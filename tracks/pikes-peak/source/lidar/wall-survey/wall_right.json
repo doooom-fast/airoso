@@ -1,0 +1,7824 @@
+{
+ "ept": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_ElPaso_2018/ept.json",
+ "side": "right",
+ "line": "data/centerline.local.json (ENU) with its widths_m",
+ "params": {
+  "STEP_M": 3.0,
+  "ALONG_M": 3.0,
+  "EDGE_IN_M": 8.0,
+  "PLANE_W_M": 2.5,
+  "SEARCH_M": 8.0,
+  "TRIM_M": 0.05,
+  "WALL_LO_M": 0.3,
+  "WALL_HI_M": 2.5,
+  "FACE_PCT": 10,
+  "FACE_IN_M": 5.0,
+  "TOP_BAND_M": 0.8,
+  "TOP_PCT": 90,
+  "MIN_PTS": 5
+ },
+ "summary": {
+  "stations": 556,
+  "with_wall": 556,
+  "face_past_edge_m": {
+   "p10": -2.81,
+   "median": -1.54,
+   "p90": -0.04
+  },
+  "top_over_road_m": {
+   "p10": 1.24,
+   "median": 1.27,
+   "p90": 1.31
+  },
+  "classes": [
+   1,
+   2
+  ]
+ },
+ "stations": [
+  {
+   "s": 0.0,
+   "wall": {
+    "face_past_edge_m": -2.31,
+    "top_over_road_m": 1.24,
+    "returns": 10,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -12.56
+  },
+  {
+   "s": 3.0,
+   "wall": {
+    "face_past_edge_m": -2.31,
+    "top_over_road_m": 1.25,
+    "returns": 17,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -12.22
+  },
+  {
+   "s": 6.0,
+   "wall": {
+    "face_past_edge_m": -2.49,
+    "top_over_road_m": 1.26,
+    "returns": 16,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -12.72
+  },
+  {
+   "s": 9.0,
+   "wall": {
+    "face_past_edge_m": -2.61,
+    "top_over_road_m": 1.24,
+    "returns": 12,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -12.89
+  },
+  {
+   "s": 12.0,
+   "wall": {
+    "face_past_edge_m": -2.44,
+    "top_over_road_m": 1.23,
+    "returns": 10,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 9,
+   "road_slope_pct": -12.95
+  },
+  {
+   "s": 15.0,
+   "wall": {
+    "face_past_edge_m": -2.56,
+    "top_over_road_m": 1.25,
+    "returns": 15,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 6,
+   "road_slope_pct": -12.48
+  },
+  {
+   "s": 18.0,
+   "wall": {
+    "face_past_edge_m": -2.35,
+    "top_over_road_m": 1.24,
+    "returns": 15,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -12.43
+  },
+  {
+   "s": 21.0,
+   "wall": {
+    "face_past_edge_m": -2.28,
+    "top_over_road_m": 1.23,
+    "returns": 16,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -12.75
+  },
+  {
+   "s": 24.0,
+   "wall": {
+    "face_past_edge_m": -2.06,
+    "top_over_road_m": 1.26,
+    "returns": 17,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -12.36
+  },
+  {
+   "s": 27.0,
+   "wall": {
+    "face_past_edge_m": -2.3,
+    "top_over_road_m": 1.27,
+    "returns": 16,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -11.68
+  },
+  {
+   "s": 30.0,
+   "wall": {
+    "face_past_edge_m": -2.45,
+    "top_over_road_m": 1.26,
+    "returns": 16,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -12.74
+  },
+  {
+   "s": 33.0,
+   "wall": {
+    "face_past_edge_m": -2.21,
+    "top_over_road_m": 1.25,
+    "returns": 13,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -13.01
+  },
+  {
+   "s": 36.0,
+   "wall": {
+    "face_past_edge_m": -2.41,
+    "top_over_road_m": 1.26,
+    "returns": 13,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -12.82
+  },
+  {
+   "s": 39.0,
+   "wall": {
+    "face_past_edge_m": -2.22,
+    "top_over_road_m": 1.26,
+    "returns": 12,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -12.68
+  },
+  {
+   "s": 42.0,
+   "wall": {
+    "face_past_edge_m": -2.28,
+    "top_over_road_m": 1.27,
+    "returns": 11,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -12.28
+  },
+  {
+   "s": 45.0,
+   "wall": {
+    "face_past_edge_m": -2.29,
+    "top_over_road_m": 1.24,
+    "returns": 13,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -13.02
+  },
+  {
+   "s": 48.0,
+   "wall": {
+    "face_past_edge_m": -2.28,
+    "top_over_road_m": 1.25,
+    "returns": 14,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -12.49
+  },
+  {
+   "s": 51.0,
+   "wall": {
+    "face_past_edge_m": -2.33,
+    "top_over_road_m": 1.27,
+    "returns": 13,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -12.46
+  },
+  {
+   "s": 54.0,
+   "wall": {
+    "face_past_edge_m": -2.42,
+    "top_over_road_m": 1.24,
+    "returns": 11,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -12.88
+  },
+  {
+   "s": 57.0,
+   "wall": {
+    "face_past_edge_m": -2.2,
+    "top_over_road_m": 1.24,
+    "returns": 10,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -12.7
+  },
+  {
+   "s": 60.0,
+   "wall": {
+    "face_past_edge_m": -2.13,
+    "top_over_road_m": 1.27,
+    "returns": 12,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -12.18
+  },
+  {
+   "s": 63.0,
+   "wall": {
+    "face_past_edge_m": -2.02,
+    "top_over_road_m": 1.28,
+    "returns": 13,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -11.87
+  },
+  {
+   "s": 66.0,
+   "wall": {
+    "face_past_edge_m": -2.33,
+    "top_over_road_m": 1.29,
+    "returns": 13,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -12.36
+  },
+  {
+   "s": 69.0,
+   "wall": {
+    "face_past_edge_m": -2.17,
+    "top_over_road_m": 1.27,
+    "returns": 12,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -12.54
+  },
+  {
+   "s": 72.0,
+   "wall": {
+    "face_past_edge_m": -2.33,
+    "top_over_road_m": 1.28,
+    "returns": 15,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -12.08
+  },
+  {
+   "s": 75.0,
+   "wall": {
+    "face_past_edge_m": -2.27,
+    "top_over_road_m": 1.26,
+    "returns": 11,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -12.79
+  },
+  {
+   "s": 78.0,
+   "wall": {
+    "face_past_edge_m": -2.34,
+    "top_over_road_m": 1.26,
+    "returns": 11,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -12.91
+  },
+  {
+   "s": 81.0,
+   "wall": {
+    "face_past_edge_m": -2.48,
+    "top_over_road_m": 1.28,
+    "returns": 14,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -12.61
+  },
+  {
+   "s": 84.0,
+   "wall": {
+    "face_past_edge_m": -2.25,
+    "top_over_road_m": 1.27,
+    "returns": 12,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -12.47
+  },
+  {
+   "s": 87.0,
+   "wall": {
+    "face_past_edge_m": -2.43,
+    "top_over_road_m": 1.28,
+    "returns": 14,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -12.45
+  },
+  {
+   "s": 90.0,
+   "wall": {
+    "face_past_edge_m": -2.69,
+    "top_over_road_m": 1.27,
+    "returns": 17,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -12.53
+  },
+  {
+   "s": 93.0,
+   "wall": {
+    "face_past_edge_m": -2.53,
+    "top_over_road_m": 1.29,
+    "returns": 14,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -12.63
+  },
+  {
+   "s": 96.0,
+   "wall": {
+    "face_past_edge_m": -2.44,
+    "top_over_road_m": 1.31,
+    "returns": 14,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -12.76
+  },
+  {
+   "s": 99.0,
+   "wall": {
+    "face_past_edge_m": -2.24,
+    "top_over_road_m": 1.31,
+    "returns": 14,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -11.97
+  },
+  {
+   "s": 102.0,
+   "wall": {
+    "face_past_edge_m": -2.44,
+    "top_over_road_m": 1.3,
+    "returns": 15,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -12.81
+  },
+  {
+   "s": 105.0,
+   "wall": {
+    "face_past_edge_m": -2.17,
+    "top_over_road_m": 1.27,
+    "returns": 13,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -13.31
+  },
+  {
+   "s": 108.0,
+   "wall": {
+    "face_past_edge_m": -2.17,
+    "top_over_road_m": 1.29,
+    "returns": 13,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -12.97
+  },
+  {
+   "s": 111.0,
+   "wall": {
+    "face_past_edge_m": -2.13,
+    "top_over_road_m": 1.27,
+    "returns": 12,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -12.91
+  },
+  {
+   "s": 114.0,
+   "wall": {
+    "face_past_edge_m": -2.0,
+    "top_over_road_m": 1.25,
+    "returns": 13,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -12.86
+  },
+  {
+   "s": 117.0,
+   "wall": {
+    "face_past_edge_m": -2.2,
+    "top_over_road_m": 1.27,
+    "returns": 15,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -12.91
+  },
+  {
+   "s": 120.0,
+   "wall": {
+    "face_past_edge_m": -2.08,
+    "top_over_road_m": 1.26,
+    "returns": 18,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -12.31
+  },
+  {
+   "s": 123.0,
+   "wall": {
+    "face_past_edge_m": -2.03,
+    "top_over_road_m": 1.27,
+    "returns": 14,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -12.61
+  },
+  {
+   "s": 126.0,
+   "wall": {
+    "face_past_edge_m": -2.16,
+    "top_over_road_m": 1.29,
+    "returns": 17,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -12.31
+  },
+  {
+   "s": 129.0,
+   "wall": {
+    "face_past_edge_m": -2.2,
+    "top_over_road_m": 1.3,
+    "returns": 16,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -12.48
+  },
+  {
+   "s": 132.0,
+   "wall": {
+    "face_past_edge_m": -2.19,
+    "top_over_road_m": 1.27,
+    "returns": 14,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -12.62
+  },
+  {
+   "s": 135.0,
+   "wall": {
+    "face_past_edge_m": -2.3,
+    "top_over_road_m": 1.27,
+    "returns": 19,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -12.41
+  },
+  {
+   "s": 138.0,
+   "wall": {
+    "face_past_edge_m": -2.22,
+    "top_over_road_m": 1.29,
+    "returns": 16,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -12.36
+  },
+  {
+   "s": 141.0,
+   "wall": {
+    "face_past_edge_m": -2.32,
+    "top_over_road_m": 1.25,
+    "returns": 15,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -13.08
+  },
+  {
+   "s": 144.0,
+   "wall": {
+    "face_past_edge_m": -2.18,
+    "top_over_road_m": 1.27,
+    "returns": 16,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -12.8
+  },
+  {
+   "s": 147.0,
+   "wall": {
+    "face_past_edge_m": -2.53,
+    "top_over_road_m": 1.29,
+    "returns": 17,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -13.15
+  },
+  {
+   "s": 150.0,
+   "wall": {
+    "face_past_edge_m": -2.49,
+    "top_over_road_m": 1.25,
+    "returns": 17,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -13.27
+  },
+  {
+   "s": 153.0,
+   "wall": {
+    "face_past_edge_m": -2.26,
+    "top_over_road_m": 1.27,
+    "returns": 16,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -13.11
+  },
+  {
+   "s": 156.0,
+   "wall": {
+    "face_past_edge_m": -2.3,
+    "top_over_road_m": 1.27,
+    "returns": 13,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -13.4
+  },
+  {
+   "s": 159.0,
+   "wall": {
+    "face_past_edge_m": -2.48,
+    "top_over_road_m": 1.28,
+    "returns": 15,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -13.13
+  },
+  {
+   "s": 162.0,
+   "wall": {
+    "face_past_edge_m": -2.51,
+    "top_over_road_m": 1.29,
+    "returns": 15,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -13.29
+  },
+  {
+   "s": 165.0,
+   "wall": {
+    "face_past_edge_m": -2.42,
+    "top_over_road_m": 1.26,
+    "returns": 12,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -13.35
+  },
+  {
+   "s": 168.0,
+   "wall": {
+    "face_past_edge_m": -2.35,
+    "top_over_road_m": 1.26,
+    "returns": 13,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -13.75
+  },
+  {
+   "s": 171.0,
+   "wall": {
+    "face_past_edge_m": -2.36,
+    "top_over_road_m": 1.24,
+    "returns": 12,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -13.66
+  },
+  {
+   "s": 174.0,
+   "wall": {
+    "face_past_edge_m": -2.38,
+    "top_over_road_m": 1.24,
+    "returns": 12,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -14.24
+  },
+  {
+   "s": 177.0,
+   "wall": {
+    "face_past_edge_m": -2.51,
+    "top_over_road_m": 1.25,
+    "returns": 12,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -13.88
+  },
+  {
+   "s": 180.0,
+   "wall": {
+    "face_past_edge_m": -2.49,
+    "top_over_road_m": 1.22,
+    "returns": 13,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -14.33
+  },
+  {
+   "s": 183.0,
+   "wall": {
+    "face_past_edge_m": -2.35,
+    "top_over_road_m": 1.24,
+    "returns": 12,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -14.49
+  },
+  {
+   "s": 186.0,
+   "wall": {
+    "face_past_edge_m": -2.54,
+    "top_over_road_m": 1.25,
+    "returns": 14,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -14.68
+  },
+  {
+   "s": 189.0,
+   "wall": {
+    "face_past_edge_m": -2.39,
+    "top_over_road_m": 1.26,
+    "returns": 14,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -14.71
+  },
+  {
+   "s": 192.0,
+   "wall": {
+    "face_past_edge_m": -2.11,
+    "top_over_road_m": 1.27,
+    "returns": 12,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -14.49
+  },
+  {
+   "s": 195.0,
+   "wall": {
+    "face_past_edge_m": -2.25,
+    "top_over_road_m": 1.28,
+    "returns": 14,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -14.98
+  },
+  {
+   "s": 198.0,
+   "wall": {
+    "face_past_edge_m": -2.22,
+    "top_over_road_m": 1.26,
+    "returns": 14,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -15.06
+  },
+  {
+   "s": 201.0,
+   "wall": {
+    "face_past_edge_m": -2.13,
+    "top_over_road_m": 1.27,
+    "returns": 13,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -15.2
+  },
+  {
+   "s": 204.0,
+   "wall": {
+    "face_past_edge_m": -2.26,
+    "top_over_road_m": 1.25,
+    "returns": 15,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -15.25
+  },
+  {
+   "s": 207.0,
+   "wall": {
+    "face_past_edge_m": -2.09,
+    "top_over_road_m": 1.25,
+    "returns": 14,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -15.24
+  },
+  {
+   "s": 210.0,
+   "wall": {
+    "face_past_edge_m": -1.98,
+    "top_over_road_m": 1.25,
+    "returns": 13,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -15.54
+  },
+  {
+   "s": 213.0,
+   "wall": {
+    "face_past_edge_m": -1.95,
+    "top_over_road_m": 1.27,
+    "returns": 14,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -15.76
+  },
+  {
+   "s": 216.0,
+   "wall": {
+    "face_past_edge_m": -1.97,
+    "top_over_road_m": 1.26,
+    "returns": 13,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -16.31
+  },
+  {
+   "s": 219.0,
+   "wall": {
+    "face_past_edge_m": -2.08,
+    "top_over_road_m": 1.24,
+    "returns": 11,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -16.54
+  },
+  {
+   "s": 222.0,
+   "wall": {
+    "face_past_edge_m": -1.95,
+    "top_over_road_m": 1.26,
+    "returns": 12,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -16.44
+  },
+  {
+   "s": 225.0,
+   "wall": {
+    "face_past_edge_m": -2.29,
+    "top_over_road_m": 1.27,
+    "returns": 12,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.17
+  },
+  {
+   "s": 228.0,
+   "wall": {
+    "face_past_edge_m": -2.07,
+    "top_over_road_m": 1.28,
+    "returns": 12,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -16.87
+  },
+  {
+   "s": 231.0,
+   "wall": {
+    "face_past_edge_m": -1.97,
+    "top_over_road_m": 1.26,
+    "returns": 10,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -16.91
+  },
+  {
+   "s": 234.0,
+   "wall": {
+    "face_past_edge_m": -2.27,
+    "top_over_road_m": 1.29,
+    "returns": 13,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.01
+  },
+  {
+   "s": 237.0,
+   "wall": {
+    "face_past_edge_m": -1.91,
+    "top_over_road_m": 1.29,
+    "returns": 10,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.07
+  },
+  {
+   "s": 240.0,
+   "wall": {
+    "face_past_edge_m": -1.94,
+    "top_over_road_m": 1.33,
+    "returns": 14,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -16.8
+  },
+  {
+   "s": 243.0,
+   "wall": {
+    "face_past_edge_m": -2.01,
+    "top_over_road_m": 1.32,
+    "returns": 14,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -16.36
+  },
+  {
+   "s": 246.0,
+   "wall": {
+    "face_past_edge_m": -2.11,
+    "top_over_road_m": 1.27,
+    "returns": 11,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.24
+  },
+  {
+   "s": 249.0,
+   "wall": {
+    "face_past_edge_m": -2.35,
+    "top_over_road_m": 1.32,
+    "returns": 15,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.26
+  },
+  {
+   "s": 252.0,
+   "wall": {
+    "face_past_edge_m": -2.13,
+    "top_over_road_m": 1.29,
+    "returns": 13,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.46
+  },
+  {
+   "s": 255.0,
+   "wall": {
+    "face_past_edge_m": -1.79,
+    "top_over_road_m": 1.3,
+    "returns": 13,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -16.58
+  },
+  {
+   "s": 258.0,
+   "wall": {
+    "face_past_edge_m": -1.72,
+    "top_over_road_m": 1.27,
+    "returns": 10,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.79
+  },
+  {
+   "s": 261.0,
+   "wall": {
+    "face_past_edge_m": -1.56,
+    "top_over_road_m": 1.24,
+    "returns": 11,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.58
+  },
+  {
+   "s": 264.0,
+   "wall": {
+    "face_past_edge_m": -1.65,
+    "top_over_road_m": 1.29,
+    "returns": 12,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -16.93
+  },
+  {
+   "s": 267.0,
+   "wall": {
+    "face_past_edge_m": -1.63,
+    "top_over_road_m": 1.28,
+    "returns": 12,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.47
+  },
+  {
+   "s": 270.0,
+   "wall": {
+    "face_past_edge_m": -1.79,
+    "top_over_road_m": 1.28,
+    "returns": 15,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.49
+  },
+  {
+   "s": 273.0,
+   "wall": {
+    "face_past_edge_m": -1.76,
+    "top_over_road_m": 1.25,
+    "returns": 13,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -18.04
+  },
+  {
+   "s": 276.0,
+   "wall": {
+    "face_past_edge_m": -1.67,
+    "top_over_road_m": 1.28,
+    "returns": 12,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.43
+  },
+  {
+   "s": 279.0,
+   "wall": {
+    "face_past_edge_m": -1.53,
+    "top_over_road_m": 1.28,
+    "returns": 14,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.46
+  },
+  {
+   "s": 282.0,
+   "wall": {
+    "face_past_edge_m": -1.49,
+    "top_over_road_m": 1.26,
+    "returns": 13,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.81
+  },
+  {
+   "s": 285.0,
+   "wall": {
+    "face_past_edge_m": -1.37,
+    "top_over_road_m": 1.27,
+    "returns": 15,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.65
+  },
+  {
+   "s": 288.0,
+   "wall": {
+    "face_past_edge_m": -1.42,
+    "top_over_road_m": 1.28,
+    "returns": 15,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.98
+  },
+  {
+   "s": 291.0,
+   "wall": {
+    "face_past_edge_m": -1.4,
+    "top_over_road_m": 1.27,
+    "returns": 12,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.54
+  },
+  {
+   "s": 294.0,
+   "wall": {
+    "face_past_edge_m": -1.54,
+    "top_over_road_m": 1.27,
+    "returns": 18,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.94
+  },
+  {
+   "s": 297.0,
+   "wall": {
+    "face_past_edge_m": -1.54,
+    "top_over_road_m": 1.28,
+    "returns": 18,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.91
+  },
+  {
+   "s": 300.0,
+   "wall": {
+    "face_past_edge_m": -1.31,
+    "top_over_road_m": 1.29,
+    "returns": 15,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.68
+  },
+  {
+   "s": 303.0,
+   "wall": {
+    "face_past_edge_m": -1.22,
+    "top_over_road_m": 1.26,
+    "returns": 14,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -18.01
+  },
+  {
+   "s": 306.0,
+   "wall": {
+    "face_past_edge_m": -1.05,
+    "top_over_road_m": 1.24,
+    "returns": 16,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -18.1
+  },
+  {
+   "s": 309.0,
+   "wall": {
+    "face_past_edge_m": -1.19,
+    "top_over_road_m": 1.34,
+    "returns": 15,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.17
+  },
+  {
+   "s": 312.0,
+   "wall": {
+    "face_past_edge_m": -0.98,
+    "top_over_road_m": 1.27,
+    "returns": 14,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.53
+  },
+  {
+   "s": 315.0,
+   "wall": {
+    "face_past_edge_m": -1.17,
+    "top_over_road_m": 1.29,
+    "returns": 15,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.33
+  },
+  {
+   "s": 318.0,
+   "wall": {
+    "face_past_edge_m": -1.39,
+    "top_over_road_m": 1.28,
+    "returns": 13,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -18.28
+  },
+  {
+   "s": 321.0,
+   "wall": {
+    "face_past_edge_m": -1.04,
+    "top_over_road_m": 1.28,
+    "returns": 14,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.57
+  },
+  {
+   "s": 324.0,
+   "wall": {
+    "face_past_edge_m": -0.94,
+    "top_over_road_m": 1.26,
+    "returns": 13,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -18.03
+  },
+  {
+   "s": 327.0,
+   "wall": {
+    "face_past_edge_m": -0.97,
+    "top_over_road_m": 1.29,
+    "returns": 13,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.85
+  },
+  {
+   "s": 330.0,
+   "wall": {
+    "face_past_edge_m": -0.73,
+    "top_over_road_m": 1.25,
+    "returns": 13,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.87
+  },
+  {
+   "s": 333.0,
+   "wall": {
+    "face_past_edge_m": -0.78,
+    "top_over_road_m": 1.28,
+    "returns": 14,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.53
+  },
+  {
+   "s": 336.0,
+   "wall": {
+    "face_past_edge_m": -1.02,
+    "top_over_road_m": 1.27,
+    "returns": 13,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.9
+  },
+  {
+   "s": 339.0,
+   "wall": {
+    "face_past_edge_m": -0.99,
+    "top_over_road_m": 1.28,
+    "returns": 16,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.81
+  },
+  {
+   "s": 342.0,
+   "wall": {
+    "face_past_edge_m": -1.15,
+    "top_over_road_m": 1.25,
+    "returns": 17,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -18.2
+  },
+  {
+   "s": 345.0,
+   "wall": {
+    "face_past_edge_m": -0.82,
+    "top_over_road_m": 1.27,
+    "returns": 12,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.88
+  },
+  {
+   "s": 348.0,
+   "wall": {
+    "face_past_edge_m": -0.88,
+    "top_over_road_m": 1.29,
+    "returns": 12,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -18.02
+  },
+  {
+   "s": 351.0,
+   "wall": {
+    "face_past_edge_m": -0.38,
+    "top_over_road_m": 1.23,
+    "returns": 12,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.78
+  },
+  {
+   "s": 354.0,
+   "wall": {
+    "face_past_edge_m": -0.45,
+    "top_over_road_m": 1.26,
+    "returns": 12,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.16
+  },
+  {
+   "s": 357.0,
+   "wall": {
+    "face_past_edge_m": -0.53,
+    "top_over_road_m": 1.27,
+    "returns": 14,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.34
+  },
+  {
+   "s": 360.0,
+   "wall": {
+    "face_past_edge_m": -0.62,
+    "top_over_road_m": 1.27,
+    "returns": 13,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.38
+  },
+  {
+   "s": 363.0,
+   "wall": {
+    "face_past_edge_m": -0.61,
+    "top_over_road_m": 1.26,
+    "returns": 15,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.38
+  },
+  {
+   "s": 366.0,
+   "wall": {
+    "face_past_edge_m": -0.89,
+    "top_over_road_m": 1.34,
+    "returns": 16,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -16.87
+  },
+  {
+   "s": 369.0,
+   "wall": {
+    "face_past_edge_m": -0.58,
+    "top_over_road_m": 1.32,
+    "returns": 15,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.15
+  },
+  {
+   "s": 372.0,
+   "wall": {
+    "face_past_edge_m": -0.49,
+    "top_over_road_m": 1.29,
+    "returns": 15,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.74
+  },
+  {
+   "s": 375.0,
+   "wall": {
+    "face_past_edge_m": -0.37,
+    "top_over_road_m": 1.32,
+    "returns": 15,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.02
+  },
+  {
+   "s": 378.0,
+   "wall": {
+    "face_past_edge_m": -0.49,
+    "top_over_road_m": 1.31,
+    "returns": 14,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.28
+  },
+  {
+   "s": 381.0,
+   "wall": {
+    "face_past_edge_m": -0.45,
+    "top_over_road_m": 1.27,
+    "returns": 13,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.3
+  },
+  {
+   "s": 384.0,
+   "wall": {
+    "face_past_edge_m": -0.65,
+    "top_over_road_m": 1.3,
+    "returns": 16,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.16
+  },
+  {
+   "s": 387.0,
+   "wall": {
+    "face_past_edge_m": -0.76,
+    "top_over_road_m": 1.29,
+    "returns": 16,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.21
+  },
+  {
+   "s": 390.0,
+   "wall": {
+    "face_past_edge_m": -0.56,
+    "top_over_road_m": 1.27,
+    "returns": 15,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.23
+  },
+  {
+   "s": 393.0,
+   "wall": {
+    "face_past_edge_m": -0.57,
+    "top_over_road_m": 1.28,
+    "returns": 14,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.15
+  },
+  {
+   "s": 396.0,
+   "wall": {
+    "face_past_edge_m": -0.5,
+    "top_over_road_m": 1.25,
+    "returns": 10,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.74
+  },
+  {
+   "s": 399.0,
+   "wall": {
+    "face_past_edge_m": -0.56,
+    "top_over_road_m": 1.28,
+    "returns": 12,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -18.0
+  },
+  {
+   "s": 402.0,
+   "wall": {
+    "face_past_edge_m": -0.59,
+    "top_over_road_m": 1.29,
+    "returns": 13,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.48
+  },
+  {
+   "s": 405.0,
+   "wall": {
+    "face_past_edge_m": -0.73,
+    "top_over_road_m": 1.3,
+    "returns": 14,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.33
+  },
+  {
+   "s": 408.0,
+   "wall": {
+    "face_past_edge_m": -0.82,
+    "top_over_road_m": 1.28,
+    "returns": 18,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.69
+  },
+  {
+   "s": 411.0,
+   "wall": {
+    "face_past_edge_m": -0.83,
+    "top_over_road_m": 1.27,
+    "returns": 15,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.31
+  },
+  {
+   "s": 414.0,
+   "wall": {
+    "face_past_edge_m": -0.54,
+    "top_over_road_m": 1.26,
+    "returns": 13,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.66
+  },
+  {
+   "s": 417.0,
+   "wall": {
+    "face_past_edge_m": -0.26,
+    "top_over_road_m": 1.26,
+    "returns": 13,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.49
+  },
+  {
+   "s": 420.0,
+   "wall": {
+    "face_past_edge_m": -0.03,
+    "top_over_road_m": 1.25,
+    "returns": 14,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.57
+  },
+  {
+   "s": 423.0,
+   "wall": {
+    "face_past_edge_m": -0.13,
+    "top_over_road_m": 1.23,
+    "returns": 13,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.93
+  },
+  {
+   "s": 426.0,
+   "wall": {
+    "face_past_edge_m": -0.21,
+    "top_over_road_m": 1.26,
+    "returns": 13,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.81
+  },
+  {
+   "s": 429.0,
+   "wall": {
+    "face_past_edge_m": -0.13,
+    "top_over_road_m": 1.27,
+    "returns": 17,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.34
+  },
+  {
+   "s": 432.0,
+   "wall": {
+    "face_past_edge_m": -0.05,
+    "top_over_road_m": 1.25,
+    "returns": 19,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.27
+  },
+  {
+   "s": 435.0,
+   "wall": {
+    "face_past_edge_m": -0.03,
+    "top_over_road_m": 1.28,
+    "returns": 16,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.39
+  },
+  {
+   "s": 438.0,
+   "wall": {
+    "face_past_edge_m": 0.12,
+    "top_over_road_m": 1.25,
+    "returns": 15,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.79
+  },
+  {
+   "s": 441.0,
+   "wall": {
+    "face_past_edge_m": 0.02,
+    "top_over_road_m": 1.28,
+    "returns": 14,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.74
+  },
+  {
+   "s": 444.0,
+   "wall": {
+    "face_past_edge_m": 0.11,
+    "top_over_road_m": 1.25,
+    "returns": 14,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.75
+  },
+  {
+   "s": 447.0,
+   "wall": {
+    "face_past_edge_m": 0.14,
+    "top_over_road_m": 1.27,
+    "returns": 13,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.45
+  },
+  {
+   "s": 450.0,
+   "wall": {
+    "face_past_edge_m": 0.07,
+    "top_over_road_m": 1.26,
+    "returns": 13,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.41
+  },
+  {
+   "s": 453.0,
+   "wall": {
+    "face_past_edge_m": -0.08,
+    "top_over_road_m": 1.31,
+    "returns": 16,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -16.98
+  },
+  {
+   "s": 456.0,
+   "wall": {
+    "face_past_edge_m": -0.14,
+    "top_over_road_m": 1.3,
+    "returns": 18,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.29
+  },
+  {
+   "s": 459.0,
+   "wall": {
+    "face_past_edge_m": 0.0,
+    "top_over_road_m": 1.28,
+    "returns": 14,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.38
+  },
+  {
+   "s": 462.0,
+   "wall": {
+    "face_past_edge_m": -0.12,
+    "top_over_road_m": 1.3,
+    "returns": 15,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.75
+  },
+  {
+   "s": 465.0,
+   "wall": {
+    "face_past_edge_m": 0.12,
+    "top_over_road_m": 1.28,
+    "returns": 14,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.89
+  },
+  {
+   "s": 468.0,
+   "wall": {
+    "face_past_edge_m": -0.03,
+    "top_over_road_m": 1.28,
+    "returns": 15,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.77
+  },
+  {
+   "s": 471.0,
+   "wall": {
+    "face_past_edge_m": 0.22,
+    "top_over_road_m": 1.3,
+    "returns": 14,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.36
+  },
+  {
+   "s": 474.0,
+   "wall": {
+    "face_past_edge_m": -0.18,
+    "top_over_road_m": 1.32,
+    "returns": 17,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 1,
+   "road_slope_pct": -17.16
+  },
+  {
+   "s": 477.0,
+   "wall": {
+    "face_past_edge_m": -0.35,
+    "top_over_road_m": 1.33,
+    "returns": 18,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.3
+  },
+  {
+   "s": 480.0,
+   "wall": {
+    "face_past_edge_m": -0.18,
+    "top_over_road_m": 1.33,
+    "returns": 15,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.2
+  },
+  {
+   "s": 483.0,
+   "wall": {
+    "face_past_edge_m": 0.03,
+    "top_over_road_m": 1.28,
+    "returns": 13,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.61
+  },
+  {
+   "s": 486.0,
+   "wall": {
+    "face_past_edge_m": 0.02,
+    "top_over_road_m": 1.26,
+    "returns": 13,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.96
+  },
+  {
+   "s": 489.0,
+   "wall": {
+    "face_past_edge_m": -0.09,
+    "top_over_road_m": 1.26,
+    "returns": 13,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.96
+  },
+  {
+   "s": 492.0,
+   "wall": {
+    "face_past_edge_m": -0.05,
+    "top_over_road_m": 1.23,
+    "returns": 10,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -18.08
+  },
+  {
+   "s": 495.0,
+   "wall": {
+    "face_past_edge_m": -0.09,
+    "top_over_road_m": 1.25,
+    "returns": 12,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.94
+  },
+  {
+   "s": 498.0,
+   "wall": {
+    "face_past_edge_m": -0.31,
+    "top_over_road_m": 1.26,
+    "returns": 17,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.36
+  },
+  {
+   "s": 501.0,
+   "wall": {
+    "face_past_edge_m": -0.4,
+    "top_over_road_m": 1.24,
+    "returns": 15,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -18.14
+  },
+  {
+   "s": 504.0,
+   "wall": {
+    "face_past_edge_m": -0.22,
+    "top_over_road_m": 1.26,
+    "returns": 11,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.38
+  },
+  {
+   "s": 507.0,
+   "wall": {
+    "face_past_edge_m": 0.02,
+    "top_over_road_m": 1.29,
+    "returns": 12,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.08
+  },
+  {
+   "s": 510.0,
+   "wall": {
+    "face_past_edge_m": -0.05,
+    "top_over_road_m": 1.28,
+    "returns": 14,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.21
+  },
+  {
+   "s": 513.0,
+   "wall": {
+    "face_past_edge_m": 0.27,
+    "top_over_road_m": 1.26,
+    "returns": 12,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.05
+  },
+  {
+   "s": 516.0,
+   "wall": {
+    "face_past_edge_m": 0.28,
+    "top_over_road_m": 1.26,
+    "returns": 11,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.25
+  },
+  {
+   "s": 519.0,
+   "wall": {
+    "face_past_edge_m": -0.07,
+    "top_over_road_m": 1.28,
+    "returns": 15,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.18
+  },
+  {
+   "s": 522.0,
+   "wall": {
+    "face_past_edge_m": -0.11,
+    "top_over_road_m": 1.27,
+    "returns": 17,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.1
+  },
+  {
+   "s": 525.0,
+   "wall": {
+    "face_past_edge_m": 0.07,
+    "top_over_road_m": 1.28,
+    "returns": 12,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.46
+  },
+  {
+   "s": 528.0,
+   "wall": {
+    "face_past_edge_m": 0.15,
+    "top_over_road_m": 1.26,
+    "returns": 11,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.42
+  },
+  {
+   "s": 531.0,
+   "wall": {
+    "face_past_edge_m": 0.16,
+    "top_over_road_m": 1.26,
+    "returns": 14,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.51
+  },
+  {
+   "s": 534.0,
+   "wall": {
+    "face_past_edge_m": 0.36,
+    "top_over_road_m": 1.24,
+    "returns": 10,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.59
+  },
+  {
+   "s": 537.0,
+   "wall": {
+    "face_past_edge_m": 0.22,
+    "top_over_road_m": 1.3,
+    "returns": 13,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.05
+  },
+  {
+   "s": 540.0,
+   "wall": {
+    "face_past_edge_m": 0.11,
+    "top_over_road_m": 1.29,
+    "returns": 11,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.22
+  },
+  {
+   "s": 543.0,
+   "wall": {
+    "face_past_edge_m": 0.05,
+    "top_over_road_m": 1.28,
+    "returns": 15,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.31
+  },
+  {
+   "s": 546.0,
+   "wall": {
+    "face_past_edge_m": 0.13,
+    "top_over_road_m": 1.26,
+    "returns": 13,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.55
+  },
+  {
+   "s": 549.0,
+   "wall": {
+    "face_past_edge_m": 0.22,
+    "top_over_road_m": 1.25,
+    "returns": 12,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.64
+  },
+  {
+   "s": 552.0,
+   "wall": {
+    "face_past_edge_m": 0.27,
+    "top_over_road_m": 1.28,
+    "returns": 15,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.26
+  },
+  {
+   "s": 555.0,
+   "wall": {
+    "face_past_edge_m": 0.4,
+    "top_over_road_m": 1.24,
+    "returns": 13,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.73
+  },
+  {
+   "s": 558.0,
+   "wall": {
+    "face_past_edge_m": 0.12,
+    "top_over_road_m": 1.28,
+    "returns": 15,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.42
+  },
+  {
+   "s": 561.0,
+   "wall": {
+    "face_past_edge_m": 0.28,
+    "top_over_road_m": 1.28,
+    "returns": 14,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.22
+  },
+  {
+   "s": 564.0,
+   "wall": {
+    "face_past_edge_m": -0.07,
+    "top_over_road_m": 1.25,
+    "returns": 16,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.8
+  },
+  {
+   "s": 567.0,
+   "wall": {
+    "face_past_edge_m": -0.04,
+    "top_over_road_m": 1.28,
+    "returns": 20,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -16.98
+  },
+  {
+   "s": 570.0,
+   "wall": {
+    "face_past_edge_m": 0.13,
+    "top_over_road_m": 1.24,
+    "returns": 16,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.5
+  },
+  {
+   "s": 573.0,
+   "wall": {
+    "face_past_edge_m": 0.22,
+    "top_over_road_m": 1.21,
+    "returns": 14,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.75
+  },
+  {
+   "s": 576.0,
+   "wall": {
+    "face_past_edge_m": 0.13,
+    "top_over_road_m": 1.24,
+    "returns": 11,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.61
+  },
+  {
+   "s": 579.0,
+   "wall": {
+    "face_past_edge_m": 0.18,
+    "top_over_road_m": 1.26,
+    "returns": 14,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.46
+  },
+  {
+   "s": 582.0,
+   "wall": {
+    "face_past_edge_m": 0.11,
+    "top_over_road_m": 1.23,
+    "returns": 11,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.77
+  },
+  {
+   "s": 585.0,
+   "wall": {
+    "face_past_edge_m": -0.08,
+    "top_over_road_m": 1.3,
+    "returns": 17,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -16.86
+  },
+  {
+   "s": 588.0,
+   "wall": {
+    "face_past_edge_m": -0.23,
+    "top_over_road_m": 1.3,
+    "returns": 16,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -16.85
+  },
+  {
+   "s": 591.0,
+   "wall": {
+    "face_past_edge_m": -0.25,
+    "top_over_road_m": 1.3,
+    "returns": 17,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.04
+  },
+  {
+   "s": 594.0,
+   "wall": {
+    "face_past_edge_m": -0.06,
+    "top_over_road_m": 1.32,
+    "returns": 15,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -16.83
+  },
+  {
+   "s": 597.0,
+   "wall": {
+    "face_past_edge_m": 0.23,
+    "top_over_road_m": 1.26,
+    "returns": 9,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.41
+  },
+  {
+   "s": 600.0,
+   "wall": {
+    "face_past_edge_m": 0.27,
+    "top_over_road_m": 1.3,
+    "returns": 15,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.09
+  },
+  {
+   "s": 603.0,
+   "wall": {
+    "face_past_edge_m": -0.0,
+    "top_over_road_m": 1.31,
+    "returns": 15,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 2,
+   "road_slope_pct": -17.2
+  },
+  {
+   "s": 606.0,
+   "wall": {
+    "face_past_edge_m": -0.01,
+    "top_over_road_m": 1.3,
+    "returns": 13,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.31
+  },
+  {
+   "s": 609.0,
+   "wall": {
+    "face_past_edge_m": -0.29,
+    "top_over_road_m": 1.33,
+    "returns": 15,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -16.94
+  },
+  {
+   "s": 612.0,
+   "wall": {
+    "face_past_edge_m": -0.22,
+    "top_over_road_m": 1.29,
+    "returns": 17,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.22
+  },
+  {
+   "s": 615.0,
+   "wall": {
+    "face_past_edge_m": -0.25,
+    "top_over_road_m": 1.3,
+    "returns": 14,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.2
+  },
+  {
+   "s": 618.0,
+   "wall": {
+    "face_past_edge_m": -0.15,
+    "top_over_road_m": 1.31,
+    "returns": 13,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -16.87
+  },
+  {
+   "s": 621.0,
+   "wall": {
+    "face_past_edge_m": 0.14,
+    "top_over_road_m": 1.26,
+    "returns": 14,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.22
+  },
+  {
+   "s": 624.0,
+   "wall": {
+    "face_past_edge_m": -0.07,
+    "top_over_road_m": 1.28,
+    "returns": 11,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -16.83
+  },
+  {
+   "s": 627.0,
+   "wall": {
+    "face_past_edge_m": -0.23,
+    "top_over_road_m": 1.3,
+    "returns": 16,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -16.33
+  },
+  {
+   "s": 630.0,
+   "wall": {
+    "face_past_edge_m": -0.36,
+    "top_over_road_m": 1.3,
+    "returns": 13,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -16.41
+  },
+  {
+   "s": 633.0,
+   "wall": {
+    "face_past_edge_m": -0.37,
+    "top_over_road_m": 1.28,
+    "returns": 15,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -16.25
+  },
+  {
+   "s": 636.0,
+   "wall": {
+    "face_past_edge_m": -0.39,
+    "top_over_road_m": 1.28,
+    "returns": 14,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -16.42
+  },
+  {
+   "s": 639.0,
+   "wall": {
+    "face_past_edge_m": -0.25,
+    "top_over_road_m": 1.23,
+    "returns": 11,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -16.57
+  },
+  {
+   "s": 642.0,
+   "wall": {
+    "face_past_edge_m": -0.23,
+    "top_over_road_m": 1.27,
+    "returns": 12,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -16.28
+  },
+  {
+   "s": 645.0,
+   "wall": {
+    "face_past_edge_m": -0.16,
+    "top_over_road_m": 1.29,
+    "returns": 14,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -16.15
+  },
+  {
+   "s": 648.0,
+   "wall": {
+    "face_past_edge_m": 0.12,
+    "top_over_road_m": 1.28,
+    "returns": 11,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -15.79
+  },
+  {
+   "s": 651.0,
+   "wall": {
+    "face_past_edge_m": -0.14,
+    "top_over_road_m": 1.29,
+    "returns": 13,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -15.79
+  },
+  {
+   "s": 654.0,
+   "wall": {
+    "face_past_edge_m": -0.18,
+    "top_over_road_m": 1.29,
+    "returns": 14,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -15.37
+  },
+  {
+   "s": 657.0,
+   "wall": {
+    "face_past_edge_m": -0.14,
+    "top_over_road_m": 1.3,
+    "returns": 16,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -15.06
+  },
+  {
+   "s": 660.0,
+   "wall": {
+    "face_past_edge_m": -0.18,
+    "top_over_road_m": 1.31,
+    "returns": 15,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -14.61
+  },
+  {
+   "s": 663.0,
+   "wall": {
+    "face_past_edge_m": -0.12,
+    "top_over_road_m": 1.3,
+    "returns": 13,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -14.34
+  },
+  {
+   "s": 666.0,
+   "wall": {
+    "face_past_edge_m": -0.23,
+    "top_over_road_m": 1.31,
+    "returns": 13,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -13.8
+  },
+  {
+   "s": 669.0,
+   "wall": {
+    "face_past_edge_m": -0.17,
+    "top_over_road_m": 1.28,
+    "returns": 14,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -14.3
+  },
+  {
+   "s": 672.0,
+   "wall": {
+    "face_past_edge_m": -0.51,
+    "top_over_road_m": 1.25,
+    "returns": 12,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -14.65
+  },
+  {
+   "s": 675.0,
+   "wall": {
+    "face_past_edge_m": -0.28,
+    "top_over_road_m": 1.24,
+    "returns": 14,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -13.71
+  },
+  {
+   "s": 678.0,
+   "wall": {
+    "face_past_edge_m": -0.53,
+    "top_over_road_m": 1.26,
+    "returns": 14,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -13.35
+  },
+  {
+   "s": 681.0,
+   "wall": {
+    "face_past_edge_m": -0.7,
+    "top_over_road_m": 1.26,
+    "returns": 16,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -13.29
+  },
+  {
+   "s": 684.0,
+   "wall": {
+    "face_past_edge_m": -0.74,
+    "top_over_road_m": 1.23,
+    "returns": 13,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -13.77
+  },
+  {
+   "s": 687.0,
+   "wall": {
+    "face_past_edge_m": -0.72,
+    "top_over_road_m": 1.25,
+    "returns": 16,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -13.07
+  },
+  {
+   "s": 690.0,
+   "wall": {
+    "face_past_edge_m": -0.25,
+    "top_over_road_m": 1.25,
+    "returns": 14,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -12.9
+  },
+  {
+   "s": 693.0,
+   "wall": {
+    "face_past_edge_m": -0.6,
+    "top_over_road_m": 1.27,
+    "returns": 17,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -12.62
+  },
+  {
+   "s": 696.0,
+   "wall": {
+    "face_past_edge_m": -0.56,
+    "top_over_road_m": 1.27,
+    "returns": 14,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -12.66
+  },
+  {
+   "s": 699.0,
+   "wall": {
+    "face_past_edge_m": -0.74,
+    "top_over_road_m": 1.29,
+    "returns": 19,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -12.32
+  },
+  {
+   "s": 702.0,
+   "wall": {
+    "face_past_edge_m": -0.73,
+    "top_over_road_m": 1.33,
+    "returns": 20,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -11.2
+  },
+  {
+   "s": 705.0,
+   "wall": {
+    "face_past_edge_m": -0.68,
+    "top_over_road_m": 1.33,
+    "returns": 21,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -10.76
+  },
+  {
+   "s": 708.0,
+   "wall": {
+    "face_past_edge_m": -0.84,
+    "top_over_road_m": 1.27,
+    "returns": 19,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -11.36
+  },
+  {
+   "s": 711.0,
+   "wall": {
+    "face_past_edge_m": -0.65,
+    "top_over_road_m": 1.29,
+    "returns": 18,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -11.03
+  },
+  {
+   "s": 714.0,
+   "wall": {
+    "face_past_edge_m": -0.79,
+    "top_over_road_m": 1.27,
+    "returns": 18,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -11.03
+  },
+  {
+   "s": 717.0,
+   "wall": {
+    "face_past_edge_m": -0.81,
+    "top_over_road_m": 1.29,
+    "returns": 18,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -10.5
+  },
+  {
+   "s": 720.0,
+   "wall": {
+    "face_past_edge_m": -0.91,
+    "top_over_road_m": 1.3,
+    "returns": 19,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -10.14
+  },
+  {
+   "s": 723.0,
+   "wall": {
+    "face_past_edge_m": -0.73,
+    "top_over_road_m": 1.24,
+    "returns": 16,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -9.89
+  },
+  {
+   "s": 726.0,
+   "wall": {
+    "face_past_edge_m": -0.88,
+    "top_over_road_m": 1.25,
+    "returns": 17,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -9.56
+  },
+  {
+   "s": 729.0,
+   "wall": {
+    "face_past_edge_m": -0.52,
+    "top_over_road_m": 1.28,
+    "returns": 17,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -8.7
+  },
+  {
+   "s": 732.0,
+   "wall": {
+    "face_past_edge_m": -0.58,
+    "top_over_road_m": 1.27,
+    "returns": 19,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -8.61
+  },
+  {
+   "s": 735.0,
+   "wall": {
+    "face_past_edge_m": -0.73,
+    "top_over_road_m": 1.25,
+    "returns": 14,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -9.02
+  },
+  {
+   "s": 738.0,
+   "wall": {
+    "face_past_edge_m": -0.88,
+    "top_over_road_m": 1.26,
+    "returns": 18,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -8.4
+  },
+  {
+   "s": 741.0,
+   "wall": {
+    "face_past_edge_m": -0.7,
+    "top_over_road_m": 1.24,
+    "returns": 18,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -8.3
+  },
+  {
+   "s": 744.0,
+   "wall": {
+    "face_past_edge_m": -0.51,
+    "top_over_road_m": 1.24,
+    "returns": 19,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -7.72
+  },
+  {
+   "s": 747.0,
+   "wall": {
+    "face_past_edge_m": -0.67,
+    "top_over_road_m": 1.25,
+    "returns": 20,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -7.68
+  },
+  {
+   "s": 750.0,
+   "wall": {
+    "face_past_edge_m": -0.53,
+    "top_over_road_m": 1.22,
+    "returns": 16,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -7.61
+  },
+  {
+   "s": 753.0,
+   "wall": {
+    "face_past_edge_m": -0.51,
+    "top_over_road_m": 1.25,
+    "returns": 23,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -6.77
+  },
+  {
+   "s": 756.0,
+   "wall": {
+    "face_past_edge_m": -0.56,
+    "top_over_road_m": 1.26,
+    "returns": 25,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -6.23
+  },
+  {
+   "s": 759.0,
+   "wall": {
+    "face_past_edge_m": -0.5,
+    "top_over_road_m": 1.25,
+    "returns": 23,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -6.35
+  },
+  {
+   "s": 762.0,
+   "wall": {
+    "face_past_edge_m": -0.37,
+    "top_over_road_m": 1.23,
+    "returns": 21,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -6.46
+  },
+  {
+   "s": 765.0,
+   "wall": {
+    "face_past_edge_m": -0.25,
+    "top_over_road_m": 1.27,
+    "returns": 25,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -5.81
+  },
+  {
+   "s": 768.0,
+   "wall": {
+    "face_past_edge_m": -0.21,
+    "top_over_road_m": 1.22,
+    "returns": 22,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -6.19
+  },
+  {
+   "s": 771.0,
+   "wall": {
+    "face_past_edge_m": -0.54,
+    "top_over_road_m": 1.26,
+    "returns": 25,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -5.36
+  },
+  {
+   "s": 774.0,
+   "wall": {
+    "face_past_edge_m": -0.37,
+    "top_over_road_m": 1.3,
+    "returns": 28,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -4.87
+  },
+  {
+   "s": 777.0,
+   "wall": {
+    "face_past_edge_m": -0.12,
+    "top_over_road_m": 1.27,
+    "returns": 35,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -4.78
+  },
+  {
+   "s": 780.0,
+   "wall": {
+    "face_past_edge_m": -0.36,
+    "top_over_road_m": 1.27,
+    "returns": 33,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -4.87
+  },
+  {
+   "s": 783.0,
+   "wall": {
+    "face_past_edge_m": -0.37,
+    "top_over_road_m": 1.27,
+    "returns": 33,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -4.77
+  },
+  {
+   "s": 786.0,
+   "wall": {
+    "face_past_edge_m": -0.55,
+    "top_over_road_m": 1.27,
+    "returns": 25,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -5.09
+  },
+  {
+   "s": 789.0,
+   "wall": {
+    "face_past_edge_m": -0.48,
+    "top_over_road_m": 1.26,
+    "returns": 23,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -5.39
+  },
+  {
+   "s": 792.0,
+   "wall": {
+    "face_past_edge_m": -0.34,
+    "top_over_road_m": 1.25,
+    "returns": 25,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -4.95
+  },
+  {
+   "s": 795.0,
+   "wall": {
+    "face_past_edge_m": -0.29,
+    "top_over_road_m": 1.24,
+    "returns": 19,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -5.21
+  },
+  {
+   "s": 798.0,
+   "wall": {
+    "face_past_edge_m": -0.54,
+    "top_over_road_m": 1.2,
+    "returns": 18,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -5.82
+  },
+  {
+   "s": 801.0,
+   "wall": {
+    "face_past_edge_m": -0.43,
+    "top_over_road_m": 1.21,
+    "returns": 19,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -5.66
+  },
+  {
+   "s": 804.0,
+   "wall": {
+    "face_past_edge_m": -0.24,
+    "top_over_road_m": 1.18,
+    "returns": 17,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -5.5
+  },
+  {
+   "s": 807.0,
+   "wall": {
+    "face_past_edge_m": -0.44,
+    "top_over_road_m": 1.2,
+    "returns": 20,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -5.55
+  },
+  {
+   "s": 810.0,
+   "wall": {
+    "face_past_edge_m": -0.42,
+    "top_over_road_m": 1.19,
+    "returns": 20,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -5.53
+  },
+  {
+   "s": 813.0,
+   "wall": {
+    "face_past_edge_m": -0.62,
+    "top_over_road_m": 1.23,
+    "returns": 21,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -5.47
+  },
+  {
+   "s": 816.0,
+   "wall": {
+    "face_past_edge_m": -0.19,
+    "top_over_road_m": 1.23,
+    "returns": 24,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -4.89
+  },
+  {
+   "s": 819.0,
+   "wall": {
+    "face_past_edge_m": -0.3,
+    "top_over_road_m": 1.22,
+    "returns": 17,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -5.63
+  },
+  {
+   "s": 822.0,
+   "wall": {
+    "face_past_edge_m": -0.21,
+    "top_over_road_m": 1.26,
+    "returns": 24,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -4.93
+  },
+  {
+   "s": 825.0,
+   "wall": {
+    "face_past_edge_m": -0.44,
+    "top_over_road_m": 1.25,
+    "returns": 26,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -5.13
+  },
+  {
+   "s": 828.0,
+   "wall": {
+    "face_past_edge_m": -0.34,
+    "top_over_road_m": 1.22,
+    "returns": 23,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -5.41
+  },
+  {
+   "s": 831.0,
+   "wall": {
+    "face_past_edge_m": -0.21,
+    "top_over_road_m": 1.24,
+    "returns": 25,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -5.29
+  },
+  {
+   "s": 834.0,
+   "wall": {
+    "face_past_edge_m": -0.44,
+    "top_over_road_m": 1.25,
+    "returns": 24,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -5.25
+  },
+  {
+   "s": 837.0,
+   "wall": {
+    "face_past_edge_m": -0.21,
+    "top_over_road_m": 1.27,
+    "returns": 26,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -5.12
+  },
+  {
+   "s": 840.0,
+   "wall": {
+    "face_past_edge_m": -0.2,
+    "top_over_road_m": 1.28,
+    "returns": 28,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -4.64
+  },
+  {
+   "s": 843.0,
+   "wall": {
+    "face_past_edge_m": -0.04,
+    "top_over_road_m": 1.26,
+    "returns": 28,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -5.05
+  },
+  {
+   "s": 846.0,
+   "wall": {
+    "face_past_edge_m": -0.21,
+    "top_over_road_m": 1.26,
+    "returns": 28,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -4.91
+  },
+  {
+   "s": 849.0,
+   "wall": {
+    "face_past_edge_m": -0.1,
+    "top_over_road_m": 1.26,
+    "returns": 27,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -4.96
+  },
+  {
+   "s": 852.0,
+   "wall": {
+    "face_past_edge_m": -0.09,
+    "top_over_road_m": 1.24,
+    "returns": 20,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -5.09
+  },
+  {
+   "s": 855.0,
+   "wall": {
+    "face_past_edge_m": -0.27,
+    "top_over_road_m": 1.27,
+    "returns": 29,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -4.6
+  },
+  {
+   "s": 858.0,
+   "wall": {
+    "face_past_edge_m": -0.08,
+    "top_over_road_m": 1.3,
+    "returns": 33,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -3.77
+  },
+  {
+   "s": 861.0,
+   "wall": {
+    "face_past_edge_m": 0.0,
+    "top_over_road_m": 1.33,
+    "returns": 38,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -3.74
+  },
+  {
+   "s": 864.0,
+   "wall": {
+    "face_past_edge_m": -0.27,
+    "top_over_road_m": 1.28,
+    "returns": 24,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -4.75
+  },
+  {
+   "s": 867.0,
+   "wall": {
+    "face_past_edge_m": -0.09,
+    "top_over_road_m": 1.27,
+    "returns": 24,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -4.55
+  },
+  {
+   "s": 870.0,
+   "wall": {
+    "face_past_edge_m": -0.23,
+    "top_over_road_m": 1.28,
+    "returns": 24,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -4.51
+  },
+  {
+   "s": 873.0,
+   "wall": {
+    "face_past_edge_m": -0.15,
+    "top_over_road_m": 1.3,
+    "returns": 27,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -4.36
+  },
+  {
+   "s": 876.0,
+   "wall": {
+    "face_past_edge_m": -0.1,
+    "top_over_road_m": 1.28,
+    "returns": 21,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -4.88
+  },
+  {
+   "s": 879.0,
+   "wall": {
+    "face_past_edge_m": 0.09,
+    "top_over_road_m": 1.29,
+    "returns": 28,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -4.33
+  },
+  {
+   "s": 882.0,
+   "wall": {
+    "face_past_edge_m": -0.1,
+    "top_over_road_m": 1.28,
+    "returns": 20,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -4.74
+  },
+  {
+   "s": 885.0,
+   "wall": {
+    "face_past_edge_m": 0.2,
+    "top_over_road_m": 1.32,
+    "returns": 22,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -4.3
+  },
+  {
+   "s": 888.0,
+   "wall": {
+    "face_past_edge_m": 0.06,
+    "top_over_road_m": 1.24,
+    "returns": 18,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -5.29
+  },
+  {
+   "s": 891.0,
+   "wall": {
+    "face_past_edge_m": -0.04,
+    "top_over_road_m": 1.27,
+    "returns": 21,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -4.91
+  },
+  {
+   "s": 894.0,
+   "wall": {
+    "face_past_edge_m": -0.09,
+    "top_over_road_m": 1.24,
+    "returns": 15,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -5.56
+  },
+  {
+   "s": 897.0,
+   "wall": {
+    "face_past_edge_m": -0.31,
+    "top_over_road_m": 1.27,
+    "returns": 20,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -4.88
+  },
+  {
+   "s": 900.0,
+   "wall": {
+    "face_past_edge_m": 0.21,
+    "top_over_road_m": 1.25,
+    "returns": 19,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -4.97
+  },
+  {
+   "s": 903.0,
+   "wall": {
+    "face_past_edge_m": -0.4,
+    "top_over_road_m": 1.25,
+    "returns": 17,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -5.83
+  },
+  {
+   "s": 906.0,
+   "wall": {
+    "face_past_edge_m": -0.03,
+    "top_over_road_m": 1.27,
+    "returns": 19,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -5.43
+  },
+  {
+   "s": 909.0,
+   "wall": {
+    "face_past_edge_m": -0.15,
+    "top_over_road_m": 1.27,
+    "returns": 19,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -5.66
+  },
+  {
+   "s": 912.0,
+   "wall": {
+    "face_past_edge_m": 0.1,
+    "top_over_road_m": 1.26,
+    "returns": 17,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -5.69
+  },
+  {
+   "s": 915.0,
+   "wall": {
+    "face_past_edge_m": 0.05,
+    "top_over_road_m": 1.23,
+    "returns": 14,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -6.17
+  },
+  {
+   "s": 918.0,
+   "wall": {
+    "face_past_edge_m": -0.06,
+    "top_over_road_m": 1.26,
+    "returns": 18,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -5.89
+  },
+  {
+   "s": 921.0,
+   "wall": {
+    "face_past_edge_m": -0.18,
+    "top_over_road_m": 1.27,
+    "returns": 19,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -5.82
+  },
+  {
+   "s": 924.0,
+   "wall": {
+    "face_past_edge_m": -0.01,
+    "top_over_road_m": 1.27,
+    "returns": 20,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -5.97
+  },
+  {
+   "s": 927.0,
+   "wall": {
+    "face_past_edge_m": 0.24,
+    "top_over_road_m": 1.32,
+    "returns": 23,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -5.42
+  },
+  {
+   "s": 930.0,
+   "wall": {
+    "face_past_edge_m": -0.16,
+    "top_over_road_m": 1.28,
+    "returns": 16,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -6.7
+  },
+  {
+   "s": 933.0,
+   "wall": {
+    "face_past_edge_m": 0.01,
+    "top_over_road_m": 1.29,
+    "returns": 17,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -6.46
+  },
+  {
+   "s": 936.0,
+   "wall": {
+    "face_past_edge_m": 0.17,
+    "top_over_road_m": 1.3,
+    "returns": 18,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -6.48
+  },
+  {
+   "s": 939.0,
+   "wall": {
+    "face_past_edge_m": 0.13,
+    "top_over_road_m": 1.25,
+    "returns": 15,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -7.25
+  },
+  {
+   "s": 942.0,
+   "wall": {
+    "face_past_edge_m": -0.13,
+    "top_over_road_m": 1.27,
+    "returns": 15,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -7.54
+  },
+  {
+   "s": 945.0,
+   "wall": {
+    "face_past_edge_m": 0.09,
+    "top_over_road_m": 1.26,
+    "returns": 15,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -7.76
+  },
+  {
+   "s": 948.0,
+   "wall": {
+    "face_past_edge_m": -0.18,
+    "top_over_road_m": 1.3,
+    "returns": 16,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -7.74
+  },
+  {
+   "s": 951.0,
+   "wall": {
+    "face_past_edge_m": -0.06,
+    "top_over_road_m": 1.26,
+    "returns": 14,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -8.45
+  },
+  {
+   "s": 954.0,
+   "wall": {
+    "face_past_edge_m": -0.21,
+    "top_over_road_m": 1.32,
+    "returns": 16,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -8.25
+  },
+  {
+   "s": 957.0,
+   "wall": {
+    "face_past_edge_m": -0.25,
+    "top_over_road_m": 1.3,
+    "returns": 15,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -9.09
+  },
+  {
+   "s": 960.0,
+   "wall": {
+    "face_past_edge_m": -0.13,
+    "top_over_road_m": 1.27,
+    "returns": 11,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -9.82
+  },
+  {
+   "s": 963.0,
+   "wall": {
+    "face_past_edge_m": -0.17,
+    "top_over_road_m": 1.26,
+    "returns": 12,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -10.43
+  },
+  {
+   "s": 966.0,
+   "wall": {
+    "face_past_edge_m": -0.22,
+    "top_over_road_m": 1.33,
+    "returns": 16,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -9.58
+  },
+  {
+   "s": 969.0,
+   "wall": {
+    "face_past_edge_m": -0.04,
+    "top_over_road_m": 1.28,
+    "returns": 14,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -10.19
+  },
+  {
+   "s": 972.0,
+   "wall": {
+    "face_past_edge_m": 0.23,
+    "top_over_road_m": 1.27,
+    "returns": 12,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -10.77
+  },
+  {
+   "s": 975.0,
+   "wall": {
+    "face_past_edge_m": -0.13,
+    "top_over_road_m": 1.29,
+    "returns": 11,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -11.07
+  },
+  {
+   "s": 978.0,
+   "wall": {
+    "face_past_edge_m": -0.16,
+    "top_over_road_m": 1.31,
+    "returns": 15,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -10.76
+  },
+  {
+   "s": 981.0,
+   "wall": {
+    "face_past_edge_m": -0.14,
+    "top_over_road_m": 1.33,
+    "returns": 14,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -10.79
+  },
+  {
+   "s": 984.0,
+   "wall": {
+    "face_past_edge_m": -0.06,
+    "top_over_road_m": 1.29,
+    "returns": 12,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -11.64
+  },
+  {
+   "s": 987.0,
+   "wall": {
+    "face_past_edge_m": 0.1,
+    "top_over_road_m": 1.31,
+    "returns": 12,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -11.02
+  },
+  {
+   "s": 990.0,
+   "wall": {
+    "face_past_edge_m": -0.28,
+    "top_over_road_m": 1.34,
+    "returns": 13,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -11.11
+  },
+  {
+   "s": 993.0,
+   "wall": {
+    "face_past_edge_m": -0.14,
+    "top_over_road_m": 1.31,
+    "returns": 14,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -11.36
+  },
+  {
+   "s": 996.0,
+   "wall": {
+    "face_past_edge_m": -0.59,
+    "top_over_road_m": 1.34,
+    "returns": 12,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -12.09
+  },
+  {
+   "s": 999.0,
+   "wall": {
+    "face_past_edge_m": -0.68,
+    "top_over_road_m": 1.37,
+    "returns": 14,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -11.9
+  },
+  {
+   "s": 1002.0,
+   "wall": {
+    "face_past_edge_m": -0.57,
+    "top_over_road_m": 1.3,
+    "returns": 9,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -12.97
+  },
+  {
+   "s": 1005.0,
+   "wall": {
+    "face_past_edge_m": -0.5,
+    "top_over_road_m": 1.31,
+    "returns": 11,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -12.78
+  },
+  {
+   "s": 1008.0,
+   "wall": {
+    "face_past_edge_m": -0.56,
+    "top_over_road_m": 1.34,
+    "returns": 11,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -12.57
+  },
+  {
+   "s": 1011.0,
+   "wall": {
+    "face_past_edge_m": -0.36,
+    "top_over_road_m": 1.28,
+    "returns": 10,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -13.26
+  },
+  {
+   "s": 1014.0,
+   "wall": {
+    "face_past_edge_m": -0.63,
+    "top_over_road_m": 1.34,
+    "returns": 12,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -13.16
+  },
+  {
+   "s": 1017.0,
+   "wall": {
+    "face_past_edge_m": -0.54,
+    "top_over_road_m": 1.24,
+    "returns": 10,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -14.65
+  },
+  {
+   "s": 1020.0,
+   "wall": {
+    "face_past_edge_m": -0.61,
+    "top_over_road_m": 1.31,
+    "returns": 12,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -13.98
+  },
+  {
+   "s": 1023.0,
+   "wall": {
+    "face_past_edge_m": -0.71,
+    "top_over_road_m": 1.28,
+    "returns": 11,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -14.2
+  },
+  {
+   "s": 1026.0,
+   "wall": {
+    "face_past_edge_m": -0.63,
+    "top_over_road_m": 1.28,
+    "returns": 12,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -14.87
+  },
+  {
+   "s": 1029.0,
+   "wall": {
+    "face_past_edge_m": -0.41,
+    "top_over_road_m": 1.28,
+    "returns": 10,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -14.71
+  },
+  {
+   "s": 1032.0,
+   "wall": {
+    "face_past_edge_m": -0.55,
+    "top_over_road_m": 1.33,
+    "returns": 11,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -14.53
+  },
+  {
+   "s": 1035.0,
+   "wall": {
+    "face_past_edge_m": -0.47,
+    "top_over_road_m": 1.31,
+    "returns": 10,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -15.07
+  },
+  {
+   "s": 1038.0,
+   "wall": {
+    "face_past_edge_m": -0.43,
+    "top_over_road_m": 1.31,
+    "returns": 12,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -15.22
+  },
+  {
+   "s": 1041.0,
+   "wall": {
+    "face_past_edge_m": -0.43,
+    "top_over_road_m": 1.31,
+    "returns": 11,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -14.97
+  },
+  {
+   "s": 1044.0,
+   "wall": {
+    "face_past_edge_m": -0.88,
+    "top_over_road_m": 1.34,
+    "returns": 12,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -15.92
+  },
+  {
+   "s": 1047.0,
+   "wall": {
+    "face_past_edge_m": -0.6,
+    "top_over_road_m": 1.29,
+    "returns": 11,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -16.03
+  },
+  {
+   "s": 1050.0,
+   "wall": {
+    "face_past_edge_m": -0.54,
+    "top_over_road_m": 1.27,
+    "returns": 9,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -16.65
+  },
+  {
+   "s": 1053.0,
+   "wall": {
+    "face_past_edge_m": -0.58,
+    "top_over_road_m": 1.3,
+    "returns": 11,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -16.61
+  },
+  {
+   "s": 1056.0,
+   "wall": {
+    "face_past_edge_m": -0.76,
+    "top_over_road_m": 1.36,
+    "returns": 11,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -16.64
+  },
+  {
+   "s": 1059.0,
+   "wall": {
+    "face_past_edge_m": -0.47,
+    "top_over_road_m": 1.32,
+    "returns": 13,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -16.55
+  },
+  {
+   "s": 1062.0,
+   "wall": {
+    "face_past_edge_m": -0.92,
+    "top_over_road_m": 1.31,
+    "returns": 10,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.39
+  },
+  {
+   "s": 1065.0,
+   "wall": {
+    "face_past_edge_m": -0.9,
+    "top_over_road_m": 1.35,
+    "returns": 12,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -16.61
+  },
+  {
+   "s": 1068.0,
+   "wall": {
+    "face_past_edge_m": -1.21,
+    "top_over_road_m": 1.32,
+    "returns": 14,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -16.9
+  },
+  {
+   "s": 1071.0,
+   "wall": {
+    "face_past_edge_m": -1.16,
+    "top_over_road_m": 1.3,
+    "returns": 9,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.51
+  },
+  {
+   "s": 1074.0,
+   "wall": {
+    "face_past_edge_m": -1.08,
+    "top_over_road_m": 1.33,
+    "returns": 12,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.18
+  },
+  {
+   "s": 1077.0,
+   "wall": {
+    "face_past_edge_m": -1.14,
+    "top_over_road_m": 1.35,
+    "returns": 12,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -16.77
+  },
+  {
+   "s": 1080.0,
+   "wall": {
+    "face_past_edge_m": -1.07,
+    "top_over_road_m": 1.39,
+    "returns": 12,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -16.23
+  },
+  {
+   "s": 1083.0,
+   "wall": {
+    "face_past_edge_m": -1.08,
+    "top_over_road_m": 1.33,
+    "returns": 12,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -16.55
+  },
+  {
+   "s": 1086.0,
+   "wall": {
+    "face_past_edge_m": -1.28,
+    "top_over_road_m": 1.33,
+    "returns": 12,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -16.8
+  },
+  {
+   "s": 1089.0,
+   "wall": {
+    "face_past_edge_m": -1.37,
+    "top_over_road_m": 1.33,
+    "returns": 13,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -16.67
+  },
+  {
+   "s": 1092.0,
+   "wall": {
+    "face_past_edge_m": -1.39,
+    "top_over_road_m": 1.35,
+    "returns": 14,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -16.16
+  },
+  {
+   "s": 1095.0,
+   "wall": {
+    "face_past_edge_m": -1.17,
+    "top_over_road_m": 1.3,
+    "returns": 14,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.35
+  },
+  {
+   "s": 1098.0,
+   "wall": {
+    "face_past_edge_m": -1.08,
+    "top_over_road_m": 1.28,
+    "returns": 9,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.11
+  },
+  {
+   "s": 1101.0,
+   "wall": {
+    "face_past_edge_m": -1.24,
+    "top_over_road_m": 1.32,
+    "returns": 11,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -16.59
+  },
+  {
+   "s": 1104.0,
+   "wall": {
+    "face_past_edge_m": -1.23,
+    "top_over_road_m": 1.32,
+    "returns": 12,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -16.8
+  },
+  {
+   "s": 1107.0,
+   "wall": {
+    "face_past_edge_m": -1.31,
+    "top_over_road_m": 1.3,
+    "returns": 8,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.19
+  },
+  {
+   "s": 1110.0,
+   "wall": {
+    "face_past_edge_m": -1.55,
+    "top_over_road_m": 1.31,
+    "returns": 10,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -18.03
+  },
+  {
+   "s": 1113.0,
+   "wall": {
+    "face_past_edge_m": -1.67,
+    "top_over_road_m": 1.28,
+    "returns": 10,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.91
+  },
+  {
+   "s": 1116.0,
+   "wall": {
+    "face_past_edge_m": -1.55,
+    "top_over_road_m": 1.3,
+    "returns": 11,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -16.88
+  },
+  {
+   "s": 1119.0,
+   "wall": {
+    "face_past_edge_m": -1.5,
+    "top_over_road_m": 1.28,
+    "returns": 10,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.25
+  },
+  {
+   "s": 1122.0,
+   "wall": {
+    "face_past_edge_m": -1.63,
+    "top_over_road_m": 1.32,
+    "returns": 8,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.49
+  },
+  {
+   "s": 1125.0,
+   "wall": {
+    "face_past_edge_m": -1.46,
+    "top_over_road_m": 1.24,
+    "returns": 9,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.57
+  },
+  {
+   "s": 1128.0,
+   "wall": {
+    "face_past_edge_m": -1.68,
+    "top_over_road_m": 1.3,
+    "returns": 11,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -16.92
+  },
+  {
+   "s": 1131.0,
+   "wall": {
+    "face_past_edge_m": -1.95,
+    "top_over_road_m": 1.29,
+    "returns": 10,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.81
+  },
+  {
+   "s": 1134.0,
+   "wall": {
+    "face_past_edge_m": -1.81,
+    "top_over_road_m": 1.22,
+    "returns": 10,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.41
+  },
+  {
+   "s": 1137.0,
+   "wall": {
+    "face_past_edge_m": -2.07,
+    "top_over_road_m": 1.3,
+    "returns": 12,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -16.93
+  },
+  {
+   "s": 1140.0,
+   "wall": {
+    "face_past_edge_m": -2.03,
+    "top_over_road_m": 1.29,
+    "returns": 11,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.05
+  },
+  {
+   "s": 1143.0,
+   "wall": {
+    "face_past_edge_m": -1.87,
+    "top_over_road_m": 1.3,
+    "returns": 11,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -16.91
+  },
+  {
+   "s": 1146.0,
+   "wall": {
+    "face_past_edge_m": -1.78,
+    "top_over_road_m": 1.22,
+    "returns": 9,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.7
+  },
+  {
+   "s": 1149.0,
+   "wall": {
+    "face_past_edge_m": -1.7,
+    "top_over_road_m": 1.27,
+    "returns": 11,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -16.7
+  },
+  {
+   "s": 1152.0,
+   "wall": {
+    "face_past_edge_m": -1.99,
+    "top_over_road_m": 1.35,
+    "returns": 11,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -16.42
+  },
+  {
+   "s": 1155.0,
+   "wall": {
+    "face_past_edge_m": -1.99,
+    "top_over_road_m": 1.28,
+    "returns": 11,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.09
+  },
+  {
+   "s": 1158.0,
+   "wall": {
+    "face_past_edge_m": -1.9,
+    "top_over_road_m": 1.21,
+    "returns": 10,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.36
+  },
+  {
+   "s": 1161.0,
+   "wall": {
+    "face_past_edge_m": -2.2,
+    "top_over_road_m": 1.28,
+    "returns": 14,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.43
+  },
+  {
+   "s": 1164.0,
+   "wall": {
+    "face_past_edge_m": -1.83,
+    "top_over_road_m": 1.23,
+    "returns": 8,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -16.97
+  },
+  {
+   "s": 1167.0,
+   "wall": {
+    "face_past_edge_m": -2.03,
+    "top_over_road_m": 1.32,
+    "returns": 12,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -16.51
+  },
+  {
+   "s": 1170.0,
+   "wall": {
+    "face_past_edge_m": -1.69,
+    "top_over_road_m": 1.19,
+    "returns": 8,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -18.06
+  },
+  {
+   "s": 1173.0,
+   "wall": {
+    "face_past_edge_m": -1.73,
+    "top_over_road_m": 1.19,
+    "returns": 9,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.53
+  },
+  {
+   "s": 1176.0,
+   "wall": {
+    "face_past_edge_m": -1.96,
+    "top_over_road_m": 1.2,
+    "returns": 8,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.33
+  },
+  {
+   "s": 1179.0,
+   "wall": {
+    "face_past_edge_m": -2.18,
+    "top_over_road_m": 1.24,
+    "returns": 8,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.05
+  },
+  {
+   "s": 1182.0,
+   "wall": {
+    "face_past_edge_m": -2.23,
+    "top_over_road_m": 1.27,
+    "returns": 15,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -16.27
+  },
+  {
+   "s": 1185.0,
+   "wall": {
+    "face_past_edge_m": -2.13,
+    "top_over_road_m": 1.22,
+    "returns": 9,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -16.91
+  },
+  {
+   "s": 1188.0,
+   "wall": {
+    "face_past_edge_m": -1.94,
+    "top_over_road_m": 1.21,
+    "returns": 9,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -16.91
+  },
+  {
+   "s": 1191.0,
+   "wall": {
+    "face_past_edge_m": -1.7,
+    "top_over_road_m": 1.12,
+    "returns": 8,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -16.85
+  },
+  {
+   "s": 1194.0,
+   "wall": {
+    "face_past_edge_m": -2.32,
+    "top_over_road_m": 1.28,
+    "returns": 12,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -16.67
+  },
+  {
+   "s": 1197.0,
+   "wall": {
+    "face_past_edge_m": -2.13,
+    "top_over_road_m": 1.24,
+    "returns": 11,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -16.66
+  },
+  {
+   "s": 1200.0,
+   "wall": {
+    "face_past_edge_m": -2.49,
+    "top_over_road_m": 1.29,
+    "returns": 10,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -16.83
+  },
+  {
+   "s": 1203.0,
+   "wall": {
+    "face_past_edge_m": -2.35,
+    "top_over_road_m": 1.25,
+    "returns": 14,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -16.63
+  },
+  {
+   "s": 1206.0,
+   "wall": {
+    "face_past_edge_m": -2.56,
+    "top_over_road_m": 1.3,
+    "returns": 11,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -16.59
+  },
+  {
+   "s": 1209.0,
+   "wall": {
+    "face_past_edge_m": -2.43,
+    "top_over_road_m": 1.3,
+    "returns": 11,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -16.95
+  },
+  {
+   "s": 1212.0,
+   "wall": {
+    "face_past_edge_m": -2.39,
+    "top_over_road_m": 1.29,
+    "returns": 11,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -16.89
+  },
+  {
+   "s": 1215.0,
+   "wall": {
+    "face_past_edge_m": -2.45,
+    "top_over_road_m": 1.28,
+    "returns": 10,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.02
+  },
+  {
+   "s": 1218.0,
+   "wall": {
+    "face_past_edge_m": -2.51,
+    "top_over_road_m": 1.28,
+    "returns": 10,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -16.7
+  },
+  {
+   "s": 1221.0,
+   "wall": {
+    "face_past_edge_m": -2.34,
+    "top_over_road_m": 1.26,
+    "returns": 9,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -16.83
+  },
+  {
+   "s": 1224.0,
+   "wall": {
+    "face_past_edge_m": -2.86,
+    "top_over_road_m": 1.32,
+    "returns": 12,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -16.9
+  },
+  {
+   "s": 1227.0,
+   "wall": {
+    "face_past_edge_m": -2.8,
+    "top_over_road_m": 1.3,
+    "returns": 11,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -16.61
+  },
+  {
+   "s": 1230.0,
+   "wall": {
+    "face_past_edge_m": -2.66,
+    "top_over_road_m": 1.29,
+    "returns": 11,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.14
+  },
+  {
+   "s": 1233.0,
+   "wall": {
+    "face_past_edge_m": -2.48,
+    "top_over_road_m": 1.28,
+    "returns": 10,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.36
+  },
+  {
+   "s": 1236.0,
+   "wall": {
+    "face_past_edge_m": -2.65,
+    "top_over_road_m": 1.32,
+    "returns": 12,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -16.74
+  },
+  {
+   "s": 1239.0,
+   "wall": {
+    "face_past_edge_m": -2.6,
+    "top_over_road_m": 1.3,
+    "returns": 10,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.04
+  },
+  {
+   "s": 1242.0,
+   "wall": {
+    "face_past_edge_m": -2.53,
+    "top_over_road_m": 1.28,
+    "returns": 9,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.08
+  },
+  {
+   "s": 1245.0,
+   "wall": {
+    "face_past_edge_m": -2.69,
+    "top_over_road_m": 1.28,
+    "returns": 10,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.22
+  },
+  {
+   "s": 1248.0,
+   "wall": {
+    "face_past_edge_m": -2.61,
+    "top_over_road_m": 1.29,
+    "returns": 11,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -16.71
+  },
+  {
+   "s": 1251.0,
+   "wall": {
+    "face_past_edge_m": -2.75,
+    "top_over_road_m": 1.29,
+    "returns": 12,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.18
+  },
+  {
+   "s": 1254.0,
+   "wall": {
+    "face_past_edge_m": -2.66,
+    "top_over_road_m": 1.3,
+    "returns": 9,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.0
+  },
+  {
+   "s": 1257.0,
+   "wall": {
+    "face_past_edge_m": -2.35,
+    "top_over_road_m": 1.26,
+    "returns": 9,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.16
+  },
+  {
+   "s": 1260.0,
+   "wall": {
+    "face_past_edge_m": -2.54,
+    "top_over_road_m": 1.28,
+    "returns": 11,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.36
+  },
+  {
+   "s": 1263.0,
+   "wall": {
+    "face_past_edge_m": -2.63,
+    "top_over_road_m": 1.32,
+    "returns": 10,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.08
+  },
+  {
+   "s": 1266.0,
+   "wall": {
+    "face_past_edge_m": -2.83,
+    "top_over_road_m": 1.34,
+    "returns": 11,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -16.73
+  },
+  {
+   "s": 1269.0,
+   "wall": {
+    "face_past_edge_m": -2.92,
+    "top_over_road_m": 1.33,
+    "returns": 9,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.38
+  },
+  {
+   "s": 1272.0,
+   "wall": {
+    "face_past_edge_m": -2.94,
+    "top_over_road_m": 1.31,
+    "returns": 13,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -16.97
+  },
+  {
+   "s": 1275.0,
+   "wall": {
+    "face_past_edge_m": -2.97,
+    "top_over_road_m": 1.28,
+    "returns": 10,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.24
+  },
+  {
+   "s": 1278.0,
+   "wall": {
+    "face_past_edge_m": -2.96,
+    "top_over_road_m": 1.34,
+    "returns": 13,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.04
+  },
+  {
+   "s": 1281.0,
+   "wall": {
+    "face_past_edge_m": -2.72,
+    "top_over_road_m": 1.27,
+    "returns": 8,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.03
+  },
+  {
+   "s": 1284.0,
+   "wall": {
+    "face_past_edge_m": -2.83,
+    "top_over_road_m": 1.28,
+    "returns": 9,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.43
+  },
+  {
+   "s": 1287.0,
+   "wall": {
+    "face_past_edge_m": -3.09,
+    "top_over_road_m": 1.33,
+    "returns": 11,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -16.97
+  },
+  {
+   "s": 1290.0,
+   "wall": {
+    "face_past_edge_m": -3.05,
+    "top_over_road_m": 1.28,
+    "returns": 11,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.29
+  },
+  {
+   "s": 1293.0,
+   "wall": {
+    "face_past_edge_m": -3.13,
+    "top_over_road_m": 1.33,
+    "returns": 12,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -16.65
+  },
+  {
+   "s": 1296.0,
+   "wall": {
+    "face_past_edge_m": -3.18,
+    "top_over_road_m": 1.32,
+    "returns": 14,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -16.04
+  },
+  {
+   "s": 1299.0,
+   "wall": {
+    "face_past_edge_m": -3.24,
+    "top_over_road_m": 1.32,
+    "returns": 11,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -16.53
+  },
+  {
+   "s": 1302.0,
+   "wall": {
+    "face_past_edge_m": -2.89,
+    "top_over_road_m": 1.3,
+    "returns": 10,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -16.13
+  },
+  {
+   "s": 1305.0,
+   "wall": {
+    "face_past_edge_m": -2.7,
+    "top_over_road_m": 1.29,
+    "returns": 12,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -15.84
+  },
+  {
+   "s": 1308.0,
+   "wall": {
+    "face_past_edge_m": -2.66,
+    "top_over_road_m": 1.25,
+    "returns": 8,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -16.33
+  },
+  {
+   "s": 1311.0,
+   "wall": {
+    "face_past_edge_m": -2.81,
+    "top_over_road_m": 1.27,
+    "returns": 10,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -15.98
+  },
+  {
+   "s": 1314.0,
+   "wall": {
+    "face_past_edge_m": -2.87,
+    "top_over_road_m": 1.27,
+    "returns": 11,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -16.03
+  },
+  {
+   "s": 1317.0,
+   "wall": {
+    "face_past_edge_m": -3.06,
+    "top_over_road_m": 1.3,
+    "returns": 9,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -15.89
+  },
+  {
+   "s": 1320.0,
+   "wall": {
+    "face_past_edge_m": -3.11,
+    "top_over_road_m": 1.28,
+    "returns": 10,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -16.42
+  },
+  {
+   "s": 1323.0,
+   "wall": {
+    "face_past_edge_m": -3.07,
+    "top_over_road_m": 1.26,
+    "returns": 7,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.31
+  },
+  {
+   "s": 1326.0,
+   "wall": {
+    "face_past_edge_m": -3.01,
+    "top_over_road_m": 1.25,
+    "returns": 8,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.52
+  },
+  {
+   "s": 1329.0,
+   "wall": {
+    "face_past_edge_m": -2.92,
+    "top_over_road_m": 1.27,
+    "returns": 9,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -16.8
+  },
+  {
+   "s": 1332.0,
+   "wall": {
+    "face_past_edge_m": -2.94,
+    "top_over_road_m": 1.28,
+    "returns": 8,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -16.67
+  },
+  {
+   "s": 1335.0,
+   "wall": {
+    "face_past_edge_m": -2.98,
+    "top_over_road_m": 1.29,
+    "returns": 10,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -16.56
+  },
+  {
+   "s": 1338.0,
+   "wall": {
+    "face_past_edge_m": -3.38,
+    "top_over_road_m": 1.31,
+    "returns": 10,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -16.57
+  },
+  {
+   "s": 1341.0,
+   "wall": {
+    "face_past_edge_m": -3.31,
+    "top_over_road_m": 1.27,
+    "returns": 11,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.24
+  },
+  {
+   "s": 1344.0,
+   "wall": {
+    "face_past_edge_m": -2.95,
+    "top_over_road_m": 1.26,
+    "returns": 21,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.51
+  },
+  {
+   "s": 1347.0,
+   "wall": {
+    "face_past_edge_m": -2.96,
+    "top_over_road_m": 1.26,
+    "returns": 16,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.82
+  },
+  {
+   "s": 1350.0,
+   "wall": {
+    "face_past_edge_m": -2.99,
+    "top_over_road_m": 1.23,
+    "returns": 7,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -18.21
+  },
+  {
+   "s": 1353.0,
+   "wall": {
+    "face_past_edge_m": -3.09,
+    "top_over_road_m": 1.25,
+    "returns": 7,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.89
+  },
+  {
+   "s": 1356.0,
+   "wall": {
+    "face_past_edge_m": -3.06,
+    "top_over_road_m": 1.26,
+    "returns": 9,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.42
+  },
+  {
+   "s": 1359.0,
+   "wall": {
+    "face_past_edge_m": -2.93,
+    "top_over_road_m": 1.23,
+    "returns": 6,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.54
+  },
+  {
+   "s": 1362.0,
+   "wall": {
+    "face_past_edge_m": -3.4,
+    "top_over_road_m": 1.25,
+    "returns": 12,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.52
+  },
+  {
+   "s": 1365.0,
+   "wall": {
+    "face_past_edge_m": -3.14,
+    "top_over_road_m": 1.26,
+    "returns": 10,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.62
+  },
+  {
+   "s": 1368.0,
+   "wall": {
+    "face_past_edge_m": -2.85,
+    "top_over_road_m": 1.26,
+    "returns": 16,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.21
+  },
+  {
+   "s": 1371.0,
+   "wall": {
+    "face_past_edge_m": -2.78,
+    "top_over_road_m": 1.3,
+    "returns": 17,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -16.99
+  },
+  {
+   "s": 1374.0,
+   "wall": {
+    "face_past_edge_m": -2.57,
+    "top_over_road_m": 1.25,
+    "returns": 8,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.03
+  },
+  {
+   "s": 1377.0,
+   "wall": {
+    "face_past_edge_m": -2.74,
+    "top_over_road_m": 1.27,
+    "returns": 10,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -16.85
+  },
+  {
+   "s": 1380.0,
+   "wall": {
+    "face_past_edge_m": -2.77,
+    "top_over_road_m": 1.25,
+    "returns": 10,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.21
+  },
+  {
+   "s": 1383.0,
+   "wall": {
+    "face_past_edge_m": -2.75,
+    "top_over_road_m": 1.23,
+    "returns": 17,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.27
+  },
+  {
+   "s": 1386.0,
+   "wall": {
+    "face_past_edge_m": -3.01,
+    "top_over_road_m": 1.26,
+    "returns": 9,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.27
+  },
+  {
+   "s": 1389.0,
+   "wall": {
+    "face_past_edge_m": -2.96,
+    "top_over_road_m": 1.27,
+    "returns": 19,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.45
+  },
+  {
+   "s": 1392.0,
+   "wall": {
+    "face_past_edge_m": -2.89,
+    "top_over_road_m": 1.26,
+    "returns": 14,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.89
+  },
+  {
+   "s": 1395.0,
+   "wall": {
+    "face_past_edge_m": -2.83,
+    "top_over_road_m": 1.25,
+    "returns": 9,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.94
+  },
+  {
+   "s": 1398.0,
+   "wall": {
+    "face_past_edge_m": -2.79,
+    "top_over_road_m": 1.27,
+    "returns": 10,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.65
+  },
+  {
+   "s": 1401.0,
+   "wall": {
+    "face_past_edge_m": -2.59,
+    "top_over_road_m": 1.25,
+    "returns": 8,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.4
+  },
+  {
+   "s": 1404.0,
+   "wall": {
+    "face_past_edge_m": -2.89,
+    "top_over_road_m": 1.26,
+    "returns": 7,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.91
+  },
+  {
+   "s": 1407.0,
+   "wall": {
+    "face_past_edge_m": -2.93,
+    "top_over_road_m": 1.25,
+    "returns": 8,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -18.07
+  },
+  {
+   "s": 1410.0,
+   "wall": {
+    "face_past_edge_m": -3.07,
+    "top_over_road_m": 1.26,
+    "returns": 7,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.92
+  },
+  {
+   "s": 1413.0,
+   "wall": {
+    "face_past_edge_m": -2.52,
+    "top_over_road_m": 1.28,
+    "returns": 9,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.42
+  },
+  {
+   "s": 1416.0,
+   "wall": {
+    "face_past_edge_m": -2.46,
+    "top_over_road_m": 1.25,
+    "returns": 7,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.89
+  },
+  {
+   "s": 1419.0,
+   "wall": {
+    "face_past_edge_m": -2.32,
+    "top_over_road_m": 1.24,
+    "returns": 8,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.56
+  },
+  {
+   "s": 1422.0,
+   "wall": {
+    "face_past_edge_m": -2.51,
+    "top_over_road_m": 1.26,
+    "returns": 6,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.05
+  },
+  {
+   "s": 1425.0,
+   "wall": {
+    "face_past_edge_m": -2.7,
+    "top_over_road_m": 1.31,
+    "returns": 10,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -16.51
+  },
+  {
+   "s": 1428.0,
+   "wall": {
+    "face_past_edge_m": -2.82,
+    "top_over_road_m": 1.29,
+    "returns": 12,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -16.8
+  },
+  {
+   "s": 1431.0,
+   "wall": {
+    "face_past_edge_m": -2.87,
+    "top_over_road_m": 1.29,
+    "returns": 8,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -16.45
+  },
+  {
+   "s": 1434.0,
+   "wall": {
+    "face_past_edge_m": -2.82,
+    "top_over_road_m": 1.3,
+    "returns": 10,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -16.67
+  },
+  {
+   "s": 1437.0,
+   "wall": {
+    "face_past_edge_m": -2.3,
+    "top_over_road_m": 1.25,
+    "returns": 6,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -16.81
+  },
+  {
+   "s": 1440.0,
+   "wall": {
+    "face_past_edge_m": -2.55,
+    "top_over_road_m": 1.27,
+    "returns": 10,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.01
+  },
+  {
+   "s": 1443.0,
+   "wall": {
+    "face_past_edge_m": -2.44,
+    "top_over_road_m": 1.3,
+    "returns": 9,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -16.73
+  },
+  {
+   "s": 1446.0,
+   "wall": {
+    "face_past_edge_m": -2.53,
+    "top_over_road_m": 1.29,
+    "returns": 9,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -16.5
+  },
+  {
+   "s": 1449.0,
+   "wall": {
+    "face_past_edge_m": -2.55,
+    "top_over_road_m": 1.29,
+    "returns": 9,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.22
+  },
+  {
+   "s": 1452.0,
+   "wall": {
+    "face_past_edge_m": -2.64,
+    "top_over_road_m": 1.29,
+    "returns": 10,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -16.95
+  },
+  {
+   "s": 1455.0,
+   "wall": {
+    "face_past_edge_m": -2.71,
+    "top_over_road_m": 1.28,
+    "returns": 8,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -17.02
+  },
+  {
+   "s": 1458.0,
+   "wall": {
+    "face_past_edge_m": -2.76,
+    "top_over_road_m": 1.26,
+    "returns": 8,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -16.94
+  },
+  {
+   "s": 1461.0,
+   "wall": {
+    "face_past_edge_m": -3.01,
+    "top_over_road_m": 1.3,
+    "returns": 10,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -16.57
+  },
+  {
+   "s": 1464.0,
+   "wall": {
+    "face_past_edge_m": -3.01,
+    "top_over_road_m": 1.28,
+    "returns": 10,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -16.13
+  },
+  {
+   "s": 1467.0,
+   "wall": {
+    "face_past_edge_m": -2.71,
+    "top_over_road_m": 1.26,
+    "returns": 8,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -16.42
+  },
+  {
+   "s": 1470.0,
+   "wall": {
+    "face_past_edge_m": -2.79,
+    "top_over_road_m": 1.27,
+    "returns": 8,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -16.14
+  },
+  {
+   "s": 1473.0,
+   "wall": {
+    "face_past_edge_m": -2.87,
+    "top_over_road_m": 1.29,
+    "returns": 10,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -16.32
+  },
+  {
+   "s": 1476.0,
+   "wall": {
+    "face_past_edge_m": -2.82,
+    "top_over_road_m": 1.26,
+    "returns": 9,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -16.14
+  },
+  {
+   "s": 1479.0,
+   "wall": {
+    "face_past_edge_m": -2.94,
+    "top_over_road_m": 1.26,
+    "returns": 10,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -16.67
+  },
+  {
+   "s": 1482.0,
+   "wall": {
+    "face_past_edge_m": -2.92,
+    "top_over_road_m": 1.27,
+    "returns": 11,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -15.16
+  },
+  {
+   "s": 1485.0,
+   "wall": {
+    "face_past_edge_m": -3.02,
+    "top_over_road_m": 1.3,
+    "returns": 12,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -15.23
+  },
+  {
+   "s": 1488.0,
+   "wall": {
+    "face_past_edge_m": -2.91,
+    "top_over_road_m": 1.28,
+    "returns": 12,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -15.58
+  },
+  {
+   "s": 1491.0,
+   "wall": {
+    "face_past_edge_m": -2.75,
+    "top_over_road_m": 1.27,
+    "returns": 14,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -15.0
+  },
+  {
+   "s": 1494.0,
+   "wall": {
+    "face_past_edge_m": -2.85,
+    "top_over_road_m": 1.27,
+    "returns": 13,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -15.08
+  },
+  {
+   "s": 1497.0,
+   "wall": {
+    "face_past_edge_m": -3.05,
+    "top_over_road_m": 1.27,
+    "returns": 14,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -15.32
+  },
+  {
+   "s": 1500.0,
+   "wall": {
+    "face_past_edge_m": -3.02,
+    "top_over_road_m": 1.28,
+    "returns": 13,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -15.02
+  },
+  {
+   "s": 1503.0,
+   "wall": {
+    "face_past_edge_m": -2.97,
+    "top_over_road_m": 1.3,
+    "returns": 15,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -14.16
+  },
+  {
+   "s": 1506.0,
+   "wall": {
+    "face_past_edge_m": -2.81,
+    "top_over_road_m": 1.3,
+    "returns": 12,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -14.09
+  },
+  {
+   "s": 1509.0,
+   "wall": {
+    "face_past_edge_m": -2.79,
+    "top_over_road_m": 1.3,
+    "returns": 15,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -14.21
+  },
+  {
+   "s": 1512.0,
+   "wall": {
+    "face_past_edge_m": -2.5,
+    "top_over_road_m": 1.25,
+    "returns": 12,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -14.5
+  },
+  {
+   "s": 1515.0,
+   "wall": {
+    "face_past_edge_m": -2.64,
+    "top_over_road_m": 1.26,
+    "returns": 12,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -14.22
+  },
+  {
+   "s": 1518.0,
+   "wall": {
+    "face_past_edge_m": -2.8,
+    "top_over_road_m": 1.27,
+    "returns": 13,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -13.8
+  },
+  {
+   "s": 1521.0,
+   "wall": {
+    "face_past_edge_m": -2.65,
+    "top_over_road_m": 1.29,
+    "returns": 13,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -13.51
+  },
+  {
+   "s": 1524.0,
+   "wall": {
+    "face_past_edge_m": -2.5,
+    "top_over_road_m": 1.26,
+    "returns": 15,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -13.9
+  },
+  {
+   "s": 1527.0,
+   "wall": {
+    "face_past_edge_m": -2.69,
+    "top_over_road_m": 1.28,
+    "returns": 14,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -13.25
+  },
+  {
+   "s": 1530.0,
+   "wall": {
+    "face_past_edge_m": -2.65,
+    "top_over_road_m": 1.26,
+    "returns": 14,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -13.44
+  },
+  {
+   "s": 1533.0,
+   "wall": {
+    "face_past_edge_m": -2.47,
+    "top_over_road_m": 1.26,
+    "returns": 13,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -13.18
+  },
+  {
+   "s": 1536.0,
+   "wall": {
+    "face_past_edge_m": -2.58,
+    "top_over_road_m": 1.25,
+    "returns": 12,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -12.98
+  },
+  {
+   "s": 1539.0,
+   "wall": {
+    "face_past_edge_m": -2.51,
+    "top_over_road_m": 1.25,
+    "returns": 12,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -13.21
+  },
+  {
+   "s": 1542.0,
+   "wall": {
+    "face_past_edge_m": -2.7,
+    "top_over_road_m": 1.26,
+    "returns": 14,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -12.78
+  },
+  {
+   "s": 1545.0,
+   "wall": {
+    "face_past_edge_m": -2.7,
+    "top_over_road_m": 1.24,
+    "returns": 15,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -12.92
+  },
+  {
+   "s": 1548.0,
+   "wall": {
+    "face_past_edge_m": -2.55,
+    "top_over_road_m": 1.24,
+    "returns": 15,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -12.5
+  },
+  {
+   "s": 1551.0,
+   "wall": {
+    "face_past_edge_m": -2.42,
+    "top_over_road_m": 1.23,
+    "returns": 12,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -12.64
+  },
+  {
+   "s": 1554.0,
+   "wall": {
+    "face_past_edge_m": -2.54,
+    "top_over_road_m": 1.25,
+    "returns": 16,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -12.21
+  },
+  {
+   "s": 1557.0,
+   "wall": {
+    "face_past_edge_m": -2.3,
+    "top_over_road_m": 1.22,
+    "returns": 14,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -12.25
+  },
+  {
+   "s": 1560.0,
+   "wall": {
+    "face_past_edge_m": -2.77,
+    "top_over_road_m": 1.24,
+    "returns": 16,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -12.58
+  },
+  {
+   "s": 1563.0,
+   "wall": {
+    "face_past_edge_m": -2.5,
+    "top_over_road_m": 1.25,
+    "returns": 16,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -12.07
+  },
+  {
+   "s": 1566.0,
+   "wall": {
+    "face_past_edge_m": -2.51,
+    "top_over_road_m": 1.24,
+    "returns": 14,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -12.63
+  },
+  {
+   "s": 1569.0,
+   "wall": {
+    "face_past_edge_m": -2.46,
+    "top_over_road_m": 1.25,
+    "returns": 15,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -12.1
+  },
+  {
+   "s": 1572.0,
+   "wall": {
+    "face_past_edge_m": -2.36,
+    "top_over_road_m": 1.25,
+    "returns": 12,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -12.0
+  },
+  {
+   "s": 1575.0,
+   "wall": {
+    "face_past_edge_m": -2.4,
+    "top_over_road_m": 1.28,
+    "returns": 15,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -11.67
+  },
+  {
+   "s": 1578.0,
+   "wall": {
+    "face_past_edge_m": -2.56,
+    "top_over_road_m": 1.28,
+    "returns": 15,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -11.94
+  },
+  {
+   "s": 1581.0,
+   "wall": {
+    "face_past_edge_m": -2.41,
+    "top_over_road_m": 1.27,
+    "returns": 13,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -11.86
+  },
+  {
+   "s": 1584.0,
+   "wall": {
+    "face_past_edge_m": -2.6,
+    "top_over_road_m": 1.24,
+    "returns": 14,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -12.62
+  },
+  {
+   "s": 1587.0,
+   "wall": {
+    "face_past_edge_m": -2.44,
+    "top_over_road_m": 1.25,
+    "returns": 12,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -12.09
+  },
+  {
+   "s": 1590.0,
+   "wall": {
+    "face_past_edge_m": -2.7,
+    "top_over_road_m": 1.24,
+    "returns": 12,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -12.33
+  },
+  {
+   "s": 1593.0,
+   "wall": {
+    "face_past_edge_m": -2.74,
+    "top_over_road_m": 1.25,
+    "returns": 13,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -12.67
+  },
+  {
+   "s": 1596.0,
+   "wall": {
+    "face_past_edge_m": -2.9,
+    "top_over_road_m": 1.25,
+    "returns": 14,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -12.6
+  },
+  {
+   "s": 1599.0,
+   "wall": {
+    "face_past_edge_m": -2.69,
+    "top_over_road_m": 1.23,
+    "returns": 13,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -12.68
+  },
+  {
+   "s": 1602.0,
+   "wall": {
+    "face_past_edge_m": -2.73,
+    "top_over_road_m": 1.25,
+    "returns": 13,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -12.7
+  },
+  {
+   "s": 1605.0,
+   "wall": {
+    "face_past_edge_m": -2.72,
+    "top_over_road_m": 1.25,
+    "returns": 14,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -12.46
+  },
+  {
+   "s": 1608.0,
+   "wall": {
+    "face_past_edge_m": -2.62,
+    "top_over_road_m": 1.25,
+    "returns": 13,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -12.69
+  },
+  {
+   "s": 1611.0,
+   "wall": {
+    "face_past_edge_m": -2.84,
+    "top_over_road_m": 1.26,
+    "returns": 16,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -12.37
+  },
+  {
+   "s": 1614.0,
+   "wall": {
+    "face_past_edge_m": -2.66,
+    "top_over_road_m": 1.24,
+    "returns": 14,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -12.64
+  },
+  {
+   "s": 1617.0,
+   "wall": {
+    "face_past_edge_m": -2.57,
+    "top_over_road_m": 1.25,
+    "returns": 15,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -12.33
+  },
+  {
+   "s": 1620.0,
+   "wall": {
+    "face_past_edge_m": -2.6,
+    "top_over_road_m": 1.22,
+    "returns": 13,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -12.87
+  },
+  {
+   "s": 1623.0,
+   "wall": {
+    "face_past_edge_m": -2.38,
+    "top_over_road_m": 1.21,
+    "returns": 11,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -13.22
+  },
+  {
+   "s": 1626.0,
+   "wall": {
+    "face_past_edge_m": -2.62,
+    "top_over_road_m": 1.24,
+    "returns": 13,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -12.61
+  },
+  {
+   "s": 1629.0,
+   "wall": {
+    "face_past_edge_m": -2.47,
+    "top_over_road_m": 1.22,
+    "returns": 11,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -13.28
+  },
+  {
+   "s": 1632.0,
+   "wall": {
+    "face_past_edge_m": -2.27,
+    "top_over_road_m": 1.23,
+    "returns": 12,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -12.34
+  },
+  {
+   "s": 1635.0,
+   "wall": {
+    "face_past_edge_m": -2.39,
+    "top_over_road_m": 1.23,
+    "returns": 12,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -12.52
+  },
+  {
+   "s": 1638.0,
+   "wall": {
+    "face_past_edge_m": -2.33,
+    "top_over_road_m": 1.22,
+    "returns": 12,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -12.77
+  },
+  {
+   "s": 1641.0,
+   "wall": {
+    "face_past_edge_m": -2.42,
+    "top_over_road_m": 1.24,
+    "returns": 12,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -12.84
+  },
+  {
+   "s": 1644.0,
+   "wall": {
+    "face_past_edge_m": -2.11,
+    "top_over_road_m": 1.23,
+    "returns": 12,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -12.95
+  },
+  {
+   "s": 1647.0,
+   "wall": {
+    "face_past_edge_m": -2.31,
+    "top_over_road_m": 1.22,
+    "returns": 12,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -13.22
+  },
+  {
+   "s": 1650.0,
+   "wall": {
+    "face_past_edge_m": -2.2,
+    "top_over_road_m": 1.26,
+    "returns": 12,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -12.48
+  },
+  {
+   "s": 1653.0,
+   "wall": {
+    "face_past_edge_m": -2.1,
+    "top_over_road_m": 1.25,
+    "returns": 11,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -13.12
+  },
+  {
+   "s": 1656.0,
+   "wall": {
+    "face_past_edge_m": -2.4,
+    "top_over_road_m": 1.27,
+    "returns": 12,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -12.72
+  },
+  {
+   "s": 1659.0,
+   "wall": {
+    "face_past_edge_m": -2.26,
+    "top_over_road_m": 1.25,
+    "returns": 12,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -12.64
+  },
+  {
+   "s": 1662.0,
+   "wall": {
+    "face_past_edge_m": -2.27,
+    "top_over_road_m": 1.25,
+    "returns": 15,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -12.44
+  },
+  {
+   "s": 1665.0,
+   "wall": {
+    "face_past_edge_m": -2.18,
+    "top_over_road_m": 1.24,
+    "returns": 9,
+    "classes": [
+     1,
+     2
+    ]
+   },
+   "fence_returns": 0,
+   "road_slope_pct": -12.39
+  }
+ ]
+}

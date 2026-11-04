@@ -16,6 +16,13 @@ re-triangulated. The crease of each column is the quad's divided by k. A row edg
 of their k, so the mesh stays watertight (no T-junction). Connectors are left alone. A ribbon with no crease over the
 tolerance is not touched and the blend is not saved.
 
+THE MEASURE (route.densify, opt-in per track; ledger 0078 round 5). The crease above is exact only when the two rows of a
+half-quad are equally wide: where the width changes it reads the change of the half's cross-fall DROP, which a planar
+trapezoid on a bank also has (Milford s 2,588: "177 mm" on a quad 3.7 mm out of plane), and it misses the warp of rows
+that turn against each other on a grade (Milford's s 984-992 corner on the 15 % descent, ledger 0069: "16 mm" on quads up
+to 105 mm out of plane). route.densify.measure "warp" uses the true out-of-plane distance instead (the fourth corner from
+the plane of the other three) and route.densify.max_cols raises the cap; absent = the crease and MAX_COLS, as before.
+
 Lake Murray never runs it (not in its ship.json); a ported track lists it as the draft step `densify_ribbon`.
 
     blender --background --python-exit-code 1 --python tools/densify_ribbon_blend.py -- <project-dir>
@@ -46,6 +53,11 @@ def main():
     conns = json.loads(cp.read_text(encoding="utf-8"))["connectors"] if cp.exists() else []
     main_pts = [tuple(p) for p in local["points_xyz_m"]]
     lay = mw.mesh_layout(main_pts, conns)
+    dcfg = ((json.loads((proj / "track.config.json").read_text(encoding="utf-8")).get("route") or {}).get("densify") or {})
+    measure = dcfg.get("measure", "crease")
+    if measure not in ("crease", "warp"):
+        raise SystemExit(f"[densify] FATAL: route.densify.measure {measure!r}: crease or warp")
+    max_cols = int(dcfg.get("max_cols", MAX_COLS))
     rows, closed = lay["MAINLINE"]["rows"], lay["MAINLINE"]["closed"]
     bpy.ops.wm.open_mainfile(filepath=str(proj / "loop.blend"))
     ob = bpy.data.objects.get("ROAD")
@@ -65,7 +77,10 @@ def main():
     def crease(r, s, h):
         a, b = BV[vi(r, halves[h][0])].co, BV[vi(r, halves[h][1])].co
         d, c = BV[vi(s, halves[h][0])].co, BV[vi(s, halves[h][1])].co
-        return abs((a.z + c.z) - (b.z + d.z)) / 2.0         # Blender z = up
+        if measure == "crease":
+            return abs((a.z + c.z) - (b.z + d.z)) / 2.0     # Blender z = up
+        n = (b - a).cross(c - a)                            # the warp: d's distance from the plane through a, b, c
+        return abs((d - a).dot(n)) / (n.length or 1e-12)
 
     need = {}
     worst = 0.0
@@ -73,7 +88,7 @@ def main():
         for h in (0, 1):
             g = crease(r, s, h)
             worst = max(worst, g)
-            need[(r, h)] = min(MAX_COLS, max(1, math.ceil(g / CREASE_TOL_M - 1e-9)))
+            need[(r, h)] = min(max_cols, max(1, math.ceil(g / CREASE_TOL_M - 1e-9)))
     # a row edge takes the larger need of the two quads that share it
     k_edge = {}
     for (r, h), k in need.items():
@@ -82,7 +97,7 @@ def main():
             k_edge[(row, h)] = max(k_edge.get((row, h), 1), k)
     todo = [(r, s, h) for r, s in pairs for h in (0, 1) if k_edge.get((r, h), 1) > 1 or k_edge.get((s, h), 1) > 1]
     if not todo:
-        print(f"[densify] worst mainline crease {worst * 1000:.1f} mm <= {CREASE_TOL_M * 1000:.0f} mm: nothing to do")
+        print(f"[densify] worst mainline {measure} {worst * 1000:.1f} mm <= {CREASE_TOL_M * 1000:.0f} mm: nothing to do")
         bm.free()
         return
     # the new vertices on each row edge (from lane a to lane b), shared by both quads that use the edge
@@ -132,7 +147,7 @@ def main():
     bm.normal_update()
     n_new = sum(len(v) - 2 for v in edge_pts.values())
     bm.to_mesh(ob.data); bm.free(); ob.data.update()
-    print(f"[densify] {len(todo)} mainline half-quads re-cut (worst crease {worst * 1000:.1f} mm; columns up to "
+    print(f"[densify] {len(todo)} mainline half-quads re-cut (worst {measure} {worst * 1000:.1f} mm; columns up to "
           f"{max(k_edge.values())}, {n_new} new row vertices, {len(add)} triangles for {len(kill)}); saved loop.blend")
     bpy.ops.wm.save_as_mainfile(filepath=str(proj / "loop.blend"))
 

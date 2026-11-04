@@ -199,7 +199,131 @@ def intake(proj: Path, *, connectors: bool | None = None) -> dict:
         pts = evidence.cap_grade(pts, max_grade=max_grade)
     if closed:
         pts[-1] = pts[0]
+    # WIDTH STEPS TAPERED (lm_intake.width_taper, m of half-width per m along; absent = the widths as traced; ledger 0078
+    # round 5). A traced width can jump in one station where the paved area takes in a gore or an apron (Milford s 2,604:
+    # 12.2 -> 21.7 m in 3 m). The ribbon stays planar across such a row on any bank, but drive_test's wheel paths sit at
+    # fractions of the width, so on Milford's 7-10 % lidar bank every jump re-seated them across the slope in one station
+    # (kinks and 4 severe steps; 0.6.0 was flat and never showed it). The taper only WIDENS: each point's half-width is the
+    # largest of its neighbours' less the rate times the distance, so no measured pavement is lost and every step becomes a
+    # flare at the declared rate.
+    wt = li.get("width_taper")
+    taper_rep = None
+    if wt:
+        rate = float(wt)
+        st_w = [0.0]
+        for a, b in zip(pts, pts[1:]):
+            st_w.append(st_w[-1] + math.hypot(b[0] - a[0], b[2] - a[2]))
+        lap_w = st_w[-1]
+        n_w = len(widths)
+        reach = (max(widths) - min(widths)) / 2.0 / rate
+        hw = [w / 2.0 for w in widths]
+        new = list(hw)
+        for i in range(n_w):
+            for j in range(n_w):
+                if hw[j] <= new[i]:
+                    continue
+                d = abs(st_w[i] - st_w[j])
+                if closed:
+                    d = min(d, lap_w - d)
+                if d <= reach:
+                    new[i] = max(new[i], hw[j] - rate * d)
+        moved = [2 * (b - a) for a, b in zip(hw, new)]
+        widths = [round(2 * h, 3) for h in new]
+        if closed:
+            widths[-1] = widths[0]
+        taper_rep = {"rate_m_per_m": rate, "points_widened": sum(1 for m in moved if m > 1e-3),
+                     "max_widening_m": round(max(moved), 2)}
+        print(f"[lm_intake] width steps tapered at {rate} m per m a side: {taper_rep['points_widened']} points widened "
+              f"(max {taper_rep['max_widening_m']} m); none narrowed")
     dy = [p[1] - a for p, a in zip(pts, y0)]
+    # A LANE EDGE ON A MEASURED WALL (lm_intake.edge_on_wall {"side": "right"|"left", "file": <tools/lidar_wall.py output
+    # inside the source track>}; ledger 0078 round 5). Where a wall bounds the pavement, its face IS the lane edge. The
+    # survey gives the face's offset from the line's own edge per station (Pikes Peak: 0.1 to 2.9 m INSIDE it, the OSM
+    # line plus 15 m running past the oval's outer wall). That side's edge is moved onto the face, the other edge kept:
+    # the centre shifts by half the offset and the width changes by all of it. The offsets are smoothed over SMOOTH_WALL
+    # stations (a median, then a mean) first; a station with no reading takes its neighbours'.
+    eow = li.get("edge_on_wall")
+    wall_rep = None
+    if eow:
+        rel_w = eow["file"]
+        if rel_w.startswith(("/", "\\")) or ".." in Path(rel_w).parts:
+            raise SystemExit(f"[lm_intake] lm_intake.edge_on_wall.file {rel_w!r} must be a plain path inside the source track")
+        wj = json.loads((src / rel_w).read_text(encoding="utf-8"))
+        side_w = eow.get("side", wj.get("side"))
+        if side_w != wj.get("side"):
+            raise SystemExit(f"[lm_intake] edge_on_wall side {side_w!r} but {rel_w} surveyed {wj.get('side')!r}")
+        ws_ = [float(r["s"]) for r in wj["stations"]]
+        wf = [None if not r.get("wall") else r["wall"]["face_past_edge_m"] for r in wj["stations"]]
+        n_r = len(wf)
+        known = [i for i, v in enumerate(wf) if v is not None]
+        if not known:
+            raise SystemExit(f"[lm_intake] {rel_w}: no wall reading at any station")
+        filled = []
+        for i in range(n_r):                                 # a gap takes the nearest reading (cyclic)
+            if wf[i] is not None:
+                filled.append(wf[i]); continue
+            j = min(known, key=lambda k: min(abs(k - i), n_r - abs(k - i)))
+            filled.append(wf[j])
+        K = 2                                                 # SMOOTH_WALL = 5 stations (15 m)
+        med = [sorted(filled[(i + d) % n_r] for d in range(-K, K + 1))[K] for i in range(n_r)]
+        sm = [sum(med[(i + d) % n_r] for d in range(-K, K + 1)) / (2 * K + 1) for i in range(n_r)]
+        st_e = [0.0]
+        for a, b in zip(pts, pts[1:]):
+            st_e.append(st_e[-1] + math.hypot(b[0] - a[0], b[2] - a[2]))
+        import bisect
+        sgn = -1.0 if side_w == "right" else 1.0
+        new_pts, new_w, moved = [], [], []
+        for i, (p, w) in enumerate(zip(pts, widths)):
+            s_i = st_e[i]
+            k = min(max(bisect.bisect_right(ws_, s_i), 1), n_r - 1)
+            t = (s_i - ws_[k - 1]) / max(1e-9, ws_[k] - ws_[k - 1])
+            f = sm[k - 1] + (sm[k] - sm[k - 1]) * min(1.0, max(0.0, t))
+            a, b = pts[max(0, i - 1)], pts[min(len(pts) - 1, i + 1)]
+            tx, tz = b[0] - a[0], b[2] - a[2]
+            L = math.hypot(tx, tz) or 1.0
+            lx, lz = -tz / L, tx / L                          # left normal
+            new_pts.append((p[0] + sgn * lx * f / 2.0, p[1], p[2] + sgn * lz * f / 2.0))
+            new_w.append(round(w + f, 3))
+            moved.append(f)
+        if closed:
+            new_pts[-1], new_w[-1] = new_pts[0], new_w[0]
+        pts, widths = new_pts, new_w
+        wall_rep = {"side": side_w, "file": rel_w, "face_offset_m": {"min": round(min(moved), 2),
+                    "median": round(sorted(moved)[len(moved) // 2], 2), "max": round(max(moved), 2)},
+                    "width_m": [round(min(widths), 2), round(max(widths), 2)]}
+        print(f"[lm_intake] {side_w} lane edge onto the measured wall ({rel_w}): edge moved {wall_rep['face_offset_m']} m, "
+              f"widths now {wall_rep['width_m'][0]}..{wall_rep['width_m'][1]} m")
+    # FINER ROWS (lm_intake.resample_m; absent = the source's own spacing; ledger 0078 round 5). The assembler sweeps one
+    # ribbon row per line point, so the surface is planar between rows and every change of grade a wheel path meets lands
+    # on a row boundary. On a tight corner on a steep grade (Milford's s 990 left-hander, R 15 m on -13.8 %, ledger 0069)
+    # the inside paths' grade turns several % per 3 m row and drive_test reads the turns as severe steps; at half the spacing
+    # each turn is half. The line is re-cut linearly at the declared spacing (plan, height and width: no new shape, the
+    # same polyline), so the declaring track also doubles route.smooth_sigma_pts / smooth_sigma_y_pts to keep the
+    # assembler's smoothing the same in metres.
+    rs = li.get("resample_m")
+    resample_rep = None
+    if rs:
+        step_r = float(rs)
+        st_r = [0.0]
+        for a, b in zip(pts, pts[1:]):
+            st_r.append(st_r[-1] + math.hypot(b[0] - a[0], b[2] - a[2]))
+        total = st_r[-1]
+        n_new = max(5, int(round(total / step_r)))
+        new_pts, new_w, j = [], [], 0
+        for k in range(n_new + (1 if closed else 1)):
+            s_k = min(total, k * total / n_new)
+            while j < len(st_r) - 2 and st_r[j + 1] < s_k:
+                j += 1
+            seg = (st_r[j + 1] - st_r[j]) or 1e-9
+            t = (s_k - st_r[j]) / seg
+            a, b = pts[j], pts[j + 1]
+            new_pts.append(tuple(a[c] + (b[c] - a[c]) * t for c in range(3)))
+            new_w.append(round(widths[j] + (widths[j + 1] - widths[j]) * t, 3))
+        if closed:
+            new_pts[-1], new_w[-1] = new_pts[0], new_w[0]
+        resample_rep = {"spacing_m": step_r, "points_before": len(pts), "points_after": len(new_pts)}
+        pts, widths = new_pts, new_w                  # dy (the heights the intake moved) stays the source points'
+        print(f"[lm_intake] resampled every {step_r} m: {resample_rep['points_before']} -> {resample_rep['points_after']} points")
     data = proj / "data"
     data.mkdir(parents=True, exist_ok=True)
     out = {"frame": "ENU local meters (X=east, Y=up, Z=north)", "origin": local["origin"],
@@ -364,6 +488,7 @@ def intake(proj: Path, *, connectors: bool | None = None) -> dict:
            "y_changed_points": sum(1 for d in dy if abs(d) > 1e-6),
            "y_change_max_m": round(max((abs(d) for d in dy), default=0.0), 3),
            "connectors": bool(want_conn and conn.exists()), "bespoke_files": copied, "crossfall": cf_rep, "profile": prof_rep,
+           "width_taper": taper_rep, "resample": resample_rep, "edge_on_wall": wall_rep,
            "grid_upsample": up,
            "md5": {"source_centerline": _md5(need[0]), "heightfield.npy": _md5(data / "heightfield.npy"),
                    "centerline.local.json": _md5(data / "centerline.local.json")}}

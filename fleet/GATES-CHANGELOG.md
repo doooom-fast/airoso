@@ -81,7 +81,15 @@ R > B + 20; white mean >= 160, spread <= 50, B >= R - 45; asphalt max < 125, spr
 (read and reported; no run-off is built from it). Pikes Peak's port: the outer wall's rail 1.4 m past the right lane edge and
 its 3.02 m resampling (config data, `tracks/pikes-peak-lm/track.config.json` `scenery.bespoke.rails`; the wall's place is
 read off NAIP, the offset is invented), and `bespoke.names.paved` the lane only on that port (a rail module may stand on the
-edge strip). Still no gate changed: Pikes Peak's drops went from FAIL to PASS because a wall now stands where NAIP shows one. `tools/draft_equiv.py` ignores JSON keys `written_utc` and `check_date` (write times).
+edge strip). Still no gate changed: Pikes Peak's drops went from FAIL to PASS because a wall now stands where NAIP shows one.
+
+Round 5 (same ledger; no threshold, no bypass). New ⚠ invented numbers, none a gate: Milford's `lm_intake.width_taper` 0.1 m
+per m a side (drive_test sets a wheel path from the width at the nearest 3 m point: a 0.3 m re-seat across a 10 % bank
+reads under its 3 % kink line), `lm_intake.resample_m` 1.5 and its doubled smoothing sigmas, `route.densify.max_cols` 24
+(densify now optionally measures the true warp); `tools/strip_seam_blend.py` `INSET_M` 0.05, `MAX_MISS_SHARE` 0.01;
+`tools/lidar_wall.py` `ALONG_M` 3.0, `EDGE_IN_M` 8, `FACE_IN_M` 5, `SEARCH_M` 8, `TRIM_M` 0.05, wall band 0.3-2.5 m, face
+= 10th percentile, top = 90th percentile within 0.8 m, `MIN_PTS` 5; Pikes Peak's wall module face 0.05 m past the lane
+edge. Measured, no longer invented: Pikes Peak's wall height (1.27 m) and place (its face, now the lane edge). `tools/draft_equiv.py` ignores JSON keys `written_utc` and `check_date` (write times).
 
 ## 2026-11-03 — EXCLUSION: race kerbs leave the prep's 0020 carve (ledger 0020 Rule 1; Lake Murray v5 race, ledger 0065)
 

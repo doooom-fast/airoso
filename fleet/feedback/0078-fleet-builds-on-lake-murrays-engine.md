@@ -270,6 +270,55 @@ still (the size cost above, here with no fine cut at all).
 NAIP note: the ImageServer's EPSG:4326 export holds the requested box only with square-degree pixels (h = w * dlat / dlon);
 metre-square pixels squash it (ledger 0062's Milford finding, and Aspen's first fetch here, 35 m off at the ends).
 
+### Round 5 (Mac): Milford's twist, Pikes Peak's wall measured, the strip's outer seam
+
+**1. Milford's ribbon twist: two causes, neither the weld nor the bank rolling.** A per-row diagnosis of the drafted ribbon
+(every mainline half-quad: the crease densify measured, the TRUE out-of-plane warp, and the parts a change of bank, a change
+of width and the rows' rotation make):
+- **The width steps on a banked road** (s 2,589, 2,624, 3,907, 4,103, 4,239). The traced width jumps in one 3 m station where
+  the paved area takes in a gore (s 2,604: 12.2 -> 21.7 m). The ribbon stays planar there (3.7 mm out of plane: densify's
+  "177 mm" was its crease formula reading the half's drop change on a trapezoid), but drive_test sets each wheel path from
+  the width at the nearest line point, so on the lidar's 7-10 % bank every jump re-seated the paths across the slope in one
+  sample: kinks, and the severe pair at s 4,103. 0.6.0 was built flat, so it never showed it. Fix (opt-in per track,
+  `lm_intake.width_taper`, m of half-width per m along): the steps become flares at 0.1 m per m a side, widening only (no
+  measured pavement is lost; 116 points widened, max 8.9 m), slow enough that a re-seat reads under the 3 % kink line.
+- **Ledger 0069's corner** (s 983-995, R 15 m on -13.8 %). The real warp: up to 105 mm out of plane where densify's crease
+  read 16 mm, and the inside paths' grade turning several % at each 3 m row boundary. Fixes (opt-in): `route.densify`
+  `{"measure": "warp", "max_cols": 24}` cuts columns by the true warp; `lm_intake.resample_m` 1.5 sweeps a ribbon row every
+  1.5 m (the line re-cut linearly, `route.smooth_sigma_pts` / `smooth_sigma_y_pts` doubled so the smoothing is the same in
+  metres), so each turn of grade lands half as hard.
+
+| Milford | 0.6.0 | port, round 4 | **port, round 5** |
+|---|---|---|---|
+| soft top / severe | 0 / 15 | 0 / 18 | **0 / 0** |
+| kinks /km | 16.33 | 38.06 | **6.34** |
+| vertex bumps / bumps /km | 23 / 0.2 | 37 / 2.66 | **16 / 0** |
+| gated drops / far ledges | 1 / 25 | 1 / 17 | **0 / 22** |
+| camber vs lidar (max) | none | 0.30 %-pts | 0.28 %-pts |
+| kn5 | | 35.0 MB | 38.2 MB |
+
+No gate is worse than 0.6.0's. Worse in size: 38.2 MB (rows every 1.5 m, the seam). kn5_ground_check reads 7 of 9,314
+road-over-ground samples over 5 cm (p95 0.021 m, PASS).
+
+**2. Pikes Peak's wall, measured.** `tools/lidar_wall.py` (run on the G10 under its 4 GB cap; cameras up throughout) reads the
+2018 USGS lidar (CO_Eastern_ElPaso_2018) at every 3 m station beside the line's right edge: the road's own ground plane at
+the edge, then the returns standing 0.3-2.5 m over it (class 1, unclassified). **All 556 stations read a wall: top 1.27 m
+over the road (p10 1.24, p90 1.31).** Its face stands 0.1 to 3.1 m INSIDE the live line's right edge (median 1.52 m; the
+OSM line + 15 m runs past the wall on the front stretch and turns 3-4; the first pass, limited to 2 m inside, missed
+those sections). So the pavement was wrong, not just the wall: `lm_intake.edge_on_wall` (opt-in) moves the right lane
+edge onto the measured face, keeping the left edge (widths now 11.9-15.2 m, not a flat 15), and the wall rail stands on
+that edge (its module face 0.05 m [invented] past it) at the measured 1.27 m (rails take `height_m`). The 1.4 m offset and
+the 0.81 m height are gone. Still invented: the module's 3 m section and 0.6 m foot (the K-rail's), plain concrete; the
+left (inside) edge is the live line's, not measured. Gates: all green (drops 0, obstructed 0, far ledges 37 reported),
+camber vs lidar max 0.07 %-pts, kn5 20.1 MB.
+
+**3. The strip's outer seam** (`tools/strip_seam_blend.py`, draft step `strip_seam`, opt-in): one terrain vertex per strip
+row 0.05 m [invented] inside its outer lip, the consecutive ones joined by terrain edges, so no ground triangle spans
+the lip (the prep's anti-poke clamps the seam under the strip; its contact band starts beyond). At 1 m past the lane edge
+the strip is now the top surface on **100 %** of High Plains' side-stations (round 3 60.6 %, round 4 24.4 %), Milford
+99.9 %, Pikes Peak 99.6 % (the rest its wall); ground on top 0. Size: High Plains TERRAIN 49,407 -> 60,944, kn5 14.9 ->
+15.5 MB.
+
 ## PC runbooks
 
 **ENG**: never the live `D:\k10\engine-july`. Keep `D:/k10-scratch/eng_repro` (the repo-only v4 engine) clean; each build
@@ -322,11 +371,12 @@ Copies: `D:/k10-scratch/eng_sclm`, `eng_hplm`, `eng_nvlm`.
      `fabric_white_normal.jpg` b95a9c9e983f7575b520f1ce9ce2504a, `pad_asphalt_diffuse.jpg` 6a3fdee42ff037d6e08aed8c9351a128,
      `roof_white_diffuse.jpg` 4d681c06dcebfdba461bfb81528d1ec3, `tiltup_wall_diffuse.jpg` 7a4ed52a856098256fd63b6e23a71de1,
      `tiltup_wall_normal.jpg` 2e7a85baf12bc77e0dd39ddeef12ea9e (the ground tile `turf_*` is the track's own; the intake
-     copies it). Expect the Mac's numbers (below, "Round 4: the next circuits"): every gate green, worse than 0.6.0 on
-     severe steps and kinks: drive it against 0.6.0 before anything else is built on it.
+     copies it). Expect the Mac's round-5 numbers (above, "Round 5"): every gate green and no worse than 0.6.0
+     on any (severe 0, kinks 6.34 /km, drops 0); the ribbon rows every 1.5 m, the width steps tapered, the strip seam.
    - **Pikes Peak** (`pikes-peak-lm`, workshop `ppir_lm`, ENG = a plain copy of `eng_repro`: every texture it uses is in
      REFERENCED.md5, `concrete_barrier_*` included; installs as `pikes_peak_international_raceway_lm`). The port's 3DEP grid is
-     its own (`tracks/pikes-peak-lm/data/heightfield.*`, synced in).
+     its own (`tracks/pikes-peak-lm/data/heightfield.*`, synced in). Round 5: the right lane edge is on the lidar wall face (widths
+     11.9-15.2 m, not 15) and the wall stands there at its measured 1.27 m: the AI line is written on that narrower lane.
    - **Aspen, Pueblo, Grand Junction** (`aspen-lm` / `pueblo-lm` / `grand-junction-lm`, workshops `aspen_lm`, `pueblo_lm`,
      `grand_junction_lm`; installs as `aspen_motorsports_park_lm`, `pueblo_motorsports_park_lm`, `grand_junction_lm`): ENG =
      plain copies of `eng_repro` (every texture they use is in REFERENCED.md5); Aspen's kerb texture

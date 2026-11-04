@@ -1844,6 +1844,44 @@ loop.blend swapped (v4's kept as loop.v4.blend). Report: `D:/k10-scratch/lm_phas
   - v4's own curb-ring seat (the baseline for the moved faces): base vertices sit at median −0.020 m (unmoved right
     v543-v558 −0.027..−0.019; left −0.071..+0.009).
 
+### Phase 2 — 0.20.2 run on step 2d (PC, 2026-11-04, 34c9f53 merged into `claude/lm-phase2-0202`): not shippable yet
+
+Same workshop (step 4 stands); config re-composed from the base (J4's trim in); plan_north PLANNED / exit 0 from a clean
+tree (in the composed worktree it reads each north layout twice: "closure_token 'ncw' is also north_cw's").
+
+**The chain** (`D:/k10-scratch/lm_phase2/ship_2d.log`): the race furniture authors clean (author-time and verify I both 0;
+1463_in over v1457-1462), every export, verify_kn5 + --inis, verify_ai_line, the track folder, maps and TreeFX pass. It
+stops at the scenery gate: **sign `M3-fwd@north_cw` stands in north_cw's lane at lap v0 (lat +4.88)**. The W1-6 step gives
+every race layout the mainline's layout plates (M3 / M4, fwd and rev) — race_cw's J1 plate spot lies in the north lap's
+lane. The remaining gates were run by hand on the scratch (the chain's commands; `gates_2d.log`), information only:
+
+| Gate | Existing layouts (street / race_cw / race_acw) | North layouts |
+|---|---|---|
+| verify_mouths / stubs / pads, rib_check, house_seat, house gate (7,600 / 7,600 / 275) | pass | — |
+| drive_test | every key equal to 0.20.1 (street FAIL on excursion drops, inherited: 0 of 193 keys differ) | north_acw PASS (severe 15, not failing); north_cw FAIL: obstruction 9 = the M3 sign; severe 9, worst 0.17 m at s 4375-4378 lat −3.2 (v1478-1479: a 2 m 1KERB_sidewalk_0 piece of v4's in the lane) |
+| audit_mesh | CLEAN, counts only differ (curb −5, grass −19 verts) | D 14,106 / I-K 2,007: audit_mesh reads the mainline's barrier_bands.json for a layout's exemptions (no lap support) |
+| built no_route | every key equal | FAIL both: a "door" at J3 v694-699 L. The edge wall stands there (1.2 m) on the pad deck 0.21-0.27 m below the centreline; no_route's band [cl + 0.30, cl + 1.00] misses its top by 3-7 cm (the deck reference is the centreline, not the local deck) |
+| verify_fold_fans | keys equal | written correctly ("not on lap north"); the tool then crashes printing a record without `rows` |
+| kn5_ground_check | pass, keys equal | pass |
+| drive_test --line expansion | fwd steps/km 0.32 → 0.48 | — |
+
+**The kn5s against 0.20.1** (`lm_v4_0201`): `_race`, `_closure_race_cw`, `_closure_race_acw` equivalent; the three spawn
+kn5s byte-identical; `_street` differs at YLINE_0 only, every moved corner in the island box. The road kn5 `--list` names
+25 meshes: 1KERB_sidewalk_0 (all 311 moved corners in the island box) — and terrain / rock / building meshes elsewhere:
+16 of 20 1GRASS tiles re-tessellated (the prep's pre-thin vertex counts differ, terrain_thin.json), mostly within 60 m of
+the north lap; ~250 triangles near the mainline > 1 km from it (1GRASS_0 / 8 / 9 / 10 / 11); 1GRASS_ROCK_6 up to 4.9 m
+36-43 m from the lap; five building meshes ≤ 0.2 mm, three houses 1-6 mm (house_seat rows 1932 / 2628 / 6079, 32-50 m from
+the lap). **A control** (the same tools at 34c9f53, v4's blend and data, no north layouts; `D:/k10-scratch/lm_phase2/control`)
+gives every kn5 equivalent to 0.20.1, the road included: the changes are 0.20.2's inputs, not drift. The control is NOT
+INSTALLED by the chain on the inherited street drive_test red alone: 0.20.2 cannot print SHIP OK without --force-install.
+
+**Princess View on the built road:** the ring at v538 [−3.43, +1.75]; the right face −3.43..−3.45 at v535-v542, then the
+uncorrected run (−3.61 at v543; the largest step 0.16 m, v542 → v543). The moved faces' seat: median −0.017 m against
+v4's −0.020 (unmoved −0.022 / −0.020); v534 +0.026 (v4 +0.031 there) and v535 +0.007 outside ±2 cm. TreeFX: 6 plants
+(Bush / Sage) at v530-v545, all inside the built ring (≥ 1.80 m from the moved face); the written trees.txt is identical
+to 0.20.1's (21,111). **Joins on the built road:** all five PASS; strip faces 0 / 524 on a curb (worst +0.011 J2,
++0.017 J3, +0.021 J4).
+
 ### Open questions for Kevin (Phase 2)
 
 - **Princess View's wide median: closed — measured, noise, fixed at the source; no gate change** (step 2c).

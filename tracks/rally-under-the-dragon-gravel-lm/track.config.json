@@ -244,6 +244,30 @@
       "_doc": "the Lariat's road-building section (ledger 0078 round 7, tools/cutfill_blend.py): the ground beside the road graded to the verge, a bench, rock cut 0.25:1 up or fill 1.5:1 down to the natural 3DEP; between stacked switchback legs every point held on its own leg's side (tools/hold_stacked_blend.py after the prep). The slopes and benches are the Lariat's [invented there, from its gates' geometry], not surveyed on these mesas"
     }
   },
+  "gates": {
+    "drive1": {
+      "force_exemptions": {
+        "stage": {
+          "undrivable_corners": [
+            {
+              "id": "s 22,414-22,542",
+              "s_m": [
+                22400,
+                22560
+              ],
+              "measured": "R 15.93 m centre arc, graded platform 6.82 m wide (outside R 19.34, inside R 12.52; data/switchbacks.json S9) against the 11 m corner rule"
+            }
+          ],
+          "excursion_drops": [],
+          "approved": "Kevin 2026-11-04, asked about the three measured rows: \"Yes, force those 3\"",
+          "versions": [
+            "0.1.0"
+          ],
+          "_doc": "ledger 0078 round 12 (fleet/GATES-CHANGELOG.md 2026-11-04): read by tools/stage_force.py, by place and row type only; any other red row, or the same row anywhere else, refuses --force-install. Not covered: Douglas Creek (s 2,403 / 2,456, waiting on the lidar), any soft top, anything at s 14.3 km"
+        }
+      }
+    }
+  },
   "strip_seam": {
     "scope": "local",
     "_doc": "tools/strip_seam_blend.py at local scope (ledger 0078 round 7): a 25 km stage's terrain"

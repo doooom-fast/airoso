@@ -14,6 +14,25 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
+## 2026-11-04 — DECLARED FORCE: three measured rows on the Rangely stage ports (ledger 0078 round 12; no threshold moved)
+
+Kevin, 2026-11-04, asked about the three rows the measured switchbacks fail as measured: **"Yes, force those 3"**.
+
+- **What is forced, by port, place and row type only** (`track.config.json` `gates.drive1.force_exemptions.stage`,
+  versions `["0.1.0"]`):
+  - `rally-dragon-tail-gravel-lm`, **undrivable corners, s 6,340-6,400** (switchback 1: R 13.75 m centre arc, graded
+    platform 6.94 m wide, against drive_test's 11 m corner rule);
+  - `rally-dragon-tail-gravel-lm`, **gated excursion drops, s 6,570-6,630** (switchback 2's real fill slope, 0.54-1.09 m
+    below the platform's outside edge, against the 0.2 m drop rule; no stone lip or other invented edge goes back in);
+  - `rally-under-the-dragon-gravel-lm`, **undrivable corners, s 22,400-22,560** (R 15.93 m, platform 6.82 m wide).
+- **Wiring.** New gate step `stage_force` (`tools/stage_force.py`, last in each port's `steps.gate`; records only, exit
+  0). `--force-install` passes a red stage build only when the build's version is declared, every drive_test fail
+  reason is one of those row types, every undrivable corner (drive_test's `worst.undrivable_all`, written because the
+  key is declared) lies in a declared undrivable window and every gated drop in a declared drop window. A soft top, a
+  severe-step rate or the same row type anywhere else refuses it. **Not covered:** Douglas Creek (s 2,403 / 2,456:
+  waiting on the lidar), any soft top, anything at s 14.3 km.
+- No threshold changed; drive_test still reads these rows red. Lake Murray and every other track declare nothing.
+
 ## 2026-11-03 — COMPARISON RULE: "unchanged" kn5s are judged by `tools/kn5_equiv.py`, not md5 (ledger 0065)
 
 Blender's tangent pass is not bit-stable. Lake Murray v4's own workshop, rebuilt from the prep on the PC with the same engine,

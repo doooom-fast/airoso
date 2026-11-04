@@ -695,6 +695,17 @@ gate_audit_street() {
   if [ -n "$AUDIT_NOTE" ]; then step "gate: audit_mesh, street (hard total; $AUDIT_NOTE)"; else step "gate: audit_mesh, street (hard total)"; fi
   AU_S=0; (cd "$AIROSO" && python -m scripts.geometry.audit_mesh "$PROJ" 2>&1 | tail -16) || AU_S=$?
 }
+gate_stage_force() {
+  # ledger 0078 round 12: Kevin's force for a stage port, by place and row (tools/stage_force.py; the port's
+  # gates.drive1.force_exemptions.stage). Records only (exit 0); its verdict decides whether --force-install may pass
+  # the red drive_test. List it LAST in steps.gate.
+  step "gate: Kevin's force for a stage, by place and row (tools/stage_force.py; --force-install only where every red row is a forced one)"
+  (cd "$AIROSO" && python tools/stage_force.py "$PROJ")
+  D1_FORCE_OK=$(pyq "import json,os,sys
+p=sys.argv[1]
+print(1 if os.path.exists(p) and json.load(open(p,encoding='utf-8')).get('force_install_ok') is True else 0)" "$PROJ/data/stage_force.json")
+  D1_FORCE_OK="${D1_FORCE_OK%$'\r'}"
+}
 gate_race_gates() {
   [ -n "$RACE_IDS" ] || { no_race race_gates; return 0; }
   local lid rc

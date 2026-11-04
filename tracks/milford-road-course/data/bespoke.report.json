@@ -9,10 +9,10 @@
     53.38
    ],
    "ground": [
-    14.092,
-    15.661
+    14.093,
+    15.66
    ],
-   "bottom": 13.942,
+   "bottom": 13.943,
    "eave": 18.408,
    "clear_m": Infinity
   }
@@ -65,8 +65,8 @@
   }
  ],
  "guardrail": {
-  "runs": 90,
-  "rail_m": 147.1,
-  "posts": 89
+  "runs": 82,
+  "rail_m": 150.9,
+  "posts": 90
  }
 }

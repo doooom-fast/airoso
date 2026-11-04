@@ -31,9 +31,9 @@
  "rows": [
   {
    "group": "BUILDING_FABRIC_pad_tent",
-   "x": 104.4,
-   "z": -444.0,
-   "bottom": 13.942,
+   "x": 104.1,
+   "z": -444.1,
+   "bottom": 13.943,
    "top": 22.408,
    "ground_low": 14.092,
    "ground_high": 15.66,

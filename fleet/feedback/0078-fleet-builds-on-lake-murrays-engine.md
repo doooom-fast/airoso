@@ -766,6 +766,100 @@ Kevin's three measured rows are untouched and nothing is declared. Runbook 4e st
 unchanged: no file of its chain changed, and the cut / fill addition reads only port records (`data/switchbacks.json`, the
 intake's switchback spans) that Lake Murray never writes.
 
+### Round 12 (Mac): Kevin's three-row force declared by place; the lidar at the three turns; both stages still red on our side
+
+1. **Kevin's force, 2026-11-04: "Yes, force those 3".** Declared per port, by place and row type, in each port's
+   `gates.drive1.force_exemptions.stage` (versions 0.1.0), as the Lariat's two rows were in round 7. It is read by
+   `tools/stage_force.py` (new gate step `stage_force`, last in steps.gate; it records and exits 0). It covers:
+   - Dragon Tail undrivable corners at s 6,340-6,400 (switchback 1);
+   - Dragon Tail gated drops at s 6,570-6,630 (switchback 2's real fill);
+   - Under the Dragon undrivable corners at s 22,400-22,560.
+   `--force-install` passes only when every red row is one of those at its place. GATES-CHANGELOG 2026-11-04. Not covered:
+   Douglas Creek, any soft top, s 14.3 km. Run 10 read it correctly. Dragon Tail: 3 corners and 4 drops covered,
+   soft top 4 not, so the force is REFUSED.
+2. **The lidar at the three turns (the PC's runbook 4f, 13eaf50).** `tools/switchback_measure.py` reads a turn's bench
+   on its lidar grid. It reads the mean of the cells with ground in the 3x3 block (else the 5x5) round each point: ~3.8 class-2
+   points a square metre leave a third of the 0.5 m cells empty, and a bench read stopped at the first gap: the first
+   pass found 0-1 edge points a turn.
+   | turn | ground read | outside R / rms | inside R / rms | centre arc | width | fitted? |
+   |---|---|---|---|---|---|---|
+   | Dragon Tail switchback 3 (S6, s 7,453) | 3DEP lidar class 2 | 20.48 / 1.41 m | 10.86 / 0.30 m | R 15.67 m | 9.62 m | no: outside rms over the 1.0 m fit-quality rule |
+   | Douglas Creek S3 (s 2,482) | 3DEP lidar class 2 | 19.55 | 11.13 | — | — | no: the two circles disagree (centres apart) |
+   | Douglas Creek S4 (s 2,500) | 3DEP lidar class 2 | 24.73 / 1.57 m | 12.74 / 0.56 m | R 18.74 m | 11.99 m | no: outside rms over 1.0 m |
+   The lidar now bounds all three platforms. On it, Douglas Creek reads ~12 m wide at S4, which is wide enough for the 11 m corner rule if built.
+   But the outside edges are rougher circles than the 1.0 m rule the fit takes (that rule is unchanged), so the turns stay as mapped, and
+   **Douglas Creek's corner (s 2,456) and drop (s 2,403) are still red,
+   not forced.** Next: the outside edge read as the platform's own outline (a pad from the bench outline, round 7's lm_pads way) rather than as a circle.
+3. **Not done this round:** the NAIP road-edge trace for Under the Dragon s 14,334-14,339; the cause of the soft tops at
+   Under the Dragon s 22,998 / 23,056; Dragon Tail s 6,566-6,567 (ground 2-9 mm over the road at the lane edge, -4.2 to
+   -4.4 m, on alternate rows at switchback 2's entry, 15-20 m before the fit's join: cause not yet found).
+
+**The Mac builds (empty workshops, `--no-install`, with the lidar measurements):**
+
+| row | DT installed 0.2.1 | **DT `_lm`** | UtD installed 0.2.0 | **UtD `_lm`** |
+|---|---|---|---|---|
+| severe steps (/km) | 182 (7.21) | 125 (4.97) | 195 (7.59) | 90 (3.52) |
+| soft top in lane | 0 | **4 (s 6,566, 6,567)** | 0 | **4 (s 14,334, 14,339, 22,998, 23,056)** |
+| undrivable corners | 0 | 3 (all forced) | 0 | 2 (s 22,414 forced; Douglas Creek not) |
+| gated drops | 0 | 4 (all forced) | 0 | 2 (Douglas Creek, not forced) |
+| replication (median / p95) | 0.02 / 0.21 m | 0.02 / 0.11 m | — | 0.01 / 0.11 m |
+| audit / kn5_ground_check | CLEAN / PASS | CLEAN / PASS | CLEAN / PASS | CLEAN / PASS |
+| road kn5 | — | 40.0 MB | — | 51.5 MB |
+| `--force-install` | — | REFUSED | — | REFUSED |
+
+**Red once the forced rows are set aside:**
+- Dragon Tail: soft top 4.
+- Under the Dragon: soft top 4, Douglas Creek's undrivable corner and its gated drops.
+
+Lake Murray is unchanged (the same empty diff over its chain; nothing it runs reads the new key or tool). Runbook 4e stays on hold.
+
+### Round 12 (Mac): Kevin's three-row force declared by place; the lidar at the three turns; both stages still red on our side
+
+1. **Kevin's force, 2026-11-04: "Yes, force those 3".** Declared per port, by place and row type, in each port's
+   `gates.drive1.force_exemptions.stage` (versions 0.1.0), as the Lariat's two rows were in round 7. It is read by
+   `tools/stage_force.py` (new gate step `stage_force`, last in steps.gate; it records and exits 0). It covers:
+   - Dragon Tail undrivable corners at s 6,340-6,400 (switchback 1);
+   - Dragon Tail gated drops at s 6,570-6,630 (switchback 2's real fill);
+   - Under the Dragon undrivable corners at s 22,400-22,560.
+   `--force-install` passes only when every red row is one of those at its place. GATES-CHANGELOG 2026-11-04. Not covered:
+   Douglas Creek, any soft top, s 14.3 km. Run 10 read it correctly. Dragon Tail: 3 corners and 4 drops covered,
+   soft top 4 not, so the force is REFUSED.
+2. **The lidar at the three turns (the PC's runbook 4f, 13eaf50).** `tools/switchback_measure.py` reads a turn's bench
+   on its lidar grid. It reads the mean of the cells with ground in the 3x3 block (else the 5x5) round each point: ~3.8 class-2
+   points a square metre leave a third of the 0.5 m cells empty, and a bench read stopped at the first gap: the first
+   pass found 0-1 edge points a turn.
+   | turn | ground read | outside R / rms | inside R / rms | centre arc | width | fitted? |
+   |---|---|---|---|---|---|---|
+   | Dragon Tail switchback 3 (S6, s 7,453) | 3DEP lidar class 2 | 20.48 / 1.41 m | 10.86 / 0.30 m | R 15.67 m | 9.62 m | no: outside rms over the 1.0 m fit-quality rule |
+   | Douglas Creek S3 (s 2,482) | 3DEP lidar class 2 | 19.55 | 11.13 | — | — | no: the two circles disagree (centres apart) |
+   | Douglas Creek S4 (s 2,500) | 3DEP lidar class 2 | 24.73 / 1.57 m | 12.74 / 0.56 m | R 18.74 m | 11.99 m | no: outside rms over 1.0 m |
+   The lidar now bounds all three platforms. On it, Douglas Creek reads ~12 m wide at S4, which is wide enough for the 11 m corner rule if built.
+   But the outside edges are rougher circles than the 1.0 m rule the fit takes (that rule is unchanged), so the turns stay as mapped, and
+   **Douglas Creek's corner (s 2,456) and drop (s 2,403) are still red,
+   not forced.** Next: the outside edge read as the platform's own outline (a pad from the bench outline, round 7's lm_pads way) rather than as a circle.
+3. **Not done this round:** the NAIP road-edge trace for Under the Dragon s 14,334-14,339; the cause of the soft tops at
+   Under the Dragon s 22,998 / 23,056; Dragon Tail s 6,566-6,567 (ground 2-9 mm over the road at the lane edge, -4.2 to
+   -4.4 m, on alternate rows at switchback 2's entry, 15-20 m before the fit's join: cause not yet found).
+
+**The Mac builds (empty workshops, `--no-install`, with the lidar measurements):**
+
+| row | DT installed 0.2.1 | **DT `_lm`** | UtD installed 0.2.0 | **UtD `_lm`** |
+|---|---|---|---|---|
+| severe steps (/km) | 182 (7.21) | 125 (4.97) | 195 (7.59) | 90 (3.52) |
+| soft top in lane | 0 | **4 (s 6,566, 6,567)** | 0 | **4 (s 14,334, 14,339, 22,998, 23,056)** |
+| undrivable corners | 0 | 3 (all forced) | 0 | 2 (s 22,414 forced; Douglas Creek not) |
+| gated drops | 0 | 4 (all forced) | 0 | 2 (Douglas Creek, not forced) |
+| replication (median / p95) | 0.02 / 0.21 m | 0.02 / 0.11 m | — | 0.01 / 0.11 m |
+| audit / kn5_ground_check | CLEAN / PASS | CLEAN / PASS | CLEAN / PASS | CLEAN / PASS |
+| road kn5 | — | 40.0 MB | — | 51.5 MB |
+| `--force-install` | — | REFUSED | — | REFUSED |
+
+**Red once the forced rows are set aside:**
+- Dragon Tail: soft top 4.
+- Under the Dragon: soft top 4, Douglas Creek's undrivable corner and its gated drops.
+
+Lake Murray is unchanged (the same empty diff over its chain; nothing it runs reads the new key or tool). Runbook 4e stays on hold.
+
 ## PC runbooks
 
 **ENG**: never the live `D:\k10\engine-july`. Keep `D:/k10-scratch/eng_repro` (the repo-only v4 engine) clean; each build

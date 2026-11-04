@@ -74,11 +74,18 @@ class LidarGround:
         return self.x0 <= x < self.x0 + self.n * self.c and self.z0 <= z < self.z0 + self.n * self.c
 
     def at(self, x, z):
+        """the mean of the cells with ground nearest (x, z): the 3 x 3 block, else the 5 x 5 (~3.8 class-2 points a
+        square metre leave a third of the 0.5 m cells empty; a bench read stops at an empty one)"""
+        import numpy as np
         i, j = int((x - self.x0) / self.c), int((z - self.z0) / self.c)
         if not (0 <= i < self.n and 0 <= j < self.n):
             return None
-        v = float(self.g[j, i])
-        return None if v != v else v
+        for r in (0, 1, 2):
+            blk = self.g[max(0, j - r):j + r + 1, max(0, i - r):i + r + 1]
+            ok = np.isfinite(blk)
+            if ok.any():
+                return float(blk[ok].mean())
+        return None
 
 
 def bench_on(G, q, nx, nz):

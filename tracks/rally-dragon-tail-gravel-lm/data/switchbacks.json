@@ -94,13 +94,20 @@
    "id": "S6",
    "st_m": 7452.8,
    "turn_deg": 120.9,
-   "points_outside": 14,
-   "points_inside": 3,
-   "measured": false,
-   "ground": "3DEP 1 m DEM (road_seek bench)",
-   "r_outside_m": 20.34,
-   "rms_outside_m": 1.85,
-   "why": "the inside edge is not bounded by a face in the DEM (or the circles disagree)"
+   "points_outside": 11,
+   "points_inside": 9,
+   "measured": true,
+   "ground": "3DEP lidar class 2 (tools/lidar_turns.py)",
+   "r_outside_m": 20.48,
+   "rms_outside_m": 1.41,
+   "r_inside_m": 10.86,
+   "rms_inside_m": 0.3,
+   "radius_m": 15.67,
+   "width_m": 9.62,
+   "centre_xz": [
+    3168.84,
+    -1010.04
+   ]
   },
   {
    "id": "S7",

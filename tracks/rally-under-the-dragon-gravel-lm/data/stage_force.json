@@ -1,0 +1,30 @@
+{
+ "force_install_ok": false,
+ "why_not": [
+  "stage: soft_top_in_lane 4 (not forced)",
+  "stage: undrivable corner at s 2456 (122 deg, 7.7 m) outside every forced window",
+  "stage: gated drop at s 2403 (0.32 m) outside every forced window",
+  "stage: gated drop at s 2403 (0.28 m) outside every forced window"
+ ],
+ "covered": [
+  "stage: undrivable corner s 22414 (113 deg at 6.8 m) \u2014 s 22,414-22,542"
+ ],
+ "declared": {
+  "undrivable_corners": [
+   {
+    "id": "s 22,414-22,542",
+    "s_m": [
+     22400,
+     22560
+    ],
+    "measured": "R 15.93 m centre arc, graded platform 6.82 m wide (outside R 19.34, inside R 12.52; data/switchbacks.json S9) against the 11 m corner rule"
+   }
+  ],
+  "excursion_drops": [],
+  "approved": "Kevin 2026-11-04, asked about the three measured rows: \"Yes, force those 3\"",
+  "versions": [
+   "0.1.0"
+  ],
+  "_doc": "ledger 0078 round 12 (fleet/GATES-CHANGELOG.md 2026-11-04): read by tools/stage_force.py, by place and row type only; any other red row, or the same row anywhere else, refuses --force-install. Not covered: Douglas Creek (s 2,403 / 2,456, waiting on the lidar), any soft top, anything at s 14.3 km"
+ }
+}

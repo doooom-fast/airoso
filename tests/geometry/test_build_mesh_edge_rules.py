@@ -24,12 +24,22 @@ def test_the_seam_weld_floor_is_capped_under_the_shoulder_too_but_the_cut_edge_k
     sheet left out of that cap, and in a cut it is the sheet the grass was lifted through. The cut-edge
     excavation asks the same question of the DECK only: with the shoulder in its table it dug 30,048
     nodes along every cut's shoulder edge and the measured-guard fenced the ledge with 467 stone lips."""
-    blk = _block("_hemW = set(shoulder.get(\"hem_idx\", ()))", "def _pav_below_W(")
-    assert "for _sheetW in (road, runoff, kerb, shoulder):" in blk, blk
-    assert "if _sheetW is not shoulder:" in blk and "_ptW_shW.setdefault" in blk
-    assert "NOT the shoulder" not in blk
+    from scripts.geometry.build_mesh import seam_weld_tables      # the tables' unit seam (ledger 0067)
+    assert "seam_weld_tables((road, runoff, kerb), shoulder, " in SRC
+    road = {"vertices": [(0.0, 10.0, 0.0), (8.0, 10.0, 0.0), (8.0, 10.0, 8.0)], "tris": [(0, 1, 2)]}
+    shoulder = {"vertices": [(8.0, 10.0, 0.0), (10.0, 9.8, 0.0), (10.0, 9.8, 8.0), (11.0, 9.0, 0.0)],
+                "tris": [(0, 1, 2), (1, 3, 2)], "hem_idx": [3]}
+    empty = {"vertices": [], "tris": []}
+    deck, cap = seam_weld_tables((road, empty, empty), shoulder)
+    in_deck = {t for ts in deck.values() for t in ts}
+    in_cap = {t for ts in cap.values() for t in ts}
+    road_tri = tuple(road["vertices"])
+    face = tuple(shoulder["vertices"][i] for i in (0, 1, 2))
+    hem = tuple(shoulder["vertices"][i] for i in (1, 3, 2))
+    assert road_tri in in_deck and road_tri in in_cap
+    assert face in in_cap and face not in in_deck                  # the shoulder caps the floor; the excavation keeps the deck
     # ... and never the buried hem: counted as pavement it capped the weld's apron under the ground at every toe
-    assert "if _sheetW is shoulder and (_tW[0] in _hemW or _tW[1] in _hemW or _tW[2] in _hemW):" in blk
+    assert hem not in in_cap
 
 
 def test_the_shoulder_builders_name_their_hem_vertices():

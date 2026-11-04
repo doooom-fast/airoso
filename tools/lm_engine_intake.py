@@ -290,8 +290,80 @@ def intake(proj: Path, *, connectors: bool | None = None) -> dict:
         bad = [r["id"] for r in arep if not str(r["status"]).startswith("PASS")]
         if bad or len(arep) != len(mf):
             raise SystemExit(f"[lm_intake] corner arcs {sorted(mf)}: not fitted or failing the step gate: {bad}")
+        old_pts = pts
         pts = [tuple(p) for p in new_line]
         arcs_rep = [{k: r[k] for k in ("id", "status", "radius_m", "turn_deg", "max_move_m") if k in r} for r in arep]
+        # THE ARCS' HEIGHTS FROM THE GROUND (ledger 0078 round 7, Kevin: "I just want real"). fit_corners keeps heights by
+        # index, so a corner cut shorter carries the node's drop over a shorter road (the Lariat: 15.48 % over 10 m at
+        # C12 / C13 against 11.82 % without the arcs). Every moved point reads 3DEP where it now stands (the source's
+        # corridor.elev.json: native 3DEP every 6 m along x 5 m across, +-60 m; inverse-distance over the 4 nearest),
+        # then the profile is re-smoothed on the new stations by road_profile's own windows, cap off, and taken within
+        # REACH of the moved points (the windows' reach); everywhere else the profile stays as read above.
+        cp_ = sdata / "corridor.elev.json"
+        rp_ = (ej.get("road_profile") or {}) if li.get("profile") == "uncapped" else {}
+        if cp_.exists() and rp_.get("tool") == "scripts/elevation/road_profile.py":
+            from scripts.elevation import road_profile as rprof
+            from scripts.geometry.projection import in_local_order as _ilo
+            corr = json.loads(cp_.read_text(encoding="utf-8"))
+            lat0c = corr["stations_lonlat"][0][1]
+            mlon_c, mlat_c = 111_320.0 * math.cos(math.radians(lat0c)), 110_540.0     # heightfield's own corridor maths
+            lon0_, lat0_ = float(local["origin"]["lon"]), float(local["origin"]["lat"])
+            phi_ = math.radians(lat0_)
+            mlon_l = 111412.84 * math.cos(phi_) - 93.5 * math.cos(3 * phi_) + 0.118 * math.cos(5 * phi_)
+            mlat_l = 111132.954 - 559.822 * math.cos(2 * phi_) + 1.175 * math.cos(4 * phi_)
+            SP = corr["stations_lonlat"]
+            buck = {}
+            for i2, (slon, slat) in enumerate(SP):
+                a2, b2 = SP[max(i2 - 1, 0)], SP[min(i2 + 1, len(SP) - 1)]
+                tx_, tz_ = (b2[0] - a2[0]) * mlon_c, (b2[1] - a2[1]) * mlat_c
+                L_ = math.hypot(tx_, tz_) or 1.0
+                nx_, nz_ = -tz_ / L_, tx_ / L_
+                for off, zz in zip(corr["offsets"], corr["z"][i2]):
+                    if zz is None:
+                        continue
+                    qlon, qlat = slon + nx_ * off / mlon_c, slat + nz_ * off / mlat_c
+                    qx, qz = (qlon - lon0_) * mlon_l, (qlat - lat0_) * mlat_l
+                    buck.setdefault((int(qx // 10), int(qz // 10)), []).append((qx, qz, float(zz)))
+
+            def g3dep(x, z):
+                near = []
+                for gx in range(int(x // 10) - 1, int(x // 10) + 2):
+                    for gz in range(int(z // 10) - 1, int(z // 10) + 2):
+                        near += buck.get((gx, gz), ())
+                near.sort(key=lambda q: (q[0] - x) ** 2 + (q[1] - z) ** 2)
+                near = near[:4]
+                if not near:
+                    raise SystemExit(f"[lm_intake] corner arcs: no corridor 3DEP near ({x:.1f}, {z:.1f})")
+                w = [1.0 / max(1e-6, (q[0] - x) ** 2 + (q[1] - z) ** 2) for q in near]
+                return sum(wi * q[2] for wi, q in zip(w, near)) / sum(w)
+            moved_i = [i for i, (a, b) in enumerate(zip(old_pts, pts)) if math.hypot(a[0] - b[0], a[2] - b[2]) > 0.01]
+            base = list(_ilo(local, ej.get("z_held_m") or ej["z_raw_m"]))
+            for i in moved_i:
+                base[i] = g3dep(pts[i][0], pts[i][2])
+            st_n = [0.0]
+            for a, b in zip(pts, pts[1:]):
+                st_n.append(st_n[-1] + math.hypot(b[0] - a[0], b[2] - a[2]))
+            z_s = rprof.snap_to_ground_stations(base, st_n, grade_cap_pct=1e9,
+                                                median_m=float(rp_.get("median_window_m", rprof.MEDIAN_WINDOW_M)),
+                                                mean_m=float(rp_.get("mean_window_m", rprof.MEAN_WINDOW_M)), closed=closed)
+            elev0_ = float(local["origin"]["elev_m"])
+            reach = float(rp_.get("median_window_m", 33.0)) + float(rp_.get("mean_window_m", 9.0))
+            mset = [st_n[i] for i in moved_i]
+            took = 0
+            new_pts = []
+            for i, p in enumerate(pts):
+                if mset and min(abs(st_n[i] - s_) for s_ in mset) <= reach:
+                    new_pts.append((p[0], z_s[i] - elev0_, p[2])); took += 1
+                else:
+                    new_pts.append(p)
+            if closed:
+                new_pts[-1] = new_pts[0]
+            pts = new_pts
+            for r_ in arcs_rep:
+                r_["heights"] = "3DEP along the arc (corridor.elev.json), re-smoothed, cap off"
+            print(f"[lm_intake] corner arcs: {len(moved_i)} moved points read 3DEP where they stand; {took} heights re-smoothed "
+                  f"within {reach:.0f} m (road_profile's windows, cap off); steepest now "
+                  f"{100.0 * _max_grade(pts, 10.0):.2f} % over 10 m")
         print(f"[lm_intake] corner arcs: " + ", ".join(f"{r['id']} R {r.get('radius_m')} m, moved <= {r.get('max_move_m')} m"
                                                       for r in arcs_rep))
     # A LANE EDGE ON A MEASURED WALL (lm_intake.edge_on_wall {"side": "right"|"left", "file": <tools/lidar_wall.py output
@@ -526,6 +598,17 @@ def intake(proj: Path, *, connectors: bool | None = None) -> dict:
             raise SystemExit(f"[lm_intake] carry_records: tracks/{src_track}/data/{rel} does not exist")
         (data / rel).parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(sdata / rel, data / rel)
+        carried.append(rel)
+    # THE SOURCE'S MEASUREMENTS (lm_intake.carry_source [paths under the source track's source/]; round 7): the lidar
+    # pad outlines tools/lm_pads_blend.py builds the lap's junction pads from, copied to the same path in the project
+    for rel in li.get("carry_source") or []:
+        if rel.startswith(("/", "\\")) or ".." in Path(rel).parts or Path(rel).parts[0] != "source":
+            raise SystemExit(f"[lm_intake] carry_source {rel!r} must be a plain path under the source track's source/")
+        sp = AIROSO / "tracks" / src_track / rel
+        if not sp.exists():
+            raise SystemExit(f"[lm_intake] carry_source: tracks/{src_track}/{rel} does not exist")
+        (proj / rel).parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(sp, proj / rel)
         carried.append(rel)
     if li.get("roll_record") == "flat":
         if li.get("crossfall"):

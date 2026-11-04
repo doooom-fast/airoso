@@ -1626,6 +1626,191 @@
       "centerline.elevation.json"
     ],
     "roll_record": "flat",
-    "_records_doc": "the line's own draft records the Drive-1 verdict re-reads (one-way, the paint centreline / hairpin gate) and the raw 3DEP drive_test replicates against; the roll-rate record written flat (the port tilts nothing)"
+    "_records_doc": "the line's own draft records the Drive-1 verdict re-reads (one-way, the paint centreline / hairpin gate) and the raw 3DEP drive_test replicates against; the roll-rate record written flat (the port tilts nothing)",
+    "carry_source": [
+      "source/pads/C14.json",
+      "source/pads/C15.json",
+      "source/pads/C18.json"
+    ]
+  },
+  "strip_seam": {
+    "scope": "local",
+    "_doc": "tools/strip_seam_blend.py at local scope (ledger 0078 round 7): the seam's pokes and cuts on small meshes of the terrain within 8 m of 120 seam points at a time; the whole-terrain seam does not finish on a 25 km lap. Top level, not under route.edge: the assembler refuses keys it does not know there"
+  },
+  "lm_pads": {
+    "_doc": "tools/lm_pads_blend.py (ledger 0078 round 7): the lap's three junction mouths C14, C15 and C18 as one pad each, the mainline arm for the pad tooling: the lap cut at two of its own rows, one deck out to the 0.17.2 lidar-intensity outline (source/pads/<id>.json, tools/draft_pad_outline.py on CO_DRCOG_2_2020, +-0.4 m; carried from tracks/lookout-lariat by lm_intake.carry_source) on its class-2 deck grid, and a K-rail across every road the lap does not take where the measurement closed it (the declared sealed cuts and the pad's box edges). The declarations are 0.17.2's route.draft_pads, unchanged.",
+    "source": "source/pads",
+    "pads": [
+      {
+        "id": "C14",
+        "node": 10003,
+        "cuts": [
+          9995,
+          10020
+        ],
+        "sealed": [],
+        "half_m": 45,
+        "box": [
+          [
+            -1683.1,
+            -2525.4
+          ],
+          [
+            -1678.1,
+            -2512.9
+          ],
+          [
+            -1662.3,
+            -2512.9
+          ],
+          [
+            -1662.3,
+            -2542.1
+          ],
+          [
+            -1625.6,
+            -2542.1
+          ],
+          [
+            -1625.6,
+            -2592.9
+          ],
+          [
+            -1697.3,
+            -2592.9
+          ],
+          [
+            -1697.3,
+            -2553.7
+          ]
+        ]
+      },
+      {
+        "id": "C15",
+        "node": 11642,
+        "cuts": [
+          11627,
+          11655
+        ],
+        "sealed": [
+          [
+            [
+              2493.1,
+              -3049.4
+            ],
+            [
+              2522.5,
+              -3065.3
+            ]
+          ],
+          [
+            [
+              2546.1,
+              -3024.9
+            ],
+            [
+              2549.5,
+              -3046.5
+            ]
+          ]
+        ],
+        "half_m": 45
+      }
+    ],
+    "parked": [
+      {
+        "id": "C18",
+        "node": 14211,
+        "cuts": [
+          14196,
+          14233
+        ],
+        "sealed": [],
+        "half_m": 60,
+        "box": [
+          [
+            850.5,
+            1869.2
+          ],
+          [
+            869.7,
+            1889.2
+          ],
+          [
+            890.5,
+            1899.2
+          ],
+          [
+            900.5,
+            1905.9
+          ],
+          [
+            910.5,
+            1907.6
+          ],
+          [
+            915.5,
+            1897.6
+          ],
+          [
+            913.8,
+            1890.9
+          ],
+          [
+            918.8,
+            1874.2
+          ],
+          [
+            922.2,
+            1865.9
+          ],
+          [
+            925.5,
+            1860.9
+          ],
+          [
+            925.5,
+            1850.9
+          ],
+          [
+            908.8,
+            1850.9
+          ],
+          [
+            897.2,
+            1865.9
+          ],
+          [
+            898.8,
+            1882.6
+          ],
+          [
+            897.2,
+            1886.7
+          ],
+          [
+            886.3,
+            1882.6
+          ],
+          [
+            875.5,
+            1871.7
+          ],
+          [
+            867.2,
+            1860.9
+          ],
+          [
+            862.2,
+            1850.9
+          ],
+          [
+            850.5,
+            1850.9
+          ]
+        ]
+      }
+    ],
+    "_parked_doc": "C18 (the ramp end at 19th St / US-6) is built by the tool but parked off this build (round 7, run 5): on the measured deck it read 8 severe steps (0.08-0.13 m) and 2 soft tops at s 24,263-24,326, where this line's ribbon runs off the measured ramp (its west edge) and its out-cut stands 0.84 m over the measured road (the climb to the lid). The lap runs through C18 as plain ribbon, as 0.1.0 did (0 severe there)"
   }
 }

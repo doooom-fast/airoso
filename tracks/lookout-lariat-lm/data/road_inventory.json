@@ -16,19 +16,23 @@
   "1ROAD",
   "AUTH_OVERPASS"
  ],
- "pavement_groups": 1,
- "pavement_tris": 57776,
+ "pavement_groups": 3,
+ "pavement_tris": 66259,
  "off_route_tris": 0,
  "off_route_area_m2": 0.0,
  "off_route_by_group": {},
  "worst_off_route": [],
- "exemptions_used": {},
- "exemptions_declared": [],
+ "exemptions_used": {
+  "mouth_c14": 2473,
+  "mouth_c15": 2921
+ },
+ "exemptions_declared": [
+  "mouth_c14",
+  "mouth_c15"
+ ],
  "exemptions_unmeasured": [
   "c1_pad",
   "mouth_c12",
-  "mouth_c14",
-  "mouth_c15",
   "mouth_c16",
   "mouth_c18",
   "side_road_stubs",

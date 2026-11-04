@@ -529,6 +529,8 @@ V4_EXTRAS = {
         "ledger 0054 P3 repair round 3: an echo in ship_sd.sh, a step here",
     ("prep_prep", "ship: red repairs (tools/red_repairs_blend.py: the named kerb faces, the named ground slivers; self-checked)"):
         "ledger 0065: v4's named repairs of the standing reds",
+    ("prep_prep", "ship: the stacked-leg hold again on the prepped ground (tools/hold_stacked_blend.py; self-checked)"):
+        "ledger 0078 round 7: only where the draft step cutfill wrote data/cutfill.line.json (the Lariat port); never on Lake Murray",
     ("draft_bespoke", "author: the buildings pipeline's blocks in place of the assembler's boxes (tools/author_bespoke_blend.py: scenery.bespoke.blocks, self-checked)"):
         "ledger 0065: v4's 7,600 blocks (ship_sd.sh stands them only under SD_BESPOKE=1, an echo there)",
     ("ship_export_street", "ship: export the STREET-ONLY kn5 (the centre line, a chicane's island; the non-race layouts alone)"):

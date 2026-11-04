@@ -1,5 +1,5 @@
 {
-  "_doc": "The Lookout Mountain Lariat on Lake Murray v4's engine (ledger 0078 round 6): engine lm-v4, the intake from tracks/lookout-lariat, Lake Murray's assembler and fold weld, densify by the true warp, the strip seam, engine-july's prep / export, the live track's Drive-1 gates (road inventory, stacked legs, the verdict with Kevin's two-row force) + edge_report.",
+  "_doc": "The Lookout Mountain Lariat on Lake Murray v4's engine (ledger 0078 rounds 6-7): engine lm-v4, the intake from tracks/lookout-lariat, Lake Murray's assembler and fold weld, densify by the true warp, the ground graded to the road's section with the stacked legs held (cutfill, round 7), the junction pads C14 / C15 / C18 (lm_pads, round 7), the strip seam at local scope (round 7), the strip cut under AC's cap, engine-july's prep, the stacked-leg hold again on its ground (round 7, inside the prep step, after cutfill), the export, the live track's Drive-1 gates (road inventory, stacked legs, the verdict with Kevin's two-row force) + edge_report.",
   "track": "lookout-lariat-lm",
   "engine": "lm-v4",
   "workshop": "D:/k10-scratch",
@@ -13,6 +13,9 @@
       "weld_mouths",
       "densify_ribbon",
       "seat_edges",
+      "cutfill",
+      "lm_pads",
+      "strip_seam",
       "split_strip"
     ],
     "author": [],
@@ -65,7 +68,8 @@
       "data/road_inventory.json",
       "data/stacked_legs.json",
       "data/drive1_gates.json",
-      "data/edge_report.json"
+      "data/edge_report.json",
+      "data/pads.built.json"
     ],
     "map": [
       [
@@ -76,6 +80,5 @@
     "dirs": [
       "ai/{id}"
     ]
-  },
-  "_strip_seam_doc": "not on the Lariat (ledger 0078 round 6): its verge is 0.4 m, and strip_seam's bmesh joins scale with the whole terrain (a 25 km lap's 28,890 seam points did not finish in 25 minutes); a local seam is owed"
+  }
 }

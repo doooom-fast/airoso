@@ -364,6 +364,23 @@ copies of the same welded draft: 22 bespoke objects each (7,512 blocks at this d
 (371 data files, 43 objects by `tools/blend_digest.py`). The assembler and weld are untouched since the round-4 proof
 (46 / 46). The PC's step 5 (a) / (b) stands as written.
 
+### Round 6 (Mac): the strip seam on Sand Creek, Pueblo, Grand Junction and Aspen (0.1.1)
+
+`strip_seam` added after `seat_edges` in each port's ship.json; built by `tools/ship_track.sh` from an empty workshop: SHIP
+OK, every gate green, ground on top 0 on all four. At 1 m past the lane edge the strip is now the top surface on:
+
+| | 0.1.0 | **0.1.1** | kn5 0.1.1 | the rest of drive_test vs 0.1.0 |
+|---|---|---|---|---|
+| Aspen | 13.2 % | **99.6 %** | 7.8 MB (+0.3) | unchanged (kinks 13.26, severe 0, drops 0) |
+| Pueblo | 6.7 % | **100 %** | 10.6 MB (+0.6) | unchanged (kinks 8.01) |
+| Grand Junction | 19.7 % | **100 %** | 9.6 MB (+0.4) | unchanged (kinks 17.31) |
+| Sand Creek | 31.8 % (the PC's run) | **99.7 %** | 41.0 MB (+1.7) | unchanged, but far ledges 0 -> 1 (reported, not gated) |
+
+Sand Creek first refused: 366 of its 6,434 seam joins found no cut between the two vertices (a straight path through a
+terrain vertex). `tools/strip_seam_blend.py` now seats a midpoint seam vertex and joins the halves, up to `JOIN_DEPTH` 3
+levels [invented]: 24 misses (0.4 %, under the 1 % refusal). This changes the seam only where a join used to fail (High
+Plains 2, Milford 11, Pikes Peak 0, Nevada 0 misses in round 5); those ports' records stand as built at cf401bf / c36f023.
+
 ## PC runbooks
 
 **ENG**: never the live `D:\k10\engine-july`. Keep `D:/k10-scratch/eng_repro` (the repo-only v4 engine) clean; each build
@@ -412,6 +429,10 @@ Copies: `D:/k10-scratch/eng_sclm`, `eng_hplm`, `eng_nvlm`.
 4a. **High Plains 0.1.1 and Nevada 0.1.1** (round 5): the same commands as steps 2-4 from the new head, the same ENG copies
    (`eng_hplm`, `eng_nvlm`: no new texture; Nevada's run-off pads wear `building_*`, in REFERENCED.md5). They replace the
    0.1.0 ports in the same folders (`high_plains_lm`, `exotics_racing_lvms_lm`). Expect the Mac's 0.1.1 numbers (Round 5, above).
+4c. **Sand Creek, Pueblo, Grand Junction, Aspen 0.1.1** (round 6, after their 0.1.0 is installed from 29c1069): the same
+   commands from the new head, the same ENG copies (no new texture), replacing 0.1.0 in the same folders
+   (`sand_creek_raceway_lm`, `pueblo_motorsports_park_lm`, `grand_junction_lm`, `aspen_motorsports_park_lm`). Expect the
+   Mac's numbers (Round 6, above): everything as 0.1.0 except the strip on top at 1 m (~100 %) and kn5 +0.3-1.7 MB.
 4b. The round-4 circuits, the same way (an empty workshop is enough), one ENG copy each from `eng_repro` with the textures
    below (airoso's tracked `assets/textures`, md5-checked after the copy):
    - **Milford** (`milford-road-course-lm`, workshop `milford_lm`, ENG `eng_mflm`, installs as `milford_road_course_lm`):

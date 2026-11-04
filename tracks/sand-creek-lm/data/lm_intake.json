@@ -35,6 +35,9 @@
   "max_pct": 4.93
  },
  "profile": null,
+ "width_taper": null,
+ "resample": null,
+ "edge_on_wall": null,
  "grid_upsample": 2,
  "md5": {
   "source_centerline": "0bbfe1453bd32b4ae2cd637da3931e08",

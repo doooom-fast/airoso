@@ -22,6 +22,9 @@
   "points_moved": 22,
   "max_move_m": 0.33
  },
+ "width_taper": null,
+ "resample": null,
+ "edge_on_wall": null,
  "grid_upsample": 2,
  "md5": {
   "source_centerline": "2fed3478aee999f45e598619577b639c",

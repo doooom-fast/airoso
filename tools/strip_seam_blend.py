@@ -35,6 +35,7 @@ import mouth_weld as mw  # noqa: E402
 INSET_M = 0.05          # [invented] the seam this far inside the strip's outer lip: under the strip by construction
 CELL_M = 4.0            # face lookup grid
 MAX_MISS_SHARE = 0.01   # [invented] seam points that may miss (outside the terrain, a join that fails) before it refuses
+JOIN_DEPTH = 3          # [invented] midpoint levels a failed join may try (ledger 0078 round 6: Sand Creek, 366 failed joins)
 
 
 def main():
@@ -111,27 +112,44 @@ def main():
                 put(nf)
             verts.append(v)
         pairs = list(zip(verts, verts[1:])) + ([(verts[-1], verts[0])] if closed else [])
-        for a, b in pairs:
-            if a is None or b is None:
-                continue
+
+        def join(a, b, depth=0):
+            """join a and b with terrain edges; where bmesh finds no cut between them (a path through a vertex, a
+            sliver), seat a seam vertex at the midpoint and join the halves (up to JOIN_DEPTH levels)"""
             if any(b in e.verts for e in a.link_edges):
-                joined += 1
-                continue
+                return True
             try:
                 res = bmesh.ops.connect_vert_pair(bm, verts=[a, b])
             except Exception:                                  # noqa: BLE001
-                miss += 1
+                res = {}
+            if res.get("edges"):
+                for e in res["edges"]:
+                    for nf in e.link_faces:
+                        put(nf)
+                for v in (a, b):
+                    for nf in v.link_faces:
+                        put(nf)
+                return True
+            if depth >= JOIN_DEPTH:
+                return False
+            mx, my = (a.co.x + b.co.x) / 2.0, (a.co.y + b.co.y) / 2.0
+            f, z = locate(mx, my)
+            if f is None:
+                return False
+            res = bmesh.ops.poke(bm, faces=[f])
+            m = res["verts"][0]
+            m.co.x, m.co.y, m.co.z = mx, my, z
+            for nf in res["faces"]:
+                put(nf)
+            return join(a, m, depth + 1) and join(m, b, depth + 1)
+
+        for a, b in pairs:
+            if a is None or b is None:
                 continue
-            if not res.get("edges"):
+            if join(a, b):
+                joined += 1
+            else:
                 miss += 1
-                continue
-            joined += 1
-            for e in res["edges"]:
-                for nf in e.link_faces:
-                    put(nf)
-            for v in (a, b):
-                for nf in v.link_faces:
-                    put(nf)
     bmesh.ops.triangulate(bm, faces=[f for f in bm.faces if len(f.verts) > 3])
     if miss > MAX_MISS_SHARE * total:
         raise SystemExit(f"[strip-seam] FATAL: {miss} of {total} seam points missed the terrain or failed to join; "

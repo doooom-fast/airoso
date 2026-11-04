@@ -373,7 +373,7 @@ Kevin's answers (above): lamps = Lake Murray's, race kerbs, no sidewalks, author
 |---|---|---|
 | Lamps (D1) | **ready**: planned, wired, tested | a new planner for engine drafts; Lake Murray's author and fixture unchanged |
 | The 56th slip merge (0.34.0's 8 severe steps) | **ready**: `route.corner_flare_off` on the merge | a merge has no crossing pavement; the flare was the defect, not a stand-in for a pad |
-| Junction pads (D, decision 3) | **blocked: needs a new Blender author** | the pad tools serve Lake Murray's v021 scene only (below) |
+| Junction pads (D, decision 3) | **planned as inputs to the PC's engine-draft pad module** (the Lariat's, in progress) | Lake Murray's pad tools serve its v021 scene only; no third implementation (below) |
 | Race kerbs (D2) | **blocked: three decisions for Kevin** | `race_furniture` brings K-rail along both curbs of the whole lap and a closure kn5 (below) |
 | Signs (D3) | not started | not asked for in this round |
 
@@ -387,7 +387,7 @@ runs straight across. Picture: `tracks/sand-creek/source/dressing/junctions_over
 | node | station | lap street | built street(s) there | width as built / street's own | recommendation | why |
 |---|---|---|---|---|---|---|
 | v95 | 285 | North Colorado Boulevard | North Colorado Boulevard Frontage East (unclassified) | 16.5 / 16.5 m | **no pad** | Colorado Frontage East: a minor frontage-road mouth (T) on the straight; ribbon-through + butt weld (JUNCTIONS 2.0 A, rule 8) |
-| v116 | 347 | North Colorado Boulevard | East 50th Avenue (unclassified) | 17.3 / 17.3 m | **pad (with v139)** | E 50th Ave west: the west arm of the Colorado / 50th crossroads, 23 m before the turn; one pad with v139 |
+| v116 | 347 | North Colorado Boulevard | East 50th Avenue (unclassified) | 17.3 / 17.3 m | **pad (with v139), if the outline reaches it** | the grid piece the nearest OSM way names E 50th Ave, meeting the lap from the west 70 m before the turn: the Colorado / 50th pad takes it if its measured outline reaches that far |
 | v139 | 416 | North Colorado Boulevard | North Colorado Boulevard (primary), North Colorado Boulevard Frontage East (unclassified), North Colorado Boulevard Frontage West (unclassified) | 32.9 / 15.6 m | **PAD (required)** | Colorado Blvd → E 50th Ave: the lap turns at a crossroads; arms Colorado north, both frontage roads, 50th west |
 | v185 | 555 | East 50th Avenue | North Ash Street (unclassified) | 18.0 / 10.0 m | **PAD (required)** | E 50th Ave → N Ash St: the lap turns; Ash St runs on north as a grid street (a T) |
 | v410 | 1,231 | East 50th Avenue | East 50th Avenue (unclassified), North Dahlia Street (tertiary) | 18.9 / 10.4 m | **PAD (required)** | E 50th Ave → Dahlia St: the lap turns at a crossroads; arms Dahlia south, 50th east |
@@ -406,13 +406,13 @@ runs straight across. Picture: `tracks/sand-creek/source/dressing/junctions_over
 | v2725 | 8,183 | East 45th North Drive | North Forest Street (unclassified) | 7.5 / 7.5 m | **no pad** | N Forest St: a minor T |
 | v2791 | 8,381 | East 45th North Drive | East 46th Avenue (unclassified) | 7.5 / 7.5 m | **no pad** | E 46th Ave (unclassified, east): a minor T |
 | v2859 | 8,586 | East 46th Avenue | North Dahlia Street (tertiary) | 17.5 / 11.0 m | **no pad (ribbon-through)** | N Dahlia St crosses E 46th: a crossroads on the straight; B1's flare as the interim |
-| v3184 | 9,562 | East 46th Avenue Access | East 48th Avenue (tertiary) | 14.0 / 11.0 m | **pad (second wave)** | E 46th Ave Access → E 48th Ave: the lap turns (a 19.8 m corner flare); E 48th runs on east; not one of the six fillet corners (OSM draws it node by node) |
+| v3184 | 9,562 | East 46th Avenue Access | East 48th Avenue (tertiary) | 14.0 / 11.0 m | **pad (one with v3198)** | E 46th Ave Access → E 48th Ave: the lap turns (a 19.8 m corner flare); E 48th runs on east; not a fillet corner (OSM draws it node by node), 45 m from v3198 |
 | v3198 | 9,604 | East 48th Avenue | East 48th Avenue (tertiary), North Colorado Boulevard (primary), North Colorado Boulevard Frontage East (unclassified) | 32.9 / 11.0 m | **PAD (required)** | E 48th Ave → Colorado Blvd: the lap turns at a crossroads; arms Colorado south, the frontage, 48th west |
 | v207 | 621 | N Ash St | none | 18.0 / 10.0 m | **no pad** | Ash St -> E 50th Ave: the lap's own L-turn; no other street built there. Its 18 m corner flare stays (not a fillet corner). |
 
-The required six are the `route.fillet` corners (v139, v185, v410, v779, v1936, v3198). v116 is v139's west arm, so it
-joins that pad. v3184 (46th Ave Access -> 48th) is a turning T with a built arm and a 19.8 m corner flare; it is the
-seventh pad, second wave. Every straight-through crossroads (v558, v1902, v2316, v2581, v2859) keeps B1's junction flare
+The required six are the `route.fillet` corners (v139, v185, v410, v779, v1936, v3198). v116 joins v139's pad if
+the measured outline reaches it. v3184 (46th Ave Access → 48th) is a turning T with a built arm and a 19.8 m corner flare. Its node is 45 m
+from 48th → Colorado's and their boxes overlap, so the two are one pad (the table below), built when 48th → Colorado is. Every straight-through crossroads (v558, v1902, v2316, v2581, v2859) keeps B1's junction flare
 as the interim; the pros' answer there is topology A, not a pad.
 
 **Curb-return radii.** The six required corners' inside returns are 0073's NAIP reads (`route.fillet.corners[].curb_radius_m`:
@@ -440,6 +440,45 @@ without a real rewrite:
   deck. That is terrain and deck work beyond `author_junction_pad_blend`.
 - **What carries over:** `junction_pad`'s pure geometry (`outline_as_built`, `run_stations`, `fit_quadratic`,
   `screened_heights`, the ground guide) and `verify_pads`' checks on the built OBJ.
+
+**The path taken: Sand Creek's pads as inputs to the PC's engine-draft pad module, not a third implementation.**
+- No adapter over Lake Murray's `junction_pad` was started; the reasons are above.
+- The PC is writing a general topology-B pad module and Blender author step for the Lariat's three junction mouths. Its
+  inputs: an outline polygon from any source (the 2020 USGS lidar intensity edge), the lap's box rows, the cuts, and a deck
+  source (lidar class-2 ground). It removes the ribbon / shoulder / paint faces inside the outline and pulls the ground
+  under the deck.
+- The same 2020 DRCOG lidar (`CO_DRCOG_2_2020`, already read by `tools/lidar_crossfall.py` for Sand Creek's camber)
+  covers Commerce City. So Sand Creek's pads should be that module's second customer.
+
+What Sand Creek gives it, measured on 0.34.0's line (`route.corner_flare_off` on the slip only; the box rows are the lap
+vertices 30 m from each node, a first cut for rule 4's "7 m past the crossing edge"):
+
+| pad | node | lap box rows (in / out) | lap width there | grid arms to cut (piece, end) | inside return (0073, NAIP) |
+|---|---|---|---|---|---|
+| Colorado Blvd → E 50th Ave | v140 (-1507.9, 166.6) | v131 / v149 | 20.0 / 10.0 m | `grid_primary_51` end + `grid_primary_53` start (Colorado north), `grid_unclassified_9` end (frontage west), `grid_unclassified_10` start + `grid_unclassified_76` (frontage east); `grid_unclassified_96` end (v116, E 50th west) if the outline reaches it | 6 m |
+| E 50th Ave → N Ash St | v186 (-1364.0, 156.1) | v176 / v196 | 10.0 / 10.0 m | `grid_unclassified_17` start (Ash north) | 3 m |
+| E 50th Ave → Dahlia St | v411 (-759.4, 68.0) | v401 / v421 | 10.0 / 11.0 m | `grid_tertiary_44` end (Dahlia south), `grid_unclassified_0` end (50th east) | 3 m |
+| Dahlia St → E 56th Ave | v780 (-909.8, 1119.8) | v772 / v789 | 11.0 / 23.5 m | `grid_primary_35` end (56th west) | 15 m |
+| Sand Creek Dr S → Quebec St | v1942 (1795.4, -488.9) | v1932 / v1952 | 18.0 / 16.5 m | `grid_primary_78` end + `grid_primary_84` start (Quebec north) | 6 m |
+| E 46th Ave Access → E 48th Ave → Colorado Blvd (one pad: the two nodes are 45 m apart, their boxes overlap) | v3190 + v3205 (-1511.1, -297.4) | v3179 / v3215 | 11.0 / 16.5 m | `grid_tertiary_14` start (48th east), `grid_tertiary_98` end (48th west), `grid_primary_52` end + `grid_primary_49` start (Colorado south), `grid_unclassified_67` start (frontage east) | 4 m (48th → Colorado); v3190 not read |
+
+What the module would need to serve Sand Creek, beyond the Lariat's mouths:
+- **The lap is both main arms.** It is cut at two box rows and turns inside the pad, not a side mouth on a through ribbon.
+  Every sheet on it is cut between the rows: `1ROAD_main`, `1ROAD_shoulder` (which runs on down the embankment), its
+  underside `SHOULDERUND`, `MARKINGS`, and `YLINE` (the street-only kn5's centre line, ledger 0063).
+- **Grid arms are separate `1ROAD_grid_*` objects.** Each ends on the lap (`grid_connectors` keeps one on-lap point, and
+  `build_mesh` levels that end onto the lap), so each is cut at its own straight line and welded to the deck.
+- **The edge is a shoulder, not a curb** ("no sidewalks"). The pad's edge is the asphalt edge plus the shoulder drape, no
+  `1KERB_sidewalk_pad`.
+- **The flares must be off before the mesh.** Each pad, when it lands, adds its node to `route.corner_flare_off` (`why:
+  "pad"`). Then the widths, the grid's on-lap ends (they follow the lap's half width) and the ribbon are drafted without
+  the corner fan the pad replaces.
+- **The deck meets the lap's camber only at the slip,** which needs no pad. No other declared crossfall span touches a pad
+  node.
+- **The gates:** the pads' faces as road-inventory exemptions (as for the Lariat), and `verify_pads`' single-coverage and
+  seam checks on the built OBJ if the module writes `pads.built.json` in its shape.
+- **Picture:** the corners' outlines are drawn in `source/dressing/corner_*.png` from the lap and grid edges. The lidar
+  edge is the module's input; it is not traced here.
 
 The opt-out that hands a corner to a pad is written and tested: `route.corner_flare_off` (below). It is **not** set on the
 six corners, because without a pad it would leave each crossroads' outside corner unpaved. The pictures
@@ -641,5 +680,5 @@ bash tools/ship_track.sh sand-creek
 
 **5. What the PC cannot do from this runbook alone.**
 
-- The pads: they need a new Blender author for engine drafts (above).
+- The pads: they wait for the PC's engine-draft pad module (the Lariat's mouths). Sand Creek's inputs are in the table above.
 - The race kerbs: they need Kevin's decisions A, B and C (above).

@@ -1,7 +1,7 @@
 ---
 id: 0075
 title: San Diego freeway, first chain run red - five mechanisms, diagnosed, not fixed
-status: in-progress — five engine fixes, opt-in, proven on the Mac's network draft (audit green; drive_test red on one line-start artefact, see the second addendum); a PC build and Kevin's drive close it
+status: in-progress — four opt-in engine switches (walls.seat seated, join_nodes, stable_snap, cap_dead_ends) + two config changes (terrain east, capture.bridges), proven on the Mac's network draft: drive_test and audit both exit 0 (third addendum); a PC build and Kevin's drive close it
 scope: tracks/san-diego-freeway (scripts/geometry/build_network_mesh.py, scripts/elevation/network_elev.py, scripts/geometry/drive_test.py)
 layer: engine (network draft) + one gate note
 train: -
@@ -263,3 +263,65 @@ greedy snap is the cause:
 - kn5_ground_check.
 - The underlay into `loop.blend`.
 - Kevin's drive of I 8, and of the unjudged network.
+
+## Third addendum 2026-11-03: dead-end caps and the declared decks (the coordinator's two decisions); drive_test green
+
+The coordinator decided the second addendum's two questions, and neither touches a gate:
+- **(a)** cap the network's dead ends, under Kevin's JUNCTIONS 18(d): "a road we are not completing gets a barrier, not a
+  curve";
+- **(b)** declare the real viaduct spans in `capture.bridges`, project config, as every other track does.
+
+**(a) `network.cap_dead_ends`** (`build_network_mesh._cap_wall`; `network_reference._trim_capped`):
+- **What gets capped.** Every freeway edge end no other edge shares ends in a closed stub: a barrier across the
+  carriageway 2 m inside the ribbon's end, joining both side barriers, with the pavement running on behind it. The
+  bbox cut I 8 off at both ends, and the same holds at every other bbox edge and at every ramp that led to a surface
+  street.
+- **How the gates read it.**
+  - The barriers are `1WALL_STUB_cap_*`, declared in `data/stubs.built.json` the way Lake Murray's phase-5 stub
+    barriers are, so audit D reads them as stub barriers: 6,180 vertices on 156 footprints, D 0.
+  - They are recorded in `data/network.caps.json`. From it `network_reference` starts and ends the line 10 m inside a
+    cap, past drive_test's 6.3 m corridor disc: I 8 starts 12.2 m and ends 13.0 m inside its caps.
+  - The gate's end guard is unchanged.
+- **Counts.** 156 caps. 39 were moved in off a deck to the edge's last at-grade vertex (a road cut mid-viaduct).
+- **22 ends are left open**, listed in `network.caps.json` "uncapped" with the reason: their edge has no at-grade vertex
+  at all (deck or a high span end to end). That includes the I 5 mainline cut by the bbox on a 5 m deck (edge 263,
+  18 m wide). A cap ON a deck is more than the stub rule gives.
+  - Tried once: audit E then read 3 mid-carriageway columns of the 18 m I 5 cap as floating. E measures against the
+    nearest road VERTEX within 4.5 m, and a ribbon has vertices only at its edges.
+  - Reverted. Those 22 are an authoring item.
+
+**(b) `capture.bridges`** (track.config.json): network_reference's six I 8 spans, each checked against the line's own
+deck lift (1.00-11.19 m along every span) and the OSM bridge layers under it (1, or 2-3 on the 3,002-3,463 m stack):
+
+| id | centre m | length m | lift m | OSM layers |
+|---|---|---|---|---|
+| i8eb_deck_1190 | 1,282.8 | 185.2 | 1.10-4.07 | 1 |
+| i8eb_deck_2982 | 3,222.7 | 480.4 | 1.36-11.19 | 2, 3 |
+| i8eb_deck_3598 | 3,665.6 | 135.2 | 1.00-1.69 | 1 |
+| i8eb_deck_6581 | 6,654.0 | 145.2 | 1.05-2.28 | 1 |
+| i8eb_deck_6884 | 6,969.5 | 170.3 | 1.03-3.87 | 1 |
+| i8eb_deck_7130 | 7,189.9 | 120.1 | 1.33-1.52 | 1 |
+
+The stations are this draft's. A net step on changed live OSM moves them: re-read `bridge.spans.auto.json` after one
+and re-declare (the config's `capture._doc` says so).
+
+**Re-gated on the Mac** (final row of `data/mac_draft_gates.log`):
+
+| | floating | soft top | severe (/km) | daylight | excursions | obstructed | D | E | J |
+|---|---|---|---|---|---|---|---|---|---|
+| 4: stable_snap (second addendum's final) | 0 | 5 | 37 (3.47) | 0 | 9 | 0 | 0 | 0 | 0 |
+| 5: + caps + capture.bridges | **0** | **0** | 16 (1.50) | **0** | **6** | **0** | 0 | 0 | 0 |
+
+- **drive_test exits 0.** The caps alone already passed (soft top 0, excursions 9); the declared decks took excursions
+  9 → 6.
+- **audit exits 0:** A-K 0 but C 8 and K 2, which do not gate.
+- **The 6 excursions left are all off any bridge:** 0.12-0.29 m shoulder and median-fill ledges at 1,651, 5,704 (two),
+  5,854 and 7,650 m, and a 0.79 m one at 3,905 m (offset -12.5, past the far edge of a median strip).
+- **Defaults stay byte-identical** without the key (no `network.caps.json`): checked by md5 on `track.obj`,
+  `finished_centerline.json`, `dummies.json` and `network.reference.json`.
+
+**What a PC build still has to show**, unchanged:
+- the chain through prep, export and kn5, gated on the BUILT gate OBJ (D and J scale with per-corner vertices; the
+  stub exemption keys on `1WALL_STUB_*` names, which the underlay keeps as object names);
+- verify_kn5 on the face-up `1KERB_deckedge`, then kn5_ground_check and the underlay;
+- Kevin's drive.

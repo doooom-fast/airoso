@@ -11,6 +11,7 @@ run | floating_furniture | soft_top_in_lane | severe_steps | severe_per_km | day
 2 + terrain east -117.115 | 1 | 107 | 92 | 8.62 | 0 | 11 | 9 | 36.36 | 10.4 | 10669.7 | True | 0 0 9 0 0 0 34 0 0.0
 3 + network.join_nodes | 1 | 98 | 46 | 4.31 | 0 | 13 | 4 | 30.55 | 11.81 | 10669.7 | True | 0 0 9 0 0 0 6 0 0.0
 4 + network.stable_snap | 0 | 5 | 37 | 3.47 | 0 | 9 | 0 | 29.92 | 14.35 | 10661.1 | True | 0 0 8 0 0 0 2 0 0.0
+5 + network.cap_dead_ends + capture.bridges (final) | 0 | 0 | 16 | 1.5 | 0 | 6 | 0 | 30.09 | 16.45 | 10635.9 | False | 0 0 8 0 0 0 2 0 0.0
 
 === final draft: network_elev
 sampling 3DEP for 45990 edge vertices across 563 edges ...
@@ -28,9 +29,11 @@ network elevation done: {'z_min_m': 1.0, 'z_max_m': 135.1, 'range_m': 134.1, 'gr
   (track grass clear skipped: string indices must be integers, not 'str')
   walls (seated): 563 freeway edges — 31916 deck / 50368 at-grade barrier vertices, 6664 gapped over other pavement or a crossing, 825 deck-edge quads clipped
   verge (seated): 4030 shoulder tris dropped over a neighbouring edge's pavement
+  dead-end caps: 156 barriers across dead ends (39 moved in off a deck to the last at-grade vertex; 22 ends left open, no at-grade vertex on their edge: data/network.caps.json 'uncapped'; 5 merge-trimmed ends skipped)
   reference-line input: 563 swept edge lines -> data/network.edges.local.json
-network mesh: {"edges": 563, "vertices": 1092670, "triangles": 1485502, "road_groups": 4, "grass_groups": 35, "viaducts": 735, "viaduct_groups": 7, "grid": "543x665", "dummies": 10, "origin_lonlat": [-117.17487, 32.784595], "elev0_m": 1.0}
-AUDIT san_diego_freeway   (roads 82282v, grass 371252v, walls 151152v, piers 2472)
+network mesh: {"edges": 563, "vertices": 1098850, "triangles": 1497238, "road_groups": 4, "grass_groups": 35, "viaducts": 735, "viaduct_groups": 7, "grid": "543x665", "dummies": 10, "origin_lonlat": [-117.17487, 32.784595], "elev0_m": 1.0}
+  (phase-5 stub barriers: 6180 1WALL_STUB verts on 156 declared footprint segments — D exempt there)
+AUDIT san_diego_freeway   (roads 82282v, grass 371252v, walls 157332v, piers 2472)
   A. supports standing in a road : 0
   B. terrain poking through road : 0  (worst +0.0 m)
   C. at-grade junction crossings : 8  ({'ramp': 8, 'mainline': 0})
@@ -47,44 +50,40 @@ AUDIT san_diego_freeway   (roads 82282v, grass 371252v, walls 151152v, piers 247
   J. terrain triangles over road : 0
   => 10 issues
 
-=== final draft: drive_test (exit 1: soft top 5, the line's first station on the ribbon's end row)
-  [drive] corridor cull: skipped 450492 triangles beyond 120 m
+=== final draft: drive_test (exit 0)
+  [drive] corridor cull: skipped 450484 triangles beyond 120 m
   layout freeroam: direction forward, kind street, furniture none, OBJ data/track.obj
-DRIVE TEST san_diego_freeway [freeroam forward street]  lap 10.66 km  (10 wheel paths @ 1.0 m)
-  ground on top mid-lane : 5
+DRIVE TEST san_diego_freeway [freeroam forward street]  lap 10.64 km  (10 wheel paths @ 1.0 m)
+  ground on top mid-lane : 0
   floating furniture (walls/fences off support): 0 
   undrivable corners (>100deg @ <11m): 0 
-  severe steps (>6 cm)  : 37
-  bumps >2.5 cm /km      : 14.35 (limit 75 for tarmac)
-  slope kinks >3.0%% /km   : 29.92
+  severe steps (>6 cm)  : 16
+  bumps >2.5 cm /km      : 16.45 (limit 75 for tarmac)
+  slope kinks >3.0%% /km   : 30.09
   daylight gaps at edges : 0
-  off-road excursion drops>20cm : 9  (far flare ledges, reported: 66)
-    worst excursion drop: (6901.6, -13.0, 12.12, False)
-    worst excursion drop: (3154.8, -7.0, 9.99, True)
-    worst excursion drop: (3304.9, -7.0, 9.99, True)
-    worst excursion drop: (3450.1, -8.5, 7.43, False)
-    worst excursion drop: (1352.5, -6.5, 4.99, False)
-    worst excursion drop: (1352.5, 6.5, 4.85, False)
+  off-road excursion drops>20cm : 6  (far flare ledges, reported: 53)
+    worst excursion drop: (2852.4, 8.5, 1.79, False)
+    worst excursion drop: (6751.6, -14.0, 1.72, False)
+    worst excursion drop: (3904.5, -12.5, 0.79, True)
+    worst excursion drop: (4953.1, -12.5, 0.7, False)
+    worst excursion drop: (10350.5, 12.5, 0.62, False)
+    worst excursion drop: (10050.2, -12.5, 0.57, False)
   obstructed stations    : 0
-    worst soft_top: (0.0, 0.75, '1GRASS_380_95')
-    worst soft_top: (0.0, 1.64, '1GRASS_380_95')
-    worst soft_top: (0.0, 3.14, '1GRASS_380_95')
-    worst soft_top: (0.0, 2.33, '1GRASS_380_95')
-    worst soft_top: (0.0, 3.18, '1GRASS_380_95')
-    worst severe: (2.0, 0.75, 0.828)
-    worst severe: (2.0, 1.64, 0.816)
-    worst severe: (2.0, 3.14, 0.796)
-    worst severe: (3324.0, 2.86, 0.352)
-    worst severe: (3323.0, 2.86, 0.349)
-    worst severe: (3347.0, 0.75, 0.28)
-  NETWORK: walked the reference line 'I 8 eastbound' (edges [200, 141, 143, 411, 242, 243, 542, 447, 446, 530, 531, 373, 372, 299, 298, 547, 504, 358, 357, 548]), 10.661 of 225.732 km built — UNJUDGED by this gate: 543 edge(s), 215.082 km (data/network.reference.json)
+    worst severe: (3312.0, 2.86, 0.352)
+    worst severe: (3311.0, 2.86, 0.349)
+    worst severe: (3335.0, 0.75, 0.279)
+    worst severe: (3334.0, 0.75, 0.275)
+    worst severe: (3341.0, -0.75, 0.216)
+    worst severe: (3342.0, -0.75, 0.216)
+  NETWORK: walked the reference line 'I 8 eastbound' (edges [200, 141, 143, 411, 242, 243, 542, 447, 446, 530, 531, 373, 372, 299, 298, 547, 504, 358, 357, 548]), 10.636 of 225.732 km built — UNJUDGED by this gate: 543 edge(s), 215.082 km (data/network.reference.json)
     ... 503 more in data/network.reference.json
-  => FAIL   (data/drive_test.freeroam.json)
+  => PASS   (data/drive_test.freeroam.json)
 
-DRIVE TEST SUMMARY san_diego_freeway: freeroam=FAIL   (data/drive_test.json)
+DRIVE TEST SUMMARY san_diego_freeway: freeroam=PASS   (data/drive_test.json)
 
 === final draft: audit_mesh (exit 0)
-AUDIT san_diego_freeway   (roads 82282v, grass 371252v, walls 151152v, piers 2472)
+  (phase-5 stub barriers: 6180 1WALL_STUB verts on 156 declared footprint segments — D exempt there)
+AUDIT san_diego_freeway   (roads 82282v, grass 371252v, walls 157332v, piers 2472)
   A. supports standing in a road : 0
   B. terrain poking through road : 0  (worst +0.0 m)
   C. at-grade junction crossings : 8  ({'ramp': 8, 'mainline': 0})

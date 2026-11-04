@@ -171,3 +171,83 @@ Expected differences on a redraft (each listed in the run's report, none a gate 
   `red_repairs_blend` reports what it could not find; a red that returns is listed, not forced;
 - the race furniture and AI lines are re-authored every ship anyway (the same plans: see above);
 - Track OBJ and gate JSON comparisons stay exact where the geometry did not move.
+
+### PC, 2026-11-03: v4 rebuilt from the repo, and 0.20.1 installed (textured houses)
+
+**The coverage trace.** v4's chain was run from the prep on a copy of `lm_v4` (`eng_rehearsal`, a fresh worktree at 43f330f),
+with a Python audit hook in every Blender process and every system-Python step. Every engine-july file it loaded was in the
+snapshot:
+- 18 code files in MANIFEST.md5;
+- 17 textures in REFERENCED.md5, md5-equal and byte-identical in airoso's tracked `assets/textures`;
+- 3 EXCLUDED `kn52fbx` binaries, zipped with the import add-on and never launched (0 subprocess calls). airoso's `vendor/`
+  carries identical copies.
+
+The run read nothing from `D:\k10\engine-july`, `k10-sd-v021`, `lm_v4`, the main checkout, the archive or AC.
+
+`D:/k10-scratch/eng_repro` is that engine from the repo alone: the snapshot's 23 files, plus 50 REFERENCED textures and the 3
+binaries, each copied from airoso only where its md5 equals the manifest's. 4 REFERENCED textures differ in airoso
+(pine_leaves, poplar_bark, poplar_leaves, street_lamp_new); v4 never opens them.
+
+**Not bit-stable.** The same workshop rebuilt from the prep gives new kn5 md5s. Every differing byte is a vertex tangent, off
+by at most 5.7e-7. The test of "the same build" is therefore `tools/kn5_equiv.py` (fleet/GATES-CHANGELOG 2026-11-03).
+
+**The repro.** A workshop seeded only from the branch, `--skip-blend` on `loop.blend` 3d840db1, `ENG=eng_repro`. It parts
+at the prep, on three files that lived only in the workshop, in this order:
+1. `data/terrain.refine.json.gz`: the prep's kept-cell refinement. Without it, 1GRASS has 714,850 vertices against 817,802.
+2. `data/terrain.tiers.json.gz`: the thin step, and rib_check, which crashes without it.
+3. `data/red_repairs.plan.json`: the red repairs (63 kerb faces, 401 ground vertices).
+
+Reseeded with exactly those three (md5 below), every kn5 is kn5_equiv-equivalent to v4's (the spawns byte-identical), and
+every gate JSON is equal. The only exceptions:
+- the trees, because the TreeFX models were absent;
+- race_authored's bridge seating 328 -> 324, from the branch's stale `data/bridge.spans.auto.json`.
+
+**What a repo-only v4 needs** (all on `claude/lm-v4-0.20.1`, all in ship.json's sync lists):
+
+| file | bytes | md5 |
+|---|---|---|
+| `data/terrain.refine.json.gz` | 772,742 | 4ae505bcf9497c4f01614d0638d14411 |
+| `data/terrain.tiers.json.gz` | 4,584,424 | 92a3a4a93973473d65b86a0b7666f9b8 |
+| `data/red_repairs.plan.json` | 2,414 | 91c26b9ec5f6d62b806785335bf5742e |
+| `data/bridge.spans.auto.json` (v4's; the repo's was a span stale) | 56 | 2c9d72977d0a275ab4bfb2ffd3086ec5 |
+| `data/scatter_positions.json` (palms 890, trees 408, scrub 983, median planting 1,102: without it TreeFX plants 17,728 of 21,111) | 251,317 | 6c9ff7acd3aa05ce716caea86d580390 |
+
+The TreeFX models are deliberately outside git: `source/trees/*.bin`, 16 files, personal use, never published. A second copy
+is at `D:/k10-track-archive/treefx-lake-murray-2026-11-03/`, with `MANIFEST.md5` (md5 of the manifest
+1721fe6444f8b6a740b2993512c3b431) and a do-not-publish README. Both copies are on this PC's D: drive only.
+
+**0.20.1** (Kevin, 2026-11-03: "Add textures"):
+- Base: `claude/lm-v4-line` 123a8b3, with the house textures through `sync_in.assets` and `texture_overrides`.
+- `ENG=eng_repro`, `--skip-blend` on 3d840db1, the workshop seeded from this branch plus the archived TreeFX models.
+- One clean run from a fresh workshop: `D:/k10-scratch/lm_v4_0201`.
+
+The road kn5 by kn5_equiv: *"textures only: added [metal_wall_diffuse.jpg, metal_wall_normal.jpg, roof_dark_diffuse.jpg,
+roof_tan_diffuse.jpg, roof_white_diffuse.jpg, shingle_roof_diffuse.jpg, stucco_wall_diffuse.jpg, stucco_wall_normal.jpg,
+tiltup_wall_diffuse.jpg, tiltup_wall_normal.jpg], removed [], changed []; materials and geometry equivalent"*. 128 materials,
+the same slots; 17 -> 27 embedded textures. ROOFTOP_SHINGLE_0 has 27,728 -> 27,729 vertices: one corner the exporter left
+unmerged because its tangent is 6e-8 apart. Every triangle corner's position, normal and UV is identical and in order.
+
+The rest of the proof:
+- `_race`, `_street` and the closures are kn5_equiv-equivalent; the three spawns are byte-identical.
+- The house gate: roofs 7,600 / blocks 7,600 / colliders 275, PASS.
+- Every gate JSON equals 0.20.0's: drive_test x3, audit x3, kn5_ground x3, house_seat, no_route x2, verify_mouths / pads /
+  stubs / fold_fans, rib_check, race_verify.scenery. Street excursion drops are 96 (Kevin's 0.20.0 "Force", the same count),
+  far ledges 107, severe 0.
+- One author-time count differs: race_verify.json's scenery reads 21,171 trees against 21,111. In a fresh workshop no gate
+  OBJ exists when the author phase runs, so its tree plan skips the built-surface guard: rock 10, walk 2 and building 48 =
+  the 60.
+- The shipped trees.txt, the AI lines and every other track-folder file are byte-identical to 0.20.0's; only the kn5s and the
+  version strings differ.
+- `loop.blend` stays 3d840db1, the input. The author phase re-saves it (0dbbe67a) with no change that reaches a kn5.
+
+**Installed** over `san_diego_lake_murray_v4`; 0.20.0 is parked in `D:/k10-track-archive/2026-11-03_214339/`. ship.json's
+workshop is `lm_v4`, kept untouched, so `tools/ship_track.sh`'s install block was replayed by hand, as for 0.19.4: refuse
+while acs.exe runs, park, copy, the ui_name_prefix names.
+
+The installed road kn5 is 0a0b2342454e, 107,371,925 B (+236 KB). The clean run's kn5s are kn5_equiv-equivalent to the
+installed ones.
+
+Stills are in `tracks/san-diego-lake-murray/source/stills/houses_{0200_before,0201_after}_{1,2,3}.jpg`: Blender workbench
+renders of the shipped road scene, with the same three cameras for 0.20.0 and 0.20.1. Before, the houses are grey shells;
+after, stucco walls with windows, shingle / white / tan roofs, tilt-up panels and ribbed metal. They are not in-game shots.
+Not driven yet.

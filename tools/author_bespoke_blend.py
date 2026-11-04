@@ -44,8 +44,9 @@ y = N, z = up). The collection is emptied first, so the tool is idempotent, and 
   names       {"ground": [...], "far": [...], "paved": [...], "track_edge": [...], "cone_ground": [...], "walls": [...]}: the scene's
               mesh-name prefixes where they are not the chain's (Lake Murray at the author stage: TERRAIN, GRASS_FAR, ROAD, CURB;
               the prep renames them to 1GRASS / 1ROAD / 1KERB later). Defaults = the chain's names below
-  rails       [{"key", "kind": "tecpro" | "krail", "polyline_lonlat", "auto"}]: collidable module lines seated on the ground ->
-              1WALL_TECPRO_<k> / 1WALL_KRAILBW_<k>; "auto" leaves a module out when it would stand on a road, instead of refusing
+  rails       [{"key", "kind": "tecpro" | "krail", "polyline_lonlat", "auto", "height_m"}]: collidable module lines seated on
+              the ground -> 1WALL_TECPRO_<k> / 1WALL_KRAILBW_<k>; "auto" leaves a module out when it would stand on a road,
+              instead of refusing; "height_m" (optional): a measured height over the ground, in place of the kind's
 
 SELF-CHECKS, exit 1 and loop.blend NOT saved: a building's footprint (ring + interior) and every scrub foot off every road
 and kerb; every cone foot off the main road; a building at least BUILDING_CLEAR_M from the road and any wall; ground under every read; no AC_* touched.
@@ -981,6 +982,7 @@ def rails(col, spec, to_xy, ground, paved, bad):
     for k, r in enumerate(spec):
         line = [to_xy(p) for p in r["polyline_lonlat"]]
         prefix, hgt, mod, dep = RAIL_KINDS[r["kind"]]
+        hgt = float(r.get("height_m", hgt))      # a measured height (ledger 0078: Pikes Peak's wall off the lidar)
         verts, faces, uvs = [], [], []
         arc_total, modules, left_out = 0.0, 0, 0
         for a, b in zip(line, line[1:]):

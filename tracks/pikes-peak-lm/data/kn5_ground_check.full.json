@@ -10,14 +10,14 @@
   "walls": {
    "objects": 1,
    "no_ground_pct": 0.0,
-   "median_m": -1.881,
-   "p95_m": -1.881,
+   "median_m": -1.813,
+   "p95_m": -1.813,
    "hovering": 0
   }
  },
  "road_over_ground": {
   "over": 0,
-  "samples": 1218,
+  "samples": 1211,
   "p95_m": 0.02,
   "max_m": 0.021
  }

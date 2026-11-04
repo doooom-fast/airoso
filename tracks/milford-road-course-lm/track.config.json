@@ -301,9 +301,9 @@
       -83.667269
     ],
     "_orientation_doc": "Clockwise, per the OSM oneway tags on every raceway way here (unverified against onboard video). S/F on the 16 m west front straight about 2/3 of the way up, raced north; the grid sits on the ~250 m of straight behind it. The lap: west straight N -> NW corner -> right-hand hairpin off the apron -> esses south -> U-turn -> north -> east into the serpentine round the woods -> top straight E -> NE corner -> east side S -> sweeping bottom W -> SW corner. Unused pavement (later layouts over this kn5): the inner hairpin short-cut, the top-straight bypass, the SE back section + cross-connector + hook.",
-    "smooth_sigma_pts": 2.0,
+    "smooth_sigma_pts": 4.0,
     "smooth_passes": 2,
-    "smooth_sigma_y_pts": 1.5,
+    "smooth_sigma_y_pts": 3.0,
     "divided_double": false,
     "lane_dividers": false,
     "edge": {
@@ -315,7 +315,13 @@
       "grass_clearance": 0.05,
       "_doc": "the circuit edge (ledger 0078): no curb, no sidewalk. The asphalt edge is held at road height for 0.30 m and the run-off ground meets it 0.15 m lower over 1.0 m [invented: the flush meet the drive gate reads as no drop]; the ground beyond is the assembler's conform to the road, then the 3DEP surface: the real run-off level."
     },
-    "crossfall_file": "data/crossfall.lm.json"
+    "crossfall_file": "data/crossfall.lm.json",
+    "densify": {
+      "measure": "warp",
+      "max_cols": 24,
+      "_doc": "ledger 0078 round 5: the true out-of-plane warp, not the crease formula (which read the s 984-992 corner's 105 mm warp as 16 mm and a planar trapezoid at s 2,588 as 177 mm); up to 24 columns [invented] so the worst column is under 5 mm"
+    },
+    "_smooth_doc": "doubled with lm_intake.resample_m 1.5 (the trace's 3 m): the same smoothing in metres"
   },
   "terrain_cell_m": 1.25,
   "terrain_vertex_budget": 1500000,
@@ -359,7 +365,11 @@
     "profile": "uncapped",
     "crossfall": "source/lidar/camber-survey/crossfall.json",
     "grid_upsample": 2,
-    "_doc": "the measured profile (the elevation stage's cap undone), the G10 lidar camber, the 40 m 3DEP grid pre-divided to 20 m (the same samples)"
+    "_doc": "the measured profile (the elevation stage's cap undone), the G10 lidar camber, the 40 m 3DEP grid pre-divided to 20 m (the same samples)",
+    "width_taper": 0.1,
+    "_width_taper_doc": "ledger 0078 round 5: the traced width jumps in one station at the gores (s 2,604: 12.2 -> 21.7 m); on the lidar bank drive_test's width-relative wheel paths re-seated across the slope there. Tapered at 0.1 m per m a side [invented: drive_test sets a wheel path from the width at the nearest line point (3 m), so a 0.3 m re-seat across a 10 % bank reads 3 cm in one 1 m sample: under the 3 % kink line]; widening only",
+    "resample_m": 1.5,
+    "_resample_doc": "ledger 0078 round 5: rows every 1.5 m, not the trace's 3 m, so the s 990 corner's grade turns (R 15 m on -13.8 %) land half as hard on each row boundary; the line re-cut linearly, the smoothing doubled in points (the same in metres)"
   },
   "terrain": {
     "terrain_band_m": 22.0,

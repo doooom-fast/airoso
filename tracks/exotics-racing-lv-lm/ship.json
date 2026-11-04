@@ -13,6 +13,7 @@
       "weld_mouths",
       "densify_ribbon",
       "seat_edges",
+      "strip_seam",
       "kerbs"
     ],
     "author": [

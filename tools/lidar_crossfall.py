@@ -155,12 +155,17 @@ def roll_worst(st: list[float], tilt: list[float], lap: float, window_m: float =
 
 def line_points(project: Path, cfg: dict) -> tuple[list[tuple[float, float]], str]:
     """(east, north) of the line the road is swept over, and which file it came from. finished_centerline.json is in
-    the kn5 frame (x, y, -z of the local ENU frame, x mirrored with ``mirror_x``); centerline.local.json is ENU."""
+    the kn5 frame (x, y, -z of the local ENU frame, x mirrored with ``mirror_x``) once the PC prep has run, and in
+    build_mesh's own mesh frame (x, y, z: z = north, x mirrored with ``mirror_x``) straight after a draft, which its
+    ``frame`` names (ledger 0073: a Mac draft read as kn5 put every station on the line's mirror image north-south);
+    centerline.local.json is ENU."""
     data = project / "data"
     fin = data / "finished_centerline.json"
     if fin.exists():
         sx = -1.0 if cfg.get("mirror_x") else 1.0
-        return [(sx * p[0], -p[2]) for p in json.loads(fin.read_text(encoding="utf-8"))["points_xyz_m"]], fin.name
+        fc = json.loads(fin.read_text(encoding="utf-8"))
+        sz = 1.0 if str(fc.get("frame") or "").startswith("mesh") else -1.0
+        return [(sx * p[0], sz * p[2]) for p in fc["points_xyz_m"]], fin.name
     lc = json.loads((data / "centerline.local.json").read_text(encoding="utf-8"))
     return [(p[0], p[2]) for p in lc["points_xyz_m"]], "centerline.local.json"
 
@@ -204,8 +209,9 @@ def fetch_fits(ept_url: str, origin: dict, sts, log=print) -> list:
     import laspy
     from pyproj import Transformer
     from scipy.spatial import cKDTree
+
     def get(url):
-        with urllib.request.urlopen(url, timeout=180, context=https_context()) as r:   # the TLS rule reads the call itself
+        with urllib.request.urlopen(url, timeout=180, context=https_context()) as r:
             return r.read()
     ept = json.loads(get(ept_url))
     base = ept_url.rsplit("/", 1)[0]

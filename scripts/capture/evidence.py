@@ -245,7 +245,12 @@ def level_bridge_decks(points_xyz: list[Vertex], bridges: list[tuple[float, floa
     the 'corkscrew narnia'). A declared bridge is a positive geometric fact: over its span the deck is a
     straight interpolation between the APPROACH heights just outside the span, blended in with a
     raised-cosine ramp so it meets the grade smoothly. Result: the road decks over the creek accurately
-    instead of diving into it. No capture needed."""
+    instead of diving into it. No capture needed.
+
+    Station frame: arc length along ``points_xyz`` as build_mesh passes them, the DRAFT line
+    (centerline.local.json), before corner rounding and smoothing. The finished line is shorter (Sand Creek:
+    14 m by the E 56th bridge, 23 m by the lap's end), and the gates read the same ``center_m``/``len_m`` on
+    the finished line. A measured deck (``profile_m``, apply_deck_profiles) is keyed to the finished line."""
     n = len(points_xyz)
     if n < 2 or not bridges:
         return [tuple(p) for p in points_xyz]
@@ -276,6 +281,101 @@ def level_bridge_decks(points_xyz: list[Vertex], bridges: list[tuple[float, floa
                 # centerline smoothing pass rounds the small grade breaks at the crests.
                 pts[i][1] = ya + (yb - ya) * (S[i] - a) / max(1e-9, b - a)
     return [tuple(p) for p in pts]
+
+
+DECK_PROFILE_RAMP_M = 20.0   # [invented] raised-cosine hand-back to the road outside a measured profile
+
+
+def deck_profiles(cfg: dict) -> list[dict[str, Any]]:
+    """The MEASURED deck profiles declared on ``capture.bridges[].profile_m`` (opt-in, per bridge), as
+    ``[{"name", "profile": [(station_m, height_m), ...], "ramp_m"}]``. Bridges without one are left out, and
+    a config with none returns ``[]``, which every caller treats as "change nothing".
+
+    ``profile_m`` is ``[[d_m, height_m], ...]``: ``d_m`` is metres from the bridge's START, ``center_m -
+    len_m / 2``, along the FINISHED line (the corner-rounded, smoothed line build_mesh sweeps the road over
+    and writes to ``data/finished_centerline.json``, the frame the gates, the lidar crossfall and the
+    road_profile dips are keyed to), strictly increasing, negative before the start (an approach point).
+    Keyed to the start, a line change re-keys the whole deck by moving ``center_m``. Heights are absolute, in
+    the elevation source's vertical datum (``y + origin elev_m``), as a source-lidar survey reads them: they
+    are the real road's and do not change with the line. ``profile_ramp_m`` (default DECK_PROFILE_RAMP_M) is
+    how far outside each end the road is eased to meet the profile. The returned ``profile`` is in absolute
+    finished-line stations. Note level_bridge_decks reads ``center_m``/``len_m`` on the draft line
+    (centerline.local.json), not this one; see that function."""
+    out = []
+    for b in ((cfg.get("capture") or {}).get("bridges") or []):
+        prof = b.get("profile_m")
+        if not prof:
+            continue
+        if "center_m" not in b or "len_m" not in b:
+            raise ValueError(f"capture.bridges {b.get('name', '?')}: profile_m is measured from the bridge's start "
+                             f"(center_m - len_m / 2): it needs center_m and len_m")
+        start = float(b["center_m"]) - float(b["len_m"]) / 2.0
+        pts = [(start + float(d), float(h)) for d, h in prof]
+        if len(pts) < 2 or any(pts[k + 1][0] <= pts[k][0] for k in range(len(pts) - 1)):
+            raise ValueError(f"capture.bridges {b.get('name', '?')}: profile_m needs >= 2 [metres from start, height] "
+                             f"points, strictly increasing")
+        out.append({"name": b.get("name", ""), "start_m": start, "profile": pts,
+                    "ramp_m": float(b.get("profile_ramp_m", DECK_PROFILE_RAMP_M))})
+    return out
+
+
+def apply_deck_profiles(points_xyz: list[Vertex], profiles: list[dict[str, Any]], *,
+                        origin_elev_m: float) -> list[Vertex]:
+    """Lay each measured deck profile onto the finished line (Y only; X/Z untouched).
+
+    level_bridge_decks holds a deck as ONE straight grade between its bank crests, because the bare-earth
+    DEM has no deck in it. Where the source lidar has the deck itself (ASPRS class 17), the deck is not
+    straight: Sand Creek's E 56th deck over the creek is crowned 0.29 m and sits 0.41 m (median) above the
+    straight grade (ledger 0068). Inside ``[first, last]`` profile station the road takes the profile,
+    linearly between its points; outside, the difference at that end eases back to the road it had over
+    ``ramp_m`` with a raised cosine, so there is no step and no grade break at the hand-over.
+
+    Stations are horizontal arc length along ``points_xyz`` from point 0. On a closed lap (L13: the first
+    vertex repeated last) distances wrap, so a profile near the seam eases across it and the duplicate
+    closing vertex gets exactly what vertex 0 gets. ``profiles == []`` returns the points unchanged."""
+    pts = [tuple(p) for p in points_xyz]
+    n = len(pts)
+    if n < 2 or not profiles:
+        return pts
+    S = [0.0]
+    for i in range(1, n):
+        S.append(S[-1] + math.hypot(pts[i][0] - pts[i - 1][0], pts[i][2] - pts[i - 1][2]))
+    lap = S[-1]
+    closed = (abs(pts[0][0] - pts[-1][0]) < 1e-6 and abs(pts[0][1] - pts[-1][1]) < 1e-6
+              and abs(pts[0][2] - pts[-1][2]) < 1e-6)
+
+    def y_at(s: float) -> float:
+        import bisect
+        k = min(max(bisect.bisect_right(S, s), 1), n - 1)
+        t = (s - S[k - 1]) / max(1e-12, S[k] - S[k - 1])
+        return pts[k - 1][1] + t * (pts[k][1] - pts[k - 1][1])
+
+    def h_at(prof: list[tuple[float, float]], s: float) -> float:
+        for k in range(1, len(prof)):
+            if s <= prof[k][0]:
+                (s0, h0), (s1, h1) = prof[k - 1], prof[k]
+                return h0 + (h1 - h0) * (s - s0) / (s1 - s0)
+        return prof[-1][1]
+
+    ys = [p[1] for p in pts]
+    for pr in profiles:
+        prof, ramp = pr["profile"], max(1e-6, pr["ramp_m"])
+        a, b = prof[0][0], prof[-1][0]
+        d_a = (prof[0][1] - origin_elev_m) - y_at(a % lap if closed else a)    # lift wanted at each end
+        d_b = (prof[-1][1] - origin_elev_m) - y_at(b % lap if closed else b)
+        for i in range(n):
+            cands = (S[i], S[i] - lap, S[i] + lap) if closed else (S[i],)
+            inside = next((s for s in cands if a <= s <= b), None)
+            if inside is not None:
+                ys[i] = h_at(prof, inside) - origin_elev_m
+                continue
+            gap_a = min((a - s for s in cands if s < a), default=math.inf)    # before the first point
+            gap_b = min((s - b for s in cands if s > b), default=math.inf)    # after the last
+            if gap_a <= gap_b and gap_a < ramp:
+                ys[i] += d_a * 0.5 * (1.0 + math.cos(math.pi * gap_a / ramp))
+            elif gap_b < ramp:
+                ys[i] += d_b * 0.5 * (1.0 + math.cos(math.pi * gap_b / ramp))
+    return [(pts[i][0], ys[i], pts[i][2]) for i in range(n)]
 
 
 def cap_grade(points_xyz: list[Vertex], *, max_grade: float = 0.06) -> list[Vertex]:

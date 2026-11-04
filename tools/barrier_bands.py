@@ -389,7 +389,10 @@ def build(project_dir, out_name: str | None = None, config_path=None, *, planned
     race_layouts = [lo for lo in cfg.get("layouts", []) if lo.get("race_furniture")]
     if not race_layouts:
         fails.append("no layouts[].race_furniture — no corridor to declare")
-    ctx = _RC.prepare(pts, widths, island_w, P)
+    # ledger 0054 Phase 2 (opt-in, race.laps.<id>.island_offsets): a lap's island standing off its line (race_lap's
+    # island_off_by_vertex); absent on the mainline and on every lap that declares none — nothing below changes then
+    island_off = lap_rec.get("island_off_by_vertex") if lap_rec is not None else None
+    ctx = _RC.prepare(pts, widths, island_w, P, **({"island_off": island_off} if island_off else {}))
     half_auth = ctx["half_auth"]
     # ledger 0054 Phase 2 (opt-in, race.corridor.noses; absent = nothing below changes): closure-run ends declared at a
     # median nose — the closure ends at the island's race face beside the nose, a K-rail across the far carriageway
@@ -591,6 +594,8 @@ def build(project_dir, out_name: str | None = None, config_path=None, *, planned
             "params": P, "free": free, "whole": whole, "boxes": boxes, "pinned": pinned, "corners": corners,
             "corner_by_apex": corner_by_apex, "removed": removed, "layouts": race_layouts, "cfg": cfg,
             "edge_inset": edge_inset, "bhalf": bhalf, "strip_c": strip_c}
+    if ctx.get("island_off") is not None:
+        vctx["island_off"] = ctx["island_off"]           # ledger 0054 Phase 2 (opt-in): the islands gate reads it
     if noses:
         # ledger 0054 Phase 2: the declared nose ends (the self-gates read them; nothing is added when none is declared)
         out["zones"]["noses"] = [{k: nz[k] for k in ("end", "median", "pin", "run")} for nz in noses]
@@ -761,7 +766,8 @@ def _corridor_record(lid, tok, direction, sol, ctx, P, pts, widths, n, m, st, st
         next_s = -1.0
         for v in range(a, b + 1):
             if half_auth[v] >= ISLAND_PROBE_MIN_HALF_M and st[v] >= next_s:
-                probes.append({"vertex": v, "y": 0.0, "why": "island"})
+                yo = round(ctx["island_off"][v], 3) if ctx.get("island_off") else 0.0   # an offset island's top
+                probes.append({"vertex": v, "y": yo, "why": "island"})
                 next_s = st[v] + PROBE_STEP_M
     yr = [None if v is None else round(v, 4) for v in y]
     zr = zone
@@ -847,9 +853,8 @@ def _noses(spec, pinned, island_w, m, st, bhalf):
             fails.append(f"noses: v{M} is not the {'first' if at_start else 'last'} vertex of an authored island run "
                          f"(>= {_RC.ISLAND_MIN_VERTS} vertices) — not a nose")
             continue
-        if pin == E:
-            fails.append(f"noses: the nose v{M} stands beside the box edge v{E} — nothing to end the closure at")
-            continue
+        # pin == E: the median runs up to the box edge itself (Mission Gorge into J4) — the closure ends there, at the
+        # island's race face, and the K-rail stands on the box edge; there is no open walk before it
         if any(half[v] > 0 for v in opn):
             fails.append(f"noses: an authored island stands between the box edge v{E} and the nose v{M}")
             continue
@@ -1553,11 +1558,11 @@ def _validate_nose(lid, c, nz, ctx) -> list[str]:
     k, widths, m = nz["pin"], ctx["widths"], ctx["m"]
     e = -1.0 if c["race_side"] == "R" else 1.0
     y = c["closure_y_by_vertex"][k]
-    want = e * _RC.nose_pin_g(ctx["ctx"], nz["median"], inset=ctx["edge_inset"], half=ctx["bhalf"])
+    want = e * _RC.nose_pin_g(ctx["ctx"], nz["median"], inset=ctx["edge_inset"], half=ctx["bhalf"], e=e)
     if abs(y - want) > PIN_TOL_M:
         fails.append(f"noses {lid}: v{k} closure y {y:+.3f} is {abs(y - want):.3f} m off the island's race face "
                      f"{want:+.3f} at the nose v{nz['median']} (> {PIN_TOL_M})")
-    if ctx["free"](k):
+    if ctx["free"](k) and k != nz["end"]:
         fails.append(f"noses {lid}: the nose pin v{k} lies in a declared box / whole-street zone")
     ends = [en for r in c.get("runs", []) for en in r.get("ends", []) if en.get("vertex") == k]
     if not ends or any(en.get("joins") != "nose" for en in ends):
@@ -1700,6 +1705,7 @@ def validate(out: dict, ctx: dict) -> list[str]:
                 fails.append(f"pins {lid}: v{k} is a trimmed fold vertex of edge_{side} — no strip ring to bury the pin in")
 
     # 3. rates, 6. shape, 4. clear width + pocket, 5. islands
+    ioff = ctx.get("island_off")
     k_conv, k_div = 1.0 / float(P["rate_toward_race_side"]), 1.0 / float(P["rate_away"])
     k_hard = 1.0 / float(P["steepest_pin_rate"])
     zone_m = float(P["pin_zone_m"])
@@ -1794,6 +1800,8 @@ def validate(out: dict, ctx: dict) -> list[str]:
                         clear_isl = -half_auth[k] - (y[k] + bhalf)
                     else:
                         clear_isl = (y[k] - bhalf) - half_auth[k]
+                    if ioff is not None:            # ledger 0054 Phase 2 (opt-in): the island centred off the line
+                        clear_isl += ioff[k] if c["closure_side"] == "L" else -ioff[k]
                     if clear_isl < ISLAND_CLEAR_M - 1e-3:
                         fails.append(f"islands {lid}: v{k} the closure footprint is {clear_isl:+.3f} m off the AUTHORED "
                                      f"island (< {ISLAND_CLEAR_M} m, or on the wrong side of a nose)")

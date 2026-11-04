@@ -64,6 +64,8 @@ DEDUPE_M = 0.25            # consecutive piece ends closer than this are one poi
 BRANCH_PROBE_M = 10.0      # tools/barrier_bands.MOUTH_PROBE_M: the branch probe stands this far past the lap's curb
 CONNECTOR_ISLAND_SNAP_M = 1.0   # a connector vertex takes the island width of the nearest connector-island point
 #                                 within this (median_bands connector_islands are a separate polyline of the road)
+ISLAND_OFFSET_SNAP_MAX_M = 3.0   # race.laps.<id>.island_offsets.snap_m may not exceed this (the island points stand ~3 m
+#                                  apart along the road: a wider snap could take a neighbour's)
 BRANCH_ON_LAP_PAD_M = 1.0  # a "branch" whose probe point lies within half-width + this of the lap is the lap itself
 JOIN_END_TOL_M = 0.05      # a declared join's end points must be the piece ends they join
 PAD_ARM_PROBE_M = 10.0     # a pad's stub arm is probed this far into the stub from its mouth line (before its barrier)
@@ -229,6 +231,36 @@ def load_lines(proj) -> dict:
     return out
 
 
+def offset_islands(proj, line: dict, name: str, snap_m: float) -> tuple[list[float], list[float]]:
+    """(island width, island centre lateral) per vertex of connector `name` (ledger 0054 Phase 2, opt-in:
+    race.laps.<id>.island_offsets). median_bands connector_islands carry the raised median's OWN centre line, one point
+    per connector vertex, and it may stand off the connector line (Waring's tail before J2: 0.8-1.7 m). load_lines' 1.0 m
+    snap drops such a point; here every vertex takes its nearest island point within snap_m and the point's signed
+    lateral off the connector line (+ = left of increasing vertex, the centreline.local frame)."""
+    mb = Path(proj) / "data" / "median_bands.json"
+    mbj = json.loads(mb.read_text(encoding="utf-8")) if mb.exists() else {}
+    base = str(name).split("#", 1)[0]
+    pts = line["pts"]
+    n = len(pts)
+    iw, io = [0.0] * n, [0.0] * n
+    for ci in mbj.get("connector_islands") or []:
+        if str(ci.get("name", "")).split("#", 1)[0] != base:
+            continue
+        ip, iwp = ci.get("points_xyz_m") or [], ci.get("island_w_by_point") or []
+        for k, p in enumerate(pts):
+            a, b = pts[max(0, k - 1)], pts[min(n - 1, k + 1)]
+            tx, tz = b[0] - a[0], b[2] - a[2]
+            L = math.hypot(tx, tz) or 1.0
+            best, got = snap_m, None
+            for q, w in zip(ip, iwp):
+                d = math.hypot(p[0] - q[0], p[2] - q[2])
+                if d <= best:
+                    best, got = d, (float(w), ((q[0] - p[0]) * -tz + (q[2] - p[2]) * tx) / L)
+            if got is not None and got[0] > iw[k]:
+                iw[k], io[k] = got
+    return iw, io
+
+
 def _piece_vertices(line: dict, name: str, piece: dict) -> tuple[list[int], int]:
     """the source vertex indices a piece walks, and its step (+1 / -1)"""
     n = len(line["pts"])
@@ -366,6 +398,18 @@ def stitch(proj, cfg: dict, lap_id: str, *, lines: dict | None = None, mouths: l
         P = lines[name]["pts"]
         gaps += [math.hypot(P[b][0] - P[a][0], P[b][2] - P[a][2]) for a, b in zip(vs, vs[1:])]
     spacing = float(s.get("join_spacing_m") or _median(gaps) or 3.0)
+    # ledger 0054 Phase 2 (opt-in): race.laps.<id>.island_offsets {lines: [...], snap_m} — those pieces take their raised
+    # median where it really stands (offset_islands); absent = load_lines' widths, centred, and no offset row at all
+    iof = s.get("island_offsets")
+    off_lines = {}
+    if iof:
+        snap = float(iof.get("snap_m", CONNECTOR_ISLAND_SNAP_M))
+        if not 0 < snap <= ISLAND_OFFSET_SNAP_MAX_M:
+            raise SystemExit(f"[lap] race.laps.{lap_id}.island_offsets.snap_m {snap} must be in (0, {ISLAND_OFFSET_SNAP_MAX_M}]")
+        for nm in iof.get("lines") or []:
+            if nm not in lines or nm == MAINLINE:
+                raise SystemExit(f"[lap] race.laps.{lap_id}.island_offsets: {nm!r} is not a connector line of this project")
+            off_lines[nm] = offset_islands(proj, lines[nm], nm, snap)
     declared = {}
     for dj in declared_joins(proj, s):
         try:
@@ -378,6 +422,7 @@ def stitch(proj, cfg: dict, lap_id: str, *, lines: dict | None = None, mouths: l
         declared[key] = (str(dj.get("id") or ""), pts_)
     used_joins = set()
     P, W, IW, SRC, joins = [], [], [], [], []
+    IO = []                                                  # island centre lateral (+ left of the LAP's travel)
 
     def _join(a_src, b_src):
         la, va = a_src
@@ -403,6 +448,7 @@ def stitch(proj, cfg: dict, lap_id: str, *, lines: dict | None = None, mouths: l
                 P.append(jp[q])
                 W.append(wa + (wb - wa) * t)
                 IW.append(0.0)
+                IO.append(0.0)
                 SRC.append(["join", k])
             used_joins.add(((la, va), (lb, vb)))
             joins.append({"from": [la, va], "to": [lb, vb], "length_m": round(arc[-1], 3), "chord_m": round(d, 3),
@@ -414,6 +460,7 @@ def stitch(proj, cfg: dict, lap_id: str, *, lines: dict | None = None, mouths: l
             P.append((A[0] + (B[0] - A[0]) * t, A[1] + (B[1] - A[1]) * t, A[2] + (B[2] - A[2]) * t))
             W.append(wa + (wb - wa) * t)
             IW.append(0.0)
+            IO.append(0.0)
             SRC.append(["join", k])
         joins.append({"from": [la, va], "to": [lb, vb], "length_m": round(d, 3), "points": n_ins})
         return True
@@ -432,7 +479,12 @@ def stitch(proj, cfg: dict, lap_id: str, *, lines: dict | None = None, mouths: l
         for v in vs[first:]:
             P.append(tuple(ln["pts"][v]))
             W.append(float(ln["widths"][v]))
-            IW.append(float(ln["island_w"][v]) if v < len(ln["island_w"]) else 0.0)
+            if name in off_lines:
+                IW.append(off_lines[name][0][v])
+                IO.append(off_lines[name][1][v] * (1.0 if step > 0 else -1.0))   # walked backwards: left is right
+            else:
+                IW.append(float(ln["island_w"][v]) if v < len(ln["island_w"]) else 0.0)
+                IO.append(0.0)
             SRC.append([name, v])
         piece_rows.append({"line": name, "from": vs[0], "to": vs[-1], "step": step, "lap_from": start,
                            "lap_to": len(P) - 1, "vertices": len(vs) - first})
@@ -440,7 +492,7 @@ def stitch(proj, cfg: dict, lap_id: str, *, lines: dict | None = None, mouths: l
     if not _join((last[0], last[1]), (SRC[0][0], SRC[0][1])):
         # the last piece ends ON the first vertex: that vertex is the closure duplicate, not a vertex of its own
         dropped = SRC.pop()
-        P.pop(); W.pop(); IW.pop()
+        P.pop(); W.pop(); IW.pop(); IO.pop()
         merged[(dropped[0], dropped[1])] = 0
         piece_rows[-1]["lap_to"] = len(P) - 1
     m = len(P)
@@ -540,7 +592,7 @@ def stitch(proj, cfg: dict, lap_id: str, *, lines: dict | None = None, mouths: l
             if ks:
                 lap_spans.append([round(st[ks[0]], 1), round(st[ks[-1]], 1)])
     pts = [[round(c, 4) for c in p] for p in P] + [[round(c, 4) for c in P[0]]]
-    return {
+    rec = {
         "_doc": "A race layout's LAP (scripts/geometry/race_lap.py, ledger 0054 phase 2): race.laps.<id>.pieces "
                 "stitched — each piece's source vertices VERBATIM, consecutive pieces bridged by points resampled "
                 "on the straight join, closed (the last point repeats v0). Engine frame x=E, y=up, z=N, like "
@@ -561,6 +613,10 @@ def stitch(proj, cfg: dict, lap_id: str, *, lines: dict | None = None, mouths: l
         "mouths_skipped": skipped,
         "bridge_spans_m": lap_spans,
     }
+    if off_lines:
+        rec["island_off_by_vertex"] = [round(o, 3) for o in IO] + [round(IO[0], 3)]
+        rec["island_offsets"] = {"lines": sorted(off_lines), "snap_m": float(iof.get("snap_m", CONNECTOR_ISLAND_SNAP_M))}
+    return rec
 
 
 def write(proj, lap: dict) -> Path:

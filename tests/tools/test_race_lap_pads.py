@@ -47,7 +47,7 @@ def test_the_north_loop_on_v4_has_34_exits():
     for mo in lap["mouths"]:
         kinds[mo["kind"]] = kinds.get(mo["kind"], 0) + 1
     assert kinds == {"side_street": 26, "pad_arm": 6, "branch": 2}, kinds
-    assert lap["point_count"] - 1 == 2936 and abs(lap["lap_m"] - 8732.7) < 0.05
+    assert lap["point_count"] - 1 == 2936 and abs(lap["lap_m"] - 8737.9) < 0.05     # J2-J4 refit 2026-11-04 (fit_joins.py)
     arms = {mo["connector"].split(" ")[0]: mo["probe_xz"] for mo in lap["mouths"] if mo["kind"] == "pad_arm"}
     assert set(arms) == set(PAD_PROBES)
     for k, (x, z) in PAD_PROBES.items():
@@ -68,7 +68,7 @@ def test_five_corners_one_per_junction():
     import barrier_bands as bb
     lap = _lap()
     cs = bb._corners(bb._load_place_signs(), [tuple(p) for p in lap["points_xyz_m"]], lap["widths_m"], 45.0)
-    assert [c["apex"] for c in cs] == [320, 707, 1458, 2130, 2932]
+    assert [c["apex"] for c in cs] == [327, 705, 1464, 2130, 2932]                  # the refit J2-J4 joins (2026-11-04)
     assert all(lap["source_by_vertex"][c["apex"]][0] == "join" for c in cs)
 
 

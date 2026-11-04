@@ -43,6 +43,16 @@
       ],
       "_roads_doc": "street per vertex (barrier_bands._streets): v0 then each detected corner apex in order (J2 v320, J3 v707, J4 v1458, J5 v2130, J1 v2932), six spans: Waring from v0, Princess View, Mission Gorge, Jackson, Navajo, and the J1 turn from v2932 back to v0 (named apart: object names are per street)",
       "joins_file": "source/expansion/race.north.joins.json",
+      "island_offsets": {
+        "lines": [
+          "north_J1_waring#0",
+          "north_princess_view",
+          "north_mission_gorge",
+          "north_J5_jackson_north#0"
+        ],
+        "snap_m": 2.5
+      },
+      "_island_offsets_doc": "scripts/geometry/race_lap.py (ledger 0054 Phase 2, 2026-11-04): every north piece's raised median where it really stands. median_bands connector_islands carry each median's own centre line (offset_aware), one point per connector vertex; the default 1.0 m snap dropped every point more than 1 m off the connector line, which cut the medians into fragments (Waring v188-264, Mission Gorge v14-70 among others) and moved their ends (Waring's start 30 m after J1 at v11 was really v8, 1.3 m right; its tail before J2 at v315, 1.7 m left, 2.0 m wide). Each vertex takes its nearest island point within 2.5 m (the points stand ~3 m apart along the road) and that point's lateral offset; race_corridor puts the closure on the offset island's race face",
       "_joins_doc": "J2, J3, J4: cubic curves off the roads' own approach tangents (832facf), a reference line through each pad, never an AI spline and never road geometry. J5 (11.6 m) and J1 (14.6 m) stay straight joins: both lie inside the mainline's own junction box (Navajo/Jackson, College/Navajo), whose pavement is built",
       "junction_pads": [
         "J2",
@@ -58,22 +68,22 @@
         "_whole_doc": "Navajo westbound, mainline v2022..v1832 (undivided, 17.0 m): the whole street for the grid and the start / finish, 190 m",
         "boxes": [
           {
-            "apex": 320,
-            "i": 314,
-            "j": 334,
-            "_corner": "J2 Waring / Princess View / Mound (pad J2), R 19.6 m, D -82.4"
+            "apex": 327,
+            "i": 316,
+            "j": 333,
+            "_corner": "J2 Waring / Princess View / Mound (pad J2), R 19.0 m, D -82.7 (refit join); i = PC (not PC-2): Waring's median tail stands at v315, the box starts beside it"
           },
           {
-            "apex": 707,
-            "i": 695,
-            "j": 713,
-            "_corner": "J3 Princess View / Mission Gorge (pad J3), R 17.0 m, D -63.0"
+            "apex": 705,
+            "i": 691,
+            "j": 712,
+            "_corner": "J3 Princess View / Mission Gorge (pad J3), R 22.9 m, D -80.2 (refit join); PC-2 .. PT+2"
           },
           {
-            "apex": 1458,
+            "apex": 1464,
             "i": 1452,
-            "j": 1470,
-            "_corner": "J4 Mission Gorge / Jackson north (pad J4), R 19.8 m, D -51.6; j PT+4 so the pad's Mission Gorge east arm (lap v1468) stands inside the box, sealed by the far strip"
+            "j": 1472,
+            "_corner": "J4 Mission Gorge / Jackson north (pad J4), R 26.1 m, D -66.3 (refit join); PC-2 .. PT+2, Mission Gorge's median runs to v1451 beside the box edge; the pad's Mission Gorge east arm (lap v1468) stands inside the box, sealed by the far strip"
           },
           {
             "apex": 2130,
@@ -88,22 +98,22 @@
             "_corner": "J1 Navajo / College / Waring (mainline v1517 box), R 8.3 m, D -78.3; j PT+4 (the box ends past the seam)"
           }
         ],
-        "_boxes_doc": "PC-2 .. PT+2 of the five corners barrier_bands detects on the lap (place_signs' detector, min turn 45 deg), the mainline's rule; exactly five, one per junction",
+        "_boxes_doc": "PC-2 .. PT+2 of the five corners barrier_bands detects on the lap (place_signs' detector, min turn 45 deg), the mainline's rule, re-declared on the refit J2-J4 joins (2026-11-04); exactly five, one per junction. J2 starts at PC (v316): the real median tail stands at v315",
         "closure_runs": [
           [
             2,
-            314
+            316
           ],
           [
-            334,
-            695
+            333,
+            691
           ],
           [
-            713,
+            712,
             1452
           ],
           [
-            1470,
+            1472,
             2121
           ],
           [
@@ -120,18 +130,28 @@
         "noses": [
           {
             "end": 2,
-            "median": 11,
-            "why": "Waring's raised median starts 30 m after the J1 box (v11, 1.5 m wide); a closure pinned on the far curb strip at v2 could only reach its race face at 1:1.8. The closure ends at the nose (pin v10) and a K-rail crosses the far carriageway there: your own side of the road (Kevin's call, ledger 0054)"
+            "median": 8,
+            "why": "Waring's raised median starts 16 m after the J1 box (v8, 1.5 m wide, 1.3 m right of the line: race.laps.north.island_offsets). The closure ends at the nose (pin v7) and a K-rail crosses the far carriageway there: your own side of the road (Kevin's call, ledger 0054)"
           },
           {
-            "end": 314,
-            "median": 306,
-            "why": "Waring's median ends 24 m before the J2 box (v306, 3.0 m wide at its tail); from the far strip at v314 the closure crossed to it at 1:1.9. It ends at the tail (pin v307) with a K-rail across the far carriageway"
+            "end": 316,
+            "median": 315,
+            "why": "Waring's median runs to its tail at v315 (2.0 m wide, 1.7 m left of the line), beside the J2 box: the closure ends at the box edge on the tail's race face (pin v316) with a K-rail across the far carriageway"
           },
           {
-            "end": 713,
+            "end": 712,
             "median": 718,
-            "why": "Mission Gorge's splitter island starts 15 m after the J3 box (v718); from the far strip at v713 the closure crossed 16.6 m at 1:0.92, R 12 m. It ends at the nose (pin v717) with a K-rail across the far carriageway"
+            "why": "Mission Gorge's median starts 18 m after the J3 box (v718, 0.6 m wide at its nose, 0.6 m right of the line): the closure ends at the nose (pin v717) with a K-rail across the far carriageway"
+          },
+          {
+            "end": 1452,
+            "median": 1451,
+            "why": "Mission Gorge's median runs to v1451, beside the J4 box: the closure ends at the box edge on its race face (pin v1452) with a K-rail across the far carriageway"
+          },
+          {
+            "end": 1472,
+            "median": 1490,
+            "why": "Jackson's median starts 49 m after the J4 box (v1490): from the far strip at v1472 the closure reached its race face only at 1:2.96 (the 1:3 limit). The closure ends at the nose (pin v1489) with a K-rail across the far carriageway"
           }
         ],
         "_noses_doc": "tools/barrier_bands.py race.corridor.noses (ledger 0054 Phase 2): each closure-run end (a box edge) that ends at a median nose instead of the far curb strip; the pin is the vertex beside the nose, on the island's race face, and the K-rail runs from the closure's race face to the far curb strip, in that layout's closure kn5",

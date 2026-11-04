@@ -1,7 +1,7 @@
 {
  "_doc": "plan_north.py: the held Mission Gorge Speedway planned on v4's intermediates (ledger 0054 Phase 2 step 2). PLANNED only: no built-artifact gate ran.",
- "status": "PLANNED",
- "lap_m": 8732.7,
+ "status": "REFUSED",
+ "lap_m": 8737.9,
  "unique_vertices": 2936,
  "joins": [
   {
@@ -13,7 +13,7 @@
     "north_princess_view",
     0
    ],
-   "length_m": 30.162,
+   "length_m": 31.309,
    "chord_m": 27.992,
    "points": 13,
    "declared": "J2"
@@ -27,7 +27,7 @@
     "north_mission_gorge",
     0
    ],
-   "length_m": 49.215,
+   "length_m": 51.722,
    "chord_m": 46.039,
    "points": 23,
    "declared": "J3"
@@ -41,7 +41,7 @@
     "north_J5_jackson_north#0",
     651
    ],
-   "length_m": 43.931,
+   "length_m": 45.417,
    "chord_m": 41.995,
    "points": 20,
    "declared": "J4"
@@ -120,63 +120,63 @@
  ],
  "corners": [
   {
-   "apex": 320,
+   "apex": 327,
    "PC": 316,
-   "PT": 332,
-   "apex_station_m": 942,
-   "PC_station_m": 932,
-   "PT_station_m": 969,
+   "PT": 331,
+   "apex_station_m": 958,
+   "PC_station_m": 934,
+   "PT_station_m": 968,
    "sign": -1,
-   "R_apex_m": 19.64,
-   "D_deg": -82.35,
-   "arc_m": 37
+   "R_apex_m": 18.97,
+   "D_deg": -82.66,
+   "arc_m": 34
   },
   {
-   "apex": 707,
-   "PC": 697,
-   "PT": 711,
-   "apex_station_m": 2075,
-   "PC_station_m": 2055,
-   "PT_station_m": 2084,
+   "apex": 705,
+   "PC": 693,
+   "PT": 710,
+   "apex_station_m": 2074,
+   "PC_station_m": 2047,
+   "PT_station_m": 2086,
    "sign": -1,
-   "R_apex_m": 16.98,
-   "D_deg": -63.0,
-   "arc_m": 29
+   "R_apex_m": 22.87,
+   "D_deg": -80.24,
+   "arc_m": 39
   },
   {
-   "apex": 1458,
+   "apex": 1464,
    "PC": 1454,
-   "PT": 1466,
-   "apex_station_m": 4321,
-   "PC_station_m": 4312,
-   "PT_station_m": 4338,
+   "PT": 1470,
+   "apex_station_m": 4338,
+   "PC_station_m": 4317,
+   "PT_station_m": 4352,
    "sign": -1,
-   "R_apex_m": 19.81,
-   "D_deg": -51.56,
-   "arc_m": 26
+   "R_apex_m": 26.06,
+   "D_deg": -66.34,
+   "arc_m": 35
   },
   {
    "apex": 2130,
    "PC": 2123,
    "PT": 2134,
-   "apex_station_m": 6311,
-   "PC_station_m": 6292,
-   "PT_station_m": 6322,
+   "apex_station_m": 6316,
+   "PC_station_m": 6297,
+   "PT_station_m": 6327,
    "sign": -1,
-   "R_apex_m": 9.08,
-   "D_deg": -90.14,
+   "R_apex_m": 9.09,
+   "D_deg": -90.35,
    "arc_m": 30
   },
   {
    "apex": 2932,
    "PC": 2928,
    "PT": 2934,
-   "apex_station_m": 8722,
-   "PC_station_m": 8711,
-   "PT_station_m": 8726,
+   "apex_station_m": 8727,
+   "PC_station_m": 8716,
+   "PT_station_m": 8731,
    "sign": -1,
-   "R_apex_m": 8.31,
-   "D_deg": -78.34,
+   "R_apex_m": 8.32,
+   "D_deg": -78.22,
    "arc_m": 15
   }
  ],
@@ -271,7 +271,7 @@
   {
    "exit": "J2:S2 Waring Road (south-west, off route)",
    "kind": "pad_arm",
-   "lap_vertex": 326,
+   "lap_vertex": 325,
    "probe_xz": [
     -2765.208,
     969.103
@@ -400,7 +400,7 @@
   {
    "exit": "J3:S3 Mission Gorge Road (west, off route)",
    "kind": "pad_arm",
-   "lap_vertex": 696,
+   "lap_vertex": 697,
    "probe_xz": [
     -3063.121,
     2020.674
@@ -532,7 +532,7 @@
   {
    "exit": "J4:S6 MTRP visitor-centre entrance (OSM service way 60516202)",
    "kind": "pad_arm",
-   "lap_vertex": 1458,
+   "lap_vertex": 1459,
    "probe_xz": [
     -1221.486,
     3222.699
@@ -549,7 +549,7 @@
   {
    "exit": "J4:S5 Mission Gorge Road (east, the gorge; Phase 2)",
    "kind": "pad_arm",
-   "lap_vertex": 1468,
+   "lap_vertex": 1467,
    "probe_xz": [
     -1167.663,
     3199.999
@@ -691,7 +691,7 @@
   "north_cw": {
    "fail": false,
    "leak_m2": 0,
-   "reached_m2": 93412,
+   "reached_m2": 89000,
    "door_clusters": 0,
    "blocked": [],
    "forbidden_reached": [],
@@ -700,7 +700,7 @@
   "north_acw": {
    "fail": false,
    "leak_m2": 0,
-   "reached_m2": 93414,
+   "reached_m2": 92095,
    "door_clusters": 0,
    "blocked": [],
    "forbidden_reached": [],
@@ -712,18 +712,18 @@
    "north_cw": {
     "token": "ncw",
     "closure_runs": 6,
-    "closure_m": 7903.2,
-    "island_vertices": 924,
-    "island_m": 2724.2,
-    "clear_min_m": 6.86,
-    "clear_median_m": 11.264,
+    "closure_m": 7882.9,
+    "island_vertices": 1431,
+    "island_m": 4255.6,
+    "clear_min_m": 6.417,
+    "clear_median_m": 10.896,
     "pin_rates": [
      [
-      10,
+      7,
       6.0
      ],
      [
-      334,
+      333,
       6.0
      ],
      [
@@ -731,8 +731,8 @@
       6.0
      ],
      [
-      1470,
-      5.01
+      1489,
+      6.0
      ],
      [
       2136,
@@ -743,11 +743,11 @@
       6.0
      ],
      [
-      307,
+      316,
       6.0
      ],
      [
-      695,
+      691,
       6.0
      ],
      [
@@ -767,13 +767,13 @@
       3.4
      ]
     ],
-    "below_floor_vertices": 842,
-    "min_radius_m": 20.1,
-    "probes": 329,
+    "below_floor_vertices": 1203,
+    "min_radius_m": 23.0,
+    "probes": 325,
     "planned_no_route": {
      "fail": false,
      "leak_m2": 0,
-     "reached_m2": 93412,
+     "reached_m2": 89000,
      "door_clusters": 0,
      "blocked": [],
      "forbidden_reached": [],
@@ -784,11 +784,11 @@
    "north_acw": {
     "token": "nacw",
     "closure_runs": 6,
-    "closure_m": 7903.2,
-    "island_vertices": 924,
-    "island_m": 2724.2,
+    "closure_m": 7882.9,
+    "island_vertices": 1431,
+    "island_m": 4255.6,
     "clear_min_m": 6.86,
-    "clear_median_m": 11.26,
+    "clear_median_m": 11.238,
     "pin_rates": [
      [
       2926,
@@ -807,11 +807,11 @@
       6.0
      ],
      [
-      695,
+      691,
       6.0
      ],
      [
-      307,
+      316,
       6.0
      ],
      [
@@ -823,42 +823,42 @@
       3.55
      ],
      [
-      1470,
-      5.01
+      1489,
+      6.0
      ],
      [
       717,
       6.0
      ],
      [
-      334,
+      333,
       6.0
      ],
      [
-      10,
+      7,
       6.0
      ]
     ],
-    "below_floor_vertices": 837,
-    "min_radius_m": 21.5,
-    "probes": 329,
+    "below_floor_vertices": 989,
+    "min_radius_m": 21.1,
+    "probes": 325,
     "planned_no_route": {
      "fail": false,
      "leak_m2": 0,
-     "reached_m2": 93414,
+     "reached_m2": 92095,
      "door_clusters": 0,
      "blocked": [],
      "forbidden_reached": [],
-     "seconds": 2.4,
+     "seconds": 2.3,
      "file": "no_route.north_acw.planned.json"
     }
    }
   },
-  "mirror_max_m": 2.171,
-  "mirror_running_max_m": 0.024,
+  "mirror_max_m": 4.019,
+  "mirror_running_max_m": 3.393,
   "edge_verts": 2937,
   "edge_gaps": 0,
-  "edge_corners": 3,
+  "edge_corners": 2,
   "kerbs": 8,
   "kerbs_dropped": [
    [
@@ -873,31 +873,47 @@
   "kerb_trims": [],
   "kerb_clips": [
    {
-    "apex": 320,
+    "apex": 327,
     "side": "L",
     "kind": "outside",
     "from": [
      305,
-     343
+     342
     ],
     "to": [
-     308,
-     333
+     317,
+     332
     ],
     "by": [
      "north_cw"
     ]
    },
    {
-    "apex": 707,
+    "apex": 327,
+    "side": "R",
+    "kind": "inside",
+    "from": [
+     316,
+     331
+    ],
+    "to": [
+     317,
+     331
+    ],
+    "by": [
+     "north_acw"
+    ]
+   },
+   {
+    "apex": 705,
     "side": "L",
     "kind": "outside",
     "from": [
-     684,
-     721
+     681,
+     720
     ],
     "to": [
-     696,
+     692,
      716
     ],
     "by": [
@@ -905,16 +921,16 @@
     ]
    },
    {
-    "apex": 1458,
+    "apex": 1464,
     "side": "L",
     "kind": "outside",
     "from": [
      1444,
-     1479
+     1482
     ],
     "to": [
      1453,
-     1469
+     1482
     ],
     "by": [
      "north_cw"
@@ -956,107 +972,35 @@
   "corners": 5,
   "island_runs": [
    [
-    11,
-    187
-   ],
-   [
-    265,
-    306
+    8,
+    315
    ],
    [
     460,
-    476
-   ],
-   [
-    479,
-    486
-   ],
-   [
-    503,
     504
    ],
    [
-    535,
-    537
+    531,
+    531
    ],
    [
-    540,
-    541
-   ],
-   [
-    549,
-    554
+    534,
+    559
    ],
    [
     718,
-    723
-   ],
-   [
-    725,
-    725
-   ],
-   [
-    734,
-    735
-   ],
-   [
-    737,
-    738
-   ],
-   [
-    740,
-    740
-   ],
-   [
-    743,
-    743
-   ],
-   [
-    745,
-    745
-   ],
-   [
-    748,
-    751
-   ],
-   [
-    753,
-    754
-   ],
-   [
-    758,
     758
    ],
    [
     764,
-    764
-   ],
-   [
-    767,
     767
    ],
    [
-    775,
-    775
+    773,
+    1451
    ],
    [
-    778,
-    778
-   ],
-   [
-    781,
-    854
-   ],
-   [
-    875,
-    1109
-   ],
-   [
-    1381,
-    1415
-   ],
-   [
-    1498,
+    1490,
     1506
    ],
    [
@@ -1069,48 +1013,20 @@
    ]
   ],
   "nose_vertices": [
-   11,
-   187,
-   265,
-   306,
+   8,
+   315,
    460,
-   476,
-   479,
-   486,
-   503,
    504,
-   535,
-   537,
-   540,
-   541,
-   549,
-   554,
+   531,
+   534,
+   559,
    718,
-   723,
-   725,
-   734,
-   735,
-   737,
-   738,
-   740,
-   743,
-   745,
-   748,
-   751,
-   753,
-   754,
    758,
    764,
    767,
-   775,
-   778,
-   781,
-   854,
-   875,
-   1109,
-   1381,
-   1415,
-   1498,
+   773,
+   1451,
+   1490,
    1506,
    2151,
    2265,
@@ -1121,5 +1037,7 @@
  "mainline_declaration_unchanged": true,
  "mainline_keys_differing_from_committed": [],
  "source_unchanged": true,
- "fails": []
+ "fails": [
+  "north: clear north_cw: v538 lane 6.44 m < the hard minimum 6.5 m"
+ ]
 }

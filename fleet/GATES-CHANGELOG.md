@@ -4043,3 +4043,26 @@ declared per corridor. With neither key, every tool's output on the existing Lak
 Teeth: tests/tools/test_race_noses.py (synthetic + the north plan: every self-gate clear, 34 / 34 exits sealed both ways,
 planned no_route PASS, no_route leaking without the K-rails, verify_race passing the planned K-rails and refusing one
 0.4 m short of the far strip).
+
+## 2026-11-04 (later) — offset islands, a nose on the box edge, the refit north joins (ledger 0054 Phase 2; opt-in; no threshold moved)
+
+The PC's step 3 on v4's built road found the planned race lane on the pads' curb returns at J2 / J3 / J4, and Waring's real
+median tail 1.7 m off the lap line. Every change is opt-in. With none declared, the existing Lake Murray Speedways stay
+byte-identical: `source/expansion/phase2/proofs/nose_off_md5.json`, re-run on this tree.
+
+| What | Before | After (only where declared) |
+|---|---|---|
+| `race.laps.<id>.island_offsets` {lines, snap_m <= 3.0} (scripts/geometry/race_lap.py) | a connector vertex takes the island width of the nearest connector-island point within 1.0 m, centred on the line | the listed pieces take their nearest island point within snap_m AND its lateral offset (`island_off_by_vertex` in the lap file) |
+| tools/race_corridor.py `prepare(island_off=)` | the island's race face at its half-width from the line | that face moved by e x the island's centre lateral (bounds, target, `nose_pin_g(..., e=)`) |
+| tools/barrier_bands.py islands gate (5), island probes | the authored island centred | the authored island at its offset (the 0.15 m ISLAND_CLEAR_M unchanged); the island-top probes at its centre |
+| `race.corridor.noses` pin on the box edge | refused ("nothing to end the closure at") | allowed: a median that runs up to the box edge ends the closure there, the K-rail on the box edge, no open walk |
+| tools/no_route.py allowed (planned / built) | the open walk in front of a K-rail at full width | + the segment before the vertex whose lane narrows (inside the box when the pin is the box edge) |
+| source/expansion/race.north.joins.json (not a gate) | J2-J4 cubics, handles a third of the chord | refit by `phase2/fit_joins.py`: the race strips on the BUILT pads' pavement on both sides (pads.built.json outline_xz + the pieces' own ribbons), radius >= max w / 2 + 0.5 m (INVENTED, R_FLOOR_PAD_M: the inside curb line never folds), length <= 1.25 x the old (INVENTED, LEN_MAX); end points, end tangents and point counts kept |
+
+Teeth: tests/tools/test_race_noses.py (an offset island moves the closure by its offset and none changes nothing; the north
+lap's medians where they stand; the plan holds one open line, below) and tests/tools/test_race_lap_pads.py (the refit lap's
+length and corners).
+
+Open, Kevin's call (ledger 0054 Phase 2 open questions): with the medians where they really stand, Princess View's 4.9-5.9 m
+median at lap v538 / v539 / v542, about 1 m toward the north_cw side, leaves a 6.42-6.44 m race lane. That is under the
+INVENTED clear_hard_min_m of 6.5 m. The gate stays as it is and refuses those three vertices.

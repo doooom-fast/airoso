@@ -157,10 +157,13 @@ def main(argv=None):
          f"{'PASS' if not any(plan['planned_no_route'][l].get('fail') for l in plan['planned_no_route']) else 'FAIL'}; plan {st}")
     draw(v, plan, lap, bands, lines, t, pads=pads).save(png / "north_overview.png", optimize=True)
     corners = {c["apex"]: c for c in bands["corners"]}
-    names = {320: "J2 Waring / Princess View", 707: "J3 Princess View / Mission Gorge", 1458: "J4 Mission Gorge / Jackson",
-             2130: "J5 Jackson / Navajo", 2932: "J1 Navajo / College / Waring"}
+    # the five detected corners in lap order are J2, J3, J4, J5, J1 (their apexes move when the joins are refit)
+    order = sorted(corners)
+    labels = ("J2 Waring / Princess View", "J3 Princess View / Mission Gorge", "J4 Mission Gorge / Jackson",
+              "J5 Jackson / Navajo", "J1 Navajo / College / Waring")
+    names = dict(zip(order, labels))
     tiles = []
-    for apex in (2932, 320, 707, 1458, 2130):
+    for apex in [order[4]] + order[:4]:
         c = P[apex]
         half = 110.0
         vv = View(c[0] - half, c[2] - half, c[0] + half, c[2] + half, 900)

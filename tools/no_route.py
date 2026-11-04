@@ -898,9 +898,16 @@ def _allowed(R: Raster, corr: Corridor):
     # narrows to the closure's one vertex early, barrier_bands._corridor_record; the lane at P is the closure's)
     for w in getattr(corr, "nose_walls", []):
         p, md, e = int(w["vertex"]) % m, int(w["median"]) % m, int(w["end"]) % m
+        step = 1 if (md - p) % m == 1 else -1
         ks = [e]
         while ks[-1] != p:
-            ks.append((ks[-1] + (1 if (md - p) % m == 1 else -1)) % m)
+            ks.append((ks[-1] + step) % m)
+        # the vertex whose lane barrier_bands narrows (P's box-side neighbour) and the next one: full width too — inside
+        # the box when the median runs up to the box edge (P = the box edge itself, Mission Gorge into J4)
+        nb = (p - step) % m
+        if nb not in ks:
+            ks = [nb] + ks
+        ks = [(ks[0] - step) % m] + ks          # and the segment before the narrowed vertex
         for a, b in zip(ks, ks[1:]):
             fa, fb = corr.widths[a] / 2.0 - corr.inset + TOL_M, corr.widths[b] / 2.0 - corr.inset + TOL_M
             R.fill_quad(R.allowed, corr.at(a, -fa), corr.at(b, -fb), corr.at(b, fb), corr.at(a, fa), create=True)

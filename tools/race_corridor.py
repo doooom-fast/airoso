@@ -38,6 +38,8 @@ the declaration (track.config.json race.corridor) and the data:
            (nose_pin_g: the enveloped face at the nose + the strip centre), and the declaration adds a short K-rail
            ACROSS the far carriageway at P (tools/barrier_bands.py `nose_walls`) from the closure's race face to the
            far curb strip. The vertices between the box edge and P stand open like the box (the caller's free_fn).
+  offsets  (OPT-IN: a lap's island_off_by_vertex, race.laps.<id>.island_offsets) an island centred off the line: its race
+           face (the bounds, the target and a nose pin) moves by e x its centre lateral (prepare(island_off=)).
   window   (OPT-IN: race.corridor.smooth_window "station", absent = "vertices") the smoothing Gaussian over a STATION
            window (+-3 sigma) with trapezoid weights, instead of +-4 vertices. On a line resampled at two spacings
            (a lap's 2 m curved joins against its 3 m streets) the vertex window is lopsided and pulls a closure that
@@ -110,13 +112,19 @@ def nose_open(end: int, median: int, run: tuple, n: int):
     return None
 
 
-def nose_pin_g(ctx, median, *, inset=INSET_M, half=BARRIER_HALF_M):
+def nose_pin_g(ctx, median, *, inset=INSET_M, half=BARRIER_HALF_M, e=None):
     """the closure's lateral toward its race side (g) at a nose pin: the island's enveloped race face at the nose
-    (the face the closure runs along beside it, >= the authored taper) + the strip centre; both directions alike"""
+    (the face the closure runs along beside it, >= the authored taper) + the strip centre; both directions alike — but
+    an island standing off the line (ctx island_off, opt-in) moves it by e x its centre lateral (e = -1 cw, +1 acw)"""
     face = ctx["face_env"][median]
     if face <= 0:
         face = ctx["half_auth"][median]
-    return face + (inset - half)
+    g = face + (inset - half)
+    if ctx.get("island_off") is not None:
+        if e is None:
+            raise ValueError("nose_pin_g: an offset island needs the direction (e)")
+        g += e * ctx["island_off"][median]
+    return g
 
 
 def ring_count(pts) -> int:
@@ -266,6 +274,7 @@ def solve(pts, widths, island_w, free_fn, direction, params, *, inset=INSET_M, h
     n = ring_count(pts)
     ctx = context or prepare(pts, widths, island_w, p)
     st, WB, HALF_AUTH, FACE_ENV = ctx["st"], ctx["WB"], ctx["half_auth"], ctx["face_env"]
+    IOFF = ctx.get("island_off")
     W = widths
     strip_c = inset - half                  # 0.485: the strip centre from the curb line
     w_t, w_lo = float(p["clear_width_m"]), float(p["clear_floor_m"])
@@ -306,6 +315,10 @@ def solve(pts, widths, island_w, free_fn, direction, params, *, inset=INSET_M, h
         g_rsf_base = [WB[v] / 2.0 - inset for v in vs]
         isl = [HALF_AUTH[v] + strip_c if HALF_AUTH[v] > 0 else None for v in vs]
         face_env = [FACE_ENV[v] + strip_c if FACE_ENV[v] > 0 else None for v in vs]
+        if IOFF is not None:
+            # opt-in (ledger 0054 Phase 2): an island standing off the line — its race face moves by e x its centre lateral
+            isl = [None if x is None else x + e * IOFF[v] for x, v in zip(isl, vs)]
+            face_env = [None if x is None else x + e * IOFF[v] for x, v in zip(face_env, vs)]
         t = []
         for j in range(m):
             tp = g_rsf_base[j] - half - w_t
@@ -313,9 +326,9 @@ def solve(pts, widths, island_w, free_fn, direction, params, *, inset=INSET_M, h
         pin0, pin1 = g_far[0], g_far[-1]
         if nose_pins:
             if vs[0] in nose_pins:
-                pin0 = nose_pin_g(ctx, nose_pins[vs[0]], inset=inset, half=half)
+                pin0 = nose_pin_g(ctx, nose_pins[vs[0]], inset=inset, half=half, e=e)
             if vs[-1] in nose_pins:
-                pin1 = nose_pin_g(ctx, nose_pins[vs[-1]], inset=inset, half=half)
+                pin1 = nose_pin_g(ctx, nose_pins[vs[-1]], inset=inset, half=half, e=e)
         d0 = rr
         d1 = [rr[-1] - x for x in rr]
 
@@ -413,9 +426,10 @@ def solve(pts, widths, island_w, free_fn, direction, params, *, inset=INSET_M, h
     return out
 
 
-def prepare(pts, widths, island_w, params):
+def prepare(pts, widths, island_w, params, island_off=None):
     """the per-track arrays both directions share: stations, base width, authored island half, the enveloped
-    island face, the island zones and openings"""
+    island face, the island zones and openings. island_off (opt-in, ledger 0054 Phase 2): the island's centre lateral
+    per vertex (+ = forward-left; a lap's island_off_by_vertex) — kept in the context as `island_off` only when given"""
     n = ring_count(pts)
     st = stations(pts)
     W = [float(w) for w in widths]
@@ -423,8 +437,11 @@ def prepare(pts, widths, island_w, params):
     WB = base_width(st, W, n, float(params["base_open_m"]), float(params["base_sigma_m"]))
     zones, openings = island_zones(iw, st, n, float(params["opening_max_m"]))
     face = island_face_env(st, n, iw, zones, openings, float(params["island_env_m"]))
-    return {"n": n, "st": st, "WB": WB, "half_auth": authored_half(iw, n), "face_env": face,
-            "island_zones": zones, "openings": openings}
+    ctx = {"n": n, "st": st, "WB": WB, "half_auth": authored_half(iw, n), "face_env": face,
+           "island_zones": zones, "openings": openings}
+    if island_off is not None:
+        ctx["island_off"] = [float(x) for x in island_off[:n]] + [0.0] * max(0, n - len(island_off))
+    return ctx
 
 
 def lane_by_vertex(y_closure, widths, n, direction, *, inset=INSET_M, half=BARRIER_HALF_M, pins=()):

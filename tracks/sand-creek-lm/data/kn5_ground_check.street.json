@@ -1,0 +1,27 @@
+{
+ "fail": false,
+ "reasons": [],
+ "kn5": [
+  "sand_creek_raceway_lm.kn5",
+  "sand_creek_raceway_lm_street.kn5"
+ ],
+ "fidelity": "skipped: gate OBJ written from this kn5",
+ "double_sheet_cells": 0,
+ "seating": {
+  "lampposts": {
+   "objects": 175,
+   "no_ground_pct": 0.0,
+   "median_m": -2.984,
+   "p95_m": -2.964,
+   "hovering": 0
+  }
+ },
+ "lamp_heads": 201,
+ "lamp_orphans": 0,
+ "road_over_ground": {
+  "over": 14,
+  "samples": 4640,
+  "p95_m": 0.022,
+  "max_m": 0.072
+ }
+}

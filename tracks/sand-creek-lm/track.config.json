@@ -418,7 +418,11 @@
       "blocks": [
         {
           "file": "source/bespoke/buildings.json",
-          "auto": true
+          "auto": true,
+          "replace": [
+            "HOUSE",
+            "BUILDING"
+          ]
         }
       ],
       "grassfx_zones": {
@@ -463,7 +467,28 @@
             ]
           }
         ]
-      }
+      },
+      "_doc": "Lake Murray v4's buildings (Kevin 2026-11-03: \"Lake Murray v4 had many more houses in it this time, don't lose those\"): the footprint plan (tools/plan_buildings.py -> source/bespoke/buildings.json, Sand Creek's, copied in by tools/lm_engine_intake.py) stood by tools/author_bespoke_blend.py in place of the assembler's HOUSE / BUILDING boxes, with Lake Murray's author-stage names and prep_seats (engine-july re-seats every BUILDING* island)",
+      "names": {
+        "ground": [
+          "TERRAIN"
+        ],
+        "far": [
+          "GRASS_FAR"
+        ],
+        "paved": [
+          "ROAD",
+          "CURB",
+          "1ROAD",
+          "1KERB"
+        ],
+        "walls": [
+          "1WALL",
+          "BARRIER"
+        ],
+        "_doc": "the assembler's names at the author stage; the prep renames TERRAIN -> 1GRASS, ROAD -> 1ROAD, CURB -> 1KERB"
+      },
+      "prep_seats": true
     },
     "treefx": {
       "_doc": "Ledger 0063: the NAIP points of source/bespoke/trees.json stand as TreeFX models (tools/make_treefx.py, planted), not as TREECARD cards. There is no cottonwood model: sycamores stand in, as the north_riparian zone does. Models are personal-use and stay on this machine.",

@@ -12,10 +12,13 @@ Every track already has those inputs from airoso's data stages (scripts.gps.cent
 scripts.geometry.projection -> scripts.gps.widths_from_osm): data/centerline.local.json is the projected line with its 3DEP
 profile and its per-vertex widths, in the frame the assembler reads (ENU metres about the config's origin, unmirrored).
 This tool copies them from the SOURCE track (track.config.json lm_intake.source_track, a folder under tracks/) into the
-project and applies the only elevation evidence airoso's mesh stage applies to the line before smoothing, Y only:
+project and applies one piece of elevation evidence to the line before smoothing, Y only:
   - capture.bridges: each declared deck held level over the bare-earth dip (scripts.capture.evidence.level_bridge_decks,
-    keyed to this draft line's stations, as build_mesh keys it);
-  - road_profile.max_grade_pct (default 6 %, build_mesh's): the launch net (scripts.capture.evidence.cap_grade).
+    keyed to this draft line's stations, as build_mesh keys it) — a DATA fact (the bare-earth DEM has no deck in it).
+NO GRADE CAP (Kevin 2026-11-03: "I just want real"): the profile is the measured ground. airoso's build_mesh clamps every
+track to road_profile.max_grade_pct (6 % by default) and the v021 modules carry 12 % / 11 % caps; none of them runs here.
+An artefact in the data (a dip under a tree, an underpass) is fixed at its source (lidar class 2, a measured deck), never
+clamped. lm_intake.max_grade_pct exists only as an explicit, reported opt-in; absent = no cap.
 X/Z, the widths and the point count are the source's. Nothing here smooths, rounds a corner or touches a width: that is
 the assembler's job (scripts-v021/geometry/smooth.py), which is the point of the port.
 
@@ -45,6 +48,20 @@ def _md5(p: Path) -> str:
     return hashlib.md5(p.read_bytes()).hexdigest()
 
 
+def _max_grade(pts, over_m: float) -> float:
+    """the steepest grade of a line over a horizontal run of ``over_m`` (the same reading for the intake and the build)"""
+    st = [0.0]
+    for a, b in zip(pts, pts[1:]):
+        st.append(st[-1] + math.hypot(b[0] - a[0], b[2] - a[2]))
+    best, j = 0.0, 0
+    for i in range(len(pts)):
+        while j < len(pts) - 1 and st[j] - st[i] < over_m:
+            j += 1
+        if st[j] - st[i] >= over_m * 0.5:
+            best = max(best, abs(pts[j][1] - pts[i][1]) / (st[j] - st[i]))
+    return best
+
+
 def intake(proj: Path, *, connectors: bool | None = None) -> dict:
     cfg = json.loads((proj / "track.config.json").read_text(encoding="utf-8"))
     li = cfg.get("lm_intake") or {}
@@ -71,13 +88,15 @@ def intake(proj: Path, *, connectors: bool | None = None) -> dict:
     closed = math.hypot(pts[0][0] - pts[-1][0], pts[0][2] - pts[-1][2]) < 1e-6
     if loop and not closed:
         raise SystemExit("[lm_intake] the source is a loop but its line does not repeat point 0 last (L13)")
-    # Y-only evidence, as build_mesh applies it to this same draft line (bridges, then the grade net)
+    # Y-only evidence: the declared decks (a data fact); no grade cap unless one is declared (ledger 0078: "I just want real")
     y0 = [p[1] for p in pts]
     bridges = [(float(b["center_m"]), float(b["len_m"])) for b in ((scfg.get("capture") or {}).get("bridges") or [])]
     if bridges:
         pts = evidence.level_bridge_decks(pts, bridges)
-    max_grade = float((scfg.get("road_profile") or {}).get("max_grade_pct", 6.0)) / 100.0
-    pts = evidence.cap_grade(pts, max_grade=max_grade)
+    mg = li.get("max_grade_pct")
+    max_grade = None if mg is None else float(mg) / 100.0
+    if max_grade is not None:
+        pts = evidence.cap_grade(pts, max_grade=max_grade)
     if closed:
         pts[-1] = pts[0]
     dy = [p[1] - a for p, a in zip(pts, y0)]
@@ -96,8 +115,28 @@ def intake(proj: Path, *, connectors: bool | None = None) -> dict:
     conn = sdata / "connectors.local.json"
     if want_conn and conn.exists():
         shutil.copyfile(conn, data / "connectors.local.json")
+        (data / "mouths.json").unlink(missing_ok=True)       # tools/trim_connectors.py writes it for these connectors
     else:
-        (data / "connectors.local.json").unlink(missing_ok=True)
+        # the lap alone: an EMPTY side-street set, so the assembler sweeps none and tools/weld_mouths_blend.py (the
+        # mainline fold mend, ledger 0050) runs on the mainline alone — it reads both files
+        (data / "connectors.local.json").write_text(json.dumps({"connectors": []}), encoding="utf-8")
+        (data / "mouths.json").write_text(json.dumps({"mouths": []}), encoding="utf-8")
+    # THE BUILDINGS (Kevin 2026-11-03: "Lake Murray v4 had many more houses in it this time, don't lose those"): the
+    # footprint plan the config's scenery.bespoke.blocks names (tools/plan_buildings.py's output, source/bespoke/...) comes
+    # from the source track; tools/author_bespoke_blend.py stands it in place of the assembler's HOUSE / BUILDING boxes
+    copied = []
+    for blk in ((cfg.get("scenery") or {}).get("bespoke") or {}).get("blocks") or []:
+        rel = blk.get("file") if isinstance(blk, dict) else None
+        if not rel:
+            continue
+        if rel.startswith(("/", "\\")) or ".." in Path(rel).parts:
+            raise SystemExit(f"[lm_intake] scenery.bespoke.blocks file {rel!r} must be a plain path inside the track")
+        sp = src / rel
+        if not sp.exists():
+            raise SystemExit(f"[lm_intake] scenery.bespoke.blocks names {rel} but tracks/{src_track}/{rel} does not exist")
+        (proj / rel).parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(sp, proj / rel)
+        copied.append(rel)
     # THE DECKS FOR THE PREP. engine-july's prep (build_kn5_loop.declare_bridge_spans) spares the ground under a bridge
     # from its conform only where data/bridges.cache.json (OSM bridge ways, Lake Murray's fetch) puts one on the line.
     # A track without that cache declares its decks in capture.bridges instead: each becomes one way along the line's
@@ -126,15 +165,16 @@ def intake(proj: Path, *, connectors: bool | None = None) -> dict:
     lap = sum(math.hypot(b[0] - a[0], b[2] - a[2]) for a, b in zip(pts, pts[1:]))
     rep = {"source_track": src_track, "points": len(pts), "lap_m": round(lap, 1), "closed": closed,
            "widths_m": [round(min(widths), 2), round(sum(widths) / len(widths), 2), round(max(widths), 2)],
-           "bridges_levelled": bridges, "max_grade_pct": max_grade * 100.0,
+           "bridges_levelled": bridges, "max_grade_pct": None if max_grade is None else max_grade * 100.0,
+           "measured_max_grade_pct": round(100.0 * _max_grade(pts, 10.0), 2),
            "y_changed_points": sum(1 for d in dy if abs(d) > 1e-6),
            "y_change_max_m": round(max((abs(d) for d in dy), default=0.0), 3),
-           "connectors": bool(want_conn and conn.exists()),
+           "connectors": bool(want_conn and conn.exists()), "bespoke_files": copied,
            "md5": {"source_centerline": _md5(need[0]), "heightfield.npy": _md5(need[1]),
                    "centerline.local.json": _md5(data / "centerline.local.json")}}
     (data / "lm_intake.json").write_text(json.dumps(rep, indent=1), encoding="utf-8")
     print(f"[lm_intake] {src_track}: {len(pts)} pts, lap {lap:.0f} m, widths {rep['widths_m']} m, "
-          f"{len(bridges)} deck(s) levelled, grade net {max_grade*100:.1f} % — {rep['y_changed_points']} heights moved "
+          f"{len(bridges)} deck(s) levelled, grade cap {'none' if max_grade is None else f'{max_grade*100:.1f} %'}, steepest {rep['measured_max_grade_pct']} % over 10 m — {rep['y_changed_points']} heights moved "
           f"(max {rep['y_change_max_m']} m); connectors {'in' if rep['connectors'] else 'out'}")
     return rep
 

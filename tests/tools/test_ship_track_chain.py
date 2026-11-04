@@ -7,7 +7,7 @@ and on guard-only runs (bash exits before the first file operation; nothing is b
 - stage order and the exit-code flag on every Blender call;
 - the scratch rails (SHIP_PROJ / SHIP_SPEC never sync back or install; nothing inside airoso), the install
   folder from config, the install refusing while AC / Content Manager runs, the old build parked in the archive;
-- engine-july only when the slug is san-diego-lake-murray;
+- engine-july only for san-diego-lake-murray and for a ship.json that declares "engine": "lm-v4" (ledger 0078);
 - San Diego parity: the step headers tracks/san-diego-lake-murray/ship.json selects are tools/ship_sd.sh's, in
   its order (re-synced 2026-10-12 to ship_sd.sh after ledger 0046's tiered terrain; it must be re-synced whenever
   ship_sd.sh changes);
@@ -121,7 +121,10 @@ def test_spec_refuses_what_is_not_in_its_patterns():
     refused(lambda d: d["steps"]["draft"].append("gps; curl x"), "is not a step name")
     refused(lambda d: d["steps"].update(deploy=["x"]), "unknown phase")
     refused(lambda d: d["steps"].update(prep=["split", "prep"]), "exactly")
-    refused(lambda d: d.update(engine="C:/Users/Owner/Documents/GitHub/engine-july"), "unknown key")
+    # ledger 0078: ship.json may name an engine, but only from the closed list — never a path
+    refused(lambda d: d.update(engine="C:/Users/Owner/Documents/GitHub/engine-july"), "must be one of")
+    refused(lambda d: d.update(engine="lm-v4; rm -rf /"), "must be one of")
+    refused(lambda d: d.update(engines="lm-v4"), "unknown key")
     refused(lambda d: d.update(track="san-diego-lake-murray"), "not 'lookout-lariat'")
     refused(lambda d: d.update(workshop="../k10-workshops"), "absolute")
     refused(lambda d: d.update(workshop="C:/x/../airoso"), "absolute")
@@ -418,13 +421,18 @@ def test_the_chain_refuses_the_v1_frame_before_any_copy():
 
 # --- engine-july -----------------------------------------------------------------------------------------------
 def test_engine_july_only_for_san_diego():
+    """engine-july for San Diego (always) and for a track whose ship.json declares "engine": "lm-v4" (ledger 0078: every
+    track is built from Lake Murray v4's engine); airoso's own scripts/ for every other track."""
     hits = [(p, ln) for p, ln in _code_lines() if "engine-july" in ln]
     assert len(hits) == 1, hits
     pos, ln = hits[0]
-    # ENG=<dir> overrides it for San Diego alone (a scratch copy of engine-july, as in tools/ship_sd.sh)
+    # ENG=<dir> overrides it (a scratch copy of engine-july, as in tools/ship_sd.sh)
     assert ln.strip() == 'ENGINE="${ENG:-C:/Users/Owner/Documents/GitHub/engine-july}"', ln
-    cond = TEXT.rfind('if [ "$TRACK" = "san-diego-lake-murray" ]; then\n', 0, pos)
-    assert cond >= 0 and TEXT[cond:pos].count("\n") == 1, "the engine-july line is the SD branch's only line"
+    cond = TEXT.rfind('if [ "$TRACK" = "san-diego-lake-murray" ] || [ "$SPEC_ENGINE" = "lm-v4" ]; then\n', 0, pos)
+    assert cond >= 0 and TEXT[cond:pos].count("\n") == 1, "the engine-july line is the LM-engine branch's only line"
+    # decided after ship.json is read, before anything runs
+    assert TEXT.find("SPEC_LINES=$(") < cond < TEXT.find('echo "engine (prep / export / spawn): $ENGINE"')
+    assert 'SPEC_ENGINE="airoso"' in TEXT and '    engine) SPEC_ENGINE="$v";;' in TEXT
     assert 'else\n  ENGINE="$AIROSO"\nfi' in TEXT[pos:pos + 160]
     assert "$ENG/" not in TEXT and '"$ENG"' not in TEXT
     fns = _functions()
@@ -433,7 +441,31 @@ def test_engine_july_only_for_san_diego():
                        ("ship_export_race", '"$ENGINE/scripts/ac/export_kn5_addon.py"'),
                        ("ship_spawn_kn5", '"$ENGINE/scripts/ac/build_spawn_kn5.py"')):
         assert frag in fns[name], name
-    assert "engine" not in spec_mod.TOP
+    assert spec_mod.ENGINES == ("airoso", "lm-v4")
+    # San Diego's spec declares no engine and its lines are exactly the old ones (no engine line at all)
+    sd_lines = spec_mod.lines(spec_mod.load(SD_SPEC, "san-diego-lake-murray"))
+    assert not any(x.startswith("engine\t") for x in sd_lines)
+    # the LM assembler for an lm-v4 track without its own scripts-v021: San Diego's copy, never a per-track one
+    assert ('if [ ! -f "$V021/blender/build_loop_blend.py" ] && [ "$SPEC_ENGINE" = "lm-v4" ]; then\n'
+            '  V021="$AIROSO/tracks/san-diego-lake-murray/scripts-v021"') in TEXT
+
+
+def test_the_lm_engine_pilot_spec():
+    """Sand Creek through Lake Murray v4's engine (ledger 0078): its own track folder and slug, engine lm-v4, the intake
+    first, the v021 assembler and its weld, the bespoke buildings, engine-july's prep."""
+    p = ROOT / "tracks" / "sand-creek-lm" / "ship.json"
+    spec = spec_mod.load(p, "sand-creek-lm")
+    assert spec["engine"] == "lm-v4"
+    d = spec["steps"]["draft"]
+    assert d[0] == "lm_intake" and d.index("build_loop_blend") < d.index("weld_mouths")
+    assert "bespoke" in spec["steps"]["author"]
+    for ph, names in spec["steps"].items():
+        for n in names:
+            assert re.search(rf"^{ph}_{n}\(\) \{{", TEXT, re.M), (ph, n)
+    cfg = json.loads((ROOT / "tracks" / "sand-creek-lm" / "track.config.json").read_text(encoding="utf-8"))
+    live = json.loads((ROOT / "tracks" / "sand-creek" / "track.config.json").read_text(encoding="utf-8"))
+    assert cfg["slug"] != live["slug"] and cfg["install_folder"] != live["install_folder"]
+    assert cfg["lm_intake"]["source_track"] == "sand-creek"
 
 
 def test_engine_rule_and_no_blend_yet_on_guard_runs():

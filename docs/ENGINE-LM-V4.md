@@ -407,3 +407,13 @@ Grand Junction, or on Pikes Peak's oval); no run-off is built (none measured as 
 bank (High Plains' kn5 29 → 14.9 MB) at the cost of ground over the edge strip's outer half; every port ships from an
 empty workshop (the intake writes `centerline.geojson`); Pikes Peak is green with its outer wall read off NAIP; Milford
 ships but is worse than 0.6.0 (kinks, severe steps); Aspen, Pueblo and Grand Junction are green and, but for Aspen's kinks, better than installed.
+
+## 7. Round 5 (Mac): the per-track opt-ins the ports gained
+
+All opt-in; Lake Murray declares none (ledger 0078 has the numbers). `lm_intake.width_taper` (a width step becomes a flare,
+widening only), `lm_intake.resample_m` (ribbon rows at a finer spacing), `lm_intake.edge_on_wall` (a lane edge moved onto a
+wall face measured by `tools/lidar_wall.py`), `route.densify` (`measure: "warp"`, the true out-of-plane distance, and
+`max_cols`), the draft step `strip_seam` (`tools/strip_seam_blend.py`: a ground seam along the edge strip's outer lip), and
+in the bespoke dressing a rail's measured `height_m` and a pad's `strip_lonlat`. With them Milford is no worse than 0.6.0 on
+any gate, Pikes Peak's wall and right edge come from the 2018 lidar, and High Plains / Nevada (0.1.1) show the strip
+everywhere it is built.

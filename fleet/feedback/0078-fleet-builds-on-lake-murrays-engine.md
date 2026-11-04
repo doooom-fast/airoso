@@ -319,6 +319,51 @@ the strip is now the top surface on **100 %** of High Plains' side-stations (rou
 99.9 %, Pikes Peak 99.6 % (the rest its wall); ground on top 0. Size: High Plains TERRAIN 49,407 -> 60,944, kn5 14.9 ->
 15.5 MB.
 
+**4. High Plains' fences and W-beam, measured: the lidar finds none on the outside, and refines the K-rails.**
+`tools/lidar_wall.py` (now also dumping every NON-ground return with its height over its own local ground) on the 2018
+lidar (CO_Eastern_B3_2018) both sides, out to 25 m (45 m on the right): a linear structure = a 0.5 m lateral band holding
+returns at consecutive stations for >= 30 m (`tracks/high-plains/source/lidar/wall-survey/wall_{left,right}.json`).
+- **Outside (right): nothing.** No band persists 30 m anywhere out to 45 m. The installed W-beam (placed on build_mesh's
+  guard lips) and chain-link / warning barriers (build_mesh rules) have no measured line, in the lidar or on NAIP (0.3-0.6 m
+  cannot resolve a fence or a W-beam): none is built. Not seen does not prove absent at 2018 QL2 density; it is the evidence there is.
+- **Inside (left): four runs, each a blue / white K-rail on NAIP** (`source/edges/rails_zoom.jpg`), now placed and sized by
+  the lidar: pit wall s 0-150, 3.7-4.1 m past the edge, top 1.03 m (NAIP had it 4.5-5.7 m); pit / paddock s 0-120, 19.7-19.9 m,
+  0.59 m; paddock east s 255-390, 14.2-15.9 m, 1.00 m; and a run the NAIP traces had missed, s 1,743-1,848, 21.0-24.3 m,
+  1.13 m. The NAIP traces are kept only where the lidar sees no rail (infield_t, not in the 2018 flight; the ends of the
+  others). Every rail line resampled every 3.02 m along its own arc (the gap trap Pikes Peak found).
+- **Unidentified, not built:** a 0.53 m run 6 m left of s 0-75 (nothing on NAIP).
+
+**5. Nevada's run-off off the 2013 NAIP: the concrete apron, not the lot.** Round 4 assumed the 2013 site unpaved; the 2013
+mosaic shows the course laid on the Speedway's lot, with a bluish-white concrete apron (~3 m) along most edges and the lot's
+concrete beyond. Read per 3 m station and side (`tracks/exotics-racing-lv/source/edges/runoff_2013.json`, overview beside
+it): the course asphalt and the grey / bluish concrete (|R - B| <= 12 or bluer) are pavement, tan (R - B > 16) is not. 16 runs,
+2,175 m, 3-20 m past the edge. Beyond them the lot's concrete reads as tan as the desert on this mosaic, so the lot is NOT
+outlined and NOT built (by eye it surrounds most of the course; desert lies toward the freeway). Built: 14 of the runs (the
+two under 4 m median leave no 4 m pad cell past the strip) as draped visual pads in the edge strip's concrete (bespoke pads
+now take `strip_lonlat`), from the strip's lip out. Visual only: the physics there is the ground's (caliche); a physical
+run-off surface is owed.
+
+**0.1.1 (High Plains, Nevada): all gates green from an empty workshop, nothing worse than 0.1.0.**
+
+| | High Plains 0.1.0 | **HP 0.1.1** | Nevada 0.1.0 | **NV 0.1.1** |
+|---|---|---|---|---|
+| soft top / severe / kinks | 0 / 0 / 1.87 | 0 / 0 / 1.87 | 0 / 0 / 0 | 0 / 0 / 0 |
+| drops / far ledges / obstructed / floating | 0 / 0 / 0 / 0 | 0 / 0 / 0 / 0 | 0 / 3 / 0 / 0 | 0 / 3 / 0 / 0 |
+| audit / kn5_ground / verify / house_seat | all PASS | all PASS | all PASS | all PASS |
+| strip on top at 1 m past the edge | 24.4 % | **100 %** | 41.8 % | **100 %** |
+| TERRAIN / kn5 | 49,407 / 14.9 MB | 60,944 / 15.6 MB | 72,337 / 12.5 MB | 83,597 / 13.3 MB |
+| new | | the strip seam; rails from the lidar (+ the back-straight rail) | | the strip seam; 14 run-off pads |
+
+Worse: size (+0.7 / +0.8 MB). The camber is unchanged (max 0.11 %-pts on both).
+
+**Lake Murray unchanged through round 5 (Mac).** Of what round 5 touched, Lake Murray runs only `tools/author_bespoke_blend.py`
+(rails' `height_m`, strip pads: Lake Murray declares neither) and `tools/ship_track.sh` (one new step function it never
+names); the intake, densify, strip seam and lidar tools are ports' alone (`tests/tools/test_lm_engine_port.py` pins that its
+ship.json and config name none of them). Its bespoke step through lm-v4-line's author and through this branch's, on two
+copies of the same welded draft: 22 bespoke objects each (7,512 blocks at this draft stage), `tools/draft_equiv.py` SAME
+(371 data files, 43 objects by `tools/blend_digest.py`). The assembler and weld are untouched since the round-4 proof
+(46 / 46). The PC's step 5 (a) / (b) stands as written.
+
 ## PC runbooks
 
 **ENG**: never the live `D:\k10\engine-july`. Keep `D:/k10-scratch/eng_repro` (the repo-only v4 engine) clean; each build
@@ -364,6 +409,9 @@ Copies: `D:/k10-scratch/eng_sclm`, `eng_hplm`, `eng_nvlm`.
    Expect the Mac's numbers above: every gate green; the edge report prints (no verdict).
 4. Install side by side (no force needed): drop `--no-install`. They land as `content/tracks/sand_creek_raceway_lm`,
    `high_plains_lm`, `exotics_racing_lvms_lm`, beside the live folders. AC closed (CM may stay open).
+4a. **High Plains 0.1.1 and Nevada 0.1.1** (round 5): the same commands as steps 2-4 from the new head, the same ENG copies
+   (`eng_hplm`, `eng_nvlm`: no new texture; Nevada's run-off pads wear `building_*`, in REFERENCED.md5). They replace the
+   0.1.0 ports in the same folders (`high_plains_lm`, `exotics_racing_lvms_lm`). Expect the Mac's 0.1.1 numbers (Round 5, above).
 4b. The round-4 circuits, the same way (an empty workshop is enough), one ENG copy each from `eng_repro` with the textures
    below (airoso's tracked `assets/textures`, md5-checked after the copy):
    - **Milford** (`milford-road-course-lm`, workshop `milford_lm`, ENG `eng_mflm`, installs as `milford_road_course_lm`):

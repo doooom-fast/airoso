@@ -9,25 +9,53 @@
    "length_m": 170.2
   },
   {
-   "key": "pit_wall",
+   "key": "pit_wall_naip_rest",
    "kind": "krail",
-   "modules": 62,
+   "modules": 12,
    "left_out": 0,
-   "length_m": 188.1
+   "length_m": 36.2
   },
   {
-   "key": "pit_paddock",
+   "key": "pit_paddock_naip_rest",
    "kind": "krail",
-   "modules": 54,
+   "modules": 12,
    "left_out": 0,
-   "length_m": 162.7
+   "length_m": 36.2
   },
   {
-   "key": "paddock_east",
+   "key": "paddock_east_naip_rest",
    "kind": "krail",
-   "modules": 56,
+   "modules": 2,
    "left_out": 0,
-   "length_m": 170.0
+   "length_m": 6.0
+  },
+  {
+   "key": "pit_wall_lidar",
+   "kind": "krail",
+   "modules": 49,
+   "left_out": 0,
+   "length_m": 148.0
+  },
+  {
+   "key": "pit_paddock_lidar",
+   "kind": "krail",
+   "modules": 39,
+   "left_out": 0,
+   "length_m": 117.8
+  },
+  {
+   "key": "paddock_east_lidar",
+   "kind": "krail",
+   "modules": 45,
+   "left_out": 0,
+   "length_m": 135.9
+  },
+  {
+   "key": "back_straight_lidar",
+   "kind": "krail",
+   "modules": 34,
+   "left_out": 0,
+   "length_m": 102.7
   }
  ],
  "blocks": [

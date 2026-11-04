@@ -30,6 +30,9 @@
   "points_moved": 0,
   "max_move_m": 0.0
  },
+ "width_taper": null,
+ "resample": null,
+ "edge_on_wall": null,
  "grid_upsample": 2,
  "md5": {
   "source_centerline": "a5b9044a8f5fbfdd2e41752c39c1b6c7",

@@ -103,7 +103,8 @@
 #                 measured in the ONCOMING carriageway on every divided run (ledger 0047 Notes).
 set -euo pipefail
 export PYTHONUTF8=1
-AIROSO="${AIROSO:-C:/Users/Owner/Documents/GitHub/airoso}"
+_here="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && { pwd -W 2>/dev/null || pwd; })"   # the repo this script lives in
+AIROSO="${AIROSO:-$_here}"   # AIROSO overrides; no machine path is spelled out (the repo moved to D:/k10/airoso, 2026-11-03)
 WS="C:/Users/Owner/Documents/GitHub/k10-sd-v021"
 WS_PROJ="$WS/project"        # the real workshop project: the ONLY spelling of it in this script
 PROJ="${SHIP_PROJ:-$WS_PROJ}"

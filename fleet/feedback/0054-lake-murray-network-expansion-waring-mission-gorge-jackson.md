@@ -1946,6 +1946,18 @@ On `D:/k10-scratch/lm_phase2/project` (no rebuild, nothing installed; 2f's gate 
 
 0.20.2 is held for Kevin's install decision (--force-install for the inherited street drops 96, on his word only).
 
+### Phase 2 — 0.20.2 INSTALLED (PC, 2026-11-04 11:38, Kevin: "Yes, install both")
+
+The gated build (step 2f's `D:/k10-scratch/lm_phase2/project`, step 2g's gate re-runs) installed by the chain's own install
+block replayed by hand (as 0.19.4 and 0.20.1: the chain installs only from ship.json's workshop, lm_v4, which stays
+untouched). Forced past the inherited street drops 96 alone, on Kevin's word.
+- `content/tracks/san_diego_lake_murray_v4` = the build folder file for file (diff -rq: only the five ui_track.json names
+  differ, which the install sets). Five layouts at 0.20.2: Lake Murray Free Roam, Lake Murray Speedway / Reverse, Mission
+  Gorge Speedway / Reverse.
+- 0.20.1 parked in `D:/k10-track-archive/2026-11-04_113801/san_diego_lake_murray_v4`.
+- The workshop that builds 0.20.2 is the scratch `D:/k10-scratch/lm_phase2/project` (the reshaped loop.blend, the corrected
+  data); lm_v4 still holds v4's own. The config change to the line is the coordinator's step.
+
 ### Open questions for Kevin (Phase 2)
 
 - **Princess View's wide median: closed — measured, noise, fixed at the source; no gate change** (step 2c).

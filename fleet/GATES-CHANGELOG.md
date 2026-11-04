@@ -4066,3 +4066,17 @@ length and corners).
 Open, Kevin's call (ledger 0054 Phase 2 open questions): with the medians where they really stand, Princess View's 4.9-5.9 m
 median at lap v538 / v539 / v542, about 1 m toward the north_cw side, leaves a 6.42-6.44 m race lane. That is under the
 INVENTED clear_hard_min_m of 6.5 m. The gate stays as it is and refuses those three vertices.
+
+## 2026-11-04 (step 2c) — Princess View's median input corrected; kn5_equiv --list (ledger 0054 Phase 2; no threshold moved)
+
+| What | Before | After |
+|---|---|---|
+| the corridor's island input at Princess View, lap v532-v542 (data/median_bands.json, from data/expansion.north.json MD7) | the automatic aerial reader's right face, 3.6 ↔ 5.9 m wide (two street trees in the median, NAIP 2022) | the PC's NAIP line fit, right face −3.45 → −3.38 m (sd 0.35), left face kept: 4.9-5.4 m wide (`phase2/fix_pv_median.py`, the record `phase2/pv_median_correction.json`) |
+| `tools/kn5_equiv.py --list` (new, opt-in; the default verdict unchanged) | the first difference only | every mesh that is not equivalent, each with the kn5-frame plan box of what moved, so a road kn5 can be judged equal everywhere but one declared island |
+| `tools/reshape_island_blend.py` (new, step 4, not a gate) | — | moves one island's own vertices to corrected data, refusing unless every old vertex is found (≤ 3 mm, MATCH_TOL_M) |
+
+The earlier entry's open line (north_cw 6.42-6.44 m against clear_hard_min_m 6.5) is closed by the data: north_cw's lane there
+is now 6.90-6.93 m. clear_hard_min_m stays 6.5 m.
+
+Teeth: tests/tools/test_race_noses.py (the corrected median on the lap and its lane, island_reshape's moves and its refusal),
+tests/tools/test_kn5_equiv.py (`--list`).

@@ -1,7 +1,7 @@
 {
  "_doc": "plan_north.py: the held Mission Gorge Speedway planned on v4's intermediates (ledger 0054 Phase 2 step 2). PLANNED only: no built-artifact gate ran.",
- "status": "REFUSED",
- "lap_m": 8737.9,
+ "status": "PLANNED",
+ "lap_m": 8739.6,
  "unique_vertices": 2936,
  "joins": [
   {
@@ -13,7 +13,7 @@
     "north_princess_view",
     0
    ],
-   "length_m": 31.309,
+   "length_m": 31.339,
    "chord_m": 27.992,
    "points": 13,
    "declared": "J2"
@@ -27,7 +27,7 @@
     "north_mission_gorge",
     0
    ],
-   "length_m": 51.722,
+   "length_m": 51.704,
    "chord_m": 46.039,
    "points": 23,
    "declared": "J3"
@@ -41,7 +41,7 @@
     "north_J5_jackson_north#0",
     651
    ],
-   "length_m": 45.417,
+   "length_m": 47.149,
    "chord_m": 41.995,
    "points": 20,
    "declared": "J4"
@@ -120,63 +120,63 @@
  ],
  "corners": [
   {
-   "apex": 327,
-   "PC": 316,
+   "apex": 326,
+   "PC": 317,
    "PT": 331,
-   "apex_station_m": 958,
-   "PC_station_m": 934,
+   "apex_station_m": 956,
+   "PC_station_m": 935,
    "PT_station_m": 968,
    "sign": -1,
-   "R_apex_m": 18.97,
-   "D_deg": -82.66,
-   "arc_m": 34
+   "R_apex_m": 18.91,
+   "D_deg": -81.96,
+   "arc_m": 33
   },
   {
    "apex": 705,
    "PC": 693,
    "PT": 710,
    "apex_station_m": 2074,
-   "PC_station_m": 2047,
+   "PC_station_m": 2048,
    "PT_station_m": 2086,
    "sign": -1,
-   "R_apex_m": 22.87,
-   "D_deg": -80.24,
-   "arc_m": 39
+   "R_apex_m": 22.63,
+   "D_deg": -79.42,
+   "arc_m": 38
   },
   {
-   "apex": 1464,
-   "PC": 1454,
-   "PT": 1470,
-   "apex_station_m": 4338,
-   "PC_station_m": 4317,
-   "PT_station_m": 4352,
+   "apex": 1463,
+   "PC": 1457,
+   "PT": 1469,
+   "apex_station_m": 4337,
+   "PC_station_m": 4322,
+   "PT_station_m": 4350,
    "sign": -1,
-   "R_apex_m": 26.06,
-   "D_deg": -66.34,
-   "arc_m": 35
+   "R_apex_m": 16.42,
+   "D_deg": -68.97,
+   "arc_m": 28
   },
   {
    "apex": 2130,
    "PC": 2123,
    "PT": 2134,
-   "apex_station_m": 6316,
-   "PC_station_m": 6297,
-   "PT_station_m": 6327,
+   "apex_station_m": 6318,
+   "PC_station_m": 6299,
+   "PT_station_m": 6329,
    "sign": -1,
-   "R_apex_m": 9.09,
-   "D_deg": -90.35,
+   "R_apex_m": 9.14,
+   "D_deg": -89.91,
    "arc_m": 30
   },
   {
    "apex": 2932,
-   "PC": 2928,
+   "PC": 2929,
    "PT": 2934,
-   "apex_station_m": 8727,
-   "PC_station_m": 8716,
-   "PT_station_m": 8731,
+   "apex_station_m": 8729,
+   "PC_station_m": 8718,
+   "PT_station_m": 8733,
    "sign": -1,
-   "R_apex_m": 8.32,
-   "D_deg": -78.22,
+   "R_apex_m": 8.3,
+   "D_deg": -78.43,
    "arc_m": 15
   }
  ],
@@ -532,7 +532,7 @@
   {
    "exit": "J4:S6 MTRP visitor-centre entrance (OSM service way 60516202)",
    "kind": "pad_arm",
-   "lap_vertex": 1459,
+   "lap_vertex": 1460,
    "probe_xz": [
     -1221.486,
     3222.699
@@ -549,7 +549,7 @@
   {
    "exit": "J4:S5 Mission Gorge Road (east, the gorge; Phase 2)",
    "kind": "pad_arm",
-   "lap_vertex": 1467,
+   "lap_vertex": 1466,
    "probe_xz": [
     -1167.663,
     3199.999
@@ -691,7 +691,7 @@
   "north_cw": {
    "fail": false,
    "leak_m2": 0,
-   "reached_m2": 89000,
+   "reached_m2": 89060,
    "door_clusters": 0,
    "blocked": [],
    "forbidden_reached": [],
@@ -700,7 +700,7 @@
   "north_acw": {
    "fail": false,
    "leak_m2": 0,
-   "reached_m2": 92095,
+   "reached_m2": 92139,
    "door_clusters": 0,
    "blocked": [],
    "forbidden_reached": [],
@@ -715,7 +715,7 @@
     "closure_m": 7882.9,
     "island_vertices": 1431,
     "island_m": 4255.6,
-    "clear_min_m": 6.417,
+    "clear_min_m": 6.705,
     "clear_median_m": 10.896,
     "pin_rates": [
      [
@@ -767,13 +767,13 @@
       3.4
      ]
     ],
-    "below_floor_vertices": 1203,
+    "below_floor_vertices": 1202,
     "min_radius_m": 23.0,
     "probes": 325,
     "planned_no_route": {
      "fail": false,
      "leak_m2": 0,
-     "reached_m2": 89000,
+     "reached_m2": 89060,
      "door_clusters": 0,
      "blocked": [],
      "forbidden_reached": [],
@@ -845,11 +845,11 @@
     "planned_no_route": {
      "fail": false,
      "leak_m2": 0,
-     "reached_m2": 92095,
+     "reached_m2": 92139,
      "door_clusters": 0,
      "blocked": [],
      "forbidden_reached": [],
-     "seconds": 2.3,
+     "seconds": 2.5,
      "file": "no_route.north_acw.planned.json"
     }
    }
@@ -873,11 +873,11 @@
   "kerb_trims": [],
   "kerb_clips": [
    {
-    "apex": 327,
+    "apex": 326,
     "side": "L",
     "kind": "outside",
     "from": [
-     305,
+     306,
      342
     ],
     "to": [
@@ -886,22 +886,6 @@
     ],
     "by": [
      "north_cw"
-    ]
-   },
-   {
-    "apex": 327,
-    "side": "R",
-    "kind": "inside",
-    "from": [
-     316,
-     331
-    ],
-    "to": [
-     317,
-     331
-    ],
-    "by": [
-     "north_acw"
     ]
    },
    {
@@ -921,16 +905,16 @@
     ]
    },
    {
-    "apex": 1464,
+    "apex": 1463,
     "side": "L",
     "kind": "outside",
     "from": [
-     1444,
-     1482
+     1446,
+     1481
     ],
     "to": [
      1453,
-     1482
+     1481
     ],
     "by": [
      "north_cw"
@@ -942,7 +926,7 @@
     "kind": "outside",
     "from": [
      2116,
-     2140
+     2141
     ],
     "to": [
      2122,
@@ -957,7 +941,7 @@
     "side": "L",
     "kind": "outside",
     "from": [
-     2922,
+     2923,
      5
     ],
     "to": [
@@ -1037,7 +1021,5 @@
  "mainline_declaration_unchanged": true,
  "mainline_keys_differing_from_committed": [],
  "source_unchanged": true,
- "fails": [
-  "north: clear north_cw: v538 lane 6.44 m < the hard minimum 6.5 m"
- ]
+ "fails": []
 }

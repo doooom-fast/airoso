@@ -19,6 +19,8 @@ compared region by region, and the verdict names exactly which textures were add
 everything else is equivalent ("textures only: ...").
 
     python tools/kn5_equiv.py <a.kn5> <b.kn5> [--tol 1e-6]     exit 0 = equivalent, 1 = not (the first difference named)
+    python tools/kn5_equiv.py <a.kn5> <b.kn5> --list           every mesh that is not equivalent, each with the plan box
+                                                               of what moved (exit 1 when any); the meshes only
 """
 from __future__ import annotations
 
@@ -194,8 +196,58 @@ def compare(a: bytes, b: bytes, tol: float = TANGENT_TOL) -> dict:
     return res
 
 
+def mesh_diffs(a: bytes, b: bytes, tol: float = TANGENT_TOL) -> list[dict]:
+    """--list (ledger 0054 Phase 2 step 4, opt-in): EVERY mesh that is not equivalent, instead of the first — its name,
+    why, and where: the kn5-frame plan box (x, z) of its vertices whose position / normal / uv moved (equal vertex
+    counts), else of all its vertices in b (the exporter merged differently). [] when the meshes are all equivalent
+    (textures, materials and the node layout are compare()'s; this looks at the meshes only)"""
+    ra, rb = regions(a), regions(b)
+    ma = {n: (s, e) for k, n, s, e, _ in ra if k == "vertices"}
+    mb = {n: (s, e) for k, n, s, e, _ in rb if k == "vertices"}
+    out = []
+    for n in [n for _k, n, *_ in rb if _k == "vertices"]:
+        if n not in ma:
+            out.append({"mesh": n, "why": "only in b"})
+            continue
+        (sa, ea), (sb, eb) = ma[n], mb[n]
+        va, vb = a[sa:ea], b[sb:eb]
+        if va == vb:
+            continue
+        pts = []
+        if len(va) == len(vb):
+            for i in range(0, len(va), VERTEX_B):
+                fa = struct.unpack_from("<11f", va, i)
+                fb = struct.unpack_from("<11f", vb, i)
+                if fa[:8] != fb[:8] or max(abs(fa[f] - fb[f]) for f in (8, 9, 10)) > tol:
+                    pts.append((fb[0], fb[2]))
+            why = f"{len(pts)} of {len(vb) // VERTEX_B} vertices moved"
+        else:
+            pts = [struct.unpack_from("<3f", vb, i)[0:3:2] for i in range(0, len(vb), VERTEX_B)]
+            why = f"vertex count {len(va) // VERTEX_B} -> {len(vb) // VERTEX_B}"
+        if not pts:
+            continue
+        xs, zs = [p[0] for p in pts], [p[1] for p in pts]
+        out.append({"mesh": n, "why": why, "box_xz": [round(min(xs), 2), round(min(zs), 2), round(max(xs), 2),
+                                                       round(max(zs), 2)]})
+    for n in ma:
+        if n not in mb:
+            out.append({"mesh": n, "why": "only in a"})
+    return out
+
+
 def main(argv=None) -> int:
     argv = list(sys.argv[1:] if argv is None else argv)
+    if "--list" in argv:
+        argv.remove("--list")
+        tol = float(argv[argv.index("--tol") + 1]) if "--tol" in argv else TANGENT_TOL
+        if "--tol" in argv:
+            del argv[argv.index("--tol"):argv.index("--tol") + 2]
+        a, b = Path(argv[0]).read_bytes(), Path(argv[1]).read_bytes()
+        ds = mesh_diffs(a, b, tol)
+        for d in ds:
+            print(f"[kn5_equiv] {d['mesh']}: {d['why']}" + (f", box (kn5 x, z) {d['box_xz']}" if d.get("box_xz") else ""))
+        print(f"[kn5_equiv] {Path(argv[1]).name}: {len(ds)} mesh(es) not equivalent")
+        return 1 if ds else 0
     tol = TANGENT_TOL
     if "--tol" in argv:
         tol = float(argv[argv.index("--tol") + 1])

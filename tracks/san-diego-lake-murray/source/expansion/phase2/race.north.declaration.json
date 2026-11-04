@@ -68,22 +68,22 @@
         "_whole_doc": "Navajo westbound, mainline v2022..v1832 (undivided, 17.0 m): the whole street for the grid and the start / finish, 190 m",
         "boxes": [
           {
-            "apex": 327,
+            "apex": 326,
             "i": 316,
             "j": 333,
-            "_corner": "J2 Waring / Princess View / Mound (pad J2), R 19.0 m, D -82.7 (refit join); i = PC (not PC-2): Waring's median tail stands at v315, the box starts beside it"
+            "_corner": "J2 Waring / Princess View / Mound (pad J2), R 18.9 m, D -82.0 (refit join); i = PC - 1 (not PC-2): Waring's median tail stands at v315, the box starts beside it"
           },
           {
             "apex": 705,
             "i": 691,
             "j": 712,
-            "_corner": "J3 Princess View / Mission Gorge (pad J3), R 22.9 m, D -80.2 (refit join); PC-2 .. PT+2"
+            "_corner": "J3 Princess View / Mission Gorge (pad J3), R 22.6 m, D -79.4 (refit join); PC-2 .. PT+2"
           },
           {
-            "apex": 1464,
+            "apex": 1463,
             "i": 1452,
             "j": 1472,
-            "_corner": "J4 Mission Gorge / Jackson north (pad J4), R 26.1 m, D -66.3 (refit join); PC-2 .. PT+2, Mission Gorge's median runs to v1451 beside the box edge; the pad's Mission Gorge east arm (lap v1468) stands inside the box, sealed by the far strip"
+            "_corner": "J4 Mission Gorge / Jackson north (pad J4), R 16.4 m, D -69.0 (refit join); from v1452 (Mission Gorge's median runs to v1451 beside the box edge) to PT+3; the pad's Mission Gorge east arm (lap v1468) stands inside the box, sealed by the far strip"
           },
           {
             "apex": 2130,

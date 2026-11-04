@@ -51,7 +51,7 @@ the new roads is a candidate for a later phase.
 
 ## Status
 
-**Open — 2026-11-04 (later): the PC's step 3 answered on the Mac, held** (see "Phase 2 — step 2b": J2-J4 refit onto the built pads, every north median where it stands, five noses; 34 / 34 sealed, planned no_route PASS; ONE self-gate line left for Kevin — Princess View's real 5.9 m median leaves a 6.42 m lane against the 6.5 m hard minimum; the PC re-judges the joins). Was: **Open — 2026-11-04: Phase 2's two tools built and proved on the Mac, held** (see "Phase 2 — step 2" at the end: the median-nose closure end and the station smoothing, opt-in and byte-identical off; laps in tools/ship_track.sh; the north plan PLANNED with every self-gate clear, 34 / 34 exits sealed, planned no_route PASS; the PC runbook builds 0.20.2 through ship_track.sh, held from install). Was: **Open — 2026-11-03: Phase 2 (the Mission Gorge Speedway) declared and planned on v4, held** (34 exits sealed in the plan, the median noses open). Was: **Open — v0.19.0 INSTALLED 2026-10-20 (Drive 1; Kevin 2026-10-26: "the barriers look great"); P4 (lamps, signs + map, trees + GrassFX, buildings + rock) INTEGRATED on one branch as v0.19.1 2026-10-26, rehearsed, refuted by the four lenses, fixed at the causes and rehearsed again, not installed** (see "P4 — dressing, integrated" at the end: no tree on a rock face / walk / in a building, buildings at their true place with no wall on a walk, the cut toes a row not a saw; every v0.19.0 gate number equal; Drive 2 is Kevin's `--force-install`). Was: **P4 trees built and rehearsed on a branch 2026-10-26, not merged** (see "P4 trees" at the end: the north network planted by zone from the aerial bins at the loop's density, Waring's median trees, GrassFX confirmed at 16 tiles; every v0.19.0 gate number unchanged; the other three P4 pieces run in parallel). Was: **Open — P3 repaired a third time and rehearsed again on the branch 2026-10-19, v0.19.0, not installed** (see "P3 repair round 3" at the end: the ground thinned before the export without moving a point, the road model back to about 90 MB; the lamp-post check finds each lamp's own foot; the J1 question for Kevin still open). Was: **Open — P3 repaired a second time and rehearsed again on the branch 2026-10-19, v0.19.0, not installed** (see "P3 repair round 2" at the end: Jackson's painted median and Princess View's centre lane put where the aerial shows them, three raised islands added or moved to their real places, Mission Gorge's south rock face raised 0.3-0.5 m, the model export's duplicate barrier piece fixed; the three existing layouts no worse than v0.18.1; the J1 question for Kevin still open). Was: **Open — P3 repaired and rehearsed again on the branch 2026-10-19, v0.19.0, not installed** (see "P3 repair round 1" at the end: the three checks' refusals fixed at their causes — the drive test's late exemption removed and its verdict written as it works, kn5_ground_check run on all three layouts, every real wall beside the new roads kept, the holes in the hillside closed, the corners on the real ground, Glenroy St's south-west leg and Doreen Rd stubbed; the three existing layouts no worse than v0.18.1; one question for Kevin: tilt the College/Navajo crossroads to its real slope?). Next: Kevin's Drive 1, then P4 dressing. Was: **Open — P3 (the north roads) built and rehearsed on a branch 2026-10-19, v0.19.0, not installed** (refuted by three checks; see "P3" at the end: four roads, three junction pads, two permanent welds, 24 barrier-closed side streets, six cut slopes kept; every gate of the three existing layouts no worse than v0.18.1; the new roads driven both ways PASS). Next: Kevin's Drive 1, then P4 dressing. Was: **Open — P2 (the ground over the expansion) done on a branch 2026-10-14** (see "P2" at the end: the grown heightfield, the pin's 37 / 26 and the re-keyed cache in one change; the tiers planned over the held north network; 3DEP fetched; the existing three layouts byte-identical to v0.18.0 on every drive, mouth and route gate; the loop's ground within 150 m unchanged except beside the two weld mouths; six cut-wall stretches listed for P3's hand authoring; the low clause restated). Was: **Open — P1 done on a branch 2026-10-14, after a fix round** (see "P1 fix round" at the end: both new mouths pass verify_mouths, J1's R 30 return is built as apron AP1 to v1526.3, no road lies over another at either mouth, no step over 6 cm at J5 in any layout on the real wheel paths, both Speedways sealed; the existing three layouts equal to v0.18.0 key for key). Was: **Open — P1 (the readable intermediate, the numbered map, the J1 / J5 weld rehearsal) done on a branch 2026-10-14** (refuted: J5 failed verify_mouths, drive_test still read 6-8 cm steps at J5). Was: **Open — P0 (data, no geometry) done on a branch 2026-10-14** (see "P0" at the end: guarded OSM + buildings, `north`
+**Open — 2026-11-04 (step 2c): PLANNED, held** (see "Phase 2 — step 2c": the PC's step 3 passed all five joins; Princess View's wide median was two street trees on the aerial, fixed at the source and carried to a scratch loop.blend by tools/reshape_island_blend.py; strip keep 0.03; plan_north PLANNED, 34 / 34 sealed, planned no_route PASS, no gate moved; the PC builds 0.20.2 with no install). Was: **Open — 2026-11-04 (later): the PC's step 3 answered on the Mac, held** (see "Phase 2 — step 2b": J2-J4 refit onto the built pads, every north median where it stands, five noses; 34 / 34 sealed, planned no_route PASS; ONE self-gate line left for Kevin — Princess View's real 5.9 m median leaves a 6.42 m lane against the 6.5 m hard minimum; the PC re-judges the joins). Was: **Open — 2026-11-04: Phase 2's two tools built and proved on the Mac, held** (see "Phase 2 — step 2" at the end: the median-nose closure end and the station smoothing, opt-in and byte-identical off; laps in tools/ship_track.sh; the north plan PLANNED with every self-gate clear, 34 / 34 exits sealed, planned no_route PASS; the PC runbook builds 0.20.2 through ship_track.sh, held from install). Was: **Open — 2026-11-03: Phase 2 (the Mission Gorge Speedway) declared and planned on v4, held** (34 exits sealed in the plan, the median noses open). Was: **Open — v0.19.0 INSTALLED 2026-10-20 (Drive 1; Kevin 2026-10-26: "the barriers look great"); P4 (lamps, signs + map, trees + GrassFX, buildings + rock) INTEGRATED on one branch as v0.19.1 2026-10-26, rehearsed, refuted by the four lenses, fixed at the causes and rehearsed again, not installed** (see "P4 — dressing, integrated" at the end: no tree on a rock face / walk / in a building, buildings at their true place with no wall on a walk, the cut toes a row not a saw; every v0.19.0 gate number equal; Drive 2 is Kevin's `--force-install`). Was: **P4 trees built and rehearsed on a branch 2026-10-26, not merged** (see "P4 trees" at the end: the north network planted by zone from the aerial bins at the loop's density, Waring's median trees, GrassFX confirmed at 16 tiles; every v0.19.0 gate number unchanged; the other three P4 pieces run in parallel). Was: **Open — P3 repaired a third time and rehearsed again on the branch 2026-10-19, v0.19.0, not installed** (see "P3 repair round 3" at the end: the ground thinned before the export without moving a point, the road model back to about 90 MB; the lamp-post check finds each lamp's own foot; the J1 question for Kevin still open). Was: **Open — P3 repaired a second time and rehearsed again on the branch 2026-10-19, v0.19.0, not installed** (see "P3 repair round 2" at the end: Jackson's painted median and Princess View's centre lane put where the aerial shows them, three raised islands added or moved to their real places, Mission Gorge's south rock face raised 0.3-0.5 m, the model export's duplicate barrier piece fixed; the three existing layouts no worse than v0.18.1; the J1 question for Kevin still open). Was: **Open — P3 repaired and rehearsed again on the branch 2026-10-19, v0.19.0, not installed** (see "P3 repair round 1" at the end: the three checks' refusals fixed at their causes — the drive test's late exemption removed and its verdict written as it works, kn5_ground_check run on all three layouts, every real wall beside the new roads kept, the holes in the hillside closed, the corners on the real ground, Glenroy St's south-west leg and Doreen Rd stubbed; the three existing layouts no worse than v0.18.1; one question for Kevin: tilt the College/Navajo crossroads to its real slope?). Next: Kevin's Drive 1, then P4 dressing. Was: **Open — P3 (the north roads) built and rehearsed on a branch 2026-10-19, v0.19.0, not installed** (refuted by three checks; see "P3" at the end: four roads, three junction pads, two permanent welds, 24 barrier-closed side streets, six cut slopes kept; every gate of the three existing layouts no worse than v0.18.1; the new roads driven both ways PASS). Next: Kevin's Drive 1, then P4 dressing. Was: **Open — P2 (the ground over the expansion) done on a branch 2026-10-14** (see "P2" at the end: the grown heightfield, the pin's 37 / 26 and the re-keyed cache in one change; the tiers planned over the held north network; 3DEP fetched; the existing three layouts byte-identical to v0.18.0 on every drive, mouth and route gate; the loop's ground within 150 m unchanged except beside the two weld mouths; six cut-wall stretches listed for P3's hand authoring; the low clause restated). Was: **Open — P1 done on a branch 2026-10-14, after a fix round** (see "P1 fix round" at the end: both new mouths pass verify_mouths, J1's R 30 return is built as apron AP1 to v1526.3, no road lies over another at either mouth, no step over 6 cm at J5 in any layout on the real wheel paths, both Speedways sealed; the existing three layouts equal to v0.18.0 key for key). Was: **Open — P1 (the readable intermediate, the numbered map, the J1 / J5 weld rehearsal) done on a branch 2026-10-14** (refuted: J5 failed verify_mouths, drive_test still read 6-8 cm steps at J5). Was: **Open — P0 (data, no geometry) done on a branch 2026-10-14** (see "P0" at the end: guarded OSM + buildings, `north`
 appended with full/medium/short byte-identical, config per D2, `grid_grow` + frame pin + cache remap proven; the grown
 grid, the pin's offsets and the re-keyed cache land together in P2). Next: P1, the readable intermediate. Was: **Open — planned 2026-10-13** (`tracks/san-diego-lake-murray/EXPANSION-PLAN.md`, revision 2 after an independent critic; place facts in `DOSSIER-EXPANSION-NORTH.md`). Kevin's answers to D1-D4 pending (D3 amends law L3: needs his explicit yes). Was: **Open — research and plan first** (dossier-style: routes, junctions with the loop, elevation and the gorge,
 widths and medians off the aerial, terrain extent, layouts, budget, gates), then the build after v0.18.x lands
@@ -1617,50 +1617,132 @@ allows that segment at full width.
 the same md5s as `proofs/nose_off_md5.json`. No lap without `island_offsets` changes either: the test stitches it and
 compares.
 
-### Phase 2 — step 3 (PC): re-judge the joins on the built road
+### Phase 2 — step 2c (Mac, 2026-11-04, `claude/lm-phase2-build`): Princess View's median fixed at the source; strip keep 0.03; PLANNED
 
-From a worktree of `claude/lm-phase2-build` (this push), with v4's workshop read-only:
+**What the PC's step 3 found on f9d4b42** (its files: `D:/k10-scratch/lm_phase2/{plan_north.f9d4b42.log, joins_f9d4b42.json,
+step3b_read.txt, step3b_fine.json, naip/edges.txt, naip/pv_table.txt}`):
+- **All five joins PASS** in both layouts. Holes, soft top, severe steps and obstructions are all 0 (J2 severe 7 → 0, J3 8 → 0,
+  J4 5 → 0). No join needs step 4.
+- **Island sides:** both LEFT of the lap's travel in the engine frame, as the data says. Waring's tail is centred +1.70 and
+  tapers out at s 929.6; Mission Gorge's J4 end is +2.00 from v1448, with nothing past v1451 + 0.16. (The earlier "right"
+  was the PC's mistake.)
+- **Casts on the built OBJ:**
+  - All 516 lane samples at ±(w/2 − 1.32) land on 1ROAD. The worst margins are J2 +1.15, J3 +1.17, J4 +1.17.
+  - Of the strip faces at ±(w/2 − 0.15) (refined to 2 mm), 498 land on 1ROAD. 18 land on the pad curb's toe
+    (1KERB_sidewalk_padJx), never on ground: J2 11 / 126 by 1-19 mm (all on the right, s 948.4-955.4), J3 4 / 208 by
+    1-5 mm, J4 3 / 182 by 3-5 mm.
+- **Princess View v536-556: the wide median is measurement noise.**
+  - expansion.north.json MD7 ("aerial island", one automatic reading every 2.5 m) swings 3.6 ↔ 5.9 m at s 632.5-650, all on
+    the RIGHT face; the left face holds at +1.4..+1.9.
+  - On NAIP 2022 z18 two street trees stand IN the median (v533-535 and v537-540). Their crowns and westward shadows are what
+    the reader took for island.
+  - Calibrated to the built faces on the clear run v543-556 (offset −2.58), a line fit puts the right face at −3.45 →
+    −3.38 m over v535-v556 (sd 0.35). Projection: scripts-v021 projection.py's WGS84 series on
+    source/naip_2022_lm_z18.jpg (a plain-sphere equirectangular is ~9 m E / 5 m N off).
+  - The noise runs both ways: about 1.3 m too wide at v538 / 539 / 542, about 1.2 m too narrow at v535-537 and v540 / 541.
+  - The real median is about 5.0-5.3 m wide, centred −0.9..−1.0. North_cw's lane beside it is 6.91-6.98 m.
+  - v4's built road carries the noise too: a 1KERB ring (+0.18 m) at v538 [−3.91, +1.73], its right face jogging 1.3 m out
+    and back.
+
+**1. The median, corrected at the source** (`phase2/fix_pv_median.py --write`; the record is `phase2/pv_median_correction.json`,
+and the provenance is also in expansion.north.json MD7 `correction`). The right face of every piece-B row on the tree run
+(s 620-647.5, lap v532-v542) is set to the PC's line fit; the left face is kept. Three files change:
+- `data/expansion.north.json`: 12 piece-B rows (`median_w_m`, `median_off_m`), plus MD7's polygon and `width_m`;
+- `data/median_bands.json`: connector_islands north_princess_view at 11 vertices (lap v532-v542), by expansion_pieces.decorate's
+  formula; the points keep their heights;
+- `data/connectors.local.json`: north_princess_view's two yellow median edge lines at the same vertices.
+
+The lap's island offsets and the race plan read these files, so they agree with the corrected source.
+
+| lap v | before: left / right / width / centre | after: left / right / width / centre |
+|---|---|---|
+| v533 | −1.57 / −3.56 / 2.00 / −2.56 | −1.57 / −3.45 / 1.89 / −2.51 |
+| v534 | +0.40 / −2.67 / 3.07 / −1.14 | +0.39 / −3.45 / 3.85 / −1.53 |
+| v535 | +1.55 / −2.19 / 3.74 / −0.32 | +1.55 / −3.45 / 5.00 / −0.95 |
+| v536 | +1.60 / −2.71 / 4.32 / −0.55 | +1.61 / −3.44 / 5.05 / −0.92 |
+| v537 | +1.57 / −2.56 / 4.13 / −0.49 | +1.57 / −3.44 / 5.01 / −0.94 |
+| v538 | +1.75 / −3.92 / 5.67 / −1.09 | +1.75 / −3.44 / 5.19 / −0.84 |
+| v539 | +1.92 / −3.94 / 5.86 / −1.01 | +1.92 / −3.44 / 5.36 / −0.76 |
+| v540 | +1.59 / −2.55 / 4.14 / −0.48 | +1.59 / −3.43 / 5.03 / −0.92 |
+| v541 | +1.46 / −2.17 / 3.63 / −0.35 | +1.47 / −3.43 / 4.89 / −0.98 |
+| v542 | +1.84 / −3.92 / 5.76 / −1.04 | +1.84 / −3.46 / 5.30 / −0.81 |
+| v543-v556 | unchanged (the clear run: right −3.62..−3.34, width 4.63-5.19) | unchanged |
+
+(Lap frame, metres off the connector line, + = left of travel. v532 moves by 1 cm: the row s 620 shapes it.)
+
+**2. How the corrected median reaches the built road without regenerating v4.** The tool is
+`tools/reshape_island_blend.py` (pure part `tools/island_reshape.py`). It runs on a scratch copy of v4's loop.blend.
+- Why not re-run a draft step: an LM chain without `--skip-blend` loses the 7,600 houses. `tools/author_median_blend.py` joins
+  its islands INTO CURB / TERRAIN, so re-running it would author every island twice.
+- What the tool does:
+  - It computes the island's curb rings and deck exactly as author_median_blend lays them, from the old data and from the
+    corrected data. The runs are the same, so the vertex count and order are the same.
+  - It requires every old vertex to be in the blend (≤ 3 mm), else it refuses and saves nothing.
+  - It moves those vertices to their corrected positions. The island's two yellow edge lines (YLINE) follow their face.
+  - Faces, vertex order and every other vertex stay as they are, so the prep's 65k splits do not move.
+- **Proved on the Mac** with v4's loop.blend (LFS 0656308e) and the f9d4b42 median_bands (`proofs/reshape_pv_mac.json`):
+  - all 592 PV island vertices found at 0.00 mm;
+  - CURB 78 and TERRAIN 26 vertices moved (stations 200-212, connector frame), YLINE 88; largest move 1.287 m;
+  - in a digest of all 145 objects, only CURB / TERRAIN / YLINE differ, in positions only (77 / 24 / 88 vertices beyond
+    1e-5 m), with the same topology and materials;
+  - re-run on the result against the corrected data: 592 found, 0 moved. Run on v4's blend against the corrected data: it
+    refuses (96 vertices not where that data lays them).
+- **Known and accepted:**
+  - the ring keeps v4's own heights: the island stands where v4 stood it, and the base moves up to 1.3 m across the deck's
+    crossfall;
+  - the TreeFX median plantings keep their positions (scatter_positions.json).
+
+**3. Strip keep 0.03** (`fit_joins.py`: STRIP_KEEP_M and END_KEEP_M 0.03, the coordinator's call), refit from the original
+curves. End points, tangents and point counts are kept: 2,936 vertices, lap 8,739.6 m.
+
+| Join | Strip face, min both sides | Judge's lane samples | Radius | Length |
+|---|---|---|---|---|
+| J2 | +0.030 m | +1.195 m | 19.1 m | 31.34 m |
+| J3 | +0.030 m | +1.195 m | 22.8 m | 51.70 m |
+| J4 | +0.025 m (5 mm short, within FIT_TOL_M 0.02) | +1.192 m | 15.7 m (floor 15.75) | 47.15 m |
+
+The new corners are J2 apex v326 (box v316-333), J3 v705 (v691-712) and J4 v1463 (v1452-1472). The records judge reads 0
+samples off pavement on all five joins.
+
+**4. Re-plan: `plan_north.py` exits 0, PLANNED.**
+- Every self-gate is clear. clear_hard_min_m stays 6.5.
+- 34 / 34 exits are sealed both ways.
+- Planned no_route PASS both ways: leak 0, nothing forbidden reached, 89,060 / 92,139 m² reached.
+- North_cw's lane at v537-v542 is 6.90-6.93 m (it was 6.42 m on the trees). The smallest lane anywhere on the lap is 6.705 m
+  (v480, Princess View's other median).
+- The mainline declaration is unchanged and no source moved under the plan.
+- The existing Speedways are byte-identical: `prove_nose_off.py` against 2ce9495 on the corrected data gives the same md5s as
+  `proofs/nose_off_md5.json`, every key.
+- Tests: 206 pass; the 2 failures are the guard runs that need bash 4 (the Mac has 3.2). The PC's judge tests pass.
+
+### Phase 2 — step 3 (PC, done 2026-11-04 on f9d4b42): all five joins PASS
+
+As above. The step is re-run on 0.20.2's built road in step 5.
+
+### Phase 2 — step 4 (PC): Princess View's island on a scratch loop.blend
+
+No join needs authoring. The one authored change is Princess View's island, by the tool, on a scratch copy; `lm_v4` is never
+written. From a worktree of `claude/lm-phase2-build` (this push; `git lfs pull` first):
 
 ```bash
-python tracks/san-diego-lake-murray/source/expansion/phase2/plan_north.py D:/k10-scratch/lm_phase2/north-plan
-python -I tracks/san-diego-lake-murray/source/expansion/phase2/judge_joins_built.py \
-  --obj D:/k10-scratch/lm_v4/data/track.obj --gate-centerline D:/k10-scratch/lm_v4/data/gate_centerline.json \
-  --plan D:/k10-scratch/lm_phase2/north-plan \
-  --also D:/k10-scratch/lm_v4/data/track.race_cw.obj --also D:/k10-scratch/lm_v4/data/track.race_acw.obj
+# 1. the scratch workshop: v4's project without build/, then the three corrected data files from the repo
+robocopy D:/k10-scratch/lm_v4 D:/k10-scratch/lm_phase2/project /E /XD build
+cp tracks/san-diego-lake-murray/data/{median_bands.json,connectors.local.json,expansion.north.json} D:/k10-scratch/lm_phase2/project/data/
+# 2. the island, vertex for vertex (Blender 4.2), from v4's own median_bands (the blend was authored from it)
+"C:/Program Files/Blender Foundation/Blender 4.2/blender.exe" --background --python-exit-code 1 \
+  --python tools/reshape_island_blend.py -- D:/k10-scratch/lm_phase2/project --island north_princess_view \
+  --old-bands D:/k10-scratch/lm_v4/data/median_bands.json --out-blend D:/k10-scratch/lm_phase2/project/loop.pv.blend \
+  --report D:/k10-scratch/lm_phase2/reshape_pv.json
+mv D:/k10-scratch/lm_phase2/project/loop.blend D:/k10-scratch/lm_phase2/project/loop.v4.blend
+mv D:/k10-scratch/lm_phase2/project/loop.pv.blend D:/k10-scratch/lm_phase2/project/loop.blend
 ```
 
-`plan_north.py` exits 1 on the one open line and writes every file. The judge reads `lap.north.json` and
-`barrier_bands.north.json` from it. **Pass: all five joins PASS** (holes, soft top, severe steps and obstructions all 0).
+**Pass:** the report reads 592 found (worst ≤ 0.5 mm), moved CURB 78 / TERRAIN 26, stations [200, 212], largest move
+1.287 m, YLINE 88 — the Mac's numbers. A refusal means `lm_v4/data/median_bands.json` is not the data the blend was
+authored from: stop and report it. (The chain's sync-in does not carry median_bands.json or connectors.local.json; step 1's
+copy is what puts the corrected files in the workshop.)
 
-Also check on the built OBJ:
-- **The refit curves stand on the pads.** For J2 / J3 / J4, every 0.5 m along each join, cast at ±(w/2 − 0.15) (the race
-  strips' outer faces) and at ±(w/2 − 1.32) (the judge's outermost samples). Every cast must hit 1ROAD (the pad deck or the
-  piece's ribbon), never 1KERB or ground. Report the worst lateral margin to the curb per join. The Mac's model reads 0.00 m
-  for the strip faces and ≥ 0.98 m for the samples.
-- **Waring's tail and Mission Gorge's J4 end stand where the lap now puts them.**
-  - Waring: the island's last curb station near s ≈ 929.8 (v315). Report its centre's lateral against the lap
-    (`island_off_by_vertex[315]` = +1.70, left of travel in the engine frame) and the side you see.
-  - Mission Gorge: v1451. Report the same.
-
-A join that still fails goes to step 4. One that passes is not touched.
-
-### Phase 2 — step 4 (PC): author only what step 3 refused
-
-Work on a scratch copy of v4's `loop.blend`, never `lm_v4`:
-- any J2-J4 corner the re-judge still refuses;
-- the J1 / J5 connections (inside kerbs, the strip across the abandoned branch), with 0055.
-
-Free Roam must not get worse:
-- every street gate key equals 0.20.1's;
-- the road kn5 is `kn5_equiv`-equivalent to 0.20.1's wherever the road was not authored;
-- each authored change is listed with its street-gate numbers before and after.
-
-If step 3 passes every join, skip this step: step 5 runs `--skip-blend` on v4's own `loop.blend`.
-
-### Phase 2 — step 5 (PC): 0.20.2 through `ship_track.sh` on v4, the layouts in the config, held from install
-
-**Blocked on the Princess View question** (open questions, first). `barrier_bands.py` exits 1 on that line, so the chain
-stops at `race_bands`. Run it once Kevin has answered and the Mac has re-planned to PLANNED.
+### Phase 2 — step 5 (PC): 0.20.2 through `ship_track.sh` on the reshaped scratch, the layouts in the config, held from install
 
 1. **A build branch** off `claude/lm-phase2-build`, for example `claude/lm-phase2-0202`; never `claude/lm-v4-line`. The north
    lap and its two layouts go into `track.config.json` exactly as plan_north composes them: the Speedway's limits, the lap's
@@ -1673,14 +1755,9 @@ stops at `race_bands`. Run it once Kevin has answered and the Mac has re-planned
    open(p.PROJECT/'track.config.json','w',encoding='utf-8').write(json.dumps(c,indent=2,ensure_ascii=False)+'\n')"
    ```
 
-2. **The workshop:** a fresh copy of `D:/k10-scratch/lm_v4` (or step 4's scratch, if it authored anything) at
-   `D:/k10-scratch/lm_phase2/project`, without `build/`. `lm_v4` is never written. ship.json's sync_in brings
-   `source/expansion/race.north.joins.json` (the refit joins). `data/median_bands.json` is already in the workshop: the island
-   offsets read it.
-3. **The run** (scratch: no sync-back, no install; `ENG` is the repo-only engine):
+2. **The run**, on step 4's scratch (no sync-back, no install; `ENG` is the repo-only engine):
 
    ```bash
-   git -C <worktree> lfs pull
    AIROSO=<worktree> ENG=D:/k10-scratch/eng_repro SHIP_PROJ=D:/k10-scratch/lm_phase2/project \
      bash tools/ship_track.sh san-diego-lake-murray --skip-blend --no-install 2>&1 | tee D:/k10-scratch/lm_phase2/ship.log
    ```
@@ -1695,6 +1772,8 @@ stops at `race_bands`. Run it once Kevin has answered and the Mac has re-planned
 **Pass when every line below holds.** Kevin reads the numbers before anything is installed.
 - **Every gate.** The chain exits 0 and prints `SHIP OK`. `--force-install` is never used on a held build. This includes
   **the house gate**: roofs 7,600, blocks 7,600, colliders 275 (`data/house_gate.json`).
+- **Princess View's island on the built road** (step 3b's read, on `lm_phase2/project/data/track.obj`): the 1KERB ring at v538
+  stands at about [−3.44, +1.75], and the right face reads −3.45..−3.38 over v535-v556, with no jog.
 - **Built containment at all 34 exits**, in both north layouts:
   - `data/no_route.north_cw.json` and `north_acw.json`: fail false, leak 0, `forbidden_reached` empty, `blocked` empty;
   - the six pad-arm probes are sealed by the Speedway's own furniture, not by the Free Roam end barriers alone (Waring SW at
@@ -1702,17 +1781,17 @@ stops at `race_bands`. Run it once Kevin has answered and the Mac has re-planned
   - the five K-rails per layout stand in the built OBJ: verify_race C' / J (`data/race_verify.north.json`, `nose_pins`
     `far_line_m` and `closure_face_m` ≤ 0.05).
 - **Every spawn reachable:** `spawns_unreached` empty on both; `layout_dummies` and spawn clearance (verify_race F) clean.
-- **The existing layouts' gate matrix reproduced.** street / race_cw / race_acw must give every key equal to 0.20.1's
-  committed files for each of:
-  - `drive_test`, `audit_mesh`, `kn5_ground_check`, built `no_route`;
-  - `verify_mouths`, `verify_stubs`, `verify_pads`, `rib_check`, `house_seat`, `verify_fold_fans`, `verify_ai_line`.
-
-  Track OBJ and gate JSON comparisons are exact.
-- **The existing kn5s equal 0.20.1's** by `python tools/kn5_equiv.py <0.20.1 kn5> <0.20.2 kn5>`:
-  - the road, `_race`, `_street`, `_closure_race_cw` and `_closure_race_acw`, with tangent floats within 1e-6;
-  - the existing three spawn kn5s byte-identical.
-
-  The 0.20.1 kn5s are the `D:/k10-scratch/lm_v4_0201` build (ledger 0065).
+- **The existing layouts and Free Roam, against 0.20.1.**
+  - street / race_cw / race_acw `drive_test`, `audit_mesh`, `kn5_ground_check`, built `no_route`, `verify_mouths`,
+    `verify_stubs`, `verify_pads`, `rib_check`, `house_seat`, `verify_fold_fans`, `verify_ai_line`: every key equal to
+    0.20.1's committed files.
+  - A key that is not equal is listed with its 0.20.1 and 0.20.2 values and must sit at Princess View's island (lap v530-v545,
+    Free Roam's north lines). Any other difference fails.
+- **The kn5s.** `python tools/kn5_equiv.py <0.20.1 kn5> <0.20.2 kn5>` must read equivalent (tangent floats within 1e-6) for
+  `_race`, `_street`, `_closure_race_cw` and `_closure_race_acw`, and the existing three spawn kn5s must be byte-identical. The
+  road kn5 must give, with `--list`, only meshes whose box lies inside the island's kn5-frame box x −3001.7..−2968.3,
+  z −1592.1..−1537.9 (the 1KERB_sidewalk piece, the 1GRASS tile and the YLINE piece that hold it). The 0.20.1 kn5s are the
+  `D:/k10-scratch/lm_v4_0201` build (ledger 0065).
 - **The four artifact gates on the north layouts:**
   - `drive_test --layout north_*`: the lane, barrier_missing 0, obstruction 0;
   - `audit_mesh --layout north_*`;
@@ -1720,28 +1799,22 @@ stops at `race_bands`. Run it once Kevin has answered and the Mac has re-planned
     mainline race or closure kn5;
   - `kn5_ground_check` per layout;
   - plus `verify_race --lap north` and `check_race_kn5 --lap north`.
-- **The joins re-judged on the built 0.20.2 road:** `judge_joins_built.py` as in step 3, on `lm_phase2/project/data/track.obj`.
-  All five pass.
+- **The joins re-judged on the built 0.20.2 road:** `judge_joins_built.py` as in step 3, on `lm_phase2/project/data/track.obj`,
+  with `--plan` a fresh plan_north out dir. All five pass, and every strip-face cast lands on 1ROAD: none on a pad curb's toe at
+  the 0.03 keep.
 
 AI: the chain writes lane-offset drafts only; the real lines are recorded in game.
 
 **Install only on Kevin's word, after these numbers.** On that word:
-- the same run against a workshop Kevin names, without `SHIP_PROJ` / `--no-install`;
+- the same run against a workshop Kevin names, carrying the reshaped loop.blend and the corrected data, without `SHIP_PROJ` /
+  `--no-install`;
 - the config change commits to the line.
 
 Until then nothing is installed. Kevin's drive and publishing approval remain required.
 
 ### Open questions for Kevin (Phase 2)
 
-- **Princess View's wide median (blocks step 5).** Between v536 and v556 the real median is 4.9-5.9 m wide on a 24 m road,
-  about 1 m toward the north_cw side. The north_cw lane beside it is 6.42-6.44 m at v538 / v539 / v542 and 6.7-6.9 m around
-  them, under the corridor's INVENTED hard minimum of 6.5 m. The 5.7-5.9 m widths at those three vertices sit between
-  4.1-5.2 m neighbours. Options:
-  - (a) Measure the median on the built road / aerial at v536-544. If the spikes are measurement noise, correct
-    median_bands there and the lane is about 6.7 m: no gate change.
-  - (b) Accept the real 6.4 m and lower clear_hard_min_m to 6.4 m for the north lap alone, recorded in GATES-CHANGELOG.
-
-  Recommended: **(a) first**, on the PC with step 3; (b) only if the 5.9 m median is real.
+- **Princess View's wide median: closed — measured, noise, fixed at the source; no gate change** (step 2c).
 - **J1 (open since P3 repair round 1):** tilt the College/Navajo crossroads to its real slope, or keep it level? The real
   slope is about 2 m down toward Waring, so Waring's first 40 m would stop riding 1.3-1.4 m over the ground at 8.8 %.
   Recommended: **keep it level for Phase 2**, and take the tilt with 0055's College work as one change:
@@ -1749,8 +1822,8 @@ Until then nothing is installed. Kevin's drive and publishing approval remain re
   - the north drives Kevin called "incredible" were on the level crossroads;
   - a tilt moves a corner every layout drives.
 - **The median noses: decided** (the K-rail at the nose, "your own side of every road"). Built as above.
-- **Where the K-rail stands:** one vertex (2-3 m) before the island's tip, on pavement, or against the tip itself?
-  Recommended: **one vertex before**. The K-rail then never sits on the raised nose, and the gap behind it is sealed by the
-  K-rail itself. Where the median reaches the box edge (Waring's tail, Mission Gorge at J4), it stands on the box edge.
+- **Where the K-rail stands:** one vertex (about 3 m) before the island's tip, on pavement, or against the tip itself?
+  Recommended: **one vertex before**. Where the median reaches the box edge (Waring's tail, Mission Gorge at J4), it stands on
+  the box edge.
 - **The station smoothing for the existing Speedways?** Recommended: **no**. Their lines are uniformly spaced, the vertex
   window does them no harm, and turning it on would move every closure by sub-millimetres for nothing.

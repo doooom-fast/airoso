@@ -56,7 +56,8 @@ from scripts.geometry import race_lap  # noqa: E402
 JOINS = PROJECT / "source" / "expansion" / "race.north.joins.json"
 STRIP_OUTER_M = 0.15        # the strip's outer face stands this far inside the lap's curb line (0.485 - 0.335)
 LANE_KEEP_M = 1.32          # the judge's outermost sample: 0.82 lane inset + EDGE_KEEP_M 0.5
-STRIP_KEEP_M = 0.0          # the strip's outer face stands ON the built pavement (the judge's lane samples are then >= 1.17 m in)
+END_KEEP_M = 0.03           # ... and at the two points beside the ends too (the pieces' ends place them; refused if short)
+STRIP_KEEP_M = 0.03        # 2026-11-04 (the coordinator's call, after the PC's casts found 18 strip faces 1-19 mm on the pad curb's toe): the strip's outer face stays this far inside the built curb line
 FIT_TOL_M = 0.02
 R_FLOOR_PAD_M = 0.5         # [invented] the centreline radius never below w/2 + this: the inside curb line never folds
 LEN_MAX = 1.25              # [invented] the refit never runs more than 25 % longer than the old join (no swing-out loop)
@@ -187,7 +188,7 @@ def fit_one(lap, jdef):
     # the interior points beside the two ends stand where the pieces' own ends put them: their strips need only be ON the
     # pavement (0.0); every other point keeps STRIP_KEEP_M
     keep = np.full(npts - 2, STRIP_KEEP_M)
-    keep[0] = keep[-1] = 0.0
+    keep[0] = keep[-1] = END_KEEP_M
 
     r_floor = float(max(w)) / 2.0 + R_FLOOR_PAD_M
     old_len = float(np.sum(np.linalg.norm(np.diff(np.array([[p[0], p[2]] for p in old]), axis=0), axis=1)))

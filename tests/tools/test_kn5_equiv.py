@@ -62,3 +62,13 @@ def test_a_vertex_left_unmerged_by_tangent_noise_is_the_same_build_corner_by_cor
     assert r["equivalent"] and r["merge_differs"] == ["MESH_0 4 -> 5 vertices"]
     r = ke.compare(_kn5(), _kn5(split=True, pos=(0.0, 0.0, 1e-3)))
     assert not r["equivalent"] and "pz" in r["first"]
+
+
+def test_list_names_every_mesh_that_moved_and_where():
+    """--list (ledger 0054 Phase 2 step 4): the meshes that differ, each with the plan box of what moved"""
+    assert ke.mesh_diffs(_kn5(), _kn5()) == [] and ke.mesh_diffs(_kn5(), _kn5(tangent=(1.0, 4e-7, 0.0))) == []
+    d = ke.mesh_diffs(_kn5(), _kn5(pos=(0.0, 0.0, 2.0)))
+    assert len(d) == 1 and d[0]["mesh"] == "MESH_0" and d[0]["why"] == "4 of 4 vertices moved"
+    assert d[0]["box_xz"] == [0.0, 2.0, 3.0, 2.0]
+    d = ke.mesh_diffs(_kn5(), _kn5(split=True))
+    assert d[0]["why"] == "vertex count 4 -> 5"

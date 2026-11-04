@@ -13,7 +13,7 @@
     0
    ],
    "chord_m": 27.992,
-   "length_m": 31.309,
+   "length_m": 31.339,
    "declared": "J2",
    "samples": 927,
    "uncovered": 0,
@@ -33,7 +33,7 @@
     0
    ],
    "chord_m": 46.039,
-   "length_m": 51.722,
+   "length_m": 51.704,
    "declared": "J3",
    "samples": 1296,
    "uncovered": 0,
@@ -53,9 +53,9 @@
     651
    ],
    "chord_m": 41.995,
-   "length_m": 45.417,
+   "length_m": 47.149,
    "declared": "J4",
-   "samples": 1179,
+   "samples": 1215,
    "uncovered": 0,
    "uncovered_share": 0.0,
    "uncovered_left": 0,

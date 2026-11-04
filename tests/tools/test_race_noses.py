@@ -141,15 +141,9 @@ def _lap(out):
     return [tuple(p) for p in lap["points_xyz_m"]], [float(w) for w in lap["widths_m"]], lap["island_w_by_vertex"]
 
 
-# 2026-11-04: with the medians where they really stand, ONE self-gate line is left, and it is Kevin's call (ledger 0054
-# Phase 2 open questions): Princess View's real 4.9-5.9 m median, ~1 m toward the cw side, leaves north_cw a 6.42-6.44 m
-# lane at v538 / v539 / v542, under the 6.5 m hard minimum (INVENTED). Nothing else is refused.
-OPEN_LINES = ["north: clear north_cw: v538 lane 6.44 m < the hard minimum 6.5 m"]
-
-
-def test_the_north_plan_seals_all_34_exits_and_holds_only_the_open_question():
+def test_the_north_plan_clears_every_self_gate_and_seals_all_34_exits():
     rcode, rep, out = _plan()
-    assert rep["fails"] == OPEN_LINES, rep["fails"][:6]
+    assert rcode == 0 and rep["status"] == "PLANNED" and not rep["fails"], rep["fails"][:6]
     assert rep["exit_counts"] == {"side_street": 26, "pad_arm": 6, "branch": 2}
     for lid in ("north_cw", "north_acw"):
         assert sum(1 for e in rep["exits"] if e[lid]["planned"] == "sealed") == 34, lid
@@ -214,7 +208,7 @@ def test_the_kerbs_stand_clear_of_the_k_rails_and_j1_j5_insides_stay_held():
         assert [x["joins"] for x in p["pins"]] == ["closure", "edge_" + p["side"]]
         assert rf.race_owner(rf.object_name(p)) == p["token"] and rf.race_role(rf.object_name(p)) == "close"
     clips = {(r["apex"], r["kind"]): r for r in rf.kerb_closure_clips(pts, widths, b)}
-    assert clips[(327, "outside")]["i"] == 317 and clips[(705, "outside")]["j"] == 716     # stopped short of the K-rails
+    assert clips[(326, "outside")]["i"] == 317 and clips[(705, "outside")]["j"] == 716     # stopped short of the K-rails
     assert all((r["min_clear_m"] is None or r["min_clear_m"] >= rf.KERB_CLOSURE_CLEAR_M - 1e-6) for r in clips.values())
     dropped = {(d["apex"], d["kind"]) for d in b["kerbs_dropped"]}
     assert dropped == {(2130, "inside"), (2932, "inside")}                                   # held, as declared
@@ -350,3 +344,42 @@ def test_the_north_lap_takes_its_medians_where_they_stand():
                             "north")
     assert "island_off_by_vertex" not in plain and "island_offsets" not in plain
     assert plain["island_w_by_vertex"][8] == 0 and plain["points_xyz_m"] == lap["points_xyz_m"]
+
+
+# --- Princess View's median, corrected at the source (step 2c, 2026-11-04) -------------------------------------------
+def test_princess_view_median_is_the_measured_one_and_its_lane_clears():
+    """the tree-shadow run v533-v542: the right face on the PC's NAIP line fit (-3.45 -> -3.38 m), the median 4.9-5.4 m wide;
+    north_cw's lane beside it >= 6.9 m (it read 6.42 m on the trees)"""
+    _r, _rep, out = _plan()
+    lap = json.loads((out / "data" / "lap.north.json").read_text())
+    iw, off = lap["island_w_by_vertex"], lap["island_off_by_vertex"]
+    for v in range(535, 543):
+        right = off[v] - iw[v] / 2.0
+        fit = -3.45 + (-3.38 + 3.45) * (v - 535) / 21.0
+        assert abs(right - fit) < 0.05, (v, right, fit)        # v542 also leans on the clear-run row s 650
+        assert 4.85 <= iw[v] <= 5.4, (v, iw[v])
+    b = json.loads((out / "data" / "barrier_bands.north.json").read_text())
+    lane = b["corridors"]["north_cw"]["lane_by_vertex"]
+    assert min(lane[v][1] - lane[v][0] for v in range(535, 543)) >= 6.85
+    rec = json.loads((PHASE2 / "pv_median_correction.json").read_text())
+    assert rec["fit"]["sd_m"] == 0.35 and "NAIP 2022" in rec["measured"] and rec["island_vertices"][0] == 532
+
+
+def test_island_reshape_moves_only_the_island_and_refuses_another_topology():
+    sys.path.insert(0, str(ROOT / "tools"))
+    import island_reshape as ir
+    pts = [(float(k) * 3.0, 1.0, 0.0) for k in range(12)]
+    iw = [0.0] + [2.0] * 10 + [0.0]
+    new = list(iw)
+    new[5] = 3.0
+    mv = ir.moves(pts, iw, pts, new)
+    assert mv and {k for _o, _a, _b, k in mv} == {5} and {o for o, *_ in mv} == {"CURB", "TERRAIN"}
+    assert len(ir.all_vertices(pts, iw)) == 10 * 8
+    shorter = list(iw)
+    shorter[10] = 0.0
+    try:
+        ir.moves(pts, iw, pts, shorter)
+    except ValueError as e:
+        assert "re-author" in str(e)
+    else:
+        raise AssertionError("a changed island run must be refused")

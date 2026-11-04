@@ -1,27 +1,15 @@
 {
- "fail": true,
- "reasons": [
-  "walls: median -1.11 p95 -0.20 hovering 1.5% no-ground 0.7%",
-  "road floating over ground: p95 gap 0.932 m > 0.1 m (96.5% of samples over 0.05 m)"
- ],
+ "fail": false,
+ "reasons": [],
  "kn5": [
   "lookout_lariat.kn5"
  ],
  "fidelity": "skipped: gate OBJ written from this kn5",
- "double_sheet_cells": 7,
- "seating": {
-  "walls": {
-   "objects": 711,
-   "no_ground_pct": 0.7,
-   "median_m": -1.108,
-   "p95_m": -0.203,
-   "hovering": 11
-  }
- },
+ "double_sheet_cells": 0,
  "road_over_ground": {
-  "over": 3766,
-  "samples": 3902,
-  "p95_m": 0.932,
-  "max_m": 12.744
+  "over": 532,
+  "samples": 7793,
+  "p95_m": 0.062,
+  "max_m": 2.342
  }
 }

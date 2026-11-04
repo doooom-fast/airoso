@@ -10,7 +10,7 @@
     "draft": ["gps", "paint_centreline", "remap_config", "verify_centreline_paint", "route_oneway_check",
               "elev", "road_profile", "project", "widths", "measured_widths", "crossfall", "verify_crossfall",
               "mesh", "underlay"],
-    "author": [],
+    "author": ["draft_pads"],
     "prep": ["prep", "split"],
     "ship": ["export_road", "ai", "verify_kn5", "road_obj", "track_folder", "verify_inis", "make_map"],
     "gate": ["drive_test_street", "audit_street", "road_inventory", "stacked_legs", "kn5_ground", "drive1_verdict"]
@@ -31,7 +31,8 @@
               "data/finished_centerline.json", "data/gate_centerline.json", "data/bridge.spans.auto.json",
               "data/dummies.json", "data/underlay.report.json", "data/drive_test.json", "data/audit.json",
               "data/road_inventory.json", "data/stacked_legs.json", "data/drive1_gates.json",
-              "data/kn5_ground_check.{id}.json", "data/drive_test.{id}.json"],
+              "data/kn5_ground_check.{id}.json", "data/drive_test.{id}.json", "data/pads.built.json",
+              "pavement_exemptions.json"],
     "map": [["blender/split/split_manifest.json", "data/split_manifest.json"]],
     "dirs": ["ai/{id}"]
   }

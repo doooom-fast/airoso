@@ -34,6 +34,7 @@ y = N, z = up). The collection is emptied first, so the tool is idempotent, and 
               grid, cells over a road left out -> PADAPRON_<k>
   cards       [{"file", "prefix": "TREECARD", "clear_m"}]: {"cols", "rows", "points": [[lon, lat, cell, h, w], ...]}; crossed
               double-sided cards on the ground, anything within clear_m of pavement or a wall dropped and counted -> <prefix>_<k>
+  (blocks group key) "collider_tri_m": the longest ground-polygon edge a collider may stand over (default COLLIDER_TRI_M, 8 m)
   guardrail   {"from": "1WALL_PARA"}: a W-beam rail and posts along the draft's guard lips (RAIL_* below), road side. The
               lips keep their shape and are renamed 1WALL_GHOST_*, a transparent skin: the collider the gates judged stays
   prep_seats  true where the prep that follows is engine-july's (Lake Murray): it re-seats every BUILDING* island itself, so a
@@ -157,6 +158,13 @@ def down_edge(tree, x, y):
         return None
     hit = tree.ray_cast(Vector((x, y, 3000.0)), Vector((0.0, 0.0, -1.0)), 6000.0)
     return None if hit[0] is None else EDGE_OF[id(tree)][hit[2]]
+
+
+def collider_ground_ok(edges, limit):
+    """a collider may stand when every sampled ground polygon under its ring exists and has no edge longer than ``limit`` m.
+    ``edges`` is down_edge() per sample (None = no ground). ``limit`` is COLLIDER_TRI_M unless the block group declares
+    ``collider_tri_m`` (High Plains: its 1GRASS_ring seating fans put 12 m-long slivers under two posts, ledger 0072)"""
+    return all(e is not None and e <= limit for e in edges)
 
 
 def down(tree, x, y):
@@ -687,7 +695,8 @@ def blocks(col, spec, proj, to_xy, ground, near_ground, paved, walls, bad):
                 # wall: over a coarse triangle (Lake Murray's slope beside College, osm_buildings3: 31 columns "floating 99") it
                 # finds nothing, so the collider stands only where ground finer than COLLIDER_TRI_M lies under EVERY 0.6 m of its
                 # ring: pavement under a ring (a mouth fill, a stub) is not that ground
-                footed = all((lambda e: e is not None and e <= COLLIDER_TRI_M)(down_edge(near_ground, x, y)) for x, y in ring_points(inset, 0.6)[0])
+                footed = collider_ground_ok([down_edge(near_ground, x, y) for x, y in ring_points(inset, 0.6)[0]],
+                                            float(group.get("collider_tri_m", COLLIDER_TRI_M)))
                 # and its foot follows the ground: the gate takes each wall vertex's LOWEST point and looks for ground within 2.5 m
                 # of it, so one flat foot at the footprint's lowest ground reads "floating 99" at the high corner of a sloped lot
                 # (Lake Murray's two Mission Gorge columns stood 2.9 m under the grass, ledger 0062). A skirt walked every

@@ -578,7 +578,7 @@ def test_lariat_draft_wires_the_paint_centreline_before_any_elevation():
         g.index("python -m scripts.gps.centerline")
     assert "'paint_centreline' in" in g
     # workshop outside airoso; airoso's engine; nothing of SD's
-    assert s["workshop"] == "C:/Users/Owner/Documents/k10-workshops/lookout-lariat"
+    assert s["workshop"] in ("C:/Users/Owner/Documents/k10-workshops/lookout-lariat", "D:/k10-workshops/lookout-lariat")
     assert "GitHub/airoso" not in s["workshop"]
     for n in ("build_loop_blend", "weld_mouths", "verify_mouths", "median", "route_connectors"):
         assert n not in sum(s["steps"].values(), []), n

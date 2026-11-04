@@ -14,6 +14,19 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
+## 2026-11-03 — EXCLUSION: race kerbs leave the prep's 0020 carve (ledger 0020 Rule 1; Lake Murray v5 race, ledger 0065)
+
+`scripts/ac/build_kn5_loop.py`: 0020's Rule 1 deletes any 1KERB face whose centre stands more than 0.15 m inside a carriageway
+(the corridor hash, deck-height guarded), the sweep-through-junction artifact 0020 was written for. It now asks
+`corridor_carves_kerb(name)`, which is false for `1KERB_RACE_*`. A race kerb (`tools/author_race_furniture_blend.py`) is laid on the
+lane's edge at a corner on purpose. On Lake Murray v5 (the engine ribbon) the carve took 2,450 of the 2,775 race-kerb faces, emptied
+`1KERB_race_1_in` and `1KERB_race_766_in`, and the common race kn5 failed to export ("Tangent space computation needs a UV Map").
+engine-july, which v4 and every earlier Lake Murray race build prepped on, has no such carve, so this is the first build where it met a race kerb.
+Race kerbs stay judged by `verify_race` E (a kerb under another ROAD sheet) and O (another deck over a ring) and by the race layouts' own
+`drive_test`. Street kerbs and sidewalks (`1KERB_sidewalk`, `1KERB_kerb*`) are carved exactly as before; no threshold moved. Proof:
+`tests/ac/test_build_kn5_loop_prep.py::test_the_corridor_carve_leaves_race_kerbs_alone`, and the v5 race chain past its race kn5
+export. It reaches the next track with race kerbs on airoso's engine: Sand Creek 0.35.0's race curbs.
+
 ## 2026-11-03 — BYPASS: Lake Murray 0.19.4 (the buildings rehearsal) installed red on 0.19.2's inherited keys, by Kevin's word (ledgers 0062, 0065)
 
 The chain's `--force-install` rule, applied by hand to a scratch build: `D:/k10-scratch/lm_bespoke` (rehearsal 2, `SD_BESPOKE=1`,

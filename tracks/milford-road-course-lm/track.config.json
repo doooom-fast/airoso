@@ -288,12 +288,12 @@
   },
   "road_profile": {
     "_doc": "No banking authored (L10). Deck follows bare-earth 3DEP; any real cross-slope comes from lidar sections, never from curvature. The lap IS banked: 1 m lidar sections read -4.3 % in the esses (s 620), -7.1 % at the U-turn (s 780, the likeliest Carousel), +8.0 % at s 995. Tried 2026-10-28: scripts.elevation.crossfall (measured, 6 % cap, 80 % of the lap banked) made drive_test WORSE than the flat deck (ground-on-top 14 -> 53, severe steps 7 -> 17, bumps 17.2 -> 89.7/km, excursion drops 31 -> 52), the ledger-0018 class (crossfall x width steps). data/crossfall.json removed; the banks are authoring work, not a flag.",
-    "ribbon_cols": 4,
     "_ribbon_cols_doc": "2026-11-03, ledger 0069: 4 lateral columns, so a row's quad cannot twist on a tight corner that descends. The left-hander at s 1,000 drops 13-15 % round a 13 m radius; with one quad per row the inside edge's rows bunch towards the turning centre while each row drops the full 0.4 m, and the quad's diagonal laid that drop across the centre wheel paths as a step every 3 m (drive_test: the lap's severe steps and most of its kinks). Unbanked: build_mesh honours the key on a flat road since 0069. Not a gate change.",
     "dips": [],
     "cambers": [],
     "max_grade_pct": 32.0,
-    "_max_grade_doc": "Set so it never binds (L3; Kevin: real hills are never reshaped). At the 9 % default the cap shaved the real hill: the deck sat up to 5.96 m under the lidar at the SW corner and 1.6 m in the esses, and drive_test failed on grass over the pavement lip and drops off the edge (2026-10-28). The despiked 3DEP profile climbs 26.6 % over 21 m at s 3,650 (31 % over one 3 m step): the climb from the bottom sweeper to the front straight, cut into a hillside (lidar cross-sections: ground 2-3 m lower 20 m left, 1-2 m higher 20 m right, both edges climbing with the line). The 2 m dip at s 3,605 is the service-road underpass, removed by the 33 m despike."
+    "_max_grade_doc": "Set so it never binds (L3; Kevin: real hills are never reshaped). At the 9 % default the cap shaved the real hill: the deck sat up to 5.96 m under the lidar at the SW corner and 1.6 m in the esses, and drive_test failed on grass over the pavement lip and drops off the edge (2026-10-28). The despiked 3DEP profile climbs 26.6 % over 21 m at s 3,650 (31 % over one 3 m step): the climb from the bottom sweeper to the front straight, cut into a hillside (lidar cross-sections: ground 2-3 m lower 20 m left, 1-2 m higher 20 m right, both edges climbing with the line). The 2 m dip at s 3,605 is the service-road underpass, removed by the 33 m despike.",
+    "_ribbon_cols_dropped": "the live track's build_mesh ribbon columns (ledger 0069); the v021 assembler never reads the key (its twist answer is tools/densify_ribbon_blend.py), so the port does not carry it (ledger 0078)"
   },
   "route": {
     "start_at": [

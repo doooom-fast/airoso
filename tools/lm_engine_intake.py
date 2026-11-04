@@ -153,6 +153,7 @@ def intake(proj: Path, *, connectors: bool | None = None) -> dict:
     # prove the inputs are the ones that built it (exit 2 otherwise), and put on the line in its own order (projection's
     # source_index, scripts.geometry.projection.in_local_order).
     prof_rep = None
+    decks_held = False          # the source profile already holds its declared decks straight (road_profile.py)
     if li.get("profile") == "uncapped":
         from scripts.elevation import heightfield as hf
         from scripts.geometry.projection import in_local_order
@@ -173,12 +174,39 @@ def intake(proj: Path, *, connectors: bool | None = None) -> dict:
         repeats = tuple(coords[0]) == tuple(coords[-1])
         kw = dict(median_m=med, closed=closed_g,
                   close_seg_m=None if (repeats or not closed_g) else haversine(coords[-1], coords[0]))
-        z_was, _ = hf.profile_along(z_raw, seg, grade_cap_pct=cap_was, **kw)
+        if (ej.get("road_profile") or {}).get("tool") == "scripts/elevation/road_profile.py":
+            # the source's profile is scripts/elevation/road_profile.py's (metre windows, declared decks held straight,
+            # then the cap: the Lariat, ledger 0078 round 6): the same tool on a scratch copy of the source, once at its
+            # own cap (it must reproduce the committed profile) and once with the cap off
+            import shutil as _sh
+            import tempfile as _tf
+            from scripts.elevation import road_profile as rprof
+            tmp = Path(_tf.mkdtemp(prefix="lm_intake_rp_"))
+            try:
+                (tmp / "data").mkdir()
+                for f in ("centerline.geojson", "centerline.elevation.json", "osm.cache.json"):
+                    if (sdata / f).exists():
+                        _sh.copyfile(sdata / f, tmp / "data" / f)
+
+                def _run(cap):
+                    c2 = json.loads(json.dumps(scfg))
+                    c2.setdefault("road_profile", {})["max_grade_pct"] = cap
+                    (tmp / "track.config.json").write_text(json.dumps(c2), encoding="utf-8")
+                    rprof.build(tmp, write=False, log=lambda *a, **k: None)
+                    return [float(v) for v in json.loads((tmp / "data" / "centerline.elevation.json")
+                                                         .read_text(encoding="utf-8"))["z_smooth_m"]]
+                z_was = _run(cap_was)
+                z_new = _run(1e9)
+                decks_held = bool((ej.get("road_profile") or {}).get("decks"))
+            finally:
+                _sh.rmtree(tmp, ignore_errors=True)
+        else:
+            z_was, _ = hf.profile_along(z_raw, seg, grade_cap_pct=cap_was, **kw)
+            z_new, _ = hf.profile_along(z_raw, seg, grade_cap_pct=1e9, **kw)
         dev = max(abs(a - b) for a, b in zip(z_was, ej["z_smooth_m"]))
         if dev > 0.0101:                                # z_smooth_m is written to 0.01 m
             raise SystemExit(f"[lm_intake] profile uncapped: the stage's own profile does not reproduce from its raw "
                              f"samples (max {dev:.3f} m off) — rerun the source track's elev stage")
-        z_new, _ = hf.profile_along(z_raw, seg, grade_cap_pct=1e9, **kw)
         z_loc = in_local_order(local, z_new)
         z_old_loc = in_local_order(local, z_was)
         elev0 = float(local["origin"]["elev_m"])
@@ -191,7 +219,7 @@ def intake(proj: Path, *, connectors: bool | None = None) -> dict:
     # Y-only evidence: the declared decks (a data fact); no grade cap unless one is declared (ledger 0078: "I just want real")
     y0 = [p[1] for p in pts]
     bridges = [(float(b["center_m"]), float(b["len_m"])) for b in ((scfg.get("capture") or {}).get("bridges") or [])]
-    if bridges:
+    if bridges and not decks_held:              # (decks road_profile.py held straight stay as it held them)
         pts = evidence.level_bridge_decks(pts, bridges)
     mg = li.get("max_grade_pct")
     max_grade = None if mg is None else float(mg) / 100.0
@@ -236,6 +264,36 @@ def intake(proj: Path, *, connectors: bool | None = None) -> dict:
         print(f"[lm_intake] width steps tapered at {rate} m per m a side: {taper_rep['points_widened']} points widened "
               f"(max {taper_rep['max_widening_m']} m); none narrowed")
     dy = [p[1] - a for p, a in zip(pts, y0)]
+    # THE MEASURED CORNER ARCS (lm_intake.corner_arcs true; ledger 0078 round 6, the Lariat). The source's
+    # hairpin_fit.mesh_fit corners (C12 / C13: junction nodes holding most of a 76-79 deg turn, measured on the aerial at
+    # R 14.9 / 16.08 m) are fitted by build_mesh on the line it sweeps; the v021 assembler does not run build_mesh, so the
+    # same fit (scripts/geometry/corner_arcs.fit_corners, the same declaration) is made here on the line it is handed.
+    arcs_rep = None
+    if li.get("corner_arcs"):
+        from scripts.geometry import corner_arcs
+        hfit = scfg.get("hairpin_fit") or {}
+        mf = set(hfit.get("mesh_fit") or [])
+        decl = [c for c in (hfit.get("corners") or []) if c.get("id") in mf and c.get("radius_m")]
+        if not decl:
+            raise SystemExit("[lm_intake] lm_intake.corner_arcs: the source declares no hairpin_fit.mesh_fit corner with a radius")
+        new_line, arep = corner_arcs.fit_corners([tuple(p) for p in pts], decl)
+
+        def _span_fails(r):
+            # build_mesh fits on its already-rounded line; here the arms still carry the raw line's facets, which the
+            # assembler's own smoothing takes out: a step-gate reading OUTSIDE the fitted span is reported, not fatal
+            a_, b_ = (r.get("span_v") or [0, -1])[:2]
+            return [f for f in ((r.get("gate") or {}).get("fails") or []) if a_ <= f.get("v", -1) <= b_]
+        for r in arep:
+            if r["status"] == "FAIL" and not _span_fails(r) and r.get("span_v"):
+                r["status"] = "PASS (arm facets outside the span: " + ", ".join(
+                    f"v{f['v']} {f.get('adjacent_diff_deg', f.get('step_deg'))} deg" for f in r["gate"]["fails"]) + ")"
+        bad = [r["id"] for r in arep if not str(r["status"]).startswith("PASS")]
+        if bad or len(arep) != len(mf):
+            raise SystemExit(f"[lm_intake] corner arcs {sorted(mf)}: not fitted or failing the step gate: {bad}")
+        pts = [tuple(p) for p in new_line]
+        arcs_rep = [{k: r[k] for k in ("id", "status", "radius_m", "turn_deg", "max_move_m") if k in r} for r in arep]
+        print(f"[lm_intake] corner arcs: " + ", ".join(f"{r['id']} R {r.get('radius_m')} m, moved <= {r.get('max_move_m')} m"
+                                                      for r in arcs_rep))
     # A LANE EDGE ON A MEASURED WALL (lm_intake.edge_on_wall {"side": "right"|"left", "file": <tools/lidar_wall.py output
     # inside the source track>}; ledger 0078 round 5). Where a wall bounds the pavement, its face IS the lane edge. The
     # survey gives the face's offset from the line's own edge per station (Pikes Peak: 0.1 to 2.9 m INSIDE it, the OSM
@@ -488,7 +546,7 @@ def intake(proj: Path, *, connectors: bool | None = None) -> dict:
            "y_changed_points": sum(1 for d in dy if abs(d) > 1e-6),
            "y_change_max_m": round(max((abs(d) for d in dy), default=0.0), 3),
            "connectors": bool(want_conn and conn.exists()), "bespoke_files": copied, "crossfall": cf_rep, "profile": prof_rep,
-           "width_taper": taper_rep, "resample": resample_rep, "edge_on_wall": wall_rep,
+           "width_taper": taper_rep, "resample": resample_rep, "edge_on_wall": wall_rep, "corner_arcs": arcs_rep,
            "grid_upsample": up,
            "md5": {"source_centerline": _md5(need[0]), "heightfield.npy": _md5(data / "heightfield.npy"),
                    "centerline.local.json": _md5(data / "centerline.local.json")}}

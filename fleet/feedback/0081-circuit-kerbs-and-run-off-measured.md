@@ -301,6 +301,47 @@ it), `kerb_spans.py --grow` (a tool in no chain). `tests/run_tests.py`: 1,279 pa
 fleet-lm-engine's head on this Mac; new: `tests/tools/test_kerb_section.py` (7), and the seat step's header registered in
 `test_ship_track_chain.py`'s v4 extras (commit 9ad26ee1 had left that test red; fixed in the next).
 
+## Round 3 (Mac, 2026-11-05)
+
+### 1. A block reader calibrated against High Plains' 20 colour-measured runs
+
+**The reader** (`tools/kerb_offsets.py`, new, in no chain): colour is not used. Luminance on a grid in the line's own
+frame (0.25 m along s, 0.075 m across, -3.5 .. +3.5 m from the lane edge, bilinear); per station (every 1 m, a 6 m window)
+every column detrended; the reference waveform is the column with the most block-period energy, then the mean of the band
+found from it (2 refinements); each column's matched-filter coefficient on the reference (~1 wholly on the blocks, ~0 on
+asphalt or dirt that never alternates); the paint's inner / outer edge is the band's half-maximum (the half-maximum of a
+blurred step is the step); in_m / out_m = the median over stations, as `kerb_spans.py`'s are. Extent: the band's block
+amplitude in a 3 m window, walked out from the eye span while over half its median. Invented numbers: GATES-CHANGELOG
+2026-11-05 round 3. Tests: `tests/tools/test_kerb_offsets.py` (4).
+
+**Against the 20 truths** (`kerb_spans.py`'s colour measure on the same NAIP 2023 0.3 m crop; the reader given only each
+run's eye span). Record: `tracks/high-plains/source/edges/kerb_offsets_calibration.json`; straightened strips of every run
+(aerial in the line's frame, lane edge cyan, the reader's edges and ends yellow, the truth's magenta):
+`kerb_offsets_calibration_strips.jpg`.
+
+| |residual| (m) | in_m median / p95 / max | out_m median / p95 / max | width p95 | s0 median / p95 | s1 median / p95 |
+|---|---|---|---|---|---|---|
+| raised blue / white (11) | 0.12 / 0.29 / 0.29 | 0.15 / **1.25** / 1.25 | 1.11 | 2.0 / 3.2 | 2.0 / 6.2 |
+| ... R s 2,892's out excluded (10) | | 0.14 / **0.36** / 0.36 | 0.35 | | |
+| flat blue / yellow stripes (9) | 0.27 / 0.48 / 0.48 | 0.20 / 0.67 / 0.67 | 0.84 | 6.0 / 12.0 | 4.8 / 7.8 |
+| all 20 | 0.16 / 0.34 / 0.48 | 0.17 / 0.67 / 1.25 | 0.84 | 3.2 / 11.2 | 2.6 / 7.2 |
+
+(n = 11 or fewer: p95 is the max.) Read on the strips:
+- **R s 2,892's colour truth is wrong, not the reader**: its out +2.30 m (built so in 0.1.3, a 2.85 m kerb) lies on the
+  plain dirt past the kerb (the white class took pale dirt); the blocks end at +1.05, where the reader puts them.
+- The ends: the colour truth ends at the last BLUE station, so it stops a white block (~1 m) short of a blue / white
+  kerb's visible end (R s 448, 2,892); the reader runs ~0.5-1.5 m past the visible end (its 3 m window). L s 1,680's s1
+  (-6.2) is the kerb curving out of the median band by its end. The blue / yellow stripes' ends differ by 5-12 m because
+  the reader sees the yellow-only ends the colour truth cannot (item 3).
+
+**The bar** (⚠ invented, GATES-CHANGELOG): p95 of both edge residuals <= 0.4 m for the class measured (one 0.3 m pixel
+plus the truth's 0.15 m step; under a third of the narrowest raised kerb, 1.3 m). **Raised blue / white kerbs pass**
+(0.29 / 0.36, with R s 2,892 out excluded on the evidence above; with it counted, 1.25 fails, and the exclusion is a call
+made on the strip, said plainly). **Flat blue / yellow stripes fail** (0.48 / 0.67: a 0.45-1.05 m stripe is 1.5-3.5
+pixels, and the half-maximum of a blur that wide is the blur). So the reader measures raised kerbs (Pueblo's, Aspen's and
+Nevada's red / white are raised blocks of this class) and not paint stripes. Ends carry no bar: every run's reader ends
+are checked by eye on its strip.
+
 ## Owed (start here)
 
 (Rewritten at round 2's end; round 1's list is done or carried here.)

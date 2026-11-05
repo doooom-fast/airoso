@@ -14,6 +14,24 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
+## 2026-11-05 — circuit kerbs round 3: a block reader for faded kerbs, and the bar it must pass (ledger 0081 round 3; no gate threshold, no bypass)
+
+No gate threshold changed and nothing is bypassed. New ⚠ invented numbers, none a gate; `tools/kerb_offsets.py` is in no
+chain (it writes a kerbs file a person then names in `route.kerbs_file`):
+- `tools/kerb_offsets.py` tuning: grid `DS_M` 0.25 along s, `DO_M` 0.075 across, `O_LO_M` / `O_HI_M` -3.5 / +3.5;
+  station every `STEP_M` 1.0 over a `WIN_M` 6.0 window; block periods `PERIOD_M` 1.25-3.0; `REFINE` 2 passes; band edge at
+  `HALF` 0.5 of the matched-filter peak (the half-maximum of a blurred step is the step: not tuned); a station counts at a
+  block amplitude of `MIN_AMP` 8 (luminance); extent window `EXT_WIN_M` 3.0, `EXT_FRAC` 0.5 of the span's median, gaps up
+  to `GAP_M` 3.0, at most `GROW_M` 15 past either eye end. ⚠ invented, chosen once and NOT tuned against the truths (one
+  extent variant, a tracked / short-window walk, was tried and dropped: it was worse, ledger 0081 round 3).
+- **The bar for using it** ⚠ invented: a run class may be measured by the reader only if, against High Plains' colour-
+  measured runs of that class, the p95 |residual| of BOTH paint edges (in_m, out_m) is <= 0.4 m: about one NAIP 0.3 m
+  pixel plus the colour truth's own 0.15 m offset step, and under a third of the narrowest raised kerb measured there
+  (1.3 m). Raised blue / white kerbs pass (in 0.29, out 0.36, with R s 2,892's out excluded: its colour truth +2.30 m is
+  the dirt beyond the kerb, seen on the committed strips); flat blue / yellow stripes do not (in 0.48, out 0.67), so the
+  reader measures raised kerbs only. Ends (along s): no bar; the reader's ends are reported beside an eye check of the
+  same strips.
+
 ## 2026-11-05 — circuit kerbs round 2: kerbs at their measured offset (ledger 0081 round 2; no gate threshold, no bypass)
 
 No gate threshold changed and nothing is bypassed. New ⚠ invented numbers, none a gate, all opt-in under keys Lake Murray

@@ -1,0 +1,43 @@
+{
+ "_doc": "tools/verify_textures.py (ledger 0079): every visible mesh of every packed kn5 binds an embedded diffuse",
+ "kn5": [
+  {
+   "kn5": "sand_creek_raceway_lm.kn5",
+   "mb": 48.4,
+   "visible_meshes": 29,
+   "materials_used": 29,
+   "textures": 21,
+   "texture_mb": 22.1,
+   "untextured": []
+  },
+  {
+   "kn5": "sand_creek_raceway_lm__race.kn5",
+   "mb": 0.0,
+   "visible_meshes": 0,
+   "materials_used": 0,
+   "textures": 0,
+   "texture_mb": 0.0,
+   "untextured": []
+  },
+  {
+   "kn5": "sand_creek_raceway_lm__street.kn5",
+   "mb": 0.0,
+   "visible_meshes": 0,
+   "materials_used": 0,
+   "textures": 0,
+   "texture_mb": 0.0,
+   "untextured": []
+  },
+  {
+   "kn5": "sand_creek_raceway_lm_street.kn5",
+   "mb": 1.8,
+   "visible_meshes": 1,
+   "materials_used": 1,
+   "textures": 1,
+   "texture_mb": 0.0,
+   "untextured": []
+  }
+ ],
+ "untextured": 0,
+ "fail": false
+}

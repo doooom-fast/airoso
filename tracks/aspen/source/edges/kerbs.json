@@ -192,7 +192,28 @@
      39.26310796
     ]
    ]
+  }
+ ],
+ "runoff": {
+  "built": [],
+  "note": "No paved run-off: the reader's 'asphalt' runs past the edge are the access road, the pit apron and the infield dirt tracks where they meet the lap; none is a run-off area."
+ },
+ "colour_reader": {
+  "tool": "tools/aerial_edges.py",
+  "params": {
+   "STEP_M": 1.0,
+   "SCAN_M": 14.0,
+   "KERB_BAND_M": 2.5,
+   "KERB_WIN_M": 3.0,
+   "MIN_KERB_M": 5.0,
+   "GAP_M": 8.0,
+   "BREAK_M": 1.0,
+   "MIN_RUNOFF_W_M": 1.5,
+   "MIN_RUNOFF_M": 10.0
   },
+  "m_per_px": 0.5
+ },
+ "not_built": [
   {
    "side": "left",
    "s0": 1495.0,
@@ -346,26 +367,8 @@
      -106.8804809,
      39.26764431
     ]
-   ]
+   ],
+   "not_built_why": "ledger 0081 round 2, Kevin 2026-11-05 (\"I just want real\"): read off NAIP 2019 (0.6 m); NAIP 2023 (0.3 m) shows a plain light edge band here, no blocks (kerbs_2023_030_check.jpg). The newest imagery is what is there, so it is not built"
   }
- ],
- "runoff": {
-  "built": [],
-  "note": "No paved run-off: the reader's 'asphalt' runs past the edge are the access road, the pit apron and the infield dirt tracks where they meet the lap; none is a run-off area."
- },
- "colour_reader": {
-  "tool": "tools/aerial_edges.py",
-  "params": {
-   "STEP_M": 1.0,
-   "SCAN_M": 14.0,
-   "KERB_BAND_M": 2.5,
-   "KERB_WIN_M": 3.0,
-   "MIN_KERB_M": 5.0,
-   "GAP_M": 8.0,
-   "BREAK_M": 1.0,
-   "MIN_RUNOFF_W_M": 1.5,
-   "MIN_RUNOFF_M": 10.0
-  },
-  "m_per_px": 0.5
- }
+ ]
 }

@@ -19,6 +19,7 @@
       "lm_pads",
       "strip_seam",
       "gap_mouths",
+      "islands",
       "lamps"
     ],
     "author": [

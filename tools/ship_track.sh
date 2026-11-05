@@ -386,6 +386,14 @@ draft_gap_mouths() {
   step "author: gap the mainline sidewalk at every mouth"
   (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/gap_mouths_blend.py" -- "$PROJ" 2>&1 | grep "^\[gap" )
 }
+draft_islands() {
+  step "author: measured concrete islands on a street's built road (tools/author_islands_blend.py; ledger 0079 round I; self-checked; no route.islands = no-op)"
+  (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_islands_blend.py" -- "$PROJ" 2>&1 | grep "^\[islands\]\|FATAL\|Error\|Traceback" )
+}
+draft_ground_patch() {
+  step "author: TERRAIN seated on the measured lidar ground in the declared patches (tools/ground_patch_blend.py; ledger 0079 round I; self-checked; no terrain.lidar_patches = no-op)"
+  (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/ground_patch_blend.py" -- "$PROJ" 2>&1 | grep "^\[ground-patch\]\|FATAL\|Error\|Traceback" )
+}
 draft_bridges() {
   step "author: bridge bodies under the overcrossings (soffit, fascia, abutments, pier bents; visual only, self-checked)"
   (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_bridges_blend.py" -- "$PROJ" 2>&1 | grep "^\[bridges\]\|Error\|Traceback" )

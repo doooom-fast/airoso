@@ -22,6 +22,10 @@ No gate threshold, floor or bypass moved this round unless listed here. All opt-
 - Numbers the round adds:
   - ⚠ fork 94/95's NAIP edge rule: gray >= 165, a run of 3 samples (1.5 m), at least 4 m from the midline [invented; 165
     fitted so the rule gives round G's own reads at 12 of 15 stations in round G's frame]. A measurement rule, not a gate.
+  - `route.islands` `fork_92` rise_m [0.078, 0.0] [measured]: the west edge's lidar step (median of 53 rows), the east
+    edge flush where the lidar reads it -0.05 m (the built road is level across where the real one rises east). The
+    island is 1KERB on the road: audit K (kerb > 0.10 m over the carriageway) reads it like any curb, no exemption; it
+    stands 0.078 m.
 
 ## 2026-11-05 (round H) — Sand Creek: the 8 mouths and 13 houses from measurement; one bypass, one gate reading (ledger 0079 round H)
 

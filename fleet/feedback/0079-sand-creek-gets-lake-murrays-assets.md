@@ -901,6 +901,30 @@ track frame on import.
   east edge has no concrete run (a car or driveway on the gutter): interpolated between s 5 and 15.
 - 91/92 moves 0.06 m in the right frame (round H): kept.
 
+### 2. Fork 91/92's concrete island, built as measured (`route.islands`, `tools/author_islands_blend.py`)
+- **Measured again before building, row by row** (NAIP 2023 in the track frame, every 0.5 m; lidar class 2):
+  - the outline: the bright run (gray >= 185) covering x 53, x 50.88 .. 53.62-54.62, from the north nose at z -811.0 to
+    the crosswalk's stop bar at -838.0 (3.75 m wide from z -817; rows -835.0 / -835.5, broken by a shadow,
+    interpolated). Through the crosswalk the refuge is cut flush, and the nose south of it (z -843 .. -847) lies past
+    the mouth line on the lap's own deck: neither built.
+  - the heights: the lidar median 0.25-1.25 m inside minus outside each edge, +-0.5 m along, 53 rows. **West edge
+    +0.078 m** (range +0.024 .. +0.216: the spread is the lidar's, the curb one height, the median taken). **East edge
+    -0.047 m** (-0.19 .. +0.05): the island is at or under the northbound lane beside it, which rises east (0.4 m over
+    the 20 m street) where the built road is level across. Built flush there (0).
+  - **Round H's "0.4 m over the east carriageway" does not hold along the island**: that was its one section, z -824,
+    the one row where the east lane dips. Along the island the east side is flush.
+- **The step** (new, opt-in `route.islands`, draft step `islands` after `gap_mouths`): each row's two edge points read
+  the welded ROAD's top (a ray down through it), and the deck stands `rise_m` over it. The faces are the deck, the west
+  curb face and the two end faces, in one object `1KERB_sidewalk_island_fork_92`. The prep keeps the AC name, binds the
+  1KERB_SIDEWALK concrete and lays planar UVs. Physics KERB. No grass, no shrubs, no barrier.
+  - Self-checks: no ROAD under an edge, under 2 rows, or a deck under the road.
+  - i1 read-back: 55 rows over 27.6 m, 0.74-4.00 m wide, rise 0.078 / 0.000 m, 0.0 mm off the road it was read from.
+- **Gates on i1** (empty workshop, items 1-2): every one as h2's. drive_test race / street PASS (soft 0, severe 0, drops
+  0, 1 far ledge, kinks 1.24 /km, bumps 0.31 /km, fold bumps 4); audit CLEAN (K kerb in carriageway 0); kn5_ground_check
+  PASS (198 heads, 0 orphans); verify_pads PASS x3; verify_mouths PASS (117 mouths); house_seat PASS (lowest roof
+  1.26 m); houses 2,182 / 2,182 / 0; textures 0 untextured; kn5 93.9 MB.
+- Fork 94/95 in i1: `[trim] fork ... -> one street grid_unclassified_95: 81.8 m, width 13.5-18.0 m (measured edges)`.
+
 ## PC runbooks (round H)
 
 4j. **Sand Creek 0.2.3** (ledger 0079 rounds E-H). This build carries:

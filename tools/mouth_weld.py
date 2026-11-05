@@ -318,13 +318,20 @@ class Line:
 # --------------------------------------------------------------------------------------------- the weld
 
 def weld_end(lines: dict, deck: HostDeck, side: int, inset: dict, h: dict, *, blend_m=BLEND_M,
-             remap_min=REMAP_MIN_M, extend_max=EXTEND_MAX_M) -> dict:
+             remap_min=REMAP_MIN_M, extend_max=EXTEND_MAX_M, hold_overlap=False) -> dict:
     """Mitre + warp the lines of ONE connector end.
 
     lines: key -> points END-FIRST (all the same row count); inset: key -> host-edge inset of that line's cut;
     h: key -> the line's profile height over the road deck (0 for road lines; curb +0.14 etc.).
     Returns {"new": key -> new points (same length), "u_x": key -> cut arc, "J": rows re-spread, "K": rows
-    touched (last + 1), "dy_end": key -> end height change}."""
+    touched (last + 1), "dy_end": key -> end height change}.
+
+    hold_overlap (opt-in, a mouth record's weld_hold "overlap": tools/trim_connectors.py street junctions, ledger 0079
+    0.2.3, an ACUTE meeting): the guest's ribbon overlaps its host for the length between its first and its last line's
+    mitre, so every row up to the furthest mitre (arc max(u_x)) lies ON the host deck (extended level across its edge),
+    and only past it does the smoothstep ease back to the line's own profile over blend_m:
+        y = q_y + (host deck + h - q_y) x w,   w = 1 up to max(u_x), smoothstep(1 - (u - max(u_x)) / blend_m) past it.
+    Off (every other mouth): the warp above, measured from each line's own mitre, as before."""
     keys = list(lines)
     n = len(next(iter(lines.values())))
     if any(len(lines[k]) != n for k in keys):
@@ -340,6 +347,7 @@ def weld_end(lines: dict, deck: HostDeck, side: int, inset: dict, h: dict, *, bl
     if J is None:
         raise WeldError(f"piece too short to re-spread its end rows (needs {need:.1f} m)")
     new, dy_end, K = {}, {}, J
+    u_hold = max(ux.values()) if hold_overlap else None
     for k in keys:
         ln = L[k]
         uJ = ln.u[J]
@@ -352,12 +360,19 @@ def weld_end(lines: dict, deck: HostDeck, side: int, inset: dict, h: dict, *, bl
             else:
                 u2 = ln.u[j]
                 q = ln.pts[j]
-            s = u2 - ux[k]
-            w = smoothstep(1.0 - s / blend_m)
             y = q[1]
-            if w > 0.0:
-                y = q[1] + (deck.at(q[0], q[2]) + h[k] - y_end) * w
-                K = max(K, j + 1)
+            if u_hold is not None:
+                s = u2 - u_hold
+                w = 1.0 if s <= 0.0 else smoothstep(1.0 - s / blend_m)
+                if w > 0.0:
+                    y = q[1] + (deck.at(q[0], q[2]) + h[k] - q[1]) * w
+                    K = max(K, j + 1)
+            else:
+                s = u2 - ux[k]
+                w = smoothstep(1.0 - s / blend_m)
+                if w > 0.0:
+                    y = q[1] + (deck.at(q[0], q[2]) + h[k] - y_end) * w
+                    K = max(K, j + 1)
             out.append((q[0], y, q[2]))
         new[k] = out
         dy_end[k] = out[0][1] - ln.pts[0][1]

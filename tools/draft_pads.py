@@ -492,6 +492,58 @@ def seam_offset(prof, x: float, y: float) -> float:
     return off
 
 
+def seam_offset_multi(prof, x: float, y: float) -> float:
+    """seam_offset for MORE than the lap's two rows (opt-in, lm_pads.arms "streets", ledger 0079 0.2.3: the street arms'
+    end rows are seams too). Each row's raised-cosine weight w_i as in seam_offset; a profile marked "lateral" (an arm:
+    its row line is short and the pad runs on past its ends) also fades past the row's ends over the same length. The
+    rows share the departure where their fades overlap: W x sum(a_i r_i) / sum(a_i), W = 1 - prod(1 - w_j),
+    a_i = w_i prod_{j != i}(1 - w_j) -- exact on every row (w_i = 1 silences the others), w r where one fade alone
+    reaches, and seam_offset's sum wherever the fades do not overlap."""
+    ws, rs = [], []
+    for s_ in prof:
+        c = s_["c"]
+        d = side(c, x, y)
+        if d >= s_["fade"]:
+            continue
+        w = 1.0 if d <= 0.0 else 0.5 * (1.0 + math.cos(math.pi * d / s_["fade"]))
+        t = (x - c["p"][0]) * s_["u"][0] + (y - c["p"][1]) * s_["u"][1]
+        ts, rr = s_["t"], s_["r"]
+        if s_.get("lateral"):
+            past = max(ts[0] - t, t - ts[-1], 0.0)
+            if past >= s_["fade"]:
+                continue
+            w *= 0.5 * (1.0 + math.cos(math.pi * past / s_["fade"]))
+        if t <= ts[0]:
+            r = rr[0]
+        elif t >= ts[-1]:
+            r = rr[-1]
+        else:
+            k = max(i for i in range(len(ts) - 1) if ts[i] <= t)
+            f = (t - ts[k]) / max(1e-9, ts[k + 1] - ts[k])
+            r = rr[k] + f * (rr[k + 1] - rr[k])
+        if w > 0.0:
+            ws.append(w)
+            rs.append(r)
+    if not ws:
+        return 0.0
+    full = [r for w, r in zip(ws, rs) if w >= 1.0]
+    if len(full) > 1:
+        return sum(full) / len(full)
+    a = []
+    for i in range(len(ws)):
+        p = ws[i]
+        for j in range(len(ws)):
+            if j != i:
+                p *= 1.0 - ws[j]
+        a.append(p)
+    W = 1.0
+    for w in ws:
+        W *= 1.0 - w
+    W = 1.0 - W
+    S = sum(a)
+    return W * sum(ai * r for ai, r in zip(a, rs)) / S if S > 0 else 0.0
+
+
 def seam_blend(x: float, y: float, seams, power: float = 2.0) -> float:
     """The deck's departure from the measured ground at (x, y): the seams' own departures [(x, y, residual), ...]
     inverse-distance weighted -- exact on a seam vertex, smooth between, so the deck welds to the ribbon rows and

@@ -360,7 +360,9 @@ def _trim_against(conns, hosts, mouths, deltas=None, capped=(), no_reach=()):
                                    "host_grade": round(host_grade(hpts, hseg), 5), **(cap_rec or {})})
             plen = sum(math.hypot(piece[q][0] - piece[q - 1][0], piece[q][2] - piece[q - 1][2])
                        for q in range(1, len(piece)))
-            if plen >= MIN_PIECE_M and len(piece) >= 2:
+            # a record's own min_piece_m (opt-in: a median crossing, route.street_junctions.median_crossings, is kept at
+            # any length); absent = MIN_PIECE_M, as before
+            if plen >= float(c.get("min_piece_m", MIN_PIECE_M)) and plen > 0.0 and len(piece) >= 2:
                 pieces.append((piece, pw))
             i = j
         if len(pieces) == 1 and not any(inside):
@@ -370,7 +372,8 @@ def _trim_against(conns, hosts, mouths, deltas=None, capped=(), no_reach=()):
             out.append({"name": f"{c['name']}#{q}", "kind": c.get("kind", "connector"),
                         "points_xyz_m": [[round(v, 3) for v in p] for p in piece], "widths_m": pw,
                         **({"stub": c["stub"]} if c.get("stub") else {}),
-                        **({"expansion": c["expansion"]} if c.get("expansion") else {})})
+                        **({"expansion": c["expansion"]} if c.get("expansion") else {}),
+                        **({k_: c[k_] for k_ in ("min_piece_m", "crossing") if k_ in c})})
         if any(inside):
             print(f"[trim] {c['name']}: {len(pieces)} piece(s), {sum(inside)} pt(s) inside a host dropped")
     return out
@@ -584,6 +587,97 @@ def join_street_pieces(conns, turn_deg, bend_deg, keep_out=()):
     return out, recs
 
 
+def merge_forks(conns, forks):
+    """PAINT-DIVIDED FORKS (opt-in route.street_junctions.merge_forks, ledger 0079 0.2.3): OSM draws a short approach
+    with a painted (flush) median as two one-way pieces leaving one node; on the ground it is ONE asphalt. Each record
+    {"pieces": [a, b], "name": .., "edges_m": [[s, left, right], ..]} replaces the two pieces with one: stations at equal
+    fractions of each piece from their shared node, s = that fraction x the pieces' mean length; the OSM midline (and
+    its height) the two pieces' mean there; the asphalt edges `left` / `right` metres along the midline's normal
+    (-dz, dx) of the direction away from the node, as measured off NAIP (interpolated in s, held past either end). The
+    centre is the edges' middle, the width their distance. Returns (new list, records)."""
+    by = {c["name"]: c for c in conns}
+    out, recs, gone = list(conns), [], set()
+    for f in forks:
+        a, b = (by[n] for n in f["pieces"])
+        pa, pb = [tuple(q) for q in a["points_xyz_m"]], [tuple(q) for q in b["points_xyz_m"]]
+        ends = [(math.hypot(x[0] - y[0], x[2] - y[2]), ia, ib) for ia, x in ((0, pa[0]), (1, pa[-1]))
+                for ib, y in ((0, pb[0]), (1, pb[-1]))]
+        d, ia, ib = min(ends)
+        if d > MEET_R_M:
+            raise SystemExit(f"[trim] merge_forks {f['pieces']}: the pieces share no node ({d:.1f} m apart)")
+        pa = pa if ia == 0 else pa[::-1]
+        pb = pb if ib == 0 else pb[::-1]
+        La, Lb = _plan_len(pa), _plan_len(pb)
+
+        def at(p, s):
+            acc = 0.0
+            for i in range(1, len(p)):
+                L = math.hypot(p[i][0] - p[i - 1][0], p[i][2] - p[i - 1][2])
+                if L > 0 and acc + L >= s:
+                    t = (s - acc) / L
+                    return tuple(p[i - 1][k] + (p[i][k] - p[i - 1][k]) * t for k in range(3))
+                acc += L
+            return p[-1]
+        n = max(len(pa), len(pb))
+        mid = []
+        for k in range(n):
+            fr = k / (n - 1)
+            qa, qb = at(pa, fr * La), at(pb, fr * Lb)
+            mid.append(((qa[0] + qb[0]) / 2.0, (qa[1] + qb[1]) / 2.0, (qa[2] + qb[2]) / 2.0, fr * (La + Lb) / 2.0))
+        tab = sorted(f["edges_m"])
+
+        def edges(s):
+            if s <= tab[0][0]:
+                return tab[0][1], tab[0][2]
+            for (s0, l0, r0), (s1, l1, r1) in zip(tab, tab[1:]):
+                if s <= s1:
+                    t = (s - s0) / (s1 - s0)
+                    return l0 + (l1 - l0) * t, r0 + (r1 - r0) * t
+            return tab[-1][1], tab[-1][2]
+        pts, ws = [], []
+        for k, (x, y, z, s) in enumerate(mid):
+            j0, j1 = max(0, k - 1), min(n - 1, k + 1)
+            dx, dz = mid[j1][0] - mid[j0][0], mid[j1][2] - mid[j0][2]
+            L = math.hypot(dx, dz) or 1.0
+            nx, nz = -dz / L, dx / L
+            l, r = edges(s)
+            c = (l + r) / 2.0
+            pts.append([round(x + nx * c, 3), round(y, 3), round(z + nz * c, 3)])
+            ws.append(round(r - l, 2))
+        rec = {k: v for k, v in b.items() if k not in ("points_xyz_m", "widths_m", "name")}
+        rec.update({"name": f.get("name", b["name"]), "points_xyz_m": pts, "widths_m": ws,
+                    "fork_merged": [a["name"], b["name"]], "median": "paint"})
+        out = [c for c in out if c["name"] not in (a["name"], b["name"])] + [rec]
+        gone |= {a["name"], b["name"]}
+        recs.append({"pieces": [a["name"], b["name"]], "name": rec["name"], "node_xz": [round(pa[0][0], 2), round(pa[0][2], 2)],
+                     "length_m": round((La + Lb) / 2.0, 1), "width_m": [min(ws), max(ws)]})
+    return out, recs
+
+
+def median_crossings(conns, crossings):
+    """MEDIAN CROSSINGS (opt-in route.street_junctions.median_crossings, ledger 0079 0.2.3): where a street crosses a
+    divided road whose two carriageways OSM draws as two pieces, OSM may end the street at one carriageway and start it
+    again at the other, leaving the median between them unpaved in the build. Each record {"between": [a, b], "name": ..,
+    "width_m": ..} adds the crossing: a straight piece from a's end to b's end nearest each other (heights linear
+    between them, a point every metre), `width_m` wide, kept at any length by trim (`min_piece_m` 0) and welded at both
+    ends (tools/weld_mouths_blend.py: each mouth's weld eases over the whole piece, so the two eases sum to one). Returns
+    (new list, records)."""
+    by = {c["name"]: c for c in conns}
+    out, recs = list(conns), []
+    for x in crossings:
+        a, b = (by[n] for n in x["between"])
+        ea = [a["points_xyz_m"][0], a["points_xyz_m"][-1]]
+        eb = [b["points_xyz_m"][0], b["points_xyz_m"][-1]]
+        d, p, q = min((math.hypot(u[0] - v[0], u[2] - v[2]), u, v) for u in ea for v in eb)
+        n = max(2, int(math.ceil(d)) + 1)
+        pts = [[round(p[k] + (q[k] - p[k]) * i / (n - 1), 3) for k in range(3)] for i in range(n)]
+        name = x.get("name") or f"{a['name']}__{b['name']}"
+        out.append({"name": name, "kind": a.get("kind", "connector"), "points_xyz_m": pts,
+                    "widths_m": [float(x["width_m"])] * n, "min_piece_m": 0.0, "crossing": [a["name"], b["name"]]})
+        recs.append({"name": name, "between": [a["name"], b["name"]], "length_m": round(d, 2), "width_m": x["width_m"]})
+    return out, recs
+
+
 def _seg_cross(p, q, a, b):
     """t along p -> q where it crosses segment a -> b (plan x, z), or None"""
     rx, rz = q[0] - p[0], q[2] - p[2]
@@ -762,6 +856,14 @@ def build(project_dir):
         conns["connectors"], arms = cut_at_pads(conns.get("connectors", []), built_pads)
         arm_ends = {(round(a["cut_xyz"][0], 3), round(a["cut_xyz"][2], 3)) for a in arms}
         print(f"[trim] pad arms: {len(arms)} street end(s) cut at {len(built_pads)} built pad box(es)")
+    fork_recs = []
+    if sj and sj.get("merge_forks"):
+        # opt-in (ledger 0079 0.2.3): a paint-divided approach OSM draws as two one-way pieces is one asphalt (merge_forks)
+        conns = dict(conns)
+        conns["connectors"], fork_recs = merge_forks(conns.get("connectors", []), sj["merge_forks"])
+        for fr in fork_recs:
+            print(f"[trim] fork {fr['pieces']} -> one street {fr['name']}: {fr['length_m']} m, width "
+                  f"{fr['width_m'][0]}-{fr['width_m'][1]} m (measured edges)")
     if sj:
         # opt-in (ledger 0079 0.2.3; module section STREET-TO-STREET JUNCTIONS): one street's OSM pieces joined first
         keep_out = [[(q[0], q[1]) for q in pd["box"]] for pd in ((cfg.get("lm_pads") or {}).get("pads") or []) if pd.get("box")]
@@ -769,6 +871,13 @@ def build(project_dir):
         conns["connectors"], join_recs = join_street_pieces(conns.get("connectors", []), float(sj["join_turn_deg"]),
                                                             float(sj["bend_turn_deg"]), keep_out)
         print(f"[trim] street junctions: {len(join_recs)} node(s) joined -> {len(conns['connectors'])} piece(s)")
+    cross_recs = []
+    if sj and sj.get("median_crossings"):
+        # opt-in (ledger 0079 0.2.3): the paved crossing of a divided road's median that OSM leaves out (median_crossings)
+        conns["connectors"], cross_recs = median_crossings(conns["connectors"], sj["median_crossings"])
+        for cr_ in cross_recs:
+            print(f"[trim] median crossing {cr_['name']}: {cr_['between']}, {cr_['length_m']} m node to node, "
+                  f"{cr_['width_m']} m wide")
 
     # pass 1: everything vs the mainline
     capped = [str(x) for x in (cfg.get("route", {}).get("trim_blend_grade_cap") or [])]
@@ -829,6 +938,18 @@ def build(project_dir):
             reach = 2.0 * (mo["connector_width_m"] / 2.0 + strip) / math.tan(ang)
             if reach > 25.0:
                 mo["extend_max_m"] = round(reach, 1)
+                # and (opt-in street_junctions.weld_hold "overlap", ledger 0079 0.2.3; coordinator 2026-11-05) its rows
+                # lie on the host deck for the length its ribbon overlaps the host (tools/mouth_weld.py hold_overlap),
+                # the 30 m ease starting only past it
+                if sj.get("weld_hold") == "overlap":
+                    mo["weld_hold"] = "overlap"
+        # a median crossing (median_crossings) is a mouth at both ends: each end's weld eases over the piece's whole
+        # length with no extra re-spread, so the two smoothsteps sum to one and every row lies between the two decks
+        crossing_len = {c["name"]: _plan_len(c["points_xyz_m"]) for c in out if c.get("crossing")}
+        for mo in mouths:
+            if mo["piece"] in crossing_len:
+                mo["weld_blend_m"] = round(crossing_len[mo["piece"]], 3)
+                mo["weld_remap_min_m"] = 0.0
     unresolved = [f"{mo['connector']}@{mo['host']}:{mo['host_vertex']}" for mo in mouths if mo["piece"] is None]
     if unresolved:
         print(f"[trim] WARNING: {len(unresolved)} mouth(s) whose piece was dropped (< {MIN_PIECE_M} m): {unresolved}")
@@ -868,7 +989,7 @@ def build(project_dir):
         (data / "street_junctions.json").write_text(json.dumps(
             {"_doc": "tools/trim_connectors.py route.street_junctions (ledger 0079 0.2.3): the OSM pieces joined into one "
                      "street at a node, and the order the street-to-street passes cut pieces in (each against the hosts "
-                     "named)", "config": sj, "joins": join_recs,
+                     "named)", "config": sj, "joins": join_recs, **({"forks_merged": fork_recs} if fork_recs else {}),
              "ranked": [{"piece": a_, "hosts": h_} for a_, h_ in rank_log if h_]}, indent=1), encoding="utf-8")
     if sj and sj.get("pad_arms"):
         for a in arms:                                    # the FINAL piece whose end is the arm's cut

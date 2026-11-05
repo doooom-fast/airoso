@@ -236,3 +236,122 @@ def test_street_junctions_join_and_rank():
     assert len(out2) == 2 and not recs2
     lm = json.loads((LM / "track.config.json").read_text(encoding="utf-8"))
     assert "street_junctions" not in (lm.get("route") or {})
+
+
+def test_paint_divided_fork_merges_into_one_measured_street():
+    """ledger 0079 0.2.3: route.street_junctions.merge_forks. Two one-way pieces leaving one node (OSM's paint-divided
+    approach) become ONE piece: the midline between them, its edges where the measured table puts them (the centre the
+    edges' middle, the width their distance), the other pieces untouched."""
+    import trim_connectors as tc
+    a = _street("grid_tertiary_91", [(x * 0.15, 10.0, -x) for x in range(0, 61, 3)])
+    b = _street("grid_tertiary_92", [(-x * 0.15, 10.2, -x) for x in range(0, 61, 3)])
+    o = _street("grid_tertiary_36", [(0.0, 10.1, z) for z in range(0, 31, 3)])
+    out, recs = tc.merge_forks([a, b, o], [{"pieces": ["grid_tertiary_91", "grid_tertiary_92"], "name": "grid_tertiary_92",
+                                            "edges_m": [[0, -7.0, 7.0], [60, -12.0, 10.0]]}])
+    assert [c["name"] for c in out] == ["grid_tertiary_36", "grid_tertiary_92"] and len(recs) == 1
+    m = out[1]
+    assert m["fork_merged"] == ["grid_tertiary_91", "grid_tertiary_92"]
+    assert abs(m["widths_m"][0] - 14.0) < 1e-6 and abs(m["widths_m"][-1] - 22.0) < 0.05
+    assert abs(m["points_xyz_m"][0][0]) < 1e-6 and abs(m["points_xyz_m"][0][1] - 10.1) < 1e-6
+    # going -z, the normal (-dz, dx) points +x: the far end's centre is (-12 + 10) / 2 = -1 m along it
+    assert abs(m["points_xyz_m"][-1][0] - (-1.0)) < 0.05
+
+
+def test_median_crossing_is_kept_and_welded_at_both_ends():
+    """ledger 0079 0.2.3: route.street_junctions.median_crossings adds the straight piece between two streets' ends, trim
+    keeps it under MIN_PIECE_M (its own min_piece_m 0), and two weld_end passes eased over its whole length (the mouth
+    keys weld_blend_m / weld_remap_min_m) leave each end ON its own host deck: the two smoothsteps sum to one."""
+    import mouth_weld as mw
+    import trim_connectors as tc
+    west = _street("grid_unclassified_27", [(x, 20.0, 0.0) for x in range(-60, 1, 3)])
+    east = _street("grid_tertiary_65", [(13.5 + x, 20.3, 0.0) for x in range(0, 61, 3)])
+    out, recs = tc.median_crossings([west, east], [{"between": ["grid_unclassified_27", "grid_tertiary_65"],
+                                                    "name": "x_crossing", "width_m": 10.0}])
+    x = out[-1]
+    assert recs[0]["length_m"] == 13.5 and x["min_piece_m"] == 0.0 and x["crossing"]
+    zs = range(-60, 61, 3)
+    hosts = [("h_w", [(0.0, 20.0, float(z)) for z in zs], [9.5] * len(zs)),
+             ("h_e", [(13.5, 20.3, float(z)) for z in zs], [9.5] * len(zs))]
+    mouths = []
+    kept = tc._trim_against([x], hosts, mouths)
+    assert len(kept) == 1 and len(mouths) == 2 and kept[0]["min_piece_m"] == 0.0
+    assert tc._plan_len(kept[0]["points_xyz_m"]) < tc.MIN_PIECE_M
+
+    def deck(cx, y):
+        rows = [((cx + 4.75, y, z), (cx, y, z), (cx - 4.75, y, z)) for z in [-30.0 + 3.0 * i for i in range(21)]]
+        return mw.HostDeck(rows, mw.host_window(rows, False, cx, 0.0))
+    # the weld on two flat hosts 0.30 m apart: a 4.8 m piece (edge - 0.4 to edge + 0.4) eased from each end over it all
+    x0, x1, n = 4.35, 9.15, 5
+    ln = {("road", lane): [(x0 + (x1 - x0) * j / (n - 1), 20.15, o) for j in range(n)]
+          for lane, o in ((0, 5.0), (1, 0.0), (2, -5.0))}
+    inset = {k: mw.OVERLAP_M for k in ln}
+    h = {k: 0.0 for k in ln}
+    ra = mw.weld_end(ln, deck(0.0, 20.0), -1, inset, h, blend_m=x1 - x0, remap_min=0.0)
+    back = {k: v[::-1] for k, v in ra["new"].items()}
+    rb = mw.weld_end(back, deck(13.5, 20.3), 1, inset, h, blend_m=x1 - x0, remap_min=0.0)
+    fin = {k: v[::-1] for k, v in rb["new"].items()}
+    for k in fin:
+        assert abs(fin[k][0][1] - 20.0) < 0.01, fin[k][0]
+        assert abs(fin[k][-1][1] - 20.3) < 1e-6, fin[k][-1]
+        ys = [q[1] for q in fin[k]]
+        assert all(b_ >= a_ - 1e-9 for a_, b_ in zip(ys, ys[1:]))      # one climb from deck to deck, no bump
+
+
+def test_acute_weld_holds_the_overlap_on_the_host_deck():
+    """ledger 0079 0.2.3: mouth_weld.weld_end(hold_overlap=True), an acute meeting (20 deg) on a host steeper than the
+    guest: every guest road vertex inside the host's pavement ends within SELF_TOL_M of the host deck, which the plain
+    30 m ease from each line's own mitre does not do."""
+    import math as m_
+    import mouth_weld as mw
+    rows = [((x, 10.0 + 0.03 * x, 5.0), (x, 10.0 + 0.03 * x, 0.0), (x, 10.0 + 0.03 * x, -5.0))
+            for x in [-90.0 + 3.0 * i for i in range(61)]]
+    dk = mw.HostDeck(rows, mw.host_window(rows, False, 0.0, 5.0))
+    a = m_.radians(20.0)
+    d, nrm = (m_.cos(a), m_.sin(a)), (-m_.sin(a), m_.cos(a))
+    ln = {("road", 0): [], ("road", 1): [], ("road", 2): []}
+    for j in range(30):
+        u = 2.0 * j
+        cx, cz = d[0] * u, 4.6 + d[1] * u
+        for lane, o in ((0, 5.0), (1, 0.0), (2, -5.0)):
+            ln[("road", lane)].append((cx + nrm[0] * o, 10.0 + 0.01 * u, cz + nrm[1] * o))
+    inset = {k: mw.OVERLAP_M for k in ln}
+    h = {k: 0.0 for k in ln}
+
+    def worst(res):
+        w = 0.0
+        for pts in res["new"].values():
+            for q in pts:
+                if dk.inside(q[0], q[2], 0.01):
+                    w = max(w, q[1] - dk.at(q[0], q[2]))
+        return w
+    plain = mw.weld_end(ln, dk, 1, inset, h, extend_max=60.0)
+    held = mw.weld_end(ln, dk, 1, inset, h, extend_max=60.0, hold_overlap=True)
+    assert worst(held) <= mw.SELF_TOL_M, worst(held)
+    assert worst(plain) > worst(held)
+
+
+def test_seam_offset_multi_is_exact_on_every_row_and_seam_offset_alone():
+    """ledger 0079 0.2.3: draft_pads.seam_offset_multi (lm_pads.arms streets). On each row its own departure exactly;
+    with one row, seam_offset's value."""
+    import draft_pads as dp
+    c1 = {"p": (0.0, 0.0), "n": (0.0, 1.0)}
+    c2 = {"p": (0.0, 10.0), "n": (0.0, -1.0)}
+    p1 = {"c": c1, "u": (-1.0, 0.0), "t": [-5.0, 5.0], "r": [0.2, 0.2], "fade": 12.0}
+    p2 = {"c": c2, "u": (1.0, 0.0), "t": [-5.0, 5.0], "r": [-0.1, -0.1], "fade": 12.0, "lateral": True}
+    assert abs(dp.seam_offset_multi([p1, p2], 0.0, 0.0) - 0.2) < 1e-9
+    assert abs(dp.seam_offset_multi([p1, p2], 0.0, 10.0) + 0.1) < 1e-9
+    for y in (0.5, 3.0, 7.0, 11.9):
+        assert abs(dp.seam_offset_multi([p1], 1.0, y) - dp.seam_offset([p1], 1.0, y)) < 1e-12
+    assert -0.1 < dp.seam_offset_multi([p1, p2], 0.0, 5.0) < 0.2
+
+
+def test_round_g_keys_are_opt_in():
+    """ledger 0079 0.2.3 round G: Lake Murray and the Lariat name none of the new keys"""
+    for t in ("san-diego-lake-murray", "lookout-lariat"):
+        p = ROOT / "tracks" / t / "track.config.json"
+        if not p.exists():
+            continue
+        cfg = json.loads(p.read_text(encoding="utf-8"))
+        sj = (cfg.get("route") or {}).get("street_junctions") or {}
+        assert not {"merge_forks", "median_crossings", "weld_hold"} & set(sj)
+        assert "arms" not in (cfg.get("lm_pads") or {})

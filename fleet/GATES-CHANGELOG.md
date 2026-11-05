@@ -14,6 +14,28 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
+## 2026-11-05 (round G) — Sand Creek: forks merged, acute welds held, pad arms, Quebec's crossing (ledger 0079 round G)
+
+No gate threshold or floor moved. One gate reads MORE: `verify_pads` (lm_pads' shape) now judges each pad-arm end row as a
+seam (`arm_<piece>_<end>`, from pads.built.json `arm_rows`); a record without it reads the two lap rows as before. The
+numbers the round adds, all opt-in (Sand Creek only):
+
+- `route.street_junctions.merge_forks[].edges_m` [measured]: the two forks' asphalt edges off NAIP 2023 (0.46 m/px, about
+  +-0.5 m), every 5 m from the fork node. The method is in the config's `_merge_forks_doc`.
+- `weld_hold: "overlap"` (mouth_weld `hold_overlap`): no number. The held length is the guest's own mitres (first to
+  last). The ease past it is the existing `BLEND_M` 30 m.
+- `lm_pads.arms "streets"`:
+  - an arm's seam fade reuses the lap cuts' rule (⚠ `SEAM_FADE_M` 12 m and ⚠ `SEAM_MAX_SLOPE` 0.035, both already
+    [invented]; up to 45 % of the way to the node, the lap cuts' own 45 %).
+  - ⚠ The fade past an arm row's ends runs over the same length [invented: no measured falloff].
+  - The lap-face test reads `route.edge` (curb_face_w + sidewalk_w + grade_w, 0.1 + 0.2 + 1.5 m: the strip as built;
+    its 1.5 m is that config's own [invented]).
+- `median_crossings[].width_m` 10.0 [rule]: the wider of the two streets the crossing joins (NAIP reads the cross
+  street's approach about 15 m: ledger 0079 round G).
+- `min_piece_m` 0 on the crossing piece alone: it is kept at any length. `MIN_PIECE_M` 15 m is unchanged for every
+  other piece.
+- `weld_blend_m` (the piece's own length, measured) and `weld_remap_min_m` 0 on the crossing's two mouths.
+
 ## 2026-11-05 (round F) — Sand Creek: street-to-street junctions, the numbers they need (ledger 0079 round F; no gate changed)
 
 No gate threshold, rule or floor moved. `verify_mouths` joins Sand Creek's gate list (ship.json) unchanged. The junction

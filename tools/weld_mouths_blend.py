@@ -398,7 +398,13 @@ def main():
         try:
             # a mouth record's own extend_max_m (tools/trim_connectors.py street junctions, ledger 0079 0.2.3: an acute
             # fork's outer lines run on along the host edge for (half width + edge strip) / tan(angle)); absent = as before
-            res = mw.weld_end(lines, deck, side, inset, h, extend_max=float(mo.get("extend_max_m", mw.EXTEND_MAX_M)))
+            # and its weld_hold "overlap" (the same acute mouths): rows on the host deck up to the furthest mitre
+            # and a median crossing's weld_blend_m / weld_remap_min_m (the piece's own length, 0: both ends welded, the two
+            # eases summing to one); absent = BLEND_M / REMAP_MIN_M
+            res = mw.weld_end(lines, deck, side, inset, h, extend_max=float(mo.get("extend_max_m", mw.EXTEND_MAX_M)),
+                              hold_overlap=mo.get("weld_hold") == "overlap",
+                              blend_m=float(mo.get("weld_blend_m", mw.BLEND_M)),
+                              remap_min=float(mo.get("weld_remap_min_m", mw.REMAP_MIN_M)))
         except mw.WeldError as e:
             raise SystemExit(f"[weld] FATAL: mouth {tag}: {e}")
         new, K, J = res["new"], res["K"], res["J"]

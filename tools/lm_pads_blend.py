@@ -102,10 +102,11 @@ class LapIndex:
         return bi
 
 
-def row_verts(road, lay, k):
-    """the mainline row k: its three indexed vertices and every ROAD vertex on the segment between its edges"""
+def row_verts(road, lay, k, name="MAINLINE"):
+    """the mainline row k: its three indexed vertices and every ROAD vertex on the segment between its edges (`name`: a
+    connector piece's row instead, lm_pads.arms "streets")"""
     V = road.data.vertices
-    idx = [mw.road_index(lay, "MAINLINE", k, j) for j in (0, 1, 2)]
+    idx = [mw.road_index(lay, name, k, j) for j in (0, 1, 2)]
     L, R = V[idx[0]].co, V[idx[2]].co
     ux, uy = R.x - L.x, R.y - L.y
     span = math.hypot(ux, uy)
@@ -315,6 +316,34 @@ def build(proj, cfg, decls):
     for ob in [o for o in bpy.data.objects if o.name.startswith(("1ROAD_pad_", WALL_PREFIX))]:
         bpy.data.objects.remove(ob, do_unlink=True)
     built = []
+    # THE STREET ARMS (opt-in lm_pads.arms "streets", ledger 0079 0.2.3; Kevin "authored pad junctions", "Real
+    # junctions"): tools/trim_connectors.py (route.street_junctions.pad_arms) cut every street entering a built pad's box
+    # at the box edge (data/pad_arms.json). Each arm's end row joins the deck exactly as a lap cut row does: spliced into
+    # the outline along its box edge, a seam (its vertices pinned), its departure from the lidar faded in. The lap's faces
+    # between the cuts go only within the lap's half width + its edge strip of the lap line (the streets' own faces stay).
+    # Absent = the lap's two rows alone, as before (the Lariat)
+    arms_mode = (cfg.get("lm_pads") or {}).get("arms")
+    arm_all, lay_c, strip_w = [], None, 0.0
+    if arms_mode == "streets":
+        arm_all = json.loads((proj / "data" / "pad_arms.json").read_text(encoding="utf-8"))["arms"]
+        conns = json.loads((proj / "data" / "connectors.local.json").read_text(encoding="utf-8"))["connectors"]
+        lay_c = mw.mesh_layout([tuple(p) for p in pts3], conns)
+        re_ = (cfg.get("route") or {}).get("edge") or {}
+        strip_w = sum(float(re_.get(k) or 0.0) for k in ("curb_face_w", "sidewalk_w", "grade_w"))
+    elif arms_mode is not None:
+        raise SystemExit(f"[lm-pads] FATAL: lm_pads.arms {arms_mode!r}: only \"streets\" is known")
+
+    def lap_lateral(x_, y_, k_):
+        """plan distance from (x, y) to the lap polyline near vertex k"""
+        best = math.inf
+        for i in (k_ - 1, k_):
+            if 0 <= i < len(P) - 1:
+                (ax, ay), (bx, by) = P[i], P[i + 1]
+                dx, dy = bx - ax, by - ay
+                L2 = dx * dx + dy * dy or 1e-12
+                t = max(0.0, min(1.0, ((x_ - ax) * dx + (y_ - ay) * dy) / L2))
+                best = min(best, math.hypot(x_ - ax - dx * t, y_ - ay - dy * t))
+        return best
     for d in decls:
         pid = d["id"]
         rec = json.loads((src / f"{pid}.json").read_text(encoding="utf-8"))
@@ -341,6 +370,18 @@ def build(proj, cfg, decls):
             cuts_rows.append((c, cr, row))
             seams += row
         cut_lines = [cr for _, cr, _ in cuts_rows]
+        arm_rows, arm_meta = [], []
+        for a in [a for a in arm_all if a["pad"] == pid]:
+            if not a.get("piece") or a["piece"] not in lay_c:
+                raise SystemExit(f"[lm-pads] FATAL: {pid}: arm {a['connector']} has no final piece in the mesh layout")
+            r_ = 0 if a["end"] == "start" else lay_c[a["piece"]]["rows"] - 1
+            row = row_verts(road, lay_c, r_, a["piece"])
+            cr = dp.row_cut(row, P[d["node"]])
+            c = dp.sealed_cut((tuple(a["box_edge"][0]), tuple(a["box_edge"][1])), P[d["node"]])
+            c["vertex"] = f"{a['piece']} ({a['end']})"
+            arm_rows.append((c, cr, row))
+            arm_meta.append({"connector": a["connector"], "piece": a["piece"], "end": a["end"], "row": r_})
+            seams += row
         RV = road.data.vertices
         edges = {}
         for k in range(lo_k, hi_k + 1):
@@ -379,6 +420,8 @@ def build(proj, cfg, decls):
                     continue
                 k = lapi.nearest(cw.x, cw.y)
                 if k is not None and lo_k <= k <= hi_k:
+                    if arms_mode == "streets" and lap_lateral(cw.x, cw.y, k) > W[k] / 2.0 + strip_w:
+                        continue                                   # a street's own face, not the lap's
                     doomed.append(f)
             if doomed and name == "ROAD":                      # the lap's own surface, where nothing measured paves it
                 rv_, rf_ = [], []
@@ -407,7 +450,7 @@ def build(proj, cfg, decls):
             return off
 
         def as_built(ring_in):
-            ring_ = dp.splice_rows(ring_in, cuts_rows)
+            ring_ = dp.splice_rows(ring_in, cuts_rows + arm_rows)
             if dp.ring_area(ring_) < 0:
                 ring_.reverse()
             return ribbon_edges(ring_, cuts_rows, edges, d["node"], lip_rows)
@@ -451,6 +494,16 @@ def build(proj, cfg, decls):
             raise SystemExit(f"[lm-pads] FATAL: {pid}: the deck covers {tri_area:.1f} m2 of a {ring_a:.1f} m2 outline")
         seam_xy = {(round(s[0], 3), round(s[1], 3)): s[2] for s in seams}
         prof = dp.seam_profile([(cr, row) for _, cr, row in cuts_rows], lambda x_, y_: dp.deck_near(rec["deck"], x_, y_))
+        for _c, cr, row in arm_rows:
+            # an arm's fade: seam_profile's own rule (as long as its departure needs at SEAM_MAX_SLOPE, from SEAM_FADE_M),
+            # up to 45 % of the way to the node, as the lap's two cuts are held to 45 % of the way to each other
+            pa_ = dp.seam_profile([(cr, row)], lambda x_, y_: dp.deck_near(rec["deck"], x_, y_))[0]
+            need = max(abs(r) for r in pa_["r"]) * math.pi / (2.0 * dp.SEAM_MAX_SLOPE)
+            mid_ = ((row[0][0] + row[-1][0]) / 2.0, (row[0][1] + row[-1][1]) / 2.0)
+            pa_["fade"] = max(dp.SEAM_FADE_M, min(need, 0.45 * math.dist(mid_, P[d["node"]])))
+            pa_["lateral"] = True
+            prof.append(pa_)
+        s_off = dp.seam_offset_multi if arm_rows else dp.seam_offset
 
         def deck_z(x_, y_):
             """the measured deck where the lidar paves it (+ the seams' departures, faded in); the lap's own ribbon
@@ -458,7 +511,7 @@ def build(proj, cfg, decls):
             the nearest measured node, then the seams, beyond"""
             g = dp.deck_at(rec["deck"], x_, y_)
             if g is not None:
-                return g + dp.seam_offset(prof, x_, y_)
+                return g + s_off(prof, x_, y_)
             if ribbon_bvh is not None:
                 hit = ribbon_bvh.ray_cast(Vector((x_, y_, 1e4)), Vector((0.0, 0.0, -1.0)))
                 if hit[0] is not None:
@@ -466,7 +519,7 @@ def build(proj, cfg, decls):
             g = dp.deck_near(rec["deck"], x_, y_)
             if g is None:
                 return dp.seam_blend(x_, y_, [(s[0], s[1], s[2]) for s in seams])
-            return g + dp.seam_offset(prof, x_, y_)
+            return g + s_off(prof, x_, y_)
         verts3 = []
         for v in vco:
             key = (round(v.x, 3), round(v.y, 3))
@@ -564,7 +617,8 @@ def build(proj, cfg, decls):
         m_lon, m_lat = dp.meters_per_degree(lo_lat)
         built.append({
             "id": pid, "object": deck_ob.name, "cuts": d["cuts"], "node": d["node"],
-            "rows": [[[round(v, 3) for v in q] for q in row] for _, _, row in cuts_rows],
+            "rows": [[[round(v, 3) for v in q] for q in row] for _, _, row in cuts_rows + arm_rows],
+            **({"arm_rows": arm_meta} if arm_meta else {}),
             "seam_residual_m": {"max": round(max(abs(r) for p_ in prof for r in p_["r"]), 3),
                                 "fade_m": [round(p_["fade"], 1) for p_ in prof]},
             "faces_removed": removed, "deck_vertices": len(verts3), "deck_faces": len(faces),
@@ -578,7 +632,7 @@ def build(proj, cfg, decls):
             built[-1]["deck_fill"] = deck_rep
         _log(f"{pid}: rows v{lo_k} ({len(cuts_rows[0][2])} verts) / v{hi_k} ({len(cuts_rows[1][2])}); lap faces removed "
              f"{removed}; deck {len(verts3)} v / {len(faces)} f, {built[-1]['area_m2']} m2; seam residual max "
-             f"{built[-1]['seam_residual_m']['max']} m; {widened} ribbon-edge points, {united * 0.0625:.1f} m2 of this line's ribbon united; ground {held}; {len(bars)} mouth barrier(s) ({along_lap} box runs along the lap skipped) "
+             f"{built[-1]['seam_residual_m']['max']} m; {widened} ribbon-edge points, {united * 0.0625:.1f} m2 of this line's ribbon united; {len(arm_rows)} street arm row(s) {[m_['piece'] for m_ in arm_meta]}; ground {held}; {len(bars)} mouth barrier(s) ({along_lap} box runs along the lap skipped) "
              f"{[b['span_m'] for b in bars]} m")
     return built
 

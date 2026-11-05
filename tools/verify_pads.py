@@ -117,9 +117,12 @@ def lm_pads_shape(built, data):
     out, plan = [], {}
     for p in pads:
         seams = []
-        for k, row in zip(p["cuts"], p["rows"]):
+        # the rows past the lap's two cuts are the street arms' end rows (lm_pads.arms "streets", ledger 0079 0.2.3:
+        # `arm_rows` names them, in order); a record without them reads the two lap rows alone, as before
+        names = [f"lap_v{k}" for k in p["cuts"]] + [f"arm_{a['piece']}_{a['end']}" for a in p.get("arm_rows") or []]
+        for k, row in zip(names, p["rows"]):
             for i, q in enumerate(row):                      # Blender (x, north, up) -> OBJ (x, up, north)
-                seams.append({"arm": f"lap_v{k}", "row_vertex": f"v{i}", "order": i, "xyz": [q[0], q[2], q[1]]})
+                seams.append({"arm": k, "row_vertex": f"v{i}", "order": i, "xyz": [q[0], q[2], q[1]]})
         stubs = [{"stub": b["object"], "barrier": dict(b["barrier"], seat=b["barrier"].get("seat") or [])}
                  for b in p.get("barriers") or []]
         out.append({"id": p["id"], "outline_xz": p["outline_en"], "seams": seams, "stubs": stubs, "curb": False})

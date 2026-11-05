@@ -605,6 +605,70 @@ a lens: `grid_tertiary_74` / `75`, 148 m long.
   inside its pavement (`SELF_TOL_M` 0.02). Its blend onto the host (30 m smoothstep) leaves the overlapping rows off the
   host's level-across deck. `grid_tertiary_91` (13.3 deg) is next in line.
 
+## Round G (Mac): the forks as one street, the acute welds held, the pad arms, Quebec's crossing (toward 0.2.3)
+
+The coordinator's calls under "I just want real" (2026-11-05), each built as decided. All code opt-in; Lake Murray and the
+Lariat name none of the keys (a test pins it).
+
+### What is committed
+
+- **The paint-divided forks: one street each** (`tools/trim_connectors.py merge_forks`, `route.street_junctions.merge_forks`).
+  The two one-way OSM pieces are replaced, before JOIN, by one piece whose edges were **measured off NAIP**: cross-sections
+  every 5 m from the fork node, sampled 0.5 m apart (each sample the mean over 1 m along the street); an edge is where the
+  asphalt meets the first concrete band 1.5 m or wider (`edges_m` in the config, about +-0.5 m). The centre is the edges'
+  middle, the width their distance; heights the two pieces' mean. Then JOIN makes each one street with the piece north
+  of its node.
+  - `grid_tertiary_91` / `92` -> `grid_tertiary_92` (joined with `grid_tertiary_36`): 14.0 m at the node to 24.5 m at s 75.
+  - `grid_unclassified_94` / `95` -> `grid_unclassified_95` (joined with `grid_unclassified_62`): 13.5-14.5 m to s 55,
+    15.5 m at s 60-65, 18-19 m at s 70-75.
+  - **The median is not built.** Lake Murray's `divide_connectors` only makes a raised island from an out-and-back loop,
+    so none is drawn. Missing: the yellow chevron paint (91/92 s 20-55; 94/95 s 15-75): no chain step paints a chevron
+    median on a grid street (Lake Murray's hatched median is `tools/expansion_pieces.py`, authored pieces only).
+  - **Measured, not as decided:** 91/92 is not paint all the way. From about s 57 to the lap crosswalk a 3.5-4 m band
+    as bright as the sidewalks stands at +1 to +5 m off the midline: a raised concrete island. Not built (paved over).
+  - Trim then cuts each merged street once at the lap: 127 -> 123 mouths before the other changes; the two fork
+    overlaps are gone from the scratch check.
+- **The acute welds held on the host deck** (`tools/mouth_weld.weld_end(hold_overlap=True)`, the mouth key
+  `weld_hold: "overlap"`, written by trim on the acute mouths only, `route.street_junctions.weld_hold`). Every row up to
+  the guest's furthest mitre (the length its ribbon overlaps the host) lies on the host deck, level across its edge; the
+  30 m ease back to the guest's own profile starts only past it. Before, the ease ran from each line's own mitre, which
+  left the overlapping rows off the host's deck (round F: `grid_unclassified_94`). No number added. Applies to the Y
+  `grid_tertiary_5` (18.6 deg) and the lens `grid_tertiary_74` at both ends (24 deg).
+- **The pad arms** (`lm_pads.arms: "streets"`, `route.street_junctions.pad_arms` on). 6 arm ends at colorado_50th (5)
+  and 50th_ash (1); 50th_dahlia's declared arms never enter its box. In `tools/lm_pads_blend.py`:
+  - each arm's end row (read through `mw.mesh_layout(pts3, connectors)`) is spliced into the outline along its box edge
+    (`draft_pads.splice_rows`, `c` = `sealed_cut(box edge)`, `cr` = `row_cut(row)`), pinned as a seam;
+  - its departure from the lidar is faded in with seam_profile's own rule, up to 45 % of the way to the node, and past
+    the row's ends over the same length. Where fades overlap the rows share it (`draft_pads.seam_offset_multi`: exact on
+    every row, `seam_offset` where only one reaches);
+  - only the lap's own faces between the cuts are deleted: a face also has to lie within the lap's half width + its
+    `route.edge` strip (0.1 + 0.2 + 1.5 m) of the lap line;
+  - pads.built.json `rows` carries the arm rows after the two lap rows, `arm_rows` naming them; `verify_pads` reads them
+    as seams `arm_<piece>_<end>`.
+- **Quebec's median crossing** (`tools/trim_connectors.py median_crossings`, `route.street_junctions.median_crossings`).
+  - **OSM has no piece across the median at all**: `grid_unclassified_27` ends at the west carriageway's node
+    (1649.2, 789.4) and `grid_tertiary_65` starts at the east one's (1662.7, 789.4). So round F's "4 m piece dropped
+    under 15 m" was not the mechanism.
+  - The crossing is added node to node (13.5 m). Its own `min_piece_m` 0 keeps the 4.8 m left after both carriageways
+    cut it; `MIN_PIECE_M` is unchanged for every other piece.
+  - Both mouths are welded. Each end's weld eases over the piece's whole length with no extra re-spread
+    (`weld_blend_m` = its length, `weld_remap_min_m` 0), so the two smoothsteps sum to one: every row lies between the
+    two decks, each end on its own.
+  - Width 10.0 m [rule]: `grid_tertiary_65`'s own, the wider of the two streets it joins.
+- **Measured for Kevin, not built: Quebec's whole median.** The strip between Quebec's two OSM carriageway ribbons
+  (`grid_primary_6` / `7`: 4-6 m, narrowing to 1-2.5 m south) reads asphalt or concrete on NAIP at 48 of 49 samples along
+  860 m. It is never planted (one dark sample). Around the 27 / 65 crossing NAIP shows one road about 31 m curb to
+  curb, divided by paint only. The cross street's approach is about 15 m wide, centred about 4 m south of OSM's line.
+  So the build's grass strip down Quebec's middle is not real either: the carriageways' OSM widths are short.
+- Tests: `test_sand_creek_lm_assets.py` 20 pass (five new: the fork merge, the crossing kept and welded at both ends,
+  the acute hold, seam_offset_multi, the keys opt-in); `test_draft_pads`, `test_lm_engine_port`, `test_mouth_weld*`,
+  `test_ship_track_chain`, `test_trim_connectors` pass. Lake Murray's committed trim inputs through fleet-lm-engine's
+  trim and this branch's: byte-identical (`664da93b…`, `b73b70f4…`, `f0c97952…`).
+
+### The build (Mac, empty workshop `sclm_work/k2`)
+
+(in progress; see below when written)
+
 ## Owed (2026-11-05, after round F; in the coordinator's order)
 
 1. **0.2.3 finishing the junctions** (round F's code is in; build `EMPTY=1` from the committed config to reproduce):

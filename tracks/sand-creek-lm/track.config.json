@@ -383,7 +383,192 @@
     "_connector_hosts_doc": "ledger 0079 round B / 0.2.3: tools/trim_connectors.py pass 2 cuts every other grid street at the arterials' pavement edge (OSM primary / secondary: the through roads)",
     "street_junctions": {
       "join_turn_deg": 45.0,
-      "bend_turn_deg": 135.0
+      "bend_turn_deg": 135.0,
+      "weld_hold": "overlap",
+      "_weld_hold_doc": "ledger 0079 0.2.3 (coordinator 2026-11-05: the Y grid_tertiary_5 and the lens grid_tertiary_74 / 75 are real acute meetings, kept as acute welds): every acute mouth (the ones whose record carries extend_max_m) welds with tools/mouth_weld.py hold_overlap: its rows lie on the host deck (level across its edge) for the length its ribbon overlaps the host, from its first line's mitre to its last, and trim's 30 m ease starts only past that, instead of a 30 m smoothstep from each line's own mitre that left the overlapping rows off the host's level-across deck (round F: grid_unclassified_94 at 16.4 deg, 0.026-0.036 m over it). The length is the mitres' own, measured on the ribbon; no number is added",
+      "merge_forks": [
+        {
+          "pieces": [
+            "grid_tertiary_91",
+            "grid_tertiary_92"
+          ],
+          "name": "grid_tertiary_92",
+          "edges_m": [
+            [
+              5,
+              -7.25,
+              6.75
+            ],
+            [
+              10,
+              -7.75,
+              6.25
+            ],
+            [
+              15,
+              -8.25,
+              5.75
+            ],
+            [
+              20,
+              -8.75,
+              6.25
+            ],
+            [
+              25,
+              -9.25,
+              5.75
+            ],
+            [
+              30,
+              -9.75,
+              6.25
+            ],
+            [
+              35,
+              -10.25,
+              6.75
+            ],
+            [
+              40,
+              -10.75,
+              7.25
+            ],
+            [
+              45,
+              -11.25,
+              7.75
+            ],
+            [
+              50,
+              -11.75,
+              8.75
+            ],
+            [
+              55,
+              -12.25,
+              9.25
+            ],
+            [
+              60,
+              -12.75,
+              8.75
+            ],
+            [
+              65,
+              -13.25,
+              10.25
+            ],
+            [
+              70,
+              -13.25,
+              9.75
+            ],
+            [
+              75,
+              -13.75,
+              10.75
+            ]
+          ]
+        },
+        {
+          "pieces": [
+            "grid_unclassified_94",
+            "grid_unclassified_95"
+          ],
+          "name": "grid_unclassified_95",
+          "edges_m": [
+            [
+              5,
+              -6.25,
+              7.25
+            ],
+            [
+              10,
+              -6.25,
+              7.25
+            ],
+            [
+              15,
+              -6.75,
+              7.25
+            ],
+            [
+              20,
+              -6.25,
+              7.25
+            ],
+            [
+              25,
+              -6.25,
+              7.25
+            ],
+            [
+              30,
+              -6.25,
+              7.25
+            ],
+            [
+              35,
+              -6.25,
+              7.25
+            ],
+            [
+              40,
+              -6.75,
+              7.25
+            ],
+            [
+              45,
+              -7.25,
+              7.25
+            ],
+            [
+              50,
+              -7.25,
+              7.25
+            ],
+            [
+              55,
+              -7.25,
+              7.25
+            ],
+            [
+              60,
+              -7.75,
+              7.75
+            ],
+            [
+              65,
+              -7.75,
+              7.75
+            ],
+            [
+              70,
+              -8.25,
+              9.75
+            ],
+            [
+              75,
+              -8.75,
+              10.25
+            ]
+          ]
+        }
+      ],
+      "_merge_forks_doc": "ledger 0079 0.2.3 (coordinator 2026-11-05 under \"I just want real\": NAIP shows one asphalt with a painted chevron median, so build what's there): the two paint-divided approaches OSM draws as two one-way pieces leaving one node at 13-16 deg become ONE street (tools/trim_connectors.py merge_forks). edges_m [s, left, right] [measured]: the asphalt's two edges off NAIP 2023 (tracks/sand-creek/source/naip_2023_sc_z18.jpg, 0.46 m/px), read every 5 m on cross-sections sampled 0.5 m apart, each sample the mean over 1 m along the street; an edge = where the asphalt meets the first concrete band (curb, gutter, sidewalk) 1.5 m or wider (1 m bands inside are paint), in metres along the OSM midline's normal (-dz, dx) of the direction away from the fork node, s metres from the node; about +-0.5 m. Held past s 75: the curb returns into the lap there belong to the lap mouth. 91/92: 14.0 m at the node to 24.5 m at s 75; from about s 57 to the lap crosswalk a 3.5-4 m concrete island stands at +1 to +5 m (NAIP: bright like the sidewalks, so raised); it is NOT built, and the yellow chevrons s 20-55 are not painted: no chain step here makes an island or paints a chevron median on a grid street. 94/95: 13.5-14.5 m to s 55, 15.5 m at s 60-65, 18-19 m at s 70-75 (the flare into the lap); its median is flush yellow chevron paint, not painted here either.",
+      "pad_arms": true,
+      "median_crossings": [
+        {
+          "between": [
+            "grid_unclassified_27",
+            "grid_tertiary_65"
+          ],
+          "name": "grid_unclassified_27_65_crossing",
+          "width_m": 10.0
+        }
+      ],
+      "_median_crossings_doc": "ledger 0079 0.2.3 (coordinator 2026-11-05: NAIP shows Quebec's median paved where 48th / grid_unclassified_27 crosses it at (1656, 789), so pave it): OSM ends grid_unclassified_27 at the west carriageway's node (1649.2, 789.4) and starts grid_tertiary_65 at the east one's (1662.7, 789.4); no way joins them, so the 4 m between the two carriageway ribbons stayed grass. tools/trim_connectors.py median_crossings adds the straight crossing node to node, kept at any length and welded at both ends. width_m 10.0 [rule]: grid_tertiary_65's own width, the wider of the two streets it joins, so its edges meet both (NAIP reads the cross street's west approach about 15 m curb to curb, centred about 4 m south of OSM's line: the streets' OSM widths are short here, a wider question than this crossing). Also measured: the strip between Quebec's two OSM carriageway ribbons (grid_primary_6 / 7, 4-6 m, narrowing to 1-2.5 m south) reads asphalt or concrete on NAIP at 48 of 49 samples along 860 m, never planted: owed to Kevin, not built here"
     },
     "_street_junctions_doc": "ledger 0079 0.2.3 (Kevin 2026-11-05: \"Real junctions\"): tools/trim_connectors.py joins a street's OSM pieces where they end at one node and continue (turn <= join_turn_deg) or, two alone, bend (turn <= bend_turn_deg), then cuts every street-to-street meeting the lap and arterial passes did not: the through piece hosts, the other is cut at its pavement edge with a mouth (the ribbon-through topology every mouth here uses). Both angles [invented], but they sit in gaps of the data: Sand Creek's pairs turn 0-24 deg (straight) or 88-108 deg (bends) or 157-167 deg (forks), so any value in 25-87 / 109-156 makes the same joins (GATES-CHANGELOG 2026-11-05)"
   },
@@ -1328,7 +1513,9 @@
       "lane_lip": "route.edge",
       "ground_edge_m": 0.7
     },
-    "_deck_doc": "ledger 0079 round D (tools/draft_pads.deck_filled, tools/lm_pads_blend.py): fill = the measured deck's holes (crosswalk paint, gutter pans, cars: under 8 road-intensity points within 2 m) filled from the lidar nodes around them, not from the lap's removed ribbon; datum_m = the deck in the lap's datum, the assembler's ROAD stands 0.10 m over its sampled ground (scripts-v021 build_loop_blend.py y + 0.10); smooth_m = a Gaussian sigma over the deck's nodes inside the measured outline [invented], its moves recorded in data/pads.built.json deck_fill; lane_lip = the lane's flat lip past the ROAD edge (route.edge curb_face_w + sidewalk_w, 0.3 m) kept paved where the measured asphalt is narrower than the lane; ground_edge_m = the ground under and round the deck split to 0.7 m [invented] (LAWS L3b: a ground cell can only follow a deck shape it is smaller than; 0.17.2's 1.4 m left grass 7-21 mm over 48th/Colorado's deck edge)"
+    "_deck_doc": "ledger 0079 round D (tools/draft_pads.deck_filled, tools/lm_pads_blend.py): fill = the measured deck's holes (crosswalk paint, gutter pans, cars: under 8 road-intensity points within 2 m) filled from the lidar nodes around them, not from the lap's removed ribbon; datum_m = the deck in the lap's datum, the assembler's ROAD stands 0.10 m over its sampled ground (scripts-v021 build_loop_blend.py y + 0.10); smooth_m = a Gaussian sigma over the deck's nodes inside the measured outline [invented], its moves recorded in data/pads.built.json deck_fill; lane_lip = the lane's flat lip past the ROAD edge (route.edge curb_face_w + sidewalk_w, 0.3 m) kept paved where the measured asphalt is narrower than the lane; ground_edge_m = the ground under and round the deck split to 0.7 m [invented] (LAWS L3b: a ground cell can only follow a deck shape it is smaller than; 0.17.2's 1.4 m left grass 7-21 mm over 48th/Colorado's deck edge)",
+    "arms": "streets",
+    "_arms_doc": "ledger 0079 0.2.3 (Kevin \"authored pad junctions\", \"Real junctions\"): tools/lm_pads_blend.py welds every street arm into its pad's deck. route.street_junctions.pad_arms cuts each street entering a built pad's box at the box edge (tools/trim_connectors.py cut_at_pads -> data/pad_arms.json); lm_pads splices that end row into the measured outline along the box edge, pins it as a seam and fades its departure from the lidar in (draft_pads.seam_offset_multi), and deletes only the lap's own faces between the cuts (within the lap's half width + its route.edge strip of the lap line). The rows go into pads.built.json rows (arm_rows names them), so verify_pads judges their seams"
   },
   "strip_seam": {
     "pads": true,

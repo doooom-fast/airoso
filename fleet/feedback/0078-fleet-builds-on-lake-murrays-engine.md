@@ -1075,6 +1075,17 @@ PASS, kn5 54,809,676 B, `[densify] 3290`, `[lm-pads] DC ... 950.3 m2`; both `[st
 **Owed:** their ui names equal the original stages' (only the version differs), so the track list shows two of each;
 Sand Creek's twin says "(LM engine)".
 
+### Runbook 4e rename (PC, 2026-11-05): the two `_lm` stages re-installed with "(LM engine)"
+
+**Kevin, 2026-11-05: "Yes, both"** (Sand Creek 0.2.2 and this). fleet-4f at cdd82f17, the same `eng_rally`, the same
+real workshops: `ship_track.sh rally-<stage>-gravel-lm --from track_folder --force-install`. Every step through
+`road_obj` skipped; every gate re-ran with round 13's rows (Dragon Tail severe 99, undrivable 3 at s 6,356-6,366; Under
+the Dragon severe 73, undrivable 1 at s 22,414; both `[stage-force] --force-install would be allowed`), SHIP OK. The
+previous folders parked in `D:/k10-track-archive/2026-11-05_111952/` and `2026-11-05_112052/`. Each installed kn5 is
+byte-identical to the parked one (42,472,833 / 54,809,676 B); the only file that differs is `ui/ui_track.json`, now
+"doooom Colorado — Dragon Tail (Gravel) (LM engine)" and "... Under the Dragon (Gravel) (LM engine)", 0.1.0. The
+sync-back changed no record.
+
 ## Owed
 
 - **The Rangely stages (round 13):** s 2,403 forced on Kevin's word (2026-11-05); runbook 4e (rehearse, then install on

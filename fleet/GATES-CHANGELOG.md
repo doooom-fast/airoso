@@ -14,6 +14,22 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
+## 2026-11-05 — the SD freeway port, phase 2 step 0: the decks measured from the lidar (ledger 0080; no gate threshold moved, no bypass)
+
+`tools/network_deck_lidar.py` reads USGS `CA_SanDiegoQL2_2014` (EPT, class 17 deck / class 2 ground) along every bridged
+edge of the network draft. Its own numbers, all ⚠ **invented** (none is a gate threshold; each decides which returns
+are a deck reading):
+- ⚠ `RADIUS_M` 2.0 m: the disc of returns read round each 5 m station on the carriageway's OSM centreline (half a lane).
+- ⚠ `LEVEL_GAP_M` 2.0 m: heights further apart are different decks (stacked interchanges).
+- ⚠ `MAX_PICK_M` 8.0 m: with no reading behind it, a level further than this from the draft's own height there (its
+  layer x 5.5 m model, which only CHOOSES between measured levels) is another road's deck.
+- ⚠ `CONT_M` 15 m / `CONT_DZ_M` 2.0 m: within 15 m along the same edge of the last reading the level nearest it is kept,
+  if within 2 m; off OSM's bridge (an approach station) a deck reading counts only within 2 m of the 3DEP there (the
+  overpass above I 8 WB at edge 295 s 145-155 read 26.0 m over a 17.0 m road before this rule).
+- ⚠ `APPROACH_M` 30 m: how far past a bridged stretch's ends the stations run (the table's extent, not a height).
+Measured, as a check of the datum (the EPT keeps NAVD88 metres): class-2 ground minus the draft's 3DEP, median
+**+0.11 m** over the approach stations.
+
 ## 2026-11-05 — the SD freeway on Lake Murray's engine, phase 1: the numbers the port carries (ledger 0080; no gate threshold moved, no bypass)
 
 - **No grade cap.** The line's profile is its own 3DEP (`tools/network_line.py`: network_elev's 33 m median + 45 m mean

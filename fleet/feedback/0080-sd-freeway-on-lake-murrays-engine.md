@@ -162,6 +162,45 @@ The Mac cannot measure a flyover's deck: 3DEP is bare earth. For every OSM bridg
 `[edge id, vertex, deck z, n returns]`. Where class 17 is absent, write nothing (no fill). Phase 2 takes those heights
 for the decks instead of the draft's `layer x 5.5 m`.
 
+## Phase 2 (Mac): the network
+
+Kevin's calls for phase 2 (2026-11-05, "I just want real"): deck heights from the lidar, not OSM layer x 5.5 m; the
+edge as it is (paved shoulder to the concrete barrier, Caltrans' standard plan); the whole box with tiered terrain;
+gore merges and connector decks as new, freeway-only engine pieces. Order: 2a I 8 westbound, 2b I 5 / SR 52 / SR 163
+mainlines, 2c ramps + gores, 2d interchange connectors + flyovers.
+
+### Step 0: the network draft committed, the decks measured from the lidar (on the Mac)
+
+- **Committed** (`tracks/san-diego-freeway/source/network-draft-pr34/`, md5-identical to the inputs `network_line.json`
+  lists): `network.edges.local.json` (563 edges, each one's swept and at-grade lines), `network.geojson` (lon / lat,
+  OSM `layer_profile`), `network.elevation.json` (3DEP per vertex), `network.local.json` (the frame).
+- **The lidar is readable here.** USGS 3DEP point clouds as EPT on AWS (`usgs-lidar-public`), read with the scratch
+  `lidarvenv` (laspy[lazrs], pyproj, scipy). The projects whose bounds touch the box: `CA_SanDiegoQL2_2014` (QL2,
+  countywide), `CA_SanDiego_2015_C17_1` (its points are all east of the box: no bridged vertex inside its footprint),
+  the Scripps 2002-06 coastal strips and the 2016 El Nino / East County sets (none inside). **The source is
+  `CA_SanDiegoQL2_2014`** (https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CA_SanDiegoQL2_2014/ept.json).
+  Datum check: its class-2 ground minus the draft's 3DEP, median **+0.11 m**.
+- **`tools/network_deck_lidar.py`** (new): every edge with OSM `layer` != 0 (201 edges, 28.4 km bridged), stationed every
+  5 m along its OSM centreline from 30 m before the first bridged vertex to 30 m past the last; class-17 and class-2
+  returns within 2 m; the deck levels split at 2 m gaps; the level kept is the one continuing the last reading on the
+  edge (within 15 m along, 2 m up / down), else the one nearest the draft's model (which chooses, never supplies a
+  height); off OSM's bridge a deck counts only within 2 m of the 3DEP (an overpass ABOVE the road is not its deck). Its
+  invented numbers are in `fleet/GATES-CHANGELOG.md` 2026-11-05 (step 0). Output
+  `deck_profiles.lidar.json` (808 KB): every station's deck z + returns, the levels seen, ground z, the draft's model and
+  3DEP. Rerun from the committed inputs reproduces it byte for byte (md5 bf2d42d5).
+  Python's one TLS stream stalled on this Mac (0.2 MB in 10 min); `--dry --cache DIR` lists the 525 node files for a
+  parallel `curl` (115 MB in under a minute), then the run reads the cache.
+- **Result: 3,155 of 5,394 bridged stations read a deck (58 %), on 144 of 201 bridged edges.** Deck minus the draft's
+  model: median -0.17 m, p5 / p95 -4.18 / +6.26 m (the 5.5 m-per-layer model is metres off at the extremes).
+  Not read: **1,595 stations have no return at all** (the 2014 EPT has holes: 0.01-degree cells at -117.20 / 32.76
+  (the I 5 / I 8 interchange, Morena) 802 + 211 + 115, Kearny Mesa -117.13 / 32.84 183, -117.18 / 32.85 (I 5 / SR 52)
+  181, and a few smaller); 644 have returns but no class-17 deck there; 329 see a deck level but not one that is theirs.
+- **A better source exists and is not reachable from here today:** USGS `CA_SanDiegoCo_D24` (the 2024 county lidar,
+  published 2026-09-10, 1 km LAZ tiles, e.g. `USGS_LPC_CA_SanDiegoCo_D24_11SMS481624.laz` ~65 MB) and the 2014 project's
+  own LAZ tiles over the EPT holes are on `rockyweb.usgs.gov` only, which answered HTTP 429 (rate limit) to every request
+  from this Mac; not retried round it. The PC (runbook 0080-2) or a later Mac run can read them into the same table:
+  `network_deck_lidar` reads EPT; a LAZ-tile reader is owed.
+
 ## Owed (start here)
 
 - **Kevin:** drive phase 1 when installed (runbook 0080-1, his word to install). Decide the freeway's edge: the real one

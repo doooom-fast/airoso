@@ -419,6 +419,21 @@ Not built: L s 1,014-1,026 (a white band under a red structure 1-2.5 m outside t
 | edge report: at 1 m kerb / ground; rise within 2 m p95 | 99.6 % / 0.4 %; 0.0 m | the same |
 | kn5 | 7,827,187 B | **7,848,715 B (7.8 MB)** |
 
+### 2c. Nevada: the reader would work at 0.6 m, but Nevada's kerbs do not show their blocks; nothing built, no 0.1.3
+
+**Does 0.6 m allow it?** High Plains' 0.3 m crop box-averaged 2x2 to 0.6 m, the same calibration: raised blue / white
+in p95 0.28 m, out p95 0.38 m (R s 2,892 out excluded as before), width p95 0.25 m: under the 0.4 m bar, just; every
+station counted, block amplitude 13-29. (A box average is kinder than a native 0.6 m sensor; said plainly.) So the
+resolution alone does not rule Nevada out.
+
+**Nevada's kerbs on NAIP 2022 and 2019** (native 0.6 m crops, `nv_m_3611548_se_11_060_20220611`,
+`..._20190706_20191118`; strips `tracks/exotics-racing-lv/source/edges/kerbs_blocks_2022_060_strips.jpg`, `_2019_`): the
+six runs show as faint pinkish striated bands, not blocks. Block amplitude 8-14 (at the 8 floor; High Plains at 0.6 m
+13-29), and the reader's stations count on 1-39 % of each run (2022: 44/136, 6/81, 1/51, 1/31, 6/91, 0/91; 2019: 53/136,
+29/81, 3/51, 5/31, 5/91, 2/91), where every calibrated run counted 96-100 %. Outside what was calibrated, so **not
+measured**: Nevada keeps 0.1.2 (0.1.1's six kerbs outside the edge at the invented -0.5 / 1.0 m). The 2013 course
+imagery is 1.0 m. A ground photo or the course's own drawing would decide them (Kevin's call / owed).
+
 ## Owed (start here)
 
 (Rewritten at round 2's end; round 1's list is done or carried here.)

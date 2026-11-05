@@ -464,23 +464,78 @@ line divergence). The calibration record (item 1) was read against round 2's fil
 
 Stills: `kerbs_built_beside_0.1.4.jpg` (the five changed runs: aerial | built faces), each on its paint.
 
+### 4. Grand Junction: the PC's lidar strips (4h) show no kerb; nothing built
+
+The PC ran 4h (commit 42747ca2): `tracks/grand-junction/source/lidar/strip/R170-230.npz`, `R970-1030.npz`
+(USGS_LPC_CO_MesaCo_QL2_2015, ~5,000 returns each, 0.5 m cells, about one return per cell, ~60 % of cells occupied).
+Read on the Mac (`tools/lidar_strip_period.py`, new; `period_test.log` beside the strips): per offset column, the
+intensity series along s, its strongest sine at a block period (1.2-3.0 m; 1.0 m is the cells' Nyquist), against the
+same column shuffled 200 times.
+- **No block period at the edge.** At every offset from 1.5 m inside the edge to 4 m outside, the period amplitude sits
+  inside the shuffled null (p 0.31-1.0 at R s 170-230, 0.27-1.0 at R s 970-1,030; null p95 0.7-2.6k intensity units). The
+  two columns under p 0.05 (-3.5 m at R s 170, +13.5 m at R s 970) are what ~40 tests give by chance, and neither is at
+  the edge.
+- **No paint band.** The intensity rises once, from the asphalt's ~20-21k (4 m inside to the edge) through ~24k / ~29k at
+  +0.5 m to the ground's 28-33k from +1 m, and stays there: one asphalt-to-ground step 0.25-0.75 m past the line's edge,
+  no band brighter or darker than both sides as a painted kerb would read. R s 170's 33k peak at +8.5-10 m is 9 m out, no kerb.
+
+So the faint light blocks NAIP shows near R s ~200 and ~1,000 are not confirmed by the 2015 lidar (QL2: a kerb's
+red / white contrast would have to exceed ~1-2.6k intensity units to show; none does). Nothing measured, nothing built;
+Grand Junction stays without kerbs. A newer or denser survey, or a ground photo, is what would change that.
+
+### Lake Murray unchanged (round 3)
+
+`git diff origin/claude/fleet-lm-engine -- tracks/san-diego-lake-murray scripts/` is empty (0 lines). Nothing in any
+chain changed this round: `tools/kerb_offsets.py` and `tools/lidar_strip_period.py` are new tools in no chain; the ports'
+configs and kerbs files are the circuits' own. `tests/run_tests.py`: 1,283 passed, 13 failed, the same 13 as on this
+Mac's baseline (registry, draft_equiv, ship_track_chain, bench_pad, ship_fleet); new `tests/tools/test_kerb_offsets.py` (4).
+
+### PC runbook 4i-kerbs (round 3)
+
+From `D:/k10-worktrees/fleet-lm-engine` reset to `origin/claude/circuit-kerbs-lm` at **8de9fc2d or later** (nothing
+merged). ENG as 4g: `eng_hplm` for High Plains, and for Aspen and Pueblo the ENG copy each one's 0.1.1 used (0078 4c). No
+new texture in any ENG: Pueblo's `textures/kerb_redwhite.png` is the port's own (md5 3464f4a78bcf36acfe02b027dcdaffd4, the
+same file as Aspen's), synced in by its ship.json. Nevada: nothing new (0.1.2 stands).
+
+4i. **High Plains 0.1.4, Aspen 0.1.3, Pueblo 0.1.2**. Each, from an EMPTY workshop:
+   1. Rehearsal: `SHIP_PROJ=D:/k10-scratch/<ws>_r3 AIROSO=D:/k10-worktrees/fleet-lm-engine ENG=D:/k10-scratch/<eng> bash
+      tools/ship_track.sh <track> --no-install`, `<track>` / `<ws>` = `high-plains-lm` / `high_plains_lm`, `aspen-lm` /
+      the Aspen workshop of 4c, `pueblo-lm` / `pueblo_lm`. Expect the Mac's rows (round 3 tables above):
+      - High Plains 0.1.4: `[kerbs] 20 kerb runs, 578 m, height 0.08 m (config), at their measured offsets (ROAD read
+        missed 0)`; soft 0, severe 0, bumps 0, kinks 0.62 /km, vertex bumps 2, drops 0, far ledges 0; audit CLEAN (K 0);
+        verify_kn5 PASS; kn5_ground_check PASS p95 0.021; houses PASS; edge 100 % / p95 0.012; kn5 15,642,170 B.
+      - Aspen 0.1.3: `[kerbs] 3 kerb runs, 144 m ... at their measured offsets (ROAD read missed 0)`; soft 0, severe 0,
+        bumps 0.6, kinks 13.26 /km, vertex bumps 41, drops 0; audit CLEAN; verify_kn5 PASS; kn5_ground_check PASS p95
+        0.021; houses PASS; kn5 7,848,715 B.
+      - Pueblo 0.1.2: `[kerbs] 15 kerb runs, 515 m ... at their measured offsets (ROAD read missed 0)`; soft 0, severe 0,
+        bumps 0.29, **kinks 8.30 /km** (0.1.1: 8.01; the one more is R s 3,275), vertex bumps 11, drops 0; audit CLEAN
+        (K 0); verify_kn5 PASS; kn5_ground_check PASS p95 0.021; houses PASS; kn5 10,742,723 B.
+   2. Install, replacing the same folders (`high_plains_lm`, `aspen_motorsports_park_lm`, `pueblo_motorsports_park_lm`):
+      the same command without `SHIP_PROJ` and without `--no-install`, AC closed. High Plains and Aspen on the rehearsal
+      matching; **Pueblo only on Kevin's word** (one kink more than 0.1.1). High Plains 0.1.4 supersedes 0.1.3 and Aspen
+      0.1.3 supersedes 0.1.2 (4g's installs, if done, are simply replaced).
+   3. Drive them: the kerbs now lie where the paint is, mostly over the 12 m lane's edge (inside the live edge by up to
+      ~3 m at Pueblo R s 1,842 / 2,993 and High Plains R s 2,000): Kevin's drive is the judge of whether a kerb that far in
+      reads right (the line's constant 12 m is wider than the asphalt there).
+
 ## Owed (start here)
 
-(Rewritten at round 2's end; round 1's list is done or carried here.)
+(Rewritten at round 3's end; round 2's list is done or carried here.)
 
-- **PC: runbook 4g** (High Plains 0.1.3, Nevada 0.1.2, Aspen 0.1.2: rehearse, then install on Kevin's word; Nevada's kn5 is
-  19.1 MB, his call) and **4h** (Grand Junction's lidar strips; commit the npz files).
-- **Kevin's calls:** Nevada's 19.1 MB (the apron at the ground's resolution); the 4 m kerb end ramp (invented, chosen
-  against drive_test); High Plains' blue / yellow stripes that look longer than their blue (L s 517, 690; R s 1,747,
-  2,678, 3,013: extend them on the yellow, which the reader cannot tell from dry grass, or not).
-- **A paint-offset measurer for faded red** (Pueblo, Aspen, Nevada all wait on it): the colour classes read no red on any
-  of the three; the block-alternation read (`blockwidth` in this round's workshop, not committed) is 0.3-1 m off on High
-  Plains' control. Calibrate it against High Plains' 20 colour-measured runs, or get ground photos. Then:
-  - **Pueblo:** the 15 eye-checked kerbs (`kerbs_eye_2023_030.json`, extents grown past the finder's spans) through
-    `kerb_spans.py` → `route.kerbs_file`, `kerb.placement: "measured"`, `kerb.end_ramp_m`, a `kerb_redwhite` texture, a
-    build; plus the right-edge kerb near s 1,190-1,215 no candidate caught;
-  - **Aspen:** the span-by-span pass at 0.3 m (2023) for its three runs' true extents (L s 233 and R s 838 run past both
-    ends, L s 1,017 past s 1,050), then measured placement;
-  - **Nevada:** the six kerbs' offsets (by eye they lie along the inside of the lane edge).
-- **Grand Junction:** read 4h's npz beside the aerial; build only what it shows.
+- **PC: runbook 4i-kerbs** (High Plains 0.1.4, Aspen 0.1.3, Pueblo 0.1.2: rehearse; install High Plains and Aspen on a
+  match, Pueblo on Kevin's word). 4g's installs (High Plains 0.1.3, Aspen 0.1.2) are superseded; Nevada 0.1.2 (4g) stands.
+- **Kevin's calls:**
+  - Pueblo 0.1.2's one extra kink (8.01 -> 8.30 /km, R s 3,275: the 12 m lane's wheel path rides the measured kerb's
+    inner edge where the ribbon and the live line diverge 1.5 m); nothing invented to hide it.
+  - Round 2's still open: Nevada's 19.1 MB apron; the 4 m kerb end ramp (invented, chosen against drive_test).
+  - The R s 1,014-1,026 part at Aspen (a white band under a red structure, not built) and L s 1,495-1,566 (round 2).
+  - The bar used for the block reader (0.4 m p95, invented) and the one truth excluded from it (High Plains R s 2,892's
+    colour out_m, the dirt; with it counted, out p95 is 1.25 m and the reader would not pass).
+- **Nevada's six kerbs:** not measurable on NAIP 2019 / 2022 (faint bands, block amplitude at the floor, 0-39 % of
+  stations); they stay at round 4's invented offsets outside the edge. A ground photo or the course's drawing decides them.
+- **High Plains R s 2,673-2,681:** the stripe crosses 3-4 m of the line's offsets; the run's first ~8 m are built at its
+  median offset, 1.5-3 m inside the paint. Flat paint is outside the block reader's calibration; a per-station colour
+  follow (blue) would place it.
+- **Grand Junction:** the 2015 QL2 lidar shows no kerb at R s 170-230 / 970-1,030 (no block period, no paint band); nothing
+  built. Only a newer survey or a ground photo would change that.
 - Round 1's carried items: Milford's ribbon creases (ledger 0078 round 4), Pikes Peak none.

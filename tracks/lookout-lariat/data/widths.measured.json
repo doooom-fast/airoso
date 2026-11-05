@@ -1,0 +1,1152 @@
+{
+ "tool": "scripts/gps/measured_widths.py",
+ "frame": "local stations (centerline.local.json, v0 = route.start_at)",
+ "local_rotation_vertices": 14442,
+ "lap_m": 24914.34,
+ "stripe_w_m": 0.1,
+ "slew_rate": 0.25,
+ "precedence": "measured (aerial NAIP 2019) > published (width_overrides.width_m) > OSM (route.width_profile)",
+ "aerial": "data/aerial/aerial_measurements.json",
+ "points": [
+  {
+   "local_m": 152.0,
+   "width_m": 12.46,
+   "source": "pavement_town",
+   "id": "W150",
+   "note": "Golden street: no painted edge lines; the pavement run includes the parking/gutter strip"
+  },
+  {
+   "local_m": 236.0,
+   "width_m": 7.32,
+   "source": "hairpin_leg",
+   "id": "C1.entry"
+  },
+  {
+   "local_m": 280.3,
+   "width_m": 9.65,
+   "source": "hairpin_apex",
+   "id": "C1.apex",
+   "note": "lanes inner 4.61 / outer 4.95 m"
+  },
+  {
+   "local_m": 314.0,
+   "width_m": 7.51,
+   "source": "hairpin_leg",
+   "id": "C1.exit"
+  },
+  {
+   "local_m": 701.3,
+   "width_m": 6.61,
+   "source": "edge_lines",
+   "id": "W700"
+  },
+  {
+   "local_m": 1066.1,
+   "width_m": 7.69,
+   "source": "hairpin_apex",
+   "id": "C2.apex",
+   "note": "lanes inner 3.64 / outer 3.89 m"
+  },
+  {
+   "local_m": 1119.1,
+   "width_m": 6.67,
+   "source": "hairpin_leg",
+   "id": "C2.exit"
+  },
+  {
+   "local_m": 1250.7,
+   "width_m": 6.6,
+   "source": "edge_lines",
+   "id": "W1250"
+  },
+  {
+   "local_m": 1407.9,
+   "width_m": 6.77,
+   "source": "hairpin_apex",
+   "id": "C3.apex",
+   "note": "lanes inner 2.88 / outer 3.74 m"
+  },
+  {
+   "local_m": 1455.6,
+   "width_m": 6.37,
+   "source": "hairpin_leg",
+   "id": "C3.exit"
+  },
+  {
+   "local_m": 1601.0,
+   "width_m": 6.62,
+   "source": "edge_lines",
+   "id": "W1600"
+  },
+  {
+   "local_m": 1900.5,
+   "width_m": 6.53,
+   "source": "edge_lines",
+   "id": "W1900"
+  },
+  {
+   "local_m": 2051.1,
+   "width_m": 6.4,
+   "source": "edge_lines",
+   "id": "W2050"
+  },
+  {
+   "local_m": 2401.1,
+   "width_m": 6.29,
+   "source": "edge_lines",
+   "id": "W2400",
+   "note": "partly in tree shadow; fewer profiles"
+  },
+  {
+   "local_m": 2556.0,
+   "width_m": 6.91,
+   "source": "hairpin_leg",
+   "id": "C4.entry"
+  },
+  {
+   "local_m": 2607.0,
+   "width_m": 7.87,
+   "source": "hairpin_apex",
+   "id": "C4.apex",
+   "note": "lanes inner 4.56 / outer 3.37 m"
+  },
+  {
+   "local_m": 2651.9,
+   "width_m": 6.65,
+   "source": "hairpin_leg",
+   "id": "C4.exit"
+  },
+  {
+   "local_m": 2801.1,
+   "width_m": 6.53,
+   "source": "hairpin_leg",
+   "id": "C5.entry"
+  },
+  {
+   "local_m": 2844.3,
+   "width_m": 7.62,
+   "source": "hairpin_apex",
+   "id": "C5.apex",
+   "note": "lanes inner 2.82 / outer 4.66 m"
+  },
+  {
+   "local_m": 2897.2,
+   "width_m": 6.64,
+   "source": "hairpin_leg",
+   "id": "C5.exit"
+  },
+  {
+   "local_m": 2977.4,
+   "width_m": 6.77,
+   "source": "hairpin_leg",
+   "id": "C6.entry"
+  },
+  {
+   "local_m": 3019.7,
+   "width_m": 7.03,
+   "source": "hairpin_apex",
+   "id": "C6.apex",
+   "note": "lanes inner 3.54 / outer 3.41 m"
+  },
+  {
+   "local_m": 3064.1,
+   "width_m": 7.03,
+   "source": "hairpin_leg",
+   "id": "C6.exit"
+  },
+  {
+   "local_m": 3166.2,
+   "width_m": 6.58,
+   "source": "edge_lines",
+   "id": "W3150"
+  },
+  {
+   "local_m": 3266.4,
+   "width_m": 6.86,
+   "source": "edge_lines",
+   "id": "W3250",
+   "note": "partly in tree shadow; fewer profiles"
+  },
+  {
+   "local_m": 3564.6,
+   "width_m": 6.65,
+   "source": "edge_lines",
+   "id": "W3550"
+  },
+  {
+   "local_m": 3814.6,
+   "width_m": 6.53,
+   "source": "edge_lines",
+   "id": "W3800"
+  },
+  {
+   "local_m": 4114.2,
+   "width_m": 6.83,
+   "source": "edge_lines",
+   "id": "W4100",
+   "note": "outside of the st ~4,100 bend is a paved/gravel pull-off; the pavement width includes it"
+  },
+  {
+   "local_m": 4364.3,
+   "width_m": 6.34,
+   "source": "edge_lines",
+   "id": "W4350"
+  },
+  {
+   "local_m": 4614.0,
+   "width_m": 6.51,
+   "source": "edge_lines",
+   "id": "W4600"
+  },
+  {
+   "local_m": 4863.5,
+   "width_m": 6.53,
+   "source": "edge_lines",
+   "id": "W4850"
+  },
+  {
+   "local_m": 5163.7,
+   "width_m": 6.09,
+   "source": "edge_lines",
+   "id": "W5150"
+  },
+  {
+   "local_m": 5313.7,
+   "width_m": 6.24,
+   "source": "edge_lines",
+   "id": "W5300"
+  },
+  {
+   "local_m": 5389.8,
+   "width_m": 7.03,
+   "source": "hairpin_leg",
+   "id": "C7.entry"
+  },
+  {
+   "local_m": 5428.4,
+   "width_m": 8.3,
+   "source": "hairpin_apex",
+   "id": "C7.apex",
+   "note": "lanes inner 4.47 / outer 3.58 m"
+  },
+  {
+   "local_m": 5484.8,
+   "width_m": 6.39,
+   "source": "hairpin_leg",
+   "id": "C8.entry"
+  },
+  {
+   "local_m": 5488.3,
+   "width_m": 6.2,
+   "source": "hairpin_leg",
+   "id": "C7.exit"
+  },
+  {
+   "local_m": 5532.2,
+   "width_m": 7.1,
+   "source": "hairpin_apex",
+   "id": "C8.apex",
+   "note": "lanes inner 3.97 / outer 3.05 m"
+  },
+  {
+   "local_m": 5574.8,
+   "width_m": 6.56,
+   "source": "hairpin_leg",
+   "id": "C8.exit"
+  },
+  {
+   "local_m": 5583.8,
+   "width_m": 6.47,
+   "source": "hairpin_leg",
+   "id": "C9.entry"
+  },
+  {
+   "local_m": 5623.8,
+   "width_m": 7.1,
+   "source": "hairpin_apex",
+   "id": "C9.apex",
+   "note": "lanes inner 3.14 / outer 3.92 m"
+  },
+  {
+   "local_m": 5684.0,
+   "width_m": 6.5,
+   "source": "hairpin_leg",
+   "id": "C9.exit"
+  },
+  {
+   "local_m": 5844.7,
+   "width_m": 6.94,
+   "source": "hairpin_leg",
+   "id": "C10.entry"
+  },
+  {
+   "local_m": 5884.2,
+   "width_m": 6.96,
+   "source": "hairpin_apex",
+   "id": "C10.apex",
+   "note": "lanes inner 3.45 / outer 3.41 m"
+  },
+  {
+   "local_m": 5940.7,
+   "width_m": 6.91,
+   "source": "hairpin_leg",
+   "id": "C10.exit"
+  },
+  {
+   "local_m": 6112.2,
+   "width_m": 6.16,
+   "source": "edge_lines",
+   "id": "W6100"
+  },
+  {
+   "local_m": 6212.1,
+   "width_m": 6.04,
+   "source": "edge_lines",
+   "id": "W6200"
+  },
+  {
+   "local_m": 6811.1,
+   "width_m": 6.63,
+   "source": "edge_lines",
+   "id": "W6800",
+   "note": "partly in tree shadow; fewer profiles"
+  },
+  {
+   "local_m": 6989.0,
+   "width_m": 7.59,
+   "source": "edge_lines",
+   "id": "W6980",
+   "note": "few profiles; near the summit, edge lines may be a turn-lane taper"
+  },
+  {
+   "local_m": 7059.5,
+   "width_m": 6.32,
+   "source": "edge_lines",
+   "id": "W7050",
+   "note": "partly in tree shadow; fewer profiles"
+  },
+  {
+   "local_m": 9860.7,
+   "width_m": 6.18,
+   "source": "edge_lines",
+   "id": "W9850",
+   "note": "partly in tree shadow; fewer profiles"
+  },
+  {
+   "local_m": 10160.2,
+   "width_m": 6.95,
+   "source": "edge_lines",
+   "id": "W10150"
+  },
+  {
+   "local_m": 10862.7,
+   "width_m": 6.01,
+   "source": "edge_lines",
+   "id": "W10850"
+  },
+  {
+   "local_m": 11161.3,
+   "width_m": 7.21,
+   "source": "edge_lines",
+   "id": "W11150",
+   "note": "at a junction mouth / Park-n-Ride side; pavement includes the junction"
+  },
+  {
+   "local_m": 11461.2,
+   "width_m": 7.02,
+   "source": "edge_lines",
+   "id": "W11450"
+  }
+ ],
+ "points_outside_any_stretch": [],
+ "refused": [
+  {
+   "id": "W2150",
+   "why": "not usable: tree shadow over the road; not measurable"
+  },
+  {
+   "id": "W2250",
+   "why": "not usable: tree shadow"
+  },
+  {
+   "id": "W6300",
+   "why": "not usable: tree shadow over the road; not measurable"
+  },
+  {
+   "id": "W6600",
+   "why": "not usable: tree shadow over the road; not measurable"
+  },
+  {
+   "id": "W6700",
+   "why": "not usable: partly in tree shadow; fewer profiles"
+  },
+  {
+   "id": "W6900",
+   "why": "not usable: tree shadow over the road; not measurable"
+  },
+  {
+   "id": "W10400",
+   "why": "no edge lines and not a town street (pavement width is an upper bound there: junction/driveway area, few profiles)"
+  }
+ ],
+ "stretches": [
+  {
+   "road": "Lookout Mountain Rd in Golden (Beverly Heights)",
+   "st_m": [
+    0.0,
+    1072.0
+   ],
+   "source": "measured",
+   "points": 6,
+   "min_m": 6.61,
+   "median_m": 7.3,
+   "max_m": 12.46
+  },
+  {
+   "road": "The Lariat Trail (National Register district, CR 68)",
+   "st_m": [
+    1072.0,
+    7110.0
+   ],
+   "source": "measured",
+   "points": 44,
+   "min_m": 6.04,
+   "median_m": 6.57,
+   "max_m": 8.29
+  },
+  {
+   "road": "Summit, Buffalo Bill lot (Lookout Mountain Park)",
+   "st_m": [
+    7110.0,
+    7710.0
+   ],
+   "source": "osm",
+   "points": 0,
+   "min_m": 6.5,
+   "median_m": 6.5,
+   "max_m": 6.5
+  },
+  {
+   "road": "Lookout Mountain Rd, back side",
+   "st_m": [
+    7710.0,
+    9752.0
+   ],
+   "source": "osm",
+   "points": 0,
+   "min_m": 6.43,
+   "median_m": 6.5,
+   "max_m": 6.5
+  },
+  {
+   "road": "Paradise Rd",
+   "st_m": [
+    9752.0,
+    11699.0
+   ],
+   "source": "measured",
+   "points": 5,
+   "min_m": 6.01,
+   "median_m": 6.65,
+   "max_m": 7.21
+  },
+  {
+   "road": "US-40, Mt Vernon Canyon",
+   "st_m": [
+    11699.0,
+    16621.0
+   ],
+   "source": "osm",
+   "points": 0,
+   "min_m": 7.62,
+   "median_m": 12.0,
+   "max_m": 15.0
+  },
+  {
+   "road": "I-70 Business / US-40 and West Colfax (Golden)",
+   "st_m": [
+    16621.0,
+    20280.0
+   ],
+   "source": "osm",
+   "points": 0,
+   "min_m": 9.0,
+   "median_m": 12.0,
+   "max_m": 21.0
+  },
+  {
+   "road": "US-6, one carriageway",
+   "st_m": [
+    20295.0,
+    23928.0
+   ],
+   "source": "osm",
+   "points": 0,
+   "min_m": 7.22,
+   "median_m": 9.0,
+   "max_m": 18.0
+  },
+  {
+   "road": "US-6 off-ramp to 19th St",
+   "st_m": [
+    23928.0,
+    24330.0
+   ],
+   "source": "osm",
+   "points": 0,
+   "min_m": 5.0,
+   "median_m": 5.0,
+   "max_m": 6.78
+  },
+  {
+   "road": "19th St (bike lanes with flex posts; the lid)",
+   "st_m": [
+    24330.0,
+    24915.0
+   ],
+   "source": "osm",
+   "points": 0,
+   "min_m": 5.56,
+   "median_m": 6.5,
+   "max_m": 12.0
+  }
+ ],
+ "vertices_by_source": {
+  "measured": 8986,
+  "osm": 5459
+ },
+ "vertices_slew_limited": 98,
+ "osm_flares_not_laid": {
+  "_doc": "widths_from_osm's junction flares, hard-corner flares and 10 m fold floors (not measurements; mouths are authored in P3b, A2 keeps hairpin widening off)",
+  "runs": [
+   {
+    "local_m": [
+     0.0,
+     20.0
+    ],
+    "max_width_m": 9.5
+   },
+   {
+    "local_m": [
+     44.0,
+     66.0
+    ],
+    "max_width_m": 9.5
+   },
+   {
+    "local_m": [
+     208.9,
+     312.8
+    ],
+    "max_width_m": 14.0
+   },
+   {
+    "local_m": [
+     359.7,
+     381.7
+    ],
+    "max_width_m": 9.5
+   },
+   {
+    "local_m": [
+     804.4,
+     826.4
+    ],
+    "max_width_m": 9.5
+   },
+   {
+    "local_m": [
+     1053.2,
+     1075.2
+    ],
+    "max_width_m": 9.5
+   },
+   {
+    "local_m": [
+     2538.0,
+     2637.9
+    ],
+    "max_width_m": 10.0
+   },
+   {
+    "local_m": [
+     2678.9,
+     2700.9
+    ],
+    "max_width_m": 9.5
+   },
+   {
+    "local_m": [
+     2787.8,
+     2874.7
+    ],
+    "max_width_m": 10.0
+   },
+   {
+    "local_m": [
+     2902.7,
+     2924.7
+    ],
+    "max_width_m": 9.5
+   },
+   {
+    "local_m": [
+     2969.7,
+     3054.6
+    ],
+    "max_width_m": 10.0
+   },
+   {
+    "local_m": [
+     3078.6,
+     3100.6
+    ],
+    "max_width_m": 9.5
+   },
+   {
+    "local_m": [
+     5370.8,
+     5456.7
+    ],
+    "max_width_m": 10.0
+   },
+   {
+    "local_m": [
+     5474.7,
+     5654.6
+    ],
+    "max_width_m": 10.0
+   },
+   {
+    "local_m": [
+     5656.6,
+     5678.5
+    ],
+    "max_width_m": 9.5
+   },
+   {
+    "local_m": [
+     5826.4,
+     5931.3
+    ],
+    "max_width_m": 10.0
+   },
+   {
+    "local_m": [
+     7343.2,
+     7361.2
+    ],
+    "max_width_m": 9.5
+   },
+   {
+    "local_m": [
+     7556.5,
+     7574.6
+    ],
+    "max_width_m": 9.5
+   },
+   {
+    "local_m": [
+     8093.4,
+     8111.4
+    ],
+    "max_width_m": 9.5
+   },
+   {
+    "local_m": [
+     9107.3,
+     9125.3
+    ],
+    "max_width_m": 9.5
+   },
+   {
+    "local_m": [
+     9575.3,
+     9593.2
+    ],
+    "max_width_m": 9.5
+   },
+   {
+    "local_m": [
+     9725.1,
+     9771.1
+    ],
+    "max_width_m": 14.0
+   },
+   {
+    "local_m": [
+     10110.5,
+     10144.4
+    ],
+    "max_width_m": 14.0
+   },
+   {
+    "local_m": [
+     10216.3,
+     10244.2
+    ],
+    "max_width_m": 14.0
+   },
+   {
+    "local_m": [
+     10414.0,
+     10435.9
+    ],
+    "max_width_m": 9.5
+   },
+   {
+    "local_m": [
+     10571.7,
+     10657.6
+    ],
+    "max_width_m": 14.0
+   },
+   {
+    "local_m": [
+     11185.1,
+     11207.1
+    ],
+    "max_width_m": 9.5
+   },
+   {
+    "local_m": [
+     11614.8,
+     11632.8
+    ],
+    "max_width_m": 9.5
+   },
+   {
+    "local_m": [
+     11671.7,
+     11713.1
+    ],
+    "max_width_m": 16.7
+   },
+   {
+    "local_m": [
+     11761.2,
+     11785.2
+    ],
+    "max_width_m": 15.0
+   },
+   {
+    "local_m": [
+     11932.4,
+     11956.4
+    ],
+    "max_width_m": 15.0
+   },
+   {
+    "local_m": [
+     15853.4,
+     15877.4
+    ],
+    "max_width_m": 15.0
+   },
+   {
+    "local_m": [
+     15916.4,
+     15940.4
+    ],
+    "max_width_m": 15.0
+   },
+   {
+    "local_m": [
+     15976.4,
+     16000.4
+    ],
+    "max_width_m": 15.0
+   },
+   {
+    "local_m": [
+     16036.4,
+     16066.4
+    ],
+    "max_width_m": 18.0
+   },
+   {
+    "local_m": [
+     16144.3,
+     16180.3
+    ],
+    "max_width_m": 18.0
+   },
+   {
+    "local_m": [
+     16291.1,
+     16315.1
+    ],
+    "max_width_m": 15.0
+   },
+   {
+    "local_m": [
+     16363.0,
+     16387.0
+    ],
+    "max_width_m": 15.0
+   },
+   {
+    "local_m": [
+     16534.1,
+     16564.1
+    ],
+    "max_width_m": 18.0
+   },
+   {
+    "local_m": [
+     16588.1,
+     16638.5
+    ],
+    "max_width_m": 29.7
+   },
+   {
+    "local_m": [
+     16692.4,
+     16722.4
+    ],
+    "max_width_m": 21.0
+   },
+   {
+    "local_m": [
+     16773.3,
+     16803.2
+    ],
+    "max_width_m": 21.0
+   },
+   {
+    "local_m": [
+     16851.2,
+     16881.1
+    ],
+    "max_width_m": 15.0
+   },
+   {
+    "local_m": [
+     17141.7,
+     17165.7
+    ],
+    "max_width_m": 15.0
+   },
+   {
+    "local_m": [
+     17776.9,
+     17806.9
+    ],
+    "max_width_m": 18.0
+   },
+   {
+    "local_m": [
+     17980.8,
+     18010.8
+    ],
+    "max_width_m": 18.0
+   },
+   {
+    "local_m": [
+     18220.5,
+     18250.5
+    ],
+    "max_width_m": 18.0
+   },
+   {
+    "local_m": [
+     18412.3,
+     18442.2
+    ],
+    "max_width_m": 18.0
+   },
+   {
+    "local_m": [
+     18538.1,
+     18562.1
+    ],
+    "max_width_m": 15.0
+   },
+   {
+    "local_m": [
+     18670.2,
+     18700.2
+    ],
+    "max_width_m": 18.0
+   },
+   {
+    "local_m": [
+     18754.3,
+     18784.4
+    ],
+    "max_width_m": 21.0
+   },
+   {
+    "local_m": [
+     18850.5,
+     18880.6
+    ],
+    "max_width_m": 21.0
+   },
+   {
+    "local_m": [
+     19175.1,
+     19241.2
+    ],
+    "max_width_m": 24.0
+   },
+   {
+    "local_m": [
+     19250.3,
+     19313.4
+    ],
+    "max_width_m": 24.0
+   },
+   {
+    "local_m": [
+     19586.7,
+     19631.8
+    ],
+    "max_width_m": 24.0
+   },
+   {
+    "local_m": [
+     19643.8,
+     19679.9
+    ],
+    "max_width_m": 24.0
+   },
+   {
+    "local_m": [
+     19697.9,
+     19727.9
+    ],
+    "max_width_m": 18.0
+   },
+   {
+    "local_m": [
+     19848.1,
+     19884.2
+    ],
+    "max_width_m": 24.0
+   },
+   {
+    "local_m": [
+     19950.3,
+     19986.2
+    ],
+    "max_width_m": 24.0
+   },
+   {
+    "local_m": [
+     19992.2,
+     20016.2
+    ],
+    "max_width_m": 15.0
+   },
+   {
+    "local_m": [
+     20136.4,
+     20166.4
+    ],
+    "max_width_m": 18.0
+   },
+   {
+    "local_m": [
+     20250.5,
+     20339.5
+    ],
+    "max_width_m": 24.3
+   },
+   {
+    "local_m": [
+     20492.8,
+     20516.9
+    ],
+    "max_width_m": 15.0
+   },
+   {
+    "local_m": [
+     20571.0,
+     20601.1
+    ],
+    "max_width_m": 18.0
+   },
+   {
+    "local_m": [
+     20661.2,
+     20691.3
+    ],
+    "max_width_m": 18.0
+   },
+   {
+    "local_m": [
+     20742.4,
+     20772.5
+    ],
+    "max_width_m": 18.0
+   },
+   {
+    "local_m": [
+     20799.6,
+     20829.7
+    ],
+    "max_width_m": 18.0
+   },
+   {
+    "local_m": [
+     20977.0,
+     21019.1
+    ],
+    "max_width_m": 21.0
+   },
+   {
+    "local_m": [
+     21067.2,
+     21112.3
+    ],
+    "max_width_m": 21.0
+   },
+   {
+    "local_m": [
+     21499.8,
+     21523.8
+    ],
+    "max_width_m": 15.0
+   },
+   {
+    "local_m": [
+     21685.8,
+     21709.8
+    ],
+    "max_width_m": 15.0
+   },
+   {
+    "local_m": [
+     21995.2,
+     22019.3
+    ],
+    "max_width_m": 12.0
+   },
+   {
+    "local_m": [
+     22067.4,
+     22121.5
+    ],
+    "max_width_m": 18.0
+   },
+   {
+    "local_m": [
+     22151.6,
+     22217.7
+    ],
+    "max_width_m": 18.0
+   },
+   {
+    "local_m": [
+     22223.7,
+     22253.8
+    ],
+    "max_width_m": 18.0
+   },
+   {
+    "local_m": [
+     22262.8,
+     22292.8
+    ],
+    "max_width_m": 18.0
+   },
+   {
+    "local_m": [
+     22472.9,
+     22496.9
+    ],
+    "max_width_m": 12.0
+   },
+   {
+    "local_m": [
+     22553.9,
+     22577.9
+    ],
+    "max_width_m": 12.0
+   },
+   {
+    "local_m": [
+     22988.8,
+     23012.8
+    ],
+    "max_width_m": 12.0
+   },
+   {
+    "local_m": [
+     23612.6,
+     23636.6
+    ],
+    "max_width_m": 12.0
+   },
+   {
+    "local_m": [
+     23648.6,
+     23672.6
+    ],
+    "max_width_m": 12.0
+   },
+   {
+    "local_m": [
+     23915.6,
+     23939.6
+    ],
+    "max_width_m": 12.0
+   },
+   {
+    "local_m": [
+     24068.5,
+     24092.5
+    ],
+    "max_width_m": 12.0
+   },
+   {
+    "local_m": [
+     24302.4,
+     24362.2
+    ],
+    "max_width_m": 14.0
+   },
+   {
+    "local_m": [
+     24371.2,
+     24395.0
+    ],
+    "max_width_m": 15.0
+   },
+   {
+    "local_m": [
+     24410.0,
+     24434.0
+    ],
+    "max_width_m": 15.0
+   },
+   {
+    "local_m": [
+     24452.0,
+     24470.0
+    ],
+    "max_width_m": 9.5
+   },
+   {
+    "local_m": [
+     24479.0,
+     24515.0
+    ],
+    "max_width_m": 9.5
+   },
+   {
+    "local_m": [
+     24887.4,
+     24914.3
+    ],
+    "max_width_m": 14.0
+   }
+  ]
+ },
+ "summary": {
+  "min_m": 5.0,
+  "median_m": 6.75,
+  "max_m": 21.0
+ }
+}

@@ -134,14 +134,20 @@ def road_ribbon(centerline_m: list[Vertex], widths_m: list[float], *, tile_m: fl
 def road_shoulder(centerline_m: list[Vertex], widths_m: list[float], *, lift: float = 0.1,
                   verge_w: float = 2.5, tile_m: float = 4.0, bank_at=None, ground_drop: float = 0.0,
                   ground=None, ratio: float = 2.0, max_w: float = 60.0,
-                  fill_apron: bool = False, bank_hold: bool = False) -> dict:
+                  fill_apron: bool = False, bank_hold: bool = False, section=None) -> dict:
     """A graded **verge + embankment** that ramps each road edge down (fill) or up (cut) to the REAL
     ground, so the road reads like a real shouldered/embanked road instead of a ribbon floating on a
     hard edge. Three points out from the lane edge: inner lip (road edge, ``lift`` proud) → a short
     ``verge_w`` band just below it (the gentle drivable band) → a GROUND-MEET point DRAPED onto
     ``ground(x,z)`` at a ``ratio``:1 slope, so the outer edge sits flush on the terrain however far
     below/above the road it is (no floating ribbon edge, no cliff). Without ``ground`` it falls back to
-    the old two-point verge at ``road_edge − ground_drop``. Physical (``1GRASS_*`` in build_mesh)."""
+    the old two-point verge at ``road_edge − ground_drop``. Physical (``1GRASS_*`` in build_mesh).
+
+    ``section`` (opt-in, the Lariat's P3a cross-section; None = every track's path, unchanged): a dict
+    ``{"cut_hv": 0.25, "fill_hv": 1.5, "wall_drop": 8.0, "cap": cap(i, side, nx, nz) -> m}`` — the face slopes come from
+    the declared section instead of the 0.75 / 4.5 selector, a fill becomes a 1:6 wall only past ``wall_drop``, and
+    the meet and the hem never reach past ``cap`` (the lateral offset where another stretch of the lap is nearer:
+    a stacked leg, a hairpin's far arm), so a face never drapes across another leg (L4)."""
     pts = centerline_m
     n = len(pts)
     closed = abs(pts[0][0] - pts[-1][0]) < 1e-6 and abs(pts[0][2] - pts[-1][2]) < 1e-6
@@ -212,7 +218,15 @@ def road_shoulder(centerline_m: list[Vertex], widths_m: list[float], *, lift: fl
                 # pleating came from grading a CUT corner), >4 m keeps the retaining wall, and
                 # unpaved tracks keep their steep rally-stage character exactly as the gate
                 # keeps its relaxed unpaved thresholds.
-                extra = min(max_w, max(verge_w if not _wall else 0.6, _drop * _slope_r))
+                _mw = max_w
+                if section is not None:
+                    _wall = (not _cutting) and _drop > float(section.get("wall_drop", 8.0))
+                    _slope_r = (1.0 / 6.0) if _wall else float(section["cut_hv"] if _cutting else section["fill_hv"])
+                    _capf = section.get("cap")
+                    if _capf is not None:
+                        # the face, the meet and the buried hem (1 m further) all stay inside the cap
+                        _mw = max(0.05, min(max_w, _capf(i, side, nx, nz) - half - verge_w - 1.0))
+                extra = min(_mw, max(verge_w if not _wall else 0.6, _drop * _slope_r))
                 o = _cap(half + verge_w + extra)
                 _my = ground(x + nx * o, z + nz * o)
                 # THE FACE GRADE IS MEASURED AT THE MEET, NOT AT THE SIZING SAMPLE (0025
@@ -226,9 +240,9 @@ def road_shoulder(centerline_m: list[Vertex], widths_m: list[float], *, lift: fl
                 if not _cutting and not _wall:
                     for _ in range(6):
                         _mdrop = verge_y - _my
-                        if _mdrop <= 0 or extra >= max_w or _mdrop * _slope_r <= extra + 0.05:
+                        if _mdrop <= 0 or extra >= _mw or _mdrop * _slope_r <= extra + 0.05:
                             break
-                        extra = min(max_w, _mdrop * _slope_r)
+                        extra = min(_mw, _mdrop * _slope_r)
                         o = _cap(half + verge_w + extra)
                         _my = ground(x + nx * o, z + nz * o)
                 verts.append((x + nx * o, _my, z + nz * o))   # ground meet (draped)

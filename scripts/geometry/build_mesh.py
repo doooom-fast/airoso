@@ -18,6 +18,7 @@ import sys
 from pathlib import Path
 
 from scripts.capture import evidence
+from scripts.geometry import cutfill as cutfill_mod
 from scripts.geometry import dummies as dummies_mod
 from scripts.geometry import kerbs, nodedbg, ribbon, road_text
 from scripts.geometry import profile as profile_mod
@@ -389,6 +390,14 @@ BRIDGE_MIN_H_M = 3.5       # road must ride this far above bare earth to earn a 
 BRIDGE_MIN_SPAN_M = 12.0   # ...over at least this long a run (a real span, not a one-vertex bump)
 
 
+def bridge_detector_on(cfg_raw: dict) -> bool:
+    """Whether the height detector may mint bridge spans. Default on; ``bridges.detector: false`` turns it off for a track
+    whose decks are all declared (ledger 0048, the Lariat: on real 3DEP it minted 24,374-24,835 m from the 19th St lid
+    along 461 m of the street's +5.7 % climb, a level 'deck + piers, no fill' where the road climbs on the ground). A
+    declared deck is held by scripts/elevation/road_profile.py and read by the prep and the gates from capture.bridges."""
+    return (cfg_raw.get("bridges") or {}).get("detector", True) is not False
+
+
 def seam_rule_spans(spans: list[tuple[float, float]], st: list[float], high: list[bool],
                     closed: bool) -> tuple[list[tuple[float, float]], list[tuple[float, float]]]:
     """L13 for a detected span list: on a CLOSED lap a span may not end on the closing vertex unless it continues
@@ -712,6 +721,27 @@ def finished_centerline(raw_pts: list[Vertex], cfg_raw: dict, *, mirror_x: bool,
         print(f"  [junction fillet] {_nfill} stitched V-junction(s) swept as real turning arcs "
               f"(R {[round(z[3], 1) for z in _fillet_zones]} m zones)")
     finished_centerline.last_fillet_zones = _fillet_zones
+    # DECLARED CORNER ARCS (opt-in, hairpin_fit.mesh_fit; V3-PLAN A2, ledger 0048): a junction node that holds most of a
+    # corner's turn (the Lariat's C12 / C13) swept as clothoid-arc-clothoid at the radius the aerial measured, on THIS
+    # line (the one the ribbon sweeps), vertex count and heights kept (scripts/geometry/corner_arcs.py)
+    finished_centerline.last_arc_report = []
+    _hf = cfg_raw.get("hairpin_fit") or {}
+    _mf = set(_hf.get("mesh_fit") or [])
+    if _mf:
+        from scripts.geometry import corner_arcs
+        _decl = [c for c in (_hf.get("corners") or []) if c.get("id") in _mf and c.get("radius_m")]
+        centerline, _arc_rep = corner_arcs.fit_corners(centerline, _decl)
+        finished_centerline.last_arc_report = _arc_rep
+        for _r in _arc_rep:
+            print(f"  [corner arcs] {_r['id']}: {_r['status']}"
+                  + (f" R {_r['radius_m']} m, turn {_r['turn_deg']} deg, transitions {_r['transition_m']} m + arc "
+                     f"{_r['arc_m']} m, st {_r['span_st_m']}, moved <= {_r['max_move_m']} m; step gate max "
+                     f"{_r['gate']['max_step_deg']} deg, adjacent {_r['gate']['max_adjacent_diff_deg']} deg, "
+                     f"{len(_r['gate']['fails'])} fails" if _r["status"] != "SKIPPED" else f" ({_r['why']})"))
+        _bad = [r["id"] for r in _arc_rep if r["status"] != "PASS"]
+        if _bad or len(_arc_rep) != len(_mf):
+            raise SystemExit(f"[corner arcs] hairpin_fit.mesh_fit {sorted(_mf)}: not fitted or failing the step gate: "
+                             f"{_bad or sorted(_mf - {c['id'] for c in _decl})}")
     # MEASURED BRIDGE DECKS (ledger 0068, opt-in per bridge: capture.bridges[].profile_m). level_bridge_decks
     # gave every declared deck one straight grade between its bank crests; where the source lidar measured the
     # deck itself, lay that profile on HERE, on the finished line its stations are keyed to. No profile
@@ -725,6 +755,64 @@ def finished_centerline(raw_pts: list[Vertex], cfg_raw: dict, *, mirror_x: bool,
         print(f"  elevation: measured deck profile on {len(_decks)} bridge(s) "
               f"({', '.join(d['name'] or '?' for d in _decks)})")
     return centerline, dip_of, bank_at, profile_active
+
+
+LIP_HALF_LEN_M = 1.5        # a measured-guard stone lip runs this far either side of its crossing
+LIP_FOOT_STEP_M = 0.25      # a foot over a drop is pulled back toward the crossing in these steps
+LIP_FOOT_MAX_GAP_M = 0.8    # drive_test's furniture-seating rule: a 1WALL column's base within 0.8 m of the surface under it
+
+
+def lip_foot_gap(ground_at, x: float, z: float, base_y: float) -> float:
+    """How far a wall foot at (x, z) with its base at ``base_y`` stands above the surface directly beneath it,
+    read the way drive_test's FURNITURE SEATING reads a 1WALL column: the highest surface within
+    [base - 3.0, base + 2.0], else within base +- 2.5; no surface at all is floating (99.0). ``ground_at(x, z,
+    lo, hi)`` returns the highest surface height in [lo, hi] at (x, z), or None. Negative = the foot is buried."""
+    g = ground_at(x, z, base_y - 3.0, base_y + 2.0)
+    if g is None:
+        g = ground_at(x, z, base_y - 2.5, base_y + 2.5)
+    return 99.0 if g is None else base_y - g
+
+
+def lip_foot_reach(ground_at, vx: float, vz: float, tx: float, tz: float, lx: float, lz: float, base_y: float,
+                   direction: float, half_len: float = LIP_HALF_LEN_M, step: float = LIP_FOOT_STEP_M,
+                   max_gap: float = LIP_FOOT_MAX_GAP_M) -> float:
+    """How far (<= ``half_len``) a measured-guard lip can run from its crossing (vx, vz) along ``direction`` * the
+    unit tangent (tx, tz) and still stand on its support: both corners of the foot there — the inboard one and the
+    outboard one, (lx, lz) across — within ``max_gap`` of the surface under them (``lip_foot_gap``). The lip was
+    seated at the crossing only and laid flat 1.5 m either way, so where the ground falls ALONG the road's edge
+    (Dragon Tail (Gravel) s 6,645, the exit of the second switchback: 2.4 m over the lip's 3 m) one foot hung
+    1.84 m in the air and drive_test failed the stage on "floating furniture" (ledger 0076). Full length wherever
+    both feet stand (every lip that was seated before is unchanged); otherwise pulled back toward the crossing in
+    ``step`` metres, down to 0 (the lip then ends at its crossing on that side)."""
+    r = half_len
+    while r > 1e-9:
+        fx, fz = vx + tx * direction * r, vz + tz * direction * r
+        if (lip_foot_gap(ground_at, fx, fz, base_y) <= max_gap
+                and lip_foot_gap(ground_at, fx + lx, fz + lz, base_y) <= max_gap):
+            return r
+        r = round(r - step, 6)
+    return 0.0
+
+
+def end_apron_cap(px: float, pz: float, tips, reach: float):
+    """The deck height a terrain node just past an OPEN road end must stay under, or None (ledger 0076, Under the
+    Dragon (Gravel) s 25,706). ``tips`` holds one (cx, cy, cz, tx, tz, half_width) per open end: the end row's centre,
+    its deck height, the unit tangent pointing OUT of the road, and the deck half-width there. A node counts when it lies
+    past that end row (0 < along <= reach) and within half_width + reach of the axis — close enough that a grass
+    triangle from it can reach back over the deck. Beside the road the verge is capped by the shoulder over it; past an
+    end there is no pavement over the node, so nothing capped it and the seam-weld's 20 % floor raised one 0.88 m above
+    the deck, lifting the grass 2.4 cm over the last pavement row. The lowest matching end's deck wins."""
+    cap = None
+    for cx, cy, cz, tx, tz, hw in tips:
+        dx, dz = px - cx, pz - cz
+        along = dx * tx + dz * tz
+        if not (0.0 < along <= reach):
+            continue
+        if abs(-dx * tz + dz * tx) > hw + reach:
+            continue
+        if cap is None or cy < cap:
+            cap = cy
+    return cap
 
 
 def fold_pads_enabled(cfg: dict) -> bool:
@@ -741,6 +829,27 @@ def fold_pads_enabled(cfg: dict) -> bool:
     Grand Junction 4/4), so the pads are off unless a track sets ``road_profile.fold_pads: true``. Off keeps the
     +-40 m plateau and drops the disc and the flat zone. Only an explicit ``true`` turns it on."""
     return ((cfg.get("road_profile") or {}).get("fold_pads", False)) is True
+
+
+def fold_plateaus_enabled(cfg: dict) -> bool:
+    """Whether build() levels the profile at every fold apex (the +-40 m smoothstep plateau). Default True: unchanged.
+
+    The plateau is for a fold the ribbon cannot sweep: where the route doubles back on a corner tighter than half the
+    road's width, the swept fans overlap and differ by grade x arc. A hairpin whose centreline is already a fitted,
+    curvature-continuous curve at the radius the aerial measured (the Lariat, V3-PLAN A2: R 9.7-15 m on a 6-8 m road,
+    inner edge R >= 5.7 m, no fold) is a graded corner, and the plateau re-profiles it: on the Lariat's climb it moved
+    the road up to 1.07 m off its real 3DEP profile at C1, C4-C10 and C13 and steepened each approach to pay for the
+    level apex. ``road_profile.fold_plateaus: false`` keeps the road on its profile there. Only an explicit ``false``
+    turns it off; it does not change which apexes are found (the fold pads and the fold-bowl crossfall fade still
+    read them)."""
+    return ((cfg.get("road_profile") or {}).get("fold_plateaus", True)) is not False
+
+
+def draft_walls_enabled(cfg: dict) -> bool:
+    """Whether the draft writes the engine's rule-placed walls (warning fences, stone parapets / measured-guard lips,
+    concrete warning barriers). Default True: unchanged. ``road_edge.draft_walls: false`` is for a track whose edges are
+    authored from a survey (the Lariat: V3-PLAN A4 / P3d), whose first drive is the road and the ground only (A13)."""
+    return ((cfg.get("road_edge") or {}).get("draft_walls", True)) is not False
 
 
 def build(project_dir: str | Path) -> dict:
@@ -842,6 +951,11 @@ def build(project_dir: str | Path) -> dict:
     centerline, dip_of, bank_at, profile_active = finished_centerline(raw_pts, cfg_raw, mirror_x=mirror_x,
                                                                       widths=widths, origin_elev_m=elev0)
     _fillet_zones = getattr(finished_centerline, "last_fillet_zones", [])
+    if getattr(finished_centerline, "last_arc_report", None):
+        (data / "corner_arcs.json").write_text(json.dumps(
+            {"_doc": "hairpin_fit.mesh_fit corners as swept (scripts/geometry/corner_arcs.py; V3-PLAN A2, ledger 0048): "
+                     "stations on data/finished_centerline.json; the step gate is the plan's P2 step 2 (both values "
+                     "[invented])", "corners": finished_centerline.last_arc_report}, indent=1), encoding="utf-8")
     # U-TURN PLATEAU: where the route folds back on itself (>110 deg within +-15 m), the swept
     # ribbon self-overlaps, and the fans differ by grade x arc across the fold — a real ~0.5-1 m
     # step INSIDE the widened corner (the 'sends me into the grass' cliff at the bottom of the
@@ -890,7 +1004,9 @@ def build(project_dir: str | Path) -> dict:
         if all(abs(_stp[_si] - _stp[a]) > 30.0 for a in _apexes):
             _apexes.append(_si)
     # rc10-proven treatment: LOCAL ±40 m plateau at each fold apex, at its own height.
-    for _ax in _apexes:
+    # road_profile.fold_plateaus false: a fitted hairpin is a graded corner, kept on its profile (V3-PLAN A2)
+    _plateaus_on = fold_plateaus_enabled(cfg_raw)
+    for _ax in (_apexes if _plateaus_on else []):
         _ay = centerline[_ax][1]
         for _i in range(len(centerline)):
             _d = abs(_stp[_i] - _stp[_ax])
@@ -899,9 +1015,12 @@ def build(project_dir: str | Path) -> dict:
                 _w = 1.0 - (_t * _t * (3.0 - 2.0 * _t))
                 x, y, z = centerline[_i]
                 centerline[_i] = (x, y * (1.0 - _w) + _ay * _w, z)
-    if _apexes:
+    if _apexes and _plateaus_on:
         print(f"  [fold plateaus] {len(_apexes)} apex(es) leveled locally "
               f"(declared: {[round(_stp[m]) for m in _declared]})")
+    elif _apexes:
+        print(f"  [fold plateaus] {len(_apexes)} apex(es) found, none leveled: road_profile.fold_plateaus false "
+              f"(fitted hairpins ride their real profile, V3-PLAN A2)")
     # DECLARED CORNER FLARE. widths_from_osm applies route.wide_corners too, but only runs when
     # osm_road_widths is on — and a graded dirt road has no OSM lane data to derive widths from, so
     # that path is off and the declared flare silently did nothing. wide_corners is a hand-declared
@@ -1159,6 +1278,11 @@ def build(project_dir: str | Path) -> dict:
             raw_ground = (_gst, [z - elev0 for z in in_local_order(local, _ej["z_raw_m"])])
     bridge_of = _bridge_detector(centerline, natural_grid, raw_ground=raw_ground, paved_zones=_fillet_zones,
                                  seam_rule=bool((cfg_raw.get("bridges") or {}).get("l13_seam_rule", False)))
+    if not bridge_detector_on(cfg_raw):    # bridges.detector false: every deck is declared (ledger 0048)
+        if getattr(_bridge_detector, "last_spans", []):
+            print(f"  bridge spans: detector off (bridges.detector false) - dropped {_bridge_detector.last_spans}")
+        _bridge_detector.last_spans = []
+        bridge_of = lambda station_m: False   # noqa: E731
     # persist AUTO-detected spans for the kn5 gate: the builder exempts them from fill/pins,
     # so the gate must exempt the same stations (declared-only exemption read auto bridge
     # valleys as 7 m of 'road hover' and wrecked the deck-vs-mountain metric).
@@ -1190,7 +1314,28 @@ def build(project_dir: str | Path) -> dict:
     # without the key keeps 2.5 m: byte-identical (ledger 0061 is where the 2.5 m sheet itself is on trial).
     _verge_decl = (cfg_raw.get("road_profile") or {}).get("verge_m")
     _verge_w = 2.5
-    if _verge_decl is not None:
+    # P3a CROSS-SECTION (opt-in: terrain.cross_section.build true; V3-PLAN P3a, ledger 0048): the ground beside the road is
+    # the road-building section by station (scripts/geometry/cutfill.py), so the grid no longer has to represent a shelf
+    # it cannot carry: the declared verge is built as declared (no floor), the near-road ground is refined
+    # (corridor_refine_factor) and every refined node takes the section's height, not the coarse grid's.
+    _cutfill = None
+    if cutfill_mod.section_enabled(cfg_raw):
+        _xs_cfg = (cfg_raw.get("terrain") or {}).get("cross_section") or {}
+        _cut_hv = cutfill_mod.parse_ratio(_xs_cfg.get("rock_cut_slope"), 0.25)
+        _fill_hv = cutfill_mod.parse_ratio(_xs_cfg.get("fill_slope"), 1.5)
+        _verge_w = float(_verge_decl) if _verge_decl is not None else 2.5
+        _fbench = float(_xs_cfg.get("fill_bench_m", 0.0) or 0.0)
+        _cbench = float(_xs_cfg.get("cut_bench_m", 0.0) or 0.0)
+        _cutfill = cutfill_mod.CrossSection(centerline, widths, verge_m=_verge_w, fill_bench_m=_fbench,
+                                            cut_bench_m=_cbench, cut_hv=_cut_hv, fill_hv=_fill_hv,
+                                            clearance=GRASS_CLEARANCE_M, bank_at=bnk, bridge_of=bridge_of)
+        GRADE_RATIO = _fill_hv
+        _cf_stats = _cutfill.grade_grid(grid_xyz)
+        _grade_band = _verge_w
+        print(f"[cutfill] terrain.cross_section: verge {_verge_w:.2f} m (as declared), benches fill {_fbench:.2f} / cut {_cbench:.2f} m, "
+              f"cut {_cut_hv}:1, fill {_fill_hv}:1; "
+              f"{sum(_cutfill.stacked)} stacked lap points; grid nodes graded {_cf_stats}")
+    elif _verge_decl is not None:
         # THE FLOOR. grade_embankment widens any band under the grid's half-diagonal + 1 m (a shelf narrower than
         # the cell that represents it is a shelf no node samples); the sheet's verge must break on the SAME line or
         # the ground shelf stands above the draped face (rehearsal 3, 2026-11-01: verge 0.4 vs band 3.6 m on 3.6 m
@@ -1206,10 +1351,11 @@ def build(project_dir: str | Path) -> dict:
               + ("" if _verge_w == float(_verge_decl) else
                  "; the declared edge is narrower than this grid can carry: the draft builds the floor, the real "
                  "edge is authored (P3a)"))
-    _grade_band = ribbon.grade_embankment(grid_xyz, centerline, widths, bank_at=bnk, band=_verge_w,
-                                          ratio=GRADE_RATIO,
-                                          extra_roads=[(p, w) for _n, p, w in connectors],
-                                          clearance=GRASS_CLEARANCE_M, bridge_of=bridge_of)
+    if _cutfill is None:
+        _grade_band = ribbon.grade_embankment(grid_xyz, centerline, widths, bank_at=bnk, band=_verge_w,
+                                              ratio=GRADE_RATIO,
+                                              extra_roads=[(p, w) for _n, p, w in connectors],
+                                              clearance=GRASS_CLEARANCE_M, bridge_of=bridge_of)
     # THE LAYER REFERENCE. Which road owns a grid node is decided HERE, once. The anti-poke clamps
     # below run three times and each would otherwise re-read ownership off the node's running
     # height, so the first call's correct rejection is undone by the second (ledger 0019).
@@ -1339,6 +1485,7 @@ def build(project_dir: str | Path) -> dict:
     # Fix: hand the clamp a short apron of virtual road verts continuing past each open end, at the
     # end's own deck height, so the terrain there is held under the deck plane like anywhere else.
     _end_apron: list = []
+    _end_tips: list = []       # (cx, cy, cz, tx, tz, deck half-width) per open end — end_apron_cap's (0076)
     if not cfg_raw.get("loop", True) and len(centerline) > 2:
         for _tip, _inw in ((0, 1), (len(centerline) - 1, -2)):
             _cx, _cy, _cz = centerline[_tip]
@@ -1346,6 +1493,7 @@ def build(project_dir: str | Path) -> dict:
             _tdx, _tdz = _cx - _px, _cz - _pz          # outward tangent at this tip
             _tl = math.hypot(_tdx, _tdz) or 1.0
             _tdx, _tdz = _tdx / _tl, _tdz / _tl
+            _end_tips.append((_cx, _cy, _cz, _tdx, _tdz, widths[_tip] / 2.0))
             _hw = widths[_tip] / 2.0 + 1.0
             for _step in range(1, 13):                 # 12 x 2.5 m = 30 m of apron past the tip
                 _ax, _az = _cx + _tdx * 2.5 * _step, _cz + _tdz * 2.5 * _step
@@ -1493,9 +1641,25 @@ def build(project_dir: str | Path) -> dict:
             # `elif natural_ground:`, so every track with neither a sidewalk nor natural ground
             # died on an unbound edge_group (found on Milford, 2026-10-28).
             shoulder = ribbon.road_shoulder(centerline, widths, lift=ROAD_LIFT_M, bank_at=bnk, verge_w=_verge_w,
-                                            ground_drop=GRASS_CLEARANCE_M, ground=grass_surf,
-                                            fill_apron=(str(cfg_raw.get("road_surface", "tarmac"))
-                                                        == "tarmac"))
+                                            ground_drop=GRASS_CLEARANCE_M,
+                                            # P3a: the sheet lands on the section itself (the refined grid's surface),
+                                            # not on the coarse grid's chords between graded nodes
+                                            ground=(grass_surf if _cutfill is None else
+                                                    (lambda _x, _z: _cutfill.height(
+                                                        _x, _z, _grid_bilinear(natural_grid, _x, _z)))),
+                                            fill_apron=(_cutfill is None and str(cfg_raw.get("road_surface", "tarmac"))
+                                                        == "tarmac"),
+                                            section=(None if _cutfill is None else
+                                                     {"cut_hv": _cut_hv, "fill_hv": _fill_hv,
+                                                      "wall_drop": float(_xs_cfg.get("fill_to_wall_trigger_m", 8.0)),
+                                                      "cap": lambda _i, _s, _nx, _nz: _cutfill.lateral_cap(_i, _s, _nx, _nz)}))
+            if _cutfill is not None:
+                # the face is ground, not pavement (ledger 0061 option C); the ring annulus, the parapets and the
+                # stone skins all read the construction sections, and the section is the grid's now: none is built
+                shoulder["sections"] = {1.0: [], -1.0: []}
+                # between stacked legs the sheet's meet and buried hem stay on their own leg's side too (L4); the lip
+                # and the verge ride the road and never move
+                shoulder["vertices"] = [(_x, _cutfill.hold_at(_x, _z, _y), _z) for _x, _y, _z in shoulder["vertices"]]
         edge_group, edge_mat = "1ROAD_shoulder", "road"
         _pav_reg(edge_group, shoulder, "shoulder")
         # CONNECTORS GET A DRAPED VERGE TOO. The main loop's shoulder extends a MANAGED corridor
@@ -1658,7 +1822,9 @@ def build(project_dir: str | Path) -> dict:
         _pull.append(_sv6[_i6])           # meet point of each station/side
     from collections import defaultdict as _fdd
     _ph6 = _fdd(list)
-    for _mx6, _my6, _mz6 in _pull:
+    # P3a: the sheet's meet is ON the section the grid was graded to (cutfill.py), so there is no seam to bend the grid
+    # through; the bend would only drag the section's faces toward the meet height for 8 m
+    for _mx6, _my6, _mz6 in ([] if _cutfill is not None else _pull):
         _ph6[(int(_mx6 // 8), int(_mz6 // 8))].append((_mx6, _my6, _mz6))
     _bent = 0
     nodedbg.note("=== pass: contact bend through the shoulder meet line ===")
@@ -2242,6 +2408,10 @@ def build(project_dir: str | Path) -> dict:
     # that sets it, and the fleet has been burned before by a shared-geometry change that looked
     # safe (the exporter pre-split un-packaged five working tracks).
     _RN = int(cfg_raw.get("corridor_refine_factor", 0) or 0)
+    # corridor_refine_margin (opt-in, default 1 = unchanged): the ring of coarse quads refined beyond those the pavement
+    # touches. 0 refines the touched quads alone (their neighbours are fanned through the hanging nodes, no crack):
+    # with the P3a section the coarse nodes beside the corridor are already graded to it, so the ring only costs vertices.
+    _RM = int(cfg_raw.get("corridor_refine_margin", 1))
     _refine_q: set = set()
     _fine_height = None
     if _RN > 1:
@@ -2272,8 +2442,8 @@ def build(project_dir: str | Path) -> dict:
         for _a, _b, _c in _pav_tris:
             _is = [ (_v[0] - _gx0) / _gdx for _v in (_a, _b, _c) ]
             _js = [ (_v[2] - _gz0) / _gdz for _v in (_a, _b, _c) ]
-            for _qi in range(int(math.floor(min(_is))) - 1, int(math.floor(max(_is))) + 2):
-                for _qj in range(int(math.floor(min(_js))) - 1, int(math.floor(max(_js))) + 2):
+            for _qi in range(int(math.floor(min(_is))) - _RM, int(math.floor(max(_is))) + 1 + _RM):
+                for _qj in range(int(math.floor(min(_js))) - _RM, int(math.floor(max(_js))) + 1 + _RM):
                     if 0 <= _qi < _nxg - 1 and 0 <= _qj < _nyg - 1:
                         _refine_q.add((_qi, _qj))
 
@@ -2301,6 +2471,23 @@ def build(project_dir: str | Path) -> dict:
                             lo = y
             return lo
 
+        def _deck_at_point(px, pz, y_ref):
+            """Lowest MAIN-ribbon surface directly over (px, pz) (the deck alone: _pav_at_point without the sheet)."""
+            lo = None
+            for t in _rc7.get((int(px // 4.0), int(pz // 4.0)), ()):
+                a, b, c = (_rv7[t[0]], _rv7[t[1]], _rv7[t[2]]) if isinstance(t[0], int) else t
+                d = (b[2] - c[2]) * (a[0] - c[0]) + (c[0] - b[0]) * (a[2] - c[2])
+                if abs(d) < 1e-12:
+                    continue
+                w0 = ((b[2] - c[2]) * (px - c[0]) + (c[0] - b[0]) * (pz - c[2])) / d
+                w1 = ((c[2] - a[2]) * (px - c[0]) + (a[0] - c[0]) * (pz - c[2])) / d
+                w2 = 1.0 - w0 - w1
+                if w0 >= -1e-6 and w1 >= -1e-6 and w2 >= -1e-6:
+                    y = w0 * a[1] + w1 * b[1] + w2 * c[1]
+                    if abs(y - y_ref) <= 20.0 and (lo is None or y < lo):
+                        lo = y
+            return lo
+
         def _fine_height(px, pz, base_y):
             """Two-sided contact pin at a refined node: the ground under pavement IS the pavement
             underside. Same rule as the coarse pin, but with the stencil sized to THIS node."""
@@ -2313,6 +2500,8 @@ def build(project_dir: str | Path) -> dict:
                 if _cand is not None and (lo is None or _cand < lo):
                     lo = _cand
             if lo is None:
+                if _cutfill is not None:            # P3a: the section at this node, off its own leg (cutfill.py)
+                    return _cutfill.height(px, pz, _grid_bilinear(natural_grid, px, pz))
                 return base_y                       # genuinely no pavement overhead: real ground
             # CHARGE CURVATURE, NOT SLOPE. The chord from this node to its neighbour rises above
             # the pavement only where the pavement CRESTS, by the sagitta s²/8R. A window minimum
@@ -2322,14 +2511,20 @@ def build(project_dir: str | Path) -> dict:
             # grade it returns this node's own height (zero cost), and on a crest it pays the
             # sagitta and nothing more. The Lariat needed this — 1.67 m nodes over a ~58 m crown
             # left 6 mm of grass above the deck, enough to fail drive_test on a 24.8 km lap.
+            # P3a: the charge reads the DECK only — the section's face is a concave break (a 4:1 rock cut beside a
+            # 0.4 m verge), and charging it as pavement sank the ground under the road edge by up to 0.35 m
+            _charge_at = _deck_at_point if _cutfill is not None else _pav_at_point
             for _ex, _ez in ((1.0, 0.0), (-1.0, 0.0), (0.0, 1.0), (0.0, -1.0)):
-                _ym = _pav_at_point(px + _ex * _sN * 0.5, pz + _ez * _sN * 0.5, base_y)
+                _ym = _charge_at(px + _ex * _sN * 0.5, pz + _ez * _sN * 0.5, base_y)
                 if _ym is None:
                     continue
-                _yn = _pav_at_point(px + _ex * _sN, pz + _ez * _sN, base_y)
+                _yn = _charge_at(px + _ex * _sN, pz + _ez * _sN, base_y)
                 _need = (2.0 * _ym - _yn) if _yn is not None else _ym
                 if _need < lo:
                     lo = _need
+            if _cutfill is not None:
+                # a node pinned under the sheet's buried hem between stacked legs stays on its own leg's side (L4)
+                return _cutfill.hold_at(px, pz, lo - GRASS_CLEARANCE_M)
             return lo - GRASS_CLEARANCE_M
 
         # The refined quads' own CORNERS are coarse nodes still carrying the coarse stencil's sag,
@@ -2376,6 +2571,9 @@ def build(project_dir: str | Path) -> dict:
                      f"node y {_cy_:.3f}"
                      + (f"; float under the LOWEST deck {min(_deck_) - _cy_:+.3f} m" if _deck_ else ""))
         nodedbg.stop_if_asked()
+    if _cutfill is not None:
+        # the pins, bends and clamps above move nodes; between stacked legs each node goes back to its own leg's side
+        print(f"[cutfill] stacked-leg hold re-applied after the contact passes: {_cutfill.hold_grid(grid_xyz)} grid nodes")
     write_ground_local(data / "ground.local.json", grid_xyz)
     grass = ribbon.grass_terrain(grid_xyz, refine_quads=_refine_q, refine_factor=_RN,
                                  height_at=_fine_height)
@@ -3313,6 +3511,9 @@ def build(project_dir: str | Path) -> dict:
         _rhW = _rh2W
         print(f"  [seam-weld] drop-edge prefilter: {_keptW} floor sources kept, {_dropdW} silenced")
         _weldW = 0
+        # OPEN-END CAP (ledger 0076): the cap below is the pavement OVER a node; past an open road end there is
+        # none, so a node there takes the end row's deck instead, within one grass cell's diagonal of the end
+        _reachE = math.sqrt(2.0) * (_sN if _RN > 1 else float(meta["spacing_m"]))
         for _giW in range(len(_gvW)):
             _gxW, _gyW, _gzW = _gvW[_giW]
             _gyW = _gy0W[_giW]
@@ -3329,6 +3530,8 @@ def build(project_dir: str | Path) -> dict:
                                 _floorW = _fW
             if _floorW is not None and _gyW < _floorW - 0.01:
                 _pavW = _pav_below_W(_gxW, _gzW, _floorW, _ptW_shW)     # the shoulder-inclusive cap
+                if _pavW is None and _end_tips:
+                    _pavW = end_apron_cap(_gxW, _gzW, _end_tips, _reachE)
                 if _pavW is not None and _floorW > _pavW - 0.06:
                     _floorW = _pavW - 0.06
                 if _gyW < _floorW - 0.01:
@@ -3476,6 +3679,22 @@ def build(project_dir: str | Path) -> dict:
                         _bH, _boH = _yH, _clH
             return _bH, _boH
 
+        def _ground_H(_pxH, _pzH, _loH, _hiH):
+            # the highest surface in [lo, hi] at (x, z) — lip_foot_gap's reader (ledger 0076)
+            _bH = None
+            for _AH, _BH, _CH, _clH in _mgH.get((int(_pxH // 4.0), int(_pzH // 4.0)), ()):
+                _dH = (_BH[2] - _CH[2]) * (_AH[0] - _CH[0]) + (_CH[0] - _BH[0]) * (_AH[2] - _CH[2])
+                if abs(_dH) < 1e-12:
+                    continue
+                _w0H = ((_BH[2] - _CH[2]) * (_pxH - _CH[0]) + (_CH[0] - _BH[0]) * (_pzH - _CH[2])) / _dH
+                _w1H = ((_CH[2] - _AH[2]) * (_pxH - _CH[0]) + (_AH[0] - _CH[0]) * (_pzH - _CH[2])) / _dH
+                _w2H = 1.0 - _w0H - _w1H
+                if _w0H >= -1e-6 and _w1H >= -1e-6 and _w2H >= -1e-6:
+                    _yH = _w0H * _AH[1] + _w1H * _BH[1] + _w2H * _CH[1]
+                    if _loH <= _yH <= _hiH and (_bH is None or _yH > _bH):
+                        _bH = _yH
+            return _bH
+
         _wmedH = sorted(widths)[len(widths) // 2]
         _guardH = 0
         _prev_endH = {1.0: None, -1.0: None}
@@ -3538,15 +3757,21 @@ def build(project_dir: str | Path) -> dict:
                         _vxH = _xH + _nxH * _inH
                         _vzH = _zH + _nzH * _inH
                         _vyH = min(_prevH, _yH0 + 1.8) - 0.2
+                        _thH = (_offH - 0.25) - _inH
+                        _lxH, _lzH = _nxH * _thH, _nzH * _thH
+                        # EVERY FOOT ON ITS SUPPORT (ledger 0076): the lip is seated at the crossing; a foot
+                        # 1.5 m up or down the edge can hang over ground falling along it — pull it back
+                        _reH = lip_foot_reach(_ground_H, _vxH, _vzH, _txH, _tzH, _lxH, _lzH, _vyH, 1.0)
                         _pH = _prev_endH[_sideH]
                         if _pH is not None and math.hypot(_vxH - _pH[0], _vzH - _pH[2]) <= 6.0:
                             _sxH, _syH, _szH = _pH
                         else:
-                            _sxH, _syH, _szH = _vxH - _txH * 1.5, _vyH, _vzH - _tzH * 1.5
-                        _exH = _vxH + _txH * 1.5
-                        _ezH = _vzH + _tzH * 1.5
-                        _thH = (_offH - 0.25) - _inH
-                        _lxH, _lzH = _nxH * _thH, _nzH * _thH
+                            _rsH = lip_foot_reach(_ground_H, _vxH, _vzH, _txH, _tzH, _lxH, _lzH, _vyH, -1.0)
+                            if _rsH + _reH <= 1e-9:
+                                break        # no foot can stand anywhere along it: no lip at this crossing
+                            _sxH, _syH, _szH = _vxH - _txH * _rsH, _vyH, _vzH - _tzH * _rsH
+                        _exH = _vxH + _txH * _reH
+                        _ezH = _vzH + _tzH * _reH
                         stone_lip_box(para_mesh, (_sxH, _syH, _szH), (_exH, _vyH, _ezH), (_lxH, _lzH))
                         _prev_endH[_sideH] = (_exH, _vyH, _ezH)
                         _guardH += 1
@@ -3557,8 +3782,31 @@ def build(project_dir: str | Path) -> dict:
         if _guardH:
             print(f"  [measured-guard] {_guardH} stone-lip guards straddling measured in-band drops (0025)")
 
+    _shoulder_face = {"vertices": [], "uvs": [], "tris": []}
+    if _cutfill is not None and edge_group == "1ROAD_shoulder" and shoulder.get("tris"):
+        # the sheet's lip -> verge strip stays pavement; verge -> meet -> hem is the section's face, i.e. ground
+        # (ledger 0061 option C): road_shoulder emits 2 tris per lateral strip, 3 strips (P = 4) per station
+        _all_t = shoulder["tris"]
+
+        def _compact(mesh, keep):
+            remap, cv, cu, ct = {}, [], [], []
+            for t in keep:
+                nt = []
+                for v in t:
+                    if v not in remap:
+                        remap[v] = len(cv)
+                        cv.append(mesh["vertices"][v])
+                        cu.append(mesh["uvs"][v])
+                    nt.append(remap[v])
+                ct.append(tuple(nt))
+            return {"vertices": cv, "uvs": cu, "tris": ct}
+        _shoulder_face = _compact(shoulder, [t for k, t in enumerate(_all_t) if (k // 2) % 3 != 0])
+        shoulder = _compact(shoulder, [t for k, t in enumerate(_all_t) if (k // 2) % 3 == 0])
+        print(f"[cutfill] the sheet split: {len(shoulder['tris'])} verge tris stay 1ROAD_shoulder, "
+              f"{len(_shoulder_face['tris'])} face tris become 1GRASS_cutfill")
     groups = [*split_mesh_under_cap("1GRASS", "grass", grass),
               *split_mesh_under_cap("1GRASS_ring", "grass", orient_up(ring_mesh)),
+              *(split_mesh_under_cap("1GRASS_cutfill", "grass", _shoulder_face) if _shoulder_face["tris"] else []),
               *split_mesh_under_cap(edge_group, edge_mat, shoulder),
                *split_mesh_under_cap("SHOULDERUND", edge_mat, shoulder_under),
               ("1RUNOFF_corners", "road", runoff),
@@ -3566,6 +3814,17 @@ def build(project_dir: str | Path) -> dict:
               *split_mesh_under_cap("1KERB_corners", "kerb", kerb),
               ("MARKINGS", "kerb", marks),
               ("MARKINGS_crosswalk", "kerb", xwalk)]
+    if not draft_walls_enabled(cfg_raw):
+        # road_edge.draft_walls false (V3-PLAN A13 / P3d, ledger 0048): the edge is AUTHORED (stone, W-beam or open,
+        # surveyed) and a Drive-1 build is the road and the ground only, so the draft ships none of the engine's
+        # rule-placed walls: the warning-run fences, the 1913-style parapets and measured-guard lips, the concrete
+        # warning barriers. Their counts are still printed above; nothing else in the build reads these meshes.
+        _dropped = {n: len(m["vertices"]) for n, m in (("1WALL_CHAINL_warn", fence_wood), ("1WALL_PARA_stone", para_mesh),
+                                                       ("BARRIER_warning", barrier)) if m["tris"]}
+        print(f"  [draft walls] road_edge.draft_walls false: not written {_dropped or '(none built)'}")
+        fence_wood = {"vertices": [], "uvs": [], "tris": []}
+        para_mesh = {"vertices": [], "uvs": [], "tris": []}
+        barrier = {"vertices": [], "uvs": [], "tris": []}
     if fence_wood["tris"]:
         groups.extend(split_mesh_under_cap("1WALL_CHAINL_warn", "grass", fence_wood))
     if para_mesh["tris"]:

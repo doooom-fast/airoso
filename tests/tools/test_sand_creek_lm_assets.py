@@ -420,3 +420,41 @@ def test_intake_applies_a_measured_connector_profile_and_refuses_other_points():
             raise AssertionError("a profile measured on other points was applied")
         except SystemExit:
             pass
+
+
+def test_round_i_keys_are_opt_in():
+    """ledger 0079 round I: Lake Murray and the Lariat name none of the new keys or steps (the islands on a street's built
+    road, the lidar ground patches)"""
+    for t in ("san-diego-lake-murray", "lookout-lariat"):
+        p = ROOT / "tracks" / t / "track.config.json"
+        if not p.exists():
+            continue
+        cfg = json.loads(p.read_text(encoding="utf-8"))
+        assert "islands" not in (cfg.get("route") or {})
+        assert "lidar_patches" not in (cfg.get("terrain") or {})
+        assert "lidar_patches_file" not in (cfg.get("terrain") or {})
+        sp = ROOT / "tracks" / t / "ship.json"
+        if sp.exists():
+            draft = json.loads(sp.read_text(encoding="utf-8")).get("steps", {}).get("draft") or []
+            assert "islands" not in draft and "ground_patch" not in draft
+
+
+def test_sand_creek_round_i_declares_the_island_and_the_patch():
+    """ledger 0079 round I: the island's rows run end to end with edge A west of edge B, its rise is the measured one and
+    flush on the east; the patch's polygon is closed by the wall's hard edges and the measured file is the config's"""
+    cfg = json.loads((SC / "track.config.json").read_text(encoding="utf-8"))
+    isl = cfg["route"]["islands"][0]
+    assert isl["id"] == "fork_92" and len(isl["rows"]) >= 2
+    assert all(r[0] < r[2] for r in isl["rows"])
+    assert isl["rise_m"][1] == 0.0 and 0.0 < isl["rise_m"][0] < 0.10
+    p = cfg["terrain"]["lidar_patches"][0]
+    meas = json.loads((SC / cfg["terrain"]["lidar_patches_file"]).read_text(encoding="utf-8"))["patches"][p["id"]]
+    assert meas["polygon"] == p["polygon"]
+    assert len(meas["y"]) == meas["nx"] * meas["nz"]
+    assert all(1 <= k < len(p["polygon"]) for k in p["hard_edges"])
+
+
+def test_lidar_ground_patch_point_in_polygon():
+    import lidar_ground_patch as lgp
+    sq = [(0.0, 0.0), (10.0, 0.0), (10.0, 10.0), (0.0, 10.0)]
+    assert lgp.point_in(sq, 5.0, 5.0) and not lgp.point_in(sq, 11.0, 5.0) and not lgp.point_in(sq, 5.0, -1.0)

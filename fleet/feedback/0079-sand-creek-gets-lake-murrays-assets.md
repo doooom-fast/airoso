@@ -925,6 +925,37 @@ track frame on import.
   1.26 m); houses 2,182 / 2,182 / 0; textures 0 untextured; kn5 93.9 MB.
 - Fork 94/95 in i1: `[trim] fork ... -> one street grid_unclassified_95: 81.8 m, width 13.5-18.0 m (measured edges)`.
 
+### 5. Building 1182 stands: the ground beside grid_primary_49 seated on the lidar (`terrain.lidar_patches`)
+- **Measured** (lidar class 2, 1 m profiles every 5 m along z): a retaining wall beside grid_primary_49, a 2.1-4.5 m step
+  within 3 m. Its line runs from x -1574.5 at z -865 to -1552.5 at -1000, and on past -1045, nearer the street. It is 4.3-4.5 m
+  tall at 1182 (z -920 .. -945). Low side 27.2-27.6 m, high side 31.5-32.1 m.
+  - The built ground (h2) held the street's 31.3 m for 20 m past the wall (to x -1572), then fell one facet to 27.3 m at
+    x -1592, through 1182's footprint (x -1588.7 .. -1579.2).
+- **The engine has no retaining-wall path for a street's verge.** `tools/lidar_wall.py` measures a wall at a lap's lane
+  edge; Pikes Peak builds its wall from K-rail modules. So the wall stands as the terrain step the lidar shows.
+- **Two new opt-in tools:**
+  - `tools/lidar_ground_patch.py` measures the polygon's ground. The lattice is 1 m: each node is the median of the
+    class-2 returns within 1 m (at least 3). 2,449 nodes under roofs are filled from their neighbours, the ground under
+    a roof read from the ground around it. Output: `source/ground_patches.lidar.json`.
+  - `tools/ground_patch_blend.py` is draft step `ground_patch`, after `islands`. It cuts TERRAIN's edges in the patch's
+    box to <= 1.5 m, then seats every vertex inside the polygon on the lattice.
+    - Outside the polygon it eases the built height toward the lidar over `feather_m` 10 [invented], past every edge
+      except the wall's own line (`hard_edges`: there the step IS the ground).
+  - The polygon: the wall's line (the step's middle) from z -862 to -1000, and x -1620 on the west. There the built and
+    the real ground agree within 0.1 m.
+- **i2:** `[ground-patch] wall_49: TERRAIN 517000 -> 555933 vertices, 28953 seated on the lidar ground (7032 in the
+  feather), largest move 4.74 m`.
+  - `osm_buildings1182` stands: ground 26.38-26.83 m (the lidar's 26.4-26.8), eave 29.47 m.
+  - Houses 2,183 / 2,183 / 0 against the 2,181 floor. Drops: 36 relief, 2 past 450 m.
+- **Not patched:** the wall south of z -1000. It comes within 2-7 m of the street there, in the street's verge (seat_terrain
+  / the prep's contact band).
+- **Gates on i2** (empty workshop, items 1, 2, 5), the same as i1 and h2:
+  - drive_test race / street PASS: soft 0, severe 0, drops 0 (1 far ledge), kinks 1.24 /km, bumps 0.31 /km, fold
+    bumps 4;
+  - audit CLEAN; kn5_ground_check PASS (198 heads, 0 orphans); verify_pads PASS x3 (seams 0.9-1.6 mm); verify_mouths
+    PASS (117);
+  - house_seat PASS (lowest roof 1.26 m); textures 0 untextured; kn5 96.2 MB (road 89.4, `_street` 6.8).
+
 ## PC runbooks (round H)
 
 4j. **Sand Creek 0.2.3** (ledger 0079 rounds E-H). This build carries:

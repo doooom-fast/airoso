@@ -26,6 +26,13 @@ No gate threshold, floor or bypass moved this round unless listed here. All opt-
     edge flush where the lidar reads it -0.05 m (the built road is level across where the real one rises east). The
     island is 1KERB on the road: audit K (kerb > 0.10 m over the carriageway) reads it like any curb, no exemption; it
     stands 0.078 m.
+  - ⚠ `tools/lidar_ground_patch.py` CELL_M 1.0 m, RADIUS_M 1.0 m, MIN_RETURNS 3 [invented]: the lidar ground lattice of a
+    `terrain.lidar_patches` polygon (as lidar_connector_profile's radius and count).
+  - ⚠ `tools/ground_patch_blend.py` SPLIT_M 1.5 m [invented]: the longest TERRAIN edge left in a patch's box (how sharp a
+    measured step can stand); Sand Creek's `wall_49` feather_m 10 m [invented]: the built ground eases to the lidar over
+    10 m past the polygon's soft edges.
+  - No gate moved for 1182: it stands because its ground is now the lidar's (relief under its rim 0.45 m, was 3.16 m
+    against the unchanged 2.64 m limit).
 
 ## 2026-11-05 (round H) — Sand Creek: the 8 mouths and 13 houses from measurement; one bypass, one gate reading (ledger 0079 round H)
 

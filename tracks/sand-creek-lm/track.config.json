@@ -1310,7 +1310,126 @@
   },
   "terrain": {
     "terrain_band_m": 22.0,
-    "_doc": "the v021 assembler's band clamp (Lake Murray's 22 m); no tiers on the pilot (the 20 m graded grid)"
+    "_doc": "the v021 assembler's band clamp (Lake Murray's 22 m); no tiers on the pilot (the 20 m graded grid)",
+    "lidar_patches": [
+      {
+        "id": "wall_49",
+        "polygon": [
+          [
+            -1575.5,
+            -862.0
+          ],
+          [
+            -1574.5,
+            -865.0
+          ],
+          [
+            -1573.5,
+            -875.0
+          ],
+          [
+            -1571.5,
+            -880.0
+          ],
+          [
+            -1571.5,
+            -890.0
+          ],
+          [
+            -1569.5,
+            -895.0
+          ],
+          [
+            -1567.5,
+            -905.0
+          ],
+          [
+            -1565.5,
+            -915.0
+          ],
+          [
+            -1564.5,
+            -920.0
+          ],
+          [
+            -1563.5,
+            -925.0
+          ],
+          [
+            -1562.5,
+            -930.0
+          ],
+          [
+            -1561.5,
+            -935.0
+          ],
+          [
+            -1560.5,
+            -945.0
+          ],
+          [
+            -1559.5,
+            -950.0
+          ],
+          [
+            -1558.5,
+            -960.0
+          ],
+          [
+            -1557.5,
+            -970.0
+          ],
+          [
+            -1555.5,
+            -980.0
+          ],
+          [
+            -1554.5,
+            -985.0
+          ],
+          [
+            -1553.5,
+            -995.0
+          ],
+          [
+            -1552.5,
+            -1000.0
+          ],
+          [
+            -1620.0,
+            -1000.0
+          ],
+          [
+            -1620.0,
+            -862.0
+          ]
+        ],
+        "hard_edges": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19
+        ],
+        "feather_m": 10.0
+      }
+    ],
+    "lidar_patches_file": "source/ground_patches.lidar.json",
+    "_lidar_patches_doc": "ledger 0079 round I (Kevin: \"I just want real\"; \"don't lose those\"): the ground west of grid_primary_49 seated on the lidar (tools/lidar_ground_patch.py measures, tools/ground_patch_blend.py seats TERRAIN after the weld). The lidar (CO_DRCOG_2_2020 class 2) has a retaining wall there: a 2.1-4.5 m step within 3 m, its line x -1574.5 at z -865 to -1552.5 at -1000 (and on, nearer the street, to -1045 and past: not patched, within the street's verge); the built ground held the street's 31.3 m for 20 m past it and then fell one 28 m facet through osm_buildings1182 (46 x 9.5 m, ground 26.4-26.8 m; relief 3.16 m, dropped). polygon: the wall's line (the step's middle, every 5 m, hard_edges: no feather, the step IS the ground: the engine has no retaining-wall path, so the wall stands as the terrain step over one <= 1.5 m edge) and x -1620 west (where the built and real ground agree within 0.1 m), z -862 to -1000; feather_m 10 [invented]: past the polygon's north / south / west edges the built ground eases to the lidar over 10 m."
   },
   "lm_pads": {
     "_doc": "Ledger 0079 round B (Kevin 2026-11-03: \"authored pad junctions\"; ledger 0070's six required corners). plan = where (the node positions and NAIP curb returns of ledger 0070's pad table, 0073's reads); pads = the declarations tools/pad_boxes.py writes from it (node, cuts, box, arms; rule, not measurement); the outline and deck are measured by tools/draft_pad_outline.py off CO_DRCOG_2_2020 (the PC: runbook 4g step 3) into source/pads/<id>.json. Round D (0.2.2): the draft step lm_pads builds `pads` (tools/lm_pads_blend.py, deck below); `parked` are declared, measured and held out, each with its reason",

@@ -20,6 +20,7 @@
       "strip_seam",
       "gap_mouths",
       "islands",
+      "ground_patch",
       "lamps"
     ],
     "author": [
@@ -63,7 +64,8 @@
       "data/heightfield.meta.json",
       "source/bespoke/buildings.lm.json",
       "source/bespoke/trees.lm.json",
-      "source/connector_profiles.lidar.json"
+      "source/connector_profiles.lidar.json",
+      "source/ground_patches.lidar.json"
     ],
     "_optional_doc": "ledger 0079: the port's own inputs (tools/lm_engine_intake.py uses a port file the source track lacks): its wider 3DEP grid (lm_intake.heightfield port), the buildings pipeline's blocks and the crowns read off NAIP",
     "assets": [

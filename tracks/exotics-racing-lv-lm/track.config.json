@@ -4,7 +4,7 @@
   "name": "Nevada Nights (LM engine)",
   "slug": "exotics_racing_lvms_lm",
   "ui_series": "doooom Nevada",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "mirror_x": false,
   "loop": true,
   "default_width_m": 14.0,
@@ -6495,7 +6495,10 @@
           "_source": "measured off the 2013 NAIP (exotics-racing-lv/source/edges/runoff_2013.json run 15: right s 1698-1821, paved 14.2 m past the edge, median); from the edge strip's lip out"
         }
       ],
-      "_runoff_doc": "ledger 0078 round 5: the paved run-off the 2013 NAIP shows (the bluish concrete apron along the edges and the grey concrete beyond it), as draped visual pads in the edge strip's concrete; the lot past that is not built: on the mosaic its concrete is as tan as the desert, so no outline is measured. Visual only: a car's physics there is the ground's"
+      "_runoff_doc": "ledger 0078 round 5: the paved run-off the 2013 NAIP shows (the bluish concrete apron along the edges and the grey concrete beyond it), as draped visual pads in the edge strip's concrete; the lot past that is not built: on the mosaic its concrete is as tan as the desert, so no outline is measured. Visual only: a car's physics there is the ground's",
+      "pads_seat": "ground",
+      "pads_surface": "1RUNOFF",
+      "_pads_seat_doc": "ledger 0081 round 2: the 2013 apron pads rebuilt on the PREPPED ground's own triangles, 6 cm over it (tools/seat_pads_blend.py, inside prep), and named 1RUNOFF_apron_<k>: paved run-off physics (surfaces.ini RUNOFF), the same concrete skin"
     },
     "draft_lamps": false,
     "_draft_lamps_doc": "a circuit has no streetlight down its edge every 55 m: the v021 assembler's draft posts are off (ledger 0078)"
@@ -11360,6 +11363,11 @@
       "_doc": "the kerb paint the aerial shows (red and white), a flat two-band stripe (this port's own file). Keyed 1KERB, the row the traced kerbs (1KERB_circuit_*, tools/author_kerbs_blend.py) bind; not 1KERB_RACE, which the split routes to the race kn5 as race furniture"
     },
     "PADAPRON": {
+      "diffuse": "assets/textures/building_diffuse.jpg",
+      "normal": "assets/textures/building_normal.jpg",
+      "_doc": "the run-off is concrete (the edge strip's own skin), not the stock pad asphalt"
+    },
+    "1RUNOFF": {
       "diffuse": "assets/textures/building_diffuse.jpg",
       "normal": "assets/textures/building_normal.jpg",
       "_doc": "the run-off is concrete (the edge strip's own skin), not the stock pad asphalt"

@@ -139,7 +139,9 @@ def main(argv=None):
         side = 1 if sd.upper().startswith("L") else -1
         s0, s1 = (float(v) for v in rng.split("-"))
         # blue / yellow: the yellow reads like the dry grass beside it, so the width is the blue blocks' alone
-        want = {"blue", "white"} if colour == "blue_white" else {"red", "white"} if colour == "red_white" else {"blue"}
+        # red / white (round 2): the red blocks alone, since the white reads like the pale sand (Pueblo) and the concrete lot
+        # (Nevada) beside it: with the white the width ran to the band's edge (Nevada L s 915: -2.05 .. +2.45 m)
+        want = {"blue", "white"} if colour == "blue_white" else {"red"} if colour == "red_white" else {"blue"}
         eye = (s0, s1)
         if grow:
             s0, s1 = grown(side, s0, s1, KEY[colour])

@@ -27,6 +27,10 @@ does not set (it names no `route.kerbs_file`, so the kerbs step is a no-op there
 - `tools/author_kerbs_blend.py` `LAYER_M` 2.0: the ROAD surface under a kerb over the lane is read within this of the lane
   edge's height (L4: never another layer). The measured placement drops `MAX_W_M` (the measured width stands; High
   Plains' R s 2,892 paint is 2.85 m).
+- `tools/seat_pads_blend.py` (opt-in `scenery.bespoke.pads_seat`, Nevada): no new shape number (the pads' own
+  `PAD_LIFT_M` 0.06, round 5's); `COPLANAR_RAD` 1e-4 (a merge tolerance) and `HASH_M` 8 (a lookup cell), neither moves a vertex.
+- `tools/kerb_spans.py`: a red / white run's width is read off the red blocks alone (the white matched the pale sand and
+  concrete beside it); the colour classes themselves are unchanged.
 - `tools/kerb_spans.py --grow 10` and `GAP_M` 3.0: an eye span is grown / trimmed to its key colour (blue for the blue
   schemes, red for red / white) at most 10 m past either end, over gaps of up to 3 m (a white block, a faded block).
 

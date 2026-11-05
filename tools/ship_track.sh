@@ -511,6 +511,14 @@ prep_prep() {
     step "ship: red repairs (tools/red_repairs_blend.py: the named kerb faces, the named ground slivers; self-checked)"
     "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/red_repairs_blend.py" -- "$PROJ/blender/$SLUG.blend" --project "$PROJ" 2>&1 | grep "^\[red\]\|Error\|Traceback"
   fi
+  # ledger 0081 round 2: bespoke pads re-laid on the PREPPED ground's own triangles (Nevada's apron sat under the ground the
+  # prep re-seated); only a config that sets scenery.bespoke.pads_seat "ground", no header otherwise (Lake Murray's chain is
+  # unchanged). Part of prep (steps.prep stays prep, split); exit 1 = the blend not saved
+  if [ "$(pyq "import json,sys; print(((json.load(open(sys.argv[1],encoding='utf-8')).get('scenery') or {}).get('bespoke') or {}).get('pads_seat') == 'ground')" "$PROJ/track.config.json" | tr -d '\r')" = "True" ]; then
+    step "ship: the bespoke pads laid on the prepped ground's own triangles (tools/seat_pads_blend.py; self-checked)"
+    "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/seat_pads_blend.py" -- "$PROJ/blender/$SLUG.blend" --project "$PROJ" 2>&1 | grep "^\[seat-pads\]\|FATAL\|Error\|Traceback"
+    [ "${PIPESTATUS[0]}" = 0 ] || { echo "seat_pads_blend failed"; exit 1; }
+  fi
 }
 prep_split() {
   local lid

@@ -160,6 +160,51 @@ now lies on its paint. Seen there and not resolved: several blue / yellow stripe
 look longer in the aerial than the blue blocks the grow follows (past the ends the stripe reads yellow only, which is the
 dry grass's colour to the reader): their extents stay the blue's.
 
+### 1b. Nevada's six kerbs: NOT re-placed: their offset cannot be measured on the imagery in reach
+
+Nevada's kerbs file carries in_m / out_m -0.5 / 1.0 [invented] (round 4: traced by eye). Measured now on the 2019 crop
+(0.48 m, `naip_2019_exr.png`): the red does not read as red at all (`kerb_spans` red-only: "no paint measured"), and the
+white matches the lot's concrete (with the white, the widths ran to the band's edge: L s 915 -2.05 .. +2.45 m). A
+colour-blind read of the alternating blocks (luminance alternation per offset, half-peak band) gives R s 265-400
+-1.65 .. +0.75 and R s 690-770 -1.50 .. +0.45 (clear contrast; on High Plains, the control, the same read lands within
+~0.3-1 m of the colour measure, so it is a lead, not a measure); the other four are weak or run to the band's edge. By eye
+(`tracks/exotics-racing-lv/source/edges/kerbs_2019_zoom_r2.jpg`) the blocks lie along the inside of the lane edge, and at
+R s 1,440-1,460 none show. So Nevada keeps 0.1.1's kerbs (outside the edge, the invented offsets), and the measured place is
+**Kevin's call / owed**: NAIP 2022 (0.6 m) is no sharper; a ground photo or the course's own map would decide it.
+
+`kerb_spans.py`: a red / white run's width is now read off its red blocks alone (the white reads like Pueblo's pale sand
+and Nevada's concrete); no committed file was measured the old way.
+
+### 2. Nevada Nights 0.1.2: the 2013 apron as real run-off, on the prepped ground
+
+**0.1.1's visual pads are buried, measured** (this Mac's build of the committed 0.1.1, `nv011`, from an empty workshop):
+`apron_seat_check.py ... PADAPRON`: 1,634 apron triangles, 6,536 samples, **ground over the apron at 57.1 %** (median
++0.046 m, p95 +0.70 m, max +1.16 m): the same as round 1's 1RUNOFF try. The installed 0.1.1 shows the ground through its
+apron wherever the prep raised it.
+
+**Now** (opt-in `scenery.bespoke.pads_seat: "ground"`, `pads_surface: "1RUNOFF"`; `tools/seat_pads_blend.py` inside prep,
+after the prep's own ground work; `tools/pad_clip.py`): each pad is rebuilt from the PREPPED ground's own triangles under
+its cells, each cut to the cell's outline in plan (so the pad keeps the measured 2013 outline: 11,526 m² against 0.1.1's
+11,532 m², per pad the same to 1 m²), 6 cm over the ground (the pads' own lift), and named `1RUNOFF_apron_<k>`
+(surfaces.ini RUNOFF: paved, off-track; the same concrete skin via `texture_overrides["1RUNOFF"]`). Self-checked in the
+step (ground over 0 vertices of 14 pads). On the built OBJ: **ground over the apron 0.0 %** of 174,172 samples (the apron
+6 cm over it everywhere, max -0.053 m).
+
+| Nevada (EMPTY workshop, Mac) | 0.1.1 | **0.1.2** |
+|---|---|---|
+| soft top / severe / bumps / kinks /km / drops | 0 / 0 / 0 / 0.0 / 0 | 0 / 0 / 0 / 0.0 / 0 |
+| far ledges (reported, not gated) | 3 (s 452, 15-16 m out) | **4** (the same place, one more at 13.5 m: the apron's outer lip over the falling ground) |
+| audit / verify_kn5 / kn5_ground_check (p95) / house_seat | CLEAN / PASS / PASS (0.021) / PASS | CLEAN / PASS / PASS (0.021) / PASS |
+| edge report: at 1 m kerb / rise within 2 m p95 | 100 % / 0.076 m | 100 % / 0.078 m |
+| apron: ground over it / physics | 57.1 % / none (visual) | **0.0 % / 1RUNOFF** |
+| kn5 | 13,328,116 B (13.3 MB) | **19,109,912 B (19.1 MB)** |
+
+**Worse: size, +5.8 MB.** The apron now carries the ground's own resolution (43,543 triangles where 0.1.1 had 1,634 draped
+4 m cells): the ground along Nevada's edges is fine (seat_edges), and a coarser apron is what lay under it. Merging the
+cut pieces of each ground plane back saved almost nothing (the planes differ triangle to triangle). Kevin's call whether
+19.1 MB stands. Still: `tracks/exotics-racing-lv/source/edges/runoff_built_beside_0.1.2.jpg` (2019 aerial | the built
+apron faces).
+
 ## Owed (start here)
 
 - **High Plains 0.1.2 is ready for a PC rehearsal and install** (runbook 4a's commands; ENG `eng_hplm` plus nothing new: the

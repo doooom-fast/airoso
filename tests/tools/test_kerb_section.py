@@ -55,3 +55,26 @@ def test_measured_placement_is_opt_in_and_lake_murray_sets_no_kerbs():
     assert consts["LAYER_M"] <= 4.0                       # L4: the ROAD surface read within a layer gap of the edge
     lm = json.loads((ROOT / "tracks" / "san-diego-lake-murray" / "track.config.json").read_text(encoding="utf-8"))
     assert not (lm.get("route") or {}).get("kerbs_file") and "placement" not in (lm.get("kerb") or {})
+
+
+def test_the_pad_seat_runs_only_where_a_config_asks_for_it():
+    """tools/seat_pads_blend.py (round 2, Nevada's apron) runs inside prep only for scenery.bespoke.pads_seat "ground";
+    Lake Murray sets no bespoke pads, so its chain is unchanged."""
+    sh = (ROOT / "tools" / "ship_track.sh").read_text(encoding="utf-8")
+    assert "get('pads_seat') == 'ground'" in sh and "tools/seat_pads_blend.py" in sh
+    src = (ROOT / "tools" / "seat_pads_blend.py").read_text(encoding="utf-8")
+    assert 'bes.get("pads_seat") != "ground"' in src
+    lm = json.loads((ROOT / "tracks" / "san-diego-lake-murray" / "track.config.json").read_text(encoding="utf-8"))
+    assert "pads_seat" not in (((lm.get("scenery") or {}).get("bespoke")) or {})
+    nv = json.loads((ROOT / "tracks" / "exotics-racing-lv-lm" / "track.config.json").read_text(encoding="utf-8"))
+    b = nv["scenery"]["bespoke"]
+    assert b["pads_seat"] == "ground" and b["pads_surface"] == "1RUNOFF" and "1RUNOFF" in nv["texture_overrides"]
+
+
+def test_a_ground_triangle_is_cut_to_the_pad_cell_on_its_own_plane():
+    import pad_clip as pc
+    tri = [(0.0, 0.0, 0.0), (4.0, 0.0, 4.0), (0.0, 4.0, 0.0)]          # z = x
+    piece = pc.clip(tri, [(1.0, -1.0), (3.0, -1.0), (3.0, 5.0), (1.0, 5.0)])
+    assert len(piece) >= 3 and all(1.0 - 1e-9 <= p[0] <= 3.0 + 1e-9 for p in piece)
+    assert all(abs(p[2] - p[0]) < 1e-9 for p in piece)                  # on the triangle's plane
+    assert pc.clip(tri, [(10.0, 10.0), (11.0, 10.0), (11.0, 11.0)]) == []

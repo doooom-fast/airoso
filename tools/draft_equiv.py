@@ -15,8 +15,9 @@ twice on the SAME branch (lm-v4-line 6f96224, two fresh copies of lm_v4, one ENG
 632,014 vs 631,989 vertices, ground_release welding 6,963 vs 7,014 coincident vertices and listing its face caps in another
 order, so every house seated on that ground and every prepped ground tile moves with it. Everything else came out
 identical. --terrain-noise allows exactly that, as a written list (TERRAIN_NOISE), and nothing else:
-  - files: the terrain stage's own reports (TERRAIN_NOISE["files"]), the split manifest's two position censuses, and any
-    JSON key named "seconds" (wall-clock run time);
+  - files: the terrain stage's own reports (TERRAIN_NOISE["files"]), the split manifest's two position censuses, the stub
+    report's count of terrain vertices it pinned (stubs.built.json terrain.verts_pinned: 14,467 / 14,468 on the same
+    branch, the PC 2026-11-05), and any JSON key named "seconds" (wall-clock run time);
   - objects: TERRAIN, every 1GRASS* tile (rock faces included), any change; the house meshes (BUILDING_*, ROOFTOP_*,
     FARBLOCK_*, 1WALL_TILTUP*) in their vertex positions ONLY: the same counts, faces, UVs, materials and matrix.
 Each allowed difference is still printed, marked "(terrain-stage noise)"; the verdict is SAME only when nothing else
@@ -42,7 +43,8 @@ TERRAIN_NOISE = {                                     # --terrain-noise: the wri
     "files": ("data/ground_release.report.json", "data/terrain_thin.json", "data/terrain_thin.nodes.json.gz",
               "data/rock_faces.json"),
     "file_keys": {"blender/split/split_manifest.json": (("input_census", "positions"),
-                                                        ("outputs", "loop_main.blend", "positions"))},
+                                                        ("outputs", "loop_main.blend", "positions")),
+                  "data/stubs.built.json": (("terrain", "verts_pinned"),)},     # the terrain's vertices the stubs pin
     "timing_keys": ("seconds",),
     "objects_any": ("TERRAIN", "1GRASS"),
     "objects_positions_only": ("BUILDING_", "ROOFTOP_", "FARBLOCK_", "1WALL_TILTUP"),

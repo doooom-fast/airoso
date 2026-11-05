@@ -14,6 +14,22 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
+## 2026-11-05 — COMPARISON RULE: `tools/draft_equiv.py --terrain-noise` adds the stub report's pinned-vertex count (ledger 0078 step 5)
+
+One key joins the written terrain-stage list (`TERRAIN_NOISE["file_keys"]`): **`data/stubs.built.json` →
+`terrain.verts_pinned`**, the count of terrain vertices the stub step pins. It follows the terrain's own vertex count,
+which the 2026-11-04 entry's evidence already shows is not bit-stable.
+
+- **Evidence (the PC, 2026-11-05, Lake Murray 5(a) A/B: two fresh lm_v4 copies, ENG eng_repro, --dry-run):** the line
+  (claude/lm-v4-line 6f96224) gave 14,468 in the Nov 3 line, line2 and fleet runs, then **14,467** in today's line run;
+  today's claude/sand-creek-lm-assets run gave 14,468. The terrain's own vertex count on the same line branch: 632,014 /
+  631,989 (Nov 3), 631,986 (today). With the key listed, today's A/B reads SAME: every blend 0 differ, every other file
+  noise / timing only (D:/k10-scratch/lm_eq_5a.txt holds the plain report).
+- **Only that leaf is allowed.** Any other key of the stub report (the stubs themselves, any lift) still makes it DIFFERENT
+  (`tests/tools/test_draft_equiv.py::test_terrain_noise_allows_the_stubs_pinned_count_only`).
+- No gate threshold moves. This is the A/B comparison's exception list, not a build gate.
+- The test file's `tmp_path` fixtures are now optional (`tests/run_tests.py`, CI's runner, passes none).
+
 ## 2026-11-03 — COMPARISON RULE: "unchanged" kn5s are judged by `tools/kn5_equiv.py`, not md5 (ledger 0065)
 
 Blender's tangent pass is not bit-stable. Lake Murray v4's own workshop, rebuilt from the prep on the PC with the same engine,

@@ -31,6 +31,12 @@ chain (it writes a kerbs file a person then names in `route.kerbs_file`):
   the dirt beyond the kerb, seen on the committed strips); flat blue / yellow stripes do not (in 0.48, out 0.67), so the
   reader measures raised kerbs only. Ends (along s): no bar; the reader's ends are reported beside an eye check of the
   same strips.
+- `tools/kerb_offsets.py --follow 1` (Pueblo 0.1.2): `FOLLOW_SMOOTH` 9 (a running median over 9 one-metre stations of the
+  band's middle; 5 left a 0.58 m zig at Pueblo R s 3,013, a parked car's shadow over the blocks, which drive_test read as
+  a kink) and `FOLLOW_MAX_M` 1.5 (a station's band further than this from the run's is not the same paint). ⚠ invented.
+- Pueblo's kerbs are built through `tools/author_kerbs_blend.py`'s existing `MIN_W_M` 0.9 floor (round 4, invented): R s
+  1,128-1,140 measured 0.63 m and L s 1,068-1,095 0.81 m are built 0.9 m wide (0.27 / 0.09 m over, inside the reader's
+  0.35 m width p95). Not changed here; said so the widths are not read as measured.
 
 ## 2026-11-05 — circuit kerbs round 2: kerbs at their measured offset (ledger 0081 round 2; no gate threshold, no bypass)
 

@@ -342,6 +342,57 @@ pixels, and the half-maximum of a blur that wide is the blur). So the reader mea
 Nevada's red / white are raised blocks of this class) and not paint stripes. Ends carry no bar: every run's reader ends
 are checked by eye on its strip.
 
+### 2a. Pueblo 0.1.2: 15 red / white kerbs measured by their blocks and built at their measured place
+
+**Measured** (`tracks/pueblo/source/edges/kerbs.json`, NAIP 2023 0.3 m; strips `kerbs_blocks_2023_030_strips.jpg`, end
+zooms `kerbs_blocks_2023_030_ends.jpg` at 24 px/m with 1 m ticks). Pueblo's blocks read as strongly as High Plains' raised
+kerbs (block amplitude 27-48 against 25-38 there). Two things the strips showed, handled:
+- **The kerbs drift across the line's offsets along a run** (the band's middle moves 0.2-1.5 m p10..p90: R s 2,135
+  -2.03 .. -0.91), so one median offset misplaces a run's ends by up to ~0.7 m. `--follow 1`: the run's edge_lonlat is
+  the lane edge moved by the band middle's own deviation station by station (a running median of 9), so in_m .. out_m lie
+  on the paint all along (the build's `edge_delta` reads the nearest edge point, unchanged). The strips draw the followed
+  band; it sits on the blocks.
+- **Ends**: the reader's ends agree with the end zooms within ~1 m on 10 runs; on 5 they do not and the eye's ends are
+  used (`:eye`, the reader's kept in `reader.ends`): L s 1,068-1,095 (reader 1,092: one more white block), R s 1,128-1,140
+  (reader 1,138), R s 1,496-1,534 (reader 1,501-1,542: the kerb curves off the band at its end), R s 2,135-2,158.5
+  (reader 2,116-2,168: nothing is there past either end), R s 3,279-3,296 (reader 3,295: the last blocks turn outward).
+  Round 2's "runs past the finder's span" notes (L s 1,069 from ~1,062, 1,902 to ~1,980, 2,069 from ~2,045, 2,267 from
+  ~2,255) are not borne out at 24 px/m: the blocks stop where the reader stops.
+- **R s 1,190-1,215 is not a kerb**: the strip from 7 m inside the edge to 6 m outside shows a plain asphalt edge and
+  dirt, no blocks; nothing measured, nothing built.
+
+| run | s | in_m .. out_m | run | s | in_m .. out_m |
+|---|---|---|---|---|---|
+| L | 1,068-1,095 (eye) | -0.66 .. +0.15 | R | 1,128-1,140 (eye) | -1.13 .. -0.50 |
+| L | 1,557-1,596 | -0.49 .. +0.63 | R | 1,252-1,309 | -0.38 .. +0.61 |
+| L | 1,903-1,971 | -0.10 .. +0.71 | R | 1,496-1,534 (eye) | -1.03 .. -0.17 |
+| L | 2,070-2,129 | -1.30 .. -0.41 | R | 1,842-1,874 | -2.36 .. -1.45 |
+| L | 2,268-2,293 | -0.81 .. +0.27 | R | 2,135-2,158.5 (eye) | -1.86 .. -0.93 |
+| L | 2,596-2,627 | +0.09 .. +1.12 | R | 2,543-2,568 | -1.21 .. -0.27 |
+| L | 3,048-3,095 | +0.15 .. +1.08 | R | 2,993-3,047 | -2.36 .. -0.89 |
+| | | | R | 3,279-3,296 (eye) | -0.55 .. +0.50 |
+
+**Built** (`tracks/pueblo-lm` 0.1.2: `route.kerbs_file`, `kerb.placement: "measured"`, `kerb.end_ramp_m` 4.0 as High
+Plains', `texture_overrides["1KERB"]` = Aspen's `kerb_redwhite.png` copied as this port's own, synced by ship.json): `[kerbs]
+15 kerb runs, 515 m ... at their measured offsets (ROAD read missed 0)`. Two measured widths are under author_kerbs_blend's
+0.9 m floor and built 0.9 (R s 1,128: 0.63; L s 1,068: 0.81; GATES-CHANGELOG). Still: `kerbs_built_beside_0.1.2.jpg`
+(each kerb: aerial | built faces): every built kerb lies on its paint.
+
+| Pueblo (EMPTY workshop, `tools/ship_track.sh --no-install`, Mac) | 0.1.1 | **0.1.2** |
+|---|---|---|
+| soft top / severe / bumps /km / kinks /km | 0 / 0 / 0.29 / 8.01 | 0 / 0 / 0.29 / **8.30** |
+| vertex bumps / drops / far ledges / obstructed / floating | 12 / 0 / 0 / 0 / 0 | 11 / 0 / 0 / 0 / 0 |
+| audit_mesh (K) / verify_kn5 / kn5_ground_check (p95) / house_seat | CLEAN (0) / PASS / PASS (0.021) / PASS | CLEAN (0) / PASS / PASS (0.021) / PASS |
+| edge report: at 1 m kerb / rise within 2 m p95 | 100 % / 0.000 m | 100 % / 0.002 m |
+| kn5 | 10,572,602 B | **10,742,723 B (10.7 MB)** |
+
+**Worse by one kink (28 -> 29: 8.01 -> 8.30 /km), not hidden.** R s 3,275, the wheel path 1.25 m inside the 12 m lane,
+3.43 % (gate 3 %): the port ribbon's edge lies up to 1.54 m outside the live edge along R s 3,279-3,296 (`edge_delta_m`),
+so the measured kerb lies 1.42 m inside the ribbon's edge and the fixed-offset path rides off its inner edge as the two
+lines diverge. The real asphalt there is narrower than the 12 m lane. A first build (follow smoothed over 5 stations) read
+3 more kinks (R s 3,000-3,010, a parked car's shadow zigging the band 0.58 m) and one more bump; smoothing over 9 stations
+removed those. No number was invented to hide the last one: **Kevin's call** (install with one more kink, or not).
+
 ## Owed (start here)
 
 (Rewritten at round 2's end; round 1's list is done or carried here.)

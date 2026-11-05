@@ -25,10 +25,15 @@ Calibrated against High Plains' 20 colour-measured runs (tools/kerb_spans.py on 
 [invented] tuning of a block reader (GATES-CHANGELOG 2026-11-05, round 3); the image is the measurement.
 
     python tools/kerb_offsets.py <track-dir> --image <png> --corners W,N,E,S --spans "L:212-239:red_white,..." \
-           [--truth <kerbs.json>] [--out <json>] [--strips <jpg>] [--imagery "<what, when, resolution>"] [--how "<how>"]
+           [--truth <kerbs.json>] [--out <json>] [--strips <jpg>] [--follow 1] [--imagery "<what, when, resolution>"] \
+           [--how "<how>"]
 
---spans takes the eye-checked spans (side:s0-s1[:colour]); with --truth and no --spans, the truth file's own eye spans
+--spans takes the eye-checked spans (side:s0-s1[:colour[:eye]]; ":eye" keeps s0-s1 as the run's ends, read by eye on
+straightened end zooms where the reader's ends are visibly off the blocks); with --truth and no --spans, the truth file's own eye spans
 (s_eye, else s0-s1) are read. --out writes a kerbs file in tools/kerb_spans.py's shape (route.kerbs_file).
+--follow 1: a kerb drifts across the line's offsets along a run (the line is not the kerb: Pueblo R s 2,131-2,171 moves
+~1.5 m); its edge_lonlat is then the lane edge moved by the band middle's own deviation station by station (a running
+median of FOLLOW_SMOOTH stations), so the build's in_m .. out_m lie on the paint along the whole run, not at one median.
 """
 from __future__ import annotations
 
@@ -51,6 +56,8 @@ HALF = 0.5
 MIN_AMP = 8.0
 EXT_WIN_M = 3.0
 EXT_FRAC = 0.5
+FOLLOW_SMOOTH = 9         # --follow: running median over this many 1 m stations of the band's middle
+FOLLOW_MAX_M = 1.5        # --follow: a station's band middle further than this from the run's is not the same paint
 GAP_M = 3.0
 GROW_M = 15.0
 PROFILE = {"blue_white": "kerb", "red_white": "kerb", "blue_yellow": "paint"}
@@ -175,9 +182,10 @@ def strips(E, rows, path, px_per_m=12, pad_m=8.0):
         y = lambda o: (O_HI_M - o) * px_per_m  # noqa: E731
         x = lambda s: (s - ss[0]) * px_per_m  # noqa: E731
         d.line([(0, y(0)), (im.width, y(0))], fill=(0, 220, 255), width=1)
+        dev = follow(m, ss) if m.get("followed") else np.zeros(len(ss))
         for o in (m["in_m"], m["out_m"]):
             for x0 in range(0, im.width, 8):
-                d.line([(x0, y(o)), (x0 + 4, y(o))], fill=(255, 230, 0), width=1)
+                d.line([(x0, y(o + dev[x0])), (x0 + 4, y(o + dev[min(len(dev) - 1, x0 + 4)]))], fill=(255, 230, 0), width=1)
         for s in (m["s0"], m["s1"]):
             d.line([(x(s), 0), (x(s), im.height)], fill=(255, 230, 0), width=1)
         if tr:
@@ -276,10 +284,37 @@ def measure(E, side, s0, s1):
         if not nxt:
             break
         hi = nxt[0]
+    # the band's middle station by station over the whole measured extent (--follow: a kerb that drifts across the line's
+    # offsets is laid along its own paint, not at one median offset)
+    track = []
+    s = float(ss[lo])
+    while s <= float(ss[hi]) + 1e-6:
+        i = int(round((s - lo_s) / DS_M))
+        if i - half >= 0 and i + half < len(ss):
+            r = station(G[i - half:i + half + 1], offs)
+            if r is not None and r[2] >= MIN_AMP and abs((r[0] + r[1]) / 2 - (o_in + o_out) / 2) <= FOLLOW_MAX_M:
+                track.append((round(s, 2), round(float((r[0] + r[1]) / 2), 3)))
+        s += STEP_M
+    mids = [m for _, m in track]
     return {"in_m": round(o_in, 2), "out_m": round(o_out, 2), "s0": round(float(ss[lo]), 2), "s1": round(float(ss[hi]), 2),
             "stations_measured": len(rows), "stations_tried": int(round((s1 - s0) / STEP_M)) + 1,
             "block_amp_median": round(amp_med, 1),
-            "width_p25_p75": [round(float(np.percentile([r[2] - r[1] for r in rows], q)), 2) for q in (25, 75)]}
+            "width_p25_p75": [round(float(np.percentile([r[2] - r[1] for r in rows], q)), 2) for q in (25, 75)],
+            "middle_p10_p90": [round(float(np.percentile(mids, q)), 2) for q in (10, 90)] if mids else None,
+            "track": track}
+
+
+def follow(m, q):
+    """the band middle's deviation from the run's (in_m + out_m) / 2 at stations q: a running median over FOLLOW_SMOOTH
+    measured stations, held flat past the first / last one"""
+    tr = m["track"]
+    if not tr:
+        return np.zeros(len(q))
+    s = np.array([t[0] for t in tr])
+    c = np.array([t[1] for t in tr])
+    k = FOLLOW_SMOOTH // 2
+    sm = np.array([np.median(c[max(0, i - k):i + k + 1]) for i in range(len(c))])
+    return np.interp(q, s, sm) - (m["in_m"] + m["out_m"]) / 2
 
 
 def pct(v, q):
@@ -301,22 +336,28 @@ def main(argv=None):
         for spec in opt["--spans"].split(","):
             f = spec.split(":")
             s0, s1 = (float(v) for v in f[1].split("-"))
-            specs.append((f[0].upper()[0], s0, s1, f[2] if len(f) > 2 else None))
+            specs.append((f[0].upper()[0], s0, s1, f[2] if len(f) > 2 and f[2] else None, len(f) > 3 and f[3] == "eye"))
     else:
         for t in truth:
             e = t.get("s_eye") or [t["s0"], t["s1"]]
-            specs.append((t["side"][0].upper(), float(e[0]), float(e[1]), t.get("colour")))
+            specs.append((t["side"][0].upper(), float(e[0]), float(e[1]), t.get("colour"), False))
     kerbs, res = [], {"in": [], "out": [], "s0": [], "s1": [], "width": []}
     strip_rows = []
-    for sd, s0, s1, colour in specs:
+    for sd, s0, s1, colour, eye_ends in specs:
         side = 1 if sd == "L" else -1
         m = measure(E, side, s0, s1)
         tag = f"{sd} {s0:.0f}-{s1:.0f}"
         if m is None:
             print(f"[kerb_offsets] {tag}: no blocks measured")
             continue
+        m["followed"] = "--follow" in opt
+        m["ends"] = "reader"
+        if eye_ends:                                   # side:s0-s1:colour:eye -- the ends read by eye on the end zooms
+            m["ends"] = f"eye (the reader's {m['s0']:.1f}-{m['s1']:.1f})"
+            m["s0"], m["s1"] = s0, s1
         line = (f"[kerb_offsets] {tag}: s {m['s0']:.1f}-{m['s1']:.1f}  in {m['in_m']:+.2f} out {m['out_m']:+.2f} m  "
-                f"({m['stations_measured']}/{m['stations_tried']} stations, block amp {m['block_amp_median']})")
+                f"({m['stations_measured']}/{m['stations_tried']} stations, block amp {m['block_amp_median']}, "
+                f"middle p10..p90 {m['middle_p10_p90']})")
         if truth is not None:
             t = next((t for t in truth if t["side"][0].upper() == sd and (t.get("s_eye") or [t["s0"]])[0] == s0), None)
             if t is not None:
@@ -336,7 +377,13 @@ def main(argv=None):
         ss = np.arange(m["s0"], m["s1"] + 1e-6, 2 * STEP_M)
         if ss[-1] < m["s1"]:
             ss = np.append(ss, m["s1"])
-        lon, lat = E.lonlat(ss, side, np.array([0.0]))
+        if "--follow" in opt:
+            dev = follow(m, ss)
+            pts = [E.lonlat(np.array([q]), side, np.array([dv])) for q, dv in zip(ss, dev)]
+            lon, lat = np.array([[p[0][0, 0]] for p in pts]), np.array([[p[1][0, 0]] for p in pts])
+            m["edge_follows_paint"] = {"max_dev_m": round(float(np.abs(dev).max()), 2)}
+        else:
+            lon, lat = E.lonlat(ss, side, np.array([0.0]))
         kerbs.append({"side": "left" if side == 1 else "right", "s0": m["s0"], "s1": m["s1"], "in_m": m["in_m"],
                       "out_m": m["out_m"], "colour": colour, "profile": PROFILE.get(colour, "kerb"), "s_eye": [s0, s1],
                       "stations_measured": m["stations_measured"],

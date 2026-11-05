@@ -884,6 +884,23 @@ committed trim inputs through fleet-lm-engine's trim and this branch's: byte-ide
 (`test_draft_equiv` x5, `test_registry_moves` x1; without `python` on PATH 5 more fail: `ship_track.sh` calls `python`).
 3 new: the run-on, the keys opt-in, the profile intake.
 
+## Round I (Mac): toward 0.2.4 (in progress)
+
+Round H's leads, built from measurement, all opt-in for Sand Creek. Every NAIP read this round goes through the track's own
+frame (`scripts.geometry.projection._meters_per_degree`, the WGS84 series: 85,659.2 m per degree east, 111,030.5 m north
+here); round G's scratch NAIP helpers (111,320 x cos(lat) / 110,540 m) are retired, and the round I helpers assert the
+track frame on import.
+
+### 1. Fork 94/95, re-measured in the track frame (config)
+- The same cross-sections as round G (every 5 m from the fork node, samples 0.5 m apart from -16 to +16 m along the
+  midline's normal, each the mean over 1 m along). The edge by rule: half-way to the first run of 3 samples (1.5 m) at
+  NAIP gray >= 165, at least 4 m from the midline (1 m bright bands inside are the chevron paint). In round G's frame the
+  rule gives round G's own reads at 12 of 15 stations (the other 3 within 0.5-1 m); 165 is fitted to them [invented].
+- In the track frame both edges move +1.0 .. +1.5 m along the normal (east), as round H predicted (about 1.2 m): west
+  edge -5.25 .. -7.25 m, east +8.25 .. +10.75 m; 13.5-15.0 m wide to s 65, 15.5 at s 70, 18.0 at s 75 (the flare). s 10's
+  east edge has no concrete run (a car or driveway on the gutter): interpolated between s 5 and 15.
+- 91/92 moves 0.06 m in the right frame (round H): kept.
+
 ## PC runbooks (round H)
 
 4j. **Sand Creek 0.2.3** (ledger 0079 rounds E-H). This build carries:

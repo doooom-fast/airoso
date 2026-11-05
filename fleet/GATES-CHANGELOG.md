@@ -14,6 +14,15 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
+## 2026-11-05 (round I) — Sand Creek toward 0.2.4: measured geometry, the numbers it adds (ledger 0079 round I)
+
+No gate threshold, floor or bypass moved this round unless listed here. All opt-in, Sand Creek only
+(`test_round_i_keys_are_opt_in`):
+
+- Numbers the round adds:
+  - ⚠ fork 94/95's NAIP edge rule: gray >= 165, a run of 3 samples (1.5 m), at least 4 m from the midline [invented; 165
+    fitted so the rule gives round G's own reads at 12 of 15 stations in round G's frame]. A measurement rule, not a gate.
+
 ## 2026-11-05 (round H) — Sand Creek: the 8 mouths and 13 houses from measurement; one bypass, one gate reading (ledger 0079 round H)
 
 No threshold or floor moved (APPROACH_DG_PER_M 3 %/m ⚠ invented, MOUTH_TOL_M, LANE_TOL_M, NOTCH_TOL_M, the houses floor

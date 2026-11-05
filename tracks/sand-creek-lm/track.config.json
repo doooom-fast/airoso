@@ -480,83 +480,78 @@
           "edges_m": [
             [
               5,
-              -6.25,
-              7.25
-            ],
-            [
-              10,
-              -6.25,
-              7.25
+              -5.25,
+              8.75
             ],
             [
               15,
-              -6.75,
-              7.25
+              -5.25,
+              8.75
             ],
             [
               20,
-              -6.25,
-              7.25
+              -5.25,
+              8.25
             ],
             [
               25,
-              -6.25,
-              7.25
+              -5.25,
+              8.25
             ],
             [
               30,
-              -6.25,
-              7.25
+              -5.25,
+              8.25
             ],
             [
               35,
-              -6.25,
-              7.25
+              -5.25,
+              8.25
             ],
             [
               40,
-              -6.75,
-              7.25
+              -5.25,
+              8.25
             ],
             [
               45,
-              -7.25,
-              7.25
+              -5.75,
+              8.25
             ],
             [
               50,
-              -7.25,
-              7.25
+              -6.25,
+              8.75
             ],
             [
               55,
-              -7.25,
-              7.25
+              -6.25,
+              8.25
             ],
             [
               60,
-              -7.75,
-              7.75
+              -6.25,
+              8.25
             ],
             [
               65,
-              -7.75,
-              7.75
+              -6.25,
+              8.75
             ],
             [
               70,
-              -8.25,
-              9.75
+              -6.75,
+              8.75
             ],
             [
               75,
-              -8.75,
-              10.25
+              -7.25,
+              10.75
             ]
           ]
         }
       ],
-      "_merge_forks_doc": "ledger 0079 0.2.3 (coordinator 2026-11-05 under \"I just want real\": NAIP shows one asphalt with a painted chevron median, so build what's there): the two paint-divided approaches OSM draws as two one-way pieces leaving one node at 13-16 deg become ONE street (tools/trim_connectors.py merge_forks). edges_m [s, left, right] [measured]: the asphalt's two edges off NAIP 2023 (tracks/sand-creek/source/naip_2023_sc_z18.jpg, 0.46 m/px), read every 5 m on cross-sections sampled 0.5 m apart, each sample the mean over 1 m along the street; an edge = where the asphalt meets the first concrete band (curb, gutter, sidewalk) 1.5 m or wider (1 m bands inside are paint), in metres along the OSM midline's normal (-dz, dx) of the direction away from the fork node, s metres from the node; about +-0.5 m. Held past s 75: the curb returns into the lap there belong to the lap mouth. 91/92: 14.0 m at the node to 24.5 m at s 75; from about s 57 to the lap crosswalk a 3.5-4 m concrete island stands at +1 to +5 m (NAIP: bright like the sidewalks, so raised); it is NOT built, and the yellow chevrons s 20-55 are not painted: no chain step here makes an island or paints a chevron median on a grid street. 94/95: 13.5-14.5 m to s 55, 15.5 m at s 60-65, 18-19 m at s 70-75 (the flare into the lap); its median is flush yellow chevron paint, not painted here either.",
+      "_merge_forks_doc": "ledger 0079 0.2.3 (coordinator 2026-11-05 under \"I just want real\": NAIP shows one asphalt with a painted chevron median, so build what's there): the two paint-divided approaches OSM draws as two one-way pieces leaving one node at 13-16 deg become ONE street (tools/trim_connectors.py merge_forks). edges_m [s, left, right] [measured]: the asphalt's two edges off NAIP 2023 (tracks/sand-creek/source/naip_2023_sc_z18.jpg, 0.46 m/px), read every 5 m on cross-sections sampled 0.5 m apart, each sample the mean over 1 m along the street; an edge = where the asphalt meets the first concrete band (curb, gutter, sidewalk) 1.5 m or wider (1 m bands inside are paint), in metres along the OSM midline's normal (-dz, dx) of the direction away from the fork node, s metres from the node; about +-0.5 m. Held past s 75: the curb returns into the lap there belong to the lap mouth. 91/92: 14.0 m at the node to 24.5 m at s 75; from about s 57 to the lap crosswalk a 3.5-4 m concrete island stands at +1 to +5 m (NAIP: bright like the sidewalks, so raised); it is NOT built, and the yellow chevrons s 20-55 are not painted: no chain step here makes an island or paints a chevron median on a grid street. 94/95: 13.5-14.5 m to s 55, 15.5 m at s 60-65, 18-19 m at s 70-75 (the flare into the lap); its median is flush yellow chevron paint, not painted here either. Round I (ledger 0079): 94/95 re-measured in the track frame (scripts.geometry.projection's WGS84 series; round G's helpers used 111,320 cos(lat) / 110,540 m and read both edges about 1.2 m west of where they are): the same cross-sections, the edge picked by rule = half-way to the first run of 3 samples (1.5 m) at NAIP gray >= 165 at least 4 m out from the midline (the rule reproduces round G's reads at 12 of 15 stations in round G's frame; 165 fitted to them [invented]); s 10's right edge has no such run (a car / driveway): interpolated between s 5 and 15. Both edges move +1.0..+1.5 m along the normal (east), width 13.5-15.5 m to s 70, 18 m at s 75. 91/92 moves 0.06 m in the right frame: kept.",
       "pad_arms": true,
       "median_crossings": [
         {

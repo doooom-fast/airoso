@@ -200,7 +200,7 @@
   "layouts": [
     {
       "id": "stage",
-      "name": "Under the Dragon (Gravel)",
+      "name": "Under the Dragon (Gravel) (LM engine)",
       "run": "Point to point, north-east to south-west along County Road 109 (the mapped road's OSM order)",
       "ai": "ai/stage",
       "_doc": "The one layout: CR 109 in its OSM order, north-east (39.8628, -108.9059, toward Rangely) to south-west (39.7466, -109.0495). Which end the rally starts from is unknown without the event GPX (route._start_at_doc). ONE-CHAIN section 3: a rally stage's surfaces are two TRACKS (L8), never two layouts."

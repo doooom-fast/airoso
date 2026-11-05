@@ -204,7 +204,7 @@
   "layouts": [
     {
       "id": "stage",
-      "name": "Dragon Tail (Gravel)",
+      "name": "Dragon Tail (Gravel) (LM engine)",
       "run": "Point to point, east to west along County Road 116",
       "ai": "ai/stage",
       "_doc": "The one layout: the stage as the rally runs it, east to west along CR 116 from route.start_at. ONE-CHAIN section 3: a rally stage's surfaces are two TRACKS (L8), never two layouts."

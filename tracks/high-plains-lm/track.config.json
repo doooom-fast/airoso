@@ -35,7 +35,7 @@
         0.55,
         0.95
       ],
-      "_doc": "ledger 0080: the two paint schemes NAIP 2023 (0.3 m) shows, one texture (textures/kerb_atlas_hp.png, made by make_kerb_atlas.py); tools/author_kerbs_blend.py maps each run's u into its colour's cell"
+      "_doc": "ledger 0081: the two paint schemes NAIP 2023 (0.3 m) shows, one texture (textures/kerb_atlas_hp.png, made by make_kerb_atlas.py); tools/author_kerbs_blend.py maps each run's u into its colour's cell"
     }
   },
   "scenery": {
@@ -1174,7 +1174,7 @@
     },
     "1KERB": {
       "diffuse": "textures/kerb_atlas_hp.png",
-      "_doc": "the kerb paint the aerial shows: blue / white kerbs and blue / yellow edge stripes (ledger 0080), an atlas of two flat two-band stripes (this port's own file). Keyed 1KERB, the row the traced kerbs (1KERB_circuit_*, tools/author_kerbs_blend.py) bind; not 1KERB_RACE, which the split routes to the race kn5 as race furniture"
+      "_doc": "the kerb paint the aerial shows: blue / white kerbs and blue / yellow edge stripes (ledger 0081), an atlas of two flat two-band stripes (this port's own file). Keyed 1KERB, the row the traced kerbs (1KERB_circuit_*, tools/author_kerbs_blend.py) bind; not 1KERB_RACE, which the split routes to the race kn5 as race furniture"
     }
   },
   "lm_intake": {

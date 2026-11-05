@@ -14,7 +14,7 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
-## 2026-11-05 — circuit kerbs off NAIP 0.3 m: the measurer's invented numbers (ledger 0080; no gate threshold, no bypass)
+## 2026-11-05 — circuit kerbs off NAIP 0.3 m: the measurer's invented numbers (ledger 0081; no gate threshold, no bypass)
 
 No gate threshold changed and nothing is bypassed; every gate runs as before on each rebuilt circuit. New ⚠ invented
 numbers, none a gate, all tuning of a colour measurer or a build profile (the image is the measurement):
@@ -26,6 +26,10 @@ numbers, none a gate, all tuning of a colour measurer or a build profile (the im
 - `tools/author_kerbs_blend.py` `MIN_PAINT_W_M` 0.45 (a flat "paint" run narrower than ~1.5 px at 0.3 m is noise). A
   "paint" run is built FLAT at the existing `KERB_LIP_M` (no height is seen in an image, so none is built), with the
   existing back fall; "kerb" runs keep the config's `kerb.height_m` as before.
+- `tools/kerb_blocks.py` (a lead finder, not a measurement; nothing is built from it unchecked): `SAMPLE_M` 0.25, the band
+  -2.0..+1.5 m in 0.15 m columns, `WIN_M` 6, periods 1.5-2.5 m, `MIN_AMP` 22 (luminance), `MIN_MEAN` 125, `MIN_RUN_M` 5,
+  `GAP_M` 4. Its precision is poor: on High Plains (the control) it lists 70 runs / 1,633 m against the 20 / 560 m checked.
+- `tools/apron_seat_check.py`: report only (four samples per apron triangle), no threshold.
 - The spans themselves: a colour scan's run (blue or red >= 3 px in a 5 m window of the -2.5..+1.0 m edge band) less its
   2 m window at each end, every span checked by eye on `tools/edge_sheet.py` zooms kept beside the trace.
 

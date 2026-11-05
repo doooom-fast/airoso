@@ -1,4 +1,4 @@
-"""A NAIP crop at the scene's native resolution, read from Microsoft's Planetary Computer (ledger 0080).
+"""A NAIP crop at the scene's native resolution, read from Microsoft's Planetary Computer (ledger 0081).
 
 USGS's NAIP ImageServer serves only each state's latest year it holds (Colorado: 2019 at 0.6 m), and the z18 web tiles
 undersample a 0.3 m scene (0.46 m at High Plains' latitude). The Planetary Computer carries every NAIP year as the

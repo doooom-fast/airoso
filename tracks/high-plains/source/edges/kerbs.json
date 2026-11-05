@@ -1,8 +1,8 @@
 {
- "_doc": "Racing kerbs and painted edge stripes measured off the aerial for the Lake Murray engine port (ledgers 0078, 0080). Each run is the lane edge it lies along, as lon/lat, plus where its paint sits across that edge (in_m / out_m: metres past the lane edge of the live line's widths, - = inside). The build places the run OUTSIDE the lane edge (tools/author_kerbs_blend.py); profile 'kerb' rises to the config's kerb.height_m, 'paint' is laid flat.",
+ "_doc": "Racing kerbs and painted edge stripes measured off the aerial for the Lake Murray engine port (ledgers 0078, 0081). Each run is the lane edge it lies along, as lon/lat, plus where its paint sits across that edge (in_m / out_m: metres past the lane edge of the live line's widths, - = inside). The build places the run OUTSIDE the lane edge (tools/author_kerbs_blend.py); profile 'kerb' rises to the config's kerb.height_m, 'paint' is laid flat.",
  "imagery": "USDA NAIP co_m_3910317_ne_13_030_20230928 (2023-09-28), 0.3 m native, Planetary Computer crop",
  "image_m_per_px": 0.3,
- "method": "ledger 0080: tools/aerial_edges.py (kerb runs) and a colour scan of the lane-edge band (blue present) on the 0.3 m crop found the candidates; each span (the scan's, less its 2 m window at each end) checked by eye on tools/edge_sheet.py zooms (kerbs_2023_030_sheet.jpg: all 20, colour by eye), then measured by tools/kerb_spans.py. Round 4's 12 runs (NAIP 2023 z18 web tiles, 0.46 m) are all inside these 20; its s 2056-2071 'blue_white' is a blue / yellow edge stripe at 0.3 m",
+ "method": "ledger 0081: tools/aerial_edges.py (kerb runs) and a colour scan of the lane-edge band (blue present) on the 0.3 m crop found the candidates; each span (the scan's, less its 2 m window at each end) checked by eye on tools/edge_sheet.py zooms (kerbs_2023_030_sheet.jpg: all 20, colour by eye), then measured by tools/kerb_spans.py. Round 4's 12 runs (NAIP 2023 z18 web tiles, 0.46 m) are all inside these 20; its s 2056-2071 'blue_white' is a blue / yellow edge stripe at 0.3 m",
  "line": "data/gate_centerline.json of the live track (engine frame)",
  "measurer": {
   "tool": "tools/kerb_spans.py",
@@ -1486,6 +1486,6 @@
  "image": "naip_crop.py --item co_m_3910317_ne_13_030_20230928_20240104 --track tracks/high-plains --margin-m 40 (4495x1202 px, 0.30 m/px)",
  "runoff": {
   "built": [],
-  "note": "No paved run-off (re-checked on the native 0.3 m crop, ledger 0080: runoff_2023_030_sheet.jpg): the colour reader's 21 'asphalt past the edge' runs are the other configurations' pavement (the north course's branches at s 1,348 / 2,722 / 2,832, the parallel loop beside s 265-322 and s 456-474), the pit lane (s 3,040-3,082) and dirt; beyond every kerb is graded dirt and prairie. No paved run-off: the NAIP 2023 corner sheets show grass and graded dirt beyond the kerbs at every corner; the colour reader's 'asphalt' runs (edges.traced.json runoff) were checked by eye and are dark vegetation, dirt and shadow, or the pit / paddock roads that join the lap. Rejected, not built."
+  "note": "No paved run-off (re-checked on the native 0.3 m crop, ledger 0081: runoff_2023_030_sheet.jpg): the colour reader's 21 'asphalt past the edge' runs are the other configurations' pavement (the north course's branches at s 1,348 / 2,722 / 2,832, the parallel loop beside s 265-322 and s 456-474), the pit lane (s 3,040-3,082) and dirt; beyond every kerb is graded dirt and prairie. No paved run-off: the NAIP 2023 corner sheets show grass and graded dirt beyond the kerbs at every corner; the colour reader's 'asphalt' runs (edges.traced.json runoff) were checked by eye and are dark vegetation, dirt and shadow, or the pit / paddock roads that join the lap. Rejected, not built."
  }
 }

@@ -1,4 +1,4 @@
-"""The aerial beside what was built: one pair of top-down cells per built object group (ledger 0080; L12 "show, don't assert").
+"""The aerial beside what was built: one pair of top-down cells per built object group (ledger 0081; L12 "show, don't assert").
 
 For each OBJ group whose name starts with --prefix (default 1KERB_circuit_) in a BUILT gate OBJ (data/track.obj: the road
 kn5 read back, the engine frame x = east, y = up, z = north about data/centerline.local.json's origin), the left cell is

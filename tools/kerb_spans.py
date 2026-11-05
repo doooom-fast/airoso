@@ -1,4 +1,4 @@
-"""Kerb runs measured off a georeferenced aerial over hand-checked station spans (ledger 0080).
+"""Kerb runs measured off a georeferenced aerial over hand-checked station spans (ledger 0081).
 
 tools/aerial_edges.py FINDS kerb paint (and its windows fragment a run where a stripe fades); the spans it and the colour
 scan find are checked by eye on tools/edge_sheet.py zooms and written down as "side:s0-s1:colour". This tool then MEASURES
@@ -127,7 +127,7 @@ def main(argv=None):
                       "edge_lonlat": [[round(v, 8) for v in lonlat(q, side, 0.0)] for q in ss]})
         print(f"[kerb_spans] {spec}: in {k_in:+.2f} out {k_out:+.2f} m over {len(ins)} stations")
     out = {"_doc": ("Racing kerbs and painted edge stripes measured off the aerial for the Lake Murray engine port (ledgers "
-                    "0078, 0080). Each run is the lane edge it lies along, as lon/lat, plus where its paint sits across "
+                    "0078, 0081). Each run is the lane edge it lies along, as lon/lat, plus where its paint sits across "
                     "that edge (in_m / out_m: metres past the lane edge of the live line's widths, - = inside). The build "
                     "places the run OUTSIDE the lane edge (tools/author_kerbs_blend.py); profile 'kerb' rises to the "
                     "config's kerb.height_m, 'paint' is laid flat."),

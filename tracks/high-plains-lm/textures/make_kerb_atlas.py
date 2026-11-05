@@ -1,4 +1,4 @@
-"""kerb_atlas_hp.png: High Plains' two kerb paint schemes side by side (ledger 0080; kerb.atlas in track.config.json).
+"""kerb_atlas_hp.png: High Plains' two kerb paint schemes side by side (ledger 0081; kerb.atlas in track.config.json).
 
 u 0-0.5: kerb_bluewhite.png as it was (the blue / white kerbs, round 4). u 0.5-1: the blue / yellow edge stripes, the same
 two-band layout (v top half the light band, bottom half the blue), the blue the same paint as the kerbs' and the yellow

@@ -1,4 +1,4 @@
-"""A contact sheet of aerial zooms along a circuit's line, to check traced kerbs / run-off by eye (ledger 0080; L12).
+"""A contact sheet of aerial zooms along a circuit's line, to check traced kerbs / run-off by eye (ledger 0081; L12).
 
 Each cell is a CELL_M square of the georeferenced aerial centred on one window's middle station, upsampled, with both
 lane edges of the track's line (data/gate_centerline.json, its widths) in thin cyan, the window's stretch of the chosen

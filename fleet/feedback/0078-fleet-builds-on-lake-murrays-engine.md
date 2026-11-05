@@ -1098,7 +1098,8 @@ sync-back changed no record.
     line's 3DEP profile; then the pad is unparked. Not built yet. Then C12 / C16's mouths.
   - Tiered terrain (Round 7 item 6): far cells at the 3DEP grid's 40 m, whatever the drive finds of the frame rate.
 
-- Racing kerbs and run-off outlines for the circuits, measured off NAIP / lidar; race kerbs at Sand Creek's race corners.
+- Racing kerbs and run-off outlines for the circuits, measured off NAIP / lidar: started in ledger 0081 (High Plains 0.1.2
+  built off NAIP 2023 at 0.3 m; its Owed lists the rest). Race kerbs at Sand Creek's race corners.
 - A coarser `seat_edges` cut where the bank is under ~2 % (size).
 - The free roam's grid streets through the LM junction tools (route/trim → weld → gap → pads).
 - `capture.bridges[].profile_m` measured decks on the v021 line.

@@ -706,7 +706,24 @@ def cut_at_pads(conns, pads):
                 hit = (pd, ins)
                 break
         if hit is None:
+            # a street that already ENDS on a box edge (the grid's OSM ways stop at the declared arm cut: 50th_dahlia's
+            # grid_unclassified_0 and grid_tertiary_44, 2-4 mm off it) is an arm as it stands, its end never reached on
+            # into the pad (round G: they were stretched to the lap and stood under the deck). On the edge = within
+            # draft_pads.splice_rows' own 0.05 m of "on a cut line"
             out.append(c)
+            for end, q in (("start", pts[0]), ("end", pts[-1])):
+                for pd in pads:
+                    box = [tuple(b) for b in pd["box"]]
+                    e = next((e for e in range(len(box)) if _project(q[0], q[2], [(box[e - 1][0], 0, box[e - 1][1]),
+                                                                                    (box[e][0], 0, box[e][1])])[0] <= 0.05),
+                             None)
+                    if e is not None:
+                        arms.append({"pad": pd["id"], "connector": c["name"], "cut_xyz": [round(v, 3) for v in q],
+                                     "box_edge": [list(box[e - 1]), list(box[e])], "on_edge": True,
+                                     "declared_arm": next((a["connector"] for a in pd.get("arms") or []
+                                                           if a["connector"] == c["name"]), None)})
+                        print(f"[trim] {c['name']} ({end}) ends on pad {pd['id']}'s box edge: an arm as it stands")
+                        break
             continue
         pd, ins = hit
         box = [tuple(q) for q in pd["box"]]

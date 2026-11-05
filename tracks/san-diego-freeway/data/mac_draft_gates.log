@@ -1,0 +1,102 @@
+Mac network draft (ledger 0075, second addendum, 2026-11-03). The chain's draft steps, run on the Mac from the repo
+root with the branch's track.config.json: scripts.gps.network, scripts.gps.classify (live Overpass),
+scripts.elevation.network_elev (live 3DEP), scripts.geometry.build_network_mesh, scripts.geometry.network_reference;
+then drive_test --layout freeroam and audit_mesh on that draft's data/track.obj. No kn5, nothing installed.
+Row 0 is the PC's committed exp1 data re-meshed here (the Mac's live front half reproduced it byte for byte).
+
+=== per-fix table (final scripts/, every row re-gated with them)
+run | floating_furniture | soft_top_in_lane | severe_steps | severe_per_km | daylight_gaps | excursion_drops | obstruction_stations | kinks_per_km | steps_per_km | lap_m | fail | A B C D E H K J worst-J
+0 exp1 (PC data) | 13223 | 151 | 90 | 8.44 | 602 | 22 | 3 | 35.9 | 10.4 | 10669.7 | True | 0 0 9 469 7 0 0 14 800.5
+1 + walls.seat seated | 5 | 107 | 92 | 8.62 | 0 | 11 | 9 | 36.36 | 10.4 | 10669.7 | True | 0 0 9 0 0 0 34 14 800.5
+2 + terrain east -117.115 | 1 | 107 | 92 | 8.62 | 0 | 11 | 9 | 36.36 | 10.4 | 10669.7 | True | 0 0 9 0 0 0 34 0 0.0
+3 + network.join_nodes | 1 | 98 | 46 | 4.31 | 0 | 13 | 4 | 30.55 | 11.81 | 10669.7 | True | 0 0 9 0 0 0 6 0 0.0
+4 + network.stable_snap | 0 | 5 | 37 | 3.47 | 0 | 9 | 0 | 29.92 | 14.35 | 10661.1 | True | 0 0 8 0 0 0 2 0 0.0
+5 + network.cap_dead_ends + capture.bridges (final) | 0 | 0 | 16 | 1.5 | 0 | 6 | 0 | 30.09 | 16.45 | 10635.9 | False | 0 0 8 0 0 0 2 0 0.0
+
+=== final draft: network_elev
+sampling 3DEP for 45990 edge vertices across 563 edges ...
+  join_nodes: 311 shared nodes pinned to one height (ledger 0075)
+terrain bbox OVERRIDE from config: [32.7, -117.275, 32.865, -117.115]
+sampling terrain grid 272x333 @ 55.0m — 33353/90576 near-road cells (rest filled flat) ...
+network elevation done: {'z_min_m': 1.0, 'z_max_m': 135.1, 'range_m': 134.1, 'grid': '272x333@55.0m'}
+
+=== final draft: build_network_mesh
+  join_nodes: 311 shared nodes, deck lift pinned to one value each (ledger 0075)
+  median fill: 911 strips between close carriageways
+  bridge runs: 543 at-grade deck spans over carved ground get slab + piers
+  viaducts: 735 decks, 2472 piers (columns under roads suppressed)
+  verge gap: 41838 shoulder tris dropped over pavement (no grass over a deck)
+  (track grass clear skipped: string indices must be integers, not 'str')
+  walls (seated): 563 freeway edges — 31916 deck / 50368 at-grade barrier vertices, 6664 gapped over other pavement or a crossing, 825 deck-edge quads clipped
+  verge (seated): 4030 shoulder tris dropped over a neighbouring edge's pavement
+  dead-end caps: 156 barriers across dead ends (39 moved in off a deck to the last at-grade vertex; 22 ends left open, no at-grade vertex on their edge: data/network.caps.json 'uncapped'; 5 merge-trimmed ends skipped)
+  reference-line input: 563 swept edge lines -> data/network.edges.local.json
+network mesh: {"edges": 563, "vertices": 1098850, "triangles": 1497238, "road_groups": 4, "grass_groups": 35, "viaducts": 735, "viaduct_groups": 7, "grid": "543x665", "dummies": 10, "origin_lonlat": [-117.17487, 32.784595], "elev0_m": 1.0}
+  (phase-5 stub barriers: 6180 1WALL_STUB verts on 156 declared footprint segments — D exempt there)
+AUDIT san_diego_freeway   (roads 82282v, grass 371252v, walls 157332v, piers 2472)
+  A. supports standing in a road : 0
+  B. terrain poking through road : 0  (worst +0.0 m)
+  C. at-grade junction crossings : 8  ({'ramp': 8, 'mainline': 0})
+  D. walls sitting on a road     : 0
+  E. walls floating over ground  : 0  (worst +0.0 m)
+  F. curbs not flush             : 0  (of 69592 curb verts,
+                                      edge-scoped, top-surface only;
+                                      0 skirt verts off terrain (advisory), 568 side faces skipped,
+                                      grounding is gated by drive_test + E/H)
+  G. plants floating over ground : (env not built)
+  H. ground cutting into road    : (no ground grid)  (worst +0.0 m)
+  I. sidewalk isolating pavement : 0
+  K. kerb/sidewalk in carriageway: 2  (worst +0.12 m above the road)
+  J. terrain triangles over road : 0
+  => 10 issues
+
+=== final draft: drive_test (exit 0)
+  [drive] corridor cull: skipped 450484 triangles beyond 120 m
+  layout freeroam: direction forward, kind street, furniture none, OBJ data/track.obj
+DRIVE TEST san_diego_freeway [freeroam forward street]  lap 10.64 km  (10 wheel paths @ 1.0 m)
+  ground on top mid-lane : 0
+  floating furniture (walls/fences off support): 0 
+  undrivable corners (>100deg @ <11m): 0 
+  severe steps (>6 cm)  : 16
+  bumps >2.5 cm /km      : 16.45 (limit 75 for tarmac)
+  slope kinks >3.0%% /km   : 30.09
+  daylight gaps at edges : 0
+  off-road excursion drops>20cm : 6  (far flare ledges, reported: 53)
+    worst excursion drop: (2852.4, 8.5, 1.79, False)
+    worst excursion drop: (6751.6, -14.0, 1.72, False)
+    worst excursion drop: (3904.5, -12.5, 0.79, True)
+    worst excursion drop: (4953.1, -12.5, 0.7, False)
+    worst excursion drop: (10350.5, 12.5, 0.62, False)
+    worst excursion drop: (10050.2, -12.5, 0.57, False)
+  obstructed stations    : 0
+    worst severe: (3312.0, 2.86, 0.352)
+    worst severe: (3311.0, 2.86, 0.349)
+    worst severe: (3335.0, 0.75, 0.279)
+    worst severe: (3334.0, 0.75, 0.275)
+    worst severe: (3341.0, -0.75, 0.216)
+    worst severe: (3342.0, -0.75, 0.216)
+  NETWORK: walked the reference line 'I 8 eastbound' (edges [200, 141, 143, 411, 242, 243, 542, 447, 446, 530, 531, 373, 372, 299, 298, 547, 504, 358, 357, 548]), 10.636 of 225.732 km built — UNJUDGED by this gate: 543 edge(s), 215.082 km (data/network.reference.json)
+    ... 503 more in data/network.reference.json
+  => PASS   (data/drive_test.freeroam.json)
+
+DRIVE TEST SUMMARY san_diego_freeway: freeroam=PASS   (data/drive_test.json)
+
+=== final draft: audit_mesh (exit 0)
+  (phase-5 stub barriers: 6180 1WALL_STUB verts on 156 declared footprint segments — D exempt there)
+AUDIT san_diego_freeway   (roads 82282v, grass 371252v, walls 157332v, piers 2472)
+  A. supports standing in a road : 0
+  B. terrain poking through road : 0  (worst +0.0 m)
+  C. at-grade junction crossings : 8  ({'ramp': 8, 'mainline': 0})
+  D. walls sitting on a road     : 0
+  E. walls floating over ground  : 0  (worst +0.0 m)
+  F. curbs not flush             : 0  (of 69592 curb verts,
+                                      edge-scoped, top-surface only;
+                                      0 skirt verts off terrain (advisory), 568 side faces skipped,
+                                      grounding is gated by drive_test + E/H)
+  G. plants floating over ground : (env not built)
+  H. ground cutting into road    : 0  (worst +0.0 m)
+  I. sidewalk isolating pavement : 0
+  K. kerb/sidewalk in carriageway: 2  (worst +0.12 m above the road)
+  J. terrain triangles over road : 0
+  => 10 issues
+

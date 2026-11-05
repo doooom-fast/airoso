@@ -54,16 +54,26 @@ class _NodeGrid:
         self.cx: list[float] = []
         self.cy: list[float] = []
         self.cn: list[int] = []  # how many points contributed (running mean)
+        self.sx: list[float] = []  # the SEED point that founded each cluster (a real input vertex; stable_snap's node point)
+        self.sy: list[float] = []
+        self.layer_of: list = []  # the OSM layer each cluster belongs to (stable_snap; None = layer-blind, the default)
+        self.exact: dict[tuple[float, float], int] = {}   # stable_snap: a coordinate already seen -> its node, any layer
 
     def _key(self, x: float, y: float) -> tuple[int, int]:
         return (int(math.floor(x / self.cell)), int(math.floor(y / self.cell)))
 
-    def assign(self, x: float, y: float) -> int:
+    def assign(self, x: float, y: float, layer=None) -> int:
+        """``layer`` (stable_snap only): join only a cluster of the same OSM layer, unless this exact coordinate was
+        already seen (a node two ways share, a ramp leaving a bridge included); None = layer-blind, as before."""
+        if layer is not None and (x, y) in self.exact:
+            return self.exact[(x, y)]
         ci, cj = self._key(x, y)
         best, best_d2 = -1, self.r * self.r
         for di in (-1, 0, 1):
             for dj in (-1, 0, 1):
                 for idx in self.buckets.get((ci + di, cj + dj), ()):
+                    if layer is not None and self.layer_of[idx] != layer:
+                        continue
                     d2 = (x - self.cx[idx]) ** 2 + (y - self.cy[idx]) ** 2
                     if d2 <= best_d2:
                         best, best_d2 = idx, d2
@@ -72,11 +82,43 @@ class _NodeGrid:
             self.cx[best] += (x - self.cx[best]) / n
             self.cy[best] += (y - self.cy[best]) / n
             self.cn[best] = n
+            if layer is not None:
+                self.exact.setdefault((x, y), best)
             return best
         idx = len(self.cx)
         self.cx.append(x); self.cy.append(y); self.cn.append(1)
+        self.sx.append(x); self.sy.append(y); self.layer_of.append(layer)
         self.buckets.setdefault((ci, cj), []).append(idx)
+        if layer is not None:
+            self.exact.setdefault((x, y), idx)
         return idx
+
+    def nearest(self, x: float, y: float, fallback: int, layer=None) -> int:
+        """The FINAL cluster centre nearest (x, y) — a pure function of the point once every point is assigned (the
+        stable snap's second pass). A centre drifts less than ``r`` from the cell it was bucketed in, and every
+        point lay within ``r`` of its centre when assigned, so +-2 cells holds it; ``fallback`` if none is found.
+        ``layer`` as assign: an exactly seen coordinate keeps its node, otherwise only that layer's centres."""
+        if layer is not None and (x, y) in self.exact:
+            return self.exact[(x, y)]
+        ci, cj = self._key(x, y)
+        best, best_d2 = fallback, None
+        for di in (-2, -1, 0, 1, 2):
+            for dj in (-2, -1, 0, 1, 2):
+                for idx in self.buckets.get((ci + di, cj + dj), ()):
+                    if layer is not None and self.layer_of[idx] != layer:
+                        continue
+                    d2 = (x - self.cx[idx]) ** 2 + (y - self.cy[idx]) ** 2
+                    if best_d2 is None or d2 < best_d2 or (d2 == best_d2 and idx < best):
+                        best, best_d2 = idx, d2
+        return best
+
+
+def _osm_layer(v) -> int:
+    """An OSM ``layer`` tag as an int (absent / unreadable = 0)."""
+    try:
+        return int(float(v or 0))
+    except (TypeError, ValueError):
+        return 0
 
 
 def _resample(pts: list[tuple[float, float]], step: float) -> list[tuple[float, float]]:
@@ -130,6 +172,7 @@ def build_network(project_dir: str | Path) -> dict:
     home_ll = (cfg.location["lon"], cfg.location["lat"])
 
     lines: list[list[tuple[float, float]]] = []
+    line_layer: list[int] = []
     src_type = cfg.source.get("type")
     if src_type == "osm-network":
         # Fetch a whole freeway box straight from OSM: every mainline carriageway AND every ramp /
@@ -141,6 +184,7 @@ def build_network(project_dir: str | Path) -> dict:
         refs = cfg.source.get("refs")      # restrict mainlines to these OSM refs (excludes I-805 etc.)
         ways = fetch_highways_by_class(bbox, classes, refs=refs)
         lines = [w["geom"] for w in ways]
+        line_layer = [_osm_layer(w.get("layer")) for w in ways]   # stable_snap clusters within one layer
         by_hw: dict[str, int] = {}
         for wobj in ways:
             by_hw[wobj["highway"]] = by_hw.get(wobj["highway"], 0) + 1
@@ -197,13 +241,30 @@ def build_network(project_dir: str | Path) -> dict:
     to_m, to_ll = _projector(lat0, lon0)
 
     grid = _NodeGrid(snap)
+    # STABLE SNAP (opt-in: network.stable_snap, ledger 0075). assign() moves a cluster's centre by a running mean as
+    # points join it, so the SAME point (a node two OSM ways share) met again in a later way can land in a different
+    # cluster than it did the first time: the two ways then end at two nodes a few metres apart with no link between
+    # them. On the San Diego freeway that left 101 pairs of edge ends 2-9 m apart that are not one node, three of them
+    # in I 8 eastbound (6.1-6.7 m holes at 33, 3,373 and 3,914 m: ground on top mid-lane, severe steps). With
+    # stable_snap every point is first assigned (the clusters settle), then mapped to its nearest FINAL centre, a pure
+    # function of the point, and placed at that node's seed point: one coordinate, one node. And it clusters near points
+    # only within ONE OSM layer (an exactly shared coordinate still joins across layers: a real shared node): the
+    # layer-blind snap merged a layer-3 flyover's vertices into the layer-2 I 8 node it passes over, a junction that
+    # does not exist (the PC draft's 2.4 m step at 3,190 m; joined, it pulled the flyovers down into the mainline).
+    stable = bool(net.get("stable_snap", False))
+    first: list[list[int]] = []
+    if stable:
+        line_layer = (line_layer + [0] * len(lines))[:len(lines)]    # KML / augment lines: layer 0
+        first = [[grid.assign(*to_m(lon, lat), layer=line_layer[li]) for lon, lat in ln] for li, ln in enumerate(lines)]
     # links keyed by unordered node pair -> representative planar geometry (dedupes retraced streets)
     links: dict[tuple[int, int], list[tuple[float, float]]] = {}
-    for ln in lines:
+    for li, ln in enumerate(lines):
         seq: list[tuple[int, tuple[float, float]]] = []  # (node_id, planar pt)
-        for lon, lat in ln:
+        for vi, (lon, lat) in enumerate(ln):
             p = to_m(lon, lat)
-            nid = grid.assign(*p)
+            nid = grid.nearest(*p, first[li][vi], layer=line_layer[li]) if stable else grid.assign(*p)
+            if stable:          # the node's seed (a real vertex): every edge that ends at a node ends at one coordinate
+                p = (grid.sx[nid], grid.sy[nid])
             if not seq or seq[-1][0] != nid:
                 seq.append((nid, p))
         for (na, pa), (nb, pb) in zip(seq, seq[1:]):

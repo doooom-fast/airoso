@@ -338,6 +338,286 @@ def _wall(pts, half, *, off, h, base_drop=0.35, tile_m=3.0, keep=None):
     return {"vertices": V, "uvs": U, "tris": T}
 
 
+# --- SEATED BARRIERS (opt-in: scenery.walls.seat "seated", ledger 0075) ---------------------------------------------
+# The default seat ("deck") sweeps the barrier at the deck's height ``offset_m`` past the half-width whatever stands
+# under it: on the freeway that left 13,234 drive_test columns with nothing under them (8,750 on the OSM-layer decks,
+# ~4,100 on unlifted spans the mesh already builds slab + piers under) and stood barriers on the neighbouring ramp at
+# every merge. "seated" puts each barrier column on a surface:
+#   * ON A DECK (the network's own viaduct lift >= DECK_LIFT_M, or a span clearing the carved ground by RUN_H_M — the
+#     mesh's own bridge-run rule) it stands on a DECK EDGE slab (1KERB_deckedge) DECK_EDGE_W_M wide beyond the pavement
+#     edge at the pavement's height, DECK_BARRIER_OFF_M past the edge: a real viaduct carries its barrier on the deck
+#     slab, beyond the travelled way. A slab vertex closer than DECK_SLAB_CLEAR_M over the built ground is not a deck
+#     there (the ground rises to it): that column is seated at grade instead, so terrain can never poke the slab;
+#   * AT GRADE the barrier stays ``offset_m`` out and its base reaches WALL_GROUND_BURY_M under the BUILT ground at
+#     the barrier (the final carved grid, triangle-exact), never above the deck's own base;
+#   * WHERE ANOTHER EDGE'S PAVEMENT LIES UNDER THE FOOTPRINT (merges, gores, a ramp's taper) the barrier is gapped and
+#     the slab clipped there, per side, triangle-exact against every built 1ROAD ribbon — the same footprint test as
+#     audit_mesh D — as the default build already gaps it at freeway crossings (a slab flush with or under that
+#     pavement — a lane gain or a merging ramp at a joint — stays: it does not stand on the lanes);
+#   * the barrier follows the ribbon's own per-vertex width (a ramp's merge taper), not the edge's base width.
+DECK_LIFT_M = 1.0           # the mesh's own "lifted deck" threshold (max(lift) > 1.0 builds a viaduct)
+# network.join_nodes (ledger 0075): a node's deck-lift correction is blended back over max(LIFT_RAMP_MIN_M,
+# |correction| / LIFT_RAMP_GRADE) of the edge, then the deck's own 6.5 % cap runs with both ends held
+LIFT_RAMP_GRADE = 0.04      # [invented] under the deck cap (0.065), so the cap rarely has to move the ramp
+LIFT_RAMP_MIN_M = 40.0      # [invented] ~8 vertices at the network's 5 m resample
+RUN_H_M = 2.8               # the mesh's bridge-run clearance (RUN_H below): an unlifted span this high is a bridge
+DECK_EDGE_W_M = 1.0         # [invented] deck slab beyond the pavement edge carrying the barrier (Caltrans decks
+#                             carry a ~0.6 m barrier on the slab past the shoulder line)
+DECK_BARRIER_OFF_M = 0.7    # [invented] barrier past the pavement edge on a deck: mid-way on the slab's outer part
+DECK_SLAB_CLEAR_M = 0.30    # [invented] = GRASS_CLEARANCE_M: a slab vertex nearer the built ground than this is not a deck
+WALL_GROUND_BURY_M = 0.5    # [invented] an at-grade barrier's base this far under the built ground at the barrier
+WALL_ROAD_DY_M = 1.2        # = audit_mesh D's height window: pavement within this of a barrier's span gaps it
+SLAB_ROAD_DY_M = 1.5        # [invented] pavement within this of a slab vertex clips the slab (audit K reads 1.2)
+
+
+def _side_normal(pts, i, side):
+    """The barrier's lateral normal at vertex ``i`` on ``side`` — _wall's own centred difference."""
+    a = pts[max(0, i - 1)]; b = pts[min(len(pts) - 1, i + 1)]
+    tx, tz = b[0] - a[0], b[2] - a[2]; tl = math.hypot(tx, tz) or 1.0
+    return -tz / tl * side, tx / tl * side
+
+
+def _wall_seated(pts, halves, deck, *, off, h, deck_off=DECK_BARRIER_OFF_M, base_drop=0.35, tile_m=3.0,
+                 keep=None, ground=None):
+    """_wall seated (scenery.walls.seat "seated", ledger 0075): per-vertex ``halves`` (the ribbon's own width, a
+    ramp's merge taper included), ``deck[i]`` puts the barrier ``deck_off`` past the edge on the deck slab
+    (_deck_edge) with its base ``base_drop`` under the deck; elsewhere it stands ``off`` past the edge with its base
+    reaching WALL_GROUND_BURY_M under ``ground(x, z)`` (None = no ground known: the deck's base). ``keep`` is a
+    PER-SIDE pair of per-vertex lists ({1.0: [...], -1.0: [...]}): a panel is emitted where both its vertices are
+    kept on that side. Double-sided, orphan verts pruned, as _wall."""
+    V, U, T = [], [], []
+    for side in (1.0, -1.0):
+        rows = []
+        arc = 0.0
+        ks = keep.get(side) if keep is not None else None
+        for i in range(len(pts)):
+            if i > 0:
+                arc += math.hypot(pts[i][0] - pts[i - 1][0], pts[i][2] - pts[i - 1][2])
+            x, y, z = pts[i]
+            nx, nz = _side_normal(pts, i, side)
+            o = halves[i] + (deck_off if deck[i] else off)
+            px, pz = x + nx * o, z + nz * o
+            base = y - base_drop
+            if not deck[i] and ground is not None:
+                g = ground(px, pz)
+                if g is not None:
+                    base = min(base, g - WALL_GROUND_BURY_M)
+            r = len(V)
+            V.append((px, base, pz)); U.append((arc / tile_m, 0.0))
+            V.append((px, y + h, pz)); U.append((arc / tile_m, 1.0))
+            rows.append(r)
+        for k in range(len(rows) - 1):
+            if ks is not None and not (ks[k] and ks[k + 1]):
+                continue
+            a0, a1, b0, b1 = rows[k], rows[k] + 1, rows[k + 1], rows[k + 1] + 1
+            T += [(a0, a1, b1), (a0, b1, b0)]
+    if not T:
+        return {"vertices": [], "uvs": [], "tris": []}
+    used = sorted({i for tri in T for i in tri})
+    remap = {o: n for n, o in enumerate(used)}
+    V = [V[o] for o in used]; U = [U[o] for o in used]
+    T = [(remap[a], remap[b], remap[c]) for a, b, c in T]
+    T = T + [(a, c, b) for a, b, c in T]
+    return {"vertices": V, "uvs": U, "tris": T}
+
+
+DECK_EDGE_EXT_M = 0.5       # [invented] the slab runs this far past an edge's end node (its end column stands inside it)
+
+
+def _end_shift(pts, i):
+    """Unit plan tangent pointing OUT of the edge at end vertex ``i`` (0 or len-1)."""
+    a, b = (pts[1], pts[0]) if i == 0 else (pts[-2], pts[-1])
+    tx, tz = b[0] - a[0], b[2] - a[2]; tl = math.hypot(tx, tz) or 1.0
+    return tx / tl, tz / tl
+
+
+def _deck_edge(pts, halves, quad_ok, *, width=DECK_EDGE_W_M, lift=ROAD_LIFT_M, tile_m=3.0, ext_ok=None,
+               ext_m=DECK_EDGE_EXT_M):
+    """The DECK EDGE slab (1KERB_deckedge, seat "seated"): a strip from the pavement edge (``halves[i]``) to
+    ``width`` past it at the pavement's own height (deck + ``lift``), per side, emitted for the segment k..k+1 only
+    where ``quad_ok[side][k]`` (both ends on a deck, no other pavement under it, clear of the ground). The barrier
+    stands on it (_wall_seated ``deck_off`` < ``width``). ``ext_ok[side] = (start, end)`` runs the slab ``ext_m``
+    past that end node of the edge, so the end column stands inside it. Face up, physical (the car may touch it,
+    as a kerb)."""
+    V, U, T = [], [], []
+    n = len(pts)
+    for side in (1.0, -1.0):
+        rows = []
+        arc = 0.0
+        for i, (x, y, z) in enumerate(pts):
+            if i > 0:
+                arc += math.hypot(x - pts[i - 1][0], z - pts[i - 1][2])
+            nx, nz = _side_normal(pts, i, side)
+            hf = halves[i]
+            rows.append(len(V))
+            V.append((x + nx * hf, y + lift, z + nz * hf)); U.append((0.0, arc / tile_m))
+            V.append((x + nx * (hf + width), y + lift, z + nz * (hf + width))); U.append((width / tile_m, arc / tile_m))
+        qs = quad_ok.get(side) or []
+        for k in range(n - 1):
+            if k < len(qs) and qs[k]:
+                a0, a1, b0, b1 = rows[k], rows[k] + 1, rows[k + 1], rows[k + 1] + 1
+                T += [(a0, a1, b1), (a0, b1, b0)]
+        eo = (ext_ok or {}).get(side) or (False, False)
+        for end, i in ((0, 0), (1, n - 1)):
+            if not eo[end] or n < 2:
+                continue
+            x, y, z = pts[i]
+            ex, ez = _end_shift(pts, i)
+            nx, nz = _side_normal(pts, i, side)
+            hf = halves[i]
+            r = len(V)
+            V.append((x + nx * hf + ex * ext_m, y + lift, z + nz * hf + ez * ext_m)); U.append((0.0, 0.0))
+            V.append((x + nx * (hf + width) + ex * ext_m, y + lift, z + nz * (hf + width) + ez * ext_m))
+            U.append((width / tile_m, 0.0))
+            T += [(rows[i], rows[i] + 1, r + 1), (rows[i], r + 1, r)]
+    if not T:
+        return {"vertices": [], "uvs": [], "tris": []}
+    used = sorted({v for t in T for v in t})
+    remap = {v: i for i, v in enumerate(used)}
+    return orient_up({"vertices": [V[v] for v in used], "uvs": [U[v] for v in used],
+                      "tris": [tuple(remap[v] for v in t) for t in T]})
+
+
+def _pavement_hash(road_meshes, *, cell=8.0):
+    """Spatial hash of every built 1ROAD triangle (the ribbons as swept) with its ribbon's name, for the seated
+    barrier's footprint test."""
+    from collections import defaultdict
+    h = defaultdict(list)
+    for nm, m in road_meshes:
+        V = m["vertices"]
+        for ia, ib, ic in m["tris"]:
+            a, b, c = V[ia], V[ib], V[ic]
+            for ci in range(int(min(a[0], b[0], c[0]) // cell), int(max(a[0], b[0], c[0]) // cell) + 1):
+                for cj in range(int(min(a[2], b[2], c[2]) // cell), int(max(a[2], b[2], c[2]) // cell) + 1):
+                    h[(ci, cj)].append((a, b, c, nm))
+    return h
+
+
+def _pavement_in(th, x, z, ylo, yhi, *, cell=8.0, skip=None, flush=None):
+    """Is there built pavement directly under (x, z) with its surface height in [ylo, yhi] (not of ribbon ``skip``)?
+    Triangle-exact (audit D's footprint test). ``flush`` = (y, tol): pavement no lower than ``y - tol`` does not count
+    (a deck-edge slab at ``y`` flush with, or under, a neighbour's lanes — a lane gain or a merging ramp at a joint —
+    does not stand on them; audit K reads a kerb ABOVE the road)."""
+    for a, b, c, nm in th.get((int(x // cell), int(z // cell)), ()):
+        if skip is not None and nm == skip:
+            continue
+        d = (b[2] - c[2]) * (a[0] - c[0]) + (c[0] - b[0]) * (a[2] - c[2])
+        if abs(d) < 1e-12:
+            continue
+        w0 = ((b[2] - c[2]) * (x - c[0]) + (c[0] - b[0]) * (z - c[2])) / d
+        w1 = ((c[2] - a[2]) * (x - c[0]) + (a[0] - c[0]) * (z - c[2])) / d
+        w2 = 1.0 - w0 - w1
+        if w0 >= -1e-6 and w1 >= -1e-6 and w2 >= -1e-6:
+            yy = w0 * a[1] + w1 * b[1] + w2 * c[1]
+            if ylo <= yy <= yhi and not (flush is not None and yy >= flush[0] - flush[1]):
+                return True
+    return False
+
+
+SLAB_FLUSH_M = 0.05         # [invented] a deck-edge slab no more than this over a neighbour's pavement is flush with it
+SEATED_ROAD_CLEAR_M = 1.0   # [invented] seated: a barrier within this of a neighbour's pavement edge stands in its corridor
+VERGE_UNDER_M = 0.30        # = GRASS_CLEARANCE_M: a shoulder vertex this far under a neighbour's pavement is clear of it
+# DEAD-END CAPS (opt-in: network.cap_dead_ends, seat "seated" only; Kevin, JUNCTIONS 18(d) 2026-10-14: "a road we are not
+# completing gets a barrier, not a curve"). Every freeway edge end that no other edge shares (source.bbox cut it off,
+# or it led to a surface street the network does not build) ends in a closed stub: a barrier across the carriageway
+# CAP_SETBACK_M inside the ribbon's end, joining both side barriers, the pavement running on behind it. A cap that
+# would stand on a deck (a road cut mid-viaduct) moves inward to the edge's last at-grade vertex.
+CAP_SETBACK_M = 2.0         # [invented] the closed stub's pavement behind the barrier
+CAP_STEP_M = 0.5            # [invented] column spacing across the cap
+CAP_LINE_CLEAR_M = 10.0     # [invented] network_reference starts / ends its line this far inside a cap (past
+#                             drive_test's 6.3 m corridor disc, so the cap is the road's end, not an obstruction)
+
+
+def _along(pts, end, dist):
+    """(index of the segment's inner vertex, t) of the point ``dist`` metres in from end ``end`` (0 first, 1 last) of
+    the plan polyline ``pts``; None if the edge is shorter."""
+    order = range(len(pts) - 1) if end == 0 else range(len(pts) - 1, 0, -1)
+    acc = 0.0
+    for i in order:
+        j = i + 1 if end == 0 else i - 1
+        seg = math.hypot(pts[j][0] - pts[i][0], pts[j][2] - pts[i][2])
+        if seg > 1e-9 and acc + seg >= dist:
+            return i, j, (dist - acc) / seg
+        acc += seg
+    return None
+
+
+def _cap_wall(p, nx, nz, half, *, off, h, base_drop=0.35, ground=None, step=CAP_STEP_M):
+    """A barrier ACROSS the carriageway at ``p`` (deck point, its lateral normal (nx, nz)), from ``half + off`` on one
+    side to the other: the panel's base ``base_drop`` under the deck on the pavement, reaching WALL_GROUND_BURY_M
+    under ``ground`` beyond it (as _wall_seated at grade). Double-sided. Returns (mesh, (left end xz, right end xz))."""
+    x, y, z = p
+    reach = half + off
+    n = max(2, int(math.ceil(2 * reach / step)) + 1)
+    V, U, T = [], [], []
+    for k in range(n):
+        lat = -reach + 2 * reach * k / (n - 1)
+        px, pz = x + nx * lat, z + nz * lat
+        base = y - base_drop
+        if abs(lat) > half and ground is not None:
+            g = ground(px, pz)
+            if g is not None:
+                base = min(base, g - WALL_GROUND_BURY_M)
+        V.append((px, base, pz)); U.append((lat / 3.0, 0.0))
+        V.append((px, y + h, pz)); U.append((lat / 3.0, 1.0))
+    for k in range(n - 1):
+        a0, a1, b0, b1 = 2 * k, 2 * k + 1, 2 * k + 2, 2 * k + 3
+        T += [(a0, a1, b1), (a0, b1, b0)]
+    T = T + [(a, c, b) for a, b, c in T]
+    return ({"vertices": V, "uvs": U, "tris": T},
+            ((round(x - nx * reach, 3), round(z - nz * reach, 3)), (round(x + nx * reach, 3), round(z + nz * reach, 3))))
+
+
+def _drop_verge_on_pavement(verge_meshes, pave, *, cell=8.0):
+    """Seat "seated": drop each shoulder (``v<eid>``) triangle with a vertex over ANOTHER edge's built pavement (not
+    ``e<eid>``) and not at least VERGE_UNDER_M under it; orphan verts pruned. Returns (meshes, tris dropped)."""
+    out, n_drop = [], 0
+    for name, m in verge_meshes:
+        own = "e" + name[1:] if name.startswith("v") else None
+        V, U, T = m["vertices"], m.get("uvs"), m["tris"]
+        bad = {}
+
+        def _on(i):
+            if i not in bad:
+                x, y, z = V[i]
+                bad[i] = _pavement_in(pave, x, z, y - 40.0, y + VERGE_UNDER_M, cell=cell, skip=own)
+            return bad[i]
+        keep_t = [t for t in T if not (_on(t[0]) or _on(t[1]) or _on(t[2]))]
+        if len(keep_t) == len(T):
+            out.append((name, m)); continue
+        n_drop += len(T) - len(keep_t)
+        if not keep_t:
+            continue
+        used = sorted({i for t in keep_t for i in t})
+        remap = {o: k for k, o in enumerate(used)}
+        out.append((name, {"vertices": [V[o] for o in used], "uvs": [U[o] for o in used] if U else None,
+                           "tris": [(remap[a], remap[b], remap[c]) for a, b, c in keep_t]}))
+    return out, n_drop
+
+
+def _grid_ground(grid_xyz):
+    """ground(x, z) -> y on the BUILT terrain grid, triangle-exact on the (a,b,c)+(a,c,d) split _grass_tiles emits
+    (None off the grid). The seated barrier's at-grade base and the deck slab's clearance read it."""
+    ny = len(grid_xyz); nx = len(grid_xyz[0])
+    x0 = grid_xyz[0][0][0]; z0 = grid_xyz[0][0][2]
+    dx = (grid_xyz[0][nx - 1][0] - x0) / max(1, nx - 1)
+    dz = (grid_xyz[ny - 1][0][2] - z0) / max(1, ny - 1)
+
+    def ground(x, z):
+        fi = (x - x0) / dx if dx else 0.0
+        fj = (z - z0) / dz if dz else 0.0
+        if not (0.0 <= fi <= nx - 1 and 0.0 <= fj <= ny - 1):
+            return None
+        i = min(nx - 2, int(fi)); j = min(ny - 2, int(fj))
+        u = fi - i; v = fj - j
+        ya = grid_xyz[j][i][1]; yb = grid_xyz[j][i + 1][1]
+        yc = grid_xyz[j + 1][i + 1][1]; yd = grid_xyz[j + 1][i][1]
+        if u >= v:                       # triangle (a, b, c)
+            return ya + u * (yb - ya) + v * (yc - yb)
+        return ya + v * (yd - ya) + u * (yc - yd)   # triangle (a, c, d)
+    return ground
+
+
 LANE_W = 3.66   # US freeway lane width (12 ft)
 
 
@@ -770,7 +1050,8 @@ def build(project_dir: str | Path) -> dict:
     edge_records: list[dict] = []
     if want_edges:
         for stale in ("network.edges.local.json", "network.reference.json", "centerline.local.json",
-                      "finished_centerline.json", "gate_centerline.json", "bridge.spans.auto.json"):
+                      "finished_centerline.json", "gate_centerline.json", "bridge.spans.auto.json",
+                      "network.caps.json"):
             (data / stale).unlink(missing_ok=True)
     elev = json.loads((data / "network.elevation.json").read_text())
     zmap = {e["id"]: e["z_smooth_m"] for e in elev["edges"]}
@@ -825,6 +1106,16 @@ def build(project_dir: str | Path) -> dict:
     want_walls = bool(_wcfg.get("enabled", False))
     wall_h = float(_wcfg.get("height_m", 1.0))
     wall_off = float(_wcfg.get("offset_m", 3.2))
+    # SEAT (ledger 0075): "deck" (default) sweeps the barrier at deck height whatever stands under it, exactly as
+    # before; "seated" stands it on the deck edge slab on decks, on the built ground at grade, gapped over other
+    # pavement (_wall_seated, built after the terrain is final)
+    wall_seat = str(_wcfg.get("seat", "deck")).lower()
+    if wall_seat not in ("deck", "seated"):
+        raise SystemExit(f"scenery.walls.seat {wall_seat!r}: one of deck, seated")
+    cap_dead_ends = bool((cfg.raw.get("network") or {}).get("cap_dead_ends", False))   # ledger 0075: DEAD-END CAPS
+    if cap_dead_ends and not (want_walls and wall_seat == "seated"):
+        raise SystemExit("network.cap_dead_ends needs scenery.walls enabled with seat 'seated'")
+    groups_extra: list = []                          # cap_dead_ends: 1WALL_STUB_cap_* barrier groups
     want_markings = bool(((cfg.raw.get("scenery", {}) or {}).get("markings", {}) or {}).get("enabled", True))
     want_merge_trim = bool(((cfg.raw.get("scenery", {}) or {}).get("merge_trim", {}) or {}).get("enabled", True))
 
@@ -859,6 +1150,8 @@ def build(project_dir: str | Path) -> dict:
     wall_meshes: list[tuple[str, dict]] = []        # 1WALL physical barrier up both freeway edges
     marking_meshes: list[tuple[str, dict]] = []     # MARKINGS lane lines (visual)
     wall_jobs: list[tuple[str, list, float]] = []   # (eid, deck_pts, half) — walls built AFTER the loop
+    wall_info: dict = {}                             # seat "seated": eid -> (per-vertex halves, per-vertex lift)
+    deckedge_meshes: list[tuple[str, dict]] = []     # seat "seated": 1KERB_deckedge slabs under the deck barriers
     via_jobs: list[tuple[str, list, float]] = []     # (eid, deck_pts, half) — viaduct structs built AFTER the loop
     deck_all: list[tuple[str, list, float]] = []     # (eid, deck_pts, half) — EVERY freeway deck (bridge runs)
     fw_edge_decks: list[tuple[str, list, float]] = []  # (eid, road-surface pts, half) — mainlines, for median fill
@@ -880,6 +1173,56 @@ def build(project_dir: str | Path) -> dict:
         for (lo, la), z1 in zip(c, zz):
             mx, my, mz = to_local(lo, la, z1)
             road_trim_hash[(int(mx // MCELL), int(mz // MCELL))].append((mx, my, mz, mhalf, p["id"]))
+    # JOIN NODES (opt-in: network.join_nodes, ledger 0075; scripts.geometry.network_joins): every freeway edge's deck
+    # lift (OSM layers + dip bridge) is computed first, each shared node takes ONE lift (its through pair's mean; a
+    # surface street contributes 0), and every edge reaches it at both ends over a ramp — instead of a flyover's lift
+    # ending at its edge boundary (3.3-4.1 m surface steps on the I 8 line) or a ramp starting at full layer height
+    # beside an at-grade mainline. network_elev's join (same key) already pinned the at-grade heights, so the deck
+    # (at grade + lift) has one height per node; its grade cap then holds both ends.
+    join_nodes = bool((cfg.raw.get("network") or {}).get("join_nodes", False))
+    lift_join: dict = {}
+    if join_nodes:
+        if _ncf:
+            raise SystemExit("network.join_nodes with scenery.elevation.conform_tracks: not supported (the lift join "
+                             "reads the unconformed profile)")
+        from scripts.geometry import network_joins as _nj
+        _lends: dict = {}
+        _lraw: dict = {}
+        _lseg: dict = {}
+        for f in F:
+            p = f["properties"]
+            c = f["geometry"]["coordinates"]
+            if len(c) < 2:
+                continue
+            zz = zmap.get(p["id"]) or [0.0] * len(c)
+            if len(zz) != len(c):
+                zz = (zz + [zz[-1]] * len(c))[:len(c)]
+            p0 = [to_local(lo, la, z1) for (lo, la), z1 in zip(c, zz)]
+            if p.get("road_class") in FREEWAY_CLS:
+                dip = _viaduct_lift(p0, terr_y, base_lift=via_base, max_lift=via_max, smooth_win=via_win,
+                                    taper_frac=via_taper)
+                lay = _layer_lift(p0, p.get("layer_profile"), layer_h=layer_h)
+                lf = [dip[i] + lay[i] for i in range(len(p0))]
+                _lraw[p["id"]] = lf
+                _lseg[p["id"]] = [0.0] + [math.hypot(p0[i][0] - p0[i - 1][0], p0[i][2] - p0[i - 1][2])
+                                          for i in range(1, len(p0))]
+            else:
+                lf = [0.0] * len(p0)
+            xz = [(q[0], q[2]) for q in p0]
+            for end, i in ((0, 0), (1, len(c) - 1)):
+                _lends.setdefault(_nj.node_key(*c[i]), []).append(
+                    (p["id"], end, lf[i], _nj.away_dir(xz, end), bool(p.get("is_ramp"))))
+        _ltgt = _nj.through_targets(_lends)
+        for f in F:
+            pid = f["properties"]["id"]
+            if pid not in _lraw:
+                continue
+            c = f["geometry"]["coordinates"]; lf = _lraw[pid]
+            d0 = _ltgt.get(_nj.node_key(*c[0]), lf[0]) - lf[0]
+            d1 = _ltgt.get(_nj.node_key(*c[-1]), lf[-1]) - lf[-1]
+            lift_join[pid] = [max(0.0, v) for v in _nj.ramped(lf, _lseg[pid], d0, d1, ramp_grade=LIFT_RAMP_GRADE,
+                                                               ramp_min_m=LIFT_RAMP_MIN_M)]
+        print(f"  join_nodes: {len(_ltgt)} shared nodes, deck lift pinned to one value each (ledger 0075)")
     for f in F:
         c = f["geometry"]["coordinates"]
         z = zmap.get(f["properties"]["id"]) or [0.0] * len(c)
@@ -903,23 +1246,39 @@ def build(project_dir: str | Path) -> dict:
         is_fw = f["properties"].get("road_class") in FREEWAY_CLS
         deck_pts = pts
         if is_fw:
-            dip = _viaduct_lift(pts, terr_y, base_lift=via_base, max_lift=via_max,
-                                smooth_win=via_win, taper_frac=via_taper)
-            lay = _layer_lift(pts, f["properties"].get("layer_profile"), layer_h=layer_h)
-            lift = [dip[i] + lay[i] for i in range(len(pts))]
-            if max(lift) > 1.0:
+            if join_nodes:      # the joined lift (pre-pass above): applied wherever it is not zero, ends held
+                lift = lift_join[f["properties"]["id"]]
+            else:
+                dip = _viaduct_lift(pts, terr_y, base_lift=via_base, max_lift=via_max,
+                                    smooth_win=via_win, taper_frac=via_taper)
+                lay = _layer_lift(pts, f["properties"].get("layer_profile"), layer_h=layer_h)
+                lift = [dip[i] + lay[i] for i in range(len(pts))]
+            if max(lift) > 1.0 or (join_nodes and max(lift) > 1e-3):
                 deck_pts = [(x, y + lift[i], z2) for i, (x, y, z2) in enumerate(pts)]
-                deck_pts = _grade_cap_y(deck_pts, max_grade=0.065)   # drivable ramps onto the flyover deck
+                if join_nodes:      # the deck's grade cap with both ends held at their node's one height
+                    _ys = _nj.pinned_cap([q[1] for q in deck_pts], _lseg[f["properties"]["id"]], deck_pts[0][1],
+                                         deck_pts[-1][1], 0.065)
+                    deck_pts = [(q[0], _ys[i], q[2]) for i, q in enumerate(deck_pts)]
+                else:
+                    deck_pts = _grade_cap_y(deck_pts, max_grade=0.065)   # drivable ramps onto the flyover deck
+            if max(lift) > 1.0:
                 via_jobs.append((f["properties"]["id"], list(deck_pts), w / 2.0))   # struct built AFTER loop
+            if deck_pts is not pts:
                 # store the ACTUALLY-applied lift (post grade-cap) so env furniture rides the real deck
                 viaduct_profiles[str(f["properties"]["id"])] = [round(deck_pts[i][1] - pts[i][1], 2)
                                                                 for i in range(len(pts))]
         # RAMP MERGE: trim a ramp where it would cross OVER the mainline it joins, then TAPER its width to a
         # point at the merge end(s) so it joins the mainline edge as a lane (at whatever angle) instead of a
         # full-width ribbon over the through-lanes. Grade-separated flyover crossings are untouched.
+        lift_now = None
+        if wall_seat == "seated" and is_fw:     # the applied lift per deck vertex (0 at grade), trimmed with the deck
+            lift_now = [deck_pts[i][1] - pts[i][1] for i in range(len(pts))]
         if is_fw and want_merge_trim and f["properties"].get("is_ramp"):
             trimmed = _trim_ramp_merge(deck_pts, road_trim_hash, f["properties"]["id"])
             if len(trimmed) >= 2:
+                if lift_now is not None:        # _trim_ramp_merge returns a slice of deck_pts: find where it starts
+                    t0 = next(k for k in range(len(deck_pts)) if deck_pts[k] is trimmed[0])
+                    lift_now = lift_now[t0:t0 + len(trimmed)]
                 deck_pts = trimmed
             w_arr = _merge_taper(deck_pts, w, road_trim_hash, f["properties"]["id"])
         else:
@@ -972,6 +1331,8 @@ def build(project_dir: str | Path) -> dict:
                     (eid, rx, ry, rz, math.atan2(b[2] - a[2], b[0] - a[0]), w / 2.0))
             if want_walls:   # defer wall build until every deck is known (so crossings can be gapped)
                 wall_jobs.append((eid, deck_pts, w / 2.0))
+                if lift_now is not None:
+                    wall_info[eid] = ([float(v) / 2.0 for v in w_arr], lift_now)
             # ALL freeway edges (mainlines AND ramps) feed the median/gore fill: a gore wedge between
             # a ramp and its mainline is paved in the real world, and filling it keeps the gap the
             # verge-gap opens there covered by drivable 1RUNOFF instead of a bare drop to the bench.
@@ -990,7 +1351,37 @@ def build(project_dir: str | Path) -> dict:
     # at a large angle at nearly the same height (a residual at-grade interchange crossing that the OSM
     # bridge-layer lift didn't grade-separate) so the car passes through instead of being trapped; keep the
     # full barrier where the ground beyond is open (dirt) or the crosser is grade-separated (a flyover). ---
-    if want_walls and wall_jobs:
+    WALL_R = 8.0
+    WALL_ANGLE = math.radians(28.0)     # >this between crossing tangents = a real crossing, not a parallel median
+
+    def _crossing_blocked(eid, y, st, wx, wz, road_clear=3.5):
+        """The default build's crossing gap at a barrier point (wx, wz) of edge ``eid`` at deck height ``y``, deck
+        tangent ``st``: another freeway's deck within reach at nearly the same height, on/over its road or crossing at
+        a large angle. Seat "seated" reuses it at each side's own barrier point with ``road_clear`` SEATED_ROAD_CLEAR_M
+        (its triangle-exact pavement test does the rest): 3.5 m past a neighbour's edge also gapped the median and gore
+        sides, leaving 0.13-0.24 m shoulder ledges unguarded (drive_test excursions 14 on the I 8 line)."""
+        ci, cj = int(wx // WCELL), int(wz // WCELL)
+        for di in (-2, -1, 0, 1, 2):
+            for dj in (-2, -1, 0, 1, 2):
+                for (eid2, rx, ry, rz, rt, rhalf) in fw_road_hash.get((ci + di, cj + dj), ()):
+                    if eid2 == eid:
+                        continue
+                    d2 = (wx - rx) ** 2 + (wz - rz) ** 2
+                    on_road_r = rhalf + road_clear
+                    if d2 >= max(WALL_R, on_road_r) ** 2:
+                        continue
+                    if not (-2.0 < (ry - y) < 1.2):
+                        continue
+                    if d2 <= on_road_r * on_road_r:
+                        return True
+                    if d2 <= WALL_R * WALL_R:
+                        da = abs((st - rt + math.pi) % (2 * math.pi) - math.pi)
+                        da = min(da, math.pi - da)
+                        if da > WALL_ANGLE:
+                            return True
+        return False
+
+    if want_walls and wall_jobs and wall_seat == "deck":
         WALL_R = 8.0
         WALL_ANGLE = math.radians(28.0)     # >this between crossing tangents = a real crossing, not a parallel median
         n_gap = 0
@@ -1176,7 +1567,7 @@ def build(project_dir: str | Path) -> dict:
     from collections import defaultdict
     SCELL = 80.0
     street_h: dict = defaultdict(list)
-    for pr, p, _w in edge_local:
+    for pr, p, _wd in edge_local:     # NOT _w: terr_y reads the heightfield's west bound _w (ledger 0075)
         if pr.get("road_class") in FREEWAY_CLS:
             continue
         for x, _y, z in p:
@@ -1216,7 +1607,7 @@ def build(project_dir: str | Path) -> dict:
     from collections import defaultdict as _dd2
     RCELL2, GBUF = 500.0, 500.0
     _rb = _dd2(list)
-    for _pr, _p, _w in edge_local:
+    for _pr, _p, _wd in edge_local:    # NOT _w (terr_y's west bound)
         for _x, _y, _z in _p:
             _rb[(int(_x // RCELL2), int(_z // RCELL2))].append((_x, _z))
 
@@ -1253,12 +1644,208 @@ def build(project_dir: str | Path) -> dict:
                     if x0 - GBUF <= rx <= x1 + GBUF and z0 - GBUF <= rz <= z1 + GBUF:
                         return True
         return False
+    # SEATED BARRIERS (scenery.walls.seat "seated", ledger 0075): built now that the ground is final (conformed,
+    # carved, ocean) and every ribbon is swept, so each column reads the surface it actually stands on.
+    if want_walls and wall_jobs and wall_seat == "seated":
+        ground = _grid_ground(grid_xyz)
+        pave = _pavement_hash(road_meshes)
+        n_deck = n_grade = n_gap = n_clip = 0
+        for eid, dp, _half in wall_jobs:
+            halves, lift = wall_info[eid]
+            n = len(dp)
+            # DECK: the network's own viaduct lift, or a span clearing the carved ground as the bridge runs do
+            on_deck = [lift[i] >= DECK_LIFT_M
+                       or dp[i][1] - min(terr_y(dp[i][0], dp[i][2]), _carved_low(dp[i][0], dp[i][2])) > RUN_H_M
+                       for i in range(n)]
+            deck = {1.0: [False] * n, -1.0: [False] * n}
+            keep = {1.0: [True] * n, -1.0: [True] * n}
+            for i in range(n):
+                x, y, z = dp[i]
+                a = dp[max(0, i - 1)]; b = dp[min(n - 1, i + 1)]
+                st = math.atan2(b[2] - a[2], b[0] - a[0])
+                slab_y = y + ROAD_LIFT_M
+                for side in (1.0, -1.0):
+                    nx, nz = _side_normal(dp, i, side)
+                    if on_deck[i]:
+                        # a deck only where its slab clears the built ground at both its lips
+                        clear = True
+                        for o in (halves[i], halves[i] + DECK_EDGE_W_M):
+                            g = ground(x + nx * o, z + nz * o)
+                            if g is not None and g > slab_y - DECK_SLAB_CLEAR_M:
+                                clear = False
+                        deck[side][i] = clear
+                    o = halves[i] + (DECK_BARRIER_OFF_M if deck[side][i] else wall_off)
+                    px, pz = x + nx * o, z + nz * o
+                    base = y - 0.35
+                    if not deck[side][i]:
+                        g = ground(px, pz)
+                        if g is not None:
+                            base = min(base, g - WALL_GROUND_BURY_M)
+                    if (_crossing_blocked(eid, y, st, px, pz, road_clear=SEATED_ROAD_CLEAR_M)
+                            or _pavement_in(pave, px, pz, base - WALL_ROAD_DY_M, y + wall_h + WALL_ROAD_DY_M)):
+                        keep[side][i] = False; n_gap += 1
+            # per side: the wall's deck flag is the side's, the slab quad needs both ends on a clear deck with no
+            # other pavement under any of its corners
+            wm_parts = []
+            quad_ok = {1.0: [False] * max(0, n - 1), -1.0: [False] * max(0, n - 1)}
+            ext_ok = {1.0: (False, False), -1.0: (False, False)}
+            for side in (1.0, -1.0):
+                for k in range(n - 1):
+                    # a run is padded one segment past each end: a deck column on the run's last row would stand on
+                    # the slab's very edge, and the OBJ's mm rounding leaves it just off it (read floating)
+                    if not (deck[side][k] or deck[side][k + 1]):
+                        continue
+                    ok = True
+                    for i in (k, k + 1):      # the padded end must clear the ground too (never a poke)
+                        if not deck[side][i]:
+                            x, y, z = dp[i]
+                            nx, nz = _side_normal(dp, i, side)
+                            for o in (halves[i], halves[i] + DECK_EDGE_W_M):
+                                g = ground(x + nx * o, z + nz * o)
+                                if g is not None and g > y + ROAD_LIFT_M - DECK_SLAB_CLEAR_M:
+                                    ok = False
+                    for i in (k, k + 1):      # inner lip (another edge's pavement only: it IS its own edge), middle, outer lip
+                        x, y, z = dp[i]
+                        nx, nz = _side_normal(dp, i, side)
+                        for o in (halves[i], halves[i] + DECK_EDGE_W_M / 2.0, halves[i] + DECK_EDGE_W_M):
+                            if _pavement_in(pave, x + nx * o, z + nz * o, y + ROAD_LIFT_M - SLAB_ROAD_DY_M,
+                                            y + ROAD_LIFT_M + SLAB_ROAD_DY_M,
+                                            skip=f"e{eid}" if o == halves[i] else None,
+                                            flush=(y + ROAD_LIFT_M, SLAB_FLUSH_M)):
+                                ok = False
+                    if not ok:
+                        n_clip += 1
+                    quad_ok[side][k] = ok
+                # past each end node, DECK_EDGE_EXT_M more slab where the end row is on a deck: the same tests
+                eo = []
+                for i in (0, n - 1):
+                    ok = n >= 2 and deck[side][i]
+                    if ok:
+                        x, y, z = dp[i]
+                        ex, ez = _end_shift(dp, i)
+                        nx, nz = _side_normal(dp, i, side)
+                        for o in (halves[i] + DECK_EDGE_W_M / 2.0, halves[i] + DECK_EDGE_W_M):
+                            qx, qz = x + nx * o + ex * DECK_EDGE_EXT_M, z + nz * o + ez * DECK_EDGE_EXT_M
+                            g = ground(qx, qz)
+                            if (g is not None and g > y + ROAD_LIFT_M - DECK_SLAB_CLEAR_M) or _pavement_in(
+                                    pave, qx, qz, y + ROAD_LIFT_M - SLAB_ROAD_DY_M, y + ROAD_LIFT_M + SLAB_ROAD_DY_M,
+                                    flush=(y + ROAD_LIFT_M, SLAB_FLUSH_M)):
+                                ok = False
+                    eo.append(ok)
+                ext_ok[side] = tuple(eo)
+                # a deck barrier column stands INSIDE the slab — on slab both sides of its row, the extension at an
+                # edge's end — or it is gapped
+                for i in range(n):
+                    before = ext_ok[side][0] if i == 0 else quad_ok[side][i - 1]
+                    after = ext_ok[side][1] if i == n - 1 else quad_ok[side][i]
+                    if deck[side][i] and not (before and after):
+                        if keep[side][i]:
+                            keep[side][i] = False; n_gap += 1
+                n_deck += sum(deck[side]); n_grade += n - sum(deck[side])
+                one = _wall_seated(dp, halves, deck[side], off=wall_off, h=wall_h,
+                                   keep={side: keep[side], -side: [False] * n}, ground=ground)
+                if one["tris"]:
+                    wm_parts.append(one)
+            if wm_parts:
+                wall_meshes.append((f"w{eid}", _merge(wm_parts)))
+            de = _deck_edge(dp, halves, quad_ok, ext_ok=ext_ok)
+            if de["tris"]:
+                deckedge_meshes.append((f"d{eid}", de))
+        print(f"  walls (seated): {len(wall_jobs)} freeway edges — {n_deck} deck / {n_grade} at-grade barrier "
+              f"vertices, {n_gap} gapped over other pavement or a crossing, {n_clip} deck-edge quads clipped")
+        # the same rule for the grass SHOULDER: _filter_verge_over_roads drops a shoulder vertex more than 5 cm OVER
+        # pavement; at a merge one edge's shoulder lay 2 cm over its neighbour's lanes (ground on top mid-lane on the
+        # I 8 line at 6,465 m). Seated, a shoulder triangle with a vertex over ANOTHER edge's pavement, not clearly
+        # under it, is dropped (that pavement is the surface there).
+        verge_meshes, n_vd = _drop_verge_on_pavement(verge_meshes, pave)
+        if n_vd:
+            print(f"  verge (seated): {n_vd} shoulder tris dropped over a neighbouring edge's pavement")
+
+        # DEAD-END CAPS (network.cap_dead_ends; CAP_SETBACK_M above): a barrier across every edge end no other edge shares
+        if cap_dead_ends:
+            from collections import Counter as _Ctr
+            _deg = _Ctr()
+            _ends_ll = {}
+            for f in F:
+                c = f["geometry"]["coordinates"]
+                if len(c) >= 2:
+                    for end, q in ((0, c[0]), (1, c[-1])):
+                        k_ = (round(q[0], 7), round(q[1], 7))
+                        _deg[k_] += 1
+                        _ends_ll[(f["properties"]["id"], end)] = (k_, q)
+            caps_rec, cap_meshes = [], []
+            n_moved = n_none = n_trim = 0
+            uncapped = []
+            for eid, dp, _half in wall_jobs:
+                halves, lift = wall_info[eid]
+                for end in (0, 1):
+                    rec = _ends_ll.get((eid, end))
+                    if rec is None or _deg[rec[0]] != 1:
+                        continue
+                    q = rec[1]
+                    ex, _ey, ez = to_local(q[0], q[1], 0.0)
+                    tip = dp[0] if end == 0 else dp[-1]
+                    if math.hypot(tip[0] - ex, tip[2] - ez) > 0.05:
+                        n_trim += 1          # this end was trimmed back to a merge: not a dead end of the ribbon
+                        continue
+                    # walk in from the end: the setback, then on past any deck (a road cut mid-viaduct) to grade
+                    dist = CAP_SETBACK_M
+                    hit = None
+                    while True:
+                        a = _along(dp, end, dist)
+                        if a is None:
+                            break
+                        i, j, t = a
+                        p = tuple(dp[i][k] + (dp[j][k] - dp[i][k]) * t for k in range(3))
+                        lf = lift[i] + (lift[j] - lift[i]) * t
+                        high = p[1] - min(terr_y(p[0], p[2]), _carved_low(p[0], p[2])) > RUN_H_M
+                        if lf < DECK_LIFT_M and not high:
+                            hit = (i, j, t, p)
+                            break
+                        dist += 5.0
+                    if hit is None:
+                        # deck (or a span clearing the ground) end to end: no at-grade vertex to cap at. Left open and
+                        # listed (data/network.caps.json "uncapped"): a cap on the deck is more than the stub rule gives
+                        n_none += 1
+                        uncapped.append({"edge": eid, "end": end, "node_xz": [round(ex, 3), round(ez, 3)],
+                                         "why": ("shorter than the setback" if dist == CAP_SETBACK_M else
+                                                 "no at-grade vertex on the edge (deck or high span end to end)")})
+                        continue
+                    if dist > CAP_SETBACK_M:
+                        n_moved += 1
+                    i, j, t, p = hit
+                    tx, tz = dp[j][0] - dp[i][0], dp[j][2] - dp[i][2]
+                    tl = math.hypot(tx, tz) or 1.0
+                    hf = halves[i] + (halves[j] - halves[i]) * t
+                    cm, (pl, pr) = _cap_wall(p, -tz / tl, tx / tl, hf, off=wall_off, h=wall_h, ground=ground)
+                    cap_meshes.append((f"c{eid}_{end}", cm))
+                    caps_rec.append({"id": f"cap_{eid}_{end}", "edge": eid, "end": end, "node_xz": [round(ex, 3), round(ez, 3)],
+                                     "barrier_xz": [round(p[0], 3), round(p[2], 3)], "in_from_end_m": round(dist, 2),
+                                     "line_trim_m": round(dist + CAP_LINE_CLEAR_M, 2),
+                                     "barrier": {"path_xz": [list(pl), list(pr)], "half_base_m": 0.05}})
+            if cap_meshes:
+                groups_extra.extend(_pack_groups("1WALL_STUB_cap", "barrier", cap_meshes))
+            (data / "network.caps.json").write_text(json.dumps({
+                "tool": "scripts/geometry/build_network_mesh.py (network.cap_dead_ends)",
+                "_doc": "Every freeway edge end no other edge shares carries a barrier across its carriageway (Kevin, "
+                        "JUNCTIONS 18(d): a road we are not completing gets a barrier, not a curve). network_reference "
+                        "starts / ends its line line_trim_m inside a cap. Frame: track.obj's (mesh local).",
+                "caps": caps_rec, "uncapped": uncapped}, indent=1), encoding="utf-8")
+            # audit_mesh D reads a declared stub barrier's footprint from data/stubs.built.json (the 1WALL_STUB_*
+            # verts on it stand on the road by design, as Lake Murray's phase-5 stub barriers)
+            (data / "stubs.built.json").write_text(json.dumps({
+                "tool": "scripts/geometry/build_network_mesh.py (network.cap_dead_ends)",
+                "stubs": [{"id": c_["id"], "barrier": c_["barrier"]} for c_ in caps_rec]}, indent=1), encoding="utf-8")
+            print(f"  dead-end caps: {len(caps_rec)} barriers across dead ends ({n_moved} moved in off a deck to the last "
+                  f"at-grade vertex; {n_none} ends left open, no at-grade vertex on their edge: data/network.caps.json "
+                  f"'uncapped'; {n_trim} merge-trimmed ends skipped)")
+
     # Save the FINAL conformed+clamped ground (axis-aligned regular grid in local X-Z) so build_network_env
     # can sit trees/bushes/water ON the real grass mesh instead of the raw heightfield — else props float
     # wherever the terrain was conformed to a road or clamped for poke.
     _save_ground_local(data, grid_xyz)
     grass_tiles = _grass_tiles(grid_xyz, is_lawn=is_lawn, keep_tile=keep_tile, pad_reject=pad_reject)
-    for _n, g in grass_tiles:
+    for _gn, g in grass_tiles:         # NOT _n (terr_y's north bound)
         orient_up(g)
     skirt = _skirt(grid_xyz)
     orient_up(skirt)
@@ -1280,6 +1867,9 @@ def build(project_dir: str | Path) -> dict:
     groups += _pack_groups("KERB_edge", "kerb", kerb_meshes)   # visual curbs (no 1-prefix -> not physical)
     groups += _pack_groups("1GRASS_verge", "grass", verge_meshes)
     groups += _pack_groups("1WALL_part", "barrier", wall_meshes)   # physical freeway barrier (KEY=WALL)
+    if deckedge_meshes:   # seat "seated" (ledger 0075): the deck slab beyond the pavement the deck barrier stands on
+        groups += _pack_groups("1KERB_deckedge", "kerb", deckedge_meshes)
+    groups += groups_extra   # network.cap_dead_ends: the barriers across the dead ends
     groups += _pack_groups("1RUNOFF_median", "runoff", median_meshes)   # flat drivable median between carriageways
     groups += _pack_groups("MARKINGS_part", "markings", marking_meshes)   # visual lane lines (no 1-prefix)
     groups += via_groups

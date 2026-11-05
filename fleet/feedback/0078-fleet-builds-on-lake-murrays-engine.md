@@ -1060,6 +1060,21 @@ Copies: `D:/k10-scratch/eng_sclm`, `eng_hplm`, `eng_nvlm`.
 
    The Mac ran what it can: "Lake Murray unchanged (Mac)" under The plan.
 
+### Runbook 4e (PC, 2026-11-05): both Rangely gravel stages installed on Kevin's force
+
+fleet-4f at 0bda93d; ENG `D:/k10-scratch/eng_rally` = eng_repro + gravel_road_diffuse.png / gravel_road_normal.png /
+ground_dry_diffuse.jpg (md5s OK, STAGED_TEXTURES.md5). Rehearsals from empty workshops reproduced round 13 exactly:
+Dragon Tail severe 99, soft top 0, undrivable 3 (s 6,356-6,366), gated drops 4 (s 6,600), replication 0.02 / 0.11, audit
+CLEAN, kn5_ground_check PASS, kn5 42,472,833 B, `[densify] 3615`, `[strip-seam] ... 0 missed`; Under the Dragon severe
+73, soft top 0, undrivable 1 (s 22,414), gated drops 2 (s 2,403), replication 0.01 / 0.11, audit CLEAN, kn5_ground_check
+PASS, kn5 54,809,676 B, `[densify] 3290`, `[lm-pads] DC ... 950.3 m2`; both `[stage-force] --force-install would be allowed`.
+**Kevin, 2026-11-05: "Not yet", then "lly yues" (actually yes).** `--force-install` from empty real workshops
+(`dragon_tail_gravel_lm`, `under_the_dragon_gravel_lm`): the same rows, SHIP OK, installed
+`rally_co_dragon_tail_gravel_lm` ("doooom Colorado — Dragon Tail (Gravel) 0.1.0") and `rally_co_under_the_dragon_gravel_lm`
+("... Under the Dragon (Gravel) 0.1.0") beside the untouched 0.2.1 / 0.2.0; each installed kn5 equals its build.
+**Owed:** their ui names equal the original stages' (only the version differs), so the track list shows two of each;
+Sand Creek's twin says "(LM engine)".
+
 ## Owed
 
 - **The Rangely stages (round 13):** s 2,403 forced on Kevin's word (2026-11-05); runbook 4e (rehearse, then install on

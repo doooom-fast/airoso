@@ -14,6 +14,21 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
+## 2026-11-05 (round F) — Sand Creek: street-to-street junctions, the numbers they need (ledger 0079 round F; no gate changed)
+
+No gate threshold, rule or floor moved. `verify_mouths` joins Sand Creek's gate list (ship.json) unchanged. The junction
+shape needs four numbers nobody measured; each is `tools/trim_connectors.py`, opt-in (`route.street_junctions`, Sand
+Creek only):
+
+- ⚠ `join_turn_deg` 45 and `bend_turn_deg` 135 [invented]: when OSM pieces ending at one node are one street. They sit in
+  gaps of Sand Creek's data (pairs turn 0-24 deg, 88-108 deg or 157-167 deg), so any value in 25-87 / 109-156 makes the
+  same 32 joins (30 straight, 2 bends).
+- ⚠ `HEADING_M` 8 m [invented]: a piece's direction at a node, read from the node to its point 8 m along.
+- ⚠ an acute mouth's weld reach (`mouths.json` `extend_max_m`): twice (half width + edge strip) / tan(angle) where that
+  passes `mouth_weld.EXTEND_MAX_M` 25 m. The factor 2 is invented (a fork's host edge bends away). Every other mouth
+  keeps 25 m; Lake Murray's records never carry the key.
+- `MEET_R_M` 2.5 m is `tools/grid_connectors.py`'s own meeting radius (not new).
+
 ## 2026-11-05 (round E) — Sand Creek: the doubled buildings out, the houses floor lowered (ledger 0079 round E)
 
 - **The houses floor is LOWERED on Sand Creek: 2,214 / 2,215 / 0 → 2,181 / 2,181 / 0.** This is a weakening, written

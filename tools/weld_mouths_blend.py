@@ -396,7 +396,9 @@ def main():
             if deck.inside(q[0], q[2]):
                 before.append(q[1] - deck.at(q[0], q[2]))
         try:
-            res = mw.weld_end(lines, deck, side, inset, h)
+            # a mouth record's own extend_max_m (tools/trim_connectors.py street junctions, ledger 0079 0.2.3: an acute
+            # fork's outer lines run on along the host edge for (half width + edge strip) / tan(angle)); absent = as before
+            res = mw.weld_end(lines, deck, side, inset, h, extend_max=float(mo.get("extend_max_m", mw.EXTEND_MAX_M)))
         except mw.WeldError as e:
             raise SystemExit(f"[weld] FATAL: mouth {tag}: {e}")
         new, K, J = res["new"], res["K"], res["J"]

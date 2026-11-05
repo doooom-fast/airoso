@@ -546,7 +546,94 @@ measurement ("two buildings in one place aren't real").
 - **Not done: step 5's pad stills.** Kevin did not pick them. The 4h night "before" stills can now only come from the
   parked 0.2.0.
 
-## Owed (2026-11-05, after round E; in the coordinator's order)
+## Round F (Mac): the street-to-street junctions, trimmed; the build stops at the weld (NOT 0.2.3, not an install)
+
+0.2.2 (f6dd8a63) stays the build of record. This round commits the junction code and turns the streets on in
+Sand Creek's config and chain, but no build of it has passed: the chain stops at `weld_mouths` on two forks (below).
+
+### What is committed
+
+- **`tools/trim_connectors.py`, opt-in `route.street_junctions`** (Lake Murray and the Lariat name none of it):
+  - **JOIN.** OSM splits a street at every node, so one street arrives as pieces that end at one node. Pieces whose
+    directions continue there (turn <= `join_turn_deg` 45) are joined into one piece; two pieces alone at a node that
+    bend (turn <= `bend_turn_deg` 135) are joined too; a sharper pair is a fork and stays two pieces. The joined piece
+    takes the higher-class / longer member's name and lists the members in `joined`. The two ends' heights are averaged
+    and each side's profile is shifted onto the mean, faded over trim's own `BLEND_M` 30 m. This removes the 0.43 m step
+    round B found on Quebec (grid_primary_30 ends 0.43 m over grid_primary_6's start: `grid_unclassified_27`'s failing
+    mouth).
+  - **RANK.** Where two pieces meet that no earlier pass cut (two arterials, then two minors), the through piece hosts and
+    the other is cut at its pavement edge with a mouth: the ribbon-through topology every mouth here uses, cut by the
+    existing `_trim_against`. A piece that ends on another's interior ranks below it; otherwise OSM's hierarchy, then the
+    wider, then the longer. Pieces are cut in rank order, each against the final pieces of the higher-ranked pieces it
+    meets, so no host is cut after a mouth is recorded on it.
+  - **No reach from a cut end.** An end that is already a mouth's cut is never REACH-extended on to the next host.
+    Round B's pass 2 stretched `grid_primary_49`, cut at the lap, 14 m on to `grid_primary_52`'s centre.
+  - **Acute mouths.** A fork's mouth record carries `extend_max_m` (twice (half width + strip) / tan(angle) where that passes
+    25 m). `tools/mouth_weld.py` / `weld_mouths_blend.py` read it as a keyword; absent = `EXTEND_MAX_M`, as before.
+  - **Pad arms (`street_junctions.pad_arms`, written, NOT on in the config).** `cut_at_pads` cuts every street entering a
+    built pad's box at the box edge and writes `data/pad_arms.json`; the lm_pads side that welds those end rows into
+    the deck is not written yet (Owed 1b). A scratch trim found 6 arm ends: colorado_50th `grid_unclassified_9`,
+    `grid_unclassified_10`, `grid_primary_51` (now in joined `grid_primary_15`), `grid_primary_53` (in `grid_primary_33`),
+    `grid_unclassified_76`; 50th_ash `grid_unclassified_17`. 50th_dahlia's two declared arms never enter its box.
+- **Sand Creek:** `lm_intake.connectors` true; `route.connector_hosts` (`grid_primary*`, `grid_secondary*`);
+  `route.street_junctions`. ship.json draft: lm_intake, build_loop_blend, **trim_connectors, rebuild_loop_blend**,
+  weld_mouths, seat_terrain, densify_ribbon, seat_edges, lm_pads, strip_seam, **gap_mouths**, lamps; gate **verify_mouths**
+  after verify_pads; sync_out the mouths, connectors and `street_junctions.json`.
+- `GATES-CHANGELOG` 2026-11-05 round F: the four numbers the junctions need, three [invented]. No gate moved.
+
+### The 146 meetings after trim (Mac, workshop `sclm_work/j1`; scratch check on the trim's output)
+
+- 32 nodes joined (30 straight, 2 bends): 106 pieces -> 89 after every cut.
+- 127 mouths: 36 on the lap, 91 street-to-street or street-to-arterial (round B: 52).
+- Of grid_meetings' 146, each is now a join, a mouth or both. The scratch check finds no two final pieces overlapping
+  except:
+  - two false positives at the end caps of mouths that are correct. Quebec x `grid_tertiary_65` is one.
+  - the forks, where an acute weld overlaps by design.
+- **Quebec's median at the `grid_unclassified_27` / `grid_tertiary_65` crossing (1656, 789).** Quebec is two carriageway
+  ribbons 13.5 m apart. The cross street ends at each one with a mouth, and the 4 m between them stays grass; NAIP shows
+  it paved. The 4 m piece would be under trim's `MIN_PIECE_M` 15 m and dropped. Owed (1c).
+
+### Where the build stops: the forks
+
+OSM draws four short paint-divided approaches as two one-way pieces leaving one node at 13-24 deg. On NAIP each is one
+asphalt with a painted chevron median: `grid_tertiary_91` / `92` at (42, -752), `grid_unclassified_94` / `95` at
+(847, -764). There is also a Y: `grid_tertiary_5` off `grid_tertiary_20` / `grid_unclassified_13` at (899, -292). And
+a lens: `grid_tertiary_74` / `75`, 148 m long.
+- Welded with the long reach: `grid_tertiary_5` (18.6 deg) and `grid_tertiary_74` at both ends (24 deg). Road cut arcs run
+  +-12 m along the host edge; verify_mouths has not judged them yet.
+- `grid_unclassified_94` (16.4 deg) fails the weld's self-check: 3 of its vertices stand 0.026-0.036 m over the host deck
+  inside its pavement (`SELF_TOL_M` 0.02). Its blend onto the host (30 m smoothstep) leaves the overlapping rows off the
+  host's level-across deck. `grid_tertiary_91` (13.3 deg) is next in line.
+
+## Owed (2026-11-05, after round F; in the coordinator's order)
+
+1. **0.2.3 finishing the junctions** (round F's code is in; build `EMPTY=1` from the committed config to reproduce):
+   a. **The forks.** Make the four acute guests weld. Options, in the order I'd try them:
+      - blend an acute guest onto its host over the length its ribbon overlaps the host, not 30 m;
+      - or rank the two paint-divided carriageways as one divided street, using Lake Murray's
+        `divide_connectors` / median island.
+      Then judge t5 / t74 on verify_mouths.
+   b. **Pad arms in lm_pads** (`lm_pads.arms: "streets"`, opt-in). Turn `route.street_junctions.pad_arms` on. Then
+      `tools/lm_pads_blend.py` must:
+      - delete only the lap's own faces between the cuts. Today it deletes any ROAD / CURB face in the cut wedge whose
+        nearest lap vertex is between the cuts, which would take the streets' faces too. Add a lateral test against
+        the lap polyline, within half width + 1.8 m;
+      - read the arm end rows through `mw.mesh_layout(pts3, connectors)`;
+      - splice them into the outline (`draft_pads.splice_rows` with `c` = `sealed_cut(box edge)` and `cr` = `row_cut`);
+      - add them to `seams` and the seam profile;
+      - add them to pads.built.json `rows`, so verify_pads checks their seams.
+      Unbuilt, lm_pads with streets in has not been run.
+   c. **Quebec's median crossing.** A piece between two mouths is dropped under 15 m. An opt-in floor is needed so the
+      4 m crossing is kept and welded at both ends.
+   d. Then the gates: verify_mouths, audit I / K, both drive_tests against 0.2.2, verify_pads x3, houses (round B: 16
+      blocks stand on a street ribbon), kn5 MB, and the stills beside NAIP.
+2. **The parked pads, alongside the PC (not built yet):** as round E's list below.
+3. **The shared-tool A/B for the PC**, once 0.2.3 is green. Round F adds `trim_connectors` and `mouth_weld` /
+   `weld_mouths_blend` (the keyword) to round E's list. Lake Murray's committed trim inputs through fleet-lm-engine's
+   trim and this branch's still give byte-identical outputs (`664da93b…`, `b73b70f4…`, `f0c97952…`).
+4. Rounds C, 5, 6 of the list below, unchanged.
+
+## Owed (2026-11-05, after round E; kept for the record)
 
 1. **Real junctions at all 146 street meetings (0.2.3, the main work).** Kevin: "Real junctions".
    - Lake Murray's weld / mouth / junction-pad / stub tools, trimming streets against streets (round B item 3 is the

@@ -375,7 +375,17 @@
     "crossfall_file": "data/crossfall.lm.json",
     "_crossfall_doc": "ledger 0066's lidar camber at the 56th -> Sand Creek Dr turn (tracks/sand-creek/data/crossfall.json), written by position by tools/lm_engine_intake.py and keyed to the assembler's own line",
     "seat_edge_m": 1.8,
-    "_seat_edge_doc": "ledger 0079 round B: tools/seat_terrain_blend.py pins the ground under the edge this far past the lane: the no-curb edge strip (0.1 face + 0.2 + 1.5 m grade), no sidewalk (Kevin: \"no sidewalks\"); absent = Lake Murray's 3.1 m curb + walk + grade"
+    "_seat_edge_doc": "ledger 0079 round B: tools/seat_terrain_blend.py pins the ground under the edge this far past the lane: the no-curb edge strip (0.1 face + 0.2 + 1.5 m grade), no sidewalk (Kevin: \"no sidewalks\"); absent = Lake Murray's 3.1 m curb + walk + grade",
+    "connector_hosts": [
+      "grid_primary*",
+      "grid_secondary*"
+    ],
+    "_connector_hosts_doc": "ledger 0079 round B / 0.2.3: tools/trim_connectors.py pass 2 cuts every other grid street at the arterials' pavement edge (OSM primary / secondary: the through roads)",
+    "street_junctions": {
+      "join_turn_deg": 45.0,
+      "bend_turn_deg": 135.0
+    },
+    "_street_junctions_doc": "ledger 0079 0.2.3 (Kevin 2026-11-05: \"Real junctions\"): tools/trim_connectors.py joins a street's OSM pieces where they end at one node and continue (turn <= join_turn_deg) or, two alone, bend (turn <= bend_turn_deg), then cuts every street-to-street meeting the lap and arterial passes did not: the through piece hosts, the other is cut at its pavement edge with a mouth (the ribbon-through topology every mouth here uses). Both angles [invented], but they sit in gaps of the data: Sand Creek's pairs turn 0-24 deg (straight) or 88-108 deg (bends) or 157-167 deg (forks), so any value in 25-87 / 109-156 makes the same joins (GATES-CHANGELOG 2026-11-05)"
   },
   "loop": true,
   "default_width_m": 9.0,
@@ -731,7 +741,7 @@
   "_ui_series_doc": "Kevin 2026-10-28: 'K10 is gone. doooom.' Content Manager shows '<ui_series> - <layout name>' (tools/ship_track.sh ui_name_prefix carries the same string)",
   "lm_intake": {
     "source_track": "sand-creek",
-    "connectors": false,
+    "connectors": true,
     "crossfall": true,
     "grid_upsample": 2,
     "_grid_doc": "the 40 m 3DEP grid pre-divided to 20 m (bilinear, the same samples) so the assembler's terrain is 10 m facets and engine-july's corridor split reaches the slip after E 56th's deck (ledger 0078: 64 ground-on-top samples where a 10 m grass chord stood over the deck's ramp sag)",

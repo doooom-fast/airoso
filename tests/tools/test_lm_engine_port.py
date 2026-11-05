@@ -149,6 +149,11 @@ def _sync_in(port: str, ws: Path):
             (ws / rel).write_bytes((src / rel).read_bytes())
 
 
+def spec_steps(port: str):
+    spec = json.loads((ROOT / "tracks" / port / "ship.json").read_text(encoding="utf-8"))
+    return [s for v in (spec.get("steps") or {}).values() for s in v]
+
+
 def test_the_intake_into_an_empty_workshop_leaves_every_file_the_chain_reads():
     import shutil
     import lm_engine_intake as L
@@ -159,6 +164,11 @@ def test_the_intake_into_an_empty_workshop_leaves_every_file_the_chain_reads():
             L.intake(ws)
             cfg = json.loads((ws / "track.config.json").read_text(encoding="utf-8"))
             want = list(WORKSHOP_INPUTS)
+            if (cfg.get("lm_intake") or {}).get("connectors"):
+                # side streets in (Sand Creek 0.2.3, ledger 0079): the intake deletes any old mouths.json and the chain's
+                # trim_connectors step writes it before weld_mouths reads it
+                assert "trim_connectors" in spec_steps(port), port
+                want.remove("data/mouths.json")
             if (cfg.get("lm_intake") or {}).get("crossfall"):
                 want.append("data/crossfall.lm.json")
             if (cfg.get("route") or {}).get("kerbs_file"):

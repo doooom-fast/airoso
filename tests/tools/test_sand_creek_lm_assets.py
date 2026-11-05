@@ -206,3 +206,33 @@ def test_round_e_dedupe_by_overlap_is_opt_in_and_cross_source():
     assert "dedupe" not in lm
     sc = json.loads((SC / "source" / "bespoke" / "buildings.plan.json").read_text(encoding="utf-8"))
     assert sc["dedupe"]["overlap"] == 0.5
+
+
+def _street(name, pts, w=8.0):
+    return {"name": name, "kind": "connector", "points_xyz_m": [list(p) for p in pts], "widths_m": [w] * len(pts)}
+
+
+def test_street_junctions_join_and_rank():
+    """ledger 0079 0.2.3: route.street_junctions (tools/trim_connectors.py). Two pieces continuing through a node are one
+    street (their ends' 0.4 m height step faded out); a third ending there is cut at the joined street's edge with a
+    mouth; a fork (17 deg) is never joined; Lake Murray names none of the keys."""
+    import trim_connectors as tc
+    a = _street("grid_tertiary_1", [(x, 10.0, 0.0) for x in range(-60, 1, 3)])
+    b = _street("grid_tertiary_2", [(x, 10.4, 0.0) for x in range(0, 61, 3)])
+    c = _street("grid_unclassified_3", [(0.0, 10.2, z) for z in range(0, 61, 3)])
+    out, recs = tc.join_street_pieces([a, b, c], 45.0, 135.0)
+    assert len(out) == 2 and len(recs) == 1 and recs[0]["rule"] == "straight"
+    j = next(p for p in out if p.get("joined"))
+    ys = [p[1] for p in j["points_xyz_m"]]
+    assert abs(ys[0] - 10.0) < 1e-6 and abs(ys[-1] - 10.4) < 1e-6
+    assert max(abs(ys[i + 1] - ys[i]) for i in range(len(ys) - 1)) < 0.05
+    mouths = []
+    tc.rank_trim(out, mouths, {})
+    assert len(mouths) == 1 and mouths[0]["host"] == j["name"] and mouths[0]["connector"] == "grid_unclassified_3"
+    assert abs(mouths[0]["cut_xyz"][2] - (4.0 - tc.OVERLAP_M)) < 0.05
+    f1 = _street("grid_unclassified_4", [(x, 0.0, 0.0) for x in range(0, 61, 3)])
+    f2 = _street("grid_unclassified_5", [(x, 0.0, x * 0.3) for x in range(0, 61, 3)])
+    out2, recs2 = tc.join_street_pieces([f1, f2], 45.0, 135.0)
+    assert len(out2) == 2 and not recs2
+    lm = json.loads((LM / "track.config.json").read_text(encoding="utf-8"))
+    assert "street_junctions" not in (lm.get("route") or {})

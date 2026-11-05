@@ -279,9 +279,10 @@ class Line:
         a, b = p[lo], p[hi]
         return (a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t)
 
-    def crossing(self, gap) -> float:
+    def crossing(self, gap, extend_max=EXTEND_MAX_M) -> float:
         """arc u where gap(x, z) changes sign from <= 0 (inside the host target) to > 0, nearest the end:
-        marching forward along the line when the end is inside, backward along the extension when it is short"""
+        marching forward along the line when the end is inside, backward along the extension when it is short
+        (at most `extend_max`: EXTEND_MAX_M unless the mouth's record says otherwise, an acute fork's)"""
         def g(u):
             q = self.at(u)
             return gap(q[0], q[2])
@@ -300,8 +301,8 @@ class Line:
             b = 0.0
             while True:
                 a = b - MARCH_M
-                if a < -EXTEND_MAX_M:
-                    raise WeldError(f"a lateral line stops > {EXTEND_MAX_M} m short of the host edge")
+                if a < -extend_max:
+                    raise WeldError(f"a lateral line stops > {extend_max} m short of the host edge")
                 if g(a) <= 0.0:
                     break
                 b = a
@@ -317,7 +318,7 @@ class Line:
 # --------------------------------------------------------------------------------------------- the weld
 
 def weld_end(lines: dict, deck: HostDeck, side: int, inset: dict, h: dict, *, blend_m=BLEND_M,
-             remap_min=REMAP_MIN_M) -> dict:
+             remap_min=REMAP_MIN_M, extend_max=EXTEND_MAX_M) -> dict:
     """Mitre + warp the lines of ONE connector end.
 
     lines: key -> points END-FIRST (all the same row count); inset: key -> host-edge inset of that line's cut;
@@ -329,7 +330,7 @@ def weld_end(lines: dict, deck: HostDeck, side: int, inset: dict, h: dict, *, bl
     if any(len(lines[k]) != n for k in keys):
         raise WeldError("lateral lines of one end differ in row count")
     L = {k: Line(lines[k]) for k in keys}
-    ux = {k: L[k].crossing(lambda x, z, _i=inset[k]: deck.edge_gap(x, z, side, _i)) for k in keys}
+    ux = {k: L[k].crossing(lambda x, z, _i=inset[k]: deck.edge_gap(x, z, side, _i), extend_max) for k in keys}
     need = max(0.0, max(ux.values())) + remap_min
     J = None
     for j in range(1, n):

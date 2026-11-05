@@ -2,7 +2,7 @@
  "_doc": "Racing kerbs and painted edge stripes measured off the aerial for the Lake Murray engine port (ledgers 0078, 0081). Each run is the lane edge it lies along, as lon/lat, plus where its paint sits across that edge (in_m / out_m: metres past the lane edge of the live line's widths, - = inside). The build places the run at this measured place across its own ribbon's lane edge when the config sets kerb.placement \"measured\" (ledger 0081 round 2; otherwise outside the edge: tools/author_kerbs_blend.py); profile 'kerb' rises to the config's kerb.height_m, 'paint' is laid flat.",
  "imagery": "USDA NAIP co_m_3910317_ne_13_030_20230928 (2023-09-28), 0.3 m native, Planetary Computer crop",
  "image_m_per_px": 0.3,
- "method": "ledger 0081: tools/aerial_edges.py (kerb runs) and a colour scan of the lane-edge band (blue present) on the 0.3 m crop found the candidates; each span (the scan's, less its 2 m window at each end) checked by eye on tools/edge_sheet.py zooms (kerbs_2023_030_sheet.jpg: all 20, colour by eye), then measured by tools/kerb_spans.py. Round 4's 12 runs (NAIP 2023 z18 web tiles, 0.46 m) are all inside these 20; its s 2056-2071 'blue_white' is a blue / yellow edge stripe at 0.3 m. Round 2 (ledger 0081): each eye span grown / trimmed to its key colour (tools/kerb_spans.py --grow 10; s_eye keeps the eye span)",
+ "method": "ledger 0081: tools/aerial_edges.py (kerb runs) and a colour scan of the lane-edge band (blue present) on the 0.3 m crop found the candidates; each span (the scan's, less its 2 m window at each end) checked by eye on tools/edge_sheet.py zooms (kerbs_2023_030_sheet.jpg: all 20, colour by eye), then measured by tools/kerb_spans.py. Round 4's 12 runs (NAIP 2023 z18 web tiles, 0.46 m) are all inside these 20; its s 2056-2071 'blue_white' is a blue / yellow edge stripe at 0.3 m. Round 2 (ledger 0081): each eye span grown / trimmed to its key colour (tools/kerb_spans.py --grow 10; s_eye keeps the eye span); round 3 (ledger 0081): L s 517, 690, R s 1,747, 3,013 stripes extended to their yellow ends by eye (s_blue keeps the blue's span); R s 2,673's yellow start is not extended (the stripe crosses 3-4 m of the line's offsets there); R s 2,892's out_m from the block reader",
  "line": "data/gate_centerline.json of the live track (engine frame)",
  "measurer": {
   "tool": "tools/kerb_spans.py",
@@ -98,8 +98,8 @@
   },
   {
    "side": "left",
-   "s0": 517.0,
-   "s1": 537.0,
+   "s0": 512.5,
+   "s1": 541.0,
    "in_m": -1.0,
    "out_m": 0.05,
    "colour": "blue_yellow",
@@ -111,55 +111,80 @@
    ],
    "edge_lonlat": [
     [
-     -103.88999255,
-     39.73547032
+     -103.88999071,
+     39.73551083
     ],
     [
-     -103.88999333,
-     39.73545232
+     -103.88999157,
+     39.73549283
     ],
     [
-     -103.88999412,
-     39.73543432
+     -103.88999236,
+     39.73547482
     ],
     [
-     -103.88999497,
-     39.73541632
+     -103.88999314,
+     39.73545682
     ],
     [
-     -103.88999579,
-     39.73539825
+     -103.88999392,
+     39.73543882
     ],
     [
-     -103.88999657,
-     39.73538031
+     -103.88999476,
+     39.73542082
     ],
     [
-     -103.88999743,
-     39.73536231
+     -103.88999559,
+     39.73540275
     ],
     [
-     -103.88999824,
-     39.73534425
+     -103.88999637,
+     39.73538475
     ],
     [
-     -103.88999902,
-     39.7353263
+     -103.88999721,
+     39.73536681
     ],
     [
-     -103.88999988,
-     39.7353083
+     -103.88999805,
+     39.73534875
     ],
     [
-     -103.8900007,
-     39.73529024
+     -103.88999882,
+     39.73533075
+    ],
+    [
+     -103.88999967,
+     39.7353128
+    ],
+    [
+     -103.8900005,
+     39.73529474
+    ],
+    [
+     -103.89000128,
+     39.73527674
+    ],
+    [
+     -103.89000212,
+     39.7352588
+    ],
+    [
+     -103.89000234,
+     39.7352543
     ]
-   ]
+   ],
+   "s_blue": [
+    517.0,
+    537.0
+   ],
+   "ends": "round 3: the yellow-only ends read by eye on 24 px/m end zooms of NAIP 2023 0.3 m (kerbs_stripe_ends_2023_030.jpg), where the yellow clearly separates from the dry grass; in_m / out_m stay the blue's (kerb_spans.py)"
   },
   {
    "side": "left",
-   "s0": 687.0,
-   "s1": 699.0,
+   "s0": 660.5,
+   "s1": 701.5,
    "in_m": -1.15,
    "out_m": -0.85,
    "colour": "blue_yellow",
@@ -171,34 +196,99 @@
    ],
    "edge_lonlat": [
     [
-     -103.89070824,
-     39.73414455
+     -103.89043909,
+     39.73426424
     ],
     [
-     -103.89072855,
-     39.73413558
+     -103.8904599,
+     39.73425474
     ],
     [
-     -103.89074877,
-     39.7341266
+     -103.89048039,
+     39.73424548
     ],
     [
-     -103.89076896,
-     39.73411767
+     -103.89050062,
+     39.73423651
     ],
     [
-     -103.89078916,
-     39.73410872
+     -103.89052104,
+     39.73422746
     ],
     [
-     -103.89080939,
-     39.73409974
+     -103.89054134,
+     39.73421848
     ],
     [
-     -103.89082963,
-     39.73409073
+     -103.89056157,
+     39.7342095
+    ],
+    [
+     -103.89058176,
+     39.73420058
+    ],
+    [
+     -103.89060207,
+     39.73419161
+    ],
+    [
+     -103.89062228,
+     39.73418261
+    ],
+    [
+     -103.89064243,
+     39.73417369
+    ],
+    [
+     -103.89066278,
+     39.73416472
+    ],
+    [
+     -103.89068299,
+     39.73415571
+    ],
+    [
+     -103.89070317,
+     39.73414678
+    ],
+    [
+     -103.89072349,
+     39.73413782
+    ],
+    [
+     -103.89074372,
+     39.73412884
+    ],
+    [
+     -103.8907639,
+     39.73411991
+    ],
+    [
+     -103.8907841,
+     39.73411096
+    ],
+    [
+     -103.89080433,
+     39.73410199
+    ],
+    [
+     -103.89082458,
+     39.73409298
+    ],
+    [
+     -103.89084479,
+     39.73408399
+    ],
+    [
+     -103.89085493,
+     39.73407952
     ]
-   ]
+   ],
+   "s_blue": [
+    687.0,
+    699.0
+   ],
+   "ends": "round 3: the yellow-only ends read by eye on 24 px/m end zooms of NAIP 2023 0.3 m (kerbs_stripe_ends_2023_030.jpg), where the yellow clearly separates from the dry grass; in_m / out_m stay the blue's (kerb_spans.py)"
   },
   {
    "side": "left",
@@ -1058,8 +1148,8 @@
   },
   {
    "side": "right",
-   "s0": 1747.0,
-   "s1": 1768.0,
+   "s0": 1743.5,
+   "s1": 1771.5,
    "in_m": -0.4,
    "out_m": 0.5,
    "colour": "blue_yellow",
@@ -1071,54 +1161,71 @@
    ],
    "edge_lonlat": [
     [
-     -103.90236507,
-     39.73511889
+     -103.90233143,
+     39.73513744
     ],
     [
-     -103.90238403,
-     39.73510839
+     -103.90235078,
+     39.73512677
     ],
     [
-     -103.90240293,
-     39.73509792
+     -103.90236981,
+     39.73511626
     ],
     [
-     -103.9024219,
-     39.73508743
+     -103.90238877,
+     39.73510577
     ],
     [
-     -103.90244092,
-     39.735077
+     -103.90240767,
+     39.7350953
     ],
     [
-     -103.9024599,
-     39.73506653
+     -103.90242666,
+     39.73508482
     ],
     [
-     -103.9024789,
-     39.73505601
+     -103.90244568,
+     39.73507439
     ],
     [
-     -103.90249786,
-     39.73504551
+     -103.90246464,
+     39.7350639
     ],
     [
-     -103.9025168,
-     39.73503506
+     -103.90248364,
+     39.73505338
     ],
     [
-     -103.9025358,
-     39.7350246
+     -103.9025026,
+     39.73504289
     ],
     [
-     -103.90255478,
-     39.73501413
+     -103.90252155,
+     39.73503244
     ],
     [
-     -103.90256432,
-     39.73500886
+     -103.90254055,
+     39.73502198
+    ],
+    [
+     -103.90255953,
+     39.73501151
+    ],
+    [
+     -103.90257854,
+     39.73500099
+    ],
+    [
+     -103.90259745,
+     39.73499052
     ]
-   ]
+   ],
+   "s_blue": [
+    1747.0,
+    1768.0
+   ],
+   "ends": "round 3: the yellow-only ends read by eye on 24 px/m end zooms of NAIP 2023 0.3 m (kerbs_stripe_ends_2023_030.jpg), where the yellow clearly separates from the dry grass; in_m / out_m stay the blue's (kerb_spans.py)"
   },
   {
    "side": "right",
@@ -1445,7 +1552,7 @@
    "s0": 2892.0,
    "s1": 2914.0,
    "in_m": -0.55,
-   "out_m": 2.3,
+   "out_m": 1.05,
    "colour": "blue_white",
    "profile": "kerb",
    "stations_measured": 23,
@@ -1502,12 +1609,14 @@
      -103.89778782,
      39.73593256
     ]
-   ]
+   ],
+   "out_m_colour": 2.3,
+   "out_note": "round 3: the colour out_m +2.30 is the plain dirt past the kerb (the white class took pale dirt; kerb_offsets_calibration_strips.jpg); +1.05 is the block reader's (kerb_offsets.py, calibrated)"
   },
   {
    "side": "right",
-   "s0": 3010.0,
-   "s1": 3044.0,
+   "s0": 3006.5,
+   "s1": 3047.5,
    "in_m": 0.5,
    "out_m": 1.1,
    "colour": "blue_yellow",
@@ -1519,78 +1628,99 @@
    ],
    "edge_lonlat": [
     [
-     -103.89695284,
-     39.73537781
+     -103.89699301,
+     39.73538311
     ],
     [
-     -103.89692976,
-     39.73537479
+     -103.89697002,
+     39.73538006
     ],
     [
-     -103.89690677,
-     39.73537174
+     -103.89694709,
+     39.73537706
     ],
     [
-     -103.89688392,
-     39.73536874
+     -103.89692402,
+     39.73537403
     ],
     [
-     -103.89686114,
-     39.73536577
+     -103.89690102,
+     39.73537097
     ],
     [
-     -103.89683816,
-     39.73536265
+     -103.89687817,
+     39.73536799
     ],
     [
-     -103.89681575,
-     39.73535955
+     -103.8968554,
+     39.73536499
     ],
     [
-     -103.89679342,
-     39.73535639
+     -103.89683242,
+     39.73536187
     ],
     [
-     -103.89677051,
-     39.73535297
+     -103.89681001,
+     39.73535874
     ],
     [
-     -103.89674818,
-     39.73534954
+     -103.89678769,
+     39.73535554
     ],
     [
-     -103.89672571,
-     39.73534601
+     -103.89676478,
+     39.73535212
     ],
     [
-     -103.89670286,
-     39.73534235
+     -103.89674246,
+     39.73534865
     ],
     [
-     -103.8966801,
-     39.73533867
+     -103.89671999,
+     39.7353451
     ],
     [
-     -103.89665734,
-     39.73533497
+     -103.89669715,
+     39.73534144
     ],
     [
-     -103.8966345,
-     39.73533132
+     -103.89667439,
+     39.73533774
     ],
     [
-     -103.89661158,
-     39.73532763
+     -103.89665163,
+     39.73533406
     ],
     [
-     -103.89658876,
-     39.73532391
+     -103.89662878,
+     39.73533041
     ],
     [
-     -103.89656591,
-     39.73532025
+     -103.89660588,
+     39.7353267
+    ],
+    [
+     -103.89658304,
+     39.735323
+    ],
+    [
+     -103.8965602,
+     39.73531934
+    ],
+    [
+     -103.89653728,
+     39.73531567
+    ],
+    [
+     -103.89652585,
+     39.73531385
     ]
-   ]
+   ],
+   "s_blue": [
+    3010.0,
+    3044.0
+   ],
+   "ends": "round 3: the yellow-only ends read by eye on 24 px/m end zooms of NAIP 2023 0.3 m (kerbs_stripe_ends_2023_030.jpg), where the yellow clearly separates from the dry grass; in_m / out_m stay the blue's (kerb_spans.py)"
   }
  ]
 }

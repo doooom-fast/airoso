@@ -434,6 +434,36 @@ six runs show as faint pinkish striated bands, not blocks. Block amplitude 8-14 
 measured**: Nevada keeps 0.1.2 (0.1.1's six kerbs outside the edge at the invented -0.5 / 1.0 m). The 2013 course
 imagery is 1.0 m. A ground photo or the course's own drawing would decide them (Kevin's call / owed).
 
+### 3. High Plains 0.1.4: four blue / yellow stripes to their yellow ends, R s 2,892 to its blocks' outer edge
+
+The five stripes' ends traced by eye on end zooms of NAIP 2023 0.3 m at 24 px/m with 1 m ticks
+(`tracks/high-plains/source/edges/kerbs_stripe_ends_2023_030.jpg`, kept beside the trace; L s 690 also read back to
+s 643 and R s 2,673 out to 6 m past the edge). At this scale the yellow is saturated against the tan grass at every end:
+
+| stripe | blue (0.1.3) | **yellow ends by eye (0.1.4)** | |
+|---|---|---|---|
+| L s 517 | 517-537 | **512.5-541** | |
+| L s 690 | 687-699 | **660.5-701.5** | the blocks run 26 m further back (pale blue the colour key missed); a white line before s 660 |
+| R s 1,747 | 1,747-1,768 | **1,743.5-1,771.5** | whitish line before s 1,743 (not yellow) |
+| R s 2,678 | 2,673-2,698 | **kept** | the yellow starts at ~2,668.5, but the stripe crosses 3-4 m of the line's offsets over s 2,668-2,681 (the line's edge leaves the asphalt's there); one in / out cannot place it, and paint is flat, which the block reader does not measure (item 1) |
+| R s 3,013 | 3,010-3,044 | **3,006.5-3,047.5** | |
+
+in_m / out_m stay the blue's (`s_blue` keeps the old span). And **R s 2,892's out_m +2.30 -> +1.05** (item 1: the colour
+out was the dirt beyond; +1.05 is the block reader's, a raised kerb, inside the bar; `out_m_colour` kept). Not fixed and
+owed: R s 2,673-2,681's first ~8 m are built at the run's median offset while the paint lies 1.5-3 m further out (the same
+line divergence). The calibration record (item 1) was read against round 2's file (4b3958f6), not this one.
+
+| High Plains (EMPTY workshop, Mac) | 0.1.1 | 0.1.3 | **0.1.4** |
+|---|---|---|---|
+| soft top / severe / bumps /km / kinks /km | 0 / 0 / 0 / 1.87 | 0 / 0 / 0 / 0.62 | 0 / 0 / 0 / **0.62** |
+| vertex bumps / drops / far ledges / obstructed / floating | 2 / 0 / 0 / 0 / 0 | the same | the same |
+| audit (K) / verify_kn5 / kn5_ground_check (p95) / house_seat | CLEAN / PASS / PASS (0.021) / PASS | CLEAN (0) / PASS / PASS (0.021) / PASS | the same |
+| edge report: at 1 m strip or kerb / rise within 2 m p95 | 100 % / 0.014 m | 100 % / 0.012 m | 100 % / 0.012 m |
+| kerbs | 12 runs, 243 m (round 4) | 20 runs, 526 m | **20 runs, 578 m** |
+| kn5 | 15.6 MB | 15,632,786 B | **15,642,170 B (15.6 MB)** |
+
+Stills: `kerbs_built_beside_0.1.4.jpg` (the five changed runs: aerial | built faces), each on its paint.
+
 ## Owed (start here)
 
 (Rewritten at round 2's end; round 1's list is done or carried here.)

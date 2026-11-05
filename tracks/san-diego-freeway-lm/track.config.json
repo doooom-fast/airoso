@@ -1,0 +1,76 @@
+{
+  "_doc": "Ledger 0080: the San Diego freeway network on Lake Murray v4's engine, beside the original (tracks/san-diego-freeway, airoso's network engine; its config is PR 34's, b888f10). Phase 1 = the line: I 8 eastbound end to end (the original's network.reference_line), its six declared decks, through the LM chain (tools/ship_track.sh, ship.json engine lm-v4). The other carriageways, ramps, flyovers and barriers are phase 2 (the ledger's map).",
+  "name": "San Diego Freeway Free Roam (LM engine)",
+  "ui_series": "doooom San Diego",
+  "slug": "san_diego_freeway_lm",
+  "install_folder": "san_diego_freeway_lm",
+  "version": "0.1.0",
+  "author": "doooom",
+  "year": 2026,
+  "archetype": "real_road",
+  "location": {
+    "lat": 32.7765,
+    "lon": -117.17,
+    "timezone": "America/Los_Angeles",
+    "city": "San Diego",
+    "country": "United States",
+    "_anchor": "I-8 in Mission Valley (straight WB stretch near the SR-163 stack) - AC_START snaps to the nearest freeway edge here. (project_freeway_net's spawn rule, build_network_mesh._freeroam_dummies. Since 2026-11-01 the chain's network_reference step replaces that dummies.json: the grid at the START of network.reference_line, AC_TIME_0 at its finish, fleet/LAWS.md L11; lat/lon here still feed the lighting.)"
+  },
+  "source": {
+    "type": "lm-intake",
+    "_doc": "the line, its 3DEP and its widths come from the original's final network draft (lm_intake below); this track fetches nothing"
+  },
+  "route": {
+    "smooth_sigma_pts": 2.0,
+    "smooth_passes": 2,
+    "smooth_sigma_y_pts": 1.5,
+    "divided_double": false,
+    "_divided_double_doc": "one carriageway, one direction of travel: no yellow centre line; white lane dividers stay (route.lane_dividers absent = on)",
+    "edge": {
+      "curb_h": 0.0,
+      "curb_face_w": 0.05,
+      "sidewalk_w": 0.05,
+      "connector_sidewalk_w": 0.05,
+      "grade_w": 0.3,
+      "grass_clearance": 0.05
+    },
+    "_edge_doc": "a freeway has no curb and no sidewalk: the rally ports' near-zero edge (ledger 0078 round 8). The real edge is a paved shoulder to a concrete barrier; the barrier is owed (ledger 0080 map), so phase 1 lays none rather than an invented one."
+  },
+  "loop": false,
+  "mirror_x": false,
+  "true_north_rotation_deg": 0.0,
+  "origin": "centroid",
+  "surfaces": {
+    "road": "1ROAD",
+    "grass": "GRASS",
+    "kerb": "1KERB"
+  },
+  "scenery": {
+    "draft_lamps": false,
+    "_draft_lamps_doc": "v021's 55 m street lamps are a neighbourhood's; the freeway's lighting is not measured here"
+  },
+  "lighting": {
+    "presets": [
+      "noon",
+      "golden_hour",
+      "morning"
+    ],
+    "grassfx": false,
+    "model_yaw_deg": 0.0
+  },
+  "layouts": [
+    {
+      "id": "freeroam",
+      "name": "Freeway Free Roam (LM engine)",
+      "ai": "ai/freeroam",
+      "run": "Point to point: Interstate 8 eastbound, end to end inside the box",
+      "uses_connectors": []
+    }
+  ],
+  "lm_intake": {
+    "source_track": "san-diego-freeway",
+    "source_data": "source/network-draft-pr34",
+    "_source_data_doc": "ledger 0080: the original's FINAL network draft (PR 34's scripts at b888f10, run on the Mac), not its committed data/ (the PC's first run, before PR 34's fixes). tools/network_line.py wrote it; its network_line.json has the provenance and md5s.",
+    "connectors": false
+  }
+}

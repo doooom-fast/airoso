@@ -1,0 +1,4536 @@
+{
+ "tool": "scripts/geometry/network_reference.py",
+ "line": {
+  "label": "I 8 eastbound",
+  "how": "ref 'I 8' eastbound: the longest directed chain",
+  "edges": [
+   200,
+   141,
+   143,
+   411,
+   242,
+   243,
+   542,
+   447,
+   446,
+   530,
+   531,
+   373,
+   372,
+   299,
+   298,
+   547,
+   504,
+   358,
+   357,
+   548
+  ],
+  "bridged": [],
+  "joints": [
+   {
+    "from": 200,
+    "to": 141,
+    "gap_m": 0.0
+   },
+   {
+    "from": 141,
+    "to": 143,
+    "gap_m": 0.0
+   },
+   {
+    "from": 143,
+    "to": 411,
+    "gap_m": 0.0
+   },
+   {
+    "from": 411,
+    "to": 242,
+    "gap_m": 0.0
+   },
+   {
+    "from": 242,
+    "to": 243,
+    "gap_m": 0.0
+   },
+   {
+    "from": 243,
+    "to": 542,
+    "gap_m": 0.0
+   },
+   {
+    "from": 542,
+    "to": 447,
+    "gap_m": 0.0
+   },
+   {
+    "from": 447,
+    "to": 446,
+    "gap_m": 0.0
+   },
+   {
+    "from": 446,
+    "to": 530,
+    "gap_m": 0.0
+   },
+   {
+    "from": 530,
+    "to": 531,
+    "gap_m": 0.0
+   },
+   {
+    "from": 531,
+    "to": 373,
+    "gap_m": 0.0
+   },
+   {
+    "from": 373,
+    "to": 372,
+    "gap_m": 0.0
+   },
+   {
+    "from": 372,
+    "to": 299,
+    "gap_m": 0.0
+   },
+   {
+    "from": 299,
+    "to": 298,
+    "gap_m": 0.0
+   },
+   {
+    "from": 298,
+    "to": 547,
+    "gap_m": 0.0
+   },
+   {
+    "from": 547,
+    "to": 504,
+    "gap_m": 0.0
+   },
+   {
+    "from": 504,
+    "to": 358,
+    "gap_m": 0.0
+   },
+   {
+    "from": 358,
+    "to": 357,
+    "gap_m": 0.0
+   },
+   {
+    "from": 357,
+    "to": 548,
+    "gap_m": 0.0
+   }
+  ],
+  "capped_ends": [
+   {
+    "end": "start",
+    "cap": "cap_200_1",
+    "trimmed_m": 12.19
+   },
+   {
+    "end": "finish",
+    "cap": "cap_548_1",
+    "trimmed_m": 12.99
+   }
+  ],
+  "max_joint_gap_m": 0.0,
+  "points": 2132,
+  "length_km": 10.636,
+  "spans": [
+   [
+    1190.2,
+    1375.4
+   ],
+   [
+    2982.5,
+    3462.9
+   ],
+   [
+    3598.0,
+    3733.2
+   ],
+   [
+    6581.4,
+    6726.6
+   ],
+   [
+    6884.4,
+    7054.7
+   ],
+   [
+    7129.8,
+    7249.9
+   ]
+  ],
+  "side_check": {
+   "samples": 188,
+   "left": 188,
+   "right": 0
+  },
+  "join_tol_m": 7.0,
+  "max_joint_turn_deg": 45.0,
+  "loop": false
+ },
+ "declared": {
+  "_doc": "THE LINE THE SHIP PHASE WALKS (scripts.geometry.network_reference, the draft step network_reference; Kevin 2026-11-01: 'a complete track list installed by morning'). A network has no single centreline, and the prep / write_ai_line / make_map / verify_kn5 / drive_test read one (tracks/san-diego-freeway/README.md 'What the Windows run owes'). This declares ONE real mainline, never an invented one (fleet/LAWS.md L1): Interstate 8 eastbound, end to end inside source.bbox, chosen from the draft's OWN edges at draft time. ref 'I 8' is one of source.refs, the OSM ref tag scripts.gps.classify writes as a motorway edge's name; eastbound = the carriageway whose OSM ways are drawn west to east (classify travel_dir, recorded because this block exists), the right-hand one of the pair (checked: where I 8 westbound runs within 80 m it must lie on the line's left). The resolver takes the longest directed chain of non-ramp I 8 edges that continue each other at a shared node (no joint turning > max_joint_turn_deg); every point of the line is a vertex of a built edge. Edge ids are not written here: they are the draft's own and change with every net step on live OSM (the README: no snapshot of the July OSM exists); edge_ids may pin a list once a draft is read. Everything else the network builds (I 8 westbound, I 5, CA 52, CA 163, every ramp and connector) is in track.obj and the kn5 but walked by no line gate: data/network.reference.json lists it by id and name, drive_test prints it, ship.json _owed names the hole.",
+  "ref": "I 8",
+  "direction": "eastbound",
+  "edge_ids": null,
+  "bridge_max_edges": 2,
+  "_bridge_max_edges_doc": "[invented] At most 2 non-ramp freeway edges of ANOTHER name may sit INSIDE the chain (never at its ends; each named in network.reference.json 'bridged'): classify names a mainline piece by a nearest-way vote every 25 m, and a short I 8 piece passing under the CA 163 or I 5 stack can lose that vote. Only non-ramp freeway edges can bridge (OSM tags freeway-to-freeway connectors motorway_link, which classify makes ramps), only between two I 8 eastbound edges (the chain starts and ends on I 8), and only through joints turning <= max_joint_turn_deg. 0 = refuse instead.",
+  "max_joint_turn_deg": 45.0
+ },
+ "built_km": 225.732,
+ "judged_km": 10.636,
+ "unjudged_km": 215.082,
+ "unjudged_edges": 543,
+ "unjudged": [
+  {
+   "id": 0,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 514.5,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 1,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 256.5,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 2,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 303.1,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 3,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 368.4,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 4,
+   "name": "CA 52",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 329.2,
+   "why": "another mainline"
+  },
+  {
+   "id": 5,
+   "name": "CA 52",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 1034.4,
+   "why": "another mainline"
+  },
+  {
+   "id": 6,
+   "name": "CA 52",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 1828.6,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 7,
+   "name": "CA 163",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 16.7,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 8,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 175.7,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 9,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 185.5,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 10,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 136.4,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 11,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 140.8,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 12,
+   "name": "CA 163",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 24.1,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 13,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 339.6,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 14,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 464.2,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 15,
+   "name": "CA 52",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 970.0,
+   "why": "another mainline"
+  },
+  {
+   "id": 16,
+   "name": "La Jolla Parkway",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 716.2,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 17,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 194.2,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 18,
+   "name": "CA 163",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 329.7,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 19,
+   "name": "CA 163",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 106.0,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 20,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 804.7,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 21,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 227.6,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 22,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 482.3,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 23,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 98.1,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 24,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 628.3,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 25,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 237.8,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 26,
+   "name": "CA 163",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 265.7,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 27,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 231.1,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 28,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 359.6,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 29,
+   "name": "CA 163",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 314.4,
+   "why": "another mainline"
+  },
+  {
+   "id": 30,
+   "name": "CA 163",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 555.6,
+   "why": "another mainline"
+  },
+  {
+   "id": 31,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 183.3,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 32,
+   "name": "CA 163",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 739.0,
+   "why": "another mainline"
+  },
+  {
+   "id": 33,
+   "name": "CA 163",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 429.3,
+   "why": "another mainline"
+  },
+  {
+   "id": 34,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 337.7,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 35,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 259.7,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 36,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 314.3,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 37,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 935.0,
+   "why": "another mainline"
+  },
+  {
+   "id": 38,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 323.8,
+   "why": "another mainline"
+  },
+  {
+   "id": 39,
+   "name": "CA 52",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 1250.5,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 40,
+   "name": "CA 94",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 591.0,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 41,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 219.8,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 42,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 376.7,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 43,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 235.9,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 44,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 886.0,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 45,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 20.6,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 46,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 20.7,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 47,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 486.0,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 48,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 55.5,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 49,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 115.7,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 50,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 1011.0,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 51,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 1325.2,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 52,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 307.2,
+   "why": "another mainline"
+  },
+  {
+   "id": 53,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 579.3,
+   "why": "another mainline"
+  },
+  {
+   "id": 54,
+   "name": "CA 163",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 397.3,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 55,
+   "name": "CA 163",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 322.3,
+   "why": "another mainline"
+  },
+  {
+   "id": 56,
+   "name": "CA 163",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 527.9,
+   "why": "another mainline"
+  },
+  {
+   "id": 57,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 143.0,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 58,
+   "name": "CA 163",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 645.6,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 59,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 718.5,
+   "why": "another mainline"
+  },
+  {
+   "id": 60,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 202.5,
+   "why": "another mainline"
+  },
+  {
+   "id": 61,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 432.4,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 62,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 155.8,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 63,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 287.0,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 64,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 193.4,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 65,
+   "name": "CA 163",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 348.0,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 66,
+   "name": "CA 163",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 379.7,
+   "why": "another mainline"
+  },
+  {
+   "id": 67,
+   "name": "CA 163",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 104.7,
+   "why": "another mainline"
+  },
+  {
+   "id": 68,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 249.1,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 69,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 373.9,
+   "why": "another mainline"
+  },
+  {
+   "id": 70,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 461.6,
+   "why": "another mainline"
+  },
+  {
+   "id": 71,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 172.2,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 72,
+   "name": "CA 163",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 724.0,
+   "why": "another mainline"
+  },
+  {
+   "id": 73,
+   "name": "CA 163",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 835.2,
+   "why": "another mainline"
+  },
+  {
+   "id": 74,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 191.5,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 75,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 217.9,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 76,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 1126.7,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 77,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 323.5,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 78,
+   "name": "CA 94",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 378.2,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 79,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 241.4,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 80,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 29.8,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 81,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 389.8,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 82,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 29.8,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 83,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 136.5,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 84,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 571.6,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 85,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 425.9,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 86,
+   "name": "CA 52",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 1361.5,
+   "why": "another mainline"
+  },
+  {
+   "id": 87,
+   "name": "CA 52",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 903.0,
+   "why": "another mainline"
+  },
+  {
+   "id": 88,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 39.9,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 89,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 183.4,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 90,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 33.5,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 91,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 387.4,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 92,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 144.2,
+   "why": "another mainline"
+  },
+  {
+   "id": 93,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 350.2,
+   "why": "another mainline"
+  },
+  {
+   "id": 94,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 294.0,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 95,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 534.9,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 96,
+   "name": "I 8",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 592.7,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 97,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 699.8,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 98,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 366.3,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 99,
+   "name": "CA 52",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 548.3,
+   "why": "another mainline"
+  },
+  {
+   "id": 100,
+   "name": "CA 52",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 781.0,
+   "why": "another mainline"
+  },
+  {
+   "id": 101,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 159.1,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 102,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 144.0,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 103,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 384.0,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 104,
+   "name": "CA 163",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 626.5,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 105,
+   "name": "CA 163",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 417.8,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 106,
+   "name": "CA 163",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 452.5,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 107,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 390.0,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 108,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 72.4,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 109,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 452.4,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 110,
+   "name": "I 8",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 789.9,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 111,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 255.3,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 112,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 872.1,
+   "why": "another mainline"
+  },
+  {
+   "id": 113,
+   "name": "CA 163",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 244.2,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 114,
+   "name": "CA 163",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 1031.3,
+   "why": "another mainline"
+  },
+  {
+   "id": 115,
+   "name": "CA 163",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 476.5,
+   "why": "another mainline"
+  },
+  {
+   "id": 116,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 479.4,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 117,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 216.1,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 118,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 39.6,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 119,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 39.6,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 120,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 107.0,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 121,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 147.9,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 122,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 161.0,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 123,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 88.3,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 124,
+   "name": "CA 52",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 351.8,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 125,
+   "name": "CA 52",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 467.2,
+   "why": "another mainline"
+  },
+  {
+   "id": 126,
+   "name": "CA 52",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 1221.0,
+   "why": "another mainline"
+  },
+  {
+   "id": 127,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 610.2,
+   "why": "another mainline"
+  },
+  {
+   "id": 128,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 514.3,
+   "why": "another mainline"
+  },
+  {
+   "id": 129,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 387.5,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 130,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 661.0,
+   "why": "another mainline"
+  },
+  {
+   "id": 131,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 1427.2,
+   "why": "another mainline"
+  },
+  {
+   "id": 132,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 374.8,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 133,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 483.7,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 134,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 269.9,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 135,
+   "name": "CA 52",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 756.8,
+   "why": "another mainline"
+  },
+  {
+   "id": 136,
+   "name": "CA 52",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 771.8,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 137,
+   "name": "CA 52",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 1667.9,
+   "why": "another mainline"
+  },
+  {
+   "id": 138,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 325.0,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 139,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 63.3,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 140,
+   "name": "Front Street",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 199.7,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 142,
+   "name": "I 8",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 424.4,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 144,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 215.4,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 145,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 85.4,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 146,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 59.5,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 147,
+   "name": "CA 163",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 174.1,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 148,
+   "name": "CA 163",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 932.8,
+   "why": "another mainline"
+  },
+  {
+   "id": 149,
+   "name": "CA 163",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 573.1,
+   "why": "another mainline"
+  },
+  {
+   "id": 150,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 183.7,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 151,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 265.0,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 152,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 261.9,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 153,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 199.1,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 154,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 326.9,
+   "why": "another mainline"
+  },
+  {
+   "id": 155,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 220.0,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 156,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 295.3,
+   "why": "another mainline"
+  },
+  {
+   "id": 157,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 395.8,
+   "why": "another mainline"
+  },
+  {
+   "id": 158,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 352.7,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 159,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 407.0,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 160,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 396.9,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 161,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 310.2,
+   "why": "another mainline"
+  },
+  {
+   "id": 162,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 188.6,
+   "why": "another mainline"
+  },
+  {
+   "id": 163,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 315.5,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 164,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 102.2,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 165,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 656.5,
+   "why": "another mainline"
+  },
+  {
+   "id": 166,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 855.4,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 167,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 389.5,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 168,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 387.0,
+   "why": "another mainline"
+  },
+  {
+   "id": 169,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 508.8,
+   "why": "another mainline"
+  },
+  {
+   "id": 170,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 11.5,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 171,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 371.4,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 172,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 11.6,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 173,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 11.8,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 174,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 18.2,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 175,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 18.2,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 176,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 113.8,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 177,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 181.7,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 178,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 490.0,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 179,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 260.0,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 180,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 364.3,
+   "why": "another mainline"
+  },
+  {
+   "id": 181,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 92.1,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 182,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 50.6,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 183,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 48.1,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 184,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 63.1,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 185,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 727.5,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 186,
+   "name": "I 8",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 946.8,
+   "why": "the other carriageway"
+  },
+  {
+   "id": 187,
+   "name": "I 8",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 109.9,
+   "why": "the other carriageway"
+  },
+  {
+   "id": 188,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 30.5,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 189,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 30.5,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 190,
+   "name": "I 8",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 165.1,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 191,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 437.2,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 192,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 431.5,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 193,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 573.3,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 194,
+   "name": "I 8",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 443.2,
+   "why": "the other carriageway"
+  },
+  {
+   "id": 195,
+   "name": "I 8",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 398.3,
+   "why": "the other carriageway"
+  },
+  {
+   "id": 196,
+   "name": "I 8",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 39.1,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 197,
+   "name": "I 8",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 1659.4,
+   "why": "the other carriageway"
+  },
+  {
+   "id": 198,
+   "name": "I 8",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 48.4,
+   "why": "the other carriageway"
+  },
+  {
+   "id": 199,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 119.7,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 201,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 19.7,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 202,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 12.5,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 203,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 9.8,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 204,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 20.8,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 205,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 90.8,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 206,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 27.8,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 207,
+   "name": "I 8",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 270.4,
+   "why": "the other carriageway"
+  },
+  {
+   "id": 208,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 556.4,
+   "why": "another mainline"
+  },
+  {
+   "id": 209,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 581.3,
+   "why": "another mainline"
+  },
+  {
+   "id": 210,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 353.4,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 211,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 636.7,
+   "why": "another mainline"
+  },
+  {
+   "id": 212,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 1621.3,
+   "why": "another mainline"
+  },
+  {
+   "id": 213,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 69.9,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 214,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 82.3,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 215,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 167.5,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 216,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 490.5,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 217,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 206.2,
+   "why": "another mainline"
+  },
+  {
+   "id": 218,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 31.8,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 219,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 293.3,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 220,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 568.4,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 221,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 912.2,
+   "why": "another mainline"
+  },
+  {
+   "id": 222,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 432.3,
+   "why": "another mainline"
+  },
+  {
+   "id": 223,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 87.0,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 224,
+   "name": "CA 52",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 317.7,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 225,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 99.3,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 226,
+   "name": "CA 52",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 393.7,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 227,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 78.8,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 228,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 50.6,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 229,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 91.5,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 230,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 52.8,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 231,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 34.6,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 232,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 277.8,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 233,
+   "name": "CA 163",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 1547.7,
+   "why": "another mainline"
+  },
+  {
+   "id": 234,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 540.3,
+   "why": "another mainline"
+  },
+  {
+   "id": 235,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 693.7,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 236,
+   "name": "CA 163",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 387.4,
+   "why": "another mainline"
+  },
+  {
+   "id": 237,
+   "name": "CA 163",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 336.9,
+   "why": "another mainline"
+  },
+  {
+   "id": 238,
+   "name": "CA 163",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 335.6,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 239,
+   "name": "CA 163",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 266.7,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 240,
+   "name": "CA 163",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 84.6,
+   "why": "another mainline"
+  },
+  {
+   "id": 241,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 18.9,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 244,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 373.5,
+   "why": "another mainline"
+  },
+  {
+   "id": 245,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 205.7,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 246,
+   "name": "I 8",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 484.3,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 247,
+   "name": "I 8",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 404.6,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 248,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 447.9,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 249,
+   "name": "I 8",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 871.0,
+   "why": "the other carriageway"
+  },
+  {
+   "id": 250,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 585.9,
+   "why": "another mainline"
+  },
+  {
+   "id": 251,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 1093.4,
+   "why": "another mainline"
+  },
+  {
+   "id": 252,
+   "name": "La Jolla Parkway",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 639.4,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 253,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 874.1,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 254,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 1114.0,
+   "why": "another mainline"
+  },
+  {
+   "id": 255,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 858.3,
+   "why": "another mainline"
+  },
+  {
+   "id": 256,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 1335.7,
+   "why": "another mainline"
+  },
+  {
+   "id": 257,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 941.3,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 258,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 949.2,
+   "why": "another mainline"
+  },
+  {
+   "id": 259,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 552.7,
+   "why": "another mainline"
+  },
+  {
+   "id": 260,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 284.9,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 261,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 260.5,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 262,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 378.6,
+   "why": "another mainline"
+  },
+  {
+   "id": 263,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 222.9,
+   "why": "another mainline"
+  },
+  {
+   "id": 264,
+   "name": "CA 163",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 632.6,
+   "why": "another mainline"
+  },
+  {
+   "id": 265,
+   "name": "I 8",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 615.6,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 266,
+   "name": "CA 163",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 107.4,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 267,
+   "name": "I 8",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 452.8,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 268,
+   "name": "I 8",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 589.4,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 269,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 69.2,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 270,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 223.5,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 271,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 330.2,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 272,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 262.5,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 273,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 33.3,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 274,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 97.9,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 275,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 141.4,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 276,
+   "name": "I 8",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 57.3,
+   "why": "the other carriageway"
+  },
+  {
+   "id": 277,
+   "name": "I 8",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 546.3,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 278,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 558.6,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 279,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 272.1,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 280,
+   "name": "I 8",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 293.9,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 281,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 656.5,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 282,
+   "name": "I 805",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 668.9,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 283,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 430.6,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 284,
+   "name": "I 805",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 308.2,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 285,
+   "name": "CA 163",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 891.3,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 286,
+   "name": "CA 163",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 594.8,
+   "why": "another mainline"
+  },
+  {
+   "id": 287,
+   "name": "CA 163",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 768.7,
+   "why": "another mainline"
+  },
+  {
+   "id": 288,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 217.5,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 289,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 208.3,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 290,
+   "name": "I 8",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 295.4,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 291,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 179.6,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 292,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 144.3,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 293,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 195.5,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 294,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 399.3,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 295,
+   "name": "I 8",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 457.3,
+   "why": "the other carriageway"
+  },
+  {
+   "id": 296,
+   "name": "I 8",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 123.7,
+   "why": "the other carriageway"
+  },
+  {
+   "id": 297,
+   "name": "I 8",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 319.0,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 300,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 456.9,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 301,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 94.3,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 302,
+   "name": "CA 163",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 796.7,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 303,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 139.6,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 304,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 307.4,
+   "why": "another mainline"
+  },
+  {
+   "id": 305,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 48.2,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 306,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 34.4,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 307,
+   "name": "I 8",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 161.7,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 308,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 34.5,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 309,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 55.2,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 310,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 140.3,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 311,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 88.6,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 312,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 126.7,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 313,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 400.8,
+   "why": "another mainline"
+  },
+  {
+   "id": 314,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 421.5,
+   "why": "another mainline"
+  },
+  {
+   "id": 315,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 282.4,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 316,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 158.9,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 317,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 403.5,
+   "why": "another mainline"
+  },
+  {
+   "id": 318,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 171.5,
+   "why": "another mainline"
+  },
+  {
+   "id": 319,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 344.7,
+   "why": "another mainline"
+  },
+  {
+   "id": 320,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 354.3,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 321,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 341.9,
+   "why": "another mainline"
+  },
+  {
+   "id": 322,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 364.9,
+   "why": "another mainline"
+  },
+  {
+   "id": 323,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 88.6,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 324,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 326.5,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 325,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 259.8,
+   "why": "another mainline"
+  },
+  {
+   "id": 326,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 548.1,
+   "why": "another mainline"
+  },
+  {
+   "id": 327,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 455.1,
+   "why": "another mainline"
+  },
+  {
+   "id": 328,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 533.5,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 329,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 545.0,
+   "why": "another mainline"
+  },
+  {
+   "id": 330,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 415.0,
+   "why": "another mainline"
+  },
+  {
+   "id": 331,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 338.3,
+   "why": "another mainline"
+  },
+  {
+   "id": 332,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 426.9,
+   "why": "another mainline"
+  },
+  {
+   "id": 333,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 273.2,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 334,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 366.8,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 335,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 834.0,
+   "why": "another mainline"
+  },
+  {
+   "id": 336,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 837.4,
+   "why": "another mainline"
+  },
+  {
+   "id": 337,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 291.9,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 338,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 213.6,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 339,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 404.8,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 340,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 630.4,
+   "why": "another mainline"
+  },
+  {
+   "id": 341,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 644.0,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 342,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 282.1,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 343,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 1307.7,
+   "why": "another mainline"
+  },
+  {
+   "id": 344,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 521.3,
+   "why": "another mainline"
+  },
+  {
+   "id": 345,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 350.7,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 346,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 1552.5,
+   "why": "another mainline"
+  },
+  {
+   "id": 347,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 2153.7,
+   "why": "another mainline"
+  },
+  {
+   "id": 348,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 764.5,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 349,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 807.6,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 350,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 348.0,
+   "why": "another mainline"
+  },
+  {
+   "id": 351,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 658.9,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 352,
+   "name": "I 805",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 988.3,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 353,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 259.6,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 354,
+   "name": "CA 52",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 244.4,
+   "why": "another mainline"
+  },
+  {
+   "id": 355,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 39.6,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 356,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 192.7,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 359,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 558.6,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 360,
+   "name": "I 805",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 404.9,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 361,
+   "name": "CA 52",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 530.7,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 362,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 666.3,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 363,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 825.3,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 364,
+   "name": "CA 52",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 303.1,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 365,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 244.8,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 366,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 103.9,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 367,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 494.6,
+   "why": "another mainline"
+  },
+  {
+   "id": 368,
+   "name": "CA 163",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 234.0,
+   "why": "another mainline"
+  },
+  {
+   "id": 369,
+   "name": "CA 163",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 337.9,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 370,
+   "name": "CA 163",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 801.0,
+   "why": "another mainline"
+  },
+  {
+   "id": 371,
+   "name": "CA 163",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 141.9,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 374,
+   "name": "I 8",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 106.5,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 375,
+   "name": "CA 163",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 443.8,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 376,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 206.3,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 377,
+   "name": "I 8",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 544.7,
+   "why": "the other carriageway"
+  },
+  {
+   "id": 378,
+   "name": "I 8",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 45.4,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 379,
+   "name": "I 8",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 1228.0,
+   "why": "the other carriageway"
+  },
+  {
+   "id": 380,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 37.6,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 381,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 19.4,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 382,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 58.4,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 383,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 622.1,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 384,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 36.0,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 385,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 36.0,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 386,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 315.5,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 387,
+   "name": "CA 163",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 876.0,
+   "why": "another mainline"
+  },
+  {
+   "id": 388,
+   "name": "CA 163",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 464.1,
+   "why": "another mainline"
+  },
+  {
+   "id": 389,
+   "name": "CA 52",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 1108.1,
+   "why": "another mainline"
+  },
+  {
+   "id": 390,
+   "name": "CA 52",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 318.7,
+   "why": "another mainline"
+  },
+  {
+   "id": 391,
+   "name": "CA 163",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 112.0,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 392,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 301.3,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 393,
+   "name": "CA 163",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 771.2,
+   "why": "another mainline"
+  },
+  {
+   "id": 394,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 1007.7,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 395,
+   "name": "I 8",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 257.4,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 396,
+   "name": "I 8",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 1414.4,
+   "why": "same road, not on the chain (a parallel or off-direction piece)"
+  },
+  {
+   "id": 397,
+   "name": "I 8",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 508.2,
+   "why": "the other carriageway"
+  },
+  {
+   "id": 398,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 13.5,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 399,
+   "name": "I 8",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 181.3,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 400,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 27.3,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 401,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 30.1,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 402,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 191.1,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 403,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 343.6,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 404,
+   "name": "CA 52",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 961.3,
+   "why": "another mainline"
+  },
+  {
+   "id": 405,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 92.4,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 406,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 82.7,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 407,
+   "name": "I 8",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 124.5,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 408,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 417.4,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 409,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 397.5,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 410,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 611.9,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 412,
+   "name": "I 8",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 365.8,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 413,
+   "name": "CA 52",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 1649.7,
+   "why": "another mainline"
+  },
+  {
+   "id": 414,
+   "name": "CA 52",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 371.2,
+   "why": "another mainline"
+  },
+  {
+   "id": 415,
+   "name": "CA 52",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 274.3,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 416,
+   "name": "CA 52",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 904.6,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 417,
+   "name": "CA 52",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 1174.5,
+   "why": "another mainline"
+  },
+  {
+   "id": 418,
+   "name": "CA 52",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 718.4,
+   "why": "another mainline"
+  },
+  {
+   "id": 419,
+   "name": "CA 52",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 760.1,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 420,
+   "name": "CA 52",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 1012.7,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 421,
+   "name": "CA 52",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 1012.6,
+   "why": "another mainline"
+  },
+  {
+   "id": 422,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 26.0,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 423,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 248.2,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 424,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 55.5,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 425,
+   "name": "CA 163",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 391.3,
+   "why": "another mainline"
+  },
+  {
+   "id": 426,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 265.0,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 427,
+   "name": "CA 163",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 499.8,
+   "why": "another mainline"
+  },
+  {
+   "id": 428,
+   "name": "CA 163",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 327.3,
+   "why": "another mainline"
+  },
+  {
+   "id": 429,
+   "name": "CA 163",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 266.3,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 430,
+   "name": "CA 163",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 345.1,
+   "why": "another mainline"
+  },
+  {
+   "id": 431,
+   "name": "CA 163",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 163.4,
+   "why": "another mainline"
+  },
+  {
+   "id": 432,
+   "name": "CA 163",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 236.3,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 433,
+   "name": "CA 163",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 56.0,
+   "why": "another mainline"
+  },
+  {
+   "id": 434,
+   "name": "CA 163",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 244.7,
+   "why": "another mainline"
+  },
+  {
+   "id": 435,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 138.2,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 436,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 122.9,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 437,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 145.4,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 438,
+   "name": "CA 52",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 1055.7,
+   "why": "another mainline"
+  },
+  {
+   "id": 439,
+   "name": "CA 52",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 737.8,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 440,
+   "name": "CA 52",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 263.6,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 441,
+   "name": "CA 52",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 1112.4,
+   "why": "another mainline"
+  },
+  {
+   "id": 442,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 52.9,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 443,
+   "name": "I 8",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 79.4,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 444,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 50.8,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 445,
+   "name": "I 8",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 210.6,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 448,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 144.2,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 449,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 230.1,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 450,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 1058.6,
+   "why": "another mainline"
+  },
+  {
+   "id": 451,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 402.6,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 452,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 779.8,
+   "why": "another mainline"
+  },
+  {
+   "id": 453,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 2612.4,
+   "why": "another mainline"
+  },
+  {
+   "id": 454,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 403.6,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 455,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 226.5,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 456,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 168.8,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 457,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 62.9,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 458,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 12.4,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 459,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 63.0,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 460,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 305.4,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 461,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 219.1,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 462,
+   "name": "I 8",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 418.0,
+   "why": "the other carriageway"
+  },
+  {
+   "id": 463,
+   "name": "I 8",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 359.9,
+   "why": "the other carriageway"
+  },
+  {
+   "id": 464,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 237.0,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 465,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 72.9,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 466,
+   "name": "CA 163",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 166.6,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 467,
+   "name": "Friars Road",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 142.5,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 468,
+   "name": "CA 163",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 410.6,
+   "why": "another mainline"
+  },
+  {
+   "id": 469,
+   "name": "CA 163",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 22.6,
+   "why": "another mainline"
+  },
+  {
+   "id": 470,
+   "name": "CA 163",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 292.7,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 471,
+   "name": "I 8",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 495.7,
+   "why": "the other carriageway"
+  },
+  {
+   "id": 472,
+   "name": "CA 163",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 1326.5,
+   "why": "another mainline"
+  },
+  {
+   "id": 473,
+   "name": "CA 163",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 444.0,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 474,
+   "name": "CA 163",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 308.2,
+   "why": "another mainline"
+  },
+  {
+   "id": 475,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 171.0,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 476,
+   "name": "CA 163",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 1760.7,
+   "why": "another mainline"
+  },
+  {
+   "id": 477,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 280.1,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 478,
+   "name": "Friars Road",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 261.9,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 479,
+   "name": "Friars Road",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 321.2,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 480,
+   "name": "CA 163",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 313.5,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 481,
+   "name": "CA 163",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 413.9,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 482,
+   "name": "CA 163",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 328.1,
+   "why": "another mainline"
+  },
+  {
+   "id": 483,
+   "name": "CA 163",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 389.2,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 484,
+   "name": "I 805",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 611.6,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 485,
+   "name": "CA 163",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 700.8,
+   "why": "another mainline"
+  },
+  {
+   "id": 486,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 556.6,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 487,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 313.3,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 488,
+   "name": "CA 163",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 197.3,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 489,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 329.0,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 490,
+   "name": "CA 163",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 936.4,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 491,
+   "name": "CA 163",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 741.4,
+   "why": "another mainline"
+  },
+  {
+   "id": 492,
+   "name": "CA 163",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 403.7,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 493,
+   "name": "CA 163",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 726.9,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 494,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 91.0,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 495,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 646.4,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 496,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 358.5,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 497,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 265.3,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 498,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 181.8,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 499,
+   "name": "CA 52",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 437.5,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 500,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 355.8,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 501,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 452.9,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 502,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 209.3,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 503,
+   "name": "I 8",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 200.5,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 505,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 203.5,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 506,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 295.1,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 507,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 329.4,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 508,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 401.9,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 509,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 280.5,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 510,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 279.0,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 511,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 166.6,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 512,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 268.2,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 513,
+   "name": "CA 163",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 812.5,
+   "why": "another mainline"
+  },
+  {
+   "id": 514,
+   "name": "CA 163",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 702.2,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 515,
+   "name": "CA 163",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 528.9,
+   "why": "another mainline"
+  },
+  {
+   "id": 516,
+   "name": "CA 163",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 181.6,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 517,
+   "name": "CA 163",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 618.7,
+   "why": "another mainline"
+  },
+  {
+   "id": 518,
+   "name": "CA 163",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 342.0,
+   "why": "another mainline"
+  },
+  {
+   "id": 519,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 45.1,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 520,
+   "name": "CA 163",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 153.5,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 521,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 121.4,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 522,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 38.2,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 523,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 48.4,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 524,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 300.0,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 525,
+   "name": "CA 163",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 425.1,
+   "why": "another mainline"
+  },
+  {
+   "id": 526,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 398.6,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 527,
+   "name": "CA 163",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 1415.3,
+   "why": "another mainline"
+  },
+  {
+   "id": 528,
+   "name": "CA 163",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 575.4,
+   "why": "another mainline"
+  },
+  {
+   "id": 529,
+   "name": "I 8",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 139.4,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 532,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 27.0,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 533,
+   "name": "I 8",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 71.9,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 534,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 17.4,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 535,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 28.7,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 536,
+   "name": "I 8",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 345.7,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 537,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 35.8,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 538,
+   "name": "I 5",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 227.0,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 539,
+   "name": "CA 163",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 415.9,
+   "why": "another mainline"
+  },
+  {
+   "id": 540,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 25.8,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 541,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 22.3,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 543,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 22.6,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 544,
+   "name": "CA 163",
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 184.6,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 545,
+   "name": "CA 163",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 1091.9,
+   "why": "another mainline"
+  },
+  {
+   "id": 546,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 13.8,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 549,
+   "name": "I 8",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 517.1,
+   "why": "the other carriageway"
+  },
+  {
+   "id": 550,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 62.9,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 551,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 51.4,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 552,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 19.6,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 553,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 19.6,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 554,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 12.9,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 555,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 10.3,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 556,
+   "name": "CA 163",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 1103.9,
+   "why": "another mainline"
+  },
+  {
+   "id": 557,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 36.7,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 558,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 24.7,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 559,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 36.8,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 560,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 27.0,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 561,
+   "name": null,
+   "road_class": "motorway",
+   "is_ramp": true,
+   "length_m": 24.0,
+   "why": "ramp / interchange connector"
+  },
+  {
+   "id": 562,
+   "name": "CA 163",
+   "road_class": "motorway",
+   "is_ramp": false,
+   "length_m": 139.4,
+   "why": "another mainline"
+  }
+ ],
+ "_doc": "The ship phase walks ONE line: drive_test (10 wheel paths), write_ai_line and make_map's lap follow it, verify_kn5's spawns sit on it. Every edge listed in 'unjudged' is BUILT (in track.obj and the kn5) but no line-walking gate drives it; audit_mesh, verify_kn5's mesh checks and kn5_ground_check read the whole mesh. A hole, named here, never hidden."
+}

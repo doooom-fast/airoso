@@ -83,6 +83,7 @@ def test_every_opt_in_is_absent_from_lake_murray_and_guarded_in_the_assembler():
     assert "densify" not in (lm.get("route") or {}) and "lm_intake" not in lm
     assert "lm_pads" not in lm and "strip_seam" not in lm      # round 7's pads and local seam scope never reach it
     assert "road_seek" not in (lm.get("lm_intake") or {})     # round 8's road seek never reaches it
+    assert "source_data" not in (lm.get("lm_intake") or {})   # ledger 0080's network line never reaches it
     bes = (lm.get("scenery") or {}).get("bespoke") or {}
     assert "rails" not in bes and "pads" not in bes       # round 5's rail height_m and strip pads never reach it
 
@@ -132,7 +133,8 @@ def test_traced_kerbs_ship_in_the_road_kn5_with_their_own_uvs():
 WORKSHOP_INPUTS = ("track.config.json", "data/centerline.local.json", "data/centerline.geojson", "data/heightfield.npy",
                    "data/heightfield.meta.json", "data/connectors.local.json", "data/mouths.json", "data/lm_intake.json")
 PORTS = ("sand-creek-lm", "high-plains-lm", "exotics-racing-lv-lm", "milford-road-course-lm", "pikes-peak-lm",
-         "lookout-lariat-lm", "rally-dragon-tail-gravel-lm", "rally-under-the-dragon-gravel-lm")
+         "lookout-lariat-lm", "rally-dragon-tail-gravel-lm", "rally-under-the-dragon-gravel-lm",
+         "san-diego-freeway-lm")
 
 
 def _sync_in(port: str, ws: Path):

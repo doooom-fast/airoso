@@ -121,6 +121,15 @@ def intake(proj: Path, *, connectors: bool | None = None) -> dict:
         raise SystemExit("[lm_intake] track.config.json lm_intake.source_track must name a folder under tracks/")
     src = AIROSO / "tracks" / src_track
     sdata = src / "data"
+    # ledger 0080 (opt-in, the SD freeway port): lm_intake.source_data names another folder INSIDE the source track that
+    # holds the line's files (a network's reference line, written by tools/network_line.py from the network draft);
+    # absent = the source's data/, as every other port
+    sd_rel = li.get("source_data")
+    if sd_rel:
+        if (not isinstance(sd_rel, str) or sd_rel.startswith(("/", "\\", ".")) or ".." in sd_rel.replace("\\", "/").split("/")
+                or ":" in sd_rel):
+            raise SystemExit(f"[lm_intake] lm_intake.source_data {sd_rel!r} must be a plain path inside the source track")
+        sdata = src / sd_rel
     need = [sdata / "centerline.local.json", sdata / "heightfield.npy", sdata / "heightfield.meta.json"]
     # a source track whose heightfield is not committed (High Plains: the elev stage's output lives in its workshop) may
     # have it fetched into the PORT track (scripts.elevation.heightfield on a copy of the source; synced in by ship.json):

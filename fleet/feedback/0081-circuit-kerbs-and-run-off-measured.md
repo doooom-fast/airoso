@@ -122,6 +122,44 @@ does not set; the atlas and the paint profile are read only from a config / kerb
 no chain. `tests/run_tests.py`: 1,272 passed, 13 failed, the same 13 as on fleet-lm-engine's head on this Mac (registry,
 draft_equiv, ship_track_chain, bench_pad, ship_fleet: Windows paths).
 
+## Round 2 (Mac, 2026-11-05)
+
+### 1. Kerbs at their measured offset: High Plains 0.1.3
+
+**Why the built kerbs sat outboard.** kerb_spans measures in_m / out_m across the LIVE line's lane edge; the port's ribbon is
+its own line (the assembler smooths it), and at High Plains' apexes its lane edge lies 0.24-1.16 m OUTSIDE the live edge
+(`kerbs.built.json` `edge_delta_m`). Round 4 laid every run from the port's edge outward, so a kerb measured 2 m inside the
+live edge was built up to ~3 m outboard of its paint.
+
+**Now (opt-in `kerb.placement: "measured"`, `tools/kerb_section.py`):** each ribbon row reads the measured edge nearest it
+and lays the paint at in_m .. out_m from THAT, as an offset from its own edge: at High Plains the runs span from 2.98 m
+inside the ribbon's edge (R s 2,000-2,019: -2.98 .. -1.33) to 1.72 m outside (R s 2,892). Over the lane the base is the ROAD
+ribbon's own surface (a ray down, 0 misses); outside, the edge's height as before. Kerbs rise to the config's 0.08 m
+(invented, as before); paint stays flat at the 3 mm lip. Each run is clipped to its measured ends (keying the ends to the
+nearest ~3 m row cut up to half a row off each). The extents were re-read by the key colour (`kerb_spans.py --grow 10`:
+blue, at most 10 m past the eye span): within 1-5 m of round 1's eye spans (L s 687-699, 2,843-2,856; R s 447-486,
+622-638, 1,519-1,541, 2,673-2,698, 3,010-3,044), `s_eye` kept. 20 runs, 526 m built.
+
+**The gate finding, and the one invented number it bought.** Laid at its measured place a kerb lies over the 12 m lane
+(the live line's constant width; the real track is narrower at those apexes), so drive_test's interior wheel paths
+(1.25 m and 2.75 m inside the edge) ride it. With full-height ends (build `hp013a`): **severe 4** (R s 1,996-2,015, 2.75 m
+inside: the kerb's ends), kinks 7.8 /km (every run end on the 1.25 m path). With the tops ramped to the lip over
+`kerb.end_ramp_m` 4.0 m at each end (invented, GATES-CHANGELOG; 2 % / 0.02 m per metre, under the bump and kink thresholds;
+real kerbs are ramped at their ends, this length is not measured): every gate as 0.1.1 or better.
+
+| High Plains (EMPTY workshop, `tools/ship_track.sh --no-install`, Mac) | 0.1.1 | 0.1.2 | **0.1.3** |
+|---|---|---|---|
+| soft top / severe / bumps /km / kinks /km | 0 / 0 / 0 / 1.87 | 0 / 0 / 0 / 1.87 | 0 / 0 / 0 / **0.62** |
+| vertex bumps / drops / far ledges / obstructed / floating | 2 / 0 / 0 / 0 / 0 | same | 2 / 0 / 0 / 0 / 0 |
+| audit_mesh (K kerb in carriageway) / verify_kn5 / kn5_ground_check (p95) / house_seat | CLEAN / PASS / PASS (0.021) / PASS | same | CLEAN (K 0) / PASS / PASS (0.021) / PASS |
+| edge report: at 1 m strip or kerb / rise within 2 m p95 | 100 % / 0.014 m | 100 % / 0.015 m | 100 % / 0.012 m |
+| kn5 | 15.6 MB | 15,616,494 B | **15,632,786 B (15.6 MB)** |
+
+Stills: `tracks/high-plains/source/edges/kerbs_built_beside_0.1.3.jpg` (all 20: aerial | built kn5 faces); each built kerb
+now lies on its paint. Seen there and not resolved: several blue / yellow stripes (L s 517, 690; R s 1,747, 2,678, 3,013)
+look longer in the aerial than the blue blocks the grow follows (past the ends the stripe reads yellow only, which is the
+dry grass's colour to the reader): their extents stay the blue's.
+
 ## Owed (start here)
 
 - **High Plains 0.1.2 is ready for a PC rehearsal and install** (runbook 4a's commands; ENG `eng_hplm` plus nothing new: the

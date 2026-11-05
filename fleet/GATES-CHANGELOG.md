@@ -14,6 +14,22 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
+## 2026-11-05 — circuit kerbs round 2: kerbs at their measured offset (ledger 0081 round 2; no gate threshold, no bypass)
+
+No gate threshold changed and nothing is bypassed. New ⚠ invented numbers, none a gate, all opt-in under keys Lake Murray
+does not set (it names no `route.kerbs_file`, so the kerbs step is a no-op there):
+- `kerb.end_ramp_m` 4.0 (each port config that sets `kerb.placement` "measured"): a raised kerb's top ramps from the lip
+  to `kerb.height_m` over this length at either end. ⚠ invented, and chosen against drive_test, said plainly: a kerb laid at
+  its measured place lies over the 12 m lane where the real track is narrower, so drive_test's interior wheel paths
+  (1.25 m and 2.75 m inside the edge) ride onto it; an abrupt 0.08 m end read as 4 severe steps (R s 2,000) and 7.8 kinks
+  /km on High Plains. 4.0 m is the shortest two-stripe length whose end slope (0.08 / 4 = 2 %, 0.02 m per metre) stays
+  under the bump (0.025 m) and kink (3 %) thresholds. Racing kerbs are ramped at their ends; this length is not measured.
+- `tools/author_kerbs_blend.py` `LAYER_M` 2.0: the ROAD surface under a kerb over the lane is read within this of the lane
+  edge's height (L4: never another layer). The measured placement drops `MAX_W_M` (the measured width stands; High
+  Plains' R s 2,892 paint is 2.85 m).
+- `tools/kerb_spans.py --grow 10` and `GAP_M` 3.0: an eye span is grown / trimmed to its key colour (blue for the blue
+  schemes, red for red / white) at most 10 m past either end, over gaps of up to 3 m (a white block, a faded block).
+
 ## 2026-11-05 — circuit kerbs off NAIP 0.3 m: the measurer's invented numbers (ledger 0081; no gate threshold, no bypass)
 
 No gate threshold changed and nothing is bypassed; every gate runs as before on each rebuilt circuit. New ⚠ invented

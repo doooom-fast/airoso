@@ -3,7 +3,7 @@
   "archetype": "race_circuit",
   "name": "High Plains Raceway (LM engine)",
   "slug": "high_plains_lm",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "mirror_x": false,
   "loop": true,
   "default_width_m": 12.0,
@@ -23,6 +23,9 @@
   },
   "kerb": {
     "height_m": 0.08,
+    "placement": "measured",
+    "end_ramp_m": 4.0,
+    "_placement_doc": "ledger 0081 round 2: each run at its measured in_m / out_m across the live lane edge it was measured on, read as an offset from this ribbon's own lane edge, on the ROAD surface where it lies over the lane (tools/author_kerbs_blend.py, tools/kerb_section.py)",
     "width_m": 1.2,
     "top_frac": 0.6,
     "edge_ramp": 0.4,

@@ -1,8 +1,8 @@
 {
- "_doc": "Racing kerbs and painted edge stripes measured off the aerial for the Lake Murray engine port (ledgers 0078, 0081). Each run is the lane edge it lies along, as lon/lat, plus where its paint sits across that edge (in_m / out_m: metres past the lane edge of the live line's widths, - = inside). The build places the run OUTSIDE the lane edge (tools/author_kerbs_blend.py); profile 'kerb' rises to the config's kerb.height_m, 'paint' is laid flat.",
+ "_doc": "Racing kerbs and painted edge stripes measured off the aerial for the Lake Murray engine port (ledgers 0078, 0081). Each run is the lane edge it lies along, as lon/lat, plus where its paint sits across that edge (in_m / out_m: metres past the lane edge of the live line's widths, - = inside). The build places the run at this measured place across its own ribbon's lane edge when the config sets kerb.placement \"measured\" (ledger 0081 round 2; otherwise outside the edge: tools/author_kerbs_blend.py); profile 'kerb' rises to the config's kerb.height_m, 'paint' is laid flat.",
  "imagery": "USDA NAIP co_m_3910317_ne_13_030_20230928 (2023-09-28), 0.3 m native, Planetary Computer crop",
  "image_m_per_px": 0.3,
- "method": "ledger 0081: tools/aerial_edges.py (kerb runs) and a colour scan of the lane-edge band (blue present) on the 0.3 m crop found the candidates; each span (the scan's, less its 2 m window at each end) checked by eye on tools/edge_sheet.py zooms (kerbs_2023_030_sheet.jpg: all 20, colour by eye), then measured by tools/kerb_spans.py. Round 4's 12 runs (NAIP 2023 z18 web tiles, 0.46 m) are all inside these 20; its s 2056-2071 'blue_white' is a blue / yellow edge stripe at 0.3 m",
+ "method": "ledger 0081: tools/aerial_edges.py (kerb runs) and a colour scan of the lane-edge band (blue present) on the 0.3 m crop found the candidates; each span (the scan's, less its 2 m window at each end) checked by eye on tools/edge_sheet.py zooms (kerbs_2023_030_sheet.jpg: all 20, colour by eye), then measured by tools/kerb_spans.py. Round 4's 12 runs (NAIP 2023 z18 web tiles, 0.46 m) are all inside these 20; its s 2056-2071 'blue_white' is a blue / yellow edge stripe at 0.3 m. Round 2 (ledger 0081): each eye span grown / trimmed to its key colour (tools/kerb_spans.py --grow 10; s_eye keeps the eye span)",
  "line": "data/gate_centerline.json of the live track (engine frame)",
  "measurer": {
   "tool": "tools/kerb_spans.py",
@@ -10,7 +10,13 @@
    "STEP_M": 1.0,
    "BAND_M": 2.5,
    "OFF_STEP_M": 0.15,
-   "MIN_HITS": 2
+   "MIN_HITS": 2,
+   "KEY": {
+    "blue_white": "blue",
+    "red_white": "red",
+    "blue_yellow": "blue"
+   },
+   "GAP_M": 3.0
   }
  },
  "kerbs": [
@@ -23,6 +29,10 @@
    "colour": "blue_white",
    "profile": "kerb",
    "stations_measured": 28,
+   "s_eye": [
+    212.0,
+    239.0
+   ],
    "edge_lonlat": [
     [
      -103.89216249,
@@ -95,6 +105,10 @@
    "colour": "blue_yellow",
    "profile": "paint",
    "stations_measured": 9,
+   "s_eye": [
+    517.0,
+    537.0
+   ],
    "edge_lonlat": [
     [
      -103.88999255,
@@ -144,33 +158,41 @@
   },
   {
    "side": "left",
-   "s0": 690.0,
+   "s0": 687.0,
    "s1": 699.0,
    "in_m": -1.15,
-   "out_m": -0.7,
+   "out_m": -0.85,
    "colour": "blue_yellow",
    "profile": "paint",
-   "stations_measured": 4,
+   "stations_measured": 5,
+   "s_eye": [
+    690.0,
+    699.0
+   ],
    "edge_lonlat": [
     [
-     -103.89073866,
-     39.73413109
+     -103.89070824,
+     39.73414455
     ],
     [
-     -103.89075883,
-     39.73412215
+     -103.89072855,
+     39.73413558
     ],
     [
-     -103.89077908,
-     39.73411319
+     -103.89074877,
+     39.7341266
     ],
     [
-     -103.89079927,
-     39.73410423
+     -103.89076896,
+     39.73411767
     ],
     [
-     -103.89081953,
-     39.73409523
+     -103.89078916,
+     39.73410872
+    ],
+    [
+     -103.89080939,
+     39.73409974
     ],
     [
      -103.89082963,
@@ -187,6 +209,10 @@
    "colour": "blue_yellow",
    "profile": "paint",
    "stations_measured": 10,
+   "s_eye": [
+    1567.0,
+    1592.0
+   ],
    "edge_lonlat": [
     [
      -103.90084387,
@@ -248,85 +274,89 @@
   },
   {
    "side": "left",
-   "s0": 1680.0,
+   "s0": 1681.0,
    "s1": 1716.0,
    "in_m": -0.85,
    "out_m": 0.8,
    "colour": "blue_white",
    "profile": "kerb",
-   "stations_measured": 37,
+   "stations_measured": 36,
+   "s_eye": [
+    1680.0,
+    1716.0
+   ],
    "edge_lonlat": [
     [
-     -103.9016445,
-     39.73513046
+     -103.90165375,
+     39.73513595
     ],
     [
-     -103.90165739,
-     39.73513742
+     -103.90166745,
+     39.73514198
     ],
     [
-     -103.90167751,
-     39.73514654
+     -103.90168127,
+     39.73514743
     ],
     [
-     -103.90169197,
-     39.73515101
+     -103.90170267,
+     39.73515459
     ],
     [
-     -103.90170814,
-     39.73515575
+     -103.9017192,
+     39.73515862
     ],
     [
-     -103.90172558,
-     39.73516037
+     -103.90173682,
+     39.73516278
     ],
     [
-     -103.90174805,
-     39.7351652
+     -103.90175396,
+     39.73516666
     ],
     [
-     -103.9017654,
-     39.73516842
+     -103.90177684,
+     39.73517019
     ],
     [
-     -103.90178144,
-     39.73517116
+     -103.90179306,
+     39.73517195
     ],
     [
-     -103.90180468,
-     39.73517275
+     -103.90180932,
+     39.73517321
     ],
     [
-     -103.90182098,
-     39.735173
+     -103.90183264,
+     39.73517279
     ],
     [
-     -103.90183897,
-     39.73517266
+     -103.90185057,
+     39.73517175
     ],
     [
-     -103.90186218,
-     39.73517085
+     -103.90186999,
+     39.73517021
     ],
     [
-     -103.90188154,
-     39.73516895
+     -103.90189309,
+     39.73516769
     ],
     [
-     -103.9019011,
-     39.73516681
+     -103.90191256,
+     39.73516512
     ],
     [
-     -103.90192402,
-     39.73516344
+     -103.90193153,
+     39.73516232
     ],
     [
-     -103.90194283,
-     39.73516006
+     -103.90195412,
+     39.7351578
     ],
     [
-     -103.90196187,
-     39.73515619
+     -103.90197297,
+     39.73515343
     ],
     [
      -103.90198407,
@@ -343,6 +373,10 @@
    "colour": "blue_yellow",
    "profile": "paint",
    "stations_measured": 17,
+   "s_eye": [
+    2038.0,
+    2073.0
+   ],
    "edge_lonlat": [
     [
      -103.90482111,
@@ -425,12 +459,16 @@
   {
    "side": "left",
    "s0": 2453.0,
-   "s1": 2490.0,
+   "s1": 2489.0,
    "in_m": -0.4,
    "out_m": 0.35,
    "colour": "blue_yellow",
    "profile": "paint",
    "stations_measured": 14,
+   "s_eye": [
+    2453.0,
+    2490.0
+   ],
    "edge_lonlat": [
     [
      -103.90118852,
@@ -507,10 +545,6 @@
     [
      -103.90088635,
      39.73591883
-    ],
-    [
-     -103.90087796,
-     39.73591257
     ]
    ]
   },
@@ -523,6 +557,10 @@
    "colour": "blue_white",
    "profile": "kerb",
    "stations_measured": 31,
+   "s_eye": [
+    2636.0,
+    2666.0
+   ],
    "edge_lonlat": [
     [
      -103.89963866,
@@ -592,14 +630,22 @@
   },
   {
    "side": "left",
-   "s0": 2845.0,
+   "s0": 2843.0,
    "s1": 2856.0,
    "in_m": -1.15,
-   "out_m": 0.65,
+   "out_m": 0.95,
    "colour": "blue_white",
    "profile": "kerb",
-   "stations_measured": 12,
+   "stations_measured": 14,
+   "s_eye": [
+    2845.0,
+    2856.0
+   ],
    "edge_lonlat": [
+    [
+     -103.89845231,
+     39.73626354
+    ],
     [
      -103.89842724,
      39.73625949
@@ -639,6 +685,10 @@
    "colour": "blue_white",
    "profile": "kerb",
    "stations_measured": 26,
+   "s_eye": [
+    2950.0,
+    2975.0
+   ],
    "edge_lonlat": [
     [
      -103.89748585,
@@ -707,6 +757,10 @@
    "colour": "blue_yellow",
    "profile": "paint",
    "stations_measured": 16,
+   "s_eye": [
+    263.0,
+    299.0
+   ],
    "edge_lonlat": [
     [
      -103.89165634,
@@ -788,89 +842,97 @@
   },
   {
    "side": "right",
-   "s0": 448.0,
+   "s0": 447.0,
    "s1": 486.0,
    "in_m": 0.05,
    "out_m": 1.7,
    "colour": "blue_white",
    "profile": "kerb",
-   "stations_measured": 39,
+   "stations_measured": 40,
+   "s_eye": [
+    448.0,
+    486.0
+   ],
    "edge_lonlat": [
     [
-     -103.89036441,
-     39.735963
+     -103.89037509,
+     39.73596661
     ],
     [
-     -103.8903467,
-     39.73595687
+     -103.89035372,
+     39.73595938
     ],
     [
-     -103.8903258,
-     39.73594886
+     -103.89033625,
+     39.73595287
     ],
     [
-     -103.89031166,
-     39.7359421
+     -103.89032149,
+     39.73594695
     ],
     [
-     -103.89029907,
-     39.73593543
+     -103.89030183,
+     39.73593724
     ],
     [
-     -103.8902812,
-     39.73592384
+     -103.89029014,
+     39.73592964
     ],
     [
-     -103.89026948,
-     39.73591438
+     -103.89027759,
+     39.73592086
     ],
     [
-     -103.89025627,
-     39.73590348
+     -103.89026137,
+     39.73590791
     ],
     [
-     -103.89024074,
-     39.73589004
+     -103.89024851,
+     39.73589676
     ],
     [
-     -103.89022739,
-     39.73587786
+     -103.89023491,
+     39.73588474
     ],
     [
-     -103.89021533,
-     39.73586648
+     -103.89021988,
+     39.73587097
     ],
     [
-     -103.89020114,
-     39.73585218
+     -103.89020823,
+     39.73585933
     ],
     [
-     -103.89019265,
-     39.73584125
+     -103.89019868,
+     39.73584896
     ],
     [
-     -103.89018567,
-     39.73583107
+     -103.89018661,
+     39.73583354
     ],
     [
-     -103.89017641,
-     39.73581454
+     -103.89018104,
+     39.73582281
     ],
     [
-     -103.89017193,
-     39.73580214
+     -103.89017536,
+     39.73581075
     ],
     [
-     -103.89016665,
-     39.73578765
+     -103.89016962,
+     39.73579636
     ],
     [
-     -103.89016109,
-     39.73577131
+     -103.89016369,
+     39.73577894
     ],
     [
-     -103.89015549,
-     39.73575382
+     -103.89015829,
+     39.73576257
+    ],
+    [
+     -103.89015286,
+     39.73574563
     ],
     [
      -103.89015013,
@@ -880,45 +942,49 @@
   },
   {
    "side": "right",
-   "s0": 623.0,
+   "s0": 622.0,
    "s1": 638.0,
    "in_m": 0.05,
    "out_m": 1.7,
    "colour": "blue_white",
    "profile": "kerb",
-   "stations_measured": 16,
+   "stations_measured": 17,
+   "s_eye": [
+    623.0,
+    638.0
+   ],
    "edge_lonlat": [
     [
-     -103.89020382,
-     39.73454724
+     -103.8902024,
+     39.7345501
     ],
     [
-     -103.89021432,
-     39.73453116
+     -103.89020907,
+     39.7345392
     ],
     [
-     -103.89022232,
-     39.73452234
+     -103.89021555,
+     39.73452968
     ],
     [
-     -103.89023145,
-     39.73451316
+     -103.89022908,
+     39.73451501
     ],
     [
-     -103.8902473,
-     39.73449994
+     -103.89023938,
+     39.73450655
     ],
     [
-     -103.89026009,
-     39.73449079
+     -103.89025155,
+     39.73449693
     ],
     [
-     -103.89027449,
-     39.73448081
+     -103.89026863,
+     39.73448465
     ],
     [
-     -103.89029237,
-     39.73446924
+     -103.89028343,
+     39.73447502
     ],
     [
      -103.8902991,
@@ -929,12 +995,16 @@
   {
    "side": "right",
    "s0": 1519.0,
-   "s1": 1540.0,
+   "s1": 1541.0,
    "in_m": -0.85,
-   "out_m": 0.95,
+   "out_m": 0.8,
    "colour": "blue_white",
    "profile": "kerb",
-   "stations_measured": 22,
+   "stations_measured": 23,
+   "s_eye": [
+    1519.0,
+    1540.0
+   ],
    "edge_lonlat": [
     [
      -103.9003458,
@@ -981,8 +1051,8 @@
      39.73423054
     ],
     [
-     -103.9005312,
-     39.73423654
+     -103.90053774,
+     39.73424131
     ]
    ]
   },
@@ -995,6 +1065,10 @@
    "colour": "blue_yellow",
    "profile": "paint",
    "stations_measured": 12,
+   "s_eye": [
+    1747.0,
+    1768.0
+   ],
    "edge_lonlat": [
     [
      -103.90236507,
@@ -1055,6 +1129,10 @@
    "colour": "blue_white",
    "profile": "kerb",
    "stations_measured": 20,
+   "s_eye": [
+    2000.0,
+    2019.0
+   ],
    "edge_lonlat": [
     [
      -103.90474643,
@@ -1111,6 +1189,10 @@
    "colour": "blue_white",
    "profile": "kerb",
    "stations_measured": 84,
+   "s_eye": [
+    2328.0,
+    2411.0
+   ],
    "edge_lonlat": [
     [
      -103.90254723,
@@ -1288,57 +1370,73 @@
   },
   {
    "side": "right",
-   "s0": 2678.0,
-   "s1": 2697.0,
-   "in_m": -1.0,
+   "s0": 2673.0,
+   "s1": 2698.0,
+   "in_m": -0.85,
    "out_m": 0.05,
    "colour": "blue_yellow",
    "profile": "paint",
-   "stations_measured": 9,
+   "stations_measured": 12,
+   "s_eye": [
+    2678.0,
+    2697.0
+   ],
    "edge_lonlat": [
     [
-     -103.89934376,
-     39.73534702
+     -103.89933758,
+     39.73529855
     ],
     [
-     -103.89934689,
-     39.73536487
+     -103.89933972,
+     39.73531795
     ],
     [
-     -103.89935189,
-     39.73538569
+     -103.89934206,
+     39.73533587
     ],
     [
-     -103.8993581,
-     39.73540675
+     -103.89934532,
+     39.73535594
     ],
     [
-     -103.89936446,
-     39.73542408
+     -103.89934952,
+     39.73537687
     ],
     [
-     -103.89937281,
-     39.73544378
+     -103.89935425,
+     39.73539451
     ],
     [
-     -103.89938121,
-     39.7354622
+     -103.89936128,
+     39.73541541
     ],
     [
-     -103.89938934,
-     39.73547909
+     -103.89936899,
+     39.73543527
     ],
     [
-     -103.89939778,
-     39.73549643
+     -103.89937662,
+     39.73545229
     ],
     [
-     -103.89940607,
-     39.73551339
+     -103.89938528,
+     39.73547065
+    ],
+    [
+     -103.89939366,
+     39.73548801
+    ],
+    [
+     -103.89940189,
+     39.73550486
     ],
     [
      -103.8994102,
      39.73552182
+    ],
+    [
+     -103.89941433,
+     39.73553024
     ]
    ]
   },
@@ -1351,6 +1449,10 @@
    "colour": "blue_white",
    "profile": "kerb",
    "stations_measured": 23,
+   "s_eye": [
+    2892.0,
+    2914.0
+   ],
    "edge_lonlat": [
     [
      -103.89794655,
@@ -1404,77 +1506,85 @@
   },
   {
    "side": "right",
-   "s0": 3013.0,
+   "s0": 3010.0,
    "s1": 3044.0,
    "in_m": 0.5,
    "out_m": 1.1,
    "colour": "blue_yellow",
    "profile": "paint",
-   "stations_measured": 12,
+   "stations_measured": 13,
+   "s_eye": [
+    3013.0,
+    3044.0
+   ],
    "edge_lonlat": [
     [
-     -103.89691827,
-     39.73537327
+     -103.89695284,
+     39.73537781
     ],
     [
-     -103.89689543,
-     39.73537023
+     -103.89692976,
+     39.73537479
     ],
     [
-     -103.89687242,
-     39.73536724
+     -103.89690677,
+     39.73537174
     ],
     [
-     -103.89684965,
-     39.73536421
+     -103.89688392,
+     39.73536874
     ],
     [
-     -103.89682723,
-     39.73536116
+     -103.89686114,
+     39.73536577
     ],
     [
-     -103.89680428,
-     39.73535793
+     -103.89683816,
+     39.73536265
     ],
     [
-     -103.89678196,
-     39.73535468
+     -103.89681575,
+     39.73535955
     ],
     [
-     -103.89675961,
-     39.73535134
+     -103.89679342,
+     39.73535639
     ],
     [
-     -103.89673675,
-     39.73534775
+     -103.89677051,
+     39.73535297
     ],
     [
-     -103.89671428,
-     39.73534418
+     -103.89674818,
+     39.73534954
     ],
     [
-     -103.89669151,
-     39.73534053
+     -103.89672571,
+     39.73534601
     ],
     [
-     -103.89666868,
-     39.73533681
+     -103.89670286,
+     39.73534235
     ],
     [
-     -103.89664592,
-     39.73533315
+     -103.8966801,
+     39.73533867
     ],
     [
-     -103.896623,
-     39.73532948
+     -103.89665734,
+     39.73533497
     ],
     [
-     -103.89660017,
-     39.73532577
+     -103.8966345,
+     39.73533132
     ],
     [
-     -103.89657733,
-     39.73532208
+     -103.89661158,
+     39.73532763
+    ],
+    [
+     -103.89658876,
+     39.73532391
     ],
     [
      -103.89656591,
@@ -1482,10 +1592,5 @@
     ]
    ]
   }
- ],
- "image": "naip_crop.py --item co_m_3910317_ne_13_030_20230928_20240104 --track tracks/high-plains --margin-m 40 (4495x1202 px, 0.30 m/px)",
- "runoff": {
-  "built": [],
-  "note": "No paved run-off (re-checked on the native 0.3 m crop, ledger 0081: runoff_2023_030_sheet.jpg): the colour reader's 21 'asphalt past the edge' runs are the other configurations' pavement (the north course's branches at s 1,348 / 2,722 / 2,832, the parallel loop beside s 265-322 and s 456-474), the pit lane (s 3,040-3,082) and dirt; beyond every kerb is graded dirt and prairie. No paved run-off: the NAIP 2023 corner sheets show grass and graded dirt beyond the kerbs at every corner; the colour reader's 'asphalt' runs (edges.traced.json runoff) were checked by eye and are dark vegetation, dirt and shadow, or the pit / paddock roads that join the lap. Rejected, not built."
- }
+ ]
 }

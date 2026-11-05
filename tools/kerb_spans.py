@@ -14,7 +14,10 @@ kerbs file the build reads (route.kerbs_file, tools/author_kerbs_blend.py):
                  since no height is seen); default by colour, PROFILE below
 
     python tools/kerb_spans.py <track-dir> --image <png> --corners W,N,E,S --spans "L:212-236:blue_white,..." \
-           --imagery "<what, when, resolution>" --out <kerbs.json> [--how "<how the spans were checked>"]
+           --imagery "<what, when, resolution>" --out <kerbs.json> [--how "<how the spans were checked>"] [--grow <m>]
+
+--grow G (round 2): each eye span is grown / trimmed to its key colour's measured extent (at most G m past either end;
+blue for the blue schemes, red for red / white), then measured as before; the eye span is kept as s_eye.
 
 Every number here is [invented] tuning of a colour reader (GATES-CHANGELOG 2026-11-05); the image is the measurement.
 """
@@ -33,6 +36,9 @@ BAND_M = 2.5
 OFF_STEP_M = 0.15
 MIN_HITS = 2          # a station with fewer paint pixels in the band says nothing about the run's width
 PROFILE = {"blue_white": "kerb", "red_white": "kerb", "blue_yellow": "paint"}
+KEY = {"blue_white": "blue", "red_white": "red", "blue_yellow": "blue"}   # --grow: the colour that marks the run's extent
+GAP_M = 3.0           # --grow: a run continues over a gap in its key colour this long (a ~1 m white block between two
+                      # colour blocks, and a faded block)
 
 
 def mpd(lat0):
@@ -96,6 +102,37 @@ def main(argv=None):
         return pix[i, j] if 0 <= i < W_ and 0 <= j < H_ else None
 
     offs = [-BAND_M + k * OFF_STEP_M for k in range(int(2 * BAND_M / OFF_STEP_M) + 1)]
+    grow = float(opt.get("--grow", 0.0))
+
+    def key_hits(side, s, key):
+        return sum(1 for o in offs if (lambda p: p is not None and paint_class(p) == key)(sample(*lonlat(s, side, o))))
+
+    def grown(side, s0, s1, key):
+        """the span's measured extent (--grow G, round 2): the eye span's own key-colour stations (blue for blue / white
+        and blue / yellow, red for red / white: the kerb's white reads like pale dirt), walked outward station by station
+        while the next key-colour station lies within GAP_M, at most G past either end; an eye end with no key colour
+        within GAP_M of it is trimmed back to the last one that has"""
+        hit = lambda s: key_hits(side, s, key) >= MIN_HITS  # noqa: E731
+        core = [s0 + i * STEP_M for i in range(int((s1 - s0) / STEP_M) + 1) if hit(s0 + i * STEP_M)]
+        if not core:
+            return s0, s1
+        lo, hi = core[0], core[-1]
+        for direction in (-1, 1):
+            edge, s, last = (lo, lo, lo) if direction < 0 else (hi, hi, hi)
+            while abs(s - edge) < (s1 - s0) + 2 * grow:
+                s += direction * STEP_M
+                if (direction < 0 and s < s0 - grow) or (direction > 0 and s > s1 + grow):
+                    break
+                if hit(s):
+                    last = s
+                elif abs(s - last) > GAP_M:
+                    break
+            if direction < 0:
+                lo = last
+            else:
+                hi = last
+        return lo, hi
+
     kerbs = []
     for spec in opt["--spans"].split(","):
         sd, rng, colour = spec.split(":")
@@ -103,6 +140,9 @@ def main(argv=None):
         s0, s1 = (float(v) for v in rng.split("-"))
         # blue / yellow: the yellow reads like the dry grass beside it, so the width is the blue blocks' alone
         want = {"blue", "white"} if colour == "blue_white" else {"red", "white"} if colour == "red_white" else {"blue"}
+        eye = (s0, s1)
+        if grow:
+            s0, s1 = grown(side, s0, s1, KEY[colour])
         ins, outs = [], []
         s = s0
         while s <= s1 + 1e-6:
@@ -123,13 +163,13 @@ def main(argv=None):
             ss.append(s1)
         kerbs.append({"side": "left" if side == 1 else "right", "s0": s0, "s1": s1,
                       "in_m": round(k_in, 2), "out_m": round(k_out, 2), "colour": colour,
-                      "profile": PROFILE[colour], "stations_measured": len(ins),
+                      "profile": PROFILE[colour], "stations_measured": len(ins), **({"s_eye": list(eye)} if grow else {}),
                       "edge_lonlat": [[round(v, 8) for v in lonlat(q, side, 0.0)] for q in ss]})
-        print(f"[kerb_spans] {spec}: in {k_in:+.2f} out {k_out:+.2f} m over {len(ins)} stations")
+        print(f"[kerb_spans] {spec}: s {s0:.0f}-{s1:.0f} (eye {eye[0]:.0f}-{eye[1]:.0f}) in {k_in:+.2f} out {k_out:+.2f} m over {len(ins)} stations")
     out = {"_doc": ("Racing kerbs and painted edge stripes measured off the aerial for the Lake Murray engine port (ledgers "
                     "0078, 0081). Each run is the lane edge it lies along, as lon/lat, plus where its paint sits across "
                     "that edge (in_m / out_m: metres past the lane edge of the live line's widths, - = inside). The build "
-                    "places the run OUTSIDE the lane edge (tools/author_kerbs_blend.py); profile 'kerb' rises to the "
+                    "places the run at this measured place across its own ribbon's lane edge when the config sets kerb.placement \"measured\" (ledger 0081 round 2; otherwise outside the edge: tools/author_kerbs_blend.py); profile 'kerb' rises to the "
                     "config's kerb.height_m, 'paint' is laid flat."),
            "imagery": opt.get("--imagery"), "image_m_per_px": round((ce - cw) * m_lon / W_, 3),
            "method": opt.get("--how", "tools/kerb_spans.py over spans checked by eye"),

@@ -12,6 +12,14 @@ A run with "profile": "paint" (ledger 0081: flat edge stripes, e.g. High Plains'
 across w, then the same back fall: no height is seen in an image, so none is built. kerb.atlas (opt-in) maps each run's
 colour into its own u-cell of one 1KERB texture.
 
+kerb.placement "measured" (opt-in, ledger 0081 round 2): each run is laid where its paint was MEASURED instead, in_m .. out_m
+across the live edge it was measured on, read as an offset from THIS ribbon's lane edge (tools/kerb_section.py; at High
+Plains' apexes the port's edge lies 0.5-1.1 m off the live one), so a kerb may lie over the lane: there its base is the ROAD
+ribbon's own surface (a ray down within LAYER_M of the edge's height), outside the edge the edge's height as before. The
+run is clipped to its measured ends (the live edge's first and last points read on the rows' edge, one row past each end,
+lerped), its width is the measured one (no MAX_W_M), and kerb.end_ramp_m (opt-in) ramps the raised top down to the lip
+over that length at either end.
+
 the painted width w is the top; the back falls past it (round 4: a 0.6 m fall inside w read as one 0.12 m excursion
 drop on Nevada at s 300, the kerb's back between two 0.5 m probes).
 
@@ -35,6 +43,7 @@ from pathlib import Path
 import bpy
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+import kerb_section as ks  # noqa: E402
 import mouth_weld as mw  # noqa: E402
 
 KERB_LIP_M = 0.003    # [invented] the kerb's inner edge this far over the lane edge: no z-fight, no step a wheel feels
@@ -46,6 +55,7 @@ MIN_W_M, MAX_W_M = 0.9, 2.0   # [invented] a traced paint width outside these is
 MIN_PAINT_W_M = 0.45  # [invented] a "paint" run (flat edge stripe, ledger 0081) narrower than this is read as 1-2 px of noise
                       # at NAIP's 0.3 m; its top is the lip, flat: no height is seen in the image, so none is built
 STRIPE_M = 2.0        # one white + one colour stripe; racing kerbs are painted in ~1 m blocks
+LAYER_M = 2.0         # [invented] measured placement: the ROAD surface is read within this of the lane edge's height (L4)
 PREFIX = "1KERB_circuit_"
 UV_LAYER = "KerbUV"   # not "UVMap": the prep's planar pass writes that one
 
@@ -91,6 +101,26 @@ def main():
         return L, C, R                                         # Blender frame: x = E, y = N, z = up
 
     centres = [row_pts(r)[1] for r in range(rows)]
+    # kerb.placement "measured" (opt-in, ledger 0081 round 2): each run at its measured place across THIS ribbon's lane
+    # edge (tools/kerb_section.py), its base on the ROAD ribbon's own surface where it lies over the lane
+    kcfg = cfg.get("kerb") or {}
+    measured = kcfg.get("placement") == "measured"
+    end_ramp = float(kcfg.get("end_ramp_m") or 0.0)
+    misses = [0]
+    if measured:
+        from mathutils import Vector
+        from mathutils.bvhtree import BVHTree
+        mwr = road.matrix_world
+        bvh = BVHTree.FromPolygons([mwr @ v.co for v in V], [tuple(p.vertices) for p in road.data.polygons])
+
+        def road_z(x, y, z_edge):
+            """the ROAD surface's height at (x, y), read within LAYER_M of the lane edge's height (L4: no other layer)"""
+            hit = bvh.ray_cast(Vector((x, y, z_edge + LAYER_M)), Vector((0.0, 0.0, -1.0)), 2 * LAYER_M)
+            if hit[0] is None:
+                misses[0] += 1
+                return z_edge
+            return hit[0].z
+
     report = []
     for k, run in enumerate(K.get("kerbs", [])):
         side = 0 if run["side"] == "left" else 2
@@ -105,30 +135,77 @@ def main():
             a, b = b, a
         span = [(a + i) % rows for i in range(((b - a) % rows if closed else b - a) + 1)]
         paint = run.get("profile") == "paint"
-        w = max(MIN_PAINT_W_M if paint else MIN_W_M,
-                min(MAX_W_M, float(run.get("out_m", 1.2)) - float(run.get("in_m", 0.0))))
-        if paint:     # flat paint on the edge (ledger 0081): the lip across the painted width, then the same back fall
-            prof = [(0.0, KERB_LIP_M), (w, KERB_LIP_M), (w + RAMP_OUT_M, -DROP_M)]
+        k_in, k_out = float(run.get("in_m", 0.0)), float(run.get("out_m", 1.2))
+        if measured:   # the measured width; only the noise floor holds (no MAX_W_M: High Plains' R s 2,892 paint is 2.85 m)
+            w = max(MIN_PAINT_W_M if paint else MIN_W_M, k_out - k_in)
         else:
-            prof = [(0.0, KERB_LIP_M), (RAMP_IN_M, h), (w, h), (w + RAMP_OUT_M, -DROP_M)]
+            w = max(MIN_PAINT_W_M if paint else MIN_W_M, min(MAX_W_M, k_out - k_in))
+        live = [((lon - lon0) * m_lon, (lat - lat0) * m_lat) for lon, lat in run["edge_lonlat"]]
         u0, u1 = atlas.get(run.get("colour"), (0.0, 1.0))
-        verts, faces, uvs = [], [], []
-        arc = 0.0
-        prev = None
-        for r in span:
-            Lp, Cp, Rp = row_pts(r)
-            E = Lp if side == 0 else Rp
-            dx, dy = E.x - Cp.x, E.y - Cp.y
-            n = math.hypot(dx, dy) or 1.0
-            ox, oy = dx / n, dy / n                            # outward, across the lane edge
-            if prev is not None:
-                arc += math.hypot(E.x - prev.x, E.y - prev.y)
-            prev = E
-            for off, dz in prof:
-                verts.append((E.x + ox * off, E.y + oy * off, E.z + dz))
-                # an atlas cell holds its u inside [u0, u1] (the back fall past w stays in the cell); none: as before
-                uvs.append((u0 + (u1 - u0) * min(1.0, off / w) if atlas else off / w, arc / STRIPE_M))
-        P = len(prof)
+        verts, faces, uvs, deltas = [], [], [], []
+        P = 0
+        if measured:
+            # one row past each end, then the run clipped to its measured ends (the live edge's first and last points
+            # read on these rows' edge): keying ends to the nearest row (~3 m apart) cut up to half a row off each end
+            ext = list(span)
+            if closed or span[0] > 0:
+                ext.insert(0, (span[0] - 1) % rows)
+            if closed or span[-1] < rows - 1:
+                ext.append((span[-1] + 1) % rows)
+            secs, eds = [], []
+            for r in ext:
+                Lp, Cp, Rp = row_pts(r)
+                E = Lp if side == 0 else Rp
+                ox, oy = ks.outward_unit((E.x, E.y), (Cp.x, Cp.y))   # outward, across the lane edge
+                d = ks.edge_delta((E.x, E.y), (ox, oy), live)
+                off_in = k_in + d
+                sec = []
+                for off, dz in ks.section(off_in, off_in + w, h, paint, KERB_LIP_M, RAMP_IN_M, RAMP_OUT_M, DROP_M):
+                    x, y = E.x + ox * off, E.y + oy * off
+                    base = road_z(x, y, E.z) if off < 0.0 else E.z
+                    sec.append((x, y, base, dz, (off - off_in) / w))
+                secs.append((sec, d))
+                eds.append((E.x, E.y))
+            arcs = [0.0]
+            for p0, p1 in zip(eds, eds[1:]):
+                arcs.append(arcs[-1] + math.hypot(p1[0] - p0[0], p1[1] - p0[1]))
+            e0, e1 = ks.arc_of(eds, live[0]), ks.arc_of(eds, live[-1])
+            s_a, s_b = min(e0, e1), max(e0, e1)
+            arc = s_b - s_a
+            P = len(secs[0][0])
+            picks = ks.clipped_rows(arcs, s_a, s_b)
+            span = picks                                            # the faces below walk these sections
+            for i, j, t in picks:
+                deltas.append(secs[i][1] + (secs[j][1] - secs[i][1]) * t)
+                s_arc = arcs[i] + (arcs[j] - arcs[i]) * t - s_a
+                scale = ks.end_scale(s_arc, arc, end_ramp)
+                for (xa, ya, ba, dza, fa), (xb, yb, bb, dzb, fb) in zip(secs[i][0], secs[j][0]):
+                    dz = dza + (dzb - dza) * t
+                    if not paint and dz > KERB_LIP_M:              # the raised top, ramped down at the run's ends
+                        dz = max(KERB_LIP_M, dz * scale)
+                    verts.append((xa + (xb - xa) * t, ya + (yb - ya) * t, ba + (bb - ba) * t + dz))
+                    f = fa + (fb - fa) * t
+                    # an atlas cell holds its u inside [u0, u1] (the back fall past w stays in the cell)
+                    uvs.append((u0 + (u1 - u0) * min(1.0, f) if atlas else f, s_arc / STRIPE_M))
+        else:
+            edges, arcs = [], []
+            for r in span:
+                Lp, Cp, Rp = row_pts(r)
+                E = Lp if side == 0 else Rp
+                arcs.append(0.0 if not edges else arcs[-1] + math.hypot(E.x - edges[-1][0].x, E.y - edges[-1][0].y))
+                edges.append((E, Cp))
+            arc = arcs[-1]
+            if paint:     # flat paint on the edge (ledger 0081): the lip across the painted width, then the back fall
+                prof = [(0.0, KERB_LIP_M), (w, KERB_LIP_M), (w + RAMP_OUT_M, -DROP_M)]
+            else:
+                prof = [(0.0, KERB_LIP_M), (RAMP_IN_M, h), (w, h), (w + RAMP_OUT_M, -DROP_M)]
+            P = len(prof)
+            for (E, Cp), s_arc in zip(edges, arcs):
+                ox, oy = ks.outward_unit((E.x, E.y), (Cp.x, Cp.y))   # outward, across the lane edge
+                for off, dz in prof:
+                    verts.append((E.x + ox * off, E.y + oy * off, E.z + dz))
+                    # an atlas cell holds its u inside [u0, u1] (the back fall past w stays in the cell); none: as before
+                    uvs.append((u0 + (u1 - u0) * min(1.0, off / w) if atlas else off / w, s_arc / STRIPE_M))
         for i in range(len(span) - 1):
             for p in range(P - 1):
                 q0, q1 = i * P + p, (i + 1) * P + p
@@ -143,11 +220,21 @@ def main():
                 uvl.data[li].uv = uvs[me.loops[li].vertex_index]
         ob = bpy.data.objects.new(f"{PREFIX}{k}", me)
         bpy.context.scene.collection.objects.link(ob)
-        report.append({"k": k, "side": run["side"], "rows": len(span), "length_m": round(arc, 1), "width_m": round(w, 2),
-                       "profile": "paint" if paint else "kerb", "colour": run.get("colour")})
-    (data / "kerbs.built.json").write_text(json.dumps({"height_m": h, "runs": report}, indent=1), encoding="utf-8")
-    print(f"[kerbs] {len(report)} kerb runs, {sum(r['length_m'] for r in report):.0f} m, height {h} m (config) on the lane "
-          f"edge rows; saved loop.blend")
+        rec = {"k": k, "side": run["side"], "rows": len(span), "length_m": round(arc, 1), "width_m": round(w, 2),
+               "profile": "paint" if paint else "kerb", "colour": run.get("colour")}
+        if measured:
+            ds = sorted(deltas)
+            rec.update({"s0": run.get("s0"), "s1": run.get("s1"), "in_m": k_in, "out_m": k_out,
+                        "edge_delta_m": [round(ds[0], 2), round(ds[len(ds) // 2], 2), round(ds[-1], 2)],
+                        "in_vs_ribbon_edge_m": round(k_in + ds[len(ds) // 2], 2),
+                        "out_vs_ribbon_edge_m": round(k_in + w + ds[len(ds) // 2], 2)})
+        report.append(rec)
+    (data / "kerbs.built.json").write_text(json.dumps(
+        {"height_m": h, "placement": "measured" if measured else "outside", "end_ramp_m": end_ramp if measured else None,
+         "road_misses": misses[0], "runs": report}, indent=1), encoding="utf-8")
+    where = f"at their measured offsets (ROAD read missed {misses[0]})" if measured else "outside the lane edge"
+    print(f"[kerbs] {len(report)} kerb runs, {sum(r['length_m'] for r in report):.0f} m, height {h} m (config), {where}; "
+          f"saved loop.blend")
     bpy.ops.wm.save_as_mainfile(filepath=str(proj / "loop.blend"))
 
 

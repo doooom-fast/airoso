@@ -14,6 +14,21 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
+## 2026-11-05 — DECLARED FORCE: Under the Dragon's Douglas Creek fill, s 2,395-2,410 (ledger 0078 round 13; no threshold moved)
+
+Kevin, 2026-11-05, asked whether to force Under the Dragon's last red row as measured: **"Yes, force it"**.
+
+- **What is forced** (`rally-under-the-dragon-gravel-lm` `track.config.json` `gates.drive1.force_exemptions.stage`,
+  versions `["0.1.0"]`, beside his three rows of 2026-11-04): **gated excursion drops, s 2,395-2,410**, id "Douglas
+  Creek fill". The two rows there (s 2,402.8, 12.5 / 13.0 m left of the line, 0.28 / 0.32 m single steps) trip the
+  unpaved rule's 3.0 m cumulative fall past the road edge. The built ground falls 3.33 m; the lidar's class-2 ground
+  falls 3.76 m over the same 8.6 m (199.33 -> 195.57 m, ~1:2.3) and 3DEP 3.85 m, so the build is the real fill slope
+  between the hairpin's legs, slightly gentler. No lip or wall goes in to clear it.
+- **Wiring unchanged** (`tools/stage_force.py`, round 12). Re-run on the round-13 records (109e4c51): Under the Dragon
+  `force_install_ok` true (its corner at s 22,414 and the two s 2,403 drops covered), Dragon Tail true as before. Any
+  soft top, a severe-step rate over 12 /km, or the same row type anywhere else still refuses it.
+- No threshold changed; drive_test still reads the row red. No other track declares anything new.
+
 ## 2026-11-04 — Rangely stage ports, round 13: the true warp, a measured pad, an aerial trace (ledger 0078 round 13; no gate threshold moved, no bypass)
 
 No gate threshold, exemption or force changed; Kevin's three-row force (below) is untouched and covers nothing new.

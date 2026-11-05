@@ -14,6 +14,33 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
+## 2026-11-05 (later) — Sand Creek 0.2.2: four pads on the lap, verify_pads on lm_pads' shape (ledger 0079 round D)
+
+No gate threshold moved. No floor moved. One gate is added to Sand Creek's chain, one gate reads a new record shape.
+- **Sand Creek's ship.json gains `verify_pads` (hard)**, after `kn5_ground`. Its rules and numbers are unchanged
+  (P2 SHEET_DZ_M 0.25, P3 SEAM_GAP_M 0.010 and the 1 mm / 5 cm binarity, P4 GRASS_OVER_M 0.005, P5, P7 NODE_TOL_M 1.0).
+- **`tools/verify_pads.py` reads `tools/lm_pads_blend.py`'s record** (`lm_pads_shape`: a pads.built.json whose pads carry
+  `rows` and `outline_en` and no `seams`). The outline is `outline_en`; every vertex of each cut row (densify's columns
+  included) is a seam vertex; the K-rails are the stubs; P7's reference is the lap's own 3DEP profile at the node vertex
+  (`centerline.local.json`), the same 1.0 m tolerance. **P1 does not ask for a `1KERB_sidewalk_pad` on this shape**: the
+  lm_pads deck ends at its measured outline with no curb or walk (Kevin: "no sidewalks"). This is the one rule that reads
+  less on lm_pads' shape, and it is written here as such; P5 (no curb over the pavement) still runs on it. Lake Murray's
+  record has `seams`, so it takes the old path line for line (`p.get("curb", True)`, the `order` sort key absent).
+- **New numbers, all [invented], none a gate** (`tools/draft_pads.deck_filled`, opt-in `lm_pads.deck`, Sand Creek only):
+  - `FILL_REACH_M` **1, 1.5, 2, 3, 4, 6, 8 m**: the radii a hole's plane looks out to;
+  - `FILL_MIN_NODES` **12**: measured deck nodes a hole's plane needs;
+  - `smooth_m` **1.0 m** (Gaussian sigma over the deck nodes inside the outline). It moved the nodes p95 1.7-3.1 cm,
+    max 0.075-0.26 m (the max is one node per pad standing off its neighbours: an object, not asphalt; the survey's
+    stated accuracy for QL2 is 10 cm RMSEz);
+  - `ground_edge_m` **0.7 m**: the ground under and round a deck split this fine (0.17.2's 1.4 m left grass 7-21 mm over
+    48th/Colorado's deck edge, P4; LAWS L3b).
+- **`tools/strip_seam_blend.py` `strip_seam.pads`** (opt-in; Sand Creek only): each lm_pads deck's outline is seamed into
+  the ground too, so no ground triangle spans a deck edge. With it the whole-terrain seam missed 79 of 7,355 points, over
+  `MAX_MISS_SHARE` 1 %, so Sand Creek moves to the local scope the Lariat already runs (`strip_seam.scope: "local"`).
+  The threshold is not touched.
+- **Cited, not invented:** `datum_m` 0.10 m is the assembler's own ROAD lift (scripts-v021 build_loop_blend.py
+  `y + 0.10`); `lane_lip` reads `route.edge` (curb_face_w 0.1 + sidewalk_w 0.2, already [invented] in ledger 0078).
+
 ## 2026-11-05 — Sand Creek 0.2.1: the lidar heights, the first pads (ledger 0079 round C)
 
 No gate threshold changed, and no new number was added. Changed reading rules:

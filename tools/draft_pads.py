@@ -308,6 +308,97 @@ def deck_near(deck: dict, e: float, n: float, reach_m: float = 3.0) -> float | N
     return bv if best is not None and math.sqrt(best) * c <= reach_m else None
 
 
+FILL_REACH_M = (1.0, 1.5, 2.0, 3.0, 4.0, 6.0, 8.0)   # the hole fill's growing search radii (the plane fit's own 2 m in the middle)
+FILL_MIN_NODES = 12        # [invented] measured deck nodes a hole's plane needs (a 3 x 4 patch of the 0.5 m grid)
+
+
+def deck_filled(deck: dict, ring, datum_m: float = 0.0, smooth_m: float | None = None) -> tuple[dict, dict]:
+    """THE MEASURED DECK WITH ITS HOLES FILLED FROM ITSELF (ledger 0079 round D, opt-in ``lm_pads.deck``). The PC's deck
+    is a plane per 0.5 m node over the ROAD-intensity class-2 points within 2 m (tools/draft_pad_outline.py); where
+    crosswalk paint, a concrete gutter pan or a parked car leaves fewer than PLANE_MIN_POINTS such points the node is
+    None. Inside the measured outline (``ring``, the lidar's own asphalt) a None node read through to the lap's removed
+    ribbon in 0.2.1's try (tools/lm_pads_blend.py deck_z): 0.10-0.33 m off the lidar around it, the severe steps at
+    50th/Ash, 50th/Dahlia and 48th/Colorado. Here each such node takes the least-squares plane through the measured
+    nodes around it (the nearest FILL_REACH_M radius holding FILL_MIN_NODES): the lidar's own surface carried across
+    the gap, slope and crown kept. Nodes outside the ring stay as measured (None stays None). ``datum_m`` is added to
+    every node (the assembler's ROAD stands 0.10 m over its sampled ground: scripts-v021 build_loop_blend.py
+    ``y + 0.10``, so a deck in the lap's datum stands the same 0.10 m over the lidar). Returns (deck, report)."""
+    nx, ny, c = deck["nx"], deck["ny"], deck["cell_m"]
+    Y = deck["y"]
+    meas = [(i, j) for j in range(ny) for i in range(nx) if Y[j][i] is not None]
+    cell = 4.0
+    grid = {}
+    for i, j in meas:
+        grid.setdefault((int(i * c // cell), int(j * c // cell)), []).append((i, j))
+    out = [[None if v is None else v + datum_m for v in row] for row in Y]
+    filled = unfilled = 0
+    reach_used = []
+    for j in range(ny):
+        for i in range(nx):
+            if Y[j][i] is not None:
+                continue
+            e, n = deck["e0"] + i * c, deck["n0"] + j * c
+            if not point_in_ring(e, n, ring):
+                continue
+            got = None
+            for R in FILL_REACH_M:
+                r = int(math.ceil(R / cell))
+                gi, gj = int(i * c // cell), int(j * c // cell)
+                pts = []
+                for di in range(-r, r + 1):
+                    for dj in range(-r, r + 1):
+                        for a, b in grid.get((gi + di, gj + dj), ()):
+                            dx, dy = (a - i) * c, (b - j) * c
+                            if dx * dx + dy * dy <= R * R:
+                                pts.append((dx, dy, Y[b][a]))
+                if len(pts) >= FILL_MIN_NODES:
+                    got = plane_height(pts)
+                    if got is not None:
+                        reach_used.append(R)
+                        break
+            if got is None:
+                unfilled += 1
+                continue
+            out[j][i] = got + datum_m
+            filled += 1
+    moved = []
+    if smooth_m:
+        # THE LIDAR'S NOISE OUT (``smooth_m``, a Gaussian sigma): each node inside the ring becomes the Gaussian-weighted
+        # mean of the ring's nodes within 3 sigma (inside only: the verge's fall and a curb face never pull the deck).
+        # The 2 m plane per node jitters 1-6 cm from its neighbour where its trimmed point set changes (a slope change
+        # over 3 % per metre: 0.2.1's try read 3.3 kinks /km on four pads against the lap's 0.41); the real asphalt is a
+        # surface, so the move is recorded (p95 / max) against the survey's own vertical accuracy
+        inside = [[point_in_ring(deck["e0"] + i * c, deck["n0"] + j * c, ring) and out[j][i] is not None
+                   for i in range(nx)] for j in range(ny)]
+        r = int(math.ceil(3.0 * smooth_m / c))
+        w = {(di, dj): math.exp(-((di * c) ** 2 + (dj * c) ** 2) / (2.0 * smooth_m * smooth_m))
+             for di in range(-r, r + 1) for dj in range(-r, r + 1)}
+        sm = [row[:] for row in out]
+        for j in range(ny):
+            for i in range(nx):
+                if not inside[j][i]:
+                    continue
+                num = den = 0.0
+                for (di, dj), wt in w.items():
+                    a, b = i + di, j + dj
+                    if 0 <= a < nx and 0 <= b < ny and inside[b][a]:
+                        num += wt * out[b][a]
+                        den += wt
+                sm[j][i] = num / den
+                moved.append(abs(sm[j][i] - out[j][i]))
+        out = sm
+    new = dict(deck)
+    new["y"] = out
+    rep = {"filled": filled, "unfilled": unfilled, "datum_m": datum_m,
+           "reach_max_m": max(reach_used) if reach_used else None}
+    if moved:
+        moved.sort()
+        rep["smooth_m"] = smooth_m
+        rep["smooth_moved_m"] = {"p50": round(moved[len(moved) // 2], 4), "p95": round(moved[int(0.95 * (len(moved) - 1))], 4),
+                                 "max": round(moved[-1], 4), "nodes": len(moved)}
+    return new, rep
+
+
 def offset_ring(ring, d: float) -> list[list[float]]:
     """a counter-clockwise ring moved d outward at every vertex (along the mean of its two edges' outward normals)"""
     n = len(ring)

@@ -13,8 +13,8 @@
  "off_pavement_stations": 0,
  "severe_steps": 0,
  "severe_per_km": 0.0,
- "steps_per_km": 0.0,
- "kinks_per_km": 0.41,
+ "steps_per_km": 0.31,
+ "kinks_per_km": 1.24,
  "obstruction_stations": 0,
  "daylight_gaps": 0,
  "replication_vs_measured": null,
@@ -22,8 +22,15 @@
  "floating_furniture": 0,
  "apron_steps": 0,
  "fold_bumps": 4,
- "vertex_bumps": 0,
- "vertex_bumps_worst": [],
+ "vertex_bumps": 1,
+ "vertex_bumps_worst": [
+  [
+   1198.0,
+   3.19,
+   0.026,
+   0.0182
+  ]
+ ],
  "excursion_drops": 0,
  "excursion_far_ledges": 1,
  "worst_excursions": [
@@ -42,24 +49,64 @@
   "severe_all": [],
   "kinks": [
    [
-    1223.0,
-    6.0,
-    4.29
+    554.0,
+    -4.49,
+    4.47
    ],
    [
-    1222.0,
-    6.0,
-    3.65
+    554.0,
+    -2.99,
+    4.43
    ],
    [
-    1225.0,
-    4.9,
-    3.12
+    552.0,
+    5.62,
+    4.18
    ],
    [
-    1220.0,
-    6.0,
-    3.09
+    551.0,
+    5.62,
+    3.97
+   ],
+   [
+    553.0,
+    -4.49,
+    3.9
+   ],
+   [
+    532.0,
+    5.25,
+    3.72
+   ],
+   [
+    552.0,
+    -4.12,
+    3.6
+   ],
+   [
+    553.0,
+    -2.99,
+    3.55
+   ],
+   [
+    584.0,
+    -4.08,
+    3.28
+   ],
+   [
+    551.0,
+    -4.12,
+    3.2
+   ],
+   [
+    531.0,
+    5.25,
+    3.06
+   ],
+   [
+    1194.0,
+    4.08,
+    3.01
    ]
   ],
   "obstructions": []

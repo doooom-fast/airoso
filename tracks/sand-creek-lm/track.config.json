@@ -2,7 +2,7 @@
   "_doc": "Sand Creek Raceway through Lake Murray v4's engine (ledger 0078, Kevin 2026-11-03: \"Lake Murray v4 should be what we build the rest from\"). The PILOT: Sand Creek 0.35.0's line (OSM centrelines, its widths, its 3DEP profile, tracks/sand-creek/data) fed by tools/lm_engine_intake.py into the v021 loop assembler (tracks/san-diego-lake-murray/scripts-v021/blender/build_loop_blend.py), prepped / exported / spawned by engine-july (the snapshot in tracks/san-diego-lake-murray/engine-july-snapshot), gated by the same gates. Its own slug and install folder so it installs beside sand_creek_raceway. Every other key is Sand Creek's own (copied from tracks/sand-creek/track.config.json at 0.35.0); the assembler reads route.smooth_*, route.divided_double, terrain.terrain_band_m and scenery.* only.",
   "name": "Sand Creek Raceway (LM engine)",
   "slug": "sand_creek_raceway_lm",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "mirror_x": false,
   "osm_road_widths": true,
   "_osm_road_widths_doc": "Real street circuit — after the project stage, scripts.gps.widths_from_osm map-matches each centerline vertex to its OSM way and sets curb-to-curb widths from lanes (arterials ~2x a side street) + writes intersection pads at the real junctions. Racetracks (defined widths) leave this off.",
@@ -746,7 +746,7 @@
     "_doc": "the v021 assembler's band clamp (Lake Murray's 22 m); no tiers on the pilot (the 20 m graded grid)"
   },
   "lm_pads": {
-    "_doc": "Ledger 0079 round B (Kevin 2026-11-03: \"authored pad junctions\"; ledger 0070's six required corners). plan = where (the node positions and NAIP curb returns of ledger 0070's pad table, 0073's reads); pads = the declarations tools/pad_boxes.py writes from it (node, cuts, box, arms; rule, not measurement); the outline and deck are measured by tools/draft_pad_outline.py off CO_DRCOG_2_2020 (the PC: runbook 4g step 3) into source/pads/<id>.json. The author with street arms is owed (ledger 0079 round B); no draft step reads these yet",
+    "_doc": "Ledger 0079 round B (Kevin 2026-11-03: \"authored pad junctions\"; ledger 0070's six required corners). plan = where (the node positions and NAIP curb returns of ledger 0070's pad table, 0073's reads); pads = the declarations tools/pad_boxes.py writes from it (node, cuts, box, arms; rule, not measurement); the outline and deck are measured by tools/draft_pad_outline.py off CO_DRCOG_2_2020 (the PC: runbook 4g step 3) into source/pads/<id>.json. Round D (0.2.2): the draft step lm_pads builds `pads` (tools/lm_pads_blend.py, deck below); `parked` are declared, measured and held out, each with its reason",
     "source": "source/pads",
     "plan": [
       {
@@ -1071,104 +1071,6 @@
         },
         "edge": "shoulder",
         "_by": "tools/pad_boxes.py from lm_pads.plan 50th_dahlia: node v411 nearest [-759.4, 68.0], cuts 30 m of arc either side, box reach 16.9 m (half width 8.0 + curb return 3 + 6.0) [rule, invented pads], 2 street arm(s)"
-      },
-      {
-        "id": "48th_colorado",
-        "node": 3205,
-        "cuts": [
-          3193,
-          3216
-        ],
-        "box": [
-          [
-            -1534.24,
-            -305.81
-          ],
-          [
-            -1530.77,
-            -315.81
-          ],
-          [
-            -1515.27,
-            -315.72
-          ],
-          [
-            -1515.01,
-            -321.24
-          ],
-          [
-            -1499.51,
-            -321.12
-          ],
-          [
-            -1494.49,
-            -315.36
-          ],
-          [
-            -1469.58,
-            -308.64
-          ],
-          [
-            -1499.67,
-            -261.39
-          ],
-          [
-            -1522.17,
-            -261.12
-          ],
-          [
-            -1534.3,
-            -289.81
-          ]
-        ],
-        "arms": [
-          {
-            "connector": "grid_primary_49",
-            "cut": [
-              [
-                -1515.27,
-                -315.72
-              ],
-              [
-                -1530.77,
-                -315.81
-              ]
-            ]
-          },
-          {
-            "connector": "grid_primary_52",
-            "cut": [
-              [
-                -1499.51,
-                -321.12
-              ],
-              [
-                -1515.01,
-                -321.24
-              ]
-            ]
-          },
-          {
-            "connector": "grid_tertiary_98",
-            "cut": [
-              [
-                -1534.24,
-                -305.81
-              ],
-              [
-                -1534.3,
-                -289.81
-              ]
-            ]
-          }
-        ],
-        "half_m": 45.0,
-        "source": {
-          "kind": "lidar_ept",
-          "ept": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept.json"
-        },
-        "edge": "shoulder",
-        "_by": "tools/pad_boxes.py from lm_pads.plan 48th_colorado: node v3205 nearest [-1511.1, -297.4], cuts 30 m of arc either side, box reach 26.4 m (half width 16.4 + curb return 4 + 6.0) [rule, invented pads], 3 street arm(s)"
       }
     ],
     "parked": [
@@ -1306,9 +1208,121 @@
         "edge": "shoulder",
         "_by": "tools/pad_boxes.py from lm_pads.plan dahlia_56th: node v780 nearest [-909.8, 1119.8], cuts 30 m of arc either side, box reach 42.1 m (half width 21.1 + curb return 15 + 6.0) [rule, invented pads], 1 street arm(s)",
         "_parked_why": "ledger 0079 round C: tools/lm_pads_blend.py refused it on the Mac: a lane sample at its in-cut row (v770, right edge) stands off the measured deck even with the ribbon united; the outline also adds 1,406 m2 of ribbon. Parked until the outline is re-read (NAIP)"
+      },
+      {
+        "id": "48th_colorado",
+        "node": 3205,
+        "cuts": [
+          3193,
+          3216
+        ],
+        "box": [
+          [
+            -1534.24,
+            -305.81
+          ],
+          [
+            -1530.77,
+            -315.81
+          ],
+          [
+            -1515.27,
+            -315.72
+          ],
+          [
+            -1515.01,
+            -321.24
+          ],
+          [
+            -1499.51,
+            -321.12
+          ],
+          [
+            -1494.49,
+            -315.36
+          ],
+          [
+            -1469.58,
+            -308.64
+          ],
+          [
+            -1499.67,
+            -261.39
+          ],
+          [
+            -1522.17,
+            -261.12
+          ],
+          [
+            -1534.3,
+            -289.81
+          ]
+        ],
+        "arms": [
+          {
+            "connector": "grid_primary_49",
+            "cut": [
+              [
+                -1515.27,
+                -315.72
+              ],
+              [
+                -1530.77,
+                -315.81
+              ]
+            ]
+          },
+          {
+            "connector": "grid_primary_52",
+            "cut": [
+              [
+                -1499.51,
+                -321.12
+              ],
+              [
+                -1515.01,
+                -321.24
+              ]
+            ]
+          },
+          {
+            "connector": "grid_tertiary_98",
+            "cut": [
+              [
+                -1534.24,
+                -305.81
+              ],
+              [
+                -1534.3,
+                -289.81
+              ]
+            ]
+          }
+        ],
+        "half_m": 45.0,
+        "source": {
+          "kind": "lidar_ept",
+          "ept": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept.json"
+        },
+        "edge": "shoulder",
+        "_by": "tools/pad_boxes.py from lm_pads.plan 48th_colorado: node v3205 nearest [-1511.1, -297.4], cuts 30 m of arc either side, box reach 26.4 m (half width 16.4 + curb return 4 + 6.0) [rule, invented pads], 3 street arm(s)",
+        "_parked_why": "ledger 0079 round D: built in 0.2.2's tries with drive_test green (0 soft, 0 severe) but verify_pads P4 red: grass 8-10 mm over the deck 0.19-0.24 m inside its south-east edge at (-1503.9, -317.7) and (-1500.4, -316.7), where the prep's contact band takes the lap ribbon's height across the cut corner; also 5 of the build's 18 kinks are its seam (the lap's flat row against the lidar's crowned Colorado Blvd, 0.20 m at the left edge) and the outline misses the east half of the crossroads (the box ends there). Parked until the PC re-measures it with the box over the whole crossroads and the deck past both cuts (the Mac re-declares its box first; a later runbook)"
       }
     ],
     "close_arms": false,
-    "_close_arms_doc": "ledger 0079: the free roam joins the side streets, so no K-rail closes a pad arm (tools/lm_pads_blend.py)"
+    "_close_arms_doc": "ledger 0079: the free roam joins the side streets, so no K-rail closes a pad arm (tools/lm_pads_blend.py)",
+    "deck": {
+      "fill": "lidar",
+      "datum_m": 0.1,
+      "smooth_m": 1.0,
+      "lane_lip": "route.edge",
+      "ground_edge_m": 0.7
+    },
+    "_deck_doc": "ledger 0079 round D (tools/draft_pads.deck_filled, tools/lm_pads_blend.py): fill = the measured deck's holes (crosswalk paint, gutter pans, cars: under 8 road-intensity points within 2 m) filled from the lidar nodes around them, not from the lap's removed ribbon; datum_m = the deck in the lap's datum, the assembler's ROAD stands 0.10 m over its sampled ground (scripts-v021 build_loop_blend.py y + 0.10); smooth_m = a Gaussian sigma over the deck's nodes inside the measured outline [invented], its moves recorded in data/pads.built.json deck_fill; lane_lip = the lane's flat lip past the ROAD edge (route.edge curb_face_w + sidewalk_w, 0.3 m) kept paved where the measured asphalt is narrower than the lane; ground_edge_m = the ground under and round the deck split to 0.7 m [invented] (LAWS L3b: a ground cell can only follow a deck shape it is smaller than; 0.17.2's 1.4 m left grass 7-21 mm over 48th/Colorado's deck edge)"
+  },
+  "strip_seam": {
+    "pads": true,
+    "scope": "local",
+    "_doc": "ledger 0079 round D: the ground seamed along each lm_pads deck's outline too (tools/strip_seam_blend.py), so no ground triangle spans a deck edge (pads); and the local scope (the Lariat's, ledger 0078 round 7): with the pads the whole-terrain seam missed 79 of 7,355 points, over its 1 % (MAX_MISS_SHARE)"
   }
 }

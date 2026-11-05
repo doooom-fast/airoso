@@ -3,9 +3,9 @@
  "kn5": [
   {
    "kn5": "sand_creek_raceway_lm.kn5",
-   "mb": 48.4,
-   "visible_meshes": 29,
-   "materials_used": 29,
+   "mb": 52.7,
+   "visible_meshes": 36,
+   "materials_used": 36,
    "textures": 21,
    "texture_mb": 22.1,
    "untextured": []
@@ -30,7 +30,7 @@
   },
   {
    "kn5": "sand_creek_raceway_lm_street.kn5",
-   "mb": 1.8,
+   "mb": 1.7,
    "visible_meshes": 1,
    "materials_used": 1,
    "textures": 1,

@@ -23,8 +23,8 @@
    "undrivable_corners": 0,
    "severe_steps": 0,
    "severe_per_km": 0.0,
-   "steps_per_km": 0.0,
-   "kinks_per_km": 0.41,
+   "steps_per_km": 0.31,
+   "kinks_per_km": 1.24,
    "file": "drive_test.race.json"
   },
   "street": {
@@ -45,8 +45,8 @@
    "undrivable_corners": 0,
    "severe_steps": 0,
    "severe_per_km": 0.0,
-   "steps_per_km": 0.0,
-   "kinks_per_km": 0.41,
+   "steps_per_km": 0.31,
+   "kinks_per_km": 1.24,
    "file": "drive_test.street.json"
   }
  },

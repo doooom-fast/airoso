@@ -14,6 +14,7 @@
       "seat_terrain",
       "densify_ribbon",
       "seat_edges",
+      "lm_pads",
       "strip_seam",
       "lamps"
     ],
@@ -41,6 +42,7 @@
       "drive_test_street",
       "audit_street",
       "kn5_ground",
+      "verify_pads",
       "house_seat",
       "houses",
       "textures",
@@ -103,7 +105,8 @@
       "data/house_gate.json",
       "data/treefx.report.json",
       "data/verify_textures.json",
-      "data/pads.built.json"
+      "data/pads.built.json",
+      "data/verify_pads.json"
     ],
     "map": [
       [

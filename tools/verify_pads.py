@@ -99,6 +99,36 @@ def pip(poly, x, z):
     return inside
 
 
+def lm_pads_shape(built, data):
+    """tools/lm_pads_blend.py's record (ledger 0078 round 7 / 0079 round D: the lap is both main arms, cut at two of its
+    own rows; the deck ends at the measured outline with NO curb or walk, "edge": "shoulder") read as this gate's own
+    shape, so every rule judges it unchanged: the outline is outline_en (the track's local x / north = the OBJ's x / z);
+    each cut row's vertices are that arm's seam vertices (every one, densify's columns included, in order along the row);
+    the K-rails are the stubs; the node height's reference is the lap's own 3DEP profile at the node vertex
+    (centerline.local.json), as pads.plan.json's z_3dep_m is for Lake Murray's pads. ``curb`` False: P1 does not ask for a
+    1KERB_sidewalk_pad (Kevin: "no sidewalks"); P5 still judges every curb triangle over the pavement.
+    Returns (built, plan) or None when the record is not lm_pads' (Lake Murray's pads.built.json: unchanged)."""
+    pads = built.get("pads") or []
+    if not pads or not all("rows" in p and "outline_en" in p and "seams" not in p for p in pads):
+        return None
+    loc = json.loads((data / "centerline.local.json").read_text(encoding="utf-8"))
+    P = loc["points_xyz_m"]
+    elev0 = loc["origin"]["elev_m"]
+    out, plan = [], {}
+    for p in pads:
+        seams = []
+        for k, row in zip(p["cuts"], p["rows"]):
+            for i, q in enumerate(row):                      # Blender (x, north, up) -> OBJ (x, up, north)
+                seams.append({"arm": f"lap_v{k}", "row_vertex": f"v{i}", "order": i, "xyz": [q[0], q[2], q[1]]})
+        stubs = [{"stub": b["object"], "barrier": dict(b["barrier"], seat=b["barrier"].get("seat") or [])}
+                 for b in p.get("barriers") or []]
+        out.append({"id": p["id"], "outline_xz": p["outline_en"], "seams": seams, "stubs": stubs, "curb": False})
+        nd = P[p["node"]]
+        plan[p["id"]] = {"node_xz": [nd[0], nd[2]], "z_3dep_m": round(nd[1] + elev0, 3),
+                         "_from": f"centerline.local.json v{p['node']} (the lap's 3DEP profile)"}
+    return {"pads": out}, plan
+
+
 def verify(project):
     proj = Path(project)
     data = proj / "data"
@@ -106,7 +136,11 @@ def verify(project):
     if not bp.exists():
         return None
     built = json.loads(bp.read_text(encoding="utf-8"))
-    plan = {p["id"]: p for p in json.loads((data / "pads.plan.json").read_text(encoding="utf-8"))["pads"]}
+    lm = lm_pads_shape(built, data)
+    if lm is not None:
+        built, plan = lm
+    else:
+        plan = {p["id"]: p for p in json.loads((data / "pads.plan.json").read_text(encoding="utf-8"))["pads"]}
     centres = []
     for p in built["pads"]:
         o = p["outline_xz"]
@@ -119,7 +153,8 @@ def verify(project):
         pid = p["id"]
         fails = []
         deck_n, curb_n = f"1ROAD_PAD_{pid}".upper(), f"1KERB_SIDEWALK_PAD{pid}".upper()
-        for n in (deck_n, curb_n) + tuple(s["barrier"]["object"].upper() for s in p["stubs"]):
+        need = (deck_n,) + ((curb_n,) if p.get("curb", True) else ())   # lm_pads' shoulder edge: no curb asked for
+        for n in need + tuple(s["barrier"]["object"].upper() for s in p["stubs"]):
             if not any(m == n or m.startswith(n + "_") or m.startswith(n + ".") for m in names):
                 fails.append(f"P1: {n} not in the built OBJ")
         o = [tuple(q) for q in p["outline_xz"]]
@@ -171,7 +206,7 @@ def verify(project):
                     fails.append(f"P3: {arm} seam vertex {sv['row_vertex']} has no pad vertex within 1 mm "
                                  f"(nearest {dmin})")
                 near_miss += sum(1 for d in ds if NEAR_LO_M < d < NEAR_HI_M)
-            pts = sorted(svs, key=lambda r: ["L", "C", "R"].index(r["row_vertex"]))
+            pts = sorted(svs, key=lambda r: r["order"] if "order" in r else ["L", "C", "R"].index(r["row_vertex"]))
             for (qa, qb) in zip(pts, pts[1:]):
                 A, B = qa["xyz"], qb["xyz"]
                 L = math.dist((A[0], A[2]), (B[0], B[2]))

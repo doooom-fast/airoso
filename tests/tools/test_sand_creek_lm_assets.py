@@ -134,3 +134,57 @@ def test_pad_declarations_validate_and_sit_between_their_cuts():
                                                     "sandcreek_quebec", "48th_colorado"])
     assert all(p.get("_parked_why") for p in cfg["lm_pads"].get("parked", []))     # a parked pad says why
     assert all(p["cuts"][1] <= 3216 and len(p["box"]) >= 4 for p in pads)
+
+
+def test_round_d_deck_fill_datum_and_smooth():
+    """ledger 0079 round D: a hole inside the measured outline takes the plane of the lidar nodes round it (slope kept),
+    every node stands datum_m higher, nothing outside the ring is filled, and the smoothing records its moves"""
+    import draft_pads as dp
+    nx = ny = 21
+    deck = {"e0": 0.0, "n0": 0.0, "cell_m": 0.5, "nx": nx, "ny": ny,
+            "y": [[0.02 * (i * 0.5) + 0.01 * (j * 0.5) for i in range(nx)] for j in range(ny)]}
+    for j in range(8, 12):
+        for i in range(8, 12):
+            deck["y"][j][i] = None                            # a crosswalk's hole in the middle
+    deck["y"][0][0] = None                                    # a hole outside the ring stays one
+    ring = [(1.0, 1.0), (9.0, 1.0), (9.0, 9.0), (1.0, 9.0)]
+    out, rep = dp.deck_filled(deck, ring, datum_m=0.10)
+    assert rep["filled"] == 16 and rep["unfilled"] == 0
+    assert abs(out["y"][10][10] - (0.02 * 5 + 0.01 * 5 + 0.10)) < 1e-6   # the plane carried across the hole
+    assert out["y"][0][0] is None and abs(out["y"][0][1] - (0.01 + 0.10)) < 1e-9
+    _sm, rep2 = dp.deck_filled(deck, ring, datum_m=0.10, smooth_m=1.0)
+    assert rep2["smooth_m"] == 1.0 and rep2["smooth_moved_m"]["max"] < 0.05   # a plane barely moves (edges only)
+    assert deck["y"][10][10] is None                          # the input is never edited
+
+
+def test_round_d_keys_are_opt_in():
+    """Lake Murray and the Lariat name none of round D's keys; absent = lm_pads and verify_pads as before"""
+    lm = json.loads((LM / "track.config.json").read_text(encoding="utf-8"))
+    assert "lm_pads" not in lm
+    for p in (ROOT / "tracks").glob("lookout-lariat*/track.config.json"):
+        assert "deck" not in (json.loads(p.read_text(encoding="utf-8")).get("lm_pads") or {})
+    sc = json.loads((SC / "track.config.json").read_text(encoding="utf-8"))
+    assert sc["lm_pads"]["deck"]["fill"] == "lidar" and sc["lm_pads"]["deck"]["datum_m"] == 0.10
+    ship = json.loads((SC / "ship.json").read_text(encoding="utf-8"))
+    assert ship["steps"]["draft"].index("lm_pads") == ship["steps"]["draft"].index("seat_edges") + 1
+    assert "verify_pads" in ship["steps"]["gate"]
+
+
+def test_verify_pads_reads_lm_pads_shape_and_leaves_lake_murrays_alone():
+    import verify_pads as vp
+    with tempfile.TemporaryDirectory() as td:
+        data = Path(td)
+        (data / "centerline.local.json").write_text(json.dumps(
+            {"origin": {"elev_m": 1500.0}, "points_xyz_m": [[0.0, 10.0, 0.0], [5.0, 10.5, 0.0], [10.0, 11.0, 0.0]]}))
+        lm = {"pads": [{"id": "p", "node": 1, "cuts": [0, 2], "outline_en": [[0, -5], [10, -5], [10, 5], [0, 5]],
+                        "rows": [[[0, -4, 10.1], [0, 0, 10.1], [0, 4, 10.1]],
+                                 [[10, -4, 11.1], [10, 0, 11.1], [10, 4, 11.1]]],
+                        "barriers": []}]}
+        built, plan = vp.lm_pads_shape(lm, data)
+        p = built["pads"][0]
+        assert p["curb"] is False and p["stubs"] == [] and p["outline_xz"] == lm["pads"][0]["outline_en"]
+        assert p["seams"][0]["xyz"] == [0, 10.1, -4]              # Blender (x, north, up) -> OBJ (x, up, north)
+        assert plan["p"]["z_3dep_m"] == 1510.5 and plan["p"]["node_xz"] == [5.0, 0.0]
+        assert vp.lm_pads_shape({"pads": [{"id": "x", "seams": [], "outline_xz": [], "stubs": []}]}, data) is None
+    lm_built = json.loads((LM / "data" / "pads.built.json").read_text(encoding="utf-8"))
+    assert vp.lm_pads_shape(lm_built, LM / "data") is None          # Lake Murray's J2-J4 take the old path

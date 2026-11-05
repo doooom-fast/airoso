@@ -404,16 +404,122 @@ pad mouth to read.
 **House floor.** Lowered to the count built: 63 footprints are gone by measurement, not lost. `tools/house_gate.py` read
 2,214 / 2,215 / 0 off the built kn5.
 
-## Owed (2026-11-05, after 0.2.1; in Kevin's order)
+## Round D (Mac): 0.2.2, three pads on the lap, every gate green
 
-1. **Pads that hold the lap.**
-   - The deck must meet the lap's rows within the drive gates. The 0.21-0.34 m seam is the lidar deck against the 3DEP
-     profile. Two ways:
-     - the lap's own profile through each pad from the same lidar (the Lariat's C18 precedent);
-     - the deck faded to the rows over a longer run.
-   - Then dahlia_56th's in-cut lane sample, sandcreek_quebec's edge traced off NAIP, and 48th_colorado's east half.
-   - Then verify_pads, taught lm_pads' no-curb shape.
-   - The NAIP stills of all six outlines are in `source/stills/pad_*_naip.jpg`.
+Built on the Mac from an empty workshop (`tools/ship_track.sh`, ship.json as committed): SHIP OK.
+
+### What the 0.21-0.34 m seam was (measured, before any change)
+
+At the cut rows of the four pads tried in round C, against the PC's lidar deck (`source/pads/*.json`):
+- **The lap's 3DEP profile agrees with the lidar.** The line's centre is within 0.07 m of the lidar deck at every cut
+  (colorado_50th +0.02 / -0.02, 50th_ash -0.07 / -0.01, 50th_dahlia -0.01 / -0.03, 48th_colorado -0.03 / ...).
+- **0.10 m of it is the engine's own datum.** The assembler stands every ROAD vertex 0.10 m over its sampled ground
+  (scripts-v021 `build_loop_blend.py`: `y + 0.10`, "~0.1 m proud of the terrain"). The lidar deck had no such lift.
+- **The rest is the crown.** The lap's rows are straight across (all three vertices one height); the measured road is
+  crowned and cross-sloped, its edges 0.1-0.2 m under its centre (48th_colorado's left edge 0.20 m).
+- So neither measurement is wrong at the cuts. The round-C fade length was not the cause of the red rows either.
+
+### What turned round C red (measured on the built OBJ)
+
+- **Holes in the deck read through to the removed ribbon.** The PC's deck is a 2 m plane per 0.5 m node over the
+  road-intensity points only. Crosswalk paint, concrete gutter pans and cars leave 10-20 % of the nodes inside the
+  outline empty (477-1,647 per pad). `lm_pads` read the lap's removed ribbon there (0.10-0.33 m over the lidar): the
+  severe steps at 50th/Ash, 50th/Dahlia and 48th/Colorado.
+- **Lidar noise.** The 2 m planes jitter 1-6 cm node to node (3-8 % of 1 m second differences over 3 cm inside the
+  outlines): the kinks.
+
+### The fix (all opt-in, `lm_pads.deck`; Sand Creek only)
+
+- **`fill: "lidar"`** (`tools/draft_pads.deck_filled`): a hole inside the measured outline takes the plane through the
+  lidar nodes around it (slope and crown carried across). Filled: 1,647 / 477 / 883 nodes, 0 unfilled.
+- **`datum_m: 0.10`**: the deck in the lap's own datum (the assembler's lift above). Seam residual max 0.27 / 0.11 /
+  0.14 m (round C: 0.34 / 0.21 / 0.24): the crown alone, faded in over round C's unchanged `SEAM_FADE_M` 12 m.
+- **`smooth_m: 1.0`** [invented]: a Gaussian over the deck nodes inside the outline. It moves them p95 1.7-3.1 cm, max
+  0.075-0.26 m (one node per pad standing off its neighbours: an object, not asphalt).
+- **`lane_lip: "route.edge"`**: where the measured asphalt is narrower than the lap's lane, the deck also keeps the lane's
+  0.3 m flat lip paved (the strip's curb_face_w + sidewalk_w). Round C's last soft top, 50th/Ash s 525 at +5.16 m.
+- **`ground_edge_m: 0.7`** [invented] and **`strip_seam.pads`**: the ground under and round each deck split to 0.7 m
+  and seamed along the deck's outline (LAWS L3b). The whole-terrain seam then missed 79 of 7,355 points (over its 1 %), so
+  Sand Creek's strip seam moves to the local scope the Lariat runs: 7,132 of 7,136 joined.
+- **I did not lengthen the fade and did not change the lap's profile.** The lap's profile through the pads is already the
+  lidar's within 0.07 m. Its flat rows against the crowned road (the crown) are what remains at the seams.
+
+### Per pad
+
+| pad | 0.2.2 | why |
+|---|---|---|
+| colorado_50th | **built**, verify_pads PASS | deck 2,357 m²; it covers the lap's corner. Colorado's north arm and 50th's west arm stay outside the box (the streets' weld, item 2) |
+| 50th_ash | **built**, PASS | 1,099 m² |
+| 50th_dahlia | **built**, PASS | 1,301 m²; the arms are as measured (short): the box ends there |
+| 48th_colorado | **parked** | drive_test green with it (0 soft, 0 severe), but verify_pads P4 red: grass 8-10 mm over the deck 0.19-0.24 m inside its south-east edge, where the prep's contact band takes the lap ribbon's height across the cut corner (unchanged by the outline seam). Also 5 of the 18 kinks with it are its seam (Colorado Blvd's crown, 0.20 m at the left edge). And the box misses the east half of the crossroads |
+| dahlia_56th | **parked** (as before) | the lap's ribbon there is 30-42 m wide (56th's merge); at its in-cut row v770 / v771 the lane edges stand 0.1-0.7 m off the measured asphalt, so the lane check refuses it |
+| sandcreek_quebec | **parked** (as before) | the lidar tile has no intensity (road median 0): the outline is the box and the ribbon. Its deck (class-2, all points) is there. The edge has to come off NAIP; no NAIP tracer exists yet |
+
+Stills from above, NAIP beside the built road (the deck orange by height, the measured outline cyan):
+`source/stills/pad_colorado_50th_built.jpg`, `pad_50th_ash_built.jpg`, `pad_50th_dahlia_built.jpg`.
+
+### verify_pads on lm_pads' shape
+
+`tools/verify_pads.py` reads `lm_pads`' record (`lm_pads_shape`); its rules and numbers are unchanged. The one rule
+that reads less: P1 does not ask for a curb (Kevin: "no sidewalks"). It is written up in GATES-CHANGELOG. P7's
+reference is the lap's 3DEP at the node. Lake Murray's J2-J4 record takes the old path (a test pins it). Sand Creek's
+ship.json now gates on it.
+
+### Gates, BUILT kn5 (Mac, empty workshop `/Volumes/Drive/codex/sclm_work/d6`)
+
+| gate | 0.2.1 | **0.2.2** |
+|---|---|---|
+| drive_test race / street | PASS: soft 0, severe 0, drops 0, far ledges 1, fold bumps 4, kinks 0.41 /km, bumps 0.0 /km | PASS: soft 0, severe 0, drops 0, far ledges 1, fold bumps 4, **kinks 1.24 /km, bumps 0.31 /km**, vertex bumps 1 |
+| audit_mesh | CLEAN | CLEAN |
+| kn5_ground_check | PASS (201 lamp heads, 0 orphans) | PASS (199, 0: posts 6 and 7 stood on the colorado_50th deck, `drop_on_road`) |
+| verify_pads | - | **PASS x3** (seams 0.9-1.6 mm, grass 0, curb over pavement 0, multi-coverage 0, node -0.10 to 0.00 m vs 3DEP) |
+| verify_mouths | - | - (no street mouth yet) |
+| house_seat | PASS, 2,215 | PASS, 2,215 (lowest roof over its ground 1.26 m) |
+| houses | 2,214 / 2,215 / 0 | 2,214 / 2,215 / 0 |
+| textures | 0 untextured | 0 untextured (36 meshes) |
+| road kn5 / `_street` | 48.3 / 1.8 MB | **52.7 / 1.7 MB** (the 0.7 m ground under the decks) |
+
+The kinks (12 on 9.64 km): 11 at 50th/Ash s 531-584, the lidar's own surface through the junction (they survive
+smoothing to 2 m, so they are the road's shape, not noise); 1 at 50th/Dahlia s 1194. Kinks do not gate. 0.2.1 had 4,
+at 50th/Dahlia's lane edge.
+
+### The two questions from 0.2.1
+
+- **The block without a roof.** There is none. `msft_buildings1333` (Microsoft) is a copy of `osm_buildings1169`: six
+  shared corners, both tan tilt-up, 4.5 m. Both stand. Their roofs coincide and the gate's 1 mm weld counts them as one
+  shell; their walls fall in two mesh chunks (TILTUP_0, TILTUP_1) and count twice. It is a real duplicate building, not
+  a missing roof.
+  - Four more OSM / Microsoft pairs stand twice as two different buildings in one place (8-12 shared corners): 912 /
+    1210, 973 / 1839, 1043 / 106, 1094 / 96. Each is a flat tan tilt-up and a shingle hip house.
+  - Owed: the planner's de-duplication. It changes the house floor, so it is a separate build.
+- **15.4 m to 1.7 m.** `osm_buildings532` was never stood. The lidar reads its roof p50 1.73 m and p95 2.37 m over the
+  ground (1,304 returns, a ~430 m² slab), under `lidar.drop_low`'s 2.5 m. It is in no `buildings.lm.json`. Round C's
+  table says "(left out)"; the hand-back's "became a 1.7 m slab" was wrong.
+
+### Lake Murray and the Lariat unchanged
+
+- `git diff origin/claude/fleet-lm-engine -- tracks/san-diego-lake-murray scripts/`: empty.
+- Shared tools: every change is opt-in or a new function.
+  - `draft_pads.deck_filled` is new.
+  - `lm_pads` runs its old path when `lm_pads.deck` is absent (the Lariat's config names none of it): `edges0` is the
+    same dict, lip 0, `ground_under` at 1.4 m.
+  - `strip_seam`'s pad seam needs `strip_seam.pads`.
+  - `verify_pads` takes the new path only on a record with `rows` and no `seams`.
+- Tests: `test_sand_creek_lm_assets.py` 13 pass (three new: the fill, the opt-in keys, verify_pads' two shapes);
+  `test_draft_pads`, `test_lm_engine_port`, `test_ship_track_chain` pass.
+
+## Owed (2026-11-05, after 0.2.2; in Kevin's order)
+
+1. **The three parked pads.**
+   - **48th_colorado:** the Mac re-declares its box over the whole crossroads, then the PC re-measures it with the box over the whole crossroads and the deck
+     past both cuts. Then the lap's rows at its cuts can take the lidar's own cross-section, which removes the crown seam.
+     The grass at its south-east corner then has to be re-read on that build.
+   - **dahlia_56th:** re-declare its in-cut row where the lap's 42 m ribbon is on the measured asphalt, or bring the lap's
+     line onto the measured road (C18's precedent).
+   - **sandcreek_quebec:** its edge off NAIP. No tool traces a pad outline off NAIP yet (`draft_pad_outline.py`'s `aerial`
+     kind was never built). Its class-2 deck is already in the file.
+   - colorado_50th's and 50th_dahlia's arms end at their boxes; the streets' weld (item 2) meets them there.
+   - The duplicate OSM / Microsoft buildings (five pairs, above).
 2. **Real junctions at all 146 street meetings** ("Real junctions"), on Lake Murray's weld / mouth / pad tools:
    - trim streets against streets;
    - one welded deck per meeting;

@@ -95,6 +95,16 @@ def main():
             pts.append((o.x + dx / L * INSET_M, o.y + dy / L * INSET_M))
         seams.append(pts)
     cfg = json.loads((proj / "track.config.json").read_text(encoding="utf-8"))
+    # THE PADS' OUTLINES (opt-in strip_seam.pads, ledger 0079 round D): the ground seamed along each lm_pads deck's own
+    # outline (data/pads.built.json outline_en, every point), so no ground triangle spans the deck's edge. 0.2.2's try:
+    # a 0.7 m ground triangle from the contact band outside 48th / Colorado's deck in over its gutter stood 8-10 mm over
+    # the deck 0.2 m inside the edge (verify_pads P4). Absent = the lap's strip alone, as before (the Lariat)
+    bp = data / "pads.built.json"
+    if (cfg.get("strip_seam") or {}).get("pads") and bp.exists():
+        rings = [[tuple(q) for q in p["outline_en"]] for p in json.loads(bp.read_text(encoding="utf-8")).get("pads") or []]
+        for r_ in rings:
+            seams.append(r_ + [r_[0]] if closed is False else r_)
+        print(f"[strip-seam] {len(rings)} pad outline(s), {sum(len(r_) for r_ in rings)} points, seamed too")
     if ((cfg.get("strip_seam") or {}).get("scope")) == "local":
         seam_local(proj, terr, seams, closed)
         return

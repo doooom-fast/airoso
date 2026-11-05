@@ -168,7 +168,7 @@ def _inset(a, b, d):
     return (a[0] + (b[0] - a[0]) * d / L, a[1] + (b[1] - a[1]) * d / L)
 
 
-def ribbon_edges(ring, cuts_rows, edges, node):
+def ribbon_edges(ring, cuts_rows, edges, node, lip_rows=None):
     """THE RIBBON'S CORNERS AT A CUT. The row spans the lap's whole width; where the measured asphalt is narrower than
     the ribbon (C14's out-cut) or the row line and the measurement's cut line differ by a few degrees, the outline goes
     straight from the row's end back in to the asphalt edge and the ribbon's corner beside it is left unpaved, under
@@ -202,6 +202,8 @@ def ribbon_edges(ring, cuts_rows, edges, node):
                 pts = []                           # the first edge point was already on the asphalt
             if not pts:
                 continue
+            if lip_rows:                           # the lane's lip at the cut row itself (lm_pads.deck.lane_lip): the patch
+                pts = [lip_rows[k][side_]] + pts   # starts on the row's own line, beside the strip's flat lip outside it
             if forward:
                 out = out[:i + 1] + pts + out[i + 1:]
             else:
@@ -249,7 +251,7 @@ def union_ribbon(ring0, pts3, P, edges, lo_k, hi_k, node, segs):
     return ring, extra
 
 
-def ground_under(ring, deck_z):
+def ground_under(ring, deck_z, edge_m=GROUND_EDGE_M):
     terr = bpy.data.objects.get("TERRAIN")
     if terr is None:
         return {}
@@ -265,7 +267,7 @@ def ground_under(ring, deck_z):
             a, b = e.verts
             mx, my = (a.co.x + b.co.x) / 2.0, (a.co.y + b.co.y) / 2.0
             L = math.hypot(b.co.x - a.co.x, b.co.y - a.co.y)
-            if L > GROUND_EDGE_M and bx0 - L / 2 <= mx <= bx1 + L / 2 and by0 - L / 2 <= my <= by1 + L / 2:
+            if L > edge_m and bx0 - L / 2 <= mx <= bx1 + L / 2 and by0 - L / 2 <= my <= by1 + L / 2:
                 todo.append((L, e))
         if not todo:
             break
@@ -319,6 +321,16 @@ def build(proj, cfg, decls):
         if rec.get("cuts") != d["cuts"] or rec.get("node") != d["node"]:
             raise SystemExit(f"[lm-pads] FATAL: {pid}: {src.name}/{pid}.json was measured for other cuts / node")
         lo_k, hi_k = d["cuts"]
+        # 0. THE DECK AS MEASURED, ITS HOLES FILLED FROM ITSELF, IN THE LAP'S DATUM (ledger 0079 round D; opt-in
+        # lm_pads.deck: {"fill": "lidar", "datum_m": <the assembler's ROAD lift>}; absent = the measured grid as before, the
+        # Lariat's C14 / C15 unchanged): draft_pads.deck_filled
+        deck_cfg = (cfg.get("lm_pads") or {}).get("deck") or {}
+        deck_rep = None
+        if deck_cfg.get("fill") == "lidar":
+            rec = dict(rec)
+            rec["deck"], deck_rep = dp.deck_filled(rec["deck"], [tuple(q) for q in rec["outline_en"]],
+                                                   float(deck_cfg.get("datum_m") or 0.0), deck_cfg.get("smooth_m"))
+            _log(f"{pid}: deck {deck_rep}")
         # 1. the rows
         cuts_rows, seams = [], []
         for k in d["cuts"]:
@@ -334,6 +346,24 @@ def build(proj, cfg, decls):
         for k in range(lo_k, hi_k + 1):
             a_, b_ = RV[mw.road_index(lay, "MAINLINE", k, 0)].co, RV[mw.road_index(lay, "MAINLINE", k, 2)].co
             edges[k] = ((a_.x, a_.y), (b_.x, b_.y))
+        # THE LANE'S LIP (opt-in lm_pads.deck.lane_lip "route.edge", ledger 0079 round D): with no curb the lap's lane edge
+        # stays at road height for route.edge curb_face_w + sidewalk_w past the ROAD edge (Sand Creek 0.1 + 0.2 m), and
+        # drive_test's edge wheel path reads 0.25 m past the ROAD edge. Between the cuts that flat lip goes with the strip,
+        # so where the measured asphalt is narrower than the lane the deck keeps the lip paved too: the edge points this
+        # step walks stand the lip outside the ROAD edge. Absent = the ROAD edge, as before (the Lariat).
+        lip = 0.0
+        if deck_cfg.get("lane_lip") == "route.edge":
+            re_ = (cfg.get("route") or {}).get("edge") or {}
+            if float(re_.get("curb_h", 1.0)) == 0.0:
+                lip = float(re_.get("curb_face_w") or 0.0) + float(re_.get("sidewalk_w") or 0.0)
+        lip_rows = None
+        edges0 = dict(edges)
+        if lip > 0.0:
+            def _out(p_, q_):
+                L_ = math.dist(p_, q_) or 1.0
+                return (p_[0] + (p_[0] - q_[0]) / L_ * lip, p_[1] + (p_[1] - q_[1]) / L_ * lip)
+            edges = {k: (_out(a_, b_), _out(b_, a_)) for k, (a_, b_) in edges.items()}
+            lip_rows = {k: edges[k] for k in d["cuts"]}
         # 2. the lap cut twice
         removed = {}
         ribbon_bvh = None
@@ -369,7 +399,7 @@ def build(proj, cfg, decls):
         def lane_off(ring_):
             off = []
             for k in range(lo_k + 1, hi_k):
-                a_, b_ = edges[k]
+                a_, b_ = edges0[k]                 # the lane check reads the ROAD edge, lip or not
                 for t, q in (("left", _inset(a_, b_, LANE_EDGE_M)), ("mid", ((a_[0] + b_[0]) / 2, (a_[1] + b_[1]) / 2)),
                              ("right", _inset(b_, a_, LANE_EDGE_M))):
                     if not dp.point_in_ring(q[0], q[1], ring_):
@@ -380,7 +410,7 @@ def build(proj, cfg, decls):
             ring_ = dp.splice_rows(ring_in, cuts_rows)
             if dp.ring_area(ring_) < 0:
                 ring_.reverse()
-            return ribbon_edges(ring_, cuts_rows, edges, d["node"])
+            return ribbon_edges(ring_, cuts_rows, edges, d["node"], lip_rows)
         united = 0
         ring, widened = as_built([tuple(q) for q in rec["outline_en"]])
         off_deck = lane_off(ring)
@@ -460,7 +490,7 @@ def build(proj, cfg, decls):
         # 4b. THE GROUND UNDER IT (0.17.2's numbers): the terrain's edges near the deck halved until under
         # GROUND_EDGE_M (longest first, triangles only), every ground vertex inside the outline GROUND_UNDER_M under the
         # deck, and within EDGE_BAND_M outside never above the deck's edge: no ground chord over a measured bowl
-        held = ground_under(ring, deck_z)
+        held = ground_under(ring, deck_z, float(deck_cfg.get("ground_edge_m") or GROUND_EDGE_M))   # opt-in finer (L3b)
         # 5. the barriers across the roads the lap does not take
         bvh = BVHTree.FromPolygons([Vector(v) for v in verts3], [tuple(f) for f in faces])
 
@@ -544,6 +574,8 @@ def build(proj, cfg, decls):
                                for q in ring],
             "source": rec.get("source"), "uncertainty_m": rec.get("uncertainty_m"),
         })
+        if deck_rep is not None:
+            built[-1]["deck_fill"] = deck_rep
         _log(f"{pid}: rows v{lo_k} ({len(cuts_rows[0][2])} verts) / v{hi_k} ({len(cuts_rows[1][2])}); lap faces removed "
              f"{removed}; deck {len(verts3)} v / {len(faces)} f, {built[-1]['area_m2']} m2; seam residual max "
              f"{built[-1]['seam_residual_m']['max']} m; {widened} ribbon-edge points, {united * 0.0625:.1f} m2 of this line's ribbon united; ground {held}; {len(bars)} mouth barrier(s) ({along_lap} box runs along the lap skipped) "

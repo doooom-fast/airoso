@@ -1,0 +1,48 @@
+{
+ "_doc": "tools/verify_pads.py (ledger 0054 P3): the junction pads on the BUILT road",
+ "pads": [
+  {
+   "id": "colorado_50th",
+   "raster_points": 9419,
+   "multi_coverage_m2": 0.0,
+   "grass_on_deck": 0,
+   "seam_max_gap_m": 0.00119,
+   "seam_near_misses": 0,
+   "curb_over_pavement": 0,
+   "barriers": [],
+   "node_deck_minus_3dep_m": -0.062,
+   "node_z_3dep_m": 1590.398,
+   "fails": [],
+   "fail": false
+  },
+  {
+   "id": "50th_ash",
+   "raster_points": 4425,
+   "multi_coverage_m2": 0.0,
+   "grass_on_deck": 0,
+   "seam_max_gap_m": 0.00161,
+   "seam_near_misses": 0,
+   "curb_over_pavement": 0,
+   "barriers": [],
+   "node_deck_minus_3dep_m": -0.105,
+   "node_z_3dep_m": 1592.639,
+   "fails": [],
+   "fail": false
+  },
+  {
+   "id": "50th_dahlia",
+   "raster_points": 5196,
+   "multi_coverage_m2": 0.0,
+   "grass_on_deck": 0,
+   "seam_max_gap_m": 0.00094,
+   "seam_near_misses": 0,
+   "curb_over_pavement": 0,
+   "barriers": [],
+   "node_deck_minus_3dep_m": -0.001,
+   "node_z_3dep_m": 1594.491,
+   "fails": [],
+   "fail": false
+  }
+ ],
+ "fail": false
+}

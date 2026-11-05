@@ -188,3 +188,21 @@ def test_verify_pads_reads_lm_pads_shape_and_leaves_lake_murrays_alone():
         assert vp.lm_pads_shape({"pads": [{"id": "x", "seams": [], "outline_xz": [], "stubs": []}]}, data) is None
     lm_built = json.loads((LM / "data" / "pads.built.json").read_text(encoding="utf-8"))
     assert vp.lm_pads_shape(lm_built, LM / "data") is None          # Lake Murray's J2-J4 take the old path
+
+
+def test_round_e_dedupe_by_overlap_is_opt_in_and_cross_source():
+    """ledger 0079 round E: a Microsoft footprint over half on an OSM one is dropped even with its centroid outside it;
+    a same-source neighbour never is; with no overlap key nothing new is dropped (Lake Murray's plan names none)"""
+    import plan_buildings as pb
+    d = 0.0001
+    osm = {"key": "osm1", "src": "OSM", "ring": [[0, 0], [10 * d, 0], [10 * d, 10 * d], [0, 10 * d]]}
+    # an L-shaped Microsoft copy: most of it on the OSM square, its centroid pulled outside by a long thin arm
+    ms = {"key": "ms1", "src": "Microsoft", "ring": [[0, 0], [10 * d, 0], [10 * d, 10 * d], [0, 10 * d], [0, 10.5 * d],
+                                                       [-40 * d, 10.5 * d], [-40 * d, 9.5 * d], [0, 9.5 * d]]}
+    twin = {"key": "osm2", "src": "OSM", "ring": [[10 * d, 0], [20 * d, 0], [20 * d, 10 * d], [10 * d, 10 * d]]}
+    assert [r["key"] for r in pb.dedupe([dict(osm), dict(twin), dict(ms)])] == ["osm1", "osm2", "ms1"]
+    assert [r["key"] for r in pb.dedupe([dict(osm), dict(twin), dict(ms)], 0.5)] == ["osm1", "osm2"]
+    lm = json.loads((LM / "source" / "bespoke" / "buildings.plan.json").read_text(encoding="utf-8"))
+    assert "dedupe" not in lm
+    sc = json.loads((SC / "source" / "bespoke" / "buildings.plan.json").read_text(encoding="utf-8"))
+    assert sc["dedupe"]["overlap"] == 0.5

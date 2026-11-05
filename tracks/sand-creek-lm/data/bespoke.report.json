@@ -4893,16 +4893,16 @@
   },
   {
    "key": "osm_buildings353",
-   "skin": "TILTUP",
-   "roof": "TAN",
-   "form": "flat",
-   "wall_h_m": 6.2,
+   "skin": "SIDING",
+   "roof": "SHINGLE",
+   "form": "hip ridge 7.0 m",
+   "wall_h_m": 5.4,
    "ground": [
     5.71,
     6.56
    ],
    "bottom": 5.78,
-   "eave": 11.98,
+   "eave": 11.18,
    "off_terrain": false,
    "collider": false
   },
@@ -6138,16 +6138,16 @@
   },
   {
    "key": "osm_buildings449",
-   "skin": "TILTUP",
-   "roof": "TAN",
-   "form": "flat",
-   "wall_h_m": 5.7,
+   "skin": "SIDING",
+   "roof": "SHINGLE",
+   "form": "hip ridge 6.6 m",
+   "wall_h_m": 4.5,
    "ground": [
     9.46,
     12.06
    ],
    "bottom": 10.36,
-   "eave": 16.06,
+   "eave": 14.86,
    "off_terrain": false,
    "collider": false
   },
@@ -10023,16 +10023,16 @@
   },
   {
    "key": "osm_buildings751",
-   "skin": "TILTUP",
-   "roof": "TAN",
-   "form": "flat",
-   "wall_h_m": 4.2,
+   "skin": "SIDING",
+   "roof": "SHINGLE",
+   "form": "hip ridge 7.3 m",
+   "wall_h_m": 4.1,
    "ground": [
     18.73,
     20.42
    ],
    "bottom": 19.16,
-   "eave": 23.36,
+   "eave": 23.26,
    "off_terrain": false,
    "collider": false
   },
@@ -10173,16 +10173,16 @@
   },
   {
    "key": "osm_buildings768",
-   "skin": "TILTUP",
-   "roof": "TAN",
-   "form": "flat",
-   "wall_h_m": 11.0,
+   "skin": "SIDING",
+   "roof": "SHINGLE",
+   "form": "hip ridge 11.0 m",
+   "wall_h_m": 10.1,
    "ground": [
     14.72,
     16.18
    ],
    "bottom": 15.04,
-   "eave": 26.04,
+   "eave": 25.14,
    "off_terrain": false,
    "collider": false
   },
@@ -12048,16 +12048,16 @@
   },
   {
    "key": "osm_buildings912",
-   "skin": "TILTUP",
-   "roof": "TAN",
-   "form": "flat",
-   "wall_h_m": 6.7,
+   "skin": "SIDING",
+   "roof": "SHINGLE",
+   "form": "hip ridge 9.4 m",
+   "wall_h_m": 3.6,
    "ground": [
     6.48,
     8.36
    ],
    "bottom": 7.01,
-   "eave": 13.71,
+   "eave": 10.61,
    "off_terrain": false,
    "collider": false
   },
@@ -12963,16 +12963,16 @@
   },
   {
    "key": "osm_buildings973",
-   "skin": "TILTUP",
-   "roof": "TAN",
-   "form": "flat",
-   "wall_h_m": 7.0,
+   "skin": "SIDING",
+   "roof": "SHINGLE",
+   "form": "hip ridge 7.8 m",
+   "wall_h_m": 3.9,
    "ground": [
     2.32,
     3.18
    ],
    "bottom": 2.33,
-   "eave": 9.33,
+   "eave": 6.23,
    "off_terrain": false,
    "collider": false
   },
@@ -13998,16 +13998,16 @@
   },
   {
    "key": "osm_buildings1043",
-   "skin": "TILTUP",
-   "roof": "TAN",
-   "form": "flat",
-   "wall_h_m": 8.1,
+   "skin": "SIDING",
+   "roof": "SHINGLE",
+   "form": "hip ridge 9.7 m",
+   "wall_h_m": 4.3,
    "ground": [
     6.98,
     7.83
    ],
    "bottom": 6.97,
-   "eave": 15.07,
+   "eave": 11.27,
    "off_terrain": false,
    "collider": false
   },
@@ -14763,16 +14763,16 @@
   },
   {
    "key": "osm_buildings1094",
-   "skin": "TILTUP",
-   "roof": "TAN",
+   "skin": "SIDING",
+   "roof": "SHINGLE",
    "form": "flat",
-   "wall_h_m": 7.0,
+   "wall_h_m": 3.9,
    "ground": [
     4.86,
     5.85
    ],
    "bottom": 4.93,
-   "eave": 11.93,
+   "eave": 8.83,
    "off_terrain": false,
    "collider": false
   },
@@ -17297,21 +17297,6 @@
    "collider": false
   },
   {
-   "key": "msft_buildings96",
-   "skin": "SIDING",
-   "roof": "SHINGLE",
-   "form": "flat",
-   "wall_h_m": 3.9,
-   "ground": [
-    4.86,
-    5.85
-   ],
-   "bottom": 4.93,
-   "eave": 8.83,
-   "off_terrain": false,
-   "collider": false
-  },
-  {
    "key": "msft_buildings97",
    "skin": "SIDING",
    "roof": "SHINGLE",
@@ -17383,21 +17368,6 @@
    ],
    "bottom": 2.9,
    "eave": 10.5,
-   "off_terrain": false,
-   "collider": false
-  },
-  {
-   "key": "msft_buildings106",
-   "skin": "SIDING",
-   "roof": "SHINGLE",
-   "form": "hip ridge 9.7 m",
-   "wall_h_m": 4.3,
-   "ground": [
-    6.98,
-    7.83
-   ],
-   "bottom": 6.97,
-   "eave": 11.27,
    "off_terrain": false,
    "collider": false
   },
@@ -18302,21 +18272,6 @@
    "collider": false
   },
   {
-   "key": "msft_buildings231",
-   "skin": "SIDING",
-   "roof": "SHINGLE",
-   "form": "flat",
-   "wall_h_m": 3.6,
-   "ground": [
-    23.13,
-    23.69
-   ],
-   "bottom": 22.97,
-   "eave": 26.57,
-   "off_terrain": false,
-   "collider": false
-  },
-  {
    "key": "msft_buildings235",
    "skin": "METAL",
    "roof": "TAN",
@@ -18737,21 +18692,6 @@
    "collider": false
   },
   {
-   "key": "msft_buildings292",
-   "skin": "TILTUP",
-   "roof": "TAN",
-   "form": "flat",
-   "wall_h_m": 10.3,
-   "ground": [
-    16.73,
-    18.97
-   ],
-   "bottom": 17.37,
-   "eave": 27.67,
-   "off_terrain": false,
-   "collider": false
-  },
-  {
    "key": "msft_buildings294",
    "skin": "SIDING",
    "roof": "SHINGLE",
@@ -19157,21 +19097,6 @@
    "collider": false
   },
   {
-   "key": "msft_buildings360",
-   "skin": "SIDING",
-   "roof": "SHINGLE",
-   "form": "flat",
-   "wall_h_m": 3.7,
-   "ground": [
-    14.08,
-    14.38
-   ],
-   "bottom": 13.82,
-   "eave": 17.52,
-   "off_terrain": false,
-   "collider": false
-  },
-  {
    "key": "msft_buildings365",
    "skin": "SIDING",
    "roof": "SHINGLE",
@@ -19453,21 +19378,6 @@
    ],
    "bottom": 27.57,
    "eave": 29.87,
-   "off_terrain": false,
-   "collider": false
-  },
-  {
-   "key": "msft_buildings400",
-   "skin": "TILTUP",
-   "roof": "TAN",
-   "form": "flat",
-   "wall_h_m": 6.0,
-   "ground": [
-    4.44,
-    6.58
-   ],
-   "bottom": 4.76,
-   "eave": 10.76,
    "off_terrain": false,
    "collider": false
   },
@@ -19813,21 +19723,6 @@
    ],
    "bottom": 24.92,
    "eave": 31.42,
-   "off_terrain": false,
-   "collider": false
-  },
-  {
-   "key": "msft_buildings452",
-   "skin": "TILTUP",
-   "roof": "DARK",
-   "form": "flat",
-   "wall_h_m": 6.0,
-   "ground": [
-    17.16,
-    19.82
-   ],
-   "bottom": 18.19,
-   "eave": 24.19,
    "off_terrain": false,
    "collider": false
   },
@@ -20312,21 +20207,6 @@
    "collider": false
   },
   {
-   "key": "msft_buildings513",
-   "skin": "TILTUP",
-   "roof": "TAN",
-   "form": "flat",
-   "wall_h_m": 6.3,
-   "ground": [
-    27.71,
-    28.7
-   ],
-   "bottom": 27.9,
-   "eave": 34.2,
-   "off_terrain": false,
-   "collider": false
-  },
-  {
    "key": "msft_buildings516",
    "skin": "METAL",
    "roof": "DARK",
@@ -20717,21 +20597,6 @@
    "collider": false
   },
   {
-   "key": "msft_buildings565",
-   "skin": "SIDING",
-   "roof": "SHINGLE",
-   "form": "flat",
-   "wall_h_m": 4.1,
-   "ground": [
-    31.55,
-    33.38
-   ],
-   "bottom": 31.88,
-   "eave": 35.98,
-   "off_terrain": false,
-   "collider": false
-  },
-  {
    "key": "msft_buildings569",
    "skin": "SIDING",
    "roof": "SHINGLE",
@@ -20972,21 +20837,6 @@
    "collider": false
   },
   {
-   "key": "msft_buildings599",
-   "skin": "TILTUP",
-   "roof": "WHITE",
-   "form": "flat",
-   "wall_h_m": 6.5,
-   "ground": [
-    25.26,
-    26.45
-   ],
-   "bottom": 25.49,
-   "eave": 31.99,
-   "off_terrain": false,
-   "collider": false
-  },
-  {
    "key": "msft_buildings605",
    "skin": "SIDING",
    "roof": "SHINGLE",
@@ -21223,36 +21073,6 @@
    ],
    "bottom": 6.21,
    "eave": 13.01,
-   "off_terrain": false,
-   "collider": false
-  },
-  {
-   "key": "msft_buildings628",
-   "skin": "TILTUP",
-   "roof": "TAN",
-   "form": "flat",
-   "wall_h_m": 5.9,
-   "ground": [
-    8.22,
-    8.69
-   ],
-   "bottom": 8.0,
-   "eave": 13.9,
-   "off_terrain": false,
-   "collider": false
-  },
-  {
-   "key": "msft_buildings634",
-   "skin": "TILTUP",
-   "roof": "WHITE",
-   "form": "flat",
-   "wall_h_m": 7.6,
-   "ground": [
-    15.41,
-    16.75
-   ],
-   "bottom": 15.87,
-   "eave": 23.47,
    "off_terrain": false,
    "collider": false
   },
@@ -21617,21 +21437,6 @@
    "collider": false
   },
   {
-   "key": "msft_buildings686",
-   "skin": "TILTUP",
-   "roof": "TAN",
-   "form": "flat",
-   "wall_h_m": 8.3,
-   "ground": [
-    33.78,
-    34.82
-   ],
-   "bottom": 34.09,
-   "eave": 42.39,
-   "off_terrain": false,
-   "collider": false
-  },
-  {
    "key": "msft_buildings687",
    "skin": "SIDING",
    "roof": "SHINGLE",
@@ -21838,21 +21643,6 @@
    ],
    "bottom": 5.97,
    "eave": 9.07,
-   "off_terrain": false,
-   "collider": false
-  },
-  {
-   "key": "msft_buildings725",
-   "skin": "TILTUP",
-   "roof": "WHITE",
-   "form": "flat",
-   "wall_h_m": 7.2,
-   "ground": [
-    18.65,
-    19.75
-   ],
-   "bottom": 18.9,
-   "eave": 26.1,
    "off_terrain": false,
    "collider": false
   },
@@ -22202,21 +21992,6 @@
    "collider": false
   },
   {
-   "key": "msft_buildings784",
-   "skin": "TILTUP",
-   "roof": "TAN",
-   "form": "flat",
-   "wall_h_m": 4.1,
-   "ground": [
-    15.89,
-    16.27
-   ],
-   "bottom": 15.67,
-   "eave": 19.77,
-   "off_terrain": false,
-   "collider": false
-  },
-  {
    "key": "msft_buildings785",
    "skin": "METAL",
    "roof": "TAN",
@@ -22408,21 +22183,6 @@
    ],
    "bottom": 1.15,
    "eave": 4.55,
-   "off_terrain": false,
-   "collider": false
-  },
-  {
-   "key": "msft_buildings813",
-   "skin": "TILTUP",
-   "roof": "TAN",
-   "form": "flat",
-   "wall_h_m": 8.2,
-   "ground": [
-    26.12,
-    27.57
-   ],
-   "bottom": 26.24,
-   "eave": 34.44,
    "off_terrain": false,
    "collider": false
   },
@@ -23867,21 +23627,6 @@
    "collider": false
   },
   {
-   "key": "msft_buildings1020",
-   "skin": "TILTUP",
-   "roof": "TAN",
-   "form": "flat",
-   "wall_h_m": 9.3,
-   "ground": [
-    2.47,
-    4.86
-   ],
-   "bottom": 3.11,
-   "eave": 12.41,
-   "off_terrain": false,
-   "collider": false
-  },
-  {
    "key": "msft_buildings1022",
    "skin": "METAL",
    "roof": "TAN",
@@ -24482,21 +24227,6 @@
    "collider": false
   },
   {
-   "key": "msft_buildings1108",
-   "skin": "SIDING",
-   "roof": "SHINGLE",
-   "form": "flat",
-   "wall_h_m": 4.8,
-   "ground": [
-    34.48,
-    34.7
-   ],
-   "bottom": 34.21,
-   "eave": 39.01,
-   "off_terrain": false,
-   "collider": false
-  },
-  {
    "key": "msft_buildings1109",
    "skin": "SIDING",
    "roof": "SHINGLE",
@@ -24508,21 +24238,6 @@
    ],
    "bottom": 16.35,
    "eave": 18.95,
-   "off_terrain": false,
-   "collider": false
-  },
-  {
-   "key": "msft_buildings1110",
-   "skin": "TILTUP",
-   "roof": "TAN",
-   "form": "flat",
-   "wall_h_m": 7.9,
-   "ground": [
-    11.94,
-    12.93
-   ],
-   "bottom": 12.14,
-   "eave": 20.04,
    "off_terrain": false,
    "collider": false
   },
@@ -25082,21 +24797,6 @@
    "collider": false
   },
   {
-   "key": "msft_buildings1210",
-   "skin": "SIDING",
-   "roof": "SHINGLE",
-   "form": "hip ridge 9.4 m",
-   "wall_h_m": 3.6,
-   "ground": [
-    6.48,
-    8.36
-   ],
-   "bottom": 7.01,
-   "eave": 10.61,
-   "off_terrain": false,
-   "collider": false
-  },
-  {
    "key": "msft_buildings1211",
    "skin": "SIDING",
    "roof": "SHINGLE",
@@ -25307,21 +25007,6 @@
    "collider": false
   },
   {
-   "key": "msft_buildings1242",
-   "skin": "TILTUP",
-   "roof": "TAN",
-   "form": "flat",
-   "wall_h_m": 11.1,
-   "ground": [
-    14.78,
-    21.93
-   ],
-   "bottom": 18.08,
-   "eave": 29.18,
-   "off_terrain": false,
-   "collider": false
-  },
-  {
    "key": "msft_buildings1243",
    "skin": "SIDING",
    "roof": "SHINGLE",
@@ -25348,21 +25033,6 @@
    ],
    "bottom": 17.08,
    "eave": 19.88,
-   "off_terrain": false,
-   "collider": false
-  },
-  {
-   "key": "msft_buildings1246",
-   "skin": "TILTUP",
-   "roof": "WHITE",
-   "form": "flat",
-   "wall_h_m": 5.4,
-   "ground": [
-    10.72,
-    11.55
-   ],
-   "bottom": 10.81,
-   "eave": 16.21,
    "off_terrain": false,
    "collider": false
   },
@@ -25922,21 +25592,6 @@
    "collider": false
   },
   {
-   "key": "msft_buildings1329",
-   "skin": "TILTUP",
-   "roof": "TAN",
-   "form": "flat",
-   "wall_h_m": 11.1,
-   "ground": [
-    29.63,
-    30.98
-   ],
-   "bottom": 29.75,
-   "eave": 40.85,
-   "off_terrain": false,
-   "collider": false
-  },
-  {
    "key": "msft_buildings1330",
    "skin": "SIDING",
    "roof": "SHINGLE",
@@ -25948,21 +25603,6 @@
    ],
    "bottom": 1.49,
    "eave": 5.99,
-   "off_terrain": false,
-   "collider": false
-  },
-  {
-   "key": "msft_buildings1333",
-   "skin": "TILTUP",
-   "roof": "TAN",
-   "form": "flat",
-   "wall_h_m": 4.5,
-   "ground": [
-    34.34,
-    36.0
-   ],
-   "bottom": 34.97,
-   "eave": 39.47,
    "off_terrain": false,
    "collider": false
   },
@@ -27287,21 +26927,6 @@
    "collider": false
   },
   {
-   "key": "msft_buildings1508",
-   "skin": "TILTUP",
-   "roof": "TAN",
-   "form": "flat",
-   "wall_h_m": 10.2,
-   "ground": [
-    32.06,
-    32.97
-   ],
-   "bottom": 32.19,
-   "eave": 42.39,
-   "off_terrain": false,
-   "collider": false
-  },
-  {
    "key": "msft_buildings1510",
    "skin": "SIDING",
    "roof": "SHINGLE",
@@ -27542,21 +27167,6 @@
    "collider": false
   },
   {
-   "key": "msft_buildings1542",
-   "skin": "TILTUP",
-   "roof": "TAN",
-   "form": "flat",
-   "wall_h_m": 7.3,
-   "ground": [
-    26.41,
-    27.68
-   ],
-   "bottom": 26.59,
-   "eave": 33.89,
-   "off_terrain": false,
-   "collider": false
-  },
-  {
    "key": "msft_buildings1543",
    "skin": "SIDING",
    "roof": "SHINGLE",
@@ -27673,21 +27283,6 @@
    ],
    "bottom": 15.15,
    "eave": 17.75,
-   "off_terrain": false,
-   "collider": false
-  },
-  {
-   "key": "msft_buildings1555",
-   "skin": "SIDING",
-   "roof": "SHINGLE",
-   "form": "flat",
-   "wall_h_m": 3.3,
-   "ground": [
-    6.84,
-    6.95
-   ],
-   "bottom": 6.48,
-   "eave": 9.78,
    "off_terrain": false,
    "collider": false
   },
@@ -28817,21 +28412,6 @@
    "collider": false
   },
   {
-   "key": "msft_buildings1703",
-   "skin": "TILTUP",
-   "roof": "TAN",
-   "form": "flat",
-   "wall_h_m": 8.7,
-   "ground": [
-    29.01,
-    30.63
-   ],
-   "bottom": 29.42,
-   "eave": 38.12,
-   "off_terrain": false,
-   "collider": false
-  },
-  {
    "key": "msft_buildings1704",
    "skin": "SIDING",
    "roof": "SHINGLE",
@@ -29642,21 +29222,6 @@
    "collider": false
   },
   {
-   "key": "msft_buildings1813",
-   "skin": "TILTUP",
-   "roof": "TAN",
-   "form": "flat",
-   "wall_h_m": 4.9,
-   "ground": [
-    21.58,
-    23.42
-   ],
-   "bottom": 22.25,
-   "eave": 27.15,
-   "off_terrain": false,
-   "collider": false
-  },
-  {
    "key": "msft_buildings1816",
    "skin": "SIDING",
    "roof": "SHINGLE",
@@ -29803,21 +29368,6 @@
    ],
    "bottom": 4.08,
    "eave": 7.28,
-   "off_terrain": false,
-   "collider": false
-  },
-  {
-   "key": "msft_buildings1839",
-   "skin": "SIDING",
-   "roof": "SHINGLE",
-   "form": "hip ridge 7.8 m",
-   "wall_h_m": 3.9,
-   "ground": [
-    2.32,
-    3.18
-   ],
-   "bottom": 2.33,
-   "eave": 6.23,
    "off_terrain": false,
    "collider": false
   },
@@ -30197,21 +29747,6 @@
    "collider": false
   },
   {
-   "key": "msft_buildings1901",
-   "skin": "SIDING",
-   "roof": "SHINGLE",
-   "form": "flat",
-   "wall_h_m": 6.8,
-   "ground": [
-    36.13,
-    36.49
-   ],
-   "bottom": 35.87,
-   "eave": 42.67,
-   "off_terrain": false,
-   "collider": false
-  },
-  {
    "key": "msft_buildings1902",
    "skin": "SIDING",
    "roof": "SHINGLE",
@@ -30403,21 +29938,6 @@
    ],
    "bottom": 17.45,
    "eave": 21.75,
-   "off_terrain": false,
-   "collider": false
-  },
-  {
-   "key": "msft_buildings1930",
-   "skin": "TILTUP",
-   "roof": "WHITE",
-   "form": "flat",
-   "wall_h_m": 10.3,
-   "ground": [
-    23.03,
-    23.73
-   ],
-   "bottom": 22.89,
-   "eave": 33.19,
    "off_terrain": false,
    "collider": false
   },
@@ -31412,21 +30932,6 @@
    "collider": false
   },
   {
-   "key": "msft_buildings2089",
-   "skin": "TILTUP",
-   "roof": "TAN",
-   "form": "flat",
-   "wall_h_m": 12.9,
-   "ground": [
-    6.58,
-    11.88
-   ],
-   "bottom": 8.89,
-   "eave": 21.79,
-   "off_terrain": false,
-   "collider": false
-  },
-  {
    "key": "msft_buildings2090",
    "skin": "METAL",
    "roof": "WHITE",
@@ -32068,21 +31573,6 @@
    ],
    "bottom": 15.47,
    "eave": 18.87,
-   "off_terrain": false,
-   "collider": false
-  },
-  {
-   "key": "msft_buildings2170",
-   "skin": "TILTUP",
-   "roof": "TAN",
-   "form": "flat",
-   "wall_h_m": 7.2,
-   "ground": [
-    13.12,
-    14.66
-   ],
-   "bottom": 13.45,
-   "eave": 20.65,
    "off_terrain": false,
    "collider": false
   },

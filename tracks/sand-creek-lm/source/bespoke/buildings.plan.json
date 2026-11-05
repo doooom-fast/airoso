@@ -14,8 +14,16 @@
   }
  ],
  "out": "source/bespoke/buildings.lm.json",
-  "ml_height_check": {"min_m": 2.5, "_doc": "ledger 0079: a Microsoft ML height under 2.5 m [invented: under a room] or past the class cap (CAP_M) is not a measurement; the next source (the class default [invented]) stands until the lidar roofs replace both"},
- "lidar": {"file": "source/bespoke/lidar_roofs.json", "past_cap": "median", "drop_low": true, "_doc": "ledger 0079: roofs measured off CO_DRCOG_2_2020 by tools/lidar_buildings.py (the PC: runbook 4g); absent = not yet measured, the next sources stand"},
+ "ml_height_check": {
+  "min_m": 2.5,
+  "_doc": "ledger 0079: a Microsoft ML height under 2.5 m [invented: under a room] or past the class cap (CAP_M) is not a measurement; the next source (the class default [invented]) stands until the lidar roofs replace both"
+ },
+ "lidar": {
+  "file": "source/bespoke/lidar_roofs.json",
+  "past_cap": "median",
+  "drop_low": true,
+  "_doc": "ledger 0079: roofs measured off CO_DRCOG_2_2020 by tools/lidar_buildings.py (the PC: runbook 4g); absent = not yet measured, the next sources stand"
+ },
  "min_area_m2": 25,
  "yes_by_area": [
   [
@@ -37,5 +45,9 @@
   "x0": 54655,
   "y0": 99433
  },
- "utc_offset": "-06:00"
+ "utc_offset": "-06:00",
+ "dedupe": {
+  "overlap": 0.5,
+  "_doc": "ledger 0079 round E (coordinator 2026-11-05, Kevin's \"I just want real\"): a later source's footprint covering, or covered by, an earlier source's footprint over at least half of the smaller one is the same building drawn twice, and OSM (the earlier source) stands alone [invented 0.5: 45 / 38 / 35 pairs at 0.25 / 0.5 / 0.8]. Before it only a centroid inside an earlier footprint counted"
+ }
 }

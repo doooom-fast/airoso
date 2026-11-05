@@ -14,6 +14,19 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
+## 2026-11-05 (round E) — Sand Creek: the doubled buildings out, the houses floor lowered (ledger 0079 round E)
+
+- **The houses floor is LOWERED on Sand Creek: 2,214 / 2,215 / 0 → 2,181 / 2,181 / 0.** This is a weakening, written
+  here as one. Evidence: the build's own counts off the built kn5 (Mac, empty workshop `sclm_work/d7`, every other gate
+  as 0.2.2). The 34 blocks no longer stood were each a second copy of a building already standing: a Microsoft
+  footprint over half on an OSM footprint (the coordinator's call, 2026-11-05, under Kevin's "I just want real").
+  The one-shell gap between roofs and blocks closed with it: it was `msft_buildings1333` doubled on `osm_buildings1169`.
+- **`plan_buildings.py` `dedupe.overlap`** (opt-in, Sand Creek's plan only). A later source's footprint that covers, or
+  is covered by, an earlier source's footprint over at least **0.5** [invented] of the smaller one is dropped, even with
+  its centroid outside (the old test, unchanged). Found 38: 45 at 0.25, 35 at 0.8. Same-source neighbours are never
+  tested. `OVERLAP_STEP_M` **0.5 m** [invented] is the sample spacing. Without the key the planner's output is
+  byte-identical to the committed `buildings.lm.json` (`cmp`, Mac).
+
 ## 2026-11-05 (later) — Sand Creek 0.2.2: four pads on the lap, verify_pads on lm_pads' shape (ledger 0079 round D)
 
 No gate threshold moved. No floor moved. One gate is added to Sand Creek's chain, one gate reads a new record shape.

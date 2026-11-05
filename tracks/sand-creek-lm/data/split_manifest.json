@@ -1,10 +1,10 @@
 {
- "input": "/Volumes/Drive/codex/sclm_work/d6/blender/sand_creek_raceway_lm.blend",
+ "input": "/Volumes/Drive/codex/sclm_work/d7/blender/sand_creek_raceway_lm.blend",
  "outputs": {
   "loop_main.blend": {
    "objects": 36,
    "meshes": 36,
-   "positions": 403936,
+   "positions": 402503,
    "max_positions": 34035,
    "materials": [
     "1GRASS_0_mat",
@@ -235,7 +235,7 @@
  "input_census": {
   "objects": 37,
   "meshes": 37,
-  "positions": 416552,
+  "positions": 415119,
   "max_positions": 34035,
   "materials": [
    "1GRASS_0_mat",

@@ -975,7 +975,7 @@ Copies: `D:/k10-scratch/eng_sclm`, `eng_hplm`, `eng_nvlm`.
    - the new hard gate `verify_pads`, and Sand Creek's strip seam on the local scope.
 
    It installs as `sand_creek_raceway_lm` 0.2.2, replacing 0.2.1. **Ask Kevin before installing.**
-   1. `git -C D:/k10-worktrees/sclm-assets pull`. The worktree is the same; check out the branch head.
+   1. `git -C D:/k10-worktrees/sclm-assets fetch` and check out **f6dd8a63** (0.2.2). A later head carries ledger 0079 round E (the de-duplicated buildings: 2,181 houses), which is 0.2.3 work and not this install.
    2. Inputs, the same as step 4h: the four TreeFX `.bin` in `tracks/sand-creek/source/trees/`, and ENG = the same plain
       copy of `eng_repro`. No new texture: the 12 asset md5s are 4g's. `source/pads/*.json` are da370cab's, unchanged.
    3. Rehearse from an EMPTY workshop:

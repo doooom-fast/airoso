@@ -508,29 +508,52 @@ at 50th/Dahlia's lane edge.
 - Tests: `test_sand_creek_lm_assets.py` 13 pass (three new: the fill, the opt-in keys, verify_pads' two shapes);
   `test_draft_pads`, `test_lm_engine_port`, `test_ship_track_chain` pass.
 
-## Owed (2026-11-05, after 0.2.2; in Kevin's order)
+## Round E (Mac): the doubled buildings out (toward 0.2.3; not an install)
 
-1. **The three parked pads.**
-   - **48th_colorado:** the Mac re-declares its box over the whole crossroads, then the PC re-measures it with the box over the whole crossroads and the deck
-     past both cuts. Then the lap's rows at its cuts can take the lidar's own cross-section, which removes the crown seam.
-     The grass at its south-east corner then has to be re-read on that build.
-   - **dahlia_56th:** re-declare its in-cut row where the lap's 42 m ribbon is on the measured asphalt, or bring the lap's
-     line onto the measured road (C18's precedent).
-   - **sandcreek_quebec:** its edge off NAIP. No tool traces a pad outline off NAIP yet (`draft_pad_outline.py`'s `aerial`
-     kind was never built). Its class-2 deck is already in the file.
-   - colorado_50th's and 50th_dahlia's arms end at their boxes; the streets' weld (item 2) meets them there.
-   - The duplicate OSM / Microsoft buildings (five pairs, above).
-2. **Real junctions at all 146 street meetings** ("Real junctions"), on Lake Murray's weld / mouth / pad tools:
-   - trim streets against streets;
-   - one welded deck per meeting;
-   - verify_mouths 11 → 0;
-   - audit I/K 525 → only the real ones;
-   - size: 70.6 MB in round B's scratch run.
-3. **Round C:**
-   - the race curbs and race closure;
-   - Lake Murray's W1-6 arrows on the lap and both layouts;
-   - street-name blades from OSM names, with MUTCD dimensions cited ("Both").
-4. **The night stills** from the PC (runbook 4h step 5).
+The coordinator, 2026-11-05: where an OSM and a Microsoft footprint stand in the same place, OSM wins, found by
+measurement ("two buildings in one place aren't real").
+- **The measurement.** `plan_buildings.py`'s de-duplication already dropped a later footprint whose centroid lies in an
+  earlier one (1,113 Microsoft footprints here). New, opt-in (`buildings.plan.json` `dedupe.overlap` 0.5 [invented]):
+  also a later source's footprint covering, or covered by, an earlier source's over half of the smaller one.
+  - It finds **38** (45 at 0.25, 35 at 0.8), the five named in round D among them (msft 1333 / osm 1169, 1210 / 912,
+    1839 / 973, 106 / 1043, 96 / 1094).
+  - Planned 2,258 -> 2,221 footprints; stood 2,215 -> **2,181**.
+  - Without the key the planner writes the committed `buildings.lm.json` byte for byte (`cmp`).
+- **The build** (Mac, empty workshop `sclm_work/d7`, then the gates re-judged with the new floor): SHIP OK.
+  - Every gate as 0.2.2: drive_test both PASS (soft 0, severe 0, drops 0, kinks 1.24 /km), audit CLEAN,
+    kn5_ground_check PASS, verify_pads PASS x3, textures 0 untextured.
+  - houses **2,181 / 2,181 / 0**: roofs and blocks now equal. The floor is lowered to it, written in GATES-CHANGELOG as a
+    weakening.
+- Runbook 4i now pins the 0.2.2 install to f6dd8a63; round E ships with 0.2.3.
+
+## Owed (2026-11-05, after round E; in the coordinator's order)
+
+1. **Real junctions at all 146 street meetings (0.2.3, the main work).** Kevin: "Real junctions".
+   - Lake Murray's weld / mouth / junction-pad / stub tools, trimming streets against streets (round B item 3 is the
+     wiring that already works: `lm_intake.connectors`, `route.connector_hosts`, trim -> rebuild -> weld -> gap_mouths).
+   - One welded deck per meeting (`data/grid_meetings.json`: 19 weld today, 17 arterial / arterial and 110 minor / minor
+     overlap).
+   - verify_mouths 11 -> 0, apart from mouths at a parked pad, listed by name. 48th_colorado being parked leaves
+     `grid_primary_49`, `grid_primary_52`, `grid_tertiary_98` there; sandcreek_quebec `grid_primary_78`, `grid_primary_80`.
+   - audit I / K 525 -> only the real ones, each named with its reason.
+   - Under 120 MB (round B's scratch with the streets: 70.6 MB; 0.2.2's road kn5 is 52.7 MB).
+   - Round E's de-duplicated buildings ship with it (houses 2,181 / 2,181 / 0).
+2. **The parked pads, alongside the PC (not built yet):**
+   - **48th_colorado:** re-declare its box over the whole crossroads (the east half). If that needs the lidar again,
+     a short PC step 4i.x re-measures it with the deck reaching past both cuts. Then its lap rows can take the lidar's
+     cross-section (the crown seam) and the south-east grass is re-read.
+   - **dahlia_56th:** re-declare its in-cut rows onto the measured road (the lap's ribbon is 30-42 m wide there and its
+     edges at v770 / v771 stand 0.1-0.7 m off the asphalt); a 4i.x step if it needs re-measuring.
+   - **sandcreek_quebec:** a NAIP outline tool, after the junctions.
+3. **The shared-tool A/B for the PC, once 0.2.3 is green** (one runbook). This round changed `draft_pads`,
+   `lm_pads_blend`, `strip_seam_blend`, `verify_pads` and `plan_buildings`:
+   - Lake Murray: the 5(a) pattern, `draft_equiv --terrain-noise`, line 6f96224 against this branch;
+   - the Lariat port: fleet-lm-engine's head against this branch.
+4. **Round C:** the race curbs and race closure over the grid mouths; Lake Murray's W1-6 arrows (sign step, atlas,
+   placement rule, signs gate unchanged) on the lap and both layouts, reported by s and corner; street-name signs from
+   OSM `name` at real junctions only, MUTCD dimensions cited, seated and out of the drivable corridor.
+5. **The night stills** from the PC (runbook 4h step 5), and runbook 4i's pad stills.
+6. Kinks at 50th/Ash (1.24 /km): left for Kevin's drive (coordinator, 2026-11-05).
 
 Earlier list, kept for the record:
 

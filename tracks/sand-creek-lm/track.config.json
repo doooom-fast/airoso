@@ -505,10 +505,10 @@
       },
       "prep_seats": true,
       "house_gate": {
-        "roofs": 2214,
-        "blocks": 2215,
+        "roofs": 2181,
+        "blocks": 2181,
         "colliders": 0,
-        "_doc": "Ledger 0079: 0.2.1 (Mac, empty workshop), counted off the BUILT road kn5 as connected shells by tools/house_gate.py: 2,214 ROOFTOP_*, 2,215 BUILDING_* (no FARBLOCK), 0 1WALL_TILTUP. Lower than 0.2.0 (2,261) by measurement, not by loss: the CO_DRCOG_2_2020 lidar reads no roof 2.5 m over the ground on 63 planned footprints (plan lidar.drop_low; slabs, open or demolished structures), so they are not stood. A floor at the count built, not a target"
+        "_doc": "Ledger 0079: round E (Mac, empty workshop), counted off the BUILT road kn5 as connected shells by tools/house_gate.py: 2,181 ROOFTOP_*, 2,181 BUILDING_*, 0 1WALL_TILTUP. Lowered from 0.2.1's 2,214 / 2,215 by measurement, not by loss: the planner's overlap de-duplication (buildings.plan.json dedupe, OSM over Microsoft) drops 38 Microsoft footprints standing over half on an OSM one (2,215 -> 2,181 stood); 0.2.1 had already dropped 63 footprints with no lidar roof 2.5 m over the ground. A floor at the count built, not a target"
       }
     },
     "treefx": {

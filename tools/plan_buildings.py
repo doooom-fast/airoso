@@ -114,7 +114,7 @@ def in_ring(ring, x, y):
     return inside
 
 
-def load_footprints(track, sources):
+def load_footprints(track, sources, overlap=None):
     out = []
     for src in sources:
         rows = json.loads((track / src["file"]).read_text(encoding="utf-8"))
@@ -135,13 +135,34 @@ def load_footprints(track, sources):
                 continue
             rec["ring"] = [[round(p[0], 7), round(p[1], 7)] for p in ring]
             out.append(rec)
-    return dedupe(out)
+    return dedupe(out, overlap)
 
 
 DEDUPE_CELL = 0.0005           # degrees (~50 m): the lon/lat index cell of the footprint-on-footprint test
+OVERLAP_STEP_M = 0.5           # the overlap test's sample spacing
 
 
-def dedupe(recs):
+def overlap_share(a, b):
+    """the share of the SMALLER of two lon/lat rings that the other covers, sampled every OVERLAP_STEP_M"""
+    lat0 = a[0][1]
+    m_lon, m_lat = 111320.0 * math.cos(math.radians(lat0)), 110540.0
+    small, big = (a, b) if area_m2(a) <= area_m2(b) else (b, a)
+    xs, ys = [p[0] for p in small], [p[1] for p in small]
+    dx, dy = OVERLAP_STEP_M / m_lon, OVERLAP_STEP_M / m_lat
+    n_in = n_both = 0
+    x = min(xs) + dx / 2
+    while x < max(xs):
+        y = min(ys) + dy / 2
+        while y < max(ys):
+            if in_ring(small, x, y):
+                n_in += 1
+                n_both += in_ring(big, x, y)
+            y += dy
+        x += dx
+    return n_both / n_in if n_in else 0.0
+
+
+def dedupe(recs, overlap=None):
     """Sources stand in the plan's order of trust. A footprint whose centroid lies inside an EARLIER source's footprint is
     the same building seen twice (Microsoft's tile over OSM's houses: 1,486 of Lake Murray's 12,035), so it is dropped;
     where the earlier footprint carries no height and no levels, the later one's height is offered to it as
@@ -155,6 +176,28 @@ def dedupe(recs):
             if in_ring(kept[k]["ring"], cx, cy):
                 host = kept[k]
                 break
+        if host is None and overlap:
+            # OVERLAP (opt-in plan "dedupe": {"overlap": share}; ledger 0079 round E): a footprint from a LATER source whose
+            # centroid misses every earlier footprint but which covers, or is covered by, an earlier source's footprint
+            # over at least `share` of the smaller one is the same building drawn twice (Sand Creek 0.2.2: Microsoft's
+            # msft_buildings1333 on OSM's osm_buildings1169, six shared corners, both stood). Same-source neighbours
+            # (a terrace's shared walls) are never tested
+            seen = set()
+            for i in range(int(min(xs) / DEDUPE_CELL), int(max(xs) / DEDUPE_CELL) + 1):
+                for j in range(int(min(ys) / DEDUPE_CELL), int(max(ys) / DEDUPE_CELL) + 1):
+                    for k in cells.get((i, j), ()):
+                        if k in seen or kept[k]["src"] == rec["src"]:
+                            continue
+                        seen.add(k)
+                        if overlap_share(rec["ring"], kept[k]["ring"]) >= float(overlap):
+                            host = kept[k]
+                            rec_ov = dropped.setdefault("_overlap", [])
+                            rec_ov.append((rec["key"], host["key"]))
+                            break
+                    if host is not None:
+                        break
+                if host is not None:
+                    break
         if host is not None:
             dropped[rec["src"]] = dropped.get(rec["src"], 0) + 1
             if not host.get("height") and not host.get("levels") and not host.get("alt_height") and rec.get("height"):
@@ -166,8 +209,12 @@ def dedupe(recs):
         for i in range(int(min(xs) / DEDUPE_CELL), int(max(xs) / DEDUPE_CELL) + 1):
             for j in range(int(min(ys) / DEDUPE_CELL), int(max(ys) / DEDUPE_CELL) + 1):
                 cells.setdefault((i, j), []).append(k)
+    ov = dropped.pop("_overlap", [])
     for src, n in dropped.items():
         print(f"[buildings] {n} footprints from {src[:70]} stand on an earlier source's footprint: dropped")
+    if ov:
+        print(f"[buildings] of them, {len(ov)} by overlap (>= {overlap} of the smaller footprint), centroid outside: "
+              + ", ".join(f"{a} on {b}" for a, b in ov))
     if offered:
         print(f"[buildings] {offered} earlier footprints with no height or levels take the dropped footprint's height")
     return kept
@@ -458,7 +505,7 @@ def roof_class(photo, ring_px):
 def main() -> int:
     track = Path(sys.argv[1])
     plan = json.loads(Path(sys.argv[2]).read_text(encoding="utf-8"))
-    recs = load_footprints(track, plan["footprints"])
+    recs = load_footprints(track, plan["footprints"], (plan.get("dedupe") or {}).get("overlap"))
     photo = Photo(track, plan)
     lat_c = statistics.median(r["ring"][0][1] for r in recs)
     lon_c = statistics.median(r["ring"][0][0] for r in recs)

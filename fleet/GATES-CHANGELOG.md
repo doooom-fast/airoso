@@ -14,6 +14,24 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
+## 2026-11-05 — the SD freeway port, phase 2a: a new gate wired, numbers the port carries (ledger 0080; no threshold moved, no bypass)
+
+- **NEW GATE WIRING: `drive_test_network`** (`tools/ship_track.sh`, runs only when a ship.json names it; the freeway
+  port's does): every network connector (`tools/network_connectors.py`, I 8 westbound first) is written as a drive_test
+  `--line` (`tools/network_drive_lines.py`: the connector exactly as the assembler sweeps it) and driven with
+  drive_test's own thresholds, hard (DT_L, never covered by --force-install). Adds a gate; weakens none.
+- **The port's draft drops `weld_mouths`.** In phase 1 it welded nothing (0 mouths, 0 of 0 fold quads); with a network
+  connector its layout self-check reads an empty yellow block as `inf` and refuses (the shared tool is not changed
+  here; owed to its owners). Not a gate.
+- ⚠ `lm_intake.grid_upsample` **2** (an existing key, ledger 0078; the value is this port's choice): the cut 3DEP grid
+  pre-divided, bilinear, no sample moved. Measured: ground on top 1,119 → 138 (line), 1,224 → 130 (WB).
+- ⚠ `network_connectors.MATCH_M` **6 m — invented**: a connector vertex takes a lidar deck height only between readings
+  no further apart than 2 x this (one 5 m station either side), or within half of it at a deck end.
+- Reused, not new: a bridged run without a reading is spanned straight between its measured readings, or levelled crest
+  to crest by `scripts.capture.evidence.level_bridge_decks` (every port's unmeasured-deck rule); a deck's approach is
+  raised (never lowered) to the line from the deck end to the bank crest within that function's `BANK_SEEK_M` 80 m.
+  The one-way paint is v021 `lane_markings`' own numbers (0.55 m edge inset, 3.65 m lanes, 0.12 m lines).
+
 ## 2026-11-05 — the SD freeway port, phase 2 step 0: the decks measured from the lidar (ledger 0080; no gate threshold moved, no bypass)
 
 `tools/network_deck_lidar.py` reads USGS `CA_SanDiegoQL2_2014` (EPT, class 17 deck / class 2 ground) along every bridged

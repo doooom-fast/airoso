@@ -1,6 +1,6 @@
 {
   "_doc": "Ledger 0080: the San Diego freeway on Lake Murray v4's engine (engine lm-v4: engine-july's prep / exporter / spawn builder and San Diego's v021 assembler, as every _lm port). Phase 1 = the line: I 8 eastbound, open (loop false: tools/stage_dummies_blend.py places the grid 45 m in and AC_TIME_0 15 m short of the end, the original's L11 rule). The draft starts from an EMPTY workshop: lm_intake reads the original's final network draft (track.config.json lm_intake.source_data).",
-  "_owed": "Phase 2 (ledger 0080's map): the other carriageways, ramps and interchange connectors as connectors; connector decks kept out of the prep's contact pin; barriers; dead-end stubs; deck heights from the PC's lidar.",
+  "_owed": "Phase 2 (ledger 0080): 2b the I 5 / SR 52 / SR 163 mainlines, 2c the ramps and their gore merges, 2d the interchange connectors and flyovers; the barriers; dead-end stubs; the whole box with tiered terrain.",
   "track": "san-diego-freeway-lm",
   "engine": "lm-v4",
   "workshop": "D:/k10-scratch",
@@ -11,7 +11,6 @@
     "draft": [
       "lm_intake",
       "build_loop_blend",
-      "weld_mouths",
       "densify_ribbon",
       "deck_rails"
     ],
@@ -31,6 +30,7 @@
     ],
     "gate": [
       "drive_test_street",
+      "drive_test_network",
       "audit_street",
       "kn5_ground",
       "edge_report"
@@ -58,7 +58,10 @@
       "data/audit.json",
       "data/kn5_ground_check.{id}.json",
       "data/edge_report.json",
-      "data/deck_rails.json"
+      "data/deck_rails.json",
+      "data/connectors.local.json",
+      "data/drive_lines.network.json",
+      "data/drive_test.network.json"
     ],
     "map": [
       [
@@ -69,5 +72,6 @@
     "dirs": [
       "ai/{id}"
     ]
-  }
+  },
+  "_weld_mouths_doc": "ledger 0080 phase 2a: weld_mouths is out of the draft. In phase 1 it welded nothing (0 mouths, 0 of 0 fold quads: the line has no fold), and with a network connector it refuses: its layout self-check (_dev) reads an EMPTY yellow block (a one-way carriageway paints no centre line and the track has no YLINE) as shape (0,) against (0, 3) = inf. A shared junction tool, not changed here; owed to its owners (claude/sand-creek-lm-assets). The ramps mouths (2c) need it or a gore tool."
 }

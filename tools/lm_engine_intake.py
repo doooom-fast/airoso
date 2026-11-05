@@ -683,6 +683,12 @@ def intake(proj: Path, *, connectors: bool | None = None) -> dict:
     if want_conn and conn.exists():
         shutil.copyfile(conn, data / "connectors.local.json")
         (data / "mouths.json").unlink(missing_ok=True)       # tools/trim_connectors.py writes it for these connectors
+        recs = json.loads(conn.read_text(encoding="utf-8")).get("connectors") or []
+        if recs and all(r.get("network") and not r.get("mouths") for r in recs):
+            # ledger 0080 phase 2: a network port's carriageways (tools/network_connectors.py) that meet no host —
+            # I 8 westbound runs beside the line, never into it — have no mouth to cut: the empty record, as the lap
+            # alone writes it, so weld_mouths runs the mainline fold mend only. (Ramps, which do meet, are 2c's.)
+            (data / "mouths.json").write_text(json.dumps({"mouths": []}), encoding="utf-8")
     else:
         # the lap alone: an EMPTY side-street set, so the assembler sweeps none and tools/weld_mouths_blend.py (the
         # mainline fold mend, ledger 0050) runs on the mainline alone — it reads both files

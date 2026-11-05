@@ -41,12 +41,32 @@ def _assembler(*names):
     return ns
 
 
+def _network_connector_decks(data: Path):
+    """[(name, smoothed points, widths, decks_all ranges)] of the network connectors (ledger 0080 phase 2); [] without."""
+    p = data / "connectors.local.json"
+    if not p.exists():
+        return []
+    import importlib.util
+    spec = importlib.util.spec_from_file_location(
+        "v021_smooth", AIROSO / "tracks" / "san-diego-lake-murray" / "scripts-v021" / "geometry" / "smooth.py")
+    sm = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(sm)
+    out = []
+    for c in json.loads(p.read_text(encoding="utf-8")).get("connectors") or []:
+        if not c.get("network") or not c.get("decks_all"):
+            continue
+        cpts = sm.smooth_centerline([tuple(q) for q in c["points_xyz_m"]], sigma_pts=1.5, passes=1, sigma_y_pts=1.0)
+        out.append((c["name"], [tuple(q) for q in cpts], list(c["widths_m"]), c["decks_all"]))
+    return out
+
+
 def main():
     proj = Path(sys.argv[sys.argv.index("--") + 1]).resolve()
     data = proj / "data"
     rep = json.loads((data / "lm_intake.json").read_text(encoding="utf-8"))
     decks = rep.get("bridges_levelled") or []
-    if not decks:
+    net = _network_connector_decks(data)
+    if not decks and not net:
         print("[deck-rails] no declared deck: nothing written")
         return
     raw = json.loads((data / "centerline.raw.local.json").read_text(encoding="utf-8"))["points_xyz_m"]
@@ -78,6 +98,19 @@ def main():
         out["vertices"] += g["vertices"]
         out["tris"] += [(p + off, q + off, r + off) for p, q, r in g["tris"]]
         rows.append({"center_m": c, "len_m": ln, "panels": len(g["tris"]) // 4})
+    # ledger 0080 phase 2: each network connector's decks (tools/network_connectors.py decks_all: measured or levelled),
+    # the same call on the connector as the assembler sweeps it (its smoothed points, its widths widest-of-three)
+    for name, cpts, cw, ranges in net:
+        cwr = [max(cw[max(0, k - 1):k + 2]) for k in range(len(cw))]
+        for a, b in ranges:
+            stretch = cpts[a:b + 1]
+            if len(stretch) < 2:
+                continue
+            g = asm["build_guardrails"](cpts, cwr, stretch)
+            off = len(out["vertices"])
+            out["vertices"] += g["vertices"]
+            out["tris"] += [(p + off, q + off, r + off) for p, q, r in g["tris"]]
+            rows.append({"connector": name, "vertices": [a, b], "panels": len(g["tris"]) // 4})
     bpy.ops.wm.open_mainfile(filepath=str(proj / "loop.blend"))
     old = bpy.data.objects.get("GUARDRAIL")
     if old is not None:

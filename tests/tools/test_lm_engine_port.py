@@ -245,11 +245,15 @@ def test_the_freeway_port_reads_the_network_line_and_cuts_the_grid_to_it():
         meta = json.loads((ws / "data" / "heightfield.meta.json").read_text(encoding="utf-8"))
         smeta = json.loads((src / "heightfield.meta.json").read_text(encoding="utf-8"))
         c = meta["lm_intake_crop"]
-        assert meta["nx"] < smeta["nx"] and meta["ny"] < smeta["ny"]
         g = L._read_npy(ws / "data" / "heightfield.npy")
         sg = L._read_npy(src / "heightfield.npy")
         j0, i0 = c["rows"][0], c["cols"][0]
-        assert all(g[j][i] == sg[j0 + j][i0 + i] for j in range(meta["ny"]) for i in range(meta["nx"]))
+        # ledger 0080 phase 2a: lm_intake.grid_upsample divides the cut grid's facets (bilinear, the same samples at
+        # every f-th row / column), so the crop is checked on the samples the cut kept
+        f = int((meta.get("lm_intake_upsample") or {}).get("factor", 1))
+        ny0, nx0 = (meta["ny"] - 1) // f + 1, (meta["nx"] - 1) // f + 1
+        assert nx0 < smeta["nx"] and ny0 < smeta["ny"]
+        assert all(abs(g[j * f][i * f] - sg[j0 + j][i0 + i]) < 1e-9 for j in range(ny0) for i in range(nx0))
         loc = json.loads((ws / "data" / "centerline.local.json").read_text(encoding="utf-8"))
         sloc = json.loads((src / "centerline.local.json").read_text(encoding="utf-8"))
         assert len(loc["points_xyz_m"]) == len(sloc["points_xyz_m"])

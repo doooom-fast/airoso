@@ -1,0 +1,75 @@
+{
+ "tool": "tools/network_connectors.py",
+ "ledger": "0080 phase 2",
+ "draft": "tracks/san-diego-freeway/source/network-draft-pr34",
+ "params": {
+  "match_m": 6.0,
+  "width_taper": 0.1,
+  "_invented": "match_m"
+ },
+ "connectors": [
+  {
+   "name": "i8_wb",
+   "how": "ref 'I 8' westbound: the longest directed chain; 1 same-ref westbound edge(s) branch off the chain (listed unjudged)",
+   "edges": [
+    397,
+    549,
+    471,
+    463,
+    462,
+    295,
+    296,
+    377,
+    379,
+    207,
+    195,
+    194,
+    187,
+    186,
+    249,
+    197,
+    198
+   ],
+   "points": 1888,
+   "length_m": 9409.4,
+   "decks": 5,
+   "deck_points": 66,
+   "deck_points_spanned": 0,
+   "bridged_points_unmeasured_levelled": 66,
+   "levelled_runs": 3,
+   "approach_points_raised_to_crest": 32,
+   "deck_end_steps_m": [
+    0.34,
+    -0.08,
+    -0.01,
+    0.05,
+    -0.08,
+    0.12,
+    0.15,
+    -0.1,
+    0.06,
+    0.02
+   ],
+   "deck_minus_3dep_max_m": 8.2,
+   "widths_flared": 66,
+   "side_check": {
+    "samples": 186,
+    "left": 186,
+    "right": 0
+   },
+   "same_ref_off_chain": [
+    276,
+    396
+   ]
+  }
+ ],
+ "inputs": {
+  "network.geojson": "255dbe5d7053ad09b6e7d987a8fdf0d1",
+  "network.edges.local.json": "a4e386a84d393c2cedc6921869170dc8",
+  "network.elevation.json": "b9c33cdf8e2969aaccbb33b02982c5aa",
+  "deck_profiles.lidar.json": "bf2d42d55e5f2b2a32f5496c1cbba5c4"
+ },
+ "outputs": {
+  "connectors.local.json": "df1750d1ef27444f7fe4759f6453a6a9"
+ }
+}

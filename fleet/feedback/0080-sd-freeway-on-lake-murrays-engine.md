@@ -4,7 +4,7 @@ title: The San Diego freeway network on Lake Murray's engine (`tracks/san-diego-
 date: 2026-11-05
 track: san-diego-freeway (port: san-diego-freeway-lm)
 routed: project (the port) + engine (opt-in, freeway-only keys)
-status: in-progress — phase 1 (the line, I-8 EB) green on the Mac, not installed; phase 2 (the network) owed
+status: in-progress — phase 1 (the line, I-8 EB) green on the Mac, not installed; phase 2 step 0 (lidar decks) done, 2a (I-8 WB) built red, 2b-2d owed
 ---
 
 # 0080 — the San Diego freeway on Lake Murray's engine
@@ -201,21 +201,111 @@ mainlines, 2c ramps + gores, 2d interchange connectors + flyovers.
   from this Mac; not retried round it. The PC (runbook 0080-2) or a later Mac run can read them into the same table:
   `network_deck_lidar` reads EPT; a LAZ-tile reader is owed.
 
+### Step 2a: I 8 westbound beside the line — BUILT, NOT GREEN (Mac, ws8)
+
+New, all port-only (Lake Murray runs none of them):
+- `tools/network_connectors.py`: each `lm_intake.network_connectors` entry resolved on the network draft by the line's
+  own resolver (`scripts.geometry.network_reference.resolve`), x / z the at-grade OSM line, Y its own 3DEP (network_line's
+  median + mean, no cap) and **on a deck the lidar** (`deck_profiles.lidar.json`); a bridged run the lidar misses runs
+  straight between its readings or, with no measured end, is levelled crest to crest (`evidence.level_bridge_decks`);
+  approaches raised to the bank crest off a measured deck's end; widths flared (0.1 m / m, widening only); a one-way
+  paint record (v021 `lane_markings` numbers, no yellow); `deck` / `decks_all` ranges. Output committed:
+  `tracks/san-diego-freeway/source/network-draft-pr34/connectors.local.json` + `network_connectors.json` (reproduced byte
+  for byte from the committed inputs; `tests/tools/test_network_connectors.py`).
+- **I 8 WB:** 17 edges (397 ... 198), 1,888 points, **9,409 m**; 5 measured decks over 66 points (deck-end steps to the
+  approach <= 0.34 m), 66 bridged points levelled crest to crest in 3 runs (edge 186: the Morena EPT hole), 32 approach
+  points raised. Edge 396 (1.4 km at the east end, the draft's travel direction 0 = undecided) and 276 (57 m) are not in
+  the chain: WB stops ~1 km short of the line's east end.
+- `tools/network_drive_lines.py` + gate `drive_test_network` (ship.json): WB is driven as a drive_test `--line`, hard.
+- `tools/deck_rails_blend.py`: rails also on every network connector's `decks_all` (418 panels on WB's 6 decks).
+- `tools/lm_engine_intake.py`: network connectors meet no host, so `mouths.json` is the empty record.
+- ship.json: `weld_mouths` out of the draft (did nothing in phase 1; refuses a connector with no yellow block, see
+  GATES-CHANGELOG); config: `lm_intake.grid_upsample` 2.
+
+| Gate (BUILT kn5) | phase 1 (ws4) | 2a, 27.5 m ground (ws7) | **2a now (ws8)** |
+|---|---|---|---|
+| line: soft top in lane | 0 | 1,119 | **138** |
+| line: severe / bumps / kinks per km | 0 / 0 / 0 | 5 / 0.75 / 12.98 | **0 / 0 / 3.2** |
+| line: excursions gated (limit 10) | 6 | 10 | **9** |
+| line: floating furniture | 0 | 10 | **10** (WB deck rails at x 1,278-1,287, 1.6 m) |
+| line drive_test | PASS | FAIL | **FAIL** (soft top, floating) |
+| WB: soft top / severe / kinks per km | — | 1,224 / 0 / 9.46 | **130 / 0 / 2.23** |
+| WB: excursions gated (1 /km) | — | 42 | **17** (worst 4.44 m at WB s 6,000) |
+| WB drive_test --line | — | FAIL | **FAIL** |
+| audit_mesh | CLEAN | 1,589 | **1,589**: D walls on a road 352, I sidewalk isolating pavement 686, K kerb in carriageway 551 |
+| verify_kn5 / verify_inis | PASS | PASS | **PASS** |
+| kn5_ground_check | PASS | PASS | **PASS** |
+| kn5 | 14.2 MB | 16.9 MB | **29.4 MB (+15.2: WB +2.7, the x2 ground +12.5)** |
+
+Edge report (ws8, the line): 1 m past the lane edge ground 91.8 %, **lane 7.9 %** (the other carriageway), kerb 0.3 %;
+rise within 2 m 0 / 0.014 m; ground 10 m out p5 / median / p95 -0.33 / -0.17 / +1.50 m, 9.5 % more than 1 m above.
+
+Why it is red — three mechanisms, measured (`/Volumes/Drive/codex/fwlm_work/ws8`):
+1. **The carriageways overlap.** The draft's widths are lane counts x 3.66 m + shoulders (up to 25.5 m); where I 8's
+   median is narrow the two ribbons overlap (gap -2.1 to -3.7 m at line s 6,249-6,751; -0.8 m at s 9,251; 0.5-2.5 m over
+   s 5,500-9,500). Each carriageway's edge strip then lies in the other's lane (audit K 551, I 686), and each's deck rails
+   stand on the other's pavement (D 352). The real median there is a paved inside shoulder to a concrete median barrier;
+   neither is built (Kevin's call 2, the barrier, owed).
+2. **Close carriageways at different heights** at the I 5 / I 8 interchange (line s 3,400-4,100 / WB s 5,800-6,200):
+   gap 1.9-4.3 m, WB 1.5-4.6 m above the line. The ground between them is a cliff (WB excursion 4.44 m) and its facets
+   stand over the line's lane edge (soft top s 3,538-3,540). This is the EPT's Morena hole: the line's deck there
+   [2,982, 3,462] is levelled crest to crest (unmeasured) and WB's edge 186 is 3DEP + a levelled run. **Neither height
+   is measured**; the D24 tiles would settle it. (Where both are measured, the line's levelled decks sit 0.1-0.7 m
+   under the lidar, median 0.45 m: phase 1's decks are close.)
+3. **The ground at WB's open east end** (WB s 0, lateral -6: the terrain over the ribbon's cut end, where edge 396 is
+   missing) and residual 13.75 m facets between the carriageways.
+
+## PC runbook 0080-3: rehearse the newest green build (step 0, 9109a49d)
+
+Step 0 changed no build input of the line: its rehearsal is runbook 0080-1 at **9109a49d** (or d1c676d4), expecting
+ws4's numbers (soft top 0, severe 0, excursions 6, audit CLEAN, kn5_ground_check PASS, 14.2 MB, SHIP OK). Do NOT
+rehearse `claude/freeway-lm` HEAD expecting green: 2a is red (above).
+
+1. `git fetch && git worktree add D:/k10-worktrees/freeway-lm-s0 9109a49d`
+2. `SHIP_PROJ=D:/k10-scratch/fwlm_s0 AIROSO=D:/k10-worktrees/freeway-lm-s0 ENG=D:/k10-scratch/eng_fwlm bash
+   tools/ship_track.sh san-diego-freeway-lm --no-install`
+3. Optional, the lidar on the PC (fills the Mac's EPT holes if rockyweb serves it there): the D24 LAZ tiles over the
+   holes (TNM API `datasets=Lidar Point Cloud (LPC)`, bbox -117.215,32.735,-117.125,32.855, titles `CA_SanDiegoCo_D24`).
+   A LAZ-tile reader for `tools/network_deck_lidar.py` is owed first (it reads EPT only).
+
 ## Owed (start here)
 
-- **Kevin:** drive phase 1 when installed (runbook 0080-1, his word to install). Decide the freeway's edge: the real one
-  is a paved shoulder to a concrete barrier; neither is measured here (phase 1 lays no barrier off the decks, and the
-  deck rails are Lake Murray's 0.95 m guardrail, not Caltrans' barrier).
-- **Phase 2, the network**, in this order (the map's rows):
-  1. `tools/network_connectors.py` (new): every edge but the line's from the draft's `network.edges.local.json` →
-     `connectors.local.json` (one record per chained carriageway / ramp; its at-grade line carried beside it).
-  2. The assembler's terrain fed each connector's at-grade line, not its deck (opt-in `route.connector_terrain_lines`
-     in `build_loop_blend.py`, absent = Lake Murray's call), and `grid_crop_m` dropped for `terrain.tiers` over the box.
-  3. Connector decks built as their own object (not `1ROAD`) so engine-july's contact pin (`LAYER_WIN` 30 m, shelf 3 m +
-     feather 6 m) does not raise ground to them; renamed to `1ROAD_deck_*` after the prep by a port step. Engine-july
-     itself is Lake Murray's and does not change.
-  4. Gores: the ramps ↔ line through `trim_connectors` (hosts = the line + `route.divided_connectors` carriageways),
-     measured against `verify_mouths`; a gore tool only if the T-mouth rule fails at 2-5°. Any change to
-     trim_connectors / mouth_weld / weld_mouths_blend is opt-in and listed for the Sand Creek branch's merge.
-  5. Barriers on every carriageway edge (the 1WALL rule drive_test credits), dead-end stubs (`author_stubs_blend`).
-  6. Deck heights from runbook 0080-2.
+State (2026-11-05, end of the phase-2 session): step 0 green-neutral and pushed (9109a49d: data + lidar decks, no build
+input changed); **2a built, red** (the table above; committed so the next session starts from it, nothing installed).
+2b-2d not started.
+
+- **Kevin:** drive phase 1 when installed (runbook 0080-1 / 0080-3 at 9109a49d, his word to install). Decide the median:
+  where I 8's carriageways run within a few metres the real section is ONE paved width with a concrete median barrier;
+  building that (not two ribbons with ground between) is the fix for 2a's mechanisms 1 and 3.
+- **2a to green, in this order:**
+  1. **The median.** Where two network carriageways' pavements come within a few metres (or overlap), pave the gap as
+     inside shoulder and stand a median barrier on its centre line; trim the overlapping widths to it (never wider than
+     the draft's, never invented: the gap is measured from the two lines). Caltrans' standard plan for the barrier
+     (Type 60 concrete barrier, Caltrans Standard Plans; not looked up this session: cite the edition and sheet) gives the cross-section; build it as `1WALL_*`
+     (drive_test credits a wall at the edge). A new port-only draft step (e.g. `tools/network_median_blend.py`); the
+     shared `author_median_blend` is Lake Murray's and on the Sand Creek branch's list — read it, do not change it.
+  2. **The outside edge** as measured: NAIP 2022/23 shoulder widths (`tools/naip_crop.py` on `claude/circuit-kerbs-lm`,
+     or a Planetary Computer fetch) to the outer barrier, same cross-section; Lake Murray's guardrail only where a
+     guardrail is really there (the deck rails today are Lake Murray's 0.95 m guardrail).
+  3. **The Morena / Kearny Mesa heights:** the D24 lidar (or the 2014 LAZ tiles) over the EPT holes, via a LAZ-tile
+     reader added to `tools/network_deck_lidar.py`; then the line's [2,982, 3,462] deck and WB's edge 186 are measured.
+  4. WB's open east end (edge 396, travel undecided in the draft): decide its direction from OSM `oneway` and join it,
+     or end WB with Lake Murray's stub barrier (`author_stubs_blend`) as the network's 156 dead-end caps.
+  5. The floating rails at x 1,278-1,287 (WB deck rails 1.6 m over their support): read with the median in.
+- **2b (I 5, SR 52, SR 163 mainlines, both ways):** `lm_intake.network_connectors` entries (ref + direction; the
+  resolver refuses a broken chain, so read its message per road), then **the whole box**: drop `grid_crop_m`, set
+  `terrain.tiers` (far cells at the 3DEP grid's native 55 m), and measure the assembler's terrain pass on the box first
+  (`/Volumes/Drive/codex/fwlm_work/prof_terrain.py`; phase 1 did not finish in 45 min). If it is too slow, vectorise
+  `conform_terrain_to_road` / `band_clamp` / `carve_road_corridor` (numpy, in a NEW module the port opts into by key,
+  or in scripts-v021 with Lake Murray's draft A/B byte-identical) — not a crop. kn5 budget: 2a is 29.4 MB for ~20 km of
+  carriageway; 2b adds ~97 km: expect the 120 MB budget to need the box's far ground at native spacing (tiers) and
+  per-layout kn5s before any geometry is cut.
+- **2c (ramps + gores):** ramps as connectors with mouths: `trim_connectors` cuts a T; a freeway merge is a 2-5 deg
+  taper. A new gore tool (port-only), measured against `verify_mouths`; `weld_mouths_blend`'s empty-yellow-block refusal
+  (`_dev` on a (0,) vs (0, 3) array) needs fixing by its owners (`claude/sand-creek-lm-assets`) or the gore tool must
+  not depend on it.
+- **2d (interchange connectors + flyovers):** deck pieces kept out of `1ROAD` until after the prep (EJ's pin raises ground
+  to the highest 1ROAD within `LAYER_WIN` 30 m, and its bury-cull deletes pavement >= 0.3 m under other pavement: an
+  at-grade road under a flyover would be culled), renamed after the prep by a port step; the assembler's conform fed
+  each connector's `terrain_xyz_m` under its `decks_all` (opt-in key). 1,595 bridged stations have no lidar (the holes).
+- Water (Mission Bay) and piers / deck bodies: not started.

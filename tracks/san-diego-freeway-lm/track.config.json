@@ -1,5 +1,5 @@
 {
-  "_doc": "Ledger 0080: the San Diego freeway network on Lake Murray v4's engine, beside the original (tracks/san-diego-freeway, airoso's network engine; its config is PR 34's, b888f10). Phase 1 = the line: I 8 eastbound end to end (the original's network.reference_line), its six declared decks, through the LM chain (tools/ship_track.sh, ship.json engine lm-v4). The other carriageways, ramps, flyovers and barriers are phase 2 (the ledger's map).",
+  "_doc": "Ledger 0080: the San Diego freeway network on Lake Murray v4's engine, beside the original (tracks/san-diego-freeway, airoso's network engine; its config is PR 34's, b888f10). Phase 1 = the line: I 8 eastbound end to end (the original's network.reference_line), its six declared decks, through the LM chain (tools/ship_track.sh, ship.json engine lm-v4). The other carriageways, ramps, flyovers and barriers are phase 2 (the ledger's map). Phase 2a adds I 8 westbound as a connector (ledger 0080 phase 2).",
   "name": "San Diego Freeway Free Roam (LM engine)",
   "ui_series": "doooom San Diego",
   "slug": "san_diego_freeway_lm",
@@ -66,7 +66,7 @@
       "id": "freeroam",
       "name": "Freeway Free Roam (LM engine)",
       "ai": "ai/freeroam",
-      "run": "Point to point: Interstate 8 eastbound, end to end inside the box",
+      "run": "Point to point: Interstate 8 eastbound, end to end inside the box; I 8 westbound alongside (a connector, driven by drive_test --line network)",
       "uses_connectors": []
     }
   ],
@@ -74,10 +74,22 @@
     "source_track": "san-diego-freeway",
     "source_data": "source/network-draft-pr34",
     "_source_data_doc": "ledger 0080: the original's FINAL network draft (PR 34's scripts at b888f10, run on the Mac), not its committed data/ (the PC's first run, before PR 34's fixes). tools/network_line.py wrote it; its network_line.json has the provenance and md5s.",
-    "connectors": false,
+    "connectors": true,
     "grid_crop_m": 1000,
     "_grid_crop_m_doc": "[invented] 1,000 m of the 3DEP grid round the line (phase 1 builds the line alone; the source grid is the whole 18 x 15 km network box and the assembler never finished on it in 45 min). The extent of the scenery, not a geometry value: no sample moves. Phase 2 (the network) needs the whole box, and terrain.tiers. fleet/GATES-CHANGELOG.md 2026-11-05.",
     "width_taper": 0.1,
-    "_width_taper_doc": "ledger 0078 round 5 (Milford), the rally ports' rate: a width step in the source line (the network draft's per-edge lane widths step at every edge joint: 7.16 -> 10.82 m at s 25 built a twisted quad and 14 ground-on-top samples) becomes a flare, widening only. The rate is that entry's, not measured here."
+    "_width_taper_doc": "ledger 0078 round 5 (Milford), the rally ports' rate: a width step in the source line (the network draft's per-edge lane widths step at every edge joint: 7.16 -> 10.82 m at s 25 built a twisted quad and 14 ground-on-top samples) becomes a flare, widening only. The rate is that entry's, not measured here.",
+    "_connectors_doc": "ledger 0080 phase 2: the network's other carriageways as connectors, read from source/network-draft-pr34/connectors.local.json (tools/network_connectors.py, from lm_intake.network_connectors below: the draft's own edges, the line's resolver, each carriageway's own 3DEP, the decks from the lidar)",
+    "network_connectors": [
+      {
+        "name": "i8_wb",
+        "ref": "I 8",
+        "direction": "westbound",
+        "bridge_max_edges": 2
+      }
+    ],
+    "_network_connectors_doc": "phase 2a: I 8 westbound. Each entry is resolved by scripts.geometry.network_reference.resolve (the line's resolver) on the network draft; the record carries its decks (lidar, deck_profiles.lidar.json) and a one-way paint. Regenerate with python tools/network_connectors.py <network-draft-project> tracks/san-diego-freeway/source/network-draft-pr34 tracks/san-diego-freeway-lm/track.config.json",
+    "grid_upsample": 2,
+    "_grid_upsample_doc": "[invented value; existing key, ledger 0078] the cut 3DEP grid pre-divided x2 (bilinear: the same samples, finer facets; with the assembler x2 the ground is 13.75 m facets, not 27.5 m). Phase 2a measured it: with I 8 westbound beside the line the 27.5 m ground stood over the lanes between the carriageways (ground on top 1,119 line / 1,224 WB samples) and 138 / 130 at 13.75 m."
   }
 }

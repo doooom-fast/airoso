@@ -697,6 +697,15 @@ gate_drive_test_lines() {
     (cd "$AIROSO" && python -m scripts.geometry.drive_test "$PROJ" --line expansion 2>&1 | grep -v "drive-time\] sweep" | tail -40) || DT_L=$?
   fi
 }
+gate_drive_test_network() {
+  # ledger 0080 phase 2 (the SD freeway port only; Lake Murray's ship.json never names it): every network connector
+  # (tools/network_connectors.py: I 8 westbound, ...) driven as a drive_test --line, on the same built OBJ — hard,
+  # DT_L as the north network's lines (never covered by --force-install)
+  rm -f "$PROJ/data/drive_test.network.json" "$PROJ/data/drive_test.line.network_"*.json
+  step "gate: drive_test --line network (the freeway port's other carriageways, as swept — hard)"
+  (cd "$AIROSO" && python tools/network_drive_lines.py "$PROJ") || DT_L=$?
+  (cd "$AIROSO" && python -m scripts.geometry.drive_test "$PROJ" --line network 2>&1 | grep -v "drive-time\] sweep" | tail -40) || DT_L=$?
+}
 gate_audit_street() {
   if [ -n "$AUDIT_NOTE" ]; then step "gate: audit_mesh, street (hard total; $AUDIT_NOTE)"; else step "gate: audit_mesh, street (hard total)"; fi
   AU_S=0; (cd "$AIROSO" && python -m scripts.geometry.audit_mesh "$PROJ" 2>&1 | tail -16) || AU_S=$?

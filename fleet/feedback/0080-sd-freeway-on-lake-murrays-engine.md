@@ -135,7 +135,8 @@ decks, the edge barriers off the decks, the dead-end caps, water. The terrain ou
   scipy here; the file is fleet-lm-engine's, round 13). The 630 tests before it pass but one,
   `test_registry_moves::test_real_registry_puts_the_lariat_at_airoso_once` (fleet/registry.json and the test unchanged
   from fleet-lm-engine: this machine's checkout layout). Every `tests/tools` file but bench_pad, run one by one with
-  `python` on PATH: see the hand-back.
+  `python` on PATH (Python 3.12): **702 pass**; the 5 that do not are `test_draft_equiv.py`'s, which take pytest's
+  `tmp_path` fixture (fleet-lm-engine's file, unchanged).
 
 ## PC runbook 0080-1: phase 1 rehearsal (no install)
 

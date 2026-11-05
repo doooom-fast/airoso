@@ -542,7 +542,7 @@ def main() -> int:
         lj = json.loads((track / plan["lidar"]["file"]).read_text(encoding="utf-8"))
         lidar_roofs, lidar_src = lj["roofs"], lj.get("_source", plan["lidar"]["file"])
         print(f"[buildings] lidar roofs: {len(lidar_roofs)} measured footprints ({plan['lidar']['file']})")
-    lidar_over_cap = 0
+    lidar_over_cap = lidar_past_cap = lidar_low = 0
     ml_check, ml_rejected = plan.get("ml_height_check"), 0
     for r in kept:
         cls = r["cls"]
@@ -551,11 +551,23 @@ def main() -> int:
         lidar_eave = None
         lr = lidar_roofs.get(r["key"])
         if lr:
-            top = (lr["roof_p95"] if FORM[cls] in ("hip", "gable") else lr["roof_p50"]) - lr["ground_m"]
-            if 0.0 < top <= CAP_M[cls]:
+            stat = "p95" if FORM[cls] in ("hip", "gable") else "p50"
+            top = lr["roof_" + stat] - lr["ground_m"]
+            if top > CAP_M[cls] and plan["lidar"].get("past_cap") == "median":
+                # plan lidar.past_cap "median" (ledger 0079 round C, Kevin: "I just want real"): a ridge read past the class
+                # cap is not thrown away. Sand Creek's 80: the median return stays a roof (sheds and houses at p50 3-6 m
+                # under a p95 of 11-16 m: a tree over the roof); where the median itself stands past the cap it is a real
+                # tall structure (tanks, a 39 m refinery block) and stands at its median. Either way the MEDIAN, uncapped
+                stat, top = "p50", lr["roof_p50"] - lr["ground_m"]
+                lidar_past_cap += 1
+            if ml_check and top < float(ml_check["min_m"]) and plan["lidar"].get("drop_low"):
+                # plan lidar.drop_low (ledger 0079 round C): the lidar reads no roof a room's height over the ground here
+                # (a slab, a demolished or open structure: Sand Creek's industrial footprints at 0.1-1.7 m): not a building
+                lidar_low += 1
+                continue
+            if 0.0 < top <= (float("inf") if stat == "p50" and plan["lidar"].get("past_cap") == "median" else CAP_M[cls]):
                 h = top
-                src = (f"lidar {'p95' if FORM[cls] in ('hip', 'gable') else 'p50'} roof over the ground ring, n {lr['n_roof']} "
-                       f"({lidar_src[:90]})")
+                src = f"lidar {stat} roof over the ground ring, n {lr['n_roof']} ({lidar_src[:90]})"
                 lidar_eave = lr["roof_p10"] - lr["ground_m"]
             else:
                 lidar_over_cap += 1
@@ -643,7 +655,8 @@ def main() -> int:
     for row in out:
         classes[row["class"]] = classes.get(row["class"], 0) + 1
     if lidar_roofs:
-        print(f"[buildings] lidar roofs past the class cap (not used): {lidar_over_cap}")
+        print(f"[buildings] lidar roofs not used (past the class cap, or no height): {lidar_over_cap}; past the cap and stood at "
+              f"their median return (lidar.past_cap median): {lidar_past_cap}; left out, no roof over {(ml_check or {}).get('min_m')} m (lidar.drop_low): {lidar_low}")
     if ml_check:
         print(f"[buildings] Microsoft heights outside [{ml_check['min_m']} m, the class cap]: {ml_rejected}, not used")
     print(f"[buildings] {len(out)} footprints -> {plan['out']}; left out {left}; classes {classes}; heights by source {by_src}")

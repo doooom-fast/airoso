@@ -22,7 +22,7 @@
  "cols": 2,
  "rows": 2,
  "out": "source/bespoke/trees.lm.json",
- "lidar": {"file": "source/bespoke/lidar_trees.json", "_doc": "ledger 0079 round B: canopy heights off CO_DRCOG_2_2020 (tools/lidar_buildings.py --trees, the PC: runbook 4g step 3); absent = the ratio"},
+ "lidar": {"file": "source/bespoke/lidar_trees.json", "drop_low": true, "_doc": "ledger 0079 round B: canopy heights off CO_DRCOG_2_2020 (tools/lidar_buildings.py --trees, the PC: runbook 4g step 3); absent = the ratio"},
  "overview": "source/bespoke/trees_overview.jpg",
  "overview_px": 4200
 }

@@ -20,6 +20,14 @@ this time, don't lose those".
 Every asset is a chain step plus per-track config, and Sand Creek is the first track to use each one. Each key below is
 absent in Lake Murray's config, or its default is Lake Murray's own value.
 
+## Kevin's three calls (2026-11-05, through the coordinator)
+
+- Where two Sand Creek side streets meet, real junctions or overlaps: **"Real junctions"**. This covers all 146 meetings in
+  `data/grid_meetings.json`: the 17 arterial/arterial and 110 minor/minor overlaps each become one welded deck with the
+  mouths cut; the 19 already welded stay as they are.
+- "Same lamps": Lake Murray's sodium light or Sand Creek's own wash: **"Lake Murray's sodium"**.
+- Signs: Lake Murray's rule-placed arrow signs, street-name signs from the real names, or both: **"Both"**.
+
 ## Round A (Mac): what was built, 0.2.0
 
 Branch `claude/sand-creek-lm-assets` (cut from `origin/claude/fleet-lm-engine` de9aefa). Built on the Mac by
@@ -295,7 +303,130 @@ crown. Runbook 4g step 3 runs roofs, trees and pad outlines as one job.
 - **Tests:** `test_sand_creek_lm_assets.py` 10 pass (round B keys absent from Lake Murray; host matching; lidar tree
   heights; the six declarations validate); `test_draft_pads.py` 13 pass.
 
-## Owed
+## Round C (Mac): 0.2.1, the PC's lidar (da370cab) built in; the pads tried and held back
+
+Built on the Mac from an empty workshop: SHIP OK, every gate green, nothing worse than 0.2.0.
+
+| gate (BUILT kn5) | 0.2.0 | **0.2.1** |
+|---|---|---|
+| drive_test race / street | PASS: kinks 0.41, fold bumps 4, drops 0, far ledges 1, soft top 0, severe 0 | identical |
+| audit_mesh | CLEAN | CLEAN |
+| kn5_ground_check | PASS (201 lamp heads, 0 orphans) | PASS (201, 0) |
+| house_seat | PASS, 2,261 | PASS, 2,215 (floating 0, sunken 0, buried 0; lowest roof over its ground 1.26 m) |
+| houses | 2,261 / 2,261 / 0 | **2,214 / 2,215 / 0** (the floor re-set: below) |
+| textures | 0 untextured | 0 untextured |
+| road kn5 / `_street` | 48.4 / 1.8 MB | **48.3 / 1.8 MB** |
+
+**Roofs.** CO_DRCOG_2_2020 measured 2,319 of 2,321 footprints. After the planner:
+
+| | count |
+|---|---|
+| heights from lidar | 2,256 |
+| Microsoft | 1 |
+| class default | 1 |
+| left out: the lidar reads no roof 2.5 m over the ground (`lidar.drop_low`) | 63 |
+
+The 63 are slabs, open sheds and structures gone since the footprints were drawn. 21 are houses. Microsoft had stood
+some of them at 14-15 m: `osm_buildings532` was 15.4 m and the lidar reads 1.7 m.
+
+Height changed by more than 0.5 m on 1,667 of 2,321 footprints (median +0.7 m; 699 up by more than 2 m, 150 down). The
+largest:
+
+| footprint | before | after |
+|---|---|---|
+| `osm_buildings1232`, industrial | 9.9 m (Microsoft) | **38.7 m** (lidar p50: a tall refinery-side block) |
+| `msft_buildings2324`, "shed" (34 m²) | 2.8 m (default) | **19.7 m**: a tower |
+| `osm_buildings1212`, shed | 2.8 m | 14.5 m |
+| `osm_buildings532` | 15.4 m | 1.7 m (left out) |
+
+**The 85 "past the class cap".** The cap is plan_buildings' `CAP_M` (shed 6, house 12, industrial 20, commercial 25,
+apartments 35 m). It is [invented]: the shadow stage's ceiling on a NAIP shadow read, not a measurement.
+
+| what the 85 were | count | what was done |
+|---|---|---|
+| no lidar height (top 0 or less) | 5 | not counted as past the cap |
+| sheds and houses with p50 3-6 m under a p95 of 11-16 m | 79 | tree crowns over the roof: the ridge read was misread by trees. Stood at the median return, uncapped (`lidar.past_cap: "median"`) |
+| industrial block at p50 38.7 m (p95 60.8 m) | 1 | real; stood at 38.7 m |
+
+None of these is thrown away any more.
+
+**Trees.** 5,171 of the 5,615 crowns were measured.
+- 3,216 read a canopy 2 m or more over the ground: these take the lidar height.
+- 1,955 read under 2 m. That is the existing [invented] floor of `LIDAR_TREE_H`; the p10 of 0.08 m is in this group. They
+  are a lawn, a shrub or a shadow the colour rule took, so `lidar.drop_low` leaves them out.
+  - Checked on NAIP over the Swansea blocks: 166 tall, 24 low. The low ones sit on bushes and bare yard, not crowns.
+- 444 the lidar did not reach keep the ratio height.
+
+Planned: 3,660 crowns (3,216 lidar + 444 ratio). The PC places **3,643** TreeFX trees: Oak3 2,357, SycamoreV2 880,
+SycamoreV1 237, SycamoreV3 169. 15 are within 5 m of a road and 2 stand on a building. (0.2.0: 5,567.)
+
+**The light: Lake Murray's sodium (Kevin, 2026-11-05).** Sand Creek's `lighting.streetlight` is now Lake Murray's block,
+copied verbatim into Sand Creek's own config; Lake Murray's file is untouched. The written `[LIGHT_0]`:
+
+| key | before | after |
+|---|---|---|
+| COLOR | 255, 217, 76, 0.35 | **255, 165, 30, 0.015** |
+| SPOT | 155 | 150 |
+| SPOT_SHARPNESS | 0.1 | 0.2 |
+| RANGE | 60.0 | 25.0 |
+| RANGE_GRADIENT_OFFSET | 0.55 | 0.5 |
+| SPECULAR_MULT | 0.12 | 0.1 |
+| FADE_AT | 1200 | 800 |
+
+New lines after: DIFFUSE_CONCENTRATION 0.25, SINGLE_FREQUENCY 0.9, SHADOWS 1, SHADOWS_HALF_RESOLUTION 1,
+SHADOWS_EXTRA_BLUR 1, VOLUMETRIC_LIGHT 0, LONG_SPECULAR 0.
+
+The posts are the same `led_cobra` as Lake Murray's, so the values carry over as they are.
+
+**The pads: measured, tried, and held out of 0.2.1.** Each outline was drawn on NAIP z18:
+
+| pad | outline vs NAIP | built on the Mac |
+|---|---|---|
+| colorado_50th | covers the lap's corner and Colorado's throat | yes (try) |
+| 50th_ash | good | yes (try) |
+| 50th_dahlia | the corner; the arms are short | yes (try) |
+| 48th_colorado | the corner; misses the east half of the crossroads | yes (try) |
+| dahlia_56th | the junction, plus 1,406 m² of the lap's ribbon | refused: a lane sample at its in-cut row is off the deck |
+| sandcreek_quebec | 0 road-intensity points; the outline is the box and the ribbon, and misses the junction's NE and S arms | parked (`lm_pads.parked`, with its reason): its edge is owed off NAIP |
+
+Built with `lm_pads.close_arms: false`: no K-rail, the arms open. The four pads turned the lap **red**:
+- soft top in lane 26;
+- severe steps 24;
+- kinks 11.9 /km;
+- the seam between each pad's deck and the lap's rows: 0.21-0.34 m.
+
+The lidar deck and the assembler's 3DEP road profile disagree by up to a third of a metre at the cuts. A 1 m DEM profile
+smoothed along the line is not the measured surface at a crossroads.
+
+So 0.2.1 ships with **no pad**. The declarations stay; `lm_pads` is not in the chain. With no pads, verify_mouths has no
+pad mouth to read.
+
+**House floor.** Lowered to the count built: 63 footprints are gone by measurement, not lost. `tools/house_gate.py` read
+2,214 / 2,215 / 0 off the built kn5.
+
+## Owed (2026-11-05, after 0.2.1; in Kevin's order)
+
+1. **Pads that hold the lap.**
+   - The deck must meet the lap's rows within the drive gates. The 0.21-0.34 m seam is the lidar deck against the 3DEP
+     profile. Two ways:
+     - the lap's own profile through each pad from the same lidar (the Lariat's C18 precedent);
+     - the deck faded to the rows over a longer run.
+   - Then dahlia_56th's in-cut lane sample, sandcreek_quebec's edge traced off NAIP, and 48th_colorado's east half.
+   - Then verify_pads, taught lm_pads' no-curb shape.
+   - The NAIP stills of all six outlines are in `source/stills/pad_*_naip.jpg`.
+2. **Real junctions at all 146 street meetings** ("Real junctions"), on Lake Murray's weld / mouth / pad tools:
+   - trim streets against streets;
+   - one welded deck per meeting;
+   - verify_mouths 11 → 0;
+   - audit I/K 525 → only the real ones;
+   - size: 70.6 MB in round B's scratch run.
+3. **Round C:**
+   - the race curbs and race closure;
+   - Lake Murray's W1-6 arrows on the lap and both layouts;
+   - street-name blades from OSM names, with MUTCD dimensions cited ("Both").
+4. **The night stills** from the PC (runbook 4h step 5).
+
+Earlier list, kept for the record:
 
 - **The lidar job** (the PC, runbook 4g step 3): the roofs, the tree heights and the six pad outlines, in one job. Then the Mac
   re-plans, rebuilds 0.2.1 and sets the houses floor again.

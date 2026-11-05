@@ -944,6 +944,30 @@ Copies: `D:/k10-scratch/eng_sclm`, `eng_hplm`, `eng_nvlm`.
    6. **Install, with Kevin's word:** the same command without `SHIP_PROJ` and without `--no-install`, into
       `D:/k10-scratch/sand_creek_lm`. AC closed (CM may stay open).
 
+4h. **Sand Creek 0.2.1** (ledger 0079 round C). This build carries:
+   - the lidar roofs and trees (da370cab), re-planned on the Mac;
+   - Lake Murray's sodium light (Kevin 2026-11-05: "Lake Murray's sodium");
+   - no pads: they are declared and held back.
+
+   It installs as `sand_creek_raceway_lm` 0.2.1, replacing 0.2.0. **Ask Kevin before installing.**
+   1. `git -C D:/k10-worktrees/sclm-assets pull`. The worktree is the same; check out the branch head.
+   2. Inputs, the same as step 4g: the four TreeFX `.bin` in `tracks/sand-creek/source/trees/`, and ENG = the same plain
+      copy of `eng_repro`. No new texture: the 12 asset md5s are 4g's.
+   3. Rehearse from an EMPTY workshop:
+      `SHIP_PROJ=D:/k10-scratch/sand_creek_lm_b_reh AIROSO=D:/k10-worktrees/sclm-assets ENG=D:/k10-scratch/eng_sclm_a bash tools/ship_track.sh sand-creek-lm --no-install`
+      Expect the Mac's 0.2.1:
+      - `[bespoke] ... 2215 buildings stood, 43 dropped`;
+      - `[treefx] planted source/bespoke/trees.lm.json: 3645 of 3660 points` and 3,643 TreeFX trees;
+      - drive_test both PASS (kinks 0.41, fold bumps 4, drops 0, far ledges 1); audit CLEAN; kn5_ground_check PASS;
+      - house_seat PASS (2,215 judged, 0 floating / sunken / buried); houses PASS (2,214 / 2,215 / 0); textures PASS;
+      - road kn5 48.3 MB, `_street` 1.8 MB;
+      - `[LIGHT_0]` in `build/sand_creek_raceway_lm/extension/ext_config.ini` reads `COLOR = 255, 165, 30, 0.015`,
+        `RANGE = 25.0`, `SPOT = 150`.
+   4. Install, with Kevin's word: the same command without `SHIP_PROJ` and `--no-install`. AC closed.
+   5. **The night stills** (the Mac has no AC). From the pit at the start line, CSP night, take one still in 0.2.0 before
+      the install and one in 0.2.1 after it, from the same spot. Commit both under
+      `tracks/sand-creek-lm/source/stills/night_0.2.0.jpg` and `night_0.2.1.jpg`.
+
 5. Lake Murray unchanged, apples to apples (the PC's check, 2026-11-03; it replaces a redraft-and-compare-to-v4 check that
    would have redrafted Lake Murray without its houses). Both branches carry v4's chain since the merge of
    `claude/lm-v4-line` (e78fe44): Lake Murray's `ship.json` and `track.config.json` are lm-v4-line's byte for byte, the

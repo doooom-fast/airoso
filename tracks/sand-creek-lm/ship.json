@@ -72,7 +72,10 @@
       "assets/textures/roof_tan_diffuse.jpg",
       "assets/textures/roof_dark_diffuse.jpg"
     ],
-    "_assets_doc": "ledger 0079, as Lake Murray's (ledger 0065): the textures the blocks' pbr rows name, copied into the workshop and named by track.config.json texture_overrides, so the kn5 embeds them whatever the ENG copy holds"
+    "_assets_doc": "ledger 0079, as Lake Murray's (ledger 0065): the textures the blocks' pbr rows name, copied into the workshop and named by track.config.json texture_overrides, so the kn5 embeds them whatever the ENG copy holds",
+    "globs": [
+      "source/pads/*.json"
+    ]
   },
   "sync_out": {
     "required": [
@@ -99,7 +102,8 @@
       "data/edge_report.json",
       "data/house_gate.json",
       "data/treefx.report.json",
-      "data/verify_textures.json"
+      "data/verify_textures.json",
+      "data/pads.built.json"
     ],
     "map": [
       [

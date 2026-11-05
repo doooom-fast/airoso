@@ -473,7 +473,11 @@ def build(proj, cfg, decls):
             return (min(got) if got else None), samples
         bars = []
         along_lap = 0
-        for m, (k_seg, run) in enumerate(mouth_runs(ring, segs)):
+        # lm_pads.close_arms false (ledger 0079, Sand Creek's free roam: the side streets are joined, not closed): no K-rail
+        # across a road the lap does not take; the deck stays open to the street (its weld is the junction step's).
+        # Absent = true, the Lariat's barriers as before
+        runs_ = mouth_runs(ring, segs) if (cfg.get("lm_pads") or {}).get("close_arms", True) else []
+        for m, (k_seg, run) in enumerate(runs_):
             # a box edge the outline follows BESIDE the lap (the measurement's box clipped the lap arm's own wide
             # pavement; the lap's ribbon was kept) is not a road leaving: no barrier along the lap
             near = [lapi.nearest(*q) for q in run]

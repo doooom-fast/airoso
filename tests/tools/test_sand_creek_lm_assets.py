@@ -129,7 +129,8 @@ def test_crowns_take_lidar_heights_before_the_ratio():
 def test_pad_declarations_validate_and_sit_between_their_cuts():
     import draft_pads as dp
     cfg = json.loads((SC / "track.config.json").read_text(encoding="utf-8"))
-    pads = dp.declarations({"route": {"draft_pads": cfg["lm_pads"]["pads"]}})
-    assert [p["id"] for p in pads] == ["colorado_50th", "50th_ash", "50th_dahlia", "dahlia_56th", "sandcreek_quebec",
-                                       "48th_colorado"]
+    pads = dp.declarations({"route": {"draft_pads": cfg["lm_pads"]["pads"] + cfg["lm_pads"].get("parked", [])}})
+    assert sorted(p["id"] for p in pads) == sorted(["colorado_50th", "50th_ash", "50th_dahlia", "dahlia_56th",
+                                                    "sandcreek_quebec", "48th_colorado"])
+    assert all(p.get("_parked_why") for p in cfg["lm_pads"].get("parked", []))     # a parked pad says why
     assert all(p["cuts"][1] <= 3216 and len(p["box"]) >= 4 for p in pads)

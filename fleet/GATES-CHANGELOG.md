@@ -14,6 +14,25 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
+## 2026-11-05 — Sand Creek 0.2.1: the lidar heights, the first pads (ledger 0079 round C)
+
+No gate threshold changed, and no new number was added. Changed reading rules:
+- **`plan_buildings.py` `lidar.past_cap: "median"`** (opt-in; Sand Creek only). A lidar roof whose pitched-roof p95 passes
+  `CAP_M` is stood at its median return instead of being thrown away.
+  - The cap is now only the trigger for using the median. It is the old **[invented]** shadow-stage cap: shed 6, house 12,
+    commercial 25, industrial 20, apartments 35 m.
+  - It hit 80 roofs. 79 are sheds and houses whose p50 reads 3-6 m under a p95 of 11-16 m (a tree over the roof). The other
+    is a 38.7 m industrial block, a real tall structure.
+- **`plan_bespoke_vegetation.py` `lidar.drop_low`** (opt-in). A crown the lidar measured under `LIDAR_TREE_H`'s **2 m**
+  [invented, 2026-11-04] is left out as no canopy. Before, it took the ratio height. On Sand Creek: 1,955 of 5,171 measured.
+- **`tools/lm_pads_blend.py` `lm_pads.close_arms`** (default true = the Lariat's K-rails). False: no barrier across a pad
+  arm.
+- **`plan_buildings.py` `lidar.drop_low`** (opt-in). A footprint whose lidar roof stands less than
+  `ml_height_check.min_m` **2.5 m** [invented, 2026-11-04] over its ground ring is not stood. On Sand Creek: 63.
+- **The houses floor is LOWERED on Sand Creek: 2,261 / 2,261 / 0 → 2,214 / 2,215 / 0** (the 0.2.1 build's own counts off the
+  built kn5). This is a weakening, and it is written here as one. It is justified by measurement, not by loss: the 63
+  footprints `drop_low` removes have no roof in CO_DRCOG_2_2020.
+
 ## 2026-11-04 (later) — Sand Creek round B: the street wiring, the pad declarations, the tree lidar (ledger 0079 round B)
 
 No gate threshold changed. These changes alter what a gate or a self-check sees:

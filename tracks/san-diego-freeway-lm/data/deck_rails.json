@@ -1,0 +1,38 @@
+{
+ "tool": "tools/deck_rails_blend.py",
+ "ledger": "0080",
+ "height_m": 0.95,
+ "set_m": 0.15,
+ "decks": [
+  {
+   "center_m": 1282.8,
+   "len_m": 185.2,
+   "panels": 102
+  },
+  {
+   "center_m": 3222.7,
+   "len_m": 480.4,
+   "panels": 216
+  },
+  {
+   "center_m": 3665.6,
+   "len_m": 135.2,
+   "panels": 82
+  },
+  {
+   "center_m": 6654.0,
+   "len_m": 145.2,
+   "panels": 86
+  },
+  {
+   "center_m": 6969.5,
+   "len_m": 170.3,
+   "panels": 94
+  },
+  {
+   "center_m": 7189.9,
+   "len_m": 120.1,
+   "panels": 74
+  }
+ ]
+}

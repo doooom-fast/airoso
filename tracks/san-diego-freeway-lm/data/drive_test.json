@@ -1,0 +1,33 @@
+{
+ "multi_layout": true,
+ "_doc": "per-layout drive tests (ledger 0047): every layouts[] id is driven on the kn5 set it loads; the full report of each is data/drive_test.<id>.json. fail = any layout fails; a layout not yet run has fail null.",
+ "ran": [
+  "freeroam"
+ ],
+ "layouts": {
+  "freeroam": {
+   "fail": false,
+   "direction": "forward",
+   "kind": "street",
+   "race_furniture": false,
+   "obj": "track.obj",
+   "lane": "full width / island",
+   "lap_m": 10635.1,
+   "soft_top_in_lane": 0,
+   "obstruction_stations": 0,
+   "barrier_missing": 0,
+   "barrier_stations": 0,
+   "floating_furniture": 0,
+   "daylight_gaps": 0,
+   "excursion_drops": 6,
+   "undrivable_corners": 0,
+   "severe_steps": 0,
+   "severe_per_km": 0.0,
+   "steps_per_km": 0.0,
+   "kinks_per_km": 0.0,
+   "file": "drive_test.freeroam.json"
+  }
+ },
+ "fail": false,
+ "not_run": []
+}

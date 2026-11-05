@@ -1,0 +1,60 @@
+{
+ "source_track": "san-diego-freeway",
+ "points": 2132,
+ "lap_m": 10635.9,
+ "closed": false,
+ "widths_m": [
+  7.16,
+  17.41,
+  21.8
+ ],
+ "bridges_levelled": [
+  [
+   1282.8,
+   185.2
+  ],
+  [
+   3222.7,
+   480.4
+  ],
+  [
+   3665.6,
+   135.2
+  ],
+  [
+   6654.0,
+   145.2
+  ],
+  [
+   6969.5,
+   170.3
+  ],
+  [
+   7189.9,
+   120.1
+  ]
+ ],
+ "max_grade_pct": null,
+ "measured_max_grade_pct": 5.25,
+ "y_changed_points": 298,
+ "y_change_max_m": 9.059,
+ "connectors": false,
+ "bespoke_files": [],
+ "crossfall": null,
+ "profile": null,
+ "width_taper": {
+  "rate_m_per_m": 0.1,
+  "points_widened": 44,
+  "max_widening_m": 6.76
+ },
+ "resample": null,
+ "edge_on_wall": null,
+ "corner_arcs": null,
+ "carried": [],
+ "grid_upsample": 1,
+ "md5": {
+  "source_centerline": "482576032d5ac9ec4381d9b15d323554",
+  "heightfield.npy": "b89dd89dae27f589c4e43a7c6f4f642c",
+  "centerline.local.json": "9019d3cf1d5c9139769e0e1eeec20712"
+ }
+}

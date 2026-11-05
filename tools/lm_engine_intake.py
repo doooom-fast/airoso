@@ -629,6 +629,37 @@ def intake(proj: Path, *, connectors: bool | None = None) -> dict:
             shutil.copyfile(sdata / f, data / f)
     else:
         print("[lm_intake] heightfield: the project's own (the port track's fetched 3DEP grid; the source commits none)")
+    # THE GRID CUT TO THE LINE (lm_intake.grid_crop_m; ledger 0080, the SD freeway's phase 1: its 3DEP grid covers the
+    # whole 18 x 15 km network box, and the assembler's pure-Python terrain passes over it never finished in 45 min for
+    # one 10.6 km line). Keeps the source samples whose lon / lat lie within grid_crop_m of the line's own bbox; no
+    # sample moves or is made. Absent = the whole grid, every other port and Lake Murray.
+    crop = li.get("grid_crop_m")
+    if crop is not None:
+        hgrid = _read_npy(data / "heightfield.npy")
+        meta = json.loads((data / "heightfield.meta.json").read_text(encoding="utf-8"))
+        s_, w_, n_, e_ = meta["bbox_swne"]
+        ny_, nx_ = len(hgrid), len(hgrid[0])
+        gl = json.loads((data / "centerline.geojson").read_text(encoding="utf-8"))["features"][0]["geometry"]["coordinates"]
+        lat_c = sum(c[1] for c in gl) / len(gl)
+        dlat = float(crop) / 110_540.0
+        dlon = float(crop) / (111_320.0 * math.cos(math.radians(lat_c)))
+        lo0, lo1 = min(c[0] for c in gl) - dlon, max(c[0] for c in gl) + dlon
+        la0, la1 = min(c[1] for c in gl) - dlat, max(c[1] for c in gl) + dlat
+        ci = [i for i in range(nx_) if lo0 <= w_ + i * (e_ - w_) / (nx_ - 1) <= lo1]
+        rj = [j for j in range(ny_) if la0 <= n_ - j * (n_ - s_) / (ny_ - 1) <= la1]
+        if len(ci) < 2 or len(rj) < 2:
+            raise SystemExit(f"[lm_intake] grid_crop_m {crop}: fewer than 2 x 2 samples left")
+        i0, i1, j0, j1 = ci[0], ci[-1], rj[0], rj[-1]
+        hgrid = [row[i0:i1 + 1] for row in hgrid[j0:j1 + 1]]
+        meta2 = dict(meta)
+        meta2["bbox_swne"] = [n_ - j1 * (n_ - s_) / (ny_ - 1), w_ + i0 * (e_ - w_) / (nx_ - 1),
+                              n_ - j0 * (n_ - s_) / (ny_ - 1), w_ + i1 * (e_ - w_) / (nx_ - 1)]
+        meta2["nx"], meta2["ny"] = len(hgrid[0]), len(hgrid)
+        meta2["lm_intake_crop"] = {"margin_m": crop, "source_nx_ny": [nx_, ny_], "cols": [i0, i1], "rows": [j0, j1],
+                                   "_doc": "the source 3DEP samples within margin_m of the line's bbox (tools/lm_engine_intake.py)"}
+        _write_npy(data / "heightfield.npy", hgrid)
+        (data / "heightfield.meta.json").write_text(json.dumps(meta2), encoding="utf-8")
+        print(f"[lm_intake] 3DEP grid cut to the line + {crop} m: {nx_} x {ny_} -> {meta2['nx']} x {meta2['ny']} samples")
     # FINER FACETS, SAME SAMPLES (lm_intake.grid_upsample, default 1 = the source grid as is). The assembler halves the
     # grid once (40 -> 20 m, build_loop_blend.py upsample_grid(.., 2)); engine-july's prep then splits terrain edges near the
     # road at most 4 times. On a 20 m grid that leaves edges up to ~10 m under a narrow road, and where the deck sags

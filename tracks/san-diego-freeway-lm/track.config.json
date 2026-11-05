@@ -39,6 +39,9 @@
   "loop": false,
   "mirror_x": false,
   "true_north_rotation_deg": 0.0,
+  "default_width_m": 14.0,
+  "_default_width_m_doc": "the source config's (scripts.config needs it); the line carries its own per-vertex widths, which the assembler sweeps",
+  "width_overrides": [],
   "origin": "centroid",
   "surfaces": {
     "road": "1ROAD",
@@ -71,6 +74,10 @@
     "source_track": "san-diego-freeway",
     "source_data": "source/network-draft-pr34",
     "_source_data_doc": "ledger 0080: the original's FINAL network draft (PR 34's scripts at b888f10, run on the Mac), not its committed data/ (the PC's first run, before PR 34's fixes). tools/network_line.py wrote it; its network_line.json has the provenance and md5s.",
-    "connectors": false
+    "connectors": false,
+    "grid_crop_m": 1000,
+    "_grid_crop_m_doc": "[invented] 1,000 m of the 3DEP grid round the line (phase 1 builds the line alone; the source grid is the whole 18 x 15 km network box and the assembler never finished on it in 45 min). The extent of the scenery, not a geometry value: no sample moves. Phase 2 (the network) needs the whole box, and terrain.tiers. fleet/GATES-CHANGELOG.md 2026-11-05.",
+    "width_taper": 0.1,
+    "_width_taper_doc": "ledger 0078 round 5 (Milford), the rally ports' rate: a width step in the source line (the network draft's per-edge lane widths step at every edge joint: 7.16 -> 10.82 m at s 25 built a twisted quad and 14 ground-on-top samples) becomes a flare, widening only. The rate is that entry's, not measured here."
   }
 }

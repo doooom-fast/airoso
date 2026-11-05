@@ -230,3 +230,30 @@ def test_the_lariat_arcs_read_the_ground_and_the_pad_outlines_come_with_it():
             assert rec["cuts"] == d["cuts"] and rec["node"] == d["node"]
     finally:
         shutil.rmtree(ws, ignore_errors=True)
+
+
+def test_the_freeway_port_reads_the_network_line_and_cuts_the_grid_to_it():
+    """ledger 0080: lm_intake.source_data reads the network draft's line from inside the source track; grid_crop_m keeps
+    only source 3DEP samples (none moved or made) within its margin of the line; the width steps flare, never narrow"""
+    import shutil
+    import lm_engine_intake as L
+    ws = Path(tempfile.mkdtemp(prefix="fwlm_"))
+    try:
+        _sync_in("san-diego-freeway-lm", ws)
+        rep = L.intake(ws)
+        src = ROOT / "tracks" / "san-diego-freeway" / "source" / "network-draft-pr34"
+        meta = json.loads((ws / "data" / "heightfield.meta.json").read_text(encoding="utf-8"))
+        smeta = json.loads((src / "heightfield.meta.json").read_text(encoding="utf-8"))
+        c = meta["lm_intake_crop"]
+        assert meta["nx"] < smeta["nx"] and meta["ny"] < smeta["ny"]
+        g = L._read_npy(ws / "data" / "heightfield.npy")
+        sg = L._read_npy(src / "heightfield.npy")
+        j0, i0 = c["rows"][0], c["cols"][0]
+        assert all(g[j][i] == sg[j0 + j][i0 + i] for j in range(meta["ny"]) for i in range(meta["nx"]))
+        loc = json.loads((ws / "data" / "centerline.local.json").read_text(encoding="utf-8"))
+        sloc = json.loads((src / "centerline.local.json").read_text(encoding="utf-8"))
+        assert len(loc["points_xyz_m"]) == len(sloc["points_xyz_m"])
+        assert all(a >= b - 1e-9 for a, b in zip(loc["widths_m"], sloc["widths_m"]))
+        assert rep is not None
+    finally:
+        shutil.rmtree(ws, ignore_errors=True)

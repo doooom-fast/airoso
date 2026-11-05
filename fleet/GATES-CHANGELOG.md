@@ -14,6 +14,26 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
+## 2026-11-05 — the SD freeway on Lake Murray's engine, phase 1: the numbers the port carries (ledger 0080; no gate threshold moved, no bypass)
+
+- **No grade cap.** The line's profile is its own 3DEP (`tools/network_line.py`: network_elev's 33 m median + 45 m mean
+  de-spike, both network_elev's own constants, not new ones), without network_elev's 5 % cap or join_nodes' pin. The six
+  `capture.bridges` decks (the source's, PR 34) are levelled between their bank crests by the intake as for every port.
+  Measured: steepest 10 m off the decks **5.25 %** (the draft capped at 5.0 %); on the raw bare earth through the decks
+  58.7 % (the DEM has no deck).
+- ⚠ **`lm_intake.grid_crop_m` 1,000 m — invented.** The 3DEP grid kept round the line: the extent of the scenery, not a
+  geometry value (no sample moves or is made). Phase 1 only; the whole box comes back with the network (phase 2).
+- ⚠ **Edge** (`route.edge`): the rally ports' near-zero curb / walk / grade (0.0 / 0.05 / 0.05 / 0.3 m), not measured.
+  The real edge is a paved shoulder to a concrete barrier; no barrier is laid (none measured yet).
+- **Reused, not new:** `lm_intake.width_taper` 0.1 m per m (ledger 0078 round 5, Milford's, already listed there);
+  the deck rails (`tools/deck_rails_blend.py`) are Lake Murray's `build_guardrails` unchanged — 0.95 m panels,
+  `GUARDRAIL_SET_M` 0.15 m (⚠ invented in v0.18.0, listed there), 22 m + 3 points past each declared deck. One choice of
+  this tool's own: on a flare each row's rail takes the widest of itself and its two neighbours (the pavement edge is a
+  chord between rows), so the rail never stands inside the pavement. drive_test's thresholds are untouched; the port
+  passes them as they are (excursions 6 against the 1 /km = 10 limit).
+- Not used, recorded: the source's `scenery.viaduct.layer_height_m` 5.5 m (the network draft's OSM-layer deck lift) — a
+  modelled number. Phase 2's connector decks need measured heights (PC lidar, class 17).
+
 ## 2026-11-05 — DECLARED FORCE: Under the Dragon's Douglas Creek fill, s 2,395-2,410 (ledger 0078 round 13; no threshold moved)
 
 Kevin, 2026-11-05, asked whether to force Under the Dragon's last red row as measured: **"Yes, force it"**.

@@ -314,6 +314,12 @@ draft_densify_ribbon() {
   step "author: more columns where the mainline ribbon twists (tools/densify_ribbon_blend.py; ledger 0078; after the weld, no crease = no-op)"
   (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/densify_ribbon_blend.py" -- "$PROJ" 2>&1 | grep "^\[densify\]\|FATAL\|Error\|Traceback" )
 }
+# ledger 0080 (the SD freeway port): Lake Murray's own I-8 deck rails (scripts-v021 build_guardrails, unchanged) on the
+# line's declared decks; a port's step only (Lake Murray's assembler lays its own rails and its ship.json never names it)
+draft_deck_rails() {
+  step "author: deck rails on the line's declared decks (tools/deck_rails_blend.py; Lake Murray's build_guardrails; ledger 0080)"
+  (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/deck_rails_blend.py" -- "$PROJ" 2>&1 | grep "^\[deck-rails\]\|FATAL\|Error\|Traceback" )
+}
 draft_kerbs() {
   step "author: racing kerbs from the traced runs on the ribbon's lane edge (tools/author_kerbs_blend.py; ledger 0078; no route.kerbs_file = no-op)"
   (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_kerbs_blend.py" -- "$PROJ" 2>&1 | grep "^\[kerbs\]\|FATAL\|Error\|Traceback" )

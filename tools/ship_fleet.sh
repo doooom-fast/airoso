@@ -15,7 +15,8 @@
 # (same rules). The matrix: $FLEET_OUT/fleet-<stamp>.md and .json (default D:/k10-scratch/fleet).
 set -uo pipefail
 export PYTHONUTF8=1
-AIROSO="${AIROSO:-C:/Users/Owner/Documents/GitHub/airoso}"
+_here="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && { pwd -W 2>/dev/null || pwd; })"   # the repo this script lives in
+AIROSO="${AIROSO:-$_here}"   # AIROSO overrides; no machine path is spelled out (the repo moved to D:/k10/airoso, 2026-11-03)
 FLEET_OUT="${FLEET_OUT:-D:/k10-scratch/fleet}"
 # ONE-CHAIN §4 order (the four chain tracks first: installed 2026-10-29, re-run to the same gates)
 ORDER=(exotics-racing-lv milford-road-course high-plains sand-creek

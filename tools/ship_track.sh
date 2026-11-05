@@ -78,8 +78,12 @@
 #                 --from: a loop.blend drafted for the other edge is never prepped); the run never syncs back.
 set -euo pipefail
 export PYTHONUTF8=1
-AIROSO="${AIROSO:-C:/Users/Owner/Documents/GitHub/airoso}"
-AIROSO_MAIN="C:/Users/Owner/Documents/GitHub/airoso"   # never a workshop, whatever AIROSO points at
+_here="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && { pwd -W 2>/dev/null || pwd; })"   # the repo this script lives in
+AIROSO="${AIROSO:-$_here}"   # AIROSO overrides (a worktree, a frozen copy run from a scratch folder)
+# the MAIN checkout (git's common dir), never a workshop, whatever AIROSO points at; the repo moved off
+# C:/Users/Owner/Documents/GitHub/airoso to D:/k10/airoso on 2026-11-03, so no path is spelled out here
+AIROSO_MAIN="$(git -C "$AIROSO" rev-parse --path-format=absolute --git-common-dir 2>/dev/null | sed 's#/\.git$##')"
+AIROSO_MAIN="${AIROSO_MAIN:-$AIROSO}"
 BL="C:/Program Files/Blender Foundation/Blender 4.2/blender.exe"
 AC="D:/SteamLibrary/steamapps/common/assettocorsa/content/tracks"
 ARCHIVE="D:/k10-track-archive"   # old installs live here, never in content/tracks (Kevin 2026-10-11: "clear old versions")

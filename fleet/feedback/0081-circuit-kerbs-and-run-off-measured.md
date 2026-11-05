@@ -393,6 +393,32 @@ lines diverge. The real asphalt there is narrower than the 12 m lane. A first bu
 3 more kinks (R s 3,000-3,010, a parked car's shadow zigging the band 0.58 m) and one more bump; smoothing over 9 stations
 removed those. No number was invented to hide the last one: **Kevin's call** (install with one more kink, or not).
 
+### 2b. Aspen 0.1.3: the three runs re-read at 0.3 m, at their measured place
+
+Round 4's three runs (traced on 2019 0.6 m, built OUTSIDE the edge at the invented -0.5 / 1.0 m) re-read on NAIP 2023
+0.3 m (`tracks/aspen/source/edges/kerbs.json`, the old values kept per run as `round4`; strips
+`kerbs_blocks_2023_030_strips.jpg`, end zooms `kerbs_blocks_2023_030_ends.jpg`). Ends by eye on the end zooms (the reader
+was 1-3.5 m short at L s 233's and R s 838's starts and ran past the L s 1,017 kerb's clear blocks onto a red structure
+outside it); offsets by the block reader, `--follow 1`. All three lie INSIDE the live edge, not outside it:
+
+| run | round 4 (0.1.1-0.1.2) | **round 3 (0.1.3)** |
+|---|---|---|
+| L | s 233-262, -0.5 .. +1.0 [invented] | **s 236-272, -1.11 .. -0.20** (block amp 27) |
+| R | s 838-862, -0.5 .. +1.0 [invented] | **s 820-874.5, -1.68 .. -0.40** (block amp 30) |
+| L | s 1,017-1,038, -0.5 .. +1.0 [invented] | **s 1,026-1,076, -1.28 .. -0.16** (block amp 29) |
+
+Not built: L s 1,014-1,026 (a white band under a red structure 1-2.5 m outside the edge, no blocks along the edge at
+0.3 m; in `not_built` with its reason), and L s 1,495-1,566 (round 2, Kevin's call, unchanged). `[kerbs] 3 kerb runs,
+144 m ... at their measured offsets (ROAD read missed 0)` (0.1.2: 76 m outside the edge). Still:
+`kerbs_built_beside_0.1.3.jpg`: each built kerb on its paint.
+
+| Aspen (EMPTY workshop, Mac) | 0.1.2 (= 0.1.1's gates) | **0.1.3** |
+|---|---|---|
+| soft top / severe / bumps /km / kinks /km / vertex bumps / drops / far ledges | 0 / 0 / 0.6 / 13.26 / 41 / 0 / 0 | **the same** |
+| audit (K) / verify_kn5 / kn5_ground_check (p95) / house_seat | CLEAN (0) / PASS / PASS (0.021) / PASS | the same |
+| edge report: at 1 m kerb / ground; rise within 2 m p95 | 99.6 % / 0.4 %; 0.0 m | the same |
+| kn5 | 7,827,187 B | **7,848,715 B (7.8 MB)** |
+
 ## Owed (start here)
 
 (Rewritten at round 2's end; round 1's list is done or carried here.)

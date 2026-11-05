@@ -526,6 +526,26 @@ measurement ("two buildings in one place aren't real").
     weakening.
 - Runbook 4i now pins the 0.2.2 install to f6dd8a63; round E ships with 0.2.3.
 
+## Runbook 4i (PC, 2026-11-05): 0.2.2 installed on Kevin's word
+
+- **Rehearsal** (`sand_creek_lm_d_reh`, empty, f6dd8a63, ENG `eng_sclm_a`, the four `.bin` in place): every row the
+  runbook lists, as listed. Decks 1647 / 477 / 883 filled, verify_pads PASS x3 (seams 0.9-1.6 mm, grass 0, curb over
+  pavement 0), 2,215 buildings stood / 43 dropped, 3,643 TreeFX trees, drive_test both PASS (kinks 1.24 /km), audit
+  CLEAN, houses 2,214 / 2,215 / 0, road kn5 52.7 MB.
+- **Kevin, 2026-11-05: "Yes, both"** (this and the Rangely renames). The 0.2.0 workshop moved aside to
+  `D:/k10-scratch/sand_creek_lm.0.2.0`; the install ran from a fresh empty `D:/k10-scratch/sand_creek_lm` (no `SHIP_PROJ`,
+  no `--no-install`). Rows equal the rehearsal's, SHIP OK. The installed 0.2.0 folder is parked in
+  `D:/k10-track-archive/2026-11-05_112252/`. Installed: "doooom Colorado — Sand Creek Raceway (LM engine)" and
+  "... Sand Creek Free Roam (LM engine)", 0.2.2. All four kn5s are byte-identical to the build; TreeFX trees are in
+  `extension/trees/` (the four personal-use `.bin`, not committed).
+- **The sync-back** is `4d607c5` on its own branch `claude/sand-creek-lm-0202-installed`, parented on f6dd8a63: on top
+  of round E it would put 0.2.2's `house_gate.json`, `house_seat_check.json`, `pads.built.json`, `split_manifest.json`,
+  `street_kn5.json` and `loop.blend` over round E's, so it is not merged here (the Mac's call). `treefx.report.json` is
+  the only record with news: 3,643 trees (2,357 Oak3, 880 SycamoreV2, 237 SycamoreV1, 169 SycamoreV3; 2 rejected on a
+  building) where the Mac's has 0.
+- **Not done: step 5's pad stills.** Kevin did not pick them. The 4h night "before" stills can now only come from the
+  parked 0.2.0.
+
 ## Owed (2026-11-05, after round E; in the coordinator's order)
 
 1. **Real junctions at all 146 street meetings (0.2.3, the main work).** Kevin: "Real junctions".

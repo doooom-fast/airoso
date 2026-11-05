@@ -1,0 +1,313 @@
+{
+ "_doc": "Ledger 0065, 2026-11-03 (Mac, Blender 5.1.2): the chain bespoke step (tools/author_bespoke_blend.py, scenery.bespoke.blocks, rim_step_m 2.0) run on a scratch copy of v4 loop.blend (LFS md5 3d840db1ab7eada45ecd6b24d9381f5c) re-stands 7,600 blocks from source/bespoke/buildings.json; every one of the 23 AUTH_bespoke batches is identical to the one v4 shipped (vertex positions in mm and faces, md5 below). shells = connected shells welded at 1 mm, the count tools/house_gate.py takes off the kn5. rim_1m_default = the same run at main default rim walk (1.0 m, ledger 0063): 7,601 blocks, a different set, which is why LM declares 2.0. Produced by a scratch dump script, not a chain step.",
+ "loop_blend_md5": "3d840db1ab7eada45ecd6b24d9381f5c",
+ "v4_shipped": {
+  "1WALL_TILTUP_0": {
+   "verts": 11486,
+   "faces": 5743,
+   "md5": "71e5b3c649de96c0715fafb712b5406e",
+   "shells": 275
+  },
+  "BUILDING_METAL_0": {
+   "verts": 1890,
+   "faces": 945,
+   "md5": "841f06ceb4a251828ede0703fa88ae9b",
+   "shells": 226
+  },
+  "BUILDING_STUCCO_0": {
+   "verts": 11976,
+   "faces": 6261,
+   "md5": "b1fbbd7c85be47f603b6c4e9a44cfad2",
+   "shells": 567
+  },
+  "BUILDING_STUCCO_1": {
+   "verts": 11982,
+   "faces": 5991,
+   "md5": "da75ffd7f1fc5857a64786d08fd9bbcd",
+   "shells": 868
+  },
+  "BUILDING_STUCCO_2": {
+   "verts": 11966,
+   "faces": 5983,
+   "md5": "1588c098e4fb0747792a1763af24818c",
+   "shells": 839
+  },
+  "BUILDING_STUCCO_3": {
+   "verts": 11978,
+   "faces": 5989,
+   "md5": "dae56acb1fc798f09b7d729bc6ba1998",
+   "shells": 869
+  },
+  "BUILDING_STUCCO_4": {
+   "verts": 11980,
+   "faces": 5990,
+   "md5": "632dec280e49e0692660225ea20f5deb",
+   "shells": 867
+  },
+  "BUILDING_STUCCO_5": {
+   "verts": 11962,
+   "faces": 5981,
+   "md5": "8ee1bdc34d22e67972b7ef1319187dc3",
+   "shells": 855
+  },
+  "BUILDING_STUCCO_6": {
+   "verts": 11944,
+   "faces": 5972,
+   "md5": "c4e01d7c74b45622b37905aa4239a895",
+   "shells": 858
+  },
+  "BUILDING_STUCCO_7": {
+   "verts": 1040,
+   "faces": 520,
+   "md5": "219663fe355d76e6aed28c81066e9316",
+   "shells": 72
+  },
+  "BUILDING_TILTUP_0": {
+   "verts": 8761,
+   "faces": 6536,
+   "md5": "ab34a305ef5abca0640303f1938ae613",
+   "shells": 218
+  },
+  "FARBLOCK_METAL_0": {
+   "verts": 378,
+   "faces": 189,
+   "md5": "8f7cd0ed9e5f928324957e21ddae9bb9",
+   "shells": 45
+  },
+  "FARBLOCK_STUCCO_0": {
+   "verts": 11961,
+   "faces": 6036,
+   "md5": "ed5bd9195c0212f608d1107a683ce436",
+   "shells": 847
+  },
+  "FARBLOCK_STUCCO_1": {
+   "verts": 5472,
+   "faces": 2736,
+   "md5": "fa20a6da2a48df4a95f3f1a6daa9faf7",
+   "shells": 409
+  },
+  "FARBLOCK_TILTUP_0": {
+   "verts": 3256,
+   "faces": 2333,
+   "md5": "4f22a94dea5f0c9653684dffd3521d01",
+   "shells": 60
+  },
+  "ROOFTOP_DARK_0": {
+   "verts": 3513,
+   "faces": 2665,
+   "md5": "973579a6e22472cfa56aa44d36eb9acf",
+   "shells": 423
+  },
+  "ROOFTOP_SHINGLE_0": {
+   "verts": 12000,
+   "faces": 8950,
+   "md5": "9067141d3aa1211198ccb2f44115b969",
+   "shells": 1525
+  },
+  "ROOFTOP_SHINGLE_1": {
+   "verts": 11999,
+   "faces": 8555,
+   "md5": "6408ef1ecadd35ab4a5124ccd1e511ca",
+   "shells": 1721
+  },
+  "ROOFTOP_SHINGLE_2": {
+   "verts": 12000,
+   "faces": 8531,
+   "md5": "ee99d3093c0693e2013b65d0437d7594",
+   "shells": 1734
+  },
+  "ROOFTOP_SHINGLE_3": {
+   "verts": 11997,
+   "faces": 8521,
+   "md5": "245b0c4bacfe708987a96fa5d78419f6",
+   "shells": 1737
+  },
+  "ROOFTOP_SHINGLE_4": {
+   "verts": 2102,
+   "faces": 1490,
+   "md5": "851bceae9bc4bab477e2839f39658d71",
+   "shells": 306
+  },
+  "ROOFTOP_TAN_0": {
+   "verts": 811,
+   "faces": 641,
+   "md5": "a616782f83c2edb87ec4449e1c995eda",
+   "shells": 85
+  },
+  "ROOFTOP_WHITE_0": {
+   "verts": 678,
+   "faces": 540,
+   "md5": "17f39215f71878eb7c0608bffa83e284",
+   "shells": 69
+  }
+ },
+ "restood_rim_2m": {
+  "1WALL_TILTUP_0": {
+   "verts": 11486,
+   "faces": 5743,
+   "md5": "71e5b3c649de96c0715fafb712b5406e",
+   "shells": 275
+  },
+  "BUILDING_METAL_0": {
+   "verts": 1890,
+   "faces": 945,
+   "md5": "841f06ceb4a251828ede0703fa88ae9b",
+   "shells": 226
+  },
+  "BUILDING_STUCCO_0": {
+   "verts": 11976,
+   "faces": 6261,
+   "md5": "b1fbbd7c85be47f603b6c4e9a44cfad2",
+   "shells": 567
+  },
+  "BUILDING_STUCCO_1": {
+   "verts": 11982,
+   "faces": 5991,
+   "md5": "da75ffd7f1fc5857a64786d08fd9bbcd",
+   "shells": 868
+  },
+  "BUILDING_STUCCO_2": {
+   "verts": 11966,
+   "faces": 5983,
+   "md5": "1588c098e4fb0747792a1763af24818c",
+   "shells": 839
+  },
+  "BUILDING_STUCCO_3": {
+   "verts": 11978,
+   "faces": 5989,
+   "md5": "dae56acb1fc798f09b7d729bc6ba1998",
+   "shells": 869
+  },
+  "BUILDING_STUCCO_4": {
+   "verts": 11980,
+   "faces": 5990,
+   "md5": "632dec280e49e0692660225ea20f5deb",
+   "shells": 867
+  },
+  "BUILDING_STUCCO_5": {
+   "verts": 11962,
+   "faces": 5981,
+   "md5": "8ee1bdc34d22e67972b7ef1319187dc3",
+   "shells": 855
+  },
+  "BUILDING_STUCCO_6": {
+   "verts": 11944,
+   "faces": 5972,
+   "md5": "c4e01d7c74b45622b37905aa4239a895",
+   "shells": 858
+  },
+  "BUILDING_STUCCO_7": {
+   "verts": 1040,
+   "faces": 520,
+   "md5": "219663fe355d76e6aed28c81066e9316",
+   "shells": 72
+  },
+  "BUILDING_TILTUP_0": {
+   "verts": 8761,
+   "faces": 6536,
+   "md5": "ab34a305ef5abca0640303f1938ae613",
+   "shells": 218
+  },
+  "FARBLOCK_METAL_0": {
+   "verts": 378,
+   "faces": 189,
+   "md5": "8f7cd0ed9e5f928324957e21ddae9bb9",
+   "shells": 45
+  },
+  "FARBLOCK_STUCCO_0": {
+   "verts": 11961,
+   "faces": 6036,
+   "md5": "ed5bd9195c0212f608d1107a683ce436",
+   "shells": 847
+  },
+  "FARBLOCK_STUCCO_1": {
+   "verts": 5472,
+   "faces": 2736,
+   "md5": "fa20a6da2a48df4a95f3f1a6daa9faf7",
+   "shells": 409
+  },
+  "FARBLOCK_TILTUP_0": {
+   "verts": 3256,
+   "faces": 2333,
+   "md5": "4f22a94dea5f0c9653684dffd3521d01",
+   "shells": 60
+  },
+  "ROOFTOP_DARK_0": {
+   "verts": 3513,
+   "faces": 2665,
+   "md5": "973579a6e22472cfa56aa44d36eb9acf",
+   "shells": 423
+  },
+  "ROOFTOP_SHINGLE_0": {
+   "verts": 12000,
+   "faces": 8950,
+   "md5": "9067141d3aa1211198ccb2f44115b969",
+   "shells": 1525
+  },
+  "ROOFTOP_SHINGLE_1": {
+   "verts": 11999,
+   "faces": 8555,
+   "md5": "6408ef1ecadd35ab4a5124ccd1e511ca",
+   "shells": 1721
+  },
+  "ROOFTOP_SHINGLE_2": {
+   "verts": 12000,
+   "faces": 8531,
+   "md5": "ee99d3093c0693e2013b65d0437d7594",
+   "shells": 1734
+  },
+  "ROOFTOP_SHINGLE_3": {
+   "verts": 11997,
+   "faces": 8521,
+   "md5": "245b0c4bacfe708987a96fa5d78419f6",
+   "shells": 1737
+  },
+  "ROOFTOP_SHINGLE_4": {
+   "verts": 2102,
+   "faces": 1490,
+   "md5": "851bceae9bc4bab477e2839f39658d71",
+   "shells": 306
+  },
+  "ROOFTOP_TAN_0": {
+   "verts": 811,
+   "faces": 641,
+   "md5": "a616782f83c2edb87ec4449e1c995eda",
+   "shells": 85
+  },
+  "ROOFTOP_WHITE_0": {
+   "verts": 678,
+   "faces": 540,
+   "md5": "17f39215f71878eb7c0608bffa83e284",
+   "shells": 69
+  }
+ },
+ "identical": true,
+ "rim_1m_default": {
+  "objects_differing": [
+   "1WALL_TILTUP_0",
+   "BUILDING_METAL_0",
+   "BUILDING_STUCCO_0",
+   "BUILDING_STUCCO_1",
+   "BUILDING_STUCCO_2",
+   "BUILDING_STUCCO_3",
+   "BUILDING_STUCCO_4",
+   "BUILDING_STUCCO_5",
+   "BUILDING_STUCCO_6",
+   "BUILDING_STUCCO_7",
+   "BUILDING_TILTUP_0",
+   "FARBLOCK_METAL_0",
+   "FARBLOCK_STUCCO_0",
+   "FARBLOCK_STUCCO_1",
+   "FARBLOCK_TILTUP_0",
+   "ROOFTOP_DARK_0",
+   "ROOFTOP_SHINGLE_0",
+   "ROOFTOP_SHINGLE_1",
+   "ROOFTOP_SHINGLE_2",
+   "ROOFTOP_SHINGLE_3",
+   "ROOFTOP_SHINGLE_4",
+   "ROOFTOP_TAN_0",
+   "ROOFTOP_WHITE_0"
+  ],
+  "shells": 15476
+ }
+}

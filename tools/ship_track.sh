@@ -336,6 +336,14 @@ draft_stubs_author() {
     (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_stubs_blend.py" -- "$PROJ" --stage author 2>&1 | grep "^\[stubs\]\|Error\|Traceback" )
   fi
 }
+draft_bespoke() {
+  # ledger 0065 (Lake Murray v4 is the line, Kevin 2026-11-03: "don't lose those"): the buildings pipeline's planned blocks
+  # (track.config.json scenery.bespoke.blocks -> source/bespoke/buildings.json) in place of the assembler's HOUSE / BUILDING
+  # boxes, at the point tools/ship_sd.sh's SD_BESPOKE=1 rehearsal stood them (after the stubs, before the mouths are gapped),
+  # so a full redraft stands v4's 7,600 blocks again; gate_houses counts them on the built road kn5. Exit 1 = loop.blend not saved
+  step "author: the buildings pipeline's blocks in place of the assembler's boxes (tools/author_bespoke_blend.py: scenery.bespoke.blocks, self-checked)"
+  (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_bespoke_blend.py" -- "$PROJ" 2>&1 | grep "^\[bespoke\]\|Error\|Traceback" )
+}
 draft_stubs_tidy() {
   if [ -f "$PROJ/data/stubs.plan.json" ]; then
     (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_stubs_blend.py" -- "$PROJ" --stage tidy 2>&1 | grep "^\[stubs\]\|Error\|Traceback" )
@@ -427,6 +435,13 @@ prep_prep() {
   "$BL" --background --python-exit-code 1 --python "$ENGINE/scripts/ac/build_kn5_loop.py" -- "$PROJ" 2>&1 | grep "prepped\|FATAL\|split 1GRASS\|split GRASS_FAR\|terrain tiles\|terrain conform\|gate line\|T-junctions\|kept-cell refinement\|house seat\|multi-layout\|Error\|Traceback" | cut -c1-200
   # ledger 0046 v0.18.0 integration fix round: the I-8's own pavement on the PREPPED scene's final ground (scenery.freeway;
   # off = no data/freeway_i8.json = nothing runs). Part of prep: the split follows it (steps.prep stays prep, split)
+  # a tiered terrain's prepped tiles carry far more vertices than their surface needs (ledger 0054 P3 repair round 3, as tools/ship_sd.sh):
+  # thinned by error-bounded half-edge collapse, no vertex moves; no tier plan = no-op. Before the freeway drape, which reads this ground
+  rm -f "$PROJ/data/terrain_thin.json" "$PROJ/data/terrain_thin.nodes.json.gz"
+  if [ -f "$PROJ/data/terrain.tiers.json.gz" ]; then
+    step "ship: thin the terrain, every vertex where the chain put it (tools/thin_terrain_blend.py; self-checked)"
+    "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/thin_terrain_blend.py" -- "$PROJ/blender/$SLUG.blend" --project "$PROJ" 2>&1 | grep "^\[thin\]\|Error\|Traceback"
+  fi
   step "ship: the I-8's own pavement, lane lines and median barrier on the final ground (visual only; self-checked)"
   (cd "$AIROSO" && python tools/freeway_i8.py "$PROJ")
   if [ -f "$PROJ/data/freeway_i8.json" ]; then
@@ -438,6 +453,11 @@ prep_prep() {
   step "ship: the road cuts' rock faces split out of the ground tiles (tools/rock_faces_blend.py: 1GRASS_ROCK_*, the sandstone skin, GRASS physics kept; self-checked; no auto cut declared = no-op)"
   rm -f "$PROJ/data/rock_faces.json"
   "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/rock_faces_blend.py" -- "$PROJ/blender/$SLUG.blend" --project "$PROJ" 2>&1 | grep "^\[rock\]\|Error\|Traceback"
+  # ledger 0065: named repairs of the standing red gates on the prepped scene (tools/red_repairs.py names them off the last gate OBJ); no plan = no-op
+  if [ -f "$PROJ/data/red_repairs.plan.json" ]; then
+    step "ship: red repairs (tools/red_repairs_blend.py: the named kerb faces, the named ground slivers; self-checked)"
+    "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/red_repairs_blend.py" -- "$PROJ/blender/$SLUG.blend" --project "$PROJ" 2>&1 | grep "^\[red\]\|Error\|Traceback"
+  fi
 }
 prep_split() {
   local lid
@@ -584,6 +604,14 @@ gate_rib_check() {
 gate_house_seat() {
   step "gate: houses on the built ground (tools/house_seat_check.py: floating, sunken or buried buildings — hard)"
   (cd "$AIROSO" && python tools/house_seat_check.py "$PROJ" --json "$PROJ/data/house_seat_check.json")
+}
+gate_houses() {
+  # ledger 0065 (Kevin 2026-11-03: "Lake Murray v4 had many more houses I[n] it this time, don't lose those"): the blocks
+  # counted as connected shells on the BUILT road kn5 against the floors in track.config.json scenery.bespoke.house_gate
+  # (v4's own counts); hard — exit 1 stops the chain, --force-install does not cover it
+  step "gate: the houses on the built road kn5 (tools/house_gate.py: ROOFTOP / BUILDING + FARBLOCK / 1WALL_TILTUP shells against scenery.bespoke.house_gate — hard)"
+  rm -f "$PROJ/data/house_gate.json"
+  (cd "$AIROSO" && python tools/house_gate.py "$PROJ" --kn5 "$PROJ/build/$SLUG.kn5" --json "$PROJ/data/house_gate.json")
 }
 gate_drive_test_street() {
   local lid rc
@@ -733,7 +761,7 @@ is_data_step() {
 SPEC_LINES=$(cd "$AIROSO" && python tools/ship_track_spec.py "$SPEC" "$TRACK") || { echo "ship.json refused (above): $SPEC"; exit 2; }
 WS=""; WS_SUB=""; REQUIRE_RACE=0; UI_PREFIX=""; AUDIT_NOTE=""; JULY_AI=""
 DRAFT=(); AUTHOR=(); PREP=(); SHIP=(); GATE=()
-IN_REQ=(); IN_OPT=(); IN_GLOB=(); IN_DIR=()
+IN_REQ=(); IN_OPT=(); IN_GLOB=(); IN_DIR=(); IN_ASSET=()
 OUT_REQ=(); OUT_FILE=(); OUT_DIR=(); OUT_RM=(); OUT_MAP_FROM=(); OUT_MAP_TO=()
 while IFS=$'\t' read -r k v w; do
   v="${v%$'\r'}"; w="${w%$'\r'}"
@@ -753,6 +781,7 @@ while IFS=$'\t' read -r k v w; do
     in.optional) IN_OPT+=("$v");;
     in.globs) IN_GLOB+=("$v");;
     in.dirs) IN_DIR+=("$v");;
+    in.assets) IN_ASSET+=("$v");;
     out.required) OUT_REQ+=("$v");;
     out.files) OUT_FILE+=("$v");;
     out.dirs) OUT_DIR+=("$v");;
@@ -868,6 +897,12 @@ for g in ${IN_GLOB[@]+"${IN_GLOB[@]}"}; do      # e.g. the TreeFX models (gitign
 done
 for d in ${IN_DIR[@]+"${IN_DIR[@]}"}; do
   [ -d "$SRC/$d" ] && { mkdir -p "$PROJ/$d"; cp -r "$SRC/$d/." "$PROJ/$d/"; }
+done
+# airoso's own assets a track names (ship.json sync_in.assets, under assets/): the same relative path in the project, every
+# one required — Lake Murray's house textures, which its engine does not carry (ledger 0065; track.config.json texture_overrides)
+for f in ${IN_ASSET[@]+"${IN_ASSET[@]}"}; do
+  [ -f "$AIROSO/$f" ] || { echo "ship.json sync_in.assets names $f but airoso has no $AIROSO/$f"; exit 1; }
+  mkdir -p "$(dirname "$PROJ/$f")"; cp "$AIROSO/$f" "$PROJ/$f"
 done
 # the declared layouts drive every per-layout step below (never a hand-typed list)
 LAYOUT_IDS=$(pyq "import json,sys; d=json.load(open(sys.argv[1],encoding='utf-8')); print(' '.join(str(l['id']) for l in d['layouts']))" "$PROJ/track.config.json")

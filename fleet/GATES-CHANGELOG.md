@@ -14,6 +14,49 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
+## 2026-11-03 — COMPARISON RULE: "unchanged" kn5s are judged by `tools/kn5_equiv.py`, not md5 (ledger 0065)
+
+Blender's tangent pass is not bit-stable. Lake Murray v4's own workshop, rebuilt from the prep on the PC with the same engine,
+gave new md5s for the road, `_race`, `_street` and both closure kn5s. Every differing byte was a vertex tangent float, off by
+at most 5.7e-7. Positions, normals, UVs, indices, materials, the texture blocks and the node tree matched exactly, and the
+spawn kn5s were byte-identical. An md5 check would have called a correct rebuild a regression.
+
+- **The rule.** `python tools/kn5_equiv.py <a.kn5> <b.kn5> [--tol 1e-6]` exits 0 when the two files are byte-identical, or
+  differ only in tangents within the tolerance with every other byte identical.
+- **Merged vertices.** Where tangent noise moves the exporter's vertex merge (one corner left unmerged), that mesh is compared
+  corner by corner: the same triangles in order, each corner's position, normal and UV bit-identical.
+- **Textures.** A build that adds or drops embedded textures is named exactly ("textures only: added [...]") with the
+  materials and geometry still compared.
+- **Proven.** On v4 0.20.0 against its rebuilds: EQUIVALENT x5, byte-identical spawns. On 0.20.1 against 0.20.0, the road is
+  textures only (the ten house textures) and the rest EQUIVALENT. Tests: `tests/tools/test_kn5_equiv.py` (identity, tangent
+  noise, a real position or tangent change, added textures, a vertex left unmerged).
+- **Tolerance.** 1e-6 on unit tangent components; the noise measured is 2.4e-7 at most. ⚠ The tolerance is chosen, not
+  measured off a reference track. Gate OBJs and gate JSONs are still compared exactly.
+
+## 2026-11-03 — NEW GATE: `houses`, Lake Murray v4's blocks counted on the built road kn5 (ledger 0065)
+
+Kevin, 2026-11-03, to the PC: "Lake Murray v4 had many more houses I[n] it this time, don't lose those". v4 is the line
+("I prefer v4"), and its 7,600 blocks were stood by a step only `tools/ship_sd.sh` ran, under `SD_BESPOKE=1`; any full
+`tools/ship_track.sh` redraft would have rebuilt `loop.blend` with the assembler's old HOUSE / BUILDING boxes and passed every
+gate. Now the chain stands them (ship.json draft `bespoke`, where the rehearsal stood them) and this gate holds them.
+
+- **What it reads.** `tools/house_gate.py` on `build/<slug>.kn5` (L5: the artifact): every mesh by name class, counted as
+  connected shells (triangles joined through positions welded at 1 mm; the exporter splits vertices at every UV seam).
+  `roofs` = ROOFTOP_* shells, `blocks` = BUILDING_<skin> + FARBLOCK_<skin> shells, `colliders` = 1WALL_TILTUP shells.
+- **Thresholds.** Floors, per track, in `track.config.json scenery.bespoke.house_gate`; Lake Murray's are v4 0.20.0's own counts
+  (road kn5 55f2026c, counted on the PC): roofs 7,600, blocks 7,600 (6,239 near + 1,361 far), colliders 275. Not invented and not
+  a target: a count above passes. ⚠ The floor is calibrated on our own output by design — it guards what Kevin picked, it does not
+  judge whether 7,600 is the right number of houses.
+- **Wiring.** ship.json `steps.gate` after `house_seat`; hard (exit 1 stops the chain; `--force-install` does not cover it);
+  no floor declared = skipped (exit 0), so no other track changes.
+- **Proof.** `tests/tools/test_house_gate.py`: a split box is one shell; a fixture kn5 passes at its floor and fails with one
+  house (walls + roof) or one collider fewer; v4's counts pass, one fewer of any key fails. The counting rule matches v4: the
+  same weld on the 23 `AUTH_bespoke` batches of v4's `loop.blend` gives 7,600 / 6,239 + 1,361 / 275, the PC's numbers off the kn5.
+
+Not a gate, recorded with it: `tools/author_bespoke_blend.py` blocks take `rim_step_m` per group (default 1.0 m, ledger 0063's
+walk); Lake Murray declares 2.0 m, the walk v4's blocks were stood with. At 1.0 m the same plan on the same blend stands 7,601,
+a different set.
+
 ## 2026-11-03 — EXCLUSION: race kerbs leave the prep's 0020 carve (ledger 0020 Rule 1; Lake Murray v5 race, ledger 0065)
 
 `scripts/ac/build_kn5_loop.py`: 0020's Rule 1 deletes any 1KERB face whose centre stands more than 0.15 m inside a carriageway

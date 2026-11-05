@@ -14,6 +14,21 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
+## 2026-11-05 — circuit kerbs off NAIP 0.3 m: the measurer's invented numbers (ledger 0080; no gate threshold, no bypass)
+
+No gate threshold changed and nothing is bypassed; every gate runs as before on each rebuilt circuit. New ⚠ invented
+numbers, none a gate, all tuning of a colour measurer or a build profile (the image is the measurement):
+- `tools/kerb_spans.py` (measures each hand-checked span): `BAND_M` 2.5 (the band across the lane edge read), `OFF_STEP_M`
+  0.15 (half a 0.3 m pixel), `MIN_HITS` 2 (a station with fewer paint pixels says nothing about width), the paint classes
+  (blue B > R + 25 and B > G; red R > G + 25, R > B + 20, G < B + 25; white mean >= 150, spread <= 50, B >= R - 45;
+  yellow R > B + 45, G > B + 35, max >= 140), and the blue / yellow width read off the blue blocks alone (NAIP's stripe
+  yellow is the dry grass's colour).
+- `tools/author_kerbs_blend.py` `MIN_PAINT_W_M` 0.45 (a flat "paint" run narrower than ~1.5 px at 0.3 m is noise). A
+  "paint" run is built FLAT at the existing `KERB_LIP_M` (no height is seen in an image, so none is built), with the
+  existing back fall; "kerb" runs keep the config's `kerb.height_m` as before.
+- The spans themselves: a colour scan's run (blue or red >= 3 px in a 5 m window of the -2.5..+1.0 m edge band) less its
+  2 m window at each end, every span checked by eye on `tools/edge_sheet.py` zooms kept beside the trace.
+
 ## 2026-11-05 — DECLARED FORCE: Under the Dragon's Douglas Creek fill, s 2,395-2,410 (ledger 0078 round 13; no threshold moved)
 
 Kevin, 2026-11-05, asked whether to force Under the Dragon's last red row as measured: **"Yes, force it"**.

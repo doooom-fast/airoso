@@ -8,6 +8,10 @@ all), so no kerb stands in the lane and none floats. Cross-section, metres past 
 
     (0, KERB_LIP_M) -> (RAMP_IN_M, h) -> (w, h) -> (w + RAMP_OUT_M, -DROP_M)
 
+A run with "profile": "paint" (ledger 0080: flat edge stripes, e.g. High Plains' blue / yellow) is laid flat at the lip
+across w, then the same back fall: no height is seen in an image, so none is built. kerb.atlas (opt-in) maps each run's
+colour into its own u-cell of one 1KERB texture.
+
 the painted width w is the top; the back falls past it (round 4: a 0.6 m fall inside w read as one 0.12 m excursion
 drop on Nevada at s 300, the kerb's back between two 0.5 m probes).
 
@@ -39,6 +43,8 @@ RAMP_OUT_M = 1.0      # [invented] the fall at the back, past the paint: (h + DR
                       # drive_test's 0.12 m excursion step
 DROP_M = 0.05         # [invented] the back lands this far under the lane edge (into the edge strip / ground)
 MIN_W_M, MAX_W_M = 0.9, 2.0   # [invented] a traced paint width outside these is read as the reader's noise
+MIN_PAINT_W_M = 0.45  # [invented] a "paint" run (flat edge stripe, ledger 0080) narrower than this is read as 1-2 px of noise
+                      # at NAIP's 0.3 m; its top is the lip, flat: no height is seen in the image, so none is built
 STRIPE_M = 2.0        # one white + one colour stripe; racing kerbs are painted in ~1 m blocks
 PREFIX = "1KERB_circuit_"
 UV_LAYER = "KerbUV"   # not "UVMap": the prep's planar pass writes that one
@@ -60,6 +66,9 @@ def main():
         return
     K = json.loads((proj / rel).read_text(encoding="utf-8"))
     h = float((cfg.get("kerb") or {}).get("height_m", 0.08))
+    # kerb.atlas (opt-in, ledger 0080): {colour: [u0, u1]}, one texture holding each colour pair side by side, so runs of
+    # two paint schemes bind the one 1KERB row (High Plains: blue / white kerbs and blue / yellow edge stripes)
+    atlas = {k: tuple(v) for k, v in ((cfg.get("kerb") or {}).get("atlas") or {}).items() if not k.startswith("_")}
     data = proj / "data"
     local = json.loads((data / "centerline.local.json").read_text(encoding="utf-8"))
     cp = data / "connectors.local.json"
@@ -95,8 +104,14 @@ def main():
         if closed and (b - a) % rows > rows // 2:
             a, b = b, a
         span = [(a + i) % rows for i in range(((b - a) % rows if closed else b - a) + 1)]
-        w = max(MIN_W_M, min(MAX_W_M, float(run.get("out_m", 1.2)) - float(run.get("in_m", 0.0))))
-        prof = [(0.0, KERB_LIP_M), (RAMP_IN_M, h), (w, h), (w + RAMP_OUT_M, -DROP_M)]
+        paint = run.get("profile") == "paint"
+        w = max(MIN_PAINT_W_M if paint else MIN_W_M,
+                min(MAX_W_M, float(run.get("out_m", 1.2)) - float(run.get("in_m", 0.0))))
+        if paint:     # flat paint on the edge (ledger 0080): the lip across the painted width, then the same back fall
+            prof = [(0.0, KERB_LIP_M), (w, KERB_LIP_M), (w + RAMP_OUT_M, -DROP_M)]
+        else:
+            prof = [(0.0, KERB_LIP_M), (RAMP_IN_M, h), (w, h), (w + RAMP_OUT_M, -DROP_M)]
+        u0, u1 = atlas.get(run.get("colour"), (0.0, 1.0))
         verts, faces, uvs = [], [], []
         arc = 0.0
         prev = None
@@ -111,7 +126,8 @@ def main():
             prev = E
             for off, dz in prof:
                 verts.append((E.x + ox * off, E.y + oy * off, E.z + dz))
-                uvs.append((off / w, arc / STRIPE_M))
+                # an atlas cell holds its u inside [u0, u1] (the back fall past w stays in the cell); none: as before
+                uvs.append((u0 + (u1 - u0) * min(1.0, off / w) if atlas else off / w, arc / STRIPE_M))
         P = len(prof)
         for i in range(len(span) - 1):
             for p in range(P - 1):
@@ -127,7 +143,8 @@ def main():
                 uvl.data[li].uv = uvs[me.loops[li].vertex_index]
         ob = bpy.data.objects.new(f"{PREFIX}{k}", me)
         bpy.context.scene.collection.objects.link(ob)
-        report.append({"k": k, "side": run["side"], "rows": len(span), "length_m": round(arc, 1), "width_m": round(w, 2)})
+        report.append({"k": k, "side": run["side"], "rows": len(span), "length_m": round(arc, 1), "width_m": round(w, 2),
+                       "profile": "paint" if paint else "kerb", "colour": run.get("colour")})
     (data / "kerbs.built.json").write_text(json.dumps({"height_m": h, "runs": report}, indent=1), encoding="utf-8")
     print(f"[kerbs] {len(report)} kerb runs, {sum(r['length_m'] for r in report):.0f} m, height {h} m (config) on the lane "
           f"edge rows; saved loop.blend")

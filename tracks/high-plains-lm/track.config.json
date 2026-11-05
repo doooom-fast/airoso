@@ -3,7 +3,7 @@
   "archetype": "race_circuit",
   "name": "High Plains Raceway (LM engine)",
   "slug": "high_plains_lm",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "mirror_x": false,
   "loop": true,
   "default_width_m": 12.0,
@@ -25,7 +25,18 @@
     "height_m": 0.08,
     "width_m": 1.2,
     "top_frac": 0.6,
-    "edge_ramp": 0.4
+    "edge_ramp": 0.4,
+    "atlas": {
+      "blue_white": [
+        0.05,
+        0.45
+      ],
+      "blue_yellow": [
+        0.55,
+        0.95
+      ],
+      "_doc": "ledger 0080: the two paint schemes NAIP 2023 (0.3 m) shows, one texture (textures/kerb_atlas_hp.png, made by make_kerb_atlas.py); tools/author_kerbs_blend.py maps each run's u into its colour's cell"
+    }
   },
   "scenery": {
     "corridor_margin_m": 3.0,
@@ -1162,8 +1173,8 @@
       "_doc": "our own concrete in place of the Hamburg bytes"
     },
     "1KERB": {
-      "diffuse": "textures/kerb_bluewhite.png",
-      "_doc": "the kerb paint the aerial shows (blue and white), a flat two-band stripe (this port's own file). Keyed 1KERB, the row the traced kerbs (1KERB_circuit_*, tools/author_kerbs_blend.py) bind; not 1KERB_RACE, which the split routes to the race kn5 as race furniture"
+      "diffuse": "textures/kerb_atlas_hp.png",
+      "_doc": "the kerb paint the aerial shows: blue / white kerbs and blue / yellow edge stripes (ledger 0080), an atlas of two flat two-band stripes (this port's own file). Keyed 1KERB, the row the traced kerbs (1KERB_circuit_*, tools/author_kerbs_blend.py) bind; not 1KERB_RACE, which the split routes to the race kn5 as race furniture"
     }
   },
   "lm_intake": {

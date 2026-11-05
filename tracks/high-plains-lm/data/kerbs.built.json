@@ -4,86 +4,182 @@
   {
    "k": 0,
    "side": "left",
-   "rows": 8,
-   "length_m": 17.2,
-   "width_m": 1.75
+   "rows": 10,
+   "length_m": 22.3,
+   "width_m": 1.65,
+   "profile": "kerb",
+   "colour": "blue_white"
   },
   {
    "k": 1,
    "side": "left",
-   "rows": 13,
-   "length_m": 29.9,
-   "width_m": 1.25
+   "rows": 7,
+   "length_m": 18.0,
+   "width_m": 1.05,
+   "profile": "paint",
+   "colour": "blue_yellow"
   },
   {
    "k": 2,
    "side": "left",
-   "rows": 6,
-   "length_m": 15.0,
-   "width_m": 1.0
+   "rows": 4,
+   "length_m": 9.0,
+   "width_m": 0.45,
+   "profile": "paint",
+   "colour": "blue_yellow"
   },
   {
    "k": 3,
    "side": "left",
-   "rows": 11,
-   "length_m": 20.3,
-   "width_m": 1.25
+   "rows": 9,
+   "length_m": 24.1,
+   "width_m": 0.9,
+   "profile": "paint",
+   "colour": "blue_yellow"
   },
   {
    "k": 4,
    "side": "left",
-   "rows": 4,
-   "length_m": 9.2,
-   "width_m": 1.5
+   "rows": 13,
+   "length_m": 29.9,
+   "width_m": 1.65,
+   "profile": "kerb",
+   "colour": "blue_white"
   },
   {
    "k": 5,
    "side": "left",
-   "rows": 6,
-   "length_m": 13.1,
-   "width_m": 1.5
+   "rows": 13,
+   "length_m": 36.5,
+   "width_m": 1.05,
+   "profile": "paint",
+   "colour": "blue_yellow"
   },
   {
    "k": 6,
-   "side": "right",
+   "side": "left",
    "rows": 13,
-   "length_m": 30.0,
-   "width_m": 1.75
+   "length_m": 36.1,
+   "width_m": 0.75,
+   "profile": "paint",
+   "colour": "blue_yellow"
   },
   {
    "k": 7,
-   "side": "right",
-   "rows": 5,
-   "length_m": 9.5,
-   "width_m": 1.5
+   "side": "left",
+   "rows": 11,
+   "length_m": 20.3,
+   "width_m": 1.35,
+   "profile": "kerb",
+   "colour": "blue_white"
   },
   {
    "k": 8,
-   "side": "right",
-   "rows": 8,
-   "length_m": 18.4,
-   "width_m": 1.75
+   "side": "left",
+   "rows": 5,
+   "length_m": 12.2,
+   "width_m": 1.8,
+   "profile": "kerb",
+   "colour": "blue_white"
   },
   {
    "k": 9,
-   "side": "right",
-   "rows": 6,
-   "length_m": 11.0,
-   "width_m": 1.5
+   "side": "left",
+   "rows": 10,
+   "length_m": 23.7,
+   "width_m": 1.65,
+   "profile": "kerb",
+   "colour": "blue_white"
   },
   {
    "k": 10,
    "side": "right",
-   "rows": 21,
-   "length_m": 56.3,
-   "width_m": 1.5
+   "rows": 13,
+   "length_m": 36.1,
+   "width_m": 0.9,
+   "profile": "paint",
+   "colour": "blue_yellow"
   },
   {
    "k": 11,
    "side": "right",
+   "rows": 13,
+   "length_m": 30.1,
+   "width_m": 1.65,
+   "profile": "kerb",
+   "colour": "blue_white"
+  },
+  {
+   "k": 12,
+   "side": "right",
    "rows": 6,
-   "length_m": 12.7,
-   "width_m": 1.5
+   "length_m": 12.1,
+   "width_m": 1.65,
+   "profile": "kerb",
+   "colour": "blue_white"
+  },
+  {
+   "k": 13,
+   "side": "right",
+   "rows": 8,
+   "length_m": 18.4,
+   "width_m": 1.8,
+   "profile": "kerb",
+   "colour": "blue_white"
+  },
+  {
+   "k": 14,
+   "side": "right",
+   "rows": 8,
+   "length_m": 21.1,
+   "width_m": 0.9,
+   "profile": "paint",
+   "colour": "blue_yellow"
+  },
+  {
+   "k": 15,
+   "side": "right",
+   "rows": 7,
+   "length_m": 13.3,
+   "width_m": 1.65,
+   "profile": "kerb",
+   "colour": "blue_white"
+  },
+  {
+   "k": 16,
+   "side": "right",
+   "rows": 29,
+   "length_m": 79.0,
+   "width_m": 1.65,
+   "profile": "kerb",
+   "colour": "blue_white"
+  },
+  {
+   "k": 17,
+   "side": "right",
+   "rows": 8,
+   "length_m": 22.1,
+   "width_m": 1.05,
+   "profile": "paint",
+   "colour": "blue_yellow"
+  },
+  {
+   "k": 18,
+   "side": "right",
+   "rows": 8,
+   "length_m": 17.8,
+   "width_m": 2.0,
+   "profile": "kerb",
+   "colour": "blue_white"
+  },
+  {
+   "k": 19,
+   "side": "right",
+   "rows": 12,
+   "length_m": 32.9,
+   "width_m": 0.6,
+   "profile": "paint",
+   "colour": "blue_yellow"
   }
  ]
 }

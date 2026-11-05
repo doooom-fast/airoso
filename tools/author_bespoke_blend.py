@@ -614,7 +614,11 @@ def blocks(col, spec, proj, to_xy, ground, near_ground, paved, walls, bad):
                             hit = tree.find_nearest(Vector((x, y, mean + 1.0)), 30.0) if tree is not None else (None,)
                             if hit[0] is not None:
                                 clear = min(clear, float(hit[3]))
-                    if clear < BUILDING_CLEAR_M:
+                    # ledger 0079 round H (opt-in, a blocks group's building_clear_m; Sand Creek 0): the clearance a planned
+                    # building keeps from a road or wall. BUILDING_CLEAR_M is a circuit's run-off [invented]; on a street
+                    # port a real house stands 2-5 m from the kerb (Sand Creek round G: 12 measured houses dropped at
+                    # 0.4-2.6 m from the 1.8 m edge strip). A footprint ON the paved stays dropped (the test above)
+                    if clear < float(group.get("building_clear_m", BUILDING_CLEAR_M)):
                         why = f"{clear:.1f} m from a road or wall"
             if why:
                 (dropped if auto else bad).append(f"block {key}: {why}")

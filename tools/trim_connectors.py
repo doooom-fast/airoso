@@ -973,6 +973,12 @@ def build(project_dir):
                 # the 30 m ease starting only past it
                 if sj.get("weld_hold") == "overlap":
                     mo["weld_hold"] = "overlap"
+        # (opt-in street_junctions.weld_runon "mitre", ledger 0079 round H) every mouth's warp past its lines' mitres eases
+        # from the host deck AT each line's mitre (tools/mouth_weld.py runon_at_mitre): the projection of a vertex 15-20 m
+        # out onto a host that turns a corner near the mouth read the other leg's deck (grid_unclassified_67, 0.34 m)
+        if sj.get("weld_runon") == "mitre":
+            for mo in mouths:
+                mo["weld_runon"] = "mitre"
         # a median crossing (median_crossings) is a mouth at both ends: each end's weld eases over the piece's whole
         # length with no extra re-spread, so the two smoothsteps sum to one and every row lies between the two decks
         crossing_len = {c["name"]: _plan_len(c["points_xyz_m"]) for c in out if c.get("crossing")}

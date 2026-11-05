@@ -355,3 +355,68 @@ def test_round_g_keys_are_opt_in():
         sj = (cfg.get("route") or {}).get("street_junctions") or {}
         assert not {"merge_forks", "median_crossings", "weld_hold"} & set(sj)
         assert "arms" not in (cfg.get("lm_pads") or {})
+
+
+def test_weld_runon_reads_the_deck_at_the_mitre_not_a_far_projection():
+    """ledger 0079 round H: mouth_weld.weld_end(runon_at_mitre=True). A host whose deck reads 0.4 m lower for any point
+    more than 12 m out (the projection onto another leg of a cornering lap): the plain warp carries that drop into the
+    guest's rows 12-30 m out; the run-on from the mitre's own deck does not, and the end row is unchanged."""
+    import mouth_weld as mw
+
+    class Deck:
+        def at(self, x, z):
+            return 10.0 if z < 12.0 else 9.6
+
+        def edge_gap(self, x, z, side, inset):
+            return z - (5.0 - inset)
+
+    ln = {("road", lane): [(o, 10.0, 4.6 + 2.0 * j) for j in range(30)] for lane, o in ((0, -5.0), (1, 0.0), (2, 5.0))}
+    inset = {k: mw.OVERLAP_M for k in ln}
+    h = {k: 0.0 for k in ln}
+    plain = mw.weld_end(ln, Deck(), 1, inset, h)
+    run = mw.weld_end(ln, Deck(), 1, inset, h, runon_at_mitre=True)
+    for k in ln:
+        assert abs(plain["new"][k][0][1] - run["new"][k][0][1]) < 1e-9
+        assert max(abs(q[1] - 10.0) for q in run["new"][k]) < 1e-9
+        assert min(q[1] for q in plain["new"][k]) < 9.95
+
+
+def test_round_h_keys_are_opt_in():
+    """ledger 0079 round H: Lake Murray and the Lariat name none of the new keys"""
+    for t in ("san-diego-lake-murray", "lookout-lariat"):
+        p = ROOT / "tracks" / t / "track.config.json"
+        if not p.exists():
+            continue
+        cfg = json.loads(p.read_text(encoding="utf-8"))
+        r = cfg.get("route") or {}
+        assert "weld_runon" not in (r.get("street_junctions") or {})
+        assert "weld_exact_deck_lines" not in r
+        assert "verify_mouths_allowed" not in r
+        assert "connector_widths" not in (cfg.get("lm_intake") or {})
+        assert "connector_profiles" not in (cfg.get("lm_intake") or {})
+        for g in ((cfg.get("scenery") or {}).get("bespoke") or {}).get("blocks") or []:
+            assert "building_clear_m" not in g
+
+
+def test_intake_applies_a_measured_connector_profile_and_refuses_other_points():
+    """ledger 0079 round H: lm_intake.connector_profiles replaces the named streets' heights point by point, and stops
+    when the profile was measured on other points"""
+    import lm_engine_intake as li
+    src = {"connectors": [{"name": "a", "kind": "connector", "points_xyz_m": [[0.0, 1.0, 0.0], [3.0, 1.0, 0.0]],
+                           "widths_m": [8.0, 8.0]}]}
+    with tempfile.TemporaryDirectory() as td:
+        d = Path(td) / "data"
+        d.mkdir()
+        (d / "connectors.local.json").write_text(json.dumps(src), encoding="utf-8")
+        prof = {"connectors": {"a": {"xz": [[0.0, 0.0], [3.0, 0.0]], "y": [2.0, 2.5]}}}
+        (Path(td) / "p.json").write_text(json.dumps(prof), encoding="utf-8")
+        li.apply_connector_profiles(Path(td), "p.json")
+        out = json.loads((d / "connectors.local.json").read_text(encoding="utf-8"))["connectors"][0]["points_xyz_m"]
+        assert [p[1] for p in out] == [2.0, 2.5]
+        prof["connectors"]["a"]["xz"][0] = [0.0, 0.5]
+        (Path(td) / "p.json").write_text(json.dumps(prof), encoding="utf-8")
+        try:
+            li.apply_connector_profiles(Path(td), "p.json")
+            raise AssertionError("a profile measured on other points was applied")
+        except SystemExit:
+            pass

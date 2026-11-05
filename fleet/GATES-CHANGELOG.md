@@ -14,6 +14,33 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
+## 2026-11-05 (round H) — Sand Creek: the 8 mouths and 13 houses from measurement; one bypass, one gate reading (ledger 0079 round H)
+
+No threshold or floor moved (APPROACH_DG_PER_M 3 %/m ⚠ invented, MOUTH_TOL_M, LANE_TOL_M, NOTCH_TOL_M, the houses floor
+2,181: all as they were). All opt-in, Sand Creek only (`test_round_h_keys_are_opt_in`):
+
+- **A BYPASS: `route.verify_mouths_allowed`** (tools/verify_mouths.py). Three mouths named one by one, each with its reason:
+  `grid_primary_52#0` end (pad 48th_colorado parked), `grid_primary_78#0` end and `grid_primary_80#0` end (pad
+  sandcreek_quebec parked). Each is still measured and its row still FAILs; the gate's verdict ignores those three. A name
+  matching no mouth is an input error. The coordinator's call (2026-11-05: "the 3 mouths at the parked pads stay
+  allowed"). Remove a row when its pad is built. Evidence of what they read: ledger 0079 round H (h2: 52 one grass
+  sample in the host lane, 80 mouth line 0.07 m; 78 passes).
+- **A gate reading: `route.weld_exact_deck_lines`** (verify_mouths `HDx`). On a mouth already reading the host deck
+  exact (Lake Murray's `weld_exact_deck`, ledger 0054 P1, which did this for HOST LANE only), MOUTH LINE and NOTCH read
+  the host deck at each station off the host's triangles (its lowest road sheet on the mouth line) instead of its centre
+  extended level across. Evidence: `grid_tertiary_16` is not level across at the `grid_unclassified_10` crossroads (lidar
+  0.11 m over 9 m, built 0.09 m), and the level model read the host's OWN edge sheet 5-6 cm off "the host deck". Same
+  tolerances. On a level-across host the two readings are the same.
+- Numbers the round adds:
+  - ⚠ `tools/lidar_connector_profile.py` RADIUS_M 1.0 m and MIN_RETURNS 3 [invented]: the returns that make a street
+    point's lidar height (10-25 returns here).
+  - `lm_intake.connector_widths` `grid_unclassified_13` 10.0 m [measured lower bound]: NAIP + lidar 10-12 m at five
+    sections (the config's doc).
+  - `building_clear_m` 0 for Sand Creek's planned blocks: removes ⚠ BUILDING_CLEAR_M 3 m (a circuit's run-off) there; the
+    footprint-on-pavement test stays. `scenery.bespoke.names.paved` ROAD / 1ROAD only (Sand Creek has no sidewalks; its
+    CURB is the curb face + the ⚠ 1.5 m graded band).
+  - `weld_runon "mitre"`: no number.
+
 ## 2026-11-05 (round G) — Sand Creek: forks merged, acute welds held, pad arms, Quebec's crossing (ledger 0079 round G)
 
 No gate threshold or floor moved. One gate reads MORE: `verify_pads` (lm_pads' shape) now judges each pad-arm end row as a

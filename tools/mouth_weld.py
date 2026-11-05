@@ -318,7 +318,7 @@ class Line:
 # --------------------------------------------------------------------------------------------- the weld
 
 def weld_end(lines: dict, deck: HostDeck, side: int, inset: dict, h: dict, *, blend_m=BLEND_M,
-             remap_min=REMAP_MIN_M, extend_max=EXTEND_MAX_M, hold_overlap=False) -> dict:
+             remap_min=REMAP_MIN_M, extend_max=EXTEND_MAX_M, hold_overlap=False, runon_at_mitre=False) -> dict:
     """Mitre + warp the lines of ONE connector end.
 
     lines: key -> points END-FIRST (all the same row count); inset: key -> host-edge inset of that line's cut;
@@ -331,7 +331,16 @@ def weld_end(lines: dict, deck: HostDeck, side: int, inset: dict, h: dict, *, bl
     mitre, so every row up to the furthest mitre (arc max(u_x)) lies ON the host deck (extended level across its edge),
     and only past it does the smoothstep ease back to the line's own profile over blend_m:
         y = q_y + (host deck + h - q_y) x w,   w = 1 up to max(u_x), smoothstep(1 - (u - max(u_x)) / blend_m) past it.
-    Off (every other mouth): the warp above, measured from each line's own mitre, as before."""
+    Off (every other mouth): the warp above, measured from each line's own mitre, as before.
+
+    runon_at_mitre (opt-in, a mouth record's weld_runon "mitre": tools/trim_connectors.py street_junctions.weld_runon,
+    ledger 0079 round H): past a line's mitre (past the held length when hold_overlap) the host deck the warp eases from
+    is the deck AT that line's mitre (its point at the held length), extended level along the line, not the deck at each
+    vertex's own projection onto the host. The projection is read inside a window of host rows round the mouth, and
+    where the host turns a corner within it (Sand Creek: grid_unclassified_67 at the 48th / Colorado corner) a vertex
+    15-20 m out projected onto the OTHER leg, 0.34 m lower: a 0.1 m dip across the wheel line (verify_mouths APPROACH
+    3.1 %/m). On the host's pavement (at or before the mitre) the deck is read where the vertex lies, as before. No
+    number is added."""
     keys = list(lines)
     n = len(next(iter(lines.values())))
     if any(len(lines[k]) != n for k in keys):
@@ -352,6 +361,10 @@ def weld_end(lines: dict, deck: HostDeck, side: int, inset: dict, h: dict, *, bl
         ln = L[k]
         uJ = ln.u[J]
         y_end = ln.at(ux[k])[1]
+        run_deck = None
+        if runon_at_mitre:
+            qm = ln.at(u_hold if u_hold is not None else ux[k])
+            run_deck = deck.at(qm[0], qm[2])
         out = []
         for j in range(n):
             if j < J:
@@ -365,13 +378,15 @@ def weld_end(lines: dict, deck: HostDeck, side: int, inset: dict, h: dict, *, bl
                 s = u2 - u_hold
                 w = 1.0 if s <= 0.0 else smoothstep(1.0 - s / blend_m)
                 if w > 0.0:
-                    y = q[1] + (deck.at(q[0], q[2]) + h[k] - q[1]) * w
+                    dk = run_deck if (run_deck is not None and s > 0.0) else deck.at(q[0], q[2])
+                    y = q[1] + (dk + h[k] - q[1]) * w
                     K = max(K, j + 1)
             else:
                 s = u2 - ux[k]
                 w = smoothstep(1.0 - s / blend_m)
                 if w > 0.0:
-                    y = q[1] + (deck.at(q[0], q[2]) + h[k] - y_end) * w
+                    dk = run_deck if (run_deck is not None and s > 0.0) else deck.at(q[0], q[2])
+                    y = q[1] + (dk + h[k] - y_end) * w
                     K = max(K, j + 1)
             out.append((q[0], y, q[2]))
         new[k] = out

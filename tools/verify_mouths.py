@@ -262,7 +262,8 @@ def _d_outline(poly, x, z):
     return best
 
 
-def check_mouth(mo, field, host_path, piece_path, piece_end, data, exact_deck: bool = False, apron=None) -> dict:
+def check_mouth(mo, field, host_path, piece_path, piece_end, data, exact_deck: bool = False, apron=None,
+                exact_lines: bool = False) -> dict:
     fails = []
     cx, _cy, cz = mo["cut_xyz"]
     _d, c, _lat = host_path.project(cx, cz)
@@ -339,6 +340,19 @@ def check_mouth(mo, field, host_path, piece_path, piece_end, data, exact_deck: b
         r = field.heights(x, z)["ROAD"]
         return min(r) if r else None
 
+    def HDx(s):
+        # (opt-in route.weld_exact_deck_lines, ledger 0079 round H; only on a weld_exact_deck mouth) MOUTH LINE and NOTCH
+        # read the host deck at the sample's own station off the host's TRIANGLES (its lowest road sheet on the mouth
+        # line), not its centre extended level across: a street host is not level across where its own mouth's weld
+        # leans it onto its host's grade (Sand Creek grid_tertiary_16 20 m from grid_primary_33: lidar 0.11 m across
+        # 9 m, built 0.09 m), and there the level-across deck read the host's own edge 5-6 cm "off itself"
+        if not exact_lines:
+            return HD(s)
+        hh = host_path.frame(s)[3] / 2.0
+        x, z = host_path.point(s, side * (hh - MOUTH_INSET_M))
+        r = field.heights(x, z)["ROAD"]
+        return min(r) if r else HD(s)
+
     def steps(a, b, d):
         n = max(1, int(round((b - a) / d)))
         return [a + (b - a) * k / n for k in range(n + 1)]
@@ -346,7 +360,7 @@ def check_mouth(mo, field, host_path, piece_path, piece_end, data, exact_deck: b
     # MOUTH LINE
     ml = {"samples": 0, "fail": 0, "max_dev_m": 0.0, "no_road": 0, "worst": None}
     for s in steps(lo_s, hi_s, STEP_ALONG_M):
-        hd = HD(s)
+        hd = HDx(s)
         if hd is None:
             continue
         hhalf = host_path.frame(s)[3] / 2.0
@@ -406,7 +420,7 @@ def check_mouth(mo, field, host_path, piece_path, piece_end, data, exact_deck: b
     # NOTCH
     nt = {"samples": 0, "fail": 0, "max_dev_m": 0.0, "worst": []}
     for s in steps(nt_lo + CORNER_INSET_M, nt_hi - CORNER_INSET_M, STEP_ALONG_M):
-        hd = HD(s)
+        hd = HDx(s)
         if hd is None:
             continue
         hhalf = host_path.frame(s)[3] / 2.0
@@ -571,6 +585,8 @@ def check_mouth(mo, field, host_path, piece_path, piece_end, data, exact_deck: b
             "host_half_m": round(half, 2), "mouth_line": ml, "host_lane": hl, "notch": nt, "approach": ap,
             **({"host_lane_deck": "exact: the host's lowest road sheet at each sample (route.weld_exact_deck)"}
                if exact_deck else {}),
+            **({"mouth_line_notch_deck": "exact: the host's lowest road sheet on the mouth line at each station "
+                                         "(route.weld_exact_deck_lines)"} if exact_lines else {}),
             **({"apron": ap_rec} if ap_rec is not None else {}),
             "fails": fails, "fail": bool(fails)}
 
@@ -608,6 +624,10 @@ def verify(project: Path, obj: Path | None = None) -> dict:
     cfgp = project / "track.config.json"
     exact_prefixes = [str(x) for x in ((json.loads(cfgp.read_text(encoding="utf-8")).get("route", {})
                                         .get("weld_exact_deck") or []) if cfgp.exists() else [])]
+    # ledger 0079 round H (opt-in, Sand Creek): route.weld_exact_deck_lines true = MOUTH LINE / NOTCH on an exact-deck mouth
+    # read the host deck off its triangles too (check_mouth HDx); absent = as before
+    exact_lines = bool((json.loads(cfgp.read_text(encoding="utf-8")).get("route", {}).get("weld_exact_deck_lines"))
+                       if cfgp.exists() else False)
     field = Field(tris)
     rows = []
     for mo in mouths:
@@ -624,9 +644,25 @@ def verify(project: Path, obj: Path | None = None) -> dict:
         pp = Path2(smooth_xz([tuple(q) for q in piece["points_xyz_m"]]), piece["widths_m"])
         rows.append(check_mouth(mo, field, hp, pp, end, data,
                                 exact_deck=any(str(mo["connector"]).startswith(px) for px in exact_prefixes),
+                                exact_lines=exact_lines and any(str(mo["connector"]).startswith(px) for px in exact_prefixes),
                                 apron=next((a for a in aprons if a.get("piece") == mo.get("piece")
                                             and a.get("host") == mo["host"]), None)))
-    return {"obj": obj.name, "mouths": rows, "fail": any(r["fail"] for r in rows),
+    # ledger 0079 round H (opt-in route.verify_mouths_allowed, Sand Creek: the coordinator 2026-11-05): mouths named one
+    # by one (piece + end), each with its reason, still measured and still FAIL in their own rows, but not failing the
+    # gate: the mouths at pads parked by decision. A name that matches no mouth is an input error. Absent = as before
+    allowed = {}
+    cfg_va = ((json.loads(cfgp.read_text(encoding="utf-8")).get("route") or {}).get("verify_mouths_allowed") or []) \
+        if cfgp.exists() else []
+    for al in cfg_va:
+        allowed[(al["piece"], al["end"])] = str(al.get("why", ""))
+    unknown = sorted(set(allowed) - {(r["piece"], r["end"]) for r in rows})
+    if unknown:
+        raise LookupError(f"route.verify_mouths_allowed names no such mouth: {unknown}")
+    for r in rows:
+        if (r["piece"], r["end"]) in allowed:
+            r["allowed"] = allowed[(r["piece"], r["end"])]
+    return {"obj": obj.name, "mouths": rows, "fail": any(r["fail"] and "allowed" not in r for r in rows),
+            **({"allowed": [f"{p}#{e}" for p, e in allowed]} if allowed else {}),
             "thresholds": {"mouth_tol_m": MOUTH_TOL_M, "lane_tol_m": LANE_TOL_M, "lane_edge_m": LANE_EDGE_M,
                            "grass_at_m": GRASS_AT_M, "notch_out_m": NOTCH_OUT_M, "notch_tol_m": NOTCH_TOL_M,
                            "approach_m": APPROACH_M, "approach_dg_per_m_invented": APPROACH_DG_PER_M,
@@ -653,7 +689,8 @@ def main(argv=None) -> int:
               f"road/curb above max {m['host_lane']['max_above_m']} m, grass max {m['host_lane']['max_grass_m']} m "
               f"({m['host_lane']['samples']} samples); notch max {m['notch']['max_dev_m']} m; approach max "
               f"{100 * m['approach']['max_dg_per_m']:.2f} %/m over {WHEELBASE_M} m "
-              f"(1 m: {100 * m['approach']['max_dg_per_m_1m']:.2f}) — {'FAIL' if m['fail'] else 'PASS'}")
+              f"(1 m: {100 * m['approach']['max_dg_per_m_1m']:.2f}) — {'FAIL' if m['fail'] else 'PASS'}"
+              + (f" (ALLOWED: {m['allowed']})" if m.get("allowed") and m["fail"] else ""))
         for f in m["fails"]:
             print(f"    FAIL {f}")
     print(f"[verify_mouths] {len(r['mouths'])} mouth(s) on {r['obj']}: {'FAIL' if r['fail'] else 'PASS'} -> {out.name}")

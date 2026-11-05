@@ -568,9 +568,36 @@
           "width_m": 10.0
         }
       ],
-      "_median_crossings_doc": "ledger 0079 0.2.3 (coordinator 2026-11-05: NAIP shows Quebec's median paved where 48th / grid_unclassified_27 crosses it at (1656, 789), so pave it): OSM ends grid_unclassified_27 at the west carriageway's node (1649.2, 789.4) and starts grid_tertiary_65 at the east one's (1662.7, 789.4); no way joins them, so the 4 m between the two carriageway ribbons stayed grass. tools/trim_connectors.py median_crossings adds the straight crossing node to node, kept at any length and welded at both ends. width_m 10.0 [rule]: grid_tertiary_65's own width, the wider of the two streets it joins, so its edges meet both (NAIP reads the cross street's west approach about 15 m curb to curb, centred about 4 m south of OSM's line: the streets' OSM widths are short here, a wider question than this crossing). Also measured: the strip between Quebec's two OSM carriageway ribbons (grid_primary_6 / 7, 4-6 m, narrowing to 1-2.5 m south) reads asphalt or concrete on NAIP at 48 of 49 samples along 860 m, never planted: owed to Kevin, not built here"
+      "_median_crossings_doc": "ledger 0079 0.2.3 (coordinator 2026-11-05: NAIP shows Quebec's median paved where 48th / grid_unclassified_27 crosses it at (1656, 789), so pave it): OSM ends grid_unclassified_27 at the west carriageway's node (1649.2, 789.4) and starts grid_tertiary_65 at the east one's (1662.7, 789.4); no way joins them, so the 4 m between the two carriageway ribbons stayed grass. tools/trim_connectors.py median_crossings adds the straight crossing node to node, kept at any length and welded at both ends. width_m 10.0 [rule]: grid_tertiary_65's own width, the wider of the two streets it joins, so its edges meet both (NAIP reads the cross street's west approach about 15 m curb to curb, centred about 4 m south of OSM's line: the streets' OSM widths are short here, a wider question than this crossing). Also measured: the strip between Quebec's two OSM carriageway ribbons (grid_primary_6 / 7, 4-6 m, narrowing to 1-2.5 m south) reads asphalt or concrete on NAIP at 48 of 49 samples along 860 m, never planted: owed to Kevin, not built here",
+      "weld_runon": "mitre",
+      "_weld_runon_doc": "ledger 0079 round H: every mouth weld eases, past each lateral line's mitre, from the host deck AT that mitre (tools/mouth_weld.py runon_at_mitre), not from each vertex's projection onto the host: grid_unclassified_67's vertices 15-20 m out projected onto the lap's other leg at the 48th / Colorado corner (0.34 m lower), a 0.1 m dip across its wheel line (APPROACH 3.1 %/m). No number"
     },
-    "_street_junctions_doc": "ledger 0079 0.2.3 (Kevin 2026-11-05: \"Real junctions\"): tools/trim_connectors.py joins a street's OSM pieces where they end at one node and continue (turn <= join_turn_deg) or, two alone, bend (turn <= bend_turn_deg), then cuts every street-to-street meeting the lap and arterial passes did not: the through piece hosts, the other is cut at its pavement edge with a mouth (the ribbon-through topology every mouth here uses). Both angles [invented], but they sit in gaps of the data: Sand Creek's pairs turn 0-24 deg (straight) or 88-108 deg (bends) or 157-167 deg (forks), so any value in 25-87 / 109-156 makes the same joins (GATES-CHANGELOG 2026-11-05)"
+    "_street_junctions_doc": "ledger 0079 0.2.3 (Kevin 2026-11-05: \"Real junctions\"): tools/trim_connectors.py joins a street's OSM pieces where they end at one node and continue (turn <= join_turn_deg) or, two alone, bend (turn <= bend_turn_deg), then cuts every street-to-street meeting the lap and arterial passes did not: the through piece hosts, the other is cut at its pavement edge with a mouth (the ribbon-through topology every mouth here uses). Both angles [invented], but they sit in gaps of the data: Sand Creek's pairs turn 0-24 deg (straight) or 88-108 deg (bends) or 157-167 deg (forks), so any value in 25-87 / 109-156 makes the same joins (GATES-CHANGELOG 2026-11-05)",
+    "weld_exact_deck": [
+      "grid_tertiary_74",
+      "grid_unclassified_10#0",
+      "grid_residential_29"
+    ],
+    "weld_exact_deck_lines": true,
+    "_weld_exact_deck_doc": "ledger 0079 round H (Lake Murray's ledger 0054 P1 key, opt-in): these mouths weld onto, and verify_mouths reads, the host deck off the host's own triangles: the lens grid_tertiary_74 on grid_tertiary_1#1 (HOST LANE 0.038 m), grid_residential_29#2 on grid_residential_22 (0.021 m), the crossroads grid_unclassified_10 on grid_tertiary_16 (0.065-0.084 m). grid_tertiary_16 there is not level across: lidar 0.11 m over its 9 m (20 m from grid_primary_33, whose grade its own mouth weld leans it onto; built 0.09 m). weld_exact_deck_lines (Sand Creek only): MOUTH LINE / NOTCH on those mouths read the host deck the same way (verify_mouths HDx; no tolerance moved)",
+    "verify_mouths_allowed": [
+      {
+        "piece": "grid_primary_52#0",
+        "end": "end",
+        "why": "pad 48th_colorado parked (lm_pads.parked, ledger 0079 round D)"
+      },
+      {
+        "piece": "grid_primary_78#0",
+        "end": "end",
+        "why": "pad sandcreek_quebec parked (lm_pads.parked)"
+      },
+      {
+        "piece": "grid_primary_80#0",
+        "end": "end",
+        "why": "pad sandcreek_quebec parked (lm_pads.parked)"
+      }
+    ],
+    "_verify_mouths_allowed_doc": "ledger 0079 round H (coordinator 2026-11-05: the 3 mouths at the parked pads stay allowed; do not work on the parked pads): tools/verify_mouths.py still measures each and marks its row FAIL, but these three named mouths do not fail the gate (a BYPASS, fleet/GATES-CHANGELOG.md). Every other mouth fails it as before; a name that matches no mouth is an input error. Remove a row when its pad is built"
   },
   "loop": true,
   "default_width_m": 9.0,
@@ -632,7 +659,9 @@
             "HOUSE",
             "BUILDING"
           ],
-          "_source": "ledger 0079: Lake Murray's buildings pipeline over Sand Creek's surroundings (source/bespoke/buildings.plan.json): OSM way[building] (1,237, source/bespoke/osm_buildings.cache.json, 2026-11-04) + Microsoft GlobalMLBuildingFootprints (2,326 in the box, 1,213 where OSM has none; source/bespoke/msft_buildings.json, ODbL) -> tools/plan_buildings.py -> 2,321 planned. Heights: Microsoft's ML estimate on 2,153, OSM building:levels on 23, class default [invented] on 145; the NAIP shadow stage voted the camera's lean (no sun matches) and is unused. The lidar heights are owed (ledger 0079)"
+          "_source": "ledger 0079: Lake Murray's buildings pipeline over Sand Creek's surroundings (source/bespoke/buildings.plan.json): OSM way[building] (1,237, source/bespoke/osm_buildings.cache.json, 2026-11-04) + Microsoft GlobalMLBuildingFootprints (2,326 in the box, 1,213 where OSM has none; source/bespoke/msft_buildings.json, ODbL) -> tools/plan_buildings.py -> 2,321 planned. Heights: Microsoft's ML estimate on 2,153, OSM building:levels on 23, class default [invented] on 145; the NAIP shadow stage voted the camera's lean (no sun matches) and is unused. The lidar heights are owed (ledger 0079)",
+          "building_clear_m": 0.0,
+          "_building_clear_m_doc": "ledger 0079 round H (tools/author_bespoke_blend.py, opt-in): no clearance buffer between a planned house and the road beyond the footprint-on-pavement test. BUILDING_CLEAR_M 3 m [invented] is a circuit's run-off; round G dropped 12 real houses at 2.2-4.4 m from the ROAD edge (0.4-2.6 m from the edge band), each measured in ledger 0079 round H"
         }
       ],
       "grassfx_zones": {
@@ -688,15 +717,14 @@
         ],
         "paved": [
           "ROAD",
-          "CURB",
-          "1ROAD",
-          "1KERB"
+          "1ROAD"
         ],
         "walls": [
           "1WALL",
           "BARRIER"
         ],
-        "_doc": "the assembler's names at the author stage; the prep renames TERRAIN -> 1GRASS, ROAD -> 1ROAD, CURB -> 1KERB"
+        "_doc": "the assembler's names at the author stage; the prep renames TERRAIN -> 1GRASS, ROAD -> 1ROAD, CURB -> 1KERB",
+        "_paved_doc": "ledger 0079 round H (Kevin: \"don't lose those\"; Sand Creek has no sidewalks): a planned house is dropped ON the pavement only (ROAD), not on the CURB object, which here is the curb face and the engine's 1.5 m graded band [route.edge grade_w, invented]: osm_buildings316's warehouse wall touched that band beside grid_secondary_39 while the lidar's road surface ends 3-8 m short of it"
       },
       "prep_seats": true,
       "house_gate": {
@@ -934,7 +962,13 @@
     "heightfield": "port",
     "_heightfield_doc": "ledger 0079: the port's own 3DEP grid (data/heightfield.*, synced in): margin 470 m = 150 + 8 x 40 on the source's lattice (every one of the source grid's 5,400 samples is a sample of this one, 0.000 m apart), so the ground reaches the buildings within 450 m of the lap and the grid streets; fetched by scripts.elevation.heightfield.build_heightfield",
     "tree_models": true,
-    "_tree_models_doc": "ledger 0079: the source's TreeFX models (tracks/sand-creek/source/trees/*.bin, personal use, on the PC only) into the project"
+    "_tree_models_doc": "ledger 0079: the source's TreeFX models (tracks/sand-creek/source/trees/*.bin, personal use, on the PC only) into the project",
+    "connector_profiles": "source/connector_profiles.lidar.json",
+    "_connector_profiles_doc": "ledger 0079 round H (Kevin: \"I just want real\"): these streets take their heights from the lidar (tools/lidar_connector_profile.py: the road surface, ground + bridge deck returns, median within 1 m [invented radius] of each source point), not the 3DEP grid, which cannot hold a bridge or an embankment: grid_tertiary_5 crosses Sand Creek on a 60 m bridge (class 17 at 22.2 m; the grid dropped it 5 m into the creek bed: its lap mouth read 3.9 %/m), grid_primary_84 / grid_primary_78 climb onto the interstate bridge (class 17 at 29.3 m; the grid held them up to 4.25 m low: 8.6 %/m at their own mouth), grid_unclassified_67 (lidar - 3DEP -0.03..+0.43 m)",
+    "connector_widths": {
+      "grid_unclassified_13": 10.0
+    },
+    "_connector_widths_doc": "ledger 0079 round H (the Y, coordinator: pave the real gore as the aerial shows it): a street's width where NAIP shows OSM's short. grid_unclassified_13 leaves the Y node (899.5, -291.9) east, OSM 8 m; NAIP 2023 + lidar cross-sections at x 945, 960, 975, 1010, 1040 read 10-12 m curb to curb (north sidewalk / south curb rise); built at 10.0 m, the lower bound, which is also grid_tertiary_20's 10 m into the same node. At 8 m its edge stepped 1 m at the node, and grid_tertiary_5's end row (a 13 m chord at 18.7 deg) ran 0.14 m outside it: the ground showed through (verify_mouths NOTCH, 15 samples 7.6-9.4 m along)"
   },
   "terrain": {
     "terrain_band_m": 22.0,

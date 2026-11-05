@@ -113,6 +113,36 @@ def _max_grade(pts, over_m: float) -> float:
     return best
 
 
+
+def apply_connector_profiles(proj: Path, prof_p: str) -> list:
+    """ledger 0079 round H (opt-in lm_intake.connector_profiles): the named streets' heights measured off the lidar
+    (tools/lidar_connector_profile.py: the road surface, ground + bridge deck returns, at each source point) replace the
+    3DEP grid's in <proj>/data/connectors.local.json, which cannot hold a bridge or an embankment. Each point's plan
+    position must be the profile's own (the profile was measured on these points), else the run stops."""
+    data = proj / "data"
+    prof = json.loads((proj / prof_p).read_text(encoding="utf-8"))["connectors"]
+    cj = json.loads((data / "connectors.local.json").read_text(encoding="utf-8"))
+    done = []
+    for c in cj["connectors"]:
+        pr = prof.get(c["name"])
+        if pr is None:
+            continue
+        pts = c["points_xyz_m"]
+        if len(pr["y"]) != len(pts) or any(abs(p[0] - q[0]) > 0.01 or abs(p[2] - q[1]) > 0.01
+                                           for p, q in zip(pts, pr["xz"])):
+            raise SystemExit(f"[lm_intake] {prof_p}: {c['name']} was measured on other points; re-run "
+                             "tools/lidar_connector_profile.py")
+        dy = [y - p[1] for y, p in zip(pr["y"], pts)]
+        for p, y in zip(pts, pr["y"]):
+            p[1] = float(y)
+        done.append(f"{c['name']} ({min(dy):+.2f}..{max(dy):+.2f} m)")
+    missing = sorted(set(prof) - {c["name"] for c in cj["connectors"]})
+    if missing:
+        raise SystemExit(f"[lm_intake] {prof_p}: no such connector(s) {missing}")
+    (data / "connectors.local.json").write_text(json.dumps(cj), encoding="utf-8")
+    print(f"[lm_intake] connector heights off the lidar ({prof_p}): {', '.join(done)}")
+    return done
+
 def intake(proj: Path, *, connectors: bool | None = None) -> dict:
     cfg = json.loads((proj / "track.config.json").read_text(encoding="utf-8"))
     li = cfg.get("lm_intake") or {}
@@ -623,6 +653,22 @@ def intake(proj: Path, *, connectors: bool | None = None) -> dict:
         # run left would re-trim the OLD set: the fresh copy is the only source
         for suf in (".pre-trim", ".pre-divide", ".pre-route"):
             (data / ("connectors.local.json" + suf)).unlink(missing_ok=True)
+        if li.get("connector_profiles"):
+            apply_connector_profiles(proj, str(li["connector_profiles"]))
+        if li.get("connector_widths"):
+            # ledger 0079 round H (opt-in lm_intake.connector_widths {street: m}): a street's width measured off NAIP where
+            # OSM's is short (the config's doc carries the cross-sections); every point of the named street
+            cw = {str(k): float(v) for k, v in li["connector_widths"].items()}
+            cj = json.loads((data / "connectors.local.json").read_text(encoding="utf-8"))
+            seen = set()
+            for c in cj["connectors"]:
+                if c["name"] in cw:
+                    c["widths_m"] = [cw[c["name"]]] * len(c["points_xyz_m"])
+                    seen.add(c["name"])
+            if set(cw) - seen:
+                raise SystemExit(f"[lm_intake] lm_intake.connector_widths: no such connector(s) {sorted(set(cw) - seen)}")
+            (data / "connectors.local.json").write_text(json.dumps(cj), encoding="utf-8")
+            print(f"[lm_intake] connector widths measured: {cw}")
     else:
         # the lap alone: an EMPTY side-street set, so the assembler sweeps none and tools/weld_mouths_blend.py (the
         # mainline fold mend, ledger 0050) runs on the mainline alone — it reads both files

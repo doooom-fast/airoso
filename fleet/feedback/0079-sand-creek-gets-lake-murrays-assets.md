@@ -754,7 +754,208 @@ Lake Murray unchanged:
 - Its trim inputs through both trims are byte-identical.
 - Tests: 99 pass.
 
-## Owed (2026-11-05, after round G; start here)
+## Round H (Mac): the 8 mouths and the 13 houses, measured; 0.2.3 green (NOT installed)
+
+The coordinator's calls under "I just want real" (2026-11-05): every fix from measurement, all opt-in for Sand Creek. The
+Mac now reads the lidar too (CO_DRCOG_2_2020 EPT through laspy[lazrs] in a scratch venv; the repo's own fetch code).
+Workshop `sclm_work/h2` (empty, this head's code but the docs): **every gate green**.
+
+### Found on the way: round G's NAIP measures sat in a frame 0.44 % (north) / 0.14 % (east) off
+Round G's NAIP helpers (scratch, not committed) turned local metres into lon/lat with 111,320 x cos(lat) / 110,540 m per
+degree; the track's frame is `scripts.geometry.projection`'s WGS84 series (85,659 / 111,032 m here). At Quebec (789 m
+north, 1,650 m east) that is 3.5 m north and 2.3 m east. So:
+- "the cross street centred about 4 m south of OSM's line" (round G) was the frame: in the right frame 48th's west leg is
+  centred 0.6 m south of OSM's line (`source/stills/quebec_48th_h.jpg`).
+- Fork 94/95's `edges_m` (x about 849) sit about 1.2 m east of where they were meant, both edges the same way (the width
+  stands). 91/92 (x about 45) moves 0.06 m. Not re-measured this round (owed below).
+Every round H measure uses the track's own frame (`tools/lidar_connector_profile.py`; the scratch NAIP / lidar helpers).
+
+### The 8 mouths: all PASS (verify_mouths: 117 mouths, only the parked pads' fail)
+- **`grid_tertiary_5#0#0` at the lap (3.9 %/m): a bridge the grid could not hold.** The lidar has the street crossing
+  Sand Creek on a 60 m deck (class 17 at 22.2-22.3 m, 833-893 m from the Y); the 3DEP grid (40 m, read at 20 m) dropped it
+  5.0 m into the creek bed, and began the drop 7 m from the lap (13 % down: the 3.9 %/m). Measured ground beside the lap:
+  22.73 at the mouth, 22.25 at 27 m, flat. Built on the lidar's surface: approach 0.38 %/m.
+- **`grid_unclassified_67#0` at the lap (3.1 %/m): the weld, not the ground.** Lidar - 3DEP -0.03..+0.43 m along the
+  street, a smooth 0.6 m fall over 45 m. The fault was the weld: its warp eased each vertex toward the host deck read at
+  that vertex's own projection onto the lap, and 15-20 m out the projection jumped to the lap's other leg round the 48th /
+  Colorado corner (lap vertex 3199 -> 3213, 0.34 m lower): a 0.1 m dip across the wheel line. `mouth_weld.weld_end
+  (runon_at_mitre)`: past each lateral line's mitre the ease starts from the deck AT that mitre (on the host's pavement it
+  reads where the vertex is, as before). Opt-in `route.street_junctions.weld_runon "mitre"`, every Sand Creek mouth. Plus
+  the lidar profile. Approach now 0.43 %/m.
+- **`grid_primary_84#0#0` -> `grid_primary_78#0` (8.6 %/m, 2 grass samples): the interstate bridge.** Both carriageways
+  climb onto a deck (class 17 at 29.3 m); the grid held 78 up to 4.25 m low at its start and 84 dipped 1.3 m where the
+  real road climbs 5 %. Measured: 84 rises 24.2 -> 29.3 m over 120 m, 78 falls 29.6 -> 24.6 m. On the lidar both:
+  approach 0.95 %/m, no grass.
+  - The real ground nowhere changes grade faster than 3 %/m on these three (no flattening, no limit moved).
+- **The Y (`t5` at `t2`, 18.7 deg): the host's width stepped 1 m at the node.** The host there is two OSM ways joined:
+  `grid_tertiary_20` (10 m) into the node, `grid_unclassified_13` (8 m) out of it. The guest's end row is a 13 m chord at
+  18.7 deg; with the edge stepping 1 m at the node it ran 0.14 m OUTSIDE the host edge, and the ground showed through
+  (the 15 NOTCH samples, a 0.1 m sliver over 5.5 m). NAIP + lidar sections at x 945, 960, 975, 1010, 1040 read
+  `grid_unclassified_13` 10-12 m curb to curb, not 8. Built at 10.0 m (the measured lower bound; `lm_intake.
+  connector_widths`). The Y is then one paved surface (`source/stills/junction_y_t5_h.jpg`). Lake Murray's mouth fill
+  was tried first (k* = 1, 15 m2): its self-check refused a 2.9 % film triangle beside 0.7 % seams (+2 % [invented]), and
+  it was not kept.
+- **The lens `t74`, the crossroads `u10` at `t16`, `r29#2`: the guest now lies on the host's own triangles.** Lake
+  Murray's `route.weld_exact_deck` (ledger 0054 P1) for `grid_tertiary_74`, `grid_unclassified_10#0`,
+  `grid_residential_29`: the weld reads the host deck off the host's triangles. At the crossroads the host is not level
+  across, and that is real: lidar across `grid_tertiary_16` 20 m from `grid_primary_33` falls 0.11 m over 9 m (built
+  0.09 m: its own mouth's weld leans it onto 33's grade). verify_mouths read that host edge against its centre extended
+  level, so the host's OWN sheet was 5-6 cm "off itself". New opt-in `route.weld_exact_deck_lines` (Sand Creek only):
+  MOUTH LINE / NOTCH on an exact-deck mouth read the host's lowest road sheet on the mouth line at that station. No
+  tolerance moved (GATES-CHANGELOG). Results: lens HOST LANE 0.0 m (was 0.038), crossroads mouth line 0.004 / 0.002, notch 0.001 / 0.002
+  (was 0.065-0.084), `r29#2` HOST LANE 0.0 m, notch 0.027 (was 0.021 over).
+- Parked pads (allowed, not worked): `grid_primary_52` (HOST LANE 1 grass sample), `grid_primary_80` (as round G).
+  `grid_primary_78` at sandcreek_quebec now PASSES (on the lidar its approach is 2.33 %/m, was 4.77).
+- **The parked-pad allowance** (a BYPASS, GATES-CHANGELOG): `route.verify_mouths_allowed` names the three mouths one
+  by one; each is still measured and its row still FAILs, the gate does not. Without it the chain stopped at
+  verify_mouths before house_seat / houses / textures and before any install (round G's k4 too).
+
+### The 13 houses round G lost: 12 stand, 1 measured and still out (houses 2,182 / 2,182 / 0 against the 2,181 floor)
+Each footprint against the BUILT k4 road (1ROAD and the 1.8 m 1KERB edge strip, plan distance from the ring):
+| block | k4 rule | to ROAD edge | to the 1KERB strip | outcome |
+|---|---|---|---|---|
+| msft_buildings1214 | 2.4 m from a road | 2.41 m | 0.61 m | stands |
+| msft_buildings1341 | clearance | 2.70 | 0.90 | stands |
+| msft_buildings1565 | clearance | 2.59 | 0.79 | stands |
+| osm_buildings115 | 2.5 m from a road | 3.07 | 1.27 | stands |
+| osm_buildings127 | 2.9 m from a road | 4.38 | 2.58 | stands |
+| osm_buildings206 | 2.6 m from a road | 3.74 | 1.94 | stands |
+| osm_buildings219 | clearance | 2.52 | 0.72 | stands |
+| osm_buildings399 | clearance | 4.34 | 2.54 | stands |
+| osm_buildings691 | clearance | 4.04 | 2.24 | stands |
+| osm_buildings763 | clearance | 2.23 | 0.43 | stands |
+| osm_buildings793 | clearance | 3.70 | 1.90 | stands |
+| osm_buildings316 | on a road or kerb | 1.07 | 0.00 (touches) | stands |
+| osm_buildings1182 | relief 3.16 m (limit 2.64) | 26.5 | 24.7 | **still dropped** |
+- **The clearance rule** (`author_bespoke_blend` BUILDING_CLEAR_M 3.0 m [invented], "a wall this close to a road would
+  stand in the run-off") is a circuit's rule; measured as a 3D distance from 1 m over the ground it dropped houses 2.2-4.4 m
+  from the ROAD edge. Opt-in blocks key `building_clear_m` (Sand Creek 0): a footprint ON the pavement still drops.
+  It also stands round E's two clearance drops, `osm_buildings17` and `osm_buildings20` (1.5 / 1.1 m from a road).
+- **316** (a 20,359 m2 warehouse) touched the 1KERB strip beside `grid_secondary_39`. Lidar section at x 250: the
+  frontage road's low surface ends 3-8 m short of the wall (the strip between rises 0.4-0.8 m to the loading apron);
+  NAIP: the wall's shadow band. Sand Creek's names.paved is now ROAD / 1ROAD only (no sidewalks here; the CURB object is
+  the curb face and the 1.5 m [invented] graded band).
+- **1182 is real and still out.** A 46 x 9.5 m, 1.7 m-tall structure (lidar: 2,208 roof returns, class 1 all along it;
+  NAIP has a no-data stripe over it). Its own ground is flat (lidar 26.4-26.8 m; `lidar_roofs.json` ground 1,598.82 m).
+  Round G's terrain beside `grid_primary_49` stands as a 20 m plateau at the street's 31.3 m and then one 28 m facet down
+  through the footprint (built ground under the rim 26.35-29.51 m; round E's 26.35-27.46). The real thing there is a
+  retaining wall: lidar ground 27.5 m at x -1562, 31.8 m at x -1560. A rule fix would not be real: the ground is wrong.
+  Owed: the wall (lidar) or a finer verge, below.
+- house_seat PASS (lowest roof 1.26 m), textures 0 untextured.
+
+### Not built this round (measured; the next round's leads)
+- **Fork 91/92's island.** Lidar across the merged street at z -800 .. -836 (x 31-61): from the west gutter (27.45 m) the
+  carriageway crowns at 27.88 m (x 43-45), falls to 27.67 m at x 50; the NAIP concrete band is x 50.5-54.5 (4 m at
+  z -824), rising 27.72 -> 27.87 m across it; the top 27.93 m at x 55, then down 0.44 m in 2.5 m to the east carriageway
+  (27.38-27.45 m). So it stands over both sides (0.05-0.2 m over the west gutter, 0.4 m over the east), as a raised
+  island. Built: not yet. `divide_connectors` / `author_median_blend` make a GRASS-topped island centred on the trunk with
+  shrubs, at heights from the trunk's own pre-weld points; this one is concrete, off-centre (+3 m) and inside the lap
+  mouth's 30 m weld, so it needs an island authored on the welded road (heights read off ROAD) with a concrete deck.
+- **Quebec.** Lidar + NAIP sections at z 680, 720, 760, 840, 880, 940 (`xs` every 0.5 m, x 1634-1682): west curb about
+  x 1645.5, east curb about x 1677 (31-32 m); a RAISED median (about +0.1 m on 0.5 m bins, NAIP concrete-bright) at
+  x 1657.5-1664 (3.5-6 m wide; 0.5-12 m wide at 880-940 where turn bays open). It is NOT OSM's gap: OSM's two
+  carriageway centres are x 1649.5 / 1662.9 (9.5 m each), so the real median lies 2-6 m east of the strip between the
+  ribbons, inside OSM's east carriageway. Real carriageways: west about 12 m (1645.5-1657.5), east about 13-16 m. Not built:
+  it needs the two carriageways re-centred on measured edges over 860 m (merge_forks' edges_m, per station) and the
+  raised median of the measured width, through the 48th crossing. The cross street (48th) reads about 15 m (OSM 8 / 10).
+
+### Gates, BUILT kn5 (Mac, empty workshop `sclm_work/h2`)
+| gate | 0.2.2 (d6) | round G (k4) | **round H (h2)** |
+|---|---|---|---|
+| drive_test race / street | PASS: soft 0, severe 0, drops 0, kinks 1.24 /km | PASS, same | **PASS / PASS: soft 0, severe 0, drops 0 (1 far ledge), kinks 1.24 /km, bumps 0.31 /km, fold bumps 4** |
+| audit_mesh | CLEAN | CLEAN | **CLEAN** |
+| kn5_ground_check | PASS (199 heads) | PASS (198 heads, 172 lamps) | **PASS (198 heads, 0 orphans, 172 lamps)** |
+| verify_pads | PASS x3 | PASS x3 | **PASS x3 (seams 0.9-1.6 mm, multi-coverage 0, grass 0, curb 0)** |
+| verify_mouths | - | FAIL 11 / 117 | **PASS: 117 mouths; `grid_primary_52`, `grid_primary_80` (parked pads) FAIL in their rows, allowed** |
+| house_seat | PASS | PASS | **PASS (lowest roof 1.26 m)** |
+| houses | 2,214 / 2,215 / 0 | 2,168 / 2,168 / 0 FAIL | **2,182 / 2,182 / 0 PASS (floor 2,181)** |
+| textures | 0 | 0 | **0 untextured** |
+| kn5 | road 52.7 MB | 89.2 MB | **road 87.0, `_street` 6.8, spawn 0.002 x2: 93.8 MB** |
+h2 was built before the allowance: its chain stopped at verify_mouths on the two parked-pad mouths, as k4's did. With
+the allowance committed, verify_mouths, house_seat, houses and textures were re-run on h2 (`--from treefx`: every gate).
+
+Stills, NAIP 2023 (track frame) beside the BUILT h2 surface, `source/stills/`: `mouth_bridge_t5_lap_h`,
+`mouth_u67_lap_h`, `mouth_p84_p78_bridge_h`, `junction_y_t5_h`, `junction_lens_t74_h`, `junction_crossroads_u10_t16_h`,
+`junction_r29_r22_h`, `quebec_48th_h` and `fork_92_island_h` (both as built, unchanged: not built this round).
+
+Lake Murray unchanged: `git diff origin/claude/fleet-lm-engine -- tracks/san-diego-lake-murray scripts/` is empty; its
+committed trim inputs through fleet-lm-engine's trim and this branch's: byte-identical (`664da93b…`, `b73b70f4…`,
+`f0c97952…`). Tests: `tests/run_tests.py` with `python` on PATH: 1,297 pass, 6 fail in files and tools this round does not touch
+(`test_draft_equiv` x5, `test_registry_moves` x1; without `python` on PATH 5 more fail: `ship_track.sh` calls `python`).
+3 new: the run-on, the keys opt-in, the profile intake.
+
+## PC runbooks (round H)
+
+4j. **Sand Creek 0.2.3** (ledger 0079 rounds E-H). This build carries:
+   - the 106 grid streets welded into the lap, each other and three pads (rounds F-G), forks merged, Quebec's crossing;
+   - four streets on the lidar's surface (two bridges), `grid_unclassified_13` at its measured 10 m, the run-on weld;
+   - 2,182 houses (rounds E and H);
+   - verify_mouths in the gate list, the two parked-pad mouths allowed by name (`route.verify_mouths_allowed`).
+
+   It installs as `sand_creek_raceway_lm` 0.2.3, replacing 0.2.2. **Ask Kevin before installing.**
+   1. `git -C D:/k10-worktrees/sclm-assets fetch` and check out this round's head of `claude/sand-creek-lm-assets`.
+   2. Inputs, the same as step 4i: the four TreeFX `.bin` in `tracks/sand-creek/source/trees/`, ENG = the same plain copy
+      of `eng_repro`, the 12 asset md5s of 4g, `source/pads/*.json` da370cab's. New and committed:
+      `tracks/sand-creek-lm/source/connector_profiles.lidar.json` (the lidar job need not run).
+   3. Rehearse from an EMPTY workshop:
+      `SHIP_PROJ=D:/k10-scratch/sand_creek_lm_h_reh AIROSO=D:/k10-worktrees/sclm-assets ENG=D:/k10-scratch/eng_sclm_a bash tools/ship_track.sh sand-creek-lm --no-install`
+      Expect the Mac's h2:
+      - `[lm_intake] connector heights off the lidar ...: grid_tertiary_5 (-0.22..+5.02 m), grid_unclassified_67
+        (-0.03..+0.43 m), grid_primary_78 (-1.37..+4.25 m), grid_primary_84 (-1.29..+2.02 m)` and `connector widths
+        measured: {'grid_unclassified_13': 10.0}`;
+      - lm-pads decks filled 1647 / 477 / 883, unfilled 0; `[strip-seam] 3 pad outline(s), 636 points`, local scope 2 missed;
+      - `[lamps] drop_on_road: 3 draft post(s)` and 172 lamps;
+      - `[bespoke] ... 2182 buildings stood, 39 dropped (2 of them past 450 m)`, drop reasons 37 relief;
+      - drive_test both PASS: soft 0, severe 0, drops 0, far ledges 1, fold bumps 4, kinks 1.24 /km, bumps 0.31 /km;
+      - audit CLEAN; kn5_ground_check PASS (198 heads, 0 orphans); verify_pads PASS x3 (seams 0.9-1.6 mm);
+      - verify_mouths PASS: 117 mouths, `grid_primary_52#0` and `grid_primary_80#0` FAIL in their rows (ALLOWED);
+      - house_seat PASS (lowest roof 1.26 m), houses 2,182 / 2,182 / 0, textures 0 untextured;
+      - road kn5 87.0 MB, `_street` 6.8 MB; the PC plants TreeFX (the Mac has no `.bin`).
+      Anything else, stop and send the log to the Mac.
+   4. Install, with Kevin's word: the same command without `SHIP_PROJ` and `--no-install`. AC closed.
+   5. Stills, from the car, CSP daylight, into `tracks/sand-creek-lm/source/stills/<name>_drive_0.2.3.jpg`: the t5 bridge
+      off the lap (s 6,180 m of the race layout or wherever the lap passes 1,753 / -373), the Y (910 / -296), the
+      interstate bridge ramps (1,864 / -389).
+
+4k. **Shared tools A/B: Lake Murray and the Lariat rebuilt with this branch's tools** (no install). This branch changed
+   tools both other tracks run: `draft_pads`, `lm_pads_blend`, `strip_seam_blend`, `verify_pads`, `plan_buildings`,
+   `trim_connectors`, `mouth_weld`, `weld_mouths_blend` (rounds C-G), `seat_terrain_blend`, `author_lamps_blend`,
+   `lm_engine_intake`, `ship_track.sh` (round B), and round H's `mouth_weld` (run-on), `weld_mouths_blend`,
+   `trim_connectors`, `verify_mouths` (exact lines), `lm_engine_intake` (profiles, widths), `author_bespoke_blend`
+   (building_clear_m). Every change is behind a key neither track names (`test_round_*_keys_are_opt_in`).
+   1. Two worktrees: `D:/k10-worktrees/ab-origin` at `origin/claude/fleet-lm-engine`, `D:/k10-worktrees/ab-branch` at this
+      head. ENG: one plain copy of `eng_repro` each (never the live engine-july).
+   2. For each of `san-diego-lake-murray` and `lookout-lariat`, from EMPTY workshops:
+      `SHIP_PROJ=D:/k10-scratch/ab_<track>_<side> AIROSO=D:/k10-worktrees/ab-<side> ENG=<its copy> bash tools/ship_track.sh <track> --no-install`
+      (side = origin / branch), each log to a file.
+   3. Compare: every gate row the same; `md5sum` of each workshop's `build/*.kn5`, `data/connectors.local.json`,
+      `data/mouths.json`, `data/mouth_welds.json`, `data/pads.built.json` (where present) the same. The Mac's check
+      (trim only, Lake Murray): byte-identical, 664da93b / b73b70f4 / f0c97952.
+   4. Anything different: stop, send both logs and the differing file names to the Mac.
+
+## Owed (2026-11-05, after round H; start here)
+
+1. **Not built, measured (round H above):**
+   - **Fork 91/92's raised island** (x 50.5-54.5 at z -824, s 57 to the lap; lidar raised 0.05-0.2 m over the west
+     gutter, 0.4 m over the east). Lead: a Sand Creek island step after `weld_mouths` that authors a curb ring + a
+     CONCRETE deck on its own measured centreline with heights read off the welded ROAD (author_median_blend reads the
+     trunk's pre-weld points, centres the island on the trunk and plants grass + shrubs; none of that is this island).
+     Fork 94/95's chevrons: no grid-street paint path exists (Lake Murray's hatched median is `expansion_pieces.py`,
+     authored pieces only); owed as paint.
+   - **Quebec at measured widths**: west curb x 1645.5, raised median x 1657.5-1664, east curb x 1677 (at z 680-940); the
+     median sits inside OSM's east carriageway. Lead: Quebec's two carriageways merged (or re-centred) on measured
+     `edges_m` per station over 860 m plus a raised median band; the 48th crossing re-cut at the real median; 48th at
+     15 m.
+   - **Fork 94/95's `edges_m`**: re-measure in the track frame (round G's sit about 1.2 m east).
+2. **`osm_buildings1182`**: the terrain beside `grid_primary_49` (a 20 m plateau at the street's height, then one 28 m
+   facet) where lidar has a 4.3 m retaining wall at x -1561. Lead: the wall from lidar (`tools/lidar_wall.py` does it for a
+   lap edge) or a verge whose blend ends at seat_terrain's own BAND_M on a finer terrain. Then 1182 stands (2,183).
+3. **More streets on the lidar.** Four streets are; the rest still ride the 3DEP grid (any other bridge or embankment is
+   wrong the same way). `tools/lidar_connector_profile.py <project> <names>` measures any list; the Mac needs laspy.
+4. **The parked-pad allowance** (`route.verify_mouths_allowed`, 3 mouths): remove each row when its pad is built.
+5. Round G's items 4-5 and round F's / E's lists below, unchanged.
+
+## Owed (2026-11-05, after round G; kept for the record)
 
 1. **0.2.3: the 8 failing mouths** (reproduce: `EMPTY=1` from this head; k4 is the reference workshop):
    - **APPROACH** (`t5#0#0` at the lap 3.9, `u67#0` 3.1, `p84#0#0` -> `p78#0` 8.6 %/m): each street's 3DEP profile against

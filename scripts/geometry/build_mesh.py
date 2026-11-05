@@ -59,6 +59,19 @@ def corridor_row_height(row, lat, half_l, step_l):
     return z1 * (1 - to) + z2 * to
 
 
+def ribbon_cols(road_profile) -> int:
+    """Lateral columns for the road ribbon: road_profile.ribbon_cols when declared, else 1 (the two-edge ribbon).
+
+    A one-quad row twists wherever its two edges change height differently between rows. A camber ramp does that (Exotics
+    T2, 2026-10-28), and so does a curve on a grade, banked or not: the inside edge's rows bunch towards the turning centre
+    while every row still drops the centreline's full fall, so the quad's diagonal splits a near-vertical sliver off the
+    inside, and the drop it carries crosses the wheel paths as a step (Milford's s 1,000 left-hander on a 15 % descent: 26
+    severe steps up to 22 cm, ledger 0069). The key used to be honoured on a banked road only; it is now honoured wherever
+    it is declared. Every track that declared it before is banked (Exotics, Pikes Peak), so their ribbon is unchanged, and a
+    track without the key still builds the two-edge ribbon byte for byte."""
+    return max(1, int((road_profile or {}).get("ribbon_cols", 1)))
+
+
 def seam_weld_tables(deck_sheets, shoulder: dict, connector_tris=(), cell: float = 4.0) -> tuple[dict, dict]:
     """The seam weld's two pavement tables, (cell i, cell j) -> triangles, both on ``cell`` m plan cells.
 
@@ -1204,9 +1217,9 @@ def build(project_dir: str | Path) -> dict:
 
     # tile_m=8 m — the LA Canyons cracked-tarmac detail reads at its real scale (cracks crisp, not
     # stretched). The cracking is irregular enough to hide the repeat.
-    # road_profile.ribbon_cols: lateral columns for a banked road, so a camber ramp's twist doesn't
-    # sag the deck between rows (ribbon.road_ribbon). Banked only; absent = the old two-edge ribbon.
-    _cols = int((cfg_raw.get("road_profile") or {}).get("ribbon_cols", 1)) if bnk is not None else 1
+    # road_profile.ribbon_cols: lateral columns, so a row whose edges change height differently (a camber ramp, a curve on
+    # a grade) doesn't twist into a step between rows (ribbon.road_ribbon; ribbon_cols above). Absent = the two-edge ribbon.
+    _cols = ribbon_cols(cfg_raw.get("road_profile"))
     road = ribbon.road_ribbon(centerline, widths, tile_m=4.0, bank_at=bnk, cols=_cols)  # 4 m = the Lake Murray asphalt scale
     # ONE SHEET THROUGH JUNCTIONS: inside a flat zone every pavement vert snaps to the plane —
     # coplanar centerlines still left each leg's CAMBERED ribbon riding proud of the pad

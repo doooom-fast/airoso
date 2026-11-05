@@ -939,6 +939,19 @@ def build(project_dir):
         second, lg = rank_trim(second, mouths, deltas, capped=capped, keep_ends=arm_ends)
         rank_log += lg
     out = [c for c in first if c["name"] in hosts_set] + loops + second
+    for c in out:
+        if c.get("crossing"):
+            # a median crossing (median_crossings) is cut at both ends, each blended onto its own host over BLEND_M, so
+            # the second blend overwrote the first everywhere but its frozen cut: a 0.24 m step one row in (round G build
+            # k3). Its profile is the straight line between its two cuts (each on its host's deck): the weld then only
+            # lays each end row across its host
+            p = c["points_xyz_m"]
+            L_ = _plan_len(p) or 1.0
+            acc = 0.0
+            y0, y1 = p[0][1], p[-1][1]
+            for q in range(1, len(p) - 1):
+                acc += math.hypot(p[q][0] - p[q - 1][0], p[q][2] - p[q - 1][2])
+                p[q][1] = round(y0 + (y1 - y0) * acc / L_, 4)
     resolve_pieces(mouths, out)
     if sj:
         # an ACUTE mouth (a fork: one carriageway leaving another at 13-24 deg) needs its outer lateral lines run on along

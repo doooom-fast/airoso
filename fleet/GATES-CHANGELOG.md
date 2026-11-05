@@ -34,7 +34,26 @@ numbers the round adds, all opt-in (Sand Creek only):
   street's approach about 15 m: ledger 0079 round G).
 - `min_piece_m` 0 on the crossing piece alone: it is kept at any length. `MIN_PIECE_M` 15 m is unchanged for every
   other piece.
-- `weld_blend_m` (the piece's own length, measured) and `weld_remap_min_m` 0 on the crossing's two mouths.
+- `weld_blend_m` (the piece's own length, measured) and `weld_remap_min_m` 0 on the crossing's two mouths. The
+  crossing's profile is the straight line between its two cuts (no number).
+- **A WEAKENING: `verify_pads` P3 seam sampling stops `SEAM_END_EPS_M` 0.001 m short of each segment's far end.** Before,
+  `while k * 0.25 < L` sampled the row's own end vertex whenever a half row was a multiple of 0.25 m to the float.
+  Evidence (k3): an 8.00 m street's arm rows, half row 4.000 m.
+  - The sample sat on the row's end vertex, 0.02 m to either side. The deck side was 1ROAD_PAD.
+  - The street side was the street's own 1KERB lip at the same height (20.178 / 20.178 m at `grid_unclassified_17`).
+  - 0.001 m before the end, both sides are 1ROAD.
+  - The end vertex itself is still judged by P3's 1 mm vertex rule. A lap row (half rows never a 0.25 m multiple here)
+    reads exactly as before.
+- Arm seam fades:
+  - The fade ends at the lap's lane edge (the arm row's distance to the lap line less the half width). No number: the
+    lane is the lap's.
+  - ⚠ The fade's 0.5 m floor is [invented] (an arm row on the lane would otherwise get no fade; none is closer than
+    8.5 m here).
+- `arm_edges` walks a street's edge into the pad at the outline's own resample step, 0.75 m (`union_ribbon`'s
+  `STEP_M`). `union_arms` uses `union_ribbon`'s grid and smoothing (0.25 / 1.0 / 0.75 m). A street "on" a box edge is
+  `splice_rows`' 0.05 m.
+- The houses floor (2,181) is NOT moved. Round G stands 2,168 (13 blocks against the new streets, measured in ledger 0079
+  round G); the call is Kevin's.
 
 ## 2026-11-05 (round F) — Sand Creek: street-to-street junctions, the numbers they need (ledger 0079 round F; no gate changed)
 

@@ -31,6 +31,7 @@ RASTER_PHASE_M = 0.137    # the raster's offsets off the whole metre in x / z, u
 RASTER_PHASE_Z_M = 0.311  # interior grid, its vertices, its edges or its diagonals)
 SHEET_DZ_M = 0.25         # [invented] two road sheets closer than this vertically over one point = multi-coverage
 SEAM_STEP_M = 0.25        # [invented] seam sampling step
+SEAM_END_EPS_M = 0.001    # a seam sample this close to a segment's far end is that end vertex (judged by P3's 1 mm rule)
 SEAM_GAP_M = 0.010        # EXPANSION-PLAN V3: seam gap <= 10 mm
 NEAR_LO_M, NEAR_HI_M = 0.001, 0.05   # JUNCTIONS rule 3: nothing between 1 mm and 5 cm of a seam vertex
 GRASS_OVER_M = 0.005      # [invented] grass this far over the deck is on top of it
@@ -216,7 +217,10 @@ def verify(project):
                 tx, tz = (B[0] - A[0]) / L, (B[2] - A[2]) / L
                 nx, nz = -tz, tx
                 k = 1
-                while k * SEAM_STEP_M < L:
+                # strictly inside the segment: a seam vertex itself is judged by the 1 mm rule above, and a sample landing
+                # ON a row's end vertex (a street row of exactly 4.000 m a side, ledger 0079 round G) reads the street's
+                # own edge strip beside it, not a hole (GATES-CHANGELOG 2026-11-05 round G)
+                while k * SEAM_STEP_M < L - SEAM_END_EPS_M:
                     u = k * SEAM_STEP_M
                     mx, mz = A[0] + tx * u, A[2] + tz * u
                     hs_l = [h for h, n in F.at(mx + nx * 0.02, mz + nz * 0.02) if n.startswith("1ROAD")]

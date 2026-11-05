@@ -619,11 +619,15 @@ def build(proj, cfg, decls):
         prof = dp.seam_profile([(cr, row) for _, cr, row in cuts_rows], lambda x_, y_: dp.deck_near(rec["deck"], x_, y_))
         for _c, cr, row in arm_rows:
             # an arm's fade: seam_profile's own rule (as long as its departure needs at SEAM_MAX_SLOPE, from SEAM_FADE_M),
-            # up to 45 % of the way to the node, as the lap's two cuts are held to 45 % of the way to each other
+            # up to 45 % of the way to the node, as the lap's two cuts are held to 45 % of the way to each other; and never
+            # onto the lap's own lane, whose seams the lap's two rows rule (round G build k2: 50th_ash's arm, 8.5 m off the
+            # lane, faded over 12 m added 3 kinks to the lap at s 549-552)
             pa_ = dp.seam_profile([(cr, row)], lambda x_, y_: dp.deck_near(rec["deck"], x_, y_))[0]
             need = max(abs(r) for r in pa_["r"]) * math.pi / (2.0 * dp.SEAM_MAX_SLOPE)
             mid_ = ((row[0][0] + row[-1][0]) / 2.0, (row[0][1] + row[-1][1]) / 2.0)
-            pa_["fade"] = max(dp.SEAM_FADE_M, min(need, 0.45 * math.dist(mid_, P[d["node"]])))
+            lane_d = min(math.dist(v[:2], P[k]) - W[k] / 2.0 for v in row for k in range(lo_k, hi_k + 1))
+            pa_["fade"] = min(max(dp.SEAM_FADE_M, min(need, 0.45 * math.dist(mid_, P[d["node"]]))), max(lane_d, 0.5))
+            pa_["lane_clear_m"] = round(lane_d, 2)
             pa_["lateral"] = True
             prof.append(pa_)
         s_off = dp.seam_offset_multi if arm_rows else dp.seam_offset

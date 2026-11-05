@@ -665,9 +665,124 @@ Lariat name none of the keys (a test pins it).
   `test_ship_track_chain`, `test_trim_connectors` pass. Lake Murray's committed trim inputs through fleet-lm-engine's
   trim and this branch's: byte-identical (`664da93b…`, `b73b70f4…`, `f0c97952…`).
 
-### The build (Mac, empty workshop `sclm_work/k2`)
+### The builds (Mac, empty workshops `sclm_work/k2`, `k3`, `k4`): NOT 0.2.3, verify_mouths red
 
-(in progress; see below when written)
+0.2.2 (f6dd8a63) stays the build of record. Each build fixed what the one before it found.
+- **k2** stopped at verify_pads.
+  - P3 holes at four arm row ends.
+  - 50th_dahlia's two streets (`grid_unclassified_0`, `grid_tertiary_44`) end ON its box edge in the grid's own data (2-4 mm
+    off it). Trim had stretched them on to the lap, so they stood under the deck (P2 128.5 m², P4, P5).
+  - The arm seams faded 12 m and added 3 kinks to the lap at 50th/Ash (1.56 /km).
+- Fixed in `lm_pads_blend` / `trim_connectors` (all inside the opt-in paths):
+  - **An arm short of the measured asphalt.** colorado_50th's lidar outline stops 3-8 m short of the box edge at
+    `grid_unclassified_10` and `_76`. The street's own ribbon to the measured ring is united in (`union_arms`, on
+    `union_ribbon`'s grid and numbers), and the arm row is its splice line.
+  - **Arm row lines** are drawn over the row's own span. At 30 m, `grid_primary_15`'s row line took
+    `grid_unclassified_10`'s row end out of the outline.
+  - **The deck corner beside each arm row is square** (`arm_edges`: `ribbon_edges` for a street, walked at the outline's
+    own 0.75 m step).
+  - **A street that ends on a box edge is an arm as it stands** (cut_at_pads; "on" = splice_rows' own 0.05 m).
+  - **Lap faces are found by the assembler's layout index** (ROAD / CURB), the lateral test kept for the paint. The lap
+    face counts are then exactly 0.2.2's: 92/264, 88/264, 88/264.
+  - **An arm's seam fade stays off the lap's lane:** it ends at the lane edge (kinks back to 1.24 /km).
+- **k3:** verify_pads still read a hole at three arm row ends. Each is a sample landing exactly ON the row's end vertex:
+  an 8.00 m street's half row is 4.000 m, a multiple of the 0.25 m step. There the street side is its own 1KERB lip at
+  the same height. `verify_pads` now samples strictly inside each segment (1 mm; GATES-CHANGELOG, a weakening): PASS x3.
+  - verify_mouths then failed at the Quebec crossing: a 0.24 m step one row in. Trim's two 30 m blends (one per end)
+    overwrote each other. The crossing's profile is now the straight line between its two cuts.
+- **k4** (head of this round): every gate as below. verify_mouths is red at 8 mouths outside the parked pads.
+
+| gate | 0.2.2 (d6) | round E (d7) | **round G (k4)** |
+|---|---|---|---|
+| drive_test race / street | PASS: soft 0, severe 0, drops 0, kinks 1.24 /km, bumps 0.31 /km, far ledges 1, fold bumps 4 | as 0.2.2 | **PASS / PASS: soft 0, severe 0, drops 0, kinks 1.24 /km, bumps 0.31 /km, far ledges 1, fold bumps 4** |
+| audit_mesh | CLEAN | CLEAN | **CLEAN (I 0, K 0)** |
+| kn5_ground_check | PASS (199 heads, 0 orphans) | PASS | **PASS (198 heads, 0 orphans; 172 lamps)** |
+| verify_pads | PASS x3 | PASS x3 | **PASS x3** (seams 0.9-1.6 mm, multi-coverage 0, grass 0, curb 0; 8 arm rows in) |
+| verify_mouths | - | - | **FAIL: 11 of 117** (3 at parked pads, 8 others, below) |
+| house_seat | PASS | PASS | PASS (lowest roof 1.26 m) |
+| houses (roofs / blocks / colliders) | 2,214 / 2,215 / 0 | 2,181 / 2,181 / 0 | **2,168 / 2,168 / 0: FAIL against the 2,181 floor** (below) |
+| textures | 0 untextured | 0 | 0 untextured |
+| kn5 | road 52.7, `_street` 1.7 MB | | **road 82.7, `_street` 6.5, spawn 0.002 x2 MB: 89.2 MB** (under 120) |
+
+**verify_mouths (k4), the 11 failing of 117:**
+- At parked pads (allowed): `grid_primary_52` (48th_colorado: HOST LANE grass, NOTCH); `grid_primary_78` (sandcreek_quebec:
+  APPROACH 4.8 %/m); `grid_primary_80` (sandcreek_quebec: MOUTH LINE / HOST LANE / NOTCH up to 0.07 m).
+  `grid_primary_49` and `grid_tertiary_98` pass.
+- The 8 others:
+  - `grid_tertiary_5#0#0` (end) -> MAINLINE: APPROACH 3.9 %/m.
+  - `grid_unclassified_67#0` -> MAINLINE: APPROACH 3.1 %/m.
+  - `grid_primary_84#0#0` -> `grid_primary_78#0` (arterial / arterial): APPROACH 8.6 %/m, 2 grass samples at the road.
+  - `grid_tertiary_5#0#0` (start) -> `grid_tertiary_2#0` (the Y, 18.7 deg, held): NOTCH 15 / 109 samples with no road
+    7.6-8.1 m along the host edge.
+  - `grid_tertiary_74#0` (start) -> `grid_tertiary_1#1` (the lens, 24 deg, held): HOST LANE 185 samples with road / curb
+    0.02-0.038 m over the host deck. Its other end passes.
+  - `grid_unclassified_10#0#0` / `#0#1` -> `grid_tertiary_16#0#0` (a crossroads, 70 / 77 deg): MOUTH LINE / NOTCH up to
+    0.07 m, HOST LANE 0.084 m.
+  - `grid_residential_29#2` -> `grid_residential_22` (26.6 deg, not held: its reach is under 25 m): HOST LANE 3 samples at
+    0.021 m (limit 0.02).
+- Passing: the two forks' lap mouths, the Quebec crossing's two mouths, the lens's other end, and every other
+  street-to-street mouth.
+- Round B's list was "verify_mouths 11 -> 0 apart from the parked pads"; here 8 remain. They are owed (below).
+
+**houses 2,168 (13 fewer than round E), measured.** The planner, footprints and floor are unchanged. The 13 blocks round E
+stood and k4 drops (`[bespoke]`: within BUILDING_CLEAR_M of a road or wall) sit against the streets now built. Each
+footprint against the nearest street ribbon (connector centreline +- half width):
+- **INTO the ribbon: 5.**
+  - `osm_buildings219`: 1.3 m into `grid_primary_11`.
+  - `osm_buildings763`: 1.1 m into `grid_primary_11`.
+  - `msft_buildings1341`: 0.7 m into `grid_residential_34`.
+  - `osm_buildings206`: 0.2 m into `grid_primary_11`.
+  - `osm_buildings316`: 0.1 m into `grid_secondary_39`.
+- **0.8-1.2 m off the edge, inside the street's 1.8 m strip: 3.** `osm_buildings115`, `_691`, `_127`.
+- **3.2-4.7 m off: 4.** `msft_buildings1214`, `_1565`, `osm_buildings399`, `_793`.
+- **Not explained: 1.** `osm_buildings1182`, 23.8 m from any street.
+
+A building on a real street is not real, but a 0.1-1.3 m overlap is also within OSM's street widths, which round G found
+short at the forks and on Quebec. **The floor is NOT moved here** (Kevin / the coordinator: lower it to 2,168 on this
+evidence, or measure those streets' widths first).
+
+Stills, NAIP 2023 beside the BUILT k4 road (`source/stills/`):
+- `junction_fork_92_k4.jpg`: the fork as one street.
+- `junction_y_t5_k4.jpg`: the Y.
+- `junction_minor_x_47_29_k4.jpg`: minor / minor.
+- `junction_arterial_84_78_k4.jpg`: arterial / arterial.
+- `pad_colorado_50th_arms_k4.jpg`: the pad with its five arms.
+- `junction_quebec_crossing_k4.jpg`: Quebec's crossing.
+
+Lake Murray unchanged:
+- `git diff origin/claude/fleet-lm-engine -- tracks/san-diego-lake-murray scripts/` is empty.
+- Its trim inputs through both trims are byte-identical.
+- Tests: 99 pass.
+
+## Owed (2026-11-05, after round G; start here)
+
+1. **0.2.3: the 8 failing mouths** (reproduce: `EMPTY=1` from this head; k4 is the reference workshop):
+   - **APPROACH** (`t5#0#0` at the lap 3.9, `u67#0` 3.1, `p84#0#0` -> `p78#0` 8.6 %/m): each street's 3DEP profile against
+     its host's deck within 30 m. These are round B's "approaches that change grade too fast", and the 3 %/m is
+     [invented]. Read each profile first: a real grade change, or 3DEP noise the lidar can replace (the lidar is on the
+     PC).
+   - **The Y** (`t5#0#0` at `t2#0`, 18.7 deg): its NOTCH has no road 7.6-8.1 m along the host edge. Look at the mitred
+     outer line there (extend reach vs the host edge's bend).
+   - **The lens** (`t74#0` start): HOST LANE road / curb up to 0.038 m over the host deck although held. Find which
+     vertices (the curb lines' mitres, or later steps moving the host).
+   - **`u10#0#0` / `#0#1` at `t16#0#0`:** a crossroads, both mouths 0.065-0.084 m off the host deck. `grid_unclassified_10`
+     is also colorado_50th's arm: check whether the arm cut or the join changed `t16`'s profile there.
+   - **`r29#2`** (26.6 deg, 0.021 m in 3 samples): either hold it too (every acute mouth, not only reach > 25 m) or find the
+     1 mm.
+2. **The houses floor** (2,168 vs 2,181): Kevin / the coordinator. The 13 are measured in round G.
+3. **Kevin's calls from round G's measurements:**
+   - **91/92's concrete island** (s 57 to the lap, 3.5-4 m, raised by its brightness): pave over it (as now) or build an
+     island. Neither fork's chevrons are painted; that needs a paint step for grid streets.
+   - **Quebec's median strip:** 4-6 m between the OSM carriageways, asphalt or concrete at 48 of 49 samples over 860 m.
+     Widen the two carriageways to the measured curb-to-curb (about 31 m at 48th), or build the strip as concrete.
+   - **The cross street's width** at Quebec: about 15 m on NAIP, 8 / 10 m from OSM.
+4. **When 0.2.3 is green:** ledger 0078's runbook 4j (install over 0.2.2, the PC asks Kevin first) and the one shared-tool
+   A/B runbook. This branch changed these shared tools since fleet-lm-engine:
+   - `draft_pads`, `lm_pads_blend`, `strip_seam_blend`, `verify_pads`, `plan_buildings`, `trim_connectors`, `mouth_weld`,
+     `weld_mouths_blend`;
+   - also `seat_terrain_blend`, `author_lamps_blend`, `lm_engine_intake`, `ship_track.sh` (round B).
+   Not written: the build is not green.
+5. Round F's items 2, 4 and the round-E list below, unchanged.
 
 ## Owed (2026-11-05, after round F; in the coordinator's order)
 

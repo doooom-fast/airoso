@@ -1,29 +1,34 @@
 {
   "name": "Sand Creek Raceway",
   "slug": "sand_creek_raceway",
-  "version": "0.30.1",
+  "version": "0.33.0",
   "mirror_x": false,
   "osm_road_widths": true,
   "_osm_road_widths_doc": "Real street circuit — after the project stage, scripts.gps.widths_from_osm map-matches each centerline vertex to its OSM way and sets curb-to-curb widths from lanes (arterials ~2x a side street) + writes intersection pads at the real junctions. Racetracks (defined widths) leave this off.",
   "capture": {
-    "_doc": "Sand Creek is a ROAD circuit stitched from real Commerce City streets, so its elevation is the REAL road-surface profile: USGS 3DEP sampled ALONG the real street centerline (3 m spacing), median-despiked + smoothed into a launch-free longitudinal grade, with the terrain conforming DOWN to that road. The phone's GPS/baro altitude is NOT used — it is too noisy on flat terrain and injected fake metre-scale bumps (56th/45th/Sand Creek Dr) and a phone-fell dip (~idx 1240); use_elevation=false ignores it. Captured TEXTURES and lateral evidence in realworld_capture.json ARE still consumed (do not delete the file). 'bridges' is RETAINED: evidence.level_bridge_decks uses it to hold a LEVEL deck (geometry only, no phone) over the two real Sand Creek crossings where bare-earth 3DEP dives into the creek bed — E 56th over Sand Creek (station ~2485, bare earth dips ~7 m) and Quebec over Sand Creek (station ~5950, ~6 m); both also get visual parapets/piers from build_env._creek_bridge. 'bridges' = [{center_m, len_m}] in lap-station metres.",
+    "_doc": "Sand Creek is a ROAD circuit stitched from real Commerce City streets, so its elevation is the REAL road-surface profile: USGS 3DEP sampled ALONG the real street centerline (3 m spacing), median-despiked + smoothed into a launch-free longitudinal grade, with the terrain conforming DOWN to that road. The phone's GPS/baro altitude is NOT used — it is too noisy on flat terrain and injected fake metre-scale bumps (56th/45th/Sand Creek Dr) and a phone-fell dip (~idx 1240); use_elevation=false ignores it. Captured TEXTURES and lateral evidence in realworld_capture.json ARE still consumed (do not delete the file). 'bridges' is RETAINED: evidence.level_bridge_decks uses it to hold a LEVEL deck (geometry only, no phone) over the two real Sand Creek crossings where bare-earth 3DEP dives into the creek bed — E 56th over Sand Creek (station ~2415 on the 0.33.0 OSM line, ~2485 on the old KML line; bare earth dips ~7 m) and Quebec over Sand Creek (station ~5887, was ~5950; ~6 m); both also get visual parapets/piers from build_env._creek_bridge. 'bridges' = [{center_m, len_m}] in lap-station metres. FRAMES (ledger 0068): level_bridge_decks reads center_m/len_m along the DRAFT line (centerline.local.json), drive_test, kn5_ground_check, build_mesh's lip exemption and tools/lidar_crossfall along the FINISHED line (data/finished_centerline.json), which is 14 m shorter by the E 56th bridge and 19 m by E 45th; the other two crossings were declared before that was known. An optional profile_m [[metres from the bridge's start (center_m - len_m / 2) along the finished line, absolute height in the 3DEP datum = y + origin elev_m], ...] lays a MEASURED deck on the finished line in place of the straight crest-to-crest grade (evidence.apply_deck_profiles), eased back to the road over profile_ramp_m at each end.",
     "use_elevation": false,
     "bridges": [
       {
         "name": "e56th_over_sand_creek",
-        "center_m": 2485,
-        "len_m": 100
+        "center_m": 2415,
+        "len_m": 118,
+        "_span_doc": "0.33.0 (ledger 0073): re-keyed by position onto the OSM line: the deck's start (2,404 m on the 0.31.1 finished line) is 2,356 m on the new finished line, so center_m = 2,356 + 59; len_m and profile_m unchanged (profile_m is metres from the start and absolute heights). The new line runs on 56th's OSM centreline, 2.9-3.2 m north of the old line (Google drove the eastbound lanes): the same deck, read along its median. On the OSM line the draft and finished stations differ by 3.8 m at this deck (14 m before). 0.32.0 (ledger 0068): the deck the 2020 source lidar classes as bridge deck (class 17), 2,404 to 2,522 m on the FINISHED line of 0.31.1 (source/lidar/e56th_bridge_deck.md); was center 2485 / len 100. Re-key after a line change: find the deck's start on the new finished line and set center_m = start + len_m / 2; profile_m moves with it. level_bridge_decks reads center_m/len_m on the DRAFT line, 14 m early here, which now only picks the bank-crest anchors of the approach grade (the west approach moved <= 1.1 cm); the deck itself is profile_m.",
+        "profile_m": [[-4, 1579.595], [1, 1579.663], [6, 1579.691], [11, 1579.715], [16, 1579.735], [21, 1579.75], [26, 1579.76], [31, 1579.766], [36, 1579.768], [41, 1579.766], [46, 1579.759], [51, 1579.749], [56, 1579.734], [61, 1579.716], [66, 1579.694], [71, 1579.668], [76, 1579.638], [81, 1579.605], [86, 1579.568], [91, 1579.528], [96, 1579.485], [101, 1579.438], [106, 1579.388], [111, 1579.335], [116, 1579.279], [121, 1579.235], [126, 1579.198], [131, 1579.146], [136, 1579.114], [141, 1579.075], [146, 1579.031], [151, 1578.991], [156, 1578.934]],
+        "profile_ramp_m": 20,
+        "_profile_doc": "0.32.0 (ledger 0068): [metres from the bridge's start (center_m - len_m / 2) along the finished line, absolute height in the 3DEP datum = y + origin elev_m]. -4 (2,400 m) and 121-126 (2,525-2,530 m): lidar ground medians of the approaches; 1-116 (2,405-2,520 m): the cubic fit to the class-17 deck medians (rms 0.9 cm), all from source/lidar/e56th_bridge_deck.md's recommended profile; 131-156 (2,535-2,560 m): the east approach, mean of the class-2 ground medians within 2.5 m (e56th_bridge_deck.json), which ran 0.13-0.23 m above the built road. The deck was held as one straight grade 0.41 m (median) under the measured deck, which is crowned 0.29 m; no step at either abutment (deck within 4 cm of the approach ground). The heights are the real road's and stay true on any line over the same deck."
       },
       {
         "name": "quebec_over_sand_creek",
-        "center_m": 5950,
-        "len_m": 130
+        "center_m": 5887,
+        "len_m": 128,
+        "_rekey_doc": "0.33.0 (ledger 0073): was 5950 / 130 on the old draft line; both ends re-keyed by position (draft-line stations, as level_bridge_decks reads them). The OSM bridge way 44769365 runs 5,854-5,956 on the new line."
       },
       {
         "name": "e46th_leg_over_sand_creek",
-        "center_m": 6549,
+        "center_m": 6484,
         "len_m": 110,
-        "_doc": "Third crossing Kevin reported: the dip after the rise on the 46th leg - a real bridge with railing over the creek channel; the channel is NOT in OSM waterways so it was never leveled or dressed (found at 5.2 m deep in the smooth profile)."
+        "_rekey_doc": "0.33.0 (ledger 0073): was 6549 / 110 on the old draft line; re-keyed by position. The OSM bridge way 864873958 (E 45th Ave) runs 6,460-6,514 on the new line.", "_doc": "Third crossing Kevin reported: the dip after the rise on the 46th leg - a real bridge with railing over the creek channel; the channel is NOT in OSM waterways so it was never leveled or dressed (found at 5.2 m deep in the smooth profile)."
       }
     ]
   },
@@ -38,7 +43,14 @@
   "road_profile": {
     "_doc": "Corkscrew dips/cambers REMOVED — Sand Creek elevation now comes from real USGS 3DEP + capture (user: the hand-authored corkscrew sucks). Re-add dips/cambers here to bring it back.",
     "dips": [],
-    "cambers": []
+    "cambers": [],
+    "crossfall": {
+      "method": "lidar",
+      "spans_m": [[2540, 2690]],
+      "_spans_doc": "0.33.0 (ledger 0073): re-keyed by position, 0.31.1's [2540, 2740] is [2491, 2690] on the OSM line's finished stations; the span now STARTS at 2540, just past the 56th slip's merge into Sand Creek Dr, because a Mac A/B showed the measured roll-in (+1.9 -> +5.1 % over 2,519-2,537) laid across the merge's 5.5 -> 23 m width flare made all 4 severe steps (2,529-2,532, 6.3-6.9 cm): starting at 2540 they are 0 (zeroing 2,515-2,545 only: also 0, but the camber rolls in, out and in again). The roll-in now reads +1.3 % at 2,529 to +4.1 % at 2,556, then 2.4 to 4.9 % through to 2,619. Stations below in this note are the old line's. 0.31.1: the measured camber at the 56th Ave -> Sand Creek Drive turn only, flat elsewhere as 0.30.1. The whole-lap file (0.31.0) took kinks 11 -> 27 /km at the road edges and steps and drops on E 45th Ave (6,270-6,450 m), where the line likely rides the embankment, not the pavement. Widen once those are checked.",
+      "_doc": "Ledger 0066, Kevin 2026-11-03 (\"Yes, build it\"): the road's real side-to-side tilt, measured off the 2020 USGS source lidar by tools/lidar_crossfall.py into data/crossfall.json (status measured), which build_mesh rolls every road section by. scripts.elevation.crossfall leaves a lidar file alone. Rerun the tool when the line moves: its cache data/crossfall.lidar.json is keyed to centerline.local.json.",
+      "source": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept.json"
+    }
   },
   "location": {
     "lat": 39.7839155,
@@ -48,12 +60,44 @@
     "country": "United States"
   },
   "source": {
-    "type": "kml",
-    "kml": "source/Sand Creek Raceway Drive-3.kml",
-    "kml_overrides": []
+    "type": "osm",
+    "_doc": "0.33.0, ledger 0073 (Kevin 2026-11-03: the roads \"are a bit wiggly w/r/t lines and curves/edges, they're not realistic and messy\"; asked to re-source or only smooth Google's line: \"Re-source from OSM\"). The whole lap is real OSM street centrelines: route.roads names every way the lap drives, as 'id:' legs in lap order, fetched into data/osm.cache.json and stitched by scripts.gps.centerline.build_centerline; route.fillet rounds the polygon (scripts/gps/fillet.py). L1: KML only where a route leaves the road network, and this one never does (ledger 0070 A: every station of the old line is within 4.7 m of an OSM way).",
+    "_history": "Until 0.31.1 the line was Google Maps' Directions polyline, source/Sand Creek Raceway Drive-3.kml (source.type kml, 453 vertices ~14 m apart rounded to 1e-5 deg), resampled to 3 m: its vertices were the line's kinks (ledger 0070 A). The KML stays in source/ for history; no build step reads it. The ways were chosen by map-matching that KML onto OSM (ledger 0073 has the run table), so the streets and their order are the same lap."
   },
   "route": {
-    "grid": {"_doc": "Ledger 0063, Kevin 2026-11-01: fill out the grid around Sand Creek for its free roam. tools/grid_connectors.py: real OSM ways of data/osm.ways.json only (L1); widths [invented], the cache carries no lanes. The road kn5 is shared (L8), so these streets stand in both layouts.", "classes": {"primary": 9.5, "secondary": 10.0, "tertiary": 10.0, "unclassified": 8.0, "residential": 8.0}, "min_piece_m": 40, "on_lap_pad_m": 6, "parallel_m": 25, "terrain_inset_m": 60, "exclude": ["grid_tertiary_94"], "_exclude_doc": "grid_tertiary_94, 80 m at the lap's east end: its smoothed line runs up to 2.57 m under the lap's graded bank; 186 of the first build's 191 kn5 terrain pokes"},
+    "roads": [
+      "id:628714841,800407125,628714840",
+      "id:16988702",
+      "id:16988425",
+      "id:16988698,800494399",
+      "id:132271133,16969721,628649540",
+      "id:132271105,628655280,44769372,628649528",
+      "id:628649529",
+      "id:1456718434,628649515,125660429,628728309,800585287,800585284,800585290,800585289,800505275,628728310",
+      "id:186241514,44769365,16977970,427698233,257721786",
+      "id:944920188",
+      "id:944920189,944920187,16986954,864873958,955933786,864873961,944926264,827145790,944926263,944926262,944914480,1018438781,944914481,955928794,1018438779,944914476,944914477,944914475,643970918,944914478,1084110116,944926267,179938620,944926268,643970909,1110633274,16986531,1018425254",
+      "id:1456709180,946631199,16986952",
+      "id:132271123,99826469"
+    ],
+    "_roads_doc": "Order = the lap, one leg per entry (build_ring joins each to the next at their shared node): (1) North Colorado Blvd, the northbound carriageway (oneway, the lap's direction) from E 48th Ave to E 50th Ave; (2) E 50th Ave; (3) N Ash St (the 50th Ave jog); (4) E 50th Ave to Dahlia; (5) Dahlia St north; (6) E 56th Ave east (one two-way way: its OSM line is the street's median line); (7) the 56th -> Sand Creek Dr slip, primary_link 628649529 (ledger 0066's camber corner); (8) Sand Creek Dr South; (9) N Northfield Quebec St, the southbound carriageway (oneway); (10) the Quebec -> E 45th slip, primary_link 944920188; (11) the I-70 frontage roads with their arrows: E 45th Ave, E 45th North Dr (incl. 944914475, a 6 m motorway_link piece of the same carriageway), E 46th Ave; (12) E 46th Ave Access; (13) E 48th Ave back to Colorado. Carriageways: where OSM has two one-way carriageways (Colorado, Quebec, the frontage pair) the lap takes the one it drives, never the median line between them: that is real pavement, the side whose lanes widths_from_osm reads, and the grid already drops the other side (route.grid.parallel_m). tools/route_oneway_check.py: no metre against an arrow.",
+    "start_at": [39.78413, -104.94043],
+    "_start_at_doc": "Station 0 = North Colorado Blvd northbound, 40 m north of the E 48th Ave node: the old KML's v0 was that corner itself; station 0 now sits on the straight just past the corner's arc, so the seam is on a straight (L13). The timing line and grids are layouts[].start, unchanged in place (re-keyed by position, ledger 0073).",
+    "fillet": {
+      "round_nodes": true,
+      "simplify_m": 0.25,
+      "arc_step_m": 1.0,
+      "_doc": "scripts/gps/fillet.py, before the 3 m resample. Each declared corner: the circle of radius_m tangent to both legs (radius_m = curb_radius_m + the mean of the two legs' half widths, half = scripts.gps.widths_from_osm.pavement_width / 2 of the way at the node: the width the ribbon is built at, so its inside edge follows a curb return of curb_radius_m). curb_radius_m [measured] read off NAIP 2023 (source/naip_2023_sc_z18.jpg, 0.46 m/px, about +-2 m): ledger 0073 has each corner's picture. Every other OSM node is rounded inside its own two segments after nodes within simplify_m (0.25 m [invented], under OSM's own accuracy) of their neighbours' chord are merged, so a curve OSM draws node by node keeps its own radius and a way join (the 56th slip merging into Sand Creek Dr at 26 deg) is not rounded inside one 3 m segment.",
+      "corners": [
+        {"name": "Colorado Blvd -> E 50th Ave", "at": [39.787949, -104.940396], "radius_m": 13.5, "curb_radius_m": 6.0, "half_widths_m": [10.0, 5.0], "_doc": "SE return round the grass island; Colorado's last way here is 4 lanes (the turn lane)"},
+        {"name": "E 50th Ave -> N Ash St", "at": [39.787855, -104.938717], "radius_m": 8.0, "curb_radius_m": 3.0, "half_widths_m": [5.0, 5.0], "_doc": "an industrial square corner, no curb: the asphalt edge"},
+        {"name": "E 50th Ave -> Dahlia St", "at": [39.787061, -104.931659], "radius_m": 8.2, "curb_radius_m": 3.0, "half_widths_m": [5.0, 5.5], "_doc": "NW corner at the truck yard: square"},
+        {"name": "Dahlia St -> E 56th Ave", "at": [39.796534, -104.933414], "radius_m": 23.6, "curb_radius_m": 15.0, "half_widths_m": [5.5, 11.75], "_doc": "the big sweeping SE return of a truck route"},
+        {"name": "Sand Creek Dr S -> Quebec St", "at": [39.782046, -104.901833], "radius_m": 14.6, "curb_radius_m": 6.0, "half_widths_m": [9.0, 8.25]},
+        {"name": "E 48th Ave -> Colorado Blvd", "at": [39.78377, -104.940434], "radius_m": 10.9, "curb_radius_m": 4.0, "half_widths_m": [5.5, 8.25], "_doc": "NE return at the island tip"}
+      ]
+    },
+    "grid": {"_doc": "Ledger 0063, Kevin 2026-11-01: fill out the grid around Sand Creek for its free roam. tools/grid_connectors.py: real OSM ways of data/osm.ways.json only (L1); widths [invented], the cache carries no lanes. The road kn5 is shared (L8), so these streets stand in both layouts.", "classes": {"primary": 9.5, "secondary": 10.0, "tertiary": 10.0, "unclassified": 8.0, "residential": 8.0}, "min_piece_m": 40, "on_lap_pad_m": 6, "parallel_m": 25, "terrain_inset_m": 60, "exclude": ["grid_tertiary_93"], "_exclude_doc": "grid_tertiary_93 (0.33.0; grid_tertiary_94 on the 0.31/0.32 line: the same OSM piece, matched by geometry, ledger 0073; the names number pieces by length, so a lap change renumbers them), 80 m at the lap's east end: its smoothed line runs up to 2.57 m under the lap's graded bank; 186 of the first build's 191 kn5 terrain pokes"},
     "bbox": [
       39.773,
       -104.945,
@@ -165,7 +209,8 @@
     },
     "treefx": {"_doc": "Ledger 0063: the NAIP points of source/bespoke/trees.json stand as TreeFX models (tools/make_treefx.py, planted), not as TREECARD cards. There is no cottonwood model: sycamores stand in, as the north_riparian zone does. Models are personal-use and stay on this machine.", "planted": {"file": "source/bespoke/trees.json", "clear_m": 5.0, "zones": {"3": "planted_cottonwood", "1": "planted_neighbourhood"}}}
   },
-  "origin": "centroid",
+  "origin": {"lon": -104.92279307050907, "lat": 39.78644888384044, "elev_m": 1572.38},
+  "_origin_doc": "0.33.0 (ledger 0073): pinned to the value 'centroid' gave the 0.31/0.32 line (data/centerline.local.json origin), so re-sourcing the line from OSM does not move the local frame: loop.blend's authored layers, the spawns, the AI lines and the deck's absolute heights (elev_m is the datum profile_m is written against) stay where they were. A 'centroid' origin moves every local coordinate whenever the line changes (ledger 0068: a 2 cm nudge moved them all).",
   "true_north_rotation_deg": 0.0,
   "surfaces": {
     "road": "1ROAD",
@@ -182,11 +227,11 @@
     "ai": "ai/race",
     "uses_connectors": [],
     "start": {
-      "line_vertex": 2805,
-      "grid_vertex": 2795,
+      "line_vertex": 2782,
+      "grid_vertex": 2772,
       "sector_vertices": [
-        655,
-        1730
+        637,
+        1709
       ],
       "offset_right_m": 1.9
     },
@@ -202,11 +247,11 @@
     "ai": "ai/street",
     "uses_connectors": [],
     "start": {
-      "line_vertex": 2805,
-      "grid_vertex": 2795,
+      "line_vertex": 2782,
+      "grid_vertex": 2772,
       "sector_vertices": [
-        655,
-        1730
+        637,
+        1709
       ],
       "offset_right_m": 1.9
     },

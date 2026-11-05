@@ -1,0 +1,209 @@
+{
+ "lap_m": 3506.6,
+ "layout": "full",
+ "direction": "forward",
+ "kind": "street",
+ "race_furniture": false,
+ "obj": "track.obj",
+ "lane": "full width / island",
+ "barrier_stations": 0,
+ "barrier_missing": 0,
+ "barrier_missing_runs": [],
+ "soft_top_in_lane": 0,
+ "off_pavement_stations": 0,
+ "severe_steps": 0,
+ "severe_per_km": 0.0,
+ "steps_per_km": 3.99,
+ "kinks_per_km": 12.83,
+ "obstruction_stations": 0,
+ "daylight_gaps": 0,
+ "replication_vs_measured": {
+  "median": 0.03,
+  "p95": 0.23,
+  "max": 0.98
+ },
+ "undrivable_corners": 0,
+ "floating_furniture": 0,
+ "apron_steps": 3,
+ "fold_bumps": 0,
+ "vertex_bumps": 26,
+ "vertex_bumps_worst": [
+  [
+   2284.0,
+   3.25,
+   0.032,
+   0.0245
+  ],
+  [
+   2274.0,
+   0.75,
+   0.026,
+   0.022
+  ],
+  [
+   1857.0,
+   -3.25,
+   0.031,
+   0.0206
+  ],
+  [
+   2275.0,
+   3.25,
+   0.037,
+   0.0205
+  ],
+  [
+   1858.0,
+   -3.25,
+   0.031,
+   0.0203
+  ],
+  [
+   1855.0,
+   -3.25,
+   0.03,
+   0.0202
+  ],
+  [
+   1860.0,
+   -3.25,
+   0.029,
+   0.0194
+  ],
+  [
+   1864.0,
+   -3.25,
+   0.029,
+   0.0185
+  ],
+  [
+   1861.0,
+   -3.25,
+   0.028,
+   0.0184
+  ],
+  [
+   1852.0,
+   -3.25,
+   0.026,
+   0.0178
+  ],
+  [
+   1863.0,
+   -3.25,
+   0.027,
+   0.0173
+  ],
+  [
+   1854.0,
+   -3.25,
+   0.027,
+   0.017
+  ]
+ ],
+ "excursion_drops": 0,
+ "excursion_far_ledges": 5,
+ "worst_excursions": [
+  [
+   452.3,
+   -14.5,
+   0.28,
+   false
+  ],
+  [
+   452.3,
+   -15.0,
+   0.25,
+   false
+  ],
+  [
+   602.1,
+   -15.0,
+   0.25,
+   false
+  ],
+  [
+   602.1,
+   -14.5,
+   0.15,
+   false
+  ],
+  [
+   1650.2,
+   -14.0,
+   0.13,
+   false
+  ]
+ ],
+ "worst_gated_excursions": [],
+ "obstruction_by_mesh": {},
+ "worst": {
+  "soft_top": [],
+  "severe_steps": [],
+  "severe_all": [],
+  "kinks": [
+   [
+    2278.0,
+    4.75,
+    6.25
+   ],
+   [
+    2275.0,
+    4.75,
+    6.2
+   ],
+   [
+    2277.0,
+    4.75,
+    6.17
+   ],
+   [
+    2274.0,
+    4.75,
+    5.9
+   ],
+   [
+    2277.0,
+    3.25,
+    5.75
+   ],
+   [
+    2272.0,
+    4.75,
+    5.35
+   ],
+   [
+    2280.0,
+    4.75,
+    5.33
+   ],
+   [
+    2280.0,
+    3.25,
+    5.29
+   ],
+   [
+    2281.0,
+    4.75,
+    5.02
+   ],
+   [
+    2274.0,
+    3.25,
+    4.77
+   ],
+   [
+    2283.0,
+    3.25,
+    4.32
+   ],
+   [
+    2271.0,
+    4.75,
+    4.25
+   ]
+  ],
+  "obstructions": []
+ },
+ "fail": false
+}

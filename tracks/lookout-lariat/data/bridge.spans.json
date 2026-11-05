@@ -1,0 +1,70 @@
+{
+ "frame": {
+  "geojson": "stations from data/centerline.geojson v0",
+  "local": "centerline.local.json stations (route.start_at rotation by 14442 vertices, as scripts.geometry.projection rotates)",
+  "lap_m": 24914.24,
+  "closed": true
+ },
+ "declared": [
+  {
+   "id": "lid_19th_us6",
+   "kind": "lid",
+   "footprint_ways": [
+    533503591,
+    533679737
+   ],
+   "footprint_half_widths_m": [
+    4.5,
+    4.5
+   ],
+   "abutment_m": 8.0,
+   "geojson_m": [
+    24347.4,
+    24385.6
+   ],
+   "local_m": [
+    24349.4,
+    24387.6
+   ],
+   "center_m": 24368.5,
+   "len_m": 38.1,
+   "over_footprint_m": 22.12,
+   "crossings_geojson": [
+    {
+     "lap_st_m": 24359.89,
+     "angle_deg": 77.5
+    },
+    {
+     "lap_st_m": 24372.98,
+     "angle_deg": 69.6
+    }
+   ],
+   "hold": {
+    "z_a_m": 1789.97,
+    "z_b_m": 1791.28,
+    "grade_pct": 3.44,
+    "max_dip_removed_m": -0.0,
+    "max_hump_removed_m": 0.11,
+    "vertices": 13
+   }
+  }
+ ],
+ "lap_osm_bridge_ways": [],
+ "dropped": [
+  {
+   "july_span_m": [
+    24278,
+    24803
+   ],
+   "why": "July auto span (engine v0.46.0 build_mesh height detector, 24,802.6 m built frame): 525 m ending on the lap's last vertex without continuing from vertex 0, a wrap artefact (L13); holding it level would erase 19th St's real +5.7 % climb. The only structure in that stretch is the lid, declared above from its footprint. No V3 lap way there carries bridge=yes (data/bridge.spans.json lap_osm_bridge_ways)."
+  },
+  {
+   "july_span_m": [
+    20742,
+    21166
+   ],
+   "why": "July auto span containing the C-470 crossing on US-6 (aerial: C-470 way 84720905 crosses OVER the lap at OSM-line st 21,137.6, its deck measured across the lap in data/aerial/aerial_measurements.json c470): the lap passes UNDER a bridge there, not over one. No V3 lap way there carries bridge=yes."
+  }
+ ],
+ "l13_seam": "every declared span lies inside (0, lap): none ends on the closing vertex"
+}

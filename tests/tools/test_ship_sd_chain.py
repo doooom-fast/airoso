@@ -450,7 +450,7 @@ def test_mouth_weld_and_its_gate_are_wired():
     own ribbon module) and the exit-code flag; verify_mouths judges the BUILT road right after its gate OBJ, hard
     (set -e: no `|| rc`), its stale verdict removed first; both reports sync back; AIROSO is overridable for a
     worktree rehearsal and defaults to the main checkout"""
-    assert 'AIROSO="${AIROSO:-C:/Users/Owner/Documents/GitHub/airoso}"' in TEXT
+    assert 'AIROSO="${AIROSO:-$_here}"' in TEXT and "Documents/GitHub/airoso}" not in TEXT   # the script's own repo
     blb = [p for p, ln in _code_lines() if "build_loop_blend.py" in ln and '"$BL"' in ln]
     weld = [(p, ln) for p, ln in _code_lines() if "weld_mouths_blend.py" in ln]
     assert len(weld) == 1, weld

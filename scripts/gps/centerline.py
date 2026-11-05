@@ -288,6 +288,37 @@ def build_centerline(project_dir: str | Path) -> tuple[Path, dict]:
     ring, corner_gaps = (build_ring(road_lines) if cfg.loop else build_open_path(road_lines))
     ring = remove_folds(ring)
     start_at = route.get("start_at")
+    fillet_cfg = route.get("fillet")
+    fillet_rep = None
+    if fillet_cfg:
+        # route.fillet (opt-in, ledger 0073): round the stitched polygon into a drivable curve BEFORE the resample:
+        # declared street corners at their declared radius, every other OSM node inside its own segments
+        # (scripts/gps/fillet.py). A track without the key keeps exactly the old path below.
+        from scripts.gps.fillet import fillet_ring, insert_point
+        if cfg.loop and ring and _key(ring[0]) != _key(ring[-1]):
+            ring.append(ring[0])
+        try:
+            ring, fillet_rep = fillet_ring(ring, corners=fillet_cfg.get("corners") or (),
+                                           round_nodes=bool(fillet_cfg.get("round_nodes", True)),
+                                           arc_step_m=float(fillet_cfg.get("arc_step_m", 1.0)),
+                                           simplify_m=float(fillet_cfg.get("simplify_m", 0.0)))
+        except ValueError as e:
+            raise SystemExit(f"[centerline] {e}")
+        for c in fillet_rep["corners"]:
+            print(f"  [fillet] {c['name']}: deflection {c['deflection_deg']} deg, R {c['radius_m']} m "
+                  f"(achieved {c['radius_achieved_m']}), tangents {c['tangent_m']} m, apex moved {c['apex_moved_m']} m")
+        print(f"  [fillet] {fillet_rep['nodes_rounded']} other OSM nodes rounded inside their segments; "
+              f"{fillet_rep['length_in_m']} -> {fillet_rep['length_out_m']} m")
+        if start_at and cfg.loop and len(ring) > 2:
+            # the rounded ring's vertices can lie tens of metres apart on a straight: station 0 is the exact foot
+            # of start_at on the line, inserted as a vertex, so projection's nearest-vertex pick lands on it
+            body = ring[:-1]
+            body, k, off = insert_point(body + [body[0]], start_at)
+            body = body[:-1]
+            ring = body[k:] + body[:k]
+            print(f"  [fillet] route.start_at: station 0 is the line's nearest point to it ({off:.2f} m away)")
+            ring.append(ring[0])
+        start_at = None   # done here; the rotation below would pick a vertex again
     if start_at and cfg.loop and len(ring) > 2:
         # route.start_at = [lat, lon]: rotate the closed ring so station 0 (start/finish, pits, hotlap
         # spawn — dummies all key off station 0) sits at the real-world start line instead of wherever
@@ -322,7 +353,8 @@ def build_centerline(project_dir: str | Path) -> tuple[Path, dict]:
             {"closed": cfg.loop, "default_width_m": cfg.default_width_m,
              "widths_m": [round(w, 2) for w in widths], "length_m": round(length_m, 1),
              "point_count": len(ring), "roads": road_names,
-             **({"exclude_ids": sorted(int(i) for i in exclude_ids)} if exclude_ids else {})},
+             **({"exclude_ids": sorted(int(i) for i in exclude_ids)} if exclude_ids else {}),
+             **({"fillet": fillet_rep} if fillet_rep else {})},
         )
     ]
     for cname, line in connectors.items():

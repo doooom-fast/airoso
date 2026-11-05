@@ -1,0 +1,24 @@
+{
+ "fail": false,
+ "reasons": [],
+ "kn5": [
+  "rally_co_dragon_tail_gravel.kn5"
+ ],
+ "fidelity": "skipped: gate OBJ written from this kn5",
+ "double_sheet_cells": 4,
+ "seating": {
+  "walls": {
+   "objects": 1115,
+   "no_ground_pct": 0.0,
+   "median_m": -0.637,
+   "p95_m": -0.297,
+   "hovering": 0
+  }
+ },
+ "road_over_ground": {
+  "over": 2030,
+  "samples": 7218,
+  "p95_m": 0.088,
+  "max_m": 1.913
+ }
+}

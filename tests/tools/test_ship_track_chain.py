@@ -741,3 +741,26 @@ def test_is_data_step_takes_the_network_draft_and_stops_at_the_underlay():
     got = dict(ln.split() for ln in r.stdout.split("\n") if ln.strip())
     assert got == {"net": "data", "classify": "data", "network_elev": "data", "network_mesh": "data",
                    "network_reference": "data", "underlay": "blender", "build_loop_blend": "blender", "network_env": "blender"}, got
+
+
+def test_airoso_defaults_to_the_scripts_own_repo_and_main_to_its_main_checkout():
+    """2026-11-03: the repo moved from C:/Users/Owner/Documents/GitHub/airoso to D:/k10/airoso. No machine path is spelled
+    out: AIROSO (unless set) is the repo the script lives in, AIROSO_MAIN git's common dir (the main checkout, the
+    workshop guard's second root) wherever AIROSO points."""
+    src = (ROOT / "tools" / "ship_track.sh").read_text(encoding="utf-8")
+    assert "Documents/GitHub/airoso}" not in src and 'AIROSO_MAIN="C:' not in src
+    bash, git = shutil.which("bash"), shutil.which("git")
+    if not bash or not git:
+        return
+    lines = [ln for ln in src.splitlines() if ln.startswith(("_here=", "AIROSO=", "AIROSO_MAIN="))]
+    assert len(lines) == 4, lines
+    snippet = "\n".join(lines).replace("${BASH_SOURCE[0]}", (ROOT / "tools" / "ship_track.sh").as_posix())
+    env = {k: v for k, v in os.environ.items() if k != "AIROSO"}
+    out = subprocess.run([bash, "-c", snippet + '\necho "$AIROSO|$AIROSO_MAIN"'], capture_output=True, text=True,
+                         env=env, check=True).stdout.strip().splitlines()[-1]
+    airoso, main = out.split("|")
+    norm = lambda p: os.path.normcase(os.path.realpath(p))
+    assert norm(airoso) == norm(ROOT)
+    common = subprocess.run([git, "-C", str(ROOT), "rev-parse", "--path-format=absolute", "--git-common-dir"],
+                            capture_output=True, text=True, check=True).stdout.strip()
+    assert norm(main) == norm(Path(common).parent)

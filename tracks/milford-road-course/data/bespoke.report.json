@@ -9,10 +9,10 @@
     53.38
    ],
    "ground": [
-    14.092,
-    15.661
+    14.093,
+    15.66
    ],
-   "bottom": 13.942,
+   "bottom": 13.943,
    "eave": 18.408,
    "clear_m": Infinity
   }
@@ -60,13 +60,13 @@
   {
    "file": "source/bespoke/trees.json",
    "prefix": "TREECARD",
-   "stood": 4386,
-   "dropped": 71
+   "stood": 4393,
+   "dropped": 64
   }
  ],
  "guardrail": {
-  "runs": 85,
-  "rail_m": 144.6,
-  "posts": 85
+  "runs": 82,
+  "rail_m": 150.9,
+  "posts": 90
  }
 }

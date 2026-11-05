@@ -1,0 +1,269 @@
+{
+ "_doc": "Lariat Drive-1 road inventory (tools/verify_road_inventory.py; V3-PLAN P5, ledger 0048), on the built gate OBJ (L5).",
+ "obj": "track.obj",
+ "line": "gate_centerline.json",
+ "exemptions_file": "D:\\k10-workshops\\lookout-lariat\\project\\pavement_exemptions.json",
+ "thresholds": {
+  "corridor_margin_m": 2.0,
+  "lap_tol": 0.01,
+  "road_window_m": 2.5,
+  "forbidden": "HIGHWAY* / HWYSTRUCT* / MOUNTAINS* (digit+KEY_ prefix allowed): 0",
+  "_tags": "forbidden meshes [std: Kevin 0048 / L1]; corridor margin and lap tolerance [invented] 2026-10-12 (fleet/GATES-CHANGELOG.md)"
+ },
+ "forbidden_meshes": 0,
+ "forbidden_names": [],
+ "pavement_prefixes": [
+  "1ROAD",
+  "AUTH_OVERPASS"
+ ],
+ "pavement_groups": 5,
+ "pavement_tris": 202229,
+ "off_route_tris": 172258,
+ "off_route_area_m2": 1366683.77,
+ "off_route_by_group": {
+  "1ROAD_shoulder_b": 44840,
+  "1ROAD_shoulder_c": 44683,
+  "1ROAD_shoulder_a": 44434,
+  "1ROAD_shoulder_d": 38292,
+  "1ROAD_main": 9
+ },
+ "worst_off_route": [
+  {
+   "group": "1ROAD_shoulder_a",
+   "beyond_m": null,
+   "x": 481.09,
+   "z": 1519.73,
+   "nearest_station_m": null,
+   "area_m2": 7.315
+  },
+  {
+   "group": "1ROAD_shoulder_a",
+   "beyond_m": null,
+   "x": 481.09,
+   "z": 1519.73,
+   "nearest_station_m": null,
+   "area_m2": 6.935
+  },
+  {
+   "group": "1ROAD_shoulder_a",
+   "beyond_m": null,
+   "x": 481.09,
+   "z": 1519.73,
+   "nearest_station_m": null,
+   "area_m2": 0.699
+  },
+  {
+   "group": "1ROAD_shoulder_a",
+   "beyond_m": null,
+   "x": 481.38,
+   "z": 1518.74,
+   "nearest_station_m": null,
+   "area_m2": 7.094
+  },
+  {
+   "group": "1ROAD_shoulder_a",
+   "beyond_m": null,
+   "x": 481.38,
+   "z": 1518.74,
+   "nearest_station_m": null,
+   "area_m2": 6.859
+  },
+  {
+   "group": "1ROAD_shoulder_a",
+   "beyond_m": null,
+   "x": 482.33,
+   "z": 1519.04,
+   "nearest_station_m": null,
+   "area_m2": 0.698
+  },
+  {
+   "group": "1ROAD_shoulder_a",
+   "beyond_m": null,
+   "x": 481.38,
+   "z": 1518.74,
+   "nearest_station_m": null,
+   "area_m2": 0.703
+  },
+  {
+   "group": "1ROAD_shoulder_a",
+   "beyond_m": null,
+   "x": 481.96,
+   "z": 1517.85,
+   "nearest_station_m": null,
+   "area_m2": 6.952
+  },
+  {
+   "group": "1ROAD_shoulder_a",
+   "beyond_m": null,
+   "x": 481.96,
+   "z": 1517.85,
+   "nearest_station_m": null,
+   "area_m2": 6.926
+  },
+  {
+   "group": "1ROAD_shoulder_a",
+   "beyond_m": null,
+   "x": 482.92,
+   "z": 1518.15,
+   "nearest_station_m": null,
+   "area_m2": 0.722
+  },
+  {
+   "group": "1ROAD_shoulder_a",
+   "beyond_m": null,
+   "x": 481.96,
+   "z": 1517.85,
+   "nearest_station_m": null,
+   "area_m2": 0.694
+  },
+  {
+   "group": "1ROAD_shoulder_a",
+   "beyond_m": null,
+   "x": 482.56,
+   "z": 1516.95,
+   "nearest_station_m": null,
+   "area_m2": 7.109
+  },
+  {
+   "group": "1ROAD_shoulder_a",
+   "beyond_m": null,
+   "x": 482.56,
+   "z": 1516.95,
+   "nearest_station_m": null,
+   "area_m2": 7.05
+  },
+  {
+   "group": "1ROAD_shoulder_a",
+   "beyond_m": null,
+   "x": 483.52,
+   "z": 1517.25,
+   "nearest_station_m": null,
+   "area_m2": 0.712
+  },
+  {
+   "group": "1ROAD_shoulder_a",
+   "beyond_m": null,
+   "x": 482.56,
+   "z": 1516.95,
+   "nearest_station_m": null,
+   "area_m2": 0.681
+  },
+  {
+   "group": "1ROAD_shoulder_a",
+   "beyond_m": null,
+   "x": 483.18,
+   "z": 1516.05,
+   "nearest_station_m": null,
+   "area_m2": 7.277
+  },
+  {
+   "group": "1ROAD_shoulder_a",
+   "beyond_m": null,
+   "x": 483.18,
+   "z": 1516.05,
+   "nearest_station_m": null,
+   "area_m2": 7.178
+  },
+  {
+   "group": "1ROAD_shoulder_a",
+   "beyond_m": null,
+   "x": 484.13,
+   "z": 1516.35,
+   "nearest_station_m": null,
+   "area_m2": 0.698
+  },
+  {
+   "group": "1ROAD_shoulder_a",
+   "beyond_m": null,
+   "x": 483.18,
+   "z": 1516.05,
+   "nearest_station_m": null,
+   "area_m2": 0.668
+  },
+  {
+   "group": "1ROAD_shoulder_a",
+   "beyond_m": null,
+   "x": 483.7,
+   "z": 1515.12,
+   "nearest_station_m": null,
+   "area_m2": 7.358
+  },
+  {
+   "group": "1ROAD_shoulder_a",
+   "beyond_m": null,
+   "x": 483.7,
+   "z": 1515.12,
+   "nearest_station_m": null,
+   "area_m2": 7.283
+  },
+  {
+   "group": "1ROAD_shoulder_a",
+   "beyond_m": null,
+   "x": 484.66,
+   "z": 1515.42,
+   "nearest_station_m": null,
+   "area_m2": 0.664
+  },
+  {
+   "group": "1ROAD_shoulder_a",
+   "beyond_m": null,
+   "x": 483.7,
+   "z": 1515.12,
+   "nearest_station_m": null,
+   "area_m2": 0.649
+  },
+  {
+   "group": "1ROAD_shoulder_a",
+   "beyond_m": null,
+   "x": 484.27,
+   "z": 1514.21,
+   "nearest_station_m": null,
+   "area_m2": 7.466
+  },
+  {
+   "group": "1ROAD_shoulder_a",
+   "beyond_m": null,
+   "x": 484.27,
+   "z": 1514.21,
+   "nearest_station_m": null,
+   "area_m2": 7.407
+  }
+ ],
+ "exemptions_used": {},
+ "exemptions_declared": [],
+ "exemptions_unmeasured": [
+  "c1_pad",
+  "mouth_c12",
+  "mouth_c14",
+  "mouth_c15",
+  "mouth_c16",
+  "mouth_c18",
+  "side_road_stubs",
+  "windy_saddle_lot",
+  "overlook_1",
+  "overlook_2",
+  "overlook_3",
+  "overlook_4",
+  "lid",
+  "c470_deck_colfax",
+  "c470_deck_us6",
+  "d2_slab_exit259",
+  "d2_slab_colfax",
+  "d2_slab_us6_offramp",
+  "d2_slab_nineteenth"
+ ],
+ "exemptions_inactive": [
+  "d2b_reverse_route"
+ ],
+ "lap": {
+  "street_full": {
+   "line": "gate_centerline.json",
+   "lap_m": 24856.8,
+   "paved_m": 24856.8,
+   "ratio": 1.0,
+   "pass": true,
+   "unpaved_runs": []
+  }
+ },
+ "fail": true
+}

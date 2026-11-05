@@ -581,6 +581,9 @@ def main(argv=None) -> int:
         cf = (json.loads(cfgp.read_text(encoding="utf-8")).get("road_profile") or {}).get("crossfall") or {}
     if isinstance(cf, dict) and cf.get("method") == "footprint":
         build_footprint(proj)
+    elif isinstance(cf, dict) and cf.get("method") == "lidar":
+        # ledger 0066: tools/lidar_crossfall.py measured this track's file off the source lidar; the DEM never overwrites it
+        print("crossfall: road_profile.crossfall.method is lidar: data/crossfall.json is tools/lidar_crossfall.py's")
     else:
         build(proj)
     return 0

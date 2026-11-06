@@ -635,6 +635,23 @@ Supersedes 0080-5 (which matched ws19 on the PC). No lidar or NAIP is needed: ev
    2014 EPT cache), and `--walls` to a scratch file; diff against the committed `median_ground.lidar.json` /
    `median_wall.lidar.json`. If 480624 reads more of the median, commit both and rebuild.
 
+**PC result (2026-11-05 21:05-21:19): every gate row matches ws27; the kn5 is 56 B larger. Not offered to Kevin.**
+- Step 4 (a8534007): `median_ground.lidar.json` with 480624 + 481624 + the EPT cache, same inputs: unread 1,643 ->
+  1,506, slope 275 -> 412, step 75 unchanged (137 stations unread -> slope, line s 2,186-2,865; no other row changed).
+  `median_wall.lidar.json` NOT changed: on its own inputs (86cea68^) 481624 alone reproduces it byte for byte; with
+  480624 the same 48 rows, only the header differs (carriageway_edges.naip.json records its md5).
+- `fwlm_2a5` (c3c988b9, empty workshop, ENG eng_fwlm): line drive_test PASS (excursions 4), WB line gate PASS / lap rule
+  FAIL (24, 2.27 / km), audit CLEAN, verify_kn5 / inis PASS, kn5_ground_check PASS (road over ground 131 / 6,135, p95
+  0.020 m), edge report 74.6 / 19.1 / 6.3 / 0.0 %, SHIP OK, **42,787,027 B (ws27 42,786,971: +56)**.
+- `fwlm_2a5c` (control: the same commit again) and `fwlm_2a5g` (a8534007: the new ground) are both kn5_equiv-EQUIVALENT
+  to `fwlm_2a5` (tangents only), 42,787,027 B: the PC is repeatable, and the 137 slope rows change nothing built (the
+  slope pass is not built).
+- 56 B = one vertex (44) + two triangles (12): one edge split, a near-tie decided differently on the two machines? The
+  PC's per-mesh table (vertices / triangles) for ws27's to diff: 1GRASS_0-7 55,965 / 110,840, 55,710 / 110,189,
+  60,497 / 119,192, 59,958 / 117,917, 58,863 / 116,398, 56,209 / 111,057, 56,943 / 112,595, 58,371 / 115,561;
+  1KERB_SIDEWALK_DECK 6,222 / 2,074; 1KERB_sidewalk 33,992 / 50,964; 1ROAD_road 50,959 / 16,988; 1WALL_MEDIAN 52,404 /
+  17,492; 1WALL_guard 6,402 / 2,136; MARKINGS 42,820 / 26,000; textures 7,770,522 B, materials 3,879 B, nodes 1,398 B.
+
 ## PC runbook 0080-5: rehearse 2a (I 8 both ways), no install
 
 2a is green on the Mac (ws19). The PC needs no lidar: `median_ground.lidar.json` is committed.

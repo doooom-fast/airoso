@@ -14,6 +14,17 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
+## 2026-11-06 — the SD freeway port, phase 2b round 2: the reader's no-image rows, the slope pass's edge, the crop dropped (ledger 0080; no threshold moved, no bypass)
+
+No gate threshold, bypass or gate code changed, and no new number:
+- `tools/naip_carriageways.py`: a side whose line-to-partner span has any no-image sample reads "unread" (a rule, no
+  number); 2a's committed outputs re-read byte for byte.
+- `tools/median_ground_blend.py` (the unpaved-slope pass): a cut-line vertex whose point abreast misses the pavement
+  takes the closest point of the pavement (engine-july's own feather target), not the slope station's edge top.
+- ⚠ `lm_intake.grid_crop_m` 1,000 m (**invented**, phase 1) is **removed**: the port builds the whole network box
+  with its far ground tiered (`terrain_tiers.fine_m` 60 m, invented, 2b round 1, unchanged).
+- `tools/ship_track.sh`'s tiered draft step keeps every `[fwlm-tiers]` line in the log (a filter, no number).
+
 ## 2026-11-05 — the SD freeway port, phase 2b round 1: the download list, tiered terrain, the 2b mainlines declared (ledger 0080; no threshold moved, no bypass)
 
 No gate threshold, bypass or gate code changed. Chain wiring: `tools/ship_track.sh` gains the draft step

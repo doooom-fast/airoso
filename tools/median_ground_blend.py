@@ -391,7 +391,7 @@ def main():
         skd.insert((s[0], s[1], 0.0), i)
     skd.balance()
     import bmesh
-    n_bis = n_low = n_raise = n_pin = n_slope = 0
+    n_bis = n_low = n_raise = n_pin = n_slope = n_slope_near = 0
     worst = worst_up = worst_pin = worst_slope = 0.0
     tiles = [o for o in bpy.data.objects if o.type == "MESH" and o.name.upper().startswith("1GRASS")]
     for ob in tiles:
@@ -480,6 +480,16 @@ def main():
                 sg_ = -1.0 if o <= o0 + EDGE_BAND_M else 1.0
                 w_ = (o - o0 if sg_ < 0 else o1 - o) + strip + 0.05
                 ta = road_z(v.co.x + sg_ * nx * w_, v.co.y + sg_ * ny * w_)
+                if ta is None:
+                    # (2b round 2, ws38: soft top 3 at line s 2,805) the cut line stood 0.09 m past the line's built edge
+                    # there (the edge was walked at the STATION, 1.8 m along), so the point abreast missed the pavement
+                    # and the station's own edge top (t0e, 1.8 m along a 3.3 % grade: 0.06 m high) put the vertex 0.04 m
+                    # over the pavement beside it; its facet ran 3.5 m under the lane. The closest point of the
+                    # pavement instead (engine-july's own feather target, the deck at the closest footprint point)
+                    hit_ = bvh.find_nearest(Vector((v.co.x, v.co.y, v.co.z)))
+                    if hit_[0] is not None:
+                        ta = hit_[0].z
+                        n_slope_near += 1
                 t_ = (ta if ta is not None else (t0e if sg_ < 0 else t1e)) - GROUND_CLEAR
             else:
                 t_ = float(_interp(o, po, pz)) - GROUND_CLEAR
@@ -565,7 +575,8 @@ def main():
            "vertices_raised_to_low": n_raise, "raised_max_m": round(worst_up, 2),
            "pinned_under_connector": n_pin, "pinned_max_m": round(worst_pin, 2),
            "slope_stations": len(slopes), "slope_skipped": slope_skipped, "slope_vertices": n_slope,
-           "slope_moved_max_m": round(worst_slope, 2), "stepped_footing_quads_removed": n_foot_cut,
+           "slope_moved_max_m": round(worst_slope, 2), "slope_edge_by_nearest_pavement": n_slope_near,
+           "stepped_footing_quads_removed": n_foot_cut,
            "bisect_vertices": n_bis, "vertices_lowered": n_low, "lowered_max_m": round(worst, 2),
            "params": {"STEP_MIN_M": STEP_MIN_M, "REACH_M": REACH_M, "SAMPLE_M": SAMPLE_M, "GROUND_CLEAR": GROUND_CLEAR,
                       "FOOT_STEP_M": FOOT_STEP_M, "NO_BAR_M": NO_BAR_M, "DECK_PAD_M": DECK_PAD_M, "BURY_M": BURY_M}}
@@ -575,7 +586,7 @@ def main():
           f"vertices), {n_low} vertices to the low pavement (max {worst:.2f} m down), {n_raise} up to it (max "
           f"{worst_up:.2f} m, off decks); {n_pin} under a connector's own pavement pinned to it (max {worst_pin:.2f} m, "
           f"off its decks); {len(slopes)} unpaved slope stations (skipped {slope_skipped}): {n_slope} vertices to the "
-          f"lidar's profile (max {worst_slope:.2f} m); {n_foot_cut} stepped footing quads F cannot see flush removed; retaining face {len(wf)} quads")
+          f"lidar's profile (max {worst_slope:.2f} m; {n_slope_near} edge vertices off the closest pavement); {n_foot_cut} stepped footing quads F cannot see flush removed; retaining face {len(wf)} quads")
 
 
 if __name__ == "__main__":

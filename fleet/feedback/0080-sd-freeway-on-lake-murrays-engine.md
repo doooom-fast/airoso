@@ -844,6 +844,41 @@ no `[fwlm-tiers]` line).** `draft_build_loop_blend_tiered` in `tools/ship_track.
 as before and prints every `[fwlm-tiers]` line after them (an awk ring buffer; checked on a fake log). Only that step,
 which Lake Murray's ship.json never names, changed.
 
+**2. The whole box: GREEN (ws41, 34.1 MB). The cause of ws38's s 2,805 was not the grid.** Read on ws38's own
+meshes (session scratchpad `r2/`: `tri_gate.py` the gate OBJ's triangles at a point, `edge_poke.py` ground vs road on
+a 0.25 m lattice in a .blend, `median_ground_dbg.py` the tool with a vertex traced through each pass):
+- The gate OBJ at line s 2,805 +5.5 / +6.0: a 1GRASS_1 facet 4 mm over 1ROAD_road, its vertices two pinned under the
+  pavement (0.02 under it) and one at +7.92 (0.09 m past the line's built edge at +7.83) standing **0.211 m** over the
+  line's centre point where the pavement abreast is 0.171: the facet ran 3.5 m into the lane from a vertex 0.04 m over
+  the pavement beside it.
+- Pass by pass: the draft (`loop.blend`) has no ground within 0.12 m of the road there; the prep's output
+  (`san_diego_freeway_lm.blend1`, saved before `median_ground`) none within 0.016 m; the final scene 74 lattice points
+  at or over the road (worst +0.032). So `tools/median_ground_blend.py` made it. Traced: its edge cuts (2) made that
+  vertex at 5.6994; its unpaved-slope pass (2c) raised it to 5.7583.
+- The mechanism: at a slope station's cut line (the edge strip's outer line, walked AT THE STATION) the vertex takes the
+  pavement's top abreast of itself less 0.02; the cut line stood 0.09 m past the pavement at the vertex's own along
+  (1.8 m from the station), so the point abreast (0.05 m in) missed the pavement and the code fell back to the
+  station's own edge top, 1.8 m along a 3.3 % grade: 0.06 m high. ws32's note had fixed the same error where the
+  abreast point hits; the fallback kept it.
+- So the guess (the whole box's grid places the near-road nodes differently) is true but not the cause: the other grid
+  made different ground facets, so the cut lines made different vertices, one of them where the abreast point misses.
+  The crop's ws39 had 69 such vertices too (none poked).
+- **Fix** (`tools/median_ground_blend.py`, port-only, no new number): where the point abreast misses, the closest
+  point of the pavement (BVH `find_nearest`: engine-july's own feather target). The station's edge top is used only if
+  no pavement is found at all. Reported as `slope_edge_by_nearest_pavement`.
+- **ws40 (2a as committed, the crop, + the fix) = ws39 on every gate JSON**: drive_test, drive_test.freeroam,
+  drive_test.network, drive_test.line.network_i8_wb, audit, kn5_ground_check, median_barrier.built, terrain tiers
+  byte-identical; kn5 29,834,689 B, the same size. Only the edge report's rows (ground heights near the edges) and
+  median_ground.built (`slope_vertices` 1,256 -> 1,218; 69 by the nearest pavement) differ.
+- **ws41 (the whole box: `grid_crop_m` removed, tiers on, the fix): every gate green.** The line's drive_test PASS,
+  `drive_test.json` byte-identical to ws40's (soft top 0, excursions 2); WB's line gate PASS, **lap rule 13 (1.23 /
+  km)**, better than 2a's 17 (worst gated WB s 9,304.5 +9.0 0.81 m, was 0.79); audit CLEAN (grass_verts 304,399);
+  verify_kn5 / verify_inis PASS; kn5_ground_check PASS (road over ground 73 of 6,135, was 72; max 3.68 m, was 2.92:
+  the decks' undersides, gated as before); SHIP OK. Terrain 1,329 x 1,085 grid -> 106,653 vertices (918 fine cells,
+  390 fans). **kn5 34,094,237 B (34.1 MB), one file.** The `[fwlm-tiers]` lines now reach the log (ws41.log 22-23).
+- `grid_crop_m` is gone from `track.config.json` (`_grid_crop_m_dropped_doc`); `test_lm_engine_port` still tests the
+  crop's mechanism on the 1,000 m it carried. Lake Murray runs neither tool.
+
 ## PC runbook 0080-8: rehearse 2b round 1 (2a with the tiered ground), no install
 
 Supersedes 0080-7 for the next candidate. No lidar or NAIP is needed; the new draft step uses Blender 4.2's own numpy.

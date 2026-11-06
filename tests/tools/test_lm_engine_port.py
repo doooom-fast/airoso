@@ -240,6 +240,11 @@ def test_the_freeway_port_reads_the_network_line_and_cuts_the_grid_to_it():
     ws = Path(tempfile.mkdtemp(prefix="fwlm_"))
     try:
         _sync_in("san-diego-freeway-lm", ws)
+        # ledger 0080 2b round 2: the port dropped its crop (the whole box builds); the mechanism is still tested, on
+        # the crop it carried (1,000 m)
+        wcfg = json.loads((ws / "track.config.json").read_text(encoding="utf-8"))
+        wcfg["lm_intake"].setdefault("grid_crop_m", 1000)
+        (ws / "track.config.json").write_text(json.dumps(wcfg, indent=2), encoding="utf-8")
         rep = L.intake(ws)
         src = ROOT / "tracks" / "san-diego-freeway" / "source" / "network-draft-pr34"
         meta = json.loads((ws / "data" / "heightfield.meta.json").read_text(encoding="utf-8"))

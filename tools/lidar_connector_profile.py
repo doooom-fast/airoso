@@ -39,6 +39,8 @@ RADIUS_M = 1.0        # [invented] returns within this of the street point (3-6 
 MIN_RETURNS = 3       # [invented] fewer than this is no reading
 TILE_M = 100.0        # fetch tiles (a fetch window is the tile + 5 m)
 CLASSES = (2, 17)     # ground, bridge deck
+NONE_COST_M = 0.3     # [invented] --surface: the price of an unread point (filled from its neighbours) in the chain
+UNDER_M = 2.0         # [invented] --surface: a deck this far over the ground at one point is a second surface
 
 
 def _get(url):
@@ -117,18 +119,60 @@ class Ept:
         return E, N, Z, C
 
 
-def profile(ept: Ept, pts):
+def profile(ept: Ept, pts, surface: bool = False):
     """[(y or None, returns, bridge returns)] at each (x, y, z) point"""
     import numpy as np
     need = sorted({(int(math.floor(p[0] / TILE_M)), int(math.floor(p[2] / TILE_M))) for p in pts})
     tiles = {t: ept.tile(*t) for t in need}
-    out = []
+    out, cand = [], []
     for p in pts:
         E, N, Z, C = tiles[(int(math.floor(p[0] / TILE_M)), int(math.floor(p[2] / TILE_M)))]
         m = (E - p[0]) ** 2 + (N - p[2]) ** 2 <= RADIUS_M * RADIUS_M
         n = int(m.sum())
         out.append((round(float(np.median(Z[m])), 3) if n >= MIN_RETURNS else None, n, int((C[m] == 17).sum())))
-    return out
+        g, d = m & (C == 2), m & (C == 17)
+        cand.append((float(np.median(Z[g])) if g.sum() >= MIN_RETURNS else None,
+                     float(np.median(Z[d])) if d.sum() >= MIN_RETURNS else None))
+    if not surface:
+        return out
+    # SURFACE (round I): a street passing UNDER a bridge has the deck's returns over it, and the median of both lifts it
+    # onto the deck. Where a point has a deck surface and a ground surface UNDER_M or more apart, or only one of them,
+    # the road is the one continuous with the street (the chain of choices with the least total height change between
+    # neighbours; a deck the street climbs onto is reached by its ramps, an overhead deck is not)
+    opts = []
+    for k, (g, d) in enumerate(cand):
+        o = [v for v in (g, d) if v is not None]
+        if g is not None and d is not None and abs(d - g) < UNDER_M:
+            o = [out[k][0]]                      # one surface: the median of both, as before
+        elif g is None and d is not None:
+            o = [d, None]                        # a deck alone: the street on it, or under it with its ground unseen
+        opts.append(o or [None])
+    back = []
+    cost = [0.0 if v is not None else NONE_COST_M for v in opts[0]]
+    last = list(opts[0])                        # each state's last READ height (an unread point carries it on)
+    for k in range(1, len(opts)):
+        nc, nb, nl = [], [], []
+        for v in opts[k]:
+            if v is None:
+                # unread: only under a deck standing UNDER_M or more over the chain's last read height (or no reading)
+                d = opts[k][0]
+                ok = [i for i in range(len(cost)) if d is None or last[i] is None or d - last[i] >= UNDER_M]
+                if not ok:
+                    nc.append(float("inf")); nb.append(0); nl.append(None)
+                    continue
+                j = min(ok, key=lambda i: cost[i])
+                nc.append(cost[j] + NONE_COST_M); nb.append(j); nl.append(last[j])
+                continue
+            c = [cost[i] + (abs(v - u) if u is not None else 0.0) for i, u in enumerate(last)]
+            j = min(range(len(c)), key=lambda i: c[i])
+            nc.append(c[j]); nb.append(j); nl.append(v)
+        back.append(nb); cost = nc; last = nl
+    j = min(range(len(cost)), key=lambda i: cost[i])
+    pick = [j]
+    for nb in reversed(back):
+        j = nb[j]; pick.append(j)
+    pick.reverse()
+    return [(None if o[i] is None else round(o[i], 3), out[k][1], out[k][2]) for k, (o, i) in enumerate(zip(opts, pick))]
 
 
 def fill(pts, meas):
@@ -160,6 +204,8 @@ def main(argv=None) -> int:
     ap.add_argument("--ept", default=EPT_DEFAULT)
     ap.add_argument("--out")
     ap.add_argument("--cache")
+    ap.add_argument("--surface", action="store_true", help="round I: pick the continuous road surface where a deck "
+                    "stands over the ground (a street under a bridge stays on the ground)")
     a = ap.parse_args(argv)
     proj = Path(a.project).resolve()
     cfg = json.loads((proj / "track.config.json").read_text(encoding="utf-8"))
@@ -175,7 +221,7 @@ def main(argv=None) -> int:
         if name not in conns:
             raise SystemExit(f"lidar_connector_profile: {name} is not a connector of {src}")
         pts = conns[name]["points_xyz_m"]
-        meas = profile(ept, pts)
+        meas = profile(ept, pts, surface=a.surface)
         ys = fill(pts, meas)
         d = [y - p[1] for y, p in zip(ys, pts)]
         res[name] = {"xz": [[round(p[0], 3), round(p[2], 3)] for p in pts], "y": ys,

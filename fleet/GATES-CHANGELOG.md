@@ -33,6 +33,12 @@ No gate threshold, floor or bypass moved this round unless listed here. All opt-
     10 m past the polygon's soft edges.
   - No gate moved for 1182: it stands because its ground is now the lidar's (relief under its rim 0.45 m, was 3.16 m
     against the unchanged 2.64 m limit).
+  - ⚠ `tools/lidar_connector_profile.py --surface` (opt-in; off by default, round H's four streets read the same with it):
+    UNDER_M 2.0 m [invented] (a deck that far over the ground at a point is a second surface) and NONE_COST_M 0.3 m
+    [invented] (the chain's price for an unread point under a deck).
+  - ⚠ round I's street profiles hold a street on 3DEP whose lidar profile jumps more than 0.5 m [invented; 3DEP's own
+    largest is 0.56 m] between neighbouring points. The 100 measured streets are NOT wired this round (one mouth,
+    grid_tertiary_1 on grid_tertiary_2, reads HOST LANE 0.021 m against LANE_TOL 0.02 m; the tolerance was not moved).
 
 ## 2026-11-05 (round H) — Sand Creek: the 8 mouths and 13 houses from measurement; one bypass, one gate reading (ledger 0079 round H)
 

@@ -458,3 +458,33 @@ def test_lidar_ground_patch_point_in_polygon():
     import lidar_ground_patch as lgp
     sq = [(0.0, 0.0), (10.0, 0.0), (10.0, 10.0), (0.0, 10.0)]
     assert lgp.point_in(sq, 5.0, 5.0) and not lgp.point_in(sq, 11.0, 5.0) and not lgp.point_in(sq, 5.0, -1.0)
+
+
+def test_lidar_profile_surface_keeps_a_street_under_a_bridge_on_its_ground():
+    """ledger 0079 round I (--surface): under an overhead deck (deck returns 7 m up, the ground under it unseen at some
+    points) the street stays on its ground; a street climbing onto a deck by its ramps stays on the deck"""
+    import numpy as np
+    import lidar_connector_profile as lcp
+
+    def fake(ground, deck):
+        E, N, Z, C = [], [], [], []
+        for k, (g, d) in enumerate(zip(ground, deck)):
+            for dx in (-0.3, 0.0, 0.3):
+                if g is not None:
+                    E.append(k * 3.0 + dx); N.append(0.0); Z.append(g); C.append(2)
+                if d is not None:
+                    E.append(k * 3.0 + dx); N.append(0.1); Z.append(d); C.append(17)
+
+        class T:
+            def tile(self, i, j):
+                return np.array(E), np.array(N), np.array(Z), np.array(C)
+        return T()
+    pts = [(k * 3.0, 0.0, 0.0) for k in range(10)]
+    under = fake([1.0, 1.0, 1.0, None, None, 1.0, None, 1.0, 1.0, 1.0],
+                 [None, None, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, None, None])
+    ys = [m[0] for m in lcp.profile(under, pts, surface=True)]
+    assert all(y is None or abs(y - 1.0) < 1e-9 for y in ys)
+    ramp = [1.0, 2.0, 3.0, 4.0, 5.0, 5.0, 4.0, 3.0, 2.0, 1.0]
+    on = fake([1.0, 2.0, 3.0, 4.0, None, None, 4.0, 3.0, 2.0, 1.0], [None, None, None, None, 5.0, 5.0, None, None, None, None])
+    ys = [m[0] for m in lcp.profile(on, pts, surface=True)]
+    assert ys == ramp

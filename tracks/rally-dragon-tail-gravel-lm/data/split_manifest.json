@@ -1,10 +1,10 @@
 {
- "input": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/ws_empty/rally-dragon-tail-gravel-lm/blender/rally_co_dragon_tail_gravel_lm.blend",
+ "input": "D:\\k10-scratch\\dragon_tail_gravel_lm\\blender\\rally_co_dragon_tail_gravel_lm.blend",
  "outputs": {
   "loop_main.blend": {
    "objects": 30,
    "meshes": 15,
-   "positions": 631734,
+   "positions": 640534,
    "max_positions": 56796,
    "materials": [
     "1GRASS_0_mat",
@@ -83,7 +83,7 @@
  "input_census": {
   "objects": 30,
   "meshes": 15,
-  "positions": 631734,
+  "positions": 640534,
   "max_positions": 56796,
   "materials": [
    "1GRASS_0_mat",

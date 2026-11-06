@@ -34,7 +34,8 @@
       "drive_test_street",
       "audit_street",
       "kn5_ground",
-      "edge_report"
+      "edge_report",
+      "stage_force"
     ]
   },
   "sync_in": {

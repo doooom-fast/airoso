@@ -35,6 +35,8 @@
  "width_taper": null,
  "resample": null,
  "edge_on_wall": null,
+ "corner_arcs": null,
+ "carried": [],
  "grid_upsample": 2,
  "md5": {
   "source_centerline": "c61a046a44c373a75d755ccbc436b029",

@@ -251,6 +251,123 @@ No gate threshold changed. These changes alter what a gate or a self-check sees:
   - The z18 colour rule (g/r 1.15, g/b 1.2, excess green 38) is read off sampled pixels of the scene (ledger 0079), not
     tuned against a gate.
 
+## 2026-11-05 — circuit kerbs round 3: a block reader for faded kerbs, and the bar it must pass (ledger 0081 round 3; no gate threshold, no bypass)
+
+No gate threshold changed and nothing is bypassed. New ⚠ invented numbers, none a gate; `tools/kerb_offsets.py` is in no
+chain (it writes a kerbs file a person then names in `route.kerbs_file`):
+- `tools/kerb_offsets.py` tuning: grid `DS_M` 0.25 along s, `DO_M` 0.075 across, `O_LO_M` / `O_HI_M` -3.5 / +3.5;
+  station every `STEP_M` 1.0 over a `WIN_M` 6.0 window; block periods `PERIOD_M` 1.25-3.0; `REFINE` 2 passes; band edge at
+  `HALF` 0.5 of the matched-filter peak (the half-maximum of a blurred step is the step: not tuned); a station counts at a
+  block amplitude of `MIN_AMP` 8 (luminance); extent window `EXT_WIN_M` 3.0, `EXT_FRAC` 0.5 of the span's median, gaps up
+  to `GAP_M` 3.0, at most `GROW_M` 15 past either eye end. ⚠ invented, chosen once and NOT tuned against the truths (one
+  extent variant, a tracked / short-window walk, was tried and dropped: it was worse, ledger 0081 round 3).
+- **The bar for using it** ⚠ invented: a run class may be measured by the reader only if, against High Plains' colour-
+  measured runs of that class, the p95 |residual| of BOTH paint edges (in_m, out_m) is <= 0.4 m: about one NAIP 0.3 m
+  pixel plus the colour truth's own 0.15 m offset step, and under a third of the narrowest raised kerb measured there
+  (1.3 m). Raised blue / white kerbs pass (in 0.29, out 0.36, with R s 2,892's out excluded: its colour truth +2.30 m is
+  the dirt beyond the kerb, seen on the committed strips); flat blue / yellow stripes do not (in 0.48, out 0.67), so the
+  reader measures raised kerbs only. Ends (along s): no bar; the reader's ends are reported beside an eye check of the
+  same strips.
+- `tools/kerb_offsets.py --follow 1` (Pueblo 0.1.2): `FOLLOW_SMOOTH` 9 (a running median over 9 one-metre stations of the
+  band's middle; 5 left a 0.58 m zig at Pueblo R s 3,013, a parked car's shadow over the blocks, which drive_test read as
+  a kink) and `FOLLOW_MAX_M` 1.5 (a station's band further than this from the run's is not the same paint). ⚠ invented.
+- Pueblo's kerbs are built through `tools/author_kerbs_blend.py`'s existing `MIN_W_M` 0.9 floor (round 4, invented): R s
+  1,128-1,140 measured 0.63 m and L s 1,068-1,095 0.81 m are built 0.9 m wide (0.27 / 0.09 m over, inside the reader's
+  0.35 m width p95). Not changed here; said so the widths are not read as measured.
+
+## 2026-11-05 — circuit kerbs round 2: kerbs at their measured offset (ledger 0081 round 2; no gate threshold, no bypass)
+
+No gate threshold changed and nothing is bypassed. New ⚠ invented numbers, none a gate, all opt-in under keys Lake Murray
+does not set (it names no `route.kerbs_file`, so the kerbs step is a no-op there):
+- `kerb.end_ramp_m` 4.0 (each port config that sets `kerb.placement` "measured"): a raised kerb's top ramps from the lip
+  to `kerb.height_m` over this length at either end. ⚠ invented, and chosen against drive_test, said plainly: a kerb laid at
+  its measured place lies over the 12 m lane where the real track is narrower, so drive_test's interior wheel paths
+  (1.25 m and 2.75 m inside the edge) ride onto it; an abrupt 0.08 m end read as 4 severe steps (R s 2,000) and 7.8 kinks
+  /km on High Plains. 4.0 m is the shortest two-stripe length whose end slope (0.08 / 4 = 2 %, 0.02 m per metre) stays
+  under the bump (0.025 m) and kink (3 %) thresholds. Racing kerbs are ramped at their ends; this length is not measured.
+- `tools/author_kerbs_blend.py` `LAYER_M` 2.0: the ROAD surface under a kerb over the lane is read within this of the lane
+  edge's height (L4: never another layer). The measured placement drops `MAX_W_M` (the measured width stands; High
+  Plains' R s 2,892 paint is 2.85 m).
+- `tools/seat_pads_blend.py` (opt-in `scenery.bespoke.pads_seat`, Nevada): no new shape number (the pads' own
+  `PAD_LIFT_M` 0.06, round 5's); `COPLANAR_RAD` 1e-4 (a merge tolerance) and `HASH_M` 8 (a lookup cell), neither moves a vertex.
+- `tools/kerb_spans.py`: a red / white run's width is read off the red blocks alone (the white matched the pale sand and
+  concrete beside it); the colour classes themselves are unchanged.
+- `tools/kerb_spans.py --grow 10` and `GAP_M` 3.0: an eye span is grown / trimmed to its key colour (blue for the blue
+  schemes, red for red / white) at most 10 m past either end, over gaps of up to 3 m (a white block, a faded block).
+
+## 2026-11-05 — circuit kerbs off NAIP 0.3 m: the measurer's invented numbers (ledger 0081; no gate threshold, no bypass)
+
+No gate threshold changed and nothing is bypassed; every gate runs as before on each rebuilt circuit. New ⚠ invented
+numbers, none a gate, all tuning of a colour measurer or a build profile (the image is the measurement):
+- `tools/kerb_spans.py` (measures each hand-checked span): `BAND_M` 2.5 (the band across the lane edge read), `OFF_STEP_M`
+  0.15 (half a 0.3 m pixel), `MIN_HITS` 2 (a station with fewer paint pixels says nothing about width), the paint classes
+  (blue B > R + 25 and B > G; red R > G + 25, R > B + 20, G < B + 25; white mean >= 150, spread <= 50, B >= R - 45;
+  yellow R > B + 45, G > B + 35, max >= 140), and the blue / yellow width read off the blue blocks alone (NAIP's stripe
+  yellow is the dry grass's colour).
+- `tools/author_kerbs_blend.py` `MIN_PAINT_W_M` 0.45 (a flat "paint" run narrower than ~1.5 px at 0.3 m is noise). A
+  "paint" run is built FLAT at the existing `KERB_LIP_M` (no height is seen in an image, so none is built), with the
+  existing back fall; "kerb" runs keep the config's `kerb.height_m` as before.
+- `tools/kerb_blocks.py` (a lead finder, not a measurement; nothing is built from it unchecked): `SAMPLE_M` 0.25, the band
+  -2.0..+1.5 m in 0.15 m columns, `WIN_M` 6, periods 1.5-2.5 m, `MIN_AMP` 22 (luminance), `MIN_MEAN` 125, `MIN_RUN_M` 5,
+  `GAP_M` 4. Its precision is poor: on High Plains (the control) it lists 70 runs / 1,633 m against the 20 / 560 m checked.
+- `tools/apron_seat_check.py`: report only (four samples per apron triangle), no threshold.
+- The spans themselves: a colour scan's run (blue or red >= 3 px in a 5 m window of the -2.5..+1.0 m edge band) less its
+  2 m window at each end, every span checked by eye on `tools/edge_sheet.py` zooms kept beside the trace.
+
+## 2026-11-05 — DECLARED FORCE: Under the Dragon's Douglas Creek fill, s 2,395-2,410 (ledger 0078 round 13; no threshold moved)
+
+Kevin, 2026-11-05, asked whether to force Under the Dragon's last red row as measured: **"Yes, force it"**.
+
+- **What is forced** (`rally-under-the-dragon-gravel-lm` `track.config.json` `gates.drive1.force_exemptions.stage`,
+  versions `["0.1.0"]`, beside his three rows of 2026-11-04): **gated excursion drops, s 2,395-2,410**, id "Douglas
+  Creek fill". The two rows there (s 2,402.8, 12.5 / 13.0 m left of the line, 0.28 / 0.32 m single steps) trip the
+  unpaved rule's 3.0 m cumulative fall past the road edge. The built ground falls 3.33 m; the lidar's class-2 ground
+  falls 3.76 m over the same 8.6 m (199.33 -> 195.57 m, ~1:2.3) and 3DEP 3.85 m, so the build is the real fill slope
+  between the hairpin's legs, slightly gentler. No lip or wall goes in to clear it.
+- **Wiring unchanged** (`tools/stage_force.py`, round 12). Re-run on the round-13 records (109e4c51): Under the Dragon
+  `force_install_ok` true (its corner at s 22,414 and the two s 2,403 drops covered), Dragon Tail true as before. Any
+  soft top, a severe-step rate over 12 /km, or the same row type anywhere else still refuses it.
+- No threshold changed; drive_test still reads the row red. No other track declares anything new.
+
+## 2026-11-04 — Rangely stage ports, round 13: the true warp, a measured pad, an aerial trace (ledger 0078 round 13; no gate threshold moved, no bypass)
+
+No gate threshold, exemption or force changed; Kevin's three-row force (below) is untouched and covers nothing new.
+What the two `_lm` ports now declare, and the numbers behind it:
+
+- **`route.densify.measure "warp"`** on both ports (Milford's measure, ledger 0078 round 5; `tools/densify_ribbon_blend.py`
+  unchanged). `max_cols` 64 is set so the cap never binds (the worst quads need 60 / 36 columns): the step's existing
+  `CREASE_TOL_M` 5 mm [invented, round 5] is the only rule. Lake Murray never runs the step.
+- **`lm_pads.pads` DC + `lm_intake.pad_widths`** on Under the Dragon: the Douglas Creek switchback as a measured pad
+  (`tools/lm_pads_blend.py`'s existing numbers) from `tools/bench_pad.py` (new). Its own numbers: road_seek's bench rule
+  as it is (0.25 m / 0.5 m face / 2 m), `EDGE_MEDIAN` 5 rays ⚠ [invented], `NAIP_RUN` 3 samples, `NAIP_MIN_CONTRAST` 20
+  grey levels, `NAIP_REACH_M` 20 ⚠ [invented]; the mask / smoothing / deck numbers are draft_pad_outline.py's. The lane
+  between the cuts is never wider than measured (2 x the nearer measured edge) and tapers at the port's existing
+  `width_taper`. drive_test's corner rule (9 m) reads that lane unchanged. The pad declares `seam: "row"`
+  (`draft_pads.seam_offset`, opt-in; the Lariat's pads declare nothing and are unchanged): beyond a row's own ends its
+  seam fades from the row, not from its infinite line (a hairpin's other leg lies behind the in-cut's line).
+- **`tools/aerial_trace.py`** (new, report-only: nothing reads its record): `BAND_W_M` 5-12 m, `NOISE_GREY` 5, `ROAD_E` 3,
+  `OFF_MIN_M` 1, `LINE_SD_GREY` 15, `RUN_MIN_M` 30, `GAP_STATIONS` 2 ⚠ [invented]; `SEEK_HALF_M` 15 (the coordinator's),
+  `ROUGH_M` / `MAX_SHIFT_M` / `SHOULDER_M` road_seek's. Round 13 drew every run it would act on and applied none.
+
+## 2026-11-04 — DECLARED FORCE: three measured rows on the Rangely stage ports (ledger 0078 round 12; no threshold moved)
+
+Kevin, 2026-11-04, asked about the three rows the measured switchbacks fail as measured: **"Yes, force those 3"**.
+
+- **What is forced, by port, place and row type only** (`track.config.json` `gates.drive1.force_exemptions.stage`,
+  versions `["0.1.0"]`):
+  - `rally-dragon-tail-gravel-lm`, **undrivable corners, s 6,340-6,400** (switchback 1: R 13.75 m centre arc, graded
+    platform 6.94 m wide, against drive_test's 11 m corner rule);
+  - `rally-dragon-tail-gravel-lm`, **gated excursion drops, s 6,570-6,630** (switchback 2's real fill slope, 0.54-1.09 m
+    below the platform's outside edge, against the 0.2 m drop rule; no stone lip or other invented edge goes back in);
+  - `rally-under-the-dragon-gravel-lm`, **undrivable corners, s 22,400-22,560** (R 15.93 m, platform 6.82 m wide).
+- **Wiring.** New gate step `stage_force` (`tools/stage_force.py`, last in each port's `steps.gate`; records only, exit
+  0). `--force-install` passes a red stage build only when the build's version is declared, every drive_test fail
+  reason is one of those row types, every undrivable corner (drive_test's `worst.undrivable_all`, written because the
+  key is declared) lies in a declared undrivable window and every gated drop in a declared drop window. A soft top, a
+  severe-step rate or the same row type anywhere else refuses it. **Not covered:** Douglas Creek (s 2,403 / 2,456:
+  waiting on the lidar), any soft top, anything at s 14.3 km.
+- No threshold changed; drive_test still reads these rows red. Lake Murray and every other track declare nothing.
+
 ## 2026-11-03 — COMPARISON RULE: "unchanged" kn5s are judged by `tools/kn5_equiv.py`, not md5 (ledger 0065)
 
 Blender's tangent pass is not bit-stable. Lake Murray v4's own workshop, rebuilt from the prep on the PC with the same engine,

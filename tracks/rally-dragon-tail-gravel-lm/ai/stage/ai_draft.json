@@ -1,0 +1,120 @@
+{
+ "status": "GENERATED DRAFT from the built centreline \u2014 not an in-game recording (docs/HANDOFF.md :284, ledger 0023). Replace file-for-file with CSP's fast_lane.ai.candidate recorded in this layout.",
+ "layout": "stage",
+ "direction": "forward",
+ "race_furniture": false,
+ "lane_offset": true,
+ "frame": "kn5 frame (median dist to centerline.local: engine 50.0 m / kn5 0.0 m)",
+ "points": 16798,
+ "spacing_m": 1.5,
+ "lap_m": 25195.4,
+ "lap_s_est": 772.1,
+ "offset_points": 81,
+ "offset_max_m": 1.003,
+ "clearance": {
+  "points": 16798,
+  "unmatched": 0,
+  "divider_stations": 0,
+  "right_side": 0,
+  "island_hits": 0,
+  "divider_hits": 0,
+  "divider_too_close": 0,
+  "edge_too_close": 0,
+  "min_divider_clear_m": null,
+  "min_edge_clear_m": 2.2417982214508254,
+  "max_lat_m": 1.016593478179898,
+  "right_side_frac": null,
+  "ok": true
+ },
+ "geometry": {
+  "ramps": [],
+  "ramp_clamped": 0,
+  "corner_approach": [],
+  "folds": [],
+  "fillets": [
+   {
+    "xz": [
+     -3859.39,
+     2011.12
+    ],
+    "radius_m": 12.6,
+    "floor_m": 12.0,
+    "lane": "comfort",
+    "window_pts": 15,
+    "turn_deg": 85.7
+   },
+   {
+    "xz": [
+     3015.59,
+     -550.75
+    ],
+    "radius_m": 12.6,
+    "floor_m": 12.0,
+    "lane": "comfort",
+    "window_pts": 10,
+    "turn_deg": 54.9
+   },
+   {
+    "xz": [
+     3156.54,
+     -1011.24
+    ],
+    "radius_m": 12.6,
+    "floor_m": 11.24,
+    "lane": "comfort",
+    "window_pts": 18,
+    "turn_deg": -105.0
+   },
+   {
+    "xz": [
+     3551.59,
+     -1593.69
+    ],
+    "radius_m": 12.6,
+    "floor_m": 11.84,
+    "lane": "comfort",
+    "window_pts": 21,
+    "turn_deg": 127.4
+   },
+   {
+    "xz": [
+     3707.67,
+     -1845.98
+    ],
+    "radius_m": 12.6,
+    "floor_m": 12.0,
+    "lane": "comfort",
+    "window_pts": 10,
+    "turn_deg": 54.0
+   }
+  ],
+  "smoothing": [
+   {
+    "iterations": 2,
+    "violations_before": 5,
+    "violations_after": 0,
+    "moved_points": 21,
+    "corridor_clamps": 0
+   },
+   {
+    "iterations": 0,
+    "violations_before": 0,
+    "violations_after": 0,
+    "moved_points": 0,
+    "corridor_clamps": 0
+   }
+  ],
+  "start": null,
+  "min_radius_m": 9.8,
+  "min_radius_at": 4380,
+  "radius_below_floor": 0,
+  "max_turn_deg": 8.7,
+  "turns_over_limit": 0,
+  "turns_over_limit_road_tight": 0,
+  "max_lateral_jump_m": 0.246,
+  "backward_steps": 0,
+  "self_crossings": 0,
+  "min_speed_kmh": 44.6,
+  "min_speed_at": 4378
+ }
+}

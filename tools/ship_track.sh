@@ -519,6 +519,14 @@ prep_prep() {
     step "ship: red repairs (tools/red_repairs_blend.py: the named kerb faces, the named ground slivers; self-checked)"
     "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/red_repairs_blend.py" -- "$PROJ/blender/$SLUG.blend" --project "$PROJ" 2>&1 | grep "^\[red\]\|Error\|Traceback"
   fi
+  # ledger 0081 round 2: bespoke pads re-laid on the PREPPED ground's own triangles (Nevada's apron sat under the ground the
+  # prep re-seated); only a config that sets scenery.bespoke.pads_seat "ground", no header otherwise (Lake Murray's chain is
+  # unchanged). Part of prep (steps.prep stays prep, split); exit 1 = the blend not saved
+  if [ "$(pyq "import json,sys; print(((json.load(open(sys.argv[1],encoding='utf-8')).get('scenery') or {}).get('bespoke') or {}).get('pads_seat') == 'ground')" "$PROJ/track.config.json" | tr -d '\r')" = "True" ]; then
+    step "ship: the bespoke pads laid on the prepped ground's own triangles (tools/seat_pads_blend.py; self-checked)"
+    "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/seat_pads_blend.py" -- "$PROJ/blender/$SLUG.blend" --project "$PROJ" 2>&1 | grep "^\[seat-pads\]\|FATAL\|Error\|Traceback"
+    [ "${PIPESTATUS[0]}" = 0 ] || { echo "seat_pads_blend failed"; exit 1; }
+  fi
 }
 prep_split() {
   local lid
@@ -709,6 +717,17 @@ gate_drive_test_lines() {
 gate_audit_street() {
   if [ -n "$AUDIT_NOTE" ]; then step "gate: audit_mesh, street (hard total; $AUDIT_NOTE)"; else step "gate: audit_mesh, street (hard total)"; fi
   AU_S=0; (cd "$AIROSO" && python -m scripts.geometry.audit_mesh "$PROJ" 2>&1 | tail -16) || AU_S=$?
+}
+gate_stage_force() {
+  # ledger 0078 round 12: Kevin's force for a stage port, by place and row (tools/stage_force.py; the port's
+  # gates.drive1.force_exemptions.stage). Records only (exit 0); its verdict decides whether --force-install may pass
+  # the red drive_test. List it LAST in steps.gate.
+  step "gate: Kevin's force for a stage, by place and row (tools/stage_force.py; --force-install only where every red row is a forced one)"
+  (cd "$AIROSO" && python tools/stage_force.py "$PROJ")
+  D1_FORCE_OK=$(pyq "import json,os,sys
+p=sys.argv[1]
+print(1 if os.path.exists(p) and json.load(open(p,encoding='utf-8')).get('force_install_ok') is True else 0)" "$PROJ/data/stage_force.json")
+  D1_FORCE_OK="${D1_FORCE_OK%$'\r'}"
 }
 gate_race_gates() {
   [ -n "$RACE_IDS" ] || { no_race race_gates; return 0; }

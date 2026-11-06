@@ -402,6 +402,39 @@ def intake(proj: Path, *, connectors: bool | None = None) -> dict:
                      "max_widening_m": round(max(moved), 2)}
         print(f"[lm_intake] width steps tapered at {rate} m per m a side: {taper_rep['points_widened']} points widened "
               f"(max {taper_rep['max_widening_m']} m); none narrowed")
+    # THE LANE ON A MEASURED PAD (lm_intake.pad_widths [pad records, tools/bench_pad.py]; ledger 0078 round 13). Between a
+    # pad's two cuts the deck is the measured platform (tools/lm_pads_blend.py) and the ribbon there is deleted; the lane
+    # drive_test reads (its wheel paths, its corner rule) is the widest one CENTRED ON THE LINE that both measured edges
+    # allow at each vertex (2 x the nearer edge), never wider than measured, and no wider than the taper allows from its
+    # neighbours and from the cut rows (width_taper a side: a lower envelope, so the lane never steps up at a cut). After
+    # the taper, so the taper never flares the ribbon outside the cuts out of a platform it does not have. The line itself
+    # is not moved: the record names its own vertices and is refused on any other line.
+    pad_rep = []
+    for rel in li.get("pad_widths") or []:
+        rec_p = json.loads((proj / rel).read_text(encoding="utf-8"))
+        k0, k1 = rec_p["cuts"]
+        lap = {int(x["k"]): x for x in rec_p.get("lap") or []}
+        if sorted(lap) != list(range(k0, k1 + 1)):
+            raise SystemExit(f"[lm_intake] pad_widths {rel}: its lap does not name every vertex v{k0}..v{k1}")
+        off = max(math.hypot(pts[k][0] - lap[k]["raw_xz"][0], pts[k][2] - lap[k]["raw_xz"][1]) for k in lap)
+        if off > 0.01:
+            raise SystemExit(f"[lm_intake] pad_widths {rel}: measured on another line (a lap vertex {off:.3f} m off) — "
+                             f"measure it again (tools/bench_pad.py) on this port's own line")
+        st_p = [0.0]
+        for a, b in zip(pts, pts[1:]):
+            st_p.append(st_p[-1] + math.hypot(b[0] - a[0], b[2] - a[2]))
+        rate_p = float(wt) if wt else 0.0
+        anchors = [(k0, widths[k0]), (k1, widths[k1])]
+        anchors += [(k, 2.0 * min(-lap[k]["edge_m"][0], lap[k]["edge_m"][1])) for k in range(k0 + 1, k1)]
+        was = widths[k0 + 1:k1]
+        for k in range(k0 + 1, k1):
+            widths[k] = round(min(w_ + 2.0 * rate_p * abs(st_p[k] - st_p[j]) for j, w_ in anchors), 3)
+        pad_rep.append({"file": rel, "id": rec_p.get("id"), "cuts": [k0, k1],
+                        "width_m": [round(min(widths[k0 + 1:k1]), 2), round(max(widths[k0 + 1:k1]), 2)],
+                        "was_m": [round(min(was), 2), round(max(was), 2)]})
+        print(f"[lm_intake] pad {rec_p.get('id')} ({rel}): the lane between v{k0} and v{k1} on its measured platform, "
+              f"{pad_rep[-1]['width_m'][0]}..{pad_rep[-1]['width_m'][1]} m (the ribbon's {pad_rep[-1]['was_m'][0]}.."
+              f"{pad_rep[-1]['was_m'][1]} m)")
     dy = [p[1] - a for p, a in zip(pts, y0)]
     # THE MEASURED CORNER ARCS (lm_intake.corner_arcs true; ledger 0078 round 6, the Lariat). The source's
     # hairpin_fit.mesh_fit corners (C12 / C13: junction nodes holding most of a 76-79 deg turn, measured on the aerial at
@@ -849,7 +882,7 @@ def intake(proj: Path, *, connectors: bool | None = None) -> dict:
            "y_changed_points": sum(1 for d in dy if abs(d) > 1e-6),
            "y_change_max_m": round(max((abs(d) for d in dy), default=0.0), 3),
            "connectors": bool(want_conn and conn.exists()), "bespoke_files": copied, "crossfall": cf_rep, "profile": prof_rep,
-           "width_taper": taper_rep, "resample": resample_rep, "edge_on_wall": wall_rep, "corner_arcs": arcs_rep, "carried": carried,
+           "width_taper": taper_rep, **({"pad_widths": pad_rep} if pad_rep else {}), "resample": resample_rep, "edge_on_wall": wall_rep, "corner_arcs": arcs_rep, "carried": carried,
            "grid_upsample": up,
            "md5": {"source_centerline": _md5(need[0]), "heightfield.npy": _md5(data / "heightfield.npy"),
                    "centerline.local.json": _md5(data / "centerline.local.json")}}

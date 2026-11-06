@@ -47,7 +47,8 @@
     "optional": [
       "data/heightfield.npy",
       "data/heightfield.meta.json",
-      "textures/kerb_bluewhite.png"
+      "textures/kerb_bluewhite.png",
+      "textures/kerb_atlas_hp.png"
     ]
   },
   "sync_out": {

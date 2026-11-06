@@ -4,8 +4,8 @@
  "lap_m": 25716.5,
  "closed": false,
  "widths_m": [
-  4.22,
-  7.31,
+  4.0,
+  7.3,
   15.51
  ],
  "bridges_levelled": [],
@@ -68,6 +68,24 @@
   "points_widened": 908,
   "max_widening_m": 5.17
  },
+ "pad_widths": [
+  {
+   "file": "source/pads/DC.json",
+   "id": "DC",
+   "cuts": [
+    816,
+    848
+   ],
+   "width_m": [
+    4.0,
+    10.69
+   ],
+   "was_m": [
+    5.7,
+    10.34
+   ]
+  }
+ ],
  "resample": null,
  "edge_on_wall": null,
  "corner_arcs": null,
@@ -79,6 +97,6 @@
  "md5": {
   "source_centerline": "57c1c45c8a4ec1bf224166a1ac0be20e",
   "heightfield.npy": "83276580a96741aa852b35c3c3a4cd81",
-  "centerline.local.json": "a591e9e9044b634184804ab196f9f164"
+  "centerline.local.json": "f114a89a89c1b28481ce92056fb9df7a"
  }
 }

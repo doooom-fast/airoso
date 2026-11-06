@@ -617,6 +617,9 @@ def build(proj, cfg, decls):
             raise SystemExit(f"[lm-pads] FATAL: {pid}: the deck covers {tri_area:.1f} m2 of a {ring_a:.1f} m2 outline")
         seam_xy = {(round(s[0], 3), round(s[1], 3)): s[2] for s in seams}
         prof = dp.seam_profile([(cr, row) for _, cr, row in cuts_rows], lambda x_, y_: dp.deck_near(rec["deck"], x_, y_))
+        if d.get("seam") == "row":        # a switchback pad (round 13): each seam fades from its row, not its line
+            for s_ in prof:
+                s_["near_row"] = True
         for _c, cr, row in arm_rows:
             # an arm's fade: seam_profile's own rule (as long as its departure needs at SEAM_MAX_SLOPE, from SEAM_FADE_M),
             # up to 45 % of the way to the node, as the lap's two cuts are held to 45 % of the way to each other; and never

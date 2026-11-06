@@ -14,6 +14,33 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
+## 2026-11-05 (round L) — Sand Creek toward 0.2.6: Lake Murray's race kerbs, pad-corner arrow plates (ledger 0079 round L)
+
+**Not live.** The candidate stays parked in `tracks/sand-creek-lm/source/round_k/` (the live config is 0.2.5). No gate
+threshold, floor, reference or bypass moved; no gate's wiring changed. scripts/ is untouched. The place_signs change is
+opt-in and A/B'd byte-identical on Lake Murray's data; the author_signs_blend change acts only where no modelled walk
+is found, which no Lake Murray sign hits (its committed signs_measured.json):
+
+- Race kerbs: the candidate's `kerb.race_rule` / `surface` / `end_ramp_m` / `placement`, the `kerbs` draft step and the
+  `1KERB` texture row are gone; `race.kerbs.trims` is empty, so Lake Murray's race-furniture kerbs are swept at every
+  corner its detector finds (race_furniture.KERB_DEFL_MIN_DEG 45, the outside extension clamp(2 R, 10, 30) m, 1.0 m x
+  0.05 m, 0.05 m inside the strip face — all Lake Murray's own constants, unchanged). One pair of `race.kerbs.trims`
+  pull-backs, ⚠ [authored, measured on rl1]: at the S at 48th / Colorado v3195's outside kerb ends at v3200 (was v3212;
+  built as detected it turned inside out in the right edge's fold, verify_race I) and v3205's outside kerb starts at
+  v3201 (was v3189), so each edge carries one kerb line where the two corners' kerbs overlapped.
+- Sign bases (`tools/author_signs_blend.py`): where the march found no modelled walk along the ray, the ground ray-cast
+  is the post's base (was: the walk's analytic road + 0.24 m whenever the ray-cast differed by > 0.30 m). No number;
+  Lake Murray's committed signs_measured.json has no sign on that path.
+- Arrow plates at the pad corners: `tools/place_signs.py` defaults.`pad_decks` (opt-in, in OPT_IN_DEFAULTS, absent from
+  DEFAULTS so a signs.json that names none writes the record it wrote before) puts data/pads.built.json's decks in the
+  polyline field as pavement, as the north network's decks are on Lake Murray (ledger 0054 A8);
+  `tools/expansion_lines.pad_polygons` reads lm_pads' `outline_en` where Lake Murray's pads record `outline_xz`. Sand
+  Creek's signs.json names the three pad corners per_layout (SC-C50 v140, SC-ASH v186, SC-DAH v410). **No new number**:
+  the rule's own defaults (Lake Murray's) place them.
+- Not changed, on purpose (the ledger has the measurements): drive_test's fixed-offset sampling (scripts/, frozen), no_route's
+  wall band reference (centreline y + 0.10), verify_kn5's closure rule. Lake Murray's `drive_test.fold_fan_severe` key
+  was NOT adopted for Sand Creek (it would re-route a severe reading to another gate; the coordinator's call).
+
 ## 2026-11-05 (round K) — Sand Creek toward 0.2.6: race closure, race kerbs, arrow signs, street-name blades (ledger 0079 round K)
 
 **Not live.** The candidate config is `tracks/sand-creek-lm/source/round_k/` (the live config stays 0.2.5): its race

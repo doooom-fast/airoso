@@ -559,7 +559,12 @@ def test_round_k_keys_are_opt_in():
     assert "race_rule" not in (live.get("kerb") or {}) and "signs_name_blades" not in live
     sc = json.loads((SC / "source" / "round_k" / "track.config.json").read_text(encoding="utf-8"))
     assert sc["version"] == "0.2.6"
-    assert sc["race"]["edge_fold_chord"] is True and sc["kerb"]["race_rule"]
+    assert sc["race"]["edge_fold_chord"] is True
+    # round L (call 2): Lake Murray's race-furniture kerbs, nothing dropped; the circuit kerb keys gone from the candidate
+    assert "race_rule" not in sc["kerb"] and "surface" not in sc["kerb"]
+    trims = sc["race"]["kerbs"]["trims"]
+    assert not any(t.get("drop") for t in trims) and {(t["apex"], t["kind"]) for t in trims} == \
+        {(3195, "outside"), (3205, "outside")}
     race = [l for l in sc["layouts"] if l["id"] == "race"][0]
     street = [l for l in sc["layouts"] if l["id"] == "street"][0]
     assert race["race_furniture"] is True and race["closure_token"] == "race"
@@ -628,3 +633,33 @@ def test_edge_fold_chord_is_opt_in():
     assert "chord" in rf._trim_folds.__code__.co_varnames
     assert rf.trim_folded_rings.__defaults__[-1] is False
     assert rf.edge_fold_corners.__defaults__[-1] is False
+
+
+def test_round_l_pad_decks_opt_in():
+    """ledger 0079 round L (call 5): defaults.pad_decks is opt-in (absent from DEFAULTS, so a signs.json naming none
+    writes the record it wrote before); only Sand Creek's names it, with its three pad corners per_layout; Lake
+    Murray's pads.built.json (outline_xz) and lm_pads' (outline_en) read the same way"""
+    import place_signs as ps
+    import expansion_lines as el
+    assert "pad_decks" not in ps.DEFAULTS and ps.OPT_IN_DEFAULTS == {"pad_decks": False}
+    for t in ("san-diego-lake-murray", "lookout-lariat", "lookout-lariat-lm"):
+        p = ROOT / "tracks" / t / "signs.json"
+        if p.exists():
+            assert "pad_decks" not in (json.loads(p.read_text(encoding="utf-8")).get("defaults") or {}), t
+    sg = json.loads((SC / "signs.json").read_text(encoding="utf-8"))
+    assert sg["defaults"]["pad_decks"] is True
+    assert {c: sg["corners"][c]["vertex"] for c in ("SC-C50", "SC-ASH", "SC-DAH")} == \
+        {"SC-C50": 140, "SC-ASH": 186, "SC-DAH": 410}
+    assert all(sg["corners"][c]["per_layout"] is True for c in ("SC-C50", "SC-ASH", "SC-DAH"))
+    try:
+        ps.validate_overrides({"pad_decks": "yes"}, {})
+    except ps.SignsConfigError:
+        pass
+    else:
+        raise AssertionError("a non-bool pad_decks must be refused")
+    with tempfile.TemporaryDirectory() as td:
+        (Path(td) / "data").mkdir()
+        ring = [[0.0, 0.0], [10.0, 0.0], [10.0, 10.0]]
+        for key in ("outline_xz", "outline_en"):
+            (Path(td) / "data" / "pads.built.json").write_text(json.dumps({"pads": [{"id": "p", key: ring}]}))
+            assert el.pad_polygons(td) == [("p", [(0.0, 0.0), (10.0, 0.0), (10.0, 10.0)], [])], key

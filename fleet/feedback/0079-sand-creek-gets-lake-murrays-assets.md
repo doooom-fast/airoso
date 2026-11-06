@@ -1273,7 +1273,140 @@ Tests: `tests/run_tests.py` (.venv python, `python` on PATH): 1,323 pass, 8 fail
 `test_registry_moves`) plus `test_bench_pad` x2, which the circuit-kerbs merge brings (ledger 0081 lists them as the Mac's
 baseline). 6 new round K tests pass.
 
-## Owed (2026-11-05, after round K; start here)
+## Round L (Mac): Lake Murray's race kerbs, the pad-corner plates; the race layout still red (NOT 0.2.6)
+
+The coordinator's six calls (Kevin can overrule). Built from an EMPTY workshop `sclm_work/rl1` with the candidate
+(`source/round_k/`, edited this round) swapped in as the live config for the build only, resumed with `--from` after each
+fix (logs `rl1.b/c/d.log`, `rl1.log`). The committed live config is still 0.2.5. Every number: GATES-CHANGELOG
+2026-11-05 (round L) — no gate threshold, reference, wiring or bypass moved; none was added.
+
+### Call 1 (closure = the mouth-crossing barrier pieces): NOT built — it is not Lake Murray's meaning of a closure
+
+- Lake Murray's closure is the wall that shuts off **the rest of the street the race runs on**: ledger 0049 R3 ("the far
+  boundary [of an Alvarado-wide 11.36 m lane] is the same jersey strip ... Everything beyond the closure is
+  unreachable"), R9 (per direction, because on 17 m roads each direction's closure stands inside the other's lane), and
+  verify_kn5's docstring ("the wall shutting off the other direction"). Its two closure kn5s hold 8 long walls each
+  (`1WALL_race_close_cw_{college,jackson,lakemurray,navajo}_*`, 123-1,995 m bounding boxes) plus the layout's own plate.
+- Side streets are NOT closures there: 0049 R7 — "On the race side, the strip runs straight across the mouth ... Both
+  strips are continuous in the common kn5, so every mouth is sealed at full height in both race layouts regardless."
+  The pieces crossing Sand Creek's 27 mouths are exactly that common strip; moving them into the closure kn5 would make
+  "closure" mean something Lake Murray's tools, gates and ledger do not.
+- So verify_kn5's red stands (the only verify_kn5 failure on rl1: "CLOSURE kn5 ... holds no 1WALL_RACE_CLOSE_RACE_*").
+  What would satisfy it in Lake Murray's own meaning: (a) Kevin names a lane narrower than the street somewhere — by
+  0049 R4 a closure stands wherever the base width is >= 15.67 m; Sand Creek has 474 of 3,218 lap vertices at >= 15.67 m
+  (Colorado / Quebec's 16 m, the junction flares); or (b) verify_kn5 learns `params.whole_lap` (scripts/: the
+  coordinator's / Kevin's call). Not done here.
+
+### Call 2 (race kerbs): BUILT — Lake Murray's race-furniture kerbs
+
+- Candidate: `kerb` back to 0.2.5's block (race_rule / surface / end_ramp_m / placement out), the `kerbs` draft step,
+  `textures/kerb_redwhite.png` sync and the `1KERB` texture row out, `race.kerbs.trims` un-dropped.
+- rl1: 14 kerbs at the 7 corners (v140, 186, 207, 410, 779, 3195, 3205), `1KERB_race_*` in `_race.kn5` (36 meshes: 22
+  strips + 14 kerbs, 10.2 MB), worn kerb atlas; none in the road kn5. verify_pads PASS x3, curb over pavement 0 / 0 / 0.
+- One authored pair of trims (measured): the S at 48th / Colorado. Built as detected, v3195's outside kerb (right edge
+  v3180-v3212) ran into the right edge's fold and turned inside out (verify_race I, stations 217-226); it also overlapped
+  v3205's inside kerb on that edge. Pulled back to v3200 (where v3205's inside kerb begins), and v3205's outside kerb
+  (left edge) starts at v3201 (where v3195's inside kerb ends): one kerb line per edge, round K's merge rule in Lake
+  Murray's trim vocabulary. verify_race OK after it.
+- The free roam is clean again: drive_test street kinks 2.9 -> **1.24 /km** (0.2.5's).
+
+### Call 3 (pad barriers on the deck's real edge): NOT built — the measured causes are not the plan edge
+
+- **The no_route door at v134-v136 L is vertical, not a gap in plan.** The strip there is seated on the colorado_50th
+  deck, which rises westward: ring bases +0.33 / +0.34 / +0.37 / +0.38 / +0.35 m over the lap centreline at v133-v137
+  (2.3 % across 16 m). no_route needs every wall to span [0.20, 0.90] m over its reference, the centreline y + 0.10
+  (WALL_LO_M / WALL_HI_M, DECK_LIFT_M); a K-rail buried 0.05 spans [base - 0.05, base + 1.15], so a base more than 0.25 m
+  over the reference (0.35 over the centreline) leaves the lowest bins open and the fill walks under it (the same limit
+  as mouth_weld's FOLD_HALF_JUMP_MAX_M note). Moving the strip in plan to the outline (0.3-0.5 m inward there) lowers it
+  ~0.01 m. Real fixes: no_route measures the band over the deck under the wall (a gate change: coordinator's call), or
+  the deck there is re-measured.
+- **The obstructions (50th/Ash s 550-554, 50th/Dahlia s 1223-1226) are the strip's apex rings at a width step.** At
+  v185-v188 the lap narrows 18.0 -> 10.0 m across a 12.1 m corner (50th to Ash; Dahlia mirror at v410-v413); the strip
+  ring at v186 stands at -6.83 m, 0.82 m along v185's tangent, and drive_test's lane clip (the lane lerped between the
+  vertex faces) counts its face inside the lane. Unchanged by this round (rl1: the same 9 stations).
+- Why not "the deck's real edge": the race declaration readers in scripts/ (drive_test's barrier-presence probe,
+  median_zone) know the strip only as `widths/2 + edge_centre_from_lip` with 3-point trimmed corners (A -> X -> B);
+  a strip on the deck's curb return would read as barrier_missing there. The in-vocabulary route is a declared pad
+  corner per side (A -> X -> B on the curb return, X measured off `pads.built.json` outline_en), which needs
+  barrier_bands / race_furniture / verify_race to accept declared (not fold-found) corners: a shared race-tool change
+  with a Lake Murray A/B. Owed.
+
+### Call 4 (the S's severe steps): diagnosed at the cause — none is a step in the built surface
+
+Every severe reading re-sampled as drive_test samples it (gate centreline, 1 m stations, the per-segment normal at the
+fixed offset; script in the round's scratch, `classify.py`):
+- rk3 (round K), 37: 29 on paths running BACKWARDS (offset +-13.7 / 14.5 / 19.2 m past the turning centre of corners of
+  R 14.1 / 15.6 / 17.2 / 22.8 m: v140, the S, v779), 6 on paths JUMPING 3.5-3.8 m per vertex (the outside of v140,
+  the colorado_50th deck's real -2 .. -4 % grade read as 0.07-0.11 m), 2 on the circuit kerb. Along each path's own
+  travel the surface grade is a steady 2-5 %.
+- rl1 (this round), 48: 29 where the backwards-running inside paths step on and off Lake Murray's 5 cm race kerb (v140,
+  v779, v3195 inside kerbs), 12 backwards on bare road / deck, the same 6 jumps, and 1 new at s 557 lat -3.2 (0.062 m:
+  the lane narrowing 18 -> 10 m carries the inside path onto v186's inside kerb).
+- So the cause is drive_test's fixed-offset sampling on a 31 m lane round 14-17 m corners (scripts/, frozen). Lake
+  Murray met the backwards half of this in ledger 0050 with its config key `drive_test.fold_fan_severe:
+  "verify_fold_fans"` (folded severe readings inside a levelled fold fan are judged by verify_fold_fans' real wheel
+  paths, which allow the authored race-kerb lip). NOT adopted here (it re-routes a reading to another gate: the
+  coordinator's call), and it would not cover the 6 jumps or the s 557 kerb reading.
+
+### Call 5 (arrow plates at the pad corners): BUILT
+
+- `tools/place_signs.py` defaults.`pad_decks` (opt-in): the BUILT pad decks join the polyline field as pavement, as
+  Lake Murray's north decks do (0054 A8); `expansion_lines.pad_polygons` reads lm_pads' `outline_en`.
+- `signs.json` names SC-C50 (v140), SC-ASH (v186), SC-DAH (v410) per_layout. rl1: SC-ASH-fwd and SC-DAH-fwd are
+  shared plates at the decks' far curb returns (rays 25.8 / 28.8 m); SC-C50-fwd is the rule's own through-leg skip in
+  Free Roam, so the race gets **SC-C50-fwd@race** behind its sealing wall, in its closure kn5 (Lake Murray's M3 / M4).
+  verify_signs PASS: 7 posts (round K 4), 2 layout plates.
+- Found by the build: Sand Creek has no walks, so where the march found no modelled walk, author_signs_blend's analytic
+  base (the walk's road + 0.24 m) stood M-c5-fwd and SC-ASH-fwd 0.32 m over the ground (verify_signs e / f). Now, with
+  no modelled walk along the ray, the terrain ray-cast is the base (the "behind the walk" rule's sibling). Lake Murray's
+  committed signs_measured.json has no sign on that path (0 "no modelled curb+walk" warnings), so its output is
+  unchanged.
+
+### Call 6 (fork 94/95's chevrons): not reached (owed, as rounds J / K).
+
+### Gates, BUILT kn5 (Mac, empty workshop `sclm_work/rl1`; candidate config)
+| gate | 0.2.5 (rj2) | round K (rk3) | **round L (rl1)** |
+|---|---|---|---|
+| drive_test street | PASS: soft 0, severe 0, drops 0, kinks 1.24 /km | PASS, kinks 2.9 /km | **PASS: soft 0, severe 0, drops 0 (1 far ledge), kinks 1.24 /km** |
+| drive_test race | (no race furniture) | FAIL: severe 37, obstructed 9, drops 0 | **FAIL: soft 0, severe 48 (above), obstructed 9, drops 0** |
+| audit street / race | CLEAN | CLEAN / CLEAN | **CLEAN / CLEAN** |
+| kn5_ground_check | PASS | PASS x2 | **PASS x2** |
+| verify_pads | PASS x3 | FAIL x3 (curb over pavement 40 / 59 / 71) | **PASS x3 (0 / 0 / 0; seams 0.9-1.6 mm)** |
+| verify_mouths | PASS 117, 2 parked rows | — | **PASS 117** |
+| house_seat / houses | PASS 1.26 m / 2,183 | not re-run | **PASS 1.261 m / 2,183 / 2,183 / 0 (blades and posts in)** |
+| textures | 0 untextured | not re-run | **0 untextured (4 kn5s)** |
+| verify_race / check_race_kn5 | — | OK / OK | **OK / OK (closure kn5 = 3 sign meshes, whole_lap WARN)** |
+| no_route PLANNED / BUILT | — | PASS / FAIL (1 door, 13 of 27 sealed streets) | **PASS / FAIL (the same door v134-v136 L, 13 of 27)** |
+| verify_signs | — | PASS, 4 posts | **PASS, 7 posts** |
+| verify_kn5 / --inis | PASS | FAIL (closure, kerbs) / — | **FAIL (closure only) / PASS** |
+| kn5 total | 96.4 MB | — | **107.0 MB** (road 89.9, `_race` 10.2, `_street` 6.8) |
+
+### Lake Murray unchanged (round L)
+- `git diff origin/claude/fleet-lm-engine -- tracks/san-diego-lake-murray scripts/`: empty.
+- Trim A/B (`sclm_work/lmtrim_rl`): byte-identical (`664da93b…`, `b73b70f4…`, `f0c97952…`).
+- Signs A/B (`sclm_work/lmsigns_rl`): Lake Murray's committed data and signs.json through fleet-lm-engine's
+  place_signs and this head's: every output file identical (signs.local.json `764b69af…`). No shared race tool changed.
+- `test_round_l_pad_decks_opt_in`: no Lake Murray / Lariat signs.json names pad_decks.
+
+Tests: 1,324 pass, the known 8 fail (`test_draft_equiv` x5, `test_registry_moves`, `test_bench_pad` x2).
+
+## Owed (2026-11-05, after round L; start here)
+
+1. **The closure (call 1): Kevin's / the coordinator's call.** Lake Murray's closure is a lane boundary, not a mouth
+   seal (above). Either Kevin names where Sand Creek's race runs in a lane narrower than the street (0049 R4 would
+   put a closure on the >= 15.67 m stretches), or verify_kn5 learns `params.whole_lap` (scripts/).
+2. **no_route's door at v134-v136 L (call 3)**: the strip's base 0.33-0.38 m over the lap centreline on the
+   colorado_50th deck. Either no_route's band is measured over the deck under the wall (a gate change, Lake Murray
+   A/B), or the deck's westward rise is re-measured.
+3. **The Ash / Dahlia obstructions (call 3)**: declared pad corners (A -> X -> B on the deck's curb return) through
+   barrier_bands / race_furniture / verify_race (shared race tools, Lake Murray A/B), or the coordinator's other call.
+4. **drive_test race severe 48 (call 4)**: all sampler readings (above). Needs a coordinator call: Lake Murray's
+   `drive_test.fold_fan_severe` route for the backwards ones plus something for the jumps / the kerb lip, or a
+   drive_test change (scripts/) that samples real wheel paths.
+5. Then: runbook 4n and the `_l` stills (owed only once green), the 0.2.6 bump.
+6. Fork 94/95's chevron paint and round J's owed items, unchanged.
+
+## Owed (2026-11-05, after round K; kept for the record)
 
 1. **The race layout to green** (candidate `source/round_k/`):
    - kerbs: Lake Murray's race-furniture kerbs instead of the circuit kerbs (un-drop `race.kerbs.trims`, remove

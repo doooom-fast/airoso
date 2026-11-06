@@ -21,7 +21,6 @@
       "gap_mouths",
       "islands",
       "ground_patch",
-      "kerbs",
       "lamps"
     ],
     "author": [
@@ -77,7 +76,6 @@
       "source/connector_profiles.lidar.json",
       "source/connector_profiles.lidar.round_i.json",
       "source/ground_patches.lidar.json",
-      "textures/kerb_redwhite.png",
       "source/name_blades.json",
       "textures/name_blades.png",
       "signs.json"
@@ -135,8 +133,6 @@
       "data/street_junctions.json",
       "data/verify_mouths.json",
       "data/barrier_bands.json",
-      "data/kerbs.race.json",
-      "data/kerbs.built.json",
       "data/race_verify.json",
       "data/no_route.{id}.json",
       "data/signs.local.json",

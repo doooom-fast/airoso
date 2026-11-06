@@ -1119,7 +1119,7 @@
         "offset_right_m": 0.0
       },
       "run": "the lap, one-way: Colorado -> 50th -> Dahlia -> 56th -> Sand Creek -> Quebec -> 45th -> 46th -> start; no centre line (ledger 0063)",
-      "ui_description": "Sand Creek Raceway: a fictional street circuit on the real roads of Commerce City, Colorado, driven one way on the whole street, without the centre line: concrete barriers along both edges sealing every side street, red/white kerbs at the corners, arrow signs at the tight corners. The AI line is a generated draft, not an in-game recording.",
+      "ui_description": "Sand Creek Raceway: a fictional street circuit on the real roads of Commerce City, Colorado, driven one way on the whole street, without the centre line: concrete barriers along both edges sealing every side street, Lake Murray's worn race kerbs at the corners, arrow signs at the tight corners. The AI line is a generated draft, not an in-game recording.",
       "closure_token": "race",
       "_start_doc": "ledger 0079 round K: the race runs one way on the whole street between the curb strips, so its grid is centred (columns at +-1.0 m) — at +1.9 m the right column stood 0.92 m into the strip on 46th's 7.5 m (barrier_bands spawns self-gate); the free roam keeps +1.9 m (its right-hand lane, no strips)"
     },
@@ -1213,20 +1213,7 @@
     "height_m": 0.05,
     "width_m": 1.4,
     "top_frac": 0.6,
-    "edge_ramp": 0.4,
-    "placement": "measured",
-    "end_ramp_m": 4.0,
-    "surface": "road_and_pads",
-    "race_rule": {
-      "min_turn_deg": 45.0,
-      "max_r_m": 60.0,
-      "exit_extension_m": [
-        10.0,
-        30.0
-      ],
-      "_doc": "AUTHORED per Kevin's request (\"race curbs\"; ledger 0079 round K; GATES-CHANGELOG 2026-11-05): Sand Creek's streets carry no kerb paint (NAIP, ledger 0070 Q1), so the kerbs stand by rule — the inside kerb PC..PT and the outside kerb apex..PT + clamp(2 R, 10, 30) m at every corner place_signs' detector finds with |D| >= 45 deg and R <= 60 m (Lake Murray's race-kerb corners), 1.4 m (kerb.width_m) on the lane against its edge, 0.05 m high (kerb.height_m), the ends ramped over 4 m (end_ramp_m, the circuits' invented value); a run whose lane edge folds is dropped"
-    },
-    "_round_k_doc": "ledger 0079 round K: placement measured + end_ramp_m 4.0 (the circuit kerb tooling, ledger 0081); surface road_and_pads: the kerbs at Colorado/50th, 50th/Ash and 50th/Dahlia stand on the pads' decks"
+    "edge_ramp": 0.4
   },
   "road_markings": {
     "style": "lane",
@@ -1289,10 +1276,6 @@
     },
     "ROOFTOP_DARK": {
       "diffuse": "assets/textures/roof_dark_diffuse.jpg"
-    },
-    "1KERB": {
-      "diffuse": "textures/kerb_redwhite.png",
-      "_doc": "ledger 0079 round K: the circuits' red / white two-band kerb stripe (Aspen's file, copied as this port's own); keyed 1KERB, the row 1KERB_circuit_* binds"
     },
     "SIGNS": {
       "diffuse": "textures/name_blades.png",
@@ -2116,7 +2099,7 @@
     "_doc": "ledger 0079 round D: the ground seamed along each lm_pads deck's outline too (tools/strip_seam_blend.py), so no ground triangle spans a deck edge (pads); and the local scope (the Lariat's, ledger 0078 round 7): with the pads the whole-terrain seam missed 79 of 7,355 points, over its 1 % (MAX_MISS_SHARE)"
   },
   "race": {
-    "_doc": "ledger 0079 round K: Lake Murray's race furniture (ledgers 0047 / 0049; tools/barrier_bands.py, tools/author_race_furniture_blend.py, the race gates) on Sand Creek's race layout. Kevin's 4.04 m K-rail module swept as curb strips along both edges of the whole lap, 0.82 m in from the lane edge (Lake Murray's road mode), sealing every side street; the free roam loads none of it (the race and closure kn5s are the race layout's alone).",
+    "_doc": "ledger 0079 round K: Lake Murray's race furniture (ledgers 0047 / 0049; tools/barrier_bands.py, tools/author_race_furniture_blend.py, the race gates) on Sand Creek's race layout. Kevin's 4.04 m K-rail module swept as curb strips along both edges of the whole lap, 0.82 m in from the lane edge (Lake Murray's road mode), sealing every side street, and its race kerbs; the free roam loads none of it (the race and closure kn5s are the race layout's alone).",
     "barrier_profile_asset": "assets/models/concrete_barrier_4m.obj",
     "barrier_height_m": 1.2,
     "module_pitch_m": 4.04,
@@ -2156,91 +2139,19 @@
       "pocket_min_m": 2.0
     },
     "kerbs": {
-      "_doc": "the race furniture's own kerbs are all dropped: Sand Creek's race kerbs are the circuit kerb tooling's, by rule (kerb.race_rule, tools/race_kerbs.py)",
+      "_doc": "ledger 0079 round L (call 2): Lake Murray's race-furniture kerbs (tools/race_furniture.py: place_signs' corner detector at |D| >= 45 deg, the outside kerb PC - E .. PT + E with E = clamp(2 R, 10, 30) m, the inside kerb PC .. PT, 1.0 m wide x 0.05 m, its outer edge 0.05 m inside the curb strip's road-side face; worn kerb atlas), 1KERB_RACE_* in the race kn5 only, so the free roam carries none. The 7 corners are round K's (v140, 186, 207, 410, 779, 3195, 3205). Every detected kerb is swept; the S at 48th / Colorado's two outside kerbs are pulled back to abut the other corner's inside kerb on their edge (trims, measured on rl1).",
       "trims": [
         {
-          "apex": 140,
-          "kind": "outside",
-          "drop": true,
-          "why": "Sand Creek's race kerbs are laid by the circuit kerb tooling by rule (kerb.race_rule, tools/race_kerbs.py, tools/author_kerbs_blend.py; ledger 0079 round K), not by the race furniture"
-        },
-        {
-          "apex": 140,
-          "kind": "inside",
-          "drop": true,
-          "why": "Sand Creek's race kerbs are laid by the circuit kerb tooling by rule (kerb.race_rule, tools/race_kerbs.py, tools/author_kerbs_blend.py; ledger 0079 round K), not by the race furniture"
-        },
-        {
-          "apex": 186,
-          "kind": "outside",
-          "drop": true,
-          "why": "Sand Creek's race kerbs are laid by the circuit kerb tooling by rule (kerb.race_rule, tools/race_kerbs.py, tools/author_kerbs_blend.py; ledger 0079 round K), not by the race furniture"
-        },
-        {
-          "apex": 186,
-          "kind": "inside",
-          "drop": true,
-          "why": "Sand Creek's race kerbs are laid by the circuit kerb tooling by rule (kerb.race_rule, tools/race_kerbs.py, tools/author_kerbs_blend.py; ledger 0079 round K), not by the race furniture"
-        },
-        {
-          "apex": 207,
-          "kind": "outside",
-          "drop": true,
-          "why": "Sand Creek's race kerbs are laid by the circuit kerb tooling by rule (kerb.race_rule, tools/race_kerbs.py, tools/author_kerbs_blend.py; ledger 0079 round K), not by the race furniture"
-        },
-        {
-          "apex": 207,
-          "kind": "inside",
-          "drop": true,
-          "why": "Sand Creek's race kerbs are laid by the circuit kerb tooling by rule (kerb.race_rule, tools/race_kerbs.py, tools/author_kerbs_blend.py; ledger 0079 round K), not by the race furniture"
-        },
-        {
-          "apex": 410,
-          "kind": "outside",
-          "drop": true,
-          "why": "Sand Creek's race kerbs are laid by the circuit kerb tooling by rule (kerb.race_rule, tools/race_kerbs.py, tools/author_kerbs_blend.py; ledger 0079 round K), not by the race furniture"
-        },
-        {
-          "apex": 410,
-          "kind": "inside",
-          "drop": true,
-          "why": "Sand Creek's race kerbs are laid by the circuit kerb tooling by rule (kerb.race_rule, tools/race_kerbs.py, tools/author_kerbs_blend.py; ledger 0079 round K), not by the race furniture"
-        },
-        {
-          "apex": 779,
-          "kind": "outside",
-          "drop": true,
-          "why": "Sand Creek's race kerbs are laid by the circuit kerb tooling by rule (kerb.race_rule, tools/race_kerbs.py, tools/author_kerbs_blend.py; ledger 0079 round K), not by the race furniture"
-        },
-        {
-          "apex": 779,
-          "kind": "inside",
-          "drop": true,
-          "why": "Sand Creek's race kerbs are laid by the circuit kerb tooling by rule (kerb.race_rule, tools/race_kerbs.py, tools/author_kerbs_blend.py; ledger 0079 round K), not by the race furniture"
-        },
-        {
           "apex": 3195,
           "kind": "outside",
-          "drop": true,
-          "why": "Sand Creek's race kerbs are laid by the circuit kerb tooling by rule (kerb.race_rule, tools/race_kerbs.py, tools/author_kerbs_blend.py; ledger 0079 round K), not by the race furniture"
-        },
-        {
-          "apex": 3195,
-          "kind": "inside",
-          "drop": true,
-          "why": "Sand Creek's race kerbs are laid by the circuit kerb tooling by rule (kerb.race_rule, tools/race_kerbs.py, tools/author_kerbs_blend.py; ledger 0079 round K), not by the race furniture"
+          "j": 3200,
+          "why": "ledger 0079 round L: the S at 48th / Colorado. The detector's outside kerb of v3195 (right edge, v3180-v3212) overlaps the inside kerb of v3205 on the same edge (v3200-v3211), and past v3200 it runs into the right edge's fold (the strip's chord v3202-v3210): built as detected it turns inside out (verify_race I, stations 217-226, rl1). Pulled back to v3200, where v3205's inside kerb begins: one kerb line along the edge, as round K's rule merged the S's overlapping runs"
         },
         {
           "apex": 3205,
           "kind": "outside",
-          "drop": true,
-          "why": "Sand Creek's race kerbs are laid by the circuit kerb tooling by rule (kerb.race_rule, tools/race_kerbs.py, tools/author_kerbs_blend.py; ledger 0079 round K), not by the race furniture"
-        },
-        {
-          "apex": 3205,
-          "kind": "inside",
-          "drop": true,
-          "why": "Sand Creek's race kerbs are laid by the circuit kerb tooling by rule (kerb.race_rule, tools/race_kerbs.py, tools/author_kerbs_blend.py; ledger 0079 round K), not by the race furniture"
+          "i": 3201,
+          "why": "ledger 0079 round L: the S at 48th / Colorado, the mirror of the v3195 outside trim. The detector's outside kerb of v3205 (left edge, v3189-v4) overlaps the inside kerb of v3195 on the same edge (v3191-v3201); it starts at v3201, where v3195's inside kerb ends: one kerb line along the edge"
         }
       ]
     },

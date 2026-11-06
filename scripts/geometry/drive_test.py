@@ -95,6 +95,19 @@ difference along their own arc, heights off the built top surface); one under ST
 ``dense_hops`` (reported, not gated). A measurement change, not a threshold change: the same 6 cm judges it, and a
 real riser on the hop still reads severe. Without the key the report is byte-identical.
 
+FOLD CHORDS (opt-in, ledger 0079 round N: track.config.json ``fold_fans.chords = true``; Lake Murray sets none). The
+weld mends a fold with no self-intersection (a HOOK: the inside edge of a junction flare widening faster than the corner
+turns) by a forward chord, not a levelled pinch, and records it only as a cut. Sand Creek's two road folds are both such
+chords (v134-141, v3202-3206, the inside of its 14-17 m corners), so the fan discs above come from its road cuts.
+With the key: (1) the discs are the levelled road pinches PLUS every road cut with no levelled record, explicitly (on
+Sand Creek the same rows the pre-0050 fallback gives; on a track with levelled pinches the chords join them), and
+(2) every reading filed under ``fold_severe`` is written in full with the plan points of its metre's two ends
+(``fold_severe_at``: s, offset, step, x, z, x_prev, z_prev), so tools/verify_fold_fans.py — which with the same key
+surveys every chord on real wheel paths too — can prove each deferred reading lies on a path it judged (its check 8),
+and (3) a reading is deferred only when both ends of its metre lie within verify_fold_fans.COVER_M of the plan samples
+its paths read on this layout (verify_fold_fans.plan_cover); a folded reading in a fan that no such path reaches stays
+severe here and is listed under ``fold_severe_unjudged``. Without the key the report is byte-identical.
+
 VERTEX BUMPS (v0.18.1, ledger 0057 integration). The same fixed offset hops FORWARD at every centreline vertex where the
 segment normal turns: on the outside of a corner the point jumps ahead by offset x turn angle (2.7-3.9 m at 10 m out
 round the Navajo / Jackson fan, 1.8-3.7 m round College / Alvarado), on the inside it creeps (0.1-0.5 m). The 1 m second
@@ -458,7 +471,7 @@ FAN_DISC_PAD_M = 0.5        # [invented] ledger 0050: a fan disc reaches the row
 FAN_LEVEL_ROWS = 8          # tools/mouth_weld.FOLD_LEVEL_ROWS, when mouth_welds.json predates its level_rows record
 
 
-def fold_fan_discs(welds: dict, pts, widths) -> list:
+def fold_fan_discs(welds: dict, pts, widths, chords: bool = False) -> list:
     """ledger 0050: flat-zone discs (x, z, 0, radius) over every levelled MAINLINE fold fan in data/mouth_welds.json
     (folds.MAINLINE.levelled; a file without it: every ROAD cut) —
     one per centreline row from k - B to l + 1 + B of each ROAD pinch (B = the weld's level_rows), centred on the row,
@@ -470,7 +483,13 @@ def fold_fan_discs(welds: dict, pts, widths) -> list:
     # (Jackson / Lake Murray Blvd, the lap seam) keep today's rule: the seam's 0.06-0.07 m step at s 12-13 lat -5..-6
     # is a pre-existing apron step the race layouts already count, not 0050's. A pre-0050 file: every road cut.
     lev = [q for q in folds.get("levelled") or [] if isinstance(q, dict) and (q.get("line") or [None])[0] == "road"]
-    if lev:
+    if lev and chords:
+        # FOLD CHORDS (opt-in, module doc): the levelled pinches and every road cut no levelled record covers
+        _lk = [("road", q["line"][1], q["k"], q["l"]) for q in lev]
+        _cov = lambda c: any(int(q[1]) == int(c[1]) and abs(int(q[2]) - int(c[-2])) <= 2 and abs(int(q[3]) - int(c[-1])) <= 2
+                             for q in _lk)
+        cuts = _lk + [c for c in cuts if not _cov(c)]
+    elif lev:
         cuts = [("road", q["line"][1], q["k"], q["l"]) for q in lev]
     if not cuts:
         return []
@@ -711,9 +730,12 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None, line: dict
     # tools/verify_fold_fans.py's arc-length wheel paths read a 1 m second difference of at most 0.025 m. Sub-6 cm
     # judgement inside the fans is verify_fold_fans' (2 cm fine steps on real paths).
     _fan_zones = []
+    # FOLD CHORDS (opt-in, ledger 0079 round N: track.config.json fold_fans.chords = true; Lake Murray sets none)
+    _fold_chords = bool((cfg.get("fold_fans") or {}).get("chords"))
     _mwp = project / "data" / "mouth_welds.json"
     if _mwp.exists() and line is None:
-        _fan_zones = fold_fan_discs(json.loads(_mwp.read_text(encoding="utf-8")), _fan_pts, _fan_w)
+        _fan_zones = fold_fan_discs(json.loads(_mwp.read_text(encoding="utf-8")), _fan_pts, _fan_w,
+                                    chords=_fold_chords)
 
     def _in_fan(px, pz):
         return any((px - a) ** 2 + (pz - b) ** 2 < d * d for a, b, c, d in _fan_zones)
@@ -721,6 +743,22 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None, line: dict
     # FOLD SEVERE (opt-in; module doc): a severe reading on a folded sample inside a levelled fan is judged by
     # tools/verify_fold_fans.py on the real wheel paths, not here
     _fold_severe_defer = bool(_fan_zones) and         str((cfg.get("drive_test") or {}).get("fold_fan_severe") or "") == "verify_fold_fans"
+    # FOLD CHORDS (opt-in): defer only a reading whose metre's two ends lie on the plan paths verify_fold_fans reads
+    # (its plan_cover: every sample whose fine-step window is on the lane, within its COVER_M); the rest stay severe
+    _fan_cover, _near_cover, _cover_m = {}, None, None
+    if _fold_severe_defer and _fold_chords:
+        _tools = str(Path(__file__).resolve().parents[2] / "tools")
+        if _tools not in sys.path:
+            sys.path.insert(0, _tools)
+        import verify_fold_fans as _vff  # noqa: E402  (pure Python; its plan geometry, no surface read)
+        _cover_lid = lid or str(((cfg.get("layouts") or [{}])[0]).get("id") or "street")
+        _fan_cover, _near_cover, _cover_m = _vff.plan_cover(project, _cover_lid), _vff.near_judged, _vff.COVER_M
+
+    def _on_fan_path(px, pz, qx, qz):
+        if not _fold_chords:
+            return True
+        a, b = _near_cover(_fan_cover, px, pz), _near_cover(_fan_cover, qx, qz)
+        return a is not None and b is not None and a <= _cover_m and b <= _cover_m
     # DENSE HOPS (opt-in, ledger 0079 round M: track.config.json drive_test.dense_hops = true; Lake Murray sets none): a
     # severe reading on a forward metre where this wheel path, or its previous metre, hopped more than DENSE_HOP_M is
     # re-measured on the same path sampled densely (_dense_step); under STEP_SEVERE_M it is filed as dense_hops
@@ -1039,13 +1077,23 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None, line: dict
                                 and not _in_fan(px, pz):
                             problems.setdefault("apron_steps", []).append(
                                 (round(s, 1), round(off, 2), round(step, 3)))
-                        elif _fold_severe_defer and folded and _in_fan(px, pz):
+                        elif _fold_severe_defer and folded and _in_fan(px, pz) and \
+                                _on_fan_path(px, pz, prev_p[pi][0], prev_p[pi][1]):
                             problems.setdefault("fold_severe", []).append(
                                 (round(s, 1), round(off, 2), round(step, 3)))
+                            if _fold_chords:
+                                # FOLD CHORDS: the metre's two ends, for verify_fold_fans' coverage check (8)
+                                problems.setdefault("fold_severe_at", []).append(
+                                    (round(s, 1), round(off, 2), round(step, 3), round(px, 3), round(pz, 3),
+                                     round(prev_p[pi][0], 3), round(prev_p[pi][1], 3)))
                         else:
                             # inside a junction flat zone the WHOLE pad is driving surface —
                             # no exemptions (Kevin: "how do your tests pass this")
                             problems["severe_steps"].append((round(s, 1), round(off, 2), round(step, 3)))
+                            if _fold_chords and _fold_severe_defer and folded and _in_fan(px, pz):
+                                # FOLD CHORDS: in a fan, folded, but on no path verify_fold_fans reads: stays severe
+                                problems.setdefault("fold_severe_unjudged", []).append(
+                                    (round(s, 1), round(off, 2), round(step, 3)))
                     elif step > STEP_BUMP_M:
                         if folded:
                             problems.setdefault("fold_bumps", []).append(
@@ -1477,6 +1525,10 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None, line: dict
         report["fold_severe"] = len(problems.get("fold_severe", []))
         report["fold_severe_judge"] = "tools/verify_fold_fans.py (real wheel paths, hard)"
         report["worst"]["fold_severe"] = sorted(problems.get("fold_severe", []), key=lambda r: -r[2])[:200]
+        if _fold_chords:
+            # FOLD CHORDS (opt-in): every deferred reading in full, with its metre's plan points (verify_fold_fans (8))
+            report["fold_severe_at"] = problems.get("fold_severe_at", [])
+            report["fold_severe_unjudged"] = problems.get("fold_severe_unjudged", [])
     if _dense_hops:
         # opt-in only (absent the key the report is byte-identical): severe readings re-measured on the dense path
         report["dense_hops"] = len(problems.get("dense_hops", []))

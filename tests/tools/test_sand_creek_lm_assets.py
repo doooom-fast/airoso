@@ -696,3 +696,35 @@ def test_round_m_keys_are_opt_in():
     assert (new[0]["in_vertex"], new[0]["out_vertex"]) == (5, 9) and new[0]["removed"] == [6, 7, 8]
     assert tuple(new[0]["xz"]) == X
     assert rf.declared_corners({"params": {}}, "L") == [] and rf.declared_corners({"params": {"pad_corners": decl}}, "R") == []
+
+
+def test_round_n_fold_chords_are_opt_in():
+    """ledger 0079 round N: fold_fans.chords is opt-in — no track config names it (Lake Murray, the Lariat, the circuits,
+    Sand Creek's live config and its candidate: the S's chord fails verify_fold_fans (5) at the parked 48th_colorado,
+    so it is not adopted). Without it pinches_from / fold_fan_discs return what they did; with it a road cut no
+    levelled pinch covers is surveyed as a chord (no X), and drive_test's discs take it beside the levelled pinches"""
+    import verify_fold_fans as vf
+    from scripts.geometry.drive_test import fold_fan_discs
+    for t in ("san-diego-lake-murray", "lookout-lariat", "lookout-lariat-lm", "high-plains-lm", "aspen-lm", "pueblo-lm",
+              "sand-creek-lm"):
+        p = ROOT / "tracks" / t / "track.config.json"
+        if p.exists():
+            assert "fold_fans" not in json.loads(p.read_text(encoding="utf-8")), t
+    sc = json.loads((SC / "source" / "round_k" / "track.config.json").read_text(encoding="utf-8"))
+    assert "fold_fans" not in sc and "fold_fan_severe" not in (sc.get("drive_test") or {})
+    # a straight 50-row line, 12 m wide; one levelled road pinch (20..22) and one road chord (35..37)
+    pts = [(0.0, 0.0, float(z)) for z in range(50)]
+    w = [12.0] * 50
+    lev = {"line": ["road", 2], "k": 20, "l": 22, "X": [-6.0, 0.1, 21.0], "y_k": 0.1, "y_l": 0.1}
+    welds = {"folds": {"MAINLINE": {"cuts": [["road", 2, 20, 22], ["road", 2, 35, 37]], "levelled": [lev],
+                                    "rows": 50, "level_rows": 2}}}
+    pins, B = vf.pinches_from(welds, pts, w, False)
+    assert [(p["k"], p["l"]) for p in pins] == [(20, 22)] and B == 2
+    assert vf.pinches_from(welds, pts, w, False, chords=False) == (pins, B)
+    got, _ = vf.pinches_from(welds, pts, w, False, chords=True)
+    assert [(p["k"], p["l"], p.get("chord", False)) for p in got] == [(20, 22, False), (35, 37, True)]
+    assert got[1]["X"] is None and len(got[1]["ref"]) == 3
+    base = fold_fan_discs(welds, pts, w)
+    assert sorted({round(d[1]) for d in base}) == list(range(18, 26))
+    both = fold_fan_discs(welds, pts, w, chords=True)
+    assert sorted({round(d[1]) for d in both}) == list(range(18, 26)) + list(range(33, 41))

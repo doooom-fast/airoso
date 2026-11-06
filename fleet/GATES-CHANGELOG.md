@@ -14,6 +14,39 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
+## 2026-11-05 (round N) — Sand Creek toward 0.2.6: verify_fold_fans learns the weld's chord mends (ledger 0079 round N)
+
+**Not live.** The candidate in `tracks/sand-creek-lm/source/round_k/` does not take the new key (below); the live config
+is 0.2.5. No gate threshold, floor, reference or bypass moved.
+
+- **`fold_fans.chords`** (opt-in, track.config.json; tools/verify_fold_fans.py CHORDS, scripts/geometry/drive_test.py
+  FOLD CHORDS; no committed config names it — `test_round_n_fold_chords_are_opt_in`). A WIDER SCOPE, not a threshold
+  change. The weld mends a fold with no self-intersection (a hook) by a forward chord and records it only as a road cut;
+  Sand Creek's two road folds are both chords (v134-141, v3202-3206), so verify_fold_fans judged 0 pinches there. With
+  the key it surveys every road cut no levelled pinch covers (both ends within 2 rows) over the pinch window it already
+  uses (rows k - B - WINDOW_PAD_ROWS .. l + 1 + B + WINDOW_PAD_ROWS), on the same paths and lane, with checks (1)-(5) at
+  their existing thresholds and (7) measured about the road edge's chord midpoint (a chord has no pinch X; (6) does not
+  apply). New check **(8)**: every reading drive_test deferred to this gate (`fold_severe`) must have both ends of its
+  metre within ⚠ `COVER_M` = PATH_DO_M 0.25 m [invented: the gate's own path spacing] of a sample whose fine-step window
+  a judged path read (on the lane, on the surface). drive_test with the key defers a reading only where those plan
+  paths run (verify_fold_fans.plan_cover, the same _paths), keeps the rest severe (`fold_severe_unjudged`), and writes
+  every deferred reading with its plan points (`fold_severe_at`) for (8). Without the key both reports are byte-identical:
+  Lake Murray A/B (prep_v4's built OBJs, `sclm_work/rn_lm`, round M's tools 14f8e46f vs this head, its config unchanged):
+  drive_test.street / race_cw json md5 72996ab2… / 16d1de79… both, verify_fold_fans.json df36a7eb… both, logs equal but
+  for timings. Lake Murray report-only with the key set in a scratch copy: drive_test unchanged (race_cw fold_severe 11,
+  all 11 on a judged path, worst gap 0.115 m; street severe 10); verify_fold_fans surveys its two chords too (the seam
+  4496-4502, Jackson / LMB 3292-3297): (1)-(5) clean on both, (7) 40 race_cw wall cells within 25 m of the seam chord's
+  midpoint outside +-0.28 (worst -0.418 m) — report-only; Lake Murray does not take the key.
+- **Sand Creek, the key in a scratch copy of rm1** (`sclm_work/rn_ff`, with `fold_fan_severe` too): the v134-141 chord
+  (under the built colorado_50th pad) PASSES both layouts (DT max 0.032 race / 0.038 street, fine 0, walls worst
+  -0.152 m); the v3202-3206 chord (the S, 48th / Colorado — the PARKED pad, so the lap ribbon is the surface) FAILS:
+  (5) two 1ROAD_road slivers 42 % / 30 % (the graded chord drops the inside edge 0.098 m over 0.67 m of plan between
+  rows 3202 and 3207; a centre-row fan triangle across two chord points 0.13 m apart reads 0.02 m over 0.047 m), both
+  layouts; street (2) DT 0.091 / 0.061 m on the paths at -15.75 / -15.00 (inside the street lane, outside the race lane).
+  So **`fold_fan_severe` is NOT adopted** (it hands readings only to a gate that passes them): 19 of the 32 fan readings
+  lie on a judged path (7 at v140, passing; 12 at the S, failing), 13 lie on none (the turning centres of v140 and the
+  S's first corner) and would stay severe anyway.
+
 ## 2026-11-05 (round M) — Sand Creek toward 0.2.6: Lake Murray 0.20.2's no_route deck frame, pad corners, dense hops (ledger 0079 round M)
 
 **Not live.** The candidate stays parked in `tracks/sand-creek-lm/source/round_k/` (the live config is 0.2.5). No gate

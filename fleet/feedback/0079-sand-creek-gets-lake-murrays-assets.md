@@ -1475,6 +1475,39 @@ closure row as round L, resumed `--from road_obj`; logs `rm1.a.log`, `rm1.b.log`
 Tests (`tests/run_tests.py`, `python` on PATH): 1,327 pass, the known 8 fail (`test_draft_equiv` x5,
 `test_registry_moves`, `test_bench_pad` x2). New: the two no_route tests from 0e256585, `test_round_m_keys_are_opt_in`.
 
+## Round N (Mac): verify_fold_fans judges Sand Creek's real folds; the race severe readings diagnosed (NOT 0.2.6)
+
+The coordinator's items, in order ("I just want real"; nothing handed to a gate that judges nothing). Probes on copies
+of round M's built workshop (rm1 is not written): `sclm_work/rn_ff` (Sand Creek), `sclm_work/rn_lm` (Lake Murray,
+prep_v4's built OBJs). The live config is still 0.2.5. Every number: GATES-CHANGELOG 2026-11-05 (round N).
+
+### Item 1 (the 40 backwards readings): verify_fold_fans now judges the chords — and fails the S; fold_fan_severe NOT adopted
+- **Why it judged nothing.** Sand Creek's two road folds (v134-141, v3202-3206, the inside of its 14-17 m corners, on
+  32.9 m of junction pavement) have no self-intersection: the weld mends them by a forward chord (a hook) and records
+  them only as road cuts. verify_fold_fans read only levelled pinches; drive_test's fan discs fell back to the cuts.
+- **The tool (opt-in `fold_fans.chords`).** verify_fold_fans surveys every road cut no levelled pinch covers, over the
+  pinch window, paths and lane it already uses, checks (1)-(5) and (7); new (8): each reading drive_test defers must
+  have both metre ends within 0.25 m (its path spacing) of a sample a judged path read. drive_test with the key defers
+  only readings on those plan paths (`plan_cover`), and writes them in full with their plan points.
+- **Lake Murray A/B:** without the key drive_test.street / race_cw and verify_fold_fans.json are byte-identical
+  (round M's tools vs this head, its config unchanged). With the key (scratch copy, report-only): drive_test unchanged
+  (11 deferred, all 11 on a judged path); its two chords (the seam, Jackson / LMB) clean on (1)-(5); (7) 40 wall cells
+  near the seam chord outside +-0.28 m (worst -0.418) — Lake Murray does not take the key.
+- **Sand Creek with the key (rn_ff, report-only):**
+  - v134-141 (under the built colorado_50th pad): PASS both layouts (DT max 0.032 / 0.038 m, fine 0, walls -0.152 m).
+  - v3202-3206 (the S's second corner, 48th / Colorado — the PARKED pad, so the lap ribbon is the surface): **FAIL**.
+    (5) two 1ROAD_road slivers at 42 % / 30 %: the chord grades the inside edge down 0.098 m over 0.67 m of plan
+    (rows 3202 -> 3207, each row level across, the centre falling 0.09 m over 13 m), so a fan triangle across two
+    chord points 0.13 m apart stands 0.02 m over 0.047 m. Street (2): DT 0.091 / 0.061 m on the paths at -15.75 /
+    -15.00 (street lane only). A real surface property of the level-row ribbon round a corner tighter than its
+    half-width, not a sampling artefact (the survey samples the built top every 0.05 m).
+- **The 40 readings:** 32 lie in a fan disc. Of those, 19 are on a path the gate judges (7 at v140 — passing; 12 at
+  the S — failing) and 13 on none (the turning centres of v140 and of the S's first corner, s 411-424 / 9584-9586,
+  where the fixed-offset point at ~R stands on no real path); 8 lie outside every fan (s 413 / 418 at v140, forward
+  samples; v779's 6). **Moved: 0** — the candidate takes neither key, since the gate the readings would go to fails
+  at the S. The fix is the surface: 48th_colorado's measured deck (owed, its round D reasons) replaces the ribbon there,
+  as colorado_50th's does at v140, where the same survey passes.
+
 ## Owed (2026-11-05, after round M; start here)
 
 1. **The closure** — Kevin's call (pending): Lake Murray's 11.36 m lane with closure walls on the >= 15.67 m streets

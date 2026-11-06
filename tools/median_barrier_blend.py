@@ -198,7 +198,7 @@ def main():
             d += 0.05
         return None
     slab_v, slab_f = [], []
-    n_slab = 0
+    n_slab = n_slab_step = n_slab_deck_skip = 0
 
     verts, faces = [], []
     rep = []
@@ -247,15 +247,37 @@ def main():
                         if q == j:
                             continue
                         x2, z2, nx2, nz2, yl2, yr2 = sec[q + 1]
-                        # a LEVEL section only (feet within the retaining threshold): across a stepped one the slab's
-                        # vertices stand > 0.5 m off the other carriageway's edge, 2 m away, and audit_mesh F reads
-                        # them as curbs not flush (ws25: 64)
-                        if abs(yl - yr) > 0.3 or abs(yl2 - yr2) > 0.3:
-                            continue
+                        # a LEVEL section (feet within the retaining threshold): the deck under the barrier, on a deck
+                        # side only (off a deck the prep's pin fills it). A STEPPED section (round 6, WB s 3,602 /
+                        # 7,054 / 7,204): the barrier's body is the retaining face's concrete, standing on the HIGH
+                        # side's level, so the high side's footing runs under the body to the low foot, deck or not
+                        # (drive_test's sample inside the base fell to the low ground, 1-4.8 m). Ws25's slab across a
+                        # step stood on a deck with the ground 4 m down (audit F: no road or ground within 0.5 m);
+                        # off a deck the high side's ground is pinned at its pavement beside it.
+                        st1, st2 = abs(yl - yr) > 0.3, abs(yl2 - yr2) > 0.3
+                        if st1 or st2:
+                            hi = [1 if a_ > b_ else -1 for (a_, b_), s_ in (((yl, yr), st1), ((yl2, yr2), st2)) if s_]
+                            if len(set(hi)) != 1 or sg_ != hi[0]:
+                                continue
                         yf2 = yl2 if sg_ > 0 else yr2
                         e1, e2 = edge_d(x, z, nx, nz, sg_), edge_d(x2, z2, nx2, nz2, sg_)
-                        if e1 is None or e2 is None or not on_deck(x + sg_ * e1 * nx, z + sg_ * e1 * nz):
+                        if e1 is None or e2 is None:
                             continue
+                        dk_ = on_deck(x + sg_ * e1 * nx, z + sg_ * e1 * nz)
+                        if st1 or st2:          # a stepped quad: either end's high edge on a deck (ws30: F 8 at its ends)
+                            dk_ = dk_ or on_deck(x2 + sg_ * e2 * nx2, z2 + sg_ * e2 * nz2)
+                        if not (st1 or st2) and not dk_:
+                            continue
+                        if (st1 or st2) and dk_:
+                            # the high side ON a declared deck (ws29, WB s 3,430-3,490 / 4,010 / 7,290-7,370): audit F
+                            # wants every curb top vertex within 0.5 m of a road vertex 2 m off or of ground 3.5 m off;
+                            # the ground is under the bridge and the high deck's own edge vertices stand 5 m apart along,
+                            # so a slab vertex between them fails (75). Not laid there: owed (vertices abreast of the
+                            # high deck's own edge vertices); no drive_test drop stands there today.
+                            n_slab_deck_skip += 1
+                            continue
+                        if st1 or st2:
+                            n_slab_step += 1
                         b0 = len(slab_v)
                         for (xa, za, nxa, nza, ya, ea) in ((x, z, nx, nz, yf, e1), (x2, z2, nx2, nz2, yf2, e2)):
                             for off in (ea + DECK_EDGE_IN_M, -B / 2):
@@ -313,12 +335,12 @@ def main():
             dob.data.update()
     print(f"[median-barrier] the deck under the barrier where its foot is on a declared deck: {n_slab} quads "
           f"({DECK_EDGE_NAME}, {DECK_EDGE_DY_M} m under the foot, from {DECK_EDGE_IN_M} m under the pavement's edge "
-          f"to the far foot)")
+          f"to the far foot; {n_slab_step} of them the high side's footing under a stepped section's body; {n_slab_deck_skip} stepped quads on a deck not laid)")
     bpy.ops.wm.save_as_mainfile(filepath=str(proj / "loop.blend"))
     length = sum(math.dist(r0, r1) for run in doc["runs"] for r0, r1 in zip(run["xz"], run["xz"][1:]))
     out = {"tool": "tools/median_barrier_blend.py", "ledger": "0080 2a", "barrier": bar, "runs": rep,
            "sections_retaining_over_0_3m": n_retain, "vertices": len(verts), "run_length_m": round(length, 1),
-           "deck_under_barrier_quads": n_slab}
+           "deck_under_barrier_quads": n_slab, "stepped_footing_quads": n_slab_step, "stepped_on_a_deck_not_laid": n_slab_deck_skip}
     (proj / "data" / "median_barrier.built.json").write_text(json.dumps(out, indent=1), encoding="utf-8")
     print(f"[median-barrier] 1WALL_MEDIAN: {len(rep)} run(s), {sum(r['sections'] for r in rep)} sections, "
           f"{len(verts)} vertices; {n_retain} sections with feet > 0.3 m apart (a retaining face)")

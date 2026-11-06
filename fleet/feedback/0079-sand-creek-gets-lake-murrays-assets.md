@@ -1167,6 +1167,23 @@ Lake Murray unchanged:
 Tests: `tests/run_tests.py` (the .venv python, `python` on PATH): 1,304 pass. 6 fail, the same as round I's
 (`test_draft_equiv` x5, `test_registry_moves` x1). 3 new: the round J keys, BeyondEndDeck, the NAIP road runs.
 
+## Round K (Mac): the race dressing, round C's plan of record (toward 0.2.6)
+
+Kevin's words: "same lamps as lake murray, race curbs, no sidewalks, authored pad junctions"; signs "Both"; "I just want
+real". Workshops `sclm_work/rk1` .. (EMPTY, fresh names). Every authored number: GATES-CHANGELOG 2026-11-05 (round K).
+
+### 0. The circuit kerb tooling merged (`origin/claude/circuit-kerbs-lm` f3a93c3f, ledger 0081)
+
+- Merge da7d8af5. Conflicts: GATES-CHANGELOG (both sections kept) and `tools/lm_pads_blend.py` (round 13's switchback
+  `near_row` on the lap's cut seams, then round G's arm seams appended; each as its side wrote it).
+- What the merge changes in shared tools is opt-in: `lm_intake.pad_widths`, `scenery.bespoke.pads_seat`, a pad's
+  `seam: "row"`, `gate_stage_force`; `draft_pads.seam_offset` only moves two lines above the fade test (same values).
+- **A/B, rj2's inputs, `--dry-run` (draft + author + prep + split), empty workshops:** `rk1` = aa4d8b0b's tools (a copy of
+  this tree with the merge's 133 paths put back), `rk2` = the merge. `tools/draft_equiv.py` with `blend_digest` of
+  loop.blend and the prepped blend: 48 files in both, the only difference `data/pads.built.json`'s `written` stamp (a
+  write time, the same bytes otherwise); loop.blend 31 objects, 0 differ; the prepped blend 54 objects, 0 differ.
+  **The merge changes no Sand Creek build output.**
+
 ## PC runbooks (round H)
 
 4j. **Sand Creek 0.2.3** (ledger 0079 rounds E-H). This build carries:

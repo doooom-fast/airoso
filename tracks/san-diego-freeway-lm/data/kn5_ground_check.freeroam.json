@@ -10,15 +10,15 @@
   "walls": {
    "objects": 1407,
    "no_ground_pct": 0.0,
-   "median_m": -0.378,
+   "median_m": -0.377,
    "p95_m": -0.1,
    "hovering": 0
   }
  },
  "road_over_ground": {
-  "over": 131,
+  "over": 73,
   "samples": 6135,
   "p95_m": 0.02,
-  "max_m": 4.263
+  "max_m": 3.681
  }
 }

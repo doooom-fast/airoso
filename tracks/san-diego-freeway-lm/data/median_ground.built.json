@@ -13,9 +13,23 @@
   "faces": 0
  },
  "step_m_max": 4.59,
- "bisect_vertices": 22711,
- "vertices_lowered": 5849,
- "lowered_max_m": 3.58,
+ "vertices_raised_to_low": 2444,
+ "raised_max_m": 0.61,
+ "pinned_under_connector": 8098,
+ "pinned_max_m": 4.88,
+ "slope_stations": 139,
+ "slope_skipped": {
+  "line deck": 50,
+  "edges not found": 10,
+  "barrier run": 15
+ },
+ "slope_vertices": 1240,
+ "slope_moved_max_m": 1.92,
+ "slope_edge_by_nearest_pavement": 53,
+ "stepped_footing_quads_removed": 3,
+ "bisect_vertices": 24739,
+ "vertices_lowered": 5946,
+ "lowered_max_m": 4.06,
  "params": {
   "STEP_MIN_M": 0.3,
   "REACH_M": 2.5,

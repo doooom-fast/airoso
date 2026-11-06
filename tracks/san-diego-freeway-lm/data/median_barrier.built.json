@@ -104,5 +104,7 @@
  "sections_retaining_over_0_3m": 550,
  "vertices": 8772,
  "run_length_m": 7257.7,
- "deck_under_barrier_quads": 44
+ "deck_under_barrier_quads": 533,
+ "stepped_footing_quads": 489,
+ "stepped_on_a_deck_not_laid": 61
 }

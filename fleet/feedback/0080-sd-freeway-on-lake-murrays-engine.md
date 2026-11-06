@@ -974,6 +974,14 @@ offered to Kevin.**
 - **Mac verdict: MATCHED.** ws41's 1GRASS_0 is 37,685 / 74,513: the PC's exporter welds 3 near-duplicate grass vertices
   the Mac's keeps apart (3 x 44 = 132 B, the same faces), a merge tie of the ground-noise family; every other mesh, the
   textures and the materials match, and `[median-ground]` is word for word ws41's. Offered to Kevin in place of 0080-8.
+- **INSTALLED on Kevin's word (2026-11-06, "Yes, install it"**, asked as the whole box over round 5 with westbound's
+  13 lap-rule drops said plainly): e733c0a9 from a fresh real workshop D:/k10-scratch/san_diego_freeway_lm (round 5's
+  parked beside it as `san_diego_freeway_lm.r5-c3c988b9`), ENG eng_fwlm; every gate row as fwlm_2b2's (WB lap rule 13,
+  line gate PASS; street PASS, excursions 2; audit CLEAN; kn5_ground_check PASS), SHIP OK, no force. Round 5's folder
+  parked in D:/k10-track-archive/2026-11-06_073244/; `san_diego_freeway_lm` ("doooom San Diego — Freeway Free Roam (LM
+  engine)" 0.1.0), kn5 34,094,105 B, kn5_equiv-equivalent to fwlm_2b2's (tangents only, max 3.8e-7); installed folder =
+  the workshop build but ui_track.json. Records with this note (taken onto e0eb5f7: only this ledger differs from
+  e733c0a9). Not driven yet.
 
 ## PC runbook 0080-8: rehearse 2b round 1 (2a with the tiered ground), no install
 
@@ -1120,14 +1128,14 @@ The Caltrans 2026 Standard Plans PDF (round 3 item 7) is still owed separately.
 State (2026-11-06, end of 2b round 2): **2a green on the Mac on the WHOLE BOX** (ws41 at e733c0a9: `grid_crop_m`
 dropped, the far ground tiered; the line's drive_test PASS, excursions 2, its JSON byte-identical to ws40's; WB's line
 gate PASS, **lap rule 13** (was 17); audit CLEAN; verify_kn5 / inis PASS; kn5_ground_check PASS; SHIP OK; **34.1 MB**,
-one kn5). With the crop (ws40) every gate JSON = ws39's, 29.8 MB. Installed on the PC: round 5 (c3c988b9); 0080-8
-rehearsed (matched ws39); rehearse ws41 with runbook 0080-9. **2b: declared and resolved, nothing built** (no corridor has
+one kn5). With the crop (ws40) every gate JSON = ws39's, 29.8 MB. Installed on the PC: ws41 (e733c0a9, 2026-11-06,
+over round 5); 0080-8 and 0080-9 rehearsed (matched ws39, ws41). **2b: declared and resolved, nothing built** (no corridor has
 a measured stretch). Lake Murray unchanged (`git diff origin/claude/fleet-lm-engine -- tracks/san-diego-lake-murray
 scripts/` empty; the tools changed this round, naip_carriageways, median_ground_blend and the tiered draft step's log
 filter, are steps Lake Murray never runs). Nothing downloaded. Tests: run_tests 630 PASS / 1 FAIL (test_registry_moves,
 as before); pytest tests/tools 722 passed, 1 skipped (718 + the 4 new).
 
-- **Kevin:** drive round 5 (installed); rehearse round 6 on the PC (runbook 0080-7), install on your word. Say yes / no
+- **Kevin:** drive the whole box (e733c0a9, installed). Say yes / no
   to: fetching the 2014 EPT nodes over the unpaved median (12 of WB's 17 lap-rule drops wait on it), the lidar over the
   outer shoulders (the outside barrier, below), the Caltrans 2026 Standard Plans PDF.
 - **2a, left (none blocks green):**

@@ -1204,6 +1204,9 @@ def rails(col, spec, to_xy, ground, paved, bad, proj=None):
             ux, uy = (b[0] - a[0]) / seg, (b[1] - a[1]) / seg
             nx, ny = -uy, ux
             cnt = int(seg // mod)
+            if r["kind"] == "screen":            # ledger 0082 pass 2: a continuous screen, whole panels fitted to each segment
+                cnt = max(1, round(seg / RAIL_KINDS["screen"][2]))   # (c3: whole 4 m panels per ~4 m segment stood 80 m of
+                mod = seg / cnt                                       # F1's 197 m)
             for m in range(cnt):
                 x0, y0 = a[0] + ux * m * mod, a[1] + uy * m * mod
                 x1, y1 = x0 + ux * (mod - 0.02), y0 + uy * (mod - 0.02)

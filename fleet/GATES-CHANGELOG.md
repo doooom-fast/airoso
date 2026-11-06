@@ -14,6 +14,31 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
+## 2026-11-06 (round Q) — Sand Creek: a lidar curb-line tracer and its numbers; no gate, no threshold, no bypass (ledger 0079 round Q)
+
+**Not live.** No gate reads any of these. They are the reading rules of a measuring tool
+(`tools/lidar_curb_trace.py`, no build step), and every one is ⚠ invented:
+- Raster:
+  - ROW_M 0.5, BIN_M 0.25, HALF_M 30 (the raster);
+  - ALONG_M 0.75 (a cell's returns along; the lidar is ~4 class-2 returns / m² here);
+  - SMOOTH_ROWS 5 (the step map's ±1 m along). STEP_WIN_M = naip_edge's 1.0 (round J).
+- Line tracing:
+  - MOVE_COST 0.01 m per bin and MAX_MOVE 2 bins per row (the DP line's stiffness);
+  - OUTER_CAP_M 0.08 (= STEP_M), DROP_CAP_M 0.06 and INWARD_COST 0.0005 m per bin (an outer line takes a curb before a
+    drop and the innermost before a berm);
+  - WINDOWS: −3 .. +9 m off OSM's outer ribbon edge (west), −2.5 .. +11 (east), −5 .. +9 for the median faces.
+- Per row and segments:
+  - `curb` = naip_edge.STEP_M 0.08 (round J);
+  - NAIP: BAND_ALONG_M 10 (the road band's centre, a median along), the band half-width = half of round J's ROAD_BAND;
+    NAIP_IN_M 1.0-2.5, NAIP_EDGE_M −1.0 .. +2.5, NAIP_LEAVE_M 1.0 (= naip_edge.RUN_M), NAIP_NEAR_M 0.75,
+    NAIP_BRIGHT 12;
+  - GAP_M 8 (a driveway cut), NAIP_GAP_M 15 (NAIP silent: a shadow, a car), MIN_SEG_M 20.
+- `apply_plan` (what a re-centre would take; nothing reads it): BRIDGE_M 30, MIN_APPLY_M 40, TAPER_M 20,
+  DY_ALONG_M 2.5.
+
+Checked by eye on the six stills (`source/stills/quebec_curb_trace_q.jpg`): every `ok` stretch lies on a curb or a
+road edge that NAIP shows. The traced west curb at s 180-240 (the turn bay, −14.25) is not `ok`: NAIP is silent there.
+
 ## 2026-11-06 (round P) — Sand Creek: 48th_colorado unparked; one mouth allowance dropped (ledger 0079 round P)
 
 **Not live.** The candidate in `tracks/sand-creek-lm/source/round_k/`; the live config is 0.2.5.

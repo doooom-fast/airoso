@@ -843,3 +843,32 @@ def test_round_p_wall_frame_and_vertex_kinks_are_opt_in():
     assert abs(dh1 - dh0) * 100 / STEP_M > KINK_PCT
     assert _own_travel_step(dh1, dh0, 1.0, 0.06) < 1e-12
     assert _own_travel_step(dh1, dh0, 1.0, 0.01) is None      # under VERTEX_MIN_TRAVEL_M: the station reading stands
+
+
+def test_round_q_curb_trace_follows_a_curb_and_cuts_unchecked_stretches():
+    """ledger 0079 round Q (tools/lidar_curb_trace.py): on a synthetic step map the dynamic-programming line follows a
+    0.15 m curb that drifts 1 m across over 100 m (through a 4 m driveway cut with no step), an outer line takes the curb
+    before a taller berm further out, and a segment's rows are `ok` only where NAIP also agrees (a 20 m NAIP-silent
+    stretch is cut out, a shorter one is not)"""
+    import numpy as np
+    import lidar_curb_trace as ct
+    n, nb = 400, 81                                   # 200 m of 0.5 m rows, 20 m of 0.25 m bins
+    L = np.arange(nb) * ct.BIN_M - 10.0
+    D = np.full((n, nb), 0.01)
+    curb = [2.0 + 1.0 * i / n for i in range(n)]      # the curb drifts +1 m across over the 200 m
+    for i in range(n):
+        if not (200 <= i < 208):                      # a 4 m driveway cut
+            D[i, int(round((curb[i] + 10.0) / ct.BIN_M))] = 0.15
+        D[i, int(round((7.0 + 10.0) / ct.BIN_M))] = 0.40     # a taller berm 5 m further out, all along
+    sc = np.where(D >= 0, np.minimum(D, ct.OUTER_CAP_M), 0.0)
+    lo = np.full(n, int(round((0.0 + 10.0) / ct.BIN_M)))
+    hi = np.full(n, nb - 1)
+    sc = sc - ct.INWARD_COST * np.abs(np.arange(nb)[None, :] - lo[:, None])
+    path = ct.viterbi(sc, lo, hi)
+    got = L[path]
+    assert max(abs(got[i] - curb[i]) for i in range(n)) <= 0.25
+    flags = [bool(D[i, path[i]] >= 0.08) for i in range(n)]
+    naip = [not (100 <= i < 140) and not (300 <= i < 310) for i in range(n)]   # 20 m and 5 m without NAIP
+    keep, ok = ct.segments(flags, naip)
+    assert not any(ok[100:140]) and all(ok[300:310]) and ok[204]   # the driveway is bridged, the long silence cut
+    assert [(round(a * ct.ROW_M), round(b * ct.ROW_M)) for a, b, _, _ in keep] == [(0, 50), (70, 200)]

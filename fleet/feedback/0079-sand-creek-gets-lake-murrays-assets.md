@@ -1743,6 +1743,72 @@ verify_kn5's closure row as rounds M-O, resumed `--from road_obj`; logs `rp1.a.l
 - Tests: 1,331 pass, the known 8 fail. New: `test_round_p_wall_frame_and_vertex_kinks_are_opt_in`; round N / O's tests
   now pin the adoption and the unpark.
 
+## Round Q (Mac): Quebec's edges traced along the road; the re-centre measured NOT buildable on two ribbons (NOT 0.2.6)
+
+Every number: GATES-CHANGELOG 2026-11-06 (round Q). The live config is still 0.2.5. Scratch: `scratchpad/rq/`.
+
+### Item 1 (Quebec's outer edges by a continuous lidar curb-line trace): TRACED, checked on NAIP; the re-centre NOT built
+- **The tool (new, no build step): `tools/lidar_curb_trace.py`.** It straightens the road along the midline between
+  OSM's two carriageways (merge_forks' stations, a row every 0.5 m, −30 .. +30 m across in 0.25 m bins; each cell the
+  median class-2 return within ±0.75 m along). The step map is the mean ground 1 m outward minus 1 m inward, smoothed
+  over ±1 m along. Four lines (outer left, the median's two faces, outer right) are each traced by dynamic programming
+  over all 1,721 rows: the path with the most summed step, paying per bin it moves, at most 0.5 m per row.
+  - An outer line takes a curb (rises outward) before a drop (an embankment's edge, the back of a walk): curbs are
+    capped at 0.08 m, drops at 0.06, and the innermost line is preferred.
+  - A row is `curb` at round J's STEP_M (0.08 m) and `naip` when NAIP agrees in the track frame. NAIP agrees when the
+    road side reads the row's own road band (the median gray over both OSM ribbons ± half round J's band, so concrete
+    paving counts) and the gray leaves it for 1 m within −1 .. +2.5 m of the line, or a concrete line (curb top or gutter)
+    reads 12 gray brighter within 0.75 m.
+  - `ok` = a run of curb rows (driveway gaps ≤ 8 m joined), less any stretch where NAIP disagrees for more than 15 m,
+    20 m or longer.
+  - Lidar: the scratch tile cache (nothing fetched). The 26 tiles missing from the cache lie outside the ±30 m
+    corridor.
+- **What it measured on grid_primary_6 / 7** (860.5 m, 48th to x 1877):
+  - **Outer west edge:** ok over 286 m (s 50-193, 274-309, 399-428, 580-626, 744-778). It is a curb at −9.25 .. −11.5
+    off the midline at s 50-193 (OSM's ribbon edge −11.45 .. −12.0); −14.25 at the turn bay before the west side street
+    (s 180-240, the lidar's curb, NAIP silent). South of s 600 it is a rural drop into the ditch, −13 .. −16.
+  - **The median:** raised over the whole 860 m. Its band stands +0.06 .. +0.25 m over both carriageways, median
+    +0.13 (+0.06 / +0.07 only at s 460-480).
+    - 1.75-2.0 m wide at about +2 .. +4 over s 20-110 and s 260-860;
+    - 4.4-5.0 m wide (+2.75 .. +7.5, planted) at s 110-250.
+    - Faces ok: A side 568 m, B side 432 m. NAIP sees the narrow median only as two bright curb lines; its top reads as
+      gray as the road.
+  - **Outer east edge:** ok over 516 m. It is a curb at +15.5 .. +16.5 at s 167-456 and +18.75 .. +19.75 at s 52-81 and
+    466-502, and +16 .. +19 at s 656-860.
+  - So the real road runs from −10 .. −14 to +15.5 .. +21: 26-33 m curb to curb (OSM's two ribbons span 23 m), centred
+    3-4 m east of OSM's midline, with the median 2-6 m east of OSM's gap. This confirms round H's sections (west curb
+    x 1645.5, median x 1657.5-1664, east curb x 1677).
+  - **48th, the same tool on each leg alone:** the west leg (grid_unclassified_27) at Quebec (s 440-520) runs from −8.25
+    to +5.5 .. +6.0, so 13.75-14.25 m wide, centred 1.1 m south of OSM's line (OSM 8 m; round H "about 15 m"). The east
+    leg (grid_tertiary_65) is 19-23 m wide in its first 120 m (turn bays).
+- **Why the re-centre is NOT built.** Measured; this is not a missing number.
+  - Every connector ribbon carries `route.edge`'s strip on both sides: 0.3 m flat, then 0.2 m down to the ground over
+    1.5 m, so 1.8 m a side. Two ribbons need 3.6 m between their edges to keep both strips.
+  - The measured median is 1.75-2.0 m wide over about 640 of the 860 m. Re-centring the two ribbons on its faces would
+    fold both strips into a 0.2 m trough where the lidar reads a median standing +0.13 m. That is not real.
+  - Where the median is wide (s 110-250, 4.4-5 m), the west outer edge is checked only to s 193. Both carriageways are
+    measured together over 26 m (s 167-193), under the 40 m a re-centre needs.
+  - Re-centring one carriageway alone fails too. At s 50-110 the west's measured inner edge (+2.0 .. +2.75) lies on
+    OSM's east ribbon (+1.85 .. +2.4): two road sheets overlap.
+  - The rule ("only where continuous and checked; elsewhere keep OSM") would re-centre 144 m of grid_primary_6 and 261 m
+    of grid_primary_7 (`apply` in the record), in three stretches with 20 m eases. That is a slalom of 3-5 m jogs,
+    not the road.
+  - Nothing in the build reads the record. Quebec and 48th are as in rp2: no config change, so no build this item.
+- **The lead (measured, for the next round):** Quebec is ONE paved street from outer curb to outer curb, with a raised
+  concrete median on it, as fork 91/92 is. So:
+  - merge grid_primary_6 / 7 into one street on the trace's midline, as merge_forks does but for two parallel
+    carriageways that share no node: edges measured where `ok`, OSM's outer ribbon edges elsewhere, eased;
+  - build the median on it as a `route.islands` concrete island from the two traced faces and the measured rise
+    (+0.13 m median);
+  - re-cut 48th at it: the median crossing lies inside the merged street; 27 and 65 mouth on it, at 14 m measured;
+    30 / 31 meet its north end.
+- **Committed:**
+  - `tools/lidar_curb_trace.py`;
+  - `tracks/sand-creek-lm/source/quebec_edges.lidar.json` (the three traces);
+  - `source/stills/quebec_curb_trace_q.jpg` (NAIP | the lidar step map, s 0-860 in six panels; green = ok, orange =
+    traced, not ok; OSM's ribbons are not drawn);
+  - the test `test_round_q_curb_trace_follows_a_curb_and_cuts_unchecked_stretches`.
+
 ## Owed (2026-11-06, after round P; start here)
 1. **The closure:** Kevin's call (unchanged; the only verify_kn5 red).
 2. **Kevin / the coordinator: confirm round P's two gate readings** — `drive_test.vertex_kinks` (a measurement change;

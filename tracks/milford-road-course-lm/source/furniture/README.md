@@ -63,4 +63,7 @@ python rgb.py <naip> name:x,y ...                              # the tone check 
 python sun.py                                                  # the sun over 2022-08-16 at the centroid
 python edge_lines.py <airoso> out.json out.jpg                 # an automatic ridge scan beside the lap: a cross-check only
 ```
-The Blender python or the repo `.venv` (numpy, Pillow).
+The Blender python or the repo `.venv` (numpy, Pillow). Added with the 0.1.1 build (ledger 0082 sections 3 and 5):
+`edit_config.py` (wrote the config entries, one class per run), `gate_table.py <ws> ...` (the gate rows of workshops side
+by side), `float_cols.py` / `probe.py` (audit E re-run naming each wall; every triangle under a point), and
+`furniture_stills_blend.py` (the stills; Blender).

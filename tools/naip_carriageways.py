@@ -366,7 +366,7 @@ def edges_of(rows, W):
 # And a barrier run broken by ONE unread station (kind "unread" on that side between two barrier stations) is one run:
 # a gap in the reading, not in the barrier (round 5 item 2: the 10 m hole at line s 3,275, WB s 7,052, left WB's deck
 # edge unguarded). Wider gaps stay gaps (counted in the report).
-JOIN_ONE_STATION_HOLES = False   # round 5 item 2 sets it (the barrier through one unread station)
+JOIN_ONE_STATION_HOLES = True    # round 5 item 2: the barrier runs through one unread station
 
 
 def _wall_offsets(line, walls_xz, idx, sg):

@@ -43,6 +43,49 @@ SEAM_EDGE_M = 2.0                # [invented] ... to edges of at most this, so n
 #                                  the lower one's lane, WB soft top at s 4,650-4,800 and 5,450-5,600 with 0.2-0.5 m between
 #                                  them); the prep's pin then places every new vertex. Nothing is moved here.
 SKIRT_M = 40.0                   # seat_edges' rule: a face longer than this is the grid's far skirt, never near a road
+# ledger 0080 2a round 5 (owed item 3, WB s 7,052): beside a DECK the barrier stood on nothing. Each carriageway's inner
+# edge stands BARRIER_CLEAR (0.3 m) off the barrier's foot (naip_carriageways), and off a deck the prep's contact pin
+# raises the ground in that slot to the pavement; on a deck nothing does (the ground is the real ground under the bridge:
+# 10 m down under WB's Morena deck), so between WB's deck edge and the barrier's face drive_test fell 1.61 m, unguarded
+# (the face stood past its probe). A barrier on a bridge stands on the deck: under every LEVEL section (feet within the
+# 0.3 m retaining threshold; across a step audit_mesh F reads the slab as a curb not flush) whose foot is on a
+# declared deck (the line's lm_intake bridges_levelled, a network connector's decks_all) the deck is carried from just
+# under that pavement's edge to the barrier's far foot, DECK_EDGE_DY_M under the foot (deck_rails_blend's slab: the same
+# mesh, 1KERB_SIDEWALK_DECK).
+DECK_EDGE_DY_M = 0.03            # reused: tools/deck_rails_blend.py, the slab's top under the pavement's edge height
+DECK_EDGE_IN_M = 0.1             # reused: tools/deck_rails_blend.py, the slab runs this far under the pavement's edge
+DECK_EDGE_NAME = "1KERB_SIDEWALK_DECK"
+
+
+def _decked(proj):
+    """[(points (x, z), per-point on-a-deck flags)] for the line and every network connector, as declared."""
+    import importlib.util
+    data = proj / "data"
+    out = []
+    raw = json.loads((data / "centerline.raw.local.json").read_text(encoding="utf-8"))["points_xyz_m"]
+    loc = json.loads((data / "centerline.local.json").read_text(encoding="utf-8"))["points_xyz_m"]
+    decks = json.loads((data / "lm_intake.json").read_text(encoding="utf-8")).get("bridges_levelled") or []
+    st = [0.0]
+    for a, b in zip(raw, raw[1:]):
+        st.append(st[-1] + math.hypot(b[0] - a[0], b[2] - a[2]))
+    out.append(([(q[0], q[2]) for q in loc],
+                [any(float(c) - float(ln) / 2.0 <= s <= float(c) + float(ln) / 2.0 for c, ln in decks) for s in st]))
+    p = data / "connectors.local.json"
+    if p.exists():
+        spec = importlib.util.spec_from_file_location(
+            "v021_smooth", AIROSO / "tracks" / "san-diego-lake-murray" / "scripts-v021" / "geometry" / "smooth.py")
+        sm = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(sm)
+        for c in json.loads(p.read_text(encoding="utf-8")).get("connectors") or []:
+            if not c.get("network"):
+                continue
+            cpts = sm.smooth_centerline([tuple(q) for q in c["points_xyz_m"]], sigma_pts=1.5, passes=1, sigma_y_pts=1.0)
+            fl = [False] * len(cpts)
+            for a, b in c.get("decks_all") or []:
+                for k in range(a, min(b, len(fl) - 1) + 1):
+                    fl[k] = True
+            out.append(([(q[0], q[2]) for q in cpts], fl))
+    return out
 
 
 def _local_to_blend(x, y, z):
@@ -127,6 +170,36 @@ def main():
                 return hit[0].z
         return None
 
+    from mathutils.kdtree import KDTree
+    carr = _decked(proj)
+    kds = []
+    for pts_, _fl in carr:
+        kd_ = KDTree(len(pts_))
+        for k, (px, pz) in enumerate(pts_):
+            kd_.insert((px, pz, 0.0), k)
+        kd_.balance()
+        kds.append(kd_)
+
+    def on_deck(px, pz):
+        best = None
+        for (pts_, fl), kd_ in zip(carr, kds):
+            _co, k, d = kd_.find((px, pz, 0.0))
+            if k is not None and (best is None or d < best[0]):
+                best = (d, fl[k])
+        return bool(best and best[1])
+
+    def edge_d(x, zl, nx, nz, sg):
+        """The pavement's edge on side sg: the first distance out from the centre line (0.05 m steps) over ROAD."""
+        d = 0.0
+        while d <= FOOT_PROBE_M[-1] + 1e-6:
+            o = _local_to_blend(x + sg * d * nx, 1e4, zl + sg * d * nz)
+            if bvh.ray_cast(o, -up, 2e4)[0] is not None:
+                return d
+            d += 0.05
+        return None
+    slab_v, slab_f = [], []
+    n_slab = 0
+
     verts, faces = [], []
     rep = []
     n_retain = 0
@@ -170,6 +243,26 @@ def main():
                     if abs(yl - yr) > 0.3:
                         n_retain += 1
                     prof = [(B / 2, bot), (B / 2, yl), (T / 2, top), (-T / 2, top), (-B / 2, yr), (-B / 2, bot)]
+                    for sg_, yf in ((1, yl), (-1, yr)):     # the deck under the barrier, on a deck side
+                        if q == j:
+                            continue
+                        x2, z2, nx2, nz2, yl2, yr2 = sec[q + 1]
+                        # a LEVEL section only (feet within the retaining threshold): across a stepped one the slab's
+                        # vertices stand > 0.5 m off the other carriageway's edge, 2 m away, and audit_mesh F reads
+                        # them as curbs not flush (ws25: 64)
+                        if abs(yl - yr) > 0.3 or abs(yl2 - yr2) > 0.3:
+                            continue
+                        yf2 = yl2 if sg_ > 0 else yr2
+                        e1, e2 = edge_d(x, z, nx, nz, sg_), edge_d(x2, z2, nx2, nz2, sg_)
+                        if e1 is None or e2 is None or not on_deck(x + sg_ * e1 * nx, z + sg_ * e1 * nz):
+                            continue
+                        b0 = len(slab_v)
+                        for (xa, za, nxa, nza, ya, ea) in ((x, z, nx, nz, yf, e1), (x2, z2, nx2, nz2, yf2, e2)):
+                            for off in (ea + DECK_EDGE_IN_M, -B / 2):
+                                slab_v.append(_local_to_blend(xa + sg_ * off * nxa, ya - DECK_EDGE_DY_M,
+                                                              za + sg_ * off * nza))
+                        slab_f.append((b0, b0 + 1, b0 + 3, b0 + 2) if sg_ > 0 else (b0, b0 + 2, b0 + 3, b0 + 1))  # face up
+                        n_slab += 1
                     for off, y in prof:
                         verts.append(_local_to_blend(x + off * nx, y, z + off * nz))
                 m = len(prof)
@@ -196,10 +289,36 @@ def main():
     me.materials.append(mat)
     ob = bpy.data.objects.new("1WALL_MEDIAN", me)
     bpy.context.scene.collection.objects.link(ob)
+    if slab_f:
+        import bmesh
+        dob = bpy.data.objects.get(DECK_EDGE_NAME)
+        if dob is None:
+            sme = bpy.data.meshes.new(DECK_EDGE_NAME)
+            sme.from_pydata([tuple(v) for v in slab_v], [], slab_f)
+            sme.update()
+            smat = bpy.data.materials.new(DECK_EDGE_NAME + "_mat")
+            smat.diffuse_color = (0.66, 0.66, 0.64, 1.0)
+            sme.materials.append(smat)
+            dob = bpy.data.objects.new(DECK_EDGE_NAME, sme)
+            bpy.context.scene.collection.objects.link(dob)
+        else:
+            inv = dob.matrix_world.inverted()
+            bm = bmesh.new()
+            bm.from_mesh(dob.data)
+            vs = [bm.verts.new(inv @ v) for v in slab_v]
+            for f in slab_f:
+                bm.faces.new([vs[k] for k in f])
+            bm.to_mesh(dob.data)
+            bm.free()
+            dob.data.update()
+    print(f"[median-barrier] the deck under the barrier where its foot is on a declared deck: {n_slab} quads "
+          f"({DECK_EDGE_NAME}, {DECK_EDGE_DY_M} m under the foot, from {DECK_EDGE_IN_M} m under the pavement's edge "
+          f"to the far foot)")
     bpy.ops.wm.save_as_mainfile(filepath=str(proj / "loop.blend"))
     length = sum(math.dist(r0, r1) for run in doc["runs"] for r0, r1 in zip(run["xz"], run["xz"][1:]))
     out = {"tool": "tools/median_barrier_blend.py", "ledger": "0080 2a", "barrier": bar, "runs": rep,
-           "sections_retaining_over_0_3m": n_retain, "vertices": len(verts), "run_length_m": round(length, 1)}
+           "sections_retaining_over_0_3m": n_retain, "vertices": len(verts), "run_length_m": round(length, 1),
+           "deck_under_barrier_quads": n_slab}
     (proj / "data" / "median_barrier.built.json").write_text(json.dumps(out, indent=1), encoding="utf-8")
     print(f"[median-barrier] 1WALL_MEDIAN: {len(rep)} run(s), {sum(r['sections'] for r in rep)} sections, "
           f"{len(verts)} vertices; {n_retain} sections with feet > 0.3 m apart (a retaining face)")

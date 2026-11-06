@@ -533,6 +533,23 @@ barrier at the midline between the two carriageways' centres ("barrier at the mi
   a ground facet from under WB's moved pavement shows 0.6 m past its kept outer edge). Tried: the step at the barrier's
   low foot with the high ground under its body (ws22-ws24): verify_kn5 TERRAIN POKE 4,513 -> 1,107, red; reverted, owed.
 
+**2. WB s 7,052: its cause found, half finished.** The 1.61 m drop was a HOLE in the median barrier: NAIP's line station
+s 3,275 was unread between two "barrier at the midline" readings, so the barrier stopped 10 m short (runs [3,250, 3,270]
+and [3,280, 3,310]) and WB's flared deck edge at WB s 7,052 faced the gap. The same one-station hole broke the barrier
+26 times along I 8.
+- `tools/naip_carriageways.py` (`JOIN_ONE_STATION_HOLES`): a barrier run broken by exactly one unread station is one
+  run (the barrier runs through it at its neighbours' mean offset). 33 runs / 6,705 m -> 13 runs / 6,990 m.
+- `tools/median_barrier_blend.py`: on a declared deck (the line's bridges_levelled, a connector's decks_all) the ground
+  in the 0.3 m clearance and under the barrier is the real ground under the bridge, so drive_test's crossing fell there
+  unguarded. The deck is carried under the barrier (1KERB_SIDEWALK_DECK, deck_rails_blend's 0.03 m / 0.1 m reused) on
+  LEVEL sections: 40 quads. On a STEPPED section (feet > 0.3 m apart, WB s 7,052 is 1.3-1.6 m over the line) the slab
+  fails audit_mesh F (ws25: 64 curb verts "not flush": 2 m from the low carriageway's edge, > 2 m from the high one's
+  sparse edge vertices): not laid there.
+- **ws26:** line drive_test PASS (excursions 3), WB line gate PASS (lap rule 25: s 3,450 gone; s 7,052 still 1.67 m on
+  the stepped deck section), audit CLEAN, verify_kn5 / inis PASS, kn5_ground_check PASS, 42,203,383 B, SHIP OK.
+- Owed for s 7,052: the stepped deck's barrier needs a surface under its body that audit F accepts (a slab joined to
+  the high deck's edge vertices, or F reading a 1KERB under a 1WALL as the wall's footing).
+
 ## PC runbook 0080-5: rehearse 2a (I 8 both ways), no install
 
 2a is green on the Mac (ws19). The PC needs no lidar: `median_ground.lidar.json` is committed.

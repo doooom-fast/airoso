@@ -501,7 +501,7 @@ passed, 1 skipped.
 
 2a is green on the Mac (ws19). The PC needs no lidar: `median_ground.lidar.json` is committed.
 
-1. `git fetch && git worktree add D:/k10-worktrees/freeway-lm-2a <round 4 sha>`
+1. `git fetch && git worktree add D:/k10-worktrees/freeway-lm-2a c42b91ab`
 2. `SHIP_PROJ=D:/k10-scratch/fwlm_2a AIROSO=D:/k10-worktrees/freeway-lm-2a ENG=D:/k10-scratch/eng_fwlm bash
    tools/ship_track.sh san-diego-freeway-lm --no-install`
 3. Expect ws19's numbers: line drive_test PASS (soft top 0, severe 0, daylight 0, floating 0, excursions 3), WB line gate

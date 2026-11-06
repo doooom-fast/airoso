@@ -14,6 +14,21 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
+## 2026-11-05 — the SD freeway port, phase 2b round 1: the download list, tiered terrain, the 2b mainlines declared (ledger 0080; no threshold moved, no bypass)
+
+No gate threshold, bypass or gate code changed. Chain wiring: `tools/ship_track.sh` gains the draft step
+`build_loop_blend_tiered` (Lake Murray's assembler run unchanged by `tools/fwlm_tiered_assembler_blend.py`) and its name
+in the two assembler checks; the port's ship.json names it, Lake Murray's never does. New numbers:
+
+- ⚠ `lm_intake.terrain_tiers.fine_m` **60 m, invented**: a native 55 m 3DEP cell farther than this from a pavement edge
+  is two triangles on its native samples (`tools/fwlm_terrain.py`). Chosen past the assembler's conform reach (corridor
+  20 + blend 16 m) and engine-july's LAYER_WIN 30 m; proven only by ws39 = ws35 on every gate JSON. `step` 4 is not a
+  choice: grid_upsample 2 x the assembler's 2.
+- `band_clamp_np`'s 130 m bucket and 40-ring limit are the assembler's band_clamp's own (byte-identical, A/B'd).
+- `tools/fwlm_downloads.py`: no new number (STEP 5, PAIR 45, REACH 60, TILE 600 are the readers' own; OUT 3 m is
+  barrier_lidar's LAT_OUT_M, ALONG 2 m median_lidar's).
+- `lm_intake.grid_crop_m` 1,000 m (⚠ invented, phase 1) stays: the whole box built (ws38) but not green (ledger).
+
 ## 2026-11-05 — the SD freeway port, phase 2a round 6: the stepped barrier's footing, the ground under WB, the median as read, a barrier reader (ledger 0080; no threshold moved, no bypass)
 
 No gate threshold, bypass, gate code or gate-chain wiring changed. New numbers / rules the port's DATA / geometry tools

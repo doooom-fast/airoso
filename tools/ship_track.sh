@@ -253,6 +253,13 @@ draft_build_loop_blend() {
   step "draft: build loop.blend (scene regen — GEN layer)"
   (cd "$WS" && "$BL" --background --python-exit-code 1 --python-expr "$V021_SHIM" --python "$V021/blender/build_loop_blend.py" -- "$PROJ" 2>&1 | grep "^\[blend\]\|Error\|Traceback" | tail -6)
 }
+# ledger 0080 2b (the SD freeway port): the same assembler, run by tools/fwlm_tiered_assembler_blend.py with its band
+# clamp vectorised (byte-identical) and, with lm_intake.terrain_tiers, the far ground at the 3DEP's native spacing
+# (tools/fwlm_terrain.py). A port's step only: Lake Murray's ship.json names build_loop_blend and never runs this one
+draft_build_loop_blend_tiered() {
+  step "draft: build loop.blend (scene regen — GEN layer; tiered terrain: tools/fwlm_tiered_assembler_blend.py; ledger 0080 2b)"
+  (cd "$WS" && "$BL" --background --python-exit-code 1 --python-expr "$V021_SHIM" --python "$AIROSO/tools/fwlm_tiered_assembler_blend.py" -- "$PROJ" 2>&1 | grep "^\[blend\]\|^\[fwlm-tiers\]\|Error\|Traceback" | tail -9)
+}
 draft_lm_intake() {
   step "draft: the track's line, widths and 3DEP into Lake Murray v4's assembler inputs (tools/lm_engine_intake.py; ledger 0078)"
   (cd "$AIROSO" && python tools/lm_engine_intake.py "$PROJ")
@@ -951,7 +958,7 @@ if [ ! -f "$V021/blender/build_loop_blend.py" ] && [ "$SPEC_ENGINE" = "lm-v4" ];
   V021="$AIROSO/tracks/san-diego-lake-murray/scripts-v021"     # Lake Murray v4's assembler, never a per-track copy (ledger 0078)
 fi
 V021_SHIM="import sys, importlib.util as u; s=u.spec_from_file_location('scripts', r'$V021/__init__.py', submodule_search_locations=[r'$V021']); m=u.module_from_spec(s); sys.modules['scripts']=m; s.loader.exec_module(m)"
-for n in ${DRAFT[@]+"${DRAFT[@]}"}; do case "$n" in build_loop_blend|rebuild_loop_blend|weld_mouths)
+for n in ${DRAFT[@]+"${DRAFT[@]}"}; do case "$n" in build_loop_blend|build_loop_blend_tiered|rebuild_loop_blend|weld_mouths)
   [ -f "$V021/blender/build_loop_blend.py" ] || { echo "ship.json steps.draft names $n but there is no assembler at $V021/blender/build_loop_blend.py"; exit 2; };;
 esac; done
 echo "track: $TRACK   workshop project: $PROJ$( [ "$SCRATCH" = 1 ] && printf ' (scratch: no sync-back, no install)')"
@@ -964,7 +971,7 @@ blend_builder_ready() {
   # resuming past the draft: nothing in this run builds the blend
   if [ -n "$FROM" ]; then case " ${DRAFT[*]:-} " in *" $FROM "*) ;; *) return 1;; esac; fi
   for n in ${DRAFT[@]+"${DRAFT[@]}"}; do case "$n" in
-    build_loop_blend) [ -f "$V021/blender/build_loop_blend.py" ] && return 0;;
+    build_loop_blend|build_loop_blend_tiered) [ -f "$V021/blender/build_loop_blend.py" ] && return 0;;
     underlay) [ -f "$AIROSO/scripts/blender/underlay.py" ] && return 0;;
   esac; done
   return 1

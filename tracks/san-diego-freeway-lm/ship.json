@@ -10,7 +10,7 @@
   "steps": {
     "draft": [
       "lm_intake",
-      "build_loop_blend",
+      "build_loop_blend_tiered",
       "densify_ribbon",
       "deck_rails",
       "median_barrier"

@@ -756,6 +756,35 @@ contiguous mainline across them; 2c / 2d interchange work): I 5 NB pieces of 3,5
 858 m (the resolver's offered join runs through NB's edges 313 / 304 / 93: a direction mislabel, not taken), SR 163 NB
 3,766 / 961 m, SB 2,892 / 2,640 m. SR 163's two chains barely overlap (NB is the southern 9.3 km, SB the northern 8.1).
 
+**2. Tiered terrain (item 2): `tools/fwlm_terrain.py`, `tools/fwlm_tiered_assembler_blend.py`, ship.json draft step
+`build_loop_blend_tiered`.** Lake Murray's assembler is run UNCHANGED from its own file by a port-only wrapper that swaps
+two things: its band clamp for a vectorised one (`band_clamp_np`: the same 130 m buckets, the same ring order, the same
+float64 distances and first minimum; byte-identical, so not opt-in-gated), and, with `lm_intake.terrain_tiers`
+{fine_m 60, step 4}, `ribbon.grass_terrain` for a tiered mesh: every native 55 m cell farther than 60 m from a pavement
+edge is two triangles on its four native samples; within 60 m the x4 grid (13.75 m) exactly as grass_terrain
+triangulates it; a coarse cell beside a fine one is a fan from its centre over its boundary (no T-junction: the test
+checks every inner edge has two faces, one winding). `tools/ship_track.sh` gains the step function and its name in the
+two assembler checks; no step Lake Murray runs changed.
+- **The clamp's A/B** (`b1/ab_clamp.py` in the session scratchpad: upsample + project + conform, then both clamps,
+  every vertex's bytes): Lake Murray's own grid and roads (333 x 297, 8,511 road points): md5 727d783b both,
+  0 vertices differ (pure Python 6.2 s, numpy 0.1 s); the port's ws35 grid (297 x 885): d3b121e9 both, 0 differ
+  (37.5 s vs 0.3 s). Tests: `tests/tools/test_fwlm_terrain.py` (the assembler's clamp vs the numpy one on random grids
+  with a far road; the fine cells' triangles = grass_terrain's; watertight; one winding).
+- **ws37 (the wrapper, tiers OFF, crop kept) = ws35:** the gate OBJ (`data/track.obj`, from the kn5) byte-identical;
+  drive_test, drive_test.network, audit, edge report, kn5_ground_check, median_ground.built byte-identical; kn5
+  43,020,931 B (same size; its md5 differs, as ws35 vs ws36 already do on one commit).
+- **ws39 (tiers ON, crop kept): the same gates as ws35, 13.2 MB smaller.** drive_test / drive_test.network / edge report /
+  kn5_ground_check JSONs byte-identical to ws35; audit CLEAN (only `grass_verts` differs: 464,303 -> 227,894);
+  median_ground counts a few vertices fewer (pinned under WB 8,248 -> 8,140, bisected 24,500 -> 24,391: the prep's
+  splits beside the fewer far cells), no gate number moved. TERRAIN 262,845 -> 32,418 vertices (938 fine cells of
+  16,354, 388 fans). **kn5 29,834,689 B (29.8 MB) vs 43,020,931 (43.0): -13.2 MB.**
+- **ws38 (tiers ON, the WHOLE box, crop dropped): 34.1 MB, NOT green.** 1,329 x 1,085 grid (1.44 M nodes) -> 106,653
+  terrain vertices (918 fine cells of 89,972); the assembler finished (the clamp 0.x s). The line's drive_test FAILED:
+  ground on top mid-lane 3 (s 2,805, +6.0 m, 1GRASS_1); WB's lap rule 13 (1.23 / km, better than 17); audit CLEAN. The
+  whole box is a different grid near the roads, not the crop's: project_grid spaces the columns by the grid's own
+  mid-latitude, so every node moves (likely the cause; not proven). So the crop (1,000 m, [invented], phase 1) is KEPT
+  and the whole box is owed: read s 2,805 on ws38 first.
+
 ## PC runbook 0080-7: rehearse 2a round 6, no install
 
 Supersedes 0080-6 for the next candidate (0080-6's c3c988b9 is what is installed). No lidar or NAIP is needed.

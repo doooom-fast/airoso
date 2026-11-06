@@ -242,6 +242,11 @@ def build(draft: Path, out: Path, cfg_path: Path) -> dict:
     cfg = json.loads(cfg_path.read_text(encoding="utf-8"))
     li = cfg.get("lm_intake") or {}
     specs = li.get("network_connectors") or []
+    # ledger 0080 2b: a spec with a "phase" is built only when lm_intake.network_build_phases lists it (absent = the
+    # specs with no phase: I 8 westbound). The 2b mainlines are declared (tools/fwlm_downloads.py reads them) but not
+    # built until their edges are measured
+    phases = set(li.get("network_build_phases") or [])
+    specs = [sp for sp in specs if sp.get("phase") is None or sp.get("phase") in phases]
     if not specs:
         raise SystemExit("[network_connectors] lm_intake.network_connectors is empty")
     rate = li.get("width_taper")

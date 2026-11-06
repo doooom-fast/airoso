@@ -45,9 +45,12 @@
       "track.config.json"
     ],
     "assets": [
-      "assets/textures/tyre_wall_diffuse.png"
+      "assets/textures/tyre_wall_diffuse.png",
+      "assets/textures/metal_wall_diffuse.jpg",
+      "assets/textures/metal_wall_normal.jpg",
+      "assets/textures/roof_tan_diffuse.jpg"
     ],
-    "_assets_doc": "ledger 0082: the tyre walls' skin (texture_overrides 1WALL_TECPRO); the engine copy does not carry it"
+    "_assets_doc": "ledger 0082: the tyre walls' skin (texture_overrides 1WALL_TECPRO) and the pad sheds' metal walls / tan roof (pbr rows BUILDING_METAL, ROOFTOP_TAN), from airoso's tracked assets so no engine copy has to carry them"
   },
   "sync_out": {
     "required": [

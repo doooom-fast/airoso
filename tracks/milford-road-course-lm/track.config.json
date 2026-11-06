@@ -121,6 +121,56 @@
           "roof": "white",
           "off_terrain": true,
           "_source": "as mpg_plant_a"
+        },
+        {
+          "key": "pad_shed_north",
+          "footprint_lonlat": [
+            [
+              -83.6633993,
+              42.5670063
+            ],
+            [
+              -83.6633444,
+              42.5670063
+            ],
+            [
+              -83.6633444,
+              42.5668904
+            ],
+            [
+              -83.6633993,
+              42.5668904
+            ]
+          ],
+          "wall_h_m": 2.6,
+          "skin": "metal",
+          "roof": "tan",
+          "_source": "source/furniture/inventory.json S1: footprint off NAIP 2022 (4.5 x 12.8 m, +-1 px), the roof colour as the photo shows it; height 2.6 m [invented: a container / site trailer, no shadow resolvable on the tree side]"
+        },
+        {
+          "key": "pad_shed_south",
+          "footprint_lonlat": [
+            [
+              -83.6633566,
+              42.5665303
+            ],
+            [
+              -83.6633138,
+              42.5665303
+            ],
+            [
+              -83.6633138,
+              42.5664204
+            ],
+            [
+              -83.6633566,
+              42.5664204
+            ]
+          ],
+          "wall_h_m": 2.6,
+          "skin": "metal",
+          "roof": "white",
+          "_source": "source/furniture/inventory.json S2: footprint off NAIP 2022 (3.5 x 12.1 m, +-1 px), the roof colour as the photo shows it; height 2.6 m [invented: a container / site trailer, no shadow resolvable on the tree side]"
         }
       ],
       "pads": [

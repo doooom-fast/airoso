@@ -271,6 +271,63 @@ def test_closure_kn5s_carry_their_own_layouts_closure_only():
     assert _has(verify(d), "stray closure kn5 build/t_closure_race_old.kn5")
 
 
+def _whole_lap(d: Path, closure: str, declare=True) -> Path:
+    """make a _synthetic() project race the whole street (race.corridor.whole_lap, ledger 0079 round R): each race
+    layout's closure kn5 rewritten — "plates" (its own W1-6 plate alone, Sand Creek's shape), "walls" (its own plate
+    + two 1WALL_race_close_<tok>_* walls), "kerb" (plate + a kerb)"""
+    cfg = json.loads((d / "track.config.json").read_text())
+    if declare:
+        cfg["race"]["corridor"] = {"whole": [0, N_PTS - 1], "boxes": [], "closure_runs": [], "whole_lap": True}
+    (d / "track.config.json").write_text(json.dumps(cfg))
+    for lid, tok in (("race_cw", "cw"), ("race_acw", "acw")):
+        plate = f"SIGNPLATE_{tok}_0"
+        ms, mats = [(plate, _BOX, _BTRIS, 0)], [f"{plate}_mat"]
+        if closure == "walls":
+            wms, wmats = _closure_meshes(tok)
+            ms, mats = ms + wms, mats + wmats
+        if closure == "kerb" and tok == "cw":
+            ms.append(("1KERB_race_9_in", _BOX, _BTRIS, 0))
+        write_kn5(d / "build" / f"t_closure_{lid}.kn5", ms, [], mats)
+    return d
+
+
+def test_whole_street_race_has_no_closure_wall_opt_in():
+    """ledger 0079 round R (Kevin 2026-11-06, "Full street width"): a layout racing the whole street
+    (race.corridor.whole_lap) has no closure line — its closure kn5 must hold NO 1WALL_RACE_CLOSE_<TOKEN>_* wall, in
+    place of >= 1; every other closure / race kn5 row as before. Without the key nothing changes."""
+    from scripts.ac.verify_kn5 import whole_lap_layouts
+    # the whole street, plates alone: green (the row that was red on Sand Creek's 0.2.6 candidate, rk3 .. rp2)
+    assert verify(_whole_lap(_synthetic(), "plates")) == []
+    # ...and the same kn5s WITHOUT the key: the closure row as it always was (Lake Murray's rule)
+    fails = verify(_whole_lap(_synthetic(), "plates", declare=False))
+    assert _has(fails, "CLOSURE kn5 't_closure_race_cw.kn5' (race_cw) holds no 1WALL_RACE_CLOSE_CW_* mesh"), fails
+    assert _has(fails, "t_closure_race_acw.kn5' (race_acw) holds no 1WALL_RACE_CLOSE_ACW_* mesh"), fails
+    # a closure wall in a whole-street race's closure kn5 fails: there is no closure line to stand on
+    fails = verify(_whole_lap(_synthetic(), "walls"))
+    assert _has(fails, "CLOSURE kn5 't_closure_race_cw.kn5' (race_cw) holds 2 1WALL_RACE_CLOSE_CW_* mesh(es)",
+                "whole street", "no closure wall"), fails
+    assert not _has(fails, "holds no"), fails
+    # every other row stands with the key: a kerb in the closure kn5, a closure in the common kn5, a missing file
+    assert _has(verify(_whole_lap(_synthetic(), "kerb")), "CLOSURE kn5 't_closure_race_cw.kn5'", "1KERB_race_9_in")
+    assert _has(verify(_whole_lap(_synthetic(race_kn5="closure_in_common"), "plates")),
+                "RACE kn5 't_race.kn5' carries 1 closure mesh")
+    d = _whole_lap(_synthetic(), "plates")
+    (d / "build" / "t_closure_race_acw.kn5").unlink()
+    assert _has(verify(d), "race layout race_acw has no build/t_closure_race_acw.kn5")
+    # the key is read exactly: only race.corridor.whole_lap true, only race_furniture layouts naming no lap
+    los = [{"id": "s", "race_furniture": False}, {"id": "r", "race_furniture": True},
+           {"id": "l", "race_furniture": True, "lap": "x"}]
+    assert whole_lap_layouts({"race": {"corridor": {"whole_lap": True}}}, los) == {"r"}
+    for c in ({}, {"race": {}}, {"race": {"corridor": {}}}, {"race": {"corridor": {"whole_lap": "true"}}},
+              {"race": {"corridor": {"whole_lap": False}}}, {"race": {"whole_lap": True}}):
+        assert whole_lap_layouts(c, los) == set(), c
+    # Lake Murray declares none; Sand Creek's 0.2.6 candidate races the whole street
+    lm = json.loads((ROOT / "tracks" / "san-diego-lake-murray" / "track.config.json").read_text(encoding="utf-8"))
+    assert whole_lap_layouts(lm, lm["layouts"]) == set()
+    sc = json.loads((ROOT / "tracks" / "sand-creek-lm" / "source" / "round_k" / "track.config.json").read_text(encoding="utf-8"))
+    assert whole_lap_layouts(sc, sc["layouts"]) == {"race"}
+
+
 def test_spawns_stand_inside_the_declared_lane_of_a_race_layout():
     """(d) with a corridor declared the START / PIT cars must stand inside the layout's lane (>= 0.30 m off each
     face); the lane replaces "right of travel" (on Alvarado the race lane is the whole street)"""

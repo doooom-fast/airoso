@@ -14,6 +14,36 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
+## 2026-11-06 (round R) — verify_kn5: a whole-street race has no closure wall (opt-in `race.corridor.whole_lap`; ledger 0079 round R)
+
+**What changed (scripts/ac/verify_kn5.py, rule (f)):** for a race layout that names no lap on a track whose
+`race.corridor.whole_lap` is `true` (`whole_lap_layouts`), the closure kn5's row "holds >= 1
+1WALL_RACE_CLOSE_<TOKEN>_* mesh" is REPLACED by "holds NO 1WALL_RACE_CLOSE_<TOKEN>_* mesh". Every other row is as
+before, for that layout too: the closure kn5 present and declared by its token, only its own closure / its own sign
+plates in it, race materials only, no spawn node, the cap, the size, no duplicate name across road + common + closure;
+the common race kn5's curb strips, kerbs, no closure, no centre chain; --inis unchanged.
+
+**Why (Kevin, 2026-11-06, relayed by the PC session):** asked whether Sand Creek's race on its wide streets should use
+Lake Murray's 11.36 m lane with closure walls shutting off the rest (about 15 % of the lap: Colorado, Quebec, every
+stretch >= 15.67 m) or the full street, he answered "Full street width". A whole-street race has no closure line, so
+the >= 1 row cannot hold; "no closure wall" is what is true of it (the closure kn5 carries the layout's own W1-6
+plate alone, as check_race_kn5 already reads under `params.whole_lap` since round K).
+
+**No number.** No threshold, reference or bypass moved; none added. The key is the one barrier_bands.py already reads
+(round K) and echoes into data/barrier_bands.json `params.whole_lap`; verify_kn5 reads the config's declaration
+(`is True` only; a lap layout's corridor is its own and is not covered).
+
+**Proven:**
+- Sand Creek rp2 (round P's built workshop, the candidate config): before FAIL on exactly the closure row
+  ("CLOSURE kn5 'sand_creek_raceway_lm_closure_race.kn5' (race) holds no 1WALL_RACE_CLOSE_RACE_* mesh"); after PASS;
+  --inis PASS both.
+- Lake Murray (no Lake Murray kn5 build is on the Mac: a fixture from its committed config, finished centreline,
+  barrier_bands, dummies and the committed parses of its 0.20.1 race / closure_cw / closure_acw kn5s, mesh and material
+  names as built; `sclm_work/lmvk_rr`): verify_kn5 output byte-identical before / after in five variants — as built
+  (PASS), race_cw's closure walls removed (FAIL "holds no 1WALL_RACE_CLOSE_CW_*"), a closure wall in the common kn5
+  (FAIL), --inis as packed (PASS), --inis listing the other closure (FAIL).
+- Test `tests/ac/test_verify_kn5_layouts.py::test_whole_street_race_has_no_closure_wall_opt_in`.
+
 ## 2026-11-06 (round Q) — Sand Creek: a lidar curb-line tracer and its numbers; no gate, no threshold, no bypass (ledger 0079 round Q)
 
 **Not live.** No gate reads any of these. They are the reading rules of a measuring tool

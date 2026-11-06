@@ -31,10 +31,8 @@
       "ribbon": "MAINLINE",
       "vertex": 3205,
       "where": "the S at 48th / Colorado, second turn (right), 27 m after SC-48C",
-      "fwd": {
-        "skip": true,
-        "reason": "a lamp mast stands 2.2 m from the rule's spot (lamps never move, no slide <= 1.0 m clears it); the S's first turn SC-48C carries the plate"
-      }
+      "skip": true,
+      "reason": "both approaches. fwd: a lamp mast stands 2.2 m from the rule's spot (lamps never move, no slide <= 1.0 m clears it); the S's first turn SC-48C carries the plate. rev (ledger 0079 round O, 48th_colorado built): straight on, southbound at x -1515, crosses the pad's measured deck into N Colorado Blvd south, a through street (grid_primary_49 / 52, its two carriageways); the failed-turn ray threads the 6 m between their two ribbons and the rule stood the plate in the middle of the real road (build ro2: verify_signs c_built_edge_clearance). In Free Roam the arrow would point away from a road a driver may take (the module's through-road rule); no race layout drives rev"
     },
     "SC-C50": {
       "ribbon": "MAINLINE",

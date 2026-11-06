@@ -14,6 +14,18 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
+## 2026-11-06 (round P) — Sand Creek: 48th_colorado unparked; one mouth allowance dropped (ledger 0079 round P)
+
+**Not live.** The candidate in `tracks/sand-creek-lm/source/round_k/`; the live config is 0.2.5.
+
+- **`route.verify_mouths_allowed`: grid_primary_52's row dropped** (an allowance REMOVED, so the gate is stricter): its
+  mouth is now on the built 48th_colorado pad. rp1 verify_mouths PASS 113 with 2 rows left (grid_primary_78, 80).
+- **48th_colorado unparked** with round O's declaration and keys unchanged (no new number). verify_pads' tolerances
+  untouched: rp1 48th seam max 1.0 mm (limit 10 mm), grass 0, curb over pavement 0.
+- **signs.json SC-48S skip** (both approaches; no number): the rule's rev plate stood in the middle of N Colorado Blvd
+  south once the pad was built (round O build ro2: verify_signs c_built_edge_clearance). A skip with its reason, not a
+  gate change; verify_signs PASS, 6 posts.
+
 ## 2026-11-06 (round O) — Sand Creek: 48th_colorado re-measured and re-declared; three opt-in pad keys; NOT unparked (ledger 0079 round O)
 
 **Not live.** 48th_colorado stays in the candidate's `lm_pads.parked` (its round-O declaration kept there); the live config

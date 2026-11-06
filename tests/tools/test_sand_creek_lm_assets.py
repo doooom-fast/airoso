@@ -757,12 +757,14 @@ def test_round_o_cut_reach_arm_is_opt_in():
         if p.exists():
             assert '"cut_reach"' not in p.read_text(encoding="utf-8"), t
     sc = json.loads((SC / "source" / "round_k" / "track.config.json").read_text(encoding="utf-8"))
-    # round O ends with 48th_colorado re-declared but still parked (ro5 verify_pads red; the ledger's owed list)
+    # round P unparks 48th_colorado (build rp1: verify_pads x4 PASS with seam_base) and drops 52's allowed mouth row
     decls = sc["lm_pads"]["pads"] + sc["lm_pads"]["parked"]
     assert [p["id"] for p in decls if p.get("cut_reach")] == ["48th_colorado"]
-    assert "48th_colorado" in [p["id"] for p in sc["lm_pads"]["parked"]]
-    assert [r["piece"] for r in sc["route"]["verify_mouths_allowed"]] == ["grid_primary_52#0", "grid_primary_78#0",
-                                                                          "grid_primary_80#0"]
+    assert "48th_colorado" in [p["id"] for p in sc["lm_pads"]["pads"]]
+    assert all(not p.get("_parked_why") for p in sc["lm_pads"]["pads"])
+    assert [r["piece"] for r in sc["route"]["verify_mouths_allowed"]] == ["grid_primary_78#0", "grid_primary_80#0"]
+    sk = json.loads((SC / "signs.json").read_text(encoding="utf-8"))["corners"]["SC-48S"]
+    assert sk["skip"] is True and "rev" in sk["reason"] and "fwd" in sk["reason"]
     for f in (SC / "source" / "pads").glob("*.json"):
         rec = json.loads(f.read_text(encoding="utf-8"))
         assert ("cut_ends_en" in rec) == (f.stem == "48th_colorado"), f.stem
@@ -807,3 +809,4 @@ def test_round_o_cut_reach_arm_is_opt_in():
     assert "class2_nodes" not in rep_old and rep_new["class2_nodes"] == 1
     assert abs(new["y"][2][2] - 0.8) < 1e-9 and new["y"][0][4] is None and old["y"][0][4] is None
     assert dp.deck_filled(deck, ring, 0.1, class2=None) == (old, rep_old)
+

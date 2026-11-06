@@ -1658,6 +1658,26 @@ kn5_ground_check PASS; verify_pads FAIL (48th: P3 10.8 mm, P4 2); later gates no
 - The three pad keys are read only from a pad declaration / pad file that names them (48th_colorado alone).
 - Tests: 1,330 pass, the known 8 fail. New: `test_round_o_cut_reach_arm_is_opt_in`.
 
+## Round P (Mac): 48th_colorado unparked — verify_pads x4 green with seam_base; the S's walls read on no_route's deck frame (NOT 0.2.6)
+
+Builds from source copy `sclm_work/rp_src` (this branch + the candidate swapped in), empty workshop `rp1` (stopped at
+verify_kn5's closure row as rounds M-O, resumed `--from road_obj`; logs `rp1.a.log`, `rp1.log`). The live config is still
+0.2.5. Every number: GATES-CHANGELOG 2026-11-06 (round P).
+
+### Item 1 (unpark 48th_colorado): DONE — rp1, every chain gate green
+- **The candidate:** 48th_colorado moved from `lm_pads.parked` to `lm_pads.pads` (round O's declaration, its
+  `_parked_why` dropped); grid_primary_52's row dropped from `route.verify_mouths_allowed` (2 rows left: 78, 80);
+  signs.json's SC-48S corner skip (both approaches, with both reasons: round O's `ro_src` text). Only the candidate's chain
+  runs signs, so the skip changes nothing in 0.2.5.
+- **verify_pads x4 PASS** (rp1): 48th_colorado seam max 1.0 mm (ro5 10.8), grass 0 (ro5 2), curb over pavement 0,
+  multi-coverage 0, node −0.067 m vs 3DEP. Round O's `seam_base` was the fix (each seam's departure measured against the
+  class-2 surface the deck stands on); nothing else moved, no tolerance touched.
+- **The rest of the chain on rp1:** verify_mouths PASS 113 (the pad's box takes 49 / 52 / 67 / 98's mouths); house_seat
+  PASS (2,183 judged, lowest roof 1.261 m); houses (house_gate) PASS; textures 0 untextured; verify_race OK;
+  check_race_kn5 OK (whole_lap WARN, as before); PLANNED / BUILT no_route PASS; verify_signs PASS, 6 posts (SC-48S's rev
+  plate is gone with the skip; rn1 7); kn5_ground_check x2 PASS; audit x2 CLEAN; verify_kn5 FAIL on the closure row only;
+  --inis PASS. kn5 109.3 MB (road 92.2, `_race` 10.2, `_street` 6.9).
+
 ## Owed (2026-11-06, after round O; start here)
 1. **The closure:** Kevin's call (unchanged).
 2. **Unpark 48th_colorado.** Move its declaration from `lm_pads.parked` to `lm_pads.pads`, drop grid_primary_52's

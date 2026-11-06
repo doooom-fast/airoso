@@ -50,7 +50,8 @@ y = N, z = up). The collection is emptied first, so the tool is idempotent, and 
               (ledger 0082, opt-in) "kind": "tyres" -> 1WALL_TECPRO_TYRES_<k>, stacked tyre columns, "depth_m" (optional) the
               measured width of the wall; "kind": "wbeam" -> GUARDRAIL_W_<k> (rail + posts, visual) + 1WALL_GHOST_RAIL_<k> (the
               unseen collider), the rail face on the line facing the nearest lap point; "auto" there breaks the rail where a
-              post would stand on a road or off the ground (WBEAM_* below)
+              post would stand on a road or off the ground (WBEAM_* below); (ledger 0082 pass 2, opt-in) "kind": "screen" ->
+              1WALL_TILTUP_SCREEN_<k>, a thin wall of panels at the entry's REQUIRED measured "height_m"
 
 SELF-CHECKS, exit 1 and loop.blend NOT saved: a building's footprint (ring + interior) and every scrub foot off every road
 and kerb; every cone foot off the main road; a building at least BUILDING_CLEAR_M from the road and any wall; ground under every read; no AC_* touched.
@@ -140,7 +141,13 @@ RAIL_KINDS = {"tecpro": ("1WALL_TECPRO", 1.2, 1.5, 0.8),
               # 1WALL_TECPRO prefix because engine-july's prep (Lake Murray's, frozen) keeps the authored UVs only of the prefixes
               # it lists (build_kn5_loop.py's planar_uv skip) and binds a texture only by a pbr row: the track's
               # texture_overrides["1WALL_TECPRO"] is the tyre skin (tools/make_bespoke_assets.py tyre_wall)
-              "tyres": ("1WALL_TECPRO_TYRES", 1.0, 0.62, 1.2)}
+              "tyres": ("1WALL_TECPRO_TYRES", 1.0, 0.62, 1.2),
+              # ledger 0082 pass 2 (opt-in): a thin opaque screen wall standing on a line the LIDAR measured (Milford's F1:
+              # a level top 3.2-4.1 m over the ground, plan spread 0.39 m sd, light on NAIP). The entry MUST carry its
+              # measured "height_m" (no default stands one). Panels 4.0 m [invented: QL2 lidar resolves no joint], 0.20 m
+              # thick [invented: the lidar's plan spread cannot resolve it]. It rides the 1WALL_TILTUP prefix: a collider,
+              # the stock tilt-up concrete row, UVs kept by engine-july's prep; UVs in real metres over TILE_BAY TILTUP
+              "screen": ("1WALL_TILTUP_SCREEN", None, 4.0, 0.20)}
 # W-beam on posts along a measured line (rails kind "wbeam", ledger 0082): the rail's face stands ON the measured line (NAIP
 # reads the galvanised face), the posts WBEAM_BLOCKOUT_M behind it, away from the nearest lap point; the rail's top is the
 # entry's "height_m" over the ground under it (default RAIL_LIP_H 0.70 m: an NCHRP-350-era strong-post W-beam's 27-28 in
@@ -1185,6 +1192,9 @@ def rails(col, spec, to_xy, ground, paved, bad, proj=None):
             rows.append(wbeam_rail(col, k, r, line, ground, paved, bad, road, wbeam_batch, lane_bvh, strip_bvh))
             continue
         prefix, hgt, mod, dep = RAIL_KINDS[r["kind"]]
+        if hgt is None and r.get("height_m") is None:    # ledger 0082 pass 2: a screen stands only at a measured height
+            bad.append(f"rail {r['key']}: kind {r['kind']} needs a measured height_m")
+            continue
         hgt = float(r.get("height_m", hgt))      # a measured height (ledger 0078: Pikes Peak's wall off the lidar)
         dep = float(r.get("depth_m", dep))       # a measured width (ledger 0082: Milford's tyre walls off NAIP)
         verts, faces, uvs = [], [], []
@@ -1208,13 +1218,26 @@ def rails(col, spec, to_xy, ground, paved, bad, proj=None):
                         bad.append(f"rail {r['key']}: module {modules} at ({x0:.1f}, {y0:.1f}) is on a road or off the ground")
                     continue
                 bot, top = min(gs) - BOTTOM_UNDER_M, max(gs) + hgt
-                if r["kind"] == "tyres":         # ledger 0082: under the whole triangle (down_low); the older kinds as built
+                if r["kind"] in ("tyres", "screen"):     # ledger 0082: under the whole triangle (down_low); the older kinds as built
                     lows = [down_low(ground, x, y) for x, y in ring]
                     bot = max(min([bot] + [lw - BOTTOM_UNDER_M for lw in lows if lw is not None]), min(gs) - FOOT_MAX_M)
                 cell = modules % 2
                 u0, u1 = cell * 0.5, cell * 0.5 + 0.5
                 base = len(verts)
                 verts += [(x, y, bot) for x, y in ring] + [(x, y, top) for x, y in ring]
+                if r["kind"] == "screen":                # ledger 0082 pass 2: real metres over the tilt-up tile (TILE_BAY)
+                    bay = TILE_BAY["TILTUP"]
+                    s0, s1, vb, vt = (arc_total + m * mod) / bay, (arc_total + m * mod + mod - 0.02) / bay, 0.0, (top - bot) / bay
+                    side = ((s0, vb), (s1, vb), (s1, vt), (s0, vt))
+                    end = ((s0, vb), (s0 + dep / bay, vb), (s0 + dep / bay, vt), (s0, vt))
+                    for i in range(4):
+                        j = (i + 1) % 4
+                        faces.append((base + i, base + j, base + 4 + j, base + 4 + i))
+                        uvs.append(side if i % 2 == 0 else end)
+                    faces.append((base + 4, base + 5, base + 6, base + 7))
+                    uvs.append(((s0, 0.0), (s1, 0.0), (s1, dep / bay), (s0, dep / bay)))
+                    modules += 1
+                    continue
                 for i in range(4):
                     j = (i + 1) % 4
                     faces.append((base + i, base + j, base + 4 + j, base + 4 + i))

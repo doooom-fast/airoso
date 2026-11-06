@@ -85,7 +85,36 @@
     238,
     337
    ],
-   "side": "L"
+   "side": "L",
+   "lidar_2017": {
+    "source": "3DEP USGS_LPC_MI_31Co_Oakland_2016_LAS_2019, flown 2017-05-03 (source/lidar/)",
+    "per_m_within_1m_on_vs_control": {
+     "len_m": 107.0,
+     "metres_with_returns": 107,
+     "ground_per_m2_on_line": 1.4,
+     "0.35-0.6 on/ctl per m": [
+      0.07,
+      0.0
+     ],
+     "0.6-1.0 on/ctl per m": [
+      0.02,
+      0.0
+     ],
+     "1.0-1.6 on/ctl per m": [
+      0.0,
+      0.0
+     ],
+     "1.6-3.0 on/ctl per m": [
+      0.0,
+      0.01
+     ],
+     "3.0-6.0 on/ctl per m": [
+      0.07,
+      0.08
+     ]
+    },
+    "verdict": "no rail: nothing stood on this line in May 2017 (the rail postdates the flight); height NOT measurable, stays [invented]"
+   }
   },
   {
    "id": "G2",
@@ -155,7 +184,36 @@
     34,
     4782
    ],
-   "side": "R"
+   "side": "R",
+   "lidar_2017": {
+    "source": "3DEP USGS_LPC_MI_31Co_Oakland_2016_LAS_2019, flown 2017-05-03 (source/lidar/)",
+    "per_m_within_1m_on_vs_control": {
+     "len_m": 558.8,
+     "metres_with_returns": 556,
+     "ground_per_m2_on_line": 1.93,
+     "0.35-0.6 on/ctl per m": [
+      0.04,
+      0.0
+     ],
+     "0.6-1.0 on/ctl per m": [
+      0.0,
+      0.0
+     ],
+     "1.0-1.6 on/ctl per m": [
+      0.0,
+      0.0
+     ],
+     "1.6-3.0 on/ctl per m": [
+      0.0,
+      0.0
+     ],
+     "3.0-6.0 on/ctl per m": [
+      0.0,
+      0.0
+     ]
+    },
+    "verdict": "no rail: nothing stood on this line in May 2017 (the rail postdates the flight); height NOT measurable, stays [invented]"
+   }
   },
   {
    "id": "G3",
@@ -209,7 +267,36 @@
     4516,
     4711
    ],
-   "side": "L"
+   "side": "L",
+   "lidar_2017": {
+    "source": "3DEP USGS_LPC_MI_31Co_Oakland_2016_LAS_2019, flown 2017-05-03 (source/lidar/)",
+    "per_m_within_1m_on_vs_control": {
+     "len_m": 196.6,
+     "metres_with_returns": 196,
+     "ground_per_m2_on_line": 2.87,
+     "0.35-0.6 on/ctl per m": [
+      0.03,
+      0.0
+     ],
+     "0.6-1.0 on/ctl per m": [
+      0.0,
+      0.0
+     ],
+     "1.0-1.6 on/ctl per m": [
+      0.0,
+      0.0
+     ],
+     "1.6-3.0 on/ctl per m": [
+      0.0,
+      0.0
+     ],
+     "3.0-6.0 on/ctl per m": [
+      0.0,
+      0.0
+     ]
+    },
+    "verdict": "no rail: nothing stood on this line in May 2017 (the rail postdates the flight); height NOT measurable, stays [invented]"
+   }
   },
   {
    "id": "G4",
@@ -439,7 +526,36 @@
     459,
     802
    ],
-   "side": "L"
+   "side": "L",
+   "lidar_2017": {
+    "source": "3DEP USGS_LPC_MI_31Co_Oakland_2016_LAS_2019, flown 2017-05-03 (source/lidar/)",
+    "per_m_within_1m_on_vs_control": {
+     "len_m": 363.7,
+     "metres_with_returns": 364,
+     "ground_per_m2_on_line": 2.14,
+     "0.35-0.6 on/ctl per m": [
+      0.0,
+      0.0
+     ],
+     "0.6-1.0 on/ctl per m": [
+      0.0,
+      0.0
+     ],
+     "1.0-1.6 on/ctl per m": [
+      0.0,
+      0.0
+     ],
+     "1.6-3.0 on/ctl per m": [
+      0.0,
+      0.0
+     ],
+     "3.0-6.0 on/ctl per m": [
+      0.0,
+      0.0
+     ]
+    },
+    "verdict": "no rail: nothing stood on this line in May 2017 (the rail postdates the flight); height NOT measurable, stays [invented]"
+   }
   },
   {
    "id": "G5",
@@ -478,7 +594,36 @@
     3117,
     3150
    ],
-   "side": "R"
+   "side": "R",
+   "lidar_2017": {
+    "source": "3DEP USGS_LPC_MI_31Co_Oakland_2016_LAS_2019, flown 2017-05-03 (source/lidar/)",
+    "per_m_within_1m_on_vs_control": {
+     "len_m": 33.9,
+     "metres_with_returns": 34,
+     "ground_per_m2_on_line": 1.87,
+     "0.35-0.6 on/ctl per m": [
+      0.18,
+      0.0
+     ],
+     "0.6-1.0 on/ctl per m": [
+      0.09,
+      0.0
+     ],
+     "1.0-1.6 on/ctl per m": [
+      0.0,
+      0.0
+     ],
+     "1.6-3.0 on/ctl per m": [
+      0.0,
+      0.0
+     ],
+     "3.0-6.0 on/ctl per m": [
+      0.0,
+      0.0
+     ]
+    },
+    "verdict": "a scatter of ~10 low returns (0.2-0.9 m) in a 7 m stretch at one end, a shrub's shape, not a 34 m rail: NOT confirmed, not built"
+   }
   },
   {
    "id": "G6",
@@ -525,7 +670,36 @@
     998,
     1018
    ],
-   "side": "R"
+   "side": "R",
+   "lidar_2017": {
+    "source": "3DEP USGS_LPC_MI_31Co_Oakland_2016_LAS_2019, flown 2017-05-03 (source/lidar/)",
+    "per_m_within_1m_on_vs_control": {
+     "len_m": 35.6,
+     "metres_with_returns": 36,
+     "ground_per_m2_on_line": 1.97,
+     "0.35-0.6 on/ctl per m": [
+      0.0,
+      0.0
+     ],
+     "0.6-1.0 on/ctl per m": [
+      0.0,
+      0.0
+     ],
+     "1.0-1.6 on/ctl per m": [
+      0.0,
+      0.0
+     ],
+     "1.6-3.0 on/ctl per m": [
+      0.0,
+      0.0
+     ],
+     "3.0-6.0 on/ctl per m": [
+      0.0,
+      0.01
+     ]
+    },
+    "verdict": "nothing: NOT confirmed, not built"
+   }
   },
   {
    "id": "T1",
@@ -564,7 +738,36 @@
     456,
     485
    ],
-   "side": "L"
+   "side": "L",
+   "lidar_2017": {
+    "source": "3DEP USGS_LPC_MI_31Co_Oakland_2016_LAS_2019, flown 2017-05-03 (source/lidar/)",
+    "per_m_within_1m_on_vs_control": {
+     "len_m": 44.1,
+     "metres_with_returns": 43,
+     "ground_per_m2_on_line": 2.13,
+     "0.35-0.6 on/ctl per m": [
+      0.0,
+      0.0
+     ],
+     "0.6-1.0 on/ctl per m": [
+      0.0,
+      0.0
+     ],
+     "1.0-1.6 on/ctl per m": [
+      0.0,
+      0.0
+     ],
+     "1.6-3.0 on/ctl per m": [
+      0.0,
+      0.0
+     ],
+     "3.0-6.0 on/ctl per m": [
+      0.0,
+      0.0
+     ]
+    },
+    "verdict": "no tyre stack (it would read as a ~1 m band of returns): nothing stood here in May 2017; identity neither confirmed nor dropped by it (NAIP 2022 still shows the black bar); height stays [invented]"
+   }
   },
   {
    "id": "T2",
@@ -611,7 +814,36 @@
     1303,
     1344
    ],
-   "side": "L"
+   "side": "L",
+   "lidar_2017": {
+    "source": "3DEP USGS_LPC_MI_31Co_Oakland_2016_LAS_2019, flown 2017-05-03 (source/lidar/)",
+    "per_m_within_1m_on_vs_control": {
+     "len_m": 53.2,
+     "metres_with_returns": 53,
+     "ground_per_m2_on_line": 2.09,
+     "0.35-0.6 on/ctl per m": [
+      0.0,
+      0.01
+     ],
+     "0.6-1.0 on/ctl per m": [
+      0.0,
+      0.0
+     ],
+     "1.0-1.6 on/ctl per m": [
+      0.0,
+      0.0
+     ],
+     "1.6-3.0 on/ctl per m": [
+      0.0,
+      0.0
+     ],
+     "3.0-6.0 on/ctl per m": [
+      0.0,
+      0.0
+     ]
+    },
+    "verdict": "no tyre stack (it would read as a ~1 m band of returns): nothing stood here in May 2017; identity neither confirmed nor dropped by it (NAIP 2022 still shows the black bar); height stays [invented]"
+   }
   },
   {
    "id": "T3",
@@ -658,7 +890,36 @@
     998,
     1014
    ],
-   "side": "R"
+   "side": "R",
+   "lidar_2017": {
+    "source": "3DEP USGS_LPC_MI_31Co_Oakland_2016_LAS_2019, flown 2017-05-03 (source/lidar/)",
+    "per_m_within_1m_on_vs_control": {
+     "len_m": 32.5,
+     "metres_with_returns": 32,
+     "ground_per_m2_on_line": 2.21,
+     "0.35-0.6 on/ctl per m": [
+      0.0,
+      0.0
+     ],
+     "0.6-1.0 on/ctl per m": [
+      0.0,
+      0.0
+     ],
+     "1.0-1.6 on/ctl per m": [
+      0.0,
+      0.0
+     ],
+     "1.6-3.0 on/ctl per m": [
+      0.0,
+      0.0
+     ],
+     "3.0-6.0 on/ctl per m": [
+      0.0,
+      0.0
+     ]
+    },
+    "verdict": "no tyre stack (it would read as a ~1 m band of returns): nothing stood here in May 2017; identity neither confirmed nor dropped by it (NAIP 2022 still shows the black bar); height stays [invented]"
+   }
   },
   {
    "id": "T4",
@@ -721,7 +982,36 @@
     1085,
     1155
    ],
-   "side": "L"
+   "side": "L",
+   "lidar_2017": {
+    "source": "3DEP USGS_LPC_MI_31Co_Oakland_2016_LAS_2019, flown 2017-05-03 (source/lidar/)",
+    "per_m_within_1m_on_vs_control": {
+     "len_m": 43.9,
+     "metres_with_returns": 42,
+     "ground_per_m2_on_line": 1.64,
+     "0.35-0.6 on/ctl per m": [
+      0.0,
+      0.02
+     ],
+     "0.6-1.0 on/ctl per m": [
+      0.0,
+      0.0
+     ],
+     "1.0-1.6 on/ctl per m": [
+      0.0,
+      0.0
+     ],
+     "1.6-3.0 on/ctl per m": [
+      0.0,
+      0.0
+     ],
+     "3.0-6.0 on/ctl per m": [
+      0.0,
+      0.0
+     ]
+    },
+    "verdict": "nothing: NOT confirmed, not built"
+   }
   },
   {
    "id": "T5",
@@ -768,7 +1058,12 @@
     1841,
     3701
    ],
-   "side": "R"
+   "side": "R",
+   "lidar_2017": {
+    "source": "3DEP USGS_LPC_MI_31Co_Oakland_2016_LAS_2019, flown 2017-05-03 (source/lidar/)",
+    "per_m_within_1m_on_vs_control": null,
+    "verdict": "outside the 45 m read"
+   }
   },
   {
    "id": "T6",
@@ -823,7 +1118,36 @@
     3520,
     3590
    ],
-   "side": "R"
+   "side": "R",
+   "lidar_2017": {
+    "source": "3DEP USGS_LPC_MI_31Co_Oakland_2016_LAS_2019, flown 2017-05-03 (source/lidar/)",
+    "per_m_within_1m_on_vs_control": {
+     "len_m": 103.5,
+     "metres_with_returns": 0,
+     "ground_per_m2_on_line": 0.0,
+     "0.35-0.6 on/ctl per m": [
+      0.0,
+      0.0
+     ],
+     "0.6-1.0 on/ctl per m": [
+      0.0,
+      0.0
+     ],
+     "1.0-1.6 on/ctl per m": [
+      0.0,
+      0.0
+     ],
+     "1.6-3.0 on/ctl per m": [
+      0.0,
+      0.0
+     ],
+     "3.0-6.0 on/ctl per m": [
+      0.0,
+      0.0
+     ]
+    },
+    "verdict": "outside the 45 m read (no returns on it)"
+   }
   },
   {
    "id": "F1",
@@ -868,7 +1192,7 @@
     ]
    ],
    "evidence": "a continuous band 3-4.5 m wide, crisp, reading shadow blue (b/r 1.17) NW of a bright edge: the shadow of something tall standing along the apron's outer edge (a screen fence, a wall or a clipped hedge: not resolvable at 0.6 m). Sun 2022-08-16 az ~113 deg, el ~42 deg (sun.py, the tent's shadow vector) puts its height near 4-5 m (3.7-6.0 m over the azimuth's +-7 deg)",
-   "identity_confidence": "low (something tall; what it is is not readable)",
+   "identity_confidence": "high (structure); wall vs screened fence unresolved",
    "position_confidence": "+-2 px (the structure is the band's SE edge)",
    "build": false,
    "polyline_lonlat": [
@@ -918,7 +1242,48 @@
     225,
     403
    ],
-   "side": "L"
+   "side": "L",
+   "lidar_2017": {
+    "source": "3DEP USGS_LPC_MI_31Co_Oakland_2016_LAS_2019, flown 2017-05-03 (source/lidar/)",
+    "measured_length_m": 197.1,
+    "returns_per_m": 3.14,
+    "top_m": {
+     "p10": 2.99,
+     "p50": 3.64,
+     "p90": 4.06,
+     "max": 4.38
+    },
+    "plan_sd_m": 0.39,
+    "top_single_pulse_frac": 0.932,
+    "pieces": [
+     {
+      "along_m": [
+       0.0,
+       112.0
+      ],
+      "height_m": 4.06,
+      "bins": 28
+     },
+     {
+      "along_m": [
+       112.0,
+       132.0
+      ],
+      "height_m": 3.54,
+      "bins": 5
+     },
+     {
+      "along_m": [
+       132.0,
+       195.99428636640602
+      ],
+      "height_m": 3.18,
+      "bins": 17
+     }
+    ],
+    "naip_tone_on_the_line": "R 204-212 G 203-213 B 183-199 (light grey), its shadow 2-4 m WNW (f1_naip.py)",
+    "verdict": "a thin, opaque, level-topped screen 3.2-4.1 m over the ground, light grey: a screen wall or screened fence, NOT a hedge; built (kind screen) where the read measured it"
+   }
   },
   {
    "id": "S1",
@@ -971,7 +1336,11 @@
     12.8
    ],
    "edge_offset_m": 257.2,
-   "lap_s_m": 4087
+   "lap_s_m": 4087,
+   "lidar_2017": {
+    "source": "3DEP USGS_LPC_MI_31Co_Oakland_2016_LAS_2019, flown 2017-05-03 (source/lidar/)",
+    "verdict": "outside the approved 45 m read: height stays [invented]"
+   }
   },
   {
    "id": "S2",
@@ -1024,7 +1393,11 @@
     12.1
    ],
    "edge_offset_m": 207.4,
-   "lap_s_m": 4084
+   "lap_s_m": 4084,
+   "lidar_2017": {
+    "source": "3DEP USGS_LPC_MI_31Co_Oakland_2016_LAS_2019, flown 2017-05-03 (source/lidar/)",
+    "verdict": "outside the approved 45 m read: height stays [invented]"
+   }
   },
   {
    "id": "P1",
@@ -1077,7 +1450,11 @@
     53.3
    ],
    "edge_offset_m": 151.8,
-   "lap_s_m": 3919
+   "lap_s_m": 3919,
+   "lidar_2017": {
+    "source": "3DEP USGS_LPC_MI_31Co_Oakland_2016_LAS_2019, flown 2017-05-03 (source/lidar/)",
+    "verdict": "outside the approved 45 m read: height stays [invented]"
+   }
   },
   {
    "id": "U1",
@@ -1116,7 +1493,36 @@
     4353,
     4367
    ],
-   "side": "R"
+   "side": "R",
+   "lidar_2017": {
+    "source": "3DEP USGS_LPC_MI_31Co_Oakland_2016_LAS_2019, flown 2017-05-03 (source/lidar/)",
+    "per_m_within_1m_on_vs_control": {
+     "len_m": 12.6,
+     "metres_with_returns": 11,
+     "ground_per_m2_on_line": 1.19,
+     "0.35-0.6 on/ctl per m": [
+      0.0,
+      0.0
+     ],
+     "0.6-1.0 on/ctl per m": [
+      0.32,
+      0.0
+     ],
+     "1.0-1.6 on/ctl per m": [
+      0.24,
+      0.13
+     ],
+     "1.6-3.0 on/ctl per m": [
+      0.0,
+      0.11
+     ],
+     "3.0-6.0 on/ctl per m": [
+      0.0,
+      0.03
+     ]
+    },
+    "verdict": "the headwall reads 0.6-1.6 m returns (0.56 / m); the deck it belongs to is not modelled: not built"
+   }
   }
  ]
 }

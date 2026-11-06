@@ -79,17 +79,28 @@ def test_kinds_and_defaults():
     assert m.LANE == ("1ROAD", "ROAD") and m.STRIP == ("1KERB", "CURB")      # over_strip never lets a post on the lane
 
 
+def test_screen_kind_needs_a_measured_height():
+    """ledger 0082 pass 2: the screen kind has no default height; it rides the stock tilt-up row (a collider, UVs kept)"""
+    m = _load_author()
+    prefix, hgt, mod, dep = m.RAIL_KINDS["screen"]
+    assert prefix.startswith("1WALL_TILTUP") and hgt is None and mod == 4.0 and dep == 0.20
+    bad = []
+    rows = m.rails(None, [{"key": "x", "kind": "screen", "polyline_lonlat": [[0, 0], [0.001, 0]]}], lambda p: (p[0], p[1]),
+                   None, None, bad)
+    assert rows == [] and bad and "measured height_m" in bad[0]
+
+
 def test_keys_are_opt_in():
-    """no config but Milford's port names the wbeam / tyres kinds, depth_m or the tyre skin"""
+    """no config but Milford's port names the wbeam / tyres / screen kinds, depth_m or the tyre skin"""
     for cfgp in sorted((ROOT / "tracks").glob("*/track.config.json")):
         txt = cfgp.read_text(encoding="utf-8")
         cfg = json.loads(txt)
         rails = (((cfg.get("scenery") or {}).get("bespoke") or {}).get("rails")) or []
         kinds = {r.get("kind") for r in rails}
         if cfgp.parent.name == "milford-road-course-lm":
-            assert {"wbeam", "tyres"} <= kinds
+            assert {"wbeam", "tyres", "screen"} <= kinds
             continue
-        assert not kinds & {"wbeam", "tyres"}, cfgp
+        assert not kinds & {"wbeam", "tyres", "screen"}, cfgp
         assert not any("depth_m" in r or "over_strip" in r for r in rails), cfgp
         assert "tyre_wall_diffuse" not in txt, cfgp
 
@@ -98,10 +109,18 @@ def test_milford_rails_are_the_inventory_lines():
     cfg = json.loads((ROOT / "tracks" / "milford-road-course-lm" / "track.config.json").read_text(encoding="utf-8"))
     inv = json.loads((ROOT / "tracks" / "milford-road-course-lm" / "source" / "furniture" / "inventory.json").read_text())
     lines = {i["id"].lower(): i["polyline_lonlat"] for i in inv["items"] if "polyline_lonlat" in i}
+    lidar = {f"f1_nw_screen_{p['tag']}": p for p in json.loads(
+        (ROOT / "tracks" / "milford-road-course-lm" / "source" / "lidar" / "f1_entries.json").read_text())}
     for r in cfg["scenery"]["bespoke"]["rails"]:
+        if r["kind"] == "screen":                    # pass 2: F1 stands on the line and at the height the lidar measured
+            p = lidar[r["key"]]
+            assert r["polyline_lonlat"] == p["polyline_lonlat"] and r["height_m"] == p["height_m"], r["key"]
+            assert "[measured]" in r["_source"]
+            continue
         gid = r["key"].split("_")[0]
         assert r["polyline_lonlat"] == lines[gid], r["key"]
         assert "[invented" in r["_source"]            # the heights say they are not measured
+        assert "LIDAR (ledger 0082 pass 2)" in r["_source"]   # ... and why the 2017 lidar could not measure them
 
 
 def test_tyre_skin_is_generated():

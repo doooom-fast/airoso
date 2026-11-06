@@ -47,3 +47,44 @@ $P -I scripts/f1.py pts.npz hag.npz ../furniture/inventory.json f1.json
 $P -I scripts/poles.py pts.npz hag.npz $CL poles.json
 $P -I scripts/xsec.py pts.npz hag.npz ../furniture/inventory.json F1 xsec_F1.png 14
 ```
+
+## What it measured (pass 2)
+
+**The flight is five years older than the furniture.** On 2017-05-03 the lap was already paved (the intensity grid
+shows the whole circuit, its aprons and painted lines), but **no rail and no tyre wall stood on any line NAIP 2022
+shows**. Within 1 m of each line, returns 0.35-1.6 m over the ground per metre (`sumitems.json`; a W-beam's rail, blockout
+and post, ~0.35 m deep in plan at the 1.4-2.9 ground returns / m2 there, would give ~0.5-1.0 / m):
+
+| item | returns / m, 0.35-1.6 m | what that means |
+|---|---|---|
+| G1 W-beam | 0.09 | nothing (a scatter under 0.6 m: grass) |
+| G2 W-beam | 0.04 | nothing |
+| G3 W-beam | 0.03 | nothing |
+| G4 W-beam | 0.00 | nothing |
+| T1 / T2 / T3 tyres | 0.00 / 0.00 / 0.00 | nothing: no ~1 m band of returns |
+| G5 | 0.27 | ~10 low returns in a 7 m stretch at one end: a shrub's shape, not a 34 m rail |
+| G6, T4 | 0.00 | nothing |
+| **F1** | **3.1 (0.3 m and up)** | **the positive control: a thin structure the same flight reads plainly** |
+
+The buffer-wide scan agrees (`scripts/lines.py`): **no linear structure 0.4-1.4 m tall longer than 16 m anywhere within 45
+m of the lap**. So the lidar cannot measure the rails' or the tyre walls' heights; they stay [invented], and their
+identity rests on NAIP 2022 alone.
+
+**F1 is a screen, not a hedge** (`f1.json`, `xsec_F1.png`). 197 m of it lies inside the read (s 262-393, 11.7-44.6 m off
+the lane edge; the NE ~60 m runs on to 74 m, outside it). Its returns stand on one thin line (plan sd 0.39 m), 93 % of
+the top returns are single pulses (an opaque top, with returns down its face), and the top is level: p90 per 4 m bin
+3.92-4.33 m over the NE 112 m (median **4.06 m**), stepping down over 20 m (**3.54 m**) to 3.1-3.35 m over the SW 63 m
+(median **3.18 m**). A hedge's top would wander and spread. On NAIP 2022 the line itself is light grey (R 204-212) with
+its shadow 2-4 m WNW (`scripts/f1_naip.py`): a light, opaque screen ~4 m tall, a precast screen wall or a screened fence;
+the lidar cannot say which. Built as kind `screen` on the fitted line at those three heights (`f1_entries.json`).
+
+**What NAIP missed** (`poles.json`, `scripts/fence.py`):
+- single returns 10.7-12.8 m up with nothing under them along the east side (s 3,177-3,496, 27-32 m off the edge): an
+  overhead line's wires; its poles stand in the treeline and are not separable. Not built.
+- two small objects 2.4 and 4.3 m tall 3 m INSIDE the traced edge at the s 960-986 apron in May 2017: on the pavement, so
+  transient (equipment); not built.
+- sparse 1.7-2.4 m returns along the outer W / NW boundary that might be a chain-link fence's top rail, but they mix with
+  shrubs and young planting and no chain holds a clean line: not confirmed, not built.
+- no isolated light pole or sign post within 45 m of the edge.
+
+The pad sheds (S1, S2) and the tent (P1) are 150-260 m from the lap, outside the read: their heights stay [invented].

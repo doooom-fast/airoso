@@ -270,6 +270,10 @@ def build(draft: Path, out: Path, cfg_path: Path) -> dict:
     for sp in specs:
         decl = {"ref": sp["ref"], "direction": sp["direction"],
                 "bridge_max_edges": int(sp.get("bridge_max_edges", 2))}
+        if sp.get("edge_ids"):
+            # ledger 0080 2b: the resolver refuses ref + direction where the draft's chain is not contiguous (I 5, SR 163);
+            # its own longest contiguous chain, declared, is checked by the same resolver (_check_explicit)
+            decl["edge_ids"] = [int(e) for e in sp["edge_ids"]]
         r = network_reference.resolve(decl, fc, edges_rec)
         head = sp.get("head")
         if head:

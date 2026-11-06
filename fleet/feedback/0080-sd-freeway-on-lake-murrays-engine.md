@@ -724,6 +724,38 @@ Every tool changed is port-only (median_barrier_blend, median_ground_blend; barr
 **Mac:** every build waited for a full minute with no `blender` process (`fwlm_work/quiet_then_ship_p7.sh`, 2 s polls);
 Sand Creek's kn5 export held ws28 for about 40 min.
 
+### Step 2b round 1: the I 5, SR 52 and SR 163 mainlines on cached data (Mac, ws37 and up)
+
+**Inputs.** 45d896a8 (2a round 6). Nothing downloaded (Kevin has approved no new download); NAIP read with
+`NAIP_OFFLINE=1`; the 2014 EPT cache, D24 tile 481624 and the cached TNM listings only; no Overpass query was needed.
+
+**1. The download list (item 1): `tools/fwlm_downloads.py`, `tracks/san-diego-freeway-lm/source/downloads_needed.json`.**
+The 2b specs (below) resolved on the draft, then what each reader would touch, against the caches; nothing fetched:
+- **NAIP** (naip_carriageways' own scan: 600 m crops touched +-60 m either side of every 5 m station): the I 8 corridor's
+  26 crops are all cached; the 2b mainlines touch 114 more. 35 of those lie inside the two 2022 items the tool knows
+  (`ca_m_3211715_sw` 19, `_se` 16); **79 are outside them, so their item ids need a STAC search (one request each
+  area)**. Each crop is stored as 4,000,128 B (the cached crops' size); the response also carries titiler's mask band,
+  not verified.
+- **EPT** (`network_deck_lidar`'s walk, offline): discs of half the draft width + 3 m (barrier_lidar's window) on every
+  5 m station of each 2b carriageway, the pair's median (midpoint, half the gap + 2 m) within PAIR_M 45 m, and I 8's
+  1,506 UNREAD median stations (`median_ground.lidar.json`, the PC's run with both D24 tiles). **702 nodes not cached,
+  27.2 M points**; 369 nodes (13.6 M points, 82.2 MB) of the same corridors are cached. Sizes are NOT in the hierarchy:
+  at the cached nodes' own 5.83 B / point the 702 are ~159 MB (an estimate; exact needs a HEAD per node). **3 hierarchy
+  pages** the walk needs are not cached (`6-24-26-31` I 5 NB; `6-28-24-31`, `6-29-24-31` SR 52 both ways, SR 163 SB):
+  the nodes under them are unknown, not counted.
+- **D24** (rockyweb, the 2014 EPT's holes, runbook 0080-4): 480624 (46.8 MB, the cached TNM listing; already on the
+  PC, so a copy, not a download) and 6 Kearny Mesa tiles whose size is unknown without a TNM request.
+- No invented number: STEP 5 m, PAIR 45 m, REACH 60 m, TILE 600 m are the readers' own; 3 m is barrier_lidar's window,
+  2 m median_lidar's ALONG_M.
+
+The 2b specs (`lm_intake.network_connectors`, `phase` 2b, each with its `partner`): the resolver takes SR 52 by ref +
+direction (EB 10,133 m, WB 9,657 m); it refuses I 5 and SR 163 (not contiguous in this draft), so each declares the
+resolver's own longest contiguous chain as `edge_ids` (`tools/network_connectors.py` now passes them through): I 5 NB
+14,672 m (17 edges), SB 15,776 m (21), SR 163 NB 9,275 m (18), SB 8,130 m (13). Left out, counted (the draft has no
+contiguous mainline across them; 2c / 2d interchange work): I 5 NB pieces of 3,519 / 2,698 / 1,058 m, SB 2,243 / 364 /
+858 m (the resolver's offered join runs through NB's edges 313 / 304 / 93: a direction mislabel, not taken), SR 163 NB
+3,766 / 961 m, SB 2,892 / 2,640 m. SR 163's two chains barely overlap (NB is the southern 9.3 km, SB the northern 8.1).
+
 ## PC runbook 0080-7: rehearse 2a round 6, no install
 
 Supersedes 0080-6 for the next candidate (0080-6's c3c988b9 is what is installed). No lidar or NAIP is needed.
@@ -823,6 +855,25 @@ expecting green. On the PC (its own network), one tile at a time:
    `python tools/network_connectors.py <that dir> <that dir> tracks/san-diego-freeway-lm/track.config.json` and
    `python tools/naip_carriageways.py <that dir> <that dir> --cache <naip dir>` (numpy + Pillow; fetches NAIP 2022 from
    the Planetary Computer), commit the four files. Expect `deck_read` > 3,613 and WB's levelled points < 32.
+
+## Downloads for Kevin
+
+Worked out on 2026-11-05 from cached indexes only (`tools/fwlm_downloads.py`; every row in
+`tracks/san-diego-freeway-lm/source/downloads_needed.json`). Nothing here is fetched until Kevin says yes.
+
+| Source | What | Count | Size | For |
+|---|---|---|---|---|
+| Planetary Computer NAIP 2022 (`api/data/v1/item/bbox`, collection naip) | 600 m crops, 0.6 m, R G B NIR | 114 (35 in the two known items, 79 whose item id needs a STAC search) | 456.0 MB stored (4,000,128 B each, exact); the response adds a mask band, not verified | the 2b mainlines' measured edges + median barriers |
+| USGS EPT on AWS (`usgs-lidar-public/CA_SanDiegoQL2_2014`) | EPT nodes (.laz) | 702 (27.2 M points) | ~159 MB estimated (5.83 B / point, the cached nodes'); exact needs a HEAD per node | 2b decks' surroundings, medians, outer barriers; I 8's unpaved median (139 of them, 5.1 M points, ~30 MB) |
+| USGS EPT on AWS | hierarchy pages | 3 (`6-24-26-31`, `6-28-24-31`, `6-29-24-31`) | small JSON, size unknown; the nodes under them unknown (not in the 702) | I 5 NB, SR 52 both ways, SR 163 SB |
+| rockyweb (USGS `CA_SanDiegoCo_D24`, 2024) | 1 km LAZ tiles over the 2014 EPT's holes | 6 (`11SMS873633`, `833634`, `823622`, `813623`, `883633`, `873625`) | unknown without a TNM request (the one Mac tile, 481624, is 64.9 MB) | Kearny Mesa / I 5 - SR 52 decks |
+| (the PC) | D24 `11SMS480624` | 1 | 46.8 MB (TNM listing) | already on the PC: a copy to the Mac, not a download |
+
+Per corridor (NAIP crops missing of touched; EPT nodes missing / points): I 5 NB 37 of 38, 199 / 7.6 M; I 5 SB 41 of 42,
+190 / 7.1 M; the I 5 median 182 / 6.7 M; SR 52 EB 25 of 25, 98 / 4.0 M; SR 52 WB 23 of 23, 86 / 3.4 M; the SR 52 median
+101 / 4.1 M; SR 163 NB 25 of 29, 150 / 6.1 M; SR 163 SB 23 of 23, 75 / 2.9 M; the SR 163 median 28 / 1.1 M (a node can
+serve several corridors: the per-corridor counts overlap; the table's totals are unique nodes).
+The Caltrans 2026 Standard Plans PDF (round 3 item 7) is still owed separately.
 
 ## Owed (start here)
 

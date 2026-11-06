@@ -100,6 +100,135 @@
           ],
           "_why": "ledger 0080 2a round 5 item 3: WB's last 290 m. The draft (PR 34) has no westbound mainline east of WB's first point (edge 396 vertex 162, x 4,236, on OSM way 361363280 between its first two nodes). OSM (Overpass, 2026-11-05, one read-only query, the response committed as file): I 8 westbound east of there is way 1011676575 (4 lanes, oneway=yes), from (x 4,525, z -1,171), 12 m east of the line's end, west to node (4,259, -1,326), where 361363280 (oneway=yes) continues west through WB's first point. 361363282 / 278 / 275 / 276 (also oneway=yes) run further east, past the line's end: not built. Ways in travel order; the head stops at the chain's first point."
         }
+      },
+      {
+        "name": "i5_nb",
+        "ref": "I 5",
+        "direction": "northbound",
+        "bridge_max_edges": 2,
+        "phase": "2b",
+        "partner": "i5_sb",
+        "edge_ids": [
+          336,
+          128,
+          127,
+          244,
+          250,
+          340,
+          212,
+          211,
+          222,
+          221,
+          346,
+          347,
+          350,
+          209,
+          208,
+          258,
+          256
+        ],
+        "_edge_ids_why": "ledger 0080 2b round 1: the resolver refuses ref + direction (not contiguous in this draft); these edge_ids are its own longest contiguous chain, read off its message. The other pieces are counted in the ledger (2c / 2d interchange gaps), not built."
+      },
+      {
+        "name": "i5_sb",
+        "ref": "I 5",
+        "direction": "southbound",
+        "bridge_max_edges": 2,
+        "phase": "2b",
+        "partner": "i5_nb",
+        "edge_ids": [
+          450,
+          453,
+          452,
+          343,
+          344,
+          367,
+          217,
+          131,
+          130,
+          38,
+          37,
+          251,
+          314,
+          317,
+          330,
+          329,
+          335,
+          327,
+          326,
+          157,
+          156
+        ],
+        "_edge_ids_why": "ledger 0080 2b round 1: the resolver refuses ref + direction (not contiguous in this draft); these edge_ids are its own longest contiguous chain, read off its message. The other pieces are counted in the ledger (2c / 2d interchange gaps), not built."
+      },
+      {
+        "name": "sr52_eb",
+        "ref": "CA 52",
+        "direction": "eastbound",
+        "bridge_max_edges": 2,
+        "phase": "2b",
+        "partner": "sr52_wb"
+      },
+      {
+        "name": "sr52_wb",
+        "ref": "CA 52",
+        "direction": "westbound",
+        "bridge_max_edges": 2,
+        "phase": "2b",
+        "partner": "sr52_eb"
+      },
+      {
+        "name": "sr163_nb",
+        "ref": "CA 163",
+        "direction": "northbound",
+        "bridge_max_edges": 2,
+        "phase": "2b",
+        "partner": "sr163_sb",
+        "edge_ids": [
+          433,
+          431,
+          387,
+          236,
+          237,
+          114,
+          115,
+          240,
+          29,
+          30,
+          264,
+          368,
+          370,
+          393,
+          472,
+          474,
+          425,
+          427
+        ],
+        "_edge_ids_why": "ledger 0080 2b round 1: the resolver refuses ref + direction (not contiguous in this draft); these edge_ids are its own longest contiguous chain, read off its message. The other pieces are counted in the ledger (2c / 2d interchange gaps), not built."
+      },
+      {
+        "name": "sr163_sb",
+        "ref": "CA 163",
+        "direction": "southbound",
+        "bridge_max_edges": 2,
+        "phase": "2b",
+        "partner": "sr163_nb",
+        "edge_ids": [
+          527,
+          528,
+          515,
+          513,
+          33,
+          32,
+          562,
+          287,
+          286,
+          556,
+          482,
+          428,
+          430
+        ],
+        "_edge_ids_why": "ledger 0080 2b round 1: the resolver refuses ref + direction (not contiguous in this draft); these edge_ids are its own longest contiguous chain, read off its message. The other pieces are counted in the ledger (2c / 2d interchange gaps), not built."
       }
     ],
     "_network_connectors_doc": "phase 2a: I 8 westbound. Each entry is resolved by scripts.geometry.network_reference.resolve (the line's resolver) on the network draft; the record carries its decks (lidar, deck_profiles.lidar.json) and a one-way paint. Regenerate with python tools/network_connectors.py <network-draft-project> tracks/san-diego-freeway/source/network-draft-pr34 tracks/san-diego-freeway-lm/track.config.json",
@@ -112,6 +241,7 @@
     "_median_ground_file_doc": "ledger 0080 2a round 4: the median as the lidar measures it (tools/median_lidar.py, class 2 off the EPT cache / LAZ tiles): tools/median_ground_blend.py (ship_track prep) builds a lidar STEP with no barrier as a retaining face at the high edge with the low ground up to it. Regenerate: <lidarvenv python> tools/median_lidar.py tracks/san-diego-freeway/source/network-draft-pr34 --ept-cache <dir> [--laz <dir>]",
     "_measured_doc": "ledger 0080 2a (Kevin 2026-11-05: measured carriageway edges, not lane counts): tools/naip_carriageways.py reads both I 8 carriageways' paved edges off NAIP 2022 (0.6 m) from the network lines (centerline.local.json, connectors.local.json) and writes the measured line and connectors (each vertex moved to the measured pavement's centre, the measured width) and the median barrier's runs (Caltrans Type 60, Standard Plans A76A) where one paved width carries both. Regenerate: <lidarvenv python> tools/naip_carriageways.py tracks/san-diego-freeway/source/network-draft-pr34 tracks/san-diego-freeway/source/network-draft-pr34 --cache <dir> (fetches the NAIP crops from the Planetary Computer)",
     "line_decks_lidar": "deck_profiles.lidar.json",
-    "_line_decks_lidar_doc": "ledger 0080 2a round 3: the line rides the lidar class-17 deck (tools/network_deck_lidar.py) over each declared deck where its own edges were read, straight between readings, anchored on the levelled crest height at each span end; the levelled height only where no reading (ws13: the levelled Morena deck sat 1-2 m under the lidar, a 2.9 m step to WB beside it)"
+    "_line_decks_lidar_doc": "ledger 0080 2a round 3: the line rides the lidar class-17 deck (tools/network_deck_lidar.py) over each declared deck where its own edges were read, straight between readings, anchored on the levelled crest height at each span end; the levelled height only where no reading (ws13: the levelled Morena deck sat 1-2 m under the lidar, a 2.9 m step to WB beside it)",
+    "_network_connectors_2b_doc": "ledger 0080 2b round 1: the I 5, SR 52 and SR 163 mainlines, both ways, phase '2b', each with its partner carriageway (the pair naip_carriageways reads a median between). tools/network_connectors.py resolves them as it does I 8 westbound (edge_ids when the resolver refuses ref + direction); what is built of each is what NAIP measured, never the draft's lane-count widths."
   }
 }

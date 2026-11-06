@@ -1,3 +1,3815 @@
 {
- "buildings": []
+ "buildings": [],
+ "blocks": [
+  {
+   "key": "osm31800949",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -6.0,
+    -5.31
+   ],
+   "bottom": -6.07,
+   "eave": -1.57,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm31806851",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -4.94,
+    -3.48
+   ],
+   "bottom": -4.63,
+   "eave": -0.13,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm31808505",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -4.15,
+    -2.95
+   ],
+   "bottom": -3.99,
+   "eave": 0.51,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm31816704",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -4.26,
+    -2.86
+   ],
+   "bottom": -3.95,
+   "eave": 0.55,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm31817819",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    0.2,
+    1.23
+   ],
+   "bottom": 0.31,
+   "eave": 4.81,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm31818435",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -3.57,
+    -2.36
+   ],
+   "bottom": -3.34,
+   "eave": 1.16,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm31818452",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -5.38,
+    -3.92
+   ],
+   "bottom": -5.02,
+   "eave": -0.52,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm31818799",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -0.86,
+    0.47
+   ],
+   "bottom": -0.59,
+   "eave": 3.91,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm31818831",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -1.9,
+    -0.58
+   ],
+   "bottom": -1.67,
+   "eave": 2.83,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm31819069",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    1.18,
+    1.55
+   ],
+   "bottom": 0.96,
+   "eave": 5.46,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm31819571",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    -5.16,
+    -1.22
+   ],
+   "bottom": -3.46,
+   "eave": 4.54,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm31819824",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -6.28,
+    -4.88
+   ],
+   "bottom": -5.99,
+   "eave": -1.49,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm66984140",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    -5.28,
+    -1.26
+   ],
+   "bottom": -3.55,
+   "eave": 4.45,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm116794606",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    0.03,
+    1.19
+   ],
+   "bottom": 0.25,
+   "eave": 8.25,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm116794618",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    -4.45,
+    -3.65
+   ],
+   "bottom": -4.45,
+   "eave": 3.55,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm116794620",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    1.41,
+    1.51
+   ],
+   "bottom": 1.06,
+   "eave": 5.56,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm116794621",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 21.6,
+   "ground": [
+    -4.33,
+    -0.14
+   ],
+   "bottom": -2.63,
+   "eave": 18.97,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm116794628",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    1.34,
+    1.45
+   ],
+   "bottom": 1.0,
+   "eave": 5.5,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm116794630",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    1.36,
+    1.42
+   ],
+   "bottom": 0.99,
+   "eave": 5.49,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm116794635",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -0.85,
+    -0.35
+   ],
+   "bottom": -1.01,
+   "eave": 3.49,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm116794645",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    1.31,
+    1.5
+   ],
+   "bottom": 1.02,
+   "eave": 9.02,
+   "off_terrain": false,
+   "collider": true
+  },
+  {
+   "key": "osm116794651",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    0.65,
+    0.95
+   ],
+   "bottom": 0.42,
+   "eave": 8.42,
+   "off_terrain": false,
+   "collider": true
+  },
+  {
+   "key": "osm116794654",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    1.29,
+    1.37
+   ],
+   "bottom": 0.94,
+   "eave": 5.44,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm116794661",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    0.18,
+    1.14
+   ],
+   "bottom": 0.34,
+   "eave": 8.34,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm116794663",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    1.43,
+    1.5
+   ],
+   "bottom": 1.06,
+   "eave": 5.56,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm116897933",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -2.12,
+    -1.54
+   ],
+   "bottom": -2.27,
+   "eave": 2.23,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm116897935",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -4.21,
+    -3.5
+   ],
+   "bottom": -4.26,
+   "eave": 0.24,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm116897937",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -3.34,
+    -2.13
+   ],
+   "bottom": -3.15,
+   "eave": 1.35,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm116897938",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -3.24,
+    -2.62
+   ],
+   "bottom": -3.34,
+   "eave": 1.16,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm116897940",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -0.68,
+    0.11
+   ],
+   "bottom": -0.68,
+   "eave": 3.82,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm116897942",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -5.29,
+    -4.52
+   ],
+   "bottom": -5.3,
+   "eave": -0.8,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm116897943",
+   "skin": "METAL",
+   "roof": "TAN",
+   "form": "gable ridge 2.8 m",
+   "wall_h_m": 2.2,
+   "ground": [
+    -0.69,
+    -0.34
+   ],
+   "bottom": -0.92,
+   "eave": 1.28,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm116897944",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -0.8,
+    -0.38
+   ],
+   "bottom": -0.99,
+   "eave": 3.51,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm116897946",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    0.32,
+    0.64
+   ],
+   "bottom": 0.08,
+   "eave": 4.58,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm116897947",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    0.26,
+    0.67
+   ],
+   "bottom": 0.06,
+   "eave": 4.56,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm116897948",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    -5.64,
+    -3.54
+   ],
+   "bottom": -4.98,
+   "eave": 3.02,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm116897949",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    0.16,
+    0.56
+   ],
+   "bottom": -0.04,
+   "eave": 4.46,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm116897950",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -0.06,
+    0.32
+   ],
+   "bottom": -0.28,
+   "eave": 4.22,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm116897951",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    0.21,
+    0.6
+   ],
+   "bottom": 0.0,
+   "eave": 4.5,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm116897952",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -1.06,
+    -0.69
+   ],
+   "bottom": -1.27,
+   "eave": 3.23,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm116897953",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    -3.88,
+    -3.01
+   ],
+   "bottom": -3.84,
+   "eave": 4.16,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm116897956",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -2.68,
+    -2.03
+   ],
+   "bottom": -2.75,
+   "eave": 1.75,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm116897957",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    -2.9,
+    -1.2
+   ],
+   "bottom": -2.47,
+   "eave": 5.53,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm116897958",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    -1.61,
+    0.63
+   ],
+   "bottom": -0.9,
+   "eave": 7.1,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm116897960",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    -3.23,
+    -1.55
+   ],
+   "bottom": -2.75,
+   "eave": 5.25,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm293494992",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -6.33,
+    -6.2
+   ],
+   "bottom": -6.66,
+   "eave": -2.16,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm544414641",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    1.52,
+    1.88
+   ],
+   "bottom": 1.29,
+   "eave": 5.79,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm544414642",
+   "skin": "METAL",
+   "roof": "WHITE",
+   "form": "gable ridge 2.8 m",
+   "wall_h_m": 2.5,
+   "ground": [
+    1.78,
+    1.92
+   ],
+   "bottom": 1.44,
+   "eave": 3.94,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm882176809",
+   "skin": "STUCCO",
+   "roof": "SHINGLE",
+   "form": "hip ridge 6.1 m",
+   "wall_h_m": 2.6,
+   "ground": [
+    -6.04,
+    -5.71
+   ],
+   "bottom": -6.28,
+   "eave": -3.68,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm882176810",
+   "skin": "STUCCO",
+   "roof": "SHINGLE",
+   "form": "hip ridge 5.0 m",
+   "wall_h_m": 2.6,
+   "ground": [
+    -6.04,
+    -5.75
+   ],
+   "bottom": -6.29,
+   "eave": -3.69,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm882176811",
+   "skin": "STUCCO",
+   "roof": "SHINGLE",
+   "form": "hip ridge 5.2 m",
+   "wall_h_m": 2.6,
+   "ground": [
+    -6.06,
+    -5.78
+   ],
+   "bottom": -6.32,
+   "eave": -3.72,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm882176812",
+   "skin": "STUCCO",
+   "roof": "SHINGLE",
+   "form": "hip ridge 5.2 m",
+   "wall_h_m": 2.6,
+   "ground": [
+    -6.5,
+    -6.24
+   ],
+   "bottom": -6.77,
+   "eave": -4.17,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm882176813",
+   "skin": "STUCCO",
+   "roof": "SHINGLE",
+   "form": "hip ridge 5.1 m",
+   "wall_h_m": 2.6,
+   "ground": [
+    -6.31,
+    -6.07
+   ],
+   "bottom": -6.58,
+   "eave": -3.98,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm882187412",
+   "skin": "STUCCO",
+   "roof": "SHINGLE",
+   "form": "flat",
+   "wall_h_m": 2.6,
+   "ground": [
+    -4.44,
+    -4.06
+   ],
+   "bottom": -4.63,
+   "eave": -2.03,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm882187413",
+   "skin": "STUCCO",
+   "roof": "SHINGLE",
+   "form": "flat",
+   "wall_h_m": 2.6,
+   "ground": [
+    -4.39,
+    -3.99
+   ],
+   "bottom": -4.62,
+   "eave": -2.02,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm882187414",
+   "skin": "STUCCO",
+   "roof": "SHINGLE",
+   "form": "hip ridge 5.4 m",
+   "wall_h_m": 2.6,
+   "ground": [
+    -5.01,
+    -4.71
+   ],
+   "bottom": -5.26,
+   "eave": -2.66,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm882187415",
+   "skin": "STUCCO",
+   "roof": "SHINGLE",
+   "form": "hip ridge 5.5 m",
+   "wall_h_m": 2.6,
+   "ground": [
+    -4.99,
+    -4.66
+   ],
+   "bottom": -5.22,
+   "eave": -2.62,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm882187416",
+   "skin": "STUCCO",
+   "roof": "SHINGLE",
+   "form": "hip ridge 5.3 m",
+   "wall_h_m": 2.6,
+   "ground": [
+    -5.55,
+    -5.26
+   ],
+   "bottom": -5.81,
+   "eave": -3.21,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm882187417",
+   "skin": "STUCCO",
+   "roof": "SHINGLE",
+   "form": "hip ridge 4.4 m",
+   "wall_h_m": 2.6,
+   "ground": [
+    -5.92,
+    -5.5
+   ],
+   "bottom": -6.12,
+   "eave": -3.52,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm882187418",
+   "skin": "STUCCO",
+   "roof": "SHINGLE",
+   "form": "flat",
+   "wall_h_m": 2.6,
+   "ground": [
+    -6.02,
+    -5.57
+   ],
+   "bottom": -6.19,
+   "eave": -3.59,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm882187423",
+   "skin": "STUCCO",
+   "roof": "SHINGLE",
+   "form": "hip ridge 4.9 m",
+   "wall_h_m": 2.6,
+   "ground": [
+    -5.71,
+    -5.37
+   ],
+   "bottom": -5.95,
+   "eave": -3.35,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm882187424",
+   "skin": "STUCCO",
+   "roof": "SHINGLE",
+   "form": "hip ridge 5.3 m",
+   "wall_h_m": 2.6,
+   "ground": [
+    -5.91,
+    -5.43
+   ],
+   "bottom": -6.07,
+   "eave": -3.47,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm882187425",
+   "skin": "STUCCO",
+   "roof": "SHINGLE",
+   "form": "hip ridge 4.4 m",
+   "wall_h_m": 2.6,
+   "ground": [
+    -5.37,
+    -4.87
+   ],
+   "bottom": -5.53,
+   "eave": -2.93,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm882187426",
+   "skin": "STUCCO",
+   "roof": "SHINGLE",
+   "form": "flat",
+   "wall_h_m": 2.6,
+   "ground": [
+    -5.11,
+    -4.77
+   ],
+   "bottom": -5.35,
+   "eave": -2.75,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm882187427",
+   "skin": "STUCCO",
+   "roof": "SHINGLE",
+   "form": "flat",
+   "wall_h_m": 2.6,
+   "ground": [
+    -4.59,
+    -4.1
+   ],
+   "bottom": -4.79,
+   "eave": -2.19,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm882187428",
+   "skin": "STUCCO",
+   "roof": "SHINGLE",
+   "form": "hip ridge 6.0 m",
+   "wall_h_m": 2.6,
+   "ground": [
+    -4.3,
+    -3.85
+   ],
+   "bottom": -4.46,
+   "eave": -1.86,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm929845974",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    -4.49,
+    -3.59
+   ],
+   "bottom": -4.4,
+   "eave": 3.6,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm929845975",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -4.64,
+    -4.45
+   ],
+   "bottom": -4.94,
+   "eave": -0.44,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm929845976",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -4.41,
+    -3.9
+   ],
+   "bottom": -4.55,
+   "eave": -0.05,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm929845977",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -3.95,
+    -3.79
+   ],
+   "bottom": -4.27,
+   "eave": 0.23,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm929845978",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -5.97,
+    -5.5
+   ],
+   "bottom": -6.14,
+   "eave": -1.64,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm929845979",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -6.85,
+    -6.04
+   ],
+   "bottom": -6.86,
+   "eave": -2.36,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm929845980",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -1.17,
+    -0.54
+   ],
+   "bottom": -1.29,
+   "eave": 3.21,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm929845981",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -1.67,
+    -1.31
+   ],
+   "bottom": -1.91,
+   "eave": 2.59,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm929845982",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -1.39,
+    -0.96
+   ],
+   "bottom": -1.59,
+   "eave": 2.91,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm929845985",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -2.77,
+    -1.74
+   ],
+   "bottom": -2.7,
+   "eave": 1.8,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm929845986",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -1.14,
+    -0.6
+   ],
+   "bottom": -1.25,
+   "eave": 3.25,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm929845987",
+   "skin": "METAL",
+   "roof": "TAN",
+   "form": "gable ridge 2.9 m",
+   "wall_h_m": 2.1,
+   "ground": [
+    -2.94,
+    -2.79
+   ],
+   "bottom": -3.27,
+   "eave": -1.17,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm929845992",
+   "skin": "METAL",
+   "roof": "TAN",
+   "form": "gable ridge 2.8 m",
+   "wall_h_m": 2.2,
+   "ground": [
+    -0.17,
+    -0.08
+   ],
+   "bottom": -0.53,
+   "eave": 1.67,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm929845993",
+   "skin": "METAL",
+   "roof": "WHITE",
+   "form": "gable ridge 2.8 m",
+   "wall_h_m": 2.2,
+   "ground": [
+    -0.08,
+    0.0
+   ],
+   "bottom": -0.44,
+   "eave": 1.76,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm929845996",
+   "skin": "METAL",
+   "roof": "TAN",
+   "form": "gable ridge 2.8 m",
+   "wall_h_m": 2.2,
+   "ground": [
+    -0.65,
+    -0.53
+   ],
+   "bottom": -0.99,
+   "eave": 1.21,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm929845997",
+   "skin": "METAL",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 2.1,
+   "ground": [
+    1.13,
+    1.5
+   ],
+   "bottom": 0.83,
+   "eave": 2.93,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm929845998",
+   "skin": "METAL",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 2.1,
+   "ground": [
+    1.16,
+    1.49
+   ],
+   "bottom": 0.87,
+   "eave": 2.97,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm929845999",
+   "skin": "METAL",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 2.1,
+   "ground": [
+    0.79,
+    1.27
+   ],
+   "bottom": 0.75,
+   "eave": 2.85,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm929846000",
+   "skin": "METAL",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 2.1,
+   "ground": [
+    0.75,
+    1.28
+   ],
+   "bottom": 0.74,
+   "eave": 2.84,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm929846001",
+   "skin": "METAL",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 2.1,
+   "ground": [
+    0.63,
+    1.2
+   ],
+   "bottom": 0.66,
+   "eave": 2.76,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm929846002",
+   "skin": "METAL",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 2.1,
+   "ground": [
+    0.59,
+    1.14
+   ],
+   "bottom": 0.58,
+   "eave": 2.68,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm929846003",
+   "skin": "METAL",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 2.1,
+   "ground": [
+    0.94,
+    1.15
+   ],
+   "bottom": 0.64,
+   "eave": 2.74,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm929846004",
+   "skin": "METAL",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 2.1,
+   "ground": [
+    1.1,
+    1.25
+   ],
+   "bottom": 0.75,
+   "eave": 2.85,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm929846005",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    1.11,
+    1.16
+   ],
+   "bottom": 0.74,
+   "eave": 5.24,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm929846006",
+   "skin": "METAL",
+   "roof": "WHITE",
+   "form": "gable ridge 2.8 m",
+   "wall_h_m": 2.3,
+   "ground": [
+    1.22,
+    1.23
+   ],
+   "bottom": 0.83,
+   "eave": 3.13,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm929846007",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    1.2,
+    1.24
+   ],
+   "bottom": 0.82,
+   "eave": 5.32,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm929846008",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    0.95,
+    1.08
+   ],
+   "bottom": 0.62,
+   "eave": 5.12,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm929846009",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    1.17,
+    1.2
+   ],
+   "bottom": 0.79,
+   "eave": 5.29,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm929846010",
+   "skin": "METAL",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 2.1,
+   "ground": [
+    0.21,
+    0.99
+   ],
+   "bottom": 0.33,
+   "eave": 2.43,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm929846011",
+   "skin": "METAL",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 2.1,
+   "ground": [
+    0.6,
+    1.31
+   ],
+   "bottom": 0.46,
+   "eave": 2.56,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm929846012",
+   "skin": "METAL",
+   "roof": "WHITE",
+   "form": "gable ridge 3.4 m",
+   "wall_h_m": 2.1,
+   "ground": [
+    -0.03,
+    0.96
+   ],
+   "bottom": 0.1,
+   "eave": 2.2,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm929846013",
+   "skin": "METAL",
+   "roof": "WHITE",
+   "form": "gable ridge 3.4 m",
+   "wall_h_m": 2.1,
+   "ground": [
+    -0.12,
+    1.06
+   ],
+   "bottom": -0.06,
+   "eave": 2.04,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm929846014",
+   "skin": "METAL",
+   "roof": "WHITE",
+   "form": "gable ridge 3.4 m",
+   "wall_h_m": 2.1,
+   "ground": [
+    -0.11,
+    1.04
+   ],
+   "bottom": -0.04,
+   "eave": 2.06,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm929846015",
+   "skin": "METAL",
+   "roof": "WHITE",
+   "form": "gable ridge 3.4 m",
+   "wall_h_m": 2.1,
+   "ground": [
+    -0.13,
+    1.2
+   ],
+   "bottom": -0.03,
+   "eave": 2.07,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm929846016",
+   "skin": "METAL",
+   "roof": "WHITE",
+   "form": "gable ridge 3.4 m",
+   "wall_h_m": 2.1,
+   "ground": [
+    -0.17,
+    0.92
+   ],
+   "bottom": -0.11,
+   "eave": 1.99,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm929846017",
+   "skin": "METAL",
+   "roof": "WHITE",
+   "form": "gable ridge 3.4 m",
+   "wall_h_m": 2.1,
+   "ground": [
+    -0.18,
+    0.59
+   ],
+   "bottom": -0.17,
+   "eave": 1.93,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm929846018",
+   "skin": "METAL",
+   "roof": "WHITE",
+   "form": "gable ridge 3.4 m",
+   "wall_h_m": 2.1,
+   "ground": [
+    -0.17,
+    0.56
+   ],
+   "bottom": -0.14,
+   "eave": 1.96,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm929846019",
+   "skin": "METAL",
+   "roof": "WHITE",
+   "form": "gable ridge 3.4 m",
+   "wall_h_m": 2.1,
+   "ground": [
+    -0.27,
+    0.62
+   ],
+   "bottom": -0.18,
+   "eave": 1.92,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm929846020",
+   "skin": "METAL",
+   "roof": "WHITE",
+   "form": "gable ridge 3.4 m",
+   "wall_h_m": 2.1,
+   "ground": [
+    -0.75,
+    0.35
+   ],
+   "bottom": -0.55,
+   "eave": 1.55,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm929846021",
+   "skin": "METAL",
+   "roof": "TAN",
+   "form": "gable ridge 3.4 m",
+   "wall_h_m": 2.1,
+   "ground": [
+    -1.17,
+    -0.18
+   ],
+   "bottom": -1.02,
+   "eave": 1.08,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm929846022",
+   "skin": "METAL",
+   "roof": "TAN",
+   "form": "gable ridge 3.4 m",
+   "wall_h_m": 2.1,
+   "ground": [
+    -1.61,
+    -0.74
+   ],
+   "bottom": -1.52,
+   "eave": 0.58,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm929846023",
+   "skin": "METAL",
+   "roof": "TAN",
+   "form": "gable ridge 3.4 m",
+   "wall_h_m": 2.1,
+   "ground": [
+    -2.06,
+    -1.28
+   ],
+   "bottom": -2.0,
+   "eave": 0.1,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm929875310",
+   "skin": "METAL",
+   "roof": "TAN",
+   "form": "gable ridge 3.4 m",
+   "wall_h_m": 2.1,
+   "ground": [
+    -2.49,
+    -1.75
+   ],
+   "bottom": -2.46,
+   "eave": -0.36,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm929875311",
+   "skin": "METAL",
+   "roof": "TAN",
+   "form": "gable ridge 3.5 m",
+   "wall_h_m": 2.1,
+   "ground": [
+    -2.92,
+    -2.21
+   ],
+   "bottom": -2.94,
+   "eave": -0.84,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm929875312",
+   "skin": "METAL",
+   "roof": "TAN",
+   "form": "gable ridge 3.5 m",
+   "wall_h_m": 2.1,
+   "ground": [
+    -3.36,
+    -2.68
+   ],
+   "bottom": -3.43,
+   "eave": -1.33,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm929875313",
+   "skin": "METAL",
+   "roof": "TAN",
+   "form": "gable ridge 3.4 m",
+   "wall_h_m": 2.1,
+   "ground": [
+    -3.8,
+    -3.28
+   ],
+   "bottom": -3.94,
+   "eave": -1.84,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm929875314",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -4.61,
+    -3.81
+   ],
+   "bottom": -4.61,
+   "eave": -0.11,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm929875315",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    -5.55,
+    -4.27
+   ],
+   "bottom": -5.34,
+   "eave": 2.66,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm929875316",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -5.14,
+    -3.98
+   ],
+   "bottom": -4.96,
+   "eave": -0.46,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm929875317",
+   "skin": "METAL",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 2.1,
+   "ground": [
+    -5.13,
+    -3.55
+   ],
+   "bottom": -4.74,
+   "eave": -2.64,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm929875318",
+   "skin": "METAL",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 2.1,
+   "ground": [
+    -4.65,
+    -3.08
+   ],
+   "bottom": -4.27,
+   "eave": -2.17,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm929875319",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -3.66,
+    -3.24
+   ],
+   "bottom": -3.85,
+   "eave": 0.65,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm929875320",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -2.3,
+    -1.86
+   ],
+   "bottom": -2.48,
+   "eave": 2.02,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm929875321",
+   "skin": "METAL",
+   "roof": "TAN",
+   "form": "gable ridge 3.8 m",
+   "wall_h_m": 2.1,
+   "ground": [
+    -4.16,
+    -2.61
+   ],
+   "bottom": -3.79,
+   "eave": -1.69,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm929875322",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -4.86,
+    -4.49
+   ],
+   "bottom": -5.08,
+   "eave": -0.58,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm929875323",
+   "skin": "METAL",
+   "roof": "TAN",
+   "form": "gable ridge 2.8 m",
+   "wall_h_m": 2.4,
+   "ground": [
+    -4.95,
+    -4.73
+   ],
+   "bottom": -5.24,
+   "eave": -2.84,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm929875324",
+   "skin": "METAL",
+   "roof": "TAN",
+   "form": "gable ridge 2.8 m",
+   "wall_h_m": 2.4,
+   "ground": [
+    -4.47,
+    -4.24
+   ],
+   "bottom": -4.75,
+   "eave": -2.35,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm929875325",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -4.37,
+    -4.0
+   ],
+   "bottom": -4.6,
+   "eave": -0.1,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm929875326",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -3.9,
+    -3.53
+   ],
+   "bottom": -4.13,
+   "eave": 0.37,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm929875327",
+   "skin": "METAL",
+   "roof": "TAN",
+   "form": "gable ridge 2.8 m",
+   "wall_h_m": 2.4,
+   "ground": [
+    -3.99,
+    -3.76
+   ],
+   "bottom": -4.28,
+   "eave": -1.88,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm929875328",
+   "skin": "METAL",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 2.1,
+   "ground": [
+    -3.72,
+    -2.16
+   ],
+   "bottom": -3.34,
+   "eave": -1.24,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm929875329",
+   "skin": "METAL",
+   "roof": "TAN",
+   "form": "gable ridge 3.9 m",
+   "wall_h_m": 2.1,
+   "ground": [
+    -3.29,
+    -1.73
+   ],
+   "bottom": -2.91,
+   "eave": -0.81,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm929875330",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -3.42,
+    -3.05
+   ],
+   "bottom": -3.65,
+   "eave": 0.85,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm929875331",
+   "skin": "METAL",
+   "roof": "TAN",
+   "form": "gable ridge 2.8 m",
+   "wall_h_m": 2.4,
+   "ground": [
+    -3.51,
+    -3.28
+   ],
+   "bottom": -3.8,
+   "eave": -1.4,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm929875332",
+   "skin": "METAL",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 2.1,
+   "ground": [
+    -2.85,
+    -1.29
+   ],
+   "bottom": -2.47,
+   "eave": -0.37,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm929875333",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -2.94,
+    -2.57
+   ],
+   "bottom": -3.17,
+   "eave": 1.33,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm929875334",
+   "skin": "METAL",
+   "roof": "TAN",
+   "form": "gable ridge 2.8 m",
+   "wall_h_m": 2.4,
+   "ground": [
+    -3.03,
+    -2.8
+   ],
+   "bottom": -3.32,
+   "eave": -0.92,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm929875335",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -1.82,
+    -1.38
+   ],
+   "bottom": -2.0,
+   "eave": 2.5,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm929875336",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -1.07,
+    -0.64
+   ],
+   "bottom": -1.26,
+   "eave": 3.24,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm929875337",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -0.47,
+    -0.3
+   ],
+   "bottom": -0.79,
+   "eave": 3.71,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm929875338",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -0.39,
+    -0.29
+   ],
+   "bottom": -0.74,
+   "eave": 3.76,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm929875339",
+   "skin": "METAL",
+   "roof": "TAN",
+   "form": "gable ridge 3.8 m",
+   "wall_h_m": 2.1,
+   "ground": [
+    -1.86,
+    -0.5
+   ],
+   "bottom": -1.58,
+   "eave": 0.52,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm929875340",
+   "skin": "METAL",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 2.1,
+   "ground": [
+    -1.96,
+    -0.57
+   ],
+   "bottom": -1.67,
+   "eave": 0.43,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm929875341",
+   "skin": "METAL",
+   "roof": "TAN",
+   "form": "gable ridge 3.9 m",
+   "wall_h_m": 2.1,
+   "ground": [
+    -2.41,
+    -0.85
+   ],
+   "bottom": -2.03,
+   "eave": 0.07,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm929875342",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -2.72,
+    -2.3
+   ],
+   "bottom": -2.9,
+   "eave": 1.6,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm929875343",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -2.95,
+    -2.6
+   ],
+   "bottom": -3.18,
+   "eave": 1.32,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm929875344",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -2.68,
+    -2.37
+   ],
+   "bottom": -2.93,
+   "eave": 1.57,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm929875345",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -2.16,
+    -1.96
+   ],
+   "bottom": -2.46,
+   "eave": 2.04,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm929875346",
+   "skin": "METAL",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 2.1,
+   "ground": [
+    -1.88,
+    -0.49
+   ],
+   "bottom": -1.58,
+   "eave": 0.52,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm929875347",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -0.4,
+    -0.3
+   ],
+   "bottom": -0.75,
+   "eave": 3.75,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm929875348",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -1.44,
+    -0.85
+   ],
+   "bottom": -1.55,
+   "eave": 2.95,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm929875349",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -0.82,
+    -0.65
+   ],
+   "bottom": -1.14,
+   "eave": 3.36,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm929875350",
+   "skin": "METAL",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 2.1,
+   "ground": [
+    -1.85,
+    -0.45
+   ],
+   "bottom": -1.55,
+   "eave": 0.55,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm929875351",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -0.35,
+    -0.21
+   ],
+   "bottom": -0.68,
+   "eave": 3.82,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm929875352",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -0.37,
+    -0.25
+   ],
+   "bottom": -0.71,
+   "eave": 3.79,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm929875353",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -0.31,
+    -0.07
+   ],
+   "bottom": -0.59,
+   "eave": 3.91,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm929875354",
+   "skin": "METAL",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 2.1,
+   "ground": [
+    -1.79,
+    -0.29
+   ],
+   "bottom": -1.44,
+   "eave": 0.66,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm929875355",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    0.3,
+    0.61
+   ],
+   "bottom": 0.04,
+   "eave": 4.54,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm929875356",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    -4.23,
+    -2.46
+   ],
+   "bottom": -3.74,
+   "eave": 4.26,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm929875357",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -2.64,
+    -2.32
+   ],
+   "bottom": -2.88,
+   "eave": 1.62,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm929875358",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -2.25,
+    -1.57
+   ],
+   "bottom": -2.29,
+   "eave": 2.21,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm993449860",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -1.88,
+    -1.53
+   ],
+   "bottom": -2.13,
+   "eave": 2.37,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm995030002",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    1.04,
+    1.17
+   ],
+   "bottom": 0.71,
+   "eave": 5.21,
+   "off_terrain": false,
+   "collider": true
+  },
+  {
+   "key": "osm995030005",
+   "skin": "METAL",
+   "roof": "TAN",
+   "form": "gable ridge 2.9 m",
+   "wall_h_m": 2.1,
+   "ground": [
+    0.46,
+    0.92
+   ],
+   "bottom": 0.27,
+   "eave": 2.37,
+   "off_terrain": false,
+   "collider": true
+  },
+  {
+   "key": "osm995030006",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -5.51,
+    -5.32
+   ],
+   "bottom": -5.81,
+   "eave": -1.31,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm995030009",
+   "skin": "METAL",
+   "roof": "TAN",
+   "form": "gable ridge 2.8 m",
+   "wall_h_m": 2.2,
+   "ground": [
+    -1.21,
+    -1.06
+   ],
+   "bottom": -1.54,
+   "eave": 0.66,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm1056063265",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -6.3,
+    -6.01
+   ],
+   "bottom": -6.56,
+   "eave": -2.06,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm1056063269",
+   "skin": "METAL",
+   "roof": "TAN",
+   "form": "gable ridge 2.9 m",
+   "wall_h_m": 2.1,
+   "ground": [
+    -4.94,
+    -4.79
+   ],
+   "bottom": -5.27,
+   "eave": -3.17,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm1066289337",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    1.1,
+    1.68
+   ],
+   "bottom": 0.92,
+   "eave": 5.42,
+   "off_terrain": false,
+   "collider": true
+  },
+  {
+   "key": "osm1066289344",
+   "skin": "METAL",
+   "roof": "WHITE",
+   "form": "gable ridge 2.8 m",
+   "wall_h_m": 2.1,
+   "ground": [
+    1.0,
+    1.04
+   ],
+   "bottom": 0.62,
+   "eave": 2.72,
+   "off_terrain": false,
+   "collider": true
+  },
+  {
+   "key": "osm1066289359",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    1.43,
+    2.27
+   ],
+   "bottom": 1.37,
+   "eave": 9.37,
+   "off_terrain": false,
+   "collider": true
+  },
+  {
+   "key": "osm1066289368",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    0.45,
+    1.52
+   ],
+   "bottom": 0.75,
+   "eave": 5.25,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm1066289382",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    0.98,
+    1.32
+   ],
+   "bottom": 0.75,
+   "eave": 5.25,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm1321490729",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -7.04,
+    -6.42
+   ],
+   "bottom": -7.13,
+   "eave": -2.63,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm1321490730",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -6.82,
+    -6.2
+   ],
+   "bottom": -6.91,
+   "eave": -2.41,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm1321490731",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -6.51,
+    -5.87
+   ],
+   "bottom": -6.59,
+   "eave": -2.09,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm1321490732",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -5.94,
+    -5.31
+   ],
+   "bottom": -6.03,
+   "eave": -1.53,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm1321490733",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -6.5,
+    -5.87
+   ],
+   "bottom": -6.59,
+   "eave": -2.09,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm1321490734",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -6.35,
+    -5.7
+   ],
+   "bottom": -6.43,
+   "eave": -1.93,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm1321490735",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -6.86,
+    -6.14
+   ],
+   "bottom": -6.9,
+   "eave": -2.4,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm1321490737",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -6.74,
+    -6.4
+   ],
+   "bottom": -6.97,
+   "eave": -2.47,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm1321490738",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -6.95,
+    -6.59
+   ],
+   "bottom": -7.17,
+   "eave": -2.67,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm1321702157",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -6.87,
+    -6.18
+   ],
+   "bottom": -6.93,
+   "eave": -2.43,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm1321702159",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -6.88,
+    -6.23
+   ],
+   "bottom": -6.95,
+   "eave": -2.45,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm1321702160",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -6.87,
+    -6.22
+   ],
+   "bottom": -6.95,
+   "eave": -2.45,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm1321702161",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -6.88,
+    -6.23
+   ],
+   "bottom": -6.94,
+   "eave": -2.44,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm1321702162",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -6.87,
+    -6.14
+   ],
+   "bottom": -6.93,
+   "eave": -2.43,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm1321702163",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -6.04,
+    -5.67
+   ],
+   "bottom": -6.27,
+   "eave": -1.77,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm1321702164",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -6.11,
+    -5.27
+   ],
+   "bottom": -6.1,
+   "eave": -1.6,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm1321702165",
+   "skin": "METAL",
+   "roof": "TAN",
+   "form": "gable ridge 2.8 m",
+   "wall_h_m": 2.1,
+   "ground": [
+    -5.75,
+    -5.63
+   ],
+   "bottom": -6.09,
+   "eave": -3.99,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm1321702166",
+   "skin": "METAL",
+   "roof": "TAN",
+   "form": "gable ridge 2.8 m",
+   "wall_h_m": 2.2,
+   "ground": [
+    -5.66,
+    -5.55
+   ],
+   "bottom": -6.0,
+   "eave": -3.8,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm1321702167",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -5.99,
+    -5.17
+   ],
+   "bottom": -5.96,
+   "eave": -1.46,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm1321702168",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -5.47,
+    -4.68
+   ],
+   "bottom": -5.49,
+   "eave": -0.99,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm1321702169",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -5.43,
+    -4.64
+   ],
+   "bottom": -5.42,
+   "eave": -0.92,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm1321702170",
+   "skin": "METAL",
+   "roof": "TAN",
+   "form": "gable ridge 2.8 m",
+   "wall_h_m": 2.2,
+   "ground": [
+    -5.11,
+    -4.98
+   ],
+   "bottom": -5.44,
+   "eave": -3.24,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm1321702171",
+   "skin": "METAL",
+   "roof": "TAN",
+   "form": "gable ridge 2.8 m",
+   "wall_h_m": 2.3,
+   "ground": [
+    -5.16,
+    -5.05
+   ],
+   "bottom": -5.5,
+   "eave": -3.2,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm1321702172",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -5.13,
+    -4.42
+   ],
+   "bottom": -5.14,
+   "eave": -0.64,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm1321702173",
+   "skin": "METAL",
+   "roof": "TAN",
+   "form": "gable ridge 3.0 m",
+   "wall_h_m": 2.1,
+   "ground": [
+    -4.89,
+    -4.74
+   ],
+   "bottom": -5.22,
+   "eave": -3.12,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm1321702174",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -4.57,
+    -4.1
+   ],
+   "bottom": -4.73,
+   "eave": -0.23,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm1321702175",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -4.47,
+    -4.08
+   ],
+   "bottom": -4.68,
+   "eave": -0.18,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm1321702176",
+   "skin": "METAL",
+   "roof": "TAN",
+   "form": "gable ridge 2.8 m",
+   "wall_h_m": 2.4,
+   "ground": [
+    -4.43,
+    -4.33
+   ],
+   "bottom": -4.78,
+   "eave": -2.38,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm1321702177",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -5.96,
+    -5.61
+   ],
+   "bottom": -6.2,
+   "eave": -1.7,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm1321702178",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -5.49,
+    -5.13
+   ],
+   "bottom": -5.7,
+   "eave": -1.2,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm1321702179",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -5.07,
+    -4.71
+   ],
+   "bottom": -5.29,
+   "eave": -0.79,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm1321702180",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -5.85,
+    -5.17
+   ],
+   "bottom": -5.92,
+   "eave": -1.42,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm1321702181",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -5.88,
+    -5.23
+   ],
+   "bottom": -5.96,
+   "eave": -1.46,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm1321702183",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    -4.47,
+    -3.17
+   ],
+   "bottom": -4.21,
+   "eave": 3.79,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm1321702184",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -4.63,
+    -3.9
+   ],
+   "bottom": -4.68,
+   "eave": -0.18,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm1321702185",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -5.6,
+    -5.12
+   ],
+   "bottom": -5.75,
+   "eave": -1.25,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm1321702186",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -5.33,
+    -5.12
+   ],
+   "bottom": -5.62,
+   "eave": -1.12,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm1321702187",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -5.37,
+    -4.72
+   ],
+   "bottom": -5.45,
+   "eave": -0.95,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm1321702188",
+   "skin": "METAL",
+   "roof": "TAN",
+   "form": "gable ridge 2.8 m",
+   "wall_h_m": 2.2,
+   "ground": [
+    -5.85,
+    -5.1
+   ],
+   "bottom": -5.88,
+   "eave": -3.68,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm1321707182",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -6.38,
+    -5.9
+   ],
+   "bottom": -6.56,
+   "eave": -2.06,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm1321707183",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -5.24,
+    -4.72
+   ],
+   "bottom": -5.37,
+   "eave": -0.87,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm1321707184",
+   "skin": "STUCCO",
+   "roof": "SHINGLE",
+   "form": "flat",
+   "wall_h_m": 2.6,
+   "ground": [
+    -4.54,
+    -4.05
+   ],
+   "bottom": -4.69,
+   "eave": -2.09,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm1321707185",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -2.68,
+    -1.93
+   ],
+   "bottom": -2.68,
+   "eave": 1.82,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm1321707186",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -2.7,
+    -2.48
+   ],
+   "bottom": -2.99,
+   "eave": 1.51,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm1321707769",
+   "skin": "METAL",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 2.1,
+   "ground": [
+    -1.5,
+    0.02
+   ],
+   "bottom": -1.15,
+   "eave": 0.95,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm1321707775",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -2.12,
+    -1.94
+   ],
+   "bottom": -2.43,
+   "eave": 2.07,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm1321707776",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -2.13,
+    -1.95
+   ],
+   "bottom": -2.44,
+   "eave": 2.06,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm1321707777",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -2.1,
+    -1.92
+   ],
+   "bottom": -2.4,
+   "eave": 2.1,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm1321707778",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -6.93,
+    -5.68
+   ],
+   "bottom": -6.75,
+   "eave": -2.25,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm1325614505",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -5.55,
+    -5.35
+   ],
+   "bottom": -5.85,
+   "eave": -1.35,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm1325614507",
+   "skin": "METAL",
+   "roof": "TAN",
+   "form": "gable ridge 2.8 m",
+   "wall_h_m": 2.4,
+   "ground": [
+    -6.04,
+    -5.93
+   ],
+   "bottom": -6.39,
+   "eave": -3.99,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm1325614512",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -3.38,
+    -3.11
+   ],
+   "bottom": -3.66,
+   "eave": 0.84,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm1325614514",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -3.55,
+    -3.21
+   ],
+   "bottom": -3.78,
+   "eave": 0.72,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm1325614515",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -5.09,
+    -4.86
+   ],
+   "bottom": -5.38,
+   "eave": -0.88,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm1325614519",
+   "skin": "METAL",
+   "roof": "TAN",
+   "form": "gable ridge 2.9 m",
+   "wall_h_m": 2.1,
+   "ground": [
+    -5.83,
+    -5.66
+   ],
+   "bottom": -6.15,
+   "eave": -4.05,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm1325614520",
+   "skin": "METAL",
+   "roof": "TAN",
+   "form": "gable ridge 2.8 m",
+   "wall_h_m": 2.4,
+   "ground": [
+    -5.32,
+    -5.13
+   ],
+   "bottom": -5.63,
+   "eave": -3.23,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm1325614521",
+   "skin": "METAL",
+   "roof": "TAN",
+   "form": "gable ridge 2.8 m",
+   "wall_h_m": 2.3,
+   "ground": [
+    -4.35,
+    -4.17
+   ],
+   "bottom": -4.66,
+   "eave": -2.36,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm1325614522",
+   "skin": "METAL",
+   "roof": "TAN",
+   "form": "gable ridge 2.8 m",
+   "wall_h_m": 2.4,
+   "ground": [
+    -4.88,
+    -4.73
+   ],
+   "bottom": -5.21,
+   "eave": -2.81,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm1325614523",
+   "skin": "METAL",
+   "roof": "TAN",
+   "form": "gable ridge 2.8 m",
+   "wall_h_m": 2.4,
+   "ground": [
+    -2.09,
+    -1.91
+   ],
+   "bottom": -2.4,
+   "eave": 0.0,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm1325614524",
+   "skin": "METAL",
+   "roof": "TAN",
+   "form": "gable ridge 2.8 m",
+   "wall_h_m": 2.4,
+   "ground": [
+    -2.12,
+    -1.95
+   ],
+   "bottom": -2.43,
+   "eave": -0.03,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm1325614525",
+   "skin": "METAL",
+   "roof": "TAN",
+   "form": "gable ridge 2.8 m",
+   "wall_h_m": 2.5,
+   "ground": [
+    -2.1,
+    -1.93
+   ],
+   "bottom": -2.42,
+   "eave": 0.08,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm1325614526",
+   "skin": "METAL",
+   "roof": "TAN",
+   "form": "gable ridge 2.8 m",
+   "wall_h_m": 2.4,
+   "ground": [
+    -2.17,
+    -1.99
+   ],
+   "bottom": -2.48,
+   "eave": -0.08,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm1325614528",
+   "skin": "METAL",
+   "roof": "WHITE",
+   "form": "gable ridge 2.8 m",
+   "wall_h_m": 2.3,
+   "ground": [
+    1.15,
+    1.18
+   ],
+   "bottom": 0.77,
+   "eave": 3.07,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm1325614529",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    -3.29,
+    -2.63
+   ],
+   "bottom": -3.41,
+   "eave": 4.59,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm1325614531",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -3.42,
+    -3.08
+   ],
+   "bottom": -3.65,
+   "eave": 0.85,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm1325617171",
+   "skin": "METAL",
+   "roof": "TAN",
+   "form": "gable ridge 2.8 m",
+   "wall_h_m": 2.4,
+   "ground": [
+    -5.5,
+    -5.35
+   ],
+   "bottom": -5.82,
+   "eave": -3.42,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm1325617172",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -5.9,
+    -5.25
+   ],
+   "bottom": -5.98,
+   "eave": -1.48,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm1325617173",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -5.86,
+    -5.43
+   ],
+   "bottom": -6.05,
+   "eave": -1.55,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm1325617175",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -6.89,
+    -6.25
+   ],
+   "bottom": -7.0,
+   "eave": -2.5,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm1325617178",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -5.36,
+    -5.15
+   ],
+   "bottom": -5.65,
+   "eave": -1.15,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm1325617179",
+   "skin": "METAL",
+   "roof": "TAN",
+   "form": "gable ridge 2.9 m",
+   "wall_h_m": 2.1,
+   "ground": [
+    -5.4,
+    -5.27
+   ],
+   "bottom": -5.74,
+   "eave": -3.64,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm1325617215",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -6.53,
+    -6.09
+   ],
+   "bottom": -6.72,
+   "eave": -2.22,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm1325617216",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -6.79,
+    -6.42
+   ],
+   "bottom": -6.99,
+   "eave": -2.49,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm1325617217",
+   "skin": "METAL",
+   "roof": "TAN",
+   "form": "gable ridge 2.8 m",
+   "wall_h_m": 2.3,
+   "ground": [
+    -6.53,
+    -6.41
+   ],
+   "bottom": -6.87,
+   "eave": -4.57,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm1326361752",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -4.41,
+    -3.63
+   ],
+   "bottom": -4.39,
+   "eave": 0.11,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm1326361753",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -6.43,
+    -4.92
+   ],
+   "bottom": -6.07,
+   "eave": -1.57,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm1326361754",
+   "skin": "METAL",
+   "roof": "TAN",
+   "form": "gable ridge 2.8 m",
+   "wall_h_m": 2.3,
+   "ground": [
+    -6.71,
+    -6.49
+   ],
+   "bottom": -7.0,
+   "eave": -4.7,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm1326361760",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    -1.55,
+    -1.2
+   ],
+   "bottom": -1.78,
+   "eave": 2.72,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm1353617968",
+   "skin": "STUCCO",
+   "roof": "SHINGLE",
+   "form": "hip ridge 4.6 m",
+   "wall_h_m": 2.6,
+   "ground": [
+    -6.12,
+    -5.83
+   ],
+   "bottom": -6.37,
+   "eave": -3.77,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm1353617974",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    -3.94,
+    -3.22
+   ],
+   "bottom": -4.02,
+   "eave": 3.98,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm1421065497",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    0.71,
+    1.05
+   ],
+   "bottom": 0.45,
+   "eave": 4.95,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm1427234829",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 14.4,
+   "ground": [
+    -5.23,
+    -2.82
+   ],
+   "bottom": -4.47,
+   "eave": 9.93,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm1547342209",
+   "skin": "STUCCO",
+   "roof": "SHINGLE",
+   "form": "flat",
+   "wall_h_m": 2.6,
+   "ground": [
+    -5.85,
+    -5.41
+   ],
+   "bottom": -6.01,
+   "eave": -3.41,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osmr5972656w397545303",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat, parapet 0.7 m",
+   "wall_h_m": 4.5,
+   "ground": [
+    0.52,
+    3.56
+   ],
+   "bottom": 1.44,
+   "eave": 5.94,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osmr18463434w1321702182",
+   "skin": "TILTUP",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 8.0,
+   "ground": [
+    -4.29,
+    -3.47
+   ],
+   "bottom": -4.29,
+   "eave": 3.71,
+   "off_terrain": false,
+   "collider": false
+  }
+ ]
 }

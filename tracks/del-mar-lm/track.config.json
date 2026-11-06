@@ -4,7 +4,7 @@
   "name": "Del Mar Grand Prix (LM engine)",
   "slug": "del_mar_fairgrounds_lm",
   "ui_series": "doooom California",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "mirror_x": false,
   "loop": true,
   "default_width_m": 13.0,
@@ -76,7 +76,14 @@
         ],
         "_doc": "the assembler's names at the author stage (Lake Murray's)"
       },
-      "prep_seats": true
+      "prep_seats": true,
+      "blocks": [
+        {
+          "file": "source/bespoke/buildings.json",
+          "auto": true
+        }
+      ],
+      "_blocks_doc": "ledger 0083 buildings pass 1: OSM's footprints (today's fairgrounds: the 1991-93 rebuild, not 1987's halls), classed and heighted by tools/plan_buildings.py (source/bespoke/buildings.plan.json; buildings.inventory.json lists each with its sources), stood by tools/author_bespoke_blend.py on the built ground; a collider only within 60 m of the lap"
     }
   },
   "layouts": [

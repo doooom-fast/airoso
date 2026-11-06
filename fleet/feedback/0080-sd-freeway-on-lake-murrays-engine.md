@@ -879,6 +879,42 @@ a 0.25 m lattice in a .blend, `median_ground_dbg.py` the tool with a vertex trac
 - `grid_crop_m` is gone from `track.config.json` (`_grid_crop_m_dropped_doc`); `test_lm_engine_port` still tests the
   crop's mechanism on the 1,000 m it carried. Lake Murray runs neither tool.
 
+**3. Per-layout kn5s: the design (written, not wired).** The 120 MB is AC's budget per kn5 FILE, not per layout: a
+layout loads every `[MODEL_n]` its `models_<id>.ini` lists, which is how Lake Murray already ships (road + common race
++ its closure + its spawns, `tools/split_exports_blend.py`). So the network splits by corridor GROUP, every layout loads
+the ground plus the groups it drives, and the full-network layout loads them all, each file under budget, no geometry
+cut.
+- **Files.** `<slug>.kn5` the ground (every 1GRASS tile, the whole box tiered: ws41's terrain) + anything no group owns
+  (+ the AC_* nodes while the track has one layout); `<slug>_g_<group>.kn5` per group: that group's carriageways' faces
+  of 1ROAD_road, the edge strips, 1KERB_sidewalk / _SIDEWALK_DECK, MARKINGS, 1WALL_MEDIAN / _guard / _RETAIN. Groups
+  (`lm_intake.kn5_groups`, each a list of carriageway names; a 2c ramp or 2d connector joins the group of the mainline
+  it leaves): `i8` (line + i8_wb), `i5` (i5_nb + i5_sb), `sr52_163` (sr52 both ways + sr163 both ways). Size (estimates, at round 1's
+  ~1.2 MB / km of carriageway with its barrier, ground and markings, from 2a): the whole box's ground costs 4.3 MB more
+  than the crop's (ws41 34.1 vs ws40 29.8 MB, measured); i8 (2a, ~21 km of carriageway) ~25 MB, i5 (30.4 km) ~37 MB,
+  sr52_163 (37.2 km) ~45 MB, each before its ramps; a group that passes ~100 MB with its ramps splits in two
+  (e.g. sr52 / sr163), never cuts.
+- **Mechanism (port-only; Lake Murray's split untouched).** A ship step `group_split` AFTER `split` (Lake Murray's
+  split code runs exactly as now and writes `loop_main.blend`): `tools/fwlm_group_split_blend.py` opens loop_main.blend,
+  gives every face of each road-side object to the carriageway whose swept footprint (its centreline, half its built
+  width + the strip + the barrier's half base) holds the face's centroid in plan (the line and connectors as the
+  assembler built them, `data/centerline.local.json`, `data/connectors.local.json`), separates them (bmesh, names
+  `<name>__g_<group>`, prefix kept so physics is kept), and writes `loop_g_<group>.blend` per group and loop_main.blend
+  without them; a face no footprint holds stays in main (reported). A manifest, as the split's: every face once,
+  no empty group, the 65,535-vertex cap per mesh. Then `export_groups` (engine-july's exporter, `--out
+  <slug>_g_<group>.kn5`, as `export_race`), and `group_inis`: after `track_folder`, each models ini gets one
+  `[MODEL_n]` per group its layout drives (`layouts[].kn5_groups`, absent = all) and the kn5s are copied into the
+  folder.
+- **Gates on the split.** `road_obj` (kn5_to_gate_obj already takes several `--kn5`) passes every group kn5, so
+  drive_test, drive_test_network, audit and edge_report judge the same mesh as now: an A/B on 2a must give the gate OBJ
+  byte for byte (or the same faces in a different order, proven by sorted-face digest). `verify_kn5 --inis` is exact
+  for multi-layout tracks (road + race + closure + spawns) and lives in `scripts/` (Lake Murray's), so the freeway's
+  ship.json swaps it for a port check (`tools/fwlm_verify_group_inis.py`: verify_inis' list + exactly the layout's
+  groups, every listed kn5 in the folder, every group kn5 under 120 MB); with one layout today verify_inis checks
+  nothing and still runs. `kn5_ground_check` per layout already loads each layout's ini set.
+- **Why not wired this round:** 2a is one 29.8 MB file (ws40) and nothing of 2b is built, so there is nothing to
+  split; the wiring touches five steps (split, export, road_obj, track_folder, inis), each needing the A/B above.
+  It is the first step of 2b's build round, before any 2b corridor is built (Owed).
+
 ## PC runbook 0080-8: rehearse 2b round 1 (2a with the tiered ground), no install
 
 Supersedes 0080-7 for the next candidate. No lidar or NAIP is needed; the new draft step uses Blender 4.2's own numpy.

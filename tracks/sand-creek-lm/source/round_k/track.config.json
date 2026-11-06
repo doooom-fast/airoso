@@ -2156,12 +2156,31 @@
       ]
     },
     "grid_slots": 8,
-    "pit_slots": 8
+    "pit_slots": 8,
+    "_pad_corners_doc": "ledger 0079 round M (call 2): the two pads whose deck runs past the lap's nominal edge at a corner (50th / Ash R, 50th / Dahlia L: the lap narrows 18 -> 10 m across a ~12 m corner, so the nominal strip stepped 2.5-3.8 m into the deck and drive_test read it in the race lane). The strip runs in_vertex's ring -> X -> out_vertex's ring; X is MEASURED by tools/barrier_bands.py (_pad_corners) on the BUILT curb return (data/pads.built.json): the outline point standing farthest toward the lane from the chord, moved edge_inset - barrier half (0.485 m) toward the lane. in_vertex / out_vertex AUTHORED: the last / first ring whose band point stands on the curb's straight legs (0.4-0.65 m in from the built outline on rl1).",
+    "pad_corners": [
+      {
+        "pad": "50th_ash",
+        "side": "R",
+        "in_vertex": 185,
+        "out_vertex": 190
+      },
+      {
+        "pad": "50th_dahlia",
+        "side": "L",
+        "in_vertex": 410,
+        "out_vertex": 415
+      }
+    ]
   },
   "signs_name_blades": {
     "file": "source/name_blades.json",
     "_doc": "ledger 0079 round K (Kevin 2026-11-05, arrow signs and street-name signs: \"Both\"): MUTCD D3-1 blades at the lap junctions, names from OpenStreetMap (tools/name_blades.py, run once on the Mac; the plan and its atlas textures/name_blades.png committed), stood on the built ground by tools/author_name_blades_blend.py on Lake Murray sign post. Sizes MUTCD 2009 2D.43 / Table 2D-1 / 2A.18; the corner, set-back, margins, border, length step and font AUTHORED (GATES-CHANGELOG 2026-11-05 round K)"
   },
   "signs_file": "signs.json",
-  "_signs_file_doc": "ledger 0079 round K: Lake Murray W1-6 arrow signs (tools/place_signs.py, its defaults copied verbatim) with one per-layout corner, 48th / Colorado (SC-48C), whose race-layout plate stands behind the race sealing wall in the race closure kn5; named here because this port slug (sand_creek_raceway_lm) names no tracks/<slug>/"
+  "_signs_file_doc": "ledger 0079 round K: Lake Murray W1-6 arrow signs (tools/place_signs.py, its defaults copied verbatim) with one per-layout corner, 48th / Colorado (SC-48C), whose race-layout plate stands behind the race sealing wall in the race closure kn5; named here because this port slug (sand_creek_raceway_lm) names no tracks/<slug>/",
+  "drive_test": {
+    "_dense_hops_doc": "ledger 0079 round M (call 3): a severe reading on a forward metre where the fixed-offset wheel path hopped > 1.5 m (the outside of v140 on the colorado_50th deck: 3.5-3.8 m per vertex across its real 2-4 % grade, read 0.07-0.11 m) is re-measured on the same path sampled every 0.25 m along its own arc (scripts/geometry/drive_test.py DENSE HOPS; rl1: 0.002-0.005 m). A measurement change, not a threshold change (fleet/GATES-CHANGELOG.md round M).",
+    "dense_hops": true
+  }
 }

@@ -663,3 +663,36 @@ def test_round_l_pad_decks_opt_in():
         for key in ("outline_xz", "outline_en"):
             (Path(td) / "data" / "pads.built.json").write_text(json.dumps({"pads": [{"id": "p", key: ring}]}))
             assert el.pad_polygons(td) == [("p", [(0.0, 0.0), (10.0, 0.0), (10.0, 10.0)], [])], key
+
+
+def test_round_m_keys_are_opt_in():
+    """ledger 0079 round M: race.pad_corners and drive_test.dense_hops are opt-in — Lake Murray, the Lariat and the
+    circuits name neither; only Sand Creek's parked candidate names them. Without a declaration the strip trims what it
+    trimmed before; with one, the strip runs in_vertex -> X -> out_vertex (kind pad_corner, the vertices between removed)"""
+    import race_furniture as rf
+    for t in ("san-diego-lake-murray", "lookout-lariat", "lookout-lariat-lm", "high-plains-lm", "aspen-lm", "pueblo-lm"):
+        p = ROOT / "tracks" / t / "track.config.json"
+        if not p.exists():
+            continue
+        cfg = json.loads(p.read_text(encoding="utf-8"))
+        assert "pad_corners" not in (cfg.get("race") or {}), t
+        assert "dense_hops" not in (cfg.get("drive_test") or {}), t
+    live = json.loads((SC / "track.config.json").read_text(encoding="utf-8"))
+    assert "pad_corners" not in (live.get("race") or {}) and "dense_hops" not in (live.get("drive_test") or {})
+    sc = json.loads((SC / "source" / "round_k" / "track.config.json").read_text(encoding="utf-8"))
+    assert [(c["pad"], c["side"], c["in_vertex"], c["out_vertex"]) for c in sc["race"]["pad_corners"]] == \
+        [("50th_ash", "R", 185, 190), ("50th_dahlia", "L", 410, 415)]
+    assert sc["drive_test"]["dense_hops"] is True
+    # a lap with a long straight edge (x = E, the left strip at z = +4.515): no fold there, so no corner unless declared
+    pts = [(2.0 * k, 0.0, 0.0) for k in range(40)] + [(78.0, 0.0, -20.0), (40.0, 0.0, -30.0), (0.0, 0.0, -20.0)]
+    pts.append(pts[0])
+    widths, ei = [10.0] * len(pts), [0.82] * len(pts)
+    base = rf.edge_fold_corners(pts, widths, ei)
+    X = (14.0, 5.5)
+    decl = [{"side": "L", "in_vertex": 5, "out_vertex": 9, "xz": list(X), "kind": "pad_corner"}]
+    got = rf.edge_fold_corners(pts, widths, ei, declared=decl)
+    new = [c for c in got if c not in base]
+    assert len(new) == 1 and new[0]["kind"] == "pad_corner" and new[0]["side"] == "L"
+    assert (new[0]["in_vertex"], new[0]["out_vertex"]) == (5, 9) and new[0]["removed"] == [6, 7, 8]
+    assert tuple(new[0]["xz"]) == X
+    assert rf.declared_corners({"params": {}}, "L") == [] and rf.declared_corners({"params": {"pad_corners": decl}}, "R") == []

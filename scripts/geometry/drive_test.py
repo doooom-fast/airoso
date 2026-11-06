@@ -85,6 +85,16 @@ fine step >= 0.02 m and a 1 m second difference > 0.06 m on the real wheel paths
 k - 12 ... l + 13 cover these zones), hard in the chain, never covered by --force-install — the 0050 lip read 0.42 /
 0.48 m there. Outside a levelled fan, on a forward sample, or without the key: severe as before.
 
+DENSE HOPS (opt-in, ledger 0079 round M: track.config.json ``drive_test.dense_hops = true``; Lake Murray sets none). On
+the outside of a corner the fixed-offset point hops 2.7-3.9 m at a vertex (VERTEX BUMPS below), so the 1 m second
+difference compares a hop's height change with a metre's: on Sand Creek's colorado_50th deck (a real 2-4 % grade) that
+read 0.07-0.11 m, severe, where the same wheel path sampled every 0.25 m along its own arc reads at most 0.007 m. With
+the key, a severe reading on a forward metre where the path (this metre or the previous one) hopped more than
+DENSE_HOP_M is re-measured on that path's last two metres sampled densely (_dense_step: the largest 1 m second
+difference along their own arc, heights off the built top surface); one under STEP_SEVERE_M is filed under
+``dense_hops`` (reported, not gated). A measurement change, not a threshold change: the same 6 cm judges it, and a
+real riser on the hop still reads severe. Without the key the report is byte-identical.
+
 VERTEX BUMPS (v0.18.1, ledger 0057 integration). The same fixed offset hops FORWARD at every centreline vertex where the
 segment normal turns: on the outside of a corner the point jumps ahead by offset x turn angle (2.7-3.9 m at 10 m out
 round the Navajo / Jackson fan, 1.8-3.7 m round College / Alvarado), on the inside it creeps (0.1-0.5 m). The 1 m second
@@ -127,6 +137,10 @@ OBST_HEIGHT_M = 1.8          # car-strike ceiling: AC cars are ~1.3 m tall; wall
 #                              level and still trip this, while legit overhead furniture (cobra-head
 #                              lamps arching the lane at 2.5 m+) clears it
 STEP_M = 1.0                 # sampling step along the lap
+DENSE_HOP_M = 1.5            # [invented] ledger 0079 round M (opt-in drive_test.dense_hops): a metre whose fixed-offset wheel
+#                              path covered more plan than this (the outside of a corner: the per-segment normal turns at a
+#                              vertex and the point hops 2.7-3.9 m) is a hop metre
+DENSE_DS_M = 0.25            # [invented] ledger 0079 round M: the dense re-sample spacing along the wheel path's own arc
 VERTEX_MIN_TRAVEL_M = 0.05   # [invented] v0.18.1 VERTEX BUMPS: a metre whose wheel path covers less plan than this is not
 #                              re-measured (its grade would be a facet's noise); the bump counts as read
 
@@ -152,6 +166,43 @@ def _own_travel_step(dh1, dh0, d1, d0):
     if d1 is None or d0 is None or min(d1, d0) < VERTEX_MIN_TRAVEL_M:
         return None
     return abs(dh1 / d1 - dh0 / d0) * 2.0 * STEP_M * STEP_M / (d0 + d1)
+
+
+def _dense_step(top_at, xz3, y_ref, ds=DENSE_DS_M):
+    """DENSE HOPS (opt-in, ledger 0079 round M): the SAME wheel path's last two metres — its three samples xz3 [(x, z)
+    of samples k-2, k-1, k], as drive_test took them — re-sampled every ds along their own polyline, each point's height
+    the built top surface (top_at), and the largest 1 m second difference |h(a + 1) - 2 h(a) + h(a - 1)| along that arc
+    (a every ds / 2). A measurement change, not a threshold: the same STEP_SEVERE_M then judges it. None (the station
+    reading stands) where the arc is under 2 m or any point has no surface."""
+    pts, arc = [], [0.0]
+    for (ax, az), (bx, bz) in zip(xz3, xz3[1:]):
+        d = math.hypot(bx - ax, bz - az)
+        n = max(1, int(math.ceil(d / ds)))
+        for j in range(n):
+            pts.append((ax + (bx - ax) * j / n, az + (bz - az) * j / n))
+    pts.append(xz3[-1])
+    for (ax, az), (bx, bz) in zip(pts, pts[1:]):
+        arc.append(arc[-1] + math.hypot(bx - ax, bz - az))
+    if arc[-1] < 2.0 * STEP_M:
+        return None
+    hs = []
+    for x_, z_ in pts:
+        h_, _o = top_at(x_, z_, y_ref)
+        if h_ is None:
+            return None
+        hs.append(h_)
+
+    def h_at(a):
+        j = 0
+        while j < len(arc) - 2 and arc[j + 1] < a:
+            j += 1
+        t = (a - arc[j]) / max(arc[j + 1] - arc[j], 1e-9)
+        return hs[j] + (hs[j + 1] - hs[j]) * t
+    worst, a = 0.0, STEP_M
+    while a <= arc[-1] - STEP_M + 1e-9:
+        worst = max(worst, abs(h_at(a + STEP_M) - 2.0 * h_at(a) + h_at(a - STEP_M)))
+        a += ds / 2.0
+    return worst
 
 
 def pad_for_lead_in(z_meas, line_pts, local_pts, tol_m=1.5):
@@ -670,6 +721,10 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None, line: dict
     # FOLD SEVERE (opt-in; module doc): a severe reading on a folded sample inside a levelled fan is judged by
     # tools/verify_fold_fans.py on the real wheel paths, not here
     _fold_severe_defer = bool(_fan_zones) and         str((cfg.get("drive_test") or {}).get("fold_fan_severe") or "") == "verify_fold_fans"
+    # DENSE HOPS (opt-in, ledger 0079 round M: track.config.json drive_test.dense_hops = true; Lake Murray sets none): a
+    # severe reading on a forward metre where this wheel path, or its previous metre, hopped more than DENSE_HOP_M is
+    # re-measured on the same path sampled densely (_dense_step); under STEP_SEVERE_M it is filed as dense_hops
+    _dense_hops = bool((cfg.get("drive_test") or {}).get("dense_hops"))
 
     def _in_flat_zone(px, pz):
         return any((px - a) ** 2 + (pz - b) ** 2 < d * d for a, b, c, d in _fzones)
@@ -968,6 +1023,14 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None, line: dict
                         else:
                             problems["kinks"].append((round(s, 1), round(off, 2), round(kink, 2)))
                     step = abs(dh - prev_slope[pi] * STEP_M)
+                    if (_dense_hops and step > STEP_SEVERE_M and not folded and len(prev_p[pi]) > 4
+                            and prev_p[pi][4] is not None
+                            and max(d_now or 0.0, prev_d[pi] or 0.0) > DENSE_HOP_M):
+                        _ds = _dense_step(surface.top_at, [prev_p[pi][4], prev_p[pi][:2], (px, pz)], y_ref)
+                        if _ds is not None and _ds <= STEP_SEVERE_M:
+                            problems.setdefault("dense_hops", []).append(
+                                (round(s, 1), round(off, 2), round(step, 3), round(_ds, 4)))
+                            step = 0.0          # judged on the dense path: no step there over STEP_SEVERE_M
                     if step > STEP_SEVERE_M:
                         # flared-apron texture: on widened corner pavement (w >= 11) the OUTER
                         # offsets ride taper fans with rolled crossfall breaks — real aprons
@@ -1000,7 +1063,9 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None, line: dict
                 prev_slope[pi] = slope
             prev_adv[pi] = adv
             prev_d[pi] = d_now
-            prev_p[pi] = (px, pz, x, z)
+            # (the 5th field, DENSE HOPS only: the sample before, so the last two metres can be re-sampled)
+            prev_p[pi] = (px, pz, x, z, (prev_p[pi][0], prev_p[pi][1]) if prev_p[pi] is not None else None) \
+                if _dense_hops else (px, pz, x, z)
             prev_h[pi] = h
         # daylight probe: just past each pavement edge, some surface must exist from deck level
         # down to 7 m below — a miss means a hole in the embankment skirt (sky under the road)
@@ -1412,6 +1477,10 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None, line: dict
         report["fold_severe"] = len(problems.get("fold_severe", []))
         report["fold_severe_judge"] = "tools/verify_fold_fans.py (real wheel paths, hard)"
         report["worst"]["fold_severe"] = sorted(problems.get("fold_severe", []), key=lambda r: -r[2])[:200]
+    if _dense_hops:
+        # opt-in only (absent the key the report is byte-identical): severe readings re-measured on the dense path
+        report["dense_hops"] = len(problems.get("dense_hops", []))
+        report["worst"]["dense_hops"] = sorted(problems.get("dense_hops", []), key=lambda r: -r[2])[:200]
     out_name = f"drive_test.{lid}.json" if lid else "drive_test.json"
     if line is not None:
         out_name = f"drive_test.line.{line['id']}.json"
@@ -1503,6 +1572,9 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None, line: dict
     if _fold_severe_defer:
         print(f"  fold severe (> 6 cm where a fixed-offset path runs backwards inside a levelled fan; judged by "
               f"tools/verify_fold_fans.py on the real wheel paths): {report['fold_severe']}")
+    if _dense_hops:
+        print(f"  dense hops (> {STEP_SEVERE_M*100:.0f} cm read across a > {DENSE_HOP_M} m hop, under it on the same path "
+              f"sampled every {DENSE_DS_M} m; reported, not gated): {report['dense_hops']}")
     if report["vertex_bumps"]:
         print(f"  vertex bumps (2.5-6 cm read across a vertex hop, under {STEP_BUMP_M*100:.1f} cm on the path's own "
               f"travel; reported, not gated): {report['vertex_bumps']}")

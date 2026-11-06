@@ -1390,7 +1390,105 @@ fixed offset; script in the round's scratch, `classify.py`):
 
 Tests: 1,324 pass, the known 8 fail (`test_draft_equiv` x5, `test_registry_moves`, `test_bench_pad` x2).
 
-## Owed (2026-11-05, after round L; start here)
+## Round M (Mac): no_route's deck frame from Lake Murray 0.20.2, pad corners, dense hops — the race layout green but for the closure row (NOT 0.2.6)
+
+The coordinator's calls ("same as Lake Murray" wherever Lake Murray already solved it). Built from an EMPTY workshop
+`sclm_work/rm1` (source copy `sclm_work/rm_src` with the candidate swapped in for the build only; stopped at verify_kn5's
+closure row as round L, resumed `--from road_obj`; logs `rm1.a.log`, `rm1.b.log`). The committed live config is still
+0.2.5. Every number: GATES-CHANGELOG 2026-11-05 (round M).
+
+### Call 1 (the no_route door at v134-136 L): DONE — Lake Murray 0.20.2's measurement, brought across
+- `tools/no_route.py` and `tests/tools/test_no_route.py` taken as `claude/lm-phase2-0202` 0e256585 has them (PR 38's
+  file and test only): a wall triangle's band is also measured from the 1ROAD deck it stands on (within DECK_REACH_M
+  0.70 of the line's own deck); a cell seals in either frame (ledger 0054 steps 2e / 2g).
+- Lake Murray, old vs new, on its committed data (`sclm_work/rm_lmnr`: prep_v4's built `track.race_cw.obj`, its
+  barrier_bands.json / track.config.json md5-equal to the committed ones): race_cw BUILT PASS / PASS (0 / 439 probes,
+  leak 0; only wall_cells +59, local_deck_cells 59, reached / allowed_m2 −1 — the three walls step 2g lists: College
+  774, Navajo 1517, Jackson 2324); race_cw and race_acw PLANNED PASS / PASS, every key equal. (No race_acw gate OBJ is on
+  the Mac.)
+- Sand Creek, rl1's built OBJ (`sclm_work/rm_scnr`): FAIL (door v134-v136 L, 13 / 27 sealed streets reached, leak
+  240,372 m²) -> **PASS** (0 doors, 0 / 27, leak 0). The deck frame adds 553 cells; `1WALL_race_edge_L_street0_0_0` at
+  v134-v136 stands on the colorado_50th deck +0.31..+0.33 m over the line's (158 cells). rm1: BUILT PASS, 0 / 27.
+
+### Call 2 (the Ash / Dahlia obstructions): DONE — declared pad corners, opt-in
+- `race.pad_corners` (candidate): 50th_ash R v185 -> v190, 50th_dahlia L v410 -> v415. barrier_bands `_pad_corners`
+  measures X on the BUILT curb return (the outline point farthest toward the lane from the chord, moved 0.485 m in):
+  Ash (-1369.571, 141.797), Dahlia (-765.456, 81.679); the strip's outer edge stays 0.012 / 0.043 m inside the deck.
+  Written into `edge_corners` (kind `pad_corner`), so drive_test's corner probe, median_zone, no_route and verify_race D
+  read it with no change; race_furniture `_trim_folds(declared=)` authors it; the inside race kerb turns the same corner
+  (`_kerb_declared`: its mid-line 0.833-0.89 m from the strip centre, 0.885 on a straight).
+- verify_race needed no change (D reads the declared corners; OK on rm1). rm1: obstructed **0** (rl1 9); s 551 and the
+  s 557 kerb reading gone (below).
+- Lake Murray A/B (`sclm_work/lmrace_rm`, fleet-lm-engine's tools vs this head's, its committed data):
+  barrier_bands.json identical but for the planned fill's `seconds` (digest without it 340c906f…, = the committed file);
+  race_furniture.plan_all 37 plans md5 345834c9… both (edge 15 / kerb 6 / close 16 each equal); check_race_kn5 common /
+  cw / acw output byte-identical. median_bands.json untouched (f0c97952…).
+
+### Call 3 (the severe steps): the jumps and s557 DONE; the backwards readings NOT adopted — verify_fold_fans judges nothing here
+- **The 6 jumps** (s 419-422, lat +13.73 / +14.48, the outside of v140): measured first. Each path sampled densely on
+  rl1's built mesh (every 0.25 m along its own arc, s 410-423): worst 1 m second difference 0.0063 / 0.0072 m against
+  drive_test's 0.069-0.109 at the 1 m stations (3.5-3.8 m hops). A sampling artefact, not the surface. So:
+  `drive_test.dense_hops` (opt-in, scripts/geometry/drive_test.py DENSE HOPS; a measurement change): a severe reading on
+  a forward metre whose path hopped > 1.5 m is re-measured on the same path densely; rm1 files exactly those 6 under
+  `dense_hops` (0.002-0.005 m). Without the key rl1's drive_test.race.json re-runs byte-identical.
+  Lake Murray (report-only, its config unchanged, the key in a scratch copy, prep_v4's OBJs): race_cw no reading moves;
+  street ONE: s 2265 lat +5.25, 0.099 -> 0.051 m (severe 10 -> 9 on that scratch build).
+  (Past s 423 the dense path also rides onto v140's outside race kerb, 0.066-0.083 m: the 5 cm kerb lip, which the
+  station sampling reads small. The key only re-measures hop metres, so it adds no reading there.)
+- **s 557 (0.062 m)**: the kerb placement, not the lane. The inside kerb at v186 followed the nominal lip through the
+  18 -> 10 m width step (the same notch that put the strip in the lane), 2.5-3.8 m into the deck; the inside path at
+  lat −3.23 rode onto it. With the kerb on the declared corner (call 2) the reading is gone on rm1 (so is s 551).
+- **The backwards readings: Lake Murray's `drive_test.fold_fan_severe` NOT adopted.** Run report-only on a copy of rm1
+  (`sclm_work/rm_ff`): it files 32 of the 40 severe as `fold_severe`, 8 stay (6 at v779 s 2321-2331 lat −19.18, outside
+  every fan; s 413 / 418 at v140). But verify_fold_fans on rm1 judges **0 pinches** ("no levelled mainline pinch:
+  nothing to judge"): Sand Creek's mouth_welds.json levels one CURB fold (v778-781) and its re-find finds no road
+  swallowtail on the gate centreline, while drive_test's discs fall back to the raw road cuts (v134-141, v3202-3206).
+  Adopted, the key would hand 32 readings to a gate that reads nothing there — a bypass. Coordinator's call (below).
+
+### Call 4 (the closure): not built (Kevin's question pending). verify_kn5's closure row is the only verify_kn5 red.
+### Call 5 (fork 94/95's chevrons): not reached.
+
+### Gates, BUILT kn5 (Mac, empty workshop `sclm_work/rm1`; candidate config)
+| gate | round L (rl1) | **round M (rm1)** |
+|---|---|---|
+| drive_test street | PASS: soft 0, severe 0, drops 0, kinks 1.24 /km | **PASS: soft 0, severe 0, drops 0 (1 far ledge), kinks 1.24 /km** |
+| drive_test race | FAIL: severe 48, obstructed 9 | **PASS (its gated rows): obstructed 0, barrier_missing 0, soft 0, drops 0; severe 40 (all backwards paths: v140 inside, the S, v779), dense_hops 6; kinks 9.54 /km (9.75)** |
+| audit street / race | CLEAN / CLEAN | **CLEAN / CLEAN** |
+| kn5_ground_check | PASS x2 | **PASS x2** |
+| verify_pads | PASS x3 (0 / 0 / 0) | **PASS x3 (curb over pavement 0 / 0 / 0; seams 1.6 / 1.6 / 0.9 mm)** |
+| verify_mouths | PASS 117 | **PASS 117 (the two parked rows as before)** |
+| house_seat / houses | PASS 1.261 m / 2,183 | **PASS 1.261 m / 2,183 / 2,183** |
+| textures | 0 untextured | **0** |
+| verify_race / check_race_kn5 | OK / OK | **OK / OK (common 36 meshes: 22 strips + 14 kerbs; closure 3 sign meshes, whole_lap WARN)** |
+| no_route PLANNED / BUILT | PASS / FAIL (door v134-136 L, 13 / 27) | **PASS / PASS (0 / 27, leak 0)** |
+| verify_signs | PASS, 7 posts | **PASS, 7 posts (2 layout plates)** |
+| verify_fold_fans | not run | **PASS — vacuous: 0 pinches** |
+| verify_kn5 / --inis | FAIL (closure only) / PASS | **FAIL (closure only) / PASS** |
+| kn5 total | 107.0 MB | **106.9 MB** (road 89.9, `_race` 10.2, `_street` 6.8) |
+
+### Lake Murray unchanged (round M)
+- `git diff origin/claude/fleet-lm-engine -- tracks/san-diego-lake-murray scripts/`: scripts/geometry/drive_test.py
+  only (the opt-in DENSE HOPS key; no Lake Murray config sets it — `test_round_m_keys_are_opt_in`).
+- Trim A/B (`sclm_work/lmtrim_rm`): byte-identical (`664da93b…`, `b73b70f4…`, `f0c97952…`).
+- no_route, race tools and drive_test A/Bs: above.
+
+Tests (`tests/run_tests.py`, `python` on PATH): 1,327 pass, the known 8 fail (`test_draft_equiv` x5,
+`test_registry_moves`, `test_bench_pad` x2). New: the two no_route tests from 0e256585, `test_round_m_keys_are_opt_in`.
+
+## Owed (2026-11-05, after round M; start here)
+
+1. **The closure** — Kevin's call (pending): Lake Murray's 11.36 m lane with closure walls on the >= 15.67 m streets
+   (0049 R4), or the full street (then verify_kn5 must learn `params.whole_lap`). The only verify_kn5 red.
+2. **The 40 backwards severe readings** (v140 inside, the S, v779) — coordinator's call. Lake Murray's
+   `fold_fan_severe` would defer 32 to a verify_fold_fans that judges 0 pinches on Sand Creek (above). Ways in: make
+   verify_fold_fans find Sand Creek's folds (its weld levels no road pinch; a tools/ change with a Lake Murray A/B), or
+   judge the backwards paths on real wheel paths some other way. v779's 6 are outside every fan either way. The race
+   drive_test's gated rows pass already (it gates obstruction / barrier_missing, not severe).
+3. Then: runbook 4n and the `_m` stills, the 0.2.6 bump (the candidate in `source/round_k/` now carries
+   `race.pad_corners` and `drive_test.dense_hops`).
+4. Fork 94/95's chevron paint and round J's owed items, unchanged.
+
+## Owed (2026-11-05, after round L; kept for the record)
 
 1. **The closure (call 1): Kevin's / the coordinator's call.** Lake Murray's closure is a lane boundary, not a mouth
    seal (above). Either Kevin names where Sand Creek's race runs in a lane narrower than the street (0049 R4 would

@@ -193,6 +193,58 @@ def _asset_half_width(asset_path: Path) -> float:
     return round((max(xs) - min(xs)) / 2.0, 3)
 
 
+def _pad_corners(decl, data, pts, widths, m, strip_c):
+    """race.pad_corners (opt-in, ledger 0079 round M; Lake Murray declares none) -> ([resolved corner], fails). Each
+    declaration {pad, side L|R, in_vertex, out_vertex} names a junction pad whose deck runs past the lap's nominal edge
+    at a corner (Sand Creek's 50th / Ash, 50th / Dahlia: the lap narrows 18 -> 10 m across the corner, so the nominal
+    strip stepped 2.5-3.8 m into the deck). The strip there runs A -> X -> B: A / B the in_vertex / out_vertex rings
+    (their band points, where the strip already stands on the curb's straight legs: AUTHORED), X MEASURED on the
+    pad's BUILT curb return (data/pads.built.json outline_xz / outline_en): of the outline points on the curb run
+    between the points nearest A and B, the one standing farthest toward the lane from the chord A-B (the curb the
+    straight strip would cross first), moved strip_c (edge_inset - barrier half: where every other ring of the strip
+    stands from its curb line) along the chord's lane-side normal."""
+    if not decl:
+        return [], []
+    fails, out = [], []
+    pb = data / "pads.built.json"
+    pads = {str(p_.get("id")): p_ for p_ in (json.loads(pb.read_text(encoding="utf-8")).get("pads") or [])} if pb.exists() else {}
+    for d in decl:
+        try:
+            pid, side = str(d["pad"]), str(d["side"])
+            i, j = int(d["in_vertex"]) % m, int(d["out_vertex"]) % m
+        except (KeyError, TypeError, ValueError) as e:
+            fails.append(f"race.pad_corners: each entry needs pad, side, in_vertex, out_vertex ({e})")
+            continue
+        ring = (pads.get(pid) or {}).get("outline_xz") or (pads.get(pid) or {}).get("outline_en")
+        if side not in ("L", "R") or not ring or (j - i) % m < 2:
+            fails.append(f"race.pad_corners {pid}: side {side!r}, v{i}..v{j}, or no BUILT outline in data/pads.built.json")
+            continue
+        sgn = 1.0 if side == "L" else -1.0
+
+        def band(k):
+            tx, tz = _RF.tangent(pts, k, m)
+            lx, lz = _RF.left_normal(tx, tz)
+            lat = sgn * (widths[k] / 2.0 - strip_c)
+            return pts[k][0] + lx * lat, pts[k][2] + lz * lat
+        A, B = band(i), band(j)
+        L = math.dist(A, B) or 1.0
+        ux, uz = (B[0] - A[0]) / L, (B[1] - A[1]) / L
+        nx, nz = -uz, ux                                # the chord's normal toward the lane (the centreline's side)
+        c = pts[(i + ((j - i) % m) // 2) % m]
+        if (c[0] - A[0]) * nx + (c[2] - A[1]) * nz < 0:
+            nx, nz = -nx, -nz
+        ia = min(range(len(ring)), key=lambda k: math.dist(ring[k], A))
+        ib = min(range(len(ring)), key=lambda k: math.dist(ring[k], B))
+        lo, hi = sorted((ia, ib))
+        run = range(lo, hi + 1) if hi - lo <= len(ring) // 2 else [*range(hi, len(ring)), *range(0, lo + 1)]
+        q = max((ring[k] for k in run), key=lambda q_: (q_[0] - A[0]) * nx + (q_[1] - A[1]) * nz)
+        X = (q[0] + nx * strip_c, q[1] + nz * strip_c)
+        out.append({"pad": pid, "side": side, "in_vertex": i, "out_vertex": j, "kind": "pad_corner",
+                    "curb_point": [round(float(q[0]), 3), round(float(q[1]), 3)],
+                    "xz": [round(X[0], 3), round(X[1], 3)]})
+    return out, fails
+
+
 def _corners(ps, pts, widths, min_turn_deg):
     rb = ps.Ribbon("MAINLINE", pts, widths, True)
     out = []
@@ -351,7 +403,11 @@ def build(project_dir, out_name: str | None = None, config_path=None, *, planned
     # race.edge_fold_chord (opt-in, ledger 0079 round K; Lake Murray declares none): a fold with no crossing and no
     # extension is cut by its chord (race_furniture._trim_folds), carried in params so edge_plans authors the same line
     fold_chord = bool(race.get("edge_fold_chord"))
-    edge_corners = _RF.edge_fold_corners(pts, widths, edge_inset_v, edge_mode, chord=fold_chord)
+    # race.pad_corners (opt-in, ledger 0079 round M; Lake Murray declares none): a strip corner declared on a junction
+    # pad's curb return, X measured off data/pads.built.json (_pad_corners), carried in params so edge_plans authors it
+    pad_corners, pc_fails = _pad_corners(race.get("pad_corners"), data, pts, widths, m, strip_c)
+    fails += pc_fails
+    edge_corners = _RF.edge_fold_corners(pts, widths, edge_inset_v, edge_mode, chord=fold_chord, declared=pad_corners)
     for c in edge_corners:
         inside = [x for x in corners if ("R" if x["sign"] < 0 else "L") == c["side"]]
         near = min((min((v_ - x["apex"]) % m, (x["apex"] - v_) % m) for x in inside for v_ in c["removed"]),
@@ -434,7 +490,8 @@ def build(project_dir, out_name: str | None = None, config_path=None, *, planned
                "kerbs": [dict(k) for k in kerbs], "kerbs_dropped": kerbs_dropped, "streets": streets, "corners": corners,
                "params": {"edge_mode": edge_mode, "edge_inset_m": edge_inset, "barrier_half_m": bhalf,
                           "edge_centre_from_lip_m": EDGE_CENTRE_FROM_LIP[edge_mode], "barrier_height_m": height,
-                          **({"edge_fold_chord": True} if fold_chord else {})}}
+                          **({"edge_fold_chord": True} if fold_chord else {}),
+                          **({"pad_corners": pad_corners} if pad_corners else {})}}
     kerbs, clip_method = _clip_kerbs(kerbs, partial, pts, widths, m, corridors, edge_inset, bhalf, edge_mode)
 
     # ---- sealed mouths (top-level, the 0047 shape; the per-layout policy is corridors.<id>.mouths) ----
@@ -563,6 +620,7 @@ def build(project_dir, out_name: str | None = None, config_path=None, *, planned
             "edge_loop_start_vertex": (_RF.loop_start(pts, m) if hasattr(_RF, "loop_start") else None),
             "corridor": _corridor_params_echo(cor_cfg, P, measured_clear, island_mode),
             **({"edge_fold_chord": True} if fold_chord else {}),
+            **({"pad_corners": pad_corners} if pad_corners else {}),
             **({"whole_lap": True} if whole_lap else {}),
         },
         "zones": {"whole": [whole[0], whole[1]], "boxes": boxes, "closure_runs": [list(r) for r in pinned],

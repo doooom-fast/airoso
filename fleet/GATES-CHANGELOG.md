@@ -14,6 +14,52 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
+## 2026-11-05 (round M) — Sand Creek toward 0.2.6: Lake Murray 0.20.2's no_route deck frame, pad corners, dense hops (ledger 0079 round M)
+
+**Not live.** The candidate stays parked in `tracks/sand-creek-lm/source/round_k/` (the live config is 0.2.5). No gate
+threshold, floor, reference or bypass moved. Two measurement changes (no_route's, Lake Murray's own; drive_test's
+opt-in dense hops) and one opt-in declaration (pad corners):
+
+- **`tools/no_route.py` — Lake Murray 0.20.2's measurement, brought across** (ledger 0054 steps 2e / 2g; the file and
+  `tests/tools/test_no_route.py` as `claude/lm-phase2-0202` 0e256585 has them, PR 38 not merged; the rest of that PR not
+  taken). MEASUREMENT-BUG FIX, Lake Murray's: the BUILT span test runs a second time with each wall triangle measured
+  from the 1ROAD deck it stands on (within `DECK_REACH_M` = WALL_HI_M - WALL_LO_M = 0.70 m of the line's own deck,
+  derived; `DECK_BUCKET_M` 2.0 is a lookup grid, not a judgment) and a cell seals in either frame. WALL_LO_M / WALL_HI_M /
+  DECK_LIFT_M unchanged. The file also carries 0.20.2's opt-in `nose_walls` (Lake Murray's north noses; no Sand Creek or
+  committed Lake Murray declaration has the key). Proof: Lake Murray's committed data (prep_v4's built
+  `track.race_cw.obj`, barrier_bands.json md5 d7781559… = committed): race_cw BUILT PASS -> PASS (0 / 439 probes, leak 0;
+  wall_cells +59, local_deck_cells 59, reached / allowed −1 m², the three walls 0054 step 2g lists), race_cw / race_acw
+  PLANNED PASS -> PASS, every key equal. Sand Creek rl1: FAIL (door v134-v136 L, 13 / 27 probes) -> PASS (0 doors,
+  0 / 27, leak 0; the deck frame adds 553 cells, 158 of them the left strip on the colorado_50th deck +0.31..+0.33 m over
+  the line's).
+- **`race.pad_corners`** (opt-in; tools/barrier_bands.py `_pad_corners`, tools/race_furniture.py `_trim_folds(declared=)`,
+  `declared_corners`, `_kerb_declared`; Lake Murray declares none — A/B below). A strip corner declared on a junction
+  pad's curb return: the strip runs in_vertex's ring -> X -> out_vertex's ring and is written into `edge_corners`
+  (kind `pad_corner`) like a trimmed fold, so drive_test's corner probe, median_zone, no_route and verify_race D read it
+  unchanged. ⚠ [authored, measured on rl1] in / out vertices: 50th / Ash R v185 -> v190, 50th / Dahlia L v410 -> v415 (the
+  last / first rings whose band point stands 0.4-0.65 m in from the BUILT outline). X MEASURED, no new number: of the
+  outline points on the curb run between A and B, the one standing farthest toward the lane from the chord A-B, moved
+  edge_inset - barrier half (0.485 m, the strip's existing offset from its curb line) along the chord's lane-side normal
+  (Ash (-1369.571, 141.797), Dahlia (-765.456, 81.679); the strip's outer edge then stays 0.012 / 0.043 m inside the
+  deck). The inside race kerb beside it turns the same corner: its mid-line corner is X moved barrier half +
+  KERB_CLEAR_M + KERB_W / 2 (0.885 m, the kerb's existing offset from the strip centre) along the bisector at the mitre
+  scale (race_furniture's own MITRE_MAX cap); the kerb mid-line then stands 0.833-0.89 m from the strip centre.
+- **`drive_test.dense_hops`** (opt-in, scripts/geometry/drive_test.py DENSE HOPS; Lake Murray sets none). A
+  **measurement change, not a threshold change**: a severe reading (> STEP_SEVERE_M 0.06, unchanged) on a forward metre
+  where the fixed-offset wheel path (this metre or the previous one) hopped more than ⚠ `DENSE_HOP_M` 1.5 m [invented]
+  is re-measured on the same path's last two metres re-sampled every ⚠ `DENSE_DS_M` 0.25 m [invented] along their own
+  arc (heights off the built top surface); the largest 1 m second difference there is judged by the same 0.06. Under it:
+  filed `dense_hops` (reported, not gated). Measured first (rl1, the 6 jumps at s 419-422 lat +13.73 / +14.48 on the
+  colorado_50th deck): station readings 0.069-0.109 m, the same paths sampled densely 0.002-0.005 m (worst on the whole
+  s 410-423 window 0.0063 / 0.0072 m): a sampling artefact, not the surface. Without the key the report is byte-identical
+  (rl1's drive_test.race.json re-run: cmp equal). Lake Murray, report-only with its config unchanged (the key set in a
+  scratch copy, prep_v4's built OBJs): race_cw no reading moves (dense_hops 0); street ONE reading moves — s 2265 lat
+  +5.25, 0.099 m at the station, 0.051 m on the dense path (severe 10 -> 9 on that scratch build).
+- Not adopted: Lake Murray's `drive_test.fold_fan_severe: "verify_fold_fans"`. On Sand Creek verify_fold_fans judges
+  **0 pinches** (mouth_welds.json levels one CURB fold only, at v778-781; it re-finds no road swallowtail on the gate
+  centreline), while drive_test's fan discs fall back to the raw road cuts (v134-141, v3202-3206) — the key would hand
+  those severe readings to a gate that reads nothing there. Ledger 0079 round M has the numbers.
+
 ## 2026-11-05 (round L) — Sand Creek toward 0.2.6: Lake Murray's race kerbs, pad-corner arrow plates (ledger 0079 round L)
 
 **Not live.** The candidate stays parked in `tracks/sand-creek-lm/source/round_k/` (the live config is 0.2.5). No gate

@@ -851,6 +851,14 @@ Supersedes 0080-7 for the next candidate. No lidar or NAIP is needed; the new dr
    PASS, kn5_ground_check PASS, 29,834,689 B (+- a ground edge split, as 0080-6), SHIP OK. Any other number: stop and
    file it here. Install only on Kevin's word (it would replace c3c988b9's `san_diego_freeway_lm`).
 
+**PC result (2026-11-06 00:00-00:04, `fwlm_2b1`): every ws39 row matches; kn5 29,834,745 B (+56, as 0080-6 / 0080-7).**
+`data/terrain.fwlm_tiers.json`: native_cells 16,354, fine_cells 938, fan_cells 388, vertices 32,418, tris 64,244 (the
+`[fwlm-tiers]` line itself is not in the PC's log: ship_track.sh:261 keeps the step's last 9 grep lines, and 9 `[blend]`
+lines came after it). Line drive_test PASS (excursions 2, gated at s 5,550.7 -10.5 / +10.5), WB line gate PASS / lap
+rule FAIL (17, 1.61 / km), audit CLEAN, verify_kn5 / inis PASS, kn5_ground_check PASS (72 / 6,135, p95 0.020 m), SHIP
+OK; gate OBJ 10 groups, 423,605 v, 570,142 tri. Per mesh (vertices / triangles): 1GRASS_0-3 59,821 / 118,954, 55,957 /
+111,369, 56,072 / 111,596, 56,045 / 111,597; every other mesh as 0080-7's table. Offered to Kevin in place of round 6.
+
 ## PC runbook 0080-7: rehearse 2a round 6, no install
 
 Supersedes 0080-6 for the next candidate (0080-6's c3c988b9 is what is installed). No lidar or NAIP is needed.

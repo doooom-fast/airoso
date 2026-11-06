@@ -20,6 +20,8 @@ plan.json = {
   "min_area_m2": 25,
   "yes_by_area": [[60, "shed"], [350, "house"], [1500, "commercial"], [1e9, "industrial"]],   an untagged footprint, by size
   "house_skin": "stucco" | "siding",                              the region's houses (DOSSIER section 5)
+  "tag_class": {"stable": "shed"},                                optional: a building tag the shared TAG_CLASS lacks, classed
+                                                                 by the track (never overrides a tag TAG_CLASS knows)
   "shadow": {"enabled": true, "max_m": 60, "trust_unchecked": false},   off = OSM and defaults only; an unchecked stage (no
                                                                  OSM heights to compare) is used only when trust_unchecked is set
   "sun": {"azimuth_deg": 122, "elevation_deg": 33, "_source": "..."}   optional: a sun read by hand (Nevada's pole shadows)
@@ -189,6 +191,13 @@ HOUSE_MAX_AREA_M2 = 1000.0     # this area is a big house, not the commercial bl
 
 def classify(rec, plan):
     tag = (rec.get("tag") or "yes").lower()
+    # the plan's own tag -> class rows (opt-in, per track; absent = TAG_CLASS alone, as before): a tag the shared table does
+    # not know, read by the track's photograph (Del Mar, ledger 0083: building=stable is a barn row, =grandstand a block)
+    own = {str(k).lower(): v for k, v in (plan.get("tag_class") or {}).items() if not str(k).startswith("_")}
+    if tag in own and tag not in TAG_CLASS:
+        if own[tag] not in STOREY_M and own[tag] != "canopy":
+            raise SystemExit(f"[buildings] plan tag_class {tag!r} -> {own[tag]!r}: not a class ({sorted(STOREY_M)} or canopy)")
+        return own[tag], f"OSM building={tag} -> {own[tag]} by the plan's tag_class"
     if tag in TAG_CLASS:
         return TAG_CLASS[tag], f"OSM building={tag}"
     a = rec["area"]

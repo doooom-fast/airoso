@@ -1,0 +1,16 @@
+{
+ "_doc": "Del Mar buildings pass 1 (ledger 0083): OSM's footprints in the lap + 600 m (osm_buildings.provenance.json), classed, heights from OSM building:levels or the shadow on the 2012 NAIP or the class default [invented], through tools/plan_buildings.py. The NAIP is the source track's (tracks/del-mar/source/naip_2012_delmar.png: ca_m_3211706_ne_11_1_20120519, Web Mercator z18 crop, its corners the config's control points; x0 / y0 are those corners in z18 tiles). Buildings off the crop read no roof colour (the planner's 'tan').",
+ "image": "../del-mar/source/naip_2012_delmar.png",
+ "webmerc": {"z": 18, "x0": 45684.90625, "y0": 105610.78125},
+ "naip_date": "2012-05-19",
+ "utc_offset": "-07:00",
+ "footprints": [{"file": "source/bespoke/osm_buildings.json", "kind": "overpass"}],
+ "out": "source/bespoke/buildings.json",
+ "min_area_m2": 25,
+ "yes_by_area": [[60, "shed"], [1500, "commercial"], [1e9, "industrial"]],
+ "_yes_by_area_doc": "a fairground, not a suburb: an untagged footprint is a kiosk (under 60 m2), a one-storey office / stall block (under 1,500 m2) or an exhibit hall [invented rule, by the 2012 NAIP: no house roofs among them]",
+ "tag_class": {"stable": "shed", "grandstand": "commercial", "pavilion": "canopy",
+               "_doc": "the tags TAG_CLASS lacks: building=stable is the barn rows north of the lap (long low gables on the NAIP), building=grandstand the racetrack's grandstand (OSM building:levels 6; flat-roofed, as commercial), building=pavilion an open-sided show-ring roof (left out as a canopy: the pipeline has no open-sided form)"},
+ "house_skin": "stucco",
+ "shadow": {"enabled": true, "max_m": 60}
+}

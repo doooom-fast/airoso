@@ -31,6 +31,10 @@ active layer, UV_LAYER: engine-july's prep writes its top-down planar UVs into a
 made active), and the kn5 exporter writes the ACTIVE layer, so the stripe survives the prep. The texture is the track's
 (texture_overrides["1KERB"]; the ports carry no other 1KERB mesh). Self-check, exit 1 and loop.blend not saved: a run that keys to fewer than 2 rows.
 
+kerb.race_rule (opt-in, ledger 0079 round K; Sand Creek): no traced runs — tools/race_kerbs.py writes RACE_RULE_FILE by rule
+(apex + exit at each race corner), each run "edge": "ribbon" (in_m / out_m from this ribbon's own lane edge, no live edge);
+kerb.surface "road_and_pads" reads the ROAD ribbon and the junction pads' decks (1ROAD_pad_*) under every offset.
+
     blender --background --python-exit-code 1 --python tools/author_kerbs_blend.py -- <project-dir>
 """
 from __future__ import annotations
@@ -57,6 +61,7 @@ MIN_PAINT_W_M = 0.45  # [invented] a "paint" run (flat edge stripe, ledger 0081)
 STRIPE_M = 2.0        # one white + one colour stripe; racing kerbs are painted in ~1 m blocks
 LAYER_M = 2.0         # [invented] measured placement: the ROAD surface is read within this of the lane edge's height (L4)
 PREFIX = "1KERB_circuit_"
+RACE_RULE_FILE = "data/kerbs.race.json"   # tools/race_kerbs.py's output (kerb.race_rule, ledger 0079 round K)
 UV_LAYER = "KerbUV"   # not "UVMap": the prep's planar pass writes that one
 
 
@@ -71,6 +76,8 @@ def main():
     proj = Path(argv[0])
     cfg = json.loads((proj / "track.config.json").read_text(encoding="utf-8"))
     rel = (cfg.get("route") or {}).get("kerbs_file")
+    if not rel and ((cfg.get("kerb") or {}).get("race_rule")):
+        rel = RACE_RULE_FILE      # kerb.race_rule (opt-in, ledger 0079 round K): the runs tools/race_kerbs.py wrote by rule
     if not rel:
         print("[kerbs] no route.kerbs_file: nothing to do")
         return
@@ -106,12 +113,24 @@ def main():
     kcfg = cfg.get("kerb") or {}
     measured = kcfg.get("placement") == "measured"
     end_ramp = float(kcfg.get("end_ramp_m") or 0.0)
+    all_road = kcfg.get("surface") == "road_and_pads"
     misses = [0]
     if measured:
         from mathutils import Vector
         from mathutils.bvhtree import BVHTree
         mwr = road.matrix_world
         bvh = BVHTree.FromPolygons([mwr @ v.co for v in V], [tuple(p.vertices) for p in road.data.polygons])
+        if all_road:
+            # kerb.surface "road_and_pads" (opt-in, ledger 0079 round K): the ROAD ribbon AND every junction pad's deck
+            # (1ROAD_pad_*, tools/lm_pads_blend.py: the lap ribbon is cut there and the measured deck stands in), read
+            # on every offset of the section, the back fall too (a miss keeps the lane edge's height, as before)
+            vs_, fs_ = [], []
+            for ob_ in [road] + sorted((o for o in bpy.data.objects if o.type == "MESH" and o.name.startswith("1ROAD_pad_")),
+                                       key=lambda o: o.name):
+                base_ = len(vs_)
+                vs_ += [ob_.matrix_world @ v.co for v in ob_.data.vertices]
+                fs_ += [tuple(base_ + i for i in p.vertices) for p in ob_.data.polygons]
+            bvh = BVHTree.FromPolygons(vs_, fs_)
 
         def road_z(x, y, z_edge):
             """the ROAD surface's height at (x, y), read within LAYER_M of the lane edge's height (L4: no other layer)"""
@@ -157,12 +176,14 @@ def main():
                 Lp, Cp, Rp = row_pts(r)
                 E = Lp if side == 0 else Rp
                 ox, oy = ks.outward_unit((E.x, E.y), (Cp.x, Cp.y))   # outward, across the lane edge
-                d = ks.edge_delta((E.x, E.y), (ox, oy), live)
+                # a run authored ON the ribbon's own lane edge ("edge": "ribbon", tools/race_kerbs.py) has no live edge
+                # to read an offset from: in_m / out_m are offsets from this ribbon's edge itself
+                d = 0.0 if run.get("edge") == "ribbon" else ks.edge_delta((E.x, E.y), (ox, oy), live)
                 off_in = k_in + d
                 sec = []
                 for off, dz in ks.section(off_in, off_in + w, h, paint, KERB_LIP_M, RAMP_IN_M, RAMP_OUT_M, DROP_M):
                     x, y = E.x + ox * off, E.y + oy * off
-                    base = road_z(x, y, E.z) if off < 0.0 else E.z
+                    base = road_z(x, y, E.z) if (off < 0.0 or all_road) else E.z
                     sec.append((x, y, base, dz, (off - off_in) / w))
                 secs.append((sec, d))
                 eds.append((E.x, E.y))
@@ -228,6 +249,8 @@ def main():
                         "edge_delta_m": [round(ds[0], 2), round(ds[len(ds) // 2], 2), round(ds[-1], 2)],
                         "in_vs_ribbon_edge_m": round(k_in + ds[len(ds) // 2], 2),
                         "out_vs_ribbon_edge_m": round(k_in + w + ds[len(ds) // 2], 2)})
+        if run.get("rule"):
+            rec["rule"] = run["rule"]                              # an authored run's rule (tools/race_kerbs.py)
         report.append(rec)
     (data / "kerbs.built.json").write_text(json.dumps(
         {"height_m": h, "placement": "measured" if measured else "outside", "end_ramp_m": end_ramp if measured else None,

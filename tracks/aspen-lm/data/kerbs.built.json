@@ -1,33 +1,68 @@
 {
  "height_m": 0.08,
+ "placement": "measured",
+ "end_ramp_m": 4.0,
+ "road_misses": 0,
  "runs": [
   {
    "k": 0,
    "side": "left",
-   "rows": 10,
-   "length_m": 27.8,
-   "width_m": 1.5
+   "rows": 14,
+   "length_m": 36.7,
+   "width_m": 0.91,
+   "profile": "kerb",
+   "colour": "red_white",
+   "s0": 236.0,
+   "s1": 272.0,
+   "in_m": -1.11,
+   "out_m": -0.2,
+   "edge_delta_m": [
+    -0.18,
+    0.02,
+    0.28
+   ],
+   "in_vs_ribbon_edge_m": -1.09,
+   "out_vs_ribbon_edge_m": -0.18
   },
   {
    "k": 1,
    "side": "right",
-   "rows": 9,
-   "length_m": 24.7,
-   "width_m": 1.5
+   "rows": 21,
+   "length_m": 56.4,
+   "width_m": 1.28,
+   "profile": "kerb",
+   "colour": "red_white",
+   "s0": 820.0,
+   "s1": 874.5,
+   "in_m": -1.68,
+   "out_m": -0.4,
+   "edge_delta_m": [
+    -0.14,
+    0.33,
+    0.62
+   ],
+   "in_vs_ribbon_edge_m": -1.35,
+   "out_vs_ribbon_edge_m": -0.07
   },
   {
    "k": 2,
    "side": "left",
-   "rows": 8,
-   "length_m": 23.2,
-   "width_m": 1.5
-  },
-  {
-   "k": 3,
-   "side": "left",
-   "rows": 25,
-   "length_m": 73.4,
-   "width_m": 1.5
+   "rows": 18,
+   "length_m": 50.5,
+   "width_m": 1.12,
+   "profile": "kerb",
+   "colour": "red_white",
+   "s0": 1026.0,
+   "s1": 1076.0,
+   "in_m": -1.28,
+   "out_m": -0.16,
+   "edge_delta_m": [
+    -1.23,
+    0.05,
+    1.46
+   ],
+   "in_vs_ribbon_edge_m": -1.23,
+   "out_vs_ribbon_edge_m": -0.11
   }
  ]
 }

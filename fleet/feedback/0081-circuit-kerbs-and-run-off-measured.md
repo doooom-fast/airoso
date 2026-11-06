@@ -518,6 +518,15 @@ same file as Aspen's), synced in by its ship.json. Nevada: nothing new (0.1.2 st
       ~3 m at Pueblo R s 1,842 / 2,993 and High Plains R s 2,000): Kevin's drive is the judge of whether a kerb that far in
       reads right (the line's constant 12 m is wider than the asphalt there).
 
+**PC (2026-11-05): 4g and 4i-kerbs rehearsals matched; all four INSTALLED on Kevin's word** ("All six, freeway 2a", asked
+with Nevada's 19.1 MB and Pueblo's 8.01 -> 8.30 kinks said plainly). Each from a fresh real workshop (the 0.1.1 workshops
+moved to `<ws>.0.1.1`), its rehearsal's ENG, every gate green, SHIP OK, no force; each installed kn5 kn5_equiv-equivalent
+to its rehearsal's (tangents only). The 0.1.1 folders are parked in `D:/k10-track-archive/2026-11-05_2219xx-2223xx/`.
+- Nevada Nights 0.1.2 (4b3958f6, ENG eng_nvlm): 19,109,912 B; records 9e2de8e.
+- High Plains 0.1.4 / Aspen 0.1.3 / Pueblo 0.1.2 (f3a93c3f, ENG eng_hplm / eng_aslm / eng_pulm): 15,642,170 /
+  7,848,715 / 10,742,723 B; records with this note. 4g's High Plains 0.1.3 / Aspen 0.1.2 were never installed.
+- Not driven yet; step 3 (Kevin's drive) is open.
+
 ## Owed (start here)
 
 (Rewritten at round 3's end; round 2's list is done or carried here.)

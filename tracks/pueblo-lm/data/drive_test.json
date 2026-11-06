@@ -24,7 +24,7 @@
    "severe_steps": 0,
    "severe_per_km": 0.0,
    "steps_per_km": 0.29,
-   "kinks_per_km": 8.01,
+   "kinks_per_km": 8.3,
    "file": "drive_test.full.json"
   }
  },

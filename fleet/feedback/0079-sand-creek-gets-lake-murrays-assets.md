@@ -1508,6 +1508,22 @@ prep_v4's built OBJs). The live config is still 0.2.5. Every number: GATES-CHANG
   at the S. The fix is the surface: 48th_colorado's measured deck (owed, its round D reasons) replaces the ribbon there,
   as colorado_50th's does at v140, where the same survey passes.
 
+### Item 2 (v779's 6 readings, outside every fan): DIAGNOSED on the built mesh — the inside race kerb's lip read twice, not a step
+- Where: s 2321-2331, lat −19.18, rows 777-781 — the inside of a 26 m corner on 42.3 m of pavement (dahlia_56th, the
+  parked pad; race lane ±20.33). Readings 0.070-0.128 m (probe `scratchpad/rn/v779.py`, rm1's built track.race.obj
+  in rn_ff).
+- **What they are.** drive_test's fixed-offset point at −19.18 m moves forward 1 m per station along each centreline
+  segment (the normal is fixed within it) and jumps BACK 1.2-1.4 m at each vertex (19.18 m × the 6.5° turn). So the
+  path zig-zags over the same 2 m of plan, crossing the edge of the inside race kerb `1KERB_race_779_in` up and down:
+  station heights alternate kerb 7.36-7.38 / road 7.29-7.32. One second difference then spans the kerb's lip (built
+  0.040 m median, 0.042 max over the road under it) both ways: 0.07-0.13 m.
+- **The surface does not step.** verify_fold_fans' real arc-length wheel paths over rows 764-794 (163 paths across the
+  whole race lane, every 0.05 m; `scratchpad/rn/v779_vff.py`): 0 paths with a step, fine max 0, DT max 0.011 m off the
+  kerb, race-kerb lip max 0.043 m (its 0.055 allowance), no road jumps, no steep road triangles. Nothing to fix.
+- The same mechanism makes s 413 / 418 at v140 (forward samples at −14.48, crossing `1KERB_race_140_in`, lip ~0.05 m;
+  the chord survey over rows 122-154 passes there) and the 13 fan readings no judged path reaches (item 1). The race
+  drive_test does not gate severe; these stay counted, now named.
+
 ## Owed (2026-11-05, after round M; start here)
 
 1. **The closure** — Kevin's call (pending): Lake Murray's 11.36 m lane with closure walls on the >= 15.67 m streets

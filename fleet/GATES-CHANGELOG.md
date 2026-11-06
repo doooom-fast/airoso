@@ -14,6 +14,46 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
+## 2026-11-06 — NEW GATE (opt-in): `kn5_textures`, every texture a built kn5's materials name is embedded (ledger 0082 pass 2)
+
+**Why.** The PC's first rehearsal of Milford 0.1.1 (ledger 0082-1, run 1) built a road kn5 of 40,611,042 B, 35,910 B
+short of the Mac's: five textures (`ghost_alpha.png` on the four `1WALL_GHOST_RAIL_*` colliders, `wbeam_rail_diffuse.png`,
+`metal_wall_diffuse.jpg`, `metal_wall_normal.jpg`, `roof_tan_diffuse.jpg`) were named by its materials and not
+embedded, because ENG lacked airoso's `assets/textures`. drive_test, audit_mesh, verify_kn5, kn5_ground_check and
+house_seat all passed. In AC the ghost colliders would likely have shown as solid walls. Only the byte count caught it.
+
+**What.** `tools/kn5_textures.py <kn5 | dir> [--recursive] [--json]`, read-only on the built kn5 (L5): its texture section
+and its materials' texture maps. **FAIL** (exit 1) on any map whose name is not an embedded texture's (exact; a
+case-only match is listed and still fails), any empty map, any zero-byte texture; exit 2 on an input error; unused
+textures are reported only. **No threshold**: a texture is embedded or it is not.
+
+**Wiring: opt-in.** `tools/ship_track.sh` `gate_kn5_textures` runs it on `$PROJ/build/*.kn5` (the shipped kn5s, not the
+track-folder copies) and writes `data/kn5_textures.json`; hard, like `house_seat`. Only a ship.json that names it runs
+it: **`tracks/milford-road-course-lm` alone** (`tests/tools/test_kn5_textures.py::test_the_gate_is_opt_in`). It is not
+fleet-wide until the PC has run it on every installed track's kn5s (ledger 0082 runbook 0082-2 step 5): the Mac has no
+Lake Murray build to prove it on.
+
+**Proven.** On Milford c2's road kn5 (0.1.1, 40,646,952 B): PASS, 20 textures, 34 materials, 48 maps, none missing. On
+b0 (0.1.0): PASS, 14 / 22 / 35. On a copy of c2's kn5 with those five textures cut from its texture section (materials
+untouched): **40,611,042 B, the PC's run-1 size to the byte, FAIL** with exactly the five names and their materials. On
+synthetic kn5s (version 5 and 6): whole, a texture dropped, a case-only match, an empty map, a zero-byte texture, a
+non-kn5 (`tests/tools/test_kn5_textures.py`, 6 tests).
+
+## 2026-11-06 — Milford furniture pass 2's numbers (ledger 0082; no gate threshold moved, no bypass)
+
+New opt-in `rails` kind `screen` in `tools/author_bespoke_blend.py` (`1WALL_TILTUP_SCREEN_<k>`: a collider, the stock
+tilt-up row); only Milford names it. **The 2017-05-03 lidar predates Milford's rails and tyre walls** (no return 0.35-1.6
+m over the ground on any of their lines; `tracks/milford-road-course-lm/source/lidar/README.md`), so every pass-1 number
+below stays ⚠ [invented]: the W-beam's 0.70 m, the tyres' 1.0 m, the sheds' 2.6 m (outside the 45 m read).
+
+| number | value | source |
+|---|---|---|
+| F1 screen top over the ground, three pieces | 4.06 / 3.54 / 3.18 m | **measured**: the median of the p90 top per 4 m bin, 3DEP lidar 2017 (`source/lidar/f1.json`) |
+| F1's line | the fitted line through its own returns | **measured** (lidar), 197 m inside the read |
+| screen kind: panel, thickness | 4.0 m, 0.20 m | ⚠ [invented]: QL2 lidar resolves neither |
+| screen kind: default height | none | an entry without a measured `height_m` is refused |
+| screen feet | under the whole ground triangle (`down_low`), capped `FOOT_MAX_M` 2.0 m | ⚠ [invented] cap, as pass 1's tyres |
+
 ## 2026-11-06 — Milford furniture pass 1's authored numbers (ledger 0082; no gate threshold moved, no bypass)
 
 New opt-in `rails` kinds in `tools/author_bespoke_blend.py`; only `tracks/milford-road-course-lm` names them

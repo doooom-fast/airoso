@@ -36,6 +36,7 @@
       "drive_test_street",
       "audit_street",
       "kn5_ground",
+      "kn5_textures",
       "house_seat",
       "edge_report"
     ]
@@ -71,6 +72,7 @@
       "data/drive_test.{id}.json",
       "data/audit.json",
       "data/kn5_ground_check.{id}.json",
+      "data/kn5_textures.json",
       "data/house_seat_check.json",
       "data/edge_report.json",
       "data/kerbs.built.json"
@@ -84,5 +86,6 @@
     "dirs": [
       "ai/{id}"
     ]
-  }
+  },
+  "_gate_doc": "ledger 0082 pass 2: kn5_textures (opt-in, this track only so far): every texture the built kn5s' materials name must be embedded (tools/kn5_textures.py). The PC's 0082-1 run 1 shipped five textures short and passed every other gate"
 }

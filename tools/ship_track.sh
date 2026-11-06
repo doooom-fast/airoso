@@ -660,6 +660,14 @@ gate_rib_check() {
   step "gate: terrain ribbing on the built ground (tools/rib_check.py: sub-cell features folded into staircases — hard)"
   (cd "$AIROSO" && python tools/rib_check.py "$PROJ" --json "$PROJ/data/rib_check.json")
 }
+gate_kn5_textures() {
+  # ledger 0082 pass 2 (opt-in: only a ship.json that names it runs it): every texture the built kn5s' materials name is
+  # embedded in them. The PC's first rehearsal of Milford 0.1.1 shipped a road kn5 five textures short (ENG without
+  # airoso's assets/textures) and every other gate passed; only the byte count caught it. Hard: exit 1 stops the chain
+  step "gate: every texture the built kn5s' materials name is embedded (tools/kn5_textures.py; ledger 0082 — hard)"
+  rm -f "$PROJ/data/kn5_textures.json"
+  (cd "$AIROSO" && python tools/kn5_textures.py "$PROJ/build" --json "$PROJ/data/kn5_textures.json")
+}
 gate_house_seat() {
   step "gate: houses on the built ground (tools/house_seat_check.py: floating, sunken or buried buildings — hard)"
   (cd "$AIROSO" && python tools/house_seat_check.py "$PROJ" --json "$PROJ/data/house_seat_check.json")

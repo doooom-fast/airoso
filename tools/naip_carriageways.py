@@ -460,34 +460,36 @@ def _asm_smooth(pts, sigma, passes):
     return [tuple(q) for q in sm.smooth_centerline([tuple(q) for q in pts], sigma_pts=sigma, passes=passes)]
 
 
-def clear_of_barrier(pts, widths, barriers, sigma, passes):
-    """Narrow ``widths`` where the swept (smoothed) ribbon's edge would stand within BARRIER_BASE_M / 2 +
-    BARRIER_CLEAR_M of a barrier run. Returns (widths, vertices narrowed, the largest cut)."""
-    sp = np.asarray([(q[0], q[2]) for q in _asm_smooth(pts, sigma, passes)], float)
-    w = np.asarray(widths, float).copy()
-    need = BARRIER_BASE_M / 2.0 + BARRIER_CLEAR_M
-    segs = np.asarray([(a[0], a[1], b[0], b[1]) for br in barriers for a, b in zip(br["xz"], br["xz"][1:])], float)
-    if not len(segs):
-        return w, 0, 0.0
+# ledger 0080 2a round 4: round 3's cut was symmetric (both edges in, about the smoothed centre), so the OUTER edge, which
+# no barrier touches, moved in by the same amount: the line's gated excursions went 10 -> 16, outer-side ledges coming
+# inside drive_test's 4 m band. Now only the barrier side's edge comes in: the vertex's centre moves away from the barrier
+# by half the cut and its width loses the cut, so the outer edge stays where NAIP measured it. The cut is found on the
+# assembler's own smoothing of the moved line, and re-found after each move (the smoothing of a moved line moves it
+# again), at most CLEAR_ITER times; each side's cut ramps in and out at the width_taper rate along the line.
+CLEAR_ITER = 6           # [invented] re-predictions of the swept edge after each move
+
+
+def _cuts(sp, w, segs, need):
+    """Per vertex, per side (left +1, right -1): how far the swept edge must come in to stand ``need`` off every
+    barrier segment (the edge at the vertex and the chords' midpoints to its neighbours, cut back 0.05 m at a time)."""
     n = len(sp)
     t = np.zeros((n, 2))
     t[1:-1] = sp[2:] - sp[:-2]
     t[0], t[-1] = sp[1] - sp[0], sp[-1] - sp[-2]
     t /= np.maximum(np.linalg.norm(t, axis=1), 1e-9)[:, None]
     nrm = np.stack([-t[:, 1], t[:, 0]], axis=1)
+    ax, az, bx, bz = segs.T
+    dx, dz = bx - ax, bz - az
+    L2 = np.maximum(dx * dx + dz * dz, 1e-12)
 
     def dist(q):
-        ax, az, bx, bz = segs.T
-        dx, dz = bx - ax, bz - az
-        L2 = np.maximum(dx * dx + dz * dz, 1e-12)
         u = np.clip(((q[0] - ax) * dx + (q[1] - az) * dz) / L2, 0.0, 1.0)
         return float(np.min(np.hypot(q[0] - ax - u * dx, q[1] - az - u * dz)))
 
-    cap = np.full(n, np.inf)
+    cut = {1.0: np.zeros(n), -1.0: np.zeros(n)}
     for i in range(n):
         for sg in (1.0, -1.0):
             hw = w[i] / 2.0
-            # the edge at this vertex and the chords' midpoints to its neighbours, cut back 0.05 m at a time
             while hw > 0.5:
                 pts_e = [sp[i] + sg * hw * nrm[i]]
                 for j in (i - 1, i + 1):
@@ -496,16 +498,55 @@ def clear_of_barrier(pts, widths, barriers, sigma, passes):
                 if min(dist(q) for q in pts_e) >= need:
                     break
                 hw -= 0.05
-            if hw < w[i] / 2.0:
-                cap[i] = min(cap[i], 2.0 * hw)
-    s = np.concatenate([[0.0], np.cumsum(np.hypot(*np.diff(sp, axis=0).T))])
-    for i in range(1, n):
-        cap[i] = min(cap[i], cap[i - 1] + 2 * RATE_M_PER_M * (s[i] - s[i - 1]))
-    for i in range(n - 2, -1, -1):
-        cap[i] = min(cap[i], cap[i + 1] + 2 * RATE_M_PER_M * (s[i + 1] - s[i]))
-    new = np.minimum(w, cap)
-    cut = w - new
-    return new, int((cut > 1e-6).sum()), float(cut.max()) if len(cut) else 0.0
+            cut[sg][i] = w[i] / 2.0 - hw
+    return cut, nrm
+
+
+def clear_of_barrier(pts, widths, barriers, sigma, passes):
+    """Bring the barrier side's edge in where the swept (smoothed) ribbon's edge would stand within BARRIER_BASE_M / 2 +
+    BARRIER_CLEAR_M of a barrier run, keeping the other edge: the vertex moves away from the barrier by half the cut and
+    loses the cut from its width. Returns (points, widths, vertices moved, the largest cut, predictions made)."""
+    P = np.asarray(pts, float)
+    w0 = np.asarray(widths, float)
+    need = BARRIER_BASE_M / 2.0 + BARRIER_CLEAR_M
+    segs = np.asarray([(a[0], a[1], b[0], b[1]) for br in barriers for a, b in zip(br["xz"], br["xz"][1:])], float)
+    if not len(segs):
+        return [list(map(float, q)) for q in pts], w0, 0, 0.0, 0
+    n = len(P)
+    total = {1.0: np.zeros(n), -1.0: np.zeros(n)}
+    # the raw line's own normals: the move is made on the raw vertices the assembler smooths
+    xz = P[:, [0, 2]]
+    t = np.zeros((n, 2))
+    t[1:-1] = xz[2:] - xz[:-2]
+    t[0], t[-1] = xz[1] - xz[0], xz[-1] - xz[-2]
+    t /= np.maximum(np.linalg.norm(t, axis=1), 1e-9)[:, None]
+    nraw = np.stack([-t[:, 1], t[:, 0]], axis=1)
+    s = np.concatenate([[0.0], np.cumsum(np.hypot(*np.diff(xz, axis=0).T))])
+
+    def moved():
+        c = (total[-1.0] - total[1.0]) / 2.0
+        Q = P.copy()
+        Q[:, 0] += c * nraw[:, 0]
+        Q[:, 2] += c * nraw[:, 1]
+        return Q, w0 - total[1.0] - total[-1.0]
+    it = 0
+    for it in range(1, CLEAR_ITER + 1):
+        Q, w = moved()
+        sp = np.asarray([(q[0], q[2]) for q in _asm_smooth([tuple(q) for q in Q], sigma, passes)], float)
+        cut, _nrm = _cuts(sp, w, segs, need)
+        if max(cut[1.0].max(), cut[-1.0].max()) < 0.01:
+            break
+        for sg in (1.0, -1.0):
+            c = total[sg] + cut[sg]
+            for i in range(1, n):                     # ramp in and out at the width_taper rate
+                c[i] = max(c[i], c[i - 1] - RATE_M_PER_M * (s[i] - s[i - 1]))
+            for i in range(n - 2, -1, -1):
+                c[i] = max(c[i], c[i + 1] - RATE_M_PER_M * (s[i + 1] - s[i]))
+            total[sg] = np.minimum(c, w0 / 2.0 - 0.5)
+    Q, w = moved()
+    cutall = total[1.0] + total[-1.0]
+    return ([[round(float(q[0]), 3), float(q[1]), round(float(q[2]), 3)] for q in Q], w, int((cutall > 1e-6).sum()),
+            float(cutall.max()) if n else 0.0, it)
 
 
 def overlap_report(line, partners):
@@ -561,7 +602,7 @@ def main(argv=None):
            "params": {k: globals()[k] for k in ("STEP_M", "SAMPLE_M", "SCAN_M", "VEG_NDVI", "PAVE_NDVI", "PAVE_SAT",
                                                    "PAVE_MIN", "BREAK_M", "BARRIER_DELTA", "BARRIER_BAND_M", "PAIR_M",
                                                    "REACH_M", "OUT_LO_M", "OUT_HI_M", "SMOOTH_N", "FILL_M",
-                                                   "MIN_BARRIER_M", "BARRIER_CLEAR_M", "SMOOTH_V")},
+                                                   "MIN_BARRIER_M", "BARRIER_CLEAR_M", "SMOOTH_V", "CLEAR_ITER")},
            "_invented": "every params value: tuning of a colour reader (fleet/GATES-CHANGELOG.md 2026-11-05, 2a)",
            "barrier": {"type": "Caltrans Concrete Barrier Type 60 (Standard Plans A76A)", "height_m": BARRIER_H_M,
                        "base_m": BARRIER_BASE_M, "top_m": BARRIER_TOP_M, "face_deg_from_vertical": 9.1},
@@ -572,15 +613,29 @@ def main(argv=None):
         S, edges, stats = edges_of(rows[name], lines[name]["W"])
         npts, nw, nbar, c = apply(pts, widths, S, edges, lines[name], barriers if name != "line" or True else [], rows[name])
         sig, pas = line_smooth if name == "line" else CONN_SMOOTH
-        nw_c, n_cut, max_cut = clear_of_barrier(npts, nw, barriers, sig, pas)
+        npts, nw_c, n_cut, max_cut, n_it = clear_of_barrier(npts, nw, barriers, sig, pas)
         nw = [round(float(x), 3) for x in nw_c]
+        # ledger 0080 2a round 4: an open carriageway's END row is never narrower than the row beside it. drive_test
+        # judges the stretch from a row to the next with the NEXT row's width, so at the line's west end (s 0-25 unread,
+        # the draft's 7.16 m widened toward the first reading at s 30 at the taper rate: 10.98, 11.95, 12.95 ...) the
+        # outer wheel path at s 0 stood 0.09 m past the end row's edge, on the ground (ws15/ws16: soft top 1). The end
+        # row takes its neighbour's width (wider only; the widening is in the report); nothing else moves.
+        ends = {}
+        if not (name == "line" and line.get("loop")):
+            for e, nb in ((0, 1), (len(nw) - 1, len(nw) - 2)):
+                if len(nw) > 1 and nw[e] < nw[nb]:
+                    ends[e] = round(nw[nb] - nw[e], 3)
+                    nw[e] = nw[nb]
         if n_cut:
-            print(f"[naip_carriageways] {name}: {n_cut} vertices narrowed (max {max_cut:.2f} m) so the swept edge stands "
-                  f"{BARRIER_CLEAR_M} m off the barrier's foot (the assembler's smoothing, sigma {sig}, {pas} pass(es))")
+            print(f"[naip_carriageways] {name}: {n_cut} vertices' barrier-side edge brought in (max {max_cut:.2f} m, the "
+                  f"outer edge kept) so the swept edge stands {BARRIER_CLEAR_M} m off the barrier's foot (the assembler's "
+                  f"smoothing, sigma {sig}, {pas} pass(es); {n_it} prediction(s))")
         dw = np.asarray(nw) - np.asarray(widths, float)
         rep["carriageways"][name] = {**stats, "stations": len(S), "vertices_on_a_barrier": nbar,
                                      "narrowed_clear_of_barrier": {"vertices": n_cut, "max_m": round(max_cut, 3),
-                                                                   "smoothing": [sig, pas]},
+                                                                   "smoothing": [sig, pas], "side": "barrier side only",
+                                                                   "predictions": n_it},
+                                     "end_rows_widened_m": {str(k): v for k, v in ends.items()},
                                      "shift_m_p5_p50_p95": [round(float(np.percentile(c, q)), 2) for q in (5, 50, 95)],
                                      "width_minus_draft_m_p5_p50_p95": [round(float(np.percentile(dw, q)), 2) for q in (5, 50, 95)],
                                      "width_m_min_max": [round(min(nw), 2), round(max(nw), 2)],

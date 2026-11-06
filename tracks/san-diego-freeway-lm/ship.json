@@ -63,7 +63,8 @@
       "data/connectors.local.json",
       "data/drive_lines.network.json",
       "data/drive_test.network.json",
-      "data/median_barrier.built.json"
+      "data/median_barrier.built.json",
+      "data/median_ground.built.json"
     ],
     "map": [
       [

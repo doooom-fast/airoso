@@ -114,6 +114,77 @@ class _Fascia:
         return n
 
 
+# ledger 0080 2a round 4: the deck's edge UNDER and behind each rail. build_guardrails draws a bridge rail as a panel
+# GUARDRAIL_SET_M (0.15 m) outside the pavement's edge, "on the curb's top" (Lake Murray's wide sidewalk); the freeway's
+# edge strip is 0.1 m (curb_face_w + connector_sidewalk_w), so on every port deck the panel stood 0.05 m past the last
+# built surface, over the ground: drive_test read the drop between the pavement and the rail as unguarded (the line's
+# deck-station excursions at s 1,201 / 3,154 / 3,304 / 3,454 / 6,604 / 6,754 / 7,202, both sides; WB s 7,052's 3.13 m)
+# and a panel over a void as floating (WB deck [1811, 1831], 0.9-1.1 m; the lidar reads that deck 8 m over the ground
+# between two parallel bridges). A real bridge rail stands ON the deck, which runs out under it to the barrier's outer
+# face. So each rail row gets the deck slab's edge: from DECK_EDGE_IN_M inside the row's own pavement edge out to
+# DECK_EDGE_M past the panel, just under the pavement's edge height (1KERB_SIDEWALK_DECK: concrete, collidable). Not laid
+# where another carriageway's pavement is under that outer edge, or where the column was carried down a fascia (there the
+# deck's edge girder face meets the lower carriageway: round 3).
+DECK_EDGE_M = 0.40      # [invented] the deck past the rail panel: a bridge barrier's base (0.3-0.5 m), not measured here
+DECK_EDGE_IN_M = 0.10   # [invented] the slab's inner edge tucked under the pavement's edge (no gap at a flare's chord)
+DECK_EDGE_DY_M = 0.03   # [invented] the slab's top under the pavement's edge height (never over the pavement)
+DECK_EDGE_NAME = "1KERB_SIDEWALK_DECK"
+
+
+def deck_edges(asm, centerline, widths, wr, stretch, g, road_y, set_m, *, over=22.0, pad=3):
+    """The deck-edge slab beside each rail row build_guardrails laid for ``stretch`` (its own run / mask logic, so
+    row k here is column k of ``g``). Returns ({vertices, tris}, rows laid, rows skipped)."""
+    on = [(asm["_i8_nearest"](stretch, p[0], p[2])[0] < over) for p in centerline]
+    mask = [any(on[max(0, k - pad):k + pad + 1]) for k in range(len(on))]
+
+    def perp(i):
+        a = centerline[max(0, i - 1)]; b = centerline[min(len(centerline) - 1, i + 1)]
+        ex, ez = b[0] - a[0], b[2] - a[2]; L = math.hypot(ex, ez) or 1.0
+        return (-ez / L, ex / L)
+    runs, i = [], 0
+    while i < len(mask):
+        if mask[i]:
+            j = i
+            while j + 1 < len(mask) and mask[j + 1]:
+                j += 1
+            runs.append((i, j)); i = j + 1
+        else:
+            i += 1
+    verts, tris = [], []
+    col = 0
+    laid = skipped = 0
+    gv = g["vertices"]
+    for a, b in runs:
+        for side in (1, -1):
+            rows = []
+            for k in range(a, b + 1):
+                x, y, z = centerline[k]; px, pz = perp(k)
+                foot = gv[2 * col]
+                col += 1
+                lowered = abs(foot[1] - y) > 1e-6          # carried down a fascia (round 3)
+                hin, hout = widths[k] / 2 - DECK_EDGE_IN_M, wr[k] / 2 + set_m + DECK_EDGE_M
+                xi, zi = x + px * side * hin, z + pz * side * hin
+                xo, zo = x + px * side * hout, z + pz * side * hout
+                ey = road_y(x + px * side * (widths[k] / 2 - 0.05), z + pz * side * (widths[k] / 2 - 0.05), y + 1.0)
+                ey = (y if ey is None or abs(ey - y) > 0.5 else ey) - DECK_EDGE_DY_M
+                other = road_y(xo, zo, ey + 0.5)
+                ok = not lowered and (other is None or ey - other > 3.0)
+                rows.append((ok, (xi, ey, zi), (xo, ey, zo)))
+            for m in range(len(rows) - 1):
+                (ok0, i0, o0), (ok1, i1, o1) = rows[m], rows[m + 1]
+                if not (ok0 and ok1):
+                    skipped += 1
+                    continue
+                v = len(verts)
+                verts += [i0, o0, i1, o1]
+                # face up in local (x E, y up, z N) before make_mesh's reflection; the prep turns any down face up
+                tris.append((v, v + 1, v + 3)); tris.append((v, v + 3, v + 2))
+                laid += 1
+    if col * 2 != len(gv):
+        raise SystemExit(f"[deck-rails] FATAL: the deck edge read {col} rail columns, build_guardrails laid {len(gv) // 2}")
+    return {"vertices": verts, "uvs": [], "tris": tris}, laid, skipped
+
+
 def main():
     proj = Path(sys.argv[sys.argv.index("--") + 1]).resolve()
     data = proj / "data"
@@ -138,8 +209,17 @@ def main():
     # the rail stands outside the pavement over the whole flare (at most one row's widening further out)
     wr = [max(widths[max(0, k - 1):k + 2]) for k in range(len(widths))]
     asm = _assembler("_i8_nearest", "build_guardrails", "GUARDRAIL_SET_M", "make_mesh")
+    set_m = asm["GUARDRAIL_SET_M"]
     out = {"vertices": [], "uvs": [], "tris": []}
+    edge = {"vertices": [], "uvs": [], "tris": []}
     rows = []
+    bpy.ops.wm.open_mainfile(filepath=str(proj / "loop.blend"))
+    fascia = _Fascia()
+
+    def add(dst, m):
+        off = len(dst["vertices"])
+        dst["vertices"] += m["vertices"]
+        dst["tris"] += [(p + off, q + off, r + off) for p, q, r in m["tris"]]
     for c, ln in decks:
         a, b = float(c) - float(ln) / 2.0, float(c) + float(ln) / 2.0
         idx = [i for i, s in enumerate(st) if a <= s <= b]
@@ -148,14 +228,13 @@ def main():
             continue
         stretch = [cl[i] for i in idx]
         g = asm["build_guardrails"](cl, wr, stretch)
-        off = len(out["vertices"])
-        out["vertices"] += g["vertices"]
-        out["tris"] += [(p + off, q + off, r + off) for p, q, r in g["tris"]]
-        rows.append({"center_m": c, "len_m": ln, "panels": len(g["tris"]) // 4})
+        add(out, g)
+        de, laid, skip = deck_edges(asm, cl, widths, wr, stretch, g, fascia._road_y, set_m)
+        add(edge, de)
+        rows.append({"center_m": c, "len_m": ln, "panels": len(g["tris"]) // 4, "deck_edge_panels": laid,
+                     "deck_edge_skipped": skip})
     # ledger 0080 phase 2: each network connector's decks (tools/network_connectors.py decks_all: measured or levelled),
     # the same call on the connector as the assembler sweeps it (its smoothed points, its widths widest-of-three)
-    bpy.ops.wm.open_mainfile(filepath=str(proj / "loop.blend"))
-    fascia = _Fascia() if net else None
     for name, cpts, cw, ranges in net:
         cwr = [max(cw[max(0, k - 1):k + 2]) for k in range(len(cw))]
         for a, b in ranges:
@@ -164,21 +243,30 @@ def main():
                 continue
             g = asm["build_guardrails"](cpts, cwr, stretch)
             nf = fascia.lower(g["vertices"])
-            off = len(out["vertices"])
-            out["vertices"] += g["vertices"]
-            out["tris"] += [(p + off, q + off, r + off) for p, q, r in g["tris"]]
+            add(out, g)
+            de, laid, skip = deck_edges(asm, cpts, cw, cwr, stretch, g, fascia._road_y, set_m)
+            add(edge, de)
             rows.append({"connector": name, "vertices": [a, b], "panels": len(g["tris"]) // 4,
-                         "fascia_columns": nf})
+                         "fascia_columns": nf, "deck_edge_panels": laid, "deck_edge_skipped": skip})
     old = bpy.data.objects.get("GUARDRAIL")
     if old is not None:
         raise SystemExit("[deck-rails] FATAL: loop.blend already has a GUARDRAIL (the assembler's I-8 rails): not a port")
+    if bpy.data.objects.get(DECK_EDGE_NAME) is not None:
+        raise SystemExit(f"[deck-rails] FATAL: loop.blend already has {DECK_EDGE_NAME}")
     asm["make_mesh"]("GUARDRAIL", out, (0.82, 0.82, 0.86, 1.0))
+    if edge["tris"]:
+        asm["make_mesh"](DECK_EDGE_NAME, edge, (0.66, 0.66, 0.64, 1.0))
     bpy.ops.wm.save_as_mainfile(filepath=str(proj / "loop.blend"))
     (data / "deck_rails.json").write_text(json.dumps({"tool": "tools/deck_rails_blend.py", "ledger": "0080",
-                                                      "height_m": 0.95, "set_m": asm["GUARDRAIL_SET_M"],
+                                                      "height_m": 0.95, "set_m": set_m,
+                                                      "deck_edge": {"mesh": DECK_EDGE_NAME, "past_rail_m": DECK_EDGE_M,
+                                                                    "under_edge_m": DECK_EDGE_IN_M,
+                                                                    "below_edge_m": DECK_EDGE_DY_M},
                                                       "decks": rows}, indent=1), encoding="utf-8")
     print(f"[deck-rails] {sum(r['panels'] for r in rows)} rail panels on {len(decks)} declared deck(s) "
-          f"(Lake Murray's build_guardrails, 0.95 m, set {asm['GUARDRAIL_SET_M']} m): saved loop.blend")
+          f"(Lake Murray's build_guardrails, 0.95 m, set {set_m} m); the deck's edge under them: "
+          f"{sum(r.get('deck_edge_panels', 0) for r in rows)} panels laid, "
+          f"{sum(r.get('deck_edge_skipped', 0) for r in rows)} skipped (a fascia / another pavement): saved loop.blend")
 
 
 main()

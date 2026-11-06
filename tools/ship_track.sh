@@ -500,6 +500,14 @@ prep_prep() {
     step "ship: a point-to-point stage's start, splits and finish on the prepped scene (tools/stage_dummies_blend.py; self-checked)"
     "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/stage_dummies_blend.py" -- "$PROJ/blender/$SLUG.blend" --project "$PROJ" 2>&1 | grep "^\[stage-dummies\]\|FATAL\|Error\|Traceback"
   fi
+  # ledger 0080 2a round 4: the median ground between two carriageways at different heights, as the lidar shows it, on the
+  # PREPPED scene (the prep's pin would undo it); only a track whose config names lm_intake.median_barrier_file (the SD
+  # freeway port), no header otherwise: Lake Murray's chain is unchanged. Part of prep (steps.prep stays prep, split)
+  rm -f "$PROJ/data/median_ground.built.json"
+  if [ -n "$(pyq "import json,sys; print((json.load(open(sys.argv[1],encoding='utf-8')).get('lm_intake') or {}).get('median_barrier_file') or '')" "$PROJ/track.config.json" | tr -d '\r')" ]; then
+    step "ship: the median ground where the carriageways' heights differ (tools/median_ground_blend.py; ledger 0080 2a)"
+    "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/median_ground_blend.py" -- "$PROJ/blender/$SLUG.blend" --project "$PROJ" 2>&1 | grep "^\[median-ground\]\|FATAL\|Error\|Traceback"
+  fi
   rm -f "$PROJ/data/terrain_thin.json" "$PROJ/data/terrain_thin.nodes.json.gz"
   if [ -f "$PROJ/data/terrain.tiers.json.gz" ]; then
     step "ship: thin the terrain, every vertex where the chain put it (tools/thin_terrain_blend.py; self-checked)"

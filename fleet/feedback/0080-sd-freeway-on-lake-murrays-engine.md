@@ -626,7 +626,7 @@ waited for `pgrep -x Blender` to be empty.
 
 Supersedes 0080-5 (which matched ws19 on the PC). No lidar or NAIP is needed: every generated input is committed.
 
-1. `git fetch && git worktree add D:/k10-worktrees/freeway-lm-2a5 <round 5 HEAD>`
+1. `git fetch && git worktree add D:/k10-worktrees/freeway-lm-2a5 c3c988b9`
 2. `SHIP_PROJ=D:/k10-scratch/fwlm_2a5 AIROSO=D:/k10-worktrees/freeway-lm-2a5 ENG=D:/k10-scratch/eng_fwlm bash
    tools/ship_track.sh san-diego-freeway-lm --no-install`
 3. Expect ws27's column: line drive_test PASS (excursions 4), WB line gate PASS (24, 2.27 / km), audit CLEAN, verify_kn5 /

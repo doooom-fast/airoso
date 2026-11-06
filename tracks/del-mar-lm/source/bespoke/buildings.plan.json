@@ -12,5 +12,7 @@
  "tag_class": {"stable": "shed", "grandstand": "commercial", "pavilion": "canopy",
                "_doc": "the tags TAG_CLASS lacks: building=stable is the barn rows north of the lap (long low gables on the NAIP), building=grandstand the racetrack's grandstand (OSM building:levels 6; flat-roofed, as commercial), building=pavilion an open-sided show-ring roof (left out as a canopy: the pipeline has no open-sided form)"},
  "house_skin": "stucco",
- "shadow": {"enabled": true, "max_m": 60}
+ "shadow": {"enabled": true, "max_m": 60},
+ "lidar": {"file": "source/bespoke/buildings.lidar.json",
+           "_doc": "pass 2 (ledger 0083): roofs and ground MEASURED off USGS 3DEP lidar CA_SanDiegoCo_D24 (flown 2024-11-09; tiles 11SMS475648 and 11SMS476648, Kevin's go 2026-11-06) by tools/lidar_building_heights.py, run on this plan's output without this key; the Grand Stand (osm116794621) stands as its measured tiers. Off the two tiles, the class default stays [invented]."}
 }

@@ -1,0 +1,41 @@
+{
+  "_doc": [
+    "What is installed in Assetto Corsa on the PC, folder by folder: the record tools/ac_tidy.py classifies content/tracks against (Kevin 2026-11-06: 'we need a routine on the PC that keeps AC clean and up-to-date').",
+    "role: current (the build Kevin last installed for that track) | kept (an older copy Kevin chose to keep beside its successor) | superseded (an older copy whose successor is installed: the tidy plan moves it on Kevin's yes) | k10-era (a k10 build with a doooom successor).",
+    "branch: where the track's next build lands; ac_tidy flags 'newer' when tracks/<track>/track.config.json there has a higher version than installed (an offer: installs stay on Kevin's word).",
+    "After every install: python tools/ac_tidy.py record <folder> --track <track> --branch <branch> --sha <sha> [--engine lm-v4], then commit this file with the install records.",
+    "Folders not listed here and not ours (no doooom / airoso / k10 author or name) are Kunos and third-party tracks: never touched."
+  ],
+  "ac_tracks": "D:/SteamLibrary/steamapps/common/assettocorsa/content/tracks",
+  "archive": "D:/k10-track-archive",
+  "ours": {
+    "authors": ["doooom", "airoso", "k10-san-diego"],
+    "name_prefixes": ["doooom", "K10"]
+  },
+  "folders": {
+    "aspen_motorsports_park": {"track": "aspen", "engine": "original", "role": "superseded", "successor": "aspen_motorsports_park_lm", "version": "0.67.1", "branch": "main", "installed": "2026-11-03"},
+    "aspen_motorsports_park_lm": {"track": "aspen-lm", "engine": "lm-v4", "role": "current", "version": "0.1.3", "branch": "claude/circuit-kerbs-lm", "sha": "f3a93c3f", "installed": "2026-11-05"},
+    "del_mar_fairgrounds": {"track": "del-mar", "engine": "original", "role": "current", "version": "0.1.0", "branch": "claude/del-mar-source", "sha": "5611cdd", "installed": "2026-11-01", "note": "estimated 1987-92 layout (ledger 0064); kn5 md5 d924754d, built at 7331e1d"},
+    "exotics_racing_lvms": {"track": "exotics-racing-lv", "engine": "original", "role": "superseded", "successor": "exotics_racing_lvms_lm", "version": "0.8.0", "branch": "main", "installed": "2026-11-03"},
+    "exotics_racing_lvms_lm": {"track": "exotics-racing-lv-lm", "engine": "lm-v4", "role": "current", "version": "0.1.2", "branch": "claude/circuit-kerbs-lm", "sha": "4b3958f6", "installed": "2026-11-05"},
+    "grand_junction": {"track": "grand-junction", "engine": "original", "role": "superseded", "successor": "grand_junction_lm", "version": "0.3.0", "branch": "main", "installed": "2026-11-03"},
+    "grand_junction_lm": {"track": "grand-junction-lm", "engine": "lm-v4", "role": "current", "version": "0.1.1", "branch": "claude/circuit-kerbs-lm", "installed": "2026-11-04"},
+    "high_plains": {"track": "high-plains", "engine": "original", "role": "superseded", "successor": "high_plains_lm", "version": "0.72.1", "branch": "main", "installed": "2026-11-03"},
+    "high_plains_lm": {"track": "high-plains-lm", "engine": "lm-v4", "role": "current", "version": "0.1.4", "branch": "claude/circuit-kerbs-lm", "sha": "f3a93c3f", "installed": "2026-11-05"},
+    "lookout_lariat_lm": {"track": "lookout-lariat-lm", "engine": "lm-v4", "role": "current", "version": "0.1.0", "branch": "claude/fleet-lm-engine", "installed": "2026-11-04"},
+    "milford_road_course": {"track": "milford-road-course", "engine": "original", "role": "superseded", "successor": "milford_road_course_lm", "version": "0.6.0", "branch": "main", "installed": "2026-11-03"},
+    "milford_road_course_lm": {"track": "milford-road-course-lm", "engine": "lm-v4", "role": "current", "version": "0.1.0", "branch": "claude/milford-furniture-lm", "installed": "2026-11-04", "note": "furniture passes start on claude/milford-furniture-lm (ledger 0082)"},
+    "pikes_peak_international_raceway": {"track": "pikes-peak", "engine": "original", "role": "superseded", "successor": "pikes_peak_international_raceway_lm", "version": "0.4.0", "branch": "main", "installed": "2026-11-03"},
+    "pikes_peak_international_raceway_lm": {"track": "pikes-peak-lm", "engine": "lm-v4", "role": "current", "version": "0.1.0", "branch": "claude/circuit-kerbs-lm", "installed": "2026-11-04"},
+    "pueblo_motorsports_park": {"track": "pueblo", "engine": "original", "role": "superseded", "successor": "pueblo_motorsports_park_lm", "version": "0.67.0", "branch": "main", "installed": "2026-11-03"},
+    "pueblo_motorsports_park_lm": {"track": "pueblo-lm", "engine": "lm-v4", "role": "current", "version": "0.1.2", "branch": "claude/circuit-kerbs-lm", "sha": "f3a93c3f", "installed": "2026-11-05"},
+    "rally_co_dragon_tail_gravel": {"track": "rally-dragon-tail-gravel", "engine": "original", "role": "superseded", "successor": "rally_co_dragon_tail_gravel_lm", "version": "0.2.1", "branch": "main", "installed": "2026-11-03", "note": "kept beside its _lm so far for comparison; keep or archive is Kevin's call"},
+    "rally_co_dragon_tail_gravel_lm": {"track": "rally-dragon-tail-gravel-lm", "engine": "lm-v4", "role": "current", "version": "0.1.0", "branch": "claude/fleet-lm-engine", "installed": "2026-11-05"},
+    "rally_co_under_the_dragon_gravel": {"track": "rally-under-the-dragon-gravel", "engine": "original", "role": "superseded", "successor": "rally_co_under_the_dragon_gravel_lm", "version": "0.2.0", "branch": "main", "installed": "2026-11-03"},
+    "rally_co_under_the_dragon_gravel_lm": {"track": "rally-under-the-dragon-gravel-lm", "engine": "lm-v4", "role": "current", "version": "0.1.0", "branch": "claude/fleet-lm-engine", "installed": "2026-11-05"},
+    "san_diego_freeway_lm": {"track": "san-diego-freeway-lm", "engine": "lm-v4", "role": "current", "version": "0.1.0", "branch": "claude/freeway-lm", "sha": "e733c0a9", "installed": "2026-11-06"},
+    "san_diego_lake_murray_v4": {"track": "san-diego-lake-murray", "engine": "lm-v4", "role": "current", "version": "0.20.2", "branch": "claude/lm-phase2-0202", "installed": "2026-11-04", "ui_name_prefix": "doooom San Diego", "old_name_prefix": "K10 - San Diego CANDIDATE v4 keep-roads", "note": "Lake Murray v4 + Mission Gorge Speedway (ship_sd.sh SD_BESPOKE=1); its ship.json ui_name_prefix still says the K10 candidate name, so a reinstall brings it back"},
+    "sand_creek_raceway": {"track": "sand-creek", "engine": "original", "role": "superseded", "successor": "sand_creek_raceway_lm", "version": "0.35.0", "branch": "main", "installed": "2026-11-03"},
+    "sand_creek_raceway_lm": {"track": "sand-creek-lm", "engine": "lm-v4", "role": "current", "version": "0.2.5", "branch": "claude/sand-creek-lm-assets", "sha": "aa4d8b0b", "installed": "2026-11-05"}
+  }
+}

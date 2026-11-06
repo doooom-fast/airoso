@@ -1,0 +1,116 @@
+{
+ "_doc": "ledger 0054 Phase 2 step 2f: the engine-july snapshot's build_kn5_loop.py (Blender 5.1.2) run whole on scratch copies of Lake Murray with v4's loop.blend (LFS 0656308e) and three reshapes of Princess View's island; every terrain tile's faces keyed by their corners' positions (0.1 mm) and compared with v4's (prep_tile_dump.py, prep_tile_cmp.py beside this file). 'inside' = the island's box (Blender x -3001.7..-2968.3, y 1537.9..1592.1).",
+ "prep_log": {
+  "v4": "80161 corridor edges split; 1GRASS 817802 verts -> 16 tiles; 822788 v",
+  "v4 again": "the same",
+  "deck moved (step 4)": "80165; 817806; 822778 v",
+  "deck narrowed under 4.5 m": "80161; 817802; 822780 v",
+  "deck kept (2f)": "80161; 817802; 822788 v"
+ },
+ "prepped": {
+  "v4 vs v4 again": {
+   "tiles_a": 20,
+   "tiles_b": 20,
+   "same_tile_names": true,
+   "faces_a": 1943923,
+   "faces_b": 1943923,
+   "faces_differing_inside_island_box": 0,
+   "faces_differing_outside_island_box": 0,
+   "outside_box_xy": null,
+   "tiles_differing": []
+  },
+  "v4 vs deck moved": {
+   "tiles_a": 20,
+   "tiles_b": 20,
+   "same_tile_names": true,
+   "faces_a": 1943923,
+   "faces_b": 1943925,
+   "faces_differing_inside_island_box": 98,
+   "faces_differing_outside_island_box": 4278,
+   "outside_box_xy": [
+    -3069.46,
+    -1623.77,
+    1063.96,
+    3217.14
+   ],
+   "tiles_differing": [
+    "1GRASS_0",
+    "1GRASS_1",
+    "1GRASS_10",
+    "1GRASS_11",
+    "1GRASS_12",
+    "1GRASS_13",
+    "1GRASS_14",
+    "1GRASS_15",
+    "1GRASS_2",
+    "1GRASS_3",
+    "1GRASS_4",
+    "1GRASS_5",
+    "1GRASS_6",
+    "1GRASS_7",
+    "1GRASS_8",
+    "1GRASS_9"
+   ]
+  },
+  "v4 vs deck narrowed": {
+   "tiles_a": 20,
+   "tiles_b": 20,
+   "same_tile_names": true,
+   "faces_a": 1943923,
+   "faces_b": 1943907,
+   "faces_differing_inside_island_box": 82,
+   "faces_differing_outside_island_box": 2036,
+   "outside_box_xy": [
+    -3071.14,
+    1391.89,
+    -1642.3,
+    2972.98
+   ],
+   "tiles_differing": [
+    "1GRASS_4",
+    "1GRASS_5",
+    "1GRASS_6",
+    "1GRASS_7"
+   ]
+  },
+  "v4 vs deck kept": {
+   "tiles_a": 20,
+   "tiles_b": 20,
+   "same_tile_names": true,
+   "faces_a": 1943923,
+   "faces_b": 1943923,
+   "faces_differing_inside_island_box": 0,
+   "faces_differing_outside_island_box": 0,
+   "outside_box_xy": null,
+   "tiles_differing": []
+  }
+ },
+ "thinned (tools/thin_terrain_blend.py after the prep)": {
+  "v4 vs deck kept": {
+   "tiles_a": 20,
+   "tiles_b": 20,
+   "same_tile_names": true,
+   "faces_a": 1060989,
+   "faces_b": 1060989,
+   "faces_differing_inside_island_box": 0,
+   "faces_differing_outside_island_box": 0,
+   "outside_box_xy": null,
+   "tiles_differing": []
+  }
+ },
+ "blend_digest_v4_vs_kept": {
+  "objects": 145,
+  "same_set": true,
+  "differ": {
+   "CURB": [
+    "pos"
+   ],
+   "YLINE": [
+    "pos"
+   ]
+  },
+  "terrain_identical": true,
+  "island_deck_longest_edge_m": 5.417,
+  "island_deck_edges_over_4_5_m": 5
+ }
+}

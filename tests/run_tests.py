@@ -37,7 +37,7 @@ def main() -> None:
                 fn()
                 passed += 1
                 print(f"PASS {f.name}::{name}")
-            except Exception:
+            except (Exception, SystemExit):    # a tool's SystemExit fails its test, not the run (it hid the name)
                 failed += 1
                 print(f"FAIL {f.name}::{name}")
                 traceback.print_exc()

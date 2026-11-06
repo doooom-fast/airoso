@@ -389,8 +389,21 @@ def build(project_dir, out_name: str | None = None, config_path=None, *, planned
     race_layouts = [lo for lo in cfg.get("layouts", []) if lo.get("race_furniture")]
     if not race_layouts:
         fails.append("no layouts[].race_furniture — no corridor to declare")
-    ctx = _RC.prepare(pts, widths, island_w, P)
+    # ledger 0054 Phase 2 (opt-in, race.laps.<id>.island_offsets): a lap's island standing off its line (race_lap's
+    # island_off_by_vertex); absent on the mainline and on every lap that declares none — nothing below changes then
+    island_off = lap_rec.get("island_off_by_vertex") if lap_rec is not None else None
+    ctx = _RC.prepare(pts, widths, island_w, P, **({"island_off": island_off} if island_off else {}))
     half_auth = ctx["half_auth"]
+    # ledger 0054 Phase 2 (opt-in, race.corridor.noses; absent = nothing below changes): closure-run ends declared at a
+    # median nose — the closure ends at the island's race face beside the nose, a K-rail across the far carriageway
+    noses, nose_fails = _noses(cor_cfg.get("noses"), pinned, island_w, m, st, bhalf)
+    fails += nose_fails
+    solve_free = free
+    if noses:
+        nose_open = {v for nz in noses for v in nz["open"]}
+
+        def solve_free(v):
+            return free(v) or v in nose_open
     corridors = {}
     tokens = {}
     for lo in race_layouts:
@@ -407,12 +420,14 @@ def build(project_dir, out_name: str | None = None, config_path=None, *, planned
             fails.append(f"layout {lid}: direction must be forward|reverse, got {direction!r}")
             continue
         d = "cw" if direction == "forward" else "acw"
-        sol = _RC.solve(pts, widths, island_w, free, d, P, inset=edge_inset, half=bhalf, context=ctx)
+        nkw = {"nose_pins": {nz["pin"]: nz["median"] for nz in noses}} if noses else {}
+        sol = _RC.solve(pts, widths, island_w, solve_free, d, P, inset=edge_inset, half=bhalf, context=ctx, **nkw)
         mine = [c_ for c_ in chicanes if lid in c_["layouts"]]
         walls, ch_lane, ch_fails = _apply_chicanes(sol, mine, direction, pts, widths, m, st, edge_inset, bhalf, P)
         fails += [f"chicanes {lid}: {f_}" for f_ in ch_fails]
         corridors[lid] = _corridor_record(lid, tok, direction, sol, ctx, P, pts, widths, n, m, st, street_at,
-                                          edge_inset, bhalf, strip_c, whole, chicane_lane=ch_lane)
+                                          edge_inset, bhalf, strip_c, whole, chicane_lane=ch_lane,
+                                          **({"noses": noses} if noses else {}))
         _chicane_record(corridors[lid], walls, mine, direction, pts, widths, n, m, st, edge_inset, bhalf, P)
 
     # ---- kerbs: outside + inside at every corner, clipped against EVERY layout's closure --------------
@@ -579,6 +594,13 @@ def build(project_dir, out_name: str | None = None, config_path=None, *, planned
             "params": P, "free": free, "whole": whole, "boxes": boxes, "pinned": pinned, "corners": corners,
             "corner_by_apex": corner_by_apex, "removed": removed, "layouts": race_layouts, "cfg": cfg,
             "edge_inset": edge_inset, "bhalf": bhalf, "strip_c": strip_c}
+    if ctx.get("island_off") is not None:
+        vctx["island_off"] = ctx["island_off"]           # ledger 0054 Phase 2 (opt-in): the islands gate reads it
+    if noses:
+        # ledger 0054 Phase 2: the declared nose ends (the self-gates read them; nothing is added when none is declared)
+        out["zones"]["noses"] = [{k: nz[k] for k in ("end", "median", "pin", "run")} for nz in noses]
+        out["params"]["corridor"]["noses"] = cor_cfg.get("noses")
+        vctx.update(noses=noses, solve_free=solve_free, ctx=ctx)
     fails += validate(out, vctx)
     # ---- 12. the PLANNED no-route: the declaration checking its own topology (not an L5 gate) ----------
     planned = {}
@@ -620,10 +642,12 @@ def _corridor_params_echo(cor_cfg, P, measured_clear, island_mode):
 
 
 def _corridor_record(lid, tok, direction, sol, ctx, P, pts, widths, n, m, st, street_at, inset, bhalf, strip_c,
-                     whole, chicane_lane=None):
+                     whole, chicane_lane=None, noses=None):
     """corridors.<lid>: the solved closure as a declaration (forward-frame laterals per vertex). chicane_lane
     {vertex: (y_lo, y_hi)}: the declared chicanes' lane (ledger 0055) — zone 'chicane' there, the lane between the
-    closure and the chicane's race-side wall (or a curb strip)"""
+    closure and the chicane's race-side wall (or a curb strip). noses (ledger 0054 Phase 2, opt-in): the declared
+    nose ends (_noses) — their pins keep the closure's lane (the far carriageway beyond is behind the K-rail), their
+    run ends join the K-rail, and `nose_walls` declares each K-rail (absent when none is declared)"""
     e = sol["e"]
     reverse = direction == "reverse"
     race_side = "L" if reverse else "R"
@@ -644,7 +668,16 @@ def _corridor_record(lid, tok, direction, sol, ctx, P, pts, widths, n, m, st, st
             zone.append("island" if half_auth[v] > 0 else "closure")
         else:
             zone.append("whole" if _RC.in_rng(v, whole[0], whole[1], m) else "box")
-    lane = _RC.lane_by_vertex(y, widths, m, "acw" if reverse else "cw", inset=inset, half=bhalf, pins=pins)
+    nose_pin = {nz["pin"]: nz for nz in (noses or []) if nz["pin"] in pins}
+    lane = _RC.lane_by_vertex(y, widths, m, "acw" if reverse else "cw", inset=inset, half=bhalf,
+                              pins=pins - set(nose_pin) if nose_pin else pins)
+    for k, nz in nose_pin.items():
+        # the lane narrows to the closure's ONE vertex before its K-rail (the box-side neighbour of the pin): the lane
+        # is lerped between vertices (drive_test, write_ai_line), and a lane still the whole street there would sweep
+        # its far-side wheel paths through the K-rail in the last metres before it. The far carriageway up to the
+        # K-rail stays reachable (no_route allows the open walk at full width: Corridor.nose_walls)
+        nb = (k - 1) % m if (nz["median"] - k) % m == 1 else (k + 1) % m
+        lane[nb] = list(lane[k])
     for v, lh in (chicane_lane or {}).items():
         lane[v] = [float(lh[0]), float(lh[1])]
         zone[v] = "chicane"
@@ -702,8 +735,7 @@ def _corridor_record(lid, tok, direction, sol, ctx, P, pts, widths, n, m, st, st
         runs.append({
             "i": i, "j": j, "travel_from": vs[0], "travel_to": vs[-1], "travel": "decreasing" if reverse else "increasing",
             "street": street_at[min(fwd)], "street_end": street_at[max(fwd)], "length_m": round(rr[-1], 1),
-            "ends": [{"vertex": vs[0], "y": round(y[vs[0]], 4), "joins": "edge_" + closure_side, "role": "in"},
-                     {"vertex": vs[-1], "y": round(y[vs[-1]], 4), "joins": "edge_" + closure_side, "role": "out"}],
+            "ends": [_run_end(vs[0], y, closure_side, "in", nose_pin), _run_end(vs[-1], y, closure_side, "out", nose_pin)],
             "island_spans": isl_spans,
             "max_rate": {"toward": _ratio(toward), "away": _ratio(away),
                          "pin_in": _ratio(R["k_pin"][0]), "pin_out": _ratio(R["k_pin"][1]),
@@ -734,11 +766,12 @@ def _corridor_record(lid, tok, direction, sol, ctx, P, pts, widths, n, m, st, st
         next_s = -1.0
         for v in range(a, b + 1):
             if half_auth[v] >= ISLAND_PROBE_MIN_HALF_M and st[v] >= next_s:
-                probes.append({"vertex": v, "y": 0.0, "why": "island"})
+                yo = round(ctx["island_off"][v], 3) if ctx.get("island_off") else 0.0   # an offset island's top
+                probes.append({"vertex": v, "y": yo, "why": "island"})
                 next_s = st[v] + PROBE_STEP_M
     yr = [None if v is None else round(v, 4) for v in y]
     zr = zone
-    return {
+    rec = {
         "token": tok, "direction": direction, "travel": "decreasing" if reverse else "increasing",
         "race_side": race_side, "closure_side": closure_side,
         "zone_by_vertex": zr + [zr[0]],
@@ -749,6 +782,90 @@ def _corridor_record(lid, tok, direction, sol, ctx, P, pts, widths, n, m, st, st
         "mouths": [],
         "no_route": {"seed": "AC_START_0", "probe_r_m": 0.5, "tol_m": 0.75, "forbidden_probes": probes},
     }
+    if nose_pin:
+        rec["nose_walls"] = [_nose_wall(nz, y, e, closure_side, pts, widths, m, strip_c, bhalf)
+                             for _p, nz in sorted(nose_pin.items())]
+    return rec
+
+
+def _run_end(v, y, closure_side, role, nose_pin):
+    """a closure run end as declared: pinned in the far curb strip, or (ledger 0054 Phase 2) ending at a median nose
+    against its K-rail (joins "nose"; only then the `nose` key)"""
+    if v in nose_pin:
+        nz = nose_pin[v]
+        return {"vertex": v, "y": round(y[v], 4), "joins": "nose", "role": role,
+                "nose": {"median": nz["median"], "end": nz["end"]}}
+    return {"vertex": v, "y": round(y[v], 4), "joins": "edge_" + closure_side, "role": role}
+
+
+def _nose_wall(nz, y, e, closure_side, pts, widths, m, strip_c, bhalf):
+    """the K-rail across the far carriageway at a nose pin P (ledger 0054 Phase 2): along P's normal, from the
+    closure's RACE face (y + e x half: the closure's end cap stands inside the K-rail's footprint, a flush L) to the
+    far curb strip's centre (its far cap buried in that strip, as a closure pin is). y = forward-frame laterals."""
+    k = nz["pin"]
+    a, b = pts[(k - 1) % m], pts[(k + 1) % m]
+    tx, tz = b[0] - a[0], b[2] - a[2]
+    L = math.hypot(tx, tz) or 1.0
+    nx, nzn = -tz / L, tx / L
+    y_from = y[k] + e * bhalf
+    y_to = -e * (widths[k] / 2.0 - strip_c)
+    poly = [[round(pts[k][0] + nx * yy, 3), round(pts[k][1], 3), round(pts[k][2] + nzn * yy, 3)] for yy in (y_from, y_to)]
+    return {"vertex": k, "median": nz["median"], "end": nz["end"], "y_from": round(y_from, 4), "y_to": round(y_to, 4),
+            "joins": ["closure", "edge_" + closure_side], "length_m": round(abs(y_to - y_from), 3),
+            "polyline_xyz_m": poly}
+
+
+def _noses(spec, pinned, island_w, m, st, bhalf):
+    """race.corridor.noses (ledger 0054 Phase 2, opt-in): [{end, median, why}] -> ([{end, median, pin, run, open,
+    why}], fails). `end` is a declared closure-run end (a box edge); `median` the first (run start) or last (run end)
+    vertex of an AUTHORED island run (tools/author_median_blend.py's >= 6 vertices) inside that run, with no authored
+    island between the two; the pin P is the vertex beside the nose toward the box, and its K-rail stands
+    >= ISLAND_CLEAR_M off the nose along the road. Every refusal is a fail; a refused nose is not applied."""
+    if not spec:
+        return [], []
+    if not isinstance(spec, list):
+        return [], [f"noses: race.corridor.noses must be a list of {{end, median}}, got {type(spec).__name__}"]
+    iw = [float(x) for x in island_w[:m]] + [0.0] * max(0, m - len(island_w))
+    runs = _RC.island_runs(iw, m)
+    half = _RC.authored_half(iw, m)
+    fails, out, seen = [], [], set()
+    for nz in spec:
+        try:
+            E, M = int(nz["end"]) % m, int(nz["median"]) % m
+        except (KeyError, TypeError, ValueError) as e_:
+            fails.append(f"noses: an entry needs integer end and median ({e_!r}): {nz!r}")
+            continue
+        run = next((r for r in pinned if E in (r[0], r[1])), None)
+        if run is None:
+            fails.append(f"noses: end v{E} is not an end of any race.corridor.closure_runs {sorted(pinned)}")
+            continue
+        if E in seen:
+            fails.append(f"noses: end v{E} is declared twice")
+            continue
+        seen.add(E)
+        geo = _RC.nose_open(E, M, run, m)
+        if geo is None:
+            fails.append(f"noses: median v{M} is not strictly inside closure run v{run[0]}-v{run[1]}")
+            continue
+        pin, opn = geo
+        at_start = E == run[0]
+        if not any((r[0] if at_start else r[1]) == M for r in runs):
+            fails.append(f"noses: v{M} is not the {'first' if at_start else 'last'} vertex of an authored island run "
+                         f"(>= {_RC.ISLAND_MIN_VERTS} vertices) — not a nose")
+            continue
+        # pin == E: the median runs up to the box edge itself (Mission Gorge into J4) — the closure ends there, at the
+        # island's race face, and the K-rail stands on the box edge; there is no open walk before it
+        if any(half[v] > 0 for v in opn):
+            fails.append(f"noses: an authored island stands between the box edge v{E} and the nose v{M}")
+            continue
+        gap = abs(st[M] - st[pin]) - bhalf
+        if gap < ISLAND_CLEAR_M - 1e-6:
+            fails.append(f"noses: the K-rail at v{pin} stands {gap:.2f} m off the nose v{M} along the road "
+                         f"(< {ISLAND_CLEAR_M} m)")
+            continue
+        out.append({"end": E, "median": M, "pin": pin, "run": [run[0], run[1]], "open": opn,
+                    "why": str(nz.get("why") or "")})
+    return out, fails
 
 
 def _travel_walk(a, b, m, direction):
@@ -1432,6 +1549,46 @@ def _validate_chicanes(out: dict, ctx: dict) -> list[str]:
 
 # ---------------------------------------------------------------------------------------------
 # the self-gates — pure on (declaration, context): tests perturb a declaration and call this
+def _validate_nose(lid, c, nz, ctx) -> list[str]:
+    """14. noses (ledger 0054 Phase 2, opt-in): at a nose pin P the closure stands ON the island's race face
+    (race_corridor.nose_pin_g, PIN_TOL_M), its run end joins the K-rail, and the K-rail is declared across the far
+    carriageway from the closure's race face to the far curb strip's centre (both PIN_TOL_M) on a real strip ring,
+    inside the declared closure run (never in a box), the lane at P no narrower than the hard minimum"""
+    fails = []
+    k, widths, m = nz["pin"], ctx["widths"], ctx["m"]
+    e = -1.0 if c["race_side"] == "R" else 1.0
+    y = c["closure_y_by_vertex"][k]
+    want = e * _RC.nose_pin_g(ctx["ctx"], nz["median"], inset=ctx["edge_inset"], half=ctx["bhalf"], e=e)
+    if abs(y - want) > PIN_TOL_M:
+        fails.append(f"noses {lid}: v{k} closure y {y:+.3f} is {abs(y - want):.3f} m off the island's race face "
+                     f"{want:+.3f} at the nose v{nz['median']} (> {PIN_TOL_M})")
+    if ctx["free"](k) and k != nz["end"]:
+        fails.append(f"noses {lid}: the nose pin v{k} lies in a declared box / whole-street zone")
+    ends = [en for r in c.get("runs", []) for en in r.get("ends", []) if en.get("vertex") == k]
+    if not ends or any(en.get("joins") != "nose" for en in ends):
+        fails.append(f"noses {lid}: the closure end at v{k} does not join its K-rail ({[en.get('joins') for en in ends]})")
+    walls = [w for w in c.get("nose_walls") or [] if w.get("vertex") == k]
+    if len(walls) != 1:
+        fails.append(f"noses {lid}: {len(walls)} K-rails declared at the nose pin v{k} (one expected)")
+        return fails
+    w = walls[0]
+    far = -e * (widths[k] / 2.0 - ctx["strip_c"])
+    if abs(float(w["y_to"]) - far) > PIN_TOL_M:
+        fails.append(f"noses {lid}: the K-rail at v{k} ends {abs(float(w['y_to']) - far):.3f} m off the far strip "
+                     f"centre {far:+.3f} — an unburied end is a door")
+    if abs(float(w["y_from"]) - (y + e * ctx["bhalf"])) > PIN_TOL_M:
+        fails.append(f"noses {lid}: the K-rail at v{k} starts {float(w['y_from']):+.3f}, not at the closure's race face "
+                     f"{y + e * ctx['bhalf']:+.3f}")
+    if k in ctx["removed"].get(c["closure_side"], ()):
+        fails.append(f"noses {lid}: v{k} is a trimmed fold vertex of edge_{c['closure_side']} — no strip ring to bury "
+                     f"the K-rail in")
+    lo_, hi_ = c["lane_by_vertex"][k]
+    if hi_ - lo_ < float(ctx["params"]["clear_hard_min_m"]):
+        fails.append(f"noses {lid}: the lane at the nose pin v{k} is {hi_ - lo_:.2f} m (< the hard minimum "
+                     f"{ctx['params']['clear_hard_min_m']} m)")
+    return fails
+
+
 def validate(out: dict, ctx: dict) -> list[str]:
     fails: list[str] = []
     m, n = ctx["m"], ctx["n"]
@@ -1489,6 +1646,13 @@ def validate(out: dict, ctx: dict) -> list[str]:
         fails.append(f"zones: the declared zones give closure runs {sorted(derived)} but race.corridor.closure_runs pins "
                      f"{sorted(pinned)} — re-declare one or the other (never derived silently)")
     pin_set = {a for a, _ in pinned} | {b for _, b in pinned}
+    # ledger 0054 Phase 2 (opt-in): a nose end moves its run's pin from the box edge to the vertex beside the nose, and
+    # the walk between stands open like the box (ctx "solve_free"); with no nose declared both are the declared ones
+    noses = ctx.get("noses") or []
+    nose_by_pin = {nz["pin"]: nz for nz in noses}
+    if noses:
+        pin_set = (pin_set - {nz["end"] for nz in noses}) | set(nose_by_pin)
+        free = ctx["solve_free"]
     for lid, c in corridors.items():
         y = c["closure_y_by_vertex"]
         zn = c["zone_by_vertex"]
@@ -1530,6 +1694,9 @@ def validate(out: dict, ctx: dict) -> list[str]:
         for k in sorted(pin_set):
             if y[k] is None:
                 continue
+            if k in nose_by_pin:
+                fails += _validate_nose(lid, c, nose_by_pin[k], ctx)
+                continue
             far = sgn * (widths[k] / 2.0 - strip_c)
             if abs(y[k] - far) > PIN_TOL_M:
                 fails.append(f"pins {lid}: v{k} closure y {y[k]:+.3f} is {abs(y[k] - far):.3f} m off the far strip "
@@ -1538,6 +1705,7 @@ def validate(out: dict, ctx: dict) -> list[str]:
                 fails.append(f"pins {lid}: v{k} is a trimmed fold vertex of edge_{side} — no strip ring to bury the pin in")
 
     # 3. rates, 6. shape, 4. clear width + pocket, 5. islands
+    ioff = ctx.get("island_off")
     k_conv, k_div = 1.0 / float(P["rate_toward_race_side"]), 1.0 / float(P["rate_away"])
     k_hard = 1.0 / float(P["steepest_pin_rate"])
     zone_m = float(P["pin_zone_m"])
@@ -1632,6 +1800,8 @@ def validate(out: dict, ctx: dict) -> list[str]:
                         clear_isl = -half_auth[k] - (y[k] + bhalf)
                     else:
                         clear_isl = (y[k] - bhalf) - half_auth[k]
+                    if ioff is not None:            # ledger 0054 Phase 2 (opt-in): the island centred off the line
+                        clear_isl += ioff[k] if c["closure_side"] == "L" else -ioff[k]
                     if clear_isl < ISLAND_CLEAR_M - 1e-3:
                         fails.append(f"islands {lid}: v{k} the closure footprint is {clear_isl:+.3f} m off the AUTHORED "
                                      f"island (< {ISLAND_CLEAR_M} m, or on the wrong side of a nose)")

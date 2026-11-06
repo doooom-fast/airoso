@@ -1,52 +1,52 @@
 {
  "_doc": "tools/make_treefx.py: what trees.txt holds (counts per zone and per species; the north network per piece per species, its planted area, the loop's density and the area-scaled caps \u2014 ledger 0054 P4 / A9)",
- "total": 20431,
+ "total": 21111,
  "per_zone": {
   "palms": 890,
-  "trees": 404,
-  "scrub": 932,
+  "trees": 408,
+  "scrub": 983,
   "median_planting": 1102,
-  "fill_yard_trees": 1601,
-  "fill_yard_bushes": 1503,
-  "fill_slope_trees": 1684,
-  "fill_slope_bushes": 7028,
-  "north_suburb_trees": 86,
-  "north_suburb_bushes": 805,
-  "north_canyon_trees": 1196,
-  "north_scrub": 2936,
+  "fill_yard_trees": 1660,
+  "fill_yard_bushes": 1569,
+  "fill_slope_trees": 1770,
+  "fill_slope_bushes": 7322,
+  "north_suburb_trees": 88,
+  "north_suburb_bushes": 834,
+  "north_canyon_trees": 1212,
+  "north_scrub": 3000,
   "north_riparian_trees": 105,
-  "north_street_trees": 60,
+  "north_street_trees": 69,
   "north_gum_belt": 73,
   "north_median_trees": 26
  },
  "per_species": {
-  "Agave.bin": 1082,
-  "Bush.bin": 3787,
-  "Bush3.bin": 1820,
-  "Gum.bin": 1370,
-  "Oak3.bin": 1325,
-  "PalmV1.bin": 698,
+  "Agave.bin": 1120,
+  "Bush.bin": 3904,
+  "Bush3.bin": 1898,
+  "Gum.bin": 1419,
+  "Oak3.bin": 1361,
+  "PalmV1.bin": 709,
   "PalmV2.bin": 274,
   "PalmV3.bin": 102,
-  "PepperV1.bin": 655,
-  "Pine_Aleppo.bin": 1133,
-  "Sage.bin": 5521,
-  "SycamoreV1.bin": 479,
+  "PepperV1.bin": 680,
+  "Pine_Aleppo.bin": 1171,
+  "Sage.bin": 5708,
+  "SycamoreV1.bin": 496,
   "SycamoreV2.bin": 89,
-  "Yucca.bin": 2096
+  "Yucca.bin": 2180
  },
  "rejected_in_corridor": 19,
  "rejected_on_built_surface": {
   "rock": 10,
   "road": 0,
   "walk": 2,
-  "building": 728
+  "building": 48
  },
  "rejected_on_built_surface_loop_zones": {
   "rock": 0,
   "road": 0,
   "walk": 2,
-  "building": 593
+  "building": 33
  },
  "surface_materials": "1GRASS_0_mat, 1GRASS_1_mat, 1GRASS_2_mat, 1GRASS_3_mat, 1GRASS_4_mat, 1GRASS_5_mat, 1GRASS_6_mat, 1GRASS_7_mat, 1GRASS_8_mat, 1GRASS_9_mat, 1GRASS_10_mat, 1GRASS_11_mat, 1GRASS_12_mat, 1GRASS_13_mat, 1GRASS_14_mat, 1GRASS_15_mat, 1GRASS_ROCK_2_mat, 1GRASS_ROCK_4_mat, 1GRASS_ROCK_5_mat, 1GRASS_ROCK_6_mat, 1GRASS_ROCK_7_mat, 1GRASS_ROCK_12_mat, 1GRASS_ROCK_13_mat, 1GRASS_ROCK_14_mat, 1ROAD_road_mat",
  "north": {
@@ -75,64 +75,64 @@
   "per_piece": {
    "A": {
     "PepperV1.bin": 35,
-    "SycamoreV1.bin": 21,
+    "SycamoreV1.bin": 22,
     "Pine_Aleppo.bin": 6,
     "Oak3.bin": 28,
     "Gum.bin": 7,
-    "PalmV1.bin": 13,
-    "Sage.bin": 163,
-    "Bush3.bin": 179,
-    "Bush.bin": 231
+    "PalmV1.bin": 14,
+    "Sage.bin": 165,
+    "Bush3.bin": 181,
+    "Bush.bin": 233
    },
    "ring": {
     "Pine_Aleppo.bin": 1,
     "SycamoreV1.bin": 1,
     "Bush3.bin": 16,
-    "Sage.bin": 21,
-    "Bush.bin": 27
+    "Sage.bin": 25,
+    "Bush.bin": 33
    },
    "C": {
-    "Bush.bin": 288,
-    "Bush3.bin": 171,
-    "Sage.bin": 499,
-    "Oak3.bin": 241,
-    "Gum.bin": 93,
-    "Pine_Aleppo.bin": 141,
-    "Yucca.bin": 217,
-    "Agave.bin": 117,
+    "Bush.bin": 293,
+    "Bush3.bin": 182,
+    "Sage.bin": 509,
+    "Oak3.bin": 245,
+    "Gum.bin": 95,
+    "Pine_Aleppo.bin": 143,
+    "Yucca.bin": 218,
+    "Agave.bin": 123,
     "SycamoreV2.bin": 24,
-    "SycamoreV1.bin": 64,
-    "PalmV1.bin": 14,
-    "PepperV1.bin": 23
+    "SycamoreV1.bin": 66,
+    "PalmV1.bin": 17,
+    "PepperV1.bin": 26
    },
    "D": {
-    "Oak3.bin": 296,
+    "Oak3.bin": 297,
     "Pine_Aleppo.bin": 189,
     "Gum.bin": 158,
     "Bush.bin": 196,
-    "Sage.bin": 393,
+    "Sage.bin": 394,
     "Agave.bin": 75,
     "Bush3.bin": 85,
     "Yucca.bin": 182
    },
    "B": {
-    "Pine_Aleppo.bin": 66,
-    "Oak3.bin": 85,
+    "Pine_Aleppo.bin": 69,
+    "Oak3.bin": 90,
     "Gum.bin": 40,
-    "Sage.bin": 356,
-    "Yucca.bin": 160,
-    "Agave.bin": 92,
-    "Bush.bin": 174,
-    "Bush3.bin": 99
+    "Sage.bin": 367,
+    "Yucca.bin": 174,
+    "Agave.bin": 93,
+    "Bush.bin": 183,
+    "Bush3.bin": 107
    }
   },
   "cap_scale": 1.0,
   "per_piece_total": {
-   "A": 683,
-   "ring": 66,
-   "C": 1892,
-   "D": 1574,
-   "B": 1072
+   "A": 691,
+   "ring": 76,
+   "C": 1941,
+   "D": 1576,
+   "B": 1123
   }
  }
 }

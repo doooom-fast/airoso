@@ -16,6 +16,10 @@ centre chain's two free ends, and all ten island noses. This is that fill, as a 
               its 8 neighbours: one jersey face alone never spans the band) covers [deck + 0.20,
               deck + 0.90]. Deliberately strict: the island beam (0.63-0.93 m) alone must NOT seal, or a
               missing island closure would pass; its posts become isolated dots, not a seal.
+              Since ledger 0054 step 2e (MEASUREMENT-BUG FIX) the test runs a second time with each wall
+              triangle measured from the deck it stands on (the 1ROAD triangle under it whose height is nearest
+              its foot; the centreline's where no deck stands) and a cell seals in either frame: a K-rail on a
+              junction pad below the line no longer reads short. local_deck_cells counts what that adds.
               PLANNED mode: the declared polylines +- the barrier half base (0.335 m) — both curb
               strips (trimmed corners included) + this layout's closure + the sealed-mouth lines.
               Walls are dilated by PROBE_R 0.5 m: gaps under 1.0 m close, 1.0-1.9 m gaps still read as
@@ -72,6 +76,9 @@ TOL_M = 0.75             # INVENTED: the allowed corridor's dilation
 WALL_LO_M, WALL_HI_M = 0.20, 0.90   # INVENTED: a wall must span this band above the local deck
 DECK_LIFT_M = 0.10       # the road ribbon rides +0.10 over the centreline y (race_furniture.LIFT)
 HBIN_M = 0.05            # height-bin size of the span test
+DECK_BUCKET_M = 2.0      # the deck index's bucket (a lookup grid, not a judgment)
+DECK_REACH_M = WALL_HI_M - WALL_LO_M   # 0.70, derived: a deck nearer the line's deck than the band's own height keeps
+#                                       the wall's band (from its deck) overlapping the line's band — the same level
 EDGE_SAMPLE_M = 0.10     # wall triangle edges sampled this often
 BARRIER_HALF_DEFAULT = 0.335
 EDGE_INSET_DEFAULT = 0.82
@@ -162,6 +169,8 @@ class Corridor:
             ry = cor.get("race_wall_y_by_vertex") or [None] * n
             self.race_wall_y = [None if v is None else float(v) for v in ry[:m]]
             self.zone = list((cor.get("zone_by_vertex") or ["whole"] * n)[:m])
+            # ledger 0054 Phase 2 (opt-in): the K-rails across the far carriageway at the declared median noses
+            self.nose_walls = [w for w in cor.get("nose_walls") or [] if len(w.get("polyline_xyz_m") or []) >= 2]
             nr = cor.get("no_route") or {}
             self.probes = [(int(p["vertex"]), float(p["y"]), str(p.get("why", ""))) for p in nr.get("forbidden_probes", [])]
             # a lap's branch probe stands ON the abandoned line (barrier_bands: "xz"), not at a lateral of its vertex
@@ -171,6 +180,7 @@ class Corridor:
         else:
             self.lane, self.closure_y, self.zone = self._lanes_v1()
             self.race_wall_y = [None] * m
+            self.nose_walls = []
             self.probes = []
             self.probe_xz = {}
             self.semantics = "v1 (centre chain / islands, the 0047 install)"
@@ -247,6 +257,9 @@ class Corridor:
             k1 = (k + 1) % m
             if yw[k] is not None and yw[k1] is not None and (self.closed or k1 != 0):
                 out.append(("chicane", [self.at(k, yw[k]), self.at(k1, yw[k1])]))
+        # ledger 0054 Phase 2: each declared nose K-rail, closure race face -> far curb strip, as declared
+        for w in self.nose_walls:
+            out.append(("nose", [(float(p[0]), float(p[2])) for p in w["polyline_xyz_m"]]))
         cw = [float(v) for v in (self.bands.get("centre_w_by_vertex") or [])[:m]]
         if len(cw) == m and any(v > 0 for v in cw):          # a v1 declaration's centre chain, on the centreline
             for k in range(m):
@@ -606,8 +619,9 @@ def _race_chicane():
     return _CHICANE[0]
 
 
-def _read_obj_walls(path: Path, mirror: float):
-    """(verts as flat array 'd' x,y,z, [(name, [(i,j,k)])]) — only 1WALL* faces are kept"""
+def _read_obj_walls(path: Path, mirror: float, decks: list | None = None):
+    """(verts as flat array 'd' x,y,z, [(name, [(i,j,k)])]) — only 1WALL* faces are kept. With ``decks`` (a list)
+    every 1ROAD* triangle is appended to it as well: the decks the walls stand on."""
     xs = array("d")
     groups = []
     cur = None
@@ -627,10 +641,63 @@ def _read_obj_walls(path: Path, mirror: float):
                         cur[1].append((idx[0], idx[t], idx[t + 1]))
             elif k == "o " or k == "g ":
                 name = ln[2:].strip()
-                cur = (name, []) if name.upper().startswith("1WALL") else None
+                up = name.upper()
+                cur = (name, []) if up.startswith("1WALL") else None
                 if cur is not None:
                     groups.append(cur)
+                elif decks is not None and up.startswith("1ROAD"):
+                    cur = (name, decks)
     return xs, groups
+
+
+class _Decks:
+    """The 1ROAD surfaces under the walls (ledger 0054 step 2e): a wall triangle's band is measured from the deck
+    it stands on — the 1ROAD triangle under its xz centroid whose height is nearest the triangle's foot (its
+    lowest vertex); since step 2g only among the sheets within DECK_REACH_M of the line's own deck (run()'s deck_of).
+    Only the DECK_BUCKET_M buckets the walls stand in are indexed."""
+
+    def __init__(self, verts, tris, need: set):
+        self.v = verts
+        self.grid: dict = {}
+        b = DECK_BUCKET_M
+        for t in tris:
+            i0, i1, i2 = t
+            xa, xb, xc = verts[3 * i0], verts[3 * i1], verts[3 * i2]
+            za, zb, zc = verts[3 * i0 + 2], verts[3 * i1 + 2], verts[3 * i2 + 2]
+            bx0, bx1 = int(math.floor(min(xa, xb, xc) / b)), int(math.floor(max(xa, xb, xc) / b))
+            bz0, bz1 = int(math.floor(min(za, zb, zc) / b)), int(math.floor(max(za, zb, zc) / b))
+            for bx in range(bx0, bx1 + 1):
+                for bz in range(bz0, bz1 + 1):
+                    if (bx, bz) in need:
+                        self.grid.setdefault((bx, bz), []).append(t)
+
+    @staticmethod
+    def bucket(x, z):
+        return int(math.floor(x / DECK_BUCKET_M)), int(math.floor(z / DECK_BUCKET_M))
+
+    def under(self, x, z, foot, lo=-1e30, hi=1e30):
+        """the height of the 1ROAD surface at (x, z) nearest ``foot`` among those within [lo, hi], or None where no
+        such deck stands"""
+        v = self.v
+        best = None
+        for (i0, i1, i2) in self.grid.get(self.bucket(x, z), ()):
+            xa, ya, za = v[3 * i0], v[3 * i0 + 1], v[3 * i0 + 2]
+            xb, yb, zb = v[3 * i1], v[3 * i1 + 1], v[3 * i1 + 2]
+            xc, yc, zc = v[3 * i2], v[3 * i2 + 1], v[3 * i2 + 2]
+            den = (zb - zc) * (xa - xc) + (xc - xb) * (za - zc)
+            if abs(den) < 1e-12:
+                continue
+            wa = ((zb - zc) * (x - xc) + (xc - xb) * (z - zc)) / den
+            wb = ((zc - za) * (x - xc) + (xa - xc) * (z - zc)) / den
+            wc = 1.0 - wa - wb
+            if wa < -1e-9 or wb < -1e-9 or wc < -1e-9:
+                continue
+            h = wa * ya + wb * yb + wc * yc
+            if not lo <= h <= hi:
+                continue
+            if best is None or abs(h - foot) < abs(best - foot):
+                best = h
+        return best
 
 
 def _load_layout(cfg: dict, lid: str) -> dict:
@@ -699,6 +766,8 @@ def run(project_dir, layout_id: str, *, planned: bool = False, obj: str | None =
     _allowed(R, corr)
     # 2. walls
     wall_tris = 0
+    local_cells: list = []
+    local_walls: list = []
     if planned:
         raw = set()
         for _kind, poly in corr.wall_polylines():
@@ -706,7 +775,8 @@ def run(project_dir, layout_id: str, *, planned: bool = False, obj: str | None =
                 raw |= _thick_segment_cells(R, a, b, corr.bhalf)
         cells = list(raw)
     else:
-        verts, groups = _read_obj_walls(data / obj_name, -1.0 if mirror else 1.0)
+        deck_tris: list = []
+        verts, groups = _read_obj_walls(data / obj_name, -1.0 if mirror else 1.0, decks=deck_tris)
         line = Line(corr.pts)
         rel_cache: dict = {}
         y_cache: dict = {}
@@ -730,6 +800,88 @@ def run(project_dir, layout_id: str, *, planned: bool = False, obj: str | None =
         cells = R.wall_cells_from_masks()
         R.hmask.clear()
         R.touched.clear()
+        # MEASUREMENT-BUG FIX (ledger 0054 step 2e): the same span test again, each wall triangle measured from
+        # the deck it stands on (the 1ROAD surface under it) instead of the centreline's. A wall on a junction
+        # pad 0.21-0.27 m below the line read 3-7 cm short of the band and left a door (north J3, v694-699 L).
+        # A cell is a wall when it seals in EITHER frame: every centreline-frame wall stays, so a build whose
+        # walls all stand on the line's own deck is unchanged (local_deck_cells counts what the deck frame adds).
+        if deck_tris:
+            def foot_xz(t):
+                i0, i1, i2 = t
+                return ((verts[3 * i0] + verts[3 * i1] + verts[3 * i2]) / 3.0,
+                        (verts[3 * i0 + 2] + verts[3 * i1 + 2] + verts[3 * i2 + 2]) / 3.0)
+            decks = _Decks(verts, deck_tris, {_Decks.bucket(*foot_xz(t)) for _n, tris in groups for t in tris})
+
+            def deck_of(cx, cz, foot):
+                """the deck a wall triangle stands on, as a car on THIS line meets it (step 2g): of the 1ROAD sheets
+                under it within DECK_REACH_M of the line's own deck there (the wall's band from that deck still
+                overlaps the line's band), the one nearest the triangle's foot. A sheet further off is another road
+                (the I-8 under a bridge, an overpass above): its barriers are not this line's walls (0.20.2: the
+                median guardrail over the I-8 sealed 104 cells on decks -3.8..+7.2 m off the line's). None: the
+                line's deck, as the first pass."""
+                pr = line.project(cx, cz)
+                if pr is None:
+                    return None
+                ref = pr[3] + DECK_LIFT_M
+                return decks.under(cx, cz, foot, ref - DECK_REACH_M, ref + DECK_REACH_M)
+            for _name, tris in groups:
+                for t in tris:
+                    i0, i1, i2 = t
+                    ys = (verts[3 * i0 + 1], verts[3 * i1 + 1], verts[3 * i2 + 1])
+                    cx, cz = foot_xz(t)
+                    h = deck_of(cx, cz, min(ys))
+                    r0, r1, r2 = rel(i0), rel(i1), rel(i2)      # (also fills y_cache)
+                    lo, hi = (min(r0, r1, r2), max(r0, r1, r2)) if h is None else (min(ys) - h, max(ys) - h)
+                    mask = _bins(lo, hi)
+                    if mask:
+                        R.mark_wall_mask(R.tri_cells(y_cache[i0], y_cache[i1], y_cache[i2]), mask)
+            have = set(cells)
+            local_cells = [c for c in R.wall_cells_from_masks() if c not in have]
+            cells = cells + local_cells
+            R.hmask.clear()
+            R.touched.clear()
+            if local_cells:
+                # step 2g: WHAT the deck frame sealed — every wall object with a triangle in band touching a deck-frame
+                # cell (or its 8 neighbours, the span test's own reach): its cells, how far the deck under it stands
+                # from the line's deck, its base / top over that deck, and the line vertices it stands beside
+                near = {(cx_ + dx, cz_ + dz) for cx_, cz_ in local_cells for dx in (-1, 0, 1) for dz in (-1, 0, 1)}
+                own = {c: set() for c in local_cells}
+                rows: dict = {}
+                for name, tris in groups:
+                    for t in tris:
+                        i0, i1, i2 = t
+                        ys = (verts[3 * i0 + 1], verts[3 * i1 + 1], verts[3 * i2 + 1])
+                        cx, cz = foot_xz(t)
+                        h = deck_of(cx, cz, min(ys))
+                        if h is None:
+                            continue
+                        if not _bins(min(ys) - h, max(ys) - h):
+                            continue
+                        hit = [c for c in R.tri_cells(y_cache[i0], y_cache[i1], y_cache[i2]) if c in near]
+                        if not hit:
+                            continue
+                        pr = line.project(cx, cz)
+                        cl_deck = (pr[3] + DECK_LIFT_M) if pr is not None else h
+                        row = rows.setdefault(name, {"object": name, "cells": set(), "deck_minus_line_m": [9e9, -9e9],
+                                                     "base_m": 9e9, "top_m": -9e9, "vertices": [10 ** 9, -1]})
+                        for c in hit:
+                            for dx in (-1, 0, 1):
+                                for dz in (-1, 0, 1):
+                                    q = (c[0] + dx, c[1] + dz)
+                                    if q in own:
+                                        own[q].add(name)
+                                        row["cells"].add(q)
+                        row["deck_minus_line_m"] = [min(row["deck_minus_line_m"][0], h - cl_deck),
+                                                    max(row["deck_minus_line_m"][1], h - cl_deck)]
+                        row["base_m"] = min(row["base_m"], min(ys) - h)
+                        row["top_m"] = max(row["top_m"], max(ys) - h)
+                        if pr is not None:
+                            row["vertices"] = [min(row["vertices"][0], pr[0]), max(row["vertices"][1], pr[0])]
+                local_walls = sorted(({"object": r["object"], "cells": len(r["cells"]),
+                                       "deck_minus_line_m": [round(v, 3) for v in r["deck_minus_line_m"]],
+                                       "base_m": round(r["base_m"], 3), "top_m": round(r["top_m"], 3),
+                                       "vertices": r["vertices"]} for r in rows.values() if r["cells"]),
+                                     key=lambda r: (r["vertices"][0], r["object"]))
     R.stamp_walls(cells)
     say(f"[no_route] walls: {wall_tris if not planned else 'declared polylines'} -> {len(cells)} wall cells, dilated "
         f"{PROBE_R_M} m ({time.time() - t0:.1f} s)")
@@ -803,6 +955,8 @@ def run(project_dir, layout_id: str, *, planned: bool = False, obj: str | None =
         "escaped": res["escaped"],
         "wall_cells": len(cells),
         "wall_tris_in_band": wall_tris,
+        **({} if planned else {"local_deck_cells": len(local_cells)}),
+        **({"local_deck_walls": local_walls} if local_walls else {}),
         "door_clusters": len(res["doors"]),
         "doors": res["doors"],
         "doors_by_class": res["by_class"],
@@ -823,6 +977,12 @@ def run(project_dir, layout_id: str, *, planned: bool = False, obj: str | None =
     say(f"[no_route] {layout_id}: {'FAIL' if fails else 'PASS'} — leak {out['leak_m2']} m2, {len(res['doors'])} doors, "
         f"{len(forbidden)}/{len(corr.probes)} probes reached, {len(blocked)} blocked spans, {len(spawns_missed)} spawns "
         f"unreached ({out['seconds']} s)")
+    if local_cells:
+        say(f"[no_route]   the deck frame sealed {len(local_cells)} cells more:")
+        for w in local_walls[:40]:
+            say(f"[no_route]     {w['object']}: {w['cells']} cells at v{w['vertices'][0]}-v{w['vertices'][1]}, its deck "
+                f"{w['deck_minus_line_m'][0]:+.2f}..{w['deck_minus_line_m'][1]:+.2f} m off the line's, standing "
+                f"{w['base_m']:+.2f}..{w['top_m']:+.2f} m over it")
     for d in res["doors"][:40]:
         say(f"[no_route]   door {_door_str(d)}: {d['cells']} cells, lat {d['lat'][0]:+.1f}..{d['lat'][1]:+.1f}, "
             f"gap ~{d['gap_m']:.1f} m, {d['class']}{', escapes to the open map' if d['escapes'] else ''}")
@@ -887,6 +1047,24 @@ def _allowed(R: Raster, corr: Corridor):
             continue
         R.fill_quad(R.allowed, corr.at(k, lat_lo(k)), corr.at(k1, lat_lo(k1)), corr.at(k1, lat_hi(k1)),
                     corr.at(k, lat_hi(k)), create=True)
+    # ledger 0054 Phase 2: in front of a nose K-rail (the open walk from its box edge to its pin P) the far carriageway is
+    # open up to the K-rail — allowed at the street's full width on every segment of that walk (the declared lane
+    # narrows to the closure's one vertex early, barrier_bands._corridor_record; the lane at P is the closure's)
+    for w in getattr(corr, "nose_walls", []):
+        p, md, e = int(w["vertex"]) % m, int(w["median"]) % m, int(w["end"]) % m
+        step = 1 if (md - p) % m == 1 else -1
+        ks = [e]
+        while ks[-1] != p:
+            ks.append((ks[-1] + step) % m)
+        # the vertex whose lane barrier_bands narrows (P's box-side neighbour) and the next one: full width too — inside
+        # the box when the median runs up to the box edge (P = the box edge itself, Mission Gorge into J4)
+        nb = (p - step) % m
+        if nb not in ks:
+            ks = [nb] + ks
+        ks = [(ks[0] - step) % m] + ks          # and the segment before the narrowed vertex
+        for a, b in zip(ks, ks[1:]):
+            fa, fb = corr.widths[a] / 2.0 - corr.inset + TOL_M, corr.widths[b] / 2.0 - corr.inset + TOL_M
+            R.fill_quad(R.allowed, corr.at(a, -fa), corr.at(b, -fb), corr.at(b, fb), corr.at(a, fa), create=True)
     for c in corr.corners:
         sgn = 1.0 if c["side"] == "L" else -1.0
         # only where this layout's lane reaches the strip on that side (a closure lane stops short of it)

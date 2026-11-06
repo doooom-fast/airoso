@@ -1,0 +1,29 @@
+{
+ "kn5": "D:\\k10-scratch\\lm_v4_0201\\build\\san_diego_lake_murray.kn5",
+ "counts": {
+  "roofs": 7600,
+  "blocks": 7600,
+  "colliders": 275
+ },
+ "floor": {
+  "roofs": 7600,
+  "blocks": 7600,
+  "colliders": 275
+ },
+ "detail": {
+  "1WALL_TILTUP": 275,
+  "BUILDING_METAL": 226,
+  "BUILDING_STUCCO": 5795,
+  "BUILDING_TILTUP": 218,
+  "FARBLOCK_METAL": 45,
+  "FARBLOCK_STUCCO": 1256,
+  "FARBLOCK_TILTUP": 60,
+  "ROOFTOP_DARK": 423,
+  "ROOFTOP_SHINGLE": 7023,
+  "ROOFTOP_TAN": 85,
+  "ROOFTOP_WHITE": 69
+ },
+ "weld_m": 0.001,
+ "fail": false,
+ "below": []
+}

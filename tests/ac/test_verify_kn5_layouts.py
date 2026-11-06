@@ -340,6 +340,9 @@ def _sd_project() -> Path:
     d = Path(tempfile.mkdtemp())
     (d / "data").mkdir(); (d / "build").mkdir()
     cfg = json.loads((SD / "track.config.json").read_text(encoding="utf-8"))
+    # the v0.18.0 fixture holds the mainline only: a layout on another lap (ledger 0054 Phase 2's north_*) reads
+    # data/lap.<id>.json, which the fixture predates
+    cfg["layouts"] = [lo for lo in cfg["layouts"] if not lo.get("lap")]
     for lo in cfg["layouts"]:            # the ledger-0049 closure tokens (the repo config may predate them)
         if lo.get("race_furniture"):
             lo.setdefault("closure_token", "cw" if lo.get("direction", "forward") == "forward" else "acw")

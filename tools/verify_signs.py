@@ -717,6 +717,8 @@ def driven_directions(proj):
         cfg = {}
     out = {}
     for lay in cfg.get("layouts") or []:
+        if lay.get("lap") not in (None, ""):
+            continue    # ledger 0054 Phase 2: a layout on its own lap drives no MAINLINE corner (place_signs.race_layouts)
         word = str(lay.get("direction") or "forward").lower()       # absent / null = forward (the older configs)
         if word not in LAYOUT_DIRECTION:
             raise ValueError("layout %s: direction %r is not forward / reverse" % (lay.get("id"), lay.get("direction")))

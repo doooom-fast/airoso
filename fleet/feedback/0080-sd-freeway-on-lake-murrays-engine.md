@@ -785,6 +785,52 @@ two assembler checks; no step Lake Murray runs changed.
   mid-latitude, so every node moves (likely the cause; not proven). So the crop (1,000 m, [invented], phase 1) is KEPT
   and the whole box is owed: read s 2,805 on ws38 first.
 
+**3. The 2b mainlines' skeleton (item 3): declared, resolved, measured where NAIP is cached; NOTHING built.** Each
+carriageway resolves (item 1's specs; `network_connectors.py` builds a phased spec only when
+`lm_intake.network_build_phases` lists it, so 2a's committed connectors reproduce byte for byte). Their decks would come
+from the cached lidar (`deck_profiles.lidar.json` covers every bridged edge network-wide) with heights uncapped (the
+tool caps nothing). The gate on building is the measured edge, and NAIP (`NAIP_OFFLINE=1`, naip_carriageways'
+`read_sections` / `edges_of`, probe `b1/probe_naip2b.py`) measures almost none of 2b: the cached crops are the I 8
+corridor's, so every 2b stretch they cover is that road's CROSSING of I 8 (0.6-1.2 km, within 5-17 m of the line in
+plan), and there the outer edge reads only where no ramp abuts it:
+
+| corridor | length (chain) | scan wholly cached | stations with BOTH edges read | longest run | built | waits on |
+|---|---|---|---|---|---|---|
+| I 5 NB | 14,672 m | s 1,845-2,430 (the I 8 crossing) | 48 of 2,935 | 60 m | no | NAIP 37 crops; EPT 199 nodes + 1 page |
+| I 5 SB | 15,776 m | s 9,630-10,210 (the same crossing) | 71 of 3,156 | 210 m | no | NAIP 41; EPT 190 |
+| SR 52 EB | 10,133 m | none | 0 | 0 | no | NAIP 25; EPT 98 + 2 pages |
+| SR 52 WB | 9,657 m | none | 0 | 0 | no | NAIP 23; EPT 86 + 2 pages |
+| SR 163 NB | 9,275 m | s 4,505-5,750 (the I 8 crossing) | 127 of 1,855 | 120 m | no | NAIP 25; EPT 150 |
+| SR 163 SB | 8,130 m (+ the 2,901 m piece abreast NB at I 8: 115 of 581 read, run 140 m) | none on the chain | 0 | 0 | no | NAIP 23; EPT 75 + 1 page |
+
+So no corridor has a measured stretch to stop at; by the round's rule (no carriageway pair on lane-count widths where
+they could overlap) none is built, and 2a's build is unchanged by 2b. Two more reasons the cached stretches could not be
+built yet even if read: (a) each is a deck OVER the line, and engine-july's prep culls pavement >= 0.3 m under other
+pavement and raises ground to the highest 1ROAD within 30 m (the 2d note in Owed): an I 5 deck over I 8 as 1ROAD would
+cull the line under it; (b) naip_carriageways reports "barrier at the midline" on the inner side where NO image exists
+(no crop: every sample class -1, so the paved-median fallback fires): 2,343 of I 5 NB's stations read so. It never fired
+in 2a (every I 8 crop is cached); before 2b reads anything a no-image row must be "unread" (owed, a port tool fix).
+
+**4. Size (item 4).** One road kn5: 2a with the tiered ground **29.8 MB** (ws39; was 43.0); 2b adds nothing this round.
+The whole box tiered with 2a is 34.1 MB (ws38, not green). Estimate for the network (2a's ~21 km of carriageway cost
+roughly 1.2 MB / km of carriageway with its barrier, ground and markings): + 2b's 67 km is ~+80 MB, about 115 MB before
+2c's ramps and 2d's connectors, so the 120 MB budget will not hold one road kn5. Proposal, as Lake Murray already ships:
+per-layout kn5s (one road kn5 per mainline group, e.g. I 8 / I 5 / SR 52 + SR 163, each layout loading its own plus the
+shared ground), not cut geometry. Not built this round (nothing of 2b is built to split).
+
+## PC runbook 0080-8: rehearse 2b round 1 (2a with the tiered ground), no install
+
+Supersedes 0080-7 for the next candidate. No lidar or NAIP is needed; the new draft step uses Blender 4.2's own numpy.
+
+1. `git fetch && git worktree add D:/k10-worktrees/freeway-lm-2b1 396c41f9` (ws39's build inputs; later 2b round 1
+   commits change only the ledger)
+2. `SHIP_PROJ=D:/k10-scratch/fwlm_2b1 AIROSO=D:/k10-worktrees/freeway-lm-2b1 ENG=D:/k10-scratch/eng_fwlm bash
+   tools/ship_track.sh san-diego-freeway-lm --no-install`
+3. Expect ws39: the draft prints `[fwlm-tiers] tiered terrain: {... "fine_cells": 938, "fan_cells": 388, "vertices":
+   32418 ...}`; line drive_test PASS (excursions 2), WB line gate PASS (17, 1.61 / km), audit CLEAN, verify_kn5 / inis
+   PASS, kn5_ground_check PASS, 29,834,689 B (+- a ground edge split, as 0080-6), SHIP OK. Any other number: stop and
+   file it here. Install only on Kevin's word (it would replace c3c988b9's `san_diego_freeway_lm`).
+
 ## PC runbook 0080-7: rehearse 2a round 6, no install
 
 Supersedes 0080-6 for the next candidate (0080-6's c3c988b9 is what is installed). No lidar or NAIP is needed.
@@ -906,10 +952,14 @@ The Caltrans 2026 Standard Plans PDF (round 3 item 7) is still owed separately.
 
 ## Owed (start here)
 
-State (2026-11-05, end of 2a round 6): **2a green on the Mac** (the round 6 table, ws35 / ws36: the line's drive_test
-PASS, excursions 2; WB's line gate PASS, lap rule 17; audit CLEAN; kn5_ground_check PASS; SHIP OK; 43.0 MB). Installed
-on the PC: round 5 (c3c988b9, Kevin's word); round 6 is rehearsed with runbook 0080-7, not installed. Lake Murray
-unchanged (empty diff; no chain step it runs changed). Nothing downloaded this round.
+State (2026-11-05, end of 2b round 1): **2a green on the Mac with the tiered ground** (ws39 at 396c41f9: every gate
+JSON byte-identical to ws35's: the line's drive_test PASS, excursions 2; WB's line gate PASS, lap rule 17; audit CLEAN;
+kn5_ground_check PASS; SHIP OK; **29.8 MB**, was 43.0). Installed on the PC: round 5 (c3c988b9); round 6 rehearsed
+(0080-7), not installed; ws39 to rehearse with runbook 0080-8. **2b: declared and resolved, nothing built** (no corridor
+has a measured stretch: item 3's table). Lake Murray unchanged (`git diff origin/claude/fleet-lm-engine --
+tracks/san-diego-lake-murray scripts/` empty; no step it runs changed; the vectorised clamp A/B'd byte-identical on its
+own grid). Nothing downloaded: the list is "## Downloads for Kevin" above. Tests: run_tests 630 PASS / 1 FAIL
+(test_registry_moves, as before); pytest tests/tools 718 passed, 1 skipped (714 + the 4 new).
 
 - **Kevin:** drive round 5 (installed); rehearse round 6 on the PC (runbook 0080-7), install on your word. Say yes / no
   to: fetching the 2014 EPT nodes over the unpaved median (12 of WB's 17 lap-rule drops wait on it), the lidar over the
@@ -933,14 +983,20 @@ unchanged (empty diff; no chain step it runs changed). Nothing downloaded this r
   scratchpad `r6/` (`under_wb.py` the ground under WB's pavement, `fprobe.py` audit F's failures located, `bprobe.py`
   audit B's, `near.py` every group's vertices near a point, `tri_at_line.py`, `bl_sweep.py` the reader's sweep);
   round 5's in `r5/` (`xs.py`, `gates.py`).
-- **2b (I 5, SR 52, SR 163 mainlines, both ways):** `lm_intake.network_connectors` entries (ref + direction; the
-  resolver refuses a broken chain, so read its message per road), then **the whole box**: drop `grid_crop_m`, set
-  `terrain.tiers` (far cells at the 3DEP grid's native 55 m), and measure the assembler's terrain pass on the box first
-  (`/Volumes/Drive/codex/fwlm_work/prof_terrain.py`; phase 1 did not finish in 45 min). If it is too slow, vectorise
-  `conform_terrain_to_road` / `band_clamp` / `carve_road_corridor` (numpy, in a NEW module the port opts into by key,
-  or in scripts-v021 with Lake Murray's draft A/B byte-identical), not a crop. kn5 budget: 2a is 41 MB for ~20 km of
-  carriageway; 2b adds ~97 km: expect the 120 MB budget to need the box's far ground at native spacing (tiers) and
-  per-layout kn5s before any geometry is cut.
+- **2b (I 5, SR 52, SR 163 mainlines, both ways)**, in order:
+  1. **Kevin: yes / no to the download list** ("## Downloads for Kevin": NAIP 114 crops, 456 MB; EPT 702 nodes ~159 MB
+     est. + 3 hierarchy pages; D24 6 tiles of unknown size + 480624 from the PC).
+  2. `tools/naip_carriageways.py`: a no-image row must read "unread", not "barrier at the midline" (item 3 (b)); then
+     generalise it to the 2b pairs (`partner` in each spec; barriers per pair, never I 8's on a 2b line), keeping
+     2a's outputs byte-identical.
+  3. Build each 2b corridor's MEASURED stretch only (`lm_intake.network_build_phases` ["2b"] after trimming each spec to
+     its measured runs), its decks from `deck_profiles.lidar.json`, median barrier / ground as I 8's. The crossings of
+     I 8 wait on 2d's deck-over-pavement mechanism (below): stop each stretch 30 m (LAYER_WIN) clear of I 8's pavement.
+  4. **The whole box (ws38, 34.1 MB, NOT green):** the line's ground on top at s 2,805 (+6.0, 3 samples). Read it on
+     ws38 (`/Volumes/Drive/codex/fwlm_work/ws38`); the suspect is project_grid's mid-latitude column spacing moving every
+     near-road node vs the crop's grid. Then drop `grid_crop_m`.
+  5. **Size:** 2b's 67 km will not fit one 120 MB road kn5 (~115 MB est. before 2c / 2d): per-layout kn5s as Lake
+     Murray ships, not cut geometry.
 - **2c (ramps + gores):** ramps as connectors with mouths: `trim_connectors` cuts a T; a freeway merge is a 2-5 deg
   taper. A new gore tool (port-only), measured against `verify_mouths`; `weld_mouths_blend`'s empty-yellow-block refusal
   needs fixing by its owners (`claude/sand-creek-lm-assets`) or the gore tool must not depend on it.

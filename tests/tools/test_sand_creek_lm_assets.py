@@ -728,3 +728,20 @@ def test_round_n_fold_chords_are_opt_in():
     assert sorted({round(d[1]) for d in base}) == list(range(18, 26))
     both = fold_fan_discs(welds, pts, w, chords=True)
     assert sorted({round(d[1]) for d in both}) == list(range(18, 26)) + list(range(33, 41))
+
+
+def test_round_n_paint_is_opt_in():
+    """ledger 0079 round N: route.paint (tools/author_paint_blend.py, draft step paint) is named only by Sand Creek's
+    candidate: Lake Murray, the Lariat, the circuits and the live 0.2.5 config name none (the step is then a no-op)"""
+    for t in ("san-diego-lake-murray", "lookout-lariat", "lookout-lariat-lm", "high-plains-lm", "aspen-lm", "pueblo-lm",
+              "sand-creek-lm"):
+        p = ROOT / "tracks" / t / "track.config.json"
+        if p.exists():
+            assert "paint" not in (json.loads(p.read_text(encoding="utf-8")).get("route") or {}), t
+    sc = json.loads((SC / "source" / "round_k" / "track.config.json").read_text(encoding="utf-8"))
+    (item,) = sc["route"]["paint"]
+    assert item["id"] == "fork_95_median" and len(item["lines"]) == 2 and len(item["clear"]) == 4
+    assert all(l["color"] == "yellow" and l["w"] == 0.12 and l["double_gap_m"] == 0.06 for l in item["lines"])
+    ship = json.loads((SC / "source" / "round_k" / "ship.json").read_text(encoding="utf-8"))["steps"]["draft"]
+    assert ship.index("paint") == ship.index("islands") + 1
+    assert "draft_paint()" in (ROOT / "tools" / "ship_track.sh").read_text(encoding="utf-8")

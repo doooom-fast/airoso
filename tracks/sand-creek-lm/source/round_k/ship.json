@@ -20,6 +20,7 @@
       "strip_seam",
       "gap_mouths",
       "islands",
+      "paint",
       "ground_patch",
       "lamps"
     ],

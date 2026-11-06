@@ -939,7 +939,64 @@
         ]
       }
     ],
-    "_islands_doc": "ledger 0079 round I (Kevin: \"I just want real\"): fork 91/92's concrete island, built where it was measured by tools/author_islands_blend.py after the weld, its heights read off the welded ROAD. rows [x_west, z, x_east, z]: NAIP 2023 (track frame) every 0.5 m from z -811.0 (the north nose) to -838.0 (the crosswalk's stop bar; through the crosswalk the refuge is cut flush, and the nose past it lies on the lap's own deck past the mouth line: neither built), each edge half-way to the first sample of the bright run (gray >= 185) covering x 53, samples 0.25 m; rows -835.0 / -835.5 (the run broken by a shadow, under 3 m wide) interpolated. x 50.88 .. 53.62-54.62 (3.75 m wide from z -817). rise_m [west, east]: lidar (CO_DRCOG_2_2020 class 2) median 0.25-1.25 m inside minus outside each edge, +-0.5 m along, over the 53 rows read: west +0.078 m (range +0.024 .. +0.216, the median taken: the spread is the lidar's, a curb is one height); east -0.047 m (-0.19 .. +0.05: the island at or under the northbound lane beside it, which rises east where the built road is level across): built flush, 0. Round H's single section at z -824 (0.4 m over the east carriageway) is the one row where the east lane dips; along the island it does not."
+    "_islands_doc": "ledger 0079 round I (Kevin: \"I just want real\"): fork 91/92's concrete island, built where it was measured by tools/author_islands_blend.py after the weld, its heights read off the welded ROAD. rows [x_west, z, x_east, z]: NAIP 2023 (track frame) every 0.5 m from z -811.0 (the north nose) to -838.0 (the crosswalk's stop bar; through the crosswalk the refuge is cut flush, and the nose past it lies on the lap's own deck past the mouth line: neither built), each edge half-way to the first sample of the bright run (gray >= 185) covering x 53, samples 0.25 m; rows -835.0 / -835.5 (the run broken by a shadow, under 3 m wide) interpolated. x 50.88 .. 53.62-54.62 (3.75 m wide from z -817). rise_m [west, east]: lidar (CO_DRCOG_2_2020 class 2) median 0.25-1.25 m inside minus outside each edge, +-0.5 m along, over the 53 rows read: west +0.078 m (range +0.024 .. +0.216, the median taken: the spread is the lidar's, a curb is one height); east -0.047 m (-0.19 .. +0.05: the island at or under the northbound lane beside it, which rises east where the built road is level across): built flush, 0. Round H's single section at z -824 (0.4 m over the east carriageway) is the one row where the east lane dips; along the island it does not.",
+    "_paint_doc": "ledger 0079 round N (tools/author_paint_blend.py, draft step paint after islands): fork 94/95's painted median, measured on NAIP 2023 in the track frame (scratchpad probe lines2.py: every 0.5 m of z, the luminance across x minus its 4 m running median, each line tracked from a seed and fitted x = a + b z; west 121 rows, rms 0.116 m; east 136 rows, rms 0.149 m; NAIP's 0.46 m pixel quantises each row). The west line is the street's own centre (the assembler's double yellow ran within about 0.4 m of it to z -830, then bent up to 1.7 m into the median); the east line diverges from it, 0.32 m apart at z -773 to 5.56 m at -840 (the last row both read >= 19 grey levels of contrast; the crosswalk follows). Both painted as the assembler's double yellow (two 0.12 m stripes 0.06 m apart: NAIP resolves neither single nor double). clear: the assembler's paint inside west - 0.6 .. east - 0.2 m over the same z (its centre line and the white dashes it drew inside the median). The chevron hatch between the lines is NOT painted: NAIP does not resolve one (the interior's brightness has no period, sd 3.4 grey levels).",
+    "paint": [
+      {
+        "id": "fork_95_median",
+        "street": "grid_unclassified_95",
+        "lines": [
+          {
+            "pts": [
+              [
+                848.863,
+                -773.0
+              ],
+              [
+                848.252,
+                -840.0
+              ]
+            ],
+            "color": "yellow",
+            "w": 0.12,
+            "double_gap_m": 0.06
+          },
+          {
+            "pts": [
+              [
+                849.186,
+                -773.0
+              ],
+              [
+                853.812,
+                -840.0
+              ]
+            ],
+            "color": "yellow",
+            "w": 0.12,
+            "double_gap_m": 0.06
+          }
+        ],
+        "clear": [
+          [
+            848.263,
+            -773.0
+          ],
+          [
+            848.986,
+            -773.0
+          ],
+          [
+            853.612,
+            -840.0
+          ],
+          [
+            847.652,
+            -840.0
+          ]
+        ]
+      }
+    ]
   },
   "loop": true,
   "default_width_m": 9.0,

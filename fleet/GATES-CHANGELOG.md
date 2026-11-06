@@ -14,7 +14,7 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
-## 2026-11-05 (round N) — Sand Creek toward 0.2.6: verify_fold_fans learns the weld's chord mends (ledger 0079 round N)
+## 2026-11-05 (round N) — Sand Creek toward 0.2.6: verify_fold_fans learns the weld's chord mends; fork 94/95's measured paint (ledger 0079 round N)
 
 **Not live.** The candidate in `tracks/sand-creek-lm/source/round_k/` does not take the new key (below); the live config
 is 0.2.5. No gate threshold, floor, reference or bypass moved.
@@ -46,6 +46,19 @@ is 0.2.5. No gate threshold, floor, reference or bypass moved.
   So **`fold_fan_severe` is NOT adopted** (it hands readings only to a gate that passes them): 19 of the 32 fan readings
   lie on a judged path (7 at v140, passing; 12 at the S, failing), 13 lie on none (the turning centres of v140 and the
   S's first corner) and would stay severe anyway.
+
+- **`route.paint` + draft step `paint`** (opt-in; tools/author_paint_blend.py, `draft_paint` in tools/ship_track.sh, the
+  candidate's ship.json after `islands`; no other config names it — `test_round_n_paint_is_opt_in`). Visual only (a
+  YLINE_paint_* object: no digit prefix, no physics, no gate surface). Numbers: `PAINT_LIFT_M` 0.015 (Lake Murray's
+  connector paint over its deck: scripts-v021 build_loop_blend +0.115 on points with the 0.10 deck lift); ⚠ `PAINT_DS_M`
+  0.5 m [invented] resample step; the stripe 0.12 m and gap 0.06 m are the assembler's double yellow (lane_markings
+  line_w 0.12, read off the built YLINE_2); self-check read-back 1 mm [invented]. Fork 94/95's median, MEASURED on NAIP
+  2023 in the track frame: ⚠ the tracker's 4 grey-level peak floor, 0.6 m search window, 4 m running median and
+  ±0.25 m row mean [invented]; west line x = 855.914 + 0.00912 z (121 rows, rms 0.116 m), east x = 795.804 − 0.06906 z
+  (136 rows, rms 0.149 m); ends z −773 (the two doubles stop overlapping: centres 0.32 m apart) .. −840 (the last row
+  both lines read ≥ 19 grey levels of contrast). ⚠ [authored] clear polygon: west − 0.6 .. east − 0.2 m over the same z;
+  ⚠ [authored] both lines painted as double yellow (NAIP resolves neither single nor double). The chevron hatch is not
+  painted (not resolved).
 
 ## 2026-11-05 (round M) — Sand Creek toward 0.2.6: Lake Murray 0.20.2's no_route deck frame, pad corners, dense hops (ledger 0079 round M)
 

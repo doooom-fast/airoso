@@ -1539,7 +1539,85 @@ prep_v4's built OBJs). The live config is still 0.2.5. Every number: GATES-CHANG
   the chord survey over rows 122-154 passes there) and the 13 fan readings no judged path reaches (item 1). The race
   drive_test does not gate severe; these stay counted, now named.
 
-## Owed (2026-11-05, after round M; start here)
+### Item 3 (fork 94/95's paint): BUILT — the two measured median lines; the chevron hatch is not resolved on NAIP, not painted
+- **Measured** on NAIP 2023 in the track frame (round I's projection; probe `scratchpad/rn/lines2.py`): every 0.5 m of
+  z from the fork's merge to the crosswalk, the luminance across x (0.05 m samples, each the mean over ±0.25 m of z)
+  minus its 4 m running median; each line tracked from a seed to the nearest maximum of its predicted x, then fitted
+  straight. West x = 855.914 + 0.00912 z (121 rows, rms 0.116 m); east x = 795.804 − 0.06906 z (136 rows, rms 0.149 m;
+  NAIP's 0.46 m pixel quantises each row). They are 0.32 m apart at z −773 and 5.56 m at −840, the last row both read
+  ≥ 19 grey levels of contrast (the crosswalk follows).
+- **The west line is the street's own centre.** The assembler's double yellow ran within about 0.4 m of it to z −830,
+  then bent up to 1.7 m into the median. Its white lane-divider dashes at x 852.5 stood inside the median south of
+  z −823.
+- **The chevron hatch is not painted.** NAIP does not resolve one: the interior's brightness has no period
+  (autocorrelation decays with no peak out to 12 m; sd 3.4 grey levels). Painting one would be inventing its spacing
+  and angle. A higher-resolution source would settle it.
+- **The step** (new, opt-in `route.paint`, draft step `paint` after `islands`, `tools/author_paint_blend.py`):
+  - `clear` removes the assembler's paint faces whose centre lies inside the measured median, from west − 0.6 m to
+    east − 0.2 m.
+  - Each line is resampled every 0.5 m. Each stripe point reads the welded ROAD's top (a ray down) and stands 0.015 m
+    over it (Lake Murray's own connector paint height over its deck).
+  - The result is one visual-only object, `YLINE_paint_<id>`: the prep binds the yellow line texture and turns its faces
+    up. It has no physics.
+  - Both lines are the assembler's double yellow (two 0.12 m stripes, 0.06 m apart), since NAIP resolves neither single
+    nor double. Lake Murray's assembler is untouched.
+  - Self-checks: no ROAD under a point, or a read-back over 1 mm off its lift, means exit 1 and nothing saved.
+- **rn1:** 95 assembler faces cleared (YLINE 91, MARKINGS 4). `YLINE_paint_fork_95_median` is 67.0 m + 67.2 m × 2
+  stripes, 540 quads, read-back 0.00 mm. In the gate OBJ the fork now carries the two doubles where NAIP has them, and
+  no dash inside the median.
+- **Owed:** the 0-8 m between z −840 and the stop bar. NAIP is unreadable there (crosswalk), so the assembler's centre
+  stub at x 850 stays.
+
+### Item 4 (Quebec's outer edges by a lidar curb-line trace): not reached (owed, as round J)
+
+### Gates, BUILT kn5 (Mac, empty workshop `sclm_work/rn1`; candidate config + item 3)
+Built from source copy `sclm_work/rn_src` (rm_src + this round's files, candidate swapped in). It stopped at
+verify_kn5's closure row, as round M did, and resumed `--from road_obj`. Logs: `rn1.a.log`, `rn1.log`.
+
+| gate | round M (rm1) | **round N (rn1)** |
+|---|---|---|
+| drive_test street | PASS: soft 0, severe 0, kinks 1.24 /km, excursion drops 1 (1 far ledge) | **the same — drive_test.street.json byte-identical to rm1's** |
+| drive_test race | PASS (gated rows): obstructed 0, barrier_missing 0, soft 0; severe 40, dense_hops 6, kinks 9.54 /km | **the same (json equal but for timing); severe 40, by item: judged by fans 0, re-measured (dense hops) 6, left 40 — each named (items 1-2)** |
+| audit street / race | CLEAN / CLEAN | **CLEAN / CLEAN** |
+| kn5_ground_check | PASS x2 | **PASS x2** |
+| verify_pads | PASS x3 | **PASS x3 (curb over pavement 0 / 0 / 0; seams 1.6 / 1.6 / 0.9 mm)** |
+| verify_mouths | PASS 117 | **PASS 117** |
+| house_seat / houses | PASS 1.261 m / 2,183 | **PASS 1.261 m / 2,183** |
+| textures | 0 untextured | **0** |
+| verify_race / check_race_kn5 | OK / OK (whole_lap WARN) | **OK / OK (common 36 meshes; closure 3 sign meshes, whole_lap WARN)** |
+| no_route PLANNED / BUILT | PASS / PASS | **PASS / PASS (0 / 27, leak 0)** |
+| verify_signs | PASS, 7 posts | **PASS, 7 posts (2 layout plates)** |
+| verify_fold_fans | PASS — vacuous | **PASS — vacuous on the candidate (no `fold_fans.chords`); with the key it judges both chords and FAILS the S (item 1)** |
+| verify_kn5 / --inis | FAIL (closure only) / PASS | **FAIL (closure only) / PASS** |
+| kn5 total | 106.9 MB | **107.1 MB** (road 89.9, `_race` 10.2, `_street` 6.9) |
+
+### Lake Murray unchanged (round N)
+- `git diff origin/claude/fleet-lm-engine -- tracks/san-diego-lake-murray scripts/` shows scripts/geometry/drive_test.py
+  only: round M's DENSE HOPS key and this round's FOLD CHORDS key. Lake Murray sets neither.
+- drive_test / verify_fold_fans A/B: byte-identical without the key (item 1).
+- Trim A/B (`sclm_work/lmtrim_rn`): byte-identical (`664da93b…`, `b73b70f4…`, `f0c97952…`).
+- `tools/author_paint_blend.py` and `draft_paint` do nothing without `route.paint`, which Lake Murray does not name.
+
+Tests (`tests/run_tests.py`, venv python on PATH): 1,329 pass, the known 8 fail (`test_draft_equiv` x5,
+`test_registry_moves`, `test_bench_pad` x2). New: `test_round_n_fold_chords_are_opt_in`, `test_round_n_paint_is_opt_in`.
+
+## Owed (2026-11-05, after round N; start here)
+
+1. **The closure:** Kevin's call, still pending. It is the only verify_kn5 red.
+2. **The S at 48th / Colorado (parked pad).** verify_fold_fans with `fold_fans.chords` fails it on the lap ribbon:
+   - (5) the inside edge's chord drops 0.098 m over 0.67 m;
+   - street (2) DT 0.091 m.
+
+   The fix is the surface: unpark 48th_colorado (round D's reasons: verify_pads P4 at its SE edge, and the box missing
+   the crossroads' east half). Then the candidate can take `fold_fans.chords` + `drive_test.fold_fan_severe`. That
+   would hand verify_fold_fans the 19 readings on its judged paths. The other 21 stay severe, named: 13 at the turning
+   centres, plus s 413 / 418 and v779's 6, each the inside race kerb's lip read by a zig-zagging fixed-offset path.
+3. **Fork 94/95:** the chevron hatch needs a higher-resolution source; the 8 m from z −840 to the stop bar is unread.
+4. **Quebec's outer edges** (round J's item: a continuous lidar curb-line trace), then the re-centre only if it holds.
+5. Then runbook 4n and the `_n` stills, and the 0.2.6 bump. The candidate in `source/round_k/` now carries
+   `race.pad_corners`, `drive_test.dense_hops` and `route.paint` (+ ship.json `paint`).
+
+## Owed (2026-11-05, after round M; kept for the record)
 
 1. **The closure** — Kevin's call (pending): Lake Murray's 11.36 m lane with closure walls on the >= 15.67 m streets
    (0049 R4), or the full street (then verify_kn5 must learn `params.whole_lap`). The only verify_kn5 red.

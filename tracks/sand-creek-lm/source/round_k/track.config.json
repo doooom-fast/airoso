@@ -581,14 +581,9 @@
     "_weld_deck_beyond_end_doc": "ledger 0079 round J (tools/weld_mouths_blend.py, mouth_weld.BeyondEndDeck): piece-name prefixes whose weld reads, past the host's OPEN end, the deck of the street that end is welded to. grid_tertiary_74#0 (24 deg) meets grid_tertiary_1#1 at its v1, where #1 starts on grid_tertiary_2#0: 74's first rows lie on grid_tertiary_2's pavement, and the host's end row held level there stood them 0.021 m over grid_tertiary_2's lane on its measured (lidar) profile, which falls 0.02 m over those 7 m (verify_mouths HOST LANE, grid_tertiary_1#1 start; round I's i3 / i5). Read off the street under them, they lie on it. No number added.",
     "verify_mouths_allowed": [
       {
-        "piece": "grid_primary_78#0",
-        "end": "end",
-        "why": "pad sandcreek_quebec parked (lm_pads.parked)"
-      },
-      {
         "piece": "grid_primary_80#0",
         "end": "end",
-        "why": "pad sandcreek_quebec parked (lm_pads.parked)"
+        "why": "NOT sandcreek_quebec's (ledger 0079 round Q): grid_primary_80 meets the lap on E 56th Ave at v847 (-736.5, 1237.5); rp1 FAIL mouth line 0.072 m, host lane 0.06 m, notch 0.079 m. The row was written for sandcreek_quebec when the pieces were numbered otherwise; kept (no new allowance), owed: its mouth"
       }
     ],
     "_verify_mouths_allowed_doc": "ledger 0079 round H (coordinator 2026-11-05: the 3 mouths at the parked pads stay allowed; do not work on the parked pads): tools/verify_mouths.py still measures each and marks its row FAIL, but these three named mouths do not fail the gate (a BYPASS, fleet/GATES-CHANGELOG.md). Every other mouth fails it as before; a name that matches no mouth is an input error. Remove a row when its pad is built",

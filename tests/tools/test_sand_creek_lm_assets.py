@@ -767,7 +767,8 @@ def test_round_o_cut_reach_arm_is_opt_in():
     assert [p["id"] for p in decls if p.get("cut_reach")] == ["48th_colorado"]
     assert "48th_colorado" in [p["id"] for p in sc["lm_pads"]["pads"]]
     assert all(not p.get("_parked_why") for p in sc["lm_pads"]["pads"])
-    assert [r["piece"] for r in sc["route"]["verify_mouths_allowed"]] == ["grid_primary_78#0", "grid_primary_80#0"]
+    # round Q drops grid_primary_78's row (it passes on rp1 / rp2); grid_primary_80's is the mouth on E 56th (v847)
+    assert [r["piece"] for r in sc["route"]["verify_mouths_allowed"]] == ["grid_primary_80#0"]
     sk = json.loads((SC / "signs.json").read_text(encoding="utf-8"))["corners"]["SC-48S"]
     assert sk["skip"] is True and "rev" in sk["reason"] and "fwd" in sk["reason"]
     for f in (SC / "source" / "pads").glob("*.json"):
@@ -872,3 +873,31 @@ def test_round_q_curb_trace_follows_a_curb_and_cuts_unchecked_stretches():
     keep, ok = ct.segments(flags, naip)
     assert not any(ok[100:140]) and all(ok[300:310]) and ok[204]   # the driveway is bridged, the long silence cut
     assert [(round(a * ct.ROW_M), round(b * ct.ROW_M)) for a, b, _, _ in keep] == [(0, 50), (70, 200)]
+
+
+def test_round_q_corner_flares_off_is_opt_in_and_only_narrows():
+    """ledger 0079 round Q (tools/lm_engine_intake.corner_flares_off): a declared corner's flare (a crest that falls to a
+    level leg on both sides) is re-laid by station between the two legs' widths; a slip's ramp up to a wider road (no
+    fall on its far side within the radius) is left alone; Lake Murray never runs the intake and the Lariat's port does
+    not name the key, nor (yet) Sand Creek's"""
+    import lm_engine_intake as li
+    from scripts.geometry.projection import _meters_per_degree
+    origin = {"lat": 39.78, "lon": -104.92, "elev_m": 1500.0}
+    pts = [(0.0, 0.0, 3.0 * k) for k in range(60)]
+    flare = [11.0] * 20 + [16.8, 30.0] + [42.3] * 10 + [35.0, 27.0] + [23.5] * 26
+    m_lon, m_lat = _meters_per_degree(origin["lat"])
+    at = [origin["lat"] + 3.0 * 27 / m_lat, origin["lon"]]
+    got, rep = li.corner_flares_off(pts, flare, origin, [{"name": "c", "at": at}])
+    assert rep[0]["flare"] == [19, 34] and rep[0]["legs_m"] == [11.0, 23.5]
+    assert got[:20] == flare[:20] and got[34:] == flare[34:]
+    assert all(g <= f + 1e-9 for g, f in zip(got, flare)) and abs(got[26] - (11.0 + 12.5 * 7 / 15)) < 1e-3
+    ramp = [5.5] * 20 + [7.0, 9.0] + [11.0] * 38
+    got2, rep2 = li.corner_flares_off(pts, ramp, origin, [{"name": "slip", "at": at}])
+    assert got2 == ramp and rep2[0]["flare"] is None
+    lm = json.loads((LM / "track.config.json").read_text(encoding="utf-8"))
+    assert "lm_intake" not in lm
+    lar = json.loads((ROOT / "tracks" / "lookout-lariat-lm" / "track.config.json").read_text(encoding="utf-8"))
+    assert "corner_flare_off" not in (lar.get("lm_intake") or {})
+    # round Q's build rq1 (dahlia_56th unparked with the flare off) went red: the candidate does not name the key yet
+    for cfgp in (SC / "track.config.json", SC / "source" / "round_k" / "track.config.json"):
+        assert "corner_flare_off" not in (json.loads(cfgp.read_text(encoding="utf-8")).get("lm_intake") or {})

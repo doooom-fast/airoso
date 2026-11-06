@@ -39,6 +39,16 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 Checked by eye on the six stills (`source/stills/quebec_curb_trace_q.jpg`): every `ok` stretch lies on a curb or a
 road edge that NAIP shows. The traced west curb at s 180-240 (the turn bay, −14.25) is not `ok`: NAIP is silent there.
 
+- **`route.verify_mouths_allowed`, candidate:**
+  - **grid_primary_78#0's row dropped.** An allowance REMOVED, so the gate is stricter: the mouth passes on rp1 / rp2
+    (approach 2.33 %/m, mouth line 0.013 m).
+  - **grid_primary_80#0's reason corrected.** No new allowance; the row's text only: it is the mouth on E 56th at v847,
+    not sandcreek_quebec's. It fails there (mouth line 0.072 m, notch 0.079 m) and is owed.
+- **`lm_intake.corner_flare_off`** (opt-in; tools/lm_engine_intake.corner_flares_off; named by no config): the port's
+  route.corner_flare_off applied to the copied widths. No new number: FLARE_OFF_RADIUS_M is widths_from_osm's own 30 m,
+  and the legs are the line's own widths. Tried on build rq1 with dahlia_56th unparked: red (lm_pads seam residual
+  6.833 m, verify_signs M-c5-rev), so reverted from the candidate.
+
 ## 2026-11-06 (round P) — Sand Creek: 48th_colorado unparked; one mouth allowance dropped (ledger 0079 round P)
 
 **Not live.** The candidate in `tracks/sand-creek-lm/source/round_k/`; the live config is 0.2.5.

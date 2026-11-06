@@ -143,6 +143,73 @@ def apply_connector_profiles(proj: Path, prof_p: str) -> list:
     print(f"[lm_intake] connector heights off the lidar ({prof_p}): {', '.join(done)}")
     return done
 
+def corner_flares_off(pts, widths, origin, entries):
+    """THE DECLARED CORNERS' FLARES OFF (lm_intake.corner_flare_off; ledger 0079 round Q, Sand Creek). The source's widths
+    stage (scripts.gps.widths_from_osm) sweeps a junction flare round a turn corner unless route.corner_flare_off declares
+    it, and that list is the source track's: the port copies the widths and never re-runs the stage. route.corner_flare_off's
+    doc is the rule: a corner joins the list when its authored pad exists, because the pad's measured deck paves the
+    crossroads the flare stood in for. Each entry of the PORT's list (at [lat, lon], radius_m, default
+    widths_from_osm.FLARE_OFF_RADIUS_M) takes its flare off the copied widths: the crest of widths within radius_m (by
+    station) of the nearest lap vertex, out on both sides to where the width stops falling (each leg's own width), is
+    re-laid by station between those two widths. A crest that does not fall to a level leg on both sides is no flare (a
+    slip's ramp to the wider road it joins: its crest runs on past the radius) and is left as it is. No new number; a width
+    is only ever narrowed (refused otherwise). Returns (widths, report)."""
+    from scripts.geometry.projection import _meters_per_degree
+    from scripts.gps.widths_from_osm import FLARE_OFF_RADIUS_M
+    widths = list(widths)
+    rep = []
+    m_lon, m_lat = _meters_per_degree(float(origin["lat"]))
+    st_f = [0.0]
+    for a_, b_ in zip(pts, pts[1:]):
+        st_f.append(st_f[-1] + math.hypot(b_[0] - a_[0], b_[2] - a_[2]))
+    for cfo in entries:
+        ax = (float(cfo["at"][1]) - float(origin["lon"])) * m_lon
+        az = (float(cfo["at"][0]) - float(origin["lat"])) * m_lat
+        r_ = float(cfo.get("radius_m", FLARE_OFF_RADIUS_M))
+        kn = min(range(len(pts)), key=lambda k: (pts[k][0] - ax) ** 2 + (pts[k][2] - az) ** 2)
+        dn = math.hypot(pts[kn][0] - ax, pts[kn][2] - az)
+        if dn > r_:
+            raise SystemExit(f"[lm_intake] corner_flare_off {cfo.get('name')!r}: no lap vertex within {r_} m ({dn:.1f})")
+        near = [k for k in range(len(pts)) if abs(st_f[k] - st_f[kn]) <= r_]
+        kp = max(near, key=lambda k: widths[k])     # the flare's crest near the node
+
+        def _walk(k, step):
+            """out from the crest while the width falls (or holds on the crest), to where it levels at the leg. The crest
+            (the widths held before the fall) must lie within radius_m of the node; the fall may run past it.
+            (vertex, fell, levelled)"""
+            i, fell = k, False
+            while 0 <= i + step < len(pts):
+                w_a, w_b = widths[i], widths[i + step]
+                if w_b < w_a - 1e-9:
+                    fell = True
+                elif abs(w_b - w_a) <= 1e-9 and not fell:
+                    if not near[0] <= i + step <= near[-1]:
+                        return i, fell, False
+                else:
+                    return i, fell, True
+                i += step
+            return i, fell, False
+        (i0, f0, l0), (i1, f1, l1) = _walk(kp, -1), _walk(kp, +1)
+        w0, w1 = widths[i0], widths[i1]
+        if not (f0 and f1 and l0 and l1) or widths[kp] <= max(w0, w1) + 1e-6:
+            rep.append({"name": cfo.get("name"), "vertex": kn, "flare": None})
+            print(f"[lm_intake] corner_flare_off {cfo.get('name')!r}: no flare at v{kn} (as the source has it)")
+            continue
+        was = widths[i0:i1 + 1]
+        for k in range(i0, i1 + 1):
+            t = (st_f[k] - st_f[i0]) / max(st_f[i1] - st_f[i0], 1e-9)
+            w_new = round(w0 + (w1 - w0) * t, 3)
+            if w_new > widths[k] + 1e-6:
+                raise SystemExit(f"[lm_intake] corner_flare_off {cfo.get('name')!r}: v{k} would widen "
+                                 f"({widths[k]} -> {w_new})")
+            widths[k] = w_new
+        rep.append({"name": cfo.get("name"), "vertex": kn, "flare": [i0, i1], "legs_m": [w0, w1],
+                    "was_m": [round(min(was), 2), round(max(was), 2)]})
+        print(f"[lm_intake] corner_flare_off {cfo.get('name')!r}: the flare v{i0}..v{i1} ({min(was):.2f}..{max(was):.2f} "
+              f"m) re-laid between its legs' {w0:.2f} and {w1:.2f} m")
+    return widths, rep
+
+
 def intake(proj: Path, *, connectors: bool | None = None) -> dict:
     cfg = json.loads((proj / "track.config.json").read_text(encoding="utf-8"))
     li = cfg.get("lm_intake") or {}
@@ -366,6 +433,12 @@ def intake(proj: Path, *, connectors: bool | None = None) -> dict:
         pts = evidence.cap_grade(pts, max_grade=max_grade)
     if closed:
         pts[-1] = pts[0]
+    # THE DECLARED CORNERS' FLARES OFF (lm_intake.corner_flare_off true; ledger 0079 round Q, Sand Creek; absent = the
+    # source's widths as traced): corner_flares_off below.
+    flare_rep = []
+    if li.get("corner_flare_off"):
+        widths, flare_rep = corner_flares_off(pts, widths, local["origin"],
+                                              (cfg.get("route") or {}).get("corner_flare_off") or [])
     # WIDTH STEPS TAPERED (lm_intake.width_taper, m of half-width per m along; absent = the widths as traced; ledger 0078
     # round 5). A traced width can jump in one station where the paved area takes in a gore or an apron (Milford s 2,604:
     # 12.2 -> 21.7 m in 3 m). The ribbon stays planar across such a row on any bank, but drive_test's wheel paths sit at
@@ -882,7 +955,8 @@ def intake(proj: Path, *, connectors: bool | None = None) -> dict:
            "y_changed_points": sum(1 for d in dy if abs(d) > 1e-6),
            "y_change_max_m": round(max((abs(d) for d in dy), default=0.0), 3),
            "connectors": bool(want_conn and conn.exists()), "bespoke_files": copied, "crossfall": cf_rep, "profile": prof_rep,
-           "width_taper": taper_rep, **({"pad_widths": pad_rep} if pad_rep else {}), "resample": resample_rep, "edge_on_wall": wall_rep, "corner_arcs": arcs_rep, "carried": carried,
+           "width_taper": taper_rep, **({"pad_widths": pad_rep} if pad_rep else {}),
+           **({"corner_flare_off": flare_rep} if flare_rep else {}), "resample": resample_rep, "edge_on_wall": wall_rep, "corner_arcs": arcs_rep, "carried": carried,
            "grid_upsample": up,
            "md5": {"source_centerline": _md5(need[0]), "heightfield.npy": _md5(data / "heightfield.npy"),
                    "centerline.local.json": _md5(data / "centerline.local.json")}}

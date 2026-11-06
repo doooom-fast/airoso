@@ -1809,7 +1809,107 @@ Every number: GATES-CHANGELOG 2026-11-06 (round Q). The live config is still 0.2
     traced, not ok; OSM's ribbons are not drawn);
   - the test `test_round_q_curb_trace_follows_a_curb_and_cuts_unchecked_stretches`.
 
-## Owed (2026-11-06, after round P; start here)
+### Item 2 (unpark `sandcreek_quebec`): NOT done. Blocked on data the Mac does not have; one allowance row dropped, one relabelled
+- **Item 1's edges do not reach the pad.** The trace runs along grid_primary_6 / 7 from 48th (z 789) to x 1877, z 24-37.
+  The pad's node is at (1795.4, −488.9), 510 m further south on the lap. Its arms are grid_primary_78 / 84, Quebec's
+  two carriageways north of Sand Creek Dr.
+- **The Mac's lidar does not cover the pad.** The scratch caches hold tile (18, −5) (x 1795-1905, z −505 .. −395) and round
+  H's window round 84's end (x 1833-1913). The box spans x 1767-1825, z −523 .. −453, so its west half and south edge
+  (tiles (17, −5), (17, −6), (18, −6)) are not on the Mac. Round C's PC cache measured it, but with no intensity.
+  - Measuring the outline needs those tiles. Fetching them would be a download, so I did not. Not traced; the pad stays
+    parked.
+- **verify_mouths' allowed rows, checked against rp1 / rp2:**
+  - `grid_primary_78#0` (end, on the MAINLINE at the pad) PASSES: approach 2.33 %/m, mouth line 0.013 m. The row was
+    unused, so **dropped** (the gate gets stricter).
+  - `grid_primary_80#0` is **not sandcreek_quebec's.** grid_primary_80 meets the lap on E 56th Ave at v847
+    (−736.5, 1237.5), 56 vertices past dahlia_56th's out-cut. It FAILS there: mouth line 0.072 m, host lane 0.06 m,
+    notch 0.079 m. The row was written for the pad when the pieces were numbered otherwise. **Kept** (dropping it turns
+    the chain red; it is no new allowance), with its reason corrected. Its mouth is owed.
+
+### Item 3 (unpark `dahlia_56th`): the cause found and an opt-in fix written; the build is red, so NOT adopted (the pad stays parked)
+- **Round D's cause, measured.** The lap's 30-42 m ribbon at 56th's merge is the source track's corner flare.
+  - The flare comes from scripts.gps.widths_from_osm detect_turn_corners in tracks/sand-creek's widths stage. The
+    widths run 11.0 → 16.8 → 30.16 → 42.3 (v770-784) → 35.81 → 27.67 → 23.5 over v767-787.
+  - The in-cut row v769 is therefore 30.16 m wide, and its lane edges stand off the measured asphalt.
+  - route.corner_flare_off's own doc says this corner joins the list when its authored pad exists. But the port copies
+    the source's widths and never re-runs that stage, so the port's list cannot take effect.
+- **The fix (opt-in `lm_intake.corner_flare_off`; `tools/lm_engine_intake.corner_flares_off`; committed, tested, NOT named
+  by the candidate).**
+  - Each entry of the port's route.corner_flare_off takes its flare off the copied widths. The crest within radius_m of
+    the corner, out to where the width levels on each side, is re-laid by station between the two legs' widths.
+  - A slip's ramp is not a flare and is left alone. Widths only narrow; no new number.
+  - The scratch intake run gives v767..v787 re-laid 11.0 → 23.5 m (v769 30.16 → 12.25) and the 56th slip "no flare".
+  - The Lariat names no such key; Lake Murray runs no intake.
+- **The pad re-measured on that line.** `tools/draft_pad_outline.py` was run on the Mac's cached lidar (nothing fetched)
+  against rp1's built line with the flare off. The ribbon's union fell 1,405.9 → 464.2 m² and the outline 3,098 →
+  2,360 m². Not committed: the pad stays parked.
+- **Build rq1** (the candidate + key + Dahlia corner + the pad unparked; empty workshop `sclm_work/rq1`, src `rq_src`):
+  - lm_pads now ACCEPTS the pad (round C's lane refusal is gone): rows v769 / v791, deck 2,359.9 m², 1 arm
+    (grid_primary_35#0).
+  - But the deck is not sound: **seam residual max 6.833 m**, the deck smoothing moved one node 2.50 m (p95 0.19), and
+    63 nodes are unfilled.
+  - The chain stopped at verify_signs: **M-c5-rev c_built_edge_clearance** (a W1-6L plate at (−941.8, 1107.5), new with
+    the narrower ribbon). drive_test, verify_pads and the later gates were not reached.
+  - All candidate changes for item 3 are reverted; dahlia_56th stays in `lm_pads.parked`.
+- **The lead.** `source/pads/dahlia_56th.lidar.npz` (scratch `si/padproj`) holds the class-2 returns.
+  - Find the node or nodes behind the 6.8 m seam and the 2.5 m smoothing move. The box's north edge reaches 56th's
+    bridge over Sand Creek, and a class-2 plane there may read the creek bed. Use `deck_beyond: "class2"` and/or a
+    sealed box edge (round O's keys) there.
+  - Look at the lap line itself. On the intensity image (`dahlia_56th.png`) the lap's line rides Dahlia's EAST curb from
+    v760 to v780, ~5 m off the asphalt's middle, because of the fillet (radius 23.6 m). With 12.25 m at v769 the east
+    lane edge is still off the asphalt.
+  - Then M-c5-rev: a signs.json corner skip or slide with its reason, as SC-48S.
+
+### Gates
+No green build this round: rq1 is red at verify_signs (item 3, reverted). The candidate as committed is rp2's inputs, plus
+item 1's record (read by nothing) and the allowance edit (78's row dropped, a passing mouth). **rp2's table stands.**
+
+| gate | rp2 (the candidate) | rq1 (item 3 tried, reverted) |
+|---|---|---|
+| drive_test street / race | PASS: severe 0, kinks 0.52 counted (station 1.97) / PASS gated rows, severe 22 | not reached |
+| audit ×2, kn5_ground_check ×2 | CLEAN ×2, PASS ×2 | not reached |
+| verify_pads | PASS ×4 | not reached (dahlia seam residual 6.833 m in lm_pads) |
+| verify_mouths | PASS 113 (2 allowed: 78 unused, 80 the 56th mouth) | not reached |
+| house_seat / houses / textures | PASS 1.261 m / 2,183 / 0 | not reached |
+| verify_race / check_race_kn5 / no_route ×2 | OK / OK / PASS | (author phase ran; not read) |
+| verify_signs | PASS, 6 posts | **FAIL M-c5-rev c_built_edge_clearance**, 7 posts |
+| verify_fold_fans | PASS | not reached |
+| verify_kn5 | FAIL (closure row only) | not reached |
+| kn5 | 109.3 MB | — |
+
+### Lake Murray unchanged (round Q)
+- `git diff origin/claude/fleet-lm-engine -- tracks/san-diego-lake-murray scripts/`: scripts/geometry/drive_test.py only,
+  exactly round P's. Round Q touched no file there: its changes are under tools/ and Sand Creek's own tree.
+- Trim A/B (`sclm_work/lmtrim_rq`): byte-identical (`664da93b…`, `b73b70f4…`, `f0c97952…`).
+- `lm_engine_intake.corner_flares_off` runs only under `lm_intake.corner_flare_off`. Lake Murray has no lm_intake; the
+  Lariat's port does not name it; neither does Sand Creek's live config or candidate (test).
+- Tests: 1,333 pass, the known 8 fail. New: `test_round_q_curb_trace_follows_a_curb_and_cuts_unchecked_stretches`,
+  `test_round_q_corner_flares_off_is_opt_in_and_only_narrows`; round O's test pins the one allowed row left.
+
+## Owed (2026-11-06, after round Q; start here)
+1. **The closure:** Kevin's call (unchanged; the only verify_kn5 red).
+2. **Kevin / the coordinator: confirm round P's two gate readings** (`drive_test.vertex_kinks`, `fold_fans.wall_frame`).
+3. **Quebec as one street** (item 1's lead). The trace is in `source/quebec_edges.lidar.json`, made by
+   `tools/lidar_curb_trace.py`; scratch drivers are in `scratchpad/rq/`: `trace_q.sh`, `go.sh`, `lat.py`, `medc.py`.
+   - A `merge_carriageways` in tools/trim_connectors.py (opt-in) puts grid_primary_6 / 7 on the trace's midline. Its
+     edges are `outer_left` / `outer_right` where `ok`, OSM's outer ribbon edges elsewhere, eased.
+   - The median goes on it as a `route.islands` concrete island from `median_left` / `median_right`, rise median
+     +0.13 m.
+   - 48th's legs mouth on it at 14 m (west leg, `48th_west`).
+   - Grid_primary_30 / 31 meet its north end at z 789: plan that junction before building.
+   - Two ribbons cannot carry it: the 1.75-2 m median is narrower than their 3.6 m of edge strips.
+4. **sandcreek_quebec** needs lidar tiles (17, −5), (17, −6) and (18, −6) on the Mac (or the PC's run of
+   `tools/draft_pad_outline.py`). Its window has intensity in the north-east only, so an outline would come from a curb
+   trace round the junction. Item 1's trace stops 510 m north of it.
+5. **dahlia_56th** (item 3's lead above): the 6.8 m seam node, the line on Dahlia's east curb, M-c5-rev. Then name
+   `lm_intake.corner_flare_off` + the Dahlia corner in the candidate, re-measure the pad on the unflared line (scratch
+   `rq/pad_dahlia.sh`), unpark, and build both layouts.
+6. **grid_primary_80#0's mouth on E 56th (v847):** it fails mouth line 0.072 m and notch 0.079 m under an allowance that
+   was labelled for sandcreek_quebec. Measure and mend it, then drop the row.
+7. The 4-lane road east of the retaining wall (x −1530 .. −1515, south of z −953): not reached (round J).
+8. Fork 94/95's chevrons (needs a better source); then runbook 4n / the `_n` stills on the PC, and the 0.2.6 bump.
+
+## Owed (2026-11-06, after round P; kept for the record)
 1. **The closure:** Kevin's call (unchanged; the only verify_kn5 red).
 2. **Kevin / the coordinator: confirm round P's two gate readings** — `drive_test.vertex_kinks` (a measurement change;
    without it the street reads 1.97 /km station, 1.24 before the pad) and `fold_fans.wall_frame` (no_route's reference).

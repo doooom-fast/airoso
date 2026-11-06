@@ -150,14 +150,19 @@ RAIL_KINDS = {"tecpro": ("1WALL_TECPRO", 1.2, 1.5, 0.8),
 WBEAM_BLOCKOUT_M = 0.20        # [invented] a post and its blockout behind the rail face (a W6x9 post + 8 in block is ~0.35 m)
 WBEAM_COLLIDER_D_M = 0.20      # [invented] the collider's depth behind the rail face
 WBEAM_POST_W_M = 0.15          # [invented] a W6x9 post's flange, round figure
+LANE = ("1ROAD", "ROAD")         # a W-beam entry with "over_strip": the lane it never stands on (the chain's / the assembler's name)
+FOOT_MAX_M = 2.0               # [invented] the deepest a wbeam / tyres foot goes under its own ground (down_low): inside drive_test's
+                               # +-2.5 m window that finds a wall's support (a deeper foot would read "floating 99")
+STRIP = ("1KERB", "CURB")        # ... and the edge strip it may stand over, seated on its top where that is higher than the ground
 
 
 EDGE_OF = {}                   # id(BVH) -> the longest edge of each polygon, in metres (for the collider's fine-ground rule)
+LOWZ_OF = {}                   # id(BVH) -> the lowest corner of each polygon (ledger 0082: a foot under the whole triangle it stands on)
 
 
 def bvh(prefixes):
     """(BVH, owner name per polygon) over every mesh whose name starts with a prefix, world space"""
-    verts, polys, owner, edges = [], [], [], []
+    verts, polys, owner, edges, lowz = [], [], [], [], []
     for o in bpy.data.objects:
         u = o.name.upper()
         if o.type != "MESH" or not u.startswith(prefixes) or u.startswith(OWN_PREFIXES):
@@ -170,9 +175,11 @@ def bvh(prefixes):
             polys.append(ids)
             owner.append(u)
             edges.append(max((verts[a] - verts[b]).length for a, b in zip(ids, ids[1:] + ids[:1])))
+            lowz.append(min(verts[a].z for a in ids))
     tree = BVHTree.FromPolygons(verts, polys) if polys else None
     if tree is not None:
         EDGE_OF[id(tree)] = edges
+        LOWZ_OF[id(tree)] = lowz
     return tree, owner
 
 
@@ -182,6 +189,17 @@ def down_edge(tree, x, y):
         return None
     hit = tree.ray_cast(Vector((x, y, 3000.0)), Vector((0.0, 0.0, -1.0)), 6000.0)
     return None if hit[0] is None else EDGE_OF[id(tree)][hit[2]]
+
+
+def down_low(tree, x, y):
+    """the lowest corner of the polygon under (x, y) in a BVH, or None (ledger 0082's rails kinds wbeam / tyres: their feet go
+    under the whole ground triangle they stand on, so on coarse ground across a steep bank no corner of that triangle is far
+    below the foot: audit_mesh's E rule reads the nearest ground VERTICES within 4.5 m, and candidate c1's T2 / G4 feet,
+    seated 0.15 m under the interpolated surface of a 10-14 m triangle on a ~40 % bank, read +1.44 / +1.52 m over them)"""
+    if tree is None:
+        return None
+    hit = tree.ray_cast(Vector((x, y, 3000.0)), Vector((0.0, 0.0, -1.0)), 6000.0)
+    return None if hit[0] is None else LOWZ_OF[id(tree)][hit[2]]
 
 
 def collider_ground_ok(edges, limit):
@@ -1038,8 +1056,13 @@ def road_side(run, road):
     return 1.0 if -ty * (rx - mid[0]) + tx * (ry - mid[1]) > 0 else -1.0
 
 
+def _foot(st):
+    """a station's foot: its own (x, y, ground, foot) or BOTTOM_UNDER_M under its ground"""
+    return st[3] if len(st) > 3 else st[2] - BOTTOM_UNDER_M
+
+
 def wbeam_geometry(run, side, height):
-    """``run`` = [(x, y, ground z)] at the post spacing. Returns (rail, posts, collider), each (verts, faces, uvs): the
+    """``run`` = [(x, y, ground z[, foot z])] at the post spacing. Returns (rail, posts, collider), each (verts, faces, uvs): the
     rail's W section (RAIL_H / RAIL_D) with its face on the run and its top ``height`` over the ground, both faces (a rail
     is seen from both sides); a post at every sample WBEAM_BLOCKOUT_M behind the face; the collider a closed box
     WBEAM_COLLIDER_D_M deep behind the face, BOTTOM_UNDER_M under the ground to the top (pure: tested)"""
@@ -1066,7 +1089,7 @@ def wbeam_geometry(run, side, height):
         bx, by = -nx * WBEAM_COLLIDER_D_M, -ny * WBEAM_COLLIDER_D_M
         base = len(v)
         for st in (s0, s1):
-            lo, hi = st[2] - BOTTOM_UNDER_M, st[2] + height
+            lo, hi = _foot(st), st[2] + height
             v += [(st[0], st[1], lo), (st[0], st[1], hi), (st[0] + bx, st[1] + by, hi), (st[0] + bx, st[1] + by, lo)]
         for i in range(4):
             j = (i + 1) % 4
@@ -1085,7 +1108,7 @@ def wbeam_geometry(run, side, height):
         ring = [(cx + tx * hw + nx * 0.05, cy + ty * hw + ny * 0.05), (cx - tx * hw + nx * 0.05, cy - ty * hw + ny * 0.05),
                 (cx - tx * hw - nx * 0.05, cy - ty * hw - ny * 0.05), (cx + tx * hw - nx * 0.05, cy + ty * hw - ny * 0.05)]
         ring = inward_ring(ring)
-        lo, hi = st[2] - BOTTOM_UNDER_M, st[2] + height - 0.03
+        lo, hi = _foot(st), st[2] + height - 0.03
         base = len(v)
         for i in range(4):
             p, r = ring[i], ring[(i + 1) % 4]
@@ -1096,14 +1119,21 @@ def wbeam_geometry(run, side, height):
     return rail, posts, coll
 
 
-def wbeam_rail(col, k, r, line, ground, paved, bad, road, batch):
+def wbeam_rail(col, k, r, line, ground, paved, bad, road, batch, lane=None, strip=None):
     """one "wbeam" entry: posts every RAIL_POST_M on the ground; a post on a road or off the ground ends the run ("auto")
-    or fails the self-check"""
+    or fails the self-check. "over_strip": true (opt-in, ledger 0082) lets a post stand over the circuit's edge strip (the
+    assembler's CURB / 1KERB_sidewalk: the asphalt edge held 0.30 m and its 1.0 m [invented] grade) but never over the
+    lane (ROAD / 1ROAD): a rail NAIP measures at the real pavement edge falls inside that invented strip; the post is then
+    seated on the higher of the ground and the strip"""
     hgt = float(r.get("height_m", RAIL_LIP_H))
+    over = bool(r.get("over_strip")) and lane is not None
     runs, cur, left_out = [], [], 0
+    why = {"lane": 0, "paved": 0, "no ground": 0}
     for x, y in resample_polyline(line, RAIL_POST_M):
         g = down(ground, x, y)
-        if g is None or down(paved, x, y) is not None:
+        on = down(lane if over else paved, x, y)
+        if g is None or on is not None:
+            why["no ground" if g is None else ("lane" if over else "paved")] += 1
             if not r.get("auto"):
                 bad.append(f"rail {r['key']}: a post at ({x:.1f}, {y:.1f}) is on a road or off the ground")
             left_out += 1
@@ -1111,7 +1141,12 @@ def wbeam_rail(col, k, r, line, ground, paved, bad, road, batch):
                 runs.append(cur)
             cur = []
             continue
-        cur.append((x, y, g))
+        if over:
+            st = down(strip, x, y)
+            if st is not None and st > g:
+                g = st
+        low = down_low(ground, x, y)
+        cur.append((x, y, g, max(min(g, low if low is not None else g) - BOTTOM_UNDER_M, g - FOOT_MAX_M)))
     if len(cur) > 1:
         runs.append(cur)
     arc, n_post, cv, cf, cu = 0.0, 0, [], [], []
@@ -1130,21 +1165,24 @@ def wbeam_rail(col, k, r, line, ground, paved, bad, road, batch):
     if cv:
         make_mesh(col, f"1WALL_GHOST_RAIL_{k}", cv, cf, cu)
     print(f"[bespoke] rail {r['key']}: W-beam {arc:.0f} m in {len(runs)} run(s), {n_post} posts, top {hgt:.2f} m over the "
-          f"ground, {left_out} post(s) left out; collider 1WALL_GHOST_RAIL_{k}")
+          f"ground, {left_out} post(s) left out {why}{' (over the edge strip)' if over else ''}; collider 1WALL_GHOST_RAIL_{k}")
     return {"key": r["key"], "kind": "wbeam", "runs": len(runs), "posts": n_post, "left_out": left_out,
             "length_m": round(arc, 1), "height_m": hgt}
 
 
 def rails(col, spec, to_xy, ground, paved, bad, proj=None):
     rows = []
-    wbeam_batch = None
+    wbeam_batch = lane_bvh = strip_bvh = None
     for k, r in enumerate(spec):
         line = [to_xy(p) for p in r["polyline_lonlat"]]
         if r["kind"] == "wbeam":                 # ledger 0082: opt-in, a config names the kind or nothing here runs
             if wbeam_batch is None:
                 wbeam_batch = Batcher(col, "GUARDRAIL_W")
                 road = [(p[0], p[2]) for p in centreline(proj)[0]]
-            rows.append(wbeam_rail(col, k, r, line, ground, paved, bad, road, wbeam_batch))
+            if r.get("over_strip") and lane_bvh is None:
+                lane_bvh = bvh(LANE)[0]
+                strip_bvh = bvh(STRIP)[0]
+            rows.append(wbeam_rail(col, k, r, line, ground, paved, bad, road, wbeam_batch, lane_bvh, strip_bvh))
             continue
         prefix, hgt, mod, dep = RAIL_KINDS[r["kind"]]
         hgt = float(r.get("height_m", hgt))      # a measured height (ledger 0078: Pikes Peak's wall off the lidar)
@@ -1170,6 +1208,9 @@ def rails(col, spec, to_xy, ground, paved, bad, proj=None):
                         bad.append(f"rail {r['key']}: module {modules} at ({x0:.1f}, {y0:.1f}) is on a road or off the ground")
                     continue
                 bot, top = min(gs) - BOTTOM_UNDER_M, max(gs) + hgt
+                if r["kind"] == "tyres":         # ledger 0082: under the whole triangle (down_low); the older kinds as built
+                    lows = [down_low(ground, x, y) for x, y in ring]
+                    bot = max(min([bot] + [lw - BOTTOM_UNDER_M for lw in lows if lw is not None]), min(gs) - FOOT_MAX_M)
                 cell = modules % 2
                 u0, u1 = cell * 0.5, cell * 0.5 + 0.5
                 base = len(verts)

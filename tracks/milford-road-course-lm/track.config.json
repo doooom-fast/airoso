@@ -350,7 +350,9 @@
               42.567043
             ]
           ],
-          "_source": "source/furniture/inventory.json G2: line off NAIP 2022 (+-1 px, 556.1 m; a bright line 1-2 px off the pavement edge with dark post ticks at a steady spacing (crops z_ws, gW1, gW2)); height 0.70 m [invented: an NCHRP-350-era strong-post W-beam's 27-28 in, a standard, not measured here]"
+          "_source": "source/furniture/inventory.json G2: line off NAIP 2022 (+-1 px, 556.1 m; a bright line 1-2 px off the pavement edge with dark post ticks at a steady spacing (crops z_ws, gW1, gW2)); height 0.70 m [invented: an NCHRP-350-era strong-post W-beam's 27-28 in, a standard, not measured here]",
+          "over_strip": true,
+          "_over_strip_doc": "ledger 0082: the rail stands 0-1.7 m off the traced pavement edge (NAIP), inside the assembler's edge strip (the asphalt edge held 0.30 m + a 1.0 m [invented] grade); built as measured over the strip, never over the lane (candidate c1 left 184 / 65 posts out with the strip counted as road)"
         },
         {
           "key": "g3_front_straight_west",
@@ -375,7 +377,9 @@
               42.5673176
             ]
           ],
-          "_source": "source/furniture/inventory.json G3: line off NAIP 2022 (+-1 px, 195.7 m; a bright line with dark ticks along the west pavement edge, starting where the wide pavement narrows (z_ws, gW2)); height 0.70 m [invented: an NCHRP-350-era strong-post W-beam's 27-28 in, a standard, not measured here]"
+          "_source": "source/furniture/inventory.json G3: line off NAIP 2022 (+-1 px, 195.7 m; a bright line with dark ticks along the west pavement edge, starting where the wide pavement narrows (z_ws, gW2)); height 0.70 m [invented: an NCHRP-350-era strong-post W-beam's 27-28 in, a standard, not measured here]",
+          "over_strip": true,
+          "_over_strip_doc": "ledger 0082: the rail stands 0-1.7 m off the traced pavement edge (NAIP), inside the assembler's edge strip (the asphalt edge held 0.30 m + a 1.0 m [invented] grade); built as measured over the strip, never over the lane (candidate c1 left 184 / 65 posts out with the strip counted as road)"
         },
         {
           "key": "g4_infield_esses",

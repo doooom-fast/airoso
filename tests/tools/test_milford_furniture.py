@@ -58,12 +58,25 @@ def test_rail_faces_the_road_and_stands_its_height_over_the_ground():
     assert len(pv) == 16 * len(run)                # four faces of four corners per post
 
 
+def test_a_measured_foot_reaches_under_the_triangle():
+    """ledger 0082: a station may carry its own foot (down_low, capped at FOOT_MAX_M under the ground); the collider and the
+    posts go down to it, the rail's top stays over the ground"""
+    m = _load_author()
+    run = [(0.0, 0.0, 10.0, 8.5), (1.905, 0.0, 10.0, 8.5)]
+    (rv, _, _), (pv, _, _), (kv, _, _) = m.wbeam_geometry(run, 1.0, 0.70)
+    assert abs(min(v[2] for v in kv) - 8.5) < 1e-9 and abs(min(v[2] for v in pv) - 8.5) < 1e-9
+    assert abs(max(v[2] for v in rv) - 10.70) < 1e-9
+    assert m._foot((0.0, 0.0, 10.0)) == 10.0 - m.BOTTOM_UNDER_M
+    assert m.FOOT_MAX_M < 2.5                        # inside drive_test's support window
+
+
 def test_kinds_and_defaults():
     m = _load_author()
     assert m.RAIL_KINDS["tyres"][0].startswith("1WALL_TECPRO")   # the prefix whose UVs engine-july's prep keeps
     assert m.RAIL_KINDS["tecpro"] == ("1WALL_TECPRO", 1.2, 1.5, 0.8) and m.RAIL_KINDS["krail"] == ("1WALL_KRAILBW", 0.81, 3.0, 0.6)
     assert m.RAIL_LIP_H == 0.70 and m.RAIL_POST_M == 1.905
     assert "1WALL_GHOST_RAIL" in m.OWN_PREFIXES
+    assert m.LANE == ("1ROAD", "ROAD") and m.STRIP == ("1KERB", "CURB")      # over_strip never lets a post on the lane
 
 
 def test_keys_are_opt_in():
@@ -77,7 +90,7 @@ def test_keys_are_opt_in():
             assert {"wbeam", "tyres"} <= kinds
             continue
         assert not kinds & {"wbeam", "tyres"}, cfgp
-        assert not any("depth_m" in r for r in rails), cfgp
+        assert not any("depth_m" in r or "over_strip" in r for r in rails), cfgp
         assert "tyre_wall_diffuse" not in txt, cfgp
 
 

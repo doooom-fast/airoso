@@ -14,6 +14,22 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
+## 2026-11-06 — Milford furniture pass 1's authored numbers (ledger 0082; no gate threshold moved, no bypass)
+
+New opt-in `rails` kinds in `tools/author_bespoke_blend.py`; only `tracks/milford-road-course-lm` names them
+(`tests/tools/test_milford_furniture.py::test_keys_are_opt_in`). No gate reads anything new; the gates judge the
+furniture as they judge any `1WALL_*` (drive_test obstruction / floating, audit's wall cruft, kn5_ground_check, verify_kn5).
+
+| number | value | source |
+|---|---|---|
+| W-beam rail top over the ground (`height_m` on Milford's G1-G4, the default `RAIL_LIP_H`) | 0.70 m | ⚠ [invented]: an NCHRP-350-era strong-post W-beam's 27-28 in, a standard, not measured at the track |
+| `WBEAM_BLOCKOUT_M` (post behind the rail face) | 0.20 m | ⚠ [invented] |
+| `WBEAM_COLLIDER_D_M` (the unseen collider's depth) | 0.20 m | ⚠ [invented] |
+| `WBEAM_POST_W_M` | 0.15 m | ⚠ [invented]: a W6x9 flange, round figure |
+| tyres kind: module (one tyre column), default height, default depth | 0.62 m, 1.0 m, 1.2 m | ⚠ [invented]; Milford's depths 1.5 / 1.2 / 1.5 m are NAIP widths less a pixel of blur |
+| Milford's pad sheds' walls | 2.6 m | ⚠ [invented]: a container / site trailer |
+| positions of every rail, tyre wall and shed | NAIP 2022, +-1 px (0.5-0.7 m) | measured: `tracks/milford-road-course-lm/source/furniture/` |
+
 ## 2026-11-05 — DECLARED FORCE: Under the Dragon's Douglas Creek fill, s 2,395-2,410 (ledger 0078 round 13; no threshold moved)
 
 Kevin, 2026-11-05, asked whether to force Under the Dragon's last red row as measured: **"Yes, force it"**.

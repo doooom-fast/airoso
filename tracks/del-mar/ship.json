@@ -1,0 +1,27 @@
+{
+  "_doc": "Del Mar Grand Prix — the IMSA Camel GT temporary circuit on the Del Mar Fairgrounds (1987-1992), ESTIMATED layout (track.config.json source._note, DOSSIER.md), through the Lake Murray chain (tools/ship_track.sh). The draft is the engine's own off the north-up placement on the 2012 NAIP (source.type aerial: aerial -> elev -> project -> mesh), the underlay drops data/track.obj into loop.blend as GEN_* collections, the prep / exporter / spawn builder run from airoso's scripts/ac, the gates run on the BUILT kn5. The workshop lives OUTSIDE airoso.",
+  "_owed": "First pass = the draft through the chain, no authoring. Dressing (DOSSIER section 8: K-rail + debris fence, bleachers on the straight and the hairpins, sponsor bridges as plain spans, palms, the Spanish tower) is bespoke work for a later pass. The layout itself is an estimate to be corrected against era imagery.",
+  "track": "del-mar",
+  "workshop": "D:/k10-workshops/del-mar",
+  "workshop_project": "project",
+  "require_race_layout": false,
+  "ui_name_prefix": "doooom California",
+  "steps": {
+    "draft": ["aerial", "elev", "project", "mesh", "underlay"],
+    "author": ["bespoke"],
+    "prep": ["prep", "split"],
+    "ship": ["export_road", "ai", "verify_kn5", "road_obj", "track_folder", "verify_inis", "make_map"],
+    "gate": ["drive_test_street", "audit_street", "kn5_ground"]
+  },
+  "sync_in": {
+    "required": ["track.config.json"],
+    "optional": ["data/centerline.geojson", "data/centerline.elevation.json", "data/heightfield.npy", "data/heightfield.meta.json", "data/corridor.elev.json", "data/flat_zones.json"],
+    "dirs": ["source"]
+  },
+  "sync_out": {
+    "required": ["loop.blend"],
+    "files": ["data/centerline.geojson", "data/centerline.elevation.json", "data/centerline.local.json", "data/finished_centerline.json", "data/gate_centerline.json", "data/bridge.spans.auto.json", "data/dummies.json", "data/underlay.report.json", "data/drive_test.json", "data/audit.json", "data/kn5_ground_check.{id}.json", "data/drive_test.{id}.json", "data/bespoke.report.json"],
+    "map": [["blender/split/split_manifest.json", "data/split_manifest.json"]],
+    "dirs": ["ai/{id}"]
+  }
+}

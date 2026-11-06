@@ -43,7 +43,11 @@
   "sync_in": {
     "required": [
       "track.config.json"
-    ]
+    ],
+    "assets": [
+      "assets/textures/tyre_wall_diffuse.png"
+    ],
+    "_assets_doc": "ledger 0082: the tyre walls' skin (texture_overrides 1WALL_TECPRO); the engine copy does not carry it"
   },
   "sync_out": {
     "required": [

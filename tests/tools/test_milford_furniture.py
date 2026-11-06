@@ -74,7 +74,7 @@ def test_keys_are_opt_in():
         rails = (((cfg.get("scenery") or {}).get("bespoke") or {}).get("rails")) or []
         kinds = {r.get("kind") for r in rails}
         if cfgp.parent.name == "milford-road-course-lm":
-            assert "wbeam" in kinds
+            assert {"wbeam", "tyres"} <= kinds
             continue
         assert not kinds & {"wbeam", "tyres"}, cfgp
         assert not any("depth_m" in r for r in rails), cfgp
@@ -90,3 +90,18 @@ def test_milford_rails_are_the_inventory_lines():
         assert r["polyline_lonlat"] == lines[gid], r["key"]
         assert "[invented" in r["_source"]            # the heights say they are not measured
 
+
+def test_tyre_skin_is_generated():
+    spec = importlib.util.spec_from_file_location("make_bespoke_assets_mf", ROOT / "tools" / "make_bespoke_assets.py")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    assert "tyre_wall_diffuse.png" in mod.TEX_FILES
+    assert (ROOT / "assets" / "textures" / "tyre_wall_diffuse.png").exists()
+    try:
+        from PIL import Image
+    except ImportError:                              # the generator's own --check covers the pixels where Pillow is
+        return
+    im = Image.open(ROOT / "assets" / "textures" / "tyre_wall_diffuse.png")
+    assert im.size == (256, 256)                     # power of two (L7)
+    mean = sum(im.convert("L").getdata()) / (256 * 256)
+    assert mean < 60                                 # black rubber, as NAIP reads it

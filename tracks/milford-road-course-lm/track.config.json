@@ -439,6 +439,68 @@
             ]
           ],
           "_source": "source/furniture/inventory.json G4: line off NAIP 2022 (+-1 px, 362.2 m; a continuous bright line, its west edge in shadow, post ticks, a hooked terminal at the north end (gB1, gB2, z_a)); height 0.70 m [invented: an NCHRP-350-era strong-post W-beam's 27-28 in, a standard, not measured here]"
+        },
+        {
+          "key": "t1_nw_hairpin_exit",
+          "kind": "tyres",
+          "auto": true,
+          "height_m": 1.0,
+          "depth_m": 1.5,
+          "polyline_lonlat": [
+            [
+              -83.6649068,
+              42.5733782
+            ],
+            [
+              -83.6649007,
+              42.5729815
+            ]
+          ],
+          "_source": "source/furniture/inventory.json T1: line off NAIP 2022 (+-1 px, 43.9 m); width 1.5 m off NAIP (the bar's width less a pixel of blur); height 1.0 m [invented: five tyres]; identity medium (black rubber by tone; not seen on video)"
+        },
+        {
+          "key": "t2_esses_east_leg",
+          "kind": "tyres",
+          "auto": true,
+          "height_m": 1.0,
+          "depth_m": 1.2,
+          "polyline_lonlat": [
+            [
+              -83.6660115,
+              42.5718951
+            ],
+            [
+              -83.6660786,
+              42.5717059
+            ],
+            [
+              -83.6661275,
+              42.5714251
+            ]
+          ],
+          "_source": "source/furniture/inventory.json T2: line off NAIP 2022 (+-1 px, 52.9 m); width 1.2 m off NAIP (the bar's width less a pixel of blur); height 1.0 m [invented: five tyres]; identity medium"
+        },
+        {
+          "key": "t3_s1000_apron_back",
+          "kind": "tyres",
+          "auto": true,
+          "height_m": 1.0,
+          "depth_m": 1.5,
+          "polyline_lonlat": [
+            [
+              -83.6662312,
+              42.5690387
+            ],
+            [
+              -83.6662678,
+              42.5689045
+            ],
+            [
+              -83.6663106,
+              42.5687519
+            ]
+          ],
+          "_source": "source/furniture/inventory.json T3: line off NAIP 2022 (+-1 px, 32.4 m); width 1.5 m off NAIP (the bar's width less a pixel of blur); height 1.0 m [invented: five tyres]; identity medium"
         }
       ],
       "_rails_doc": "ledger 0082 pass 1: the W-beam (kind wbeam) and tyre walls (kind tyres) on the lines NAIP 2022 shows (source/furniture/README.md); auto: a post or module that would stand on a road or off the ground is left out"
@@ -572,6 +634,10 @@
       "diffuse": "assets/textures/tiltup_wall_diffuse.jpg",
       "normal": "assets/textures/tiltup_wall_normal.jpg",
       "_doc": "our own concrete in place of the Hamburg bytes"
+    },
+    "1WALL_TECPRO": {
+      "diffuse": "assets/textures/tyre_wall_diffuse.png",
+      "_doc": "ledger 0082: the tyre walls (rails kind tyres, 1WALL_TECPRO_TYRES_*) ride the Tec-Pro row, whose UVs engine-july's prep keeps; Milford has no Tec-Pro, so the row is the tyre skin here (tools/make_bespoke_assets.py tyre_wall, CC0)"
     }
   },
   "lm_intake": {

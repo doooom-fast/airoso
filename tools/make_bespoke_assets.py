@@ -23,6 +23,8 @@ The second batch (all chain tracks, 2026-10-31):
   assets/textures/prairie_atlas.png                       2 x 2 cutout: rabbitbrush, soapweed yucca, bunchgrass, snakeweed. pbr row PRAIRIECARD
   assets/textures/tecpro_diffuse.png                     a red and a white module. pbr row 1WALL_TECPRO
   assets/textures/krail_bluewhite_diffuse.png             a blue and a white K-rail section. pbr row 1WALL_KRAILBW
+  assets/textures/tyre_wall_diffuse.png                   two stacked-tyre columns, five tyres up (ledger 0082). Bound per
+                                                          track by texture_overrides["1WALL_TECPRO"] (Milford)
   assets/textures/drystone_diffuse.jpg, _normal.jpg       laid dry stone, one tile = 2 m. pbr row BUILDING_DRYSTONE
   assets/textures/conifer_foothill_atlas.png              2 x 2 cutout: ponderosa, Douglas-fir, juniper, mahogany. pbr row TREECARD_CONIFER
   assets/textures/stucco_wall_diffuse.jpg, _normal.jpg    a house bay with its window, tan stucco. pbr row BUILDING_STUCCO
@@ -429,6 +431,29 @@ def krail(out_dir: Path) -> None:
     img.save(out_dir / "krail_bluewhite_diffuse.png", optimize=True)
 
 
+def tyre_wall(out_dir: Path) -> None:
+    """a stacked-tyre wall's skin for a pair of module columns (u 0..0.5, 0.5..1: one tyre each, 0.62 m), five tyres up the
+    tile (v 0..1 = the 1.0 m wall [invented]); treads facing out, each tyre's shoulders darker than its crown, a black gap
+    between tyres; ledger 0082 (Milford's tyre walls are black on NAIP 2022)"""
+    n = 256
+    rng = random.Random(620)
+    img = Image.new("RGB", (n, n), (20, 20, 21))
+    d = ImageDraw.Draw(img)
+    band = n // 5
+    for col in (0, n // 2):
+        for t in range(5):
+            y0, y1 = t * band + 3, (t + 1) * band - 3
+            for y in range(y0, y1):
+                k = abs((y - (y0 + y1) / 2) / ((y1 - y0) / 2))          # 0 at the crown, 1 at a shoulder
+                g = int(46 - 18 * k * k)
+                d.line((col + 2, y, col + n // 2 - 3, y), fill=(g, g, g + 1))
+            for x in range(col + 4, col + n // 2 - 4, 7):                # tread blocks
+                d.line((x, y0 + 6, x + 3, y1 - 6), fill=(30, 30, 31))
+    wear = _noise(rng, n, 32, 2).point(lambda v: 205 + v * 50 // 255)
+    img = ImageChops.multiply(img, Image.merge("RGB", (wear, wear, wear)))
+    img.save(out_dir / "tyre_wall_diffuse.png", optimize=True)
+
+
 def drystone(out_dir: Path) -> None:
     """laid dry stone (Lariat DOSSIER section 5a: the 1917 walls and pylons): coursed rough blocks with dark joints, tan and
     grey-brown, one tile = 2 m. Drawn, no photograph: ledger 0005, the stone_tan source is not recorded"""
@@ -576,6 +601,7 @@ def write_all(tex_dir: Path, model_dir: Path) -> None:
     prairie_atlas(tex_dir)
     tecpro(tex_dir)
     krail(tex_dir)
+    tyre_wall(tex_dir)
     drystone(tex_dir)
     conifer_atlas(tex_dir)
     house_walls(tex_dir)
@@ -586,7 +612,7 @@ TEX_FILES = ("fabric_white_diffuse.jpg", "fabric_white_normal.jpg", "traffic_con
              "tiltup_wall_diffuse.jpg", "tiltup_wall_normal.jpg", "metal_wall_diffuse.jpg", "metal_wall_normal.jpg",
              "roof_white_diffuse.jpg", "roof_tan_diffuse.jpg", "roof_dark_diffuse.jpg", "pad_asphalt_diffuse.jpg",
              "wbeam_rail_diffuse.png", "ghost_alpha.png", "deciduous_atlas.png", "prairie_atlas.png",
-             "tecpro_diffuse.png", "krail_bluewhite_diffuse.png", "drystone_diffuse.jpg", "drystone_normal.jpg", "conifer_foothill_atlas.png",
+             "tecpro_diffuse.png", "krail_bluewhite_diffuse.png", "tyre_wall_diffuse.png", "drystone_diffuse.jpg", "drystone_normal.jpg", "conifer_foothill_atlas.png",
              "stucco_wall_diffuse.jpg", "stucco_wall_normal.jpg", "siding_wall_diffuse.jpg", "siding_wall_normal.jpg", "shingle_roof_diffuse.jpg")
 MODEL_FILES = ("traffic_cone.obj", "traffic_cone.json")
 

@@ -1,0 +1,894 @@
+{
+ "_doc": "tools/trim_connectors.py route.street_junctions (ledger 0079 0.2.3): the OSM pieces joined into one street at a node, and the order the street-to-street passes cut pieces in (each against the hosts named)",
+ "config": {
+  "join_turn_deg": 45.0,
+  "bend_turn_deg": 135.0,
+  "weld_hold": "overlap",
+  "_weld_hold_doc": "ledger 0079 0.2.3 (coordinator 2026-11-05: the Y grid_tertiary_5 and the lens grid_tertiary_74 / 75 are real acute meetings, kept as acute welds): every acute mouth (the ones whose record carries extend_max_m) welds with tools/mouth_weld.py hold_overlap: its rows lie on the host deck (level across its edge) for the length its ribbon overlaps the host, from its first line's mitre to its last, and trim's 30 m ease starts only past that, instead of a 30 m smoothstep from each line's own mitre that left the overlapping rows off the host's level-across deck (round F: grid_unclassified_94 at 16.4 deg, 0.026-0.036 m over it). The length is the mitres' own, measured on the ribbon; no number is added",
+  "merge_forks": [
+   {
+    "pieces": [
+     "grid_tertiary_91",
+     "grid_tertiary_92"
+    ],
+    "name": "grid_tertiary_92",
+    "edges_m": [
+     [
+      5,
+      -7.25,
+      6.75
+     ],
+     [
+      10,
+      -7.75,
+      6.25
+     ],
+     [
+      15,
+      -8.25,
+      5.75
+     ],
+     [
+      20,
+      -8.75,
+      6.25
+     ],
+     [
+      25,
+      -9.25,
+      5.75
+     ],
+     [
+      30,
+      -9.75,
+      6.25
+     ],
+     [
+      35,
+      -10.25,
+      6.75
+     ],
+     [
+      40,
+      -10.75,
+      7.25
+     ],
+     [
+      45,
+      -11.25,
+      7.75
+     ],
+     [
+      50,
+      -11.75,
+      8.75
+     ],
+     [
+      55,
+      -12.25,
+      9.25
+     ],
+     [
+      60,
+      -12.75,
+      8.75
+     ],
+     [
+      65,
+      -13.25,
+      10.25
+     ],
+     [
+      70,
+      -13.25,
+      9.75
+     ],
+     [
+      75,
+      -13.75,
+      10.75
+     ]
+    ]
+   },
+   {
+    "pieces": [
+     "grid_unclassified_94",
+     "grid_unclassified_95"
+    ],
+    "name": "grid_unclassified_95",
+    "edges_m": [
+     [
+      5,
+      -5.25,
+      8.75
+     ],
+     [
+      15,
+      -5.25,
+      8.75
+     ],
+     [
+      20,
+      -5.25,
+      8.25
+     ],
+     [
+      25,
+      -5.25,
+      8.25
+     ],
+     [
+      30,
+      -5.25,
+      8.25
+     ],
+     [
+      35,
+      -5.25,
+      8.25
+     ],
+     [
+      40,
+      -5.25,
+      8.25
+     ],
+     [
+      45,
+      -5.75,
+      8.25
+     ],
+     [
+      50,
+      -6.25,
+      8.75
+     ],
+     [
+      55,
+      -6.25,
+      8.25
+     ],
+     [
+      60,
+      -6.25,
+      8.25
+     ],
+     [
+      65,
+      -6.25,
+      8.75
+     ],
+     [
+      70,
+      -6.75,
+      8.75
+     ],
+     [
+      75,
+      -7.25,
+      10.75
+     ]
+    ]
+   }
+  ],
+  "_merge_forks_doc": "ledger 0079 0.2.3 (coordinator 2026-11-05 under \"I just want real\": NAIP shows one asphalt with a painted chevron median, so build what's there): the two paint-divided approaches OSM draws as two one-way pieces leaving one node at 13-16 deg become ONE street (tools/trim_connectors.py merge_forks). edges_m [s, left, right] [measured]: the asphalt's two edges off NAIP 2023 (tracks/sand-creek/source/naip_2023_sc_z18.jpg, 0.46 m/px), read every 5 m on cross-sections sampled 0.5 m apart, each sample the mean over 1 m along the street; an edge = where the asphalt meets the first concrete band (curb, gutter, sidewalk) 1.5 m or wider (1 m bands inside are paint), in metres along the OSM midline's normal (-dz, dx) of the direction away from the fork node, s metres from the node; about +-0.5 m. Held past s 75: the curb returns into the lap there belong to the lap mouth. 91/92: 14.0 m at the node to 24.5 m at s 75; from about s 57 to the lap crosswalk a 3.5-4 m concrete island stands at +1 to +5 m (NAIP: bright like the sidewalks, so raised); it is NOT built, and the yellow chevrons s 20-55 are not painted: no chain step here makes an island or paints a chevron median on a grid street. 94/95: 13.5-14.5 m to s 55, 15.5 m at s 60-65, 18-19 m at s 70-75 (the flare into the lap); its median is flush yellow chevron paint, not painted here either. Round I (ledger 0079): 94/95 re-measured in the track frame (scripts.geometry.projection's WGS84 series; round G's helpers used 111,320 cos(lat) / 110,540 m and read both edges about 1.2 m west of where they are): the same cross-sections, the edge picked by rule = half-way to the first run of 3 samples (1.5 m) at NAIP gray >= 165 at least 4 m out from the midline (the rule reproduces round G's reads at 12 of 15 stations in round G's frame; 165 fitted to them [invented]); s 10's right edge has no such run (a car / driveway): interpolated between s 5 and 15. Both edges move +1.0..+1.5 m along the normal (east), width 13.5-15.5 m to s 70, 18 m at s 75. 91/92 moves 0.06 m in the right frame: kept.",
+  "pad_arms": true,
+  "median_crossings": [
+   {
+    "between": [
+     "grid_unclassified_27",
+     "grid_tertiary_65"
+    ],
+    "name": "grid_unclassified_27_65_crossing",
+    "width_m": 10.0
+   }
+  ],
+  "_median_crossings_doc": "ledger 0079 0.2.3 (coordinator 2026-11-05: NAIP shows Quebec's median paved where 48th / grid_unclassified_27 crosses it at (1656, 789), so pave it): OSM ends grid_unclassified_27 at the west carriageway's node (1649.2, 789.4) and starts grid_tertiary_65 at the east one's (1662.7, 789.4); no way joins them, so the 4 m between the two carriageway ribbons stayed grass. tools/trim_connectors.py median_crossings adds the straight crossing node to node, kept at any length and welded at both ends. width_m 10.0 [rule]: grid_tertiary_65's own width, the wider of the two streets it joins, so its edges meet both (NAIP reads the cross street's west approach about 15 m curb to curb, centred about 4 m south of OSM's line: the streets' OSM widths are short here, a wider question than this crossing). Also measured: the strip between Quebec's two OSM carriageway ribbons (grid_primary_6 / 7, 4-6 m, narrowing to 1-2.5 m south) reads asphalt or concrete on NAIP at 48 of 49 samples along 860 m, never planted: owed to Kevin, not built here",
+  "weld_runon": "mitre",
+  "_weld_runon_doc": "ledger 0079 round H: every mouth weld eases, past each lateral line's mitre, from the host deck AT that mitre (tools/mouth_weld.py runon_at_mitre), not from each vertex's projection onto the host: grid_unclassified_67's vertices 15-20 m out projected onto the lap's other leg at the 48th / Colorado corner (0.34 m lower), a 0.1 m dip across its wheel line (APPROACH 3.1 %/m). No number"
+ },
+ "joins": [
+  {
+   "node_xz": [
+    1355.96,
+    -133.53
+   ],
+   "pieces": [
+    "grid_unclassified_60",
+    "grid_unclassified_72"
+   ],
+   "turn_deg": 0.0,
+   "rule": "straight"
+  },
+  {
+   "node_xz": [
+    1355.96,
+    -133.53
+   ],
+   "pieces": [
+    "grid_tertiary_1",
+    "grid_tertiary_85"
+   ],
+   "turn_deg": 0.6,
+   "rule": "straight"
+  },
+  {
+   "node_xz": [
+    244.89,
+    108.76
+   ],
+   "pieces": [
+    "grid_tertiary_37",
+    "grid_tertiary_46"
+   ],
+   "turn_deg": 0.6,
+   "rule": "straight"
+  },
+  {
+   "node_xz": [
+    1356.21,
+    112.32
+   ],
+   "pieces": [
+    "grid_tertiary_2",
+    "grid_tertiary_50"
+   ],
+   "turn_deg": 0.5,
+   "rule": "straight"
+  },
+  {
+   "node_xz": [
+    -758.35,
+    -337.31
+   ],
+   "pieces": [
+    "grid_tertiary_3",
+    "grid_tertiary_14"
+   ],
+   "turn_deg": 0.6,
+   "rule": "straight"
+  },
+  {
+   "node_xz": [
+    -758.35,
+    -337.31
+   ],
+   "pieces": [
+    "grid_tertiary_44",
+    "grid_tertiary_54"
+   ],
+   "turn_deg": 1.1,
+   "rule": "straight"
+  },
+  {
+   "node_xz": [
+    243.25,
+    -297.58
+   ],
+   "pieces": [
+    "grid_tertiary_3",
+    "grid_tertiary_20"
+   ],
+   "turn_deg": 0.6,
+   "rule": "straight"
+  },
+  {
+   "node_xz": [
+    226.99,
+    495.76
+   ],
+   "pieces": [
+    "grid_tertiary_4",
+    "grid_tertiary_46"
+   ],
+   "turn_deg": 11.7,
+   "rule": "straight"
+  },
+  {
+   "node_xz": [
+    899.5,
+    -291.86
+   ],
+   "pieces": [
+    "grid_unclassified_13",
+    "grid_tertiary_20"
+   ],
+   "turn_deg": 1.0,
+   "rule": "straight"
+  },
+  {
+   "node_xz": [
+    1649.19,
+    789.35
+   ],
+   "pieces": [
+    "grid_primary_6",
+    "grid_primary_30"
+   ],
+   "turn_deg": 0.6,
+   "rule": "straight"
+  },
+  {
+   "node_xz": [
+    1662.71,
+    789.4
+   ],
+   "pieces": [
+    "grid_primary_7",
+    "grid_primary_31"
+   ],
+   "turn_deg": 0.8,
+   "rule": "straight"
+  },
+  {
+   "node_xz": [
+    -758.23,
+    -748.26
+   ],
+   "pieces": [
+    "grid_tertiary_68",
+    "grid_tertiary_99"
+   ],
+   "turn_deg": 1.4,
+   "rule": "straight"
+  },
+  {
+   "node_xz": [
+    -758.23,
+    -748.26
+   ],
+   "pieces": [
+    "grid_secondary_8",
+    "grid_primary_11"
+   ],
+   "turn_deg": 2.1,
+   "rule": "straight"
+  },
+  {
+   "node_xz": [
+    36.92,
+    -931.57
+   ],
+   "pieces": [
+    "grid_secondary_8",
+    "grid_tertiary_103"
+   ],
+   "turn_deg": 95.6,
+   "rule": "bend"
+  },
+  {
+   "node_xz": [
+    -1533.26,
+    -744.39
+   ],
+   "pieces": [
+    "grid_primary_66",
+    "grid_primary_87"
+   ],
+   "turn_deg": 0.9,
+   "rule": "straight"
+  },
+  {
+   "node_xz": [
+    1113.02,
+    583.56
+   ],
+   "pieces": [
+    "grid_residential_34",
+    "grid_residential_63"
+   ],
+   "turn_deg": 9.5,
+   "rule": "straight"
+  },
+  {
+   "node_xz": [
+    1463.87,
+    -132.35
+   ],
+   "pieces": [
+    "grid_unclassified_13",
+    "grid_tertiary_50"
+   ],
+   "turn_deg": 0.9,
+   "rule": "straight"
+  },
+  {
+   "node_xz": [
+    1463.87,
+    -132.35
+   ],
+   "pieces": [
+    "grid_tertiary_75",
+    "grid_tertiary_85"
+   ],
+   "turn_deg": 9.1,
+   "rule": "straight"
+  },
+  {
+   "node_xz": [
+    -1475.89,
+    506.6
+   ],
+   "pieces": [
+    "grid_primary_15",
+    "grid_primary_51#0"
+   ],
+   "turn_deg": 2.0,
+   "rule": "straight"
+  },
+  {
+   "node_xz": [
+    -1459.24,
+    506.28
+   ],
+   "pieces": [
+    "grid_primary_33",
+    "grid_primary_53#0"
+   ],
+   "turn_deg": 0.2,
+   "rule": "straight"
+  },
+  {
+   "node_xz": [
+    679.9,
+    868.89
+   ],
+   "pieces": [
+    "grid_residential_22",
+    "grid_residential_106"
+   ],
+   "turn_deg": 23.7,
+   "rule": "straight"
+  },
+  {
+   "node_xz": [
+    722.72,
+    868.3
+   ],
+   "pieces": [
+    "grid_residential_32",
+    "grid_residential_106"
+   ],
+   "turn_deg": 1.6,
+   "rule": "straight"
+  },
+  {
+   "node_xz": [
+    42.53,
+    -752.43
+   ],
+   "pieces": [
+    "grid_tertiary_36",
+    "grid_tertiary_92"
+   ],
+   "turn_deg": 3.9,
+   "rule": "straight"
+  },
+  {
+   "node_xz": [
+    442.74,
+    -942.6
+   ],
+   "pieces": [
+    "grid_secondary_39",
+    "grid_secondary_45"
+   ],
+   "turn_deg": 0.8,
+   "rule": "straight"
+  },
+  {
+   "node_xz": [
+    846.35,
+    -939.88
+   ],
+   "pieces": [
+    "grid_secondary_39",
+    "grid_secondary_42"
+   ],
+   "turn_deg": 1.5,
+   "rule": "straight"
+  },
+  {
+   "node_xz": [
+    1244.85,
+    -945.92
+   ],
+   "pieces": [
+    "grid_secondary_42",
+    "grid_unclassified_77"
+   ],
+   "turn_deg": 16.7,
+   "rule": "straight"
+  },
+  {
+   "node_xz": [
+    -158.41,
+    -700.96
+   ],
+   "pieces": [
+    "grid_unclassified_81",
+    "grid_unclassified_86"
+   ],
+   "turn_deg": 0.1,
+   "rule": "straight"
+  },
+  {
+   "node_xz": [
+    51.19,
+    -933.05
+   ],
+   "pieces": [
+    "grid_secondary_45",
+    "grid_tertiary_101"
+   ],
+   "turn_deg": 87.9,
+   "rule": "bend"
+  },
+  {
+   "node_xz": [
+    -1560.71,
+    -648.55
+   ],
+   "pieces": [
+    "grid_primary_49",
+    "grid_primary_88"
+   ],
+   "turn_deg": 0.1,
+   "rule": "straight"
+  },
+  {
+   "node_xz": [
+    -1533.09,
+    -649.33
+   ],
+   "pieces": [
+    "grid_primary_52",
+    "grid_primary_87"
+   ],
+   "turn_deg": 0.5,
+   "rule": "straight"
+  },
+  {
+   "node_xz": [
+    847.25,
+    -764.51
+   ],
+   "pieces": [
+    "grid_unclassified_62",
+    "grid_unclassified_95"
+   ],
+   "turn_deg": 0.7,
+   "rule": "straight"
+  },
+  {
+   "node_xz": [
+    -1561.49,
+    -743.24
+   ],
+   "pieces": [
+    "grid_primary_64",
+    "grid_primary_88"
+   ],
+   "turn_deg": 1.2,
+   "rule": "straight"
+  }
+ ],
+ "forks_merged": [
+  {
+   "pieces": [
+    "grid_tertiary_91",
+    "grid_tertiary_92"
+   ],
+   "name": "grid_tertiary_92",
+   "node_xz": [
+    42.53,
+    -752.43
+   ],
+   "length_m": 87.3,
+   "width_m": [
+    14.0,
+    24.5
+   ]
+  },
+  {
+   "pieces": [
+    "grid_unclassified_94",
+    "grid_unclassified_95"
+   ],
+   "name": "grid_unclassified_95",
+   "node_xz": [
+    847.25,
+    -764.51
+   ],
+   "length_m": 81.8,
+   "width_m": [
+    13.5,
+    18.0
+   ]
+  }
+ ],
+ "ranked": [
+  {
+   "piece": "grid_primary_7",
+   "hosts": [
+    "grid_primary_6"
+   ]
+  },
+  {
+   "piece": "grid_primary_11#0",
+   "hosts": [
+    "grid_primary_52#0"
+   ]
+  },
+  {
+   "piece": "grid_primary_49#0",
+   "hosts": [
+    "grid_primary_52#0"
+   ]
+  },
+  {
+   "piece": "grid_primary_84#0",
+   "hosts": [
+    "grid_primary_78#0"
+   ]
+  },
+  {
+   "piece": "grid_secondary_102#0",
+   "hosts": [
+    "grid_secondary_39#0"
+   ]
+  },
+  {
+   "piece": "grid_tertiary_92#0",
+   "hosts": [
+    "grid_tertiary_2#0"
+   ]
+  },
+  {
+   "piece": "grid_tertiary_4#0",
+   "hosts": [
+    "grid_tertiary_2#0"
+   ]
+  },
+  {
+   "piece": "grid_tertiary_1",
+   "hosts": [
+    "grid_tertiary_2#0"
+   ]
+  },
+  {
+   "piece": "grid_tertiary_5#0",
+   "hosts": [
+    "grid_tertiary_2#0"
+   ]
+  },
+  {
+   "piece": "grid_tertiary_44#0",
+   "hosts": [
+    "grid_tertiary_2#0"
+   ]
+  },
+  {
+   "piece": "grid_tertiary_40",
+   "hosts": [
+    "grid_tertiary_1",
+    "grid_tertiary_2#0"
+   ]
+  },
+  {
+   "piece": "grid_tertiary_74",
+   "hosts": [
+    "grid_tertiary_1",
+    "grid_tertiary_2#0"
+   ]
+  },
+  {
+   "piece": "grid_unclassified_0#0",
+   "hosts": [
+    "grid_tertiary_2#0"
+   ]
+  },
+  {
+   "piece": "grid_unclassified_9#0",
+   "hosts": [
+    "grid_tertiary_98#0"
+   ]
+  },
+  {
+   "piece": "grid_unclassified_10#0",
+   "hosts": [
+    "grid_tertiary_16#0#0"
+   ]
+  },
+  {
+   "piece": "grid_unclassified_18#0",
+   "hosts": [
+    "grid_tertiary_2#0"
+   ]
+  },
+  {
+   "piece": "grid_unclassified_23",
+   "hosts": [
+    "grid_tertiary_5#0"
+   ]
+  },
+  {
+   "piece": "grid_unclassified_25#0",
+   "hosts": [
+    "grid_tertiary_2#0"
+   ]
+  },
+  {
+   "piece": "grid_unclassified_60",
+   "hosts": [
+    "grid_tertiary_1",
+    "grid_tertiary_2#0"
+   ]
+  },
+  {
+   "piece": "grid_unclassified_38",
+   "hosts": [
+    "grid_tertiary_1",
+    "grid_tertiary_2#0"
+   ]
+  },
+  {
+   "piece": "grid_unclassified_41",
+   "hosts": [
+    "grid_unclassified_0#0",
+    "grid_tertiary_92#0"
+   ]
+  },
+  {
+   "piece": "grid_unclassified_48",
+   "hosts": [
+    "grid_tertiary_4#0"
+   ]
+  },
+  {
+   "piece": "grid_unclassified_55",
+   "hosts": [
+    "grid_tertiary_4#0"
+   ]
+  },
+  {
+   "piece": "grid_unclassified_58",
+   "hosts": [
+    "grid_tertiary_1",
+    "grid_tertiary_2#0"
+   ]
+  },
+  {
+   "piece": "grid_unclassified_59",
+   "hosts": [
+    "grid_tertiary_1",
+    "grid_tertiary_2#0"
+   ]
+  },
+  {
+   "piece": "grid_unclassified_61",
+   "hosts": [
+    "grid_tertiary_1",
+    "grid_tertiary_2#0"
+   ]
+  },
+  {
+   "piece": "grid_unclassified_81#0",
+   "hosts": [
+    "grid_unclassified_41"
+   ]
+  },
+  {
+   "piece": "grid_unclassified_43#0",
+   "hosts": [
+    "grid_unclassified_0#0",
+    "grid_unclassified_81#0"
+   ]
+  },
+  {
+   "piece": "grid_unclassified_69#0",
+   "hosts": [
+    "grid_unclassified_41",
+    "grid_unclassified_43#0"
+   ]
+  },
+  {
+   "piece": "grid_unclassified_70",
+   "hosts": [
+    "grid_tertiary_5#0"
+   ]
+  },
+  {
+   "piece": "grid_unclassified_79",
+   "hosts": [
+    "grid_tertiary_1"
+   ]
+  },
+  {
+   "piece": "grid_unclassified_96#0",
+   "hosts": [
+    "grid_unclassified_9#0"
+   ]
+  },
+  {
+   "piece": "grid_unclassified_105",
+   "hosts": [
+    "grid_tertiary_2#0",
+    "grid_tertiary_5#0"
+   ]
+  },
+  {
+   "piece": "grid_residential_34",
+   "hosts": [
+    "grid_residential_22"
+   ]
+  },
+  {
+   "piece": "grid_residential_12",
+   "hosts": [
+    "grid_residential_34"
+   ]
+  },
+  {
+   "piece": "grid_unclassified_27#0",
+   "hosts": [
+    "grid_residential_12"
+   ]
+  },
+  {
+   "piece": "grid_unclassified_28#0",
+   "hosts": [
+    "grid_residential_12"
+   ]
+  },
+  {
+   "piece": "grid_residential_19",
+   "hosts": [
+    "grid_residential_34"
+   ]
+  },
+  {
+   "piece": "grid_residential_21",
+   "hosts": [
+    "grid_residential_34"
+   ]
+  },
+  {
+   "piece": "grid_residential_24",
+   "hosts": [
+    "grid_residential_22"
+   ]
+  },
+  {
+   "piece": "grid_residential_26",
+   "hosts": [
+    "grid_tertiary_65#0"
+   ]
+  },
+  {
+   "piece": "grid_residential_29",
+   "hosts": [
+    "grid_residential_22",
+    "grid_residential_24"
+   ]
+  },
+  {
+   "piece": "grid_residential_47",
+   "hosts": [
+    "grid_residential_24",
+    "grid_residential_29"
+   ]
+  },
+  {
+   "piece": "grid_residential_89",
+   "hosts": [
+    "grid_residential_34"
+   ]
+  },
+  {
+   "piece": "grid_residential_104",
+   "hosts": [
+    "grid_residential_26"
+   ]
+  }
+ ]
+}

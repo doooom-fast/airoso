@@ -1,0 +1,2237 @@
+{
+ "mouths": [
+  {
+   "connector": "grid_unclassified_0",
+   "host": "MAINLINE",
+   "host_vertex": 2725,
+   "side": -1,
+   "connector_width_m": 8.0,
+   "cut_xyz": [
+    -360.1,
+    28.588,
+    -753.175
+   ],
+   "host_seg": 2725,
+   "host_t": 0.0017,
+   "angle_deg": 89.91,
+   "host_grade": -0.00639,
+   "piece": "grid_unclassified_0#0#0",
+   "end": "start",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_tertiary_2",
+   "host": "MAINLINE",
+   "host_vertex": 3184,
+   "side": -1,
+   "connector_width_m": 10.0,
+   "cut_xyz": [
+    -1473.858,
+    20.219,
+    -338.394
+   ],
+   "host_seg": 3184,
+   "host_t": 0.0468,
+   "angle_deg": 88.78,
+   "host_grade": -0.03178,
+   "piece": "grid_tertiary_2#0",
+   "end": "end",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_tertiary_4",
+   "host": "MAINLINE",
+   "host_vertex": 558,
+   "side": -1,
+   "connector_width_m": 10.0,
+   "cut_xyz": [
+    -752.404,
+    10.297,
+    511.328
+   ],
+   "host_seg": 558,
+   "host_t": 0.2233,
+   "angle_deg": 84.22,
+   "host_grade": -0.01673,
+   "piece": "grid_tertiary_4#0#0",
+   "end": "start",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_tertiary_5",
+   "host": "MAINLINE",
+   "host_vertex": 1902,
+   "side": -1,
+   "connector_width_m": 10.0,
+   "cut_xyz": [
+    1753.055,
+    22.835,
+    -372.922
+   ],
+   "host_seg": 1901,
+   "host_t": 0.686,
+   "angle_deg": 84.68,
+   "host_grade": 0.00788,
+   "piece": "grid_tertiary_5#0#0",
+   "end": "end",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_primary_11",
+   "host": "MAINLINE",
+   "host_vertex": 2586,
+   "side": 1,
+   "connector_width_m": 10.0,
+   "cut_xyz": [
+    41.986,
+    27.643,
+    -864.314
+   ],
+   "host_seg": 2586,
+   "host_t": 0.2913,
+   "angle_deg": 85.28,
+   "host_grade": -0.02092,
+   "piece": "grid_primary_11#0#0",
+   "end": "end",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_tertiary_16",
+   "host": "MAINLINE",
+   "host_vertex": 559,
+   "side": 1,
+   "connector_width_m": 10.0,
+   "cut_xyz": [
+    -765.674,
+    10.267,
+    512.483
+   ],
+   "host_seg": 558,
+   "host_t": 0.8189,
+   "angle_deg": 85.3,
+   "host_grade": -0.01673,
+   "piece": "grid_tertiary_16#0#0",
+   "end": "end",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_unclassified_17#0",
+   "host": "MAINLINE",
+   "host_vertex": 479,
+   "side": 1,
+   "connector_width_m": 8.0,
+   "cut_xyz": [
+    -763.904,
+    20.296,
+    273.826
+   ],
+   "host_seg": 479,
+   "host_t": 0.0019,
+   "angle_deg": 89.94,
+   "host_grade": -0.00644,
+   "piece": "grid_unclassified_17#0#0",
+   "end": "end",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_unclassified_18",
+   "host": "MAINLINE",
+   "host_vertex": 2406,
+   "side": -1,
+   "connector_width_m": 8.0,
+   "cut_xyz": [
+    585.03,
+    34.679,
+    -854.299
+   ],
+   "host_seg": 2405,
+   "host_t": 0.805,
+   "angle_deg": 84.02,
+   "host_grade": -0.00509,
+   "piece": "grid_unclassified_18#0#0",
+   "end": "start",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_unclassified_25",
+   "host": "MAINLINE",
+   "host_vertex": 2522,
+   "side": -1,
+   "connector_width_m": 8.0,
+   "cut_xyz": [
+    235.361,
+    31.633,
+    -858.818
+   ],
+   "host_seg": 2522,
+   "host_t": 0.1674,
+   "angle_deg": 86.08,
+   "host_grade": -0.01643,
+   "piece": "grid_unclassified_25#0#0",
+   "end": "start",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_primary_35",
+   "host": "MAINLINE",
+   "host_vertex": 779,
+   "side": 1,
+   "connector_width_m": 9.5,
+   "cut_xyz": [
+    -919.706,
+    7.236,
+    1116.354
+   ],
+   "host_seg": 778,
+   "host_t": 0.8779,
+   "angle_deg": 89.05,
+   "host_grade": -0.00436,
+   "piece": "grid_primary_35#0",
+   "end": "end",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_tertiary_92",
+   "host": "MAINLINE",
+   "host_vertex": 2585,
+   "side": -1,
+   "connector_width_m": 24.5,
+   "cut_xyz": [
+    47.801,
+    27.717,
+    -843.611
+   ],
+   "host_seg": 2585,
+   "host_t": 0.0861,
+   "angle_deg": 88.6,
+   "host_grade": -0.02042,
+   "piece": "grid_tertiary_92#0#0",
+   "end": "start",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_secondary_39",
+   "host": "MAINLINE",
+   "host_vertex": 2581,
+   "side": 1,
+   "connector_width_m": 10.0,
+   "cut_xyz": [
+    56.683,
+    27.923,
+    -865.939
+   ],
+   "host_seg": 2581,
+   "host_t": 0.3335,
+   "angle_deg": 84.6,
+   "host_grade": -0.01746,
+   "piece": "grid_secondary_39#0",
+   "end": "start",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_unclassified_43",
+   "host": "MAINLINE",
+   "host_vertex": 2791,
+   "side": -1,
+   "connector_width_m": 8.0,
+   "cut_xyz": [
+    -553.926,
+    27.414,
+    -708.074
+   ],
+   "host_seg": 2791,
+   "host_t": 0.1685,
+   "angle_deg": 81.4,
+   "host_grade": 0.00206,
+   "piece": "grid_unclassified_43#0#0",
+   "end": "start",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_tertiary_44",
+   "host": "MAINLINE",
+   "host_vertex": 2860,
+   "side": -1,
+   "connector_width_m": 10.0,
+   "cut_xyz": [
+    -756.155,
+    27.159,
+    -660.834
+   ],
+   "host_seg": 2860,
+   "host_t": 0.0981,
+   "angle_deg": 87.98,
+   "host_grade": -0.00692,
+   "piece": "grid_tertiary_44#0#0",
+   "end": "start",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_primary_49",
+   "host": "MAINLINE",
+   "host_vertex": 3205,
+   "side": 1,
+   "connector_width_m": 9.5,
+   "cut_xyz": [
+    -1517.556,
+    19.423,
+    -303.994
+   ],
+   "host_seg": 3204,
+   "host_t": 1.0,
+   "angle_deg": 89.05,
+   "host_grade": -0.00725,
+   "piece": "grid_primary_49#0#0",
+   "end": "start",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_primary_52",
+   "host": "MAINLINE",
+   "host_vertex": 3202,
+   "side": 1,
+   "connector_width_m": 9.5,
+   "cut_xyz": [
+    -1505.136,
+    19.489,
+    -311.965
+   ],
+   "host_seg": 3201,
+   "host_t": 0.7225,
+   "angle_deg": 87.23,
+   "host_grade": -0.00739,
+   "piece": "grid_primary_52#0",
+   "end": "end",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_unclassified_95",
+   "host": "MAINLINE",
+   "host_vertex": 2318,
+   "side": -1,
+   "connector_width_m": 18.0,
+   "cut_xyz": [
+    849.991,
+    34.019,
+    -851.205
+   ],
+   "host_seg": 2317,
+   "host_t": 0.6676,
+   "angle_deg": 84.61,
+   "host_grade": -0.00722,
+   "piece": "grid_unclassified_95#0",
+   "end": "start",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_unclassified_67",
+   "host": "MAINLINE",
+   "host_vertex": 3198,
+   "side": -1,
+   "connector_width_m": 8.0,
+   "cut_xyz": [
+    -1481.548,
+    19.568,
+    -287.391
+   ],
+   "host_seg": 3197,
+   "host_t": 1.0,
+   "angle_deg": 84.25,
+   "host_grade": -0.00962,
+   "piece": "grid_unclassified_67#0",
+   "end": "start",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_tertiary_68",
+   "host": "MAINLINE",
+   "host_vertex": 2859,
+   "side": 1,
+   "connector_width_m": 10.0,
+   "cut_xyz": [
+    -755.181,
+    27.19,
+    -677.965
+   ],
+   "host_seg": 2858,
+   "host_t": 0.793,
+   "angle_deg": 85.74,
+   "host_grade": -0.00925,
+   "piece": "grid_tertiary_68#0#1",
+   "end": "end",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_unclassified_69",
+   "host": "MAINLINE",
+   "host_vertex": 2691,
+   "side": -1,
+   "connector_width_m": 8.0,
+   "cut_xyz": [
+    -260.3,
+    28.246,
+    -777.859
+   ],
+   "host_seg": 2690,
+   "host_t": 0.8377,
+   "angle_deg": 81.71,
+   "host_grade": 0.01045,
+   "piece": "grid_unclassified_69#0#0",
+   "end": "start",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_unclassified_76#0",
+   "host": "MAINLINE",
+   "host_vertex": 95,
+   "side": -1,
+   "connector_width_m": 8.0,
+   "cut_xyz": [
+    -1500.772,
+    17.508,
+    27.67
+   ],
+   "host_seg": 95,
+   "host_t": 0.1774,
+   "angle_deg": 86.13,
+   "host_grade": 0.00868,
+   "piece": "grid_unclassified_76#0#0",
+   "end": "start",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_primary_78",
+   "host": "MAINLINE",
+   "host_vertex": 1936,
+   "side": 1,
+   "connector_width_m": 9.5,
+   "cut_xyz": [
+    1802.158,
+    23.804,
+    -466.404
+   ],
+   "host_seg": 1935,
+   "host_t": 0.8554,
+   "angle_deg": 88.43,
+   "host_grade": 0.00441,
+   "piece": "grid_primary_78#0",
+   "end": "end",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_primary_80",
+   "host": "MAINLINE",
+   "host_vertex": 847,
+   "side": 1,
+   "connector_width_m": 9.5,
+   "cut_xyz": [
+    -733.103,
+    5.685,
+    1224.061
+   ],
+   "host_seg": 846,
+   "host_t": 0.9819,
+   "angle_deg": 88.68,
+   "host_grade": -0.04114,
+   "piece": "grid_primary_80#0",
+   "end": "end",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_unclassified_81",
+   "host": "MAINLINE",
+   "host_vertex": 2656,
+   "side": -1,
+   "connector_width_m": 8.0,
+   "cut_xyz": [
+    -160.506,
+    26.077,
+    -810.676
+   ],
+   "host_seg": 2655,
+   "host_t": 0.7352,
+   "angle_deg": 81.91,
+   "host_grade": 0.02179,
+   "piece": "grid_unclassified_81#0#0",
+   "end": "start",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_primary_84",
+   "host": "MAINLINE",
+   "host_vertex": 1942,
+   "side": 1,
+   "connector_width_m": 9.5,
+   "cut_xyz": [
+    1806.759,
+    23.88,
+    -487.253
+   ],
+   "host_seg": 1941,
+   "host_t": 1.0,
+   "angle_deg": 89.29,
+   "host_grade": 0.00428,
+   "piece": "grid_primary_84#0#0",
+   "end": "start",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_tertiary_98",
+   "host": "MAINLINE",
+   "host_vertex": 3207,
+   "side": 1,
+   "connector_width_m": 10.0,
+   "cut_xyz": [
+    -1523.842,
+    19.385,
+    -294.482
+   ],
+   "host_seg": 3206,
+   "host_t": 1.0,
+   "angle_deg": 87.85,
+   "host_grade": -0.00748,
+   "piece": "grid_tertiary_98#0",
+   "end": "end",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_secondary_102",
+   "host": "MAINLINE",
+   "host_vertex": 2319,
+   "side": 1,
+   "connector_width_m": 10.0,
+   "cut_xyz": [
+    846.507,
+    33.992,
+    -872.393
+   ],
+   "host_seg": 2318,
+   "host_t": 0.8025,
+   "angle_deg": 86.79,
+   "host_grade": -0.00841,
+   "piece": "grid_secondary_102#0#0",
+   "end": "end",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_primary_7",
+   "host": "grid_primary_6",
+   "host_vertex": 464,
+   "side": 1,
+   "connector_width_m": 9.5,
+   "cut_xyz": [
+    1874.361,
+    20.061,
+    31.509
+   ],
+   "host_seg": 463,
+   "host_t": 0.8359,
+   "angle_deg": 83.54,
+   "host_grade": 0.00233,
+   "piece": "grid_primary_7#0",
+   "end": "start",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_primary_11#0",
+   "host": "grid_primary_52#0",
+   "host_vertex": 71,
+   "side": -1,
+   "connector_width_m": 9.5,
+   "cut_xyz": [
+    -1528.914,
+    31.068,
+    -744.429
+   ],
+   "host_seg": 70,
+   "host_t": 0.9662,
+   "angle_deg": 89.36,
+   "host_grade": -0.00349,
+   "piece": "grid_primary_11#0#0",
+   "end": "start",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_primary_49#0",
+   "host": "grid_primary_52#0",
+   "host_vertex": 1,
+   "side": 1,
+   "connector_width_m": 9.5,
+   "cut_xyz": [
+    -1533.048,
+    32.883,
+    -953.352
+   ],
+   "host_seg": 0,
+   "host_t": 0.9297,
+   "angle_deg": 87.23,
+   "host_grade": -0.033,
+   "piece": "grid_primary_49#0#0",
+   "end": "end",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_primary_84#0",
+   "host": "grid_primary_78#0",
+   "host_vertex": 11,
+   "side": 1,
+   "connector_width_m": 9.5,
+   "cut_xyz": [
+    1863.677,
+    28.835,
+    -389.335
+   ],
+   "host_seg": 10,
+   "host_t": 0.9348,
+   "angle_deg": 87.43,
+   "host_grade": -0.03134,
+   "piece": "grid_primary_84#0#0",
+   "end": "end",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_secondary_102#0",
+   "host": "grid_secondary_39#0",
+   "host_vertex": 288,
+   "side": 1,
+   "connector_width_m": 10.0,
+   "cut_xyz": [
+    846.272,
+    34.405,
+    -935.284
+   ],
+   "host_seg": 287,
+   "host_t": 0.9491,
+   "angle_deg": 88.94,
+   "host_grade": -0.0024,
+   "piece": "grid_secondary_102#0#0",
+   "end": "start",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_tertiary_16#0",
+   "host": "grid_primary_33",
+   "host_vertex": 108,
+   "side": -1,
+   "connector_width_m": 10.0,
+   "cut_xyz": [
+    -1454.736,
+    15.432,
+    506.288
+   ],
+   "host_seg": 108,
+   "host_t": 0.3919,
+   "angle_deg": 74.87,
+   "host_grade": -0.011,
+   "piece": "grid_tertiary_16#0#0",
+   "end": "start",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_unclassified_27",
+   "host": "grid_primary_6",
+   "host_vertex": 176,
+   "side": -1,
+   "connector_width_m": 8.0,
+   "cut_xyz": [
+    1644.842,
+    20.046,
+    789.339
+   ],
+   "host_seg": 175,
+   "host_t": 1.0,
+   "angle_deg": 89.83,
+   "host_grade": -0.00855,
+   "piece": "grid_unclassified_27#0#0",
+   "end": "end",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_unclassified_28",
+   "host": "grid_primary_6",
+   "host_vertex": 97,
+   "side": -1,
+   "connector_width_m": 8.0,
+   "cut_xyz": [
+    1643.47,
+    20.39,
+    1025.3
+   ],
+   "host_seg": 96,
+   "host_t": 0.5268,
+   "angle_deg": 89.56,
+   "host_grade": 0.01834,
+   "piece": "grid_unclassified_28#0#0",
+   "end": "end",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_tertiary_65",
+   "host": "grid_primary_7#0",
+   "host_vertex": 285,
+   "side": -1,
+   "connector_width_m": 10.0,
+   "cut_xyz": [
+    1667.059,
+    20.183,
+    789.373
+   ],
+   "host_seg": 284,
+   "host_t": 0.9717,
+   "angle_deg": 89.3,
+   "host_grade": 0.01049,
+   "piece": "grid_tertiary_65#0",
+   "end": "start",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_tertiary_68#0",
+   "host": "grid_primary_11#0#0",
+   "host_vertex": 258,
+   "side": -1,
+   "connector_width_m": 10.0,
+   "cut_xyz": [
+    -758.277,
+    27.649,
+    -752.669
+   ],
+   "host_seg": 258,
+   "host_t": 0.1469,
+   "angle_deg": 84.26,
+   "host_grade": 0.00633,
+   "piece": "grid_tertiary_68#0#0",
+   "end": "end",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_tertiary_68#0",
+   "host": "grid_primary_11#0#0",
+   "host_vertex": 258,
+   "side": 1,
+   "connector_width_m": 10.0,
+   "cut_xyz": [
+    -758.349,
+    27.642,
+    -743.846
+   ],
+   "host_seg": 257,
+   "host_t": 0.6642,
+   "angle_deg": 79.95,
+   "host_grade": 0.0048,
+   "piece": "grid_tertiary_68#0#1",
+   "end": "start",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_unclassified_83",
+   "host": "grid_primary_11#0#0",
+   "host_vertex": 396,
+   "side": -1,
+   "connector_width_m": 8.0,
+   "cut_xyz": [
+    -357.353,
+    28.147,
+    -848.069
+   ],
+   "host_seg": 395,
+   "host_t": 0.809,
+   "angle_deg": 84.77,
+   "host_grade": 0.00967,
+   "piece": "grid_unclassified_83#0",
+   "end": "end",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_unclassified_90",
+   "host": "grid_primary_11#0#0",
+   "host_vertex": 430,
+   "side": -1,
+   "connector_width_m": 8.0,
+   "cut_xyz": [
+    -258.051,
+    28.502,
+    -873.53
+   ],
+   "host_seg": 429,
+   "host_t": 0.9968,
+   "angle_deg": 81.16,
+   "host_grade": 0.00067,
+   "piece": "grid_unclassified_90#0",
+   "end": "end",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_unclassified_100",
+   "host": "grid_primary_11#0#0",
+   "host_vertex": 465,
+   "side": -1,
+   "connector_width_m": 8.0,
+   "cut_xyz": [
+    -156.841,
+    28.365,
+    -896.864
+   ],
+   "host_seg": 464,
+   "host_t": 0.5981,
+   "angle_deg": 82.88,
+   "host_grade": -0.00533,
+   "piece": "grid_unclassified_100#0",
+   "end": "end",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_unclassified_27_65_crossing",
+   "host": "grid_primary_6",
+   "host_vertex": 176,
+   "side": 1,
+   "connector_width_m": 10.0,
+   "cut_xyz": [
+    1653.542,
+    20.045,
+    789.367
+   ],
+   "host_seg": 176,
+   "host_t": 0.0116,
+   "angle_deg": 89.53,
+   "host_grade": -0.01634,
+   "piece": "grid_unclassified_27_65_crossing#0",
+   "end": "start",
+   "weld_runon": "mitre",
+   "weld_blend_m": 4.817,
+   "weld_remap_min_m": 0.0
+  },
+  {
+   "connector": "grid_unclassified_27_65_crossing",
+   "host": "grid_primary_7#0",
+   "host_vertex": 285,
+   "side": 1,
+   "connector_width_m": 10.0,
+   "cut_xyz": [
+    1658.359,
+    20.184,
+    789.382
+   ],
+   "host_seg": 284,
+   "host_t": 1.0,
+   "angle_deg": 89.79,
+   "host_grade": 0.01049,
+   "piece": "grid_unclassified_27_65_crossing#0",
+   "end": "end",
+   "weld_runon": "mitre",
+   "weld_blend_m": 4.817,
+   "weld_remap_min_m": 0.0
+  },
+  {
+   "connector": "grid_tertiary_92#0",
+   "host": "grid_tertiary_2#0",
+   "host_vertex": 1011,
+   "side": 1,
+   "connector_width_m": 10.0,
+   "cut_xyz": [
+    43.598,
+    26.99,
+    -299.484
+   ],
+   "host_seg": 1010,
+   "host_t": 0.7171,
+   "angle_deg": 89.71,
+   "host_grade": -0.014,
+   "piece": "grid_tertiary_92#0#0",
+   "end": "end",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_tertiary_4#0",
+   "host": "grid_tertiary_2#0",
+   "host_vertex": 0,
+   "side": 1,
+   "connector_width_m": 10.0,
+   "cut_xyz": [
+    244.923,
+    13.398,
+    113.362
+   ],
+   "host_seg": 0,
+   "host_t": 0.0,
+   "angle_deg": 88.89,
+   "host_grade": -0.01167,
+   "piece": "grid_tertiary_4#0#0",
+   "end": "end",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_tertiary_4#0",
+   "host": "grid_tertiary_2#0",
+   "host_vertex": 0,
+   "side": -1,
+   "connector_width_m": 10.0,
+   "cut_xyz": [
+    244.915,
+    13.396,
+    104.16
+   ],
+   "host_seg": 0,
+   "host_t": 0.0464,
+   "angle_deg": 88.28,
+   "host_grade": -0.01167,
+   "piece": "grid_tertiary_4#0#1",
+   "end": "start",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_tertiary_4#0",
+   "host": "grid_tertiary_2#0",
+   "host_vertex": 944,
+   "side": -1,
+   "connector_width_m": 10.0,
+   "cut_xyz": [
+    243.282,
+    28.695,
+    -292.977
+   ],
+   "host_seg": 943,
+   "host_t": 0.9652,
+   "angle_deg": 88.7,
+   "host_grade": -0.00967,
+   "piece": "grid_tertiary_4#0#1",
+   "end": "end",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_tertiary_1",
+   "host": "grid_tertiary_2#0",
+   "host_vertex": 45,
+   "side": -1,
+   "connector_width_m": 10.0,
+   "cut_xyz": [
+    379.387,
+    13.708,
+    103.605
+   ],
+   "host_seg": 44,
+   "host_t": 0.8296,
+   "angle_deg": 89.81,
+   "host_grade": 0.004,
+   "piece": "grid_tertiary_1#0",
+   "end": "start",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_tertiary_1",
+   "host": "grid_tertiary_2#0",
+   "host_vertex": 485,
+   "side": -1,
+   "connector_width_m": 10.0,
+   "cut_xyz": [
+    1459.268,
+    17.955,
+    -132.404
+   ],
+   "host_seg": 485,
+   "host_t": 0.0661,
+   "angle_deg": 89.06,
+   "host_grade": 0.01604,
+   "piece": "grid_tertiary_1#0",
+   "end": "end",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_tertiary_1",
+   "host": "grid_tertiary_2#0",
+   "host_vertex": 485,
+   "side": 1,
+   "connector_width_m": 10.0,
+   "cut_xyz": [
+    1468.46,
+    17.956,
+    -131.569
+   ],
+   "host_seg": 484,
+   "host_t": 0.7546,
+   "angle_deg": 80.9,
+   "host_grade": -0.00267,
+   "piece": "grid_tertiary_1#1",
+   "end": "start",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_tertiary_5#0",
+   "host": "grid_tertiary_2#0",
+   "host_vertex": 721,
+   "side": 1,
+   "connector_width_m": 10.0,
+   "cut_xyz": [
+    913.082,
+    17.098,
+    -296.746
+   ],
+   "host_seg": 720,
+   "host_t": 0.4417,
+   "angle_deg": 18.59,
+   "host_grade": -0.001,
+   "piece": "grid_tertiary_5#0#0",
+   "end": "start",
+   "extend_max_m": 40.4,
+   "weld_hold": "overlap",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_tertiary_44#0",
+   "host": "grid_tertiary_2#0",
+   "host_vertex": 1280,
+   "side": 1,
+   "connector_width_m": 10.0,
+   "cut_xyz": [
+    -758.271,
+    24.561,
+    -341.907
+   ],
+   "host_seg": 1279,
+   "host_t": 0.9953,
+   "angle_deg": 89.83,
+   "host_grade": 0.01433,
+   "piece": "grid_tertiary_44#0#0",
+   "end": "end",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_tertiary_44#0",
+   "host": "grid_tertiary_2#0",
+   "host_vertex": 1280,
+   "side": -1,
+   "connector_width_m": 10.0,
+   "cut_xyz": [
+    -758.326,
+    24.56,
+    -332.707
+   ],
+   "host_seg": 1279,
+   "host_t": 0.9736,
+   "angle_deg": 89.03,
+   "host_grade": 0.01433,
+   "piece": "grid_tertiary_44#0#1",
+   "end": "start",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_tertiary_40",
+   "host": "grid_tertiary_2#0",
+   "host_vertex": 743,
+   "side": -1,
+   "connector_width_m": 10.0,
+   "cut_xyz": [
+    846.347,
+    16.834,
+    -287.052
+   ],
+   "host_seg": 742,
+   "host_t": 0.9602,
+   "angle_deg": 89.73,
+   "host_grade": -0.00267,
+   "piece": "grid_tertiary_40#0",
+   "end": "start",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_tertiary_40",
+   "host": "grid_tertiary_1#0",
+   "host_vertex": 204,
+   "side": -1,
+   "connector_width_m": 10.0,
+   "cut_xyz": [
+    846.27,
+    15.816,
+    -139.911
+   ],
+   "host_seg": 203,
+   "host_t": 0.7648,
+   "angle_deg": 89.92,
+   "host_grade": 0.00267,
+   "piece": "grid_tertiary_40#0",
+   "end": "end",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_tertiary_40",
+   "host": "grid_tertiary_1#0",
+   "host_vertex": 204,
+   "side": 1,
+   "connector_width_m": 10.0,
+   "cut_xyz": [
+    846.287,
+    15.816,
+    -130.711
+   ],
+   "host_seg": 203,
+   "host_t": 0.7787,
+   "angle_deg": 89.56,
+   "host_grade": 0.00267,
+   "piece": "grid_tertiary_40#1",
+   "end": "start",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_tertiary_40",
+   "host": "grid_tertiary_2#0",
+   "host_vertex": 201,
+   "side": -1,
+   "connector_width_m": 10.0,
+   "cut_xyz": [
+    846.538,
+    14.805,
+    106.191
+   ],
+   "host_seg": 200,
+   "host_t": 0.5225,
+   "angle_deg": 88.85,
+   "host_grade": 0.00133,
+   "piece": "grid_tertiary_40#1",
+   "end": "end",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_tertiary_74",
+   "host": "grid_tertiary_1#1",
+   "host_vertex": 1,
+   "side": -1,
+   "connector_width_m": 10.0,
+   "cut_xyz": [
+    1474.759,
+    17.959,
+    -135.159
+   ],
+   "host_seg": 2,
+   "host_t": 0.1392,
+   "angle_deg": 24.13,
+   "host_grade": 0.001,
+   "piece": "grid_tertiary_74#0",
+   "end": "start",
+   "extend_max_m": 30.4,
+   "weld_hold": "overlap",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_tertiary_74",
+   "host": "grid_tertiary_1#1",
+   "host_vertex": 45,
+   "side": -1,
+   "connector_width_m": 10.0,
+   "cut_xyz": [
+    1599.468,
+    19.448,
+    -135.577
+   ],
+   "host_seg": 44,
+   "host_t": 0.5121,
+   "angle_deg": 23.74,
+   "host_grade": 0.025,
+   "piece": "grid_tertiary_74#0",
+   "end": "end",
+   "extend_max_m": 30.9,
+   "weld_hold": "overlap",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_unclassified_0#0",
+   "host": "grid_tertiary_2#0",
+   "host_vertex": 1145,
+   "side": 1,
+   "connector_width_m": 8.0,
+   "cut_xyz": [
+    -359.246,
+    23.151,
+    -301.935
+   ],
+   "host_seg": 1145,
+   "host_t": 0.043,
+   "angle_deg": 89.29,
+   "host_grade": -0.012,
+   "piece": "grid_unclassified_0#0#0",
+   "end": "end",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_unclassified_0#0",
+   "host": "grid_tertiary_2#0",
+   "host_vertex": 1145,
+   "side": -1,
+   "connector_width_m": 8.0,
+   "cut_xyz": [
+    -359.338,
+    23.153,
+    -292.735
+   ],
+   "host_seg": 1145,
+   "host_t": 0.0091,
+   "angle_deg": 89.45,
+   "host_grade": -0.012,
+   "piece": "grid_unclassified_0#0#1",
+   "end": "start",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_unclassified_9#0",
+   "host": "grid_tertiary_98#0",
+   "host_vertex": 15,
+   "side": -1,
+   "connector_width_m": 8.0,
+   "cut_xyz": [
+    -1550.902,
+    19.685,
+    -302.261
+   ],
+   "host_seg": 15,
+   "host_t": 0.4668,
+   "angle_deg": 88.64,
+   "host_grade": -0.01067,
+   "piece": "grid_unclassified_9#0#0",
+   "end": "end",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_unclassified_9#0",
+   "host": "grid_tertiary_98#0",
+   "host_vertex": 16,
+   "side": 1,
+   "connector_width_m": 8.0,
+   "cut_xyz": [
+    -1550.214,
+    19.678,
+    -293.066
+   ],
+   "host_seg": 15,
+   "host_t": 0.6727,
+   "angle_deg": 81.0,
+   "host_grade": -0.01067,
+   "piece": "grid_unclassified_9#0#1",
+   "end": "start",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_unclassified_10#0",
+   "host": "grid_tertiary_16#0#0",
+   "host_vertex": 7,
+   "side": -1,
+   "connector_width_m": 8.0,
+   "cut_xyz": [
+    -1435.746,
+    15.296,
+    501.706
+   ],
+   "host_seg": 6,
+   "host_t": 0.8309,
+   "angle_deg": 70.41,
+   "host_grade": -0.024,
+   "piece": "grid_unclassified_10#0#0",
+   "end": "end",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_unclassified_10#0",
+   "host": "grid_tertiary_16#0#0",
+   "host_vertex": 8,
+   "side": 1,
+   "connector_width_m": 8.0,
+   "cut_xyz": [
+    -1433.041,
+    15.262,
+    510.909
+   ],
+   "host_seg": 7,
+   "host_t": 0.7358,
+   "angle_deg": 76.82,
+   "host_grade": -0.01,
+   "piece": "grid_unclassified_10#0#1",
+   "end": "start",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_unclassified_18#0",
+   "host": "grid_tertiary_2#0",
+   "host_vertex": 880,
+   "side": 1,
+   "connector_width_m": 8.0,
+   "cut_xyz": [
+    434.283,
+    26.456,
+    -298.955
+   ],
+   "host_seg": 880,
+   "host_t": 0.3381,
+   "angle_deg": 89.64,
+   "host_grade": 0.041,
+   "piece": "grid_unclassified_18#0#0",
+   "end": "end",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_unclassified_23",
+   "host": "grid_tertiary_5#0#0",
+   "host_vertex": 94,
+   "side": -1,
+   "connector_width_m": 8.0,
+   "cut_xyz": [
+    1128.982,
+    18.609,
+    -455.858
+   ],
+   "host_seg": 94,
+   "host_t": 0.4557,
+   "angle_deg": 88.18,
+   "host_grade": 0.01034,
+   "piece": "grid_unclassified_23#0",
+   "end": "start",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_unclassified_23",
+   "host": "grid_tertiary_5#0#0",
+   "host_vertex": 203,
+   "side": -1,
+   "connector_width_m": 8.0,
+   "cut_xyz": [
+    1454.407,
+    20.335,
+    -452.051
+   ],
+   "host_seg": 202,
+   "host_t": 0.8931,
+   "angle_deg": 89.08,
+   "host_grade": 0.00633,
+   "piece": "grid_unclassified_23#0",
+   "end": "end",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_unclassified_25#0",
+   "host": "grid_tertiary_2#0",
+   "host_vertex": 947,
+   "side": 1,
+   "connector_width_m": 8.0,
+   "cut_xyz": [
+    235.0,
+    28.644,
+    -302.232
+   ],
+   "host_seg": 946,
+   "host_t": 0.9216,
+   "angle_deg": 89.54,
+   "host_grade": -0.01267,
+   "piece": "grid_unclassified_25#0#0",
+   "end": "end",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_unclassified_60",
+   "host": "grid_tertiary_2#0",
+   "host_vertex": 568,
+   "side": -1,
+   "connector_width_m": 8.0,
+   "cut_xyz": [
+    1371.337,
+    18.243,
+    -287.273
+   ],
+   "host_seg": 567,
+   "host_t": 0.7135,
+   "angle_deg": 88.8,
+   "host_grade": -0.01467,
+   "piece": "grid_unclassified_60#0",
+   "end": "start",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_unclassified_60",
+   "host": "grid_tertiary_1#0",
+   "host_vertex": 374,
+   "side": -1,
+   "connector_width_m": 8.0,
+   "cut_xyz": [
+    1355.996,
+    17.748,
+    -138.132
+   ],
+   "host_seg": 373,
+   "host_t": 1.0,
+   "angle_deg": 89.54,
+   "host_grade": 0.007,
+   "piece": "grid_unclassified_60#0",
+   "end": "end",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_unclassified_60",
+   "host": "grid_tertiary_1#0",
+   "host_vertex": 374,
+   "side": 1,
+   "connector_width_m": 8.0,
+   "cut_xyz": [
+    1355.92,
+    17.748,
+    -128.932
+   ],
+   "host_seg": 373,
+   "host_t": 0.9811,
+   "angle_deg": 89.54,
+   "host_grade": 0.007,
+   "piece": "grid_unclassified_60#1",
+   "end": "start",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_unclassified_60",
+   "host": "grid_tertiary_2#0",
+   "host_vertex": 371,
+   "side": -1,
+   "connector_width_m": 8.0,
+   "cut_xyz": [
+    1356.181,
+    16.637,
+    107.72
+   ],
+   "host_seg": 370,
+   "host_t": 0.9869,
+   "angle_deg": 89.76,
+   "host_grade": 0.00288,
+   "piece": "grid_unclassified_60#1",
+   "end": "end",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_unclassified_38",
+   "host": "grid_tertiary_2#0",
+   "host_vertex": 663,
+   "side": -1,
+   "connector_width_m": 8.0,
+   "cut_xyz": [
+    1085.271,
+    17.21,
+    -286.943
+   ],
+   "host_seg": 663,
+   "host_t": 0.0522,
+   "angle_deg": 89.12,
+   "host_grade": -0.00633,
+   "piece": "grid_unclassified_38#0",
+   "end": "start",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_unclassified_38",
+   "host": "grid_tertiary_1#0",
+   "host_vertex": 284,
+   "side": -1,
+   "connector_width_m": 8.0,
+   "cut_xyz": [
+    1085.754,
+    16.327,
+    -139.02
+   ],
+   "host_seg": 283,
+   "host_t": 0.5908,
+   "angle_deg": 89.56,
+   "host_grade": 0.00767,
+   "piece": "grid_unclassified_38#0",
+   "end": "end",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_unclassified_38",
+   "host": "grid_tertiary_1#0",
+   "host_vertex": 284,
+   "side": 1,
+   "connector_width_m": 8.0,
+   "cut_xyz": [
+    1085.8,
+    16.327,
+    -129.82
+   ],
+   "host_seg": 283,
+   "host_t": 0.6194,
+   "angle_deg": 89.37,
+   "host_grade": 0.00767,
+   "piece": "grid_unclassified_38#1",
+   "end": "start",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_unclassified_38",
+   "host": "grid_tertiary_2#0",
+   "host_vertex": 281,
+   "side": -1,
+   "connector_width_m": 8.0,
+   "cut_xyz": [
+    1087.363,
+    15.438,
+    107.718
+   ],
+   "host_seg": 280,
+   "host_t": 0.8402,
+   "angle_deg": 89.35,
+   "host_grade": -0.007,
+   "piece": "grid_unclassified_38#1",
+   "end": "end",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_unclassified_41",
+   "host": "grid_unclassified_0#0#0",
+   "host_vertex": 54,
+   "side": -1,
+   "connector_width_m": 8.0,
+   "cut_xyz": [
+    -355.281,
+    26.331,
+    -588.602
+   ],
+   "host_seg": 54,
+   "host_t": 0.3399,
+   "angle_deg": 89.73,
+   "host_grade": 0.00067,
+   "piece": "grid_unclassified_41#0",
+   "end": "start",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_unclassified_41",
+   "host": "grid_tertiary_92#0#0",
+   "host_vertex": 86,
+   "side": 1,
+   "connector_width_m": 8.0,
+   "cut_xyz": [
+    38.8,
+    27.38,
+    -586.491
+   ],
+   "host_seg": 86,
+   "host_t": 0.3178,
+   "angle_deg": 89.77,
+   "host_grade": 0.01067,
+   "piece": "grid_unclassified_41#0",
+   "end": "end",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_unclassified_48",
+   "host": "grid_tertiary_4#0#0",
+   "host_vertex": 129,
+   "side": 1,
+   "connector_width_m": 8.0,
+   "cut_xyz": [
+    -364.419,
+    7.397,
+    516.667
+   ],
+   "host_seg": 128,
+   "host_t": 0.7693,
+   "angle_deg": 89.5,
+   "host_grade": 0.00167,
+   "piece": "grid_unclassified_48#0",
+   "end": "start",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_unclassified_55",
+   "host": "grid_tertiary_4#0#0",
+   "host_vertex": 328,
+   "side": 1,
+   "connector_width_m": 8.0,
+   "cut_xyz": [
+    230.62,
+    13.397,
+    498.594
+   ],
+   "host_seg": 328,
+   "host_t": 0.0327,
+   "angle_deg": 89.2,
+   "host_grade": 0.01307,
+   "piece": "grid_unclassified_55#0",
+   "end": "start",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_unclassified_58",
+   "host": "grid_tertiary_1#0",
+   "host_vertex": 250,
+   "side": 1,
+   "connector_width_m": 8.0,
+   "cut_xyz": [
+    985.958,
+    16.386,
+    -130.156
+   ],
+   "host_seg": 250,
+   "host_t": 0.3372,
+   "angle_deg": 89.94,
+   "host_grade": 0.001,
+   "piece": "grid_unclassified_58#0",
+   "end": "start",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_unclassified_58",
+   "host": "grid_tertiary_2#0",
+   "host_vertex": 247,
+   "side": -1,
+   "connector_width_m": 8.0,
+   "cut_xyz": [
+    986.438,
+    15.187,
+    107.159
+   ],
+   "host_seg": 247,
+   "host_t": 0.1942,
+   "angle_deg": 89.03,
+   "host_grade": 0.00133,
+   "piece": "grid_unclassified_58#0",
+   "end": "end",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_unclassified_59",
+   "host": "grid_tertiary_1#0",
+   "host_vertex": 337,
+   "side": 1,
+   "connector_width_m": 8.0,
+   "cut_xyz": [
+    1244.618,
+    17.191,
+    -128.936
+   ],
+   "host_seg": 336,
+   "host_t": 0.5575,
+   "angle_deg": 89.77,
+   "host_grade": 0.00833,
+   "piece": "grid_unclassified_59#0",
+   "end": "start",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_unclassified_59",
+   "host": "grid_tertiary_2#0",
+   "host_vertex": 333,
+   "side": -1,
+   "connector_width_m": 8.0,
+   "cut_xyz": [
+    1244.864,
+    16.148,
+    107.94
+   ],
+   "host_seg": 333,
+   "host_t": 0.35,
+   "angle_deg": 90.0,
+   "host_grade": 0.005,
+   "piece": "grid_unclassified_59#0",
+   "end": "end",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_unclassified_61",
+   "host": "grid_tertiary_1#0",
+   "host_vertex": 159,
+   "side": 1,
+   "connector_width_m": 8.0,
+   "cut_xyz": [
+    710.758,
+    16.352,
+    -131.047
+   ],
+   "host_seg": 158,
+   "host_t": 0.6046,
+   "angle_deg": 89.62,
+   "host_grade": 0.00233,
+   "piece": "grid_unclassified_61#0",
+   "end": "start",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_unclassified_61",
+   "host": "grid_tertiary_2#0",
+   "host_vertex": 155,
+   "side": -1,
+   "connector_width_m": 8.0,
+   "cut_xyz": [
+    711.333,
+    15.366,
+    104.517
+   ],
+   "host_seg": 155,
+   "host_t": 0.456,
+   "angle_deg": 88.82,
+   "host_grade": -0.004,
+   "piece": "grid_unclassified_61#0",
+   "end": "end",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_unclassified_81#0",
+   "host": "grid_unclassified_41#0",
+   "host_vertex": 66,
+   "side": -1,
+   "connector_width_m": 8.0,
+   "cut_xyz": [
+    -158.137,
+    25.004,
+    -591.274
+   ],
+   "host_seg": 65,
+   "host_t": 0.9112,
+   "angle_deg": 89.62,
+   "host_grade": 0.01533,
+   "piece": "grid_unclassified_81#0#0",
+   "end": "end",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_unclassified_43#0",
+   "host": "grid_unclassified_0#0#0",
+   "host_vertex": 17,
+   "side": 1,
+   "connector_width_m": 8.0,
+   "cut_xyz": [
+    -362.151,
+    27.397,
+    -701.7
+   ],
+   "host_seg": 16,
+   "host_t": 0.6351,
+   "angle_deg": 89.64,
+   "host_grade": -0.00933,
+   "piece": "grid_unclassified_43#0#0",
+   "end": "end",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_unclassified_43#0",
+   "host": "grid_unclassified_0#0#0",
+   "host_vertex": 17,
+   "side": -1,
+   "connector_width_m": 8.0,
+   "cut_xyz": [
+    -354.951,
+    27.397,
+    -701.68
+   ],
+   "host_seg": 16,
+   "host_t": 0.6523,
+   "angle_deg": 89.54,
+   "host_grade": -0.00933,
+   "piece": "grid_unclassified_43#0#1",
+   "end": "start",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_unclassified_43#0",
+   "host": "grid_unclassified_81#0#0",
+   "host_vertex": 37,
+   "side": 1,
+   "connector_width_m": 8.0,
+   "cut_xyz": [
+    -162.011,
+    24.72,
+    -700.972
+   ],
+   "host_seg": 36,
+   "host_t": 0.9043,
+   "angle_deg": 89.81,
+   "host_grade": 0.08065,
+   "piece": "grid_unclassified_43#0#1",
+   "end": "end",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_unclassified_69#0",
+   "host": "grid_unclassified_43#0#1",
+   "host_vertex": 32,
+   "side": -1,
+   "connector_width_m": 8.0,
+   "cut_xyz": [
+    -258.669,
+    25.914,
+    -704.916
+   ],
+   "host_seg": 32,
+   "host_t": 0.289,
+   "angle_deg": 89.98,
+   "host_grade": -0.01733,
+   "piece": "grid_unclassified_69#0#0",
+   "end": "end",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_unclassified_69#0",
+   "host": "grid_unclassified_43#0#1",
+   "host_vertex": 32,
+   "side": 1,
+   "connector_width_m": 8.0,
+   "cut_xyz": [
+    -258.673,
+    25.914,
+    -697.716
+   ],
+   "host_seg": 32,
+   "host_t": 0.2965,
+   "angle_deg": 89.64,
+   "host_grade": -0.01733,
+   "piece": "grid_unclassified_69#0#1",
+   "end": "start",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_unclassified_69#0",
+   "host": "grid_unclassified_41#0",
+   "host_vertex": 32,
+   "side": -1,
+   "connector_width_m": 8.0,
+   "cut_xyz": [
+    -258.399,
+    25.231,
+    -591.72
+   ],
+   "host_seg": 32,
+   "host_t": 0.49,
+   "angle_deg": 89.62,
+   "host_grade": 0.00167,
+   "piece": "grid_unclassified_69#0#1",
+   "end": "end",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_unclassified_70",
+   "host": "grid_tertiary_5#0#0",
+   "host_vertex": 268,
+   "side": -1,
+   "connector_width_m": 8.0,
+   "cut_xyz": [
+    1643.262,
+    21.32,
+    -405.294
+   ],
+   "host_seg": 268,
+   "host_t": 0.1199,
+   "angle_deg": 86.5,
+   "host_grade": 0.00367,
+   "piece": "grid_unclassified_70#0",
+   "end": "end",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_unclassified_79",
+   "host": "grid_tertiary_1#0",
+   "host_vertex": 90,
+   "side": 1,
+   "connector_width_m": 8.0,
+   "cut_xyz": [
+    514.053,
+    14.88,
+    -100.958
+   ],
+   "host_seg": 89,
+   "host_t": 0.8101,
+   "angle_deg": 88.13,
+   "host_grade": 0.002,
+   "piece": "grid_unclassified_79#0",
+   "end": "start",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_unclassified_96#0",
+   "host": "grid_unclassified_9#0#1",
+   "host_vertex": 129,
+   "side": 1,
+   "connector_width_m": 8.0,
+   "cut_xyz": [
+    -1537.48,
+    17.905,
+    90.308
+   ],
+   "host_seg": 128,
+   "host_t": 0.9778,
+   "angle_deg": 88.76,
+   "host_grade": 0.03234,
+   "piece": "grid_unclassified_96#0#0",
+   "end": "end",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_unclassified_105",
+   "host": "grid_tertiary_5#0#0",
+   "host_vertex": 18,
+   "side": 1,
+   "connector_width_m": 8.0,
+   "cut_xyz": [
+    959.159,
+    17.622,
+    -323.151
+   ],
+   "host_seg": 18,
+   "host_t": 0.3983,
+   "angle_deg": 87.63,
+   "host_grade": 0.00134,
+   "piece": "grid_unclassified_105#0",
+   "end": "start",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_unclassified_105",
+   "host": "grid_tertiary_2#0",
+   "host_vertex": 695,
+   "side": 1,
+   "connector_width_m": 8.0,
+   "cut_xyz": [
+    989.917,
+    17.284,
+    -297.38
+   ],
+   "host_seg": 694,
+   "host_t": 0.8737,
+   "angle_deg": 29.63,
+   "host_grade": -0.00167,
+   "piece": "grid_unclassified_105#0",
+   "end": "end",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_residential_34",
+   "host": "grid_residential_22",
+   "host_vertex": 176,
+   "side": 1,
+   "connector_width_m": 8.0,
+   "cut_xyz": [
+    710.938,
+    15.936,
+    864.863
+   ],
+   "host_seg": 175,
+   "host_t": 0.9103,
+   "angle_deg": 85.72,
+   "host_grade": 0.01333,
+   "piece": "grid_residential_34#0",
+   "end": "end",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_residential_12",
+   "host": "grid_residential_34#0",
+   "host_vertex": 77,
+   "side": -1,
+   "connector_width_m": 8.0,
+   "cut_xyz": [
+    1113.025,
+    16.539,
+    587.262
+   ],
+   "host_seg": 77,
+   "host_t": 0.2816,
+   "angle_deg": 76.8,
+   "host_grade": 0.00267,
+   "piece": "grid_residential_12#0",
+   "end": "start",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_unclassified_27#0",
+   "host": "grid_residential_12#0",
+   "host_vertex": 67,
+   "side": -1,
+   "connector_width_m": 8.0,
+   "cut_xyz": [
+    1117.029,
+    15.621,
+    787.839
+   ],
+   "host_seg": 67,
+   "host_t": 0.0947,
+   "angle_deg": 89.69,
+   "host_grade": 0.00133,
+   "piece": "grid_unclassified_27#0#0",
+   "end": "start",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_unclassified_28#0",
+   "host": "grid_residential_12#0",
+   "host_vertex": 146,
+   "side": -1,
+   "connector_width_m": 8.0,
+   "cut_xyz": [
+    1117.507,
+    18.627,
+    1024.286
+   ],
+   "host_seg": 145,
+   "host_t": 0.9095,
+   "angle_deg": 89.37,
+   "host_grade": 0.044,
+   "piece": "grid_unclassified_28#0#0",
+   "end": "start",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_residential_19",
+   "host": "grid_residential_34#0",
+   "host_vertex": 124,
+   "side": -1,
+   "connector_width_m": 8.0,
+   "cut_xyz": [
+    995.745,
+    16.612,
+    659.505
+   ],
+   "host_seg": 124,
+   "host_t": 0.0727,
+   "angle_deg": 54.07,
+   "host_grade": -0.00533,
+   "piece": "grid_residential_19#0",
+   "end": "start",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_residential_21",
+   "host": "grid_residential_34#0",
+   "host_vertex": 165,
+   "side": -1,
+   "connector_width_m": 8.0,
+   "cut_xyz": [
+    896.731,
+    16.431,
+    733.054
+   ],
+   "host_seg": 165,
+   "host_t": 0.1749,
+   "angle_deg": 55.23,
+   "host_grade": -0.012,
+   "piece": "grid_residential_21#0",
+   "end": "start",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_residential_24",
+   "host": "grid_residential_22",
+   "host_vertex": 128,
+   "side": -1,
+   "connector_width_m": 8.0,
+   "cut_xyz": [
+    794.155,
+    16.189,
+    931.577
+   ],
+   "host_seg": 127,
+   "host_t": 0.536,
+   "angle_deg": 89.62,
+   "host_grade": 0.00133,
+   "piece": "grid_residential_24#0",
+   "end": "start",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_residential_26",
+   "host": "grid_tertiary_65#0",
+   "host_vertex": 51,
+   "side": 1,
+   "connector_width_m": 8.0,
+   "cut_xyz": [
+    1816.595,
+    20.871,
+    779.666
+   ],
+   "host_seg": 50,
+   "host_t": 0.536,
+   "angle_deg": 84.84,
+   "host_grade": 0.007,
+   "piece": "grid_residential_26#0",
+   "end": "start",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_residential_29",
+   "host": "grid_residential_22",
+   "host_vertex": 64,
+   "side": -1,
+   "connector_width_m": 8.0,
+   "cut_xyz": [
+    793.914,
+    17.202,
+    1122.913
+   ],
+   "host_seg": 63,
+   "host_t": 0.7605,
+   "angle_deg": 89.56,
+   "host_grade": 0.00367,
+   "piece": "grid_residential_29#0",
+   "end": "start",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_residential_29",
+   "host": "grid_residential_24#0",
+   "host_vertex": 126,
+   "side": -1,
+   "connector_width_m": 8.0,
+   "cut_xyz": [
+    607.799,
+    16.04,
+    1122.966
+   ],
+   "host_seg": 126,
+   "host_t": 0.3672,
+   "angle_deg": 89.52,
+   "host_grade": 0.01,
+   "piece": "grid_residential_29#0",
+   "end": "end",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_residential_29",
+   "host": "grid_residential_24#0",
+   "host_vertex": 126,
+   "side": 1,
+   "connector_width_m": 8.0,
+   "cut_xyz": [
+    600.599,
+    16.039,
+    1122.955
+   ],
+   "host_seg": 126,
+   "host_t": 0.3405,
+   "angle_deg": 89.22,
+   "host_grade": 0.01,
+   "piece": "grid_residential_29#1",
+   "end": "start",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_residential_29",
+   "host": "grid_residential_22",
+   "host_vertex": 319,
+   "side": -1,
+   "connector_width_m": 8.0,
+   "cut_xyz": [
+    552.953,
+    17.04,
+    1122.758
+   ],
+   "host_seg": 318,
+   "host_t": 1.0,
+   "angle_deg": 61.37,
+   "host_grade": 0.00739,
+   "piece": "grid_residential_29#1",
+   "end": "end",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_residential_29",
+   "host": "grid_residential_22",
+   "host_vertex": 316,
+   "side": 1,
+   "connector_width_m": 8.0,
+   "cut_xyz": [
+    541.728,
+    16.962,
+    1122.681
+   ],
+   "host_seg": 316,
+   "host_t": 0.0572,
+   "angle_deg": 26.61,
+   "host_grade": 0.021,
+   "piece": "grid_residential_29#2",
+   "end": "start",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_residential_47",
+   "host": "grid_residential_24#0",
+   "host_vertex": 31,
+   "side": -1,
+   "connector_width_m": 8.0,
+   "cut_xyz": [
+    701.852,
+    15.173,
+    936.202
+   ],
+   "host_seg": 30,
+   "host_t": 0.9855,
+   "angle_deg": 89.29,
+   "host_grade": -0.00333,
+   "piece": "grid_residential_47#0",
+   "end": "start",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_residential_47",
+   "host": "grid_residential_29#0",
+   "host_vertex": 31,
+   "side": 1,
+   "connector_width_m": 8.0,
+   "cut_xyz": [
+    701.441,
+    15.854,
+    1119.259
+   ],
+   "host_seg": 31,
+   "host_t": 0.0208,
+   "angle_deg": 89.81,
+   "host_grade": -0.006,
+   "piece": "grid_residential_47#0",
+   "end": "end",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_residential_47",
+   "host": "grid_residential_29#0",
+   "host_vertex": 31,
+   "side": -1,
+   "connector_width_m": 8.0,
+   "cut_xyz": [
+    701.44,
+    15.854,
+    1126.459
+   ],
+   "host_seg": 31,
+   "host_t": 0.0244,
+   "angle_deg": 89.96,
+   "host_grade": -0.006,
+   "piece": "grid_residential_47#1",
+   "end": "start",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_residential_89",
+   "host": "grid_residential_34#0",
+   "host_vertex": 33,
+   "side": 1,
+   "connector_width_m": 8.0,
+   "cut_xyz": [
+    1245.46,
+    15.984,
+    578.183
+   ],
+   "host_seg": 32,
+   "host_t": 0.8271,
+   "angle_deg": 89.43,
+   "host_grade": -0.00233,
+   "piece": "grid_residential_89#0",
+   "end": "end",
+   "weld_runon": "mitre"
+  },
+  {
+   "connector": "grid_residential_104",
+   "host": "grid_residential_26#0",
+   "host_vertex": 36,
+   "side": -1,
+   "connector_width_m": 8.0,
+   "cut_xyz": [
+    1820.309,
+    20.658,
+    885.321
+   ],
+   "host_seg": 35,
+   "host_t": 0.769,
+   "angle_deg": 89.62,
+   "host_grade": 0.00133,
+   "piece": "grid_residential_104#0",
+   "end": "start",
+   "weld_runon": "mitre"
+  }
+ ]
+}

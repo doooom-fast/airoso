@@ -3,10 +3,10 @@
  "pads": [
   {
    "id": "colorado_50th",
-   "raster_points": 9419,
+   "raster_points": 10351,
    "multi_coverage_m2": 0.0,
    "grass_on_deck": 0,
-   "seam_max_gap_m": 0.00119,
+   "seam_max_gap_m": 0.00159,
    "seam_near_misses": 0,
    "curb_over_pavement": 0,
    "barriers": [],
@@ -17,7 +17,7 @@
   },
   {
    "id": "50th_ash",
-   "raster_points": 4425,
+   "raster_points": 4505,
    "multi_coverage_m2": 0.0,
    "grass_on_deck": 0,
    "seam_max_gap_m": 0.00161,
@@ -31,7 +31,7 @@
   },
   {
    "id": "50th_dahlia",
-   "raster_points": 5196,
+   "raster_points": 5200,
    "multi_coverage_m2": 0.0,
    "grass_on_deck": 0,
    "seam_max_gap_m": 0.00094,

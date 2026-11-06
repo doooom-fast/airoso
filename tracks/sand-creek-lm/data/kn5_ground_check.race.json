@@ -8,19 +8,19 @@
  "double_sheet_cells": 0,
  "seating": {
   "lampposts": {
-   "objects": 173,
+   "objects": 172,
    "no_ground_pct": 0.0,
    "median_m": -2.842,
-   "p95_m": -2.828,
+   "p95_m": -2.827,
    "hovering": 0
   }
  },
- "lamp_heads": 199,
+ "lamp_heads": 198,
  "lamp_orphans": 0,
  "road_over_ground": {
-  "over": 3,
-  "samples": 7825,
+  "over": 21,
+  "samples": 10274,
   "p95_m": 0.021,
-  "max_m": 0.377
+  "max_m": 0.241
  }
 }

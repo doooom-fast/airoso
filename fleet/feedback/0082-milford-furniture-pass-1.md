@@ -155,8 +155,11 @@ Not seen in game.
 The shape of 0079's runbook 4m. **Rehearse only: no install** (installs happen on Kevin's word).
 
 1. A clean checkout at `6782e184` or later on `claude/milford-furniture-lm` (`git lfs pull` is not needed for this track:
-   the port builds from an EMPTY workshop and reads no blend). ENG = round 4b's `D:/k10-scratch/eng_mflm`, unchanged:
-   every new texture comes from airoso through `ship.json sync_in.assets`. Check the synced copies in the workshop's
+   the port builds from an EMPTY workshop and reads no blend). ENG = round 4b's `D:/k10-scratch/eng_mflm` **plus
+   airoso's `assets/textures` at the head being built, md5-checked** (corrected after the PC's first run, below: pbr's
+   stock table reads ENG's `assets/textures` only, so `wbeam_rail_diffuse.png`, `ghost_alpha.png` and the three
+   shed / roof textures were referenced but not embedded; `sync_in.assets` reaches the workshop, which only
+   `texture_overrides` reads). Check the synced copies in the workshop's
    `assets/textures/`: `tyre_wall_diffuse.png` c7f4764d722ae452b0306d2d6cbc7d62, `metal_wall_diffuse.jpg`
    326b3841477610400a7926a577926ee7, `metal_wall_normal.jpg` 5a1721de1b28d55e11b86908b27e2936, `roof_tan_diffuse.jpg`
    247c5d4f295e6cf8fab875bcd21b0596.
@@ -173,6 +176,23 @@ The shape of 0079's runbook 4m. **Rehearse only: no install** (installs happen o
 4. The kn5 bytes: the Mac's road kn5 is 40,646,952 B; expect it within the ground noise (`tools/kn5_equiv.py` against a
    carried-over Mac copy when there is one; never md5, ledger 0065). The installed 0.1.0 is untouched.
 5. Push the rehearsal's records on a branch of their own only if a row differs; no install.
+
+## PC rehearsal 0082-1 (2026-11-06): MATCHED on the second run
+
+- **Run 1** (`D:/k10-scratch/milford_lm_f1_reh`, ENG `eng_mflm` as section 8 first said): every gate row equal to the
+  0.1.1 column and the author log equal (G1 107 / G2 465, 48 out / G3 181, 7 out / G4 364 m; T1-T3 71 / 85 / 48
+  modules, 3 out; sheds 2.6 m), but the road kn5 40,611,042 B, 35,910 B short: 5 textures referenced and not embedded
+  (`ghost_alpha.png` on the 4 `1WALL_GHOST_RAIL_*` colliders, `wbeam_rail_diffuse.png`, `metal_wall_diffuse.jpg`,
+  `metal_wall_normal.jpg`, `roof_tan_diffuse.jpg`). In AC the ghost colliders would have taken pbr's flat fallback and
+  likely shown as solid walls. **No gate caught it; the byte count did.**
+- **Run 2** (`D:/k10-scratch/milford_lm_f1b_reh`, ENG `eng_mflm_f1` = `eng_mflm` + airoso's `assets/textures` at
+  2d4f56be, 38 added, 57 identical, md5-checked): every gate row equal, SHIP OK with no force, road kn5 40,646,952 B
+  (the Mac's size), 20 textures embedded, none referenced-but-missing. md5 differs from the Mac's (tangents, as every
+  Mac rerun); no Mac copy on the PC for kn5_equiv.
+- **Rule for every PC runbook from here** (coordinator, 2026-11-06): ENG = the engine snapshot + airoso's
+  `assets/textures` at the head being built, md5-checked.
+- **Owed (engine):** a gate that every texture a kn5's materials name is embedded in it; proven on Lake Murray's real
+  built kn5s before it gates anything.
 
 ## Owed (after pass 1; start here)
 
@@ -194,4 +214,5 @@ Start here:
    2 m dip at s 3,605); its headwalls are furniture once the deck is.
 7. **The look, in game**: the tyre walls step up the esses' bank module by module; the W-beam runs end without
    terminals. Kevin's drive decides whether either matters.
-8. **The PC rehearsal** (section 8), then Kevin's word on an install of 0.1.1 beside 0.1.0.
+8. **The PC rehearsal**: done, matched (above). Kevin's word on installing 0.1.1 over the installed 0.1.0 (the PC asks).
+9. **The texture gate** (above): every texture a kn5 names is embedded.

@@ -818,6 +818,26 @@ roughly 1.2 MB / km of carriageway with its barrier, ground and markings): + 2b'
 per-layout kn5s (one road kn5 per mainline group, e.g. I 8 / I 5 / SR 52 + SR 163, each layout loading its own plus the
 shared ground), not cut geometry. Not built this round (nothing of 2b is built to split).
 
+### Step 2b round 2: the reader's no-image rows, the whole box, per-layout kn5s (Mac, ws40 and up)
+
+**Inputs.** 6e616bd0 (2b round 1). Nothing downloaded; NAIP read with `NAIP_OFFLINE=1` from the 26 cached I 8 crops.
+
+**1. A no-image row reads "unread" (`tools/naip_carriageways.py`, `tests/tools/test_naip_carriageways.py`).** Cause:
+`read_sections`' paired branch (a partner line within PAIR_M) went straight to the paved-median fallback whenever neither
+pavement edge was found; with no image every sample is class -1, `edge_out` returns None on -1, so e1 / e2 were None,
+the base pavement brightness was NaN, no top was "seen", and the barrier went to the midline. Fix: any -1 sample
+between the line and its partner makes that side "unread" (no new number). Proof:
+- 2a reproduces byte for byte: the committed draft re-read offline (`--config`, `--walls median_wall.lidar.json`, as
+  committed) gives `centerline.measured.local.json` 2e1e7fe2, `connectors.measured.local.json` 9f355412,
+  `median_barrier.json` d067ae9f and `carriageway_edges.naip.json` 2ff182e7, the committed bytes, before and after the
+  fix (every I 8 crop is cached, so no 2a row had a no-image sample in its median).
+- On the 2b pairs (round 1's probe): I 5 NB's left side "barrier at the midline" 2,343 -> 46 (the 46 are imaged paved
+  medians at the I 8 crossing); I 5 SB 2,344 -> 42; SR 163 NB 436 -> 100 (and "barrier seen" 95 -> 94: one station's
+  median was partly imaged); SR 163 SB's piece 412 -> 95. Both-edges-read stations: I 5 NB 48 -> 47, SR 163 NB
+  127 -> 123, the others unchanged; no longest run moved.
+- Tests: no image between the pair -> unread; a 2 m hole in the image inside the median -> unread (both FAIL on the old
+  reader); an imaged paved median still puts its barrier at the midline, and a bright top in the band is still "seen".
+
 ## PC runbook 0080-8: rehearse 2b round 1 (2a with the tiered ground), no install
 
 Supersedes 0080-7 for the next candidate. No lidar or NAIP is needed; the new draft step uses Blender 4.2's own numpy.

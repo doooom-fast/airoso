@@ -275,6 +275,12 @@ def read_sections(mosaic, cw: dict):
                 if d is not None and np.sign(d) == sg and abs(d) > 1.0:
                     D = abs(d)
                     kd = int(np.argmin(np.abs(o - D)))
+                    if (c[:kd + 1] == -1).any():
+                        # ledger 0080 2b round 2: no image between the two lines (a crop not cached, NAIP_OFFLINE, or
+                        # the item's nodata) is UNREAD, never a median: the paved-median fallback below put a barrier
+                        # at the midline wherever every sample was -1 (2b round 1: 2,343 of I 5 NB's stations)
+                        side[sg] = ["unread", None, None]
+                        continue
                     e1 = edge_out(c, o, 0)
                     e2 = edge_out(c[kd::-1], D - o[kd::-1], 0)
                     if e1 is not None and e2 is not None and e1 < D - e2 and half - OUT_LO_M <= e1 <= half + OUT_HI_M:

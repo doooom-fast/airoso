@@ -1,0 +1,1122 @@
+{
+ "frame": "NAIP 2022-08-16 tile m_4208327_ne_17_060_20220816 as source/naip_2022_mrc.jpg, true extent lon -83.6700..-83.6570, lat 42.56050..42.57950, 2130 x 3112 px (0.53 m E-W x 0.68 m N-S)",
+ "items": [
+  {
+   "id": "G1",
+   "kind": "guardrail_wbeam",
+   "where": "NW corner, outside, on the grass between the apron and the boundary",
+   "px": [
+    [
+     565,
+     958
+    ],
+    [
+     545,
+     980
+    ],
+    [
+     528,
+     1000
+    ],
+    [
+     510,
+     1020
+    ],
+    [
+     494,
+     1040
+    ],
+    [
+     478,
+     1060
+    ],
+    [
+     463,
+     1080
+    ],
+    [
+     455,
+     1093
+    ]
+   ],
+   "evidence": "a bright double line with dark post ticks and a turned-down end at the apron (z 3.4x crop gA)",
+   "identity_confidence": "high",
+   "position_confidence": "+-1 px (0.5-0.7 m)",
+   "polyline_lonlat": [
+    [
+     -83.6665486,
+     42.5736467
+    ],
+    [
+     -83.6666707,
+     42.5735124
+    ],
+    [
+     -83.6667744,
+     42.5733904
+    ],
+    [
+     -83.6668843,
+     42.5732683
+    ],
+    [
+     -83.6669819,
+     42.5731462
+    ],
+    [
+     -83.6670796,
+     42.5730242
+    ],
+    [
+     -83.6671711,
+     42.5729021
+    ],
+    [
+     -83.66722,
+     42.5728228
+    ]
+   ],
+   "length_m": 106.5,
+   "edge_offset_m": [
+    3.7,
+    11.3
+   ],
+   "lap_s_m": [
+    238,
+    337
+   ],
+   "side": "L"
+  },
+  {
+   "id": "G2",
+   "kind": "guardrail_wbeam",
+   "where": "front straight, east (infield) side, from the opening at the NW corner to the SW corner",
+   "px": [
+    [
+     457,
+     1216
+    ],
+    [
+     456,
+     1400
+    ],
+    [
+     456,
+     1600
+    ],
+    [
+     456,
+     1800
+    ],
+    [
+     456,
+     1990
+    ],
+    [
+     462,
+     2040
+    ]
+   ],
+   "evidence": "a bright line 1-2 px off the pavement edge with dark post ticks at a steady spacing (crops z_ws, gW1, gW2)",
+   "identity_confidence": "high",
+   "position_confidence": "+-1 px",
+   "polyline_lonlat": [
+    [
+     -83.6672077,
+     42.5720721
+    ],
+    [
+     -83.6672138,
+     42.5709491
+    ],
+    [
+     -83.6672138,
+     42.5697284
+    ],
+    [
+     -83.6672138,
+     42.5685077
+    ],
+    [
+     -83.6672138,
+     42.5673481
+    ],
+    [
+     -83.6671772,
+     42.567043
+    ]
+   ],
+   "length_m": 556.1,
+   "edge_offset_m": [
+    -0.6,
+    1.7
+   ],
+   "lap_s_m": [
+    34,
+    4782
+   ],
+   "side": "R"
+  },
+  {
+   "id": "G3",
+   "kind": "guardrail_wbeam",
+   "where": "front straight, west side, from about 120 m before the S/F line to the SW corner",
+   "px": [
+    [
+     418,
+     1705
+    ],
+    [
+     418,
+     1800
+    ],
+    [
+     419,
+     1900
+    ],
+    [
+     420,
+     1995
+    ]
+   ],
+   "evidence": "a bright line with dark ticks along the west pavement edge, starting where the wide pavement narrows (z_ws, gW2)",
+   "identity_confidence": "medium-high",
+   "position_confidence": "+-1 px",
+   "polyline_lonlat": [
+    [
+     -83.6674458,
+     42.5690876
+    ],
+    [
+     -83.6674458,
+     42.5685077
+    ],
+    [
+     -83.6674397,
+     42.5678974
+    ],
+    [
+     -83.6674336,
+     42.5673176
+    ]
+   ],
+   "length_m": 195.7,
+   "edge_offset_m": [
+    0.4,
+    4.2
+   ],
+   "lap_s_m": [
+    4516,
+    4711
+   ],
+   "side": "L"
+  },
+  {
+   "id": "G4",
+   "kind": "guardrail_wbeam",
+   "where": "infield between the NW hairpin exit and the esses: the rail between the two legs",
+   "px": [
+    [
+     857,
+     1004
+    ],
+    [
+     856,
+     1033
+    ],
+    [
+     854,
+     1061
+    ],
+    [
+     850,
+     1083
+    ],
+    [
+     839,
+     1108
+    ],
+    [
+     829,
+     1126
+    ],
+    [
+     814,
+     1140
+    ],
+    [
+     800,
+     1151
+    ],
+    [
+     786,
+     1158
+    ],
+    [
+     771,
+     1165
+    ],
+    [
+     757,
+     1172
+    ],
+    [
+     743,
+     1179
+    ],
+    [
+     718,
+     1190
+    ],
+    [
+     705,
+     1195
+    ],
+    [
+     684,
+     1199
+    ],
+    [
+     663,
+     1211
+    ],
+    [
+     647,
+     1226
+    ],
+    [
+     634,
+     1242
+    ],
+    [
+     628,
+     1263
+    ],
+    [
+     625,
+     1288
+    ],
+    [
+     622,
+     1318
+    ],
+    [
+     620,
+     1347
+    ],
+    [
+     617,
+     1367
+    ],
+    [
+     613,
+     1397
+    ],
+    [
+     610,
+     1430
+    ],
+    [
+     606,
+     1463
+    ]
+   ],
+   "evidence": "a continuous bright line, its west edge in shadow, post ticks, a hooked terminal at the north end (gB1, gB2, z_a)",
+   "identity_confidence": "high",
+   "position_confidence": "+-1 px",
+   "polyline_lonlat": [
+    [
+     -83.6647664,
+     42.573366
+    ],
+    [
+     -83.6647725,
+     42.573189
+    ],
+    [
+     -83.6647847,
+     42.5730181
+    ],
+    [
+     -83.6648092,
+     42.5728838
+    ],
+    [
+     -83.6648763,
+     42.5727312
+    ],
+    [
+     -83.6649373,
+     42.5726214
+    ],
+    [
+     -83.6650289,
+     42.5725359
+    ],
+    [
+     -83.6651143,
+     42.5724688
+    ],
+    [
+     -83.6651998,
+     42.5724261
+    ],
+    [
+     -83.6652913,
+     42.5723833
+    ],
+    [
+     -83.6653768,
+     42.5723406
+    ],
+    [
+     -83.6654622,
+     42.5722979
+    ],
+    [
+     -83.6656148,
+     42.5722308
+    ],
+    [
+     -83.6656941,
+     42.5722002
+    ],
+    [
+     -83.6658223,
+     42.5721758
+    ],
+    [
+     -83.6659505,
+     42.5721026
+    ],
+    [
+     -83.6660481,
+     42.572011
+    ],
+    [
+     -83.6661275,
+     42.5719134
+    ],
+    [
+     -83.6661641,
+     42.5717852
+    ],
+    [
+     -83.6661824,
+     42.5716326
+    ],
+    [
+     -83.6662007,
+     42.5714495
+    ],
+    [
+     -83.6662129,
+     42.5712725
+    ],
+    [
+     -83.6662312,
+     42.5711505
+    ],
+    [
+     -83.6662556,
+     42.5709674
+    ],
+    [
+     -83.6662739,
+     42.570766
+    ],
+    [
+     -83.6662984,
+     42.5705646
+    ]
+   ],
+   "length_m": 362.2,
+   "edge_offset_m": [
+    10.6,
+    38.8
+   ],
+   "lap_s_m": [
+    459,
+    802
+   ],
+   "side": "L"
+  },
+  {
+   "id": "G5",
+   "kind": "guardrail_wbeam?",
+   "where": "east straight, inside edge, a short run",
+   "px": [
+    [
+     1773,
+     1450
+    ],
+    [
+     1775,
+     1500
+    ]
+   ],
+   "evidence": "a short bright line with a small object at its north end (gE1); the outside edge is in tree shadow",
+   "identity_confidence": "low",
+   "position_confidence": "+-1 px",
+   "build": false,
+   "polyline_lonlat": [
+    [
+     -83.6591758,
+     42.5706439
+    ],
+    [
+     -83.6591636,
+     42.5703387
+    ]
+   ],
+   "length_m": 33.7,
+   "edge_offset_m": [
+    2.7,
+    4.8
+   ],
+   "lap_s_m": [
+    3117,
+    3150
+   ],
+   "side": "R"
+  },
+  {
+   "id": "G6",
+   "kind": "rail_or_wall_top?",
+   "where": "the bright line behind (east of) tyre wall T3 at the s 1,000 run-off apron",
+   "px": [
+    [
+     622,
+     1708
+    ],
+    [
+     617,
+     1735
+    ],
+    [
+     612,
+     1760
+    ]
+   ],
+   "evidence": "bright 1 px line beside T3 (gD4)",
+   "identity_confidence": "low",
+   "position_confidence": "+-1 px",
+   "build": false,
+   "polyline_lonlat": [
+    [
+     -83.6662007,
+     42.5690692
+    ],
+    [
+     -83.6662312,
+     42.5689045
+    ],
+    [
+     -83.6662617,
+     42.5687519
+    ]
+   ],
+   "length_m": 35.4,
+   "edge_offset_m": [
+    -0.4,
+    25.6
+   ],
+   "lap_s_m": [
+    998,
+    1018
+   ],
+   "side": "R"
+  },
+  {
+   "id": "T1",
+   "kind": "tyre_wall",
+   "where": "NW hairpin exit, 13 m west of G4's north terminal",
+   "px": [
+    [
+     834,
+     1002
+    ],
+    [
+     835,
+     1067
+    ]
+   ],
+   "width_px": 4,
+   "evidence": "a neutral black bar ~2 m wide, segmented; neutral grey-black (g/r 0.95, b/r 0.92), not shadow blue (shadows read b/r 1.1-1.9): a black object, not a shadow (rgb.py)",
+   "identity_confidence": "medium (black rubber by tone; not seen on video)",
+   "position_confidence": "+-1 px",
+   "polyline_lonlat": [
+    [
+     -83.6649068,
+     42.5733782
+    ],
+    [
+     -83.6649007,
+     42.5729815
+    ]
+   ],
+   "length_m": 43.9,
+   "edge_offset_m": [
+    14.4,
+    23.2
+   ],
+   "lap_s_m": [
+    456,
+    485
+   ],
+   "side": "L"
+  },
+  {
+   "id": "T2",
+   "kind": "tyre_wall",
+   "where": "esses, 4-5 m east of G4 in front of it, outside the east leg's bend",
+   "px": [
+    [
+     653,
+     1245
+    ],
+    [
+     642,
+     1276
+    ],
+    [
+     634,
+     1322
+    ]
+   ],
+   "width_px": 3,
+   "evidence": "neutral black bar (g/r 1.03, b/r 0.93), segmented, standing in front of the rail",
+   "identity_confidence": "medium",
+   "position_confidence": "+-1 px",
+   "polyline_lonlat": [
+    [
+     -83.6660115,
+     42.5718951
+    ],
+    [
+     -83.6660786,
+     42.5717059
+    ],
+    [
+     -83.6661275,
+     42.5714251
+    ]
+   ],
+   "length_m": 52.9,
+   "edge_offset_m": [
+    15.8,
+    23.5
+   ],
+   "lap_s_m": [
+    1303,
+    1344
+   ],
+   "side": "L"
+  },
+  {
+   "id": "T3",
+   "kind": "tyre_wall",
+   "where": "the back (east edge) of the concrete run-off apron outside the s 1,000 left-hander (ledger 0069's corner)",
+   "px": [
+    [
+     617,
+     1713
+    ],
+    [
+     611,
+     1735
+    ],
+    [
+     604,
+     1760
+    ]
+   ],
+   "width_px": 4,
+   "evidence": "neutral black bar (g/r 0.99, b/r 0.95) along the apron's back edge, a bright line (G6) behind it",
+   "identity_confidence": "medium",
+   "position_confidence": "+-1 px",
+   "polyline_lonlat": [
+    [
+     -83.6662312,
+     42.5690387
+    ],
+    [
+     -83.6662678,
+     42.5689045
+    ],
+    [
+     -83.6663106,
+     42.5687519
+    ]
+   ],
+   "length_m": 32.4,
+   "edge_offset_m": [
+    0.7,
+    24.0
+   ],
+   "lap_s_m": [
+    998,
+    1014
+   ],
+   "side": "R"
+  },
+  {
+   "id": "T4",
+   "kind": "tyre_wall?",
+   "where": "the unused inner hairpin short-cut (OSM 1030539760), along its outer edge",
+   "px": [
+    [
+     688,
+     1546
+    ],
+    [
+     688,
+     1571
+    ],
+    [
+     685,
+     1590
+    ],
+    [
+     678,
+     1599
+    ],
+    [
+     668,
+     1606
+    ]
+   ],
+   "evidence": "a dark segmented line hugging the pavement edge (gD); tone read is ambiguous (the darkest pixel reads b/r 1.13)",
+   "identity_confidence": "low",
+   "position_confidence": "+-1 px",
+   "build": false,
+   "polyline_lonlat": [
+    [
+     -83.6657979,
+     42.570058
+    ],
+    [
+     -83.6657979,
+     42.5699054
+    ],
+    [
+     -83.6658162,
+     42.5697894
+    ],
+    [
+     -83.6658589,
+     42.5697345
+    ],
+    [
+     -83.66592,
+     42.5696918
+    ]
+   ],
+   "length_m": 43.7,
+   "edge_offset_m": [
+    19.6,
+    25.7
+   ],
+   "lap_s_m": [
+    1085,
+    1155
+   ],
+   "side": "L"
+  },
+  {
+   "id": "T5",
+   "kind": "dark_bar_far",
+   "where": "field east of the ride pad beside a mown two-track, far from the lap",
+   "px": [
+    [
+     1367,
+     1952
+    ],
+    [
+     1351,
+     2010
+    ],
+    [
+     1336,
+     2073
+    ]
+   ],
+   "evidence": "neutral black bar (g/r 1.03, b/r 0.89), 84 m",
+   "identity_confidence": "low",
+   "position_confidence": "+-1 px",
+   "build": false,
+   "polyline_lonlat": [
+    [
+     -83.6616538,
+     42.56758
+    ],
+    [
+     -83.6617514,
+     42.5672261
+    ],
+    [
+     -83.661843,
+     42.5668415
+    ]
+   ],
+   "length_m": 83.1,
+   "edge_offset_m": [
+    210.0,
+    225.5
+   ],
+   "lap_s_m": [
+    1841,
+    3701
+   ],
+   "side": "R"
+  },
+  {
+   "id": "T6",
+   "kind": "dark_bar_far",
+   "where": "field north of the SE back section, curved beside a mown path loop",
+   "px": [
+    [
+     1545,
+     2073
+    ],
+    [
+     1600,
+     2030
+    ],
+    [
+     1660,
+     2015
+    ],
+    [
+     1723,
+     2018
+    ]
+   ],
+   "evidence": "dark segmented curved bar (t_1450_1900), vertices read at 2.2x only",
+   "identity_confidence": "low",
+   "position_confidence": "+-2 px",
+   "build": false,
+   "polyline_lonlat": [
+    [
+     -83.6605674,
+     42.5668415
+    ],
+    [
+     -83.6602317,
+     42.567104
+    ],
+    [
+     -83.6598655,
+     42.5671955
+    ],
+    [
+     -83.659481,
+     42.5671772
+    ]
+   ],
+   "length_m": 103.3,
+   "edge_offset_m": [
+    46.2,
+    119.5
+   ],
+   "lap_s_m": [
+    3520,
+    3590
+   ],
+   "side": "R"
+  },
+  {
+   "id": "F1",
+   "kind": "tall_structure_shadow",
+   "where": "NW boundary, between the NW apron and the outside road / employee lot",
+   "px": [
+    [
+     780,
+     850
+    ],
+    [
+     700,
+     878
+    ],
+    [
+     640,
+     905
+    ],
+    [
+     600,
+     935
+    ],
+    [
+     560,
+     958
+    ],
+    [
+     520,
+     990
+    ],
+    [
+     480,
+     1023
+    ],
+    [
+     440,
+     1060
+    ],
+    [
+     405,
+     1100
+    ]
+   ],
+   "evidence": "a continuous band 3-4.5 m wide, crisp, reading shadow blue (b/r 1.17) NW of a bright edge: the shadow of something tall standing along the apron's outer edge (a screen fence, a wall or a clipped hedge: not resolvable at 0.6 m). Sun 2022-08-16 az ~113 deg, el ~42 deg (sun.py, the tent's shadow vector) puts its height near 4-5 m (3.7-6.0 m over the azimuth's +-7 deg)",
+   "identity_confidence": "low (something tall; what it is is not readable)",
+   "position_confidence": "+-2 px (the structure is the band's SE edge)",
+   "build": false,
+   "polyline_lonlat": [
+    [
+     -83.6652364,
+     42.5743059
+    ],
+    [
+     -83.6657246,
+     42.574135
+    ],
+    [
+     -83.6660908,
+     42.5739702
+    ],
+    [
+     -83.666335,
+     42.5737871
+    ],
+    [
+     -83.6665791,
+     42.5736467
+    ],
+    [
+     -83.6668232,
+     42.5734514
+    ],
+    [
+     -83.6670674,
+     42.57325
+    ],
+    [
+     -83.6673115,
+     42.5730242
+    ],
+    [
+     -83.6675251,
+     42.57278
+    ]
+   ],
+   "length_m": 256.7,
+   "edge_offset_m": [
+    12.2,
+    73.6
+   ],
+   "lap_s_m": [
+    225,
+    403
+   ],
+   "side": "L"
+  },
+  {
+   "id": "S1",
+   "kind": "container_or_shed",
+   "where": "west edge of the ride pad",
+   "px_ring": [
+    [
+     1081,
+     2046
+    ],
+    [
+     1090,
+     2046
+    ],
+    [
+     1090,
+     2065
+    ],
+    [
+     1081,
+     2065
+    ]
+   ],
+   "evidence": "an orange-brown roof 4.5 x 13 m (gP); the size of a 40 ft container or a site trailer with the image blur",
+   "identity_confidence": "medium",
+   "position_confidence": "+-1 px",
+   "height_note": "[invented] 2.6 m, an ISO high-cube's 2.9 m less nothing measured: no shadow resolvable on the tree side",
+   "footprint_lonlat": [
+    [
+     -83.6633993,
+     42.5670063
+    ],
+    [
+     -83.6633444,
+     42.5670063
+    ],
+    [
+     -83.6633444,
+     42.5668904
+    ],
+    [
+     -83.6633993,
+     42.5668904
+    ]
+   ],
+   "sides_m": [
+    4.5,
+    12.8,
+    4.5,
+    12.8
+   ],
+   "edge_offset_m": 257.2,
+   "lap_s_m": 4087
+  },
+  {
+   "id": "S2",
+   "kind": "container_or_shed",
+   "where": "west edge of the ride pad, south of S1",
+   "px_ring": [
+    [
+     1088,
+     2124
+    ],
+    [
+     1095,
+     2124
+    ],
+    [
+     1095,
+     2142
+    ],
+    [
+     1088,
+     2142
+    ]
+   ],
+   "evidence": "a light-blue roof 3.5 x 12 m (gP)",
+   "identity_confidence": "medium",
+   "position_confidence": "+-1 px",
+   "height_note": "[invented] 2.6 m",
+   "footprint_lonlat": [
+    [
+     -83.6633566,
+     42.5665303
+    ],
+    [
+     -83.6633138,
+     42.5665303
+    ],
+    [
+     -83.6633138,
+     42.5664204
+    ],
+    [
+     -83.6633566,
+     42.5664204
+    ]
+   ],
+   "sides_m": [
+    3.5,
+    12.1,
+    3.5,
+    12.1
+   ],
+   "edge_offset_m": 207.4,
+   "lap_s_m": 4084
+  },
+  {
+   "id": "P1",
+   "kind": "pad_tent",
+   "where": "on the ride pad (built since 0.1.0: scenery.bespoke.buildings pad_tent)",
+   "px_ring": [
+    [
+     1229,
+     2169
+    ],
+    [
+     1269,
+     2169
+    ],
+    [
+     1269,
+     2248
+    ],
+    [
+     1229,
+     2248
+    ]
+   ],
+   "evidence": "white gable roof 20 x 53 m; its west shadow 4.5-5 m wide (gT) at the sun above reads an eave of 3.6-5.6 m (config: 3.5 m [invented])",
+   "identity_confidence": "high",
+   "position_confidence": "+-1 px",
+   "build": "already in 0.1.0",
+   "footprint_lonlat": [
+    [
+     -83.662496,
+     42.5662556
+    ],
+    [
+     -83.6622519,
+     42.5662556
+    ],
+    [
+     -83.6622519,
+     42.5657735
+    ],
+    [
+     -83.662496,
+     42.5657735
+    ]
+   ],
+   "sides_m": [
+    20.0,
+    53.3,
+    20.0,
+    53.3
+   ],
+   "edge_offset_m": 151.8,
+   "lap_s_m": 3919
+  },
+  {
+   "id": "U1",
+   "kind": "underpass_portal",
+   "where": "the service road's portal under the lap at the SW corner climb (route-notes: the 2 m dip at s 3,605)",
+   "px": [
+    [
+     573,
+     2182
+    ],
+    [
+     591,
+     2195
+    ]
+   ],
+   "evidence": "a concrete headwall where the dark service road ends at the lap's embankment (t_400_1900)",
+   "identity_confidence": "high",
+   "position_confidence": "+-2 px",
+   "build": false,
+   "polyline_lonlat": [
+    [
+     -83.6664998,
+     42.5661763
+    ],
+    [
+     -83.6663899,
+     42.5660969
+    ]
+   ],
+   "length_m": 12.6,
+   "edge_offset_m": [
+    19.6,
+    22.5
+   ],
+   "lap_s_m": [
+    4353,
+    4367
+   ],
+   "side": "R"
+  }
+ ]
+}

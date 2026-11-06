@@ -915,6 +915,46 @@ cut.
   split; the wiring touches five steps (split, export, road_obj, track_folder, inis), each needing the A/B above.
   It is the first step of 2b's build round, before any 2b corridor is built (Owed).
 
+**4. Pavement under a deck (2d's mechanism), proven on a cached crossing, half of it.** First the crossings as they are:
+at every cached 2b crossing of I 8 the LINE is the deck (its declared spans) and the 2b road is at grade under it
+(`r2/find_cross.py` on the draft edges: I 5 NB edge 244 and I 5 SB edge 37 11.6 / 10.7 m under the line at line s
+3,104 / 3,079; SR 163 NB edge 368 5.7 m under at s 6,983). So the hazard round 1 named (a 2b deck culling I 8) is, here,
+the reverse: the line's deck culling the 2b pavement under it. engine-july's prep (`build_kn5_loop._conform_and_reseat`
+step 0, the bury-cull) deletes every 1ROAD / 1KERB face whose vertices all have other pavement over them, and it already
+exempts one class: objects whose name ends `_FW` are neither culled nor occluders (its merged-freeway convention).
+- **The A/B** (`r2/deck_ab.sh`; scratch projects ws42 / ws43 = ws40's draft scene + a test strip: I 5 NB's draft edge 244
+  within 70 m of the crossing, 21 quads at 18.14 m, at grade; then engine-july's prep, unchanged, from the eng copy):
+  - A, the strip as `1ROAD_xi5` (as a 2b carriageway would ship today): `bury-cull: 1 drivable faces removed`, the strip
+    1,821.1 m2 after the prep: the 91 m2 quad under the line's deck gone.
+  - B, the strip as `1ROAD_xi5_FW`: no bury-cull line, the strip 1,912.1 m2: every face kept. The line's own 1ROAD is
+    438,993.5 m2 in both (nothing of the line moved).
+  - So the mechanism for the crossings: the pavement on either side of a crossing (the lower carriageway's faces under
+    the deck, or the upper deck's faces, which then occlude nothing) is separated into a `..._FW` object before the
+    prep. It changes no engine code and no Lake Murray step (Lake Murray names no `_FW` object in its scene).
+- **Not proven (the other half): the ground under the lower road.** In both A and B 315-323 of the strip's ~1,700
+  lattice points have ground at or over it (worst 2.99 m over): the line's embankment ground, conformed by the
+  assembler to the line before the strip existed (the strip was added after the draft, so the assembler never conformed
+  to it), and the prep's pin cannot raise or lower ground to it there (the highest pavement within LAYER_WIN is the
+  line's deck, a declared span: push down only). A real 2b carriageway is a connector in the draft, so the assembler's
+  conform and median_ground's connector pin (`pinned_under_connector`) will act on it; whether that is enough under the
+  line's deck is owed to the first 2b build (and engine-july's pin to the HIGHEST pavement stays 2d's question for a
+  flyover over at-grade ground).
+- Not wired: no `_FW` step exists yet (nothing of 2b is built to separate).
+
+## PC runbook 0080-9: rehearse 2b round 2 (the whole box), no install
+
+Supersedes 0080-8. No lidar or NAIP is needed.
+
+1. `git fetch && git worktree add D:/k10-worktrees/freeway-lm-2b2 e733c0a9` (ws41's build inputs: the whole box, the
+   slope pass's fix; later 2b round 2 commits change only the ledger)
+2. `SHIP_PROJ=D:/k10-scratch/fwlm_2b2 AIROSO=D:/k10-worktrees/freeway-lm-2b2 ENG=D:/k10-scratch/eng_fwlm bash
+   tools/ship_track.sh san-diego-freeway-lm --no-install`
+3. Expect ws41: the draft prints both `[fwlm-tiers]` lines (`'grid': [1329, 1085]`, `"fine_cells": 918, "fan_cells":
+   390, "vertices": 106653`); `[median-ground]` "... 53 edge vertices off the closest pavement"; line drive_test PASS
+   (soft top 0, excursions 2); WB line gate PASS (lap rule 13, 1.23 / km); audit CLEAN; verify_kn5 / inis PASS;
+   kn5_ground_check PASS; 34,094,237 B (+- a ground edge split, as 0080-6 / 0080-8); SHIP OK. Any other number: stop
+   and file it here. Install only on Kevin's word.
+
 ## PC runbook 0080-8: rehearse 2b round 1 (2a with the tiered ground), no install
 
 Supersedes 0080-7 for the next candidate. No lidar or NAIP is needed; the new draft step uses Blender 4.2's own numpy.
@@ -1057,14 +1097,15 @@ The Caltrans 2026 Standard Plans PDF (round 3 item 7) is still owed separately.
 
 ## Owed (start here)
 
-State (2026-11-05, end of 2b round 1): **2a green on the Mac with the tiered ground** (ws39 at 396c41f9: every gate
-JSON byte-identical to ws35's: the line's drive_test PASS, excursions 2; WB's line gate PASS, lap rule 17; audit CLEAN;
-kn5_ground_check PASS; SHIP OK; **29.8 MB**, was 43.0). Installed on the PC: round 5 (c3c988b9); round 6 rehearsed
-(0080-7), not installed; ws39 to rehearse with runbook 0080-8. **2b: declared and resolved, nothing built** (no corridor
-has a measured stretch: item 3's table). Lake Murray unchanged (`git diff origin/claude/fleet-lm-engine --
-tracks/san-diego-lake-murray scripts/` empty; no step it runs changed; the vectorised clamp A/B'd byte-identical on its
-own grid). Nothing downloaded: the list is "## Downloads for Kevin" above. Tests: run_tests 630 PASS / 1 FAIL
-(test_registry_moves, as before); pytest tests/tools 718 passed, 1 skipped (714 + the 4 new).
+State (2026-11-06, end of 2b round 2): **2a green on the Mac on the WHOLE BOX** (ws41 at e733c0a9: `grid_crop_m`
+dropped, the far ground tiered; the line's drive_test PASS, excursions 2, its JSON byte-identical to ws40's; WB's line
+gate PASS, **lap rule 13** (was 17); audit CLEAN; verify_kn5 / inis PASS; kn5_ground_check PASS; SHIP OK; **34.1 MB**,
+one kn5). With the crop (ws40) every gate JSON = ws39's, 29.8 MB. Installed on the PC: round 5 (c3c988b9); 0080-8
+rehearsed (matched ws39); rehearse ws41 with runbook 0080-9. **2b: declared and resolved, nothing built** (no corridor has
+a measured stretch). Lake Murray unchanged (`git diff origin/claude/fleet-lm-engine -- tracks/san-diego-lake-murray
+scripts/` empty; the tools changed this round, naip_carriageways, median_ground_blend and the tiered draft step's log
+filter, are steps Lake Murray never runs). Nothing downloaded. Tests: run_tests 630 PASS / 1 FAIL (test_registry_moves,
+as before); pytest tests/tools 722 passed, 1 skipped (718 + the 4 new).
 
 - **Kevin:** drive round 5 (installed); rehearse round 6 on the PC (runbook 0080-7), install on your word. Say yes / no
   to: fetching the 2014 EPT nodes over the unpaved median (12 of WB's 17 lap-rule drops wait on it), the lidar over the
@@ -1083,7 +1124,11 @@ own grid). Nothing downloaded: the list is "## Downloads for Kevin" above. Tests
   6. **The unpaved median's ground** (12 drops, WB s 1,203 and 9,004-10,051): the EPT nodes over it, Kevin's yes.
   7. **The Caltrans sheet** (round 3 item 7).
 - `weld_mouths` stays out (its empty-yellow-block refusal, owed to its owners on `claude/sand-creek-lm-assets`).
-- Scratch: `/Volumes/Drive/codex/fwlm_work/run_ship_p7.sh` + `quiet_then_ship_p7.sh` (round 6's worktree; the second
+- Scratch (2b round 2): `run_ship_p9.sh` + `quiet_then_ship_p9.sh` (this round's worktree), ws40 (2a + crop), ws41 (the
+  whole box, green), ws42 / ws43 (the deck A/B); probes in the session scratchpad `r2/` (`tri_gate.py`, `edge_poke.py` +
+  `poke.sh`, `mk_mg_dbg.py` + `mg_dbg.sh` a vertex traced through median_ground, `cmp_ws.py` two workshops' gate JSONs,
+  `find_cross.py`, `deck_ab.sh`, `naip_run.sh` the reader offline on the committed draft).
+- Scratch (older): `/Volumes/Drive/codex/fwlm_work/run_ship_p7.sh` + `quiet_then_ship_p7.sh` (round 6's worktree; the second
   waits a full minute with no `blender` process first), ws35 (round 6), ws36 (rebased HEAD); round-6 probes in the session
   scratchpad `r6/` (`under_wb.py` the ground under WB's pavement, `fprobe.py` audit F's failures located, `bprobe.py`
   audit B's, `near.py` every group's vertices near a point, `tri_at_line.py`, `bl_sweep.py` the reader's sweep);
@@ -1091,17 +1136,17 @@ own grid). Nothing downloaded: the list is "## Downloads for Kevin" above. Tests
 - **2b (I 5, SR 52, SR 163 mainlines, both ways)**, in order:
   1. **Kevin: yes / no to the download list** ("## Downloads for Kevin": NAIP 114 crops, 456 MB; EPT 702 nodes ~159 MB
      est. + 3 hierarchy pages; D24 6 tiles of unknown size + 480624 from the PC).
-  2. `tools/naip_carriageways.py`: a no-image row must read "unread", not "barrier at the midline" (item 3 (b)); then
-     generalise it to the 2b pairs (`partner` in each spec; barriers per pair, never I 8's on a 2b line), keeping
-     2a's outputs byte-identical.
+  2. `tools/naip_carriageways.py`: no-image rows read "unread" (DONE, 2b round 2); left: generalise it to the 2b pairs
+     (`partner` in each spec; barriers per pair, never I 8's on a 2b line), keeping 2a's outputs byte-identical.
   3. Build each 2b corridor's MEASURED stretch only (`lm_intake.network_build_phases` ["2b"] after trimming each spec to
      its measured runs), its decks from `deck_profiles.lidar.json`, median barrier / ground as I 8's. The crossings of
      I 8 wait on 2d's deck-over-pavement mechanism (below): stop each stretch 30 m (LAYER_WIN) clear of I 8's pavement.
-  4. **The whole box (ws38, 34.1 MB, NOT green):** the line's ground on top at s 2,805 (+6.0, 3 samples). Read it on
-     ws38 (`/Volumes/Drive/codex/fwlm_work/ws38`); the suspect is project_grid's mid-latitude column spacing moving every
-     near-road node vs the crop's grid. Then drop `grid_crop_m`.
-  5. **Size:** 2b's 67 km will not fit one 120 MB road kn5 (~115 MB est. before 2c / 2d): per-layout kn5s as Lake
-     Murray ships, not cut geometry.
+  4. ~~The whole box~~: DONE (2b round 2, ws41 green, `grid_crop_m` dropped).
+  5. **Group kn5s** (2b round 2 item 3, designed): wire `group_split` / `export_groups` / `group_inis` and the port's
+     ini check, A/B'd on 2a (gate OBJ the same faces), BEFORE the first 2b corridor is built.
+  6. **The crossings** (2b round 2 item 4): every cached crossing has the LINE as the deck; the 2b pavement under it
+     ships as a `_FW` object (proven: engine-july's bury-cull spares it); the ground under it is read on the first 2b
+     build (the A/B's strip was post-draft, so its ground proves nothing).
 - **2c (ramps + gores):** ramps as connectors with mouths: `trim_connectors` cuts a T; a freeway merge is a 2-5 deg
   taper. A new gore tool (port-only), measured against `verify_mouths`; `weld_mouths_blend`'s empty-yellow-block refusal
   needs fixing by its owners (`claude/sand-creek-lm-assets`) or the gore tool must not depend on it.

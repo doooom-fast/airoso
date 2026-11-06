@@ -60,6 +60,60 @@ def _network_connector_decks(data: Path):
     return out
 
 
+# ledger 0080 2a round 3: a connector deck beside a LOWER carriageway (I 8 WB's deck at WB s 9,050-9,150 stands 1.6-2 m
+# over the line's, 2 m away: both read off the lidar) is two parallel bridges with open air between them; the deck rail
+# on WB's median side stood on nothing (drive_test floating 10, 0.8-1.5 m). Under a real bridge rail is the deck's edge
+# girder: here each such rail column's foot is carried down that girder's face to the lower carriageway's pavement
+# (ROAD, ray-cast FASCIA_PROBE_M out past the rail), never deeper than FASCIA_MAX_M. A rail with no lower pavement
+# beside it is unchanged; the line's rails are Lake Murray's, unchanged.
+FASCIA_PROBE_M = (0.5, 1.0, 1.5, 2.0, 2.5, 3.0)   # [invented] how far out past the rail the lower carriageway is sought
+FASCIA_MIN_M = 0.3                                # [invented] a pavement less than this under the rail's foot is its own
+FASCIA_MAX_M = 3.0                                # [invented] the deepest edge girder face (a box girder ~ span / 18)
+
+
+class _Fascia:
+    def __init__(self):
+        from mathutils import Vector
+        from mathutils.bvhtree import BVHTree
+        road = bpy.data.objects["ROAD"]
+        mw = road.matrix_world
+        self.V = Vector
+        self.bvh = BVHTree.FromPolygons([mw @ v.co for v in road.data.vertices],
+                                        [tuple(p.vertices) for p in road.data.polygons])
+
+    def _road_y(self, x, z, below):
+        # local (x = E, y = up, z = N) -> Blender (x, z, y): the assembler's make_mesh remap
+        hit = self.bvh.ray_cast(self.V((x, z, below)), self.V((0.0, 0.0, -1.0)), 50.0)
+        return None if hit[0] is None else hit[0].z
+
+    def lower(self, verts):
+        """build_guardrails' panels: pairs (bottom, top) per column, in order along each side's run."""
+        n = 0
+        for k in range(0, len(verts) - 1, 2):
+            bx, by, bz = verts[k]
+            # outward = away from the deck's own centre: the column's offset from its run neighbour's normal is not
+            # kept by build_guardrails, so probe both ways and take the lower pavement found first (the deck's own
+            # pavement is at the foot's height, never FASCIA_MIN_M under it)
+            j = k + 2 if k + 2 < len(verts) else k - 2
+            if j < 0:
+                continue
+            tx, tz = verts[j][0] - bx, verts[j][2] - bz
+            L = math.hypot(tx, tz) or 1.0
+            nx, nz = -tz / L, tx / L
+            best = None
+            for sg in (1.0, -1.0):
+                for d in FASCIA_PROBE_M:
+                    y = self._road_y(bx + sg * d * nx, bz + sg * d * nz, by + 0.5)
+                    if y is not None:
+                        if by - y >= FASCIA_MIN_M and (best is None or y > best):
+                            best = y
+                        break
+            if best is not None:
+                verts[k] = (bx, max(best, by - FASCIA_MAX_M), bz)
+                n += 1
+        return n
+
+
 def main():
     proj = Path(sys.argv[sys.argv.index("--") + 1]).resolve()
     data = proj / "data"
@@ -100,6 +154,8 @@ def main():
         rows.append({"center_m": c, "len_m": ln, "panels": len(g["tris"]) // 4})
     # ledger 0080 phase 2: each network connector's decks (tools/network_connectors.py decks_all: measured or levelled),
     # the same call on the connector as the assembler sweeps it (its smoothed points, its widths widest-of-three)
+    bpy.ops.wm.open_mainfile(filepath=str(proj / "loop.blend"))
+    fascia = _Fascia() if net else None
     for name, cpts, cw, ranges in net:
         cwr = [max(cw[max(0, k - 1):k + 2]) for k in range(len(cw))]
         for a, b in ranges:
@@ -107,11 +163,12 @@ def main():
             if len(stretch) < 2:
                 continue
             g = asm["build_guardrails"](cpts, cwr, stretch)
+            nf = fascia.lower(g["vertices"])
             off = len(out["vertices"])
             out["vertices"] += g["vertices"]
             out["tris"] += [(p + off, q + off, r + off) for p, q, r in g["tris"]]
-            rows.append({"connector": name, "vertices": [a, b], "panels": len(g["tris"]) // 4})
-    bpy.ops.wm.open_mainfile(filepath=str(proj / "loop.blend"))
+            rows.append({"connector": name, "vertices": [a, b], "panels": len(g["tris"]) // 4,
+                         "fascia_columns": nf})
     old = bpy.data.objects.get("GUARDRAIL")
     if old is not None:
         raise SystemExit("[deck-rails] FATAL: loop.blend already has a GUARDRAIL (the assembler's I-8 rails): not a port")

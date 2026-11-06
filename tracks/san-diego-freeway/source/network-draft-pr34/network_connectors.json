@@ -35,7 +35,7 @@
    "length_m": 10220.2,
    "decks": 6,
    "deck_points": 101,
-   "deck_points_spanned": 6,
+   "deck_points_spanned": 4,
    "bridged_points_unmeasured_levelled": 32,
    "levelled_runs": 4,
    "approach_points_raised_to_crest": 36,
@@ -49,11 +49,11 @@
     0.15,
     -0.1,
     -0.06,
-    0.33,
+    0.12,
     0.06,
     0.02
    ],
-   "deck_minus_3dep_max_m": 20.09,
+   "deck_minus_3dep_max_m": 11.56,
    "widths_flared": 69,
    "side_check": {
     "samples": 186,
@@ -70,9 +70,9 @@
   "network.geojson": "255dbe5d7053ad09b6e7d987a8fdf0d1",
   "network.edges.local.json": "a4e386a84d393c2cedc6921869170dc8",
   "network.elevation.json": "b9c33cdf8e2969aaccbb33b02982c5aa",
-  "deck_profiles.lidar.json": "313ac87ce7c5b4f4cdae2a3f1819d4f6"
+  "deck_profiles.lidar.json": "be6d5f7af79e556aae847971f5156b2e"
  },
  "outputs": {
-  "connectors.local.json": "12d5663007939ba25c7addfdb513f99a"
+  "connectors.local.json": "403a21fd8469003e8bcd4249e141e9bc"
  }
 }

@@ -113,6 +113,73 @@ def _max_grade(pts, over_m: float) -> float:
     return best
 
 
+LINE_DECK_MATCH_M = 4.0   # [invented] a line point takes a lidar station of its own edges within this (stations every 5 m)
+
+
+def _line_decks_lidar(pts, bridges, table: Path, sdata: Path, origin):
+    """Y over each declared deck from the lidar (ledger 0080 2a round 3). ``bridges`` [(center_m, len_m)] on ``pts``'
+    own stations; the line's edges from sdata/network.reference.json; the table's stations matched in plan (lon / lat to
+    the line's ENU frame, as network_line does). Between the span's ends the deck runs straight through its readings,
+    anchored on the levelled height at each end (the bank crests level_bridge_decks found), so nothing steps."""
+    import math as _m
+    doc = json.loads(table.read_text(encoding="utf-8"))
+    ref = json.loads((sdata / "network.reference.json").read_text(encoding="utf-8"))
+    own = {int(e) for e in ref["line"]["edges"]}
+    lon0, lat0, elev0 = float(origin["lon"]), float(origin["lat"]), float(origin["elev_m"])
+    phi = _m.radians(lat0)
+    mlon = 111412.84 * _m.cos(phi) - 93.5 * _m.cos(3 * phi) + 0.118 * _m.cos(5 * phi)
+    mlat = 111132.954 - 559.822 * _m.cos(2 * phi) + 1.175 * _m.cos(4 * phi)
+    cell = {}
+    for r in doc["stations"]:
+        if int(r[0]) in own and r[6] is not None:
+            x, z = (float(r[3]) - lon0) * mlon, (float(r[4]) - lat0) * mlat
+            cell.setdefault((int(x // 10), int(z // 10)), []).append((x, z, float(r[6]) - elev0))
+    n = len(pts)
+    S = [0.0]
+    for i in range(1, n):
+        S.append(S[-1] + _m.hypot(pts[i][0] - pts[i - 1][0], pts[i][2] - pts[i - 1][2]))
+    out = [list(p) for p in pts]
+    rep = {"table": table.name, "match_m": LINE_DECK_MATCH_M, "decks": [], "points_read": 0, "points_between": 0,
+           "points_levelled": 0}
+    dz = []
+    for c, ln in bridges:
+        idx = [i for i in range(n) if c - ln / 2.0 <= S[i] <= c + ln / 2.0]
+        if len(idx) < 2:
+            continue
+        read = {}
+        for i in idx:
+            x, z = pts[i][0], pts[i][2]
+            best = None
+            for gx in range(int(x // 10) - 1, int(x // 10) + 2):
+                for gz in range(int(z // 10) - 1, int(z // 10) + 2):
+                    for sx, sz, sy in cell.get((gx, gz), ()):
+                        d = _m.hypot(sx - x, sz - z)
+                        if d <= LINE_DECK_MATCH_M and (best is None or d < best[0]):
+                            best = (d, sy)
+            if best is not None:
+                read[i] = best[1]
+        # anchors: the span's end points keep the levelled height (the bank crests), then every reading
+        knots = sorted({idx[0]: pts[idx[0]][1], idx[-1]: pts[idx[-1]][1], **read}.items())
+        for i in idx:
+            lo = max((k for k in knots if k[0] <= i), key=lambda k: k[0])
+            hi = min((k for k in knots if k[0] >= i), key=lambda k: k[0])
+            y = lo[1] if hi[0] == lo[0] else lo[1] + (hi[1] - lo[1]) * (S[i] - S[lo[0]]) / (S[hi[0]] - S[lo[0]])
+            if i in read:
+                rep["points_read"] += 1
+                dz.append(read[i] - pts[i][1])
+            elif read and min(read) < i < max(read):
+                rep["points_between"] += 1
+            else:
+                rep["points_levelled"] += 1
+            out[i][1] = y
+        rep["decks"].append({"center_m": c, "len_m": ln, "points": len(idx), "read": len(read),
+                             "measured_minus_levelled_m": None if not read else
+                             round(sorted(read[i] - pts[i][1] for i in read)[len(read) // 2], 2)})
+    dz.sort()
+    rep["measured_minus_levelled_median_m"] = None if not dz else round(dz[len(dz) // 2], 2)
+    return [tuple(p) for p in out], rep
+
+
 def intake(proj: Path, *, connectors: bool | None = None) -> dict:
     cfg = json.loads((proj / "track.config.json").read_text(encoding="utf-8"))
     li = cfg.get("lm_intake") or {}
@@ -337,6 +404,16 @@ def intake(proj: Path, *, connectors: bool | None = None) -> dict:
     bridges = [(float(b["center_m"]), float(b["len_m"])) for b in ((scfg.get("capture") or {}).get("bridges") or [])]
     if bridges and not decks_held:              # (decks road_profile.py held straight stay as it held them)
         pts = evidence.level_bridge_decks(pts, bridges)
+    # ledger 0080 2a round 3 (opt-in, the SD freeway port): lm_intake.line_decks_lidar names the measured deck table
+    # (tools/network_deck_lidar.py) in source_data; over each declared deck the line then rides the lidar's class-17
+    # deck where its own edges (network.reference.json) were read, straight between readings, and the levelled
+    # crest-to-crest height only where none was. Absent = as before (every other port).
+    deck_lidar_rep = None
+    if li.get("line_decks_lidar") and bridges:
+        pts, deck_lidar_rep = _line_decks_lidar(pts, bridges, sdata / li["line_decks_lidar"], sdata, local["origin"])
+        print(f"[lm_intake] line decks from the lidar: {deck_lidar_rep['points_read']} points read, "
+              f"{deck_lidar_rep['points_between']} between readings, {deck_lidar_rep['points_levelled']} levelled (no "
+              f"reading); measured minus levelled median {deck_lidar_rep['measured_minus_levelled_median_m']} m")
     mg = li.get("max_grade_pct")
     max_grade = None if mg is None else float(mg) / 100.0
     if max_grade is not None:
@@ -860,7 +937,7 @@ def intake(proj: Path, *, connectors: bool | None = None) -> dict:
     lap = sum(math.hypot(b[0] - a[0], b[2] - a[2]) for a, b in zip(pts, pts[1:]))
     rep = {"source_track": src_track, "points": len(pts), "lap_m": round(lap, 1), "closed": closed,
            "widths_m": [round(min(widths), 2), round(sum(widths) / len(widths), 2), round(max(widths), 2)],
-           "bridges_levelled": bridges, "max_grade_pct": None if max_grade is None else max_grade * 100.0,
+           "bridges_levelled": bridges, "line_decks_lidar": deck_lidar_rep, "max_grade_pct": None if max_grade is None else max_grade * 100.0,
            "measured_max_grade_pct": round(100.0 * _max_grade(pts, 10.0), 2),
            "y_changed_points": sum(1 for d in dy if abs(d) > 1e-6),
            "y_change_max_m": round(max((abs(d) for d in dy), default=0.0), 3),

@@ -22,7 +22,7 @@ midway between the two pavements' centres unless the image shows its bright conc
 Every number in UPPER CASE is [invented] tuning of a colour reader (fleet/GATES-CHANGELOG.md 2026-11-05, 2a); what the
 image shows is the measurement, and the overview crops written beside the output are there to be checked by eye.
 
-    python tools/naip_carriageways.py <draft-dir> <out-dir> [--cache DIR] [--items ID,ID]
+    python tools/naip_carriageways.py <draft-dir> <out-dir> [--cache DIR] [--items ID,ID] [--config track.config.json]
 
 <draft-dir> holds network.local.json, centerline.local.json (the line) and connectors.local.json (the connectors).
 Writes <out-dir>/carriageway_edges.naip.json: per carriageway per station [s, x, z, left edge, right edge, median,
@@ -440,6 +440,74 @@ def apply(pts, widths, S, edges, line, barriers, own_rows):
     return new, w, n_bar, c
 
 
+# ledger 0080 2a round 3: the assembler (scripts-v021 build_loop_blend) smooths every line horizontally before it sweeps
+# it (the line: route.smooth_sigma_pts / smooth_passes; a connector: sigma 1.5, 1 pass, hard-coded there), so a measured
+# edge pinned BARRIER_CLEAR_M off the barrier's foot can still be swept onto it (ws12: audit D 128, the line moved up to
+# 0.26 m toward the barrier at line s 5,891, 6,359, 6,549, 6,754, 10,289, 10,349; WB's edge on a barrier run's first,
+# ragged reading at WB s 4,045). The clamp below predicts that sweep with the assembler's own function and narrows a
+# vertex (both edges, about the smoothed centre) until its swept inner edge, and the chord to each neighbour, stand
+# BARRIER_CLEAR_M off every barrier run's foot; neighbours close on it at the width_taper rate (both sides) so the
+# intake's taper does not widen it back.
+ASM_SMOOTH = ROOT / "tracks" / "san-diego-lake-murray" / "scripts-v021" / "geometry" / "smooth.py"
+CONN_SMOOTH = (1.5, 1)   # build_loop_blend's connector smoothing (sigma_pts, passes), hard-coded there
+
+
+def _asm_smooth(pts, sigma, passes):
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("v021_smooth", ASM_SMOOTH)
+    sm = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(sm)
+    return [tuple(q) for q in sm.smooth_centerline([tuple(q) for q in pts], sigma_pts=sigma, passes=passes)]
+
+
+def clear_of_barrier(pts, widths, barriers, sigma, passes):
+    """Narrow ``widths`` where the swept (smoothed) ribbon's edge would stand within BARRIER_BASE_M / 2 +
+    BARRIER_CLEAR_M of a barrier run. Returns (widths, vertices narrowed, the largest cut)."""
+    sp = np.asarray([(q[0], q[2]) for q in _asm_smooth(pts, sigma, passes)], float)
+    w = np.asarray(widths, float).copy()
+    need = BARRIER_BASE_M / 2.0 + BARRIER_CLEAR_M
+    segs = np.asarray([(a[0], a[1], b[0], b[1]) for br in barriers for a, b in zip(br["xz"], br["xz"][1:])], float)
+    if not len(segs):
+        return w, 0, 0.0
+    n = len(sp)
+    t = np.zeros((n, 2))
+    t[1:-1] = sp[2:] - sp[:-2]
+    t[0], t[-1] = sp[1] - sp[0], sp[-1] - sp[-2]
+    t /= np.maximum(np.linalg.norm(t, axis=1), 1e-9)[:, None]
+    nrm = np.stack([-t[:, 1], t[:, 0]], axis=1)
+
+    def dist(q):
+        ax, az, bx, bz = segs.T
+        dx, dz = bx - ax, bz - az
+        L2 = np.maximum(dx * dx + dz * dz, 1e-12)
+        u = np.clip(((q[0] - ax) * dx + (q[1] - az) * dz) / L2, 0.0, 1.0)
+        return float(np.min(np.hypot(q[0] - ax - u * dx, q[1] - az - u * dz)))
+
+    cap = np.full(n, np.inf)
+    for i in range(n):
+        for sg in (1.0, -1.0):
+            hw = w[i] / 2.0
+            # the edge at this vertex and the chords' midpoints to its neighbours, cut back 0.05 m at a time
+            while hw > 0.5:
+                pts_e = [sp[i] + sg * hw * nrm[i]]
+                for j in (i - 1, i + 1):
+                    if 0 <= j < n:
+                        pts_e.append(0.5 * (sp[i] + sg * hw * nrm[i] + sp[j] + sg * (w[j] / 2.0) * nrm[j]))
+                if min(dist(q) for q in pts_e) >= need:
+                    break
+                hw -= 0.05
+            if hw < w[i] / 2.0:
+                cap[i] = min(cap[i], 2.0 * hw)
+    s = np.concatenate([[0.0], np.cumsum(np.hypot(*np.diff(sp, axis=0).T))])
+    for i in range(1, n):
+        cap[i] = min(cap[i], cap[i - 1] + 2 * RATE_M_PER_M * (s[i] - s[i - 1]))
+    for i in range(n - 2, -1, -1):
+        cap[i] = min(cap[i], cap[i + 1] + 2 * RATE_M_PER_M * (s[i + 1] - s[i]))
+    new = np.minimum(w, cap)
+    cut = w - new
+    return new, int((cut > 1e-6).sum()), float(cut.max()) if len(cut) else 0.0
+
+
 def overlap_report(line, partners):
     """At each line vertex beside a partner: the gap between the two pavements, measured along the line's normal
     (negative = they overlap: what 2a's red audit was made of)."""
@@ -482,6 +550,11 @@ def main(argv=None):
     if first:
         cw["line"] = (line["points_xyz_m"], line["widths_m"], first[0])
     rows, lines = read_sections(mos, cw)
+    # the line's horizontal smoothing in the assembler (route.smooth_sigma_pts / smooth_passes; v021's defaults 2.0 / 2)
+    route = {}
+    if "--config" in argv:
+        route = json.loads(Path(argv[argv.index("--config") + 1]).read_text(encoding="utf-8")).get("route") or {}
+    line_smooth = (float(route.get("smooth_sigma_pts", 2.0)), int(route.get("smooth_passes", 2)))
     barriers = barrier_runs(rows["line"], lines["line"]) if first else []
     rep = {"tool": "tools/naip_carriageways.py", "ledger": "0080 phase 2a",
            "imagery": "USDA FSA NAIP 2022 (0.6 m, R G B NIR), Microsoft Planetary Computer: " + ", ".join(i for i, _b in ITEMS),
@@ -498,8 +571,16 @@ def main(argv=None):
     for name, (pts, widths, _p) in cw.items():
         S, edges, stats = edges_of(rows[name], lines[name]["W"])
         npts, nw, nbar, c = apply(pts, widths, S, edges, lines[name], barriers if name != "line" or True else [], rows[name])
+        sig, pas = line_smooth if name == "line" else CONN_SMOOTH
+        nw_c, n_cut, max_cut = clear_of_barrier(npts, nw, barriers, sig, pas)
+        nw = [round(float(x), 3) for x in nw_c]
+        if n_cut:
+            print(f"[naip_carriageways] {name}: {n_cut} vertices narrowed (max {max_cut:.2f} m) so the swept edge stands "
+                  f"{BARRIER_CLEAR_M} m off the barrier's foot (the assembler's smoothing, sigma {sig}, {pas} pass(es))")
         dw = np.asarray(nw) - np.asarray(widths, float)
         rep["carriageways"][name] = {**stats, "stations": len(S), "vertices_on_a_barrier": nbar,
+                                     "narrowed_clear_of_barrier": {"vertices": n_cut, "max_m": round(max_cut, 3),
+                                                                   "smoothing": [sig, pas]},
                                      "shift_m_p5_p50_p95": [round(float(np.percentile(c, q)), 2) for q in (5, 50, 95)],
                                      "width_minus_draft_m_p5_p50_p95": [round(float(np.percentile(dw, q)), 2) for q in (5, 50, 95)],
                                      "width_m_min_max": [round(min(nw), 2), round(max(nw), 2)],

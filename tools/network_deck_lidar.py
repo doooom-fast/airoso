@@ -57,6 +57,8 @@ LEVEL_GAP_M = 2.0     # [invented] heights more than this apart are different de
 MAX_PICK_M = 8.0      # [invented] a level further than this from the draft's model is another road's deck, not ours
 CONT_M = 15.0         # [invented] a reading within this along the same edge is the deck we are on: its level is kept
 CONT_DZ_M = 2.0       # [invented] ... unless the nearest level is further than this from it (another deck over / under)
+HIDDEN_M = 30.0       # [invented] how far along ours another deck crossing over it can hide it (its width, skewed)
+HIDDEN_GRADE = 0.08   # [invented] how far a hidden deck's grade may have changed from its measured one (dz per m)
 GROUND, DECK = 2, 17  # ASPRS classes
 M_PER_DEG_LAT = 110_946.0
 
@@ -131,6 +133,15 @@ def pick(lv: list[tuple[float, int]], model: float | None):
         return max(lv, key=lambda t: t[1]) if len(lv) == 1 else None
     best = min(lv, key=lambda t: abs(t[0] - model))
     return best if abs(best[0] - model) <= MAX_PICK_M else None
+
+
+def _grade(hist: list[tuple[float, float]]) -> float:
+    """The deck's own grade (dz / ds) over its last CONT_M of readings; 0 with fewer than two readings there."""
+    if len(hist) < 2:
+        return 0.0
+    s1, z1 = hist[-1]
+    s0, z0 = next(((a, b) for a, b in hist if s1 - a <= CONT_M), hist[-1])
+    return 0.0 if s1 - s0 < 1e-6 else (z1 - z0) / (s1 - s0)
 
 
 def fetch(ept_url: str, sts, *, dry: bool = False, cache: Path | None = None, log=print):
@@ -304,13 +315,32 @@ def build(draft: Path, out: Path, *, ept_url: str = EPT_DEFAULT, only=None, dry=
         log(f"network_deck_lidar: {ntiles} LAZ tile(s) filled {filled} station(s) the EPT had no return for")
     rows, per_edge = [], {}
     last = None                                     # (edge, s, z) of the last deck read on this edge
+    hist = []                                       # this edge's readings [(s, z)], for the deck's own grade
+    hidden = None                                   # (edge, s) of the first station where our deck was hidden
     for i, (eid, s, v, lon, lat, zs, zg, lay) in enumerate(sts):
         g = got.get(i, {GROUND: [], DECK: []})
         lv = levels(g[DECK])
+        if last is None or last[0] != eid:
+            hist = []
         if last is not None and last[0] == eid and abs(s - last[1]) <= CONT_M and lv:
             # the deck we are on continues: the level nearest the last reading, if the deck can have got there
             near = min(lv, key=lambda t: abs(t[0] - last[2]))
             pk = near if abs(near[0] - last[2]) <= CONT_DZ_M else None
+            if pk is None and (hidden is None or hidden[0] != eid):
+                hidden = (eid, s)
+        elif hidden is not None and hidden[0] == eid and abs(s - hidden[1]) <= HIDDEN_M and lv:
+            # ledger 0080 2a round 3: the station before had returns, but only ANOTHER deck's (an overpass shadows the
+            # deck under it from an airborne scanner): the deck we are on carries on under it, along its own measured
+            # grade (the last CONT_M of readings), and is ours again where a level meets that line within CONT_DZ_M
+            # plus HIDDEN_GRADE x the distance since our last reading (its grade may change while it is hidden), for
+            # HIDDEN_M from where it was first hidden (a deck crossing over ours is that wide along ours); past that the
+            # model chooses, as before.
+            # Before, the reference timed out CONT_M after the last reading and the model-nearest pick took the deck
+            # over ours: the I 5 connector 9 m over I 8 WB's Morena deck (edge 186 s 370-385), a flyover 8 m over
+            # edge 277 (s 251-311).
+            pred = last[2] + _grade(hist) * (s - last[1])
+            near = min(lv, key=lambda t: abs(t[0] - pred))
+            pk = near if abs(near[0] - pred) <= CONT_DZ_M + HIDDEN_GRADE * abs(s - last[1]) else None
         else:
             pk = pick(lv, None if zs is None else zs + elev0)
         if pk is not None and not lay and (zg is None or abs(pk[0] - (zg + elev0)) > CONT_DZ_M):
@@ -318,7 +348,11 @@ def build(draft: Path, out: Path, *, ept_url: str = EPT_DEFAULT, only=None, dry=
             # higher is another road's deck crossing over this one (I 8 WB under the overpass at edge 295 s 145-155)
             pk = None
         if pk is not None:
+            if last is None or last[0] != eid:
+                hist = []
             last = (eid, s, pk[0])
+            hist.append((s, pk[0]))
+            hidden = None
         gz = levels(g[GROUND])
         ground = gz[0][0] if gz else None          # the lowest ground level: the earth, not a retaining-wall top
         rows.append([eid, s, v, round(lon, 7), round(lat, 7), lay,
@@ -352,7 +386,8 @@ def build(draft: Path, out: Path, *, ept_url: str = EPT_DEFAULT, only=None, dry=
         "classes": {"deck": DECK, "ground": GROUND},
         "params": {"step_m": STEP_M, "approach_m": APPROACH_M, "radius_m": RADIUS_M, "level_gap_m": LEVEL_GAP_M,
                    "max_pick_m": MAX_PICK_M, "cont_m": CONT_M, "cont_dz_m": CONT_DZ_M,
-                   "_invented": "approach_m, radius_m, level_gap_m, max_pick_m, cont_m, cont_dz_m"},
+                   "hidden_m": HIDDEN_M, "hidden_grade": HIDDEN_GRADE,
+                   "_invented": "approach_m, radius_m, level_gap_m, max_pick_m, cont_m, cont_dz_m, hidden_m, hidden_grade"},
         "vertical": "deck_z, deck_levels, ground_z: the lidar's NAVD88 metres; draft_*: the draft's local Y (NAVD88 less origin elev_m)",
         "origin_elev_m": elev0,
         "columns": ["edge", "s_m", "vertex", "lon", "lat", "osm_layer", "deck_z", "deck_n", "deck_levels[[z,n]]",

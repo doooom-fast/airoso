@@ -14,6 +14,28 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
+## 2026-11-05 — the SD freeway port, phase 2a round 3: the hidden deck, the swept-edge clamp, the line's lidar decks, the fascia (ledger 0080; no threshold moved, no bypass)
+
+No gate threshold, wiring or bypass changed; no gate code touched. New numbers the port's DATA tools carry (none is a
+gate's):
+
+- ⚠ `tools/network_deck_lidar.py` **invented**: `HIDDEN_M` 30 (how far along ours another deck crossing over it can hide
+  ours from the scanner: a crossing deck's width, skewed) and `HIDDEN_GRADE` 0.08 (how far a hidden deck's grade may have
+  changed from its measured one, dz per m, added to `CONT_DZ_M` per metre since our last reading). A rule change, not a
+  threshold: where a station's returns are only another deck's, the continuation no longer times out into the
+  model-nearest pick for HIDDEN_M (edge 186: that pick took the I 5 connector 9 m over I 8 WB). 80 of 9,685 stations
+  change, listed in the ledger.
+- Reused, not new: `tools/naip_carriageways.py` `clear_of_barrier` holds `BARRIER_CLEAR_M` 0.3 (round 2's) on the SWEPT
+  edge, predicted with the assembler's own `smooth_centerline` (the line: route.smooth_sigma_pts / smooth_passes from the
+  config; a connector: `CONN_SMOOTH` (1.5, 1), the values build_loop_blend hard-codes), stepping 0.05 m; neighbours close
+  at the width_taper rate (0.1 m / m a side).
+- ⚠ `tools/lm_engine_intake.py` **invented**: `LINE_DECK_MATCH_M` 4 (a line point takes a lidar station of its own edges
+  within this in plan; stations are every 5 m). The key `lm_intake.line_decks_lidar` is the freeway port's only.
+- ⚠ `tools/deck_rails_blend.py` **invented**: `FASCIA_PROBE_M` (0.5 .. 3.0 m beyond a network connector's deck rail, where
+  a lower carriageway's pavement is sought), `FASCIA_MIN_M` 0.3 (a pavement less than this under the rail's foot is the
+  deck's own), `FASCIA_MAX_M` 3 (the deepest edge girder face carried down, ~ a box girder's span / 18). Lake Murray's
+  `build_guardrails` and the line's rails unchanged.
+
 ## 2026-11-05 — the SD freeway port, phase 2a round 2: measured carriageway edges, the median barrier (ledger 0080; no threshold moved, no bypass)
 
 No gate threshold, wiring or bypass changed. New numbers the port's DATA carries (none is a gate's):

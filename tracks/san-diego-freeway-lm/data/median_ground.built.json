@@ -1,0 +1,29 @@
+{
+ "tool": "tools/median_ground_blend.py",
+ "ledger": "0080 2a round 4",
+ "barrier_samples": 6591,
+ "stepped_barrier_samples": 2467,
+ "lidar_step_sections": 0,
+ "lidar_steps_skipped": {
+  "line deck": 53,
+  "barrier run": 22
+ },
+ "retaining_face": {
+  "mesh": null,
+  "faces": 0
+ },
+ "step_m_max": 4.59,
+ "bisect_vertices": 22711,
+ "vertices_lowered": 5849,
+ "lowered_max_m": 3.58,
+ "params": {
+  "STEP_MIN_M": 0.3,
+  "REACH_M": 2.5,
+  "SAMPLE_M": 1.0,
+  "GROUND_CLEAR": 0.02,
+  "FOOT_STEP_M": 0.05,
+  "NO_BAR_M": 1.0,
+  "DECK_PAD_M": 25.0,
+  "BURY_M": 0.3
+ }
+}

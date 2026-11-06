@@ -8,17 +8,17 @@
  "double_sheet_cells": 0,
  "seating": {
   "walls": {
-   "objects": 0,
+   "objects": 1407,
    "no_ground_pct": 0.0,
-   "median_m": 0.0,
-   "p95_m": 0.0,
+   "median_m": -0.378,
+   "p95_m": -0.1,
    "hovering": 0
   }
  },
  "road_over_ground": {
-  "over": 1,
-  "samples": 2690,
-  "p95_m": 0.021,
-  "max_m": 0.075
+  "over": 131,
+  "samples": 6135,
+  "p95_m": 0.02,
+  "max_m": 4.263
  }
 }

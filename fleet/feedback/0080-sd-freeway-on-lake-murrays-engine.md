@@ -654,6 +654,11 @@ Supersedes 0080-5 (which matched ws19 on the PC). No lidar or NAIP is needed: ev
 - **Mac verdict: MATCHED.** ws27's 1GRASS_2 is 60,496 / 119,190 (the PC's +1 vertex, +2 triangles = the 56 B); every
   other mesh, the textures and the materials match exactly: one ground edge split, terrain noise (as 4k's Lake Murray
   control). c3c988b9 (a8534007 equivalent) is offered to Kevin in place of c42b91ab; install only on his word.
+- **INSTALLED on Kevin's word (2026-11-05, "All six, freeway 2a"**, asked with westbound's 24 median-side drops and phase
+  1 as the fully clean choice said plainly): c3c988b9 from a fresh real workshop D:/k10-scratch/san_diego_freeway_lm, ENG
+  eng_fwlm; every gate green as fwlm_2a5, SHIP OK, no force; `san_diego_freeway_lm` ("doooom San Diego — Freeway Free
+  Roam (LM engine)" 0.1.0, nothing there before), kn5 42,787,027 B, kn5_equiv-equivalent to fwlm_2a5's. Records with
+  this note (taken onto the branch head: nothing under tracks/san-diego-freeway-lm differs from c3c988b9). Not driven yet.
 
 ## PC runbook 0080-5: rehearse 2a (I 8 both ways), no install
 

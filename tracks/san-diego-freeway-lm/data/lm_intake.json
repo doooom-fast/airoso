@@ -1,12 +1,12 @@
 {
  "source_track": "san-diego-freeway",
  "points": 2132,
- "lap_m": 10635.9,
+ "lap_m": 10643.6,
  "closed": false,
  "widths_m": [
-  7.16,
-  17.41,
-  21.8
+  10.51,
+  20.49,
+  27.22
  ],
  "bridges_levelled": [
   [
@@ -34,27 +34,79 @@
    120.1
   ]
  ],
+ "line_decks_lidar": {
+  "table": "deck_profiles.lidar.json",
+  "match_m": 4.0,
+  "decks": [
+   {
+    "center_m": 1282.8,
+    "len_m": 185.2,
+    "points": 37,
+    "read": 20,
+    "measured_minus_levelled_m": 0.48
+   },
+   {
+    "center_m": 3222.7,
+    "len_m": 480.4,
+    "points": 96,
+    "read": 47,
+    "measured_minus_levelled_m": 2.23
+   },
+   {
+    "center_m": 3665.6,
+    "len_m": 135.2,
+    "points": 27,
+    "read": 8,
+    "measured_minus_levelled_m": 0.1
+   },
+   {
+    "center_m": 6654.0,
+    "len_m": 145.2,
+    "points": 29,
+    "read": 9,
+    "measured_minus_levelled_m": 0.7
+   },
+   {
+    "center_m": 6969.5,
+    "len_m": 170.3,
+    "points": 34,
+    "read": 17,
+    "measured_minus_levelled_m": 0.43
+   },
+   {
+    "center_m": 7189.9,
+    "len_m": 120.1,
+    "points": 24,
+    "read": 10,
+    "measured_minus_levelled_m": 0.37
+   }
+  ],
+  "points_read": 111,
+  "points_between": 18,
+  "points_levelled": 118,
+  "measured_minus_levelled_median_m": 0.61
+ },
  "max_grade_pct": null,
  "measured_max_grade_pct": 5.25,
- "y_changed_points": 298,
- "y_change_max_m": 9.059,
- "connectors": false,
+ "y_changed_points": 296,
+ "y_change_max_m": 11.512,
+ "connectors": true,
  "bespoke_files": [],
  "crossfall": null,
  "profile": null,
  "width_taper": {
   "rate_m_per_m": 0.1,
-  "points_widened": 44,
-  "max_widening_m": 6.76
+  "points_widened": 9,
+  "max_widening_m": 0.5
  },
  "resample": null,
  "edge_on_wall": null,
  "corner_arcs": null,
  "carried": [],
- "grid_upsample": 1,
+ "grid_upsample": 2,
  "md5": {
-  "source_centerline": "482576032d5ac9ec4381d9b15d323554",
-  "heightfield.npy": "b89dd89dae27f589c4e43a7c6f4f642c",
-  "centerline.local.json": "9019d3cf1d5c9139769e0e1eeec20712"
+  "source_centerline": "2e1e7fe224922a3f42a2776d36f5e2a6",
+  "heightfield.npy": "62b525577186d85c3e143ce56fc86492",
+  "centerline.local.json": "4e111a767c77fb0554a49bf62fad93b1"
  }
 }

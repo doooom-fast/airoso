@@ -23,6 +23,11 @@ THE DECLARATION (track.config.json ``route.draft_pads``, a list; each entry):
                 brightness; the deck from the draft's own 3DEP ground (data/ground.local.json) -- no aerial height
   half_m        the measurement window round the node (default 45)
   edge          "shoulder" (the default: the deck meets the ground at its outline) -- no curb, no sidewalk
+  cut_reach     (optional) "arm": each lap cut drawn across the lap's own arm only, as far as the measured asphalt runs
+                on along it (draft_pads.arm_reach), its ends recorded (cut_ends_en, cut_reach_m) for the author; absent =
+                +-CUT_HALF_M (ledger 0079 round O: 48th_colorado's in-cut ran over the median into grid_primary_52)
+  deck_beyond   (optional) "class2": a deck node with too few road points also gets the plane through all the class-2
+                points round it, in its own grid (deck_class2), for tools/lm_pads_blend.py (ledger 0079 round O)
 
 WHAT IT MEASURES:
   * the asphalt mask: intensity / brightness interpolated on a 0.25 m grid (the mean within 0.6 m), thresholded midway
@@ -202,6 +207,17 @@ def main(argv=None):
     # a sealed cut along its declared segment. A barrier, not a half-plane: an infinite line would clip the other arm
     # (C18's third-band seal crossed 19th St west).
     cuts = [dp.lap_cut(loc["points_xyz_m"], k, node) for k in decl["cuts"]]
+    # CUT REACH "arm" (opt-in per pad, ledger 0079 round O; draft_pads.arm_reach): each lap cut across the lap's own arm
+    # only, as far as the measured asphalt (or the lap's ribbon) runs on along it; absent = +-CUT_HALF_M, as before
+    if decl.get("cut_reach") == "arm":
+        paved_g = mask | ribbon
+
+        def paved(x, y):
+            i, j = int(math.floor((x - (cE - half)) / GRID_M)), int(math.floor(((cN + half) - y) / GRID_M))
+            return 0 <= i < n and 0 <= j < n and bool(paved_g[j, i])
+        cuts = [dp.arm_reach(c, paved) for c in cuts]
+    elif decl.get("cut_reach") is not None:
+        raise SystemExit(f"draft_pad_outline {pid}: cut_reach {decl['cut_reach']!r}: only \"arm\" is known")
     sealed = [dp.sealed_cut(s, (cE, cN)) for s in decl.get("sealed") or []]
     keep = mask.copy()
     box = decl.get("box")
@@ -232,13 +248,28 @@ def main(argv=None):
     by0, by1 = min(p[1] for p in ring) - 2.0, max(p[1] for p in ring) + 2.0
     nx, ny = int(math.ceil((bx1 - bx0) / DECK_CELL_M)) + 1, int(math.ceil((by1 - by0) / DECK_CELL_M)) + 1
     deck = []
+    # DECK BEYOND "class2" (opt-in per pad, ledger 0079 round O: 48th_colorado): a node with too few ROAD points also
+    # gets the plane through ALL the class-2 ground points round it, in a grid of its own (deck_class2), for the author
+    # (tools/lm_pads_blend.py: inside the outline it replaces the road plane extrapolated up to 8 m; outside, it is held
+    # under the nearest road node). Absent = the road deck alone, as before
+    beyond = decl.get("deck_beyond")
+    if beyond not in (None, "class2"):
+        raise SystemExit(f"draft_pad_outline {pid}: deck_beyond {beyond!r}: only \"class2\" is known")
+    deck2, n2 = [], 0
     for j in range(ny):
-        row = []
+        row, row2 = [], []
         for i in range(nx):
             x, y = bx0 + i * DECK_CELL_M, by0 + j * DECK_CELL_M
-            ids = [k for k in tree.query_ball_point((x, y), DECK_R_M) if I[k] < thr]   # the ROAD's points only:
+            near = tree.query_ball_point((x, y), DECK_R_M)
+            ids = [k for k in near if I[k] < thr]                                        # the ROAD's points only:
             row.append(dp.plane_height([(E[k] - x, N[k] - y, zl[k]) for k in ids]))      # never the verge's fall
+            v2 = None
+            if beyond == "class2" and row[-1] is None:
+                v2 = dp.plane_height([(E[k] - x, N[k] - y, zl[k]) for k in near])
+                n2 += v2 is not None
+            row2.append(None if v2 is None else round(v2, 3))
         deck.append(row)
+        deck2.append(row2)
     rec = {
         "id": pid, "node": node, "cuts": decl["cuts"], "sealed": decl.get("sealed") or [],
         "outline_en": [[round(x, 3), round(y, 3)] for x, y in ring],
@@ -246,7 +277,13 @@ def main(argv=None):
         "deck": {"e0": round(bx0, 3), "n0": round(by0, 3), "cell_m": DECK_CELL_M, "nx": nx, "ny": ny,
                  "y": [[None if v is None else round(v, 3) for v in r] for r in deck]},
         "ribbon_union_m2": round(ribbon_only * GRID_M * GRID_M, 1),
-        "source": {"kind": "lidar_ept", "ept": src["ept"], "ground_points": int(len(E)),
+        **({"cut_reach": "arm", "cut_ends_en": {str(c["vertex"]): [[round(v, 3) for v in c["a"]], [round(v, 3) for v in c["b"]]]
+                                                for c in cuts},
+            "cut_reach_m": {str(c["vertex"]): c["reach_m"] for c in cuts}} if decl.get("cut_reach") == "arm" else {}),
+        **({"deck_class2": {"e0": round(bx0, 3), "n0": round(by0, 3), "cell_m": DECK_CELL_M, "nx": nx, "ny": ny,
+                            "nodes": n2, "y": deck2,
+                            "_doc": "deck_beyond class2: the plane through all class-2 points, where the road deck has none"}}
+           if beyond == "class2" else {}),        "source": {"kind": "lidar_ept", "ept": src["ept"], "ground_points": int(len(E)),
                    "density_per_m2": round(len(E) / (2 * half) ** 2, 2), "intensity_road_median": round(on),
                    "intensity_verge_median": round(off), "threshold": round(thr), "window_half_m": half,
                    "method": "tools/draft_pad_outline.py (intensity edge, class-2 deck)"},

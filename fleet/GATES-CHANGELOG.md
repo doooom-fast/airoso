@@ -14,6 +14,36 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
+## 2026-11-06 (round O) — Sand Creek: 48th_colorado re-measured and re-declared; three opt-in pad keys; NOT unparked (ledger 0079 round O)
+
+**Not live.** 48th_colorado stays in the candidate's `lm_pads.parked` (its round-O declaration kept there); the live config
+is 0.2.5. No gate threshold, floor, reference or bypass moved; `route.verify_mouths_allowed` keeps its three rows.
+
+- **The box** (measured, the declaration): pad_boxes' north-east diagonal replaced by a cut across grid_unclassified_67 at
+  z −278 (x −1487..−1470) and an east side at x −1470.0 to the old corner (−1469.58, −308.64). ⚠ [authored from
+  measurement] z −278 = 6 m past 67's curb returns (pad_boxes' own ARM_PAST_M rule); the returns at z −284..−292 and 67's
+  asphalt x −1484.5..−1477 measured on the cached lidar (intensity under the pad's threshold 490) and checked on NAIP 2023
+  in the track frame (west edge −1485.5 ± 0.5; the east edge under the building's shadow). Re-measured with
+  tools/draft_pad_outline.py on the cached lidar: 336 points, 2,369 m² (was 299 / 2,247).
+- **`cut_reach: "arm"`** (per pad; tools/draft_pads.arm_reach, draft_pad_outline, lm_pads_blend reads the recorded
+  `cut_ends_en`; only 48th_colorado declares it — `test_round_o_cut_reach_arm_is_opt_in`). ⚠ `ARM_GAP_M` 1.0 m and ⚠
+  `ARM_MARGIN_M` 1.0 m [invented]: a lap cut drawn across the lap's own arm only. The default ±30 m in-cut v3193 ran over
+  the median into grid_primary_52's carriageway; the outline met 52's arm cut for 1.5 m and lm_pads stopped ("the
+  outline never runs along it", build ro1). Measured reaches: v3193 11.75 / 16.5 m, v3216 11.75 / 15.0 m.
+- **`seam: "row"` beside street arms** (draft_pads.seam_offset_multi now honours the Lariat's existing switchback rule;
+  no other pad combines arms and seam row, so every other build is unchanged): behind the in-cut's line every deck node
+  took that row's whole departure (+0.21 m): ro2 verify_pads P3 21 mm at 52's seam. ro3: 52's seam 0.5 mm.
+- **`deck_beyond: "class2"`** (per pad; draft_pad_outline writes `deck_class2`, the plane through all class-2 points where
+  road points are too few; draft_pads.deck_filled takes it first inside the outline; lm_pads deck_z outside it before the
+  lap's removed ribbon, **held under the nearest road node** [authored rule, no number]). Inside: the S's inside lane
+  overhangs the asphalt onto a flush strip, where the 8 m road-plane fill stood 0.29 m across 2.2 m (lidar 0.05 m):
+  verify_fold_fans (2) DT 0.068–0.129 m (ro3). The fill's worst move fell 0.49 → 0.094 m. Tried and dropped: class-2
+  unheld (ro4: 0.31 m over 67's row at its east end, P3), and the road plane carried outside the outline (offline: 0.30 m
+  over the lidar at 49's crosswalk).
+- **lm_pads `seam_base`** (only with deck_beyond): each seam's departure measured against the surface the deck stands on,
+  not the nearest road node (ro5: 49's seam 10.8 mm, P4 grass 6–16 mm beside it). Written, unit-tested only: **build ro6
+  was stopped at the coordinator's wrap-up and not judged.**
+
 ## 2026-11-05 (round N) — Sand Creek toward 0.2.6: verify_fold_fans learns the weld's chord mends; fork 94/95's measured paint (ledger 0079 round N)
 
 **Not live.** The candidate in `tracks/sand-creek-lm/source/round_k/` does not take the new key (below); the live config

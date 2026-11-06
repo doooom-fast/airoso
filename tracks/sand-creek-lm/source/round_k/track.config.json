@@ -2074,6 +2074,14 @@
             -308.64
           ],
           [
+            -1470.0,
+            -278.0
+          ],
+          [
+            -1487.0,
+            -278.0
+          ],
+          [
             -1499.67,
             -261.39
           ],
@@ -2133,8 +2141,15 @@
           "ept": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept.json"
         },
         "edge": "shoulder",
+        "cut_reach": "arm",
+        "_cut_reach_doc": "ledger 0079 round O (tools/draft_pads.arm_reach, opt-in per pad): each lap cut drawn across the lap's own arm only, as far as the measured asphalt runs on along it (a non-asphalt run of ARM_GAP_M 1.0 m ends it, ARM_MARGIN_M 1.0 m past; both invented). The default +-30 m in-cut at v3193 ran on over the dirt median into grid_primary_52's carriageway: the measured outline stopped on that line, met 52's arm cut for 1.5 m, and lm_pads' splice of the v3193 row dropped those points (build ro1: 'the outline never runs along it')",
+        "seam": "row",
+        "_seam_doc": "ledger 0079 round O: the lap rows' seam fades run from each row itself past its ends (the Lariat's switchback rule, ledger 0078 round 13; draft_pads.seam_offset_multi now honours it beside street arms). The in-cut v3193's row line runs on behind grid_primary_52's arm and, with the default, every deck node behind it took the row's whole departure (+0.21 m): build ro2 verify_pads P3 21 mm at 52's seam, P4 grass beside it",
+        "deck_beyond": "class2",
+        "_deck_beyond_doc": "ledger 0079 round O (tools/draft_pad_outline.py writes deck_class2: the plane through ALL class-2 lidar points round a node where the road-intensity points are too few; tools/draft_pads.deck_filled, tools/lm_pads_blend.py deck_z). Inside the measured outline such a node takes the class-2 plane before the road-plane fill: the outline holds the lap's ribbon union, and the S's inside lane (offsets -14..-16 m, rows 3200-3201) lies on the flush strip west of grid_unclassified_67 with no road point, where the road plane carried up to 8 m in stood 0.29 m across 2.2 m (the lidar: 0.05 m): verify_fold_fans (2) DT 0.068-0.129 m (build ro3, probe ro3_ff). Outside it (an arm row's or the lane's overhang) the class-2 plane comes before the lap's removed ribbon, held under the nearest road node: at the concrete crosswalk on grid_primary_49's arm (no road node within 3 m) the nearest node stood a vertex 0.16 m over the lidar, 12 mm of grass over the deck (ro3, verify_pads P4); unheld, it climbed the ground's rise to the building at grid_unclassified_67's east row end, 0.31 m over the street's row (build ro4, verify_pads P3). Tried and dropped: the road plane carried outside the outline too (0.30 m over the lidar at the crosswalk, offline)",
         "_by": "tools/pad_boxes.py from lm_pads.plan 48th_colorado: node v3205 nearest [-1511.1, -297.4], cuts 30 m of arc either side, box reach 26.4 m (half width 16.4 + curb return 4 + 6.0) [rule, invented pads], 3 street arm(s)",
-        "_parked_why": "ledger 0079 round D: built in 0.2.2's tries with drive_test green (0 soft, 0 severe) but verify_pads P4 red: grass 8-10 mm over the deck 0.19-0.24 m inside its south-east edge at (-1503.9, -317.7) and (-1500.4, -316.7), where the prep's contact band takes the lap ribbon's height across the cut corner; also 5 of the build's 18 kinks are its seam (the lap's flat row against the lidar's crowned Colorado Blvd, 0.20 m at the left edge) and the outline misses the east half of the crossroads (the box ends there). Parked until the PC re-measures it with the box over the whole crossroads and the deck past both cuts (the Mac re-declares its box first; a later runbook)"
+        "_box_doc": "ledger 0079 round O (unparked): tools/pad_boxes.py's box, its north-east diagonal (-1469.58, -308.64) -> (-1499.67, -261.39) replaced, because it cut the crossroads' east half (grid_unclassified_67's mouth: the lidar's road-intensity asphalt at x -1485..-1477 for z -284..-292 lay outside it). Measured on the cached lidar (scratchpad ro/edges67.py, ro/prof67.py: intensity under the pad's own threshold 490, class-2 heights) and NAIP 2023 in the track frame: 67's asphalt runs x -1484.5..-1477 (west edge on NAIP -1485.5 +- 0.5, a dark seam between the dirt strip and the asphalt; the east edge is under the building's shadow on NAIP, the lidar's -1477 where the ground rises 0.9 m to the building) and is its own width north of z -284, where its curb returns into the crossroads start. New edges: the cut across 67 at z -278 (6 m past the returns: pad_boxes' ARM_PAST_M rule) from x -1487 to -1470, and the east side x -1470.0 at z -278 to the old corner (-1469.58, -308.64), past the measured asphalt edge (x -1476.5 +- 0.5 at z -296..-306: the lot beyond reads concrete-bright), so the measurement, not the box, ends the deck there. grid_unclassified_67 becomes a street arm (route.street_junctions.pad_arms cuts it at the box edge)",
+        "_parked_why": "ledger 0079 round O: re-measured and re-declared (box over the crossroads' east half, cut_reach arm, seam row, deck_beyond class2), built in ro2-ro5; NOT unparked: ro5 verify_pads P3 10.8 mm at grid_primary_49's arm seam and P4 grass 6-16 mm beside it (the arm's fade measured against the nearest road node, not the class-2 surface the deck stands on; fixed in tools/lm_pads_blend.py seam_base, build ro6 NOT run), and the street drive_test's kinks 1.24 -> 1.97 /km (7 at s 9576-9578, offset +6.0, the in-cut v3193's seam). Unpark when a build passes verify_pads x4 and keeps the street at 0.2.5 (ledger 0079 'Owed (after round O)')"
       }
     ],
     "close_arms": false,

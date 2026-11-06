@@ -443,10 +443,20 @@ def build(proj, cfg, decls):
         # Lariat's C14 / C15 unchanged): draft_pads.deck_filled
         deck_cfg = (cfg.get("lm_pads") or {}).get("deck") or {}
         deck_rep = None
+        deck2 = None
         if deck_cfg.get("fill") == "lidar":
             rec = dict(rec)
+            # DECK BEYOND "class2" (opt-in per pad, ledger 0079 round O: 48th_colorado; the pad file's deck_class2):
+            # inside the outline a node with no road point takes the class-2 ground's plane before the road plane fill
+            # (draft_pads.deck_filled); outside it, deck_z below. Absent = as before
+            if d.get("deck_beyond") not in (None, "class2"):
+                raise SystemExit(f"[lm-pads] FATAL: {pid}: deck_beyond {d['deck_beyond']!r}: only \"class2\" is known")
+            if d.get("deck_beyond") == "class2" and not rec.get("deck_class2"):
+                raise SystemExit(f"[lm-pads] FATAL: {pid}: deck_beyond class2 but {pid}.json has no deck_class2 (measure again)")
+            deck2 = rec.get("deck_class2") if d.get("deck_beyond") == "class2" else None
             rec["deck"], deck_rep = dp.deck_filled(rec["deck"], [tuple(q) for q in rec["outline_en"]],
-                                                   float(deck_cfg.get("datum_m") or 0.0), deck_cfg.get("smooth_m"))
+                                                   float(deck_cfg.get("datum_m") or 0.0), deck_cfg.get("smooth_m"),
+                                                   class2=deck2)
             _log(f"{pid}: deck {deck_rep}")
         # 1. the rows
         cuts_rows, seams = [], []
@@ -455,6 +465,19 @@ def build(proj, cfg, decls):
             row = row_verts(road, lay, k)
             cr = dp.row_cut(row, P[d["node"]])
             cr["vertex"] = k
+            ends = (rec.get("cut_ends_en") or {}).get(str(k))
+            if ends:
+                # CUT REACH "arm" (ledger 0079 round O; the measurement's own record, written by draft_pad_outline only
+                # for a pad declared cut_reach "arm"): the cut and its row line reach as far as the measurement drew
+                # them across the lap's own arm, never past the row's own ends; absent = +-CUT_HALF_M, as before
+                c = dict(c, a=tuple(ends[0]), b=tuple(ends[1]))
+                (rx0, ry0), (rx1, ry1) = (row[0][0], row[0][1]), (row[-1][0], row[-1][1])
+                rl_ = math.hypot(rx1 - rx0, ry1 - ry0) or 1.0
+                ux_, uy_ = (rx1 - rx0) / rl_, (ry1 - ry0) / rl_
+                mx_, my_ = (rx0 + rx1) / 2.0, (ry0 + ry1) / 2.0
+                ts = [(q[0] - mx_) * ux_ + (q[1] - my_) * uy_ for q in ends]
+                t0, t1 = min(min(ts), -rl_ / 2.0), max(max(ts), rl_ / 2.0)
+                cr["a"], cr["b"] = (mx_ + ux_ * t0, my_ + uy_ * t0), (mx_ + ux_ * t1, my_ + uy_ * t1)
             cuts_rows.append((c, cr, row))
             seams += row
         cut_lines = [cr for _, cr, _ in cuts_rows]
@@ -616,7 +639,24 @@ def build(proj, cfg, decls):
         if abs(tri_area - ring_a) > 0.002 * ring_a:
             raise SystemExit(f"[lm-pads] FATAL: {pid}: the deck covers {tri_area:.1f} m2 of a {ring_a:.1f} m2 outline")
         seam_xy = {(round(s[0], 3), round(s[1], 3)): s[2] for s in seams}
-        prof = dp.seam_profile([(cr, row) for _, cr, row in cuts_rows], lambda x_, y_: dp.deck_near(rec["deck"], x_, y_))
+
+        def seam_base(x_, y_):
+            """the surface a seam's departure is measured against: the nearest road node (as before); with deck_beyond
+            "class2" the surface deck_z stands on there (the road deck, else the class-2 plane held under the nearest
+            road node), so the fade cancels exactly the step it is for (ledger 0079 round O, build ro5: grid_primary_49's
+            row measured against a road node 1.4 m off, 0.20 m over the class-2 surface the deck stood on, 10.7 mm at
+            its seam)"""
+            if deck2 is not None:
+                g = dp.deck_at(rec["deck"], x_, y_)
+                if g is not None:
+                    return g
+                g2 = dp.deck_at(deck2, x_, y_)
+                if g2 is not None:
+                    gn = dp.deck_near(rec["deck"], x_, y_)
+                    g2 += float(deck_cfg.get("datum_m") or 0.0)
+                    return g2 if gn is None else min(g2, gn)
+            return dp.deck_near(rec["deck"], x_, y_)
+        prof = dp.seam_profile([(cr, row) for _, cr, row in cuts_rows], seam_base)
         if d.get("seam") == "row":        # a switchback pad (round 13): each seam fades from its row, not its line
             for s_ in prof:
                 s_["near_row"] = True
@@ -625,7 +665,7 @@ def build(proj, cfg, decls):
             # up to 45 % of the way to the node, as the lap's two cuts are held to 45 % of the way to each other; and never
             # onto the lap's own lane, whose seams the lap's two rows rule (round G build k2: 50th_ash's arm, 8.5 m off the
             # lane, faded over 12 m added 3 kinks to the lap at s 549-552)
-            pa_ = dp.seam_profile([(cr, row)], lambda x_, y_: dp.deck_near(rec["deck"], x_, y_))[0]
+            pa_ = dp.seam_profile([(cr, row)], seam_base)[0]
             need = max(abs(r) for r in pa_["r"]) * math.pi / (2.0 * dp.SEAM_MAX_SLOPE)
             mid_ = ((row[0][0] + row[-1][0]) / 2.0, (row[0][1] + row[-1][1]) / 2.0)
             lane_d = min(math.dist(v[:2], P[k]) - W[k] / 2.0 for v in row for k in range(lo_k, hi_k + 1))
@@ -642,6 +682,18 @@ def build(proj, cfg, decls):
             g = dp.deck_at(rec["deck"], x_, y_)
             if g is not None:
                 return g + s_off(prof, x_, y_)
+            if deck2 is not None:
+                # DECK BEYOND "class2", outside the outline (ledger 0079 round O): the class-2 ground's plane in the lap's
+                # datum, before the lap's removed ribbon, held under the nearest road node (the earth that rises past
+                # the asphalt is not pavement: at grid_unclassified_67's east row end the class-2 ground climbs 0.3 m to
+                # the building, and taken as it stands it stood the deck 0.31 m over the street's row, build ro4). Where
+                # it is lower it is the surface: the concrete crosswalk at grid_primary_49's arm, no road node within 3 m,
+                # where the nearest node stood a vertex 0.16 m over the lidar (build ro3, verify_pads P4)
+                g2 = dp.deck_at(deck2, x_, y_)
+                if g2 is not None:
+                    g2 += float(deck_cfg.get("datum_m") or 0.0)
+                    gn = dp.deck_near(rec["deck"], x_, y_)
+                    return (g2 if gn is None else min(g2, gn)) + s_off(prof, x_, y_)
             if ribbon_bvh is not None:
                 hit = ribbon_bvh.ray_cast(Vector((x_, y_, 1e4)), Vector((0.0, 0.0, -1.0)))
                 if hit[0] is not None:

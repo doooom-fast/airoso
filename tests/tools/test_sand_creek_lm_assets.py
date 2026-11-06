@@ -745,3 +745,65 @@ def test_round_n_paint_is_opt_in():
     ship = json.loads((SC / "source" / "round_k" / "ship.json").read_text(encoding="utf-8"))["steps"]["draft"]
     assert ship.index("paint") == ship.index("islands") + 1
     assert "draft_paint()" in (ROOT / "tools" / "ship_track.sh").read_text(encoding="utf-8")
+
+
+def test_round_o_cut_reach_arm_is_opt_in():
+    """ledger 0079 round O: a lap cut drawn across the lap's own arm only (draft_pads.arm_reach, a pad's cut_reach
+    "arm"), declared by 48th_colorado alone; its measurement records the ends lm_pads reads. Without the key every pad's
+    cut is +-CUT_HALF_M, as before. The walk crosses a gap under ARM_GAP_M and stops at a longer one, ARM_MARGIN_M on"""
+    import draft_pads as dp
+    for t in ("san-diego-lake-murray", "lookout-lariat", "lookout-lariat-lm", "sand-creek-lm"):
+        p = ROOT / "tracks" / t / "track.config.json"
+        if p.exists():
+            assert '"cut_reach"' not in p.read_text(encoding="utf-8"), t
+    sc = json.loads((SC / "source" / "round_k" / "track.config.json").read_text(encoding="utf-8"))
+    # round O ends with 48th_colorado re-declared but still parked (ro5 verify_pads red; the ledger's owed list)
+    decls = sc["lm_pads"]["pads"] + sc["lm_pads"]["parked"]
+    assert [p["id"] for p in decls if p.get("cut_reach")] == ["48th_colorado"]
+    assert "48th_colorado" in [p["id"] for p in sc["lm_pads"]["parked"]]
+    assert [r["piece"] for r in sc["route"]["verify_mouths_allowed"]] == ["grid_primary_52#0", "grid_primary_78#0",
+                                                                          "grid_primary_80#0"]
+    for f in (SC / "source" / "pads").glob("*.json"):
+        rec = json.loads(f.read_text(encoding="utf-8"))
+        assert ("cut_ends_en" in rec) == (f.stem == "48th_colorado"), f.stem
+        assert ("deck_class2" in rec) == (f.stem == "48th_colorado"), f.stem
+    p48 = next(p for p in decls if p["id"] == "48th_colorado")
+    assert (p48["seam"], p48["deck_beyond"]) == ("row", "class2")
+    assert all("deck_beyond" not in p for p in decls if p["id"] != "48th_colorado")
+    # a lap at x = 0 heading +z; asphalt |x| <= 5 with a 0.5 m paint gap at x 2.0..2.5, a 3 m median 5..8, road past it
+    pts = [(0.0, 0.0, float(z)) for z in range(10)]
+    c = dp.lap_cut(pts, 2, 5)
+    assert abs(abs(c["a"][0]) - dp.CUT_HALF_M) < 1e-9
+
+    def paved(x, y):
+        return (abs(x) <= 5.0 and not 2.0 < x < 2.5) or abs(x) >= 8.0
+    r = dp.arm_reach(c, paved)
+    assert r["reach_m"] == [5.0 + dp.ARM_MARGIN_M] * 2
+    assert sorted(round(abs(q[0]), 6) for q in (r["a"], r["b"])) == [6.0, 6.0]
+    assert r["p"] == c["p"] and r["n"] == c["n"] and abs(c["a"][0]) == dp.CUT_HALF_M
+    assert dp.arm_reach(c, lambda x, y: True)["reach_m"] == [dp.CUT_HALF_M, dp.CUT_HALF_M]
+    # seam "row" beside street arms (seam_offset_multi): behind a lap row's line, past its ends, the row's departure no
+    # longer applies in full; without near_row (every pad but 48th_colorado) the reading is as before
+    row = [(-5.0, 2.0, 1.0), (0.0, 2.0, 1.0), (5.0, 2.0, 1.0)]
+    prof = dp.seam_profile([(c, row)], lambda x, y: 0.8)
+    prof[0]["fade"] = 12.0
+    behind_past = (-20.0, -3.0)
+    assert abs(dp.seam_offset_multi(prof, *behind_past) - 0.2) < 1e-9
+    prof[0]["near_row"] = True
+    assert dp.seam_offset_multi(prof, *behind_past) == 0.0
+    assert abs(dp.seam_offset_multi(prof, 0.0, 2.0) - 0.2) < 1e-9
+    assert dp.seam_offset_multi(prof, 0.0, 2.0) == dp.seam_offset(prof, 0.0, 2.0)
+    # deck_beyond "class2": a road-less node inside the ring takes the class-2 plane before the plane fill; without the
+    # grid deck_filled is as before; outside the ring nothing changes here
+    Y = [[1.0] * 5 for _ in range(5)]
+    Y[2][2] = None
+    Y[0][4] = None
+    deck = {"e0": 0.0, "n0": 0.0, "cell_m": 0.5, "nx": 5, "ny": 5, "y": Y}
+    ring = [(0.6, 0.6), (1.4, 0.6), (1.4, 1.4), (0.6, 1.4)]
+    c2 = {"y": [[None] * 5 for _ in range(5)]}
+    c2["y"][2][2], c2["y"][0][4] = 0.7, 0.7
+    old, rep_old = dp.deck_filled(deck, ring, 0.1)
+    new, rep_new = dp.deck_filled(deck, ring, 0.1, class2=c2)
+    assert "class2_nodes" not in rep_old and rep_new["class2_nodes"] == 1
+    assert abs(new["y"][2][2] - 0.8) < 1e-9 and new["y"][0][4] is None and old["y"][0][4] is None
+    assert dp.deck_filled(deck, ring, 0.1, class2=None) == (old, rep_old)

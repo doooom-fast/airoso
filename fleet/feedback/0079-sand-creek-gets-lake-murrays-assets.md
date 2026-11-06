@@ -1601,7 +1601,77 @@ verify_kn5's closure row, as round M did, and resumed `--from road_obj`. Logs: `
 Tests (`tests/run_tests.py`, venv python on PATH): 1,329 pass, the known 8 fail (`test_draft_equiv` x5,
 `test_registry_moves`, `test_bench_pad` x2). New: `test_round_n_fold_chords_are_opt_in`, `test_round_n_paint_is_opt_in`.
 
-## Owed (2026-11-05, after round N; start here)
+## Round O (Mac): 48th_colorado re-measured over the whole crossroads; the S's surface fault gone on its deck; NOT unparked (stopped at the coordinator's wrap-up)
+
+Builds from source copy `sclm_work/ro_src` (this head + the candidate swapped in), empty workshops `ro1`..`ro5`
+(`ro6` stopped before judging). Probes: `sclm_work/ro3_ff`, `ro5_ff` (data copies, `fold_fans.chords` +
+`fold_fan_severe` set). Every number: GATES-CHANGELOG 2026-11-06 (round O). The live config is still 0.2.5.
+
+### Item 1 (unpark 48th_colorado): re-measured, re-declared, four builds; still parked
+- **Box over the crossroads' east half (DONE, committed).** The diagonal cut off grid_unclassified_67's mouth. New
+  edges: across 67 at z −278 and an east side at x −1470 (measured on the cached lidar, checked on NAIP in the track
+  frame). 67 becomes a street arm (trim cut it at the box: ro1). Outline 336 points, 2,369 m² (was 299 / 2,247).
+- **Three causes found and fixed opt-in for this pad (committed):**
+  - the ±30 m in-cut v3193 ran over the median into grid_primary_52 and cut its arm off the pad (`cut_reach: "arm"`);
+  - the in-cut's seam fade applied in full behind its own line (+0.21 m at 52's seam: `seam: "row"` beside arms);
+  - road-less nodes took an 8 m road-plane extrapolation or the nearest road node (`deck_beyond: "class2"`).
+- **Round D's P4 cause, as measured now:** the grass near the south-east edge sat behind the in-cut's infinite line,
+  where the in-cut row's departure applied in full (ro2: 21 mm step and grass at 52's seam). It is gone with the
+  seam fix (ro3: 52's seam 0.5 mm, no grass there).
+- **Why still parked (ro5):** verify_pads P3 10.8 mm at grid_primary_49's arm seam and P4 grass 6–16 mm beside it
+  (−1522, −315.7). The cause: the arm's fade was measured against the nearest road node, while the deck stands on the
+  class-2 surface. `tools/lm_pads_blend.py` `seam_base` fixes it (committed, unit-tested), but **ro6 was never judged**.
+  Also the street drive_test's kinks rose 1.24 → 1.97 /km: 7 new at s 9576-9578, offset +6.0, the in-cut v3193's seam.
+  verify_mouths and the race gates were not reached past verify_pads.
+- The candidate keeps 48th_colorado in `lm_pads.parked` (round O's declaration, `_parked_why` updated) and keeps
+  grid_primary_52's allowed row.
+- Not committed: signs.json's SC-48S skip. ro2 needed it, because with the deck built the rev plate stood in the middle
+  of Colorado Blvd south, between 49 and 52's ribbons. That fails verify_signs c_built_edge_clearance and then (l). The
+  fix is a corner-level skip, with both reasons, as in `sclm_work/ro_src`'s signs.json.
+
+### The S's surface (round N's 0.098 m over 0.67 m): gone on the measured deck
+- ro5_ff (keys set), chord 3202..3207, both layouts: 0 paths with a step; DT max 0.025 (race) / 0.028 m (street);
+  0 steep road triangles. The ribbon's chord is no longer the surface there.
+- **verify_fold_fans with `fold_fans.chords` still FAILS the S, on (7):** 14 race-wall cells within 25 m stand outside
+  ±0.28 of no_route's centre-line reference (worst −0.431 m at (−1491.2, −282.8)). The K-rail strips now stand on
+  the measured deck, whose inside edge lies ~0.4 m below the lap's centre line. (7) still reads the centre-line
+  reference, while no_route has read the local deck since round M. Changing (7)'s reference would be a gate change.
+
+### Item 2: NOT adopted
+- `fold_fans.chords` and `fold_fan_severe` are not in the candidate: the pad is parked, and the S fails (7).
+- The probe count (ro5_ff, race): severe 22, all named:
+  - 10 deferred, all 10 on a judged path ((8) clean);
+  - 14 unjudged (the turning centres and v779 / s 413-418, as round N);
+  - dense hops 8.
+- rn1 without keys: severe 40.
+
+### Item 3 (Quebec's outer edges): not reached
+
+### Gates (the candidate as committed = rn1's inputs but for 48th_colorado's re-measured file, which a parked pad does not read)
+No build of the committed candidate this round; it differs from rn1 only in parked data. rn1's table stands. Builds
+with the pad (not shipped): ro5 drive_test street PASS (kinks 1.97 /km, severe 0) / race PASS (gated rows); audit, kn5,
+kn5_ground_check PASS; verify_pads FAIL (48th: P3 10.8 mm, P4 2); later gates not run.
+
+### Lake Murray unchanged (round O)
+- `git diff origin/claude/sand-creek-lm-assets -- tracks/san-diego-lake-murray scripts/`: empty this round.
+- Trim A/B (`sclm_work/lmtrim_ro`): byte-identical (`664da93b…`, `b73b70f4…`, `f0c97952…`).
+- The three pad keys are read only from a pad declaration / pad file that names them (48th_colorado alone).
+- Tests: 1,330 pass, the known 8 fail. New: `test_round_o_cut_reach_arm_is_opt_in`.
+
+## Owed (2026-11-06, after round O; start here)
+1. **The closure:** Kevin's call (unchanged).
+2. **Unpark 48th_colorado.** Move its declaration from `lm_pads.parked` to `lm_pads.pads`, drop grid_primary_52's
+   allowed row, and add signs.json's SC-48S corner skip (`sclm_work/ro_src/tracks/sand-creek-lm/signs.json`). Then
+   build. ro5's red should be gone with `seam_base`; check with `scratchpad/ro/probe_vp.py <ws>`. Then:
+   - the 7 street kinks at s 9576-9578, offset +6.0 (the in-cut v3193's flat row against the crowned deck; round D saw
+     the same 5);
+   - verify_mouths, the race gates, signs.
+3. **verify_fold_fans (7) at the S**: the walls stand on the real deck 0.43 m under the centre-line reference. Either
+   (7) reads no_route's deck frame (a gate reference change: Kevin's / the coordinator's call), or the S keeps no
+   fold_fan_severe. The surface checks (1)-(5) pass there on the deck.
+4. Quebec's outer edges (round J's item), fork 94/95's chevrons (needs a better source), then 0.2.6.
+
+## Owed (2026-11-05, after round N; kept for the record)
 
 1. **The closure:** Kevin's call, still pending. It is the only verify_kn5 red.
 2. **The S at 48th / Colorado (parked pad).** verify_fold_fans with `fold_fans.chords` fails it on the lap ribbon:

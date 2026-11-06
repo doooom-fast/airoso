@@ -1184,6 +1184,109 @@ real". Workshops `sclm_work/rk1` .. (EMPTY, fresh names). Every authored number:
   write time, the same bytes otherwise); loop.blend 31 objects, 0 differ; the prepped blend 54 objects, 0 differ.
   **The merge changes no Sand Creek build output.**
 
+### Status: NOT 0.2.6. The race layout is red; the live config stays 0.2.5
+
+The candidate config and ship.json are parked at `tracks/sand-creek-lm/source/round_k/` (version 0.2.6, every key below);
+the live `track.config.json` / `ship.json` are 0.2.5's, so the branch builds 0.2.5 exactly as before (every tool change is
+opt-in). Built from an empty workshop `sclm_work/rk3` (resumed with `--from` after each fix; logs `rk3.a..k.log`, `rk3.log`).
+
+### 1. Race closure: built through the author phase; red at verify_kn5 and the race gates
+
+- What stands: Lake Murray's race furniture on Sand Creek's race layout (`race_furniture` true, token `race`):
+  - the curb strips (Kevin's 4.04 m K-rail, 0.82 m in from the lane edge) along both edges of the whole lap, 19.4 km in
+    22 objects, sealing the 27 mainline mouths and the three pads' arms;
+  - every ring seated on a deck (`race.seat_on_pads`: every ROAD face + the pads' decks): 6,563 hit, 0 interpolated
+    (before: 66 interpolated at the 56th slip's flared mouth);
+  - the race corridor is the whole street (`race.corridor.whole_lap`): no closure line, no median on the lap, so no K-rail
+    at a median nose. The race grid is centred (offset 0): at +1.9 m it stood 0.92 m into the strip on 46th's 7.5 m.
+  - Passing: PLANNED no_route (0 leaks), verify_race OK, check_race_kn5 common OK (7.8 MB), audit --layout race CLEAN,
+    kn5_ground_check race PASS.
+- Red:
+  - **scripts/ac/verify_kn5.py** (frozen, Lake Murray's rule): the common race kn5 must hold 1KERB_RACE_* kerbs and the
+    closure kn5 a 1WALL_RACE_CLOSE_RACE_* wall. A whole-street race has no closure line; its closure kn5 holds only its own
+    W1-6 plate (SC-48C). Either verify_kn5 learns `params.whole_lap` (a scripts/ change: the coordinator's / Kevin's call),
+    or Kevin names where Sand Creek's race closes part of the street (Lake Murray's 11.36 m lane on the 16 m 4-lane
+    Colorado / Quebec would be one; his brief so far is the whole street, ledger 0063).
+  - **no_route --layout race BUILT: FAIL**, one door at v134-v136 L (the colorado_50th pad's left side: the strip leaves a
+    gap where the pad deck runs past the lap's edge), through which 13 of the 27 sealed mouths are reached.
+  - **drive_test --layout race: FAIL**: obstructed stations 9 (the right strip at 50th/Ash s 550-554, the left at
+    50th/Dahlia s 1223: on the pads the race lane's inside path crosses the strip, which follows the lap's nominal edge, not
+    the pad's); severe steps 37 (s 9584-9607, the 48th/Colorado S, the paths at +-14.48 m on the 32.9 m flare; and s 421).
+- Tools (all opt-in; Lake Murray A/B below): barrier_bands (`race.edge_fold_chord`, `race.spawn_gate_layouts`,
+  `race.corridor.whole_lap`), race_furniture (the chord fallback, CHORD_ALIGN_COS; whole_lap), author_race_furniture_blend
+  (`race.seat_on_pads`), check_race_kn5 / split_exports_blend (a whole-lap closure of sign plates), signs_mesh (an empty
+  RACE_CLOSE_ token reads the common strips), plot_signs (lm_pads' outline_en).
+
+### 2. Race kerbs: built with the circuit kerb tooling; they cannot stay as built
+
+- `tools/race_kerbs.py` (rule, GATES-CHANGELOG round K): place_signs' corners with |D| >= 45 deg and R <= 60 m (the 7 race
+  corners v140, 186, 207, 410, 779, 3195, 3205); the apex kerb PC..PT inside, the exit kerb apex..PT + clamp(2R, 10, 30) m
+  outside; an S's overlapping runs merged; a run whose lane edge folds dropped (v140 apex R, the v3195 exit + v3205 apex R).
+  11 runs, 505 m, 1.4 m on the lane against its edge, 0.05 m (kerb.height_m), 4 m end ramps, red / white
+  (kerb_redwhite.png); `kerb.surface "road_and_pads"` seats them on the pads' decks.
+- Found by the build: (a) they are 1KERB_circuit_* in the ROAD kn5, so the free roam gets them too; (b) at the lane edge
+  they lie under the race strip (the strip spans 0.15-0.82 m in from the edge; the kerb 0-1.4 m); (c) verify_pads FAILs
+  all three pads ("curb over pavement" 40 / 59 / 71: the kerbs on the decks); (d) the street drive_test's slope kinks go
+  1.24 -> 2.9 /km (still PASS).
+- So the race layout's kerbs should be Lake Murray's race-furniture kerbs (1KERB_RACE_*, in the race kn5, inside the strip
+  face, the same corner rule), which verify_kn5 also demands: un-drop `race.kerbs.trims`, drop `kerb.race_rule`. The
+  circuit-kerb path stays in the tree, opt-in, unused by the candidate's next round.
+
+### 3. Arrow signs: built (Lake Murray's rule and defaults)
+
+- `tracks/sand-creek-lm/signs.json` (`signs_file`): Lake Murray's defaults verbatim, except `include_connectors` false (the
+  race layout's corners, not the grid's bends). verify_signs PASS: 4 posts — shared M-c5-fwd (Dahlia -> 56th),
+  SC-48C-rev and SC-48S-rev (free roam's reverse approach at 48th/Colorado), and the race layout's own plate
+  SC-48C-fwd@race (48th/Colorado, behind the race's wall, in its closure kn5). SC-48S fwd skipped with its reason (a lamp mast 2.2 m away).
+- Not placed: the three pad corners (v140, 186, 410). On the built mesh the pad deck is pavement past the corner, so the rule
+  finds no spot in either layout; naming them per_layout makes no race plate (a layout plate is tried only when the
+  POLYLINE stage skips). Owed: place_signs tries a layout plate when the mesh stage skips the shared one.
+
+### 4. Street-name blades: built
+
+- `tools/name_blades.py` (run once on the Mac; plan + atlas committed: `source/name_blades.json`,
+  `textures/name_blades.png`, 26 names) and `tools/author_name_blades_blend.py` (step `name_blades`, after signs): MUTCD
+  2009 D3-1 — 12 in blades (Table 2D-1), 6 in / 4.5 in letters (2D.43 para 04), white on green (2D.43 para 18), both
+  streets named, faces parallel to their streets, a crossing's arms on diagonally opposite corners (2D.43 para 20), bottom
+  7 ft over the lane edge (2A.18 para 05), names abbreviated per 1A.15. OSM names (the source track's Overpass caches).
+- Built on rk3: 26 posts / 52 blades (4 slid, max 5.0 m); 3 skipped (the colorado_50th pad's corners: on pavement within
+  6 m). They ship in the road kn5 (every layout). Not judged by a gate of their own; the build stopped before houses /
+  textures re-ran on them.
+- Per-layout plates / map: none apply (a name blade is the same in both layouts).
+
+### 5. Paint (fork 94/95's chevrons): not reached (owed, as round J)
+
+### Lake Murray unchanged (round K)
+
+- `git diff origin/claude/fleet-lm-engine -- tracks/san-diego-lake-murray scripts/`: empty.
+- Trim A/B (`sclm_work/lmtrim_rk`): Lake Murray's committed trim inputs through fleet-lm-engine's and this head's
+  trim_connectors.py: byte-identical (`664da93b…`, `b73b70f4…`, `f0c97952…`).
+- Race tools A/B (`sclm_work/lmrace_rk`): Lake Murray's data through fleet-lm-engine's tools and this head's —
+  barrier_bands.json identical (md5 1fe275d2…), race_furniture.edge_plans identical (73394680…), median_bands.json untouched
+  (f0c97952…); check_race_kn5 on its committed race / closure_cw / closure_acw parses: identical output.
+- Opt-in by key (`test_round_k_keys_are_opt_in`): no Lake Murray / Lariat / circuit config names `race.edge_fold_chord`,
+  `race.spawn_gate_layouts`, `race.seat_on_pads`, `race.corridor.whole_lap`, `kerb.race_rule`, `kerb.surface`,
+  `signs_name_blades`, `signs_file`. signs_mesh / split_exports / check_race_kn5 change only for a token with no closure
+  wall or a declaration with `whole_lap` (Lake Murray has neither).
+
+Tests: `tests/run_tests.py` (.venv python, `python` on PATH): 1,323 pass, 8 fail — round J's 6 (`test_draft_equiv` x5,
+`test_registry_moves`) plus `test_bench_pad` x2, which the circuit-kerbs merge brings (ledger 0081 lists them as the Mac's
+baseline). 6 new round K tests pass.
+
+## Owed (2026-11-05, after round K; start here)
+
+1. **The race layout to green** (candidate `source/round_k/`):
+   - kerbs: Lake Murray's race-furniture kerbs instead of the circuit kerbs (un-drop `race.kerbs.trims`, remove
+     `kerb.race_rule` / `surface` / `end_ramp_m` / `placement` and the `kerbs` draft step from the candidate);
+   - the closure: verify_kn5's rule (scripts/, frozen) vs a whole-street race — the coordinator's / Kevin's call (above);
+   - no_route's door at v134-v136 L and the strips across the race lane on the pads (50th/Ash s 550-554, 50th/Dahlia
+     s 1223): the strips follow the lap's nominal edge through a pad; they need the pad deck's own edge there;
+   - the 48th/Colorado S's 37 severe steps on the race lane's outer paths (the 32.9 m flare; drive_test reads the whole
+     width as the race lane).
+2. Then: verify_pads / houses / textures with the blades in, runbook 4n (in 4m's shape), the `_k` stills.
+3. Arrow plates at the pad corners (place_signs: a layout plate when the mesh stage skips).
+4. Round J's owed items 1-5 and the paint step, unchanged.
+
 ## PC runbooks (round H)
 
 4j. **Sand Creek 0.2.3** (ledger 0079 rounds E-H). This build carries:

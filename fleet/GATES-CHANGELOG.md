@@ -14,6 +14,60 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
+## 2026-11-05 (round K) — Sand Creek toward 0.2.6: race closure, race kerbs, arrow signs, street-name blades (ledger 0079 round K)
+
+**Not live.** The candidate config is `tracks/sand-creek-lm/source/round_k/` (the live config stays 0.2.5): its race
+layout is red on Lake Murray's race gates and on scripts/ac/verify_kn5 (ledger 0079 round K). No gate threshold, floor or
+bypass moved. Lake Murray's race gates (verify_race, PLANNED / BUILT no_route, check_race_kn5,
+audit / drive_test --layout race) now run on Sand Creek's race layout at their own numbers. All new keys opt-in, Sand
+Creek only (`test_round_k_keys_are_opt_in`). Every number below is **AUTHORED per Kevin's request** ("race curbs",
+street-name signs "Both"; Sand Creek's streets carry no kerb paint — NAIP, ledger 0070 Q1 — so nothing here is measured)
+unless a real reference is cited:
+
+- Race closure (`race`, tools/barrier_bands.py et al.): Lake Murray's numbers as they are — K-rail module 4.04 m, 1.2 m
+  high, strip face 0.82 m in from the lane edge (road mode, ledger 0049); the corridor is the WHOLE street, v0..v3216 (no
+  boxes, no closure runs: Sand Creek's race is the whole street one way, ledger 0063).
+  - ⚠ `race.edge_fold_chord` [authored]: where the strip's offset folds with no crossing and no extension within 8 m (two
+    junction flares, colorado_50th v135-v145 and 48th/Colorado v3202-v3210, both right edge; the lap 32.9 m wide on
+    R ~14 m) the strip is cut by the straight chord between the last / first rings not curling into the cusp
+    (FOLD_STRETCH_MIN 0.5, race_furniture's own) whose step runs within 30 deg of the way the ring faces
+    (⚠ CHORD_ALIGN_COS 0.866 [authored]).
+  - `race.corridor.whole_lap` (no number): no box, no closure run; barrier_bands writes median_bands.json with the zero
+    island widths it assumed; race_furniture / check_race_kn5 / split_exports accept a closure that holds the layout's
+    own sign plates alone. scripts/ac/verify_kn5.py (frozen: Lake Murray's rule) still demands a 1WALL_RACE_CLOSE_* wall
+    and 1KERB_RACE_* kerbs — the candidate is red there.
+  - `race.spawn_gate_layouts "race_furniture"`: the spawn self-gate (GRID_CLEAR_MIN_M 0.30, unchanged) holds the layouts
+    that load strips; the free roam (no strip) keeps its grid at +1.9 m. ⚠ The race grid is centred, offset_right_m 0.0
+    [authored]: at +1.9 m the right column stood 0.92 m into the strip on 46th's 7.5 m.
+  - `race.seat_on_pads`: the strips over the three built pads seat on the pads' measured decks (no number).
+  - The race furniture's own kerbs: all 14 dropped through `race.kerbs.trims` (each with its why), so none is swept there.
+- Race kerbs (`kerb.race_rule`, tools/race_kerbs.py; the circuit kerb tooling, tools/author_kerbs_blend.py):
+  - corners: place_signs' detector, |D| >= 45 deg (Lake Murray's race.kerbs.min_turn_deg) and R_apex <= 60 m (the
+    detector's own 1/60 bound) [authored choice of Lake Murray's corner rule];
+  - ⚠ apex kerb PC..PT on the inside, exit kerb apex..PT + clamp(2 R, 10, 30) m on the outside (Lake Murray's outside-kerb
+    extension, race_furniture.KERB_EXT_MIN_M / MAX_M) [authored]; overlapping runs on one edge merge; a run whose lane edge
+    steps backward is dropped;
+  - ⚠ across: in_m -1.4 .. out_m 0.0 from the ribbon's own lane edge (kerb.width_m 1.4, the config's) [authored]; height
+    kerb.height_m 0.05 (the config's); end ramps kerb.end_ramp_m 4.0 m (the circuits' [invented] value); author_kerbs'
+    KERB_LIP_M 0.003, RAMP_IN_M 0.25, RAMP_OUT_M 1.0, DROP_M 0.05 [invented, unchanged];
+  - `kerb.surface "road_and_pads"`: the section reads the ROAD ribbon and the pads' decks at every offset (no number).
+  - Texture: the circuits' red / white two-band stripe (Aspen's kerb_redwhite.png).
+- Arrow signs: Lake Murray's W1-6 rule and defaults verbatim (tracks/sand-creek-lm/signs.json copies
+  tracks/san-diego-lake-murray/signs.json `defaults`); one per-layout corner, 48th / Colorado (SC-48C), as Lake Murray's
+  M3 / M4 (ledger 0054 A7 / P4). No new number.
+- Street-name blades (tools/name_blades.py, tools/author_name_blades_blend.py), MUTCD 2009 cited:
+  - 2D.43 para 04: initial upper-case letters >= 6 in, lower-case >= 4.5 in (CAP_IN 6, LOWER_IN 4.5);
+  - Table 2D-1: D3-1 Street Name (1 line), conventional road "Varies x 12" (BLADE_H_IN 12);
+  - 2D.43 para 18 / 2D.03 para 02: white legend and border on green; 2D.43 para 20: both streets named, faces parallel to
+    the streets they name, a crossing's arms on diagonally opposite corners;
+  - 2A.18 para 05: the sign's bottom 7 ft (2.134 m) above the near edge of the traveled way;
+  - 1A.15 (Table 1A-2): the abbreviations (Ave, Blvd, Dr, St, N / E / S / W ...);
+  - ⚠ [authored]: side margin 3 in, border 0.5 in inset, lengths in 6 in steps, font Arial Narrow Bold (standing in for
+    FHWA Series E(M)), the post CORNER_M 3.0 m past the side street's edge (gap_mouths' CORNER_M) and SETBACK_M 2.1 m
+    outside the lane edge (Sand Creek's 1.8 m edge strip + 1 ft, 2A.19 para 11's minimum), blade 0.02 m thick, 0.03 m
+    between blades, the slide 0.25 m steps to 6 m; the post's PAVE_CLEAR_M 1.0 m (verify_signs' connector minimum) and
+    LAMP_CLEAR_M 3.0 m (place_signs' lamp rule) are the sign tools' own.
+
 ## 2026-11-05 (round J) — Sand Creek 0.2.5: the streets on the lidar, the south wall, a NAIP tracer (ledger 0079 round J)
 
 No gate threshold, floor or bypass moved (LANE_TOL_M 0.02 m, the houses floor 2,181, `route.verify_mouths_allowed`'s three

@@ -539,3 +539,92 @@ def test_naip_edge_road_runs_close_paint_and_keep_the_carriageway():
     assert runs == [(-6.25, 6.25)]
     out = ne.trace_section(lat, gray, [None] * len(lat), 0.0)
     assert out["run"] == [-6.25, 6.25] and out["left"]["kind"] == "no_step"
+
+
+def test_round_k_keys_are_opt_in():
+    """ledger 0079 round K: Lake Murray, the Lariat and the circuits name none of the new keys (race.edge_fold_chord,
+    race.spawn_gate_layouts, race.seat_on_pads, kerb.race_rule, kerb.surface, signs_name_blades)"""
+    for t in ("san-diego-lake-murray", "lookout-lariat", "lookout-lariat-lm", "high-plains-lm", "aspen-lm", "pueblo-lm"):
+        p = ROOT / "tracks" / t / "track.config.json"
+        if not p.exists():
+            continue
+        cfg = json.loads(p.read_text(encoding="utf-8"))
+        race, kerb = cfg.get("race") or {}, cfg.get("kerb") or {}
+        for k in ("edge_fold_chord", "spawn_gate_layouts", "seat_on_pads"):
+            assert k not in race, (t, k)
+        assert "race_rule" not in kerb and "surface" not in kerb, t
+        assert "signs_name_blades" not in cfg, t
+    # round K's candidate (not live: its race layout is red on the race gates and on verify_kn5, ledger 0079 round K)
+    live = json.loads((SC / "track.config.json").read_text(encoding="utf-8"))
+    assert "race_rule" not in (live.get("kerb") or {}) and "signs_name_blades" not in live
+    sc = json.loads((SC / "source" / "round_k" / "track.config.json").read_text(encoding="utf-8"))
+    assert sc["version"] == "0.2.6"
+    assert sc["race"]["edge_fold_chord"] is True and sc["kerb"]["race_rule"]
+    race = [l for l in sc["layouts"] if l["id"] == "race"][0]
+    street = [l for l in sc["layouts"] if l["id"] == "street"][0]
+    assert race["race_furniture"] is True and race["closure_token"] == "race"
+    assert street["race_furniture"] is False and street["start"]["offset_right_m"] == 1.9
+
+
+def _rounded_square_lap(half=100.0, R=15.0, step=2.0):
+    """an anticlockwise rounded square (x = E, z = N): four left corners of radius R"""
+    import math
+    pts = []
+    c = half - R
+    centres = [(c, -c), (c, c), (-c, c), (-c, -c)]
+    for q, (cx, cz) in enumerate(centres):
+        a0 = -math.pi / 2 + q * math.pi / 2                       # the arc starts heading along +x rotated by q
+        for k in range(0, 46):
+            t = a0 + math.radians(90.0 * k / 45)
+            pts.append((cx + R * math.cos(t), 0.0, cz + R * math.sin(t)))
+        ex, ez = pts[-1][0], pts[-1][2]
+        dx, dz = -math.sin(a0 + math.pi / 2), math.cos(a0 + math.pi / 2)   # the straight's heading
+        n = int(2 * c / step)
+        for s in range(1, n):
+            pts.append((ex + dx * s * step, 0.0, ez + dz * s * step))
+    pts.append(pts[0])
+    return pts
+
+
+def test_race_kerbs_rule_apex_and_exit_on_a_rounded_square():
+    """tools/race_kerbs.py: an anticlockwise rounded square (four left corners of R 15 m): each corner gets the inside
+    kerb PC..PT on the left edge and the outside kerb apex..PT + clamp(2 R, 10, 30) m on the right, on the lane"""
+    import race_kerbs as rk
+    pts = _rounded_square_lap()
+    cl = {"points_xyz_m": [list(p) for p in pts], "widths_m": [10.0] * len(pts), "origin": {"lon": -104.9, "lat": 39.8}}
+    rec = rk.rule({"kerb": {"width_m": 1.4, "race_rule": {"min_turn_deg": 45}}}, cl)
+    assert len(rec["corners"]) == 4 and all(c["D_deg"] > 0 for c in rec["corners"])
+    kinds = [(k["side"], tuple(k["rule"]["kind"])) for k in rec["kerbs"]]
+    assert kinds.count(("left", ("apex",))) == 4 and kinds.count(("right", ("exit",))) == 4
+    assert not rec["dropped"]
+    for k in rec["kerbs"]:
+        assert k["in_m"] == -1.4 and k["out_m"] == 0.0 and k["edge"] == "ribbon"
+
+
+def test_name_blades_abbreviate_per_mutcd_1a15():
+    import name_blades as nb
+    assert nb.abbreviate("North Colorado Boulevard") == "N Colorado Blvd"
+    assert nb.abbreviate("East 45th Avenue") == "E 45th Ave"
+    assert nb.abbreviate("Sand Creek Drive South") == "Sand Creek Dr S"
+    assert nb.abbreviate("North Northfield Quebec Street") == "N Northfield Quebec St"
+
+
+def test_name_blades_plan_is_committed_and_fits_its_atlas():
+    plan = json.loads((SC / "source" / "name_blades.json").read_text(encoding="utf-8"))
+    rows = plan["atlas"]["rows"]
+    assert plan["mutcd"]["blade_h_in"] == 12.0 and plan["mutcd"]["cap_in"] == 6.0
+    assert (SC / "textures" / plan["atlas"]["file"]).exists()
+    for p in plan["posts"]:
+        assert p["lap_name"] in rows and p["cross_name"] in rows and p["lap_name"] != p["cross_name"]
+        assert p["side"] in ("L", "R")
+    for r in rows.values():
+        assert 0.0 <= r["u"][0] < r["u"][1] <= 1.0 and 0.0 <= r["v"][0] < r["v"][1] <= 1.0
+        assert r["length_in"] % 6.0 == 0.0
+
+
+def test_edge_fold_chord_is_opt_in():
+    """race_furniture: the chord fallback is off unless the declaration carries params.edge_fold_chord"""
+    import race_furniture as rf
+    assert "chord" in rf._trim_folds.__code__.co_varnames
+    assert rf.trim_folded_rings.__defaults__[-1] is False
+    assert rf.edge_fold_corners.__defaults__[-1] is False

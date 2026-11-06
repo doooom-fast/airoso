@@ -315,6 +315,12 @@ draft_densify_ribbon() {
   (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/densify_ribbon_blend.py" -- "$PROJ" 2>&1 | grep "^\[densify\]\|FATAL\|Error\|Traceback" )
 }
 draft_kerbs() {
+  # ledger 0079 round K: a config with kerb.race_rule (Sand Creek) gets its runs BY RULE first (tools/race_kerbs.py: apex +
+  # exit at each race corner, data/kerbs.race.json); no header otherwise (the circuits' traced runs are unchanged)
+  if [ "$(pyq "import json,sys; print(bool((json.load(open(sys.argv[1],encoding='utf-8')).get('kerb') or {}).get('race_rule')))" "$PROJ/track.config.json" | tr -d '\r')" = "True" ]; then
+    step "author: race kerbs by rule at the race layout's corners (tools/race_kerbs.py; ledger 0079 round K; AUTHORED, not measured)"
+    (cd "$AIROSO" && python tools/race_kerbs.py "$PROJ")
+  fi
   step "author: racing kerbs from the traced runs on the ribbon's lane edge (tools/author_kerbs_blend.py; ledger 0078; no route.kerbs_file = no-op)"
   (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_kerbs_blend.py" -- "$PROJ" 2>&1 | grep "^\[kerbs\]\|FATAL\|Error\|Traceback" )
 }
@@ -418,9 +424,20 @@ author_signs() {
   # ledger 0054 P4: after the race furniture, every ship (the furniture author empties the RACE_CLOSE_<TOKEN> collections
   # the race layouts' own plates live in); a track with no race layout gets its shared plates and nothing else
   step "author: W1-6 large-arrow signs at every tight corner (SIGNPLATE + SIGNARROW + SIGNPOST; the race layouts' own plates into RACE_CLOSE_<TOKEN>)"
-  (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_signs_blend.py" -- "$PROJ" 2>&1 | grep "^\[signs\]\|Error\|Traceback" )
-  (cd "$AIROSO" && python tools/verify_signs.py "$PROJ" --blend "$PROJ/loop.blend" --blender "$BL" | tail -8)
+  # ledger 0079 round K: a port whose slug names no tracks/<slug>/ (Sand Creek: sand_creek_raceway_lm in tracks/sand-creek-lm)
+  # names its signs.json in track.config.json signs_file (synced in); absent = tools/place_signs.py's own lookup, as before
+  local sg sga=()
+  sg=$(pyq "import json,sys; print(json.load(open(sys.argv[1],encoding='utf-8')).get('signs_file') or '')" "$PROJ/track.config.json" | tr -d '\r')
+  [ -n "$sg" ] && sga=(--signs "$PROJ/$sg")
+  (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_signs_blend.py" -- "$PROJ" ${sga[@]+"${sga[@]}"} 2>&1 | grep "^\[signs\]\|Error\|Traceback" )
+  (cd "$AIROSO" && python tools/verify_signs.py "$PROJ" --blend "$PROJ/loop.blend" --blender "$BL" ${sga[@]+"${sga[@]}"} | tail -8)
   (cd "$AIROSO" && PYTHONUTF8=1 python tools/plot_signs.py "$PROJ")
+}
+author_name_blades() {
+  # ledger 0079 round K: MUTCD D3-1 street-name blades from the committed plan (tools/name_blades.py, OSM names), stood on
+  # the built ground on the sign post (tools/author_name_blades_blend.py); no signs_name_blades.file = no-op. After signs.
+  step "author: street-name blades at the lap's junctions (tools/author_name_blades_blend.py; ledger 0079 round K; no signs_name_blades = no-op)"
+  (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_name_blades_blend.py" -- "$PROJ" 2>&1 | grep "^\[name-blades\]\|FATAL\|Error\|Traceback" )
 }
 
 # --- author: every ship (idempotent) ------------------------------------------------------------------------

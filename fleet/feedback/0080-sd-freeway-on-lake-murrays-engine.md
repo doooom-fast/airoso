@@ -735,6 +735,15 @@ Supersedes 0080-6 for the next candidate (0080-6's c3c988b9 is what is installed
    inis PASS, kn5_ground_check PASS, 43,020,931 B (+- a ground edge split, as 0080-6), SHIP OK. Any other number: stop
    and file it here. Install only on Kevin's word (it would replace c3c988b9's `san_diego_freeway_lm`).
 
+**PC result (2026-11-05 22:42-22:49, `fwlm_2a6`): every ws35 row matches; kn5 43,020,987 B (+56, as 0080-6).** Line
+drive_test PASS (excursions 2, gated at s 5,550.7 -10.5 / +10.5, 0.15 / 0.14 m), WB line gate PASS / lap rule FAIL (17,
+1.61 / km), audit CLEAN, verify_kn5 / inis PASS, kn5_ground_check PASS (road over ground 72 / 6,135, p95 0.020 m), edge
+report 74.5 / 18.5 / 7.0 / 0.0 %, SHIP OK; gate OBJ 14 groups, 660,014 v, 1,033,937 tri. Per mesh (vertices /
+triangles): 1GRASS_0-7 57,770 / 114,402, 55,710 / 110,189, 60,507 / 119,192, 59,945 / 117,917, 58,854 / 116,398,
+56,209 / 111,057, 56,943 / 112,595, 58,366 / 115,561; 1KERB_SIDEWALK_DECK 9,133 / 3,046; 1KERB_sidewalk 33,992 / 50,964;
+1ROAD_road 50,959 / 16,988; 1WALL_MEDIAN 52,404 / 17,492; 1WALL_guard 6,402 / 2,136; MARKINGS 42,820 / 26,000; textures
+7,770,522 B, materials 3,879 B. Offered to Kevin over round 5 (the 56 B for the Mac to place against ws35's table).
+
 ## PC runbook 0080-6: rehearse 2a round 5, no install
 
 Supersedes 0080-5 (which matched ws19 on the PC). No lidar or NAIP is needed: every generated input is committed.

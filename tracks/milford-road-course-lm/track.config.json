@@ -3,7 +3,7 @@
   "archetype": "race_circuit",
   "name": "Milford Road Course (unofficial) (LM engine)",
   "slug": "milford_road_course_lm",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "mirror_x": false,
   "loop": true,
   "default_width_m": 11.0,

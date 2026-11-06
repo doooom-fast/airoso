@@ -1886,7 +1886,134 @@ item 1's record (read by nothing) and the allowance edit (78's row dropped, a pa
 - Tests: 1,333 pass, the known 8 fail. New: `test_round_q_curb_trace_follows_a_curb_and_cuts_unchecked_stretches`,
   `test_round_q_corner_flares_off_is_opt_in_and_only_narrows`; round O's test pins the one allowed row left.
 
-## Owed (2026-11-06, after round Q; start here)
+## Round R (Mac): Kevin's answer, "Full street width"; verify_kn5 learns the whole-street race; 0.2.6 green on the Mac and live (NOT installed)
+
+### Kevin's answer (2026-11-06, relayed by the PC session, which asked him)
+- **The question:** on wide streets, should Sand Creek's race use Lake Murray's 11.36 m race lane, with closure walls
+  shutting off the rest of the street (about 15 % of the lap: Colorado, Quebec, every stretch >= 15.67 m wide), or the
+  full street width?
+- **His answer, verbatim:** "Full street width"
+- **What it means:** the race runs the whole street everywhere. The candidate already declared
+  `race.corridor.whole_lap` (round K), so the corridor was already the whole street; a whole-street race has no closure
+  line, so verify_kn5's closure row ("CLOSURE kn5 ... holds no 1WALL_RACE_CLOSE_RACE_*", red rounds K-Q) asked for
+  something that cannot exist. That row was the only red one on the candidate.
+
+### Item 1: verify_kn5 learns a whole-street race, opt-in (a9780273)
+- `scripts/ac/verify_kn5.py` (the one the chain runs: `ship_verify_kn5` / `ship_verify_inis`, `python -m
+  scripts.ac.verify_kn5` from AIROSO; engine-july has no copy, so there is nothing to mirror). `whole_lap_layouts`: the
+  race_furniture layouts naming no lap, on a track whose `race.corridor.whole_lap` is `true` (the key barrier_bands.py
+  has read since round K; no second key). For those, the closure kn5's ">= 1 1WALL_RACE_CLOSE_<TOKEN>_*" row is
+  REPLACED by "NO 1WALL_RACE_CLOSE_<TOKEN>_*" (a whole-street race has no closure line, so no closure wall). Every other
+  row stays, kerbs included: the closure kn5 present and declared, only its own plates in it, race materials, no spawn
+  node, cap, size, duplicates; the common kn5's strips / kerbs / no closure; --inis.
+- No threshold moved, none added. GATES-CHANGELOG 2026-11-06 (round R).
+- **rp2** (round P's built workshop): before FAIL on exactly that row; after PASS; --inis PASS both.
+- Test `test_whole_street_race_has_no_closure_wall_opt_in` (plates alone pass; the same kn5s without the key fail as
+  before; a closure wall with the key fails; the kerb / common-closure / missing-file rows still fire; the key read
+  exactly).
+
+### Item 2: the candidate through the full chain (rr2; no commit of its own: no file changed)
+- Source `sclm_work/rr_src` (`git archive` of a9780273, LFS blobs checked against their oids, the candidate swapped
+  in); EMPTY workshop `sclm_work/rr2`, round P's runner (`.venv` python; Blender path and the `${tok^^}` header text
+  sed-changed for macOS bash 3.2), log `rr2.log`. **SHIP OK, exit 0, no force, no resume.**
+- `sclm_work/rr1` is a dead first try, not a result: it ran with Homebrew python 3.12 and the unpatched `${tok^^}`
+  header, and stopped there ("bad substitution", rc 1) after the common race kn5. Its author-phase lines matched rp1's.
+- kn5s, rr2 against rp2: the same sizes; closure and both spawn kn5s byte-identical; road, race and street kn5s
+  kn5_equiv-EQUIVALENT (tangents only, max 1.79e-07).
+
+| gate | rp2 (round P, candidate) | **rr2 (round R, = 0.2.6 live)** |
+|---|---|---|
+| drive_test street | PASS: severe 0, kinks 0.52 counted (station 1.97), vertex bumps 1, excursion drops 1 | **PASS: identical** (severe 0, fold bumps 6, kinks 0.52, bumps 0.31 /km, drops 1, obstructed 0) |
+| drive_test race | PASS gated rows; severe 22, deferred 10, dense hops 8 | **PASS: identical** (severe 22, deferred 10, dense hops 8, kinks 6.85, bumps 1.04 /km, obstructed 0) |
+| audit street / race | CLEAN / CLEAN | **CLEAN / CLEAN** |
+| verify_kn5 / --inis | (rp1's) FAIL closure row only / PASS | **PASS / PASS** |
+| kn5_ground_check | PASS x2 | **PASS x2** (197 heads, 0 orphans) |
+| verify_pads | PASS x4 | **PASS x4** (seams 1.6 / 1.6 / 0.9 / 1.0 mm, grass 0, curb over pavement 0) |
+| verify_mouths | PASS 113 (grid_primary_80 allowed) | **PASS 113** (grid_primary_80 allowed) |
+| house_seat / houses | PASS 1.261 m, 2,183 / house_gate PASS | **PASS 1.261 m, 2,183 / PASS** |
+| textures | 0 untextured | **0** |
+| verify_race | (rp1's) OK | **OK** (+ scenery OK) |
+| check_race_kn5 | (rp1's) OK, closure whole_lap WARN | **OK common (36: 22 strips, 14 kerbs); closure OK, whole_lap WARN** |
+| no_route PLANNED / BUILT | (rp1's) PASS / PASS | **PASS / PASS** (leak 0, 0 doors, 0/23 probes) |
+| verify_signs | (rp1's) PASS, 6 posts | **PASS, 6 posts** (2 layout plates), name blades 25 posts / 50 |
+| verify_fold_fans | PASS: 2 x 2 judged, 10 deferred covered | **PASS: identical** (worst gap 0.2315 m of 0.25) |
+| kn5 | 109.3 MB | **109.3 MB**: road 92,160,949 B, `_race` 10,196,549, `_closure_race` 9,701, `_street` 6,923,402, spawn 2,104 x2 |
+
+### Item 3: the candidate adopted as the live config at 0.2.6 (6e05e050)
+- `tracks/sand-creek-lm/track.config.json` and `ship.json` = `source/round_k/`'s, byte for byte; `"version": "0.2.6"`
+  (the candidate carried it since round K; the live file said 0.2.5 until now). `source/round_k/` stays as the record.
+- Tests: the round K-P opt-in tests no longer list Sand Creek's live config among the tracks that name none of their
+  keys (it is the candidate now); `test_round_r_live_is_the_candidate` pins the adoption.
+
+### Item 4: the `_r` stills (22a596eb), `source/stills/`
+- NAIP 2023 (z18, track frame) | the BUILT race layout (rr2's `data/track.race.obj`: road + common race + closure kn5),
+  plan view, made by a scratch script (`scratchpad/rr/stills_r.py`; not committed: no step needs it):
+  - `race_full_street_colorado_r` (N Colorado Blvd, lap v54 / 60 / 66) and `race_full_street_quebec_r` (N Northfield
+    Quebec St, v1994 / 2000 / 2006): at every section the built street is 16.45-16.50 m (config 16.5), the strips'
+    inner faces stand at −7.43 / +7.43 (0.82 m in from each lane edge, round K's strip), 14.86 m open; 0 closure walls
+    within 40 m (0 in the whole OBJ);
+  - `pad_colorado_50th_race_r`, `pad_50th_ash_race_r`, `pad_50th_dahlia_race_r`, `pad_48th_colorado_race_r`: each pad's
+    built outline over NAIP, and the race's strips and kerbs over the built deck.
+- **What the two street stills also show (NAIP, not built; read off a 1 m NAIP gray profile along each section,
+  `scratchpad/rr/section_probe.py`; the asphalt / concrete / planting calls are by eye, so ⚠ invented):**
+  - **Colorado at v60 is a divided boulevard.** NAIP: asphalt about −20 .. −11 m and −5 .. +4.5 m off the lap's
+    centre (+ = east), concrete −10 .. −6 m (the median) and +5 .. +12 m (the east walk). The lap's 16.5 m ribbon is
+    centred on the northbound carriageway (~10 m) and runs ~3 m onto the median and ~3 m onto the walk; the southbound
+    carriageway is built as its own ribbon at −33 .. −25 m, ~12 m west of NAIP's.
+  - **Quebec at v2000 is two carriageways with a planted median.** NAIP: road −6 .. +4 m, planting +5 .. +17 m, road
+    +18 .. +29 m, concrete +30 .. +34 m: about 35 m curb to curb. The lap's single 16.5 m ribbon covers one
+    carriageway; the other is not built here.
+  - So "full street" on Colorado and on the lap's Quebec is, in the real world, wider than 16.5 m and divided. The race
+    now runs the full BUILT street; the built street is not yet the real one there. Owed below; nothing built.
+
+### Lake Murray unchanged (round R)
+- `git diff origin/claude/fleet-lm-engine -- tracks/san-diego-lake-murray scripts/`: `scripts/geometry/drive_test.py`
+  (rounds M / N / P's keys, untouched this round) and `scripts/ac/verify_kn5.py` (this opt-in) only.
+- verify_kn5 on Lake Murray (no Lake Murray kn5 build exists on the Mac): fixtures from its committed config,
+  finished centreline, barrier_bands, median_bands, dummies and the committed parses of its 0.20.1 race / closure_cw /
+  closure_acw kn5s (every mesh and material name as built), `sclm_work/lmvk_rr`; fleet-lm-engine's verify_kn5 against
+  this head's, output byte-identical in all five: as built PASS (4342b876…), race_cw's walls removed FAIL "holds no
+  1WALL_RACE_CLOSE_CW_*" (3df0eebb…), a closure in the common kn5 FAIL (1d14c6d9…), --inis PASS (9e1607c4…), --inis
+  listing the other closure FAIL (9a19519e…). The PC's 4k A/B covers the built kn5s.
+- Trim A/B (`sclm_work/lmtrim_rr`): byte-identical (`664da93b…`, `b73b70f4…`, `f0c97952…`), logs identical.
+- Opt-in: `whole_lap_layouts` is empty unless `race.corridor.whole_lap` is `true`; Lake Murray, the Lariat and the
+  circuits name no such key (tests).
+- Tests: 1,335 pass, the known 8 fail (`test_draft_equiv` x5, `test_registry_moves`, `test_bench_pad` x2).
+
+## Owed (2026-11-06, after round R; start here)
+1. **The PC: runbook 4n** (rehearse 0.2.6 from a clean checkout of round R's head; every gate row and the kn5 bytes
+   against rr2). **Install only on Kevin's word**, which the PC asks for.
+2. **Kevin / the coordinator: confirm round P's two gate readings** (`drive_test.vertex_kinks`, `fold_fans.wall_frame`);
+   0.2.6 carries them.
+3. **What "Full street width" means for the open items** (recorded, none built):
+   - **Quebec, grid_primary_6 / 7** (round Q's trace: 26-33 m curb to curb, a raised median +0.13 m, 1.75-2 m wide over
+     ~640 m and 4.4-5 m over s 110-250). This stretch runs north of the sandcreek_quebec pad (x 1647-1877, z 24-1315 in
+     the engine frame) and is free roam: the lap meets Quebec at the pad (~v1940) and runs south on it to E 45th Ave
+     (~v2080). Built as one street with a `route.islands` concrete island (round Q's lead), it is driven full width in
+     free roam; it carries no race.
+   - **The lap's own Quebec (~v1940-2080) and Colorado (v3205 → v140)** (item 4's NAIP reading, at v2000 and v60 only):
+     divided in the real world, built as one 16.5 m ribbon on one carriageway. Full street means the race takes both
+     carriageways with the median as a raised island between them, as Kevin's answer reads. Owed: the NAIP reading
+     checked along both stretches, then `tools/lidar_curb_trace.py` on them (whether the Mac's tile cache covers them is
+     not checked), then the one-street build round Q describes. The 11.36 m lane is NOT the fallback.
+   - **sandcreek_quebec's pad:** needs lidar tiles (17, −5), (17, −6), (18, −6) (the PC's `draft_pad_outline.py`, or a
+     fetch on Kevin's word). It is the corner where the lap turns from Sand Creek Dr S onto Quebec; built, its strips
+     follow the measured curb returns (`race.pad_corners`, as 50th/Ash and 50th/Dahlia) and the race takes the whole
+     junction deck inside them.
+   - **The Dahlia / 56th seam residual** (dahlia_56th: 6.833 m seam, a 2.50 m smoothing move, 63 unfilled; M-c5-rev):
+     the race corner v779 now runs the lap's 30-42 m flare edge to edge, and round Q measured that flare as the source's
+     widths, not the street (v769 12.25 m with `lm_intake.corner_flare_off`). Full street there is the real street, so
+     the flare-off goes with the pad, after the seam node is found.
+   - **The E 56th mouth (grid_primary_80#0, v847, allowed row):** mouth line 0.072 m, notch 0.079 m. Free roam: the race
+     strip runs straight across it (sealed, Lake Murray's 0049 R7), so full street changes nothing for the race there.
+   - **The 4-lane road east of the retaining wall** (x −1530 .. −1515, south of z −953): not on the lap; free roam only;
+     unbuilt (round J).
+   - **The 7 streets held on 3DEP** (grid_primary_15's viaduct; round I's 6 jumpy streets grid_secondary_8,
+     grid_primary_11, grid_secondary_39, grid_secondary_42, grid_primary_71, grid_unclassified_77): free roam; side
+     streets are sealed off the race by the strips, so none is raced.
+4. Fork 94/95's chevrons (needs a better source than NAIP z18).
+
+## Owed (2026-11-06, after round Q; kept for the record)
 1. **The closure:** Kevin's call (unchanged; the only verify_kn5 red).
 2. **Kevin / the coordinator: confirm round P's two gate readings** (`drive_test.vertex_kinks`, `fold_fans.wall_frame`).
 3. **Quebec as one street** (item 1's lead). The trace is in `source/quebec_edges.lidar.json`, made by

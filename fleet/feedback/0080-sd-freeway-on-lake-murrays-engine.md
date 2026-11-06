@@ -955,6 +955,23 @@ Supersedes 0080-8. No lidar or NAIP is needed.
    kn5_ground_check PASS; 34,094,237 B (+- a ground edge split, as 0080-6 / 0080-8); SHIP OK. Any other number: stop
    and file it here. Install only on Kevin's word.
 
+**PC result (2026-11-06 00:35-00:43): every ws41 row matches; the kn5 is 132 B SMALLER (34,094,105). Filed, not
+offered to Kevin.**
+- `fwlm_2b2` (e733c0a9, empty workshop, ENG eng_fwlm): both `[fwlm-tiers]` lines (band clamp 156,209 vertices; grid
+  [1329, 1085], native 89,972, fine 918, fan 390, vertices 106,653, tris 212,098); `[median-ground]` 2,467 / 6,591
+  stepped, 24,739 new, 5,946 down (max 4.06), 2,444 up (max 0.61), 8,098 pinned (max 4.88), 139 unpaved slope stations,
+  1,240 vertices to the lidar's profile (max 1.92 m; 53 edge vertices off the closest pavement), 3 footing quads removed;
+  line drive_test PASS (soft top 0, excursions 2, gated at s 5,550.7 +-10.5, 0.14 m), WB line gate PASS / lap rule FAIL
+  (13, 1.23 / km), audit CLEAN, verify_kn5 / inis PASS, kn5_ground_check PASS (73 / 6,135, p95 0.020 m), SHIP OK; gate
+  OBJ 14 groups, 500,106 v, 718,782 tri.
+- `fwlm_2b2c` (control, the same commit): kn5_equiv-EQUIVALENT, the same per-mesh counts: the PC is repeatable; the
+  -132 B is PC vs Mac. -132 = 3 vertices x 44 with no triangle change (a vertex-merge difference, as kn5_equiv's doc
+  names) or another mix; the per-mesh table settles it.
+- Per mesh (vertices / triangles): 1GRASS_0-7 37,682 / 74,513, 41,532 / 82,224, 39,069 / 77,521, 37,508 / 74,193,
+  35,884 / 70,696, 37,355 / 73,794, 36,874 / 73,186, 38,492 / 76,029; 1KERB_SIDEWALK_DECK 9,133 / 3,046;
+  1KERB_sidewalk 33,992 / 50,964; 1ROAD_road 50,959 / 16,988; 1WALL_MEDIAN 52,404 / 17,492; 1WALL_guard 6,402 / 2,136;
+  MARKINGS 42,820 / 26,000; textures 7,770,522 B, materials 3,879 B, nodes 1,398 B.
+
 ## PC runbook 0080-8: rehearse 2b round 1 (2a with the tiered ground), no install
 
 Supersedes 0080-7 for the next candidate. No lidar or NAIP is needed; the new draft step uses Blender 4.2's own numpy.

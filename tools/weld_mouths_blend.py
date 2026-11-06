@@ -126,6 +126,12 @@ def main():
     if cfgp.exists():
         exact_prefixes = [str(x) for x in (json.loads(cfgp.read_text(encoding="utf-8")).get("route", {})
                                            .get("weld_exact_deck") or [])]
+    # ledger 0079 round J (opt-in, Sand Creek): route.weld_deck_beyond_end — piece-name prefixes whose weld reads, past
+    # the host's open end, the deck of the street that end is welded to (mouth_weld.BeyondEndDeck); absent = as before
+    beyond_prefixes = []
+    if cfgp.exists():
+        beyond_prefixes = [str(x) for x in (json.loads(cfgp.read_text(encoding="utf-8")).get("route", {})
+                                            .get("weld_deck_beyond_end") or [])]
     # ledger 0078: the connectors' edge is the assembler's own (route.edge; absent = Lake Murray's curb + 1.5 m walk)
     cfg_route = (json.loads(cfgp.read_text(encoding="utf-8")).get("route") or {}) if cfgp.exists() else {}
     _edge_main, edge_conn = wr.edge_profile(cfg_route)
@@ -373,7 +379,19 @@ def main():
         cx, _cy, cz = mo["cut_xyz"]
         Deck = mw.ExactHostDeck if any(str(mo["connector"]).startswith(px) for px in exact_prefixes) else mw.HostDeck
         deck = Deck(hrows, mw.host_window(hrows, lay[host]["closed"], cx, cz))
-        far = rows_old[min(len(rows_old) - 1, 6)][1]
+        if any(str(piece).startswith(px) for px in beyond_prefixes):
+            # ledger 0079 round J (opt-in route.weld_deck_beyond_end, Sand Creek): past the host's open end, on the
+            # street that end is welded to, the deck is that street's (mouth_weld.BeyondEndDeck); absent = as before
+            hw = deck.idx
+            third = []
+            for m2 in mouths:
+                if m2.get("piece") == host and m2["host"] in lay and m2.get("end") in ("start", "end"):
+                    r3 = rows_of(m2["host"])
+                    c3 = m2["cut_xyz"]
+                    third.append(mw.ExactHostDeck(r3, mw.host_window(r3, lay[m2["host"]]["closed"], c3[0], c3[2])))
+            deck = mw.BeyondEndDeck(deck, third, open_start=not lay[host]["closed"] and hw[0] == 0,
+                                    open_end=not lay[host]["closed"] and hw[-1] == lay[host]["rows"] - 1)
+        far =rows_old[min(len(rows_old) - 1, 6)][1]
         if (1 if deck.project(far[0], far[2])[3] >= 0 else -1) != side:
             raise SystemExit(f"[weld] FATAL: mouth {tag}: the piece approaches from side "
                              f"{-side:+d}, mouths.json says {side:+d}")
@@ -460,11 +478,16 @@ def main():
                "host_vertex": mo["host_vertex"], "angle_deg": mo.get("angle_deg"), "host_grade": mo.get("host_grade"),
                "rows_respread": J, "rows_touched": K, "markings_moved": moved_mk,
                **({"deck": "exact (route.weld_exact_deck)"} if Deck is mw.ExactHostDeck else {}),
+               **({"deck_beyond_end": {"third": len(deck.beyond), "points_read": deck.hits}}
+                  if isinstance(deck, mw.BeyondEndDeck) else {}),
                "cut_arc_m": {f"{k[0]}{''.join('%+d' % v for v in k[1:])}": round(v, 3) for k, v in res["u_x"].items()},
                "end_dy_m": [round(res["dy_end"][("road", lane)], 3) for lane in range(3)],
                "end_vs_host_before_m": [round(v, 3) for v in before],
                "end_vs_host_after_max_m": round(end_dev, 4),
                "above_host_after": above[:12], "folds": folds[:12]}
+        if isinstance(deck, mw.BeyondEndDeck):
+            print(f"[weld] {tag}: past the host's open end, {deck.hits} point(s) read the deck of the street it is "
+                  f"welded to ({len(deck.beyond)} street(s); route.weld_deck_beyond_end)")
         report.append(rec)
         print(f"[weld] {piece} ({end}) -> {host} side {side:+d}: angle {mo.get('angle_deg')} deg, grade "
               f"{100 * (mo.get('host_grade') or 0):+.2f} %; road cut arcs L/C/R "

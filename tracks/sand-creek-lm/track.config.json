@@ -575,6 +575,10 @@
     ],
     "weld_exact_deck_lines": true,
     "_weld_exact_deck_doc": "ledger 0079 round H (Lake Murray's ledger 0054 P1 key, opt-in): these mouths weld onto, and verify_mouths reads, the host deck off the host's own triangles: the lens grid_tertiary_74 on grid_tertiary_1#1 (HOST LANE 0.038 m), grid_residential_29#2 on grid_residential_22 (0.021 m), the crossroads grid_unclassified_10 on grid_tertiary_16 (0.065-0.084 m). grid_tertiary_16 there is not level across: lidar 0.11 m over its 9 m (20 m from grid_primary_33, whose grade its own mouth weld leans it onto; built 0.09 m). weld_exact_deck_lines (Sand Creek only): MOUTH LINE / NOTCH on those mouths read the host deck the same way (verify_mouths HDx; no tolerance moved)",
+    "weld_deck_beyond_end": [
+      "grid_tertiary_74#0"
+    ],
+    "_weld_deck_beyond_end_doc": "ledger 0079 round J (tools/weld_mouths_blend.py, mouth_weld.BeyondEndDeck): piece-name prefixes whose weld reads, past the host's OPEN end, the deck of the street that end is welded to. grid_tertiary_74#0 (24 deg) meets grid_tertiary_1#1 at its v1, where #1 starts on grid_tertiary_2#0: 74's first rows lie on grid_tertiary_2's pavement, and the host's end row held level there stood them 0.021 m over grid_tertiary_2's lane on its measured (lidar) profile, which falls 0.02 m over those 7 m (verify_mouths HOST LANE, grid_tertiary_1#1 start; round I's i3 / i5). Read off the street under them, they lie on it. No number added.",
     "verify_mouths_allowed": [
       {
         "piece": "grid_primary_52#0",
@@ -1301,8 +1305,8 @@
     "_heightfield_doc": "ledger 0079: the port's own 3DEP grid (data/heightfield.*, synced in): margin 470 m = 150 + 8 x 40 on the source's lattice (every one of the source grid's 5,400 samples is a sample of this one, 0.000 m apart), so the ground reaches the buildings within 450 m of the lap and the grid streets; fetched by scripts.elevation.heightfield.build_heightfield",
     "tree_models": true,
     "_tree_models_doc": "ledger 0079: the source's TreeFX models (tracks/sand-creek/source/trees/*.bin, personal use, on the PC only) into the project",
-    "connector_profiles": "source/connector_profiles.lidar.json",
-    "_connector_profiles_doc": "ledger 0079 round H (Kevin: \"I just want real\"): these streets take their heights from the lidar (tools/lidar_connector_profile.py: the road surface, ground + bridge deck returns, median within 1 m [invented radius] of each source point), not the 3DEP grid, which cannot hold a bridge or an embankment: grid_tertiary_5 crosses Sand Creek on a 60 m bridge (class 17 at 22.2 m; the grid dropped it 5 m into the creek bed: its lap mouth read 3.9 %/m), grid_primary_84 / grid_primary_78 climb onto the interstate bridge (class 17 at 29.3 m; the grid held them up to 4.25 m low: 8.6 %/m at their own mouth), grid_unclassified_67 (lidar - 3DEP -0.03..+0.43 m)",
+    "connector_profiles": "source/connector_profiles.lidar.round_i.json",
+    "_connector_profiles_doc": "ledger 0079 round H (Kevin: \"I just want real\"): these streets take their heights from the lidar (tools/lidar_connector_profile.py: the road surface, ground + bridge deck returns, median within 1 m [invented radius] of each source point), not the 3DEP grid, which cannot hold a bridge or an embankment: grid_tertiary_5 crosses Sand Creek on a 60 m bridge (class 17 at 22.2 m; the grid dropped it 5 m into the creek bed: its lap mouth read 3.9 %/m), grid_primary_84 / grid_primary_78 climb onto the interstate bridge (class 17 at 29.3 m; the grid held them up to 4.25 m low: 8.6 %/m at their own mouth), grid_unclassified_67 (lidar - 3DEP -0.03..+0.43 m) Round J (ledger 0079): the round I file is wired: 99 streets on the lidar (--surface; round H's four read the same); held on 3DEP: round I's 6 whose profiles jump > 0.5 m [invented] between neighbouring points, and grid_primary_15, a viaduct deck the build has no street-bridge path for (its embankment buried two houses' ground; the file's _doc names them and why).",
     "connector_widths": {
       "grid_unclassified_13": 10.0
     },
@@ -1396,8 +1400,68 @@
             -1000.0
           ],
           [
+            -1552.5,
+            -1005.0
+          ],
+          [
+            -1552.5,
+            -1010.0
+          ],
+          [
+            -1551.5,
+            -1015.0
+          ],
+          [
+            -1550.5,
+            -1020.0
+          ],
+          [
+            -1550.5,
+            -1025.0
+          ],
+          [
+            -1548.5,
+            -1030.0
+          ],
+          [
+            -1548.5,
+            -1035.0
+          ],
+          [
+            -1547.5,
+            -1040.0
+          ],
+          [
+            -1547.5,
+            -1045.0
+          ],
+          [
+            -1547.5,
+            -1050.0
+          ],
+          [
+            -1547.5,
+            -1055.0
+          ],
+          [
+            -1546.5,
+            -1060.0
+          ],
+          [
+            -1546.5,
+            -1065.0
+          ],
+          [
+            -1545.5,
+            -1070.0
+          ],
+          [
+            -1545.5,
+            -1075.0
+          ],
+          [
             -1620.0,
-            -1000.0
+            -1075.0
           ],
           [
             -1620.0,
@@ -1423,13 +1487,28 @@
           16,
           17,
           18,
-          19
+          19,
+          20,
+          21,
+          22,
+          23,
+          24,
+          25,
+          26,
+          27,
+          28,
+          29,
+          30,
+          31,
+          32,
+          33,
+          34
         ],
         "feather_m": 10.0
       }
     ],
     "lidar_patches_file": "source/ground_patches.lidar.json",
-    "_lidar_patches_doc": "ledger 0079 round I (Kevin: \"I just want real\"; \"don't lose those\"): the ground west of grid_primary_49 seated on the lidar (tools/lidar_ground_patch.py measures, tools/ground_patch_blend.py seats TERRAIN after the weld). The lidar (CO_DRCOG_2_2020 class 2) has a retaining wall there: a 2.1-4.5 m step within 3 m, its line x -1574.5 at z -865 to -1552.5 at -1000 (and on, nearer the street, to -1045 and past: not patched, within the street's verge); the built ground held the street's 31.3 m for 20 m past it and then fell one 28 m facet through osm_buildings1182 (46 x 9.5 m, ground 26.4-26.8 m; relief 3.16 m, dropped). polygon: the wall's line (the step's middle, every 5 m, hard_edges: no feather, the step IS the ground: the engine has no retaining-wall path, so the wall stands as the terrain step over one <= 1.5 m edge) and x -1620 west (where the built and real ground agree within 0.1 m), z -862 to -1000; feather_m 10 [invented]: past the polygon's north / south / west edges the built ground eases to the lidar over 10 m."
+    "_lidar_patches_doc": "ledger 0079 round I (Kevin: \"I just want real\"; \"don't lose those\"): the ground west of grid_primary_49 seated on the lidar (tools/lidar_ground_patch.py measures, tools/ground_patch_blend.py seats TERRAIN after the weld). The lidar (CO_DRCOG_2_2020 class 2) has a retaining wall there: a 2.1-4.5 m step within 3 m, its line x -1574.5 at z -865 to -1552.5 at -1000 (and on, nearer the street, to -1045 and past: not patched, within the street's verge); the built ground held the street's 31.3 m for 20 m past it and then fell one 28 m facet through osm_buildings1182 (46 x 9.5 m, ground 26.4-26.8 m; relief 3.16 m, dropped). polygon: the wall's line (the step's middle, every 5 m, hard_edges: no feather, the step IS the ground: the engine has no retaining-wall path, so the wall stands as the terrain step over one <= 1.5 m edge) and x -1620 west (where the built and real ground agree within 0.1 m), z -862 to -1000; feather_m 10 [invented]: past the polygon's north / south / west edges the built ground eases to the lidar over 10 m. Round J (ledger 0079): the wall's line on south of z -1000 to -1075 (the same scan, CO_DRCOG_2_2020 class 2, 1 m profiles every 5 m: a 2.1-2.4 m step, x -1552.5 at z -1000 to -1545.5 at -1075; south of that the ground climbs onto the embankment and bridge abutment, 4-10 m steps, not a wall) and the polygon's south edge to z -1075. grid_primary_49 ends at z -953 in the build (its own mouth): no street's verge lies along this stretch. The built ground (i2) held the step as a 10 m slope, 0.3-0.6 m under the lidar on both sides."
   },
   "lm_pads": {
     "_doc": "Ledger 0079 round B (Kevin 2026-11-03: \"authored pad junctions\"; ledger 0070's six required corners). plan = where (the node positions and NAIP curb returns of ledger 0070's pad table, 0073's reads); pads = the declarations tools/pad_boxes.py writes from it (node, cuts, box, arms; rule, not measurement); the outline and deck are measured by tools/draft_pad_outline.py off CO_DRCOG_2_2020 (the PC: runbook 4g step 3) into source/pads/<id>.json. Round D (0.2.2): the draft step lm_pads builds `pads` (tools/lm_pads_blend.py, deck below); `parked` are declared, measured and held out, each with its reason",

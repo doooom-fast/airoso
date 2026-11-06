@@ -14,6 +14,22 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
+## 2026-11-05 (round J) — Sand Creek 0.2.5: the streets on the lidar, the south wall, a NAIP tracer (ledger 0079 round J)
+
+No gate threshold, floor or bypass moved (LANE_TOL_M 0.02 m, the houses floor 2,181, `route.verify_mouths_allowed`'s three
+rows: as they were). All opt-in, Sand Creek only (`test_round_j_keys_are_opt_in`):
+
+- Wiring: `lm_intake.connector_profiles` now names round I's measured file (99 streets; round I's 0.5 m jump hold
+  [invented] unchanged, plus grid_primary_15 held for a measured reason: a viaduct deck with no street-bridge path).
+- `route.weld_deck_beyond_end` (tools/weld_mouths_blend.py, mouth_weld.BeyondEndDeck): past a host's open end the weld
+  reads the deck of the street that end is welded to. No number; it changes what surface is read, not a tolerance.
+  verify_mouths' grid_tertiary_1#1 mouth passes because the sheet now lies on the deck (0.0 m above), not by any allowance.
+- `terrain.lidar_patches` wall_49 polygon extended to z -1075 (measured wall line); its feather_m 10 m ⚠ [invented, round I]
+  applies to the new soft edges.
+- ⚠ `tools/naip_edge.py` (a measurement tool, no gate, no build step): RUN_M 1.0 m, STEP_M 0.08 m, STEP_WIN_M 1.0 m,
+  STEP_SEARCH_M 1.0 m, ROAD_BAND 150-195 gray (read off Quebec's corridor histogram, asphalt peak 160-190), MIN_RUN_M
+  3.0 m [all invented].
+
 ## 2026-11-05 (round I) — Sand Creek toward 0.2.4: measured geometry, the numbers it adds (ledger 0079 round I)
 
 No gate threshold, floor or bypass moved this round unless listed here. All opt-in, Sand Creek only

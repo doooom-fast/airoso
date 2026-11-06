@@ -202,6 +202,47 @@ class ExactHostDeck(HostDeck):
         return HostDeck.at(self, x, z)
 
 
+class BeyondEndDeck:
+    """(opt-in route.weld_deck_beyond_end, ledger 0079 round J; Sand Creek) A guest that meets its host right at the
+    host's OPEN END (the host's own mouth on a third street) lays rows past that end, on the third street's pavement.
+    `base` (HostDeck / ExactHostDeck) holds the host's end row level there: Sand Creek grid_tertiary_74#0 (24 deg) on
+    grid_tertiary_1#1 at its v1, whose start is welded onto grid_tertiary_2#0; on the measured (lidar) profiles the
+    third street falls 0.02 m over 7 m from that end row and the guest's rows stood 0.021 m over its lane (verify_mouths
+    HOST LANE). Here a point that projects past an open end of the host's window AND lies on one of `beyond` (decks of
+    the streets the host's ends are welded to) reads that street's deck where it lies: the surface under it. Every
+    other point reads `base`, as before. No number is added."""
+
+    def __init__(self, base, beyond, open_start: bool, open_end: bool):
+        self.base = base
+        self.beyond = list(beyond)
+        self.open_start, self.open_end = open_start, open_end
+        self.rows, self.idx = base.rows, base.idx
+        self.hits = 0
+
+    def _past_end(self, x, z) -> bool:
+        _d, k, t, _o = self.base.project(x, z)
+        if k == 0 and t <= 0.0 and self.open_start:
+            return True
+        return k == len(self.idx) - 2 and t >= 1.0 and self.open_end
+
+    def at(self, x, z) -> float:
+        if self._past_end(x, z):
+            for d in self.beyond:
+                if d.inside(x, z):
+                    self.hits += 1
+                    return d.at(x, z)
+        return self.base.at(x, z)
+
+    def project(self, x, z):
+        return self.base.project(x, z)
+
+    def edge_gap(self, x, z, side, inset) -> float:
+        return self.base.edge_gap(x, z, side, inset)
+
+    def inside(self, x, z, margin=0.0) -> bool:
+        return self.base.inside(x, z, margin)
+
+
 def host_window(rows, closed, x, z, reach=HOST_WINDOW_M):
     """row indices of the host within `reach` of arc from the row nearest (x, z), in order (wrapped if closed)"""
     m = len(rows)

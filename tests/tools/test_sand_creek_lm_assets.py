@@ -488,3 +488,54 @@ def test_lidar_profile_surface_keeps_a_street_under_a_bridge_on_its_ground():
     on = fake([1.0, 2.0, 3.0, 4.0, None, None, 4.0, 3.0, 2.0, 1.0], [None, None, None, None, 5.0, 5.0, None, None, None, None])
     ys = [m[0] for m in lcp.profile(on, pts, surface=True)]
     assert ys == ramp
+
+
+def test_round_j_keys_are_opt_in():
+    """ledger 0079 round J: Lake Murray and the Lariat name none of the new keys (the weld's deck past a host's open end;
+    the round I lidar profile file)"""
+    for t in ("san-diego-lake-murray", "lookout-lariat"):
+        p = ROOT / "tracks" / t / "track.config.json"
+        if not p.exists():
+            continue
+        cfg = json.loads(p.read_text(encoding="utf-8"))
+        assert "weld_deck_beyond_end" not in (cfg.get("route") or {})
+        assert "round_i" not in str((cfg.get("lm_intake") or {}).get("connector_profiles") or "")
+
+
+def test_weld_deck_beyond_end_reads_the_street_under_the_rows():
+    """ledger 0079 round J (mouth_weld.BeyondEndDeck): a host street running north from z 0 (its open start welded onto
+    a third street along z 0, which falls 0.01 m per m east); a point past the host's start on the third street reads the
+    third street's deck, a point on the host reads the host's, and a point past the start but off the third street reads
+    the host's end row held level, as before"""
+    import mouth_weld as mw
+    host = [((x - 5.0, 10.0, z), (x, 10.0, z), (x + 5.0, 10.0, z)) for x, z in ((0.0, 3.0 * j) for j in range(10))]
+    third = [((x, 10.0 - 0.01 * x, 5.0), (x, 10.0 - 0.01 * x, 0.0), (x, 10.0 - 0.01 * x, -5.0))
+             for x in (-30.0 + 3.0 * j for j in range(21))]
+    base = mw.HostDeck(host, list(range(len(host))))
+    d3 = mw.ExactHostDeck(third, list(range(len(third))))
+    deck = mw.BeyondEndDeck(base, [d3], open_start=True, open_end=False)
+    assert abs(deck.at(2.0, -2.0) - (10.0 - 0.02)) < 1e-6        # past the host's start, on the third street
+    assert abs(deck.at(2.0, 6.0) - 10.0) < 1e-9                  # on the host
+    assert abs(deck.at(2.0, -9.0) - 10.0) < 1e-9                 # past the start, off the third street: as before
+    assert deck.hits == 1
+    shut = mw.BeyondEndDeck(base, [d3], open_start=False, open_end=False)
+    assert abs(shut.at(2.0, -2.0) - 10.0) < 1e-9
+
+
+def test_naip_edge_road_runs_close_paint_and_keep_the_carriageway():
+    """ledger 0079 round J (tools/naip_edge.road_runs): a 0.5 m lane line (bright) and a car shadow (dark) inside an
+    asphalt run are closed over; the verge (dark) beyond 1 m ends it; a run under 3 m is not a carriageway"""
+    import naip_edge as ne
+    lat = [-10.0 + 0.5 * k for k in range(41)]
+    gray = []
+    for l in lat:
+        if -6.0 <= l <= 6.0:
+            gray.append(230.0 if abs(l - 1.0) < 0.3 else (90.0 if abs(l + 3.0) < 0.3 else 170.0))
+        elif 8.0 <= l <= 9.0:
+            gray.append(170.0)
+        else:
+            gray.append(110.0)
+    runs = ne.road_runs(lat, gray)
+    assert runs == [(-6.25, 6.25)]
+    out = ne.trace_section(lat, gray, [None] * len(lat), 0.0)
+    assert out["run"] == [-6.25, 6.25] and out["left"]["kind"] == "no_step"

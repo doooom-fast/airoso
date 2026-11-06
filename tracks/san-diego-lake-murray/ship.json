@@ -4,7 +4,7 @@
   "workshop": "D:/k10-scratch",
   "workshop_project": "lm_v4",
   "require_race_layout": true,
-  "ui_name_prefix": "K10 - San Diego CANDIDATE v4 keep-roads",
+  "ui_name_prefix": "doooom San Diego",
   "street_ai_july": "D:/k10-track-archive/2026-10-11/san_diego_lake_murray/ai",
   "audit_note": "the regression floor — D 0 / K 20 / I 20 / F 13 since v0.18.0: the I-8 deck rails stand on the curb, 0.15 m off the pavement; D 512 while they stood on its edge, since the 2026-10-11 mouth weld + fold mend, was 512 / 154 / 145 / 15",
   "steps": {

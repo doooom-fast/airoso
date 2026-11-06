@@ -550,7 +550,8 @@ def test_sd_spec_carries_ship_sds_sync_lists_and_names():
     assert 'WS="C:/Users/Owner/Documents/GitHub/k10-sd-v021"' in SD_TEXT and 'WS_PROJ="$WS/project"' in SD_TEXT
     assert s["require_race_layout"] is True
     assert s["street_ai_july"] == "D:/k10-track-archive/2026-10-11/san_diego_lake_murray/ai"
-    assert 'K10 - San Diego (V3) \\u2014 ' in SD_TEXT and s["ui_name_prefix"].startswith("K10 - San Diego")
+    # ship_sd.sh keeps the 0.19.x V3 name; v4's layouts show as "doooom San Diego — …" (Kevin 2026-11-06: "Rename it")
+    assert 'K10 - San Diego (V3) \\u2014 ' in SD_TEXT and s["ui_name_prefix"] == "doooom San Diego"
     sync = SD_TEXT[_first('step "sync outputs workshop -> airoso"\n', SD_TEXT):_first("never synced.\nfi\n", SD_TEXT)]
     for f in ("centerline.local.json", "centerline.raw.local.json", "median_bands.json", "dummies.json",
               "finished_centerline.json", "gate_centerline.json", "lights.local.json", "connectors.local.json",

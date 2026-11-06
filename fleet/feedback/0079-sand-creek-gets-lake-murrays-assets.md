@@ -2111,6 +2111,78 @@ item 1's record (read by nothing) and the allowance edit (78's row dropped, a pa
    - 4k (the shared-tools A/B) also covers this round's tools: `mouth_weld.py` / `weld_mouths_blend.py` gained
      `route.weld_deck_beyond_end` (no key, no change); `tools/naip_edge.py` is new and no step calls it.
 
+4n. **Sand Creek 0.2.6** (ledger 0079 rounds K-R). This build carries 0.2.5 (4m) plus:
+   - the race layout's dressing (rounds K-P): Lake Murray's race furniture over the WHOLE street, the whole lap
+     (`race.corridor.whole_lap`; Kevin 2026-11-06: "Full street width"): the K-rail curb strips along both edges (22
+     objects, 23 mainline mouths sealed), Lake Murray's race kerbs at the 7 race corners (14), no closure wall; the race
+     layout's own W1-6 plates in its closure kn5;
+   - arrow signs (6 posts) and the street-name blades (25 posts / 50 blades);
+   - the fourth pad, `48th_colorado` (round P), and the pad-corner strips at 50th/Ash and 50th/Dahlia (round M);
+   - fork 94/95's measured median paint (round N);
+   - verify_kn5's whole-street rule (round R), `fold_fans` + `drive_test.vertex_kinks` / `fold_fan_severe` (round P).
+
+   It installs as `sand_creek_raceway_lm` 0.2.6, replacing 0.2.5. **NO install in this runbook. An install happens only
+   on Kevin's word, and the PC asks him.**
+   1. `git -C D:/k10-worktrees/sclm-assets fetch` and check out a CLEAN tree at round R's pushed head of
+      `claude/sand-creek-lm-assets` (`git status` empty; the LFS blobs pulled: `tracks/sand-creek-lm/loop.blend`,
+      `tracks/sand-creek/loop.blend`, `tracks/sand-creek/source/naip_2023_sc_z18.jpg`).
+   2. Inputs, the same as step 4m (the four TreeFX `.bin`, ENG = the same plain copy `D:/k10-scratch/eng_sclm_a`). New
+      and committed since 4m, synced in by ship.json: `signs.json`, `source/name_blades.json`, `textures/name_blades.png`.
+      Nothing to fetch, no lidar job.
+   3. Rehearse from an EMPTY workshop:
+      `SHIP_PROJ=D:/k10-scratch/sand_creek_lm_r_reh AIROSO=D:/k10-worktrees/sclm-assets ENG=D:/k10-scratch/eng_sclm_a bash tools/ship_track.sh sand-creek-lm --no-install`
+      (log to a file). Expect the Mac's rr2 (`sclm_work/rr2.log`, built from this head with nothing but the Mac's
+      Blender path and the `${tok^^}` header text changed for macOS bash 3.2):
+      - 4m's lines (`[lm_intake]` the same streets off the lidar; `[trim] fork ... grid_tertiary_92: 87.3 m, width
+        14.0-24.5 m` and `... grid_unclassified_95: 81.8 m, width 13.5-18.0 m`; `[weld] grid_tertiary_74 ... 19 point(s)`;
+        `[islands] 1KERB_sidewalk_island_fork_92: 55 rows over 27.6 m ...`; `[ground-patch] wall_49: ... 42509 seated on
+        the lidar ground (8241 in the 10 m feather), largest move 5.10 m`; `[bespoke] ... 2183 buildings stood, 38
+        dropped`);
+      - lm-pads x4: decks filled 1647 / 477 / 883 / class-2 1347 nodes (48th_colorado), unfilled 0;
+        `[strip-seam] 4 pad outline(s), 866 points`; `[lamps] 171 lamps`;
+      - `[paint] YLINE_paint_fork_95_median: yellow 67.0 m x 2 stripe(s), yellow 67.2 m x 2 stripe(s)`;
+      - `[bands] ...: strips on 3218/3218 verts (closed loops, 4 trimmed corners); 14 kerbs at 7 corners; 23 sealed
+        mouths`; PLANNED no_route PASS (leak 0, 0 doors); `[verify-race] OK`;
+      - `[verify-signs] 6 posts (6 plates, 2 layout plates: SC-C50-fwd@race, SC-48C-fwd@race), 18 skipped, PASS`;
+        `[name-blades] 25 posts, 50 blades stood (5 slid, max 5.0 m); 4 skipped`;
+      - `[race-kn5]` COMMON OK (36 meshes: 22 curb strips, 14 kerbs, 0 closure); CLOSURE `race` OK with the WARN "no
+        1WALL_RACE_CLOSE_RACE_* mesh: the 'race' layout races the whole lap (params.whole_lap) — its closure kn5 holds
+        its 3 sign mesh(es) alone";
+      - **verify_kn5 PASS** (`[race] lane: 16 START/PIT cars inside the declared lane, nearest face +0.98 m`) and
+        **verify_kn5 --inis PASS** — the row that was red from round K to Q;
+      - drive_test street PASS: severe 0, fold bumps 6, vertex kinks 14 (station 1.97 /km), vertex bumps 1, slope kinks
+        0.52 /km, bumps 0.31 /km, excursion drops 1, obstructed 0;
+      - drive_test race PASS: severe 22 (10 deferred to verify_fold_fans), dense hops 8, slope kinks 6.85 /km, bumps
+        1.04 /km, excursion drops 0 (far ledges 1), obstructed 0;
+      - audit street / race CLEAN; BUILT no_route race PASS (leak 0, 0 doors, 0/23 probes); verify_fold_fans PASS (2
+        levelled pinches x 2 layouts; race 10 deferred, all on a judged path, worst gap 0.2315 m);
+      - kn5_ground_check race / street PASS (197 heads, 0 orphans);
+      - verify_pads x4 PASS (seams 1.6 / 1.6 / 0.9 / 1.0 mm; grass 0; curb over pavement 0);
+      - verify_mouths PASS: 113 mouths, `grid_primary_80#0` FAILs in its row (ALLOWED: the E 56th mouth, owed);
+      - house_seat PASS (lowest roof 1.261 m, 2,183 judged), house_gate PASS (2,183 / 2,183 / 0), textures 0 untextured;
+      - `SHIP OK`.
+   4. Compare every gate row above with rr2's, and the kn5 BYTES:
+      - rr2's sizes: road `sand_creek_raceway_lm.kn5` 92,160,949 B; `_race` 10,196,549 B; `_closure_race` 9,701 B;
+        `_street` 6,923,402 B; `__race` / `__street` 2,104 B each (total 109.3 MB). md5 (Mac): closure 18e5eb36…, spawn
+        race 1822ac76…, spawn street f82f7ed8….
+      - Judge the road, race and street kn5s with `tools/kn5_equiv.py` (GATES-CHANGELOG 2026-11-03), not md5: rr2 is
+        kn5_equiv-EQUIVALENT to round P's rp2 (tangents only) for all three.
+      - **Known ground noise, not a difference:** the road kn5 +56 B (one grass vertex) or −132 B (3 grass vertices
+        welded differently) against the Mac's, with `1GRASS_0` 1 / 3 vertices apart. Anything else on the road kn5,
+        and ANY byte on the race / closure / spawn kn5s, is a difference.
+      - Anything different (a gate row, a count, a size beyond that noise): stop and send the log and the differing
+        names to the Mac.
+   5. **Ask Kevin** whether to install 0.2.6. Only on his word: the same command without `SHIP_PROJ` and `--no-install`
+      (AC closed), the 0.2.5 workshop moved aside first as in 4m.
+   6. Stills, after an install only, from the car, CSP daylight, into
+      `tracks/sand-creek-lm/source/stills/<name>_drive_0.2.6.jpg` (engine frame, x = E, z = N; AC's z is −N):
+      - the race layout on N Colorado Blvd at lap v60 (−1509 / −78), facing north: the strips 14.86 m apart on 16.5 m;
+      - the race layout on N Northfield Quebec St at v2000 (1697 / −633), facing south-west;
+      - each of the four pads from the race line: colorado_50th (v140), 50th_ash (v186), 50th_dahlia (v411),
+        48th_colorado (v3205).
+   - 4k (the shared-tools A/B) also covers this round's change: `scripts/ac/verify_kn5.py` (opt-in
+     `race.corridor.whole_lap`; Lake Murray's output byte-identical, round R).
+
 ## Owed (2026-11-05, after round J; start here)
 
 1. **Quebec (round J item 2): measured, not built.**

@@ -622,6 +622,119 @@ network_connectors; median_ground_blend tried and reverted); no chain step Lake 
 **Mac note:** ws25 ran while Sand Creek's prep was in Blender (my check missed a step boundary); every later build
 waited for `pgrep -x Blender` to be empty.
 
+### Step 2a round 6: the stepped barrier's footing, the ground under WB, the median as read (Mac, ws28-ws36)
+
+**Inputs.** a8534007 (the PC's `median_ground.lidar.json` with tile 480624: slope 275 -> 412, step 75 unchanged) and
+90d1d66e (round 5 installed; its sync-back is build output, nothing this chain reads: ws36 on it = ws35's numbers).
+`median_wall.lidar.json` and the NAIP / measured lines are unchanged this round (no line moved: no `--walls` rerun owed,
+the md5 chain stands). Nothing downloaded; NAIP not read (no NAIP step re-run).
+
+**What the 8 "cached-coverage" drops were (ws27 sections, `r6/xs_a.txt`, `r6/xs_b.txt`):** not one kind.
+- WB s 302 +10.5 (0.13): WB the LOW side, its edge strip draped into gap ground 0.13 m under WB's pavement.
+- WB s 3,602 +9.5 (1.09), 7,054 +7.5 (4.21), 7,204 +6.0 (4.82): WB the HIGH side, the sample inside the barrier's base,
+  where only the low side's ground lies under the body. None is on a WB deck: 7,054 / 7,204 are beside the LINE's deck.
+- WB s 7,204 -6.0 (3.31, item 3) and the centre of WB s 7,024-7,294: the ground under WB's own pavement stood 4.3-4.8 m
+  down, at the LINE's under-deck ground. The deck lidar reads WB at grade there (edge 186, OSM layer 0, class-2 ground
+  19.01 at WB 19.0; WB's declared decks are 1,399-1,408 and 1,464-1,527): the prep's pin never reached it. From WB's
+  outer edge drive_test fell down that facet.
+- WB s 7,204 -9.0 / -9.5 (0.23): the ground falling 1:2 three metres outside WB's outer edge (outer, not median).
+- WB s 9,304 +9.0 (0.83): no barrier; an unpaved median whose lidar reads the ground at WB's level falling to the line.
+
+**1. The low side's gap ground up to the low pavement (item 1).** `median_ground_blend.py` step 3: on the low side of the
+high foot, in the gap, under no pavement, the ground goes UP to the low pavement less GROUND_CLEAR where the prep left it
+lower (2,379 vertices, max 0.53 m); never to the high side, not where the low pavement is a declared deck (the deck flag
+read 0.6 m past the low foot, median_barrier_blend's `_decked`). WB s 302 fixed.
+
+**2. The stepped barrier's footing (item 2: what F wants).** audit_mesh F judges each 1KERB top vertex that has a road
+vertex within 2 m: it must be within 0.5 m of one of those road vertices or of a ground vertex within 3.5 m. Round 5's
+slab across a step failed because it stood on a DECK (ground 4 m down) beside a high deck whose own edge vertices are 5 m
+apart. Off a deck the high side's ground is pinned at its pavement and F sees the slab flush. So
+`median_barrier_blend.py` now carries the HIGH side's deck slab under the barrier's body to the low foot on every stepped
+section (489 quads), except where the high side's edge is a declared deck at either end of the quad (61 not laid); and
+`median_ground_blend.py` (3b) removes, on the final ground, any footing quad F could not see flush (3 removed: WB s
+3,430-3,490, the line's s 7,170-7,220). Fixed: WB s 3,602, 7,054, 7,204 +6.0; the line's s 5,701 +11.0 (0.43) and
+s 10,500 +9.0 (0.12, item 4). ws29 (no deck test) had F 75, ws30 (one end) F 8, ws32 F 0.
+
+**3. The ground under WB's own pavement (item 3).** `median_ground_blend.py` 2b: every ground vertex under a network
+connector's pavement (the road hit within 0.5 m of that connector's height), off its declared decks (+-3 vertices, 2d's
+pad), takes the pavement's height less GROUND_CLEAR, the prep's own contact pin: 8,208 vertices, max 4.88 m. WB s 7,204
+-6.0 fixed; under WB's centre at s 7,024-7,294 the ground now reads 0.08 m under the drive line (`r6/under_wb.py`).
+
+**4. WB s 6,902 (now 7,204) +-6.0 and the line's s 10,500:** fixed at their causes (items 2 and 3 above).
+
+**4b. The unpaved median as read (round 4's slope application, now built).** With the PC's 412 slope rows: every slope
+station with an unpaved gap (>= 2 m), off a line deck / WB deck and away from a barrier run (149 used; 50 line deck, 15
+barrier, 10 edges not found skipped): the terrain is cut at both edge strips' outer lines (bisect, as the step's cut),
+the ground between takes the lidar's profile re-anchored on the BUILT pavements' tops (median_lidar anchors on the
+centre line's y, 0.10 m under the built top), and within one lidar bin (0.5 m) of a strip the ground meets that strip's
+pavement read abreast. Vertices under a pavement inside the cut stretch go DOWN to the contact height where a cut split a
+facet that stood over the road (ws33-34: audit B +0.27 m at the line's s 1,412, a facet ws27 hid between vertices).
+Fixed: WB s 7,950.7 +14.0 / +14.5 (two of the 14 that waited on the download: the PC's tile read them). Repairs on the
+way: ws29 soft top 101 (no cuts), ws31 soft 10 / ws32 soft 11 (the station's edge top used 2.5 m along on a 2.4 % grade).
+
+| Gate (BUILT kn5) | round 5 (ws27) | ws29 | ws30 | ws32 | ws34 | **round 6 (ws35; ws36 = rebased HEAD)** |
+|---|---|---|---|---|---|---|
+| line: soft top / severe / kinks per km / daylight / floating | 0/0/0/0/0 | 101/0/1.5/0/0 | 0/0/0/0/0 | 11/0/0/0/0 | 0/0/0/0/0 | **0/0/0/0/0** |
+| line: excursions gated (limit 10) | 4 | 3 | 2 | 2 | 2 | **2** (s 5,550.7 +-10.5, 0.14-0.15) |
+| line drive_test | PASS | FAIL | PASS | FAIL | PASS | **PASS** |
+| WB: soft / severe / kinks / daylight / floating | 0/0/0/0/0 | 0/0/0/0/0 | 0/0/0/0/0 | 0/0/0/0/0 | 0/0/0/0/0 | **0/0/0/0/0** |
+| WB: lap-rule excursions (line gate 7.12 / km) | 24 (2.27) | 17 | 19 | 17 | 17 | **17 (1.61)** |
+| WB: line gate / drive_test's own lap rule | PASS / FAIL | PASS / FAIL | PASS / FAIL | PASS / FAIL | PASS / FAIL | **PASS / FAIL (17 > 10)** |
+| audit_mesh | CLEAN | F 75 | F 8 | B 1 | B 1 | **CLEAN** |
+| verify_kn5 / verify_inis | PASS | PASS | PASS | PASS | PASS | **PASS** |
+| kn5_ground_check | PASS | PASS | PASS | PASS | PASS | **PASS** (road over ground 72 / 6,135 > 5 cm, p95 0.020 m) |
+| kn5 B | 42,786,971 | 42,937,935 | 42,960,143 | 43,020,931 | 43,020,931 | **43,020,931 (43.0 MB)** |
+| ship_track | SHIP OK | rc 1 | rc 1 | rc 1 | rc 1 | **SHIP OK** |
+
+ws28 failed in median_ground_blend (a tuple unpack), ws31 F 5 + soft tops; both repaired as above. Edge report (ws35,
+line): 1 m past the lane edge ground 74.5 %, wall 18.5 %, kerb 7.0 %, lane 0.0 %.
+
+**WB's lap rule, 24 -> 17:** fixed 7 (s 302, 3,602, 7,054, 7,204 +6.0, 7,204 -6.0 of the 8 cached; 7,950.7 x2 of the
+waiting 14). **Waiting on the median download: 12** (s 1,203, 9,004, 9,750.5 x3, 9,900.8 x4, 10,051 x3). **Left with
+cached data: 5** — s 7,204 -9.0 / -9.5 (the 1:2 fill slope outside WB's outer edge: real ground, unguarded; the outside
+barrier, below, cannot yet say whether a rail stands there), s 9,304 +9.0 (0.79: the slope row there is beside the LINE's
+deck, line s 1,357 in bridges_levelled [1,190, 1,375], so not applied: the ground next to a bridge is not the bridge's
+level; owed: a WB-side-only application), s 4,351.7 +-11.5 (0.13-0.14, partly covered).
+
+**5. An outside-barrier reader, calibrated on the median (item 5): `tools/barrier_lidar.py`, NOT used to build.**
+At every line / WB vertex and side: non-ground returns (not class 2, 7, 17, 18) 0.3-1.3 m over the pavement's own class 2,
+binned 0.25 m across the edge from 0.5 m inside it to 3 m out; the densest bin (>= 2 returns within 2.5 m along) is the
+reading; a BARRIER is >= 10 m of consecutive readings holding their offset within 0.5 m and height within 0.3 m. Truth:
+`median_barrier.json`'s runs on the inner sides, LEVEL sections only (across a step the barrier reads as the high side's
+wall). Report `network-draft-pr34/barrier_lidar.calibration.json` (2014 EPT cache + tile 481624, 1.82 M returns near the two carriageways):
+
+| inner side, level median | covered stations | with a NAIP barrier | tp / fp / fn | precision | recall |
+|---|---|---|---|---|---|
+| line (the 16-way sweep's choice, in sample) | 251 | 239 | 121 / 9 / 118 | 0.93 | 0.51 |
+| WB (same thresholds) | 244 | 232 | 113 / 9 / 119 | 0.93 | 0.49 |
+
+Read it with care: 95 % of the covered level median HAS a barrier, so precision barely tests the rule; of the 12 covered
+stations without one it fires on 9, and those 9 sit in 10-20 m holes between NAIP's runs (line s 9,994-10,009 and
+10,147-10,167): likely NAIP's misses, not the reader's, but unproven either way. Recall is the cache's density (about 0.6
+barrier returns per 0.25 m bin per station). Outer sides: the line 7 runs / 216 m, WB 9 runs / 406 m, most at the
+window's 2.4-2.9 m edge and 0.3-0.6 m tall (slope or shrubs, not a 0.9 m barrier); only WB s 6,455-6,476 (0.38 m out,
+0.92 m tall) and 6,950-6,965 (1.87 m out, 0.91 m), and the line's s 3,923-3,953 (0.62 m out, 1.24 m) and
+7,001-7,011 (0.98 m) look like one. Every threshold invented (GATES-CHANGELOG round 6). Nothing built.
+
+**Lake Murray unchanged:** `git diff origin/claude/fleet-lm-engine -- tracks/san-diego-lake-murray scripts/` is empty.
+Every tool changed is port-only (median_barrier_blend, median_ground_blend; barrier_lidar is new and out of the chain);
+`tools/ship_track.sh` is unchanged; no chain step Lake Murray runs changed: no A/B owed.
+**Tests:** `tests/run_tests.py` (python 3.12) 630 PASS, 1 FAIL (`test_registry_moves`, as round 5); pytest
+`tests/tools` 714 passed, 1 skipped (as round 5).
+**Mac:** every build waited for a full minute with no `blender` process (`fwlm_work/quiet_then_ship_p7.sh`, 2 s polls);
+Sand Creek's kn5 export held ws28 for about 40 min.
+
+## PC runbook 0080-7: rehearse 2a round 6, no install
+
+Supersedes 0080-6 for the next candidate (0080-6's c3c988b9 is what is installed). No lidar or NAIP is needed.
+
+1. `git fetch && git worktree add D:/k10-worktrees/freeway-lm-2a6 7e4e92fc` (ws36's commit; any later commit of round 6 changes no build input)
+2. `SHIP_PROJ=D:/k10-scratch/fwlm_2a6 AIROSO=D:/k10-worktrees/freeway-lm-2a6 ENG=D:/k10-scratch/eng_fwlm bash
+   tools/ship_track.sh san-diego-freeway-lm --no-install`
+3. Expect ws35 / ws36: line drive_test PASS (excursions 2), WB line gate PASS (17, 1.61 / km), audit CLEAN, verify_kn5 /
+   inis PASS, kn5_ground_check PASS, 43,020,931 B (+- a ground edge split, as 0080-6), SHIP OK. Any other number: stop
+   and file it here. Install only on Kevin's word (it would replace c3c988b9's `san_diego_freeway_lm`).
+
 ## PC runbook 0080-6: rehearse 2a round 5, no install
 
 Supersedes 0080-5 (which matched ws19 on the PC). No lidar or NAIP is needed: every generated input is committed.
@@ -704,31 +817,33 @@ expecting green. On the PC (its own network), one tile at a time:
 
 ## Owed (start here)
 
-State (2026-11-05, end of 2a round 5): **2a green on the Mac** (the round 5 table, ws27: the line's drive_test PASS, WB's
-line gate PASS, audit CLEAN, kn5_ground_check PASS, SHIP OK, 42.8 MB), nothing installed. The PC matched round 4 (ws19,
-runbook 0080-5); round 5 is rehearsed with runbook 0080-6. Lake Murray unchanged (empty diff; no chain step it runs
-changed). Nothing was downloaded this round (one read-only Overpass query; NAIP and lidar from the caches).
+State (2026-11-05, end of 2a round 6): **2a green on the Mac** (the round 6 table, ws35 / ws36: the line's drive_test
+PASS, excursions 2; WB's line gate PASS, lap rule 17; audit CLEAN; kn5_ground_check PASS; SHIP OK; 43.0 MB). Installed
+on the PC: round 5 (c3c988b9, Kevin's word); round 6 is rehearsed with runbook 0080-7, not installed. Lake Murray
+unchanged (empty diff; no chain step it runs changed). Nothing downloaded this round.
 
-- **Kevin:** rehearse round 5 on the PC (runbook 0080-6), then drive it (install on your word). Say yes / no to:
-  fetching the 2014 EPT nodes over the unpaved median (14 of WB's 24 lap-rule drops wait on it), the lidar over the
-  outer shoulders (item 4), the Caltrans 2026 Standard Plans PDF. Look at Morena (the barrier now on the lidar's wall:
-  the line's pavement runs to it, WB is 2.5-2.9 m narrower) and WB's new east head.
+- **Kevin:** drive round 5 (installed); rehearse round 6 on the PC (runbook 0080-7), install on your word. Say yes / no
+  to: fetching the 2014 EPT nodes over the unpaved median (12 of WB's 17 lap-rule drops wait on it), the lidar over the
+  outer shoulders (the outside barrier, below), the Caltrans 2026 Standard Plans PDF.
 - **2a, left (none blocks green):**
-  1. **The ground under a barrier's base where drive_test samples it** (WB lap rule: s 3,602, 7,054, 7,204 x4, 9,304,
-     302): raise the LOW side's gap ground to the low pavement (never the high: ws22-ws24's pokes), off decks only.
-  2. **WB s 7,054 (old 7,052) on the stepped Morena deck**: a surface under the barrier that audit F accepts (round 5
-     item 2: a 1KERB slab across a step reads as a curb not flush).
-  3. **WB s 7,204 -6.0 (old 6,902)**: a ground facet from under WB's moved pavement shows past its kept outer edge.
-  4. **The unpaved median's ground** (WB s 7,950-10,050 now): the EPT nodes over it, with Kevin's yes (round 4 item 2).
-  5. **The outside barrier** (item 4): a run-continuity reader on the outer-edge returns, or the shoulder lidar.
-  6. **Tile 480624 on the Mac**: median_lidar ran with the 2014 EPT + 481624 only; runbook 0080-6 step 4 reads 480624
-     on the PC.
+  1. **WB s 9,304 +9.0 (0.79 m)**: the unpaved median's slope row there is beside the LINE's deck (line s 1,357), so it is
+     skipped whole; apply its WB half only (WB is at grade, the lidar reads the ground at WB's level at its edge).
+  2. **WB s 7,204 -9.0 / -9.5 (0.23 m)**: a 1:2 fill slope 3 m outside WB's outer edge. Real ground; whether a rail
+     stands there is the outside barrier's question.
+  3. **The outside barrier**: `tools/barrier_lidar.py` reads the median's barrier at precision 0.93 / recall 0.49-0.51
+     (level sections, in sample; the negatives are too few to trust a false-positive rate). Before building any outer
+     run: a held-out truth for the negatives (NAIP's barrier tops on the outer shoulders, or the shoulder lidar).
+  4. **The stepped footing on a declared deck** (61 quads not laid, 3 removed): slab vertices abreast of the high deck's
+     own edge vertices, so F sees them flush. No drive_test drop stands there today.
+  5. **WB s 4,351.7 +-11.5 (0.13-0.14)**, partly covered: read when the median lidar lands.
+  6. **The unpaved median's ground** (12 drops, WB s 1,203 and 9,004-10,051): the EPT nodes over it, Kevin's yes.
   7. **The Caltrans sheet** (round 3 item 7).
 - `weld_mouths` stays out (its empty-yellow-block refusal, owed to its owners on `claude/sand-creek-lm-assets`).
-- Scratch: `/Volumes/Drive/codex/fwlm_work/run_ship_p6.sh` (round 5's worktree), ws20 (d738203 baseline), ws21 (item 1),
-  ws26 (item 2), ws27 (HEAD); round-5 probes in the session scratchpad `r5/` (`xs.py` built sections across WB / the
-  line, `tri_at.py` / `verts_near.py` the ground under a point, `cmp_edges.py` / `cmp_bar.py` old vs new edges and
-  barrier, `outer_cov.py` the outer-edge census, `gates.py` a ws's gate summary).
+- Scratch: `/Volumes/Drive/codex/fwlm_work/run_ship_p7.sh` + `quiet_then_ship_p7.sh` (round 6's worktree; the second
+  waits a full minute with no `blender` process first), ws35 (round 6), ws36 (rebased HEAD); round-6 probes in the session
+  scratchpad `r6/` (`under_wb.py` the ground under WB's pavement, `fprobe.py` audit F's failures located, `bprobe.py`
+  audit B's, `near.py` every group's vertices near a point, `tri_at_line.py`, `bl_sweep.py` the reader's sweep);
+  round 5's in `r5/` (`xs.py`, `gates.py`).
 - **2b (I 5, SR 52, SR 163 mainlines, both ways):** `lm_intake.network_connectors` entries (ref + direction; the
   resolver refuses a broken chain, so read its message per road), then **the whole box**: drop `grid_crop_m`, set
   `terrain.tiers` (far cells at the 3DEP grid's native 55 m), and measure the assembler's terrain pass on the box first

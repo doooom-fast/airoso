@@ -14,6 +14,28 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
+## 2026-11-05 — the SD freeway port, phase 2a round 6: the stepped barrier's footing, the ground under WB, the median as read, a barrier reader (ledger 0080; no threshold moved, no bypass)
+
+No gate threshold, bypass, gate code or gate-chain wiring changed. New numbers / rules the port's DATA / geometry tools
+carry (none is a gate's):
+
+- `tools/median_barrier_blend.py`: the stepped section's footing reuses deck_rails_blend's `DECK_EDGE_DY_M` 0.03 and
+  `DECK_EDGE_IN_M` 0.1 and the barrier tool's 0.3 m retaining threshold. ⚠ A rule: not laid where the high side's edge is
+  a declared deck at either end of the quad.
+- `tools/median_ground_blend.py`: `LOW_PROBE_M` 0.6 (= `FOOT_PROBE_M[0]`), `DECK_PAD_V` 3 (2d's / 1b's pad), `PIN_DY_M`
+  0.5 (its own pavement-edge tolerance), `UNPAVED_GAP_M` 2.0 (round 4's unpaved gap), `SLOPE_ALONG_M` 2.5 (1b's half
+  station), `EDGE_BAND_M` 0.5 (median_lidar's `BIN_M`), the 0.6 m / 0.05 m edge walk (1b's), all reused. `F_EDGE_M`
+  2.0, `F_REACH_M` 3.5, `F_DY_M` 0.5 are audit_mesh F's own `EDGE_REACH`, `CURB_REACH` and |dy|, READ (the footing quads
+  F cannot see flush are removed, not forced; F itself is untouched). `SLOPE_REACH` 60 m is a KD search bound only (the
+  along / across tests decide). ⚠ Rules: the ground under a network connector's pavement off its decks is pinned to it
+  (the prep's contact pin, GROUND_CLEAR); the low side's gap ground goes UP to the low pavement too (never to the high
+  side's, not on a declared deck); an unpaved slope row is applied only off line / connector decks and away from a
+  barrier run, cut at both edge strips; under a pavement inside that cut stretch the ground only goes DOWN.
+- ⚠ `tools/barrier_lidar.py` **invented**, every one: `ALONG_M` 2.5, `LAT_IN_M` 0.5, `LAT_OUT_M` 3.0, `PAVE_M` 2.0,
+  `H_LO` 0.3 / `H_HI` 1.3, `BIN_M` 0.25, `N_MIN` 2, `DOFF_M` 0.5, `DH_M` 0.3, `RUN_MIN_M` 10.0; `H_LO`, `N_MIN`,
+  `DOFF_M`, `RUN_MIN_M` chosen by a 16-way sweep scored on the line's level median (in sample): precision 0.93, recall
+  0.51 (WB with the same values 0.93 / 0.49). Out of the chain: it reports, it builds nothing.
+
 ## 2026-11-05 — the SD freeway port, phase 2a round 5: the barrier on the lidar's wall, the barrier through one-station holes and on the deck, WB's OSM head (ledger 0080; no threshold moved, no bypass)
 
 No gate threshold, bypass, gate code or gate-chain wiring changed. New numbers / rules the port's DATA / geometry tools

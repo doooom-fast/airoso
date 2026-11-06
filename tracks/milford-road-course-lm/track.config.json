@@ -226,7 +226,222 @@
         ],
         "_doc": "the assembler's names at the author stage (Lake Murray's)"
       },
-      "prep_seats": true
+      "prep_seats": true,
+      "rails": [
+        {
+          "key": "g1_nw_corner_outside",
+          "kind": "wbeam",
+          "auto": true,
+          "height_m": 0.7,
+          "polyline_lonlat": [
+            [
+              -83.6665486,
+              42.5736467
+            ],
+            [
+              -83.6666707,
+              42.5735124
+            ],
+            [
+              -83.6667744,
+              42.5733904
+            ],
+            [
+              -83.6668843,
+              42.5732683
+            ],
+            [
+              -83.6669819,
+              42.5731462
+            ],
+            [
+              -83.6670796,
+              42.5730242
+            ],
+            [
+              -83.6671711,
+              42.5729021
+            ],
+            [
+              -83.66722,
+              42.5728228
+            ]
+          ],
+          "_source": "source/furniture/inventory.json G1: line off NAIP 2022 (+-1 px, 106.5 m; a bright double line with dark post ticks and a turned-down end at the apron (z 3.4x crop gA)); height 0.70 m [invented: an NCHRP-350-era strong-post W-beam's 27-28 in, a standard, not measured here]"
+        },
+        {
+          "key": "g2_front_straight_east",
+          "kind": "wbeam",
+          "auto": true,
+          "height_m": 0.7,
+          "polyline_lonlat": [
+            [
+              -83.6672077,
+              42.5720721
+            ],
+            [
+              -83.6672138,
+              42.5709491
+            ],
+            [
+              -83.6672138,
+              42.5697284
+            ],
+            [
+              -83.6672138,
+              42.5685077
+            ],
+            [
+              -83.6672138,
+              42.5673481
+            ],
+            [
+              -83.6671772,
+              42.567043
+            ]
+          ],
+          "_source": "source/furniture/inventory.json G2: line off NAIP 2022 (+-1 px, 556.1 m; a bright line 1-2 px off the pavement edge with dark post ticks at a steady spacing (crops z_ws, gW1, gW2)); height 0.70 m [invented: an NCHRP-350-era strong-post W-beam's 27-28 in, a standard, not measured here]"
+        },
+        {
+          "key": "g3_front_straight_west",
+          "kind": "wbeam",
+          "auto": true,
+          "height_m": 0.7,
+          "polyline_lonlat": [
+            [
+              -83.6674458,
+              42.5690876
+            ],
+            [
+              -83.6674458,
+              42.5685077
+            ],
+            [
+              -83.6674397,
+              42.5678974
+            ],
+            [
+              -83.6674336,
+              42.5673176
+            ]
+          ],
+          "_source": "source/furniture/inventory.json G3: line off NAIP 2022 (+-1 px, 195.7 m; a bright line with dark ticks along the west pavement edge, starting where the wide pavement narrows (z_ws, gW2)); height 0.70 m [invented: an NCHRP-350-era strong-post W-beam's 27-28 in, a standard, not measured here]"
+        },
+        {
+          "key": "g4_infield_esses",
+          "kind": "wbeam",
+          "auto": true,
+          "height_m": 0.7,
+          "polyline_lonlat": [
+            [
+              -83.6647664,
+              42.573366
+            ],
+            [
+              -83.6647725,
+              42.573189
+            ],
+            [
+              -83.6647847,
+              42.5730181
+            ],
+            [
+              -83.6648092,
+              42.5728838
+            ],
+            [
+              -83.6648763,
+              42.5727312
+            ],
+            [
+              -83.6649373,
+              42.5726214
+            ],
+            [
+              -83.6650289,
+              42.5725359
+            ],
+            [
+              -83.6651143,
+              42.5724688
+            ],
+            [
+              -83.6651998,
+              42.5724261
+            ],
+            [
+              -83.6652913,
+              42.5723833
+            ],
+            [
+              -83.6653768,
+              42.5723406
+            ],
+            [
+              -83.6654622,
+              42.5722979
+            ],
+            [
+              -83.6656148,
+              42.5722308
+            ],
+            [
+              -83.6656941,
+              42.5722002
+            ],
+            [
+              -83.6658223,
+              42.5721758
+            ],
+            [
+              -83.6659505,
+              42.5721026
+            ],
+            [
+              -83.6660481,
+              42.572011
+            ],
+            [
+              -83.6661275,
+              42.5719134
+            ],
+            [
+              -83.6661641,
+              42.5717852
+            ],
+            [
+              -83.6661824,
+              42.5716326
+            ],
+            [
+              -83.6662007,
+              42.5714495
+            ],
+            [
+              -83.6662129,
+              42.5712725
+            ],
+            [
+              -83.6662312,
+              42.5711505
+            ],
+            [
+              -83.6662556,
+              42.5709674
+            ],
+            [
+              -83.6662739,
+              42.570766
+            ],
+            [
+              -83.6662984,
+              42.5705646
+            ]
+          ],
+          "_source": "source/furniture/inventory.json G4: line off NAIP 2022 (+-1 px, 362.2 m; a continuous bright line, its west edge in shadow, post ticks, a hooked terminal at the north end (gB1, gB2, z_a)); height 0.70 m [invented: an NCHRP-350-era strong-post W-beam's 27-28 in, a standard, not measured here]"
+        }
+      ],
+      "_rails_doc": "ledger 0082 pass 1: the W-beam (kind wbeam) and tyre walls (kind tyres) on the lines NAIP 2022 shows (source/furniture/README.md); auto: a post or module that would stand on a road or off the ground is left out"
     },
     "draft_lamps": false,
     "_draft_lamps_doc": "a circuit has no streetlight down its edge every 55 m: the v021 assembler's draft posts are off (ledger 0078)"

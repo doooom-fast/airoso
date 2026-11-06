@@ -47,6 +47,10 @@ y = N, z = up). The collection is emptied first, so the tool is idempotent, and 
   rails       [{"key", "kind": "tecpro" | "krail", "polyline_lonlat", "auto", "height_m"}]: collidable module lines seated on
               the ground -> 1WALL_TECPRO_<k> / 1WALL_KRAILBW_<k>; "auto" leaves a module out when it would stand on a road,
               instead of refusing; "height_m" (optional): a measured height over the ground, in place of the kind's
+              (ledger 0082, opt-in) "kind": "tyres" -> 1WALL_TECPRO_TYRES_<k>, stacked tyre columns, "depth_m" (optional) the
+              measured width of the wall; "kind": "wbeam" -> GUARDRAIL_W_<k> (rail + posts, visual) + 1WALL_GHOST_RAIL_<k> (the
+              unseen collider), the rail face on the line facing the nearest lap point; "auto" there breaks the rail where a
+              post would stand on a road or off the ground (WBEAM_* below)
 
 SELF-CHECKS, exit 1 and loop.blend NOT saved: a building's footprint (ring + interior) and every scrub foot off every road
 and kerb; every cone foot off the main road; a building at least BUILDING_CLEAR_M from the road and any wall; ground under every read; no AC_* touched.
@@ -75,7 +79,8 @@ from scripts.geometry.projection import _meters_per_degree  # noqa: E402  (the d
 
 COLLECTION = "AUTH_bespoke"
 OWN_PREFIXES = ("BUILDING_FABRIC", "1WALL_FABRIC", "PROPCONE", "SCRUBCARD", "BUILDING_TILTUP", "BUILDING_METAL", "ROOFTOP",
-                "1WALL_TILTUP", "PADAPRON", "TREECARD", "PRAIRIECARD", "GUARDRAIL", "1WALL_TECPRO", "1WALL_KRAILBW", "BUILDING_DRYSTONE", "FARBLOCK")
+                "1WALL_TILTUP", "PADAPRON", "TREECARD", "PRAIRIECARD", "GUARDRAIL", "1WALL_TECPRO", "1WALL_KRAILBW", "BUILDING_DRYSTONE", "FARBLOCK",
+                "1WALL_GHOST_RAIL")
 GROUND = ("1GRASS",)
 GROUND_FAR = ("1GRASS", "GRASS_FAR")
 PAVED = ("1ROAD", "1RUNOFF", "1KERB")
@@ -128,7 +133,23 @@ RAIL_LIP_H = 0.70              # the draft's lip, read off Milford's 1WALL_PARA_
 RAIL_KINDS = {"tecpro": ("1WALL_TECPRO", 1.2, 1.5, 0.8),
               # High Plains' painted barriers: a Caltrans-type K-rail is 0.81 m tall, 0.6 m at the foot, 3 m a section
               # (cited from memory, not re-read); the paint alternates every section on NAIP 2023
-              "krail": ("1WALL_KRAILBW", 0.81, 3.0, 0.6)}
+              "krail": ("1WALL_KRAILBW", 0.81, 3.0, 0.6),
+              # ledger 0082 (Milford furniture pass 1), opt-in kinds a config names or does not:
+              # a stacked-tyre wall: one module = one tyre column, 0.62 m [invented: a common passenger tyre's diameter]; height
+              # 1.0 m [invented: five tyres]; the depth is the entry's measured "depth_m" where NAIP gives it. It rides the
+              # 1WALL_TECPRO prefix because engine-july's prep (Lake Murray's, frozen) keeps the authored UVs only of the prefixes
+              # it lists (build_kn5_loop.py's planar_uv skip) and binds a texture only by a pbr row: the track's
+              # texture_overrides["1WALL_TECPRO"] is the tyre skin (tools/make_bespoke_assets.py tyre_wall)
+              "tyres": ("1WALL_TECPRO_TYRES", 1.0, 0.62, 1.2)}
+# W-beam on posts along a measured line (rails kind "wbeam", ledger 0082): the rail's face stands ON the measured line (NAIP
+# reads the galvanised face), the posts WBEAM_BLOCKOUT_M behind it, away from the nearest lap point; the rail's top is the
+# entry's "height_m" over the ground under it (default RAIL_LIP_H 0.70 m: an NCHRP-350-era strong-post W-beam's 27-28 in
+# [invented: a standard, not measured at the track]). Visual GUARDRAIL_W_<k> (the GUARDRAIL row: wbeam_rail_diffuse.png; UVs
+# kept), and an unseen collider 1WALL_GHOST_RAIL_<k> (the 1WALL_GHOST row: transparent) WBEAM_COLLIDER_D_M deep, its face on
+# the rail's, from BOTTOM_UNDER_M under the ground to the rail's top
+WBEAM_BLOCKOUT_M = 0.20        # [invented] a post and its blockout behind the rail face (a W6x9 post + 8 in block is ~0.35 m)
+WBEAM_COLLIDER_D_M = 0.20      # [invented] the collider's depth behind the rail face
+WBEAM_POST_W_M = 0.15          # [invented] a W6x9 post's flange, round figure
 
 
 EDGE_OF = {}                   # id(BVH) -> the longest edge of each polygon, in metres (for the collider's fine-ground rule)
@@ -894,7 +915,8 @@ def cards(col, spec, proj, to_xy, ground, paved, walls, bad, pad_quads=()):
 
 def guardrail(col, spec, proj, bad):
     """the rail along the draft's guard lips: the lip's own top and foot, its road side; the lip becomes the unseen collider"""
-    src = [o for o in bpy.data.objects if o.type == "MESH" and o.name.upper().startswith((spec["from"], "1WALL_GHOST"))]
+    src = [o for o in bpy.data.objects if o.type == "MESH" and o.name.upper().startswith((spec["from"], "1WALL_GHOST"))
+           and not o.name.upper().startswith("1WALL_GHOST_RAIL")]      # a W-beam entry's own collider (ledger 0082) is no lip
     if not src:
         bad.append(f"guardrail: no {spec['from']}* to follow")
         return {}
@@ -989,12 +1011,144 @@ def guardrail(col, spec, proj, bad):
     return {"runs": len(runs), "rail_m": round(total, 1), "posts": n_post}
 
 
-def rails(col, spec, to_xy, ground, paved, bad):
+def resample_polyline(line, step):
+    """points every ``step`` m along a polyline, its last point included (pure: ledger 0082's W-beam posts)"""
+    out = [tuple(line[0])]
+    carry = 0.0
+    for a, b in zip(line, line[1:]):
+        seg = math.dist(a, b)
+        if seg <= 0:
+            continue
+        t = step - carry
+        while t <= seg + 1e-9:
+            out.append((a[0] + (b[0] - a[0]) * t / seg, a[1] + (b[1] - a[1]) * t / seg))
+            t += step
+        carry = seg - (t - step)
+    if math.dist(out[-1], line[-1]) > 0.05 * step:
+        out.append(tuple(line[-1]))
+    return out
+
+
+def road_side(run, road):
+    """+1 when the left of the run's travel (a, b = its ends) faces the nearest road point to its middle, else -1 (pure)"""
+    mid = run[len(run) // 2]
+    rx, ry = min(road, key=lambda q: (q[0] - mid[0]) ** 2 + (q[1] - mid[1]) ** 2)
+    a, b = run[0], run[-1]
+    tx, ty = b[0] - a[0], b[1] - a[1]
+    return 1.0 if -ty * (rx - mid[0]) + tx * (ry - mid[1]) > 0 else -1.0
+
+
+def wbeam_geometry(run, side, height):
+    """``run`` = [(x, y, ground z)] at the post spacing. Returns (rail, posts, collider), each (verts, faces, uvs): the
+    rail's W section (RAIL_H / RAIL_D) with its face on the run and its top ``height`` over the ground, both faces (a rail
+    is seen from both sides); a post at every sample WBEAM_BLOCKOUT_M behind the face; the collider a closed box
+    WBEAM_COLLIDER_D_M deep behind the face, BOTTOM_UNDER_M under the ground to the top (pure: tested)"""
+    rail, posts, coll = ([], [], []), ([], [], []), ([], [], [])
+    arc = 0.0
+    for s0, s1 in zip(run, run[1:]):
+        dx, dy = s1[0] - s0[0], s1[1] - s0[1]
+        seg = math.hypot(dx, dy) or 1e-6
+        nx, ny = -dy / seg * side, dx / seg * side           # toward the road
+        v, f, uv = rail
+        for j in range(len(RAIL_H) - 1):
+            base = len(v)
+            for st, z0 in ((s0, s0[2]), (s1, s1[2])):
+                for jj in (j, j + 1):
+                    off = RAIL_D[jj] - RAIL_D[0]               # the W bulges toward the road from the face line
+                    v.append((st[0] + nx * off, st[1] + ny * off, z0 + height - 0.312 + RAIL_H[jj]))
+            u0, u1 = arc / RAIL_PANEL_M, (arc + seg) / RAIL_PANEL_M
+            vv = lambda q: 0.06 + 0.88 * RAIL_H[q] / 0.312
+            q = (base, base + 2, base + 3, base + 1)
+            quv = ((u0, vv(j)), (u1, vv(j)), (u1, vv(j + 1)), (u0, vv(j + 1)))
+            f += [q, q[::-1]]
+            uv += [quv, quv[::-1]]
+        v, f, uv = coll
+        bx, by = -nx * WBEAM_COLLIDER_D_M, -ny * WBEAM_COLLIDER_D_M
+        base = len(v)
+        for st in (s0, s1):
+            lo, hi = st[2] - BOTTOM_UNDER_M, st[2] + height
+            v += [(st[0], st[1], lo), (st[0], st[1], hi), (st[0] + bx, st[1] + by, hi), (st[0] + bx, st[1] + by, lo)]
+        for i in range(4):
+            j = (i + 1) % 4
+            f.append((base + i, base + j, base + 4 + j, base + 4 + i))
+            uv.append(((0, 0), (1, 0), (1, 1), (0, 1)))
+        arc += seg
+    v, f, uv = posts
+    for k, st in enumerate(run):
+        a, b = (run[k - 1], st) if k else (st, run[1])
+        dx, dy = b[0] - a[0], b[1] - a[1]
+        seg = math.hypot(dx, dy) or 1e-6
+        tx, ty = dx / seg, dy / seg
+        nx, ny = -ty * side, tx * side
+        cx, cy = st[0] - nx * (WBEAM_BLOCKOUT_M + 0.05), st[1] - ny * (WBEAM_BLOCKOUT_M + 0.05)
+        hw = WBEAM_POST_W_M / 2
+        ring = [(cx + tx * hw + nx * 0.05, cy + ty * hw + ny * 0.05), (cx - tx * hw + nx * 0.05, cy - ty * hw + ny * 0.05),
+                (cx - tx * hw - nx * 0.05, cy - ty * hw - ny * 0.05), (cx + tx * hw - nx * 0.05, cy + ty * hw - ny * 0.05)]
+        ring = inward_ring(ring)
+        lo, hi = st[2] - BOTTOM_UNDER_M, st[2] + height - 0.03
+        base = len(v)
+        for i in range(4):
+            p, r = ring[i], ring[(i + 1) % 4]
+            b0 = len(v)
+            v += [(p[0], p[1], lo), (r[0], r[1], lo), (r[0], r[1], hi), (p[0], p[1], hi)]
+            f.append((b0, b0 + 1, b0 + 2, b0 + 3))
+            uv.append(((0.5, 0.2), (0.6, 0.2), (0.6, 0.8), (0.5, 0.8)))
+    return rail, posts, coll
+
+
+def wbeam_rail(col, k, r, line, ground, paved, bad, road, batch):
+    """one "wbeam" entry: posts every RAIL_POST_M on the ground; a post on a road or off the ground ends the run ("auto")
+    or fails the self-check"""
+    hgt = float(r.get("height_m", RAIL_LIP_H))
+    runs, cur, left_out = [], [], 0
+    for x, y in resample_polyline(line, RAIL_POST_M):
+        g = down(ground, x, y)
+        if g is None or down(paved, x, y) is not None:
+            if not r.get("auto"):
+                bad.append(f"rail {r['key']}: a post at ({x:.1f}, {y:.1f}) is on a road or off the ground")
+            left_out += 1
+            if len(cur) > 1:
+                runs.append(cur)
+            cur = []
+            continue
+        cur.append((x, y, g))
+    if len(cur) > 1:
+        runs.append(cur)
+    arc, n_post, cv, cf, cu = 0.0, 0, [], [], []
+    for run in runs:
+        side = road_side(run, road)
+        (rv, rf, ru), (pv, pf, pu), (kv, kf, ku) = wbeam_geometry(run, side, hgt)
+        batch.room(len(rv) + len(pv))
+        batch.add(rv, rf, ru)
+        batch.add(pv, pf, pu)
+        off = len(cv)
+        cv += kv
+        cf += [tuple(off + i for i in f) for f in kf]
+        cu += ku
+        arc += sum(math.dist(a[:2], b[:2]) for a, b in zip(run, run[1:]))
+        n_post += len(run)
+    if cv:
+        make_mesh(col, f"1WALL_GHOST_RAIL_{k}", cv, cf, cu)
+    print(f"[bespoke] rail {r['key']}: W-beam {arc:.0f} m in {len(runs)} run(s), {n_post} posts, top {hgt:.2f} m over the "
+          f"ground, {left_out} post(s) left out; collider 1WALL_GHOST_RAIL_{k}")
+    return {"key": r["key"], "kind": "wbeam", "runs": len(runs), "posts": n_post, "left_out": left_out,
+            "length_m": round(arc, 1), "height_m": hgt}
+
+
+def rails(col, spec, to_xy, ground, paved, bad, proj=None):
     rows = []
+    wbeam_batch = None
     for k, r in enumerate(spec):
         line = [to_xy(p) for p in r["polyline_lonlat"]]
+        if r["kind"] == "wbeam":                 # ledger 0082: opt-in, a config names the kind or nothing here runs
+            if wbeam_batch is None:
+                wbeam_batch = Batcher(col, "GUARDRAIL_W")
+                road = [(p[0], p[2]) for p in centreline(proj)[0]]
+            rows.append(wbeam_rail(col, k, r, line, ground, paved, bad, road, wbeam_batch))
+            continue
         prefix, hgt, mod, dep = RAIL_KINDS[r["kind"]]
         hgt = float(r.get("height_m", hgt))      # a measured height (ledger 0078: Pikes Peak's wall off the lidar)
+        dep = float(r.get("depth_m", dep))       # a measured width (ledger 0082: Milford's tyre walls off NAIP)
         verts, faces, uvs = [], [], []
         arc_total, modules, left_out = 0.0, 0, 0
         for a, b in zip(line, line[1:]):
@@ -1032,6 +1186,8 @@ def rails(col, spec, to_xy, ground, paved, bad):
             make_mesh(col, f"{prefix}_{k}", verts, faces, uvs)
         rows.append({"key": r["key"], "kind": r["kind"], "modules": modules, "left_out": left_out, "length_m": round(arc_total, 1)})
         print(f"[bespoke] rail {r['key']}: {modules} {r['kind']} modules over {arc_total:.0f} m, {left_out} left out")
+    if wbeam_batch is not None:
+        wbeam_batch.flush()
     return rows
 
 
@@ -1070,7 +1226,7 @@ def main():
         report["scrub"] = scrub(col, spec["scrub"], to_xy, ground, paved, walls, bad)
     far = bvh(GROUND_FAR)[0]
     if spec.get("rails"):
-        report["rails"] = rails(col, spec["rails"], to_xy, ground, paved, bad)
+        report["rails"] = rails(col, spec["rails"], to_xy, ground, paved, bad, proj)
     if spec.get("blocks"):
         report["blocks"] = blocks(col, spec["blocks"], proj, to_xy, far, ground, paved, walls, bad)
     if spec.get("pads"):

@@ -34,9 +34,9 @@
    "points": 2050,
    "length_m": 10220.2,
    "decks": 6,
-   "deck_points": 101,
+   "deck_points": 129,
    "deck_points_spanned": 4,
-   "bridged_points_unmeasured_levelled": 32,
+   "bridged_points_unmeasured_levelled": 4,
    "levelled_runs": 4,
    "approach_points_raised_to_crest": 36,
    "deck_end_steps_m": [
@@ -49,7 +49,7 @@
     0.15,
     -0.1,
     -0.06,
-    0.12,
+    0.17,
     0.06,
     0.02
    ],
@@ -70,9 +70,9 @@
   "network.geojson": "255dbe5d7053ad09b6e7d987a8fdf0d1",
   "network.edges.local.json": "a4e386a84d393c2cedc6921869170dc8",
   "network.elevation.json": "b9c33cdf8e2969aaccbb33b02982c5aa",
-  "deck_profiles.lidar.json": "be6d5f7af79e556aae847971f5156b2e"
+  "deck_profiles.lidar.json": "13f70ea305ea18de2e82124e62cdded0"
  },
  "outputs": {
-  "connectors.local.json": "403a21fd8469003e8bcd4249e141e9bc"
+  "connectors.local.json": "974118bbefda8a699a2ba158eca66f23"
  }
 }

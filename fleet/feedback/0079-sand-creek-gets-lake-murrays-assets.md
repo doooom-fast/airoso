@@ -1167,6 +1167,21 @@ Lake Murray unchanged:
 Tests: `tests/run_tests.py` (the .venv python, `python` on PATH): 1,304 pass. 6 fail, the same as round I's
 (`test_draft_equiv` x5, `test_registry_moves` x1). 3 new: the round J keys, BeyondEndDeck, the NAIP road runs.
 
+## Runbook 4m (PC, 2026-11-05): 0.2.5 installed on Kevin's word
+
+- **Rehearsal** (`sand_creek_lm_j_reh`, empty, aa4d8b0b, ENG `eng_sclm_a`, the four `.bin` in place) matched rj2:
+  99 lidar streets, houses 2,183, verify_mouths 117 PASS, road kn5 89.6 MB.
+- **Kevin, 2026-11-05: "All six, freeway 2a"** (0.2.5 was item 1 of the six). The 0.2.2 workshop moved aside to
+  `D:/k10-scratch/sand_creek_lm.0.2.2`; the install ran from a fresh empty `D:/k10-scratch/sand_creek_lm`, 22:0x-23:01.
+  Every gate green, verify_mouths 117 PASS, SHIP OK, no force. The installed 0.2.2 folder is parked in
+  `D:/k10-track-archive/2026-11-05_230119/`. Installed: "doooom Colorado — Sand Creek Raceway (LM engine)" and "... Sand
+  Creek Free Roam (LM engine)", 0.2.5. Road kn5 89,563,823 B and the street kn5 are kn5_equiv-equivalent to the rehearsal
+  (tangents only; the road's 1GRASS_0 23,431 -> 23,430 vertices by the tangent merge); the race / street closure kn5s are
+  byte-identical. TreeFX in `extension/trees/` (the four personal-use `.bin`, not committed).
+- **The sync-back** is `5cb48d9` on its own branch `claude/sand-creek-lm-0205-installed`, parented on aa4d8b0b: rounds
+  K-M here are newer 0.2.6 work and 0.2.5's records over them would undo theirs, so it is not merged here (the Mac's call).
+- Not driven yet.
+
 ## Round K (Mac): the race dressing, round C's plan of record (toward 0.2.6)
 
 Kevin's words: "same lamps as lake murray, race curbs, no sidewalks, authored pad junctions"; signs "Both"; "I just want

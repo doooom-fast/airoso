@@ -838,6 +838,12 @@ between the line and its partner makes that side "unread" (no new number). Proof
 - Tests: no image between the pair -> unread; a 2 m hole in the image inside the median -> unread (both FAIL on the old
   reader); an imaged paved median still puts its barrier at the midline, and a bright top in the band is still "seen".
 
+**The tiers line in the log (the coordinator's extra; the PC's 0080-8 rehearsal matched ws39, kn5 +56 B, but its log had
+no `[fwlm-tiers]` line).** `draft_build_loop_blend_tiered` in `tools/ship_track.sh` filtered Blender's output through
+`tail -9`, and nine `[blend]` lines follow the tiers report. The filter now keeps the last nine `[blend]` / error lines
+as before and prints every `[fwlm-tiers]` line after them (an awk ring buffer; checked on a fake log). Only that step,
+which Lake Murray's ship.json never names, changed.
+
 ## PC runbook 0080-8: rehearse 2b round 1 (2a with the tiered ground), no install
 
 Supersedes 0080-7 for the next candidate. No lidar or NAIP is needed; the new draft step uses Blender 4.2's own numpy.

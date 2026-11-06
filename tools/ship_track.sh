@@ -258,7 +258,9 @@ draft_build_loop_blend() {
 # (tools/fwlm_terrain.py). A port's step only: Lake Murray's ship.json names build_loop_blend and never runs this one
 draft_build_loop_blend_tiered() {
   step "draft: build loop.blend (scene regen — GEN layer; tiered terrain: tools/fwlm_tiered_assembler_blend.py; ledger 0080 2b)"
-  (cd "$WS" && "$BL" --background --python-exit-code 1 --python-expr "$V021_SHIM" --python "$AIROSO/tools/fwlm_tiered_assembler_blend.py" -- "$PROJ" 2>&1 | grep "^\[blend\]\|^\[fwlm-tiers\]\|Error\|Traceback" | tail -9)
+  (cd "$WS" && "$BL" --background --python-exit-code 1 --python-expr "$V021_SHIM" --python "$AIROSO/tools/fwlm_tiered_assembler_blend.py" -- "$PROJ" 2>&1 | grep "^\[blend\]\|^\[fwlm-tiers\]\|Error\|Traceback" | awk '/^\[fwlm-tiers\]/ { t[nt++] = $0; next } { b[n++ % 9] = $0 } END { for (i = (n > 9 ? n - 9 : 0); i < n; i++) print b[i % 9]; for (i = 0; i < nt; i++) print t[i] }')
+  # ^ the last 9 [blend] / error lines as before, then every [fwlm-tiers] line (2b round 2: under the old `tail -9` the
+  #   nine [blend] lines after it dropped the tiers report from the PC's log)
 }
 draft_lm_intake() {
   step "draft: the track's line, widths and 3DEP into Lake Murray v4's assembler inputs (tools/lm_engine_intake.py; ledger 0078)"

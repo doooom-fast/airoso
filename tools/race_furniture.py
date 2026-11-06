@@ -118,6 +118,8 @@ FOLD_MERGE_M = 6.0           # backward steps closer than this (along the run's 
 #                              saw-tooth back at every ~3 m polyline vertex of a folding lip (two vertex spacings)
 FOLD_STRETCH_MIN = 0.5       # an `extend` leg step moves >= this fraction of its centreline step (not curling into the cusp)
 FOLD_EXTEND_MAX_M = 8.0      # an `extend` join runs at most this far past either leg's last ring (SD's seam corner: 7.0)
+CHORD_ALIGN_COS = 0.866      # [authored, ledger 0079 round K] race.edge_fold_chord: a chord ends on a ring whose step runs
+                             # within 30 deg of the way the ring faces
 MITRE_MAX = 2.0              # corner ring lateral scale cap 1/cos(psi/2) (2.0 at psi 120 deg; SD's corners 67-93: 1.20-1.45)
 MITRE_CLEAR_M = 0.25         # a leg ring stays >= half_w * tan(psi/2) + this from the corner (clear of the reflex mitre tip)
 SHARP_DEG = 30.0             # a hard edge where two faces meet at more than this (a real crease)
@@ -827,7 +829,9 @@ def check_bands(bands, pts, island_w=None):
         if not isinstance(y, list) or len(y) < m:
             probs.append(f"corridors.{lid}.closure_y_by_vertex has {len(y) if isinstance(y, list) else 'no'} entries, "
                          f"the centreline {m}")
-        if not c.get("runs"):
+        if not c.get("runs") and not (bands.get("params") or {}).get("whole_lap"):
+            # params.whole_lap (race.corridor.whole_lap, opt-in, ledger 0079 round K): the layout races the whole street
+            # round the whole lap — no closure line exists to declare
             probs.append(f"corridors.{lid}: no closure runs declared")
     return probs
 
@@ -1158,7 +1162,8 @@ def edge_plans(pts, widths, bands, mode="road", height=BARRIER_H):
     found = []
     for side, whole, closed in _edge_runs(pts, widths, ei, mode, height, table):
         i, j = whole["run"]
-        rings, skipped, corners = trim_folded_rings(whole["rings"])
+        rings, skipped, corners = trim_folded_rings(whole["rings"],
+                                                    chord=bool((bands.get("params") or {}).get("edge_fold_chord")))
         found += [dict(c, side=side) for c in corners]
         assigned = set()
         rings, _ = densify_rings(rings, m)      # AFTER the trim: the two corner spans stay straight chords
@@ -1578,7 +1583,7 @@ def corner_station(a, nxt, X, din, dout, t, sgn):
     return r, abs(psi)
 
 
-def _trim_folds(recs, pos, place, half, search, what):
+def _trim_folds(recs, pos, place, half, search, what, chord=False):
     """Offset-curve LOOP REMOVAL on the polyline pos(recs) of ONE run (strip rings or kerb stations) —
     ledger 0047, 2026-10-11; replaces the one-sided drop (drop_folded_rings / drop_folded_stations), whose
     test kept the 'ear' rings v768 / v1512 / v2317 / v3295 and chorded BACKWARDS across the fold: six
@@ -1654,6 +1659,27 @@ def _trim_folds(recs, pos, place, half, search, what):
                     if best is None or (b - a, ext) < (best[1] + 1 - best[0], best[7]):
                         X = (P[a][0] + din[0] * r[0], P[a][1] + din[1] * r[0])
                         best = (a, b - 1, X, din, dout, 0.0, "extend", ext)
+        if best is None and chord:
+            # race.edge_fold_chord (opt-in, ledger 0079 round K; Lake Murray declares none): a fold whose legs neither
+            # cross nor meet within FOLD_EXTEND_MAX_M (Sand Creek's 48th / Colorado: the lap's 32.9 m junction flare
+            # turning on R ~14 m, the strip a 0.3 m loop) is cut by the straight CHORD from the last in-leg ring to the
+            # first out-leg ring that are not curling into the cusp (FOLD_STRETCH_MIN); one straight record at the
+            # chord's midpoint (psi 0, so the mitre reach is MITRE_CLEAR_M). AUTHORED by rule, not measured: the
+            # barrier cuts the inside of the flare as one straight run
+            def clean(i):
+                # the step i -> i + 1 is a real leg AND runs the way ring i faces (cos >= CHORD_ALIGN_COS): past a junction
+                # flare's cusp the strip's polyline can run on while its rings still face the turn (the colorado_50th pad,
+                # Sand Creek: rings v142-v144 face east, their steps run north) — a chord ending there turns inside-out
+                if i < 1 or i >= n - 1 or not leg_ok(i):
+                    return False
+                u = _unit2(P[i + 1][0] - P[i][0], P[i + 1][1] - P[i][1])
+                return u[0] * recs[i]["tx"] + u[1] * recs[i]["tz"] >= CHORD_ALIGN_COS
+            a = next((a_ for a_ in range(f0 - 1, max(0, f0 - 1 - search), -1) if clean(a_ - 1)), None)
+            b = next((b_ for b_ in range(f1, min(n - 1, f1 + search)) if clean(b_)), None)
+            if a is not None and b is not None:
+                du = _unit2(P[b][0] - P[a][0], P[b][1] - P[a][1])
+                X = ((P[a][0] + P[b][0]) / 2.0, (P[a][1] + P[b][1]) / 2.0)
+                best = (a, b - 1, X, du, du, 0.0, "chord", math.dist(P[a], P[b]))
         if best is None:
             raise SystemExit(f"[race] {what} fold at v{recs[f0]['k']}..v{recs[f1]['k']}: no trim (no crossing, no "
                              f"extension within {FOLD_EXTEND_MAX_M} m) — author this corner by hand")
@@ -1707,10 +1733,11 @@ def _trim_folds(recs, pos, place, half, search, what):
     return out, dropped, corners
 
 
-def trim_folded_rings(rings, search=FOLD_SEARCH_RINGS):
+def trim_folded_rings(rings, search=FOLD_SEARCH_RINGS, chord=False):
     """_trim_folds on a kerb-line strip's vertex rings (the strip centre polyline, a mitred corner_ring at
-    each corner). A closure never folds (closure_plans refuses one). Returns (rings, n_dropped, corners)."""
-    return _trim_folds(rings, _strip_xz, corner_ring, BARRIER_HALF_W, search, "edge")
+    each corner). A closure never folds (closure_plans refuses one). Returns (rings, n_dropped, corners).
+    chord: race.edge_fold_chord (opt-in; the declaration's params.edge_fold_chord) — _trim_folds' chord fallback."""
+    return _trim_folds(rings, _strip_xz, corner_ring, BARRIER_HALF_W, search, "edge", chord=chord)
 
 
 def trim_folded_stations(sts, sgn, search=FOLD_SEARCH_STATIONS):
@@ -1773,7 +1800,7 @@ def match_declared_corners(bands, found, tol=0.05):
                          f"— re-run tools/barrier_bands.py")
 
 
-def edge_fold_corners(pts, widths, edge_inset, mode="road", height=BARRIER_H):
+def edge_fold_corners(pts, widths, edge_inset, mode="road", height=BARRIER_H, chord=False):
     """the kerb-line strips' trimmed inside corners on both sides — what tools/barrier_bands.py declares as
     `edge_corners`: the SAME _edge_runs (one closed loop per side when every vertex is declared — ledger 0049 C1)
     + trim_folded_rings that edge_plans authors, so the declaration IS the authored line. Sorted by (side,
@@ -1782,7 +1809,7 @@ def edge_fold_corners(pts, widths, edge_inset, mode="road", height=BARRIER_H):
     declared band runs in_vertex -> xz -> out_vertex across them), n_removed, extension_m."""
     out = []
     for side, run, _closed in _edge_runs(pts, widths, edge_inset, mode, height):
-        out += [dict(c, side=side) for c in trim_folded_rings(run["rings"])[2]]
+        out += [dict(c, side=side) for c in trim_folded_rings(run["rings"], chord=chord)[2]]
     return sorted(out, key=lambda c: (c["side"], int(c["in_vertex"])))
 
 

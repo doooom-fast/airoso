@@ -348,7 +348,10 @@ def build(project_dir, out_name: str | None = None, config_path=None, *, planned
     # ---- curb strips: both sides, every vertex, one closed loop per side --------------------------
     edge_strip = [1] * n
     edge_inset_v = [edge_inset] * n
-    edge_corners = _RF.edge_fold_corners(pts, widths, edge_inset_v, edge_mode)
+    # race.edge_fold_chord (opt-in, ledger 0079 round K; Lake Murray declares none): a fold with no crossing and no
+    # extension is cut by its chord (race_furniture._trim_folds), carried in params so edge_plans authors the same line
+    fold_chord = bool(race.get("edge_fold_chord"))
+    edge_corners = _RF.edge_fold_corners(pts, widths, edge_inset_v, edge_mode, chord=fold_chord)
     for c in edge_corners:
         inside = [x for x in corners if ("R" if x["sign"] < 0 else "L") == c["side"]]
         near = min((min((v_ - x["apex"]) % m, (x["apex"] - v_) % m) for x in inside for v_ in c["removed"]),
@@ -366,6 +369,11 @@ def build(project_dir, out_name: str | None = None, config_path=None, *, planned
         pinned = [(int(a) % m, int(b) % m) for a, b in cor_cfg["closure_runs"]]
     except (KeyError, TypeError, ValueError, IndexError) as e:
         raise SystemExit(f"[bands] race.corridor needs whole [i, j], boxes [{{apex, i, j}}] and closure_runs [[i, j]]: {e}")
+    # race.corridor.whole_lap (opt-in, ledger 0079 round K; Sand Creek): the race is the whole street round the whole lap —
+    # no box, no closure run; echoed in params so race_furniture / check_race_kn5 accept a layout with no closure line
+    whole_lap = bool(cor_cfg.get("whole_lap"))
+    if whole_lap and (boxes or pinned or not all(_RC.in_rng(v, whole[0], whole[1], m) for v in range(m))):
+        fails.append("race.corridor.whole_lap: whole must cover every vertex, with no boxes and no closure_runs")
 
     def free(v):
         return _RC.in_rng(v, whole[0], whole[1], m) or any(_RC.in_rng(v, b["i"], b["j"], m) for b in boxes)
@@ -425,7 +433,8 @@ def build(project_dir, out_name: str | None = None, config_path=None, *, planned
                "centre_w_by_vertex": [0.0] * n, "edge_corners": edge_corners, "corridors": corridors,
                "kerbs": [dict(k) for k in kerbs], "kerbs_dropped": kerbs_dropped, "streets": streets, "corners": corners,
                "params": {"edge_mode": edge_mode, "edge_inset_m": edge_inset, "barrier_half_m": bhalf,
-                          "edge_centre_from_lip_m": EDGE_CENTRE_FROM_LIP[edge_mode], "barrier_height_m": height}}
+                          "edge_centre_from_lip_m": EDGE_CENTRE_FROM_LIP[edge_mode], "barrier_height_m": height,
+                          **({"edge_fold_chord": True} if fold_chord else {})}}
     kerbs, clip_method = _clip_kerbs(kerbs, partial, pts, widths, m, corridors, edge_inset, bhalf, edge_mode)
 
     # ---- sealed mouths (top-level, the 0047 shape; the per-layout policy is corridors.<id>.mouths) ----
@@ -504,6 +513,11 @@ def build(project_dir, out_name: str | None = None, config_path=None, *, planned
         start = lo.get("start") or {}
         if not start:
             continue
+        if race.get("spawn_gate_layouts") == "race_furniture" and not lo.get("race_furniture"):
+            # opt-in (ledger 0079 round K; Lake Murray declares none, so its street grid is still held to the faces): a
+            # layout that loads no race furniture has no strip to stand clear of — Sand Creek's free roam keeps its grid
+            # in the right-hand lane of the open two-way 7.5 m street, where the race's strips would stand
+            continue
         gv = int(start.get("grid_vertex", start.get("vertex", 0)))
         off = abs(float(start.get("offset_right_m", 0.0)))
         reverse = str(lo.get("direction", "forward")) == "reverse"
@@ -548,6 +562,8 @@ def build(project_dir, out_name: str | None = None, config_path=None, *, planned
             "mouths": str(race.get("mouths", "sealed")),
             "edge_loop_start_vertex": (_RF.loop_start(pts, m) if hasattr(_RF, "loop_start") else None),
             "corridor": _corridor_params_echo(cor_cfg, P, measured_clear, island_mode),
+            **({"edge_fold_chord": True} if fold_chord else {}),
+            **({"whole_lap": True} if whole_lap else {}),
         },
         "zones": {"whole": [whole[0], whole[1]], "boxes": boxes, "closure_runs": [list(r) for r in pinned],
                   "island_zones": [list(z) for z in ctx["island_zones"]], "openings": [list(z) for z in ctx["openings"]]},
@@ -606,6 +622,14 @@ def build(project_dir, out_name: str | None = None, config_path=None, *, planned
         out_path = data / (out_name or _LAP.bands_file(lap_id))
         out_path.write_text(json.dumps(out), encoding="utf-8")
         out["_path"] = str(out_path)
+        mb_ = data / "median_bands.json"
+        if whole_lap and lap_rec is None and not mb_.exists():
+            # race.corridor.whole_lap (opt-in, ledger 0079 round K): a lap with no divided road runs no median_envelope;
+            # the zero island widths this declaration assumed (above) are written down for verify_race / median_zone /
+            # no_route, which read them from this file
+            mb_.write_text(json.dumps({"_doc": "no median island on the lap: race.corridor.whole_lap, written by "
+                                               "tools/barrier_bands.py (ledger 0079 round K), not tools/median_envelope.py",
+                                       "island_w_by_vertex": [0.0] * n}), encoding="utf-8")
     _report(proj, out, fails)
     out["_ctx"] = vctx            # in memory only (after the write): validate(out, out["_ctx"]) re-runs the self-gates
     return out

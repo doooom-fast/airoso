@@ -184,7 +184,9 @@ def load(proj):
     pb = data / "pads.built.json"
     if pb.exists():
         for pad in json.loads(pb.read_text(encoding="utf-8")).get("pads", []):
-            PADS.append((pad["id"], [tuple(q) for q in pad["outline_xz"]]))
+            # Lake Murray's junction pads record outline_xz; tools/lm_pads_blend.py's (Sand Creek, ledger 0079 round K)
+            # record the same engine-frame (E, N) ring as outline_en
+            PADS.append((pad["id"], [tuple(q) for q in (pad.get("outline_xz") or pad.get("outline_en") or [])]))
     return signs, ribbons, island
 
 

@@ -34,6 +34,7 @@ import hashlib
 import io
 import json
 import math
+import os
 import sys
 import time
 import urllib.parse
@@ -96,6 +97,7 @@ class Mosaic:
         cache.mkdir(parents=True, exist_ok=True)
         self.tiles = {}
         self.fetched = []
+        self.missing = []
 
     def _ll(self, x, z):
         return self.lon0 + x / self.mx, self.lat0 + z / self.my
@@ -116,7 +118,10 @@ class Mosaic:
         px = int(round(TILE_M / MPP))
         f = self.cache / f"naip_{i}_{j}.npy"
         if not f.exists():
-            if item is None:
+            if item is None or os.environ.get("NAIP_OFFLINE") == "1":
+                # NAIP_OFFLINE=1 (ledger 0080 round 5: no new downloads): a tile not in the cache is UNREAD, never fetched
+                if item is not None:
+                    self.missing.append(f.name)
                 self.tiles[(i, j)] = None
                 return None
             q = urllib.parse.urlencode({"collection": "naip", "item": item, "assets": "image",
@@ -350,7 +355,39 @@ def edges_of(rows, W):
     return S, out, stats
 
 
-def barrier_runs(rows, line):
+# ledger 0080 2a round 5 (owed item 1): where the lidar reads the WALL between the carriageways (tools/median_lidar.py
+# --walls: a step whose low and high bins read the two built pavements), the barrier stands on it, not where NAIP put it
+# (at Morena NAIP saw no barrier top and put it at the midline between the two centres; the lidar's wall stood 0.5-2.8 m
+# past WB's built inner edge at line s 3,425-3,611 and up to 4.5 m at 3,380-3,420). A station of a barrier run takes the
+# wall's offset (running median over the read stations, SMOOTH_N); the unread stations of the same run close on it at the
+# width_taper rate (RATE_M_PER_M per m), the read ones are not moved. Both carriageways' inner edges follow the barrier
+# (apply()'s pin): WB narrows to the wall, the line's pavement runs to the wall's foot, as the lidar reads it at the
+# line's level and NAIP reads it as pavement.
+# And a barrier run broken by ONE unread station (kind "unread" on that side between two barrier stations) is one run:
+# a gap in the reading, not in the barrier (round 5 item 2: the 10 m hole at line s 3,275, WB s 7,052, left WB's deck
+# edge unguarded). Wider gaps stay gaps (counted in the report).
+JOIN_ONE_STATION_HOLES = False   # round 5 item 2 sets it (the barrier through one unread station)
+
+
+def _wall_offsets(line, walls_xz, idx, sg):
+    """Per station in ``idx``: the wall's signed offset (along sg * the station's normal), or nan where none is read."""
+    out = np.full(len(idx), np.nan)
+    if walls_xz is None or not len(walls_xz):
+        return out
+    for k, i in enumerate(idx):
+        q, n = line["Q"][i], line["Nn"][i]
+        t = np.array([n[1], -n[0]])
+        v = walls_xz - q
+        al = np.abs(v @ t)
+        off = (v @ n) * sg
+        ok = (al <= STEP_M / 2.0) & (off > 0) & (off < PAIR_M / 2.0)
+        if ok.any():
+            j = int(np.argmin(np.where(ok, al, np.inf)))
+            out[k] = float(off[j])
+    return out
+
+
+def barrier_runs(rows, line, walls_xz=None, stats=None):
     """The median barrier's centre line (x, z) from the line's own readings, as runs of consecutive stations."""
     pts = []
     for i, r in enumerate(rows):
@@ -358,23 +395,52 @@ def barrier_runs(rows, line):
             if r[k][0].startswith("barrier"):
                 pts.append((i, sg, r[k][2]))
     runs, cur = [], []
+    joined = 0
     for i, sg, b in pts:
-        if cur and (i != cur[-1][0] + 1 or sg != cur[-1][1]):
+        if (JOIN_ONE_STATION_HOLES and cur and sg == cur[-1][1] and i == cur[-1][0] + 2
+                and rows[i - 1][4 if sg > 0 else 5][0] == "unread"):
+            cur.append((i - 1, sg, (cur[-1][2] + b) / 2.0))     # one unread station: the barrier runs through it
+            joined += 1
+        elif cur and (i != cur[-1][0] + 1 or sg != cur[-1][1]):
             runs.append(cur)
             cur = []
         cur.append((i, sg, b))
     if cur:
         runs.append(cur)
     out = []
+    n_wall = 0
     for run in runs:
         idx = [i for i, _sg, _b in run]
         if line["S"][idx[-1]] - line["S"][idx[0]] < MIN_BARRIER_M:
             continue
         sg = run[0][1]
         bo = _runmed([b for _i, _sg, b in run], SMOOTH_N)
+        wo = _wall_offsets(line, walls_xz, idx, sg)
+        rd = ~np.isnan(wo)
+        if rd.any():
+            n_wall += int(rd.sum())
+            bo = np.asarray(bo, float)
+            st = np.asarray(line["S"][idx], float)
+            w = np.full(len(bo), np.nan)
+            w[rd] = _runmed(list(wo[rd]), SMOOTH_N)
+            k = np.flatnonzero(rd)
+            for a, b in zip(k, k[1:]):                   # an unread stretch inside the read wall, up to FILL_M: interpolated
+                if b > a + 1 and st[b] - st[a] <= FILL_M:
+                    w[a + 1:b] = np.interp(st[a + 1:b], [st[a], st[b]], [w[a], w[b]])
+            d = np.where(np.isnan(w), 0.0, w - bo)       # the move off NAIP's line, ramped in from where the wall is not
+            for _ in range(2):                           # read, at the width_taper rate (the read stations near the ends
+                for q in range(1, len(d)):               # of a reading close on it too: no jog into a carriageway)
+                    lim = abs(d[q - 1]) + RATE_M_PER_M * (st[q] - st[q - 1])
+                    d[q] = float(np.clip(d[q], -lim, lim))
+                for q in range(len(d) - 2, -1, -1):
+                    lim = abs(d[q + 1]) + RATE_M_PER_M * (st[q + 1] - st[q])
+                    d[q] = float(np.clip(d[q], -lim, lim))
+            bo = bo + d
         xz = [[round(float(line["Q"][i][0] + sg * b * line["Nn"][i][0]), 3),
                round(float(line["Q"][i][1] + sg * b * line["Nn"][i][1]), 3)] for i, b in zip(idx, bo)]
         out.append({"stations_m": [float(line["S"][idx[0]]), float(line["S"][idx[-1]])], "side": sg, "xz": xz})
+    if stats is not None:
+        stats.update({"one_station_holes_joined": joined, "stations_on_the_lidar_wall": n_wall})
     return out
 
 
@@ -596,7 +662,14 @@ def main(argv=None):
     if "--config" in argv:
         route = json.loads(Path(argv[argv.index("--config") + 1]).read_text(encoding="utf-8")).get("route") or {}
     line_smooth = (float(route.get("smooth_sigma_pts", 2.0)), int(route.get("smooth_passes", 2)))
-    barriers = barrier_runs(rows["line"], lines["line"]) if first else []
+    walls_xz, walls_md5 = None, None
+    if "--walls" in argv:
+        wp = Path(argv[argv.index("--walls") + 1])
+        wd = json.loads(wp.read_text(encoding="utf-8"))
+        walls_xz = np.asarray([r["xz"] for pr in wd["pairs"].values() for r in pr["rows"]], float).reshape(-1, 2)
+        walls_md5 = {wp.name: hashlib.md5(wp.read_bytes()).hexdigest()}
+    bstats = {}
+    barriers = barrier_runs(rows["line"], lines["line"], walls_xz, bstats) if first else []
     rep = {"tool": "tools/naip_carriageways.py", "ledger": "0080 phase 2a",
            "imagery": "USDA FSA NAIP 2022 (0.6 m, R G B NIR), Microsoft Planetary Computer: " + ", ".join(i for i, _b in ITEMS),
            "params": {k: globals()[k] for k in ("STEP_M", "SAMPLE_M", "SCAN_M", "VEG_NDVI", "PAVE_NDVI", "PAVE_SAT",
@@ -606,7 +679,7 @@ def main(argv=None):
            "_invented": "every params value: tuning of a colour reader (fleet/GATES-CHANGELOG.md 2026-11-05, 2a)",
            "barrier": {"type": "Caltrans Concrete Barrier Type 60 (Standard Plans A76A)", "height_m": BARRIER_H_M,
                        "base_m": BARRIER_BASE_M, "top_m": BARRIER_TOP_M, "face_deg_from_vertical": 9.1},
-           "carriageways": {}, "barrier_runs": barriers}
+           "carriageways": {}, "barrier_runs": barriers, "barrier_stats": bstats, "walls_input": walls_md5}
     new_line = dict(line)
     new_conns = {"connectors": []}
     for name, (pts, widths, _p) in cw.items():
@@ -661,7 +734,7 @@ def main(argv=None):
         print(f"[naip_carriageways] carriageways overlapping: {rep['overlap']['overlap_stations']} of "
               f"{rep['overlap']['paired_stations']} paired stations (worst {rep['overlap']['worst_m']} m)")
     print(f"[naip_carriageways] median barrier: {len(barriers)} run(s), "
-          f"{sum(b['stations_m'][1] - b['stations_m'][0] for b in barriers):.0f} m")
+          f"{sum(b['stations_m'][1] - b['stations_m'][0] for b in barriers):.0f} m; {bstats}")
     out.mkdir(parents=True, exist_ok=True)
     (out / "centerline.measured.local.json").write_text(json.dumps(new_line), encoding="utf-8")
     (out / "connectors.measured.local.json").write_text(json.dumps(new_conns), encoding="utf-8")
@@ -670,6 +743,9 @@ def main(argv=None):
     rep["outputs"] = {f: hashlib.md5((out / f).read_bytes()).hexdigest()
                       for f in ("centerline.measured.local.json", "connectors.measured.local.json", "median_barrier.json")}
     rep["tiles"] = sorted(p.name for p in cache.glob("naip_*.npy"))
+    rep["tiles_missing_offline"] = sorted(set(mos.missing))
+    if mos.missing:
+        print(f"[naip_carriageways] NAIP_OFFLINE: {len(set(mos.missing))} tile(s) not in the cache, read as unread: {sorted(set(mos.missing))}")
     (out / "carriageway_edges.naip.json").write_text(json.dumps(rep), encoding="utf-8")
 
 

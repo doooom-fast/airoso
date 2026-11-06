@@ -17,8 +17,8 @@ At each line vertex paired with a connector (its nearest point within PAIR_M), a
     so a 0.1 m datum or model difference never makes a ledge at a pavement's edge.
 Every UPPER CASE number is [invented] (fleet/GATES-CHANGELOG.md 2026-11-05, round 4).
 
-    python tools/median_lidar.py <draft-dir> --ept-cache DIR [--laz DIR]
-Writes <draft-dir>/median_ground.lidar.json. Needs numpy, scipy, laspy[lazrs], pyproj (the lidar venv).
+    python tools/median_lidar.py <draft-dir> --ept-cache DIR [--laz DIR] [--walls OUT.json]
+Writes <draft-dir>/median_ground.lidar.json (with --walls, only the wall file walls() reads: round 5). Needs numpy, scipy, laspy[lazrs], pyproj (the lidar venv).
 """
 from __future__ import annotations
 
@@ -176,6 +176,69 @@ def sections(line, partner, G):
     return rows
 
 
+# ledger 0080 2a round 5: the WALL between the carriageways where it stands, for naip_carriageways to put the median
+# barrier on (owed item 1: at line s 3,425-3,611 the lidar's wall stood 0.5-2.8 m past WB's built inner edge, which NAIP
+# had put at the midline between the two centres: "barrier at the midline", nothing seen). sections() looks for a step
+# only out to PAST_M past the partner's built edge, so it misses a wall further in; walls() reads the whole width from
+# the line's inner edge to the partner's CENTRE, and keeps a step only where the lidar says it is THE wall between these
+# two pavements: its low bin reads the low carriageway's built height and its high bin the high one's, each within
+# EDGE_TOL_M (median_ground_blend's own tolerance for "this pavement's edge"). A step that does not (a deck: the lidar's
+# ground under it, not its pavement) is not a wall here. The wall's line is the middle of the no-return gap between the
+# two bins (the barrier stands in it: Type 60's 0.61 m base and the wall's face return no class 2).
+EDGE_TOL_M = 0.5       # reused: tools/median_ground_blend.py, a pavement's edge is where the surface is within 0.5 m of it
+
+
+def walls(line, partner, G):
+    """Per line vertex paired with ``partner``: the wall the lidar reads between the two pavements, if any."""
+    import numpy as np
+    from scipy.spatial import cKDTree
+    P = np.asarray(line["points_xyz_m"], float); W = np.asarray(line["widths_m"], float)
+    Q = np.asarray(partner["points_xyz_m"], float)
+    xz, t, n, s = _frames(P)
+    qt = cKDTree(Q[:, [0, 2]])
+    gt = cKDTree(G[:, :2])
+    rows = []
+    for i in range(len(P)):
+        d, j = qt.query(xz[i])
+        if d > PAIR_M:
+            continue
+        v = Q[j, [0, 2]] - xz[i]
+        side = 1.0 if float(v @ n[i]) > 0 else -1.0
+        dist = abs(float(v @ n[i]))
+        idx = gt.query_ball_point(xz[i], dist + 2.0)
+        if not idx:
+            continue
+        pts = G[idx]
+        w = pts[:, :2] - xz[i]
+        m = np.abs(w @ t[i]) <= ALONG_M
+        lat, hz = ((w @ n[i]) * side)[m], pts[m, 2]
+        bins = {}
+        for o in np.arange(W[i] / 2.0 - 1.0, dist + 1e-6, BIN_M):
+            k = (lat >= o - BIN_M / 2) & (lat < o + BIN_M / 2)
+            if int(k.sum()) >= BIN_MIN:
+                bins[round(float(o), 2)] = float(np.median(hz[k]))
+        keys = sorted(bins)
+        yl, yp = float(P[i, 1]), float(Q[j, 1])
+        best = None
+        for a, b in zip(keys, keys[1:]):
+            dz = bins[b] - bins[a]
+            if abs(dz) > STEP_MIN_M and abs(dz) > STEP_GRADE * (b - a):
+                if abs(bins[a] - yl) <= EDGE_TOL_M and abs(bins[b] - yp) <= EDGE_TOL_M:
+                    if best is None or abs(dz) > abs(best[2]):
+                        best = (a, b, dz)
+        if best is None:
+            continue
+        a, b, dz = best
+        mid = (a + b) / 2.0
+        nn = side * n[i]
+        rows.append({"s": round(float(s[i]), 1), "i": i, "partner_vertex": int(j),
+                     "bins": [a, b], "mid": round(mid, 2), "dz": round(dz, 2),
+                     "y": [round(bins[a], 2), round(bins[b], 2)], "built_y": [round(yl, 2), round(yp, 2)],
+                     "edges_built": [round(float(W[i] / 2.0), 2)],
+                     "xz": [round(float(xz[i][0] + nn[0] * mid), 3), round(float(xz[i][1] + nn[1] * mid), 3)]})
+    return rows
+
+
 def main(argv=None):
     import numpy as np
     argv = list(sys.argv[1:] if argv is None else argv)
@@ -194,6 +257,24 @@ def main(argv=None):
             k = max(1, int(np.hypot(*(q - p)) / 2.0))
             cor += [p + (q - p) * u for u in np.linspace(0, 1, k, endpoint=False)]
     G, files = read_ground(draft, ept, laz, np.asarray(cor))
+    if "--walls" in argv:
+        out = Path(argv[argv.index("--walls") + 1])
+        doc = {"tool": "tools/median_lidar.py --walls", "ledger": "0080 2a round 5",
+               "lidar": {"ept_cache_nodes": sum(1 for f in files if f.count("-") == 3),
+                         "laz_tiles": [f for f in files if f.count("-") != 3], "class2_returns_in_corridor": int(len(G))},
+               "params": {k: globals()[k] for k in ("PAIR_M", "ALONG_M", "BIN_M", "BIN_MIN", "STEP_MIN_M", "STEP_GRADE",
+                                                       "EDGE_TOL_M")},
+               "_doc": "the wall between two carriageways where the lidar reads it (walls()): xz = the line of the "
+                       "no-return gap's middle, in the draft's local frame; an input of tools/naip_carriageways.py --walls",
+               "inputs": {f: hashlib.md5((draft / f).read_bytes()).hexdigest()
+                          for f in ("centerline.measured.local.json", "connectors.measured.local.json", "network.local.json")},
+               "pairs": {}}
+        for c in conns:
+            rows = walls(line, c, G)
+            doc["pairs"][c["name"]] = {"walls": len(rows), "rows": rows}
+            print(f"[median_lidar] walls line | {c['name']}: {len(rows)} stations read a wall")
+        out.write_text(json.dumps(doc), encoding="utf-8")
+        return
     doc = {"tool": "tools/median_lidar.py", "ledger": "0080 2a round 4",
            "lidar": {"ept_cache_nodes": sum(1 for f in files if f.count("-") == 3), "laz_tiles": [f for f in files if f.count("-") != 3],
                      "class2_returns_in_corridor": int(len(G))},

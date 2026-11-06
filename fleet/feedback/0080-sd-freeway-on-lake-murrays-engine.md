@@ -497,6 +497,42 @@ Lake Murray parity holds with the header listed in V4_EXTRAS. No chain step Lake
 **Tests:** `tests/run_tests.py` 630 PASS, 1 FAIL (`test_registry_moves`, the same as round 3); pytest `tests/tools` 713
 passed, 1 skipped.
 
+### Step 2a round 5: more real, nothing downloaded (Mac, ws20 and up)
+
+**Inputs.** Rebased onto the PC's d738203 (runbook 0080-4: the 2024 D24 tiles 480624 / 481624 read on the PC; WB's
+deck heights moved, its measured file's md5 with them). `median_ground.lidar.json` was stale against it (it recorded
+connectors.measured 461e3158, the PC's is 3baf3736): re-run on d738203's files with the Mac's lidar (the 2014 EPT cache
+and tile 481624; tile 480624 is on the PC only): the same 1,941 paired stations, unread 1,601 / slope 282 / step 58 as
+round 4 (WB's xz did not move). **ws20** = d738203 + that refresh, round 4's tools: ws19's numbers on every row (line
+drive_test PASS, excursions 3; WB line gate PASS, 24; audit CLEAN; kn5_ground_check PASS; 42,067,878 B; SHIP OK).
+
+**1. WB's median edge at Morena, on the lidar's wall (owed item 1).** NAIP saw no barrier top through Morena and put the
+barrier at the midline between the two carriageways' centres ("barrier at the midline"); the lidar's wall stood
+0.5-4.5 m from there.
+- `tools/median_lidar.py --walls` (new `walls()`): at each line vertex paired with WB, class 2 binned from the line's
+  inner edge to WB's CENTRE (round 4's `sections()` looked only 3 m past WB's built edge), the largest step steeper than
+  1:1 kept only where it is THE wall between these two pavements: its low bin reads the low carriageway's built height
+  and its high bin the high one's, each within 0.5 m (median_ground_blend's own pavement-edge tolerance, reused). Its
+  line = the middle of the no-return gap (the barrier and the wall's face). Frozen as
+  `median_wall.lidar.json` (48 stations: line s 3,380-3,621 at 8.6-12.6 m off the line's centre, 3-4.4 m tall; s
+  3,701-3,721, 2.1-2.5 m; s 3,812-3,847, 0.5-0.9 m).
+- `tools/naip_carriageways.py --walls`: a barrier-run station with a wall reading takes the wall's offset (running
+  median over the read stations; unread gaps inside a reading up to FILL_M interpolated); the move off NAIP's line is
+  ramped in from where the wall is not read at the width_taper rate (0.1 m per m), so no run jogs into a carriageway.
+  Both inner edges follow the barrier (the existing pin): through s 3,410-3,530 WB's inner edge moved 2.5-2.9 m in (WB
+  13.4 -> 10.6-10.8 m wide) and the line's paved width runs out to the wall's foot (+2.4-2.7 m): the lidar reads that
+  strip at the line's level and NAIP reads it as pavement. 47 stations on the wall. `NAIP_OFFLINE=1`: a tile not cached
+  is unread, never fetched (none was missing).
+- Regenerated (offline) `carriageway_edges.naip.json`, `centerline.measured.local.json`,
+  `connectors.measured.local.json`, `median_barrier.json`, then `median_ground.lidar.json` on them (unread 1,603, slope
+  264, step 74).
+- **ws21:** line drive_test PASS (excursions 3, unchanged), WB line gate PASS, audit CLEAN, verify_kn5 / inis PASS,
+  kn5_ground_check PASS, 42,048,478 B, SHIP OK. WB's lap-rule count 24 -> **26**: two new drops at WB s 6,902, where the
+  150 m excursion station now falls on the moved stretch: +6.0 (4.56 m: the sample lands inside the barrier's base,
+  0.3 m off WB's new edge, where median_ground_blend keeps the LOW ground under the barrier's body) and -6.0 (0.75 m:
+  a ground facet from under WB's moved pavement shows 0.6 m past its kept outer edge). Tried: the step at the barrier's
+  low foot with the high ground under its body (ws22-ws24): verify_kn5 TERRAIN POKE 4,513 -> 1,107, red; reverted, owed.
+
 ## PC runbook 0080-5: rehearse 2a (I 8 both ways), no install
 
 2a is green on the Mac (ws19). The PC needs no lidar: `median_ground.lidar.json` is committed.

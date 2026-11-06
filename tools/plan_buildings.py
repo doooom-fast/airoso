@@ -26,6 +26,11 @@ plan.json = {
                                                                  OSM heights to compare) is used only when trust_unchecked is set
   "sun": {"azimuth_deg": 122, "elevation_deg": 33, "_source": "..."}   optional: a sun read by hand (Nevada's pole shadows)
                                                                  in place of the vote
+  "lidar": {"file": "source/bespoke/buildings.lidar.json"}       optional (ledger 0083 pass 2): heights MEASURED off 3DEP lidar
+                                                                 by tools/lidar_building_heights.py (run on this planner's
+                                                                 output WITHOUT this key); a measured footprint takes them over
+                                                                 every other source, a "stepped" one stands as its tiers
+                                                                 (lidar_rows); absent = as before
 }
 
 CLASSES, from the OSM building tag first, then by area: house, apartments, commercial, industrial, shed; canopy (building=roof)
@@ -173,6 +178,50 @@ def dedupe(recs):
     if offered:
         print(f"[buildings] {offered} earlier footprints with no height or levels take the dropped footprint's height")
     return kept
+
+
+def lidar_rows(row, rec, stepped):
+    """the plan's opt-in "lidar" (ledger 0083 pass 2): a footprint MEASURED off the 3DEP point cloud
+    (tools/lidar_building_heights.py) takes its roof from it, over every other source (OSM levels are a storey count times an
+    assumed storey; the lidar is the roof). A flat roof's wall is the roof points' median over the lidar ground (the deck; the
+    parapet stays PARAPET_M [invented] on top); a pitched roof's eave is their p05, its ridge their p95. A building named in
+    the file's "stepped" stands as its tiers instead (flat roofs, one row per tier, keys <key>_t<i>). One whose first returns
+    are mostly ground ("no_roof") is dropped: nothing stands there in the lidar. Not measured = the row as before. Returns the
+    rows to write."""
+    if rec and rec.get("status") == "no_roof":
+        return []                      # the lidar sees bare ground inside the walls: no building stands there today
+    if not rec or rec.get("status") != "measured":
+        if rec:
+            row["_lidar"] = rec.get("status")
+        return [row]
+    p = rec["h_pct"]
+    tag = (f"lidar {rec['roof_src']} n={rec['n_roof']} over ground {rec['ground_m']:.2f} m "
+           f"(n={rec['ground_n']}, ring {rec['ground_ring_m'][0]:.0f}-{rec['ground_ring_m'][1]:.0f} m)"
+           + (f", {rec['cover']:.0%} of the footprint on the tiles" if rec.get("cover", 1.0) < 0.95 else ""))
+    was = row["_h"] + f" -> wall {row['wall_h_m']}" + (f", ridge {row['ridge_h_m']}" if "ridge_h_m" in row else "")
+    if len(rec.get("levels", [])) > 1:
+        row["_levels"] = rec["levels"]
+    if stepped:
+        out = []
+        for i, t in enumerate(stepped["tiers"]):
+            r = {k: v for k, v in row.items() if k not in ("ridge_h_m", "_form")}
+            r.update(key=f"{row['key']}_t{i}", footprint_lonlat=t["footprint_lonlat"], form="flat", wall_h_m=round(t["h_p50"], 1),
+                     _h=f"lidar stepped form, tier {i} (band {t['band_m'][0]}..{t['band_m'][1]} m across the short axis): roof p50 "
+                        f"{t['h_p50']} m (p10 {t['h_p10']}, p90 {t['h_p90']}, n={t['n_roof']}); {tag}",
+                     _h_was=was, _form="flat: a tier of the measured stepped form")
+            out.append(r)
+        return out
+    if row["form"] in ("hip", "gable"):
+        wall = p["p05"]
+        ridge = max(p["p95"], wall + 0.3)
+        row["wall_h_m"], row["ridge_h_m"] = round(wall, 1), round(ridge, 1)
+        row["_h"] = f"{tag}: eave p05 {p['p05']} m, ridge p95 {p['p95']} m"
+        row["_form"] = f"{row['form']} [invented by class]; eave and ridge measured (lidar)"
+    else:
+        row["wall_h_m"] = round(p["p50"], 1)
+        row["_h"] = f"{tag}: roof p50 {p['p50']} m (p10 {p['p10']}, p90 {p['p90']}, p98 {p['p98']})"
+    row["_h_was"] = was
+    return [row]
 
 
 def height_label(src):
@@ -515,6 +564,9 @@ def main() -> int:
         tan_el = math.tan(math.radians(sun[3]))
     out, by_src, checks = [], {}, []
     measured = {}
+    lidar = None
+    if plan.get("lidar"):                       # opt-in (ledger 0083 pass 2); absent = as before
+        lidar = json.loads((track / plan["lidar"]["file"]).read_text(encoding="utf-8"))
     if sun:
         for r in kept:
             L, why = shadow_length_m(photo, r["px"], index, ux, uy, float(sh.get("max_m", 60)), debug)
@@ -585,7 +637,17 @@ def main() -> int:
             row["wall_h_m"] = round(wall, 1)
             row["ridge_h_m"] = round(wall + rise, 1)
             row["_form"] = f"{form} at {PITCH[form]:.2f} pitch [invented by class]; wall = top - rise {rise:.1f} m, floored at {MIN_WALL_M.get(cls, 2.6)} m"
-        out.append(row)
+        if lidar is not None:
+            rec = lidar["buildings"].get(r["key"])
+            new = lidar_rows(row, rec, lidar.get("stepped", {}).get(r["key"]))
+            out.extend(new)
+            if rec and rec.get("status") == "measured":
+                src = "lidar"
+            elif not new:
+                left["no_roof_in_lidar"] = left.get("no_roof_in_lidar", 0) + 1
+                continue
+        else:
+            out.append(row)
         by_src.setdefault(src.split(" ")[0] + (" default" if "default" in src else ""), 0)
         by_src[src.split(" ")[0] + (" default" if "default" in src else "")] += 1
     path = track / plan["out"]

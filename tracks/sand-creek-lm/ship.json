@@ -20,11 +20,18 @@
       "strip_seam",
       "gap_mouths",
       "islands",
+      "paint",
       "ground_patch",
       "lamps"
     ],
     "author": [
+      "race_bands",
+      "race_planned_gate",
       "layout_dummies",
+      "race_author",
+      "race_verify",
+      "signs",
+      "name_blades",
       "bespoke"
     ],
     "prep": [
@@ -33,6 +40,7 @@
     ],
     "ship": [
       "export_road",
+      "export_race",
       "export_street",
       "spawn_kn5",
       "ai",
@@ -41,11 +49,14 @@
       "track_folder",
       "verify_inis",
       "make_map",
-      "treefx"
+      "treefx",
+      "race_scenery_gate"
     ],
     "gate": [
       "drive_test_street",
       "audit_street",
+      "race_gates",
+      "fold_fans",
       "kn5_ground",
       "verify_pads",
       "verify_mouths",
@@ -66,7 +77,10 @@
       "source/bespoke/trees.lm.json",
       "source/connector_profiles.lidar.json",
       "source/connector_profiles.lidar.round_i.json",
-      "source/ground_patches.lidar.json"
+      "source/ground_patches.lidar.json",
+      "source/name_blades.json",
+      "textures/name_blades.png",
+      "signs.json"
     ],
     "_optional_doc": "ledger 0079: the port's own inputs (tools/lm_engine_intake.py uses a port file the source track lacks): its wider 3DEP grid (lm_intake.heightfield port), the buildings pipeline's blocks and the crowns read off NAIP",
     "assets": [
@@ -119,7 +133,13 @@
       "data/connectors.local.json",
       "data/mouths.json",
       "data/street_junctions.json",
-      "data/verify_mouths.json"
+      "data/verify_mouths.json",
+      "data/verify_fold_fans.json",
+      "data/barrier_bands.json",
+      "data/race_verify.json",
+      "data/no_route.{id}.json",
+      "data/signs.local.json",
+      "data/name_blades.built.json"
     ],
     "map": [
       [

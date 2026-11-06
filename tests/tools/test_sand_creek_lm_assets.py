@@ -554,9 +554,9 @@ def test_round_k_keys_are_opt_in():
             assert k not in race, (t, k)
         assert "race_rule" not in kerb and "surface" not in kerb, t
         assert "signs_name_blades" not in cfg, t
-    # round K's candidate (not live: its race layout is red on the race gates and on verify_kn5, ledger 0079 round K)
+    # round K's candidate (live since round R, 0.2.6: test_round_r_live_is_the_candidate)
     live = json.loads((SC / "track.config.json").read_text(encoding="utf-8"))
-    assert "race_rule" not in (live.get("kerb") or {}) and "signs_name_blades" not in live
+    assert "race_rule" not in (live.get("kerb") or {}) and live["version"] == "0.2.6"
     sc = json.loads((SC / "source" / "round_k" / "track.config.json").read_text(encoding="utf-8"))
     assert sc["version"] == "0.2.6"
     assert sc["race"]["edge_fold_chord"] is True
@@ -677,8 +677,9 @@ def test_round_m_keys_are_opt_in():
         cfg = json.loads(p.read_text(encoding="utf-8"))
         assert "pad_corners" not in (cfg.get("race") or {}), t
         assert "dense_hops" not in (cfg.get("drive_test") or {}), t
-    live = json.loads((SC / "track.config.json").read_text(encoding="utf-8"))
-    assert "pad_corners" not in (live.get("race") or {}) and "dense_hops" not in (live.get("drive_test") or {})
+    live = json.loads((SC / "track.config.json").read_text(encoding="utf-8"))   # = the candidate since round R
+    assert live["race"]["pad_corners"] == json.loads((SC / "source" / "round_k" / "track.config.json")
+                                                     .read_text(encoding="utf-8"))["race"]["pad_corners"]
     sc = json.loads((SC / "source" / "round_k" / "track.config.json").read_text(encoding="utf-8"))
     assert [(c["pad"], c["side"], c["in_vertex"], c["out_vertex"]) for c in sc["race"]["pad_corners"]] == \
         [("50th_ash", "R", 185, 190), ("50th_dahlia", "L", 410, 415)]
@@ -705,8 +706,7 @@ def test_round_n_fold_chords_are_opt_in():
     levelled pinch covers is surveyed as a chord (no X), and drive_test's discs take it beside the levelled pinches"""
     import verify_fold_fans as vf
     from scripts.geometry.drive_test import fold_fan_discs
-    for t in ("san-diego-lake-murray", "lookout-lariat", "lookout-lariat-lm", "high-plains-lm", "aspen-lm", "pueblo-lm",
-              "sand-creek-lm"):
+    for t in ("san-diego-lake-murray", "lookout-lariat", "lookout-lariat-lm", "high-plains-lm", "aspen-lm", "pueblo-lm"):   # Sand Creek 0.2.6 is live since round R (test_round_r_live_is_the_candidate)
         p = ROOT / "tracks" / t / "track.config.json"
         if p.exists():
             assert "fold_fans" not in json.loads(p.read_text(encoding="utf-8")), t
@@ -738,8 +738,7 @@ def test_round_n_fold_chords_are_opt_in():
 def test_round_n_paint_is_opt_in():
     """ledger 0079 round N: route.paint (tools/author_paint_blend.py, draft step paint) is named only by Sand Creek's
     candidate: Lake Murray, the Lariat, the circuits and the live 0.2.5 config name none (the step is then a no-op)"""
-    for t in ("san-diego-lake-murray", "lookout-lariat", "lookout-lariat-lm", "high-plains-lm", "aspen-lm", "pueblo-lm",
-              "sand-creek-lm"):
+    for t in ("san-diego-lake-murray", "lookout-lariat", "lookout-lariat-lm", "high-plains-lm", "aspen-lm", "pueblo-lm"):   # Sand Creek 0.2.6 is live since round R (test_round_r_live_is_the_candidate)
         p = ROOT / "tracks" / t / "track.config.json"
         if p.exists():
             assert "paint" not in (json.loads(p.read_text(encoding="utf-8")).get("route") or {}), t
@@ -757,7 +756,7 @@ def test_round_o_cut_reach_arm_is_opt_in():
     "arm"), declared by 48th_colorado alone; its measurement records the ends lm_pads reads. Without the key every pad's
     cut is +-CUT_HALF_M, as before. The walk crosses a gap under ARM_GAP_M and stops at a longer one, ARM_MARGIN_M on"""
     import draft_pads as dp
-    for t in ("san-diego-lake-murray", "lookout-lariat", "lookout-lariat-lm", "sand-creek-lm"):
+    for t in ("san-diego-lake-murray", "lookout-lariat", "lookout-lariat-lm"):   # Sand Creek: live = the candidate since round R
         p = ROOT / "tracks" / t / "track.config.json"
         if p.exists():
             assert '"cut_reach"' not in p.read_text(encoding="utf-8"), t
@@ -824,8 +823,7 @@ def test_round_p_wall_frame_and_vertex_kinks_are_opt_in():
     every sheet at a point; the own-travel kink of a constant grade read across a vertex creep is 0"""
     import verify_fold_fans as vf
     from scripts.geometry.drive_test import _own_travel_step, KINK_PCT, STEP_M
-    for t in ("san-diego-lake-murray", "lookout-lariat", "lookout-lariat-lm", "high-plains-lm", "aspen-lm", "pueblo-lm",
-              "sand-creek-lm"):
+    for t in ("san-diego-lake-murray", "lookout-lariat", "lookout-lariat-lm", "high-plains-lm", "aspen-lm", "pueblo-lm"):   # Sand Creek 0.2.6 is live since round R (test_round_r_live_is_the_candidate)
         p = ROOT / "tracks" / t / "track.config.json"
         if p.exists():
             c = json.loads(p.read_text(encoding="utf-8"))
@@ -901,3 +899,15 @@ def test_round_q_corner_flares_off_is_opt_in_and_only_narrows():
     # round Q's build rq1 (dahlia_56th unparked with the flare off) went red: the candidate does not name the key yet
     for cfgp in (SC / "track.config.json", SC / "source" / "round_k" / "track.config.json"):
         assert "corner_flare_off" not in (json.loads(cfgp.read_text(encoding="utf-8")).get("lm_intake") or {})
+
+
+def test_round_r_live_is_the_candidate():
+    """ledger 0079 round R (Kevin 2026-11-06: "Full street width"): the round_k candidate is adopted as the live config
+    at 0.2.6 — track.config.json and ship.json byte-identical to source/round_k/'s, version 0.2.6, the race the whole
+    street (race.corridor.whole_lap) and verify_kn5 in the chain both before (closure kn5) and after (--inis) the folder"""
+    for f in ("track.config.json", "ship.json"):
+        assert (SC / f).read_bytes() == (SC / "source" / "round_k" / f).read_bytes(), f
+    live = json.loads((SC / "track.config.json").read_text(encoding="utf-8"))
+    assert live["version"] == "0.2.6"
+    assert live["race"]["corridor"]["whole_lap"] is True
+    assert live["race"]["corridor"]["boxes"] == [] and live["race"]["corridor"]["closure_runs"] == []

@@ -49,7 +49,8 @@ with one row per track: the draft's exit, the full run's exit, installed or not,
 | 17 | Second Creek (`second-creek`) | — | circuit_port, historical, closed in the 2000s | **not chain-ready**: fabricated (registry `fidelity: FABRICATED`; "must not ship as a real port", L1); re-source first (ONE-CHAIN §4 row 7: a georeferenced pre-2008 aerial + two control points, then the aerial trace) | no | nothing to run; the sourcing is the whole task |
 
 The Lake Murray v4 engine ports (ledger 0078, `docs/ENGINE-LM-V4.md`): `sand-creek-lm`, `high-plains-lm`,
-`exotics-racing-lv-lm`, `milford-road-course-lm`, `aspen-lm`, `pueblo-lm`, `grand-junction-lm`, `pikes-peak-lm`. Each is
+`exotics-racing-lv-lm`, `milford-road-course-lm`, `aspen-lm`, `pueblo-lm`, `grand-junction-lm`, `pikes-peak-lm`, and
+`del-mar-lm` (ledger 0083: Del Mar Grand Prix's ESTIMATED 1987-92 layout of `tracks/del-mar`, ledger 0064). Each is
 its live track's line and data through Lake Murray v4's engine (ship.json `"engine": "lm-v4"`), installing beside the live
 folder (`<slug>_lm`) for the A/B drive; not in the morning runner's order. Listed in `fleet/registry.json` with the rest.
 

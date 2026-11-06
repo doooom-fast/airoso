@@ -2479,7 +2479,7 @@
   "_note": "ESTIMATED LAYOUT, not a trace of asphalt (there is none: the course was temporary walls on parking lots, and the 1991-93 rebuild moved the hall and lots). The shape is the 1987-92 drawing on NA-Motorsports (same shape as ESPN's 1988 broadcast map, '10 Turns, 1.6 Miles'), skeletonised to a 1-px loop (source/estimate/sketch_loop.json), placed north-up, stretched to the fairgrounds' envelope read off the 1987 ESPN helicopter aerials (docs/research/del-mar): the paddock hairpin apex 60 m east of the horse oval's north-east rail so the west arm clears the rail's bulge, the east lobe at the east lot's edge under I-5, the bottom held north of Jimmy Durante Blvd's river-side stretch. That envelope yields a 2215 m lap (sketch pixel length; the engine's smoothed lap is shorter) against the published 2570 m (RSC); the published length cannot be fitted inside the grounds with this shape, so the TV map's proportions are the suspect. Counter-clockwise (Fastlane), trace order = direction of travel. To be corrected against 1989-1996 era imagery (USGS NAPP / Google Earth Pro history) when Kevin can supply a frame."
  },
  "road_profile": {
-  "ribbon_cols": 8,
+  "_ribbon_cols_doc": "ribbon_cols 8 dropped 2026-11-06 (ledger 0083): 0.1.0 was built on 6f7404e, whose build_mesh had no ribbon_cols (the 2-edge ribbon); under ledger 0069 the key would change this unbanked ribbon",
   "dips": [],
   "cambers": [],
   "_doc": "Flat lots on the river terrace: no banking, no invented camber (L10: street ports get real elevation only; this is a lot circuit, same rule)."

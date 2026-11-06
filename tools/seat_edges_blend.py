@@ -12,6 +12,8 @@ to <= MAX_EDGE_M within BAND_M of each lane edge keeps every such chord under 1 
 Only where the line is banked (route.crossfall_file, keyed as build_loop_blend.crossfall_bank keys it, + PAD_M either
 side): a flat road gains nothing and keeps its vertex count. No vertex moves (subdivision interpolates on the faces it
 splits); the prep's pin and shelf then place the new vertices. A track without route.crossfall_file is left untouched.
+Opt-in route.seat_edges_grade_pct (ledger 0083, Del Mar): the line's points steeper than that grade are seated too, as a
+bank of atan(grade) would be (tools/seat_edges_grade.py); absent = as before.
 
     blender --background --python-exit-code 1 --python tools/seat_edges_blend.py -- <project-dir>
 """
@@ -40,12 +42,22 @@ def main():
     proj = Path(argv[0])
     cfg = json.loads((proj / "track.config.json").read_text(encoding="utf-8"))
     rel = (cfg.get("route") or {}).get("crossfall_file")
-    if not rel:
+    grade_pct = (cfg.get("route") or {}).get("seat_edges_grade_pct")     # opt-in (ledger 0083); absent = as before
+    if not rel and grade_pct is None:
         print("[seat-edges] no route.crossfall_file: nothing banked, nothing to do")
         return
     loc = json.loads((proj / "data" / "centerline.local.json").read_text(encoding="utf-8"))
     P, W = loc["points_xyz_m"], loc["widths_m"]
-    cf = json.loads((proj / rel).read_text(encoding="utf-8"))
+    cf = json.loads((proj / rel).read_text(encoding="utf-8")) if rel else {"points_xz": [], "bank_rad": []}
+    if grade_pct is not None:
+        # the steep stretches seated as a bank of atan(grade) would be (tools/seat_edges_grade.py)
+        sys.path.insert(0, str(Path(__file__).resolve().parent))
+        from seat_edges_grade import grade_points
+        gp = grade_points(P, float(grade_pct))
+        cf = {"points_xz": list(cf["points_xz"]) + [[x, z] for x, z, _ in gp],
+              "bank_rad": list(cf["bank_rad"]) + [g for _, _, g in gp]}
+        print(f"[seat-edges] route.seat_edges_grade_pct {float(grade_pct):g}: {len(gp)} line points steeper, seated as banked "
+              f"(steepest {100 * math.tan(max([g for _, _, g in gp] or [0.0])):.1f} %)")
     banked = [tuple(p) for p, b in zip(cf["points_xz"], cf["bank_rad"]) if abs(b) > 1e-6]
     # the bank each face must answer for: the steepest measured within BANK_REACH_M of it (a 10 m grid of the points)
     bgrid = {}

@@ -1,0 +1,40 @@
+{
+ "source_track": "del-mar",
+ "points": 1338,
+ "lap_m": 2000.7,
+ "closed": true,
+ "widths_m": [
+  13.0,
+  13.0,
+  13.0
+ ],
+ "bridges_levelled": [],
+ "max_grade_pct": null,
+ "measured_max_grade_pct": 25.27,
+ "y_changed_points": 0,
+ "y_change_max_m": 0.0,
+ "connectors": false,
+ "bespoke_files": [],
+ "crossfall": null,
+ "profile": {
+  "cap_was_pct": 9.0,
+  "reproduced_within_m": 0.0067,
+  "points_moved": 33,
+  "max_move_m": 1.707
+ },
+ "width_taper": null,
+ "resample": {
+  "spacing_m": 1.5,
+  "points_before": 677,
+  "points_after": 1338
+ },
+ "edge_on_wall": null,
+ "corner_arcs": null,
+ "carried": [],
+ "grid_upsample": 4,
+ "md5": {
+  "source_centerline": "1072e4b1678ed6d684f6522de99e4776",
+  "heightfield.npy": "f4689fd38b93432fdd9bad93c0359f27",
+  "centerline.local.json": "12c316f7917e1a132068dc599fe90529"
+ }
+}

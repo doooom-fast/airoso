@@ -1,0 +1,130 @@
+{
+ "input": "/Volumes/Drive/codex/dm_work/del_mar_lm/blender/del_mar_fairgrounds_lm.blend",
+ "outputs": {
+  "loop_main.blend": {
+   "objects": 21,
+   "meshes": 5,
+   "positions": 92865,
+   "max_positions": 36649,
+   "materials": [
+    "1GRASS_0_mat",
+    "1GRASS_1_mat",
+    "1KERB_sidewalk_mat",
+    "1ROAD_road_mat",
+    "MARKINGS_mat.001"
+   ],
+   "orphan_materials": [],
+   "ac_nodes": [
+    "AC_HOTLAP_START_0",
+    "AC_PIT_0",
+    "AC_PIT_1",
+    "AC_PIT_2",
+    "AC_PIT_3",
+    "AC_PIT_4",
+    "AC_PIT_5",
+    "AC_PIT_6",
+    "AC_PIT_7",
+    "AC_START_0",
+    "AC_TIME_0_L",
+    "AC_TIME_0_R",
+    "AC_TIME_1_L",
+    "AC_TIME_1_R",
+    "AC_TIME_2_L",
+    "AC_TIME_2_R"
+   ],
+   "race_objects": [],
+   "closure_objects": [],
+   "sign_objects": [],
+   "names": [
+    "1GRASS_0",
+    "1GRASS_1",
+    "1KERB_sidewalk",
+    "1ROAD_road",
+    "AC_HOTLAP_START_0",
+    "AC_PIT_0",
+    "AC_PIT_1",
+    "AC_PIT_2",
+    "AC_PIT_3",
+    "AC_PIT_4",
+    "AC_PIT_5",
+    "AC_PIT_6",
+    "AC_PIT_7",
+    "AC_START_0",
+    "AC_TIME_0_L",
+    "AC_TIME_0_R",
+    "AC_TIME_1_L",
+    "AC_TIME_1_R",
+    "AC_TIME_2_L",
+    "AC_TIME_2_R",
+    "MARKINGS"
+   ]
+  }
+ },
+ "problems": [],
+ "tokens": {},
+ "input_census": {
+  "objects": 21,
+  "meshes": 5,
+  "positions": 92865,
+  "max_positions": 36649,
+  "materials": [
+   "1GRASS_0_mat",
+   "1GRASS_1_mat",
+   "1KERB_sidewalk_mat",
+   "1ROAD_road_mat",
+   "MARKINGS_mat.001",
+   "TERRAIN_mat"
+  ],
+  "orphan_materials": [
+   "TERRAIN_mat"
+  ],
+  "ac_nodes": [
+   "AC_HOTLAP_START_0",
+   "AC_PIT_0",
+   "AC_PIT_1",
+   "AC_PIT_2",
+   "AC_PIT_3",
+   "AC_PIT_4",
+   "AC_PIT_5",
+   "AC_PIT_6",
+   "AC_PIT_7",
+   "AC_START_0",
+   "AC_TIME_0_L",
+   "AC_TIME_0_R",
+   "AC_TIME_1_L",
+   "AC_TIME_1_R",
+   "AC_TIME_2_L",
+   "AC_TIME_2_R"
+  ],
+  "race_objects": [],
+  "closure_objects": [],
+  "sign_objects": [],
+  "names": [
+   "1GRASS_0",
+   "1GRASS_1",
+   "1KERB_sidewalk",
+   "1ROAD_road",
+   "AC_HOTLAP_START_0",
+   "AC_PIT_0",
+   "AC_PIT_1",
+   "AC_PIT_2",
+   "AC_PIT_3",
+   "AC_PIT_4",
+   "AC_PIT_5",
+   "AC_PIT_6",
+   "AC_PIT_7",
+   "AC_START_0",
+   "AC_TIME_0_L",
+   "AC_TIME_0_R",
+   "AC_TIME_1_L",
+   "AC_TIME_1_R",
+   "AC_TIME_2_L",
+   "AC_TIME_2_R",
+   "MARKINGS"
+  ]
+ },
+ "routes": {
+  "common": 0,
+  "street": 0
+ }
+}

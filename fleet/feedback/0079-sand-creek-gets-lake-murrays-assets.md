@@ -1063,6 +1063,110 @@ Tests: `tests/run_tests.py` (the .venv python, `python` on PATH): 1,301 pass. 6 
 (`test_draft_equiv` x5, `test_registry_moves` x1). 4 new: the round I keys, the island / patch declarations, the patch's
 polygon test, the `--surface` chain.
 
+## Round J (Mac): 0.2.5 green on the Mac (rj2; NOT installed): 99 streets on the lidar, the south wall, a NAIP tracer measured
+
+Round I's leads under "just want real", all opt-in for Sand Creek. Workshops `sclm_work/rj1`, `rj2` (EMPTY, fresh names:
+j1-k4 already existed from earlier rounds). Items 1 and 4 built; item 2's tracer written and measured on Quebec, not
+built; items 3 and 5 not reached (owed, below).
+
+### 1. The streets on the lidar: wired (99 streets), the mouth mended at its cause
+- **The cause, measured on i3's OBJ and loop.blend** (not the host's profile itself): the extra sheet over
+  grid_tertiary_2's lane, 7 m along from grid_tertiary_1#1's mouth, is **grid_tertiary_74#0's first rows** (ROAD
+  vertices 31329-31334, CURB 81881). 74#0 meets grid_tertiary_1#1 at 24 deg at its v1, and #1 starts on
+  grid_tertiary_2#0: 74's first rows lie past #1's open end, on grid_tertiary_2's pavement. The weld read "the host deck"
+  there as #1's end row held level (18.026 m), while grid_tertiary_2's measured deck under them falls (18.015 -> 18.005
+  m over 1 m): road 0.021 m over the host lane, and the terrain seated 0.02 m under that sheet (the 2 grass samples at
+  -4 mm). On 3DEP (i2) the same sheet existed, but grid_tertiary_2 rose there, so it lay 9 mm under.
+- **The fix** (opt-in `route.weld_deck_beyond_end`, piece prefixes; `mouth_weld.BeyondEndDeck`, used by
+  `tools/weld_mouths_blend.py`): past the host's OPEN end, on a street that end is welded to, the weld reads that street's
+  deck (its triangles) where the point lies; everywhere else as before. No number added. Sand Creek names
+  `grid_tertiary_74#0`. rj1/rj2: `[weld] grid_tertiary_74 -> grid_tertiary_1#1 v1: past the host's open end, 19 point(s)
+  read the deck of the street it is welded to`.
+  - verify_mouths, the mouth: grid_tertiary_1#1 start on grid_tertiary_2#0 PASS (host lane above 0.0 m, grass max
+    -0.020 m, 0 grass samples); 74#0's two mouths PASS (grass max -0.016 / -0.018 m). LANE_TOL not moved; tertiary_2
+    stays on the lidar.
+- **Wired:** `lm_intake.connector_profiles` -> `source/connector_profiles.lidar.round_i.json` (and in ship.json
+  sync_in). Held on 3DEP, with reasons in the file's `_doc`:
+  - round I's 6 jumpy streets (grid_secondary_8, grid_primary_11, grid_secondary_39, grid_secondary_42, grid_primary_71,
+    grid_unclassified_77): profiles jump > 0.5 m [invented] between neighbouring points; their jump points still owed;
+  - **grid_primary_15 (new):** rj1 (all 100) lost two houses, `osm_buildings766` and `msft_buildings2147` (houses
+    2,181 < 2,183). Measured: its lidar profile is a VIADUCT's deck (class 17, ~8 m wide, from z ~500 to ~1000, up to
+    7.9 m over 3DEP) with the ground at 9-11 m right up to both sides of the deck (1 m cells every 4 m across, z 810-925).
+    The build has no street-bridge path, so the assembler's terrain band (22 m) raised an 8 m embankment beside the deck,
+    and the two houses 15-40 m off sat on its toe (relief over the limit). Held on 3DEP until a street bridge exists.
+- **rj2:** `[lm_intake] connector heights off the lidar (source/connector_profiles.lidar.round_i.json)`: 99 streets
+  plus round H's four read as before; houses 2,183. Gates below.
+
+### 4. The retaining wall south of z -1000: on the lidar ground (`terrain.lidar_patches` wall_49 extended)
+- Measured (as round I's wall scan: class 2, 1 m profiles every 5 m along z): the wall runs on from x -1552.5 at z -1000
+  to -1545.5 at -1075, a 2.1-2.4 m step (low 30.5-33.9 m, high 33.2-36.1 m). South of -1075 the ground climbs onto an
+  embankment and a bridge abutment (4-10 m steps, decks): not a wall, not patched.
+- **No street weld in the way:** grid_primary_49 ends at z -953 in the build (round I's "within 2-7 m of the street" is
+  the real road east of the wall: NAIP shows a 4-lane road at x ~ -1530 .. -1515 that the build does not carry south of
+  -953; still `wall_49_south_j`). The built ground (i2) held the step as a 10 m slope, 0.3-0.6 m under the lidar on both
+  sides.
+- The polygon: the wall's line on to (-1545.5, -1075), hard edges 1-34 (the step IS the ground), the south edge at
+  -1075 and x -1620 west soft (feather 10 m [invented, round I]). Re-measured with `tools/lidar_ground_patch.py`: 96 x
+  234 nodes, 17,516 read, 4,149 filled under roofs; every node round I's lattice shares reads the same (13,566 of 13,566).
+- rj2: `[ground-patch] wall_49: TERRAIN 516981 -> 574373 vertices, 42509 seated on the lidar ground (8241 in the 10 m
+  feather), largest move 5.10 m`. Houses 2,183 / 2,183 / 0 (1182 still stands).
+
+### 2. A NAIP edge tracer: written, measured on Quebec; Quebec NOT re-centred, `sandcreek_quebec` still parked
+- `tools/naip_edge.py` (new, no build step): `Naip` reads the 2023 NAIP mosaic at local metres through the track frame
+  (the WGS84 series, as round I's helpers), vectorised; `road_runs` / `trace_section` take one cross-section (NAIP gray +
+  lidar class-2 medians) and return the carriageway run at a seed with each edge classed `curb` (a lidar step >= 0.08 m
+  within 1 m, within 1 m of the NAIP edge), `flush` (bright concrete past it, no step) or `no_step`. Its numbers are
+  [invented] (GATES-CHANGELOG round J). The NAIP file in the repo is a Git LFS pointer on the Mac; the tool says so and
+  takes the image's path.
+- **Measured on grid_primary_6 (Quebec southbound), 44 stations every 20 m** (sections +-25 m, 0.5 m, lidar +-1.5 m
+  along; the corridor's NAIP histogram puts asphalt at 150-195, verge under 140):
+  - **a raised median, measured:** the median-side edge is a curb at +10.0 .. +11.0 m off the OSM line with a +0.08 ..
+    +0.16 m step at 10 stations, s 140-460;
+  - the outer edge does not hold: a curb at -3 .. -10 m at 9 stations, otherwise `no_step` / `flush` (driveways,
+    aprons, the slip lane);
+  - the road run is 4-41 m wide: on most stations north of s 480 it runs across both carriageways (the median reads
+    road-gray in NAIP there), and at s 0-120 / 620 the OSM line sits on the median (the seed is not on asphalt).
+  - So a brightness run plus a curb step separates the median's curb but not the outer edge; re-centring both
+    carriageways from it would place edges on paint, aprons and the other carriageway. Not built. 48th unchanged (~15 m).
+- `sandcreek_quebec`'s outline needs the same separation (a NAIP mask also takes the concrete median and aprons). Not
+  traced; the pad stays parked, `route.verify_mouths_allowed` keeps its three rows.
+- Lead: the lidar's own curb line, traced along (a continuous step line, not per-station), with NAIP only to tell asphalt
+  from concrete; the 0.3 m NAIP crop (`tools/naip_crop.py` on `claude/circuit-kerbs-lm`) for the paint.
+
+### 3, 5. Not reached this round
+- The parked pads (`48th_colorado`: the prep's contact band at its cut corner; `dahlia_56th`: the 30-42 m lap ribbon's
+  lane edges at v770/v771) and the paint step (fork 94/95's chevrons; Quebec's divider is a raised median at s 140-460,
+  so not paint there): unchanged, owed (round I's reasons stand).
+
+### Gates, BUILT kn5 (Mac, empty workshop `sclm_work/rj2`: this head; items 1, 4)
+| gate | 0.2.4 (i2) | **round J (rj2)** |
+|---|---|---|
+| drive_test race / street | PASS: soft 0, severe 0, drops 0 (1 far ledge), kinks 1.24 /km, bumps 0.31 /km, fold bumps 4 | **PASS / PASS, the same (vertex bumps 1, reported)** |
+| audit_mesh | CLEAN (K 0) | **CLEAN (K 0)** |
+| kn5_ground_check | PASS (198 heads, 0 orphans) | **PASS (198 heads, 0 orphans)** |
+| verify_pads | PASS x3 (seams 0.9-1.6 mm) | **PASS x3 (seams 0.9-1.6 mm)** |
+| verify_mouths | PASS: 117, 2 parked-pad rows allowed | **PASS: 117, the same rows allowed; grid_tertiary_1#1 PASS** |
+| house_seat | PASS (lowest roof 1.26 m) | **PASS (1.26 m)** |
+| houses | 2,183 / 2,183 / 0 | **2,183 / 2,183 / 0** |
+| textures | 0 untextured | **0 untextured** |
+| kn5 | 96.2 MB (road 89.4, `_street` 6.8) | **96.4 MB (road 89.6, `_street` 6.8)** |
+
+rj1 (item 1 with all 100 streets, before the wall): every gate as rj2 but houses 2,181 (the viaduct, above).
+
+Stills, NAIP 2023 (track frame) beside the BUILT rj2 surface, `source/stills/`:
+- `mouth_t1_t2_j`: grid_tertiary_1 across grid_tertiary_2 with 74 joining, on the lidar;
+- `wall_49_south_j`: the patched ground west of the wall, z -975 .. -1085 (the unbuilt road east of it in NAIP).
+
+Lake Murray unchanged:
+- `git diff origin/claude/fleet-lm-engine -- tracks/san-diego-lake-murray scripts/` is empty.
+- Its committed trim inputs through fleet-lm-engine's trim and this head's: byte-identical (`664da93b…`, `b73b70f4…`,
+  `f0c97952…`).
+- `test_round_j_keys_are_opt_in`: neither Lake Murray nor the Lariat names `route.weld_deck_beyond_end` or the round I
+  profile file. The weld's change is a no-op without the key (BeyondEndDeck is built only for a named piece).
+
+Tests: `tests/run_tests.py` (the .venv python, `python` on PATH): 1,304 pass. 6 fail, the same as round I's
+(`test_draft_equiv` x5, `test_registry_moves` x1). 3 new: the round J keys, BeyondEndDeck, the NAIP road runs.
+
 ## PC runbooks (round H)
 
 4j. **Sand Creek 0.2.3** (ledger 0079 rounds E-H). This build carries:
@@ -1146,7 +1250,66 @@ polygon test, the `--surface` chain.
    - 4k (the shared-tools A/B) also covers this round's tools: `ship_track.sh` gained two steps neither track lists, and
      `lidar_connector_profile.py` gained `--surface` (off by default).
 
-## Owed (2026-11-05, after round I; start here)
+4m. **Sand Creek 0.2.5** (ledger 0079 round J). This build carries 0.2.4 (4l) plus:
+   - 99 more streets on their measured (lidar) profiles, grid_tertiary_74's first rows read off grid_tertiary_2's deck
+     (`route.weld_deck_beyond_end`);
+   - the ground west of grid_primary_49's wall on the lidar on south to z -1075.
+
+   It installs as `sand_creek_raceway_lm` 0.2.5, replacing 0.2.4. **Ask Kevin before installing.**
+   1. `git -C D:/k10-worktrees/sclm-assets fetch` and check out this round's head of `claude/sand-creek-lm-assets`.
+   2. Inputs, the same as step 4l. Now WIRED and committed: `tracks/sand-creek-lm/source/connector_profiles.lidar.round_i.json`
+      (ship.json syncs it in); `source/ground_patches.lidar.json` re-measured (the lidar jobs need not run).
+   3. Rehearse from an EMPTY workshop:
+      `SHIP_PROJ=D:/k10-scratch/sand_creek_lm_j_reh AIROSO=D:/k10-worktrees/sclm-assets ENG=D:/k10-scratch/eng_sclm_a bash tools/ship_track.sh sand-creek-lm --no-install`
+      Expect the Mac's rj2:
+      - 4l's lines, except: `[lm_intake] connector heights off the lidar (source/connector_profiles.lidar.round_i.json): ...`
+        (103 streets in all; grid_primary_15 and round I's 6 not among them);
+      - `[weld] grid_tertiary_74 -> grid_tertiary_1#1 v1: past the host's open end, 19 point(s) read the deck of the street
+        it is welded to (1 street(s); route.weld_deck_beyond_end)` (and `v45: ... 0 point(s)`);
+      - `[islands] 1KERB_sidewalk_island_fork_92: 55 rows over 27.6 m, 0.74-4.00 m wide, rise 0.078 / 0.000 m ...`;
+      - `[ground-patch] wall_49: TERRAIN 516981 -> 574373 vertices ..., 42509 seated on the lidar ground (8241 in the
+        10 m feather), largest move 5.10 m`;
+      - `[bespoke] ... 2183 buildings stood, 38 dropped (2 of them past 450 m)`, drop reasons 36 relief;
+      - drive_test both PASS: soft 0, severe 0, drops 0, far ledges 1, fold bumps 4, vertex bumps 1, kinks 1.24 /km,
+        bumps 0.31 /km;
+      - audit CLEAN (K 0); kn5_ground_check PASS (198 heads, 0 orphans); verify_pads PASS x3 (seams 0.9-1.6 mm);
+      - verify_mouths PASS: 117 mouths, `grid_primary_52#0` and `grid_primary_80#0` FAIL in their rows (ALLOWED);
+        `grid_tertiary_1#1 (start) -> grid_tertiary_2#0` PASS;
+      - house_seat PASS (lowest roof 1.26 m), houses 2,183 / 2,183 / 0, textures 0 untextured;
+      - road kn5 89.6 MB, `_street` 6.8 MB.
+      Anything else, stop and send the log to the Mac.
+   4. Install, with Kevin's word: the same command without `SHIP_PROJ` and `--no-install`. AC closed.
+   5. Stills, from the car, CSP daylight, into `tracks/sand-creek-lm/source/stills/<name>_drive_0.2.5.jpg`:
+      - grid_tertiary_1 crossing grid_tertiary_2, 74 joining (1466 / -134), from grid_tertiary_2 southbound;
+      - a few lidar streets with the most change: grid_primary_87 / 88 (decks), grid_primary_33 (+2.56 m);
+      - the wall south of 1182 (-1550 / -1040), from the ground west of it (free roam: no street reaches it).
+   - 4k (the shared-tools A/B) also covers this round's tools: `mouth_weld.py` / `weld_mouths_blend.py` gained
+     `route.weld_deck_beyond_end` (no key, no change); `tools/naip_edge.py` is new and no step calls it.
+
+## Owed (2026-11-05, after round J; start here)
+
+1. **Quebec (round J item 2): measured, not built.**
+   - `tools/naip_edge.py` finds the raised median's curb (+10 .. +11 m off the southbound OSM line, +0.08 .. +0.16 m, s
+     140-460) but not the outer edges (curb at 9 of 44 stations; the run crosses the median north of s 480; the OSM line
+     sits on the median at s 0-120 / 620).
+   - Next: trace the lidar's curb as a continuous line along (not per station), NAIP only for asphalt vs concrete; the
+     0.3 m NAIP crop for paint. Then re-centre both carriageways, the median as measured, 48th at ~15 m.
+   - Then `sandcreek_quebec`'s outline (still parked; `route.verify_mouths_allowed` keeps its rows).
+2. **Parked pads (item 3): not reached.** Round I's reasons stand (48th_colorado: the prep's contact band at its cut
+   corner, the box missing the east half; dahlia_56th: the 30-42 m lap ribbon's lane edges at v770 / v771).
+3. **Paint (item 5): not reached.** Fork 94/95's chevrons; Quebec's divider is a raised median at s 140-460 (an island
+   step, `route.islands`, not paint) and unmeasured further north.
+4. **Streets held on 3DEP (7):**
+   - grid_primary_15: a viaduct deck (class 17) over ground at 9-11 m. Needs a street-bridge path (the deck as a bridge,
+     the ground left at the lidar under it), then wire its profile.
+   - Round I's 6 jumpy streets: look at their jump points.
+   - Check the other deck streets on the lidar (grid_primary_87 / 88, 33, 64, 73) for the same embankment-for-a-viaduct
+     artefact; they lost no house, but their terrain bands may be embankments the real ground does not have.
+5. **The road east of the wall** (NAIP: 4 lanes at x ~ -1530 .. -1515, z < -953): not in the build south of
+   grid_primary_49's end.
+6. Round C (race curbs, race closure, arrow signs, street-name signs) and round H's items 4-5, unchanged.
+
+## Owed (2026-11-05, after round I; kept for the record)
 
 1. **More streets on the lidar (item 4): measured, parked.**
    - 100 streets in `source/connector_profiles.lidar.round_i.json`.

@@ -1,0 +1,886 @@
+{
+ "_doc": "MUTCD D3-1 street-name blades at Sand Creek's lap junctions (tools/name_blades.py; ledger 0079 round K). Names: OpenStreetMap `name`, abbreviated per MUTCD 1A.15; sizes MUTCD 2009 2D.43 / Table 2D-1; the corner, margins, border, length step, font and set-back AUTHORED (GATES-CHANGELOG 2026-11-05).",
+ "mutcd": {
+  "blade_h_in": 12.0,
+  "cap_in": 6.0,
+  "lower_in": 4.5,
+  "mount_bottom_ft": 7.0,
+  "margin_in": 3.0,
+  "border_in": 0.5,
+  "len_step_in": 6.0
+ },
+ "corner_m": 3.0,
+ "setback_m": 2.1,
+ "atlas": {
+  "file": "name_blades.png",
+  "size_px": [
+   1024,
+   3328
+  ],
+  "px_per_in": 10.0,
+  "font": "Arial Narrow Bold.ttf",
+  "font_px": 84,
+  "rows": {
+   "Dahlia St": {
+    "row": 0,
+    "length_in": 36.0,
+    "u": [
+     0.0,
+     0.3515625
+    ],
+    "v": [
+     0.9639423076923077,
+     1.0
+    ]
+   },
+   "E 44th Ave": {
+    "row": 1,
+    "length_in": 42.0,
+    "u": [
+     0.0,
+     0.41015625
+    ],
+    "v": [
+     0.9254807692307693,
+     0.9615384615384616
+    ]
+   },
+   "E 45th Ave": {
+    "row": 2,
+    "length_in": 42.0,
+    "u": [
+     0.0,
+     0.41015625
+    ],
+    "v": [
+     0.8870192307692307,
+     0.9230769230769231
+    ]
+   },
+   "E 45th N Dr": {
+    "row": 3,
+    "length_in": 48.0,
+    "u": [
+     0.0,
+     0.46875
+    ],
+    "v": [
+     0.8485576923076923,
+     0.8846153846153846
+    ]
+   },
+   "E 45th S Dr": {
+    "row": 4,
+    "length_in": 48.0,
+    "u": [
+     0.0,
+     0.46875
+    ],
+    "v": [
+     0.8100961538461539,
+     0.8461538461538461
+    ]
+   },
+   "E 46th Ave": {
+    "row": 5,
+    "length_in": 42.0,
+    "u": [
+     0.0,
+     0.41015625
+    ],
+    "v": [
+     0.7716346153846154,
+     0.8076923076923077
+    ]
+   },
+   "E 46th Ave Access": {
+    "row": 6,
+    "length_in": 72.0,
+    "u": [
+     0.0,
+     0.703125
+    ],
+    "v": [
+     0.7331730769230769,
+     0.7692307692307692
+    ]
+   },
+   "E 47th Ave Dr": {
+    "row": 7,
+    "length_in": 54.0,
+    "u": [
+     0.0,
+     0.52734375
+    ],
+    "v": [
+     0.6947115384615384,
+     0.7307692307692308
+    ]
+   },
+   "E 48th Ave": {
+    "row": 8,
+    "length_in": 42.0,
+    "u": [
+     0.0,
+     0.41015625
+    ],
+    "v": [
+     0.65625,
+     0.6923076923076923
+    ]
+   },
+   "E 50th Ave": {
+    "row": 9,
+    "length_in": 42.0,
+    "u": [
+     0.0,
+     0.41015625
+    ],
+    "v": [
+     0.6177884615384616,
+     0.6538461538461539
+    ]
+   },
+   "E 51st Ave": {
+    "row": 10,
+    "length_in": 42.0,
+    "u": [
+     0.0,
+     0.41015625
+    ],
+    "v": [
+     0.5793269230769231,
+     0.6153846153846154
+    ]
+   },
+   "E 52nd Ave": {
+    "row": 11,
+    "length_in": 48.0,
+    "u": [
+     0.0,
+     0.46875
+    ],
+    "v": [
+     0.5408653846153846,
+     0.5769230769230769
+    ]
+   },
+   "E 56th Ave": {
+    "row": 12,
+    "length_in": 42.0,
+    "u": [
+     0.0,
+     0.41015625
+    ],
+    "v": [
+     0.5024038461538461,
+     0.5384615384615384
+    ]
+   },
+   "N Colorado Blvd": {
+    "row": 13,
+    "length_in": 60.0,
+    "u": [
+     0.0,
+     0.5859375
+    ],
+    "v": [
+     0.4639423076923077,
+     0.5
+    ]
+   },
+   "N Colorado Blvd Frtg E": {
+    "row": 14,
+    "length_in": 84.0,
+    "u": [
+     0.0,
+     0.8203125
+    ],
+    "v": [
+     0.4254807692307693,
+     0.46153846153846156
+    ]
+   },
+   "N Colorado Blvd Frtg W": {
+    "row": 15,
+    "length_in": 84.0,
+    "u": [
+     0.0,
+     0.8203125
+    ],
+    "v": [
+     0.3870192307692307,
+     0.42307692307692313
+    ]
+   },
+   "N Dahlia St": {
+    "row": 16,
+    "length_in": 48.0,
+    "u": [
+     0.0,
+     0.46875
+    ],
+    "v": [
+     0.3485576923076923,
+     0.3846153846153846
+    ]
+   },
+   "N Forest St": {
+    "row": 17,
+    "length_in": 48.0,
+    "u": [
+     0.0,
+     0.46875
+    ],
+    "v": [
+     0.31009615384615385,
+     0.34615384615384615
+    ]
+   },
+   "N Glencoe St": {
+    "row": 18,
+    "length_in": 54.0,
+    "u": [
+     0.0,
+     0.52734375
+    ],
+    "v": [
+     0.2716346153846154,
+     0.3076923076923077
+    ]
+   },
+   "N Grape St": {
+    "row": 19,
+    "length_in": 42.0,
+    "u": [
+     0.0,
+     0.41015625
+    ],
+    "v": [
+     0.23317307692307687,
+     0.2692307692307693
+    ]
+   },
+   "N Holly St": {
+    "row": 20,
+    "length_in": 42.0,
+    "u": [
+     0.0,
+     0.41015625
+    ],
+    "v": [
+     0.19471153846153844,
+     0.23076923076923073
+    ]
+   },
+   "N Ivy St": {
+    "row": 21,
+    "length_in": 36.0,
+    "u": [
+     0.0,
+     0.3515625
+    ],
+    "v": [
+     0.15625,
+     0.1923076923076923
+    ]
+   },
+   "N Leyden St": {
+    "row": 22,
+    "length_in": 48.0,
+    "u": [
+     0.0,
+     0.46875
+    ],
+    "v": [
+     0.11778846153846156,
+     0.15384615384615385
+    ]
+   },
+   "N Monaco St": {
+    "row": 23,
+    "length_in": 48.0,
+    "u": [
+     0.0,
+     0.46875
+    ],
+    "v": [
+     0.07932692307692313,
+     0.11538461538461542
+    ]
+   },
+   "N Northfield Quebec St": {
+    "row": 24,
+    "length_in": 84.0,
+    "u": [
+     0.0,
+     0.8203125
+    ],
+    "v": [
+     0.04086538461538458,
+     0.07692307692307687
+    ]
+   },
+   "Sand Creek Dr S": {
+    "row": 25,
+    "length_in": 60.0,
+    "u": [
+     0.0,
+     0.5859375
+    ],
+    "v": [
+     0.0024038461538461453,
+     0.038461538461538436
+    ]
+   }
+  }
+ },
+ "posts": [
+  {
+   "id": "nb0",
+   "connector": "grid_unclassified_76#0",
+   "via": "mouth",
+   "vertex": 95,
+   "side": "R",
+   "along_m": -7.0,
+   "setback_m": 2.1,
+   "lap_name": "N Colorado Blvd",
+   "cross_name": "N Colorado Blvd Frtg E",
+   "osm_lap": "North Colorado Boulevard",
+   "osm_cross": "North Colorado Boulevard Frontage East",
+   "cross_dir_xz": [
+    0.8196,
+    0.573
+   ]
+  },
+  {
+   "id": "nb1",
+   "connector": "grid_unclassified_10",
+   "via": "pad colorado_50th",
+   "vertex": 140,
+   "side": "R",
+   "along_m": -7.0,
+   "setback_m": 2.1,
+   "lap_name": "E 50th Ave",
+   "cross_name": "N Colorado Blvd Frtg E",
+   "osm_lap": "East 50th Avenue",
+   "osm_cross": "North Colorado Boulevard Frontage East",
+   "cross_dir_xz": [
+    -0.0883,
+    0.9961
+   ]
+  },
+  {
+   "id": "nb2",
+   "connector": "grid_unclassified_9",
+   "via": "pad colorado_50th",
+   "vertex": 140,
+   "side": "L",
+   "along_m": 7.0,
+   "setback_m": 2.1,
+   "lap_name": "E 50th Ave",
+   "cross_name": "N Colorado Blvd Frtg W",
+   "osm_lap": "East 50th Avenue",
+   "osm_cross": "North Colorado Boulevard Frontage West",
+   "cross_dir_xz": [
+    -0.6925,
+    -0.7214
+   ]
+  },
+  {
+   "id": "nb3",
+   "connector": "grid_primary_51",
+   "via": "pad colorado_50th",
+   "vertex": 140,
+   "side": "L",
+   "along_m": 7.75,
+   "setback_m": 2.1,
+   "lap_name": "E 50th Ave",
+   "cross_name": "N Colorado Blvd",
+   "osm_lap": "East 50th Avenue",
+   "osm_cross": "North Colorado Boulevard",
+   "cross_dir_xz": [
+    0.0442,
+    0.999
+   ]
+  },
+  {
+   "id": "nb4",
+   "connector": "grid_unclassified_0",
+   "via": "pad 50th_dahlia",
+   "vertex": 411,
+   "side": "R",
+   "along_m": -7.0,
+   "setback_m": 2.1,
+   "lap_name": "N Dahlia St",
+   "cross_name": "E 50th Ave",
+   "osm_lap": "North Dahlia Street",
+   "osm_cross": "East 50th Avenue",
+   "cross_dir_xz": [
+    1.0,
+    0.0099
+   ]
+  },
+  {
+   "id": "nb5",
+   "connector": "grid_unclassified_17#0",
+   "via": "mouth",
+   "vertex": 479,
+   "side": "L",
+   "along_m": 7.0,
+   "setback_m": 2.1,
+   "lap_name": "N Dahlia St",
+   "cross_name": "E 51st Ave",
+   "osm_lap": "North Dahlia Street",
+   "osm_cross": "East 51st Avenue",
+   "cross_dir_xz": [
+    -1.0,
+    0.0
+   ]
+  },
+  {
+   "id": "nb6",
+   "connector": "grid_tertiary_4",
+   "via": "mouth",
+   "vertex": 558,
+   "side": "R",
+   "along_m": -8.0,
+   "setback_m": 2.1,
+   "lap_name": "N Dahlia St",
+   "cross_name": "E 52nd Ave",
+   "osm_lap": "North Dahlia Street",
+   "osm_cross": "East 52nd Avenue",
+   "cross_dir_xz": [
+    0.9996,
+    0.0279
+   ]
+  },
+  {
+   "id": "nb7",
+   "connector": "grid_tertiary_16",
+   "via": "mouth",
+   "vertex": 559,
+   "side": "L",
+   "along_m": 8.0,
+   "setback_m": 2.1,
+   "lap_name": "Dahlia St",
+   "cross_name": "E 52nd Ave",
+   "osm_lap": "Dahlia Street",
+   "osm_cross": "East 52nd Avenue",
+   "cross_dir_xz": [
+    -0.9997,
+    -0.0258
+   ]
+  },
+  {
+   "id": "nb8",
+   "connector": "grid_primary_35",
+   "via": "mouth",
+   "vertex": 779,
+   "side": "L",
+   "along_m": 7.75,
+   "setback_m": 2.1,
+   "lap_name": "Dahlia St",
+   "cross_name": "E 56th Ave",
+   "osm_lap": "Dahlia Street",
+   "osm_cross": "East 56th Avenue",
+   "cross_dir_xz": [
+    -0.9993,
+    0.0379
+   ]
+  },
+  {
+   "id": "nb9",
+   "connector": "grid_primary_80",
+   "via": "mouth",
+   "vertex": 847,
+   "side": "L",
+   "along_m": 7.75,
+   "setback_m": 2.1,
+   "lap_name": "Sand Creek Dr S",
+   "cross_name": "E 56th Ave",
+   "osm_lap": "Sand Creek Drive South",
+   "osm_cross": "East 56th Avenue",
+   "cross_dir_xz": [
+    0.2943,
+    0.9557
+   ]
+  },
+  {
+   "id": "nb10",
+   "connector": "grid_tertiary_5",
+   "via": "mouth",
+   "vertex": 1902,
+   "side": "R",
+   "along_m": -8.0,
+   "setback_m": 2.1,
+   "lap_name": "Sand Creek Dr S",
+   "cross_name": "E 47th Ave Dr",
+   "osm_lap": "Sand Creek Drive South",
+   "osm_cross": "East 47th Avenue Drive",
+   "cross_dir_xz": [
+    -0.9741,
+    -0.2263
+   ]
+  },
+  {
+   "id": "nb11",
+   "connector": "grid_primary_78",
+   "via": "mouth",
+   "vertex": 1936,
+   "side": "L",
+   "along_m": 7.75,
+   "setback_m": 2.1,
+   "lap_name": "Sand Creek Dr S",
+   "cross_name": "N Northfield Quebec St",
+   "osm_lap": "Sand Creek Drive South",
+   "osm_cross": "North Northfield Quebec Street",
+   "cross_dir_xz": [
+    0.7055,
+    0.7087
+   ]
+  },
+  {
+   "id": "nb12",
+   "connector": "grid_primary_84",
+   "via": "mouth",
+   "vertex": 1942,
+   "side": "L",
+   "along_m": 7.75,
+   "setback_m": 2.1,
+   "lap_name": "Sand Creek Dr S",
+   "cross_name": "N Northfield Quebec St",
+   "osm_lap": "Sand Creek Drive South",
+   "osm_cross": "North Northfield Quebec Street",
+   "cross_dir_xz": [
+    0.7671,
+    0.6415
+   ]
+  },
+  {
+   "id": "nb13",
+   "connector": "grid_unclassified_95",
+   "via": "mouth",
+   "vertex": 2318,
+   "side": "R",
+   "along_m": -12.0,
+   "setback_m": 2.1,
+   "lap_name": "E 45th Ave",
+   "cross_name": "N Monaco St",
+   "osm_lap": "East 45th Avenue",
+   "osm_cross": "North Monaco Street",
+   "cross_dir_xz": [
+    -0.2887,
+    0.9574
+   ]
+  },
+  {
+   "id": "nb14",
+   "connector": "grid_secondary_102",
+   "via": "mouth",
+   "vertex": 2319,
+   "side": "L",
+   "along_m": 8.0,
+   "setback_m": 2.1,
+   "lap_name": "E 45th Ave",
+   "cross_name": "N Monaco St",
+   "osm_lap": "East 45th Avenue",
+   "osm_cross": "North Monaco Street",
+   "cross_dir_xz": [
+    0.002,
+    -1.0
+   ]
+  },
+  {
+   "id": "nb15",
+   "connector": "grid_unclassified_18",
+   "via": "mouth",
+   "vertex": 2406,
+   "side": "R",
+   "along_m": -7.0,
+   "setback_m": 2.1,
+   "lap_name": "E 45th Ave",
+   "cross_name": "N Leyden St",
+   "osm_lap": "East 45th Avenue",
+   "osm_cross": "North Leyden Street",
+   "cross_dir_xz": [
+    0.0238,
+    0.9997
+   ]
+  },
+  {
+   "id": "nb16",
+   "connector": "grid_unclassified_25",
+   "via": "mouth",
+   "vertex": 2522,
+   "side": "R",
+   "along_m": -7.0,
+   "setback_m": 2.1,
+   "lap_name": "E 45th Ave",
+   "cross_name": "N Ivy St",
+   "osm_lap": "East 45th Avenue",
+   "osm_cross": "North Ivy Street",
+   "cross_dir_xz": [
+    -0.0436,
+    0.999
+   ]
+  },
+  {
+   "id": "nb17",
+   "connector": "grid_secondary_39",
+   "via": "mouth",
+   "vertex": 2581,
+   "side": "L",
+   "along_m": 8.0,
+   "setback_m": 2.1,
+   "lap_name": "E 45th Ave",
+   "cross_name": "E 44th Ave",
+   "osm_lap": "East 45th Avenue",
+   "osm_cross": "East 44th Avenue",
+   "cross_dir_xz": [
+    0.9815,
+    -0.1912
+   ]
+  },
+  {
+   "id": "nb18",
+   "connector": "grid_tertiary_92",
+   "via": "mouth",
+   "vertex": 2585,
+   "side": "R",
+   "along_m": -15.25,
+   "setback_m": 2.1,
+   "lap_name": "E 45th N Dr",
+   "cross_name": "N Holly St",
+   "osm_lap": "East 45th North Drive",
+   "osm_cross": "North Holly Street",
+   "cross_dir_xz": [
+    -0.2677,
+    0.9635
+   ]
+  },
+  {
+   "id": "nb19",
+   "connector": "grid_primary_11",
+   "via": "mouth",
+   "vertex": 2586,
+   "side": "L",
+   "along_m": 8.0,
+   "setback_m": 2.1,
+   "lap_name": "E 45th N Dr",
+   "cross_name": "E 45th S Dr",
+   "osm_lap": "East 45th North Drive",
+   "osm_cross": "East 45th South Drive",
+   "cross_dir_xz": [
+    -0.9896,
+    0.1435
+   ]
+  },
+  {
+   "id": "nb20",
+   "connector": "grid_unclassified_81",
+   "via": "mouth",
+   "vertex": 2656,
+   "side": "R",
+   "along_m": -7.0,
+   "setback_m": 2.1,
+   "lap_name": "E 45th N Dr",
+   "cross_name": "N Grape St",
+   "osm_lap": "East 45th North Drive",
+   "osm_cross": "North Grape Street",
+   "cross_dir_xz": [
+    0.0182,
+    0.9998
+   ]
+  },
+  {
+   "id": "nb21",
+   "connector": "grid_unclassified_69",
+   "via": "mouth",
+   "vertex": 2691,
+   "side": "R",
+   "along_m": -7.0,
+   "setback_m": 2.1,
+   "lap_name": "E 45th N Dr",
+   "cross_name": "N Glencoe St",
+   "osm_lap": "East 45th North Drive",
+   "osm_cross": "North Glencoe Street",
+   "cross_dir_xz": [
+    0.0809,
+    0.9967
+   ]
+  },
+  {
+   "id": "nb22",
+   "connector": "grid_unclassified_0",
+   "via": "mouth",
+   "vertex": 2725,
+   "side": "R",
+   "along_m": -7.0,
+   "setback_m": 2.1,
+   "lap_name": "E 45th N Dr",
+   "cross_name": "N Forest St",
+   "osm_lap": "East 45th North Drive",
+   "osm_cross": "North Forest Street",
+   "cross_dir_xz": [
+    0.0582,
+    0.9983
+   ]
+  },
+  {
+   "id": "nb23",
+   "connector": "grid_unclassified_43",
+   "via": "mouth",
+   "vertex": 2791,
+   "side": "R",
+   "along_m": -7.0,
+   "setback_m": 2.1,
+   "lap_name": "E 45th N Dr",
+   "cross_name": "E 46th Ave",
+   "osm_lap": "East 45th North Drive",
+   "osm_cross": "East 46th Avenue",
+   "cross_dir_xz": [
+    0.9634,
+    0.2681
+   ]
+  },
+  {
+   "id": "nb24",
+   "connector": "grid_tertiary_68",
+   "via": "mouth",
+   "vertex": 2859,
+   "side": "L",
+   "along_m": 8.0,
+   "setback_m": 2.1,
+   "lap_name": "E 46th Ave",
+   "cross_name": "N Dahlia St",
+   "osm_lap": "East 46th Avenue",
+   "osm_cross": "North Dahlia Street",
+   "cross_dir_xz": [
+    -0.0415,
+    -0.9991
+   ]
+  },
+  {
+   "id": "nb25",
+   "connector": "grid_tertiary_44",
+   "via": "mouth",
+   "vertex": 2860,
+   "side": "R",
+   "along_m": -8.0,
+   "setback_m": 2.1,
+   "lap_name": "E 46th Ave",
+   "cross_name": "N Dahlia St",
+   "osm_lap": "East 46th Avenue",
+   "osm_cross": "North Dahlia Street",
+   "cross_dir_xz": [
+    -0.0066,
+    1.0
+   ]
+  },
+  {
+   "id": "nb26",
+   "connector": "grid_tertiary_2",
+   "via": "mouth",
+   "vertex": 3184,
+   "side": "R",
+   "along_m": -8.0,
+   "setback_m": 2.1,
+   "lap_name": "E 46th Ave Access",
+   "cross_name": "E 50th Ave",
+   "osm_lap": "East 46th Avenue Access",
+   "osm_cross": "East 50th Avenue",
+   "cross_dir_xz": [
+    0.968,
+    0.2509
+   ]
+  },
+  {
+   "id": "nb27",
+   "connector": "grid_unclassified_67",
+   "via": "mouth",
+   "vertex": 3198,
+   "side": "R",
+   "along_m": -7.0,
+   "setback_m": 2.1,
+   "lap_name": "E 48th Ave",
+   "cross_name": "N Colorado Blvd Frtg E",
+   "osm_lap": "East 48th Avenue",
+   "osm_cross": "North Colorado Boulevard Frontage East",
+   "cross_dir_xz": [
+    0.154,
+    0.9881
+   ]
+  },
+  {
+   "id": "nb28",
+   "connector": "grid_primary_52",
+   "via": "mouth",
+   "vertex": 3202,
+   "side": "L",
+   "along_m": 7.75,
+   "setback_m": 2.1,
+   "lap_name": "E 48th Ave",
+   "cross_name": "N Colorado Blvd",
+   "osm_lap": "East 48th Avenue",
+   "osm_cross": "North Colorado Boulevard",
+   "cross_dir_xz": [
+    -0.0917,
+    -0.9958
+   ]
+  }
+ ],
+ "skipped": [
+  {
+   "connector": "grid_unclassified_17",
+   "vertex": 186,
+   "side": 1,
+   "width_m": 8.0,
+   "via": "pad 50th_ash",
+   "cut": [
+    -1360.698,
+    166.889
+   ],
+   "why": "the side street carries the lap's own name (North Ash Street)"
+  },
+  {
+   "connector": "grid_tertiary_44",
+   "vertex": 411,
+   "side": -1,
+   "width_m": 10.0,
+   "via": "pad 50th_dahlia",
+   "cut": [
+    -757.586,
+    55.691
+   ],
+   "why": "the side street carries the lap's own name (North Dahlia Street)"
+  },
+  {
+   "connector": "grid_primary_49",
+   "vertex": 3205,
+   "side": 1,
+   "width_m": 9.5,
+   "via": "mouth",
+   "cut": [
+    -1517.556,
+    -303.994
+   ],
+   "why": "the side street carries the lap's own name (North Colorado Boulevard)"
+  },
+  {
+   "connector": "grid_unclassified_76",
+   "vertex": 140,
+   "why": "the same corner's post already names both"
+  },
+  {
+   "connector": "grid_primary_53",
+   "vertex": 140,
+   "why": "the same corner's post already names both"
+  },
+  {
+   "connector": "grid_tertiary_98",
+   "vertex": 3207,
+   "why": "the same corner's post already names both"
+  }
+ ]
+}

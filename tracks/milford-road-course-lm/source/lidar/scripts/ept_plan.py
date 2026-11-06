@@ -8,6 +8,10 @@ import json, math, sys, urllib.request
 from pathlib import Path
 
 import numpy as np
+ROOT = Path(__file__).resolve().parents[5]          # airoso: TLS goes through scripts/tls.py (tests/net/test_https_everywhere.py)
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+from scripts.tls import https_context  # noqa: E402
 from pyproj import Transformer
 
 EPT = "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/USGS_LPC_MI_31Co_Oakland_2016_LAS_2019/ept.json"
@@ -20,7 +24,7 @@ fetched = {"bytes": 0, "files": 0}
 def get(url, save=None):
     for k in range(5):
         try:
-            with urllib.request.urlopen(url, timeout=120) as r:
+            with urllib.request.urlopen(url, timeout=120, context=https_context()) as r:
                 b = r.read()
             break
         except Exception as e:  # noqa
@@ -35,7 +39,7 @@ def get(url, save=None):
 
 def head(url):
     req = urllib.request.Request(url, method="HEAD")
-    with urllib.request.urlopen(req, timeout=60) as r:
+    with urllib.request.urlopen(req, timeout=60, context=https_context()) as r:
         return int(r.headers["Content-Length"])
 
 

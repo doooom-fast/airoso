@@ -10,6 +10,7 @@ from __future__ import annotations
 import importlib.util
 import json
 import struct
+import tempfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -44,7 +45,7 @@ WHOLE = ([("ghost_alpha.png", b"PNG1"), ("wbeam_rail_diffuse.png", b"PNG22"), ("
           ("GUARDRAIL_W_0_mat", [("txDiffuse", "wbeam_rail_diffuse.png")])])
 
 
-def test_a_whole_kn5_passes(tmp_path):
+def _test_a_whole_kn5_passes(tmp_path):
     p = tmp_path / "t.kn5"
     p.write_bytes(_kn5(*WHOLE))
     r = kt.check(p)
@@ -53,7 +54,7 @@ def test_a_whole_kn5_passes(tmp_path):
     assert json.loads((tmp_path / "o.json").read_text())["ok"] is True
 
 
-def test_a_texture_named_and_not_embedded_fails(tmp_path):
+def _test_a_texture_named_and_not_embedded_fails(tmp_path):
     """the PC's 0082-1 run 1: the materials name ghost_alpha.png, the texture section lacks it"""
     p = tmp_path / "t.kn5"
     p.write_bytes(_kn5(WHOLE[0][1:], WHOLE[1]))
@@ -63,14 +64,14 @@ def test_a_texture_named_and_not_embedded_fails(tmp_path):
     assert kt.main([str(p)]) == 1
 
 
-def test_case_only_match_is_still_missing(tmp_path):
+def _test_case_only_match_is_still_missing(tmp_path):
     p = tmp_path / "t.kn5"
     p.write_bytes(_kn5([("Ghost_Alpha.png", b"x")], [("m", [("txDiffuse", "ghost_alpha.png")])]))
     r = kt.check(p)
     assert not r["ok"] and r["missing"][0]["case_only"] is True
 
 
-def test_empty_map_and_zero_byte_texture_fail(tmp_path):
+def _test_empty_map_and_zero_byte_texture_fail(tmp_path):
     p = tmp_path / "a.kn5"
     p.write_bytes(_kn5([("a.png", b"x")], [("m", [("txDiffuse", "a.png"), ("txNormal", "")])]))
     assert kt.check(p)["empty"] == [{"material": "m", "sampler": "txNormal"}]
@@ -80,7 +81,7 @@ def test_empty_map_and_zero_byte_texture_fail(tmp_path):
     assert kt.main([str(tmp_path)]) == 1
 
 
-def test_version_6_and_input_errors(tmp_path):
+def _test_version_6_and_input_errors(tmp_path):
     p = tmp_path / "v6.kn5"
     p.write_bytes(_kn5(*WHOLE, version=6))
     assert kt.check(p)["ok"]
@@ -99,3 +100,29 @@ def test_the_gate_is_opt_in():
     assert named == ["milford-road-course-lm"]
     text = (ROOT / "tools" / "ship_track.sh").read_text(encoding="utf-8")
     assert "gate_kn5_textures() {" in text and "python tools/kn5_textures.py \"$PROJ/build\"" in text
+
+
+# the repo's runner (tests/run_tests.py) calls plain functions: no pytest fixtures, a tempfile directory each
+def test_a_whole_kn5_passes():
+    with tempfile.TemporaryDirectory() as t:
+        _test_a_whole_kn5_passes(Path(t))
+
+
+def test_a_texture_named_and_not_embedded_fails():
+    with tempfile.TemporaryDirectory() as t:
+        _test_a_texture_named_and_not_embedded_fails(Path(t))
+
+
+def test_case_only_match_is_still_missing():
+    with tempfile.TemporaryDirectory() as t:
+        _test_case_only_match_is_still_missing(Path(t))
+
+
+def test_empty_map_and_zero_byte_texture_fail():
+    with tempfile.TemporaryDirectory() as t:
+        _test_empty_map_and_zero_byte_texture_fail(Path(t))
+
+
+def test_version_6_and_input_errors():
+    with tempfile.TemporaryDirectory() as t:
+        _test_version_6_and_input_errors(Path(t))

@@ -9,6 +9,10 @@ from pathlib import Path
 
 import laspy
 import numpy as np
+ROOT = Path(__file__).resolve().parents[5]          # airoso: TLS goes through scripts/tls.py (tests/net/test_https_everywhere.py)
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+from scripts.tls import https_context  # noqa: E402
 from pyproj import Transformer
 from scipy.spatial import cKDTree
 
@@ -46,7 +50,7 @@ for q, (key, npts, size) in enumerate(plan["nodes"]):
     if not f.exists() or f.stat().st_size != size:
         for k in range(5):
             try:
-                with urllib.request.urlopen(f"{BASE}/ept-data/{key}.laz", timeout=180) as r:
+                with urllib.request.urlopen(f"{BASE}/ept-data/{key}.laz", timeout=180, context=https_context()) as r:
                     data = r.read()
                 break
             except Exception as e:  # noqa

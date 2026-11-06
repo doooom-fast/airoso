@@ -651,6 +651,9 @@ Supersedes 0080-5 (which matched ws19 on the PC). No lidar or NAIP is needed: ev
   60,497 / 119,192, 59,958 / 117,917, 58,863 / 116,398, 56,209 / 111,057, 56,943 / 112,595, 58,371 / 115,561;
   1KERB_SIDEWALK_DECK 6,222 / 2,074; 1KERB_sidewalk 33,992 / 50,964; 1ROAD_road 50,959 / 16,988; 1WALL_MEDIAN 52,404 /
   17,492; 1WALL_guard 6,402 / 2,136; MARKINGS 42,820 / 26,000; textures 7,770,522 B, materials 3,879 B, nodes 1,398 B.
+- **Mac verdict: MATCHED.** ws27's 1GRASS_2 is 60,496 / 119,190 (the PC's +1 vertex, +2 triangles = the 56 B); every
+  other mesh, the textures and the materials match exactly: one ground edge split, terrain noise (as 4k's Lake Murray
+  control). c3c988b9 (a8534007 equivalent) is offered to Kevin in place of c42b91ab; install only on his word.
 
 ## PC runbook 0080-5: rehearse 2a (I 8 both ways), no install
 

@@ -2,7 +2,7 @@
   "_doc": "Sand Creek Raceway through Lake Murray v4's engine (ledger 0078, Kevin 2026-11-03: \"Lake Murray v4 should be what we build the rest from\"). The PILOT: Sand Creek 0.35.0's line (OSM centrelines, its widths, its 3DEP profile, tracks/sand-creek/data) fed by tools/lm_engine_intake.py into the v021 loop assembler (tracks/san-diego-lake-murray/scripts-v021/blender/build_loop_blend.py), prepped / exported / spawned by engine-july (the snapshot in tracks/san-diego-lake-murray/engine-july-snapshot), gated by the same gates. Its own slug and install folder so it installs beside sand_creek_raceway. Every other key is Sand Creek's own (copied from tracks/sand-creek/track.config.json at 0.35.0); the assembler reads route.smooth_*, route.divided_double, terrain.terrain_band_m and scenery.* only.",
   "name": "Sand Creek Raceway (LM engine)",
   "slug": "sand_creek_raceway_lm",
-  "version": "0.2.2",
+  "version": "0.2.5",
   "mirror_x": false,
   "osm_road_widths": true,
   "_osm_road_widths_doc": "Real street circuit — after the project stage, scripts.gps.widths_from_osm map-matches each centerline vertex to its OSM way and sets curb-to-curb widths from lanes (arterials ~2x a side street) + writes intersection pads at the real junctions. Racetracks (defined widths) leave this off.",

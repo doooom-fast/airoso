@@ -56,3 +56,39 @@ def test_the_committed_wb_connector_is_reproduced_and_its_decks_are_measured():
         assert all(w >= 0 for w in rec["widths_m"])
     finally:
         shutil.rmtree(tmp, ignore_errors=True)
+
+
+def test_wb_head_runs_edge_396_westward_into_397():
+    """2a item 4: the declared head puts edge 396's vertices 162 -> 1 in front of the chain, ending at 397's start."""
+    rec = json.loads((SRC / "connectors.local.json").read_text())["connectors"][0]
+    src = rec["source_by_vertex"]
+    assert src[0] == [396, 162] and src[161] == [396, 1] and src[162][0] == 397
+    xs = [p[0] for p in rec["points_xyz_m"][:163]]
+    assert all(b < a for a, b in zip(xs, xs[1:]))           # westward: x falls the whole head
+
+
+def test_naip_edge_limit_widens_steps_and_never_passes_the_barrier():
+    np = __import__("pytest").importorskip("numpy")
+    import naip_carriageways as C
+    st = np.arange(0.0, 100.0, 5.0)
+    v = np.where(st < 50, 5.0, 9.0)                          # a 4 m step at s 50
+    pin = np.full(len(st), np.nan)
+    out = C._limit(v, st, pin, 0.1)
+    assert np.all(out >= v - 1e-9)                            # widening only
+    assert np.all(np.abs(np.diff(out)) <= 0.1 * 5 + 1e-9)     # at most the rate
+    pin[12:] = 6.0                                            # the barrier face from s 60
+    out = C._limit(v, st, pin, 0.1)
+    assert np.all(out[12:] <= 6.0 + 1e-9)                     # never past the barrier
+
+
+def test_measured_carriageways_do_not_overlap_and_the_barrier_is_type_60():
+    doc = json.loads((SRC / "carriageway_edges.naip.json").read_text())
+    assert doc["overlap"]["overlap_stations"] == 0
+    b = doc["barrier"]
+    assert (b["height_m"], b["base_m"], b["face_deg_from_vertical"]) == (0.914, 0.61, 9.1)
+    assert abs(b["top_m"] - 0.317) < 1e-3
+    for f, k in (("centerline.measured.local.json", "centerline.measured.local.json"),
+                 ("connectors.measured.local.json", "connectors.measured.local.json"),
+                 ("median_barrier.json", "median_barrier.json")):
+        import hashlib
+        assert hashlib.md5((SRC / f).read_bytes()).hexdigest() == doc["outputs"][k]

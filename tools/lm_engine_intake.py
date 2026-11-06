@@ -130,7 +130,14 @@ def intake(proj: Path, *, connectors: bool | None = None) -> dict:
                 or ":" in sd_rel):
             raise SystemExit(f"[lm_intake] lm_intake.source_data {sd_rel!r} must be a plain path inside the source track")
         sdata = src / sd_rel
-    need = [sdata / "centerline.local.json", sdata / "heightfield.npy", sdata / "heightfield.meta.json"]
+    # ledger 0080 2a (opt-in, the SD freeway port): lm_intake.line_file / connectors_file name the measured versions of
+    # the line and the connectors in source_data (tools/naip_carriageways.py: NAIP edges); absent = the plain names
+    line_name = li.get("line_file") or "centerline.local.json"
+    conn_name = li.get("connectors_file") or "connectors.local.json"
+    for nm in (line_name, conn_name):
+        if "/" in nm or "\\" in nm or nm.startswith("."):
+            raise SystemExit(f"[lm_intake] {nm!r} must be a file name in the source data folder")
+    need = [sdata / line_name, sdata / "heightfield.npy", sdata / "heightfield.meta.json"]
     # a source track whose heightfield is not committed (High Plains: the elev stage's output lives in its workshop) may
     # have it fetched into the PORT track (scripts.elevation.heightfield on a copy of the source; synced in by ship.json):
     # then the project's own copy is used, and its provenance is the port track's
@@ -679,7 +686,7 @@ def intake(proj: Path, *, connectors: bool | None = None) -> dict:
                                        "_doc": "bilinear from the source 3DEP grid (tools/lm_engine_intake.py)"}
         (data / "heightfield.meta.json").write_text(json.dumps(meta2), encoding="utf-8")
     want_conn = li.get("connectors", False) if connectors is None else connectors
-    conn = sdata / "connectors.local.json"
+    conn = sdata / conn_name
     if want_conn and conn.exists():
         shutil.copyfile(conn, data / "connectors.local.json")
         (data / "mouths.json").unlink(missing_ok=True)       # tools/trim_connectors.py writes it for these connectors

@@ -26,6 +26,7 @@ lidar's own vertical datum (the EPT keeps the source's NAVD88 metres); the summa
 datum shift would show.
 
     python tools/network_deck_lidar.py <draft-data-dir> <out-dir> [--ept URL] [--edges 1,2,3] [--dry] [--cache DIR]
+                                       [--laz DIR]   (LAZ tiles that fill the EPT's holes, ledger 0080 2a)
 
 With --cache, --dry lists the node files in <cache>/nodes.txt; fetch them in parallel (e.g. ``xargs -P 8 curl -O``)
 and rerun without --dry: Python's single TLS stream stalled on this Mac where curl ran at full speed.
@@ -229,7 +230,53 @@ def fetch(ept_url: str, sts, *, dry: bool = False, cache: Path | None = None, lo
     return got, len(keys), npts
 
 
-def build(draft: Path, out: Path, *, ept_url: str = EPT_DEFAULT, only=None, dry=False, cache=None, log=print) -> dict:
+def fetch_laz(laz_dir: Path, sts, *, log=print):
+    """{station index: {class: [z...]}} from a folder of LAZ TILES (USGS LPC 1 km tiles, e.g. CA_SanDiegoCo_D24 or the
+    2014 project's own tiles over its EPT's holes; ledger 0080 2a). Each tile's horizontal CRS is read from its own
+    header (laspy ``parse_crs``) and the stations are projected into it; heights are the tile's own (NAVD88 metres).
+    Only stations inside a tile's bounds are read. Returns ({}, tiles read, points kept) and which tile served whom."""
+    import numpy as np
+    import laspy
+    from pyproj import Transformer
+    from scipy.spatial import cKDTree
+    got: dict = {}
+    served: dict = {}
+    files = sorted(Path(laz_dir).glob("*.laz"))
+    lon = np.array([s[3] for s in sts]); lat = np.array([s[4] for s in sts])
+    npts = 0
+    for f in files:
+        with laspy.open(f) as fh:
+            crs = fh.header.parse_crs()
+            if crs is None:
+                raise SystemExit(f"network_deck_lidar: {f.name} carries no CRS")
+            hcrs = crs.sub_crs_list[0] if crs.is_compound else crs
+            if hcrs.axis_info[0].unit_name not in ("metre", "meter"):
+                raise SystemExit(f"network_deck_lidar: {f.name} is not in metres ({hcrs.axis_info[0].unit_name})")
+            tx, ty = Transformer.from_crs(4326, hcrs, always_xy=True).transform(lon, lat)
+            mn, mx = fh.header.mins, fh.header.maxs
+            inside = np.where((tx >= mn[0] - RADIUS_M) & (tx <= mx[0] + RADIUS_M) & (ty >= mn[1] - RADIUS_M) & (ty <= mx[1] + RADIUS_M))[0]
+            if not len(inside):
+                continue
+            tree = cKDTree(np.c_[tx[inside], ty[inside]])
+            for chunk in fh.chunk_iterator(2_000_000):
+                cls = np.asarray(chunk.classification)
+                m = np.isin(cls, (GROUND, DECK))
+                if not m.any():
+                    continue
+                px = np.asarray(chunk.x)[m]; py = np.asarray(chunk.y)[m]; pz = np.asarray(chunk.z)[m]; pc = cls[m]
+                near = tree.query_ball_point(np.c_[px, py], RADIUS_M)
+                for pi, hs in enumerate(near):
+                    for h in hs:
+                        si = int(inside[h])
+                        got.setdefault(si, {GROUND: [], DECK: []})[int(pc[pi])].append(float(pz[pi]))
+                        served.setdefault(si, f.name)
+                        npts += 1
+        log(f"  tile {f.name}: {len(inside)} stations inside")
+    return got, served, len(files), npts
+
+
+def build(draft: Path, out: Path, *, ept_url: str = EPT_DEFAULT, only=None, dry=False, cache=None, log=print,
+          laz=None) -> dict:
     geo = json.loads((draft / "network.geojson").read_text())
     edges = json.loads((draft / "network.edges.local.json").read_text())
     sts = bridge_stations(geo, edges, only)
@@ -239,6 +286,22 @@ def build(draft: Path, out: Path, *, ept_url: str = EPT_DEFAULT, only=None, dry=
     got, nn, npts = fetch(ept_url, sts, dry=dry, cache=cache, log=log)
     if dry:
         return {"nodes": nn, "points": npts, "stations": len(sts)}
+    # ledger 0080 2a: LAZ tiles fill the EPT's HOLES only (a station the EPT returned nothing for, ground or deck);
+    # where the EPT read, its reading stands, so the table stays the 2014 survey's wherever that survey has points
+    src_of = {}
+    laz_rep = None
+    if laz is not None:
+        lgot, served, ntiles, lpts = fetch_laz(laz, sts, log=log)
+        filled = 0
+        for i, g in lgot.items():
+            e = got.get(i)
+            if e is None or (not e[GROUND] and not e[DECK]):
+                got[i] = g
+                src_of[i] = served[i]
+                filled += 1
+        laz_rep = {"dir": str(laz), "tiles": sorted(p.name for p in Path(laz).glob("*.laz")), "points": lpts,
+                   "stations_filled": filled}
+        log(f"network_deck_lidar: {ntiles} LAZ tile(s) filled {filled} station(s) the EPT had no return for")
     rows, per_edge = [], {}
     last = None                                     # (edge, s, z) of the last deck read on this edge
     for i, (eid, s, v, lon, lat, zs, zg, lay) in enumerate(sts):
@@ -262,7 +325,8 @@ def build(draft: Path, out: Path, *, ept_url: str = EPT_DEFAULT, only=None, dry=
                      None if pk is None else round(pk[0], 3), 0 if pk is None else pk[1],
                      [[round(a, 2), n] for a, n in lv],
                      None if ground is None else round(ground, 3), len(g[GROUND]),
-                     None if zs is None else round(zs, 3), None if zg is None else round(zg, 3)])
+                     None if zs is None else round(zs, 3), None if zg is None else round(zg, 3)]
+                    + ([src_of.get(i)] if laz is not None else []))
         pe = per_edge.setdefault(eid, {"stations": 0, "bridged": 0, "deck_read": 0, "dz_model": [], "dz_3dep": []})
         pe["stations"] += 1
         if lay:
@@ -300,6 +364,8 @@ def build(draft: Path, out: Path, *, ept_url: str = EPT_DEFAULT, only=None, dry=
                    "deck_minus_model_p5_p95_m": None if not all_dm else
                    [round(sorted(all_dm)[int(0.05 * (len(all_dm) - 1))], 2), round(sorted(all_dm)[int(0.95 * (len(all_dm) - 1))], 2)],
                    "ground_minus_3dep_median_m": med(all_dg), "ept_nodes": nn, "ept_points": npts},
+        **({"laz": laz_rep, "columns_laz": "a 14th column: the LAZ tile that filled the station (None = the EPT)"}
+           if laz is not None else {}),
         "edges": summary,
         "stations": rows,
     }
@@ -317,9 +383,10 @@ def main(argv=None) -> int:
     ap.add_argument("--edges", default="")
     ap.add_argument("--dry", action="store_true", help="count the EPT nodes only (and list them in <cache>/nodes.txt)")
     ap.add_argument("--cache", type=Path, default=None, help="a folder of downloaded EPT node files")
+    ap.add_argument("--laz", type=Path, default=None, help="a folder of LAZ tiles that fill the EPT's holes")
     a = ap.parse_args(argv)
     only = {int(x) for x in a.edges.split(",") if x.strip()} or None
-    build(a.draft, a.out, ept_url=a.ept, only=only, dry=a.dry, cache=a.cache)
+    build(a.draft, a.out, ept_url=a.ept, only=only, dry=a.dry, cache=a.cache, laz=a.laz)
     return 0
 
 

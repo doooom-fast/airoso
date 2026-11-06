@@ -85,11 +85,21 @@
         "name": "i8_wb",
         "ref": "I 8",
         "direction": "westbound",
-        "bridge_max_edges": 2
+        "bridge_max_edges": 2,
+        "head": {
+          "edge": 396,
+          "from_vertex": 162,
+          "to_vertex": 1,
+          "_why": "ledger 0080 2a item 4: the draft left edge 396 undecided (travel votes 21 / 28) because it is TWO westbound roadways it joined at its hairpin, vertex 162 (x 4,236): vertices 0..162 run 22-24 m north of (left of) the line's EB edges 357 / 548 the whole way (I 8 westbound in right-hand traffic); 162..284 end at node B, where only ramps 507 / 508 leave. Node A (vertex 0) is where I 8 WB edge 397 starts and ramp 395 arrives, so 0..162 is driven 162 -> 0 (westward): the 28 backward votes (28 / 49 = 0.57 of the votes; 162 / 284 = 0.57 of the vertices). OSM's oneway could not be re-read (Overpass timed out 2026-11-05). East of vertex 162 the draft has no westbound mainline: WB starts there, 290 m short of the line's end."
+        }
       }
     ],
     "_network_connectors_doc": "phase 2a: I 8 westbound. Each entry is resolved by scripts.geometry.network_reference.resolve (the line's resolver) on the network draft; the record carries its decks (lidar, deck_profiles.lidar.json) and a one-way paint. Regenerate with python tools/network_connectors.py <network-draft-project> tracks/san-diego-freeway/source/network-draft-pr34 tracks/san-diego-freeway-lm/track.config.json",
     "grid_upsample": 2,
-    "_grid_upsample_doc": "[invented value; existing key, ledger 0078] the cut 3DEP grid pre-divided x2 (bilinear: the same samples, finer facets; with the assembler x2 the ground is 13.75 m facets, not 27.5 m). Phase 2a measured it: with I 8 westbound beside the line the 27.5 m ground stood over the lanes between the carriageways (ground on top 1,119 line / 1,224 WB samples) and 138 / 130 at 13.75 m."
+    "_grid_upsample_doc": "[invented value; existing key, ledger 0078] the cut 3DEP grid pre-divided x2 (bilinear: the same samples, finer facets; with the assembler x2 the ground is 13.75 m facets, not 27.5 m). Phase 2a measured it: with I 8 westbound beside the line the 27.5 m ground stood over the lanes between the carriageways (ground on top 1,119 line / 1,224 WB samples) and 138 / 130 at 13.75 m.",
+    "line_file": "centerline.measured.local.json",
+    "connectors_file": "connectors.measured.local.json",
+    "median_barrier_file": "median_barrier.json",
+    "_measured_doc": "ledger 0080 2a (Kevin 2026-11-05: measured carriageway edges, not lane counts): tools/naip_carriageways.py reads both I 8 carriageways' paved edges off NAIP 2022 (0.6 m) from the network lines (centerline.local.json, connectors.local.json) and writes the measured line and connectors (each vertex moved to the measured pavement's centre, the measured width) and the median barrier's runs (Caltrans Type 60, Standard Plans A76A) where one paved width carries both. Regenerate: <lidarvenv python> tools/naip_carriageways.py tracks/san-diego-freeway/source/network-draft-pr34 tracks/san-diego-freeway/source/network-draft-pr34 --cache <dir> (fetches the NAIP crops from the Planetary Computer)"
   }
 }

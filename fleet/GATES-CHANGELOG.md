@@ -14,6 +14,32 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
+## 2026-11-05 — the SD freeway port, phase 2a round 2: measured carriageway edges, the median barrier (ledger 0080; no threshold moved, no bypass)
+
+No gate threshold, wiring or bypass changed. New numbers the port's DATA carries (none is a gate's):
+
+- ⚠ `tools/naip_carriageways.py` **— every tuning number invented** (a colour reader over NAIP 2022, 0.6 m, R G B NIR):
+  `STEP_M` 5, `SAMPLE_M` 0.3, `SCAN_M` 30, `REACH_M` 60, `VEG_NDVI` 0.12, `PAVE_NDVI` 0.08, `PAVE_SAT` 40, `PAVE_MIN` 55,
+  `BREAK_M` 1.2 (pavement ends after this much not-pavement), `BARRIER_DELTA` 25 / `BARRIER_BAND_M` 1.5 (the barrier's
+  sunlit top sought within this of the two lines' midline; not seen = the midline itself), `PAIR_M` 45 (carriageways
+  read as one section within this), `OUT_LO_M` 3 / `OUT_HI_M` 6 (a read edge outside the draft half-width -3 .. +6 m is
+  another pavement or a shadow: unread), `SMOOTH_N` 7 stations / `SMOOTH_V` 9 vertices (running medians), `FILL_M` 60
+  (an unread run up to this is interpolated; longer keeps the draft's edge, counted), `MIN_BARRIER_M` 20. What the
+  image shows is the measurement; the render crops in the ledger are the check.
+- Reused, not new: each edge offset changes at most 0.1 m per m (`lm_intake.width_taper`'s rate, ledger 0078 round 5),
+  widening only, except that a vertex on the barrier never passes the barrier's face.
+- **The barrier's section**: Caltrans Concrete Barrier Type 60, Standard Plans **A76A** (the 1999 edition's "Type 60";
+  the 2026 edition's sheet A76A "Concrete Barrier Type 60M"): 0.914 m (36 in) high and 9.1 deg faces (Caltrans Roadside
+  Safety Research Group, "Type 60 median barrier MASH 2016"), 0.610 m base (the Type 60 family's 610 mm); the top
+  0.317 m follows. ⚠ The sheet's own drawing was not read (its DGN is compressed, no PDF reader here): owed.
+- ⚠ `tools/median_barrier_blend.py` **invented**: `FOOT_PROBE_M` (0.6, 1.2, 2.0) where each side's pavement is ray-cast,
+  `BURY_M` 0.3 below the lower foot, `MAX_DIFF_M` 6 (a foot further below than this is not the barrier's). Where the two
+  feet differ by more than 0.3 m the low side's face runs down to the low pavement (a retaining face, counted, not a
+  Type 60 variant: the A76 unequal-grade sheets are not read).
+- `network_connectors` `head` (WB's east end, edge 396 vertices 162 -> 1): a declared decision with its evidence in
+  the config (`_why`), not a number; the resolver's rule (an undecided edge is never guessed) is unchanged.
+- `tools/network_deck_lidar.py --laz`: LAZ tiles fill only stations the EPT returned nothing for; same thresholds.
+
 ## 2026-11-05 — the SD freeway port, phase 2a: a new gate wired, numbers the port carries (ledger 0080; no threshold moved, no bypass)
 
 - **NEW GATE WIRING: `drive_test_network`** (`tools/ship_track.sh`, runs only when a ship.json names it; the freeway

@@ -255,7 +255,9 @@ def test_the_freeway_port_reads_the_network_line_and_cuts_the_grid_to_it():
         assert nx0 < smeta["nx"] and ny0 < smeta["ny"]
         assert all(abs(g[j * f][i * f] - sg[j0 + j][i0 + i]) < 1e-9 for j in range(ny0) for i in range(nx0))
         loc = json.loads((ws / "data" / "centerline.local.json").read_text(encoding="utf-8"))
-        sloc = json.loads((src / "centerline.local.json").read_text(encoding="utf-8"))
+        # ledger 0080 2a: the line the intake reads is the config's lm_intake.line_file (the NAIP-measured line)
+        cfg = json.loads((ROOT / "tracks" / "san-diego-freeway-lm" / "track.config.json").read_text(encoding="utf-8"))
+        sloc = json.loads((src / (cfg["lm_intake"].get("line_file") or "centerline.local.json")).read_text(encoding="utf-8"))
         assert len(loc["points_xyz_m"]) == len(sloc["points_xyz_m"])
         assert all(a >= b - 1e-9 for a, b in zip(loc["widths_m"], sloc["widths_m"]))
         assert rep is not None

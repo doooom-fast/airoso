@@ -12,7 +12,8 @@
       "lm_intake",
       "build_loop_blend",
       "densify_ribbon",
-      "deck_rails"
+      "deck_rails",
+      "median_barrier"
     ],
     "author": [],
     "prep": [
@@ -61,7 +62,8 @@
       "data/deck_rails.json",
       "data/connectors.local.json",
       "data/drive_lines.network.json",
-      "data/drive_test.network.json"
+      "data/drive_test.network.json",
+      "data/median_barrier.built.json"
     ],
     "map": [
       [

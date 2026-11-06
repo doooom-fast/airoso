@@ -118,6 +118,35 @@ def deck_heights(chain_src, coords, layers, lidar, elev0):
     return out
 
 
+def _prepend_head(r: dict, head: dict, edges_rec: dict) -> None:
+    """A declared HEAD (ledger 0080 2a, WB's east end): part of an edge whose travel the draft left undecided, run in
+    its decided direction and put in front of the resolved chain. ``head`` = {"edge", "from_vertex", "to_vertex"}: the
+    edge's vertices from_vertex .. to_vertex (either order = the travel), whose last must be the chain's first point
+    (or one vertex short of it: the shared node is written once). The decision and its evidence are the config's
+    (``_why``); the resolver's own rule (an undecided edge is never guessed) is unchanged."""
+    rec = next((e for e in edges_rec["edges"] if int(e["id"]) == int(head["edge"])), None)
+    if rec is None:
+        raise SystemExit(f"[network_connectors] head edge {head['edge']} is not in the draft")
+    a, b = int(head["from_vertex"]), int(head["to_vertex"])
+    idx = list(range(a, b - 1, -1)) if a > b else list(range(a, b + 1))
+    g = rec["at_grade_xyz_m"]
+    first = r["grade"][0]
+    nxt = b - 1 if a > b else b + 1
+    if 0 <= nxt < len(g) and math.dist((g[nxt][0], g[nxt][2]), (first[0], first[2])) > 1e-3:
+        raise SystemExit(f"[network_connectors] head edge {head['edge']} vertex {nxt} is not the chain's first point")
+    gp = [list(g[i]) for i in idx]
+    add = [0.0]
+    for p, q in zip(gp, gp[1:] + [first]):
+        add.append(add[-1] + math.hypot(q[0] - p[0], q[2] - p[2]))
+    sh = add[-1]
+    r["grade"] = gp + r["grade"]
+    r["widths"] = [float(rec["widths_m"][i]) for i in idx] + list(r["widths"])
+    r["source_by_vertex"] = [[int(rec["id"]), i] for i in idx] + r["source_by_vertex"]
+    r["stations"] = add[:-1] + [s + sh for s in r["stations"]]
+    r["chain"] = [int(rec["id"])] + r["chain"]
+    r["how"] += f"; head: edge {rec['id']} vertices {a}..{b} ({sh:.0f} m, declared)"
+
+
 def build(draft: Path, out: Path, cfg_path: Path) -> dict:
     d = draft / "data" if (draft / "data").is_dir() else draft     # a draft project, or the committed copy
     cfg = json.loads(cfg_path.read_text(encoding="utf-8"))
@@ -152,6 +181,9 @@ def build(draft: Path, out: Path, cfg_path: Path) -> dict:
         decl = {"ref": sp["ref"], "direction": sp["direction"],
                 "bridge_max_edges": int(sp.get("bridge_max_edges", 2))}
         r = network_reference.resolve(decl, fc, edges_rec)
+        head = sp.get("head")
+        if head:
+            _prepend_head(r, head, edges_rec)
         grade, src, widths = r["grade"], r["source_by_vertex"], list(r["widths"])
         raw = [float(zraw[int(e)][int(v)]) for e, v in src]
         L = r["stations"][-1]

@@ -971,6 +971,9 @@ offered to Kevin.**
   35,884 / 70,696, 37,355 / 73,794, 36,874 / 73,186, 38,492 / 76,029; 1KERB_SIDEWALK_DECK 9,133 / 3,046;
   1KERB_sidewalk 33,992 / 50,964; 1ROAD_road 50,959 / 16,988; 1WALL_MEDIAN 52,404 / 17,492; 1WALL_guard 6,402 / 2,136;
   MARKINGS 42,820 / 26,000; textures 7,770,522 B, materials 3,879 B, nodes 1,398 B.
+- **Mac verdict: MATCHED.** ws41's 1GRASS_0 is 37,685 / 74,513: the PC's exporter welds 3 near-duplicate grass vertices
+  the Mac's keeps apart (3 x 44 = 132 B, the same faces), a merge tie of the ground-noise family; every other mesh, the
+  textures and the materials match, and `[median-ground]` is word for word ws41's. Offered to Kevin in place of 0080-8.
 
 ## PC runbook 0080-8: rehearse 2b round 1 (2a with the tiered ground), no install
 

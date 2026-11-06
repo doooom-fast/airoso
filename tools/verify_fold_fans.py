@@ -45,6 +45,15 @@ measured about the road edge's chord midpoint; (6) has no pinch X to read), and
       read it.
 Without the key every reading and verdict is exactly as before.
 
+WALL FRAME (opt-in, ledger 0079 round P: track.config.json ``fold_fans.wall_frame = "local_deck"``; Lake Murray sets
+none). (7) reads each wall cell against no_route's reference. no_route has measured a wall from the deck it stands on
+since ledger 0054 step 2e / 2g (Lake Murray 0.20.2; Sand Creek round M): the 1ROAD sheet under it nearest its foot, of
+those within no_route.DECK_REACH_M of the line's deck (its projected centre line + DECK_LIFT_M), and a cell is a wall
+when it seals in EITHER frame. With the key (7) reads the same two frames: a cell is outside the band only when its
+base + 0.05 m is outside +-WALL_BAND_M of the centre-line reference AND of that local deck (or no such deck stands
+under it). The band, bury and radius are unchanged; only the reference is no_route's own. Without the key (7) reads
+the centre line alone, exactly as before.
+
     python tools/verify_fold_fans.py <project> [--layout <id> ...] [--json <out>]
 
 Writes data/verify_fold_fans.json; exit 1 on FAIL, 2 on an input error. Pure Python (the ship chain's interpreter has
@@ -134,6 +143,22 @@ class Surface:
             for cx in range(int(math.floor(x0 / HASH_M)), int(math.floor(x1 / HASH_M)) + 1):
                 for cz in range(int(math.floor(z0 / HASH_M)), int(math.floor(z1 / HASH_M)) + 1):
                     self.cells.setdefault((cx, cz), []).append(i)
+
+    def all_at(self, x, z):
+        """every triangle's height at a plan point (exact barycentric), unordered"""
+        out = []
+        for i in self.cells.get((int(math.floor(x / HASH_M)), int(math.floor(z / HASH_M))), ()):
+            a, b, c, _g = self.tris[i]
+            d = (b[2] - c[2]) * (a[0] - c[0]) + (c[0] - b[0]) * (a[2] - c[2])
+            if abs(d) < 1e-12:
+                continue
+            w0 = ((b[2] - c[2]) * (x - c[0]) + (c[0] - b[0]) * (z - c[2])) / d
+            w1 = ((c[2] - a[2]) * (x - c[0]) + (a[0] - c[0]) * (z - c[2])) / d
+            w2 = 1.0 - w0 - w1
+            if w0 < -1e-7 or w1 < -1e-7 or w2 < -1e-7:
+                continue
+            out.append(w0 * a[1] + w1 * b[1] + w2 * c[1])
+        return out
 
     def top(self, x, z):
         best, own = None, -1
@@ -299,8 +324,10 @@ def near_judged(judged, x, z):
     return best
 
 
-def survey_pinch(pin, B, P, W, N, closed, lane_of, surf, paved, tris, names, island, race, cl_line, judged=None):
-    """judged (CHORDS only): a {cell: [(x, z)]} hash (COVER_M cells) that receives every sample a path judged"""
+def survey_pinch(pin, B, P, W, N, closed, lane_of, surf, paved, tris, names, island, race, cl_line, judged=None,
+                 wall_frame=None):
+    """judged (CHORDS only): a {cell: [(x, z)]} hash (COVER_M cells) that receives every sample a path judged;
+    wall_frame (WALL FRAME only): "local_deck" — (7) also reads each cell from the deck it stands on (module doc)"""
     n = len(P) - 1 if closed else len(P)
     k, l = pin["k"], pin["l"]
     rows = [r % n for r in range(k - B - WINDOW_PAD_ROWS, l + 2 + B + WINDOW_PAD_ROWS) if closed or 0 <= r < n]
@@ -449,14 +476,33 @@ def survey_pinch(pin, B, P, W, N, closed, lane_of, surf, paved, tris, names, isl
     # (7) the race walls near X inside no_route's band
     if race:
         cells = {}
+        decks = None
+        if wall_frame == "local_deck":
+            # WALL FRAME (opt-in): no_route's local deck — the 1ROAD sheets of the surveyed region; each wall triangle's
+            # deck read as no_route's deck_of reads it (under its plan centroid, nearest its foot, within DECK_REACH_M
+            # of the line's deck); a cell keeps the deck of the triangle that set its base
+            decks = Surface([t for t in tris if t[3] >= 0 and upper[t[3]].startswith("1ROAD")])
+            cell_deck, n_deck, worst_cl = {}, 0, None
         for a, b, c, g in tris:
             if g < 0 or not upper[g].startswith("1WALL"):
                 continue
             if min(math.hypot(p[0] - X[0], p[2] - X[2]) for p in (a, b, c)) > WALL_RADIUS_M:
                 continue
+            if decks is not None:
+                foot = min(a[1], b[1], c[1])
+                cx, cz = (a[0] + b[0] + c[0]) / 3.0, (a[2] + b[2] + c[2]) / 3.0
+                prc = cl_line.project(cx, cz)
+                hd = None
+                if prc is not None:
+                    ref = prc[3] + nr.DECK_LIFT_M
+                    hs = [h for h in decks.all_at(cx, cz) if ref - nr.DECK_REACH_M <= h <= ref + nr.DECK_REACH_M]
+                    hd = min(hs, key=lambda h_: abs(h_ - foot)) if hs else None
             for p in (a, b, c):
                 key = (int(math.floor(p[0] / WALL_CELL_M)), int(math.floor(p[2] / WALL_CELL_M)))
-                cells[key] = min(cells.get(key, 1e9), p[1])
+                if p[1] < cells.get(key, 1e9):
+                    cells[key] = p[1]
+                    if decks is not None:
+                        cell_deck[key] = hd
         worst_w, bad_w = None, 0
         for (i, j) in cells:
             base = min(cells.get((i + a, j + b), 1e9) for a in (-1, 0, 1) for b in (-1, 0, 1))
@@ -465,12 +511,29 @@ def survey_pinch(pin, B, P, W, N, closed, lane_of, surf, paved, tris, names, isl
             if pr is None:
                 continue
             delta = base + 0.05 - (pr[3] + 0.10)
+            if decks is not None:
+                if worst_cl is None or abs(delta) > abs(worst_cl[0]):
+                    worst_cl = (delta, x, z)
+                if abs(delta) > WALL_BAND_M:
+                    # the deck the base's own wall triangle stands on (no_route's deck_of); None: the centre line only
+                    kb = min(((i + a, j + b) for a in (-1, 0, 1) for b in (-1, 0, 1) if (i + a, j + b) in cells),
+                             key=lambda q: cells[q])
+                    h = cell_deck.get(kb)
+                    if h is not None:
+                        d2 = base + 0.05 - h
+                        if abs(d2) <= WALL_BAND_M:
+                            n_deck += 1
+                        delta = d2 if abs(d2) < abs(delta) else delta
             if worst_w is None or abs(delta) > abs(worst_w[0]):
                 worst_w = (delta, x, z)
             if abs(delta) > WALL_BAND_M:
                 bad_w += 1
         info["wall_cells"] = len(cells)
         info["wall_worst_delta_m"] = round(worst_w[0], 4) if worst_w else None
+        if decks is not None:
+            info["wall_frame"] = "local_deck"
+            info["wall_cells_by_deck_frame"] = n_deck
+            info["wall_worst_centreline_delta_m"] = round(worst_cl[0], 4) if worst_cl else None
         if bad_w:
             fails.append(f"(7) {bad_w} race-wall cells within {WALL_RADIUS_M:.0f} m of X stand outside no_route's band "
                          f"(+-{WALL_BAND_M}); worst {worst_w[0]:+.3f} m at ({worst_w[1]:.1f}, {worst_w[2]:.1f})")
@@ -606,6 +669,9 @@ def run(project: Path, layouts=None, out: Path | None = None) -> dict:
         raise InputError(f"mouth_welds.json indexes {rows_rec} mainline rows; data/gate_centerline.json has {n}")
     N = normals(P, closed)
     chords = bool((cfg.get("fold_fans") or {}).get("chords"))     # CHORDS (opt-in, module doc)
+    wall_frame = (cfg.get("fold_fans") or {}).get("wall_frame")   # WALL FRAME (opt-in, module doc)
+    if wall_frame not in (None, "local_deck"):
+        raise InputError(f"fold_fans.wall_frame {wall_frame!r}: only \"local_deck\" is known")
     pins, B = pinches_from(welds, P, W, closed, chords=chords)
     mb = data / "median_bands.json"
     iw = (json.loads(mb.read_text(encoding="utf-8")).get("island_w_by_vertex") or []) if mb.exists() else []
@@ -632,6 +698,8 @@ def run(project: Path, layouts=None, out: Path | None = None) -> dict:
     if chords:
         rep["chords"] = True
         rep["cover_m"] = COVER_M
+    if wall_frame:
+        rep["wall_frame"] = wall_frame
     if not pins:
         rep["note"] = "no levelled mainline pinch (no swallowtail fold): nothing to judge"
         if chords:
@@ -676,7 +744,7 @@ def run(project: Path, layouts=None, out: Path | None = None) -> dict:
             judged = {} if chords else None
             for pin in todo:
                 f, info = survey_pinch(pin, B, P, W, N, closed, lane_of, surf, paved, tris, names, island, race, cl_line,
-                                       judged=judged)
+                                       judged=judged, wall_frame=wall_frame)
                 res.append({"k": pin["k"] % n, "l": pin["l"] % n, "lane": pin["lane"], "fails": f, **info})
                 what = "chord" if pin.get("chord") else "pinch"
                 rep["fails"] += [f"{lid} {what} {pin['k'] % n}..{(pin['l'] + 1) % n}: {x}" for x in f]

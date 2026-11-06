@@ -25,6 +25,38 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 - **signs.json SC-48S skip** (both approaches; no number): the rule's rev plate stood in the middle of N Colorado Blvd
   south once the pad was built (round O build ro2: verify_signs c_built_edge_clearance). A skip with its reason, not a
   gate change; verify_signs PASS, 6 posts.
+- **`drive_test.vertex_kinks`** (opt-in, track.config.json; scripts/geometry/drive_test.py VERTEX KINKS; Lake Murray and every
+  live config name none — `test_round_p_wall_frame_and_vertex_kinks_are_opt_in`). A MEASUREMENT change, not a threshold
+  change; no new number. A slope kink over KINK_PCT (3 %/m, unchanged) is re-measured on the wheel path's own travel with
+  VERTEX BUMPS' existing `_own_travel_step` (v0.18.1) and its existing VERTEX_MIN_TRAVEL_M (0.05 m: a metre with less
+  travel keeps its station reading); one under KINK_PCT is filed under `vertex_kinks` (reported, not counted); the station
+  rate stays in the report as `kinks_per_km_station`. Why: with 48th_colorado built, 7 new street kinks at s 9575-9578,
+  offset +6.0 (inside the S, 3.3-4.5 %/m). On the built surface the fixed-offset point creeps 0.03-0.2 m across each
+  vertex there and runs 1 m between, so a smooth real grade (−4.4 to −4.7 % over 3 m of the measured deck) reads as
+  alternating station slopes; the true parallel path at +6.0, sampled every 1 m of its own arc, reads 0 kinks, max
+  1.97 %/m (probe `scratchpad/rp/arcprobe.py` on ro5 / rp1). Not the in-cut v3193's seam: the seam row is at s ~9571 and
+  reads 0.33-0.67 %/m on both paths. rp2 street: kinks 0.52 /km counted (station 1.97, rn1 1.24), 14 re-measured under
+  3 %/m (the S's 7 at 0.25-2.52, and 7 of rn1's 12 at s 531-553 on the colorado_50th deck); race 6.85 /km (station 10.89,
+  39 re-measured). Lake Murray A/B without the key (prep_v4's built OBJs, `sclm_work/rp_lmdt`, f672525a's drive_test vs
+  this head): drive_test.street / race_cw json byte-identical (31fc2f80… / 16d1de79…; the same FAIL verdict on that
+  Mac probe both sides).
+- **`fold_fans.wall_frame: "local_deck"`** (opt-in; tools/verify_fold_fans.py WALL FRAME). A REFERENCE aligned with
+  no_route, not a threshold change: band ±0.28 m, bury 0.05 m, radius 25 m, cell 0.5 m all unchanged; no new number
+  (no_route's own DECK_LIFT_M 0.10 and DECK_REACH_M 0.70 are read from tools/no_route.py). (7) took its reference from the
+  centre line alone; no_route has read each wall triangle from the 1ROAD sheet under its plan centroid nearest its foot
+  (within DECK_REACH_M of the line's deck), a cell sealing in EITHER frame, since ledger 0054 step 2e / 2g (Lake Murray
+  0.20.2; Sand Creek round M). With the key a cell is outside the band only when it is outside in both frames (the deck of
+  the wall triangle that set the cell's base). Lake Murray A/B (`sclm_work/rp_lmk`, rn_lm's built OBJs, street + race_cw):
+  without the key verify_fold_fans.json byte-identical to f672525a's (df36a7eb…), logs equal; with it (report-only) the
+  same PASS, every pinch's wall reading unchanged, 0 cells read by the deck frame. Report-only with chords too: its seam
+  chord's 40 race_cw cells (worst −0.418 m) stay out — no deck within reach under them.
+- **Adopted on the candidate:** `fold_fans.chords` + `fold_fans.wall_frame` + `drive_test.fold_fan_severe` (Lake Murray's
+  own key) + `drive_test.vertex_kinks`, and ship.json's gate `fold_fans` after `race_gates` (Lake Murray's order), so the
+  deferred readings are judged in the chain. rp2 (rp1's built workshop cloned, the gates re-run `--from road_obj` with
+  these keys; they change no geometry): verify_fold_fans PASS — v134-141 and v3202-3206 both layouts, 0 paths with a
+  step, DT max 0.032 / 0.025 race, 0.038 / 0.028 street; (7) the S's 64 cells in band (14 by the deck frame, centre-line
+  worst −0.431 → in band; the gate's worst in-band reading −0.278 m), v140's 71 (worst −0.152); (8) 10 deferred race
+  readings, all 10 on a judged path (worst gap 0.2315 m of 0.25).
 
 ## 2026-11-06 (round O) — Sand Creek: 48th_colorado re-measured and re-declared; three opt-in pad keys; NOT unparked (ledger 0079 round O)
 

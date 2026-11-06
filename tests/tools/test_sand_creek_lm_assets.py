@@ -711,7 +711,12 @@ def test_round_n_fold_chords_are_opt_in():
         if p.exists():
             assert "fold_fans" not in json.loads(p.read_text(encoding="utf-8")), t
     sc = json.loads((SC / "source" / "round_k" / "track.config.json").read_text(encoding="utf-8"))
-    assert "fold_fans" not in sc and "fold_fan_severe" not in (sc.get("drive_test") or {})
+    # round P: the candidate takes them, with (7) on no_route's deck frame, once the S passes on 48th_colorado's deck
+    assert {k: v for k, v in sc["fold_fans"].items() if not k.startswith("_")} == {"chords": True,
+                                                                                  "wall_frame": "local_deck"}
+    assert sc["drive_test"]["fold_fan_severe"] == "verify_fold_fans"
+    gate = json.loads((SC / "source" / "round_k" / "ship.json").read_text(encoding="utf-8"))["steps"]["gate"]
+    assert gate.index("fold_fans") == gate.index("race_gates") + 1
     # a straight 50-row line, 12 m wide; one levelled road pinch (20..22) and one road chord (35..37)
     pts = [(0.0, 0.0, float(z)) for z in range(50)]
     w = [12.0] * 50
@@ -810,3 +815,31 @@ def test_round_o_cut_reach_arm_is_opt_in():
     assert abs(new["y"][2][2] - 0.8) < 1e-9 and new["y"][0][4] is None and old["y"][0][4] is None
     assert dp.deck_filled(deck, ring, 0.1, class2=None) == (old, rep_old)
 
+
+def test_round_p_wall_frame_and_vertex_kinks_are_opt_in():
+    """ledger 0079 round P: verify_fold_fans' fold_fans.wall_frame "local_deck" ((7) reads no_route's deck frame too) and
+    drive_test's drive_test.vertex_kinks (a kink re-measured on the wheel path's own travel) are named by no live config
+    (Lake Murray, the Lariat, the circuits, Sand Creek 0.2.5); only Sand Creek's candidate may name them. all_at reads
+    every sheet at a point; the own-travel kink of a constant grade read across a vertex creep is 0"""
+    import verify_fold_fans as vf
+    from scripts.geometry.drive_test import _own_travel_step, KINK_PCT, STEP_M
+    for t in ("san-diego-lake-murray", "lookout-lariat", "lookout-lariat-lm", "high-plains-lm", "aspen-lm", "pueblo-lm",
+              "sand-creek-lm"):
+        p = ROOT / "tracks" / t / "track.config.json"
+        if p.exists():
+            c = json.loads(p.read_text(encoding="utf-8"))
+            assert "wall_frame" not in (c.get("fold_fans") or {}), t
+            assert "vertex_kinks" not in (c.get("drive_test") or {}), t
+    sc = json.loads((SC / "source" / "round_k" / "track.config.json").read_text(encoding="utf-8"))
+    assert sc["fold_fans"]["wall_frame"] == "local_deck" and sc["drive_test"]["vertex_kinks"] is True
+    # two sheets over one plan triangle: all_at reads both, top the higher
+    tri = lambda y: ((0.0, y, 0.0), (2.0, y, 0.0), (0.0, y, 2.0), 0)
+    s = vf.Surface([tri(1.0), tri(1.4)])
+    assert sorted(s.all_at(0.5, 0.5)) == [1.0, 1.4] and s.all_at(3.0, 3.0) == []
+    assert s.top(0.5, 0.5)[0] == 1.4
+    # a 4 % grade read by a path that crept 0.06 m then ran 1.0 m: the station slopes -0.24 % / -4 % read a 3.8 %/m kink;
+    # on the path's own travel the grade is the same both metres (0 kink)
+    dh0, dh1 = -0.04 * 0.06, -0.04 * 1.0
+    assert abs(dh1 - dh0) * 100 / STEP_M > KINK_PCT
+    assert _own_travel_step(dh1, dh0, 1.0, 0.06) < 1e-12
+    assert _own_travel_step(dh1, dh0, 1.0, 0.01) is None      # under VERTEX_MIN_TRAVEL_M: the station reading stands

@@ -119,6 +119,16 @@ difference wherever both cover 1 m). One under STEP_BUMP_M is filed under ``vert
 still over it counts. Neither travel may be under VERTEX_MIN_TRAVEL_M (a grade over a few cm of plan is facet noise —
 such a bump counts as read). The re-measure can only move a bump out of the gated count when the surface the wheel
 actually crosses is smoother than 2.5 cm per metre; it never adds one.
+
+VERTEX KINKS (opt-in, ledger 0079 round P: track.config.json ``drive_test.vertex_kinks = true``; Lake Murray sets none).
+The slope-kink count reads the same fixed-offset path, so it has the same artefact: on the inside of a corner the point
+creeps 0.03-0.2 m across a vertex and the next metre runs a full 1 m, so on a smooth real grade g the station slopes
+alternate ~0 / g and their change reads ~g per metre (Sand Creek's measured 48th_colorado deck, s 9575-9578 at +6.0
+inside the S: 3.3-4.5 %/m on a surface whose own arc-length path at +6.0 reads at most 1.97 %/m). With the key a kink
+over KINK_PCT is re-measured on the path's own travel exactly as a vertex bump is (_own_travel_step, its change of grade
+over the mean of the two metres' plan travel, as %/m); one under KINK_PCT is filed under ``vertex_kinks`` (reported, not
+counted in kinks_per_km), one still over it counts, and a metre under VERTEX_MIN_TRAVEL_M keeps its station reading. A
+measurement change, not a threshold change: KINK_PCT judges both. Without the key the report is byte-identical.
 """
 
 from __future__ import annotations
@@ -763,6 +773,9 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None, line: dict
     # severe reading on a forward metre where this wheel path, or its previous metre, hopped more than DENSE_HOP_M is
     # re-measured on the same path sampled densely (_dense_step); under STEP_SEVERE_M it is filed as dense_hops
     _dense_hops = bool((cfg.get("drive_test") or {}).get("dense_hops"))
+    # VERTEX KINKS (opt-in, ledger 0079 round P: drive_test.vertex_kinks = true; Lake Murray sets none): a kink is
+    # re-measured on the wheel path's own travel, as a vertex bump is (module doc)
+    _vertex_kinks = bool((cfg.get("drive_test") or {}).get("vertex_kinks"))
 
     def _in_flat_zone(px, pz):
         return any((px - a) ** 2 + (pz - b) ** 2 < d * d for a, b, c, d in _fzones)
@@ -1059,7 +1072,13 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None, line: dict
                             # the plan (FOLD BUMPS): reported as fold_kinks, as fold bumps are
                             problems.setdefault("fold_kinks", []).append((round(s, 1), round(off, 2), round(kink, 2)))
                         else:
-                            problems["kinks"].append((round(s, 1), round(off, 2), round(kink, 2)))
+                            own_k = (_own_travel_step(dh, prev_slope[pi] * STEP_M, d_now, prev_d[pi])
+                                     if _vertex_kinks else None)
+                            if own_k is not None and own_k * 100 / STEP_M <= KINK_PCT:
+                                problems.setdefault("vertex_kinks", []).append(
+                                    (round(s, 1), round(off, 2), round(kink, 2), round(own_k * 100 / STEP_M, 2)))
+                            else:
+                                problems["kinks"].append((round(s, 1), round(off, 2), round(kink, 2)))
                     step = abs(dh - prev_slope[pi] * STEP_M)
                     if (_dense_hops and step > STEP_SEVERE_M and not folded and len(prev_p[pi]) > 4
                             and prev_p[pi][4] is not None
@@ -1529,6 +1548,11 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None, line: dict
             # FOLD CHORDS (opt-in): every deferred reading in full, with its metre's plan points (verify_fold_fans (8))
             report["fold_severe_at"] = problems.get("fold_severe_at", [])
             report["fold_severe_unjudged"] = problems.get("fold_severe_unjudged", [])
+    if _vertex_kinks:
+        # opt-in only (absent the key the report is byte-identical): kinks re-measured on the path's own travel
+        report["vertex_kinks"] = len(problems.get("vertex_kinks", []))
+        report["kinks_per_km_station"] = round((len(problems["kinks"]) + report["vertex_kinks"]) / per_km, 2)
+        report["worst"]["vertex_kinks"] = sorted(problems.get("vertex_kinks", []), key=lambda r: r[0])[:2000]
     if _dense_hops:
         # opt-in only (absent the key the report is byte-identical): severe readings re-measured on the dense path
         report["dense_hops"] = len(problems.get("dense_hops", []))
@@ -1627,6 +1651,9 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None, line: dict
     if _dense_hops:
         print(f"  dense hops (> {STEP_SEVERE_M*100:.0f} cm read across a > {DENSE_HOP_M} m hop, under it on the same path "
               f"sampled every {DENSE_DS_M} m; reported, not gated): {report['dense_hops']}")
+    if _vertex_kinks:
+        print(f"  vertex kinks (> {KINK_PCT}%/m read across a vertex creep / hop, under it on the path's own travel; "
+              f"reported, not counted): {report['vertex_kinks']} (station reading {report['kinks_per_km_station']} /km)")
     if report["vertex_bumps"]:
         print(f"  vertex bumps (2.5-6 cm read across a vertex hop, under {STEP_BUMP_M*100:.1f} cm on the path's own "
               f"travel; reported, not gated): {report['vertex_bumps']}")

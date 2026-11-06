@@ -2247,6 +2247,15 @@
   "_signs_file_doc": "ledger 0079 round K: Lake Murray W1-6 arrow signs (tools/place_signs.py, its defaults copied verbatim) with one per-layout corner, 48th / Colorado (SC-48C), whose race-layout plate stands behind the race sealing wall in the race closure kn5; named here because this port slug (sand_creek_raceway_lm) names no tracks/<slug>/",
   "drive_test": {
     "_dense_hops_doc": "ledger 0079 round M (call 3): a severe reading on a forward metre where the fixed-offset wheel path hopped > 1.5 m (the outside of v140 on the colorado_50th deck: 3.5-3.8 m per vertex across its real 2-4 % grade, read 0.07-0.11 m) is re-measured on the same path sampled every 0.25 m along its own arc (scripts/geometry/drive_test.py DENSE HOPS; rl1: 0.002-0.005 m). A measurement change, not a threshold change (fleet/GATES-CHANGELOG.md round M).",
-    "dense_hops": true
+    "dense_hops": true,
+    "_vertex_kinks_doc": "ledger 0079 round P: a slope kink over KINK_PCT is re-measured on the wheel path's own travel, as a vertex bump is (scripts/geometry/drive_test.py VERTEX KINKS). On the inside of the S at +6.0 the fixed-offset point creeps 0.03-0.2 m across each vertex, so on the measured 48th_colorado deck's real ~4 % grade the station slopes alternated and read 7 kinks at s 9575-9578 (3.3-4.5 %/m); the arc-length path there reads at most 1.97 %/m. A measurement change, not a threshold change (fleet/GATES-CHANGELOG.md round P); the station reading stays in the report (kinks_per_km_station).",
+    "vertex_kinks": true,
+    "_fold_fan_severe_doc": "ledger 0079 round P: a severe reading where a fixed-offset path runs backwards inside a fold fan is deferred to tools/verify_fold_fans.py (Lake Murray's own key), only on a path that gate judges (fold_fans.chords (8)); the chain runs it after the race gates (ship.json gate fold_fans).",
+    "fold_fan_severe": "verify_fold_fans"
+  },
+  "fold_fans": {
+    "_doc": "ledger 0079 rounds N / P: verify_fold_fans surveys the weld's chord mends (Sand Creek's two road folds, v134-141 under colorado_50th and v3202-3206 under 48th_colorado, are both chords) with checks (1)-(5), (7) and (8); (7) reads each race-wall cell on no_route's own reference — the centre line or the deck the wall stands on, either frame (wall_frame local_deck; no_route since ledger 0054 step 2e / Sand Creek round M). A wider scope and a reference aligned with no_route, not a threshold change (fleet/GATES-CHANGELOG.md rounds N / P).",
+    "chords": true,
+    "wall_frame": "local_deck"
   }
 }

@@ -1678,7 +1678,83 @@ verify_kn5's closure row as rounds M-O, resumed `--from road_obj`; logs `rp1.a.l
   plate is gone with the skip; rn1 7); kn5_ground_check x2 PASS; audit x2 CLEAN; verify_kn5 FAIL on the closure row only;
   --inis PASS. kn5 109.3 MB (road 92.2, `_race` 10.2, `_street` 6.9).
 
-## Owed (2026-11-06, after round O; start here)
+### Item 1, continued (the 7 street kinks at s 9575-9578, +6.0): DIAGNOSED — drive_test's sampler, not the seam; re-measured opt-in
+- **Where they are not:** the in-cut v3193's seam. The pad starts at s ~9571 on that path and the seam reads 0.33 /
+  0.67 %/m (probe `scratchpad/rp/kinkprobe.py`, ro5 and rp1 identical).
+- **What they are:** the fixed-offset point at +6.0 is on the INSIDE of the S's first corner. It creeps 0.03-0.2 m across
+  each centreline vertex (s 9574 -> 9575: 0.20 m; 9576 -> 9577: 0.06 m; 9579 -> 9580: 0.03 m) and runs a full metre between.
+  The measured deck there falls a real −4.4 to −4.7 % for 3 m, so the station slopes alternate ~0 / −4 % and their change
+  reads 3.3-4.5 %/m. The same surface on the true parallel path at +6.0, every 1 m of its own arc (`scratchpad/rp/arcprobe.py`):
+  0 kinks, max 1.97 %/m. On the lap ribbon (rn1) the rows were level, so a creeping point read the centre's grade.
+- **The fix (opt-in `drive_test.vertex_kinks`):** a kink is re-measured on the path's own travel exactly as a vertex bump is
+  (v0.18.1's `_own_travel_step`, its 0.05 m floor); one under 3 %/m is reported as `vertex_kinks`, not counted. No new
+  number, no threshold moved; the station rate stays in the report (`kinks_per_km_station`). The deck is measured and
+  smooth, so it is not touched ("I just want real").
+- **rp2 street:** kinks 0.52 /km counted, station reading 1.97 (rn1 1.24). 14 re-measured under 3 %/m: the S's 7
+  (0.25-2.52 %/m) and 7 of rn1's 12 on the colorado_50th deck (s 531-553, the same creep). 5 still count (s 552-554 / 584 at
+  −4.1 to −4.5, s 1194 +4.08). **For the coordinator / Kevin:** this is a gate measurement change in the spirit of
+  DENSE HOPS / VERTEX BUMPS; drop the key and the station 1.97 /km is the number.
+
+### Item 2 (verify_fold_fans (7) on no_route's deck frame): DONE, opt-in; `fold_fans.chords` + `fold_fan_severe` ADOPTED
+- **The key (`fold_fans.wall_frame: "local_deck"`):** (7) reads each wall cell as no_route does since ledger 0054 step 2e /
+  2g: the deck under the wall triangle that set the cell's base (the 1ROAD sheet under its centroid nearest its foot, within
+  no_route's DECK_REACH_M of the line's deck), the cell inside the band in EITHER frame. Band, bury, radius unchanged.
+- **Lake Murray A/B** (rn_lm's built OBJs, street + race_cw): without the key verify_fold_fans.json byte-identical
+  (df36a7eb…); with it the same PASS, every wall reading unchanged, 0 cells read by the deck frame.
+- **The S passes every check** (rp2, the chain's own run): v3202-3206 both layouts, 0 paths with a step, DT max 0.025 race /
+  0.028 street, steep 0, grass 0; (7) 64 cells in band (14 of them by the deck frame: the K-rails on the measured deck
+  ~0.4 m under the lap's centre line; centre-line worst −0.431). v134-141 passes as before (walls −0.152).
+- **Adopted** on the candidate: `fold_fans.chords`, `fold_fans.wall_frame`, `drive_test.fold_fan_severe` (Lake Murray's
+  own key), and ship.json's gate `fold_fans` after `race_gates` (Lake Murray's order) so the chain judges what it defers.
+- **The race severe count** (rn1 40 -> rp1 32 with the pad built -> **rp2 22 counted**):
+  - deferred and judged: **10**, all 10 on a path verify_fold_fans judged and passed ((8) worst gap 0.2315 m of 0.25);
+  - re-measured: **8** dense hops (under 6 cm on the dense arc), as round M;
+  - left: **22**, each named: 14 folded in a fan where no judged path runs (`fold_severe_unjudged`: v140's turning centre
+    s 411-424 at −14.48 / −14.03 / −13.28, the S's turning centre s 9584-9586 at +13.73 / +14.48, s 9610 at −14.15, 0.073 m);
+    v779's 6 (s 2321-2331 at −19.18) and s 413 / 418 at −14.48 — the inside race kerb's lip read by a zig-zagging
+    fixed-offset path (round N item 2). The race drive_test does not gate severe; it PASSES its gated rows.
+
+### Item 3 (Quebec's outer edges): not reached (owed)
+
+### Gates (rp1 = the unpark; rp2 = rp1 + the round-P keys, gates re-run on the same built workshop)
+| gate | rn1 / installed 0.2.5 | **rp1** | **rp2 (the candidate as committed)** |
+|---|---|---|---|
+| drive_test street | PASS: severe 0, kinks 1.24 /km | PASS: severe 0, kinks 1.97 | **PASS: severe 0, kinks 0.52 counted (station 1.97), excursion drops 1** |
+| drive_test race | PASS gated rows; severe 40, dense hops 6 | PASS; severe 32, dense hops 8 | **PASS; severe 22, deferred 10 (judged), dense hops 8; obstructed 0, barrier_missing 0, soft 0** |
+| audit street / race | CLEAN / CLEAN | CLEAN / CLEAN | **CLEAN / CLEAN** |
+| kn5_ground_check | PASS x2 | PASS x2 | **PASS x2** |
+| verify_pads | PASS x3 | PASS x4 (48th 1.0 mm, grass 0) | **PASS x4** |
+| verify_mouths | PASS 117 (3 allowed) | PASS 113 (2 allowed) | **PASS 113 (2 allowed)** |
+| house_seat / houses | PASS 1.261 m / 2,183 | PASS / PASS | **PASS 1.261 m, 2,183 judged / house_gate PASS** |
+| textures | 0 | 0 | **0** |
+| verify_race / check_race_kn5 | OK / OK | OK / OK (whole_lap WARN) | (author phase: rp1's) |
+| no_route PLANNED / BUILT | PASS / PASS | PASS / PASS | **(rp1's) / PASS (leak 0, 0 doors)** |
+| verify_signs | PASS, 7 posts | PASS, 6 posts (SC-48S skipped) | (author phase: rp1's) |
+| verify_fold_fans | PASS — vacuous | PASS — vacuous (no keys) | **PASS — 2 chords x 2 layouts judged, 10 deferred all covered** |
+| verify_kn5 / --inis | FAIL (closure only) / PASS | FAIL (closure only) / PASS | **(rp1's) / PASS** |
+| kn5 total | 107.1 MB | 109.3 MB | **109.3 MB** (road 92.2, `_race` 10.2, `_street` 6.9) |
+
+### Lake Murray unchanged (round P)
+- The diff against origin/claude/fleet-lm-engine over tracks/san-diego-lake-murray and scripts/: scripts/geometry/drive_test.py
+  only — rounds M / N's DENSE HOPS and FOLD CHORDS keys and this round's VERTEX KINKS key. Lake Murray sets none.
+- drive_test A/B without the key: byte-identical (street 31fc2f80…, race_cw 16d1de79…). verify_fold_fans A/B: byte-identical
+  without `wall_frame`; with it the same verdicts.
+- Trim A/B (`sclm_work/lmtrim_rp`): byte-identical (`664da93b…`, `b73b70f4…`, `f0c97952…`).
+- Tests: 1,331 pass, the known 8 fail. New: `test_round_p_wall_frame_and_vertex_kinks_are_opt_in`; round N / O's tests
+  now pin the adoption and the unpark.
+
+## Owed (2026-11-06, after round P; start here)
+1. **The closure:** Kevin's call (unchanged; the only verify_kn5 red).
+2. **Kevin / the coordinator: confirm round P's two gate readings** — `drive_test.vertex_kinks` (a measurement change;
+   without it the street reads 1.97 /km station, 1.24 before the pad) and `fold_fans.wall_frame` (no_route's reference).
+3. **Quebec's outer edges** (round J's item: a continuous lidar curb-line trace, NAIP for asphalt vs concrete), then the
+   re-centre only if it holds, then `sandcreek_quebec`'s outline. dahlia_56th stays parked (round I's reasons).
+4. Fork 94/95's chevrons (needs a higher-resolution source); the 8 m to its stop bar.
+5. Then runbook 4n / the `_n` stills on the PC, and the 0.2.6 bump. The candidate in `source/round_k/` now carries
+   48th_colorado built, `fold_fans` (chords + wall_frame), `drive_test.fold_fan_severe` + `vertex_kinks`, and ship.json's
+   `fold_fans` gate.
+
+## Owed (2026-11-06, after round O; kept for the record)
 1. **The closure:** Kevin's call (unchanged).
 2. **Unpark 48th_colorado.** Move its declaration from `lm_pads.parked` to `lm_pads.pads`, drop grid_primary_52's
    allowed row, and add signs.json's SC-48S corner skip (`sclm_work/ro_src/tracks/sand-creek-lm/signs.json`). Then

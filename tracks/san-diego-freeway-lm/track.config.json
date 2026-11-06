@@ -91,6 +91,14 @@
           "from_vertex": 162,
           "to_vertex": 1,
           "_why": "ledger 0080 2a item 4: the draft left edge 396 undecided (travel votes 21 / 28) because it is TWO westbound roadways it joined at its hairpin, vertex 162 (x 4,236): vertices 0..162 run 22-24 m north of (left of) the line's EB edges 357 / 548 the whole way (I 8 westbound in right-hand traffic); 162..284 end at node B, where only ramps 507 / 508 leave. Node A (vertex 0) is where I 8 WB edge 397 starts and ramp 395 arrives, so 0..162 is driven 162 -> 0 (westward): the 28 backward votes (28 / 49 = 0.57 of the votes; 162 / 284 = 0.57 of the vertices). OSM's oneway could not be re-read (Overpass timed out 2026-11-05). East of vertex 162 the draft has no westbound mainline: WB starts there, 290 m short of the line's end."
+        },
+        "head_osm": {
+          "file": "osm_i8_wb_head.overpass.json",
+          "ways": [
+            1011676575,
+            361363280
+          ],
+          "_why": "ledger 0080 2a round 5 item 3: WB's last 290 m. The draft (PR 34) has no westbound mainline east of WB's first point (edge 396 vertex 162, x 4,236, on OSM way 361363280 between its first two nodes). OSM (Overpass, 2026-11-05, one read-only query, the response committed as file): I 8 westbound east of there is way 1011676575 (4 lanes, oneway=yes), from (x 4,525, z -1,171), 12 m east of the line's end, west to node (4,259, -1,326), where 361363280 (oneway=yes) continues west through WB's first point. 361363282 / 278 / 275 / 276 (also oneway=yes) run further east, past the line's end: not built. Ways in travel order; the head stops at the chain's first point."
         }
       }
     ],

@@ -550,6 +550,91 @@ and [3,280, 3,310]) and WB's flared deck edge at WB s 7,052 faced the gap. The s
 - Owed for s 7,052: the stepped deck's barrier needs a surface under its body that audit F accepts (a slab joined to
   the high deck's edge vertices, or F reading a 1KERB under a 1WALL as the wall's footing).
 
+**3. WB's last 290 m: an OSM-way head (owed item 5).** One read-only Overpass query (`way(id:...);out geom tags;`),
+the response committed as `network-draft-pr34/osm_i8_wb_head.overpass.json`: ways 1011676575, 361363274-82, all
+`oneway=yes` (so node order is travel), I 8 WB = 361363282 -> 278 -> 275 -> 276 -> 1011676575 -> 361363280.
+- `tools/network_connectors.py` `head_osm` (config `lm_intake.network_connectors[0].head_osm`, `_why` there): the ways
+  in travel order, projected as the draft projects OSM, resampled at the chain's own spacing, ending on the chain's first
+  point (edge 396 vertex 162, 3.08 m off way 361363280: the head closes on it linearly along its length, no jog;
+  `OSM_JOIN_MAX_M` 5 m [invented] or it refuses). Built from 1011676575's first node (x 4,525, 12 m east of the line's
+  end) west: +67 points, +332 m (WB 10,220 -> 10,552 m). Heights: the draft has no 3DEP point heights there, so each
+  head point takes the LINE's raw 3DEP abreast (18-42 m away across the median) shifted by WB's own offset at the join
+  (-0.47 m); the 55 m grid read 1-4 m off the draft's point heights, so it was not used. Width: the draft's 18.14 m,
+  then measured: the cached NAIP covers the head (`NAIP_OFFLINE=1`, nothing missing): 67 barrier-at-the-midline,
+  30 read, 38 unread sides; the head 16.8-20.3 m wide. Barrier runs 6,990 -> 7,255 m; overlap 0 of 1,993 paired.
+- Regenerated: connectors.local.json, network_connectors.json, the NAIP outputs, median_ground.lidar.json (1,993 paired:
+  unread 1,643, slope 275, step 75). `median_wall.lidar.json` kept (absolute positions; the head has no wall).
+- **ws27:** line drive_test PASS (excursions 4: + s 10,500 +9.0 0.12 m, the line's median side beside the new head),
+  WB line gate PASS (lap rule 24 over 10,555 m: WB's 150 m stations now fall 332 m later, so the set moved: Morena's
+  stepped barrier sections at WB s 7,054 / 7,204 and s 3,602 / 9,304 are sampled now), audit CLEAN, verify_kn5 / inis
+  PASS, kn5_ground_check PASS (road over ground p95 0.020 m, 131 / 6,135 > 5 cm), 42,786,971 B, SHIP OK.
+
+**4. The outside barrier from the cached lidar: counted, not built.** A census of every line / WB vertex's OUTER edge
+(returns within 2.5 m along, from 0.5 m inside the edge to 2.5 m out; the 2014 EPT cache's 525 nodes and tile
+481624, 1.57 M returns of classes 1, 2, 7, 17, 18, 20-22; probe `r5/outer_cov.py` in the session scratchpad):
+
+| | vertices | no data | ground only | non-ground >= 0.6 m over the pavement in the first 1.5 m | other non-ground |
+|---|---|---|---|---|---|
+| line | 2,132 | 1,252 | 235 | 156 | 489 |
+| WB | 2,050 | 1,193 | 282 | 106 | 469 |
+
+Neither dataset classes a barrier: what stands at the shoulder's edge is class 1 (unclassified: barriers, vehicles,
+sign posts, shrubs alike; 2024's 20-22 are not documented here). The 262 "barrier-like" stations are not separable
+from parked vehicles or vegetation without a continuity rule this round did not invent; nothing was built, and 2,445 of
+4,182 outer edges have no cached return at all (the cache follows the decks). Owed: a run-continuity reader (a
+barrier is a line: a height step that persists station to station) on the outer-edge returns, or the lidar download
+over the shoulders (Kevin's yes).
+
+**5. WB's median-side drops, where cached class 2 covers the median: not built, counted.** ws27's 24 (WB 332 m longer:
+its 150 m stations sample new places), by what the cache (2014 EPT nodes + tile 481624) holds over each median:
+- covered (class 2 across the median, 10-26 of the 0.5 m bins): **8**: WB s 302 (0.13 m), 3,602 (1.09), 7,054 (4.21),
+  7,204 x4 (+6.0 4.82, -6.0 3.31, -9.0 / -9.5 0.23: item 1's moved stretch), 9,304 (0.83). Every one is a sample inside
+  or beside a barrier's base or a stepped barrier section, the ground under the body being the low side's (or lower);
+- partly covered (4 of 11 bins): 2 at WB s 4,352;
+- no cached return over the median: **14 wait on the median lidar download**: WB s 1,203 and 13 on the unpaved median
+  (WB s 7,951 x2, 9,004, 9,751 x3, 9,901 x4, 10,051 x3: round 4's s 7,100-9,900 in the old stationing).
+- The slope pass is not built. Tried (ws22-ws24): the step moved to the barrier's low foot with the HIGH side's ground
+  under its body: verify_kn5 TERRAIN POKE 4,513 / 1,107 (raised vertices whose facets reach over the low side's edge
+  strips and deck slabs), reverted. Owed: raise the LOW side's gap ground to the low pavement (never the high), off
+  decks only, after the step's cut; and the stepped deck sections' surface under the barrier (item 2).
+
+| Gate (BUILT kn5) | round 4 (ws19) | d738203 (ws20) | item 1 (ws21) | item 2 (ws26) | **item 3 (ws27, HEAD)** |
+|---|---|---|---|---|---|
+| line: soft top / severe / kinks per km / daylight / floating | 0/0/0/0/0 | 0/0/0/0/0 | 0/0/0/0/0 | 0/0/0/0/0 | **0/0/0/0/0** |
+| line: excursions gated (limit 10) | 3 | 3 | 3 | 3 | **4** |
+| line drive_test | PASS | PASS | PASS | PASS | **PASS** |
+| WB: soft top / severe / kinks / daylight / floating | 0/0/0/0/0 | 0/0/0/0/0 | 0/0/0/0/0 | 0/0/0/0/0 | **0/0/0/0/0** |
+| WB: excursions gated (line gate 7.12 / km) | 24 (2.35) | 24 (2.35) | 26 (2.54) | 25 (2.45) | **24 (2.27)** |
+| WB: line gate / drive_test's own lap rule | PASS / FAIL | PASS / FAIL | PASS / FAIL | PASS / FAIL | **PASS / FAIL (24 > 10)** |
+| audit_mesh | CLEAN | CLEAN | CLEAN | CLEAN | **CLEAN** |
+| verify_kn5 / verify_inis | PASS | PASS | PASS | PASS | **PASS** |
+| kn5_ground_check | PASS | PASS | PASS | PASS | **PASS** |
+| kn5 B | 42,067,174 | 42,067,878 | 42,048,478 | 42,203,383 | **42,786,971 (42.8 MB)** |
+| ship_track | SHIP OK | SHIP OK | SHIP OK | SHIP OK | **SHIP OK** |
+
+Edge report (ws27, line): 1 m past the lane edge ground 74.6 %, wall 19.1 %, kerb 6.3 %, lane 0.0 %.
+
+**Lake Murray unchanged:** `git diff origin/claude/fleet-lm-engine -- tracks/san-diego-lake-murray scripts/` is empty
+after every commit. Every tool changed this round is port-only (median_lidar, naip_carriageways, median_barrier_blend,
+network_connectors; median_ground_blend tried and reverted); no chain step Lake Murray runs changed: no A/B owed.
+**Tests:** `tests/run_tests.py` (python 3.12) 630 PASS, 1 FAIL (`test_registry_moves`, as round 4); pytest `tests/tools`
+714 passed, 1 skipped (test_network_connectors: the head shifts WB's indices by 67; one new test for the OSM head).
+**Mac note:** ws25 ran while Sand Creek's prep was in Blender (my check missed a step boundary); every later build
+waited for `pgrep -x Blender` to be empty.
+
+## PC runbook 0080-6: rehearse 2a round 5, no install
+
+Supersedes 0080-5 (which matched ws19 on the PC). No lidar or NAIP is needed: every generated input is committed.
+
+1. `git fetch && git worktree add D:/k10-worktrees/freeway-lm-2a5 <round 5 HEAD>`
+2. `SHIP_PROJ=D:/k10-scratch/fwlm_2a5 AIROSO=D:/k10-worktrees/freeway-lm-2a5 ENG=D:/k10-scratch/eng_fwlm bash
+   tools/ship_track.sh san-diego-freeway-lm --no-install`
+3. Expect ws27's column: line drive_test PASS (excursions 4), WB line gate PASS (24, 2.27 / km), audit CLEAN, verify_kn5 /
+   inis PASS, kn5_ground_check PASS, 42,786,971 B, SHIP OK. Any other number: stop and file it here.
+4. Optional (fills the Mac's gap): `median_lidar.py` with the PC's tile 480624 too (`--laz D:/k10-scratch/d24`, plus the
+   2014 EPT cache), and `--walls` to a scratch file; diff against the committed `median_ground.lidar.json` /
+   `median_wall.lidar.json`. If 480624 reads more of the median, commit both and rebuild.
+
 ## PC runbook 0080-5: rehearse 2a (I 8 both ways), no install
 
 2a is green on the Mac (ws19). The PC needs no lidar: `median_ground.lidar.json` is committed.
@@ -594,34 +679,31 @@ expecting green. On the PC (its own network), one tile at a time:
 
 ## Owed (start here)
 
-State (2026-11-05, end of 2a round 4): **2a green on the Mac** (the round 4 table, ws19: the line's drive_test PASS, WB's
-line gate PASS, audit CLEAN, kn5_ground_check PASS, SHIP OK), nothing installed, not rehearsed on the PC. Phase 1
-(d1c676d4 / 9109a49d) stays the build of record until runbook 0080-5 reproduces ws19. Lake Murray unchanged (empty diff;
-no chain step it runs changed).
+State (2026-11-05, end of 2a round 5): **2a green on the Mac** (the round 5 table, ws27: the line's drive_test PASS, WB's
+line gate PASS, audit CLEAN, kn5_ground_check PASS, SHIP OK, 42.8 MB), nothing installed. The PC matched round 4 (ws19,
+runbook 0080-5); round 5 is rehearsed with runbook 0080-6. Lake Murray unchanged (empty diff; no chain step it runs
+changed). Nothing was downloaded this round (one read-only Overpass query; NAIP and lidar from the caches).
 
-- **Kevin:** rehearse 2a on the PC (runbook 0080-5), then drive it (install on your word). Say yes / no to: downloading
-  the Caltrans 2026 Standard Plans book PDF (item 7, round 3); fetching the 2014 EPT nodes over the unpaved median (below;
-  a download, so your yes). Look at the Morena retaining stretch and the deck edges on a build.
+- **Kevin:** rehearse round 5 on the PC (runbook 0080-6), then drive it (install on your word). Say yes / no to:
+  fetching the 2014 EPT nodes over the unpaved median (14 of WB's 24 lap-rule drops wait on it), the lidar over the
+  outer shoulders (item 4), the Caltrans 2026 Standard Plans PDF. Look at Morena (the barrier now on the lidar's wall:
+  the line's pavement runs to it, WB is 2.5-2.9 m narrower) and WB's new east head.
 - **2a, left (none blocks green):**
-  1. **The lidar's wall vs NAIP's edge at Morena** (line s 3,425-3,611, 15 stations `step_past_built_edge`): the lidar's
-     wall stands 0.5-2.8 m past WB's built inner edge. Move WB's median edge (and the barrier) to the lidar's wall there
-     (a lidar fusion in `naip_carriageways`, port-only), then re-read.
-  2. **The unpaved median's ground as measured** (WB s 7,100-9,900 and the other unread gaps: 1,601 of 1,941 paired
-     stations unread): the EPT nodes over it are not in the cache (round 2 fetched the decks' only). With Kevin's yes,
-     `network_deck_lidar.py --dry` over the median stations lists them; then `median_lidar.py` reads SLOPES there and a
-     `median_ground_blend` slope pass (the profile on the built pavements, never within the prep's 3 m contact band)
-     builds them. WB's 24 median-side excursions (0.12-0.4 m) are that ground; they are inside WB's line gate.
-  3. **WB s 7,052**: 1.61 m gated (was 3.13) between the Morena deck's flared median edge and its rail.
-  4. **The outside barrier from the lidar** (Kevin's call 2): class and a 0.8-1 m height step at the shoulder's edge;
-     nothing where nothing shows, counted.
-  5. **WB's last 290 m**: an OSM-way head in `network_connectors` (OSM ways 1011676575, 361363276-82, oneway yes).
-  6. **The Caltrans sheet** (round 3 item 7): the drawings for A76A and the 60M family's unequal-grade section; with it,
-     whether Morena's barrier-on-wall is a 60 variant or a wall with a barrier on top.
+  1. **The ground under a barrier's base where drive_test samples it** (WB lap rule: s 3,602, 7,054, 7,204 x4, 9,304,
+     302): raise the LOW side's gap ground to the low pavement (never the high: ws22-ws24's pokes), off decks only.
+  2. **WB s 7,054 (old 7,052) on the stepped Morena deck**: a surface under the barrier that audit F accepts (round 5
+     item 2: a 1KERB slab across a step reads as a curb not flush).
+  3. **WB s 7,204 -6.0 (old 6,902)**: a ground facet from under WB's moved pavement shows past its kept outer edge.
+  4. **The unpaved median's ground** (WB s 7,950-10,050 now): the EPT nodes over it, with Kevin's yes (round 4 item 2).
+  5. **The outside barrier** (item 4): a run-continuity reader on the outer-edge returns, or the shoulder lidar.
+  6. **Tile 480624 on the Mac**: median_lidar ran with the 2014 EPT + 481624 only; runbook 0080-6 step 4 reads 480624
+     on the PC.
+  7. **The Caltrans sheet** (round 3 item 7).
 - `weld_mouths` stays out (its empty-yellow-block refusal, owed to its owners on `claude/sand-creek-lm-assets`).
-- Scratch: `/Volumes/Drive/codex/fwlm_work/run_ship_p5.sh` (round 4's worktree), ws16 (deck edge + one-sided cut),
-  ws17 (+ the median step, the end row), ws19 (HEAD); round-4 probes in the session scratchpad `r4/` (`extract.py` the
-  cache's class 2 / 17 into the local frame, `xsec.py` / `step.py` lidar cross-sections, `paveoff.py` lidar pavement
-  minus the model, `transect.py` every surface along a plan line of a built OBJ, `nobar.py` stepped gaps with no barrier).
+- Scratch: `/Volumes/Drive/codex/fwlm_work/run_ship_p6.sh` (round 5's worktree), ws20 (d738203 baseline), ws21 (item 1),
+  ws26 (item 2), ws27 (HEAD); round-5 probes in the session scratchpad `r5/` (`xs.py` built sections across WB / the
+  line, `tri_at.py` / `verts_near.py` the ground under a point, `cmp_edges.py` / `cmp_bar.py` old vs new edges and
+  barrier, `outer_cov.py` the outer-edge census, `gates.py` a ws's gate summary).
 - **2b (I 5, SR 52, SR 163 mainlines, both ways):** `lm_intake.network_connectors` entries (ref + direction; the
   resolver refuses a broken chain, so read its message per road), then **the whole box**: drop `grid_crop_m`, set
   `terrain.tiers` (far cells at the 3DEP grid's native 55 m), and measure the assembler's terrain pass on the box first

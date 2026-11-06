@@ -14,6 +14,21 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
+## 2026-11-05 — the SD freeway port, phase 2a round 5: the barrier on the lidar's wall, the barrier through one-station holes and on the deck, WB's OSM head (ledger 0080; no threshold moved, no bypass)
+
+No gate threshold, bypass, gate code or gate-chain wiring changed. New numbers / rules the port's DATA / geometry tools
+carry (none is a gate's):
+
+- `tools/median_lidar.py --walls` (`walls()`): reuses round 4's `ALONG_M`, `BIN_M`, `BIN_MIN`, `STEP_MIN_M`,
+  `STEP_GRADE`; `EDGE_TOL_M` 0.5 is median_ground_blend's pavement-edge tolerance (`abs(z - y) < 0.5`), reused.
+- `tools/naip_carriageways.py`: the wall's offset ramps in at `RATE_M_PER_M` (the width_taper rate) and fills read gaps
+  up to `FILL_M`, both existing. ⚠ A rule, not a tuned number: a barrier run broken by exactly ONE unread station is one
+  run (`JOIN_ONE_STATION_HOLES`; wider holes stay holes). `NAIP_OFFLINE=1` refuses every fetch (a missing tile is unread).
+- `tools/median_barrier_blend.py`: the deck under the barrier where its foot is on a declared deck reuses
+  deck_rails_blend's `DECK_EDGE_DY_M` 0.03 and `DECK_EDGE_IN_M` 0.1.
+- ⚠ `tools/network_connectors.py` (`head_osm`) **invented**: `OSM_JOIN_MAX_M` 5.0 (the chain's first point must lie this
+  close to the OSM head, or the tool refuses; WB: 3.08 m).
+
 ## 2026-11-05 — the SD freeway port, phase 2a round 4: the median from the lidar, the deck's edge, the one-sided cut (ledger 0080; no threshold moved, no bypass)
 
 No gate threshold, bypass or gate code changed. One gate-chain WIRING change: `tools/ship_track.sh` prep_prep runs

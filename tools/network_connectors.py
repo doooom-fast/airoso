@@ -147,6 +147,96 @@ def _prepend_head(r: dict, head: dict, edges_rec: dict) -> None:
     r["how"] += f"; head: edge {rec['id']} vertices {a}..{b} ({sh:.0f} m, declared)"
 
 
+# ledger 0080 2a round 5 (owed item 5, WB's last 290 m): the draft (PR 34) has no westbound mainline east of WB's first
+# point (edge 396 vertex 162, x 4,236): WB started 290 m short of the line's end. OSM has it (Overpass, round 3 item 8,
+# re-read round 5 and committed as ``file``): I 8 westbound ways, all oneway=yes, so each way's node order IS the travel.
+# A declared OSM head = those ways in travel order, their nodes projected as the draft projects OSM (equirectangular
+# about network.local.json's origin), resampled every STEP of the chain (its own mean spacing), the last point joining
+# the chain's first. Its heights: the draft carries no 3DEP point heights there (network.elevation.json is per draft
+# edge), so each head point takes the LINE's raw 3DEP height abreast of it (the draft line's at_grade_xyz_m, the
+# carriageway 22-40 m away across the median) shifted by WB's own offset from the line at the join (raw 3DEP at the
+# chain's first point minus the line's abreast): WB keeps its level relative to the line, as it runs at the join. Its
+# widths: the chain's first width (the draft's), counted; naip_carriageways then measures them off NAIP like every
+# other vertex. The config's ``_why`` carries the evidence; the resolver's rules are unchanged.
+OSM_JOIN_MAX_M = 5.0  # [invented] the chain's first point must lie this close to the OSM head (WB: 3.08 m), or refuse
+
+
+def _osm_head(r: dict, head: dict, draft_dir: Path, nloc: dict, zraw_line) -> dict:
+    from scripts.geometry.projection import _meters_per_degree
+    doc = json.loads((draft_dir / head["file"]).read_text(encoding="utf-8"))
+    ways = {int(e["id"]): e for e in doc["elements"]}
+    lon0, lat0 = float(nloc["origin"]["lon"]), float(nloc["origin"]["lat"])
+    mx, my = _meters_per_degree(lat0)
+    poly = []
+    for wid in head["ways"]:
+        e = ways.get(int(wid))
+        if e is None:
+            raise SystemExit(f"[network_connectors] osm head: way {wid} is not in {head['file']}")
+        if (e.get("tags") or {}).get("oneway") != "yes":
+            raise SystemExit(f"[network_connectors] osm head: way {wid} is not oneway=yes (its travel is not its order)")
+        g = [((q["lon"] - lon0) * mx, (q["lat"] - lat0) * my) for q in e["geometry"]]
+        if poly and math.dist(poly[-1], g[0]) > 1e-3:
+            raise SystemExit(f"[network_connectors] osm head: way {wid} does not start where the previous way ends")
+        poly += g if not poly else g[1:]
+    first = r["grade"][0]
+    fx, fz = first[0], first[2]
+    # the chain's first point lies on (or beside) the head's last segment: cut the head there
+    best = None
+    for k, (a, b) in enumerate(zip(poly, poly[1:])):
+        dx, dz = b[0] - a[0], b[1] - a[1]
+        L2 = dx * dx + dz * dz or 1e-12
+        u = max(0.0, min(1.0, ((fx - a[0]) * dx + (fz - a[1]) * dz) / L2))
+        d = math.hypot(a[0] + u * dx - fx, a[1] + u * dz - fz)
+        if best is None or d < best[0]:
+            best = (d, k, u)
+    d_join, kj, uj = best
+    if d_join > OSM_JOIN_MAX_M:
+        raise SystemExit(f"[network_connectors] osm head: the chain's first point is {d_join:.1f} m off the head")
+    pj = (poly[kj][0] + uj * (poly[kj + 1][0] - poly[kj][0]), poly[kj][1] + uj * (poly[kj + 1][1] - poly[kj][1]))
+    path = poly[:kj + 1] + [pj]
+    spacing = r["stations"][-1] / max(1, len(r["grade"]) - 1)
+    cum = [0.0]
+    for a, b in zip(path, path[1:]):
+        cum.append(cum[-1] + math.dist(a, b))
+    total = cum[-1]
+    n = max(1, int(round(total / spacing)))
+    st = [total * k / n for k in range(n)]                      # the last (total) is the chain's first point
+    pts = []
+    for sv in st:
+        k = max(0, min(len(cum) - 2, bisect.bisect_right(cum, sv) - 1))
+        t = (sv - cum[k]) / max(1e-9, cum[k + 1] - cum[k])
+        # the draft's edge 396 stands d_join off OSM's way at the join: the head closes on it linearly along its length
+        # (no jog at the join; naip_carriageways then centres every vertex on the measured pavement)
+        u = sv / total if total else 1.0
+        pts.append((path[k][0] + t * (path[k + 1][0] - path[k][0]) + u * (fx - pj[0]),
+                    path[k][1] + t * (path[k + 1][1] - path[k][1]) + u * (fz - pj[1])))
+    lp, lz = zraw_line
+
+    def abreast(x, z):
+        j = min(range(len(lp)), key=lambda q: (lp[q][0] - x) ** 2 + (lp[q][1] - z) ** 2)
+        return lz[j], math.dist(lp[j], (x, z))
+    z0, _d0 = abreast(fx, fz)
+    off = float(r["raw0"]) - z0
+    raw, dist = [], []
+    for x, z in pts:
+        zz, dd = abreast(x, z)
+        raw.append(zz + off)
+        dist.append(dd)
+    elev0 = float(nloc["origin"]["elev_m"])
+    w0 = float(r["widths"][0])
+    r["grade"] = [[x, zr - elev0, z] for (x, z), zr in zip(pts, raw)] + r["grade"]
+    r["widths"] = [w0] * len(pts) + list(r["widths"])
+    r["source_by_vertex"] = [[int(head["ways"][0]), k] for k in range(len(pts))] + r["source_by_vertex"]
+    r["stations"] = st + [sv + total for sv in r["stations"]]
+    r["chain"] = ["osm:" + ",".join(str(w) for w in head["ways"])] + r["chain"]
+    r["how"] += (f"; OSM head: ways {head['ways']} ({total:.0f} m, {len(pts)} points, joined {d_join:.2f} m off; "
+                 f"heights the line's raw 3DEP abreast ({min(dist):.0f}-{max(dist):.0f} m away) {off:+.2f} m; "
+                 f"width the draft's {w0} m)")
+    return {"ways": head["ways"], "points": len(pts), "length_m": round(total, 1), "join_m": round(d_join, 2),
+            "height_offset_from_line_m": round(off, 2), "abreast_m": [round(min(dist), 1), round(max(dist), 1)],
+            "width_m": w0, "file_md5": _md5(draft_dir / head["file"])}
+
+
 def build(draft: Path, out: Path, cfg_path: Path) -> dict:
     d = draft / "data" if (draft / "data").is_dir() else draft     # a draft project, or the committed copy
     cfg = json.loads(cfg_path.read_text(encoding="utf-8"))
@@ -184,12 +274,24 @@ def build(draft: Path, out: Path, cfg_path: Path) -> dict:
         head = sp.get("head")
         if head:
             _prepend_head(r, head, edges_rec)
+        osm_raw, osm_rep = {}, None
+        if sp.get("head_osm"):
+            e0, v0 = r["source_by_vertex"][0]
+            r["raw0"] = float(zraw[int(e0)][int(v0)])
+            lsrc = json.loads((d / "centerline.local.json").read_text(encoding="utf-8"))
+            lpts = [(q[0], q[2]) for q in lsrc["points_xyz_m"]]
+            lraw = [float(zraw[int(e_)][int(v_)]) for e_, v_ in lsrc["source_by_vertex"]]
+            n0 = len(r["grade"])
+            osm_rep = _osm_head(r, sp["head_osm"], d, nloc, (lpts, lraw))
+            for k in range(len(r["grade"]) - n0):
+                osm_raw[k] = r["grade"][k][1] + elev0
         grade, src, widths = r["grade"], r["source_by_vertex"], list(r["widths"])
-        raw = [float(zraw[int(e)][int(v)]) for e, v in src]
+        raw = [osm_raw[k] if k in osm_raw else float(zraw[int(e)][int(v)]) for k, (e, v) in enumerate(src)]
         L = r["stations"][-1]
         spacing = L / max(1, len(grade) - 1)
         y3 = [z - elev0 for z in _median_mean(raw, spacing)]
-        dk = deck_heights([(int(e), int(v)) for e, v in src], coords, layers, lidar, elev0)
+        dk = deck_heights([(-1, k) if k in osm_raw else (int(e), int(v)) for k, (e, v) in enumerate(src)],
+                          coords, layers, lidar, elev0)                  # an OSM head point: no draft edge, no deck
         ys = [yd if yd is not None else y for y, (yd, _h) in zip(y3, dk)]
         mask = [yd is not None for yd, _h in dk]
         how = [h for _yd, h in dk]
@@ -299,7 +401,8 @@ def build(draft: Path, out: Path, cfg_path: Path) -> dict:
                     "deck_end_steps_m": ends,
                     "deck_minus_3dep_max_m": round(max([a - b for a, b, m in zip(ys, y3, mask) if m] or [0.0]), 2),
                     "widths_flared": nwid, "side_check": r["side_check"],
-                    "same_ref_off_chain": [u["id"] for u in r["unjudged"] if u["why"].startswith("same road")]})
+                    "same_ref_off_chain": [u["id"] for u in r["unjudged"] if u["why"].startswith("same road")],
+                    **({"osm_head": osm_rep} if osm_rep else {})})
         print(f"[network_connectors] {sp['name']}: {len(pts)} points, {L:.0f} m, edges {r['chain']}; "
               f"{len(ranges)} lidar deck(s) over {sum(mask)} points, {unread} bridged points without lidar levelled crest to crest ({len(spans_lvl)} run(s))")
     out.mkdir(parents=True, exist_ok=True)

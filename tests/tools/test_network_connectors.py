@@ -40,7 +40,7 @@ def test_the_committed_wb_connector_is_reproduced_and_its_decks_are_measured():
     tmp = Path(tempfile.mkdtemp(prefix="netconn_"))
     try:
         for f in ("network.geojson", "network.edges.local.json", "network.elevation.json", "network.local.json",
-                  "deck_profiles.lidar.json"):
+                  "deck_profiles.lidar.json", "centerline.local.json", "osm_i8_wb_head.overpass.json"):
             shutil.copyfile(SRC / f, tmp / f)
         doc = N.build(tmp, tmp, CFG)
         assert (tmp / "connectors.local.json").read_bytes() == (SRC / "connectors.local.json").read_bytes()
@@ -62,9 +62,26 @@ def test_wb_head_runs_edge_396_westward_into_397():
     """2a item 4: the declared head puts edge 396's vertices 162 -> 1 in front of the chain, ending at 397's start."""
     rec = json.loads((SRC / "connectors.local.json").read_text())["connectors"][0]
     src = rec["source_by_vertex"]
-    assert src[0] == [396, 162] and src[161] == [396, 1] and src[162][0] == 397
-    xs = [p[0] for p in rec["points_xyz_m"][:163]]
+    k = src.index([396, 162])                                # round 5: the OSM head stands in front of it
+    assert src[k + 161] == [396, 1] and src[k + 162][0] == 397
+    xs = [p[0] for p in rec["points_xyz_m"][:k + 163]]
     assert all(b < a for a, b in zip(xs, xs[1:]))           # westward: x falls the whole head
+
+
+def test_wb_osm_head_reaches_the_line_end_and_joins_without_a_jog():
+    """2a round 5 item 3: OSM ways 1011676575 -> 361363280 (oneway=yes) in front of edge 396, from abreast of the line's
+    end, at the chain's own spacing, closing on the chain's first point with no jog."""
+    import math
+    rec = json.loads((SRC / "connectors.local.json").read_text())["connectors"][0]
+    src = rec["source_by_vertex"]
+    k = src.index([396, 162])
+    assert k > 0 and all(s[0] == 1011676575 for s in src[:k])
+    P = rec["points_xyz_m"]
+    line = json.loads((SRC / "centerline.local.json").read_text())["points_xyz_m"]
+    assert P[0][0] >= line[-1][0]                            # WB starts at (east of) the line's end
+    steps = [math.hypot(b[0] - a[0], b[2] - a[2]) for a, b in zip(P[:k + 2], P[1:k + 2])]
+    assert max(steps) < 6.0 and min(steps) > 4.0             # the chain's ~5 m spacing through the join
+    assert all(b[0] < a[0] for a, b in zip(P[:k + 1], P[1:k + 1]))   # westward
 
 
 def test_naip_edge_limit_widens_steps_and_never_passes_the_barrier():

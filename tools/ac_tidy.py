@@ -201,7 +201,7 @@ def mb(n) -> str:
     return "-" if n is None else f"{n / 1e6:,.0f} MB"
 
 
-def report(inv: dict, man: dict) -> str:
+def report(inv: dict, man: dict, dry: bool = True) -> str:
     rows = inv["rows"]
     order = ["current", "kept", "superseded", "k10-era", "unlisted"]
     out = [f"AC tracks: {inv['ac_tracks']}  ({len(rows)} folders)"]
@@ -223,7 +223,7 @@ def report(inv: dict, man: dict) -> str:
         out.append(f"MISSING: manifest says {m} is installed; it is not in AC")
     pl = plan_of(inv)
     out.append(f"\nPLAN: move {len(pl)} folders ({mb(sum(r['size'] or 0 for r in pl))}) to "
-               f"{man.get('archive', 'D:/k10-track-archive')}/<stamp>_tidy/ (dry run: nothing moved)")
+               f"{man.get('archive', 'D:/k10-track-archive')}/<stamp>_tidy/" + (" (dry run: nothing moved)" if dry else ""))
     for r in pl:
         out.append(f"  move {r['folder']}")
     for r in renames_of(inv, man):
@@ -375,7 +375,7 @@ def main(argv=None) -> int:
     if a.fetch:
         subprocess.run(["git", "-C", str(ROOT), "fetch", "-q", "origin"], check=False)
     inv = inventory(man, ac)
-    print(report(inv, man))
+    print(report(inv, man, dry=not (a.apply or a.rename)))
     if a.json:
         Path(a.json).write_text(json.dumps(inv, indent=2, ensure_ascii=False), encoding="utf-8")
     if not (a.apply or a.rename):

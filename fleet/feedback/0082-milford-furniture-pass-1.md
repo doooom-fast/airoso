@@ -397,3 +397,13 @@ above. Not seen in game.
 7. **Signs, light poles, marshal posts, the white line on the straight**: none resolvable in the 2017 lidar either (no
    isolated pole within 45 m); onboard laps only.
 8. **The look, in game** (pass 1 Owed 7, plus F1): Kevin's drive decides.
+
+## PC: the 0.1.1 install (2026-11-06)
+
+- **INSTALLED on Kevin's word** (2026-11-06, "Install over 0.1.0 (Recommended)", asked with: the heights are standard
+  sizes, not measured): 2d4f56be from an empty `D:/k10-scratch/milford_lm` (0.1.0's workshop parked as
+  `milford_lm.0.1.0`), ENG `D:/k10-scratch/eng_mflm_f1` (eng_mflm + airoso's `assets/textures` at 2d4f56be, md5-checked:
+  0082-1's run 1 on eng_mflm alone left 5 textures out of the kn5); every gate green, SHIP OK, no force. 0.1.0's folder
+  parked in `D:/k10-track-archive/2026-11-06_163602/`; `milford_road_course_lm` 0.1.1, kn5 40,646,952 B,
+  kn5_equiv-equivalent to the 0082-1 run-2 rehearsal (tangents only). The sync-back's records are on their own branch
+  `claude/milford-lm-0101-installed` (0c74170): this branch's later rounds rewrote the same `data/*.json`. Not driven yet.

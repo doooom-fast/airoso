@@ -5,7 +5,8 @@
     "branch: where the track's next build lands; ac_tidy flags 'newer' when tracks/<track>/track.config.json there has a higher version than installed (an offer: installs stay on Kevin's word).",
     "After every install: python tools/ac_tidy.py record <folder> --track <track> --branch <branch> --sha <sha> [--engine lm-v4], then commit this file with the install records.",
     "Folders not listed here and not ours (no doooom / airoso / k10 author or name) are Kunos and third-party tracks: never touched.",
-    "2026-11-06 (Kevin: 'Move all 10', 'Rename it'): the 10 originals moved to D:/k10-track-archive/2026-11-06_103803_tidy/ (MOVES.tsv there; `python tools/ac_tidy.py restore <dir>` puts them back) and dropped from this list; Lake Murray v4's 5 layout names renamed from the K10 candidate prefix to 'doooom San Diego' (originals in <dir>/san_diego_lake_murray_v4.ui/)."
+    "2026-11-06 (Kevin: 'Move all 10', 'Rename it'): the 10 originals moved to D:/k10-track-archive/2026-11-06_103803_tidy/ (MOVES.tsv there; `python tools/ac_tidy.py restore <dir>` puts them back) and dropped from this list; Lake Murray v4's 5 layout names renamed from the K10 candidate prefix to 'doooom San Diego' (originals in <dir>/san_diego_lake_murray_v4.ui/).",
+    "2026-11-07 (Kevin, relayed by the Mac: 'We want to delete old copies from ac when installing new ones'; asked here, 'Move it out now (Recommended)'): del_mar_fairgrounds 0.1.0 moved to D:/k10-track-archive/2026-11-07_164229_tidy/ and dropped from this list. Every install now REPLACES: the other folders of the track leave AC (archive, never deleted)."
   ],
   "ac_tracks": "D:/SteamLibrary/steamapps/common/assettocorsa/content/tracks",
   "archive": "D:/k10-track-archive",
@@ -29,17 +30,6 @@
       "branch": "claude/circuit-kerbs-lm",
       "sha": "f3a93c3f",
       "installed": "2026-11-05"
-    },
-    "del_mar_fairgrounds": {
-      "branch": "claude/del-mar-source",
-      "engine": "original",
-      "installed": "2026-11-01",
-      "note": "estimated 1987-92 layout (ledger 0064); kn5 md5 d924754d, built at 7331e1d; kept beside del_mar_fairgrounds_lm (Kevin 2026-11-06: 'Install beside 0.1.0')",
-      "role": "kept",
-      "sha": "5611cdd",
-      "successor": "del_mar_fairgrounds_lm",
-      "track": "del-mar",
-      "version": "0.1.0"
     },
     "del_mar_fairgrounds_lm": {
       "branch": "claude/del-mar-lm",

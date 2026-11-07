@@ -1,10 +1,10 @@
 {
- "input": "D:\\k10-scratch\\del_mar_lm\\blender\\del_mar_fairgrounds_lm.blend",
+ "input": "/Volumes/Drive/codex/dm_work/v022b/blender/del_mar_fairgrounds_lm.blend",
  "outputs": {
   "loop_main.blend": {
-   "objects": 28,
-   "meshes": 12,
-   "positions": 106556,
+   "objects": 29,
+   "meshes": 13,
+   "positions": 107766,
    "max_positions": 36649,
    "materials": [
     "1GRASS_0_mat",
@@ -13,6 +13,7 @@
     "1ROAD_road_mat",
     "1WALL_TILTUP_0_mat",
     "BUILDING_METAL_0_mat",
+    "BUILDING_METAL_CANOPY_0_mat",
     "BUILDING_STUCCO_0_mat",
     "BUILDING_TILTUP_0_mat",
     "MARKINGS_mat.001",
@@ -65,6 +66,7 @@
     "AC_TIME_2_L",
     "AC_TIME_2_R",
     "BUILDING_METAL_0",
+    "BUILDING_METAL_CANOPY_0",
     "BUILDING_STUCCO_0",
     "BUILDING_TILTUP_0",
     "MARKINGS",
@@ -77,9 +79,9 @@
  "problems": [],
  "tokens": {},
  "input_census": {
-  "objects": 28,
-  "meshes": 12,
-  "positions": 106556,
+  "objects": 29,
+  "meshes": 13,
+  "positions": 107766,
   "max_positions": 36649,
   "materials": [
    "1GRASS_0_mat",
@@ -88,6 +90,7 @@
    "1ROAD_road_mat",
    "1WALL_TILTUP_0_mat",
    "BUILDING_METAL_0_mat",
+   "BUILDING_METAL_CANOPY_0_mat",
    "BUILDING_STUCCO_0_mat",
    "BUILDING_TILTUP_0_mat",
    "MARKINGS_mat.001",
@@ -143,6 +146,7 @@
    "AC_TIME_2_L",
    "AC_TIME_2_R",
    "BUILDING_METAL_0",
+   "BUILDING_METAL_CANOPY_0",
    "BUILDING_STUCCO_0",
    "BUILDING_TILTUP_0",
    "MARKINGS",

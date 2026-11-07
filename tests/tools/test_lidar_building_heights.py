@@ -82,7 +82,7 @@ def test_the_planner_takes_a_measured_roof_over_every_other_source():
     flat = pb.lidar_rows({"key": "a", "form": "flat_parapet", "wall_h_m": 21.6, "_h": "OSM building:levels 6 x 3.6 m"}, rec, None)
     assert flat[0]["wall_h_m"] == 6.8 and flat[0]["_h"].startswith("lidar") and "OSM building:levels" in flat[0]["_h_was"]
     gable = pb.lidar_rows({"key": "b", "form": "gable", "wall_h_m": 2.1, "ridge_h_m": 2.9, "_h": "class default [invented]"}, rec, None)
-    assert gable[0]["wall_h_m"] == 3.3 and gable[0]["ridge_h_m"] == 7.9
+    assert gable[0]["wall_h_m"] == 3.1 and gable[0]["ridge_h_m"] == 7.9
     st = {"tiers": [{"footprint_lonlat": [[0, 0], [1, 0], [1, 1]], "band_m": [-10, -2], "h_p50": 6.0, "h_p10": 5.8, "h_p90": 6.2, "n_roof": 50},
                     {"footprint_lonlat": [[0, 1], [1, 1], [1, 2]], "band_m": [-2, 10], "h_p50": 18.0, "h_p10": 17.0, "h_p90": 19.0, "n_roof": 80}]}
     rows = pb.lidar_rows({"key": "g", "form": "flat_parapet", "wall_h_m": 21.6, "_h": "x"}, rec, st)

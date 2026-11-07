@@ -18,7 +18,7 @@ PER FOOTPRINT (all in the tile's own CRS, metres; the footprint is OSM's lon/lat
   ground  the median of the class-2 (ground) points GROUND_RING_M outside the walls, outside every other footprint, widened
           ring by ring until GROUND_MIN points are found.
   heights roof z - ground: p05 .. p98, the median the robust roof height of a flat roof (the deck: a parapet, rooftop units and
-          a stray wall return are the top few per cent); a pitched roof's eave p10 and ridge p95 (the planner).
+          a stray wall return are the top few per cent); a pitched roof's eave 2 x p25 - p50 and ridge p95 (the planner).
   levels  the roof heights' histogram in LEVEL_BIN_M bins: every mode holding LEVEL_MIN_SHARE of the roof points and LEVEL_SEP_M
           from a bigger one is a roof level (a stepped stand, a tower over a hall).
   cover   the share of the footprint's 1 m cells holding any lidar point: under COVER_MIN the footprint is off the tiles

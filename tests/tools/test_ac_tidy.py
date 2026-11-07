@@ -148,10 +148,10 @@ def test_rename_keeps_originals_and_restore_puts_them_back(env, monkeypatch):
 def test_record_writes_the_installed_version(env):
     ac, _arch, mp, _man = env
     assert at.main(["record", "trk_lm", "--track", "trk-lm", "--branch", "claude/x", "--sha", "abc1234",
-                    "--engine", "lm-v4", "--manifest", str(mp)]) == 0
+                    "--engine", "lm-v4", "--date", "2026-11-06", "--manifest", str(mp)]) == 0
     ent = json.loads(mp.read_text(encoding="utf-8"))["folders"]["trk_lm"]
     assert ent["version"] == "0.1.2" and ent["sha"] == "abc1234" and ent["branch"] == "claude/x"
-    assert ent["role"] == "current" and ent["engine"] == "lm-v4"
+    assert ent["role"] == "current" and ent["engine"] == "lm-v4" and ent["installed"] == "2026-11-06"
 
 
 def test_the_repo_manifest_parses_and_names_known_roles():

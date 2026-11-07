@@ -31,7 +31,7 @@ What it does (a dry run unless --apply / --rename is given):
   python tools/ac_tidy.py --rename --only san_diego_lake_murray_v4
   python tools/ac_tidy.py restore D:/k10-track-archive/2026-11-06_120000_tidy
   python tools/ac_tidy.py record san_diego_freeway_lm --track san-diego-freeway-lm --branch claude/freeway-lm \
-      --sha e733c0a9 [--engine lm-v4]          # after an install: the manifest entry from the installed folder
+      --sha e733c0a9 [--engine lm-v4] [--date YYYY-MM-DD]          # after an install: the manifest entry from the installed folder
 """
 from __future__ import annotations
 
@@ -348,6 +348,7 @@ def main(argv=None) -> int:
     ap.add_argument("--all", action="store_true")
     ap.add_argument("--track"), ap.add_argument("--branch"), ap.add_argument("--sha"), ap.add_argument("--engine")
     ap.add_argument("--role", default="current")
+    ap.add_argument("--date", help="record: the install date (default today)")
     a = ap.parse_args(argv)
     if hasattr(sys.stdout, "reconfigure"):
         sys.stdout.reconfigure(encoding="utf-8", errors="replace")
@@ -359,7 +360,7 @@ def main(argv=None) -> int:
     if a.cmd == "record":
         if not (a.target and a.track):
             ap.error("record needs <folder> and --track")
-        ent = record(man, ac, a.target, a.track, a.branch, a.sha, a.engine, a.role)
+        ent = record(man, ac, a.target, a.track, a.branch, a.sha, a.engine, a.role, a.date)
         save_manifest(man, mp)
         print(f"recorded {a.target}: {json.dumps(ent, ensure_ascii=False)}")
         return 0

@@ -407,3 +407,24 @@ above. Not seen in game.
   parked in `D:/k10-track-archive/2026-11-06_163602/`; `milford_road_course_lm` 0.1.1, kn5 40,646,952 B,
   kn5_equiv-equivalent to the 0082-1 run-2 rehearsal (tangents only). The sync-back's records are on their own branch
   `claude/milford-lm-0101-installed` (0c74170): this branch's later rounds rewrote the same `data/*.json`. Not driven yet.
+
+## PC: rehearsal 0082-2, the installed-kn5 texture check, and the 0.1.2 install (2026-11-07)
+
+- **0082-2 MATCHED** (1357968b, `D:/k10-scratch/milford_lm_f2_reh`, ENG `D:/k10-scratch/eng_mflm_f2` = eng_mflm +
+  airoso's `assets/textures` at 1357968b, 96/96 md5-equal; tiltup_wall diffuse 7a4ed52a / normal 2e7a85ba): kn5_textures
+  PASS (40,714,845 B, 20 textures, 37 materials, 54 maps; missing / empty / zero-byte / unused 0); drive_test 0/0/0/0,
+  kinks 6.34, vertex bumps 16, apron steps 5, obstructed 0, floating 0; audit CLEAN (walls 20,743 v); verify_kn5 + --inis
+  PASS; kn5_ground_check PASS (24 walls, hovering 0, seat median -1.24 / p95 -0.27); road over ground 7 / 9,314; house_seat
+  PASS (3); F1 29 / 5 / 16 screen modules over 113 / 21 / 63 m, 0 left out; road kn5 40,714,845 B (the Mac's size; md5
+  8e8da5b3, tangents).
+- **Step 5, `tools/kn5_textures.py` on every installed kn5** (read-only, 2026-11-07 after the installs below;
+  `source/furniture/kn5_textures_installed.json` + `.summary.txt`): **Lake Murray `san_diego_lake_murray_v4` PASS on all
+  13 kn5s**; every doooom folder PASS (15 folders: the 13 `_lm` + `del_mar_fairgrounds` 0.1.0 + Lake Murray). Not ours:
+  93 folders, 2 with a FAIL, not fixed: `berowra_valley_national_park` (`asquith_start.kn5` / `asquith_start_reverse.kn5`,
+  6 missing each) and `vn_motorland_aragon_complex` (`xtras_speed.kn5`, 3 missing) — names in the JSON. The tool exits 1
+  on those third-party FAILs.
+- **INSTALLED on Kevin's word** (2026-11-07, "Install over 0.1.1 (Recommended)"): 1357968b from an empty
+  `D:/k10-scratch/milford_lm` (0.1.1's workshop parked as `milford_lm.0.1.1`), ENG eng_mflm_f2; kn5_textures PASS in the
+  chain; SHIP OK, no force. 0.1.1's folder parked in `D:/k10-track-archive/2026-11-07_134653/`; `milford_road_course_lm`
+  0.1.2, kn5 kn5_equiv-equivalent to the rehearsal (tangents only). Records with this note (no record path changed on this
+  branch since 1357968b). Not driven yet.

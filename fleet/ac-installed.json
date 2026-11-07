@@ -44,12 +44,12 @@
     "del_mar_fairgrounds_lm": {
       "branch": "claude/del-mar-lm",
       "engine": "lm-v4",
-      "installed": "2026-11-06",
-      "note": "Lake Murray engine + buildings pass 1 (ledger 0083), estimated layout; records on claude/del-mar-lm-0200-installed",
+      "installed": "2026-11-07",
+      "note": "Lake Murray engine, buildings at their 2024 lidar heights (ledger 0083), estimated layout; 0.2.1 records on claude/del-mar-lm d559550",
       "role": "current",
-      "sha": "fc7e09fa",
+      "sha": "557b7bdb",
       "track": "del-mar-lm",
-      "version": "0.2.0"
+      "version": "0.2.1"
     },
     "exotics_racing_lvms_lm": {
       "track": "exotics-racing-lv-lm",

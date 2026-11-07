@@ -45,11 +45,11 @@
       "branch": "claude/del-mar-lm",
       "engine": "lm-v4",
       "installed": "2026-11-07",
-      "note": "Lake Murray engine, buildings at their 2024 lidar heights (ledger 0083), estimated layout; 0.2.1 records on claude/del-mar-lm d559550",
+      "note": "every building at its 2024 lidar height, open roofs on posts (ledger 0083), estimated layout; records on claude/del-mar-lm",
       "role": "current",
-      "sha": "557b7bdb",
+      "sha": "b26e2b03",
       "track": "del-mar-lm",
-      "version": "0.2.1"
+      "version": "0.2.2"
     },
     "exotics_racing_lvms_lm": {
       "track": "exotics-racing-lv-lm",
@@ -88,12 +88,12 @@
     "milford_road_course_lm": {
       "branch": "claude/milford-furniture-lm",
       "engine": "lm-v4",
-      "installed": "2026-11-06",
-      "note": "0.1.1 = furniture pass 1 (ledger 0082), ENG must carry airoso assets/textures; records on claude/milford-lm-0101-installed",
+      "installed": "2026-11-07",
+      "note": "0.1.2 = F1 screen wall off the lidar + the kn5_textures gate (ledger 0082); records on claude/milford-furniture-lm 48daf25",
       "role": "current",
-      "sha": "2d4f56be",
+      "sha": "1357968b",
       "track": "milford-road-course-lm",
-      "version": "0.1.1"
+      "version": "0.1.2"
     },
     "pikes_peak_international_raceway_lm": {
       "track": "pikes-peak-lm",

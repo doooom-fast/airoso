@@ -1,0 +1,2843 @@
+{
+"summary": {
+"stations": 555,
+"with_edge": 523,
+"inside_edge_from_centre_m": {
+"p10": 15.9,
+"median": 18.3,
+"p90": 34.89
+},
+"pavement_past_built_left_edge_m": {
+"p10": 8.58,
+"median": 11.41,
+"p90": 28.27
+},
+"no_edge_runs": [
+[
+170.6,
+182.5
+],
+[
+224.4,
+224.4
+],
+[
+230.4,
+236.4
+],
+[
+245.4,
+251.3
+],
+[
+260.3,
+269.2
+],
+[
+275.2,
+278.2
+],
+[
+284.2,
+284.2
+],
+[
+296.1,
+311.0
+],
+[
+1319.9,
+1319.9
+],
+[
+1325.9,
+1325.9
+],
+[
+1331.8,
+1331.8
+],
+[
+1474.3,
+1483.2
+]
+]
+},
+"rows": [
+{
+"s": 0.0,
+"lane_left_m": 6.34,
+"inside_edge_m": 17.1
+},
+{
+"s": 3.0,
+"lane_left_m": 6.32,
+"inside_edge_m": 17.25
+},
+{
+"s": 6.0,
+"lane_left_m": 6.3,
+"inside_edge_m": 17.1
+},
+{
+"s": 9.0,
+"lane_left_m": 6.28,
+"inside_edge_m": 17.25
+},
+{
+"s": 11.9,
+"lane_left_m": 6.28,
+"inside_edge_m": 17.25
+},
+{
+"s": 14.9,
+"lane_left_m": 6.29,
+"inside_edge_m": 16.8
+},
+{
+"s": 17.9,
+"lane_left_m": 6.31,
+"inside_edge_m": 17.25
+},
+{
+"s": 20.9,
+"lane_left_m": 6.33,
+"inside_edge_m": 17.25
+},
+{
+"s": 23.9,
+"lane_left_m": 6.35,
+"inside_edge_m": 16.8
+},
+{
+"s": 26.9,
+"lane_left_m": 6.35,
+"inside_edge_m": 17.25
+},
+{
+"s": 29.9,
+"lane_left_m": 6.35,
+"inside_edge_m": 17.25
+},
+{
+"s": 32.9,
+"lane_left_m": 6.36,
+"inside_edge_m": 17.1
+},
+{
+"s": 35.9,
+"lane_left_m": 6.36,
+"inside_edge_m": 17.1
+},
+{
+"s": 38.9,
+"lane_left_m": 6.36,
+"inside_edge_m": 17.4
+},
+{
+"s": 41.9,
+"lane_left_m": 6.36,
+"inside_edge_m": 17.1
+},
+{
+"s": 44.9,
+"lane_left_m": 6.36,
+"inside_edge_m": 17.1
+},
+{
+"s": 47.8,
+"lane_left_m": 6.36,
+"inside_edge_m": 17.1
+},
+{
+"s": 50.8,
+"lane_left_m": 6.37,
+"inside_edge_m": 17.25
+},
+{
+"s": 53.8,
+"lane_left_m": 6.37,
+"inside_edge_m": 17.25
+},
+{
+"s": 56.8,
+"lane_left_m": 6.39,
+"inside_edge_m": 17.25
+},
+{
+"s": 59.8,
+"lane_left_m": 6.4,
+"inside_edge_m": 17.25
+},
+{
+"s": 62.8,
+"lane_left_m": 6.4,
+"inside_edge_m": 17.4
+},
+{
+"s": 65.8,
+"lane_left_m": 6.39,
+"inside_edge_m": 17.25
+},
+{
+"s": 68.8,
+"lane_left_m": 6.37,
+"inside_edge_m": 17.1
+},
+{
+"s": 71.8,
+"lane_left_m": 6.36,
+"inside_edge_m": 17.25
+},
+{
+"s": 74.8,
+"lane_left_m": 6.34,
+"inside_edge_m": 17.4
+},
+{
+"s": 77.8,
+"lane_left_m": 6.32,
+"inside_edge_m": 17.25
+},
+{
+"s": 80.8,
+"lane_left_m": 6.31,
+"inside_edge_m": 17.25
+},
+{
+"s": 83.8,
+"lane_left_m": 6.3,
+"inside_edge_m": 17.1
+},
+{
+"s": 86.8,
+"lane_left_m": 6.29,
+"inside_edge_m": 17.25
+},
+{
+"s": 89.7,
+"lane_left_m": 6.28,
+"inside_edge_m": 17.4
+},
+{
+"s": 92.7,
+"lane_left_m": 6.28,
+"inside_edge_m": 17.25
+},
+{
+"s": 95.7,
+"lane_left_m": 6.3,
+"inside_edge_m": 17.4
+},
+{
+"s": 98.7,
+"lane_left_m": 6.33,
+"inside_edge_m": 17.4
+},
+{
+"s": 101.7,
+"lane_left_m": 6.35,
+"inside_edge_m": 17.4
+},
+{
+"s": 104.7,
+"lane_left_m": 6.38,
+"inside_edge_m": 17.4
+},
+{
+"s": 107.7,
+"lane_left_m": 6.41,
+"inside_edge_m": 17.25
+},
+{
+"s": 110.7,
+"lane_left_m": 6.43,
+"inside_edge_m": 17.1
+},
+{
+"s": 113.7,
+"lane_left_m": 6.44,
+"inside_edge_m": 17.25
+},
+{
+"s": 116.7,
+"lane_left_m": 6.44,
+"inside_edge_m": 17.25
+},
+{
+"s": 119.7,
+"lane_left_m": 6.44,
+"inside_edge_m": 17.1
+},
+{
+"s": 122.7,
+"lane_left_m": 6.43,
+"inside_edge_m": 17.1
+},
+{
+"s": 125.7,
+"lane_left_m": 6.42,
+"inside_edge_m": 18.15
+},
+{
+"s": 128.7,
+"lane_left_m": 6.41,
+"inside_edge_m": 18.9
+},
+{
+"s": 131.7,
+"lane_left_m": 6.4,
+"inside_edge_m": 19.5
+},
+{
+"s": 134.7,
+"lane_left_m": 6.39,
+"inside_edge_m": 20.1
+},
+{
+"s": 137.7,
+"lane_left_m": 6.37,
+"inside_edge_m": 20.7
+},
+{
+"s": 140.6,
+"lane_left_m": 6.36,
+"inside_edge_m": 21.3
+},
+{
+"s": 143.6,
+"lane_left_m": 6.35,
+"inside_edge_m": 21.6
+},
+{
+"s": 146.6,
+"lane_left_m": 6.33,
+"inside_edge_m": 22.35
+},
+{
+"s": 149.6,
+"lane_left_m": 6.31,
+"inside_edge_m": 22.95
+},
+{
+"s": 152.6,
+"lane_left_m": 6.3,
+"inside_edge_m": 23.55
+},
+{
+"s": 155.6,
+"lane_left_m": 6.29,
+"inside_edge_m": 24.0
+},
+{
+"s": 158.6,
+"lane_left_m": 6.28,
+"inside_edge_m": 24.45
+},
+{
+"s": 161.6,
+"lane_left_m": 6.29,
+"inside_edge_m": 25.05
+},
+{
+"s": 164.6,
+"lane_left_m": 6.3,
+"inside_edge_m": 24.9
+},
+{
+"s": 167.6,
+"lane_left_m": 6.3,
+"inside_edge_m": 25.8
+},
+{
+"s": 170.6,
+"lane_left_m": 6.31,
+"inside_edge_m": null
+},
+{
+"s": 173.6,
+"lane_left_m": 6.3,
+"inside_edge_m": null
+},
+{
+"s": 176.6,
+"lane_left_m": 6.29,
+"inside_edge_m": null
+},
+{
+"s": 179.5,
+"lane_left_m": 6.29,
+"inside_edge_m": null
+},
+{
+"s": 182.5,
+"lane_left_m": 6.29,
+"inside_edge_m": null
+},
+{
+"s": 185.5,
+"lane_left_m": 6.3,
+"inside_edge_m": 33.6
+},
+{
+"s": 188.5,
+"lane_left_m": 6.33,
+"inside_edge_m": 30.15
+},
+{
+"s": 191.5,
+"lane_left_m": 6.36,
+"inside_edge_m": 35.1
+},
+{
+"s": 194.5,
+"lane_left_m": 6.37,
+"inside_edge_m": 27.45
+},
+{
+"s": 197.5,
+"lane_left_m": 6.4,
+"inside_edge_m": 23.25
+},
+{
+"s": 200.5,
+"lane_left_m": 6.41,
+"inside_edge_m": 25.2
+},
+{
+"s": 203.5,
+"lane_left_m": 6.44,
+"inside_edge_m": 17.4
+},
+{
+"s": 206.5,
+"lane_left_m": 6.46,
+"inside_edge_m": 16.2
+},
+{
+"s": 209.5,
+"lane_left_m": 6.48,
+"inside_edge_m": 15.45
+},
+{
+"s": 212.5,
+"lane_left_m": 6.5,
+"inside_edge_m": 14.4
+},
+{
+"s": 215.5,
+"lane_left_m": 6.5,
+"inside_edge_m": 14.7
+},
+{
+"s": 218.5,
+"lane_left_m": 6.49,
+"inside_edge_m": 19.65
+},
+{
+"s": 221.4,
+"lane_left_m": 6.49,
+"inside_edge_m": 19.65
+},
+{
+"s": 224.4,
+"lane_left_m": 6.47,
+"inside_edge_m": null
+},
+{
+"s": 227.4,
+"lane_left_m": 6.47,
+"inside_edge_m": 38.55
+},
+{
+"s": 230.4,
+"lane_left_m": 6.49,
+"inside_edge_m": null
+},
+{
+"s": 233.4,
+"lane_left_m": 6.49,
+"inside_edge_m": null
+},
+{
+"s": 236.4,
+"lane_left_m": 6.5,
+"inside_edge_m": null
+},
+{
+"s": 239.4,
+"lane_left_m": 6.49,
+"inside_edge_m": 37.8
+},
+{
+"s": 242.4,
+"lane_left_m": 6.48,
+"inside_edge_m": 37.8
+},
+{
+"s": 245.4,
+"lane_left_m": 6.46,
+"inside_edge_m": null
+},
+{
+"s": 248.4,
+"lane_left_m": 6.49,
+"inside_edge_m": null
+},
+{
+"s": 251.3,
+"lane_left_m": 6.52,
+"inside_edge_m": null
+},
+{
+"s": 254.3,
+"lane_left_m": 6.56,
+"inside_edge_m": 37.8
+},
+{
+"s": 257.3,
+"lane_left_m": 6.61,
+"inside_edge_m": 37.95
+},
+{
+"s": 260.3,
+"lane_left_m": 6.65,
+"inside_edge_m": null
+},
+{
+"s": 263.3,
+"lane_left_m": 6.67,
+"inside_edge_m": null
+},
+{
+"s": 266.3,
+"lane_left_m": 6.67,
+"inside_edge_m": null
+},
+{
+"s": 269.2,
+"lane_left_m": 6.67,
+"inside_edge_m": null
+},
+{
+"s": 272.2,
+"lane_left_m": 6.68,
+"inside_edge_m": 37.5
+},
+{
+"s": 275.2,
+"lane_left_m": 6.7,
+"inside_edge_m": null
+},
+{
+"s": 278.2,
+"lane_left_m": 6.72,
+"inside_edge_m": null
+},
+{
+"s": 281.2,
+"lane_left_m": 6.75,
+"inside_edge_m": 36.75
+},
+{
+"s": 284.2,
+"lane_left_m": 6.77,
+"inside_edge_m": null
+},
+{
+"s": 287.2,
+"lane_left_m": 6.78,
+"inside_edge_m": 37.35
+},
+{
+"s": 290.1,
+"lane_left_m": 6.79,
+"inside_edge_m": 37.2
+},
+{
+"s": 293.1,
+"lane_left_m": 6.8,
+"inside_edge_m": 37.35
+},
+{
+"s": 296.1,
+"lane_left_m": 6.82,
+"inside_edge_m": null
+},
+{
+"s": 299.1,
+"lane_left_m": 6.85,
+"inside_edge_m": null
+},
+{
+"s": 302.1,
+"lane_left_m": 6.87,
+"inside_edge_m": null
+},
+{
+"s": 305.1,
+"lane_left_m": 6.89,
+"inside_edge_m": null
+},
+{
+"s": 308.1,
+"lane_left_m": 6.91,
+"inside_edge_m": null
+},
+{
+"s": 311.0,
+"lane_left_m": 6.93,
+"inside_edge_m": null
+},
+{
+"s": 314.0,
+"lane_left_m": 6.94,
+"inside_edge_m": 37.8
+},
+{
+"s": 317.0,
+"lane_left_m": 6.96,
+"inside_edge_m": 37.95
+},
+{
+"s": 320.0,
+"lane_left_m": 6.99,
+"inside_edge_m": 37.5
+},
+{
+"s": 323.0,
+"lane_left_m": 7.01,
+"inside_edge_m": 37.8
+},
+{
+"s": 326.0,
+"lane_left_m": 7.01,
+"inside_edge_m": 37.5
+},
+{
+"s": 329.0,
+"lane_left_m": 7.02,
+"inside_edge_m": 36.75
+},
+{
+"s": 332.0,
+"lane_left_m": 7.02,
+"inside_edge_m": 37.35
+},
+{
+"s": 335.0,
+"lane_left_m": 7.01,
+"inside_edge_m": 36.3
+},
+{
+"s": 338.0,
+"lane_left_m": 7.02,
+"inside_edge_m": 37.35
+},
+{
+"s": 341.0,
+"lane_left_m": 7.04,
+"inside_edge_m": 36.6
+},
+{
+"s": 344.0,
+"lane_left_m": 7.08,
+"inside_edge_m": 36.0
+},
+{
+"s": 347.0,
+"lane_left_m": 7.13,
+"inside_edge_m": 36.3
+},
+{
+"s": 349.9,
+"lane_left_m": 7.17,
+"inside_edge_m": 36.9
+},
+{
+"s": 352.9,
+"lane_left_m": 7.2,
+"inside_edge_m": 37.35
+},
+{
+"s": 355.9,
+"lane_left_m": 7.22,
+"inside_edge_m": 36.45
+},
+{
+"s": 358.9,
+"lane_left_m": 7.21,
+"inside_edge_m": 37.5
+},
+{
+"s": 361.9,
+"lane_left_m": 7.21,
+"inside_edge_m": 37.2
+},
+{
+"s": 364.9,
+"lane_left_m": 7.21,
+"inside_edge_m": 37.35
+},
+{
+"s": 367.9,
+"lane_left_m": 7.22,
+"inside_edge_m": 37.05
+},
+{
+"s": 370.9,
+"lane_left_m": 7.24,
+"inside_edge_m": 37.2
+},
+{
+"s": 373.9,
+"lane_left_m": 7.25,
+"inside_edge_m": 37.5
+},
+{
+"s": 376.9,
+"lane_left_m": 7.25,
+"inside_edge_m": 37.35
+},
+{
+"s": 379.9,
+"lane_left_m": 7.24,
+"inside_edge_m": 37.5
+},
+{
+"s": 382.9,
+"lane_left_m": 7.23,
+"inside_edge_m": 37.65
+},
+{
+"s": 385.9,
+"lane_left_m": 7.22,
+"inside_edge_m": 37.35
+},
+{
+"s": 388.9,
+"lane_left_m": 7.22,
+"inside_edge_m": 37.65
+},
+{
+"s": 391.9,
+"lane_left_m": 7.22,
+"inside_edge_m": 37.35
+},
+{
+"s": 394.9,
+"lane_left_m": 7.21,
+"inside_edge_m": 37.65
+},
+{
+"s": 397.9,
+"lane_left_m": 7.2,
+"inside_edge_m": 37.8
+},
+{
+"s": 400.9,
+"lane_left_m": 7.18,
+"inside_edge_m": 4.65
+},
+{
+"s": 403.9,
+"lane_left_m": 7.17,
+"inside_edge_m": 19.35
+},
+{
+"s": 406.8,
+"lane_left_m": 7.17,
+"inside_edge_m": 18.3
+},
+{
+"s": 409.8,
+"lane_left_m": 7.21,
+"inside_edge_m": 18.3
+},
+{
+"s": 412.8,
+"lane_left_m": 7.26,
+"inside_edge_m": 18.15
+},
+{
+"s": 415.8,
+"lane_left_m": 7.32,
+"inside_edge_m": 18.3
+},
+{
+"s": 418.8,
+"lane_left_m": 7.38,
+"inside_edge_m": 18.3
+},
+{
+"s": 421.8,
+"lane_left_m": 7.42,
+"inside_edge_m": 18.3
+},
+{
+"s": 424.8,
+"lane_left_m": 7.44,
+"inside_edge_m": 18.3
+},
+{
+"s": 427.8,
+"lane_left_m": 7.45,
+"inside_edge_m": 17.7
+},
+{
+"s": 430.8,
+"lane_left_m": 7.47,
+"inside_edge_m": 18.0
+},
+{
+"s": 433.8,
+"lane_left_m": 7.49,
+"inside_edge_m": 3.45
+},
+{
+"s": 436.8,
+"lane_left_m": 7.52,
+"inside_edge_m": 3.3
+},
+{
+"s": 439.8,
+"lane_left_m": 7.53,
+"inside_edge_m": 3.3
+},
+{
+"s": 442.8,
+"lane_left_m": 7.54,
+"inside_edge_m": 4.35
+},
+{
+"s": 445.8,
+"lane_left_m": 7.53,
+"inside_edge_m": 17.85
+},
+{
+"s": 448.8,
+"lane_left_m": 7.51,
+"inside_edge_m": 17.85
+},
+{
+"s": 451.8,
+"lane_left_m": 7.5,
+"inside_edge_m": 17.7
+},
+{
+"s": 454.8,
+"lane_left_m": 7.49,
+"inside_edge_m": 17.55
+},
+{
+"s": 457.8,
+"lane_left_m": 7.48,
+"inside_edge_m": 17.85
+},
+{
+"s": 460.8,
+"lane_left_m": 7.48,
+"inside_edge_m": 17.85
+},
+{
+"s": 463.8,
+"lane_left_m": 7.48,
+"inside_edge_m": 17.85
+},
+{
+"s": 466.8,
+"lane_left_m": 7.47,
+"inside_edge_m": 17.85
+},
+{
+"s": 469.8,
+"lane_left_m": 7.46,
+"inside_edge_m": 17.85
+},
+{
+"s": 472.8,
+"lane_left_m": 7.44,
+"inside_edge_m": 17.85
+},
+{
+"s": 475.7,
+"lane_left_m": 7.43,
+"inside_edge_m": 18.0
+},
+{
+"s": 478.7,
+"lane_left_m": 7.43,
+"inside_edge_m": 18.0
+},
+{
+"s": 481.7,
+"lane_left_m": 7.45,
+"inside_edge_m": 17.7
+},
+{
+"s": 484.7,
+"lane_left_m": 7.46,
+"inside_edge_m": 17.7
+},
+{
+"s": 487.7,
+"lane_left_m": 7.46,
+"inside_edge_m": 17.55
+},
+{
+"s": 490.7,
+"lane_left_m": 7.45,
+"inside_edge_m": 17.85
+},
+{
+"s": 493.7,
+"lane_left_m": 7.43,
+"inside_edge_m": 18.15
+},
+{
+"s": 496.7,
+"lane_left_m": 7.42,
+"inside_edge_m": 17.85
+},
+{
+"s": 499.7,
+"lane_left_m": 7.42,
+"inside_edge_m": 17.85
+},
+{
+"s": 502.7,
+"lane_left_m": 7.43,
+"inside_edge_m": 17.85
+},
+{
+"s": 505.7,
+"lane_left_m": 7.46,
+"inside_edge_m": 18.15
+},
+{
+"s": 508.6,
+"lane_left_m": 7.47,
+"inside_edge_m": 17.85
+},
+{
+"s": 511.6,
+"lane_left_m": 7.5,
+"inside_edge_m": 18.15
+},
+{
+"s": 514.6,
+"lane_left_m": 7.51,
+"inside_edge_m": 18.0
+},
+{
+"s": 517.6,
+"lane_left_m": 7.52,
+"inside_edge_m": 18.0
+},
+{
+"s": 520.6,
+"lane_left_m": 7.53,
+"inside_edge_m": 17.85
+},
+{
+"s": 523.6,
+"lane_left_m": 7.55,
+"inside_edge_m": 17.85
+},
+{
+"s": 526.6,
+"lane_left_m": 7.56,
+"inside_edge_m": 17.85
+},
+{
+"s": 529.6,
+"lane_left_m": 7.57,
+"inside_edge_m": 17.85
+},
+{
+"s": 532.6,
+"lane_left_m": 7.58,
+"inside_edge_m": 17.7
+},
+{
+"s": 535.6,
+"lane_left_m": 7.57,
+"inside_edge_m": 18.0
+},
+{
+"s": 538.6,
+"lane_left_m": 7.57,
+"inside_edge_m": 17.85
+},
+{
+"s": 541.6,
+"lane_left_m": 7.58,
+"inside_edge_m": 17.85
+},
+{
+"s": 544.6,
+"lane_left_m": 7.58,
+"inside_edge_m": 18.0
+},
+{
+"s": 547.6,
+"lane_left_m": 7.6,
+"inside_edge_m": 18.0
+},
+{
+"s": 550.5,
+"lane_left_m": 7.61,
+"inside_edge_m": 18.0
+},
+{
+"s": 553.5,
+"lane_left_m": 7.61,
+"inside_edge_m": 17.85
+},
+{
+"s": 556.5,
+"lane_left_m": 7.6,
+"inside_edge_m": 18.15
+},
+{
+"s": 559.5,
+"lane_left_m": 7.59,
+"inside_edge_m": 18.3
+},
+{
+"s": 562.5,
+"lane_left_m": 7.58,
+"inside_edge_m": 18.0
+},
+{
+"s": 565.5,
+"lane_left_m": 7.56,
+"inside_edge_m": 18.3
+},
+{
+"s": 568.5,
+"lane_left_m": 7.56,
+"inside_edge_m": 18.3
+},
+{
+"s": 571.5,
+"lane_left_m": 7.57,
+"inside_edge_m": 17.85
+},
+{
+"s": 574.5,
+"lane_left_m": 7.56,
+"inside_edge_m": 18.15
+},
+{
+"s": 577.5,
+"lane_left_m": 7.54,
+"inside_edge_m": 18.3
+},
+{
+"s": 580.4,
+"lane_left_m": 7.52,
+"inside_edge_m": 18.0
+},
+{
+"s": 583.4,
+"lane_left_m": 7.5,
+"inside_edge_m": 18.0
+},
+{
+"s": 586.4,
+"lane_left_m": 7.48,
+"inside_edge_m": 17.7
+},
+{
+"s": 589.4,
+"lane_left_m": 7.47,
+"inside_edge_m": 18.0
+},
+{
+"s": 592.4,
+"lane_left_m": 7.48,
+"inside_edge_m": 18.15
+},
+{
+"s": 595.4,
+"lane_left_m": 7.49,
+"inside_edge_m": 18.0
+},
+{
+"s": 598.4,
+"lane_left_m": 7.49,
+"inside_edge_m": 18.0
+},
+{
+"s": 601.4,
+"lane_left_m": 7.48,
+"inside_edge_m": 18.15
+},
+{
+"s": 604.3,
+"lane_left_m": 7.45,
+"inside_edge_m": 17.25
+},
+{
+"s": 607.3,
+"lane_left_m": 7.43,
+"inside_edge_m": 18.0
+},
+{
+"s": 610.3,
+"lane_left_m": 7.42,
+"inside_edge_m": 18.15
+},
+{
+"s": 613.3,
+"lane_left_m": 7.4,
+"inside_edge_m": 18.0
+},
+{
+"s": 616.3,
+"lane_left_m": 7.41,
+"inside_edge_m": 18.15
+},
+{
+"s": 619.3,
+"lane_left_m": 7.41,
+"inside_edge_m": 18.3
+},
+{
+"s": 622.3,
+"lane_left_m": 7.39,
+"inside_edge_m": 18.3
+},
+{
+"s": 625.3,
+"lane_left_m": 7.37,
+"inside_edge_m": 18.45
+},
+{
+"s": 628.3,
+"lane_left_m": 7.35,
+"inside_edge_m": 18.45
+},
+{
+"s": 631.2,
+"lane_left_m": 7.34,
+"inside_edge_m": 18.3
+},
+{
+"s": 634.2,
+"lane_left_m": 7.34,
+"inside_edge_m": 18.45
+},
+{
+"s": 637.2,
+"lane_left_m": 7.37,
+"inside_edge_m": 18.45
+},
+{
+"s": 640.2,
+"lane_left_m": 7.38,
+"inside_edge_m": 18.15
+},
+{
+"s": 643.2,
+"lane_left_m": 7.41,
+"inside_edge_m": 18.45
+},
+{
+"s": 646.2,
+"lane_left_m": 7.42,
+"inside_edge_m": 18.9
+},
+{
+"s": 649.2,
+"lane_left_m": 7.43,
+"inside_edge_m": 35.7
+},
+{
+"s": 652.1,
+"lane_left_m": 7.42,
+"inside_edge_m": 35.55
+},
+{
+"s": 655.1,
+"lane_left_m": 7.42,
+"inside_edge_m": 34.5
+},
+{
+"s": 658.1,
+"lane_left_m": 7.42,
+"inside_edge_m": 34.2
+},
+{
+"s": 661.1,
+"lane_left_m": 7.41,
+"inside_edge_m": 33.75
+},
+{
+"s": 664.1,
+"lane_left_m": 7.39,
+"inside_edge_m": 33.15
+},
+{
+"s": 667.1,
+"lane_left_m": 7.36,
+"inside_edge_m": 32.55
+},
+{
+"s": 670.1,
+"lane_left_m": 7.33,
+"inside_edge_m": 31.8
+},
+{
+"s": 673.1,
+"lane_left_m": 7.27,
+"inside_edge_m": 30.75
+},
+{
+"s": 676.1,
+"lane_left_m": 7.23,
+"inside_edge_m": 30.15
+},
+{
+"s": 679.1,
+"lane_left_m": 7.19,
+"inside_edge_m": 29.25
+},
+{
+"s": 682.1,
+"lane_left_m": 7.18,
+"inside_edge_m": 28.5
+},
+{
+"s": 685.0,
+"lane_left_m": 7.17,
+"inside_edge_m": 28.2
+},
+{
+"s": 688.0,
+"lane_left_m": 7.18,
+"inside_edge_m": 27.3
+},
+{
+"s": 691.0,
+"lane_left_m": 7.18,
+"inside_edge_m": 26.25
+},
+{
+"s": 694.0,
+"lane_left_m": 7.18,
+"inside_edge_m": 25.65
+},
+{
+"s": 697.0,
+"lane_left_m": 7.17,
+"inside_edge_m": 24.9
+},
+{
+"s": 700.0,
+"lane_left_m": 7.15,
+"inside_edge_m": 23.85
+},
+{
+"s": 703.0,
+"lane_left_m": 7.13,
+"inside_edge_m": 23.4
+},
+{
+"s": 706.0,
+"lane_left_m": 7.12,
+"inside_edge_m": 22.5
+},
+{
+"s": 709.0,
+"lane_left_m": 7.12,
+"inside_edge_m": 21.9
+},
+{
+"s": 712.0,
+"lane_left_m": 7.11,
+"inside_edge_m": 21.0
+},
+{
+"s": 715.0,
+"lane_left_m": 7.1,
+"inside_edge_m": 20.1
+},
+{
+"s": 718.0,
+"lane_left_m": 7.11,
+"inside_edge_m": 19.5
+},
+{
+"s": 721.0,
+"lane_left_m": 7.11,
+"inside_edge_m": 18.45
+},
+{
+"s": 724.0,
+"lane_left_m": 7.12,
+"inside_edge_m": 17.85
+},
+{
+"s": 727.0,
+"lane_left_m": 7.13,
+"inside_edge_m": 16.8
+},
+{
+"s": 730.0,
+"lane_left_m": 7.14,
+"inside_edge_m": 16.2
+},
+{
+"s": 733.0,
+"lane_left_m": 7.14,
+"inside_edge_m": 16.2
+},
+{
+"s": 736.0,
+"lane_left_m": 7.15,
+"inside_edge_m": 16.2
+},
+{
+"s": 739.0,
+"lane_left_m": 7.17,
+"inside_edge_m": 10.8
+},
+{
+"s": 742.0,
+"lane_left_m": 7.19,
+"inside_edge_m": 15.9
+},
+{
+"s": 745.0,
+"lane_left_m": 7.2,
+"inside_edge_m": 16.05
+},
+{
+"s": 748.0,
+"lane_left_m": 7.22,
+"inside_edge_m": 16.05
+},
+{
+"s": 751.0,
+"lane_left_m": 7.24,
+"inside_edge_m": 15.75
+},
+{
+"s": 754.0,
+"lane_left_m": 7.26,
+"inside_edge_m": 16.05
+},
+{
+"s": 757.0,
+"lane_left_m": 7.27,
+"inside_edge_m": 16.2
+},
+{
+"s": 759.9,
+"lane_left_m": 7.29,
+"inside_edge_m": 15.9
+},
+{
+"s": 762.9,
+"lane_left_m": 7.31,
+"inside_edge_m": 15.9
+},
+{
+"s": 765.9,
+"lane_left_m": 7.33,
+"inside_edge_m": 16.35
+},
+{
+"s": 768.9,
+"lane_left_m": 7.33,
+"inside_edge_m": 16.05
+},
+{
+"s": 771.9,
+"lane_left_m": 7.33,
+"inside_edge_m": 16.05
+},
+{
+"s": 774.9,
+"lane_left_m": 7.33,
+"inside_edge_m": 16.35
+},
+{
+"s": 777.9,
+"lane_left_m": 7.32,
+"inside_edge_m": 16.05
+},
+{
+"s": 781.0,
+"lane_left_m": 7.32,
+"inside_edge_m": 16.05
+},
+{
+"s": 784.0,
+"lane_left_m": 7.3,
+"inside_edge_m": 16.05
+},
+{
+"s": 787.1,
+"lane_left_m": 7.3,
+"inside_edge_m": 15.75
+},
+{
+"s": 790.1,
+"lane_left_m": 7.3,
+"inside_edge_m": 15.75
+},
+{
+"s": 793.3,
+"lane_left_m": 7.29,
+"inside_edge_m": 15.6
+},
+{
+"s": 796.4,
+"lane_left_m": 7.29,
+"inside_edge_m": 15.9
+},
+{
+"s": 799.6,
+"lane_left_m": 7.29,
+"inside_edge_m": 15.9
+},
+{
+"s": 802.7,
+"lane_left_m": 7.29,
+"inside_edge_m": 15.75
+},
+{
+"s": 805.9,
+"lane_left_m": 7.29,
+"inside_edge_m": 16.05
+},
+{
+"s": 809.0,
+"lane_left_m": 7.3,
+"inside_edge_m": 15.9
+},
+{
+"s": 812.0,
+"lane_left_m": 7.32,
+"inside_edge_m": 15.75
+},
+{
+"s": 815.1,
+"lane_left_m": 7.33,
+"inside_edge_m": 15.75
+},
+{
+"s": 818.1,
+"lane_left_m": 7.34,
+"inside_edge_m": 16.05
+},
+{
+"s": 821.1,
+"lane_left_m": 7.34,
+"inside_edge_m": 15.9
+},
+{
+"s": 824.1,
+"lane_left_m": 7.35,
+"inside_edge_m": 15.75
+},
+{
+"s": 827.1,
+"lane_left_m": 7.35,
+"inside_edge_m": 16.2
+},
+{
+"s": 830.1,
+"lane_left_m": 7.36,
+"inside_edge_m": 15.9
+},
+{
+"s": 833.1,
+"lane_left_m": 7.37,
+"inside_edge_m": 15.9
+},
+{
+"s": 836.1,
+"lane_left_m": 7.39,
+"inside_edge_m": 15.9
+},
+{
+"s": 839.1,
+"lane_left_m": 7.41,
+"inside_edge_m": 15.9
+},
+{
+"s": 842.1,
+"lane_left_m": 7.42,
+"inside_edge_m": 16.05
+},
+{
+"s": 845.1,
+"lane_left_m": 7.43,
+"inside_edge_m": 16.05
+},
+{
+"s": 848.1,
+"lane_left_m": 7.45,
+"inside_edge_m": 16.05
+},
+{
+"s": 851.1,
+"lane_left_m": 7.45,
+"inside_edge_m": 16.05
+},
+{
+"s": 854.1,
+"lane_left_m": 7.45,
+"inside_edge_m": 15.75
+},
+{
+"s": 857.1,
+"lane_left_m": 7.45,
+"inside_edge_m": 16.2
+},
+{
+"s": 860.1,
+"lane_left_m": 7.45,
+"inside_edge_m": 16.2
+},
+{
+"s": 863.1,
+"lane_left_m": 7.44,
+"inside_edge_m": 15.9
+},
+{
+"s": 866.1,
+"lane_left_m": 7.44,
+"inside_edge_m": 15.9
+},
+{
+"s": 869.1,
+"lane_left_m": 7.44,
+"inside_edge_m": 16.05
+},
+{
+"s": 872.0,
+"lane_left_m": 7.45,
+"inside_edge_m": 15.9
+},
+{
+"s": 875.0,
+"lane_left_m": 7.47,
+"inside_edge_m": 15.9
+},
+{
+"s": 878.0,
+"lane_left_m": 7.48,
+"inside_edge_m": 16.05
+},
+{
+"s": 881.0,
+"lane_left_m": 7.49,
+"inside_edge_m": 15.9
+},
+{
+"s": 884.0,
+"lane_left_m": 7.5,
+"inside_edge_m": 15.75
+},
+{
+"s": 887.0,
+"lane_left_m": 7.49,
+"inside_edge_m": 16.05
+},
+{
+"s": 890.0,
+"lane_left_m": 7.48,
+"inside_edge_m": 15.9
+},
+{
+"s": 893.0,
+"lane_left_m": 7.47,
+"inside_edge_m": 15.75
+},
+{
+"s": 896.0,
+"lane_left_m": 7.46,
+"inside_edge_m": 15.75
+},
+{
+"s": 899.0,
+"lane_left_m": 7.46,
+"inside_edge_m": 16.05
+},
+{
+"s": 902.0,
+"lane_left_m": 7.46,
+"inside_edge_m": 15.9
+},
+{
+"s": 905.0,
+"lane_left_m": 7.47,
+"inside_edge_m": 15.9
+},
+{
+"s": 908.0,
+"lane_left_m": 7.47,
+"inside_edge_m": 16.05
+},
+{
+"s": 911.0,
+"lane_left_m": 7.48,
+"inside_edge_m": 15.9
+},
+{
+"s": 914.0,
+"lane_left_m": 7.49,
+"inside_edge_m": 15.9
+},
+{
+"s": 917.0,
+"lane_left_m": 7.48,
+"inside_edge_m": 16.05
+},
+{
+"s": 920.0,
+"lane_left_m": 7.49,
+"inside_edge_m": 15.9
+},
+{
+"s": 923.0,
+"lane_left_m": 7.5,
+"inside_edge_m": 16.05
+},
+{
+"s": 926.0,
+"lane_left_m": 7.51,
+"inside_edge_m": 16.8
+},
+{
+"s": 929.0,
+"lane_left_m": 7.51,
+"inside_edge_m": 17.1
+},
+{
+"s": 932.0,
+"lane_left_m": 7.53,
+"inside_edge_m": 16.8
+},
+{
+"s": 935.0,
+"lane_left_m": 7.53,
+"inside_edge_m": 15.6
+},
+{
+"s": 938.0,
+"lane_left_m": 7.52,
+"inside_edge_m": 16.5
+},
+{
+"s": 941.0,
+"lane_left_m": 7.49,
+"inside_edge_m": 17.25
+},
+{
+"s": 944.0,
+"lane_left_m": 7.47,
+"inside_edge_m": 19.65
+},
+{
+"s": 947.0,
+"lane_left_m": 7.45,
+"inside_edge_m": 20.1
+},
+{
+"s": 950.0,
+"lane_left_m": 7.42,
+"inside_edge_m": 21.15
+},
+{
+"s": 953.0,
+"lane_left_m": 7.41,
+"inside_edge_m": 22.2
+},
+{
+"s": 956.0,
+"lane_left_m": 7.41,
+"inside_edge_m": 23.25
+},
+{
+"s": 959.0,
+"lane_left_m": 7.42,
+"inside_edge_m": 24.3
+},
+{
+"s": 962.0,
+"lane_left_m": 7.42,
+"inside_edge_m": 25.35
+},
+{
+"s": 965.0,
+"lane_left_m": 7.43,
+"inside_edge_m": 26.4
+},
+{
+"s": 968.0,
+"lane_left_m": 7.43,
+"inside_edge_m": 27.75
+},
+{
+"s": 971.0,
+"lane_left_m": 7.43,
+"inside_edge_m": 28.8
+},
+{
+"s": 974.0,
+"lane_left_m": 7.43,
+"inside_edge_m": 29.85
+},
+{
+"s": 977.0,
+"lane_left_m": 7.43,
+"inside_edge_m": 31.35
+},
+{
+"s": 980.0,
+"lane_left_m": 7.43,
+"inside_edge_m": 32.4
+},
+{
+"s": 983.0,
+"lane_left_m": 7.43,
+"inside_edge_m": 33.6
+},
+{
+"s": 986.0,
+"lane_left_m": 7.4,
+"inside_edge_m": 34.35
+},
+{
+"s": 989.0,
+"lane_left_m": 7.36,
+"inside_edge_m": 35.25
+},
+{
+"s": 992.0,
+"lane_left_m": 7.32,
+"inside_edge_m": 18.15
+},
+{
+"s": 994.9,
+"lane_left_m": 7.27,
+"inside_edge_m": 18.15
+},
+{
+"s": 997.9,
+"lane_left_m": 7.24,
+"inside_edge_m": 18.45
+},
+{
+"s": 1000.9,
+"lane_left_m": 7.22,
+"inside_edge_m": 18.9
+},
+{
+"s": 1003.9,
+"lane_left_m": 7.22,
+"inside_edge_m": 18.75
+},
+{
+"s": 1006.9,
+"lane_left_m": 7.22,
+"inside_edge_m": 18.6
+},
+{
+"s": 1009.9,
+"lane_left_m": 7.21,
+"inside_edge_m": 18.9
+},
+{
+"s": 1012.9,
+"lane_left_m": 7.21,
+"inside_edge_m": 19.05
+},
+{
+"s": 1015.9,
+"lane_left_m": 7.2,
+"inside_edge_m": 20.4
+},
+{
+"s": 1018.9,
+"lane_left_m": 7.2,
+"inside_edge_m": 19.05
+},
+{
+"s": 1021.9,
+"lane_left_m": 7.2,
+"inside_edge_m": 19.35
+},
+{
+"s": 1024.9,
+"lane_left_m": 7.22,
+"inside_edge_m": 19.2
+},
+{
+"s": 1027.9,
+"lane_left_m": 7.24,
+"inside_edge_m": 19.35
+},
+{
+"s": 1030.9,
+"lane_left_m": 7.25,
+"inside_edge_m": 19.35
+},
+{
+"s": 1033.8,
+"lane_left_m": 7.26,
+"inside_edge_m": 19.2
+},
+{
+"s": 1036.8,
+"lane_left_m": 7.26,
+"inside_edge_m": 19.2
+},
+{
+"s": 1039.8,
+"lane_left_m": 7.25,
+"inside_edge_m": 19.2
+},
+{
+"s": 1042.8,
+"lane_left_m": 7.23,
+"inside_edge_m": 19.05
+},
+{
+"s": 1045.8,
+"lane_left_m": 7.22,
+"inside_edge_m": 19.05
+},
+{
+"s": 1048.8,
+"lane_left_m": 7.2,
+"inside_edge_m": 18.9
+},
+{
+"s": 1051.8,
+"lane_left_m": 7.18,
+"inside_edge_m": 19.05
+},
+{
+"s": 1054.8,
+"lane_left_m": 7.15,
+"inside_edge_m": 19.05
+},
+{
+"s": 1057.8,
+"lane_left_m": 7.11,
+"inside_edge_m": 19.2
+},
+{
+"s": 1060.8,
+"lane_left_m": 7.06,
+"inside_edge_m": 19.2
+},
+{
+"s": 1063.8,
+"lane_left_m": 7.01,
+"inside_edge_m": 19.35
+},
+{
+"s": 1066.7,
+"lane_left_m": 6.98,
+"inside_edge_m": 19.05
+},
+{
+"s": 1069.7,
+"lane_left_m": 6.96,
+"inside_edge_m": 19.05
+},
+{
+"s": 1072.7,
+"lane_left_m": 6.95,
+"inside_edge_m": 18.75
+},
+{
+"s": 1075.7,
+"lane_left_m": 6.94,
+"inside_edge_m": 19.05
+},
+{
+"s": 1078.7,
+"lane_left_m": 6.92,
+"inside_edge_m": 19.05
+},
+{
+"s": 1081.7,
+"lane_left_m": 6.91,
+"inside_edge_m": 19.05
+},
+{
+"s": 1084.7,
+"lane_left_m": 6.89,
+"inside_edge_m": 19.2
+},
+{
+"s": 1087.6,
+"lane_left_m": 6.88,
+"inside_edge_m": 19.05
+},
+{
+"s": 1090.6,
+"lane_left_m": 6.87,
+"inside_edge_m": 19.05
+},
+{
+"s": 1093.6,
+"lane_left_m": 6.88,
+"inside_edge_m": 19.05
+},
+{
+"s": 1096.6,
+"lane_left_m": 6.88,
+"inside_edge_m": 19.05
+},
+{
+"s": 1099.6,
+"lane_left_m": 6.86,
+"inside_edge_m": 19.05
+},
+{
+"s": 1102.6,
+"lane_left_m": 6.83,
+"inside_edge_m": 19.05
+},
+{
+"s": 1105.6,
+"lane_left_m": 6.8,
+"inside_edge_m": 19.2
+},
+{
+"s": 1108.6,
+"lane_left_m": 6.77,
+"inside_edge_m": 19.2
+},
+{
+"s": 1111.5,
+"lane_left_m": 6.74,
+"inside_edge_m": 19.35
+},
+{
+"s": 1114.5,
+"lane_left_m": 6.72,
+"inside_edge_m": 19.35
+},
+{
+"s": 1117.5,
+"lane_left_m": 6.71,
+"inside_edge_m": 19.35
+},
+{
+"s": 1120.5,
+"lane_left_m": 6.69,
+"inside_edge_m": 19.35
+},
+{
+"s": 1123.5,
+"lane_left_m": 6.66,
+"inside_edge_m": 19.5
+},
+{
+"s": 1126.5,
+"lane_left_m": 6.62,
+"inside_edge_m": 19.35
+},
+{
+"s": 1129.5,
+"lane_left_m": 6.59,
+"inside_edge_m": 19.5
+},
+{
+"s": 1132.4,
+"lane_left_m": 6.57,
+"inside_edge_m": 19.2
+},
+{
+"s": 1135.4,
+"lane_left_m": 6.55,
+"inside_edge_m": 19.5
+},
+{
+"s": 1138.4,
+"lane_left_m": 6.55,
+"inside_edge_m": 19.5
+},
+{
+"s": 1141.4,
+"lane_left_m": 6.56,
+"inside_edge_m": 19.35
+},
+{
+"s": 1144.4,
+"lane_left_m": 6.56,
+"inside_edge_m": 19.5
+},
+{
+"s": 1147.3,
+"lane_left_m": 6.55,
+"inside_edge_m": 19.35
+},
+{
+"s": 1150.3,
+"lane_left_m": 6.53,
+"inside_edge_m": 19.35
+},
+{
+"s": 1153.3,
+"lane_left_m": 6.53,
+"inside_edge_m": 19.5
+},
+{
+"s": 1156.3,
+"lane_left_m": 6.53,
+"inside_edge_m": 19.65
+},
+{
+"s": 1159.3,
+"lane_left_m": 6.54,
+"inside_edge_m": 19.65
+},
+{
+"s": 1162.3,
+"lane_left_m": 6.55,
+"inside_edge_m": 19.5
+},
+{
+"s": 1165.2,
+"lane_left_m": 6.55,
+"inside_edge_m": 19.65
+},
+{
+"s": 1168.2,
+"lane_left_m": 6.54,
+"inside_edge_m": 19.2
+},
+{
+"s": 1171.2,
+"lane_left_m": 6.52,
+"inside_edge_m": 19.5
+},
+{
+"s": 1174.2,
+"lane_left_m": 6.49,
+"inside_edge_m": 19.5
+},
+{
+"s": 1177.2,
+"lane_left_m": 6.46,
+"inside_edge_m": 19.35
+},
+{
+"s": 1180.2,
+"lane_left_m": 6.45,
+"inside_edge_m": 19.65
+},
+{
+"s": 1183.1,
+"lane_left_m": 6.43,
+"inside_edge_m": 19.5
+},
+{
+"s": 1186.1,
+"lane_left_m": 6.43,
+"inside_edge_m": 19.5
+},
+{
+"s": 1189.1,
+"lane_left_m": 6.41,
+"inside_edge_m": 19.5
+},
+{
+"s": 1192.1,
+"lane_left_m": 6.38,
+"inside_edge_m": 19.5
+},
+{
+"s": 1195.1,
+"lane_left_m": 6.35,
+"inside_edge_m": 19.5
+},
+{
+"s": 1198.0,
+"lane_left_m": 6.32,
+"inside_edge_m": 19.65
+},
+{
+"s": 1201.0,
+"lane_left_m": 6.3,
+"inside_edge_m": 19.5
+},
+{
+"s": 1204.0,
+"lane_left_m": 6.29,
+"inside_edge_m": 19.65
+},
+{
+"s": 1207.0,
+"lane_left_m": 6.28,
+"inside_edge_m": 21.75
+},
+{
+"s": 1210.0,
+"lane_left_m": 6.28,
+"inside_edge_m": 19.65
+},
+{
+"s": 1212.9,
+"lane_left_m": 6.26,
+"inside_edge_m": 19.65
+},
+{
+"s": 1215.9,
+"lane_left_m": 6.24,
+"inside_edge_m": 21.75
+},
+{
+"s": 1218.9,
+"lane_left_m": 6.22,
+"inside_edge_m": 19.5
+},
+{
+"s": 1221.9,
+"lane_left_m": 6.2,
+"inside_edge_m": 19.65
+},
+{
+"s": 1224.8,
+"lane_left_m": 6.18,
+"inside_edge_m": 19.5
+},
+{
+"s": 1227.8,
+"lane_left_m": 6.18,
+"inside_edge_m": 19.5
+},
+{
+"s": 1230.8,
+"lane_left_m": 6.18,
+"inside_edge_m": 19.5
+},
+{
+"s": 1233.7,
+"lane_left_m": 6.19,
+"inside_edge_m": 19.5
+},
+{
+"s": 1236.7,
+"lane_left_m": 6.19,
+"inside_edge_m": 19.65
+},
+{
+"s": 1239.7,
+"lane_left_m": 6.19,
+"inside_edge_m": 19.5
+},
+{
+"s": 1242.7,
+"lane_left_m": 6.19,
+"inside_edge_m": 19.65
+},
+{
+"s": 1245.7,
+"lane_left_m": 6.18,
+"inside_edge_m": 19.35
+},
+{
+"s": 1248.6,
+"lane_left_m": 6.18,
+"inside_edge_m": 19.5
+},
+{
+"s": 1251.6,
+"lane_left_m": 6.18,
+"inside_edge_m": 19.35
+},
+{
+"s": 1254.6,
+"lane_left_m": 6.18,
+"inside_edge_m": 19.65
+},
+{
+"s": 1257.6,
+"lane_left_m": 6.15,
+"inside_edge_m": 19.5
+},
+{
+"s": 1260.5,
+"lane_left_m": 6.12,
+"inside_edge_m": 19.65
+},
+{
+"s": 1263.5,
+"lane_left_m": 6.09,
+"inside_edge_m": 18.75
+},
+{
+"s": 1266.5,
+"lane_left_m": 6.06,
+"inside_edge_m": 19.5
+},
+{
+"s": 1269.5,
+"lane_left_m": 6.04,
+"inside_edge_m": 19.65
+},
+{
+"s": 1272.4,
+"lane_left_m": 6.03,
+"inside_edge_m": 19.35
+},
+{
+"s": 1275.4,
+"lane_left_m": 6.02,
+"inside_edge_m": 19.35
+},
+{
+"s": 1278.4,
+"lane_left_m": 6.01,
+"inside_edge_m": 19.5
+},
+{
+"s": 1281.3,
+"lane_left_m": 5.99,
+"inside_edge_m": 19.2
+},
+{
+"s": 1284.3,
+"lane_left_m": 5.97,
+"inside_edge_m": 19.2
+},
+{
+"s": 1287.3,
+"lane_left_m": 5.96,
+"inside_edge_m": 19.35
+},
+{
+"s": 1290.2,
+"lane_left_m": 5.95,
+"inside_edge_m": 19.65
+},
+{
+"s": 1293.2,
+"lane_left_m": 5.98,
+"inside_edge_m": 22.8
+},
+{
+"s": 1296.1,
+"lane_left_m": 6.01,
+"inside_edge_m": 36.45
+},
+{
+"s": 1299.1,
+"lane_left_m": 6.04,
+"inside_edge_m": 36.0
+},
+{
+"s": 1302.1,
+"lane_left_m": 6.07,
+"inside_edge_m": 35.7
+},
+{
+"s": 1305.1,
+"lane_left_m": 6.07,
+"inside_edge_m": 35.1
+},
+{
+"s": 1308.0,
+"lane_left_m": 6.05,
+"inside_edge_m": 34.95
+},
+{
+"s": 1311.0,
+"lane_left_m": 6.03,
+"inside_edge_m": 34.65
+},
+{
+"s": 1314.0,
+"lane_left_m": 6.0,
+"inside_edge_m": 33.75
+},
+{
+"s": 1316.9,
+"lane_left_m": 5.99,
+"inside_edge_m": 34.5
+},
+{
+"s": 1319.9,
+"lane_left_m": 5.99,
+"inside_edge_m": null
+},
+{
+"s": 1322.9,
+"lane_left_m": 5.99,
+"inside_edge_m": 22.65
+},
+{
+"s": 1325.9,
+"lane_left_m": 6.0,
+"inside_edge_m": null
+},
+{
+"s": 1328.8,
+"lane_left_m": 6.01,
+"inside_edge_m": 19.35
+},
+{
+"s": 1331.8,
+"lane_left_m": 6.01,
+"inside_edge_m": null
+},
+{
+"s": 1334.7,
+"lane_left_m": 6.01,
+"inside_edge_m": 16.35
+},
+{
+"s": 1337.7,
+"lane_left_m": 6.01,
+"inside_edge_m": 11.7
+},
+{
+"s": 1340.7,
+"lane_left_m": 6.01,
+"inside_edge_m": 12.9
+},
+{
+"s": 1343.6,
+"lane_left_m": 6.0,
+"inside_edge_m": 13.2
+},
+{
+"s": 1346.6,
+"lane_left_m": 5.99,
+"inside_edge_m": 12.75
+},
+{
+"s": 1349.6,
+"lane_left_m": 5.99,
+"inside_edge_m": 36.0
+},
+{
+"s": 1352.5,
+"lane_left_m": 5.98,
+"inside_edge_m": 9.15
+},
+{
+"s": 1355.5,
+"lane_left_m": 5.99,
+"inside_edge_m": 32.7
+},
+{
+"s": 1358.4,
+"lane_left_m": 6.01,
+"inside_edge_m": 32.1
+},
+{
+"s": 1361.4,
+"lane_left_m": 6.04,
+"inside_edge_m": 3.9
+},
+{
+"s": 1364.4,
+"lane_left_m": 6.08,
+"inside_edge_m": 3.15
+},
+{
+"s": 1367.3,
+"lane_left_m": 6.1,
+"inside_edge_m": 1.8
+},
+{
+"s": 1370.3,
+"lane_left_m": 6.11,
+"inside_edge_m": 1.2
+},
+{
+"s": 1373.3,
+"lane_left_m": 6.11,
+"inside_edge_m": 30.6
+},
+{
+"s": 1376.2,
+"lane_left_m": 6.1,
+"inside_edge_m": 30.45
+},
+{
+"s": 1379.2,
+"lane_left_m": 6.09,
+"inside_edge_m": 0.0
+},
+{
+"s": 1382.2,
+"lane_left_m": 6.08,
+"inside_edge_m": 30.0
+},
+{
+"s": 1385.1,
+"lane_left_m": 6.07,
+"inside_edge_m": 29.4
+},
+{
+"s": 1388.1,
+"lane_left_m": 6.07,
+"inside_edge_m": 29.1
+},
+{
+"s": 1391.0,
+"lane_left_m": 6.07,
+"inside_edge_m": 29.1
+},
+{
+"s": 1394.0,
+"lane_left_m": 6.07,
+"inside_edge_m": 28.5
+},
+{
+"s": 1397.0,
+"lane_left_m": 6.07,
+"inside_edge_m": 28.35
+},
+{
+"s": 1399.9,
+"lane_left_m": 6.08,
+"inside_edge_m": 28.5
+},
+{
+"s": 1402.9,
+"lane_left_m": 6.11,
+"inside_edge_m": 28.05
+},
+{
+"s": 1405.9,
+"lane_left_m": 6.15,
+"inside_edge_m": 27.3
+},
+{
+"s": 1408.8,
+"lane_left_m": 6.18,
+"inside_edge_m": 28.05
+},
+{
+"s": 1411.8,
+"lane_left_m": 6.21,
+"inside_edge_m": 28.05
+},
+{
+"s": 1414.8,
+"lane_left_m": 6.21,
+"inside_edge_m": 27.9
+},
+{
+"s": 1417.7,
+"lane_left_m": 6.18,
+"inside_edge_m": 27.45
+},
+{
+"s": 1420.7,
+"lane_left_m": 6.15,
+"inside_edge_m": 0.9
+},
+{
+"s": 1423.7,
+"lane_left_m": 6.13,
+"inside_edge_m": 27.75
+},
+{
+"s": 1426.6,
+"lane_left_m": 6.14,
+"inside_edge_m": 27.75
+},
+{
+"s": 1429.6,
+"lane_left_m": 6.16,
+"inside_edge_m": 27.9
+},
+{
+"s": 1432.6,
+"lane_left_m": 6.19,
+"inside_edge_m": 27.75
+},
+{
+"s": 1435.5,
+"lane_left_m": 6.21,
+"inside_edge_m": 27.45
+},
+{
+"s": 1438.5,
+"lane_left_m": 6.23,
+"inside_edge_m": 28.5
+},
+{
+"s": 1441.5,
+"lane_left_m": 6.21,
+"inside_edge_m": 28.95
+},
+{
+"s": 1444.5,
+"lane_left_m": 6.19,
+"inside_edge_m": 29.4
+},
+{
+"s": 1447.4,
+"lane_left_m": 6.17,
+"inside_edge_m": 30.15
+},
+{
+"s": 1450.4,
+"lane_left_m": 6.15,
+"inside_edge_m": 30.75
+},
+{
+"s": 1453.4,
+"lane_left_m": 6.12,
+"inside_edge_m": 30.3
+},
+{
+"s": 1456.4,
+"lane_left_m": 6.11,
+"inside_edge_m": 31.5
+},
+{
+"s": 1459.4,
+"lane_left_m": 6.1,
+"inside_edge_m": 34.35
+},
+{
+"s": 1462.4,
+"lane_left_m": 6.09,
+"inside_edge_m": 35.4
+},
+{
+"s": 1465.3,
+"lane_left_m": 6.08,
+"inside_edge_m": 36.45
+},
+{
+"s": 1468.3,
+"lane_left_m": 6.07,
+"inside_edge_m": 37.65
+},
+{
+"s": 1471.3,
+"lane_left_m": 6.06,
+"inside_edge_m": 38.4
+},
+{
+"s": 1474.3,
+"lane_left_m": 6.05,
+"inside_edge_m": null
+},
+{
+"s": 1477.3,
+"lane_left_m": 6.04,
+"inside_edge_m": null
+},
+{
+"s": 1480.2,
+"lane_left_m": 6.04,
+"inside_edge_m": null
+},
+{
+"s": 1483.2,
+"lane_left_m": 6.04,
+"inside_edge_m": null
+},
+{
+"s": 1486.2,
+"lane_left_m": 6.04,
+"inside_edge_m": 27.9
+},
+{
+"s": 1489.2,
+"lane_left_m": 6.03,
+"inside_edge_m": 18.15
+},
+{
+"s": 1492.2,
+"lane_left_m": 6.03,
+"inside_edge_m": 18.15
+},
+{
+"s": 1495.1,
+"lane_left_m": 6.04,
+"inside_edge_m": 17.85
+},
+{
+"s": 1498.1,
+"lane_left_m": 6.06,
+"inside_edge_m": 17.7
+},
+{
+"s": 1501.1,
+"lane_left_m": 6.08,
+"inside_edge_m": 17.85
+},
+{
+"s": 1504.1,
+"lane_left_m": 6.11,
+"inside_edge_m": 17.7
+},
+{
+"s": 1507.1,
+"lane_left_m": 6.14,
+"inside_edge_m": 17.55
+},
+{
+"s": 1510.1,
+"lane_left_m": 6.15,
+"inside_edge_m": 17.85
+},
+{
+"s": 1513.1,
+"lane_left_m": 6.17,
+"inside_edge_m": 17.7
+},
+{
+"s": 1516.0,
+"lane_left_m": 6.18,
+"inside_edge_m": 17.55
+},
+{
+"s": 1519.0,
+"lane_left_m": 6.18,
+"inside_edge_m": 18.0
+},
+{
+"s": 1522.0,
+"lane_left_m": 6.19,
+"inside_edge_m": 17.55
+},
+{
+"s": 1525.0,
+"lane_left_m": 6.2,
+"inside_edge_m": 17.55
+},
+{
+"s": 1528.0,
+"lane_left_m": 6.21,
+"inside_edge_m": 17.7
+},
+{
+"s": 1531.0,
+"lane_left_m": 6.21,
+"inside_edge_m": 17.4
+},
+{
+"s": 1534.0,
+"lane_left_m": 6.21,
+"inside_edge_m": 17.25
+},
+{
+"s": 1537.0,
+"lane_left_m": 6.22,
+"inside_edge_m": 17.25
+},
+{
+"s": 1540.0,
+"lane_left_m": 6.22,
+"inside_edge_m": 17.25
+},
+{
+"s": 1542.9,
+"lane_left_m": 6.23,
+"inside_edge_m": 17.25
+},
+{
+"s": 1545.9,
+"lane_left_m": 6.23,
+"inside_edge_m": 17.25
+},
+{
+"s": 1548.9,
+"lane_left_m": 6.24,
+"inside_edge_m": 17.25
+},
+{
+"s": 1551.9,
+"lane_left_m": 6.24,
+"inside_edge_m": 17.25
+},
+{
+"s": 1554.9,
+"lane_left_m": 6.25,
+"inside_edge_m": 17.55
+},
+{
+"s": 1557.9,
+"lane_left_m": 6.25,
+"inside_edge_m": 17.25
+},
+{
+"s": 1560.9,
+"lane_left_m": 6.26,
+"inside_edge_m": 17.4
+},
+{
+"s": 1563.9,
+"lane_left_m": 6.27,
+"inside_edge_m": 17.4
+},
+{
+"s": 1566.9,
+"lane_left_m": 6.28,
+"inside_edge_m": 17.55
+},
+{
+"s": 1569.9,
+"lane_left_m": 6.28,
+"inside_edge_m": 17.55
+},
+{
+"s": 1572.9,
+"lane_left_m": 6.27,
+"inside_edge_m": 17.55
+},
+{
+"s": 1575.9,
+"lane_left_m": 6.25,
+"inside_edge_m": 17.7
+},
+{
+"s": 1578.8,
+"lane_left_m": 6.22,
+"inside_edge_m": 17.55
+},
+{
+"s": 1581.8,
+"lane_left_m": 6.19,
+"inside_edge_m": 17.7
+},
+{
+"s": 1584.8,
+"lane_left_m": 6.17,
+"inside_edge_m": 17.25
+},
+{
+"s": 1587.8,
+"lane_left_m": 6.15,
+"inside_edge_m": 17.7
+},
+{
+"s": 1590.8,
+"lane_left_m": 6.14,
+"inside_edge_m": 17.4
+},
+{
+"s": 1593.8,
+"lane_left_m": 6.14,
+"inside_edge_m": 17.55
+},
+{
+"s": 1596.8,
+"lane_left_m": 6.14,
+"inside_edge_m": 17.4
+},
+{
+"s": 1599.7,
+"lane_left_m": 6.15,
+"inside_edge_m": 17.4
+},
+{
+"s": 1602.7,
+"lane_left_m": 6.16,
+"inside_edge_m": 17.55
+},
+{
+"s": 1605.7,
+"lane_left_m": 6.17,
+"inside_edge_m": 17.25
+},
+{
+"s": 1608.7,
+"lane_left_m": 6.18,
+"inside_edge_m": 17.25
+},
+{
+"s": 1611.7,
+"lane_left_m": 6.2,
+"inside_edge_m": 17.25
+},
+{
+"s": 1614.7,
+"lane_left_m": 6.22,
+"inside_edge_m": 17.25
+},
+{
+"s": 1617.7,
+"lane_left_m": 6.24,
+"inside_edge_m": 17.25
+},
+{
+"s": 1620.7,
+"lane_left_m": 6.26,
+"inside_edge_m": 17.25
+},
+{
+"s": 1623.7,
+"lane_left_m": 6.29,
+"inside_edge_m": 17.25
+},
+{
+"s": 1626.7,
+"lane_left_m": 6.31,
+"inside_edge_m": 17.1
+},
+{
+"s": 1629.7,
+"lane_left_m": 6.32,
+"inside_edge_m": 17.1
+},
+{
+"s": 1632.6,
+"lane_left_m": 6.33,
+"inside_edge_m": 16.95
+},
+{
+"s": 1635.6,
+"lane_left_m": 6.35,
+"inside_edge_m": 17.1
+},
+{
+"s": 1638.6,
+"lane_left_m": 6.37,
+"inside_edge_m": 17.1
+},
+{
+"s": 1641.6,
+"lane_left_m": 6.37,
+"inside_edge_m": 16.95
+},
+{
+"s": 1644.6,
+"lane_left_m": 6.38,
+"inside_edge_m": 17.25
+},
+{
+"s": 1647.6,
+"lane_left_m": 6.38,
+"inside_edge_m": 16.95
+},
+{
+"s": 1650.6,
+"lane_left_m": 6.37,
+"inside_edge_m": 16.95
+},
+{
+"s": 1653.6,
+"lane_left_m": 6.37,
+"inside_edge_m": 17.1
+},
+{
+"s": 1656.6,
+"lane_left_m": 6.36,
+"inside_edge_m": 17.25
+}
+]
+}

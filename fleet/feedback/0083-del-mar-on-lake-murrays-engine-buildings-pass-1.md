@@ -559,3 +559,16 @@ The three approved tiles only. No fourth is needed: every footprint is on the fi
 9. **The 5 of today's buildings on the estimated course** stay dropped; **the layout itself**, still estimated, waits on
    one georeferenced 1989-96 frame.
 10. **Install:** none from the Mac; 0.2.2 goes to the PC's rehearsal (runbook 0083-3) and Kevin's word.
+
+## PC: rehearsal 0083-3 and the 0.2.2 install (2026-11-07)
+
+- **0083-3 MATCHED** (b26e2b03, `D:/k10-scratch/del_mar_lm_022_reh`, ENG `D:/k10-scratch/eng_dmlm_022` = eng_repro +
+  airoso's `assets/textures` at b26e2b03, 95/95 md5-equal): `[bespoke] 259 buildings stood, 98 dropped (92 of them past
+  450 m of the lap)`, drop reasons 5 on a road or kerb + 1 near a road or wall; prep "259 buildings seated"; seat-edges 74;
+  drive_test PASS (soft 0, severe 0, kinks 6.68 /km, drops 0, obstructed 0, floating 0); audit CLEAN (walls 1,888 v);
+  verify_kn5 + --inis PASS; kn5_ground_check PASS (walls 11, 0/2,292); house_seat PASS (256 judged, 0/0/0, lowest roof
+  1.415 m); road kn5 15,966,502 B (the Mac's size; md5 c322e85d, tangents); 15 textures, all embedded.
+- **INSTALLED on Kevin's word** (2026-11-07, "Install over 0.2.1 (Recommended)"): b26e2b03 from an empty
+  `D:/k10-scratch/del_mar_lm` (0.2.1's workshop parked as `del_mar_lm.0.2.1`), ENG eng_dmlm_022; SHIP OK, no force; 0.2.1's
+  folder parked in `D:/k10-track-archive/2026-11-07_142030/`; `del_mar_fairgrounds_lm` 0.2.2, kn5 kn5_equiv-equivalent to
+  the rehearsal (tangents only); `del_mar_fairgrounds` 0.1.0 still beside it. Records with this note. Not driven yet.

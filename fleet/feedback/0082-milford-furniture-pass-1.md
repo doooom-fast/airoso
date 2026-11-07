@@ -194,9 +194,7 @@ The shape of 0079's runbook 4m. **Rehearse only: no install** (installs happen o
 - **Owed (engine):** a gate that every texture a kn5's materials name is embedded in it; proven on Lake Murray's real
   built kn5s before it gates anything.
 
-## Owed (after pass 1; start here)
-
-Start here:
+## Owed after pass 1 (superseded: start at "Owed (after pass 2; start here)" at the end)
 
 1. **Heights off the lidar** (Kevin's go on the EPT read, section 7): `tools/lidar_wall.py` beside the whole lap, both
    sides, to ~45 m. Replace every `[invented]` height (W-beam 0.70, tyre walls 1.0) with the measured top; confirm or
@@ -216,3 +214,186 @@ Start here:
    terminals. Kevin's drive decides whether either matters.
 8. **The PC rehearsal**: done, matched (above). Kevin's word on installing 0.1.1 over the installed 0.1.0 (the PC asks).
 9. **The texture gate** (above): every texture a kn5 names is embedded.
+
+---
+
+# Pass 2 (2026-11-06): the heights off the lidar, F1 built, the texture gate, 0.1.2
+
+Kevin, 2026-11-06, to "Fetch the lidar for Milford (size unmeasured, est. tens of MB) and Del Mar (2 tiles, 129 MB)?":
+**"Yes, fetch both"** (Milford's half: the 3DEP EPT within ~45 m of the lap; stop above 100 MB). Commits on
+`claude/milford-furniture-lm`: d9d8bcc7 (the read), bd04574f (the heights, F1), 3a0c3c39 (the gate), ab660775 (tests /
+TLS), d2982862 (version), 85ec24a8 (the screen's panels), 522e0e80 (0.1.2's records), 5ec89c3a (stills script).
+
+## P2.1 The read (`tracks/milford-road-course-lm/source/lidar/`, README there)
+
+- `USGS_LPC_MI_31Co_Oakland_2016_LAS_2019`. **Flown 2017-05-03** (14:10-14:39 UTC, the points' GPS time): five years
+  before NAIP 2022-08-16.
+- Sized first (`scripts/ept_plan.py`: hierarchy + HEAD only): every node whose box comes within the lane edge + 45 m,
+  **71 nodes, 39,604,920 B** of LAZ (under the 100 MB stop), then fetched; + 46,380 B of metadata.
+- **5,727,790 points read, 1,427,749 kept** within the lane edge + 45 m: ground 931,962, unclassified 495,390 (no
+  building class), noise 291, water 29, class 10 77. Ground density on the item lines 1.2-2.9 / m2.
+- Raw tiles on the Mac only: `/Volumes/Drive/codex/lidar_dl/milford_oakland2016/`. Committed: `lidar_read.json`, a 1 m
+  grid (`milford_lidar_1m.npz`, 943 kB), `sumitems.json`, `f1.json`, `f1_entries.json`, `poles.json`, `overview.jpg`,
+  four cross-sections, the scripts.
+
+## P2.2 What the lidar measured, object by object
+
+**The flight predates the rails and the tyre walls.** The lap was paved in May 2017 (the intensity grid shows the whole
+circuit and its painted lines), but nothing stood on any rail or tyre line. Within 1 m of each line, returns 0.35-1.6 m
+over the ground per metre, against ~0.5-1.0 / m that a W-beam (rail + blockout + post, ~0.35 m deep in plan) would give at
+that density, and against F1's 3.1 / m on the same flight:
+
+| object | pass 1 (invented) | pass 2 |
+|---|---|---|
+| G1 W-beam, 107 m | 0.70 m | 0.09 / m: **nothing in 2017. Not measurable; stays 0.70 m [invented]** |
+| G2 W-beam, 556 m | 0.70 m | 0.04 / m: as G1 |
+| G3 W-beam, 196 m | 0.70 m | 0.03 / m: as G1 |
+| G4 W-beam, 362 m | 0.70 m | 0.00 / m: as G1 |
+| T1 / T2 / T3 tyre walls | 1.0 m | 0.00 / m each: no ~1 m band. **Identity neither confirmed nor dropped** (NAIP 2022 still shows the black bars); stays 1.0 m [invented] |
+| S1 / S2 sheds | 2.6 m | 207-257 m from the lap, **outside the read**: stays 2.6 m [invented] |
+| P1 tent eave | 3.5 m | outside the read: stays [invented] |
+| **F1, the NW boundary** | 4-5 m by its shadow, not built | **measured: 4.06 m (NE 112 m), 3.54 m (20 m step), 3.18 m (SW 63 m); built** |
+| G5 (rail?) | not built | 0.27 / m: ~10 returns 0.2-0.9 m in 7 m at one end, a shrub's shape: **not confirmed, not built** |
+| G6, T4 | not built | 0.00 / m: **not confirmed, not built** |
+| U1 portal headwall | not built | 0.6-1.6 m returns (0.56 / m); its deck is not modelled: not built |
+
+The buffer-wide scan (`scripts/lines.py`) agrees: **no linear structure 0.4-1.4 m tall longer than 16 m anywhere within
+45 m of the lap**.
+
+**F1 is a screen, not a hedge.** 197 m of it inside the read (s 262-393, 11.7-44.6 m off the edge). One thin line of
+returns (plan sd 0.39 m), 93 % of the top returns single pulses with returns down its face (opaque), a level top (p90 per 4
+m bin 3.92-4.33 m over the NE 112 m) stepping down to 3.1-3.35 m in the SW. NAIP 2022 reads the line itself light grey
+(R 204-212) with the shadow 2-4 m WNW. A hedge's top would wander and spread. **A light, opaque screen ~4 m tall: a precast
+screen wall or a screened fence**; the lidar cannot say which. The NE ~60 m (45-74 m off the edge) is outside the read.
+
+**What NAIP missed** (`poles.json`): an overhead line's wires along the east side (single returns 10.7-12.8 m up, s
+3,177-3,496, 27-32 m off; poles in the treeline, not separable): not built. Two small objects (2.4 m, 4.3 m) 3 m inside
+the traced edge on the s 960-986 apron in May 2017: on the pavement, transient: not built. Sparse 1.7-2.4 m returns
+along the W / NW boundary that may be a chain-link's top rail, mixed with shrubs: not confirmed, not built. No isolated
+light pole or sign within 45 m of the edge.
+
+## P2.3 What was built, dropped, changed
+
+- **F1 built**: rails kind `screen` (new, opt-in; `tools/author_bespoke_blend.py`): `1WALL_TILTUP_SCREEN_<k>`, a
+  collider on the stock tilt-up concrete row (UVs kept by engine-july's prep, real-metre UVs), on the line fitted
+  through F1's own returns, at the three measured heights; an entry without a measured `height_m` is refused. Panels
+  4.0 m nominal, fitted whole to each segment (c3 fitted whole 4 m panels per ~4 m segment and stood only 20 panels / 80
+  m: caught in the author log, fixed in 85ec24a8; c4 stands 29 + 5 + 16 = 50 panels over 197 m), 0.20 m thick
+  [invented], feet under the whole ground triangle as the tyres'.
+- **Kept as pass 1 built them**: G1-G4, T1-T3, the sheds; every `_source` now carries the lidar's word and stays
+  [invented]. `source/furniture/inventory.json` carries a `lidar_2017` reading per item.
+- **Dropped**: nothing that was built. G5, G6, T4 stay unbuilt (not confirmed).
+
+## P2.4 The texture gate (`tools/kn5_textures.py`, GATES-CHANGELOG 2026-11-06)
+
+Every texture a built kn5's materials name must be embedded in it (exact name; an empty map or a zero-byte texture
+fails too). Opt-in: `gate_kn5_textures` in `tools/ship_track.sh`, named only by Milford's ship.json (after
+`kn5_ground`), on `$PROJ/build/*.kn5`, `data/kn5_textures.json`. Proven: c2 PASS (20 / 34 / 48 textures / materials /
+maps), b0 PASS (14 / 22 / 35), c4 PASS in the chain (20 / 37 / 54); a copy of c2's kn5 with the PC run 1's five
+textures cut from its texture section comes to **40,611,042 B, run 1's size to the byte, and FAILS naming all five**
+(`ghost_alpha.png` x 4 materials, `wbeam_rail_diffuse.png` x 3, `metal_wall_diffuse.jpg`, `metal_wall_normal.jpg`,
+`roof_tan_diffuse.jpg`). Not fleet-wide: the Mac has no Lake Murray build; the PC runs it on every installed kn5 first
+(0082-2 step 5).
+
+## P2.5 The candidate (Mac, EMPTY workshops in `/Volumes/Drive/codex/mf_work/`, `--no-install`)
+
+ENG = `/Volumes/Drive/codex/mf_work/eng2`: the engine-july snapshot's `scripts/` + `vendor/` (0 files differ from
+pass 1's) + airoso's `assets/textures` at d2982862, **96 / 96 md5-identical**. c3 = d2982862 (the holed screen), **c4 =
+85ec24a8, version 0.1.2, adopted**. No force anywhere.
+
+| gate (BUILT artifact) | 0.1.1 (c2) | c3 | **0.1.2 (c4)** |
+|---|---|---|---|
+| drive_test: soft top / severe / undrivable / daylight gaps | 0 / 0 / 0 / 0 | 0 / 0 / 0 / 0 | **0 / 0 / 0 / 0** |
+| drive_test: kinks /km, vertex bumps, fold bumps, apron steps | 6.34, 16, 0, 5 | the same | **6.34, 16, 0, 5** |
+| drive_test: obstructed stations, floating furniture, off-pavement | 0, 0, 0 | 0, 0, 0 | **0, 0, 0** |
+| drive_test verdict | PASS | PASS | **PASS** |
+| audit_mesh A-K | CLEAN (walls 19,291 v) | CLEAN (19,875 v) | **CLEAN (walls 20,743 v; D 0, E 0, worst float 0.0)** |
+| verify_kn5 + --inis | PASS | PASS | **PASS** |
+| kn5_ground_check | PASS: 21 wall objects, hovering 0, seat median -1.238 / p95 -0.268 m; road-over-ground 7 / 9,314, p95 0.021 m | PASS: 26 walls | **PASS: 24 wall objects, hovering 0, median -1.238 / p95 -0.268 m; road-over-ground 7 / 9,314, p95 0.021 m** |
+| kn5_textures (new) | PASS 20 / 34 / 48 (run after) | PASS 20 / 37 / 54 | **PASS 20 / 37 / 54, none missing** |
+| house_seat | PASS, 3 judged | PASS, 3 | **PASS, 3 judged** |
+| edge_report at 1 m (not a gate) | strip 99.5 %, wall 0.5 % | the same | **strip 99.5 %, wall 0.5 %** |
+| chain | SHIP OK | SHIP OK | **SHIP OK, no force** |
+
+| road kn5 `milford_road_course_lm.kn5` | 0.1.1 (c2) | **0.1.2 (c4)** |
+|---|---|---|
+| bytes | 40,646,952 (md5 c278c912…) | **40,714,845** (md5 d06ec161…) |
+
+Author log, c4: G1 107 m / 0 out; G2 465 m, 48 out; G3 181 m, 7 out; G4 364 m; T1-T3 71 / 85 / 48 modules, 3 out;
+**f1_nw_screen_ne 29 panels / 113 m, _step 5 / 21 m, _sw 16 / 63 m, 0 out**. The committed `data/` records are c4's
+(they were 0.1.0's).
+
+## P2.6 Lake Murray unchanged
+
+- `git diff origin/claude/fleet-lm-engine -- tracks/san-diego-lake-murray scripts/`: **empty**.
+- **Trim A/B** (`/Volumes/Drive/codex/mf_work/lmtrim2/`): fleet-lm-engine's `tools/trim_connectors.py` + `scripts/`
+  (git archive) and this branch's, each on a fresh copy of the committed trim inputs: **byte-identical**
+  (`664da93b…`, `b73b70f4…`, `f0c97952…`), logs identical.
+- Opt-in by key: `test_milford_furniture.py::test_keys_are_opt_in` (now with `screen`), `test_kn5_textures.py::
+  test_the_gate_is_opt_in` (only Milford's ship.json names the gate).
+- **Tests** (`tests/run_tests.py`, the .venv python on PATH): **1,291 pass, 8 fail**, the known 8 (draft_equiv x5,
+  registry_moves, bench_pad x2). New: `test_kn5_textures.py` 6; `test_milford_furniture.py` 8.
+
+## P2.7 Stills (Blender EEVEE, NAIP's sun; the Mac only, `/Volumes/Drive/codex/mf_work/stills2/`)
+
+`source/furniture/furniture_stills_pass2_blend.py` on c2 and c4, the same cameras: `mf_c2_*` / `mf_c4_*`
+`lap_F1_ne_back`, `lap_F1_ne_ahead`, `lap_F1_sw_back`, `lap_F1_sw_ahead` (the driver's eye 45 m either side of each
+piece) and `above_nw_boundary_F1`. 0.1.1 shows open grass to the NW boundary; 0.1.2 shows the grey panel wall behind
+G1, stepping down to the SW. The fitted line carries the lidar's ~0.4 m jitter: the panels zig-zag gently seen from
+above. Not seen in game.
+
+## P2.8 What is still invented
+
+- Every rail top (0.70 m) and tyre wall top (1.0 m): the only lidar predates them.
+- The sheds' 2.6 m and the tent's eave: outside the read.
+- The W-beam's post / blockout / collider depths; the tyre column; the screen's panel (4.0 m) and thickness (0.20 m);
+  the feet's 2.0 m cap.
+- F1's identity between a wall and a screened fence; its NE ~60 m (outside the read) is not built.
+- The tyre walls' identity (NAIP tone and form only).
+
+## PC runbook 0082-2: rehearse 0.1.2 from a clean checkout, and the texture check on every installed kn5 (no install)
+
+1. A clean checkout at the ledger's pass-2 commit or later on `claude/milford-furniture-lm` (no `git lfs pull` needed:
+   the port builds from an EMPTY workshop).
+2. **ENG = round 4b's `D:/k10-scratch/eng_mflm` + airoso's `assets/textures` at the head being built, md5-checked** (the
+   rule after 0082-1): 96 files, every one equal to the checkout's. Spot md5s: `tiltup_wall_diffuse.jpg`
+   7a4ed52a856098256fd63b6e23a71de1 (F1's screen, new in 0.1.2), `tiltup_wall_normal.jpg` 2e7a85baf12bc77e0dd39ddeef12ea9e,
+   `ghost_alpha.png` 33f4744856ed62b26778f5a2d325adbd, `wbeam_rail_diffuse.png` a9e3650a0f3097aed63b661d926fbe19,
+   `tyre_wall_diffuse.png` c7f4764d722ae452b0306d2d6cbc7d62.
+3. An empty workshop, the whole chain, no install:
+   ```bash
+   SHIP_PROJ=D:/k10-scratch/milford_lm_f2_reh AIROSO=<that checkout> ENG=<ENG of step 2> \
+     bash tools/ship_track.sh milford-road-course-lm --no-install
+   ```
+   The chain now runs `kn5_textures` after `kn5_ground`: it must print PASS (20 textures, 37 materials, 54 maps).
+4. Compare every row of P2.5's 0.1.2 column (`python tracks/milford-road-course-lm/source/furniture/gate_table.py
+   <rehearsal>`) and the author log's rail lines (above, with **f1 29 / 5 / 16 panels**). Known noise: +-1-3 grass
+   vertices. The road kn5: the Mac's is 40,714,845 B; expect it within the ground noise (`tools/kn5_equiv.py` against a
+   carried Mac copy when there is one; never md5). Every row equal, else stop and report the row.
+5. **The texture check on every installed track's kn5s** (read-only; this decides whether the gate goes fleet-wide):
+   ```bash
+   python tools/kn5_textures.py "<AC>/content/tracks" --recursive --json D:/k10-scratch/kn5_textures_installed.json
+   ```
+   Report, per track folder, PASS / FAIL and every missing name, Lake Murray's kn5s first. Fix nothing.
+6. Push the rehearsal's records and the installed-kn5 report as data only; **no install**. Installing 0.1.2 over what is
+   installed is Kevin's word: the PC asks.
+
+## Owed (after pass 2; start here)
+
+1. **The PC: runbook 0082-2** (above): rehearse 0.1.2, and run `kn5_textures` on every installed kn5. Then Kevin's word on
+   installing 0.1.2.
+2. **The texture gate fleet-wide**: once 0082-2 step 5 is clean on Lake Murray's installed kn5s (or every FAIL is
+   explained), name `kn5_textures` in every ship.json (and Lake Murray's chain of record), with a GATES-CHANGELOG entry.
+3. **Rail and tyre heights**: the 3DEP flight over the lap (2017) predates them. The onboard laps (DOSSIER A2.3; section 7
+   above: ~100-300 MB each, not approved) or another NAIP vintage's shadows are the sources left; ask Kevin before
+   fetching.
+4. **F1**: its NE ~60 m (45-74 m off the edge) is outside the read: a second, small read (the nodes there) would let it
+   stand whole. Wall or screened fence: an onboard frame says which. The fitted line could be smoothed further (a
+   straight-segment fit) if the zig-zag shows in game.
+5. **G2 / G3's 91 + 15 m left out on the lane** (pass 1 Owed 3): the 2017 intensity grid shows the pavement edges
+   plainly; re-measure the straight's edges against them (the pavement may have changed by 2022) and narrow the lane or
+   move the rails' lines.
+6. **The underpass portal (U1)**: the lidar reads its headwall (0.6-1.6 m); still waits on the deck.
+7. **Signs, light poles, marshal posts, the white line on the straight**: none resolvable in the 2017 lidar either (no
+   isolated pole within 45 m); onboard laps only.
+8. **The look, in game** (pass 1 Owed 7, plus F1): Kevin's drive decides.

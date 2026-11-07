@@ -10,8 +10,8 @@ What it does (a dry run unless --apply / --rename is given):
   2. Classify each folder against the manifest `fleet/ac-installed.json` (the record every install updates):
        current     the build Kevin last installed for that track
        kept        an older copy Kevin chose to keep beside its successor (e.g. for comparison)
-       superseded  an older copy whose successor is installed (manifest role, or an unlisted `<folder>` beside an
-                   installed `<folder>_lm`)
+       superseded  an older copy whose successor is installed (manifest role; an unlisted `<folder>` beside an
+                   installed `<folder>_lm`; an unlisted `<folder>_lm` beside a current plain `<folder>`)
        k10-era     a k10 build (K10 name / k10 author) with no manifest entry, or the manifest says so
        unlisted    ours, not in the manifest, no successor found: reported, never planned
        not-ours    Kunos and third-party tracks: counted, NEVER touched
@@ -30,6 +30,11 @@ What it does (a dry run unless --apply / --rename is given):
   python tools/ac_tidy.py --apply --only high_plains,aspen_motorsports_park
   python tools/ac_tidy.py --rename --only san_diego_lake_murray_v4
   python tools/ac_tidy.py restore D:/k10-track-archive/2026-11-06_120000_tidy
+
+Installs REPLACE (Kevin 2026-11-07: "We want to delete old copies from ac when installing new ones"): every folder
+is a copy of one track, its `family` (the manifest's `family`, else the track slug without a trailing `-lm`).
+`record`ing an install marks every other folder of that family superseded, so the next dry run plans their move
+(old engine, `_lm`, an older plain folder alike); the install question lists them and `--apply --only` moves them.
   python tools/ac_tidy.py record san_diego_freeway_lm --track san-diego-freeway-lm --branch claude/freeway-lm \
       --sha e733c0a9 [--engine lm-v4] [--date YYYY-MM-DD]          # after an install: the manifest entry from the installed folder
 """
@@ -178,6 +183,8 @@ def inventory(man: dict, ac: Path, bv_fn=None, sizes: bool = True) -> dict:
                         row["flags"].append(f"newer ({bv} on origin/{ent['branch']}; install on Kevin's word)")
         elif (ac / f"{name}_lm").is_dir():
             row["class"], row["successor"] = "superseded", f"{name}_lm"
+        elif name.endswith("_lm") and entries.get(name[:-3], {}).get("role", "current") == "current" and name[:-3] in entries:
+            row["class"], row["successor"] = "superseded", name[:-3]
         elif is_k10(lays):
             row["class"] = "k10-era"
         else:
@@ -322,7 +329,24 @@ def record(man: dict, ac: Path, folder: str, track: str, branch: str | None, sha
         if v:
             ent[k] = v
     man["folders"][folder] = dict(sorted(ent.items()))
+    if role == "current":
+        fam = family_of(ent)
+        for other, oe in man["folders"].items():
+            if other != folder and family_of(oe) == fam and oe.get("role", "current") in ("current", "kept"):
+                oe["role"], oe["successor"] = "superseded", folder
+                man["folders"][other] = dict(sorted(oe.items()))
     return ent
+
+
+def family_of(ent: dict) -> str:
+    """the track a folder is a copy of: the manifest's `family`, else the track slug without a trailing -lm"""
+    return ent.get("family") or re.sub(r"-lm$", "", str(ent.get("track") or ""))
+
+
+def replaced_by(man: dict, ac: Path, folder: str) -> list[str]:
+    """the folders still in AC that an install of `folder` replaces (same family, superseded by it)"""
+    return sorted(n for n, e in man["folders"].items()
+                  if e.get("successor") == folder and e.get("role") == "superseded" and (ac / n).is_dir())
 
 
 def load_manifest(p: Path) -> dict:
@@ -363,6 +387,10 @@ def main(argv=None) -> int:
         ent = record(man, ac, a.target, a.track, a.branch, a.sha, a.engine, a.role, a.date)
         save_manifest(man, mp)
         print(f"recorded {a.target}: {json.dumps(ent, ensure_ascii=False)}")
+        rep = replaced_by(man, ac, a.target)
+        if rep:
+            print(f"replaces (still in AC, now planned to move): {', '.join(rep)}"
+                  f"  -> python tools/ac_tidy.py --apply --only {','.join(rep)}")
         return 0
     if a.cmd == "restore":
         if not a.target:

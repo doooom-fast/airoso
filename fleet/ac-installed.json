@@ -6,7 +6,8 @@
     "After every install: python tools/ac_tidy.py record <folder> --track <track> --branch <branch> --sha <sha> [--engine lm-v4], then commit this file with the install records.",
     "Folders not listed here and not ours (no doooom / airoso / k10 author or name) are Kunos and third-party tracks: never touched.",
     "2026-11-06 (Kevin: 'Move all 10', 'Rename it'): the 10 originals moved to D:/k10-track-archive/2026-11-06_103803_tidy/ (MOVES.tsv there; `python tools/ac_tidy.py restore <dir>` puts them back) and dropped from this list; Lake Murray v4's 5 layout names renamed from the K10 candidate prefix to 'doooom San Diego' (originals in <dir>/san_diego_lake_murray_v4.ui/).",
-    "2026-11-07 (Kevin, relayed by the Mac: 'We want to delete old copies from ac when installing new ones'; asked here, 'Move it out now (Recommended)'): del_mar_fairgrounds 0.1.0 moved to D:/k10-track-archive/2026-11-07_164229_tidy/ and dropped from this list. Every install now REPLACES: the other folders of the track leave AC (archive, never deleted)."
+    "2026-11-07 (Kevin, relayed by the Mac: 'We want to delete old copies from ac when installing new ones'; asked here, 'Move it out now (Recommended)'): del_mar_fairgrounds 0.1.0 moved to D:/k10-track-archive/2026-11-07_164229_tidy/ and dropped from this list. Every install now REPLACES: the other folders of the track leave AC (archive, never deleted).",
+    "Installs replace (Kevin 2026-11-07): `record` supersedes every other folder of the track's family (track slug minus -lm, or `family`), and prints what still has to leave AC. Plain names from now on (Kevin: 'Get rid of Lm Version from names' / 'LM is the airoso engine'): installing sand_creek_raceway replaces sand_creek_raceway_lm."
   ],
   "ac_tracks": "D:/SteamLibrary/steamapps/common/assettocorsa/content/tracks",
   "archive": "D:/k10-track-archive",

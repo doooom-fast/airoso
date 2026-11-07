@@ -161,3 +161,29 @@ def test_the_repo_manifest_parses_and_names_known_roles():
         assert ent.get("track"), name
         if ent["role"] == "superseded":
             assert man["folders"][ent["successor"]]["role"] == "current", name
+
+
+def test_record_replaces_every_other_copy_of_the_track(env, capsys):
+    """Kevin 2026-11-07, "We want to delete old copies from ac when installing new ones": recording a plain-named
+    install supersedes the `_lm` folder and the old-engine folder of the same track (family = track minus -lm)"""
+    ac, _arch, mp, _man = env
+    man = json.loads(mp.read_text(encoding="utf-8"))
+    man["folders"]["keepme"] = {"track": "trk", "role": "kept", "version": "0.2.1"}       # an old "beside" copy
+    mp.write_text(json.dumps(man), encoding="utf-8")
+    _ui(ac / "trk_plain", f"doooom Colorado {DASH} Trk", "0.3.0", "doooom")
+    assert at.main(["record", "trk_plain", "--track", "trk", "--manifest", str(mp)]) == 0
+    out = capsys.readouterr().out
+    f = json.loads(mp.read_text(encoding="utf-8"))["folders"]
+    assert f["trk_lm"]["role"] == "superseded" and f["trk_lm"]["successor"] == "trk_plain"     # trk-lm -> family trk
+    assert f["keepme"]["role"] == "superseded" and f["old"]["successor"] == "trk_lm"           # superseded stays
+    assert f["lm_v4"]["role"] == "current"                                                     # another track
+    assert "replaces (still in AC, now planned to move): keepme, trk_lm" in out
+
+
+def test_unlisted_lm_beside_a_current_plain_folder_is_superseded(env):
+    ac, _arch, _mp, man = env
+    man["folders"]["plain"] = {"track": "plain", "role": "current", "version": "0.3.0"}
+    _ui(ac / "plain", f"doooom Colorado {DASH} Plain", "0.3.0", "doooom")
+    _ui(ac / "plain_lm", f"doooom Colorado {DASH} Plain (LM engine)", "0.2.6", "doooom")
+    rows = {r["folder"]: r for r in at.inventory(man, ac, bv_fn=lambda b, t: None)["rows"]}
+    assert rows["plain_lm"]["class"] == "superseded" and rows["plain_lm"]["successor"] == "plain"

@@ -26,6 +26,9 @@ plan.json = {
                                                                  OSM heights to compare) is used only when trust_unchecked is set
   "sun": {"azimuth_deg": 122, "elevation_deg": 33, "_source": "..."}   optional: a sun read by hand (Nevada's pole shadows)
                                                                  in place of the vote
+  "canopy_posts": true                                           optional (ledger 0083 pass 3, with "lidar"): a canopy-class
+                                                                 footprint (building=roof, a tag_class canopy) the lidar
+                                                                 measured stands as the author's "posts" form (canopy_row)
   "lidar": {"file": "source/bespoke/buildings.lidar.json"}       optional (ledger 0083 pass 2): heights MEASURED off 3DEP lidar
                                                                  by tools/lidar_building_heights.py (run on this planner's
                                                                  output WITHOUT this key); a measured footprint takes them over
@@ -223,6 +226,20 @@ def lidar_rows(row, rec, stepped):
         row["_h"] = f"{tag}: roof p50 {p['p50']} m (p10 {p['p10']}, p90 {p['p90']}, p98 {p['p98']})"
     row["_h_was"] = was
     return [row]
+
+
+def canopy_row(r, rec):
+    """the plan's opt-in canopy_posts (ledger 0083 pass 3): an open-sided roof (building=roof / =pavilion, the canopy class)
+    stands as tools/author_bespoke_blend.py's "posts" form, its slab's top at the lidar roof's median over the ground.
+    MEASURED only: no lidar roof, no row (the canopy stays left out, as before)."""
+    if not rec or rec.get("status") != "measured":
+        return None
+    p = rec["h_pct"]
+    return {"key": r["key"], "footprint_lonlat": r["ring"], "class": "canopy", "form": "posts", "wall_h_m": round(p["p50"], 1),
+            "skin": "metal", "roof": "metal", "_class": r["_class"],
+            "_h": (f"lidar {rec['roof_src']} n={rec['n_roof']} over ground {rec['ground_m']:.2f} m: roof p50 {p['p50']} m "
+                   f"(p10 {p['p10']}, p90 {p['p90']})"),
+            "_form": "posts: an open-sided roof, slab and posts [invented sizes]; the slab's top measured (lidar)", "_src": r["src"]}
 
 
 def height_label(src):
@@ -523,11 +540,13 @@ def main() -> int:
     lon_c = statistics.median(r["ring"][0][0] for r in recs)
     photo.set_centre(lon_c, lat_c)
     left = {"canopy": 0, "small": 0}
-    kept = []
+    kept, canopies = [], []
     for r in recs:
         r["area"] = area_m2(r["ring"])
         r["cls"], r["_class"] = classify(r, plan)
         if r["cls"] == "canopy":
+            if plan.get("canopy_posts") and plan.get("lidar"):
+                canopies.append(r)              # opt-in (ledger 0083 pass 3): stood on posts where the lidar measured it
             left["canopy"] += 1
             continue
         if r["area"] < plan.get("min_area_m2", 25):
@@ -651,6 +670,12 @@ def main() -> int:
             out.append(row)
         by_src.setdefault(src.split(" ")[0] + (" default" if "default" in src else ""), 0)
         by_src[src.split(" ")[0] + (" default" if "default" in src else "")] += 1
+    for r in canopies:
+        row = canopy_row(r, (lidar or {}).get("buildings", {}).get(r["key"]))
+        if row:
+            out.append(row)
+            left["canopy"] -= 1
+            left["canopy_on_posts"] = left.get("canopy_on_posts", 0) + 1
     path = track / plan["out"]
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(out, separators=(",", ":")), encoding="utf-8", newline="\n")

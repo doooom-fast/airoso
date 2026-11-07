@@ -22,7 +22,9 @@ y = N, z = up). The collection is emptied first, so the tool is idempotent, and 
   blocks      [{"file": "source/bespoke/buildings.json", "auto": true, "replace": ["HOUSE", "BUILDING"]}] or inline {"key", "footprint_lonlat", "wall_h_m", "skin",
               "roof", "form", "ridge_h_m", "off_terrain"}: "form" (tools/plan_buildings.py) = flat | flat_parapet (a PARAPET_M lip
               round the roof) | hip | gable (the ridge along the long axis of the footprint's oriented box, ridge_h_m over the
-              level; a ring that fills less than RECT_FILL of its box is roofed flat instead); "off_terrain" = a far backdrop past the built ground: it stands at the nearest ground's
+              level; a ring that fills less than RECT_FILL of its box is roofed flat instead) | posts (ledger 0083 pass 3, opt-in
+              by a planned row only: an open-sided roof, canopy_on_posts, one welded island BUILDING_METAL_CANOPY_<k>, no walls,
+              no collider, refused within COLLIDER_REACH_M of the lap); "off_terrain" = a far backdrop past the built ground: it stands at the nearest ground's
               height with OFF_TERRAIN_SKIRT_M more wall below -> FARBLOCK_<SKIN>_<k>, no collider: never a GrassFX occluder (the
               TDR lesson in scripts/ac/ext_config.py) and never read by the seat gate. "replace": the scene's own meshes of these exact
               names (the v021 assembler's HOUSE / BUILDING boxes on Lake Murray) are removed first, so the pipeline's stand alone. Any ring, flat roof, walls batched by skin -> BUILDING_TILTUP_<k> / BUILDING_METAL_<k> /
@@ -541,6 +543,51 @@ class Batcher:
             self.v, self.f, self.uv = [], [], []
 
 
+CANOPY_SLAB_M = 0.3            # [invented] an open-sided roof's slab: its top is the measured roof, its soffit this under it
+CANOPY_POST_W = 0.3            # [invented] a canopy post's square section
+CANOPY_POST_M = 6.0            # [invented] posts at every ring corner and at most this far apart along an edge
+
+
+def canopy_on_posts(ring, bottom, top, slab=CANOPY_SLAB_M, post_w=CANOPY_POST_W, step=CANOPY_POST_M):
+    """Pure: the "posts" form (ledger 0083 pass 3): an open-sided roof (a pavilion, a fuel canopy). ``ring`` counter-clockwise
+    seen from above; the slab is the ring extruded from ``top - slab`` to ``top``; a square post stands at every ring corner
+    and every ``step`` along each edge, from ``bottom`` to the soffit, inside the ring. Each post's outer top corner IS a
+    slab vertex (shared index), so posts and slab are ONE island: the prep re-seats it by its feet (the lowest vertices)
+    and tools/house_seat_check.py judges it by them. Returns (verts, faces, uvs, n_posts); no walls, no collider."""
+    pts = []
+    for i, a in enumerate(ring):
+        b = ring[(i + 1) % len(ring)]
+        n = max(1, math.ceil(math.dist(a, b) / step))
+        pts += [(a[0] + (b[0] - a[0]) * k / n, a[1] + (b[1] - a[1]) * k / n) for k in range(n)]
+    m = len(pts)
+    soffit = top - slab
+    verts = [(x, y, soffit) for x, y in pts] + [(x, y, top) for x, y in pts]
+    faces, uvs = [], []
+    for i in range(m):                                         # the slab's edge band
+        j = (i + 1) % m
+        faces.append((i, j, m + j, m + i))
+        uvs.append(((0.0, 0.0), (1.0, 0.0), (1.0, slab), (0.0, slab)))
+    faces.append(tuple(range(m, 2 * m)))                        # top, facing up (ccw)
+    uvs.append(tuple((x / 4.0, y / 4.0) for x, y in pts))
+    faces.append(tuple(range(m - 1, -1, -1)))                   # soffit, facing down
+    uvs.append(tuple((pts[i][0] / 4.0, pts[i][1] / 4.0) for i in range(m - 1, -1, -1)))
+    for i in range(m):
+        a, b = pts[i], pts[(i + 1) % m]
+        L = math.dist(a, b) or 1.0
+        e1 = ((b[0] - a[0]) / L, (b[1] - a[1]) / L)
+        e2 = (-e1[1], e1[0])                                    # inward for a counter-clockwise ring
+        q = [a, (a[0] + e1[0] * post_w, a[1] + e1[1] * post_w),
+             (a[0] + (e1[0] + e2[0]) * post_w, a[1] + (e1[1] + e2[1]) * post_w), (a[0] + e2[0] * post_w, a[1] + e2[1] * post_w)]
+        o = len(verts)
+        verts += [(x, y, bottom) for x, y in q] + [(x, y, soffit) for x, y in q[1:]]
+        tops = [i, o + 4, o + 5, o + 6]                         # the outer top corner is the slab's own vertex i
+        for k in range(4):
+            kk = (k + 1) % 4
+            faces.append((o + k, o + kk, tops[kk], tops[k]))
+            uvs.append(((0.0, 0.0), (post_w, 0.0), (post_w, top - bottom), (0.0, top - bottom)))
+    return verts, faces, uvs, m
+
+
 def ring_points(ring, step=2.0):
     """a ring of any shape walked every ``step`` m + a grid of interior points"""
     pts = []
@@ -631,6 +678,23 @@ def blocks(col, spec, proj, to_xy, ground, near_ground, paved, walls, bad):
             else:
                 bottom, eave = min(floor, lo - PREP_FOOT_M), floor + wall_h
             n = len(ring)
+            if form == "posts":
+                # an open-sided roof on posts (ledger 0083 pass 3), opt-in: only a planned row whose form names it
+                # (tools/plan_buildings.py's plan key canopy_posts, a MEASURED roof only). One welded island per canopy,
+                # ribbed metal; no walls, no collider (a canopy within COLLIDER_REACH_M of the lap is refused instead)
+                reach = min(math.hypot(x - q[0], y - q[2]) for x, y in ring[:: max(1, n // 4)] for q in lap[::4])
+                if reach <= COLLIDER_REACH_M or off:
+                    (dropped if auto else bad).append(f"block {key}: a canopy on posts {reach:.0f} m from the lap"
+                                                      f"{' (off the ground)' if off else ''}: no post collider yet")
+                    continue
+                cv, cf, cu, n_posts = canopy_on_posts(ring, bottom, eave)
+                cb = walls_by.setdefault(("CANOPY", off), Batcher(col, "BUILDING_METAL_CANOPY"))
+                cb.room(len(cv))
+                cb.add(cv, cf, cu)
+                rows.append({"key": key, "skin": "METAL", "roof": "METAL", "form": f"posts ({n_posts}), slab {CANOPY_SLAB_M} m",
+                             "wall_h_m": wall_h, "ground": [round(lo, 2), round(hi, 2)], "bottom": round(bottom, 2),
+                             "eave": round(eave, 2), "off_terrain": off, "collider": False})
+                continue
             cx_, cy_ = sum(p[0] for p in ring) / n, sum(p[1] for p in ring) / n
             batch = walls_by.setdefault((skin, off), Batcher(col, f"FARBLOCK_{skin}" if off else f"BUILDING_{skin}"))
             batch.room(5 * n)

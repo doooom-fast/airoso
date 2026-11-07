@@ -113,3 +113,52 @@ def test_without_class_6_a_roof_is_its_single_returns_and_a_tree_or_bare_ground_
     assert roof["status"] == "measured" and roof["roof_src"].startswith("single") and abs(roof["h_pct"]["p50"] - 6.0) < 1e-6
     assert run(16.0, 1, 3)["status"] == "vegetation"     # several returns per pulse: a tree
     assert run(10.0, 2, 1)["status"] == "no_roof"        # ground inside the walls: nothing stands there
+
+
+def _load_author():
+    import types
+    for name in ("bpy", "mathutils", "mathutils.bvhtree"):
+        sys.modules.setdefault(name, types.ModuleType(name))
+    sys.modules["mathutils"].Vector = object
+    sys.modules["mathutils.bvhtree"].BVHTree = object
+    spec = importlib.util.spec_from_file_location("author_bespoke_blend_posts", ROOT / "tools" / "author_bespoke_blend.py")
+    m = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(m)
+    return m
+
+
+def test_a_canopy_on_posts_is_one_welded_island_with_no_walls():
+    ab = _load_author()
+    ring = [(0.0, 0.0), (12.0, 0.0), (12.0, 5.0), (0.0, 5.0)]          # counter-clockwise, 12 x 5 m
+    v, f, uv, n = ab.canopy_on_posts(ring, bottom=-0.4, top=3.6)
+    assert n == 6 and len(f) == len(uv) == n + 2 + 4 * n             # slab band, top, soffit, 4 sides per post
+    assert sorted({round(p[2], 3) for p in v}) == [-0.4, 3.3, 3.6]   # feet, soffit, roof
+    parent = list(range(len(v)))                                     # one island through shared vertex indices
+
+    def find(a):
+        while parent[a] != a:
+            parent[a] = parent[parent[a]]
+            a = parent[a]
+        return a
+    for fc in f:
+        for k in fc[1:]:
+            parent[find(k)] = find(fc[0])
+    assert len({find(i) for i in range(len(v))}) == 1
+    feet = [p for p in v if p[2] == -0.4]
+    assert len(feet) == 4 * n
+    assert all(-1e-9 <= x <= 12.0 + 1e-9 and -1e-9 <= y <= 5.0 + 1e-9 for x, y, _ in feet)     # the posts stand inside
+
+
+def test_the_planner_stands_a_canopy_only_where_the_lidar_measured_it():
+    r = {"key": "osm1", "ring": [[0, 0], [1, 0], [1, 1]], "_class": "OSM building=roof", "src": "OSM"}
+    rec = {"status": "measured", "roof_src": "single returns, not ground", "n_roof": 300, "ground_m": 2.0,
+           "h_pct": {"p10": 3.3, "p50": 3.59, "p90": 3.9}}
+    row = pb.canopy_row(r, rec)
+    assert row["form"] == "posts" and row["wall_h_m"] == 3.6 and row["_h"].startswith("lidar")
+    assert pb.canopy_row(r, None) is None and pb.canopy_row(r, {"status": "uncovered"}) is None
+
+
+def test_no_other_plan_names_canopy_posts():
+    for f in ROOT.glob("tracks/*/source/bespoke/buildings.plan.json"):
+        if f.parts[-4] != "del-mar-lm":
+            assert "canopy_posts" not in json.loads(f.read_text(encoding="utf-8")), f

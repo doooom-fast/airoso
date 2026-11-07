@@ -149,13 +149,13 @@
       "note": "Lake Murray v4 + Mission Gorge Speedway (ship_sd.sh SD_BESPOKE=1); its ship.json ui_name_prefix still says the K10 candidate name, so a reinstall brings it back"
     },
     "sand_creek_raceway_lm": {
-      "track": "sand-creek-lm",
-      "engine": "lm-v4",
-      "role": "current",
-      "version": "0.2.5",
       "branch": "claude/sand-creek-lm-assets",
-      "sha": "aa4d8b0b",
-      "installed": "2026-11-05"
+      "engine": "lm-v4",
+      "installed": "2026-11-07",
+      "role": "current",
+      "sha": "aff35043",
+      "track": "sand-creek-lm",
+      "version": "0.2.6"
     }
   }
 }

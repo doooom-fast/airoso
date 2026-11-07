@@ -31,14 +31,25 @@
       "installed": "2026-11-05"
     },
     "del_mar_fairgrounds": {
-      "track": "del-mar",
-      "engine": "original",
-      "role": "current",
-      "version": "0.1.0",
       "branch": "claude/del-mar-source",
-      "sha": "5611cdd",
+      "engine": "original",
       "installed": "2026-11-01",
-      "note": "estimated 1987-92 layout (ledger 0064); kn5 md5 d924754d, built at 7331e1d"
+      "note": "estimated 1987-92 layout (ledger 0064); kn5 md5 d924754d, built at 7331e1d; kept beside del_mar_fairgrounds_lm (Kevin 2026-11-06: 'Install beside 0.1.0')",
+      "role": "kept",
+      "sha": "5611cdd",
+      "successor": "del_mar_fairgrounds_lm",
+      "track": "del-mar",
+      "version": "0.1.0"
+    },
+    "del_mar_fairgrounds_lm": {
+      "branch": "claude/del-mar-lm",
+      "engine": "lm-v4",
+      "installed": "2026-11-06",
+      "note": "Lake Murray engine + buildings pass 1 (ledger 0083), estimated layout; records on claude/del-mar-lm-0200-installed",
+      "role": "current",
+      "sha": "fc7e09fa",
+      "track": "del-mar-lm",
+      "version": "0.2.0"
     },
     "exotics_racing_lvms_lm": {
       "track": "exotics-racing-lv-lm",
@@ -75,13 +86,14 @@
       "installed": "2026-11-04"
     },
     "milford_road_course_lm": {
-      "track": "milford-road-course-lm",
-      "engine": "lm-v4",
-      "role": "current",
-      "version": "0.1.0",
       "branch": "claude/milford-furniture-lm",
-      "installed": "2026-11-04",
-      "note": "furniture passes start on claude/milford-furniture-lm (ledger 0082)"
+      "engine": "lm-v4",
+      "installed": "2026-11-06",
+      "note": "0.1.1 = furniture pass 1 (ledger 0082), ENG must carry airoso assets/textures; records on claude/milford-lm-0101-installed",
+      "role": "current",
+      "sha": "2d4f56be",
+      "track": "milford-road-course-lm",
+      "version": "0.1.1"
     },
     "pikes_peak_international_raceway_lm": {
       "track": "pikes-peak-lm",

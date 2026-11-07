@@ -14,5 +14,7 @@
  "house_skin": "stucco",
  "shadow": {"enabled": true, "max_m": 60},
  "lidar": {"file": "source/bespoke/buildings.lidar.json",
-           "_doc": "pass 2 (ledger 0083): roofs and ground MEASURED off USGS 3DEP lidar CA_SanDiegoCo_D24 (flown 2024-11-09; tiles 11SMS475648 and 11SMS476648, Kevin's go 2026-11-06) by tools/lidar_building_heights.py, run on this plan's output without this key; the Grand Stand (osm116794621) stands as its measured tiers. Off the two tiles, the class default stays [invented]."}
+           "_doc": "pass 2 (ledger 0083): roofs and ground MEASURED off USGS 3DEP lidar CA_SanDiegoCo_D24 (flown 2024-11-09; tiles 11SMS475648 and 11SMS476648, Kevin's go 2026-11-06) by tools/lidar_building_heights.py, run on this plan's output without this key; the Grand Stand (osm116794621) stands as its measured tiers. Pass 3 (Kevin 2026-11-07, 'Yes, fetch them'): three tiles more, 11SMS475649 / 476649 / 475647, every footprint on the five; measured on the G10."},
+ "canopy_posts": true,
+ "_canopy_posts_doc": "pass 3 (ledger 0083): the pavilions and fuel canopies the lidar measured stand as the author's posts form (an open-sided roof on posts); no measured roof, no canopy"
 }

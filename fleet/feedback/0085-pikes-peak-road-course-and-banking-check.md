@@ -112,3 +112,94 @@ x1); the known bench_pad pair is not in this base's suite (`cf401bf4` predates i
 Then the build this entry stops short of: the oval's inside pavement on its measured slope; the infield road as connectors
 (`connectors.local.json`) welded at s 947-1037 and s 1344; a race layout on a stitched lap (`race.laps`, `layouts[].lap`)
 on the one kn5 (L8); kerbs where NAIP / lidar show them; every gate on every layout; version 0.2.0.
+
+## Re-trace (2026-11-07): edges measured, not drawn
+
+Kevin, on the first overlays: **"Those tracings aren't very accurate."** Then: **"Follow curbs and road wear, it's easy
+for human eye"**, **"There are smaller variations on there too"**, **"One seems to avoid the issue oval"** and **"It just
+avoid the oval, like an interior track only version"** (an infield-only layout; reading (a)). Standing rule: "I just
+want real". Tools and data in `tracks/pikes-peak/source/road-course/` (README "Re-trace"); the eyeball files kept as
+`*.eyeball.json`. Stills: `/Volumes/Drive/codex/pp_work/retrace/`. Nothing downloaded, nothing built.
+
+**1. Registration** (`register_wall.py`, `registration.json`). The wall's concrete top on NAIP (its road-side edge,
+sub-pixel) against the lidar face at 374 of 556 stations, fitted `offset = b + dE nE + dN nN`: **the image sits 0.42 m off
+(E +0.09, N -0.41 m; block-bootstrap sd 0.04 m each)**, bias b -0.01 m, residual rms 0.16 m (p50 0.12, p95 0.32). Over a
+pixel, so applied to every NAIP coordinate. Caveat: the band is the wall's TOP, 1.27 m up; relief displacement of a
+1.27 m top is a uniform shift too, so 0.42 m is an upper bound on the ground's misregistration in that direction;
+nothing on disk separates them (the lidar ground returns are not on disk).
+
+**2. The infield pieces** (`pieces.py`, `retrace.py`, `infield_pieces.naip.json`). Each piece is named by 2-11 via
+pixels (which road); its geometry is measured: pavement score (grey asphalt, or smooth texture for the older dusty
+asphalt that has dirt's colour; green run-off paint excluded), both edges every 0.5 m at the score's steepest fall
+(sub-pixel), a kerb or white edge line within 1.5 m taking precedence (asphalt edge = its inner face), robust smoothing
+splines (outliers dropped at max(0.35 m, 3 MAD-sigma)), centre = midline, then again on that centre. Kerb runs traced
+along each fitted edge (red blocks, or white blocks in a 1 m rhythm). Residual = seen edge point to fitted edge.
+
+| piece | length m | width m p50 (min-max) | residual L / R p50-p95 m | inferred (not seen) | kerb on L / R |
+|---|---|---|---|---|---|
+| ne_lane (oval diverge -> hairpin top) | 150.4 | 12.2 (11.9-22.3 at the diverge) | 0.11-0.35 / 0.10-0.33 | 16 m: diverge mouth, weak | 29 / 42 % |
+| hairpin_w | 56.0 | 12.4 (12.0-20.3 at mouths) | 0.13-0.44 / 0.13-0.54 | 0 | 100 / 26 % |
+| diag_n | 25.9 | 12.4 (12.0-12.8) | 0.06-0.24 / 0.13-0.47 | 0 | 0 / 75 % |
+| diag_s | 73.8 | 12.3 (12.0-15.9) | 0.08-0.25 / 0.08-0.24 | 4 m | 0 / 10 % |
+| n_road (NW junction -> hairpin top) | 139.3 | 12.1 (11.6-23.0) | 0.10-0.35 / 0.08-0.26 | 8 m | 7 / 16 % |
+| arc_nw (kerbed sweeper) | 82.8 | 12.6 (12.3-12.8) | 0.05-0.13 / 0.09-0.57 | 2 m | 0 / 96 % |
+| c_road (older) | 77.3 | 10.3 (5.1-14.5) | 0.24-0.65 / 0.18-0.71 | 29 m: S-curve mouth, weak | 9 / 0 % |
+| west_n | 27.3 | 18.9 (14.4-20.3, junction-wide) | 0.21-0.59 / 0.11-0.32 | 4 m | 30 / 29 % |
+| bottom | 142.4 | 14.0 (11.7-20.1) | 0.22-0.72 / 0.26-0.65 | 23 m: paddock side, weak | 41 / 6 % |
+| s_curve (older) | 132.0 | 7.8 (4.0-11.6) | 0.21-0.69 / 0.23-0.65 | 30 m: weak (faded kerbs, dust) | 13 / 4 % |
+| par_lane (older) | 196.3 | 7.8 (5.4-9.7) | 0.22-0.62 / 0.19-0.80 | 66 m: weak (dust) | 17 / 10 % |
+| ring_nw / ring_ne / ring_s (the lot ring) | 51.3 / 121.6 / 264.0 | one edge: the lot's interior is paved; driven band 3.2 / 3.4 / 6.0 m wide | 0.16-0.45 / 0.09-0.22 / 0.18-0.72 (outer edge) | 2 / 46 / 140 m (grey vs tan concrete is a weak edge) | 48 / 0 / 0 % |
+
+The newer pieces are 12.1-12.6 m wide (40-41 ft) and fit to 0.05-0.13 m p50; the older dusty pieces 0.18-0.26 m p50 with
+a third of their edge inferred. Kerb detection misses faded S-curve kerbs (white-only blocks): their edges are found,
+labelled edge-surface, not kerb.
+
+**3. The oval's inside edge** (`inside_edge.naip.json`): 1,666 stations, 1,001 seen; residual p50 0.16, p95 0.66,
+max 1.88 m. 21 junction / opening runs bridged, never followed (pit exit and service roads s 129-397, s 650-726, the NE
+diverge s 945-995 and 1018-1034, the NW merge s 1309-1377 and 1450-1481); 9 short inferred runs. Bridges are straight in
+width, so the edge kinks where a bridge meets the spline (min radius 0.3 m at a bridge end).
+
+| section | wall face -> inside edge m (p50, seen) | apron line (painted) from edge m | wall face -> apron line m |
+|---|---|---|---|
+| front stretch | 23.7 (23.6-24.9) | 3.1 (27 stations) | **20.5** |
+| turns 1-2 | 25.9 (25.6-26.0) | not found | - |
+| back stretch | 23.3 (22.8-25.7) | 3.6 (28 stations) | **20.4** |
+| turns 3-4 | 25.8 (25.3-35.8; 34-36 m at s 1380-1450 where a second paved lane runs inside) | 6.1 (179 stations) | **19.7** |
+
+Wall to apron line 19.7-20.5 m = 65-67 ft, inside the published 60-71 ft; the apron 3-6 m beyond it. The oval's
+mid-surface line (wall face to inside edge, halved) laps **1,622.8 m**; 15 ft off the inside edge 1,573.7 m (published
+1.0 mi = 1,609 m); the port line 1,665.9 m.
+
+**4. Wear and the layouts** (`routes.py`, `layouts.naip.json`). Wear index = the median, over a piece's sections, of
+the darkest band's darkening against that section's clean (80th-percentile) asphalt. Ranked: lot ring 0.21-0.26
+(inflated: the ring's asphalt is darker than the lot interior it is compared with), arc_nw 0.165, bottom 0.165, west_n
+0.126, s_curve 0.125, diag_n 0.102, hairpin_w 0.094, n_road 0.082, diag_s 0.081, ne_lane 0.069, par_lane 0.059,
+c_road 0.055. **Direction from wear is NOT established**: the apex-shift read (late apex = travel direction) flipped
+for s_curve and arc_nw when the centre's smoothing changed by 2 m; it is reported per piece, not relied on.
+
+Oval share of a CCW road-course lap on the mid line: NW merge (s 1,317.7) -> NE diverge (s 957.3) = 1,262.4 m.
+Lap = pieces' centre lines + oval share, +-6 m per junction [invented allowance].
+
+| id | layout | lap m | vs 2,074 / 2,116 | wear |
+|---|---|---|---|---|
+| RC-A | oval + lane, hairpin, diag, lot corner, bottom, west road, sweeper (the previous "newest loop") | 1,872 +-54 | -202 / -244 | 0.128 |
+| RC-B | RC-A with the S-curve and C road west in place of the west road | 2,038 +-60 | -36 / -78 | 0.122 |
+| RC-C | RC-A with the parallel lane and the lot ring's north-east side in place of diag south | **2,092 +-60** | **+18 / -24** | 0.129 |
+| RC-D | RC-A round the lot ring the long way | 2,207 +-66 | +133 / +91 | 0.160 |
+| RC-E | oval + lane, hairpin, N road back (bypass) | 1,574 +-18 | -500 / -543 | 0.075 |
+| IF-1 | infield only: RC-A's infield closed by the N road over the NW apron | 599 +-48 | - | 0.132 |
+| IF-2 | infield only: C road, west road, bottom, lot corner, diag | 398 +-42 | - | 0.133 |
+| IF-3 | infield only: C road east, S-curve, bottom, lot corner, diag | 442 +-36 | - | 0.142 |
+| IF-4 | infield only: N road, hairpin, C road, sweeper | 355 +-30 | - | 0.097 |
+| LOT-1 | the lot ring alone (reading (b); kept because its wear is the heaviest) | 437 +-24 | - | 0.227 |
+
+RC-B and RC-C both sit within the junction uncertainty of the published length; RC-A is ~200 m short. The wear does not
+separate B from C: the S-curve carries twice the parallel lane's darkening, but the lane and C road are the least worn
+pieces either way. Which is the 1.3 mi course stays Kevin's call (or the SCCA course map, owed). Every infield-only loop is
+assembled from the same pieces, ready to become `layouts[]` on one kn5 (L8).
+
+**What would still improve it** (not on disk): the 2018 lidar over the infield and the oval's inside half would
+(1) settle the 0.42 m shift between ground and wall-top relief, (2) give kerb heights and the dusty edges' true
+positions (a 3-8 cm kerb step is a clean edge where NAIP has 0.2-0.7 m of dust-blurred residual), (3) measure the apron's
+cross-slope. OSM raceway ways would at best name pieces; at their usual 1-3 m accuracy they would not improve a 0.1-0.3 m
+edge.

@@ -1,4 +1,5 @@
-"""Part 1: where the oval's inside pavement edge really is, off NAIP 2023 0.3 m (on disk), per survey station.
+"""SUPERSEDED by retrace.py (ledger 0085 Re-trace: its first-gap read zig-zags into the pit lane and junctions).
+Kept to reproduce inside_edge.eyeball.json. Part 1: where the oval's inside pavement edge really is, off NAIP 2023 0.3 m (on disk), per survey station.
 
 Along each station's left (inside) normal from the line's centre, the pavement mask (pave_mask.npy: grey / kerb pixels)
 is read every 0.15 m out to 40 m. The INSIDE EDGE is the start of the first non-pavement run >= 1.5 m long. A station whose
@@ -53,4 +54,4 @@ for k in range(len(rows) + 1):
     if not bad and run0 is not None:
         summ["no_edge_runs"].append([float(s[run0]), float(s[k - 1])]); run0 = None
 print(json.dumps(summ, indent=1))
-json.dump({"summary": summ, "rows": rows}, open(str(__import__("pathlib").Path(__file__).resolve().parent) + "/" + "inside_edge.naip.json", "w"), indent=0)
+json.dump({"summary": summ, "rows": rows}, open(str(__import__("pathlib").Path(__file__).resolve().parent) + "/" + "inside_edge.eyeball.json", "w"), indent=0)

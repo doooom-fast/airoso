@@ -3,6 +3,28 @@
 Research only, in no chain; nothing here is built. Kevin, 2026-11-07: "pikes peak is an oval yes but also it has a road
 course we're supposed to be building in, that takes advantage of the existing oval."
 
+## Re-trace (edge-measured; supersedes the eyeball trace below)
+
+Kevin, on the first overlays: "Those tracings aren't very accurate." The infield centre line by eye and the oval's
+first-gap inside edge are kept as `infield_network.eyeball.json` / `inside_edge.eyeball.json` (`inner_edge.py`).
+Their replacements, every number in ledger 0085's Re-trace section:
+
+| file | what |
+|---|---|
+| `register_wall.py` -> `registration.json` | NAIP against the 2018 lidar wall face: the image sits 0.42 m off (E +0.09, N -0.41), applied |
+| `naip.py` | image channels (grey, smooth-texture, kerb, white, green paint), ENU <-> pixel with the shift removed |
+| `pieces.py` | the 14 infield pieces (which road each is: a few via pixels; WHERE it is: measured), edge finding, spline fit, wear |
+| `retrace.py` -> `infield_pieces.naip.json`, `inside_edge.naip.json` | both edges, centre, width per metre, residuals, inferred stretches, kerb runs, wear per piece; the oval's inside edge, apron line, wall-to-edge width |
+| `routes.py` -> `layouts.naip.json` | the oval's mid-surface line, junction stations, ten candidate layouts assembled from the pieces, lap lengths, wear support |
+| `stills.py` | `/Volumes/Drive/codex/pp_work/retrace/`: `overall.png`, 33 `zoom_*.png` (60 x 60 m, 4x, wear tinted), 10 `layout_*.png` |
+
+Run order (needs the NAIP crop, `geo.IMG` / `PPIR_NAIP`): `register_wall.py`, `retrace.py`, `routes.py`, `stills.py`.
+Intermediate arrays go to `PP_CACHE` (default `pp_work/retrace/_cache`), not the repo.
+
+Superseded below: the 623.6 m "newest loop" (now RC-A, 1,872 m with the oval, edge-measured), the 18.3 m median inside
+edge (from the port line; the wall-to-edge width is now measured per station), and "which route the aerial cannot
+decide" (still true: RC-B and RC-C both land within the junction uncertainty of the published length).
+
 ## What the road course is (sources)
 
 | fact | value | source |

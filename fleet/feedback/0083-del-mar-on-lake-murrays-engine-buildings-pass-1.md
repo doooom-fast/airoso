@@ -383,3 +383,19 @@ The two approved tiles (above). Sizes looked up by HTTP HEAD only (nothing fetch
   engine)" 0.2.0) beside `del_mar_fairgrounds` 0.1.0; kn5 kn5_equiv-equivalent to the rehearsal (tangents only). The
   sync-back's records are on their own branch `claude/del-mar-lm-0200-installed` (ee61922): this branch's later rounds
   rewrote `house_seat_check.json` / `split_manifest.json`. Not driven yet.
+
+## PC: rehearsal 0083-2 and the 0.2.1 install (2026-11-07)
+
+- **0083-2 MATCHED** (557b7bdb, `D:/k10-scratch/del_mar_lm_021_reh`, ENG `D:/k10-scratch/eng_dmlm_021` = eng_repro +
+  airoso's `assets/textures` at 557b7bdb, 95/95 md5-equal): `[bespoke] 255 buildings stood, 98 dropped (92 of them past
+  450 m of the lap)`, drop reasons 5 on a road or kerb + 1 near a road or wall; `[seat-edges] 74 line points steeper`;
+  drive_test PASS (soft 0, severe 0, kinks 6.68 /km, drops 0, obstructed 0, floating 0); audit CLEAN (walls 1,888 v);
+  verify_kn5 + --inis PASS; kn5_ground_check PASS (walls 11, hovering 0, 0/2,292); house_seat PASS (252 judged, 0/0/0,
+  lowest roof 1.425 m); road kn5 15,774,997 B (the Mac's size; md5 a93abe52 vs d934ef81, tangents); 15 textures, every one
+  its materials name embedded.
+- **INSTALLED on Kevin's word** (2026-11-07, "Install over 0.2.0 (Recommended)", asked with: today's buildings at their
+  2024 lidar heights, not 1987-92, on the estimated layout): 557b7bdb from an empty `D:/k10-scratch/del_mar_lm` (0.2.0's
+  workshop parked as `del_mar_lm.0.2.0`), ENG eng_dmlm_021; SHIP OK, no force; 0.2.0's folder parked in
+  `D:/k10-track-archive/2026-11-07_120606/`; `del_mar_fairgrounds_lm` 0.2.1, kn5 kn5_equiv-equivalent to the rehearsal
+  (tangents only); `del_mar_fairgrounds` 0.1.0 still beside it. Records with this note (no record path changed on this
+  branch since 557b7bdb). Not driven yet.

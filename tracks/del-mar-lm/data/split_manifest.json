@@ -1,10 +1,10 @@
 {
- "input": "/Volumes/Drive/codex/dm_work/del_mar_lm/blender/del_mar_fairgrounds_lm.blend",
+ "input": "/Volumes/Drive/codex/dm_work/v021b/blender/del_mar_fairgrounds_lm.blend",
  "outputs": {
   "loop_main.blend": {
    "objects": 28,
    "meshes": 12,
-   "positions": 106673,
+   "positions": 106556,
    "max_positions": 36649,
    "materials": [
     "1GRASS_0_mat",
@@ -79,7 +79,7 @@
  "input_census": {
   "objects": 28,
   "meshes": 12,
-  "positions": 106673,
+  "positions": 106556,
   "max_positions": 36649,
   "materials": [
    "1GRASS_0_mat",

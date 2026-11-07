@@ -184,8 +184,9 @@ def lidar_rows(row, rec, stepped):
     """the plan's opt-in "lidar" (ledger 0083 pass 2): a footprint MEASURED off the 3DEP point cloud
     (tools/lidar_building_heights.py) takes its roof from it, over every other source (OSM levels are a storey count times an
     assumed storey; the lidar is the roof). A flat roof's wall is the roof points' median over the lidar ground (the deck; the
-    parapet stays PARAPET_M [invented] on top); a pitched roof's eave is their p05, its ridge their p95. A building named in
-    the file's "stepped" stands as its tiers instead (flat roofs, one row per tier, keys <key>_t<i>). One whose first returns
+    parapet stays PARAPET_M [invented] on top); a pitched roof's eave is their p10 (p05 caught a lean-to's 1.3 m on a
+    3.5 m shed: house_seat's buried 0.82 m), its ridge their p95. A building named in the file's "stepped" stands as its
+    tiers instead (flat roofs, one row per tier, keys <key>_t<i>). One whose first returns
     are mostly ground ("no_roof") is dropped: nothing stands there in the lidar. Not measured = the row as before. Returns the
     rows to write."""
     if rec and rec.get("status") == "no_roof":
@@ -212,10 +213,10 @@ def lidar_rows(row, rec, stepped):
             out.append(r)
         return out
     if row["form"] in ("hip", "gable"):
-        wall = p["p05"]
+        wall = p["p10"]
         ridge = max(p["p95"], wall + 0.3)
         row["wall_h_m"], row["ridge_h_m"] = round(wall, 1), round(ridge, 1)
-        row["_h"] = f"{tag}: eave p05 {p['p05']} m, ridge p95 {p['p95']} m"
+        row["_h"] = f"{tag}: eave p10 {p['p10']} m, ridge p95 {p['p95']} m"
         row["_form"] = f"{row['form']} [invented by class]; eave and ridge measured (lidar)"
     else:
         row["wall_h_m"] = round(p["p50"], 1)

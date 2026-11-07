@@ -3,10 +3,10 @@
  "pads": [
   {
    "id": "colorado_50th",
-   "raster_points": 9419,
+   "raster_points": 10351,
    "multi_coverage_m2": 0.0,
    "grass_on_deck": 0,
-   "seam_max_gap_m": 0.00119,
+   "seam_max_gap_m": 0.00159,
    "seam_near_misses": 0,
    "curb_over_pavement": 0,
    "barriers": [],
@@ -17,7 +17,7 @@
   },
   {
    "id": "50th_ash",
-   "raster_points": 4425,
+   "raster_points": 4505,
    "multi_coverage_m2": 0.0,
    "grass_on_deck": 0,
    "seam_max_gap_m": 0.00161,
@@ -31,7 +31,7 @@
   },
   {
    "id": "50th_dahlia",
-   "raster_points": 5196,
+   "raster_points": 5200,
    "multi_coverage_m2": 0.0,
    "grass_on_deck": 0,
    "seam_max_gap_m": 0.00094,
@@ -40,6 +40,20 @@
    "barriers": [],
    "node_deck_minus_3dep_m": -0.001,
    "node_z_3dep_m": 1594.491,
+   "fails": [],
+   "fail": false
+  },
+  {
+   "id": "48th_colorado",
+   "raster_points": 10114,
+   "multi_coverage_m2": 0.0,
+   "grass_on_deck": 0,
+   "seam_max_gap_m": 0.00101,
+   "seam_near_misses": 0,
+   "curb_over_pavement": 0,
+   "barriers": [],
+   "node_deck_minus_3dep_m": -0.067,
+   "node_z_3dep_m": 1591.803,
    "fails": [],
    "fail": false
   }

@@ -26,7 +26,7 @@
  "measured_max_grade_pct": 6.84,
  "y_changed_points": 219,
  "y_change_max_m": 7.91,
- "connectors": false,
+ "connectors": true,
  "bespoke_files": [],
  "crossfall": {
   "stations": 60,

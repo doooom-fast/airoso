@@ -1182,6 +1182,28 @@ Tests: `tests/run_tests.py` (the .venv python, `python` on PATH): 1,304 pass. 6 
   K-M here are newer 0.2.6 work and 0.2.5's records over them would undo theirs, so it is not merged here (the Mac's call).
 - Not driven yet.
 
+
+## Runbook 4n (PC, 2026-11-07): 0.2.6 installed on Kevin's word
+
+- **Rehearsal** (`D:/k10-scratch/sand_creek_lm_r_reh`, empty; aff35043 clean, the 3 LFS blobs pulled; ENG `eng_sclm_a`,
+  the four `.bin` in place; 2026-11-06 14:10-15:27) matched rr2 on every gate row of 4n's list and all six kn5 sizes to
+  the byte (road 92,160,949; `_race` 10,196,549; `_closure_race` 9,701, md5 18e5eb36 = the Mac's; `_street` 6,923,402;
+  `__race` / `__street` 2,104). The spawn kn5s' md5s differ from rr2's (PC 20d09541 / c6ffbc6f vs 1822ac76 / f82f7ed8)
+  by exactly 2 bytes each, offsets 999 and 1023: the low byte of AC_START_1's cos word (m[2], m[8]; Mac 0x97, PC 0x99:
+  0.97544235 vs 0.97544247, 2 ULP), the platforms' sin/cos rounding; every position and the other 22 nodes byte-equal
+  (`cmp -l` against the Mac's rr2 files). Accepted as MATCHED. Every kn5 embeds every texture its materials name.
+- **4k for round R's verify_kn5:** `python -m scripts.ac.verify_kn5 D:/k10-scratch/lm_v4`, with and without `--inis`,
+  at afd22a8c and aff35043: byte-identical output (906 B / 158 B), both PASS (Windows needs PYTHONIOENCODING=utf-8: the
+  check-mark print crashes cp1252).
+- **Kevin, 2026-11-07: "Install over 0.2.5 (Recommended)"**, asked with round R's one-carriageway finding (Colorado v60 /
+  Quebec v2000; an eye reading off NAIP that 0.2.6 doesn't change). The 0.2.5 workshop moved aside to
+  `D:/k10-scratch/sand_creek_lm.0.2.5`; the install ran from a fresh empty `D:/k10-scratch/sand_creek_lm`, 11:48-12:55,
+  ENG eng_sclm_a. SHIP OK, no force. 0.2.5's folder parked in `D:/k10-track-archive/2026-11-07_125553/`. Installed
+  "doooom Colorado — Sand Creek Raceway (LM engine)" and "... Sand Creek Free Roam (LM engine)" 0.2.6. Against the
+  rehearsal: road, `_race` and `_street` kn5_equiv-EQUIVALENT (tangents only; the road's 1GRASS_0 24,453 vertices both);
+  the closure and both spawn kn5s byte-identical.
+- **The sync-back** is with this note (no commit on this branch since aff35043).
+- Not driven yet; 4n step 6's stills (from the car) owed.
 ## Round K (Mac): the race dressing, round C's plan of record (toward 0.2.6)
 
 Kevin's words: "same lamps as lake murray, race curbs, no sidewalks, authored pad junctions"; signs "Both"; "I just want

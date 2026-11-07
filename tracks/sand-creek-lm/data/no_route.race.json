@@ -1,0 +1,142 @@
+{
+ "layout": "race",
+ "mode": "built",
+ "obj": "track.race.obj",
+ "declaration": "v2 corridors.race",
+ "bands_version": 2,
+ "params": {
+  "cell_m": 0.25,
+  "tile_m": 64.0,
+  "domain_pad_m": 25.0,
+  "probe_r_m": 0.5,
+  "tol_m": 0.75,
+  "wall_span_m": [
+   0.2,
+   0.9
+  ],
+  "deck": "centreline y + 0.10",
+  "barrier_half_m": 0.335
+ },
+ "seed": "AC_START_0",
+ "domain_m2": 598826,
+ "reached_m2": 89035,
+ "allowed_m2": 89035,
+ "leak_cells": 0,
+ "leak_m2": 0,
+ "escaped": false,
+ "wall_cells": 291742,
+ "wall_tris_in_band": 78394,
+ "local_deck_cells": 842,
+ "local_deck_walls": [
+  {
+   "object": "1WALL_race_edge_L_street0_0_0",
+   "cells": 158,
+   "deck_minus_line_m": [
+    0.308,
+    0.327
+   ],
+   "base_m": 0.057,
+   "top_m": 1.156,
+   "vertices": [
+    134,
+    136
+   ]
+  },
+  {
+   "object": "1WALL_race_edge_L_street1_140_0",
+   "cells": 83,
+   "deck_minus_line_m": [
+    -0.275,
+    -0.077
+   ],
+   "base_m": -0.031,
+   "top_m": 1.228,
+   "vertices": [
+    141,
+    184
+   ]
+  },
+  {
+   "object": "1WALL_race_edge_R_street0_0_0",
+   "cells": 11,
+   "deck_minus_line_m": [
+    -0.143,
+    -0.117
+   ],
+   "base_m": 0.059,
+   "top_m": 1.163,
+   "vertices": [
+    143,
+    144
+   ]
+  },
+  {
+   "object": "1WALL_race_edge_L_street3_207_0",
+   "cells": 19,
+   "deck_minus_line_m": [
+    -0.156,
+    -0.123
+   ],
+   "base_m": 0.048,
+   "top_m": 1.18,
+   "vertices": [
+    402,
+    404
+   ]
+  },
+  {
+   "object": "1WALL_race_edge_R_street5_779_0",
+   "cells": 282,
+   "deck_minus_line_m": [
+    -0.25,
+    -0.112
+   ],
+   "base_m": 0.032,
+   "top_m": 1.183,
+   "vertices": [
+    853,
+    874
+   ]
+  },
+  {
+   "object": "1WALL_race_edge_R_street6_3195_0",
+   "cells": 225,
+   "deck_minus_line_m": [
+    -0.44,
+    -0.103
+   ],
+   "base_m": 0.034,
+   "top_m": 1.195,
+   "vertices": [
+    3196,
+    3209
+   ]
+  },
+  {
+   "object": "1WALL_race_edge_R_street7_3210_0",
+   "cells": 69,
+   "deck_minus_line_m": [
+    -0.234,
+    -0.143
+   ],
+   "base_m": 0.053,
+   "top_m": 1.167,
+   "vertices": [
+    3210,
+    3213
+   ]
+  }
+ ],
+ "door_clusters": 0,
+ "doors": [],
+ "doors_by_class": {},
+ "forbidden_probes": 23,
+ "forbidden_reached": [],
+ "lap_vertices": 3217,
+ "blocked": [],
+ "spawns_checked": 16,
+ "spawns_unreached": [],
+ "fail": false,
+ "fails": [],
+ "seconds": 14.8
+}

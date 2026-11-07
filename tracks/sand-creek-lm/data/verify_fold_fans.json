@@ -1,0 +1,163 @@
+{
+ "pinches": [
+  {
+   "k": 134,
+   "l": 141,
+   "X": null,
+   "y_k": null,
+   "y_l": null,
+   "lane": 2,
+   "chord": true,
+   "ref": [
+    -1491.7139,
+    18.037,
+    143.0585
+   ],
+   "source": "mouth_welds.json road cut with no levelled pinch: a chord mend (fold_fans.chords)"
+  },
+  {
+   "k": 3202,
+   "l": 3206,
+   "X": null,
+   "y_k": null,
+   "y_l": null,
+   "lane": 2,
+   "chord": true,
+   "ref": [
+    -1493.577,
+    19.434,
+    -281.7872
+   ],
+   "source": "mouth_welds.json road cut with no levelled pinch: a chord mend (fold_fans.chords)"
+  }
+ ],
+ "level_rows": 8,
+ "layouts": {
+  "race": [
+   {
+    "k": 134,
+    "l": 141,
+    "lane": 2,
+    "fails": [],
+    "rows": [
+     122,
+     154
+    ],
+    "paths": 125,
+    "paths_with_step": 0,
+    "kerb_lip_max_m": 0.0433,
+    "fine_max_m": 0.0,
+    "dt_max_m": 0.0316,
+    "grass_on_top": 0,
+    "grass_over_max_m": 0.0,
+    "road_jumps": 0,
+    "steep_road_tris": 0,
+    "chord": true,
+    "wall_cells": 71,
+    "wall_worst_delta_m": -0.1525,
+    "wall_frame": "local_deck",
+    "wall_cells_by_deck_frame": 0,
+    "wall_worst_centreline_delta_m": -0.1525
+   },
+   {
+    "k": 3202,
+    "l": 3206,
+    "lane": 2,
+    "fails": [],
+    "rows": [
+     3190,
+     2
+    ],
+    "paths": 125,
+    "paths_with_step": 0,
+    "kerb_lip_max_m": 0.0487,
+    "fine_max_m": 0.0,
+    "dt_max_m": 0.0245,
+    "grass_on_top": 0,
+    "grass_over_max_m": 0.0,
+    "road_jumps": 0,
+    "steep_road_tris": 0,
+    "chord": true,
+    "wall_cells": 64,
+    "wall_worst_delta_m": -0.2776,
+    "wall_frame": "local_deck",
+    "wall_cells_by_deck_frame": 14,
+    "wall_worst_centreline_delta_m": -0.4314
+   }
+  ],
+  "street": [
+   {
+    "k": 134,
+    "l": 141,
+    "lane": 2,
+    "fails": [],
+    "rows": [
+     122,
+     154
+    ],
+    "paths": 127,
+    "paths_with_step": 0,
+    "kerb_lip_max_m": 0.0,
+    "fine_max_m": 0.0,
+    "dt_max_m": 0.0378,
+    "grass_on_top": 0,
+    "grass_over_max_m": 0.0,
+    "road_jumps": 0,
+    "steep_road_tris": 0,
+    "chord": true
+   },
+   {
+    "k": 3202,
+    "l": 3206,
+    "lane": 2,
+    "fails": [],
+    "rows": [
+     3190,
+     2
+    ],
+    "paths": 127,
+    "paths_with_step": 0,
+    "kerb_lip_max_m": 0.0,
+    "fine_max_m": 0.0,
+    "dt_max_m": 0.0277,
+    "grass_on_top": 0,
+    "grass_over_max_m": 0.0,
+    "road_jumps": 0,
+    "steep_road_tris": 0,
+    "chord": true
+   }
+  ]
+ },
+ "fails": [],
+ "chords": true,
+ "cover_m": 0.25,
+ "wall_frame": "local_deck",
+ "deferred": {
+  "race": {
+   "deferred": 10,
+   "covered": 10,
+   "worst_gap_m": 0.2315
+  },
+  "street": {
+   "deferred": 0,
+   "covered": 0,
+   "worst_gap_m": 0.0
+  }
+ },
+ "fail": false,
+ "thresholds": {
+  "fine_step_m": 0.02,
+  "kerb_lip_m": 0.055,
+  "dt_max_m": 0.06,
+  "grass_over_m": 0.02,
+  "jump_plan_m": 0.1,
+  "tri_slope_max": 0.25,
+  "tri_area_min": 0.01,
+  "apex_tol_m": 0.01,
+  "wall_band_m": 0.28,
+  "wall_radius_m": 25.0,
+  "window_pad_rows": 4,
+  "path_do_m": 0.25,
+  "path_ds_m": 0.05
+ }
+}

@@ -3,11 +3,11 @@
  "kn5": [
   {
    "kn5": "sand_creek_raceway_lm.kn5",
-   "mb": 52.6,
-   "visible_meshes": 36,
-   "materials_used": 36,
-   "textures": 21,
-   "texture_mb": 22.1,
+   "mb": 92.2,
+   "visible_meshes": 130,
+   "materials_used": 130,
+   "textures": 25,
+   "texture_mb": 22.3,
    "untextured": []
   },
   {
@@ -29,10 +29,28 @@
    "untextured": []
   },
   {
+   "kn5": "sand_creek_raceway_lm_closure_race.kn5",
+   "mb": 0.0,
+   "visible_meshes": 3,
+   "materials_used": 3,
+   "textures": 3,
+   "texture_mb": 0.0,
+   "untextured": []
+  },
+  {
+   "kn5": "sand_creek_raceway_lm_race.kn5",
+   "mb": 10.2,
+   "visible_meshes": 36,
+   "materials_used": 36,
+   "textures": 4,
+   "texture_mb": 4.0,
+   "untextured": []
+  },
+  {
    "kn5": "sand_creek_raceway_lm_street.kn5",
-   "mb": 1.7,
-   "visible_meshes": 1,
-   "materials_used": 1,
+   "mb": 6.9,
+   "visible_meshes": 4,
+   "materials_used": 4,
    "textures": 1,
    "texture_mb": 0.0,
    "untextured": []

@@ -1,7 +1,7 @@
 {
- "file": "/Volumes/Drive/codex/sclm_work/d7/build/sand_creek_raceway_lm_street.kn5",
+ "file": "D:\\k10-scratch\\sand_creek_lm\\build\\sand_creek_raceway_lm_street.kn5",
  "version": 5,
- "file_bytes": 1740095,
+ "file_bytes": 6923402,
  "textures": [
   {
    "name": "line_yellow.png",
@@ -10,7 +10,49 @@
  ],
  "materials": [
   {
-   "name": "YLINE_mat.001",
+   "name": "YLINE_0_mat",
+   "shader": "ksPerPixel",
+   "props": {
+    "ksDiffuse": 0.4,
+    "ksAmbient": 0.4
+   },
+   "textures": [
+    [
+     "txDiffuse",
+     "line_yellow.png"
+    ]
+   ]
+  },
+  {
+   "name": "YLINE_1_mat",
+   "shader": "ksPerPixel",
+   "props": {
+    "ksDiffuse": 0.4,
+    "ksAmbient": 0.4
+   },
+   "textures": [
+    [
+     "txDiffuse",
+     "line_yellow.png"
+    ]
+   ]
+  },
+  {
+   "name": "YLINE_2_mat",
+   "shader": "ksPerPixel",
+   "props": {
+    "ksDiffuse": 0.4,
+    "ksAmbient": 0.4
+   },
+   "textures": [
+    [
+     "txDiffuse",
+     "line_yellow.png"
+    ]
+   ]
+  },
+  {
+   "name": "YLINE_paint_fork_95_median_mat",
    "shader": "ksPerPixel",
    "props": {
     "ksDiffuse": 0.4,
@@ -26,33 +68,62 @@
  ],
  "meshes": [
   {
-   "name": "YLINE",
-   "verts": 37812,
-   "tris": 12604,
+   "name": "YLINE_0",
+   "verts": 61452,
+   "tris": 20504,
    "matid": 0,
    "surface": null,
    "renderable": true,
-   "radius_m": 1781.8
+   "radius_m": 1247.4
+  },
+  {
+   "name": "YLINE_1",
+   "verts": 58248,
+   "tris": 19424,
+   "matid": 1,
+   "surface": null,
+   "renderable": true,
+   "radius_m": 1265.9
+  },
+  {
+   "name": "YLINE_2",
+   "verts": 25349,
+   "tris": 25185,
+   "matid": 2,
+   "surface": null,
+   "renderable": true,
+   "radius_m": 1260.3
+  },
+  {
+   "name": "YLINE_paint_fork_95_median",
+   "verts": 3240,
+   "tris": 1080,
+   "matid": 3,
+   "surface": null,
+   "renderable": true,
+   "radius_m": 33.6
   }
  ],
  "nodes": [
   "BlenderFile"
  ],
  "summary": {
-  "meshes": 1,
-  "verts": 37812,
-  "tris": 12604,
+  "meshes": 4,
+  "verts": 148289,
+  "tris": 66193,
   "textures": 1,
   "texture_bytes": 361,
-  "materials": 1,
+  "materials": 4,
   "surfaces": {},
   "shaders_by_tris": {
    "ksPerPixel": {
-    "meshes": 1,
-    "tris": 12604
+    "meshes": 4,
+    "tris": 66193
    }
   },
-  "near_vert_cap": [],
+  "near_vert_cap": [
+   "YLINE_0"
+  ],
   "non_pot_textures": []
  }
 }

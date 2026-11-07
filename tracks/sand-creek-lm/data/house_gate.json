@@ -1,8 +1,8 @@
 {
- "kn5": "/Volumes/Drive/codex/sclm_work/d7/build/sand_creek_raceway_lm.kn5",
+ "kn5": "D:\\k10-scratch\\sand_creek_lm\\build\\sand_creek_raceway_lm.kn5",
  "counts": {
-  "roofs": 2181,
-  "blocks": 2181,
+  "roofs": 2183,
+  "blocks": 2183,
   "colliders": 0
  },
  "floor": {
@@ -14,11 +14,11 @@
   "BUILDING_METAL": 173,
   "BUILDING_SIDING": 1291,
   "BUILDING_STUCCO": 9,
-  "BUILDING_TILTUP": 708,
+  "BUILDING_TILTUP": 710,
   "ROOFTOP_DARK": 102,
   "ROOFTOP_SHINGLE": 1291,
   "ROOFTOP_TAN": 515,
-  "ROOFTOP_WHITE": 273
+  "ROOFTOP_WHITE": 275
  },
  "weld_m": 0.001,
  "fail": false,

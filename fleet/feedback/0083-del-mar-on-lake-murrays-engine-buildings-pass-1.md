@@ -370,3 +370,16 @@ The two approved tiles (above). Sizes looked up by HTTP HEAD only (nothing fetch
    estimate or the buildings, a call that waits on the layout.
 9. **The layout itself, still estimated:** one georeferenced 1989-96 frame for ledger 0064's correction pass.
 10. **Install:** none from the Mac; 0.2.1 goes to the PC's rehearsal (runbook 0083-2) and Kevin's word.
+
+## PC: rehearsal 0083-1 and the 0.2.0 install (2026-11-06)
+
+- **0083-1 MATCHED** (fc7e09fa, `D:/k10-scratch/del_mar_lm_reh`, ENG `D:/k10-scratch/eng_dmlm` = eng_repro + airoso's 95
+  `assets/textures`, md5-checked; SOURCES.txt differs only by CRLF): every row of the 0.2.0 column; `[bespoke] 254
+  buildings stood, 98 dropped (92 of them past 450 m of the lap)`; `[seat-edges] 74 line points steeper`; road kn5
+  15,811,691 B (the Mac's size; md5 84b7fd4c vs 607655cd, tangents); every texture its materials name is embedded.
+- **INSTALLED on Kevin's word** (2026-11-06, "Install beside 0.1.0 (Recommended)", asked with: the layout is estimated,
+  most heights are defaults, the halls are plain grey boxes): fc7e09fa from an empty `D:/k10-scratch/del_mar_lm`, ENG
+  eng_dmlm; SHIP OK, no force; `content/tracks/del_mar_fairgrounds_lm` ("doooom California — Del Mar Grand Prix (LM
+  engine)" 0.2.0) beside `del_mar_fairgrounds` 0.1.0; kn5 kn5_equiv-equivalent to the rehearsal (tangents only). The
+  sync-back's records are on their own branch `claude/del-mar-lm-0200-installed` (ee61922): this branch's later rounds
+  rewrote `house_seat_check.json` / `split_manifest.json`. Not driven yet.

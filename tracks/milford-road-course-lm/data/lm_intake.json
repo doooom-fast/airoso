@@ -39,6 +39,9 @@
   "points_before": 1635,
   "points_after": 3269
  },
+ "edge_on_wall": null,
+ "corner_arcs": null,
+ "carried": [],
  "grid_upsample": 2,
  "md5": {
   "source_centerline": "f46d2f9b3e3ab4641e6ea2d1ac6a6bcd",

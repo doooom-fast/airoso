@@ -1,0 +1,19 @@
+{
+ "kn5s": [
+  {
+   "kn5": "/Volumes/Drive/codex/mf_work/c4/build/milford_road_course_lm.kn5",
+   "bytes": 40714845,
+   "version": 5,
+   "textures_embedded": 20,
+   "materials": 37,
+   "maps": 54,
+   "missing_textures": [],
+   "missing": [],
+   "empty": [],
+   "zero_bytes": [],
+   "unused": [],
+   "ok": true
+  }
+ ],
+ "ok": true
+}

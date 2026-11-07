@@ -53,6 +53,10 @@ SLICE_M = 2.0             # [invented] the stepped form's slice across the short
 TIER_JOIN_M = 1.0         # [invented] a slice within this of its tier's running median joins it
 TIER_MIN_M = 4.0          # [invented] a tier narrower than this joins its neighbour nearer in height
 PCTS = (5, 10, 25, 50, 75, 90, 95, 98)
+CHUNK_POINTS = 2_000_000     # laspy chunk_iterator: a tile is read in chunks and only the kept points held
+KEEP_CELL_M = 5.0           # the keep mask's cell (a superset of every footprint's query box)
+KEEP_MARGIN_M = 5.0         # [invented] slack round the query box
+READ_ONLY = frozenset({"CHUNK_POINTS", "KEEP_CELL_M", "KEEP_MARGIN_M"})   # how the tiles are read, not how a roof is measured: not in params
 
 
 def point_in_ring(ring, x, y):
@@ -332,38 +336,71 @@ def main() -> int:
             if k not in planned and t.get("building") in ("pavilion", "roof") and e.get("geometry"):
                 extra.append({"key": k, "footprint_lonlat": [[p["lon"], p["lat"]] for p in e["geometry"]],
                               "class": "canopy", "_tag": t.get("building"), "_name": t.get("name")})
-    crs, xs_, ys_, zs_, cs_, rns_, nrs_, tinfo = None, [], [], [], [], [], [], []
-    for tp in tiles:
-        with laspy.open(tp) as f:
-            hd = f.header
-            c = hd.parse_crs()
-            crs = crs or c
-            las = f.read()
-        cls = np.asarray(las.classification, dtype=np.uint8)
-        keep = cls != 7                               # low noise
-        keep &= cls != 18                             # high noise
-        xs_.append(np.asarray(las.x)[keep]); ys_.append(np.asarray(las.y)[keep]); zs_.append(np.asarray(las.z)[keep])
-        cs_.append(cls[keep]); rns_.append(np.asarray(las.return_number, dtype=np.uint8)[keep])
-        nrs_.append(np.asarray(las.number_of_returns, dtype=np.uint8)[keep])
-        gps = np.asarray(las.gps_time)
-        import datetime
-        t0 = datetime.datetime(1980, 1, 6) + datetime.timedelta(seconds=1e9)   # adjusted standard GPS time (LAS 1.4)
-        flown = [str((t0 + datetime.timedelta(seconds=float(v))).date()) for v in (gps.min(), gps.max())]
-        u, n = np.unique(cls, return_counts=True)
-        tinfo.append({"file": tp.name, "bytes": tp.stat().st_size, "points": int(hd.point_count),
-                      "bbox": [round(float(v), 2) for v in (hd.mins[0], hd.mins[1], hd.maxs[0], hd.maxs[1])],
-                      "z_range": [round(float(hd.mins[2]), 2), round(float(hd.maxs[2]), 2)],
-                      "classes": {int(a): int(b) for a, b in zip(u, n)}, "file_created": str(hd.creation_date),
-                      "flown": flown,
-                      "point_format": int(hd.point_format.id), "version": str(hd.version)})
+    with laspy.open(tiles[0]) as f:                   # the first tile's CRS frames the footprints before any point is read
+        crs = f.header.parse_crs()
     hcrs = crs.sub_crs_list[0] if crs.is_compound else crs
     to_m = Transformer.from_crs(CRS.from_epsg(4326), hcrs, always_xy=True)
     to_ll = Transformer.from_crs(hcrs, CRS.from_epsg(4326), always_xy=True)
     unit = hcrs.axis_info[0].unit_conversion_factor
     if abs(unit - 1.0) > 1e-9:
         raise SystemExit(f"tile CRS unit {unit} m: this tool reads metres only")
+    rings = {}
+    for r in rows + extra:
+        xy = [to_m.transform(p[0], p[1]) for p in r["footprint_lonlat"]]
+        if xy[0] == xy[-1]:
+            xy = xy[:-1]
+        rings[r["key"]] = xy
+    # KEEP ONLY what a footprint can read (the G10's 4 GB cap, ledger 0083 pass 3): the points in KEEP_CELL_M cells that a
+    # footprint's box, padded by the widest ground ring + 1 m (measure()'s own query) + KEEP_MARGIN_M, overlaps. measure()
+    # reads exact predicates inside that query, so the output is the whole-tile run's, byte for byte (proved on pass 2's tiles)
+    pad = GROUND_RING_M[-1][1] + 1.0 + KEEP_MARGIN_M
+    boxes = [(min(p[0] for p in v) - pad, min(p[1] for p in v) - pad, max(p[0] for p in v) + pad, max(p[1] for p in v) + pad)
+             for v in rings.values()]
+    heads = []
+    for tp in tiles:
+        with laspy.open(tp) as f:
+            heads.append((float(f.header.mins[0]), float(f.header.mins[1]), float(f.header.maxs[0]), float(f.header.maxs[1])))
+    gx0, gy0 = min(h[0] for h in heads), min(h[1] for h in heads)
+    gnx = int((max(h[2] for h in heads) - gx0) // KEEP_CELL_M) + 1
+    gny = int((max(h[3] for h in heads) - gy0) // KEEP_CELL_M) + 1
+    mask = np.zeros((gny, gnx), dtype=bool)
+    for x0, y0, x1, y1 in boxes:
+        i0, i1 = max(0, int((x0 - gx0) // KEEP_CELL_M)), min(gnx - 1, int((x1 - gx0) // KEEP_CELL_M))
+        j0, j1 = max(0, int((y0 - gy0) // KEEP_CELL_M)), min(gny - 1, int((y1 - gy0) // KEEP_CELL_M))
+        if i1 >= i0 and j1 >= j0:
+            mask[j0:j1 + 1, i0:i1 + 1] = True
+    import datetime
+    t0 = datetime.datetime(1980, 1, 6) + datetime.timedelta(seconds=1e9)   # adjusted standard GPS time (LAS 1.4)
+    xs_, ys_, zs_, cs_, rns_, nrs_, tinfo = [], [], [], [], [], [], []
+    for tp in tiles:
+        counts, gmin, gmax = {}, None, None
+        with laspy.open(tp) as f:
+            hd = f.header
+            for ch in f.chunk_iterator(CHUNK_POINTS):
+                cls = np.asarray(ch.classification, dtype=np.uint8)
+                u, n = np.unique(cls, return_counts=True)
+                for a, b in zip(u, n):
+                    counts[int(a)] = counts.get(int(a), 0) + int(b)
+                gps = np.asarray(ch.gps_time)
+                gmin = float(gps.min()) if gmin is None else min(gmin, float(gps.min()))
+                gmax = float(gps.max()) if gmax is None else max(gmax, float(gps.max()))
+                x, y = np.asarray(ch.x), np.asarray(ch.y)
+                ci = np.clip(((x - gx0) // KEEP_CELL_M).astype(np.int64), 0, gnx - 1)
+                cj = np.clip(((y - gy0) // KEEP_CELL_M).astype(np.int64), 0, gny - 1)
+                keep = mask[cj, ci] & (cls != 7) & (cls != 18)       # low / high noise dropped, as before
+                xs_.append(x[keep]); ys_.append(y[keep]); zs_.append(np.asarray(ch.z)[keep])
+                cs_.append(cls[keep]); rns_.append(np.asarray(ch.return_number, dtype=np.uint8)[keep])
+                nrs_.append(np.asarray(ch.number_of_returns, dtype=np.uint8)[keep])
+        flown = [str((t0 + datetime.timedelta(seconds=v)).date()) for v in (gmin, gmax)]
+        tinfo.append({"file": tp.name, "bytes": tp.stat().st_size, "points": int(hd.point_count),
+                      "bbox": [round(float(v), 2) for v in (hd.mins[0], hd.mins[1], hd.maxs[0], hd.maxs[1])],
+                      "z_range": [round(float(hd.mins[2]), 2), round(float(hd.maxs[2]), 2)],
+                      "classes": dict(sorted(counts.items())), "file_created": str(hd.creation_date),
+                      "flown": flown,
+                      "point_format": int(hd.point_format.id), "version": str(hd.version)})
     cloud = Cloud(np.concatenate(xs_), np.concatenate(ys_), np.concatenate(zs_), np.concatenate(cs_), np.concatenate(rns_),
                   np.concatenate(nrs_))
+    del xs_, ys_, zs_, cs_, rns_, nrs_
     origin = None
     if origin_file:
         origin = json.loads(origin_file.read_text(encoding="utf-8"))["origin"]
@@ -375,12 +412,6 @@ def main() -> int:
             corners = [to_ll.transform(a, b) for a, b in ((x0, y0), (x1, y0), (x1, y1), (x0, y1))]
             t["corners_lonlat"] = [[round(a, 7), round(b, 7)] for a, b in corners]
             t["corners_track_xy"] = [[round((a - origin["lon"]) * mlon, 1), round((b - origin["lat"]) * mlat, 1)] for a, b in corners]
-    rings = {}
-    for r in rows + extra:
-        xy = [to_m.transform(p[0], p[1]) for p in r["footprint_lonlat"]]
-        if xy[0] == xy[-1]:
-            xy = xy[:-1]
-        rings[r["key"]] = xy
     # neighbours for the ground ring: every footprint near this one
     cent = {k: (sum(p[0] for p in v) / len(v), sum(p[1] for p in v) / len(v)) for k, v in rings.items()}
     out = {}
@@ -409,7 +440,7 @@ def main() -> int:
                    "(under COVER_MIN of it on the tiles: the class default stays) / vegetation / no_roof / no_ground / too_few_points.",
            "crs": hcrs.name, "crs_epsg": hcrs.to_epsg(), "vertical": crs.sub_crs_list[1].name if crs.is_compound else None,
            "origin": origin, "tiles": tinfo,
-           "params": {k: v for k, v in globals().items() if k.isupper() and isinstance(v, (int, float, list, tuple))},
+           "params": {k: v for k, v in globals().items() if k.isupper() and k not in READ_ONLY and isinstance(v, (int, float, list, tuple))},
            "status": tally, "buildings": out, "stepped": parts}
     outp.write_text(json.dumps(doc, indent=1), encoding="utf-8", newline="\n")
     print(f"[lidar] {len(cloud.x):,} points from {len(tiles)} tiles ({hcrs.name}); {len(out)} footprints: {tally}; stepped {list(parts)}")

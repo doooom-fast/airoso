@@ -8,10 +8,10 @@
  "double_sheet_cells": 0,
  "seating": {
   "walls": {
-   "objects": 4,
+   "objects": 21,
    "no_ground_pct": 0.0,
-   "median_m": -0.863,
-   "p95_m": -0.151,
+   "median_m": -1.238,
+   "p95_m": -0.268,
    "hovering": 0
   }
  },

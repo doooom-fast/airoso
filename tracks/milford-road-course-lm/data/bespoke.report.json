@@ -17,6 +17,65 @@
    "clear_m": Infinity
   }
  ],
+ "rails": [
+  {
+   "key": "g1_nw_corner_outside",
+   "kind": "wbeam",
+   "runs": 1,
+   "posts": 58,
+   "left_out": 0,
+   "length_m": 107.0,
+   "height_m": 0.7
+  },
+  {
+   "key": "g2_front_straight_east",
+   "kind": "wbeam",
+   "runs": 3,
+   "posts": 247,
+   "left_out": 48,
+   "length_m": 464.8,
+   "height_m": 0.7
+  },
+  {
+   "key": "g3_front_straight_west",
+   "kind": "wbeam",
+   "runs": 2,
+   "posts": 98,
+   "left_out": 7,
+   "length_m": 181.4,
+   "height_m": 0.7
+  },
+  {
+   "key": "g4_infield_esses",
+   "kind": "wbeam",
+   "runs": 1,
+   "posts": 192,
+   "left_out": 0,
+   "length_m": 363.6,
+   "height_m": 0.7
+  },
+  {
+   "key": "t1_nw_hairpin_exit",
+   "kind": "tyres",
+   "modules": 71,
+   "left_out": 0,
+   "length_m": 44.1
+  },
+  {
+   "key": "t2_esses_east_leg",
+   "kind": "tyres",
+   "modules": 85,
+   "left_out": 0,
+   "length_m": 53.2
+  },
+  {
+   "key": "t3_s1000_apron_back",
+   "kind": "tyres",
+   "modules": 48,
+   "left_out": 3,
+   "length_m": 32.5
+  }
+ ],
  "blocks": [
   {
    "key": "mpg_plant_a",
@@ -46,6 +105,36 @@
    "bottom": -0.28,
    "eave": 10.72,
    "off_terrain": true,
+   "collider": false
+  },
+  {
+   "key": "pad_shed_north",
+   "skin": "METAL",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 2.6,
+   "ground": [
+    16.78,
+    16.9
+   ],
+   "bottom": 16.46,
+   "eave": 19.06,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "pad_shed_south",
+   "skin": "METAL",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 2.6,
+   "ground": [
+    16.94,
+    17.11
+   ],
+   "bottom": 16.63,
+   "eave": 19.23,
+   "off_terrain": false,
    "collider": false
   }
  ],

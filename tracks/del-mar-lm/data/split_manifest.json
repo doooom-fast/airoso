@@ -2,10 +2,10 @@
  "input": "D:\\k10-scratch\\del_mar_lm\\blender\\del_mar_fairgrounds_lm.blend",
  "outputs": {
   "loop_main.blend": {
-   "objects": 29,
-   "meshes": 13,
-   "positions": 107766,
-   "max_positions": 36649,
+   "objects": 31,
+   "meshes": 15,
+   "positions": 133822,
+   "max_positions": 49475,
    "materials": [
     "1GRASS_0_mat",
     "1GRASS_1_mat",
@@ -16,7 +16,9 @@
     "BUILDING_METAL_CANOPY_0_mat",
     "BUILDING_STUCCO_0_mat",
     "BUILDING_TILTUP_0_mat",
+    "BUILDING_TILTUP_SETIN_0_mat",
     "MARKINGS_mat.001",
+    "ROOFTOP_NAIP_0_mat",
     "ROOFTOP_SHINGLE_0_mat",
     "ROOFTOP_TAN_0_mat",
     "ROOFTOP_WHITE_0_mat"
@@ -69,7 +71,9 @@
     "BUILDING_METAL_CANOPY_0",
     "BUILDING_STUCCO_0",
     "BUILDING_TILTUP_0",
+    "BUILDING_TILTUP_SETIN_0",
     "MARKINGS",
+    "ROOFTOP_NAIP_0",
     "ROOFTOP_SHINGLE_0",
     "ROOFTOP_TAN_0",
     "ROOFTOP_WHITE_0"
@@ -79,10 +83,10 @@
  "problems": [],
  "tokens": {},
  "input_census": {
-  "objects": 29,
-  "meshes": 13,
-  "positions": 107766,
-  "max_positions": 36649,
+  "objects": 31,
+  "meshes": 15,
+  "positions": 133822,
+  "max_positions": 49475,
   "materials": [
    "1GRASS_0_mat",
    "1GRASS_1_mat",
@@ -93,7 +97,9 @@
    "BUILDING_METAL_CANOPY_0_mat",
    "BUILDING_STUCCO_0_mat",
    "BUILDING_TILTUP_0_mat",
+   "BUILDING_TILTUP_SETIN_0_mat",
    "MARKINGS_mat.001",
+   "ROOFTOP_NAIP_0_mat",
    "ROOFTOP_SHINGLE_0_mat",
    "ROOFTOP_TAN_0_mat",
    "ROOFTOP_WHITE_0_mat",
@@ -149,7 +155,9 @@
    "BUILDING_METAL_CANOPY_0",
    "BUILDING_STUCCO_0",
    "BUILDING_TILTUP_0",
+   "BUILDING_TILTUP_SETIN_0",
    "MARKINGS",
+   "ROOFTOP_NAIP_0",
    "ROOFTOP_SHINGLE_0",
    "ROOFTOP_TAN_0",
    "ROOFTOP_WHITE_0"

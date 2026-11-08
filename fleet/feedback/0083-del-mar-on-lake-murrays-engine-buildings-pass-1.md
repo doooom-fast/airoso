@@ -912,3 +912,26 @@ download (Kevin's yes).
 5. Canopy posts and slab, walls, furniture, the boulevard banks, direction, the period, the layout itself: pass 3's owed
    5-9, unchanged.
 6. **Install:** none from the Mac; 0.2.4 goes to the PC's rehearsal (runbook 0083-5) and Kevin's word.
+
+## PC: rehearsal 0083-5 and the 0.2.4 install (2026-11-07)
+
+- **Rehearsal** (a clean detached worktree at `4810cdbd`, GIT_LFS_SKIP_SMUDGE; ENG `eng_dmlm_024` = 0.2.2's engine +
+  this head's `assets/textures`, 95/95 md5-equal [0.2.2's copy differed in SOURCES.txt only, so a fresh copy]; an EMPTY
+  scratch workshop `D:/k10-scratch/del_mar_lm_024_reh`): SHIP OK, no force, 4 min. Every row of the 0.2.4 column: the
+  far-ground line to the digit (26200 ring nodes, 20851 / 1785 / 3564, residual -0.367..0.589 max 3.504, grade p95
+  0.1058 max 0.2375, TERRAIN 63599 -> 89159); 456 stood, 31 dropped (23 relief, 7 road, 1 near); prep 451 seated, 221
+  with a foundation (4.03 m); drive_test PASS (kinks 6.68, drops 0, obstructed 0, floating 0); audit CLEAN (grass
+  102,251 v, walls 2,906 v); verify_kn5 + inis PASS; kn5_ground_check PASS (11 walls, 0/2292); house_seat PASS (445
+  judged, set in: 5 declared, 2 judged, +0.00 m); road kn5 16,927,115 B, 17 textures (kn5_textures.py by hand: PASS,
+  missing 0 — this chain has no kn5_textures step). The track folder is 1,520 B smaller than the Mac's (kn5 equal; not
+  traced).
+- **Install** on Kevin's word, asked here ("Install it (Recommended)"): from an EMPTY `D:/k10-scratch/del_mar_lm`
+  (0.2.2's workshop parked as `del_mar_lm.0.2.2`) to the plain **`del_mar_fairgrounds`** (install_folder; 0.1.0 had
+  already left AC, so the install parked nothing). Installed = the workshop build (ui_track.json only); kn5 = the
+  rehearsal's, tangents only (44,996 values). Then `ac_tidy record` + `--apply --only del_mar_fairgrounds_lm`: 0.2.2
+  moved to `D:/k10-track-archive/2026-11-07_222810_tidy/` (MOVES.tsv). In AC: `del_mar_fairgrounds` 0.2.4 only.
+- **Menu picture**: re-rendered from 0.2.4 with 1c04c56's camera (s5, -0.8 EV; eye and look identical; the far ground
+  now rises behind the stands), committed at `source/ui/` and copied into AC (the pack's in
+  `D:/k10-track-archive/2026-11-08_001402_previews/`).
+- This commit: the outputs the install synced back (data/, loop.blend) + the picture. Recorded in
+  `fleet/ac-installed.json` on claude/ac-tidy.

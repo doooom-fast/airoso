@@ -7,7 +7,10 @@
     "Folders not listed here and not ours (no doooom / airoso / k10 author or name) are Kunos and third-party tracks: never touched.",
     "2026-11-06 (Kevin: 'Move all 10', 'Rename it'): the 10 originals moved to D:/k10-track-archive/2026-11-06_103803_tidy/ (MOVES.tsv there; `python tools/ac_tidy.py restore <dir>` puts them back) and dropped from this list; Lake Murray v4's 5 layout names renamed from the K10 candidate prefix to 'doooom San Diego' (originals in <dir>/san_diego_lake_murray_v4.ui/).",
     "2026-11-07 (Kevin, relayed by the Mac: 'We want to delete old copies from ac when installing new ones'; asked here, 'Move it out now (Recommended)'): del_mar_fairgrounds 0.1.0 moved to D:/k10-track-archive/2026-11-07_164229_tidy/ and dropped from this list. Every install now REPLACES: the other folders of the track leave AC (archive, never deleted).",
-    "Installs replace (Kevin 2026-11-07): `record` supersedes every other folder of the track's family (track slug minus -lm, or `family`), and prints what still has to leave AC. Plain names from now on (Kevin: 'Get rid of Lm Version from names' / 'LM is the airoso engine'): installing sand_creek_raceway replaces sand_creek_raceway_lm."
+    "Installs replace (Kevin 2026-11-07): `record` supersedes every other folder of the track's family (track slug minus -lm, or `family`), and prints what still has to leave AC. Plain names from now on (Kevin: 'Get rid of Lm Version from names' / 'LM is the airoso engine'): installing sand_creek_raceway replaces sand_creek_raceway_lm.",
+    "2026-11-07 (Kevin, relayed by the Mac: 'Copy now'): the Blender menu pictures (tools/menu_preview_blend.py, each track's source/ui[/<layout>]/preview.png) copied over the installed preview.png of 13 tracks / 18 layouts (Milford skipped: 0.1.4 installing); the old ones in D:/k10-track-archive/2026-11-07_221708_previews/ (PREVIEWS.tsv, README: the one-line put-back).",
+    "2026-11-07 (Kevin, asked here: 'Install it (Recommended)' x2): Milford 0.1.4 over 0.1.2 in milford_road_course_lm; Del Mar 0.2.4 to the plain del_mar_fairgrounds, del_mar_fairgrounds_lm 0.2.2 moved to D:/k10-track-archive/2026-11-07_222810_tidy/ (ac_tidy --apply). Both pictures re-rendered from the new builds with their committed cameras and copied in (the pack's in D:/k10-track-archive/2026-11-08_001402_previews/).",
+    "After every install from now on: re-render the track's menu picture from the new build with the camera in its source/ui/preview.json, copy it over ui[/<layout>]/preview.png (old one backed up), commit it with the install records."
   ],
   "ac_tracks": "D:/SteamLibrary/steamapps/common/assettocorsa/content/tracks",
   "archive": "D:/k10-track-archive",
@@ -32,15 +35,15 @@
       "sha": "f3a93c3f",
       "installed": "2026-11-05"
     },
-    "del_mar_fairgrounds_lm": {
+    "del_mar_fairgrounds": {
       "branch": "claude/del-mar-lm",
       "engine": "lm-v4",
       "installed": "2026-11-07",
-      "note": "every building at its 2024 lidar height, open roofs on posts (ledger 0083), estimated layout; records on claude/del-mar-lm",
       "role": "current",
-      "sha": "b26e2b03",
+      "sha": "4810cdbd",
       "track": "del-mar-lm",
-      "version": "0.2.2"
+      "version": "0.2.4",
+      "note": "0.2.4 = far ground off the 2024 lidar, garages set in their slope (ledger 0083 pass 4b), the plain folder; records + menu picture on claude/del-mar-lm 0f5ba59"
     },
     "exotics_racing_lvms_lm": {
       "track": "exotics-racing-lv-lm",
@@ -77,14 +80,14 @@
       "installed": "2026-11-04"
     },
     "milford_road_course_lm": {
-      "branch": "claude/milford-furniture-lm",
+      "branch": "claude/milford-edges",
       "engine": "lm-v4",
       "installed": "2026-11-07",
-      "note": "0.1.2 = F1 screen wall off the lidar + the kn5_textures gate (ledger 0082); records on claude/milford-furniture-lm 48daf25",
+      "note": "0.1.4 = smooth lane edges (ledger 0087, edge_smoothness gate); records + menu picture on claude/milford-edges ce98214; 0.1.2 parked in D:/k10-track-archive/2026-11-07_223238/",
       "role": "current",
-      "sha": "1357968b",
+      "sha": "5c588428",
       "track": "milford-road-course-lm",
-      "version": "0.1.2"
+      "version": "0.1.4"
     },
     "pikes_peak_international_raceway_lm": {
       "track": "pikes-peak-lm",

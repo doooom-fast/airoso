@@ -1,9 +1,9 @@
 {
   "_doc": "Milford Road Course (unofficial) through Lake Murray v4's engine (ledger 0078). The line, widths and profile are tracks/milford-road-course's (installed 0.6.0), read by tools/lm_engine_intake.py; the profile is the measured one with the elevation stage's grade cap undone; the camber is the G10 lidar survey (source/lidar/camber-survey/crossfall.json); the edge is the circuit's (no curb, no sidewalk). Every other key is the live track's, copied; the live config is untouched.",
   "archetype": "race_circuit",
-  "name": "Milford Road Course (unofficial) (LM engine)",
+  "name": "Milford Road Course (unofficial)",
   "slug": "milford_road_course_lm",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "mirror_x": false,
   "loop": true,
   "default_width_m": 11.0,
@@ -197,56 +197,66 @@
           "_source": "the paved pad inside the lap off NAIP 2022, read by eye to about 3 m"
         }
       ],
-      "cards": [
-        {
-          "file": "source/bespoke/trees.json",
-          "prefix": "TREECARD",
-          "clear_m": 5.0
-        }
-      ],
       "grassfx_zones": {
-        "image": "source/naip_2022_mrc.jpg",
+        "image": "source/vegetation/grass_classes.png",
         "bbox_lonlat": [
-          -83.67,
-          42.56050328638498,
-          -83.657,
-          42.57949671361502
+          -83.67001018,
+          42.56049182,
+          -83.6570028,
+          42.57950439
         ],
-        "cell_m": 30,
-        "max_rects": 48,
-        "fade_m": 10,
+        "margin_m": 250,
+        "cell_m": 12,
+        "max_rects": 96,
+        "fade_m": 6,
         "classes": [
           {
             "map": "C",
             "mean": [
-              18,
-              114
+              30,
+              50
             ],
             "g_over_r": [
-              1.03,
-              9
+              50,
+              999
             ],
             "g_over_b": [
-              1.04,
-              9
+              50,
+              999
             ]
           },
           {
             "map": "B",
             "mean": [
-              140,
-              215
+              120,
+              150
+            ],
+            "g_over_r": [
+              0.9,
+              1.1
+            ],
+            "g_over_b": [
+              50,
+              999
+            ]
+          },
+          {
+            "map": "D",
+            "mean": [
+              50,
+              80
             ],
             "g_over_r": [
               0,
-              1.0
+              0.5
             ],
             "g_over_b": [
-              1.15,
-              9
+              0,
+              0.5
             ]
           }
-        ]
+        ],
+        "_source": "ledger 0082 vegetation pass: the image is the MEASURED class map (source/vegetation/scripts/veg_plan.py), one pixel per 2 m cell, coded so the colour rules here read each class back exactly: C (0,120,0) the wood floor, NAIP 2022's canopy (its rule calibrated on the 2017 lidar, 97 % / 97 %); B (200,200,0) long grass, NAIP 2022 by 0.1.0's own rule (the lidar, flown 2017-05-03, holds no standing grass to confirm it); D (0,0,200) no grass, pavement or gravel the build carries as ground (lidar ground intensity at or under the build's own pavement p75 AND NAIP grey); white = the base look (mown)"
       },
       "_guardrail_dropped": "the live track's W-beam rail follows airoso's draft guard lips (1WALL_PARA), which the v021 assembler does not lay; not ported (ledger 0078)",
       "names": {
@@ -796,10 +806,32 @@
           "_source": "source/lidar/f1.json F1 (SW piece, along 132-196 m of the 197 m the read covers): the line fitted through the structure's own returns every 4 m (3-point mean), off the 3DEP flight of 2017-05-03; height 3.18 m = the median of 17 bins' p90 top over the lidar ground (range 2.37-3.35 m) [measured]; a thin (plan sd 0.39 m), opaque (93 % single-pulse tops, face returns), level-topped structure, light grey on NAIP 2022: a screen wall / screened fence, not a hedge. Panel 4.0 m and thickness 0.20 m [invented]. Beyond the read (the NE ~60 m, 45-74 m off the edge) and SW of the trees: not built"
         }
       ],
-      "_rails_doc": "ledger 0082 pass 1: the W-beam (kind wbeam) and tyre walls (kind tyres) on the lines NAIP 2022 shows (source/furniture/README.md); auto: a post or module that would stand on a road or off the ground is left out. Pass 2: F1 (kind screen) on the line and at the heights the lidar measured (source/lidar/README.md); the 2017 lidar predates the rails and tyre walls, whose heights stay [invented]"
+      "_rails_doc": "ledger 0082 pass 1: the W-beam (kind wbeam) and tyre walls (kind tyres) on the lines NAIP 2022 shows (source/furniture/README.md); auto: a post or module that would stand on a road or off the ground is left out. Pass 2: F1 (kind screen) on the line and at the heights the lidar measured (source/lidar/README.md); the 2017 lidar predates the rails and tyre walls, whose heights stay [invented]",
+      "_cards_dropped": "ledger 0082 vegetation pass: 0.1.0's 4,457 TREECARD cards (NAIP colour rule, a 9 m grid with 3 m jitter, 30 % interior keep, heights 14-24 m invented) are replaced by the crowns the 2017 lidar measures, planted as TreeFX (scenery.treefx.planted)",
+      "trunks": {
+        "file": "source/vegetation/trunks.json",
+        "radius_m": 0.3,
+        "height_m": 3.0,
+        "_source": "ledger 0082 vegetation pass: an unseen collider round every planted tree within 30 m [invented reach] of the build's paved surface (source/vegetation/scripts/veg_plan.py COLLIDER_REACH_M): TreeFX trees have no physics. radius 0.30 m [invented: tools/verify_race.py TREE_TRUNK_R_M, the fleet's trunk], 3.0 m over the ground [invented: over any car's roof]"
+      }
     },
     "draft_lamps": false,
-    "_draft_lamps_doc": "a circuit has no streetlight down its edge every 55 m: the v021 assembler's draft posts are off (ledger 0078)"
+    "_draft_lamps_doc": "a circuit has no streetlight down its edge every 55 m: the v021 assembler's draft posts are off (ledger 0078)",
+    "treefx": {
+      "planted": {
+        "file": "source/vegetation/trees.lm.json",
+        "clear_m": 3.0,
+        "zones": {
+          "1": "planted_neighbourhood"
+        },
+        "native_h_m": {
+          "Oak3.bin": 15.0,
+          "SycamoreV2.bin": 15.0,
+          "_doc": "the model's height at size 1, m: NOT MEASURED on the Mac (the .bin models are on the PC only); 15 m [invented] until the PC's runbook step reads them. Every tree's size is its measured height over this"
+        }
+      },
+      "_doc": "Ledger 0082 vegetation pass (Kevin 2026-11-07: \"When does Milford get a vegetation pass?\"; \"I just want real\"): one TreeFX tree per crown the USGS 3DEP lidar (flown 2017-05-03) measures, at its measured top's height, checked against NAIP 2022 (source/vegetation/inventory.json). Lake Murray's models (personal use, on the PC only; ship.json globs source/trees/*.bin): planted_neighbourhood = Oak3 3 : SycamoreV2 1, the stand-ins for SE Michigan's oak-hickory-maple woods (no maple or hickory model exists). clear_m = scenery.corridor_margin_m"
+    }
   },
   "layouts": [
     {
@@ -847,8 +879,14 @@
         },
         "C": {
           "texture_base_chance": 0.15
+        },
+        "D": {
+          "mask_min_luminance": 2.0,
+          "mask_max_luminance": 2.0,
+          "_doc": "ledger 0082 vegetation pass: no blades (no ground texel is that bright): the pavement and gravel the build carries as ground. VERIFY IN-GAME"
         }
-      }
+      },
+      "_zones_doc": "ledger 0082 vegetation pass: the zones are the measured class map (scenery.bespoke.grassfx_zones), written by tools/plan_grassfx_aerial.py (ship step grassfx_aerial, which 0.1.0-0.1.2 never ran: their B / C looks bound nothing)"
     }
   },
   "source": {
@@ -948,5 +986,6 @@
   "terrain": {
     "terrain_band_m": 22.0,
     "_doc": "the v021 assembler's band clamp (Lake Murray's 22 m)"
-  }
+  },
+  "_name_doc": "Kevin 2026-11-07: \"Get rid of Lm Version from names, nothing should be on any other engine now\" / \"LM is the airoso engine\". The install folder and slug stay milford_road_course_lm until the merge with the edges branch (0.1.4) renames both to milford_road_course and the PC removes the old copies (ledger 0082 vegetation pass, Owed)"
 }

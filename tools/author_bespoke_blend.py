@@ -52,6 +52,9 @@ y = N, z = up). The collection is emptied first, so the tool is idempotent, and 
               unseen collider), the rail face on the line facing the nearest lap point; "auto" there breaks the rail where a
               post would stand on a road or off the ground (WBEAM_* below); (ledger 0082 pass 2, opt-in) "kind": "screen" ->
               1WALL_TILTUP_SCREEN_<k>, a thin wall of panels at the entry's REQUIRED measured "height_m"
+  trunks      (ledger 0082 vegetation pass, opt-in) {"file": [[lon, lat, h_m, d_paved_m], ...], "radius_m", "height_m"}: an
+              unseen octagonal collider round each TreeFX tree's trunk near the road (TreeFX trees have no physics)
+              -> 1WALL_GHOST_TRUNK_<k> (the transparent 1WALL_GHOST row)
 
 SELF-CHECKS, exit 1 and loop.blend NOT saved: a building's footprint (ring + interior) and every scrub foot off every road
 and kerb; every cone foot off the main road; a building at least BUILDING_CLEAR_M from the road and any wall; ground under every read; no AC_* touched.
@@ -81,7 +84,7 @@ from scripts.geometry.projection import _meters_per_degree  # noqa: E402  (the d
 COLLECTION = "AUTH_bespoke"
 OWN_PREFIXES = ("BUILDING_FABRIC", "1WALL_FABRIC", "PROPCONE", "SCRUBCARD", "BUILDING_TILTUP", "BUILDING_METAL", "ROOFTOP",
                 "1WALL_TILTUP", "PADAPRON", "TREECARD", "PRAIRIECARD", "GUARDRAIL", "1WALL_TECPRO", "1WALL_KRAILBW", "BUILDING_DRYSTONE", "FARBLOCK",
-                "1WALL_GHOST_RAIL")
+                "1WALL_GHOST_RAIL", "1WALL_GHOST_TRUNK")
 GROUND = ("1GRASS",)
 GROUND_FAR = ("1GRASS", "GRASS_FAR")
 PAVED = ("1ROAD", "1RUNOFF", "1KERB")
@@ -161,6 +164,7 @@ LANE = ("1ROAD", "ROAD")         # a W-beam entry with "over_strip": the lane it
 FOOT_MAX_M = 2.0               # [invented] the deepest a wbeam / tyres foot goes under its own ground (down_low): inside drive_test's
                                # +-2.5 m window that finds a wall's support (a deeper foot would read "floating 99")
 STRIP = ("1KERB", "CURB")        # ... and the edge strip it may stand over, seated on its top where that is higher than the ground
+TRUNK_SIDES = 8                # ledger 0082 vegetation pass (scenery.bespoke.trunks, opt-in): the collider's octagon
 
 
 EDGE_OF = {}                   # id(BVH) -> the longest edge of each polygon, in metres (for the collider's fine-ground rule)
@@ -938,10 +942,54 @@ def cards(col, spec, proj, to_xy, ground, paved, walls, bad, pad_quads=()):
     return rows
 
 
+def trunks(col, spec, proj, to_xy, ground, paved, walls, bad):
+    """ledger 0082 vegetation pass (opt-in: scenery.bespoke.trunks): an unseen collider round the trunk of each TreeFX tree
+    near the drivable surface. CSP's TreeFX trees are drawn by the game and have no physics (tools/verify_race.py G: "a
+    trunk in the lane is a car driving through a palm"), so a car that leaves the road would drive through the measured
+    woods. {"file": [lon, lat, h_m, d_paved_m] points, "radius_m", "height_m"} -> 1WALL_GHOST_TRUNK_<k>: an octagon
+    TRUNK_SIDES around the point, from under the whole ground triangle (down_low, as the rails' feet) to height_m over the
+    ground, on the transparent 1WALL_GHOST row. A point with no ground under it, on a road, or inside a wall is a failure"""
+    d = json.loads((proj / spec["file"]).read_text(encoding="utf-8"))
+    r_m, h_m = float(spec["radius_m"]), float(spec["height_m"])
+    batch = Batcher(col, "1WALL_GHOST_TRUNK")
+    stood = 0
+    nearest = float("inf")
+    for p in d["points"]:
+        x, y = to_xy((p[0], p[1]))
+        ring = [(x + r_m * math.cos(2 * math.pi * i / TRUNK_SIDES), y + r_m * math.sin(2 * math.pi * i / TRUNK_SIDES))
+                for i in range(TRUNK_SIDES)]
+        gs = [down(ground, a, b) for a, b in ring + [(x, y)]]
+        if any(g is None for g in gs) or any(down(paved, a, b) is not None for a, b in ring + [(x, y)]):
+            bad.append(f"trunk at ({x:.1f}, {y:.1f}): on a road or off the ground")
+            continue
+        if walls is not None:
+            hit = walls.find_nearest(Vector((x, y, gs[-1] + 1.0)), 2.0)
+            if hit[0] is not None and float(hit[3]) < r_m:
+                bad.append(f"trunk at ({x:.1f}, {y:.1f}): inside a wall")
+                continue
+        if paved is not None:
+            hit = paved.find_nearest(Vector((x, y, gs[-1])), 200.0)
+            if hit[0] is not None:
+                nearest = min(nearest, float(hit[3]))
+        lows = [down_low(ground, a, b) for a, b in ring]
+        bot = max(min([min(gs) - BOTTOM_UNDER_M] + [lw - BOTTOM_UNDER_M for lw in lows if lw is not None]), min(gs) - FOOT_MAX_M)
+        top = gs[-1] + h_m
+        verts = [(a, b, bot) for a, b in ring] + [(a, b, top) for a, b in ring]
+        faces = [(i, (i + 1) % TRUNK_SIDES, TRUNK_SIDES + (i + 1) % TRUNK_SIDES, TRUNK_SIDES + i) for i in range(TRUNK_SIDES)]
+        faces.append(tuple(range(TRUNK_SIDES, 2 * TRUNK_SIDES)))
+        uvs = [((0.0, 0.0), (1.0, 0.0), (1.0, 1.0), (0.0, 1.0))] * TRUNK_SIDES + [tuple((0.5, 0.5) for _ in range(TRUNK_SIDES))]
+        batch.room(len(verts))
+        batch.add(verts, faces, uvs)
+        stood += 1
+    batch.flush()
+    print(f"[bespoke] trunks ({spec['file']}): {stood} colliders, r {r_m} m, {h_m} m over the ground; nearest paved {nearest:.2f} m")
+    return {"file": spec["file"], "stood": stood, "radius_m": r_m, "height_m": h_m, "nearest_paved_m": round(nearest, 2)}
+
+
 def guardrail(col, spec, proj, bad):
     """the rail along the draft's guard lips: the lip's own top and foot, its road side; the lip becomes the unseen collider"""
     src = [o for o in bpy.data.objects if o.type == "MESH" and o.name.upper().startswith((spec["from"], "1WALL_GHOST"))
-           and not o.name.upper().startswith("1WALL_GHOST_RAIL")]      # a W-beam entry's own collider (ledger 0082) is no lip
+           and not o.name.upper().startswith(("1WALL_GHOST_RAIL", "1WALL_GHOST_TRUNK"))]   # a W-beam's / trunk's own collider (ledger 0082) is no lip
     if not src:
         bad.append(f"guardrail: no {spec['from']}* to follow")
         return {}
@@ -1305,6 +1353,8 @@ def main():
                 si, so = p["strip_lonlat"]["inner"], p["strip_lonlat"]["outer"]
                 quads += [[to_xy(si[i]), to_xy(si[i + 1]), to_xy(so[i + 1]), to_xy(so[i])] for i in range(len(si) - 1)]
         report["cards"] = cards(col, spec["cards"], proj, to_xy, far, paved, walls, bad, quads)
+    if spec.get("trunks"):                     # ledger 0082 vegetation pass: opt-in, a config names it or nothing here runs
+        report["trunks"] = trunks(col, spec["trunks"], proj, to_xy, ground, paved, walls, bad)
     if spec.get("guardrail"):
         report["guardrail"] = guardrail(col, spec["guardrail"], proj, bad)
     if sorted(o.name for o in bpy.data.objects if o.name.startswith("AC_")) != ac_before:

@@ -564,6 +564,10 @@ def plan(project_dir, all_species=False, verbose=False):
     used = set()
     counts = {}
     rejected = 0
+    # ledger 0082 (Milford's vegetation pass, opt-in): scenery.treefx.planted.native_h_m {model: its height at size 1, m}
+    # sizes a planted point by its MEASURED height (size = h_m / native) instead of its rank between the file's shortest
+    # and tallest; a model it does not name keeps the rank rule. Absent (every other track) = nothing changes
+    native_h = {k: float(v) for k, v in ((tcfg.get("planted") or {}).get("native_h_m") or {}).items() if not k.startswith("_")}
 
     def emit_zone(zone_key, entries, idx_base=0, guard=True):
         species = [s for s in ZONES[zone_key] if s[0] in available]
@@ -597,6 +601,8 @@ def plan(project_dir, all_species=False, verbose=False):
                     continue
             s = _pick(species, i)
             size = s[1] + (s[2] - s[1]) * e.get("_size01", _hash(i, 2))
+            if "_h" in e and s[0] in native_h:   # ledger 0082 (opt-in planted.native_h_m): the measured height, absolute
+                size = e["_h"] / native_h[s[0]]
             angle = int(360 * _hash(i, 3))
             out.append(f"tree: {s[0]}; pos={e['x']:.2f}, {e['y']:.2f}, {-e['z']:.2f}; angle = {angle}; size = {size:.2f}")
             entries_out.append({"zone": zone_key, "model": s[0], "x": e["x"], "y": e["y"], "z": e["z"]})
@@ -633,7 +639,8 @@ def plan(project_dir, all_species=False, verbose=False):
                 too_near += 1
                 continue
             by_zone.setdefault(planted["zones"][str(cell)], []).append(
-                {"x": x, "y": ground_y(lon, lat), "z": z, "_size01": (h - h0) / max(h1 - h0, 1e-6)})
+                {"x": x, "y": ground_y(lon, lat), "z": z, "_size01": (h - h0) / max(h1 - h0, 1e-6),
+                 **({"_h": float(h)} if native_h else {})})
         for k, zone in enumerate(sorted(by_zone)):
             emit_zone(zone, by_zone[zone], idx_base=k * 100000)
         rejected += too_near

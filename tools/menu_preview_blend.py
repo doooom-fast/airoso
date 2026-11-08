@@ -10,8 +10,10 @@ sidecar <out>_<name>.json (camera, sun, scenes, line) that tools/menu_preview_cu
 Defaults (the split's own names): scenes = loop_street.blend for "street", else loop_race.blend (or
 loop_race_<lap>.blend when the layout id is <lap>_cw / <lap>_acw and that file exists) + loop_closure_<layout>.blend;
 line = data/lap.<lap>.json when it exists, else data/centerline.local.json; the driving direction = the layout's grid
-(data/dummies_<layout>.json, AC_START_0 ahead of AC_START_1) against the line's point order. --phase shifts the
-stations along the lap (a fraction of one station step)."""
+(data/dummies_<layout>.json, AC_START_0 ahead of AC_START_1; a one-car grid: the order of AC_TIME_0, 1, 2)
+against the line's point order. --phase shifts the
+stations along the lap (a fraction of one station step). --sun-label names the light (every track uses the same
+sun, so the menu reads as one set); --exposure (EV) holds a pale ground (ground_dry) off white."""
 import argparse
 import json
 import math
@@ -33,6 +35,8 @@ ap.add_argument("--scenes", default="")
 ap.add_argument("--line", default="")
 ap.add_argument("--reverse", default="auto", choices=("auto", "yes", "no"))
 ap.add_argument("--phase", type=float, default=0.0)
+ap.add_argument("--sun-label", default="San Diego, 7 Nov, 15:30 PST")
+ap.add_argument("--exposure", type=float, default=0.0)
 A = ap.parse_args(sys.argv[sys.argv.index("--") + 1:])
 PROJ, LAYOUT, OUT, N, RES_X = Path(A.project), A.layout, A.out, A.n, A.res_x
 ONLY = [int(s) for s in A.stations.split(",")] if A.stations else None
@@ -96,15 +100,31 @@ pts = [(p[0], p[2]) for p in json.loads(LINE.read_text(encoding="utf-8"))["point
 L = len(pts)
 
 
+def gates_say_reverse(d):
+    """a one-car grid: the lap passes AC_TIME_0, 1, 2 in that order; their line points say which way it runs"""
+    if not all(f"AC_TIME_{k}_{s}" in d for k in range(3) for s in "LR"):
+        return None
+    idx = []
+    for k in range(3):
+        m = ((d[f"AC_TIME_{k}_L"][0] + d[f"AC_TIME_{k}_R"][0]) / 2, (d[f"AC_TIME_{k}_L"][2] + d[f"AC_TIME_{k}_R"][2]) / 2)
+        idx.append(min(range(L), key=lambda j: math.dist(m, pts[j])))
+    rev = (idx[1] - idx[0]) % L > (idx[2] - idx[0]) % L
+    print(f"[preview] gates: AC_TIME_0/1/2 at line points {idx}; drives {'against' if rev else 'with'} the line")
+    return rev
+
+
 def grid_says_reverse():
     """the layout's grid: AC_START_0 is the front car, AC_START_1 the next; their difference is the driving direction.
-    The dummies may be in either z sense (engine or kn5 frame): use the one that sits on the line."""
+    The dummies may be in either z sense (engine or kn5 frame): use the one that sits on the line. A single-layout
+    track has data/dummies.json."""
     f = DATA / f"dummies_{LAYOUT}.json"
+    if not f.exists():
+        f = DATA / "dummies.json"          # a single-layout track
     if not f.exists():
         return None
     d = json.loads(f.read_text(encoding="utf-8"))
-    if "AC_START_0" not in d or "AC_START_1" not in d:
-        return None
+    if "AC_START_1" not in d:
+        return gates_say_reverse(d)
     best = None
     for zs in (1.0, -1.0):
         s0 = (d["AC_START_0"][0], zs * d["AC_START_0"][2])
@@ -131,6 +151,7 @@ sc.render.engine = "BLENDER_EEVEE_NEXT"
 sc.render.resolution_x, sc.render.resolution_y = RES_X, RES_X * 9 // 16
 sc.render.image_settings.file_format = "PNG"
 sc.view_settings.view_transform = "AgX"
+sc.view_settings.exposure = A.exposure
 try:
     sc.eevee.use_shadows = True
     sc.eevee.shadow_ray_count = 2
@@ -187,9 +208,9 @@ def shoot(name, eye, look, fov, station):
             "line": str(LINE.relative_to(PROJ)).replace("\\", "/"), "reversed": REVERSE, "station": station,
             "camera": {"eye_m": [round(c, 2) for c in eye], "look_m": [round(c, 2) for c in look], "fov_deg": fov,
                        "frame": "blender scene (x, y = the split scene's plan, z up)"},
-            "sun": {"azimuth_deg": SUN_AZ, "elevation_deg": SUN_EL, "as": "San Diego, 7 Nov, 15:30 PST"},
+            "sun": {"azimuth_deg": SUN_AZ, "elevation_deg": SUN_EL, "as": A.sun_label},
             "sky": "Nishita, strength 0.35, altitude 120 m, air 1.2, dust 1.5",
-            "render": f"EEVEE Next, AgX, {sc.render.resolution_x}x{sc.render.resolution_y}"}
+            "render": f"EEVEE Next, AgX, exposure {A.exposure:+.1f} EV, {sc.render.resolution_x}x{sc.render.resolution_y}"}
     Path(f"{OUT}_{name}.json").write_text(json.dumps(side, indent=2), encoding="utf-8")
     print(f"[preview] {name}: eye ({eye[0]:.1f}, {eye[1]:.1f}, {eye[2]:.1f}) look ({look[0]:.1f}, {look[1]:.1f}, "
           f"{look[2]:.1f}) fov {fov} sun az {SUN_AZ} el {SUN_EL} -> {sc.render.filepath}")

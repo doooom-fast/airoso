@@ -133,7 +133,9 @@ def test_without_native_height_the_rank_rule_stands():
 
 def test_milford_planted_files_keep_their_rules():
     cfg = json.loads((MF / "track.config.json").read_text(encoding="utf-8"))
-    assert "(LM engine)" not in cfg["name"] and cfg["install_folder"] == "milford_road_course_lm"
+    assert "(LM engine)" not in cfg["name"] and cfg["install_folder"] == cfg["slug"] == "milford_road_course"
+    old = json.loads((MF.parent / "milford-road-course" / "track.config.json").read_text(encoding="utf-8"))
+    assert old["slug"] != cfg["slug"] and old["install_folder"] != cfg["install_folder"]   # S7: one AC folder each
     assert "cards" not in cfg["scenery"]["bespoke"]
     trees = json.loads((MF / "source" / "vegetation" / "trees.lm.json").read_text(encoding="utf-8"))["points"]
     trunks = json.loads((MF / "source" / "vegetation" / "trunks.json").read_text(encoding="utf-8"))["points"]
@@ -147,3 +149,34 @@ def test_milford_planted_files_keep_their_rules():
     ship = json.loads((MF / "ship.json").read_text(encoding="utf-8"))
     st = ship["steps"]["ship"]
     assert st.index("grassfx_aerial") < st.index("track_folder") < st.index("treefx")
+
+
+def test_point_key_keeps_model_and_angle_when_an_earlier_point_goes():
+    """Milford 0.1.5: a planted point's 6th element is its hash key, so removing a point before it changes nothing after it;
+    without a key a point hashes by its place (every other track: unchanged)"""
+    mt = _load(ROOT / "tools" / "make_treefx.py", "make_treefx_mfveg5")
+    trees = lambda ls: [ln for ln in ls if ln.startswith("tree:")]
+    with tempfile.TemporaryDirectory() as tmp:
+        proj = _project(tmp, {"Oak3.bin": 8.673, "SycamoreV2.bin": 8.194})
+        t = proj / "source" / "t.json"
+        d = json.loads(t.read_text())
+        base = trees(mt.plan(proj)["lines"])
+        d["points"] = [p + [k] for k, p in enumerate(d["points"])]
+        t.write_text(json.dumps(d))
+        keyed = trees(mt.plan(proj)["lines"])
+        d["points"] = d["points"][1:]
+        t.write_text(json.dumps(d))
+        after = trees(mt.plan(proj)["lines"])
+    assert keyed == base and len(base) == 2                      # key == place: the same file
+    assert after == keyed[1:]                                    # the second tree keeps its model and angle
+
+
+def test_crown_fix_lists_every_case():
+    fix = json.loads((MF / "source" / "vegetation" / "crown_fix.json").read_text(encoding="utf-8"))
+    s = fix["summary"]
+    assert len(fix["cases"]) == s["before"]["width_under_0.25"] + s["before"]["width_over_2"]
+    assert s["after"]["width_under_0.25"] == 0 and s["after"]["width_over_2"] == 0
+    trees = json.loads((MF / "source" / "vegetation" / "trees.lm.json").read_text(encoding="utf-8"))["points"]
+    keys = [p[5] for p in trees]
+    assert len(set(keys)) == len(keys) == s["after"]["planted"]
+    assert not set(fix["removed_keys"]) & set(keys)

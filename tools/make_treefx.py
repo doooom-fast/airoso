@@ -603,11 +603,12 @@ def plan(project_dir, all_species=False, verbose=False):
                     if not zone_key.startswith("north_"):
                         rejected_built_loop[why] += 1
                     continue
-            s = _pick(species, i)
-            size = s[1] + (s[2] - s[1]) * e.get("_size01", _hash(i, 2))
+            hk = idx_base + e["_key"] if "_key" in e else i   # a planted point's own key (opt-in, above), else its place
+            s = _pick(species, hk)
+            size = s[1] + (s[2] - s[1]) * e.get("_size01", _hash(hk, 2))
             if "_h" in e and s[0] in native_h:   # ledger 0082 (opt-in planted.native_h_m): the measured height, absolute
                 size = e["_h"] / native_h[s[0]]
-            angle = int(360 * _hash(i, 3))
+            angle = int(360 * _hash(hk, 3))
             line = f"tree: {s[0]}; pos={e['x']:.2f}, {e['y']:.2f}, {-e['z']:.2f}; angle = {angle}; size = {size:.2f}"
             if "_w" in e and s[0] in native_w:   # ledger 0082 (opt-in planted.native_w_m): the measured crown, absolute
                 line += f"; width = {e['_w'] / (native_w[s[0]] * round(size, 2)):.2f}"
@@ -640,14 +641,19 @@ def plan(project_dir, all_species=False, verbose=False):
             j = min(ny - 1, max(0, round((n_ - lat) / (n_ - s_) * (ny - 1))))
             i = min(nx - 1, max(0, round((lon - w_) / (e_ - w_) * (nx - 1))))
             return float(grid[j][i]) - o["elev_m"]
-        for lon, lat, cell, h, _w in d["points"]:
+        # ledger 0082 / 0087, Milford 0.1.5 (opt-in by the point's shape): a 6th element is the point's KEY, the index its
+        # model / angle hashes use instead of its place in the file, so a re-segmented crown file keeps every untouched
+        # tree's model and angle (a removed or added point no longer renumbers every tree after it). Absent = the place
+        for pt in d["points"]:
+            lon, lat, cell, h, _w = pt[:5]
             x, z = (lon - o["lon"]) * m_lon, (lat - o["lat"]) * m_lat
             if field.query(x, z)[0] < clear:
                 too_near += 1
                 continue
             by_zone.setdefault(planted["zones"][str(cell)], []).append(
                 {"x": x, "y": ground_y(lon, lat), "z": z, "_size01": (h - h0) / max(h1 - h0, 1e-6),
-                 **({"_h": float(h)} if native_h else {}), **({"_w": float(_w)} if native_w else {})})
+                 **({"_h": float(h)} if native_h else {}), **({"_w": float(_w)} if native_w else {}),
+                 **({"_key": int(pt[5])} if len(pt) > 5 else {})})
         for k, zone in enumerate(sorted(by_zone)):
             emit_zone(zone, by_zone[zone], idx_base=k * 100000)
         rejected += too_near

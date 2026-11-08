@@ -208,7 +208,8 @@
         ],
         "margin_m": 250,
         "cell_m": 12,
-        "max_rects": 96,
+        "max_rects": null,
+        "_max_rects_doc": "Milford 0.1.5 (ledger 0082 Owed 4): every rectangle the reading makes (1,285 at 12 m cells), no cap. 0.1.3's 96 [invented, 0.1.0's 48 doubled] covered 64 % of the measured wood floor C, 16 % of long grass B and 16 % of no grass D; all of them cover 92 / 67 / 71 % (source/vegetation/scripts/grass_coverage.py). The cap was this planner's (tools/plan_grassfx_aerial.py), not CSP's: no limit on [GRASS_FX_ADJUSTMENT_...] sections is known; what 1,285 cost in game is VERIFY IN-GAME. What is left uncovered is the 12 m cell's majority rule [invented] (6 m cells: 4,131 rectangles, 95 / 78 / 84 %)",
         "fade_m": 6,
         "classes": [
           {

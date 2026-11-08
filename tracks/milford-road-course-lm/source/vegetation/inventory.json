@@ -16,21 +16,21 @@
  },
  "crowns_read": 13041,
  "planted": {
-  "trees": 10419,
+  "trees": 11247,
   "h_p10_p50_p90_max_m": [
-   13.1,
-   21.0,
-   28.8,
-   41.1
+   12.6,
+   20.4,
+   28.6,
+   36.9
   ],
   "crown_p10_p50_p90_m": [
-   2.3,
-   7.5,
-   18.8
+   4.5,
+   9.0,
+   16.9
   ],
   "infield": 1571,
   "within_100m_of_paved": 2438,
-  "trunk_colliders": 384,
+  "trunk_colliders": 385,
   "collider_reach_m": 30.0
  },
  "not_planted": {
@@ -5729,5 +5729,71 @@
    "nearest_paved_m": 154.0,
    "read_cover_p50_per_m2": 1.74
   }
- ]
+ ],
+ "crown_fix": {
+  "_doc": "Milford 0.1.5: veg_crown_fix.py (crown_fix.json holds every case)",
+  "before": {
+   "planted": 10419,
+   "width_under_0.25": 2249,
+   "width_over_2": 276
+  },
+  "re_segmented": {
+   "units": 805,
+   "crowns": 4579,
+   "extreme": 2525,
+   "neighbours_touched": 2031
+  },
+  "after_resegmentation": {
+   "planted": 11247,
+   "width_under_0.25": 58,
+   "width_over_2": 145
+  },
+  "drawn_from_stand_ratio": 203,
+  "after": {
+   "planted": 11247,
+   "width_under_0.25": 0,
+   "width_over_2": 0
+  },
+  "removed_trees": 888,
+  "new_trees": 1716,
+  "global_ratio": 0.451,
+  "stand_ratios": {
+   "1": 0.436,
+   "5": 0.401,
+   "6": 0.402,
+   "1117": 0.559,
+   "1335": 0.504,
+   "1427": 0.554,
+   "1515": 0.521,
+   "1529": 0.457,
+   "1690": 0.494,
+   "1760": 0.69,
+   "1797": 0.58,
+   "1998": 0.512,
+   "2119": 0.519
+  },
+  "unreached_m2": 6028.0,
+  "not_planted_after": {
+   "gone_by_2022": 30,
+   "off_ground": 5,
+   "too_near_built": 1
+  },
+  "untouched_trees": 5863,
+  "rules": {
+   "K_RETURNS": 6.3,
+   "sigma_cells": [
+    0.5,
+    1.5
+   ],
+   "bands": [
+    0.25,
+    2.0
+   ],
+   "STAND_MIN_TREES": 30
+  },
+  "trunk_colliders": {
+   "before": 384,
+   "after": 385
+  }
+ }
 }

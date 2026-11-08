@@ -53,7 +53,7 @@ if TREES != "none":
     verts, faces = [], []
     tv, tf = [], []
     SEG, RING = 10, 6
-    for lon, lat, _zone, h, w in d["points"]:
+    for lon, lat, _zone, h, w, *_ in d["points"]:
         x, y = to_xy(lon, lat)
         g = z_at(ground, x, y)
         if g is None:

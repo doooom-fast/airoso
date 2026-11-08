@@ -836,3 +836,34 @@ kn5_textures, house_seat, split_manifest, edge_smoothness (the OBJ path only), t
    the species split. Kevin's questions from the vegetation pass (the reach, the NAIP-only canopy: 428 blobs, 4.43 ha)
    stand unanswered.
 4. Owed 3 / 5-7 of the vegetation pass and ledger 0087's Q1-Q3 stand as they were.
+
+## PC: rehearsal 0082-4 / 0087-2 and the 0.1.5 install (2026-11-08)
+
+- **Trees (step 2)**: `Oak3.bin` 24111ede…, `SycamoreV2.bin` 7010d61f… from `san_diego_lake_murray_v4/extension/trees/`
+  into this worktree's `source/trees/` (a clean detached worktree at `5529aecd`, `D:/k10-worktrees/milford-015`; the
+  main checkout is on another branch); gitignored, `git status` clean there. The same md5s in the workshop's
+  `build/milford_road_course/extension/trees/` and in the installed folder.
+- **ENG**: `eng_mflm_015` = `eng_mflm_f2` + this head's `assets/textures`, 96/96 md5-equal (f2's differed in SOURCES.txt).
+- **Rehearsal** (EMPTY `D:/k10-scratch/milford_015_reh`, `--no-install`): SHIP OK, no force, 30 min. `[grassfx] 1285
+  rectangles, 1285 kept`; `[treefx] planted ... 11247 of 11247`; `11247 trees ... ['Oak3.bin', 'SycamoreV2.bin']`. Every
+  row of M.5's 0.1.5 column: drive_test 0/0/0/0, 6.34 / 16 / 0 / 5, 0/0/0/0; audit CLEAN, walls 43,337 v; verify_kn5 +
+  inis PASS; kn5_ground_check PASS (336 walls, p95 -0.19, hovering 0; 9/9317, max +0.073); kn5_textures PASS 19 / 32 / 49,
+  missing 0; house_seat PASS 3; edge_smoothness PASS (1.19 / 1.22 cm, 0.38 / 0.39 cm, max 2.0 / 1.1 cm); edge_report kerb
+  99.5 %; road kn5 **39,006,968 B**. veg_verify PASS (11,247, nearest paved 4.65 m, 385 colliders, 0 orphans, 0 within
+  reach without one); mesh_diff vs the installed 0.1.4: all 31 shared meshes equal, TREECARD x6 only in 0.1.4, one
+  1WALL (the ghost trunks) only in 0.1.5, `deciduous_atlas.png` only in 0.1.4; crown_check: 0 under 0.25, 0 over 2
+  (crown/height p1/p50/p99 0.18 / 0.45 / 1.31).
+  - PC notes: the chain's python has no numpy, so veg_verify / mesh_diff / crown_check ran in `D:/k10-scratch/lidar-venv`
+    (numpy, Pillow, scipy); crown_check's `os.symlink` needs a privilege Windows withholds, so it ran unmodified through a
+    wrapper that makes directory junctions instead (removed after).
+- **Install** (Kevin, asked on the PC: "Yes, install overnight", on the six conditions, all met): `milford_road_course_lm`
+  0.1.4 moved first to `D:/k10-track-archive/2026-11-08_011149_milford/` (MOVES.tsv: `ac_tidy restore` puts it back); no
+  old-engine `milford_road_course` was in AC; 0.1.4's workshop parked as `milford_lm.0.1.4`; the chain from an EMPTY
+  `D:/k10-scratch/milford_lm`, SHIP OK 01:42. Installed = the workshop build (ui_track.json only); kn5 = the rehearsal's,
+  tangents only (169,041 values). AC now holds one Milford: **`milford_road_course` 0.1.5**, "doooom Michigan — Milford
+  Road Course (unofficial)". The id changed: CM's lap times and setups under `milford_road_course_lm` do not follow.
+  ai/ came back byte-identical.
+- **Menu picture**: re-rendered off 0.1.5 with preview.json's camera (s3, -0.5 EV). TreeFX is the game's, so the picture
+  carries the stills' stand-ins (`tools/menu_preview_blend.py --standins source/vegetation/trees.lm.json`, the shapes of
+  `veg_stills_blend.py`; 10,924 of 11,247 have ground under them in the split scene); copied into AC, the pack's own in
+  `D:/k10-track-archive/2026-11-08_014406_previews/`.

@@ -1,6 +1,6 @@
 {
  "_doc": "tools/edge_smoothness.py, ledger 0087: the built road edge's 1 m second difference and residual to a robust fit, per side",
- "obj": "/Volumes/Drive/codex/mf_work/v015/b1/data/track.obj",
+ "obj": "D:\\k10-scratch\\milford_lm\\data\\track.obj",
  "step_m": 1.0,
  "thresholds": {
   "FLARE_M": 1.5,

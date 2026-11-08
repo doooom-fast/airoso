@@ -14,6 +14,43 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
+## 2026-11-07 — NEW GATE (opt-in): `edge_smoothness`, the built lane edges are smooth (ledger 0087)
+
+**Why.** Kevin, 2026-11-07: "Milford should very smooth edges and they're ragged in places." No gate read the outline of
+the lane: drive_test walks wheel paths inside it, audit_mesh and edge_report read what stands beside it. Milford 0.1.2
+passed every gate with 163 ragged stretches on its lane edge (10-15 cm wobbles over 3-6 m, the trace's 0.25 m width
+quantization through a running median, ledger 0087 §2).
+
+**What.** `tools/edge_smoothness.py <project> [--connectors] --gate-default`, stdlib only, read-only on the built
+`data/track.obj` (L5). Every 1 m along the gate line (and every connector with `--connectors`), both sides, a ray reads
+the first 1ROAD boundary crossing (the lane edge) and the edge strip's outer lip. Per side: **d2**, the 1 m second
+difference of the edge's offset, and **resid**, its residual to a robust local quadratic over +-8 m ⚠ [invented]. Samples
+more than 1.5 m ⚠ [invented] off the line's half width are mouths / flares: counted, never judged. **FAIL** (exit 1) when
+on either side:
+
+| row | threshold | where it comes from |
+|---|---|---|
+| p99 \|d2\|, lane edge | 0.02 m | ⚠ **a mirror**: Milford 0.1.4 (Mac c5)'s own worst lane-edge sample, 0.0200 m (its p99 0.0122 m) |
+| p99 \|resid\|, lane edge | 0.012 m | ⚠ **a mirror**: c5's worst lane-edge sample, 0.0111 m (its p99 0.0039 m) |
+| ragged stretches (\|resid\| > 5 cm or \|d2\| > 4 cm, merged over 4 m) | 0 | ⚠ **a mirror**: c5 has 0 (0.1.2: 163) |
+
+By the standing rule above these are calibrated on our own output: a **no-regression bar** (a build may not be rougher at
+p99 than 0.1.4 is at its single worst sample), not an envelope of a real paved edge. That envelope is owed: the edge jitter
+of a surveyed pavement edge (the lidar's curb line on a road known to be clean) at the same 1 m spacing. The ragged-stretch
+limits themselves (5 cm, 4 cm) are ⚠ [invented]: the smallest step a driver's eye catches at the edge from 1 m up has not
+been measured; they sit at 1.5-2x the cleanest stretches' p99.9.
+
+**Wiring: opt-in.** `tools/ship_track.sh` `gate_edge_smoothness` runs it on `$PROJ` and writes
+`data/edge_smoothness.json` (the summary and the 40 worst stretches); hard, like `kn5_textures`. Only a ship.json that
+names it runs it: **`tracks/milford-road-course-lm` alone** (`tests/tools/test_edge_fit.py::test_both_are_opt_in`).
+Sand Creek would fail it today (423 stretches, most at its junction flares and mouths, ledger 0087 §1.2): it is not
+fleet-wide until the flares are measured shapes (ledger 0087 §7).
+
+**Proven.** Milford 0.1.2 (Mac c4, run on its OBJ after the fact): **FAIL on every row**, p99 \|d2\| 0.045 m both sides,
+p99 \|resid\| 0.085 / 0.084 m, 163 ragged stretches. Milford 0.1.4 (Mac c5, in the ship chain): **PASS**. A synthetic
+200 m straight ribbon: PASS (max d2 under 1 mm); the same ribbon with one row notched 15 cm a side: FAIL, d2 0.30 m, both
+sides (`tests/tools/test_edge_fit.py`).
+
 ## 2026-11-06 — NEW GATE (opt-in): `kn5_textures`, every texture a built kn5's materials name is embedded (ledger 0082 pass 2)
 
 **Why.** The PC's first rehearsal of Milford 0.1.1 (ledger 0082-1, run 1) built a road kn5 of 40,611,042 B, 35,910 B

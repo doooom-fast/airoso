@@ -1,9 +1,10 @@
 {
   "_doc": "Milford Road Course (unofficial) through Lake Murray v4's engine (ledger 0078). The line, widths and profile are tracks/milford-road-course's (installed 0.6.0), read by tools/lm_engine_intake.py; the profile is the measured one with the elevation stage's grade cap undone; the camber is the G10 lidar survey (source/lidar/camber-survey/crossfall.json); the edge is the circuit's (no curb, no sidewalk). Every other key is the live track's, copied; the live config is untouched.",
   "archetype": "race_circuit",
-  "name": "Milford Road Course (unofficial) (LM engine)",
+  "name": "Milford Road Course (unofficial)",
+  "_name_doc": "ledger 0087 (Kevin 2026-11-07: \"Get rid of Lm Version from names, nothing should be on any other engine now\" / \"LM is the airoso engine\"): no \"(LM engine)\" in the display name. The slug and install_folder keep _lm for 0.1.4; the folder becomes milford_road_course once, when this branch merges with claude/milford-vegetation (owed, ledger 0087)",
   "slug": "milford_road_course_lm",
-  "version": "0.1.2",
+  "version": "0.1.4",
   "mirror_x": false,
   "loop": true,
   "default_width_m": 11.0,
@@ -940,6 +941,12 @@
     "crossfall": "source/lidar/camber-survey/crossfall.json",
     "grid_upsample": 2,
     "_doc": "the measured profile (the elevation stage's cap undone), the G10 lidar camber, the 40 m 3DEP grid pre-divided to 20 m (the same samples)",
+    "edge_fit": {
+      "evidence": "source/edges/edge_evidence.json",
+      "mode": "judge",
+      "fit_half_m": 15.0
+    },
+    "_edge_fit_doc": "ledger 0087 (Kevin 2026-11-07: \"Milford should very smooth edges and they're ragged in places\"): every built lane edge is the trace's width series (the ribbon is +-w/2 about the smoothed line), and the series is a 0.25 m-quantized NAIP-mask scan through a 21-station running median, a staircase. tools/edge_fit.py mode judge: per side, a robust local quadratic (+-15 m [invented]: at +-10 m the staircase still left 14 samples over 5 cm, at +-15 m none; a real width change here runs 20-50 m) through the trace's own samples, every 3-sigma candidate judged against the measured edge (source/edges/edge_evidence.json: NAIP 2022 + the 2017 lidar's intensity step): a 1-2 row spike the evidence does not support is cut, a sustained change stays; every verdict logged in data/edge_fit.json. The line is not moved",
     "width_taper": 0.1,
     "_width_taper_doc": "ledger 0078 round 5: the traced width jumps in one station at the gores (s 2,604: 12.2 -> 21.7 m); on the lidar bank drive_test's width-relative wheel paths re-seated across the slope there. Tapered at 0.1 m per m a side [invented: drive_test sets a wheel path from the width at the nearest line point (3 m), so a 0.3 m re-seat across a 10 % bank reads 3 cm in one 1 m sample: under the 3 % kink line]; widening only",
     "resample_m": 1.5,

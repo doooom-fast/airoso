@@ -596,6 +596,47 @@ def intake(proj: Path, *, connectors: bool | None = None) -> dict:
         resample_rep = {"spacing_m": step_r, "points_before": len(pts), "points_after": len(new_pts)}
         pts, widths = new_pts, new_w                  # dy (the heights the intake moved) stays the source points'
         print(f"[lm_intake] resampled every {step_r} m: {resample_rep['points_before']} -> {resample_rep['points_after']} points")
+    # THE LANE EDGES RE-FITTED, OUTLIERS CUT (lm_intake.edge_fit {"evidence": <file in the PORT track>, "mode": "fit"|"judge",
+    # "fit_half_m"?}; ledger 0087; absent = the widths as they are). The assembler sweeps the lane +-width/2 about its smoothed
+    # line, so every notch in the width series is a notch in both built edges (Milford 0.1.2: the trace's 0.25 m scan steps
+    # through a 21-station running median). tools/edge_fit.py fits each edge, per side, on the line the assembler will
+    # build (this line through its own smoothing, route.smooth_*), through the trace and the measured edge points, rejects
+    # and logs every outlier, and writes the width back as left + right. The line is not moved.
+    ef_cfg = li.get("edge_fit")
+    edge_fit_rep = None
+    if ef_cfg:
+        from tools import edge_fit as _ef
+        rel_e = ef_cfg["evidence"]
+        if rel_e.startswith(("/", "\\")) or ".." in Path(rel_e).parts:
+            raise SystemExit(f"[lm_intake] lm_intake.edge_fit.evidence {rel_e!r} must be a plain path inside the port track")
+        evj = json.loads((proj / rel_e).read_text(encoding="utf-8"))
+        o_ev, o_ln = evj.get("origin") or {}, local["origin"]
+        if abs(o_ev.get("lon", 1e9) - o_ln["lon"]) > 1e-9 or abs(o_ev.get("lat", 1e9) - o_ln["lat"]) > 1e-9:
+            raise SystemExit(f"[lm_intake] edge_fit: {rel_e} was measured about another origin ({o_ev}) than this line's")
+        import importlib.util
+        _sp = importlib.util.spec_from_file_location(
+            "_lm_smooth", AIROSO / "tracks" / "san-diego-lake-murray" / "scripts-v021" / "geometry" / "smooth.py")
+        _sm = importlib.util.module_from_spec(_sp)
+        _sp.loader.exec_module(_sm)
+        route_ = cfg.get("route") or {}
+        sm_pts = _sm.smooth_centerline(pts, sigma_pts=float(route_.get("smooth_sigma_pts", 2.0)),
+                                       passes=int(route_.get("smooth_passes", 2)),
+                                       sigma_y_pts=float(route_.get("smooth_sigma_y_pts", 1.5)))
+        kw_ = {"mode": ef_cfg.get("mode", "fit")}
+        if "fit_half_m" in ef_cfg:
+            kw_["half"] = float(ef_cfg["fit_half_m"])
+        w_was = list(widths)
+        widths, edge_fit_rep = _ef.fit_widths(sm_pts, widths, closed, evj["points"], **kw_)
+        edge_fit_rep["evidence"] = rel_e
+        (proj / "data").mkdir(parents=True, exist_ok=True)
+        (proj / "data" / "edge_fit.json").write_text(json.dumps(edge_fit_rep), encoding="utf-8")
+        rows_ = edge_fit_rep["rejections"]
+        edge_fit_rep = {k: v for k, v in edge_fit_rep.items() if k not in ("rejections", "runs")}
+        edge_fit_rep["rejected"] = sum(1 for r in rows_ if r.get("rejected"))
+        print(f"[lm_intake] edge fit ({kw_['mode']}, {rel_e}): {edge_fit_rep['rejected']} samples rejected, every one logged in "
+              f"data/edge_fit.json; widths {min(w_was):.2f}..{max(w_was):.2f} -> {min(widths):.2f}..{max(widths):.2f} m; "
+              + "; ".join(f"{sd} edge to the evidence median {v['edge_to_evidence_m']['before']['median']} -> "
+                          f"{v['edge_to_evidence_m']['after']['median']} m" for sd, v in edge_fit_rep["sides"].items()))
     data = proj / "data"
     data.mkdir(parents=True, exist_ok=True)
     out = {"frame": "ENU local meters (X=east, Y=up, Z=north)", "origin": local["origin"],
@@ -813,6 +854,7 @@ def intake(proj: Path, *, connectors: bool | None = None) -> dict:
            "y_change_max_m": round(max((abs(d) for d in dy), default=0.0), 3),
            "connectors": bool(want_conn and conn.exists()), "bespoke_files": copied, "crossfall": cf_rep, "profile": prof_rep,
            "width_taper": taper_rep, **({"pad_widths": pad_rep} if pad_rep else {}), "resample": resample_rep, "edge_on_wall": wall_rep, "corner_arcs": arcs_rep, "carried": carried,
+           **({"edge_fit": edge_fit_rep} if edge_fit_rep else {}),
            "grid_upsample": up,
            "md5": {"source_centerline": _md5(need[0]), "heightfield.npy": _md5(data / "heightfield.npy"),
                    "centerline.local.json": _md5(data / "centerline.local.json")}}

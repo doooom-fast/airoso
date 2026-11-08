@@ -668,6 +668,14 @@ gate_kn5_textures() {
   rm -f "$PROJ/data/kn5_textures.json"
   (cd "$AIROSO" && python tools/kn5_textures.py "$PROJ/build" --json "$PROJ/data/kn5_textures.json")
 }
+gate_edge_smoothness() {
+  # ledger 0087 (opt-in: only a ship.json that names it runs it): the built lane edge's 1 m second difference and its residual
+  # to a robust fit, per side, on data/track.obj (Kevin 2026-11-07: "Milford should very smooth edges and they're ragged in
+  # places"). Thresholds: tools/edge_smoothness.py GATE_DEFAULT (fleet/GATES-CHANGELOG.md). Hard: exit 1 stops the chain
+  step "gate: the built lane edges are smooth (tools/edge_smoothness.py; ledger 0087 — hard)"
+  rm -f "$PROJ/data/edge_smoothness.json"
+  (cd "$AIROSO" && python tools/edge_smoothness.py "$PROJ" --gate-default --json "$PROJ/data/edge_smoothness.json")
+}
 gate_house_seat() {
   step "gate: houses on the built ground (tools/house_seat_check.py: floating, sunken or buried buildings — hard)"
   (cd "$AIROSO" && python tools/house_seat_check.py "$PROJ" --json "$PROJ/data/house_seat_check.json")

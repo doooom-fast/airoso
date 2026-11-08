@@ -38,12 +38,14 @@
       "kn5_ground",
       "kn5_textures",
       "house_seat",
+      "edge_smoothness",
       "edge_report"
     ]
   },
   "sync_in": {
     "required": [
-      "track.config.json"
+      "track.config.json",
+      "source/edges/edge_evidence.json"
     ],
     "assets": [
       "assets/textures/tyre_wall_diffuse.png",
@@ -75,6 +77,8 @@
       "data/kn5_textures.json",
       "data/house_seat_check.json",
       "data/edge_report.json",
+      "data/edge_fit.json",
+      "data/edge_smoothness.json",
       "data/kerbs.built.json"
     ],
     "map": [
@@ -87,5 +91,6 @@
       "ai/{id}"
     ]
   },
+  "_edges_doc": "ledger 0087: the lane edges re-fitted in the intake (track.config.json lm_intake.edge_fit; the evidence synced in), every verdict in data/edge_fit.json; edge_smoothness (opt-in, this track only so far) gates the built edges' 1 m second difference and residual (tools/edge_smoothness.py GATE_DEFAULT)",
   "_gate_doc": "ledger 0082 pass 2: kn5_textures (opt-in, this track only so far): every texture the built kn5s' materials name must be embedded (tools/kn5_textures.py). The PC's 0082-1 run 1 shipped five textures short and passed every other gate"
 }

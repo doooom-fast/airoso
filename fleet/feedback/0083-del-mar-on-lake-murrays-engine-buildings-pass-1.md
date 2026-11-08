@@ -1,8 +1,8 @@
 ---
 id: 0083
-title: Del Mar on Lake Murray's engine; buildings pass 1; pass 2 and 3 (lidar heights, canopies on posts)
+title: Del Mar on Lake Murray's engine; buildings pass 1; pass 2 and 3 (lidar heights, canopies on posts); pass 4 (roof forms, the look)
 status: in-progress
-scope: tracks/del-mar-lm (new), tracks/del-mar (its source, ledger 0064); tools/seat_edges_blend.py, tools/plan_buildings.py (opt-in keys); tools/lidar_building_heights.py (new, pass 2), tools/author_bespoke_blend.py (posts form, pass 3)
+scope: tracks/del-mar-lm (new), tracks/del-mar (its source, ledger 0064); tools/seat_edges_blend.py, tools/plan_buildings.py (opt-in keys); tools/lidar_building_heights.py (new, pass 2), tools/author_bespoke_blend.py (posts form, pass 3; shed / parapet / NAIP roof keys, pass 4); tools/lidar_roof_forms.py (new, pass 4)
 layer: project + engine (opt-in)
 train: -
 ---
@@ -541,7 +541,7 @@ off: a near hall fills the frame; the Via de la Valle row is behind it, not seen
 
 The three approved tiles only. No fourth is needed: every footprint is on the five.
 
-## Owed (after pass 3; start here)
+## Owed after pass 3 (superseded: the list after pass 4, at the end, is where to start)
 
 1. **Hillside buildings:** the two multi-storey garages (osm1353617974, osm1427234829) were dropped because their decks
    sit under the median ground of a sloping ring; a downhill-face reference (the ring's low side) would stand them as
@@ -572,3 +572,168 @@ The three approved tiles only. No fourth is needed: every footprint is on the fi
   `D:/k10-scratch/del_mar_lm` (0.2.1's workshop parked as `del_mar_lm.0.2.1`), ENG eng_dmlm_022; SHIP OK, no force; 0.2.1's
   folder parked in `D:/k10-track-archive/2026-11-07_142030/`; `del_mar_fairgrounds_lm` 0.2.2, kn5 kn5_equiv-equivalent to
   the rehearsal (tangents only); `del_mar_fairgrounds` 0.1.0 still beside it. Records with this note. Not driven yet.
+
+## 8. Buildings pass 4: roof forms off the lidar, the look (`361722f`, `354d63c`; candidate 0.2.3)
+
+**Request (Kevin, 2026-11-07, verbatim, through the coordinator):** "We can keep moving ahead on the plans with these
+added guidelines" — the plan was "building looks"; the guidelines: road edges smooth (the engine side is another
+agent's), old copies removed from AC at each install (the PC). On the name and the folder: "Get rid of Lm Version from
+names, nothing should be on any other engine now", "LM is the airoso engine", "We want to delete old copies from ac when
+installing new ones". "Far ground from the lidar" was asked and is **not answered**: the terrain is as 0.2.2's.
+
+**The read** (the G10, job `dm-p4`, `g10run.sh`, 4 GB cap): `tools/lidar_roof_forms.py extract` over pass 3's five tiles,
+the same `measure()` as `tools/lidar_building_heights.py` (its 352 records equal to `buildings.lidar.json`):
+16.4 M points kept, 352 footprints, 2.53 M roof points + the edge band inside the walls; wall 65 s, maxrss 2.1 GB, the
+cameras all active after. The `.npz` stays in `dm_work/p4/` (never in the repo). **The fit** (`fit`, numpy, the Mac)
+writes `source/bespoke/buildings.roofs.json`; the planner reads it under the opt-in plan key `roof_forms`.
+
+**The fit, per footprint** (the tool's header says how; every threshold `[invented]` and listed in the file's `params`):
+flat, gable along the long axis, gable across it, hip (the author's four-plane hip), shed (one plane, any direction);
+trimmed least squares, judged by a clipped RMS over EVERY roof point (a form cannot win by trimming away the part it
+does not fit); the simplest within 0.05 m / 10 % of the best. Where no single form holds (residual over 0.5 m) or the
+roof has levels: a split-and-fit (a straight cut where both sides' best forms score under 0.8 of the whole, 3 deep) or a
+cut by level, each part its own form. Still over 0.5 m: **poor — the measured median box, flat, flagged**
+(`_fit` in its row). Two fixes found on the first fit and made before the build: the trim was centred on zero, so a
+roof with a low wing locked onto the few points between (osm1325614529, a 77 m hall, read 12.7 m "poor"; now flat
+13.46 m) — trimmed about the residuals' median now, tested; and the parapet was one p75 of the whole edge band, so a
+neighbour's eave over one side read as a parapet (6.0 m on a 41 m² kiosk) — now each side of the box, their low median,
+tested.
+
+### Roof forms found (352 measured footprints)
+
+| form | footprints | residual p50 / max (m) |
+|---|---|---|
+| flat | 61 (4 with a measured parapet: 0.27, 0.35, 0.95, 3.13 m; 57 none) | 0.30 / 0.50 |
+| gable, ridge along | 60 | 0.29 / 0.47 |
+| gable, ridge across | 13 | 0.30 / 0.49 |
+| hip | 5 | 0.32 / 0.47 |
+| shed | 55 | 0.19 / 0.49 |
+| parts | 87 (220 rows: 171 shed, 40 flat, 9 gable; 80 by split, 6 by level, the Grand Stand by its profile) | 0.38 / 0.69 |
+| **poor (median box, flagged)** | **64** (best single form flat 41, shed 16, parts 4, gable 3) | 0.75 / 0.83 |
+| none (no roof read) | 7 | - |
+
+All 345 fitted: residual p50 **0.36 m**, p90 0.72, max 0.83. By class, the poor share: commercial 51 of 207, houses 5
+of 22, halls 6 of 27, sheds 1 of 86, apartments 1 of 3. The houses' poor ones are the cross-gabled roofs (osm882187414: gable along 0.63,
+hip 0.66; levels 2.4 / 5.2 / 6.8 m); the commercial rows of ~43 x 23 m (osm13217021xx) fill 0.71-0.82 of their box
+(no pitched form tried under 0.82, the author's own rule) and read 0.75 m flat.
+**osm1326361752** (141 m², roof median 2.48 m) reads a 3.13 m parapet off three sides: stood as measured, worth a look.
+
+**Multi-level roofs:** 126 of the 352 have two or more levels (pass 3 stood 84 of them at the median): 61 stand as
+parts, 10 as a gable, 8 shed, 3 hip, 2 flat (one form holds them), **42 poor** (the median box).
+
+**Against pass 3's planned rows** (357 -> 487 rows, the parts): flat with a 0.7 m parapet `[invented by class]` 209 ->
+**6** (measured), gable 86 -> 82, hip 22 -> 5, flat 31 -> 159, shed 0 -> 226. 82 gables: 66 ridges along, 16 across.
+
+### The garages and the Grand Stand
+
+- **The two hillside garages stand** (dropped in pass 3): read over their ring's low (p10) ground, the downhill face:
+  osm1353617974 (+6.10 m: two parts, flat 4.7 m and a shed 4.1-7.8 m, residual 0.24) and osm1427234829 (+13.38 m: three
+  sheds 7.7-13.8 m, residual 0.42). Per the coordinator ("Garages: measured heights on the current ground"): they stand
+  at those heights on 0.2.2's built ground, which is flat out there (477 / 619 m from the lap, past the 3DEP grid), so
+  they are NOT set into a slope; no collider (no lap near). Setting them into the real slope waits on the far-ground
+  question.
+- **The Grand Stand** (osm116794621, `--stepped`): its short-axis profile as six straight runs: the front apron 5.0-5.5 m,
+  **the seating rise as two sloped parts 4.4 -> 10.5 m and 7.4 -> 20.2 m**, the roof 21.7 m, the upper roof 25.1 m, the
+  back edge 20.9-26.3 m. Residual 0.69 m (over the 0.5 m line: the seats' rows and the roof trusses; stood, flagged here).
+  The first build dropped the 4.4-10.5 m part ("3.9 m of relief under it": the relief share read a shed's LOW wall);
+  the author now reads a shed's mean wall (opt-in: only a planned shed), and the second build stands it.
+
+### The look: measured vs stand-in
+
+- **Roof colour (measured):** each roof's median 2012 NAIP pixel (2 px clear of its edge) as one solid cell of
+  `roof_naip_palette.png` (1,024 px, 32 px cells), bound through `texture_overrides` ROOF (no other object in Del Mar binds
+  ROOF). **51 rows** are on the source track's crop (`tracks/del-mar/source/naip_2012_delmar.png`, the lap and its lots);
+  **436 are off it and keep their class colour (stand-in)**. No wider Del Mar NAIP is on disk with a known
+  georeference; a wider crop is a download (Kevin's yes).
+- **Facades (stand-in):** the class's material, the same CC0 `assets/textures` tilt-up / ribbed metal / stucco that Lake
+  Murray's houses wear (its ledger 0065 overrides name the same files), unchanged from 0.2.2. No measured facade.
+- **Measured:** every height (pass 3), every roof's form, ridge direction, eave and ridge heights, each part's level,
+  the parapets, the garages' heights over their downhill ground, the stand's slope, 51 roof colours.
+- **Still invented:** the fit's thresholds (listed); the canopy slab and posts (pass 3); the facades; 436 roof colours;
+  the garages' ground (0.2.2's flat far ground); the 1987 period (everything measured is 2024's / 2012's).
+
+### Build: candidate 0.2.3 (Mac, empty workshop `dm_work/v023`, no force)
+
+ENG = `dm_work/eng`, `assets/textures` md5-equal to this head's (95/95). Run 1 stopped at the track folder: macOS
+`cp: ... fcopyfile failed: Operation timed out` on /Volumes/Drive (an I/O stall, not the build); resumed
+`--from track_folder` on the same workshop (the export, the AI line and verify_kn5 are run 1's; `v023.run1.log`), and
+every gate ran on the resumed run.
+
+| | 0.2.2 (pass 3) | **0.2.3 (pass 4)** |
+|---|---|---|
+| bespoke | 259 stood, 98 dropped (92 past 450 m), 6 for cause | **355 stood** (rows: parts counted each), 132 dropped (124 past 450 m), the same 6 buildings for cause (7 rows on a road or kerb, 1 near a road or wall) |
+| prep house seat | 259 seated, 112 with a foundation down a slope | 355 seated, 146 (deepest 1.85 m) |
+| drive_test | PASS (soft 0, severe 0, bumps 0, kinks 6.68 /km, drops 0, obstructed 0, floating 0) | PASS, **`drive_test.json` / `.full.json` byte-identical** |
+| audit_mesh | CLEAN (walls 1,888 v) | CLEAN (walls **2,906 v**: the parts' colliders within 60 m of the lap) |
+| verify_kn5 + --inis | PASS | PASS |
+| kn5_ground_check | PASS (walls 11, hovering 0, 0/2,292, p95 0.021) | PASS, the same (walls seat p95 -0.161 -> -0.158) |
+| house_seat | PASS (256 judged; 0/0/0; lowest roof 1.42 m; > 30 %: 1) | PASS (**349** judged; contact -0.39..-0.15 m; 0/0/0; lowest roof **1.0 m**; > 30 %: 6) |
+| road kn5 | 15,966,502 B (md5 7ae33c38), 15 textures | **15,078,136 B (md5 5fee829c), 17 textures** (+ the palette 4,864 B and the flat normal 134 B) |
+| track folder | 16,074,271 B | 15,185,939 B |
+
+**Smaller by 0.89 MB:** 210,177 -> 190,843 vertices in the gate OBJ: the 203 invented parapets (three rings each) are
+gone; 22 class hips -> 5 measured. **Road and ground byte-identical to 0.2.2's:** `drive_test.json`,
+`drive_test.full.json`, `edge_report.json`, `lm_intake.json`, `mouth_welds.json`, `bridge.spans.auto.json`,
+`centerline.local.json`, `gate_centerline.json`. Differ, explained: `audit.json` (wall_verts only),
+`kn5_ground_check.full.json` (the walls' seat p95 only), `data/heightfield.npy` in the workshop (the resume's sync-in
+copied the track's committed 19 x 23 3DEP grid back over the draft's 73 x 89 resample; the gates read the OBJ).
+
+**Name and folder (0.2.3):** "Del Mar Grand Prix" (no "(LM engine)"), `install_folder` `del_mar_fairgrounds`. The slug stays
+`del_mar_fairgrounds_lm` (the file names inside): fleet lint S7 refuses two tracks on one slug while `tracks/del-mar`
+holds `del_mar_fairgrounds`; the directories are renamed in one later pass.
+
+### Stills (Mac; not in the repo)
+
+`/Volumes/Drive/codex/dm_work/stills/p4_022_*.jpg` against `p4_023_*.jpg`, the same eight cameras: `north_rows`,
+`halls_north`, `halls_side`, `grandstand_view` (pass 3's lap cameras), `grandstand_air` (behind the stand, 70 m up: the
+seating rise a slope), `garage_north` / `garage_east` (the two garages, absent in 0.2.2), `rows_air` (the commercial rows
+from 90 m).
+
+### Lake Murray unchanged after pass 4 (Mac)
+
+- `git diff origin/claude/fleet-lm-engine -- tracks/san-diego-lake-murray scripts/`: empty.
+- Trim A/B (`dm_work/lmtrim_f`, from this worktree): byte-identical (`664da93b…`, `b73b70f4…`, `f0c97952…`), logs identical.
+- Every new key is opt-in: `roof_forms` / `roof_colour` (plan), `shed` / `parapet_m` / `ridge_axis` / `roof: NAIP` (row);
+  no other plan or track names them (tested), no other track overrides ROOF (tested).
+- `tests/run_tests.py`: (.venv python, a `python` on PATH): **1,303 pass, 8 fail — the known 8** (`test_draft_equiv` x5,
+  `test_registry_moves`, `test_bench_pad` x2); the suite ran before the trim / parapet / relief fixes, so the six test files
+  of the changed tools were re-run at `354d63c`: 72 pass (12 in `test_lidar_roof_forms.py`).
+
+## PC runbook 0083-4 (rehearse from a clean checkout; NO install — the PC asks Kevin)
+
+1. `git fetch`; a clean worktree at `origin/claude/del-mar-lm` (this ledger commit), `GIT_LFS_SKIP_SMUDGE=1`. No lidar
+   and no NAIP needed: the fit, the plan and the palette are committed.
+2. ENG = the engine snapshot PLUS airoso's `assets/textures` at this head, md5-checked: 95 files, any difference stops it.
+3. From an EMPTY scratch workshop:
+   `SHIP_PROJ=D:/k10-scratch/del_mar_lm_023_reh AIROSO=<worktree> ENG=<eng> bash tools/ship_track.sh del-mar-lm --no-install`.
+4. Expect the 0.2.3 column: `[bespoke] ... 355 buildings stood, 132 dropped (124 of them past 450 m of the lap)`, drop
+   reasons 7 on a road or kerb + 1 near a road or wall; prep "355 buildings seated ... 146 with a foundation"; seat-edges
+   74; drive_test PASS (soft 0, severe 0, kinks 6.68 /km, drops 0, obstructed 0, floating 0); audit CLEAN (walls 2,906 v);
+   verify_kn5 + --inis PASS; kn5_ground_check PASS (walls 11, 0/2,292); house_seat PASS (349 judged, 0/0/0, lowest roof
+   1.0 m); road kn5 15,078,136 B (tangent-only md5 difference is the known noise), 17 textures embedded. Any other row:
+   stop and report it.
+5. Do **not** install. Ask Kevin: "Del Mar 0.2.3: every roof's form read off the lidar (gables, hips, sheds, the levels as
+   parts, 64 poor fits as their measured box), the two hillside garages back, the Grand Stand's seats a slope, 51 roof
+   colours off the NAIP; installed as `del_mar_fairgrounds` (the plain name) in place of the old-engine 0.1.0 and the
+   `_lm` 0.2.2?" Only on his word, from an empty `D:/k10-scratch/del_mar_lm`, 0.2.2's workshop parked first. The install
+   parks the 0.1.0 `del_mar_fairgrounds` it replaces; **move `content/tracks/del_mar_fairgrounds_lm` (0.2.2) to
+   `D:/k10-track-archive/<stamp>/` by hand** (Kevin: old copies removed at each install). Record both.
+
+## Downloads in pass 4
+
+None. The five tiles of pass 3 (on the G10 and the Drive) and the 2012 NAIP crop already committed.
+
+## Owed (after pass 4; start here)
+
+1. **Far ground from the lidar** (Kevin's call, asked): 220 of the 259 pass-3 buildings stand past the 3DEP grid where
+   the built ground is flat; lidar ground minus built ground is 3.8-30.8 m (p10-p90) out there. Until then the garages
+   cannot sit in their slope.
+2. **64 poor fits** stand as their median box: the cross-gabled houses and the commercial rows (fill under 0.82: an
+   L-shape or a courtyard). A form per wing (split the ring along its concave corners) would fit them.
+3. **Roof colours:** 436 rows off the 2012 crop keep the class colour; a wider NAIP crop (2022, a download) would
+   measure them, and the halls' solar panels / the barns' red roofs with them.
+4. **Facades** are the class's CC0 material: no window rows, doors or the halls' signage measured.
+5. **osm1326361752's 3.13 m parapet** (three sides): stood as read; a ground photo would settle it.
+6. Canopy posts and slab (pass 3), walls, furniture, the boulevard banks, direction, the period, the layout itself:
+   pass 3's owed 5-9, unchanged.
+7. **Install:** none from the Mac; 0.2.3 goes to the PC's rehearsal (runbook 0083-4) and Kevin's word.

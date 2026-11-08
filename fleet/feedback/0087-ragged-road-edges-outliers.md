@@ -295,3 +295,25 @@ the smoothing alone; the road's position against the real pavement is unchanged.
 4. Report; **no install** until Kevin says so. When he does (and once 0.1.3 and 0.1.4 merge), the install goes to
    `milford_road_course` and removes `milford_road_course_lm` and the old-engine folder from content/tracks (parked in
    D:/k10-track-archive, never beside it).
+
+## PC: rehearsal 0087-1 and the 0.1.4 install (2026-11-07)
+
+- **Rehearsal** (a clean detached worktree at `5c588428`, an EMPTY scratch workshop `D:/k10-scratch/milford_lm_f3_reh`,
+  ENG `eng_mflm_f2`, its 95 textures md5-equal to this head's except SOURCES.txt): SHIP OK, no force, 31 min. Every row
+  is the Mac's c5: the intake's "2 samples rejected" (s 2,942: left "spike" cut 0/2, right "kept_spike_supported" 2/2);
+  drive_test PASS (0 / 0 / 0.0 /km / kinks 6.34 / vertex bumps 16 / 0 / 0); audit CLEAN (roads 65,218 v); race 0/0/0;
+  verify_kn5 + inis pass; kn5_ground_check PASS (seat-gap p95 -0.26, deck-vs-mountain max +0.073, 9/9317 p95 +0.021);
+  kn5_textures PASS 40,735,735 B (the Mac's size), 20 textures, missing 0; houses PASS; **edge_smoothness PASS**, lane
+  edge |d2| p99 1.19 / 1.22 cm, |resid| p99 0.38 / 0.39 cm, 0 ragged runs. kn5 md5 `5f7941e5…`.
+  One count the ledger did not list: the G2 rail stands one more post (465 -> 467 m, 247 -> 248 posts, 48 -> 47 left
+  out on 'lane'), walls 20,743 -> 20,783 v: the moved edge (the Mac: nothing to chase).
+- **Install** on Kevin's word, asked here ("Install it (Recommended)"): from an EMPTY `D:/k10-scratch/milford_lm`
+  (0.1.2's workshop parked as `milford_lm.0.1.2`), SHIP OK 22:32. 0.1.2 parked by the install in
+  `D:/k10-track-archive/2026-11-07_223238/`. Installed = the workshop build (ui_track.json only); its kn5 = the
+  rehearsal's, tangents only (170,458 values, max 1.79e-07). In AC: `milford_road_course_lm` 0.1.4, "doooom Michigan —
+  Milford Road Course (unofficial)"; no other Milford folder.
+- **Menu picture**: re-rendered from this build with the camera of 74de8b1's (s3, -0.5 EV; eye and look identical),
+  committed at `source/ui/` and copied over the pack's preview.png (the old one in
+  `D:/k10-track-archive/2026-11-08_001402_previews/`).
+- This commit: the outputs the install synced back (ai/, data/, loop.blend) + the picture + `tools/menu_preview_*.py`
+  (the same file as on every branch). Recorded in `fleet/ac-installed.json` on claude/ac-tidy.

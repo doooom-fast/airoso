@@ -11,14 +11,14 @@
    "objects": 24,
    "no_ground_pct": 0.0,
    "median_m": -1.238,
-   "p95_m": -0.268,
+   "p95_m": -0.256,
    "hovering": 0
   }
  },
  "road_over_ground": {
-  "over": 7,
-  "samples": 9314,
+  "over": 9,
+  "samples": 9317,
   "p95_m": 0.021,
-  "max_m": 0.086
+  "max_m": 0.073
  }
 }

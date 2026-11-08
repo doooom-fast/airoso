@@ -4,9 +4,9 @@
  "lap_m": 4901.7,
  "closed": true,
  "widths_m": [
-  9.0,
+  8.96,
   13.44,
-  21.71
+  21.74
  ],
  "bridges_levelled": [],
  "max_grade_pct": null,
@@ -42,10 +42,100 @@
  "edge_on_wall": null,
  "corner_arcs": null,
  "carried": [],
+ "edge_fit": {
+  "mode": "judge",
+  "rows": 3268,
+  "fit_half_m": 15.0,
+  "w_trace": 0.15,
+  "min_support": 12,
+  "evidence_points": 16476,
+  "evidence_unowned": 0,
+  "sides": {
+   "left": {
+    "sigma_m": 0.05,
+    "evidence_owned": 8158,
+    "evidence_sparse_dropped": 0,
+    "rows_evidence_trusted": 0,
+    "rows_evidence_not_trusted": {},
+    "verdicts": {
+     "trace_spike": 1,
+     "trace_sustained_contra": 0,
+     "evidence_outlier": 0,
+     "kept_spike_supported": 0,
+     "kept_sustained_supported": 0,
+     "kept_sustained_unsupported": 0,
+     "kept_sustained_no_evidence": 0
+    },
+    "edge_to_evidence_m": {
+     "before": {
+      "median": 0.733,
+      "mean": 0.927,
+      "p90": 2.033
+     },
+     "after": {
+      "median": 0.73,
+      "mean": 0.927,
+      "p90": 2.035
+     }
+    },
+    "edge_moved_m": {
+     "min": -0.133,
+     "median": 0.0,
+     "max": 0.199
+    }
+   },
+   "right": {
+    "sigma_m": 0.05,
+    "evidence_owned": 8318,
+    "evidence_sparse_dropped": 0,
+    "rows_evidence_trusted": 0,
+    "rows_evidence_not_trusted": {},
+    "verdicts": {
+     "trace_spike": 0,
+     "trace_sustained_contra": 0,
+     "evidence_outlier": 0,
+     "kept_spike_supported": 1,
+     "kept_sustained_supported": 0,
+     "kept_sustained_unsupported": 0,
+     "kept_sustained_no_evidence": 0
+    },
+    "edge_to_evidence_m": {
+     "before": {
+      "median": 0.72,
+      "mean": 0.92,
+      "p90": 2.002
+     },
+     "after": {
+      "median": 0.72,
+      "mean": 0.92,
+      "p90": 1.999
+     }
+    },
+    "edge_moved_m": {
+     "min": -0.133,
+     "median": 0.0,
+     "max": 0.139
+    }
+   }
+  },
+  "widths_m": {
+   "before": [
+    9.0,
+    21.71
+   ],
+   "after": [
+    8.96,
+    21.74
+   ]
+  },
+  "rejections_logged": 4,
+  "evidence": "source/edges/edge_evidence.json",
+  "rejected": 2
+ },
  "grid_upsample": 2,
  "md5": {
   "source_centerline": "f46d2f9b3e3ab4641e6ea2d1ac6a6bcd",
   "heightfield.npy": "5f86445a8846bc11a512dae247ac4fbf",
-  "centerline.local.json": "a804a5de56e25e562f7ee2dc85e4706f"
+  "centerline.local.json": "06c77f07d08144032ff89af1d5e0a73b"
  }
 }

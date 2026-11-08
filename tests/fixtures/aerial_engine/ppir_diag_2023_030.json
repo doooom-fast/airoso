@@ -1,0 +1,27 @@
+{
+ "_doc": "A 280 x 290 px window of USDA NAIP 2023 (co_m_3810427_ne_13_030_20230920, 0.3 m, public domain; Planetary Computer crop tools/naip_crop.py) over Pikes Peak's infield diag road (ledger 0085 piece diag_n / diag_s, measured there 12.0-12.8 m wide, edge residual p50 0.06-0.13 m). Fixture for tests/aerial/test_engine.py.",
+ "corners": [
+  -104.67703615538356,
+  38.59350064436178,
+  -104.67607210976195,
+  38.5927167998792
+ ],
+ "w": 280,
+ "h": 290,
+ "parent": {
+  "corners": [
+   -104.67965285064224,
+   38.59485210036624,
+   -104.67320407403763,
+   38.58871919301801
+  ],
+  "w": 1873,
+  "h": 2269,
+  "window_px": [
+   760,
+   500,
+   1040,
+   790
+  ]
+ }
+}

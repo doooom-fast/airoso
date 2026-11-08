@@ -1,0 +1,191 @@
+{
+ "track": "pikes-peak",
+ "stage_run": "/Volumes/Drive/aerial_engine_work/pp_run4",
+ "reference": "route_from_maps.naip.json at f11baae3 (origin/claude/pikes-peak-road-course, ledger 0085)",
+ "layouts": {
+  "rcd": {
+   "vs": "RC-D",
+   "lap_m": {
+    "stage": 2211.8,
+    "f11baae3": 2217.8,
+    "difference": -6.0,
+    "f11baae3_uncertainty_m": 54.0
+   },
+   "centre_to_centre_m": {
+    "stage_to_f11baae3": {
+     "p50": 0.34,
+     "p95": 3.28,
+     "max": 9.75,
+     "n": 4424
+    },
+    "f11baae3_to_stage": {
+     "p50": 0.34,
+     "p95": 3.28,
+     "max": 9.28,
+     "n": 4436
+    }
+   },
+   "over_3m_m": 120.0
+  },
+  "ifk": {
+   "vs": "IF-K",
+   "lap_m": {
+    "stage": 750.1,
+    "f11baae3": 760.3,
+    "difference": -10.2,
+    "f11baae3_uncertainty_m": 36.0
+   },
+   "centre_to_centre_m": {
+    "stage_to_f11baae3": {
+     "p50": 0.33,
+     "p95": 2.22,
+     "max": 3.1,
+     "n": 1500
+    },
+    "f11baae3_to_stage": {
+     "p50": 0.34,
+     "p95": 2.33,
+     "max": 3.95,
+     "n": 1521
+    }
+   },
+   "over_3m_m": 0.5
+  }
+ },
+ "piece_widths": [
+  {
+   "f11baae3_piece": "ne_lane",
+   "on_a_stage_layout_m": 124,
+   "f11baae3_width_p50_m": 12.15,
+   "stage_minus_f11baae3_m": {
+    "median": 0.02,
+    "abs": {
+     "p50": 0.16,
+     "p95": 0.48,
+     "max": 1.41,
+     "n": 124
+    }
+   }
+  },
+  {
+   "f11baae3_piece": "hairpin_w",
+   "on_a_stage_layout_m": 43,
+   "f11baae3_width_p50_m": 12.38,
+   "stage_minus_f11baae3_m": {
+    "median": -0.16,
+    "abs": {
+     "p50": 0.27,
+     "p95": 2.18,
+     "max": 3.24,
+     "n": 43
+    }
+   }
+  },
+  {
+   "f11baae3_piece": "diag_n",
+   "on_a_stage_layout_m": 16,
+   "f11baae3_width_p50_m": 12.37,
+   "stage_minus_f11baae3_m": {
+    "median": 0.09,
+    "abs": {
+     "p50": 0.25,
+     "p95": 0.58,
+     "max": 0.6,
+     "n": 16
+    }
+   }
+  },
+  {
+   "f11baae3_piece": "diag_s",
+   "on_a_stage_layout_m": 53,
+   "f11baae3_width_p50_m": 12.31,
+   "stage_minus_f11baae3_m": {
+    "median": -0.15,
+    "abs": {
+     "p50": 0.17,
+     "p95": 2.82,
+     "max": 3.97,
+     "n": 53
+    }
+   }
+  },
+  {
+   "f11baae3_piece": "n_road",
+   "on_a_stage_layout_m": 0
+  },
+  {
+   "f11baae3_piece": "arc_nw",
+   "on_a_stage_layout_m": 34,
+   "f11baae3_width_p50_m": 12.62,
+   "stage_minus_f11baae3_m": {
+    "median": 0.08,
+    "abs": {
+     "p50": 0.24,
+     "p95": 1.89,
+     "max": 2.81,
+     "n": 34
+    }
+   }
+  },
+  {
+   "f11baae3_piece": "c_road",
+   "on_a_stage_layout_m": 12,
+   "f11baae3_width_p50_m": 14.16,
+   "stage_minus_f11baae3_m": {
+    "median": -3.31,
+    "abs": {
+     "p50": 3.31,
+     "p95": 4.11,
+     "max": 4.13,
+     "n": 12
+    }
+   }
+  },
+  {
+   "f11baae3_piece": "west_n",
+   "on_a_stage_layout_m": 24,
+   "f11baae3_width_p50_m": 18.87,
+   "stage_minus_f11baae3_m": {
+    "median": -0.94,
+    "abs": {
+     "p50": 0.94,
+     "p95": 3.06,
+     "max": 3.1,
+     "n": 24
+    }
+   }
+  },
+  {
+   "f11baae3_piece": "bottom",
+   "on_a_stage_layout_m": 116,
+   "f11baae3_width_p50_m": 13.45,
+   "stage_minus_f11baae3_m": {
+    "median": -0.06,
+    "abs": {
+     "p50": 0.48,
+     "p95": 4.25,
+     "max": 5.89,
+     "n": 116
+    }
+   }
+  },
+  {
+   "f11baae3_piece": "s_curve",
+   "on_a_stage_layout_m": 115,
+   "f11baae3_width_p50_m": 7.81,
+   "stage_minus_f11baae3_m": {
+    "median": 0.08,
+    "abs": {
+     "p50": 0.19,
+     "p95": 1.43,
+     "max": 1.88,
+     "n": 115
+    }
+   }
+  },
+  {
+   "f11baae3_piece": "par_lane",
+   "on_a_stage_layout_m": 0
+  }
+ ]
+}

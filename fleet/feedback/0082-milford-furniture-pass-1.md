@@ -584,8 +584,11 @@ as a tree**, and in nearly all of them the measured crown is the segmentation's 
 - `source/vegetation/scripts/veg_stills_blend.py`, the same cameras on 0.1.2 (c4, its TREECARD cards in the kn5) and
   0.1.3 (v1: TreeFX is drawn by the game, not the kn5, so STAND-INS: a trunk and an ellipsoid crown at each tree's
   measured height and measured crown, V.6b's poles and fans included), `mf_work/veg/stills.sh` -> `mf_work/veg/mf012_*` /
-  `mf013_*`. **Pending at this commit**: the Mac's Blender is shared with two other sessions and the run waits for 60 s
-  with none. Not a gate (L12).
+  `mf013_*`: 8 driver's-eye stills round the lap (`seat_s0000` .. `seat_s4276`) and 3 from above (`above_lap_from_sw`,
+  `above_lap_from_ne`, `above_infield_low`), 2026-11-07 22:02, the Mac only. Not a gate (L12).
+- What they show: the measured stands stand where 0.1.2's cards stood (the NAIP rule and the lidar agree on where the
+  woods are), now a closed canopy at measured heights instead of a 9 m-grid scatter of 14-24 m cards; the narrow pole
+  crowns of V.6b are visible here and there inside the stands. Stand-ins, not the game's models.
 
 ## V.9 What is still invented (each flagged where it is written)
 

@@ -10,7 +10,8 @@
     "Installs replace (Kevin 2026-11-07): `record` supersedes every other folder of the track's family (track slug minus -lm, or `family`), and prints what still has to leave AC. Plain names from now on (Kevin: 'Get rid of Lm Version from names' / 'LM is the airoso engine'): installing sand_creek_raceway replaces sand_creek_raceway_lm.",
     "2026-11-07 (Kevin, relayed by the Mac: 'Copy now'): the Blender menu pictures (tools/menu_preview_blend.py, each track's source/ui[/<layout>]/preview.png) copied over the installed preview.png of 13 tracks / 18 layouts (Milford skipped: 0.1.4 installing); the old ones in D:/k10-track-archive/2026-11-07_221708_previews/ (PREVIEWS.tsv, README: the one-line put-back).",
     "2026-11-07 (Kevin, asked here: 'Install it (Recommended)' x2): Milford 0.1.4 over 0.1.2 in milford_road_course_lm; Del Mar 0.2.4 to the plain del_mar_fairgrounds, del_mar_fairgrounds_lm 0.2.2 moved to D:/k10-track-archive/2026-11-07_222810_tidy/ (ac_tidy --apply). Both pictures re-rendered from the new builds with their committed cameras and copied in (the pack's in D:/k10-track-archive/2026-11-08_001402_previews/).",
-    "After every install from now on: re-render the track's menu picture from the new build with the camera in its source/ui/preview.json, copy it over ui[/<layout>]/preview.png (old one backed up), commit it with the install records."
+    "After every install from now on: re-render the track's menu picture from the new build with the camera in its source/ui/preview.json, copy it over ui[/<layout>]/preview.png (old one backed up), commit it with the install records.",
+    "2026-11-08 (Kevin, asked on the PC: 'Yes, install overnight', the six conditions met): Milford 0.1.5 to the plain milford_road_course; milford_road_course_lm 0.1.4 moved first to D:/k10-track-archive/2026-11-08_011149_milford/ (MOVES.tsv) and dropped from this list. The menu picture re-rendered off 0.1.5 with stand-in trees (the pack's in D:/k10-track-archive/2026-11-08_014406_previews/)."
   ],
   "ac_tracks": "D:/SteamLibrary/steamapps/common/assettocorsa/content/tracks",
   "archive": "D:/k10-track-archive",
@@ -79,15 +80,15 @@
       "branch": "claude/fleet-lm-engine",
       "installed": "2026-11-04"
     },
-    "milford_road_course_lm": {
-      "branch": "claude/milford-edges",
+    "milford_road_course": {
+      "branch": "claude/milford-lm-015",
       "engine": "lm-v4",
-      "installed": "2026-11-07",
-      "note": "0.1.4 = smooth lane edges (ledger 0087, edge_smoothness gate); records + menu picture on claude/milford-edges ce98214; 0.1.2 parked in D:/k10-track-archive/2026-11-07_223238/",
+      "installed": "2026-11-08",
       "role": "current",
-      "sha": "5c588428",
+      "sha": "5529aecd",
       "track": "milford-road-course-lm",
-      "version": "0.1.4"
+      "version": "0.1.5",
+      "note": "0.1.5 = 0.1.4's edges + the vegetation pass (TreeFX Oak3 / SycamoreV2, personal-use, in extension/trees/, md5 24111ede / 7010d61f; GrassFX 1,285 rectangles), the plain folder; records + menu picture on claude/milford-lm-015 871fbde"
     },
     "pikes_peak_international_raceway_lm": {
       "track": "pikes-peak-lm",

@@ -11,7 +11,8 @@
     "2026-11-07 (Kevin, relayed by the Mac: 'Copy now'): the Blender menu pictures (tools/menu_preview_blend.py, each track's source/ui[/<layout>]/preview.png) copied over the installed preview.png of 13 tracks / 18 layouts (Milford skipped: 0.1.4 installing); the old ones in D:/k10-track-archive/2026-11-07_221708_previews/ (PREVIEWS.tsv, README: the one-line put-back).",
     "2026-11-07 (Kevin, asked here: 'Install it (Recommended)' x2): Milford 0.1.4 over 0.1.2 in milford_road_course_lm; Del Mar 0.2.4 to the plain del_mar_fairgrounds, del_mar_fairgrounds_lm 0.2.2 moved to D:/k10-track-archive/2026-11-07_222810_tidy/ (ac_tidy --apply). Both pictures re-rendered from the new builds with their committed cameras and copied in (the pack's in D:/k10-track-archive/2026-11-08_001402_previews/).",
     "After every install from now on: re-render the track's menu picture from the new build with the camera in its source/ui/preview.json, copy it over ui[/<layout>]/preview.png (old one backed up), commit it with the install records.",
-    "2026-11-08 (Kevin, asked on the PC: 'Yes, install overnight', the six conditions met): Milford 0.1.5 to the plain milford_road_course; milford_road_course_lm 0.1.4 moved first to D:/k10-track-archive/2026-11-08_011149_milford/ (MOVES.tsv) and dropped from this list. The menu picture re-rendered off 0.1.5 with stand-in trees (the pack's in D:/k10-track-archive/2026-11-08_014406_previews/)."
+    "2026-11-08 (Kevin, asked on the PC: 'Yes, install overnight', the six conditions met): Milford 0.1.5 to the plain milford_road_course; milford_road_course_lm 0.1.4 moved first to D:/k10-track-archive/2026-11-08_011149_milford/ (MOVES.tsv) and dropped from this list. The menu picture re-rendered off 0.1.5 with stand-in trees (the pack's in D:/k10-track-archive/2026-11-08_014406_previews/).",
+    "2026-11-08 (Kevin, asked on the PC: 'Yes, install overnight', the six conditions met): Sand Creek 0.2.7 to the plain sand_creek_raceway; sand_creek_raceway_lm 0.2.6 moved first to D:/k10-track-archive/2026-11-08_043809_sand_creek/ (MOVES.tsv) and dropped from this list (the old engine's sand_creek_raceway was already out of AC). The race and street menu pictures re-rendered off 0.2.7 (the pack's in D:/k10-track-archive/2026-11-08_053642_previews/)."
   ],
   "ac_tracks": "D:/SteamLibrary/steamapps/common/assettocorsa/content/tracks",
   "archive": "D:/k10-track-archive",
@@ -143,14 +144,15 @@
       "old_name_prefix": "K10 - San Diego CANDIDATE v4 keep-roads",
       "note": "Lake Murray v4 + Mission Gorge Speedway (ship_sd.sh SD_BESPOKE=1); its ship.json ui_name_prefix still says the K10 candidate name, so a reinstall brings it back"
     },
-    "sand_creek_raceway_lm": {
-      "branch": "claude/sand-creek-lm-assets",
+    "sand_creek_raceway": {
+      "branch": "claude/sand-creek-grid-mouths",
       "engine": "lm-v4",
-      "installed": "2026-11-07",
+      "installed": "2026-11-08",
       "role": "current",
-      "sha": "aff35043",
+      "sha": "5a0d1687",
       "track": "sand-creek-lm",
-      "version": "0.2.6"
+      "version": "0.2.7",
+      "note": "0.2.7 = 0.2.6 + rounded paved corner returns at the grid mouths (ledger 0086), the plain folder; records + menu pictures + ledger 0079 4o note on claude/sand-creek-grid-mouths 396604b"
     }
   }
 }

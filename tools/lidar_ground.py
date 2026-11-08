@@ -17,7 +17,7 @@ author reads, data/far_ground.lidar.npy (float32, NAVD88 metres, row 0 = SOUTH, 
 centre) + data/far_ground.lidar.meta.json (the box, the cell, the origin, what each value is, the fill counts):
   measured  the mean of the cell's ground points (MIN_PTS or more)
   filled    a cell with too few ground points inside the tiles (a building's footprint, a dense tree) or past them takes the
-            harmonic fill of its measured neighbours (each such cell the mean of its four, FILL_ITERS sweeps): the ground
+            harmonic fill of its measured neighbours (each such cell the mean of its four, solved coarse to fine): the ground
             under a building is the surface its surroundings span; past the tiles' edge the fill only continues it, flagged
             (data/far_ground.lidar.fill.npy: 0 measured, 1 under cover, 2 off the tiles)
 Every constant is an [invented] threshold; every measured value is a mean of points.
@@ -36,7 +36,7 @@ EXTRACT_CELL_M = 1.0
 CELL_M = 5.0               # [invented] the product's cell: finer than the 10 m mesh that samples it
 MIN_PTS = 3                # [invented] fewer ground points than this in a product cell is no measurement
 GROUND_CLASSES = (2, 9)
-FILL_ITERS = 4000          # Jacobi sweeps of the fill (converged far below a centimetre on a 400 x 400 box)
+FILL_ITERS = 400           # Jacobi sweeps of the fill at each level of its coarse-to-fine solve
 CHUNK_POINTS = 2_000_000
 
 
@@ -97,11 +97,25 @@ def extract_main(argv):
 
 
 def harmonic_fill(z, known, iters=FILL_ITERS):
-    """Pure: every unknown cell the mean of its four neighbours (edges reflect), the known cells held; starts from the
-    mean of the known cells"""
-    out = np.where(known, z, float(np.mean(z[known])) if known.any() else 0.0).astype(np.float64)
-    if known.all():
-        return out
+    """Pure: every unknown cell the mean of its four neighbours (edges reflect), the known cells held. Solved coarse to
+    fine (each level starts from the half-resolution solution, then FILL_ITERS Jacobi sweeps), so a wide unknown region
+    converges and is not left near its starting value"""
+    known = np.asarray(known, bool)
+    if known.all() or not known.any():
+        return np.where(known, z, float(np.mean(z[known])) if known.any() else 0.0).astype(np.float64)
+    ny, nx = z.shape
+    if min(ny, nx) > 8:
+        # the half-resolution problem: a coarse cell is known where any of its fine cells is, at their mean
+        py, px = ny % 2, nx % 2
+        zz = np.pad(np.where(known, z, 0.0), ((0, py), (0, px)), mode="edge")
+        kk = np.pad(known, ((0, py), (0, px)), mode="edge").astype(np.float64)
+        S = (zz * kk).reshape(zz.shape[0] // 2, 2, zz.shape[1] // 2, 2).sum(axis=(1, 3))
+        K = kk.reshape(kk.shape[0] // 2, 2, kk.shape[1] // 2, 2).sum(axis=(1, 3))
+        coarse = harmonic_fill(np.where(K > 0, S / np.maximum(K, 1), 0.0), K > 0, iters)
+        start = np.repeat(np.repeat(coarse, 2, axis=0), 2, axis=1)[:ny, :nx]
+    else:
+        start = np.full(z.shape, float(np.mean(z[known])))
+    out = np.where(known, z, start).astype(np.float64)
     for _ in range(iters):
         p = np.pad(out, 1, mode="edge")
         avg = (p[:-2, 1:-1] + p[2:, 1:-1] + p[1:-1, :-2] + p[1:-1, 2:]) / 4.0

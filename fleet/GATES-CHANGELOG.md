@@ -14,6 +14,30 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
+## 2026-11-07 — `house_seat`: a deck set into its slope is judged against its measured deck (ledger 0083 pass 4b; no threshold moved, nothing forced)
+
+Kevin, 2026-11-07, "Yes" to Del Mar's far ground from the lidar; the brief: "Set the two hillside garages into their
+measured slope, with walls down to the real ground." On the real ground the lidar shows both garages built into the hill:
+osm1427234829's top deck sits within 0.2-0.3 m of its uphill grade (N 23.3-24.5, W 24.6 m NAVD88) over a 13.6 m downhill
+face; osm1353617974's shed part 2.3 m under its north ground. `house_seat`'s BURIED rule (roof under `MIN_SHOW_M` 1.0 m
+over the highest ground under the walls) reads such a deck as a buried wall: run 2 of 0.2.4 read the two as 2 buried.
+
+- **What changed** (`tools/house_seat_check.py`): an OPT-IN declaration, `data/house_seat.set_in.json`, written by
+  `tools/author_bespoke_blend.py` only for planned rows carrying `set_in` (`tools/plan_buildings.py`, the plan's opt-in
+  `set_in_slope`: a measured hillside deck). An island whose wall corners ARE a declared deck's ring (at least 3 of its
+  vertices, 5 cm) is judged FLOATING and SUNKEN exactly as every building; in place of BURIED its top must be the highest
+  declared deck it holds within **`SET_IN_TOL_M` 0.3 m ⚠ invented**. No file = the gate as before, byte for byte.
+- **Why corners, not the centroid:** a first wiring matched by the island's centre and also caught a separate building
+  standing inside a garage's outline (judged against the garage's deck). The walls' own corners name only the deck's
+  walls; a deck's parts share their party walls, so the gate reads one island per garage and takes its highest part.
+- **Proof:** `tests/tools/test_far_ground.py` (a box on a slope: buried without the file, PASS with it, still buried
+  when its deck is 1 m off its measure; two parts sharing a wall judged as one against the higher deck). Del Mar 0.2.4:
+  445 judged, 0 floating / sunken / buried; the two garages +0.00 m off their decks. Only Del Mar's plan names
+  `set_in_slope` (tested).
+- **The prep is not changed:** engine-july's house seat re-seats only a BUILDING mesh at the identity transform; the
+  author carries a set-in deck's walls in `BUILDING_<SKIN>_SETIN_<k>` with a 1 m object lift (the same world positions),
+  which the prep leaves to its terrain-delta ride (0 past the corridor it reshapes), so the measured placement ships.
+
 ## 2026-11-05 — DECLARED FORCE: Under the Dragon's Douglas Creek fill, s 2,395-2,410 (ledger 0078 round 13; no threshold moved)
 
 Kevin, 2026-11-05, asked whether to force Under the Dragon's last red row as measured: **"Yes, force it"**.

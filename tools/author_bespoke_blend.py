@@ -118,6 +118,9 @@ PARAPET_M = 0.7                # [invented] a flat commercial roof's parapet, as
 # (scenery.bespoke.prep_seats true) the block is authored AT the floor so the prep moves its walls by nothing and the roof, another
 # object the prep never touches, stays on them; where it does not, the walls carry on down to the foundation themselves
 PREP_SINK_M, PREP_SHOW, PREP_FOOT_M = 0.4, 0.5, 0.15
+SET_IN_SUFFIX = "_SETIN"       # ledger 0083 pass 4b: a set-in deck's walls, BUILDING_<SKIN>_SETIN_<k> (pbr binds BUILDING_<SKIN>)
+SET_IN_LIFT_M = 1.0            # their object transform (the same world positions): the prep's house seat leaves them be
+ELEV0 = 0.0                    # the origin's NAVD88 height (centerline.local.json), set in main
 RECT_FILL = 0.82               # [invented] a ring filling less of its oriented box than this is not a rectangle: flat roof
 PAD_CELL_M = 4.0               # [invented] a cell of a draped pad
 PAD_LIFT_M = 0.06              # [invented] above the ground, under any kerb
@@ -656,7 +659,7 @@ def blocks(col, spec, proj, to_xy, ground, near_ground, paved, walls, bad):
                 # a shed's (ledger 0083 pass 4) walls rise from its low eave to its high one: its mean wall is the share's measure
                 wall_m = (wall_h + float(b.get("ridge_h_m", wall_h))) / 2 if b.get("form") == "shed" else wall_h
                 limit = max(MAX_RELIEF_M, wall_m * AUTO_RELIEF_SHARE) if auto else MAX_RELIEF_M
-                if hi - lo > limit:
+                if hi - lo > limit and not b.get("set_in"):   # a set-in deck (pass 4b) stands in the relief it was measured in
                     why = f"{hi - lo:.1f} m of relief under it"
                 elif any(down(paved, x, y) is not None for x, y in rim + inner):
                     why = "on a road or kerb"
@@ -684,6 +687,13 @@ def blocks(col, spec, proj, to_xy, ground, near_ground, paved, walls, bad):
                 bottom, eave = floor, floor + wall_h
             else:
                 bottom, eave = min(floor, lo - PREP_FOOT_M), floor + wall_h
+            set_in = b.get("set_in") if not off else None
+            if set_in:
+                # set into the slope (ledger 0083 pass 4b, a planned row's "set_in"): every height of the row is over its MEASURED
+                # low ground, at that ground's own height (NAVD88 less the origin's); the walls run down to the real ground on
+                # every side (PREP_FOOT_M under the lowest under its walls), so the uphill side stands in the hill as built
+                floor = float(set_in["ground_navd88"]) - ELEV0
+                bottom, eave = min(floor, lo) - PREP_FOOT_M, floor + wall_h
             n = len(ring)
             if form == "posts":
                 # an open-sided roof on posts (ledger 0083 pass 3), opt-in: only a planned row whose form names it
@@ -703,7 +713,10 @@ def blocks(col, spec, proj, to_xy, ground, near_ground, paved, walls, bad):
                              "eave": round(eave, 2), "off_terrain": off, "collider": False})
                 continue
             cx_, cy_ = sum(p[0] for p in ring) / n, sum(p[1] for p in ring) / n
-            batch = walls_by.setdefault((skin, off), Batcher(col, f"FARBLOCK_{skin}" if off else f"BUILDING_{skin}"))
+            if set_in:
+                batch = walls_by.setdefault((skin, "set_in"), Batcher(col, f"BUILDING_{skin}{SET_IN_SUFFIX}"))
+            else:
+                batch = walls_by.setdefault((skin, off), Batcher(col, f"FARBLOCK_{skin}" if off else f"BUILDING_{skin}"))
             batch.room(5 * n)
             bay_h0 = (floor - bottom) if not off else 0.0        # the wall tile starts at the floor: the foundation shows the tile below it
             tops = [eave] * n
@@ -808,6 +821,10 @@ def blocks(col, spec, proj, to_xy, ground, near_ground, paved, walls, bad):
                              [((0.0, 0.0), (1.0, 0.0), (1.0, 1.0), (0.0, 1.0))] * m)
             rows.append({"key": key, "skin": skin, "roof": rclass, "form": roof_note, "wall_h_m": wall_h, "ground": [round(lo, 2), round(hi, 2)],
                          "bottom": round(bottom, 2), "eave": round(eave, 2), "off_terrain": off, "collider": footed})
+            if set_in:
+                rows[-1]["set_in"] = {"ground_navd88": float(set_in["ground_navd88"]), "floor": round(floor, 3),
+                                      "deck_top": round(max(tops), 3), "deck_low": round(min(tops), 3),
+                                      "ring_xy": [[round(x, 3), round(y, 3)] for x, y in ring]}
             if not auto:
                 print(f"[bespoke] block {key}: {skin}, walls {wall_h:.1f} m, {roof_note}, ground {lo:.2f}..{hi:.2f}, bottom {bottom:.2f}, eave {eave:.2f}")
         n_kept, n_drop = len(rows) - kept0, len(dropped) - drop0
@@ -828,6 +845,17 @@ def blocks(col, spec, proj, to_xy, ground, near_ground, paved, walls, bad):
                 bad.append(f"{group['file']}: {n_drop} of {n_kept + n_drop} planned buildings refused (> {AUTO_DROP_MAX:.0%})")
     for b in list(walls_by.values()) + list(roofs_by.values()) + [collider]:
         b.flush()
+    # a set-in deck's walls (ledger 0083 pass 4b) are not re-seated by the prep: engine-july's house seat (build_kn5_loop)
+    # seats only a BUILDING mesh at the identity transform ("not the draft's own mesh: left to the delta ride") and would
+    # lift a deck set into a hill until half of it stood over its uphill ground. The same world positions, carried by an
+    # object lift of SET_IN_LIFT_M, keep the measured placement; the delta ride moves it only by the prep's own ground
+    # change under it (none past the corridor the prep reshapes)
+    for ob in list(col.objects):
+        if ob.type == "MESH" and SET_IN_SUFFIX in ob.name:
+            for v in ob.data.vertices:
+                v.co.z -= SET_IN_LIFT_M
+            ob.location.z += SET_IN_LIFT_M
+            ob.data.update()
     return rows
 
 
@@ -1147,8 +1175,9 @@ def main():
         return
     origin = json.loads((proj / "data" / "centerline.local.json").read_text(encoding="utf-8"))["origin"]
     to_xy = lonlat_to_xy(origin)
-    global GROUND, GROUND_FAR, PAVED, TRACK_EDGE, CONE_GROUND, WALLS, PREP_SEATS
+    global GROUND, GROUND_FAR, PAVED, TRACK_EDGE, CONE_GROUND, WALLS, PREP_SEATS, ELEV0
     PREP_SEATS = bool(spec.get("prep_seats", False))
+    ELEV0 = float(origin.get("elev_m", 0.0))
     names = spec.get("names") or {}
     GROUND = tuple(names.get("ground", GROUND))
     GROUND_FAR = tuple(names.get("far", GROUND_FAR)) + GROUND
@@ -1191,6 +1220,16 @@ def main():
     if bad:
         raise SystemExit("[bespoke] self-check FAILED (loop.blend not saved): " + "; ".join(bad))
     (proj / "data" / "bespoke.report.json").write_text(json.dumps(report, indent=1), encoding="utf-8")
+    # the set-in decks (ledger 0083 pass 4b) declared for tools/house_seat_check.py, which judges each against its own
+    # measured deck instead of its uphill ground; no set-in deck = no file (and a stale one removed)
+    si = [{"key": r["key"], **r["set_in"]} for r in report.get("blocks", []) if r.get("set_in")]
+    sp = proj / "data" / "house_seat.set_in.json"
+    if si:
+        sp.write_text(json.dumps({"_doc": "ledger 0083 pass 4b: decks set into their slope by tools/author_bespoke_blend.py "
+                                          "(rows with set_in); Blender frame (x east, y north, z up)", "decks": si}, indent=1),
+                      encoding="utf-8")
+    elif sp.exists():
+        sp.unlink()
     bpy.ops.wm.save_mainfile(filepath=str(proj / "loop.blend"))
     print(f"[bespoke] saved loop.blend: {len(col.objects)} objects in {COLLECTION}; {len(report['buildings'])} buildings, "
           f"{len(report.get('blocks', []))} blocks, {len(report.get('cones', []))} cones, {len(report.get('scrub', []))} scrub clumps")

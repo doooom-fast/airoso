@@ -39,6 +39,9 @@ plan.json = {
                                                                  a measured parapet / gable / hip / shed / its measured
                                                                  parts; a poor fit stands its median, flagged)
                                                                  (roof_form_rows); absent = as before
+  "set_in_slope": true                                           optional (ledger 0083 pass 4b, with "roof_forms"): a hillside
+                                                                 deck stands set into its slope at its measured heights over
+                                                                 its low ground ("set_in" on its rows); absent = as before
   "roof_colour": {"atlas": "source/bespoke/roof_naip_palette.png", "normal": "source/bespoke/roof_flat_normal.png"}
                                                                  optional (ledger 0083 pass 4): each roof's MEASURED colour,
                                                                  the median "image" pixel inside it, as a cell of a palette
@@ -239,7 +242,7 @@ def lidar_rows(row, rec, stepped):
     return [row]
 
 
-def roof_form_rows(row, rec, rf, stepped):
+def roof_form_rows(row, rec, rf, stepped, set_in=False):
     """the plan's opt-in "roof_forms" (ledger 0083 pass 4, with "lidar"): the roof's FORM fitted to the lidar points
     (tools/lidar_roof_forms.py) in place of the class's. ``row`` is the class row before the lidar, ``rec`` its
     buildings.lidar.json record, ``rf`` its buildings.roofs.json record. flat: the median (as lidar_rows) with the MEASURED
@@ -258,6 +261,13 @@ def roof_form_rows(row, rec, rf, stepped):
                f"(p10 {hill['ground_p10_p90_navd88'][0]:.2f} m NAVD88, the median {hill['ground_median_navd88']:.2f}; "
                f"+{hill['shift_m']:.2f} m)")
         r.pop("ridge_h_m", None)
+        if set_in:
+            # the plan's opt-in set_in_slope (ledger 0083 pass 4b): the deck stands at its MEASURED height over the ring's low
+            # ground, at that ground's own NAVD88 height, set into the slope (tools/author_bespoke_blend.py: walls down to the
+            # real ground on every side, no relief refusal, not re-seated by the prep; tools/house_seat_check.py judges it
+            # against this deck, not against its uphill ground). Every part carries it (the parts copy the row)
+            r["set_in"] = {"ground_navd88": hill["ground_p10_p90_navd88"][0],
+                           "_doc": "the ring's p10 lidar ground (its downhill face): every height of this row is over it"}
     else:
         r = lidar_rows(row, rec, None)[0]
         tag = r["_h"]
@@ -838,7 +848,8 @@ def main() -> int:
         if lidar is not None:
             rec = lidar["buildings"].get(r["key"])
             if roofs is not None:               # opt-in (ledger 0083 pass 4): the roof's form fitted to the points
-                new = roof_form_rows(row, rec, roofs["buildings"].get(r["key"]), lidar.get("stepped", {}).get(r["key"]))
+                new = roof_form_rows(row, rec, roofs["buildings"].get(r["key"]), lidar.get("stepped", {}).get(r["key"]),
+                                     bool(plan.get("set_in_slope")))
             else:
                 new = lidar_rows(row, rec, lidar.get("stepped", {}).get(r["key"]))
             out.extend(new)

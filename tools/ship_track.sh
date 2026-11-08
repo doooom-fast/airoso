@@ -388,6 +388,13 @@ draft_stubs_tidy() {
     (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_stubs_blend.py" -- "$PROJ" --stage tidy 2>&1 | grep "^\[stubs\]\|Error\|Traceback" )
   fi
 }
+draft_mouth_returns() {
+  # ledger 0086 (Kevin 2026-11-07 on Sand Creek's grid streets: "Doesn't connect, floats"; the fix: "Yes, build it"): Lake
+  # Murray's stub returns on THROUGH mouths at each corner's measured radius, the corner paved, the ground pinned; after
+  # lm_pads, before strip_seam / gap_mouths (both read data/mouth_returns.json). No route.mouth_returns = no-op
+  step "author: corner returns at the through mouths (tools/mouth_returns_blend.py: measured radii, the corner paved, the ground pinned; ledger 0086; no route.mouth_returns = no-op)"
+  (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/mouth_returns_blend.py" -- "$PROJ" 2>&1 | grep "^\[returns\]\|FATAL\|Error\|Traceback" )
+}
 draft_gap_mouths() {
   step "author: gap the mainline sidewalk at every mouth"
   (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/gap_mouths_blend.py" -- "$PROJ" 2>&1 | grep "^\[gap" )
@@ -672,6 +679,12 @@ ship_race_scenery_gate() {
 gate_verify_mouths() {
   step "gate: verify_mouths on the built road (every side-street mouth: mouth line, host lane, notch, approach — hard)"
   (cd "$AIROSO" && python tools/verify_mouths.py "$PROJ")
+}
+gate_verify_mouth_corners() {
+  # ledger 0086: the corners beside every judged mouth (lip, the ground over the street's strip, the host's edge paint across
+  # the opening) on the built road; opt-in route.verify_mouth_corners (not opted in = prints so, exit 0) — hard
+  step "gate: verify_mouth_corners on the built road (corner lip <= 0.05 m, grass over the street strips <= 2.1 %, no edge line across an opening; R 9 turn drop reported — hard)"
+  (cd "$AIROSO" && python tools/verify_mouth_corners.py "$PROJ")
 }
 gate_verify_stubs() {
   if [ -f "$PROJ/data/stubs.plan.json" ]; then

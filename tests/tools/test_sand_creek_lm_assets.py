@@ -556,7 +556,7 @@ def test_round_k_keys_are_opt_in():
         assert "signs_name_blades" not in cfg, t
     # round K's candidate (live since round R, 0.2.6: test_round_r_live_is_the_candidate)
     live = json.loads((SC / "track.config.json").read_text(encoding="utf-8"))
-    assert "race_rule" not in (live.get("kerb") or {}) and live["version"] == "0.2.6"
+    assert "race_rule" not in (live.get("kerb") or {}) and live["version"] == "0.2.7"
     sc = json.loads((SC / "source" / "round_k" / "track.config.json").read_text(encoding="utf-8"))
     assert sc["version"] == "0.2.6"
     assert sc["race"]["edge_fold_chord"] is True
@@ -901,13 +901,59 @@ def test_round_q_corner_flares_off_is_opt_in_and_only_narrows():
         assert "corner_flare_off" not in (json.loads(cfgp.read_text(encoding="utf-8")).get("lm_intake") or {})
 
 
+def _drop(cfg, path):
+    d = cfg
+    for k in path[:-1]:
+        d = d.get(k) or {}
+    d.pop(path[-1], None)
+
+
+# ledger 0086 (0.2.7): every key the live config adds to, or changes from, round_k's candidate
+LIVE_0_2_7_KEYS = (("name",), ("_name_doc",), ("slug",), ("version",), ("install_folder",), ("_install_folder_doc",),
+                   ("route", "mouth_returns"), ("route", "mouth_radii_file"), ("route", "strip_under_road"),
+                   ("route", "_strip_under_road_doc"), ("route", "verify_mouth_corners"), ("route", "_mouth_returns_doc"),
+                   ("route", "mouth_returns_skip"), ("route", "verify_mouth_corners_allowed"),
+                   ("road_markings", "gap_mouths"), ("road_markings", "_gap_mouths_doc"),
+                   ("strip_seam", "connectors"), ("strip_seam", "_connectors_doc"))
+
+
 def test_round_r_live_is_the_candidate():
-    """ledger 0079 round R (Kevin 2026-11-06: "Full street width"): the round_k candidate is adopted as the live config
-    at 0.2.6 — track.config.json and ship.json byte-identical to source/round_k/'s, version 0.2.6, the race the whole
-    street (race.corridor.whole_lap) and verify_kn5 in the chain both before (closure kn5) and after (--inis) the folder"""
-    for f in ("track.config.json", "ship.json"):
-        assert (SC / f).read_bytes() == (SC / "source" / "round_k" / f).read_bytes(), f
+    """ledger 0079 round R (Kevin 2026-11-06: "Full street width"): the round_k candidate was adopted as the live config
+    at 0.2.6. At 0.2.7 (ledger 0086, Kevin 2026-11-07: "Yes, build it"; "Get rid of Lm Version from names") the live
+    config is round_k's with exactly the 0086 keys added and the plain name / slug / folder, and ship.json is round_k's
+    plus the mouth_returns draft step, the verify_mouth_corners gate and their files. The race is still the whole street
+    (race.corridor.whole_lap) and verify_kn5 runs both before (closure kn5) and after (--inis) the folder"""
     live = json.loads((SC / "track.config.json").read_text(encoding="utf-8"))
-    assert live["version"] == "0.2.6"
+    cand = json.loads((SC / "source" / "round_k" / "track.config.json").read_text(encoding="utf-8"))
+    assert live["version"] == "0.2.7" and cand["version"] == "0.2.6"
+    assert live["slug"] == live["install_folder"] == "sand_creek_raceway" and "LM" not in live["name"]
+    assert [l["name"] for l in live["layouts"]] == ["Sand Creek Raceway", "Sand Creek Free Roam"]
+    assert live["route"]["mouth_returns"] == ["grid_"] and live["route"]["verify_mouth_corners"] is True
+    assert live["strip_seam"]["connectors"] is True and live["road_markings"]["gap_mouths"] is True
+    # verify_mouths_allowed: round_k's rows plus grid_tertiary_74's start (ledger 0086, 0.2.7)
+    va, vk = live["route"].pop("verify_mouths_allowed"), cand["route"].pop("verify_mouths_allowed")
+    assert va[:len(vk)] == vk and [(r["piece"], r["end"]) for r in va[len(vk):]] == [("grid_tertiary_74#0", "start")]
+    for k in LIVE_0_2_7_KEYS:
+        _drop(live, k)
+        _drop(cand, k)
+    for l in live["layouts"] + cand["layouts"]:
+        l.pop("name", None)
+    assert live == cand
+    ship = json.loads((SC / "ship.json").read_text(encoding="utf-8"))
+    ship_k = json.loads((SC / "source" / "round_k" / "ship.json").read_text(encoding="utf-8"))
+    added = {"mouth_returns", "verify_mouth_corners", "source/mouth_radii.naip.json", "data/mouth_returns.json",
+             "data/verify_mouth_corners.json"}
+    assert ship.keys() == ship_k.keys()
+    for k, v in ship.items():
+        if isinstance(v, dict):
+            assert v.keys() == ship_k[k].keys(), k
+            for kk, vv in v.items():
+                assert ([x for x in vv if not isinstance(x, str) or x not in added] if isinstance(vv, list) else vv) \
+                    == ship_k[k][kk], (k, kk)
+        elif isinstance(v, list):
+            assert [x for x in v if not isinstance(x, str) or x not in added] == ship_k[k], k
+        else:
+            assert v == ship_k[k], k
+    live = json.loads((SC / "track.config.json").read_text(encoding="utf-8"))
     assert live["race"]["corridor"]["whole_lap"] is True
     assert live["race"]["corridor"]["boxes"] == [] and live["race"]["corridor"]["closure_runs"] == []

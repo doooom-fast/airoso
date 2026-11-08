@@ -14,6 +14,52 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
+## 2026-11-07 (ledger 0086) — verify_mouth_corners: a new opt-in gate on every judged mouth's corners; the mouth_radii and corner-return numbers
+
+**What changed:** `tools/verify_mouth_corners.py` (new; gate step `verify_mouth_corners`; opt-in by track.config.json
+`route.verify_mouth_corners`, Sand Creek only). On the gate OBJ of the shipped kn5, with `tools/mouth_survey.py`'s own
+sampler (ledger 0086's diagnostic, unchanged), per mouth of `route.mouth_returns`' prefixes:
+- **corner lip <= 0.05 m** [measured: `scripts/ac/kn5_ground_check.ROAD_GAP_M`, read from it, not copied: the
+  barycentric sampling ceiling the contact gate already holds every road vertex to]: the host's road edge over the top
+  surface 0.05 / 0.15 m past it, 0-6 m along the host either side of the street's edges;
+- **grass over the streets' edge strips <= 2.1 %** of the samples over all judged mouths, the first 20 m [measured:
+  Sand Creek's own lap on rr2, `edge_report` at_1m ground 0.021];
+- **the host's edge line across the opening: <= 0.25 m** ⚠ [invented: policy; real paint breaks at a mouth; 0.25 m is
+  one sample, the sampler's step], read on the line's OWN band: `tools/mouth_survey.py` now samples white MARKINGS at b
+  −0.58 / −0.55 / −0.52 m (the assembler paints it at −0.61..−0.49: v021 `ribbon.lane_markings` edge_inset 0.55, line_w
+  0.12; read on m7a's OBJ 20-25 m either side of a mouth: −0.60..−0.50). Its first version sampled −0.5 / −0.3 / −0.15 and
+  counted YLINE: −0.3 / −0.15 are off the host's line, where the STREET's own edge and centre lines reach 0.17-0.31 m past
+  the host edge at the weld, so every opening read 0.25-1.5 m with the host's line gone (m7a, 92 mouths). On 0.2.6 (rr2)
+  the corrected sampler reads the host's line across 111 of 113 openings;
+- the R 9 m inside-wheel turn drop: reported, not gated.
+`route.verify_mouth_corners_allowed` lets a named mouth stand red (printed ALLOWED); Sand Creek's rows are below.
+
+**Why:** Kevin, 2026-11-07, on Sand Creek's grid streets: "They don't connect to the main road very well at all",
+"Doesn't connect, floats". verify_mouths passed all 113 mouths: its rows look inside the street's span and along straight
+approach lines; the corners beside it are in none of them (ledger 0086: corner lip median 0.175 m, max 0.327; Lake Murray
+v4 0.033).
+
+**Numbers of the fix's tools (no gate reads them; each ⚠ invented unless marked):**
+- `tools/mouth_radii.py` (the radii off NAIP 2023, z18 0.46 m px): BAND_MIN 16 gray, BAND_K 2.5 robust spreads (the
+  road band); EDGE_U 12-30 m and EDGE_OFF −3..+8 m (the legs' straight edges); R_GRID 0.5-20 m by 0.25; ARC_MID 0.7,
+  CONTRAST_M 0.7 m (1.5 px); acceptance CONTRAST_MIN 12 gray and PROM_MIN 1.4. A corner not accepted is built at the
+  median of the measured corners on its host (else of all), logged per corner.
+- `tools/mouth_returns.py` / `_blend.py`: EDGE_FIT_TO_M 22 m (a through street's edge line), HEAD_MIN_M 1.0 m;
+  TERRAIN_EDGE_M 0.75, ZONE_PAD_M 3.5, HOST_KEEP_M 0.3, PIN_UNDER_M 0.16, VERGE_UNDER_M 0.02 are the stubs' own
+  (2026-10-14 / 10-18 entries, unchanged). `strip_under_road`: UNDER_RISE_M −0.05..+0.8 m.
+- `tools/gap_mouths_blend.py` gap_paint: PAINT_BAND_M −1.2..+0.3 m, PAINT_PARALLEL 0.8.
+- `tools/strip_seam_blend.py` connectors: INSET_M 0.05 (the lap's, unchanged). Every connector row is seamed, including
+  rows whose strip faces `route.strip_under_road` took (m7b left those out: grid_tertiary_74's NOTCH cleared, but
+  verify_kn5 TERRAIN POKE went 18 -> 24 at the pads' edges, over its 20; reverted, and 74's NOTCH row is allowed instead).
+- `route.mouth_returns_skip` (track.config.json, every row names its why): mouths given no returns. Sand Creek names two,
+  both ledger 0086 owed spots whose returns turned verify_mouths red on m7a (grid_primary_78 end: APPROACH 4.0 %/m, rr2
+  PASS; grid_primary_80 end, allowed since round Q: mouth line 0.072 -> 0.139 m).
+- `route.verify_mouth_corners_allowed`: Sand Creek's rows are the mouths still red on m7b, each with its why (ledger 0086
+  "Fix (0.2.7)": the corners mouth_returns could not build, and the built ones that stay over the lip).
+
+**Proven:** see ledger 0086 "Fix (0.2.7)" (the 0.2.6 rr2 / 0.2.7 m7 rows). Lake Murray names none of the keys; its trim
+A/B is byte-identical (ledger 0086).
+
 ## 2026-11-06 (round R) — verify_kn5: a whole-street race has no closure wall (opt-in `race.corridor.whole_lap`; ledger 0079 round R)
 
 **What changed (scripts/ac/verify_kn5.py, rule (f)):** for a race layout that names no lap on a track whose

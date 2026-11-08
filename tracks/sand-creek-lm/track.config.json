@@ -1,8 +1,9 @@
 {
   "_doc": "Sand Creek Raceway through Lake Murray v4's engine (ledger 0078, Kevin 2026-11-03: \"Lake Murray v4 should be what we build the rest from\"). The PILOT: Sand Creek 0.35.0's line (OSM centrelines, its widths, its 3DEP profile, tracks/sand-creek/data) fed by tools/lm_engine_intake.py into the v021 loop assembler (tracks/san-diego-lake-murray/scripts-v021/blender/build_loop_blend.py), prepped / exported / spawned by engine-july (the snapshot in tracks/san-diego-lake-murray/engine-july-snapshot), gated by the same gates. Its own slug and install folder so it installs beside sand_creek_raceway. Every other key is Sand Creek's own (copied from tracks/sand-creek/track.config.json at 0.35.0); the assembler reads route.smooth_*, route.divided_double, terrain.terrain_band_m and scenery.* only.",
-  "name": "Sand Creek Raceway (LM engine)",
-  "slug": "sand_creek_raceway_lm",
-  "version": "0.2.6",
+  "name": "Sand Creek Raceway",
+  "_name_doc": "0.2.7 (Kevin 2026-11-07: \"Get rid of Lm Version from names, nothing should be on any other engine now\" / \"LM is the airoso engine\"): the plain name, slug and AC folder; the old-engine sand_creek_raceway and the sand_creek_raceway_lm installs leave AC when the PC installs this (Kevin: \"We want to delete old copies from ac when installing new ones\"). The repo directory stays tracks/sand-creek-lm until directories are renamed in one pass.",
+  "slug": "sand_creek_raceway",
+  "version": "0.2.7",
   "mirror_x": false,
   "osm_road_widths": true,
   "_osm_road_widths_doc": "Real street circuit — after the project stage, scripts.gps.widths_from_osm map-matches each centerline vertex to its OSM way and sets curb-to-curb widths from lanes (arterials ~2x a side street) + writes intersection pads at the real junctions. Racetracks (defined widths) leave this off.",
@@ -579,11 +580,143 @@
       "grid_tertiary_74#0"
     ],
     "_weld_deck_beyond_end_doc": "ledger 0079 round J (tools/weld_mouths_blend.py, mouth_weld.BeyondEndDeck): piece-name prefixes whose weld reads, past the host's OPEN end, the deck of the street that end is welded to. grid_tertiary_74#0 (24 deg) meets grid_tertiary_1#1 at its v1, where #1 starts on grid_tertiary_2#0: 74's first rows lie on grid_tertiary_2's pavement, and the host's end row held level there stood them 0.021 m over grid_tertiary_2's lane on its measured (lidar) profile, which falls 0.02 m over those 7 m (verify_mouths HOST LANE, grid_tertiary_1#1 start; round I's i3 / i5). Read off the street under them, they lie on it. No number added.",
+    "mouth_returns": [
+      "grid_"
+    ],
+    "mouth_radii_file": "source/mouth_radii.naip.json",
+    "mouth_returns_skip": [
+      {
+        "piece": "grid_primary_78#0",
+        "end": "end",
+        "why": "ledger 0086 owed: the I-70 bridge approach mouth (the street climbs -1.37..+4.25 m off the lidar); m7a built its returns and verify_mouths went red (APPROACH 4.0 %/m on the -3.75 m line, 5.5 m out; rr2 PASS), so the mouth keeps 0.2.6's shape until the bridge mouths' ground is done"
+      },
+      {
+        "piece": "grid_primary_80#0",
+        "end": "end",
+        "why": "ledger 0086 owed: the E 56th mouth at v847 (verify_mouths_allowed since round Q); m7a's returns moved its mouth line 0.072 -> 0.139 m and its approach to 7.5 %/m, so it keeps 0.2.6's shape until the 56th seam and mouth are done"
+      }
+    ],
+    "strip_under_road": true,
+    "_strip_under_road_doc": "ledger 0086's owed spots (tools/mouth_returns_blend.py strip_under_road): every edge-strip face whose centre lies under another road's pavement (a pad deck's edge over the lap's strip, a fork's other street) is removed, so the prep's anti-poke stops dragging the ground under the deck edge down to the sunk strip (0.2.6: colorado_50th 0.217 m, 50th_dahlia 0.152 / 0.144, 48th_colorado 0.055, grid_primary_7 at its fork 0.291)",
+    "verify_mouth_corners": true,
+    "verify_mouth_corners_allowed": [
+      {
+        "piece": "grid_primary_11#0#0",
+        "end": "end",
+        "why": "ledger 0086 0.2.7 owed: m7a corner lip 0.212 m; 1 of 2 corners built; corner -1: the host's strip at row 2581 is already cut (a pad)"
+      },
+      {
+        "piece": "grid_primary_35#0",
+        "end": "end",
+        "why": "ledger 0086 0.2.7 owed: m7a corner lip 0.166 m; both corners built; the lip left is beyond the return (owed: ledger 0086 Fix (0.2.7))"
+      },
+      {
+        "piece": "grid_secondary_39#0",
+        "end": "start",
+        "why": "ledger 0086 0.2.7 owed: m7a corner lip 0.211 m; both corners built; the lip left is beyond the return (owed: ledger 0086 Fix (0.2.7))"
+      },
+      {
+        "piece": "grid_unclassified_43#0#0",
+        "end": "start",
+        "why": "ledger 0086 0.2.7 owed: m7a corner lip 0.206 m; 0 of 2 corners built; corner +1: only 2 rows to fit the street's edge on; corner -1: only 2 rows to fit the street's edge on"
+      },
+      {
+        "piece": "grid_primary_78#0",
+        "end": "end",
+        "why": "ledger 0086 0.2.7 owed: m7a corner lip 0.32 m, host edge line 4.25 m across; no returns (route.mouth_returns_skip: an owed spot)"
+      },
+      {
+        "piece": "grid_primary_80#0",
+        "end": "end",
+        "why": "ledger 0086 0.2.7 owed: m7a corner lip 0.196 m; no returns (route.mouth_returns_skip: an owed spot)"
+      },
+      {
+        "piece": "grid_primary_84#0#0",
+        "end": "start",
+        "why": "ledger 0086 0.2.7 owed: m7a corner lip 0.196 m; 1 of 2 corners built; corner -1: its road edge line never meets the host edge"
+      },
+      {
+        "piece": "grid_primary_7#0",
+        "end": "start",
+        "why": "ledger 0086 0.2.7 owed: m7a corner lip 0.125 m, host edge line 1.5 m across; 0 of 2 corners built; corner +1: only 0 rows to fit the street's edge on; corner -1: only 0 rows to fit the street's edge on"
+      },
+      {
+        "piece": "grid_primary_49#0#0",
+        "end": "end",
+        "why": "ledger 0086 0.2.7 owed: m7a corner lip 0.199 m; 0 of 2 corners built; corner +1: only 1 rows to fit the street's edge on; corner -1: only 1 rows to fit the street's edge on"
+      },
+      {
+        "piece": "grid_primary_84#0#0",
+        "end": "end",
+        "why": "ledger 0086 0.2.7 owed: m7a corner lip 0.212 m; 1 of 2 corners built; corner +1: its road edge line never meets the host edge"
+      },
+      {
+        "piece": "grid_unclassified_27_65_crossing#0",
+        "end": "start",
+        "why": "ledger 0086 0.2.7 owed: m7a corner lip 0.19 m; 0 of 2 corners built; corner +1: the street is shorter than its edge fit; corner -1: the street is shorter than its edge fit"
+      },
+      {
+        "piece": "grid_unclassified_27_65_crossing#0",
+        "end": "end",
+        "why": "ledger 0086 0.2.7 owed: m7a corner lip 0.196 m; 0 of 2 corners built; corner +1: the street is shorter than its edge fit; corner -1: the street is shorter than its edge fit"
+      },
+      {
+        "piece": "grid_tertiary_5#0#0",
+        "end": "start",
+        "why": "ledger 0086 0.2.7 owed: m7a corner lip 0.187 m; 0 of 2 corners built; corner +1: only 0 rows to fit the street's edge on; corner -1: only 0 rows to fit the street's edge on"
+      },
+      {
+        "piece": "grid_tertiary_74#0",
+        "end": "start",
+        "why": "ledger 0086 0.2.7 owed: m7a corner lip 0.057 m; 0 of 2 corners built; corner +1: only 0 rows to fit the street's edge on; corner -1: only 0 rows to fit the street's edge on"
+      },
+      {
+        "piece": "grid_tertiary_74#0",
+        "end": "end",
+        "why": "ledger 0086 0.2.7 owed: m7a corner lip 0.111 m, host edge line 1.25 m across; 0 of 2 corners built; corner +1: only 0 rows to fit the street's edge on; corner -1: only 0 rows to fit the street's edge on"
+      },
+      {
+        "piece": "grid_unclassified_10#0#0",
+        "end": "end",
+        "why": "ledger 0086 0.2.7 owed: m7a corner lip 0.19 m; 1 of 2 corners built; corner +1: the return (tangent 21.5 m) runs off the host's end"
+      },
+      {
+        "piece": "grid_unclassified_96#0#0",
+        "end": "end",
+        "why": "ledger 0086 0.2.7 owed: m7a corner lip 0.052 m; both corners built; the lip left is beyond the return (owed: ledger 0086 Fix (0.2.7))"
+      },
+      {
+        "piece": "grid_unclassified_105#0",
+        "end": "end",
+        "why": "ledger 0086 0.2.7 owed: m7a corner lip 0.197 m, host edge line 0.5 m across; 0 of 2 corners built; corner +1: only 1 rows to fit the street's edge on; corner -1: only 1 rows to fit the street's edge on"
+      },
+      {
+        "piece": "grid_residential_34#0",
+        "end": "end",
+        "why": "ledger 0086 0.2.7 owed: m7a corner lip 0.199 m; both corners built; the lip left is beyond the return (owed: ledger 0086 Fix (0.2.7))"
+      },
+      {
+        "piece": "grid_residential_19#0",
+        "end": "start",
+        "why": "ledger 0086 0.2.7 owed: m7a corner lip 0.199 m; 0 of 2 corners built; corner +1: only 2 rows to fit the street's edge on; corner -1: only 2 rows to fit the street's edge on"
+      },
+      {
+        "piece": "grid_residential_29#2",
+        "end": "start",
+        "why": "ledger 0086 0.2.7 owed: m7a corner lip 0.093 m, host edge line 1.0 m across; 0 of 2 corners built; corner +1: only 0 rows to fit the street's edge on; corner -1: only 0 rows to fit the street's edge on"
+      }
+    ],
+    "_mouth_returns_doc": "ledger 0086 (Kevin 2026-11-07: \"They don't connect to the main road very well at all\", \"Doesn't connect, floats\"; shown the fix: \"Yes, build it\"): Lake Murray's stub returns (0054 Phase 5) on every grid street's through mouth (tools/mouth_returns_blend.py): a circular return at each corner's radius as measured off NAIP 2023 (tools/mouth_radii.py -> source/mouth_radii.naip.json; a corner the imagery did not settle takes the median of the measured ones on its host, logged), the corner paved, the ground pinned and seamed, route.edge's no-curb profile carried round it, no barrier. verify_mouth_corners gates the corners on the built road (corner lip <= 0.05 m, grass over the street strips <= 2.1 %, no edge paint across an opening)",
     "verify_mouths_allowed": [
       {
         "piece": "grid_primary_80#0",
         "end": "end",
         "why": "NOT sandcreek_quebec's (ledger 0079 round Q): grid_primary_80 meets the lap on E 56th Ave at v847 (-736.5, 1237.5); rp1 FAIL mouth line 0.072 m, host lane 0.06 m, notch 0.079 m. The row was written for sandcreek_quebec when the pieces were numbered otherwise; kept (no new allowance), owed: its mouth"
+      },
+      {
+        "piece": "grid_tertiary_74#0",
+        "end": "start",
+        "why": "ledger 0086 (0.2.7, owed): the 24 deg mouth on grid_tertiary_1#1 whose first rows lie on grid_tertiary_2's deck (weld_deck_beyond_end). No corner return could be built (0 street rows to fit an edge on past the weld's re-spread); strip_seam.connectors seams its strip rows that lie under the deck, and the ground meets the deck flush there: m7a NOTCH 20 / 76 samples with grass at the host deck's own height (-0.001..0.0 m), not a lip (rr2 PASS). Leaving those rows unseamed cleared it but took verify_kn5 TERRAIN POKE 18 -> 24 at the pads (m7b)"
       }
     ],
     "_verify_mouths_allowed_doc": "ledger 0079 round H (coordinator 2026-11-05: the 3 mouths at the parked pads stay allowed; do not work on the parked pads): tools/verify_mouths.py still measures each and marks its row FAIL, but these three named mouths do not fail the gate (a BYPASS, fleet/GATES-CHANGELOG.md). Every other mouth fails it as before; a name that matches no mouth is an input error. Remove a row when its pad is built",
@@ -1150,7 +1283,7 @@
   "layouts": [
     {
       "id": "race",
-      "name": "Sand Creek Raceway (LM engine)",
+      "name": "Sand Creek Raceway",
       "kind": "race",
       "direction": "forward",
       "race_furniture": true,
@@ -1172,7 +1305,7 @@
     },
     {
       "id": "street",
-      "name": "Sand Creek Free Roam (LM engine)",
+      "name": "Sand Creek Free Roam",
       "kind": "street",
       "direction": "forward",
       "race_furniture": false,
@@ -1265,6 +1398,8 @@
   "road_markings": {
     "style": "lane",
     "center_yellow": true,
+    "gap_mouths": true,
+    "_gap_mouths_doc": "ledger 0086 (tools/gap_mouths_blend.py gap_paint): the host's white edge line broken at every mouth, as real paint is: across the opening, widened to the corner returns' tangent points; 0.2.6 painted it across 93 of 113 openings",
     "_doc": "Lake Murray-style painted lines (double-yellow + white edges) - same assets as the Lariat."
   },
   "props": {
@@ -1333,8 +1468,8 @@
   "corridor_refine_factor": 4,
   "corridor_refine_connectors": "ribbon",
   "terrain_vertex_budget": 1500000,
-  "install_folder": "sand_creek_raceway_lm",
-  "_install_folder_doc": "beside sand_creek_raceway for the A/B drive (ledger 0078)",
+  "install_folder": "sand_creek_raceway",
+  "_install_folder_doc": "0.2.7 (Kevin 2026-11-07: \"LM is the airoso engine\"): the plain folder; 0.2.6 and before installed beside the old engine's sand_creek_raceway as sand_creek_raceway_lm for the A/B drive (ledger 0078). The PC removes both old copies when it installs this (Kevin: \"We want to delete old copies from ac when installing new ones\")",
   "_layouts_v3_owed": {
     "_doc": "2026-10-28, the first ship-chain pass (Kevin: 'rebuild all four with the Lake Murray chain'): the chain's multi-layout path needs a declared start per layout (layouts[].start: line_vertex, grid_vertex, offset_right_m, sector_vertices — tools/layout_dummies.py) and a spawn kn5 each; the reverse layout returns in the authoring pass with its start declared on the V3 centreline. Nothing of its world is lost: every layout shares the one kn5 (L8).",
     "layouts": [
@@ -2157,6 +2292,8 @@
   "strip_seam": {
     "pads": true,
     "scope": "local",
+    "connectors": true,
+    "_connectors_doc": "ledger 0086: the ground seamed along every grid street's two edge strips and every corner return's lip (tools/strip_seam_blend.py), as the lap's is; 0.2.6 had 24.8 % of the streets' first 20 m of strip under grass",
     "_doc": "ledger 0079 round D: the ground seamed along each lm_pads deck's outline too (tools/strip_seam_blend.py), so no ground triangle spans a deck edge (pads); and the local scope (the Lariat's, ledger 0078 round 7): with the pads the whole-terrain seam missed 79 of 7,355 points, over its 1 % (MAX_MISS_SHARE)"
   },
   "race": {

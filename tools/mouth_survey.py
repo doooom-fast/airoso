@@ -31,8 +31,9 @@ piece, lateral l):
              positive number is the connector's cut end standing over the host deck: a lip facing the host); no sheet
              at all = daylight.
   GRASS      1GRASS at or above the connector's road over its deck (|l| < w/2 - 0.1, u 0..WHEEL_OUT_M), a 0.25 m grid.
-  MARKINGS   MARKINGS / YLINE triangles on the host's mouth-side lane edge band across the span (an edge line painted
-             across the opening) and on the host past the overlap along the connector's centre (a centre line run on).
+  MARKINGS   white MARKINGS on the host's mouth-side edge line's own band (b -0.58..-0.52; the line is painted at
+             -0.61..-0.49) across the span (an edge line painted across the opening), and MARKINGS / YLINE on the host
+             past the overlap along the connector's centre (a centre line run on).
 
 --rog also locates scripts/ac/kn5_ground_check's road_over_ground samples (its exact sampler: every 7th 1ROAD vertex of
 the road kn5, grass/kerb/runoff triangle beneath, its span / structure / deck-over-deck exemptions) and names the
@@ -461,13 +462,18 @@ def survey_mouth(mo, F, hp, pp, end):
                 gmax = max(gmax or -1, g[0] - r[0])
     out["grass_on_deck"] = {"samples": grass, "max_m": None if gmax is None else round(gmax, 3)}
 
-    # MARKINGS across the opening (host lane edge band b in [-1.0, 0]) and run on into the host (u < 0 on the centre)
+    # MARKINGS across the opening and run on into the host (u < 0 on the centre). The host's EDGE LINE is white
+    # (MARKINGS) and lies where the assembler paints it: v021 ribbon.lane_markings edge_inset 0.55 m, line_w 0.12 m, so
+    # b in [-0.61, -0.49] (read on the built OBJ 20-25 m either side of the mouth: -0.60..-0.50). It is sampled across
+    # its own band only. 0.2.6's first version sampled b -0.5 / -0.3 / -0.15 and counted YLINE too: -0.3 / -0.15 lie
+    # off the host's line, where the STREET's own edge lines and centre line reach 0.17-0.31 m past the host edge at
+    # the weld, so an opening with no host paint across it still read 0.25-0.5 m (ledger 0086, 0.2.7)
     mk_edge = 0
     s = s_lo
     while s <= s_hi:
-        for b in (-0.5, -0.3, -0.15):
+        for b in (-0.58, -0.55, -0.52):
             x, z = hpt(s, b)
-            if any(cls in ("MARK", "YLINE") for _y, cls in F.sheets(x, z)):
+            if any(cls == "MARK" for _y, cls in F.sheets(x, z)):
                 mk_edge += 1
                 break
         s += 0.25

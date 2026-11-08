@@ -321,13 +321,14 @@ def test_whole_street_race_has_no_closure_wall_opt_in():
     for c in ({}, {"race": {}}, {"race": {"corridor": {}}}, {"race": {"corridor": {"whole_lap": "true"}}},
               {"race": {"corridor": {"whole_lap": False}}}, {"race": {"whole_lap": True}}):
         assert whole_lap_layouts(c, los) == set(), c
-    # Lake Murray declares none; Sand Creek 0.2.6 (live since round R, and its round_k record) races the whole street
+    # Lake Murray declares none; Sand Creek (live since round R at 0.2.6, 0.2.7 since ledger 0086, and its round_k
+    # record at 0.2.6) races the whole street
     lm = json.loads((ROOT / "tracks" / "san-diego-lake-murray" / "track.config.json").read_text(encoding="utf-8"))
     assert whole_lap_layouts(lm, lm["layouts"]) == set()
-    for p in ("track.config.json", "source/round_k/track.config.json"):
+    for p, v in (("track.config.json", "0.2.7"), ("source/round_k/track.config.json", "0.2.6")):
         sc = json.loads((ROOT / "tracks" / "sand-creek-lm" / p).read_text(encoding="utf-8"))
         assert whole_lap_layouts(sc, sc["layouts"]) == {"race"}, p
-        assert sc["version"] == "0.2.6", p
+        assert sc["version"] == v, p
 
 
 def test_spawns_stand_inside_the_declared_lane_of_a_race_layout():

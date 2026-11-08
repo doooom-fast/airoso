@@ -644,3 +644,195 @@ as a tree**, and in nearly all of them the measured crown is the segmentation's 
 6. **The Mac's `/usr/bin/cp` on `/Volumes/Drive`** (V.4): times out on large files since 2026-11-07 ~20:00; every
    Mac build on that volume needs the GNU cp shim until the volume is checked.
 7. Pass 2's Owed 2-8 stand as they were (above).
+
+---
+
+# Milford 0.1.5 (2026-11-08): 0.1.4's edges and 0.1.3's vegetation in one build, the plain name, the crowns re-segmented, every GrassFX zone
+
+Branch `claude/milford-lm-015`: `claude/milford-edges` (0.1.4, ledger 0087, then the PC's install records ce98214),
+`claude/milford-vegetation` (0.1.3, the vegetation pass above) and `claude/milford-furniture-lm` (the PC's menu picture)
+merged. Kevin's standing rule: "I just want real".
+
+## M.1 The merge, by intent
+
+- **Edges own the road edge and the intake** (`tools/edge_fit.py`, `lm_intake.edge_fit`, `tools/edge_smoothness.py`, the
+  gate); **vegetation owns the trees and the grass** (`scenery.treefx`, `scenery.bespoke.trunks / grassfx_zones`, the
+  TREECARD cards out); **the PC owns the menu picture** (`source/ui/`: ce98214's re-render off the 0.1.4 build, with
+  74de8b1's camera, replaces 74de8b1's off 0.1.2; `tools/menu_preview_*.py` identical on every branch).
+- Conflicts: `ship.json` (sync_out: both lists kept; both `_doc`s kept), `track.config.json` (name / slug / version,
+  two `_name_doc` keys: one now), and ce98214's synced-back `data/` records against 0.1.3's (both replaced by this build's,
+  M.6). Nothing else touched both sides.
+- **ai/ is the PC's**: this build's `ai/full/` (fast_lane.ai, pit_lane.ai, side_l / side_r.csv, ai_draft.json) is
+  md5-identical to what ce98214 synced back, and so are the centrelines, `edge_fit.json`, `drive_test*.json`,
+  `dummies.json`: the Mac and the PC agree on 0.1.4's road. `loop.blend` stays the PC's 0.1.4 sync until the 0.1.5
+  install syncs its own back.
+
+## M.2 The names (Kevin 2026-11-07: "Get rid of Lm Version from names" / "LM is the airoso engine")
+
+- Display "Milford Road Course (unofficial)"; **slug and install folder `milford_road_course`** (every file inside drops
+  `_lm`: `milford_road_course.kn5`, `build/milford_road_course/`).
+- **S7** (`fleet/lint.py`: one slug per AC folder): the old-engine `tracks/milford-road-course` (0.6.0) held
+  `milford_road_course`. Resolved by moving the OLD track's slug and folder to **`milford_road_course_v06`** (its
+  `_slug_doc` says why); its directory stays (the LM intake reads its NAIP trace, `lm_intake.source_track`). Checked by
+  hand (the lint skips worktrees): no slug and no install folder shared. `docs/TRACKS.md` row 2 says so;
+  `test_milford_vegetation.py` asserts it.
+- The repo directory keeps `-lm` (the one rename pass after the current agents land, ledger 0087 Owed).
+
+## M.3 The split and merged crowns (Owed 3a): re-segmented from the canopy model (`source/vegetation/scripts/veg_crown_fix.py`)
+
+- **The mechanism, measured** (0.1.3's crowns): (1) veg_crowns smooths sigma 0.5 cell at >= 0.6 returns / m2 and 1.5 below:
+  43 % of the crowns at 0.6-0.7 / m2 are fragments, 16 % at 0.3-0.6 are blobs; (2) `scipy.ndimage.watershed_ift` on the
+  uint16-inverted model floods by queue order on its many equal-cost paths, not by height: 974 of 14,015 tops ended
+  with no cell, and the widest "crown" (86.5 m, id 6911) is 1,470 cells scattered over the whole 2.8 km grid.
+- **The fix, local** (the 2,525 extreme crowns, and for a fragment the crowns it touches: 805 units, 4,579 crowns): the
+  smoothing from the coverage, continuously (the Gaussian holds K = 6.3 returns: sigma 1 m at 1.0 return / m2, where
+  fragmentation stops [measured]; floored and capped at veg_crowns' own 0.5 / 1.5 cells); the same Popescu & Wynne
+  seeds; a **height-ordered marker watershed** (Meyer's flood); veg_crowns' sparse-crown merge; every new crown judged by
+  veg_plan's planting rules. A tree whose measured top lies in its new crown keeps its position and its **key**
+  (trees.lm.json's 6th element; `tools/make_treefx.py` now hashes model and angle by it, opt-in by the point's shape), so
+  no untouched tree changes model or angle.
+- **Unresolved**: still under 0.25 / over 2 after the re-segmentation, its height as measured and its crown DRAWN as
+  height x its stand's measured crown / height ratio (the median of the stand's resolved crowns, >= 30 [invented] of
+  them; else the planting's, 0.451). The measured crown is kept in `crown_fix.json`.
+
+| | 0.1.3 | **0.1.5** |
+|---|---|---|
+| planted trees | 10,419 | **11,247** (5,863 untouched; 1,716 new tops, 888 removed: merged fragments) |
+| width < 0.25 (a pole) | 2,249 | **0** (58 after the re-segmentation, then drawn) |
+| width > 2 (a fan) | 276 | **0** (145 after, then drawn) |
+| drawn from the stand ratio | 0 | **203** (138 of the 276 fans: low wide canopy, h p50 10 m, with one top) |
+| crown p10 / p50 / p90 | 2.3 / 7.5 / 18.8 m | **4.5 / 9.0 / 16.9 m** |
+| width multiplier p1 / p50 / p99 (built trees.txt) | 0.11 / 0.50 / 2.42 | **0.25 / 0.62 / 1.82** |
+| trunk colliders (30 m [invented]) | 384 | **385** (383 at the same spot, 1 gone, 2 new) |
+
+- Every case in `source/vegetation/crown_fix.json` (2,525 cases with before / after / outcome: 1,824 re-segmented and
+  resolved, 531 merged into the crown they were a piece of, 158 drawn, 8 dropped by the planting rules (gone by 2022),
+  4 whose top no flood reached; 2,031 touched neighbours with before / after; every new key; every removed key).
+  `crown_check.json` is now 0.1.5's built trees.txt: 0 extreme.
+- The built `trees.txt`: 5,894 of 0.1.3's 10,419 lines byte-identical (the 5,863 untouched trees and 31 whose
+  re-segmentation came back the same).
+- 6,028 m2 of the units' canopy is reached by no seed (the scattered pieces of the IFT's labels): not planted, listed.
+
+## M.4 GrassFX coverage (Owed 4): the cap was ours, not CSP's
+
+- The limit was `tools/plan_grassfx_aerial.py`'s `max_rects` (48 by default [invented], 0.1.3's 96 [invented]); CSP's
+  `[GRASS_FX_ADJUSTMENT_...]` has no limit anyone here has measured (docs/TREEFX-FORMAT.md, ledger 0045's census of 73
+  inis: none). `max_rects: null` now means every rectangle (opt-in; the default stays 48 for every other track).
+- Coverage of the MEASURED zones inside the plan's box (`source/vegetation/scripts/grass_coverage.py` on the built
+  `data/grassfx.aerial.json`):
+
+| zone | measured | 0.1.3 (96 rects) | **0.1.5 (1,285 rects)** | 6 m cells (4,131, not built) |
+|---|---|---|---|---|
+| C wood floor | 63.95 ha | 40.68 ha, 63.6 % | **59.18 ha, 92.5 %** | 95.4 % |
+| B long grass | 19.91 ha | 3.17 ha, 15.9 % | **13.40 ha, 67.3 %** | 78.1 % |
+| D no grass | 11.39 ha | 1.83 ha, 16.1 % | **8.09 ha, 71.0 %** | 84.3 % |
+
+- Left uncovered: the 12 m cell's majority rule [invented]. Rectangles over another zone: C 6.5 ha, B 4.3, D 2.8 (the
+  same rule). ext_config.ini 11.8 -> 114.8 kB, 1,286 adjustment sections. **What 1,285 cost in game, and whether the
+  fades of touching rectangles dip at their seams: VERIFY IN-GAME.**
+
+## M.5 Milford 0.1.5 (Mac, an EMPTY workshop `/Volumes/Drive/codex/mf_work/v015/b1`, `--no-install`, no force)
+
+AIROSO = this worktree at 6aa05bf0 (the two 82 B Mac placeholders for the TreeFX models, gitignored, in
+`source/trees/`), ENG `mf_work/eng2`, GNU cp first on PATH, TMPDIR on /Volumes/Drive. SHIP OK, exit 0.
+
+| gate (BUILT artifact) | 0.1.4 (Mac c5) | 0.1.3 (Mac v1) | **0.1.5 (Mac b1)** |
+|---|---|---|---|
+| drive_test: soft top / severe / undrivable / daylight | 0 / 0 / 0 / 0 | 0 / 0 / 0 / 0 | **0 / 0 / 0 / 0** |
+| drive_test: kinks /km, vertex bumps, fold bumps, apron steps | 6.34, 16, 0, 5 | 6.34, 16, 0, 5 | **6.34, 16, 0, 5** |
+| drive_test: obstructed, floating furniture, off-pavement, excursion drops | 0, 0, 0, 0 | 0, 0, 0, 0 | **0, 0, 0, 0** |
+| audit_mesh A-K | CLEAN (walls 20,783 v) | CLEAN (43,319 v) | **CLEAN (43,337 v: 0.1.4's walls + 385 colliders)** |
+| verify_kn5 + --inis | PASS | PASS | **PASS** |
+| kn5_ground_check | PASS: 24 walls, p95 -0.256; road-over-ground 9 / 9,317, max 0.073 | PASS: 336, p95 -0.186; 7 / 9,314, 0.086 | **PASS: 336, p95 -0.186, hovering 0; 9 / 9,317, max 0.073** |
+| kn5_textures | PASS, 20 textures | PASS, 19 / 32 / 49 | **PASS, 19 textures / 32 materials / 49 maps, missing 0** |
+| house_seat | PASS, 3 | PASS, 3 | **PASS, 3** |
+| edge_smoothness (hard) | PASS: lane \|d2\| p99 1.19 cm, \|resid\| p99 0.38 cm | not run (0.1.2's edges: FAIL) | **PASS: 1.19 cm, 0.38 cm, max 2.0 / 1.1 cm** |
+| veg_verify (not in the chain) | - | PASS: 10,419, nearest paved 4.65 m, 384 colliders, 0 orphans | **PASS: 11,247, 4.65 m, 385 colliders, 0 orphans, 0 within reach without one** |
+| mesh_diff | - | - | **= 0.1.4 on every road / kerb / grass / wall / rail / building mesh; TREECARD x6 out, 1WALL_GHOST_TRUNK in** |
+| edge_report at 1 m | kerb 99.5 % | 99.5 % | **99.5 %** |
+| road kn5 | 40,735,735 B | 38,987,706 B | **39,006,968 B** |
+
+- **The road equals 0.1.4's**: `mesh_diff` c5 -> b1, all 31 shared meshes equal (1ROAD, 1KERB, the 8 1GRASS tiles,
+  MARKINGS, PADAPRON, every rail, tyre wall, guardrail, building, roof, the far block); only 0.1.4 has `TREECARD_0..5`
+  and `deciduous_atlas.png`, only 0.1.5 has `1WALL_GHOST_TRUNK_0`. Against 0.1.3 the road, kerb, grass, markings, rails
+  and guardrails differ: 0.1.4's edges (0.1.3 had 0.1.2's).
+- **The trees, grass and colliders equal 0.1.3's apart from the crown fix and the grass cap**: M.3 and M.4.
+
+## M.6 Records
+
+`data/` is b1's (`ship.json` sync_out). Byte-identical to ce98214's PC records: lm_intake's line, the centrelines,
+dummies, drive_test, edge_fit, edge_report, ai/; changed by 0.1.5: audit, bespoke.report, kn5_ground_check,
+kn5_textures, house_seat, split_manifest, edge_smoothness (the OBJ path only), treefx.report, grassfx.aerial.
+
+## M.7 Lake Murray unchanged
+
+- `git diff origin/claude/fleet-lm-engine -- tracks/san-diego-lake-murray scripts/`: **empty**.
+- **Trim A/B** (`mf_work/v015/lm_checks.sh`): byte-identical, `connectors.local.json` 664da93b…, `mouths.json` b73b70f4…,
+  `median_bands.json` f0c97952…, log 63af07cc… (ledger 0087's).
+- **make_treefx A/B** (fleet-lm-engine's against this branch's, `all_species=True`): **Lake Murray byte-identical
+  (21,219 lines)**; Sand Creek, the Lariat, the four Rangely stages the same.
+- **Tests** (`tests/run_tests.py`, the .venv python on PATH): **1,306 pass, 8 fail**, the known 8 (draft_equiv x5,
+  registry_moves, bench_pad x2). New: `test_milford_vegetation.py` +2 (the point key; every crown case listed).
+
+## M.8 Stills (Mac only, Blender; TreeFX is the game's, so the trees are STAND-INS at measured height and crown)
+
+`/Volumes/Drive/codex/mf_work/v015/stills/`:
+- **The woods from the lap**: `mf015_seat_s0000` .. `mf015_seat_s4276` (8 driver's-eye) and `mf015_above_*` (3).
+- **The crown fix, before / after** (the same b1 scene and cameras, only the tree file differs): `before013_crownfix_blob`
+  / `after015_crownfix_blob` (the fan at e 393, n 239, 37 m from the lap: crown 36.6 m on a 24 m tree) and
+  `before013_crownfix_fragment` / `after015_crownfix_fragment` (a pole at e 407, n -175, 20 m from the lap: 3.2 m on
+  18 m). What they show is small at this distance: in the fragment pair the narrow pole right of centre becomes a round
+  crown and the poles at the right edge fill in; in the fan pair the merged left-of-centre mass breaks into separate
+  crowns. Most of the woods are untouched by design (5,863 trees byte-identical).
+- **The grass zones**: `/Volumes/Drive/codex/mf_work/v015/grass_zones_013_vs_015.jpg`, a plan view (GrassFX is drawn by
+  the game): the measured classes, the lap, each rectangle in its look's colour, 0.1.3's 96 beside 0.1.5's 1,285.
+
+## PC runbook 0082-4 / 0087-2: rehearse 0.1.5 with the real TreeFX models; install only on Kevin's word
+
+1. `git fetch && git checkout claude/milford-lm-015` (a clean checkout at this ledger's commit or later), in
+   `D:/k10/airoso`.
+2. **The TreeFX models** (personal use, gitignored, NEVER committed): copy `Oak3.bin` and `SycamoreV2.bin` from
+   `<AC>/content/tracks/san_diego_lake_murray_v4/extension/trees/` into
+   **`D:/k10/airoso/tracks/milford-road-course-lm/source/trees/`** (create it). Then `md5sum` both there: Oak3 must
+   start `24111ede`, SycamoreV2 `7010d61f` (the files Sand Creek's `sand_creek_raceway_lm` carries), else stop.
+   `git status` must show nothing under `source/trees/` (gitignored `*.bin`).
+   The chain carries them on: ship.json's glob `source/trees/*.bin` -> `<workshop>/source/trees/` ->
+   `<workshop>/build/milford_road_course/extension/trees/` (make_treefx copies the used ones beside trees.txt) ->
+   installed `<AC>/content/tracks/milford_road_course/extension/trees/`. md5 both again in the workshop's
+   `build/milford_road_course/extension/trees/` after the chain, and in the installed folder after an install.
+3. ENG as for 0.1.4 (`eng_mflm_f2`, its textures md5-equal to this head's `assets/textures`).
+4. **Rehearsal**, an EMPTY scratch workshop, no install:
+   ```bash
+   SHIP_PROJ=D:/k10-scratch/milford_015_reh AIROSO=D:/k10/airoso ENG=<ENG> PYTHONUTF8=1 \
+     bash tools/ship_track.sh milford-road-course-lm --no-install
+   ```
+   The log must show `[grassfx] ... 1285 rectangles, 1285 kept`, `[treefx] planted ...: 11247 of 11247 points` and
+   `11247 trees ... species ['Oak3.bin', 'SycamoreV2.bin']`, `SHIP OK`.
+5. Compare M.5's 0.1.5 column row by row (`python tracks/milford-road-course-lm/source/furniture/gate_table.py
+   D:/k10-scratch/milford_015_reh`); `python tracks/milford-road-course-lm/source/vegetation/scripts/veg_verify.py
+   D:/k10-scratch/milford_015_reh` (PASS, 11,247 / 385 / 0); `.../mesh_diff.py
+   <AC>/content/tracks/milford_road_course_lm/milford_road_course_lm.kn5 D:/k10-scratch/milford_015_reh/build/milford_road_course.kn5`
+   (every shared mesh equal; TREECARD x6 out, 1WALL_GHOST_TRUNK in); `.../crown_check.py D:/k10/airoso
+   D:/k10-scratch/milford_015_reh <out>.json` (0 under 0.25, 0 over 2); the road kn5 39,006,968 B (tangent noise
+   aside). Every row equal, else stop and report the row.
+6. **Install, on Kevin's word only.** Before it: list every `milford_road_course*` folder under `<AC>/content/tracks`
+   with its `ui/ui_track.json` version. **Park** `milford_road_course_lm` (0.1.4) AND any old-engine
+   `milford_road_course` (0.6.0 / 0.3.0) in `D:/k10-track-archive/<stamp>_milford/` (moved, never left beside, never
+   deleted); AC must be closed. Then empty `D:/k10-scratch/milford_lm` (park 0.1.4's workshop as
+   `milford_lm.0.1.4`) and run the chain WITHOUT `SHIP_PROJ` and without `--no-install`. Afterwards: one Milford folder,
+   `milford_road_course` 0.1.5, "doooom Michigan — Milford Road Course (unofficial)"; the two .bin md5s in its
+   `extension/trees/`. The track id changes (`milford_road_course_lm` -> `milford_road_course`): CM's lap times and
+   setups keyed by the old id do not follow.
+7. **Menu picture**: as for 0.1.4, copy `source/ui/preview.png` over the installed `ui/preview.png` (the pack's own into
+   the archive), or re-render off 0.1.5 with `source/ui/preview.json`'s camera (it shows 0.1.4: no trees).
+8. Push the install's sync-back (ai/, data/, loop.blend) and the records as for ce98214; the ai/ should come back
+   byte-identical (M.1).
+
+## Owed (after 0.1.5; start here)
+
+1. The PC: runbook 0082-4 / 0087-2; then Kevin's word, then the drive. Nothing installed from the Mac.
+2. **In game**: the 1,285 GrassFX rectangles (cost, seams), the drawn crowns (203), the stand-ins' species, the colliders.
+3. Still invented: the collider reach 30 m and its 0.30 m x 3.0 m octagon; `STAND_MIN_TREES` 30; the 12 m grass cell;
+   the species split. Kevin's questions from the vegetation pass (the reach, the NAIP-only canopy: 428 blobs, 4.43 ha)
+   stand unanswered.
+4. Owed 3 / 5-7 of the vegetation pass and ledger 0087's Q1-Q3 stand as they were.

@@ -4,7 +4,11 @@ each tree's measured height and measured crown width; the game draws Lake Murray
 (L12: show, don't assert). Camera, sun and render as source/furniture/furniture_stills_pass2_blend.py.
 
     blender --background --factory-startup --python-exit-code 1 --python veg_stills_blend.py -- \
-        <project> <trees.lm.json | none> <out-prefix>
+        <project> <trees.lm.json | none> <out-prefix> [<shots.json>]
+
+shots.json (Milford 0.1.5, optional): a list of shots taken INSTEAD of the default set, each either a seat view
+{"name", "s": lap station m, "ahead": m (60), "fov": deg (70)} or a free camera {"name", "eye": [x, y, dz], "look": [x, y, dz],
+"fov"} in the split scene's plan (x = E, y = N), dz over the ground under that point.
 """
 import json
 import math
@@ -17,6 +21,7 @@ from mathutils.bvhtree import BVHTree
 
 a = sys.argv[sys.argv.index("--") + 1:]
 PROJ, TREES, OUT = Path(a[0]), a[1], a[2]
+SHOTS = json.loads(Path(a[3]).read_text(encoding="utf-8")) if len(a) > 3 else None
 EYE_M = 1.2
 
 
@@ -146,19 +151,31 @@ def at(s):
     return (pts[i][0] + (pts[i + 1][0] - pts[i][0]) * t, pts[i][1] + (pts[i + 1][1] - pts[i][1]) * t)
 
 
-# the driver's seat: every 1/8 of the lap, looking 60 m down the road
-for k in range(8):
-    s = lap[-1] * k / 8
+def seat(name, s, ahead=60.0, fov=70.0):
     ex, ey = at(s)
-    lx, ly = at(s + 60.0)
+    lx, ly = at(s + ahead)
     ez = z_at(road, ex, ey, 0.0) + EYE_M
     lz = z_at(road, lx, ly, ez - EYE_M) + EYE_M
-    shoot(f"seat_s{int(s):04d}", (ex, ey, ez), (lx, ly, lz), fov=70.0)
-# aerial-style overviews
-xs, ys = [p[0] for p in pts], [p[1] for p in pts]
-cx, cy = (min(xs) + max(xs)) / 2, (min(ys) + max(ys)) / 2
-gz = z_at(ground, cx, cy, 0.0)
-shoot("above_lap_from_sw", (cx - 450.0, cy - 650.0, gz + 380.0), (cx, cy, gz), fov=55.0)
-shoot("above_lap_from_ne", (cx + 450.0, cy + 650.0, gz + 380.0), (cx, cy, gz), fov=55.0)
-shoot("above_infield_low", (cx + 150.0, cy - 250.0, gz + 120.0), (cx - 20.0, cy + 60.0, gz), fov=60.0)
+    shoot(name, (ex, ey, ez), (lx, ly, lz), fov=fov)
+
+
+if SHOTS is not None:
+    for q in SHOTS:
+        if "s" in q:
+            seat(q["name"], float(q["s"]), float(q.get("ahead", 60.0)), float(q.get("fov", 70.0)))
+        else:
+            (ex, ey, ez), (lx, ly, lz) = q["eye"], q["look"]
+            shoot(q["name"], (ex, ey, z_at(ground, ex, ey, 0.0) + ez), (lx, ly, z_at(ground, lx, ly, 0.0) + lz), float(q.get("fov", 60.0)))
+else:
+    # the driver's seat: every 1/8 of the lap, looking 60 m down the road
+    for k in range(8):
+        s = lap[-1] * k / 8
+        seat(f"seat_s{int(s):04d}", s)
+    # aerial-style overviews
+    xs, ys = [p[0] for p in pts], [p[1] for p in pts]
+    cx, cy = (min(xs) + max(xs)) / 2, (min(ys) + max(ys)) / 2
+    gz = z_at(ground, cx, cy, 0.0)
+    shoot("above_lap_from_sw", (cx - 450.0, cy - 650.0, gz + 380.0), (cx, cy, gz), fov=55.0)
+    shoot("above_lap_from_ne", (cx + 450.0, cy + 650.0, gz + 380.0), (cx, cy, gz), fov=55.0)
+    shoot("above_infield_low", (cx + 150.0, cy - 250.0, gz + 120.0), (cx - 20.0, cy + 60.0, gz), fov=60.0)
 print("[stills] done")

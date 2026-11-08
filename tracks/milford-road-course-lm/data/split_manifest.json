@@ -1,11 +1,11 @@
 {
- "input": "/Volumes/Drive/codex/mf_work/v1/blender/milford_road_course_lm.blend",
+ "input": "/Volumes/Drive/codex/mf_work/v015/b1/blender/milford_road_course.blend",
  "outputs": {
   "loop_main.blend": {
    "objects": 48,
    "meshes": 32,
-   "positions": 476271,
-   "max_positions": 50329,
+   "positions": 476370,
+   "max_positions": 50364,
    "materials": [
     "1GRASS_0_mat",
     "1GRASS_1_mat",
@@ -119,8 +119,8 @@
  "input_census": {
   "objects": 48,
   "meshes": 32,
-  "positions": 476271,
-  "max_positions": 50329,
+  "positions": 476370,
+  "max_positions": 50364,
   "materials": [
    "1GRASS_0_mat",
    "1GRASS_1_mat",

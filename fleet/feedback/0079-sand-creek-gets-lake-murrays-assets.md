@@ -2361,7 +2361,7 @@ item 1's record (read by nothing) and the allowance edit (78's row dropped, a pa
    - 4k (the shared-tools A/B) also covers this round's change: `scripts/ac/verify_kn5.py` (opt-in
      `race.corridor.whole_lap`; Lake Murray's output byte-identical, round R).
 
-4o. **Sand Creek 0.2.7** (ledger 0086, Kevin 2026-11-07: "Yes, build it"). **STATUS: HELD for the coordinator's call.**
+4o. **Sand Creek 0.2.7** (ledger 0086, Kevin 2026-11-07: "Yes, build it"). **STATUS: INSTALLED 2026-11-08 05:35 (PC) as `sand_creek_raceway`, on Kevin's overnight word.** The coordinator accepted m7d's two rows (road_over_ground 17, teeth 0.23 %: inside their gates, far better than 0.2.6's 27 / 24.8 %) and checked the rehearsal's three rows that differ from 4n against m7d.log (equal); see "Runbook 4o (PC, 2026-11-08)".
    The Mac's m7d (built from the tree of the branch head that carries this text) is SHIP OK with verify_kn5 at 0 TERRAIN POKEs, but two rows are a hair worse than the
    red m7c's (road_over_ground 16 -> 17, teeth 0.21 -> 0.23 %; ledger 0086 "Gates"); the coordinator's bar was "matches
    m7c or better", so the coordinator un-blocks this, not the Mac. This build carries 0.2.6 (4n) plus:

@@ -15,6 +15,11 @@
  "shadow": {"enabled": true, "max_m": 60},
  "lidar": {"file": "source/bespoke/buildings.lidar.json",
            "_doc": "pass 2 (ledger 0083): roofs and ground MEASURED off USGS 3DEP lidar CA_SanDiegoCo_D24 (flown 2024-11-09; tiles 11SMS475648 and 11SMS476648, Kevin's go 2026-11-06) by tools/lidar_building_heights.py, run on this plan's output without this key; the Grand Stand (osm116794621) stands as its measured tiers. Pass 3 (Kevin 2026-11-07, 'Yes, fetch them'): three tiles more, 11SMS475649 / 476649 / 475647, every footprint on the five; measured on the G10."},
+ "roof_forms": {"file": "source/bespoke/buildings.roofs.json",
+                "_doc": "pass 4 (ledger 0083; Kevin 2026-11-07: \"We can keep moving ahead on the plans\"): each roof's form fitted to the 2024 points by tools/lidar_roof_forms.py (extract on the G10 over the five tiles, run on this plan's output without lidar; fit with --stepped osm116794621): flat with its measured parapet, gable, hip, shed, its measured levels as parts, the Grand Stand's slope as a slope; a poor fit stands its median, flagged; the two hillside garages over their downhill ground"},
+ "roof_colour": {"atlas": "source/bespoke/roof_naip_palette.png", "normal": "source/bespoke/roof_flat_normal.png",
+                 "_photo": "NAIP 2012-05-19",
+                 "_doc": "pass 4 (ledger 0083): each roof's median NAIP pixel (this plan's image) as one cell of the palette the track's texture_overrides ROOF binds; a roof off the crop keeps its class stand-in"},
  "canopy_posts": true,
  "_canopy_posts_doc": "pass 3 (ledger 0083): the pavilions and fuel canopies the lidar measured stand as the author's posts form (an open-sided roof on posts); no measured roof, no canopy"
 }

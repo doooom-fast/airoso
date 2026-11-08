@@ -1,10 +1,11 @@
 {
   "_doc": "Del Mar Grand Prix through Lake Murray v4's engine (ledger 0083, the 0078 port shape). The line, widths and profile are tracks/del-mar's (installed 0.1.0, the ESTIMATED 1987-92 IMSA layout of ledger 0064), read by tools/lm_engine_intake.py; the profile is the measured 3DEP one with the elevation stage's grade cap undone; no lidar camber (none surveyed), so flat; the 3DEP grid is this port's own fetch (the live track commits none); the edge is the circuit's (no curb, no sidewalk). Every other key is the live track's, copied; the live config is untouched.",
   "archetype": "race_circuit",
-  "name": "Del Mar Grand Prix (LM engine)",
+  "name": "Del Mar Grand Prix",
+  "_name_engine_doc": "ledger 0083 pass 4 (Kevin 2026-11-07: \"Get rid of Lm Version from names, nothing should be on any other engine now\" / \"LM is the airoso engine\"): no '(LM engine)' in the name; installed as the plain del_mar_fairgrounds (install_folder). The slug stays del_mar_fairgrounds_lm (the file names inside the folder) while tracks/del-mar still holds del_mar_fairgrounds: fleet lint S7 refuses two tracks on one slug; the directories are renamed in one pass later.",
   "slug": "del_mar_fairgrounds_lm",
   "ui_series": "doooom California",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "mirror_x": false,
   "loop": true,
   "default_width_m": 13.0,
@@ -83,7 +84,7 @@
           "auto": true
         }
       ],
-      "_blocks_doc": "ledger 0083 buildings pass 1 + 2: OSM's footprints (today's fairgrounds: the 1991-93 rebuild, not 1987's halls), classed by tools/plan_buildings.py and heighted off USGS 3DEP lidar (2024-11-09; two tiles in pass 2, five in pass 3: every footprint), open-sided roofs on posts (pass 3) (source/bespoke/buildings.plan.json; buildings.inventory.json lists each with its sources), stood by tools/author_bespoke_blend.py on the built ground; a collider only within 60 m of the lap"
+      "_blocks_doc": "ledger 0083 buildings pass 1 + 2: OSM's footprints (today's fairgrounds: the 1991-93 rebuild, not 1987's halls), classed by tools/plan_buildings.py and heighted off USGS 3DEP lidar (2024-11-09; two tiles in pass 2, five in pass 3: every footprint), open-sided roofs on posts (pass 3), each roof's form, levels, parapet and colour measured (pass 4: lidar planes, the 2012 NAIP) (source/bespoke/buildings.plan.json; buildings.inventory.json lists each with its sources), stood by tools/author_bespoke_blend.py on the built ground; a collider only within 60 m of the lap"
     }
   },
   "layouts": [
@@ -2556,10 +2557,17 @@
     "street"
   ],
   "natural_ground": false,
-  "install_folder": "del_mar_fairgrounds_lm",
-  "_install_folder_doc": "beside del_mar_fairgrounds (0.1.0) for the A/B drive (ledgers 0078, 0083)",
+  "install_folder": "del_mar_fairgrounds",
+  "_install_folder_doc": "ledger 0083 pass 4 (Kevin 2026-11-07: \"LM is the airoso engine\"; \"We want to delete old copies from ac when installing new ones\"): the plain folder. The install parks the old-engine del_mar_fairgrounds 0.1.0 it replaces; the PC moves del_mar_fairgrounds_lm (0.2.0-0.2.2) out of content/tracks by hand (runbook 0083-4). Was del_mar_fairgrounds_lm, beside 0.1.0 for the A/B drive (ledgers 0078, 0083).",
+  "texture_overrides": {
+    "ROOF": {
+      "diffuse": "source/bespoke/roof_naip_palette.png",
+      "normal": "source/bespoke/roof_flat_normal.png",
+      "_doc": "ledger 0083 pass 4: the MEASURED roof colours (tools/plan_buildings.py roof_colour: each roof's median 2012 NAIP pixel, one solid cell of this palette); the author's ROOFTOP_NAIP_* objects bind engine-july's ROOF row (no ROOFTOP_* row of their own), so the row's diffuse is the palette and its normal flat. No other object in Del Mar's scene binds ROOF. Project-relative, synced in by ship.json."
+    }
+  },
   "_name_doc": "The event was the Camel Grand Prix of Southern California (1987-88), Nissan Grand Prix of Southern California (1989), Grand Prix of Greater San Diego / Vons Grand Prix of San Diego (1990-92). Kevin to name; 'Del Mar Grand Prix' is the placeholder.",
-  "ui_description": "ESTIMATED layout. The 1987-92 IMSA Camel GT temporary street circuit through the Del Mar Fairgrounds lots, San Diego County: its shape from the period TV map, placed on today's ground inside the envelope the 1987 ESPN broadcast aerials allow (about 2.0 km against the published 2.57 km). Not traced from any survey of the course: no drawing to scale survives. Counter-clockwise. Real USGS 3DEP elevation. Built on Lake Murray's engine. Not an official or endorsed product.",
+  "ui_description": "ESTIMATED layout. The 1987-92 IMSA Camel GT temporary street circuit through the Del Mar Fairgrounds lots, San Diego County: its shape from the period TV map, placed on today's ground inside the envelope the 1987 ESPN broadcast aerials allow (about 2.0 km against the published 2.57 km). Not traced from any survey of the course: no drawing to scale survives. Counter-clockwise. Real USGS 3DEP elevation. Today's fairground buildings, their heights and roof forms measured off the 2024 USGS lidar, their roof colours off the 2012 NAIP. Not an official or endorsed product.",
   "author": "airoso",
   "lm_intake": {
     "source_track": "del-mar",

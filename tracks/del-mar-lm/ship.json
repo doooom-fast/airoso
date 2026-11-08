@@ -47,7 +47,9 @@
     "optional": [
       "data/heightfield.npy",
       "data/heightfield.meta.json",
-      "source/bespoke/buildings.json"
+      "source/bespoke/buildings.json",
+      "source/bespoke/roof_naip_palette.png",
+      "source/bespoke/roof_flat_normal.png"
     ]
   },
   "sync_out": {

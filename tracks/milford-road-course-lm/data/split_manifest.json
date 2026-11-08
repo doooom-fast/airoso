@@ -1,10 +1,10 @@
 {
- "input": "D:\\k10-scratch\\milford_lm\\blender\\milford_road_course_lm.blend",
+ "input": "/Volumes/Drive/codex/mf_work/v1/blender/milford_road_course_lm.blend",
  "outputs": {
   "loop_main.blend": {
-   "objects": 53,
-   "meshes": 37,
-   "positions": 505575,
+   "objects": 48,
+   "meshes": 32,
+   "positions": 476271,
    "max_positions": 50329,
    "materials": [
     "1GRASS_0_mat",
@@ -22,6 +22,7 @@
     "1WALL_GHOST_RAIL_1_mat",
     "1WALL_GHOST_RAIL_2_mat",
     "1WALL_GHOST_RAIL_3_mat",
+    "1WALL_GHOST_TRUNK_0_mat",
     "1WALL_TECPRO_TYRES_4_mat",
     "1WALL_TECPRO_TYRES_5_mat",
     "1WALL_TECPRO_TYRES_6_mat",
@@ -37,13 +38,7 @@
     "MARKINGS_mat.001",
     "PADAPRON_0_mat",
     "ROOFTOP_TAN_0_mat",
-    "ROOFTOP_WHITE_0_mat",
-    "TREECARD_0_mat",
-    "TREECARD_1_mat",
-    "TREECARD_2_mat",
-    "TREECARD_3_mat",
-    "TREECARD_4_mat",
-    "TREECARD_5_mat"
+    "ROOFTOP_WHITE_0_mat"
    ],
    "orphan_materials": [],
    "ac_nodes": [
@@ -83,6 +78,7 @@
     "1WALL_GHOST_RAIL_1",
     "1WALL_GHOST_RAIL_2",
     "1WALL_GHOST_RAIL_3",
+    "1WALL_GHOST_TRUNK_0",
     "1WALL_TECPRO_TYRES_4",
     "1WALL_TECPRO_TYRES_5",
     "1WALL_TECPRO_TYRES_6",
@@ -114,22 +110,16 @@
     "MARKINGS",
     "PADAPRON_0",
     "ROOFTOP_TAN_0",
-    "ROOFTOP_WHITE_0",
-    "TREECARD_0",
-    "TREECARD_1",
-    "TREECARD_2",
-    "TREECARD_3",
-    "TREECARD_4",
-    "TREECARD_5"
+    "ROOFTOP_WHITE_0"
    ]
   }
  },
  "problems": [],
  "tokens": {},
  "input_census": {
-  "objects": 53,
-  "meshes": 37,
-  "positions": 505575,
+  "objects": 48,
+  "meshes": 32,
+  "positions": 476271,
   "max_positions": 50329,
   "materials": [
    "1GRASS_0_mat",
@@ -147,6 +137,7 @@
    "1WALL_GHOST_RAIL_1_mat",
    "1WALL_GHOST_RAIL_2_mat",
    "1WALL_GHOST_RAIL_3_mat",
+   "1WALL_GHOST_TRUNK_0_mat",
    "1WALL_TECPRO_TYRES_4_mat",
    "1WALL_TECPRO_TYRES_5_mat",
    "1WALL_TECPRO_TYRES_6_mat",
@@ -163,13 +154,7 @@
    "PADAPRON_0_mat",
    "ROOFTOP_TAN_0_mat",
    "ROOFTOP_WHITE_0_mat",
-   "TERRAIN_mat",
-   "TREECARD_0_mat",
-   "TREECARD_1_mat",
-   "TREECARD_2_mat",
-   "TREECARD_3_mat",
-   "TREECARD_4_mat",
-   "TREECARD_5_mat"
+   "TERRAIN_mat"
   ],
   "orphan_materials": [
    "TERRAIN_mat"
@@ -211,6 +196,7 @@
    "1WALL_GHOST_RAIL_1",
    "1WALL_GHOST_RAIL_2",
    "1WALL_GHOST_RAIL_3",
+   "1WALL_GHOST_TRUNK_0",
    "1WALL_TECPRO_TYRES_4",
    "1WALL_TECPRO_TYRES_5",
    "1WALL_TECPRO_TYRES_6",
@@ -242,13 +228,7 @@
    "MARKINGS",
    "PADAPRON_0",
    "ROOFTOP_TAN_0",
-   "ROOFTOP_WHITE_0",
-   "TREECARD_0",
-   "TREECARD_1",
-   "TREECARD_2",
-   "TREECARD_3",
-   "TREECARD_4",
-   "TREECARD_5"
+   "ROOFTOP_WHITE_0"
   ]
  },
  "routes": {

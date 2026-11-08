@@ -48,6 +48,23 @@ MAX_MISS_SHARE = 0.01   # [invented] seam points that may miss (outside the terr
 JOIN_DEPTH = 3          # [invented] midpoint levels a failed join may try (ledger 0078 round 6: Sand Creek, 366 failed joins)
 CHUNK_ROWS = 120        # [invented] local scope: seam points per small mesh
 PAD_M = 8.0             # [invented] local scope: terrain faces this far around a chunk's seam points go into its small mesh
+# OFF THE ROW EDGE (ledger 0086, 0.2.7; with strip_seam.connectors only): a seam point INSET_M in from the lip ON a strip
+# row's own line sits exactly on the edge two strip triangles share. engine-july's anti-poke (build_kn5_loop 2c) finds
+# the strip under a ground vertex by a downward ray, and a ray down an edge misses both triangles, so that vertex kept
+# the contact band's road - 0.02 instead of strip - 0.02: 0.16-0.30 m over the strip, which verify_kn5's poke lens
+# (barycentric, edges inclusive) counts. Every one of m7c's 24 TERRAIN POKEs (rr2's 9 on the lap among them) was such a
+# vertex (barycentric min 0.0, 0.05 m from a lip vertex along its row). The point moves this plan vector off the line
+# into a triangle's interior: 12 mm at 36 deg, so it stays >= 38 mm inside the lip; one vector for every seam, so a
+# point two seams share (a return's first / last row) moves the same way and is still shared
+OFF_EDGE = (0.0097, 0.0071)  # [invented] metres (Blender X = E, Y = N)
+
+
+def seam_point(o, e, off_edge=False):
+    """the seam point INSET_M inside the lip o along the row towards e (plan); off_edge: moved OFF_EDGE off the row line"""
+    dx, dy = e.x - o.x, e.y - o.y
+    L = math.hypot(dx, dy) or 1.0
+    x, y = o.x + dx / L * INSET_M, o.y + dy / L * INSET_M
+    return (x + OFF_EDGE[0], y + OFF_EDGE[1]) if off_edge else (x, y)
 
 
 def main():
@@ -117,9 +134,7 @@ def main():
                 continue
             o = CV[mw.curb_index(lay, "MAINLINE", r, side, 3)].co
             e = CV[mw.curb_index(lay, "MAINLINE", r, side, 0)].co
-            dx, dy = e.x - o.x, e.y - o.y
-            L = math.hypot(dx, dy) or 1.0
-            pts.append((o.x + dx / L * INSET_M, o.y + dy / L * INSET_M))
+            pts.append(seam_point(o, e, seam_conn))
         seams.append(pts)
     cfg = json.loads((proj / "track.config.json").read_text(encoding="utf-8"))
     # THE PADS' OUTLINES (opt-in strip_seam.pads, ledger 0079 round D): the ground seamed along each lm_pads deck's own
@@ -150,9 +165,6 @@ def main():
                 rr = range(int(c_["street_rows_removed"]))
                 gone.setdefault((m_["piece"], int(c_["e"])), set()).update(
                     {r if m_["end"] == "start" else n_ - 1 - r for r in rr})
-        # (tried on m7b and reverted: leaving out the rows whose strip faces route.strip_under_road took cleared
-        # grid_tertiary_74's NOTCH but raised verify_kn5's TERRAIN POKE 18 -> 24 at the pads' edges, over its 20; ledger
-        # 0086 "Fix (0.2.7)")
         n_conn = n_pts = 0
         for c in conns:
             b_ = lay[c["name"]]
@@ -165,9 +177,7 @@ def main():
                         continue
                     o = CV[mw.curb_index(lay, c["name"], r, side, 3)].co
                     e = CV[mw.curb_index(lay, c["name"], r, side, 0)].co
-                    dx, dy = e.x - o.x, e.y - o.y
-                    L = math.hypot(dx, dy) or 1.0
-                    pts.append((o.x + dx / L * INSET_M, o.y + dy / L * INSET_M))
+                    pts.append(seam_point(o, e, True))
                 seams.append(pts)
                 seam_open.append(True)
                 n_conn += 1
@@ -179,9 +189,7 @@ def main():
                 pts = []
                 for k in range(v0, v1, mw.CURB_P):
                     o, e = CV[k + 3].co, CV[k].co
-                    dx, dy = e.x - o.x, e.y - o.y
-                    L = math.hypot(dx, dy) or 1.0
-                    pts.append((o.x + dx / L * INSET_M, o.y + dy / L * INSET_M))
+                    pts.append(seam_point(o, e, True))
                 seams.append(pts)
                 seam_open.append(True)
                 n_ret += 1

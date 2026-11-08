@@ -596,8 +596,6 @@
         "why": "ledger 0086 owed: the E 56th mouth at v847 (verify_mouths_allowed since round Q); m7a's returns moved its mouth line 0.072 -> 0.139 m and its approach to 7.5 %/m, so it keeps 0.2.6's shape until the 56th seam and mouth are done"
       }
     ],
-    "strip_under_road": true,
-    "_strip_under_road_doc": "ledger 0086's owed spots (tools/mouth_returns_blend.py strip_under_road): every edge-strip face whose centre lies under another road's pavement (a pad deck's edge over the lap's strip, a fork's other street) is removed, so the prep's anti-poke stops dragging the ground under the deck edge down to the sunk strip (0.2.6: colorado_50th 0.217 m, 50th_dahlia 0.152 / 0.144, 48th_colorado 0.055, grid_primary_7 at its fork 0.291)",
     "verify_mouth_corners": true,
     "verify_mouth_corners_allowed": [
       {

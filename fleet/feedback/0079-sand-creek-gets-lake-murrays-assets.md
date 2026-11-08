@@ -2332,26 +2332,32 @@ item 1's record (read by nothing) and the allowance edit (78's row dropped, a pa
    - 4k (the shared-tools A/B) also covers this round's change: `scripts/ac/verify_kn5.py` (opt-in
      `race.corridor.whole_lap`; Lake Murray's output byte-identical, round R).
 
-4o. **Sand Creek 0.2.7** (ledger 0086, Kevin 2026-11-07: "Yes, build it"). **BLOCKED: do not run until the Mac posts a
-   green 0.2.7.** The Mac's m7c is red on verify_kn5 (TERRAIN POKE 24 > 20; ledger 0086 "Owed after 0.2.7" item 1). This
-   build carries 0.2.6 (4n) plus:
-   - corner returns at 100 grid mouths (194 corners, radii off NAIP 2023), the corners paved and the ground pinned, the
-     street strips seamed, the host's edge line broken at every opening; the new gate verify_mouth_corners (21 allowed);
+4o. **Sand Creek 0.2.7** (ledger 0086, Kevin 2026-11-07: "Yes, build it"). **STATUS: HELD for the coordinator's call.**
+   The Mac's m7d (built from the tree of the branch head that carries this text) is SHIP OK with verify_kn5 at 0 TERRAIN POKEs, but two rows are a hair worse than the
+   red m7c's (road_over_ground 16 -> 17, teeth 0.21 -> 0.23 %; ledger 0086 "Gates"); the coordinator's bar was "matches
+   m7c or better", so the coordinator un-blocks this, not the Mac. This build carries 0.2.6 (4n) plus:
+   - corner returns at 100 grid mouths (195 corners, radii off NAIP 2023), the corners paved and the ground pinned, the
+     street strips seamed (their seam points off the strip rows' shared edges), the host's edge line broken at every
+     opening; the new gate verify_mouth_corners (21 allowed);
    - the plain name: **Sand Creek Raceway**, slug and folder `sand_creek_raceway` (Kevin: "Get rid of Lm Version from
      names", "LM is the airoso engine").
 
    NO install in this runbook without Kevin's word; the PC asks him.
-   1. Fetch `claude/sand-creek-grid-mouths` and check out a CLEAN tree at the green head the Mac names (LFS blobs pulled
-      as in 4n step 1). New and committed: `source/mouth_radii.naip.json` (synced in by ship.json).
+   1. Fetch `claude/sand-creek-grid-mouths` and check out a CLEAN tree at the branch head that carries this text (LFS blobs pulled as in 4n step 1). New and committed: `source/mouth_radii.naip.json` (synced in by ship.json).
    2. Inputs as 4n (the four TreeFX `.bin`, ENG = `D:/k10-scratch/eng_sclm_a`). Nothing to fetch.
    3. Rehearse from an EMPTY workshop: `SHIP_PROJ=D:/k10-scratch/sand_creek_027_reh AIROSO=<the clean tree>
       ENG=D:/k10-scratch/eng_sclm_a bash tools/ship_track.sh sand-creek-lm --no-install` (log to a file). Expect the
-      Mac's green log row for row; the new rows: `[returns] 194 corner return(s) at 100 mouth(s) (radius measured 139, a
-      median 55); 30 skipped`, `[gap-mouths] ... the host's edge line broken at 113 mouth(s)`, `[mouth-corners] 113
-      mouth(s): corner lip median 0.02 ... teeth ... 0.21% ... 0 red mouth(s) — PASS` (21 ALLOWED), verify_mouths PASS (80
-      and 74-start ALLOWED), and **verify_kn5 PASS** (the row m7c failed).
-   4. Compare every gate row and the kn5 sizes with the Mac's green run (known ground noise as in 4n step 4). The road kn5
-      is ~116 MB (0.2.6: 92.2 MB). Anything different: stop and send the log to the Mac.
+      Mac's m7d (`sclm_work/m7d.log`) row for row; the new rows: `[returns] 195 corner return(s) at 100 mouth(s) (radius
+      measured 139, a median 56); 29 skipped`, `[strip-seam] local scope: 41804 seam points ... 13 missed`,
+      `[gap-mouths] deleted 5988 host curb/sidewalk faces across 113 mouths; 2620 street strip vertices ... the host's edge
+      line broken at 113 mouth(s) (1997 paint faces ...)`, **verify_kn5 PASS** (`✓ kn5 verification passed`), verify_mouths
+      PASS (80 and 74-start ALLOWED), `[mouth-corners] 113 mouth(s): corner lip median 0.02 max 0.327 (<= 0.05); teeth
+      157/68942 = 0.23% (<= 2.1%); R9 turn drop median 0.013 p90 0.193 (reported); 0 red mouth(s) — PASS` (21 ALLOWED),
+      kn5_ground_check race / street PASS (road_over_ground 17 / 12,956, max 0.295), houses 2,182, textures 0 untextured;
+      every drive_test / audit / no_route / fold_fans / verify_pads row as 4n; `SHIP OK`.
+   4. Compare every gate row and the kn5 sizes with m7d: road `sand_creek_raceway.kn5` 116,115,917 B, `_race` 10,196,549 B,
+      `_closure_race` 9,701 B, `_street` 6,923,402 B (known ground noise on the road kn5 as in 4n step 4; judge the road,
+      race and street kn5s with `tools/kn5_equiv.py`). Anything different: stop and send the log to the Mac.
    5. **Ask Kevin** whether to install 0.2.7. Only on his word, AC closed: move BOTH old installs out of
       `content/tracks` into `D:/k10-track-archive` (`sand_creek_raceway_lm` 0.2.6, and the old engine's
       `sand_creek_raceway`; Kevin: "We want to delete old copies from ac when installing new ones"; archive, never

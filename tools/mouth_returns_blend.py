@@ -74,88 +74,6 @@ class Skip(Exception):
     pass
 
 
-UNDER_RISE_M = (-0.05, 0.8)  # [invented] a foreign pavement this far over a strip face's centre stands on it (the strip
-#                              falls 0.20 m; a pad deck / a fork's other street stands 0.0-0.3 m over it)
-
-
-def strip_under_road(cfg, lay, conns, road, curb):
-    """route.strip_under_road (opt-in, ledger 0086's owed spots): every CURB face whose centre lies UNDER another road's
-    pavement (a ROAD triangle of another line, or a 1ROAD_pad_* deck) goes, FACES_ONLY. Ledger 0086 found the ground
-    pulled under those buried strips: the prep clamps the ground 0.02 m under the LOWEST drivable sheet (road + kerb), so
-    a strip sunk 0.20 m under a pad deck's edge (colorado_50th 0.217 m, 50th_dahlia 0.152 / 0.144, 48th_colorado
-    0.055) or under a fork's other street (grid_primary_7 beside grid_primary_6, 0.291 m) drags the ground under the
-    deck edge with it, and kn5_ground_check reads the deck standing on air. Nothing visible goes: the pavement is over it.
-    Returns {"faces": n, "by_owner": {...}}."""
-    blocks = sorted(((v["road"], v["road"] + 3 * v["rows"], n) for n, v in lay.items() if not n.startswith("_")))
-    cblocks = sorted(((v["curb"], v["curb"] + 2 * v["rows"] * mw.CURB_P, n) for n, v in lay.items()
-                      if not n.startswith("_")))
-
-    def owner(bl, i):
-        for a, b, n in bl:
-            if a <= i < b:
-                return n
-        return None
-    H = 4.0
-    grid = {}
-    rme = road.data
-    rco = [v.co for v in rme.vertices]
-    for poly in rme.polygons:
-        vs = list(poly.vertices)
-        own = owner(blocks, min(vs))
-        for k in range(1, len(vs) - 1):
-            t = (tuple(rco[vs[0]]), tuple(rco[vs[k]]), tuple(rco[vs[k + 1]]))
-            for gx in range(int(math.floor(min(p[0] for p in t) / H)), int(math.floor(max(p[0] for p in t) / H)) + 1):
-                for gy in range(int(math.floor(min(p[1] for p in t) / H)), int(math.floor(max(p[1] for p in t) / H)) + 1):
-                    grid.setdefault((gx, gy), []).append((t, own))
-    for ob in bpy.data.objects:
-        if ob.type == "MESH" and ob.name.upper().startswith("1ROAD_PAD_"):
-            mw_ = ob.matrix_world
-            co = [mw_ @ v.co for v in ob.data.vertices]
-            for poly in ob.data.polygons:
-                vs = list(poly.vertices)
-                for k in range(1, len(vs) - 1):
-                    t = (tuple(co[vs[0]]), tuple(co[vs[k]]), tuple(co[vs[k + 1]]))
-                    for gx in range(int(math.floor(min(p[0] for p in t) / H)), int(math.floor(max(p[0] for p in t) / H)) + 1):
-                        for gy in range(int(math.floor(min(p[1] for p in t) / H)), int(math.floor(max(p[1] for p in t) / H)) + 1):
-                            grid.setdefault((gx, gy), []).append((t, ob.name))
-
-    def over(x, y, z, own):
-        for t, o in grid.get((int(math.floor(x / H)), int(math.floor(y / H))), ()):
-            if o == own:
-                continue
-            a, b, c = t
-            d = (b[1] - c[1]) * (a[0] - c[0]) + (c[0] - b[0]) * (a[1] - c[1])
-            if abs(d) < 1e-12:
-                continue
-            l1 = ((b[1] - c[1]) * (x - c[0]) + (c[0] - b[0]) * (y - c[1])) / d
-            l2 = ((c[1] - a[1]) * (x - c[0]) + (a[0] - c[0]) * (y - c[1])) / d
-            l3 = 1.0 - l1 - l2
-            if min(l1, l2, l3) < 1e-6:
-                continue
-            h = l1 * a[2] + l2 * b[2] + l3 * c[2]
-            if UNDER_RISE_M[0] <= h - z <= UNDER_RISE_M[1]:
-                return o
-        return None
-    bm = bmesh.new()
-    bm.from_mesh(curb.data)
-    gone, by = [], {}
-    for f in bm.faces:
-        own = owner(cblocks, min(v.index for v in f.verts))
-        ce = f.calc_center_median()
-        o = over(ce.x, ce.y, ce.z, own)
-        if o is not None:
-            gone.append(f)
-            k_ = f"{own} under {o if not str(o).startswith('grid_') else 'a street'}"
-            by[k_] = by.get(k_, 0) + 1
-    bmesh.ops.delete(bm, geom=gone, context="FACES_ONLY")
-    bm.to_mesh(curb.data)
-    bm.free()
-    curb.data.update()
-    print(f"[returns] strip under road: {len(gone)} CURB faces whose centre lies under another road's pavement removed "
-          f"({len(by)} owner / cover pairs)")
-    return {"faces": len(gone), "by_owner": dict(sorted(by.items(), key=lambda kv: -kv[1])[:60])}
-
-
 def main():
     argv = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else sys.argv[1:]
     proj = Path(argv[0])
@@ -195,7 +113,8 @@ def main():
         raise SystemExit(f"[returns] FATAL: ROAD {len(RV)} verts, fewer than the assembler's layout {lay['_road_total']}")
     if len(CV) != lay["_curb_total"]:
         raise SystemExit(f"[returns] FATAL: CURB {len(CV)} verts, the assembler's layout says {lay['_curb_total']}")
-    n_under = strip_under_road(cfg, lay, conns, road, curb) if (cfg.get("route") or {}).get("strip_under_road") else None
+    # (route.strip_under_road, 0.2.7's m7a-m7c: strip faces under another road's pavement removed; measured to move none
+    # of its targets, the pad deck edges and grid_primary_7, so dropped for m7d: ledger 0086)
     faced = set()
     for poly in curb.data.polygons:
         faced.update(poly.vertices)
@@ -205,8 +124,7 @@ def main():
     doomed = []                     # (frozenset of the 8 CURB indices of a street strip quad pair) to remove
     removed = {}                    # (piece, e) -> street rows whose strip faces go (actual row indices)
     zones = []
-    out = {"version": 1, "prefixes": prefixes, "radii_file": radii_rel, "mouths": [], "skipped": [],
-           "strip_under_road": n_under}
+    out = {"version": 1, "prefixes": prefixes, "radii_file": radii_rel, "mouths": [], "skipped": []}
     n_meas = n_med = 0
     hrows_cache = {}
 

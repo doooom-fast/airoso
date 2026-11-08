@@ -910,8 +910,8 @@ def _drop(cfg, path):
 
 # ledger 0086 (0.2.7): every key the live config adds to, or changes from, round_k's candidate
 LIVE_0_2_7_KEYS = (("name",), ("_name_doc",), ("slug",), ("version",), ("install_folder",), ("_install_folder_doc",),
-                   ("route", "mouth_returns"), ("route", "mouth_radii_file"), ("route", "strip_under_road"),
-                   ("route", "_strip_under_road_doc"), ("route", "verify_mouth_corners"), ("route", "_mouth_returns_doc"),
+                   ("route", "mouth_returns"), ("route", "mouth_radii_file"),
+                   ("route", "verify_mouth_corners"), ("route", "_mouth_returns_doc"),
                    ("route", "mouth_returns_skip"), ("route", "verify_mouth_corners_allowed"),
                    ("road_markings", "gap_mouths"), ("road_markings", "_gap_mouths_doc"),
                    ("strip_seam", "connectors"), ("strip_seam", "_connectors_doc"))

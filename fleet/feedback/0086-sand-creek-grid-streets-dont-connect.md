@@ -1,7 +1,7 @@
 ---
 id: 0086
 title: "Sand Creek's grid streets don't connect to the main road, they float": square, sunk corners at every mouth
-status: fix built on the Mac (0.2.7, m7c); NOT a candidate (verify_kn5 TERRAIN POKE 24 > 20, rr2 9); not installed
+status: fix built on the Mac (0.2.7, m7d): SHIP OK, verify_kn5 TERRAIN POKE 0 (rr2 9); not installed
 scope: tracks/sand-creek-lm (113 mouths of 0.2.6, 117 of 0.2.5); tools (opt-in keys only, Lake Murray unchanged)
 layer: project + engine
 train: -
@@ -186,7 +186,7 @@ host's line lies at −0.61..−0.49 (v021 `lane_markings` edge_inset 0.55, 0.12
 street's own edge and centre lines reach 0.17-0.31 m past the host edge at the weld, so every opening read 0.25-1.5 m
 with the host's line gone. It now samples white MARKINGS at −0.58 / −0.55 / −0.52 (GATES-CHANGELOG 2026-11-07).
 
-### Three builds (Mac, `sclm_work/`, workshop root `/Volumes/Drive/codex/sclm_work`, TMPDIR on the Drive)
+### Four builds (Mac, `sclm_work/`, workshop root `/Volumes/Drive/codex/sclm_work`, TMPDIR on the Drive)
 
 - **m7a** (returns at every corner the tool could build; resumed twice: `--from mouth_returns` after a ROAD-count guard
   that did not allow `densify_ribbon`'s 130 appended vertices, then `--from export_race` after macOS bash 3.2's
@@ -198,32 +198,53 @@ with the host's line gone. It now samples white MARKINGS at −0.58 / −0.55 / 
   The seam change was not the cause (m7b and m7c have the same 24). The rest of the chain was run with verify_kn5 made
   non-fatal (`m7/run_soft.sh`, a Mac rehearsal runner only, `m7c.soft.log`) to read every other gate; **that run is not a
   candidate and is not quoted as SHIP OK.**
+- **m7d** (clean, from an empty workshop; the seam fix below, `strip_under_road` dropped): **SHIP OK**, verify_kn5 PASS
+  with **0** TERRAIN POKEs.
 
-### Gates, 0.2.6 (rr2) against 0.2.7 (m7c)
+### Gates, 0.2.6 (rr2) against 0.2.7 (m7c, then m7d)
 
-| gate | rr2 (0.2.6, installed) | m7c (0.2.7) |
-|---|---|---|
-| **verify_kn5** | PASS (TERRAIN POKE 9) | **FAIL: TERRAIN POKE 24** (> 20) |
-| **verify_mouth_corners** (new) | 113 red: lip median 0.175 / max 0.327; teeth 24.76 %; host line across 111 openings | **PASS**, 21 ALLOWED: lip median **0.02** / max 0.327 (78, skipped); teeth **0.21 %**; R9 turn drop median 0.144 -> **0.013** (p90 0.202 -> 0.197) |
-| verify_mouths | PASS (80 allowed) | PASS (80 and 74-start allowed) |
-| kn5_ground_check race / street | PASS; road_over_ground 27 / 11,781, p95 0.021, max 0.291 | PASS; **16** / 12,949, p95 0.021, max 0.295 |
-| drive_test street / race, audit, no_route, fold_fans, verify_pads x4 | as runbook 4n | every row identical |
-| houses / house_gate | 2,183 / PASS | 2,182 / PASS (one building fewer: a corner zone) |
-| textures | 0 untextured | 0 untextured |
-| road kn5 | 92,160,949 B | **116,013,226 B** (TERRAIN 439k -> 971k verts: the corner zones' halved edges and the seams) |
-| race / closure / street kn5 | 10,196,549 / 9,701 / 6,923,402 B | the same sizes |
+| gate | rr2 (0.2.6, installed) | m7c (0.2.7, red) | **m7d (0.2.7, SHIP OK)** |
+|---|---|---|---|
+| **verify_kn5** | PASS (TERRAIN POKE 9) | **FAIL: TERRAIN POKE 24** (> 20) | **PASS: TERRAIN POKE 0** |
+| **verify_mouth_corners** (new) | 113 red: lip median 0.175 / max 0.327; teeth 24.76 %; host line across 111 openings | PASS, 21 ALLOWED: lip median 0.02 / max 0.327 (78, skipped); teeth 0.21 %; R9 turn drop median 0.013 (p90 0.197) | **PASS**, 21 ALLOWED: lip median **0.02** / max 0.327; teeth **0.23 %** (157 / 68,942); R9 turn drop median **0.013** (p90 0.193; rr2 0.144 / 0.202) |
+| verify_mouths | PASS (80 allowed) | PASS (80 and 74-start allowed) | PASS (80 and 74-start allowed) |
+| kn5_ground_check race / street | PASS; road_over_ground 27 / 11,781, p95 0.021, max 0.291 | PASS; 16 / 12,949, p95 0.021, max 0.295 | PASS; **17** / 12,956, p95 0.021, max 0.295 |
+| drive_test street / race, audit, no_route, fold_fans, verify_pads x4 | as runbook 4n | every row identical | every row identical |
+| houses / house_gate | 2,183 / PASS | 2,182 / PASS | 2,182 / PASS (one building fewer: a corner zone) |
+| textures | 0 untextured | 0 untextured | 0 untextured (128 visible meshes on the road kn5) |
+| road kn5 | 92,160,949 B | 116,013,226 B | **116,115,917 B** (TERRAIN 439k -> 973k verts: the corner zones and the seams) |
+| race / closure / street kn5 | 10,196,549 / 9,701 / 6,923,402 B | the same sizes | the same sizes |
+
+Against m7c, m7d is better on verify_kn5 (24 -> 0) and the R9 p90, equal everywhere else but two rows a hair worse,
+both from putting the strip faces under the decks back (`strip_under_road` dropped): road_over_ground 16 -> 17 (one
+sample, 0.222 m, on the lap 1.7 m past its edge at s 1255.6, the 50th_dahlia pad's stretch) and teeth 0.21 % -> 0.23 %
+(144 -> 157 samples of ~69,000). Both are far inside their gates and far better than rr2.
 
 **The 24 pokes** (`m7/pokes.py`, verify_kn5's own sampler, located; kn5 z is −N): rr2's 9 are all still there (the lap's
 strip by the 50th_ash and 48th_colorado pads, and three more on it at x ≈ −1,400..−1,500 m). The **15 more** are grass 0.16-0.30 m over a
 street's sunk edge strip, mostly away from the openings: grid_primary_7 beside its fork (0.295 / 0.222: the owed raised edge, now over its strip),
 and single vertices on grid_unclassified_96 / 17 / 9 / 79 / 28, grid_residential_29#2, grid_tertiary_4#0#1, 43, 2 and 84.
 At each, a KERB triangle 3.6-5.5 m long with the ground standing over it: the strip's teeth the connector seam was meant
-to end, where it missed (strip_seam: 13 missed on m7c, rr2 1). Not fixed on this branch.
+to end.
 
-**The owed spots** (`mouth_survey --rog` on m7c): 4 of the 16 road_over_ground samples are in a mouth's corner (rr2 15),
+**Their cause, found on m7d's way (it was NOT the seam's misses):** every one of the 24 (rr2's 9 too) is a seam vertex.
+`m7/pokes2.py` prints each poke's KERB triangle and barycentric weights: the minimum weight is 0.0 every time, and the
+grass vertex lies 0.05 m from a lip vertex along the strip row, i.e. the seam point (INSET_M inside the lip) ON the row's
+own line, which is the edge two strip triangles share. engine-july's anti-poke (build_kn5_loop 2c) finds the strip under a
+ground vertex with a downward ray; a ray down a shared edge hits neither triangle (`m7/poke_blend.py` on m7c's prepped
+blend: no drivable hit at those vertices), so the vertex kept the contact band's road − 0.02, 0.16-0.30 m over the strip,
+and verify_kn5's lens (barycentric, edges inclusive) counts it. 41,752 seam points on m7c against 7,134 on rr2 made 24 of
+what was 9. **The fix** (`tools/strip_seam_blend.py` OFF_EDGE, with `strip_seam.connectors` only, so the Lariat's seam is
+unchanged): every strip seam point moves (9.7, 7.1) mm off the row's line into a triangle's interior, one vector for all
+seams so shared points stay shared. No gate tolerance touched, no allow row added. m7d: 0 pokes; strip_seam's 13 misses
+are unchanged and caused none of them.
+
+**The owed spots** (`mouth_survey --rog`): on m7c 4 of the 16 road_over_ground samples are in a mouth's corner (rr2 15),
 all at allowed mouths (35 x 2, 84 start, 43). `strip_under_road` changed none of its targets: the colorado_50th pad edge
 0.217, 50th_dahlia 0.152 / 0.144, 48th_colorado 0.055 and grid_primary_7's 0.295 all read as on rr2. The I-70 bridge
-mouth (78 end, skipped) still reads 0.241.
+mouth (78 end, skipped) still reads 0.241. **Decision (m7d): `route.strip_under_road` dropped** (the key, its code in
+mouth_returns_blend.py and its number). Its only measured effect was one road_over_ground sample at the 50th_dahlia
+stretch (0.222 m, back on m7d) and 13 grass-over-strip samples; its five targets read the same with and without it.
 
 **Lake Murray unchanged:**
 - `git diff` against this branch's base: nothing under `scripts/` or `tracks/san-diego-lake-murray/`.
@@ -231,6 +252,9 @@ mouth (78 end, skipped) still reads 0.241.
   145-object blend digest identical (`c1722523…`).
 - Lake Murray names none of the keys (test); `stub_geom.return_stations`' default is the stubs' `MEET_H_M`, unchanged.
 - Tests: 1,353 pass under pytest; the 1 failure is the known `test_registry_moves` (also red before this branch).
+- m7d: the gap_mouths A/B re-run on fresh copies with m7d's tools: logs and digest identical again (`c1722523…`). Lake Murray runs neither mouth_returns nor
+  strip_seam; the Lariat's strip_seam (no `connectors`) computes its points by the same expression as before.
+- m7d tests: 1,353 pass, the known `test_registry_moves` fails (as before).
 
 **Stills** (numpy z-buffer off the gate OBJs, same cameras as above): `/Volumes/Drive/codex/sc_mouths/m7c/`,
 `cmp_<mouth>_<view>.jpg` = 0.2.6 | 0.2.7. sc5 (grid_unclassified_38 -> grid_tertiary_2) D: the square trench and grass
@@ -239,16 +263,15 @@ the driver's seat.
 
 ### Owed after 0.2.7 (start here)
 
-1. **The 15 new pokes** (verify_kn5 > 20): seam the connector strips where the seam misses, or pin the ground under the
-   strip's long triangles; then rebuild and judge verify_kn5 again. Until then there is no 0.2.7 candidate.
-2. `strip_under_road`: measured to fix none of its targets; drop it or replace it, in the same rebuild.
+1. (done on m7d) the pokes: the seam points off the strip rows' shared edges; verify_kn5 0 pokes.
+2. (done on m7d) `strip_under_road` dropped.
 3. The 21 allowed corner rows: 11 mouths where neither corner could be built (the street's edge fit has 0-2 rows past a
    long weld re-spread: 7, 49, 5, 74 x 2, 105, 19, 29#2, 43; the 27/65 crossing, shorter than its fit, x 2); 4 with one
    corner built (11: the other's host strip cut by a pad; 84 x 2: an edge that never meets the host's; 10: a 21.5 m
    tangent off its host's end); 4 with both built and still over the lip (35, 39, 34, 96); 2 skipped (78, 80).
 4. The I-70 bridge mouths' ground, the pad deck edges, grid_primary_7's raised edge (0086's owed list, unchanged).
 
-**Runbook 4o** (ledger 0079, PC runbooks) is written for 0.2.7 and **blocked** on item 1.
+**Runbook 4o** (ledger 0079, PC runbooks): the PC's rehearsal of m7d's head; see its status line there.
 
 ## Verification
 

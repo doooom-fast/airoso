@@ -46,11 +46,16 @@ v4 0.033).
   median of the measured corners on its host (else of all), logged per corner.
 - `tools/mouth_returns.py` / `_blend.py`: EDGE_FIT_TO_M 22 m (a through street's edge line), HEAD_MIN_M 1.0 m;
   TERRAIN_EDGE_M 0.75, ZONE_PAD_M 3.5, HOST_KEEP_M 0.3, PIN_UNDER_M 0.16, VERGE_UNDER_M 0.02 are the stubs' own
-  (2026-10-14 / 10-18 entries, unchanged). `strip_under_road`: UNDER_RISE_M −0.05..+0.8 m.
+  (2026-10-14 / 10-18 entries, unchanged). (`route.strip_under_road` and its UNDER_RISE_M −0.05..+0.8 m: built on
+  m7a-m7c, measured to move none of its targets, dropped for m7d.)
 - `tools/gap_mouths_blend.py` gap_paint: PAINT_BAND_M −1.2..+0.3 m, PAINT_PARALLEL 0.8.
-- `tools/strip_seam_blend.py` connectors: INSET_M 0.05 (the lap's, unchanged). Every connector row is seamed, including
-  rows whose strip faces `route.strip_under_road` took (m7b left those out: grid_tertiary_74's NOTCH cleared, but
-  verify_kn5 TERRAIN POKE went 18 -> 24 at the pads' edges, over its 20; reverted, and 74's NOTCH row is allowed instead).
+- `tools/strip_seam_blend.py` connectors: INSET_M 0.05 (the lap's, unchanged); every connector row is seamed (m7b left
+  out the rows whose strip faces strip_under_road took: no change in TERRAIN POKE, reverted, 74's NOTCH row allowed).
+  With `strip_seam.connectors` every strip seam point (lap, streets, returns; not the pads' outlines) moves **OFF_EDGE
+  (9.7, 7.1) mm** ⚠ [invented: any small plan vector off the row's line] off the strip row's own line: ON that line it
+  sits on the edge two strip triangles share, engine-july's anti-poke ray (build_kn5_loop 2c) misses both, and the
+  vertex keeps the contact band's road − 0.02. All 24 of m7c's verify_kn5 TERRAIN POKEs (rr2's 9 among them) were such
+  vertices (barycentric min 0.0, 0.05 m from a lip vertex along its row). verify_kn5's POKE_MAX 20 unchanged.
 - `route.mouth_returns_skip` (track.config.json, every row names its why): mouths given no returns. Sand Creek names two,
   both ledger 0086 owed spots whose returns turned verify_mouths red on m7a (grid_primary_78 end: APPROACH 4.0 %/m, rr2
   PASS; grid_primary_80 end, allowed since round Q: mouth line 0.072 -> 0.139 m).

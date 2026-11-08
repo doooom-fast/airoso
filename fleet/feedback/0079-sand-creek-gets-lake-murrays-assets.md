@@ -1204,6 +1204,35 @@ Tests: `tests/run_tests.py` (the .venv python, `python` on PATH): 1,304 pass. 6 
   the closure and both spawn kn5s byte-identical.
 - **The sync-back** is with this note (no commit on this branch since aff35043).
 - Not driven yet; 4n step 6's stills (from the car) owed.
+
+## Runbook 4o (PC, 2026-11-08): 0.2.7 installed on Kevin's overnight word
+
+- **Rehearsal** (`D:/k10-scratch/sand_creek_027_reh`, empty; 5a0d1687 clean, the 3 LFS blobs pulled; ENG `eng_sclm_a`,
+  its 50 textures md5-equal to the head's; the four `.bin` in place; 03:38-04:36) equals m7d row for row: every new row
+  of 4o step 3 (`[returns]` 195 at 100, 29 skipped; `[strip-seam]` 41804 points, 13 missed; `[gap-mouths]` 5988 / 2620 /
+  113 / 1997; verify_kn5 + `--inis` PASS; verify_mouths 113 PASS; `[mouth-corners]` lip median 0.02 / max 0.327, teeth
+  157/68942 = 0.23 %, R9 p90 0.193, PASS; road_over_ground 17 / 12,956, max 0.295; houses 2,182; 0 untextured) and all
+  four kn5 sizes to the byte (road 116,115,917; `_race` 10,196,549; `_closure_race` 9,701; `_street` 6,923,402).
+- **Three rows differ from 4o's "as 4n"** and are the same in the Mac's m7d.log (the Mac checked lines 609 / 737 / 766 /
+  817): `[name-blades]` 23 posts, 46 blades (13 slid), 6 skipped (nb1, 2, 3, 17, 20, 28: the paved corners leave no clear
+  base); drive_test street excursion drops 1 -> 0 and race far flare ledges 1 -> 0 (the s 7952.8 ledge is gone); the
+  treefx guard's plan triangles road 86,336 / walk 241,907. 4o's wording is stale on those rows, not the build.
+- **Kevin, 2026-11-07, asked on the PC: "Yes, install overnight"** (for that night, on the six conditions: a clean
+  rehearsal at the pushed head, every row = the Mac's column, SHIP OK with no force, old copies to the archive, records
+  pushed, AC closed). All six held. `sand_creek_raceway_lm` 0.2.6 moved first to
+  `D:/k10-track-archive/2026-11-08_043809_sand_creek/` (MOVES.tsv, README); the old engine's `sand_creek_raceway` was
+  already out of AC. 0.2.6's workshop moved aside to `D:/k10-scratch/sand_creek_lm.0.2.6`; the install ran from a fresh
+  empty `D:/k10-scratch/sand_creek_lm`, 04:38-05:35, ENG eng_sclm_a. SHIP OK, no force; every gate row equal to the
+  rehearsal's. Installed "doooom Colorado — Sand Creek Raceway" and "... Sand Creek Free Roam" 0.2.7 in the plain
+  `sand_creek_raceway`. Against the rehearsal: road, `_race` and `_street` kn5_equiv-EQUIVALENT (tangents only; the
+  road's 1GRASS_0 30,873 vertices both); the closure and both spawn kn5s byte-identical; the four TreeFX `.bin` in
+  `extension/trees/` at their source md5s.
+- **Menu pictures**: race (s0, phase 0) and street (s1, phase 0.5) re-rendered off the installed 0.2.7 split scenes with
+  0.2.6's cameras (`tools/menu_preview_blend.py`, exposure 0, no stand-ins), cut into `source/ui/<layout>/` and copied
+  over the pack's `ui/<layout>/preview.png` (the pack's in `D:/k10-track-archive/2026-11-08_053642_previews/`).
+- **The sync-back** is with this note. 4o step 6 (stills from the car) skipped on the Mac's word: Kevin drives the mouths.
+- Not driven yet.
+
 ## Round K (Mac): the race dressing, round C's plan of record (toward 0.2.6)
 
 Kevin's words: "same lamps as lake murray, race curbs, no sidewalks, authored pad junctions"; signs "Both"; "I just want

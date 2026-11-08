@@ -24,6 +24,6 @@
   "walk": 0,
   "building": 2
  },
- "surface_materials": "1GRASS_0_mat, 1GRASS_1_mat, 1GRASS_2_mat, 1GRASS_3_mat, 1GRASS_4_mat, 1GRASS_5_mat, 1GRASS_6_mat, 1GRASS_7_mat, 1GRASS_8_mat, 1GRASS_9_mat, 1GRASS_10_mat, 1GRASS_11_mat, 1GRASS_12_mat, 1GRASS_13_mat, 1GRASS_14_mat, 1GRASS_15_mat, 1GRASS_16_mat, 1GRASS_17_mat, 1ROAD_road_mat",
+ "surface_materials": "1GRASS_0_mat, 1GRASS_1_mat, 1GRASS_2_mat, 1GRASS_3_mat, 1GRASS_4_mat, 1GRASS_5_mat, 1GRASS_6_mat, 1GRASS_7_mat, 1GRASS_8_mat, 1GRASS_9_mat, 1GRASS_10_mat, 1GRASS_11_mat, 1GRASS_12_mat, 1GRASS_13_mat, 1GRASS_14_mat, 1GRASS_15_mat, 1GRASS_16_mat, 1GRASS_17_mat, 1GRASS_18_mat, 1GRASS_19_mat, 1GRASS_20_mat, 1GRASS_21_mat, 1ROAD_road_mat",
  "north": null
 }

@@ -7,12 +7,12 @@
    "vertex": 95,
    "side": "R",
    "xz": [
-    -1498.24,
-    20.15
+    -1498.22,
+    17.15
    ],
-   "along_m": -7.0,
-   "slid_m": 0.0,
-   "ground_y": 17.388,
+   "along_m": -10.0,
+   "slid_m": 3.0,
+   "ground_y": 17.44,
    "edge_y": 17.603,
    "blade_bottom_y": 19.736,
    "names": [
@@ -45,12 +45,12 @@
    "vertex": 479,
    "side": "L",
    "xz": [
-    -766.28,
-    280.86
+    -766.25,
+    282.61
    ],
-   "along_m": 7.0,
-   "slid_m": 0.0,
-   "ground_y": 20.18,
+   "along_m": 8.75,
+   "slid_m": 1.75,
+   "ground_y": 20.234,
    "edge_y": 20.398,
    "blade_bottom_y": 22.532,
    "names": [
@@ -69,7 +69,7 @@
    ],
    "along_m": -8.0,
    "slid_m": 0.0,
-   "ground_y": 10.232,
+   "ground_y": 10.34,
    "edge_y": 10.404,
    "blade_bottom_y": 12.537,
    "names": [
@@ -88,7 +88,7 @@
    ],
    "along_m": 8.0,
    "slid_m": 0.0,
-   "ground_y": 10.085,
+   "ground_y": 10.065,
    "edge_y": 10.361,
    "blade_bottom_y": 12.494,
    "names": [
@@ -140,12 +140,12 @@
    "vertex": 1902,
    "side": "R",
    "xz": [
-    1749.01,
-    -366.63
+    1748.22,
+    -363.22
    ],
-   "along_m": -8.0,
-   "slid_m": 0.0,
-   "ground_y": 22.708,
+   "along_m": -11.5,
+   "slid_m": 3.5,
+   "ground_y": 22.751,
    "edge_y": 22.94,
    "blade_bottom_y": 25.073,
    "names": [
@@ -221,7 +221,7 @@
    ],
    "along_m": 8.0,
    "slid_m": 0.0,
-   "ground_y": 33.901,
+   "ground_y": 33.9,
    "edge_y": 34.089,
    "blade_bottom_y": 36.222,
    "names": [
@@ -235,12 +235,12 @@
    "vertex": 2406,
    "side": "R",
    "xz": [
-    591.48,
-    -851.9
+    594.23,
+    -851.94
    ],
-   "along_m": -7.0,
-   "slid_m": 0.0,
-   "ground_y": 34.569,
+   "along_m": -9.75,
+   "slid_m": 2.75,
+   "ground_y": 34.712,
    "edge_y": 34.772,
    "blade_bottom_y": 36.906,
    "names": [
@@ -254,35 +254,16 @@
    "vertex": 2522,
    "side": "R",
    "xz": [
-    242.87,
-    -856.34
+    243.62,
+    -856.35
    ],
-   "along_m": -7.0,
-   "slid_m": 0.0,
-   "ground_y": 31.646,
+   "along_m": -7.75,
+   "slid_m": 0.75,
+   "ground_y": 31.753,
    "edge_y": 31.741,
-   "blade_bottom_y": 33.875,
+   "blade_bottom_y": 33.886,
    "names": [
     "N Ivy St",
-    "E 45th Ave"
-   ]
-  },
-  {
-   "id": "nb17",
-   "k": 17,
-   "vertex": 2581,
-   "side": "L",
-   "xz": [
-    49.44,
-    -867.62
-   ],
-   "along_m": 8.0,
-   "slid_m": 0.0,
-   "ground_y": 27.668,
-   "edge_y": 28.046,
-   "blade_bottom_y": 30.18,
-   "names": [
-    "E 44th Ave",
     "E 45th Ave"
    ]
   },
@@ -292,14 +273,14 @@
    "vertex": 2585,
    "side": "R",
    "xz": [
-    63.5,
-    -842.79
+    66.74,
+    -843.14
    ],
-   "along_m": -15.25,
-   "slid_m": 0.0,
-   "ground_y": 27.517,
+   "along_m": -18.5,
+   "slid_m": 3.25,
+   "ground_y": 28.035,
    "edge_y": 27.823,
-   "blade_bottom_y": 29.956,
+   "blade_bottom_y": 30.168,
    "names": [
     "N Holly St",
     "E 45th N Dr"
@@ -316,30 +297,11 @@
    ],
    "along_m": 12.0,
    "slid_m": 4.0,
-   "ground_y": 27.345,
+   "ground_y": 27.341,
    "edge_y": 27.765,
    "blade_bottom_y": 29.898,
    "names": [
     "E 45th S Dr",
-    "E 45th N Dr"
-   ]
-  },
-  {
-   "id": "nb20",
-   "k": 20,
-   "vertex": 2656,
-   "side": "R",
-   "xz": [
-    -153.86,
-    -809.85
-   ],
-   "along_m": -7.0,
-   "slid_m": 0.0,
-   "ground_y": 25.852,
-   "edge_y": 26.192,
-   "blade_bottom_y": 28.325,
-   "names": [
-    "N Grape St",
     "E 45th N Dr"
    ]
   },
@@ -354,7 +316,7 @@
    ],
    "along_m": -7.0,
    "slid_m": 0.0,
-   "ground_y": 28.103,
+   "ground_y": 28.129,
    "edge_y": 28.35,
    "blade_bottom_y": 30.484,
    "names": [
@@ -368,12 +330,12 @@
    "vertex": 2725,
    "side": "R",
    "xz": [
-    -352.7,
-    -752.41
+    -350.76,
+    -752.88
    ],
-   "along_m": -7.0,
-   "slid_m": 0.0,
-   "ground_y": 28.5,
+   "along_m": -9.0,
+   "slid_m": 2.0,
+   "ground_y": 28.625,
    "edge_y": 28.688,
    "blade_bottom_y": 30.822,
    "names": [
@@ -406,12 +368,12 @@
    "vertex": 2859,
    "side": "L",
    "xz": [
-    -764.08,
-    -678.9
+    -764.32,
+    -678.86
    ],
-   "along_m": 8.0,
-   "slid_m": 0.0,
-   "ground_y": 27.072,
+   "along_m": 8.25,
+   "slid_m": 0.25,
+   "ground_y": 27.135,
    "edge_y": 27.288,
    "blade_bottom_y": 29.421,
    "names": [
@@ -430,7 +392,7 @@
    ],
    "along_m": -8.0,
    "slid_m": 0.0,
-   "ground_y": 27.104,
+   "ground_y": 27.154,
    "edge_y": 27.261,
    "blade_bottom_y": 29.395,
    "names": [
@@ -489,6 +451,14 @@
   {
    "id": "nb3",
    "why": "no clear base within 6.0 m of the plan (on pavement)"
+  },
+  {
+   "id": "nb17",
+   "why": "no clear base within 6.0 m of the plan (on pavement)"
+  },
+  {
+   "id": "nb20",
+   "why": "no clear base within 6.0 m of the plan (within 1.0 m of pavement)"
   },
   {
    "id": "nb28",

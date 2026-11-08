@@ -1847,21 +1847,6 @@
    "collider": false
   },
   {
-   "key": "osm_buildings127",
-   "skin": "TILTUP",
-   "roof": "WHITE",
-   "form": "flat",
-   "wall_h_m": 8.6,
-   "ground": [
-    24.64,
-    26.45
-   ],
-   "bottom": 24.89,
-   "eave": 33.49,
-   "off_terrain": false,
-   "collider": false
-  },
-  {
    "key": "osm_buildings128",
    "skin": "TILTUP",
    "roof": "DARK",

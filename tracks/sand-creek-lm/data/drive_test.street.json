@@ -31,24 +31,10 @@
    0.0182
   ]
  ],
- "excursion_drops": 1,
+ "excursion_drops": 0,
  "excursion_far_ledges": 0,
- "worst_excursions": [
-  [
-   7952.8,
-   -6.5,
-   0.12,
-   true
-  ]
- ],
- "worst_gated_excursions": [
-  [
-   7952.8,
-   -6.5,
-   0.12,
-   true
-  ]
- ],
+ "worst_excursions": [],
+ "worst_gated_excursions": [],
  "obstruction_by_mesh": {},
  "worst": {
   "soft_top": [],

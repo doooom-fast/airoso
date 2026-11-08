@@ -131,7 +131,7 @@
     "road_kerb_above": 0,
     "grass_at_or_above": 0,
     "max_above_m": 0.0,
-    "max_grass_m": -0.017,
+    "max_grass_m": -0.019,
     "worst": []
    },
    "notch": {
@@ -221,7 +221,7 @@
     "road_kerb_above": 0,
     "grass_at_or_above": 0,
     "max_above_m": 0.0,
-    "max_grass_m": -0.019,
+    "max_grass_m": -0.02,
     "worst": []
    },
    "notch": {
@@ -311,7 +311,7 @@
     "road_kerb_above": 0,
     "grass_at_or_above": 0,
     "max_above_m": 0.0,
-    "max_grass_m": -0.02,
+    "max_grass_m": -0.019,
     "worst": []
    },
    "notch": {
@@ -401,7 +401,7 @@
     "road_kerb_above": 0,
     "grass_at_or_above": 0,
     "max_above_m": 0.0,
-    "max_grass_m": -0.017,
+    "max_grass_m": -0.018,
     "worst": []
    },
    "notch": {
@@ -491,7 +491,7 @@
     "road_kerb_above": 0,
     "grass_at_or_above": 0,
     "max_above_m": 0.0,
-    "max_grass_m": -0.019,
+    "max_grass_m": -0.017,
     "worst": []
    },
    "notch": {
@@ -864,9 +864,9 @@
     "lines": {
      "-3.75": {
       "max_dg_per_m": 0.0048,
-      "at_m": 0.0,
-      "max_dg_per_m_1m": 0.012,
-      "at_m_1m": 0.75,
+      "at_m": 1.0,
+      "max_dg_per_m_1m": 0.0076,
+      "at_m_1m": 1.0,
       "unmeasured": 0,
       "holes": 0,
       "grass_on_road": [],
@@ -894,7 +894,7 @@
      }
     },
     "max_dg_per_m": 0.0048,
-    "max_dg_per_m_1m": 0.012,
+    "max_dg_per_m_1m": 0.011,
     "wheelbase_m": 2.5,
     "grass_on_road": 0
    },
@@ -941,7 +941,7 @@
     "road_kerb_above": 0,
     "grass_at_or_above": 0,
     "max_above_m": 0.0,
-    "max_grass_m": -0.013,
+    "max_grass_m": -0.015,
     "worst": []
    },
    "notch": {
@@ -1031,7 +1031,7 @@
     "road_kerb_above": 0,
     "grass_at_or_above": 0,
     "max_above_m": 0.0,
-    "max_grass_m": -0.014,
+    "max_grass_m": -0.018,
     "worst": []
    },
    "notch": {
@@ -1211,7 +1211,7 @@
     "road_kerb_above": 0,
     "grass_at_or_above": 0,
     "max_above_m": 0.0,
-    "max_grass_m": -0.018,
+    "max_grass_m": -0.02,
     "worst": []
    },
    "notch": {
@@ -1391,7 +1391,7 @@
     "road_kerb_above": 0,
     "grass_at_or_above": 0,
     "max_above_m": 0.0,
-    "max_grass_m": -0.018,
+    "max_grass_m": -0.02,
     "worst": []
    },
    "notch": {
@@ -1749,7 +1749,7 @@
    "host_lane": {
     "samples": 160,
     "road_kerb_above": 81,
-    "grass_at_or_above": 92,
+    "grass_at_or_above": 91,
     "max_above_m": 0.06,
     "max_grass_m": 0.04,
     "worst": [
@@ -1890,7 +1890,7 @@
    },
    "fails": [
     "MOUTH LINE: 22 / 32 samples with a ROAD sheet > 0.05 m off the host deck (max 0.072 m), 0 with no road",
-    "HOST LANE: 81 samples with road/curb > 0.02 m over the host deck (max 0.06 m), 92 with grass at/above it",
+    "HOST LANE: 81 samples with road/curb > 0.02 m over the host deck (max 0.06 m), 91 with grass at/above it",
     "NOTCH: 32 / 32 samples just outside the host edge are not the connector's road at the host deck (+-0.05 m), e.g. [s, road-HD, curb/grass-HD] [[-3.86, 0.051, 0.03], [-3.61, 0.053, 0.032], [-3.37, 0.054, 0.034]]"
    ],
    "fail": true,
@@ -2656,7 +2656,7 @@
     "road_kerb_above": 0,
     "grass_at_or_above": 0,
     "max_above_m": 0.0,
-    "max_grass_m": -0.019,
+    "max_grass_m": -0.02,
     "worst": []
    },
    "notch": {
@@ -3826,7 +3826,7 @@
     "road_kerb_above": 0,
     "grass_at_or_above": 0,
     "max_above_m": 0.0,
-    "max_grass_m": -0.019,
+    "max_grass_m": -0.02,
     "worst": []
    },
    "notch": {
@@ -4911,14 +4911,55 @@
    },
    "notch": {
     "samples": 76,
-    "fail": 0,
+    "fail": 20,
     "max_dev_m": 0.003,
-    "worst": []
+    "worst": [
+     [
+      -2.12,
+      -0.0,
+      -0.0
+     ],
+     [
+      -1.87,
+      -0.0,
+      -0.001
+     ],
+     [
+      -1.62,
+      -0.0,
+      -0.001
+     ],
+     [
+      -1.37,
+      -0.0,
+      -0.001
+     ],
+     [
+      -1.12,
+      -0.0,
+      -0.001
+     ],
+     [
+      -0.88,
+      -0.0,
+      -0.001
+     ],
+     [
+      -0.63,
+      -0.0,
+      -0.001
+     ],
+     [
+      -0.38,
+      -0.0,
+      -0.001
+     ]
+    ]
    },
    "approach": {
     "lines": {
      "-4.00": {
-      "max_dg_per_m": 0.0035,
+      "max_dg_per_m": 0.0052,
       "at_m": -2.5,
       "max_dg_per_m_1m": 0.0061,
       "at_m_1m": -0.25,
@@ -4948,15 +4989,18 @@
       "grass_unmeasured_folded": 0
      }
     },
-    "max_dg_per_m": 0.0035,
+    "max_dg_per_m": 0.0052,
     "max_dg_per_m_1m": 0.0061,
     "wheelbase_m": 2.5,
     "grass_on_road": 0
    },
    "host_lane_deck": "exact: the host's lowest road sheet at each sample (route.weld_exact_deck)",
    "mouth_line_notch_deck": "exact: the host's lowest road sheet on the mouth line at each station (route.weld_exact_deck_lines)",
-   "fails": [],
-   "fail": false
+   "fails": [
+    "NOTCH: 20 / 76 samples just outside the host edge are not the connector's road at the host deck (+-0.05 m), e.g. [s, road-HD, curb/grass-HD] [[-2.12, -0.0, -0.0], [-1.87, -0.0, -0.001], [-1.62, -0.0, -0.001]]"
+   ],
+   "fail": true,
+   "allowed": "ledger 0086 (0.2.7, owed): the 24 deg mouth on grid_tertiary_1#1 whose first rows lie on grid_tertiary_2's deck (weld_deck_beyond_end). No corner return could be built (0 street rows to fit an edge on past the weld's re-spread); strip_seam.connectors seams its strip rows that lie under the deck, and the ground meets the deck flush there: m7a NOTCH 20 / 76 samples with grass at the host deck's own height (-0.001..0.0 m), not a lip (rr2 PASS). Leaving those rows unseamed cleared it but took verify_kn5 TERRAIN POKE 18 -> 24 at the pads (m7b)"
   },
   {
    "connector": "grid_tertiary_74",
@@ -5090,7 +5134,7 @@
     "road_kerb_above": 0,
     "grass_at_or_above": 0,
     "max_above_m": 0.0,
-    "max_grass_m": -0.019,
+    "max_grass_m": -0.02,
     "worst": []
    },
    "notch": {
@@ -6714,7 +6758,7 @@
     "road_kerb_above": 0,
     "grass_at_or_above": 0,
     "max_above_m": 0.0,
-    "max_grass_m": -0.019,
+    "max_grass_m": -0.02,
     "worst": []
    },
    "notch": {
@@ -9954,7 +9998,7 @@
     "road_kerb_above": 0,
     "grass_at_or_above": 0,
     "max_above_m": 0.0,
-    "max_grass_m": -0.016,
+    "max_grass_m": -0.019,
     "worst": []
    },
    "notch": {
@@ -10044,7 +10088,7 @@
     "road_kerb_above": 0,
     "grass_at_or_above": 0,
     "max_above_m": 0.0,
-    "max_grass_m": -0.016,
+    "max_grass_m": -0.019,
     "worst": []
    },
    "notch": {
@@ -10277,7 +10321,8 @@
  ],
  "fail": false,
  "allowed": [
-  "grid_primary_80#0#end"
+  "grid_primary_80#0#end",
+  "grid_tertiary_74#0#start"
  ],
  "thresholds": {
   "mouth_tol_m": 0.05,

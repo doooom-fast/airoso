@@ -1,0 +1,33 @@
+{
+  "layout": "main",
+  "project": "D:/k10-scratch/del_mar_lm",
+  "scenes": [
+    "loop_main.blend"
+  ],
+  "line": "data/centerline.local.json",
+  "reversed": false,
+  "station": "centerline.local.json point 1115 (s5 of 6, phase 0.0)",
+  "camera": {
+    "eye_m": [
+      -294.77,
+      229.4,
+      6.97
+    ],
+    "look_m": [
+      -251.35,
+      224.75,
+      2.5
+    ],
+    "fov_deg": 48.0,
+    "frame": "blender scene (x, y = the split scene's plan, z up)"
+  },
+  "sun": {
+    "azimuth_deg": 228.0,
+    "elevation_deg": 22.0,
+    "as": "San Diego, 7 Nov, 15:30 PST"
+  },
+  "sky": "Nishita, strength 0.35, altitude 120 m, air 1.2, dust 1.5",
+  "render": "EEVEE Next, AgX, exposure -0.8 EV, 1920x1080 -> centre crop 1917x1080 (355:200) = preview_full.png -> 355x200 LANCZOS = preview.png",
+  "source": "Blender render of the installed build's split scenes, not an AC screenshot (Kevin 2026-11-07: 'Render them in Blender') (D:/k10-scratch/del_mar_lm/blender/split)",
+  "script": "tools/menu_preview_blend.py + tools/menu_preview_cut.py"
+}

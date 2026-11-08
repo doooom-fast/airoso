@@ -13,7 +13,10 @@ line = data/lap.<lap>.json when it exists, else data/centerline.local.json; the 
 (data/dummies_<layout>.json, AC_START_0 ahead of AC_START_1; a one-car grid: the order of AC_TIME_0, 1, 2)
 against the line's point order. --phase shifts the
 stations along the lap (a fraction of one station step). --sun-label names the light (every track uses the same
-sun, so the menu reads as one set); --exposure (EV) holds a pale ground (ground_dry) off white."""
+sun, so the menu reads as one set); --exposure (EV) holds a pale ground (ground_dry) off white.
+--standins <trees json> (e.g. source/vegetation/trees.lm.json): TreeFX trees are drawn by the game, not in the kn5, so
+the picture shows the Mac's stills' stand-ins there (veg_stills_blend.py, ledger 0082: a trunk and an ellipsoid crown at
+each planted tree's measured height and crown width; the game draws its TreeFX models in their place)."""
 import argparse
 import json
 import math
@@ -37,6 +40,7 @@ ap.add_argument("--reverse", default="auto", choices=("auto", "yes", "no"))
 ap.add_argument("--phase", type=float, default=0.0)
 ap.add_argument("--sun-label", default="San Diego, 7 Nov, 15:30 PST")
 ap.add_argument("--exposure", type=float, default=0.0)
+ap.add_argument("--standins", default="")
 A = ap.parse_args(sys.argv[sys.argv.index("--") + 1:])
 PROJ, LAYOUT, OUT, N, RES_X = Path(A.project), A.layout, A.out, A.n, A.res_x
 ONLY = [int(s) for s in A.stations.split(",")] if A.stations else None
@@ -95,6 +99,75 @@ def road_bvh():
 
 
 road = road_bvh()
+
+
+def standins(path):
+    """the Mac's stills' stand-in trees (source/vegetation/scripts/veg_stills_blend.py, the same shapes and colours)"""
+    gv, gp = [], []
+    for o in bpy.data.objects:
+        if o.type == "MESH" and o.name.upper().startswith(("1ROAD", "1GRASS", "1KERB", "GRASS_FAR")):
+            off = len(gv)
+            gv += [o.matrix_world @ Vector(v.co) for v in o.data.vertices]
+            gp += [[off + i for i in q.vertices] for q in o.data.polygons]
+    ground = BVHTree.FromPolygons(gv, gp)
+    cl = json.loads((DATA / "centerline.local.json").read_text(encoding="utf-8"))
+    org = cl["origin"]
+    phi = math.radians(org["lat"])
+    m_lat = 111132.954 - 559.822 * math.cos(2 * phi) + 1.175 * math.cos(4 * phi)
+    m_lon = 111412.84 * math.cos(phi) - 93.5 * math.cos(3 * phi) + 0.118 * math.cos(5 * phi)
+    verts, faces, tv, tf, n = [], [], [], [], 0
+    SEG, RING = 10, 6
+    for lon, lat, _zone, h, w, *_ in json.loads(Path(path).read_text(encoding="utf-8"))["points"]:
+        x, y = (lon - org["lon"]) * m_lon, (lat - org["lat"]) * m_lat
+        hit = ground.ray_cast(Vector((x, y, 3000.0)), Vector((0, 0, -1)), 6000.0)
+        if hit[0] is None:
+            continue
+        g = float(hit[0].z)
+        crown_h = max(2.0, 0.62 * h)
+        rx = max(1.0, w / 2.0)
+        cz = g + h - crown_h / 2
+        base = len(verts)
+        for j in range(1, RING):
+            t = math.pi * j / RING
+            for i in range(SEG):
+                q = 2 * math.pi * i / SEG
+                verts.append((x + rx * math.sin(t) * math.cos(q), y + rx * math.sin(t) * math.sin(q),
+                              cz + crown_h / 2 * math.cos(t)))
+        top, bot = len(verts), len(verts) + 1
+        verts += [(x, y, cz + crown_h / 2), (x, y, cz - crown_h / 2)]
+        for j in range(RING - 2):
+            for i in range(SEG):
+                a0, a1 = base + j * SEG + i, base + j * SEG + (i + 1) % SEG
+                faces.append((a0, a1, a1 + SEG, a0 + SEG))
+        last = base + (RING - 2) * SEG
+        for i in range(SEG):
+            faces.append((top, base + (i + 1) % SEG, base + i))
+            faces.append((bot, last + i, last + (i + 1) % SEG))
+        tb = len(tv)
+        for i in range(6):
+            q = 2 * math.pi * i / 6
+            tv += [(x + 0.25 * math.cos(q), y + 0.25 * math.sin(q), g - 0.2), (x + 0.25 * math.cos(q), y + 0.25 * math.sin(q), cz)]
+        for i in range(6):
+            k, k1 = tb + 2 * i, tb + 2 * ((i + 1) % 6)
+            tf.append((k, k1, k1 + 1, k + 1))
+        n += 1
+    for name, V, F, col in (("STANDIN_CROWN", verts, faces, (0.16, 0.30, 0.10, 1)),
+                            ("STANDIN_TRUNK", tv, tf, (0.25, 0.19, 0.13, 1))):
+        me = bpy.data.meshes.new(name)
+        me.from_pydata(V, [], F)
+        me.update()
+        ob = bpy.data.objects.new(name, me)
+        mat = bpy.data.materials.new(name)
+        mat.use_nodes = True
+        mat.node_tree.nodes["Principled BSDF"].inputs["Base Color"].default_value = col
+        mat.node_tree.nodes["Principled BSDF"].inputs["Roughness"].default_value = 0.9
+        me.materials.append(mat)
+        bpy.context.scene.collection.objects.link(ob)
+    print(f"[preview] stand-in trees: {n} from {path}")
+    return n
+
+
+N_STAND = standins(A.standins if Path(A.standins).is_absolute() else PROJ / A.standins) if A.standins else 0
 # the line files are engine frame (x = E, y = up, z = N); the split scene's plan is (x, y) = (E, N)
 pts = [(p[0], p[2]) for p in json.loads(LINE.read_text(encoding="utf-8"))["points_xyz_m"]]
 L = len(pts)
@@ -210,6 +283,7 @@ def shoot(name, eye, look, fov, station):
                        "frame": "blender scene (x, y = the split scene's plan, z up)"},
             "sun": {"azimuth_deg": SUN_AZ, "elevation_deg": SUN_EL, "as": A.sun_label},
             "sky": "Nishita, strength 0.35, altitude 120 m, air 1.2, dust 1.5",
+            "trees": (f"{N_STAND} stand-ins (trunk + ellipsoid crown at measured height and crown) from {A.standins}; the game draws its TreeFX models there" if N_STAND else "as in the kn5"),
             "render": f"EEVEE Next, AgX, exposure {A.exposure:+.1f} EV, {sc.render.resolution_x}x{sc.render.resolution_y}"}
     Path(f"{OUT}_{name}.json").write_text(json.dumps(side, indent=2), encoding="utf-8")
     print(f"[preview] {name}: eye ({eye[0]:.1f}, {eye[1]:.1f}, {eye[2]:.1f}) look ({look[0]:.1f}, {look[1]:.1f}, "

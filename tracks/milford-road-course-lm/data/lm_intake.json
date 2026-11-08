@@ -15,7 +15,6 @@
  "y_change_max_m": 0.0,
  "connectors": false,
  "bespoke_files": [
-  "source/bespoke/trees.json",
   "textures/turf_diffuse.jpg",
   "textures/turf_normal.jpg"
  ],

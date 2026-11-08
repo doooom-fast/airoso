@@ -166,12 +166,11 @@
    "left_out": 0
   }
  ],
- "cards": [
-  {
-   "file": "source/bespoke/trees.json",
-   "prefix": "TREECARD",
-   "stood": 4431,
-   "dropped": 26
-  }
- ]
+ "trunks": {
+  "file": "source/vegetation/trunks.json",
+  "stood": 384,
+  "radius_m": 0.3,
+  "height_m": 3.0,
+  "nearest_paved_m": 4.7
+ }
 }

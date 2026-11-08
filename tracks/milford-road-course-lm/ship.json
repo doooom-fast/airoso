@@ -28,9 +28,11 @@
       "ai",
       "verify_kn5",
       "road_obj",
+      "grassfx_aerial",
       "track_folder",
       "verify_inis",
-      "make_map"
+      "make_map",
+      "treefx"
     ],
     "gate": [
       "drive_test_street",
@@ -53,7 +55,16 @@
       "assets/textures/metal_wall_normal.jpg",
       "assets/textures/roof_tan_diffuse.jpg"
     ],
-    "_assets_doc": "ledger 0082: the tyre walls' skin (texture_overrides 1WALL_TECPRO) and the pad sheds' metal walls / tan roof (pbr rows BUILDING_METAL, ROOFTOP_TAN), from airoso's tracked assets so no engine copy has to carry them"
+    "_assets_doc": "ledger 0082: the tyre walls' skin (texture_overrides 1WALL_TECPRO) and the pad sheds' metal walls / tan roof (pbr rows BUILDING_METAL, ROOFTOP_TAN), from airoso's tracked assets so no engine copy has to carry them",
+    "optional": [
+      "source/vegetation/trees.lm.json",
+      "source/vegetation/trunks.json",
+      "source/vegetation/grass_classes.png"
+    ],
+    "globs": [
+      "source/trees/*.bin"
+    ],
+    "_vegetation_doc": "ledger 0082 vegetation pass: the planted crowns, the trunk colliders and the grass class map (committed); the TreeFX models (source/trees/*.bin: Lake Murray's Oak3.bin and SycamoreV2.bin, personal use, gitignored) the PC copies into tracks/milford-road-course-lm/source/trees/ before the chain (runbook 0082-3)"
   },
   "sync_out": {
     "required": [
@@ -79,7 +90,9 @@
       "data/edge_report.json",
       "data/edge_fit.json",
       "data/edge_smoothness.json",
-      "data/kerbs.built.json"
+      "data/kerbs.built.json",
+      "data/treefx.report.json",
+      "data/grassfx.aerial.json"
     ],
     "map": [
       [
@@ -92,5 +105,6 @@
     ]
   },
   "_edges_doc": "ledger 0087: the lane edges re-fitted in the intake (track.config.json lm_intake.edge_fit; the evidence synced in), every verdict in data/edge_fit.json; edge_smoothness (opt-in, this track only so far) gates the built edges' 1 m second difference and residual (tools/edge_smoothness.py GATE_DEFAULT)",
-  "_gate_doc": "ledger 0082 pass 2: kn5_textures (opt-in, this track only so far): every texture the built kn5s' materials name must be embedded (tools/kn5_textures.py). The PC's 0082-1 run 1 shipped five textures short and passed every other gate"
+  "_gate_doc": "ledger 0082 pass 2: kn5_textures (opt-in, this track only so far): every texture the built kn5s' materials name must be embedded (tools/kn5_textures.py). The PC's 0082-1 run 1 shipped five textures short and passed every other gate",
+  "_vegetation_doc": "ledger 0082 vegetation pass: grassfx_aerial (the measured grass zones, before the track folder's ext_config) and treefx (the measured crowns as TreeFX, after the map) run"
 }

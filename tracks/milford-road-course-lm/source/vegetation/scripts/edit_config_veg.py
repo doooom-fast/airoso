@@ -49,10 +49,19 @@ b["grassfx_zones"] = {
                "the base look (mown)"}
 sc["treefx"] = {
     "planted": {"file": "source/vegetation/trees.lm.json", "clear_m": 3.0, "zones": {"1": "planted_neighbourhood"},
-                "native_h_m": {"Oak3.bin": 15.0, "SycamoreV2.bin": 15.0,
-                               "_doc": "the model's height at size 1, m: NOT MEASURED on the Mac (the .bin models are on the PC only); "
-                                       "15 m [invented] until the PC's runbook step reads them. Every tree's size is its measured "
-                                       "height over this"}},
+                "native_h_m": {"Oak3.bin": 8.673, "SycamoreV2.bin": 8.194,
+                               "_doc": "the model's height at size 1, m: MEASURED on the PC 2026-11-07 off the installed files "
+                                       "(san_diego_lake_murray_v4/extension/trees/<model>/tree.ini HEIGHT; the mesh's y spans "
+                                       "-0.29..8.67 m (Oak3, the root flare under the origin) and -0.08..8.19 m (SycamoreV2), in units "
+                                       "of HEIGHT; md5 Oak3 24111ede..., SycamoreV2 7010d61f..., equal to Sand Creek's copies; "
+                                       "cross-check PalmV1 HEIGHT 20.053 = make_treefx's 'nohesi V1 20 m native'). Every tree's "
+                                       "size is its measured height over this"},
+                "native_w_m": {"Oak3.bin": 6.089, "SycamoreV2.bin": 6.620,
+                               "_doc": "the model's crown width at size 1, m: tree.ini WIDTH (the mesh's horizontal extent is about "
+                                       "WIDTH / 2 per unit either side), measured with native_h_m. Every tree's width multiplier is "
+                                       "its measured crown over (this x its size): TreeFX's width = <mult>, width-only (the "
+                                       "format's own words, docs/TREEFX-FORMAT.md). That it multiplies on top of size is VERIFY "
+                                       "IN-GAME"}},
     "_doc": "Ledger 0082 vegetation pass (Kevin 2026-11-07: \"When does Milford get a vegetation pass?\"; \"I just want real\"): one "
             "TreeFX tree per crown the USGS 3DEP lidar (flown 2017-05-03) measures, at its measured top's height, checked against "
             "NAIP 2022 (source/vegetation/inventory.json). Lake Murray's models (personal use, on the PC only; ship.json globs "

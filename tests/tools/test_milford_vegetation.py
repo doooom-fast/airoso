@@ -46,7 +46,8 @@ def test_keys_are_opt_in():
         cfg = json.loads(cfgp.read_text(encoding="utf-8"))
         sc = cfg.get("scenery") or {}
         has_trunks = "trunks" in (sc.get("bespoke") or {})
-        has_native = "native_h_m" in (((sc.get("treefx") or {}).get("planted")) or {})
+        planted = ((sc.get("treefx") or {}).get("planted")) or {}
+        has_native = "native_h_m" in planted or "native_w_m" in planted
         if cfgp.parent.name == "milford-road-course-lm":
             assert has_trunks and has_native
             continue
@@ -93,6 +94,29 @@ def test_native_height_sizes_a_tree_by_its_measured_height():
     # every size is a measured height (10 or 30 m) over its model's height
     for m, s in got:
         assert any(abs(s - h / want[m]) < 0.006 for h in (10.0, 30.0)), (m, s)
+
+
+def test_native_width_keeps_the_measured_crown():
+    """planted.native_w_m: width = crown / (native width x size), so the drawn crown is the measured one at any height"""
+    mt = _load(ROOT / "tools" / "make_treefx.py", "make_treefx_mfveg3")
+    with tempfile.TemporaryDirectory() as tmp:
+        proj = _project(tmp, {"Oak3.bin": 8.673, "SycamoreV2.bin": 8.194})
+        cfgp = proj / "track.config.json"
+        cfg = json.loads(cfgp.read_text())
+        cfg["scenery"]["treefx"]["planted"]["native_w_m"] = {"Oak3.bin": 6.089, "SycamoreV2.bin": 6.620}
+        cfgp.write_text(json.dumps(cfg))
+        p = mt.plan(proj)
+    nw = {"Oak3.bin": 6.089, "SycamoreV2.bin": 6.620}
+    drawn = sorted(round(nw[ln.split(";")[0].split()[1]] * float(ln.split("size =")[1].split(";")[0])
+                         * float(ln.split("width =")[1]), 1) for ln in p["lines"] if ln.startswith("tree:"))
+    assert len(drawn) == 2 and abs(drawn[0] - 6.0) < 0.1 and abs(drawn[1] - 12.0) < 0.1, drawn
+
+
+def test_without_native_width_no_width_is_written():
+    mt = _load(ROOT / "tools" / "make_treefx.py", "make_treefx_mfveg4")
+    with tempfile.TemporaryDirectory() as tmp:
+        p = mt.plan(_project(tmp, {"Oak3.bin": 15.0, "SycamoreV2.bin": 20.0}))
+    assert not any("width =" in ln for ln in p["lines"])
 
 
 def test_without_native_height_the_rank_rule_stands():

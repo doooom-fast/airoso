@@ -7,8 +7,9 @@ Reads build/<slug>/extension/trees/trees.txt (kn5 frame: x, y, -z) and data/trac
   - no trunk on, or within corridor_margin_m (track.config.json) of, a paved face (1ROAD*, 1KERB*, PADAPRON*);
   - no trunk within 1.0 m (tools/make_treefx.py BUILT_BUILDING_CLEAR_M) of a wall or building (1WALL*, BUILDING*, ROOFTOP*,
     FARBLOCK*, GUARDRAIL*), its ghost trunk colliders excepted;
-  - every 1WALL_GHOST_TRUNK collider stands on a written tree (within 0.5 m) and every written tree within the collider reach of
-    paved has one.
+  - every 1WALL_GHOST_TRUNK collider stands on a written tree (within 0.5 m), and every written tree nearer the built paved
+    surface than the collider reach (veg_plan.COLLIDER_REACH_M) less the plan grid's own error (veg_plan.HALF_DIAG_M: the
+    plan measured on 2 m cells) has one; the trees in that last 1.41 m band without one are listed, not failed.
 Exit 1 on any failure.
 """
 import json
@@ -21,6 +22,7 @@ import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from veg_common import obj_surfaces  # noqa: E402
+from veg_plan import COLLIDER_REACH_M, HALF_DIAG_M  # noqa: E402
 
 TREE_RE = re.compile(r"^\s*tree:\s*([^;]+);\s*pos\s*=\s*([-0-9.eE+]+)\s*,\s*([-0-9.eE+]+)\s*,\s*([-0-9.eE+]+)")
 
@@ -80,13 +82,18 @@ def main():
     for c in centres:
         if not len(trees) or np.sqrt(((trees - c) ** 2).sum(1)).min() > 0.5:
             orphan += 1
+    has = np.array([bool(len(trunk_v)) and float(np.sqrt(((trunk_v - t) ** 2).sum(1)).min()) < 0.5 for t in trees], dtype=bool)
+    reach = (dp <= COLLIDER_REACH_M) & ~has
+    missing = int((reach & (dp < COLLIDER_REACH_M - HALF_DIAG_M)).sum())
+    band = sorted(round(float(x), 2) for x in dp[reach & (dp >= COLLIDER_REACH_M - HALF_DIAG_M)])
     bad_p = int((dp < margin).sum())
     bad_w = int((dw < 1.0).sum())
     rep = {"trees": int(len(trees)), "trunk_colliders": int(len(centres)), "orphan_colliders": orphan,
            "nearest_paved_m": round(float(dp.min()), 2) if len(dp) else None, "within_margin_of_paved": bad_p,
            "nearest_wall_m": round(float(dw.min()), 2) if len(dw) else None, "within_1m_of_wall": bad_w,
-           "trees_within_30m_of_paved": int((dp <= 30.0).sum()), "corridor_margin_m": margin,
-           "verdict": "PASS" if not (bad_p or bad_w or orphan) else "FAIL"}
+           "trees_within_reach_of_paved": int((dp <= COLLIDER_REACH_M).sum()), "collider_reach_m": COLLIDER_REACH_M,
+           "within_reach_no_collider": missing, "reach_band_no_collider_m": band, "corridor_margin_m": margin,
+           "verdict": "PASS" if not (bad_p or bad_w or orphan or missing) else "FAIL"}
     print(json.dumps(rep))
     if "--json" in sys.argv:
         Path(sys.argv[sys.argv.index("--json") + 1]).write_text(json.dumps(rep, indent=1))

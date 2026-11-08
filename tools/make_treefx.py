@@ -568,6 +568,10 @@ def plan(project_dir, all_species=False, verbose=False):
     # sizes a planted point by its MEASURED height (size = h_m / native) instead of its rank between the file's shortest
     # and tallest; a model it does not name keeps the rank rule. Absent (every other track) = nothing changes
     native_h = {k: float(v) for k, v in ((tcfg.get("planted") or {}).get("native_h_m") or {}).items() if not k.startswith("_")}
+    # ... and planted.native_w_m {model: its crown width at size 1, m} (opt-in, beside native_h_m) writes `width = crown_m /
+    # (native width * size)`: TreeFX's width-only multiplier, so a tree keeps its MEASURED crown at its measured height (a
+    # uniform size alone scales the crown with the height). A model it does not name gets no width
+    native_w = {k: float(v) for k, v in ((tcfg.get("planted") or {}).get("native_w_m") or {}).items() if not k.startswith("_")}
 
     def emit_zone(zone_key, entries, idx_base=0, guard=True):
         species = [s for s in ZONES[zone_key] if s[0] in available]
@@ -604,7 +608,10 @@ def plan(project_dir, all_species=False, verbose=False):
             if "_h" in e and s[0] in native_h:   # ledger 0082 (opt-in planted.native_h_m): the measured height, absolute
                 size = e["_h"] / native_h[s[0]]
             angle = int(360 * _hash(i, 3))
-            out.append(f"tree: {s[0]}; pos={e['x']:.2f}, {e['y']:.2f}, {-e['z']:.2f}; angle = {angle}; size = {size:.2f}")
+            line = f"tree: {s[0]}; pos={e['x']:.2f}, {e['y']:.2f}, {-e['z']:.2f}; angle = {angle}; size = {size:.2f}"
+            if "_w" in e and s[0] in native_w:   # ledger 0082 (opt-in planted.native_w_m): the measured crown, absolute
+                line += f"; width = {e['_w'] / (native_w[s[0]] * round(size, 2)):.2f}"
+            out.append(line)
             entries_out.append({"zone": zone_key, "model": s[0], "x": e["x"], "y": e["y"], "z": e["z"]})
             used.add(s[0])
             n += 1
@@ -640,7 +647,7 @@ def plan(project_dir, all_species=False, verbose=False):
                 continue
             by_zone.setdefault(planted["zones"][str(cell)], []).append(
                 {"x": x, "y": ground_y(lon, lat), "z": z, "_size01": (h - h0) / max(h1 - h0, 1e-6),
-                 **({"_h": float(h)} if native_h else {})})
+                 **({"_h": float(h)} if native_h else {}), **({"_w": float(_w)} if native_w else {})})
         for k, zone in enumerate(sorted(by_zone)):
             emit_zone(zone, by_zone[zone], idx_base=k * 100000)
         rejected += too_near

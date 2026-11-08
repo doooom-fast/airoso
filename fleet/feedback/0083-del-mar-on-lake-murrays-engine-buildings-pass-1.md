@@ -1,8 +1,8 @@
 ---
 id: 0083
-title: Del Mar on Lake Murray's engine; buildings pass 1; pass 2 and 3 (lidar heights, canopies on posts); pass 4 (roof forms, the look)
+title: Del Mar on Lake Murray's engine; buildings pass 1; pass 2 and 3 (lidar heights, canopies on posts); pass 4 (roof forms, the look); pass 4b (far ground from the lidar)
 status: in-progress
-scope: tracks/del-mar-lm (new), tracks/del-mar (its source, ledger 0064); tools/seat_edges_blend.py, tools/plan_buildings.py (opt-in keys); tools/lidar_building_heights.py (new, pass 2), tools/author_bespoke_blend.py (posts form, pass 3; shed / parapet / NAIP roof keys, pass 4); tools/lidar_roof_forms.py (new, pass 4)
+scope: tracks/del-mar-lm (new), tracks/del-mar (its source, ledger 0064); tools/seat_edges_blend.py, tools/plan_buildings.py (opt-in keys); tools/lidar_building_heights.py (new, pass 2), tools/author_bespoke_blend.py (posts form, pass 3; shed / parapet / NAIP roof keys, pass 4); tools/lidar_roof_forms.py (new, pass 4); tools/lidar_ground.py, tools/far_ground*.py (new, pass 4b), tools/house_seat_check.py (set-in decks, pass 4b)
 layer: project + engine (opt-in)
 train: -
 ---
@@ -699,7 +699,7 @@ from 90 m).
   `test_registry_moves`, `test_bench_pad` x2); the suite ran before the trim / parapet / relief fixes, so the six test files
   of the changed tools were re-run at `354d63c`: 72 pass (12 in `test_lidar_roof_forms.py`).
 
-## PC runbook 0083-4 (rehearse from a clean checkout; NO install — the PC asks Kevin)
+## PC runbook 0083-4 (superseded by 0083-5: 0.2.3 was never rehearsed; the PC rehearses 0.2.4)
 
 1. `git fetch`; a clean worktree at `origin/claude/del-mar-lm` (this ledger commit), `GIT_LFS_SKIP_SMUDGE=1`. No lidar
    and no NAIP needed: the fit, the plan and the palette are committed.
@@ -723,7 +723,7 @@ from 90 m).
 
 None. The five tiles of pass 3 (on the G10 and the Drive) and the 2012 NAIP crop already committed.
 
-## Owed (after pass 4; start here)
+## Owed after pass 4 (superseded: the list after pass 4b, at the end, is where to start)
 
 1. **Far ground from the lidar** (Kevin's call, asked): 220 of the 259 pass-3 buildings stand past the 3DEP grid where
    the built ground is flat; lidar ground minus built ground is 3.8-30.8 m (p10-p90) out there. Until then the garages
@@ -737,3 +737,178 @@ None. The five tiles of pass 3 (on the G10 and the Drive) and the 2012 NAIP crop
 6. Canopy posts and slab (pass 3), walls, furniture, the boulevard banks, direction, the period, the layout itself:
    pass 3's owed 5-9, unchanged.
 7. **Install:** none from the Mac; 0.2.3 goes to the PC's rehearsal (runbook 0083-4) and Kevin's word.
+
+## 9. Pass 4b: far ground from the lidar (`53aefca`, `abd16ba`, `8a7c7f2`; candidate 0.2.4)
+
+**Kevin, 2026-11-07, verbatim, through the coordinator:** asked "Should Del Mar's far ground be built from the lidar?", he
+said **"Yes"**. Built as 0.2.4 on top of 0.2.3 (which was never rehearsed: the PC rehearses 0.2.4 only, runbook 0083-5
+below, which replaces 0083-4). The 3DEP grid inside the lap + 150 m is untouched, so the drive is the drive.
+
+**The read** (the G10, job `dm-p4b`, `g10run.sh`, 4 GB cap; code `fe10de17`, the same tool as `53aefca` before the rebase onto the PC's `1c04c56`): `tools/lidar_ground.py extract` over the
+same five D24 tiles: `[ground] 60,798,143 points from 5 tiles, 32,187,311 ground; 2010 x 3010 cells of 1.0 m`,
+**`TIMING wall=42.2s user=108.8s sys=0.8s maxrss=517MB exit=0`**, the cameras all active after. Ground = class 2 and
+class 9 (water: the lagoon's surface is the ground a driver sees). The 1 m `.npz` stays in `dm_work/p4b/`.
+
+**The product** (`tools/lidar_ground.py grid`, the Mac; committed, so the PC needs no lidar):
+`data/far_ground.lidar.npy` (+ `.meta.json`, `.fill.npy`), 386 x 353 cells of 5 m over x -946..984, y -859..906 (local
+metres east / north of the origin): **111,012 cells measured** (the mean of their ground points), **8,935 filled under
+cover** (buildings, dense trees: the harmonic fill of the measured ground around them, solved coarse to fine; residual
+under 1.3 mm), **16,311 filled past the tiles**: the south-east corner (x > -34, y < -510) is tile 11SMS476647, which
+was never fetched; there the fill only continues the edge, flagged.
+**Same datum as the grid:** lidar minus 3DEP at the grid's 40 m nodes: median 0.00 m, p05 -0.11, p95 +0.29, max |0.67|.
+
+**The mesh** (`tools/far_ground_blend.py`, a new draft step `far_ground` after `strip_seam`; config
+`terrain.far_ground` {reach_m 500, feather_m 40 `[invented]`, cell_m 10}; `tools/far_ground.py` its pure parts):
+- the assembler's skirt goes (640 vertices: the 500 m ramp from the grid's border down to a floor 5 m under the lowest
+  ground, `ribbon.grass_terrain`);
+- **the grid's border vertices stay exactly**, so there is **no step at the seam** (one vertex, both sides);
+- a ring on every second node of the grid's own 5.02 x 5.00 m lattice (**10 m, a coarser tier, as Lake Murray's ledger
+  0046 tiers**; each ring cell on the border takes the border's own 5 m nodes, so no T-junction), out 500 m on every
+  side: **26,200 nodes** (20,851 on measured lidar, 1,785 under cover, 3,564 past the tiles), 52,320 triangles, wound and
+  UV'd as the grid, its material;
+- each node = the lidar less the border's residual feathered out (1 - smoothstep over 40 m).
+
+**The seam, measured** (`data/far_ground.report.json`): border residual (lidar - grid) p05..p95 **-0.37..+0.59 m**, max
+**|3.50| m**; the feather adds at most **13 %** of grade (1.5 x 3.50 / 40). The ground's grade across the border (the
+grid's own cell inside against the ring's outside) changes p50 **0.015**, p95 **0.106**, max **0.238**; the ten worst
+are all on the east edge (x 458), where the 1 m lidar resolves slopes the 40 m 3DEP smooths. TERRAIN 63,599 -> 89,159
+vertices; the prep's 1GRASS 100,564 -> 2 tiles (as 0.2.3: 2); audit grass 76,635 -> 102,251 v.
+
+**Why not Lake Murray's tier code itself:** `terrain_tiers` / `terrain_sample` sample 3DEP at every vertex and re-plan
+the near-road ground (kept cells, refine, feather); the brief kept the near ground as built. The ring uses the tiers'
+idea (finer at the seam, coarser out) on the grid Del Mar already has.
+
+### Buildings on the real ground
+
+- **The old skirt left its four corner squares empty** (it was extruded square off each edge): every planned footprint
+  there had no ground and was dropped past 450 m (124 in 0.2.3). The ring covers them: **456 rows stood** (0.2.3: 355),
+  **0 dropped past 450 m**, 109 rows new.
+- **Dropped for cause, 31:** the same 7 on a road or kerb and 1 near a road or wall as 0.2.3, and **23 for relief under
+  them** (the author's rule, unchanged: more than max(2.5 m, 0.8 x the wall) of ground relief under a footprint). 8 of
+  them stood in 0.2.3 on the flat skirt: osm1325617179, osm1325617215_p1 / _p2, osm1325617216, osm1326361752 (the 3.13 m
+  "parapet" of pass 4), osm929845978, osm929845979, osm993449860.
+- **The north houses** (around x 60, y 800, the hillside over Via de la Valle) stood on the skirt at -6 m; the lidar puts
+  their ground at +31..+39 m: **up to 45.4 m higher** (osm1321707182). The prep seats every building on the new ground:
+  451 seated, 221 with a foundation down a slope (deepest 4.03 m).
+
+### The garages, set into their slope
+
+Planned with the plan's new opt-in `set_in_slope` (`tools/plan_buildings.py`: rows of a measured hillside deck carry
+`set_in`, the ring's p10 lidar ground NAVD88): `tools/author_bespoke_blend.py` stands every part at its fitted height
+over THAT ground (not over the built ground's mean), its walls down to 0.15 m under the lowest built ground on every
+side, no relief refusal, in its own objects `BUILDING_<SKIN>_SETIN_<k>` carried by a 1 m object lift (the same world
+positions): engine-july's house seat seats only a BUILDING mesh at the identity transform and would lift a deck set in
+a hill until half of it stood over its uphill ground. No collider (477 / 619 m from the lap).
+
+**Each deck against its ground** (the lidar's 1 m ground 1-4 m outside each side, NAVD88; decks = p10 ground + the fit):
+
+| garage | deck | ground, downhill sides | ground, uphill sides | reads |
+|---|---|---|---|---|
+| osm1353617974 (2,553 m²) | flat part 23.4 m; shed part 22.8-26.5 m | S 20.3, W 20.2 | E 23.7-25.0, N 28.8 | a 3.1-3.2 m downhill face; the shed part's deck 2.3 m under the north ground |
+| osm1427234829 (3,599 m², OSM 4 levels) | 20.7-24.3 / 20.7-21.6 / 18.2-21.6 m | S 10.7-10.8, E 10.7-11.1 | N 23.3-24.5, W 24.6 | a downhill face up to 13.6 m; the top deck within 0.2-0.3 m of the uphill grade |
+
+Built (the gate OBJ): both decks' tops **+0.00 m** off their measure; walls 0.15-0.51 m under the lowest ground.
+
+### Gate change: house_seat judges a set-in deck against its deck (fleet/GATES-CHANGELOG.md, 2026-11-07)
+
+A deck built into a hill has its uphill wall in the hill by measurement, which the BURIED rule (roof under 1 m over the
+highest ground under the walls) reads as buried. `tools/house_seat_check.py` now reads `data/house_seat.set_in.json`
+(written by the author only for `set_in` rows): an island whose wall corners ARE a declared deck's ring is judged
+floating and sunken as every building, and in place of BURIED its top must be its parts' highest deck within
+**0.3 m `[invented]`**. Absent file = as before. No threshold moved, nothing forced; the first run read the two garages
+as 2 buried, a deck matched by centroid also caught a separate building inside a garage's outline, so matching is by the
+walls' own corners (tested: a deck built 1 m off its measure still fails).
+
+### Build: candidate 0.2.4 (Mac, empty workshop `dm_work/v024`, no force)
+
+ENG = `dm_work/eng`, textures 95/95 md5-equal; the code as committed (after the build only a docstring line of
+`tools/house_seat_check.py` and a sync-back line of `ship.json` changed). Run 1 (`v024.run1.log`) stopped at the track folder on the same
+/Volumes/Drive `fcopyfile ... Operation timed out` as 0.2.3's run 1; run 2 resumed `--from track_folder`
+(`v024.run2.log`) and house_seat read the garages as 2 buried (above); after the gate change, run 3 re-ran the gates
+`--from make_map` (`v024.log`). verify_kn5 is run 1's, verify_inis run 2's, every gate row run 3's.
+
+| | 0.2.3 (pass 4) | **0.2.4 (pass 4b)** |
+|---|---|---|
+| far ground | the skirt (a ramp to 5 m under the lowest ground) | **the 2024 lidar**, 26,200 nodes at 10 m, out 500 m |
+| bespoke | 355 stood, 132 dropped (124 past 450 m) | **456 stood, 31 dropped (0 past 450 m)**: 7 road, 1 near a road, 23 relief |
+| prep house seat | 355 seated, 146 down a slope (1.85 m) | 451 seated (+ the 5 set-in parts), 221 (4.03 m) |
+| drive_test | PASS (soft 0, severe 0, kinks 6.68 /km, drops 0, obstructed 0, floating 0) | PASS, **`drive_test.json` / `.full.json` byte-identical** |
+| audit_mesh | CLEAN (grass 76,635 v, walls 2,906 v) | CLEAN (grass **102,251 v**, walls 2,906 v) |
+| verify_kn5 + --inis | PASS | PASS |
+| kn5_ground_check | PASS (double-sheet 0, walls 11, 0/2,292, p95 0.021) | PASS, **`kn5_ground_check.full.json` byte-identical** |
+| house_seat | PASS (349 judged, 0/0/0, lowest roof 1.0 m) | PASS (**445** judged, 0/0/0, contact -0.51..-0.15; set in: 5 parts, 2 islands, +0.00 m) |
+| road kn5 | 15,078,136 B | **16,927,115 B** (+1.85 MB: the ring and 101 more buildings), 17 textures |
+| track folder | 15,185,939 B | 17,034,918 B |
+
+**Unchanged from 0.2.3, byte for byte:** `drive_test.json`, `drive_test.full.json`, `kn5_ground_check.full.json`,
+`lm_intake.json`, `mouth_welds.json`, `bridge.spans.auto.json`, `centerline.local.json`, `gate_centerline.json`,
+`heightfield.npy`. Differ: `audit.json` (grass_verts only), `edge_report.json` (8 of its 187 rows' 3 m ground reading
+moved under 0.2 mm; not a gate, cause not traced: the prep handles a larger 1GRASS).
+
+### Stills (Mac; not in the repo)
+
+`/Volumes/Drive/codex/dm_work/stills/p4b_023_*.jpg` against `p4b_024_*.jpg`: `garage_north`, `garage_east`,
+`garage_east_low` (the 13 m downhill face from 3 m up), `north_houses` (the hillside from 240 m south, 25 m up),
+`north_houses_lap` (s 1,635, pass 3's `north_rows` camera), `seam_air_north` (160 m up over the grid's north half,
+looking across the north edge), `seam_air_east` (140 m up, across the east edge where the seam's grade changes most).
+Read on them: no step or crease at the grid's north or east edge from the air; the north houses on their hill (in
+0.2.3 they stood on the skirt's ramp, under the hill's real height); the garages' downhill faces and their uphill sides in the hill.
+
+### Lake Murray unchanged after pass 4b (Mac)
+
+- `git diff origin/claude/fleet-lm-engine -- tracks/san-diego-lake-murray scripts/`: empty.
+- Trim A/B (`dm_work/lmtrim_g`): byte-identical (`664da93b…`, `b73b70f4…`, `f0c97952…`), logs identical.
+- Every new key is opt-in and named by Del Mar only (tested): `terrain.far_ground` + the draft step `far_ground`, the plan's
+  `set_in_slope`, a row's `set_in`, `data/house_seat.set_in.json`.
+- `tests/run_tests.py` (.venv python, a `python` on PATH): **1,312 pass, 8 fail — the known 8** (`test_draft_equiv` x5,
+  `test_registry_moves`, `test_bench_pad` x2); 9 in `tests/tools/test_far_ground.py`, all pass.
+
+### The near ground (not done; asked)
+
+The lap + 150 m stays the 40 m 3DEP grid (pre-divided to 10 m, then 5 m) as the brief said. My read: it should also come
+from the lidar, later and as its own pass. The 40 m nodes agree with the lidar to 0.67 m, but between them the grid
+smooths what the 1 m lidar holds: the boulevard banks, the lot edges, the slopes the east border meets (residual up to
+3.5 m, grade changes to 0.24). It would move the ground the lap was built and gated on (the kerb meets, seat_edges,
+strip_seam), so it needs every gate again and Kevin's drive.
+
+## PC runbook 0083-5 (replaces 0083-4: rehearse 0.2.4 from a clean checkout; NO install — the PC asks Kevin)
+
+1. `git fetch`; a clean worktree at `origin/claude/del-mar-lm` (this ledger commit), `GIT_LFS_SKIP_SMUDGE=1`. No lidar and
+   no NAIP needed: the roof fit, the plan, the palette and the far-ground product (`data/far_ground.lidar.*`) are committed.
+2. ENG = the engine snapshot PLUS airoso's `assets/textures` at this head, md5-checked: 95 files, any difference stops it.
+3. From an EMPTY scratch workshop:
+   `SHIP_PROJ=D:/k10-scratch/del_mar_lm_024_reh AIROSO=<worktree> ENG=<eng> bash tools/ship_track.sh del-mar-lm --no-install`.
+4. Expect the 0.2.4 column:
+   - `[far-ground] skirt out (640 vertices), 26200 ring nodes ... (20851 on measured lidar, 1785 under cover, 3564 past the
+     tiles); border residual p05..p95 -0.367..0.589 m (max |3.504|) ... grade change p95 0.1058 max 0.2375; TERRAIN 63599
+     -> 89159 verts`;
+   - `[bespoke] ... 456 buildings stood, 31 dropped (0 of them past 450 m of the lap)`, drop reasons 23 relief, 7 on a
+     road or kerb, 1 near a road or wall; prep "451 buildings seated ... 221 with a foundation";
+   - drive_test PASS (soft 0, severe 0, kinks 6.68 /km, drops 0, obstructed 0, floating 0); audit CLEAN (grass 102,251 v,
+     walls 2,906 v); verify_kn5 + --inis PASS; kn5_ground_check PASS (walls 11, 0/2,292); house_seat PASS (445 judged,
+     0/0/0; "set in their slope: 5 declared, 2 judged", each +0.00 m off its deck);
+   - road kn5 16,927,115 B (a tangent-only md5 difference is the known noise), 17 textures embedded. Any other row: stop
+     and report it.
+5. Do **not** install. Ask Kevin: "Del Mar 0.2.4: 0.2.3's measured roofs, plus the far ground from the 2024 lidar (the
+   north houses up to 45 m higher, on their hill), the two garages set into their slope, 101 more buildings on the new
+   ground; installed as `del_mar_fairgrounds` (the plain name) in place of the old-engine 0.1.0 and the `_lm` 0.2.2?" Only
+   on his word, from an empty `D:/k10-scratch/del_mar_lm`, 0.2.2's workshop parked first. The install parks the 0.1.0
+   `del_mar_fairgrounds` it replaces; **move `content/tracks/del_mar_fairgrounds_lm` (0.2.2) to
+   `D:/k10-track-archive/<stamp>/` by hand** (Kevin: old copies removed at each install). Record both.
+
+## Downloads in pass 4b
+
+None. The five tiles already on the G10 and the Drive. Tile 11SMS476647 (the south-east corner, filled here) would be a
+download (Kevin's yes).
+
+## Owed (after pass 4b; start here)
+
+1. **The near ground from the lidar** (above): my recommendation, not done.
+2. **The south-east corner** past the five tiles is a fill: tile 11SMS476647 (~80 MB, USGS) would measure it.
+3. **23 buildings dropped for relief** on the real ground (8 of them stood in 0.2.3): the author's relief rule
+   (`[invented]`) refuses them; set-in or stepped forms from the lidar would stand them as measured.
+4. **64 poor fits** as their median box; **436 roof colours** off the 2012 crop; facades the class's CC0 material
+   (Kevin's questions 2 and 3, open).
+5. Canopy posts and slab, walls, furniture, the boulevard banks, direction, the period, the layout itself: pass 3's owed
+   5-9, unchanged.
+6. **Install:** none from the Mac; 0.2.4 goes to the PC's rehearsal (runbook 0083-5) and Kevin's word.

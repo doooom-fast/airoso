@@ -21,5 +21,7 @@
                  "_photo": "NAIP 2012-05-19",
                  "_doc": "pass 4 (ledger 0083): each roof's median NAIP pixel (this plan's image) as one cell of the palette the track's texture_overrides ROOF binds; a roof off the crop keeps its class stand-in"},
  "canopy_posts": true,
- "_canopy_posts_doc": "pass 3 (ledger 0083): the pavilions and fuel canopies the lidar measured stand as the author's posts form (an open-sided roof on posts); no measured roof, no canopy"
+ "_canopy_posts_doc": "pass 3 (ledger 0083): the pavilions and fuel canopies the lidar measured stand as the author's posts form (an open-sided roof on posts); no measured roof, no canopy",
+ "set_in_slope": true,
+ "_set_in_slope_doc": "pass 4b (ledger 0083; Kevin 2026-11-07 \"Yes\" to the far ground from the lidar): the two hillside garages (osm1353617974, osm1427234829) set into their measured slope: every part at its fitted height over the ring's p10 lidar ground, at that ground's NAVD88 height; walls down to the real ground on every side"
 }

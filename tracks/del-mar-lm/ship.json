@@ -14,6 +14,7 @@
       "densify_ribbon",
       "seat_edges",
       "strip_seam",
+      "far_ground",
       "kerbs"
     ],
     "author": [
@@ -49,7 +50,10 @@
       "data/heightfield.meta.json",
       "source/bespoke/buildings.json",
       "source/bespoke/roof_naip_palette.png",
-      "source/bespoke/roof_flat_normal.png"
+      "source/bespoke/roof_flat_normal.png",
+      "data/far_ground.lidar.npy",
+      "data/far_ground.lidar.meta.json",
+      "data/far_ground.lidar.fill.npy"
     ]
   },
   "sync_out": {
@@ -73,7 +77,9 @@
       "data/kn5_ground_check.{id}.json",
       "data/house_seat_check.json",
       "data/edge_report.json",
-      "data/kerbs.built.json"
+      "data/kerbs.built.json",
+      "data/far_ground.report.json",
+      "data/house_seat.set_in.json"
     ],
     "map": [
       [

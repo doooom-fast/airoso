@@ -5,7 +5,7 @@
   "_name_engine_doc": "ledger 0083 pass 4 (Kevin 2026-11-07: \"Get rid of Lm Version from names, nothing should be on any other engine now\" / \"LM is the airoso engine\"): no '(LM engine)' in the name; installed as the plain del_mar_fairgrounds (install_folder). The slug stays del_mar_fairgrounds_lm (the file names inside the folder) while tracks/del-mar still holds del_mar_fairgrounds: fleet lint S7 refuses two tracks on one slug; the directories are renamed in one pass later.",
   "slug": "del_mar_fairgrounds_lm",
   "ui_series": "doooom California",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "mirror_x": false,
   "loop": true,
   "default_width_m": 13.0,
@@ -2580,7 +2580,12 @@
   },
   "terrain": {
     "terrain_band_m": 22.0,
-    "_doc": "the v021 assembler's band clamp (Lake Murray's 22 m)"
+    "_doc": "the v021 assembler's band clamp (Lake Murray's 22 m)",
+    "far_ground": {
+      "reach_m": 500.0,
+      "feather_m": 40.0,
+      "_doc": "ledger 0083 pass 4b (Kevin 2026-11-07: \"Yes\", to \"Should Del Mar's far ground be built from the lidar?\"): the assembler's 500 m skirt (a ramp from the 3DEP grid's border down to a floor 5 m under the lowest ground) replaced by the real ground over the same reach, off the 2024 USGS lidar's ground points (tools/lidar_ground.py -> data/far_ground.lidar.npy, 5 m cells; the SE corner past the five tiles harmonically filled, flagged), meshed by tools/far_ground_blend.py on the grid's own 10 m lattice; the grid's border vertices kept, the border residual (lidar - grid) feathered out over feather_m [invented] so the seam has no step. The 3DEP grid inside (the lap + 150 m) is untouched."
+    }
   },
   "_grid_doc": "lm_intake.grid_upsample 4 (ledger 0083): at 2 the ground's 20 m facets chorded over the crossings' ramps (35 grass-on-top); 4 took it to 7, 8 bought nothing more"
 }

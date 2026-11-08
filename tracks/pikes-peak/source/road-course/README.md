@@ -3,6 +3,22 @@
 Research only, in no chain; nothing here is built. Kevin, 2026-11-07: "pikes peak is an oval yes but also it has a road
 course we're supposed to be building in, that takes advantage of the existing oval."
 
+## Route from the published maps (supersedes "which route" below)
+
+Kevin: "Why aren't you using actual track maps?" / "Stop guessing" / "Do them as published, i just drew shape". The two
+maps (downloaded on his word, not committed; `PPIR_MAPS`, default `/Volumes/Drive/codex/pp_work/maps_dl`):
+SCCA Track Night (`scca_trackmap_ppir.png`) and racingcircuits.info 2017 to date (`racingcircuits_ppir_road_2017.png`).
+
+| file | what |
+|---|---|
+| `schematic.py` | map outline, thinning, similarity ICP (both handednesses), warp |
+| `maps_route.py` -> `route_from_maps.naip.json`, `still_route_from_maps.jpg` | each map registered to the lidar wall face, its line read onto the measured pieces, SCCA's top hairpin refit locally, the lot's driven band measured, RC-D and the infield-only loop assembled, T1-T9 placed |
+
+Run after `routes.py` (it reads `oval_mid.npy` from `PP_CACHE`); Kevin's infield-only stroke from `PPIR_SKETCH`
+(default `pp_work/sketch/routes/infield_only.json`). Further stills in `PPIR_MAPS_OUT` (`lot_band.jpg`,
+`top_hairpin_refit.jpg`). A map is a selection aid (L1): it picks the pieces and their order; every coordinate is a
+measured piece, the measured lot band, or the oval's mid-surface line. Numbers: ledger 0085 "Route from the published maps".
+
 ## Re-trace (edge-measured; supersedes the eyeball trace below)
 
 Kevin, on the first overlays: "Those tracings aren't very accurate." The infield centre line by eye and the oval's

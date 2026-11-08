@@ -203,3 +203,97 @@ assembled from the same pieces, ready to become `layouts[]` on one kn5 (L8).
 positions (a 3-8 cm kerb step is a clean edge where NAIP has 0.2-0.7 m of dust-blurred residual), (3) measure the apron's
 cross-slope. OSM raceway ways would at best name pieces; at their usual 1-3 m accuracy they would not improve a 0.1-0.3 m
 edge.
+
+## Route from the published maps (2026-11-07)
+
+Kevin: **"Why aren't you using actual track maps?"**, **"Stop guessing"**, then on his own strokes **"Do them as
+published, i just drew shape"**. Two maps, downloaded on his word, not committed (`/Volumes/Drive/codex/pp_work/maps_dl`):
+SCCA Track Night in America (scca.com, 2026; 9 corners, start/finish arrow, pit entry / exit) and racingcircuits.info's
+road course "2017 to date" (T1-T9, arrows, unused pavement grey). Tool: `source/road-course/maps_route.py` ->
+`route_from_maps.naip.json`, `still_route_from_maps.jpg`; working stills `pp_work/maps_route/` (`lot_band.jpg`,
+`top_hairpin_refit.jpg`). L1 held: a map picks WHICH measured pieces, in what order and direction; every coordinate of
+the route is a measured piece centre line, the lot band measured below, or the oval's mid-surface line. Nothing built.
+
+**1. Registration** (each map's oval outline onto the 2018 lidar wall face, similarity ICP from every 10 deg start, both
+handednesses; the S/F painted on NAIP and the infield's side choose between the near-symmetric fits):
+
+| map | outline to wall face rms / p95 m | S/F miss m | infield labels miss m (chosen / mirror) | affine rms, axis ratio |
+|---|---|---|---|---|
+| racingcircuits.info | **0.62 / 1.09** | 1.4 | 65 / 227 | 0.47 m, 1.005 |
+| SCCA | 6.9 / 11.4 | 6.5 | 39 / 278 | 2.7 m, 1.072 (drawn 7 % fatter one way) |
+
+The mirror about the oval's short axis fits the outline equally (rms within 0.01 m, S/F within 1 m: the line is mid
+front stretch); it puts the infield on the wrong side by 160-240 m, so the infield decides, not the outline.
+
+**2. The pieces each map's line runs over** (per metre: nearest measured centre line, mode-filtered, runs under 20 m
+dropped as junction flicker). **Both maps give the same route, in the same order and direction:** oval (S/F, turns 1-2,
+back stretch) -> NE lane -> top hairpin -> diag north -> diag south -> round the skid pad lot the long way (north-east
+side, east end, south side, west end) -> bottom road west -> west road -> sweeper -> NW merge onto the oval. That is
+**RC-D** of the Re-trace's ten candidates. The RC line sits 0.43-1.02 m p50 from the newer pieces' centre lines (west road
+2.8 m). SCCA's top hairpin is drawn as a loop out over the N road (12.2 m p50 off every measured centre line, read as
+n_road): refit locally (`local_refit`, line within 50 m of the hairpin's top junction, proper similarity ICP onto every
+infield centre line near it at once, blended out by 80 m): scale 0.983, -0.75 deg, its centre moved 23.4 m; 0.77 m p50 /
+2.27 m p95 after. Then it reads ne_lane -> hairpin_w -> diag like the RC map. The RC line was not refit (0.57 m p50).
+Registered, the maps' own lines measure 2,189 m (RC) and 2,186 m (SCCA).
+
+**3. The lot.** Both lines run over open pavement there (4-12 m from the ring pieces, whose measured edge is the LOT's
+outer boundary, not the driven road), so the driven band is measured (`lot_band`): cross-sections every 1 m along the RC
+line through the lot, luminance smoothed 1 m across / +-4 m along (cracks and kerb gaps are 0.3-1 m), samples beyond the
+lot's measured outer edge read as its interior; floor = darkest point within 6 m of the line; each side normalised
+against its own surface (80th percentile 3-12 m out); limits at half depth; [unseen] when less than 6 grey levels below
+either side, when 3-20 m wide fails, or when a limit jumps > 1.5 m off its 15 m running median.
+
+| | |
+|---|---|
+| sections (RC line +-15 m) / in the lot | 361 / 331 |
+| used: the longest run with no [unseen] gap over 5 m | **281 m (east end, south side, west end), 269 seen** |
+| width p10 / p50 / p90 | 6.6 / **9.2** / 11.5 m |
+| depth below the inner / outer surface (p50) | 30 / 32 grey levels |
+| limit residual to its running median p50 / p95 | 0.06 / 0.66 m |
+| [unseen] | 30 not 6 grey levels below both sides, 9 jumps, 2 too narrow: the lot's NORTH-EAST side, where the concrete carries no darker band |
+
+The north-east side is therefore **bridged, not measured: 64.3 m straight** from diag south's end to the band's first
+seen section, along the lot's straight north-east edge [inferred].
+
+**4. The laps** (`route_from_maps.naip.json` `routes`, centre lines every 1 m; joins straight, gap listed):
+
+| layout | pieces | lap m | joins (gap m) |
+|---|---|---|---|
+| **RC-D road course**, counter-clockwise (both maps' arrows), from the painted S/F | oval S/F -> NE 944.8, ne_lane 150.0, hairpin_w 55.0, diag_n 25.0, diag_s 73.0, lot band 289.6, bottom 142.0 (rev), west_n 27.0 (rev), arc_nw 82.0 (rev), oval NW -> S/F 317.6 | **2,217.8 +-54** | 9.2, 6.7, 6.2, 3.8, **64.3 bridge**, 6.4, 5.4, 5.8, 6.0 |
+| **IF-K infield only** (Kevin's shape) | diag_n, diag_s, lot band, bottom (rev), S-curve (rev), C road east (c_road.b) | **760.3 +-36** | 3.8, **64.3 bridge**, 6.4, 2.2, 2.0, 4.9 |
+
+RC-D against the published 2,074 / 2,116 m: **+144 / +102 m**. The maps' own registered lines (2,186-2,189 m) are as long,
+so the difference is not the assembly. Most is the measuring line: the oval share here is the mid-surface line
+(1,262.4 m); on a line 15 ft off the inside edge it scales by 1,573.7 / 1,622.8 to ~1,224 m, leaving ~+64 m against
+2,116 [not resolved; the publishers' measuring line is not stated].
+
+**Direction.** The road course: counter-clockwise, as both maps draw it. Kevin's strokes give shape only (his road-course
+stroke runs the same pieces, drawn clockwise). **The infield-only layout runs the way the published road course runs on
+the pieces they share** (diag north -> diag south -> the lot the long way -> bottom road west), then north up the S-curve
+and east on the C road back to the diag; Kevin's infield stroke happens to run that way too. No map publishes an
+infield-only course. One old listing (search snippet only) says Track Sprints run the infield in the reverse direction:
+**unconfirmed** (no page reached), so not adopted.
+
+**5. The corners** (each label: the map line's nearest point, then that point's station on RC-D from the S/F; labels
+are printed 19-47 m off the line, so a station is good to a corner's length, not to an apex). The two maps number
+different corners:
+
+| corner on RC-D | racingcircuits.info | SCCA |
+|---|---|---|
+| oval turns 1-2 ("the longest corner") | **T1** s 299, **T2** s 529 | **1** s 220 |
+| leaving the back stretch (NE diverge) | **T3** s 879 | **2** s 926 |
+| top hairpin | **T4** s 1,119 | **3** s 1,152 |
+| lot, east end | **T5** s 1,437 | **4** s 1,417 |
+| lot, west end onto the bottom road | **T6** s 1,589 | **5** s 1,605 |
+| bottom road | **T7** s 1,636 | **6** s 1,647 |
+| bottom road, west end | **T8** s 1,704 | **7** s 1,743 |
+| west road / sweeper | **T9** s 1,842 | **8** s 1,804 |
+| NW merge onto the oval | - | **9** s 1,993 |
+
+The racingcircuits.info map counts the oval's turns 1 and 2 separately and leaves the merge unnumbered; SCCA counts
+turns 1-2 as one and numbers the merge. Same nine-plus corners, offset by one through the infield. On IF-K: RC T5-T8
+(s 266 / 417 / 464 / 532 from the diag's start).
+
+**Still owed before a build** (unchanged from above): the join onto the oval's unbuilt inside pavement (its slope is
+unmeasured; the 2018 lidar), the infield ground (40 m 3DEP grid now), the lot's north-east side (a measured band, or
+Kevin's word that the straight bridge is the driven line), and which measuring line the published 1.3 mi uses.

@@ -15,7 +15,8 @@
     "2026-11-08 (Kevin, asked on the PC: 'Yes, install overnight', the six conditions met): Sand Creek 0.2.7 to the plain sand_creek_raceway; sand_creek_raceway_lm 0.2.6 moved first to D:/k10-track-archive/2026-11-08_043809_sand_creek/ (MOVES.tsv) and dropped from this list (the old engine's sand_creek_raceway was already out of AC). The race and street menu pictures re-rendered off 0.2.7 (the pack's in D:/k10-track-archive/2026-11-08_053642_previews/).",
     "2026-11-09 (Kevin, asked on the PC: 'Yes and I always want newer builds'): Milford 0.1.6 to the plain milford_road_course; ship_track's install step parked 0.1.5 in D:/k10-track-archive/2026-11-09_093135/ (MOVES.tsv). The menu picture re-rendered off 0.1.6 (the pack's in D:/k10-track-archive/2026-11-09_093221_previews/).",
     "2026-11-09 (Kevin on the PC: 'Yes, check them' / 'I always want newer builds'): Del Mar 0.2.5 to del_mar_fairgrounds; ship_track's install step parked 0.2.4 in D:/k10-track-archive/2026-11-09_105157/ (MOVES.tsv).",
-    "2026-11-09 (Kevin on the PC: 'Yes, check them' / 'I always want newer builds'): High Plains 0.1.5, Nevada Nights 0.1.3, Grand Junction 0.1.2, Pueblo 0.1.3, Aspen 0.1.4 installed under plain names; each old _lm folder moved to D:/k10-track-archive/2026-11-09_<hhmmss>_<folder>/ after its successor installed and dropped from this list. Menu pictures re-rendered (the packs' in 2026-11-09_110323_previews)."
+    "2026-11-09 (Kevin on the PC: 'Yes, check them' / 'I always want newer builds'): High Plains 0.1.5, Nevada Nights 0.1.3, Grand Junction 0.1.2, Pueblo 0.1.3, Aspen 0.1.4 installed under plain names; each old _lm folder moved to D:/k10-track-archive/2026-11-09_<hhmmss>_<folder>/ after its successor installed and dropped from this list. Menu pictures re-rendered (the packs' in 2026-11-09_110323_previews).",
+    "2026-11-09 (Kevin on the PC: 'Yes, check them' / 'I always want newer builds'): Sand Creek 0.2.8 to sand_creek_raceway; ship_track's install step parked 0.2.7 in D:/k10-track-archive/2026-11-09_140029/ (MOVES.tsv)."
   ],
   "ac_tracks": "D:/SteamLibrary/steamapps/common/assettocorsa/content/tracks",
   "archive": "D:/k10-track-archive",
@@ -164,14 +165,14 @@
       "note": "Lake Murray v4 + Mission Gorge Speedway (ship_sd.sh SD_BESPOKE=1); its ship.json ui_name_prefix still says the K10 candidate name, so a reinstall brings it back"
     },
     "sand_creek_raceway": {
-      "branch": "claude/sand-creek-grid-mouths",
+      "branch": "claude/sand-creek-edge-flush",
       "engine": "lm-v4",
-      "installed": "2026-11-08",
+      "installed": "2026-11-09",
+      "note": "0.2.8 = 0.2.7 + the mainline's edge strip flush with the prep's contact band (route.edge.grass_clearance -0.08; the side streets keep 0.10 via connector_grass_clearance; ledger 0087 / 0079); TreeFX Oak3 / SycamoreV1-3 3,471 trees as 0.2.7; records + menu pictures on claude/sand-creek-edge-flush faa3a37",
       "role": "current",
-      "sha": "5a0d1687",
+      "sha": "981727d0",
       "track": "sand-creek-lm",
-      "version": "0.2.7",
-      "note": "0.2.7 = 0.2.6 + rounded paved corner returns at the grid mouths (ledger 0086), the plain folder; records + menu pictures + ledger 0079 4o note on claude/sand-creek-grid-mouths 396604b"
+      "version": "0.2.8"
     }
   }
 }

@@ -2489,8 +2489,9 @@
       "sidewalk_w": 0.2,
       "connector_sidewalk_w": 0.2,
       "grade_w": 1.0,
-      "grass_clearance": 0.05,
-      "_doc": "the circuit edge (ledger 0078): no curb, no sidewalk. The asphalt edge is held at road height for 0.30 m and the run-off ground meets it 0.15 m lower over 1.0 m [invented: the flush meet the drive gate reads as no drop]; the ground beyond is the assembler's conform to the road, then the 3DEP surface: the real run-off level."
+      "grass_clearance": -0.08,
+      "_doc": "the circuit edge (ledger 0078): no curb, no sidewalk. The asphalt edge is held at road height for 0.30 m and the run-off ground meets it 0.15 m lower over 1.0 m [invented: the flush meet the drive gate reads as no drop]; the ground beyond is the assembler's conform to the road, then the 3DEP surface: the real run-off level.",
+      "_grass_clearance_doc": "ledger 0087 (the circuit edge gutter, Milford 0.1.6's fix; Kevin 2026-11-09 \"Yes, check them\"): at 0.05 the strip's outer lip ended 0.12-0.14 m under the lane edge while the prep's 3 m contact band holds the ground at lane - 0.02, so the ground stood over the strip: on the 0.2.0 rehearsal (pp_b5) rc_infield's lip was buried at 260 of 284 side-stations (ground over 46 % of the strip, p50), if_link's at 38 of 46, the oval's wall side 98 of 278 over 5 cm (behind the wall). -0.08 puts the lip 0.02 m under the lane edge, where the ground meets it. The apron side keeps its measured lip (route.edge_apron_file)"
     },
     "crossfall_file": "data/crossfall.lm.json",
     "edge_apron_file": "data/apron.lm.json",

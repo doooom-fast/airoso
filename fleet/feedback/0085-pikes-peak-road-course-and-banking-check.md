@@ -438,3 +438,20 @@ Every other check passed:
 
 Stills: `tracks/pikes-peak-lm/source/pads/still_*.jpg`. Nothing installed. The install waits on Kevin's word (it
 replaces `pikes_peak_international_raceway_lm`: archive it first, then ac_tidy record and the menu pictures).
+
+**8. The edge strip flush (PC, 2026-11-09; ledger 0087's fix, Kevin "Yes, check them").** route.edge.grass_clearance
+0.05 -> -0.08. The strip's outer lip had ended 0.12-0.14 m under the lane edge, while the prep holds the ground at
+lane - 0.02, so the ground stood over the strip.
+
+The fix, measured with the 0087 gutter probe on pp_b5 -> pp_b6:
+
+| | before | after |
+|---|---|---|
+| rc_infield: ground over the strip (median) | 46 % | 4 % |
+| rc_infield: side-stations more than half covered | 129 of 284 | 5 |
+| if_link: side-stations more than half covered | 10 of 46 | 0 |
+| oval wall side: ground more than 5 cm over the lip (behind the wall) | 98 of 278 | 0 |
+
+The apron side keeps its measured lip. The clean rehearsal at this head (`D:/k10-scratch/pp_b6`, `pp_b6.log`) gives the
+same verdicts as pp_b5: oval PASS, road course PASS, infield red on its real hairpin only. Every other gate passes.
+Nothing installed.

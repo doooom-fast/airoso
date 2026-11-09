@@ -1,9 +1,10 @@
 {
   "_doc": "High Plains Raceway through Lake Murray v4's engine (ledger 0078: the old quality bar, ported to check that nothing gets worse). The line, widths and 3DEP are tracks/high-plains's (installed 0.72.1), read by tools/lm_engine_intake.py; the profile is the measured one with the elevation stage's grade cap undone; the camber is the G10 lidar survey (source/lidar/camber-survey/crossfall.json, branch claude/lidar-camber-survey); the edge is the circuit's (no curb, no sidewalk). Every other key is the live track's, copied; the live config is untouched.",
   "archetype": "race_circuit",
-  "name": "High Plains Raceway (LM engine)",
-  "slug": "high_plains_lm",
-  "version": "0.1.4",
+  "name": "High Plains Raceway",
+  "_name_doc": "Kevin 2026-11-07: \"Get rid of Lm Version from names, nothing should be on any other engine now\" / \"LM is the airoso engine\". 0.1.5 (2026-11-09): no \"(LM engine)\" in the display name, and the slug and install_folder are the plain high_plains. The old-engine track (tracks/high-plains) gave that slug up: its slug and folder are high_plains_v072 (S7, fleet.cli lint)",
+  "slug": "high_plains",
+  "version": "0.1.5",
   "mirror_x": false,
   "loop": true,
   "default_width_m": 12.0,
@@ -1137,7 +1138,8 @@
       "sidewalk_w": 0.2,
       "connector_sidewalk_w": 0.2,
       "grade_w": 1.0,
-      "grass_clearance": 0.05,
+      "grass_clearance": -0.08,
+      "_grass_clearance_doc": "0.1.5 (PC, 2026-11-09; Kevin, asked whether the other circuit tracks have Milford's fast-curve edge mess: \"Yes, check them\"; Milford 0.1.6 is the same fix, ledger 0087): the strip's outer lip 2 cm under the lane edge (profile point 3 at -grass_clearance = +0.08 over the unlifted edge; the lane edge at +0.10). engine-july's prep holds the ground past the ROAD edge at the lane edge's height - 0.02 for 3 m (its contact band), so the lower lip lay in a gutter with a wall of ground at its lip. Measured on the installed 0.1.4 (gate OBJ, every 10 m, both sides; strip_gutter.py): the strip's lip 14 cm under the lane edge; the ground just past it stood more than 5 cm over the lip at 90 of 538 side-stations, more than 10 cm at 36 (max 12 cm). Flush with the band, nothing stands over it",
       "_doc": "the circuit edge (ledger 0078): no curb, no sidewalk (neither track has one). The asphalt edge is held at road height for 0.30 m and the run-off ground meets it 0.15 m lower over 1.0 m [invented: the flush meet the drive gate reads as no drop]; the ground beyond is the assembler's conform to the road (20 m + 16 m blend), then the 3DEP surface: the real run-off level. Racing kerbs and paved run-off are NOT built: no measured kerb line or run-off outline is committed for either track (owed: read off the NAIP / lidar)."
     },
     "crossfall_file": "data/crossfall.lm.json",
@@ -1150,7 +1152,7 @@
   "ui_tags": [
     "circuit"
   ],
-  "install_folder": "high_plains_lm",
+  "install_folder": "high_plains",
   "_install_folder_doc": "beside high_plains for the A/B drive (ledger 0078)",
   "ui_series": "doooom Colorado",
   "_ui_series_doc": "Kevin 2026-10-28: 'K10 is gone. doooom.' Content Manager shows '<ui_series> - <layout name>' (tools/ship_track.sh ui_name_prefix carries the same string)",

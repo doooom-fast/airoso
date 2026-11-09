@@ -52,6 +52,40 @@ the config names `road_wear` (no header otherwise: Lake Murray's chain, `tools/s
 `tests/tools/test_ship_track_chain.py` V4_EXTRAS names the new prep header. engine-july's `export_kn5_addon.py` binds
 `data/road_wear.json`'s material rows only when the config names the key (PENDING-MIRROR line).
 
+## 2026-11-09 — Milford furniture pass 3: the rails re-seated on the prepped ground, far blocks at their measured roof, a seat report (ledger 0082 pass 3; no gate threshold moved, no bypass)
+
+**Why.** A built-ground read of 0.1.5 / 0.1.6's gate OBJ (`tracks/milford-road-course-lm/source/furniture/pass3/scripts/
+seat_built.py`) found the NW corner's W-beam G1 with its rail top a **median 0.39 m UNDER the built grass** (p5 -0.69 m;
+117 of 132 cells under 0.6 m), and G2 / G3 showing 0-0.5 m of their 0.70 m in 148 / 93 cells. No gate saw it: drive_test,
+audit_mesh and kn5_ground_check ask whether a wall stands on ground (it did: under it), not whether it shows. Mechanism,
+shown in Blender on the workshop: `tools/author_bespoke_blend.py` seats on loop.blend's author ground; engine-july's prep
+then raises the ground near the road (G1's SW end 19.42 -> 20.87 m, +1.45 m). The PC found Pikes Peak's rails buried the
+same way.
+
+**Wiring (opt-in, Milford only).** `tools/ship_track.sh` `prep_prep`, after red repairs, before the split: when
+`scenery.bespoke.reseat_on_prep` is true, `tools/reseat_bespoke_blend.py` moves every vertex of the rails kinds' meshes
+(GUARDRAIL_W, 1WALL_GHOST_RAIL, 1WALL_TECPRO_TYRES, 1WALL_TILTUP_SCREEN) by (built ground) - (author ground) at its own plan
+position, read by a ray from 6.0 m ⚠ [invented] above it; a move over 3.0 m ⚠ [invented] (another layer, L4) or a vertex
+with no ground fails it (exit 1, the blend not saved). No key = no header, nothing runs. `tools/ship_sd.sh` (Lake Murray's
+chain of record) is untouched; `test_ship_track_chain.py` V4_EXTRAS carries the new header.
+
+**Far blocks (opt-in key `roof_z_m`).** A far block was seated at its lowest built ground; over sloping or skirted ground that
+sank its lap side (the west hall: 13 m of wall from a skirt 17 m under its high side). With `roof_z_m` (the lidar's roof
+elevation in the scene frame) the roof stands there and the walls reach the lowest ground; a roof under half its wall over
+the highest ground is refused. Named only by Milford's `source/furniture/pass3/blocks.json` and `mpg_plant_a`.
+
+| number | value | source |
+|---|---|---|
+| F1's north-east end | 58.6 m at 4.14 m | **measured**: the median of 15 bins' p90 top, 2017 lidar (`pass3/f1ne_bins.json`) |
+| four west site buildings: wall / roof elevation | 12.09 / 60.22, 13.06 / 55.20, 7.85 / 46.51, 5.12 / 19.30 m | **measured** (`pass3/tiers.json`) |
+| mpg_plant_a | 11.0 -> 10.0 m, roof 24.25 m | **measured** over its southern 5,748 m2 (was ⚠ [invented]) |
+| the new blocks' skin | tilt-up | ⚠ [invented]: no wall is seen from above |
+
+**`seat_built.py` is a report, not a gate** (wired into no chain): per 0.5 m cell of each rail / tyre wall / screen, the top
+over the highest built ground; FAIL when over 2 % ⚠ [invented] of a piece's cells show 0.10 m ⚠ [invented] under the
+entry's intended top, or a solid piece's foot floats over 5 cm (kn5_ground_check's). 0.1.6 (Mac rebuild): FAIL (G1, G2, G3,
+T3); 0.1.8: PASS. Owed: a gate, proven on Pikes Peak's buried rails first.
+
 ## 2026-11-07 — NEW GATE (opt-in): `edge_smoothness`, the built lane edges are smooth (ledger 0087)
 
 **Why.** Kevin, 2026-11-07: "Milford should very smooth edges and they're ragged in places." No gate read the outline of

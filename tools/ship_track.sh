@@ -511,10 +511,20 @@ prep_prep() {
     step "ship: red repairs (tools/red_repairs_blend.py: the named kerb faces, the named ground slivers; self-checked)"
     "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/red_repairs_blend.py" -- "$PROJ/blender/$SLUG.blend" --project "$PROJ" 2>&1 | grep "^\[red\]\|Error\|Traceback"
   fi
+  # ledger 0082 pass 3 (Milford 0.1.8): the bespoke rails, tyre walls and screens moved with the ground the prep moved under them
+  # (seated on the author ground, they stood buried in the prepped ground: Milford's G1 a median 0.39 m under it). Opt-in:
+  # scenery.bespoke.reseat_on_prep true; no key = no header, nothing runs (Lake Murray's chain is tools/ship_sd.sh, untouched)
+  rm -f "$PROJ/data/reseat_bespoke.json"
+  if [ "$(pyq "import json,sys; print(((json.load(open(sys.argv[1],encoding='utf-8')).get('scenery') or {}).get('bespoke') or {}).get('reseat_on_prep') is True)" "$PROJ/track.config.json" | tr -d '\r')" = "True" ]; then
+    step "ship: the bespoke rails, tyre walls and screens re-seated on the prepped ground (tools/reseat_bespoke_blend.py; self-checked)"
+    "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/reseat_bespoke_blend.py" -- "$PROJ/blender/$SLUG.blend" --project "$PROJ" 2>&1 | grep "^\[reseat\]\|FATAL\|Error\|Traceback"
+  fi
   # ledger 0084 (opt-in: a track.config.json road_wear key; none = no header, nothing runs, the stale report removed): the
   # road's tone off the aerial and the rubber where tyres run, baked into a world atlas under the stock asphalt as detail;
   # UVs and materials only, every vertex where the chain put it. Last in prep: it reads the final 1ROAD. Part of prep
-  # (steps.prep stays prep, split)
+  # (steps.prep stays prep, split). After the 0082 re-seat above (Milford 0.1.9): the re-seat reads the prepped 1GRASS / 1KERB
+  # positions and moves only the rail kinds' vertices; the bake reads 1ROAD / 1KERB_SIDEWALK and writes only their UVs and
+  # materials, so the two commute; the re-seat goes first so it reads the ground the rest of prep left, the bake stays last
   rm -f "$PROJ/data/road_wear.json"
   if [ "$(pyq "import json,sys; print(bool(json.load(open(sys.argv[1],encoding='utf-8')).get('road_wear')))" "$PROJ/track.config.json" | tr -d '\r')" = "True" ]; then
     step "ship: road wear where tyres run + the road's tone off the aerial (tools/road_wear_blend.py; ledger 0084; self-checked)"

@@ -49,8 +49,10 @@
     "required": [
       "track.config.json",
       "source/edges/edge_evidence.json",
-      "source/road_wear/naip_2022_mrc.jpg"
+      "source/road_wear/naip_2022_mrc.jpg",
+      "source/furniture/pass3/blocks.json"
     ],
+    "_furniture_doc": "ledger 0082 pass 3 (0.1.8): the site buildings the 2017 lidar measures and NAIP 2022 shows, named once by scenery.bespoke.blocks [{\"file\": ...}]",
     "assets": [
       "assets/textures/tyre_wall_diffuse.png",
       "assets/textures/metal_wall_diffuse.jpg",
@@ -98,7 +100,8 @@
       "data/grassfx.aerial.json",
       "data/road_wear.json",
       "data/road_wear.line.{id}.json",
-      "data/road_wear_check.json"
+      "data/road_wear_check.json",
+      "data/reseat_bespoke.json"
     ],
     "map": [
       [

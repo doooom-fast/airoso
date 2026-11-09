@@ -111,6 +111,9 @@ def test_milford_rails_are_the_inventory_lines():
     lines = {i["id"].lower(): i["polyline_lonlat"] for i in inv["items"] if "polyline_lonlat" in i}
     lidar = {f"f1_nw_screen_{p['tag']}": p for p in json.loads(
         (ROOT / "tracks" / "milford-road-course-lm" / "source" / "lidar" / "f1_entries.json").read_text())}
+    # pass 3 (0.1.8): F1's north-east end, past pass 2's 45 m read, off the vegetation read (source/furniture/pass3/)
+    p3 = json.loads((ROOT / "tracks" / "milford-road-course-lm" / "source" / "furniture" / "pass3" / "f1_ne_end.json").read_text())
+    lidar[p3["key"]] = p3
     for r in cfg["scenery"]["bespoke"]["rails"]:
         if r["kind"] == "screen":                    # pass 2: F1 stands on the line and at the height the lidar measured
             p = lidar[r["key"]]

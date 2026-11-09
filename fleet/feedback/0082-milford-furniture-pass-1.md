@@ -867,3 +867,225 @@ kn5_textures, house_seat, split_manifest, edge_smoothness (the OBJ path only), t
   carries the stills' stand-ins (`tools/menu_preview_blend.py --standins source/vegetation/trees.lm.json`, the shapes of
   `veg_stills_blend.py`; 10,924 of 11,247 have ground under them in the split scene); copied into AC, the pack's own in
   `D:/k10-track-archive/2026-11-08_014406_previews/`.
+
+---
+
+# Furniture pass 3 (2026-11-09): what a driver sees that is missing, measured off what is on disk; 0.1.8
+
+## P3.0 Request
+
+- Kevin, 2026-11-08 22:15, after driving 0.1.5: **"Lots to furniture needed all over"** (the same evening as "Milford still
+  looks messy on the edges of the high speed curves", which 0.1.6 fixed, ledger 0087). Asked where to start: **"Milford
+  first"**. Standing: "I just want real"; "We want all treefx as a rule"; "I always want newer builds"; downloads need his yes.
+- Branch `claude/milford-furniture-018` from `claude/milford-edge-strip-016` d8d1473 (0.1.6 installed). Version 0.1.8 (0.1.7 is
+  the road-texture job on its own branch from the same base). Everything here is in `source/furniture/pass3/`, the config's
+  existing keys (a blocks group's `file`, the `screen` kind), and two opt-in keys in shared code that only Milford names
+  (P3.4): `roof_z_m` on a far block, `scenery.bespoke.reseat_on_prep`.
+- /Volumes/Drive stopped accepting new files mid-pass (2026-11-09 ~13:35, EINVAL on every create; appends and reads work).
+  Kevin: **"Move to system disk"**: from there on the worktree, the sources, the workshops and TMPDIR are on the Mac's system
+  disk (`<scratchpad>/sys/`), the read-only inputs (NAIP, the lidar read, `mf_work/eng2`, the placeholder bins) on the Drive.
+
+## P3.1 What was on disk, and what each source can still say (nothing downloaded)
+
+- **The vegetation pass's read** of pass 2's 71 EPT nodes (`/Volumes/Drive/codex/mf_work/veg/read/veg.npz` 1 m grids,
+  `veg_canopy.npz` every non-ground return over 2 m; 3DEP `USGS_LPC_MI_31Co_Oakland_2016_LAS_2019`, **flown 2017-05-03**).
+  Pass 2's furniture read kept only the lane edge + 45 m; the shallower nodes cover far more at a lower density: full
+  density over the lap, the infield, the NW lots and plant, the west site to e -644, the east houses to e +580. No
+  building class (ground and unclassified only), so a roof is told from a crown by the 1 m surface (`scripts/bld2.py`:
+  2 m cells, |h - its 3x3 median| < 0.35 m, the cell's first returns single-pulse) and checked against NAIP 2022.
+- **NAIP 2022-08-16** (`tracks/milford-road-course/source/naip_2022_mrc.jpg`, e -522 .. +544 m): what still stands, by
+  tone (`scripts/naipchk.py`: a roof's green excess is under ~6, a crown's 25-40).
+- **The flight is still five years older than the rails, tyre walls, sheds and tent** (pass 2): nothing of pass 1's
+  classes can be re-measured from it. What it CAN say is everything that stood in May 2017 and still stands in 2022:
+  buildings, F1, the hedge, the plant.
+- **Visibility from the car** (`scripts/vis.py`): the sight line from 1.1 m over every 7th lap point (467) to each roof's
+  corners, through the 2017 surface (ground + canopy). The woods grew after 2017, so it over-reads visibility, never under.
+- Published pages read for identity (GM's 100-year fact sheet and press): a 2.9-mile, 17-turn course emulating sections of
+  famous tracks; nothing on its furniture. No page was downloaded.
+
+## P3.2 The inventory: everything a driver would look for, lap and paddock (`source/furniture/pass3/`)
+
+Positions are local metres (e, n) about the centreline's origin; "seen from" = lap points of 467 with a clear sight line.
+
+| # | item | where | how measured | invented | built |
+|---|---|---|---|---|---|
+| 1 | **F1's north-east end** (the light screen along the NW boundary) | from F1's built NE end (e -165, n 456) to e -112, n 484, 45-74 m off the edge | 2017 lidar: 15 bins of 4 m, plan sd 0.27-0.49 m, p90 top 3.97-4.31 m, single-pulse tops 0.80-1.00 (opaque, as the built 197 m); NAIP 2022 shows the light line and its shadow to the same end | panel 4.0 m, thickness 0.20 m (the kind's) | **yes**: `f1_nw_screen_ne_end`, 58.6 m at **4.14 m [measured]** |
+| 2 | **MPG building west of the front straight** ("a": white roof, a stack at its north end) | e -500..-440, n -186..-234; 132 m off the edge | roof 1,032 m2 of 2 m cells, p10 / p50 / p90 11.92 / 12.09 / 12.54 m over the lidar ground, its elevation 60.22 m; NAIP 2022 white roof (green excess 1.5, lum 237) | wall skin (tilt-up concrete: no wall is seen from above) | **yes**: far block, **12.09 m, roof at 60.22 m [measured]**, seen from 125 lap points |
+| 3 | **MPG plant hall south-west of it** ("b") | e -590..-447, n -313..-442; 146 m off | roof 6,944 m2, 10.45 / 13.06 / 15.56 m over the ground; its roof ELEVATION is level (p50 / p90 55.1 / 55.4 m in the scene frame) over ground falling 7.0 m: a flat roof on a slope; NAIP 2022 white roof, a tank yard to its SE | the skin | **yes**: far block, roof at **55.20 m [measured]**, seen from 59 |
+| 4 | **block south of the hall** ("c") | e -490..-451, n -427..-465; 173 m off | roof 572 m2, 7.64 / 7.85 / 8.20 m; NAIP 2022 white roof | the skin | **yes**: far block, **7.85 m, roof at 46.51 m [measured]**, seen from 38 |
+| 5 | **small building north of the employee lot** | e -250..-238, n 550..558; 145 m off | roof 64 m2, 5.07 / 5.12 / 5.26 m; NAIP 2022 white roof | the skin | **yes**: far block, **5.12 m, roof at 19.30 m [measured]**, seen from 8 |
+| 6 | **MPG plant A** (pass 1's backdrop, 11.0 m [invented]) | NW, 137 m off | its southern 5,748 m2 of roof inside the read: 9.42 / 10.04 / 10.96 m | footprint by eye off NAIP (pass 1, +-5 m) | **height 10.0 m, roof at 24.25 m [measured]** (it stood ~5 m low, P3.4); seen from 114 |
+| 7 | hall "b"'s low NW annex | e -511..-587, n -312..-385 | roof 1,480 m2, 6.44 / 6.92 / 8.00 m | - | no: mostly west of the NAIP crop (2022 unconfirmed), and 2 planted crowns stand within 1 m of its rectangle |
+| 8 | NW and far-west MPG buildings (5 roofs, 4.0-11 m) | e -575..-645, n -224..+386, 230-375 m off | 2017 lidar roofs | - | no: **west of the NAIP crop on disk, so 2022 is unconfirmed**; seen from 12-28 lap points (download b below) |
+| 9 | the west hedge | n -152 from e -420 to -358 (63 m), then north along e -357 to n -116 (36 m); 50-120 m off the front straight | 2017 lidar: a continuous single-pulse line, p50 / p90 top 2.64-2.76 / 3.06-3.15 m; NAIP 2022 dark green and textured, with a shadow: an evergreen hedge, not a fence | - | no: the engine has no hedge kind; a wall would misstate it, a card tree is banned (Kevin: all TreeFX) |
+| 10 | a solar carport | e -280..-241, n 470..480, behind F1 | 2017 lidar: a 40 x 10 m roof at 3.5-4.6 m; NAIP 2022 dark ribbed panels | - | no: seen from 3 lap points (F1 hides it), and the block kind would draw it as a solid box |
+| 11 | a ground-mount solar array | e -470..-430, n -260..-300 | NAIP 2022 rows; built after the 2017 flight | - | no: no height on disk |
+| 12 | 13 houses east of Hickory Ridge Rd | e 449-544, n -551..+455, 79-192 m off | 2017 lidar roofs 3.6-9.3 m, NAIP 2022 roofs | - | no: **seen from 0 lap points** through the east woods, even with the 2017 canopy |
+| 13 | 3 buildings south of the lap | n -827..-850, 219-249 m off | 2017 lidar roofs 6.1-8.5 m | - | no: seen from 0 |
+| 14 | W-beam G1-G4, tyre walls T1-T3, sheds S1 / S2, the pad tent | pass 1 | the 2017 flight predates them (pass 2); none newly measurable | heights as pass 1 | already built; **re-read on the BUILT ground: G1 was buried (P3.4), now re-seated** |
+| 15 | catch fencing, more rails, Tec-Pro | along the lap | none on NAIP 2022 at 0.6 m; the 2017 lidar has no linear structure 0.4-1.4 m tall longer than 16 m within 45 m (pass 2 `lines.py`) and only a sparse, unconfirmed 1.7-2.4 m scatter on the W / NW boundary | - | no: nothing on disk shows one |
+| 16 | marker / brake / corner boards, signage, marshal posts, light poles, gates | along the lap | under a metre across: not resolvable on NAIP 2022; the 2017 lidar has no isolated pole or post within 45 m (pass 2 `poles.json`) | - | no. Two light ~2 x 1 m objects stand at the NE corner's outer treeline on NAIP 2022 (e 245, n 425; e 258, n 401), nothing there in 2017: identity unknown, not built |
+| 17 | timing / control tower, pit wall, garages, paddock buildings, gantries | the front straight and the pad | none on NAIP 2022 (pass 1); the 2017 lidar has no roof within 75 m of the lap except F1, and nothing over the lane | - | none exists to build |
+| 18 | parked and stored items | the pad, the infield service road, the lots | 2017 lidar: rows of 0.5-2 m returns on the pad and lots (cars), 2-4 m objects on the infield service road (trailers) gone by 2022; NAIP 2022: trailers on the pad's east edge, cars in the lots | - | no: vehicles, transient (as pass 1) |
+| 19 | the overhead line on the east side | s 3,177-3,496, 27-32 m off | wires 10.7-12.8 m (pass 2) | - | no: its poles stand in the treeline and do not separate from the crowns |
+| 20 | the underpass portal U1 | the SW climb | its headwall 0.6-1.6 m (pass 2) | - | no: the deck is not modelled |
+| 21 | the white transverse line on the front straight | ~260 m south of S/F | NAIP 2022 | - | not furniture: a road marking (the 0.1.7 road-texture job's) |
+
+**invented-from-standard this pass: none.** Every new height is the lidar's; the only invention in the new items is the
+wall skin (tilt-up concrete, as pass 1's plant blocks) and F1's panel / thickness (the kind's, pass 2). Plant B (11.0 m
+[invented], outside the read) stays as pass 1 built it: its built ground spans -0.13..11.72 m under its rim, so its roof
+(10.72 m) stands 1 m UNDER its high side's ground; owed (needs its roof read: download a's flight, or the NAIP tile's
+shadow). Pass 1's W-beam
+0.70 m (an NCHRP-350-era strong-post rail's 27-28 in) and tyre walls 1.0 m stay as they were.
+
+
+## P3.4 What the BUILT ground showed, and the two fixes (`tools/reseat_bespoke_blend.py`, `roof_z_m`; GATES-CHANGELOG 2026-11-09)
+
+- **G1 was buried in 0.1.5 and 0.1.6.** `scripts/seat_built.py` on the gate OBJ (the shipped kn5; L5), per 0.5 m cell the top
+  over the highest built ground: G1's rail top a **median 0.39 m under the grass** (p5 -0.69 m; 117 of 132 cells under 0.6
+  m), G2 148 and G3 93 cells under 0.6 m (G3 p5 0.00 m), T3 12 of 105 cells under its 1.0 m. Kevin drove a NW corner with
+  no rail showing. No gate saw it: every one asks whether a wall stands ON ground (it stood under it), none whether it shows.
+- **Mechanism, shown** (`probe_g1.py`, Blender, the same workshop): the author ground under G1 (loop.blend's TERRAIN) 16.80 ..
+  19.42 m, the prepped ground (1GRASS) 16.80 .. 20.87 m: engine-july's prep raises the ground near the road after the
+  bespoke step seated the rail, by up to 1.45 m at G1's SW end. The PC's Pikes Peak rails, the same failure.
+- **Fix 1, opt-in `scenery.bespoke.reseat_on_prep`**: a step at the end of `prep_prep` moves every vertex of the rails kinds'
+  meshes by (built ground) - (author ground) at its own plan position, so each keeps the height the author tool gave it over
+  the ground the car sees. 0.1.8's log: G1's meshes up to +1.48 m (GUARDRAIL_W_0 p50 +0.13 / p95 +1.28 m; its collider p50
+  +1.06 m), G2 / G3 up to +1.05 m, T3 up to +0.19 m; G4, T1, T2 and F1 0 (beyond the prep's reach). Unmoved vertices keep
+  their exact bytes (a first run's round trip through the inverse matrix split 2-3 % more vertices on export: mesh_diff caught
+  it; fixed, re-built).
+- **The far blocks sank too.** Seated at their lowest built ground, the west hall's walls rose 13.1 m from a ground skirt 17 m
+  under its high side, its roof 4.5 m under the ground the lap sees; plant A stood ~5 m low (built ground under its rim
+  8.7-14.4 m, the lidar's 13.8-19.2 m). **Fix 2, opt-in `roof_z_m`** on an off-terrain block: the roof at its measured
+  elevation (the lidar's ground + height, in the scene frame: the lap's lidar ground minus its local y is 316.26 m, the
+  origin's elevation, to the centimetre), the walls down to the lowest built ground; refused if the roof stands less than half
+  its wall over the highest ground under it. The hall's roof is level (55.1-55.4 m) over ground falling 7 m: what pass 3 first
+  read as a sloped roof is a flat roof on a slope.
+- Plant B (pass 1, 11.0 m [invented], outside the read) still stands with its roof 1.0 m under its high side's ground: owed.
+
+## P3.5 The builds (Mac, the system disk, EMPTY workshops, `--no-install`, no force)
+
+- `tools/ship_track.sh` with the Mac Blender, v015/build.sh's recipe (`<scratchpad>/sys/work/furniture/build.sh`): AIROSO = a
+  `git archive` of the head under test + the two 82 B placeholder `Oak3.bin` / `SycamoreV2.bin` (positions only; the models
+  are the PC's), ENG = a copy of `mf_work/eng2` (its `assets/textures` md5-equal to this head's, 96 / 96: no texture added),
+  TMPDIR beside the workshops. One Blender build at a time; each workshop deleted once its gate JSON, log and stills were kept
+  (`source/furniture/pass3/records/mac_016/`, `mac_018/`).
+- **b016** = d8d1473 (0.1.6 as installed), for the before column and the stills. Its road kn5 is **39,002,272 B, the PC's
+  installed 0.1.6 to the byte**.
+- **b018** = 06d0412 (0.1.8). Both logs: `[treefx] 11247 trees ... ['Oak3.bin', 'SycamoreV2.bin']`, `[grassfx] 1285
+  rectangles, 1285 kept`, SHIP OK, exit 0, 18 min each. b018's bespoke lines: `f1_nw_screen_ne_end: 15 screen modules over 59
+  m, 0 left out`; `mpg_west_bldg_a` .. `mpg_nw_small` eaves 60.22 / 55.20 / 46.51 / 19.30 m; `mpg_plant_a` eave 24.25 m;
+  `[reseat] 14 objects moved with the prepped ground`. (Two earlier b018 runs: the first stood the far blocks at their lowest
+  ground and the rails on the author ground, stopped at the gates; the second's reseat split 2-3 % more vertices on unmoved
+  meshes. Both fixed, P3.4.)
+
+## P3.6 The gate column
+
+| gate (BUILT artifact) | 0.1.6 (PC install records) | 0.1.6 (Mac b016) | **0.1.8 (Mac b018)** |
+|---|---|---|---|
+| drive_test: soft top / severe / undrivable / daylight | 0 / 0 / 0 / 0 | 0 / 0 / 0 / 0 | **0 / 0 / 0 / 0** |
+| drive_test: kinks /km, vertex bumps, fold bumps, apron steps | 6.34, 16, 0, 5 | 6.34, 16, 0, 5 | **6.34, 16, 0, 5** |
+| drive_test: obstructed, floating furniture, off-pavement, excursion drops | 0, 0, 0, 0 | 0, 0, 0, 0 | **0, 0, 0, 0** |
+| audit_mesh A-K | CLEAN (walls 43,335 v) | CLEAN (43,335 v) | **CLEAN (walls 43,907 v: + F1's end, the moved rails' splits; D 0, E 0)** |
+| verify_kn5 + --inis | PASS | PASS | **PASS** |
+| kn5_ground_check | PASS: 336 walls, hovering 0, median -0.461 / p95 -0.186; road over ground 2 / 9,317, max 0.052 | the same | **the same** |
+| kn5_textures | PASS 19 / 32 / 49 | PASS 19 / 32 / 49 | **PASS 19 textures / 33 materials / 51 maps, missing 0** |
+| house_seat | PASS, 3 | PASS, 3 | **PASS, 3** |
+| edge_smoothness | PASS: lane \|d2\| p99 1.19 / 1.22 cm, \|resid\| 0.38 / 0.39 cm | the same | **the same** |
+| edge_report at 1 m (not a gate) | kerb 99.5 %, wall 0.5 % | the same | **the same** |
+| veg_verify (not in the chain) | (PC: 11,247 trees in the log) | PASS: 11,247, nearest paved 4.65 m, 385 colliders, 0 orphans, 0 within reach without one | **PASS: the same** |
+| **seat_built (new report, not in the chain)** | - | **FAIL: G1 rail top p50 -0.39 m (117 of 132 cells under 0.6 m), G2 148, G3 93 cells, T3 12 of 105** | **PASS: G1 p5 / p50 0.61 / 0.69 m, G2 0.66 / 0.70, G3 0.67 / 0.69, G4 0.64 / 0.69; every collider 0.65-0.70 m, 0 floating** |
+| chain | SHIP OK | SHIP OK | **SHIP OK, no force** |
+| road kn5 | 39,002,272 B | 39,002,272 B | **39,066,361 B (+64,089 B)** |
+
+## P3.7 What changed in the kn5, mesh by mesh (`vegetation/scripts/mesh_diff.py` b016 -> b018; `records/mesh_diff_b016_b018.json`)
+
+- **Equal**: every road, kerb and ground mesh (1ROAD, 1KERB, the 8 1GRASS tiles), MARKINGS, PADAPRON, both BUILDING meshes
+  (the tent, the sheds), ROOFTOP_TAN, T1 / T2's tyre walls, F1's three built screens; no texture added, changed or dropped.
+- **Only in 0.1.8**: `1WALL_TILTUP_SCREEN_10` (F1's north-east end, 426 v).
+- **Differ, by design**: `FARBLOCK_TILTUP_0` (46 -> 134 v) and `ROOFTOP_WHITE_0`: the four west blocks join plant A / B's
+  batches, and plant A's roof stands at its measured elevation; G1 / G2 / G3's rails and colliders and T3's tyres (re-seated, up to +1.48 m).
+- **Differ by under half a millimetre**: G4's rail and collider (`GUARDRAIL_W_2`, `1WALL_GHOST_RAIL_3`): every vertex within
+  0.35 mm of 0.1.6's, 1-2 vertices more on export (the author and built ground agree there to 0.0003 m; `MIN_MOVE_M` 0.1 mm
+  lets that noise through: owed, a 1-2 mm floor).
+
+## P3.8 Lake Murray unchanged (`<scratchpad>/sys/work/furniture/lm_checks.sh`)
+
+- `git diff origin/claude/milford-edge-strip-016 -- tracks/san-diego-lake-murray`: **empty**. Shared code changed only behind
+  keys no other config names: `tools/author_bespoke_blend.py` (`roof_z_m`), `tools/ship_track.sh` + `tools/reseat_bespoke_blend.py`
+  (`reseat_on_prep`); `tools/ship_sd.sh` (Lake Murray's chain of record) untouched. `test_milford_furniture_pass3.py::
+  test_no_other_track_names_pass3` / `test_reseat_runs_only_when_the_key_says_so` hold it.
+- **Trim A/B** (fleet-lm-engine's `tools/` + `scripts/` against this branch's, Lake Murray's committed trim inputs):
+  **byte-identical**, `connectors.local.json` 664da93b…, `mouths.json` b73b70f4…, `median_bands.json` f0c97952…, log 63af07cc….
+- **make_treefx A/B**: Lake Murray **byte-identical (21,219 lines)**; the Lariat, the Rangely stages, Sand Creek the same.
+- **Tests**: `test_milford_furniture.py` + `test_milford_furniture_pass3.py` (new, 8) + `test_ship_track_chain.py` (V4_EXTRAS
+  gains the reseat header) + `test_ship_sd_chain.py` + `test_milford_vegetation.py` + `test_kn5_textures.py`: 85 pass, with
+  the .venv's `python` on PATH (pass 3's file: 7). Full suite (`tests/run_tests.py`): **1,313 pass, 8 fail**, the known 8 (draft_equiv x5, registry_moves, bench_pad x2).
+
+## P3.9 Stills (Blender EEVEE on each build's split scene, NAIP's sun; TreeFX is the game's, so the trees are STAND-INS)
+
+`source/furniture/pass3/scripts/furniture_stills_pass3_blend.py`, the same cameras on b016 and b018. In the repo, 0.1.6 above /
+0.1.8 below: `source/furniture/pass3/stills/pair_seat_G1_nw_corner_back.jpg` (**the NW corner: no rail at all in 0.1.6, G1
+standing in 0.1.8**), `pair_seat_F1_ne_end_back.jpg`, `pair_seat_straight_west_bldg_a.jpg`. Every still, both builds
+(`mf016_*` / `mf018_*`: `seat_straight_west_bldg_a`, `_bldg_b`, `seat_straight_northbound`, `seat_F1_ne_end_back` / `_ahead`,
+`seat_G1_nw_corner_back` / `_ahead`, `above_west_site`), on this Mac's system disk:
+`<scratchpad>/sys/work/furniture/stills/`. Not seen in game.
+
+## P3.10 Downloads that would measure what is left (none fetched; each needs Kevin's yes)
+
+| | file | source | size | what it would measure |
+|---|---|---|---|---|
+| a | USGS 3DEP `USGS_LPC_MI_31Co_Livingston_2018_LAS_2019`, the EPT nodes over the lap's west side (its conforming bounds end at lon -83.66588, so it covers e -304..-184: the front straight, G1-G3, F1's SW, the west site) | `https://s3-us-west-2.amazonaws.com/usgs-lidar-public/USGS_LPC_MI_31Co_Livingston_2018_LAS_2019/ept.json` (read for its bounds only: no point fetched) | not measured; sizing it is `scripts/ept_plan.py`'s hierarchy reads + HEAD requests (a few hundred kB of metadata); by pass 2's density, est. 10-40 MB for the west strip | a second flight, a year later: whether G1-G3 stood by 2018 (their heights if so), the west site again, the hedge |
+| b | NAIP 2022 west of the crop: an ImageServer export of the strip lon -83.6720..-83.6700, lat 42.5605..42.5795 (or the whole tile `m_4208327_ne_17_060_20220816`) | `https://imagery.nationalmap.gov/arcgis/rest/services/USGSNAIPImagery/ImageServer/exportImage` | ~1-3 MB for the strip (the tile ~150-200 MB) | whether the 2017 roofs of row 8 (and row 7's annex) still stand: then they are built as rows 2-5 |
+| c | the onboard laps (DOSSIER A2.3; pass 1 section 7) | `https://www.youtube.com/watch?v=tNRWvk5nMu0`; `https://www.corvetteblogger.com/2013/08/05/video-take-a-lap-around-the-milford-proving-grounds-in-the-2014-corvette-stingray/` | ~100-300 MB each | the only source in reach for rows 15-17: boards, signs, marshal posts, catch fencing, the tyre walls' identity |
+| d | a newer NAIP vintage (Michigan 2024) over the same frame, the same ImageServer | as b | ~2-6 MB | what stands now (2022 is the newest on disk); a second sun for the shed and tent heights |
+
+## PC runbook 0082-5: rehearse 0.1.8 from an EMPTY workshop with the real TreeFX models; a green newer build installs
+
+1. `git fetch && git checkout claude/milford-furniture-018` (a clean checkout or worktree at this ledger's commit or later).
+2. **The TreeFX models first** (the trap of 0.1.6: a worktree without them planted 0 of 11,247 trees and went green): copy
+   `Oak3.bin` and `SycamoreV2.bin` from `<AC>/content/tracks/milford_road_course/extension/trees/` (0.1.6 installed) or
+   `san_diego_lake_murray_v4/extension/trees/` into `tracks/milford-road-course-lm/source/trees/`; `md5sum` both: Oak3
+   `24111ede…`, SycamoreV2 `7010d61f…`, else stop. `git status` shows nothing under `source/trees/` (gitignored); never
+   commit a .bin.
+3. ENG = `eng_mflm_015` (0.1.6's), its `assets/textures` md5-equal to this head's (96 / 96: this pass adds no texture).
+4. The rehearsal, an EMPTY scratch workshop, no install:
+   ```bash
+   SHIP_PROJ=D:/k10-scratch/milford_018_reh AIROSO=<checkout> ENG=<ENG> PYTHONUTF8=1 \
+     bash tools/ship_track.sh milford-road-course-lm --no-install
+   ```
+   The log must show `[treefx] planted ...: 11247 of 11247 points`, `11247 trees ... ['Oak3.bin', 'SycamoreV2.bin']`,
+   `[grassfx] ... 1285 rectangles, 1285 kept`, the bespoke lines `block mpg_west_bldg_a` .. `mpg_nw_small` (4, off
+   terrain) and `f1_nw_screen_ne_end` (screen, 0 left out), and `SHIP OK`.
+5. Compare every row of P3.6's 0.1.8 column: `python tracks/milford-road-course-lm/source/furniture/gate_table.py
+   D:/k10-scratch/milford_018_reh`; `.../vegetation/scripts/veg_verify.py D:/k10-scratch/milford_018_reh`;
+   `.../furniture/pass3/scripts/seat_built.py D:/k10-scratch/milford_018_reh`; `.../vegetation/scripts/mesh_diff.py
+   <AC>/content/tracks/milford_road_course/milford_road_course.kn5 D:/k10-scratch/milford_018_reh/build/milford_road_course.kn5`
+   (P3.7's list); `.../furniture/pass3/scripts/rails_by_line.py D:/k10-scratch/milford_018_reh` (P3.6's seat_built row); the
+   log's `[reseat] 14 objects moved` with G1's rails up to +1.48 m; the road kn5 39,066,361 B within tangent noise (`tools/kn5_equiv.py` against the Mac's copy if one is carried; never md5). Every row equal (+-1-3
+   grass vertices), else stop and report the row.
+6. **Install (Kevin 2026-11-09: "I always want newer builds": a green newer build installs).** AC closed; list every
+   `milford_road_course*` folder with its `ui/ui_track.json` version; park 0.1.6's workshop (`milford_lm` ->
+   `milford_lm.0.1.6`), run the chain from an EMPTY `D:/k10-scratch/milford_lm` without `SHIP_PROJ` and without
+   `--no-install` (ship_track parks the installed 0.1.6 in `D:/k10-track-archive/<stamp>/` itself). Afterwards one
+   Milford folder, `milford_road_course` 0.1.8; the two .bin md5s in its `extension/trees/`. **If 0.1.7 (the road texture)
+   is merged first, install the merge instead**, rehearsed the same way: the newer green build is the one that installs.
+7. Menu picture: re-render off 0.1.8 with `source/ui/preview.json`'s camera, stand-in trees, as for 0.1.6.
+8. Push the install's sync-back (ai/, data/, loop.blend) and the records on this branch.
+
+## Owed (after pass 3; start here)
+
+1. **The PC: runbook 0082-5**, then the install (Kevin: newer green builds install). Kevin's drive is the verdict: the
+   buildings' skin, F1's end, G1 now standing.
+2. **Kevin's yes on the downloads (P3.10 a-d)**: a and b would measure what this pass could not (G1-G3's heights if the 2018
+   flight post-dates them; the five unconfirmed buildings; the annex); c is the only source for boards, signs, marshal posts and
+   catch fencing.
+3. **seat_built as a gate**: fleet-wide, proven first on Pikes Peak's buried rails (the PC's finding) and on Milford 0.1.6
+   (FAIL) / 0.1.8 (PASS). And `reseat_on_prep` for the other circuit ports whose rails stand within the prep's reach.
+4. **Plant B**: its roof (10.72 m, 11.0 m [invented] wall) stands 1.0 m under its high side's built ground; it needs a measured
+   roof (download a's flight or the NAIP tile) and `roof_z_m`.
+5. The reseat's 0.1 mm floor lets sub-millimetre noise through on G4 (P3.7): raise it to a 1-2 mm floor [to be cited].
+6. The west hedge (P3.2 row 9): a hedge kind (TreeFX has none; a card is banned): Kevin's call whether it matters.
+7. The far ground under the west site falls up to 15 m below the lidar's (the bespoke log's rim reads 24.0-41.4 m under hall b
+   against 38.5-46.4 m): a terrain question (the built ground's margin), not furniture; the walls now reach it.
+8. Pass 2's and the vegetation pass's Owed stand as they were.

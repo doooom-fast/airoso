@@ -14,7 +14,8 @@
     "2026-11-08 (Kevin, asked on the PC: 'Yes, install overnight', the six conditions met): Milford 0.1.5 to the plain milford_road_course; milford_road_course_lm 0.1.4 moved first to D:/k10-track-archive/2026-11-08_011149_milford/ (MOVES.tsv) and dropped from this list. The menu picture re-rendered off 0.1.5 with stand-in trees (the pack's in D:/k10-track-archive/2026-11-08_014406_previews/).",
     "2026-11-08 (Kevin, asked on the PC: 'Yes, install overnight', the six conditions met): Sand Creek 0.2.7 to the plain sand_creek_raceway; sand_creek_raceway_lm 0.2.6 moved first to D:/k10-track-archive/2026-11-08_043809_sand_creek/ (MOVES.tsv) and dropped from this list (the old engine's sand_creek_raceway was already out of AC). The race and street menu pictures re-rendered off 0.2.7 (the pack's in D:/k10-track-archive/2026-11-08_053642_previews/).",
     "2026-11-09 (Kevin, asked on the PC: 'Yes and I always want newer builds'): Milford 0.1.6 to the plain milford_road_course; ship_track's install step parked 0.1.5 in D:/k10-track-archive/2026-11-09_093135/ (MOVES.tsv). The menu picture re-rendered off 0.1.6 (the pack's in D:/k10-track-archive/2026-11-09_093221_previews/).",
-    "2026-11-09 (Kevin on the PC: 'Yes, check them' / 'I always want newer builds'): Del Mar 0.2.5 to del_mar_fairgrounds; ship_track's install step parked 0.2.4 in D:/k10-track-archive/2026-11-09_105157/ (MOVES.tsv)."
+    "2026-11-09 (Kevin on the PC: 'Yes, check them' / 'I always want newer builds'): Del Mar 0.2.5 to del_mar_fairgrounds; ship_track's install step parked 0.2.4 in D:/k10-track-archive/2026-11-09_105157/ (MOVES.tsv).",
+    "2026-11-09 (Kevin on the PC: 'Yes, check them' / 'I always want newer builds'): High Plains 0.1.5, Nevada Nights 0.1.3, Grand Junction 0.1.2, Pueblo 0.1.3, Aspen 0.1.4 installed under plain names; each old _lm folder moved to D:/k10-track-archive/2026-11-09_<hhmmss>_<folder>/ after its successor installed and dropped from this list. Menu pictures re-rendered (the packs' in 2026-11-09_110323_previews)."
   ],
   "ac_tracks": "D:/SteamLibrary/steamapps/common/assettocorsa/content/tracks",
   "archive": "D:/k10-track-archive",
@@ -30,14 +31,15 @@
     ]
   },
   "folders": {
-    "aspen_motorsports_park_lm": {
-      "track": "aspen-lm",
+    "aspen_motorsports_park": {
+      "branch": "claude/circuit-edge-flush",
       "engine": "lm-v4",
+      "installed": "2026-11-09",
       "role": "current",
-      "version": "0.1.3",
-      "branch": "claude/circuit-kerbs-lm",
-      "sha": "f3a93c3f",
-      "installed": "2026-11-05"
+      "sha": "8573cdd0",
+      "track": "aspen-lm",
+      "version": "0.1.4",
+      "note": "0.1.4 = the edge strip flush with the prep's contact band (route.edge.grass_clearance -0.08, ledger 0087 / 0081), the plain folder; aspen_motorsports_park_lm 0.1.3 moved to D:/k10-track-archive/2026-11-09_110255_aspen_motorsports_park/; records + menu picture on claude/circuit-edge-flush 07cc303"
     },
     "del_mar_fairgrounds": {
       "branch": "claude/del-mar-edge-flush",
@@ -49,31 +51,35 @@
       "track": "del-mar-lm",
       "version": "0.2.5"
     },
-    "exotics_racing_lvms_lm": {
+    "exotics_racing_lvms": {
+      "branch": "claude/circuit-edge-flush",
+      "engine": "lm-v4",
+      "installed": "2026-11-09",
+      "role": "current",
+      "sha": "84fefe1c",
       "track": "exotics-racing-lv-lm",
-      "engine": "lm-v4",
-      "role": "current",
-      "version": "0.1.2",
-      "branch": "claude/circuit-kerbs-lm",
-      "sha": "4b3958f6",
-      "installed": "2026-11-05"
+      "version": "0.1.3",
+      "note": "0.1.3 = the edge strip flush with the prep's contact band (route.edge.grass_clearance -0.08, ledger 0087 / 0081), the plain folder; exotics_racing_lvms_lm 0.1.2 moved to D:/k10-track-archive/2026-11-09_110245_exotics_racing_lvms/; records + menu picture on claude/circuit-edge-flush 07cc303"
     },
-    "grand_junction_lm": {
+    "grand_junction": {
+      "branch": "claude/circuit-edge-flush",
+      "engine": "lm-v4",
+      "installed": "2026-11-09",
+      "role": "current",
+      "sha": "8573cdd0",
       "track": "grand-junction-lm",
-      "engine": "lm-v4",
-      "role": "current",
-      "version": "0.1.1",
-      "branch": "claude/circuit-kerbs-lm",
-      "installed": "2026-11-04"
+      "version": "0.1.2",
+      "note": "0.1.2 = the edge strip flush with the prep's contact band (route.edge.grass_clearance -0.08, ledger 0087 / 0081), the plain folder; grand_junction_lm 0.1.1 moved to D:/k10-track-archive/2026-11-09_110115_grand_junction/; records + menu picture on claude/circuit-edge-flush 07cc303"
     },
-    "high_plains_lm": {
-      "track": "high-plains-lm",
+    "high_plains": {
+      "branch": "claude/circuit-edge-flush",
       "engine": "lm-v4",
+      "installed": "2026-11-09",
       "role": "current",
-      "version": "0.1.4",
-      "branch": "claude/circuit-kerbs-lm",
-      "sha": "f3a93c3f",
-      "installed": "2026-11-05"
+      "sha": "8573cdd0",
+      "track": "high-plains-lm",
+      "version": "0.1.5",
+      "note": "0.1.5 = the edge strip flush with the prep's contact band (route.edge.grass_clearance -0.08, ledger 0087 / 0081), the plain folder; high_plains_lm 0.1.4 moved to D:/k10-track-archive/2026-11-09_105942_high_plains/; records + menu picture on claude/circuit-edge-flush 07cc303"
     },
     "lookout_lariat_lm": {
       "track": "lookout-lariat-lm",
@@ -101,14 +107,15 @@
       "branch": "claude/circuit-kerbs-lm",
       "installed": "2026-11-04"
     },
-    "pueblo_motorsports_park_lm": {
-      "track": "pueblo-lm",
+    "pueblo_motorsports_park": {
+      "branch": "claude/circuit-edge-flush",
       "engine": "lm-v4",
+      "installed": "2026-11-09",
       "role": "current",
-      "version": "0.1.2",
-      "branch": "claude/circuit-kerbs-lm",
-      "sha": "f3a93c3f",
-      "installed": "2026-11-05"
+      "sha": "8573cdd0",
+      "track": "pueblo-lm",
+      "version": "0.1.3",
+      "note": "0.1.3 = the edge strip flush with the prep's contact band (route.edge.grass_clearance -0.08, ledger 0087 / 0081), the plain folder; pueblo_motorsports_park_lm 0.1.2 moved to D:/k10-track-archive/2026-11-09_110221_pueblo_motorsports_park/; records + menu picture on claude/circuit-edge-flush 07cc303"
     },
     "rally_co_dragon_tail_gravel_lm": {
       "track": "rally-dragon-tail-gravel-lm",

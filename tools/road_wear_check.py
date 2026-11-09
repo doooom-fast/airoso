@@ -63,7 +63,7 @@ def materials_with_props(path: Path) -> list[dict]:
     def s():
         n = i32(); v = d[o[0]:o[0] + n].decode("utf-8", "replace"); o[0] += n; return v
     for _ in range(i32()):
-        i32(); s(); o[0] += i32()
+        i32(); s(); size = i32(); o[0] += size     # not `o[0] += i32()`: that adds to the offset read before the size
     mats = []
     for _ in range(i32()):
         name = s(); shader = s(); o[0] += 2; i32()
@@ -147,12 +147,16 @@ def main(argv=None) -> int:
 
     # the meshes: world (east, north), uv
     tris = []
-    for me in p["meshes"]:
+    road_tris = set()            # the first surface's (1ROAD): the tone row reads only these (the edge strip's tone is
+    for me in p["meshes"]:       # the road's carried outward, not the photo's verge)
         if me["matid"] >= len(mats) or mats[me["matid"]]["name"] not in decl["materials"]:
             continue
         V = _world_verts(me)
         idx = me["idx"]
+        first = me["name"].upper().startswith(spec["surfaces"][0])
         for t in range(0, len(idx), 3):
+            if first:
+                road_tris.add(len(tris))
             a_, b_, c_ = V[idx[t]], V[idx[t + 1]], V[idx[t + 2]]
             tris.append((((a_[0], -a_[2]), (b_[0], -b_[2]), (c_[0], -c_[2])),
                          ((a_[3], a_[4]), (b_[3], b_[4]), (c_[3], c_[4]))))
@@ -206,9 +210,13 @@ def main(argv=None) -> int:
     px = im.load()
     W, H = im.size
 
+    # the v the kn5 stores against Blender's (v up from the image's bottom row): the add-on writes -v (measured on Milford
+    # 0.1.7: 1ROAD v in -0.85..-0.01); the gate reads all three conventions on the tone row and keeps the one that fits
+    VB = {"v": lambda v: v, "-v": lambda v: -v, "1-v": lambda v: 1.0 - v}
+
     def atlas_lum(u, v, flip):
         x = min(W - 1, max(0, int(u * W)))
-        yy = (1 - v) if not flip else v
+        yy = 1.0 - VB[flip](v)
         y = min(H - 1, max(0, int(yy * H)))
         r_, g_, b_, _a = px[x, y]
         return (0.2126 * r_ + 0.7152 * g_ + 0.0722 * b_) / 255.0
@@ -272,9 +280,10 @@ def main(argv=None) -> int:
                 return None
             r_, g_, b_ = apx[int(u), int(v)]
             return (0.2126 * r_ + 0.7152 * g_ + 0.0722 * b_) / 255.0, b_ / max(1, r_)
-        step = max(1, len(tris) // 6000)
+        rt = sorted(road_tris)
+        step = max(1, len(rt) // 6000)
         samples = []
-        for ti in range(0, len(tris), step):
+        for ti in rt[::step]:
             (P0, P1, P2), (U0, U1, U2) = tris[ti]
             x = (P0[0] + P1[0] + P2[0]) / 3; y = (P0[1] + P1[1] + P2[1]) / 3
             if near_line(x, y) < reach + 0.5:
@@ -283,6 +292,11 @@ def main(argv=None) -> int:
             if al is None or al[1] > spec["tone"]["shadow_blue"]:
                 continue
             samples.append((al[0], (U0[0] + U1[0] + U2[0]) / 3, (U0[1] + U1[1] + U2[1]) / 3))
+        # the lit asphalt only: a shadow's edge and anything the bake clipped or filled is not the photo by design
+        if samples:
+            med = sorted(s_[0] for s_ in samples)[len(samples) // 2]
+            lo, hi = spec["tone"]["clip"]
+            samples = [s_ for s_ in samples if max(0.8, lo) * med <= s_[0] <= hi * med]
 
         def pearson(pairs):
             n = len(pairs)
@@ -292,13 +306,14 @@ def main(argv=None) -> int:
             sxy = sum((q[0] - mx) * (q[1] - my) for q in pairs)
             sx = math.sqrt(sum((q[0] - mx) ** 2 for q in pairs)); sy = math.sqrt(sum((q[1] - my) ** 2 for q in pairs))
             return sxy / max(1e-12, sx * sy)
-        tone_r = {f: pearson([(s_[0], atlas_lum(s_[1], s_[2], f)) for s_ in samples]) for f in (False, True)}
+        tone_r = {f: pearson([(s_[0], atlas_lum(s_[1], s_[2], f)) for s_ in samples]) for f in VB}
         flip = max(tone_r, key=lambda k: tone_r[k] if tone_r[k] is not None else -2)
         r_best = tone_r[flip]
         rows["tone"] = {"pass": r_best is not None and r_best >= GATE["tone_r_min"], "pearson_r": round(r_best or 0, 4),
-                        "samples": len(samples), "v_flipped": flip, "r_other_convention": round(tone_r[not flip] or 0, 4)}
+                        "samples": len(samples), "v_convention": flip,
+                        "r_by_convention": {k: round(v or 0, 4) for k, v in tone_r.items()}}
     else:
-        flip = False
+        flip = "-v"
         rows["tone"] = {"pass": True, "note": "no aerial declared: tone = 1 (nothing to follow)"}
 
     # rubber on the declared line

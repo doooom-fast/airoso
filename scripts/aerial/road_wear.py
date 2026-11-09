@@ -65,7 +65,9 @@ DEFAULTS = {
                                     # NAIP 2022 the model line's tyre band regresses to 0.3 % darker (the centreline 0.7 %),
                                     # so what NAIP sees at 0.5 m is <= ~1 %. Kevin's drive picks it (ledger 0084)
         "track_m": 1.60,            # [measured] a car's track width (front/rear 1.5-1.7 m on the cars AC ships)
-        "spread_m": 0.55,           # [invented] the line's lateral scatter, car to car and lap to lap (1 sigma)
+        "spread_m": 0.70,           # [invented] the line's lateral scatter, car to car and lap to lap (1 sigma). 0.55 (0.1.7's
+                                    # first build) left two tyre stripes with a lighter middle, a lane's look; 0.70 merges
+                                    # them into one band ~3 m wide, a circuit's
         "base": 0.35,               # [invented] the share of peak rubber a straight carries
         "smooth_m": 12.0,           # [invented] rubber builds over a stretch, not a point (1 sigma along the lap)
         "margin_m": 0.95,           # [measured] half a 1.9 m car: the line's centre this far inside the road edge

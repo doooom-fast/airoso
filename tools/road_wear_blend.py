@@ -49,6 +49,7 @@ from scripts.aerial import road_wear as rw  # noqa: E402
 from scripts.ac import pbr  # noqa: E402
 
 VERT_CAP = 65535
+DETAIL_JPEG_Q = 95         # [invented] the pre-brightened detail's JPEG quality (the stock tile is itself a JPEG)
 
 
 def _args():
@@ -296,8 +297,17 @@ def main() -> int:
                 return 1
         dd = d / m0
         clip = float((dd > 1.0).mean())
-        fn = texdir / f"road_wear_detail_{key.lower()}.png"
-        rw.write_png(fn, np.round(np.clip(dd, 0, 1) * 255).astype(np.uint8))
+        # JPEG, as the stock tile it is made from (0.1.7's first build wrote it as PNG: 9.6 MB for a 2.4 MB JPEG)
+        fn = texdir / f"road_wear_detail_{key.lower()}.jpg"
+        hh, ww = dd.shape[:2]
+        im = bpy.data.images.new(fn.stem, ww, hh, alpha=False)
+        px = np.ones((hh, ww, 4), dtype=np.float32)
+        px[..., :3] = np.clip(dd, 0, 1)[::-1]                     # top-down -> Blender's bottom-up rows
+        im.pixels.foreach_set(px.ravel())
+        im.filepath_raw = str(fn)
+        im.file_format = "JPEG"
+        im.save(filepath=str(fn), quality=DETAIL_JPEG_Q)
+        bpy.data.images.remove(im)
         nm = Path(res["normal"]) if res["normal"] is not None and Path(res["normal"]).exists() else files["flat_nm"]
         detail_stats[key] = {"from": str(Path(res["diffuse"]).name), "normal": nm.name, "clipped_pct": round(100 * clip, 3),
                              "size": [d.shape[1], d.shape[0]]}

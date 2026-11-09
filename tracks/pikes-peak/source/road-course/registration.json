@@ -1,0 +1,2805 @@
+{
+"_doc": "Registration of NAIP 2023 0.3 m against the 2018 lidar wall (ledger 0085 Re-trace, step 1). See register_wall.py for the method.",
+"stations": 556,
+"with_band": 374,
+"used": 374,
+"shift_en_m": [
+0.09,
+-0.414
+],
+"shift_m": 0.424,
+"shift_sd_en_m": [
+0.036,
+0.037
+],
+"edge_definition_bias_m": -0.009,
+"residual_m": {
+"rms": 0.161,
+"p50_abs": 0.116,
+"p95_abs": 0.322
+},
+"apply": true,
+"note": "|shift| >= 0.3 m: applied (naip.py subtracts it from every NAIP coordinate)",
+"rows": [
+{
+"s": 0.0,
+"naip_minus_lidar_m": 0.071,
+"used": true
+},
+{
+"s": 3.0,
+"naip_minus_lidar_m": -0.035,
+"used": true
+},
+{
+"s": 6.0,
+"naip_minus_lidar_m": 0.432,
+"used": true
+},
+{
+"s": 9.0,
+"naip_minus_lidar_m": 0.272,
+"used": true
+},
+{
+"s": 12.0,
+"naip_minus_lidar_m": 0.257,
+"used": true
+},
+{
+"s": 15.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 18.0,
+"naip_minus_lidar_m": 0.298,
+"used": true
+},
+{
+"s": 21.0,
+"naip_minus_lidar_m": 0.082,
+"used": true
+},
+{
+"s": 24.0,
+"naip_minus_lidar_m": 0.003,
+"used": true
+},
+{
+"s": 27.0,
+"naip_minus_lidar_m": 0.36,
+"used": true
+},
+{
+"s": 30.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 33.0,
+"naip_minus_lidar_m": 0.121,
+"used": true
+},
+{
+"s": 36.0,
+"naip_minus_lidar_m": 0.515,
+"used": true
+},
+{
+"s": 39.0,
+"naip_minus_lidar_m": 0.283,
+"used": true
+},
+{
+"s": 42.0,
+"naip_minus_lidar_m": 0.21,
+"used": true
+},
+{
+"s": 45.0,
+"naip_minus_lidar_m": 0.279,
+"used": true
+},
+{
+"s": 48.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 51.0,
+"naip_minus_lidar_m": 0.231,
+"used": true
+},
+{
+"s": 54.0,
+"naip_minus_lidar_m": 0.432,
+"used": true
+},
+{
+"s": 57.0,
+"naip_minus_lidar_m": 0.092,
+"used": true
+},
+{
+"s": 60.0,
+"naip_minus_lidar_m": 0.183,
+"used": true
+},
+{
+"s": 63.0,
+"naip_minus_lidar_m": 0.177,
+"used": true
+},
+{
+"s": 66.0,
+"naip_minus_lidar_m": 0.347,
+"used": true
+},
+{
+"s": 69.0,
+"naip_minus_lidar_m": 0.237,
+"used": true
+},
+{
+"s": 72.0,
+"naip_minus_lidar_m": 0.435,
+"used": true
+},
+{
+"s": 75.0,
+"naip_minus_lidar_m": 0.299,
+"used": true
+},
+{
+"s": 78.0,
+"naip_minus_lidar_m": 0.315,
+"used": true
+},
+{
+"s": 81.0,
+"naip_minus_lidar_m": 0.377,
+"used": true
+},
+{
+"s": 84.0,
+"naip_minus_lidar_m": 0.005,
+"used": true
+},
+{
+"s": 87.0,
+"naip_minus_lidar_m": 0.452,
+"used": true
+},
+{
+"s": 90.0,
+"naip_minus_lidar_m": 0.318,
+"used": true
+},
+{
+"s": 93.0,
+"naip_minus_lidar_m": 0.201,
+"used": true
+},
+{
+"s": 96.0,
+"naip_minus_lidar_m": 0.175,
+"used": true
+},
+{
+"s": 99.0,
+"naip_minus_lidar_m": 0.079,
+"used": true
+},
+{
+"s": 102.0,
+"naip_minus_lidar_m": 0.266,
+"used": true
+},
+{
+"s": 105.0,
+"naip_minus_lidar_m": 0.301,
+"used": true
+},
+{
+"s": 108.0,
+"naip_minus_lidar_m": 0.37,
+"used": true
+},
+{
+"s": 111.0,
+"naip_minus_lidar_m": 0.169,
+"used": true
+},
+{
+"s": 114.0,
+"naip_minus_lidar_m": 0.016,
+"used": true
+},
+{
+"s": 117.0,
+"naip_minus_lidar_m": 0.234,
+"used": true
+},
+{
+"s": 120.0,
+"naip_minus_lidar_m": 0.055,
+"used": true
+},
+{
+"s": 123.0,
+"naip_minus_lidar_m": 0.023,
+"used": true
+},
+{
+"s": 126.0,
+"naip_minus_lidar_m": 0.14,
+"used": true
+},
+{
+"s": 129.0,
+"naip_minus_lidar_m": 0.341,
+"used": true
+},
+{
+"s": 132.0,
+"naip_minus_lidar_m": 0.295,
+"used": true
+},
+{
+"s": 135.0,
+"naip_minus_lidar_m": 0.447,
+"used": true
+},
+{
+"s": 138.0,
+"naip_minus_lidar_m": 0.358,
+"used": true
+},
+{
+"s": 141.0,
+"naip_minus_lidar_m": 0.518,
+"used": true
+},
+{
+"s": 144.0,
+"naip_minus_lidar_m": 0.284,
+"used": true
+},
+{
+"s": 147.0,
+"naip_minus_lidar_m": 0.557,
+"used": true
+},
+{
+"s": 150.0,
+"naip_minus_lidar_m": 0.417,
+"used": true
+},
+{
+"s": 153.0,
+"naip_minus_lidar_m": 0.197,
+"used": true
+},
+{
+"s": 156.0,
+"naip_minus_lidar_m": 0.128,
+"used": true
+},
+{
+"s": 159.0,
+"naip_minus_lidar_m": 0.281,
+"used": true
+},
+{
+"s": 162.0,
+"naip_minus_lidar_m": 0.272,
+"used": true
+},
+{
+"s": 165.0,
+"naip_minus_lidar_m": 0.277,
+"used": true
+},
+{
+"s": 168.0,
+"naip_minus_lidar_m": 0.132,
+"used": true
+},
+{
+"s": 171.0,
+"naip_minus_lidar_m": 0.157,
+"used": true
+},
+{
+"s": 174.0,
+"naip_minus_lidar_m": 0.375,
+"used": true
+},
+{
+"s": 177.0,
+"naip_minus_lidar_m": 0.411,
+"used": true
+},
+{
+"s": 180.0,
+"naip_minus_lidar_m": 0.311,
+"used": true
+},
+{
+"s": 183.0,
+"naip_minus_lidar_m": 0.115,
+"used": true
+},
+{
+"s": 186.0,
+"naip_minus_lidar_m": 0.372,
+"used": true
+},
+{
+"s": 189.0,
+"naip_minus_lidar_m": 0.348,
+"used": true
+},
+{
+"s": 192.0,
+"naip_minus_lidar_m": 0.222,
+"used": true
+},
+{
+"s": 195.0,
+"naip_minus_lidar_m": 0.402,
+"used": true
+},
+{
+"s": 198.0,
+"naip_minus_lidar_m": 0.332,
+"used": true
+},
+{
+"s": 201.0,
+"naip_minus_lidar_m": 0.234,
+"used": true
+},
+{
+"s": 204.0,
+"naip_minus_lidar_m": 0.326,
+"used": true
+},
+{
+"s": 207.0,
+"naip_minus_lidar_m": 0.162,
+"used": true
+},
+{
+"s": 210.0,
+"naip_minus_lidar_m": 0.14,
+"used": true
+},
+{
+"s": 213.0,
+"naip_minus_lidar_m": 0.154,
+"used": true
+},
+{
+"s": 216.0,
+"naip_minus_lidar_m": 0.135,
+"used": true
+},
+{
+"s": 219.0,
+"naip_minus_lidar_m": 0.277,
+"used": true
+},
+{
+"s": 222.0,
+"naip_minus_lidar_m": 0.112,
+"used": true
+},
+{
+"s": 225.0,
+"naip_minus_lidar_m": 0.459,
+"used": true
+},
+{
+"s": 228.0,
+"naip_minus_lidar_m": 0.13,
+"used": true
+},
+{
+"s": 231.0,
+"naip_minus_lidar_m": 0.071,
+"used": true
+},
+{
+"s": 234.0,
+"naip_minus_lidar_m": 0.405,
+"used": true
+},
+{
+"s": 237.0,
+"naip_minus_lidar_m": 0.081,
+"used": true
+},
+{
+"s": 240.0,
+"naip_minus_lidar_m": 0.128,
+"used": true
+},
+{
+"s": 243.0,
+"naip_minus_lidar_m": 0.464,
+"used": true
+},
+{
+"s": 246.0,
+"naip_minus_lidar_m": 0.588,
+"used": true
+},
+{
+"s": 249.0,
+"naip_minus_lidar_m": 0.639,
+"used": true
+},
+{
+"s": 252.0,
+"naip_minus_lidar_m": 0.498,
+"used": true
+},
+{
+"s": 255.0,
+"naip_minus_lidar_m": 0.387,
+"used": true
+},
+{
+"s": 258.0,
+"naip_minus_lidar_m": 0.557,
+"used": true
+},
+{
+"s": 261.0,
+"naip_minus_lidar_m": 0.343,
+"used": true
+},
+{
+"s": 264.0,
+"naip_minus_lidar_m": 0.444,
+"used": true
+},
+{
+"s": 267.0,
+"naip_minus_lidar_m": 0.41,
+"used": true
+},
+{
+"s": 270.0,
+"naip_minus_lidar_m": 0.655,
+"used": true
+},
+{
+"s": 273.0,
+"naip_minus_lidar_m": 0.425,
+"used": true
+},
+{
+"s": 276.0,
+"naip_minus_lidar_m": 0.31,
+"used": true
+},
+{
+"s": 279.0,
+"naip_minus_lidar_m": 0.424,
+"used": true
+},
+{
+"s": 282.0,
+"naip_minus_lidar_m": 0.335,
+"used": true
+},
+{
+"s": 285.0,
+"naip_minus_lidar_m": 0.307,
+"used": true
+},
+{
+"s": 288.0,
+"naip_minus_lidar_m": 0.46,
+"used": true
+},
+{
+"s": 291.0,
+"naip_minus_lidar_m": 0.192,
+"used": true
+},
+{
+"s": 294.0,
+"naip_minus_lidar_m": 0.23,
+"used": true
+},
+{
+"s": 297.0,
+"naip_minus_lidar_m": 0.279,
+"used": true
+},
+{
+"s": 300.0,
+"naip_minus_lidar_m": 0.204,
+"used": true
+},
+{
+"s": 303.0,
+"naip_minus_lidar_m": 0.254,
+"used": true
+},
+{
+"s": 306.0,
+"naip_minus_lidar_m": 0.125,
+"used": true
+},
+{
+"s": 309.0,
+"naip_minus_lidar_m": 0.328,
+"used": true
+},
+{
+"s": 312.0,
+"naip_minus_lidar_m": 0.018,
+"used": true
+},
+{
+"s": 315.0,
+"naip_minus_lidar_m": 0.048,
+"used": true
+},
+{
+"s": 318.0,
+"naip_minus_lidar_m": 0.158,
+"used": true
+},
+{
+"s": 321.0,
+"naip_minus_lidar_m": 0.079,
+"used": true
+},
+{
+"s": 324.0,
+"naip_minus_lidar_m": 0.108,
+"used": true
+},
+{
+"s": 327.0,
+"naip_minus_lidar_m": 0.203,
+"used": true
+},
+{
+"s": 330.0,
+"naip_minus_lidar_m": 0.3,
+"used": true
+},
+{
+"s": 333.0,
+"naip_minus_lidar_m": 0.283,
+"used": true
+},
+{
+"s": 336.0,
+"naip_minus_lidar_m": 0.492,
+"used": true
+},
+{
+"s": 339.0,
+"naip_minus_lidar_m": 0.261,
+"used": true
+},
+{
+"s": 342.0,
+"naip_minus_lidar_m": 0.49,
+"used": true
+},
+{
+"s": 345.0,
+"naip_minus_lidar_m": 0.314,
+"used": true
+},
+{
+"s": 348.0,
+"naip_minus_lidar_m": 0.489,
+"used": true
+},
+{
+"s": 351.0,
+"naip_minus_lidar_m": 0.043,
+"used": true
+},
+{
+"s": 354.0,
+"naip_minus_lidar_m": 0.161,
+"used": true
+},
+{
+"s": 357.0,
+"naip_minus_lidar_m": 0.137,
+"used": true
+},
+{
+"s": 360.0,
+"naip_minus_lidar_m": 0.092,
+"used": true
+},
+{
+"s": 363.0,
+"naip_minus_lidar_m": 0.089,
+"used": true
+},
+{
+"s": 366.0,
+"naip_minus_lidar_m": 0.451,
+"used": true
+},
+{
+"s": 369.0,
+"naip_minus_lidar_m": 0.333,
+"used": true
+},
+{
+"s": 372.0,
+"naip_minus_lidar_m": 0.302,
+"used": true
+},
+{
+"s": 375.0,
+"naip_minus_lidar_m": 0.245,
+"used": true
+},
+{
+"s": 378.0,
+"naip_minus_lidar_m": 0.291,
+"used": true
+},
+{
+"s": 381.0,
+"naip_minus_lidar_m": 0.196,
+"used": true
+},
+{
+"s": 384.0,
+"naip_minus_lidar_m": 0.387,
+"used": true
+},
+{
+"s": 387.0,
+"naip_minus_lidar_m": 0.292,
+"used": true
+},
+{
+"s": 390.0,
+"naip_minus_lidar_m": 0.191,
+"used": true
+},
+{
+"s": 393.0,
+"naip_minus_lidar_m": 0.261,
+"used": true
+},
+{
+"s": 396.0,
+"naip_minus_lidar_m": 0.212,
+"used": true
+},
+{
+"s": 399.0,
+"naip_minus_lidar_m": 0.147,
+"used": true
+},
+{
+"s": 402.0,
+"naip_minus_lidar_m": 0.204,
+"used": true
+},
+{
+"s": 405.0,
+"naip_minus_lidar_m": 0.236,
+"used": true
+},
+{
+"s": 408.0,
+"naip_minus_lidar_m": 0.022,
+"used": true
+},
+{
+"s": 411.0,
+"naip_minus_lidar_m": 0.251,
+"used": true
+},
+{
+"s": 414.0,
+"naip_minus_lidar_m": 0.504,
+"used": true
+},
+{
+"s": 417.0,
+"naip_minus_lidar_m": 0.42,
+"used": true
+},
+{
+"s": 420.0,
+"naip_minus_lidar_m": 0.207,
+"used": true
+},
+{
+"s": 423.0,
+"naip_minus_lidar_m": 0.43,
+"used": true
+},
+{
+"s": 426.0,
+"naip_minus_lidar_m": 0.6,
+"used": true
+},
+{
+"s": 429.0,
+"naip_minus_lidar_m": 0.421,
+"used": true
+},
+{
+"s": 432.0,
+"naip_minus_lidar_m": 0.262,
+"used": true
+},
+{
+"s": 435.0,
+"naip_minus_lidar_m": 0.371,
+"used": true
+},
+{
+"s": 438.0,
+"naip_minus_lidar_m": 0.306,
+"used": true
+},
+{
+"s": 441.0,
+"naip_minus_lidar_m": 0.493,
+"used": true
+},
+{
+"s": 444.0,
+"naip_minus_lidar_m": 0.407,
+"used": true
+},
+{
+"s": 447.0,
+"naip_minus_lidar_m": 0.338,
+"used": true
+},
+{
+"s": 450.0,
+"naip_minus_lidar_m": 0.202,
+"used": true
+},
+{
+"s": 453.0,
+"naip_minus_lidar_m": 0.232,
+"used": true
+},
+{
+"s": 456.0,
+"naip_minus_lidar_m": 0.424,
+"used": true
+},
+{
+"s": 459.0,
+"naip_minus_lidar_m": 0.29,
+"used": true
+},
+{
+"s": 462.0,
+"naip_minus_lidar_m": 0.486,
+"used": true
+},
+{
+"s": 465.0,
+"naip_minus_lidar_m": 0.27,
+"used": true
+},
+{
+"s": 468.0,
+"naip_minus_lidar_m": 0.435,
+"used": true
+},
+{
+"s": 471.0,
+"naip_minus_lidar_m": 0.163,
+"used": true
+},
+{
+"s": 474.0,
+"naip_minus_lidar_m": 0.384,
+"used": true
+},
+{
+"s": 477.0,
+"naip_minus_lidar_m": 0.378,
+"used": true
+},
+{
+"s": 480.0,
+"naip_minus_lidar_m": 0.436,
+"used": true
+},
+{
+"s": 483.0,
+"naip_minus_lidar_m": 0.345,
+"used": true
+},
+{
+"s": 486.0,
+"naip_minus_lidar_m": 0.323,
+"used": true
+},
+{
+"s": 489.0,
+"naip_minus_lidar_m": 0.531,
+"used": true
+},
+{
+"s": 492.0,
+"naip_minus_lidar_m": 0.469,
+"used": true
+},
+{
+"s": 495.0,
+"naip_minus_lidar_m": 0.426,
+"used": true
+},
+{
+"s": 498.0,
+"naip_minus_lidar_m": 0.448,
+"used": true
+},
+{
+"s": 501.0,
+"naip_minus_lidar_m": 0.43,
+"used": true
+},
+{
+"s": 504.0,
+"naip_minus_lidar_m": 0.469,
+"used": true
+},
+{
+"s": 507.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 510.0,
+"naip_minus_lidar_m": 0.281,
+"used": true
+},
+{
+"s": 513.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 516.0,
+"naip_minus_lidar_m": 0.203,
+"used": true
+},
+{
+"s": 519.0,
+"naip_minus_lidar_m": 0.45,
+"used": true
+},
+{
+"s": 522.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 525.0,
+"naip_minus_lidar_m": 0.283,
+"used": true
+},
+{
+"s": 528.0,
+"naip_minus_lidar_m": 0.386,
+"used": true
+},
+{
+"s": 531.0,
+"naip_minus_lidar_m": 0.441,
+"used": true
+},
+{
+"s": 534.0,
+"naip_minus_lidar_m": 0.267,
+"used": true
+},
+{
+"s": 537.0,
+"naip_minus_lidar_m": 0.373,
+"used": true
+},
+{
+"s": 540.0,
+"naip_minus_lidar_m": 0.51,
+"used": true
+},
+{
+"s": 543.0,
+"naip_minus_lidar_m": 0.449,
+"used": true
+},
+{
+"s": 546.0,
+"naip_minus_lidar_m": 0.357,
+"used": true
+},
+{
+"s": 549.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 552.0,
+"naip_minus_lidar_m": 0.337,
+"used": true
+},
+{
+"s": 555.0,
+"naip_minus_lidar_m": 0.158,
+"used": true
+},
+{
+"s": 558.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 561.0,
+"naip_minus_lidar_m": 0.183,
+"used": true
+},
+{
+"s": 564.0,
+"naip_minus_lidar_m": 0.559,
+"used": true
+},
+{
+"s": 567.0,
+"naip_minus_lidar_m": 0.065,
+"used": true
+},
+{
+"s": 570.0,
+"naip_minus_lidar_m": -0.024,
+"used": true
+},
+{
+"s": 573.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 576.0,
+"naip_minus_lidar_m": 0.191,
+"used": true
+},
+{
+"s": 579.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 582.0,
+"naip_minus_lidar_m": 0.405,
+"used": true
+},
+{
+"s": 585.0,
+"naip_minus_lidar_m": 0.417,
+"used": true
+},
+{
+"s": 588.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 591.0,
+"naip_minus_lidar_m": 0.32,
+"used": true
+},
+{
+"s": 594.0,
+"naip_minus_lidar_m": 0.049,
+"used": true
+},
+{
+"s": 597.0,
+"naip_minus_lidar_m": -0.196,
+"used": true
+},
+{
+"s": 600.0,
+"naip_minus_lidar_m": 0.224,
+"used": true
+},
+{
+"s": 603.0,
+"naip_minus_lidar_m": 0.409,
+"used": true
+},
+{
+"s": 606.0,
+"naip_minus_lidar_m": 0.386,
+"used": true
+},
+{
+"s": 609.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 612.0,
+"naip_minus_lidar_m": 0.184,
+"used": true
+},
+{
+"s": 615.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 618.0,
+"naip_minus_lidar_m": 0.237,
+"used": true
+},
+{
+"s": 621.0,
+"naip_minus_lidar_m": -0.036,
+"used": true
+},
+{
+"s": 624.0,
+"naip_minus_lidar_m": 0.099,
+"used": true
+},
+{
+"s": 627.0,
+"naip_minus_lidar_m": 0.187,
+"used": true
+},
+{
+"s": 630.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 633.0,
+"naip_minus_lidar_m": 0.175,
+"used": true
+},
+{
+"s": 636.0,
+"naip_minus_lidar_m": -0.053,
+"used": true
+},
+{
+"s": 639.0,
+"naip_minus_lidar_m": -0.033,
+"used": true
+},
+{
+"s": 642.0,
+"naip_minus_lidar_m": 0.301,
+"used": true
+},
+{
+"s": 645.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 648.0,
+"naip_minus_lidar_m": -0.163,
+"used": true
+},
+{
+"s": 651.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 654.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 657.0,
+"naip_minus_lidar_m": -0.015,
+"used": true
+},
+{
+"s": 660.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 663.0,
+"naip_minus_lidar_m": 0.024,
+"used": true
+},
+{
+"s": 666.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 669.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 672.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 675.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 678.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 681.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 684.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 687.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 690.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 693.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 696.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 699.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 702.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 705.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 708.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 711.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 714.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 717.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 720.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 723.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 726.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 729.0,
+"naip_minus_lidar_m": -0.541,
+"used": true
+},
+{
+"s": 732.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 735.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 738.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 741.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 744.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 747.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 750.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 753.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 756.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 759.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 762.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 765.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 768.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 771.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 774.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 777.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 780.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 783.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 786.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 789.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 792.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 795.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 798.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 801.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 804.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 807.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 810.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 813.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 816.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 819.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 822.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 825.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 828.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 831.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 834.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 837.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 840.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 843.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 846.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 849.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 852.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 855.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 858.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 861.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 864.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 867.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 870.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 873.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 876.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 879.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 882.0,
+"naip_minus_lidar_m": -0.566,
+"used": true
+},
+{
+"s": 885.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 888.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 891.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 894.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 897.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 900.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 903.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 906.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 909.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 912.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 915.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 918.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 921.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 924.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 927.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 930.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 933.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 936.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 939.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 942.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 945.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 948.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 951.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 954.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 957.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 960.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 963.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 966.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 969.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 972.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 975.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 978.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 981.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 984.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 987.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 990.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 993.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 996.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 999.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 1002.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 1005.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 1008.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 1011.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 1014.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 1017.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 1020.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 1023.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 1026.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 1029.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 1032.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 1035.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 1038.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 1041.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 1044.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 1047.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 1050.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 1053.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 1056.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 1059.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 1062.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 1065.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 1068.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 1071.0,
+"naip_minus_lidar_m": -0.494,
+"used": true
+},
+{
+"s": 1074.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 1077.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 1080.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 1083.0,
+"naip_minus_lidar_m": -0.18,
+"used": true
+},
+{
+"s": 1086.0,
+"naip_minus_lidar_m": -0.222,
+"used": true
+},
+{
+"s": 1089.0,
+"naip_minus_lidar_m": -0.338,
+"used": true
+},
+{
+"s": 1092.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 1095.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 1098.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 1101.0,
+"naip_minus_lidar_m": -0.232,
+"used": true
+},
+{
+"s": 1104.0,
+"naip_minus_lidar_m": -0.333,
+"used": true
+},
+{
+"s": 1107.0,
+"naip_minus_lidar_m": -0.389,
+"used": true
+},
+{
+"s": 1110.0,
+"naip_minus_lidar_m": -0.244,
+"used": true
+},
+{
+"s": 1113.0,
+"naip_minus_lidar_m": -0.257,
+"used": true
+},
+{
+"s": 1116.0,
+"naip_minus_lidar_m": -0.397,
+"used": true
+},
+{
+"s": 1119.0,
+"naip_minus_lidar_m": -0.419,
+"used": true
+},
+{
+"s": 1122.0,
+"naip_minus_lidar_m": -0.375,
+"used": true
+},
+{
+"s": 1125.0,
+"naip_minus_lidar_m": -0.495,
+"used": true
+},
+{
+"s": 1128.0,
+"naip_minus_lidar_m": -0.393,
+"used": true
+},
+{
+"s": 1131.0,
+"naip_minus_lidar_m": -0.186,
+"used": true
+},
+{
+"s": 1134.0,
+"naip_minus_lidar_m": -0.548,
+"used": true
+},
+{
+"s": 1137.0,
+"naip_minus_lidar_m": -0.393,
+"used": true
+},
+{
+"s": 1140.0,
+"naip_minus_lidar_m": -0.306,
+"used": true
+},
+{
+"s": 1143.0,
+"naip_minus_lidar_m": -0.479,
+"used": true
+},
+{
+"s": 1146.0,
+"naip_minus_lidar_m": -0.457,
+"used": true
+},
+{
+"s": 1149.0,
+"naip_minus_lidar_m": -0.627,
+"used": true
+},
+{
+"s": 1152.0,
+"naip_minus_lidar_m": -0.366,
+"used": true
+},
+{
+"s": 1155.0,
+"naip_minus_lidar_m": -0.503,
+"used": true
+},
+{
+"s": 1158.0,
+"naip_minus_lidar_m": -0.751,
+"used": true
+},
+{
+"s": 1161.0,
+"naip_minus_lidar_m": -0.459,
+"used": true
+},
+{
+"s": 1164.0,
+"naip_minus_lidar_m": -0.655,
+"used": true
+},
+{
+"s": 1167.0,
+"naip_minus_lidar_m": -0.524,
+"used": true
+},
+{
+"s": 1170.0,
+"naip_minus_lidar_m": -0.507,
+"used": true
+},
+{
+"s": 1173.0,
+"naip_minus_lidar_m": -0.516,
+"used": true
+},
+{
+"s": 1176.0,
+"naip_minus_lidar_m": -0.419,
+"used": true
+},
+{
+"s": 1179.0,
+"naip_minus_lidar_m": -0.519,
+"used": true
+},
+{
+"s": 1182.0,
+"naip_minus_lidar_m": -0.482,
+"used": true
+},
+{
+"s": 1185.0,
+"naip_minus_lidar_m": -0.559,
+"used": true
+},
+{
+"s": 1188.0,
+"naip_minus_lidar_m": -0.584,
+"used": true
+},
+{
+"s": 1191.0,
+"naip_minus_lidar_m": -0.767,
+"used": true
+},
+{
+"s": 1194.0,
+"naip_minus_lidar_m": -0.162,
+"used": true
+},
+{
+"s": 1197.0,
+"naip_minus_lidar_m": -0.46,
+"used": true
+},
+{
+"s": 1200.0,
+"naip_minus_lidar_m": -0.314,
+"used": true
+},
+{
+"s": 1203.0,
+"naip_minus_lidar_m": -0.497,
+"used": true
+},
+{
+"s": 1206.0,
+"naip_minus_lidar_m": -0.257,
+"used": true
+},
+{
+"s": 1209.0,
+"naip_minus_lidar_m": -0.304,
+"used": true
+},
+{
+"s": 1212.0,
+"naip_minus_lidar_m": -0.363,
+"used": true
+},
+{
+"s": 1215.0,
+"naip_minus_lidar_m": -0.348,
+"used": true
+},
+{
+"s": 1218.0,
+"naip_minus_lidar_m": -0.39,
+"used": true
+},
+{
+"s": 1221.0,
+"naip_minus_lidar_m": -0.597,
+"used": true
+},
+{
+"s": 1224.0,
+"naip_minus_lidar_m": -0.312,
+"used": true
+},
+{
+"s": 1227.0,
+"naip_minus_lidar_m": -0.391,
+"used": true
+},
+{
+"s": 1230.0,
+"naip_minus_lidar_m": -0.512,
+"used": true
+},
+{
+"s": 1233.0,
+"naip_minus_lidar_m": -0.602,
+"used": true
+},
+{
+"s": 1236.0,
+"naip_minus_lidar_m": -0.334,
+"used": true
+},
+{
+"s": 1239.0,
+"naip_minus_lidar_m": -0.387,
+"used": true
+},
+{
+"s": 1242.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 1245.0,
+"naip_minus_lidar_m": -0.4,
+"used": true
+},
+{
+"s": 1248.0,
+"naip_minus_lidar_m": -0.559,
+"used": true
+},
+{
+"s": 1251.0,
+"naip_minus_lidar_m": -0.459,
+"used": true
+},
+{
+"s": 1254.0,
+"naip_minus_lidar_m": -0.473,
+"used": true
+},
+{
+"s": 1257.0,
+"naip_minus_lidar_m": -0.426,
+"used": true
+},
+{
+"s": 1260.0,
+"naip_minus_lidar_m": -0.286,
+"used": true
+},
+{
+"s": 1263.0,
+"naip_minus_lidar_m": -0.216,
+"used": true
+},
+{
+"s": 1266.0,
+"naip_minus_lidar_m": -0.086,
+"used": true
+},
+{
+"s": 1269.0,
+"naip_minus_lidar_m": -0.219,
+"used": true
+},
+{
+"s": 1272.0,
+"naip_minus_lidar_m": -0.33,
+"used": true
+},
+{
+"s": 1275.0,
+"naip_minus_lidar_m": -0.323,
+"used": true
+},
+{
+"s": 1278.0,
+"naip_minus_lidar_m": -0.243,
+"used": true
+},
+{
+"s": 1281.0,
+"naip_minus_lidar_m": -0.398,
+"used": true
+},
+{
+"s": 1284.0,
+"naip_minus_lidar_m": -0.355,
+"used": true
+},
+{
+"s": 1287.0,
+"naip_minus_lidar_m": -0.134,
+"used": true
+},
+{
+"s": 1290.0,
+"naip_minus_lidar_m": -0.306,
+"used": true
+},
+{
+"s": 1293.0,
+"naip_minus_lidar_m": -0.394,
+"used": true
+},
+{
+"s": 1296.0,
+"naip_minus_lidar_m": -0.379,
+"used": true
+},
+{
+"s": 1299.0,
+"naip_minus_lidar_m": -0.232,
+"used": true
+},
+{
+"s": 1302.0,
+"naip_minus_lidar_m": -0.411,
+"used": true
+},
+{
+"s": 1305.0,
+"naip_minus_lidar_m": -0.605,
+"used": true
+},
+{
+"s": 1308.0,
+"naip_minus_lidar_m": -0.58,
+"used": true
+},
+{
+"s": 1311.0,
+"naip_minus_lidar_m": -0.501,
+"used": true
+},
+{
+"s": 1314.0,
+"naip_minus_lidar_m": -0.518,
+"used": true
+},
+{
+"s": 1317.0,
+"naip_minus_lidar_m": -0.329,
+"used": true
+},
+{
+"s": 1320.0,
+"naip_minus_lidar_m": -0.299,
+"used": true
+},
+{
+"s": 1323.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 1326.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 1329.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 1332.0,
+"naip_minus_lidar_m": -0.226,
+"used": true
+},
+{
+"s": 1335.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 1338.0,
+"naip_minus_lidar_m": -0.349,
+"used": true
+},
+{
+"s": 1341.0,
+"naip_minus_lidar_m": -0.498,
+"used": true
+},
+{
+"s": 1344.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 1347.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 1350.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 1353.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 1356.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 1359.0,
+"naip_minus_lidar_m": -0.457,
+"used": true
+},
+{
+"s": 1362.0,
+"naip_minus_lidar_m": -0.15,
+"used": true
+},
+{
+"s": 1365.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 1368.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 1371.0,
+"naip_minus_lidar_m": -0.414,
+"used": true
+},
+{
+"s": 1374.0,
+"naip_minus_lidar_m": -0.615,
+"used": true
+},
+{
+"s": 1377.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 1380.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 1383.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 1386.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 1389.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 1392.0,
+"naip_minus_lidar_m": -0.095,
+"used": true
+},
+{
+"s": 1395.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 1398.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 1401.0,
+"naip_minus_lidar_m": -0.425,
+"used": true
+},
+{
+"s": 1404.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 1407.0,
+"naip_minus_lidar_m": -0.009,
+"used": true
+},
+{
+"s": 1410.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 1413.0,
+"naip_minus_lidar_m": -0.602,
+"used": true
+},
+{
+"s": 1416.0,
+"naip_minus_lidar_m": -0.571,
+"used": true
+},
+{
+"s": 1419.0,
+"naip_minus_lidar_m": -0.17,
+"used": true
+},
+{
+"s": 1422.0,
+"naip_minus_lidar_m": -0.123,
+"used": true
+},
+{
+"s": 1425.0,
+"naip_minus_lidar_m": 0.08,
+"used": true
+},
+{
+"s": 1428.0,
+"naip_minus_lidar_m": 0.096,
+"used": true
+},
+{
+"s": 1431.0,
+"naip_minus_lidar_m": 0.04,
+"used": true
+},
+{
+"s": 1434.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 1437.0,
+"naip_minus_lidar_m": -0.4,
+"used": true
+},
+{
+"s": 1440.0,
+"naip_minus_lidar_m": -0.096,
+"used": true
+},
+{
+"s": 1443.0,
+"naip_minus_lidar_m": -0.15,
+"used": true
+},
+{
+"s": 1446.0,
+"naip_minus_lidar_m": -0.128,
+"used": true
+},
+{
+"s": 1449.0,
+"naip_minus_lidar_m": -0.141,
+"used": true
+},
+{
+"s": 1452.0,
+"naip_minus_lidar_m": -0.231,
+"used": true
+},
+{
+"s": 1455.0,
+"naip_minus_lidar_m": -0.311,
+"used": true
+},
+{
+"s": 1458.0,
+"naip_minus_lidar_m": -0.219,
+"used": true
+},
+{
+"s": 1461.0,
+"naip_minus_lidar_m": 0.034,
+"used": true
+},
+{
+"s": 1464.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 1467.0,
+"naip_minus_lidar_m": -0.21,
+"used": true
+},
+{
+"s": 1470.0,
+"naip_minus_lidar_m": -0.142,
+"used": true
+},
+{
+"s": 1473.0,
+"naip_minus_lidar_m": -0.129,
+"used": true
+},
+{
+"s": 1476.0,
+"naip_minus_lidar_m": -0.249,
+"used": true
+},
+{
+"s": 1479.0,
+"naip_minus_lidar_m": 0.139,
+"used": true
+},
+{
+"s": 1482.0,
+"naip_minus_lidar_m": -0.065,
+"used": true
+},
+{
+"s": 1485.0,
+"naip_minus_lidar_m": 0.035,
+"used": true
+},
+{
+"s": 1488.0,
+"naip_minus_lidar_m": -0.091,
+"used": true
+},
+{
+"s": 1491.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 1494.0,
+"naip_minus_lidar_m": -0.15,
+"used": true
+},
+{
+"s": 1497.0,
+"naip_minus_lidar_m": 0.007,
+"used": true
+},
+{
+"s": 1500.0,
+"naip_minus_lidar_m": 0.208,
+"used": true
+},
+{
+"s": 1503.0,
+"naip_minus_lidar_m": 0.254,
+"used": true
+},
+{
+"s": 1506.0,
+"naip_minus_lidar_m": -0.141,
+"used": true
+},
+{
+"s": 1509.0,
+"naip_minus_lidar_m": 0.079,
+"used": true
+},
+{
+"s": 1512.0,
+"naip_minus_lidar_m": -0.117,
+"used": true
+},
+{
+"s": 1515.0,
+"naip_minus_lidar_m": -0.051,
+"used": true
+},
+{
+"s": 1518.0,
+"naip_minus_lidar_m": 0.135,
+"used": true
+},
+{
+"s": 1521.0,
+"naip_minus_lidar_m": -0.081,
+"used": true
+},
+{
+"s": 1524.0,
+"naip_minus_lidar_m": -0.11,
+"used": true
+},
+{
+"s": 1527.0,
+"naip_minus_lidar_m": 0.038,
+"used": true
+},
+{
+"s": 1530.0,
+"naip_minus_lidar_m": 0.062,
+"used": true
+},
+{
+"s": 1533.0,
+"naip_minus_lidar_m": -0.135,
+"used": true
+},
+{
+"s": 1536.0,
+"naip_minus_lidar_m": -0.022,
+"used": true
+},
+{
+"s": 1539.0,
+"naip_minus_lidar_m": -0.05,
+"used": true
+},
+{
+"s": 1542.0,
+"naip_minus_lidar_m": 0.056,
+"used": true
+},
+{
+"s": 1545.0,
+"naip_minus_lidar_m": 0.081,
+"used": true
+},
+{
+"s": 1548.0,
+"naip_minus_lidar_m": -0.145,
+"used": true
+},
+{
+"s": 1551.0,
+"naip_minus_lidar_m": -0.242,
+"used": true
+},
+{
+"s": 1554.0,
+"naip_minus_lidar_m": 0.055,
+"used": true
+},
+{
+"s": 1557.0,
+"naip_minus_lidar_m": -0.255,
+"used": true
+},
+{
+"s": 1560.0,
+"naip_minus_lidar_m": 0.266,
+"used": true
+},
+{
+"s": 1563.0,
+"naip_minus_lidar_m": -0.005,
+"used": true
+},
+{
+"s": 1566.0,
+"naip_minus_lidar_m": -0.025,
+"used": true
+},
+{
+"s": 1569.0,
+"naip_minus_lidar_m": 0.141,
+"used": true
+},
+{
+"s": 1572.0,
+"naip_minus_lidar_m": -0.169,
+"used": true
+},
+{
+"s": 1575.0,
+"naip_minus_lidar_m": 0.043,
+"used": true
+},
+{
+"s": 1578.0,
+"naip_minus_lidar_m": 0.047,
+"used": true
+},
+{
+"s": 1581.0,
+"naip_minus_lidar_m": -0.01,
+"used": true
+},
+{
+"s": 1584.0,
+"naip_minus_lidar_m": -0.062,
+"used": true
+},
+{
+"s": 1587.0,
+"naip_minus_lidar_m": -0.039,
+"used": true
+},
+{
+"s": 1590.0,
+"naip_minus_lidar_m": -0.168,
+"used": true
+},
+{
+"s": 1593.0,
+"naip_minus_lidar_m": 0.218,
+"used": true
+},
+{
+"s": 1596.0,
+"naip_minus_lidar_m": 0.081,
+"used": true
+},
+{
+"s": 1599.0,
+"naip_minus_lidar_m": 0.161,
+"used": true
+},
+{
+"s": 1602.0,
+"naip_minus_lidar_m": -0.029,
+"used": true
+},
+{
+"s": 1605.0,
+"naip_minus_lidar_m": 0.237,
+"used": true
+},
+{
+"s": 1608.0,
+"naip_minus_lidar_m": 0.048,
+"used": true
+},
+{
+"s": 1611.0,
+"naip_minus_lidar_m": 0.363,
+"used": true
+},
+{
+"s": 1614.0,
+"naip_minus_lidar_m": 0.105,
+"used": true
+},
+{
+"s": 1617.0,
+"naip_minus_lidar_m": 0.066,
+"used": true
+},
+{
+"s": 1620.0,
+"naip_minus_lidar_m": 0.09,
+"used": true
+},
+{
+"s": 1623.0,
+"naip_minus_lidar_m": 0.122,
+"used": true
+},
+{
+"s": 1626.0,
+"naip_minus_lidar_m": 0.254,
+"used": true
+},
+{
+"s": 1629.0,
+"naip_minus_lidar_m": 0.18,
+"used": true
+},
+{
+"s": 1632.0,
+"naip_minus_lidar_m": -0.006,
+"used": true
+},
+{
+"s": 1635.0,
+"naip_minus_lidar_m": 0.071,
+"used": true
+},
+{
+"s": 1638.0,
+"naip_minus_lidar_m": 0.176,
+"used": true
+},
+{
+"s": 1641.0,
+"naip_minus_lidar_m": 0.215,
+"used": true
+},
+{
+"s": 1644.0,
+"naip_minus_lidar_m": -0.014,
+"used": true
+},
+{
+"s": 1647.0,
+"naip_minus_lidar_m": 0.14,
+"used": true
+},
+{
+"s": 1650.0,
+"naip_minus_lidar_m": 0.003,
+"used": true
+},
+{
+"s": 1653.0,
+"naip_minus_lidar_m": 0.224,
+"used": true
+},
+{
+"s": 1656.0,
+"naip_minus_lidar_m": 0.16,
+"used": true
+},
+{
+"s": 1659.0,
+"naip_minus_lidar_m": null,
+"used": false
+},
+{
+"s": 1662.0,
+"naip_minus_lidar_m": 0.277,
+"used": true
+},
+{
+"s": 1665.0,
+"naip_minus_lidar_m": -0.073,
+"used": true
+}
+]
+}

@@ -4,8 +4,8 @@
   {
    "key": "outer_wall",
    "kind": "krail",
-   "modules": 564,
-   "left_out": 0,
+   "modules": 546,
+   "left_out": 18,
    "length_m": 1703.2
   }
  ]

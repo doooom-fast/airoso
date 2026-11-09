@@ -1,0 +1,175 @@
+{
+ "lap_m": 2215.6,
+ "layout": "roadcourse",
+ "direction": "forward",
+ "kind": "race",
+ "race_furniture": false,
+ "obj": "track.obj",
+ "lane": "full width / island",
+ "barrier_stations": 0,
+ "barrier_missing": 0,
+ "barrier_missing_runs": [],
+ "soft_top_in_lane": 0,
+ "off_pavement_stations": 0,
+ "severe_steps": 0,
+ "severe_per_km": 0.0,
+ "steps_per_km": 0.0,
+ "kinks_per_km": 7.22,
+ "obstruction_stations": 0,
+ "daylight_gaps": 0,
+ "replication_vs_measured": null,
+ "undrivable_corners": 0,
+ "floating_furniture": 0,
+ "apron_steps": 0,
+ "fold_bumps": 0,
+ "vertex_bumps": 0,
+ "vertex_bumps_worst": [],
+ "excursion_drops": 0,
+ "excursion_far_ledges": 44,
+ "worst_excursions": [
+  [
+   1952.2,
+   -16.5,
+   0.26,
+   false
+  ],
+  [
+   1952.2,
+   -17.0,
+   0.26,
+   false
+  ],
+  [
+   450.0,
+   -16.0,
+   0.25,
+   false
+  ],
+  [
+   1952.2,
+   -16.0,
+   0.25,
+   false
+  ],
+  [
+   1952.2,
+   -17.5,
+   0.25,
+   false
+  ],
+  [
+   450.0,
+   -15.5,
+   0.24,
+   false
+  ],
+  [
+   450.0,
+   -16.5,
+   0.24,
+   false
+  ],
+  [
+   302.6,
+   -15.0,
+   0.22,
+   false
+  ],
+  [
+   450.0,
+   -17.0,
+   0.22,
+   false
+  ],
+  [
+   450.0,
+   -15.0,
+   0.21,
+   false
+  ],
+  [
+   1952.2,
+   -15.5,
+   0.21,
+   false
+  ],
+  [
+   450.0,
+   -17.5,
+   0.2,
+   false
+  ]
+ ],
+ "worst_gated_excursions": [],
+ "obstruction_by_mesh": {},
+ "worst": {
+  "soft_top": [],
+  "severe_steps": [],
+  "severe_all": [],
+  "kinks": [
+   [
+    1878.0,
+    -6.0,
+    5.25
+   ],
+   [
+    1887.0,
+    -6.0,
+    4.49
+   ],
+   [
+    1887.0,
+    -5.07,
+    4.34
+   ],
+   [
+    1880.0,
+    -6.0,
+    4.18
+   ],
+   [
+    1878.0,
+    -4.86,
+    3.88
+   ],
+   [
+    1880.0,
+    -4.91,
+    3.82
+   ],
+   [
+    1886.0,
+    -5.07,
+    3.75
+   ],
+   [
+    1879.0,
+    -6.0,
+    3.71
+   ],
+   [
+    1886.0,
+    -6.0,
+    3.71
+   ],
+   [
+    1893.0,
+    -5.24,
+    3.61
+   ],
+   [
+    1884.0,
+    -5.02,
+    3.35
+   ],
+   [
+    1876.0,
+    -6.0,
+    3.34
+   ]
+  ],
+  "obstructions": [],
+  "undrivable_all": []
+ },
+ "fail": false
+}

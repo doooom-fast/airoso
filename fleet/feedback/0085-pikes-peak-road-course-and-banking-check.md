@@ -455,3 +455,27 @@ The fix, measured with the 0087 gutter probe on pp_b5 -> pp_b6:
 The apron side keeps its measured lip. The clean rehearsal at this head (`D:/k10-scratch/pp_b6`, `pp_b6.log`) gives the
 same verdicts as pp_b5: oval PASS, road course PASS, infield red on its real hairpin only. Every other gate passes.
 Nothing installed.
+
+**9. Installed: 0.2.0 (PC, 2026-11-09 11:44).** Kevin was asked "How should the infield's hairpin go, so I can install
+0.2.0?" (Drop infield, install / Exempt hairpin, install). His answer, verbatim: "Exempt hairpin with a note to ask
+after driving".
+
+- **The force**: `gates.drive1.force_exemptions.stage` covers the S-curve hairpin on the infield layout (s 650-695)
+  for 0.2.0 only. It carries `ask_after_driving`: ask Kevin how the hairpin drives once he has driven it (keep the
+  exemption, widen it, or drop the layout). `tools/ship_track.sh` now reads the force verdict at install.
+- **The install run**: built from an empty workshop at dea3389 (the 0.1.0 workshop was parked as
+  `D:/k10-scratch/ppir_lm.0.1.0-parked-2026-11-09`), log `D:/k10-scratch/ppir_install_020.log`.
+  - Oval and road course PASS. Infield red on its 5 hairpin stations s 665-681, all covered by the force ("would be
+    allowed").
+  - Every other gate green (audit 0, kn5 + ini x3, verify_pads, verify_mouths, houses). The texture gate ran by hand
+    on the rehearsal: PASS.
+  - SHIP OK. Installed as the plain `pikes_peak_international_raceway`, three layouts: Pikes Peak International
+    Raceway, Pikes Peak Road Course, Pikes Peak Infield, each 0.2.0.
+- **The old copy**: 0.1.0's `pikes_peak_international_raceway_lm` (the buried-wall oval) moved to
+  `D:/k10-track-archive/2026-11-09_114521_tidy/` (ac_tidy record + apply; claude/ac-tidy 8a6c247).
+- **Menu pictures**: rendered in Blender from the installed build's split, the fleet's light at -0.8 EV
+  (`source/ui/<layout>/`). Oval at the S/F; road course at the NE exit (rc lap point 305); infield on its winding road.
+  Copied into AC's `ui/<layout>/preview.png`; the pack's placeholders are in
+  `D:/k10-track-archive/2026-11-09_menu_pikes_peak_020/`.
+- Pikes Peak carries no personal-use tree bins (none to lose). GrassFX names all 8 ground pieces.
+- **Not driven yet.**

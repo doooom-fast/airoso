@@ -574,11 +574,14 @@ def road_markings(centerline_m: list[Vertex], widths_m: list[float], *, line_w: 
 # ledger 0078 (the fleet on Lake Murray v4's engine): the street edge per track. Every key defaults to Lake Murray's own
 # value, so a config without route.edge sweeps exactly the curb + walk it always swept (byte-identical floats).
 EDGE_DEFAULTS = {"lift": 0.10, "curb_h": 0.14, "curb_face_w": 0.08, "sidewalk_w": 1.8, "connector_sidewalk_w": 1.5,
-                 "grade_w": 1.2, "grass_clearance": 0.10}
+                 "grade_w": 1.2, "grass_clearance": 0.10, "connector_grass_clearance": None}
 
 
 def edge_profile(route):
-    """track.config.json route.edge -> the curb_sidewalk keyword set (mainline, connectors). Lake Murray declares none."""
+    """track.config.json route.edge -> the curb_sidewalk keyword set (mainline, connectors). Lake Murray declares none.
+    connector_grass_clearance (opt-in, ledger 0087, Sand Creek 0.2.8): the connectors' own grass_clearance; unset, they
+    take the mainline's, as before. The flush mainline lip (-0.08) on Sand Creek's side streets stood their strips 8-22 cm
+    over the next street's pavement where two streets meet (audit I / K), where the old 0.10 lip lay under it."""
     e = dict(EDGE_DEFAULTS)
     for k, v in ((route or {}).get("edge") or {}).items():
         if k.startswith("_"):
@@ -589,4 +592,6 @@ def edge_profile(route):
     main = {"lift": e["lift"], "curb_h": e["curb_h"], "curb_face_w": e["curb_face_w"], "sidewalk_w": e["sidewalk_w"],
             "grade_w": e["grade_w"], "grass_clearance": e["grass_clearance"]}
     conn = dict(main, sidewalk_w=e["connector_sidewalk_w"])
+    if e["connector_grass_clearance"] is not None:
+        conn["grass_clearance"] = e["connector_grass_clearance"]
     return main, conn

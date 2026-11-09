@@ -16,6 +16,7 @@
       "seat_terrain",
       "densify_ribbon",
       "seat_edges",
+      "lm_pads",
       "strip_seam",
       "apron_road",
       "gap_mouths",
@@ -45,6 +46,7 @@
       "drive_test_street",
       "audit_street",
       "kn5_ground",
+      "verify_pads",
       "verify_mouths",
       "house_seat",
       "edge_report"
@@ -59,6 +61,9 @@
       "data/heightfield.meta.json",
       "source/ground_patches.lidar.json",
       "source/connectors.infield.json"
+    ],
+    "globs": [
+      "source/pads/*.json"
     ]
   },
   "sync_out": {
@@ -88,7 +93,10 @@
       "data/connectors.local.json",
       "data/dummies_{id}.json",
       "data/lap.rc.json",
-      "data/lap.inf.json"
+      "data/lap.inf.json",
+      "data/pads.built.json",
+      "data/verify_pads.json",
+      "data/pad_arms.json"
     ],
     "map": [
       [

@@ -381,3 +381,60 @@ Owed:
 - Kevin's call on the infield hairpin.
 - The road course's grid_vertex: the lap gained vertices and the pole now stands 20.8 m behind the line. Reset it at the
   final rehearsal.
+
+**7. The two oval junctions as measured pads; the clean rehearsal (PC, 2026-11-09).** Kevin's yes to the NAIP crop,
+asked through the remote-control session and relayed verbatim: "Yes, download it". That covers the one 2023 crop:
+co_m_3810427_ne_13_030_20230920_20240104, 8.46 MB, tools/naip_crop.py, the frame `road-course/naip_2023_030.json`
+describes, to the pixel, at D:/k10-scratch/pp_naip. No other download.
+
+What NAIP showed at both junctions is one continuous pavement: the lap's lane, the apron, the diverge's wedge and gore,
+and the infield road. The NE has a grass island's round tip; the NW has the road's kerbed bend, the kerbed island and
+the NE branch road beside the oval. The corners the welded mouths left as grass were real pavement. So each junction
+is now built as the Lariat's mouths and Sand Creek's junctions are: one deck out to its measured outline (lm_pads,
+`lm_pads.arms "streets"`).
+
+- **The measurement** (`source/lidar/infield/junction_pads.py` -> `tracks/pikes-peak-lm/source/pads/NE|NW.json`, with
+  pictures). A cell is pavement where NAIP reads grey and the 2018 lidar's ground intensity reads asphalt-dark, or
+  where NAIP reads a red / white kerb.
+  - The brownish sealed patches (NE north of the island, NW between the road and the branch) are pavement: intensity
+    1,140-1,230, darker than the asphalt.
+  - The infield's pale dirt is not: NAIP calls it grey, its intensity is 3,360.
+  - The deck is the class-2 ground's local planes. NE: 2,348 m2, cuts v310 / v334. NW: 4,566 m2, cuts v428 / v465.
+  - The boxes are authored by eye on NAIP and the mask: every vertex on grass or an island, except the arm crossings
+    and the NW branch crossing.
+- **The NW branch road** is not built. A 13.8 m K-rail closes it where the box crosses it (`close_arms "branches"`,
+  Kevin's rule for a road not taken). The infield road's arms stay open.
+- **The race lap** crosses each pad on the infield road's own measured line. That is the old connector's points
+  through the box, with a cubic onto the oval on its own tangent (race_lap `via`). The lane is never wider than the
+  measured pavement less 0.3 m a side. The straight NW join had turned 21 deg in one vertex on the 17 % bank, a
+  7.1 cm step.
+- **The wall's foot**: the deck runs 0.7 m past the lane under the outer wall, held at the lane edge's height. The
+  wall seats on it (rails `stand_on`). Without that deck one module's base went 2.6 m under the surface. audit_mesh D
+  counts the wall's footing on that band as exempt (1,780 verts; GATES-CHANGELOG 2026-11-09).
+- **The apron at the cuts**: the apron strip's row is pinned with the lane's (`cut_strip`). Before, the NW deck met
+  the apron 0.14 m low at its out-cut, a lip no gate drove.
+- **The skid-pad band's end** tapers into the measured road (LOT_TAPER, 5 points, 9.16 -> 11.39 m). Its 2.7 m step in
+  2 m was the last road-course grass spot (s 1626) and the infield's two (s 458).
+- **Not done:**
+  - The two mouth corner radii were not measured as radii. The pads' outlines are the measured corners themselves
+    (the NE island tip, the NW kerb arc).
+  - The skid pad itself (the big concrete circle) is still unbuilt ground beside the road.
+  - The oval's inside white line stops across both pads (the lap's paint goes with its surface there).
+
+**The clean rehearsal from an empty workshop** (`D:/k10-scratch/pp_b5`, `pp_b5.log`, head below):
+
+| check | oval | road course | infield |
+|---|---|---|---|
+| drive_test | PASS (0 / 0 / 0) | PASS: ground 0 (was 3), severe 0 (was 1), kinks 7.2 /km (was 14.9) | FAIL: the real S-curve hairpin only (5 corners); ground 0 (was 2) |
+| kn5 + models_<id>.ini | PASS | PASS | PASS |
+
+Every other check passed:
+- verify_pads: NE seam 1.4 mm, NW 8.2 mm (limit 10). No grass, no multi-coverage, no curb. The branch K-rail stands
+  1.08 m.
+- verify_mouths: if_link's two mouths. The two oval mouths are pads now.
+- audit_mesh 0. houses PASS.
+- The outer wall: 546 modules, 18 left out (as every earlier build).
+- The road course's pole is 8.9 m behind the line (grid_vertex 910).
+
+Stills: `tracks/pikes-peak-lm/source/pads/still_*.jpg`. Nothing installed. The install waits on Kevin's word (it
+replaces `pikes_peak_international_raceway_lm`: archive it first, then ac_tidy record and the menu pictures).

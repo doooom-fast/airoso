@@ -48,6 +48,21 @@ EASE_NW_M = 15.0      # [invented] the NW merge's ease: at 25 m it met the deck 
 CAP_W = 14.5          # [invented] where a piece's measured width runs out across a junction (hairpin top 20.3 m, west road
                       # 18.9 m: the side roads' mouths, not this road), the widest piece's own p50 (bottom 14.0) + 0.5
 FLOOR_FRAC = 0.85     # [invented] no point narrower than 85 % of its piece's p50 (the S-curve's weak, dusty edges)
+LOT_TAPER = 0.25      # [invented] the lot band's p50 (no per-section widths on disk) meets the measured road it runs into
+                      # at no more than this change per metre, the band's points raised (never the measured ones): its
+                      # east end stepped 9.16 -> 11.89 m in 2 m and the lane's edge stood on the strip and the grass
+                      # (drive_test, s 1626 rc / s 458 inf, 2026-11-09); NAIP shows pavement on to the skid pad there
+
+
+def lot_taper(w, lot_mask, step=STEP_M, rate=LOT_TAPER):
+    """the lot band's widths raised to meet its measured neighbours at `rate` per metre (both ways)"""
+    w = np.array(w, float)
+    for order in (range(1, len(w)), range(len(w) - 2, -1, -1)):
+        for i in order:
+            j = i - 1 if order.step == 1 else i + 1
+            if lot_mask[i]:
+                w[i] = max(w[i], w[j] - rate * step)
+    return w
 
 
 def resample(P, step):
@@ -180,7 +195,7 @@ def main(proj, dem_npz, out):
     lot_mask = np.array([np.min(np.hypot(*(lot - q).T)) <= 4.0 for q in C])
     # the 64.3 m straight join before the band also takes the band's width
     rcd_names = ["ne_lane", "hairpin_w", "diag_n", "diag_s", "bottom", "west_n", "arc_nw"]
-    w = widths_for(C, pieces, rcd_names, lot_mask)
+    w = lot_taper(widths_for(C, pieces, rcd_names, lot_mask), lot_mask)
     res.append(("rc_infield", C, w, f"RC-D route_from_maps idx {i0}..{i1}"))
     # if_link: IF-K from LEAD_M before the S-curve (bottom's west end) to LEAD_M into diag_n (wrapping its start)
     K, rep = relax(np.array(routes["routes"]["IF-K"]["centre_en_m"]), closed=True)

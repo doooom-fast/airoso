@@ -56,7 +56,8 @@
         ],
         "track_edge": [
           "ROAD",
-          "CURB"
+          "CURB",
+          "1ROAD_PAD"
         ],
         "cone_ground": [
           "TERRAIN",
@@ -67,7 +68,8 @@
           "BARRIER"
         ],
         "_doc": "the assembler's names at the author stage (Lake Murray's)",
-        "_paved_doc": "Pikes Peak: the lane only. The outer wall stands on the pavement's edge (NAIP); on the port that is the circuit edge strip (CURB), so a rail module may stand on it (ledger 0078)"
+        "_paved_doc": "Pikes Peak: the lane only. The outer wall stands on the pavement's edge (NAIP); on the port that is the circuit edge strip (CURB), so a rail module may stand on it (ledger 0078)",
+        "_track_edge_doc": "ledger 0085 (2026-11-09): the junction pads' decks (1ROAD_pad_<id>) replace the lap's edge strip between their cuts, so the outer wall seats on them there"
       },
       "prep_seats": true,
       "rails": [
@@ -2342,7 +2344,11 @@
           "seat": "surface",
           "_seat_doc": "ledger 0085 (PC, 2026-11-08): each module stands on the higher of the ground and the edge strip under it (names.track_edge). 0.1.0 stood the wall on the author stage's terrain, up to 1.6 m under the banked strip: on its gate OBJ no module rose more than 0.61 m over the pavement under it and 635 of 1,128 were under it (the installed oval's wall is buried on the banking)",
           "overlap_m": 0.05,
-          "_overlap_doc": "ledger 0085: modules interlock 5 cm (a pinned K-rail line): drive_test's wall-crossing probe at s 1200.8 ran exactly along a 2 cm joint and read the berm behind the wall as unguarded"
+          "_overlap_doc": "ledger 0085: modules interlock 5 cm (a pinned K-rail line): drive_test's wall-crossing probe at s 1200.8 ran exactly along a 2 cm joint and read the berm behind the wall as unguarded",
+          "stand_on": [
+            "1ROAD_PAD"
+          ],
+          "_stand_on_doc": "ledger 0085 (2026-11-09): the wall's foot may stand on a junction pad's deck edge (the deck runs 0.3-0.6 m past the lane to the wall's face, where the lap's edge strip was); without it every module along the two pads would be left out as standing on a road"
         }
       ]
     }
@@ -2374,7 +2380,7 @@
       "ai": "ai/roadcourse",
       "start": {
         "line_vertex": 0,
-        "grid_vertex": 906,
+        "grid_vertex": 910,
         "offset_right_m": 2.0
       },
       "run": "counter-clockwise as both published maps draw it: the front stretch, turns 1-2, the back stretch, off at the NE lane, the top hairpin, the diagonal, round the skid-pad lot the long way, the bottom road, the west road, the sweeper, back on at the NW merge",
@@ -2504,7 +2510,13 @@
     "weld_exact_deck_lines": true,
     "_weld_exact_deck_doc": "ledger 0085: the infield roads' welds and verify_mouths' MOUTH LINE / NOTCH read the host's deck off its triangles where the sample stands, not its centre carried level across: the oval is banked 12-17 % (its inside edge 0.85-1.8 m under its centre at the two mouths; B2's verify_mouths read exactly that as the road 'off the host deck')",
     "weld_deck_apron": true,
-    "_weld_deck_apron_doc": "ledger 0085: the infield road's welds onto the oval read the deck past its edge on the apron side as the measured apron (tools/mouth_weld.ApronDeck, route.edge_apron_file), not the edge held level: the level run-on pulled the NW approach up to the edge's height across an apron falling 3-8 %, a 3.3 %/m crease (verify_mouths APPROACH, pp_b3u)"
+    "_weld_deck_apron_doc": "ledger 0085: the infield road's welds onto the oval read the deck past its edge on the apron side as the measured apron (tools/mouth_weld.ApronDeck, route.edge_apron_file), not the edge held level: the level run-on pulled the NW approach up to the edge's height across an apron falling 3-8 %, a 3.3 %/m crease (verify_mouths APPROACH, pp_b3u)",
+    "street_junctions": {
+      "pad_arms": true,
+      "join_turn_deg": 45.0,
+      "bend_turn_deg": 135.0,
+      "_doc": "ledger 0085: only pad_arms is wanted (tools/trim_connectors.py cut_at_pads: rc_infield cut at both pads' box edges, data/pad_arms.json for lm_pads); join_turn_deg / bend_turn_deg are Sand Creek's (the street-junction passes need them; this track's two connectors have no pieces to join)"
+    }
   },
   "terrain_cell_m": 1.5,
   "corridor_refine_factor": 6,
@@ -2935,22 +2947,357 @@
           {
             "line": "rc_infield#0",
             "from": 0,
-            "to": 469
+            "to": 424,
+            "via": [
+              [
+                101.66,
+                166.07,
+                17.21
+              ],
+              [
+                100.09,
+                168.5,
+                17.07
+              ],
+              [
+                98.34,
+                170.99,
+                16.88
+              ],
+              [
+                96.52,
+                173.33,
+                16.65
+              ],
+              [
+                94.6,
+                175.59,
+                16.41
+              ],
+              [
+                92.58,
+                177.76,
+                16.17
+              ],
+              [
+                90.46,
+                179.84,
+                15.93
+              ],
+              [
+                88.15,
+                181.88,
+                15.7
+              ],
+              [
+                85.84,
+                183.71,
+                15.46
+              ],
+              [
+                83.45,
+                185.4,
+                15.22
+              ],
+              [
+                80.88,
+                186.99,
+                14.99
+              ],
+              [
+                78.24,
+                188.4,
+                14.75
+              ],
+              [
+                75.52,
+                189.6,
+                14.51
+              ],
+              [
+                72.74,
+                190.6,
+                14.29
+              ],
+              [
+                69.89,
+                191.37,
+                14.09
+              ],
+              [
+                67.94,
+                191.8,
+                13.9
+              ],
+              [
+                65.99,
+                192.24,
+                13.73
+              ],
+              [
+                64.04,
+                192.69,
+                13.57
+              ],
+              [
+                62.1,
+                193.18,
+                13.41
+              ],
+              [
+                60.18,
+                193.72,
+                13.25
+              ],
+              [
+                58.27,
+                194.33,
+                13.09
+              ],
+              [
+                56.4,
+                195.02,
+                12.73
+              ],
+              [
+                54.57,
+                195.82,
+                12.28
+              ],
+              [
+                52.8,
+                196.76,
+                11.6
+              ],
+              [
+                51.11,
+                197.83,
+                11.0
+              ],
+              [
+                49.51,
+                199.03,
+                11.0
+              ]
+            ]
           },
           {
             "line": "MAINLINE",
             "from": 462,
-            "to": 3
+            "to": 3,
+            "via": [
+              [
+                -148.52,
+                208.78,
+                11.4
+              ],
+              [
+                -150.31,
+                209.67,
+                11.7
+              ],
+              [
+                -152.13,
+                210.5,
+                12.63
+              ],
+              [
+                -153.99,
+                211.24,
+                13.09
+              ],
+              [
+                -155.9,
+                211.82,
+                13.53
+              ],
+              [
+                -157.85,
+                212.24,
+                13.72
+              ],
+              [
+                -159.83,
+                212.54,
+                13.9
+              ],
+              [
+                -161.82,
+                212.75,
+                14.06
+              ],
+              [
+                -163.82,
+                212.87,
+                14.24
+              ],
+              [
+                -165.81,
+                212.91,
+                14.4
+              ],
+              [
+                -167.81,
+                212.92,
+                14.58
+              ],
+              [
+                -169.81,
+                213.0,
+                14.75
+              ],
+              [
+                -171.8,
+                213.25,
+                14.92
+              ],
+              [
+                -173.74,
+                213.73,
+                15.09
+              ],
+              [
+                -175.58,
+                214.49,
+                15.26
+              ],
+              [
+                -177.31,
+                215.49,
+                15.43
+              ],
+              [
+                -178.97,
+                216.61,
+                15.6
+              ],
+              [
+                -180.69,
+                217.62,
+                15.77
+              ],
+              [
+                -182.5,
+                218.47,
+                15.94
+              ],
+              [
+                -184.41,
+                219.05,
+                16.12
+              ],
+              [
+                -186.39,
+                219.3,
+                16.29
+              ],
+              [
+                -188.39,
+                219.27,
+                16.46
+              ],
+              [
+                -190.38,
+                219.04,
+                16.64
+              ],
+              [
+                -192.32,
+                218.57,
+                16.85
+              ],
+              [
+                -195.16,
+                217.64,
+                17.07
+              ],
+              [
+                -197.81,
+                216.5,
+                17.3
+              ],
+              [
+                -200.38,
+                215.13,
+                17.55
+              ],
+              [
+                -202.86,
+                213.56,
+                17.8
+              ],
+              [
+                -205.24,
+                211.8,
+                18.05
+              ],
+              [
+                -207.43,
+                209.95,
+                18.3
+              ],
+              [
+                -209.61,
+                207.86,
+                18.55
+              ],
+              [
+                -211.6,
+                205.72,
+                18.8
+              ],
+              [
+                -213.47,
+                203.47,
+                19.05
+              ],
+              [
+                -215.17,
+                201.22,
+                19.3
+              ],
+              [
+                -216.82,
+                198.79,
+                19.55
+              ],
+              [
+                -218.35,
+                196.28,
+                19.8
+              ],
+              [
+                -219.75,
+                193.71,
+                20.05
+              ],
+              [
+                -221.02,
+                191.1,
+                20.3
+              ],
+              [
+                -222.2,
+                188.35,
+                20.5
+              ],
+              [
+                -223.19,
+                185.7,
+                20.64
+              ]
+            ]
           }
         ],
-        "_doc": "ledger 0085: the published S/F (mainline v4) -> the back stretch -> off at v312 (a 37 m join to rc_infield's cut at the deck edge: up the 12 % bank at ~15 deg, not 30) -> the infield road whole -> back on at v462 (a 37 m join) -> round to v3"
+        "_doc": "ledger 0085: the published S/F (mainline v4) -> the back stretch -> off at v312 -> across the NE junction pad on the infield road's own measured line (via: rc_infield's points from the old cut at the deck edge to the pad's box edge, as built before the pads) -> the infield road whole -> across the NW pad on its own line (via) -> back on at v462 -> round to v3. 2026-11-09: the junctions are pads (lm_pads), so rc_infield is cut at the boxes' edges (18 points off its start, 35 off its end)",
+        "_via_doc": "2026-11-09 (scripts/geometry/race_lap.py via, [E, N, width]): NE = a cubic from the mainline v312 on its own tangent to the infield road's own measured line (its old v6, on its tangent), then that line to the pad's box edge; NW = the road's own line from the box edge (its old v443-466), then a cubic onto the mainline v462 on its tangent (a straight join turned 21 deg in one vertex on the 17 % bank: a 7.1 cm step). Widths: the stitcher's own (A's -> B's by arc length), never wider than the pad's measured pavement less 0.3 m a side (narrowed just inside each arm: NE to 11.0 m, NW to 11.4 m)"
       },
       "inf": {
         "pieces": [
           {
             "line": "rc_infield#0",
-            "from": 110,
-            "to": 409
+            "from": 92,
+            "to": 391
           },
           {
             "line": "if_link#0",
@@ -2958,11 +3305,242 @@
             "to": 69
           }
         ],
-        "_doc": "ledger 0085: rc_infield from just past if_link's end mouth (v108) to just before its start mouth (v410), then if_link whole"
+        "_doc": "ledger 0085: rc_infield from just past if_link's end mouth (v90) to just before its start mouth (v392), then if_link whole (2026-11-09: indices 18 lower, rc_infield now starts at the NE pad's box edge)"
       }
     },
     "grid_slots": 8,
     "pit_slots": 8,
     "_slots_doc": "layout_dummies' own defaults, declared; no pit lane is built (the pits stand on each layout's lane behind its grid)"
+  },
+  "lm_pads": {
+    "_doc": "ledger 0085 (PC 2026-11-09; Kevin's yes to the NAIP crop, relayed verbatim \"Yes, download it\"): the oval's two junctions with the infield road (rc_infield's NE exit and NW return) as one measured pad each, tools/lm_pads_blend.py (the Lariat's and Sand Creek's): the lap cut at two of its own rows, one deck out to the outline tracks/pikes-peak/source/lidar/infield/junction_pads.py measured (NAIP 2023 grey x the 2018 lidar's intensity edge; the deck the class-2 ground's local planes) into source/pads/<id>.json, the infield road welded in as an arm at the box edge (arms streets: route.street_junctions.pad_arms cuts it there), the NW branch road the build does not complete closed by the box (a K-rail across it, Kevin's rule for a road not taken). Why: as welded connector mouths the junctions crossed the bank's knee and its apron with a three-line ribbon (NW approach 3.08 %/m, an 8.9 cm step, ground over the race lap's joins in the unpaved corner wedges); NAIP shows each as one continuous pavement. Boxes [authored, by eye on NAIP + the pavement mask]: the right side 0.75 m past the lap's right lane edge (past the wall's 0.6 m foot), every other vertex on grass or an island except the arm and the branch crossings",
+    "source": "source/pads",
+    "pads": [
+      {
+        "id": "NE",
+        "node": 323,
+        "cuts": [
+          310,
+          334
+        ],
+        "sealed": [],
+        "half_m": 60.0,
+        "box": [
+          [
+            118.99,
+            155.17
+          ],
+          [
+            114.61,
+            162.86
+          ],
+          [
+            110.04,
+            170.64
+          ],
+          [
+            105.45,
+            178.53
+          ],
+          [
+            100.92,
+            186.42
+          ],
+          [
+            96.43,
+            194.33
+          ],
+          [
+            92.0,
+            202.25
+          ],
+          [
+            87.52,
+            210.13
+          ],
+          [
+            82.72,
+            217.89
+          ],
+          [
+            77.62,
+            225.59
+          ],
+          [
+            72.3,
+            233.11
+          ],
+          [
+            48.92,
+            215.59
+          ],
+          [
+            54.27,
+            208.11
+          ],
+          [
+            39.74,
+            190.11
+          ],
+          [
+            66.0,
+            163.0
+          ],
+          [
+            95.03,
+            141.44
+          ]
+        ],
+        "arms": [
+          {
+            "connector": "rc_infield",
+            "cut": [
+              [
+                54.27,
+                208.11
+              ],
+              [
+                39.74,
+                190.11
+              ]
+            ]
+          }
+        ],
+        "_by": "the NE exit: in-cut v310 where the wedge leaves the apron's back, out-cut v334 past the grass island's tip; the arm 34 m along rc_infield (its v18)",
+        "ribbon_right_m": 0.7
+      },
+      {
+        "id": "NW",
+        "node": 449,
+        "cuts": [
+          428,
+          465
+        ],
+        "sealed": [],
+        "half_m": 75.0,
+        "box": [
+          [
+            -169.62,
+            277.28
+          ],
+          [
+            -176.95,
+            271.62
+          ],
+          [
+            -184.18,
+            265.81
+          ],
+          [
+            -190.9,
+            259.44
+          ],
+          [
+            -197.28,
+            252.73
+          ],
+          [
+            -203.27,
+            245.61
+          ],
+          [
+            -208.93,
+            238.21
+          ],
+          [
+            -214.44,
+            230.68
+          ],
+          [
+            -219.15,
+            222.75
+          ],
+          [
+            -223.49,
+            214.73
+          ],
+          [
+            -227.45,
+            206.45
+          ],
+          [
+            -230.84,
+            197.78
+          ],
+          [
+            -233.98,
+            188.98
+          ],
+          [
+            -236.35,
+            180.03
+          ],
+          [
+            -238.35,
+            171.02
+          ],
+          [
+            -200.09,
+            161.11
+          ],
+          [
+            -186.0,
+            188.0
+          ],
+          [
+            -151.9,
+            198.86
+          ],
+          [
+            -141.61,
+            216.81
+          ],
+          [
+            -150.0,
+            231.0
+          ],
+          [
+            -165.0,
+            244.0
+          ],
+          [
+            -152.76,
+            253.67
+          ]
+        ],
+        "arms": [
+          {
+            "connector": "rc_infield",
+            "cut": [
+              [
+                -151.9,
+                198.86
+              ],
+              [
+                -141.61,
+                216.81
+              ]
+            ]
+          }
+        ],
+        "_by": "the NW return: in-cut v428 before the island the NE branch runs beside, out-cut v465 where the pavement south of the road closes on the apron's back; the arm 57 m short of rc_infield's old cut, past the kerbed island; the box's (-150, 231) -> (-165, 244) edge crosses the NE branch",
+        "ribbon_right_m": 0.7
+      }
+    ],
+    "close_arms": "branches",
+    "_close_arms_doc": "\"branches\" (tools/lm_pads_blend.py, ledger 0085): the infield road is built (one road kn5 carries all three layouts), so its arm stays open; the NW branch road the build does not complete gets a K-rail where the box crosses it (Kevin: \"a road we are not completing gets a barrier, not a curve\")",
+    "deck": {
+      "fill": "lidar",
+      "datum_m": 0.1,
+      "smooth_m": 1.0,
+      "ground_edge_m": 0.7,
+      "cut_strip": [
+        "left"
+      ],
+      "hold_beyond_lane": "right"
+    },
+    "_deck_doc": "Sand Creek's (ledger 0079 round D): the deck's holes filled from the lidar round them, in the lap's datum (the assembler's ROAD stands 0.10 m over its sampled ground), a 1 m Gaussian over its nodes, the ground under and round it split to 0.7 m. Pikes Peak's own (ledger 0085, tools/lm_pads_blend.py): cut_strip left = the apron strip's row pinned at each cut with the lane's (the deck met the apron 0.14 m low at the NW out-cut); hold_beyond_lane right = past the lane's right edge the deck holds the edge's height under the wall's foot (the lidar rises 0.15 m into it). No lane_lip: the measured pavement and the wall-foot band cover the edges",
+    "arms": "streets",
+    "_ribbon_right_doc": "pads[].ribbon_right_m (junction_pads.py only): the deck runs 0.7 m past the lap's right lane edge, under the outer wall's whole foot (its inner face 0.05 m past the edge, 0.6 m deep), where the lap's edge strip was; without it one module's outer corners stood on the assembler's unseated ground and its base went 2.6 m under the surface (drive_test: floating, nothing under it)"
   }
 }

@@ -134,12 +134,13 @@ RAIL_KINDS = {"tecpro": ("1WALL_TECPRO", 1.2, 1.5, 0.8),
 EDGE_OF = {}                   # id(BVH) -> the longest edge of each polygon, in metres (for the collider's fine-ground rule)
 
 
-def bvh(prefixes):
-    """(BVH, owner name per polygon) over every mesh whose name starts with a prefix, world space"""
+def bvh(prefixes, exclude=()):
+    """(BVH, owner name per polygon) over every mesh whose name starts with a prefix (and none of `exclude`), world space"""
     verts, polys, owner, edges = [], [], [], []
     for o in bpy.data.objects:
         u = o.name.upper()
-        if o.type != "MESH" or not u.startswith(prefixes) or u.startswith(OWN_PREFIXES):
+        if (o.type != "MESH" or not u.startswith(prefixes) or u.startswith(OWN_PREFIXES)
+                or (exclude and u.startswith(tuple(exclude)))):
             continue
         mw = o.matrix_world
         off = len(verts)
@@ -1008,6 +1009,11 @@ def rails(col, spec, to_xy, ground, paved, bad, edge=None):
         if on_surface and edge is None:
             bad.append(f"rail {r['key']}: seat surface but no track_edge mesh in the scene")
             continue
+        # MAY STAND ON (opt-in "stand_on": [name prefixes], ledger 0085, Pikes Peak's junction pads): a module over those
+        # paved meshes is not "on a road" (the outer wall's foot on a pad deck's edge, where the deck replaces the lap's
+        # edge strip; names.track_edge then seats it on the deck). Absent = every paved mesh, as before
+        stand_on = tuple(str(p).upper() for p in r.get("stand_on") or [])
+        paved_r = bvh(PAVED, exclude=stand_on)[0] if stand_on else paved
         line = [to_xy(p) for p in r["polyline_lonlat"]]
         prefix, hgt, mod, dep = RAIL_KINDS[r["kind"]]
         hgt = float(r.get("height_m", hgt))      # a measured height (ledger 0078: Pikes Peak's wall off the lidar)
@@ -1032,7 +1038,7 @@ def rails(col, spec, to_xy, ground, paved, bad, edge=None):
                 if on_surface:
                     es = [down(edge, x, y) for x, y in ring]
                     gs = [g if e is None else (e if g is None else max(g, e)) for g, e in zip(gs, es)]
-                if any(g is None for g in gs) or any(down(paved, x, y) is not None for x, y in ring):
+                if any(g is None for g in gs) or any(down(paved_r, x, y) is not None for x, y in ring):
                     if r.get("auto"):
                         left_out += 1
                     else:

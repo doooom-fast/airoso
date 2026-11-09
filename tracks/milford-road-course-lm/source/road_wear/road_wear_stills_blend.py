@@ -33,6 +33,8 @@ for mat in bpy.data.materials:
     if not ({"txDiffuse", "txDetail", "txNormalDetail"} <= set(tex)) or mult is None:
         continue
     bsdf = nt.nodes.get("Principled BSDF")
+    # the macro's alpha is AC's detail mask (0 = full detail), not a transparency: Blender would premultiply it to black
+    tex["txDiffuse"].image.alpha_mode = "NONE"
     uv = nt.nodes.new("ShaderNodeUVMap")
     mp = nt.nodes.new("ShaderNodeMapping"); mp.inputs["Scale"].default_value = (mult, mult, 1.0)
     nt.links.new(uv.outputs["UV"], mp.inputs["Vector"])

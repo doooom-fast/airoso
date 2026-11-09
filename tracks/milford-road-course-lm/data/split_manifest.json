@@ -1,5 +1,5 @@
 {
- "input": "D:\\k10-scratch\\milford_lm\\blender\\milford_road_course.blend",
+ "input": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/work/roadtex/b17/blender/milford_road_course.blend",
  "outputs": {
   "loop_main.blend": {
    "objects": 48,
@@ -153,12 +153,9 @@
    "MARKINGS_mat.001",
    "PADAPRON_0_mat",
    "ROOFTOP_TAN_0_mat",
-   "ROOFTOP_WHITE_0_mat",
-   "TERRAIN_mat"
+   "ROOFTOP_WHITE_0_mat"
   ],
-  "orphan_materials": [
-   "TERRAIN_mat"
-  ],
+  "orphan_materials": [],
   "ac_nodes": [
    "AC_HOTLAP_START_0",
    "AC_PIT_0",

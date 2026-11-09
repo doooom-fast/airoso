@@ -5,7 +5,7 @@
   "_name_engine_doc": "ledger 0083 pass 4 (Kevin 2026-11-07: \"Get rid of Lm Version from names, nothing should be on any other engine now\" / \"LM is the airoso engine\"): no '(LM engine)' in the name; installed as the plain del_mar_fairgrounds (install_folder). The slug stays del_mar_fairgrounds_lm (the file names inside the folder) while tracks/del-mar still holds del_mar_fairgrounds: fleet lint S7 refuses two tracks on one slug; the directories are renamed in one pass later.",
   "slug": "del_mar_fairgrounds_lm",
   "ui_series": "doooom California",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "mirror_x": false,
   "loop": true,
   "default_width_m": 13.0,
@@ -2542,7 +2542,8 @@
       "sidewalk_w": 0.2,
       "connector_sidewalk_w": 0.2,
       "grade_w": 1.0,
-      "grass_clearance": 0.05,
+      "grass_clearance": -0.08,
+      "_grass_clearance_doc": "0.2.5 (PC, 2026-11-09; Kevin, asked whether the other circuit tracks have Milford's fast-curve edge mess: \"Yes, check them\"; Milford 0.1.6 is the same fix, ledger 0087): the strip's outer lip 2 cm under the lane edge (profile point 3 at -grass_clearance = +0.08 over the unlifted edge; the lane edge at +0.10). engine-july's prep holds the ground past the ROAD edge at the lane edge's height - 0.02 for 3 m (its contact band), so the lower lip lay in a gutter with a wall of ground at its lip. Measured on the installed 0.2.4 (gate OBJ, every 10 m, both sides; strip_gutter.py): the strip's lip 14 cm under the lane edge; the ground just past it stood more than 5 cm over the lip at 60 of 374 side-stations, more than 10 cm at 16 (max 12 cm). Flush with the band, nothing stands over it",
       "_doc": "the circuit edge (ledger 0078): no curb, no sidewalk. The asphalt edge is held at road height for 0.30 m and the run-off ground meets it 0.15 m lower over 1.0 m [invented: the flush meet the drive gate reads as no drop]; the ground beyond is the assembler's conform to the road, then the 3DEP surface: the real run-off level."
     },
     "seat_edges_grade_pct": 5.0,

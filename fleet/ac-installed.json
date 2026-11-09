@@ -13,7 +13,8 @@
     "After every install from now on: re-render the track's menu picture from the new build with the camera in its source/ui/preview.json, copy it over ui[/<layout>]/preview.png (old one backed up), commit it with the install records.",
     "2026-11-08 (Kevin, asked on the PC: 'Yes, install overnight', the six conditions met): Milford 0.1.5 to the plain milford_road_course; milford_road_course_lm 0.1.4 moved first to D:/k10-track-archive/2026-11-08_011149_milford/ (MOVES.tsv) and dropped from this list. The menu picture re-rendered off 0.1.5 with stand-in trees (the pack's in D:/k10-track-archive/2026-11-08_014406_previews/).",
     "2026-11-08 (Kevin, asked on the PC: 'Yes, install overnight', the six conditions met): Sand Creek 0.2.7 to the plain sand_creek_raceway; sand_creek_raceway_lm 0.2.6 moved first to D:/k10-track-archive/2026-11-08_043809_sand_creek/ (MOVES.tsv) and dropped from this list (the old engine's sand_creek_raceway was already out of AC). The race and street menu pictures re-rendered off 0.2.7 (the pack's in D:/k10-track-archive/2026-11-08_053642_previews/).",
-    "2026-11-09 (Kevin, asked on the PC: 'Yes and I always want newer builds'): Milford 0.1.6 to the plain milford_road_course; ship_track's install step parked 0.1.5 in D:/k10-track-archive/2026-11-09_093135/ (MOVES.tsv). The menu picture re-rendered off 0.1.6 (the pack's in D:/k10-track-archive/2026-11-09_093221_previews/)."
+    "2026-11-09 (Kevin, asked on the PC: 'Yes and I always want newer builds'): Milford 0.1.6 to the plain milford_road_course; ship_track's install step parked 0.1.5 in D:/k10-track-archive/2026-11-09_093135/ (MOVES.tsv). The menu picture re-rendered off 0.1.6 (the pack's in D:/k10-track-archive/2026-11-09_093221_previews/).",
+    "2026-11-09 (Kevin on the PC: 'Yes, check them' / 'I always want newer builds'): Del Mar 0.2.5 to del_mar_fairgrounds; ship_track's install step parked 0.2.4 in D:/k10-track-archive/2026-11-09_105157/ (MOVES.tsv)."
   ],
   "ac_tracks": "D:/SteamLibrary/steamapps/common/assettocorsa/content/tracks",
   "archive": "D:/k10-track-archive",
@@ -39,14 +40,14 @@
       "installed": "2026-11-05"
     },
     "del_mar_fairgrounds": {
-      "branch": "claude/del-mar-lm",
+      "branch": "claude/del-mar-edge-flush",
       "engine": "lm-v4",
-      "installed": "2026-11-07",
+      "installed": "2026-11-09",
+      "note": "0.2.5 = 0.2.4 + the edge strip flush with the prep's contact band (route.edge.grass_clearance -0.08, ledger 0087 / 0083); records + menu picture on claude/del-mar-edge-flush fd462189",
       "role": "current",
-      "sha": "4810cdbd",
+      "sha": "36aef610",
       "track": "del-mar-lm",
-      "version": "0.2.4",
-      "note": "0.2.4 = far ground off the 2024 lidar, garages set in their slope (ledger 0083 pass 4b), the plain folder; records + menu picture on claude/del-mar-lm 0f5ba59"
+      "version": "0.2.5"
     },
     "exotics_racing_lvms_lm": {
       "track": "exotics-racing-lv-lm",

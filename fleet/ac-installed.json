@@ -99,13 +99,23 @@
       "track": "milford-road-course-lm",
       "version": "0.1.6"
     },
-    "pikes_peak_international_raceway_lm": {
-      "track": "pikes-peak-lm",
+    "pikes_peak_international_raceway": {
+      "branch": "claude/pikes-peak-road-course-build",
       "engine": "lm-v4",
+      "installed": "2026-11-09",
       "role": "current",
-      "version": "0.1.0",
+      "sha": "dea338935591cebc41c566d0e5c39857b778ef2c",
+      "track": "pikes-peak-lm",
+      "version": "0.2.0"
+    },
+    "pikes_peak_international_raceway_lm": {
       "branch": "claude/circuit-kerbs-lm",
-      "installed": "2026-11-04"
+      "engine": "lm-v4",
+      "installed": "2026-11-04",
+      "role": "superseded",
+      "successor": "pikes_peak_international_raceway",
+      "track": "pikes-peak-lm",
+      "version": "0.1.0"
     },
     "pueblo_motorsports_park": {
       "branch": "claude/circuit-edge-flush",

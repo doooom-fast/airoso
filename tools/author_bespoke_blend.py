@@ -1020,7 +1020,11 @@ def rails(col, spec, to_xy, ground, paved, bad, edge=None):
             cnt = int(seg // mod)
             for m in range(cnt):
                 x0, y0 = a[0] + ux * m * mod, a[1] + uy * m * mod
-                x1, y1 = x0 + ux * (mod - 0.02), y0 + uy * (mod - 0.02)
+                # opt-in "overlap_m" (ledger 0085, Pikes Peak's outer wall): the modules interlock, each running this far
+                # into the next (a K-rail line is pinned end to end; the 2 cm joint let drive_test's wall probe through at
+                # s 1200.8); absent = the 2 cm joint, as before
+                run = mod + float(r["overlap_m"]) if r.get("overlap_m") is not None else mod - 0.02
+                x1, y1 = x0 + ux * run, y0 + uy * run
                 ring = [(x0 - nx * dep / 2, y0 - ny * dep / 2), (x1 - nx * dep / 2, y1 - ny * dep / 2),
                         (x1 + nx * dep / 2, y1 + ny * dep / 2), (x0 + nx * dep / 2, y0 + ny * dep / 2)]
                 ring = inward_ring(ring)

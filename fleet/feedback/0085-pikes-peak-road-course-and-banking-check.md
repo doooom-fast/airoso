@@ -348,3 +348,36 @@ straight joins turned 35-100 deg in 4 m (a 12 m road cannot): each exit off the 
 either side of the deck's edge (the pavement there is continuous: the apron and the diverge's mouth), and every spot
 tighter than R 12 m relaxes towards its neighbours, never more than 3 m off the route (RC-D: max 1.45 m, p95 0.04 m;
 IF-K: max 3.0, p95 1.27; its two junction turns stay tight, inside the mouths).
+
+**6. Where it stands (PC, 2026-11-08 23:35; head ba4f836, workshop `D:/k10-scratch/pp_b3`, last full run `pp_b3w.log`
+= the committed config).** kn5 and models_<id>.ini verification PASS for all three layouts. The oval's drive_test PASS,
+and its wall is fixed: 0.1.0's outer wall (bespoke rails seated on the author stage's terrain, up to 1.6 m under the banked
+strip) topped out at +0.61 m over the pavement, with 635 of 1,128 modules below it. Now `rails[].seat "surface"` +
+`overlap_m` give every module +1.27..+1.36 m. 0.1.0's AC_TIME_0 also sat on the back stretch; the line is now on the
+published S/F.
+
+Still red:
+- Road course drive_test: ground over the lane at 3 spots (the NE join s 948/966, the lot s 1626) and one 8.9 cm step at
+  s 1887.
+- verify_mouths: the NW mouth's APPROACH, 3.08 %/m against 3.
+- Infield drive_test: the S-curve's real hairpin (8.3-8.7 m wide, centre R ~8-9 m) breaks the >110 deg on <9 m rule, plus
+  2 ground spots at s 456. Asked of Kevin: "Drop infield for now" or "Exempt that hairpin". Nothing forced.
+
+The NW mouth is the hard part. The infield road meets the 17 % bank at 32-36 deg across the measured knee (bank to 4 %
+apron), and a connector ribbon (three lateral lines) cannot follow a bank, a knee and an acute edge sliver at once. Tried
+and kept:
+- `apron_road` cuts the apron along the road's edges (ground spots 78 -> 3).
+- `weld_deck_apron` (the weld reads the apron past the edge).
+- The NW exit eased over 15 m (24.7 -> 31.8 deg).
+
+Tried and NOT kept: `edge_on_bank.round_m` 2.0 (a rounded knee). The NW approach went 3.08 -> 4.40 %/m and the steps
+1 -> 2; the code stays, opt-in, undeclared.
+
+Owed:
+- The NW junction as a measured pad (lm_pads-style: one lidar deck over the junction, the oval's and the road's rows
+  welded to its outline).
+- The two oval mouths' corner radii and the skid-pad lot's paved outline. Both need the NAIP crop: asked of the Mac; the
+  PC has none, and fetching it needs Kevin's yes.
+- Kevin's call on the infield hairpin.
+- The road course's grid_vertex: the lap gained vertices and the pole now stands 20.8 m behind the line. Reset it at the
+  final rehearsal.

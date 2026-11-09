@@ -1,5 +1,5 @@
 {
-  "_doc": "Pikes Peak International Raceway on Lake Murray v4's engine (ledger 0078): engine lm-v4, the intake from tracks/pikes-peak, Lake Murray's assembler and fold weld, finer ground on the banked stretches, the traced kerbs when committed, the bespoke dressing, engine-july's prep / export, the gates + edge_report. Single layout: engine-july's prep lays the AC_* nodes in the road kn5.",
+  "_doc": "Pikes Peak International Raceway on Lake Murray v4's engine (ledger 0078): engine lm-v4, the intake from tracks/pikes-peak, Lake Murray's assembler and fold weld, finer ground on the banked stretches, the traced kerbs when committed, the bespoke dressing, engine-july's prep / export, the gates + edge_report. 0.2.0 (ledger 0085): three layouts on one road kn5 (the oval, the road course, the infield), each with its own spawn kn5 (AC_* nodes) and AI line; the laps stitched by the author step race_laps.",
   "track": "pikes-peak-lm",
   "engine": "lm-v4",
   "workshop": "D:/k10-scratch",
@@ -10,15 +10,21 @@
     "draft": [
       "lm_intake",
       "build_loop_blend",
+      "trim_connectors",
+      "rebuild_loop_blend",
       "weld_mouths",
+      "seat_terrain",
       "densify_ribbon",
       "seat_edges",
       "strip_seam",
       "apron_road",
+      "gap_mouths",
       "ground_patch",
       "kerbs"
     ],
     "author": [
+      "race_laps",
+      "layout_dummies",
       "bespoke"
     ],
     "prep": [
@@ -27,6 +33,7 @@
     ],
     "ship": [
       "export_road",
+      "spawn_kn5",
       "ai",
       "verify_kn5",
       "road_obj",
@@ -38,6 +45,7 @@
       "drive_test_street",
       "audit_street",
       "kn5_ground",
+      "verify_mouths",
       "house_seat",
       "edge_report"
     ]
@@ -49,7 +57,8 @@
     "optional": [
       "data/heightfield.npy",
       "data/heightfield.meta.json",
-      "source/ground_patches.lidar.json"
+      "source/ground_patches.lidar.json",
+      "source/connectors.infield.json"
     ]
   },
   "sync_out": {
@@ -74,7 +83,12 @@
       "data/house_seat_check.json",
       "data/edge_report.json",
       "data/kerbs.built.json",
-      "data/apron.lm.json"
+      "data/apron.lm.json",
+      "data/mouths.json",
+      "data/connectors.local.json",
+      "data/dummies_{id}.json",
+      "data/lap.rc.json",
+      "data/lap.inf.json"
     ],
     "map": [
       [

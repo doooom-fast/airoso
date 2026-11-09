@@ -484,6 +484,13 @@ for lid in sys.argv[2:]:
         bad.append(lid+': planned no_route FAIL')
 if bad: raise SystemExit('PLANNED no_route: '+'; '.join(bad))" "$PROJ/data" $RACE_IDS
 }
+author_race_laps() {
+  # ledger 0085 (Pikes Peak): a BARE race layout (kind race, no race_furniture) that names a lap gets its stitched line
+  # here (scripts/geometry/race_lap.py -> data/lap.<id>.json); a furnished race layout's comes from barrier_bands. List it
+  # before layout_dummies; a track that names no lap does not list it
+  step "author: the race laps the layouts name (scripts/geometry/race_lap.py -> data/lap.<id>.json; ledger 0085)"
+  (cd "$AIROSO" && python -m scripts.geometry.race_lap "$PROJ")
+}
 author_layout_dummies() {
   (cd "$AIROSO" && python tools/layout_dummies.py "$PROJ")         # data/dummies_<id>.json per layout; exit 1 on validation
 }

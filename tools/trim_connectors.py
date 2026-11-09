@@ -244,6 +244,14 @@ def capped_blend_length(piece, cut, host_y, at_start, frozen=(), cap=GRADE_CAP, 
     return best
 
 
+# BANKED HOSTS (opt-in route.trim_host_bank, ledger 0085 Pikes Peak; absent = {} = the centreline height, as before):
+# host name -> f(x, z) = the host's bank (radians, + = its left edge higher) at a point. On a banked host the cut lands
+# at the deck's own height where it stands (centreline + lateral x tan(bank)), not the centreline's: on Pikes Peak's
+# 12-17 % bank the inside edge is 1.0-1.8 m under the centre, and the blend up to it followed by the weld's warp down
+# left a 0.2-0.4 m dip ~27 m into each infield road.
+HOST_BANK: dict = {}
+
+
 def _trim_against(conns, hosts, mouths, deltas=None, capped=(), no_reach=()):
     """conns: list of connector dicts to trim; hosts: list of (name, pts, widths). Returns new list.
     `deltas` (optional dict connector name -> [(x, z, dy)]) collects every blended point's height change.
@@ -319,6 +327,9 @@ def _trim_against(conns, hosts, mouths, deltas=None, capped=(), no_reach=()):
                     cx, cz = po[0] + (pi_[0] - po[0]) * f, po[2] + (pi_[2] - po[2]) * f
                     hpts = host_pts[hname]
                     host_y, hseg, ht = host_height(hpts, cx, cz)
+                    if hname in HOST_BANK:
+                        d_b, _hb, _kb, sd_b = _lateral(cx, cz, hpts, host_w[hname])
+                        host_y += sd_b * d_b * math.tan(HOST_BANK[hname](cx, cz))
                     cut = (cx, host_y, cz)
                     # the approach direction: from the piece's point next to the cut (po unless the cut IS po)
                     ox, oz = po[0], po[2]
@@ -898,6 +909,18 @@ def build(project_dir):
 
     # pass 1: everything vs the mainline
     capped = [str(x) for x in (cfg.get("route", {}).get("trim_blend_grade_cap") or [])]
+    if (cfg.get("route") or {}).get("trim_host_bank"):
+        rel_cf = (cfg.get("route") or {}).get("crossfall_file")
+        if not rel_cf:
+            raise SystemExit("[trim] route.trim_host_bank needs route.crossfall_file (the mainline's measured bank)")
+        cfj = json.loads((proj / rel_cf).read_text(encoding="utf-8"))
+        cxz, cbk = cfj["points_xz"], cfj["bank_rad"]
+
+        def _bank_at(x, z, cxz=cxz, cbk=cbk):
+            j = min(range(len(cxz)), key=lambda k: (cxz[k][0] - x) ** 2 + (cxz[k][1] - z) ** 2)
+            return float(cbk[j])
+        HOST_BANK["MAINLINE"] = _bank_at
+        print(f"[trim] route.trim_host_bank: cuts on the MAINLINE land on its banked deck ({len(cbk)} stations, {rel_cf})")
     first = _trim_against(conns.get("connectors", []), [("MAINLINE", main, local["widths_m"])], mouths, deltas,
                           capped=capped, **({"no_reach": arm_ends} if arm_ends else {}))
     # pass 2: non-host pieces vs the divided trunks (host = any piece of a divided connector, not its _loop)

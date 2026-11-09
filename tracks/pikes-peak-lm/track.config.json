@@ -1,9 +1,9 @@
 {
   "_doc": "Pikes Peak International Raceway through Lake Murray v4's engine (ledger 0078). The line, widths and profile are tracks/pikes-peak's (installed 0.4.0), read by tools/lm_engine_intake.py; the profile is the measured one with the elevation stage's grade cap undone; the camber is the G10 lidar survey (source/lidar/camber-survey/crossfall.json); the 3DEP grid is this port's own fetch (the live track commits none); the edge is the circuit's (no curb, no sidewalk). Every other key is the live track's, copied; the live config is untouched.",
   "archetype": "race_circuit",
-  "name": "Pikes Peak International Raceway (LM engine)",
-  "slug": "pikes_peak_international_raceway_lm",
-  "version": "0.1.0",
+  "name": "Pikes Peak International Raceway",
+  "slug": "pikes_peak_international_raceway",
+  "version": "0.2.0",
   "mirror_x": false,
   "loop": true,
   "default_width_m": 15.0,
@@ -2338,16 +2338,63 @@
               38.59102581
             ]
           ],
-          "_source": "the oval's outer retaining wall, measured off the 2018 lidar (tools/lidar_wall.py, tracks/pikes-peak/source/lidar/wall-survey/wall_right.json; CO_Eastern_ElPaso_2018, every one of 556 stations): its face is the port's right lane edge (lm_intake.edge_on_wall), the module's inner face 0.05 m [invented] past it; its top 1.27 m over the road (the survey's median; p10 1.24, p90 1.31). Resampled every 3.02 m along its own arc (one module a segment). The module is the K-rail's section (3 m, 0.6 m foot), at the measured height; plain concrete."
+          "_source": "the oval's outer retaining wall, measured off the 2018 lidar (tools/lidar_wall.py, tracks/pikes-peak/source/lidar/wall-survey/wall_right.json; CO_Eastern_ElPaso_2018, every one of 556 stations): its face is the port's right lane edge (lm_intake.edge_on_wall), the module's inner face 0.05 m [invented] past it; its top 1.27 m over the road (the survey's median; p10 1.24, p90 1.31). Resampled every 3.02 m along its own arc (one module a segment). The module is the K-rail's section (3 m, 0.6 m foot), at the measured height; plain concrete.",
+          "seat": "surface",
+          "_seat_doc": "ledger 0085 (PC, 2026-11-08): each module stands on the higher of the ground and the edge strip under it (names.track_edge). 0.1.0 stood the wall on the author stage's terrain, up to 1.6 m under the banked strip: on its gate OBJ no module rose more than 0.61 m over the pavement under it and 635 of 1,128 were under it (the installed oval's wall is buried on the banking)"
         }
       ]
     }
   },
   "layouts": [
     {
-      "id": "full",
-      "ai": "ai/full",
-      "uses_connectors": []
+      "id": "oval",
+      "name": "Pikes Peak International Raceway",
+      "kind": "race",
+      "direction": "forward",
+      "race_furniture": false,
+      "ai": "ai/oval",
+      "start": {
+        "line_vertex": 4,
+        "grid_vertex": 1,
+        "offset_right_m": 0.0
+      },
+      "run": "the 1-mile oval, counter-clockwise, on its measured racing surface (the bank's plane to its inside knee) and apron",
+      "ui_description": "Pikes Peak International Raceway, Fountain, Colorado: the 1-mile D-oval, counter-clockwise, on its measured 2018 lidar surface (the 10-degree turns, the banked straights, the apron). The AI line is a generated draft, not an in-game recording.",
+      "_start_doc": "ledger 0085: the line on the published S/F (route_from_maps RC-D start_finish (-157.7, -89.5), mid front stretch in front of the grandstand; the mainline's v4, 2.9 m off it): 0.1.0's single-layout prep put AC_TIME_0 on the BACK stretch (x +171..+184). Grid 9 m behind; sectors derived by tools/layout_dummies.py (a third and two thirds of the lap, nudged to the nearest straight)"
+    },
+    {
+      "id": "roadcourse",
+      "name": "Pikes Peak Road Course",
+      "kind": "race",
+      "direction": "forward",
+      "race_furniture": false,
+      "lap": "rc",
+      "ai": "ai/roadcourse",
+      "start": {
+        "line_vertex": 0,
+        "grid_vertex": 906,
+        "offset_right_m": 0.0
+      },
+      "run": "counter-clockwise as both published maps draw it: the front stretch, turns 1-2, the back stretch, off at the NE lane, the top hairpin, the diagonal, round the skid-pad lot the long way, the bottom road, the west road, the sweeper, back on at the NW merge",
+      "ui_description": "Pikes Peak International Raceway road course: the route both published course maps draw (SCCA, racingcircuits.info), counter-clockwise, about 2.2 km: turns 1-2 of the oval, then the infield's hairpin, diagonal, skid-pad lot, bottom road and sweeper back onto the oval. Every infield road off the 2023 aerial and the 2018 lidar; the lot's north-east side is drawn straight (no driven line shows on its concrete). The AI line is a generated draft.",
+      "_start_doc": "ledger 0085: the published S/F (the lap's v0 = mainline v4), the grid 9 m behind on the lap's last vertices; sectors derived by tools/layout_dummies.py (a third and two thirds of the lap, nudged to the nearest straight)"
+    },
+    {
+      "id": "infield",
+      "name": "Pikes Peak Infield",
+      "kind": "race",
+      "direction": "forward",
+      "race_furniture": false,
+      "lap": "inf",
+      "ai": "ai/infield",
+      "start": {
+        "line_vertex": 250,
+        "grid_vertex": 246,
+        "offset_right_m": 0.0
+      },
+      "run": "the infield alone (Kevin's shape, \"like an interior track only version\"): the diagonal, round the lot the long way, the bottom road, a right at its west end up the S-curve, the C road east back to the diagonal",
+      "ui_description": "Pikes Peak International Raceway infield: the roads inside the oval alone, about 750 m, run the way the published road course runs on the roads they share, then up the S-curve and along the C road. No infield-only course is published; the start line on the bottom road is ours. The AI line is a generated draft.",
+      "_start_doc": "ledger 0085: no infield-only course is published, so the line is ours [invented]: mid bottom road (the longest straight, rc_infield v360), the grid 8 m behind; sectors at the lap's thirds"
     }
   ],
   "lighting": {
@@ -2439,7 +2486,21 @@
     },
     "crossfall_file": "data/crossfall.lm.json",
     "edge_apron_file": "data/apron.lm.json",
-    "_edge_apron_file_doc": "ledger 0085: the left edge strip as the oval's measured apron (build_loop_blend.edge_apron, ribbon.curb_sidewalk apron); written by lm_intake.edge_on_bank.apron"
+    "_edge_apron_file_doc": "ledger 0085: the left edge strip as the oval's measured apron (build_loop_blend.edge_apron, ribbon.curb_sidewalk apron); written by lm_intake.edge_on_bank.apron",
+    "connector_hosts": [
+      "rc_infield"
+    ],
+    "_connector_hosts_doc": "ledger 0085: tools/trim_connectors.py pass 2 cuts if_link at rc_infield's pavement edge (both its ends: the bottom road's west end and diag's start)",
+    "seat_edge_m": 1.3,
+    "_seat_edge_doc": "ledger 0085: tools/seat_terrain_blend.py pins the ground under the circuit edge strip (0.1 face + 0.2 + 1.0 m grade)",
+    "trim_host_bank": true,
+    "_trim_host_bank_doc": "ledger 0085: tools/trim_connectors.py lands each infield road's cut on the oval's BANKED deck (centreline + lateral x tan(bank), data/crossfall.lm.json), not its centreline: on the 12-17 % bank the inside edge stands 1.0-1.8 m under the centre; the blend up to it then the weld's warp down left a 0.2-0.4 m dip ~27 m into each road (B2: the blend moved the ends +1.04 / +1.73 m; banked, +0.26 / +0.17 m and the cut within 2-6 cm of the road's own lidar height)",
+    "weld_exact_deck": [
+      "rc_infield",
+      "if_link"
+    ],
+    "weld_exact_deck_lines": true,
+    "_weld_exact_deck_doc": "ledger 0085: the infield roads' welds and verify_mouths' MOUTH LINE / NOTCH read the host's deck off its triangles where the sample stands, not its centre carried level across: the oval is banked 12-17 % (its inside edge 0.85-1.8 m under its centre at the two mouths; B2's verify_mouths read exactly that as the road 'off the host deck')"
   },
   "terrain_cell_m": 1.5,
   "corridor_refine_factor": 6,
@@ -2447,8 +2508,8 @@
   "ui_tags": [
     "circuit"
   ],
-  "install_folder": "pikes_peak_international_raceway_lm",
-  "_install_folder_doc": "beside pikes_peak_international_raceway for the A/B drive (ledger 0078)",
+  "install_folder": "pikes_peak_international_raceway",
+  "_install_folder_doc": "0.2.0 (ledger 0085; Kevin 2026-11-07 \"LM is the airoso engine\", the plain folder as Sand Creek 0.2.7): 0.1.0 installed beside the old engine's folder as pikes_peak_international_raceway_lm for the A/B drive (ledger 0078); the old engine's folder is not in AC",
   "ui_series": "doooom Colorado",
   "_ui_series_doc": "Kevin 2026-10-28: 'K10 is gone. doooom.' Content Manager shows '<ui_series> - <layout name>' (tools/ship_track.sh ui_name_prefix carries the same string)",
   "_chain_doc": "2026-11-01 (ONE-CHAIN §4 row 10; Kevin 2026-11-01: 'get a complete track list and installed by morning'): to the chain. mirror_x true -> false and true_north_rotation_deg 180 -> 0 (the chain's frame, ledger 0060), and with it the two turn cambers' sign +10 -> -10 (profile.py: in the unmirrored frame +ve banks a right-hander, left edge up; PPIR is raced counterclockwise, every turn a left-hander, so the outside is the RIGHT edge and the sign is negative; +10 was the mirrored frame's sign); the arcs re-derived on the unsmoothed line (road_profile._arcs_doc); road_profile.ribbon_cols 8 added (Exotics' fix for a camber ramp's twist sagging the deck between rows; road_profile._ribbon_cols_doc); version 0.2.2 -> 0.3.0 (versions keep counting, ONE-CHAIN §3); source.smooth_window 0 (an OSM node list); terrain_cell_m 2.0 -> 1.5 (L3b) and corridor_refine_factor 6 added (ledger 0025 #7's fleet standard); despike_window_m 90 / max_grade_pct 4 kept (ledger 0018: not the fix); ui_series 'doooom Colorado', install_folder = the slug (pikes_peak_international_raceway, kept: it names every file; ONE-CHAIN §3); ui_tags 'circuit' added; the one layout already 'full'. route.reverse + start_at checked offline on the gps line + projection (zero-elevation stand-in): the lap is reversed to counterclockwise, the ring rotates 288 points, vertex 0 lands 6.5 m from start_at on the front stretch heading 151 deg (SSE), as _orientation_doc says; lap 1,666 m, 556 points from 63 nodes (PPIR's published 1 mile: +3.5 %, the OSM centreline as mapped).",
@@ -2471,7 +2532,9 @@
       "apron": true,
       "_apron_doc": "the measured apron past the bank's edge (oval_surface.json: width to the NAIP inside edge 4.2-14.9 m, p50 6.0; fall -2.9..-8.5 %, p50 -6.6 %; the ground 1 m past it -0.15..+0.10 m off the apron's edge) -> data/apron.lm.json -> route.edge_apron_file: the edge strip's sidewalk on the left side IS the apron (the aerial: a paved, lighter band with its painted line all round the inside)",
       "_doc": "ledger 0085 (PC, 2026-11-08; Kevin: \"I just want real\", told the oval is widened to its measured width): the 2018 lidar (fetch_infield.py, 7.5 MB on his yes) shows the bank's plane running on past the traced lane's left (inside) edge to a knee 2.3-9.2 m further in (median 5.1 m; two-line fits 1-3 cm, inside_slope.py), then an apron at -3.6..-8 % to the NAIP inside edge. The left edge moves onto that knee (oval_surface.py: smoothed, weak knees filled), the right edge stays on the wall: the racing surface 17.0-21.4 m wide (published 60-71 ft = 18.3-21.6 m). heights plane: the moved centre takes the lidar plane's height where it now stands (the centre otherwise keeps the old height while moving up to 4.6 m down a 17 % bank)"
-    }
+    },
+    "connectors_file": "source/connectors.infield.json",
+    "_connectors_file_doc": "ledger 0085 Phase B (PC, 2026-11-08): the infield roads off the measured pieces (tracks/pikes-peak/source/lidar/infield/make_connectors.py from route_from_maps.naip.json: both published maps' route, Kevin 2026-11-08 \"Straight is fine\" for the lot's NE side): rc_infield (RC-D off the oval, 963.5 m, both ends on the deck) and if_link (IF-K's own: S-curve, C road east, 182 m, both ends on rc_infield); heights the 1 m lidar DEM"
   },
   "terrain": {
     "terrain_band_m": 22.0,
@@ -2842,7 +2905,9 @@
           ]
         ],
         "feather_m": 0.0,
-        "_doc": "ledger 0085: the oval's whole inside, from 0.5 m inside the bank's edge (the intake's moved left edge), seated on the 2018 lidar ground (make_ground_patch.py from infield_ground.py's 1 m DEM: no fetch). The port's 20 m grid stood up to 1.3-1.8 m off near the NW junction; the apron's real fall and the infield's 1-2 % cross-falls come from here. feather 0: outside the polygon is the deck"
+        "_doc": "ledger 0085: the oval's whole inside, from 0.5 m inside the bank's edge (the intake's moved left edge), seated on the 2018 lidar ground (make_ground_patch.py from infield_ground.py's 1 m DEM: no fetch). The port's 20 m grid stood up to 1.3-1.8 m off near the NW junction; the apron's real fall and the infield's 1-2 % cross-falls come from here. feather 0: outside the polygon is the deck",
+        "split_m": 3.0,
+        "_split_doc": "ledger 0085: the infield's terrain cut to <= 3 m edges, not the tool's 1.5 m: its grades are 1-4 % and the apron is its own road object; at 1.5 m the terrain went 173k -> 552k vertices and the prep's per-vertex passes ran past 20 min"
       }
     ],
     "lidar_patches_file": "source/ground_patches.lidar.json"
@@ -2853,5 +2918,47 @@
       "normal": "assets/textures/concrete_barrier_normal.png",
       "_doc": "the outer wall is plain concrete, not High Plains' blue / white paint (engine-july's own concrete barrier files)"
     }
+  },
+  "race": {
+    "laps": {
+      "rc": {
+        "pieces": [
+          {
+            "line": "MAINLINE",
+            "from": 4,
+            "to": 319
+          },
+          {
+            "line": "rc_infield#0",
+            "from": 0,
+            "to": 470
+          },
+          {
+            "line": "MAINLINE",
+            "from": 455,
+            "to": 3
+          }
+        ],
+        "_doc": "ledger 0085: the published S/F (mainline v4) -> the back stretch -> off 16 m before the NE mouth (v319; the join to rc_infield's cut at the deck edge) -> the infield road whole -> back on 19 m past the NW mouth (v455) -> round to v3"
+      },
+      "inf": {
+        "pieces": [
+          {
+            "line": "rc_infield#0",
+            "from": 110,
+            "to": 409
+          },
+          {
+            "line": "if_link#0",
+            "from": 0,
+            "to": 69
+          }
+        ],
+        "_doc": "ledger 0085: rc_infield from just past if_link's end mouth (v108) to just before its start mouth (v410), then if_link whole"
+      }
+    },
+    "grid_slots": 8,
+    "pit_slots": 8,
+    "_slots_doc": "layout_dummies' own defaults, declared; no pit lane is built (the pits stand on each layout's lane behind its grid)"
   }
 }

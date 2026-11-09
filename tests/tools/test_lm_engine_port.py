@@ -164,13 +164,15 @@ def test_the_intake_into_an_empty_workshop_leaves_every_file_the_chain_reads():
             L.intake(ws)
             cfg = json.loads((ws / "track.config.json").read_text(encoding="utf-8"))
             want = list(WORKSHOP_INPUTS)
-            if (cfg.get("lm_intake") or {}).get("connectors"):
+            if (cfg.get("lm_intake") or {}).get("connectors") or (cfg.get("lm_intake") or {}).get("connectors_file"):
                 # side streets in (Sand Creek 0.2.3, ledger 0079): the intake deletes any old mouths.json and the chain's
                 # trim_connectors step writes it before weld_mouths reads it
                 assert "trim_connectors" in spec_steps(port), port
                 want.remove("data/mouths.json")
             if (cfg.get("lm_intake") or {}).get("crossfall"):
                 want.append("data/crossfall.lm.json")
+            if ((cfg.get("lm_intake") or {}).get("edge_on_bank") or {}).get("apron"):
+                want.append("data/apron.lm.json")        # ledger 0085: route.edge_apron_file, the assembler reads it
             if (cfg.get("route") or {}).get("kerbs_file"):
                 want.append(cfg["route"]["kerbs_file"])
             if (cfg.get("capture") or {}).get("bridges"):

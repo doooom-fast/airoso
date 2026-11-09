@@ -869,6 +869,19 @@ def intake(proj: Path, *, connectors: bool | None = None) -> dict:
         (data / "heightfield.meta.json").write_text(json.dumps(meta2), encoding="utf-8")
     want_conn = li.get("connectors", False) if connectors is None else connectors
     conn = sdata / "connectors.local.json"
+    # THE PORT'S OWN SIDE STREETS (lm_intake.connectors_file, a path inside the PORT project; ledger 0085, Pikes Peak's
+    # infield roads off the measured pieces): the source track has none, so the port carries its own set (ship.json
+    # sync_in). Taken instead of the source's; the same fresh-copy rules below. Absent = as before.
+    cfile = li.get("connectors_file")
+    if cfile:
+        if str(cfile).startswith(("/", "\\")) or ".." in Path(str(cfile)).parts:
+            raise SystemExit(f"[lm_intake] lm_intake.connectors_file {cfile!r} must be a plain path inside the project")
+        conn = proj / str(cfile)
+        if not conn.exists():
+            raise SystemExit(f"[lm_intake] lm_intake.connectors_file {cfile}: not in the project (ship.json sync_in)")
+        want_conn = True
+        print(f"[lm_intake] connectors: the port's own ({cfile}, "
+              f"{len(json.loads(conn.read_text(encoding='utf-8'))['connectors'])} pieces)")
     if want_conn and conn.exists():
         shutil.copyfile(conn, data / "connectors.local.json")
         (data / "mouths.json").unlink(missing_ok=True)       # tools/trim_connectors.py writes it for these connectors

@@ -297,3 +297,54 @@ turns 1-2 as one and numbers the merge. Same nine-plus corners, offset by one th
 **Still owed before a build** (unchanged from above): the join onto the oval's unbuilt inside pavement (its slope is
 unmeasured; the 2018 lidar), the infield ground (40 m 3DEP grid now), the lot's north-east side (a measured band, or
 Kevin's word that the straight bridge is the driven line), and which measuring line the published 1.3 mi uses.
+
+## The build (PC, 2026-11-08; Kevin, asked here: "Pikes Peak road course", then "Straight is fine" and "Oval + road course + infield")
+
+Kevin picked this as the PC's next job; the option said the 2018 lidar for the oval's inside and infield would be downloaded
+first (est. 30-80 MB), his pick the yes. Asked next: the lot's north-east side built straight along the lot's edge
+(**"Straight is fine"**, so it is inferred, said so here), and the layouts (**"Oval + road course + infield"**: three on
+one track; he was told the oval is widened to its measured width in this build). Branch `claude/pikes-peak-road-course-build`
+= Sand Creek's engine head `34521fa` (the most capable engine: connectors, mouths, pads, ground patches) + this branch +
+the lidar commit; the oval's 0.1.0 config rebuilt from an empty workshop on it is kn5_equiv to the installed oval
+(tangents only, 1.8e-7) and every record equal but paths and two new null keys (`D:/k10-scratch/pp_ab`).
+
+**1. The lidar** (`source/lidar/infield/fetch_infield.py`, `infield.summary.json`): CO_Eastern_ElPaso_2018 EPT, 38 nodes,
+**7.5 MB** (the plan said ~13 MB at 9 B/pt; the estimate given to Kevin was 30-80), 789,608 points in E -284..300 /
+N -352..320 m, ground 1.9 points/m2. Too sparse for a 3-8 cm kerb step; ample for planes. Raw LAZ and the npz stay on the
+PC (`D:/k10-scratch/pp_lidar`).
+
+**2. The oval's inside** (`inside_slope.py` -> `inside_slope.json`; per 3 m station of the 0.1.0 built line, class-2
+points +-1.5 m along): the lane read itself first, -12.7 / -17.3 / -5.4 / -17.0 % by section against the G10 survey's
+-13.1 / -17.2 / -6.2 / -17.0 (the read is sound). A continuous two-line fit across the inside (residual sd 1.2-2.9 cm):
+**the bank's plane runs on past the built lane's left edge** (knee +4.75 T1-2, +5.25 front, +3.25 back, +7.25 T3-4,
++8.25 at the NW merge, p50) **at the lane's own slope**, then the **apron** falls -6.4 / -7.5 / -3.6 / -6.6 % to the NAIP
+inside edge, 5.4-6.2 m wide. Wall face to knee 17.0-21.4 m (published 60-71 ft = 18.3-21.6 m): the built 12-15 m lane
+was the racing surface's outer three quarters. The knee sits 0-3 m past the painted apron line. Where the two slopes
+differ by under 1.75 %-pts (the back stretch s 885-906, -5.4 vs -4.0 %) the knee's place is noise (it wandered -1.75..+2.25
+m) and is filled from its neighbours (`oval_surface.py`, 21 stations); carrying the plane 3 m on there is 4 cm. The ground
+1 m past the inside edge stands level with the apron's edge (p50 +2 mm, p10/p90 -4 / +5 cm). The 0.1.0 deck stood
+**+0.13..+0.34 m (p50 +0.22)** over the lidar ground under it (the assembler's lift is 0.10).
+
+**3. The infield ground** (`infield_ground.py` -> `infield_ground.json`, 1 m DEM on the PC): the pieces' grades p50
+0.3-1.3 %, max 4.1 % (the sweeper), cross-falls 1-2.4 %. The port's 20 m grid sat within 0.25 m under most pieces and
+**1.3 m (n_road) / 1.8 m (arc_nw)** off near the NW junction, where it smears the bank.
+
+**4. What the build changes** (every key opt-in; Lake Murray and every other track declare none):
+
+| key / step | what |
+|---|---|
+| `lm_intake.edge_on_bank` (`tools/lm_engine_intake.py`) | the left edge onto the knee (smoothed per station), the right edge kept on the wall; the moved centre on the lidar plane's height; the banking's position keys move with the line |
+| `edge_on_bank.apron` -> `route.edge_apron_file` | the edge strip's left side IS the measured apron (scripts-v021 `ribbon.curb_sidewalk(apron=)`, `build_loop_blend.edge_apron`): its width and fall per vertex, its lip on the measured ground. Without an apron the strip is the function before the change, byte for byte (`tests/geometry/test_v021_curb_apron.py`) |
+| draft `apron_road` (`tools/apron_road_blend.py`) | those strip faces moved into `1ROAD_apron` (CURB keeps every vertex): engine-july's prep pins the ground under 1ROAD only and holds a 3 m band at the LANE edge's height then feathers 6 m; as CURB the apron's low lip would have had ground standing over it |
+| `terrain.lidar_patches` "infield" + draft `ground_patch` | the oval's whole inside seated on the 1 m DEM (`make_ground_patch.py`: 90-point outline 0.5 m inside the bank's edge); `split_m` 3 (opt-in per patch; the tool's 1.5 m took the terrain 173k -> 552k vertices and the prep past 20 min) |
+| `lm_intake.connectors_file` | the infield roads (`make_connectors.py`, below) carried by the port (the source track has none) |
+
+**5. The infield roads** (`make_connectors.py` -> `source/connectors.infield.json`): **rc_infield** = RC-D off the oval
+(NE lane, hairpin, diag, the lot: the 64.3 m straight + the measured band, bottom road, west road, sweeper), both ends on
+the deck; **if_link** = IF-K's own piece (S-curve, C road east), both ends on rc_infield (`route.connector_hosts`).
+Widths: the pieces' own per metre, a 15 m running median, junction-wide runs capped at 14.5 m, a floor of 85 % of each
+piece's p50 (the S-curve's dusty edges dipped to 4 m), the lot band its p50 9.16 m. Heights: the DEM, 9 m mean. The route's
+straight joins turned 35-100 deg in 4 m (a 12 m road cannot): each exit off the oval is redrawn as one cubic over 25 m
+either side of the deck's edge (the pavement there is continuous: the apron and the diverge's mouth), and every spot
+tighter than R 12 m relaxes towards its neighbours, never more than 3 m off the route (RC-D: max 1.45 m, p95 0.04 m;
+IF-K: max 3.0, p95 1.27; its two junction turns stay tight, inside the mouths).

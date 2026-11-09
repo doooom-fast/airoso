@@ -94,6 +94,9 @@ def main():
         allx = [q[0] for q in poly]
         allz = [q[1] for q in poly]
         bx0, bx1, bz0, bz1 = min(allx) - F, max(allx) + F, min(allz) - F, max(allz) + F
+        # a patch's own edge length (opt-in "split_m", ledger 0085: Pikes Peak's whole infield, 1-4 % grades, at 3 m;
+        # absent = SPLIT_M, Sand Creek's retaining-wall step)
+        split = float(p.get("split_m", SPLIT_M))
         for q in poly:
             if lattice_at(L, q[0], q[1]) is None and not (L["x0"] <= q[0] <= L["x0"] + (L["nx"] - 1) * L["cell_m"]):
                 raise SystemExit(f"[ground-patch] FATAL: {p['id']}: the lattice does not cover {q}; not saved")
@@ -103,7 +106,7 @@ def main():
         n0 = len(bm.verts)
         for _ in range(12):
             bm.edges.ensure_lookup_table()
-            long_e = [e for e in bm.edges if e.calc_length() > SPLIT_M
+            long_e = [e for e in bm.edges if e.calc_length() > split
                       and any(bx0 <= v.co.x <= bx1 and bz0 <= v.co.y <= bz1 for v in e.verts)]
             if not long_e:
                 break
@@ -138,7 +141,7 @@ def main():
         bm.to_mesh(me)
         bm.free()
         me.update()
-        print(f"[ground-patch] {p['id']}: TERRAIN {n0} -> {len(me.vertices)} vertices (edges <= {SPLIT_M} m in the box), "
+        print(f"[ground-patch] {p['id']}: TERRAIN {n0} -> {len(me.vertices)} vertices (edges <= {split} m in the box), "
               f"{moved} seated on the lidar ground ({fe} in the {F:.0f} m feather), largest move {worst:.2f} m")
     bpy.ops.wm.save_as_mainfile(filepath=str(proj / "loop.blend"))
     print(f"[ground-patch] {len(patches)} patch(es); saved loop.blend")

@@ -121,9 +121,12 @@ def validate(cfg: dict) -> list[str]:
         lap = lap_of(lo)
         if lap is None:
             continue
-        if not lo.get("race_furniture"):
-            probs.append(f"layout {lo.get('id')}: lap {lap!r} on a layout without race_furniture — a lap is a race "
-                         f"layout's line (the street layouts drive the whole network)")
+        # a BARE race layout (kind "race", no race_furniture; ledger 0085, Pikes Peak's road course and infield: a real
+        # circuit whose infield has no barriers) may drive a lap too: its lap file comes from ship_track's author step
+        # `race_laps` (no barrier_bands run for it). A street layout never names one (it drives the whole network).
+        if not lo.get("race_furniture") and lo.get("kind") != "race":
+            probs.append(f"layout {lo.get('id')}: lap {lap!r} on a layout that is neither a race layout with "
+                         f"race_furniture nor a bare race layout (kind 'race') — the street layouts drive the whole network")
         if not LAP_TOKEN_RE.match(lap):
             probs.append(f"layout {lo.get('id')}: lap id {lap!r} must be a lower-case [a-z0-9]+ token (it rides in "
                          f"file and mesh names)")

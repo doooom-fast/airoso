@@ -16,7 +16,8 @@ can). Connectors' strips are not touched.
 
 Self-checks (exit 1, loop.blend not saved): CURB is not the assembler's layout; the apron file's side is not "left" or
 "right"; fewer faces moved than the side's rows. No route.edge_apron_file = no-op (Lake Murray and every other track).
-Run after strip_seam (its seam reads the strip's lip off CURB's layout), before ground_patch.
+Run after strip_seam (its seam reads the strip's lip off CURB's layout) and BEFORE gap_mouths (which deletes with its
+orphaned vertices: CURB is no longer the layout after it); the mouths' windows (gap_mouths' own rule) stay in CURB for it.
 
     blender --background --python-exit-code 1 --python tools/apron_road_blend.py -- <project-dir>
 """
@@ -66,9 +67,30 @@ def main():
     bm.from_mesh(curb.data)
     bm.faces.ensure_lookup_table()
     uv = bm.loops.layers.uv.active
-    take = [f for f in bm.faces if all(lo <= v.index <= hi for v in f.verts)]
-    if len(take) < rows:
-        raise SystemExit(f"[apron-road] FATAL: {len(take)} faces on the apron side for {rows} rows; not saved")
+    # the mouths' windows stay in CURB for tools/gap_mouths_blend.py (it runs AFTER this step and deletes them, the
+    # apron opening where a road leaves: its own rule, mouth_weld.gap_window on mouths.json's cut station, a face goes
+    # when both its stations are in the window). gap_mouths deletes with context FACES (its orphaned vertices go too),
+    # so this step must come first: after it CURB is no longer the assembler's layout
+    skip = set()
+    mp = data / "mouths.json"
+    pts_m = local["points_xyz_m"]
+    closed_m = mw.is_closed(pts_m)
+    for mo in (json.loads(mp.read_text(encoding="utf-8")).get("mouths", []) if mp.exists() else []):
+        if mo.get("host") != "MAINLINE" or int(mo.get("side", 0)) != side:
+            continue
+        if "host_seg" in mo:
+            skip.update(mw.gap_window(pts_m, rows, closed_m, int(mo["host_seg"]), float(mo["host_t"]),
+                                      float(mo["connector_width_m"]), float(mo.get("angle_deg") or 90.0)))
+        else:
+            raise SystemExit(f"[apron-road] FATAL: mouth {mo.get('piece')} has no host_seg (an older mouths.json); not saved")
+    base = mw.curb_index(lay, "MAINLINE", 0, side, 0)
+
+    def in_gap(f):
+        return {(v.index - base) // mw.CURB_P for v in f.verts} <= skip
+    take = [f for f in bm.faces if all(lo <= v.index <= hi for v in f.verts) and not in_gap(f)]
+    n_gap = sum(1 for f in bm.faces if all(lo <= v.index <= hi for v in f.verts) and in_gap(f))
+    if len(take) + n_gap < rows:
+        raise SystemExit(f"[apron-road] FATAL: {len(take) + n_gap} faces on the apron side for {rows} rows; not saved")
     # the new object: its own vertices (a copy), faces, UVs and material slots
     nb = bmesh.new()
     nuv = nb.loops.layers.uv.new("UVMap")
@@ -102,7 +124,8 @@ def main():
         raise SystemExit("[apron-road] FATAL: CURB lost vertices; not saved")
     bpy.ops.wm.save_as_mainfile(filepath=str(proj / "loop.blend"))
     print(f"[apron-road] {ap['side']} apron: {n_take} CURB faces ({rows} rows) -> {NAME} ({len(vmap)} vertices, CURB's "
-          f"material); CURB keeps all {lay['_curb_total']} vertices; saved loop.blend")
+          f"material); {n_gap} faces in {len(skip)} mouth-window rows left for gap_mouths; CURB keeps all "
+          f"{lay['_curb_total']} vertices; saved loop.blend")
 
 
 main()

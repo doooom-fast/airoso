@@ -993,9 +993,21 @@ def guardrail(col, spec, proj, bad):
     return {"runs": len(runs), "rail_m": round(total, 1), "posts": n_post}
 
 
-def rails(col, spec, to_xy, ground, paved, bad):
+def rails(col, spec, to_xy, ground, paved, bad, edge=None):
     rows = []
     for k, r in enumerate(spec):
+        # SEATED ON WHAT IT STANDS ON (opt-in "seat": "surface", ledger 0085, Pikes Peak's outer wall): the module's
+        # ring reads the higher of the ground and the track edge's own surface (names.track_edge, the circuit edge strip
+        # the wall stands on) — at the author stage the ground under a BANKED edge strip is the assembler's terrain, up
+        # to 1.6 m under the strip (the prep pins it only later): 0.1.0's wall stood its 1.27 m on that ground, so no
+        # module rose more than 0.61 m over the pavement and 56 % were under it. Absent = the ground, as before.
+        on_surface = r.get("seat") == "surface"
+        if r.get("seat") not in (None, "surface"):
+            bad.append(f"rail {r['key']}: seat {r.get('seat')!r} (only \"surface\")")
+            continue
+        if on_surface and edge is None:
+            bad.append(f"rail {r['key']}: seat surface but no track_edge mesh in the scene")
+            continue
         line = [to_xy(p) for p in r["polyline_lonlat"]]
         prefix, hgt, mod, dep = RAIL_KINDS[r["kind"]]
         hgt = float(r.get("height_m", hgt))      # a measured height (ledger 0078: Pikes Peak's wall off the lidar)
@@ -1013,6 +1025,9 @@ def rails(col, spec, to_xy, ground, paved, bad):
                         (x1 + nx * dep / 2, y1 + ny * dep / 2), (x0 + nx * dep / 2, y0 + ny * dep / 2)]
                 ring = inward_ring(ring)
                 gs = [down(ground, x, y) for x, y in ring]
+                if on_surface:
+                    es = [down(edge, x, y) for x, y in ring]
+                    gs = [g if e is None else (e if g is None else max(g, e)) for g, e in zip(gs, es)]
                 if any(g is None for g in gs) or any(down(paved, x, y) is not None for x, y in ring):
                     if r.get("auto"):
                         left_out += 1
@@ -1074,7 +1089,8 @@ def main():
         report["scrub"] = scrub(col, spec["scrub"], to_xy, ground, paved, walls, bad)
     far = bvh(GROUND_FAR)[0]
     if spec.get("rails"):
-        report["rails"] = rails(col, spec["rails"], to_xy, ground, paved, bad)
+        report["rails"] = rails(col, spec["rails"], to_xy, ground, paved, bad,
+                                edge=bvh(TRACK_EDGE)[0] if any(r.get("seat") for r in spec["rails"]) else None)
     if spec.get("blocks"):
         report["blocks"] = blocks(col, spec["blocks"], proj, to_xy, far, ground, paved, walls, bad)
     if spec.get("pads"):

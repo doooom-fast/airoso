@@ -5,7 +5,9 @@ shipped geometry, the gate OBJ (data/track.obj, the road kn5 in the engine frame
 furniture object covers:
 
   exposed = its top - the built ground under it      (a rail whose ground rose round it shows less than it was built)
-  gap     = its lowest vertex - the built ground     (> 5 cm, kn5_ground_check's tolerance: it floats)
+  gap     = its lowest vertex - the built ground     (> 5 cm, kn5_ground_check's tolerance: it floats; judged on the solid
+                                                      pieces: a tyre wall, a screen, a W-beam's collider; the visual W-beam's
+                                                      rail band hangs over the ground between its posts by design)
 
 The built ground under a cell is the HIGHEST of the 1GRASS / 1KERB / 1ROAD / PADAPRON triangles over the cell centre.
 The intended top per class: the config's height_m for the line the cell is nearest (rails, tyre walls, screens), a block's
@@ -23,12 +25,13 @@ from pathlib import Path
 import numpy as np
 
 GROUND = ("1GRASS", "1KERB", "1ROAD", "PADAPRON")
-CLASSES = {"GUARDRAIL_W": "wbeam", "1WALL_TECPRO_TYRES": "tyres", "1WALL_TILTUP_SCREEN": "screen",
+CLASSES = {"GUARDRAIL_W": "wbeam", "1WALL_GHOST_RAIL": "wbeam_collider", "1WALL_TECPRO_TYRES": "tyres", "1WALL_TILTUP_SCREEN": "screen",
            "FARBLOCK": "block", "BUILDING_": "block", "ROOFTOP_": "roof"}
 CELL = 0.5
 TOL_M = 0.10            # [invented] a top this much under its intended height counts as buried
 BURIED_SHARE = 0.02     # [invented] more than this share of an object's cells buried fails it
 FLOAT_M = 0.05          # tools/kn5_ground_check.py's hover tolerance
+JUDGED = ("wbeam", "wbeam_collider", "tyres", "screen")
 
 
 def read(obj):
@@ -137,8 +140,8 @@ def main():
                 continue
             ex.append(hi - g)
             gap.append(lo - g)
-            if cls in ("wbeam", "tyres", "screen"):
-                nl = nearest_line(x, z, cls)
+            if cls in JUDGED:
+                nl = nearest_line(x, z, "wbeam" if cls == "wbeam_collider" else cls)
                 if nl:
                     keys[nl[1]] = nl[2]
                     if hi - g < nl[2] - TOL_M:
@@ -148,7 +151,9 @@ def main():
         if len(ex):
             row.update({"exposed_p5_p50_p95_m": [round(float(np.percentile(ex, q)), 3) for q in (5, 50, 95)],
                         "foot_gap_max_m": round(float(gap.max()), 3), "floating_cells": int((gap > FLOAT_M).sum())})
-        if cls in ("wbeam", "tyres", "screen"):
+        if cls in JUDGED:
+            if cls == "wbeam":                  # the visual rail: its band hangs 0.39 m over the ground between posts by design;
+                row.pop("floating_cells", None)  # its foot is the collider's to judge (wbeam_collider: ground to the rail's top)
             row.update({"lines": keys, "buried_cells": buried})
             share = buried / max(1, len(ex))
             if share > BURIED_SHARE or row.get("floating_cells", 0):

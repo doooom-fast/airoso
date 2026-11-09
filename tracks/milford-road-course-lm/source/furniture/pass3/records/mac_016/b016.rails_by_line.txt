@@ -1,0 +1,5 @@
+g1_nw_corner_outside 132 exposed p5/50/95 [-0.69 -0.39  0.67] buried(<0.6) 117
+   worst at [  -0.79   -1.1  -294.75  313.75]
+g2_front_straight_east 363 exposed p5/50/95 [0.51 0.67 0.71] buried(<0.6) 148
+g3_front_straight_west 216 exposed p5/50/95 [0.   0.67 0.7 ] buried(<0.6) 93
+g4_infield_esses 416 exposed p5/50/95 [0.64 0.69 0.76] buried(<0.6) 6

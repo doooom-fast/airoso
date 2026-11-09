@@ -1,0 +1,176 @@
+{
+ "buildings": [
+  {
+   "key": "pad_tent",
+   "sides_m": [
+    20.53,
+    53.38,
+    20.53,
+    53.38
+   ],
+   "ground": [
+    14.094,
+    15.661
+   ],
+   "bottom": 13.944,
+   "eave": 18.408,
+   "clear_m": Infinity
+  }
+ ],
+ "rails": [
+  {
+   "key": "g1_nw_corner_outside",
+   "kind": "wbeam",
+   "runs": 1,
+   "posts": 58,
+   "left_out": 0,
+   "length_m": 107.0,
+   "height_m": 0.7
+  },
+  {
+   "key": "g2_front_straight_east",
+   "kind": "wbeam",
+   "runs": 3,
+   "posts": 248,
+   "left_out": 47,
+   "length_m": 466.7,
+   "height_m": 0.7
+  },
+  {
+   "key": "g3_front_straight_west",
+   "kind": "wbeam",
+   "runs": 2,
+   "posts": 98,
+   "left_out": 7,
+   "length_m": 181.4,
+   "height_m": 0.7
+  },
+  {
+   "key": "g4_infield_esses",
+   "kind": "wbeam",
+   "runs": 1,
+   "posts": 192,
+   "left_out": 0,
+   "length_m": 363.6,
+   "height_m": 0.7
+  },
+  {
+   "key": "t1_nw_hairpin_exit",
+   "kind": "tyres",
+   "modules": 71,
+   "left_out": 0,
+   "length_m": 44.1
+  },
+  {
+   "key": "t2_esses_east_leg",
+   "kind": "tyres",
+   "modules": 85,
+   "left_out": 0,
+   "length_m": 53.2
+  },
+  {
+   "key": "t3_s1000_apron_back",
+   "kind": "tyres",
+   "modules": 48,
+   "left_out": 3,
+   "length_m": 32.5
+  },
+  {
+   "key": "f1_nw_screen_ne",
+   "kind": "screen",
+   "modules": 29,
+   "left_out": 0,
+   "length_m": 112.9
+  },
+  {
+   "key": "f1_nw_screen_step",
+   "kind": "screen",
+   "modules": 5,
+   "left_out": 0,
+   "length_m": 20.6
+  },
+  {
+   "key": "f1_nw_screen_sw",
+   "kind": "screen",
+   "modules": 16,
+   "left_out": 0,
+   "length_m": 63.1
+  }
+ ],
+ "blocks": [
+  {
+   "key": "mpg_plant_a",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 11.0,
+   "ground": [
+    8.72,
+    14.42
+   ],
+   "bottom": 8.57,
+   "eave": 19.57,
+   "off_terrain": true,
+   "collider": false
+  },
+  {
+   "key": "mpg_plant_b",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 11.0,
+   "ground": [
+    -0.13,
+    11.72
+   ],
+   "bottom": -0.28,
+   "eave": 10.72,
+   "off_terrain": true,
+   "collider": false
+  },
+  {
+   "key": "pad_shed_north",
+   "skin": "METAL",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 2.6,
+   "ground": [
+    16.78,
+    16.9
+   ],
+   "bottom": 16.46,
+   "eave": 19.06,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "pad_shed_south",
+   "skin": "METAL",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 2.6,
+   "ground": [
+    16.94,
+    17.11
+   ],
+   "bottom": 16.63,
+   "eave": 19.23,
+   "off_terrain": false,
+   "collider": false
+  }
+ ],
+ "pads": [
+  {
+   "key": "ride_pad",
+   "cells": 1058,
+   "left_out": 0
+  }
+ ],
+ "trunks": {
+  "file": "source/vegetation/trunks.json",
+  "stood": 385,
+  "radius_m": 0.3,
+  "height_m": 3.0,
+  "nearest_paved_m": 4.72
+ }
+}

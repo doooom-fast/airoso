@@ -1,0 +1,202 @@
+{
+ "ok": true,
+ "bad": [],
+ "objects": [
+  {
+   "object": "1WALL_GHOST_RAIL_0",
+   "verts": 252,
+   "dz_p5_p50_p95_m": [
+    0.0,
+    1.064,
+    1.37
+   ],
+   "dz_min_max_m": [
+    0.0,
+    1.457
+   ],
+   "moved_over_1cm": 232
+  },
+  {
+   "object": "1WALL_GHOST_RAIL_1",
+   "verts": 1000,
+   "dz_p5_p50_p95_m": [
+    0.0,
+    0.0,
+    0.172
+   ],
+   "dz_min_max_m": [
+    -0.0,
+    0.183
+   ],
+   "moved_over_1cm": 472
+  },
+  {
+   "object": "1WALL_GHOST_RAIL_2",
+   "verts": 396,
+   "dz_p5_p50_p95_m": [
+    0.0,
+    0.0,
+    0.665
+   ],
+   "dz_min_max_m": [
+    0.0,
+    0.689
+   ],
+   "moved_over_1cm": 174
+  },
+  {
+   "object": "1WALL_GHOST_RAIL_3",
+   "verts": 860,
+   "dz_p5_p50_p95_m": [
+    -0.0,
+    0.0,
+    0.0
+   ],
+   "dz_min_max_m": [
+    -0.0,
+    0.0
+   ],
+   "moved_over_1cm": 0
+  },
+  {
+   "object": "1WALL_TECPRO_TYRES_4",
+   "verts": 568,
+   "dz_p5_p50_p95_m": [
+    -0.0,
+    0.0,
+    0.0
+   ],
+   "dz_min_max_m": [
+    -0.0,
+    0.0
+   ],
+   "moved_over_1cm": 0
+  },
+  {
+   "object": "1WALL_TECPRO_TYRES_5",
+   "verts": 680,
+   "dz_p5_p50_p95_m": [
+    -0.0,
+    0.0,
+    0.0
+   ],
+   "dz_min_max_m": [
+    -0.0,
+    0.0
+   ],
+   "moved_over_1cm": 0
+  },
+  {
+   "object": "1WALL_TECPRO_TYRES_6",
+   "verts": 384,
+   "dz_p5_p50_p95_m": [
+    -0.0,
+    0.0,
+    0.172
+   ],
+   "dz_min_max_m": [
+    -0.0,
+    0.188
+   ],
+   "moved_over_1cm": 112
+  },
+  {
+   "object": "1WALL_TILTUP_SCREEN_10",
+   "verts": 120,
+   "dz_p5_p50_p95_m": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "dz_min_max_m": [
+    0.0,
+    0.0
+   ],
+   "moved_over_1cm": 0
+  },
+  {
+   "object": "1WALL_TILTUP_SCREEN_7",
+   "verts": 232,
+   "dz_p5_p50_p95_m": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "dz_min_max_m": [
+    -0.0,
+    0.0
+   ],
+   "moved_over_1cm": 0
+  },
+  {
+   "object": "1WALL_TILTUP_SCREEN_8",
+   "verts": 40,
+   "dz_p5_p50_p95_m": [
+    -0.0,
+    0.0,
+    0.0
+   ],
+   "dz_min_max_m": [
+    -0.0,
+    0.0
+   ],
+   "moved_over_1cm": 0
+  },
+  {
+   "object": "1WALL_TILTUP_SCREEN_9",
+   "verts": 128,
+   "dz_p5_p50_p95_m": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "dz_min_max_m": [
+    -0.0,
+    0.0
+   ],
+   "moved_over_1cm": 0
+  },
+  {
+   "object": "GUARDRAIL_W_0",
+   "verts": 7168,
+   "dz_p5_p50_p95_m": [
+    0.0,
+    0.126,
+    1.284
+   ],
+   "dz_min_max_m": [
+    -0.0,
+    1.477
+   ],
+   "moved_over_1cm": 3732
+  },
+  {
+   "object": "GUARDRAIL_W_1",
+   "verts": 8848,
+   "dz_p5_p50_p95_m": [
+    0.0,
+    0.152,
+    0.662
+   ],
+   "dz_min_max_m": [
+    -0.0,
+    1.046
+   ],
+   "moved_over_1cm": 4786
+  },
+  {
+   "object": "GUARDRAIL_W_2",
+   "verts": 7656,
+   "dz_p5_p50_p95_m": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "dz_min_max_m": [
+    -0.0,
+    0.0
+   ],
+   "moved_over_1cm": 0
+  }
+ ]
+}

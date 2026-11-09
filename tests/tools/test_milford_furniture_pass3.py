@@ -80,7 +80,7 @@ def _seat():
     return mod
 
 
-def test_seat_built_reads_the_highest_ground_under_a_point(tmp_path):
+def test_seat_built_reads_the_highest_ground_under_a_point():
     import numpy as np
     m = _seat()
     V = np.array([[0, 0, 0], [10, 0, 0], [0, 0, 10], [0, 1.0, 0], [10, 1.0, 0], [0, 1.0, 10]], float)
@@ -89,8 +89,13 @@ def test_seat_built_reads_the_highest_ground_under_a_point(tmp_path):
     assert G.height(20.0, 20.0) is None
 
 
-def test_seat_built_flags_a_buried_rail(tmp_path):
-    m = _seat()
+def test_seat_built_flags_a_buried_rail():
+    import tempfile
+    with tempfile.TemporaryDirectory() as d:
+        _buried_rail(Path(d))
+
+
+def _buried_rail(tmp_path):
     obj = tmp_path / "data"
     obj.mkdir()
     (obj / "track.obj").write_text(

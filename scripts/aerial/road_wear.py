@@ -52,15 +52,18 @@ DEFAULTS = {
     "max_atlas_px": 8192,           # L7: power of two; 8192 the per-file ceiling (SATELLITE-ROAD-TEXTURES §4.1)
     "layer_m": 10.0,                # [invented] faces more than this apart in height never share a tile (L4)
     "tone": {
-        "shadow_lum": 0.72,         # [measured, ledger 0084 §aerial road] a shadow texel: under this share of the lit median...
-        "shadow_blue": 1.06,        # [measured] ...and bluer than this b/r (Milford furniture README: shadows b/r 1.1-1.9)
-        "paint_lum": 1.45,          # [invented] brighter than this share of the median: paint or a paint ghost
+        "shadow_lum": 0.72,         # [measured, Milford NAIP 2022] a shadow texel: under this share of the lit median (the road's
+                                    # dark tail sits under 0.6, its lit body 0.97-1.07; 7.5 % of the road)...
+        "shadow_blue": 1.06,        # [measured] ...and bluer than this b/r (dark tail median 1.43, lit asphalt 0.93)
+        "paint_lum": 1.45,          # [invented] brighter than this share of the median: paint or a paint ghost (Milford: none; p99 1.14)
         "fill_m": 3.0,              # [invented] the lit-asphalt neighbourhood a shadow / paint texel is filled from
         "clip": [0.70, 1.30],       # [invented] the tone ratio kept (outliers are cars, cones, debris)
         "headroom_pct": 99.5,       # [invented] the tone percentile that maps to 1.0 (m0)
     },
     "wear": {
-        "amplitude": 0.22,          # [invented, see ledger 0084 "Build (pilot Milford 0.1.7)": the aerial bounds it]
+        "amplitude": 0.22,          # [invented] the rubber's darkening at the line's peak. The aerial cannot set it: on Milford's
+                                    # NAIP 2022 the model line's tyre band regresses to 0.3 % darker (the centreline 0.7 %),
+                                    # so what NAIP sees at 0.5 m is <= ~1 %. Kevin's drive picks it (ledger 0084)
         "track_m": 1.60,            # [measured] a car's track width (front/rear 1.5-1.7 m on the cars AC ships)
         "spread_m": 0.55,           # [invented] the line's lateral scatter, car to car and lap to lap (1 sigma)
         "base": 0.35,               # [invented] the share of peak rubber a straight carries
@@ -248,6 +251,10 @@ def tone_field(aerial: Aerial, grid: Grid, road: np.ndarray, spec_tone: dict) ->
     br = rgb[..., 2] / np.maximum(rgb[..., 0], 1e-3)
     shadow = valid & (lum < spec_tone["shadow_lum"] * ref) & (br > spec_tone["shadow_blue"])
     paint = valid & (lum > spec_tone["paint_lum"] * ref)
+    # a shadow's or a line's edge is a mixed pixel that meets neither rule: both masks grow by one aerial pixel
+    rp = max(1, int(math.ceil(max(aerial.px_m) / grid.res)))
+    shadow = valid & (box_mean(shadow.astype(np.float64), np.ones(shadow.shape), rp) > 0)
+    paint = valid & (box_mean(paint.astype(np.float64), np.ones(paint.shape), rp) > 0)
     lit = valid & ~shadow & ~paint
     ref = float(np.median(lum[lit]))                     # the lit-asphalt median
     t = lum / ref

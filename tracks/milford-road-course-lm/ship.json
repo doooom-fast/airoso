@@ -39,6 +39,7 @@
       "audit_street",
       "kn5_ground",
       "kn5_textures",
+      "road_wear",
       "house_seat",
       "edge_smoothness",
       "edge_report"
@@ -47,7 +48,8 @@
   "sync_in": {
     "required": [
       "track.config.json",
-      "source/edges/edge_evidence.json"
+      "source/edges/edge_evidence.json",
+      "source/road_wear/naip_2022_mrc.jpg"
     ],
     "assets": [
       "assets/textures/tyre_wall_diffuse.png",
@@ -59,7 +61,8 @@
     "optional": [
       "source/vegetation/trees.lm.json",
       "source/vegetation/trunks.json",
-      "source/vegetation/grass_classes.png"
+      "source/vegetation/grass_classes.png",
+      "source/road_wear/fast_lane.full.ai"
     ],
     "globs": [
       "source/trees/*.bin"
@@ -92,7 +95,10 @@
       "data/edge_smoothness.json",
       "data/kerbs.built.json",
       "data/treefx.report.json",
-      "data/grassfx.aerial.json"
+      "data/grassfx.aerial.json",
+      "data/road_wear.json",
+      "data/road_wear.line.{id}.json",
+      "data/road_wear_check.json"
     ],
     "map": [
       [
@@ -106,5 +112,6 @@
   },
   "_edges_doc": "ledger 0087: the lane edges re-fitted in the intake (track.config.json lm_intake.edge_fit; the evidence synced in), every verdict in data/edge_fit.json; edge_smoothness (opt-in, this track only so far) gates the built edges' 1 m second difference and residual (tools/edge_smoothness.py GATE_DEFAULT)",
   "_gate_doc": "ledger 0082 pass 2: kn5_textures (opt-in, this track only so far): every texture the built kn5s' materials name must be embedded (tools/kn5_textures.py). The PC's 0082-1 run 1 shipped five textures short and passed every other gate",
-  "_vegetation_doc": "ledger 0082 vegetation pass: grassfx_aerial (the measured grass zones, before the track folder's ext_config) and treefx (the measured crowns as TreeFX, after the map) run"
+  "_vegetation_doc": "ledger 0082 vegetation pass: grassfx_aerial (the measured grass zones, before the track folder's ext_config) and treefx (the measured crowns as TreeFX, after the map) run",
+  "_road_wear_doc": "ledger 0084 pilot (0.1.7): the aerial (required: track.config.json road_wear.aerial) and a recorded line when one exists (optional) sync in; the bake runs as the last part of prep (tools/ship_track.sh prep_prep, opt-in on the config key); gate road_wear (tools/road_wear_check.py) reads the built road kn5"
 }

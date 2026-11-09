@@ -1179,7 +1179,7 @@ def edge_apron(proj, route, centerline, edge_main):
           f"{min(w_out):.2f}..{max(w_out):.2f} m, slope {100 * min(s_out):.1f}..{100 * max(s_out):.1f} % "
           f"(route.edge_apron_file {rel})")
     return {"side": 1.0 if ap["side"] == "left" else -1.0, "w": w_out, "slope": s_out,
-            "lip": l_out if LIP is not None else None}
+            "lip": l_out if LIP is not None else None, "round_m": float(ap.get("round_m") or 0.0)}
 
 
 def crossfall_bank(proj, route, centerline):

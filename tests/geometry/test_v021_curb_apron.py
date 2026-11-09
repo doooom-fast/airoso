@@ -106,3 +106,23 @@ def test_the_apron_without_a_lip_grades_to_the_clearance():
     for i in range(n):
         y = pts[i][1]
         assert abs(rv[4 * i + 3][1] - (y - 0.05 * 5.0 - 0.05)) < 1e-9
+
+
+def test_a_rounded_knee_meets_the_sharp_one_past_its_transition():
+    """round_m (ledger 0085): point 1 ends a round_m transition at the mean of the bank's fall and the apron's; from it on
+    the apron is the sharp knee's own surface (the knee sat round_m / 2 further out), its back at the same width"""
+    pts = _ring()
+    n = len(pts) - 1
+    w = [19.0] * len(pts)
+    bank, sa, rm, wa = -0.17, -0.04, 2.0, 7.0
+    kw = {"curb_h": 0.0, "curb_face_w": 0.1, "grade_w": 1.0, "grass_clearance": 0.05, "bank_at": lambda a: math.atan(bank)}
+    got = rb.curb_sidewalk(pts, w, apron={"side": 1.0, "w": [wa - 0.1] * n, "slope": [sa] * n, "lip": [0.0] * n,
+                                          "round_m": rm}, **kw)
+    for i in range(n):
+        lv = got["vertices"][4 * i:4 * i + 4]
+        edge_y = pts[i][1] + (w[i] / 2) * bank
+        m = 0.5 * (bank + sa)
+        assert abs(lv[1][1] - (edge_y + 0.1 + m * rm)) < 1e-9
+        sharp_back = edge_y + 0.1 + bank * (rm / 2) + sa * (wa - rm / 2)          # knee at rm / 2, then the apron
+        assert abs(lv[2][1] - sharp_back) < 1e-9
+        assert abs(math.hypot(lv[2][0] - pts[i][0], lv[2][2] - pts[i][2]) - (w[i] / 2 + wa)) < 1e-6

@@ -736,12 +736,19 @@ def intake(proj: Path, *, connectors: bool | None = None) -> dict:
                     "off_m": math.sqrt(d2)}
         pre_b = list(pts)
         want_apron = bool(eob.get("apron"))
+        round_b = float(eob.get("round_m", 0.0))
+        if round_b < 0.0 or (round_b > 0.0 and not want_apron):
+            raise SystemExit(f"[lm_intake] edge_on_bank.round_m {round_b}: >= 0, and only with apron true (the apron carries "
+                             f"the transition)")
         new_pts, new_w, moves, offs, dys, ap_w, ap_s, ap_l = [], [], [], [], [], [], [], []
         for i, (p, w) in enumerate(zip(pts, widths)):
             sa = _station_at(p[0], p[2])
             c = (p[0] - sa["o"][0]) * sa["l"][0] + (p[2] - sa["o"][1]) * sa["l"][1]   # lateral in the station frame
             # the edge's outward move: left, the bank edge (+edge) minus the lane's left edge (c + w/2); right, mirrored
-            f = (sa["edge"] - (c + w / 2.0)) if side_b == "left" else (sa["edge"] - (w / 2.0 - c))
+            # edge_on_bank.round_m (opt-in): the knee is rounded over round_m centred on it, so the bank's plane stops
+            # round_m / 2 short of it and the apron (below) starts with a round_m transition at the two slopes' mean
+            e_ = sa["edge"] - round_b / 2.0
+            f = (e_ - (c + w / 2.0)) if side_b == "left" else (e_ - (w / 2.0 - c))
             a, b = pts[max(0, i - 1)], pts[min(len(pts) - 1, i + 1)]
             tx, tz = b[0] - a[0], b[2] - a[2]
             L = math.hypot(tx, tz) or 1.0
@@ -759,7 +766,7 @@ def intake(proj: Path, *, connectors: bool | None = None) -> dict:
             if want_apron:
                 if sa["apron_w"] is None:
                     raise SystemExit(f"[lm_intake] edge_on_bank.apron: {rel_b} has no apron per station")
-                ap_w.append(round(sa["apron_w"], 3))
+                ap_w.append(round(sa["apron_w"] + round_b / 2.0, 3))
                 ap_s.append(round(sa["apron_s"], 5))
                 ap_l.append(None if sa["apron_lip"] is None else round(sa["apron_lip"], 3))
         if closed:
@@ -783,6 +790,7 @@ def intake(proj: Path, *, connectors: bool | None = None) -> dict:
             (data_dir_b / "apron.lm.json").write_text(json.dumps({
                 "side": side_b, "points_xz": [[round(q[0], 3), round(q[2], 3)] for q in pts], "width_m": ap_w, "slope": ap_s,
                 **({"lip": ap_l} if ap_l and all(v is not None for v in ap_l) else {}),
+                **({"round_m": round_b} if round_b > 0.0 else {}),
                 "source": f"tracks/{src_track}/{rel_b}",
                 "_doc": "lm_intake.edge_on_bank.apron (ledger 0085): the measured apron past the bank's edge, per line vertex; "
                         "slope = rise per m away from the lane"}), encoding="utf-8")

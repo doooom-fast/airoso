@@ -2502,7 +2502,9 @@
       "if_link"
     ],
     "weld_exact_deck_lines": true,
-    "_weld_exact_deck_doc": "ledger 0085: the infield roads' welds and verify_mouths' MOUTH LINE / NOTCH read the host's deck off its triangles where the sample stands, not its centre carried level across: the oval is banked 12-17 % (its inside edge 0.85-1.8 m under its centre at the two mouths; B2's verify_mouths read exactly that as the road 'off the host deck')"
+    "_weld_exact_deck_doc": "ledger 0085: the infield roads' welds and verify_mouths' MOUTH LINE / NOTCH read the host's deck off its triangles where the sample stands, not its centre carried level across: the oval is banked 12-17 % (its inside edge 0.85-1.8 m under its centre at the two mouths; B2's verify_mouths read exactly that as the road 'off the host deck')",
+    "weld_deck_apron": true,
+    "_weld_deck_apron_doc": "ledger 0085: the infield road's welds onto the oval read the deck past its edge on the apron side as the measured apron (tools/mouth_weld.ApronDeck, route.edge_apron_file), not the edge held level: the level run-on pulled the NW approach up to the edge's height across an apron falling 3-8 %, a 3.3 %/m crease (verify_mouths APPROACH, pp_b3u)"
   },
   "terrain_cell_m": 1.5,
   "corridor_refine_factor": 6,
@@ -2933,7 +2935,7 @@
           {
             "line": "rc_infield#0",
             "from": 0,
-            "to": 470
+            "to": 469
           },
           {
             "line": "MAINLINE",

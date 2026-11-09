@@ -42,6 +42,9 @@ R_MIN = 12.0          # [invented, from the measured pieces] the tightest centre
                       # traced edge is 7.6 m (diag_s left), a 12 m road's centre ~13.6 m. Tighter spots are the route's
                       # straight joins between pieces (35-100 deg in 4 m) and the lot band's noisy west end
 MAX_MOVE = 3.0        # [invented] the relaxation never moves a point further than this from the route (a quarter of a road)
+EASE_NW_M = 15.0      # [invented] the NW merge's ease: at 25 m it met the deck at 24.7 deg, a 13 m road running ~14 m along
+                      # the bank's edge before parting (verify_mouths APPROACH 3.3-3.9 %/m on that acute side, a 9.8 cm
+                      # step at s 1872); 15 m meets it near 40 deg, as the NE (38.7 deg, PASS)
 CAP_W = 14.5          # [invented] where a piece's measured width runs out across a junction (hairpin top 20.3 m, west road
                       # 18.9 m: the side roads' mouths, not this road), the widest piece's own p50 (bottom 14.0) + 0.5
 FLOOR_FRAC = 0.85     # [invented] no point narrower than 85 % of its piece's p50 (the S-curve's weak, dusty edges)
@@ -167,8 +170,8 @@ def main(proj, dem_npz, out):
     out_idx = np.flatnonzero(off > half_max + 1.0)
     i0, i1 = int(out_idx.min()), int(out_idx.max())
     R = R.copy()
-    e = int(EASE_M)
-    for a, b in ((i0 - e, i0 + e), (i1 - e, i1 + e)):
+    e, e1 = int(EASE_M), int(EASE_NW_M)
+    for a, b in ((i0 - e, i0 + e), (i1 - e1, i1 + e1)):
         R[a:b + 1] = hermite(R, a, b)
     R, rep = relax(R)
     print(f"[connectors] RC-D relaxed: {rep}")

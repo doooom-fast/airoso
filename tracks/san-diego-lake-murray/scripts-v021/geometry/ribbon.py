@@ -128,8 +128,9 @@ def curb_sidewalk(centerline_m: list[Vertex], widths_m: list[float], *, lift: fl
     vertex], "slope": [rise per m outward, per vertex]} — on that side the sidewalk is a measured APRON: point 2 stands
     ``w[i]`` out (not ``sidewalk_w``) and ``slope[i] * w[i]`` above the curb top (the apron's own fall away from the
     lane), point 3 ``grade_w`` further and ``grass_clearance`` under the apron's back edge — or, with "lip" [m per
-    vertex], on the measured ground there (the ground ``grade_w`` past the edge above the apron's own edge). Same four
-    points a row,
+    vertex], on the measured ground there (the ground ``grade_w`` past the edge above the apron's own edge). With
+    "round_m" (> 0) point 1 is no curb top but the end of a round_m transition at the mean of the bank's fall past the
+    edge and the apron's (the measured knee rounded, centred on it). Same four points a row,
     so every tool that reads the strip by index (tools/mouth_weld.curb_index) reads it unchanged."""
     pts = centerline_m
     n = len(pts)
@@ -160,9 +161,18 @@ def curb_sidewalk(centerline_m: list[Vertex], widths_m: list[float], *, lift: fl
             if apron is not None and side == apron["side"]:
                 wa, sa = float(apron["w"][i]), float(apron["slope"][i])
                 lip = (float(apron["lip"][i]) if apron.get("lip") is not None else -grass_clearance)
-                prof_i = [(0.0, lift), (curb_face_w, lift + curb_h),
-                          (curb_face_w + wa, lift + curb_h + sa * wa),
-                          (curb_face_w + wa + grade_w, curb_h + sa * wa + lip)]
+                rm = float(apron.get("round_m") or 0.0)
+                if rm > 0.0:
+                    # the knee rounded (ledger 0085): point 1 ends a round_m transition at the mean of the bank's own
+                    # fall past this edge (side * tan(bank): rise per m away from the lane) and the apron's
+                    sb = (side * math.tan(bank_at(arc)) if bank_at else 0.0)
+                    h1 = lift + 0.5 * (sb + sa) * rm
+                    h2 = h1 + sa * (curb_face_w + wa - rm)
+                    prof_i = [(0.0, lift), (rm, h1), (curb_face_w + wa, h2), (curb_face_w + wa + grade_w, h2 - lift + lip)]
+                else:
+                    prof_i = [(0.0, lift), (curb_face_w, lift + curb_h),
+                              (curb_face_w + wa, lift + curb_h + sa * wa),
+                              (curb_face_w + wa + grade_w, curb_h + sa * wa + lip)]
                 tot_i = tile_m                      # U in metres / tile_m like V: a 6 m apron is not one stretched texel row
             for off, h in prof_i:
                 o = half + off

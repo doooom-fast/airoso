@@ -94,7 +94,8 @@
       "data/edge_smoothness.json",
       "data/kerbs.built.json",
       "data/treefx.report.json",
-      "data/grassfx.aerial.json"
+      "data/grassfx.aerial.json",
+      "data/reseat_bespoke.json"
     ],
     "map": [
       [

@@ -533,6 +533,8 @@ V4_EXTRAS = {
         "ledger 0078 round 7: only where the draft step cutfill wrote data/cutfill.line.json (the Lariat port); never on Lake Murray",
     ("prep_prep", "ship: a point-to-point stage's start, splits and finish on the prepped scene (tools/stage_dummies_blend.py; self-checked)"):
         "ledger 0078 round 8: only where the track's config says loop false (the Rangely stage ports); never on Lake Murray",
+    ("prep_prep", "ship: the bespoke rails, tyre walls and screens re-seated on the prepped ground (tools/reseat_bespoke_blend.py; self-checked)"):
+        "ledger 0082 pass 3: only where the config says scenery.bespoke.reseat_on_prep true (Milford); never on Lake Murray",
     ("draft_bespoke", "author: the buildings pipeline's blocks in place of the assembler's boxes (tools/author_bespoke_blend.py: scenery.bespoke.blocks, self-checked)"):
         "ledger 0065: v4's 7,600 blocks (ship_sd.sh stands them only under SD_BESPOKE=1, an echo there)",
     ("ship_export_street", "ship: export the STREET-ONLY kn5 (the centre line, a chicane's island; the non-race layouts alone)"):

@@ -511,6 +511,14 @@ prep_prep() {
     step "ship: red repairs (tools/red_repairs_blend.py: the named kerb faces, the named ground slivers; self-checked)"
     "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/red_repairs_blend.py" -- "$PROJ/blender/$SLUG.blend" --project "$PROJ" 2>&1 | grep "^\[red\]\|Error\|Traceback"
   fi
+  # ledger 0082 pass 3 (Milford 0.1.8): the bespoke rails, tyre walls and screens moved with the ground the prep moved under them
+  # (seated on the author ground, they stood buried in the prepped ground: Milford's G1 a median 0.39 m under it). Opt-in:
+  # scenery.bespoke.reseat_on_prep true; no key = no header, nothing runs (Lake Murray's chain is tools/ship_sd.sh, untouched)
+  rm -f "$PROJ/data/reseat_bespoke.json"
+  if [ "$(pyq "import json,sys; print(((json.load(open(sys.argv[1],encoding='utf-8')).get('scenery') or {}).get('bespoke') or {}).get('reseat_on_prep') is True)" "$PROJ/track.config.json" | tr -d '\r')" = "True" ]; then
+    step "ship: the bespoke rails, tyre walls and screens re-seated on the prepped ground (tools/reseat_bespoke_blend.py; self-checked)"
+    "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/reseat_bespoke_blend.py" -- "$PROJ/blender/$SLUG.blend" --project "$PROJ" 2>&1 | grep "^\[reseat\]\|FATAL\|Error\|Traceback"
+  fi
 }
 prep_split() {
   local lid

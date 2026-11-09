@@ -81,12 +81,14 @@ for key, k, what in BUILD:
     sloped = t["h90"] - t["h10"] > 2.0
     blocks.append({
         "key": key, "footprint_lonlat": t["footprint_lonlat"], "wall_h_m": round(t["h50"], 2), "skin": "tiltup", "roof": "white",
-        "form": "flat", "off_terrain": True,
+        "form": "flat", "off_terrain": True, "roof_z_m": t["roof_z_local_m"],
         "_source": (f"source/furniture/pass3/tiers.json (ledger 0082 pass 3): {what}. Footprint = the minimum-area rectangle of its "
                     f"roof cells ({t['area_m2']} m2 of 2 m cells, fill {t['fill']}; +-2 m), off {LIDAR}; wall {t['h50']} m = the roof's "
                     f"median height over the lidar ground [measured] (p10 {t['h10']} / p90 {t['h90']} m"
-                    + ("; the roof slopes over that range and is built flat at its median [simplified form]" if sloped else "") +
-                    f"). NAIP 2022 shows it standing (median green excess {c.get('naip_green')}, luminance {c.get('naip_lum')}: a roof). "
+                    + (f": a level roof over ground falling {t['ground_z_local_m'][1] - t['ground_z_local_m'][0]:.1f} m" if sloped else "") +
+                    f"); roof_z_m {t['roof_z_local_m']} m = the roof's median elevation (lidar ground + height) in the scene frame "
+                    "(y 0 = the origin's 316.26 m) [measured]: the roof stands there and its walls reach the lowest built ground "
+                    f"(tools/author_bespoke_blend.py, ledger 0082 pass 3). NAIP 2022 shows it standing (median green excess {c.get('naip_green')}, luminance {c.get('naip_lum')}: a roof). "
                     f"Seen from {c['vis_lap_pts']} of {c['vis_of']} lap points (scripts/vis.py, the 2017 surface). Walls' skin "
                     "[invented: no wall is seen from above]; roof white as NAIP shows it; past the built ground: a far block")})
 (P3 / "blocks.json").write_text(json.dumps(blocks, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
@@ -100,12 +102,19 @@ b["blocks"] = [g for g in b["blocks"] if g.get("file") != FILE]
 plant = next(g for g in b["blocks"] if g.get("key") == "mpg_plant_a")
 pa = tier(104, 0, 5748)
 plant["wall_h_m"] = round(pa["h50"], 1)
+plant["roof_z_m"] = pa["roof_z_local_m"]
 plant["_source"] = ("footprint off NAIP 2022 (source/naip_2022_mrc.jpg on its true extent), read by eye to about 5 m, ground-level "
                     f"backdrop past the built ground; height {plant['wall_h_m']} m = the median roof height over the lidar ground of "
                     f"its southern {pa['area_m2']} m2 that the read reaches (p10 {pa['h10']} / p90 {pa['h90']} m; {LIDAR}) "
-                    "[measured, ledger 0082 pass 3; was 11.0 m invented]")
+                    f"[measured, ledger 0082 pass 3; was 11.0 m invented]; roof_z_m {pa['roof_z_local_m']} m, its roof's median elevation "
+                    "in the scene frame [measured]: seated at its lowest built ground it stood ~5 m low (the built ground under its "
+                    "rim 8.7-14.4 m against the lidar's 13.8-19.2 m)")
 b["blocks"].append({"file": FILE, "_source": "ledger 0082 pass 3: the site buildings west of the front straight the 2017 lidar measures "
                     "and NAIP 2022 still shows, each entry's _source says how (source/furniture/pass3/)"})
+b["reseat_on_prep"] = True
+b["_reseat_doc"] = ("ledger 0082 pass 3: the rails, tyre walls and screens move with the ground the prep moves under them "
+                    "(tools/reseat_bespoke_blend.py, run by tools/ship_track.sh prep_prep): seated on the author ground, 0.1.5 / 0.1.6's "
+                    "G1 stood a median 0.39 m under the built grass (source/furniture/pass3/scripts/seat_built.py)")
 cfg["version"] = "0.1.8"
 CFG.write_text(json.dumps(cfg, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
 print(f"F1 NE end: {len(line)} vertices, {length:.1f} m, height {h} m; {len(blocks)} blocks -> {FILE}; plant_a {plant['wall_h_m']} m")

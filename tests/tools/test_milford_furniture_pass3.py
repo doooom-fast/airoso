@@ -24,6 +24,7 @@ def test_blocks_are_the_measured_roofs():
         t = by_h[b["wall_h_m"]]
         assert b["footprint_lonlat"] == t["footprint_lonlat"], b["key"]
         assert b["off_terrain"] is True and b["form"] == "flat"
+        assert b["roof_z_m"] == t["roof_z_local_m"]                       # the roof at its measured elevation
         assert "[measured]" in b["_source"] and "NAIP 2022 shows it standing" in b["_source"]
         assert "[invented: no wall is seen from above]" in b["_source"]   # the skin is the one guess, and says so
 
@@ -40,10 +41,26 @@ def test_config_names_the_file_once_and_plant_a_is_measured():
 
 
 def test_no_other_track_names_pass3():
+    """the pass's files and its two opt-in keys (a far block's roof_z_m, scenery.bespoke.reseat_on_prep) are Milford's alone"""
     for cfgp in sorted((ROOT / "tracks").glob("*/track.config.json")):
+        txt = cfgp.read_text(encoding="utf-8")
         if cfgp.parent.name == "milford-road-course-lm":
+            assert json.loads(txt)["scenery"]["bespoke"]["reseat_on_prep"] is True
             continue
-        assert "source/furniture/pass3" not in cfgp.read_text(encoding="utf-8"), cfgp
+        for key in ("source/furniture/pass3", "roof_z_m", "reseat_on_prep"):
+            assert key not in txt, (cfgp, key)
+    for f in (ROOT / "tracks").glob("*/source/bespoke/*.json"):
+        assert "roof_z_m" not in f.read_text(encoding="utf-8"), f
+
+
+def test_reseat_runs_only_when_the_key_says_so():
+    sh = (ROOT / "tools" / "ship_track.sh").read_text(encoding="utf-8")
+    i = sh.index("reseat_bespoke_blend.py")
+    block = sh[sh.rindex("rm -f \"$PROJ/data/reseat_bespoke.json\"", 0, i):i]
+    assert "get('reseat_on_prep') is True" in block and '= "True" ]; then' in block
+    assert "reseat" not in (ROOT / "tools" / "ship_sd.sh").read_text(encoding="utf-8")   # Lake Murray's chain of record
+    src = (ROOT / "tools" / "reseat_bespoke_blend.py").read_text(encoding="utf-8")
+    assert 'spec.get("reseat_on_prep") is not True' in src
 
 
 def test_f1_ne_end_joins_the_built_piece_and_is_measured():

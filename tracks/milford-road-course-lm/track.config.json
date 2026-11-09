@@ -95,7 +95,8 @@
           "skin": "tiltup",
           "roof": "white",
           "off_terrain": true,
-          "_source": "footprint off NAIP 2022 (source/naip_2022_mrc.jpg on its true extent), read by eye to about 5 m, ground-level backdrop past the built ground; height 10.0 m = the median roof height over the lidar ground of its southern 5748 m2 that the read reaches (p10 9.42 / p90 10.96 m; 3DEP USGS_LPC_MI_31Co_Oakland_2016_LAS_2019, flown 2017-05-03 (the vegetation read of pass 2's 71 EPT nodes)) [measured, ledger 0082 pass 3; was 11.0 m invented]"
+          "_source": "footprint off NAIP 2022 (source/naip_2022_mrc.jpg on its true extent), read by eye to about 5 m, ground-level backdrop past the built ground; height 10.0 m = the median roof height over the lidar ground of its southern 5748 m2 that the read reaches (p10 9.42 / p90 10.96 m; 3DEP USGS_LPC_MI_31Co_Oakland_2016_LAS_2019, flown 2017-05-03 (the vegetation read of pass 2's 71 EPT nodes)) [measured, ledger 0082 pass 3; was 11.0 m invented]; roof_z_m 24.25 m, its roof's median elevation in the scene frame [measured]: seated at its lowest built ground it stood ~5 m low (the built ground under its rim 8.7-14.4 m against the lidar's 13.8-19.2 m)",
+          "roof_z_m": 24.25
         },
         {
           "key": "mpg_plant_b",
@@ -892,7 +893,9 @@
         "radius_m": 0.3,
         "height_m": 3.0,
         "_source": "ledger 0082 vegetation pass: an unseen collider round every planted tree within 30 m [invented reach] of the build's paved surface (source/vegetation/scripts/veg_plan.py COLLIDER_REACH_M): TreeFX trees have no physics. radius 0.30 m [invented: tools/verify_race.py TREE_TRUNK_R_M, the fleet's trunk], 3.0 m over the ground [invented: over any car's roof]"
-      }
+      },
+      "reseat_on_prep": true,
+      "_reseat_doc": "ledger 0082 pass 3: the rails, tyre walls and screens move with the ground the prep moves under them (tools/reseat_bespoke_blend.py, run by tools/ship_track.sh prep_prep): seated on the author ground, 0.1.5 / 0.1.6's G1 stood a median 0.39 m under the built grass (source/furniture/pass3/scripts/seat_built.py)"
     },
     "draft_lamps": false,
     "_draft_lamps_doc": "a circuit has no streetlight down its edge every 55 m: the v021 assembler's draft posts are off (ledger 0078)",

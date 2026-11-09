@@ -9,6 +9,8 @@ from scipy import ndimage as ndi
 from scipy.spatial import ConvexHull
 d=np.load(VEG_READ+'/veg.npz'); chm=d['chm'].astype(float); E0=N0=-1400
 ny,nx=chm.shape; C=chm[:ny//2*2,:nx//2*2].reshape(ny//2,2,nx//2,2).max(axis=(1,3))
+GF=d['g_fill'].astype(float)[:ny//2*2,:nx//2*2].reshape(ny//2,2,nx//2,2).mean(axis=(1,3))   # the lidar ground under each 2 m cell (absolute, NAVD88 m)
+Z0=316.26   # data/centerline.local.json origin elev_m: the scene's y = 0 (the lap's lidar ground minus its local y, median 316.26 m)
 lab=np.load('bldAll_lab.npy'); B={b['id']:b for b in json.load(open('bldAll.json'))}
 O=dict(lon=-83.66362827905016,lat=42.56999810653583); mlon,mlat=82107.23577351798,111084.36697075465
 def rect(pts):
@@ -31,6 +33,7 @@ for sid,cuts in spec.items():
             jj,ii=np.nonzero(mk); pts=np.c_[E0+2*ii+1.0,N0+2*jj+1.0]; R,A=rect(pts); hh=C[mk]
             out.append(dict(src=int(sid),tier=t,cells=int(mk.sum()),area_m2=int(mk.sum()*4),fill=round(mk.sum()*4/A,2),
               h10=round(float(np.percentile(hh,10)),2),h50=round(float(np.median(hh)),2),h90=round(float(np.percentile(hh,90)),2),
+              roof_z_local_m=round(float(np.median((C+GF)[mk]))-Z0,2),ground_z_local_m=[round(float(GF[mk].min())-Z0,2),round(float(GF[mk].max())-Z0,2)],
               corners_en=[[round(float(x),1),round(float(y),1)] for x,y in R],
               footprint_lonlat=[[round(O['lon']+x/mlon,7),round(O['lat']+y/mlat,7)] for x,y in R]))
 for o in out: print({k:v for k,v in o.items() if k!='footprint_lonlat'})

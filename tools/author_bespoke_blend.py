@@ -24,7 +24,8 @@ y = N, z = up). The collection is emptied first, so the tool is idempotent, and 
               round the roof) | hip | gable (the ridge along the long axis of the footprint's oriented box, ridge_h_m over the
               level; a ring that fills less than RECT_FILL of its box is roofed flat instead); "off_terrain" = a far backdrop past the built ground: it stands at the nearest ground's
               height with OFF_TERRAIN_SKIRT_M more wall below -> FARBLOCK_<SKIN>_<k>, no collider: never a GrassFX occluder (the
-              TDR lesson in scripts/ac/ext_config.py) and never read by the seat gate. "replace": the scene's own meshes of these exact
+              TDR lesson in scripts/ac/ext_config.py) and never read by the seat gate; (ledger 0082 pass 3, opt-in) "roof_z_m" on an off_terrain
+              block = its MEASURED roof elevation in the scene frame: the roof stands there, the walls reach the lowest ground. "replace": the scene's own meshes of these exact
               names (the v021 assembler's HOUSE / BUILDING boxes on Lake Murray) are removed first, so the pipeline's stand alone. Any ring, flat roof, walls batched by skin -> BUILDING_TILTUP_<k> / BUILDING_METAL_<k> /
               BUILDING_FABRICB_<k> (joined only within one building: tools/house_seat_check.py re-joins by position),
               ROOFTOP_<WHITE|TAN|DARK>_<k>, 1WALL_TILTUP_<k> (the collider). "auto" = a planned file: a footprint the
@@ -674,7 +675,17 @@ def blocks(col, spec, proj, to_xy, ground, near_ground, paved, walls, bad):
             form = str(b.get("form", "flat"))
             total_h = wall_h + (max(0.0, float(b.get("ridge_h_m", wall_h)) - wall_h) if form in ("hip", "gable") else (PARAPET_M if form == "flat_parapet" else 0.0))
             floor = max(mean - PREP_SINK_M, hi - (1.0 - PREP_SHOW) * total_h)         # the prep's floor, see PREP_SINK_M
-            if off:
+            if off and b.get("roof_z_m") is not None:
+                # ledger 0082 pass 3 (opt-in: only Milford's pass-3 blocks name it): the roof at its MEASURED elevation in the
+                # scene's frame (the lidar's roof, ground + height), the walls carried down to the lowest built ground under the
+                # rim. A far block over sloping or skirted ground seated at its lowest ground (below) sank its lap-side wall:
+                # Milford's west hall stood 13 m tall from a skirt 17 m under its high side, its roof 4.5 m under that ground
+                bottom, eave = lo - BOTTOM_UNDER_M, float(b["roof_z_m"])
+                if eave - hi < 0.5 * wall_h:
+                    why = f"its measured roof {eave:.2f} stands {eave - hi:.2f} m over the highest ground under it (< half its {wall_h} m wall)"
+                    bad.append(f"block {key}: {why}")
+                    continue
+            elif off:
                 bottom, eave = lo - BOTTOM_UNDER_M, lo - BOTTOM_UNDER_M + wall_h
             elif PREP_SEATS:
                 bottom, eave = floor, floor + wall_h

@@ -24,7 +24,8 @@
     "roof": "white",
     "form": "flat",
     "off_terrain": true,
-    "_source": "source/furniture/pass3/tiers.json (ledger 0082 pass 3): the white building west of the front straight (NAIP 2022: white roof, a stack at its north end). Footprint = the minimum-area rectangle of its roof cells (1032 m2 of 2 m cells, fill 0.73; +-2 m), off 3DEP USGS_LPC_MI_31Co_Oakland_2016_LAS_2019, flown 2017-05-03 (the vegetation read of pass 2's 71 EPT nodes); wall 12.09 m = the roof's median height over the lidar ground [measured] (p10 11.92 / p90 12.54 m). NAIP 2022 shows it standing (median green excess 1.5, luminance 237.0: a roof). Seen from 125 of 467 lap points (scripts/vis.py, the 2017 surface). Walls' skin [invented: no wall is seen from above]; roof white as NAIP shows it; past the built ground: a far block"
+    "roof_z_m": 60.22,
+    "_source": "source/furniture/pass3/tiers.json (ledger 0082 pass 3): the white building west of the front straight (NAIP 2022: white roof, a stack at its north end). Footprint = the minimum-area rectangle of its roof cells (1032 m2 of 2 m cells, fill 0.73; +-2 m), off 3DEP USGS_LPC_MI_31Co_Oakland_2016_LAS_2019, flown 2017-05-03 (the vegetation read of pass 2's 71 EPT nodes); wall 12.09 m = the roof's median height over the lidar ground [measured] (p10 11.92 / p90 12.54 m); roof_z_m 60.22 m = the roof's median elevation (lidar ground + height) in the scene frame (y 0 = the origin's 316.26 m) [measured]: the roof stands there and its walls reach the lowest built ground (tools/author_bespoke_blend.py, ledger 0082 pass 3). NAIP 2022 shows it standing (median green excess 1.5, luminance 237.0: a roof). Seen from 125 of 467 lap points (scripts/vis.py, the 2017 surface). Walls' skin [invented: no wall is seen from above]; roof white as NAIP shows it; past the built ground: a far block"
   },
   {
     "key": "mpg_west_bldg_b",
@@ -51,7 +52,8 @@
     "roof": "white",
     "form": "flat",
     "off_terrain": true,
-    "_source": "source/furniture/pass3/tiers.json (ledger 0082 pass 3): the long plant hall south-west of it, its high main roof (NAIP 2022: white roof, a tank yard to its south-east). Footprint = the minimum-area rectangle of its roof cells (6944 m2 of 2 m cells, fill 0.85; +-2 m), off 3DEP USGS_LPC_MI_31Co_Oakland_2016_LAS_2019, flown 2017-05-03 (the vegetation read of pass 2's 71 EPT nodes); wall 13.06 m = the roof's median height over the lidar ground [measured] (p10 10.45 / p90 15.56 m; the roof slopes over that range and is built flat at its median [simplified form]). NAIP 2022 shows it standing (median green excess 1.5, luminance 239.0: a roof). Seen from 59 of 467 lap points (scripts/vis.py, the 2017 surface). Walls' skin [invented: no wall is seen from above]; roof white as NAIP shows it; past the built ground: a far block"
+    "roof_z_m": 55.2,
+    "_source": "source/furniture/pass3/tiers.json (ledger 0082 pass 3): the long plant hall south-west of it, its high main roof (NAIP 2022: white roof, a tank yard to its south-east). Footprint = the minimum-area rectangle of its roof cells (6944 m2 of 2 m cells, fill 0.85; +-2 m), off 3DEP USGS_LPC_MI_31Co_Oakland_2016_LAS_2019, flown 2017-05-03 (the vegetation read of pass 2's 71 EPT nodes); wall 13.06 m = the roof's median height over the lidar ground [measured] (p10 10.45 / p90 15.56 m: a level roof over ground falling 7.0 m); roof_z_m 55.2 m = the roof's median elevation (lidar ground + height) in the scene frame (y 0 = the origin's 316.26 m) [measured]: the roof stands there and its walls reach the lowest built ground (tools/author_bespoke_blend.py, ledger 0082 pass 3). NAIP 2022 shows it standing (median green excess 1.5, luminance 239.0: a roof). Seen from 59 of 467 lap points (scripts/vis.py, the 2017 surface). Walls' skin [invented: no wall is seen from above]; roof white as NAIP shows it; past the built ground: a far block"
   },
   {
     "key": "mpg_west_bldg_c",
@@ -78,7 +80,8 @@
     "roof": "white",
     "form": "flat",
     "off_terrain": true,
-    "_source": "source/furniture/pass3/tiers.json (ledger 0082 pass 3): the block south of the hall (NAIP 2022: white roof). Footprint = the minimum-area rectangle of its roof cells (572 m2 of 2 m cells, fill 0.76; +-2 m), off 3DEP USGS_LPC_MI_31Co_Oakland_2016_LAS_2019, flown 2017-05-03 (the vegetation read of pass 2's 71 EPT nodes); wall 7.85 m = the roof's median height over the lidar ground [measured] (p10 7.64 / p90 8.2 m). NAIP 2022 shows it standing (median green excess 2.0, luminance 239.0: a roof). Seen from 38 of 467 lap points (scripts/vis.py, the 2017 surface). Walls' skin [invented: no wall is seen from above]; roof white as NAIP shows it; past the built ground: a far block"
+    "roof_z_m": 46.51,
+    "_source": "source/furniture/pass3/tiers.json (ledger 0082 pass 3): the block south of the hall (NAIP 2022: white roof). Footprint = the minimum-area rectangle of its roof cells (572 m2 of 2 m cells, fill 0.76; +-2 m), off 3DEP USGS_LPC_MI_31Co_Oakland_2016_LAS_2019, flown 2017-05-03 (the vegetation read of pass 2's 71 EPT nodes); wall 7.85 m = the roof's median height over the lidar ground [measured] (p10 7.64 / p90 8.2 m); roof_z_m 46.51 m = the roof's median elevation (lidar ground + height) in the scene frame (y 0 = the origin's 316.26 m) [measured]: the roof stands there and its walls reach the lowest built ground (tools/author_bespoke_blend.py, ledger 0082 pass 3). NAIP 2022 shows it standing (median green excess 2.0, luminance 239.0: a roof). Seen from 38 of 467 lap points (scripts/vis.py, the 2017 surface). Walls' skin [invented: no wall is seen from above]; roof white as NAIP shows it; past the built ground: a far block"
   },
   {
     "key": "mpg_nw_small",
@@ -105,6 +108,7 @@
     "roof": "white",
     "form": "flat",
     "off_terrain": true,
-    "_source": "source/furniture/pass3/tiers.json (ledger 0082 pass 3): a small white-roofed building north of the employee lot. Footprint = the minimum-area rectangle of its roof cells (64 m2 of 2 m cells, fill 0.67; +-2 m), off 3DEP USGS_LPC_MI_31Co_Oakland_2016_LAS_2019, flown 2017-05-03 (the vegetation read of pass 2's 71 EPT nodes); wall 5.12 m = the roof's median height over the lidar ground [measured] (p10 5.07 / p90 5.26 m). NAIP 2022 shows it standing (median green excess 5.0, luminance 229.0: a roof). Seen from 8 of 467 lap points (scripts/vis.py, the 2017 surface). Walls' skin [invented: no wall is seen from above]; roof white as NAIP shows it; past the built ground: a far block"
+    "roof_z_m": 19.3,
+    "_source": "source/furniture/pass3/tiers.json (ledger 0082 pass 3): a small white-roofed building north of the employee lot. Footprint = the minimum-area rectangle of its roof cells (64 m2 of 2 m cells, fill 0.67; +-2 m), off 3DEP USGS_LPC_MI_31Co_Oakland_2016_LAS_2019, flown 2017-05-03 (the vegetation read of pass 2's 71 EPT nodes); wall 5.12 m = the roof's median height over the lidar ground [measured] (p10 5.07 / p90 5.26 m); roof_z_m 19.3 m = the roof's median elevation (lidar ground + height) in the scene frame (y 0 = the origin's 316.26 m) [measured]: the roof stands there and its walls reach the lowest built ground (tools/author_bespoke_blend.py, ledger 0082 pass 3). NAIP 2022 shows it standing (median green excess 5.0, luminance 229.0: a roof). Seen from 8 of 467 lap points (scripts/vis.py, the 2017 surface). Walls' skin [invented: no wall is seen from above]; roof white as NAIP shows it; past the built ground: a far block"
   }
 ]

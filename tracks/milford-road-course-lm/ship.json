@@ -47,8 +47,10 @@
   "sync_in": {
     "required": [
       "track.config.json",
-      "source/edges/edge_evidence.json"
+      "source/edges/edge_evidence.json",
+      "source/furniture/pass3/blocks.json"
     ],
+    "_furniture_doc": "ledger 0082 pass 3 (0.1.8): the site buildings the 2017 lidar measures and NAIP 2022 shows, named once by scenery.bespoke.blocks [{\"file\": ...}]",
     "assets": [
       "assets/textures/tyre_wall_diffuse.png",
       "assets/textures/metal_wall_diffuse.jpg",

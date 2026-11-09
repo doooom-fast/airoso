@@ -4,7 +4,7 @@
   "name": "Milford Road Course (unofficial)",
   "_name_doc": "Kevin 2026-11-07: \"Get rid of Lm Version from names, nothing should be on any other engine now\" / \"LM is the airoso engine\". 0.1.5 (the merge of 0.1.4 edges, ledger 0087, and 0.1.3 vegetation, ledger 0082): no \"(LM engine)\" in the display name, and the slug and install_folder are the plain milford_road_course. The old-engine track (tracks/milford-road-course, 0.6.0) gave that slug up: its slug and folder are milford_road_course_v06 (S7, fleet.cli lint). The repo directory keeps its -lm suffix until the one rename pass after the current agents land",
   "slug": "milford_road_course",
-  "version": "0.1.6",
+  "version": "0.1.8",
   "mirror_x": false,
   "loop": true,
   "default_width_m": 11.0,
@@ -91,11 +91,11 @@
               42.574314
             ]
           ],
-          "wall_h_m": 11.0,
+          "wall_h_m": 10.0,
           "skin": "tiltup",
           "roof": "white",
           "off_terrain": true,
-          "_source": "footprint off NAIP 2022 (source/naip_2022_mrc.jpg on its true extent), read by eye to about 5 m, ground-level backdrop past the built ground; height [invented]"
+          "_source": "footprint off NAIP 2022 (source/naip_2022_mrc.jpg on its true extent), read by eye to about 5 m, ground-level backdrop past the built ground; height 10.0 m = the median roof height over the lidar ground of its southern 5748 m2 that the read reaches (p10 9.42 / p90 10.96 m; 3DEP USGS_LPC_MI_31Co_Oakland_2016_LAS_2019, flown 2017-05-03 (the vegetation read of pass 2's 71 EPT nodes)) [measured, ledger 0082 pass 3; was 11.0 m invented]"
         },
         {
           "key": "mpg_plant_b",
@@ -172,6 +172,10 @@
           "skin": "metal",
           "roof": "white",
           "_source": "source/furniture/inventory.json S2: footprint off NAIP 2022 (3.5 x 12.1 m, +-1 px), the roof colour as the photo shows it; height 2.6 m [invented: a container / site trailer, no shadow resolvable on the tree side] | LIDAR (ledger 0082 pass 2): 207-257 m from the lap, outside the approved 45 m read: the height stays [invented]"
+        },
+        {
+          "file": "source/furniture/pass3/blocks.json",
+          "_source": "ledger 0082 pass 3: the site buildings west of the front straight the 2017 lidar measures and NAIP 2022 still shows, each entry's _source says how (source/furniture/pass3/)"
         }
       ],
       "pads": [
@@ -806,6 +810,79 @@
             ]
           ],
           "_source": "source/lidar/f1.json F1 (SW piece, along 132-196 m of the 197 m the read covers): the line fitted through the structure's own returns every 4 m (3-point mean), off the 3DEP flight of 2017-05-03; height 3.18 m = the median of 17 bins' p90 top over the lidar ground (range 2.37-3.35 m) [measured]; a thin (plan sd 0.39 m), opaque (93 % single-pulse tops, face returns), level-topped structure, light grey on NAIP 2022: a screen wall / screened fence, not a hedge. Panel 4.0 m and thickness 0.20 m [invented]. Beyond the read (the NE ~60 m, 45-74 m off the edge) and SW of the trees: not built"
+        },
+        {
+          "key": "f1_nw_screen_ne_end",
+          "kind": "screen",
+          "auto": true,
+          "height_m": 4.14,
+          "polyline_lonlat": [
+            [
+              -83.6656378,
+              42.5741073
+            ],
+            [
+              -83.6656111,
+              42.5741175
+            ],
+            [
+              -83.6655664,
+              42.5741328
+            ],
+            [
+              -83.6655225,
+              42.574149
+            ],
+            [
+              -83.6654791,
+              42.5741652
+            ],
+            [
+              -83.6654357,
+              42.5741814
+            ],
+            [
+              -83.6653926,
+              42.5741982
+            ],
+            [
+              -83.6653492,
+              42.574215
+            ],
+            [
+              -83.6653054,
+              42.5742306
+            ],
+            [
+              -83.6652615,
+              42.5742462
+            ],
+            [
+              -83.6652181,
+              42.5742621
+            ],
+            [
+              -83.6651742,
+              42.5742783
+            ],
+            [
+              -83.6651304,
+              42.5742942
+            ],
+            [
+              -83.6650873,
+              42.574311
+            ],
+            [
+              -83.6650447,
+              42.5743284
+            ],
+            [
+              -83.6650021,
+              42.5743462
+            ]
+          ],
+          "_source": "source/furniture/pass3/f1ne_bins.json (ledger 0082 pass 3): F1's north-east 59 m, past pass 2's 45 m read: the canopy-free 2-6 m returns along F1's own line (3DEP USGS_LPC_MI_31Co_Oakland_2016_LAS_2019, flown 2017-05-03 (the vegetation read of pass 2's 71 EPT nodes)), per 4 m bin the median plan position (sd 0.33-0.49 m) and the p90 top; height 4.14 m = the median of 15 bins' p90 (4.03-4.31 m) [measured]; single-pulse tops 0.80-1.00 (opaque, as the built 197 m). NAIP 2022 shows the light line and its shadow to the same end (e -112, n 485). Panel and thickness as the kind's [invented]"
         }
       ],
       "_rails_doc": "ledger 0082 pass 1: the W-beam (kind wbeam) and tyre walls (kind tyres) on the lines NAIP 2022 shows (source/furniture/README.md); auto: a post or module that would stand on a road or off the ground is left out. Pass 2: F1 (kind screen) on the line and at the heights the lidar measured (source/lidar/README.md); the 2017 lidar predates the rails and tyre walls, whose heights stay [invented]",

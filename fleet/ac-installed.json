@@ -12,7 +12,8 @@
     "2026-11-07 (Kevin, asked here: 'Install it (Recommended)' x2): Milford 0.1.4 over 0.1.2 in milford_road_course_lm; Del Mar 0.2.4 to the plain del_mar_fairgrounds, del_mar_fairgrounds_lm 0.2.2 moved to D:/k10-track-archive/2026-11-07_222810_tidy/ (ac_tidy --apply). Both pictures re-rendered from the new builds with their committed cameras and copied in (the pack's in D:/k10-track-archive/2026-11-08_001402_previews/).",
     "After every install from now on: re-render the track's menu picture from the new build with the camera in its source/ui/preview.json, copy it over ui[/<layout>]/preview.png (old one backed up), commit it with the install records.",
     "2026-11-08 (Kevin, asked on the PC: 'Yes, install overnight', the six conditions met): Milford 0.1.5 to the plain milford_road_course; milford_road_course_lm 0.1.4 moved first to D:/k10-track-archive/2026-11-08_011149_milford/ (MOVES.tsv) and dropped from this list. The menu picture re-rendered off 0.1.5 with stand-in trees (the pack's in D:/k10-track-archive/2026-11-08_014406_previews/).",
-    "2026-11-08 (Kevin, asked on the PC: 'Yes, install overnight', the six conditions met): Sand Creek 0.2.7 to the plain sand_creek_raceway; sand_creek_raceway_lm 0.2.6 moved first to D:/k10-track-archive/2026-11-08_043809_sand_creek/ (MOVES.tsv) and dropped from this list (the old engine's sand_creek_raceway was already out of AC). The race and street menu pictures re-rendered off 0.2.7 (the pack's in D:/k10-track-archive/2026-11-08_053642_previews/)."
+    "2026-11-08 (Kevin, asked on the PC: 'Yes, install overnight', the six conditions met): Sand Creek 0.2.7 to the plain sand_creek_raceway; sand_creek_raceway_lm 0.2.6 moved first to D:/k10-track-archive/2026-11-08_043809_sand_creek/ (MOVES.tsv) and dropped from this list (the old engine's sand_creek_raceway was already out of AC). The race and street menu pictures re-rendered off 0.2.7 (the pack's in D:/k10-track-archive/2026-11-08_053642_previews/).",
+    "2026-11-09 (Kevin, asked on the PC: 'Yes and I always want newer builds'): Milford 0.1.6 to the plain milford_road_course; ship_track's install step parked 0.1.5 in D:/k10-track-archive/2026-11-09_093135/ (MOVES.tsv). The menu picture re-rendered off 0.1.6 (the pack's in D:/k10-track-archive/2026-11-09_093221_previews/)."
   ],
   "ac_tracks": "D:/SteamLibrary/steamapps/common/assettocorsa/content/tracks",
   "archive": "D:/k10-track-archive",
@@ -82,14 +83,14 @@
       "installed": "2026-11-04"
     },
     "milford_road_course": {
-      "branch": "claude/milford-lm-015",
+      "branch": "claude/milford-edge-strip-016",
       "engine": "lm-v4",
-      "installed": "2026-11-08",
+      "installed": "2026-11-09",
+      "note": "0.1.6 = 0.1.5 + the circuit edge strip flush with the prep's contact band (route.edge.grass_clearance -0.08, ledger 0087: Kevin's 'messy on the edges of the high speed curves'); TreeFX Oak3 / SycamoreV2 (personal-use, md5 24111ede / 7010d61f) 11,247 trees and GrassFX 1,285 rectangles as 0.1.5; records + menu picture on claude/milford-edge-strip-016 d8d1473",
       "role": "current",
-      "sha": "5529aecd",
+      "sha": "f77b0cb8",
       "track": "milford-road-course-lm",
-      "version": "0.1.5",
-      "note": "0.1.5 = 0.1.4's edges + the vegetation pass (TreeFX Oak3 / SycamoreV2, personal-use, in extension/trees/, md5 24111ede / 7010d61f; GrassFX 1,285 rectangles), the plain folder; records + menu picture on claude/milford-lm-015 871fbde"
+      "version": "0.1.6"
     },
     "pikes_peak_international_raceway_lm": {
       "track": "pikes-peak-lm",

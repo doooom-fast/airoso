@@ -64,7 +64,8 @@ def knee_fit(x, z, lo, hi):
         c, *_ = np.linalg.lstsq(A, z, rcond=None)
         sd = float(np.std(z - A @ c))
         if best is None or sd < best["sd"]:
-            best = {"knee_m": float(k), "b_in": float(c[1]), "b_out": float(c[1] + c[2]), "sd": sd}
+            best = {"knee_m": float(k), "b_in": float(c[1]), "b_out": float(c[1] + c[2]), "sd": sd,
+                    "c": [float(c[0]), float(c[1]), float(c[2])]}
     return best
 
 
@@ -107,6 +108,8 @@ def main(ws, npz, out):
                 edge_label = "seen" if (labs == "seen").mean() >= 0.5 else str(labs[0])
         idx = tree.query_ball_point(C[k], (edge or 30.0) + BEYOND_M + 2.0)
         row = {"s": round(float(st[k]), 1), "half_w_m": round(float(hw[k]), 2),
+               "xz": [round(float(C[k, 0]), 3), round(float(C[k, 1]), 3)],
+               "left": [round(float(L[k, 0]), 5), round(float(L[k, 1]), 5)], "built_y": round(float(ey[k]), 4),
                "edge_m": None if edge is None else round(edge, 2), "edge_label": edge_label}
         if idx:
             dv = G[idx] - C[k]; lat = dv @ L[k]; al = dv @ T[k]; z = Gz[idx] - ELEV0
@@ -115,7 +118,8 @@ def main(ws, npz, out):
             lane = line_fit(lat[np.abs(lat) <= LANE_M], z[np.abs(lat) <= LANE_M])
             if lane:
                 row["lane"] = {"slope_pct": round(100 * lane["b"], 2), "sd_m": round(lane["sd"], 3), "n": lane["n"],
-                               "z0_minus_built_m": round(lane["a"] - float(ey[k]), 3)}
+                               "z0_minus_built_m": round(lane["a"] - float(ey[k]), 3),
+                               "a": round(lane["a"], 4), "b": round(lane["b"], 5)}
             if edge is not None and edge > hw[k] + 2 * GAP_M + 1.0:
                 m = (lat >= hw[k] + GAP_M) & (lat <= edge - GAP_M)
                 ins = line_fit(lat[m], z[m])
@@ -140,6 +144,11 @@ def main(ws, npz, out):
                     if ins:
                         row["beyond"]["step_at_edge_m"] = round((bey["a"] + bey["b"] * (edge + 1.0))
                                                                 - (ins["a"] + ins["b"] * edge), 3)
+                    if kn:
+                        c0, c1, c2 = kn["c"]
+                        z_edge = c0 + c1 * edge + c2 * max(0.0, edge - kn["knee_m"])
+                        # the ground 1 m past the edge (the edge strip's grade width) above the knee model's apron at the edge
+                        row["beyond"]["lip_step_m"] = round((bey["a"] + bey["b"] * (edge + 1.0)) - z_edge, 3)
         rows.append(row)
 
     def q(vals, p):

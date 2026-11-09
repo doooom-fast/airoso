@@ -407,6 +407,10 @@ draft_paint() {
   step "author: measured road paint on a street's built road (tools/author_paint_blend.py; ledger 0079 round N; self-checked; no route.paint = no-op)"
   (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_paint_blend.py" -- "$PROJ" 2>&1 | grep "^\[paint\]\|FATAL\|Error\|Traceback" )
 }
+draft_apron_road() {
+  step "author: the mainline's measured apron (the edge strip's apron side) as its own 1ROAD object (tools/apron_road_blend.py; ledger 0085; self-checked; no route.edge_apron_file = no-op)"
+  (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/apron_road_blend.py" -- "$PROJ" 2>&1 | grep "^\[apron-road\]\|FATAL\|Error\|Traceback" )
+}
 draft_ground_patch() {
   step "author: TERRAIN seated on the measured lidar ground in the declared patches (tools/ground_patch_blend.py; ledger 0079 round I; self-checked; no terrain.lidar_patches = no-op)"
   (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/ground_patch_blend.py" -- "$PROJ" 2>&1 | grep "^\[ground-patch\]\|FATAL\|Error\|Traceback" )

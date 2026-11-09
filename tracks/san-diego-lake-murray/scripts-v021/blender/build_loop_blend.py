@@ -1149,6 +1149,39 @@ def _profile_sigma_windows(cfg, data, raw_centerline):
     return out
 
 
+def edge_apron(proj, route, centerline, edge_main):
+    """ledger 0085 (Pikes Peak): the mainline's measured APRON on one side as the edge strip's sidewalk (opt-in,
+    route.edge_apron_file, a project path: {"side": "left"|"right", "points_xz": [[x, z], ...], "width_m": [...],
+    "slope": [...], "lip": [...] optional} — tools/lm_engine_intake.py writes it with lm_intake.edge_on_bank.apron from
+    the lidar). Each line
+    vertex takes the nearest point's width (less the curb face, so the apron's back lands on the measured edge) and
+    slope (rise per m away from the lane). None when undeclared: the strip exactly as before."""
+    rel = (route or {}).get("edge_apron_file")
+    if not rel:
+        return None
+    ap = json.loads((proj / rel).read_text(encoding="utf-8"))
+    P, W, S = ap["points_xz"], ap["width_m"], ap["slope"]
+    if not (len(P) == len(W) == len(S)) or len(P) < 2:
+        raise SystemExit(f"[blend] route.edge_apron_file {rel}: {len(P)} points, {len(W)} widths, {len(S)} slopes")
+    face = float(edge_main.get("curb_face_w", 0.08))
+    LIP = ap.get("lip")
+    w_out, s_out, l_out, far = [], [], [], 0.0
+    for (x, _y, z) in centerline:
+        j = min(range(len(P)), key=lambda k: (P[k][0] - x) ** 2 + (P[k][1] - z) ** 2)
+        far = max(far, math.hypot(P[j][0] - x, P[j][1] - z))
+        w_out.append(max(0.2, float(W[j]) - face))
+        s_out.append(float(S[j]))
+        if LIP is not None:
+            l_out.append(float(LIP[j]))
+    if far > 6.0:
+        raise SystemExit(f"[blend] route.edge_apron_file {rel}: a line vertex {far:.2f} m from its nearest apron point")
+    print(f"[blend] apron ({ap['side']}): {len(P)} measured points on the line (nearest <= {far:.2f} m), width "
+          f"{min(w_out):.2f}..{max(w_out):.2f} m, slope {100 * min(s_out):.1f}..{100 * max(s_out):.1f} % "
+          f"(route.edge_apron_file {rel})")
+    return {"side": 1.0 if ap["side"] == "left" else -1.0, "w": w_out, "slope": s_out,
+            "lip": l_out if LIP is not None else None}
+
+
 def crossfall_bank(proj, route, centerline):
     """ledger 0078: the mainline's measured crossfall as the ribbon's bank (opt-in, route.crossfall_file, a project path:
     {"points_xz": [[x, z], ...], "bank_rad": [...]} — tools/lm_engine_intake.py writes it from a lidar crossfall.json).
@@ -1295,7 +1328,9 @@ def main():
     # ONE continuous urban edge per side: road edge -> curb -> raised sidewalk -> graded down to the grass.
     # Gives real sidewalks the WHOLE loop (not just the sparse OSM footways) AND removes the hover — the outer
     # lip lands on the terrain, so road/curb/sidewalk/grass share heights with no floating edge.
-    kerb = ribbon.curb_sidewalk(centerline, widths, **edge_main, **_bk)   # route.edge (ledger 0078); LM's values by default
+    _ap = edge_apron(proj, route, centerline, edge_main)            # route.edge_apron_file (ledger 0085); None = as before
+    kerb = ribbon.curb_sidewalk(centerline, widths, **edge_main, **_bk,   # route.edge (ledger 0078); LM's values by default
+                                **({"apron": _ap} if _ap is not None else {}))
     marks = ribbon.lane_markings(centerline, widths,   # painted lines: white edges/dashes + (two-way) yellow centre
                                  center_yellow=route.get("divided_double", True), **_bk,
                                  # ledger 0078: a circuit paints its edge lines only (route.lane_dividers false); absent = as before

@@ -33,9 +33,13 @@ def verdict(cfg, reports):
     why, covered = [], []
     if str(cfg.get("version")) not in [str(v) for v in fx.get("versions") or []]:
         why.append(f"build version {cfg.get('version')} is not in the declared versions {fx.get('versions')}")
-    und_w = [(w["id"], float(w["s_m"][0]), float(w["s_m"][1])) for w in fx.get("undrivable_corners") or []]
-    exc_w = [(w["id"], float(w["s_m"][0]), float(w["s_m"][1])) for w in fx.get("excursion_drops") or []]
+    # a window may name its layout ("layout", optional; ledger 0085, Pikes Peak: three laps, each with its own
+    # stations): it then covers that layout's report only. Absent = every report, as before (a stage has one)
+    def _wins(key, lid_):
+        return [(w["id"], float(w["s_m"][0]), float(w["s_m"][1])) for w in fx.get(key) or []
+                if w.get("layout") in (None, lid_)]
     for lid, r in reports.items():
+        und_w, exc_w = _wins("undrivable_corners", lid), _wins("excursion_drops", lid)
         lap_km = float(r.get("lap_m") or 0) / 1000.0
         reasons = [k for k in ("soft_top_in_lane", "daylight_gaps", "obstruction_stations", "floating_furniture",
                                "barrier_missing") if (r.get(k) or 0) > 0]

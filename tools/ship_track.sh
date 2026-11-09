@@ -773,6 +773,7 @@ gate_stage_force() {
 p=sys.argv[1]
 print(1 if os.path.exists(p) and json.load(open(p,encoding='utf-8')).get('force_install_ok') is True else 0)" "$PROJ/data/stage_force.json")
   D1_FORCE_OK="${D1_FORCE_OK%$'\r'}"
+  SF_RAN=1
 }
 gate_race_gates() {
   [ -n "$RACE_IDS" ] || { no_race race_gates; return 0; }
@@ -1218,6 +1219,12 @@ fi
 if [ "$DT_S" != 0 ] || [ "$AU_S" != 0 ] || [ "$DT_R" != 0 ] || [ "$AU_R" != 0 ] || [ "$NR_R" != 0 ] || [ "$KG" != 0 ]; then
   if [ "$NR_R" != 0 ]; then
     echo "  NOT INSTALLED: no_route exited $NR_R (2 = an input error: the containment verdict could not be computed)"; exit 1
+  elif [ "$FORCE" = 1 ] && [ "${SF_RAN:-0}" = 1 ] && [ "$D1_FORCE_OK" != 1 ]; then
+    # ledger 0085: a port that runs the stage_force gate is forced only where Kevin's declared force covers every red
+    # drive_test row (data/stage_force.json force_install_ok); until now its verdict was recorded but not read here
+    echo "  NOT INSTALLED: --force-install refused — Kevin's declared force does not cover every red row (data/stage_force.json why_not)"; exit 1
+  elif [ "$FORCE" = 1 ] && [ "${SF_RAN:-0}" = 1 ] && { [ "$AU_S" != 0 ] || [ "$DT_R" != 0 ] || [ "$AU_R" != 0 ] || [ "$KG" != 0 ]; }; then
+    echo "  NOT INSTALLED: --force-install refused — a declared force covers drive_test rows only, and the audit / race gates / kn5_ground_check are red"; exit 1
   elif [ "$FORCE" = 1 ]; then
     echo "  --force-install: installing RED (caller asserts no metric is worse than the reference)"
   else

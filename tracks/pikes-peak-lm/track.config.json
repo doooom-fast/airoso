@@ -3543,5 +3543,31 @@
     "_deck_doc": "Sand Creek's (ledger 0079 round D): the deck's holes filled from the lidar round them, in the lap's datum (the assembler's ROAD stands 0.10 m over its sampled ground), a 1 m Gaussian over its nodes, the ground under and round it split to 0.7 m. Pikes Peak's own (ledger 0085, tools/lm_pads_blend.py): cut_strip left = the apron strip's row pinned at each cut with the lane's (the deck met the apron 0.14 m low at the NW out-cut); hold_beyond_lane right = past the lane's right edge the deck holds the edge's height under the wall's foot (the lidar rises 0.15 m into it). No lane_lip: the measured pavement and the wall-foot band cover the edges",
     "arms": "streets",
     "_ribbon_right_doc": "pads[].ribbon_right_m (junction_pads.py only): the deck runs 0.7 m past the lap's right lane edge, under the outer wall's whole foot (its inner face 0.05 m past the edge, 0.6 m deep), where the lap's edge strip was; without it one module's outer corners stood on the assembler's unseated ground and its base went 2.6 m under the surface (drive_test: floating, nothing under it)"
+  },
+  "gates": {
+    "drive1": {
+      "force_exemptions": {
+        "stage": {
+          "approved": "Kevin 2026-11-09, asked 'How should the infield's hairpin go, so I can install 0.2.0?' (Drop infield, install / Exempt hairpin, install): \"Exempt hairpin with a note to ask after driving\"",
+          "versions": [
+            "0.2.0"
+          ],
+          "undrivable_corners": [
+            {
+              "id": "the S-curve hairpin",
+              "layout": "infield",
+              "s_m": [
+                650,
+                695
+              ],
+              "measured": "NAIP 2023 + the 2018 lidar (road-course infield_pieces.naip.json s_curve): the real hairpin 8.3-8.7 m wide, centre R ~8-9 m, against drive_test's >110 deg on <9 m corner rule; drive_test reads 5 stations s 665-681 on the infield lap (pp_b5 / pp_b6)"
+            }
+          ],
+          "excursion_drops": [],
+          "ask_after_driving": "Kevin asked for this note: after he has driven the infield layout, ask him how the hairpin drives (keep the exemption, widen it, or drop the infield layout). The exemption is for 0.2.0 only",
+          "_doc": "tools/stage_force.py (gate step stage_force, last): --force-install may pass the red infield drive_test only where every red row is this hairpin, on the infield layout, for 0.2.0; any other red row (a soft top, a step rate, a corner anywhere else, another layout) refuses it (tools/ship_track.sh checks the verdict before a forced install)"
+        }
+      }
+    }
   }
 }

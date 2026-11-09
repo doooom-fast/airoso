@@ -49,7 +49,8 @@
       "verify_pads",
       "verify_mouths",
       "house_seat",
-      "edge_report"
+      "edge_report",
+      "stage_force"
     ]
   },
   "sync_in": {
@@ -96,7 +97,8 @@
       "data/lap.inf.json",
       "data/pads.built.json",
       "data/verify_pads.json",
-      "data/pad_arms.json"
+      "data/pad_arms.json",
+      "data/stage_force.json"
     ],
     "map": [
       [

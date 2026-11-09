@@ -14,6 +14,23 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
+## 2026-11-09 (ledger 0085) — Kevin's force for Pikes Peak 0.2.0's infield hairpin; a declared stage force is now enforced at install
+
+**Kevin's words** (asked "How should the infield's hairpin go, so I can install 0.2.0?", the choices "Drop infield,
+install" / "Exempt hairpin, install"): "Exempt hairpin with a note to ask after driving".
+
+**What changed:**
+- `tracks/pikes-peak-lm/track.config.json` `gates.drive1.force_exemptions.stage`: one undrivable-corner window, the
+  S-curve hairpin, layout `infield`, s 650-695, versions ["0.2.0"]. The hairpin is measured 8.3-8.7 m wide, centre R
+  ~8-9 m, against drive_test's >110 deg on <9 m rule; drive_test reads 5 stations, s 665-681. `ask_after_driving`
+  carries Kevin's note. No threshold moves; every other red row still refuses the force.
+- `tools/stage_force.py`: a window may name its `layout` (it then covers that layout's report only); absent = every
+  report, as before (`tests/tools/test_stage_force.py`).
+- **`tools/ship_track.sh`**: a port that runs the `stage_force` gate is force-installed only when its verdict says
+  `force_install_ok`, and only when the audit, race gates and kn5_ground_check are green (a declared force covers
+  drive_test rows only). Until now the verdict was recorded and printed but not read at the install. The rally ports
+  (the only other users) installed with verdicts that pass this.
+
 ## 2026-11-09 (ledger 0085) — Pikes Peak's two oval junctions become measured pads: verify_pads wired in, the two oval mouths leave verify_mouths; the junction_pads numbers
 
 **What changed (Pikes Peak only; every key opt-in, no other track declares them):**

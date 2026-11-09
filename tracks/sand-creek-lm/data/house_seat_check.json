@@ -19352,12 +19352,12 @@
    "x": -850.4,
    "z": 172.4,
    "bottom": 20.254,
-   "top": 29.794,
+   "top": 29.799,
    "ground_low": 20.403,
    "ground_high": 22.849,
-   "ground_mean": 21.766,
+   "ground_mean": 21.771,
    "contact_m": -0.15,
-   "show_m": 6.945,
+   "show_m": 6.95,
    "lens_buried_share": 0.159
   },
   {

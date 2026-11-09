@@ -12,7 +12,7 @@
    ],
    "along_m": -10.0,
    "slid_m": 3.0,
-   "ground_y": 17.44,
+   "ground_y": 17.492,
    "edge_y": 17.603,
    "blade_bottom_y": 19.736,
    "names": [
@@ -50,7 +50,7 @@
    ],
    "along_m": 8.75,
    "slid_m": 1.75,
-   "ground_y": 20.234,
+   "ground_y": 20.3,
    "edge_y": 20.398,
    "blade_bottom_y": 22.532,
    "names": [
@@ -69,9 +69,9 @@
    ],
    "along_m": -8.0,
    "slid_m": 0.0,
-   "ground_y": 10.34,
+   "ground_y": 10.437,
    "edge_y": 10.404,
-   "blade_bottom_y": 12.537,
+   "blade_bottom_y": 12.571,
    "names": [
     "E 52nd Ave",
     "N Dahlia St"
@@ -88,7 +88,7 @@
    ],
    "along_m": 8.0,
    "slid_m": 0.0,
-   "ground_y": 10.065,
+   "ground_y": 10.149,
    "edge_y": 10.361,
    "blade_bottom_y": 12.494,
    "names": [
@@ -145,7 +145,7 @@
    ],
    "along_m": -11.5,
    "slid_m": 3.5,
-   "ground_y": 22.751,
+   "ground_y": 22.816,
    "edge_y": 22.94,
    "blade_bottom_y": 25.073,
    "names": [
@@ -240,9 +240,9 @@
    ],
    "along_m": -9.75,
    "slid_m": 2.75,
-   "ground_y": 34.712,
+   "ground_y": 34.775,
    "edge_y": 34.772,
-   "blade_bottom_y": 36.906,
+   "blade_bottom_y": 36.909,
    "names": [
     "N Leyden St",
     "E 45th Ave"
@@ -259,9 +259,9 @@
    ],
    "along_m": -7.75,
    "slid_m": 0.75,
-   "ground_y": 31.753,
+   "ground_y": 31.808,
    "edge_y": 31.741,
-   "blade_bottom_y": 33.886,
+   "blade_bottom_y": 33.942,
    "names": [
     "N Ivy St",
     "E 45th Ave"
@@ -278,9 +278,9 @@
    ],
    "along_m": -18.5,
    "slid_m": 3.25,
-   "ground_y": 28.035,
+   "ground_y": 28.096,
    "edge_y": 27.823,
-   "blade_bottom_y": 30.168,
+   "blade_bottom_y": 30.23,
    "names": [
     "N Holly St",
     "E 45th N Dr"
@@ -297,7 +297,7 @@
    ],
    "along_m": 12.0,
    "slid_m": 4.0,
-   "ground_y": 27.341,
+   "ground_y": 27.345,
    "edge_y": 27.765,
    "blade_bottom_y": 29.898,
    "names": [
@@ -316,7 +316,7 @@
    ],
    "along_m": -7.0,
    "slid_m": 0.0,
-   "ground_y": 28.129,
+   "ground_y": 28.191,
    "edge_y": 28.35,
    "blade_bottom_y": 30.484,
    "names": [
@@ -335,7 +335,7 @@
    ],
    "along_m": -9.0,
    "slid_m": 2.0,
-   "ground_y": 28.625,
+   "ground_y": 28.685,
    "edge_y": 28.688,
    "blade_bottom_y": 30.822,
    "names": [
@@ -373,7 +373,7 @@
    ],
    "along_m": 8.25,
    "slid_m": 0.25,
-   "ground_y": 27.135,
+   "ground_y": 27.197,
    "edge_y": 27.288,
    "blade_bottom_y": 29.421,
    "names": [
@@ -392,7 +392,7 @@
    ],
    "along_m": -8.0,
    "slid_m": 0.0,
-   "ground_y": 27.154,
+   "ground_y": 27.247,
    "edge_y": 27.261,
    "blade_bottom_y": 29.395,
    "names": [

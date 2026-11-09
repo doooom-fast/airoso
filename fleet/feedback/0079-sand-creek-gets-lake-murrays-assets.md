@@ -2561,3 +2561,24 @@ Earlier list, kept for the record:
   change grade too fast on the host's own deck, a host lane 0.43 m over the deck, and a notch.
 - **Round C:** the race corridor and closures over the grid mouths; the race kerbs; street-name blades as a chain step.
 - **`colliders 0`:** no block stands within 60 m of the lap on fine ground (as in 0.1.1).
+
+## Sand Creek 0.2.8: the mainline's edge strip flush with the ground (PC, 2026-11-09; ledger 0087's Milford 0.1.6 fix)
+
+- **Asked**: Kevin on the PC, whether the other circuit tracks have Milford's fast-curve edge mess: "Yes, check them". He also said "I always want newer builds".
+- **The cause**: no `route.edge.grass_clearance` was set, so the engine default 0.10 put the 1.5 m strip's lip 20 cm under the lane edge. engine-july's prep holds the ground past the ROAD edge at lane height - 0.02 for 3 m.
+  - Measured on 0.2.7 (gate OBJ, every 10 m, both sides; `strip_gutter_w.py`, the lip at +1.75 m, the ground at +1.95 m): the ground stood over the lip by more than 5 cm at 137 of 1,608 side-stations, more than 10 cm at 68, worst 17 cm.
+- **First 0.2.8** (1712557, -0.08 for every strip): the mainline was flush (137 -> 0), but the audit went red with I 42 / K 38. Where two side streets meet, one street's strip stood 8-22 cm over the other's pavement (e.g. grid_unclassified_9#0#1, grid_primary_7#0); the 0.10 lip had lain under it there.
+  - Kept as `D:/k10-scratch/sc_edge_reh.fail1`.
+- **Fix** (981727d): an opt-in `route.edge.connector_grass_clearance` in scripts-v021 `ribbon.edge_profile`. Unset, the connectors take the mainline's value, byte for byte. Sand Creek sets 0.10, so its side streets keep 0.2.7's lip and only the mainline is flush. Tests in `tests/geometry/test_v021_edge_profile.py`.
+- **Rehearsal** `D:/k10-scratch/sc_edge_reh`: empty workshop, ENG `eng_sclm_a`; TreeFX bins copied from the sc027 worktree, md5 = installed.
+  - SHIP OK, no force; every GATES row exit 0; audit I / K 0 / 0.
+  - 3,471 trees, as 0.2.7.
+  - Every drive_test / audit / kn5_ground row as 0.2.7's, but signposts: seat-gap median -0.46 (was -0.48), p95 -0.35 (was -0.41), no-ground 0, hovering 0.
+  - Gutter 137 -> 0 (worst +2.1 cm).
+- **Installed** 2026-11-09 14:00 from the EMPTY `D:/k10-scratch/sand_creek_lm`; 0.2.7's workshop is kept as `sand_creek_lm.0.2.7`.
+  - "doooom Colorado — Sand Creek Raceway" and "— Sand Creek Free Roam" 0.2.8.
+  - Each kn5 is byte-identical or kn5_equiv to the rehearsal's (tangents only).
+  - trees.txt is identical to 0.2.7's.
+  - The install step parked 0.2.7 in `D:/k10-track-archive/2026-11-09_140029/` (MOVES.tsv + README).
+  - Menu pictures: the same cameras (race s0, street s1 phase 0.5); the pack's own are in `2026-11-09_140058_previews`.
+- Not driven.

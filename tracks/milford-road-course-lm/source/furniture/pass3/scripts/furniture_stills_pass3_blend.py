@@ -178,7 +178,16 @@ for name, d in (("seat_F1_ne_end_back", -45.0), ("seat_F1_ne_end_ahead", 45.0)):
     ex, ey, ez = seat_at(*along(i, d))
     mz = z_at(ground, mx, my, ez - EYE_M) + 1.8
     shoot(name, (ex, ey, ez), (mx, my, mz), fov=70.0)
-# 6: above the west site, from the lap's side
+# 6: the NW corner's W-beam G1 (buried in the prepped ground until 0.1.8's reseat), from 40 m back down the lap
+cfgb = json.loads((PROJ / "track.config.json").read_text(encoding="utf-8"))["scenery"]["bespoke"]["rails"]
+g1 = [to_xy(*q) for q in next(r for r in cfgb if r["key"] == "g1_nw_corner_outside")["polyline_lonlat"]]
+gx, gy = g1[len(g1) // 2]
+i = nearest_i(gx, gy)
+for name, d in (("seat_G1_nw_corner_back", -40.0), ("seat_G1_nw_corner_ahead", 40.0)):
+    ex, ey, ez = seat_at(*along(i, d))
+    gz = z_at(ground, gx, gy, ez - EYE_M) + 0.4
+    shoot(name, (ex, ey, ez), (gx, gy, gz), fov=60.0)
+# 7: above the west site, from the lap's side
 cx, cy = (cen["mpg_west_bldg_a"][0] + cen["mpg_west_bldg_b"][0]) / 2, (cen["mpg_west_bldg_a"][1] + cen["mpg_west_bldg_b"][1]) / 2
 gz = z_at(ground, cx + 150.0, cy, 0.0)
 shoot("above_west_site", (cx + 260.0, cy - 60.0, gz + 70.0), (cx, cy, gz), fov=60.0)

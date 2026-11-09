@@ -33,6 +33,7 @@ PREFIXES = ("GUARDRAIL_W", "1WALL_GHOST_RAIL", "1WALL_TECPRO_TYRES", "1WALL_TILT
 BUILT_GROUND = ("1GRASS", "1KERB")          # the prepped scene's ground and edge strip (the chain's names)
 PROBE_UP_M = 6.0                            # [invented] the ray starts this far over the vertex: over any burial seen (1.45 m),
                                             # under any deck (Milford's one underpass is far from every rail)
+MIN_MOVE_M = 1e-4                           # under this a vertex is left exactly where it was
 MAX_MOVE_M = 3.0                            # [invented] a larger move reads another layer (L4's ~4 m shoulder gap, less a margin)
 
 
@@ -73,8 +74,10 @@ def main():
         raise SystemExit(f"[reseat] FATAL: no author ground ({author_prefixes}) or no built ground ({BUILT_GROUND})")
     bad, rows = [], []
     for o in sorted((o for o in bpy.data.objects if o.type == "MESH" and o.name.upper().startswith(PREFIXES)), key=lambda o: o.name):
-        m, mi = o.matrix_world, o.matrix_world.inverted()
+        m = o.matrix_world
+        up = o.matrix_world.inverted().to_3x3() @ Vector((0.0, 0.0, 1.0))   # world +z in the object's frame
         n0 = len(o.data.vertices)
+        touched = False
         moves, missing, cache = [], 0, {}
         for v in o.data.vertices:
             w = m @ Vector(v.co)
@@ -89,13 +92,16 @@ def main():
             if abs(dz) > MAX_MOVE_M:
                 bad.append(f"{o.name}: a vertex at ({w.x:.1f}, {w.y:.1f}) would move {dz:+.2f} m (> {MAX_MOVE_M} m: another layer)")
                 break
-            v.co = mi @ Vector((w.x, w.y, w.z + dz))
             moves.append(dz)
+            if abs(dz) >= MIN_MOVE_M:            # an unmoved vertex keeps its exact bytes: a round trip through the inverse
+                v.co = v.co + up * dz            # matrix perturbs it, and the exporter then splits more vertices (mesh_diff)
+                touched = True
         if missing:
             bad.append(f"{o.name}: {missing} of {n0} vertices with no author or built ground under them")
         if len(o.data.vertices) != n0:
             bad.append(f"{o.name}: the vertex count changed")
-        o.data.update()
+        if touched:
+            o.data.update()
         if moves:
             s = sorted(moves)
             q = lambda f: s[min(len(s) - 1, int(f * (len(s) - 1)))]   # noqa: E731

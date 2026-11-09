@@ -290,3 +290,18 @@ the driver's seat.
 cd D:\k10\airoso && git fetch origin && git show origin/claude/sand-creek-grid-mouths:tools/mouth_survey.py > tools\mouth_survey.py
 set PYTHONUTF8=1 && python tools/mouth_survey.py D:/k10-scratch/sand_creek_lm --rog --json D:/k10-scratch/sand_creek_lm/data/mouth_survey.json > D:/k10-scratch/sand_creek_lm/mouth_survey.txt
 ```
+
+**Ran on the PC, 2026-11-08 19:20** (the installed 0.2.7 workshop `D:/k10-scratch/sand_creek_lm`, the branch's own
+`tools/mouth_survey.py` at ae5fc2d, nothing copied over the main checkout): exit 0, 113 mouths, 0 errors, 2 min 20 s.
+Output: `tracks/sand-creek-lm/data/mouth_survey.json` (md5 b12007ab) and `D:/k10-scratch/sand_creek_lm/mouth_survey.txt`.
+
+| | m7d's gates (table above) | installed 0.2.7, `mouth_survey --rog` |
+|---|---|---|
+| lip median / max | 0.02 / 0.327 | 0.021 / 0.327 (78#0 end) |
+| teeth | 0.23 % (157 / 68,942) | 0.23 % (157 / 68,942) |
+| road_over_ground | 17 / 12,956, max 0.295 | 17 / 12,956, max 0.295; 4 in a mouth's corner (35 lo x 2, 84 start hi, 43 start hi) |
+| mouths at lip <= 0.05 | | 88 of 113 |
+
+The same numbers as the Mac's build. R9 is not compared: the survey's `turn_r9_drop_m` (median 0.033, p90 ~0.21) is a
+different measure from verify_mouth_corners' R9 turn drop (0.013 / 0.193). The 21 allowed corners (owed item 3) are
+still the ones over 0.05; nothing new.

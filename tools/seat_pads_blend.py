@@ -75,6 +75,11 @@ def main():
             if key not in idx:
                 idx[key] = len(verts)
                 verts.append((p[0], p[1], p[2] + PAD_LIFT_M))
+            elif p[2] + PAD_LIFT_M > verts[idx[key]][2]:
+                # two ground pieces meet here at different heights (a fold in the prepped ground: 1.5 mm on Nevada
+                # 0.1.3's apron 11, ledger 0087): the pad takes the higher, so no ground stands over it
+                k = idx[key]
+                verts[k] = (verts[k][0], verts[k][1], p[2] + PAD_LIFT_M)
             return idx[key]
         for poly in ob.data.polygons:                          # the pad's own cells: its measured outline
             cell = [(P[i].x, P[i].y) for i in poly.vertices]

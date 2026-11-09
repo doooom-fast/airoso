@@ -511,6 +511,15 @@ prep_prep() {
     step "ship: red repairs (tools/red_repairs_blend.py: the named kerb faces, the named ground slivers; self-checked)"
     "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/red_repairs_blend.py" -- "$PROJ/blender/$SLUG.blend" --project "$PROJ" 2>&1 | grep "^\[red\]\|Error\|Traceback"
   fi
+  # ledger 0084 (opt-in: a track.config.json road_wear key; none = no header, nothing runs, the stale report removed): the
+  # road's tone off the aerial and the rubber where tyres run, baked into a world atlas under the stock asphalt as detail;
+  # UVs and materials only, every vertex where the chain put it. Last in prep: it reads the final 1ROAD. Part of prep
+  # (steps.prep stays prep, split)
+  rm -f "$PROJ/data/road_wear.json"
+  if [ "$(pyq "import json,sys; print(bool(json.load(open(sys.argv[1],encoding='utf-8')).get('road_wear')))" "$PROJ/track.config.json" | tr -d '\r')" = "True" ]; then
+    step "ship: road wear where tyres run + the road's tone off the aerial (tools/road_wear_blend.py; ledger 0084; self-checked)"
+    "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/road_wear_blend.py" -- "$PROJ/blender/$SLUG.blend" --project "$PROJ" --eng "$ENGINE" 2>&1 | grep "^\[road_wear\]\|FATAL\|Error\|Traceback"
+  fi
 }
 prep_split() {
   local lid
@@ -675,6 +684,15 @@ gate_edge_smoothness() {
   step "gate: the built lane edges are smooth (tools/edge_smoothness.py; ledger 0087 — hard)"
   rm -f "$PROJ/data/edge_smoothness.json"
   (cd "$AIROSO" && python tools/edge_smoothness.py "$PROJ" --gate-default --json "$PROJ/data/edge_smoothness.json")
+}
+gate_road_wear() {
+  # ledger 0084 (opt-in: only a ship.json that names it runs it): on the BUILT road kn5, the road-wear surfaces' UVs are one
+  # texel per texel_m of ground, round and never repeating; the shipped atlas follows the aerial; the rubber sits on the
+  # declared line; the slots and textures are what the bake declared. Thresholds: tools/road_wear_check.py GATE
+  # (fleet/GATES-CHANGELOG.md). Hard: exit 1 stops the chain
+  step "gate: road wear on the built road kn5 (tools/road_wear_check.py; ledger 0084 — hard)"
+  rm -f "$PROJ/data/road_wear_check.json"
+  (cd "$AIROSO" && python tools/road_wear_check.py "$PROJ" --kn5 "$PROJ/build/$SLUG.kn5" --json "$PROJ/data/road_wear_check.json")
 }
 gate_house_seat() {
   step "gate: houses on the built ground (tools/house_seat_check.py: floating, sunken or buried buildings — hard)"

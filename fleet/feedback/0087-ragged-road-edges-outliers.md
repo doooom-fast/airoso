@@ -328,3 +328,27 @@ the smoothing alone; the road's position against the real pavement is unchanged.
 - The install folder owed above is done: slug and folder `milford_road_course`; the old-engine track's are
   `milford_road_course_v06` (S7). Details, the gate column (0.1.4 / 0.1.3 / 0.1.5) and **the one runbook for both entries,
   0082-4 / 0087-2**: `fleet/feedback/0082-milford-furniture-pass-1.md`, "Milford 0.1.5".
+
+## Milford 0.1.6 (PC, 2026-11-08): the edge strip flush with the ground the prep leaves
+
+Kevin (PC session, 2026-11-08 ~22:15): **"Milford still looks messy on the edges of the high speed curves"**.
+
+**Measured on the installed 0.1.5 (`D:/k10-scratch/milford_lm`, its gate OBJ):**
+- The lane outline is smooth: edge_smoothness resid p99 3.9 mm (max 1.1 cm), 0 ragged runs. The mess is not the outline.
+- The circuit edge (`route.edge`, ledger 0078) grades the strip 0.15 m down over its outer 1.0 m.
+- engine-july's prep (`build_kn5_loop._conform_and_reseat`) pins ground under 1ROAD only. Past the ROAD edge it holds a 3 m contact band at the lane edge's height - 0.02, then feathers 6 m.
+- So the strip lies in a gutter with a wall of ground at its lip. At s 2,957 and 3,693, both sides: the strip -0.14..-0.15 at +1.25 m; the ground -0.05..-0.13 at +1.4 m and -0.02 at +1.8 m.
+- Between strip_seam's points the ground's triangles climb over the strip's lower half. In Blender stills of the fast curves (s 2,594 / 2,798 / 2,957 / 3,693 / 4,355; R 146-296 m, ~155-220 km/h) that reads as saw teeth along the outsides.
+
+**Fix (0.1.6, opt-in per track):** `route.edge.grass_clearance` -0.08.
+- The strip's outer lip now stands 2 cm under the lane edge, level with the prep's band, not 15 cm under it.
+- Rehearsed from an EMPTY workshop (`D:/k10-scratch/milford_016_reh`, ENG `eng_mflm_015`, branch `claude/milford-edge-strip-016` from 871fbde): SHIP OK, every gate green.
+- The same stations now read: strip 0.00..-0.02, ground -0.02..-0.04 under it, -0.02..-0.03 past the lip. No gutter, no wall.
+- The stills show the strip meeting the grass in a clean line: `tracks/milford-road-course-lm/source/stills/edges_015_vs_016.jpg`, 0.1.5 left, 0.1.6 right.
+- Unchanged: drive_test 0 severe / 0 excursions, edge_report ground_3m median -0.027 (was -0.028), kn5_ground PASS.
+- kn5 39,002,272 B (0.1.5: 39,006,968).
+
+**Owed:**
+- Install on Kevin's word: replaces `milford_road_course` 0.1.5 (archive by the family rule; re-render the menu picture).
+- Kevin's drive is the verdict: the stills are Blender, not AC.
+- The same circuit edge profile is on the other circuit ports (High Plains, Exotics, Pikes Peak, Pueblo, Aspen, Grand Junction); each needs the same check.

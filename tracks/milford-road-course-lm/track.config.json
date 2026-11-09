@@ -4,7 +4,7 @@
   "name": "Milford Road Course (unofficial)",
   "_name_doc": "Kevin 2026-11-07: \"Get rid of Lm Version from names, nothing should be on any other engine now\" / \"LM is the airoso engine\". 0.1.5 (the merge of 0.1.4 edges, ledger 0087, and 0.1.3 vegetation, ledger 0082): no \"(LM engine)\" in the display name, and the slug and install_folder are the plain milford_road_course. The old-engine track (tracks/milford-road-course, 0.6.0) gave that slug up: its slug and folder are milford_road_course_v06 (S7, fleet.cli lint). The repo directory keeps its -lm suffix until the one rename pass after the current agents land",
   "slug": "milford_road_course",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "mirror_x": false,
   "loop": true,
   "default_width_m": 11.0,
@@ -927,8 +927,9 @@
       "sidewalk_w": 0.2,
       "connector_sidewalk_w": 0.2,
       "grade_w": 1.0,
-      "grass_clearance": 0.05,
-      "_doc": "the circuit edge (ledger 0078): no curb, no sidewalk. The asphalt edge is held at road height for 0.30 m and the run-off ground meets it 0.15 m lower over 1.0 m [invented: the flush meet the drive gate reads as no drop]; the ground beyond is the assembler's conform to the road, then the 3DEP surface: the real run-off level."
+      "grass_clearance": -0.08,
+      "_doc": "the circuit edge (ledger 0078): no curb, no sidewalk. The asphalt edge is held at road height for 0.30 m and the run-off ground meets it 0.15 m lower over 1.0 m [invented: the flush meet the drive gate reads as no drop]; the ground beyond is the assembler's conform to the road, then the 3DEP surface: the real run-off level.",
+      "_grass_clearance_doc": "0.1.6 (PC, 2026-11-08; Kevin: \"Milford still looks messy on the edges of the high speed curves\"): the strip's outer lip 2 cm under the lane edge (profile point 3 at -grass_clearance = +0.08 over the unlifted edge; the lane edge at +0.10), not 15 cm. engine-july's prep holds the ground past the ROAD edge at the lane edge's height - 0.02 for 3 m (its contact band), so the 0.15 m strip lay in a 12-15 cm gutter with a wall of ground at its lip (0.1.5's gate OBJ at s 2,957 / 3,693: the strip -0.14 at +1.3 m, the ground -0.05..-0.13 at +1.4 and -0.02 at +1.8), and between the seam's points the ground climbed over the strip's lower half: the saw teeth on the fast curves' outsides. Flush with the band, nothing stands over it"
     },
     "crossfall_file": "data/crossfall.lm.json",
     "densify": {

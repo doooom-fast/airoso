@@ -2,6 +2,7 @@
 (../f1ne_bins.json, ../tiers.json; each written by the scripts here off the vegetation read of the 71 EPT nodes already on
 disk, nothing downloaded), into
 
+  ../f1_ne_end.json         the F1 north-east entry as written into the config (tests check the config against it)
   ../blocks.json             the site buildings the 2017 lidar measures AND NAIP 2022 still shows (track.config.json names
                              it once: scenery.bespoke.blocks [{"file": ...}], read by tools/author_bespoke_blend.py blocks)
   track.config.json          scenery.bespoke.rails += F1's north-east end (kind screen, its measured height); mpg_plant_a's
@@ -54,6 +55,8 @@ f1_end = {
                 f"{min(b['single'] for b in ne):.2f}-{max(b['single'] for b in ne):.2f} (opaque, as the built 197 m). NAIP 2022 shows "
                 "the light line and its shadow to the same end (e -112, n 485). Panel and thickness as the kind's [invented]"),
 }
+
+(P3 / "f1_ne_end.json").write_text(json.dumps(f1_end, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
 
 # ---- the site buildings --------------------------------------------------------------------------------------------
 tiers = {(t["src"], t["tier"], t["area_m2"]): t for t in json.loads((P3 / "tiers.json").read_text())}

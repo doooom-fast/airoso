@@ -27,6 +27,7 @@
     "as": "the fleet's menu light (San Diego, 7 Nov, 15:30 PST), not this site's own sun"
   },
   "sky": "Nishita, strength 0.35, altitude 120 m, air 1.2, dust 1.5",
+  "trees": "as in the kn5",
   "render": "EEVEE Next, AgX, exposure -0.8 EV, 1920x1080 -> centre crop 1917x1080 (355:200) = preview_full.png -> 355x200 LANCZOS = preview.png",
   "source": "Blender render of the installed build's split scenes, not an AC screenshot (Kevin 2026-11-07: 'Render them in Blender') (D:/k10-scratch/pueblo_lm/blender/split)",
   "script": "tools/menu_preview_blend.py + tools/menu_preview_cut.py"

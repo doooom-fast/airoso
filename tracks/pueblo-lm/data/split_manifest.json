@@ -1,11 +1,11 @@
 {
- "input": "D:\\k10-scratch\\pueblo_lm\\blender\\pueblo_motorsports_park_lm.blend",
+ "input": "D:\\k10-scratch\\pueblo_lm\\blender\\pueblo_motorsports_park.blend",
  "outputs": {
   "loop_main.blend": {
    "objects": 35,
    "meshes": 19,
-   "positions": 53882,
-   "max_positions": 35457,
+   "positions": 53881,
+   "max_positions": 35456,
    "materials": [
     "1GRASS_mat",
     "1KERB_circuit_0_mat",
@@ -93,8 +93,8 @@
  "input_census": {
   "objects": 35,
   "meshes": 19,
-  "positions": 53882,
-  "max_positions": 35457,
+  "positions": 53881,
+  "max_positions": 35456,
   "materials": [
    "1GRASS_mat",
    "1KERB_circuit_0_mat",

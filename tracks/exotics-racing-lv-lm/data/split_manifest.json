@@ -1,11 +1,11 @@
 {
- "input": "D:\\k10-scratch\\exotics_lm\\blender\\exotics_racing_lvms_lm.blend",
+ "input": "D:\\k10-scratch\\exotics_lm\\blender\\exotics_racing_lvms.blend",
  "outputs": {
   "loop_main.blend": {
    "objects": 53,
    "meshes": 37,
-   "positions": 131402,
-   "max_positions": 46161,
+   "positions": 131371,
+   "max_positions": 46171,
    "materials": [
     "1GRASS_0_mat",
     "1GRASS_1_mat",
@@ -129,8 +129,8 @@
  "input_census": {
   "objects": 53,
   "meshes": 37,
-  "positions": 131402,
-  "max_positions": 46161,
+  "positions": 131371,
+  "max_positions": 46171,
   "materials": [
    "1GRASS_0_mat",
    "1GRASS_1_mat",

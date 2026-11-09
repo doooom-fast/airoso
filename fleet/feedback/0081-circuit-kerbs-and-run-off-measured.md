@@ -548,3 +548,33 @@ to its rehearsal's (tangents only). The 0.1.1 folders are parked in `D:/k10-trac
 - **Grand Junction:** the 2015 QL2 lidar shows no kerb at R s 170-230 / 970-1,030 (no block period, no paint band); nothing
   built. Only a newer survey or a ground photo would change that.
 - Round 1's carried items: Milford's ribbon creases (ledger 0078 round 4), Pikes Peak none.
+
+## The edge strip flush with the ground: five circuits rebuilt and installed under plain names (PC, 2026-11-09; ledger 0087)
+
+- **Asked**: Kevin on the PC, whether the other circuit tracks have Milford's fast-curve edge mess: "Yes, check them". He also said "I always want newer builds".
+- **The cause**: the circuit edge (`route.edge`, grass_clearance 0.05) ends the strip 14 cm under the lane edge. engine-july's prep holds the ground past the ROAD edge at lane height - 0.02 for 3 m, so the strip lay in a gutter with ground standing over its lip.
+- **The fix**: `route.edge.grass_clearance` -0.08 (8573cdd), the same as Milford 0.1.6. On these builds the slug, install folder and display name are plain too (Kevin 2026-11-07: "Get rid of Lm Version from names"); the old-engine tracks' slugs moved to `_v<ver>`.
+- **Measured** (gate OBJ, every 10 m, both sides; `strip_gutter.py`: the top surface at +1.25 m vs the ground at +1.45 m past the lane edge). Side-stations with the ground over the lip by more than 5 cm, installed build -> new build:
+
+  | track | before | after | worst before |
+  |---|---|---|---|
+  | High Plains 0.1.4 -> 0.1.5 | 90 / 538 | 0 | 12 cm |
+  | Nevada Nights 0.1.2 -> 0.1.3 | 64 / 304 | 0 | 12 cm |
+  | Grand Junction 0.1.1 -> 0.1.2 | 46 / 218 | 0 | 12 cm |
+  | Pueblo 0.1.2 -> 0.1.3 | 31 / 586 | 0 | 12 cm |
+  | Aspen 0.1.3 -> 0.1.4 | 16 / 280 | 0 | 12 cm |
+
+  The lip now stands at -0.019 against the lane edge, was -0.142.
+- **Nevada's first rehearsal stopped** at seat_pads: `1RUNOFF_apron_11: ground over 1 of its vertices`.
+  - Debug run on the saved prepped blend: one plan point with two ground surfaces 1.5 mm apart (-0.0426 / -0.0441). The pad took the lower one, and the self-check's 1 mm tolerance caught the other.
+  - Fix 84fefe1: the pad vertex takes the highest ground piece that reaches it. Only Nevada sets `pads_seat` "ground".
+  - Re-rehearsed from an empty workshop: all 14 pads have ground over 0.
+- **Rehearsals** `D:/k10-scratch/{hp,nv,gj,pu,as}_edge_reh` (empty workshops, each track's own ENG; the ENG textures are a subset of this head's, none different):
+  - SHIP OK, no force; every GATES row exit 0.
+  - drive_test / audit / kn5_ground rows identical to the installed builds', Grand Junction's from its drive_test.full.json.
+- **Installed** 2026-11-09 10:59-11:03, each from an EMPTY workshop (the old one kept as `<workshop>.<old version>`):
+  - The kn5s are kn5_equiv to the rehearsals' (tangents only).
+  - Each old `_lm` folder was moved out after its successor installed: `D:/k10-track-archive/2026-11-09_{105942_high_plains,110245_exotics_racing_lvms,110115_grand_junction,110221_pueblo_motorsports_park,110255_aspen_motorsports_park}/` (MOVES.tsv + README).
+  - Lap times and setups saved under the `_lm` folders don't carry over (new track ids).
+- **Menu pictures**: the same cameras as before. The packs' own pictures are in `2026-11-09_110323_previews`.
+- Not driven.

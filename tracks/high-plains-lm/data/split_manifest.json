@@ -1,11 +1,11 @@
 {
- "input": "D:\\k10-scratch\\high_plains_lm\\blender\\high_plains_lm.blend",
+ "input": "D:\\k10-scratch\\high_plains_lm\\blender\\high_plains.blend",
  "outputs": {
   "loop_main.blend": {
    "objects": 58,
    "meshes": 42,
-   "positions": 110073,
-   "max_positions": 35653,
+   "positions": 110075,
+   "max_positions": 35654,
    "materials": [
     "1GRASS_0_mat",
     "1GRASS_1_mat",
@@ -139,8 +139,8 @@
  "input_census": {
   "objects": 58,
   "meshes": 42,
-  "positions": 110073,
-  "max_positions": 35653,
+  "positions": 110075,
+  "max_positions": 35654,
   "materials": [
    "1GRASS_0_mat",
    "1GRASS_1_mat",

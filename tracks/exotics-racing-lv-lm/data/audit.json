@@ -1,5 +1,5 @@
 {
- "slug": "exotics_racing_lvms_lm",
+ "slug": "exotics_racing_lvms",
  "obj": "track.obj",
  "race": false,
  "road_verts": 9948,
@@ -18,7 +18,7 @@
  "worst_terrain_span_m": 0.0,
  "F_curb_not_flush": 0,
  "F_skirt_off_terrain": 0,
- "F_side_faces_skipped": 489,
+ "F_side_faces_skipped": 0,
  "G_prop_floating": null,
  "H_ground_above_deck": null,
  "I_sidewalk_isolating": 0,

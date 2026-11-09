@@ -935,3 +935,27 @@ download (Kevin's yes).
   `D:/k10-track-archive/2026-11-08_001402_previews/`).
 - This commit: the outputs the install synced back (data/, loop.blend) + the picture. Recorded in
   `fleet/ac-installed.json` on claude/ac-tidy.
+
+## Del Mar 0.2.5: the edge strip flush with the ground (PC, 2026-11-09; ledger 0087's Milford 0.1.6 fix)
+
+- **Asked**: Kevin on the PC, whether the other circuit tracks have Milford's fast-curve edge mess: "Yes, check them". He also said "I always want newer builds".
+- **The cause**: the circuit edge (`route.edge`, grass_clearance 0.05) ends the strip 14 cm under the lane edge. engine-july's prep holds the ground past the ROAD edge at lane height - 0.02 for 3 m, so the strip lay in a gutter with ground standing over its lip.
+- **Measured** (gate OBJ, every 10 m, both sides; `strip_gutter.py`: the top surface at +1.25 m vs the ground at +1.45 m past the lane edge):
+
+  | | installed 0.2.4 | 0.2.5 |
+  |---|---|---|
+  | side-stations with the ground over the lip by more than 5 cm | 60 of 374 | 0 of 374 |
+  | more than 10 cm | 16 | 0 |
+  | worst | 12 cm | +1.0 cm |
+  | lip height vs the lane edge | -0.142 | -0.019 |
+
+- **Fix**: `route.edge.grass_clearance` -0.08, the same as Milford 0.1.6 (36aef61).
+- **Rehearsal** `D:/k10-scratch/dm_edge_reh`: empty workshop, ENG `eng_dmlm_024`, whose textures are 95 of 95 md5-equal to this head's.
+  - SHIP OK, no force; every GATES row exit 0.
+  - drive_test severe 0 / excursions 0, audit CLEAN, walls seat-gap and hovering identical to 0.2.4's.
+- **Installed** 2026-11-09 10:51 from the EMPTY `D:/k10-scratch/del_mar_lm`; 0.2.4's workshop is kept as `del_mar_lm.0.2.4`.
+  - "doooom California — Del Mar Grand Prix" 0.2.5.
+  - The kn5 is kn5_equiv to the rehearsal's (tangents only).
+  - The install step parked 0.2.4 in `D:/k10-track-archive/2026-11-09_105157/` (MOVES.tsv + README).
+  - Menu picture: the same camera (s5, -0.8 EV); the pack's own is in `2026-11-09_105224_previews`.
+- Not driven.

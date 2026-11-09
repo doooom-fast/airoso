@@ -352,3 +352,25 @@ Kevin (PC session, 2026-11-08 ~22:15): **"Milford still looks messy on the edges
 - Install on Kevin's word: replaces `milford_road_course` 0.1.5 (archive by the family rule; re-render the menu picture).
 - Kevin's drive is the verdict: the stills are Blender, not AC.
 - The same circuit edge profile is on the other circuit ports (High Plains, Exotics, Pikes Peak, Pueblo, Aspen, Grand Junction); each needs the same check.
+
+### The 0.1.6 install (PC, 2026-11-09)
+
+- **Kevin, asked on the PC** ("Install Milford 0.1.6 over 0.1.5?"): "Yes and I always want newer builds".
+- **Trap caught first**: this worktree had no `source/trees/` (gitignored, personal-use TreeFX models). The rehearsal
+  `milford_016_reh` planted **0 of 11,247 trees** and still went gate-green. `Oak3.bin` 24111ede / `SycamoreV2.bin`
+  7010d61f were copied from the milford-015 worktree and md5-checked. They are still never committed: `git status`
+  is clean there.
+- **Install**: EMPTY `D:/k10-scratch/milford_lm` (0.1.5's workshop kept as `milford_lm.0.1.5`), head f77b0cb8, ENG
+  `eng_mflm_015`.
+  - SHIP OK, no force; every GATES row exit 0.
+  - `[treefx] 11247 trees`, species Oak3 / SycamoreV2; `[grassfx] 1285 rectangles`.
+  - ship_track parked 0.1.5 in `D:/k10-track-archive/2026-11-09_093135/` (MOVES.tsv + README added).
+  - Installed as "doooom Michigan — Milford Road Course (unofficial)" 0.1.6.
+- **Checks**:
+  - The installed folder = the workshop build (only ui_track.json's name differs).
+  - The kn5, 39,002,272 B, is kn5_equiv to the rehearsal's (tangents only).
+  - Against 0.1.5: trees.txt and ext_config.ini are identical. Only the kn5, the README, the picture and ui_track
+    differ.
+- **Menu picture**: re-rendered off 0.1.6 with 0.1.5's camera (s3, eye -50.04 / 375.41 / 13.41, -0.5 EV, stand-in
+  trees). The pack's own preview is in `D:/k10-track-archive/2026-11-09_093221_previews/`.
+- Not driven.

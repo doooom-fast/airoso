@@ -16,9 +16,9 @@
   }
  },
  "road_over_ground": {
-  "over": 9,
+  "over": 2,
   "samples": 9317,
   "p95_m": 0.021,
-  "max_m": 0.073
+  "max_m": 0.052
  }
 }

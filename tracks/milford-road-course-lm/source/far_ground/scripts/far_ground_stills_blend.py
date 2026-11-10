@@ -157,7 +157,7 @@ def seat_at(x, y):
 
 
 print("[stills] far blocks in the scene:", sorted(o.name for o in bpy.data.objects if o.name.upper().startswith(("FARBLOCK", "ROOFTOP"))))
-GROUPS = {"nw_complex": ("mpg_nw_complex_",), "far_sw": ("mpg_far_sw_", "mpg_far_w_small_"),
+GROUPS = {"nw_complex": ("mpg_nw_complex_",), "far_sw": ("mpg_far_sw_",), "far_w_small": ("mpg_far_w_small_",),
           "west_halls": ("mpg_west_bldg_",)}
 rings = {g: [] for g in GROUPS}
 for f in ("pass3/blocks.json", "pass4/blocks.json"):

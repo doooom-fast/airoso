@@ -39,5 +39,7 @@ def test_no_other_track_names_pass4():
 
 def test_every_drop_is_listed_with_its_reason():
     drops = json.loads((P4 / "blocks_dropped.json").read_text())
-    assert all(d["why"] in ("small or empty", "a planted tree within 1 m") for d in drops)
+    # 0.1.11 (ledger 0082 'Far ground (0.1.11)'): one more, refused by the author on the real ground (far_ground/scripts/drop_set_in.py)
+    assert all(d["why"] in ("small or empty", "a planted tree within 1 m", "set into its slope") for d in drops)
+    assert [d["key"] for d in drops if d["why"] == "set into its slope"] == ["mpg_nw_complex_0"]
     assert len(drops) + len(json.loads((P4 / "blocks.json").read_text())) == len(json.loads((P4 / "tiers_p4.json").read_text()))

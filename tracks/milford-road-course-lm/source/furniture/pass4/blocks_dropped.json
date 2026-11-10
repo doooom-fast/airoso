@@ -54,5 +54,14 @@
   "area_m2": 68,
   "fill": 0.3,
   "why": "small or empty"
+ },
+ {
+  "src": 81,
+  "tier": 0,
+  "area_m2": 1036,
+  "fill": 0.76,
+  "why": "set into its slope",
+  "key": "mpg_nw_complex_0",
+  "_why": "set into its slope on the real ground (0.1.11): the lidar's ground 25.44-25.56 m 5-6 m east of its east wall, its roof 25.91 m; the author refuses a roof under half its wall over its rim's highest ground"
  }
 ]

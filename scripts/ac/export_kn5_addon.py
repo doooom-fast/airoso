@@ -106,6 +106,13 @@ overrides = pbr.load_overrides(project)
 if overrides:
     print("[export] real-world texture overrides:", sorted(overrides))
 assets_tex = repo / "assets" / "textures"
+# ledger 0084 (opt-in): the road-wear bake (tools/road_wear_blend.py) rebinds the materials it lists in
+# data/road_wear.json — shader, texture slots, VARs. A config with no road_wear key reads nothing here, so its .ini and
+# kn5 are byte-identical to before.
+road_wear = {}
+if cfg.get("road_wear") and (project / "data" / "road_wear.json").exists():
+    road_wear = json.loads((project / "data" / "road_wear.json").read_text(encoding="utf-8")).get("materials", {})
+    print("[export] road wear:", sorted(road_wear))
 
 
 def shader_and_textures(name):
@@ -149,7 +156,11 @@ for mat in bpy.data.materials:
     # and vegetation billboards blast neon under CSP streetlights (the glowing-forest video).
     ks_key = next((k for k in pbr.KS_PROPS if obj.upper().startswith(k)), None)
     ks = pbr.KS_PROPS.get(ks_key, {})
-    lines += [f"[MATERIAL_{i}]", f"NAME={mat.name}", f"SHADER={shader}",
+    if mat.name in road_wear:
+        shader = road_wear[mat.name]["shader"]
+        tx = [tuple(t) for t in road_wear[mat.name]["textures"]]
+        ks = dict(road_wear[mat.name]["props"])
+    lines +=[f"[MATERIAL_{i}]", f"NAME={mat.name}", f"SHADER={shader}",
               "ALPHABLEND=0", f"ALPHATEST={at}", "DEPTHMODE=0",
               f"VARCOUNT={len(ks)}", f"RESCOUNT={len(tx)}"]
     for v, (pname, pval) in enumerate(ks.items()):

@@ -463,6 +463,50 @@ class BuiltSurfaces:
         return None
 
 
+class BuiltGround:
+    """ledger 0082 'Far ground (0.1.11)' (opt-in scenery.treefx.planted.seat_far_on_built): the gate OBJ's ground tiles
+    (1GRASS*) as triangles bucketed by plan cell; ``at(x, z)`` -> the highest ground surface over the spot (engine frame),
+    None where no ground triangle covers it"""
+
+    def __init__(self, obj_path):
+        self.cells = {}
+        self.tris = 0
+        V = []
+        on = False
+        with open(obj_path, encoding="utf-8", errors="replace") as f:
+            for ln in f:
+                c = ln[:2]
+                if c == "v ":
+                    p = ln.split()
+                    V.append((float(p[1]), float(p[2]), float(p[3])))
+                elif c in ("o ", "g "):
+                    on = ln[2:].strip().upper().startswith("1GRASS")
+                elif c == "f " and on:
+                    idx = [int(q.split("/")[0]) - 1 for q in ln.split()[1:]]
+                    for i in range(1, len(idx) - 1):
+                        a, b, cc = V[idx[0]], V[idx[i]], V[idx[i + 1]]
+                        xs, zs = (a[0], b[0], cc[0]), (a[2], b[2], cc[2])
+                        for ix in range(int(min(xs) // BUILT_CELL_M), int(max(xs) // BUILT_CELL_M) + 1):
+                            for iz in range(int(min(zs) // BUILT_CELL_M), int(max(zs) // BUILT_CELL_M) + 1):
+                                self.cells.setdefault((ix, iz), []).append((a, b, cc))
+                        self.tris += 1
+
+    def at(self, x, z):
+        best = None
+        for a, b, c in self.cells.get((int(x // BUILT_CELL_M), int(z // BUILT_CELL_M)), ()):
+            det = (b[2] - c[2]) * (a[0] - c[0]) + (c[0] - b[0]) * (a[2] - c[2])
+            if abs(det) < 1e-12:
+                continue
+            l1 = ((b[2] - c[2]) * (x - c[0]) + (c[0] - b[0]) * (z - c[2])) / det
+            l2 = ((c[2] - a[2]) * (x - c[0]) + (a[0] - c[0]) * (z - c[2])) / det
+            l3 = 1.0 - l1 - l2
+            if min(l1, l2, l3) < -1e-9:
+                continue
+            y = l1 * a[1] + l2 * b[1] + l3 * c[1]
+            best = y if best is None else max(best, y)
+        return best
+
+
 def _pick(species, i):
     wsum = sum(s[3] for s in species)
     r = _hash(i, 1) * wsum
@@ -630,6 +674,7 @@ def plan(project_dir, all_species=False, verbose=False):
     # (tools/plan_bespoke_vegetation.py); y is only where the snap starts: TreeFX seats each tree on SURFACE_MATERIALS
     planted = tcfg.get("planted")
     hf, meta_p = data / "heightfield.npy", data / "heightfield.meta.json"
+    far_seat_out = None
     if planted:
         d = json.loads((proj / planted["file"]).read_text(encoding="utf-8"))
         o = local["origin"]
@@ -640,6 +685,18 @@ def plan(project_dir, all_species=False, verbose=False):
         by_zone, too_near = {}, 0
         grid, ny, nx = _read_npy(hf)
         s_, w_, n_, e_ = json.loads(meta_p.read_text(encoding="utf-8"))["bbox_swne"]
+        # ledger 0082 'Far ground (0.1.11)' (opt-in planted.seat_far_on_built): a point past the 3DEP grid (whose ground_y is
+        # only the grid's nearest border node) starts on the BUILT far ground under it, the gate OBJ's 1GRASS: the far ground
+        # moved (the lidar's in place of the skirt), so its trees are re-seated on it. Inside the grid nothing changes
+        far_ground = BuiltGround(data / "track.obj") if planted.get("seat_far_on_built") and (data / "track.obj").exists() else None
+        far_seat = {"reseated": 0, "no_ground": 0, "inside_grid": 0}
+        if far_ground is not None:
+            # the grid's NODES end short of bbox_swne's east / south edge (whole spacings from its north-west corner, as
+            # build_loop_blend.project_grid lays them): inside = within the nodes, where the built ground is the grid's
+            _hm = json.loads(meta_p.read_text(encoding="utf-8"))
+            _sp = float(_hm["spacing_m"])
+            lon_last = w_ + (nx - 1) * _sp / (111_000.0 * math.cos(math.radians((s_ + n_) / 2)))
+            lat_last = n_ - (ny - 1) * _sp / 111_000.0
 
         def ground_y(lon, lat):
             j = min(ny - 1, max(0, round((n_ - lat) / (n_ - s_) * (ny - 1))))
@@ -654,13 +711,26 @@ def plan(project_dir, all_species=False, verbose=False):
             if field.query(x, z)[0] < clear:
                 too_near += 1
                 continue
+            y = ground_y(lon, lat)
+            if far_ground is not None:
+                if lat_last <= lat <= n_ and w_ <= lon <= lon_last:
+                    far_seat["inside_grid"] += 1
+                else:
+                    yb = far_ground.at(x, z)
+                    far_seat["no_ground" if yb is None else "reseated"] += 1
+                    y = y if yb is None else yb
             by_zone.setdefault(planted["zones"][str(cell)], []).append(
-                {"x": x, "y": ground_y(lon, lat), "z": z, "_size01": (h - h0) / max(h1 - h0, 1e-6),
+                {"x": x, "y": y, "z": z, "_size01": (h - h0) / max(h1 - h0, 1e-6),
                  **({"_h": float(h)} if native_h else {}), **({"_w": float(_w)} if native_w else {}),
                  **({"_key": int(pt[5])} if len(pt) > 5 else {})})
         for k, zone in enumerate(sorted(by_zone)):
             emit_zone(zone, by_zone[zone], idx_base=k * 100000)
         rejected += too_near
+        if far_ground is not None:
+            far_seat_out = far_seat
+            print(f"[treefx] planted past the 3DEP grid, seated on the built far ground ({far_ground.tris} 1GRASS triangles): "
+                  f"{far_seat['reseated']} re-seated, {far_seat['no_ground']} with no ground under them (kept on the grid's "
+                  f"border height), {far_seat['inside_grid']} inside the grid unchanged")
         if verbose:
             print(f"[treefx] planted {planted['file']}: {sum(len(v) for v in by_zone.values())} of {len(d['points'])} points "
                   f"clear of the roads by {clear} m -> {counts}")
@@ -838,7 +908,8 @@ def plan(project_dir, all_species=False, verbose=False):
         print(f"[treefx] built-surface guard: dropped " + ", ".join(f"{k} {n}" for k, n in rejected_built.items())
               + " (of them on the loop's own zones: " + ", ".join(f"{k} {n}" for k, n in rejected_built_loop.items()) + ")")
     return {"lines": out, "entries": entries_out, "counts": counts, "used": used, "rejected": rejected,
-            "rejected_built": rejected_built, "rejected_built_loop": rejected_built_loop, "north": north_stats}
+            "rejected_built": rejected_built, "rejected_built_loop": rejected_built_loop, "north": north_stats,
+            "far_seat": far_seat_out}
 
 
 def build(project_dir):
@@ -872,6 +943,8 @@ def build(project_dir):
            "total": total, "per_zone": counts, "per_species": dict(sorted(by_model.items())), "rejected_in_corridor": rejected,
            "rejected_on_built_surface": p["rejected_built"], "rejected_on_built_surface_loop_zones": p["rejected_built_loop"],
            "surface_materials": surface_materials(proj), "north": p["north"]}
+    if p.get("far_seat") is not None:      # ledger 0082 'Far ground (0.1.11)', opt-in: absent = the report as before
+        rep["planted_far_seat"] = p["far_seat"]
     (proj / "data" / "treefx.report.json").write_text(json.dumps(rep, indent=1), encoding="utf-8")
     g = treefx_gate(proj, p, tdir)
     print(f"[treefx] gate: {g['written']} written of {g['planned']} planned; models named in trees.txt "

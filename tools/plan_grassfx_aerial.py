@@ -109,7 +109,10 @@ def main() -> int:
     for k, cells in by_class.items():
         all_rects += [(w * h, k, i, j, w, h) for i, j, w, h in rects(cells)]
     all_rects.sort(reverse=True)
-    kept = all_rects[: int(spec.get("max_rects", 48))]
+    # max_rects: 48 when absent [invented, the first track's]; null = every rectangle the reading makes (Milford 0.1.5,
+    # ledger 0082 Owed 4: the cap is this planner's, not CSP's — no limit on [GRASS_FX_ADJUSTMENT_...] sections is known)
+    cap = spec.get("max_rects", 48)
+    kept = all_rects if cap is None else all_rects[: int(cap)]
     fade = float(spec.get("fade_m", 12.0))
     ys = [p[1] for p in cl["points_xyz_m"]]
     mid_y = (min(ys) + max(ys)) / 2         # the grammar wants a height; a rectangle's reach is its size on the ground [unverified in CSP]

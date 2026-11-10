@@ -1,0 +1,200 @@
+{
+ "_doc": "ledger 0084 road wear (tools/road_wear_blend.py): the material rows engine-july's export_kn5_addon binds, and every number the bake used",
+ "materials": {
+  "1KERB_sidewalk_mat": {
+   "shader": "ksPerPixelMultiMap_NMDetail",
+   "textures": [
+    [
+     "txDiffuse",
+     "road_wear_macro.png",
+     "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/work/mf019/b19/textures/road_wear/road_wear_macro.png"
+    ],
+    [
+     "txNormal",
+     "road_wear_flat_nm.png",
+     "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/work/mf019/b19/textures/road_wear/road_wear_flat_nm.png"
+    ],
+    [
+     "txDetail",
+     "road_wear_detail_1kerb_sidewalk.jpg",
+     "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/work/mf019/b19/textures/road_wear/road_wear_detail_1kerb_sidewalk.jpg"
+    ],
+    [
+     "txNormalDetail",
+     "building_normal.jpg",
+     "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/wt-mf019/assets/textures/building_normal.jpg"
+    ]
+   ],
+   "props": {
+    "detailUVMultiplier": 256.0,
+    "detailNormalBlend": 1.0,
+    "useDetail": 1.0
+   }
+  },
+  "1ROAD_road_mat": {
+   "shader": "ksPerPixelMultiMap_NMDetail",
+   "textures": [
+    [
+     "txDiffuse",
+     "road_wear_macro.png",
+     "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/work/mf019/b19/textures/road_wear/road_wear_macro.png"
+    ],
+    [
+     "txNormal",
+     "road_wear_flat_nm.png",
+     "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/work/mf019/b19/textures/road_wear/road_wear_flat_nm.png"
+    ],
+    [
+     "txDetail",
+     "road_wear_detail_1road.jpg",
+     "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/work/mf019/b19/textures/road_wear/road_wear_detail_1road.jpg"
+    ],
+    [
+     "txNormalDetail",
+     "asphalt_cracked_normal.jpg",
+     "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/wt-mf019/assets/textures/asphalt_cracked_normal.jpg"
+    ]
+   ],
+   "props": {
+    "detailUVMultiplier": 256.0,
+    "detailNormalBlend": 1.0,
+    "useDetail": 1.0
+   }
+  }
+ },
+ "spec": {
+  "surfaces": [
+   "1ROAD",
+   "1KERB_SIDEWALK"
+  ],
+  "texel_m": 0.25,
+  "detail_tile_m": 4.0,
+  "max_atlas_px": 8192,
+  "layer_m": 10.0,
+  "tone": {
+   "shadow_lum": 0.72,
+   "shadow_blue": 1.06,
+   "paint_lum": 1.45,
+   "fill_m": 3.0,
+   "clip": [
+    0.7,
+    1.3
+   ],
+   "headroom_pct": 99.5
+  },
+  "wear": {
+   "amplitude": 0.22,
+   "track_m": 1.6,
+   "spread_m": 0.7,
+   "base": 0.35,
+   "smooth_m": 12.0,
+   "margin_m": 0.95,
+   "lat_g": 1.2,
+   "brake_g": 1.1,
+   "accel_g": 0.45,
+   "v_top_ms": 70.0,
+   "edge_reach_m": 1.0
+  },
+  "lines": [
+   {
+    "layout": "full",
+    "ai": "source/road_wear/fast_lane.full.ai",
+    "_doc": "a line Kevin records with CSP's AI recorder in this layout, clockwise, copied here: the wear then follows where the car really ran. Absent (as for 0.1.7) = the minimum-curvature line inside the built edges [model]: the committed ai/full/fast_lane.ai is the generated centreline draft (ai_draft.json: offset_max 0.012 m), not a racing line"
+   }
+  ],
+  "aerial": {
+   "image": "source/road_wear/naip_2022_mrc.jpg",
+   "bbox_lonlat": [
+    -83.67001018,
+    42.56049182,
+    -83.6570028,
+    42.57950439
+   ],
+   "_doc": "USDA NAIP 2022-08-16 (public domain), the same export the lap was traced off (tracks/milford-road-course/source/naip_2022_mrc.jpg, byte-identical; its true extent, ledger 0062): 0.50 m E-W x 0.68 m N-S per pixel"
+  }
+ },
+ "stats": {
+  "plan": {
+   "cell_m": 64.0,
+   "margin_m": 8.0,
+   "pitch_px": 320,
+   "atlas_px": 4096,
+   "cells": 131,
+   "tiles_per_row": 12,
+   "atlas_fill_pct": 80.0
+  },
+  "furthest_vertex_m": 7.265,
+  "aerial": {
+   "image": "source/road_wear/naip_2022_mrc.jpg",
+   "registration": {
+    "dx_m": -1.0,
+    "dy_m": 0.0,
+    "contrast_at_0": -0.067,
+    "contrast_best": -0.0725
+   },
+   "lit_median_lum": 0.7287,
+   "road_cells": 1050616,
+   "shadow_pct": 8.33,
+   "paint_pct": 0.0,
+   "tone_p01_p50_p99": [
+    0.7305,
+    0.9966,
+    1.1428
+   ],
+   "aerial_px_m": [
+    0.501,
+    0.679
+   ]
+  }
+ },
+ "m0": 0.85518,
+ "detail_uv_multiplier": 256.0,
+ "detail": {
+  "1KERB_SIDEWALK": {
+   "from": "building_diffuse.jpg",
+   "normal": "building_normal.jpg",
+   "clipped_pct": 0.0,
+   "size": [
+    1024,
+    1024
+   ]
+  },
+  "1ROAD": {
+   "from": "asphalt_cracked_diffuse.jpg",
+   "normal": "asphalt_cracked_normal.jpg",
+   "clipped_pct": 0.444,
+   "size": [
+    2048,
+    2048
+   ]
+  }
+ },
+ "deepest_rubber": 0.2245,
+ "centre": {
+  "file": "finished_centerline.json",
+  "z_sign": -1.0,
+  "on_road_frac": 1.0
+ },
+ "lines": [
+  {
+   "closed": true,
+   "layer_m": 10.0,
+   "layout": "full",
+   "source": "model: minimum curvature inside the built edges (recorded line named but missing: source/road_wear/fast_lane.full.ai)",
+   "lap_m": 4886.9,
+   "lap_s_model": 107.1,
+   "v_min_kmh": 45.2,
+   "v_max_kmh": 252.0
+  }
+ ],
+ "writer_vertices": {
+  "1KERB_sidewalk": 27191,
+  "1ROAD_road": 65218
+ },
+ "positions_md5": "bf5b692b92bdbad74009867d44728d1e",
+ "macro_png_bytes": 2548583,
+ "textures": {
+  "macro": "road_wear_macro.png",
+  "flat_nm": "road_wear_flat_nm.png"
+ }
+}

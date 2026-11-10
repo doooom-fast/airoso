@@ -1,0 +1,328 @@
+{
+ "G1": {
+  "len_m": 107.0,
+  "metres_with_returns": 107,
+  "ground_per_m2_on_line": 1.4,
+  "0.35-0.6 on/ctl per m": [
+   0.07,
+   0.0
+  ],
+  "0.6-1.0 on/ctl per m": [
+   0.02,
+   0.0
+  ],
+  "1.0-1.6 on/ctl per m": [
+   0.0,
+   0.0
+  ],
+  "1.6-3.0 on/ctl per m": [
+   0.0,
+   0.01
+  ],
+  "3.0-6.0 on/ctl per m": [
+   0.07,
+   0.08
+  ]
+ },
+ "G2": {
+  "len_m": 558.8,
+  "metres_with_returns": 556,
+  "ground_per_m2_on_line": 1.93,
+  "0.35-0.6 on/ctl per m": [
+   0.04,
+   0.0
+  ],
+  "0.6-1.0 on/ctl per m": [
+   0.0,
+   0.0
+  ],
+  "1.0-1.6 on/ctl per m": [
+   0.0,
+   0.0
+  ],
+  "1.6-3.0 on/ctl per m": [
+   0.0,
+   0.0
+  ],
+  "3.0-6.0 on/ctl per m": [
+   0.0,
+   0.0
+  ]
+ },
+ "G3": {
+  "len_m": 196.6,
+  "metres_with_returns": 196,
+  "ground_per_m2_on_line": 2.87,
+  "0.35-0.6 on/ctl per m": [
+   0.03,
+   0.0
+  ],
+  "0.6-1.0 on/ctl per m": [
+   0.0,
+   0.0
+  ],
+  "1.0-1.6 on/ctl per m": [
+   0.0,
+   0.0
+  ],
+  "1.6-3.0 on/ctl per m": [
+   0.0,
+   0.0
+  ],
+  "3.0-6.0 on/ctl per m": [
+   0.0,
+   0.0
+  ]
+ },
+ "G4": {
+  "len_m": 363.7,
+  "metres_with_returns": 364,
+  "ground_per_m2_on_line": 2.14,
+  "0.35-0.6 on/ctl per m": [
+   0.0,
+   0.0
+  ],
+  "0.6-1.0 on/ctl per m": [
+   0.0,
+   0.0
+  ],
+  "1.0-1.6 on/ctl per m": [
+   0.0,
+   0.0
+  ],
+  "1.6-3.0 on/ctl per m": [
+   0.0,
+   0.0
+  ],
+  "3.0-6.0 on/ctl per m": [
+   0.0,
+   0.0
+  ]
+ },
+ "G5": {
+  "len_m": 33.9,
+  "metres_with_returns": 34,
+  "ground_per_m2_on_line": 1.87,
+  "0.35-0.6 on/ctl per m": [
+   0.18,
+   0.0
+  ],
+  "0.6-1.0 on/ctl per m": [
+   0.09,
+   0.0
+  ],
+  "1.0-1.6 on/ctl per m": [
+   0.0,
+   0.0
+  ],
+  "1.6-3.0 on/ctl per m": [
+   0.0,
+   0.0
+  ],
+  "3.0-6.0 on/ctl per m": [
+   0.0,
+   0.0
+  ]
+ },
+ "G6": {
+  "len_m": 35.6,
+  "metres_with_returns": 36,
+  "ground_per_m2_on_line": 1.97,
+  "0.35-0.6 on/ctl per m": [
+   0.0,
+   0.0
+  ],
+  "0.6-1.0 on/ctl per m": [
+   0.0,
+   0.0
+  ],
+  "1.0-1.6 on/ctl per m": [
+   0.0,
+   0.0
+  ],
+  "1.6-3.0 on/ctl per m": [
+   0.0,
+   0.0
+  ],
+  "3.0-6.0 on/ctl per m": [
+   0.0,
+   0.01
+  ]
+ },
+ "T1": {
+  "len_m": 44.1,
+  "metres_with_returns": 43,
+  "ground_per_m2_on_line": 2.13,
+  "0.35-0.6 on/ctl per m": [
+   0.0,
+   0.0
+  ],
+  "0.6-1.0 on/ctl per m": [
+   0.0,
+   0.0
+  ],
+  "1.0-1.6 on/ctl per m": [
+   0.0,
+   0.0
+  ],
+  "1.6-3.0 on/ctl per m": [
+   0.0,
+   0.0
+  ],
+  "3.0-6.0 on/ctl per m": [
+   0.0,
+   0.0
+  ]
+ },
+ "T2": {
+  "len_m": 53.2,
+  "metres_with_returns": 53,
+  "ground_per_m2_on_line": 2.09,
+  "0.35-0.6 on/ctl per m": [
+   0.0,
+   0.01
+  ],
+  "0.6-1.0 on/ctl per m": [
+   0.0,
+   0.0
+  ],
+  "1.0-1.6 on/ctl per m": [
+   0.0,
+   0.0
+  ],
+  "1.6-3.0 on/ctl per m": [
+   0.0,
+   0.0
+  ],
+  "3.0-6.0 on/ctl per m": [
+   0.0,
+   0.0
+  ]
+ },
+ "T3": {
+  "len_m": 32.5,
+  "metres_with_returns": 32,
+  "ground_per_m2_on_line": 2.21,
+  "0.35-0.6 on/ctl per m": [
+   0.0,
+   0.0
+  ],
+  "0.6-1.0 on/ctl per m": [
+   0.0,
+   0.0
+  ],
+  "1.0-1.6 on/ctl per m": [
+   0.0,
+   0.0
+  ],
+  "1.6-3.0 on/ctl per m": [
+   0.0,
+   0.0
+  ],
+  "3.0-6.0 on/ctl per m": [
+   0.0,
+   0.0
+  ]
+ },
+ "T4": {
+  "len_m": 43.9,
+  "metres_with_returns": 42,
+  "ground_per_m2_on_line": 1.64,
+  "0.35-0.6 on/ctl per m": [
+   0.0,
+   0.02
+  ],
+  "0.6-1.0 on/ctl per m": [
+   0.0,
+   0.0
+  ],
+  "1.0-1.6 on/ctl per m": [
+   0.0,
+   0.0
+  ],
+  "1.6-3.0 on/ctl per m": [
+   0.0,
+   0.0
+  ],
+  "3.0-6.0 on/ctl per m": [
+   0.0,
+   0.0
+  ]
+ },
+ "T5": "no returns (outside the 45 m read)",
+ "T6": {
+  "len_m": 103.5,
+  "metres_with_returns": 0,
+  "ground_per_m2_on_line": 0.0,
+  "0.35-0.6 on/ctl per m": [
+   0.0,
+   0.0
+  ],
+  "0.6-1.0 on/ctl per m": [
+   0.0,
+   0.0
+  ],
+  "1.0-1.6 on/ctl per m": [
+   0.0,
+   0.0
+  ],
+  "1.6-3.0 on/ctl per m": [
+   0.0,
+   0.0
+  ],
+  "3.0-6.0 on/ctl per m": [
+   0.0,
+   0.0
+  ]
+ },
+ "F1": {
+  "len_m": 257.5,
+  "metres_with_returns": 210,
+  "ground_per_m2_on_line": 1.27,
+  "0.35-0.6 on/ctl per m": [
+   0.02,
+   0.01
+  ],
+  "0.6-1.0 on/ctl per m": [
+   0.0,
+   0.07
+  ],
+  "1.0-1.6 on/ctl per m": [
+   0.0,
+   0.0
+  ],
+  "1.6-3.0 on/ctl per m": [
+   0.03,
+   0.04
+  ],
+  "3.0-6.0 on/ctl per m": [
+   0.32,
+   0.18
+  ]
+ },
+ "U1": {
+  "len_m": 12.6,
+  "metres_with_returns": 11,
+  "ground_per_m2_on_line": 1.19,
+  "0.35-0.6 on/ctl per m": [
+   0.0,
+   0.0
+  ],
+  "0.6-1.0 on/ctl per m": [
+   0.32,
+   0.0
+  ],
+  "1.0-1.6 on/ctl per m": [
+   0.24,
+   0.13
+  ],
+  "1.6-3.0 on/ctl per m": [
+   0.0,
+   0.11
+  ],
+  "3.0-6.0 on/ctl per m": [
+   0.0,
+   0.03
+  ]
+ }
+}

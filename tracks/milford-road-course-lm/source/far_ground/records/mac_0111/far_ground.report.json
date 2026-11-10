@@ -1,0 +1,123 @@
+{
+ "_doc": "ledger 0083 pass 4b: tools/far_ground_blend.py on this build's TERRAIN (its header says how)",
+ "grid": {
+  "nx": 97,
+  "ny": 137,
+  "dx_m": 10.0441,
+  "dy_m": 10.0077,
+  "bbox_xy": [
+   -455.51,
+   -757.64,
+   508.72,
+   603.4
+  ]
+ },
+ "reach_m": 500.0,
+ "feather_m": 40.0,
+ "ring_cell_m": 10.044,
+ "skirt_vertices_removed": 464,
+ "ring_nodes": 33370,
+ "ring_triangles": 66306,
+ "ring_nodes_on": {
+  "measured": 29049,
+  "filled_under_cover": 3775,
+  "filled_off_the_tiles": 546
+ },
+ "border_residual_m": {
+  "n": 464,
+  "median": 0.023,
+  "p05": -0.687,
+  "p95": 0.853,
+  "max_abs": 2.713
+ },
+ "seam_step_m": 0.0,
+ "seam_grade_change": {
+  "n": 468,
+  "median": 0.0364,
+  "p95": 0.2088,
+  "max": 0.3622
+ },
+ "feather_added_grade_max": 0.1017,
+ "worst_seam": [
+  [
+   508.7,
+   483.3,
+   -0.139,
+   0.223
+  ],
+  [
+   -455.5,
+   -237.2,
+   0.167,
+   -0.177
+  ],
+  [
+   508.7,
+   533.4,
+   -0.096,
+   0.219
+  ],
+  [
+   508.7,
+   563.4,
+   -0.133,
+   0.168
+  ],
+  [
+   508.7,
+   523.3,
+   -0.084,
+   0.206
+  ],
+  [
+   508.7,
+   493.3,
+   -0.125,
+   0.161
+  ],
+  [
+   508.7,
+   543.4,
+   -0.108,
+   0.164
+  ],
+  [
+   508.7,
+   463.3,
+   -0.143,
+   0.124
+  ],
+  [
+   508.7,
+   473.3,
+   -0.141,
+   0.122
+  ],
+  [
+   508.7,
+   553.4,
+   -0.121,
+   0.132
+  ]
+ ],
+ "object": {
+  "name": "1GRASS_LIDAR",
+  "skirt_sunk_z": -521.576,
+  "skirt_faces": 928,
+  "skirt_floor_vertices": 464,
+  "ring_over_sunk_skirt_min_m": 8.79,
+  "border_copies": 464
+ },
+ "beyond": {
+  "mode": "keep",
+  "keep_feather_m": 40.0,
+  "nodes": {
+   "lidar": 32763,
+   "feathered_to_today": 560,
+   "today": 47,
+   "no_ground": 30
+  },
+  "ring_cells_left_out": 47,
+  "ring_nodes_left_with_no_cell": 0
+ }
+}

@@ -1140,6 +1140,213 @@ over the highest ground under the walls) reads such a deck as a buried wall: run
   author carries a set-in deck's walls in `BUILDING_<SKIN>_SETIN_<k>` with a 1 m object lift (the same world positions),
   which the prep leaves to its terrain-delta ride (0 past the corridor it reshapes), so the measured placement ships.
 
+## 2026-11-09 — Milford far ground (ledger 0082 "Far ground (0.1.11)"; no gate threshold moved, no bypass, nothing forced)
+
+No gate changed. Two self-checks are new, each opt-in by `terrain.far_ground.object` (only Milford names it):
+`tools/far_ground_blend.py` refuses a ring node standing less than **0.5 m ⚠ [invented]** over the sunk skirt and an object name
+that is not 1GRASS* or carries GRASS_FAR (verify_kn5's visual-only ring, which refused run 3); `tools/far_ground_prep_blend.py`
+refuses unless the faces it takes out are exactly the draft's sunk-skirt count, none centred inside the grid. Proven on the
+0.1.11 build: every chain gate's JSON byte-identical to 0.1.10's but audit's grass count, kn5_textures' material count and the
+paths; the near ground's 767,037 triangles bit-identical.
+
+| number | value | source |
+|---|---|---|
+| the far ground's heights | a plane through the 2017 ground returns per 5 m cell (86.9 % of the ring) | **measured** |
+| the radii a cell's returns are read within | 3.5 / 7.5 / 15 / 30 m, 3 returns, a 3-sigma pass, held to +-1 m of the samples | ⚠ [invented] (`far_ground_product.py`) |
+| past the lidar's reach | farther than 30 m from a measured cell and open to the edge | ⚠ [invented] |
+| the border feather / the feather to today's ground | 40 m / 40 m | ⚠ [invented] (Del Mar's / `keep_feather_m`) |
+| the sunk skirt's floor | 500 m under the lowest ring or grid height | ⚠ [invented] (`SINK_M`), never shipped (taken out in prep) |
+| the author's refusal of a roof under half its wall over its rim's highest ground | unchanged | pass 3's; it dropped `mpg_nw_complex_0`, set into its slope |
+
+## 2026-11-09 — Milford furniture pass 4's numbers (ledger 0082 pass 4, 0.1.10; no gate threshold moved, no bypass, no shared code changed)
+
+| number | value | source |
+|---|---|---|
+| the far-west roofs' elevation and walls | roof_z_m 25.91-47.56 m, walls 5.1-12.9 m | **measured**: the 2017 lidar, tiered by roof elevation (`pass4/tiers_p4.json`) |
+| which of them stand | 21, 77, 81 standing; 53, 57, 58, 59 gone | **measured**: NAIP 2022's strip west of the crop (download b), by eye |
+| a piece too small or empty to be a block | under 100 m2 or filling under 0.55 of its box | ⚠ [invented] (`make_entries_p4.py` MIN_AREA_M2 / MIN_FILL) |
+| an L / T roof split when it fills under | 0.7 of its box | ⚠ [invented] (`tiers.py --split`) |
+| a piece with a planted tree within | 1.0 m | `tools/make_treefx.py` BUILT_BUILDING_CLEAR_M, which veg_verify gates |
+| rail and tyre-wall heights | unchanged, ⚠ [invented] | download a (Livingston 2018) holds no point within 1.28 km of the lap |
+
+## 2026-11-09 — Milford 0.1.9: 0.1.7's `road_wear` gate and 0.1.8's re-seat in one chain (ledger 0082 "Milford 0.1.9"; no gate threshold moved, no bypass)
+
+**Wiring only.** `tools/ship_track.sh` `prep_prep` now runs 0.1.8's re-seat (`scenery.bespoke.reseat_on_prep`), then
+0.1.7's road-wear bake (`road_wear`), which stays last in prep. Each is opt-in on its own key, so a config naming neither
+gets neither header. The two commute: the re-seat moves only the rail kinds and reads 1GRASS / 1KERB positions, and the
+bake writes only 1ROAD / 1KERB_SIDEWALK UVs and materials. Milford's ship.json gates are 0.1.7's (`road_wear` included).
+
+**Proven** on the 0.1.9 Mac build (an empty workshop, no force):
+- every chain gate PASS with 0.1.7's / 0.1.8's numbers;
+- `road_wear_check.json` identical to 0.1.7's;
+- `reseat_bespoke.json` identical to 0.1.8's;
+- seat_built PASS.
+
+## 2026-11-09 — NEW GATE (opt-in): `road_wear`, the road's macro atlas and rubber on the built kn5 (ledger 0084)
+
+**Why.** Ledger 0084's bake (`tools/road_wear_blend.py`, Milford 0.1.7 first) rewrites the road-wear surfaces' UVs and
+materials. No gate read either: verify_kn5, kn5_ground_check and kn5_textures would pass a stretched, repeating or
+misregistered atlas, and a rubber band painted a metre off the line.
+
+**What.** `tools/road_wear_check.py <project> --kn5 <road kn5>`, pure python + PIL, on the BUILT road kn5 (L5): the
+road-wear materials, their embedded textures and the surfaces' world positions + UVs, against the declarations in
+`data/road_wear.json` and `data/road_wear.line.<layout>.json` and the track's own aerial. Opt-in: only a ship.json that
+names `road_wear` runs it (Milford). Hard (exit 1 stops the chain). Rows (`GATE` in the tool):
+
+- **materials**: shader `ksPerPixelMultiMap_NMDetail`, the slots txDiffuse / txNormal / txDetail / txNormalDetail, each
+  embedded and power of two (L7), `detailUVMultiplier` = atlas_px x texel_m / 4.
+- **density**: every triangle's UV Jacobian over (east, north) within 0.5 % of 1 / (atlas_px x texel_m), shear <= 0.5 %
+  ⚠ [invented: a construction error, not float rounding (float32 UVs hold 1e-6 at 4096 px)].
+- **no_repeat**: no atlas texel claimed by two places on the ground > 0.75 m apart ⚠ [invented: three texels].
+- **detail_phase**: UV x detailUVMultiplier = east / 4, north / 4 mod 1 within 0.002 tiles ⚠ [invented: 8 mm]: the grain
+  stays on the prep's 4 m grid and phase across every atlas seam.
+- **tone**: Pearson r >= 0.60 ⚠ [invented] between the shipped atlas and the aerial's luminance at lit 1ROAD centroids off
+  the line's rubber band. The edge strip is left out (its tone is the road's carried outward, not the photo's verge), as
+  are shadow-blue pixels and anything outside the bake's own clip / lit body (0.8-1.3 x the median).
+- **rubber**: the mean cross-line profile of the shipped atlas at the line's high-rubber stations (rubber >= 0.7, every
+  5th): its darkening centroid within 0.15 m ⚠ [invented, ledger 0084's plan] of the declared line, its depth over
+  |u| <= 0.75 m within 0.5-1.5 x ⚠ [invented] the declared amplitude x rubber x tyre profile.
+
+**Proven (Milford 0.1.7, Mac b17).** materials PASS; density 60,956 triangles, 0 off, worst 0.086 % / shear 0.089 %;
+no_repeat 87,633 texels, 0 twice; detail_phase worst 1e-5 tiles; tone r 0.953 (2,966 samples); rubber 268 stations,
+centroid +0.044 m, depth 0.217 vs 0.209 declared. **The first run failed on its own reader and was fixed, not loosened:**
+the kn5 header parse added a texture's size to the offset read before it (`o[0] += i32()`), and the gate read the kn5's
+v as Blender's (the add-on writes -v: 1ROAD v -0.85..-0.01). The tone row first sampled every road-wear triangle
+(r 0.49: the edge strip and the shadows' filled edges are not the photo by design); it now samples the lit 1ROAD only,
+r 0.95. No threshold moved.
+
+**Wiring.** `tools/ship_track.sh`: `gate_road_wear` (the vocabulary) and, in `prep_prep`, the bake itself, run only when
+the config names `road_wear` (no header otherwise: Lake Murray's chain, `tools/ship_sd.sh`, never calls it).
+`tests/tools/test_ship_track_chain.py` V4_EXTRAS names the new prep header. engine-july's `export_kn5_addon.py` binds
+`data/road_wear.json`'s material rows only when the config names the key (PENDING-MIRROR line).
+
+## 2026-11-09 — Milford furniture pass 3: the rails re-seated on the prepped ground, far blocks at their measured roof, a seat report (ledger 0082 pass 3; no gate threshold moved, no bypass)
+
+**Why.** A built-ground read of 0.1.5 / 0.1.6's gate OBJ (`tracks/milford-road-course-lm/source/furniture/pass3/scripts/
+seat_built.py`) found the NW corner's W-beam G1 with its rail top a **median 0.39 m UNDER the built grass** (p5 -0.69 m;
+117 of 132 cells under 0.6 m), and G2 / G3 showing 0-0.5 m of their 0.70 m in 148 / 93 cells. No gate saw it: drive_test,
+audit_mesh and kn5_ground_check ask whether a wall stands on ground (it did: under it), not whether it shows. Mechanism,
+shown in Blender on the workshop: `tools/author_bespoke_blend.py` seats on loop.blend's author ground; engine-july's prep
+then raises the ground near the road (G1's SW end 19.42 -> 20.87 m, +1.45 m). The PC found Pikes Peak's rails buried the
+same way.
+
+**Wiring (opt-in, Milford only).** `tools/ship_track.sh` `prep_prep`, after red repairs, before the split: when
+`scenery.bespoke.reseat_on_prep` is true, `tools/reseat_bespoke_blend.py` moves every vertex of the rails kinds' meshes
+(GUARDRAIL_W, 1WALL_GHOST_RAIL, 1WALL_TECPRO_TYRES, 1WALL_TILTUP_SCREEN) by (built ground) - (author ground) at its own plan
+position, read by a ray from 6.0 m ⚠ [invented] above it; a move over 3.0 m ⚠ [invented] (another layer, L4) or a vertex
+with no ground fails it (exit 1, the blend not saved). No key = no header, nothing runs. `tools/ship_sd.sh` (Lake Murray's
+chain of record) is untouched; `test_ship_track_chain.py` V4_EXTRAS carries the new header.
+
+**Far blocks (opt-in key `roof_z_m`).** A far block was seated at its lowest built ground; over sloping or skirted ground that
+sank its lap side (the west hall: 13 m of wall from a skirt 17 m under its high side). With `roof_z_m` (the lidar's roof
+elevation in the scene frame) the roof stands there and the walls reach the lowest ground; a roof under half its wall over
+the highest ground is refused. Named only by Milford's `source/furniture/pass3/blocks.json` and `mpg_plant_a`.
+
+| number | value | source |
+|---|---|---|
+| F1's north-east end | 58.6 m at 4.14 m | **measured**: the median of 15 bins' p90 top, 2017 lidar (`pass3/f1ne_bins.json`) |
+| four west site buildings: wall / roof elevation | 12.09 / 60.22, 13.06 / 55.20, 7.85 / 46.51, 5.12 / 19.30 m | **measured** (`pass3/tiers.json`) |
+| mpg_plant_a | 11.0 -> 10.0 m, roof 24.25 m | **measured** over its southern 5,748 m2 (was ⚠ [invented]) |
+| the new blocks' skin | tilt-up | ⚠ [invented]: no wall is seen from above |
+
+**`seat_built.py` is a report, not a gate** (wired into no chain): per 0.5 m cell of each rail / tyre wall / screen, the top
+over the highest built ground; FAIL when over 2 % ⚠ [invented] of a piece's cells show 0.10 m ⚠ [invented] under the
+entry's intended top, or a solid piece's foot floats over 5 cm (kn5_ground_check's). 0.1.6 (Mac rebuild): FAIL (G1, G2, G3,
+T3); 0.1.8: PASS. Owed: a gate, proven on Pikes Peak's buried rails first.
+
+## 2026-11-07 — NEW GATE (opt-in): `edge_smoothness`, the built lane edges are smooth (ledger 0087)
+
+**Why.** Kevin, 2026-11-07: "Milford should very smooth edges and they're ragged in places." No gate read the outline of
+the lane: drive_test walks wheel paths inside it, audit_mesh and edge_report read what stands beside it. Milford 0.1.2
+passed every gate with 163 ragged stretches on its lane edge (10-15 cm wobbles over 3-6 m, the trace's 0.25 m width
+quantization through a running median, ledger 0087 §2).
+
+**What.** `tools/edge_smoothness.py <project> [--connectors] --gate-default`, stdlib only, read-only on the built
+`data/track.obj` (L5). Every 1 m along the gate line (and every connector with `--connectors`), both sides, a ray reads
+the first 1ROAD boundary crossing (the lane edge) and the edge strip's outer lip. Per side: **d2**, the 1 m second
+difference of the edge's offset, and **resid**, its residual to a robust local quadratic over +-8 m ⚠ [invented]. Samples
+more than 1.5 m ⚠ [invented] off the line's half width are mouths / flares: counted, never judged. **FAIL** (exit 1) when
+on either side:
+
+| row | threshold | where it comes from |
+|---|---|---|
+| p99 \|d2\|, lane edge | 0.02 m | ⚠ **a mirror**: Milford 0.1.4 (Mac c5)'s own worst lane-edge sample, 0.0200 m (its p99 0.0122 m) |
+| p99 \|resid\|, lane edge | 0.012 m | ⚠ **a mirror**: c5's worst lane-edge sample, 0.0111 m (its p99 0.0039 m) |
+| ragged stretches (\|resid\| > 5 cm or \|d2\| > 4 cm, merged over 4 m) | 0 | ⚠ **a mirror**: c5 has 0 (0.1.2: 163) |
+
+By the standing rule above these are calibrated on our own output: a **no-regression bar** (a build may not be rougher at
+p99 than 0.1.4 is at its single worst sample), not an envelope of a real paved edge. That envelope is owed: the edge jitter
+of a surveyed pavement edge (the lidar's curb line on a road known to be clean) at the same 1 m spacing. The ragged-stretch
+limits themselves (5 cm, 4 cm) are ⚠ [invented]: the smallest step a driver's eye catches at the edge from 1 m up has not
+been measured; they sit at 1.5-2x the cleanest stretches' p99.9.
+
+**Wiring: opt-in.** `tools/ship_track.sh` `gate_edge_smoothness` runs it on `$PROJ` and writes
+`data/edge_smoothness.json` (the summary and the 40 worst stretches); hard, like `kn5_textures`. Only a ship.json that
+names it runs it: **`tracks/milford-road-course-lm` alone** (`tests/tools/test_edge_fit.py::test_both_are_opt_in`).
+Sand Creek would fail it today (423 stretches, most at its junction flares and mouths, ledger 0087 §1.2): it is not
+fleet-wide until the flares are measured shapes (ledger 0087 §7).
+
+**Proven.** Milford 0.1.2 (Mac c4, run on its OBJ after the fact): **FAIL on every row**, p99 \|d2\| 0.045 m both sides,
+p99 \|resid\| 0.085 / 0.084 m, 163 ragged stretches. Milford 0.1.4 (Mac c5, in the ship chain): **PASS**. A synthetic
+200 m straight ribbon: PASS (max d2 under 1 mm); the same ribbon with one row notched 15 cm a side: FAIL, d2 0.30 m, both
+sides (`tests/tools/test_edge_fit.py`).
+
+## 2026-11-06 — NEW GATE (opt-in): `kn5_textures`, every texture a built kn5's materials name is embedded (ledger 0082 pass 2)
+
+**Why.** The PC's first rehearsal of Milford 0.1.1 (ledger 0082-1, run 1) built a road kn5 of 40,611,042 B, 35,910 B
+short of the Mac's: five textures (`ghost_alpha.png` on the four `1WALL_GHOST_RAIL_*` colliders, `wbeam_rail_diffuse.png`,
+`metal_wall_diffuse.jpg`, `metal_wall_normal.jpg`, `roof_tan_diffuse.jpg`) were named by its materials and not
+embedded, because ENG lacked airoso's `assets/textures`. drive_test, audit_mesh, verify_kn5, kn5_ground_check and
+house_seat all passed. In AC the ghost colliders would likely have shown as solid walls. Only the byte count caught it.
+
+**What.** `tools/kn5_textures.py <kn5 | dir> [--recursive] [--json]`, read-only on the built kn5 (L5): its texture section
+and its materials' texture maps. **FAIL** (exit 1) on any map whose name is not an embedded texture's (exact; a
+case-only match is listed and still fails), any empty map, any zero-byte texture; exit 2 on an input error; unused
+textures are reported only. **No threshold**: a texture is embedded or it is not.
+
+**Wiring: opt-in.** `tools/ship_track.sh` `gate_kn5_textures` runs it on `$PROJ/build/*.kn5` (the shipped kn5s, not the
+track-folder copies) and writes `data/kn5_textures.json`; hard, like `house_seat`. Only a ship.json that names it runs
+it: **`tracks/milford-road-course-lm` alone** (`tests/tools/test_kn5_textures.py::test_the_gate_is_opt_in`). It is not
+fleet-wide until the PC has run it on every installed track's kn5s (ledger 0082 runbook 0082-2 step 5): the Mac has no
+Lake Murray build to prove it on.
+
+**Proven.** On Milford c2's road kn5 (0.1.1, 40,646,952 B): PASS, 20 textures, 34 materials, 48 maps, none missing. On
+b0 (0.1.0): PASS, 14 / 22 / 35. On a copy of c2's kn5 with those five textures cut from its texture section (materials
+untouched): **40,611,042 B, the PC's run-1 size to the byte, FAIL** with exactly the five names and their materials. On
+synthetic kn5s (version 5 and 6): whole, a texture dropped, a case-only match, an empty map, a zero-byte texture, a
+non-kn5 (`tests/tools/test_kn5_textures.py`, 6 tests).
+
+## 2026-11-06 — Milford furniture pass 2's numbers (ledger 0082; no gate threshold moved, no bypass)
+
+New opt-in `rails` kind `screen` in `tools/author_bespoke_blend.py` (`1WALL_TILTUP_SCREEN_<k>`: a collider, the stock
+tilt-up row); only Milford names it. **The 2017-05-03 lidar predates Milford's rails and tyre walls** (no return 0.35-1.6
+m over the ground on any of their lines; `tracks/milford-road-course-lm/source/lidar/README.md`), so every pass-1 number
+below stays ⚠ [invented]: the W-beam's 0.70 m, the tyres' 1.0 m, the sheds' 2.6 m (outside the 45 m read).
+
+| number | value | source |
+|---|---|---|
+| F1 screen top over the ground, three pieces | 4.06 / 3.54 / 3.18 m | **measured**: the median of the p90 top per 4 m bin, 3DEP lidar 2017 (`source/lidar/f1.json`) |
+| F1's line | the fitted line through its own returns | **measured** (lidar), 197 m inside the read |
+| screen kind: panel, thickness | 4.0 m, 0.20 m | ⚠ [invented]: QL2 lidar resolves neither |
+| screen kind: default height | none | an entry without a measured `height_m` is refused |
+| screen feet | under the whole ground triangle (`down_low`), capped `FOOT_MAX_M` 2.0 m | ⚠ [invented] cap, as pass 1's tyres |
+
+## 2026-11-06 — Milford furniture pass 1's authored numbers (ledger 0082; no gate threshold moved, no bypass)
+
+New opt-in `rails` kinds in `tools/author_bespoke_blend.py`; only `tracks/milford-road-course-lm` names them
+(`tests/tools/test_milford_furniture.py::test_keys_are_opt_in`). No gate reads anything new; the gates judge the
+furniture as they judge any `1WALL_*` (drive_test obstruction / floating, audit's wall cruft, kn5_ground_check, verify_kn5).
+
+| number | value | source |
+|---|---|---|
+| W-beam rail top over the ground (`height_m` on Milford's G1-G4, the default `RAIL_LIP_H`) | 0.70 m | ⚠ [invented]: an NCHRP-350-era strong-post W-beam's 27-28 in, a standard, not measured at the track |
+| `WBEAM_BLOCKOUT_M` (post behind the rail face) | 0.20 m | ⚠ [invented] |
+| `WBEAM_COLLIDER_D_M` (the unseen collider's depth) | 0.20 m | ⚠ [invented] |
+| `WBEAM_POST_W_M` | 0.15 m | ⚠ [invented]: a W6x9 flange, round figure |
+| tyres kind: module (one tyre column), default height, default depth | 0.62 m, 1.0 m, 1.2 m | ⚠ [invented]; Milford's depths 1.5 / 1.2 / 1.5 m are NAIP widths less a pixel of blur |
+| Milford's pad sheds' walls | 2.6 m | ⚠ [invented]: a container / site trailer |
+| positions of every rail, tyre wall and shed | NAIP 2022, +-1 px (0.5-0.7 m) | measured: `tracks/milford-road-course-lm/source/furniture/` |
+
 ## 2026-11-05 — DECLARED FORCE: Under the Dragon's Douglas Creek fill, s 2,395-2,410 (ledger 0078 round 13; no threshold moved)
 
 Kevin, 2026-11-05, asked whether to force Under the Dragon's last red row as measured: **"Yes, force it"**.

@@ -1,6 +1,6 @@
 {
  "obj": "D:\\k10-scratch\\milford_lm\\data\\track.obj",
- "buildings": 1,
+ "buildings": 3,
  "no_ground": 0,
  "floating": 0,
  "sunken": 0,
@@ -15,14 +15,14 @@
   "MAX_BURIED": 0
  },
  "contact_m": {
-  "min": -0.15,
+  "min": -0.323,
   "max": -0.15
  },
- "show_m_min": 6.748,
+ "show_m_min": 2.117,
  "lens_buried_share": {
   "over_30pct": 0,
   "over_50pct": 0,
-  "p95": 0.113
+  "p95": 0.154
  },
  "worst_floating": [],
  "worst_sunken": [],
@@ -41,6 +41,32 @@
    "contact_m": -0.15,
    "show_m": 6.748,
    "lens_buried_share": 0.113
+  },
+  {
+   "group": "BUILDING_METAL_0",
+   "x": 21.1,
+   "z": -338.8,
+   "bottom": 16.459,
+   "top": 19.059,
+   "ground_low": 16.782,
+   "ground_high": 16.905,
+   "ground_mean": 16.861,
+   "contact_m": -0.323,
+   "show_m": 2.154,
+   "lens_buried_share": 0.154
+  },
+  {
+   "group": "BUILDING_METAL_0",
+   "x": 24.1,
+   "z": -391.3,
+   "bottom": 16.626,
+   "top": 19.226,
+   "ground_low": 16.938,
+   "ground_high": 17.11,
+   "ground_mean": 17.027,
+   "contact_m": -0.312,
+   "show_m": 2.117,
+   "lens_buried_share": 0.154
   }
  ]
 }

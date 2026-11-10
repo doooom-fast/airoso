@@ -1,0 +1,37 @@
+{
+ "kn5_bytes": {
+  "0.1.7": 42611917,
+  "0.1.8": 39066361,
+  "0.1.9": 42676006
+ },
+ "meshes": 33,
+ "positions_equal_018": 33,
+ "uv_mat_equal_017_on_road_wear": [
+  "1KERB_sidewalk",
+  "1ROAD_road"
+ ],
+ "uv_mat_equal_018_elsewhere": 31,
+ "differs_from_017_elsewhere_by_018_design": [
+  "1WALL_GHOST_RAIL_0",
+  "1WALL_GHOST_RAIL_1",
+  "1WALL_GHOST_RAIL_2",
+  "1WALL_GHOST_RAIL_3",
+  "1WALL_TECPRO_TYRES_6",
+  "1WALL_TILTUP_SCREEN_10 (not in 0.1.7)",
+  "FARBLOCK_TILTUP_0",
+  "GUARDRAIL_W_0",
+  "GUARDRAIL_W_1",
+  "GUARDRAIL_W_2",
+  "ROOFTOP_WHITE_0"
+ ],
+ "textures": {
+  "0.1.7": 21,
+  "0.1.8": 19,
+  "0.1.9": 21,
+  "only_017": [],
+  "only_019": [],
+  "changed_vs_017": []
+ },
+ "pass": true,
+ "problems": []
+}

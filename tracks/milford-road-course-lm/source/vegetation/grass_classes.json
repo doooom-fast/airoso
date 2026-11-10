@@ -1,0 +1,10 @@
+{
+ "_doc": "the bbox of grass_classes.png (north-up, one pixel per 2 m cell of the local frame)",
+ "bbox_lonlat": [
+  -83.67001018,
+  42.56049182,
+  -83.6570028,
+  42.57950439
+ ],
+ "lidar_pavement_intensity_p75": 34835.0
+}

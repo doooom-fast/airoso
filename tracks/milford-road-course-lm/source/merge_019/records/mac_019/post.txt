@@ -1,0 +1,186 @@
+== b19 (/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/wt-mf019 @ 073038f)
+quiet at 16:56:21; /dev/disk3s5   460Gi   423Gi    13Gi    98%    2.5M  137M    2%   /System/Volumes/Data
+head 073038fdb4800be00bf3a7833d316870006cbcaf
+exit 0
+end 17:15:00
+[bespoke] rail f1_nw_screen_ne: 29 screen modules over 113 m, 0 left out
+[bespoke] rail f1_nw_screen_step: 5 screen modules over 21 m, 0 left out
+[bespoke] rail f1_nw_screen_sw: 16 screen modules over 63 m, 0 left out
+[bespoke] rail f1_nw_screen_ne_end: 15 screen modules over 59 m, 0 left out
+[bespoke] block mpg_plant_a: TILTUP, walls 10.0 m, flat, ground 8.72..14.42, bottom 8.57, eave 24.25
+[bespoke] block mpg_plant_b: TILTUP, walls 11.0 m, flat, ground -0.13..11.72, bottom -0.28, eave 10.72
+[bespoke] block mpg_west_bldg_a: TILTUP, walls 12.1 m, flat, ground 42.42..48.08, bottom 42.27, eave 60.22
+[bespoke] block mpg_west_bldg_b: TILTUP, walls 13.1 m, flat, ground 24.00..41.41, bottom 23.85, eave 55.20
+[bespoke] block mpg_west_bldg_c: TILTUP, walls 7.8 m, flat, ground 34.44..38.48, bottom 34.29, eave 46.51
+[bespoke] block mpg_nw_small: TILTUP, walls 5.1 m, flat, ground 14.07..14.25, bottom 13.92, eave 19.30
+[reseat] 1WALL_GHOST_RAIL_0              252 verts  dz p5/p50/p95 [0.0, 1.064, 1.37]  min/max [0.0, 1.457]  moved > 1 cm 232
+[reseat] 1WALL_GHOST_RAIL_1             1000 verts  dz p5/p50/p95 [0.0, 0.0, 0.172]  min/max [-0.0, 0.183]  moved > 1 cm 472
+[reseat] 1WALL_GHOST_RAIL_2              396 verts  dz p5/p50/p95 [0.0, 0.0, 0.665]  min/max [0.0, 0.689]  moved > 1 cm 174
+[reseat] 1WALL_GHOST_RAIL_3              860 verts  dz p5/p50/p95 [-0.0, 0.0, 0.0]  min/max [-0.0, 0.0]  moved > 1 cm 0
+[reseat] 1WALL_TECPRO_TYRES_4            568 verts  dz p5/p50/p95 [-0.0, 0.0, 0.0]  min/max [-0.0, 0.0]  moved > 1 cm 0
+[reseat] 1WALL_TECPRO_TYRES_5            680 verts  dz p5/p50/p95 [-0.0, 0.0, 0.0]  min/max [-0.0, 0.0]  moved > 1 cm 0
+[reseat] 1WALL_TECPRO_TYRES_6            384 verts  dz p5/p50/p95 [-0.0, 0.0, 0.172]  min/max [-0.0, 0.188]  moved > 1 cm 112
+[reseat] 1WALL_TILTUP_SCREEN_10          120 verts  dz p5/p50/p95 [0.0, 0.0, 0.0]  min/max [0.0, 0.0]  moved > 1 cm 0
+[reseat] 1WALL_TILTUP_SCREEN_7           232 verts  dz p5/p50/p95 [0.0, 0.0, 0.0]  min/max [-0.0, 0.0]  moved > 1 cm 0
+[reseat] 1WALL_TILTUP_SCREEN_8            40 verts  dz p5/p50/p95 [-0.0, 0.0, 0.0]  min/max [-0.0, 0.0]  moved > 1 cm 0
+[reseat] 1WALL_TILTUP_SCREEN_9           128 verts  dz p5/p50/p95 [0.0, 0.0, 0.0]  min/max [-0.0, 0.0]  moved > 1 cm 0
+[reseat] GUARDRAIL_W_0                  7168 verts  dz p5/p50/p95 [0.0, 0.126, 1.284]  min/max [-0.0, 1.477]  moved > 1 cm 3732
+[reseat] GUARDRAIL_W_1                  8848 verts  dz p5/p50/p95 [0.0, 0.152, 0.662]  min/max [-0.0, 1.046]  moved > 1 cm 4786
+[reseat] GUARDRAIL_W_2                  7656 verts  dz p5/p50/p95 [0.0, 0.0, 0.0]  min/max [-0.0, 0.0]  moved > 1 cm 0
+[reseat] 14 objects moved with the prepped ground; saved milford_road_course.blend
+[road_wear] 60956 faces on ['1KERB_sidewalk', '1ROAD_road']; furthest vertex 7.26 m off its centroid; atlas 4096 px at 0.25 m (131 cells of 64 m + 8 m margin, 80.0 % of the atlas used)
+[road_wear] grid 3136 x 4672 at 0.25 m; the built 1ROAD covers 65664 m2 (1 s)
+[road_wear] aerial registered to the built road: shift (-1.00, +0.00) m, contrast -0.0670 -> -0.0725; shadow 8.33 %, paint 0.0 % of the road; tone p01/p50/p99 [0.7305, 0.9966, 1.1428]
+[road_wear] line full: model: minimum curvature inside the built edges (recorded line named but missing: source/road_wear/fast_lane.full.ai); 4887 m, model lap 107.1 s (45.2-252.0 km/h) -> road_wear.line.full.json
+[road_wear] macro atlas 4096 x 4096: m0 0.8552, deepest rubber 22.5 %, 2548583 B (71 s)
+[road_wear] 2 materials -> ksPerPixelMultiMap_NMDetail (detailUVMultiplier 256); writer vertices {'1KERB_sidewalk': 27191, '1ROAD_road': 65218}; positions unchanged; -> road_wear.json, milford_road_course.blend saved (72 s)
+[grassfx] 100 x 131 cells of 12 m; cells per look {'C': 4640, 'D': 766, 'B': 1231}; 1285 rectangles, 1285 kept -> grassfx.aerial.json
+[lights-ini] 0 [LIGHT_N] for 0 lamps, 0 at their lens: PASS
+[treefx] planted source/vegetation/trees.lm.json: 11247 of 11247 points clear of the roads by 3.0 m -> {'planted_neighbourhood': 11247}
+[treefx] 11247 trees ({'planted_neighbourhood': 11247}), 0 rejected in the corridor, species ['Oak3.bin', 'SycamoreV2.bin'] -> /private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/work/mf019/b19/build/milford_road_course/extension/trees/trees.txt + [TREES] in ext_config.ini
+  => PASS   (data/drive_test.full.json)
+DRIVE TEST SUMMARY milford_road_course: full=PASS   (data/drive_test.json)
+  => PASS — kn5 matches the audited OBJs
+PASS /private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/work/mf019/b19/build/milford_road_course.kn5: 42,676,006 B, 21 textures embedded, 33 materials, 55 maps; missing 0, empty 0, zero-byte 0, unused 0
+[road_wear_check] materials     PASS  problems []
+[road_wear_check] density       PASS  triangles 60956, off 0, worst_scale_err 0.000858, worst_shear 0.000894, texel_m 0.25, atlas_px 4096
+[road_wear_check] no_repeat     PASS  texels_claimed 87633, claimed_twice 0
+[road_wear_check] detail_phase  PASS  worst_tiles 1e-05, detail_uv_multiplier 256.0
+[road_wear_check] tone          PASS  pearson_r 0.9526, samples 2966, v_convention -v, r_by_convention {'v': 0.0797, '-v': 0.9526, '1-v': 0}
+[road_wear_check] rubber        PASS  stations 268, centroid_m 0.044, depth_on_line 0.2174, declared_depth 0.2092, declared_amplitude 0.22
+[road_wear_check] PASS
+[houses] PASS
+[edges] gate PASS: every row under
+SHIP OK
+== gate_table (0.1.7 b17 | 0.1.8 b018 | 0.1.9 b19)
+drive_test soft_top_in_lane                   0 | 0 | 0
+drive_test severe_steps                       0 | 0 | 0
+drive_test kinks_per_km                       6.34 | 6.34 | 6.34
+drive_test vertex_bumps                       16 | 16 | 16
+drive_test fold_bumps                         0 | 0 | 0
+drive_test obstruction_stations               0 | 0 | 0
+drive_test floating_furniture                 0 | 0 | 0
+drive_test undrivable_corners                 0 | 0 | 0
+drive_test daylight_gaps                      0 | 0 | 0
+drive_test off_pavement_stations              0 | 0 | 0
+drive_test apron_steps                        5 | 5 | 5
+drive_test barrier_stations                   0 | 0 | 0
+drive_test barrier_missing                    0 | 0 | 0
+drive_test excursion drops / far ledges       (0, None) | (0, None) | (0, None)
+audit A_supports_in_road                      0 | 0 | 0
+audit B_terrain_poke                          0 | 0 | 0
+audit C_junction_crossings                    0 | 0 | 0
+audit D_wall_on_road                          0 | 0 | 0
+audit E_wall_floating                         0 | 0 | 0
+audit worst_float_m                           0.0 | 0.0 | 0.0
+audit F_curb_not_flush                        0 | 0 | 0
+audit I_sidewalk_isolating                    0 | 0 | 0
+audit K_kerb_in_carriageway                   0 | 0 | 0
+audit J_terrain_span                          0 | 0 | 0
+audit wall_verts                              43335 | 43907 | 43907
+kn5_ground_check                              {'fail': False, 'reasons': [], 'kn5': ['milford_road_course.kn5'], 'fidelity': 'skipped: gate OBJ written from this kn5', 'double_sheet_cells': 0, 'seating': {'walls': {'objects': 336, 'no_ground_pct': 0.0, 'median_m': -0.461, 'p95_m': -0.186, 'hovering': 0}}, 'road_over_ground': {'over': 2, 'samples': 9317, 'p95_m': 0.021, 'max_m': 0.052}} | {'fail': False, 'reasons': [], 'kn5': ['milford_road_course.kn5'], 'fidelity': 'skipped: gate OBJ written from this kn5', 'double_sheet_cells': 0, 'seating': {'walls': {'objects': 336, 'no_ground_pct': 0.0, 'median_m': -0.461, 'p95_m': -0.186, 'hovering': 0}}, 'road_over_ground': {'over': 2, 'samples': 9317, 'p95_m': 0.021, 'max_m': 0.052}} | {'fail': False, 'reasons': [], 'kn5': ['milford_road_course.kn5'], 'fidelity': 'skipped: gate OBJ written from this kn5', 'double_sheet_cells': 0, 'seating': {'walls': {'objects': 336, 'no_ground_pct': 0.0, 'median_m': -0.461, 'p95_m': -0.186, 'hovering': 0}}, 'road_over_ground': {'over': 2, 'samples': 9317, 'p95_m': 0.021, 'max_m': 0.052}}
+house_seat                                    {'obj': '/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/work/roadtex/b17/data/track.obj', 'buildings': 3, 'no_ground': 0, 'floating': 0, 'sunken': 0, 'buried': 0, 'show_m_min': 2.117, 'verdict': 'PASS'} | {'obj': '/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/work/furniture/b018/data/track.obj', 'buildings': 3, 'no_ground': 0, 'floating': 0, 'sunken': 0, 'buried': 0, 'show_m_min': 2.117, 'verdict': 'PASS'} | {'obj': '/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/work/mf019/b19/data/track.obj', 'buildings': 3, 'no_ground': 0, 'floating': 0, 'sunken': 0, 'buried': 0, 'show_m_min': 2.117, 'verdict': 'PASS'}
+edge_report at_1m                             {'lane': 0.0, 'shoulder': 0.0, 'kerb': 0.995, 'ground': 0.0, 'wall': 0.005, 'none': 0.0, 'other': 0.0} | {'lane': 0.0, 'shoulder': 0.0, 'kerb': 0.995, 'ground': 0.0, 'wall': 0.005, 'none': 0.0, 'other': 0.0} | {'lane': 0.0, 'shoulder': 0.0, 'kerb': 0.995, 'ground': 0.0, 'wall': 0.005, 'none': 0.0, 'other': 0.0}
+b17 ['✓ kn5 verification passed (no dup meshes, drivable surfaces face-up, spawns on road, per-layout spawn kn5s facing their travel, race furniture split common / per-direction closure)', "✓ models_<id>.ini verification passed (each race layout loads road + common race + ITS closure + its spawns; no ini loads another layout's closure)", 'GATES: street drive_test exit 0, street audit exit 0, race drive_test exit 0, race audit exit 0, race no_route exit 0, kn5_ground_check exit 0', 'SHIP OK', 'exit 0']
+    milford_road_course.kn5 42611917 B
+Traceback (most recent call last):
+  File "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/wt-mf019/tracks/milford-road-course-lm/source/furniture/gate_table.py", line 31, in <module>
+    log = open(w + ".log").read()
+          ~~~~^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/work/mf019/b018_rec.log'
+== road_wear_check (0.1.7 | 0.1.9)
+{'pass': True, 'gate': None, 'kn5': 'milford_road_course.kn5', 'rows': None}
+{'pass': True, 'gate': None, 'kn5': 'milford_road_course.kn5', 'rows': None}
+== kn5 bytes
+-rw-r--r--@ 1 kevinconboy  wheel  39066361 Nov  9 16:33 /private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/work/furniture/records/b018/milford_road_course.kn5
+-rw-r--r--@ 1 kevinconboy  wheel  42676006 Nov  9 17:14 /private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/work/mf019/b19/build/milford_road_course.kn5
+-rw-r--r--@ 1 kevinconboy  wheel  42611917 Nov  9 15:15 /private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/work/roadtex/b17/build/milford_road_course.kn5
+== veg_verify
+{"trees": 11247, "trunk_colliders": 385, "orphan_colliders": 0, "nearest_paved_m": 4.65, "within_margin_of_paved": 0, "nearest_wall_m": 5.31, "within_1m_of_wall": 0, "trees_within_reach_of_paved": 390, "collider_reach_m": 30.0, "within_reach_no_collider": 0, "reach_band_no_collider_m": [29.55, 29.85, 29.87, 29.95, 29.97], "corridor_margin_m": 3.0, "verdict": "PASS"}
+== seat_built
+[seat_built] 1WALL_GHOST_RAIL_0_mat           wbeam_collider cells    93  exposed p5/p50/p95 [0.651, 0.702, 0.746]  gap max -0.1  floating 0  buried 0  no ground 0
+[seat_built] 1WALL_GHOST_RAIL_1_mat           wbeam_collider cells   262  exposed p5/p50/p95 [0.692, 0.701, 0.716]  gap max -0.146  floating 0  buried 0  no ground 0
+[seat_built] 1WALL_GHOST_RAIL_2_mat           wbeam_collider cells   162  exposed p5/p50/p95 [0.692, 0.701, 0.711]  gap max -0.142  floating 0  buried 0  no ground 0
+[seat_built] 1WALL_GHOST_RAIL_3_mat           wbeam_collider cells   276  exposed p5/p50/p95 [0.673, 0.704, 0.763]  gap max -0.121  floating 0  buried 0  no ground 0
+[seat_built] 1WALL_TECPRO_TYRES_4_mat         tyres   cells   149  exposed p5/p50/p95 [1.005, 1.016, 1.061]  gap max -0.18  floating 0  buried 0  no ground 0
+[seat_built] 1WALL_TECPRO_TYRES_5_mat         tyres   cells   190  exposed p5/p50/p95 [0.995, 1.037, 1.652]  gap max -0.156  floating 0  buried 0  no ground 0
+[seat_built] 1WALL_TECPRO_TYRES_6_mat         tyres   cells   105  exposed p5/p50/p95 [0.998, 1.06, 1.2]  gap max -0.148  floating 0  buried 0  no ground 0
+[seat_built] 1WALL_TILTUP_SCREEN_10_mat       screen  cells    26  exposed p5/p50/p95 [4.154, 4.26, 4.293]  gap max -0.461  floating 0  buried 0  no ground 0
+[seat_built] 1WALL_TILTUP_SCREEN_7_mat        screen  cells    49  exposed p5/p50/p95 [4.052, 4.126, 4.408]  gap max -0.184  floating 0  buried 0  no ground 0
+[seat_built] 1WALL_TILTUP_SCREEN_8_mat        screen  cells     9  exposed p5/p50/p95 [3.535, 3.841, 4.088]  gap max -0.307  floating 0  buried 0  no ground 0
+[seat_built] 1WALL_TILTUP_SCREEN_9_mat        screen  cells    25  exposed p5/p50/p95 [3.185, 3.327, 3.581]  gap max -0.448  floating 0  buried 0  no ground 0
+[seat_built] BUILDING_FABRIC_pad_tent_mat     block   cells     6  exposed p5/p50/p95 [2.838, 3.912, 7.528]  gap max 7.751  floating 2  buried -  no ground 0
+[seat_built] BUILDING_METAL_0_mat             block   cells     8  exposed p5/p50/p95 [2.133, 2.179, 2.286]  gap max -0.31  floating 0  buried -  no ground 0
+[seat_built] FARBLOCK_TILTUP_0_mat            block   cells    24  exposed p5/p50/p95 [3.438, 10.636, 25.943]  gap max -0.137  floating 0  buried -  no ground 0
+[seat_built] GUARDRAIL_W_0_mat                wbeam   cells   319  exposed p5/p50/p95 [0.642, 0.695, 0.816]  gap max 0.456  floating None  buried 5  no ground 0
+[seat_built] GUARDRAIL_W_1_mat                wbeam   cells   392  exposed p5/p50/p95 [0.665, 0.696, 0.846]  gap max 1.492  floating None  buried 1  no ground 0
+[seat_built] GUARDRAIL_W_2_mat                wbeam   cells   416  exposed p5/p50/p95 [0.64, 0.694, 0.757]  gap max 0.473  floating None  buried 6  no ground 0
+[seat_built] PASS: 17 furniture objects read against the built ground (831,037 ground triangles)
+== rails_by_line
+g1_nw_corner_outside 132 exposed p5/50/95 [0.61 0.69 0.74] buried(<0.6) 5
+   worst at [ 5.5000e-01  3.2000e-01 -2.5425e+02  3.8275e+02]
+g2_front_straight_east 363 exposed p5/50/95 [0.66 0.7  0.83] buried(<0.6) 1
+g3_front_straight_west 216 exposed p5/50/95 [0.67 0.69 0.87] buried(<0.6) 0
+g4_infield_esses 416 exposed p5/50/95 [0.64 0.69 0.76] buried(<0.6) 6
+== compare_019 (positions = 0.1.8, road-wear UVs + materials = 0.1.7, textures = 0.1.7)
+{
+ "kn5_bytes": {
+  "0.1.7": 42611917,
+  "0.1.8": 39066361,
+  "0.1.9": 42676006
+ },
+ "meshes": 33,
+ "positions_equal_018": 33,
+ "uv_mat_equal_017_on_road_wear": [
+  "1KERB_sidewalk",
+  "1ROAD_road"
+ ],
+ "uv_mat_equal_018_elsewhere": 31,
+ "differs_from_017_elsewhere_by_018_design": [
+  "1WALL_GHOST_RAIL_0",
+  "1WALL_GHOST_RAIL_1",
+  "1WALL_GHOST_RAIL_2",
+  "1WALL_GHOST_RAIL_3",
+  "1WALL_TECPRO_TYRES_6",
+  "1WALL_TILTUP_SCREEN_10 (not in 0.1.7)",
+  "FARBLOCK_TILTUP_0",
+  "GUARDRAIL_W_0",
+  "GUARDRAIL_W_1",
+  "GUARDRAIL_W_2",
+  "ROOFTOP_WHITE_0"
+ ],
+ "textures": {
+  "0.1.7": 21,
+  "0.1.8": 19,
+  "0.1.9": 21,
+  "only_017": [],
+  "only_019": [],
+  "changed_vs_017": []
+ },
+ "pass": true,
+ "problems": []
+}
+== mesh_diff 0.1.8 -> 0.1.9
+1GRASS                   {'equal': 8}
+1KERB                    {'DIFFERS': 1}
+1ROAD                    {'DIFFERS': 1}
+1WALL                    {'equal': 13}
+BUILDING                 {'equal': 2}
+FARBLOCK                 {'equal': 1}
+GUARDRAIL                {'equal': 3}
+MARKINGS                 {'equal': 1}
+PADAPRON                 {'equal': 1}
+ROOFTOP                  {'equal': 2}
+textures: {'only_a': ['asphalt_cracked_diffuse.jpg', 'building_diffuse.jpg'], 'only_b': ['road_wear_detail_1kerb_sidewalk.jpg', 'road_wear_detail_1road.jpg', 'road_wear_flat_nm.png', 'road_wear_macro.png'], 'changed': []}
+== mesh_diff 0.1.7 -> 0.1.9
+1GRASS                   {'equal': 8}
+1KERB                    {'equal': 1}
+1ROAD                    {'equal': 1}
+1WALL                    {'equal': 7, 'DIFFERS': 5, 'only in b': 1}
+BUILDING                 {'equal': 2}
+FARBLOCK                 {'DIFFERS': 1}
+GUARDRAIL                {'DIFFERS': 3}
+MARKINGS                 {'equal': 1}
+PADAPRON                 {'equal': 1}
+ROOFTOP                  {'equal': 1, 'DIFFERS': 1}
+textures: {'only_a': [], 'only_b': [], 'changed': []}

@@ -30,7 +30,8 @@ y = N, z = up). The collection is emptied first, so the tool is idempotent, and 
               "ridge_axis": "short" (a gable's measured ridge across the box), "roof": "NAIP" + "roof_uv" (the measured
               colour's cell of the plan's palette: ROOFTOP_NAIP_<k>, bound by the track's texture_overrides ROOF key); "off_terrain" = a far backdrop past the built ground: it stands at the nearest ground's
               height with OFF_TERRAIN_SKIRT_M more wall below -> FARBLOCK_<SKIN>_<k>, no collider: never a GrassFX occluder (the
-              TDR lesson in scripts/ac/ext_config.py) and never read by the seat gate. "replace": the scene's own meshes of these exact
+              TDR lesson in scripts/ac/ext_config.py) and never read by the seat gate; (ledger 0082 pass 3, opt-in) "roof_z_m" on an off_terrain
+              block = its MEASURED roof elevation in the scene frame: the roof stands there, the walls reach the lowest ground. "replace": the scene's own meshes of these exact
               names (the v021 assembler's HOUSE / BUILDING boxes on Lake Murray) are removed first, so the pipeline's stand alone. Any ring, flat roof, walls batched by skin -> BUILDING_TILTUP_<k> / BUILDING_METAL_<k> /
               BUILDING_FABRICB_<k> (joined only within one building: tools/house_seat_check.py re-joins by position),
               ROOFTOP_<WHITE|TAN|DARK>_<k>, 1WALL_TILTUP_<k> (the collider). "auto" = a planned file: a footprint the
@@ -53,6 +54,14 @@ y = N, z = up). The collection is emptied first, so the tool is idempotent, and 
   rails       [{"key", "kind": "tecpro" | "krail", "polyline_lonlat", "auto", "height_m"}]: collidable module lines seated on
               the ground -> 1WALL_TECPRO_<k> / 1WALL_KRAILBW_<k>; "auto" leaves a module out when it would stand on a road,
               instead of refusing; "height_m" (optional): a measured height over the ground, in place of the kind's
+              (ledger 0082, opt-in) "kind": "tyres" -> 1WALL_TECPRO_TYRES_<k>, stacked tyre columns, "depth_m" (optional) the
+              measured width of the wall; "kind": "wbeam" -> GUARDRAIL_W_<k> (rail + posts, visual) + 1WALL_GHOST_RAIL_<k> (the
+              unseen collider), the rail face on the line facing the nearest lap point; "auto" there breaks the rail where a
+              post would stand on a road or off the ground (WBEAM_* below); (ledger 0082 pass 2, opt-in) "kind": "screen" ->
+              1WALL_TILTUP_SCREEN_<k>, a thin wall of panels at the entry's REQUIRED measured "height_m"
+  trunks      (ledger 0082 vegetation pass, opt-in) {"file": [[lon, lat, h_m, d_paved_m], ...], "radius_m", "height_m"}: an
+              unseen octagonal collider round each TreeFX tree's trunk near the road (TreeFX trees have no physics)
+              -> 1WALL_GHOST_TRUNK_<k> (the transparent 1WALL_GHOST row)
 
 SELF-CHECKS, exit 1 and loop.blend NOT saved: a building's footprint (ring + interior) and every scrub foot off every road
 and kerb; every cone foot off the main road; a building at least BUILDING_CLEAR_M from the road and any wall; ground under every read; no AC_* touched.
@@ -81,7 +90,8 @@ from scripts.geometry.projection import _meters_per_degree  # noqa: E402  (the d
 
 COLLECTION = "AUTH_bespoke"
 OWN_PREFIXES = ("BUILDING_FABRIC", "1WALL_FABRIC", "PROPCONE", "SCRUBCARD", "BUILDING_TILTUP", "BUILDING_METAL", "ROOFTOP",
-                "1WALL_TILTUP", "PADAPRON", "TREECARD", "PRAIRIECARD", "GUARDRAIL", "1WALL_TECPRO", "1WALL_KRAILBW", "BUILDING_DRYSTONE", "FARBLOCK")
+                "1WALL_TILTUP", "PADAPRON", "TREECARD", "PRAIRIECARD", "GUARDRAIL", "1WALL_TECPRO", "1WALL_KRAILBW", "BUILDING_DRYSTONE", "FARBLOCK",
+                "1WALL_GHOST_RAIL", "1WALL_GHOST_TRUNK")
 GROUND = ("1GRASS",)
 GROUND_FAR = ("1GRASS", "GRASS_FAR")
 PAVED = ("1ROAD", "1RUNOFF", "1KERB")
@@ -137,15 +147,43 @@ RAIL_LIP_H = 0.70              # the draft's lip, read off Milford's 1WALL_PARA_
 RAIL_KINDS = {"tecpro": ("1WALL_TECPRO", 1.2, 1.5, 0.8),
               # High Plains' painted barriers: a Caltrans-type K-rail is 0.81 m tall, 0.6 m at the foot, 3 m a section
               # (cited from memory, not re-read); the paint alternates every section on NAIP 2023
-              "krail": ("1WALL_KRAILBW", 0.81, 3.0, 0.6)}
+              "krail": ("1WALL_KRAILBW", 0.81, 3.0, 0.6),
+              # ledger 0082 (Milford furniture pass 1), opt-in kinds a config names or does not:
+              # a stacked-tyre wall: one module = one tyre column, 0.62 m [invented: a common passenger tyre's diameter]; height
+              # 1.0 m [invented: five tyres]; the depth is the entry's measured "depth_m" where NAIP gives it. It rides the
+              # 1WALL_TECPRO prefix because engine-july's prep (Lake Murray's, frozen) keeps the authored UVs only of the prefixes
+              # it lists (build_kn5_loop.py's planar_uv skip) and binds a texture only by a pbr row: the track's
+              # texture_overrides["1WALL_TECPRO"] is the tyre skin (tools/make_bespoke_assets.py tyre_wall)
+              "tyres": ("1WALL_TECPRO_TYRES", 1.0, 0.62, 1.2),
+              # ledger 0082 pass 2 (opt-in): a thin opaque screen wall standing on a line the LIDAR measured (Milford's F1:
+              # a level top 3.2-4.1 m over the ground, plan spread 0.39 m sd, light on NAIP). The entry MUST carry its
+              # measured "height_m" (no default stands one). Panels 4.0 m [invented: QL2 lidar resolves no joint], 0.20 m
+              # thick [invented: the lidar's plan spread cannot resolve it]. It rides the 1WALL_TILTUP prefix: a collider,
+              # the stock tilt-up concrete row, UVs kept by engine-july's prep; UVs in real metres over TILE_BAY TILTUP
+              "screen": ("1WALL_TILTUP_SCREEN", None, 4.0, 0.20)}
+# W-beam on posts along a measured line (rails kind "wbeam", ledger 0082): the rail's face stands ON the measured line (NAIP
+# reads the galvanised face), the posts WBEAM_BLOCKOUT_M behind it, away from the nearest lap point; the rail's top is the
+# entry's "height_m" over the ground under it (default RAIL_LIP_H 0.70 m: an NCHRP-350-era strong-post W-beam's 27-28 in
+# [invented: a standard, not measured at the track]). Visual GUARDRAIL_W_<k> (the GUARDRAIL row: wbeam_rail_diffuse.png; UVs
+# kept), and an unseen collider 1WALL_GHOST_RAIL_<k> (the 1WALL_GHOST row: transparent) WBEAM_COLLIDER_D_M deep, its face on
+# the rail's, from BOTTOM_UNDER_M under the ground to the rail's top
+WBEAM_BLOCKOUT_M = 0.20        # [invented] a post and its blockout behind the rail face (a W6x9 post + 8 in block is ~0.35 m)
+WBEAM_COLLIDER_D_M = 0.20      # [invented] the collider's depth behind the rail face
+WBEAM_POST_W_M = 0.15          # [invented] a W6x9 post's flange, round figure
+LANE = ("1ROAD", "ROAD")         # a W-beam entry with "over_strip": the lane it never stands on (the chain's / the assembler's name)
+FOOT_MAX_M = 2.0               # [invented] the deepest a wbeam / tyres foot goes under its own ground (down_low): inside drive_test's
+                               # +-2.5 m window that finds a wall's support (a deeper foot would read "floating 99")
+STRIP = ("1KERB", "CURB")        # ... and the edge strip it may stand over, seated on its top where that is higher than the ground
+TRUNK_SIDES = 8                # ledger 0082 vegetation pass (scenery.bespoke.trunks, opt-in): the collider's octagon
 
 
 EDGE_OF = {}                   # id(BVH) -> the longest edge of each polygon, in metres (for the collider's fine-ground rule)
+LOWZ_OF = {}                   # id(BVH) -> the lowest corner of each polygon (ledger 0082: a foot under the whole triangle it stands on)
 
 
 def bvh(prefixes, exclude=()):
     """(BVH, owner name per polygon) over every mesh whose name starts with a prefix (and none of `exclude`), world space"""
-    verts, polys, owner, edges = [], [], [], []
+    verts, polys, owner, edges, lowz = [], [], [], [], []
     for o in bpy.data.objects:
         u = o.name.upper()
         if (o.type != "MESH" or not u.startswith(prefixes) or u.startswith(OWN_PREFIXES)
@@ -159,9 +197,11 @@ def bvh(prefixes, exclude=()):
             polys.append(ids)
             owner.append(u)
             edges.append(max((verts[a] - verts[b]).length for a, b in zip(ids, ids[1:] + ids[:1])))
+            lowz.append(min(verts[a].z for a in ids))
     tree = BVHTree.FromPolygons(verts, polys) if polys else None
     if tree is not None:
         EDGE_OF[id(tree)] = edges
+        LOWZ_OF[id(tree)] = lowz
     return tree, owner
 
 
@@ -171,6 +211,17 @@ def down_edge(tree, x, y):
         return None
     hit = tree.ray_cast(Vector((x, y, 3000.0)), Vector((0.0, 0.0, -1.0)), 6000.0)
     return None if hit[0] is None else EDGE_OF[id(tree)][hit[2]]
+
+
+def down_low(tree, x, y):
+    """the lowest corner of the polygon under (x, y) in a BVH, or None (ledger 0082's rails kinds wbeam / tyres: their feet go
+    under the whole ground triangle they stand on, so on coarse ground across a steep bank no corner of that triangle is far
+    below the foot: audit_mesh's E rule reads the nearest ground VERTICES within 4.5 m, and candidate c1's T2 / G4 feet,
+    seated 0.15 m under the interpolated surface of a 10-14 m triangle on a ~40 % bank, read +1.44 / +1.52 m over them)"""
+    if tree is None:
+        return None
+    hit = tree.ray_cast(Vector((x, y, 3000.0)), Vector((0.0, 0.0, -1.0)), 6000.0)
+    return None if hit[0] is None else LOWZ_OF[id(tree)][hit[2]]
 
 
 def collider_ground_ok(edges, limit):
@@ -686,7 +737,17 @@ def blocks(col, spec, proj, to_xy, ground, near_ground, paved, walls, bad):
             par_m = float(b.get("parapet_m", PARAPET_M))      # a planned row's MEASURED parapet (ledger 0083 pass 4), else PARAPET_M
             total_h = wall_h + (max(0.0, float(b.get("ridge_h_m", wall_h)) - wall_h) if form in ("hip", "gable", "shed") else (par_m if form == "flat_parapet" else 0.0))
             floor = max(mean - PREP_SINK_M, hi - (1.0 - PREP_SHOW) * total_h)         # the prep's floor, see PREP_SINK_M
-            if off:
+            if off and b.get("roof_z_m") is not None:
+                # ledger 0082 pass 3 (opt-in: only Milford's pass-3 blocks name it): the roof at its MEASURED elevation in the
+                # scene's frame (the lidar's roof, ground + height), the walls carried down to the lowest built ground under the
+                # rim. A far block over sloping or skirted ground seated at its lowest ground (below) sank its lap-side wall:
+                # Milford's west hall stood 13 m tall from a skirt 17 m under its high side, its roof 4.5 m under that ground
+                bottom, eave = lo - BOTTOM_UNDER_M, float(b["roof_z_m"])
+                if eave - hi < 0.5 * wall_h:
+                    why = f"its measured roof {eave:.2f} stands {eave - hi:.2f} m over the highest ground under it (< half its {wall_h} m wall)"
+                    bad.append(f"block {key}: {why}")
+                    continue
+            elif off:
                 bottom, eave = lo - BOTTOM_UNDER_M, lo - BOTTOM_UNDER_M + wall_h
             elif PREP_SEATS:
                 bottom, eave = floor, floor + wall_h
@@ -1027,9 +1088,54 @@ def cards(col, spec, proj, to_xy, ground, paved, walls, bad, pad_quads=()):
     return rows
 
 
+def trunks(col, spec, proj, to_xy, ground, paved, walls, bad):
+    """ledger 0082 vegetation pass (opt-in: scenery.bespoke.trunks): an unseen collider round the trunk of each TreeFX tree
+    near the drivable surface. CSP's TreeFX trees are drawn by the game and have no physics (tools/verify_race.py G: "a
+    trunk in the lane is a car driving through a palm"), so a car that leaves the road would drive through the measured
+    woods. {"file": [lon, lat, h_m, d_paved_m] points, "radius_m", "height_m"} -> 1WALL_GHOST_TRUNK_<k>: an octagon
+    TRUNK_SIDES around the point, from under the whole ground triangle (down_low, as the rails' feet) to height_m over the
+    ground, on the transparent 1WALL_GHOST row. A point with no ground under it, on a road, or inside a wall is a failure"""
+    d = json.loads((proj / spec["file"]).read_text(encoding="utf-8"))
+    r_m, h_m = float(spec["radius_m"]), float(spec["height_m"])
+    batch = Batcher(col, "1WALL_GHOST_TRUNK")
+    stood = 0
+    nearest = float("inf")
+    for p in d["points"]:
+        x, y = to_xy((p[0], p[1]))
+        ring = [(x + r_m * math.cos(2 * math.pi * i / TRUNK_SIDES), y + r_m * math.sin(2 * math.pi * i / TRUNK_SIDES))
+                for i in range(TRUNK_SIDES)]
+        gs = [down(ground, a, b) for a, b in ring + [(x, y)]]
+        if any(g is None for g in gs) or any(down(paved, a, b) is not None for a, b in ring + [(x, y)]):
+            bad.append(f"trunk at ({x:.1f}, {y:.1f}): on a road or off the ground")
+            continue
+        if walls is not None:
+            hit = walls.find_nearest(Vector((x, y, gs[-1] + 1.0)), 2.0)
+            if hit[0] is not None and float(hit[3]) < r_m:
+                bad.append(f"trunk at ({x:.1f}, {y:.1f}): inside a wall")
+                continue
+        if paved is not None:
+            hit = paved.find_nearest(Vector((x, y, gs[-1])), 200.0)
+            if hit[0] is not None:
+                nearest = min(nearest, float(hit[3]))
+        lows = [down_low(ground, a, b) for a, b in ring]
+        bot = max(min([min(gs) - BOTTOM_UNDER_M] + [lw - BOTTOM_UNDER_M for lw in lows if lw is not None]), min(gs) - FOOT_MAX_M)
+        top = gs[-1] + h_m
+        verts = [(a, b, bot) for a, b in ring] + [(a, b, top) for a, b in ring]
+        faces = [(i, (i + 1) % TRUNK_SIDES, TRUNK_SIDES + (i + 1) % TRUNK_SIDES, TRUNK_SIDES + i) for i in range(TRUNK_SIDES)]
+        faces.append(tuple(range(TRUNK_SIDES, 2 * TRUNK_SIDES)))
+        uvs = [((0.0, 0.0), (1.0, 0.0), (1.0, 1.0), (0.0, 1.0))] * TRUNK_SIDES + [tuple((0.5, 0.5) for _ in range(TRUNK_SIDES))]
+        batch.room(len(verts))
+        batch.add(verts, faces, uvs)
+        stood += 1
+    batch.flush()
+    print(f"[bespoke] trunks ({spec['file']}): {stood} colliders, r {r_m} m, {h_m} m over the ground; nearest paved {nearest:.2f} m")
+    return {"file": spec["file"], "stood": stood, "radius_m": r_m, "height_m": h_m, "nearest_paved_m": round(nearest, 2)}
+
+
 def guardrail(col, spec, proj, bad):
     """the rail along the draft's guard lips: the lip's own top and foot, its road side; the lip becomes the unseen collider"""
-    src = [o for o in bpy.data.objects if o.type == "MESH" and o.name.upper().startswith((spec["from"], "1WALL_GHOST"))]
+    src = [o for o in bpy.data.objects if o.type == "MESH" and o.name.upper().startswith((spec["from"], "1WALL_GHOST"))
+           and not o.name.upper().startswith(("1WALL_GHOST_RAIL", "1WALL_GHOST_TRUNK"))]   # a W-beam's / trunk's own collider (ledger 0082) is no lip
     if not src:
         bad.append(f"guardrail: no {spec['from']}* to follow")
         return {}
@@ -1124,8 +1230,150 @@ def guardrail(col, spec, proj, bad):
     return {"runs": len(runs), "rail_m": round(total, 1), "posts": n_post}
 
 
-def rails(col, spec, to_xy, ground, paved, bad, edge=None):
+def resample_polyline(line, step):
+    """points every ``step`` m along a polyline, its last point included (pure: ledger 0082's W-beam posts)"""
+    out = [tuple(line[0])]
+    carry = 0.0
+    for a, b in zip(line, line[1:]):
+        seg = math.dist(a, b)
+        if seg <= 0:
+            continue
+        t = step - carry
+        while t <= seg + 1e-9:
+            out.append((a[0] + (b[0] - a[0]) * t / seg, a[1] + (b[1] - a[1]) * t / seg))
+            t += step
+        carry = seg - (t - step)
+    if math.dist(out[-1], line[-1]) > 0.05 * step:
+        out.append(tuple(line[-1]))
+    return out
+
+
+def road_side(run, road):
+    """+1 when the left of the run's travel (a, b = its ends) faces the nearest road point to its middle, else -1 (pure)"""
+    mid = run[len(run) // 2]
+    rx, ry = min(road, key=lambda q: (q[0] - mid[0]) ** 2 + (q[1] - mid[1]) ** 2)
+    a, b = run[0], run[-1]
+    tx, ty = b[0] - a[0], b[1] - a[1]
+    return 1.0 if -ty * (rx - mid[0]) + tx * (ry - mid[1]) > 0 else -1.0
+
+
+def _foot(st):
+    """a station's foot: its own (x, y, ground, foot) or BOTTOM_UNDER_M under its ground"""
+    return st[3] if len(st) > 3 else st[2] - BOTTOM_UNDER_M
+
+
+def wbeam_geometry(run, side, height):
+    """``run`` = [(x, y, ground z[, foot z])] at the post spacing. Returns (rail, posts, collider), each (verts, faces, uvs): the
+    rail's W section (RAIL_H / RAIL_D) with its face on the run and its top ``height`` over the ground, both faces (a rail
+    is seen from both sides); a post at every sample WBEAM_BLOCKOUT_M behind the face; the collider a closed box
+    WBEAM_COLLIDER_D_M deep behind the face, BOTTOM_UNDER_M under the ground to the top (pure: tested)"""
+    rail, posts, coll = ([], [], []), ([], [], []), ([], [], [])
+    arc = 0.0
+    for s0, s1 in zip(run, run[1:]):
+        dx, dy = s1[0] - s0[0], s1[1] - s0[1]
+        seg = math.hypot(dx, dy) or 1e-6
+        nx, ny = -dy / seg * side, dx / seg * side           # toward the road
+        v, f, uv = rail
+        for j in range(len(RAIL_H) - 1):
+            base = len(v)
+            for st, z0 in ((s0, s0[2]), (s1, s1[2])):
+                for jj in (j, j + 1):
+                    off = RAIL_D[jj] - RAIL_D[0]               # the W bulges toward the road from the face line
+                    v.append((st[0] + nx * off, st[1] + ny * off, z0 + height - 0.312 + RAIL_H[jj]))
+            u0, u1 = arc / RAIL_PANEL_M, (arc + seg) / RAIL_PANEL_M
+            vv = lambda q: 0.06 + 0.88 * RAIL_H[q] / 0.312
+            q = (base, base + 2, base + 3, base + 1)
+            quv = ((u0, vv(j)), (u1, vv(j)), (u1, vv(j + 1)), (u0, vv(j + 1)))
+            f += [q, q[::-1]]
+            uv += [quv, quv[::-1]]
+        v, f, uv = coll
+        bx, by = -nx * WBEAM_COLLIDER_D_M, -ny * WBEAM_COLLIDER_D_M
+        base = len(v)
+        for st in (s0, s1):
+            lo, hi = _foot(st), st[2] + height
+            v += [(st[0], st[1], lo), (st[0], st[1], hi), (st[0] + bx, st[1] + by, hi), (st[0] + bx, st[1] + by, lo)]
+        for i in range(4):
+            j = (i + 1) % 4
+            f.append((base + i, base + j, base + 4 + j, base + 4 + i))
+            uv.append(((0, 0), (1, 0), (1, 1), (0, 1)))
+        arc += seg
+    v, f, uv = posts
+    for k, st in enumerate(run):
+        a, b = (run[k - 1], st) if k else (st, run[1])
+        dx, dy = b[0] - a[0], b[1] - a[1]
+        seg = math.hypot(dx, dy) or 1e-6
+        tx, ty = dx / seg, dy / seg
+        nx, ny = -ty * side, tx * side
+        cx, cy = st[0] - nx * (WBEAM_BLOCKOUT_M + 0.05), st[1] - ny * (WBEAM_BLOCKOUT_M + 0.05)
+        hw = WBEAM_POST_W_M / 2
+        ring = [(cx + tx * hw + nx * 0.05, cy + ty * hw + ny * 0.05), (cx - tx * hw + nx * 0.05, cy - ty * hw + ny * 0.05),
+                (cx - tx * hw - nx * 0.05, cy - ty * hw - ny * 0.05), (cx + tx * hw - nx * 0.05, cy + ty * hw - ny * 0.05)]
+        ring = inward_ring(ring)
+        lo, hi = _foot(st), st[2] + height - 0.03
+        base = len(v)
+        for i in range(4):
+            p, r = ring[i], ring[(i + 1) % 4]
+            b0 = len(v)
+            v += [(p[0], p[1], lo), (r[0], r[1], lo), (r[0], r[1], hi), (p[0], p[1], hi)]
+            f.append((b0, b0 + 1, b0 + 2, b0 + 3))
+            uv.append(((0.5, 0.2), (0.6, 0.2), (0.6, 0.8), (0.5, 0.8)))
+    return rail, posts, coll
+
+
+def wbeam_rail(col, k, r, line, ground, paved, bad, road, batch, lane=None, strip=None):
+    """one "wbeam" entry: posts every RAIL_POST_M on the ground; a post on a road or off the ground ends the run ("auto")
+    or fails the self-check. "over_strip": true (opt-in, ledger 0082) lets a post stand over the circuit's edge strip (the
+    assembler's CURB / 1KERB_sidewalk: the asphalt edge held 0.30 m and its 1.0 m [invented] grade) but never over the
+    lane (ROAD / 1ROAD): a rail NAIP measures at the real pavement edge falls inside that invented strip; the post is then
+    seated on the higher of the ground and the strip"""
+    hgt = float(r.get("height_m", RAIL_LIP_H))
+    over = bool(r.get("over_strip")) and lane is not None
+    runs, cur, left_out = [], [], 0
+    why = {"lane": 0, "paved": 0, "no ground": 0}
+    for x, y in resample_polyline(line, RAIL_POST_M):
+        g = down(ground, x, y)
+        on = down(lane if over else paved, x, y)
+        if g is None or on is not None:
+            why["no ground" if g is None else ("lane" if over else "paved")] += 1
+            if not r.get("auto"):
+                bad.append(f"rail {r['key']}: a post at ({x:.1f}, {y:.1f}) is on a road or off the ground")
+            left_out += 1
+            if len(cur) > 1:
+                runs.append(cur)
+            cur = []
+            continue
+        if over:
+            st = down(strip, x, y)
+            if st is not None and st > g:
+                g = st
+        low = down_low(ground, x, y)
+        cur.append((x, y, g, max(min(g, low if low is not None else g) - BOTTOM_UNDER_M, g - FOOT_MAX_M)))
+    if len(cur) > 1:
+        runs.append(cur)
+    arc, n_post, cv, cf, cu = 0.0, 0, [], [], []
+    for run in runs:
+        side = road_side(run, road)
+        (rv, rf, ru), (pv, pf, pu), (kv, kf, ku) = wbeam_geometry(run, side, hgt)
+        batch.room(len(rv) + len(pv))
+        batch.add(rv, rf, ru)
+        batch.add(pv, pf, pu)
+        off = len(cv)
+        cv += kv
+        cf += [tuple(off + i for i in f) for f in kf]
+        cu += ku
+        arc += sum(math.dist(a[:2], b[:2]) for a, b in zip(run, run[1:]))
+        n_post += len(run)
+    if cv:
+        make_mesh(col, f"1WALL_GHOST_RAIL_{k}", cv, cf, cu)
+    print(f"[bespoke] rail {r['key']}: W-beam {arc:.0f} m in {len(runs)} run(s), {n_post} posts, top {hgt:.2f} m over the "
+          f"ground, {left_out} post(s) left out {why}{' (over the edge strip)' if over else ''}; collider 1WALL_GHOST_RAIL_{k}")
+    return {"key": r["key"], "kind": "wbeam", "runs": len(runs), "posts": n_post, "left_out": left_out,
+            "length_m": round(arc, 1), "height_m": hgt}
+
+
+def rails(col, spec, to_xy, ground, paved, bad, proj=None, edge=None):
     rows = []
+    wbeam_batch = lane_bvh = strip_bvh = None
     for k, r in enumerate(spec):
         # SEATED ON WHAT IT STANDS ON (opt-in "seat": "surface", ledger 0085, Pikes Peak's outer wall): the module's
         # ring reads the higher of the ground and the track edge's own surface (names.track_edge, the circuit edge strip
@@ -1145,8 +1393,21 @@ def rails(col, spec, to_xy, ground, paved, bad, edge=None):
         stand_on = tuple(str(p).upper() for p in r.get("stand_on") or [])
         paved_r = bvh(PAVED, exclude=stand_on)[0] if stand_on else paved
         line = [to_xy(p) for p in r["polyline_lonlat"]]
+        if r["kind"] == "wbeam":                 # ledger 0082: opt-in, a config names the kind or nothing here runs
+            if wbeam_batch is None:
+                wbeam_batch = Batcher(col, "GUARDRAIL_W")
+                road = [(p[0], p[2]) for p in centreline(proj)[0]]
+            if r.get("over_strip") and lane_bvh is None:
+                lane_bvh = bvh(LANE)[0]
+                strip_bvh = bvh(STRIP)[0]
+            rows.append(wbeam_rail(col, k, r, line, ground, paved, bad, road, wbeam_batch, lane_bvh, strip_bvh))
+            continue
         prefix, hgt, mod, dep = RAIL_KINDS[r["kind"]]
+        if hgt is None and r.get("height_m") is None:    # ledger 0082 pass 2: a screen stands only at a measured height
+            bad.append(f"rail {r['key']}: kind {r['kind']} needs a measured height_m")
+            continue
         hgt = float(r.get("height_m", hgt))      # a measured height (ledger 0078: Pikes Peak's wall off the lidar)
+        dep = float(r.get("depth_m", dep))       # a measured width (ledger 0082: Milford's tyre walls off NAIP)
         verts, faces, uvs = [], [], []
         arc_total, modules, left_out = 0.0, 0, 0
         for a, b in zip(line, line[1:]):
@@ -1154,6 +1415,9 @@ def rails(col, spec, to_xy, ground, paved, bad, edge=None):
             ux, uy = (b[0] - a[0]) / seg, (b[1] - a[1]) / seg
             nx, ny = -uy, ux
             cnt = int(seg // mod)
+            if r["kind"] == "screen":            # ledger 0082 pass 2: a continuous screen, whole panels fitted to each segment
+                cnt = max(1, round(seg / RAIL_KINDS["screen"][2]))   # (c3: whole 4 m panels per ~4 m segment stood 80 m of
+                mod = seg / cnt                                       # F1's 197 m)
             for m in range(cnt):
                 x0, y0 = a[0] + ux * m * mod, a[1] + uy * m * mod
                 # opt-in "overlap_m" (ledger 0085, Pikes Peak's outer wall): the modules interlock, each running this far
@@ -1175,10 +1439,26 @@ def rails(col, spec, to_xy, ground, paved, bad, edge=None):
                         bad.append(f"rail {r['key']}: module {modules} at ({x0:.1f}, {y0:.1f}) is on a road or off the ground")
                     continue
                 bot, top = min(gs) - BOTTOM_UNDER_M, max(gs) + hgt
+                if r["kind"] in ("tyres", "screen"):     # ledger 0082: under the whole triangle (down_low); the older kinds as built
+                    lows = [down_low(ground, x, y) for x, y in ring]
+                    bot = max(min([bot] + [lw - BOTTOM_UNDER_M for lw in lows if lw is not None]), min(gs) - FOOT_MAX_M)
                 cell = modules % 2
                 u0, u1 = cell * 0.5, cell * 0.5 + 0.5
                 base = len(verts)
                 verts += [(x, y, bot) for x, y in ring] + [(x, y, top) for x, y in ring]
+                if r["kind"] == "screen":                # ledger 0082 pass 2: real metres over the tilt-up tile (TILE_BAY)
+                    bay = TILE_BAY["TILTUP"]
+                    s0, s1, vb, vt = (arc_total + m * mod) / bay, (arc_total + m * mod + mod - 0.02) / bay, 0.0, (top - bot) / bay
+                    side = ((s0, vb), (s1, vb), (s1, vt), (s0, vt))
+                    end = ((s0, vb), (s0 + dep / bay, vb), (s0 + dep / bay, vt), (s0, vt))
+                    for i in range(4):
+                        j = (i + 1) % 4
+                        faces.append((base + i, base + j, base + 4 + j, base + 4 + i))
+                        uvs.append(side if i % 2 == 0 else end)
+                    faces.append((base + 4, base + 5, base + 6, base + 7))
+                    uvs.append(((s0, 0.0), (s1, 0.0), (s1, dep / bay), (s0, dep / bay)))
+                    modules += 1
+                    continue
                 for i in range(4):
                     j = (i + 1) % 4
                     faces.append((base + i, base + j, base + 4 + j, base + 4 + i))
@@ -1191,6 +1471,8 @@ def rails(col, spec, to_xy, ground, paved, bad, edge=None):
             make_mesh(col, f"{prefix}_{k}", verts, faces, uvs)
         rows.append({"key": r["key"], "kind": r["kind"], "modules": modules, "left_out": left_out, "length_m": round(arc_total, 1)})
         print(f"[bespoke] rail {r['key']}: {modules} {r['kind']} modules over {arc_total:.0f} m, {left_out} left out")
+    if wbeam_batch is not None:
+        wbeam_batch.flush()
     return rows
 
 
@@ -1230,7 +1512,7 @@ def main():
         report["scrub"] = scrub(col, spec["scrub"], to_xy, ground, paved, walls, bad)
     far = bvh(GROUND_FAR)[0]
     if spec.get("rails"):
-        report["rails"] = rails(col, spec["rails"], to_xy, ground, paved, bad,
+        report["rails"] = rails(col, spec["rails"], to_xy, ground, paved, bad, proj,
                                 edge=bvh(TRACK_EDGE)[0] if any(r.get("seat") for r in spec["rails"]) else None)
     if spec.get("blocks"):
         report["blocks"] = blocks(col, spec["blocks"], proj, to_xy, far, ground, paved, walls, bad)
@@ -1243,6 +1525,8 @@ def main():
                 si, so = p["strip_lonlat"]["inner"], p["strip_lonlat"]["outer"]
                 quads += [[to_xy(si[i]), to_xy(si[i + 1]), to_xy(so[i + 1]), to_xy(so[i])] for i in range(len(si) - 1)]
         report["cards"] = cards(col, spec["cards"], proj, to_xy, far, paved, walls, bad, quads)
+    if spec.get("trunks"):                     # ledger 0082 vegetation pass: opt-in, a config names it or nothing here runs
+        report["trunks"] = trunks(col, spec["trunks"], proj, to_xy, ground, paved, walls, bad)
     if spec.get("guardrail"):
         report["guardrail"] = guardrail(col, spec["guardrail"], proj, bad)
     if sorted(o.name for o in bpy.data.objects if o.name.startswith("AC_")) != ac_before:

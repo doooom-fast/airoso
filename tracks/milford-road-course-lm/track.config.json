@@ -276,7 +276,7 @@
         ],
         "far": [
           "GRASS_FAR",
-          "1GRASS_FAR"
+          "1GRASS_LIDAR"
         ],
         "paved": [
           "ROAD",
@@ -296,7 +296,7 @@
           "1WALL",
           "BARRIER"
         ],
-        "_doc": "the assembler's names at the author stage (Lake Murray's); far + 1GRASS_FAR: the far ground's own object (ledger 0082 'Far ground (0.1.11)'), so a far block reads the lidar's ground, not the sunk skirt under it"
+        "_doc": "the assembler's names at the author stage (Lake Murray's); far + 1GRASS_LIDAR: the far ground's own object (ledger 0082 'Far ground (0.1.11)'), so a far block reads the lidar's ground, not the sunk skirt under it"
       },
       "prep_seats": true,
       "rails": [
@@ -1093,8 +1093,8 @@
       "cell_m": 10.0,
       "beyond": "keep",
       "keep_feather_m": 40.0,
-      "object": "1GRASS_FAR",
-      "_doc": "ledger 0082 'Far ground (0.1.11)' (Milford's far blocks stood on the assembler's skirt, a 500 m ramp from the 3DEP grid's border down to a floor 5 m under its lowest ground, 15-25 m under the real ground): the skirt replaced by the 2017 lidar's bare earth (class 2, pass 2's 71 EPT nodes as the vegetation pass read them; source/far_ground/scripts/far_ground_product.py -> data/far_ground.lidar.npy, 5 m cells) on the grid's own 10 m lattice by tools/far_ground_blend.py (Del Mar's, ledger 0083 pass 4b); the grid's border vertices kept, the border residual feathered over feather_m [invented, Del Mar's]. beyond keep: where the lidar does not reach (data/far_ground.lidar.fill.npy 2), today's skirt stays, feathered to the lidar's fill over keep_feather_m [invented] from the reach. The 3DEP grid inside (the lap + 150 m) is untouched. object: the ring is its own physical ground object (1GRASS_FAR) and TERRAIN's skirt is sunk in place, not deleted, so engine-july's prep tiles and welds the ground near the road bit for bit as 0.1.10 (its balanced bisection reads face centres in plan; a first build with the ring inside TERRAIN moved the tile seams and 8,199 near-road vertices); tools/far_ground_prep_blend.py takes the sunk skirt out of the prepped tiles."
+      "object": "1GRASS_LIDAR",
+      "_doc": "ledger 0082 'Far ground (0.1.11)' (Milford's far blocks stood on the assembler's skirt, a 500 m ramp from the 3DEP grid's border down to a floor 5 m under its lowest ground, 15-25 m under the real ground): the skirt replaced by the 2017 lidar's bare earth (class 2, pass 2's 71 EPT nodes as the vegetation pass read them; source/far_ground/scripts/far_ground_product.py -> data/far_ground.lidar.npy, 5 m cells) on the grid's own 10 m lattice by tools/far_ground_blend.py (Del Mar's, ledger 0083 pass 4b); the grid's border vertices kept, the border residual feathered over feather_m [invented, Del Mar's]. beyond keep: where the lidar does not reach (data/far_ground.lidar.fill.npy 2), today's skirt stays, feathered to the lidar's fill over keep_feather_m [invented] from the reach. The 3DEP grid inside (the lap + 150 m) is untouched. object: the ring is its own physical ground object (1GRASS_LIDAR: no GRASS_FAR in the name, which verify_kn5 keeps visual-only) and TERRAIN's skirt is sunk in place, not deleted, so engine-july's prep tiles and welds the ground near the road bit for bit as 0.1.10 (its balanced bisection reads face centres in plan; a first build with the ring inside TERRAIN moved the tile seams and 8,199 near-road vertices); tools/far_ground_prep_blend.py takes the sunk skirt out of the prepped tiles."
     }
   },
   "road_wear": {

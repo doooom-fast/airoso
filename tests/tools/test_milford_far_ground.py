@@ -90,7 +90,7 @@ def test_milford_declares_it_and_ships_the_product():
     cfg = json.loads((MF / "track.config.json").read_text(encoding="utf-8"))
     fgc = cfg["terrain"]["far_ground"]
     assert fgc["beyond"] == "keep" and fgc["reach_m"] == 500.0 and fgc["cell_m"] == 10.0
-    assert fgc["object"] == "1GRASS_FAR" and "1GRASS_FAR" in cfg["scenery"]["bespoke"]["names"]["far"]
+    assert fgc["object"] == "1GRASS_LIDAR" and "1GRASS_LIDAR" in cfg["scenery"]["bespoke"]["names"]["far"]
     assert cfg["scenery"]["treefx"]["planted"]["seat_far_on_built"] is True
     ship = json.loads((MF / "ship.json").read_text(encoding="utf-8"))
     assert ship["steps"]["draft"].index("far_ground") == ship["steps"]["draft"].index("strip_seam") + 1

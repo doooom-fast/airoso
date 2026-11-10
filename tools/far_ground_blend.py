@@ -24,7 +24,7 @@ surface at its plan position, read before the skirt goes), feathered to the lida
 node is left out and the ring cells on it with it (no ground, as today), and a ring node no cell is left on goes too.
 Absent = every node the lidar's, as before.
 Also opt-in (ledger 0082 "Far ground (0.1.11)", Milford): "object": "<name>" builds the ring as its OWN mesh object of that name
-(a 1GRASS* name: physical ground; the border nodes copied, so it meets the grid vertex for vertex) and leaves TERRAIN's
+(a 1GRASS* name: physical ground, and never one carrying GRASS_FAR, which verify_kn5 keeps visual-only; the border nodes copied, so it meets the grid vertex for vertex) and leaves TERRAIN's
 topology exactly as the assembler and the draft left it: the skirt is not deleted but SUNK (each floor vertex to one height
 SINK_M under the lowest of the ring and the grid, x / y untouched), so engine-july's prep, whose balanced bisection tiles the
 ground by face CENTRES IN PLAN and then welds and fills each tile on its own, cuts exactly the tiles it cut before and the
@@ -75,8 +75,8 @@ def main():
         fail(f"terrain.far_ground.beyond {beyond!r}: only \"keep\" (or absent)")
     keep_feather_m = float(spec.get("keep_feather_m", feather_m))
     obj_name = spec.get("object")
-    if obj_name is not None and not str(obj_name).upper().startswith("1GRASS"):
-        fail(f"terrain.far_ground.object {obj_name!r}: a 1GRASS* name (physical ground)")
+    if obj_name is not None and (not str(obj_name).upper().startswith("1GRASS") or "GRASS_FAR" in str(obj_name).upper()):
+        fail(f"terrain.far_ground.object {obj_name!r}: a 1GRASS* name (physical ground) without GRASS_FAR (verify_kn5's visual-only ring)")
     data = proj / "data"
     dem = fg.Dem.load(data)
     if beyond == "keep" and dem.reach is None:

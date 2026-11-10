@@ -1,0 +1,183 @@
+{
+  "_doc": [
+    "What is installed in Assetto Corsa on the PC, folder by folder: the record tools/ac_tidy.py classifies content/tracks against (Kevin 2026-11-06: 'we need a routine on the PC that keeps AC clean and up-to-date').",
+    "role: current (the build Kevin last installed for that track) | kept (an older copy Kevin chose to keep beside its successor) | superseded (an older copy whose successor is installed: the tidy plan moves it on Kevin's yes) | k10-era (a k10 build with a doooom successor).",
+    "branch: where the track's next build lands; ac_tidy flags 'newer' when tracks/<track>/track.config.json there has a higher version than installed (an offer: installs stay on Kevin's word).",
+    "After every install: python tools/ac_tidy.py record <folder> --track <track> --branch <branch> --sha <sha> [--engine lm-v4], then commit this file with the install records.",
+    "Folders not listed here and not ours (no doooom / airoso / k10 author or name) are Kunos and third-party tracks: never touched.",
+    "2026-11-06 (Kevin: 'Move all 10', 'Rename it'): the 10 originals moved to D:/k10-track-archive/2026-11-06_103803_tidy/ (MOVES.tsv there; `python tools/ac_tidy.py restore <dir>` puts them back) and dropped from this list; Lake Murray v4's 5 layout names renamed from the K10 candidate prefix to 'doooom San Diego' (originals in <dir>/san_diego_lake_murray_v4.ui/).",
+    "2026-11-07 (Kevin, relayed by the Mac: 'We want to delete old copies from ac when installing new ones'; asked here, 'Move it out now (Recommended)'): del_mar_fairgrounds 0.1.0 moved to D:/k10-track-archive/2026-11-07_164229_tidy/ and dropped from this list. Every install now REPLACES: the other folders of the track leave AC (archive, never deleted).",
+    "Installs replace (Kevin 2026-11-07): `record` supersedes every other folder of the track's family (track slug minus -lm, or `family`), and prints what still has to leave AC. Plain names from now on (Kevin: 'Get rid of Lm Version from names' / 'LM is the airoso engine'): installing sand_creek_raceway replaces sand_creek_raceway_lm.",
+    "2026-11-07 (Kevin, relayed by the Mac: 'Copy now'): the Blender menu pictures (tools/menu_preview_blend.py, each track's source/ui[/<layout>]/preview.png) copied over the installed preview.png of 13 tracks / 18 layouts (Milford skipped: 0.1.4 installing); the old ones in D:/k10-track-archive/2026-11-07_221708_previews/ (PREVIEWS.tsv, README: the one-line put-back).",
+    "2026-11-07 (Kevin, asked here: 'Install it (Recommended)' x2): Milford 0.1.4 over 0.1.2 in milford_road_course_lm; Del Mar 0.2.4 to the plain del_mar_fairgrounds, del_mar_fairgrounds_lm 0.2.2 moved to D:/k10-track-archive/2026-11-07_222810_tidy/ (ac_tidy --apply). Both pictures re-rendered from the new builds with their committed cameras and copied in (the pack's in D:/k10-track-archive/2026-11-08_001402_previews/).",
+    "After every install from now on: re-render the track's menu picture from the new build with the camera in its source/ui/preview.json, copy it over ui[/<layout>]/preview.png (old one backed up), commit it with the install records.",
+    "2026-11-08 (Kevin, asked on the PC: 'Yes, install overnight', the six conditions met): Milford 0.1.5 to the plain milford_road_course; milford_road_course_lm 0.1.4 moved first to D:/k10-track-archive/2026-11-08_011149_milford/ (MOVES.tsv) and dropped from this list. The menu picture re-rendered off 0.1.5 with stand-in trees (the pack's in D:/k10-track-archive/2026-11-08_014406_previews/).",
+    "2026-11-08 (Kevin, asked on the PC: 'Yes, install overnight', the six conditions met): Sand Creek 0.2.7 to the plain sand_creek_raceway; sand_creek_raceway_lm 0.2.6 moved first to D:/k10-track-archive/2026-11-08_043809_sand_creek/ (MOVES.tsv) and dropped from this list (the old engine's sand_creek_raceway was already out of AC). The race and street menu pictures re-rendered off 0.2.7 (the pack's in D:/k10-track-archive/2026-11-08_053642_previews/).",
+    "2026-11-09 (Kevin, asked on the PC: 'Yes and I always want newer builds'): Milford 0.1.6 to the plain milford_road_course; ship_track's install step parked 0.1.5 in D:/k10-track-archive/2026-11-09_093135/ (MOVES.tsv). The menu picture re-rendered off 0.1.6 (the pack's in D:/k10-track-archive/2026-11-09_093221_previews/).",
+    "2026-11-09 (Kevin on the PC: 'Yes, check them' / 'I always want newer builds'): Del Mar 0.2.5 to del_mar_fairgrounds; ship_track's install step parked 0.2.4 in D:/k10-track-archive/2026-11-09_105157/ (MOVES.tsv).",
+    "2026-11-09 (Kevin on the PC: 'Yes, check them' / 'I always want newer builds'): High Plains 0.1.5, Nevada Nights 0.1.3, Grand Junction 0.1.2, Pueblo 0.1.3, Aspen 0.1.4 installed under plain names; each old _lm folder moved to D:/k10-track-archive/2026-11-09_<hhmmss>_<folder>/ after its successor installed and dropped from this list. Menu pictures re-rendered (the packs' in 2026-11-09_110323_previews).",
+    "2026-11-09 (Kevin on the PC: 'Yes, check them' / 'I always want newer builds'): Sand Creek 0.2.8 to sand_creek_raceway; ship_track's install step parked 0.2.7 in D:/k10-track-archive/2026-11-09_140029/ (MOVES.tsv).",
+    "2026-11-09 (ledger 0089; Kevin: 'I always want newer builds'): High Plains 0.1.6 and Nevada Nights 0.1.4 installed over 0.1.5 / 0.1.3 (parked by the install step in D:/k10-track-archive/2026-11-09_183038/ and _183401/).",
+    "2026-11-09 (Kevin on the PC: 'I always want newer builds'): Milford 0.1.9 to milford_road_course; ship_track's install step parked 0.1.6 in D:/k10-track-archive/2026-11-09_193301/ (MOVES.tsv).",
+    "2026-11-09 (Kevin on the PC: 'I always want newer builds' / 'Resume now'): Milford 0.1.10 to milford_road_course; ship_track's install step parked 0.1.9 in D:/k10-track-archive/2026-11-09_212206/ (MOVES.tsv).",
+    "2026-11-09 (ledger 0089; Kevin: 'I always want newer builds'): Nevada Nights 0.1.5 installed over 0.1.4 (parked by the install step in D:/k10-track-archive/2026-11-09_213254/).",
+    "2026-11-09 (Kevin on the PC: 'I always want newer builds'): Milford 0.1.11 to milford_road_course; ship_track's install step parked 0.1.10 in D:/k10-track-archive/2026-11-09_224638/ (MOVES.tsv)."
+  ],
+  "ac_tracks": "D:/SteamLibrary/steamapps/common/assettocorsa/content/tracks",
+  "archive": "D:/k10-track-archive",
+  "ours": {
+    "authors": [
+      "doooom",
+      "airoso",
+      "k10-san-diego"
+    ],
+    "name_prefixes": [
+      "doooom",
+      "K10"
+    ]
+  },
+  "folders": {
+    "aspen_motorsports_park": {
+      "branch": "claude/circuit-edge-flush",
+      "engine": "lm-v4",
+      "installed": "2026-11-09",
+      "role": "current",
+      "sha": "8573cdd0",
+      "track": "aspen-lm",
+      "version": "0.1.4",
+      "note": "0.1.4 = the edge strip flush with the prep's contact band (route.edge.grass_clearance -0.08, ledger 0087 / 0081), the plain folder; aspen_motorsports_park_lm 0.1.3 moved to D:/k10-track-archive/2026-11-09_110255_aspen_motorsports_park/; records + menu picture on claude/circuit-edge-flush 07cc303"
+    },
+    "del_mar_fairgrounds": {
+      "branch": "claude/del-mar-edge-flush",
+      "engine": "lm-v4",
+      "installed": "2026-11-09",
+      "note": "0.2.5 = 0.2.4 + the edge strip flush with the prep's contact band (route.edge.grass_clearance -0.08, ledger 0087 / 0083); records + menu picture on claude/del-mar-edge-flush fd462189",
+      "role": "current",
+      "sha": "36aef610",
+      "track": "del-mar-lm",
+      "version": "0.2.5"
+    },
+    "exotics_racing_lvms": {
+      "branch": "claude/treefx-cards",
+      "engine": "lm-v4",
+      "installed": "2026-11-09",
+      "note": "0.1.5 = 0.1.4 with the scrub at its lidar heights: 28 TreeFX Bush3 (personal-use, md5 e9299a59, in extension/trees/; ledger 0089); records + menu picture on claude/treefx-cards 98bb3510",
+      "role": "current",
+      "sha": "1148c584",
+      "track": "exotics-racing-lv-lm",
+      "version": "0.1.5"
+    },
+    "grand_junction": {
+      "branch": "claude/circuit-edge-flush",
+      "engine": "lm-v4",
+      "installed": "2026-11-09",
+      "role": "current",
+      "sha": "8573cdd0",
+      "track": "grand-junction-lm",
+      "version": "0.1.2",
+      "note": "0.1.2 = the edge strip flush with the prep's contact band (route.edge.grass_clearance -0.08, ledger 0087 / 0081), the plain folder; grand_junction_lm 0.1.1 moved to D:/k10-track-archive/2026-11-09_110115_grand_junction/; records + menu picture on claude/circuit-edge-flush 07cc303"
+    },
+    "high_plains": {
+      "branch": "claude/treefx-cards",
+      "engine": "lm-v4",
+      "installed": "2026-11-09",
+      "note": "0.1.6 = 0.1.5 with the PRAIRIECARD cards out (grass on NAIP 2023) and GrassFX from the aerial (32 rectangles; ledger 0089); records + menu picture on claude/treefx-cards 1aeecb84",
+      "role": "current",
+      "sha": "5ce76a7e",
+      "track": "high-plains-lm",
+      "version": "0.1.6"
+    },
+    "lookout_lariat_lm": {
+      "track": "lookout-lariat-lm",
+      "engine": "lm-v4",
+      "role": "current",
+      "version": "0.1.0",
+      "branch": "claude/fleet-lm-engine",
+      "installed": "2026-11-04"
+    },
+    "milford_road_course": {
+      "branch": "claude/milford-0111",
+      "engine": "lm-v4",
+      "installed": "2026-11-09",
+      "note": "0.1.11 = 0.1.10 + the far ground from the 2017 lidar (1GRASS_LIDAR ring; far blocks' walls p50 21.1 -> 8.1 m; mpg_nw_complex_0 dropped, set into its slope); road wear + furniture 3/4 as 0.1.10; TreeFX 11,247 trees; records + menu picture on claude/milford-0111 2dc444cd",
+      "role": "current",
+      "sha": "bb93889d",
+      "track": "milford-road-course-lm",
+      "version": "0.1.11"
+    },
+    "pikes_peak_international_raceway": {
+      "branch": "claude/pikes-peak-road-course-build",
+      "engine": "lm-v4",
+      "installed": "2026-11-09",
+      "role": "current",
+      "sha": "dea338935591cebc41c566d0e5c39857b778ef2c",
+      "track": "pikes-peak-lm",
+      "version": "0.2.0"
+    },
+    "pikes_peak_international_raceway_lm": {
+      "branch": "claude/circuit-kerbs-lm",
+      "engine": "lm-v4",
+      "installed": "2026-11-04",
+      "role": "superseded",
+      "successor": "pikes_peak_international_raceway",
+      "track": "pikes-peak-lm",
+      "version": "0.1.0"
+    },
+    "pueblo_motorsports_park": {
+      "branch": "claude/circuit-edge-flush",
+      "engine": "lm-v4",
+      "installed": "2026-11-09",
+      "role": "current",
+      "sha": "8573cdd0",
+      "track": "pueblo-lm",
+      "version": "0.1.3",
+      "note": "0.1.3 = the edge strip flush with the prep's contact band (route.edge.grass_clearance -0.08, ledger 0087 / 0081), the plain folder; pueblo_motorsports_park_lm 0.1.2 moved to D:/k10-track-archive/2026-11-09_110221_pueblo_motorsports_park/; records + menu picture on claude/circuit-edge-flush 07cc303"
+    },
+    "rally_co_dragon_tail_gravel_lm": {
+      "track": "rally-dragon-tail-gravel-lm",
+      "engine": "lm-v4",
+      "role": "current",
+      "version": "0.1.0",
+      "branch": "claude/fleet-lm-engine",
+      "installed": "2026-11-05"
+    },
+    "rally_co_under_the_dragon_gravel_lm": {
+      "track": "rally-under-the-dragon-gravel-lm",
+      "engine": "lm-v4",
+      "role": "current",
+      "version": "0.1.0",
+      "branch": "claude/fleet-lm-engine",
+      "installed": "2026-11-05"
+    },
+    "san_diego_freeway_lm": {
+      "track": "san-diego-freeway-lm",
+      "engine": "lm-v4",
+      "role": "current",
+      "version": "0.1.0",
+      "branch": "claude/freeway-lm",
+      "sha": "e733c0a9",
+      "installed": "2026-11-06"
+    },
+    "san_diego_lake_murray_v4": {
+      "track": "san-diego-lake-murray",
+      "engine": "lm-v4",
+      "role": "current",
+      "version": "0.20.2",
+      "branch": "claude/lm-phase2-0202",
+      "installed": "2026-11-04",
+      "ui_name_prefix": "doooom San Diego",
+      "old_name_prefix": "K10 - San Diego CANDIDATE v4 keep-roads",
+      "note": "Lake Murray v4 + Mission Gorge Speedway (ship_sd.sh SD_BESPOKE=1); its ship.json ui_name_prefix still says the K10 candidate name, so a reinstall brings it back"
+    },
+    "sand_creek_raceway": {
+      "branch": "claude/sand-creek-edge-flush",
+      "engine": "lm-v4",
+      "installed": "2026-11-09",
+      "note": "0.2.8 = 0.2.7 + the mainline's edge strip flush with the prep's contact band (route.edge.grass_clearance -0.08; the side streets keep 0.10 via connector_grass_clearance; ledger 0087 / 0079); TreeFX Oak3 / SycamoreV1-3 3,471 trees as 0.2.7; records + menu pictures on claude/sand-creek-edge-flush faa3a37",
+      "role": "current",
+      "sha": "981727d0",
+      "track": "sand-creek-lm",
+      "version": "0.2.8"
+    }
+  }
+}

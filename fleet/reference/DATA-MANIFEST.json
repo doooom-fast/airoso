@@ -1,0 +1,2783 @@
+{
+ "schema": 1,
+ "generated": "2026-11-10",
+ "head_basis": "origin/claude/ac-tidy",
+ "purpose": "Re-fetch list so the Windows PC can re-download, into D:/k10-data/, every public source file that exists only on the Mac's damaged /Volumes/Drive (and the Mac scratchpad). Only sources already downloaded before (Kevin: 'PC re-fetches it'); nothing new.",
+ "pc_dest_root": "D:/k10-data/",
+ "hashing": "sha256 computed by reading the files on the Mac 2026-11-10; git_blob equality used to find files already committed.",
+ "fetch_rules": [
+  "Fetch with certificate verification ON.",
+  "Verify size then sha256 of each file; for ept_nodes/static_file groups a mismatch means the publisher changed it: stop and report, do not overwrite silently.",
+  "Planetary Computer crops and ImageServer exports: if the sha differs, compare dims/corners and report; they are inputs to measurements, not byte-for-byte products.",
+  "Throttle (USGS rockyweb returned HTTP 429 once); retry with back-off.",
+  "Do not fetch anything not listed."
+ ],
+ "groups": [
+  {
+   "id": "lidar_del_mar_d24",
+   "title": "USGS 3DEP lidar, CA_SanDiegoCo_D24, five LAZ tiles over the Del Mar Fairgrounds",
+   "track": "del-mar-lm",
+   "ledger": [
+    "0083 (tiles 475648/476648: pass 1; 475649/476649/475647: pass 2/3)"
+   ],
+   "approved_by": "Kevin 2026-11-06 (two tiles), later passes (three more); all downloaded before",
+   "kind": "static_file",
+   "method": "HTTP GET each url",
+   "params": {
+    "base_url": "https://rockyweb.usgs.gov/vdelivery/Datasets/Staged/Elevation/LPC/Projects/CA_SanDiegoCo_D24/CA_SanDiegoCo_1_D24/LAZ/",
+    "flown": "2024-11-09",
+    "crs": "NAD83(2011) / UTM 11N, NAVD88 (Geoid18)"
+   },
+   "byte_exact": true,
+   "compare": "sha256 and size equal; md5 prefixes also quoted in ledger 0083 (9f3d8dbb, 9af405e9, 3498fafa, ef01c39d, 00327c7a all match). USGS may rewrite files: if size differs, compare point count in the LAZ header (12,793,553 etc. in ledger 0083). 2nd tile once hit HTTP 429: retry.",
+   "used_by": "tools/lidar_building_heights.py, lidar_roof_forms.py, lidar_ground.py (dm_work/p4*/ points.npz, ground.npz are derived from these)",
+   "files": [
+    {
+     "mac_path": "/Volumes/Drive/codex/lidar_dl/del_mar_d24/USGS_LPC_CA_SanDiegoCo_D24_11SMS475647.laz",
+     "size": 90940763,
+     "sha256": "876a53e4b8881d3b075769b36fcddb7ac6d57f7d54555bded4c39d2c72310a53",
+     "dest": "lidar/del_mar_d24/USGS_LPC_CA_SanDiegoCo_D24_11SMS475647.laz",
+     "url": "https://rockyweb.usgs.gov/vdelivery/Datasets/Staged/Elevation/LPC/Projects/CA_SanDiegoCo_D24/CA_SanDiegoCo_1_D24/LAZ/USGS_LPC_CA_SanDiegoCo_D24_11SMS475647.laz",
+     "md5": "00327c7ac028a93f26508b25b2584555"
+    },
+    {
+     "mac_path": "/Volumes/Drive/codex/lidar_dl/del_mar_d24/USGS_LPC_CA_SanDiegoCo_D24_11SMS475648.laz",
+     "size": 62882222,
+     "sha256": "f201acf37145706acac0d3aeb043c1355971f0465576378a2a3cab7a6cc000ea",
+     "dest": "lidar/del_mar_d24/USGS_LPC_CA_SanDiegoCo_D24_11SMS475648.laz",
+     "url": "https://rockyweb.usgs.gov/vdelivery/Datasets/Staged/Elevation/LPC/Projects/CA_SanDiegoCo_D24/CA_SanDiegoCo_1_D24/LAZ/USGS_LPC_CA_SanDiegoCo_D24_11SMS475648.laz",
+     "md5": "9f3d8dbbb6cf109076f8b17a165e785a"
+    },
+    {
+     "mac_path": "/Volumes/Drive/codex/lidar_dl/del_mar_d24/USGS_LPC_CA_SanDiegoCo_D24_11SMS475649.laz",
+     "size": 81488775,
+     "sha256": "c6d8244c90b8e1d15d7e8d01ece9a30759b0efdc9e37cd7f1d3ea12d1e773e33",
+     "dest": "lidar/del_mar_d24/USGS_LPC_CA_SanDiegoCo_D24_11SMS475649.laz",
+     "url": "https://rockyweb.usgs.gov/vdelivery/Datasets/Staged/Elevation/LPC/Projects/CA_SanDiegoCo_D24/CA_SanDiegoCo_1_D24/LAZ/USGS_LPC_CA_SanDiegoCo_D24_11SMS475649.laz",
+     "md5": "3498fafacf83ab8451f2684e7bb103fa"
+    },
+    {
+     "mac_path": "/Volumes/Drive/codex/lidar_dl/del_mar_d24/USGS_LPC_CA_SanDiegoCo_D24_11SMS476648.laz",
+     "size": 65934024,
+     "sha256": "254ebbef241a5aa20c99e3fa088acf5a563fe75e0f6c3a10c6a405de14f3d0d3",
+     "dest": "lidar/del_mar_d24/USGS_LPC_CA_SanDiegoCo_D24_11SMS476648.laz",
+     "url": "https://rockyweb.usgs.gov/vdelivery/Datasets/Staged/Elevation/LPC/Projects/CA_SanDiegoCo_D24/CA_SanDiegoCo_1_D24/LAZ/USGS_LPC_CA_SanDiegoCo_D24_11SMS476648.laz",
+     "md5": "9af405e956e6a892ddc7979549225d52"
+    },
+    {
+     "mac_path": "/Volumes/Drive/codex/lidar_dl/del_mar_d24/USGS_LPC_CA_SanDiegoCo_D24_11SMS476649.laz",
+     "size": 79285690,
+     "sha256": "318579af611f4788a5080cbc2f66afbd929189a9ce0514417a137e821aa7dcff",
+     "dest": "lidar/del_mar_d24/USGS_LPC_CA_SanDiegoCo_D24_11SMS476649.laz",
+     "url": "https://rockyweb.usgs.gov/vdelivery/Datasets/Staged/Elevation/LPC/Projects/CA_SanDiegoCo_D24/CA_SanDiegoCo_1_D24/LAZ/USGS_LPC_CA_SanDiegoCo_D24_11SMS476649.laz",
+     "md5": "ef01c39db5ebca93410a12e8d6a5d2f3"
+    }
+   ],
+   "total_bytes": 380531474,
+   "n_files": 5,
+   "_rb": 380531474
+  },
+  {
+   "id": "lidar_milford_oakland2016",
+   "title": "USGS 3DEP EPT USGS_LPC_MI_31Co_Oakland_2016_LAS_2019 (flown 2017-05-03): 71 nodes within lane edge + 45 m of the Milford lap",
+   "track": "milford-road-course-lm",
+   "ledger": [
+    "0082 pass 2 (P2.1 The read)"
+   ],
+   "approved_by": "Kevin 2026-11-06 'Yes, fetch both'",
+   "kind": "ept_nodes",
+   "method": "HTTP GET each url (S3, no auth)",
+   "params": {
+    "ept_json": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/USGS_LPC_MI_31Co_Oakland_2016_LAS_2019/ept.json",
+    "buffer_m_past_lane_edge": 45.0,
+    "nodes": 71,
+    "hierarchy_files": 9,
+    "plan_tool": "scripts/ept_plan.py (hierarchy + HEAD only)",
+    "plan_file_mac": "/Volumes/Drive/codex/lidar_dl/milford_oakland2016/plan.json",
+    "plan_sha256": "cf07014e285ae9c9844919511ae4bc1fe430ae1770869ae6ac618330d82ea29f",
+    "note": "plan.json is derived (node list with point/byte counts); the files list below is the authoritative node set. Identical copy also at /Volumes/Drive/codex/mf_work/veg/g10in (not listed separately; sha-equal)."
+   },
+   "byte_exact": true,
+   "compare": "sha256 and size per file; 39,604,920 B of LAZ + 46,380 B metadata per ledger 0082 (this inventory: 39,653,928 B incl. 9 hierarchy files, ept.json and nothing else)",
+   "used_by": "tools/lidar_wall.py, mf_work/veg/read/veg.npz (derived), Milford heights/F1/trees",
+   "files": [
+    {
+     "mac_path": "/Volumes/Drive/codex/lidar_dl/milford_oakland2016/ept.json",
+     "size": 2590,
+     "sha256": "1cc76327f15b8566f606389fa6a6027592007e77b32c649442dceb4af67df8f4",
+     "dest": "lidar/milford_oakland2016/ept.json",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/USGS_LPC_MI_31Co_Oakland_2016_LAS_2019/ept.json"
+    },
+    {
+     "mac_path": "/Volumes/Drive/codex/lidar_dl/milford_oakland2016/ept-data/0-0-0-0.laz",
+     "size": 1157480,
+     "sha256": "7999b08b2d3eb6a92c16a0f8a3a9b91da37f2a697d4d92273502d16ea377398c",
+     "dest": "lidar/milford_oakland2016/ept-data/0-0-0-0.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/USGS_LPC_MI_31Co_Oakland_2016_LAS_2019/ept-data/0-0-0-0.laz"
+    },
+    {
+     "mac_path": "/Volumes/Drive/codex/lidar_dl/milford_oakland2016/ept-data/1-0-0-0.laz",
+     "size": 993235,
+     "sha256": "705bdf80f2c9015e9a2a41ec193325ab8cc9ac1f998552f57884e271e1ae9053",
+     "dest": "lidar/milford_oakland2016/ept-data/1-0-0-0.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/USGS_LPC_MI_31Co_Oakland_2016_LAS_2019/ept-data/1-0-0-0.laz"
+    },
+    {
+     "mac_path": "/Volumes/Drive/codex/lidar_dl/milford_oakland2016/ept-data/2-0-1-1.laz",
+     "size": 1069027,
+     "sha256": "0c70aaad364ee2c706261b626883f87c98472b55b615d9e839a16ea4cf1cc295",
+     "dest": "lidar/milford_oakland2016/ept-data/2-0-1-1.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/USGS_LPC_MI_31Co_Oakland_2016_LAS_2019/ept-data/2-0-1-1.laz"
+    },
+    {
+     "mac_path": "/Volumes/Drive/codex/lidar_dl/milford_oakland2016/ept-data/3-0-2-3.laz",
+     "size": 898202,
+     "sha256": "4f7350788b5db82efd67732d8ec1c1f5c45efcf603fb6cac1488d7ed14ecf6a7",
+     "dest": "lidar/milford_oakland2016/ept-data/3-0-2-3.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/USGS_LPC_MI_31Co_Oakland_2016_LAS_2019/ept-data/3-0-2-3.laz"
+    },
+    {
+     "mac_path": "/Volumes/Drive/codex/lidar_dl/milford_oakland2016/ept-data/4-0-4-7.laz",
+     "size": 574689,
+     "sha256": "99159bc72ed06246ba124e93e12376b9044d9d9d617de6675988163422066701",
+     "dest": "lidar/milford_oakland2016/ept-data/4-0-4-7.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/USGS_LPC_MI_31Co_Oakland_2016_LAS_2019/ept-data/4-0-4-7.laz"
+    },
+    {
+     "mac_path": "/Volumes/Drive/codex/lidar_dl/milford_oakland2016/ept-data/4-1-4-7.laz",
+     "size": 1311188,
+     "sha256": "4c52f0c9557938576952f5083326128636740fc7dd9515919381b3bb21badb03",
+     "dest": "lidar/milford_oakland2016/ept-data/4-1-4-7.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/USGS_LPC_MI_31Co_Oakland_2016_LAS_2019/ept-data/4-1-4-7.laz"
+    },
+    {
+     "mac_path": "/Volumes/Drive/codex/lidar_dl/milford_oakland2016/ept-data/5-1-9-15.laz",
+     "size": 1094290,
+     "sha256": "0b090a840355c8b8879a3be12835a01be68209668665a5c99f12a01bb0045187",
+     "dest": "lidar/milford_oakland2016/ept-data/5-1-9-15.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/USGS_LPC_MI_31Co_Oakland_2016_LAS_2019/ept-data/5-1-9-15.laz"
+    },
+    {
+     "mac_path": "/Volumes/Drive/codex/lidar_dl/milford_oakland2016/ept-data/5-2-9-15.laz",
+     "size": 1733683,
+     "sha256": "a9321246493c37457161a647f022d1f98bfd1786dc3aaef64cfc3afda56044c8",
+     "dest": "lidar/milford_oakland2016/ept-data/5-2-9-15.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/USGS_LPC_MI_31Co_Oakland_2016_LAS_2019/ept-data/5-2-9-15.laz"
+    },
+    {
+     "mac_path": "/Volumes/Drive/codex/lidar_dl/milford_oakland2016/ept-data/6-3-18-31.laz",
+     "size": 1249664,
+     "sha256": "adc8e8c56122dec30e961d75ca4b468f0b6bb8ced54003646f01f491978fc2d1",
+     "dest": "lidar/milford_oakland2016/ept-data/6-3-18-31.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/USGS_LPC_MI_31Co_Oakland_2016_LAS_2019/ept-data/6-3-18-31.laz"
+    },
+    {
+     "mac_path": "/Volumes/Drive/codex/lidar_dl/milford_oakland2016/ept-data/6-3-19-31.laz",
+     "size": 817867,
+     "sha256": "3083dcb9be03dddf6ed59fe983b7f13a8d883a5aab79858a09f740a8021c68d3",
+     "dest": "lidar/milford_oakland2016/ept-data/6-3-19-31.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/USGS_LPC_MI_31Co_Oakland_2016_LAS_2019/ept-data/6-3-19-31.laz"
+    },
+    {
+     "mac_path": "/Volumes/Drive/codex/lidar_dl/milford_oakland2016/ept-data/6-4-18-31.laz",
+     "size": 1692854,
+     "sha256": "e23995d852c6749bc9582d064310251783a9c7f9634ea6a48d84c929841307a2",
+     "dest": "lidar/milford_oakland2016/ept-data/6-4-18-31.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/USGS_LPC_MI_31Co_Oakland_2016_LAS_2019/ept-data/6-4-18-31.laz"
+    },
+    {
+     "mac_path": "/Volumes/Drive/codex/lidar_dl/milford_oakland2016/ept-data/6-4-19-31.laz",
+     "size": 1747344,
+     "sha256": "e2ea68d13775869547b100a0418ec8179d8dfac67fa4bf097db1f79fb8827797",
+     "dest": "lidar/milford_oakland2016/ept-data/6-4-19-31.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/USGS_LPC_MI_31Co_Oakland_2016_LAS_2019/ept-data/6-4-19-31.laz"
+    },
+    {
+     "mac_path": "/Volumes/Drive/codex/lidar_dl/milford_oakland2016/ept-data/7-6-37-63.laz",
+     "size": 592883,
+     "sha256": "b94e9be17238b1deb1787cdb69aabe612be4aa912c131532c609b62f54df7a42",
+     "dest": "lidar/milford_oakland2016/ept-data/7-6-37-63.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/USGS_LPC_MI_31Co_Oakland_2016_LAS_2019/ept-data/7-6-37-63.laz"
+    },
+    {
+     "mac_path": "/Volumes/Drive/codex/lidar_dl/milford_oakland2016/ept-data/7-6-38-63.laz",
+     "size": 566156,
+     "sha256": "590dd2e39ebac5201f6fa3dcfd4712eb8bfad33add57ee889e92dd80db449afa",
+     "dest": "lidar/milford_oakland2016/ept-data/7-6-38-63.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/USGS_LPC_MI_31Co_Oakland_2016_LAS_2019/ept-data/7-6-38-63.laz"
+    },
+    {
+     "mac_path": "/Volumes/Drive/codex/lidar_dl/milford_oakland2016/ept-data/7-6-39-63.laz",
+     "size": 432910,
+     "sha256": "f054e8cda1114b182759bc7db0454abae095af5dffc706fc0c9395c421e4600c",
+     "dest": "lidar/milford_oakland2016/ept-data/7-6-39-63.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/USGS_LPC_MI_31Co_Oakland_2016_LAS_2019/ept-data/7-6-39-63.laz"
+    },
+    {
+     "mac_path": "/Volumes/Drive/codex/lidar_dl/milford_oakland2016/ept-data/7-7-36-63.laz",
+     "size": 1199344,
+     "sha256": "580213ec4c8f6000e99b2840a40fdc7617749d86459f0a96df8419ed86989bec",
+     "dest": "lidar/milford_oakland2016/ept-data/7-7-36-63.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/USGS_LPC_MI_31Co_Oakland_2016_LAS_2019/ept-data/7-7-36-63.laz"
+    },
+    {
+     "mac_path": "/Volumes/Drive/codex/lidar_dl/milford_oakland2016/ept-data/7-7-37-63.laz",
+     "size": 917993,
+     "sha256": "19d3adabefe119ca42be2d6aad6fc24aa012a0c2a22e1cb1fce19b8a9715592c",
+     "dest": "lidar/milford_oakland2016/ept-data/7-7-37-63.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/USGS_LPC_MI_31Co_Oakland_2016_LAS_2019/ept-data/7-7-37-63.laz"
+    },
+    {
+     "mac_path": "/Volumes/Drive/codex/lidar_dl/milford_oakland2016/ept-data/7-7-38-63.laz",
+     "size": 955938,
+     "sha256": "ba0bb2ec02532e3e2cb85c71b6ea71cd5f33df74568d855d448f6630ff56952f",
+     "dest": "lidar/milford_oakland2016/ept-data/7-7-38-63.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/USGS_LPC_MI_31Co_Oakland_2016_LAS_2019/ept-data/7-7-38-63.laz"
+    },
+    {
+     "mac_path": "/Volumes/Drive/codex/lidar_dl/milford_oakland2016/ept-data/7-7-39-63.laz",
+     "size": 659242,
+     "sha256": "16b563bad9624568d623a147219361cde73caf0b861bb92793f1ca50e37b27f2",
+     "dest": "lidar/milford_oakland2016/ept-data/7-7-39-63.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/USGS_LPC_MI_31Co_Oakland_2016_LAS_2019/ept-data/7-7-39-63.laz"
+    },
+    {
+     "mac_path": "/Volumes/Drive/codex/lidar_dl/milford_oakland2016/ept-data/7-8-37-63.laz",
+     "size": 941635,
+     "sha256": "d1db8308d834782e36a7a3cc15e436d9a6ff920a5980a17ba2fb8df1b70055d6",
+     "dest": "lidar/milford_oakland2016/ept-data/7-8-37-63.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/USGS_LPC_MI_31Co_Oakland_2016_LAS_2019/ept-data/7-8-37-63.laz"
+    },
+    {
+     "mac_path": "/Volumes/Drive/codex/lidar_dl/milford_oakland2016/ept-data/7-8-38-63.laz",
+     "size": 1113450,
+     "sha256": "44d181ff2b23f3d837be7292e04376577a49cda016b05544947c03ab248b89d9",
+     "dest": "lidar/milford_oakland2016/ept-data/7-8-38-63.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/USGS_LPC_MI_31Co_Oakland_2016_LAS_2019/ept-data/7-8-38-63.laz"
+    },
+    {
+     "mac_path": "/Volumes/Drive/codex/lidar_dl/milford_oakland2016/ept-data/7-8-39-63.laz",
+     "size": 1267624,
+     "sha256": "e61a0bc8643595fdef12274974e1cb9c67de4866f724b1e8b0ac549bec4833c0",
+     "dest": "lidar/milford_oakland2016/ept-data/7-8-39-63.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/USGS_LPC_MI_31Co_Oakland_2016_LAS_2019/ept-data/7-8-39-63.laz"
+    },
+    {
+     "mac_path": "/Volumes/Drive/codex/lidar_dl/milford_oakland2016/ept-data/8-13-74-127.laz",
+     "size": 302533,
+     "sha256": "600afa51d77ba7bbdf5f7939e5d4d8943b92c91b618cbbf9eca66ec807bf5a15",
+     "dest": "lidar/milford_oakland2016/ept-data/8-13-74-127.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/USGS_LPC_MI_31Co_Oakland_2016_LAS_2019/ept-data/8-13-74-127.laz"
+    },
+    {
+     "mac_path": "/Volumes/Drive/codex/lidar_dl/milford_oakland2016/ept-data/8-13-75-127.laz",
+     "size": 454152,
+     "sha256": "0488869f07e2ecb29e914eded57a5978df1fa3a6833b9a97f1d33abf7e582bef",
+     "dest": "lidar/milford_oakland2016/ept-data/8-13-75-127.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/USGS_LPC_MI_31Co_Oakland_2016_LAS_2019/ept-data/8-13-75-127.laz"
+    },
+    {
+     "mac_path": "/Volumes/Drive/codex/lidar_dl/milford_oakland2016/ept-data/8-13-76-127.laz",
+     "size": 387407,
+     "sha256": "bce27d31709f5f596719ba7bdb59e22f6c32783dc49f1dce00bdebefb15e1123",
+     "dest": "lidar/milford_oakland2016/ept-data/8-13-76-127.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/USGS_LPC_MI_31Co_Oakland_2016_LAS_2019/ept-data/8-13-76-127.laz"
+    },
+    {
+     "mac_path": "/Volumes/Drive/codex/lidar_dl/milford_oakland2016/ept-data/8-13-77-127.laz",
+     "size": 148801,
+     "sha256": "07d1f20b5aef8f55a94b001c6c23b566354ead963e1f68a23170518849333e3d",
+     "dest": "lidar/milford_oakland2016/ept-data/8-13-77-127.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/USGS_LPC_MI_31Co_Oakland_2016_LAS_2019/ept-data/8-13-77-127.laz"
+    },
+    {
+     "mac_path": "/Volumes/Drive/codex/lidar_dl/milford_oakland2016/ept-data/8-13-78-127.laz",
+     "size": 184013,
+     "sha256": "3dbc0f0d53c79f0d4edbd44890ff4a4eca8505dc87715a3cebd88a85cdc3b74c",
+     "dest": "lidar/milford_oakland2016/ept-data/8-13-78-127.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/USGS_LPC_MI_31Co_Oakland_2016_LAS_2019/ept-data/8-13-78-127.laz"
+    },
+    {
+     "mac_path": "/Volumes/Drive/codex/lidar_dl/milford_oakland2016/ept-data/8-13-79-127.laz",
+     "size": 168796,
+     "sha256": "33b3c5f7d1c8b38ffa239a65a5062008bec563049bda6bf3b24d8c63d9de1dd6",
+     "dest": "lidar/milford_oakland2016/ept-data/8-13-79-127.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/USGS_LPC_MI_31Co_Oakland_2016_LAS_2019/ept-data/8-13-79-127.laz"
+    },
+    {
+     "mac_path": "/Volumes/Drive/codex/lidar_dl/milford_oakland2016/ept-data/8-14-73-127.laz",
+     "size": 406112,
+     "sha256": "99c32c3661499840e0ea8d1f6180a048d65422da56194b6a085ae675348ae28b",
+     "dest": "lidar/milford_oakland2016/ept-data/8-14-73-127.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/USGS_LPC_MI_31Co_Oakland_2016_LAS_2019/ept-data/8-14-73-127.laz"
+    },
+    {
+     "mac_path": "/Volumes/Drive/codex/lidar_dl/milford_oakland2016/ept-data/8-14-74-127.laz",
+     "size": 317995,
+     "sha256": "5463fe4cbe108b403a7e70f8d0ce30a7754a58c119451966dbf42c9cc1db29ec",
+     "dest": "lidar/milford_oakland2016/ept-data/8-14-74-127.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/USGS_LPC_MI_31Co_Oakland_2016_LAS_2019/ept-data/8-14-74-127.laz"
+    },
+    {
+     "mac_path": "/Volumes/Drive/codex/lidar_dl/milford_oakland2016/ept-data/8-14-75-127.laz",
+     "size": 747441,
+     "sha256": "cd0fc0e42713466ed4ed3036b7b2d8180e753be5abcd3f7e930e79c6daa0adf3",
+     "dest": "lidar/milford_oakland2016/ept-data/8-14-75-127.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/USGS_LPC_MI_31Co_Oakland_2016_LAS_2019/ept-data/8-14-75-127.laz"
+    },
+    {
+     "mac_path": "/Volumes/Drive/codex/lidar_dl/milford_oakland2016/ept-data/8-14-76-127.laz",
+     "size": 478070,
+     "sha256": "42a9677166bec8b6f87101193867fd2874eb0964dcd39a80e7b35dc361bbbe40",
+     "dest": "lidar/milford_oakland2016/ept-data/8-14-76-127.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/USGS_LPC_MI_31Co_Oakland_2016_LAS_2019/ept-data/8-14-76-127.laz"
+    },
+    {
+     "mac_path": "/Volumes/Drive/codex/lidar_dl/milford_oakland2016/ept-data/8-14-77-127.laz",
+     "size": 375426,
+     "sha256": "641b8f1a48767f37da56f3c2053fbc8078fd209639aa9113b008c2673b7cf0d9",
+     "dest": "lidar/milford_oakland2016/ept-data/8-14-77-127.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/USGS_LPC_MI_31Co_Oakland_2016_LAS_2019/ept-data/8-14-77-127.laz"
+    },
+    {
+     "mac_path": "/Volumes/Drive/codex/lidar_dl/milford_oakland2016/ept-data/8-14-78-127.laz",
+     "size": 309740,
+     "sha256": "f44f5c81a451aa8896e1aab563d3ec839dbae184e4e30b049cd22066f5568303",
+     "dest": "lidar/milford_oakland2016/ept-data/8-14-78-127.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/USGS_LPC_MI_31Co_Oakland_2016_LAS_2019/ept-data/8-14-78-127.laz"
+    },
+    {
+     "mac_path": "/Volumes/Drive/codex/lidar_dl/milford_oakland2016/ept-data/8-14-79-127.laz",
+     "size": 321898,
+     "sha256": "e380e7e9c9ad55527ebd130a18b77ae2591a9ef80c8c8b119588f0f56f16588d",
+     "dest": "lidar/milford_oakland2016/ept-data/8-14-79-127.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/USGS_LPC_MI_31Co_Oakland_2016_LAS_2019/ept-data/8-14-79-127.laz"
+    },
+    {
+     "mac_path": "/Volumes/Drive/codex/lidar_dl/milford_oakland2016/ept-data/8-15-73-127.laz",
+     "size": 515725,
+     "sha256": "a501c0ab8bd5ee328bbd6e5de4e9118479b5510712a52c7b156820c4bb89c26b",
+     "dest": "lidar/milford_oakland2016/ept-data/8-15-73-127.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/USGS_LPC_MI_31Co_Oakland_2016_LAS_2019/ept-data/8-15-73-127.laz"
+    },
+    {
+     "mac_path": "/Volumes/Drive/codex/lidar_dl/milford_oakland2016/ept-data/8-15-74-127.laz",
+     "size": 390403,
+     "sha256": "205dc859fd68a5c920f6cfd82a6c5d0ef8a60c0e22e02b314d62ddf0b82cf370",
+     "dest": "lidar/milford_oakland2016/ept-data/8-15-74-127.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/USGS_LPC_MI_31Co_Oakland_2016_LAS_2019/ept-data/8-15-74-127.laz"
+    },
+    {
+     "mac_path": "/Volumes/Drive/codex/lidar_dl/milford_oakland2016/ept-data/8-15-76-127.laz",
+     "size": 734172,
+     "sha256": "61ca81d01ac541f187de539b6abbaa0b4f659bf9e5f5608a3dafaf895994492f",
+     "dest": "lidar/milford_oakland2016/ept-data/8-15-76-127.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/USGS_LPC_MI_31Co_Oakland_2016_LAS_2019/ept-data/8-15-76-127.laz"
+    },
+    {
+     "mac_path": "/Volumes/Drive/codex/lidar_dl/milford_oakland2016/ept-data/8-15-77-127.laz",
+     "size": 434725,
+     "sha256": "6251816a3208ebb2b603f0f22580be01110363190390a5d441bca35c29952782",
+     "dest": "lidar/milford_oakland2016/ept-data/8-15-77-127.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/USGS_LPC_MI_31Co_Oakland_2016_LAS_2019/ept-data/8-15-77-127.laz"
+    },
+    {
+     "mac_path": "/Volumes/Drive/codex/lidar_dl/milford_oakland2016/ept-data/8-15-78-127.laz",
+     "size": 473350,
+     "sha256": "ccfb462c79785a511153e7be8204b5c8dace3bef0d69f265c97d293a3711fa5b",
+     "dest": "lidar/milford_oakland2016/ept-data/8-15-78-127.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/USGS_LPC_MI_31Co_Oakland_2016_LAS_2019/ept-data/8-15-78-127.laz"
+    },
+    {
+     "mac_path": "/Volumes/Drive/codex/lidar_dl/milford_oakland2016/ept-data/8-15-79-127.laz",
+     "size": 374379,
+     "sha256": "d26db18a9495c7b861e8d5486f86ec83102ba768325091539b034fd7fea80f75",
+     "dest": "lidar/milford_oakland2016/ept-data/8-15-79-127.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/USGS_LPC_MI_31Co_Oakland_2016_LAS_2019/ept-data/8-15-79-127.laz"
+    },
+    {
+     "mac_path": "/Volumes/Drive/codex/lidar_dl/milford_oakland2016/ept-data/8-16-74-127.laz",
+     "size": 490284,
+     "sha256": "ef33760cbe202686be47f5129e281ba7dd29beb1b650eaa58af3bc2f66aee6b9",
+     "dest": "lidar/milford_oakland2016/ept-data/8-16-74-127.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/USGS_LPC_MI_31Co_Oakland_2016_LAS_2019/ept-data/8-16-74-127.laz"
+    },
+    {
+     "mac_path": "/Volumes/Drive/codex/lidar_dl/milford_oakland2016/ept-data/8-16-75-127.laz",
+     "size": 466707,
+     "sha256": "a185e23ba5b705c2369d40c6a4df66aa5055934c3bae25d02395d4b9108bbb27",
+     "dest": "lidar/milford_oakland2016/ept-data/8-16-75-127.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/USGS_LPC_MI_31Co_Oakland_2016_LAS_2019/ept-data/8-16-75-127.laz"
+    },
+    {
+     "mac_path": "/Volumes/Drive/codex/lidar_dl/milford_oakland2016/ept-data/8-16-76-127.laz",
+     "size": 392200,
+     "sha256": "ecb9b489b952ebcde9f53b619f8007bbdae7e973a8660cef25b5bd70830fdf89",
+     "dest": "lidar/milford_oakland2016/ept-data/8-16-76-127.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/USGS_LPC_MI_31Co_Oakland_2016_LAS_2019/ept-data/8-16-76-127.laz"
+    },
+    {
+     "mac_path": "/Volumes/Drive/codex/lidar_dl/milford_oakland2016/ept-data/8-16-77-127.laz",
+     "size": 517143,
+     "sha256": "f4b63640518b7a618ebeee355c9093f1a9206588afadc93a487be07a5b4039e0",
+     "dest": "lidar/milford_oakland2016/ept-data/8-16-77-127.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/USGS_LPC_MI_31Co_Oakland_2016_LAS_2019/ept-data/8-16-77-127.laz"
+    },
+    {
+     "mac_path": "/Volumes/Drive/codex/lidar_dl/milford_oakland2016/ept-data/8-16-78-127.laz",
+     "size": 730803,
+     "sha256": "d98ec384c5c6ff0345312e51e306fb42a58005a0743187ac93a5b196573a1517",
+     "dest": "lidar/milford_oakland2016/ept-data/8-16-78-127.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/USGS_LPC_MI_31Co_Oakland_2016_LAS_2019/ept-data/8-16-78-127.laz"
+    },
+    {
+     "mac_path": "/Volumes/Drive/codex/lidar_dl/milford_oakland2016/ept-data/8-16-79-127.laz",
+     "size": 640341,
+     "sha256": "0739bfd96d70d61f63502dcc7dd4d7941b9f24c5d230a382d1c7febaab9ca461",
+     "dest": "lidar/milford_oakland2016/ept-data/8-16-79-127.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/USGS_LPC_MI_31Co_Oakland_2016_LAS_2019/ept-data/8-16-79-127.laz"
+    },
+    {
+     "mac_path": "/Volumes/Drive/codex/lidar_dl/milford_oakland2016/ept-data/8-17-74-127.laz",
+     "size": 395718,
+     "sha256": "13fe2815fde49a0b9c80242f881a4484a4c9461598fa6d9563fdc91fce71febc",
+     "dest": "lidar/milford_oakland2016/ept-data/8-17-74-127.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/USGS_LPC_MI_31Co_Oakland_2016_LAS_2019/ept-data/8-17-74-127.laz"
+    },
+    {
+     "mac_path": "/Volumes/Drive/codex/lidar_dl/milford_oakland2016/ept-data/8-17-75-127.laz",
+     "size": 571601,
+     "sha256": "4ee53a50d4cefd249a073c6df43d14663092c81662938ce88fd50102bd4cc73f",
+     "dest": "lidar/milford_oakland2016/ept-data/8-17-75-127.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/USGS_LPC_MI_31Co_Oakland_2016_LAS_2019/ept-data/8-17-75-127.laz"
+    },
+    {
+     "mac_path": "/Volumes/Drive/codex/lidar_dl/milford_oakland2016/ept-data/8-17-76-127.laz",
+     "size": 914791,
+     "sha256": "a2e8cd59175e4d0b58ed5e5a4f0e502a9d2569f782daf3ab8223dd0b091dbc47",
+     "dest": "lidar/milford_oakland2016/ept-data/8-17-76-127.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/USGS_LPC_MI_31Co_Oakland_2016_LAS_2019/ept-data/8-17-76-127.laz"
+    },
+    {
+     "mac_path": "/Volumes/Drive/codex/lidar_dl/milford_oakland2016/ept-data/8-17-77-126.laz",
+     "size": 243257,
+     "sha256": "779d3f4266dde1f16a8c4b376ceaeda6eda67db10472df694c42671bcb07b927",
+     "dest": "lidar/milford_oakland2016/ept-data/8-17-77-126.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/USGS_LPC_MI_31Co_Oakland_2016_LAS_2019/ept-data/8-17-77-126.laz"
+    },
+    {
+     "mac_path": "/Volumes/Drive/codex/lidar_dl/milford_oakland2016/ept-data/8-17-77-127.laz",
+     "size": 353008,
+     "sha256": "671e0f1dcfc22a2d07483ce32bf429fc792646b7eb0fe4e48b97523a594d3249",
+     "dest": "lidar/milford_oakland2016/ept-data/8-17-77-127.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/USGS_LPC_MI_31Co_Oakland_2016_LAS_2019/ept-data/8-17-77-127.laz"
+    },
+    {
+     "mac_path": "/Volumes/Drive/codex/lidar_dl/milford_oakland2016/ept-data/8-17-78-126.laz",
+     "size": 91773,
+     "sha256": "cc256712ec1ed584fb556113635af523c90c21714e34c710e1c00e52a4912f1e",
+     "dest": "lidar/milford_oakland2016/ept-data/8-17-78-126.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/USGS_LPC_MI_31Co_Oakland_2016_LAS_2019/ept-data/8-17-78-126.laz"
+    },
+    {
+     "mac_path": "/Volumes/Drive/codex/lidar_dl/milford_oakland2016/ept-data/8-17-78-127.laz",
+     "size": 496092,
+     "sha256": "8fbb2e0fc95fe84380c0112fc12032d21d76e7ba1b5c06e9d38184414700e6b6",
+     "dest": "lidar/milford_oakland2016/ept-data/8-17-78-127.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/USGS_LPC_MI_31Co_Oakland_2016_LAS_2019/ept-data/8-17-78-127.laz"
+    },
+    {
+     "mac_path": "/Volumes/Drive/codex/lidar_dl/milford_oakland2016/ept-data/9-26-151-254.laz",
+     "size": 120404,
+     "sha256": "a4d0b6b76ee488245482e1896b51f878abf217669c95cb5605ef15267bf1ac67",
+     "dest": "lidar/milford_oakland2016/ept-data/9-26-151-254.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/USGS_LPC_MI_31Co_Oakland_2016_LAS_2019/ept-data/9-26-151-254.laz"
+    },
+    {
+     "mac_path": "/Volumes/Drive/codex/lidar_dl/milford_oakland2016/ept-data/9-26-152-254.laz",
+     "size": 123614,
+     "sha256": "b67b9a6b3fc3170e2507abdfd7885f41aaaa9136e776504f43e967a4a769bb34",
+     "dest": "lidar/milford_oakland2016/ept-data/9-26-152-254.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/USGS_LPC_MI_31Co_Oakland_2016_LAS_2019/ept-data/9-26-152-254.laz"
+    },
+    {
+     "mac_path": "/Volumes/Drive/codex/lidar_dl/milford_oakland2016/ept-data/9-27-151-254.laz",
+     "size": 165925,
+     "sha256": "05097f76acd57d119da569d724d9a9513063e72da6d3c627b4f254e5dd3f3f5e",
+     "dest": "lidar/milford_oakland2016/ept-data/9-27-151-254.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/USGS_LPC_MI_31Co_Oakland_2016_LAS_2019/ept-data/9-27-151-254.laz"
+    },
+    {
+     "mac_path": "/Volumes/Drive/codex/lidar_dl/milford_oakland2016/ept-data/9-27-152-254.laz",
+     "size": 120787,
+     "sha256": "ca85de8ad70e3210df59b8a5913de3efa723b0fada832a43093088db065c94f0",
+     "dest": "lidar/milford_oakland2016/ept-data/9-27-152-254.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/USGS_LPC_MI_31Co_Oakland_2016_LAS_2019/ept-data/9-27-152-254.laz"
+    },
+    {
+     "mac_path": "/Volumes/Drive/codex/lidar_dl/milford_oakland2016/ept-data/9-28-150-254.laz",
+     "size": 116187,
+     "sha256": "fa87ef23e262ad728fe3c6f63d4b97f452106d0c448f71dea3f2f6063d2965d5",
+     "dest": "lidar/milford_oakland2016/ept-data/9-28-150-254.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/USGS_LPC_MI_31Co_Oakland_2016_LAS_2019/ept-data/9-28-150-254.laz"
+    },
+    {
+     "mac_path": "/Volumes/Drive/codex/lidar_dl/milford_oakland2016/ept-data/9-28-152-254.laz",
+     "size": 119468,
+     "sha256": "8071bda9547f5c1eca4c3e0c52443a021a45fba42d2851d471583428f24d01fc",
+     "dest": "lidar/milford_oakland2016/ept-data/9-28-152-254.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/USGS_LPC_MI_31Co_Oakland_2016_LAS_2019/ept-data/9-28-152-254.laz"
+    },
+    {
+     "mac_path": "/Volumes/Drive/codex/lidar_dl/milford_oakland2016/ept-data/9-30-153-254.laz",
+     "size": 184478,
+     "sha256": "fff3ca463f3c0f7fac63ef8df8cad169dc18ff1bd31499ad413ed65c610b1b78",
+     "dest": "lidar/milford_oakland2016/ept-data/9-30-153-254.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/USGS_LPC_MI_31Co_Oakland_2016_LAS_2019/ept-data/9-30-153-254.laz"
+    },
+    {
+     "mac_path": "/Volumes/Drive/codex/lidar_dl/milford_oakland2016/ept-data/9-31-153-254.laz",
+     "size": 173855,
+     "sha256": "632ed2473cf2174eb65c369de51eda14189856787772b943a5f705e1c1104087",
+     "dest": "lidar/milford_oakland2016/ept-data/9-31-153-254.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/USGS_LPC_MI_31Co_Oakland_2016_LAS_2019/ept-data/9-31-153-254.laz"
+    },
+    {
+     "mac_path": "/Volumes/Drive/codex/lidar_dl/milford_oakland2016/ept-data/9-32-153-254.laz",
+     "size": 160014,
+     "sha256": "f17c79b4827b09b705548de20ae690cfb95fe1d32fd369b0df247a13e3437133",
+     "dest": "lidar/milford_oakland2016/ept-data/9-32-153-254.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/USGS_LPC_MI_31Co_Oakland_2016_LAS_2019/ept-data/9-32-153-254.laz"
+    },
+    {
+     "mac_path": "/Volumes/Drive/codex/lidar_dl/milford_oakland2016/ept-data/9-33-150-254.laz",
+     "size": 245993,
+     "sha256": "7c83287ea5a1fdff799b017613a61f90ef3fcb0a291ee2165eda7deb602d4713",
+     "dest": "lidar/milford_oakland2016/ept-data/9-33-150-254.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/USGS_LPC_MI_31Co_Oakland_2016_LAS_2019/ept-data/9-33-150-254.laz"
+    },
+    {
+     "mac_path": "/Volumes/Drive/codex/lidar_dl/milford_oakland2016/ept-data/9-33-151-254.laz",
+     "size": 188930,
+     "sha256": "bcb5ac43c18949ad21a7a2f4d847d97a993da2144f469f172b26fa39267da1c3",
+     "dest": "lidar/milford_oakland2016/ept-data/9-33-151-254.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/USGS_LPC_MI_31Co_Oakland_2016_LAS_2019/ept-data/9-33-151-254.laz"
+    },
+    {
+     "mac_path": "/Volumes/Drive/codex/lidar_dl/milford_oakland2016/ept-data/9-33-152-254.laz",
+     "size": 160529,
+     "sha256": "cff21da8ab212fc1f0a451bc670720dcc6e2b958662eff5f4a3b5e3989f53bb1",
+     "dest": "lidar/milford_oakland2016/ept-data/9-33-152-254.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/USGS_LPC_MI_31Co_Oakland_2016_LAS_2019/ept-data/9-33-152-254.laz"
+    },
+    {
+     "mac_path": "/Volumes/Drive/codex/lidar_dl/milford_oakland2016/ept-data/9-33-153-254.laz",
+     "size": 147994,
+     "sha256": "61d8c7844a8a0e6a4ff23fc1d5a0b8b829939262387247c237acbda8c55f50b7",
+     "dest": "lidar/milford_oakland2016/ept-data/9-33-153-254.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/USGS_LPC_MI_31Co_Oakland_2016_LAS_2019/ept-data/9-33-153-254.laz"
+    },
+    {
+     "mac_path": "/Volumes/Drive/codex/lidar_dl/milford_oakland2016/ept-data/9-34-150-254.laz",
+     "size": 206209,
+     "sha256": "3594e6e6db78d72f21e9baaa900eaa058d5c45a15e33a4468e50f21339b01e78",
+     "dest": "lidar/milford_oakland2016/ept-data/9-34-150-254.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/USGS_LPC_MI_31Co_Oakland_2016_LAS_2019/ept-data/9-34-150-254.laz"
+    },
+    {
+     "mac_path": "/Volumes/Drive/codex/lidar_dl/milford_oakland2016/ept-data/9-34-151-254.laz",
+     "size": 169256,
+     "sha256": "6f29894f3da0795f2a40323459d0c0d504d480aa8afb1cd98ba9781915045c13",
+     "dest": "lidar/milford_oakland2016/ept-data/9-34-151-254.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/USGS_LPC_MI_31Co_Oakland_2016_LAS_2019/ept-data/9-34-151-254.laz"
+    },
+    {
+     "mac_path": "/Volumes/Drive/codex/lidar_dl/milford_oakland2016/ept-data/9-34-152-254.laz",
+     "size": 191643,
+     "sha256": "552c17da1af651090ab9244c9e83e45028276cc84ad7aa8df8d2426d8cad1c88",
+     "dest": "lidar/milford_oakland2016/ept-data/9-34-152-254.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/USGS_LPC_MI_31Co_Oakland_2016_LAS_2019/ept-data/9-34-152-254.laz"
+    },
+    {
+     "mac_path": "/Volumes/Drive/codex/lidar_dl/milford_oakland2016/ept-data/9-34-153-254.laz",
+     "size": 194080,
+     "sha256": "4fb6ae4ca7bd9546ee82a691e0108454151f5535b7a282aea9e832d51f9fa48a",
+     "dest": "lidar/milford_oakland2016/ept-data/9-34-153-254.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/USGS_LPC_MI_31Co_Oakland_2016_LAS_2019/ept-data/9-34-153-254.laz"
+    },
+    {
+     "mac_path": "/Volumes/Drive/codex/lidar_dl/milford_oakland2016/ept-hierarchy/0-0-0-0.json",
+     "size": 26426,
+     "sha256": "7f31f7185d391bfc19e2960e619d97a0403b3b0a69eb5e95a808273232f636fc",
+     "dest": "lidar/milford_oakland2016/ept-hierarchy/0-0-0-0.json",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/USGS_LPC_MI_31Co_Oakland_2016_LAS_2019/ept-hierarchy/0-0-0-0.json"
+    },
+    {
+     "mac_path": "/Volumes/Drive/codex/lidar_dl/milford_oakland2016/ept-hierarchy/5-0-8-15.json",
+     "size": 130,
+     "sha256": "f7999ffc4efd9538fe5240c4559b6a9470c5fc3869f6f1e921366a42aaaf9f88",
+     "dest": "lidar/milford_oakland2016/ept-hierarchy/5-0-8-15.json",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/USGS_LPC_MI_31Co_Oakland_2016_LAS_2019/ept-hierarchy/5-0-8-15.json"
+    },
+    {
+     "mac_path": "/Volumes/Drive/codex/lidar_dl/milford_oakland2016/ept-hierarchy/5-0-9-15.json",
+     "size": 344,
+     "sha256": "95503eecb9d68205458b71047466268738b5c026476cf57a8539b753239fa021",
+     "dest": "lidar/milford_oakland2016/ept-hierarchy/5-0-9-15.json",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/USGS_LPC_MI_31Co_Oakland_2016_LAS_2019/ept-hierarchy/5-0-9-15.json"
+    },
+    {
+     "mac_path": "/Volumes/Drive/codex/lidar_dl/milford_oakland2016/ept-hierarchy/5-1-8-15.json",
+     "size": 2710,
+     "sha256": "3480b392f73ad1e6e0583105b719a1bbd04bc6a07e13080bddf4fa255ea634c3",
+     "dest": "lidar/milford_oakland2016/ept-hierarchy/5-1-8-15.json",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/USGS_LPC_MI_31Co_Oakland_2016_LAS_2019/ept-hierarchy/5-1-8-15.json"
+    },
+    {
+     "mac_path": "/Volumes/Drive/codex/lidar_dl/milford_oakland2016/ept-hierarchy/5-1-9-15.json",
+     "size": 2212,
+     "sha256": "5795944f6f4a4b7c58bbfb42bb89e223ffa9eba5aaeea91199b76f6a8c59a98e",
+     "dest": "lidar/milford_oakland2016/ept-hierarchy/5-1-9-15.json",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/USGS_LPC_MI_31Co_Oakland_2016_LAS_2019/ept-hierarchy/5-1-9-15.json"
+    },
+    {
+     "mac_path": "/Volumes/Drive/codex/lidar_dl/milford_oakland2016/ept-hierarchy/5-2-8-15.json",
+     "size": 3487,
+     "sha256": "124cac6ad58c4c78aebe12e2427e668c073825fc2cc611de3d81983f3373b619",
+     "dest": "lidar/milford_oakland2016/ept-hierarchy/5-2-8-15.json",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/USGS_LPC_MI_31Co_Oakland_2016_LAS_2019/ept-hierarchy/5-2-8-15.json"
+    },
+    {
+     "mac_path": "/Volumes/Drive/codex/lidar_dl/milford_oakland2016/ept-hierarchy/5-2-9-15.json",
+     "size": 3015,
+     "sha256": "c0dbb41ff0f1e0308aa81c703c18334bee47b48b95097f6ffc007a20da50a3e4",
+     "dest": "lidar/milford_oakland2016/ept-hierarchy/5-2-9-15.json",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/USGS_LPC_MI_31Co_Oakland_2016_LAS_2019/ept-hierarchy/5-2-9-15.json"
+    },
+    {
+     "mac_path": "/Volumes/Drive/codex/lidar_dl/milford_oakland2016/ept-hierarchy/5-3-8-15.json",
+     "size": 2759,
+     "sha256": "3d4f1c9c78f9f07fc27e932da06da17cbc55d3f58b7fe1c40a6924fa03980690",
+     "dest": "lidar/milford_oakland2016/ept-hierarchy/5-3-8-15.json",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/USGS_LPC_MI_31Co_Oakland_2016_LAS_2019/ept-hierarchy/5-3-8-15.json"
+    },
+    {
+     "mac_path": "/Volumes/Drive/codex/lidar_dl/milford_oakland2016/ept-hierarchy/5-3-9-15.json",
+     "size": 2707,
+     "sha256": "13e2245f3d64d53095d88cebdbc4cee80fda8f9a373881c9fc2d409eac69fbdb",
+     "dest": "lidar/milford_oakland2016/ept-hierarchy/5-3-9-15.json",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/USGS_LPC_MI_31Co_Oakland_2016_LAS_2019/ept-hierarchy/5-3-9-15.json"
+    }
+   ],
+   "total_bytes": 39651300,
+   "n_files": 81,
+   "_rb": 39651300
+  },
+  {
+   "id": "lidar_livingston2018",
+   "title": "USGS 3DEP EPT USGS_LPC_MI_31Co_Livingston_2018_LAS_2019: 5 nodes within 25 m of G1-G3/T2/T3 (Milford furniture)",
+   "track": "milford-road-course-lm",
+   "ledger": [
+    "0082 pass 4 (line ~1265: 'a, the Livingston 2018 flight: no point near the lap')"
+   ],
+   "approved_by": "Kevin 2026-11-09 (downloads need his yes; this one was asked and approved)",
+   "kind": "ept_nodes",
+   "method": "HTTP GET each url (S3, no auth)",
+   "params": {
+    "buffer_m": 25.0,
+    "tool": "scripts/ept_plan_2018.py",
+    "nodes": 5,
+    "used_by": "strip check only; 'no point near the lap'",
+    "ept_json": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/USGS_LPC_MI_31Co_Livingston_2018_LAS_2019/ept.json",
+    "plan_file_mac": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/a_livingston2018/plan.json",
+    "plan_sha256": "99f760f312e4f310d2bc3b9084b09fd4e79e55b89605289efe1933e45e762531",
+    "plan_note": "derived node plan (box + node keys, points, bytes); files list is authoritative"
+   },
+   "byte_exact": true,
+   "compare": "sha256 and size per file",
+   "used_by": "strip check only; 'no point near the lap'",
+   "files": [
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/a_livingston2018/ept.json",
+     "size": 2591,
+     "sha256": "8cfb8f134f07988c365eae08494f010acb9c2e3826324a26fb627881d822ce0e",
+     "dest": "lidar/livingston2018/ept.json",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/USGS_LPC_MI_31Co_Livingston_2018_LAS_2019/ept.json"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/a_livingston2018/ept-data/0-0-0-0.laz",
+     "size": 246280,
+     "sha256": "13c6f4a2f810340a52d2de65c5740e0777f9608ed0974e3dc321958917f23657",
+     "dest": "lidar/livingston2018/ept-data/0-0-0-0.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/USGS_LPC_MI_31Co_Livingston_2018_LAS_2019/ept-data/0-0-0-0.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/a_livingston2018/ept-data/1-1-0-0.laz",
+     "size": 182126,
+     "sha256": "3f4ea9f2f30c1fad27d9b0c8456f426da357e38faad7fdcc349eb53af24f5fad",
+     "dest": "lidar/livingston2018/ept-data/1-1-0-0.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/USGS_LPC_MI_31Co_Livingston_2018_LAS_2019/ept-data/1-1-0-0.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/a_livingston2018/ept-data/2-3-1-1.laz",
+     "size": 207793,
+     "sha256": "91b61c1aba1cdc1fc9d00fd62ada2065504cf3831dce6ef5f481674eb0292f9c",
+     "dest": "lidar/livingston2018/ept-data/2-3-1-1.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/USGS_LPC_MI_31Co_Livingston_2018_LAS_2019/ept-data/2-3-1-1.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/a_livingston2018/ept-data/3-7-3-3.laz",
+     "size": 157478,
+     "sha256": "b4adbaefc4804e13e100011716db071087cf2b877d77c5958f7d58ca3c7563bf",
+     "dest": "lidar/livingston2018/ept-data/3-7-3-3.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/USGS_LPC_MI_31Co_Livingston_2018_LAS_2019/ept-data/3-7-3-3.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/a_livingston2018/ept-data/4-15-6-7.laz",
+     "size": 134476,
+     "sha256": "7b1b7ffc6f8eb21cdcd282128134c26dfcbb4241d629f21f92191f6fe27aab1a",
+     "dest": "lidar/livingston2018/ept-data/4-15-6-7.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/USGS_LPC_MI_31Co_Livingston_2018_LAS_2019/ept-data/4-15-6-7.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/a_livingston2018/ept-hierarchy/0-0-0-0.json",
+     "size": 104575,
+     "sha256": "fba297a42e18c80b66e1d045ba2ce37c464be3aacb740dbe9907eb24942e2bc1",
+     "dest": "lidar/livingston2018/ept-hierarchy/0-0-0-0.json",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/USGS_LPC_MI_31Co_Livingston_2018_LAS_2019/ept-hierarchy/0-0-0-0.json"
+    }
+   ],
+   "total_bytes": 1035319,
+   "location_on_mac": "system disk /private/tmp (scratchpad/sys/dl), NOT on /Volumes/Drive",
+   "n_files": 7,
+   "_rb": 1035319
+  },
+  {
+   "id": "lidar_co_eastern_b3_2018",
+   "title": "USGS 3DEP EPT CO_Eastern_B3_2018 (flown 2018-06-12..16): 108 nodes over High Plains' draws and west escarpment",
+   "track": "high-plains",
+   "ledger": [
+    "0089 'The lidar reads' / 'The downloads (Mac, 2026-11-09)'"
+   ],
+   "approved_by": "Kevin 2026-11-09 'Yes, both'",
+   "kind": "ept_nodes",
+   "method": "HTTP GET each url (S3, no auth)",
+   "params": {
+    "box_lonlat_W_S_E_N": [
+     -103.9065,
+     39.7327,
+     -103.8885,
+     39.7378
+    ],
+    "depths": "0-11, every node meeting the box",
+    "tools": "tracks/high-plains/source/vegetation/lidar/ept_plan.py, ept_extract.py",
+    "note": "ept-sources/list.json (5.5 MB) was fetched to date the flight and not used; skip it if bandwidth matters",
+    "used_by": "HP shrub/vegetation read (derived npz was made on the G10 and not kept)",
+    "ept_json": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept.json",
+    "plan_file_mac": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/plan.json",
+    "plan_sha256": "484cc47fd54c92f3428055bdb5dbdd00b45e001bd2c40fa21f8b283ce5cc3c84",
+    "plan_note": "derived node plan (box + node keys, points, bytes); files list is authoritative"
+   },
+   "byte_exact": true,
+   "compare": "sha256 and size per file",
+   "used_by": "HP shrub/vegetation read (derived npz was made on the G10 and not kept)",
+   "files": [
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-sources-list.json",
+     "size": 5542645,
+     "sha256": "0ccb5bdb4860a48f5226fd6c75634527fa1415a99b6e4858367bee53d1d32731",
+     "dest": "lidar/co_eastern_b3_2018/ept-sources/list.json",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-sources/list.json"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept.json",
+     "size": 2522,
+     "sha256": "44e08d8195033b14cdbe7545bcca8ca8c13f350cfd0374d95ade0571874ac5b1",
+     "dest": "lidar/co_eastern_b3_2018/ept.json",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept.json"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/0-0-0-0.laz",
+     "size": 180469,
+     "sha256": "36883720d0b906779d41e9ff1b53b47aebd16a3bb387b6942417817ebd9532b5",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/0-0-0-0.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/0-0-0-0.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/1-1-1-0.laz",
+     "size": 93768,
+     "sha256": "67e982792dc167a680f7de240acac4c14d06317e7ecf7be179ea1a5662f32a20",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/1-1-1-0.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/1-1-1-0.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/10-513-814-505.laz",
+     "size": 250934,
+     "sha256": "d40025b59d09039c7b6062f210c0dfbe1304a6c56965d51b827fd48417997cf7",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/10-513-814-505.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/10-513-814-505.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/10-513-815-505.laz",
+     "size": 236632,
+     "sha256": "a9a3dda02e790811e78aa158a73f1ac5950bf1c24d7b5d284a8081d9b8c419fb",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/10-513-815-505.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/10-513-815-505.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/10-513-816-505.laz",
+     "size": 103501,
+     "sha256": "ed032e1e57789dd8d9127a58a4ae4b30729eef5630fcefdd978db963032127a3",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/10-513-816-505.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/10-513-816-505.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/10-513-818-505.laz",
+     "size": 101550,
+     "sha256": "6e99ad1649bde048067657f4fac7619d21f1b15d3d11227fc69809b99cb1c516",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/10-513-818-505.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/10-513-818-505.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/10-514-814-505.laz",
+     "size": 222745,
+     "sha256": "0b711b0bd516868344ed2c53359c744b80bb31e469aa03c61e6bf0113f22f42f",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/10-514-814-505.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/10-514-814-505.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/10-514-815-505.laz",
+     "size": 212234,
+     "sha256": "b4e01befbe513a15589724704b1cd670fe828e78eb0a48d3b42188484f4e0c67",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/10-514-815-505.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/10-514-815-505.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/10-514-816-505.laz",
+     "size": 92645,
+     "sha256": "f45b9e1bd2853b354582cb852d2386d20703ea6889ff81930dd5cde0df2bf112",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/10-514-816-505.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/10-514-816-505.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/10-514-818-505.laz",
+     "size": 88901,
+     "sha256": "6a613ea2dd4e359067c45ec0678d255d873da8d57ef605107b7baf30d2ad2d5a",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/10-514-818-505.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/10-514-818-505.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/10-515-814-505.laz",
+     "size": 221761,
+     "sha256": "9315445d0085ddcfcc1eaefafcdefe89dc164c2e1aba94b64fc3e7ac91be22c4",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/10-515-814-505.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/10-515-814-505.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/10-515-815-505.laz",
+     "size": 198987,
+     "sha256": "533a6b398e1fbb6610dcfbf9e9f43e8dd04b7601e83a55cb4d3f65071d5a4417",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/10-515-815-505.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/10-515-815-505.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/10-515-816-505.laz",
+     "size": 103239,
+     "sha256": "8b5fbcf9122d3ebe1e850577de2e0c8f7e73b2e2153d6b292b50af6e76e355b7",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/10-515-816-505.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/10-515-816-505.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/10-516-814-505.laz",
+     "size": 226013,
+     "sha256": "c4e8d85d440485089b0137551d034618c520f3798293964b77b637ec0a9471b0",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/10-516-814-505.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/10-516-814-505.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/10-516-815-505.laz",
+     "size": 215917,
+     "sha256": "48f3c96855569494a68581849be7d03158952c3697e68afd5beede963184d50a",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/10-516-815-505.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/10-516-815-505.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/10-516-816-505.laz",
+     "size": 100286,
+     "sha256": "34b201a8d6714c632a1438a4cfe7cf38989064bf73d50eac0bb70afa42392130",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/10-516-816-505.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/10-516-816-505.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/10-516-818-505.laz",
+     "size": 103032,
+     "sha256": "e394221621d6984f25754cbc5655e70269ca384443889cc3aa6c62a1bb9c260f",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/10-516-818-505.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/10-516-818-505.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/10-517-814-505.laz",
+     "size": 231482,
+     "sha256": "ce97684b4ae4b9747c810e51efcc1a43096b71f7acb1c021f5a6707ab2cdf72a",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/10-517-814-505.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/10-517-814-505.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/10-517-815-505.laz",
+     "size": 216655,
+     "sha256": "e095078e9a12eff0762f22353d16e4f3e143efed7832dd87af61515412aef990",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/10-517-815-505.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/10-517-815-505.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/10-517-816-505.laz",
+     "size": 95303,
+     "sha256": "c949ee4ddfbd4714065216348790fef848d5a7a89cd64772c93bc642fb8ea06b",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/10-517-816-505.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/10-517-816-505.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/10-518-814-505.laz",
+     "size": 238982,
+     "sha256": "cd944c049b6a954c70d10e649242a867676e279ca273a8a24206d041e7c1b0a8",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/10-518-814-505.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/10-518-814-505.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/10-518-815-505.laz",
+     "size": 233388,
+     "sha256": "65b35f1524ba6b02d2079651cf173db3a790685016a225c0941f199dbf74adfe",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/10-518-815-505.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/10-518-815-505.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/10-518-816-505.laz",
+     "size": 102426,
+     "sha256": "6e639b1e3e07ea12e62db0317f69ee004c0468b4f135d262bcc4773cea3a6bdc",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/10-518-816-505.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/10-518-816-505.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/10-518-817-505.laz",
+     "size": 108513,
+     "sha256": "fe6a7944a6565e86249f3b2ca2144ab12fdfce9ab40b281328ffee2d686291b9",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/10-518-817-505.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/10-518-817-505.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/10-518-818-505.laz",
+     "size": 107728,
+     "sha256": "3900a0743a8541dedc9b9d7ae97839e1a488c44156ac48c1bfee057d05dbcef5",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/10-518-818-505.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/10-518-818-505.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/10-519-814-505.laz",
+     "size": 236236,
+     "sha256": "a912b0ce8645b1b40257cdccfd3a4231885913bb6fe1793c3431696ead84f4ee",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/10-519-814-505.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/10-519-814-505.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/10-519-815-505.laz",
+     "size": 216670,
+     "sha256": "16e2581c1ad971f27fcc5842b997a61472fe09c745229c51d7eb8f684a457562",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/10-519-815-505.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/10-519-815-505.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/10-519-816-505.laz",
+     "size": 104096,
+     "sha256": "5d94cf5634d9fcf636e20f28aea0920788708b31a4ce69a0f562c6496dac6a54",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/10-519-816-505.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/10-519-816-505.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/10-519-818-505.laz",
+     "size": 113812,
+     "sha256": "8658bd03ba6a74f1e5f7c21f3a435c92fa125128df5249ecbc69be5cdb0fa597",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/10-519-818-505.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/10-519-818-505.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/10-520-814-505.laz",
+     "size": 221639,
+     "sha256": "56eb4a3d0ea2bbcb6aba46ac69ed4a00fa9582c69694b1de5fc9231cbcbf9ca1",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/10-520-814-505.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/10-520-814-505.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/10-520-815-505.laz",
+     "size": 203791,
+     "sha256": "d48eb19b1a44f7219567b15f335ded9f767e3d5dc1a9de4257cd892dfdceb5ee",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/10-520-815-505.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/10-520-815-505.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/10-520-816-505.laz",
+     "size": 87059,
+     "sha256": "aeeb42aa35ce8b53c0d71e3e9ad2bd04be34cf7755d6ea6b9698e9fa2344fcde",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/10-520-816-505.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/10-520-816-505.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/10-521-814-505.laz",
+     "size": 223877,
+     "sha256": "738c9ce87436ab37bde3d7888cb7adb0022151f6eb0335d21557223a1a689a40",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/10-521-814-505.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/10-521-814-505.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/10-521-815-505.laz",
+     "size": 244348,
+     "sha256": "cf22bc629d6f357d933e8622e892898b5c80ecf84c208717bb54573305c43458",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/10-521-815-505.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/10-521-815-505.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/10-521-816-505.laz",
+     "size": 142288,
+     "sha256": "6fdddd4f89129f0ac84dd0a7cf3d07be743470a8858ceddc5717149728f4f253",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/10-521-816-505.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/10-521-816-505.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/10-521-817-505.laz",
+     "size": 142804,
+     "sha256": "e08771b3deeb7f2fdf7945539329043ddb8a60252130a8e7b3beb614de50e91c",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/10-521-817-505.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/10-521-817-505.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/10-521-818-505.laz",
+     "size": 141311,
+     "sha256": "8bed4b3725aec5279f051de25d6e0d967f89c4167581302fd149ab90709c1afb",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/10-521-818-505.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/10-521-818-505.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/10-522-814-505.laz",
+     "size": 221828,
+     "sha256": "c76ea773b848e8d12e22a3320049f7ff7affb27c2c89d9a761d8b4cd4829d2dc",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/10-522-814-505.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/10-522-814-505.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/10-522-815-505.laz",
+     "size": 223788,
+     "sha256": "14a051586ad94684819011c752fbe5a4757cec0762ac3378f83662bb1effa44d",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/10-522-815-505.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/10-522-815-505.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/10-522-816-505.laz",
+     "size": 115209,
+     "sha256": "22a2b98c9343b11cc758051c6cbb5709b6464304d9edf0bdcafa56b00a2bc7e2",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/10-522-816-505.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/10-522-816-505.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/10-522-817-505.laz",
+     "size": 109075,
+     "sha256": "ef58508732a227af261dfac5c66648bf93037da05bc0eddd4abbd0e3ad16de4d",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/10-522-817-505.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/10-522-817-505.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/10-522-818-505.laz",
+     "size": 100126,
+     "sha256": "5221670b37eed18942993875f1a6f18052025385c3e05c909012c35059ecedf2",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/10-522-818-505.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/10-522-818-505.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/10-523-814-505.laz",
+     "size": 244308,
+     "sha256": "9d0d925ebb7e39beca391112ca72e831f770af9b545cacb074fe7cdf3e31e6ba",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/10-523-814-505.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/10-523-814-505.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/10-523-815-505.laz",
+     "size": 221762,
+     "sha256": "099f5a56b3c6fe3d26a4dd250986b204347dd120b83ca4dcf55c096863b1600b",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/10-523-815-505.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/10-523-815-505.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/10-523-816-505.laz",
+     "size": 99504,
+     "sha256": "2a95c1a4468715cada1096b1ebb0c04fd4ebca34247d12cff7c62aaf400f3d2c",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/10-523-816-505.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/10-523-816-505.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/10-524-814-505.laz",
+     "size": 263118,
+     "sha256": "27bb10274057c2c060add5392002379745de39bc720f3469991a7f90695fb691",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/10-524-814-505.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/10-524-814-505.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/10-524-815-505.laz",
+     "size": 220712,
+     "sha256": "3c1bf3b6312288d932a7d644e33c40adce27567cbd5bb7309f6d80d2e4cbf0a7",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/10-524-815-505.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/10-524-815-505.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/10-524-816-505.laz",
+     "size": 114753,
+     "sha256": "3433e47347bdceb2bcf230125e9219d585f6850eec5aa8481d0b0e82bddc510f",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/10-524-816-505.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/10-524-816-505.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/10-524-817-505.laz",
+     "size": 127315,
+     "sha256": "fa31d6510a43140b8b51641992536513e7f5904037a805d3635a2929cc9f36cd",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/10-524-817-505.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/10-524-817-505.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/10-524-818-505.laz",
+     "size": 120763,
+     "sha256": "ba12f8e6dc95087eaeebf5ed01f16e6f30a27919733b0e28d53ae7a89b239b16",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/10-524-818-505.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/10-524-818-505.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/10-525-814-505.laz",
+     "size": 240960,
+     "sha256": "8179588dd0544360ba2c8ef06a8367ab8cc1611b08833842af49238e58548851",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/10-525-814-505.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/10-525-814-505.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/10-525-815-505.laz",
+     "size": 199626,
+     "sha256": "ed47f0aeefd0f25550e85de76668748d3b4bc9d2a2ed440420cf996c4b5f2b16",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/10-525-815-505.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/10-525-815-505.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/10-525-816-505.laz",
+     "size": 104043,
+     "sha256": "29f42fd862b654c97aa17cb15797f5bbaa70652f2c4cd6cd5645f4731d3b7b39",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/10-525-816-505.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/10-525-816-505.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/10-525-818-505.laz",
+     "size": 110711,
+     "sha256": "a7e11c4205158a5711125ea6d6a34d65199fae559eae93819f7a62b74dc5f1ff",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/10-525-818-505.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/10-525-818-505.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/11-1026-1631-1011.laz",
+     "size": 72224,
+     "sha256": "41a22a2206f8d8afba14c97ef636303b35422f12f4b81fdf6bed0ababa05164b",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/11-1026-1631-1011.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/11-1026-1631-1011.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/11-1028-1631-1011.laz",
+     "size": 73851,
+     "sha256": "d72fa5c747411d3d6a048b993ca7c50183f7e950123842bf59ac5469525b87e8",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/11-1028-1631-1011.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/11-1028-1631-1011.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/11-1030-1631-1011.laz",
+     "size": 81316,
+     "sha256": "35ca1ff376c5978e9d3ec5bd706d612e567a89053fbdfcbd8b96d7e74ff63602",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/11-1030-1631-1011.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/11-1030-1631-1011.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/11-1033-1631-1011.laz",
+     "size": 78353,
+     "sha256": "55f7bac82eb28e00afd90e1555b01fdc8e18283d048540d102fc10cec3774162",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/11-1033-1631-1011.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/11-1033-1631-1011.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/11-1034-1631-1011.laz",
+     "size": 73690,
+     "sha256": "6adca81cdc8fa40ff0c84ab617f8e18f195628233b62f66fa9f528bdf0f7b1a6",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/11-1034-1631-1011.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/11-1034-1631-1011.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/11-1037-1631-1011.laz",
+     "size": 76892,
+     "sha256": "a0d8c432ed03d246e27dcc17ea74406ebd0f84157499d74c1d95daf6c707c437",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/11-1037-1631-1011.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/11-1037-1631-1011.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/11-1038-1631-1011.laz",
+     "size": 72756,
+     "sha256": "126c4718a32105c63b99220ae4ed839708099b6514b7ac89cbe8c39b9b582f6c",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/11-1038-1631-1011.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/11-1038-1631-1011.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/11-1040-1631-1011.laz",
+     "size": 72475,
+     "sha256": "22c7664aa63f60b827691edfe331cba1f38a625f6038373c0c814d2e38ed0227",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/11-1040-1631-1011.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/11-1040-1631-1011.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/11-1042-1631-1011.laz",
+     "size": 75773,
+     "sha256": "8fc76ade422986056bea43737ebe98b83722c8c0a0f0a7a86367ff5ed91940c5",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/11-1042-1631-1011.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/11-1042-1631-1011.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/11-1043-1628-1011.laz",
+     "size": 77958,
+     "sha256": "8d16560e0557813120947f35957996e7aeccc71f5d8e853b5664c94bc1f13a1e",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/11-1043-1628-1011.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/11-1043-1628-1011.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/11-1044-1628-1011.laz",
+     "size": 79117,
+     "sha256": "fc7784ee680d535c6fcec22581ec1f7e886ef95537c1bfa32ab3a80015607569",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/11-1044-1628-1011.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/11-1044-1628-1011.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/11-1044-1631-1011.laz",
+     "size": 78612,
+     "sha256": "29551c6f8af38be7a96df432e3749c483f7c84c3c8b6b4563a2ab1b78da8b894",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/11-1044-1631-1011.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/11-1044-1631-1011.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/11-1046-1631-1011.laz",
+     "size": 79377,
+     "sha256": "172670e60c59bd5a6a52ba991e197e798c14fd31bf294206f5bb767b51f848cd",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/11-1046-1631-1011.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/11-1046-1631-1011.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/11-1049-1631-1011.laz",
+     "size": 72004,
+     "sha256": "72ba3cc452573a89d3b4c3d05a566228ba3bedc9cd248b5747455ce817d6011e",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/11-1049-1631-1011.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/11-1049-1631-1011.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/11-1050-1631-1011.laz",
+     "size": 75144,
+     "sha256": "16212dd06befd16000abb710fc72c0a83fa02e9d3c91599cc5ee27c8a454dad0",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/11-1050-1631-1011.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/11-1050-1631-1011.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/2-2-3-1.laz",
+     "size": 28055,
+     "sha256": "b01194b8f9ca057ce0fb69764cc6f1521fef9c72768bbc910e8ab38f06a19eb5",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/2-2-3-1.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/2-2-3-1.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/3-4-6-3.laz",
+     "size": 86737,
+     "sha256": "4f6de108811274df10a2014c79af9219c93829352fbf3f9f19639d04797f6f89",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/3-4-6-3.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/3-4-6-3.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/4-8-12-7.laz",
+     "size": 172105,
+     "sha256": "700a8f4d41a91bcd5da378979c7a951178d2dee955bea9b60b1fca3eff9dd503",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/4-8-12-7.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/4-8-12-7.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/5-16-25-15.laz",
+     "size": 139167,
+     "sha256": "e610ec4f882e3c7fddf2473dd5d6d2bc747543e32424bb1e786802db55083c13",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/5-16-25-15.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/5-16-25-15.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/6-32-50-31.laz",
+     "size": 192116,
+     "sha256": "33e0ac6902ebb5d1b82d256696faadfb159631990ff10e4ea30c303caaa5f52c",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/6-32-50-31.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/6-32-50-31.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/6-32-51-31.laz",
+     "size": 68752,
+     "sha256": "6d0494fc677ecc345ac30add24823739233929b8b014a9a1b15a52865ab16096",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/6-32-51-31.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/6-32-51-31.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/7-64-101-63.laz",
+     "size": 161192,
+     "sha256": "33938f21c7cb34bdf1ffbbb4737c94d19d00814b5e4b0f25659b47d4423e3bfd",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/7-64-101-63.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/7-64-101-63.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/7-64-102-63.laz",
+     "size": 107116,
+     "sha256": "86278b3fdb9206ea961047d41fb2414dc9b82c888c06995f88bfb28dc07b5a74",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/7-64-102-63.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/7-64-102-63.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/7-65-101-63.laz",
+     "size": 156013,
+     "sha256": "21cc3557da60defbece43ed8b8de1cb5b521f32d6aa841097fa61dae0c2bcd8d",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/7-65-101-63.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/7-65-101-63.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/7-65-102-63.laz",
+     "size": 115078,
+     "sha256": "c0c3e8dbb252a1cedcf1613794d025bc474de0c3922922acbefd063e8b2663e3",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/7-65-102-63.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/7-65-102-63.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/8-128-203-126.laz",
+     "size": 137577,
+     "sha256": "3f78872587c6e6809bc5236c6b8c05f6dd3bb19a02c300d831f5b4d9c7a6fdae",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/8-128-203-126.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/8-128-203-126.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/8-128-204-126.laz",
+     "size": 114618,
+     "sha256": "d42d5642fe10f2c5447af4e30a82dc33541e270127f0b2e94fd0beb81e67acd4",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/8-128-204-126.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/8-128-204-126.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/8-129-203-126.laz",
+     "size": 138418,
+     "sha256": "0fcafd2055b75039f1724d076de012017a66485c550d251c2459e5afc279a1dd",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/8-129-203-126.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/8-129-203-126.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/8-129-204-126.laz",
+     "size": 122613,
+     "sha256": "f6ba224ba57a82e5a0fcf061d1c5b67a8a7a3dfb6e3bbb4e0a68d493f601f4b3",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/8-129-204-126.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/8-129-204-126.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/8-130-203-126.laz",
+     "size": 132691,
+     "sha256": "9aef890b2072cef7e3d9a55b25186ac46f76748505274c5e48f3082ff54e798f",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/8-130-203-126.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/8-130-203-126.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/8-130-204-126.laz",
+     "size": 129977,
+     "sha256": "ba5d113ffbc9698ac328ff0d9ccbe2290966e0025708892c9ab95b85c5bc3c09",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/8-130-204-126.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/8-130-204-126.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/8-131-203-126.laz",
+     "size": 131169,
+     "sha256": "f83d1725110e85e0c28d1d4bff41f90d6e632ab8b1544084ca539f8f1d4f243b",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/8-131-203-126.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/8-131-203-126.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/8-131-204-126.laz",
+     "size": 122156,
+     "sha256": "6c234f18acfbe7c8eee406efde1715acd3c4ceb1620761f6d8ae8df75a3974a0",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/8-131-204-126.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/8-131-204-126.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/9-256-407-252.laz",
+     "size": 123369,
+     "sha256": "d1b0b9acd47e9c5f5b9216ca93de9548f3807daa1166c5f1be9992a90d8acd13",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/9-256-407-252.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/9-256-407-252.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/9-256-408-252.laz",
+     "size": 186135,
+     "sha256": "92c5cc7ebf14d1ddc90b409176e1918392dc12f33b40bb33b90f20b9ae21e82b",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/9-256-408-252.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/9-256-408-252.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/9-256-409-252.laz",
+     "size": 257276,
+     "sha256": "e8fc16a5cd83c4e26b0ee043c87d9322a8c7105af71c05b8334179ae1a081c63",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/9-256-409-252.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/9-256-409-252.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/9-257-407-252.laz",
+     "size": 122455,
+     "sha256": "1036b8245842f533af7192daa2ec0513da1bbba10d4f1543047af73c08e75fa7",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/9-257-407-252.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/9-257-407-252.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/9-257-408-252.laz",
+     "size": 234874,
+     "sha256": "c2b1b2800ba662218d591a13291b6616a32a41bcfd7505ce5ea4f5e1cbcb85de",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/9-257-408-252.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/9-257-408-252.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/9-257-409-252.laz",
+     "size": 213365,
+     "sha256": "7770b002ca7734ba0e886c780721364082ab0e03c6a65eea3280d2626219bd64",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/9-257-409-252.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/9-257-409-252.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/9-258-407-252.laz",
+     "size": 127317,
+     "sha256": "3e7ba06a8e79414e3508c355c70c4c1c75be18fb06c7f93714a2ffbead88b1f2",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/9-258-407-252.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/9-258-407-252.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/9-258-408-252.laz",
+     "size": 257157,
+     "sha256": "e678b97f6d79c9944791e5f6b1fda0633d583aef2f22b1deb3d65a83edea6385",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/9-258-408-252.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/9-258-408-252.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/9-258-409-252.laz",
+     "size": 260638,
+     "sha256": "b586cae9c01b8420955fa0c7e0e40af433dd2821fcc60c06411c93c6e3b70d89",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/9-258-409-252.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/9-258-409-252.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/9-259-407-252.laz",
+     "size": 122520,
+     "sha256": "58d6e70409d5495165f914945c8df161858df583ae0ccec9f184601a31b8e5f8",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/9-259-407-252.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/9-259-407-252.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/9-259-408-252.laz",
+     "size": 187283,
+     "sha256": "078a00561d31f043359c2e68d482533134754a57b2dfdc241f8de2dabdb70d8b",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/9-259-408-252.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/9-259-408-252.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/9-259-409-252.laz",
+     "size": 204678,
+     "sha256": "3238625bf8e73e92ef8e98413a8eb30646b05dd3c30878c7199bd195846e73fe",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/9-259-409-252.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/9-259-409-252.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/9-260-407-252.laz",
+     "size": 117133,
+     "sha256": "a143a6bd045c57c15fffbe1f8225e388f99e71845bb213631225af724a99423d",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/9-260-407-252.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/9-260-407-252.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/9-260-408-252.laz",
+     "size": 179148,
+     "sha256": "be642e7b006815b26ab3863204ec1b82401d831ce190a35913e5bf73495a8238",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/9-260-408-252.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/9-260-408-252.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/9-260-409-252.laz",
+     "size": 226333,
+     "sha256": "1ed1aa3fde955fe1a70e173e63f0c9bbec21d551a89221f68a81835e5ace10d5",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/9-260-409-252.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/9-260-409-252.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/9-261-407-252.laz",
+     "size": 120812,
+     "sha256": "2ec5d7cf75d663341b3411680647174f29f265330bb4e65fd0e288114d101aa0",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/9-261-407-252.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/9-261-407-252.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/9-261-408-252.laz",
+     "size": 190677,
+     "sha256": "963e2c85e9b95aed418e02953400fa9db489f0a6347c8169cda8bd2884e71078",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/9-261-408-252.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/9-261-408-252.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/9-261-409-252.laz",
+     "size": 189403,
+     "sha256": "05b52fb767677b28d325c7ebcc296c2c417d2fe6f8258a28973b8b0fc58cbeed",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/9-261-409-252.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/9-261-409-252.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/9-262-407-252.laz",
+     "size": 121900,
+     "sha256": "bf10a633341d3d7be9a1a0a9648a56215cd189df8a70e338465376b15e48b768",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/9-262-407-252.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/9-262-407-252.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/9-262-408-252.laz",
+     "size": 197942,
+     "sha256": "095936823203d54f27704c91167a95a884a7210e7d136be69beca02366b5d49f",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/9-262-408-252.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/9-262-408-252.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/ept-data/9-262-409-252.laz",
+     "size": 190305,
+     "sha256": "70b8c09e6d128faeb3801d00baae7b93a40f3db38605bdf1d4dcd3c4c86b56d3",
+     "dest": "lidar/co_eastern_b3_2018/ept-data/9-262-409-252.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-data/9-262-409-252.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/hier/0-0-0-0.json",
+     "size": 58226,
+     "sha256": "c7b73d8da01e60c42f21f00767b5c4d09d11c485a03ac1b0295124dcd7d2b77b",
+     "dest": "lidar/co_eastern_b3_2018/ept-hierarchy/0-0-0-0.json",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-hierarchy/0-0-0-0.json"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/hier/6-32-50-31.json",
+     "size": 7823,
+     "sha256": "a2a3ec26a33f17f708fc5d7793bb70a2a83040937449afb7a2c24c31b4eb5003",
+     "dest": "lidar/co_eastern_b3_2018/ept-hierarchy/6-32-50-31.json",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-hierarchy/6-32-50-31.json"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/hp_CO_Eastern_B3_2018/hier/6-32-51-31.json",
+     "size": 2254,
+     "sha256": "a9bcfcc13d6cf07203f1d37e0d93b57ac17bb888e1b0d3cfdfb725ea3f540a1a",
+     "dest": "lidar/co_eastern_b3_2018/ept-hierarchy/6-32-51-31.json",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept-hierarchy/6-32-51-31.json"
+    }
+   ],
+   "total_bytes": 21841905,
+   "location_on_mac": "system disk /private/tmp (scratchpad/sys/dl), NOT on /Volumes/Drive",
+   "n_files": 113,
+   "_rb": 21841905
+  },
+  {
+   "id": "lidar_nv_clarkco_2_b22",
+   "title": "USGS 3DEP EPT NV_ClarkCo_2_B22 (flown 2022-07-28): 40 nodes over Nevada Nights",
+   "track": "exotics-racing-lv-lm",
+   "ledger": [
+    "0089 'The downloads (Mac, 2026-11-09)'"
+   ],
+   "approved_by": "Kevin 2026-11-09 'Yes, both'",
+   "kind": "ept_nodes",
+   "method": "HTTP GET each url (S3, no auth)",
+   "params": {
+    "box_lonlat_W_S_E_N": [
+     -115.0214,
+     36.2836,
+     -115.0185,
+     36.2853
+    ],
+    "note": "ept-sources/list.json returned 404 when fetched; the manifest does not list it",
+    "used_by": "Nevada shrub read (0089)",
+    "ept_json": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/NV_ClarkCo_2_B22/ept.json",
+    "plan_file_mac": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/nv_NV_ClarkCo_2_B22/plan.json",
+    "plan_sha256": "673cb5cb81941ac039c2fa96ed1414731a24efb7e38ead2bfe0ab09f42ce55d1",
+    "plan_note": "derived node plan (box + node keys, points, bytes); files list is authoritative"
+   },
+   "byte_exact": true,
+   "compare": "sha256 and size per file",
+   "used_by": "Nevada shrub read (0089)",
+   "files": [
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/nv_NV_ClarkCo_2_B22/ept.json",
+     "size": 2534,
+     "sha256": "a99bd9b40e17415641883d4b89fa3e6849dda2cf1627d8c04b60c48e28564897",
+     "dest": "lidar/nv_clarkco_2_b22/ept.json",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/NV_ClarkCo_2_B22/ept.json"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/nv_NV_ClarkCo_2_B22/ept-data/0-0-0-0.laz",
+     "size": 125691,
+     "sha256": "0582f5286a8e160025ed5991c1943baf0d6b5bf92674830270f460dd4b75509a",
+     "dest": "lidar/nv_clarkco_2_b22/ept-data/0-0-0-0.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/NV_ClarkCo_2_B22/ept-data/0-0-0-0.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/nv_NV_ClarkCo_2_B22/ept-data/1-1-1-0.laz",
+     "size": 61360,
+     "sha256": "f6f76c9af9aad661207fd09beca45e7e6bc622d762a14ce293e593f15af66b08",
+     "dest": "lidar/nv_clarkco_2_b22/ept-data/1-1-1-0.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/NV_ClarkCo_2_B22/ept-data/1-1-1-0.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/nv_NV_ClarkCo_2_B22/ept-data/1-1-1-1.laz",
+     "size": 66113,
+     "sha256": "1b371fd7a999f9f3610bf4b19ef07f49164a92f0c07afe2067128cd72c3adb65",
+     "dest": "lidar/nv_clarkco_2_b22/ept-data/1-1-1-1.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/NV_ClarkCo_2_B22/ept-data/1-1-1-1.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/nv_NV_ClarkCo_2_B22/ept-data/10-627-895-505.laz",
+     "size": 109660,
+     "sha256": "595d6fca4f738ac393f33581041fea0dd7c7911b045aca28a9119598eed02b04",
+     "dest": "lidar/nv_clarkco_2_b22/ept-data/10-627-895-505.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/NV_ClarkCo_2_B22/ept-data/10-627-895-505.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/nv_NV_ClarkCo_2_B22/ept-data/10-627-896-505.laz",
+     "size": 118485,
+     "sha256": "2eb7544439cd7d7adf98b9664e3fa47f13faa12e2306e6a288375c17fcba1422",
+     "dest": "lidar/nv_clarkco_2_b22/ept-data/10-627-896-505.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/NV_ClarkCo_2_B22/ept-data/10-627-896-505.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/nv_NV_ClarkCo_2_B22/ept-data/10-628-895-505.laz",
+     "size": 108326,
+     "sha256": "9f64cba3604e2e4fbae817b5365e8ea69bfa99507db21ca0df7e4f96b246e97c",
+     "dest": "lidar/nv_clarkco_2_b22/ept-data/10-628-895-505.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/NV_ClarkCo_2_B22/ept-data/10-628-895-505.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/nv_NV_ClarkCo_2_B22/ept-data/10-628-896-505.laz",
+     "size": 122155,
+     "sha256": "3c61436b54339639eb9a1b0c49370a8d2ea3740c292bfc08bf73cd83521b652f",
+     "dest": "lidar/nv_clarkco_2_b22/ept-data/10-628-896-505.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/NV_ClarkCo_2_B22/ept-data/10-628-896-505.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/nv_NV_ClarkCo_2_B22/ept-data/11-1254-1791-1011.laz",
+     "size": 177280,
+     "sha256": "8d3a57eb654068af5594b4984d7604c0c5c2913d47bfd6402c6a4c6e28e5eb4d",
+     "dest": "lidar/nv_clarkco_2_b22/ept-data/11-1254-1791-1011.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/NV_ClarkCo_2_B22/ept-data/11-1254-1791-1011.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/nv_NV_ClarkCo_2_B22/ept-data/11-1254-1792-1011.laz",
+     "size": 187504,
+     "sha256": "d4508c8ba2ba4487fb069cad8095b68effdd7bd4a0572902a01c18036a6bca2f",
+     "dest": "lidar/nv_clarkco_2_b22/ept-data/11-1254-1792-1011.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/NV_ClarkCo_2_B22/ept-data/11-1254-1792-1011.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/nv_NV_ClarkCo_2_B22/ept-data/11-1254-1793-1011.laz",
+     "size": 186971,
+     "sha256": "b99211ce62e15a92343915ef0e822c7dd3b0b0c1fc5cb66971a0c69c08564cb0",
+     "dest": "lidar/nv_clarkco_2_b22/ept-data/11-1254-1793-1011.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/NV_ClarkCo_2_B22/ept-data/11-1254-1793-1011.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/nv_NV_ClarkCo_2_B22/ept-data/11-1255-1791-1011.laz",
+     "size": 186101,
+     "sha256": "a12c42f9c0118bd060a37c9be1316e1a27643b325e58364f44a965f6e65687dc",
+     "dest": "lidar/nv_clarkco_2_b22/ept-data/11-1255-1791-1011.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/NV_ClarkCo_2_B22/ept-data/11-1255-1791-1011.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/nv_NV_ClarkCo_2_B22/ept-data/11-1255-1792-1011.laz",
+     "size": 180922,
+     "sha256": "d3538f2dc2348c0e6e9cc5b6b2c927ff1681ad19942239ff8fea515dce2b158a",
+     "dest": "lidar/nv_clarkco_2_b22/ept-data/11-1255-1792-1011.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/NV_ClarkCo_2_B22/ept-data/11-1255-1792-1011.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/nv_NV_ClarkCo_2_B22/ept-data/11-1255-1793-1011.laz",
+     "size": 180382,
+     "sha256": "abc30d4e6338048bd790c240f197f6fd55d2f6d6c5d38eddae9a252b11b1d9e6",
+     "dest": "lidar/nv_clarkco_2_b22/ept-data/11-1255-1793-1011.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/NV_ClarkCo_2_B22/ept-data/11-1255-1793-1011.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/nv_NV_ClarkCo_2_B22/ept-data/11-1256-1791-1011.laz",
+     "size": 172534,
+     "sha256": "2eb9bc4646cb4f93eda984d6b9169d5dd73da3f5351cadda51323080a843ef39",
+     "dest": "lidar/nv_clarkco_2_b22/ept-data/11-1256-1791-1011.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/NV_ClarkCo_2_B22/ept-data/11-1256-1791-1011.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/nv_NV_ClarkCo_2_B22/ept-data/11-1256-1792-1011.laz",
+     "size": 188087,
+     "sha256": "94350d441a08df332c597ae9ec36a810ad3434ed0cb6197c23506e132d428fbb",
+     "dest": "lidar/nv_clarkco_2_b22/ept-data/11-1256-1792-1011.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/NV_ClarkCo_2_B22/ept-data/11-1256-1792-1011.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/nv_NV_ClarkCo_2_B22/ept-data/11-1256-1793-1011.laz",
+     "size": 185944,
+     "sha256": "c8904b256e418e0b712305931f9f56ef2d5bf99755108c7f88a3ed317a4a64ca",
+     "dest": "lidar/nv_clarkco_2_b22/ept-data/11-1256-1793-1011.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/NV_ClarkCo_2_B22/ept-data/11-1256-1793-1011.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/nv_NV_ClarkCo_2_B22/ept-data/11-1257-1791-1011.laz",
+     "size": 172601,
+     "sha256": "86102003d374959b092fc9c7c69963dd195680def6a5b6e36c48675a4cbc1f74",
+     "dest": "lidar/nv_clarkco_2_b22/ept-data/11-1257-1791-1011.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/NV_ClarkCo_2_B22/ept-data/11-1257-1791-1011.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/nv_NV_ClarkCo_2_B22/ept-data/11-1257-1792-1011.laz",
+     "size": 187916,
+     "sha256": "9cab75ffca8f3cc18ee7b034aee5cbaeea52fa2478659f23dc3dbaf5c04d138c",
+     "dest": "lidar/nv_clarkco_2_b22/ept-data/11-1257-1792-1011.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/NV_ClarkCo_2_B22/ept-data/11-1257-1792-1011.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/nv_NV_ClarkCo_2_B22/ept-data/11-1257-1793-1011.laz",
+     "size": 190081,
+     "sha256": "8777b1527a3c2f230f92879f1003d53d85662c4cd3ec079d396d0ac70655c5b1",
+     "dest": "lidar/nv_clarkco_2_b22/ept-data/11-1257-1793-1011.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/NV_ClarkCo_2_B22/ept-data/11-1257-1793-1011.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/nv_NV_ClarkCo_2_B22/ept-data/2-2-3-1.laz",
+     "size": 162445,
+     "sha256": "fc812e0a03ea50d2752bf4feee4b0aab6f25823d884420703a2cebdecf7178b3",
+     "dest": "lidar/nv_clarkco_2_b22/ept-data/2-2-3-1.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/NV_ClarkCo_2_B22/ept-data/2-2-3-1.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/nv_NV_ClarkCo_2_B22/ept-data/2-2-3-2.laz",
+     "size": 182577,
+     "sha256": "8c22668447c93a91ddbd2550750182beedd4328a5dbd6d2adc15228727df3f32",
+     "dest": "lidar/nv_clarkco_2_b22/ept-data/2-2-3-2.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/NV_ClarkCo_2_B22/ept-data/2-2-3-2.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/nv_NV_ClarkCo_2_B22/ept-data/3-4-6-3.laz",
+     "size": 409938,
+     "sha256": "9f9c4e858c2020467c22f13863d4ddfc54dac94266288dc9bd97a1735b0baa29",
+     "dest": "lidar/nv_clarkco_2_b22/ept-data/3-4-6-3.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/NV_ClarkCo_2_B22/ept-data/3-4-6-3.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/nv_NV_ClarkCo_2_B22/ept-data/3-4-6-4.laz",
+     "size": 139953,
+     "sha256": "bfdc9738c71d81e1c6437020fe64821f13480a3614ab608e15dc92a95f1d4c40",
+     "dest": "lidar/nv_clarkco_2_b22/ept-data/3-4-6-4.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/NV_ClarkCo_2_B22/ept-data/3-4-6-4.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/nv_NV_ClarkCo_2_B22/ept-data/3-4-7-3.laz",
+     "size": 97540,
+     "sha256": "ef1c821156bda0fe40b997f859dba733fe891e22cd90e8d49e4ef855383920ea",
+     "dest": "lidar/nv_clarkco_2_b22/ept-data/3-4-7-3.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/NV_ClarkCo_2_B22/ept-data/3-4-7-3.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/nv_NV_ClarkCo_2_B22/ept-data/4-9-13-7.laz",
+     "size": 488959,
+     "sha256": "f68a6b7faa161ebd912d4bffb6bae4720226cc38acf9f4dc43daab657173de45",
+     "dest": "lidar/nv_clarkco_2_b22/ept-data/4-9-13-7.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/NV_ClarkCo_2_B22/ept-data/4-9-13-7.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/nv_NV_ClarkCo_2_B22/ept-data/4-9-14-7.laz",
+     "size": 217700,
+     "sha256": "05dbbc430b274167c19f2647cbdf4c85ee5526e8b775f06f9dec6333ff8288a3",
+     "dest": "lidar/nv_clarkco_2_b22/ept-data/4-9-14-7.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/NV_ClarkCo_2_B22/ept-data/4-9-14-7.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/nv_NV_ClarkCo_2_B22/ept-data/5-19-27-15.laz",
+     "size": 529920,
+     "sha256": "b95f954994d14d015f904847fa93fb4028b9121705c4511a80f295ac7376fd18",
+     "dest": "lidar/nv_clarkco_2_b22/ept-data/5-19-27-15.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/NV_ClarkCo_2_B22/ept-data/5-19-27-15.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/nv_NV_ClarkCo_2_B22/ept-data/5-19-28-15.laz",
+     "size": 403102,
+     "sha256": "a65f9689d99db975b58fdcaf6022e1a55421528bd02f8a8bd4d25b5c9a62e43b",
+     "dest": "lidar/nv_clarkco_2_b22/ept-data/5-19-28-15.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/NV_ClarkCo_2_B22/ept-data/5-19-28-15.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/nv_NV_ClarkCo_2_B22/ept-data/6-39-55-31.laz",
+     "size": 355537,
+     "sha256": "55b37a857e550044952866ee70ea4b35f461ea504af08efcd73059d45d5d014a",
+     "dest": "lidar/nv_clarkco_2_b22/ept-data/6-39-55-31.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/NV_ClarkCo_2_B22/ept-data/6-39-55-31.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/nv_NV_ClarkCo_2_B22/ept-data/6-39-56-31.laz",
+     "size": 325667,
+     "sha256": "8832b086cb7e8c3ee518ca3c732495a7998563f9dc9603908affdbed737bec6f",
+     "dest": "lidar/nv_clarkco_2_b22/ept-data/6-39-56-31.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/NV_ClarkCo_2_B22/ept-data/6-39-56-31.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/nv_NV_ClarkCo_2_B22/ept-data/7-78-111-63.laz",
+     "size": 238673,
+     "sha256": "13b63670de7694804c515ca00cf48d9a3e8dc4d3606c634dd2115b6ad62f024a",
+     "dest": "lidar/nv_clarkco_2_b22/ept-data/7-78-111-63.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/NV_ClarkCo_2_B22/ept-data/7-78-111-63.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/nv_NV_ClarkCo_2_B22/ept-data/7-78-112-63.laz",
+     "size": 197625,
+     "sha256": "3a2c4cd9d860c0fbbbbf99318892009b97e62532780fd1c919d3e024c91f0d77",
+     "dest": "lidar/nv_clarkco_2_b22/ept-data/7-78-112-63.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/NV_ClarkCo_2_B22/ept-data/7-78-112-63.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/nv_NV_ClarkCo_2_B22/ept-data/8-156-223-126.laz",
+     "size": 189586,
+     "sha256": "75ac1c95c909b5252631aeb352ba4e6958c1899c1b5c09cd14b8cb9fa3147886",
+     "dest": "lidar/nv_clarkco_2_b22/ept-data/8-156-223-126.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/NV_ClarkCo_2_B22/ept-data/8-156-223-126.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/nv_NV_ClarkCo_2_B22/ept-data/8-156-224-126.laz",
+     "size": 187616,
+     "sha256": "52c46671f9c3331ce8d9866b6ccc27428e21caa33f2d78cff0b95655741e0a28",
+     "dest": "lidar/nv_clarkco_2_b22/ept-data/8-156-224-126.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/NV_ClarkCo_2_B22/ept-data/8-156-224-126.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/nv_NV_ClarkCo_2_B22/ept-data/8-157-223-126.laz",
+     "size": 175771,
+     "sha256": "8e9752739b4647098a7cd3b6e9e759568286842616181dcc12f2d5b1966700c1",
+     "dest": "lidar/nv_clarkco_2_b22/ept-data/8-157-223-126.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/NV_ClarkCo_2_B22/ept-data/8-157-223-126.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/nv_NV_ClarkCo_2_B22/ept-data/8-157-224-126.laz",
+     "size": 191548,
+     "sha256": "6bb3654237e6b729418048ee899d6ec4b9b41a2861727f5aefb8692de926ce1b",
+     "dest": "lidar/nv_clarkco_2_b22/ept-data/8-157-224-126.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/NV_ClarkCo_2_B22/ept-data/8-157-224-126.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/nv_NV_ClarkCo_2_B22/ept-data/9-313-447-252.laz",
+     "size": 134936,
+     "sha256": "71566616ee424058b4602e6371e8752806b81e465b20bfef362c0aaafe362d1b",
+     "dest": "lidar/nv_clarkco_2_b22/ept-data/9-313-447-252.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/NV_ClarkCo_2_B22/ept-data/9-313-447-252.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/nv_NV_ClarkCo_2_B22/ept-data/9-313-448-252.laz",
+     "size": 161976,
+     "sha256": "9d137fe4db747d01763385c555374570dbffc7a3239e6006b03e8441503f8fe9",
+     "dest": "lidar/nv_clarkco_2_b22/ept-data/9-313-448-252.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/NV_ClarkCo_2_B22/ept-data/9-313-448-252.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/nv_NV_ClarkCo_2_B22/ept-data/9-314-447-252.laz",
+     "size": 133617,
+     "sha256": "c34730266720313cdb8ad74c674d1188cdb1e7ff7db41443af2620a8b7496f3d",
+     "dest": "lidar/nv_clarkco_2_b22/ept-data/9-314-447-252.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/NV_ClarkCo_2_B22/ept-data/9-314-447-252.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/nv_NV_ClarkCo_2_B22/ept-data/9-314-448-252.laz",
+     "size": 161182,
+     "sha256": "d3187563ebe14051cfc3e80d49b9c8e5f6a9352e7964bf2fecc0405662750cc9",
+     "dest": "lidar/nv_clarkco_2_b22/ept-data/9-314-448-252.laz",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/NV_ClarkCo_2_B22/ept-data/9-314-448-252.laz"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/nv_NV_ClarkCo_2_B22/hier/0-0-0-0.json",
+     "size": 251037,
+     "sha256": "2437b341176e4e1d7ad12be6990444cfb28f829ff9a55e400b1e6d34cc91f0c3",
+     "dest": "lidar/nv_clarkco_2_b22/ept-hierarchy/0-0-0-0.json",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/NV_ClarkCo_2_B22/ept-hierarchy/0-0-0-0.json"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/nv_NV_ClarkCo_2_B22/hier/8-156-223-126.json",
+     "size": 3703,
+     "sha256": "d24f703d37c6c56e01262ef0a37f7217b89206fcec1c9ef5d952a8c4a32e4391",
+     "dest": "lidar/nv_clarkco_2_b22/ept-hierarchy/8-156-223-126.json",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/NV_ClarkCo_2_B22/ept-hierarchy/8-156-223-126.json"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/nv_NV_ClarkCo_2_B22/hier/8-156-224-126.json",
+     "size": 3677,
+     "sha256": "3e8a031a04dc77e0b6b48b0b2dcf15cc2648c6c419f795a8adf4edaca32466b2",
+     "dest": "lidar/nv_clarkco_2_b22/ept-hierarchy/8-156-224-126.json",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/NV_ClarkCo_2_B22/ept-hierarchy/8-156-224-126.json"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/nv_NV_ClarkCo_2_B22/hier/8-157-223-126.json",
+     "size": 3885,
+     "sha256": "a65d9a112a39412335dc3f4da3f69c2e36007844ee39d96cff053596ff847e1d",
+     "dest": "lidar/nv_clarkco_2_b22/ept-hierarchy/8-157-223-126.json",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/NV_ClarkCo_2_B22/ept-hierarchy/8-157-223-126.json"
+    },
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/nv_NV_ClarkCo_2_B22/hier/8-157-224-126.json",
+     "size": 4067,
+     "sha256": "edfff63b71d57d338580e098fbe75b30a70b1395139ff6034f34fc13abd1d542",
+     "dest": "lidar/nv_clarkco_2_b22/ept-hierarchy/8-157-224-126.json",
+     "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/NV_ClarkCo_2_B22/ept-hierarchy/8-157-224-126.json"
+    }
+   ],
+   "total_bytes": 8262884,
+   "location_on_mac": "system disk /private/tmp (scratchpad/sys/dl), NOT on /Volumes/Drive",
+   "n_files": 46,
+   "_rb": 8262884
+  },
+  {
+   "id": "naip_2022_west_strip",
+   "title": "NAIP 2022 west strip (USGS NAIPImagery ImageServer exportImage, locked raster 77616) west of the Milford crop",
+   "track": "milford-road-course-lm",
+   "ledger": [
+    "0082 pass 4 (table row 'b' ~line 1039 / 1265)"
+   ],
+   "approved_by": "Kevin 2026-11-09",
+   "kind": "imageserver_export",
+   "method": "HTTP GET the url",
+   "params": {
+    "url": "https://imagery.nationalmap.gov/arcgis/rest/services/USGSNAIPImagery/ImageServer/exportImage?bbox=-83.6720,42.56050328638498,-83.6700,42.57949671361502&bboxSR=4326&imageSR=4326&size=328,3112&format=png&mosaicRule=%7B%22mosaicMethod%22%3A%22esriMosaicLockRaster%22%2C%22lockRasterIds%22%3A%5B77616%5D%7D&f=image",
+    "size_px": [
+     328,
+     3112
+    ],
+    "format": "png",
+    "bboxSR": 4326,
+    "imageSR": 4326,
+    "bbox_W_S_E_N": [
+     -83.672,
+     42.56050328638498,
+     -83.67,
+     42.57949671361502
+    ],
+    "mosaicRule": {
+     "mosaicMethod": "esriMosaicLockRaster",
+     "lockRasterIds": [
+      77616
+     ]
+    },
+    "source_item": "m_4208327_ne_17_060_20220816 (per ledger)"
+   },
+   "byte_exact": "unlikely",
+   "compare": "dimensions 328 x 3112; same bbox corners; mean abs pixel difference vs the Mac copy small (service renders can change). Used once, as a 'nothing there' check.",
+   "files": [
+    {
+     "mac_path": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/dl/b_naip2022_west/naip_2022_west_strip.png",
+     "size": 1025270,
+     "sha256": "eb94b3822f4b6a01526ce3094d0604a6fc86130854caca5c3283233d1db11254",
+     "dest": "naip/milford/naip_2022_west_strip.png",
+     "url": "https://imagery.nationalmap.gov/arcgis/rest/services/USGSNAIPImagery/ImageServer/exportImage?bbox=-83.6720,42.56050328638498,-83.6700,42.57949671361502&bboxSR=4326&imageSR=4326&size=328,3112&format=png&mosaicRule=%7B%22mosaicMethod%22%3A%22esriMosaicLockRaster%22%2C%22lockRasterIds%22%3A%5B77616%5D%7D&f=image"
+    }
+   ],
+   "total_bytes": 1025270,
+   "location_on_mac": "system disk /private/tmp",
+   "n_files": 1,
+   "_rb": 1025270
+  },
+  {
+   "id": "naip_planetary_computer_2023",
+   "title": "NAIP 2023 0.3 m crops from Microsoft Planetary Computer (Aspen, Pueblo, Grand Junction, Pikes Peak, High Plains)",
+   "track": "circuits: aspen, pueblo, grand-junction, pikes-peak, high-plains",
+   "ledger": [
+    "0081 'The data: NAIP at its best year and resolution per site'",
+    "0085 section 7 (Pikes Peak crop, 'Yes, download it', 2026-11-09)",
+    "0088 (aerial engine reads these)"
+   ],
+   "approved_by": "Kevin (0081 round-5 data; 0085 'Yes, download it')",
+   "kind": "planetary_computer_crop",
+   "method": "naip_crop.py recipe (params)",
+   "params": {
+    "data_url": "https://planetarycomputer.microsoft.com/api/data/v1/item/bbox/{w},{s},{e},{n}/{px}x{py}.png",
+    "query": "collection=naip&item=<item>&assets=image&asset_bidx=image|1,2,3&nodata=0",
+    "stac_url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/naip/items/<item>",
+    "tool": "tools/naip_crop.py on origin/claude/circuit-kerbs-lm (ledger 0081); CLI: python tools/naip_crop.py --item <item> --box W,S,E,N --m-per-px <mpp> --out <png>  (writes <png> and <png minus .png>.json)",
+    "tiling": "w_px=round((E-W)*mpd_lon(midlat)/mpp), h_px=round((N-S)*mpd_lat(midlat)/mpp); request tiles <=1024 px a side, each tile's lon/lat box = linear share of the box; paste into a canvas; save PNG. mpd(lat): m_lat=111132.954-559.822cos2phi+1.175cos4phi; m_lon=111412.84cos(phi)-93.5cos3phi+0.118cos5phi"
+   },
+   "byte_exact": "probably (same item, same tile requests, same PIL save); not guaranteed",
+   "compare": "sha256 first; if different compare width x height (sidecar w,h), corners (exact by construction), then mean absolute pixel difference (expect ~0). Files marked refetch:false are in git, derived, or test files.",
+   "used_by": "tools/aerial_edges.py, kerb_spans.py, pp_work/*.py (geo.IMG), 0081 kerbs, 0085 PP retrace, 0088 aerial engine, 0089",
+   "files": [
+    {
+     "mac_path": "/Volumes/Drive/codex/kerb_work/img/aspen_2023_030.png",
+     "size": 5449974,
+     "sha256": "3628cc77371974c474f58f68dadcaac7d5c0b0f1075e104af701203740de361f",
+     "dest": "naip/kerb_work_img/aspen_2023_030.png",
+     "naip": {
+      "item": "co_m_3910641_se_13_030_20230907_20240104",
+      "datetime": "2023-09-07T16:00:00Z",
+      "gsd": 0.3,
+      "box_W_N_E_S": [
+       -106.88282515083195,
+       39.26801589128868,
+       -106.87847232759137,
+       39.262418819093476
+      ],
+      "sidecar_w_h": [
+       1252,
+       2071
+      ],
+      "m_per_px_sidecar": [
+       0.3,
+       0.3
+      ]
+     },
+     "same_content_as": [],
+     "sidecar_json": {
+      "mac_path": "/Volumes/Drive/codex/kerb_work/img/aspen_2023_030.json",
+      "size": 389,
+      "sha256": "7a1ac9126646e0c46110cce9a5bec1706f59ffa71066f13da5360957db952ee9",
+      "dest": "naip/kerb_work_img/aspen_2023_030.json"
+     },
+     "fetch": "Planetary Computer data API crop (naip_crop.py --box)",
+     "refetch": true,
+     "cli": "python tools/naip_crop.py --item co_m_3910641_se_13_030_20230907_20240104 --box -106.88282515083195,39.262418819093476,-106.87847232759137,39.26801589128868 --m-per-px 0.3 --out <dest>"
+    },
+    {
+     "mac_path": "/Volumes/Drive/codex/kerb_work/img/exotics-racing-lv_2019_060.png",
+     "size": 1565958,
+     "sha256": "ee352739bcabc666b8d041157bb5df06542138ecdeeade0804f4da72c41fcad4",
+     "dest": "naip/kerb_work_img/exotics-racing-lv_2019_060.png",
+     "naip": {
+      "item": "nv_m_3611548_se_11_060_20190706_20191118",
+      "datetime": "2019-07-06T00:00:00Z",
+      "gsd": 0.6,
+      "box_W_N_E_S": [
+       -115.0217485,
+       36.2851645,
+       -115.0148821,
+       36.2794564
+      ],
+      "sidecar_w_h": [
+       1028,
+       1056
+      ],
+      "m_per_px_sidecar": [
+       0.6001,
+       0.5998
+      ]
+     },
+     "same_content_as": [],
+     "sidecar_json": {
+      "mac_path": "/Volumes/Drive/codex/kerb_work/img/exotics-racing-lv_2019_060.json",
+      "size": 366,
+      "sha256": "678459524e01c5c33951503e50c8b4df96a3b65066ac00d13c39793459574faa",
+      "dest": "naip/kerb_work_img/exotics-racing-lv_2019_060.json"
+     },
+     "fetch": "IN GIT already (tracks/exotics-racing-lv-lm/source/vegetation/naip_%s.png); PC gets it from the repo. Re-fetch not needed.",
+     "refetch": false
+    },
+    {
+     "mac_path": "/Volumes/Drive/codex/kerb_work/img/exotics-racing-lv_2022_060.png",
+     "size": 1345494,
+     "sha256": "3bad639b6c1263369d086760a4ab2d864b1ceb991a03594d4ac7cc83fc36a7b0",
+     "dest": "naip/kerb_work_img/exotics-racing-lv_2022_060.png",
+     "naip": {
+      "item": "nv_m_3611548_se_11_060_20220611",
+      "datetime": "2022-06-11T16:00:00Z",
+      "gsd": 0.6,
+      "box_W_N_E_S": [
+       -115.0217485,
+       36.2851645,
+       -115.0148821,
+       36.2794564
+      ],
+      "sidecar_w_h": [
+       1028,
+       1056
+      ],
+      "m_per_px_sidecar": [
+       0.6001,
+       0.5998
+      ]
+     },
+     "same_content_as": [],
+     "sidecar_json": {
+      "mac_path": "/Volumes/Drive/codex/kerb_work/img/exotics-racing-lv_2022_060.json",
+      "size": 357,
+      "sha256": "60e2380650a434c005a7d27a6fef723dc1d4f181deb953e16074acd59e4638cf",
+      "dest": "naip/kerb_work_img/exotics-racing-lv_2022_060.json"
+     },
+     "fetch": "IN GIT already (tracks/exotics-racing-lv-lm/source/vegetation/naip_%s.png); PC gets it from the repo. Re-fetch not needed.",
+     "refetch": false
+    },
+    {
+     "mac_path": "/Volumes/Drive/codex/kerb_work/img/grand-junction_2023_030.png",
+     "size": 2260862,
+     "sha256": "943106a362e37919d0db3f7e8751f9a772b8c8634b3a30c24bfd1502bc08be89",
+     "dest": "naip/kerb_work_img/grand-junction_2023_030.png",
+     "naip": {
+      "item": "co_m_3910861_nw_12_030_20230924_20240104",
+      "datetime": "2023-09-24T16:00:00Z",
+      "gsd": 0.3,
+      "box_W_N_E_S": [
+       -108.49492773773257,
+       39.10984014850702,
+       -108.4910237619326,
+       39.1070499592498
+      ],
+      "sidecar_w_h": [
+       1126,
+       1033
+      ],
+      "m_per_px_sidecar": [
+       0.2999,
+       0.2999
+      ]
+     },
+     "same_content_as": [],
+     "sidecar_json": {
+      "mac_path": "/Volumes/Drive/codex/kerb_work/img/grand-junction_2023_030.json",
+      "size": 392,
+      "sha256": "6397321346242902077e46c1d92267cfde51287877c5dae20b5fec3e890c3665",
+      "dest": "naip/kerb_work_img/grand-junction_2023_030.json"
+     },
+     "fetch": "Planetary Computer data API crop (naip_crop.py --box)",
+     "refetch": true,
+     "cli": "python tools/naip_crop.py --item co_m_3910861_nw_12_030_20230924_20240104 --box -108.49492773773257,39.1070499592498,-108.4910237619326,39.10984014850702 --m-per-px 0.3 --out <dest>"
+    },
+    {
+     "mac_path": "/Volumes/Drive/codex/kerb_work/img/high-plains_2023_030.png",
+     "size": 10762351,
+     "sha256": "05bd8cb207f8f284ee6fcee83f74ecb72c7e83b3d9f4a9e16ed418ac4753a586",
+     "dest": "naip/kerb_work_img/high-plains_2023_030.png",
+     "naip": {
+      "item": "co_m_3910317_ne_13_030_20230928_20240104",
+      "datetime": "2023-09-28T16:00:00Z",
+      "gsd": 0.3,
+      "box_W_N_E_S": [
+       -103.90532207890708,
+       39.73680613545915,
+       -103.88959002688462,
+       39.73355853151761
+      ],
+      "sidecar_w_h": [
+       4495,
+       1202
+      ],
+      "m_per_px_sidecar": [
+       0.3,
+       0.3
+      ]
+     },
+     "same_content_as": [
+      "/Volumes/Drive/codex/kerb_work/img/hp_2023_030.png"
+     ],
+     "sidecar_json": {
+      "mac_path": "/Volumes/Drive/codex/kerb_work/img/high-plains_2023_030.json",
+      "size": 388,
+      "sha256": "551de217a074574631b60f02955045b0abf0ce8d1ce4873fb910427249d534f0",
+      "dest": "naip/kerb_work_img/high-plains_2023_030.json"
+     },
+     "fetch": "Planetary Computer data API crop (naip_crop.py --box)",
+     "refetch": true,
+     "cli": "python tools/naip_crop.py --item co_m_3910317_ne_13_030_20230928_20240104 --box -103.90532207890708,39.73355853151761,-103.88959002688462,39.73680613545915 --m-per-px 0.3 --out <dest>"
+    },
+    {
+     "mac_path": "/Volumes/Drive/codex/kerb_work/img/high-plains_2023_030to060.png",
+     "size": 2764798,
+     "sha256": "f3425d6fcbfc87d37eb67b91030b54ac1270bbf8eaeeba028b612cda60fa9696",
+     "dest": "naip/kerb_work_img/high-plains_2023_030to060.png",
+     "naip": {
+      "item": "co_m_3910317_ne_13_030_20230928_20240104",
+      "datetime": "2023-09-28T16:00:00Z",
+      "gsd": 0.3,
+      "box_W_N_E_S": [
+       -103.90532207890708,
+       39.73680613545915,
+       -103.88959352678496,
+       39.73355853151761
+      ],
+      "sidecar_w_h": [
+       4495,
+       1202
+      ],
+      "m_per_px_sidecar": [
+       0.6,
+       0.6
+      ]
+     },
+     "same_content_as": [],
+     "sidecar_json": {
+      "mac_path": "/Volumes/Drive/codex/kerb_work/img/high-plains_2023_030to060.json",
+      "size": 471,
+      "sha256": "ba81988fd0b5913b1252e914ec2b67dbb6e694f4c2194390d155f3082df86b32",
+      "dest": "naip/kerb_work_img/high-plains_2023_030to060.json"
+     },
+     "fetch": "DERIVED, not downloaded: 2x2 box-average of high-plains_2023_030.png to 0.6 m (png is 2247x601; its sidecar json still says 4495x1202, stale). Make it from the 0.3 m crop.",
+     "refetch": false
+    },
+    {
+     "mac_path": "/Volumes/Drive/codex/kerb_work/img/hp_test.png",
+     "size": 207637,
+     "sha256": "8e88fc27430ca0e8d6d047da5dc632116f562f139ea0c68d1c42a342c54fe754",
+     "dest": "naip/kerb_work_img/hp_test.png",
+     "naip": {
+      "item": "co_m_3910317_ne_13_030_20230928_20240104",
+      "datetime": "2023-09-28T16:00:00Z",
+      "gsd": 0.3,
+      "box_W_N_E_S": [
+       -103.8925,
+       39.735,
+       -103.8915,
+       39.734
+      ],
+      "sidecar_w_h": [
+       286,
+       370
+      ],
+      "m_per_px_sidecar": [
+       0.2997,
+       0.3001
+      ]
+     },
+     "same_content_as": [],
+     "sidecar_json": {
+      "mac_path": "/Volumes/Drive/codex/kerb_work/img/hp_test.json",
+      "size": 350,
+      "sha256": "0068619bcf4c1c89df16cac4281683c3498bb7d6ff58cb815040dce4e599dc27",
+      "dest": "naip/kerb_work_img/hp_test.json"
+     },
+     "fetch": "Test crop (286x370) of the HP item; not needed.",
+     "refetch": false
+    },
+    {
+     "mac_path": "/Volumes/Drive/codex/kerb_work/img/pikes-peak_2023_030.png",
+     "size": 8456835,
+     "sha256": "ffca619902d5ad47a2d09fdd1856854e918ed0e2225f73ecea615f075c53bad1",
+     "dest": "naip/kerb_work_img/pikes-peak_2023_030.png",
+     "naip": {
+      "item": "co_m_3810427_ne_13_030_20230920_20240104",
+      "datetime": "2023-09-20T16:00:00Z",
+      "gsd": 0.3,
+      "box_W_N_E_S": [
+       -104.67965285064224,
+       38.59485210036624,
+       -104.67320407403763,
+       38.58871919301801
+      ],
+      "sidecar_w_h": [
+       1873,
+       2269
+      ],
+      "m_per_px_sidecar": [
+       0.3,
+       0.3
+      ]
+     },
+     "same_content_as": [],
+     "sidecar_json": {
+      "mac_path": "/Volumes/Drive/codex/kerb_work/img/pikes-peak_2023_030.json",
+      "size": 388,
+      "sha256": "dceea1316264d19c59c6fd00399c8de45a6e1a7a3d48a8b76d46035910c07fff",
+      "dest": "naip/kerb_work_img/pikes-peak_2023_030.json"
+     },
+     "fetch": "Planetary Computer data API crop (naip_crop.py --box)",
+     "refetch": true,
+     "cli": "python tools/naip_crop.py --item co_m_3810427_ne_13_030_20230920_20240104 --box -104.67965285064224,38.58871919301801,-104.67320407403763,38.59485210036624 --m-per-px 0.3 --out <dest>"
+    },
+    {
+     "mac_path": "/Volumes/Drive/codex/kerb_work/img/pueblo_2023_030.png",
+     "size": 16057968,
+     "sha256": "615ea08646b45d2ab1519f5feada9c50a26ecde2889320c7f751dfb0ad6f7ddc",
+     "dest": "naip/kerb_work_img/pueblo_2023_030.png",
+     "naip": {
+      "item": "co_m_3810443_se_13_030_20230920_20240104",
+      "datetime": "2023-09-20T16:00:00Z",
+      "gsd": 0.3,
+      "box_W_N_E_S": [
+       -104.67980731612035,
+       38.30744572856356,
+       -104.67251931114335,
+       38.29776682352166
+      ],
+      "sidecar_w_h": [
+       2125,
+       3581
+      ],
+      "m_per_px_sidecar": [
+       0.3,
+       0.3
+      ]
+     },
+     "same_content_as": [],
+     "sidecar_json": {
+      "mac_path": "/Volumes/Drive/codex/kerb_work/img/pueblo_2023_030.json",
+      "size": 388,
+      "sha256": "ba9ea2e5f811380f6f0bf6732af0793692b786d483bf69ecb0ed5d7ed95ce3fd",
+      "dest": "naip/kerb_work_img/pueblo_2023_030.json"
+     },
+     "fetch": "Planetary Computer data API crop (naip_crop.py --box)",
+     "refetch": true,
+     "cli": "python tools/naip_crop.py --item co_m_3810443_se_13_030_20230920_20240104 --box -104.67980731612035,38.29776682352166,-104.67251931114335,38.30744572856356 --m-per-px 0.3 --out <dest>"
+    }
+   ],
+   "extra_files": [
+    {
+     "mac_path": "/Volumes/Drive/codex/kerb_work/img/fetch_all.log",
+     "size": 701,
+     "sha256": "a26709fe2a220ce57ce8d6da4e9c0161045446683caa48dacc6b5ef9a214b754"
+    },
+    {
+     "mac_path": "/Volumes/Drive/codex/kerb_work/img/hp_fetch.log",
+     "size": 388,
+     "sha256": "f708dc2f7f926e56ce6fb01075e4dc066c76309f3d59d63151f23abbd344baf8"
+    }
+   ],
+   "total_bytes": 48871877,
+   "refetch_bytes": 42987990,
+   "n_files": 9,
+   "_rb": 42987990
+  },
+  {
+   "id": "maps_ppir",
+   "title": "Published Pikes Peak International Raceway track maps (SCCA Track Night 2026; racingcircuits.info road course 2017-to-date)",
+   "track": "pikes-peak",
+   "ledger": [
+    "0085 'Route from the published maps (2026-11-07)'"
+   ],
+   "approved_by": "Kevin 2026-11-07 ('downloaded on his word')",
+   "kind": "static_file",
+   "method": "HTTP GET",
+   "params": {},
+   "byte_exact": "yes if the publisher has not replaced the image",
+   "compare": "dimensions (640x479 / 1875x1110) and sha256; these are reference maps registered by ICP, a replaced image would need re-registration (tracks/pikes-peak/source/road-course/maps_route.py)",
+   "used_by": "maps_route.py -> route_from_maps.naip.json",
+   "files": [
+    {
+     "mac_path": "/Volumes/Drive/codex/pp_work/maps_dl/scca_trackmap_ppir.webp",
+     "size": 612152,
+     "sha256": "85aaef5ba698452dc2afb058a49f9bb8f8b41878e4b51ec852dce3603daa5133",
+     "dest": "maps/ppir/scca_trackmap_ppir.webp",
+     "url": "https://www.scca.com/wp-content/uploads/2026/02/trackmap_Pikes-Peak-International-Raceway.webp",
+     "note": "as downloaded (640x479)"
+    },
+    {
+     "mac_path": "/Volumes/Drive/codex/pp_work/maps_dl/scca_trackmap_ppir.png",
+     "size": 180600,
+     "sha256": "1be945f53c0d0acdf1ce98a2e0b39afdb39cc7e34358f3035c358136b453af7d",
+     "dest": "maps/ppir/scca_trackmap_ppir.png",
+     "url": null,
+     "note": "local PNG conversion of the .webp (640x479): make it from the webp (e.g. PIL Image.open(webp).save(png))"
+    },
+    {
+     "mac_path": "/Volumes/Drive/codex/pp_work/maps_dl/racingcircuits_ppir_road_2017.png",
+     "size": 171323,
+     "sha256": "c3f1049e4dd2511e4ebc36f786473a77945396296c0742e9d0b46fda138e0d4c",
+     "dest": "maps/ppir/racingcircuits_ppir_road_2017.png",
+     "url": "https://www.racingcircuits.info/assets/images/maps/North%20America/USA/Pikes%20Peak%20International%20Raceway/Pikes%20Peak%20International%20Raceway-Road-2017.png",
+     "note": "1875x1110; URL recovered from the session transcript of the 2026-11-07 download (not recorded in the repo): VERIFY it still serves the same map (unused pavement grey, T1-T9, arrows)"
+    }
+   ],
+   "total_bytes": 964075,
+   "n_files": 3,
+   "_rb": 783475
+  }
+ ],
+ "in_git": [
+  {
+   "mac_path": "/Volumes/Drive/codex/kerb_work/img/exotics-racing-lv_2019_060.json",
+   "size": 366,
+   "sha256": "678459524e01c5c33951503e50c8b4df96a3b65066ac00d13c39793459574faa",
+   "git_path": "tracks/exotics-racing-lv-lm/source/vegetation/naip_2019_060.json",
+   "note": "sha-equal to a blob (or LFS object) on origin; the PC gets it with git (git lfs pull for z18)"
+  },
+  {
+   "mac_path": "/Volumes/Drive/codex/kerb_work/img/exotics-racing-lv_2019_060.png",
+   "size": 1565958,
+   "sha256": "ee352739bcabc666b8d041157bb5df06542138ecdeeade0804f4da72c41fcad4",
+   "git_path": "tracks/exotics-racing-lv-lm/source/vegetation/naip_2019_060.png",
+   "note": "sha-equal to a blob (or LFS object) on origin; the PC gets it with git (git lfs pull for z18)"
+  },
+  {
+   "mac_path": "/Volumes/Drive/codex/kerb_work/img/exotics-racing-lv_2022_060.json",
+   "size": 357,
+   "sha256": "60e2380650a434c005a7d27a6fef723dc1d4f181deb953e16074acd59e4638cf",
+   "git_path": "tracks/exotics-racing-lv-lm/source/vegetation/naip_2022_060.json",
+   "note": "sha-equal to a blob (or LFS object) on origin; the PC gets it with git (git lfs pull for z18)"
+  },
+  {
+   "mac_path": "/Volumes/Drive/codex/kerb_work/img/exotics-racing-lv_2022_060.png",
+   "size": 1345494,
+   "sha256": "3bad639b6c1263369d086760a4ab2d864b1ceb991a03594d4ac7cc83fc36a7b0",
+   "git_path": "tracks/exotics-racing-lv-lm/source/vegetation/naip_2022_060.png",
+   "note": "sha-equal to a blob (or LFS object) on origin; the PC gets it with git (git lfs pull for z18)"
+  },
+  {
+   "mac_path": "/Volumes/Drive/codex/kerb_work/img/pikes-peak_2023_030.json",
+   "size": 388,
+   "sha256": "dceea1316264d19c59c6fd00399c8de45a6e1a7a3d48a8b76d46035910c07fff",
+   "git_path": "tracks/pikes-peak/source/aerial-engine/naip_2023_030.json",
+   "note": "sha-equal to a blob (or LFS object) on origin; the PC gets it with git (git lfs pull for z18)"
+  },
+  {
+   "mac_path": "/Volumes/Drive/codex/roadwear_work/img/dm_naip_2012.png",
+   "size": 3529229,
+   "sha256": "992a3ad5298ee1b7004d4c73b13ede5205e6e8ffdd66fe0a4e02fb5b3958a99d",
+   "git_path": "tracks/del-mar/source/naip_2012_delmar.png",
+   "note": "sha-equal to a blob (or LFS object) on origin; the PC gets it with git (git lfs pull for z18)"
+  },
+  {
+   "mac_path": "/Volumes/Drive/codex/roadwear_work/img/dm_naip_2012_z18.jpg",
+   "size": 1010740,
+   "sha256": "0844bc93389f1f74dbc6cb1cea9faa3a16fa8193b35216e930d5faa200581a3e",
+   "git_path": "docs/research/del-mar/tools/naip_2012_z18.jpg",
+   "note": "sha-equal to a blob (or LFS object) on origin; the PC gets it with git (git lfs pull for z18)"
+  },
+  {
+   "mac_path": "/Volumes/Drive/codex/roadwear_work/img/lm_naip_2022_z18.jpg",
+   "size": 31861774,
+   "sha256": "5b300b3d8b68158a647e45fe0f157c73643cc009c24846beba08ba7f5019cd8e",
+   "git_path": "tracks/san-diego-lake-murray/source/naip_2022_lm_z18.jpg",
+   "note": "sha-equal to a blob (or LFS object) on origin; the PC gets it with git (git lfs pull for z18)"
+  },
+  {
+   "mac_path": "/Volumes/Drive/codex/roadwear_work/img/mrc_naip_2022.jpg",
+   "size": 2128356,
+   "sha256": "faed2b7d3ace7dd77b81ed50728d950b28849ef572af4bf56b4b0440e1389322",
+   "git_path": "tracks/milford-road-course-lm/source/road_wear/naip_2022_mrc.jpg",
+   "note": "sha-equal to a blob (or LFS object) on origin; the PC gets it with git (git lfs pull for z18)"
+  },
+  {
+   "mac_path": "/Volumes/Drive/codex/roadwear_work/img/sc_naip_2023.jpg",
+   "size": 1837915,
+   "sha256": "09c5b72c04000f0917c8d2f954cb3ba06e6c089a929652bcb5ad4b582dddec7d",
+   "git_path": "tracks/sand-creek/source/naip_2023_sc.jpg",
+   "note": "sha-equal to a blob (or LFS object) on origin; the PC gets it with git (git lfs pull for z18)"
+  },
+  {
+   "mac_path": "/Volumes/Drive/codex/roadwear_work/img/sc_naip_2023_z18.jpg",
+   "size": 14679716,
+   "sha256": "ba625badc8595d8428114e6545e4f7c7c7b600a23b35e092c7672e2e85013576",
+   "git_path": "tracks/sand-creek/source/naip_2023_sc_z18.jpg",
+   "note": "sha-equal to a blob (or LFS object) on origin; the PC gets it with git (git lfs pull for z18)"
+  },
+  {
+   "mac_path": "/Volumes/Drive/codex/mf_work/inv/naip.jpg",
+   "size": 2128356,
+   "sha256": "faed2b7d3ace7dd77b81ed50728d950b28849ef572af4bf56b4b0440e1389322",
+   "git_path": "tracks/milford-road-course-lm/source/road_wear/naip_2022_mrc.jpg",
+   "note": "sha-equal to a blob (or LFS object) on origin; the PC gets it with git (git lfs pull for z18)"
+  }
+ ],
+ "derived_regenerable": [
+  {
+   "mac_path": "/Volumes/Drive/codex/mf_work/veg/read/veg.npz",
+   "size": 47559278,
+   "sha256": "18ba249a7f0a39854751e874ea3f8030debbd2d1f68bbbecc9e81d0ec509f109",
+   "why": "made from the Milford EPT (lidar_milford_oakland2016) / NAIP 2022 by scripts in mf_work/veg and the Milford vegetation tools (ledger 0079/0082/0089); regenerate after re-fetch"
+  },
+  {
+   "mac_path": "/Volumes/Drive/codex/mf_work/veg/read/veg.summary.json",
+   "size": 286,
+   "sha256": "04d662f3c1df283e0f24a7d4a28e3f8d9fc3a65ce40feb13f8df10fac5e207ba",
+   "why": "made from the Milford EPT (lidar_milford_oakland2016) / NAIP 2022 by scripts in mf_work/veg and the Milford vegetation tools (ledger 0079/0082/0089); regenerate after re-fetch"
+  },
+  {
+   "mac_path": "/Volumes/Drive/codex/mf_work/veg/read/veg_canopy.npz",
+   "size": 17983779,
+   "sha256": "380079b8468aabfbd2ad121a661560bd36993a04c13ae535dd8f538310fd2c6a",
+   "why": "made from the Milford EPT (lidar_milford_oakland2016) / NAIP 2022 by scripts in mf_work/veg and the Milford vegetation tools (ledger 0079/0082/0089); regenerate after re-fetch"
+  },
+  {
+   "mac_path": "/Volumes/Drive/codex/mf_work/veg/inv/crowns.json",
+   "size": 3720045,
+   "sha256": "92217a01a3737679eff1d15c1a746e2fe49d5f192b9a6b0c8ec91b8fd6b177d2",
+   "why": "made from the Milford EPT (lidar_milford_oakland2016) / NAIP 2022 by scripts in mf_work/veg and the Milford vegetation tools (ledger 0079/0082/0089); regenerate after re-fetch"
+  },
+  {
+   "mac_path": "/Volumes/Drive/codex/mf_work/veg/inv/crowns.npz",
+   "size": 9234463,
+   "sha256": "c017f3b9a80ac6009db08dbe62c0cd712f743328d0ae7d96800869247f599d6d",
+   "why": "made from the Milford EPT (lidar_milford_oakland2016) / NAIP 2022 by scripts in mf_work/veg and the Milford vegetation tools (ledger 0079/0082/0089); regenerate after re-fetch"
+  },
+  {
+   "mac_path": "/Volumes/Drive/codex/mf_work/veg/work/naipfeat.npz",
+   "size": 5614083,
+   "sha256": "232ef7a5a08ef92367706b8a833319e15014057a6be46c8d8405695eafddd87f",
+   "why": "made from the Milford EPT (lidar_milford_oakland2016) / NAIP 2022 by scripts in mf_work/veg and the Milford vegetation tools (ledger 0079/0082/0089); regenerate after re-fetch"
+  },
+  {
+   "mac_path": "/Volumes/Drive/codex/mf_work/veg/work/naip_local.npy",
+   "size": 8100128,
+   "sha256": "ba5dae251f662c08ce1d659d5af9e002cb5f7ab290658b09d821ac70a37f7f17",
+   "why": "made from the Milford EPT (lidar_milford_oakland2016) / NAIP 2022 by scripts in mf_work/veg and the Milford vegetation tools (ledger 0079/0082/0089); regenerate after re-fetch"
+  },
+  {
+   "mac_path": "/Volumes/Drive/codex/dm_work/p4/points.npz",
+   "size": 21791482,
+   "sha256": "958030fa40ac3efe9649bdfd98acfd47a4ba6a0fd69680d77676add99355e403",
+   "why": "made by tools/lidar_ground.py / lidar_roof_forms.py from the Del Mar D24 tiles (ledger 0083 pass 3/4); regenerate after re-fetch"
+  },
+  {
+   "mac_path": "/Volumes/Drive/codex/dm_work/p4b/ground.npz",
+   "size": 20218791,
+   "sha256": "c68bc2462e5549fd0614bc0cebffba8ba3009967efd041869d059bfa25fe2af0",
+   "why": "made by tools/lidar_ground.py / lidar_roof_forms.py from the Del Mar D24 tiles (ledger 0083 pass 3/4); regenerate after re-fetch"
+  },
+  {
+   "mac_path": "/Volumes/Drive/codex/dm_work/p4/data/heightfield.npy",
+   "size": 205448,
+   "sha256": "3f95fc89a8358de0acc92e66c2b43727a54642854ae9b674f71728ee594f8833",
+   "why": "made by tools/lidar_ground.py / lidar_roof_forms.py from the Del Mar D24 tiles (ledger 0083 pass 3/4); regenerate after re-fetch"
+  },
+  {
+   "mac_path": "/Volumes/Drive/codex/kerb_work/aspen_edges/blocks.json",
+   "size": 5249,
+   "sha256": "f6cc14bc91b2e8786fac4441b0d01b1f7abe75ef170fec7b5ba3d545f7401b9d",
+   "why": "tools/aerial_edges.py + kerb_blocks.py outputs over the kerb_work/img crops (ledger 0081/0088); regenerate after re-fetch (blocks/kerbs hand-checked values that matter are committed under tracks/*/source/edges)"
+  },
+  {
+   "mac_path": "/Volumes/Drive/codex/kerb_work/aspen_edges/edges.traced.json",
+   "size": 91289,
+   "sha256": "5eae33bceb0659b8eb053cbf621a47445d823356706a51add83c8d52c4e42dac",
+   "why": "tools/aerial_edges.py + kerb_blocks.py outputs over the kerb_work/img crops (ledger 0081/0088); regenerate after re-fetch (blocks/kerbs hand-checked values that matter are committed under tracks/*/source/edges)"
+  },
+  {
+   "mac_path": "/Volumes/Drive/codex/kerb_work/aspen_edges/edges_overview.png",
+   "size": 5482017,
+   "sha256": "7f9445cab1e989c60ac51ea7e458b67762078cf097994fa641809f6639d828b7",
+   "why": "tools/aerial_edges.py + kerb_blocks.py outputs over the kerb_work/img crops (ledger 0081/0088); regenerate after re-fetch (blocks/kerbs hand-checked values that matter are committed under tracks/*/source/edges)"
+  },
+  {
+   "mac_path": "/Volumes/Drive/codex/kerb_work/aspen_edges/scan.json",
+   "size": 217732,
+   "sha256": "7455cb11e8708eb5c723f26b38790c26b738a611ed821c99d58cfec7e5d89a6c",
+   "why": "tools/aerial_edges.py + kerb_blocks.py outputs over the kerb_work/img crops (ledger 0081/0088); regenerate after re-fetch (blocks/kerbs hand-checked values that matter are committed under tracks/*/source/edges)"
+  },
+  {
+   "mac_path": "/Volumes/Drive/codex/kerb_work/grand-junction_edges/blocks.json",
+   "size": 493,
+   "sha256": "901c76f09850d2dd704705ffcc3d7e00e363d6469e1e5406931466c768f0c56f",
+   "why": "tools/aerial_edges.py + kerb_blocks.py outputs over the kerb_work/img crops (ledger 0081/0088); regenerate after re-fetch (blocks/kerbs hand-checked values that matter are committed under tracks/*/source/edges)"
+  },
+  {
+   "mac_path": "/Volumes/Drive/codex/kerb_work/grand-junction_edges/check1.jpg",
+   "size": 111705,
+   "sha256": "8092f7227ebb540588b7ee049c2b78538ddbf1e10ee25eb7c463308b1bdb1665",
+   "why": "tools/aerial_edges.py + kerb_blocks.py outputs over the kerb_work/img crops (ledger 0081/0088); regenerate after re-fetch (blocks/kerbs hand-checked values that matter are committed under tracks/*/source/edges)"
+  },
+  {
+   "mac_path": "/Volumes/Drive/codex/kerb_work/grand-junction_edges/edges.traced.json",
+   "size": 129285,
+   "sha256": "2fbe652fe3d69216641eb75e030b4d0d81c700e7eeb752fefa5ccb01662329a4",
+   "why": "tools/aerial_edges.py + kerb_blocks.py outputs over the kerb_work/img crops (ledger 0081/0088); regenerate after re-fetch (blocks/kerbs hand-checked values that matter are committed under tracks/*/source/edges)"
+  },
+  {
+   "mac_path": "/Volumes/Drive/codex/kerb_work/grand-junction_edges/edges_overview.png",
+   "size": 2303622,
+   "sha256": "9ace74dc79e7af77c8f6936163a359b396b9234d3fd1e6f3119866f0b10e3bba",
+   "why": "tools/aerial_edges.py + kerb_blocks.py outputs over the kerb_work/img crops (ledger 0081/0088); regenerate after re-fetch (blocks/kerbs hand-checked values that matter are committed under tracks/*/source/edges)"
+  },
+  {
+   "mac_path": "/Volumes/Drive/codex/kerb_work/grand-junction_edges/scan.json",
+   "size": 170040,
+   "sha256": "a702eb9a79c002fba03243290599b8e3a3ba30e6ee0c1eb1991bce65aaafa9a7",
+   "why": "tools/aerial_edges.py + kerb_blocks.py outputs over the kerb_work/img crops (ledger 0081/0088); regenerate after re-fetch (blocks/kerbs hand-checked values that matter are committed under tracks/*/source/edges)"
+  },
+  {
+   "mac_path": "/Volumes/Drive/codex/kerb_work/high-plains_edges/blocks.json",
+   "size": 8249,
+   "sha256": "c82dac7063727bc011c67bd5531090c3793eb81c64e49e904aa6e819c0e6eec8",
+   "why": "tools/aerial_edges.py + kerb_blocks.py outputs over the kerb_work/img crops (ledger 0081/0088); regenerate after re-fetch (blocks/kerbs hand-checked values that matter are committed under tracks/*/source/edges)"
+  },
+  {
+   "mac_path": "/Volumes/Drive/codex/kerb_work/hp_edges/check1.jpg",
+   "size": 322334,
+   "sha256": "8b9f31ded0ac64f30f8a84cef3fefc45e5dc6f2b340bd3c375e3ebef04888c65",
+   "why": "tools/aerial_edges.py + kerb_blocks.py outputs over the kerb_work/img crops (ledger 0081/0088); regenerate after re-fetch (blocks/kerbs hand-checked values that matter are committed under tracks/*/source/edges)"
+  },
+  {
+   "mac_path": "/Volumes/Drive/codex/kerb_work/hp_edges/edges.traced.json",
+   "size": 50286,
+   "sha256": "10766d324f4a515e2916eecf0aa5f66a64c93c41009603195d36f4ad6e2b827d",
+   "why": "tools/aerial_edges.py + kerb_blocks.py outputs over the kerb_work/img crops (ledger 0081/0088); regenerate after re-fetch (blocks/kerbs hand-checked values that matter are committed under tracks/*/source/edges)"
+  },
+  {
+   "mac_path": "/Volumes/Drive/codex/kerb_work/hp_edges/edges_overview.png",
+   "size": 10797785,
+   "sha256": "787444710de2bffd91251324bd97928fa1c05da92bea831a91e0b0ce17a0a9c9",
+   "why": "tools/aerial_edges.py + kerb_blocks.py outputs over the kerb_work/img crops (ledger 0081/0088); regenerate after re-fetch (blocks/kerbs hand-checked values that matter are committed under tracks/*/source/edges)"
+  },
+  {
+   "mac_path": "/Volumes/Drive/codex/kerb_work/hp_edges/kerbs.json",
+   "size": 20122,
+   "sha256": "9027f3200bbddde2f38a5570b00503475173c855d976e2b3453837f0728d0c29",
+   "why": "tools/aerial_edges.py + kerb_blocks.py outputs over the kerb_work/img crops (ledger 0081/0088); regenerate after re-fetch (blocks/kerbs hand-checked values that matter are committed under tracks/*/source/edges)"
+  },
+  {
+   "mac_path": "/Volumes/Drive/codex/kerb_work/hp_edges/scan.json",
+   "size": 419554,
+   "sha256": "b8ba6cf449e7fd5fd60086e6711417d04d79c8340565f5d5b757adf2319bffdc",
+   "why": "tools/aerial_edges.py + kerb_blocks.py outputs over the kerb_work/img crops (ledger 0081/0088); regenerate after re-fetch (blocks/kerbs hand-checked values that matter are committed under tracks/*/source/edges)"
+  },
+  {
+   "mac_path": "/Volumes/Drive/codex/kerb_work/pikes-peak_edges/blocks.json",
+   "size": 2360,
+   "sha256": "038defdeb516b0127023e2208dd531fe427c1b202c8d4ed05939d0f858a030cb",
+   "why": "tools/aerial_edges.py + kerb_blocks.py outputs over the kerb_work/img crops (ledger 0081/0088); regenerate after re-fetch (blocks/kerbs hand-checked values that matter are committed under tracks/*/source/edges)"
+  },
+  {
+   "mac_path": "/Volumes/Drive/codex/kerb_work/pikes-peak_edges/edges.traced.json",
+   "size": 53373,
+   "sha256": "c2df848e132bbfa2cbadea6b9185eb250a285445f54db1dcb6703de88e35e5ae",
+   "why": "tools/aerial_edges.py + kerb_blocks.py outputs over the kerb_work/img crops (ledger 0081/0088); regenerate after re-fetch (blocks/kerbs hand-checked values that matter are committed under tracks/*/source/edges)"
+  },
+  {
+   "mac_path": "/Volumes/Drive/codex/kerb_work/pikes-peak_edges/edges_overview.png",
+   "size": 8501416,
+   "sha256": "adda8c0be5e3f8818a0d439f31b3e8c12c9deb3dea0630541accf298a1c53969",
+   "why": "tools/aerial_edges.py + kerb_blocks.py outputs over the kerb_work/img crops (ledger 0081/0088); regenerate after re-fetch (blocks/kerbs hand-checked values that matter are committed under tracks/*/source/edges)"
+  },
+  {
+   "mac_path": "/Volumes/Drive/codex/kerb_work/pikes-peak_edges/scan.json",
+   "size": 217569,
+   "sha256": "cc2d075f164336ab3ad02cfbc80729d3e31a3fbdd811ba43c913150ae5d4e766",
+   "why": "tools/aerial_edges.py + kerb_blocks.py outputs over the kerb_work/img crops (ledger 0081/0088); regenerate after re-fetch (blocks/kerbs hand-checked values that matter are committed under tracks/*/source/edges)"
+  },
+  {
+   "mac_path": "/Volumes/Drive/codex/kerb_work/pueblo_edges/edges.traced.json",
+   "size": 184791,
+   "sha256": "7d9f901b5ab3a853df9b4bad8e5ca2b08b4422b8dd4b38281a42b611ac61adf9",
+   "why": "tools/aerial_edges.py + kerb_blocks.py outputs over the kerb_work/img crops (ledger 0081/0088); regenerate after re-fetch (blocks/kerbs hand-checked values that matter are committed under tracks/*/source/edges)"
+  },
+  {
+   "mac_path": "/Volumes/Drive/codex/kerb_work/pueblo_edges/edges_overview.png",
+   "size": 16128713,
+   "sha256": "cccf0f1506e4db659db8d7d060b274073b866dbe2daa011b1b04f28c1916af91",
+   "why": "tools/aerial_edges.py + kerb_blocks.py outputs over the kerb_work/img crops (ledger 0081/0088); regenerate after re-fetch (blocks/kerbs hand-checked values that matter are committed under tracks/*/source/edges)"
+  },
+  {
+   "mac_path": "/Volumes/Drive/codex/kerb_work/pueblo_edges/scan.json",
+   "size": 459950,
+   "sha256": "da2b8fa24b3004f266cfcd6ec879781c56764a84f359f5d6945638371ade53a2",
+   "why": "tools/aerial_edges.py + kerb_blocks.py outputs over the kerb_work/img crops (ledger 0081/0088); regenerate after re-fetch (blocks/kerbs hand-checked values that matter are committed under tracks/*/source/edges)"
+  },
+  {
+   "mac_path": "/Volumes/Drive/codex/pp_work/network.json",
+   "size": 570,
+   "sha256": "15b7d35b4781c3975efe97e96b9dfdddff45aa13863e7742f728168fca962049",
+   "why": "pave_mask.py over the PP NAIP crop; retrace caches; network.json is a by-eye pixel trace (570 B, same shape as committed infield_network.eyeball.json)"
+  },
+  {
+   "mac_path": "/Volumes/Drive/codex/pp_work/pave_mask.npy",
+   "size": 4249965,
+   "sha256": "073972240c094f2a9ff18a4a366606dae3c9951429316361a77f8f2e8dc438bf",
+   "why": "pave_mask.py over the PP NAIP crop; retrace caches; network.json is a by-eye pixel trace (570 B, same shape as committed infield_network.eyeball.json)"
+  },
+  {
+   "mac_path": "/Volumes/Drive/codex/pp_work/retrace/_cache/inside.pkl",
+   "size": 186973,
+   "sha256": "b62b0a7db4f09ba888932c6785b632aa4c4cc6cfc70f502c92fecd3a341b8d1b",
+   "why": "pave_mask.py over the PP NAIP crop; retrace caches; network.json is a by-eye pixel trace (570 B, same shape as committed infield_network.eyeball.json)"
+  },
+  {
+   "mac_path": "/Volumes/Drive/codex/pp_work/retrace/_cache/internals.pkl",
+   "size": 467512,
+   "sha256": "154363be6ec82cea2091bc7b95ebbbac1f4906901af61050787b5b0307a9f9e5",
+   "why": "pave_mask.py over the PP NAIP crop; retrace caches; network.json is a by-eye pixel trace (570 B, same shape as committed infield_network.eyeball.json)"
+  },
+  {
+   "mac_path": "/Volumes/Drive/codex/pp_work/retrace/_cache/oval_mid.npy",
+   "size": 80096,
+   "sha256": "eeb2aa3ee7c93c86f15f05ce822962a55f76b568ffeba8b1a630187f36e1fa23",
+   "why": "pave_mask.py over the PP NAIP crop; retrace caches; network.json is a by-eye pixel trace (570 B, same shape as committed infield_network.eyeball.json)"
+  },
+  {
+   "mac_path": "/Volumes/Drive/codex/edges_work/sc_rr2.edges.json",
+   "size": 20568487,
+   "sha256": "6e7d53b1a3a529dcd30db27e169a028aa9256144d6b78eee0692d359ccc5109b",
+   "why": "tools/edge_smoothness.py / aerial_edges outputs over builds (ledger 0087/0088); read builds, regenerate"
+  },
+  {
+   "mac_path": "/Volumes/Drive/codex/edges_work/sc_rr2.lines.json",
+   "size": 20568487,
+   "sha256": "6e7d53b1a3a529dcd30db27e169a028aa9256144d6b78eee0692d359ccc5109b",
+   "why": "tools/edge_smoothness.py / aerial_edges outputs over builds (ledger 0087/0088); read builds, regenerate"
+  },
+  {
+   "mac_path": "/Volumes/Drive/codex/edges_work/mf_c4.edges.json",
+   "size": 2146057,
+   "sha256": "93791c4fae07b93a823187b4b490e2e0729f62d5f6e40d6dde8431e5817a67a2",
+   "why": "tools/edge_smoothness.py / aerial_edges outputs over builds (ledger 0087/0088); read builds, regenerate"
+  },
+  {
+   "mac_path": "/Volumes/Drive/codex/edges_work/mf_c4.truth.json",
+   "size": 455466,
+   "sha256": "0eb73d9d4ce2060e41f06dbdae2afd5face5ff42e45a299387ce2505b84dfd4c",
+   "why": "tools/edge_smoothness.py / aerial_edges outputs over builds (ledger 0087/0088); read builds, regenerate"
+  },
+  {
+   "mac_path": "/Volumes/Drive/codex/edges_work/es_c4.json",
+   "size": 10736,
+   "sha256": "e7c43b57009c55b3576524b61a3e55d9c56aa1c8aa241e0d3ae9e59f086ea097",
+   "why": "tools/edge_smoothness.py / aerial_edges outputs over builds (ledger 0087/0088); read builds, regenerate"
+  },
+  {
+   "mac_path": "/Volumes/Drive/codex/edges_work/es_c5.json",
+   "size": 2058,
+   "sha256": "11fb8ffee60db5831df0fbdb48da54f8c0837ce477ee406a577976e39cc97fc9",
+   "why": "tools/edge_smoothness.py / aerial_edges outputs over builds (ledger 0087/0088); read builds, regenerate"
+  },
+  {
+   "mac_path": "/Volumes/Drive/codex/edges_work/fit_both.json",
+   "size": 28152,
+   "sha256": "af1311d6d0cba71233e0b03e7eba590b22039dc489f7476acb96d8fbb8ec2376",
+   "why": "tools/edge_smoothness.py / aerial_edges outputs over builds (ledger 0087/0088); read builds, regenerate"
+  },
+  {
+   "mac_path": "/Volumes/Drive/codex/roadwear_work/scratch/measure.json",
+   "size": 936,
+   "sha256": "2f077a2b8dca1d79cce99a195f79066dae7f4a34603a8be00436c2ee3f6b41d8",
+   "why": "scratch analysis for ledger 0084"
+  },
+  {
+   "mac_path": "/Volumes/Drive/codex/roadwear_work/scratch/mf_model_line.json",
+   "size": 24266,
+   "sha256": "9ce6f404509ac1626bd19b3d212c1662ba01f055679a99002b951cb85a6e22e1",
+   "why": "scratch analysis for ledger 0084"
+  }
+ ],
+ "unique_not_public": [
+  {
+   "mac_path": "/Volumes/Drive/codex/pp_work/sketch/routes/infield_only.json",
+   "size": 11043,
+   "sha256": "eeb7c715f1cc765381e2ce155a34ec6cfc49222f8be411f9b749bc56432e162c",
+   "why": "Kevin's own pen strokes (saved_at 2026-11-07T23:41:06Z), pixel coords on the PP NAIP 2023 crop. Used by maps_route.py (PPIR_SKETCH). NOT public, NOT re-fetchable."
+  },
+  {
+   "mac_path": "/Volumes/Drive/codex/pp_work/sketch/routes/road_course.json",
+   "size": 31398,
+   "sha256": "e8b9a8ba9a5a972afe88f507733a1cbacb4287bc2121535a6dcc75385b010221",
+   "why": "Kevin's own pen strokes, road-course sketch over the same crop (same tool). NOT public."
+  },
+  {
+   "mac_path": "/Volumes/Drive/codex/pp_work/sketch/sketch_overlay.jpg",
+   "size": 972199,
+   "sha256": "02f400d818415b96a7b6ab6893b8743c1f8f73cde20fe327753d03c4c83dff5a",
+   "why": "Render of Kevin's sketch over the crop (derived by pp_work/sketch/render_sketch.py, 963 B script, also on the SD): regenerable from the two JSONs; copy anyway, it is 0.97 MB"
+  },
+  {
+   "mac_path": "/Volumes/Drive/codex/pp_work/sketch/render_sketch.py",
+   "size": 963,
+   "sha256": "810af05897a263853ee5654522f43f3e0fc2fa588752c49ea8a6a3199340303d",
+   "why": "script that renders the sketch overlay (tiny)"
+  }
+ ],
+ "untraced": [],
+ "not_inventoried": [
+  "mf_work/*_src, v01x, c*, b0, ... : repo copies and build workshops (loop.blend 0.1-0.7 GB each), regenerable/in git",
+  "kerb_work/{hp012,r2,r3,nv012,...}, pp_work/ppir_base, dm_work/{v02x,p*,b1,del_mar_lm}, edges_work/{mf,tmp}: build outputs",
+  "roadwear_work/lm, lmdata: copies of repo trees (lmdata = Lake Murray tracks/ data as of Nov 5)",
+  "fwlm_work, sclm_work, sc_mouths, g10, claude_scratch, k10-colorado*, racing-desk*, menu_previews: no raw downloads found (builds, source trees, tools)"
+ ]
+}

@@ -139,6 +139,15 @@ def main(argv=None) -> int:
         got = m["props"].get("detailUVMultiplier")
         if got is None or abs(got - mult) > 1e-3:
             bad.append(f"{mn}: detailUVMultiplier {got} != {mult}")
+        # every VAR the bake declared is in the kn5 at its value; and the lighting pair is there at all (without it AC
+        # falls back to its shader defaults: 0.1.9's first build shipped the road with neither)
+        for pn, pv in (row.get("props") or {}).items():
+            kv = m["props"].get(pn)
+            if kv is None or abs(kv - float(pv)) > 1e-3:
+                bad.append(f"{mn}: {pn} {kv} != declared {pv}")
+        for pn in ("ksAmbient", "ksDiffuse"):
+            if pn not in m["props"]:
+                bad.append(f"{mn}: no {pn} (AC would use its shader default)")
         atlas_name = tx.get("txDiffuse", atlas_name)
     rows["materials"] = {"pass": not bad, "materials": sorted(decl["materials"]), "problems": bad}
     if atlas_name is None or atlas_name not in p["textures"]:

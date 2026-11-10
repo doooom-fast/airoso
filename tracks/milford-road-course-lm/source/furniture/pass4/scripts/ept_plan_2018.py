@@ -5,10 +5,14 @@ writes DL/plan.json. Fetches no point data.
 
     python -I ept_plan_2018.py <track.config.json> <DL dir> [BUF_M]
 """
-import json, math, sys, ssl, time, urllib.request
+import json, math, sys, time, urllib.request
 from pathlib import Path
 
 import numpy as np
+ROOT = Path(__file__).resolve().parents[5]          # airoso: TLS goes through scripts/tls.py (tests/net/test_https_everywhere.py)
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+from scripts.tls import https_context  # noqa: E402
 
 EPT = "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/USGS_LPC_MI_31Co_Livingston_2018_LAS_2019/ept.json"
 BASE = EPT.rsplit("/", 1)[0]
@@ -16,14 +20,13 @@ cfg_path, DL = Path(sys.argv[1]), Path(sys.argv[2])
 BUF = float(sys.argv[3]) if len(sys.argv) > 3 else 25.0
 KEYS = ("g1_", "g2_", "g3_", "t2_", "t3_")
 fetched = {"bytes": 0, "files": 0}
-CTX = ssl.create_default_context()
 
 
 def get(url, save=None):
     err = None
     for k in range(5):
         try:
-            with urllib.request.urlopen(url, timeout=120, context=CTX) as r:
+            with urllib.request.urlopen(url, timeout=120, context=https_context()) as r:
                 b = r.read()
             break
         except Exception as e:  # noqa
@@ -37,7 +40,7 @@ def get(url, save=None):
 
 
 def head(url):
-    with urllib.request.urlopen(urllib.request.Request(url, method="HEAD"), timeout=60, context=CTX) as r:
+    with urllib.request.urlopen(urllib.request.Request(url, method="HEAD"), timeout=60, context=https_context()) as r:
         return int(r.headers["Content-Length"])
 
 

@@ -14,6 +14,17 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
+## 2026-11-09 — Milford furniture pass 4's numbers (ledger 0082 pass 4, 0.1.10; no gate threshold moved, no bypass, no shared code changed)
+
+| number | value | source |
+|---|---|---|
+| the far-west roofs' elevation and walls | roof_z_m 25.91-47.56 m, walls 5.1-12.9 m | **measured**: the 2017 lidar, tiered by roof elevation (`pass4/tiers_p4.json`) |
+| which of them stand | 21, 77, 81 standing; 53, 57, 58, 59 gone | **measured**: NAIP 2022's strip west of the crop (download b), by eye |
+| a piece too small or empty to be a block | under 100 m2 or filling under 0.55 of its box | ⚠ [invented] (`make_entries_p4.py` MIN_AREA_M2 / MIN_FILL) |
+| an L / T roof split when it fills under | 0.7 of its box | ⚠ [invented] (`tiers.py --split`) |
+| a piece with a planted tree within | 1.0 m | `tools/make_treefx.py` BUILT_BUILDING_CLEAR_M, which veg_verify gates |
+| rail and tyre-wall heights | unchanged, ⚠ [invented] | download a (Livingston 2018) holds no point within 1.28 km of the lap |
+
 ## 2026-11-09 — Milford 0.1.9: 0.1.7's `road_wear` gate and 0.1.8's re-seat in one chain (ledger 0082 "Milford 0.1.9"; no gate threshold moved, no bypass)
 
 **Wiring only.** `tools/ship_track.sh` `prep_prep` now runs 0.1.8's re-seat (`scenery.bespoke.reseat_on_prep`), then

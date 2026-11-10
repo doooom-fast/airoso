@@ -1,0 +1,21 @@
+{
+ "trees": 11247,
+ "trunk_colliders": 385,
+ "orphan_colliders": 0,
+ "nearest_paved_m": 4.65,
+ "within_margin_of_paved": 0,
+ "nearest_wall_m": 2.96,
+ "within_1m_of_wall": 0,
+ "trees_within_reach_of_paved": 390,
+ "collider_reach_m": 30.0,
+ "within_reach_no_collider": 0,
+ "reach_band_no_collider_m": [
+  29.55,
+  29.85,
+  29.87,
+  29.95,
+  29.97
+ ],
+ "corridor_margin_m": 3.0,
+ "verdict": "PASS"
+}

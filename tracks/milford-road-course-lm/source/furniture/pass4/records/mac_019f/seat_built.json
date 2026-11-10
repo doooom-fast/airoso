@@ -1,0 +1,287 @@
+{
+ "verdict": "PASS",
+ "fails": [],
+ "objects": [
+  {
+   "object": "1WALL_GHOST_RAIL_0_mat",
+   "class": "wbeam_collider",
+   "cells": 93,
+   "cells_no_ground": 0,
+   "exposed_p5_p50_p95_m": [
+    0.651,
+    0.702,
+    0.746
+   ],
+   "foot_gap_max_m": -0.1,
+   "floating_cells": 0,
+   "lines": {
+    "g1_nw_corner_outside": 0.7
+   },
+   "buried_cells": 0
+  },
+  {
+   "object": "1WALL_GHOST_RAIL_1_mat",
+   "class": "wbeam_collider",
+   "cells": 262,
+   "cells_no_ground": 0,
+   "exposed_p5_p50_p95_m": [
+    0.692,
+    0.701,
+    0.716
+   ],
+   "foot_gap_max_m": -0.146,
+   "floating_cells": 0,
+   "lines": {
+    "g2_front_straight_east": 0.7
+   },
+   "buried_cells": 0
+  },
+  {
+   "object": "1WALL_GHOST_RAIL_2_mat",
+   "class": "wbeam_collider",
+   "cells": 162,
+   "cells_no_ground": 0,
+   "exposed_p5_p50_p95_m": [
+    0.692,
+    0.701,
+    0.711
+   ],
+   "foot_gap_max_m": -0.142,
+   "floating_cells": 0,
+   "lines": {
+    "g3_front_straight_west": 0.7
+   },
+   "buried_cells": 0
+  },
+  {
+   "object": "1WALL_GHOST_RAIL_3_mat",
+   "class": "wbeam_collider",
+   "cells": 276,
+   "cells_no_ground": 0,
+   "exposed_p5_p50_p95_m": [
+    0.673,
+    0.704,
+    0.763
+   ],
+   "foot_gap_max_m": -0.121,
+   "floating_cells": 0,
+   "lines": {
+    "g4_infield_esses": 0.7
+   },
+   "buried_cells": 0
+  },
+  {
+   "object": "1WALL_TECPRO_TYRES_4_mat",
+   "class": "tyres",
+   "cells": 149,
+   "cells_no_ground": 0,
+   "exposed_p5_p50_p95_m": [
+    1.005,
+    1.016,
+    1.061
+   ],
+   "foot_gap_max_m": -0.18,
+   "floating_cells": 0,
+   "lines": {
+    "t1_nw_hairpin_exit": 1.0
+   },
+   "buried_cells": 0
+  },
+  {
+   "object": "1WALL_TECPRO_TYRES_5_mat",
+   "class": "tyres",
+   "cells": 190,
+   "cells_no_ground": 0,
+   "exposed_p5_p50_p95_m": [
+    0.995,
+    1.037,
+    1.652
+   ],
+   "foot_gap_max_m": -0.156,
+   "floating_cells": 0,
+   "lines": {
+    "t2_esses_east_leg": 1.0
+   },
+   "buried_cells": 0
+  },
+  {
+   "object": "1WALL_TECPRO_TYRES_6_mat",
+   "class": "tyres",
+   "cells": 105,
+   "cells_no_ground": 0,
+   "exposed_p5_p50_p95_m": [
+    0.998,
+    1.06,
+    1.2
+   ],
+   "foot_gap_max_m": -0.148,
+   "floating_cells": 0,
+   "lines": {
+    "t3_s1000_apron_back": 1.0
+   },
+   "buried_cells": 0
+  },
+  {
+   "object": "1WALL_TILTUP_SCREEN_10_mat",
+   "class": "screen",
+   "cells": 26,
+   "cells_no_ground": 0,
+   "exposed_p5_p50_p95_m": [
+    4.154,
+    4.26,
+    4.293
+   ],
+   "foot_gap_max_m": -0.461,
+   "floating_cells": 0,
+   "lines": {
+    "f1_nw_screen_ne_end": 4.14,
+    "f1_nw_screen_ne": 4.06
+   },
+   "buried_cells": 0
+  },
+  {
+   "object": "1WALL_TILTUP_SCREEN_7_mat",
+   "class": "screen",
+   "cells": 49,
+   "cells_no_ground": 0,
+   "exposed_p5_p50_p95_m": [
+    4.052,
+    4.126,
+    4.408
+   ],
+   "foot_gap_max_m": -0.184,
+   "floating_cells": 0,
+   "lines": {
+    "f1_nw_screen_ne": 4.06,
+    "f1_nw_screen_ne_end": 4.14,
+    "f1_nw_screen_step": 3.54
+   },
+   "buried_cells": 0
+  },
+  {
+   "object": "1WALL_TILTUP_SCREEN_8_mat",
+   "class": "screen",
+   "cells": 9,
+   "cells_no_ground": 0,
+   "exposed_p5_p50_p95_m": [
+    3.535,
+    3.841,
+    4.088
+   ],
+   "foot_gap_max_m": -0.307,
+   "floating_cells": 0,
+   "lines": {
+    "f1_nw_screen_step": 3.54,
+    "f1_nw_screen_ne": 4.06,
+    "f1_nw_screen_sw": 3.18
+   },
+   "buried_cells": 0
+  },
+  {
+   "object": "1WALL_TILTUP_SCREEN_9_mat",
+   "class": "screen",
+   "cells": 25,
+   "cells_no_ground": 0,
+   "exposed_p5_p50_p95_m": [
+    3.185,
+    3.327,
+    3.581
+   ],
+   "foot_gap_max_m": -0.448,
+   "floating_cells": 0,
+   "lines": {
+    "f1_nw_screen_sw": 3.18
+   },
+   "buried_cells": 0
+  },
+  {
+   "object": "BUILDING_FABRIC_pad_tent_mat",
+   "class": "block",
+   "cells": 6,
+   "cells_no_ground": 0,
+   "exposed_p5_p50_p95_m": [
+    2.838,
+    3.912,
+    7.528
+   ],
+   "foot_gap_max_m": 7.751,
+   "floating_cells": 2
+  },
+  {
+   "object": "BUILDING_METAL_0_mat",
+   "class": "block",
+   "cells": 8,
+   "cells_no_ground": 0,
+   "exposed_p5_p50_p95_m": [
+    2.133,
+    2.179,
+    2.286
+   ],
+   "foot_gap_max_m": -0.31,
+   "floating_cells": 0
+  },
+  {
+   "object": "FARBLOCK_TILTUP_0_mat",
+   "class": "block",
+   "cells": 24,
+   "cells_no_ground": 0,
+   "exposed_p5_p50_p95_m": [
+    3.438,
+    10.636,
+    25.943
+   ],
+   "foot_gap_max_m": -0.137,
+   "floating_cells": 0
+  },
+  {
+   "object": "GUARDRAIL_W_0_mat",
+   "class": "wbeam",
+   "cells": 319,
+   "cells_no_ground": 0,
+   "exposed_p5_p50_p95_m": [
+    0.642,
+    0.695,
+    0.816
+   ],
+   "foot_gap_max_m": 0.456,
+   "lines": {
+    "g1_nw_corner_outside": 0.7,
+    "g2_front_straight_east": 0.7
+   },
+   "buried_cells": 5
+  },
+  {
+   "object": "GUARDRAIL_W_1_mat",
+   "class": "wbeam",
+   "cells": 392,
+   "cells_no_ground": 0,
+   "exposed_p5_p50_p95_m": [
+    0.665,
+    0.696,
+    0.846
+   ],
+   "foot_gap_max_m": 1.492,
+   "lines": {
+    "g2_front_straight_east": 0.7,
+    "g3_front_straight_west": 0.7
+   },
+   "buried_cells": 1
+  },
+  {
+   "object": "GUARDRAIL_W_2_mat",
+   "class": "wbeam",
+   "cells": 416,
+   "cells_no_ground": 0,
+   "exposed_p5_p50_p95_m": [
+    0.64,
+    0.694,
+    0.757
+   ],
+   "foot_gap_max_m": 0.473,
+   "lines": {
+    "g4_infield_esses": 0.7
+   },
+   "buried_cells": 6
+  }
+ ]
+}

@@ -1243,3 +1243,143 @@ The two passes' deltas add exactly.
 1. **The PC: runbook 0082-6** and the install. It replaces 0082-5 and 0084-1's install steps: the newer green build is the
    one that installs. 0084-1 step 7 (the slot / alpha check) still needs doing in game.
 2. Pass 3's Owed 2-8 and ledger 0084's "Unverified" stand as written.
+
+---
+
+# Furniture pass 4 (2026-11-09): the three small downloads, what each measured; 0.1.10
+
+## P4.0 Request
+
+- Kevin, 2026-11-09, to pass 3's four downloads: **"The three small ones"** (a, b and d; not c, the onboard laps). Rules
+  (coordinator): stop if a's real size exceeds 60 MB; each download in its own new, empty directory on the system disk
+  (`<scratchpad>/sys/dl/`), the scripts elsewhere, read with `python -I`.
+- Branch `claude/milford-0110` from `origin/claude/milford-019` dcc2ebf (0.1.9 = 0.1.7's road wear + 0.1.8's furniture),
+  then **merged with 4262162** (the PC's fix: the road-wear materials keep ksAmbient / ksDiffuse 0.40; `road_wear_check`'s
+  materials row checks every declared VAR) as 004b522, so 0.1.10 carries it. A merge, not a rebase: 6ff5e2d was already pushed
+  (never force-push). Version 0.1.10. A first 0.1.10 build on dcc2ebf (same furniture, the old road materials) was set aside.
+
+## P4.1 The downloads (each recorded: file, source, size, date)
+
+| | file(s) | source | size | fetched |
+|---|---|---|---|---|
+| a | `ept.json`, `ept-hierarchy/0-0-0-0.json` (metadata) + `ept-data/{0-0-0-0, 1-1-0-0, 2-3-1-1, 3-7-3-3, 4-15-6-7}.laz` | `https://s3-us-west-2.amazonaws.com/usgs-lidar-public/USGS_LPC_MI_31Co_Livingston_2018_LAS_2019/` (`scripts/ept_plan_2018.py`: every node within 25 m of G1, G2, G3, T2, T3, the rails inside the project's bounds) | **107,166 B metadata + 928,153 B laz = 1,035,319 B** (sized first; far under the 60 MB stop) | 2026-11-09 17:40 MST |
+| b | `naip_2022_west_strip.png` (328 x 3112 px, the crop's own 6.1e-6 deg pixel) | `https://imagery.nationalmap.gov/arcgis/rest/services/USGSNAIPImagery/ImageServer/exportImage?bbox=-83.6720,42.56050328638498,-83.6700,42.57949671361502&bboxSR=4326&imageSR=4326&size=328,3112&format=png&mosaicRule={"mosaicMethod":"esriMosaicLockRaster","lockRasterIds":[77616]}&f=image` (raster 77616 = `m_4208327_ne_17_060_20220816`, the crop's own tile) | **1,025,270 B** | 2026-11-09 17:42 MST |
+| d | **nothing to fetch**: the ImageServer's catalog (`/query`, Category 1, the lap's envelope) holds only `m_4208327_ne_17_060_20220816` and `_se_` (2022); Michigan's newest year in the service is **2022** (`outStatistics` max(Year)) | the same service | 0 B | 2026-11-09 |
+
+The raw files stay on the Mac (`<scratchpad>/sys/dl/a_livingston2018/`, `b_naip2022_west/`); the plan, the strip check and the
+scripts are committed in `source/furniture/pass4/`.
+
+## P4.2 What each showed
+
+- **a, the Livingston 2018 flight: no point near the lap.** Its conforming bounds end at lon -83.66588, but the hierarchy holds
+  no node deeper than 4 (2.6 km cells, ~11,000 points each) within 25 m of any rail: the county's points stop at the county
+  line. Read on the G10 (`scripts/liv_extent.py`, laspy, the 4 GB cap): in the lap's latitude band the easternmost point is at
+  **lon -83.68293, 1.28 km west of the front straight**; 0 points east of -83.6673. **The rails' and tyre walls' heights stay
+  as pass 1 built them [invented]**: the only lidar over them is still the 2017 flight, which predates them.
+- **b, NAIP 2022 west of the crop: 3 of 7 roofs stand, 4 are gone, the annex stands.** `scripts/strip_check.py` (the strip
+  beside the 2017 lidar, every roof by eye; the tone alone cannot tell a roof from a lot):
+  - **standing, built**: roof 21 (the two-level building 375 m south-west of the lap, seen from 22 lap points), roof 77 (a small
+    block west of the far-west hall, 22), roof 81 (the multi-level complex north-west of the employee lot, 12);
+  - **gone by 2022, dropped**: roofs 53, 57, 58, 59 (3.1-5.0 m objects on what NAIP 2022 shows as a parking lot and grass:
+    2017's stored trailers or site huts);
+  - **79**: the 11-15 m east edge of a large building the 2017 read does not reach (its footprint is unmeasured): not built;
+  - **hall b's annex** (6.9 m): standing in 2022, but two crowns the vegetation pass planted (h 8.2 / 7.8 m, crown 4.5 m) stand
+    inside its rectangle. They look like rooftop units read as crowns; moving them changes the 11,247 trees, so the annex
+    stays unbuilt and the two points are listed (Owed).
+- **d**: nothing newer than 2022 exists on that service for Michigan, so **what changed since 2022 cannot be measured** from
+  it. A 2024 Michigan NAIP may exist elsewhere (USDA APFO's own distribution); that would be a new download to ask for.
+
+## P4.3 What 0.1.10 builds (`source/furniture/pass4/`, `scripts/make_entries_p4.py`)
+
+- The three standing roofs, tiered by **roof elevation** (`pass3/scripts/tiers.py` gains `{"z": [cuts]}`: a complex on sloping
+  ground has level roofs at their own elevations, so a cut on the height over the ground splits one roof in two) and with
+  L / T shapes **split** across their box's long axis where the fewest cells cross (`--split 0.7`): 26 pieces.
+- **Built 18** as far blocks at their measured roof elevation (`roof_z_m`, pass 3's key): `mpg_far_sw_0..3` (roof 40.13-44.54
+  m, walls 6.3-10.7 m over the lidar ground), `mpg_far_w_small_0` (47.56 m, 8.1 m), `mpg_nw_complex_0..12` (25.91-39.84 m,
+  5.1-12.9 m). Skin tilt-up [invented], roofs white as NAIP shows them.
+- **Dropped 8** (`blocks_dropped.json`, each with its reason): 5 pieces under 100 m2 or filling under 0.55 of their box
+  [invented floors: rooftop units, a split's slivers]; 3 with a planted tree within 1.0 m (make_treefx's building clearance,
+  which veg_verify gates), the rectangle overfilling its roof there.
+- **What it does not fix**: the built world's far ground under these roofs lies 15-25 m under the lidar's (the bespoke log's
+  rim reads 7.1-20.9 m where the lidar's ground is 20-40 m; pass 3 Owed 7). The roofs stand at their real elevation, so from
+  the lap the skyline is the real one; the walls reach down to the far ground the build has, so from above (or close) the
+  blocks read as 20-30 m towers. The fix is the terrain's margin, not the furniture.
+- Nothing else is newly measurable: no rail, tyre wall, sign or board height (a), nothing newer than 2022 (d).
+
+## P4.4 The build (Mac, the system disk, an EMPTY workshop, `--no-install`, no force)
+
+- Two builds, one after the other: **b019f** = `git archive` of 4262162 (0.1.9 with the PC's fix: the comparison column) and
+  **b0110** = 004b522; each + the two 82 B placeholder bins. ENG = a copy of `mf_work/eng2` with this branch's
+  `export_kn5_addon.py` (md5 **83b231e8**, 0.1.9's), its `assets/textures` md5-equal to this head's (96 / 96). ~20 min each.
+- Log: `[treefx] 11247 trees ... ['Oak3.bin', 'SycamoreV2.bin']`, `[grassfx] 1285 rectangles, 1285 kept`, the 18 new block lines,
+  `[reseat] 14 objects moved with the prepped ground`, `[road_wear] ... shift (-1.00, +0.00) m`, `[road_wear_check] materials
+  PASS`, SHIP OK, exit 0 (both). Workshops deleted after the records were kept (`source/furniture/pass4/records/mac_019f/`,
+  `mac_0110/`).
+
+| gate (BUILT artifact) | 0.1.9 at 4262162 (Mac b019f) | **0.1.10 (Mac b0110)** |
+|---|---|---|
+| drive_test: soft top / severe / undrivable / daylight; kinks /km, vertex bumps, apron steps; obstructed, floating, off-pavement, excursions | 0/0/0/0; 6.34, 16, 5; 0, 0, 0, 0 | **the same (`drive_test.full.json` byte-identical)** |
+| audit_mesh A-K | CLEAN; walls 43,907 v | **CLEAN; walls 43,907 v** (far blocks carry no collider) |
+| verify_kn5 + --inis | PASS | **PASS** |
+| kn5_ground_check | PASS: 336 walls, hovering 0, median -0.461 / p95 -0.186; road over ground 2 / 9,317, max 0.052 | **the same** |
+| kn5_textures | PASS 21 / 33 / 55 | **PASS 21 textures / 33 materials / 55 maps, missing 0** |
+| road_wear (materials row now checks every VAR) | PASS | **PASS, every row identical: materials (ksAmbient / ksDiffuse 0.40 present), density 60,956 tris, no_repeat 0 / 87,633, phase 1e-5, tone r 0.9526, rubber +0.044 m** |
+| house_seat | PASS, 3 | **PASS, 3** |
+| edge_smoothness | PASS 1.19 / 1.22 cm, 0.38 / 0.39 cm | **PASS, identical bar its path** |
+| veg_verify (not in the chain) | PASS 11,247, 385 colliders, nearest wall 5.31 m | **PASS 11,247, 385 colliders, 0 orphans, nearest wall or building 2.96 m (0 within 1 m)** |
+| seat_built (report) | PASS, 17 objects | **PASS, 17 objects** |
+| chain | SHIP OK | **SHIP OK, no force** |
+| road kn5 | 42,676,218 B | **42,696,834 B (+20,616 B)** |
+
+**mesh_diff 0.1.9 (4262162) -> 0.1.10** (`records/mesh_diff_019f_0110.json`): every mesh equal (1ROAD, 1KERB, the 8 1GRASS
+tiles, all 13 1WALL, the 3 GUARDRAIL, both BUILDING, MARKINGS, PADAPRON, ROOFTOP_TAN) except **FARBLOCK_TILTUP_0 and
+ROOFTOP_WHITE_0**, the batches the 18 blocks join; no texture added, changed or dropped.
+
+## P4.5 Lake Murray unchanged (`<scratchpad>/sys/work/p4/lm_checks.sh`)
+
+- `git diff origin/claude/milford-019 -- tracks/san-diego-lake-murray scripts tools` (at 004b522): **empty** (this pass changes no shared
+  code: `pass3/scripts/tiers.py` and `pass4/` are Milford's).
+- Trim A/B byte-identical (664da93b… / b73b70f4… / f0c97952…, log 63af07cc…); make_treefx A/B: Lake Murray byte-identical
+  (21,219 lines).
+- Tests: `test_milford_furniture_pass4.py` (new, 4) with the pass-3, pass-1, chain, vegetation and texture files: 63 pass. Full suite (`tests/run_tests.py`): **1,324 pass, 8 fail**, the known 8 (draft_equiv x5, registry_moves, bench_pad x2), after `ept_plan_2018.py` was moved onto `scripts/tls.py` (`test_https_everywhere` caught its bare urlopen).
+
+## P4.6 Stills (Blender, b0110's split scene; TreeFX stand-ins)
+
+`source/furniture/pass4/scripts/furniture_stills_pass4_blend.py`: from the nearest lap point and from above, per building.
+b0110's scene. In the repo: `source/furniture/pass4/stills/mf0110_far_west_blocks.jpg` (top: from the lap towards the far SW building and the
+NW complex, small on the skyline; bottom: from above, where the far ground's 15-25 m deficit shows as tall walls). All six:
+`<scratchpad>/sys/work/p4/stills/`. No before still: 0.1.9 has nothing there. Not seen in game.
+
+## PC runbook 0082-7: rehearse 0.1.10 from an EMPTY workshop with the real TreeFX models; it installs when green
+
+1. `git fetch && git checkout claude/milford-0110` at this ledger's commit or later; `git status` clean.
+2. **The TreeFX models first**: copy `Oak3.bin` / `SycamoreV2.bin` from the installed Milford's `extension/trees/` into
+   `tracks/milford-road-course-lm/source/trees/`; md5 Oak3 `24111ede…`, SycamoreV2 `7010d61f…`, else stop. Never commit a .bin.
+3. **ENG** = runbook 0082-6's copy (eng_mflm_015 + `export_kn5_addon.py` md5 83b231e8); its `assets/textures` md5-equal to this
+   head's (96 / 96: this pass adds none).
+4. **Rehearse** from an EMPTY `D:/k10-scratch/milford_0110_reh`:
+   `ENG=<ENG> SHIP_PROJ=D:/k10-scratch/milford_0110_reh AIROSO=<checkout> PYTHONUTF8=1 bash tools/ship_track.sh milford-road-course-lm --no-install`.
+   The log must show `11247 of 11247 points`, `11247 trees ... ['Oak3.bin', 'SycamoreV2.bin']`, `1285 rectangles, 1285 kept`,
+   the 18 block lines `mpg_far_sw_0` .. `mpg_nw_complex_12` (eaves P4.3's roof_z_m), `[reseat] 14 objects moved`,
+   `[road_wear] ... shift (-1.00, +0.00) m`, `SHIP OK`.
+5. **Compare every row** of P4.4's 0.1.10 column: `furniture/gate_table.py`, `vegetation/scripts/veg_verify.py` and
+   `furniture/pass3/scripts/seat_built.py` on the workshop; `data/road_wear_check.json` all PASS; `vegetation/scripts/mesh_diff.py
+   <installed 0.1.9 kn5 (4262162)> <rehearsal kn5>`: only `FARBLOCK_TILTUP_0` and `ROOFTOP_WHITE_0` differ, no texture changes;
+   the road kn5 42,696,834 B within tangent noise. `data/road_wear_check.json`'s materials row PASS (ksAmbient / ksDiffuse 0.40). Every row equal, else stop and report the row.
+6. **Install when green** (Kevin: newer green builds install): AC closed; park 0.1.9's workshop (it must be 4262162's build, the PC's fixed one), run the chain from an EMPTY
+   `D:/k10-scratch/milford_lm` without `SHIP_PROJ` / `--no-install` (ship_track parks the installed 0.1.9); one Milford folder,
+   0.1.10; the two .bin md5s in its `extension/trees/`. Re-render the menu picture as for 0.1.9.
+7. Push the install's sync-back and records on this branch.
+
+## Owed (after pass 4; start here)
+
+1. **The PC: runbook 0082-7**, then the drive.
+2. **The far ground west of the site** lies 15-25 m under the lidar's (P4.3; pass 3 Owed 7): the terrain's margin. Until then the
+   far blocks show tall walls from above.
+3. **The rails' and tyre walls' heights**: no lidar after 2017 covers the lap (a: Livingston 2018 stops 1.28 km west). The onboard
+   laps (c, not approved) or a newer flight are the sources left.
+4. **What changed since 2022** (d): Michigan's newest NAIP on the ImageServer is 2022. A 2024 vintage from USDA APFO would be a
+   new download to ask for.
+5. **Hall b's annex and the vegetation pass's two crowns on its roof** (P4.2): drop the two points (11,247 -> 11,245) and build
+   the annex, on Kevin's word.
+6. Pass 3's Owed (plant B, the reseat's 1-2 mm floor, seat_built as a gate, the hedge) stand.

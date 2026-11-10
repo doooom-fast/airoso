@@ -251,3 +251,33 @@ Stills are in `tracks/san-diego-lake-murray/source/stills/houses_{0200_before,02
 renders of the shipped road scene, with the same three cameras for 0.20.0 and 0.20.1. Before, the houses are grey shells;
 after, stucco walls with windows, shingle / white / tan roofs, tilt-up panels and ribbed metal. They are not in-game shots.
 Not driven yet.
+
+
+## v5-bare: 0.21.0 installed 2026-11-03 as `san_diego_lake_murray_v5`, the street layout alone, forced on one gate (not driven yet)
+
+Kevin: "Continue v5 now", then "Yes, v5-bare early", then "yes" to forcing the 18. Branch `claude/lm-v5`, project `D:/k10-scratch/lm_v5`. Road kn5
+645002e6151a7f648a9d4bc551f9c582. No sidewalks, no bridge rails, no buildings, no race layouts: the engine's road and ground on the approved line.
+
+What it took (each kept, each opt-in so no other track moves):
+- **The line and heights are the approved ones.** `source.type: from_track` on the authored loop, `smooth_window` 0, the origin pinned; the fixes carry
+  `ele` and `tools/profile_from_fixes.py` (draft step `profile`) puts the approved profile on the projected line, decks held, Kevin's College hump
+  kept. My first conversion used a spherical Earth and put the line 4.4 m off; the engine projects on the ellipsoid.
+- **The levelled fold pinch in the engine** (`ribbon.fold_level_deltas`, `route.fold_treatment: "pinch"`): ledger 0050's rule. At the four
+  junction corners a 24-30 m road turns on 8-10 m; the engine's plateau and flat disc would have flattened the College hump (ledger 0057) and
+  left a 0.33 m rim. Severe steps 18 -> 0, kinks 10.99 -> 2.52 /km.
+- **`scenery.warning_barriers` / `fences` / `parapets: false`**: a real street's barriers are the ones it has, authored later.
+- **The corridor splice read the wrong side of the road** (ledger 0067): 110 double-sheet cells -> 0.
+- **The sidewalk edge's contact pass** read the sidewalk's 6-point rows with the shoulder's 4-point stride (fixed). The engine's sidewalk still
+  stands up to 1.7 m over Lake Murray's falling yards (281 excursion drops), so v5-bare runs the shoulder edge; sidewalks come as authoring.
+
+| street gate | 0.19.2 | v5-bare |
+|---|---|---|
+| soft top in lane | 8 | 0 |
+| severe steps | 0 | 0 |
+| kinks /km | 2.67 | 2.52 |
+| fold bumps | 20 | 18 |
+| excursion drops, limit 13 | 96 | **18: forced** |
+| audit | 53 | CLEAN |
+| kn5_ground_check | PASS | PASS |
+
+Owed before v5 can be judged against v4: sidewalks, bridge rails, the race layouts on the new line, buildings, trees, lamps, signs.

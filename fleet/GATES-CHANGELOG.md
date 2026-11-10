@@ -282,6 +282,14 @@ the audit's classes unchanged; `kn5_ground_check`, `no_route`, `house_seat`, `ri
 scratch build never installs itself, so the chain's install step (park, copy, ui names) was replayed by hand with the
 version written 0.19.4. No threshold changed.
 
+## 2026-11-03 — BYPASS: Lake Murray v5-bare installed red on one gate, by Kevin's word (ledger 0065)
+
+`--force-install` on `san_diego_lake_murray_v5` 0.21.0 (the street layout alone, no sidewalks, no bridge rails), over the street's `drive_test`
+excursion drops alone: 18 against the limit of 13, every one 9.5-15 m off the centre line on the real hillside beside the street. Kevin first said
+"Yes, force the 24" for the build before the corridor-splice fix (ledger 0067); with the fix the count came back at 18 and he said "yes" to that.
+No threshold changed; this is one install. Every other gate on the installed build: soft top 0, severe 0, audit CLEAN, kn5_ground_check PASS
+(double-sheet cells 0), floating furniture 0.
+
 ## 2026-11-01 — BYPASS: Lake Murray v4 installed red on one gate, by Kevin's word (ledger 0065)
 
 `--force-install` on `san_diego_lake_murray_v4` 0.20.0, over the street layout's `drive_test` excursion drops alone: 96 against the limit of 13. Kevin's word: "Force". The count equals the installed 0.19.2's. No threshold changed; this is one install, not a rule. Every other gate on the proof build: soft top 0 / 0 / 0, audit 0 on all three layouts, race drive_test and no_route PASS, kn5_ground_check PASS, house seat floating / sunken / buried 0.

@@ -68,8 +68,70 @@ def _cap_offset(off: float, k: float, frac: float = 0.9) -> float:
     return off
 
 
+FOLD_LEVEL_ROWS = 8   # tools/mouth_weld.FOLD_LEVEL_ROWS: the rows each leg eases over to the pinch's one height (ledger 0050)
+
+
+def fold_level_deltas(centerline_m: list[Vertex], widths_m: list[float], *, rows: int = FOLD_LEVEL_ROWS,
+                      frac: float = 0.9) -> tuple[list[float], list[float]]:
+    """LAWS L3's corollary, the engine's form of ledger 0050's levelled pinch: where a ribbon is wider than its corner, the inside
+    edge of every row in the run that ``_cap_offset`` caps lands on (nearly) one plan point, so those rows must share ONE height,
+    the midpoint of the two legs that meet there, or the fan between them stands as a riser (Navajo / Jackson, v0.17.1: a lip
+    0.13 m 3 m from the centre line). Returns per unique row the height change of its LEFT and RIGHT edge (0 off every run): the
+    capped rows take the midpoint, each leg's last ``rows`` rows ease to it (smoothstep). Heights only; nothing moves in plan."""
+    pts = centerline_m
+    n = len(pts)
+    closed = n > 2 and abs(pts[0][0] - pts[-1][0]) < 1e-6 and abs(pts[0][2] - pts[-1][2]) < 1e-6
+    m = n - 1 if closed else n
+    capped = {1.0: [False] * m, -1.0: [False] * m}
+    for i in range(m):
+        k = _signed_curvature(pts, i, closed)
+        half = widths_m[i] / 2.0
+        if abs(k) > 1e-6 and half > frac / abs(k):
+            capped[1.0 if k > 0 else -1.0][i] = True
+    out = {}
+    for side, flags in capped.items():
+        d = [0.0] * m
+        if not any(flags) or all(flags):
+            out[side] = d
+            continue
+        start = 0
+        if closed:
+            while flags[start]:          # begin off a run, so a run across the seam stays whole (L13)
+                start += 1
+        runs = []
+        prev = False
+        for t in range(m):
+            r = (start + t) % m if closed else t
+            if flags[r] and not prev:
+                runs.append([r, r])
+            elif flags[r]:
+                runs[-1][1] = r
+            prev = flags[r]
+        for a, b in runs:
+            ia, ib = (a - 1) % m if closed else a - 1, (b + 1) % m if closed else b + 1
+            if not closed and (ia < 0 or ib >= m):
+                continue
+            h = 0.5 * (pts[ia][1] + pts[ib][1])
+            r = a
+            while True:
+                d[r] = h - pts[r][1]
+                if r == b:
+                    break
+                r = (r + 1) % m
+            for step in range(1, rows + 1):
+                u = 1.0 - step / (rows + 1.0)
+                w = u * u * (3.0 - 2.0 * u)
+                for r in ((a - step) % m if closed else a - step, (b + step) % m if closed else b + step):
+                    if 0 <= r < m and not flags[r]:
+                        dv = w * (h - pts[r][1])
+                        if abs(dv) > abs(d[r]):
+                            d[r] = dv
+        out[side] = d
+    return out[1.0], out[-1.0]
+
+
 def road_ribbon(centerline_m: list[Vertex], widths_m: list[float], *, tile_m: float = 4.0,
-                bank_at=None, cols: int = 1) -> dict:
+                bank_at=None, cols: int = 1, fold_level=None) -> dict:
     """Sweep a drivable ribbon (1ROAD) along the centerline, offsetting ±width/2 per vertex.
 
     Also emits per-vertex UVs (parallel to vertices) in metres/``tile_m``: U across the width
@@ -83,7 +145,10 @@ def road_ribbon(centerline_m: list[Vertex], widths_m: list[float], *, tile_m: fl
     single edge-to-edge quad, and where the bank changes between rows (a camber ramp) that quad
     twists: its diagonal sags by half the edge lift difference, about 10 cm on a 17 m road ramping
     6 deg over 20 m at 3 m rows (Exotics Racing T2, 2026-10-28). The sag falls as 1/cols. 1 is
-    byte-identical to the old ribbon."""
+    byte-identical to the old ribbon.
+
+    ``fold_level`` (``fold_level_deltas``'s pair): each row's left / right edge takes its height change, a column between the
+    centre and an edge the share of it its offset holds. None is byte-identical to the old ribbon."""
     pts = centerline_m
     n = len(pts)
     closed = abs(pts[0][0] - pts[-1][0]) < 1e-6 and abs(pts[0][2] - pts[-1][2]) < 1e-6
@@ -102,15 +167,17 @@ def road_ribbon(centerline_m: list[Vertex], widths_m: list[float], *, tile_m: fl
         half_l = _cap_offset(half, k)
         half_r = -_cap_offset(-half, k)
         tb = math.tan(bank_at(arc)) if bank_at else 0.0
+        dl, dr = (fold_level[0][i], fold_level[1][i]) if fold_level else (0.0, 0.0)
         if cols <= 1:
-            verts.append((x + nx * half_l, y + half_l * tb, z + nz * half_l))  # left  -> 2i  (outside/raised)
-            verts.append((x - nx * half_r, y - half_r * tb, z - nz * half_r))  # right -> 2i+1
+            verts.append((x + nx * half_l, y + half_l * tb + dl, z + nz * half_l))  # left  -> 2i  (outside/raised)
+            verts.append((x - nx * half_r, y - half_r * tb + dr, z - nz * half_r))  # right -> 2i+1
             uvs.append((half_l / tile_m, arc / tile_m))        # left
             uvs.append((-half_r / tile_m, arc / tile_m))       # right
         else:
             for c in range(cols + 1):                          # left edge (c=0) -> right edge (c=cols)
                 o = half_l - (half_l + half_r) * c / cols
-                verts.append((x + nx * o, y + o * tb, z + nz * o))
+                dc = (dl * o / half_l if o > 0 and half_l > 0 else (dr * -o / half_r if o < 0 and half_r > 0 else 0.0))
+                verts.append((x + nx * o, y + o * tb + dc, z + nz * o))
                 uvs.append((o / tile_m, arc / tile_m))
     tris: list[tuple[int, int, int]] = []
     last = m if closed else m - 1
@@ -134,7 +201,7 @@ def road_ribbon(centerline_m: list[Vertex], widths_m: list[float], *, tile_m: fl
 def road_shoulder(centerline_m: list[Vertex], widths_m: list[float], *, lift: float = 0.1,
                   verge_w: float = 2.5, tile_m: float = 4.0, bank_at=None, ground_drop: float = 0.0,
                   ground=None, ratio: float = 2.0, max_w: float = 60.0,
-                  fill_apron: bool = False, bank_hold: bool = False, section=None) -> dict:
+                  fill_apron: bool = False, bank_hold: bool = False, section=None, fold_level=None) -> dict:
     """A graded **verge + embankment** that ramps each road edge down (fill) or up (cut) to the REAL
     ground, so the road reads like a real shouldered/embanked road instead of a ribbon floating on a
     hard edge. Three points out from the lane edge: inner lip (road edge, ``lift`` proud) → a short
@@ -173,6 +240,8 @@ def road_shoulder(centerline_m: list[Vertex], widths_m: list[float], *, lift: fl
                 return abs(_cap_offset(o * side, k))
             tb = math.tan(bank_at(arc)) if bank_at else 0.0
             r = len(verts)
+            if fold_level:      # the road edge's pinch level (fold_level_deltas), so the lip stays on the levelled edge
+                y = y + (fold_level[0][i] if side > 0 else fold_level[1][i])
             inner_y = y + lift + side * half * tb
             verts.append((x + nx * _cap(half), inner_y, z + nz * _cap(half)))                 # inner lip (road edge)
             uvs.append((0.0, arc / tile_m))
@@ -279,7 +348,7 @@ def curb_sidewalk(centerline_m: list[Vertex], widths_m: list[float], *, lift: fl
                   curb_h: float = 0.15, curb_face_w: float = 0.08, sidewalk_w: float = 1.5,
                   grade_w: float = 1.0, grass_clearance: float = 0.25, tile_m: float = 2.0,
                   bank_at=None, ground=None, ratio: float = 2.0, max_grade_w: float = 60.0,
-                  roll_flags=None) -> dict:
+                  roll_flags=None, fold_level=None) -> dict:
     """A continuous urban edge swept along BOTH road sides as ONE strip so road, curb, sidewalk and
     grass share seam vertices and nothing can hover. Per side, the cross-section is five profile points
     out from the lane edge:
@@ -313,6 +382,8 @@ def curb_sidewalk(centerline_m: list[Vertex], widths_m: list[float], *, lift: fl
             if i > 0:
                 arc += math.hypot(pts[i][0] - pts[i - 1][0], pts[i][2] - pts[i - 1][2])
             x, y, z = pts[i]
+            if fold_level:      # the road edge's pinch level (fold_level_deltas): the curb stays on the levelled edge
+                y = y + (fold_level[0][i] if side > 0 else fold_level[1][i])
             tx, tz = _horiz_tangent(pts, i, closed)
             nx, nz = -tz * side, tx * side  # outward normal on this side
             k = _signed_curvature(pts, i, closed)

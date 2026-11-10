@@ -90,6 +90,7 @@ def test_milford_declares_it_and_ships_the_product():
     cfg = json.loads((MF / "track.config.json").read_text(encoding="utf-8"))
     fgc = cfg["terrain"]["far_ground"]
     assert fgc["beyond"] == "keep" and fgc["reach_m"] == 500.0 and fgc["cell_m"] == 10.0
+    assert fgc["object"] == "1GRASS_FAR" and "1GRASS_FAR" in cfg["scenery"]["bespoke"]["names"]["far"]
     assert cfg["scenery"]["treefx"]["planted"]["seat_far_on_built"] is True
     ship = json.loads((MF / "ship.json").read_text(encoding="utf-8"))
     assert ship["steps"]["draft"].index("far_ground") == ship["steps"]["draft"].index("strip_seam") + 1
@@ -113,3 +114,13 @@ def test_no_other_track_names_the_opt_in_keys():
         if shp.parent.name in ("milford-road-course-lm", "del-mar-lm"):
             continue
         assert '"far_ground"' not in shp.read_text(encoding="utf-8"), shp
+
+
+def test_the_prep_takes_the_sunk_skirt_out_only_when_the_config_names_the_object():
+    sh = (ROOT / "tools" / "ship_track.sh").read_text(encoding="utf-8")
+    i = sh.index("far_ground_prep_blend.py")
+    guard = sh[sh.rindex("if [", 0, i):i]
+    assert "'far_ground'" in guard and ".get('object')" in guard           # opt-in by terrain.far_ground.object
+    assert sh.index("build_kn5_loop.py") < i < sh.index("rock_faces_blend.py")  # first after the prep, before anything reads its ground
+    blend = (ROOT / "tools" / "far_ground_blend.py").read_text(encoding="utf-8")
+    assert 'obj_name = spec.get("object")' in blend and "if obj_name is None:\n        bmesh.ops.delete(bm, geom=skirt" in blend

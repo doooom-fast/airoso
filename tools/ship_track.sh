@@ -477,6 +477,14 @@ ship_grassfx_aerial() {
 prep_prep() {
   step "ship: prep (AC naming, 65k splits; multi-layout: NO AC_* dummies in the road scene)"
   "$BL" --background --python-exit-code 1 --python "$ENGINE/scripts/ac/build_kn5_loop.py" -- "$PROJ" 2>&1 | grep "prepped\|FATAL\|split 1GRASS\|split GRASS_FAR\|terrain tiles\|terrain conform\|gate line\|T-junctions\|kept-cell refinement\|house seat\|multi-layout\|Error\|Traceback" | cut -c1-200
+  # ledger 0082 "Far ground (0.1.11)" (Milford): the far ground built as its own object left TERRAIN's skirt sunk in place so the
+  # prep tiles the ground as before; take the sunk skirt out of the prepped tiles, first. Opt-in: terrain.far_ground.object;
+  # none = no header, nothing runs (Lake Murray's chain is tools/ship_sd.sh, untouched)
+  rm -f "$PROJ/data/far_ground.prep.json"
+  if [ "$(pyq "import json,sys; print(bool(((json.load(open(sys.argv[1],encoding='utf-8')).get('terrain') or {}).get('far_ground') or {}).get('object')))" "$PROJ/track.config.json" | tr -d '\r')" = "True" ]; then
+    step "ship: the far ground's sunk skirt out of the prepped ground tiles (tools/far_ground_prep_blend.py; self-checked)"
+    "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/far_ground_prep_blend.py" -- "$PROJ/blender/$SLUG.blend" --project "$PROJ" 2>&1 | grep "^\[far-ground-prep\]\|FATAL\|Error\|Traceback"
+  fi
   # ledger 0046 v0.18.0 integration fix round: the I-8's own pavement on the PREPPED scene's final ground (scenery.freeway;
   # off = no data/freeway_i8.json = nothing runs). Part of prep: the split follows it (steps.prep stays prep, split)
   # a tiered terrain's prepped tiles carry far more vertices than their surface needs (ledger 0054 P3 repair round 3, as tools/ship_sd.sh):

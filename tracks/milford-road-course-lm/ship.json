@@ -109,7 +109,8 @@
       "data/road_wear.line.{id}.json",
       "data/road_wear_check.json",
       "data/reseat_bespoke.json",
-      "data/far_ground.report.json"
+      "data/far_ground.report.json",
+      "data/far_ground.prep.json"
     ],
     "map": [
       [

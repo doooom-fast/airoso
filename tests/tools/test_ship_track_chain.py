@@ -535,6 +535,8 @@ V4_EXTRAS = {
         "ledger 0078 round 8: only where the track's config says loop false (the Rangely stage ports); never on Lake Murray",
     ("prep_prep", "ship: the bespoke rails, tyre walls and screens re-seated on the prepped ground (tools/reseat_bespoke_blend.py; self-checked)"):
         "ledger 0082 pass 3: only where the config says scenery.bespoke.reseat_on_prep true (Milford); never on Lake Murray",
+    ("prep_prep", "ship: the far ground's sunk skirt out of the prepped ground tiles (tools/far_ground_prep_blend.py; self-checked)"):
+        "ledger 0082 'Far ground (0.1.11)': only where the config names terrain.far_ground.object (Milford); never on Lake Murray",
     ("prep_prep", "ship: road wear where tyres run + the road's tone off the aerial (tools/road_wear_blend.py; ledger 0084; self-checked)"):
         "ledger 0084: only where the track's config names road_wear (Milford 0.1.7); never on Lake Murray",
     ("draft_bespoke", "author: the buildings pipeline's blocks in place of the assembler's boxes (tools/author_bespoke_blend.py: scenery.bespoke.blocks, self-checked)"):

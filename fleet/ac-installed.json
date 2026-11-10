@@ -20,7 +20,8 @@
     "2026-11-09 (ledger 0089; Kevin: 'I always want newer builds'): High Plains 0.1.6 and Nevada Nights 0.1.4 installed over 0.1.5 / 0.1.3 (parked by the install step in D:/k10-track-archive/2026-11-09_183038/ and _183401/).",
     "2026-11-09 (Kevin on the PC: 'I always want newer builds'): Milford 0.1.9 to milford_road_course; ship_track's install step parked 0.1.6 in D:/k10-track-archive/2026-11-09_193301/ (MOVES.tsv).",
     "2026-11-09 (Kevin on the PC: 'I always want newer builds' / 'Resume now'): Milford 0.1.10 to milford_road_course; ship_track's install step parked 0.1.9 in D:/k10-track-archive/2026-11-09_212206/ (MOVES.tsv).",
-    "2026-11-09 (ledger 0089; Kevin: 'I always want newer builds'): Nevada Nights 0.1.5 installed over 0.1.4 (parked by the install step in D:/k10-track-archive/2026-11-09_213254/)."
+    "2026-11-09 (ledger 0089; Kevin: 'I always want newer builds'): Nevada Nights 0.1.5 installed over 0.1.4 (parked by the install step in D:/k10-track-archive/2026-11-09_213254/).",
+    "2026-11-09 (Kevin on the PC: 'I always want newer builds'): Milford 0.1.11 to milford_road_course; ship_track's install step parked 0.1.10 in D:/k10-track-archive/2026-11-09_224638/ (MOVES.tsv)."
   ],
   "ac_tracks": "D:/SteamLibrary/steamapps/common/assettocorsa/content/tracks",
   "archive": "D:/k10-track-archive",
@@ -95,14 +96,14 @@
       "installed": "2026-11-04"
     },
     "milford_road_course": {
-      "branch": "claude/milford-0110",
+      "branch": "claude/milford-0111",
       "engine": "lm-v4",
       "installed": "2026-11-09",
-      "note": "0.1.10 = 0.1.9 + furniture pass 4 (18 far blocks at the 2017 lidar's roof elevations; their far ground 15-25 m low, owed in 0.1.11); road wear with ksAmbient / ksDiffuse 0.4; TreeFX 11,247 trees; records + menu picture on claude/milford-0110 fd93202a",
+      "note": "0.1.11 = 0.1.10 + the far ground from the 2017 lidar (1GRASS_LIDAR ring; far blocks' walls p50 21.1 -> 8.1 m; mpg_nw_complex_0 dropped, set into its slope); road wear + furniture 3/4 as 0.1.10; TreeFX 11,247 trees; records + menu picture on claude/milford-0111 2dc444cd",
       "role": "current",
-      "sha": "795b2f8f",
+      "sha": "bb93889d",
       "track": "milford-road-course-lm",
-      "version": "0.1.10"
+      "version": "0.1.11"
     },
     "pikes_peak_international_raceway": {
       "branch": "claude/pikes-peak-road-course-build",

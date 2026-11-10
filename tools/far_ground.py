@@ -18,9 +18,10 @@ import numpy as np
 class Dem:
     """tools/lidar_ground.py's product: bilinear at local (x east, y north) metres, NAVD88; edges clamp"""
 
-    def __init__(self, z, meta, fill=None):
+    def __init__(self, z, meta, fill=None, reach=None):
         self.z = np.asarray(z, np.float64)
         self.fill = fill
+        self.reach = None if reach is None else np.asarray(reach, np.float64)
         self.x0, self.y0, self.c = float(meta["x0"]), float(meta["y0"]), float(meta["cell_m"])
         self.ny, self.nx = self.z.shape
 
@@ -28,7 +29,9 @@ class Dem:
     def load(cls, data_dir: Path):
         meta = json.loads((data_dir / "far_ground.lidar.meta.json").read_text(encoding="utf-8"))
         fp = data_dir / "far_ground.lidar.fill.npy"
-        return cls(np.load(data_dir / "far_ground.lidar.npy"), meta, np.load(fp) if fp.exists() else None)
+        rp = data_dir / "far_ground.lidar.reach.npy"     # ledger 0082 'Far ground (0.1.11)', opt-in: absent = None
+        return cls(np.load(data_dir / "far_ground.lidar.npy"), meta, np.load(fp) if fp.exists() else None,
+                   np.load(rp) if rp.exists() else None)
 
     def _f(self, x, y):
         fx = min(max((x - self.x0) / self.c - 0.5, 0.0), self.nx - 1.0)
@@ -36,13 +39,20 @@ class Dem:
         return fx, fy
 
     def at(self, x, y):
+        return self._bilinear(self.z, x, y)
+
+    def _bilinear(self, z, x, y):
         fx, fy = self._f(x, y)
         i, j = int(fx), int(fy)
         i, j = min(i, self.nx - 2), min(j, self.ny - 2)
         tx, ty = fx - i, fy - j
-        z = self.z
         return float(z[j, i] * (1 - tx) * (1 - ty) + z[j, i + 1] * tx * (1 - ty) + z[j + 1, i] * (1 - tx) * ty
                      + z[j + 1, i + 1] * tx * ty)
+
+    def reach_at(self, x, y):
+        """ledger 0082 'Far ground (0.1.11)': metres in from the lidar's reach (data/far_ground.lidar.reach.npy; 0 where
+        the lidar reaches, bilinear), None when the product has no reach grid"""
+        return None if self.reach is None else self._bilinear(self.reach, x, y)
 
     def fill_at(self, x, y):
         """0 measured, 1 filled under cover, 2 filled past the tiles (the nearest cell's flag)"""
@@ -104,3 +114,15 @@ def clamp_node(i, j, NX, NY):
 def ring_height(lidar_z, r_border, d, feather_m):
     """a ring node's height: the lidar's, less the border residual feathered over feather_m"""
     return lidar_z - feather_w(d, feather_m) * r_border
+
+
+def keep_today(z_lidar, z_today, d_beyond, keep_feather_m):
+    """ledger 0082 'Far ground (0.1.11)' (terrain.far_ground "beyond": "keep"): a node past the lidar's reach keeps TODAY's
+    ground, feathered from the lidar's fill at the reach (d_beyond 0) to today's by keep_feather_m in (no step). Today's
+    ground absent there (the old skirt's empty corners): the fill while the feather still holds it, else None (no ground,
+    as today)"""
+    w = feather_w(d_beyond, keep_feather_m)
+    if z_today is None:
+        return z_lidar if w > 0.0 else None
+    return z_today + w * (z_lidar - z_today)
+

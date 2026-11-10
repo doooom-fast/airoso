@@ -17,8 +17,13 @@ Writes data/far_ground.report.json: the border residuals, the seam's measured gr
 border, the grid's cell inside against the ring's outside), the feather's steepest added grade, the nodes on filled cells.
 
 Opt-in: track.config.json terrain.far_ground {"reach_m", "feather_m", "cell_m"} and the draft step `far_ground`; absent = no-op,
-loop.blend not saved. Self-check (exit 1, not saved): the skirt is not the assembler's (its floor vertices are not all
-outside the grid), the border is not one vertex per lattice node, a ring cell's corner is missing.
+loop.blend not saved. Also opt-in (ledger 0082 "Far ground (0.1.11)", Milford): "beyond": "keep" with "keep_feather_m": where the
+product's data/far_ground.lidar.reach.npy says the lidar does not reach, a ring node keeps TODAY's ground (the skirt's own
+surface at its plan position, read before the skirt goes), feathered to the lidar's fill over keep_feather_m from the reach
+(tools/far_ground.keep_today); where today has no ground either (the skirt's empty corners) and the feather has let go, the
+node is left out and the ring cells on it with it (no ground, as today), and a ring node no cell is left on goes too.
+Absent = every node the lidar's, as before. Self-check (exit 1, not saved): the skirt is not the assembler's (its floor
+vertices are not all outside the grid), the border is not one vertex per lattice node, a ring cell's corner is missing.
 
     blender --background --python-exit-code 1 --python tools/far_ground_blend.py -- <project-dir>
 """
@@ -32,6 +37,8 @@ from pathlib import Path
 import bmesh
 import bpy
 import numpy as np
+from mathutils import Vector
+from mathutils.bvhtree import BVHTree
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import far_ground as fg  # noqa: E402
@@ -51,8 +58,14 @@ def main():
         return
     reach_m, feather_m = float(spec.get("reach_m", 500.0)), float(spec.get("feather_m", 40.0))
     cell_m = float(spec.get("cell_m", 10.0))
+    beyond = spec.get("beyond")
+    if beyond not in (None, "keep"):
+        fail(f"terrain.far_ground.beyond {beyond!r}: only \"keep\" (or absent)")
+    keep_feather_m = float(spec.get("keep_feather_m", feather_m))
     data = proj / "data"
     dem = fg.Dem.load(data)
+    if beyond == "keep" and dem.reach is None:
+        fail("terrain.far_ground.beyond keep and no data/far_ground.lidar.reach.npy")
     elev0 = float(json.loads((data / "centerline.local.json").read_text(encoding="utf-8"))["origin"]["elev_m"])
     bpy.ops.wm.open_mainfile(filepath=str(proj / "loop.blend"))
     terr = bpy.data.objects.get("TERRAIN")
@@ -91,6 +104,22 @@ def main():
     cu = np.linalg.lstsq(np.array(A), np.array(U), rcond=None)[0]
     cv = np.linalg.lstsq(np.array(A), np.array(V), rcond=None)[0]
     mat_ix = max(set(f.material_index for f in bm.faces), key=lambda m: sum(1 for f in bm.faces if f.material_index == m))
+    today = None
+    if beyond == "keep":
+        # TODAY's ground past the grid: the skirt's own faces (every face on a floor vertex), read before they go
+        sk = [f for f in bm.faces if any(v.co.z < zfloor + 1e-3 for v in f.verts)]
+        vix = {}
+        polys_t = [[vix.setdefault(v.index, len(vix)) for v in f.verts] for f in sk]
+        co = [None] * len(vix)
+        for f in sk:
+            for v in f.verts:
+                co[vix[v.index]] = v.co.copy()
+        today = BVHTree.FromPolygons(co, polys_t)
+        ztop = max(v.co.z for v in bm.verts) + 100.0
+
+        def today_at(x, y):
+            hit = today.ray_cast(Vector((x, y, ztop)), Vector((0.0, 0.0, -1.0)))
+            return None if hit[0] is None else float(hit[0].z)
     bmesh.ops.delete(bm, geom=skirt, context="VERTS")
     bm.verts.ensure_lookup_table()
     # the grid's border: one vertex per lattice node on the bbox's edges
@@ -130,11 +159,24 @@ def main():
         fail(str(ex))
     new = {}
     fills = [0, 0, 0]
+    kept = {"lidar": 0, "feathered_to_today": 0, "today": 0, "no_ground": 0}
+    absent = set()
     for i, j in nodes:
         x, y = xmin + i * dx, ymin + j * dy
         bi, bj = fg.clamp_node(i, j, NX, NY)
         d = math.hypot(x - (xmin + bi * dx), y - (ymin + bj * dy))
         z = fg.ring_height(dem.at(x, y) - elev0, r[(bi, bj)], d, feather_m)
+        if beyond == "keep":
+            db = dem.reach_at(x, y)
+            if db > 0.0:
+                z = fg.keep_today(z, today_at(x, y), db, keep_feather_m)
+                w = fg.feather_w(db, keep_feather_m)
+                kept["no_ground" if z is None else ("today" if w <= 0.0 else "feathered_to_today")] += 1
+                if z is None:
+                    absent.add((i, j))
+                    continue
+            else:
+                kept["lidar"] += 1
         new[(i, j)] = bm.verts.new((x, y, z))
         fills[dem.fill_at(x, y)] += 1
     bm.verts.ensure_lookup_table()
@@ -148,11 +190,23 @@ def main():
 
     flip = down > up
     newfaces = []
+    cells_out = 0
     for poly in polys:
+        if absent and any(q in absent for q in poly):
+            cells_out += 1                     # beyond keep: a cell on a node with no ground, today or lidar, stays out
+            continue
         vs = [node(i, j) for i, j in poly]
         f = bm.faces.new(vs[::-1] if flip else vs)
         f.material_index = mat_ix
         newfaces.append(f)
+    loose = 0
+    if absent:                                 # beyond keep: a ring node every one of whose cells stayed out goes too
+        lv = [v for v in new.values() if not v.link_faces]
+        loose = len(lv)
+        for k in [k for k, v in new.items() if not v.link_faces]:
+            del new[k]
+        bmesh.ops.delete(bm, geom=lv, context="VERTS")
+        bm.verts.ensure_lookup_table()
     tri = bmesh.ops.triangulate(bm, faces=newfaces)["faces"]
     for f in tri:
         for lp in f.loops:
@@ -184,6 +238,9 @@ def main():
                                  "p95": round(float(np.percentile(jumps, 95)), 4), "max": round(float(max(jumps)), 4)},
            "feather_added_grade_max": round(1.5 * float(np.abs(rv).max()) / feather_m, 4),
            "worst_seam": sorted(outer, key=lambda t: -abs(t[3] - t[2]))[:10]}
+    if beyond == "keep":
+        rep["beyond"] = {"mode": "keep", "keep_feather_m": keep_feather_m, "nodes": kept, "ring_cells_left_out": cells_out,
+                         "ring_nodes_left_with_no_cell": loose}
     bm.normal_update()
     bm.to_mesh(me)
     me.update()
@@ -194,6 +251,10 @@ def main():
           f"residual p05..p95 {rep['border_residual_m']['p05']}..{rep['border_residual_m']['p95']} m (max |{rep['border_residual_m']['max_abs']}|), "
           f"feathered over {feather_m:.0f} m; seam step 0, grade change p95 {rep['seam_grade_change']['p95']} max "
           f"{rep['seam_grade_change']['max']}; TERRAIN {n0} -> {len(me.vertices)} verts; saved loop.blend")
+    if beyond == "keep":
+        print(f"[far-ground] beyond the lidar's reach: today's ground kept at {kept['today']} nodes, feathered to it at "
+              f"{kept['feathered_to_today']} over {keep_feather_m:.0f} m; {kept['no_ground']} nodes with no ground (today or "
+              f"lidar), {cells_out} ring cells and {loose} nodes left with no cell out; {kept['lidar']} nodes the lidar's")
     bpy.ops.wm.save_as_mainfile(filepath=str(proj / "loop.blend"))
 
 

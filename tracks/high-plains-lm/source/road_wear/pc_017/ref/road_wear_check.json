@@ -1,0 +1,116 @@
+{
+ "pass": false,
+ "gate": {
+  "density_tol": 0.005,
+  "shear_tol": 0.005,
+  "repeat_m": 0.75,
+  "phase_tol": 0.002,
+  "tone_r_min": 0.6,
+  "line_offset_max_m": 0.15,
+  "depth_min_frac": 0.5,
+  "depth_max_frac": 1.5,
+  "kerb_paint_tol": 1,
+  "photo_depth_tol": 0.02,
+  "photo_centroid_tol_m": 0.15,
+  "photo_min_depth": 0.03,
+  "kerb_level_tol": 0.55
+ },
+ "kn5": "high_plains.kn5",
+ "rows": {
+  "materials": {
+   "pass": true,
+   "materials": [
+    "1KERB_sidewalk_mat",
+    "1ROAD_road_mat"
+   ],
+   "problems": []
+  },
+  "density": {
+   "pass": true,
+   "triangles": 17328,
+   "off": 0,
+   "worst_scale_err": 0.000511,
+   "worst_shear": 0.000646,
+   "texel_m": 0.2,
+   "atlas_px": 4096
+  },
+  "no_repeat": {
+   "pass": true,
+   "texels_claimed": 25848,
+   "claimed_twice": 0
+  },
+  "detail_phase": {
+   "pass": false,
+   "worst_tiles": 0.20001,
+   "detail_uv_multiplier": 204.8
+  },
+  "tone": {
+   "pass": true,
+   "pearson_r": 0.8823,
+   "samples": 1660,
+   "v_convention": "-v",
+   "r_by_convention": {
+    "v": 0.0934,
+    "-v": 0.8823,
+    "1-v": 0
+   }
+  },
+  "photo_rubber": {
+   "pass": true,
+   "lines": [
+    {
+     "layout": "full",
+     "pass": true,
+     "declared_depth": 0.14059,
+     "shipped_depth": 0.14068,
+     "declared_centroid_m": -0.089,
+     "shipped_centroid_m": -0.0882,
+     "stations": 1175,
+     "samples": 18132
+    }
+   ],
+   "drawn_band": "none (road_wear.rubber photo)"
+  },
+  "kerb_materials": {
+   "pass": true,
+   "materials": 20,
+   "problems": []
+  },
+  "kerb_paint": {
+   "pass": true,
+   "levels": 16,
+   "step": 0.01017,
+   "problems": []
+  },
+  "kerb_levels": {
+   "pass": true,
+   "triangles": 1146,
+   "corners_in_two_levels": 0,
+   "outside_every_declared_face": 0,
+   "level_not_its_face": 0,
+   "faces": 573,
+   "faces_off_the_line_rubber": 0,
+   "worst_level_err": 0.4974,
+   "faces_darkened": 331,
+   "darkest_face": 0.15255,
+   "per_level": [
+    242,
+    27,
+    11,
+    20,
+    20,
+    16,
+    11,
+    7,
+    14,
+    16,
+    13,
+    19,
+    94,
+    26,
+    20,
+    17
+   ]
+  }
+ }
+}

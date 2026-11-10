@@ -4,7 +4,7 @@
   "name": "High Plains Raceway",
   "_name_doc": "Kevin 2026-11-07: \"Get rid of Lm Version from names, nothing should be on any other engine now\" / \"LM is the airoso engine\". 0.1.5 (2026-11-09): no \"(LM engine)\" in the display name, and the slug and install_folder are the plain high_plains. The old-engine track (tracks/high-plains) gave that slug up: its slug and folder are high_plains_v072 (S7, fleet.cli lint)",
   "slug": "high_plains",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "mirror_x": false,
   "loop": true,
   "default_width_m": 12.0,
@@ -1191,5 +1191,37 @@
   "terrain": {
     "terrain_band_m": 22.0,
     "_doc": "the v021 assembler's band clamp (Lake Murray's 22 m); flat sites"
+  },
+  "road_wear": {
+    "_doc": "ledger 0084 'High Plains 0.1.7' (Kevin 2026-11-07: \"road textures to include wear along where tires run, in a realistic manner\" / \"sampling the entire road's texture from aerial data and mapping it directly onto the entire road\" / \"For tracks we'll use racing lines\" / \"Which will help darken curbs realistically\"; 2026-11-08: \"the road texture from aerial isn't done yet\"; 2026-11-10: \"lets continue, drives looked good\"). Milford 0.1.7's bake (tools/road_wear_blend.py, last in prep): the large-scale tone off NAIP 2023 0.3 m, registered to the built road, under the stock cracked asphalt kept as the 4 m detail (ksPerPixelMultiMap_NMDetail); rubber on the racing line, on the edge strip where the line clips it, and on the traced race kerbs it rides (kerbs, below). scripts/aerial/road_wear.py DEFAULTS has every number, marked measured / model / invented.",
+    "surfaces": [
+      "1ROAD",
+      "1KERB_SIDEWALK"
+    ],
+    "_surfaces_doc": "the road and the edge strip beside it (ledger 0087's 1KERB_sidewalk on the circuit-edge-flush ports), as Milford: the strip shares the atlas so the rubber where the line clips the edge carries on over it. The race kerbs are not a surface here: they keep their own paint (kerbs)",
+    "texel_m": 0.2,
+    "_texel_doc": "the aerial is NAIP 2023 at 0.30 m (Milford's 0.50 m gave 0.25). 0.2 m: finer than the source pixel, so every tone the 0.3 m photo carries is kept, and a whole divisor of the 4 m detail tile (the cell, margin and pitch stay whole tiles, so the grain keeps the prep's 4 m grid and phase; 0.15 m, half the pixel, is not: 26.7 texels a tile). The next finer divisor, 0.125 m, needs an 8192 px atlas (4x the VRAM of Milford's 4096) for what the photo can no longer resolve; 0.2 m fits 4096 on the centreline's own cells (78 of 81 tiles, estimated off data/centerline.local.json)",
+    "aerial": {
+      "image": "source/road_wear/naip_2023_030_hp.png",
+      "bbox_lonlat": [
+        -103.90532207890708,
+        39.73355853151761,
+        -103.88959002688462,
+        39.73680613545915
+      ],
+      "_doc": "USDA NAIP 2023-09-28, co_m_3910317_ne_13_030_20230928_20240104 (public domain), the 0.3 m crop ledger 0081 measured the kerbs off (tools/naip_crop.py, /Volumes/Drive/codex/kerb_work/img/high-plains_2023_030.png, md5 4da61327; its record naip_2023_030_hp.json beside it): 4495 x 1202 px, 0.300 x 0.300 m, corners [W, N, E, S] exact (EPSG:4326 crop). It covers the whole lap: 0 of 3,205 centreline stations +-10 m fall outside it or on a black pixel"
+    },
+    "lines": [
+      {
+        "layout": "full",
+        "ai": "source/road_wear/fast_lane.full.ai",
+        "_doc": "a line Kevin records with CSP's AI recorder in this layout, copied here: the wear then follows where the car really ran. Absent (as for 0.1.7) = the minimum-curvature line inside the built edges [model]: the committed ai/full/fast_lane.ai is the generated centreline draft (ai/full/ai_draft.json: 'GENERATED DRAFT from the built centreline', offset_max 0.238 m), not a racing line"
+      }
+    ],
+    "kerbs": {
+      "prefix": "1KERB_CIRCUIT_",
+      "levels": 16,
+      "_doc": "ledger 0081's 20 traced kerb runs (tools/author_kerbs_blend.py, 1KERB_circuit_<k>: blue / white kerbs and blue / yellow paint stripes, kerb_atlas_hp.png): 18 of them lie partly over the lane (data/kerbs.built.json in_vs_ribbon_edge_m < 0) at their measured offsets, where the line's tyres run. Each face takes the rubber the same line puts on its centroid, to one of 16 copies of its own paint (copy k = paint x (1 - k x 0.22 / 15)), its u moved into that copy (v, the stripes, untouched); the material row is the exporter's own (ksPerPixel, no VAR) with txDiffuse -> the levelled paint. 16 levels [invented]: a 1.5 % step"
+    }
   }
 }

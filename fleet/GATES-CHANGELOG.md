@@ -14,6 +14,76 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
+## 2026-11-10 — `road_wear` on High Plains 0.1.7, and three kerb rows (ledger 0084 "High Plains 0.1.7"; no threshold moved or loosened, no bypass)
+
+**Brought over from the Milford branches** (no Milford track file): the `road_wear` gate below as it stands at
+`claude/milford-0111` (4262162's materials row included: every VAR the bake declared is in the kn5 at its value, and
+ksAmbient / ksDiffuse are present; that tightening was not logged here when it landed, so it is logged now), its bake,
+the opt-in exporter rows (engine-july snapshot md5 83b231e8) and the `prep_prep` / `gate_road_wear` wiring in
+`tools/ship_track.sh`.
+
+**New, opt-in on `road_wear.kerbs` (only High Plains names it).** The traced race kerbs (`1KERB_circuit_<k>`) keep their own
+paint and UVs; the bake moves each face's u into one of `levels` copies of that paint, copy k darkened by k x
+amplitude / (levels - 1), by the rubber the declared line puts on the face's centroid. Three rows in
+`tools/road_wear_check.py`, read off the built road kn5 (L5), run only when `data/road_wear.json` carries `kerbs`:
+
+- **kerb_materials**: every declared kerb material in the kn5 with its declared shader, slots and textures (the
+  exporter's own stock row with txDiffuse -> the levelled paint), embedded, power of two, every declared VAR at its value.
+- **kerb_paint**: the shipped levelled paint is `levels` copies of the kerb's own paint: copy 0 byte for byte, copy k
+  within `kerb_paint_tol` = 1 (8-bit rounding) of round(paint x (1 - k step)).
+- **kerb_levels**: every shipped kerb triangle has one level (floor(u x levels)) at all three corners and lies inside a
+  declared face of that level; every declared face's level is the gate's own reading of the declared line's rubber
+  (`make_darkness`, `road_wear.wear_at` restated without numpy) at its centroid within `kerb_level_tol` = 0.55 levels
+  ⚠ [invented: half a level of rounding + 5 % for the line file's 1 mm / 1e-4 rounding].
+- `levels` 16 ⚠ [invented: a 1.5 % step at 0.22].
+
+**The road rows' thresholds are unchanged at High Plains' 0.2 m texel**: density / shear 0.5 %, phase 0.002 tiles, tone r
+>= 0.60, rubber centroid 0.15 m and depth 0.5-1.5 x. `repeat_m` stays 0.75 m (it was "three texels at 0.25 m"; at 0.2 m it
+is 3.75 texels, and two places a texel can honestly hold are <= 0.28 m apart, so it still catches any repeat).
+
+**Proven so far (Mac, no build: Kevin 2026-11-10, "Move everything from the Mac to the pc that you can"):** a synthetic
+Blender scene (one kerb run on an elliptic lap) through `road_wear_blend._kerbs` and the three rows: PASS, and a kerb
+triangle moved one level FAILS kerb_levels; `tests/aerial/test_road_wear_kerbs.py` (6 tests: the gate's darkness gives
+the bake's level on 600 faces, worst 0.49 of a level). The built proof is the PC's (runbook 0084-2).
+
+## 2026-11-09 — NEW GATE (opt-in): `road_wear`, the road's macro atlas and rubber on the built kn5 (ledger 0084)
+
+**Why.** Ledger 0084's bake (`tools/road_wear_blend.py`, Milford 0.1.7 first) rewrites the road-wear surfaces' UVs and
+materials. No gate read either: verify_kn5, kn5_ground_check and kn5_textures would pass a stretched, repeating or
+misregistered atlas, and a rubber band painted a metre off the line.
+
+**What.** `tools/road_wear_check.py <project> --kn5 <road kn5>`, pure python + PIL, on the BUILT road kn5 (L5): the
+road-wear materials, their embedded textures and the surfaces' world positions + UVs, against the declarations in
+`data/road_wear.json` and `data/road_wear.line.<layout>.json` and the track's own aerial. Opt-in: only a ship.json that
+names `road_wear` runs it (Milford). Hard (exit 1 stops the chain). Rows (`GATE` in the tool):
+
+- **materials**: shader `ksPerPixelMultiMap_NMDetail`, the slots txDiffuse / txNormal / txDetail / txNormalDetail, each
+  embedded and power of two (L7), `detailUVMultiplier` = atlas_px x texel_m / 4.
+- **density**: every triangle's UV Jacobian over (east, north) within 0.5 % of 1 / (atlas_px x texel_m), shear <= 0.5 %
+  ⚠ [invented: a construction error, not float rounding (float32 UVs hold 1e-6 at 4096 px)].
+- **no_repeat**: no atlas texel claimed by two places on the ground > 0.75 m apart ⚠ [invented: three texels].
+- **detail_phase**: UV x detailUVMultiplier = east / 4, north / 4 mod 1 within 0.002 tiles ⚠ [invented: 8 mm]: the grain
+  stays on the prep's 4 m grid and phase across every atlas seam.
+- **tone**: Pearson r >= 0.60 ⚠ [invented] between the shipped atlas and the aerial's luminance at lit 1ROAD centroids off
+  the line's rubber band. The edge strip is left out (its tone is the road's carried outward, not the photo's verge), as
+  are shadow-blue pixels and anything outside the bake's own clip / lit body (0.8-1.3 x the median).
+- **rubber**: the mean cross-line profile of the shipped atlas at the line's high-rubber stations (rubber >= 0.7, every
+  5th): its darkening centroid within 0.15 m ⚠ [invented, ledger 0084's plan] of the declared line, its depth over
+  |u| <= 0.75 m within 0.5-1.5 x ⚠ [invented] the declared amplitude x rubber x tyre profile.
+
+**Proven (Milford 0.1.7, Mac b17).** materials PASS; density 60,956 triangles, 0 off, worst 0.086 % / shear 0.089 %;
+no_repeat 87,633 texels, 0 twice; detail_phase worst 1e-5 tiles; tone r 0.953 (2,966 samples); rubber 268 stations,
+centroid +0.044 m, depth 0.217 vs 0.209 declared. **The first run failed on its own reader and was fixed, not loosened:**
+the kn5 header parse added a texture's size to the offset read before it (`o[0] += i32()`), and the gate read the kn5's
+v as Blender's (the add-on writes -v: 1ROAD v -0.85..-0.01). The tone row first sampled every road-wear triangle
+(r 0.49: the edge strip and the shadows' filled edges are not the photo by design); it now samples the lit 1ROAD only,
+r 0.95. No threshold moved.
+
+**Wiring.** `tools/ship_track.sh`: `gate_road_wear` (the vocabulary) and, in `prep_prep`, the bake itself, run only when
+the config names `road_wear` (no header otherwise: Lake Murray's chain, `tools/ship_sd.sh`, never calls it).
+`tests/tools/test_ship_track_chain.py` V4_EXTRAS names the new prep header. engine-july's `export_kn5_addon.py` binds
+`data/road_wear.json`'s material rows only when the config names the key (PENDING-MIRROR line).
+
 ## 2026-11-09 — TreeFX: a build that plants fewer trees than it planned FAILS (ledger 0089; new hard gate, no threshold loosened)
 
 **New gate, `tools/make_treefx.py` `treefx_gate`, hard (exit 1 from `build()`).** Every TreeFX track gets it: `tools/ship_track.sh`

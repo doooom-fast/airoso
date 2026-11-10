@@ -37,19 +37,22 @@
       "drive_test_street",
       "audit_street",
       "kn5_ground",
+      "road_wear",
       "house_seat",
       "edge_report"
     ]
   },
   "sync_in": {
     "required": [
-      "track.config.json"
+      "track.config.json",
+      "source/road_wear/naip_2023_030_hp.png"
     ],
     "optional": [
       "data/heightfield.npy",
       "data/heightfield.meta.json",
       "textures/kerb_bluewhite.png",
-      "textures/kerb_atlas_hp.png"
+      "textures/kerb_atlas_hp.png",
+      "source/road_wear/fast_lane.full.ai"
     ]
   },
   "sync_out": {
@@ -74,7 +77,10 @@
       "data/house_seat_check.json",
       "data/edge_report.json",
       "data/kerbs.built.json",
-      "data/grassfx.aerial.json"
+      "data/grassfx.aerial.json",
+      "data/road_wear.json",
+      "data/road_wear.line.{id}.json",
+      "data/road_wear_check.json"
     ],
     "map": [
       [
@@ -86,5 +92,6 @@
       "ai/{id}"
     ]
   },
-  "_vegetation_doc": "ledger 0089 (High Plains 0.1.6): grassfx_aerial before the track folder (the config's own GrassFX zones off NAIP 2023: the draws' long grass, B, which 0.1.5's PRAIRIECARD cards stood on, and the bright bare ground, C); no TreeFX: NAIP shows no shrub there"
+  "_vegetation_doc": "ledger 0089 (High Plains 0.1.6): grassfx_aerial before the track folder (the config's own GrassFX zones off NAIP 2023: the draws' long grass, B, which 0.1.5's PRAIRIECARD cards stood on, and the bright bare ground, C); no TreeFX: NAIP shows no shrub there",
+  "_road_wear_doc": "ledger 0084 'High Plains 0.1.7': the aerial (required: track.config.json road_wear.aerial) and a recorded line when one exists (optional) sync in; the bake runs as the last part of prep (tools/ship_track.sh prep_prep, opt-in on the config key), the race kerbs included (road_wear.kerbs); gate road_wear (tools/road_wear_check.py) reads the built road kn5"
 }

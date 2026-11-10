@@ -519,6 +519,16 @@ prep_prep() {
     "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/seat_pads_blend.py" -- "$PROJ/blender/$SLUG.blend" --project "$PROJ" 2>&1 | grep "^\[seat-pads\]\|FATAL\|Error\|Traceback"
     [ "${PIPESTATUS[0]}" = 0 ] || { echo "seat_pads_blend failed"; exit 1; }
   fi
+  # ledger 0084 (opt-in: a track.config.json road_wear key; none = no header, nothing runs, the stale report removed): the
+  # road's tone off the aerial and the rubber where tyres run, baked into a world atlas under the stock asphalt as detail;
+  # UVs and materials only, every vertex where the chain put it. Last in prep: it reads the final 1ROAD (after the pads
+  # above, which move only PADAPRON). Part of prep (steps.prep stays prep, split). road_wear.kerbs (opt-in, High Plains
+  # 0.1.7): the race kerbs' own paint darkened where the line rides them, their u only
+  rm -f "$PROJ/data/road_wear.json"
+  if [ "$(pyq "import json,sys; print(bool(json.load(open(sys.argv[1],encoding='utf-8')).get('road_wear')))" "$PROJ/track.config.json" | tr -d '\r')" = "True" ]; then
+    step "ship: road wear where tyres run + the road's tone off the aerial (tools/road_wear_blend.py; ledger 0084; self-checked)"
+    "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/road_wear_blend.py" -- "$PROJ/blender/$SLUG.blend" --project "$PROJ" --eng "$ENGINE" 2>&1 | grep "^\[road_wear\]\|FATAL\|Error\|Traceback"
+  fi
 }
 prep_split() {
   local lid
@@ -667,6 +677,16 @@ gate_edge_report() {
 gate_rib_check() {
   step "gate: terrain ribbing on the built ground (tools/rib_check.py: sub-cell features folded into staircases — hard)"
   (cd "$AIROSO" && python tools/rib_check.py "$PROJ" --json "$PROJ/data/rib_check.json")
+}
+gate_road_wear() {
+  # ledger 0084 (opt-in: only a ship.json that names it runs it): on the BUILT road kn5, the road-wear surfaces' UVs are one
+  # texel per texel_m of ground, round and never repeating; the shipped atlas follows the aerial; the rubber sits on the
+  # declared line; the slots and textures are what the bake declared; with road_wear.kerbs, the race kerbs' levelled paint
+  # and every kerb triangle's level against the line. Thresholds: tools/road_wear_check.py GATE (fleet/GATES-CHANGELOG.md).
+  # Hard: exit 1 stops the chain
+  step "gate: road wear on the built road kn5 (tools/road_wear_check.py; ledger 0084 — hard)"
+  rm -f "$PROJ/data/road_wear_check.json"
+  (cd "$AIROSO" && python tools/road_wear_check.py "$PROJ" --kn5 "$PROJ/build/$SLUG.kn5" --json "$PROJ/data/road_wear_check.json")
 }
 gate_house_seat() {
   step "gate: houses on the built ground (tools/house_seat_check.py: floating, sunken or buried buildings — hard)"

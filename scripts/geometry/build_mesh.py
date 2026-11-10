@@ -1232,6 +1232,41 @@ def build(project_dir: str | Path) -> dict:
                                             fill_apron=(str(cfg_raw.get("road_surface", "tarmac"))
                                                         == "tarmac"))
         edge_group, edge_mat = "1ROAD_shoulder", "road"
+        # SHOULDER FIN OVER THE RUNOFF. The corner runoff apron is a flat paved shelf the grass is
+        # pinned down to later, but the shoulder drapes its cut face onto the bank as it stood BEFORE
+        # that pin — so where a corner's runoff lies in a cut the face stood up through the apron as a
+        # fin and ended in a drop: High Plains st 3450, shoulder +1.15 m over a runoff at +0.05, a
+        # 0.75 m ledge at +11 m (drive_test excursion, 2026-10-28). Over the apron the apron is the
+        # surface: any shoulder vertex standing above it snaps just under it, so the runoff renders on
+        # top and the drop is gone; nothing changes off the apron.
+        if runoff.get("tris"):
+            _rcF: dict = {}
+            _rvF = runoff["vertices"]
+            for _tF in runoff["tris"]:
+                _trF = (_rvF[_tF[0]], _rvF[_tF[1]], _rvF[_tF[2]])
+                for _ciF in range(int(min(_v[0] for _v in _trF) // 4.0), int(max(_v[0] for _v in _trF) // 4.0) + 1):
+                    for _cjF in range(int(min(_v[2] for _v in _trF) // 4.0), int(max(_v[2] for _v in _trF) // 4.0) + 1):
+                        _rcF.setdefault((_ciF, _cjF), []).append(_trF)
+            _nfin = 0
+            _svF = shoulder["vertices"]
+            for _iF, (_xF, _yF, _zF) in enumerate(_svF):
+                _top = None
+                for _AF, _BF, _CF in _rcF.get((int(_xF // 4.0), int(_zF // 4.0)), ()):
+                    _dF = (_BF[2] - _CF[2]) * (_AF[0] - _CF[0]) + (_CF[0] - _BF[0]) * (_AF[2] - _CF[2])
+                    if abs(_dF) < 1e-12:
+                        continue
+                    _w0F = ((_BF[2] - _CF[2]) * (_xF - _CF[0]) + (_CF[0] - _BF[0]) * (_zF - _CF[2])) / _dF
+                    _w1F = ((_CF[2] - _AF[2]) * (_xF - _CF[0]) + (_AF[0] - _CF[0]) * (_zF - _CF[2])) / _dF
+                    _w2F = 1.0 - _w0F - _w1F
+                    if _w0F >= -1e-6 and _w1F >= -1e-6 and _w2F >= -1e-6:
+                        _yyF = _w0F * _AF[1] + _w1F * _BF[1] + _w2F * _CF[1]
+                        if abs(_yyF - _yF) <= 4.0 and (_top is None or _yyF < _top):
+                            _top = _yyF
+                if _top is not None and _yF > _top - 0.01:
+                    _svF[_iF] = (_xF, _top - 0.01, _zF)
+                    _nfin += 1
+            if _nfin:
+                print(f"  [shoulder] {_nfin} shoulder vert(s) over a corner runoff apron snapped under it (no fin)")
         _pav_reg(edge_group, shoulder, "shoulder")
         # CONNECTORS GET A DRAPED VERGE TOO. The main loop's shoulder extends a MANAGED corridor
         # outward from the deck and drapes its outer lip onto grass_surf; a connector had only a

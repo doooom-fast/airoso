@@ -36,6 +36,27 @@ line; `--inis` PASS (models_forward.ini / models_reverse.ini = road + own spawn 
 there sin(yaw) = 0, so the sign of the s-terms is not exercised; a track with another true-north angle is the
 first real test of them (kn5_ground_check, which tries both sign conventions, is the cross-check).
 
+## 2026-10-27 — Phase 2 lap probes include authored junction-pad arms (ledger 0054)
+
+**Wiring, not a threshold relaxation.** An opt-in `race.laps.<id>.junction_pads` list now makes
+`scripts/geometry/race_lap.py` read each named pad from `data/pads.plan.json`. The pad must connect
+exactly one consecutive pair of the lap's source-piece endpoints. Every unused stub arm contributes
+a `pad_branch` mouth and explicit world-XZ forbidden probe, consumed by the existing
+`barrier_bands._mouth_probes` → `no_route` path. Previously those arms were absent: they live in
+`pads.plan.json`, not `connectors.local.json` / `mouths.json`.
+
+The probe stands **BRANCH_PROBE_M = 10 m** down the stub from its mouth centre, following the line to
+the stub's far-edge centre, inside its end barrier. This reuses the existing invented 10 m branch
+probe reach; it is not a measured vehicle envelope. A stub no longer than that reach is refused,
+not silently skipped. Missing/duplicate pads, duplicate ids and non-adjacent route endpoints are
+refused. No-pad laps and all mainline consumers retain their existing behavior. No gate is disabled,
+no tolerance is widened, and the probe inventory alone is not proof that a built seal works.
+
+Proof: `tests/tools/test_race_lap_pads.py` checks forward/reverse world-point identity and flipped
+sides, a join across the lap seam, bad declarations, unchanged non-pad output, all six J2–J4 arms
+on the held real north spec, and preservation of their XZ by the forbidden-probe consumer. The held
+spec does **not** activate layouts; built containment and lap completion remain to be proven.
+
 ## 2026-10-26 — Lake Murray expansion P4 integrated (v0.19.1, Drive 2) + the lenses' fix round (ledger 0054 "P4 — dressing, integrated")
 
 The four P4 branches (lamps, buildings + rock, trees + GrassFX, signs + map) merged as unions onto airoso main 1b5a6b3

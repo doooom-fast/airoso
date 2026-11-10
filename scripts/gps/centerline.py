@@ -297,6 +297,23 @@ def build_centerline(project_dir: str | Path) -> tuple[Path, dict]:
             ring = ring[:-1]
         tgt = (float(start_at[1]), float(start_at[0]))          # config [lat, lon] -> (lon, lat)
         k = min(range(len(ring)), key=lambda i: haversine(ring[i], tgt))
+        # No vertex near the start line (High Plains' front straight is ONE 371 m OSM segment, its
+        # nearest node 185 m from mid-straight): put station 0 on the segment at the foot of start_at.
+        # Rotating to the node left the projection stage to rotate again (by 62 points) AFTER
+        # elevation had sampled the line, so everything reading centerline.elevation.json by station
+        # read 186 m off. Within one resample step of a node (the Lariat: 2.7 m) nothing changes.
+        cx = math.cos(math.radians(tgt[1]))
+        best = None
+        for j in (k - 1, k):
+            a, b = ring[j % len(ring)], ring[(j + 1) % len(ring)]
+            dx, dy = (b[0] - a[0]) * cx, b[1] - a[1]
+            t = max(0.0, min(1.0, (((tgt[0] - a[0]) * cx) * dx + (tgt[1] - a[1]) * dy) / (dx * dx + dy * dy or 1e-18)))
+            foot = (a[0] + t * (b[0] - a[0]), a[1] + t * (b[1] - a[1]))
+            if best is None or haversine(foot, tgt) < haversine(best[1], tgt):
+                best = ((j + 1) % len(ring), foot)
+        if haversine(best[1], ring[k]) > RESAMPLE_SPACING_M:
+            ring.insert(best[0], best[1])
+            k = best[0]
         ring = ring[k:] + ring[:k]
     elif start_at and not cfg.loop and len(ring) > 2:
         # An open route can't be rotated — it has two fixed ends. start_at picks WHICH end is the

@@ -22,6 +22,8 @@ Declared (opt-in) in track.config.json:
                           "corridor": {... race.corridor's schema, keyed on LAP vertices ...},
                           "kerbs": {"trims": [...]},      (optional; every other race.kerbs key is inherited)
                           "roads": ["street names in driving order from the lap's v0"],   (optional)
+                          "junction_pads": ["J2", "J3", "J4"],  (optional; data/pads.plan.json: probe every stub arm)
+                          "joins_file": "source/race-joins.json", (optional authored joins; see _authored_joins)
                           "join_spacing_m": 3.0}          (optional; default the pieces' median spacing)
     layouts[].lap = "<lap id>"   on a race layout (absent = today's mainline, byte-identical)
 
@@ -262,10 +264,93 @@ def _walk_line(line: dict, v: int, step: int, dist: float):
         k = k2
 
 
+def _pad_mouths(pad_ids, pads, lines, walked, lap_index, points, tangent):
+    """Unused arms of declared junction pads, including arms absent from connectors/mouths.json.
+
+    A pad must join two consecutive piece endpoints, not merely be near the lap. Probe each stub
+    BRANCH_PROBE_M along its own centre from its mouth, inside the stub rather than beyond its end
+    barrier. The same world point is forbidden in both race directions.
+    """
+    out = []
+    m = len(points)
+    for pid in pad_ids:
+        matches = [pad for pad in pads if pad.get("id") == pid]
+        if len(matches) != 1:
+            raise SystemExit(f"[lap] junction pad {pid!r}: expected one entry in data/pads.plan.json")
+        pad = matches[0]
+        ends = set()
+        for arm in pad["arms"]:
+            if arm["kind"] != "route":
+                continue
+            name, end = arm["connector"], arm["end"]
+            if name not in lines or end not in ("start", "end"):
+                raise SystemExit(f"[lap] junction pad {pid}: unknown route endpoint {name!r} {end!r}")
+            ends.add((name, 0 if end == "start" else len(lines[name]["pts"]) - 1))
+        crossings = []
+        for i, (name, vs, _step) in enumerate(walked):
+            nxt, nvs, _ = walked[(i + 1) % len(walked)]
+            a, b = (name, vs[-1]), (nxt, nvs[0])
+            if a != b and {a, b} == ends:
+                crossings.append((lap_index[a], lap_index[b]))
+        if len(crossings) != 1:
+            raise SystemExit(f"[lap] junction pad {pid}: must cross its two route endpoints at one piece join")
+        a, b = crossings[0]
+        ks = [(a + q) % m for q in range((b - a) % m + 1)]
+        for arm in pad["arms"]:
+            if arm["kind"] != "stub":
+                continue
+            sid = arm["stub"]
+            stub = pad["stubs"][sid]
+            mouth, far = stub["mouth_line_xz"], stub["far_xz"]
+            mx, mz = (sum(p[j] for p in mouth) / len(mouth) for j in (0, 1))
+            fx, fz = (sum(p[j] for p in far) / len(far) for j in (0, 1))
+            length = math.hypot(fx - mx, fz - mz)
+            if length <= BRANCH_PROBE_M:
+                raise SystemExit(f"[lap] junction pad {pid} stub {sid}: too short for an interior "
+                                 f"{BRANCH_PROBE_M:g} m branch probe")
+            px = mx + (fx - mx) * BRANCH_PROBE_M / length
+            pz = mz + (fz - mz) * BRANCH_PROBE_M / length
+            k = min(ks, key=lambda q: (points[q][0] - mx) ** 2 + (points[q][2] - mz) ** 2)
+            tx, tz = tangent(k)
+            side = 1 if tx * (pz - points[k][2]) - tz * (px - points[k][0]) > 0 else -1
+            out.append({"connector": f"{pid}:{sid} {stub['road']}", "piece": f"{pid}:{sid}",
+                        "host": "LAP", "host_vertex": k, "side": side,
+                        "connector_width_m": float(stub["width_m"]), "kind": "pad_branch",
+                        "probe_xz": [round(px, 3), round(pz, 3)]})
+    return out
+
+
+def _authored_joins(proj, spec):
+    """Optional readable reference joins: {joins: [{from: [line,v], to: [line,v], points_xyz_m}]}.
+
+    These are counting lines, not road surfaces or AI. Endpoints must still match the source;
+    reversing a lap reverses the same authored points. A stale or unused declaration fails closed.
+    """
+    if not spec.get("joins_file"):
+        return {}
+    root = Path(proj).resolve()
+    path = (root / spec["joins_file"]).resolve()
+    if not path.is_relative_to(root):
+        raise SystemExit("[lap] joins_file must be inside the project")
+    rows = json.loads(path.read_text(encoding="utf-8"))["joins"]
+    out = {}
+    for row in rows:
+        a, b = tuple(row["from"]), tuple(row["to"])
+        key = frozenset((a, b))
+        if a == b or key in out:
+            raise SystemExit(f"[lap] duplicate or self authored join {a} -> {b}")
+        pts = row["points_xyz_m"]
+        if (len(pts) < 2 or any(len(p) != 3 or not all(math.isfinite(c) for c in p) for p in pts)
+                or any(math.dist(p[::2], q[::2]) < 1e-6 for p, q in zip(pts, pts[1:]))):
+            raise SystemExit(f"[lap] authored join {a} -> {b}: needs finite, distinct XYZ points")
+        out[key] = (a, b, [tuple(p) for p in pts])
+    return out
+
+
 def stitch(proj, cfg: dict, lap_id: str, *, lines: dict | None = None, mouths: list | None = None,
-           spans: list | None = None) -> dict:
-    """The lap line of race.laps.<lap_id> (see the module doc). `lines` / `mouths` / `spans` default to the
-    project's own files (tests pass them in memory)."""
+           spans: list | None = None, pads: list | None = None) -> dict:
+    """The lap line of race.laps.<lap_id> (see the module doc). `lines` / `mouths` / `spans` / `pads`
+    default to the project's own files (tests pass them in memory). Pads are read only when declared."""
     if not LAP_TOKEN_RE.match(str(lap_id)):
         raise SystemExit(f"[lap] lap id {lap_id!r} must be a lower-case [a-z0-9]+ token")
     s = spec(cfg, lap_id)
@@ -285,12 +370,37 @@ def stitch(proj, cfg: dict, lap_id: str, *, lines: dict | None = None, mouths: l
         gaps += [math.hypot(P[b][0] - P[a][0], P[b][2] - P[a][2]) for a, b in zip(vs, vs[1:])]
     spacing = float(s.get("join_spacing_m") or _median(gaps) or 3.0)
     P, W, IW, SRC, joins = [], [], [], [], []
+    authored = _authored_joins(proj, s)
+    used_joins = set()
 
     def _join(a_src, b_src):
         la, va = a_src
         lb, vb = b_src
         A, B = lines[la]["pts"][va], lines[lb]["pts"][vb]
         d = math.hypot(B[0] - A[0], B[2] - A[2])
+        key = frozenset((a_src, b_src))
+        if key in authored:
+            start, _end, pts = authored[key]
+            if start != a_src:
+                pts = pts[::-1]
+            if math.dist(pts[0], A) > 1e-4 or math.dist(pts[-1], B) > 1e-4:
+                raise SystemExit(f"[lap] authored join {a_src} -> {b_src}: endpoints changed; re-author the join")
+            if key in used_joins:
+                raise SystemExit(f"[lap] authored join {a_src} -> {b_src}: traversed more than once")
+            used_joins.add(key)
+            st_join = [0.0]
+            for a, b in zip(pts, pts[1:]):
+                st_join.append(st_join[-1] + math.dist(a[::2], b[::2]))
+            wa, wb = lines[la]["widths"][va], lines[lb]["widths"][vb]
+            k = len(joins)
+            for p, station in zip(pts[1:-1], st_join[1:-1]):
+                P.append(p)
+                W.append(wa + (wb - wa) * station / st_join[-1])
+                IW.append(0.0)
+                SRC.append(["join", k])
+            joins.append({"from": [la, va], "to": [lb, vb], "length_m": round(st_join[-1], 3),
+                          "points": len(pts) - 2, "method": "authored"})
+            return True
         if d < DEDUPE_M:
             return False
         k = len(joins)
@@ -330,6 +440,8 @@ def stitch(proj, cfg: dict, lap_id: str, *, lines: dict | None = None, mouths: l
         P.pop(); W.pop(); IW.pop()
         merged[(dropped[0], dropped[1])] = 0
         piece_rows[-1]["lap_to"] = len(P) - 1
+    if set(authored) != used_joins:
+        raise SystemExit("[lap] unused authored joins: the declared pieces no longer traverse every join")
     m = len(P)
     if m < 8:
         raise SystemExit(f"[lap] race.laps.{lap_id}: {m} vertices — not a lap")
@@ -404,6 +516,17 @@ def stitch(proj, cfg: dict, lap_id: str, *, lines: dict | None = None, mouths: l
             lap_mouths.append({"connector": f"{name} {end} v{v}", "piece": name, "host": "LAP",
                                "host_vertex": k, "side": side, "connector_width_m": round(ln["widths"][v], 3),
                                "kind": "branch", "probe_xz": [round(px, 3), round(pz, 3)]})
+    pad_ids = s.get("junction_pads") or []
+    if pad_ids:
+        if (not isinstance(pad_ids, list) or any(not isinstance(pid, str) for pid in pad_ids)
+                or len(set(pad_ids)) != len(pad_ids)):
+            raise SystemExit("[lap] junction_pads must be a list of unique pad ids")
+        if pads is None:
+            pp = Path(proj) / "data" / "pads.plan.json"
+            if not pp.exists():
+                raise SystemExit("[lap] junction_pads declared but data/pads.plan.json is missing")
+            pads = json.loads(pp.read_text(encoding="utf-8"))["pads"]
+        lap_mouths += _pad_mouths(pad_ids, pads, lines, walked, lap_index, P, tangent)
     lap_mouths.sort(key=lambda r: (r["host_vertex"], r["connector"]))
     # bridge spans (mainline stations) -> lap stations over the mainline vertices the lap shares
     if spans is None:

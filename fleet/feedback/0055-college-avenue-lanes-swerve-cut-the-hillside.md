@@ -1,11 +1,95 @@
 ---
 id: 0055
-title: "One of the lanes swerves into where the other lane should be ... we should just cut into the hillside the way California does" — College Avenue's split section; the Speedways keep their chicane
-status: in-progress — diagnosed, fixed and rehearsed 2026-10-14 (round 2, after the truth + gates lenses refuted round 1; full scratch chain), not installed; Kevin's seat closes it
+title: College Avenue's split section and College/Navajo continuity — Drive 2, realism+; connected split-level roads before race features
+status: open
 scope: tracks/san-diego-lake-murray (College Ave mainline between the College hairpin and the College/Navajo box; median_bands / connector islands there; race corridor on College)
 layer: project (+ engine if the ribbon/median sweep is the cause)
 train: -
 ---
+
+## Drive 2 — College remains unresolved (Kevin, 2026-10-27, v0.19.1)
+
+**This seat report supersedes the older rehearsal's claim of a fix, not its historical measurements.**
+Drive 2 is "great" overall, but College is not accepted:
+
+> "drive 2 is great with some issues on college ave: it seems to go around a hill that the actual road cuts through, making one direction swerve onto the other and the whole thing go outward in a way that’s not realistic. same with the junction at college and Navajo: it seems to jut inwards, making you have to swerve through the intersection to land correctly past Navajo which isn’t correct. the thing is about the college part that goes around the hill: i _do_ want the race course to continue to change which side of the road it’s on there for a kind of chicane"
+
+Kevin then qualified the race-design request:
+
+> "it may not be realistic though to leep that chicane, if the lanes are diverged there in real life, but we don’t diverge them here"
+
+### Design decision — realism+ (same conversation, supersedes conditional retention)
+
+Kevin then chose the direction:
+
+> "can you split them up and do something fun? i would prefer realism+"
+
+And identified the failure to avoid:
+
+> "claude has a hard time splitting up lanes and keeping a coherent system in place"
+
+**Author the real separated, separately graded carriageways as one connected road system.**
+This supersedes the previous one-slab simplification and the requirement to retain its crossover chicane.
+Race enjoyment must fit the real road; no specific replacement race feature has yet been selected or sourced.
+Do not preserve a defective street alignment to keep a race feature, or invent a crossover through the hill.
+College/Navajo's unwanted through-junction swerve is a separate correction, not an intentional chicane.
+
+The old `route.split_carriageways` mechanism stays deleted (0032/0035). The new approval is for authored,
+connected split-level roads, not re-enabling independent `_opp` ribbons that start and stop mid-street.
+
+The older research below describes northbound 2.4–5.9 m above southbound, while the model uses one slab at
+southbound grade. That is existing research, not a fresh measurement of the installed v0.19.1. The earlier
+"Kevin's choice" language about that simplification must not be read as renewed acceptance after this feedback.
+
+### Evidence and next verification
+
+- Current `track.config.json` still declares `route.median_registration`, `terrain.ground_release.zones`
+  entry `college_split_cut`, and the race-only `race.chicanes` entry `college_split`.
+- Read-only inspection of this checkout's `median_bands.json` finds one College run v825–1509 and no zero
+  island widths at v1190–1430. The cached intermediate does not exhibit the old split-run gap; this does not
+  establish what the Windows install loads or whether the current street is realistic.
+- The previous fix deliberately retained the College run-end taper into Navajo (old verification below,
+  v1493–1509); registration also returns to zero by v1505. Inspect their combined effect and the J1 Waring
+  mouth against the real through alignment. **Candidate to investigate, not a proven cause.**
+- Before another geometry edit, compare the artifact AC actually loads with these declarations and the
+  real-road reference. Do not assume the old gap returned or that a rehearsal proves the installed road.
+- This Mac checkout has only a Git LFS pointer for `loop.blend` (134 bytes), no `data/track.obj` or
+  `data/track.street.obj`, and no local confirmation of the Windows-loaded artifact. `tools/ship_sd.sh`
+  still names retired Windows workshop/engine paths; do not run those defaults against retired repos.
+  Git LFS is unavailable; installed Blender is 5.1.2, not the pinned export version 4.2. System Python also
+  lacks numpy/scipy/shapely/pytest. Built-geometry diagnosis and a corrected export remain unperformed here.
+- Acceptance: a registered aerial comparison and built cross-sections through the College cut, a continuous
+  through-junction lane trace across College/Navajo into Waring in both directions, the existing built-artifact
+  gates for Free Roam and both Speedways, and Kevin's repeat drive. Resolve the race crossover design explicitly;
+  no gate thresholds are changed and no new tier is claimed.
+
+### Bounded proof before network integration
+
+1. Recover the canonical LFS `.blend`, inspect its authored collections without regeneration, and obtain
+   the loaded v0.19.1 artifact/manifest for comparison. Use a scratch copy and the pinned author/export tools.
+2. Register the real carriageway edges and elevations in the engine frame, with served aerial extents
+   (the two frame errors documented below must not recur). Select both ends at real connections, not a
+   separation-distance threshold. Include the approach to College/Navajo/Waring in the proof.
+3. Author both carriageways, the median/cut and both transitions together. Shared boundary vertices,
+   single-coverage pavement, and no sidewalk across an opening are the contract (`docs/JUNCTIONS.md`).
+   No broad old slab remains hidden underneath the separated road and median.
+4. Reuse the existing pad authoring and built-pad verification where applicable
+   (`tools/junction_pad.py`, `author_junction_pad_blend.py`, `verify_pads.py`); do not assume their current
+   J2–J4 connector-arm support already handles a cut through MAINLINE at J1.
+5. Check every consumer before integration: terrain seating must use the correct carriageway/layer; paint,
+   curbs, lamps and barriers its actual surface; race paths their own named road pieces and junction paths.
+   `scripts/geometry/race_lap.py` offers named pieces, but its straight joins are not proof of a drivable
+   junction and it currently inherits race settings. Old mainline-indexed chicane declarations cannot
+   silently carry onto a new piece sequence. No GPS-generated AI spline is part of this fix.
+6. On the BUILT proof, demonstrate connected pavement through both transitions in both directions,
+   through College/Navajo/Waring and along the intended turns. A connectivity check must consider height
+   and actual seam adjacency, not plan overlap alone. Check median/cut contact, no pavement duplication,
+   no grass/curb obstruction, and both race layouts' containment. Any necessary new gate is documented
+   in GATES-CHANGELOG with its change; no threshold is relaxed to accommodate the split.
+7. Only after that proof, integrate with the shared road model, run all existing gates and compare the
+   unaffected network with v0.19.1. Seat screenshots and Kevin's repeat drive decide acceptance.
+
+**Status:** investigation and design decision recorded; no split geometry authored, no export, no install.
 
 ## Symptom (Kevin, seat, 2026-10-14, v0.18.0)
 

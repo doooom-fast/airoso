@@ -2,10 +2,10 @@
   "archetype": "race_circuit",
   "name": "High Plains Raceway",
   "slug": "high_plains",
-  "version": "0.66.3",
+  "version": "0.67.0",
   "mirror_x": true,
   "loop": true,
-  "default_width_m": 12.0,
+  "default_width_m": 10.5,
   "location": {
     "lat": 39.7353,
     "lon": -103.898,
@@ -56,22 +56,40 @@
     "grassfx": true
   },
   "source": {
-    "type": "from_track",
-    "track": "source/osm_fixes.json",
-    "_note": "RE-SOURCED 2026-07-25 from the REAL High Plains Raceway at 93301 E US Hwy 36, Deer Trail CO (39.7353,-103.8980). Replaces fabricated compressed lat/lon traced off the old unified map (which placed it at 39.67,-104.77, ~70 km away). Geometry is the closed cycle of OSM highway=raceway ways: Short North, Bikers Berm, Niagara, Dannys Lesson, High Plains Drifter, Prarie Corkscrew, Full West + one unnamed link = 3220 m (2.00 mi). The north section (To Hell On A Bobsled / Ladder To Heaven) is EXCLUDED: its south end is unmapped in OSM, leaving a 110 m gap that would have to be invented to close the full 2.55-mile course (LAWS L1 — never invent geometry). Add it by tracing that 110 m off a georeferenced aerial, then re-chain. Pit Lane excluded (not the racing line). Winding CW to match the other CO circuits. Elevation from USGS 3DEP at the real site.",
-    "_width_note": "default_width_m 12.0 is INHERITED FROM THE FABRICATED CONFIG and unverified against the real circuit."
+    "type": "osm",
+    "_doc": "RE-SOURCED 2026-10-28 (ledger 0059): the FULL 2.55-mile course, the closed cycle of OSM highway=raceway ways at 93301 E US Hwy 36, Deer Trail CO, every one oneway=yes so OSM also records the direction (clockwise, as the July research found from the PCA turn guide / LapMeta). OSM now closes the north section — Ladder To Heaven ends on node 1454637805 inside Prarie Corkscrew — so the 110 m gap the July 2.00-mile build left out is mapped, not invented (L1). route.roads lists the ten ways in driving order by id; build_ring trims the Corkscrew at that node. Snapshot: data/osm.cache.json. Not in the lap: the 172 m unnamed cut-through 132189634 (the short course) and Pit Lane 289311751 (691 m, 9-25 m north of the front straight). Superseded: source/osm_fixes.json (the July 2.00-mile cycle) and source/high_plains.kml (the old fabricated trace)."
   },
   "route": {
-    "start_at": [
-      39.67456,
-      -104.77141
+    "bbox": [
+      39.731,
+      -103.908,
+      39.743,
+      -103.887
     ],
-    "_orientation_doc": "Research 2026-07-20: High Plains Raceway runs CLOCKWISE (PCA turn guide + LapMeta, 15 turns, 2.56 mi). Our ring is already CW. REAL S/F: mid front straight (~370 m, WSW->ENE ~102 deg, between the Prairie Corkscrew exit and T1) at real-world ~39.7350,-103.8946 — but THIS trace lives in a displaced frame (~77 km off; re-source pending per CLAUDE.md), so start_at is the matching straight IN THE TRACE'S OWN FRAME: the 207 m straight bearing 115.7 deg, midpoint 39.67456,-104.77141. Re-derive when re-sourced. Pit lane: real hot pits on the NORTH side of the front straight (driver's left), ~690 m incl. entry/exit; entry before S/F at the corkscrew exit, exit wraps outside T1-T2 and merges at T2 exit."
+    "roads": [
+      "id:289314484",
+      "id:132189631",
+      "id:289314483",
+      "id:132189632",
+      "id:289314488",
+      "id:289314485",
+      "id:289314482",
+      "id:132189633",
+      "id:289314489",
+      "id:289314486"
+    ],
+    "_roads_doc": "High Plains Drifter, To Hell On A Bobsled, Ladder To Heaven, Prarie Corkscrew (from node 1454637805), Full West (the front straight), unnamed 289314485, Short North, Bikers Berm, Niagara, Dannys Lesson.",
+    "start_at": [
+      39.73504,
+      -103.89449
+    ],
+    "_orientation_doc": "S/F: the midpoint of the front straight (OSM 'Full West', 371 m at 101.7 deg, WSW->ENE), 39.73504,-103.89449 — the July research's 'mid front straight ~39.7350,-103.8946' (PCA turn guide), now on the real frame. Pit lane: OSM 289311751 on the NORTH side (driver's left)."
   },
   "terrain_cell_m": 1.5,
   "corridor_refine_factor": 6,
   "terrain_vertex_budget": 1500000,
   "ui_tags": [
     "circuit"
-  ]
+  ],
+  "_width_doc": "Measured 2026-10-28 off NAIP (m_3910317_ne_13_060_20190913, 0.6 m px, USGS/USDA public domain), cross-profiles every 0.3 m over +-10 m of each station. Three layers on every straight: dark asphalt (NDVI -0.25) to ~+-4.2 m, a sharp bright, non-yellow peak at ~+-5 m (brightness 157-173 = a white edge line blurred by the 0.6 m pixel; paint over asphalt predicts ~175), then dry grass at once. Edge-line centres 10.2-10.6 m apart (Short North 10.2 / 10.6, Bobsled 10.5) -> 10.5 m (34 ft), +-0.6 m. The front straight is wider: lines at ~-6.3 / +5.4 -> ~11.7 m, pit wall concrete at +9..+12 m north, pit-lane asphalt from +13 m — NOT modelled (one constant width; width_overrides is parsed but nothing consumes it). Two cruder reads bracket this and were set aside: NDVI half-max 9.9 m (stops inside the white line), grass-yellowness half-max 12.3-12.9 m (runs into the blurred verge). Replaces the 12.0 m inherited from the fabricated config. Overlays: build/naip_width_check*.png. Ledger 0059."
 }

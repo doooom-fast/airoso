@@ -1,7 +1,7 @@
 ---
 id: 0084
 title: "road textures need wear where tyres run" — one cracked-asphalt picture on a 4 m world grid; the wear repeats and ignores the lanes. Wear on the real wheel paths (streets) and the racing line (tracks, kerbs too), and the whole road sampled from the aerial
-status: open — investigated 2026-11-07; pilot built 2026-11-09 (Milford 0.1.7, Mac, every gate green), integrated into Milford 0.1.9 the same day (ledger 0082), not installed, not driven; Kevin's drive closes it
+status: open — investigated 2026-11-07; pilot built 2026-11-09 (Milford 0.1.7, Mac, every gate green), integrated into Milford 0.1.9 the same day (ledger 0082); Milford 0.1.11 installed with it; High Plains 0.1.7 inputs + kerb rubber 2026-11-10, the photo's rubber by Kevin's word ("Use the photo's rubber"; built on the PC, runbook 0084-2); Kevin's drive closes it
 scope: every track (the LM v4 engine's road material); proof cases chosen by the investigation
 layer: engine
 train: -
@@ -393,3 +393,335 @@ commute), the gate column and the PC runbook **0082-6**.
 
 Runbook 0082-6 supersedes this runbook's install (steps 4-6). Step 7 (the in-game slot / alpha check) and step 8 (record a
 line) now run on 0.1.9.
+
+## High Plains 0.1.7 (2026-11-10: the inputs and the engine on the Mac, both builds on the PC)
+
+Kevin, 2026-11-10: "lets continue, drives looked good". Then, while this was being prepared: "Move everything from the Mac to
+the pc that you can, we seem to be filling up that drive too quickly". So **nothing was built on the Mac**. The Mac did only
+what needs its data: it read the NAIP and wrote the inputs. The PC builds twice and installs (runbook 0084-2).
+
+Branch `claude/high-plains-road-wear`, cut from `claude/treefx-cards` 98bb3510. Installed 0.1.6 is `5ce76a7e` per
+`fleet/ac-installed.json` on `claude/ac-tidy`. Its records are at 1aeecb84, and 98bb3510 changes no High Plains source
+after that.
+
+### What came over from the Milford branches (engine only, no Milford track file)
+
+These files were taken as they stand at `claude/milford-0111` (2dc444cd; equal to 4262162 for every one of them):
+
+- `scripts/aerial/road_wear.py`
+- `tools/road_wear_blend.py`
+- `tools/road_wear_check.py`, including 4262162's ksAmbient / ksDiffuse 0.40 and the every-VAR check
+- `tests/aerial/test_road_wear.py`
+- `scripts/ac/export_kn5_addon.py` and the engine-july snapshot's copy, md5 83b231e8, with its `MANIFEST.md5` and
+  `PENDING-MIRROR.md5` lines
+
+Edited by hand:
+
+- `tools/ship_track.sh`: only the `road_wear` prep block and `gate_road_wear`. Milford's far-ground, re-seat,
+  kn5_textures and edge_smoothness pieces stayed behind, and this branch's `seat_pads` step is kept.
+- `tests/tools/test_ship_track_chain.py` gets one V4_EXTRAS line.
+
+This ledger file was taken from the same head, and this section is appended to it.
+
+### New in the engine: the race kerbs (opt-in `road_wear.kerbs`)
+
+High Plains' 20 traced kerb runs (`1KERB_circuit_<k>`, ledger 0081) carry their own paint in their own UVs: u runs across
+inside the colour's cell of `kerb_atlas_hp.png`, and v = arc / 2 m repeats. So they cannot take the road's world atlas.
+
+- `road_wear.kerb_*` and `road_wear_blend._kerbs` give each kerb face the rubber the same line puts on its centroid (the
+  same `wear_at` the road's atlas is baked from).
+- That rubber picks one of 16 copies of the kerb's own paint laid side by side. Copy k is the paint x (1 - k x 0.22 / 15),
+  and copy 0 is the paint byte for byte. 16 levels is **[invented]**: a 1.5 % step.
+- Each face's u moves into its copy. v and the positions are untouched.
+- The material row is the exporter's own stock row (ksPerPixel, no VAR, so the add-on's 0.4 / 0.4 as in 0.1.6), with
+  txDiffuse changed to the levelled paint.
+- Each face's ring and level are written to `data/road_wear.json` for the gate.
+- 18 of the 20 runs lie partly over the lane at their measured offsets (`kerbs.built.json` in_vs_ribbon_edge_m < 0). The
+  line's tyres reach them there.
+- Gate rows `kerb_materials`, `kerb_paint` and `kerb_levels` (fleet/GATES-CHANGELOG.md 2026-11-10). The road rows are
+  unchanged and no threshold moved.
+
+Proven so far without a build:
+
+- `tests/aerial/test_road_wear_kerbs.py` passes 6 of 6, and `test_road_wear.py` 7 of 7.
+- A synthetic Blender scene went through `_kerbs` and the three rows (`source/road_wear/mac_read/kt_*.py`): one kerb, 145
+  faces, 122 darkened. Every row passed, and a triangle moved one level failed `kerb_levels`.
+
+### The config (`tracks/high-plains-lm/track.config.json` 0.1.7, `ship.json`)
+
+- `road_wear` = Milford's key with these changes:
+  - `surfaces` 1ROAD + 1KERB_SIDEWALK (the circuit-edge-flush strip, ledger 0087);
+  - `texel_m` **0.2**;
+  - the aerial below;
+  - `lines` full, recorded `source/road_wear/fast_lane.full.ai` when one exists;
+  - `kerbs` {prefix 1KERB_CIRCUIT_, levels 16}.
+- ship.json:
+  - gate `road_wear` after kn5_ground;
+  - sync_in: the aerial required and the recorded line optional;
+  - sync_out: the three road_wear records.
+
+### The aerial (measured on the Mac: `source/road_wear/mac_read/naip_read.py` + `.log`)
+
+- **The image is committed** as `source/road_wear/naip_2023_030_hp.png`, beside its record `naip_2023_030_hp.json`:
+  - USDA NAIP 2023-09-28, `co_m_3910317_ne_13_030_20230928_20240104`, public domain;
+  - ledger 0081's crop, `/Volumes/Drive/codex/kerb_work/img/high-plains_2023_030.png`, md5 4da61327, byte-identical;
+  - 4495 x 1202 px at 0.300 x 0.300 m, 10,762,351 B;
+  - corners [W, N, E, S] exact (`tools/naip_crop.py`), bbox_lonlat (W, S, E, N) in the config.
+  - It is **not LFS** (`.gitattributes` puts only `*_z18` aerials there).
+  - The track's other on-disk aerial, `tracks/high-plains/source/naip_2023_hp_z18.png`, is a 133 B LFS pointer here.
+- **Coverage**: the whole lap. 0 of 3,205 centreline stations at 0 / +-8 / +-10 m fall outside the image or on a black pixel.
+  **No download was needed.**
+- **Texel 0.2 m**:
+  - It is finer than the 0.3 m pixel, so every tone the photo carries is kept.
+  - It is a whole divisor of the 4 m detail tile, so the grain keeps the prep's grid and phase across the atlas seams.
+  - Milford's rule, half the pixel (0.15 m), is not a divisor: 26.7 texels a tile, and the gate's detail_phase row would
+    fail.
+  - The next divisor, 0.125 m, needs an 8192 px atlas (4x Milford's VRAM).
+  - Estimated off the centreline's cells: 78 cells of 64 m, a 4096 px atlas at 74-90 % fill. The bake measures the real
+    plan on the built road.
+- **Registration**: (-1.25, +1.25) m, contrast 0.0507 -> 0.0595. This was measured on the centreline +- 6 m, not the built
+  road, so it is an estimate. The bake measures it again on the built road.
+- **Shadows and paint**:
+  - Shadows: 4.0 % of the road (masks grown by one aerial pixel).
+  - The dark tail (< 0.72 x the lit median) is 3.57 % at b/r 1.103 against the lit 0.928, so Milford's shadow rule (0.72,
+    1.06) still separates them here.
+  - Paint: 9.54 % (raw 3.22 % over 1.45 x: the painted edge lines).
+  - Tone p01 / p50 / p99: 0.712 / 0.999 / 1.300.
+- **Model line**: the minimum-curvature line [model]. The committed `ai/full/fast_lane.ai` is the generated centreline draft
+  (`ai_draft.json` "GENERATED DRAFT", offset_max 0.238 m). Model lap 89.5 s, 56.6-252 km/h.
+
+### Finding: at 0.3 m the photo already shows the rubber
+
+At Milford's 0.5 m it did not: the band there regressed to 0.3 % darker. At High Plains it does, measured on lit asphalt at
+least 1.5 m inside the edges, at stations where the model line runs 2 m or more off the centre:
+
+| distance from | 0-0.5 m | 0.5-1 | 1-1.5 | 1.5-2 | 2-3 | 3-4 |
+|---|---|---|---|---|---|---|
+| the model line | **0.915** | 0.925 | 0.935 | 0.958 | 0.988 | 1.010 |
+| its mirror across the centreline | 1.075 | 1.086 | 1.074 | 1.076 | 1.055 | 1.031 |
+| the centreline | 1.000 | 1.013 | 1.017 | 1.027 | 1.025 | 1.023 |
+
+- Fitted on the model line's tyre profile, the photo's darkening is **A = 0.120** (measured; `fit_sim.log`).
+- Consequence 1, double counting. The bake draws the rubber over the photo's tone, so with Milford's **0.22 [invented]** the
+  line ships about 1 - 0.88 x 0.78 = 31 % darker than the lit road, where the photo shows about 12 %. At Milford that was
+  right, because the photo showed nothing; here it counts the rubber twice.
+- Consequence 2, the gate may go red. Simulated on the centreline corridor (`gate_sim.log`), the `rubber` row gives:
+
+| drawn A | centroid (limit 0.15 m) | depth / declared |
+|---|---|---|
+| 0 | -0.668 m | - |
+| 0.10 | -0.295 m | 1.55 |
+| 0.22 | **-0.175 m** | 1.22 |
+
+  The photo's own band sits about 0.7 m right of the model line at the gate's stations (or that much off in registration).
+  So the row may be **red on the built road**. The PC's reference build settles it. Nothing is loosened if it is red.
+- An attempt to read the line off the photo's rubber instead (`fit_sim.py`) is not usable as it stands:
+  - the lateral shifts run to the search bounds (p5 / p95 -2.5 / +2.5 m) on edge paint and patches;
+  - its A is 0.195.
+  - It is not in the engine.
+- What 0.1.7 first shipped, now superseded by the next section: **Milford's numbers unchanged** (0.22, spread 0.70, base 0.35). It is the feature as Milford was built,
+  rolled out.
+- **Kevin's call** (made the same day: (b), "Use the photo's rubber"; see the next section):
+  - (a) keep 0.22;
+  - (b) draw nothing on the asphalt (the photo is the wear) and give the kerbs the measured 0.12. This needs the rubber row
+    to judge a photo-borne band, which is a gate change for Kevin's word, not a loosening slipped in;
+  - (c) record a racing line in CSP (runbook step 9), which puts the drawn band where cars really run.
+
+### High Plains 0.1.7: the photo's rubber (Kevin's call, 2026-11-10)
+
+Kevin, verbatim: **"Use the photo's rubber"**. That is option (b) above, and it is what 0.1.7 now ships. It replaces
+"Milford's numbers unchanged" for this track.
+
+- **`road_wear.rubber: "photo"`** (opt-in; absent or "drawn" is Milford's mode, unchanged).
+  - The asphalt gets **no drawn band**: the photo's tone carries the rubber.
+  - The bake measures the photo's darkening across each line against its mirror across the centreline
+    (`road_wear.photo_rubber`, on lit asphalt at least 1.5 m inside the built road, stations where the line runs at least
+    2 m off the centre) and writes it to `data/road_wear.line.<layout>.json`.
+  - The min-curvature line [model] is kept only to measure that and to say which kerb faces it clips.
+- **The kerbs** take the measured profile D(u) at each face's signed offset from the line, through the 16 levels, whose top
+  is the measured peak. The drawn model's 0.22 / 0.70 m / 0.35 and the speed weighting are not used here.
+- **The gate**:
+  - The drawn `rubber` row is not run in photo mode; it would demand a band that is not drawn.
+  - The new `photo_rubber` row judges the shipped atlas's line-vs-mirror darkening against the bake's measurement on the
+    photo: depth within 0.02, centroid within 0.15 m, the photo's depth at least 0.03 (fleet/GATES-CHANGELOG.md
+    2026-11-10 later, every number marked).
+  - No threshold of the drawn mode moved.
+- **Measured on High Plains**, Mac, on the centreline corridor (`source/road_wear/mac_read/photo_sim.log`):
+  - The photo's depth is **0.146** (|u| <= 0.75 m), its peak **0.156**, its centroid +0.42 m (642 stations).
+  - The simulated shipped atlas reads 0.141 / +0.420 m, so photo_rubber **PASSES**.
+  - The drawn 0.22 still fails the old row the same way: centroid -0.175 m (`gate_sim.log`, re-run).
+  - The kerbs' top level is 0.156, in steps of 0.0104.
+  - The profile is skewed (D 0.04 at u = +4 m, 0 by -3.5 m), so a kerb face 4 m right of the line steps down about 4
+    levels at the profile's edge.
+- **Which number.** The brief quoted 0.120. That is the regression of the photo on the model line's tyre profile
+  against 3-4 m out (`fit_sim.log`). The line-against-mirror measure that was asked for reads 0.146 / 0.156, and that is
+  what the build uses. The mirror takes out the road's own across-the-road shading but keeps any off-line dust (the outside
+  of a corner reads lighter), so it reads higher than the regression.
+- **Default for the other 0.3 m circuits.** Photo mode is the default when Pueblo, Aspen, Grand Junction and Pikes Peak
+  (NAIP 2023 0.3 m on disk) get road wear, each checked by the same `photo_min_depth`.
+  - Milford keeps its drawn band: at 0.5 m its photo shows under 1 %.
+  - Lake Murray names nothing.
+- Unit tests: `tests/aerial/test_road_wear_photo.py` (6). Lake Murray as before (`mac_read/lm_checks.log`; this pass
+  touches neither its tools nor its tree).
+
+### Lake Murray unchanged (Mac, `source/road_wear/mac_read/lm_checks.log`)
+
+- `git diff 98bb351 -- tracks/san-diego-lake-murray` touches only the snapshot's `export_kn5_addon.py` (13 lines), its
+  MANIFEST.md5 line and one PENDING-MIRROR.md5 line: the known mirror lines.
+- `tools/trim_connectors.py` (8a456516), `tools/make_treefx.py` (d759fe89) and `tools/ship_sd.sh` (5a4bbe29, no
+  `road_wear`) are byte-identical to the base. Lake Murray's config names no `road_wear`.
+- **Trim A/B** on a copy of Lake Murray's data: connectors 664da93b, mouths b73b70f4, median_bands f0c97952 and the log
+  63af07cc. These are ledger 0089's base numbers, **byte-identical**.
+- **make_treefx A/B**: `plan(all_species=True)` with 98bb351's tool and with the branch's gives 8ce38a01 / 21,219 lines on
+  both sides. **SAME.**
+- The exporter without the key: Milford's export A/B (above) holds. Its `.ini` was byte-identical and its kn5s
+  `kn5_equiv` EQUIVALENT.
+
+### Records still owed (the PC)
+
+- The gate column.
+- The sizes.
+- mesh_diff and compare_ab against the installed 0.1.6.
+- Stills 0.1.6 vs 0.1.7 of the front straight, the kerbed corner and the fast curve.
+
+All of these are runbook 0084-2's output and land under `tracks/high-plains-lm/source/road_wear/pc_017/`. The 0.1.6 column
+to compare against is ledger 0089's: drive_test 0 / 0 / 0.62 / 0 / 0, audit 0, kn5_ground 0 / 1,908 p95 0.021,
+house_seat PASS, edge_report 4,051 scalars, road kn5 14,511,475 B.
+
+### Runbook 0084-2 (PC): reference build, rehearsal, compare every row, install when green, then the in-game look
+
+Kevin: "I always want newer builds". A green 0.1.7 installs without asking, and the old build goes to the archive.
+Downloads still need his word, and none is needed here.
+
+1. **Worktree.**
+   - `git fetch && git worktree add D:/k10-worktrees/hp-rw origin/claude/high-plains-road-wear`, at the head this section
+     was pushed in or later.
+   - `git status` must be clean.
+   - Check `md5sum tracks/high-plains-lm/source/road_wear/naip_2023_030_hp.png` = **4da61327cb66cb155594cc48cd99b077**.
+2. **ENG.**
+   - `cp -r D:/k10-scratch/eng_hplm D:/k10-scratch/eng_hplm_rw`. eng_hplm itself stays untouched for any 0.1.6 rebuild.
+   - Copy the worktree's `scripts/ac/export_kn5_addon.py` over `eng_hplm_rw/scripts/ac/export_kn5_addon.py`. Its md5 must be
+     **83b231e840c09b34ef32cde98dbf2c35**.
+   - Record the md5s of `eng_hplm_rw/scripts/ac/pbr.py` (expect 44615dd3) and `build_kn5_loop.py` (2a653ee1 or its
+     PENDING-MIRROR predecessor; note which).
+   - Real engine-july is not edited until the mirror.
+3. **The K-rail re-seat (the PC's own change, carried in this same 0.1.7 build).**
+   - High Plains 0.1.6's pit-wall K-rail `pit_wall_lidar` stands about 0.29 m buried: declared 1.03 m, 0.74 m showing at
+     p50. This is Milford G1's mechanism.
+   - The PC widens `tools/reseat_bespoke_blend.py`'s prefixes, opt-in `scenery.bespoke.reseat_prefixes` adding
+     `"1WALL_KRAIL"`. The tool and its `prep_prep` call come from `claude/milford-0111`.
+   - It sets `scenery.bespoke.reseat_on_prep: true` in High Plains' config.
+   - Commit (fetch + rebase, never force) **before** step 4, so both builds are of one head.
+   - In `prep_prep` the re-seat goes before the road-wear bake, as on Milford 0.1.9. The two commute: the re-seat moves only
+     the rail kinds, and the bake writes only 1ROAD / 1KERB_SIDEWALK / 1KERB_CIRCUIT UVs and materials.
+   - **The seat numbers it should then show** (`data/reseat_bespoke.json` and a `seat_built` read of the built kn5):
+     - `pit_wall_lidar` 1.03 m showing at p50 (from 0.74), 0 m buried (from 0.29);
+     - every other K-rail's p50 within a centimetre of its declared height;
+     - no 1ROAD / 1KERB / 1GRASS vertex moved by the re-seat (its own report).
+   - If that is not ready, build without it. The rest of this runbook does not depend on it.
+4. **Reference build** from an EMPTY workshop:
+   - `mkdir -p D:/k10-scratch/hp_rw_ref/data`, then
+     `SHIP_PROJ=D:/k10-scratch/hp_rw_ref AIROSO=D:/k10-worktrees/hp-rw ENG=D:/k10-scratch/eng_hplm_rw bash tools/ship_track.sh high-plains-lm --no-install > hp_rw_ref.log 2>&1`.
+   - No force. Look for:
+     - `[road_wear] ... atlas 4096 px at 0.2 m` (8192 is possible if the built road takes more cells: record it);
+     - `aerial registered to the built road: shift (...)`;
+     - `line full: model: minimum curvature inside the built edges`;
+     - `line full: the photo's rubber against the mirror: depth ~0.15 ...` (the Mac's estimate on the centreline corridor:
+       0.146, peak 0.156, centroid +0.42 m; the built road may differ a little: record it);
+     - `kerbs: 20 meshes, ... darkened (levels 16, step ~0.0104 ...)`;
+     - `[export] road wear: [...]` naming 1ROAD_road_mat, 1KERB_sidewalk_mat and the 20 `1KERB_circuit_<k>_mat`;
+     - every `[road_wear_check]` row PASS: materials, density, no_repeat, detail_phase, tone, **photo_rubber** (in place of
+       rubber: photo mode draws no band), kerb_materials, kerb_paint, kerb_levels;
+     - SHIP OK.
+   - **If any row is red**, stop. The Mac's photo-mode simulation passes photo_rubber by 0.006 in depth and 0.002 m in
+     centroid; the drawn `rubber` row is not run in photo mode. Nothing is changed, loosened or forced. Commit the log and every `data/*.json` under `source/road_wear/pc_017/ref/`
+     and report the row.
+5. **Rehearsal** from a second EMPTY workshop, `D:/k10-scratch/hp_rw_reh`, with the same command and the same head.
+6. **Compare every row, reference against rehearsal.**
+   - Every scalar of drive_test.full, audit, kn5_ground_check.full, house_seat, edge_report and road_wear_check must be
+     equal.
+   - `data/road_wear.json` must be equal except for absolute paths: m0, the plan, the registration, the kerb levels.
+   - The two road kn5s must be byte-equal or `tools/kn5_equiv.py` EQUIVALENT (tangents only). Any other difference: no
+     install; report it.
+7. **Against the installed 0.1.6** (`D:/k10-scratch/high_plains_lm/build/high_plains.kn5`, or the AC folder's kn5):
+   - `python tracks/high-plains-lm/source/road_wear/mesh_diff.py <0.1.6.kn5> D:/k10-scratch/hp_rw_ref/build/high_plains.kn5 --json pc_017/mesh_diff.json`;
+   - `python tracks/high-plains-lm/source/road_wear/compare_ab.py <0.1.6.kn5> <ref kn5> 1ROAD 1KERB_SIDEWALK 1KERB_CIRCUIT_ [--moved 1WALL_KRAIL]`
+     (`--moved` only when step 3 ran).
+   - Pass means:
+     - every 1ROAD / 1KERB / 1GRASS / BUILDING / MARKINGS / PADAPRON / ROOFTOP mesh's positions are bit-identical (only the
+       K-rails' may move, under step 3);
+     - UVs and materials changed only on 1ROAD_road, 1KERB_sidewalk and the 1KERB_circuit_* meshes;
+     - the kerbs' v, shader and VARs are unchanged;
+     - textures added: `road_wear_macro.png`, `road_wear_detail_1road.jpg`, `road_wear_detail_1kerb_sidewalk.jpg`,
+       `road_wear_flat_nm.png`, `road_wear_kerb_kerb_atlas_hp.png`;
+     - textures dropped are the ones they replace;
+     - textures changed: none.
+   - The gate numbers must equal ledger 0089's 0.1.6 column (above). The only expected changes are audit's road / curb
+     vertex counts (the strip's UV seams, as Milford) and, under step 3, the K-rails' seat.
+   - Lake Murray: `git diff 98bb351 -- tracks/san-diego-lake-murray` shows only the three mirror files. Re-run the trim and
+     make_treefx A/B as `mac_read/lm_checks.log`; the numbers must be the same.
+8. **Green on every row = install**, with no further word.
+   - Move the old workshop to `high_plains_lm.0.1.6`.
+   - Run the same command without `SHIP_PROJ` and without `--no-install`, AC closed. The install parks 0.1.6 in
+     `D:/k10-track-archive/<stamp>/`.
+   - `python tools/ac_tidy.py record <folder> --track high-plains-lm --branch claude/high-plains-road-wear --sha <head> --engine lm-v4`
+     on `claude/ac-tidy`.
+   - Re-render the menu picture with 0.1.6's camera.
+   - **Stills**: `python tracks/high-plains-lm/source/road_wear/pick_spots.py D:/k10-scratch/hp_rw_ref pc_017/spots.json`
+     gives front straight, fast curve and kerbed corner (the most-darkened kerb face). Then
+     `blender --background --factory-startup --python-exit-code 1 --python tracks/high-plains-lm/source/road_wear/road_wear_stills_blend.py -- <ws>/blender/split/loop_main.blend <out-prefix> pc_017/spots.json`
+     on 0.1.6's workshop (`high_plains_lm.0.1.6`) and on the reference. Compose the pairs as
+     `tracks/high-plains-lm/source/stills/road_wear_016_vs_017_{front_straight,kerbed_corner,fast_curve}.jpg`.
+   - Commit the records (`source/road_wear/pc_017/`: both logs, the gate JSONs, road_wear.json, mesh_diff, compare_ab, the
+     sizes) and append the gate column 0.1.6 / 0.1.7 here. Fetch + rebase, never force.
+9. **In game** (Kevin's drive is the verdict).
+   - CSP Objects Inspector on the road: shader `ksPerPixelMultiMap_NMDetail`, the four slots bound, detailUVMultiplier
+     204.8 (= 4096 x 0.2 / 4), ksAmbient / ksDiffuse 0.4.
+   - Look for:
+     - the cracked grain as crisp as 0.1.6 at car height (missing = the macro's alpha reads the other way: ledger 0084
+       "Unverified");
+     - the road neither black nor see-through;
+     - the photo's own rubber (no drawn band): darker where cars really run, about 15 % against the off-line asphalt;
+     - the kerbs where the line rides them darker (up to the measured ~15 %) than the ends of the same run, their paint
+       otherwise unchanged;
+     - no 4 m grid in the tone.
+   - **Record a racing line** during the drive (CSP's AI recorder, the full layout). Copy its `fast_lane.ai` to
+     `tracks/high-plains-lm/source/road_wear/fast_lane.full.ai`. The next build's rubber then follows where the car really
+     ran: the kerbs' faces are then picked by the real line, and the photo's rubber is measured against it.
+
+### High Plains 0.1.7: the PC's first builds red on detail_phase; texel 0.25 m (PC, 2026-11-10)
+
+- Both builds, reference `hp_rw_ref` and rehearsal `hp_rw_reh`, came from empty workshops at a79b6a6 (ENG `eng_hplm_rw`). They were identical, and both stopped at `road_wear_check` detail_phase: worst 0.20001 tiles, detailUVMultiplier 204.8.
+- 0.2 m broke the detail phase (204.8). 0.25 m is chosen so the multiplier is whole (256); it is still finer than the 0.3 m photo, so no photo detail is lost.
+- Every other row passed. The re-seat (step 3) moved pit_wall_lidar +0.30 m at p50.
+- Records: `tracks/high-plains-lm/source/road_wear/pc_017/{ref,reh}/` (399d03c).
+- The bake now refuses a fractional multiplier before baking (GATES-CHANGELOG 2026-11-10 PC).
+
+### High Plains 0.1.7: green and installed (PC, 2026-11-10)
+
+- **Head** 2981db6d (texel 0.25 m + the whole-multiplier guard on a79b6a6's K-rail re-seat). ENG `eng_hplm_rw`.
+- **Reference + rehearsal** from empty workshops `hp_rw_ref` / `hp_rw_reh`: SHIP OK, no force, every gate green.
+  - `road_wear_check` passes every row: detail_phase worst 1e-05 tiles at multiplier 256; photo_rubber shipped 0.14143 vs declared 0.14139, centroid -0.1061 vs -0.1116 m; the kerb rows.
+  - Atlas: 4096 px at 0.25 m, 74 cells, 45.2 % used.
+  - The two builds are identical: drive_test / audit / kn5_ground / house_seat / edge_report / road_wear_check / road_wear / reseat JSONs equal bar paths, and the kn5s kn5_equiv (tangents only), 17,730,716 B.
+- **Against the installed 0.1.6**:
+  - mesh_diff: 1ROAD, 1KERB x21 (the strip and the 20 circuit kerbs) and two 1WALL (KRAILBW_1 / _4, the re-seated) differ; every 1GRASS / BUILDING / MARKINGS / PADAPRON / ROOFTOP mesh is equal.
+  - Textures: asphalt_cracked_diffuse / building_diffuse / kerb_atlas_hp dropped; the road-wear set added (macro 2,089,872 B, detail_1road 3,395,491, detail_1kerb_sidewalk 331,034, flat_nm 76, kerb atlas 2,549).
+  - compare_ab's "1WALL_KRAILBW_1 / _4: UVs differ" is the re-seat's re-triangulation: the same 784 / 192 corner points (plan + UV) are each raised by the re-seat's dz (p50 +0.303 / +0.102), and the moved quads split on the other diagonal. No UV moved.
+  - Every gate scalar equals 0.1.6's, except audit wall_verts 7,078 -> 7,170 (the re-seated rails' splits).
+- **The seat** (`wall_seat_abs.py`, top-ridge points vs the ground under them):
+
+  | rail | declared | 0.1.6 showing p50 | 0.1.7 showing p50 |
+  |---|---|---|---|
+  | pit_wall_lidar | 1.03 | 0.74 | **1.03** |
+  | pit_wall_naip_rest | 0.81 | 0.71 | **0.81** |
+  | the other six | | as 0.1.6 | as 0.1.6 |
+
+  The re-seat moved none of the other six, because the band's mechanism isn't theirs: pit_paddock_lidar 0.54 of 0.59, pit_paddock_naip_rest 0.76 of 0.81, back_straight_lidar 1.23 of 1.13.
+- **Installed** 2026-11-10 13:28 from an EMPTY `D:/k10-scratch/high_plains_lm`; 0.1.6's workshop is kept as `high_plains_lm.0.1.6`.
+  - "doooom Colorado — High Plains Raceway" 0.1.7.
+  - kn5_equiv to the reference.
+  - The install step parked 0.1.6 in `D:/k10-track-archive/2026-11-10_132827/`.
+  - Menu picture: s0 at -0.3 EV, as before.
+- Records: `source/road_wear/pc_017/green_{ref,reh}/`.
+- Not driven.

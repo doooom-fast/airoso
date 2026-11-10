@@ -348,6 +348,152 @@ Measured, as a check of the datum (the EPT keeps NAVD88 metres): class-2 ground 
 - Not used, recorded: the source's `scenery.viaduct.layer_height_m` 5.5 m (the network draft's OSM-layer deck lift) — a
   modelled number. Phase 2's connector decks need measured heights (PC lidar, class 17).
 
+## 2026-11-10 (PC) — NEW GUARD (opt-in, inside the road-wear bake): a fractional detail multiplier stops the bake (ledger 0084 "High Plains 0.1.7"; no threshold moved or loosened)
+
+**Why.** Both PC builds of High Plains 0.1.7 (reference + rehearsal at a79b6a6, `source/road_wear/pc_017/`) went red on
+`road_wear_check` detail_phase: worst 0.20001 tiles against phase_tol 0.002. texel_m 0.2 at a 4096 px atlas gives
+detailUVMultiplier 4096 x 0.2 / 4 = 204.8. The shipped v is flipped, so the detail lands at (1 - v) x 204.8: a constant 0.8
+tile off the prep's 4 m phase. Milford's 0.25 m gives 256, whole, and its flip costs nothing.
+
+**What.** `scripts/aerial/road_wear.detail_multiplier` raises ValueError when atlas_px x texel_m / detail_tile_m is not whole
+within 1e-9, naming the values. `tools/road_wear_blend.py` calls it right after `plan_atlas`, before the 69 s bake, and exits
+"[road_wear] FATAL: ...", so the blend is not saved. The gate row is unchanged; this only fails the same thing earlier, before
+anything is written. High Plains' texel_m is now 0.25 m (multiplier 256; 80 m cells = 320 px, 144 slots for 74 cells; still
+finer than the photo's 0.3 m).
+
+**No-op elsewhere.** Milford 0.1.7+ (0.25 m, 4096 px -> 256) passes unchanged. A config without `road_wear` never reaches
+it, and Lake Murray names none.
+
+**Tests.** `tests/aerial/test_road_wear.py::test_a_fractional_detail_multiplier_is_refused`: 204.8 raises, naming it; 0.25 m
+at 4096 and 0.125 m at 8192 give 256. All 14 road-wear tests pass (run with numpy).
+
+## 2026-11-10 (later) — NEW ROW (opt-in): `photo_rubber`, the photo's own rubber judged in place of a drawn band (ledger 0084 "High Plains 0.1.7: the photo's rubber"; no threshold of the drawn mode moved)
+
+**Why.** Kevin, 2026-11-10: "Use the photo's rubber". At 0.3 m High Plains' NAIP resolves the rubber. Lit asphalt within
+0.5 m of the model line reads 0.915 of the lit median, and the same distance from its mirror across the centreline reads
+1.075. So with `road_wear.rubber` "photo" the bake draws **no band on the asphalt** and the photo's tone carries it. The
+drawn mode's `rubber` row would then demand a band that is not declared (want 0 on the drawn amplitude). Simulated on High
+Plains it also fails with the drawn 0.22: centroid -0.175 m against 0.15, unchanged. That row is **not run in photo mode**,
+and this one takes its place.
+
+**What.** For each line, `tools/road_wear_check.measure_photo` restates `scripts/aerial/road_wear.photo_rubber` without
+numpy, on the **shipped** atlas:
+
+- Stations: those at least `a_min_m` off the centre.
+- At u along the line's left normal, the atlas is sampled on the line side and at the reflection of that point across the
+  declared centreline. Samples count only on lit asphalt (the aerial's shadow / paint rule, grown one pixel) at least
+  `interior_m` inside the built 1ROAD.
+- D(u) = 1 - sum(line) / sum(mirror).
+- Read from that: the depth over |u| <= `band_m` and the centroid of max(D, 0).
+
+PASS when all of these hold:
+
+- at least 10 stations;
+- the bake's depth measured on the photo is >= `photo_min_depth`;
+- the shipped depth is within `photo_depth_tol` of the bake's;
+- the shipped centroid is within `photo_centroid_tol_m` of the bake's.
+
+The new numbers:
+
+| name | value | status |
+|---|---|---|
+| `photo_min_depth` | 0.03 | ⚠ [invented]: the photo must resolve the rubber; High Plains 0.146 measured, Milford's 0.5 m <= 0.007 |
+| `photo_depth_tol` | 0.02 | ⚠ [invented]: 8-bit rounding and the lit mask's edges, measured at 0.006 in the simulation |
+| `photo_centroid_tol_m` | 0.15 m | ⚠ [invented]: the same distance as `line_offset_max_m` |
+| `PHOTO.a_min_m` | 2.0 m | ⚠ [invented] |
+| `PHOTO.interior_m` | 1.5 m | ⚠ [invented] |
+| `PHOTO.u_max_m` | 4.0 m | ⚠ [invented]: the profile is still 0.04-0.09 at 2.5 m and ~0.02-0.04 by 4 m (`naip_read.log`) |
+| `PHOTO.du_m` | 0.25 m | [the profile's step] |
+| `PHOTO.band_m` | 0.75 m | [the drawn rubber row's own band] |
+
+**Measured (High Plains, Mac, on the centreline corridor; `tracks/high-plains-lm/source/road_wear/mac_read/photo_sim.log`):**
+
+- On the photo: depth 0.146, peak 0.156, centroid +0.422 m (642 stations, 9,009 samples).
+- On the simulated shipped atlas (m0 x tone, 8 bit, no band): depth 0.141, centroid +0.420 m. **PASS** (0.006 / 0.002 m).
+- `gate_sim.log`, re-run: the drawn mode at 0.22 is unchanged, centroid -0.175 m, FAIL.
+- The kerb rows in photo mode read the measured profile at each face's signed offset (`make_photo_darkness`, the bake's
+  `photo_darkness_at` restated). The 16 levels' top is the measured peak (0.156 here), not the drawn 0.22. `kerb_level_tol`
+  is unchanged.
+
+**Tests.** `tests/aerial/test_road_wear_photo.py`, 6 tests:
+
+- the mirror measures a synthetic band and cancels a symmetric crown;
+- a band moved 0.5 m reads +0.35-0.65;
+- no band reads under `photo_min_depth`;
+- the gate's restatement equals the bake to 1e-6;
+- the profile on kerb faces is signed and equal in both;
+- the kerb levels take the measured peak.
+
+## 2026-11-10 — `road_wear` on High Plains 0.1.7, and three kerb rows (ledger 0084 "High Plains 0.1.7"; no threshold moved or loosened, no bypass)
+
+**Brought over from the Milford branches** (no Milford track file): the `road_wear` gate below as it stands at
+`claude/milford-0111` (4262162's materials row included: every VAR the bake declared is in the kn5 at its value, and
+ksAmbient / ksDiffuse are present; that tightening was not logged here when it landed, so it is logged now), its bake,
+the opt-in exporter rows (engine-july snapshot md5 83b231e8) and the `prep_prep` / `gate_road_wear` wiring in
+`tools/ship_track.sh`.
+
+**New, opt-in on `road_wear.kerbs` (only High Plains names it).** The traced race kerbs (`1KERB_circuit_<k>`) keep their own
+paint and UVs; the bake moves each face's u into one of `levels` copies of that paint, copy k darkened by k x
+amplitude / (levels - 1), by the rubber the declared line puts on the face's centroid. Three rows in
+`tools/road_wear_check.py`, read off the built road kn5 (L5), run only when `data/road_wear.json` carries `kerbs`:
+
+- **kerb_materials**: every declared kerb material in the kn5 with its declared shader, slots and textures (the
+  exporter's own stock row with txDiffuse -> the levelled paint), embedded, power of two, every declared VAR at its value.
+- **kerb_paint**: the shipped levelled paint is `levels` copies of the kerb's own paint: copy 0 byte for byte, copy k
+  within `kerb_paint_tol` = 1 (8-bit rounding) of round(paint x (1 - k step)).
+- **kerb_levels**: every shipped kerb triangle has one level (floor(u x levels)) at all three corners and lies inside a
+  declared face of that level; every declared face's level is the gate's own reading of the declared line's rubber
+  (`make_darkness`, `road_wear.wear_at` restated without numpy) at its centroid within `kerb_level_tol` = 0.55 levels
+  ⚠ [invented: half a level of rounding + 5 % for the line file's 1 mm / 1e-4 rounding].
+- `levels` 16 ⚠ [invented: a 1.5 % step at 0.22].
+
+**The road rows' thresholds are unchanged at High Plains' 0.2 m texel**: density / shear 0.5 %, phase 0.002 tiles, tone r
+>= 0.60, rubber centroid 0.15 m and depth 0.5-1.5 x. `repeat_m` stays 0.75 m (it was "three texels at 0.25 m"; at 0.2 m it
+is 3.75 texels, and two places a texel can honestly hold are <= 0.28 m apart, so it still catches any repeat).
+
+**Proven so far (Mac, no build: Kevin 2026-11-10, "Move everything from the Mac to the pc that you can"):** a synthetic
+Blender scene (one kerb run on an elliptic lap) through `road_wear_blend._kerbs` and the three rows: PASS, and a kerb
+triangle moved one level FAILS kerb_levels; `tests/aerial/test_road_wear_kerbs.py` (6 tests: the gate's darkness gives
+the bake's level on 600 faces, worst 0.49 of a level). The built proof is the PC's (runbook 0084-2).
+
+## 2026-11-09 — NEW GATE (opt-in): `road_wear`, the road's macro atlas and rubber on the built kn5 (ledger 0084)
+
+**Why.** Ledger 0084's bake (`tools/road_wear_blend.py`, Milford 0.1.7 first) rewrites the road-wear surfaces' UVs and
+materials. No gate read either: verify_kn5, kn5_ground_check and kn5_textures would pass a stretched, repeating or
+misregistered atlas, and a rubber band painted a metre off the line.
+
+**What.** `tools/road_wear_check.py <project> --kn5 <road kn5>`, pure python + PIL, on the BUILT road kn5 (L5): the
+road-wear materials, their embedded textures and the surfaces' world positions + UVs, against the declarations in
+`data/road_wear.json` and `data/road_wear.line.<layout>.json` and the track's own aerial. Opt-in: only a ship.json that
+names `road_wear` runs it (Milford). Hard (exit 1 stops the chain). Rows (`GATE` in the tool):
+
+- **materials**: shader `ksPerPixelMultiMap_NMDetail`, the slots txDiffuse / txNormal / txDetail / txNormalDetail, each
+  embedded and power of two (L7), `detailUVMultiplier` = atlas_px x texel_m / 4.
+- **density**: every triangle's UV Jacobian over (east, north) within 0.5 % of 1 / (atlas_px x texel_m), shear <= 0.5 %
+  ⚠ [invented: a construction error, not float rounding (float32 UVs hold 1e-6 at 4096 px)].
+- **no_repeat**: no atlas texel claimed by two places on the ground > 0.75 m apart ⚠ [invented: three texels].
+- **detail_phase**: UV x detailUVMultiplier = east / 4, north / 4 mod 1 within 0.002 tiles ⚠ [invented: 8 mm]: the grain
+  stays on the prep's 4 m grid and phase across every atlas seam.
+- **tone**: Pearson r >= 0.60 ⚠ [invented] between the shipped atlas and the aerial's luminance at lit 1ROAD centroids off
+  the line's rubber band. The edge strip is left out (its tone is the road's carried outward, not the photo's verge), as
+  are shadow-blue pixels and anything outside the bake's own clip / lit body (0.8-1.3 x the median).
+- **rubber**: the mean cross-line profile of the shipped atlas at the line's high-rubber stations (rubber >= 0.7, every
+  5th): its darkening centroid within 0.15 m ⚠ [invented, ledger 0084's plan] of the declared line, its depth over
+  |u| <= 0.75 m within 0.5-1.5 x ⚠ [invented] the declared amplitude x rubber x tyre profile.
+
+**Proven (Milford 0.1.7, Mac b17).** materials PASS; density 60,956 triangles, 0 off, worst 0.086 % / shear 0.089 %;
+no_repeat 87,633 texels, 0 twice; detail_phase worst 1e-5 tiles; tone r 0.953 (2,966 samples); rubber 268 stations,
+centroid +0.044 m, depth 0.217 vs 0.209 declared. **The first run failed on its own reader and was fixed, not loosened:**
+the kn5 header parse added a texture's size to the offset read before it (`o[0] += i32()`), and the gate read the kn5's
+v as Blender's (the add-on writes -v: 1ROAD v -0.85..-0.01). The tone row first sampled every road-wear triangle
+(r 0.49: the edge strip and the shadows' filled edges are not the photo by design); it now samples the lit 1ROAD only,
+r 0.95. No threshold moved.
+
+**Wiring.** `tools/ship_track.sh`: `gate_road_wear` (the vocabulary) and, in `prep_prep`, the bake itself, run only when
+the config names `road_wear` (no header otherwise: Lake Murray's chain, `tools/ship_sd.sh`, never calls it).
+`tests/tools/test_ship_track_chain.py` V4_EXTRAS names the new prep header. engine-july's `export_kn5_addon.py` binds
+`data/road_wear.json`'s material rows only when the config names the key (PENDING-MIRROR line).
+
 ## 2026-11-09 — TreeFX: a build that plants fewer trees than it planned FAILS (ledger 0089; new hard gate, no threshold loosened)
 
 **New gate, `tools/make_treefx.py` `treefx_gate`, hard (exit 1 from `build()`).** Every TreeFX track gets it: `tools/ship_track.sh`
@@ -1181,44 +1327,6 @@ bake writes only 1ROAD / 1KERB_SIDEWALK UVs and materials. Milford's ship.json g
 - `road_wear_check.json` identical to 0.1.7's;
 - `reseat_bespoke.json` identical to 0.1.8's;
 - seat_built PASS.
-
-## 2026-11-09 — NEW GATE (opt-in): `road_wear`, the road's macro atlas and rubber on the built kn5 (ledger 0084)
-
-**Why.** Ledger 0084's bake (`tools/road_wear_blend.py`, Milford 0.1.7 first) rewrites the road-wear surfaces' UVs and
-materials. No gate read either: verify_kn5, kn5_ground_check and kn5_textures would pass a stretched, repeating or
-misregistered atlas, and a rubber band painted a metre off the line.
-
-**What.** `tools/road_wear_check.py <project> --kn5 <road kn5>`, pure python + PIL, on the BUILT road kn5 (L5): the
-road-wear materials, their embedded textures and the surfaces' world positions + UVs, against the declarations in
-`data/road_wear.json` and `data/road_wear.line.<layout>.json` and the track's own aerial. Opt-in: only a ship.json that
-names `road_wear` runs it (Milford). Hard (exit 1 stops the chain). Rows (`GATE` in the tool):
-
-- **materials**: shader `ksPerPixelMultiMap_NMDetail`, the slots txDiffuse / txNormal / txDetail / txNormalDetail, each
-  embedded and power of two (L7), `detailUVMultiplier` = atlas_px x texel_m / 4.
-- **density**: every triangle's UV Jacobian over (east, north) within 0.5 % of 1 / (atlas_px x texel_m), shear <= 0.5 %
-  ⚠ [invented: a construction error, not float rounding (float32 UVs hold 1e-6 at 4096 px)].
-- **no_repeat**: no atlas texel claimed by two places on the ground > 0.75 m apart ⚠ [invented: three texels].
-- **detail_phase**: UV x detailUVMultiplier = east / 4, north / 4 mod 1 within 0.002 tiles ⚠ [invented: 8 mm]: the grain
-  stays on the prep's 4 m grid and phase across every atlas seam.
-- **tone**: Pearson r >= 0.60 ⚠ [invented] between the shipped atlas and the aerial's luminance at lit 1ROAD centroids off
-  the line's rubber band. The edge strip is left out (its tone is the road's carried outward, not the photo's verge), as
-  are shadow-blue pixels and anything outside the bake's own clip / lit body (0.8-1.3 x the median).
-- **rubber**: the mean cross-line profile of the shipped atlas at the line's high-rubber stations (rubber >= 0.7, every
-  5th): its darkening centroid within 0.15 m ⚠ [invented, ledger 0084's plan] of the declared line, its depth over
-  |u| <= 0.75 m within 0.5-1.5 x ⚠ [invented] the declared amplitude x rubber x tyre profile.
-
-**Proven (Milford 0.1.7, Mac b17).** materials PASS; density 60,956 triangles, 0 off, worst 0.086 % / shear 0.089 %;
-no_repeat 87,633 texels, 0 twice; detail_phase worst 1e-5 tiles; tone r 0.953 (2,966 samples); rubber 268 stations,
-centroid +0.044 m, depth 0.217 vs 0.209 declared. **The first run failed on its own reader and was fixed, not loosened:**
-the kn5 header parse added a texture's size to the offset read before it (`o[0] += i32()`), and the gate read the kn5's
-v as Blender's (the add-on writes -v: 1ROAD v -0.85..-0.01). The tone row first sampled every road-wear triangle
-(r 0.49: the edge strip and the shadows' filled edges are not the photo by design); it now samples the lit 1ROAD only,
-r 0.95. No threshold moved.
-
-**Wiring.** `tools/ship_track.sh`: `gate_road_wear` (the vocabulary) and, in `prep_prep`, the bake itself, run only when
-the config names `road_wear` (no header otherwise: Lake Murray's chain, `tools/ship_sd.sh`, never calls it).
-`tests/tools/test_ship_track_chain.py` V4_EXTRAS names the new prep header. engine-july's `export_kn5_addon.py` binds
-`data/road_wear.json`'s material rows only when the config names the key (PENDING-MIRROR line).
 
 ## 2026-11-09 — Milford furniture pass 3: the rails re-seated on the prepped ground, far blocks at their measured roof, a seat report (ledger 0082 pass 3; no gate threshold moved, no bypass)
 

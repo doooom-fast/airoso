@@ -16,12 +16,20 @@ WHAT IT DOES, in order, on the scene engine-july's prep saved (blender/<slug>.bl
 4. the racing line per layout: a recorded fast_lane.ai named in ``road_wear.lines`` when it exists, else the
    minimum-curvature line inside the built road's edges [model], with the rubber intensity a friction-limited speed model
    gives it [model];
+4b. (opt-in road_wear.rubber "photo", High Plains 0.1.7; Kevin 2026-11-10 "Use the photo's rubber") the photo's own
+   darkening across each line, measured against its mirror across the centreline (scripts/aerial/road_wear.photo_rubber,
+   on lit asphalt at least PHOTO interior_m inside the built road), written to the line's record; the asphalt then gets
+   NO drawn band (wear = 0 below: the tone carries it) and the kerbs (7b) take the measured profile, not the drawn model;
 5. the macro atlas baked tile by tile from the world (tone x (1 - wear), x m0), the detail textures (each surface's own
    stock diffuse / m0 and its stock normal), a flat normal — all PNG, power of two;
 6. every face's UVs rewritten into its cell's tile (detail on today's 4 m grid and phase: detailUVMultiplier);
 7. each surface's material rebuilt with those five images (packed, named as their files, so the add-on embeds exactly
    them) and data/road_wear.json written: the material rows engine-july's export_kn5_addon reads (shader
    ksPerPixelMultiMap_NMDetail, the five slots, the VARs) plus every measured / chosen number;
+7b. (opt-in road_wear.kerbs, High Plains 0.1.7) the race kerbs (1KERB_circuit_*): each face's darkness off the same lines
+   at its centroid, to one of ``levels`` copies of the kerb's own paint laid side by side (copy k = paint x (1 - k step)),
+   its u moved into that copy (v untouched); the material row = the exporter's own stock row with txDiffuse -> the
+   levelled paint; every face's ring and level recorded for the gate's join;
 8. the kn5 WRITER's vertex count re-checked on every surface (engine-july's own _export_vertex_keys); a surface over
    the cap is tiled under unique names by engine-july's own _split_for_writer.
 
@@ -146,6 +154,163 @@ def _centre(proj: Path, road: np.ndarray, grid: rw.Grid):
     return P, W, {"file": src.name, "z_sign": best[1], "on_road_frac": round(best[0], 4)}
 
 
+def _kerb_positions(prefix: str) -> dict:
+    out = {}
+    for o in bpy.data.objects:
+        if o.type == "MESH" and o.name.upper().startswith(prefix):
+            me = o.data; nv = len(me.vertices)
+            co = np.empty(nv * 3); me.vertices.foreach_get("co", co)
+            out[o.name] = co.reshape(nv, 3) @ np.array(o.matrix_world)[:3, :3].T + np.array(o.matrix_world)[:3, 3]
+    return out
+
+
+def _exporter_pbr(eng: Path | None):
+    """The pbr module engine-july's exporter binds materials with (ENG's own, by path), else airoso's (the same md5 at
+    44615dd3 today)."""
+    if eng is None or not (eng / "scripts" / "ac" / "pbr.py").exists():
+        return pbr
+    spec = importlib.util.spec_from_file_location("ej_pbr", eng / "scripts" / "ac" / "pbr.py")
+    m = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(m)
+    return m
+
+
+def _stock_row(pb, overrides: dict, assets_tex: Path, mat_name: str) -> dict:
+    """What engine-july's export_kn5_addon writes for this material with no road_wear row (its shader_and_textures and
+    KS_PROPS lookup, restated): the kerb row below changes only its txDiffuse."""
+    obj = mat_name[:-4] if mat_name.endswith("_mat") else mat_name
+    key = next((k for k in pb.TEXTURES if obj.upper().startswith(k)), None)
+    tx = []
+    shader = "ksPerPixel"
+    if key is not None:
+        diff, norm = pb.TEXTURES[key][0], pb.TEXTURES[key][1]
+        ov = overrides.get(key, {})
+        if ov.get("diffuse"):
+            p = Path(ov["diffuse"]); tx.append(["txDiffuse", p.name, str(p)])
+        elif diff:
+            tx.append(["txDiffuse", diff, str(assets_tex / diff)])
+        if ov.get("normal"):
+            p = Path(ov["normal"]); tx.append(["txNormal", p.name, str(p)])
+        elif norm:
+            tx.append(["txNormal", norm, str(assets_tex / norm)])
+        has_norm = bool(norm or ov.get("normal"))
+        shader = "ksTree" if key in pb.BILLBOARD else ("ksPerPixelMultiMap" if has_norm else "ksPerPixel")
+    ks_key = next((k for k in pb.KS_PROPS if obj.upper().startswith(k)), None)
+    return {"shader": shader, "textures": tx, "props": dict(pb.KS_PROPS.get(ks_key, {}))}
+
+
+def _kerbs(proj: Path, eng: Path | None, ksp: dict, spec: dict, lines: list, w: dict, reach: float, texdir: Path,
+           rows: dict) -> dict | None:
+    """The race kerbs (road_wear.kerbs): each face's rubber off the lines at its centroid, its u moved into that level's
+    copy of the kerb's own paint, the material row = the exporter's stock row with txDiffuse -> the levelled paint. No
+    vertex moves; v is untouched. Returns the record for data/road_wear.json, or None on a FATAL (printed)."""
+    pre = ksp["prefix"]; L = ksp["levels"]
+    photo = spec.get("rubber", "drawn") == "photo"
+    if photo:
+        # the photo's measured profile (the line against its mirror), its peak the top level: no drawn amplitude, spread
+        # or base share
+        amp = max(float(ln["photo"]["peak"]) for ln in lines)
+        if not amp > 0:
+            print(f"[road_wear] FATAL: road_wear.rubber 'photo' but the photo shows no rubber on the line (peak {amp})")
+            return None
+    else:
+        amp = float(w["amplitude"])
+    step = rw.kerb_step(amp, L)
+    obs = sorted([o for o in bpy.data.objects if o.type == "MESH" and o.name.upper().startswith(pre)], key=lambda o: o.name)
+    if not obs:
+        print(f"[road_wear] FATAL: road_wear.kerbs names {pre} but the scene has no such mesh")
+        return None
+    pos0 = _kerb_positions(pre)
+    pb = _exporter_pbr(eng)
+    overrides = pb.load_overrides(proj)
+    assets_tex = (eng if eng is not None else AIROSO) / "assets" / "textures"
+    atlases = {}                       # source paint path -> (atlas path, image)
+    faces_rec = {}
+    hist = np.zeros(L, dtype=np.int64)
+    n_faces = 0; touched = 0; clipped = 0
+    for ob in obs:
+        me = ob.data
+        uvl = me.uv_layers.active
+        if uvl is None:
+            print(f"[road_wear] FATAL: {ob.name} has no active UV layer")
+            return None
+        P, fl, cen, _t, _co = _faces(ob)
+        nl = len(me.loops)
+        uv = np.empty(nl * 2, dtype=np.float32); uvl.data.foreach_get("uv", uv); uv = uv.reshape(nl, 2).astype(np.float64)
+        if uv[:, 0].min() < -1e-6 or uv[:, 0].max() > 1 + 1e-6:
+            print(f"[road_wear] FATAL: {ob.name}: u {uv[:, 0].min():.3f}..{uv[:, 0].max():.3f} outside the paint texture "
+                  f"(0..1): its copies would bleed into each other")
+            return None
+        keep = np.ones(len(cen))
+        Z = float(np.mean(cen[:, 2]))
+        for ln in lines:
+            if photo:
+                keep *= 1.0 - rw.photo_darkness_at(cen[:, 0], cen[:, 1], Z, ln, ln["photo"]).astype(np.float64)
+            else:
+                keep *= 1.0 - rw.wear_at(cen[:, 0], cen[:, 1], Z, ln, w, reach).astype(np.float64)
+        dark = 1.0 - keep
+        lev = rw.kerb_levels(dark, step, L)
+        clipped += int(np.sum(np.round(dark / step) > L - 1))
+        uv2 = uv.copy()
+        uv2[:, 0] = rw.kerb_u(np.clip(uv[:, 0], 0.0, 1.0), lev[fl], L)
+        uvl.data.foreach_set("uv", uv2.astype(np.float32).ravel())
+        me.update()
+        hist += np.bincount(lev, minlength=L)
+        n_faces += len(cen); touched += int(np.sum(lev > 0))
+        # each face's ring (world x, y) and level, for the gate's join of the kn5's triangles to these faces
+        ls = np.empty(len(me.polygons), dtype=np.int64); me.polygons.foreach_get("loop_start", ls)
+        lt = np.empty(len(me.polygons), dtype=np.int64); me.polygons.foreach_get("loop_total", lt)
+        faces_rec[ob.name] = [{"c": [round(float(v), 4) for v in cen[f]], "level": int(lev[f]),
+                               "darkness": round(float(dark[f]), 5),
+                               "ring": [[round(float(P[l, 0]), 4), round(float(P[l, 1]), 4)] for l in range(ls[f], ls[f] + lt[f])]}
+                              for f in range(len(cen))]
+        for mat in [m for m in me.materials if m is not None]:
+            st = _stock_row(pb, overrides, assets_tex, mat.name)
+            dif = [t for t in st["textures"] if t[0] == "txDiffuse"]
+            if not dif or not Path(dif[0][2]).exists():
+                print(f"[road_wear] FATAL: {mat.name}: no paint texture to level ({dif})")
+                return None
+            src = Path(dif[0][2])
+            if str(src) not in atlases:
+                base = _image_pixels(src)
+                for s in base.shape[:2]:
+                    if s & (s - 1):
+                        print(f"[road_wear] FATAL: {src.name} is not a power of two ({base.shape[1]} x {base.shape[0]})")
+                        return None
+                b8 = np.round(np.clip(base, 0, 1) * 255).astype(np.uint8)
+                fn = texdir / f"road_wear_kerb_{src.stem}.png"
+                nb = rw.write_png(fn, rw.kerb_wear_atlas(b8, L, step))
+                im = bpy.data.images.load(str(fn), check_existing=True)
+                im.name = fn.name
+                if not im.packed_file:
+                    im.pack()
+                atlases[str(src)] = (fn, im, nb)
+            fn, im, _nb = atlases[str(src)]
+            # the Blender material shows the levelled paint too (the stills); the kn5 binds from the row below
+            nt = mat.node_tree if mat.use_nodes else None
+            if nt is not None:
+                for nd in nt.nodes:
+                    if nd.type == "TEX_IMAGE" and nd.image is not None and Path(nd.image.filepath or nd.image.name).name in (src.name, fn.name):
+                        nd.image = im
+            row = {"shader": st["shader"], "textures": [["txDiffuse", fn.name, str(fn)] if t[0] == "txDiffuse" else t
+                                                         for t in st["textures"]],
+                   "props": st["props"], "stock": st}
+            rows[mat.name] = row
+    now = _kerb_positions(pre)
+    h0 = _hash([pos0[n] for n in sorted(pos0)])
+    if _hash([now[n] for n in sorted(now)]) != h0:
+        print("[road_wear] FATAL: a kerb vertex moved (positions before != after)")
+        return None
+    srcs = {Path(k).name: {"atlas": v[0].name, "png_bytes": v[2], "source": k} for k, v in atlases.items()}
+    print(f"[road_wear] kerbs: {len(obs)} meshes, {n_faces} faces, {touched} darkened (levels {L}, step {step:.4f}; per "
+          f"level {hist.tolist()}); clipped {clipped}; paint {sorted(srcs)} -> {[v['atlas'] for v in srcs.values()]}")
+    return {"spec": ksp, "levels": L, "step": step, "amplitude": amp, "rubber": "photo" if photo else "drawn", "objects": sorted(pos0), "positions_md5": h0,
+            "materials": sorted(m for m in rows if rows[m].get("stock") is not None), "paint": srcs,
+            "faces_total": n_faces, "faces_darkened": touched, "faces_clipped": clipped, "per_level": hist.tolist(),
+            "darkest": round(float(max(f["darkness"] for fs in faces_rec.values() for f in fs)), 5),
+            "faces": faces_rec}
+
+
 def main() -> int:
     blend, proj, eng = _args()
     cfg = json.loads((proj / "track.config.json").read_text(encoding="utf-8"))
@@ -180,6 +345,10 @@ def main() -> int:
     for P, fl, c, _t, _co in data.values():
         over = max(over, float(np.max(np.abs(P[:, :2] - c[fl, :2]))) if len(P) else 0.0)
     plan = rw.plan_atlas(cen[:, :2], cen[:, 2], over, spec)
+    try:                                    # early: a fractional detail multiplier shifts the grain (ledger 0084, HP 0.1.7)
+        rw.detail_multiplier(plan, spec)
+    except ValueError as e:
+        raise SystemExit(f"[road_wear] FATAL: {e}")
     tex = spec["texel_m"]; C = plan["cell_m"]; M = plan["margin_m"]; Pp = plan["pitch_px"]
     keys_by = {n: rw.cell_keys(d[2][:, :2], d[2][:, 2], plan, spec) for n, d in data.items()}
     allkeys = sorted({k for ks in keys_by.values() for k in ks})
@@ -198,13 +367,23 @@ def main() -> int:
           f"({time.time() - t0:.0f} s)")
     aer_spec = spec.get("aerial")
     stats = {"plan": plan, "furthest_vertex_m": round(over, 3)}
+    # road_wear.rubber (opt-in, Kevin 2026-11-10 "Use the photo's rubber"): "photo" = the aerial carries the rubber, no
+    # drawn band on the asphalt; absent / "drawn" = Milford's drawn band, unchanged
+    mode = spec.get("rubber", "drawn")
+    if mode not in ("drawn", "photo"):
+        print(f"[road_wear] FATAL: road_wear.rubber {mode!r}: 'drawn' or 'photo'")
+        return 1
+    if mode == "photo" and not aer_spec:
+        print("[road_wear] FATAL: road_wear.rubber 'photo' needs road_wear.aerial")
+        return 1
+    lit = None
     if aer_spec:
         img = _image_pixels(proj / aer_spec["image"])
         o = json.loads((proj / "data" / "centerline.local.json").read_text(encoding="utf-8"))["origin"]
         aer = rw.Aerial(img, aer_spec["bbox_lonlat"], (o["lon"], o["lat"]))
         reg = rw.register(aer, grid, road)
         aer.dx, aer.dy = reg["dx_m"], reg["dy_m"]
-        tone, tstats = rw.tone_field(aer, grid, road, spec["tone"])
+        tone, tstats, lit = rw.tone_field(aer, grid, road, spec["tone"], return_lit=True)
         stats["aerial"] = {"image": aer_spec["image"], "registration": reg, **tstats}
         print(f"[road_wear] aerial registered to the built road: shift ({reg['dx_m']:+.2f}, {reg['dy_m']:+.2f}) m, contrast "
               f"{reg['contrast_at_0']:+.4f} -> {reg['contrast_best']:+.4f}; shadow {tstats['shadow_pct']} %, paint "
@@ -222,6 +401,24 @@ def main() -> int:
     closed = bool(cfg.get("loop", True))
     Wc = Wc[:len(Pc)]
     lines = []
+    if mode == "photo":
+        # the measurement's frame: the centreline (2 m) and its left normals; the photo's lit asphalt at least interior_m
+        # inside the BUILT road (edge paint, kerbs and verge out)
+        ph = dict(rw.PHOTO, **{k: v for k, v in (spec.get("photo") or {}).items() if not str(k).startswith("_")})
+        Cc, _e, _L = rw.resample(Pc, 2.0, closed)
+        nCc = rw.left_normals(Cc, closed)
+        ri = max(1, int(round(ph["interior_m"] / tex)))
+        interior = road & (rw.box_mean(road.astype(np.float64), np.ones(road.shape), ri) >= 1.0 - 1e-9)
+        usable = interior & lit
+
+        def tone_at(x, y):
+            i, j = grid.index(x, y)
+            ok = (i >= 0) & (j >= 0) & (i < grid.nx) & (j < grid.ny)
+            out = np.full(np.shape(x), np.nan)
+            ok2 = ok.copy()
+            ok2[ok] = usable[j[ok], i[ok]]
+            out[ok2] = tone[j[ok2], i[ok2]]
+            return out
     line_specs = spec.get("lines") or [{"layout": L.get("id", "main")} for L in (cfg.get("layouts") or [{"id": "main"}])]
     for ls in line_specs:
         ai = proj / ls["ai"] if ls.get("ai") else None
@@ -242,12 +439,20 @@ def main() -> int:
             src = "model: minimum curvature inside the built edges" + (" (recorded line named but missing: "
                                                                       f"{ls['ai']})" if ai is not None else "")
         I, sp = rw.rubber_intensity(P, 2.0, w, closed)
+        extra = {}
+        if mode == "photo":
+            prof = rw.photo_rubber(tone_at, P, Cc, nCc, closed, ph)
+            extra = {"photo_rubber": prof, "centre": np.round(Cc[:, :2], 3).tolist(),
+                     "centre_normals": np.round(nCc, 6).tolist()}
+            print(f"[road_wear] line {ls.get('layout')}: the photo's rubber against the mirror: depth {prof['depth']} over "
+                  f"|u| <= {ph['band_m']} m, peak {prof['peak']}, centroid {prof['centroid_m']:+.3f} m ({prof['stations']} "
+                  f"stations, {prof['samples']} samples)")
         lines.append({"P": P, "I": I, "closed": closed, "layer_m": spec["layer_m"], "layout": ls.get("layout"),
-                      "source": src, "lap_m": round(L, 1), **sp})
+                      "source": src, "lap_m": round(L, 1), **sp, **({"photo": extra["photo_rubber"]} if extra else {})})
         out = proj / "data" / f"road_wear.line.{ls.get('layout', 'main')}.json"
         out.write_text(json.dumps({"layout": ls.get("layout"), "source": src, "frame": "Blender (x = E, y = N, height)",
                                    "spacing_m": 2.0, "points": np.round(P, 3).tolist(), "rubber": np.round(I, 4).tolist(),
-                                   **sp}, indent=0), encoding="utf-8", newline="\n")
+                                   **sp, **extra}, indent=0), encoding="utf-8", newline="\n")
         print(f"[road_wear] line {ls.get('layout')}: {src}; {L:.0f} m, model lap {sp['lap_s_model']} s "
               f"({sp['v_min_kmh']}-{sp['v_max_kmh']} km/h) -> {out.name}")
 
@@ -264,7 +469,7 @@ def main() -> int:
         T = tone[gj0:gj0 + Pp, gi0:gi0 + Pp]
         X, Y = grid.centres(gi0, gj0, Pp, Pp)
         keep = np.ones_like(T)
-        for ln in lines:
+        for ln in (lines if mode == "drawn" else ()):        # photo: the tone already carries the rubber, none drawn
             keep *= 1.0 - rw.wear_at(X, Y, k[2] * spec["layer_m"], ln, w, reach)
         dmax = max(dmax, float(1 - keep.min()))
         macro = np.clip(m0 * T * keep, 0.0, 1.0)
@@ -370,6 +575,13 @@ def main() -> int:
                                   # VARs alone dropped both (PC, 2026-11-09: 0.1.9's road shipped no ksAmbient / ksDiffuse)
                                   "props": {"ksAmbient": 0.40, "ksDiffuse": 0.40,
                                             "detailUVMultiplier": mult, "detailNormalBlend": 1.0, "useDetail": 1.0}}
+    # 7b. the race kerbs (opt-in road_wear.kerbs): their own paint, darkened per face where the line rides them
+    kerb_rec = None
+    ksp = rw.kerb_spec(spec)
+    if ksp is not None:
+        kerb_rec = _kerbs(proj, eng, ksp, spec, lines, w, reach, texdir, rows)
+        if kerb_rec is None:
+            return 1
     # 8. the writer's vertex count (engine-july's own), split when over
     caps = {}
     for key, obl in objs.items():
@@ -384,7 +596,19 @@ def main() -> int:
                         return 1
             else:
                 caps[ob.name] = None
-    after_objs = [o for o in bpy.data.objects if o.type == "MESH" and any(o.name.upper().startswith(s) for s in surfaces)]
+    if kerb_rec is not None:
+        for ob in [o for o in bpy.data.objects if o.type == "MESH" and o.name.upper().startswith(ksp["prefix"])]:
+            if ej is not None:
+                n = ej.export_vertex_count(ej._export_vertex_keys(ob.data)[0])
+                caps[ob.name] = n
+                if n > VERT_CAP:
+                    print(f"[road_wear] FATAL: {ob.name}: {n} writer vertices > {VERT_CAP}")
+                    return 1
+        now = _kerb_positions(ksp["prefix"])
+        if _hash([now[n] for n in sorted(now)]) != kerb_rec["positions_md5"] or sorted(now) != kerb_rec["objects"]:
+            print("[road_wear] FATAL: a kerb vertex moved (positions before != after)")
+            return 1
+    after_objs =[o for o in bpy.data.objects if o.type == "MESH" and any(o.name.upper().startswith(s) for s in surfaces)]
     after = {}
     for o in after_objs:
         me = o.data; nv = len(me.vertices)
@@ -412,9 +636,10 @@ def main() -> int:
         "lines": [{k: v for k, v in ln.items() if k not in ("P", "I")} for ln in lines],
         "writer_vertices": caps, "positions_md5": before, "macro_png_bytes": nbytes,
         "textures": {k: Path(v).name for k, v in files.items()},
+        **({"kerbs": kerb_rec} if kerb_rec is not None else {}),
     }, indent=1, default=lambda o: o.tolist() if hasattr(o, "tolist") else str(o)), encoding="utf-8", newline="\n")
     bpy.ops.wm.save_mainfile(filepath=str(blend))
-    print(f"[road_wear] {len(rows)} materials -> ksPerPixelMultiMap_NMDetail (detailUVMultiplier {mult:g}); writer vertices "
+    print(f"[road_wear] {sum(1 for r in rows.values() if 'stock' not in r)} materials -> ksPerPixelMultiMap_NMDetail (detailUVMultiplier {mult:g}); writer vertices "
           f"{caps}; positions unchanged; -> {report.name}, {blend.name} saved ({time.time() - t0:.0f} s)")
     return 0
 

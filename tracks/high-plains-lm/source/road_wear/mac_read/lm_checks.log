@@ -1,0 +1,12 @@
+Lake Murray checks, Mac 2026-11-10, branch claude/high-plains-road-wear vs base 98bb3510
+git diff 98bb351 -- tracks/san-diego-lake-murray (stat):
+ .../san-diego-lake-murray/engine-july-snapshot/MANIFEST.md5 |  2 +-
+ .../engine-july-snapshot/PENDING-MIRROR.md5                 |  1 +
+ .../engine-july-snapshot/scripts/ac/export_kn5_addon.py     | 13 ++++++++++++-
+ 3 files changed, 14 insertions(+), 2 deletions(-)
+md5 base / branch: tools/trim_connectors.py 8a45651657df676f71cfdfe30eca5483 / 8a45651657df676f71cfdfe30eca5483; tools/make_treefx.py d759fe8936950c6d32beb8dabbdf0b3b / d759fe8936950c6d32beb8dabbdf0b3b; tools/ship_sd.sh 5a4bbe298eb2d06eeefbd450d54f3c23 / 5a4bbe298eb2d06eeefbd450d54f3c23 (no road_wear in it: 0)
+Lake Murray config names road_wear: 0
+trim on a copy of Lake Murray's data (connectors / mouths / median_bands / log): 664da93b17d79982943d4a53dfa1f209 b73b70f4b6dc15f975cc019e739885dd f0c97952b9b71f67b4ec7d269a65b465 63af07ccf16d01c179f89afec997f536
+  ledger 0089's recorded base: 664da93b... b73b70f4... f0c97952... 63af07cc...
+make_treefx plan(all_species=True) A/B (98bb351's tools/make_treefx.py vs the branch's):
+san-diego-lake-murray | base 8ce38a015afc0e09d7144d269f77bad1 lines 21219 | branch 8ce38a015afc0e09d7144d269f77bad1 lines 21219 | SAME

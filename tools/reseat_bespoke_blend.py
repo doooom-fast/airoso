@@ -14,6 +14,10 @@ top of the ground and the edge strip (the author tool seats an over_strip post o
 ray cast down from PROBE_UP_M above the vertex, so a deck or a layer far above is never read (L4: a conform pass never
 crosses layers). The road is never read: no rail stands on it.
 
+Which. PREFIXES (the rails kinds' objects) plus, opt-in, scenery.bespoke.reseat_prefixes: more object-name prefixes the same
+move applies to (High Plains 0.1.7: ["1WALL_KRAIL"], its K-rails; pit_wall_lidar stood 0.29 m buried, ledger 0084 /
+0089). A config without it moves exactly the PREFIXES objects, as before.
+
 SELF-CHECKS, exit 1 and the blend NOT saved: a vertex with no author or no built ground under it; a move larger than
 MAX_MOVE_M (a different layer, L4); a reseated object whose vertex count changed. One line per object (L12).
 
@@ -61,6 +65,12 @@ def main():
     if spec.get("reseat_on_prep") is not True:
         print("[reseat] scenery.bespoke.reseat_on_prep not set: nothing to do")
         return
+    extra = spec.get("reseat_prefixes") or []
+    if not isinstance(extra, list) or not all(isinstance(p, str) and p.strip() for p in extra):
+        raise SystemExit(f"[reseat] FATAL: scenery.bespoke.reseat_prefixes must be a list of object-name prefixes, got {extra!r}")
+    prefixes = PREFIXES + tuple(p for p in extra if p not in PREFIXES)
+    if extra:
+        print(f"[reseat] prefixes {list(prefixes)} (reseat_prefixes adds {extra})")
     names = spec.get("names") or {}
     author_prefixes = tuple(names.get("ground", ["1GRASS"])) + tuple(p for p in names.get("track_edge", ["1KERB"]) if p not in ("ROAD", "1ROAD"))
     # the author scene's ground, read from the workshop's loop.blend (what tools/author_bespoke_blend.py seated on)
@@ -73,7 +83,7 @@ def main():
     if author is None or built is None:
         raise SystemExit(f"[reseat] FATAL: no author ground ({author_prefixes}) or no built ground ({BUILT_GROUND})")
     bad, rows = [], []
-    for o in sorted((o for o in bpy.data.objects if o.type == "MESH" and o.name.upper().startswith(PREFIXES)), key=lambda o: o.name):
+    for o in sorted((o for o in bpy.data.objects if o.type == "MESH" and o.name.upper().startswith(tuple(p.upper() for p in prefixes))), key=lambda o: o.name):
         m = o.matrix_world
         up = o.matrix_world.inverted().to_3x3() @ Vector((0.0, 0.0, 1.0))   # world +z in the object's frame
         n0 = len(o.data.vertices)

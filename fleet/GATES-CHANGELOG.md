@@ -14,6 +14,32 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
+## 2026-11-10 — WIRING FIX: the lap gates run over furnished laps only, and the rail re-seat runs again on the PC (ledger 0090)
+
+Two faults in `tools/ship_track.sh` on main ca297e2, found by rebuilding the installed tracks from main in empty
+workshops (ledger 0090).
+
+- **The lap steps** (verify_race --lap, the split's loop_race_<lap>.blend check, the lap's common race kn5, the scenery
+  gate per lap, the {lap} syncs) ran over `race_lap.lap_ids`: every lap any layout names. `tools/split_exports_blend.py`
+  writes a lap's common blend only for laps a FURNISHED race layout names (ledger 0085). So main asked Pikes Peak for
+  blends that split never makes: its road course and infield are bare laps. The rebuild of 0.2.0 stopped with EXIT 1.
+  - LAP_IDS now comes from `race_lap.furnished_lap_ids`, the set split uses. Lake Murray's one lap (north) is
+    furnished, so its gates are unchanged.
+  - Pikes Peak runs the step set 0.2.0 was built with: no lap steps.
+  - No gate is removed for a lap that has a curb strip. Nothing ran for a bare lap before c4094785 either.
+- **The re-seat step** (`tools/reseat_bespoke_blend.py`, opt-in `scenery.bespoke.reseat_on_prep`, Milford and High
+  Plains) is an author step, not a gate. Its on/off test read `tr -d '<newline>'`: a79b6a68 wrote a raw CR byte
+  there, and the merge turned it into a line break.
+  - The PC's python prints `True<CR>`, so on the PC the step never ran. Every gate stayed green: none measures rail
+    seating against the declared heights.
+  - Restored to `tr -d '\r'`. `test_every_tr_strips_the_windows_cr_spelled_as_an_escape` reads ship_track.sh as bytes
+    and fails on ca297e2.
+- **Proven.** Rebuilt from this branch in empty workshops:
+  - Pikes Peak equals 0.2.0 (kn5 equivalent, AI lines identical, gate rows identical, 0.2.0's forced street red
+    included).
+  - Milford runs the re-seat (14 objects) and equals 0.1.11 (ledger 0090).
+  - `tests/tools/test_race_lap.py` and `test_ship_track_chain.py` green: 50 passed.
+
 ## 2026-11-04 (step 2g) — MEASUREMENT-BUG FIX: the edge band between two vertices is the offset curve the strip follows (audit_mesh D; ledger 0054 Phase 2; no threshold moved)
 
 `scripts/geometry/median_zone.py` made a declared band continuous between consecutive vertices with the straight CHORD

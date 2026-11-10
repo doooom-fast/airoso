@@ -17,7 +17,8 @@
     "2026-11-09 (Kevin on the PC: 'Yes, check them' / 'I always want newer builds'): Del Mar 0.2.5 to del_mar_fairgrounds; ship_track's install step parked 0.2.4 in D:/k10-track-archive/2026-11-09_105157/ (MOVES.tsv).",
     "2026-11-09 (Kevin on the PC: 'Yes, check them' / 'I always want newer builds'): High Plains 0.1.5, Nevada Nights 0.1.3, Grand Junction 0.1.2, Pueblo 0.1.3, Aspen 0.1.4 installed under plain names; each old _lm folder moved to D:/k10-track-archive/2026-11-09_<hhmmss>_<folder>/ after its successor installed and dropped from this list. Menu pictures re-rendered (the packs' in 2026-11-09_110323_previews).",
     "2026-11-09 (Kevin on the PC: 'Yes, check them' / 'I always want newer builds'): Sand Creek 0.2.8 to sand_creek_raceway; ship_track's install step parked 0.2.7 in D:/k10-track-archive/2026-11-09_140029/ (MOVES.tsv).",
-    "2026-11-09 (ledger 0089; Kevin: 'I always want newer builds'): High Plains 0.1.6 and Nevada Nights 0.1.4 installed over 0.1.5 / 0.1.3 (parked by the install step in D:/k10-track-archive/2026-11-09_183038/ and _183401/)."
+    "2026-11-09 (ledger 0089; Kevin: 'I always want newer builds'): High Plains 0.1.6 and Nevada Nights 0.1.4 installed over 0.1.5 / 0.1.3 (parked by the install step in D:/k10-track-archive/2026-11-09_183038/ and _183401/).",
+    "2026-11-09 (Kevin on the PC: 'I always want newer builds'): Milford 0.1.9 to milford_road_course; ship_track's install step parked 0.1.6 in D:/k10-track-archive/2026-11-09_193301/ (MOVES.tsv)."
   ],
   "ac_tracks": "D:/SteamLibrary/steamapps/common/assettocorsa/content/tracks",
   "archive": "D:/k10-track-archive",
@@ -92,14 +93,14 @@
       "installed": "2026-11-04"
     },
     "milford_road_course": {
-      "branch": "claude/milford-edge-strip-016",
+      "branch": "claude/milford-019",
       "engine": "lm-v4",
       "installed": "2026-11-09",
-      "note": "0.1.6 = 0.1.5 + the circuit edge strip flush with the prep's contact band (route.edge.grass_clearance -0.08, ledger 0087: Kevin's 'messy on the edges of the high speed curves'); TreeFX Oak3 / SycamoreV2 (personal-use, md5 24111ede / 7010d61f) 11,247 trees and GrassFX 1,285 rectangles as 0.1.5; records + menu picture on claude/milford-edge-strip-016 d8d1473",
+      "note": "0.1.9 = 0.1.6 + road wear and the road's tone from NAIP (ledger 0084; ksAmbient / ksDiffuse 0.4 kept, 4262162) + furniture pass 3 (rails re-seated on the prepped ground; ledger 0082); TreeFX Oak3 / SycamoreV2 11,247 trees as before; records + menu picture on claude/milford-019 dbd831d6",
       "role": "current",
-      "sha": "f77b0cb8",
+      "sha": "4262162d",
       "track": "milford-road-course-lm",
-      "version": "0.1.6"
+      "version": "0.1.9"
     },
     "pikes_peak_international_raceway": {
       "branch": "claude/pikes-peak-road-course-build",

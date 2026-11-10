@@ -14,6 +14,25 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
+## 2026-11-10 (PC) — NEW GUARD (opt-in, inside the road-wear bake): a fractional detail multiplier stops the bake (ledger 0084 "High Plains 0.1.7"; no threshold moved or loosened)
+
+**Why.** Both PC builds of High Plains 0.1.7 (reference + rehearsal at a79b6a6, `source/road_wear/pc_017/`) went red on
+`road_wear_check` detail_phase: worst 0.20001 tiles against phase_tol 0.002. texel_m 0.2 at a 4096 px atlas gives
+detailUVMultiplier 4096 x 0.2 / 4 = 204.8. The shipped v is flipped, so the detail lands at (1 - v) x 204.8: a constant 0.8
+tile off the prep's 4 m phase. Milford's 0.25 m gives 256, whole, and its flip costs nothing.
+
+**What.** `scripts/aerial/road_wear.detail_multiplier` raises ValueError when atlas_px x texel_m / detail_tile_m is not whole
+within 1e-9, naming the values. `tools/road_wear_blend.py` calls it right after `plan_atlas`, before the 69 s bake, and exits
+"[road_wear] FATAL: ...", so the blend is not saved. The gate row is unchanged; this only fails the same thing earlier, before
+anything is written. High Plains' texel_m is now 0.25 m (multiplier 256; 80 m cells = 320 px, 144 slots for 74 cells; still
+finer than the photo's 0.3 m).
+
+**No-op elsewhere.** Milford 0.1.7+ (0.25 m, 4096 px -> 256) passes unchanged. A config without `road_wear` never reaches
+it, and Lake Murray names none.
+
+**Tests.** `tests/aerial/test_road_wear.py::test_a_fractional_detail_multiplier_is_refused`: 204.8 raises, naming it; 0.25 m
+at 4096 and 0.125 m at 8192 give 256. All 14 road-wear tests pass (run with numpy).
+
 ## 2026-11-10 (later) — NEW ROW (opt-in): `photo_rubber`, the photo's own rubber judged in place of a drawn band (ledger 0084 "High Plains 0.1.7: the photo's rubber"; no threshold of the drawn mode moved)
 
 **Why.** Kevin, 2026-11-10: "Use the photo's rubber". At 0.3 m High Plains' NAIP resolves the rubber. Lit asphalt within

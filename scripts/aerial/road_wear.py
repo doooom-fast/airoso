@@ -624,7 +624,15 @@ def uv_of(x: np.ndarray, y: np.ndarray, key, slot, plan: dict, tex: float) -> tu
 
 
 def detail_multiplier(plan: dict, spec: dict) -> float:
-    return plan["atlas_px"] * spec["texel_m"] / spec["detail_tile_m"]
+    """atlas_px x texel_m / detail_tile_m: the detail UV scale. It must be WHOLE (ledger 0084, High Plains 0.1.7): the
+    shipped v is flipped, so the detail lands at (1 - v) x mult and any fraction shifts the grain off the prep's 4 m phase
+    (texel 0.2 m at 4096 px gave 204.8: road_wear_check detail_phase 0.2 tiles off). Raises ValueError naming the values."""
+    m = plan["atlas_px"] * spec["texel_m"] / spec["detail_tile_m"]
+    if abs(m - round(m)) > 1e-9:
+        raise ValueError(f"road_wear: detailUVMultiplier {m!r} = atlas_px {plan['atlas_px']} x texel_m {spec['texel_m']} / "
+                         f"detail_tile_m {spec['detail_tile_m']} is not whole: the grain would land {m - math.floor(m):.3f} tile "
+                         "off the prep's phase (choose a texel that makes it whole, e.g. 0.25 m at 4096 px -> 256)")
+    return m
 
 
 # --- the race kerbs (opt-in road_wear.kerbs; High Plains 0.1.7) ---------------------------------------------------------

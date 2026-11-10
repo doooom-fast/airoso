@@ -688,3 +688,11 @@ Downloads still need his word, and none is needed here.
    - **Record a racing line** during the drive (CSP's AI recorder, the full layout). Copy its `fast_lane.ai` to
      `tracks/high-plains-lm/source/road_wear/fast_lane.full.ai`. The next build's rubber then follows where the car really
      ran: the kerbs' faces are then picked by the real line, and the photo's rubber is measured against it.
+
+### High Plains 0.1.7: the PC's first builds red on detail_phase; texel 0.25 m (PC, 2026-11-10)
+
+- Both builds, reference `hp_rw_ref` and rehearsal `hp_rw_reh`, came from empty workshops at a79b6a6 (ENG `eng_hplm_rw`). They were identical, and both stopped at `road_wear_check` detail_phase: worst 0.20001 tiles, detailUVMultiplier 204.8.
+- 0.2 m broke the detail phase (204.8). 0.25 m is chosen so the multiplier is whole (256); it is still finer than the 0.3 m photo, so no photo detail is lost.
+- Every other row passed. The re-seat (step 3) moved pit_wall_lidar +0.30 m at p50.
+- Records: `tracks/high-plains-lm/source/road_wear/pc_017/{ref,reh}/` (399d03c).
+- The bake now refuses a fractional multiplier before baking (GATES-CHANGELOG 2026-11-10 PC).

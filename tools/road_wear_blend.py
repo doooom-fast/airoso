@@ -345,6 +345,10 @@ def main() -> int:
     for P, fl, c, _t, _co in data.values():
         over = max(over, float(np.max(np.abs(P[:, :2] - c[fl, :2]))) if len(P) else 0.0)
     plan = rw.plan_atlas(cen[:, :2], cen[:, 2], over, spec)
+    try:                                    # early: a fractional detail multiplier shifts the grain (ledger 0084, HP 0.1.7)
+        rw.detail_multiplier(plan, spec)
+    except ValueError as e:
+        raise SystemExit(f"[road_wear] FATAL: {e}")
     tex = spec["texel_m"]; C = plan["cell_m"]; M = plan["margin_m"]; Pp = plan["pitch_px"]
     keys_by = {n: rw.cell_keys(d[2][:, :2], d[2][:, 2], plan, spec) for n, d in data.items()}
     allkeys = sorted({k for ks in keys_by.values() for k in ks})

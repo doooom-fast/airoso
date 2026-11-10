@@ -75,6 +75,18 @@ if np is not None:
                 pu = (u[0] * mult - (x + dx) / 4.0) % 1.0; pv = (v[0] * mult - (y + dy) / 4.0) % 1.0
                 assert min(pu, 1 - pu) < 1e-6 and min(pv, 1 - pv) < 1e-6
 
+    def test_a_fractional_detail_multiplier_is_refused():
+        """ledger 0084 (High Plains 0.1.7): 4096 x 0.2 / 4 = 204.8 put the grain 0.8 tile off; 0.25 -> 256 is whole."""
+        spec = {"texel_m": 0.2, "detail_tile_m": 4.0}
+        try:
+            rw.detail_multiplier({"atlas_px": 4096}, spec)
+        except ValueError as e:
+            assert "204.8" in str(e)
+        else:
+            raise AssertionError("204.8 was accepted")
+        assert rw.detail_multiplier({"atlas_px": 4096}, {"texel_m": 0.25, "detail_tile_m": 4.0}) == 256.0
+        assert rw.detail_multiplier({"atlas_px": 8192}, {"texel_m": 0.125, "detail_tile_m": 4.0}) == 256.0
+
     def test_tone_fills_shadow_from_lit_asphalt():
         """A shadow band (dark, blue) inside a lit road reads as the lit asphalt round it, not as a dark stripe."""
         h, w = 200, 200

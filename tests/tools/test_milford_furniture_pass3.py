@@ -47,7 +47,9 @@ def test_no_other_track_names_pass3():
         if cfgp.parent.name == "milford-road-course-lm":
             assert json.loads(txt)["scenery"]["bespoke"]["reseat_on_prep"] is True
             continue
-        for key in ("source/furniture/pass3", "roof_z_m", "reseat_on_prep"):
+        # High Plains 0.1.7 (ledger 0084, runbook 0084-2 step 3) re-seats its pit-wall K-rail with reseat_on_prep too
+        keys = ("source/furniture/pass3", "roof_z_m") + (() if cfgp.parent.name == "high-plains-lm" else ("reseat_on_prep",))
+        for key in keys:
             assert key not in txt, (cfgp, key)
     for f in (ROOT / "tracks").glob("*/source/bespoke/*.json"):
         assert "roof_z_m" not in f.read_text(encoding="utf-8"), f

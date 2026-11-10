@@ -1,0 +1,40 @@
+{
+ "drive_test.full.json": {
+  "scalars": 39,
+  "differ": {}
+ },
+ "drive_test.json": {
+  "scalars": 25,
+  "differ": {}
+ },
+ "audit.json": {
+  "scalars": 33,
+  "differ": {}
+ },
+ "kn5_ground_check.full.json": {
+  "scalars": 14,
+  "differ": {}
+ },
+ "house_seat_check.json": {
+  "scalars": 233,
+  "differ": {
+   "obj": [
+    "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/work/treefx/hp_base/data/track.obj",
+    "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/work/treefx/hp_br/data/track.obj"
+   ]
+  }
+ },
+ "edge_report.json": {
+  "scalars": 4051,
+  "differ": {}
+ },
+ "lights_ini_check.json": {
+  "scalars": 6,
+  "differ": {
+   "ini": [
+    "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/work/treefx/hp_base/build/high_plains/extension/ext_config.ini",
+    "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/work/treefx/hp_br/build/high_plains/extension/ext_config.ini"
+   ]
+  }
+ }
+}

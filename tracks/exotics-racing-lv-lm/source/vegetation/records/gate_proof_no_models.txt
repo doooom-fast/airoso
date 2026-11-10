@@ -1,0 +1,6 @@
+[treefx] built-surface guard on track.obj: plan triangles rock 0, road 3316, walk 8226, building 7
+[treefx] planted source/vegetation/scrub.naip.json: 49 of 49 points clear of the roads by 4.0 m -> {}
+[treefx] built-surface guard: dropped rock 0, road 0, walk 0, building 0 (of them on the loop's own zones: rock 0, road 0, walk 0, building 0)
+[treefx] 0 trees ({}), 0 rejected in the corridor, species [] -> /private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/work/treefx/nv_nobins/build/exotics_racing_lvms/extension/trees/trees.txt + [TREES] in ext_config.ini
+[treefx] gate: 0 written of 49 planned; models named in trees.txt [], all present in trees/: True; WARNING the mixes also name ['Bush.bin', 'Bush3.bin'], absent from source/trees (their spots took the zone's other models) -> FAIL
+[treefx] GATE FAIL (ledger 0089): 0 trees written, 49 planned (short per zone {'planted_desert_scrub': 49}; models absent from /private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/work/treefx/nv_nobins/source/trees: ['Bush.bin', 'Bush3.bin'])

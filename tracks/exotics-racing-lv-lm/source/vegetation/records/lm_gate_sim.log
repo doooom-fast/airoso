@@ -1,0 +1,7 @@
+('base', False) 8ce38a015afc0e09d7144d269f77bad1 21171 14
+('base', True) 8ce38a015afc0e09d7144d269f77bad1 21171 14
+('branch', False) 8ce38a015afc0e09d7144d269f77bad1 21171 14
+('branch', True) 8ce38a015afc0e09d7144d269f77bad1 21171 14
+written (15 placeholders) == planned (all species): True
+branch == base, both modes: True
+species used: ['Agave.bin', 'Bush.bin', 'Bush3.bin', 'Gum.bin', 'Oak3.bin', 'PalmV1.bin', 'PalmV2.bin', 'PalmV3.bin', 'PepperV1.bin', 'Pine_Aleppo.bin', 'Sage.bin', 'SycamoreV1.bin', 'SycamoreV2.bin', 'Yucca.bin']

@@ -14,6 +14,35 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
+## 2026-11-09 — TreeFX: a build that plants fewer trees than it planned FAILS (ledger 0089; new hard gate, no threshold loosened)
+
+**New gate, `tools/make_treefx.py` `treefx_gate`, hard (exit 1 from `build()`).** Every TreeFX track gets it: `tools/ship_track.sh`
+`ship_treefx` and `tools/ship_sd.sh` both call `build()`. **Bought by:** a fresh PC worktree without the gitignored `.bin` models
+planted 0 trees and every gate stayed green. It FAILS when:
+- fewer trees are written than `plan(all_species=True)` places. That plan has the same positions, guards and drops, and assumes
+  every model is present. Zero tolerance: a count, not a threshold.
+- a model `trees.txt` names is not a file beside it (`extension/trees/`) or in `source/trees/`.
+- `scenery.treefx.planted.native_h_m` / `native_w_m` carry `"_placeholder"` while a copied model is larger than
+  `PLACEHOLDER_MAX_B` 4096 B. ⚠ That number is a classifier, not tuned: real TreeFX models are hundreds of kB, and the Mac's
+  stand-ins are 79-82 B text files.
+
+A mixed zone short of one model still plants every spot with its other models. That is a printed **WARNING**, not a failure:
+the existing tests and the plan contract (`plan()` is what `build()` writes) rely on it.
+
+**No output changes.** The gate reads; `trees.txt`, `ext_config.ini` and `data/treefx.report.json` are byte-for-byte what they
+were. One `[treefx] gate:` stdout line is new. Lake Murray: `plan(all_species=True)` md5 8ce38a01…, 21,219 lines, equal to
+07cc303's. With 15 stand-in models present it writes 21,171 of 21,171 planned with 14 species, so the gate passes. Proven
+failing on Nevada 0.1.4 from an empty workshop without the models: "0 trees written, 49 planned", exit 1.
+
+**Also in this commit (not gates):**
+- `make_treefx.py` takes `claude/milford-019`'s opt-in `planted.native_h_m` / `native_w_m` and the planted point's 6th-element
+  key verbatim. Absent keys give the old output (A/B above).
+- New zone `planted_desert_scrub` (Bush / Bush3).
+- High Plains 0.1.6's ship.json runs the existing `grassfx_aerial` step. Its `cell_m` 30, `max_rects` 48 and colour bounds
+  are the config's own, already marked invented in `plan_grassfx_aerial.py`'s docstring, and unchanged.
+- ⚠ `plan_scrub_naip.py` (Nevada): `K_MAD` 4.0 and `MATCH_M` 1.0 are invented, not a gate. The count is stable over 0.8-1.5 m
+  (45-52).
+
 ## 2026-11-05 — circuit kerbs round 3: a block reader for faded kerbs, and the bar it must pass (ledger 0081 round 3; no gate threshold, no bypass)
 
 No gate threshold changed and nothing is bypassed. New ⚠ invented numbers, none a gate; `tools/kerb_offsets.py` is in no

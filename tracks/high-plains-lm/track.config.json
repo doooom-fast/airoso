@@ -4,7 +4,7 @@
   "name": "High Plains Raceway",
   "_name_doc": "Kevin 2026-11-07: \"Get rid of Lm Version from names, nothing should be on any other engine now\" / \"LM is the airoso engine\". 0.1.5 (2026-11-09): no \"(LM engine)\" in the display name, and the slug and install_folder are the plain high_plains. The old-engine track (tracks/high-plains) gave that slug up: its slug and folder are high_plains_v072 (S7, fleet.cli lint)",
   "slug": "high_plains",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "mirror_x": false,
   "loop": true,
   "default_width_m": 12.0,
@@ -91,13 +91,7 @@
           "_source": "the paddock's paved and graded ground off NAIP 2023, read by eye to about 5 m: one sheet, the lots and lanes not told apart"
         }
       ],
-      "cards": [
-        {
-          "file": "source/bespoke/shrubs.json",
-          "prefix": "PRAIRIECARD",
-          "clear_m": 3.0
-        }
-      ],
+      "_cards_doc": "0.1.6 (ledger 0089; Kevin 2026-11-08: \"We want all treefx as a rule\"): 0.1.5's 1,898 PRAIRIECARD cards (data/bespoke.report.json: 1,986 planned, 88 within 3 m of pavement) are gone from the kn5 and no TreeFX replaces them. They stood on source/bespoke/shrubs.json, a 7 m grid over the pixels NAIP 2023 shows darker green (the draws and swales), with rabbitbrush / yucca / bunchgrass / snakeweed and their heights [invented]. NAIP 2023 at 0.3 m (co_m_3910317_ne_13_030_20230928) shows those draws as continuous green swale grass with no shrub crown in them, and nothing on the uplands it can tell from ant mounds, ruts and posts: the cards were grass. Their replacement is the GrassFX zone this config already reads off the same pixels (grassfx_zones class B, 'the greener draws taller and full'), which the LM port had not run: ship.json grassfx_aerial. Plants under NAIP's resolution are owed to a lidar read (ledger 0089)",
       "rails": [
         {
           "key": "infield_t",
@@ -1188,6 +1182,10 @@
     "profile": "uncapped",
     "crossfall": "source/lidar/camber-survey/crossfall.json",
     "grid_upsample": 2,
+    "carry_source": [
+      "source/naip_2023_hp.jpg"
+    ],
+    "_carry_source_doc": "ledger 0089: the NAIP 2023 photo scenery.bespoke.grassfx_zones reads (tools/plan_grassfx_aerial.py, ship step grassfx_aerial)",
     "_doc": "the measured profile (the elevation stage's cap undone), the G10 lidar camber, the 40 m 3DEP grid pre-divided to 20 m (the same samples)"
   },
   "terrain": {

@@ -5,7 +5,7 @@
   "_name_doc": "Kevin 2026-11-07: \"Get rid of Lm Version from names, nothing should be on any other engine now\" / \"LM is the airoso engine\". 0.1.3 (2026-11-09): no \"(LM engine)\" in the display name, and the slug and install_folder are the plain exotics_racing_lvms. The old-engine track (tracks/exotics-racing-lv) gave that slug up: its slug and folder are exotics_racing_lvms_v08 (S7, fleet.cli lint)",
   "slug": "exotics_racing_lvms",
   "ui_series": "doooom Nevada",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "mirror_x": false,
   "loop": true,
   "default_width_m": 14.0,
@@ -44,6 +44,29 @@
     "bush_size_span_m": 0.6,
     "light_spacing_m": 90,
     "_note": "Mojave lot track: no trees, sparse low scrub only (DOSSIER section 6 / QA 6).",
+    "treefx": {
+      "_doc": "0.1.4 (ledger 0089; Kevin 2026-11-08: \"We want all treefx as a rule\"): 0.1.3's 36 SCRUBCARD cards (a seeded scatter in the polygon below, heights from the species' habit) are gone from the kn5; the real clumps stand as TreeFX models (tools/make_treefx.py, planted). Positions and crowns MEASURED off NAIP 2019 + 2022 (source/vegetation/scripts/plan_scrub_naip.py: a clump both years show); heights NOT measured (creosote's 1-2 m here, ranked by crown). There is no creosote model: Lake Murray's Bush / Bush3 stand in. Models are personal-use and stay on the machine (source/trees/*.bin, gitignored).",
+      "planted": {
+        "file": "source/vegetation/scrub.naip.json",
+        "clear_m": 4.0,
+        "_clear_m_doc": "author_bespoke_blend SCRUB_ROAD_CLEAR_M, the cards' own rule: nothing within 4 m of the lap's pavement",
+        "zones": {
+          "0": "planted_desert_scrub"
+        },
+        "polygon_lonlat": [[-115.0211316, 36.2838888], [-115.0209439, 36.2841051], [-115.019871, 36.284624], [-115.0187579, 36.2850348], [-115.0187445, 36.2844942], [-115.0196028, 36.2841483], [-115.0201392, 36.2838997]],
+        "_polygon_doc": "0.1.3's scenery.bespoke.scrub polygon, unchanged: the undisturbed strip north of the lap (DOSSIER section 6). Read by plan_scrub_naip.py only",
+        "native_h_m": {
+          "_placeholder": "NOT MEASURED on the Mac (its models are 82 B stand-ins). PC runbook 0089-2 step 2 reads each model's tree.ini HEIGHT off san_diego_lake_murray_v4/extension/trees/ and replaces both values; tools/make_treefx.py refuses to write real models while this key stands",
+          "Bush.bin": 2.0,
+          "Bush3.bin": 2.0
+        },
+        "native_w_m": {
+          "_placeholder": "as native_h_m: tree.ini WIDTH, read on the PC",
+          "Bush.bin": 2.0,
+          "Bush3.bin": 2.0
+        }
+      }
+    },
     "bespoke": {
       "_doc": ".claude/skills/bespoke-assets, placed by tools/author_bespoke_blend.py into AUTH_bespoke. Kevin's dressing call (DOSSIER section 11): as in 2013, the two south-west buildings, no Welcome Center.",
       "buildings": [
@@ -220,46 +243,6 @@
             "s": 1631.4,
             "side": "L"
           }
-        ]
-      },
-      "scrub": {
-        "_source": "Polygon: the undisturbed strip north of the lap on NAIP 2019-07-06 (DOSSIER section 6: native scrub only beyond the campus edge, confirmed in the imagery). Count: 36 dark clumps counted in it (brightness at least 28 under the polygon's median, 3-60 px), median about 1.3 m across. Heights by the species (creosote about 1-2 m here, bursage half that) [from the plant's habit, not measured]; the scatter is seeded, not the real plants.",
-        "polygon_lonlat": [
-          [
-            -115.0211316,
-            36.2838888
-          ],
-          [
-            -115.0209439,
-            36.2841051
-          ],
-          [
-            -115.019871,
-            36.284624
-          ],
-          [
-            -115.0187579,
-            36.2850348
-          ],
-          [
-            -115.0187445,
-            36.2844942
-          ],
-          [
-            -115.0196028,
-            36.2841483
-          ],
-          [
-            -115.0201392,
-            36.2838997
-          ]
-        ],
-        "count": 36,
-        "seed": 20190706,
-        "creosote_share": 0.7,
-        "size_m": [
-          1.0,
-          2.0
         ]
       },
       "rails": [

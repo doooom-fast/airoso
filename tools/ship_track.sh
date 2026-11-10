@@ -264,6 +264,15 @@ draft_build_loop_blend() {
   step "draft: build loop.blend (scene regen — GEN layer)"
   (cd "$WS" && "$BL" --background --python-exit-code 1 --python-expr "$V021_SHIM" --python "$V021/blender/build_loop_blend.py" -- "$PROJ" 2>&1 | grep "^\[blend\]\|Error\|Traceback" | tail -6)
 }
+# ledger 0080 2b (the SD freeway port): the same assembler, run by tools/fwlm_tiered_assembler_blend.py with its band
+# clamp vectorised (byte-identical) and, with lm_intake.terrain_tiers, the far ground at the 3DEP's native spacing
+# (tools/fwlm_terrain.py). A port's step only: Lake Murray's ship.json names build_loop_blend and never runs this one
+draft_build_loop_blend_tiered() {
+  step "draft: build loop.blend (scene regen — GEN layer; tiered terrain: tools/fwlm_tiered_assembler_blend.py; ledger 0080 2b)"
+  (cd "$WS" && "$BL" --background --python-exit-code 1 --python-expr "$V021_SHIM" --python "$AIROSO/tools/fwlm_tiered_assembler_blend.py" -- "$PROJ" 2>&1 | grep "^\[blend\]\|^\[fwlm-tiers\]\|Error\|Traceback" | awk '/^\[fwlm-tiers\]/ { t[nt++] = $0; next } { b[n++ % 9] = $0 } END { for (i = (n > 9 ? n - 9 : 0); i < n; i++) print b[i % 9]; for (i = 0; i < nt; i++) print t[i] }')
+  # ^ the last 9 [blend] / error lines as before, then every [fwlm-tiers] line (2b round 2: under the old `tail -9` the
+  #   nine [blend] lines after it dropped the tiers report from the PC's log)
+}
 draft_lm_intake() {
   step "draft: the track's line, widths and 3DEP into Lake Murray v4's assembler inputs (tools/lm_engine_intake.py; ledger 0078)"
   (cd "$AIROSO" && python tools/lm_engine_intake.py "$PROJ")
@@ -324,6 +333,16 @@ draft_seat_terrain() {
 draft_densify_ribbon() {
   step "author: more columns where the mainline ribbon twists (tools/densify_ribbon_blend.py; ledger 0078; after the weld, no crease = no-op)"
   (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/densify_ribbon_blend.py" -- "$PROJ" 2>&1 | grep "^\[densify\]\|FATAL\|Error\|Traceback" )
+}
+# ledger 0080 (the SD freeway port): Lake Murray's own I-8 deck rails (scripts-v021 build_guardrails, unchanged) on the
+# line's declared decks; a port's step only (Lake Murray's assembler lays its own rails and its ship.json never names it)
+draft_deck_rails() {
+  step "author: deck rails on the line's declared decks (tools/deck_rails_blend.py; Lake Murray's build_guardrails; ledger 0080)"
+  (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/deck_rails_blend.py" -- "$PROJ" 2>&1 | grep "^\[deck-rails\]\|FATAL\|Error\|Traceback" )
+}
+draft_median_barrier() {
+  step "author: the median barrier where the carriageways share one paved width (tools/median_barrier_blend.py; Caltrans Type 60; ledger 0080 2a)"
+  (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/median_barrier_blend.py" -- "$PROJ" 2>&1 | grep "^\[median-barrier\]\|FATAL\|Error\|Traceback" )
 }
 draft_kerbs() {
   step "author: racing kerbs from the traced runs on the ribbon's lane edge (tools/author_kerbs_blend.py; ledger 0078; no route.kerbs_file = no-op)"
@@ -511,6 +530,14 @@ prep_prep() {
   if [ "$SPEC_ENGINE" = "lm-v4" ] && [ "$(pyq "import json,sys; print(json.load(open(sys.argv[1],encoding='utf-8')).get('loop', True) is False)" "$PROJ/track.config.json" | tr -d '\r')" = "True" ]; then
     step "ship: a point-to-point stage's start, splits and finish on the prepped scene (tools/stage_dummies_blend.py; self-checked)"
     "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/stage_dummies_blend.py" -- "$PROJ/blender/$SLUG.blend" --project "$PROJ" 2>&1 | grep "^\[stage-dummies\]\|FATAL\|Error\|Traceback"
+  fi
+  # ledger 0080 2a round 4: the median ground between two carriageways at different heights, as the lidar shows it, on the
+  # PREPPED scene (the prep's pin would undo it); only a track whose config names lm_intake.median_barrier_file (the SD
+  # freeway port), no header otherwise: Lake Murray's chain is unchanged. Part of prep (steps.prep stays prep, split)
+  rm -f "$PROJ/data/median_ground.built.json"
+  if [ -n "$(pyq "import json,sys; print((json.load(open(sys.argv[1],encoding='utf-8')).get('lm_intake') or {}).get('median_barrier_file') or '')" "$PROJ/track.config.json" | tr -d '\r')" ]; then
+    step "ship: the median ground where the carriageways' heights differ (tools/median_ground_blend.py; ledger 0080 2a)"
+    "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/median_ground_blend.py" -- "$PROJ/blender/$SLUG.blend" --project "$PROJ" 2>&1 | grep "^\[median-ground\]\|FATAL\|Error\|Traceback"
   fi
   rm -f "$PROJ/data/terrain_thin.json" "$PROJ/data/terrain_thin.nodes.json.gz"
   if [ -f "$PROJ/data/terrain.tiers.json.gz" ]; then
@@ -733,6 +760,15 @@ gate_drive_test_lines() {
     (cd "$AIROSO" && python tools/expansion_lines.py "$PROJ")
     (cd "$AIROSO" && python -m scripts.geometry.drive_test "$PROJ" --line expansion 2>&1 | grep -v "drive-time\] sweep" | tail -40) || DT_L=$?
   fi
+}
+gate_drive_test_network() {
+  # ledger 0080 phase 2 (the SD freeway port only; Lake Murray's ship.json never names it): every network connector
+  # (tools/network_connectors.py: I 8 westbound, ...) driven as a drive_test --line, on the same built OBJ — hard,
+  # DT_L as the north network's lines (never covered by --force-install)
+  rm -f "$PROJ/data/drive_test.network.json" "$PROJ/data/drive_test.line.network_"*.json
+  step "gate: drive_test --line network (the freeway port's other carriageways, as swept — hard)"
+  (cd "$AIROSO" && python tools/network_drive_lines.py "$PROJ") || DT_L=$?
+  (cd "$AIROSO" && python -m scripts.geometry.drive_test "$PROJ" --line network 2>&1 | grep -v "drive-time\] sweep" | tail -40) || DT_L=$?
 }
 gate_audit_street() {
   if [ -n "$AUDIT_NOTE" ]; then step "gate: audit_mesh, street (hard total; $AUDIT_NOTE)"; else step "gate: audit_mesh, street (hard total)"; fi
@@ -967,7 +1003,7 @@ if [ ! -f "$V021/blender/build_loop_blend.py" ] && [ "$SPEC_ENGINE" = "lm-v4" ];
   V021="$AIROSO/tracks/san-diego-lake-murray/scripts-v021"     # Lake Murray v4's assembler, never a per-track copy (ledger 0078)
 fi
 V021_SHIM="import sys, importlib.util as u; s=u.spec_from_file_location('scripts', r'$V021/__init__.py', submodule_search_locations=[r'$V021']); m=u.module_from_spec(s); sys.modules['scripts']=m; s.loader.exec_module(m)"
-for n in ${DRAFT[@]+"${DRAFT[@]}"}; do case "$n" in build_loop_blend|rebuild_loop_blend|weld_mouths)
+for n in ${DRAFT[@]+"${DRAFT[@]}"}; do case "$n" in build_loop_blend|build_loop_blend_tiered|rebuild_loop_blend|weld_mouths)
   [ -f "$V021/blender/build_loop_blend.py" ] || { echo "ship.json steps.draft names $n but there is no assembler at $V021/blender/build_loop_blend.py"; exit 2; };;
 esac; done
 echo "track: $TRACK   workshop project: $PROJ$( [ "$SCRATCH" = 1 ] && printf ' (scratch: no sync-back, no install)')"
@@ -980,7 +1016,7 @@ blend_builder_ready() {
   # resuming past the draft: nothing in this run builds the blend
   if [ -n "$FROM" ]; then case " ${DRAFT[*]:-} " in *" $FROM "*) ;; *) return 1;; esac; fi
   for n in ${DRAFT[@]+"${DRAFT[@]}"}; do case "$n" in
-    build_loop_blend) [ -f "$V021/blender/build_loop_blend.py" ] && return 0;;
+    build_loop_blend|build_loop_blend_tiered) [ -f "$V021/blender/build_loop_blend.py" ] && return 0;;
     underlay) [ -f "$AIROSO/scripts/blender/underlay.py" ] && return 0;;
   esac; done
   return 1

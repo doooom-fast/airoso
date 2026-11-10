@@ -83,6 +83,7 @@ def test_every_opt_in_is_absent_from_lake_murray_and_guarded_in_the_assembler():
     assert "densify" not in (lm.get("route") or {}) and "lm_intake" not in lm
     assert "lm_pads" not in lm and "strip_seam" not in lm      # round 7's pads and local seam scope never reach it
     assert "road_seek" not in (lm.get("lm_intake") or {})     # round 8's road seek never reaches it
+    assert "source_data" not in (lm.get("lm_intake") or {})   # ledger 0080's network line never reaches it
     bes = (lm.get("scenery") or {}).get("bespoke") or {}
     assert "rails" not in bes and "pads" not in bes       # round 5's rail height_m and strip pads never reach it
 
@@ -132,7 +133,8 @@ def test_traced_kerbs_ship_in_the_road_kn5_with_their_own_uvs():
 WORKSHOP_INPUTS = ("track.config.json", "data/centerline.local.json", "data/centerline.geojson", "data/heightfield.npy",
                    "data/heightfield.meta.json", "data/connectors.local.json", "data/mouths.json", "data/lm_intake.json")
 PORTS = ("sand-creek-lm", "high-plains-lm", "exotics-racing-lv-lm", "milford-road-course-lm", "pikes-peak-lm",
-         "lookout-lariat-lm", "rally-dragon-tail-gravel-lm", "rally-under-the-dragon-gravel-lm")
+         "lookout-lariat-lm", "rally-dragon-tail-gravel-lm", "rally-under-the-dragon-gravel-lm",
+         "san-diego-freeway-lm")
 
 
 def _sync_in(port: str, ws: Path):
@@ -226,5 +228,43 @@ def test_the_lariat_arcs_read_the_ground_and_the_pad_outlines_come_with_it():
         for d in cfg["lm_pads"]["pads"]:
             rec = json.loads((ws / "source" / "pads" / f"{d['id']}.json").read_text(encoding="utf-8"))
             assert rec["cuts"] == d["cuts"] and rec["node"] == d["node"]
+    finally:
+        shutil.rmtree(ws, ignore_errors=True)
+
+
+def test_the_freeway_port_reads_the_network_line_and_cuts_the_grid_to_it():
+    """ledger 0080: lm_intake.source_data reads the network draft's line from inside the source track; grid_crop_m keeps
+    only source 3DEP samples (none moved or made) within its margin of the line; the width steps flare, never narrow"""
+    import shutil
+    import lm_engine_intake as L
+    ws = Path(tempfile.mkdtemp(prefix="fwlm_"))
+    try:
+        _sync_in("san-diego-freeway-lm", ws)
+        # ledger 0080 2b round 2: the port dropped its crop (the whole box builds); the mechanism is still tested, on
+        # the crop it carried (1,000 m)
+        wcfg = json.loads((ws / "track.config.json").read_text(encoding="utf-8"))
+        wcfg["lm_intake"].setdefault("grid_crop_m", 1000)
+        (ws / "track.config.json").write_text(json.dumps(wcfg, indent=2), encoding="utf-8")
+        rep = L.intake(ws)
+        src = ROOT / "tracks" / "san-diego-freeway" / "source" / "network-draft-pr34"
+        meta = json.loads((ws / "data" / "heightfield.meta.json").read_text(encoding="utf-8"))
+        smeta = json.loads((src / "heightfield.meta.json").read_text(encoding="utf-8"))
+        c = meta["lm_intake_crop"]
+        g = L._read_npy(ws / "data" / "heightfield.npy")
+        sg = L._read_npy(src / "heightfield.npy")
+        j0, i0 = c["rows"][0], c["cols"][0]
+        # ledger 0080 phase 2a: lm_intake.grid_upsample divides the cut grid's facets (bilinear, the same samples at
+        # every f-th row / column), so the crop is checked on the samples the cut kept
+        f = int((meta.get("lm_intake_upsample") or {}).get("factor", 1))
+        ny0, nx0 = (meta["ny"] - 1) // f + 1, (meta["nx"] - 1) // f + 1
+        assert nx0 < smeta["nx"] and ny0 < smeta["ny"]
+        assert all(abs(g[j * f][i * f] - sg[j0 + j][i0 + i]) < 1e-9 for j in range(ny0) for i in range(nx0))
+        loc = json.loads((ws / "data" / "centerline.local.json").read_text(encoding="utf-8"))
+        # ledger 0080 2a: the line the intake reads is the config's lm_intake.line_file (the NAIP-measured line)
+        cfg = json.loads((ROOT / "tracks" / "san-diego-freeway-lm" / "track.config.json").read_text(encoding="utf-8"))
+        sloc = json.loads((src / (cfg["lm_intake"].get("line_file") or "centerline.local.json")).read_text(encoding="utf-8"))
+        assert len(loc["points_xyz_m"]) == len(sloc["points_xyz_m"])
+        assert all(a >= b - 1e-9 for a, b in zip(loc["widths_m"], sloc["widths_m"]))
+        assert rep is not None
     finally:
         shutil.rmtree(ws, ignore_errors=True)

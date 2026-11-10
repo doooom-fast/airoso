@@ -113,6 +113,73 @@ def _max_grade(pts, over_m: float) -> float:
     return best
 
 
+LINE_DECK_MATCH_M = 4.0   # [invented] a line point takes a lidar station of its own edges within this (stations every 5 m)
+
+
+def _line_decks_lidar(pts, bridges, table: Path, sdata: Path, origin):
+    """Y over each declared deck from the lidar (ledger 0080 2a round 3). ``bridges`` [(center_m, len_m)] on ``pts``'
+    own stations; the line's edges from sdata/network.reference.json; the table's stations matched in plan (lon / lat to
+    the line's ENU frame, as network_line does). Between the span's ends the deck runs straight through its readings,
+    anchored on the levelled height at each end (the bank crests level_bridge_decks found), so nothing steps."""
+    import math as _m
+    doc = json.loads(table.read_text(encoding="utf-8"))
+    ref = json.loads((sdata / "network.reference.json").read_text(encoding="utf-8"))
+    own = {int(e) for e in ref["line"]["edges"]}
+    lon0, lat0, elev0 = float(origin["lon"]), float(origin["lat"]), float(origin["elev_m"])
+    phi = _m.radians(lat0)
+    mlon = 111412.84 * _m.cos(phi) - 93.5 * _m.cos(3 * phi) + 0.118 * _m.cos(5 * phi)
+    mlat = 111132.954 - 559.822 * _m.cos(2 * phi) + 1.175 * _m.cos(4 * phi)
+    cell = {}
+    for r in doc["stations"]:
+        if int(r[0]) in own and r[6] is not None:
+            x, z = (float(r[3]) - lon0) * mlon, (float(r[4]) - lat0) * mlat
+            cell.setdefault((int(x // 10), int(z // 10)), []).append((x, z, float(r[6]) - elev0))
+    n = len(pts)
+    S = [0.0]
+    for i in range(1, n):
+        S.append(S[-1] + _m.hypot(pts[i][0] - pts[i - 1][0], pts[i][2] - pts[i - 1][2]))
+    out = [list(p) for p in pts]
+    rep = {"table": table.name, "match_m": LINE_DECK_MATCH_M, "decks": [], "points_read": 0, "points_between": 0,
+           "points_levelled": 0}
+    dz = []
+    for c, ln in bridges:
+        idx = [i for i in range(n) if c - ln / 2.0 <= S[i] <= c + ln / 2.0]
+        if len(idx) < 2:
+            continue
+        read = {}
+        for i in idx:
+            x, z = pts[i][0], pts[i][2]
+            best = None
+            for gx in range(int(x // 10) - 1, int(x // 10) + 2):
+                for gz in range(int(z // 10) - 1, int(z // 10) + 2):
+                    for sx, sz, sy in cell.get((gx, gz), ()):
+                        d = _m.hypot(sx - x, sz - z)
+                        if d <= LINE_DECK_MATCH_M and (best is None or d < best[0]):
+                            best = (d, sy)
+            if best is not None:
+                read[i] = best[1]
+        # anchors: the span's end points keep the levelled height (the bank crests), then every reading
+        knots = sorted({idx[0]: pts[idx[0]][1], idx[-1]: pts[idx[-1]][1], **read}.items())
+        for i in idx:
+            lo = max((k for k in knots if k[0] <= i), key=lambda k: k[0])
+            hi = min((k for k in knots if k[0] >= i), key=lambda k: k[0])
+            y = lo[1] if hi[0] == lo[0] else lo[1] + (hi[1] - lo[1]) * (S[i] - S[lo[0]]) / (S[hi[0]] - S[lo[0]])
+            if i in read:
+                rep["points_read"] += 1
+                dz.append(read[i] - pts[i][1])
+            elif read and min(read) < i < max(read):
+                rep["points_between"] += 1
+            else:
+                rep["points_levelled"] += 1
+            out[i][1] = y
+        rep["decks"].append({"center_m": c, "len_m": ln, "points": len(idx), "read": len(read),
+                             "measured_minus_levelled_m": None if not read else
+                             round(sorted(read[i] - pts[i][1] for i in read)[len(read) // 2], 2)})
+    dz.sort()
+    rep["measured_minus_levelled_median_m"] = None if not dz else round(dz[len(dz) // 2], 2)
+    return [tuple(p) for p in out], rep
+
+
 def intake(proj: Path, *, connectors: bool | None = None) -> dict:
     cfg = json.loads((proj / "track.config.json").read_text(encoding="utf-8"))
     li = cfg.get("lm_intake") or {}
@@ -121,7 +188,23 @@ def intake(proj: Path, *, connectors: bool | None = None) -> dict:
         raise SystemExit("[lm_intake] track.config.json lm_intake.source_track must name a folder under tracks/")
     src = AIROSO / "tracks" / src_track
     sdata = src / "data"
-    need = [sdata / "centerline.local.json", sdata / "heightfield.npy", sdata / "heightfield.meta.json"]
+    # ledger 0080 (opt-in, the SD freeway port): lm_intake.source_data names another folder INSIDE the source track that
+    # holds the line's files (a network's reference line, written by tools/network_line.py from the network draft);
+    # absent = the source's data/, as every other port
+    sd_rel = li.get("source_data")
+    if sd_rel:
+        if (not isinstance(sd_rel, str) or sd_rel.startswith(("/", "\\", ".")) or ".." in sd_rel.replace("\\", "/").split("/")
+                or ":" in sd_rel):
+            raise SystemExit(f"[lm_intake] lm_intake.source_data {sd_rel!r} must be a plain path inside the source track")
+        sdata = src / sd_rel
+    # ledger 0080 2a (opt-in, the SD freeway port): lm_intake.line_file / connectors_file name the measured versions of
+    # the line and the connectors in source_data (tools/naip_carriageways.py: NAIP edges); absent = the plain names
+    line_name = li.get("line_file") or "centerline.local.json"
+    conn_name = li.get("connectors_file") or "connectors.local.json"
+    for nm in (line_name, conn_name):
+        if "/" in nm or "\\" in nm or nm.startswith("."):
+            raise SystemExit(f"[lm_intake] {nm!r} must be a file name in the source data folder")
+    need = [sdata / line_name, sdata / "heightfield.npy", sdata / "heightfield.meta.json"]
     # a source track whose heightfield is not committed (High Plains: the elev stage's output lives in its workshop) may
     # have it fetched into the PORT track (scripts.elevation.heightfield on a copy of the source; synced in by ship.json):
     # then the project's own copy is used, and its provenance is the port track's
@@ -321,6 +404,16 @@ def intake(proj: Path, *, connectors: bool | None = None) -> dict:
     bridges = [(float(b["center_m"]), float(b["len_m"])) for b in ((scfg.get("capture") or {}).get("bridges") or [])]
     if bridges and not decks_held:              # (decks road_profile.py held straight stay as it held them)
         pts = evidence.level_bridge_decks(pts, bridges)
+    # ledger 0080 2a round 3 (opt-in, the SD freeway port): lm_intake.line_decks_lidar names the measured deck table
+    # (tools/network_deck_lidar.py) in source_data; over each declared deck the line then rides the lidar's class-17
+    # deck where its own edges (network.reference.json) were read, straight between readings, and the levelled
+    # crest-to-crest height only where none was. Absent = as before (every other port).
+    deck_lidar_rep = None
+    if li.get("line_decks_lidar") and bridges:
+        pts, deck_lidar_rep = _line_decks_lidar(pts, bridges, sdata / li["line_decks_lidar"], sdata, local["origin"])
+        print(f"[lm_intake] line decks from the lidar: {deck_lidar_rep['points_read']} points read, "
+              f"{deck_lidar_rep['points_between']} between readings, {deck_lidar_rep['points_levelled']} levelled (no "
+              f"reading); measured minus levelled median {deck_lidar_rep['measured_minus_levelled_median_m']} m")
     mg = li.get("max_grade_pct")
     max_grade = None if mg is None else float(mg) / 100.0
     if max_grade is not None:
@@ -620,6 +713,37 @@ def intake(proj: Path, *, connectors: bool | None = None) -> dict:
             shutil.copyfile(sdata / f, data / f)
     else:
         print("[lm_intake] heightfield: the project's own (the port track's fetched 3DEP grid; the source commits none)")
+    # THE GRID CUT TO THE LINE (lm_intake.grid_crop_m; ledger 0080, the SD freeway's phase 1: its 3DEP grid covers the
+    # whole 18 x 15 km network box, and the assembler's pure-Python terrain passes over it never finished in 45 min for
+    # one 10.6 km line). Keeps the source samples whose lon / lat lie within grid_crop_m of the line's own bbox; no
+    # sample moves or is made. Absent = the whole grid, every other port and Lake Murray.
+    crop = li.get("grid_crop_m")
+    if crop is not None:
+        hgrid = _read_npy(data / "heightfield.npy")
+        meta = json.loads((data / "heightfield.meta.json").read_text(encoding="utf-8"))
+        s_, w_, n_, e_ = meta["bbox_swne"]
+        ny_, nx_ = len(hgrid), len(hgrid[0])
+        gl = json.loads((data / "centerline.geojson").read_text(encoding="utf-8"))["features"][0]["geometry"]["coordinates"]
+        lat_c = sum(c[1] for c in gl) / len(gl)
+        dlat = float(crop) / 110_540.0
+        dlon = float(crop) / (111_320.0 * math.cos(math.radians(lat_c)))
+        lo0, lo1 = min(c[0] for c in gl) - dlon, max(c[0] for c in gl) + dlon
+        la0, la1 = min(c[1] for c in gl) - dlat, max(c[1] for c in gl) + dlat
+        ci = [i for i in range(nx_) if lo0 <= w_ + i * (e_ - w_) / (nx_ - 1) <= lo1]
+        rj = [j for j in range(ny_) if la0 <= n_ - j * (n_ - s_) / (ny_ - 1) <= la1]
+        if len(ci) < 2 or len(rj) < 2:
+            raise SystemExit(f"[lm_intake] grid_crop_m {crop}: fewer than 2 x 2 samples left")
+        i0, i1, j0, j1 = ci[0], ci[-1], rj[0], rj[-1]
+        hgrid = [row[i0:i1 + 1] for row in hgrid[j0:j1 + 1]]
+        meta2 = dict(meta)
+        meta2["bbox_swne"] = [n_ - j1 * (n_ - s_) / (ny_ - 1), w_ + i0 * (e_ - w_) / (nx_ - 1),
+                              n_ - j0 * (n_ - s_) / (ny_ - 1), w_ + i1 * (e_ - w_) / (nx_ - 1)]
+        meta2["nx"], meta2["ny"] = len(hgrid[0]), len(hgrid)
+        meta2["lm_intake_crop"] = {"margin_m": crop, "source_nx_ny": [nx_, ny_], "cols": [i0, i1], "rows": [j0, j1],
+                                   "_doc": "the source 3DEP samples within margin_m of the line's bbox (tools/lm_engine_intake.py)"}
+        _write_npy(data / "heightfield.npy", hgrid)
+        (data / "heightfield.meta.json").write_text(json.dumps(meta2), encoding="utf-8")
+        print(f"[lm_intake] 3DEP grid cut to the line + {crop} m: {nx_} x {ny_} -> {meta2['nx']} x {meta2['ny']} samples")
     # FINER FACETS, SAME SAMPLES (lm_intake.grid_upsample, default 1 = the source grid as is). The assembler halves the
     # grid once (40 -> 20 m, build_loop_blend.py upsample_grid(.., 2)); engine-july's prep then splits terrain edges near the
     # road at most 4 times. On a 20 m grid that leaves edges up to ~10 m under a narrow road, and where the deck sags
@@ -639,10 +763,16 @@ def intake(proj: Path, *, connectors: bool | None = None) -> dict:
                                        "_doc": "bilinear from the source 3DEP grid (tools/lm_engine_intake.py)"}
         (data / "heightfield.meta.json").write_text(json.dumps(meta2), encoding="utf-8")
     want_conn = li.get("connectors", False) if connectors is None else connectors
-    conn = sdata / "connectors.local.json"
+    conn = sdata / conn_name
     if want_conn and conn.exists():
         shutil.copyfile(conn, data / "connectors.local.json")
         (data / "mouths.json").unlink(missing_ok=True)       # tools/trim_connectors.py writes it for these connectors
+        recs = json.loads(conn.read_text(encoding="utf-8")).get("connectors") or []
+        if recs and all(r.get("network") and not r.get("mouths") for r in recs):
+            # ledger 0080 phase 2: a network port's carriageways (tools/network_connectors.py) that meet no host —
+            # I 8 westbound runs beside the line, never into it — have no mouth to cut: the empty record, as the lap
+            # alone writes it, so weld_mouths runs the mainline fold mend only. (Ramps, which do meet, are 2c's.)
+            (data / "mouths.json").write_text(json.dumps({"mouths": []}), encoding="utf-8")
     else:
         # the lap alone: an EMPTY side-street set, so the assembler sweeps none and tools/weld_mouths_blend.py (the
         # mainline fold mend, ledger 0050) runs on the mainline alone — it reads both files
@@ -807,7 +937,7 @@ def intake(proj: Path, *, connectors: bool | None = None) -> dict:
     lap = sum(math.hypot(b[0] - a[0], b[2] - a[2]) for a, b in zip(pts, pts[1:]))
     rep = {"source_track": src_track, "points": len(pts), "lap_m": round(lap, 1), "closed": closed,
            "widths_m": [round(min(widths), 2), round(sum(widths) / len(widths), 2), round(max(widths), 2)],
-           "bridges_levelled": bridges, "max_grade_pct": None if max_grade is None else max_grade * 100.0,
+           "bridges_levelled": bridges, "line_decks_lidar": deck_lidar_rep, "max_grade_pct": None if max_grade is None else max_grade * 100.0,
            "measured_max_grade_pct": round(100.0 * _max_grade(pts, 10.0), 2),
            "y_changed_points": sum(1 for d in dy if abs(d) > 1e-6),
            "y_change_max_m": round(max((abs(d) for d in dy), default=0.0), 3),

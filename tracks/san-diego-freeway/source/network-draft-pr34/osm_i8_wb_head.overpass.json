@@ -1,0 +1,251 @@
+{
+  "version": 0.6,
+  "generator": "Overpass API 0.7.62.11 87bfad18",
+  "osm3s": {
+    "timestamp_osm_base": "2026-11-06T02:42:36Z",
+    "copyright": "The data included in this document is from www.openstreetmap.org. The data is made available under ODbL."
+  },
+  "elements": [
+
+{
+  "type": "way",
+  "id": 361363274,
+  "bounds": {
+    "minlat": 32.7701395,
+    "minlon": -117.1387324,
+    "maxlat": 32.7737325,
+    "maxlon": -117.1265812
+  },
+  "geometry": [
+    { "lat": 32.7701395, "lon": -117.1387324 },
+    { "lat": 32.7702369, "lon": -117.1383165 },
+    { "lat": 32.7704172, "lon": -117.1375796 },
+    { "lat": 32.7711132, "lon": -117.1344842 },
+    { "lat": 32.7713065, "lon": -117.1336259 },
+    { "lat": 32.7714380, "lon": -117.1330422 },
+    { "lat": 32.7715592, "lon": -117.1324588 },
+    { "lat": 32.7718767, "lon": -117.1311284 },
+    { "lat": 32.7720370, "lon": -117.1305360 },
+    { "lat": 32.7721957, "lon": -117.1300038 },
+    { "lat": 32.7723834, "lon": -117.1294631 },
+    { "lat": 32.7725854, "lon": -117.1289395 },
+    { "lat": 32.7737325, "lon": -117.1265812 }
+  ],
+  "tags": {
+    "bicycle": "no",
+    "cycleway:left": "no",
+    "hgv": "designated",
+    "highway": "motorway",
+    "lanes": "4",
+    "maxspeed": "65 mph",
+    "maxspeed:hgv": "55 mph",
+    "maxspeed:trailer": "55 mph",
+    "name": "Mission Valley Freeway",
+    "official_name": "Route 8",
+    "oneway": "yes",
+    "ref": "I 8",
+    "source:maxspeed": "sign",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 361363275,
+  "bounds": {
+    "minlat": 32.7749615,
+    "minlon": -117.1249019,
+    "maxlat": 32.7750402,
+    "maxlon": -117.1247648
+  },
+  "geometry": [
+    { "lat": 32.7750402, "lon": -117.1247648 },
+    { "lat": 32.7749615, "lon": -117.1249019 }
+  ],
+  "tags": {
+    "bicycle": "no",
+    "change:lanes": "only_right|yes|yes|yes|only_left|no",
+    "cycleway:left": "no",
+    "hgv": "designated",
+    "highway": "motorway",
+    "lanes": "6",
+    "maxspeed": "65 mph",
+    "name": "Mission Valley Freeway",
+    "official_name": "Route 8",
+    "oneway": "yes",
+    "ref": "I 8",
+    "source:maxspeed": "sign",
+    "surface": "asphalt",
+    "turn:lanes": "through|through|through|through;slight_right|slight_right|slight_right"
+  }
+},
+{
+  "type": "way",
+  "id": 361363276,
+  "bounds": {
+    "minlat": 32.7740400,
+    "minlon": -117.1265703,
+    "maxlat": 32.7749615,
+    "maxlon": -117.1249019
+  },
+  "geometry": [
+    { "lat": 32.7749615, "lon": -117.1249019 },
+    { "lat": 32.7740400, "lon": -117.1265703 }
+  ],
+  "tags": {
+    "bicycle": "no",
+    "change:lanes": "only_right|yes|yes|only_left|no|no",
+    "cycleway:left": "no",
+    "destination:lanes": "|||Texas Street;Qualcomm Way;National City;Chula Vista|National City;Chula Vista;Los Angeles|Los Angeles",
+    "hgv": "designated",
+    "highway": "motorway",
+    "lanes": "6",
+    "maxspeed": "65 mph",
+    "name": "Mission Valley Freeway",
+    "official_name": "Route 8",
+    "oneway": "yes",
+    "ref": "I 8",
+    "source:maxspeed": "sign",
+    "surface": "asphalt",
+    "turn:lanes": "through|through|through|through;slight_right|slight_right|slight_right"
+  }
+},
+{
+  "type": "way",
+  "id": 361363278,
+  "bounds": {
+    "minlat": 32.7750402,
+    "minlon": -117.1247648,
+    "maxlat": 32.7769874,
+    "maxlon": -117.1214048
+  },
+  "geometry": [
+    { "lat": 32.7769874, "lon": -117.1214048 },
+    { "lat": 32.7766990, "lon": -117.1218757 },
+    { "lat": 32.7750402, "lon": -117.1247648 }
+  ],
+  "tags": {
+    "bicycle": "no",
+    "cycleway:left": "no",
+    "hgv": "designated",
+    "highway": "motorway",
+    "lanes": "6",
+    "maxspeed": "65 mph",
+    "name": "Mission Valley Freeway",
+    "official_name": "Route 8",
+    "oneway": "yes",
+    "ref": "I 8",
+    "source:maxspeed": "sign",
+    "surface": "asphalt",
+    "turn:lanes": "through|through|through|through;slight_right|slight_right|slight_right"
+  }
+},
+{
+  "type": "way",
+  "id": 361363280,
+  "bounds": {
+    "minlat": 32.7705337,
+    "minlon": -117.1379497,
+    "maxlat": 32.7726430,
+    "maxlon": -117.1294036
+  },
+  "geometry": [
+    { "lat": 32.7726430, "lon": -117.1294036 },
+    { "lat": 32.7724840, "lon": -117.1297969 },
+    { "lat": 32.7723767, "lon": -117.1301298 },
+    { "lat": 32.7722414, "lon": -117.1305724 },
+    { "lat": 32.7721568, "lon": -117.1308950 },
+    { "lat": 32.7720379, "lon": -117.1313998 },
+    { "lat": 32.7719939, "lon": -117.1315921 },
+    { "lat": 32.7718147, "lon": -117.1323569 },
+    { "lat": 32.7715389, "lon": -117.1335710 },
+    { "lat": 32.7713956, "lon": -117.1342013 },
+    { "lat": 32.7708186, "lon": -117.1367116 },
+    { "lat": 32.7705337, "lon": -117.1379497 }
+  ],
+  "tags": {
+    "bicycle": "no",
+    "cycleway:left": "no",
+    "hgv": "designated",
+    "highway": "motorway",
+    "lanes": "4",
+    "maxspeed": "65 mph",
+    "name": "Mission Valley Freeway",
+    "official_name": "Route 8",
+    "oneway": "yes",
+    "ref": "I 8",
+    "source:maxspeed": "sign",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 361363282,
+  "bounds": {
+    "minlat": 32.7769874,
+    "minlon": -117.1214048,
+    "maxlat": 32.7783284,
+    "maxlon": -117.1182965
+  },
+  "geometry": [
+    { "lat": 32.7783284, "lon": -117.1182965 },
+    { "lat": 32.7782433, "lon": -117.1186084 },
+    { "lat": 32.7781467, "lon": -117.1189186 },
+    { "lat": 32.7780199, "lon": -117.1192962 },
+    { "lat": 32.7778569, "lon": -117.1196937 },
+    { "lat": 32.7778126, "lon": -117.1198017 },
+    { "lat": 32.7773038, "lon": -117.1208595 },
+    { "lat": 32.7769874, "lon": -117.1214048 }
+  ],
+  "tags": {
+    "bicycle": "no",
+    "cycleway:left": "no",
+    "hgv": "designated",
+    "highway": "motorway",
+    "lanes": "7",
+    "maxspeed": "65 mph",
+    "name": "Mission Valley Freeway",
+    "official_name": "Route 8",
+    "oneway": "yes",
+    "ref": "I 8",
+    "source:maxspeed": "sign",
+    "surface": "asphalt",
+    "turn:lanes": "through|through|through|through|through|through|merge_to_left"
+  }
+},
+{
+  "type": "way",
+  "id": 1011676575,
+  "bounds": {
+    "minlat": 32.7726430,
+    "minlon": -117.1294036,
+    "maxlat": 32.7740400,
+    "maxlon": -117.1265703
+  },
+  "geometry": [
+    { "lat": 32.7740400, "lon": -117.1265703 },
+    { "lat": 32.7738392, "lon": -117.1268619 },
+    { "lat": 32.7736175, "lon": -117.1272658 },
+    { "lat": 32.7732061, "lon": -117.1280469 },
+    { "lat": 32.7729752, "lon": -117.1285361 },
+    { "lat": 32.7726430, "lon": -117.1294036 }
+  ],
+  "tags": {
+    "bicycle": "no",
+    "cycleway:left": "no",
+    "destination:lanes": "|||Mission Center Road;Auto Circle;Texas Street;Qualcomm Way",
+    "hgv": "designated",
+    "highway": "motorway",
+    "lanes": "4",
+    "maxspeed": "65 mph",
+    "name": "Mission Valley Freeway",
+    "official_name": "Route 8",
+    "oneway": "yes",
+    "ref": "I 8",
+    "source:maxspeed": "sign",
+    "surface": "asphalt",
+    "turn:lanes": "|||through;slight_right"
+  }
+}
+
+  ]
+}

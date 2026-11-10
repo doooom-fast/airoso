@@ -156,6 +156,198 @@ compared samples 10-51 m apart in plan: 0.15-0.55 m of plain grade.
 - **Proven.** `tests/tools/test_judge_joins_built.py`: a band that shifts through a synthetic join on a 3 % grade counts no
   step, and counts one with the re-seat disabled (the test reaches the bug); a 0.15 m curb across the lane still counts.
 
+## 2026-11-06 — the SD freeway port, phase 2b round 2: the reader's no-image rows, the slope pass's edge, the crop dropped (ledger 0080; no threshold moved, no bypass)
+
+No gate threshold, bypass or gate code changed, and no new number:
+- `tools/naip_carriageways.py`: a side whose line-to-partner span has any no-image sample reads "unread" (a rule, no
+  number); 2a's committed outputs re-read byte for byte.
+- `tools/median_ground_blend.py` (the unpaved-slope pass): a cut-line vertex whose point abreast misses the pavement
+  takes the closest point of the pavement (engine-july's own feather target), not the slope station's edge top.
+- ⚠ `lm_intake.grid_crop_m` 1,000 m (**invented**, phase 1) is **removed**: the port builds the whole network box
+  with its far ground tiered (`terrain_tiers.fine_m` 60 m, invented, 2b round 1, unchanged).
+- `tools/ship_track.sh`'s tiered draft step keeps every `[fwlm-tiers]` line in the log (a filter, no number).
+
+## 2026-11-05 — the SD freeway port, phase 2b round 1: the download list, tiered terrain, the 2b mainlines declared (ledger 0080; no threshold moved, no bypass)
+
+No gate threshold, bypass or gate code changed. Chain wiring: `tools/ship_track.sh` gains the draft step
+`build_loop_blend_tiered` (Lake Murray's assembler run unchanged by `tools/fwlm_tiered_assembler_blend.py`) and its name
+in the two assembler checks; the port's ship.json names it, Lake Murray's never does. New numbers:
+
+- ⚠ `lm_intake.terrain_tiers.fine_m` **60 m, invented**: a native 55 m 3DEP cell farther than this from a pavement edge
+  is two triangles on its native samples (`tools/fwlm_terrain.py`). Chosen past the assembler's conform reach (corridor
+  20 + blend 16 m) and engine-july's LAYER_WIN 30 m; proven only by ws39 = ws35 on every gate JSON. `step` 4 is not a
+  choice: grid_upsample 2 x the assembler's 2.
+- `band_clamp_np`'s 130 m bucket and 40-ring limit are the assembler's band_clamp's own (byte-identical, A/B'd).
+- `tools/fwlm_downloads.py`: no new number (STEP 5, PAIR 45, REACH 60, TILE 600 are the readers' own; OUT 3 m is
+  barrier_lidar's LAT_OUT_M, ALONG 2 m median_lidar's).
+- `lm_intake.grid_crop_m` 1,000 m (⚠ invented, phase 1) stays: the whole box built (ws38) but not green (ledger).
+
+## 2026-11-05 — the SD freeway port, phase 2a round 6: the stepped barrier's footing, the ground under WB, the median as read, a barrier reader (ledger 0080; no threshold moved, no bypass)
+
+No gate threshold, bypass, gate code or gate-chain wiring changed. New numbers / rules the port's DATA / geometry tools
+carry (none is a gate's):
+
+- `tools/median_barrier_blend.py`: the stepped section's footing reuses deck_rails_blend's `DECK_EDGE_DY_M` 0.03 and
+  `DECK_EDGE_IN_M` 0.1 and the barrier tool's 0.3 m retaining threshold. ⚠ A rule: not laid where the high side's edge is
+  a declared deck at either end of the quad.
+- `tools/median_ground_blend.py`: `LOW_PROBE_M` 0.6 (= `FOOT_PROBE_M[0]`), `DECK_PAD_V` 3 (2d's / 1b's pad), `PIN_DY_M`
+  0.5 (its own pavement-edge tolerance), `UNPAVED_GAP_M` 2.0 (round 4's unpaved gap), `SLOPE_ALONG_M` 2.5 (1b's half
+  station), `EDGE_BAND_M` 0.5 (median_lidar's `BIN_M`), the 0.6 m / 0.05 m edge walk (1b's), all reused. `F_EDGE_M`
+  2.0, `F_REACH_M` 3.5, `F_DY_M` 0.5 are audit_mesh F's own `EDGE_REACH`, `CURB_REACH` and |dy|, READ (the footing quads
+  F cannot see flush are removed, not forced; F itself is untouched). `SLOPE_REACH` 60 m is a KD search bound only (the
+  along / across tests decide). ⚠ Rules: the ground under a network connector's pavement off its decks is pinned to it
+  (the prep's contact pin, GROUND_CLEAR); the low side's gap ground goes UP to the low pavement too (never to the high
+  side's, not on a declared deck); an unpaved slope row is applied only off line / connector decks and away from a
+  barrier run, cut at both edge strips; under a pavement inside that cut stretch the ground only goes DOWN.
+- ⚠ `tools/barrier_lidar.py` **invented**, every one: `ALONG_M` 2.5, `LAT_IN_M` 0.5, `LAT_OUT_M` 3.0, `PAVE_M` 2.0,
+  `H_LO` 0.3 / `H_HI` 1.3, `BIN_M` 0.25, `N_MIN` 2, `DOFF_M` 0.5, `DH_M` 0.3, `RUN_MIN_M` 10.0; `H_LO`, `N_MIN`,
+  `DOFF_M`, `RUN_MIN_M` chosen by a 16-way sweep scored on the line's level median (in sample): precision 0.93, recall
+  0.51 (WB with the same values 0.93 / 0.49). Out of the chain: it reports, it builds nothing.
+
+## 2026-11-05 — the SD freeway port, phase 2a round 5: the barrier on the lidar's wall, the barrier through one-station holes and on the deck, WB's OSM head (ledger 0080; no threshold moved, no bypass)
+
+No gate threshold, bypass, gate code or gate-chain wiring changed. New numbers / rules the port's DATA / geometry tools
+carry (none is a gate's):
+
+- `tools/median_lidar.py --walls` (`walls()`): reuses round 4's `ALONG_M`, `BIN_M`, `BIN_MIN`, `STEP_MIN_M`,
+  `STEP_GRADE`; `EDGE_TOL_M` 0.5 is median_ground_blend's pavement-edge tolerance (`abs(z - y) < 0.5`), reused.
+- `tools/naip_carriageways.py`: the wall's offset ramps in at `RATE_M_PER_M` (the width_taper rate) and fills read gaps
+  up to `FILL_M`, both existing. ⚠ A rule, not a tuned number: a barrier run broken by exactly ONE unread station is one
+  run (`JOIN_ONE_STATION_HOLES`; wider holes stay holes). `NAIP_OFFLINE=1` refuses every fetch (a missing tile is unread).
+- `tools/median_barrier_blend.py`: the deck under the barrier where its foot is on a declared deck reuses
+  deck_rails_blend's `DECK_EDGE_DY_M` 0.03 and `DECK_EDGE_IN_M` 0.1.
+- ⚠ `tools/network_connectors.py` (`head_osm`) **invented**: `OSM_JOIN_MAX_M` 5.0 (the chain's first point must lie this
+  close to the OSM head, or the tool refuses; WB: 3.08 m).
+
+## 2026-11-05 — the SD freeway port, phase 2a round 4: the median from the lidar, the deck's edge, the one-sided cut (ledger 0080; no threshold moved, no bypass)
+
+No gate threshold, bypass or gate code changed. One gate-chain WIRING change: `tools/ship_track.sh` prep_prep runs
+`tools/median_ground_blend.py` after the prep, before the split, only where the track's config names
+`lm_intake.median_barrier_file` (the SD freeway port); Lake Murray's chain prints no header and runs nothing new
+(`tests/tools/test_ship_track_chain.py` V4_EXTRAS lists the header, as the other port-only prep sub-steps).
+New numbers the port's DATA / geometry tools carry (none is a gate's):
+
+- ⚠ `tools/median_lidar.py` (new; the median as the lidar's class 2 reads it) **invented**: `CORRIDOR_M` 40, `ALONG_M`
+  2, `BIN_M` 0.5, `BIN_MIN` 2, `READ_SHARE` 0.6, `STEP_MIN_M` 0.5, `STEP_GRADE` 1.0 (a jump steeper than 1:1 between
+  neighbouring read bins is a wall: ground does not stand steeper), `PAST_M` 3 (the step is also sought past the BUILT
+  inner edge: NAIP and the lidar put the Morena wall 0.5-2 m apart). `PAIR_M` 45 is naip_carriageways'.
+- ⚠ `tools/median_ground_blend.py` (new) **invented**: `REACH_M` 2.5 (a gap vertex is looked for this far from the high
+  foot), `SAMPLE_M` 1 (barrier feet read every metre), `FOOT_STEP_M` 0.05 (the step's width at the foot), `NO_BAR_M` 1
+  (a lidar step whose gap midline is this close to a barrier run is the barrier's), `DECK_PAD_M` 25 (a lidar step this
+  near a line deck's declared ends is the deck's: 2d). Reused: `FOOT_PROBE_M`, `BURY_M` 0.3 and the 0.3 m retaining
+  threshold (`STEP_MIN_M`) are median_barrier_blend's; `GROUND_CLEAR` 0.02 is engine-july's prep's.
+- ⚠ `tools/deck_rails_blend.py` **invented**: `DECK_EDGE_M` 0.40 (the deck slab past the rail panel: a bridge barrier's
+  base, 0.3-0.5 m, not measured), `DECK_EDGE_IN_M` 0.10 (tucked under the pavement's edge), `DECK_EDGE_DY_M` 0.03 (under
+  the pavement's edge height). A new surface (1KERB_SIDEWALK_DECK) under every port deck rail; Lake Murray's rails are its
+  assembler's, untouched.
+- ⚠ `tools/naip_carriageways.py` **invented**: `CLEAR_ITER` 6 (re-predictions of the swept edge after each move). A rule
+  change, not a threshold: round 3's `clear_of_barrier` narrowed both edges; it now brings in the barrier side's only and
+  moves the vertex's centre by half the cut (the outer edge stays NAIP's). And an open carriageway's END row takes its
+  neighbour's width where narrower (line s 0 +0.975 m, WB's last row +0.053 m): drive_test judges a row's stretch with
+  the next row's width.
+
+## 2026-11-05 — the SD freeway port, phase 2a round 3: the hidden deck, the swept-edge clamp, the line's lidar decks, the fascia (ledger 0080; no threshold moved, no bypass)
+
+No gate threshold, wiring or bypass changed; no gate code touched. New numbers the port's DATA tools carry (none is a
+gate's):
+
+- ⚠ `tools/network_deck_lidar.py` **invented**: `HIDDEN_M` 30 (how far along ours another deck crossing over it can hide
+  ours from the scanner: a crossing deck's width, skewed) and `HIDDEN_GRADE` 0.08 (how far a hidden deck's grade may have
+  changed from its measured one, dz per m, added to `CONT_DZ_M` per metre since our last reading). A rule change, not a
+  threshold: where a station's returns are only another deck's, the continuation no longer times out into the
+  model-nearest pick for HIDDEN_M (edge 186: that pick took the I 5 connector 9 m over I 8 WB). 80 of 9,685 stations
+  change, listed in the ledger.
+- Reused, not new: `tools/naip_carriageways.py` `clear_of_barrier` holds `BARRIER_CLEAR_M` 0.3 (round 2's) on the SWEPT
+  edge, predicted with the assembler's own `smooth_centerline` (the line: route.smooth_sigma_pts / smooth_passes from the
+  config; a connector: `CONN_SMOOTH` (1.5, 1), the values build_loop_blend hard-codes), stepping 0.05 m; neighbours close
+  at the width_taper rate (0.1 m / m a side).
+- ⚠ `tools/lm_engine_intake.py` **invented**: `LINE_DECK_MATCH_M` 4 (a line point takes a lidar station of its own edges
+  within this in plan; stations are every 5 m). The key `lm_intake.line_decks_lidar` is the freeway port's only.
+- ⚠ `tools/deck_rails_blend.py` **invented**: `FASCIA_PROBE_M` (0.5 .. 3.0 m beyond a network connector's deck rail, where
+  a lower carriageway's pavement is sought), `FASCIA_MIN_M` 0.3 (a pavement less than this under the rail's foot is the
+  deck's own), `FASCIA_MAX_M` 3 (the deepest edge girder face carried down, ~ a box girder's span / 18). Lake Murray's
+  `build_guardrails` and the line's rails unchanged.
+
+## 2026-11-05 — the SD freeway port, phase 2a round 2: measured carriageway edges, the median barrier (ledger 0080; no threshold moved, no bypass)
+
+No gate threshold, wiring or bypass changed. New numbers the port's DATA carries (none is a gate's):
+
+- ⚠ `tools/naip_carriageways.py` **— every tuning number invented** (a colour reader over NAIP 2022, 0.6 m, R G B NIR):
+  `STEP_M` 5, `SAMPLE_M` 0.3, `SCAN_M` 30, `REACH_M` 60, `VEG_NDVI` 0.12, `PAVE_NDVI` 0.08, `PAVE_SAT` 40, `PAVE_MIN` 55,
+  `BREAK_M` 1.2 (pavement ends after this much not-pavement), `BARRIER_DELTA` 25 / `BARRIER_BAND_M` 1.5 (the barrier's
+  sunlit top sought within this of the two lines' midline; not seen = the midline itself), `PAIR_M` 45 (carriageways
+  read as one section within this), `OUT_LO_M` 3 / `OUT_HI_M` 6 (a read edge outside the draft half-width -3 .. +6 m is
+  another pavement or a shadow: unread), `SMOOTH_N` 7 stations / `SMOOTH_V` 9 vertices (running medians), `FILL_M` 60
+  (an unread run up to this is interpolated; longer keeps the draft's edge, counted), `MIN_BARRIER_M` 20. What the
+  image shows is the measurement; the render crops in the ledger are the check.
+- Reused, not new: each edge offset changes at most 0.1 m per m (`lm_intake.width_taper`'s rate, ledger 0078 round 5),
+  widening only, except that a vertex on the barrier never passes the barrier's face.
+- **The barrier's section**: Caltrans Concrete Barrier Type 60, Standard Plans **A76A** (the 1999 edition's "Type 60";
+  the 2026 edition's sheet A76A "Concrete Barrier Type 60M"): 0.914 m (36 in) high and 9.1 deg faces (Caltrans Roadside
+  Safety Research Group, "Type 60 median barrier MASH 2016"), 0.610 m base (the Type 60 family's 610 mm); the top
+  0.317 m follows. ⚠ The sheet's own drawing was not read (its DGN is compressed, no PDF reader here): owed.
+- ⚠ `tools/median_barrier_blend.py` **invented**: `FOOT_PROBE_M` (0.6, 1.2, 2.0) where each side's pavement is ray-cast,
+  `BURY_M` 0.3 below the lower foot, `MAX_DIFF_M` 6 (a foot further below than this is not the barrier's). Where the two
+  feet differ by more than 0.3 m the low side's face runs down to the low pavement (a retaining face, counted, not a
+  Type 60 variant: the A76 unequal-grade sheets are not read).
+- `network_connectors` `head` (WB's east end, edge 396 vertices 162 -> 1): a declared decision with its evidence in
+  the config (`_why`), not a number; the resolver's rule (an undecided edge is never guessed) is unchanged.
+- `tools/network_deck_lidar.py --laz`: LAZ tiles fill only stations the EPT returned nothing for; same thresholds.
+
+## 2026-11-05 — the SD freeway port, phase 2a: a new gate wired, numbers the port carries (ledger 0080; no threshold moved, no bypass)
+
+- **NEW GATE WIRING: `drive_test_network`** (`tools/ship_track.sh`, runs only when a ship.json names it; the freeway
+  port's does): every network connector (`tools/network_connectors.py`, I 8 westbound first) is written as a drive_test
+  `--line` (`tools/network_drive_lines.py`: the connector exactly as the assembler sweeps it) and driven with
+  drive_test's own thresholds, hard (DT_L, never covered by --force-install). Adds a gate; weakens none.
+- **The port's draft drops `weld_mouths`.** In phase 1 it welded nothing (0 mouths, 0 of 0 fold quads); with a network
+  connector its layout self-check reads an empty yellow block as `inf` and refuses (the shared tool is not changed
+  here; owed to its owners). Not a gate.
+- ⚠ `lm_intake.grid_upsample` **2** (an existing key, ledger 0078; the value is this port's choice): the cut 3DEP grid
+  pre-divided, bilinear, no sample moved. Measured: ground on top 1,119 → 138 (line), 1,224 → 130 (WB).
+- ⚠ `network_connectors.MATCH_M` **6 m — invented**: a connector vertex takes a lidar deck height only between readings
+  no further apart than 2 x this (one 5 m station either side), or within half of it at a deck end.
+- Reused, not new: a bridged run without a reading is spanned straight between its measured readings, or levelled crest
+  to crest by `scripts.capture.evidence.level_bridge_decks` (every port's unmeasured-deck rule); a deck's approach is
+  raised (never lowered) to the line from the deck end to the bank crest within that function's `BANK_SEEK_M` 80 m.
+  The one-way paint is v021 `lane_markings`' own numbers (0.55 m edge inset, 3.65 m lanes, 0.12 m lines).
+
+## 2026-11-05 — the SD freeway port, phase 2 step 0: the decks measured from the lidar (ledger 0080; no gate threshold moved, no bypass)
+
+`tools/network_deck_lidar.py` reads USGS `CA_SanDiegoQL2_2014` (EPT, class 17 deck / class 2 ground) along every bridged
+edge of the network draft. Its own numbers, all ⚠ **invented** (none is a gate threshold; each decides which returns
+are a deck reading):
+- ⚠ `RADIUS_M` 2.0 m: the disc of returns read round each 5 m station on the carriageway's OSM centreline (half a lane).
+- ⚠ `LEVEL_GAP_M` 2.0 m: heights further apart are different decks (stacked interchanges).
+- ⚠ `MAX_PICK_M` 8.0 m: with no reading behind it, a level further than this from the draft's own height there (its
+  layer x 5.5 m model, which only CHOOSES between measured levels) is another road's deck.
+- ⚠ `CONT_M` 15 m / `CONT_DZ_M` 2.0 m: within 15 m along the same edge of the last reading the level nearest it is kept,
+  if within 2 m; off OSM's bridge (an approach station) a deck reading counts only within 2 m of the 3DEP there (the
+  overpass above I 8 WB at edge 295 s 145-155 read 26.0 m over a 17.0 m road before this rule).
+- ⚠ `APPROACH_M` 30 m: how far past a bridged stretch's ends the stations run (the table's extent, not a height).
+Measured, as a check of the datum (the EPT keeps NAVD88 metres): class-2 ground minus the draft's 3DEP, median
+**+0.11 m** over the approach stations.
+
+## 2026-11-05 — the SD freeway on Lake Murray's engine, phase 1: the numbers the port carries (ledger 0080; no gate threshold moved, no bypass)
+
+- **No grade cap.** The line's profile is its own 3DEP (`tools/network_line.py`: network_elev's 33 m median + 45 m mean
+  de-spike, both network_elev's own constants, not new ones), without network_elev's 5 % cap or join_nodes' pin. The six
+  `capture.bridges` decks (the source's, PR 34) are levelled between their bank crests by the intake as for every port.
+  Measured: steepest 10 m off the decks **5.25 %** (the draft capped at 5.0 %); on the raw bare earth through the decks
+  58.7 % (the DEM has no deck).
+- ⚠ **`lm_intake.grid_crop_m` 1,000 m — invented.** The 3DEP grid kept round the line: the extent of the scenery, not a
+  geometry value (no sample moves or is made). Phase 1 only; the whole box comes back with the network (phase 2).
+- ⚠ **Edge** (`route.edge`): the rally ports' near-zero curb / walk / grade (0.0 / 0.05 / 0.05 / 0.3 m), not measured.
+  The real edge is a paved shoulder to a concrete barrier; no barrier is laid (none measured yet).
+- **Reused, not new:** `lm_intake.width_taper` 0.1 m per m (ledger 0078 round 5, Milford's, already listed there);
+  the deck rails (`tools/deck_rails_blend.py`) are Lake Murray's `build_guardrails` unchanged — 0.95 m panels,
+  `GUARDRAIL_SET_M` 0.15 m (⚠ invented in v0.18.0, listed there), 22 m + 3 points past each declared deck. One choice of
+  this tool's own: on a flare each row's rail takes the widest of itself and its two neighbours (the pavement edge is a
+  chord between rows), so the rail never stands inside the pavement. drive_test's thresholds are untouched; the port
+  passes them as they are (excursions 6 against the 1 /km = 10 limit).
+- Not used, recorded: the source's `scenery.viaduct.layer_height_m` 5.5 m (the network draft's OSM-layer deck lift) — a
+  modelled number. Phase 2's connector decks need measured heights (PC lidar, class 17).
+
 ## 2026-11-05 — DECLARED FORCE: Under the Dragon's Douglas Creek fill, s 2,395-2,410 (ledger 0078 round 13; no threshold moved)
 
 Kevin, 2026-11-05, asked whether to force Under the Dragon's last red row as measured: **"Yes, force it"**.

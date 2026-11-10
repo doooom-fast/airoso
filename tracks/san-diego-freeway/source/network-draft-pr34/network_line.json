@@ -1,0 +1,33 @@
+{
+ "tool": "tools/network_line.py",
+ "ledger": "0080",
+ "draft": "/Volumes/Drive/codex/fwlm_work/src_draft",
+ "points": 2132,
+ "length_m": 10635.9,
+ "spacing_m": 4.991,
+ "y_measured_minus_draft_m": {
+  "max_abs": 6.678,
+  "mean": -0.023
+ },
+ "max_grade_10m_pct": {
+  "measured_uncapped": 22.39,
+  "draft_capped": 5.0,
+  "raw_3dep_no_smoothing": 58.71
+ },
+ "inputs": {
+  "centerline.local.json": "d9328273ac617c25053a562baddb08ff",
+  "network.elevation.json": "b9c33cdf8e2969aaccbb33b02982c5aa",
+  "network.geojson": "255dbe5d7053ad09b6e7d987a8fdf0d1",
+  "heightfield.npy": "4114cfb415e0c1c4dbfc530aec84af93",
+  "heightfield.meta.json": "e2ea04d08b36d780fc9f927d929519b2",
+  "network.reference.json": "6cf7f05b89d1de8560f2700e666da1ba"
+ },
+ "outputs": {
+  "centerline.geojson": "7925779a0dca035cee231be639264eef",
+  "centerline.local.json": "482576032d5ac9ec4381d9b15d323554",
+  "heightfield.meta.json": "e2ea04d08b36d780fc9f927d929519b2",
+  "heightfield.npy": "4114cfb415e0c1c4dbfc530aec84af93",
+  "network.caps.json": "7954da16039a6334030f4623fa58d74c",
+  "network.reference.json": "6cf7f05b89d1de8560f2700e666da1ba"
+ }
+}

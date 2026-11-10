@@ -1,0 +1,110 @@
+{
+ "tool": "tools/median_barrier_blend.py",
+ "ledger": "0080 2a",
+ "barrier": {
+  "type": "Caltrans Concrete Barrier Type 60 (Standard Plans A76A)",
+  "height_m": 0.914,
+  "base_m": 0.61,
+  "top_m": 0.317,
+  "face_deg_from_vertical": 9.1
+ },
+ "runs": [
+  {
+   "stations_m": [
+    440.0,
+    490.0
+   ],
+   "sections": 11
+  },
+  {
+   "stations_m": [
+    3250.0,
+    3320.0
+   ],
+   "sections": 13
+  },
+  {
+   "stations_m": [
+    3365.0,
+    4570.0
+   ],
+   "sections": 242
+  },
+  {
+   "stations_m": [
+    4580.0,
+    5385.0
+   ],
+   "sections": 162
+  },
+  {
+   "stations_m": [
+    5395.0,
+    5515.0
+   ],
+   "sections": 25
+  },
+  {
+   "stations_m": [
+    5525.0,
+    5580.0
+   ],
+   "sections": 12
+  },
+  {
+   "stations_m": [
+    5590.0,
+    6580.0
+   ],
+   "sections": 199
+  },
+  {
+   "stations_m": [
+    6590.0,
+    6860.0
+   ],
+   "sections": 55
+  },
+  {
+   "stations_m": [
+    6870.0,
+    7905.0
+   ],
+   "sections": 208
+  },
+  {
+   "stations_m": [
+    7925.0,
+    9725.0
+   ],
+   "sections": 361
+  },
+  {
+   "stations_m": [
+    9735.0,
+    9990.0
+   ],
+   "sections": 52
+  },
+  {
+   "stations_m": [
+    10010.0,
+    10145.0
+   ],
+   "sections": 28
+  },
+  {
+   "stations_m": [
+    10170.0,
+    10635.0
+   ],
+   "sections": 94
+  }
+ ],
+ "sections_retaining_over_0_3m": 550,
+ "vertices": 8772,
+ "run_length_m": 7257.7,
+ "deck_under_barrier_quads": 533,
+ "stepped_footing_quads": 489,
+ "stepped_on_a_deck_not_laid": 61
+}

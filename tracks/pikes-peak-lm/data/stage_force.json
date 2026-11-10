@@ -1,0 +1,31 @@
+{
+ "force_install_ok": true,
+ "why_not": [],
+ "covered": [
+  "infield: undrivable corner s 665 (112 deg at 8.0 m) \u2014 the S-curve hairpin",
+  "infield: undrivable corner s 669 (121 deg at 8.4 m) \u2014 the S-curve hairpin",
+  "infield: undrivable corner s 673 (129 deg at 8.4 m) \u2014 the S-curve hairpin",
+  "infield: undrivable corner s 677 (128 deg at 8.4 m) \u2014 the S-curve hairpin",
+  "infield: undrivable corner s 681 (122 deg at 8.3 m) \u2014 the S-curve hairpin"
+ ],
+ "declared": {
+  "approved": "Kevin 2026-11-09, asked 'How should the infield's hairpin go, so I can install 0.2.0?' (Drop infield, install / Exempt hairpin, install): \"Exempt hairpin with a note to ask after driving\"",
+  "versions": [
+   "0.2.0"
+  ],
+  "undrivable_corners": [
+   {
+    "id": "the S-curve hairpin",
+    "layout": "infield",
+    "s_m": [
+     650,
+     695
+    ],
+    "measured": "NAIP 2023 + the 2018 lidar (road-course infield_pieces.naip.json s_curve): the real hairpin 8.3-8.7 m wide, centre R ~8-9 m, against drive_test's >110 deg on <9 m corner rule; drive_test reads 5 stations s 665-681 on the infield lap (pp_b5 / pp_b6)"
+   }
+  ],
+  "excursion_drops": [],
+  "ask_after_driving": "Kevin asked for this note: after he has driven the infield layout, ask him how the hairpin drives (keep the exemption, widen it, or drop the infield layout). The exemption is for 0.2.0 only",
+  "_doc": "tools/stage_force.py (gate step stage_force, last): --force-install may pass the red infield drive_test only where every red row is this hairpin, on the infield layout, for 0.2.0; any other red row (a soft top, a step rate, a corner anywhere else, another layout) refuses it (tools/ship_track.sh checks the verdict before a forced install)"
+ }
+}

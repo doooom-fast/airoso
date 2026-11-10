@@ -37,6 +37,9 @@ Declared (opt-in) in track.config.json:
     PAD_ARM_PROBE_M into the stub from the middle of its mouth line along its bearing (before the stub's end
     barrier, so the Speedway's own seal is judged, never the Free Roam end wall alone). A declared pad that is
     missing, used twice or does not connect consecutive pieces is refused.
+    a piece may carry "via": [[E, N], ...] or [[E, N, width], ...] (optional, ledger 0085): the join INTO it runs
+    through those plan points (a polyline resampled at the spacing; heights by arc length; widths by arc length, or
+    through the points' own widths when every point gives one) instead of straight; absent = straight
     layouts[].lap = "<lap id>"   on a race layout (absent = today's mainline, byte-identical)
 
 The lap id is a lower-case [a-z0-9]+ token: it rides in file names (data/lap.<id>.json,
@@ -139,9 +142,12 @@ def validate(cfg: dict) -> list[str]:
         lap = lap_of(lo)
         if lap is None:
             continue
-        if not lo.get("race_furniture"):
-            probs.append(f"layout {lo.get('id')}: lap {lap!r} on a layout without race_furniture — a lap is a race "
-                         f"layout's line (the street layouts drive the whole network)")
+        # a BARE race layout (kind "race", no race_furniture; ledger 0085, Pikes Peak's road course and infield: a real
+        # circuit whose infield has no barriers) may drive a lap too: its lap file comes from ship_track's author step
+        # `race_laps` (no barrier_bands run for it). A street layout never names one (it drives the whole network).
+        if not lo.get("race_furniture") and lo.get("kind") != "race":
+            probs.append(f"layout {lo.get('id')}: lap {lap!r} on a layout that is neither a race layout with "
+                         f"race_furniture nor a bare race layout (kind 'race') — the street layouts drive the whole network")
         if not LAP_TOKEN_RE.match(lap):
             probs.append(f"layout {lo.get('id')}: lap id {lap!r} must be a lower-case [a-z0-9]+ token (it rides in "
                          f"file and mesh names)")
@@ -428,12 +434,12 @@ def stitch(proj, cfg: dict, lap_id: str, *, lines: dict | None = None, mouths: l
     P, W, IW, SRC, joins = [], [], [], [], []
     IO = []                                                  # island centre lateral (+ left of the LAP's travel)
 
-    def _join(a_src, b_src):
+    def _join(a_src, b_src, via=None):
         la, va = a_src
         lb, vb = b_src
         A, B = lines[la]["pts"][va], lines[lb]["pts"][vb]
         d = math.hypot(B[0] - A[0], B[2] - A[2])
-        if d < DEDUPE_M:
+        if d < DEDUPE_M and not via:
             return False
         k = len(joins)
         wa, wb = lines[la]["widths"][va], lines[lb]["widths"][vb]
@@ -458,6 +464,33 @@ def stitch(proj, cfg: dict, lap_id: str, *, lines: dict | None = None, mouths: l
             joins.append({"from": [la, va], "to": [lb, vb], "length_m": round(arc[-1], 3), "chord_m": round(d, 3),
                           "points": len(jp) - 2, "declared": jid})
             return True
+        if via:
+            # VIA (opt-in per piece, ledger 0085, Pikes Peak's junction pads): the join into this piece runs A -> the
+            # declared plan points [E, N] -> B, resampled at the lap's spacing along that polyline; heights and widths by
+            # arc length between A's and B's (where a straight join would cut across what is not road: the infield
+            # road's own measured line through a pad, its piece cut back to the pad's box)
+            poly = [(A[0], A[2])] + [(float(q[0]), float(q[1])) for q in via] + [(B[0], B[2])]
+            # [E, N, width] points carry the lane's width there (interpolated along the polyline between them, from A's
+            # to B's); [E, N] points take A's -> B's by arc length
+            pw = [wa] + [float(q[2]) for q in via] + [wb] if all(len(q) >= 3 for q in via) else None
+            seg = [math.hypot(poly[i + 1][0] - poly[i][0], poly[i + 1][1] - poly[i][1]) for i in range(len(poly) - 1)]
+            L = sum(seg)
+            n_ins = max(0, int(math.ceil(L / spacing)) - 1)
+            for q in range(1, n_ins + 1):
+                t = q / (n_ins + 1)
+                s_, i = t * L, 0
+                while i < len(seg) - 1 and s_ > seg[i]:
+                    s_ -= seg[i]
+                    i += 1
+                u = s_ / seg[i] if seg[i] > 0 else 0.0
+                P.append((poly[i][0] + (poly[i + 1][0] - poly[i][0]) * u, A[1] + (B[1] - A[1]) * t,
+                          poly[i][1] + (poly[i + 1][1] - poly[i][1]) * u))
+                W.append(wa + (wb - wa) * t if pw is None else pw[i] + (pw[i + 1] - pw[i]) * u)
+                IW.append(0.0)
+                IO.append(0.0)
+                SRC.append(["join", k])
+            joins.append({"from": [la, va], "to": [lb, vb], "length_m": round(L, 3), "points": n_ins, "via": len(via)})
+            return True
         n_ins = max(0, int(math.ceil(d / spacing)) - 1)
         for q in range(1, n_ins + 1):
             t = q / (n_ins + 1)
@@ -476,7 +509,7 @@ def stitch(proj, cfg: dict, lap_id: str, *, lines: dict | None = None, mouths: l
         first = 0
         if P and SRC:
             prev = next(x for x in reversed(SRC) if x[0] != "join")
-            if not _join((prev[0], prev[1]), (name, vs[0])):
+            if not _join((prev[0], prev[1]), (name, vs[0]), pieces[i].get("via")):
                 first = 1                                    # the same point: the previous piece's vertex stands
                 merged[(name, vs[0])] = len(P) - 1
         start = len(P)

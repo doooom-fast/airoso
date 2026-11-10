@@ -1,0 +1,23 @@
+{
+  "ept": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_ElPaso_2018/ept.json",
+  "box_local_m": {
+    "e": [
+      -284.0,
+      300.0
+    ],
+    "n": [
+      -352.0,
+      320.0
+    ]
+  },
+  "nodes": 38,
+  "downloaded_bytes": 7527610,
+  "points_in_box": 789608,
+  "density_pts_m2": 2.01,
+  "classes": {
+    "1": 44137,
+    "2": 745293,
+    "7": 178
+  },
+  "ground_density_pts_m2": 1.9
+}

@@ -165,6 +165,7 @@ def verify(project):
         xs, zs = [q[0] for q in o], [q[1] for q in o]
         multi = grass = n_in = 0
         worst_multi = None
+        grass_at = []                 # where P4 found it (the first GRASS_AT_N, reported: x, z, grass over the deck)
         # the raster stands RASTER_PHASE_M off the whole metre: the deck's interior points are a 1 m grid, and a sample
         # exactly on a shared vertex / edge reads every triangle round it (the same sheet several times)
         x = math.floor(min(xs)) - 3.0 + RASTER_PHASE_M
@@ -183,8 +184,11 @@ def verify(project):
                             break
                     if deck:
                         top_road = max(deck)
-                        if any(n.startswith("1GRASS") and h > top_road + GRASS_OVER_M for h, n in hs):
+                        over = [h - top_road for h, n in hs if n.startswith("1GRASS") and h > top_road + GRASS_OVER_M]
+                        if over:
                             grass += 1
+                            if len(grass_at) < 12:
+                                grass_at.append([round(x, 2), round(z, 2), round(max(over), 4)])
                 z += COVER_STEP_M
             x += COVER_STEP_M
         multi_m2 = multi * COVER_STEP_M * COVER_STEP_M
@@ -290,6 +294,7 @@ def verify(project):
         elif not dk:
             fails.append("P7: no deck over the junction node")
         rows.append({"id": pid, "raster_points": n_in, "multi_coverage_m2": multi_m2, "grass_on_deck": grass,
+                     "grass_at_xz": grass_at,
                      "seam_max_gap_m": round(max_gap, 5), "seam_near_misses": near_miss,
                      "curb_over_pavement": curb_over, "barriers": bars,
                      "node_deck_minus_3dep_m": None if node_dev is None else round(node_dev, 3),

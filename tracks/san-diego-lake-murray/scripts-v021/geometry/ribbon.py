@@ -112,7 +112,7 @@ def road_shoulder(centerline_m: list[Vertex], widths_m: list[float], *, lift: fl
 def curb_sidewalk(centerline_m: list[Vertex], widths_m: list[float], *, lift: float = 0.1,
                   curb_h: float = 0.15, curb_face_w: float = 0.08, sidewalk_w: float = 1.5,
                   grade_w: float = 1.0, grass_clearance: float = 0.25, tile_m: float = 2.0,
-                  bank_at=None) -> dict:
+                  bank_at=None, apron=None) -> dict:
     """A continuous urban edge swept along BOTH road sides as ONE strip so road, curb, sidewalk and
     grass share seam vertices and nothing can hover. Per side, the cross-section is four profile points
     out from the lane edge:
@@ -122,7 +122,16 @@ def curb_sidewalk(centerline_m: list[Vertex], widths_m: list[float], *, lift: fl
       3  grass meet   — graded down ``grade_w`` to the grass-conform height (road edge − ``grass_clearance``)
     Heights are referenced to the BANKED road edge (``side*half*tan(bank)``) — the same height the grass is
     conformed to — so the outer lip lands exactly on the graded terrain on cambered corners too. Physical
-    (``1KERB_sidewalk`` in build_mesh). UVs: U across the profile, V along the road (m/``tile_m``)."""
+    (``1KERB_sidewalk`` in build_mesh). UVs: U across the profile, V along the road (m/``tile_m``).
+
+    ``apron`` (opt-in, ledger 0085 Pikes Peak; None = the strip exactly as before): {"side": +1 | -1, "w": [m per
+    vertex], "slope": [rise per m outward, per vertex]} — on that side the sidewalk is a measured APRON: point 2 stands
+    ``w[i]`` out (not ``sidewalk_w``) and ``slope[i] * w[i]`` above the curb top (the apron's own fall away from the
+    lane), point 3 ``grade_w`` further and ``grass_clearance`` under the apron's back edge — or, with "lip" [m per
+    vertex], on the measured ground there (the ground ``grade_w`` past the edge above the apron's own edge). With
+    "round_m" (> 0) point 1 is no curb top but the end of a round_m transition at the mean of the bank's fall past the
+    edge and the apron's (the measured knee rounded, centred on it). Same four points a row,
+    so every tool that reads the strip by index (tools/mouth_weld.curb_index) reads it unchanged."""
     pts = centerline_m
     n = len(pts)
     closed = abs(pts[0][0] - pts[-1][0]) < 1e-6 and abs(pts[0][2] - pts[-1][2]) < 1e-6
@@ -148,10 +157,27 @@ def curb_sidewalk(centerline_m: list[Vertex], widths_m: list[float], *, lift: fl
             half = widths_m[i] / 2.0
             edge_bank = side * half * (math.tan(bank_at(arc)) if bank_at else 0.0)
             r = len(verts)
-            for off, h in profile:
+            prof_i, tot_i = profile, total_w
+            if apron is not None and side == apron["side"]:
+                wa, sa = float(apron["w"][i]), float(apron["slope"][i])
+                lip = (float(apron["lip"][i]) if apron.get("lip") is not None else -grass_clearance)
+                rm = float(apron.get("round_m") or 0.0)
+                if rm > 0.0:
+                    # the knee rounded (ledger 0085): point 1 ends a round_m transition at the mean of the bank's own
+                    # fall past this edge (side * tan(bank): rise per m away from the lane) and the apron's
+                    sb = (side * math.tan(bank_at(arc)) if bank_at else 0.0)
+                    h1 = lift + 0.5 * (sb + sa) * rm
+                    h2 = h1 + sa * (curb_face_w + wa - rm)
+                    prof_i = [(0.0, lift), (rm, h1), (curb_face_w + wa, h2), (curb_face_w + wa + grade_w, h2 - lift + lip)]
+                else:
+                    prof_i = [(0.0, lift), (curb_face_w, lift + curb_h),
+                              (curb_face_w + wa, lift + curb_h + sa * wa),
+                              (curb_face_w + wa + grade_w, curb_h + sa * wa + lip)]
+                tot_i = tile_m                      # U in metres / tile_m like V: a 6 m apron is not one stretched texel row
+            for off, h in prof_i:
                 o = half + off
                 verts.append((x + nx * o, y + edge_bank + h, z + nz * o))
-                uvs.append((off / total_w, arc / tile_m))
+                uvs.append((off / tot_i, arc / tile_m))
             rows.append(r)
         last = m if closed else m - 1
         for k in range(last):

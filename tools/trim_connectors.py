@@ -244,6 +244,14 @@ def capped_blend_length(piece, cut, host_y, at_start, frozen=(), cap=GRADE_CAP, 
     return best
 
 
+# BANKED HOSTS (opt-in route.trim_host_bank, ledger 0085 Pikes Peak; absent = {} = the centreline height, as before):
+# host name -> f(x, z) = the host's bank (radians, + = its left edge higher) at a point. On a banked host the cut lands
+# at the deck's own height where it stands (centreline + lateral x tan(bank)), not the centreline's: on Pikes Peak's
+# 12-17 % bank the inside edge is 1.0-1.8 m under the centre, and the blend up to it followed by the weld's warp down
+# left a 0.2-0.4 m dip ~27 m into each infield road.
+HOST_BANK: dict = {}
+
+
 def _trim_against(conns, hosts, mouths, deltas=None, capped=(), no_reach=()):
     """conns: list of connector dicts to trim; hosts: list of (name, pts, widths). Returns new list.
     `deltas` (optional dict connector name -> [(x, z, dy)]) collects every blended point's height change.
@@ -319,6 +327,9 @@ def _trim_against(conns, hosts, mouths, deltas=None, capped=(), no_reach=()):
                     cx, cz = po[0] + (pi_[0] - po[0]) * f, po[2] + (pi_[2] - po[2]) * f
                     hpts = host_pts[hname]
                     host_y, hseg, ht = host_height(hpts, cx, cz)
+                    if hname in HOST_BANK:
+                        d_b, _hb, _kb, sd_b = _lateral(cx, cz, hpts, host_w[hname])
+                        host_y += sd_b * d_b * math.tan(HOST_BANK[hname](cx, cz))
                     cut = (cx, host_y, cz)
                     # the approach direction: from the piece's point next to the cut (po unless the cut IS po)
                     ox, oz = po[0], po[2]
@@ -699,13 +710,14 @@ def cut_at_pads(conns, pads):
     for c in conns:
         pts = [tuple(p) for p in c["points_xyz_m"]]
         w = list(c["widths_m"])
-        hit = None
+        # every box the street enters (ledger 0085, Pikes Peak: the infield road runs from one oval junction pad to the
+        # other and is cut at both); a street entering one box is cut exactly as before
+        hits = []
         for pd in pads:
-            ins = [_in_poly(p[0], p[2], pd["box"]) for p in pts]
-            if any(ins):
-                hit = (pd, ins)
-                break
-        if hit is None:
+            ins_pd = [_in_poly(p[0], p[2], pd["box"]) for p in pts]
+            if any(ins_pd):
+                hits.append((pd, ins_pd))
+        if not hits:
             # a street that already ENDS on a box edge (the grid's OSM ways stop at the declared arm cut: 50th_dahlia's
             # grid_unclassified_0 and grid_tertiary_44, 2-4 mm off it) is an arm as it stands, its end never reached on
             # into the pad (round G: they were stretched to the lap and stood under the deck). On the edge = within
@@ -725,17 +737,21 @@ def cut_at_pads(conns, pads):
                         print(f"[trim] {c['name']} ({end}) ends on pad {pd['id']}'s box edge: an arm as it stands")
                         break
             continue
-        pd, ins = hit
-        box = [tuple(q) for q in pd["box"]]
+        ins = [any(h[1][k] for h in hits) for k in range(len(pts))]
         m = len(pts)
 
         def crossing(i_out, i_in):
+            """where the step from an outside point into a box crosses that box's edge: (point, edge, pad)"""
             p, q = pts[i_out], pts[i_in]
-            for e in range(len(box)):
-                t = _seg_cross(p, q, box[e - 1], box[e])
-                if t is not None:
-                    return (p[0] + (q[0] - p[0]) * t, p[1] + (q[1] - p[1]) * t, p[2] + (q[2] - p[2]) * t), e
-            return None, None
+            for pd_, ins_pd in hits:
+                if not ins_pd[i_in]:
+                    continue
+                box_ = [tuple(b) for b in pd_["box"]]
+                for e in range(len(box_)):
+                    t = _seg_cross(p, q, box_[e - 1], box_[e])
+                    if t is not None:
+                        return (p[0] + (q[0] - p[0]) * t, p[1] + (q[1] - p[1]) * t, p[2] + (q[2] - p[2]) * t), e, pd_
+            return None, None, None
         pieces = []
         i = 0
         while i < m:
@@ -747,15 +763,15 @@ def cut_at_pads(conns, pads):
                 j += 1
             piece, pw, ends = list(pts[i:j]), list(w[i:j]), []
             if i > 0:
-                cp, e = crossing(i, i - 1)
+                cp, e, pd_ = crossing(i, i - 1)
                 piece.insert(0, cp)
                 pw.insert(0, w[i])
-                ends.append(("start", cp, e))
+                ends.append(("start", cp, e, pd_))
             if j < m:
-                cp, e = crossing(j - 1, j)
+                cp, e, pd_ = crossing(j - 1, j)
                 piece.append(cp)
                 pw.append(w[j - 1])
-                ends.append(("end", cp, e))
+                ends.append(("end", cp, e, pd_))
             if _plan_len(piece) >= MIN_PIECE_M:
                 pieces.append((piece, pw, ends))
             i = j
@@ -764,14 +780,16 @@ def cut_at_pads(conns, pads):
             rec = {k: v for k, v in c.items() if k not in ("name", "points_xyz_m", "widths_m")}
             rec.update({"name": name, "points_xyz_m": [[round(v, 3) for v in p] for p in piece], "widths_m": pw})
             out.append(rec)
-            for end, cp, e in ends:
+            for end, cp, e, pd in ends:
+                box = [tuple(b) for b in pd["box"]]
                 arms.append({"pad": pd["id"], "connector": c["name"], "cut_xyz": [round(v, 3) for v in cp],
                              "box_edge": [list(box[e - 1]), list(box[e])],
                              "declared_arm": next((a["connector"] for a in pd.get("arms") or []
                                                    if _project(cp[0], cp[2], [(a["cut"][0][0], 0, a["cut"][0][1]),
                                                                               (a["cut"][1][0], 0, a["cut"][1][1])])[0] < 1.0),
                                                   None)})
-        print(f"[trim] {c['name']}: cut at pad {pd['id']}'s box ({sum(ins)} pt(s) inside dropped, {len(pieces)} piece(s))")
+        for pd, ins_pd in hits:
+            print(f"[trim] {c['name']}: cut at pad {pd['id']}'s box ({sum(ins_pd)} pt(s) inside dropped, {len(pieces)} piece(s))")
     return out, arms
 
 
@@ -898,6 +916,18 @@ def build(project_dir):
 
     # pass 1: everything vs the mainline
     capped = [str(x) for x in (cfg.get("route", {}).get("trim_blend_grade_cap") or [])]
+    if (cfg.get("route") or {}).get("trim_host_bank"):
+        rel_cf = (cfg.get("route") or {}).get("crossfall_file")
+        if not rel_cf:
+            raise SystemExit("[trim] route.trim_host_bank needs route.crossfall_file (the mainline's measured bank)")
+        cfj = json.loads((proj / rel_cf).read_text(encoding="utf-8"))
+        cxz, cbk = cfj["points_xz"], cfj["bank_rad"]
+
+        def _bank_at(x, z, cxz=cxz, cbk=cbk):
+            j = min(range(len(cxz)), key=lambda k: (cxz[k][0] - x) ** 2 + (cxz[k][1] - z) ** 2)
+            return float(cbk[j])
+        HOST_BANK["MAINLINE"] = _bank_at
+        print(f"[trim] route.trim_host_bank: cuts on the MAINLINE land on its banked deck ({len(cbk)} stations, {rel_cf})")
     first = _trim_against(conns.get("connectors", []), [("MAINLINE", main, local["widths_m"])], mouths, deltas,
                           capped=capped, **({"no_reach": arm_ends} if arm_ends else {}))
     # pass 2: non-host pieces vs the divided trunks (host = any piece of a divided connector, not its _loop)

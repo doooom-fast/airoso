@@ -297,7 +297,12 @@ def intake(proj: Path, *, connectors: bool | None = None) -> dict:
     # ledger 0080 2a (opt-in, the SD freeway port): lm_intake.line_file / connectors_file name the measured versions of
     # the line and the connectors in source_data (tools/naip_carriageways.py: NAIP edges); absent = the plain names
     line_name = li.get("line_file") or "centerline.local.json"
-    conn_name = li.get("connectors_file") or "connectors.local.json"
+    # lm_intake.connectors_file has two readings, one per port (integration 2026-11-10: both branches named the key): a
+    # bare FILE NAME is the freeway's (a file in source_data, ledger 0080 2a); a PATH (it has a separator) is a file
+    # inside the PORT project (ledger 0085, Pikes Peak's infield roads: "source/connectors.infield.json"), read below
+    _cf = li.get("connectors_file")
+    port_conn = _cf if isinstance(_cf, str) and ("/" in _cf or "\\" in _cf) else None
+    conn_name = (None if port_conn else _cf) or "connectors.local.json"
     for nm in (line_name, conn_name):
         if "/" in nm or "\\" in nm or nm.startswith("."):
             raise SystemExit(f"[lm_intake] {nm!r} must be a file name in the source data folder")
@@ -770,6 +775,131 @@ def intake(proj: Path, *, connectors: bool | None = None) -> dict:
                     "width_m": [round(min(widths), 2), round(max(widths), 2)]}
         print(f"[lm_intake] {side_w} lane edge onto the measured wall ({rel_w}): edge moved {wall_rep['face_offset_m']} m, "
               f"widths now {wall_rep['width_m'][0]}..{wall_rep['width_m'][1]} m")
+    # A LANE EDGE ON THE MEASURED BANK (lm_intake.edge_on_bank {"side": "left"|"right", "file": <a surface file inside the
+    # source track>, "heights": "plane"}; ledger 0085, Pikes Peak). Where a banked surface runs on past the traced lane,
+    # its real edge is where the bank's plane ends: the 2018 lidar's knee (tracks/pikes-peak/source/lidar/infield/
+    # oval_surface.py: per 3 m station of the built line, the knee's lateral offset from that line's centre, smoothed, and
+    # the lane plane z = a + b * lateral). That side's edge is moved onto it, the other edge kept: the centre shifts by half
+    # the move and the width changes by all of it (as edge_on_wall). heights "plane": the moved centre takes the plane's
+    # height where it now stands (the lidar ground; the assembler lifts the deck as everywhere), so the deck is the
+    # measured plane, not the old centre's height carried sideways down a 17 % bank. Each vertex reads the two stations
+    # either side of its foot on the station polyline, by position. The banking (lm_intake.crossfall, keyed by position)
+    # moves with the line: each of its points takes the move of the vertex nearest it. Absent = no move.
+    eob = li.get("edge_on_bank")
+    bank_rep = None
+    bank_move = None                                          # (pre-move points, per-vertex (dx, dz)) for the crossfall
+    if eob:
+        rel_b = eob["file"]
+        if rel_b.startswith(("/", "\\")) or ".." in Path(rel_b).parts:
+            raise SystemExit(f"[lm_intake] lm_intake.edge_on_bank.file {rel_b!r} must be a plain path inside the source track")
+        side_b = eob.get("side", "left")
+        if side_b not in ("left", "right"):
+            raise SystemExit(f"[lm_intake] edge_on_bank side {side_b!r}: left or right")
+        heights_b = eob.get("heights")
+        if heights_b not in (None, "plane"):
+            raise SystemExit(f"[lm_intake] edge_on_bank heights {heights_b!r}: \"plane\" or absent")
+        bj = json.loads((src / rel_b).read_text(encoding="utf-8"))
+        S_b = bj["stations"]
+        if len(S_b) < 3:
+            raise SystemExit(f"[lm_intake] {rel_b}: {len(S_b)} stations")
+        sgn_b = 1.0 if side_b == "left" else -1.0
+        n_s = len(S_b)
+
+        def _station_at(px, pz):
+            """The station values at the foot of (px, pz) on the closed station polyline, interpolated along it."""
+            best = None
+            for k in range(n_s):
+                a_, b_ = S_b[k], S_b[(k + 1) % n_s]
+                ax, az = a_["xz"]
+                dx_, dz_ = b_["xz"][0] - ax, b_["xz"][1] - az
+                L2 = dx_ * dx_ + dz_ * dz_
+                t = 0.0 if L2 < 1e-12 else max(0.0, min(1.0, ((px - ax) * dx_ + (pz - az) * dz_) / L2))
+                d2 = (px - ax - t * dx_) ** 2 + (pz - az - t * dz_) ** 2
+                if best is None or d2 < best[0]:
+                    best = (d2, k, t)
+            d2, k, t = best
+            a_, b_ = S_b[k], S_b[(k + 1) % n_s]
+
+            def lerp(u, v):
+                return u + (v - u) * t
+            ox, oz = lerp(a_["xz"][0], b_["xz"][0]), lerp(a_["xz"][1], b_["xz"][1])
+            lx, lz = lerp(a_["left"][0], b_["left"][0]), lerp(a_["left"][1], b_["left"][1])
+            ln = math.hypot(lx, lz) or 1.0
+            return {"o": (ox, oz), "l": (lx / ln, lz / ln), "edge": lerp(a_["bank_edge_m"], b_["bank_edge_m"]),
+                    "a": lerp(a_["plane"]["a"], b_["plane"]["a"]), "b": lerp(a_["plane"]["b"], b_["plane"]["b"]),
+                    "apron_w": lerp(a_["apron"]["width_m"], b_["apron"]["width_m"]) if "apron" in a_ else None,
+                    "apron_s": lerp(a_["apron"]["slope_pct"], b_["apron"]["slope_pct"]) / 100.0 if "apron" in a_ else None,
+                    "apron_lip": (lerp(a_["apron"]["lip_step_m"], b_["apron"]["lip_step_m"])
+                                  if "lip_step_m" in a_.get("apron", {}) else None),
+                    "off_m": math.sqrt(d2)}
+        pre_b = list(pts)
+        want_apron = bool(eob.get("apron"))
+        round_b = float(eob.get("round_m", 0.0))
+        if round_b < 0.0 or (round_b > 0.0 and not want_apron):
+            raise SystemExit(f"[lm_intake] edge_on_bank.round_m {round_b}: >= 0, and only with apron true (the apron carries "
+                             f"the transition)")
+        new_pts, new_w, moves, offs, dys, ap_w, ap_s, ap_l = [], [], [], [], [], [], [], []
+        for i, (p, w) in enumerate(zip(pts, widths)):
+            sa = _station_at(p[0], p[2])
+            c = (p[0] - sa["o"][0]) * sa["l"][0] + (p[2] - sa["o"][1]) * sa["l"][1]   # lateral in the station frame
+            # the edge's outward move: left, the bank edge (+edge) minus the lane's left edge (c + w/2); right, mirrored
+            # edge_on_bank.round_m (opt-in): the knee is rounded over round_m centred on it, so the bank's plane stops
+            # round_m / 2 short of it and the apron (below) starts with a round_m transition at the two slopes' mean
+            e_ = sa["edge"] - round_b / 2.0
+            f = (e_ - (c + w / 2.0)) if side_b == "left" else (e_ - (w / 2.0 - c))
+            a, b = pts[max(0, i - 1)], pts[min(len(pts) - 1, i + 1)]
+            tx, tz = b[0] - a[0], b[2] - a[2]
+            L = math.hypot(tx, tz) or 1.0
+            lx, lz = -tz / L, tx / L                                                 # the line's own left normal
+            nx_, nz_ = p[0] + sgn_b * lx * f / 2.0, p[2] + sgn_b * lz * f / 2.0
+            y_ = p[1]
+            if heights_b == "plane":
+                c_new = (nx_ - sa["o"][0]) * sa["l"][0] + (nz_ - sa["o"][1]) * sa["l"][1]
+                y_ = sa["a"] + sa["b"] * c_new
+            new_pts.append((nx_, y_, nz_))
+            new_w.append(round(w + f, 3))
+            moves.append(f)
+            offs.append(sa["off_m"])
+            dys.append(y_ - p[1])
+            if want_apron:
+                if sa["apron_w"] is None:
+                    raise SystemExit(f"[lm_intake] edge_on_bank.apron: {rel_b} has no apron per station")
+                ap_w.append(round(sa["apron_w"] + round_b / 2.0, 3))
+                ap_s.append(round(sa["apron_s"], 5))
+                ap_l.append(None if sa["apron_lip"] is None else round(sa["apron_lip"], 3))
+        if closed:
+            new_pts[-1], new_w[-1] = new_pts[0], new_w[0]
+        if max(offs) > 6.0:
+            raise SystemExit(f"[lm_intake] edge_on_bank {rel_b}: a vertex {max(offs):.2f} m from the stations' line — "
+                             f"measured on another line")
+        bank_move = (pre_b, [(q[0] - p[0], q[2] - p[2]) for p, q in zip(pre_b, new_pts)])
+        pts, widths = new_pts, new_w
+        srt = sorted(moves)
+        bank_rep = {"side": side_b, "file": rel_b, "heights": heights_b,
+                    "edge_moved_m": {"min": round(srt[0], 2), "median": round(srt[len(srt) // 2], 2), "max": round(srt[-1], 2)},
+                    "width_m": [round(min(widths), 2), round(max(widths), 2)],
+                    "height_change_m": {"min": round(min(dys), 3), "max": round(max(dys), 3)},
+                    "line_to_stations_m_max": round(max(offs), 2)}
+        # THE APRON (edge_on_bank.apron true): past the bank's edge the measured apron to the inside edge, its width and
+        # fall per vertex for the assembler's edge strip (route.edge_apron_file, build_loop_blend.edge_apron)
+        data_dir_b = proj / "data"
+        data_dir_b.mkdir(parents=True, exist_ok=True)
+        if want_apron:
+            (data_dir_b / "apron.lm.json").write_text(json.dumps({
+                "side": side_b, "points_xz": [[round(q[0], 3), round(q[2], 3)] for q in pts], "width_m": ap_w, "slope": ap_s,
+                **({"lip": ap_l} if ap_l and all(v is not None for v in ap_l) else {}),
+                **({"round_m": round_b} if round_b > 0.0 else {}),
+                "source": f"tracks/{src_track}/{rel_b}",
+                "_doc": "lm_intake.edge_on_bank.apron (ledger 0085): the measured apron past the bank's edge, per line vertex; "
+                        "slope = rise per m away from the lane"}), encoding="utf-8")
+            bank_rep["apron"] = {"width_m": [round(min(ap_w), 2), round(max(ap_w), 2)],
+                                 "slope_pct": [round(100 * min(ap_s), 2), round(100 * max(ap_s), 2)]}
+        else:
+            (data_dir_b / "apron.lm.json").unlink(missing_ok=True)
+        print(f"[lm_intake] {side_b} lane edge onto the measured bank ({rel_b}): edge moved {bank_rep['edge_moved_m']} m, "
+              f"widths now {bank_rep['width_m'][0]}..{bank_rep['width_m'][1]} m"
+              + (f", heights on the measured plane ({bank_rep['height_change_m']['min']:+.3f}.."
+                 f"{bank_rep['height_change_m']['max']:+.3f} m)" if heights_b else ""))
     # FINER ROWS (lm_intake.resample_m; absent = the source's own spacing; ledger 0078 round 5). The assembler sweeps one
     # ribbon row per line point, so the surface is planar between rows and every change of grade a wheel path meets lands
     # on a row boundary. On a tight corner on a steep grade (Milford's s 990 left-hander, R 15 m on -13.8 %, ledger 0069)
@@ -876,6 +1006,19 @@ def intake(proj: Path, *, connectors: bool | None = None) -> dict:
         (data / "heightfield.meta.json").write_text(json.dumps(meta2), encoding="utf-8")
     want_conn = li.get("connectors", False) if connectors is None else connectors
     conn = sdata / conn_name
+    # THE PORT'S OWN SIDE STREETS (lm_intake.connectors_file, a path inside the PORT project; ledger 0085, Pikes Peak's
+    # infield roads off the measured pieces): the source track has none, so the port carries its own set (ship.json
+    # sync_in). Taken instead of the source's; the same fresh-copy rules below. Absent = as before.
+    cfile = port_conn
+    if cfile:
+        if str(cfile).startswith(("/", "\\")) or ".." in Path(str(cfile)).parts:
+            raise SystemExit(f"[lm_intake] lm_intake.connectors_file {cfile!r} must be a plain path inside the project")
+        conn = proj / str(cfile)
+        if not conn.exists():
+            raise SystemExit(f"[lm_intake] lm_intake.connectors_file {cfile}: not in the project (ship.json sync_in)")
+        want_conn = True
+        print(f"[lm_intake] connectors: the port's own ({cfile}, "
+              f"{len(json.loads(conn.read_text(encoding='utf-8'))['connectors'])} pieces)")
     if want_conn and conn.exists():
         shutil.copyfile(conn, data / "connectors.local.json")
         (data / "mouths.json").unlink(missing_ok=True)       # tools/trim_connectors.py writes it for these connectors
@@ -946,6 +1089,11 @@ def intake(proj: Path, *, connectors: bool | None = None) -> dict:
             pxz.append([round(gl[j - 1][0] + (gl[j][0] - gl[j - 1][0]) * t, 3),
                         round(gl[j - 1][2] + (gl[j][2] - gl[j - 1][2]) * t, 3)])
             pbk.append(cbk[k])
+        if bank_move is not None:                     # lm_intake.edge_on_bank moved the line: its banking moves with it
+            pre_b, mv_b = bank_move
+            for q in pxz:
+                j = min(range(len(pre_b)), key=lambda i_: (pre_b[i_][0] - q[0]) ** 2 + (pre_b[i_][2] - q[1]) ** 2)
+                q[0], q[1] = round(q[0] + mv_b[j][0], 3), round(q[1] + mv_b[j][1], 3)
         cf_out.write_text(json.dumps({"points_xz": pxz, "bank_rad": pbk, "source": f"tracks/{src_track}/data/crossfall.json",
                                       "source_frame": cf.get("frame"), "source_status": cf.get("status"),
                                       "_doc": "+ = the left edge (of travel) higher; keyed by position (ledger 0078)"}),
@@ -1086,7 +1234,8 @@ def intake(proj: Path, *, connectors: bool | None = None) -> dict:
            "y_change_max_m": round(max((abs(d) for d in dy), default=0.0), 3),
            "connectors": bool(want_conn and conn.exists()), "bespoke_files": copied, "crossfall": cf_rep, "profile": prof_rep,
            "width_taper": taper_rep, **({"pad_widths": pad_rep} if pad_rep else {}),
-           **({"corner_flare_off": flare_rep} if flare_rep else {}), "resample": resample_rep, "edge_on_wall": wall_rep, "corner_arcs": arcs_rep, "carried": carried,
+           **({"corner_flare_off": flare_rep} if flare_rep else {}), "resample": resample_rep, "edge_on_wall": wall_rep,
+           **({"edge_on_bank": bank_rep} if bank_rep else {}), "corner_arcs": arcs_rep, "carried": carried,
            "grid_upsample": up,
            "md5": {"source_centerline": _md5(need[0]), "heightfield.npy": _md5(data / "heightfield.npy"),
                    "centerline.local.json": _md5(data / "centerline.local.json")}}

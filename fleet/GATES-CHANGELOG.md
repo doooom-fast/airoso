@@ -380,6 +380,79 @@ failing on Nevada 0.1.4 from an empty workshop without the models: "0 trees writ
   its lidar top clears 2x its own ground plane's scatter: a two-sided 95 % bar, not tuned. `planted_desert_scrub` is now Bush3
   only. The treefx gate counts the same way (28 / 28).
 
+## 2026-11-09 (ledger 0085) — Kevin's force for Pikes Peak 0.2.0's infield hairpin; a declared stage force is now enforced at install
+
+**Kevin's words** (asked "How should the infield's hairpin go, so I can install 0.2.0?", the choices "Drop infield,
+install" / "Exempt hairpin, install"): "Exempt hairpin with a note to ask after driving".
+
+**What changed:**
+- `tracks/pikes-peak-lm/track.config.json` `gates.drive1.force_exemptions.stage`: one undrivable-corner window, the
+  S-curve hairpin, layout `infield`, s 650-695, versions ["0.2.0"]. The hairpin is measured 8.3-8.7 m wide, centre R
+  ~8-9 m, against drive_test's >110 deg on <9 m rule; drive_test reads 5 stations, s 665-681. `ask_after_driving`
+  carries Kevin's note. No threshold moves; every other red row still refuses the force.
+- `tools/stage_force.py`: a window may name its `layout` (it then covers that layout's report only); absent = every
+  report, as before (`tests/tools/test_stage_force.py`).
+- **`tools/ship_track.sh`**: a port that runs the `stage_force` gate is force-installed only when its verdict says
+  `force_install_ok`, and only when the audit, race gates and kn5_ground_check are green (a declared force covers
+  drive_test rows only). Until now the verdict was recorded and printed but not read at the install. The rally ports
+  (the only other users) installed with verdicts that pass this.
+
+## 2026-11-09 (ledger 0085) — Pikes Peak's two oval junctions become measured pads: verify_pads wired in, the two oval mouths leave verify_mouths; the junction_pads numbers
+
+**What changed (Pikes Peak only; every key opt-in, no other track declares them):**
+- `tracks/pikes-peak-lm/ship.json`: draft step `lm_pads` after `seat_edges`; gate `verify_pads` (P1-P7, unchanged
+  numbers) before `verify_mouths`. The infield road's NE exit and NW return are no longer welded connector mouths: trim
+  cuts rc_infield at the pads' box edges (`route.street_junctions.pad_arms`) and lm_pads welds its end rows into the
+  decks (`lm_pads.arms "streets"`). So `verify_mouths` judges only if_link's two mouths now; the NW mouth's APPROACH red
+  (3.08 %/m against 3) is not waived, its mouth no longer exists: the pad's seams are judged by verify_pads P3 (10 mm)
+  and the lap over the deck by drive_test (its step and ground rules unchanged).
+- `tracks/pikes-peak/source/lidar/infield/junction_pads.py` (new, the measurement): draft_pad_outline's grid, closing,
+  opening, smoothing, resampling and deck numbers, read from it, plus:
+  - **SAT_MAX 0.16** ⚠ [invented between measured classes]: NAIP 2023 saturation of asphalt 0.02-0.06 and the sealed
+    brownish patches 0.135 (pavement: lidar intensity 1,140-1,230, darker than the asphalt's 1,700-2,300) under it;
+    grass 0.27-0.33, dirt 0.17-0.25 over it (16 spots sampled at the two junctions, 2026-11-09);
+  - **MX 40 / 225** ⚠ [invented]: grey's brightness band (a shadow under, lane paint and the wall's caps over);
+  - **the intensity threshold** [measured per pad]: midway between the lap's own lane points and the points NAIP
+    reads as vegetation (saturation over **VEG_SAT 0.22** ⚠ [invented]): NE 2,144 / 4,000 -> 3,072, NW 1,824 / 3,776
+    -> 2,800. The infield's pale dirt (saturation 0.11, grey enough) is out on intensity 3,360;
+  - **HOLE_MAX_M2 6** ⚠ [invented]: a hole smaller than this is paint or a car and is filled; a grass island is kept
+    (draft_pad_outline fills every hole: the NE island would have been paved).
+- `tools/lm_pads_blend.py`: `lm_pads.close_arms "branches"` (new value): the box runs across roads not built get their
+  K-rail, a pad's own arm box edges do not. `true` / `false` unchanged.
+- `tools/verify_pads.py` P4: now records where it found grass (`grass_at_xz`, the first 12); its rule is unchanged.
+- `tools/trim_connectors.py` cut_at_pads: a street entering two boxes is cut at both (it was cut at the first only; one
+  box = byte-identical, `tests/tools/test_trim_pad_arms.py`).
+- `scripts/geometry/race_lap.py`: a piece's optional `via` (the join into it through declared plan points, optionally
+  with widths; absent = straight, `tests/tools/test_race_lap_via.py`). `tools/author_bespoke_blend.py`: a rail's
+  optional `stand_on` (paved prefixes it may stand on: the outer wall on the pads' deck edge).
+- `tools/lm_pads_blend.py` deck options (new, opt-in): `cut_strip` (the lap's edge strip row pinned at each cut with the
+  lane's: the NW deck met the 6-16 m apron strip 0.14 m low at its out-cut, a lip no gate drove: drive_test reads the
+  lane only) and `hold_beyond_lane` (past the lane edge on that side the deck holds the edge's height: the lidar rises
+  0.15 m into the wall's foot, and the ground's chords stood 1.4 cm over that crease, verify_pads P4).
+- **`scripts/geometry/audit_mesh.py` D (walls on a road): a new exemption, opt-in by its record.** A 1WALL vert inside a
+  junction pad's HELD BAND (pads.built.json `held_band`, written only with `hold_beyond_lane`: from the in-cut to the
+  out-cut, the lane's edge to 1.0 m past it on the held side) is the wall's own footing, counted and printed, not a
+  wall on the road. Why: between the cuts the pad's deck replaces the lap's edge strip the outer wall stands on
+  everywhere else, so the deck runs under the wall's 0.6 m foot (pads[].ribbon_right_m 0.7); without that deck one
+  module's outer corners read the assembler's unseated ground and its base went 2.6 m under the surface (drive_test:
+  floating, nothing under it). D's purpose (a wall standing in a carriageway) is untouched: the band is past the lane
+  edge, never in the lane; every other wall vert on any deck still counts, and the wall's seating stays drive_test's
+  and E's. The same pattern as the stub-barrier exemption (ledger 0054). No other track records a held band.
+- `tracks/pikes-peak/source/lidar/infield/make_connectors.py` **LOT_TAPER 0.25 m/m** ⚠ [invented]: the skid-pad band's
+  p50 width (9.16 m; no per-section widths on disk) meets the measured road at its east end at no more than this, the
+  band's points raised, never the measured ones (5 points, 9.16 -> 9.39-11.39 m): the 2.7 m step in 2 m put the lap's
+  lane edge on the strip and the grass at s 1626 (road course) / s 458 (infield).
+
+**Proof:** the clean rehearsal from an empty workshop (`D:/k10-scratch/pp_b5`, ledger 0085 section 7).
+- drive_test: oval PASS; road course PASS (ground 3 -> 0, severe 1 -> 0, kinks 14.9 -> 7.2 /km); infield red on its
+  real hairpin only (Kevin's call).
+- verify_pads: both PASS (seams 1.4 / 8.2 mm).
+- verify_mouths: PASS (if_link's two).
+- audit_mesh: 0 (1,780 held-band wall verts exempt, every one on the two pads' wall side). Before the band: one wall
+  module floating (nothing under it) on the oval, or 65-227 D hits with the deck under the wall and no exemption.
+- kn5 / ini: PASS x3. Tests: tests/tools/test_trim_pad_arms.py, test_race_lap_via.py, and the touched suites (96)
+  pass.
+
 ## 2026-11-07 (ledger 0086) — verify_mouth_corners: a new opt-in gate on every judged mouth's corners; the mouth_radii and corner-return numbers
 
 **What changed:** `tools/verify_mouth_corners.py` (new; gate step `verify_mouth_corners`; opt-in by track.config.json

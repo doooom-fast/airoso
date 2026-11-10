@@ -202,6 +202,62 @@ class ExactHostDeck(HostDeck):
         return HostDeck.at(self, x, z)
 
 
+class ApronDeck:
+    """(opt-in route.weld_deck_apron, ledger 0085; Pikes Peak) Past the host's edge on its APRON side the deck goes on as
+    the measured apron: the edge's height + the apron's fall (rise per m away from the host, per host row) x the
+    distance past the edge, out to the apron's width, held there. `base` (HostDeck / ExactHostDeck) everywhere else,
+    and on the other side. The base's level run-on read the apron (falling 3-8 % away from a 12-17 % bank) as flat:
+    the warp pulled the infield road's approach up to the edge's height and left a 3.3 %/m crease within 30 m of the
+    NW mouth (verify_mouths APPROACH, rehearsal pp_b3). `width_of_row` / `slope_of_row`: per host row index."""
+
+    def __init__(self, base, side: int, width_of_row, slope_of_row, round_m: float = 0.0):
+        self.base = base
+        self.side = 1 if side >= 0 else -1
+        self.w, self.s = list(width_of_row), list(slope_of_row)
+        self.round_m = float(round_m)
+        self.rows, self.idx = base.rows, base.idx
+        self.hits = 0
+
+    def _bank_fall(self, r):
+        """the host row's own fall past its edge on the apron side (rise per m away), off its edge and centre vertices"""
+        L, C, R = self.rows[r]
+        S = L if self.side == 1 else R
+        return (S[1] - C[1]) / max(1e-6, _plan_len(C, S))
+
+    def at(self, x, z) -> float:
+        h = self.base.at(x, z)
+        _d, k, t, o = self.base.project(x, z)
+        if (1 if o >= 0 else -1) != self.side:
+            return h
+        r0, r1 = self.idx[k], self.idx[k + 1]
+        half = self.base._half(r0, o) * (1 - t) + self.base._half(r1, o) * t
+        past = abs(o) - half
+        if past <= 0.0:
+            return h
+        w = self.w[r0] * (1 - t) + self.w[r1] * t
+        s = self.s[r0] * (1 - t) + self.s[r1] * t
+        self.hits += 1
+        rm = min(self.round_m, w)
+        if rm > 0.0:
+            # the rounded knee (route.edge_apron_file round_m): a transition at the mean of the bank's fall and the apron's
+            sb = self._bank_fall(r0) * (1 - t) + self._bank_fall(r1) * t
+            m = 0.5 * (sb + s)
+            return h + (m * past if past <= rm else m * rm + s * (min(past, w) - rm))
+        return h + s * min(past, w)
+
+    def project(self, x, z):
+        return self.base.project(x, z)
+
+    def edge_gap(self, x, z, side, inset) -> float:
+        return self.base.edge_gap(x, z, side, inset)
+
+    def inside(self, x, z, margin=0.0) -> bool:
+        return self.base.inside(x, z, margin)
+
+    def _half(self, r, o):
+        return self.base._half(r, o)
+
+
 class BeyondEndDeck:
     """(opt-in route.weld_deck_beyond_end, ledger 0079 round J; Sand Creek) A guest that meets its host right at the
     host's OPEN END (the host's own mouth on a third street) lays rows past that end, on the third street's pavement.

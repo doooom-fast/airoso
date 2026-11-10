@@ -134,6 +134,16 @@ def main():
                                             .get("weld_deck_beyond_end") or [])]
     # ledger 0078: the connectors' edge is the assembler's own (route.edge; absent = Lake Murray's curb + 1.5 m walk)
     cfg_route = (json.loads(cfgp.read_text(encoding="utf-8")).get("route") or {}) if cfgp.exists() else {}
+    # ledger 0085 (opt-in, Pikes Peak): route.weld_deck_apron — a mouth on the mainline's apron side reads the deck past
+    # the edge as the measured apron (route.edge_apron_file: width and fall per point, keyed by position); absent = as before
+    apron = None
+    if cfg_route.get("weld_deck_apron"):
+        rel_a = cfg_route.get("edge_apron_file")
+        if not rel_a:
+            raise SystemExit("[weld] FATAL: route.weld_deck_apron needs route.edge_apron_file")
+        aj = json.loads((proj / rel_a).read_text(encoding="utf-8"))
+        apron = {"side": 1 if aj["side"] == "left" else -1, "pts": aj["points_xz"], "w": aj["width_m"],
+                 "s": aj["slope"], "rows": None, "round_m": float(aj.get("round_m") or 0.0)}
     _edge_main, edge_conn = wr.edge_profile(cfg_route)
     main_pts = [tuple(p) for p in local["points_xyz_m"]]
     lay = mw.mesh_layout(main_pts, conns)
@@ -391,6 +401,18 @@ def main():
                     third.append(mw.ExactHostDeck(r3, mw.host_window(r3, lay[m2["host"]]["closed"], c3[0], c3[2])))
             deck = mw.BeyondEndDeck(deck, third, open_start=not lay[host]["closed"] and hw[0] == 0,
                                     open_end=not lay[host]["closed"] and hw[-1] == lay[host]["rows"] - 1)
+        if apron is not None and host == "MAINLINE" and side == apron["side"]:
+            # ledger 0085 (opt-in route.weld_deck_apron): past the mainline's edge on its apron side the deck is the
+            # measured apron (mouth_weld.ApronDeck), per host row off route.edge_apron_file; absent = as before
+            if apron.get("rows") is None:
+                PA, WA, SA = apron["pts"], apron["w"], apron["s"]
+                aw, as_ = [], []
+                for (_l, c_, _r) in hrows:
+                    j = min(range(len(PA)), key=lambda q: (PA[q][0] - c_[0]) ** 2 + (PA[q][1] - c_[2]) ** 2)
+                    aw.append(float(WA[j]))
+                    as_.append(float(SA[j]))
+                apron["rows"] = (aw, as_)
+            deck = mw.ApronDeck(deck, apron["side"], *apron["rows"], round_m=apron["round_m"])
         far =rows_old[min(len(rows_old) - 1, 6)][1]
         if (1 if deck.project(far[0], far[2])[3] >= 0 else -1) != side:
             raise SystemExit(f"[weld] FATAL: mouth {tag}: the piece approaches from side "

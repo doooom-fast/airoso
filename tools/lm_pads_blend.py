@@ -74,6 +74,8 @@ GROUND_UNDER_M = 0.04           # 0.17.2's [invented]: the ground under a deck (
 EDGE_BAND_M = 2.5               # 0.17.2's [invented]: outside the outline the ground this close never stands over its edge
 LAP_CLEAR_M = 1.0               # [invented] an outline run along a mouth line closer than the lap's half width + this is the lap's own edge
 EXEMPT_MARGIN_M = 0.15          # 0.17.2's: the exemption polygon this far outside the deck's outline
+HELD_BAND_M = 1.0               # [invented] the held band's record (deck.hold_beyond_lane) reaches this far past the lane
+#                                 edge: the 0.7 m wall-foot band and its traced edge's grid steps
 WALL_PREFIX = "1WALL_STUB_PAD_"
 
 
@@ -460,9 +462,22 @@ def build(proj, cfg, decls):
             _log(f"{pid}: deck {deck_rep}")
         # 1. the rows
         cuts_rows, seams = [], []
+        # THE EDGE STRIP'S ROW AT EACH CUT TOO (opt-in lm_pads.deck.cut_strip: ["left"] / ["right"] / both, ledger 0085,
+        # Pikes Peak's apron): the lap's edge strip runs on past each cut (its faces outside the pad stay), so its row
+        # there joins the deck as the ROAD row does: its profile points 1-3 added to the cut row (outline + seam, pinned
+        # at their heights). Without it the deck's own lidar surface met the 6-16 m apron strip at the NW out-cut 0.14 m
+        # low. Absent = the ROAD row alone, as before
+        cut_strip = deck_cfg.get("cut_strip") or []
+        if any(s_ not in ("left", "right") for s_ in cut_strip):
+            raise SystemExit(f"[lm-pads] FATAL: lm_pads.deck.cut_strip {cut_strip!r}: \"left\" / \"right\"")
+        curb_v = bpy.data.objects["CURB"].data.vertices if cut_strip else None
         for k in d["cuts"]:
             c = dp.lap_cut(pts3, k, d["node"])
             row = row_verts(road, lay, k)
+            if "left" in cut_strip:
+                row = [tuple(curb_v[mw.curb_index(lay, "MAINLINE", k, 1, p_)].co) for p_ in (3, 2, 1)] + row
+            if "right" in cut_strip:
+                row = row + [tuple(curb_v[mw.curb_index(lay, "MAINLINE", k, -1, p_)].co) for p_ in (1, 2, 3)]
             cr = dp.row_cut(row, P[d["node"]])
             cr["vertex"] = k
             ends = (rec.get("cut_ends_en") or {}).get(str(k))
@@ -675,10 +690,35 @@ def build(proj, cfg, decls):
             prof.append(pa_)
         s_off = dp.seam_offset_multi if arm_rows else dp.seam_offset
 
+        # HELD PAST THE LANE (opt-in lm_pads.deck.hold_beyond_lane "left" / "right", ledger 0085, Pikes Peak's outer wall):
+        # on that side, between the cuts, the deck past the lap's lane edge stands at the lane edge's own height (the point
+        # moved back onto the edge along the lap's normal), as the lap's flat edge lip does: the lidar's ground there rises
+        # into the wall's foot (0.15 m in 0.7 m at the NE pad) and the ground's chords stood over that crease. Absent = the
+        # measured deck everywhere, as before
+        hold = deck_cfg.get("hold_beyond_lane")
+        if hold not in (None, "left", "right"):
+            raise SystemExit(f"[lm-pads] FATAL: lm_pads.deck.hold_beyond_lane {hold!r}: \"left\" / \"right\"")
+        hold_s = 1.0 if hold == "left" else -1.0
+
+        def held_xy(x_, y_):
+            if hold is None:
+                return x_, y_
+            k = lapi.nearest(x_, y_)
+            if k is None or not lo_k <= k <= hi_k:
+                return x_, y_
+            (ax_, ay_), (bx_, by_) = P[max(k - 1, 0)], P[min(k + 1, len(P) - 1)]
+            tl = math.hypot(bx_ - ax_, by_ - ay_) or 1.0
+            nx_, ny_ = -(by_ - ay_) / tl, (bx_ - ax_) / tl             # the lap's left normal
+            past = hold_s * ((x_ - P[k][0]) * nx_ + (y_ - P[k][1]) * ny_) - W[k] / 2.0
+            if past <= 0.0:
+                return x_, y_
+            return x_ - hold_s * nx_ * past, y_ - hold_s * ny_ * past
+
         def deck_z(x_, y_):
             """the measured deck where the lidar paves it (+ the seams' departures, faded in); the lap's own ribbon
             surface where only the ribbon does (the asphalt narrower than the lane, or this line off the measured edge);
             the nearest measured node, then the seams, beyond"""
+            x_, y_ = held_xy(x_, y_)
             g = dp.deck_at(rec["deck"], x_, y_)
             if g is not None:
                 return g + s_off(prof, x_, y_)
@@ -743,7 +783,17 @@ def build(proj, cfg, decls):
         # lm_pads.close_arms false (ledger 0079, Sand Creek's free roam: the side streets are joined, not closed): no K-rail
         # across a road the lap does not take; the deck stays open to the street (its weld is the junction step's).
         # Absent = true, the Lariat's barriers as before
-        runs_ = mouth_runs(ring, segs) if (cfg.get("lm_pads") or {}).get("close_arms", True) else []
+        close = (cfg.get("lm_pads") or {}).get("close_arms", True)
+        if close not in (True, False, "branches"):
+            raise SystemExit(f"[lm-pads] FATAL: lm_pads.close_arms {close!r}: true, false or \"branches\"")
+        runs_ = mouth_runs(ring, segs) if close else []
+        if close == "branches":
+            # "branches" (opt-in, ledger 0085, Pikes Peak's NW junction): the roads the build does not complete are closed
+            # (Kevin: "a road we are not completing gets a barrier, not a curve"), the built arms stay open: a run along
+            # one of this pad's arm box edges gets no barrier
+            arm_e = {(tuple(a["box_edge"][0]), tuple(a["box_edge"][1])) for a in arm_all if a["pad"] == pid}
+            arm_e |= {(b_, a_) for a_, b_ in arm_e}
+            runs_ = [(k_, run) for k_, run in runs_ if (tuple(segs[k_][0]), tuple(segs[k_][1])) not in arm_e]
         for m, (k_seg, run) in enumerate(runs_):
             # a box edge the outline follows BESIDE the lap (the measurement's box clipped the lap arm's own wide
             # pavement; the lap's ribbon was kept) is not a road leaving: no barrier along the lap
@@ -814,6 +864,19 @@ def build(proj, cfg, decls):
         })
         if deck_rep is not None:
             built[-1]["deck_fill"] = deck_rep
+        if hold is not None:
+            # the held band (hold_beyond_lane): the deck past the lap's lane edge on that side, from the in-cut to the
+            # out-cut, out to HELD_BAND_M past the edge: where the deck runs under the wall's foot (audit_mesh D reads
+            # it: the outer wall standing on its own footing there is not a wall on the road)
+            inner, outer = [], []
+            for k in range(lo_k, hi_k + 1):
+                (ax_, ay_), (bx_, by_) = P[max(k - 1, 0)], P[min(k + 1, len(P) - 1)]
+                tl = math.hypot(bx_ - ax_, by_ - ay_) or 1.0
+                nx_, ny_ = -(by_ - ay_) / tl * hold_s, (bx_ - ax_) / tl * hold_s     # out of the lane, the held side
+                inner.append([round(P[k][0] + nx_ * W[k] / 2.0, 3), round(P[k][1] + ny_ * W[k] / 2.0, 3)])
+                outer.append([round(P[k][0] + nx_ * (W[k] / 2.0 + HELD_BAND_M), 3),
+                              round(P[k][1] + ny_ * (W[k] / 2.0 + HELD_BAND_M), 3)])
+            built[-1]["held_band"] = {"side": hold, "polygon_xz": inner + outer[::-1]}
         _log(f"{pid}: rows v{lo_k} ({len(cuts_rows[0][2])} verts) / v{hi_k} ({len(cuts_rows[1][2])}); lap faces removed "
              f"{removed}; deck {len(verts3)} v / {len(faces)} f, {built[-1]['area_m2']} m2; seam residual max "
              f"{built[-1]['seam_residual_m']['max']} m; {widened} ribbon-edge points, {united * 0.0625:.1f} m2 of this line's ribbon united; {len(arm_rows)} street arm row(s) {[m_['piece'] for m_ in arm_meta]}; ground {held}; {len(bars)} mouth barrier(s) ({along_lap} box runs along the lap skipped) "

@@ -437,6 +437,10 @@ draft_paint() {
   step "author: measured road paint on a street's built road (tools/author_paint_blend.py; ledger 0079 round N; self-checked; no route.paint = no-op)"
   (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_paint_blend.py" -- "$PROJ" 2>&1 | grep "^\[paint\]\|FATAL\|Error\|Traceback" )
 }
+draft_apron_road() {
+  step "author: the mainline's measured apron (the edge strip's apron side) as its own 1ROAD object (tools/apron_road_blend.py; ledger 0085; self-checked; no route.edge_apron_file = no-op)"
+  (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/apron_road_blend.py" -- "$PROJ" 2>&1 | grep "^\[apron-road\]\|FATAL\|Error\|Traceback" )
+}
 draft_ground_patch() {
   step "author: TERRAIN seated on the measured lidar ground in the declared patches (tools/ground_patch_blend.py; ledger 0079 round I; self-checked; no terrain.lidar_patches = no-op)"
   (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/ground_patch_blend.py" -- "$PROJ" 2>&1 | grep "^\[ground-patch\]\|FATAL\|Error\|Traceback" )
@@ -509,6 +513,13 @@ for lid in sys.argv[2:]:
     if r.get('fail') is not False or (r.get('leak_cells') or 0)>0 or r.get('blocked') or r.get('forbidden_reached') or r.get('spawns_unreached'):
         bad.append(lid+': planned no_route FAIL')
 if bad: raise SystemExit('PLANNED no_route: '+'; '.join(bad))" "$PROJ/data" $RACE_IDS
+}
+author_race_laps() {
+  # ledger 0085 (Pikes Peak): a BARE race layout (kind race, no race_furniture) that names a lap gets its stitched line
+  # here (scripts/geometry/race_lap.py -> data/lap.<id>.json); a furnished race layout's comes from barrier_bands. List it
+  # before layout_dummies; a track that names no lap does not list it
+  step "author: the race laps the layouts name (scripts/geometry/race_lap.py -> data/lap.<id>.json; ledger 0085)"
+  (cd "$AIROSO" && python -m scripts.geometry.race_lap "$PROJ")
 }
 author_layout_dummies() {
   (cd "$AIROSO" && python tools/layout_dummies.py "$PROJ")         # data/dummies_<id>.json per layout; exit 1 on validation
@@ -841,6 +852,7 @@ gate_stage_force() {
 p=sys.argv[1]
 print(1 if os.path.exists(p) and json.load(open(p,encoding='utf-8')).get('force_install_ok') is True else 0)" "$PROJ/data/stage_force.json")
   D1_FORCE_OK="${D1_FORCE_OK%$'\r'}"
+  SF_RAN=1
 }
 gate_race_gates() {
   [ -n "$RACE_IDS" ] || { no_race race_gates; return 0; }
@@ -1309,6 +1321,12 @@ fi
 if [ "$DT_S" != 0 ] || [ "$AU_S" != 0 ] || [ "$DT_R" != 0 ] || [ "$AU_R" != 0 ] || [ "$NR_R" != 0 ] || [ "$KG" != 0 ]; then
   if [ "$NR_R" != 0 ]; then
     echo "  NOT INSTALLED: no_route exited $NR_R (2 = an input error: the containment verdict could not be computed)"; exit 1
+  elif [ "$FORCE" = 1 ] && [ "${SF_RAN:-0}" = 1 ] && [ "$D1_FORCE_OK" != 1 ]; then
+    # ledger 0085: a port that runs the stage_force gate is forced only where Kevin's declared force covers every red
+    # drive_test row (data/stage_force.json force_install_ok); until now its verdict was recorded but not read here
+    echo "  NOT INSTALLED: --force-install refused — Kevin's declared force does not cover every red row (data/stage_force.json why_not)"; exit 1
+  elif [ "$FORCE" = 1 ] && [ "${SF_RAN:-0}" = 1 ] && { [ "$AU_S" != 0 ] || [ "$DT_R" != 0 ] || [ "$AU_R" != 0 ] || [ "$KG" != 0 ]; }; then
+    echo "  NOT INSTALLED: --force-install refused — a declared force covers drive_test rows only, and the audit / race gates / kn5_ground_check are red"; exit 1
   elif [ "$FORCE" = 1 ]; then
     echo "  --force-install: installing RED (caller asserts no metric is worse than the reference)"
   else

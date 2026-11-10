@@ -464,3 +464,31 @@ def test_gap_window_reaches_past_the_connector_edge():
     c = 3.08 * 14.89
     lo = min(3.08 * q for q in w)
     assert c - lo >= 12.86 + 1e-9 and c - 3.08 * (min(w) + 1) < 12.86 + 3.08, (c - lo, sorted(w))
+
+
+def test_an_apron_deck_falls_past_the_edge_on_its_side_only():
+    """ledger 0085 (route.weld_deck_apron, Pikes Peak): past the host's edge on the apron side the deck falls at the
+    row's apron slope out to the apron's width, then holds; inside the pavement and on the other side it is the base"""
+    rows = host_rows()
+    base = deck()
+    n = len(rows)
+    ap = mw.ApronDeck(base, +1, [6.0] * n, [-0.066] * n)
+    hits = 0
+    for x in (-20.0, 0.0, 20.0):
+        assert abs(ap.at(x, 3.0) - base.at(x, 3.0)) < 1e-9                    # on the pavement
+        assert abs(ap.at(x, -HALF_H - 4.0) - base.at(x, -HALF_H - 4.0)) < 1e-9  # the other side
+        assert abs(ap.at(x, HALF_H + 4.0) - (base.at(x, HALF_H + 4.0) - 0.066 * 4.0)) < 1e-9
+        assert abs(ap.at(x, HALF_H + 9.0) - (base.at(x, HALF_H + 9.0) - 0.066 * 6.0)) < 1e-9   # held past its width
+    assert ap.hits > 0
+
+
+def test_an_apron_deck_with_a_rounded_knee():
+    """round_m: past the edge the deck runs at the mean of the host row's own fall and the apron's for round_m, then the
+    apron's (the host rows here are level, so the mean is half the apron's fall)"""
+    rows = host_rows()
+    base = deck()
+    n = len(rows)
+    ap = mw.ApronDeck(base, +1, [6.0] * n, [-0.066] * n, round_m=2.0)
+    e = base.at(0.0, HALF_H + 1.0)
+    assert abs(ap.at(0.0, HALF_H + 1.0) - (e - 0.033 * 1.0)) < 1e-9
+    assert abs(ap.at(0.0, HALF_H + 4.0) - (base.at(0.0, HALF_H + 4.0) - 0.033 * 2.0 - 0.066 * 2.0)) < 1e-9

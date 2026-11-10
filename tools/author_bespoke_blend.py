@@ -134,12 +134,13 @@ RAIL_KINDS = {"tecpro": ("1WALL_TECPRO", 1.2, 1.5, 0.8),
 EDGE_OF = {}                   # id(BVH) -> the longest edge of each polygon, in metres (for the collider's fine-ground rule)
 
 
-def bvh(prefixes):
-    """(BVH, owner name per polygon) over every mesh whose name starts with a prefix, world space"""
+def bvh(prefixes, exclude=()):
+    """(BVH, owner name per polygon) over every mesh whose name starts with a prefix (and none of `exclude`), world space"""
     verts, polys, owner, edges = [], [], [], []
     for o in bpy.data.objects:
         u = o.name.upper()
-        if o.type != "MESH" or not u.startswith(prefixes) or u.startswith(OWN_PREFIXES):
+        if (o.type != "MESH" or not u.startswith(prefixes) or u.startswith(OWN_PREFIXES)
+                or (exclude and u.startswith(tuple(exclude)))):
             continue
         mw = o.matrix_world
         off = len(verts)
@@ -993,9 +994,26 @@ def guardrail(col, spec, proj, bad):
     return {"runs": len(runs), "rail_m": round(total, 1), "posts": n_post}
 
 
-def rails(col, spec, to_xy, ground, paved, bad):
+def rails(col, spec, to_xy, ground, paved, bad, edge=None):
     rows = []
     for k, r in enumerate(spec):
+        # SEATED ON WHAT IT STANDS ON (opt-in "seat": "surface", ledger 0085, Pikes Peak's outer wall): the module's
+        # ring reads the higher of the ground and the track edge's own surface (names.track_edge, the circuit edge strip
+        # the wall stands on) — at the author stage the ground under a BANKED edge strip is the assembler's terrain, up
+        # to 1.6 m under the strip (the prep pins it only later): 0.1.0's wall stood its 1.27 m on that ground, so no
+        # module rose more than 0.61 m over the pavement and 56 % were under it. Absent = the ground, as before.
+        on_surface = r.get("seat") == "surface"
+        if r.get("seat") not in (None, "surface"):
+            bad.append(f"rail {r['key']}: seat {r.get('seat')!r} (only \"surface\")")
+            continue
+        if on_surface and edge is None:
+            bad.append(f"rail {r['key']}: seat surface but no track_edge mesh in the scene")
+            continue
+        # MAY STAND ON (opt-in "stand_on": [name prefixes], ledger 0085, Pikes Peak's junction pads): a module over those
+        # paved meshes is not "on a road" (the outer wall's foot on a pad deck's edge, where the deck replaces the lap's
+        # edge strip; names.track_edge then seats it on the deck). Absent = every paved mesh, as before
+        stand_on = tuple(str(p).upper() for p in r.get("stand_on") or [])
+        paved_r = bvh(PAVED, exclude=stand_on)[0] if stand_on else paved
         line = [to_xy(p) for p in r["polyline_lonlat"]]
         prefix, hgt, mod, dep = RAIL_KINDS[r["kind"]]
         hgt = float(r.get("height_m", hgt))      # a measured height (ledger 0078: Pikes Peak's wall off the lidar)
@@ -1008,12 +1026,19 @@ def rails(col, spec, to_xy, ground, paved, bad):
             cnt = int(seg // mod)
             for m in range(cnt):
                 x0, y0 = a[0] + ux * m * mod, a[1] + uy * m * mod
-                x1, y1 = x0 + ux * (mod - 0.02), y0 + uy * (mod - 0.02)
+                # opt-in "overlap_m" (ledger 0085, Pikes Peak's outer wall): the modules interlock, each running this far
+                # into the next (a K-rail line is pinned end to end; the 2 cm joint let drive_test's wall probe through at
+                # s 1200.8); absent = the 2 cm joint, as before
+                run = mod + float(r["overlap_m"]) if r.get("overlap_m") is not None else mod - 0.02
+                x1, y1 = x0 + ux * run, y0 + uy * run
                 ring = [(x0 - nx * dep / 2, y0 - ny * dep / 2), (x1 - nx * dep / 2, y1 - ny * dep / 2),
                         (x1 + nx * dep / 2, y1 + ny * dep / 2), (x0 + nx * dep / 2, y0 + ny * dep / 2)]
                 ring = inward_ring(ring)
                 gs = [down(ground, x, y) for x, y in ring]
-                if any(g is None for g in gs) or any(down(paved, x, y) is not None for x, y in ring):
+                if on_surface:
+                    es = [down(edge, x, y) for x, y in ring]
+                    gs = [g if e is None else (e if g is None else max(g, e)) for g, e in zip(gs, es)]
+                if any(g is None for g in gs) or any(down(paved_r, x, y) is not None for x, y in ring):
                     if r.get("auto"):
                         left_out += 1
                     else:
@@ -1074,7 +1099,8 @@ def main():
         report["scrub"] = scrub(col, spec["scrub"], to_xy, ground, paved, walls, bad)
     far = bvh(GROUND_FAR)[0]
     if spec.get("rails"):
-        report["rails"] = rails(col, spec["rails"], to_xy, ground, paved, bad)
+        report["rails"] = rails(col, spec["rails"], to_xy, ground, paved, bad,
+                                edge=bvh(TRACK_EDGE)[0] if any(r.get("seat") for r in spec["rails"]) else None)
     if spec.get("blocks"):
         report["blocks"] = blocks(col, spec["blocks"], proj, to_xy, far, ground, paved, walls, bad)
     if spec.get("pads"):

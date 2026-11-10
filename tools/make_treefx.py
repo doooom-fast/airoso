@@ -115,9 +115,10 @@ ZONES = {
     # Sand Creek's cottonwoods off NAIP: there is no cottonwood model, so the sycamores, the riparian stand-in north_riparian_trees uses
     "planted_cottonwood": [("SycamoreV1.bin", 0.8, 1.1, 3), ("SycamoreV2.bin", 0.8, 1.1, 2), ("SycamoreV3.bin", 0.8, 1.1, 2)],
     "planted_neighbourhood": [("Oak3.bin", 0.6, 0.9, 3), ("SycamoreV2.bin", 0.6, 0.9, 1)],
-    # Nevada Nights' creosote clumps off NAIP 2019 + 2022 (ledger 0089): there is no creosote model; Lake Murray's two
-    # generic shrubs stand in by growth form (an open, many-stemmed evergreen shrub of 1-2 m), sized by planted.native_h_m
-    "planted_desert_scrub": [("Bush.bin", 0.6, 1.0, 1), ("Bush3.bin", 0.6, 1.0, 1)],
+    # Nevada Nights' scrub clumps off NAIP 2019 + 2022 at their lidar heights (ledger 0089): there is no creosote model;
+    # Lake Murray's Bush3 stands in, sized by planted.native_h_m. Bush.bin is out until its drawn height is settled: its
+    # tree.ini HEIGHT reads 20.66 m, ten times Bush3's, while Lake Murray draws it as a 1-2 m shrub (Nevada 0.1.5)
+    "planted_desert_scrub": [("Bush3.bin", 0.6, 1.0, 1)],
     # Waring's planted median: small median trees (A2, st 250-550). The islands' LOW planting is not here: the
     # assembler (author_median_blend) already plants every raised island, north pieces included, and exports it as
     # scatter_positions.json median_planting (v0.19.0 shipped it)

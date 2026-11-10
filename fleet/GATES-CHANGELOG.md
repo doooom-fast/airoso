@@ -42,6 +42,9 @@ failing on Nevada 0.1.4 from an empty workshop without the models: "0 trees writ
   are the config's own, already marked invented in `plan_grassfx_aerial.py`'s docstring, and unchanged.
 - ⚠ `plan_scrub_naip.py` (Nevada): `K_MAD` 4.0 and `MATCH_M` 1.0 are invented, not a gate. The count is stable over 0.8-1.5 m
   (45-52).
+- Nevada 0.1.5 (same ledger, later the same day; no gate change): `plan_scrub_measured.py` `K_SD` 2.0. A clump is planted when
+  its lidar top clears 2x its own ground plane's scatter: a two-sided 95 % bar, not tuned. `planted_desert_scrub` is now Bush3
+  only. The treefx gate counts the same way (28 / 28).
 
 ## 2026-11-05 — circuit kerbs round 3: a block reader for faded kerbs, and the bar it must pass (ledger 0081 round 3; no gate threshold, no bypass)
 

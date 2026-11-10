@@ -49,7 +49,8 @@
       "data/heightfield.npy",
       "data/heightfield.meta.json",
       "textures/kerb_redwhite.png",
-      "source/vegetation/scrub.naip.json"
+      "source/vegetation/scrub.naip.json",
+      "source/vegetation/scrub.measured.json"
     ],
     "globs": [
       "source/trees/*.bin"

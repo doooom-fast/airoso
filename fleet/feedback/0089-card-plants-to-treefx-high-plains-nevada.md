@@ -250,3 +250,121 @@ needed: the card atlases are simply no longer referenced.
   - Nevada's folder carries both .bin (md5 as above) and 49 trees.
 - **Menu pictures**: re-rendered with the same cameras; the packs' own are in `2026-11-09_183441_previews`.
 - Not driven.
+
+## The lidar reads (Kevin, 2026-11-09: "Yes, both")
+
+### The downloads (Mac, 2026-11-09)
+
+Each one has its own directory under the scratchpad's `sys/dl/`. They are not in the repo, and nothing is on /Volumes/Drive.
+
+- **Size first**, by HTTP HEAD on every node the box needs: High Plains 16.2 MB (cap 120), Nevada 8.0 MB (cap 40).
+- The points were decoded on the G10 (`systemd-run --user --scope -p MemoryMax=4G -p MemorySwapMax=0 nice -n 19 ionice -c3`;
+  the five camera services were active before and after). The box's points came back as an npz.
+
+| site | URL | files | bytes |
+|---|---|---|---|
+| High Plains | `https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/` | `ept.json`; 3 `ept-hierarchy/*.json`; 108 `ept-data/<D-X-Y-Z>.laz` (depths 0-11, every node meeting -103.9065..-103.8885, 39.7327..39.7378); `ept-sources/list.json` | 2,522; 68,303; **16,228,435**; 5,542,645 (fetched to date the flight, not used: GPS time did that) |
+| Nevada | `https://s3-us-west-2.amazonaws.com/usgs-lidar-public/NV_ClarkCo_2_B22/` | `ept.json`; 5 `ept-hierarchy/*.json`; 40 `ept-data/*.laz` (box -115.0214..-115.0185, 36.2836..36.2853) | 2,534; 266,369; **7,993,981** (`ept-sources/list.json`: 404) |
+
+- Flights, read off the returns' GPS time: **High Plains 2018-06-12..16, 3.1 returns/m²**; **Nevada 2022-07-28, 10.0
+  returns/m²**. That is seven weeks after NAIP 2022-06-11.
+- Tools, committed beside each track: `source/vegetation/lidar/` (`ept_plan.py`, `ept_extract.py`, `hag.py`,
+  `shrubs.py`, `clump_heights.py`).
+
+### High Plains: nothing taller than 0.5 m in the draws or on the west bank. No build.
+
+- Method: `lidar/shrubs.py` takes the highest return in each 0.5 m cell over the 1 m class-2 ground; cells over 0.5 m are
+  joined into objects.
+- Result: 1,613 "plant-sized" objects (2 or more returns, under 4 m tall and 6 m wide), 79 structures and 629 single specks.
+- 356 of them lie within 7 m of a 0.1.5 card spot. On NAIP 2023 every one of those is a K-rail or wall run, the perimeter
+  fence along the south boundary, a marshal post, or the steep cut of the west bank (a ground-model artefact on a slope).
+  Evidence: `evidence/lidar2018_objects_over_0.5m.jpg`, `lidar/objects_over_0.5m.json`.
+- **The draws themselves (the NE swale, the dendritic draws mid-infield, the east draws) hold no object over 0.5 m.**
+- At 3.1 returns/m² a 1 m crown takes about 3 returns, so a shrub that size would show. Anything lower stays under the
+  lidar, as under NAIP.
+- High Plains stays 0.1.6, GrassFX on the draws.
+
+### Nevada Nights 0.1.5: the clumps at their lidar heights
+
+- Method (`lidar/clump_heights.py`, `scrub.lidar.json`):
+  - Each of the 49 NAIP clumps takes the returns inside its crown radius, with noise classes 7 / 18 out.
+  - Its **height = the second-highest return** over a plane fitted to the class-2 ground 1-4 m beyond it. One stray
+    return doesn't make a shrub.
+- Result: **p10 / p50 / p90 0.03 / 0.10 / 0.21 m**. 4 clumps reach 0.3 m or more (1.66, 0.44, 0.32, 0.30); 0.1.4 gave all
+  49 between 1.0 and 2.0 m.
+- Checks that this is not a registration error:
+  - All 90 persistent NAIP clumps in the lidar box, the I-15 median's included, read the same (p50 0.09 m).
+  - NAIP darkness and lidar height correlate at 0.03-0.05 at every shift up to ±5 m (2019 and 2022).
+  - The lidar's own standing objects in the polygon (20 with 5 or more returns over 0.3 m) are not on the clumps. Some are
+    flat-topped: a 5 m object 2 m tall, a 3 m slab at 0.62 m.
+  - The vendor's class 18 (high noise) is spread over lots, roads and scrub alike. It is not vegetation.
+- What the dark clumps are, the data can't say. They are not 1-2 m creosote: they stood 0.1-0.2 m tall in July 2022.
+- **Planted:** a clump stands when its top clears **2× its own ground's scatter**, about 95 % confidence (`K_SD` 2.0, not
+  tuned). **28 of 49 do, at their measured heights 0.05-1.68 m (median 0.13)** and their NAIP crowns.
+  - The other 21 have no height the lidar separates from the ground and are not planted.
+  - `scripts/plan_scrub_measured.py` writes `scrub.measured.json`, which the config now names.
+- **Model: Bush3 only.**
+  - Bush's tree.ini reads HEIGHT 20.66 / WIDTH 34.38 m: ten times Bush3 (2.02 / 3.49), with the same proportions
+    (W/H 1.66 vs 1.72).
+  - Lake Murray's own use says Bush draws as a 1-2 m shrub:
+    - its median planting at Bush 0.35-0.6 was "a little too tall" to Kevin (2026-10-09). At 20.66 m that would be 7-12 m
+      median "bushes".
+    - its yard / scrub mixes use it at 0.6-1.0, which would be 12-20 m.
+  - So HEIGHT is most likely not Bush's drawn height. **If so, 0.1.4's 24 Bush shrubs drew at about a tenth of their
+    sizes** (about 0.1-0.2 m).
+  - It can't be settled on the Mac (82 B stand-ins). Owed on the PC (runbook 0089-3 step 2).
+  - `planted_desert_scrub` is Bush3 only until then. Lake Murray's planting is untouched: it sizes by mix ranges, not
+    tree.ini.
+
+### Nevada 0.1.5 build (Mac, empty workshop, stand-in bins)
+
+- Built at this branch's head; compared against 0.1.4 rebuilt from `1aeecb8`.
+- Gate column. Every gate scalar is equal between 0.1.4 and 0.1.5 (`records/0.1.5/gates_nv_014_vs_015.json`):
+
+| gate | 0.1.4 → 0.1.5 |
+|---|---|
+| drive_test (soft top / severe / kinks per km / drops / undrivable) | 0 / 0 / 0.00 / 0 / 0 = |
+| audit A-K | 0 = |
+| kn5_ground (road over ground > 5 cm) | 0 / 1,422, p95 0.021 = |
+| house_seat | PASS = |
+| edge_report | 2,311 scalars equal |
+| treefx gate | 49 / 49 → **28 / 28 OK**, species Bush3 only |
+| SHIP | OK, no force |
+
+- mesh_diff 0.1.4 → 0.1.5: every mesh equal, no texture changed. The road kn5 is 18,970,521 B both times; the md5 differs
+  run to run (tangents).
+- The gate OBJs are equal group by group (36 / 36).
+- Track folders: only trees.txt, ext_config ([TREES] count), README / ui (version) differ, and `Bush.bin` is no longer copied.
+
+Lake Murray:
+
+- `git diff 07cc303 -- tracks/san-diego-lake-murray` is empty.
+- make_treefx `plan(all_species=True)` against 07cc303 gives 8ce38a01…, 21,219 lines, on every TreeFX track.
+- `trim_connectors.py` is byte-identical, so the trim A/B is equal as before.
+
+Stills are stand-ins, one ellipsoid per clump at its height and crown: 0.1.4 (ranked 1-2 m) over 0.1.5 (lidar), the same
+cameras. In 0.1.5 most clumps draw as low mats. Mac only: `work/treefx/stills/pair_nv014_nv015_*.jpg`.
+
+### 0089-3 — Nevada Nights 0.1.5 PC runbook
+
+1. `git -C D:/k10-worktrees/treefx fetch && git -C D:/k10-worktrees/treefx checkout --detach origin/claude/treefx-cards`.
+   - `source/trees/Bush3.bin` must be there, md5 e9299a59…; copy it again from `san_diego_lake_murray_v4` if not.
+   - Bush.bin is no longer used.
+2. **Bush's drawn height (report only; nothing is changed by it):**
+   - Unzip `Bush.bin` and `Bush3.bin` and read each `LOD0.mesh`'s vertex extent (the drawn geometry), set beside tree.ini HEIGHT.
+   - Or plant one of each at `size = 1` side by side in a scratch trees.txt and look in game.
+   - Record which is true in this ledger.
+3. Rehearse from an EMPTY workshop:
+   `SHIP_PROJ=D:/k10-scratch/nv_015_reh AIROSO=D:/k10-worktrees/treefx ENG=D:/k10-scratch/eng_nvlm bash tools/ship_track.sh exotics-racing-lv-lm --no-install`.
+4. Compare with `tracks/exotics-racing-lv-lm/source/vegetation/records/0.1.5/`:
+   - `[treefx] gate: 28 written of 28 planned ... -> OK`;
+   - trees.txt equal to `records/0.1.5/trees.txt` (the native sizes are committed, so it should be byte-equal);
+   - drive_test / audit / kn5_ground / house_seat rows as above;
+   - mesh_diff against the installed 0.1.4: every mesh equal.
+5. Green: install, as 0089-1 step 4 (old workshop to `exotics_lm.0.1.4`).
+
+### Owed (updated)
+
+- Bush's drawn height (0089-3 step 2).
+- Nevada: what the dark NAIP clumps are. The lidar says they stand 0.1-0.2 m. A site photo or Street View from Speedway
+  Blvd would settle it; nothing more to fetch.

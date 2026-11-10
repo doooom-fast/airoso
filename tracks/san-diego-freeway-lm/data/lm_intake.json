@@ -1,0 +1,112 @@
+{
+ "source_track": "san-diego-freeway",
+ "points": 2132,
+ "lap_m": 10643.6,
+ "closed": false,
+ "widths_m": [
+  10.51,
+  20.49,
+  27.22
+ ],
+ "bridges_levelled": [
+  [
+   1282.8,
+   185.2
+  ],
+  [
+   3222.7,
+   480.4
+  ],
+  [
+   3665.6,
+   135.2
+  ],
+  [
+   6654.0,
+   145.2
+  ],
+  [
+   6969.5,
+   170.3
+  ],
+  [
+   7189.9,
+   120.1
+  ]
+ ],
+ "line_decks_lidar": {
+  "table": "deck_profiles.lidar.json",
+  "match_m": 4.0,
+  "decks": [
+   {
+    "center_m": 1282.8,
+    "len_m": 185.2,
+    "points": 37,
+    "read": 20,
+    "measured_minus_levelled_m": 0.48
+   },
+   {
+    "center_m": 3222.7,
+    "len_m": 480.4,
+    "points": 96,
+    "read": 47,
+    "measured_minus_levelled_m": 2.23
+   },
+   {
+    "center_m": 3665.6,
+    "len_m": 135.2,
+    "points": 27,
+    "read": 8,
+    "measured_minus_levelled_m": 0.1
+   },
+   {
+    "center_m": 6654.0,
+    "len_m": 145.2,
+    "points": 29,
+    "read": 9,
+    "measured_minus_levelled_m": 0.7
+   },
+   {
+    "center_m": 6969.5,
+    "len_m": 170.3,
+    "points": 34,
+    "read": 17,
+    "measured_minus_levelled_m": 0.43
+   },
+   {
+    "center_m": 7189.9,
+    "len_m": 120.1,
+    "points": 24,
+    "read": 10,
+    "measured_minus_levelled_m": 0.37
+   }
+  ],
+  "points_read": 111,
+  "points_between": 18,
+  "points_levelled": 118,
+  "measured_minus_levelled_median_m": 0.61
+ },
+ "max_grade_pct": null,
+ "measured_max_grade_pct": 5.25,
+ "y_changed_points": 296,
+ "y_change_max_m": 11.512,
+ "connectors": true,
+ "bespoke_files": [],
+ "crossfall": null,
+ "profile": null,
+ "width_taper": {
+  "rate_m_per_m": 0.1,
+  "points_widened": 9,
+  "max_widening_m": 0.5
+ },
+ "resample": null,
+ "edge_on_wall": null,
+ "corner_arcs": null,
+ "carried": [],
+ "grid_upsample": 2,
+ "md5": {
+  "source_centerline": "2e1e7fe224922a3f42a2776d36f5e2a6",
+  "heightfield.npy": "a9b782cf86724f322b74173690585a9c",
+  "centerline.local.json": "4e111a767c77fb0554a49bf62fad93b1"
+ }
+}

@@ -1,0 +1,229 @@
+{
+  "_doc": "Ledger 0054 Phase 2 (Mission Gorge Speedway), step 2: the HELD race declaration of the north loop, on Lake Murray v4's committed intermediates (ledger 0065: v4 is the line). NOT in track.config.json and NOT enabled: plan_north.py beside this file merges it into a SCRATCH copy of the config and runs the race tools' plan modes (race_lap.stitch, layout_dummies, barrier_bands with the planned no_route). Everything here is keyed on the LAP's own vertices (data/lap.north.json, 2,936 unique vertices, 8,732.7 m with the declared J2-J4 curves): no mainline vertex number, no race.chicanes (College's crossover chicane is the mainline's, ledger 0055). Corridor limits are the existing Speedway's, unchanged (copied from race.corridor by plan_north.py except whole / boxes / closure_runs / pin_rate, which are the lap's own); clear_width_source none (the lap has no Alvarado to re-measure on). Activating it means copying lap + layouts into track.config.json AFTER the PC's authoring and built gates (ledger 0054 'Phase 2 - step 1..4').",
+  "status": "held",
+  "lap": "north",
+  "built_on": "Lake Murray v4 0.20.0 intermediates (claude/lm-v4-line): data/centerline.local.json, connectors.local.json, mouths.json, median_bands.json, pads.plan.json",
+  "laps": {
+    "north": {
+      "pieces": [
+        {
+          "line": "north_J1_waring#0",
+          "from": 0,
+          "to": 317
+        },
+        {
+          "line": "north_princess_view",
+          "from": 0,
+          "to": 355
+        },
+        {
+          "line": "north_mission_gorge",
+          "from": 0,
+          "to": 745
+        },
+        {
+          "line": "north_J5_jackson_north#0",
+          "from": 651,
+          "to": 0
+        },
+        {
+          "line": "MAINLINE",
+          "from": 2317,
+          "to": 1517,
+          "reverse": true
+        }
+      ],
+      "roads": [
+        "Waring Road",
+        "Princess View Drive",
+        "Mission Gorge Road",
+        "Jackson Drive",
+        "Navajo Road",
+        "Waring Road J1"
+      ],
+      "_roads_doc": "street per vertex (barrier_bands._streets): v0 then each detected corner apex in order (J2 v320, J3 v707, J4 v1458, J5 v2130, J1 v2932), six spans: Waring from v0, Princess View, Mission Gorge, Jackson, Navajo, and the J1 turn from v2932 back to v0 (named apart: object names are per street)",
+      "joins_file": "source/expansion/race.north.joins.json",
+      "island_offsets": {
+        "lines": [
+          "north_J1_waring#0",
+          "north_princess_view",
+          "north_mission_gorge",
+          "north_J5_jackson_north#0"
+        ],
+        "snap_m": 2.5
+      },
+      "_island_offsets_doc": "scripts/geometry/race_lap.py (ledger 0054 Phase 2, 2026-11-04): every north piece's raised median where it really stands. median_bands connector_islands carry each median's own centre line (offset_aware), one point per connector vertex; the default 1.0 m snap dropped every point more than 1 m off the connector line, which cut the medians into fragments (Waring v188-264, Mission Gorge v14-70 among others) and moved their ends (Waring's start 30 m after J1 at v11 was really v8, 1.3 m right; its tail before J2 at v315, 1.7 m left, 2.0 m wide). Each vertex takes its nearest island point within 2.5 m (the points stand ~3 m apart along the road) and that point's lateral offset; race_corridor puts the closure on the offset island's race face. Since step 2e (2026-11-04) an offset_aware island (one point per connector vertex) is read by index, however far its point stands off the line (Jackson's nose 2.6-3.6 m at lap v1478-1489); snap_m is the fallback for any other island",
+      "_joins_doc": "J2, J3, J4: cubic curves off the roads' own approach tangents (832facf), a reference line through each pad, never an AI spline and never road geometry. J5 (11.6 m) and J1 (14.6 m) stay straight joins: both lie inside the mainline's own junction box (Navajo/Jackson, College/Navajo), whose pavement is built",
+      "junction_pads": [
+        "J2",
+        "J3",
+        "J4"
+      ],
+      "_junction_pads_doc": "the three pads the lap drives through; their six stub arms (Mound Ave, Waring SW = the future Zion link, Mission Gorge W = the future Zion link, the quarry drive, Mission Gorge E, the MTRP entrance) become pad_arm mouths probed 10 m into the stub, before the Free Roam end barrier",
+      "corridor": {
+        "whole": [
+          2426,
+          2616
+        ],
+        "_whole_doc": "Navajo westbound, mainline v2022..v1832 (undivided, 17.0 m): the whole street for the grid and the start / finish, 190 m",
+        "boxes": [
+          {
+            "apex": 326,
+            "i": 316,
+            "j": 333,
+            "_corner": "J2 Waring / Princess View / Mound (pad J2), R 18.9 m, D -82.0 (refit join); i = PC - 1 (not PC-2): Waring's median tail stands at v315, the box starts beside it"
+          },
+          {
+            "apex": 705,
+            "i": 691,
+            "j": 712,
+            "_corner": "J3 Princess View / Mission Gorge (pad J3), R 22.6 m, D -79.4 (refit join); PC-2 .. PT+2"
+          },
+          {
+            "apex": 1463,
+            "i": 1452,
+            "j": 1472,
+            "_corner": "J4 Mission Gorge / Jackson north (pad J4), R 16.4 m, D -69.0 (refit join); from v1452 (Mission Gorge's median runs to v1451 beside the box edge) to PT+3; the pad's Mission Gorge east arm (lap v1468) stands inside the box, sealed by the far strip"
+          },
+          {
+            "apex": 2130,
+            "i": 2121,
+            "j": 2136,
+            "_corner": "J5 Jackson / Navajo (mainline v2317 box), R 9.1 m, D -90.1"
+          },
+          {
+            "apex": 2932,
+            "i": 2926,
+            "j": 2,
+            "_corner": "J1 Navajo / College / Waring (mainline v1517 box), R 8.3 m, D -78.3; j PT+4 (the box ends past the seam)"
+          }
+        ],
+        "_boxes_doc": "PC-2 .. PT+2 of the five corners barrier_bands detects on the lap (place_signs' detector, min turn 45 deg), the mainline's rule, re-declared on the refit J2-J4 joins (2026-11-04); exactly five, one per junction. J2 starts at PC (v316): the real median tail stands at v315",
+        "closure_runs": [
+          [
+            2,
+            316
+          ],
+          [
+            333,
+            691
+          ],
+          [
+            712,
+            1452
+          ],
+          [
+            1472,
+            2121
+          ],
+          [
+            2136,
+            2426
+          ],
+          [
+            2616,
+            2926
+          ]
+        ],
+        "pin_rate": {},
+        "_pin_rate_doc": "none declared. Tried 695: 5.0 / 1470: 4.5 (2026-11-03): the solver still misses the declared rate by the same share. The cause (2026-11-04) was the smoothing, not the rate: see smooth_window",
+        "noses": [
+          {
+            "end": 2,
+            "median": 8,
+            "why": "Waring's raised median starts 16 m after the J1 box (v8, 1.5 m wide, 1.3 m right of the line: race.laps.north.island_offsets). The closure ends at the nose (pin v7) and a K-rail crosses the far carriageway there: your own side of the road (Kevin's call, ledger 0054)"
+          },
+          {
+            "end": 316,
+            "median": 315,
+            "why": "Waring's median runs to its tail at v315 (2.0 m wide, 1.7 m left of the line), beside the J2 box: the closure ends at the box edge on the tail's race face (pin v316) with a K-rail across the far carriageway"
+          },
+          {
+            "end": 712,
+            "median": 718,
+            "why": "Mission Gorge's median starts 18 m after the J3 box (v718, 0.6 m wide at its nose, 0.6 m right of the line): the closure ends at the nose (pin v717) with a K-rail across the far carriageway"
+          },
+          {
+            "end": 1452,
+            "median": 1451,
+            "why": "Mission Gorge's median runs to v1451, beside the J4 box: the closure ends at the box edge on its race face (pin v1452) with a K-rail across the far carriageway"
+          },
+          {
+            "end": 1472,
+            "median": 1478,
+            "why": "Jackson's median starts 15 m after the J4 box (v1478, a 1.5 m nose 3.6 m right of the line: its points stand past any snap, so the lap takes them by index since step 2e; the 0.20.2 run's north_cw drove onto its curb at v1478-1479). The closure ends at the nose (pin v1477) with a K-rail across the far carriageway"
+          }
+        ],
+        "_noses_doc": "tools/barrier_bands.py race.corridor.noses (ledger 0054 Phase 2): each closure-run end (a box edge) that ends at a median nose instead of the far curb strip; the pin is the vertex beside the nose, on the island's race face, and the K-rail runs from the closure's race face to the far curb strip, in that layout's closure kn5",
+        "smooth_window": "station",
+        "_smooth_window_doc": "the closure's smoothing Gaussian over +-3 sigma of STATION with trapezoid weights (tools/race_corridor.py). The lap mixes 2 m curved joins with 3 m streets; the default +-4-vertex window is lopsided where they meet and pulled the closure off its own pin-zone envelope at v683-685 (1:5.49 of 1:6) and v1477-1479 (1:4.62 of 1:5.01). Not a threshold: the rates and limits are unchanged"
+      },
+      "kerbs": {
+        "trims": [
+          {
+            "apex": 1463,
+            "kind": "inside",
+            "i": 1457,
+            "j": 1462,
+            "why": "Pulled back by the kerb's own geometry (ledger 0054 Phase 2 step 2d; plan_north.py checks every north kerb with race_furniture.kerb_column_margin and names this run, race_furniture.kerb_standing_run): at the refit J4 apex the lap's radius (R 15.4 m at v1463) barely clears w/2 (14.4 m), so the inside kerb's outer column swings round about 1.8 m from the corner's centre and advances only 2-9 mm per 0.3 m station over v1463-v1464 (11 spans under the author's 0.01 m record resolution, 0.0141 m; the PC's 0.20.2 run read 2 of them inside-out, verify_race I). The longest station run that stands ends 0.3 m before v1463 (12.6 m); rounded in to its vertices it is v1457-v1462 (11.2 m of the detected 26.9 m, the turn-in up to the apex), column margin 0.0147 m. The exit side v1465-v1469 stands too, but a declared kerb is one run. J4's radius floor is not raised: the strips already stand 0.025 m inside the pad there"
+          },
+          {
+            "apex": 2130,
+            "kind": "inside",
+            "drop": true,
+            "why": "Held until the PC authors the J5 connection (Phase 2 step 1): the lap's J5 corner is an 11.6 m straight join inside the mainline's Navajo/Jackson box, R 9.1 m; its inside kerb folds on itself (race_furniture: no trim resolves it) and the mainline drops its own inside kerb here for the ribbon fold (race.kerbs.trims apex 2319). Re-declared once the corner surface is authored and measured on the built road"
+          },
+          {
+            "apex": 2932,
+            "kind": "inside",
+            "drop": true,
+            "why": "Held until the PC authors the J1 connection (Phase 2 step 1, coordinated with ledger 0055): the lap's J1 corner is a 14.6 m straight join inside the mainline's College/Navajo box, R 8.3 m, the same fold class; the mainline drops its own inside kerb here (apex 1514). Re-declared once the corner surface is authored and measured"
+          }
+        ]
+      }
+    }
+  },
+  "layouts": [
+    {
+      "id": "north_cw",
+      "name": "Mission Gorge Speedway",
+      "kind": "race",
+      "direction": "forward",
+      "race_furniture": true,
+      "closure_token": "ncw",
+      "lap": "north",
+      "map": "lap",
+      "start": {
+        "line_vertex": 2536,
+        "grid_vertex": 2527,
+        "offset_right_m": 3.25,
+        "sector_vertices": [
+          584,
+          1565
+        ]
+      },
+      "run": "one-way: Waring Road north, Princess View Drive, Mission Gorge Road east through the gorge, Jackson Drive south, Navajo Road west; your own side of every road, the whole street on Navajo at the start, the full junction open at the five corners"
+    },
+    {
+      "id": "north_acw",
+      "name": "Mission Gorge Speedway Reverse",
+      "kind": "race",
+      "direction": "reverse",
+      "race_furniture": true,
+      "closure_token": "nacw",
+      "lap": "north",
+      "map": "lap",
+      "start": {
+        "line_vertex": 2536,
+        "grid_vertex": 2546,
+        "offset_right_m": 3.25,
+        "sector_vertices": [
+          1565,
+          584
+        ]
+      },
+      "run": "one-way, the other way round: Navajo Road east, Jackson Drive north, Mission Gorge Road west, Princess View Drive, Waring Road south"
+    }
+  ],
+  "_sectors_doc": "a third and two thirds of the lap from the start line by station (v579 s 1709 m on Princess View, v1565 s 4620 m on Jackson north)"
+}

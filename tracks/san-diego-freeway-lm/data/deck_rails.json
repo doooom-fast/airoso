@@ -1,0 +1,122 @@
+{
+ "tool": "tools/deck_rails_blend.py",
+ "ledger": "0080",
+ "height_m": 0.95,
+ "set_m": 0.15,
+ "deck_edge": {
+  "mesh": "1KERB_SIDEWALK_DECK",
+  "past_rail_m": 0.4,
+  "under_edge_m": 0.1,
+  "below_edge_m": 0.03
+ },
+ "decks": [
+  {
+   "center_m": 1282.8,
+   "len_m": 185.2,
+   "panels": 100,
+   "deck_edge_panels": 100,
+   "deck_edge_skipped": 0
+  },
+  {
+   "center_m": 3222.7,
+   "len_m": 480.4,
+   "panels": 218,
+   "deck_edge_panels": 218,
+   "deck_edge_skipped": 0
+  },
+  {
+   "center_m": 3665.6,
+   "len_m": 135.2,
+   "panels": 80,
+   "deck_edge_panels": 80,
+   "deck_edge_skipped": 0
+  },
+  {
+   "center_m": 6654.0,
+   "len_m": 145.2,
+   "panels": 84,
+   "deck_edge_panels": 84,
+   "deck_edge_skipped": 0
+  },
+  {
+   "center_m": 6969.5,
+   "len_m": 170.3,
+   "panels": 94,
+   "deck_edge_panels": 94,
+   "deck_edge_skipped": 0
+  },
+  {
+   "center_m": 7189.9,
+   "len_m": 120.1,
+   "panels": 74,
+   "deck_edge_panels": 74,
+   "deck_edge_skipped": 0
+  },
+  {
+   "connector": "i8_wb",
+   "vertices": [
+    690,
+    699
+   ],
+   "panels": 46,
+   "fascia_columns": 24,
+   "deck_edge_panels": 23,
+   "deck_edge_skipped": 23
+  },
+  {
+   "connector": "i8_wb",
+   "vertices": [
+    733,
+    749
+   ],
+   "panels": 60,
+   "fascia_columns": 2,
+   "deck_edge_panels": 58,
+   "deck_edge_skipped": 2
+  },
+  {
+   "connector": "i8_wb",
+   "vertices": [
+    800,
+    808
+   ],
+   "panels": 44,
+   "fascia_columns": 0,
+   "deck_edge_panels": 44,
+   "deck_edge_skipped": 0
+  },
+  {
+   "connector": "i8_wb",
+   "vertices": [
+    1399,
+    1408
+   ],
+   "panels": 46,
+   "fascia_columns": 24,
+   "deck_edge_panels": 23,
+   "deck_edge_skipped": 23
+  },
+  {
+   "connector": "i8_wb",
+   "vertices": [
+    1464,
+    1527
+   ],
+   "panels": 154,
+   "fascia_columns": 27,
+   "deck_edge_panels": 127,
+   "deck_edge_skipped": 27
+  },
+  {
+   "connector": "i8_wb",
+   "vertices": [
+    1878,
+    1898
+   ],
+   "panels": 68,
+   "fascia_columns": 0,
+   "deck_edge_panels": 68,
+   "deck_edge_skipped": 0
+  }
+ ]
+}

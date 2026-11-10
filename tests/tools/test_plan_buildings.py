@@ -91,6 +91,27 @@ def test_classes_from_tags_then_area():
         assert cls in pb.STOREY_M and cls in pb.DEFAULT_WALL_M and cls in pb.FORM
 
 
+def test_the_plans_tag_class_classes_only_tags_the_shared_table_lacks():
+    """ledger 0083 (Del Mar): opt-in per plan; absent = the shared table and the area rule, as before"""
+    plan = {"yes_by_area": [[60, "shed"], [350, "house"], [1500, "commercial"], [1e9, "industrial"]]}
+    assert pb.classify({"tag": "stable", "area": 1500}, plan)[0] == "industrial"          # no tag_class: by area
+    own = dict(plan, tag_class={"stable": "shed", "grandstand": "commercial", "pavilion": "canopy", "barn": "industrial",
+                                "_doc": "x"})
+    cls, why = pb.classify({"tag": "stable", "area": 1500}, own)
+    assert cls == "shed" and "tag_class" in why
+    assert pb.classify({"tag": "Grandstand", "area": 14000}, own)[0] == "commercial"
+    assert pb.classify({"tag": "pavilion", "area": 400}, own)[0] == "canopy"
+    assert pb.classify({"tag": "barn", "area": 400}, own)[0] == "shed"                     # TAG_CLASS knows barn: kept
+    assert pb.classify({"tag": "yes", "area": 2000}, own)[0] == "industrial"
+    import pytest
+    with pytest.raises(SystemExit):
+        pb.classify({"tag": "stable", "area": 10}, dict(plan, tag_class={"stable": "castle"}))
+    for track in ("high-plains", "sand-creek", "exotics-racing-lv", "san-diego-lake-murray"):
+        f = ROOT / "tracks" / track / "source" / "bespoke" / "buildings.plan.json"
+        if f.exists():
+            assert "tag_class" not in json.loads(f.read_text(encoding="utf-8")), track
+
+
 def test_a_later_source_on_an_earlier_footprint_is_dropped_and_offers_its_height():
     sq = lambda x, y, s: [[x, y], [x + s, y], [x + s, y + s], [x, y + s]]
     recs = [

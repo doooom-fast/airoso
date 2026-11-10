@@ -1,0 +1,251 @@
+{
+  "_doc": "Ledger 0080: the San Diego freeway network on Lake Murray v4's engine, beside the original (tracks/san-diego-freeway, airoso's network engine; its config is PR 34's, b888f10). Phase 1 = the line: I 8 eastbound end to end (the original's network.reference_line), its six declared decks, through the LM chain (tools/ship_track.sh, ship.json engine lm-v4). The other carriageways, ramps, flyovers and barriers are phase 2 (the ledger's map). Phase 2a adds I 8 westbound as a connector (ledger 0080 phase 2).",
+  "name": "San Diego Freeway Free Roam (LM engine)",
+  "ui_series": "doooom San Diego",
+  "slug": "san_diego_freeway_lm",
+  "install_folder": "san_diego_freeway_lm",
+  "version": "0.1.0",
+  "author": "doooom",
+  "year": 2026,
+  "archetype": "real_road",
+  "location": {
+    "lat": 32.7765,
+    "lon": -117.17,
+    "timezone": "America/Los_Angeles",
+    "city": "San Diego",
+    "country": "United States",
+    "_anchor": "I-8 in Mission Valley (straight WB stretch near the SR-163 stack) - AC_START snaps to the nearest freeway edge here. (project_freeway_net's spawn rule, build_network_mesh._freeroam_dummies. Since 2026-11-01 the chain's network_reference step replaces that dummies.json: the grid at the START of network.reference_line, AC_TIME_0 at its finish, fleet/LAWS.md L11; lat/lon here still feed the lighting.)"
+  },
+  "source": {
+    "type": "lm-intake",
+    "_doc": "the line, its 3DEP and its widths come from the original's final network draft (lm_intake below); this track fetches nothing"
+  },
+  "route": {
+    "smooth_sigma_pts": 2.0,
+    "smooth_passes": 2,
+    "smooth_sigma_y_pts": 1.5,
+    "divided_double": false,
+    "_divided_double_doc": "one carriageway, one direction of travel: no yellow centre line; white lane dividers stay (route.lane_dividers absent = on)",
+    "edge": {
+      "curb_h": 0.0,
+      "curb_face_w": 0.05,
+      "sidewalk_w": 0.05,
+      "connector_sidewalk_w": 0.05,
+      "grade_w": 0.3,
+      "grass_clearance": 0.05
+    },
+    "_edge_doc": "a freeway has no curb and no sidewalk: the rally ports' near-zero edge (ledger 0078 round 8). The real edge is a paved shoulder to a concrete barrier; the barrier is owed (ledger 0080 map), so phase 1 lays none rather than an invented one."
+  },
+  "loop": false,
+  "mirror_x": false,
+  "true_north_rotation_deg": 0.0,
+  "default_width_m": 14.0,
+  "_default_width_m_doc": "the source config's (scripts.config needs it); the line carries its own per-vertex widths, which the assembler sweeps",
+  "width_overrides": [],
+  "origin": "centroid",
+  "surfaces": {
+    "road": "1ROAD",
+    "grass": "GRASS",
+    "kerb": "1KERB"
+  },
+  "scenery": {
+    "draft_lamps": false,
+    "_draft_lamps_doc": "v021's 55 m street lamps are a neighbourhood's; the freeway's lighting is not measured here"
+  },
+  "lighting": {
+    "presets": [
+      "noon",
+      "golden_hour",
+      "morning"
+    ],
+    "grassfx": false,
+    "model_yaw_deg": 0.0
+  },
+  "layouts": [
+    {
+      "id": "freeroam",
+      "name": "Freeway Free Roam (LM engine)",
+      "ai": "ai/freeroam",
+      "run": "Point to point: Interstate 8 eastbound, end to end inside the box; I 8 westbound alongside (a connector, driven by drive_test --line network)",
+      "uses_connectors": []
+    }
+  ],
+  "lm_intake": {
+    "source_track": "san-diego-freeway",
+    "source_data": "source/network-draft-pr34",
+    "_source_data_doc": "ledger 0080: the original's FINAL network draft (PR 34's scripts at b888f10, run on the Mac), not its committed data/ (the PC's first run, before PR 34's fixes). tools/network_line.py wrote it; its network_line.json has the provenance and md5s.",
+    "connectors": true,
+    "_grid_crop_m_dropped_doc": "ledger 0080 2b round 2: grid_crop_m (1,000 m of the 3DEP grid round the line, [invented], phase 1) is DROPPED: the whole network box builds, its far ground tiered (terrain_tiers). Round 1 kept it because the whole box read ground on top at line s 2,805 (ws38); the cause was not the grid but tools/median_ground_blend.py's unpaved-slope pass, which, where the point abreast of a cut-line vertex missed the pavement, took the slope station's own edge top 1.8 m along a 3.3 % grade (0.06 m high); it now takes the closest point of the pavement. The crop changed which vertices the cut lines made, not the rule. fleet/GATES-CHANGELOG.md 2026-11-06.",
+    "terrain_tiers": {
+      "fine_m": 60.0,
+      "step": 4
+    },
+    "_terrain_tiers_doc": "ledger 0080 2b round 1 (tools/fwlm_terrain.py, ship.json draft step build_loop_blend_tiered): every native 55 m 3DEP cell farther than fine_m from a pavement edge is two triangles on its four native samples; within fine_m the ground is the assembler's x4 grid (grid_upsample x2, then its own x2: 13.75 m), triangulated exactly as grass_terrain does. step = grid_upsample x 2 (the native cell in fine cells). fine_m [invented] 60 m: past the assembler's conform reach (corridor 20 + blend 16 m) and engine-july's LAYER_WIN 30 m, with room; fleet/GATES-CHANGELOG.md 2026-11-05 2b round 1.",
+    "width_taper": 0.1,
+    "_width_taper_doc": "ledger 0078 round 5 (Milford), the rally ports' rate: a width step in the source line (the network draft's per-edge lane widths step at every edge joint: 7.16 -> 10.82 m at s 25 built a twisted quad and 14 ground-on-top samples) becomes a flare, widening only. The rate is that entry's, not measured here.",
+    "_connectors_doc": "ledger 0080 phase 2: the network's other carriageways as connectors, read from source/network-draft-pr34/connectors.local.json (tools/network_connectors.py, from lm_intake.network_connectors below: the draft's own edges, the line's resolver, each carriageway's own 3DEP, the decks from the lidar)",
+    "network_connectors": [
+      {
+        "name": "i8_wb",
+        "ref": "I 8",
+        "direction": "westbound",
+        "bridge_max_edges": 2,
+        "head": {
+          "edge": 396,
+          "from_vertex": 162,
+          "to_vertex": 1,
+          "_why": "ledger 0080 2a item 4: the draft left edge 396 undecided (travel votes 21 / 28) because it is TWO westbound roadways it joined at its hairpin, vertex 162 (x 4,236): vertices 0..162 run 22-24 m north of (left of) the line's EB edges 357 / 548 the whole way (I 8 westbound in right-hand traffic); 162..284 end at node B, where only ramps 507 / 508 leave. Node A (vertex 0) is where I 8 WB edge 397 starts and ramp 395 arrives, so 0..162 is driven 162 -> 0 (westward): the 28 backward votes (28 / 49 = 0.57 of the votes; 162 / 284 = 0.57 of the vertices). OSM's oneway could not be re-read (Overpass timed out 2026-11-05). East of vertex 162 the draft has no westbound mainline: WB starts there, 290 m short of the line's end."
+        },
+        "head_osm": {
+          "file": "osm_i8_wb_head.overpass.json",
+          "ways": [
+            1011676575,
+            361363280
+          ],
+          "_why": "ledger 0080 2a round 5 item 3: WB's last 290 m. The draft (PR 34) has no westbound mainline east of WB's first point (edge 396 vertex 162, x 4,236, on OSM way 361363280 between its first two nodes). OSM (Overpass, 2026-11-05, one read-only query, the response committed as file): I 8 westbound east of there is way 1011676575 (4 lanes, oneway=yes), from (x 4,525, z -1,171), 12 m east of the line's end, west to node (4,259, -1,326), where 361363280 (oneway=yes) continues west through WB's first point. 361363282 / 278 / 275 / 276 (also oneway=yes) run further east, past the line's end: not built. Ways in travel order; the head stops at the chain's first point."
+        }
+      },
+      {
+        "name": "i5_nb",
+        "ref": "I 5",
+        "direction": "northbound",
+        "bridge_max_edges": 2,
+        "phase": "2b",
+        "partner": "i5_sb",
+        "edge_ids": [
+          336,
+          128,
+          127,
+          244,
+          250,
+          340,
+          212,
+          211,
+          222,
+          221,
+          346,
+          347,
+          350,
+          209,
+          208,
+          258,
+          256
+        ],
+        "_edge_ids_why": "ledger 0080 2b round 1: the resolver refuses ref + direction (not contiguous in this draft); these edge_ids are its own longest contiguous chain, read off its message. The other pieces are counted in the ledger (2c / 2d interchange gaps), not built."
+      },
+      {
+        "name": "i5_sb",
+        "ref": "I 5",
+        "direction": "southbound",
+        "bridge_max_edges": 2,
+        "phase": "2b",
+        "partner": "i5_nb",
+        "edge_ids": [
+          450,
+          453,
+          452,
+          343,
+          344,
+          367,
+          217,
+          131,
+          130,
+          38,
+          37,
+          251,
+          314,
+          317,
+          330,
+          329,
+          335,
+          327,
+          326,
+          157,
+          156
+        ],
+        "_edge_ids_why": "ledger 0080 2b round 1: the resolver refuses ref + direction (not contiguous in this draft); these edge_ids are its own longest contiguous chain, read off its message. The other pieces are counted in the ledger (2c / 2d interchange gaps), not built."
+      },
+      {
+        "name": "sr52_eb",
+        "ref": "CA 52",
+        "direction": "eastbound",
+        "bridge_max_edges": 2,
+        "phase": "2b",
+        "partner": "sr52_wb"
+      },
+      {
+        "name": "sr52_wb",
+        "ref": "CA 52",
+        "direction": "westbound",
+        "bridge_max_edges": 2,
+        "phase": "2b",
+        "partner": "sr52_eb"
+      },
+      {
+        "name": "sr163_nb",
+        "ref": "CA 163",
+        "direction": "northbound",
+        "bridge_max_edges": 2,
+        "phase": "2b",
+        "partner": "sr163_sb",
+        "edge_ids": [
+          433,
+          431,
+          387,
+          236,
+          237,
+          114,
+          115,
+          240,
+          29,
+          30,
+          264,
+          368,
+          370,
+          393,
+          472,
+          474,
+          425,
+          427
+        ],
+        "_edge_ids_why": "ledger 0080 2b round 1: the resolver refuses ref + direction (not contiguous in this draft); these edge_ids are its own longest contiguous chain, read off its message. The other pieces are counted in the ledger (2c / 2d interchange gaps), not built."
+      },
+      {
+        "name": "sr163_sb",
+        "ref": "CA 163",
+        "direction": "southbound",
+        "bridge_max_edges": 2,
+        "phase": "2b",
+        "partner": "sr163_nb",
+        "edge_ids": [
+          527,
+          528,
+          515,
+          513,
+          33,
+          32,
+          562,
+          287,
+          286,
+          556,
+          482,
+          428,
+          430
+        ],
+        "_edge_ids_why": "ledger 0080 2b round 1: the resolver refuses ref + direction (not contiguous in this draft); these edge_ids are its own longest contiguous chain, read off its message. The other pieces are counted in the ledger (2c / 2d interchange gaps), not built."
+      }
+    ],
+    "_network_connectors_doc": "phase 2a: I 8 westbound. Each entry is resolved by scripts.geometry.network_reference.resolve (the line's resolver) on the network draft; the record carries its decks (lidar, deck_profiles.lidar.json) and a one-way paint. Regenerate with python tools/network_connectors.py <network-draft-project> tracks/san-diego-freeway/source/network-draft-pr34 tracks/san-diego-freeway-lm/track.config.json",
+    "grid_upsample": 2,
+    "_grid_upsample_doc": "[invented value; existing key, ledger 0078] the cut 3DEP grid pre-divided x2 (bilinear: the same samples, finer facets; with the assembler x2 the ground is 13.75 m facets, not 27.5 m). Phase 2a measured it: with I 8 westbound beside the line the 27.5 m ground stood over the lanes between the carriageways (ground on top 1,119 line / 1,224 WB samples) and 138 / 130 at 13.75 m.",
+    "line_file": "centerline.measured.local.json",
+    "connectors_file": "connectors.measured.local.json",
+    "median_barrier_file": "median_barrier.json",
+    "median_ground_file": "median_ground.lidar.json",
+    "_median_ground_file_doc": "ledger 0080 2a round 4: the median as the lidar measures it (tools/median_lidar.py, class 2 off the EPT cache / LAZ tiles): tools/median_ground_blend.py (ship_track prep) builds a lidar STEP with no barrier as a retaining face at the high edge with the low ground up to it. Regenerate: <lidarvenv python> tools/median_lidar.py tracks/san-diego-freeway/source/network-draft-pr34 --ept-cache <dir> [--laz <dir>]",
+    "_measured_doc": "ledger 0080 2a (Kevin 2026-11-05: measured carriageway edges, not lane counts): tools/naip_carriageways.py reads both I 8 carriageways' paved edges off NAIP 2022 (0.6 m) from the network lines (centerline.local.json, connectors.local.json) and writes the measured line and connectors (each vertex moved to the measured pavement's centre, the measured width) and the median barrier's runs (Caltrans Type 60, Standard Plans A76A) where one paved width carries both. Regenerate: <lidarvenv python> tools/naip_carriageways.py tracks/san-diego-freeway/source/network-draft-pr34 tracks/san-diego-freeway/source/network-draft-pr34 --cache <dir> (fetches the NAIP crops from the Planetary Computer)",
+    "line_decks_lidar": "deck_profiles.lidar.json",
+    "_line_decks_lidar_doc": "ledger 0080 2a round 3: the line rides the lidar class-17 deck (tools/network_deck_lidar.py) over each declared deck where its own edges were read, straight between readings, anchored on the levelled crest height at each span end; the levelled height only where no reading (ws13: the levelled Morena deck sat 1-2 m under the lidar, a 2.9 m step to WB beside it)",
+    "_network_connectors_2b_doc": "ledger 0080 2b round 1: the I 5, SR 52 and SR 163 mainlines, both ways, phase '2b', each with its partner carriageway (the pair naip_carriageways reads a median between). tools/network_connectors.py resolves them as it does I 8 westbound (edge_ids when the resolver refuses ref + direction); what is built of each is what NAIP measured, never the draft's lane-count widths."
+  }
+}

@@ -1,0 +1,64 @@
+{
+ "lap_m": 3204.7,
+ "layout": "full",
+ "direction": "forward",
+ "kind": "street",
+ "race_furniture": false,
+ "obj": "track.obj",
+ "lane": "full width / island",
+ "barrier_stations": 0,
+ "barrier_missing": 0,
+ "barrier_missing_runs": [],
+ "soft_top_in_lane": 0,
+ "off_pavement_stations": 0,
+ "severe_steps": 0,
+ "severe_per_km": 0.0,
+ "steps_per_km": 0.0,
+ "kinks_per_km": 0.62,
+ "obstruction_stations": 0,
+ "daylight_gaps": 0,
+ "replication_vs_measured": null,
+ "undrivable_corners": 0,
+ "floating_furniture": 0,
+ "apron_steps": 0,
+ "fold_bumps": 0,
+ "vertex_bumps": 2,
+ "vertex_bumps_worst": [
+  [
+   1690.0,
+   3.25,
+   0.026,
+   0.011
+  ],
+  [
+   1687.0,
+   3.25,
+   0.025,
+   0.0104
+  ]
+ ],
+ "excursion_drops": 0,
+ "excursion_far_ledges": 0,
+ "worst_excursions": [],
+ "worst_gated_excursions": [],
+ "obstruction_by_mesh": {},
+ "worst": {
+  "soft_top": [],
+  "severe_steps": [],
+  "severe_all": [],
+  "kinks": [
+   [
+    2013.0,
+    -4.75,
+    3.15
+   ],
+   [
+    2009.0,
+    -4.75,
+    3.07
+   ]
+  ],
+  "obstructions": []
+ },
+ "fail": false
+}

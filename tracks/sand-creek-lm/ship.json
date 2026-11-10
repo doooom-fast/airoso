@@ -1,0 +1,159 @@
+{
+  "_doc": "Sand Creek Raceway through Lake Murray v4's engine — the fleet pilot (ledger 0078, Kevin 2026-11-03: \"Lake Murray v4 should be what we build the rest from\"). engine lm-v4: the loop assembler is tracks/san-diego-lake-murray/scripts-v021 (V021_SHIM, never a per-track copy) and the prep / exporter / spawn builder are engine-july (ENG=<dir>: the real tree, a scratch copy, or the snapshot tracks/san-diego-lake-murray/engine-july-snapshot with assets/textures beside it). The draft starts from Sand Creek 0.35.0's line as airoso's data stages left it (tracks/sand-creek/data: the OSM centrelines, osm widths, 3DEP), read by tools/lm_engine_intake.py; then Lake Murray's own draft and author steps that serve a lap with no side streets: the assembler, the fold weld (weld_mouths, mainline only), Kevin's lamp model, the bespoke buildings in place of the assembler's boxes. Ledger 0079 adds Lake Murray's dressing as chain steps: the buildings pipeline's blocks at the surroundings' real density (the port's wider ground), the crowns read off NAIP as TreeFX (treefx), the houses gate. 0.2.3 (ledger 0079): the free roam's 106 grid streets are in, through Lake Murray's junction steps (trim_connectors with route.connector_hosts and route.street_junctions, rebuild_loop_blend, weld_mouths, gap_mouths, verify_mouths): every street meets the lap, an arterial or another street at a welded mouth. The workshop is outside airoso and beside Lake Murray's.",
+  "track": "sand-creek-lm",
+  "engine": "lm-v4",
+  "workshop": "D:/k10-scratch",
+  "workshop_project": "sand_creek_lm",
+  "require_race_layout": false,
+  "ui_name_prefix": "doooom Colorado",
+  "steps": {
+    "draft": [
+      "lm_intake",
+      "build_loop_blend",
+      "trim_connectors",
+      "rebuild_loop_blend",
+      "weld_mouths",
+      "seat_terrain",
+      "densify_ribbon",
+      "seat_edges",
+      "lm_pads",
+      "mouth_returns",
+      "strip_seam",
+      "gap_mouths",
+      "islands",
+      "paint",
+      "ground_patch",
+      "lamps"
+    ],
+    "author": [
+      "race_bands",
+      "race_planned_gate",
+      "layout_dummies",
+      "race_author",
+      "race_verify",
+      "signs",
+      "name_blades",
+      "bespoke"
+    ],
+    "prep": [
+      "prep",
+      "split"
+    ],
+    "ship": [
+      "export_road",
+      "export_race",
+      "export_street",
+      "spawn_kn5",
+      "ai",
+      "verify_kn5",
+      "road_obj",
+      "track_folder",
+      "verify_inis",
+      "make_map",
+      "treefx",
+      "race_scenery_gate"
+    ],
+    "gate": [
+      "drive_test_street",
+      "audit_street",
+      "race_gates",
+      "fold_fans",
+      "kn5_ground",
+      "verify_pads",
+      "verify_mouths",
+      "verify_mouth_corners",
+      "house_seat",
+      "houses",
+      "textures",
+      "edge_report"
+    ]
+  },
+  "sync_in": {
+    "required": [
+      "track.config.json"
+    ],
+    "optional": [
+      "data/heightfield.npy",
+      "data/heightfield.meta.json",
+      "source/bespoke/buildings.lm.json",
+      "source/bespoke/trees.lm.json",
+      "source/connector_profiles.lidar.json",
+      "source/connector_profiles.lidar.round_i.json",
+      "source/ground_patches.lidar.json",
+      "source/mouth_radii.naip.json",
+      "source/name_blades.json",
+      "textures/name_blades.png",
+      "signs.json"
+    ],
+    "_optional_doc": "ledger 0079: the port's own inputs (tools/lm_engine_intake.py uses a port file the source track lacks): its wider 3DEP grid (lm_intake.heightfield port), the buildings pipeline's blocks and the crowns read off NAIP",
+    "assets": [
+      "assets/textures/siding_wall_diffuse.jpg",
+      "assets/textures/siding_wall_normal.jpg",
+      "assets/textures/stucco_wall_diffuse.jpg",
+      "assets/textures/stucco_wall_normal.jpg",
+      "assets/textures/tiltup_wall_diffuse.jpg",
+      "assets/textures/tiltup_wall_normal.jpg",
+      "assets/textures/metal_wall_diffuse.jpg",
+      "assets/textures/metal_wall_normal.jpg",
+      "assets/textures/shingle_roof_diffuse.jpg",
+      "assets/textures/roof_white_diffuse.jpg",
+      "assets/textures/roof_tan_diffuse.jpg",
+      "assets/textures/roof_dark_diffuse.jpg"
+    ],
+    "_assets_doc": "ledger 0079, as Lake Murray's (ledger 0065): the textures the blocks' pbr rows name, copied into the workshop and named by track.config.json texture_overrides, so the kn5 embeds them whatever the ENG copy holds",
+    "globs": [
+      "source/pads/*.json"
+    ]
+  },
+  "sync_out": {
+    "required": [
+      "loop.blend"
+    ],
+    "files": [
+      "data/lm_intake.json",
+      "data/centerline.local.json",
+      "data/centerline.raw.local.json",
+      "data/finished_centerline.json",
+      "data/gate_centerline.json",
+      "data/bridge.spans.auto.json",
+      "data/mouth_welds.json",
+      "data/lights.local.json",
+      "data/bespoke.report.json",
+      "data/dummies_{id}.json",
+      "data/drive_test.json",
+      "data/drive_test.{id}.json",
+      "data/audit.json",
+      "data/kn5_ground_check.{id}.json",
+      "data/house_seat_check.json",
+      "data/street_kn5.json",
+      "data/crossfall.lm.json",
+      "data/edge_report.json",
+      "data/house_gate.json",
+      "data/treefx.report.json",
+      "data/verify_textures.json",
+      "data/pads.built.json",
+      "data/verify_pads.json",
+      "data/connectors.local.json",
+      "data/mouths.json",
+      "data/street_junctions.json",
+      "data/verify_mouths.json",
+      "data/mouth_returns.json",
+      "data/verify_mouth_corners.json",
+      "data/verify_fold_fans.json",
+      "data/barrier_bands.json",
+      "data/race_verify.json",
+      "data/no_route.{id}.json",
+      "data/signs.local.json",
+      "data/name_blades.built.json"
+    ],
+    "map": [
+      [
+        "blender/split/split_manifest.json",
+        "data/split_manifest.json"
+      ]
+    ],
+    "dirs": [
+      "ai/{id}"
+    ]
+  }
+}

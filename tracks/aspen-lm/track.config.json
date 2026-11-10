@@ -1,0 +1,161 @@
+{
+  "_doc": "Aspen Motorsports Park through Lake Murray v4's engine (ledger 0078). The line, widths and profile are tracks/aspen's (installed 0.67.1), read by tools/lm_engine_intake.py; the profile is the measured one with the elevation stage's grade cap undone; no lidar camber (the G10 survey found no usable cloud here: source/lidar/camber-survey/README.md), so flat; the 3DEP grid is this port's own fetch (the live track commits none); the edge is the circuit's (no curb, no sidewalk). Every other key is the live track's, copied; the live config is untouched.",
+  "archetype": "race_circuit",
+  "name": "Aspen Motorsports Park",
+  "_name_doc": "Kevin 2026-11-07: \"Get rid of Lm Version from names, nothing should be on any other engine now\" / \"LM is the airoso engine\". 0.1.4 (2026-11-09): no \"(LM engine)\" in the display name, and the slug and install_folder are the plain aspen_motorsports_park. The old-engine track (tracks/aspen) gave that slug up: its slug and folder are aspen_motorsports_park_v067 (S7, fleet.cli lint)",
+  "slug": "aspen_motorsports_park",
+  "version": "0.1.4",
+  "mirror_x": false,
+  "loop": true,
+  "default_width_m": 9.0,
+  "location": {
+    "lat": 39.2642,
+    "lon": -106.8805,
+    "timezone": "America/Denver",
+    "city": "Woody Creek",
+    "country": "United States"
+  },
+  "origin": "centroid",
+  "true_north_rotation_deg": 0.0,
+  "surfaces": {
+    "road": "1ROAD",
+    "grass": "GRASS",
+    "kerb": "1KERB"
+  },
+  "kerb": {
+    "height_m": 0.08,
+    "placement": "measured",
+    "end_ramp_m": 4.0,
+    "_placement_doc": "ledger 0081 round 3: each run at its measured in_m / out_m (tools/kerb_offsets.py, the block reader calibrated on High Plains, colour not used; the edge follows the paint) across the live lane edge, read as an offset from this ribbon's own lane edge, on the ROAD surface where it lies over the lane; the 4 m end ramp is High Plains' (invented, GATES-CHANGELOG)",
+    "width_m": 1.2,
+    "top_frac": 0.6,
+    "edge_ramp": 0.4
+  },
+  "scenery": {
+    "corridor_margin_m": 3.0,
+    "tree_step_m": 45,
+    "tree_cap": 150,
+    "tree_atlas_cols": 3,
+    "tree_atlas_rows": 2,
+    "bush_spacing_m": 9,
+    "bush_density": 0.25,
+    "bush_off_min_m": 6,
+    "bush_off_span_m": 22,
+    "bush_size_min_m": 1.0,
+    "bush_size_span_m": 1.2,
+    "light_spacing_m": 90,
+    "draft_lamps": false,
+    "_draft_lamps_doc": "a circuit has no streetlight down its edge every 55 m: the v021 assembler's draft posts are off (ledger 0078)",
+    "bespoke": {
+      "names": {
+        "ground": [
+          "TERRAIN"
+        ],
+        "far": [
+          "GRASS_FAR"
+        ],
+        "paved": [
+          "ROAD",
+          "CURB",
+          "1ROAD",
+          "1KERB"
+        ],
+        "track_edge": [
+          "ROAD",
+          "CURB"
+        ],
+        "cone_ground": [
+          "TERRAIN",
+          "CURB"
+        ],
+        "walls": [
+          "1WALL",
+          "BARRIER"
+        ],
+        "_doc": "the assembler's names at the author stage (Lake Murray's)"
+      },
+      "prep_seats": true
+    }
+  },
+  "layouts": [
+    {
+      "id": "full",
+      "ai": "ai/full",
+      "uses_connectors": []
+    }
+  ],
+  "lighting": {
+    "presets": [
+      "morning",
+      "noon",
+      "golden_hour"
+    ],
+    "grassfx": true
+  },
+  "source": {
+    "type": "from_track",
+    "track": "source/osm_fixes.json",
+    "smooth_window": 0,
+    "_smooth_window_doc": "2026-11-01 (ledger 0060, High Plains' lesson): source/osm_fixes.json is a list of 64 OSM nodes (8 m apart on the corners, up to 302 m on the straights), not a 1 Hz GPS drive; from_track's 5-fix moving average put the line 3.33 m median / 6.30 p95 / 7.36 m max off the source polygon (corners cut by most of the 9 m road) and shortened the lap 1,676 -> 1,600 m. 0 = no smoothing: the line is the OSM polygon resampled at 3 m (build_mesh still corner-rounds it for the sweep).",
+    "_note": "Real Aspen Motorsports Park (550 Raceway Rd, Woody Creek, CO). From OSM highway=raceway way 192313782 (1-mile road course), native CCW winding reversed to CW, resampled to 3 m via scripts.gps.from_track. Elevation from USGS 3DEP bare-earth (mountain site, do NOT flatten); NO banking (road course)."
+  },
+  "road_profile": {
+    "_doc": "Flat road course — no banking. dips/cambers intentionally empty; deck follows bare-earth 3DEP.",
+    "dips": [],
+    "cambers": [],
+    "fold_pads": false,
+    "_fold_pads_doc": "2026-11-03 (ledger 0074): the engine reads the 160 deg final hairpin (apex at lap 1,573 m) as a fold and, its +-60 m chord grade reading 0.9 %, laid a paved disc and a w/2+16 = 20.5 m flat zone that snapped every pavement vertex to the apex height. The corner itself climbs ~2.4 % (3DEP), so the zone rims were steps: +0.23 m at the entry and -0.20 m at the exit inside one 3 m segment, all 17 severe steps at 1,551-1,557 and 1,597-1,599 m. The ribbon sweeps this corner without folding (R 12.6 m at 9 m wide), so no pad: the engine's +-40 m fold plateau stays."
+  },
+  "route": {
+    "start_at": [
+      39.2669,
+      -106.88
+    ],
+    "_orientation_doc": "Research 2026-07-20: Aspen Motorsports Park runs CLOCKWISE (official map corners 1-7 CW; crash-report geometry corroborates). Our ring is already CW. S/F on the short N-S chute south of the final hairpin (~39.2669,-106.8800), cars heading SSW; checkered timing stand beside it. Pit lane: east side of the S/F chute (driver's left), ~100-150 m, splits at hairpin exit, rejoins after S/F.",
+    "smooth_sigma_pts": 2.0,
+    "smooth_passes": 2,
+    "smooth_sigma_y_pts": 1.5,
+    "divided_double": false,
+    "lane_dividers": false,
+    "edge": {
+      "curb_h": 0.0,
+      "curb_face_w": 0.1,
+      "sidewalk_w": 0.2,
+      "connector_sidewalk_w": 0.2,
+      "grade_w": 1.0,
+      "grass_clearance": -0.08,
+      "_grass_clearance_doc": "0.1.4 (PC, 2026-11-09; Kevin, asked whether the other circuit tracks have Milford's fast-curve edge mess: \"Yes, check them\"; Milford 0.1.6 is the same fix, ledger 0087): the strip's outer lip 2 cm under the lane edge (profile point 3 at -grass_clearance = +0.08 over the unlifted edge; the lane edge at +0.10). engine-july's prep holds the ground past the ROAD edge at the lane edge's height - 0.02 for 3 m (its contact band), so the lower lip lay in a gutter with a wall of ground at its lip. Measured on the installed 0.1.3 (gate OBJ, every 10 m, both sides; strip_gutter.py): the strip's lip 14 cm under the lane edge; the ground just past it stood more than 5 cm over the lip at 16 of 280 side-stations, more than 10 cm at 5 (max 12 cm). Flush with the band, nothing stands over it",
+      "_doc": "the circuit edge (ledger 0078): no curb, no sidewalk. The asphalt edge is held at road height for 0.30 m and the run-off ground meets it 0.15 m lower over 1.0 m [invented: the flush meet the drive gate reads as no drop]; the ground beyond is the assembler's conform to the road, then the 3DEP surface: the real run-off level."
+    },
+    "kerbs_file": "source/edges/kerbs.json",
+    "_kerbs_doc": "Aspen's three red / white kerbs (tracks/aspen/source/edges/kerbs.json: NAIP 2023 0.3 m, ends by eye on end zooms, offsets by their blocks: ledger 0081 round 3); built at their measured place by tools/author_kerbs_blend.py"
+  },
+  "terrain_cell_m": 1.5,
+  "corridor_refine_factor": 6,
+  "terrain_vertex_budget": 1500000,
+  "ui_tags": [
+    "circuit"
+  ],
+  "install_folder": "aspen_motorsports_park",
+  "_install_folder_doc": "beside aspen_motorsports_park for the A/B drive (ledger 0078)",
+  "ui_series": "doooom Colorado",
+  "_ui_series_doc": "Kevin 2026-10-28: 'K10 is gone. doooom.' Content Manager shows '<ui_series> - <layout name>' (tools/ship_track.sh ui_name_prefix carries the same string)",
+  "_chain_doc": "2026-11-01 (ONE-CHAIN §4 row 10; Kevin 2026-11-01: 'get a complete track list and installed by morning'): to the chain. mirror_x true -> false and true_north_rotation_deg 180 -> 0 (the chain's frame, ledger 0060; road_profile has no camber, so no sign to flip); version 0.66.3 -> 0.67.0 (versions keep counting, ONE-CHAIN §3); source.smooth_window 0 (an OSM node list); terrain_cell_m 1.5 and corridor_refine_factor 6 kept; ui_series 'doooom Colorado', install_folder = the slug (ONE-CHAIN §3); ui_tags already 'circuit'; the one layout already 'full'. route.start_at checked offline on the gps line + projection (zero-elevation stand-in): the ring rotates 382 points, vertex 0 lands 9.4 m from start_at on the N-S chute heading 179 deg (S; _orientation_doc says SSW), clockwise; lap 1,676 m, 561 points from 64 nodes (advertised '1-mile' = 1,609 m: +4.2 %, the OSM way as mapped). The engine-era T1 (v0.66.3 gate wave, ledger 0025) is withdrawn: the track enters at T0 through the chain.",
+  "lm_intake": {
+    "source_track": "aspen",
+    "connectors": false,
+    "profile": "uncapped",
+    "grid_upsample": 2,
+    "_doc": "the measured profile (the elevation stage's cap undone), the 40 m 3DEP grid pre-divided to 20 m (the same samples)"
+  },
+  "texture_overrides": {
+    "1KERB": {
+      "diffuse": "textures/kerb_redwhite.png",
+      "_doc": "the kerb paint the aerial shows (red and white), a flat two-band stripe (this port's own file). Keyed 1KERB, the row the traced kerbs (1KERB_circuit_*) bind; not 1KERB_RACE (race furniture)"
+    }
+  },
+  "terrain": {
+    "terrain_band_m": 22.0,
+    "_doc": "the v021 assembler's band clamp (Lake Murray's 22 m)"
+  }
+}

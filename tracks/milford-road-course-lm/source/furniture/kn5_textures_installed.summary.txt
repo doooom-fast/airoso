@@ -1,0 +1,34 @@
+== OURS
+san_diego_lake_murray_v4: PASS (13 kn5)
+   PASS san_diego_lake_murray.kn5: missing 0, empty 0, zero-byte 0, unused 0
+   PASS san_diego_lake_murray__north_acw.kn5: missing 0, empty 0, zero-byte 0, unused 0
+   PASS san_diego_lake_murray__north_cw.kn5: missing 0, empty 0, zero-byte 0, unused 0
+   PASS san_diego_lake_murray__race_acw.kn5: missing 0, empty 0, zero-byte 0, unused 0
+   PASS san_diego_lake_murray__race_cw.kn5: missing 0, empty 0, zero-byte 0, unused 0
+   PASS san_diego_lake_murray__street.kn5: missing 0, empty 0, zero-byte 0, unused 0
+   PASS san_diego_lake_murray_closure_north_acw.kn5: missing 0, empty 0, zero-byte 0, unused 0
+   PASS san_diego_lake_murray_closure_north_cw.kn5: missing 0, empty 0, zero-byte 0, unused 0
+   PASS san_diego_lake_murray_closure_race_acw.kn5: missing 0, empty 0, zero-byte 0, unused 0
+   PASS san_diego_lake_murray_closure_race_cw.kn5: missing 0, empty 0, zero-byte 0, unused 0
+   PASS san_diego_lake_murray_race.kn5: missing 0, empty 0, zero-byte 0, unused 0
+   PASS san_diego_lake_murray_race_north.kn5: missing 0, empty 0, zero-byte 0, unused 0
+   PASS san_diego_lake_murray_street.kn5: missing 0, empty 0, zero-byte 0, unused 0
+aspen_motorsports_park_lm: PASS (1 kn5)
+del_mar_fairgrounds: PASS (1 kn5)
+del_mar_fairgrounds_lm: PASS (1 kn5)
+exotics_racing_lvms_lm: PASS (1 kn5)
+grand_junction_lm: PASS (1 kn5)
+high_plains_lm: PASS (1 kn5)
+lookout_lariat_lm: PASS (1 kn5)
+milford_road_course_lm: PASS (1 kn5)
+pikes_peak_international_raceway_lm: PASS (1 kn5)
+pueblo_motorsports_park_lm: PASS (1 kn5)
+rally_co_dragon_tail_gravel_lm: PASS (1 kn5)
+rally_co_under_the_dragon_gravel_lm: PASS (1 kn5)
+san_diego_freeway_lm: PASS (1 kn5)
+sand_creek_raceway_lm: PASS (6 kn5)
+
+== NOT OURS: 93 folders, 2 with a FAIL
+   berowra_valley_national_park/asquith_start.kn5: missing 6, empty 0, zero-byte 0, unused 0
+   berowra_valley_national_park/asquith_start_reverse.kn5: missing 6, empty 0, zero-byte 0, unused 0
+   vn_motorland_aragon_complex/xtras_speed.kn5: missing 3, empty 0, zero-byte 0, unused 0

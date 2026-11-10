@@ -31,6 +31,7 @@ RASTER_PHASE_M = 0.137    # the raster's offsets off the whole metre in x / z, u
 RASTER_PHASE_Z_M = 0.311  # interior grid, its vertices, its edges or its diagonals)
 SHEET_DZ_M = 0.25         # [invented] two road sheets closer than this vertically over one point = multi-coverage
 SEAM_STEP_M = 0.25        # [invented] seam sampling step
+SEAM_END_EPS_M = 0.001    # a seam sample this close to a segment's far end is that end vertex (judged by P3's 1 mm rule)
 SEAM_GAP_M = 0.010        # EXPANSION-PLAN V3: seam gap <= 10 mm
 NEAR_LO_M, NEAR_HI_M = 0.001, 0.05   # JUNCTIONS rule 3: nothing between 1 mm and 5 cm of a seam vertex
 GRASS_OVER_M = 0.005      # [invented] grass this far over the deck is on top of it
@@ -99,6 +100,39 @@ def pip(poly, x, z):
     return inside
 
 
+def lm_pads_shape(built, data):
+    """tools/lm_pads_blend.py's record (ledger 0078 round 7 / 0079 round D: the lap is both main arms, cut at two of its
+    own rows; the deck ends at the measured outline with NO curb or walk, "edge": "shoulder") read as this gate's own
+    shape, so every rule judges it unchanged: the outline is outline_en (the track's local x / north = the OBJ's x / z);
+    each cut row's vertices are that arm's seam vertices (every one, densify's columns included, in order along the row);
+    the K-rails are the stubs; the node height's reference is the lap's own 3DEP profile at the node vertex
+    (centerline.local.json), as pads.plan.json's z_3dep_m is for Lake Murray's pads. ``curb`` False: P1 does not ask for a
+    1KERB_sidewalk_pad (Kevin: "no sidewalks"); P5 still judges every curb triangle over the pavement.
+    Returns (built, plan) or None when the record is not lm_pads' (Lake Murray's pads.built.json: unchanged)."""
+    pads = built.get("pads") or []
+    if not pads or not all("rows" in p and "outline_en" in p and "seams" not in p for p in pads):
+        return None
+    loc = json.loads((data / "centerline.local.json").read_text(encoding="utf-8"))
+    P = loc["points_xyz_m"]
+    elev0 = loc["origin"]["elev_m"]
+    out, plan = [], {}
+    for p in pads:
+        seams = []
+        # the rows past the lap's two cuts are the street arms' end rows (lm_pads.arms "streets", ledger 0079 0.2.3:
+        # `arm_rows` names them, in order); a record without them reads the two lap rows alone, as before
+        names = [f"lap_v{k}" for k in p["cuts"]] + [f"arm_{a['piece']}_{a['end']}" for a in p.get("arm_rows") or []]
+        for k, row in zip(names, p["rows"]):
+            for i, q in enumerate(row):                      # Blender (x, north, up) -> OBJ (x, up, north)
+                seams.append({"arm": k, "row_vertex": f"v{i}", "order": i, "xyz": [q[0], q[2], q[1]]})
+        stubs = [{"stub": b["object"], "barrier": dict(b["barrier"], seat=b["barrier"].get("seat") or [])}
+                 for b in p.get("barriers") or []]
+        out.append({"id": p["id"], "outline_xz": p["outline_en"], "seams": seams, "stubs": stubs, "curb": False})
+        nd = P[p["node"]]
+        plan[p["id"]] = {"node_xz": [nd[0], nd[2]], "z_3dep_m": round(nd[1] + elev0, 3),
+                         "_from": f"centerline.local.json v{p['node']} (the lap's 3DEP profile)"}
+    return {"pads": out}, plan
+
+
 def verify(project):
     proj = Path(project)
     data = proj / "data"
@@ -106,7 +140,15 @@ def verify(project):
     if not bp.exists():
         return None
     built = json.loads(bp.read_text(encoding="utf-8"))
-    plan = {p["id"]: p for p in json.loads((data / "pads.plan.json").read_text(encoding="utf-8"))["pads"]}
+    lm = lm_pads_shape(built, data)
+    # the end-vertex epsilon is round G's rule, for the street arm rows it introduced (lm_pads records with arm_rows:
+    # Sand Creek, Pikes Peak). Every other record samples each seam to its far end as before (integration 2026-11-10:
+    # five of Lake Murray's seam segments run < 1 mm past a 0.25 m multiple; the Lariat / Rangely ports have no arm rows)
+    end_eps = SEAM_END_EPS_M if lm is not None and any(p.get("arm_rows") for p in built.get("pads") or []) else 0.0
+    if lm is not None:
+        built, plan = lm
+    else:
+        plan = {p["id"]: p for p in json.loads((data / "pads.plan.json").read_text(encoding="utf-8"))["pads"]}
     centres = []
     for p in built["pads"]:
         o = p["outline_xz"]
@@ -119,13 +161,15 @@ def verify(project):
         pid = p["id"]
         fails = []
         deck_n, curb_n = f"1ROAD_PAD_{pid}".upper(), f"1KERB_SIDEWALK_PAD{pid}".upper()
-        for n in (deck_n, curb_n) + tuple(s["barrier"]["object"].upper() for s in p["stubs"]):
+        need = (deck_n,) + ((curb_n,) if p.get("curb", True) else ())   # lm_pads' shoulder edge: no curb asked for
+        for n in need + tuple(s["barrier"]["object"].upper() for s in p["stubs"]):
             if not any(m == n or m.startswith(n + "_") or m.startswith(n + ".") for m in names):
                 fails.append(f"P1: {n} not in the built OBJ")
         o = [tuple(q) for q in p["outline_xz"]]
         xs, zs = [q[0] for q in o], [q[1] for q in o]
         multi = grass = n_in = 0
         worst_multi = None
+        grass_at = []                 # where P4 found it (the first GRASS_AT_N, reported: x, z, grass over the deck)
         # the raster stands RASTER_PHASE_M off the whole metre: the deck's interior points are a 1 m grid, and a sample
         # exactly on a shared vertex / edge reads every triangle round it (the same sheet several times)
         x = math.floor(min(xs)) - 3.0 + RASTER_PHASE_M
@@ -144,8 +188,11 @@ def verify(project):
                             break
                     if deck:
                         top_road = max(deck)
-                        if any(n.startswith("1GRASS") and h > top_road + GRASS_OVER_M for h, n in hs):
+                        over = [h - top_road for h, n in hs if n.startswith("1GRASS") and h > top_road + GRASS_OVER_M]
+                        if over:
                             grass += 1
+                            if len(grass_at) < 12:
+                                grass_at.append([round(x, 2), round(z, 2), round(max(over), 4)])
                 z += COVER_STEP_M
             x += COVER_STEP_M
         multi_m2 = multi * COVER_STEP_M * COVER_STEP_M
@@ -171,14 +218,17 @@ def verify(project):
                     fails.append(f"P3: {arm} seam vertex {sv['row_vertex']} has no pad vertex within 1 mm "
                                  f"(nearest {dmin})")
                 near_miss += sum(1 for d in ds if NEAR_LO_M < d < NEAR_HI_M)
-            pts = sorted(svs, key=lambda r: ["L", "C", "R"].index(r["row_vertex"]))
+            pts = sorted(svs, key=lambda r: r["order"] if "order" in r else ["L", "C", "R"].index(r["row_vertex"]))
             for (qa, qb) in zip(pts, pts[1:]):
                 A, B = qa["xyz"], qb["xyz"]
                 L = math.dist((A[0], A[2]), (B[0], B[2]))
                 tx, tz = (B[0] - A[0]) / L, (B[2] - A[2]) / L
                 nx, nz = -tz, tx
                 k = 1
-                while k * SEAM_STEP_M < L:
+                # strictly inside the segment: a seam vertex itself is judged by the 1 mm rule above, and a sample landing
+                # ON a row's end vertex (a street row of exactly 4.000 m a side, ledger 0079 round G) reads the street's
+                # own edge strip beside it, not a hole (GATES-CHANGELOG 2026-11-05 round G)
+                while k * SEAM_STEP_M < L - end_eps:
                     u = k * SEAM_STEP_M
                     mx, mz = A[0] + tx * u, A[2] + tz * u
                     hs_l = [h for h, n in F.at(mx + nx * 0.02, mz + nz * 0.02) if n.startswith("1ROAD")]
@@ -248,6 +298,7 @@ def verify(project):
         elif not dk:
             fails.append("P7: no deck over the junction node")
         rows.append({"id": pid, "raster_points": n_in, "multi_coverage_m2": multi_m2, "grass_on_deck": grass,
+                     "grass_at_xz": grass_at,
                      "seam_max_gap_m": round(max_gap, 5), "seam_near_misses": near_miss,
                      "curb_over_pavement": curb_over, "barriers": bars,
                      "node_deck_minus_3dep_m": None if node_dev is None else round(node_dev, 3),

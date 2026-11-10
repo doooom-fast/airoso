@@ -1,0 +1,97 @@
+{
+  "_doc": "High Plains Raceway on Lake Murray v4's engine (ledger 0078): engine lm-v4, the intake from tracks/high-plains, Lake Murray's assembler and fold weld, finer ground on the banked stretches, the bespoke dressing, engine-july's prep / export, the gates + edge_report. Single layout: engine-july's prep lays the AC_* nodes in the road kn5.",
+  "track": "high-plains-lm",
+  "engine": "lm-v4",
+  "workshop": "D:/k10-scratch",
+  "workshop_project": "high_plains_lm",
+  "require_race_layout": false,
+  "ui_name_prefix": "doooom Colorado",
+  "steps": {
+    "draft": [
+      "lm_intake",
+      "build_loop_blend",
+      "weld_mouths",
+      "densify_ribbon",
+      "seat_edges",
+      "strip_seam",
+      "kerbs"
+    ],
+    "author": [
+      "bespoke"
+    ],
+    "prep": [
+      "prep",
+      "split"
+    ],
+    "ship": [
+      "export_road",
+      "ai",
+      "verify_kn5",
+      "road_obj",
+      "grassfx_aerial",
+      "track_folder",
+      "verify_inis",
+      "make_map"
+    ],
+    "gate": [
+      "drive_test_street",
+      "audit_street",
+      "kn5_ground",
+      "road_wear",
+      "house_seat",
+      "edge_report"
+    ]
+  },
+  "sync_in": {
+    "required": [
+      "track.config.json",
+      "source/road_wear/naip_2023_030_hp.png"
+    ],
+    "optional": [
+      "data/heightfield.npy",
+      "data/heightfield.meta.json",
+      "textures/kerb_bluewhite.png",
+      "textures/kerb_atlas_hp.png",
+      "source/road_wear/fast_lane.full.ai"
+    ]
+  },
+  "sync_out": {
+    "required": [
+      "loop.blend"
+    ],
+    "files": [
+      "data/lm_intake.json",
+      "data/centerline.local.json",
+      "data/centerline.raw.local.json",
+      "data/finished_centerline.json",
+      "data/gate_centerline.json",
+      "data/bridge.spans.auto.json",
+      "data/mouth_welds.json",
+      "data/crossfall.lm.json",
+      "data/bespoke.report.json",
+      "data/dummies.json",
+      "data/drive_test.json",
+      "data/drive_test.{id}.json",
+      "data/audit.json",
+      "data/kn5_ground_check.{id}.json",
+      "data/house_seat_check.json",
+      "data/edge_report.json",
+      "data/kerbs.built.json",
+      "data/grassfx.aerial.json",
+      "data/road_wear.json",
+      "data/road_wear.line.{id}.json",
+      "data/road_wear_check.json"
+    ],
+    "map": [
+      [
+        "blender/split/split_manifest.json",
+        "data/split_manifest.json"
+      ]
+    ],
+    "dirs": [
+      "ai/{id}"
+    ]
+  },
+  "_vegetation_doc": "ledger 0089 (High Plains 0.1.6): grassfx_aerial before the track folder (the config's own GrassFX zones off NAIP 2023: the draws' long grass, B, which 0.1.5's PRAIRIECARD cards stood on, and the bright bare ground, C); no TreeFX: NAIP shows no shrub there",
+  "_road_wear_doc": "ledger 0084 'High Plains 0.1.7': the aerial (required: track.config.json road_wear.aerial) and a recorded line when one exists (optional) sync in; the bake runs as the last part of prep (tools/ship_track.sh prep_prep, opt-in on the config key), the race kerbs included (road_wear.kerbs); gate road_wear (tools/road_wear_check.py) reads the built road kn5"
+}

@@ -38,6 +38,7 @@ import bmesh
 import bpy
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+import mouth_returns as mr  # noqa: E402
 import mouth_weld as mw  # noqa: E402
 
 CORNER_M = mw.GAP_CORNER_M
@@ -86,6 +87,14 @@ def main():
     if not (l0 > 0 > r0):
         raise SystemExit(f"[gap-mouths] ring layout assertion failed: side+1 lat {l0:.2f}, side-1 lat {r0:.2f}")
 
+    # ledger 0086 (opt-in, route.mouth_returns): a mouth with corner returns (tools/mouth_returns_blend.py) opens the
+    # host's strip exactly to the returns' A rows (data/mouth_returns.json host_rows_opened), not gap_window's
+    # GAP_CORNER_M; and the street strip vertices the returns orphaned are deleted once the faces have gone
+    cfg = json.loads((proj / "track.config.json").read_text(encoding="utf-8"))
+    returns = mr.load_returns(proj) if mr.config(cfg)[0] else None
+    ret_open = {(m_["piece"], m_["end"]): set(m_["host_rows_opened"]) for m_ in (returns or {}).get("mouths", [])}
+    ret_paint = {(m_["piece"], m_["end"]): m_ for m_ in (returns or {}).get("mouths", [])}
+
     # gap windows per (host, side)
     gaps = {}
     for mo in mouths:
@@ -95,6 +104,9 @@ def main():
             continue
         _, mh, closed, hpts = blocks[host]
         s = gaps.setdefault((host, int(mo["side"])), set())
+        if (mo.get("piece"), mo.get("end")) in ret_open:
+            s.update(ret_open[(mo["piece"], mo["end"])])
+            continue
         if "host_seg" not in mo:
             k = int(mo["host_vertex"])
             nv = int(math.ceil((mo["connector_width_m"] / 2.0 + CORNER_M) / 3.0))
@@ -126,6 +138,8 @@ def main():
     bm = bmesh.new()
     bm.from_mesh(me)
     bm.faces.ensure_lookup_table()
+    bm.verts.ensure_lookup_table()
+    orphans = [bm.verts[i] for i in (returns or {}).get("orphan_curb_verts", []) if i < len(bm.verts)]
     doomed = []
     for f in bm.faces:
         idx = [v.index for v in f.verts]
@@ -140,11 +154,142 @@ def main():
                     doomed.append(f)
                     break
     bmesh.ops.delete(bm, geom=doomed, context="FACES")
+    n_orph = 0
+    if orphans:
+        loose = [v for v in orphans if v.is_valid and not v.link_faces]
+        bmesh.ops.delete(bm, geom=loose, context="VERTS")
+        n_orph = len(loose)
     bm.to_mesh(me)
     bm.free()
     me.update()
+    n_paint = gap_paint(proj, cfg, mouths, blocks, ret_paint) if (cfg.get("road_markings") or {}).get("gap_mouths") else None
     bpy.ops.wm.save_mainfile(filepath=str(proj / "loop.blend"))
-    print(f"[gap-mouths] deleted {len(doomed)} host curb/sidewalk faces across {len(mouths)} mouths; saved loop.blend")
+    print(f"[gap-mouths] deleted {len(doomed)} host curb/sidewalk faces across {len(mouths)} mouths"
+          + (f"; {n_orph} street strip vertices the corner returns orphaned deleted" if orphans else "")
+          + (f"; {n_paint}" if n_paint is not None else "") + "; saved loop.blend")
+
+
+PAINT_BAND_M = (-1.2, 0.3)   # [invented] the host's edge line (lane_markings edge_inset 0.55 m, 0.12 m wide) lies in this
+#                              band of b (m past the host's pavement edge on the mouth side; - = on the host)
+PAINT_PARALLEL = 0.8         # [invented] a face whose long side runs within ~37 deg of the host is the host's line
+
+
+def gap_paint(proj, cfg, mouths, blocks, ret_paint):
+    """road_markings.gap_mouths (ledger 0086, opt-in): the host's white edge line broken at every mouth, as real paint is.
+    Kevin's grid streets had it painted across 93 of 113 openings (build_loop_blend.py lane_markings sweeps it along the
+    whole host; nothing gapped it). Per mouth: the window along the host is the opening (connector half-width /
+    sin(angle) either side of the cut's station), widened to the corner returns' A* where tools/mouth_returns_blend.py
+    built them (mouth_returns.paint_window); MARKINGS faces in the edge band whose long side runs with the host are cut
+    exactly at the window's two ends (bmesh bisect_plane, those faces only) and the pieces inside deleted. YLINE (the
+    centre lines) and the connector's own paint are untouched."""
+    ob = bpy.data.objects.get("MARKINGS")
+    if ob is None:
+        return "no MARKINGS object: no paint gapped"
+    data = proj / "data"
+    local = json.loads((data / "centerline.local.json").read_text(encoding="utf-8"))
+    conns = json.loads((data / "connectors.local.json").read_text(encoding="utf-8"))["connectors"]
+    widths = {"MAINLINE": local.get("widths_m")}
+    widths.update({c["name"]: c.get("widths_m") for c in conns})
+    bm = bmesh.new()
+    bm.from_mesh(ob.data)
+    n_del = n_mouth = 0
+    HC = 8.0
+    fh = {}
+    for f in bm.faces:
+        ce = f.calc_center_median()
+        fh.setdefault((int(math.floor(ce.x / HC)), int(math.floor(ce.y / HC))), []).append(f)
+    arcs = {}
+    for mo in mouths:
+        host = mo["host"]
+        if host not in blocks or "host_seg" not in mo or not widths.get(host):
+            continue
+        _, mh, closed, hpts = blocks[host]
+        hp = [tuple(p) for p in hpts]
+        wd = widths[host]
+        side = int(mo["side"])
+        c, lo, hi = mr.paint_window(mo, hp, closed, ret_paint.get((mo.get("piece"), mo.get("end"))))
+        seg0 = int(mo["host_seg"])
+        segs = [q for q in range(seg0 - 30, seg0 + 31)]
+
+        def frame(x, z):
+            pr = mr.project_polyline(hp, closed, x, z, segs)
+            if pr is None:
+                return None
+            _d, q, t = pr
+            n = len(hp)
+            a, b = hp[q], hp[(q + 1) % n]
+            L = math.hypot(b[0] - a[0], b[2] - a[2]) or 1.0
+            tx, tz = (b[0] - a[0]) / L, (b[2] - a[2]) / L
+            lat = -tz * (x - a[0] - tx * L * t) + tx * (z - a[2] - tz * L * t)
+            arc = arcs.get(host)
+            if arc is None:
+                arc = arcs[host] = mr.host_arcs(hp, mh, closed)
+            s_ = arc[q] + (arc[min(q + 1, len(arc) - 1)] - arc[q]) * t
+            w = wd[q] * (1 - t) + wd[min(q + 1, len(wd) - 1)] * t
+            return mr.signed_off(s_, c, arc[mh] if closed else None), side * lat - w / 2.0, (tx, tz)
+        cx, cz = mo["cut_xyz"][0], mo["cut_xyz"][2]
+        reach = max(abs(lo), abs(hi)) + 16.0
+        local_f = set()
+        for gx in range(int(math.floor((cx - reach) / HC)), int(math.floor((cx + reach) / HC)) + 1):
+            for gz in range(int(math.floor((cz - reach) / HC)), int(math.floor((cz + reach) / HC)) + 1):
+                local_f.update(f for f in fh.get((gx, gz), ()) if f.is_valid)
+
+        def cand():
+            out = []
+            for f in local_f:
+                if not f.is_valid:
+                    continue
+                ce = f.calc_center_median()
+                fr = frame(ce.x, ce.y)
+                if fr is None or not (PAINT_BAND_M[0] <= fr[1] <= PAINT_BAND_M[1]) or not (lo - 4.0 <= fr[0] <= hi + 4.0):
+                    continue
+                ed = max(f.edges, key=lambda e_: e_.calc_length())
+                d = ed.verts[1].co - ed.verts[0].co
+                L = math.hypot(d.x, d.y) or 1.0
+                if abs(d.x / L * fr[2][0] + d.y / L * fr[2][1]) < PAINT_PARALLEL:
+                    continue
+                out.append((f, fr))
+            return out
+        got = cand()
+        if not got:
+            continue
+        for off in (lo, hi):
+            # the window's end: the host point at that arc offset, the plane square to the host there
+            fr0 = None
+            best = None
+            for f, fr in got:
+                if f.is_valid and (best is None or abs(fr[0] - off) < best):
+                    best, fr0 = abs(fr[0] - off), (f, fr)
+            if fr0 is None:
+                continue
+            f, fr = fr0
+            ce = f.calc_center_median()
+            tx, tz = fr[2]
+            co = ce.copy()
+            co.x += tx * (off - fr[0])
+            co.y += tz * (off - fr[0])
+            geom = [g for f_, _ in got if f_.is_valid for g in list(f_.verts) + list(f_.edges) + [f_]]
+            geom = list(dict.fromkeys(geom))
+            vs = [g for g in geom if isinstance(g, bmesh.types.BMVert)]
+            res = bmesh.ops.bisect_plane(bm, geom=geom, plane_co=co, plane_no=(tx, tz, 0.0), dist=1e-5)
+            vs += [g for g in res["geom"] if isinstance(g, bmesh.types.BMVert)]
+            for v in vs:
+                if v.is_valid:
+                    for nf in v.link_faces:
+                        if nf not in local_f:
+                            local_f.add(nf)
+                            ce_ = nf.calc_center_median()
+                            fh.setdefault((int(math.floor(ce_.x / HC)), int(math.floor(ce_.y / HC))), []).append(nf)
+            got = cand()
+        doomed = [f for f, fr in got if lo + 1e-3 < fr[0] < hi - 1e-3]
+        if doomed:
+            bmesh.ops.delete(bm, geom=doomed, context="FACES")
+            n_del += len(doomed)
+            n_mouth += 1
+    bm.to_mesh(ob.data)
+    bm.free()
+    ob.data.update()
+    return f"the host's edge line broken at {n_mouth} mouth(s) ({n_del} paint faces inside the openings deleted)"
 
 
 main()

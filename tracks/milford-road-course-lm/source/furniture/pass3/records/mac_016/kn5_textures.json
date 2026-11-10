@@ -1,0 +1,19 @@
+{
+ "kn5s": [
+  {
+   "kn5": "<sys>/work/furniture/b016/build/milford_road_course.kn5",
+   "bytes": 39002272,
+   "version": 5,
+   "textures_embedded": 19,
+   "materials": 32,
+   "maps": 49,
+   "missing_textures": [],
+   "missing": [],
+   "empty": [],
+   "zero_bytes": [],
+   "unused": [],
+   "ok": true
+  }
+ ],
+ "ok": true
+}

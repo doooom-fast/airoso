@@ -1,0 +1,126 @@
+start 21:29:49
+track: milford-road-course-lm   workshop project: <scratchpad>/sys/work/mf0111/b0111 (scratch: no sync-back, no install)
+engine (prep / export / spawn): <scratchpad>/sys/work/mf0111/eng
+
+=================== sync inputs airoso -> workshop (<scratchpad>/sys/work/mf0111/b0111)
+layouts: full   (race furniture: ; street: full; street AI = draft)
+--from treefx: every step before it is skipped (the sync-in ran above; every gate runs)
+(--from treefx: draft lm_intake skipped — the workshop keeps the last run's output)
+(--from treefx: draft build_loop_blend skipped — the workshop keeps the last run's output)
+(--from treefx: draft weld_mouths skipped — the workshop keeps the last run's output)
+(--from treefx: draft densify_ribbon skipped — the workshop keeps the last run's output)
+(--from treefx: draft seat_edges skipped — the workshop keeps the last run's output)
+(--from treefx: draft strip_seam skipped — the workshop keeps the last run's output)
+(--from treefx: draft far_ground skipped — the workshop keeps the last run's output)
+(--from treefx: draft kerbs skipped — the workshop keeps the last run's output)
+(--from treefx: author bespoke skipped — the workshop keeps the last run's output)
+(--from treefx: prep prep skipped — the workshop keeps the last run's output)
+(--from treefx: prep split skipped — the workshop keeps the last run's output)
+(--from treefx: ship export_road skipped — the workshop keeps the last run's output)
+(--from treefx: ship ai skipped — the workshop keeps the last run's output)
+(--from treefx: ship verify_kn5 skipped — the workshop keeps the last run's output)
+(--from treefx: ship road_obj skipped — the workshop keeps the last run's output)
+(--from treefx: ship grassfx_aerial skipped — the workshop keeps the last run's output)
+(--from treefx: ship track_folder skipped — the workshop keeps the last run's output)
+(--from treefx: ship verify_inis skipped — the workshop keeps the last run's output)
+(--from treefx: ship make_map skipped — the workshop keeps the last run's output)
+
+=================== ship: TreeFX palms / street trees / scrub + the north network by zone (tools/make_treefx.py; the loop's cells byte-identical, the added cells per the aerial bins, caps by area)
+[treefx] built-surface guard on track.obj: plan triangles rock 0, road 21740, walk 39216, building 4
+[treefx] planted past the 3DEP grid, seated on the built far ground (833343 1GRASS triangles): 7656 re-seated, 0 with no ground under them (kept on the grid's border height), 3591 inside the grid unchanged
+[treefx] planted source/vegetation/trees.lm.json: 11247 of 11247 points clear of the roads by 3.0 m -> {'planted_neighbourhood': 11247}
+[treefx] built-surface guard: dropped rock 0, road 0, walk 0, building 0 (of them on the loop's own zones: rock 0, road 0, walk 0, building 0)
+[treefx] 11247 trees ({'planted_neighbourhood': 11247}), 0 rejected in the corridor, species ['Oak3.bin', 'SycamoreV2.bin'] -> <scratchpad>/sys/work/mf0111/b0111/build/milford_road_course/extension/trees/trees.txt + [TREES] in ext_config.ini
+
+=================== gate: drive_test, street layout (hard)
+  [drive] corridor cull: skipped 66684 triangles beyond 120 m
+  [drive-time] load + hash                2.3s
+  layout full: direction forward, kind street, furniture none, OBJ data/track.obj
+  [drive-time] pre-sweep setup            0.0s
+  [drive-time] post-sweep passes          1.8s
+DRIVE TEST milford_road_course [full forward street]  lap 4.89 km  (10 wheel paths @ 1.0 m)
+  ground on top mid-lane : 0
+  floating furniture (walls/fences off support): 0 
+  undrivable corners (>100deg @ <11m): 0 
+  severe steps (>6 cm)  : 0
+  bumps >2.5 cm /km      : 0.0 (limit 75 for tarmac)
+  vertex bumps (2.5-6 cm read across a vertex hop, under 2.5 cm on the path's own travel; reported, not gated): 16
+  slope kinks >3.0%% /km   : 6.34
+  daylight gaps at edges : 0
+  off-road excursion drops>20cm : 0  (far flare ledges, reported: 21)
+    worst excursion drop: (4501.5, 13.5, 0.16, False)
+    worst excursion drop: (301.4, 15.0, 0.15, False)
+    worst excursion drop: (301.4, 15.5, 0.15, False)
+    worst excursion drop: (301.4, 16.0, 0.15, False)
+    worst excursion drop: (301.4, 14.5, 0.14, False)
+    worst excursion drop: (2850.4, 13.5, 0.14, False)
+  obstructed stations    : 0
+  => PASS   (data/drive_test.full.json)
+
+DRIVE TEST SUMMARY milford_road_course: full=PASS   (data/drive_test.json)
+
+=================== gate: audit_mesh, street (hard total)
+AUDIT milford_road_course   (roads 65218v, grass 451687v, walls 43907v, piers 0)
+  A. supports standing in a road : 0
+  B. terrain poking through road : 0  (worst +0.0 m)
+  C. at-grade junction crossings : 0  ({'ramp': 0, 'mainline': 0})
+  D. walls sitting on a road     : 0
+  E. walls floating over ground  : 0  (worst +0.0 m)
+  F. curbs not flush             : 0  (of 27191 curb verts,
+                                      edge-scoped, top-surface only;
+                                      0 skirt verts off terrain (advisory), 0 side faces skipped,
+                                      grounding is gated by drive_test + E/H)
+  G. plants floating over ground : (env not built)
+  H. ground cutting into road    : (no ground grid)  (worst +0.0 m)
+  I. sidewalk isolating pavement : 0
+  K. kerb/sidewalk in carriageway: 0
+  J. terrain triangles over road : 0
+  => CLEAN
+
+=================== gate: kn5_ground_check per layout (EXPANSION-PLAN V5: the kn5 set each layout loads — terrain sheets, furniture seating, lamp masts, the road on the ground)
+KN5 FIDELITY milford_road_course.kn5  (yaw 0 deg)  [data/track.obj is this kn5's own gate OBJ (kn5_to_gate_obj) — kn5-internal checks only]
+  double-sheet terrain cells (>12 m spread): 0
+  walls     objects   336: no-ground  0.0%  seat-gap median -0.46  p95 -0.19  hovering>0.3m 0 (0.0%)
+  flush edges (info): 2616 samples  deck-vs-verge median -0.01  p95 +0.75
+  deck-vs-mountain (tri-exact): median +0.020  p95 +0.021  max +0.052
+  road-over-ground: 2/9317 samples gap > 0.05 m (0.0%)  p95 +0.021 m (gate 0.1 m)
+  => PASS — kn5 matches the audited OBJs
+  kn5_ground_check full: exit 0
+
+=================== gate: every texture the built kn5s' materials name is embedded (tools/kn5_textures.py; ledger 0082 — hard)
+PASS <scratchpad>/sys/work/mf0111/b0111/build/milford_road_course.kn5: 44,555,580 B, 21 textures embedded, 34 materials, 57 maps; missing 0, empty 0, zero-byte 0, unused 0
+
+=================== gate: road wear on the built road kn5 (tools/road_wear_check.py; ledger 0084 — hard)
+[road_wear_check] materials     PASS  problems []
+[road_wear_check] density       PASS  triangles 60956, off 0, worst_scale_err 0.000858, worst_shear 0.000894, texel_m 0.25, atlas_px 4096
+[road_wear_check] no_repeat     PASS  texels_claimed 87633, claimed_twice 0
+[road_wear_check] detail_phase  PASS  worst_tiles 1e-05, detail_uv_multiplier 256.0
+[road_wear_check] tone          PASS  pearson_r 0.9526, samples 2966, v_convention -v, r_by_convention {'v': 0.0797, '-v': 0.9526, '1-v': 0}
+[road_wear_check] rubber        PASS  stations 268, centroid_m 0.044, depth_on_line 0.2174, declared_depth 0.2092, declared_amplitude 0.22
+[road_wear_check] PASS
+
+=================== gate: houses on the built ground (tools/house_seat_check.py: floating, sunken or buried buildings — hard)
+[houses] <scratchpad>/sys/work/mf0111/b0111/data/track.obj: 3 buildings judged, 0 with no ground under them
+[houses] contact (bottom - lowest ground under the walls): min -0.323 m, max -0.15 m
+[houses] floating (> 0.1 m above): 0 (limit 0); sunken (> 1 m below): 0 (limit 0); buried (roof < 1 m over the highest ground under the walls): 0 (limit 0); lowest roof over that ground 2.117 m
+[houses] the visual lens's buried share (mean ground over the height, foundation included; not gated): {'over_30pct': 0, 'over_50pct': 0, 'p95': 0.154}
+[houses] PASS
+
+=================== gate: the built lane edges are smooth (tools/edge_smoothness.py; ledger 0087 — hard)
+[edges] {"boundary_segments": {"road": 6536, "strip": 13072}, "lane_edge": {"left": {"samples": 4887, "judged": 4882, "flare": 0, "open": 5, "d2_m": {"p50": 0.001, "p95": 0.0072, "p99": 0.0119, "max": 0.02}, "resid_m": {"p50": 0.0004, "p95": 0.0023, "p99": 0.0038, "max": 0.0111}}, "right": {"samples": 4887, "judged": 4879, "flare": 0, "open": 8, "d2_m": {"p50": 0.001, "p95": 0.0074, "p99": 0.0122, "max": 0.0196}, "resid_m": {"p50": 0.0004, "p95": 0.0024, "p99": 0.0039, "max": 0.0091}}}, "strip_outer": {"left": {"samples": 4887, "judged": 4872, "flare": 0, "open": 5, "d2_m": {"p50": 0.001, "p95": 0.0074, "p99": 0.0119, "max": 0.0209}, "resid_m": {"p50": 0.0005, "p95": 0.0024, "p99": 0.0039, "max": 0.0134}}, "right": {"samples": 4887, "judged": 4873, "flare": 0, "open": 8, "d2_m": {"p50": 0.001, "p95": 0.0075, "p99": 0.012, "max": 0.0225}, "resid_m": {"p50": 0.0005, "p95": 0.0024, "p99": 0.0039, "max": 0.0093}}}, "ragged_runs": {"lane_edge": 0, "strip_outer": 0}}
+[edges] gate PASS: every row under
+
+=================== report: the road edge and the near-road ground on the built road (tools/edge_report.py; ledger 0078; not a gate)
+[edge] {"side_stations": 934, "at_1m": {"lane": 0.0, "shoulder": 0.0, "kerb": 0.995, "ground": 0.0, "wall": 0.005, "none": 0.0, "other": 0.0}, "rise_2m_m": {"median": 0.002, "p95": 0.07}, "paved_past_edge_m": {"median": 0.0, "p95": 0.0}, "ground_3m": {"p5": -0.081, "median": -0.027, "p95": 0.036, "share_below_1m": 0.0, "share_above_1m": 0.0}, "ground_6m": {"p5": -0.528, "median": -0.144, "p95": -0.094, "share_below_1m": 0.0, "share_above_1m": 0.0}, "ground_10m": {"p5": -0.792, "median": -0.221, "p95": -0.159, "share_below_1m": 0.016, "share_above_1m": 0.003}}
+
+=================== sync outputs workshop -> airoso: SKIPPED
+the project is a scratch copy or a rehearsal (<scratchpad>/sys/work/mf0111/b0111; ship.json <scratchpad>/sys/work/mf0111/src/a0111/tracks/milford-road-course-lm/ship.json), not the workshop (D:/k10-scratch/milford_lm): its outputs
+stay in the scratch copy — only the workshop feeds <scratchpad>/sys/work/mf0111/src/a0111/tracks/milford-road-course-lm.
+
+GATES: street drive_test exit 0, street audit exit 0, race drive_test exit 0, race audit exit 0, race no_route exit 0, kn5_ground_check exit 0
+  race layouts red on their own gates: none
+  Drive-1 road gates: road inventory exit -, stacked legs exit -, the Drive-1 verdict exit - ('-' = not run)
+
+SHIP OK
+exit 0
+end 21:30:38

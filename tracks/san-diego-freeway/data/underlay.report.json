@@ -1,0 +1,631 @@
+{
+ "written": "loop.blend",
+ "existed": true,
+ "blender": "4.2.22 LTS",
+ "source_obj": "data/track.obj",
+ "obj_md5": "5d335503524aaeb2f0d018c08e61dff8",
+ "frame": "local (E,up,N) -> Blender (E,N,up) as (x,y,z)->(x,z,y), faces re-wound",
+ "groups": [
+  {
+   "name": "1GRASS_0_95",
+   "collection": "GEN_terrain",
+   "verts": 9216,
+   "faces": 18050,
+   "uv": true
+  },
+  {
+   "name": "1GRASS_0_190",
+   "collection": "GEN_terrain",
+   "verts": 9216,
+   "faces": 18050,
+   "uv": true
+  },
+  {
+   "name": "1GRASS_0_285",
+   "collection": "GEN_terrain",
+   "verts": 9216,
+   "faces": 18050,
+   "uv": true
+  },
+  {
+   "name": "1GRASS_0_380",
+   "collection": "GEN_terrain",
+   "verts": 9216,
+   "faces": 18050,
+   "uv": true
+  },
+  {
+   "name": "1GRASS_0_475",
+   "collection": "GEN_terrain",
+   "verts": 3264,
+   "faces": 6270,
+   "uv": true
+  },
+  {
+   "name": "1GRASS_95_95",
+   "collection": "GEN_terrain",
+   "verts": 9216,
+   "faces": 18050,
+   "uv": true
+  },
+  {
+   "name": "1GRASS_95_190",
+   "collection": "GEN_terrain",
+   "verts": 9216,
+   "faces": 18050,
+   "uv": true
+  },
+  {
+   "name": "1GRASS_95_285",
+   "collection": "GEN_terrain",
+   "verts": 9216,
+   "faces": 18050,
+   "uv": true
+  },
+  {
+   "name": "1GRASS_95_380",
+   "collection": "GEN_terrain",
+   "verts": 9216,
+   "faces": 18050,
+   "uv": true
+  },
+  {
+   "name": "1GRASS_95_475",
+   "collection": "GEN_terrain",
+   "verts": 3264,
+   "faces": 6270,
+   "uv": true
+  },
+  {
+   "name": "1GRASS_190_95",
+   "collection": "GEN_terrain",
+   "verts": 9216,
+   "faces": 18050,
+   "uv": true
+  },
+  {
+   "name": "1GRASS_190_190",
+   "collection": "GEN_terrain",
+   "verts": 9216,
+   "faces": 18050,
+   "uv": true
+  },
+  {
+   "name": "1GRASS_190_285",
+   "collection": "GEN_terrain",
+   "verts": 9216,
+   "faces": 18050,
+   "uv": true
+  },
+  {
+   "name": "1GRASS_190_380",
+   "collection": "GEN_terrain",
+   "verts": 9216,
+   "faces": 18050,
+   "uv": true
+  },
+  {
+   "name": "1GRASS_285_190",
+   "collection": "GEN_terrain",
+   "verts": 9216,
+   "faces": 18050,
+   "uv": true
+  },
+  {
+   "name": "1GRASS_285_285",
+   "collection": "GEN_terrain",
+   "verts": 9216,
+   "faces": 18050,
+   "uv": true
+  },
+  {
+   "name": "1GRASS_285_380",
+   "collection": "GEN_terrain",
+   "verts": 9216,
+   "faces": 18050,
+   "uv": true
+  },
+  {
+   "name": "1GRASS_285_475",
+   "collection": "GEN_terrain",
+   "verts": 3264,
+   "faces": 6270,
+   "uv": true
+  },
+  {
+   "name": "1GRASS_380_95",
+   "collection": "GEN_terrain",
+   "verts": 9216,
+   "faces": 18050,
+   "uv": true
+  },
+  {
+   "name": "1GRASS_380_190",
+   "collection": "GEN_terrain",
+   "verts": 9216,
+   "faces": 18050,
+   "uv": true
+  },
+  {
+   "name": "1GRASS_380_285",
+   "collection": "GEN_terrain",
+   "verts": 9216,
+   "faces": 18050,
+   "uv": true
+  },
+  {
+   "name": "1GRASS_380_380",
+   "collection": "GEN_terrain",
+   "verts": 9216,
+   "faces": 18050,
+   "uv": true
+  },
+  {
+   "name": "1GRASS_380_475",
+   "collection": "GEN_terrain",
+   "verts": 3264,
+   "faces": 6270,
+   "uv": true
+  },
+  {
+   "name": "1GRASS_475_190",
+   "collection": "GEN_terrain",
+   "verts": 9216,
+   "faces": 18050,
+   "uv": true
+  },
+  {
+   "name": "1GRASS_475_285",
+   "collection": "GEN_terrain",
+   "verts": 9216,
+   "faces": 18050,
+   "uv": true
+  },
+  {
+   "name": "1GRASS_475_380",
+   "collection": "GEN_terrain",
+   "verts": 9216,
+   "faces": 18050,
+   "uv": true
+  },
+  {
+   "name": "1GRASS_570_285",
+   "collection": "GEN_terrain",
+   "verts": 9120,
+   "faces": 17860,
+   "uv": true
+  },
+  {
+   "name": "1GRASS_570_380",
+   "collection": "GEN_terrain",
+   "verts": 9120,
+   "faces": 17860,
+   "uv": true
+  },
+  {
+   "name": "1GRASS_skirt",
+   "collection": "GEN_terrain",
+   "verts": 4688,
+   "faces": 4688,
+   "uv": false
+  },
+  {
+   "name": "1ROAD_part_0",
+   "collection": "GEN_road",
+   "verts": 21210,
+   "faces": 20920,
+   "uv": true
+  },
+  {
+   "name": "1ROAD_part_1",
+   "collection": "GEN_road",
+   "verts": 21272,
+   "faces": 20922,
+   "uv": true
+  },
+  {
+   "name": "1ROAD_part_2",
+   "collection": "GEN_road",
+   "verts": 21022,
+   "faces": 20738,
+   "uv": true
+  },
+  {
+   "name": "1ROAD_part_3",
+   "collection": "GEN_road",
+   "verts": 19484,
+   "faces": 19184,
+   "uv": true
+  },
+  {
+   "name": "1GRASS_verge_0",
+   "collection": "GEN_terrain",
+   "verts": 21399,
+   "faces": 20863,
+   "uv": true
+  },
+  {
+   "name": "1GRASS_verge_1",
+   "collection": "GEN_terrain",
+   "verts": 21198,
+   "faces": 20700,
+   "uv": true
+  },
+  {
+   "name": "1GRASS_verge_2",
+   "collection": "GEN_terrain",
+   "verts": 21406,
+   "faces": 20906,
+   "uv": true
+  },
+  {
+   "name": "1GRASS_verge_3",
+   "collection": "GEN_terrain",
+   "verts": 21334,
+   "faces": 20850,
+   "uv": true
+  },
+  {
+   "name": "1GRASS_verge_4",
+   "collection": "GEN_terrain",
+   "verts": 20774,
+   "faces": 20336,
+   "uv": true
+  },
+  {
+   "name": "1GRASS_verge_5",
+   "collection": "GEN_terrain",
+   "verts": 17883,
+   "faces": 17519,
+   "uv": true
+  },
+  {
+   "name": "1WALL_part_0",
+   "collection": "GEN_wall",
+   "verts": 10436,
+   "faces": 10224,
+   "uv": true
+  },
+  {
+   "name": "1WALL_part_1",
+   "collection": "GEN_wall",
+   "verts": 10388,
+   "faces": 10136,
+   "uv": true
+  },
+  {
+   "name": "1WALL_part_2",
+   "collection": "GEN_wall",
+   "verts": 10088,
+   "faces": 9884,
+   "uv": true
+  },
+  {
+   "name": "1WALL_part_3",
+   "collection": "GEN_wall",
+   "verts": 10580,
+   "faces": 10272,
+   "uv": true
+  },
+  {
+   "name": "1WALL_part_4",
+   "collection": "GEN_wall",
+   "verts": 10488,
+   "faces": 10256,
+   "uv": true
+  },
+  {
+   "name": "1WALL_part_5",
+   "collection": "GEN_wall",
+   "verts": 10620,
+   "faces": 10412,
+   "uv": true
+  },
+  {
+   "name": "1WALL_part_6",
+   "collection": "GEN_wall",
+   "verts": 10760,
+   "faces": 10424,
+   "uv": true
+  },
+  {
+   "name": "1WALL_part_7",
+   "collection": "GEN_wall",
+   "verts": 10676,
+   "faces": 10468,
+   "uv": true
+  },
+  {
+   "name": "1WALL_part_8",
+   "collection": "GEN_wall",
+   "verts": 10620,
+   "faces": 10460,
+   "uv": true
+  },
+  {
+   "name": "1WALL_part_9",
+   "collection": "GEN_wall",
+   "verts": 10656,
+   "faces": 10428,
+   "uv": true
+  },
+  {
+   "name": "1WALL_part_10",
+   "collection": "GEN_wall",
+   "verts": 10784,
+   "faces": 10488,
+   "uv": true
+  },
+  {
+   "name": "1WALL_part_11",
+   "collection": "GEN_wall",
+   "verts": 3480,
+   "faces": 3308,
+   "uv": true
+  },
+  {
+   "name": "1RUNOFF_median_0",
+   "collection": "GEN_road",
+   "verts": 21930,
+   "faces": 20980,
+   "uv": true
+  },
+  {
+   "name": "1RUNOFF_median_1",
+   "collection": "GEN_road",
+   "verts": 19132,
+   "faces": 18186,
+   "uv": true
+  },
+  {
+   "name": "MARKINGS_part_0",
+   "collection": "GEN_misc",
+   "verts": 20880,
+   "faces": 10440,
+   "uv": true
+  },
+  {
+   "name": "MARKINGS_part_1",
+   "collection": "GEN_misc",
+   "verts": 20152,
+   "faces": 10076,
+   "uv": true
+  },
+  {
+   "name": "MARKINGS_part_2",
+   "collection": "GEN_misc",
+   "verts": 20488,
+   "faces": 10244,
+   "uv": true
+  },
+  {
+   "name": "MARKINGS_part_3",
+   "collection": "GEN_misc",
+   "verts": 19812,
+   "faces": 9906,
+   "uv": true
+  },
+  {
+   "name": "MARKINGS_part_4",
+   "collection": "GEN_misc",
+   "verts": 19416,
+   "faces": 9708,
+   "uv": true
+  },
+  {
+   "name": "MARKINGS_part_5",
+   "collection": "GEN_misc",
+   "verts": 20208,
+   "faces": 10104,
+   "uv": true
+  },
+  {
+   "name": "MARKINGS_part_6",
+   "collection": "GEN_misc",
+   "verts": 20140,
+   "faces": 10070,
+   "uv": true
+  },
+  {
+   "name": "MARKINGS_part_7",
+   "collection": "GEN_misc",
+   "verts": 19784,
+   "faces": 9892,
+   "uv": true
+  },
+  {
+   "name": "MARKINGS_part_8",
+   "collection": "GEN_misc",
+   "verts": 20076,
+   "faces": 10038,
+   "uv": true
+  },
+  {
+   "name": "MARKINGS_part_9",
+   "collection": "GEN_misc",
+   "verts": 20348,
+   "faces": 10174,
+   "uv": true
+  },
+  {
+   "name": "MARKINGS_part_10",
+   "collection": "GEN_misc",
+   "verts": 19084,
+   "faces": 9542,
+   "uv": true
+  },
+  {
+   "name": "MARKINGS_part_11",
+   "collection": "GEN_misc",
+   "verts": 20056,
+   "faces": 10028,
+   "uv": true
+  },
+  {
+   "name": "MARKINGS_part_12",
+   "collection": "GEN_misc",
+   "verts": 14988,
+   "faces": 7494,
+   "uv": true
+  },
+  {
+   "name": "HWYSTRUCT_via_0",
+   "collection": "GEN_misc",
+   "verts": 17508,
+   "faces": 10190,
+   "uv": true
+  },
+  {
+   "name": "HWYSTRUCT_via_1",
+   "collection": "GEN_misc",
+   "verts": 17644,
+   "faces": 10322,
+   "uv": true
+  },
+  {
+   "name": "HWYSTRUCT_via_2",
+   "collection": "GEN_misc",
+   "verts": 17704,
+   "faces": 10284,
+   "uv": true
+  },
+  {
+   "name": "HWYSTRUCT_via_3",
+   "collection": "GEN_misc",
+   "verts": 17364,
+   "faces": 10270,
+   "uv": true
+  },
+  {
+   "name": "HWYSTRUCT_via_4",
+   "collection": "GEN_misc",
+   "verts": 17748,
+   "faces": 10398,
+   "uv": true
+  },
+  {
+   "name": "HWYSTRUCT_via_5",
+   "collection": "GEN_misc",
+   "verts": 17892,
+   "faces": 10222,
+   "uv": true
+  },
+  {
+   "name": "HWYSTRUCT_via_6",
+   "collection": "GEN_misc",
+   "verts": 13524,
+   "faces": 7834,
+   "uv": true
+  }
+ ],
+ "refs": 23,
+ "gen_removed": [
+  "1KERB_parapet_0",
+  "1KERB_parapet_1",
+  "MARKINGS_part_0",
+  "MARKINGS_part_1",
+  "MARKINGS_part_2",
+  "MARKINGS_part_3",
+  "MARKINGS_part_4",
+  "MARKINGS_part_5",
+  "MARKINGS_part_6",
+  "MARKINGS_part_7",
+  "MARKINGS_part_8",
+  "MARKINGS_part_9",
+  "MARKINGS_part_10",
+  "MARKINGS_part_11",
+  "MARKINGS_part_12",
+  "HWYSTRUCT_via_0",
+  "HWYSTRUCT_via_1",
+  "HWYSTRUCT_via_2",
+  "HWYSTRUCT_via_3",
+  "HWYSTRUCT_via_4",
+  "HWYSTRUCT_via_5",
+  "HWYSTRUCT_via_6",
+  "REF_centreline",
+  "REF_start",
+  "REF_station_00500",
+  "REF_station_01000",
+  "REF_station_01500",
+  "REF_station_02000",
+  "REF_station_02500",
+  "REF_station_03000",
+  "REF_station_03500",
+  "REF_station_04000",
+  "REF_station_04500",
+  "REF_station_05000",
+  "REF_station_05500",
+  "REF_station_06000",
+  "REF_station_06500",
+  "REF_station_07000",
+  "REF_station_07500",
+  "REF_station_08000",
+  "REF_station_08500",
+  "REF_station_09000",
+  "REF_station_09500",
+  "REF_station_10000",
+  "REF_station_10500",
+  "1ROAD_part_0",
+  "1ROAD_part_1",
+  "1ROAD_part_2",
+  "1ROAD_part_3",
+  "1RUNOFF_median_0",
+  "1RUNOFF_median_1",
+  "1GRASS_0_95",
+  "1GRASS_0_190",
+  "1GRASS_0_285",
+  "1GRASS_0_380",
+  "1GRASS_0_475",
+  "1GRASS_95_95",
+  "1GRASS_95_190",
+  "1GRASS_95_285",
+  "1GRASS_95_380",
+  "1GRASS_95_475",
+  "1GRASS_190_95",
+  "1GRASS_190_190",
+  "1GRASS_190_285",
+  "1GRASS_190_380",
+  "1GRASS_285_190",
+  "1GRASS_285_285",
+  "1GRASS_285_380",
+  "1GRASS_285_475",
+  "1GRASS_380_95",
+  "1GRASS_380_190",
+  "1GRASS_380_285",
+  "1GRASS_380_380",
+  "1GRASS_380_475",
+  "1GRASS_475_190",
+  "1GRASS_475_285",
+  "1GRASS_475_380",
+  "1GRASS_570_285",
+  "1GRASS_570_380",
+  "1GRASS_skirt",
+  "1GRASS_verge_0",
+  "1GRASS_verge_1",
+  "1GRASS_verge_2",
+  "1GRASS_verge_3",
+  "1GRASS_verge_4",
+  "1GRASS_verge_5",
+  "1WALL_part_0",
+  "1WALL_part_1",
+  "1WALL_part_2",
+  "1WALL_part_3",
+  "1WALL_part_4",
+  "1WALL_part_5",
+  "1WALL_part_6",
+  "1WALL_part_7",
+  "1WALL_part_8",
+  "1WALL_part_9",
+  "1WALL_part_10",
+  "1WALL_part_11"
+ ],
+ "auth_untouched": [],
+ "collections": [
+  "GEN_road",
+  "GEN_kerb",
+  "GEN_terrain",
+  "GEN_wall",
+  "GEN_misc",
+  "GEN_refs"
+ ]
+}

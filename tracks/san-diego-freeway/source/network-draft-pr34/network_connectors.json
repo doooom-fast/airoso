@@ -1,0 +1,95 @@
+{
+ "tool": "tools/network_connectors.py",
+ "ledger": "0080 phase 2",
+ "draft": "tracks/san-diego-freeway/source/network-draft-pr34",
+ "params": {
+  "match_m": 6.0,
+  "width_taper": 0.1,
+  "_invented": "match_m"
+ },
+ "connectors": [
+  {
+   "name": "i8_wb",
+   "how": "ref 'I 8' westbound: the longest directed chain; 1 same-ref westbound edge(s) branch off the chain (listed unjudged); head: edge 396 vertices 162..1 (811 m, declared); OSM head: ways [1011676575, 361363280] (332 m, 67 points, joined 3.08 m off; heights the line's raw 3DEP abreast (18-42 m away) -0.47 m; width the draft's 18.14 m)",
+   "edges": [
+    "osm:1011676575,361363280",
+    396,
+    397,
+    549,
+    471,
+    463,
+    462,
+    295,
+    296,
+    377,
+    379,
+    207,
+    195,
+    194,
+    187,
+    186,
+    249,
+    197,
+    198
+   ],
+   "points": 2117,
+   "length_m": 10552.5,
+   "decks": 6,
+   "deck_points": 129,
+   "deck_points_spanned": 4,
+   "bridged_points_unmeasured_levelled": 4,
+   "levelled_runs": 4,
+   "approach_points_raised_to_crest": 36,
+   "deck_end_steps_m": [
+    0.34,
+    -0.08,
+    -0.01,
+    0.05,
+    -0.08,
+    0.12,
+    0.15,
+    -0.1,
+    -0.06,
+    0.17,
+    0.06,
+    0.02
+   ],
+   "deck_minus_3dep_max_m": 11.56,
+   "widths_flared": 69,
+   "side_check": {
+    "samples": 186,
+    "left": 186,
+    "right": 0
+   },
+   "same_ref_off_chain": [
+    276,
+    396
+   ],
+   "osm_head": {
+    "ways": [
+     1011676575,
+     361363280
+    ],
+    "points": 67,
+    "length_m": 332.3,
+    "join_m": 3.08,
+    "height_offset_from_line_m": -0.47,
+    "abreast_m": [
+     17.9,
+     42.3
+    ],
+    "width_m": 18.14,
+    "file_md5": "3c26ba5525f206585ccd3a8fcefb0b09"
+   }
+  }
+ ],
+ "inputs": {
+  "network.geojson": "255dbe5d7053ad09b6e7d987a8fdf0d1",
+  "network.edges.local.json": "a4e386a84d393c2cedc6921869170dc8",
+  "network.elevation.json": "b9c33cdf8e2969aaccbb33b02982c5aa",
+  "deck_profiles.lidar.json": "13f70ea305ea18de2e82124e62cdded0"
+ },
+ "outputs": {
+  "connectors.local.json": "a7aa959bd21c05f4ab5c17663e07ccc3"
+ }
+}

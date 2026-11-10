@@ -121,7 +121,8 @@ def test_a_piece_walked_backwards_flips_its_side_streets_and_the_declaration_is_
     bad["layouts"][-1]["lap"] = "nope"
     bad["race"]["laps"]["Bad_Id"] = {"pieces": []}
     probs = " | ".join(race_lap.validate(bad))
-    for frag in ("lap 'w' on a layout without race_furniture", "lap 'nope' is not declared in race.laps",
+    for frag in ("layout street: lap 'w' on a layout that is neither a race layout with race_furniture nor a bare race",
+                 "lap 'nope' is not declared in race.laps",
                  "race.laps: id 'Bad_Id' must be", "race.laps.Bad_Id: needs pieces"):
         assert frag in probs, (frag, probs)
     try:
@@ -491,3 +492,14 @@ def test_track_folder_gives_each_lap_layout_its_laps_common_kn5_and_verify_kn5_a
     ini.write_text(ini.read_text(encoding="utf-8").replace("t_race_w.kn5", "t_race.kn5"), encoding="utf-8")
     assert any("models_lap_f.ini" in x for x in vk.verify_inis(d))
     assert vk.race_kn5_name("t", {"lap": "w"}) == "t_race_w.kn5" and vk.race_kn5_name("t", {}) == "t_race.kn5"
+
+
+def test_a_bare_race_layout_may_drive_a_lap_and_a_street_layout_still_may_not():
+    """ledger 0085 (Pikes Peak's road course and infield): kind "race" with no race_furniture names a lap; a street
+    layout (any other kind, no furniture) is refused as before"""
+    cfg = {"layouts": [{"id": "rc", "kind": "race", "race_furniture": False, "lap": "rc"},
+                       {"id": "free", "kind": "street", "race_furniture": False, "lap": "rc"}],
+           "race": {"laps": {"rc": {"pieces": [{"line": "MAINLINE", "from": 0, "to": 3}]}}}}
+    probs = race_lap.validate(cfg)
+    assert not any(p.startswith("layout rc:") for p in probs), probs
+    assert any(p.startswith("layout free:") and "neither a race layout" in p for p in probs), probs

@@ -1,0 +1,246 @@
+{
+ "a": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/work/p4/records/b019f/milford_road_course.kn5",
+ "b": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/work/p4/b0110/build/milford_road_course.kn5",
+ "by_prefix": {
+  "1GRASS": {
+   "equal": 8
+  },
+  "1KERB": {
+   "equal": 1
+  },
+  "1ROAD": {
+   "equal": 1
+  },
+  "1WALL": {
+   "equal": 13
+  },
+  "BUILDING": {
+   "equal": 2
+  },
+  "FARBLOCK": {
+   "DIFFERS": 1
+  },
+  "GUARDRAIL": {
+   "equal": 3
+  },
+  "MARKINGS": {
+   "equal": 1
+  },
+  "PADAPRON": {
+   "equal": 1
+  },
+  "ROOFTOP": {
+   "equal": 1,
+   "DIFFERS": 1
+  }
+ },
+ "textures": {
+  "only_a": [],
+  "only_b": [],
+  "changed": []
+ },
+ "meshes": [
+  {
+   "mesh": "1GRASS_0",
+   "verdict": "equal",
+   "why": [],
+   "verts": 51200
+  },
+  {
+   "mesh": "1GRASS_1",
+   "verdict": "equal",
+   "why": [],
+   "verts": 53480
+  },
+  {
+   "mesh": "1GRASS_2",
+   "verdict": "equal",
+   "why": [],
+   "verts": 51171
+  },
+  {
+   "mesh": "1GRASS_3",
+   "verdict": "equal",
+   "why": [],
+   "verts": 52350
+  },
+  {
+   "mesh": "1GRASS_4",
+   "verdict": "equal",
+   "why": [],
+   "verts": 53270
+  },
+  {
+   "mesh": "1GRASS_5",
+   "verdict": "equal",
+   "why": [],
+   "verts": 52693
+  },
+  {
+   "mesh": "1GRASS_6",
+   "verdict": "equal",
+   "why": [],
+   "verts": 52203
+  },
+  {
+   "mesh": "1GRASS_7",
+   "verdict": "equal",
+   "why": [],
+   "verts": 51961
+  },
+  {
+   "mesh": "1KERB_sidewalk",
+   "verdict": "equal",
+   "why": [],
+   "verts": 27191
+  },
+  {
+   "mesh": "1ROAD_road",
+   "verdict": "equal",
+   "why": [],
+   "verts": 65218
+  },
+  {
+   "mesh": "1WALL_FABRIC_pad_tent",
+   "verdict": "equal",
+   "why": [],
+   "verts": 24
+  },
+  {
+   "mesh": "1WALL_GHOST_RAIL_0",
+   "verdict": "equal",
+   "why": [],
+   "verts": 1365
+  },
+  {
+   "mesh": "1WALL_GHOST_RAIL_1",
+   "verdict": "equal",
+   "why": [],
+   "verts": 5548
+  },
+  {
+   "mesh": "1WALL_GHOST_RAIL_2",
+   "verdict": "equal",
+   "why": [],
+   "verts": 2250
+  },
+  {
+   "mesh": "1WALL_GHOST_RAIL_3",
+   "verdict": "equal",
+   "why": [],
+   "verts": 4512
+  },
+  {
+   "mesh": "1WALL_GHOST_TRUNK_0",
+   "verdict": "equal",
+   "why": [],
+   "verts": 22554
+  },
+  {
+   "mesh": "1WALL_TECPRO_TYRES_4",
+   "verdict": "equal",
+   "why": [],
+   "verts": 2004
+  },
+  {
+   "mesh": "1WALL_TECPRO_TYRES_5",
+   "verdict": "equal",
+   "why": [],
+   "verts": 2404
+  },
+  {
+   "mesh": "1WALL_TECPRO_TYRES_6",
+   "verdict": "equal",
+   "why": [],
+   "verts": 1376
+  },
+  {
+   "mesh": "1WALL_TILTUP_SCREEN_10",
+   "verdict": "equal",
+   "why": [],
+   "verts": 426
+  },
+  {
+   "mesh": "1WALL_TILTUP_SCREEN_7",
+   "verdict": "equal",
+   "why": [],
+   "verts": 838
+  },
+  {
+   "mesh": "1WALL_TILTUP_SCREEN_8",
+   "verdict": "equal",
+   "why": [],
+   "verts": 142
+  },
+  {
+   "mesh": "1WALL_TILTUP_SCREEN_9",
+   "verdict": "equal",
+   "why": [],
+   "verts": 464
+  },
+  {
+   "mesh": "BUILDING_FABRIC_pad_tent",
+   "verdict": "equal",
+   "why": [],
+   "verts": 38
+  },
+  {
+   "mesh": "BUILDING_METAL_0",
+   "verdict": "equal",
+   "why": [],
+   "verts": 36
+  },
+  {
+   "mesh": "FARBLOCK_TILTUP_0",
+   "verdict": "DIFFERS",
+   "why": [
+    "header / indices / vertex count"
+   ],
+   "verts": 134
+  },
+  {
+   "mesh": "GUARDRAIL_W_0",
+   "verdict": "equal",
+   "why": [],
+   "verts": 10260
+  },
+  {
+   "mesh": "GUARDRAIL_W_1",
+   "verdict": "equal",
+   "why": [],
+   "verts": 12611
+  },
+  {
+   "mesh": "GUARDRAIL_W_2",
+   "verdict": "equal",
+   "why": [],
+   "verts": 11322
+  },
+  {
+   "mesh": "MARKINGS",
+   "verdict": "equal",
+   "why": [],
+   "verts": 39216
+  },
+  {
+   "mesh": "PADAPRON_0",
+   "verdict": "equal",
+   "why": [],
+   "verts": 6348
+  },
+  {
+   "mesh": "ROOFTOP_TAN_0",
+   "verdict": "equal",
+   "why": [],
+   "verts": 4
+  },
+  {
+   "mesh": "ROOFTOP_WHITE_0",
+   "verdict": "DIFFERS",
+   "why": [
+    "header / indices / vertex count"
+   ],
+   "verts": 34
+  }
+ ]
+}

@@ -150,6 +150,61 @@ def test_closed_lap_seam_band_is_vertex_0s():
     assert not MedianZone.load(_project()).closed
 
 
+def test_road_islands_zone_the_mainline_medians_for_a_lap_layout_only():
+    """ledger 0054 step 2e: a layout on a LAP is zoned on its lap, but its gate OBJ carries the whole road kn5 —
+    road_islands() gives the mainline's own medians (island kind) for it, and None for every other layout"""
+    d = _project()
+    cfg = {"slug": "t", "mirror_x": False,
+           "layouts": [{"id": "street", "kind": "street"},
+                       {"id": "race_cw", "kind": "race", "race_furniture": True},
+                       {"id": "north_cw", "kind": "race", "race_furniture": True, "lap": "north"}]}
+    (d / "track.config.json").write_text(json.dumps(cfg))
+    z = MedianZone.road_islands(d, "north_cw")
+    assert z is not None and z.n_island == 11 and not z.has_barrier
+    assert z.contains(0.0, 75.0)                          # v15: the mainline island
+    assert not z.contains(0.0, 150.0, ALL_KINDS)          # the mainline's race bands are not the lap's
+    for lid in (None, "street", "race_cw"):
+        assert MedianZone.road_islands(d, lid) is None
+
+
+def test_the_edge_band_follows_the_offset_curve_round_a_tight_corner():
+    """step 2g: race_furniture.densify_rings puts the strip ON the declared offset curve between two vertices; round the
+    outside of a tight turn in a wide box (the north lap's J1: R 8.3 m, 30 m) the band points stand 11-13 m apart and the
+    curve bows ~1 m off their chord — the lap's own edge wall read D 32. The band is that curve too (same reach)."""
+    d = Path(tempfile.mkdtemp())
+    (d / "data").mkdir()
+    (d / "track.config.json").write_text(json.dumps({"slug": "t", "mirror_x": False}))
+    # the north lap's own J1, v2926-v2: the line runs in, turns ~90 deg at v2931 and runs out (re-based to v2931)
+    pts = [[12.02, 0.0, 8.15], [9.42, 0.0, 6.64], [6.87, 0.0, 5.06], [4.42, 0.0, 3.43], [2.1, 0.0, 1.74], [0.0, 0.0, -0.01],
+           [-2.1, 0.0, 2.03], [-4.19, 0.0, 4.07], [-6.28, 0.0, 6.11], [-8.37, 0.0, 8.14], [-10.46, 0.0, 10.18],
+           [-11.94, 0.0, 12.0], [-13.64, 0.0, 14.1]]
+    n = len(pts)
+    wd = 30.0
+    (d / "data" / "gate_centerline.json").write_text(json.dumps({"points_xyz_m": pts, "widths_m": [wd] * n}))
+    (d / "data" / "barrier_bands.json").write_text(json.dumps({
+        "centre_w_by_vertex": [0.0] * n, "edge_strip_by_vertex": [1] * n, "edge_inset_by_vertex": [0.82] * n,
+        "params": {"barrier_half_m": 0.335, "edge_centre_from_lip_m": -0.485}}))
+    z = MedianZone.load(d)
+    lat = wd / 2 - 0.485
+    worst = 0.0
+    for i in range(n - 1):
+        (ax, az), (bx, bz) = (pts[i][0], pts[i][2]), (pts[i + 1][0], pts[i + 1][2])
+        na, nb = z._normal(i), z._normal(i + 1)
+        ta, tb = (na[1], -na[0]), (nb[1], -nb[0])
+        for side in (1.0, -1.0):
+            pa = (ax + na[0] * lat * side, az + na[1] * lat * side)
+            pb = (bx + nb[0] * lat * side, bz + nb[1] * lat * side)
+            for q in range(1, 8):
+                u = q / 8
+                tx, tz = ta[0] + (tb[0] - ta[0]) * u, ta[1] + (tb[1] - ta[1]) * u
+                L = math.hypot(tx, tz)
+                px = ax + (bx - ax) * u - tz / L * lat * side
+                pz = az + (bz - az) * u + tx / L * lat * side
+                worst = max(worst, z._span_dist(px, pz, pa[0], pa[1], pb[0], pb[1]))
+                assert z.contains(px, pz, ALL_KINDS), (i, side, u, px, pz)
+    assert worst > 0.335 + MARGIN_M          # the chord alone misses the curve here: the test reaches the bug
+
+
 def test_a_trimmed_corner_band_runs_through_its_corner_not_the_folded_offsets():
     """2026-10-11: barrier_bands.json `edge_corners` — on that side the removed vertices have NO band point and
     the band is the polyline in_vertex band point -> X -> out_vertex band point (what the author sweeps), so

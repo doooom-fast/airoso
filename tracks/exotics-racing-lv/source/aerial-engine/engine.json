@@ -1,0 +1,19 @@
+{
+ "_doc": "scripts.aerial.engine config for Exotics Racing LVMS (ledger 0088 validation). Data only. The circuit is painted on a parking lot: its edges are the painted edge lines (edge_kind lines), the guide runs between them (route_mask between_lines). No published map is on disk and Kevin drew no sketch, so the route is a degraded stand-in sketch made from the 2026-10-28 trace (tools/aerial_engine_validate.py exotics-sketch: a vertex every 30 m, each moved +-3 m): it selects the asphalt; it is never a coordinate. Direction clockwise as the config's route._orientation_doc infers it.",
+ "name": "Exotics Racing Las Vegas (unofficial)",
+ "image": "../naip_2019_exr.png",
+ "georef": {"kind": "control_points", "control_points": [
+   {"px": [0, 0], "lonlat": [-115.0217485, 36.2851645]},
+   {"px": [1280, 1320], "lonlat": [-115.0148821, 36.2794564]}]},
+ "origin_from": "../../data/centerline.local.json",
+ "colours": {"edge_band": {"weights": [-0.5, -0.5, 1.0], "lo": -9, "hi": -1, "lum_min": 110, "lum_span": 20,
+   "_sampled": "2026-11-07 on naip_2019_exr.png cross-sections: the edge bands read yellowness (r+g)/2-b of -18..+5 at lum 138-178; the track asphalt +13..+16, the lot +8..+13, the dark rubbered line +1..+6 at lum 73-78"}},
+ "edges": {"edge_kind": "lines", "min_half_m": 3.5, "ridge_min": 0.6, "reach_m": 16.0, "noise_m": 0.35, "centre_smooth_m": 4.0},
+ "route_mask": "between_lines",
+ "start_finish_lonlat": [-115.019206, 36.283654],
+ "sketches": {"from_trace": {"file": "sketch_from_trace.json", "stroke": 0}},
+ "layouts": [
+  {"id": "full", "name": "the full lap", "route": {"sketch": "from_trace"}, "direction": "cw",
+   "published_length_m": [1931.0]}
+ ]
+}

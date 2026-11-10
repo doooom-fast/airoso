@@ -217,6 +217,9 @@ DEFAULTS = {
     "both_directions_mainline": False, "lamp_clear_m": LAMP_CLEAR_M, "plant_clear_m": PLANT_CLEAR_M,
     "kappa_window_m": 2 * KAPPA_HALF_WIN, "hysteresis_stations": HYSTERESIS,
 }
+# opt-in knobs a signs.json may name that are absent from DEFAULTS (so a track that names none writes exactly the
+# record it wrote before): pad_decks (ledger 0079 round L) — the BUILT junction pad decks join the field as pavement
+OPT_IN_DEFAULTS = {"pad_decks": False}
 PLATE_GEOMETRY = ("W1-6",)      # the plates sign_polygons can build; W1-7 / W1-8 are second-pass devices
 CORNER_KEYS = ("ribbon", "vertex", "skip", "reason", "slide_along_curb_m", "base_xz", "face_bearing_deg",
                "plate", "arrow", "expect_arrow", "height_m", "om1_3", "second_arrow", "force",
@@ -617,6 +620,19 @@ class Context:
             for lname, ln in sorted(lines.items()):
                 self.field.add_line(LINE_PREFIX + lname, ln["points_xyz_m"], ln["widths_m"])
             self.gated = tuple(GATED_RIBBONS) + tuple(LINE_PREFIX + k for k in sorted(lines))
+        # ledger 0079 round L (opt-in: defaults.pad_decks): a track whose junction pads are tools/lm_pads_blend.py's
+        # measured decks on the lap (no north route) puts the BUILT decks in the field as pavement, as the north
+        # network's are above (A8): the failed-to-turn ray at a pad corner crosses the deck and leaves pavement at the
+        # deck's far curb return, or runs on down an arm into a real street (a through road: the shared plate is
+        # skipped and a per_layout corner gets its race-layout plate). Without it the polyline stage sees only the
+        # lap's nominal ribbon there and stands a plate the mesh march then finds on the deck (round K's mesh-skips).
+        self.pad_decks = []
+        if self.north is None and cfg.get("pad_decks"):
+            for pid, poly, _kinds in el.pad_polygons(self.proj):
+                self.field.add_polygon(PAD_PREFIX + pid, poly)
+                self.pad_decks.append(pid)
+            if not self.pad_decks:
+                raise SystemExit("[signs] defaults.pad_decks: no data/pads.built.json pad to stand in the field")
         mp = data / "mouths.json"
         mouths = json.loads(mp.read_text(encoding="utf-8")) if mp.exists() else {"mouths": []}
         mouths = mouths["mouths"] if isinstance(mouths, dict) else mouths
@@ -633,7 +649,9 @@ class Context:
         except Exception:
             cfg_t = {}
         self.layouts = [{"id": str(lo.get("id")), "direction": "rev" if str(lo.get("direction") or "forward").lower() == "reverse" else "fwd",
-                         "race": bool(lo.get("race_furniture")), "token": str(lo.get("closure_token") or "").lower()}
+                         "race": bool(lo.get("race_furniture")), "token": str(lo.get("closure_token") or "").lower(),
+                         # a layout on its own lap (ledger 0054) carries its lap; a mainline layout's record is as before
+                         **({"lap": str(lo["lap"])} if lo.get("lap") not in (None, "") else {})}
                         for lo in (cfg_t.get("layouts") or []) if isinstance(lo, dict)]
         bb = data / "barrier_bands.json"
         self.walls = None
@@ -669,8 +687,10 @@ class Context:
                     self.spawn_pts.append(p)
 
     def race_layouts(self, direction):
-        """the race layouts that drive `direction` ('fwd' / 'rev')"""
-        return [lo for lo in self.layouts if lo["race"] and lo["direction"] == direction]
+        """the race layouts that drive `direction` ('fwd' / 'rev') ON THE MAINLINE: a per_layout corner is a MAINLINE
+        corner, so a layout on its own lap (layouts[].lap, ledger 0054) never gets its plate — the 0.20.2 run stood
+        M3-fwd@north_cw in north_cw's lane at lap v0, race_cw's J1 spot"""
+        return [lo for lo in self.layouts if lo["race"] and lo["direction"] == direction and lo.get("lap") is None]
 
     def layout_behind_lip_m(self, cfg):
         """how far past the MAINLINE lip a layout plate stands: the sealing curb strip's centre (edge_centre_from_lip_m,
@@ -758,8 +778,10 @@ def validate_overrides(cfg, corners, src="signs.json"):
     CORNER_KEYS, every plate one of PLATE_GEOMETRY. Raises SignsConfigError."""
     bad = []
     for k in cfg:
-        if k not in DEFAULTS:
-            bad.append("defaults.%s is not a knob any tool reads (known: %s)" % (k, ", ".join(DEFAULTS)))
+        if k not in DEFAULTS and k not in OPT_IN_DEFAULTS:
+            bad.append("defaults.%s is not a knob any tool reads (known: %s)" % (k, ", ".join(list(DEFAULTS) + list(OPT_IN_DEFAULTS))))
+        elif k in OPT_IN_DEFAULTS and not isinstance(cfg[k], bool):
+            bad.append("defaults.%s = %r (true|false)" % (k, cfg[k]))
     for cid, ov in corners.items():
         if not isinstance(ov, dict):
             bad.append("corners.%s is not an object" % cid)

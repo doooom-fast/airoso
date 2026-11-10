@@ -52,6 +52,12 @@
     "smooth_iters": 2,
     "clip_radius_m": 0,
     "keep_largest_component": true,
+    "stable_snap": true,
+    "_stable_snap_doc": "Ledger 0075 (2026-11-03, the Mac agent): build_network's greedy snap moves a cluster's centre by a running mean as points join it, so a node two OSM ways share, met again in a later way, could land in a different cluster: the ways then ended at two nodes 2-9 m apart with no link (101 such pairs in this network, three of them holes in I 8 eastbound at 33, 3,373 and 3,914 m, read as ground on top mid-lane and severe steps). true maps every point to its nearest FINAL cluster centre after all are assigned, and every edge that ends at a node ends at its seed point (scripts.gps.network._NodeGrid.nearest): one coordinate, one node. A node's point can then be a ramp's vertex at a gore, so classify's travel vote (only) reads an edge's interior samples, or a short edge's middle vertex (an 18.7 m I 8 piece otherwise came out undecided and network_reference refused the line).",
+    "cap_dead_ends": true,
+    "_cap_dead_ends_doc": "Ledger 0075 (2026-11-03; Kevin, JUNCTIONS 18(d) 2026-10-14: 'a road we are not completing gets a barrier, not a curve'). Every freeway edge end no other edge shares (source.bbox cut it off, or it led to a surface street this network does not build) ends in a closed stub: a barrier across the carriageway 2 m inside the ribbon's end (moved in to the last at-grade vertex where the road is cut on a deck), joining both side barriers (build_network_mesh, 1WALL_STUB_cap_*; declared in data/stubs.built.json as Lake Murray's stub barriers are, so audit D reads it as one) and recorded in data/network.caps.json, from which network_reference starts and ends the reference line 10 m inside a cap.",
+    "join_nodes": true,
+    "_join_nodes_doc": "Ledger 0075: ONE height per shared node (scripts.geometry.network_joins). network_elev smoothed and forward-capped each edge alone, so 334 of 365 shared nodes met at two heights (169 by more than 0.5 m, worst 19.86 m); build_network_mesh laid each edge's OSM-layer deck lift alone, so a flyover's lift ended at its edge boundary (the 3.3-4.1 m surface steps at 1,373 and 7,036 m) and a ramp could start at full layer height beside an at-grade mainline. true pins each node to its THROUGH pair's mean (two mainline ends running on straightest; ramps take the mainline's value), at grade in network_elev (both ends pinned within the 5 % cap) and for the deck lift in build_network_mesh (ramped back, then the deck's 6.5 % cap with both ends held).",
     "class_widths_m": {
       "motorway": 16.0,
       "ramp": 8.5,
@@ -71,6 +77,47 @@
       "_bridge_max_edges_doc": "[invented] At most 2 non-ramp freeway edges of ANOTHER name may sit INSIDE the chain (never at its ends; each named in network.reference.json 'bridged'): classify names a mainline piece by a nearest-way vote every 25 m, and a short I 8 piece passing under the CA 163 or I 5 stack can lose that vote. Only non-ramp freeway edges can bridge (OSM tags freeway-to-freeway connectors motorway_link, which classify makes ramps), only between two I 8 eastbound edges (the chain starts and ends on I 8), and only through joints turning <= max_joint_turn_deg. 0 = refuse instead.",
       "max_joint_turn_deg": 45.0
     }
+  },
+  "capture": {
+    "_doc": "Ledger 0075 (2026-11-03): the I 8 eastbound reference line's real decks, DECLARED (drive_test reads capture.bridges, local stations along the gate line, as every other track declares its bridges; it does not read data/bridge.spans.auto.json). Taken from the spans scripts.geometry.network_reference wrote for the Mac's network draft (bridge.spans.auto.json: where the line rides a deck the mesh raised over 1 m), each checked against the line's own deck lift and the OSM bridge layer tags under it. Stations are this draft's: a net step on changed live OSM moves them, so re-read bridge.spans.auto.json after one and re-declare.",
+    "bridges": [
+      {
+        "id": "i8eb_deck_1190",
+        "center_m": 1282.8,
+        "len_m": 185.2,
+        "_evidence": "OSM bridge layers [1], deck lift 1.10-4.07 m along the whole span"
+      },
+      {
+        "id": "i8eb_deck_2982",
+        "center_m": 3222.7,
+        "len_m": 480.4,
+        "_evidence": "OSM bridge layers [2, 3], deck lift 1.36-11.19 m along the whole span"
+      },
+      {
+        "id": "i8eb_deck_3598",
+        "center_m": 3665.6,
+        "len_m": 135.2,
+        "_evidence": "OSM bridge layers [1], deck lift 1.00-1.69 m along the whole span"
+      },
+      {
+        "id": "i8eb_deck_6581",
+        "center_m": 6654.0,
+        "len_m": 145.2,
+        "_evidence": "OSM bridge layers [1], deck lift 1.05-2.28 m along the whole span"
+      },
+      {
+        "id": "i8eb_deck_6884",
+        "center_m": 6969.5,
+        "len_m": 170.3,
+        "_evidence": "OSM bridge layers [1], deck lift 1.03-3.87 m along the whole span"
+      },
+      {
+        "id": "i8eb_deck_7130",
+        "center_m": 7189.9,
+        "len_m": 120.1,
+        "_evidence": "OSM bridge layers [1], deck lift 1.33-1.52 m along the whole span"
+      }
+    ]
   },
   "loop": false,
   "mirror_x": false,
@@ -100,7 +147,9 @@
       "_doc": "Physical concrete barrier along both edges of every freeway-class edge (build_network_mesh -> 1WALL_*). height_m tall enough to stop a launched car; offset_m past the shoulder outer lip.",
       "enabled": true,
       "height_m": 1.1,
-      "offset_m": 3.2
+      "offset_m": 0.5,
+      "seat": "seated",
+      "_seat_doc": "Ledger 0075. offset_m 3.2 -> 0.5 (PC experiment 1) put the at-grade barrier on the 3 m graded shoulder. seat 'seated' (build_network_mesh._wall_seated, Mac 2026-11-03) stands every column on a surface: on a deck (the network's own viaduct lift >= 1 m, or a span the mesh already builds slab + piers under) on a 1 m 1KERB_deckedge slab beyond the pavement, 0.7 m out; at grade offset_m out with its base 0.5 m under the BUILT ground; gapped (and the slab clipped) wherever another edge's pavement lies under it (merges, gores, ramp tapers), triangle-exact as audit D reads it; following the ribbon's own width. The default seat 'deck' is the old sweep, byte for byte."
     },
     "viaduct": {
       "_doc": "Real 3DEP carries the terrain grades; OSM bridge LAYER tags carry the flyovers. So the synthetic dip-bridge is OFF (max_lift_m 0) - only layer_height_m raises OSM-tagged flyover decks so interchanges grade-separate.",
@@ -112,11 +161,12 @@
     },
     "terrain": {
       "_doc": "Override the DEM bbox to reach WEST past I-5 over Mission Bay to the coast, so the bay + ocean have ground under them.",
+      "_east_doc": "Ledger 0075 (2026-11-03): east -117.125 -> -117.115. The network's edges run to -117.1224 (CA 163 / I 8 east of the box; network.geojson), 250 m past the old grid, so the 800 m skirt apron lay over their pavement (audit J 14-23, worst 800 m) and their barriers stood over the skirt (drive_test floating furniture 5 after the seated barrier). -117.115 covers every edge plus ~690 m.",
       "bbox_swne": [
         32.7,
         -117.275,
         32.865,
-        -117.125
+        -117.115
       ]
     },
     "ocean": {

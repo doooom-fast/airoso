@@ -1,0 +1,72 @@
+{
+ "obj": "D:\\k10-scratch\\milford_lm\\data\\track.obj",
+ "buildings": 3,
+ "no_ground": 0,
+ "floating": 0,
+ "sunken": 0,
+ "buried": 0,
+ "limits": {
+  "FLOAT_M": 0.1,
+  "SUNK_M": 1.0,
+  "MIN_SHOW_M": 1.0,
+  "STEP_M": 1.5,
+  "MAX_FLOATING": 0,
+  "MAX_SUNKEN": 0,
+  "MAX_BURIED": 0
+ },
+ "contact_m": {
+  "min": -0.323,
+  "max": -0.15
+ },
+ "show_m_min": 2.117,
+ "lens_buried_share": {
+  "over_30pct": 0,
+  "over_50pct": 0,
+  "p95": 0.154
+ },
+ "worst_floating": [],
+ "worst_sunken": [],
+ "worst_buried": [],
+ "verdict": "PASS",
+ "rows": [
+  {
+   "group": "BUILDING_FABRIC_pad_tent",
+   "x": 104.1,
+   "z": -444.1,
+   "bottom": 13.944,
+   "top": 22.408,
+   "ground_low": 14.093,
+   "ground_high": 15.661,
+   "ground_mean": 14.899,
+   "contact_m": -0.15,
+   "show_m": 6.748,
+   "lens_buried_share": 0.113
+  },
+  {
+   "group": "BUILDING_METAL_0",
+   "x": 21.1,
+   "z": -338.8,
+   "bottom": 16.459,
+   "top": 19.059,
+   "ground_low": 16.782,
+   "ground_high": 16.905,
+   "ground_mean": 16.861,
+   "contact_m": -0.323,
+   "show_m": 2.154,
+   "lens_buried_share": 0.154
+  },
+  {
+   "group": "BUILDING_METAL_0",
+   "x": 24.1,
+   "z": -391.3,
+   "bottom": 16.626,
+   "top": 19.226,
+   "ground_low": 16.938,
+   "ground_high": 17.11,
+   "ground_mean": 17.027,
+   "contact_m": -0.312,
+   "show_m": 2.117,
+   "lens_buried_share": 0.154
+  }
+ ]
+}

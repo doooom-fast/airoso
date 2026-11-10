@@ -31,17 +31,59 @@ MAX_GRADE = 0.05          # cap road slope at 5% — no "narnia" launches, and a
                           # the compressed grade UP to Aspen) becomes a gentle, drivable grade.
 
 
-def _smooth_edge(z_raw, spacing_m):
-    """Open-ended de-spike + smooth for one edge (median kills DEM notches at over/underpasses)."""
+def _median_mean(z_raw, spacing_m):
+    """_smooth_edge's de-spike + smooth, before its grade cap (median kills DEM notches at over/underpasses)."""
     n = len(z_raw)
-    if n < 3:
-        return list(z_raw)
     mw = max(3, round(MEDIAN_M / spacing_m)) | 1
     h = mw // 2
     med = [sorted(z_raw[max(0, i - h):min(n, i + h + 1)])[(min(n, i + h + 1) - max(0, i - h)) // 2]
            for i in range(n)]
     sw = max(3, round(MEAN_M / spacing_m)) | 1
-    sm = smooth_open(med, sw)
+    return smooth_open(med, sw)
+
+
+def _join_edges(F, z_by_edge, spacing_m):
+    """ONE height per shared node (``network.join_nodes``, ledger 0075; scripts.geometry.network_joins): every edge
+    de-spiked + smoothed as _smooth_edge does, each shared node's height the mean of its THROUGH pair's smoothed ends,
+    then each edge grade-capped at MAX_GRADE with BOTH ends pinned to their nodes (_smooth_edge caps forward only, so
+    an edge's end drifted from 3DEP — 19.86 m at the worst freeway node — and two edges met at two heights).
+    Returns {edge id: z list}."""
+    from scripts.geometry import network_joins as nj
+    lat_mid = sum(c[1] for f in F for c in f["geometry"]["coordinates"]) / max(1, sum(len(f["geometry"]["coordinates"]) for f in F))
+    kx = 111_320.0 * math.cos(math.radians(lat_mid)); ky = 110_540.0
+    sm, xy, seg = {}, {}, {}
+    ends: dict = {}
+    for f in F:
+        pid = f["properties"]["id"]; c = f["geometry"]["coordinates"]
+        zr = z_by_edge[pid]
+        sm[pid] = _median_mean(zr, spacing_m) if len(zr) >= 3 else list(zr)
+        xy[pid] = [(lo * kx, la * ky) for lo, la in c]
+        seg[pid] = [0.0] + [math.hypot(xy[pid][i][0] - xy[pid][i - 1][0], xy[pid][i][1] - xy[pid][i - 1][1])
+                            for i in range(1, len(c))]
+        if len(c) < 2:
+            continue
+        for end, i in ((0, 0), (1, len(c) - 1)):
+            ends.setdefault(nj.node_key(*c[i]), []).append(
+                (pid, end, sm[pid][i], nj.away_dir(xy[pid], end), bool(f["properties"].get("is_ramp"))))
+    target = nj.through_targets(ends)
+    out = {}
+    for f in F:
+        pid = f["properties"]["id"]; c = f["geometry"]["coordinates"]
+        if len(c) < 2:
+            out[pid] = list(sm[pid]); continue
+        z0 = target.get(nj.node_key(*c[0]), sm[pid][0])
+        z1 = target.get(nj.node_key(*c[-1]), sm[pid][-1])
+        out[pid] = nj.pinned_cap(sm[pid], seg[pid], z0, z1, MAX_GRADE)
+    print(f"  join_nodes: {len(target)} shared nodes pinned to one height (ledger 0075)")
+    return out
+
+
+def _smooth_edge(z_raw, spacing_m):
+    """Open-ended de-spike + smooth for one edge (median kills DEM notches at over/underpasses)."""
+    n = len(z_raw)
+    if n < 3:
+        return list(z_raw)
+    sm = _median_mean(z_raw, spacing_m)
     # grade cap: clamp consecutive-vertex slope so no road exceeds MAX_GRADE. Turns steep real terrain
     # (mountain spokes) into gentle drivable grades and removes any residual spike -> no launches.
     cap = MAX_GRADE * spacing_m
@@ -176,19 +218,26 @@ def build(project_dir: str | Path) -> dict:
     print(f"sampling 3DEP for {len(flat_pts)} edge vertices across {len(F)} edges ...")
     z_all = usgs_3dep.sample_points(flat_pts)
 
+    # JOIN NODES (opt-in, ledger 0075): one height per shared node; without the key every edge is smoothed alone
+    join = bool((_cfg.raw.get("network") or {}).get("join_nodes", False))
+    joined = _join_edges(F, {f["properties"]["id"]: z_all[off:off + ln] for f, (off, ln) in zip(F, spans)},
+                         spacing) if join else None
+
     edges_elev = []
     zmin, zmax = 1e9, -1e9
     for f, (off, ln) in zip(F, spans):
         zr = z_all[off:off + ln]
-        zs = _smooth_edge(zr, spacing)
+        zs = joined[f["properties"]["id"]] if joined is not None else _smooth_edge(zr, spacing)
         zmin = min(zmin, min(zs)); zmax = max(zmax, max(zs))
         edges_elev.append({"id": f["properties"]["id"], "z_raw_m": [round(v, 2) for v in zr],
                            "z_smooth_m": [round(v, 2) for v in zs]})
-    (data / "network.elevation.json").write_text(json.dumps({
-        "spacing_m": spacing, "median_m": MEDIAN_M, "mean_m": MEAN_M,
-        "edge_count": len(F), "z_min_m": round(zmin, 1), "z_max_m": round(zmax, 1),
-        "edges": edges_elev,
-    }), encoding="utf-8")
+    rec = {"spacing_m": spacing, "median_m": MEDIAN_M, "mean_m": MEAN_M,
+           "edge_count": len(F), "z_min_m": round(zmin, 1), "z_max_m": round(zmax, 1),
+           "edges": edges_elev}
+    if join:
+        rec = {**{k: rec[k] for k in ("spacing_m", "median_m", "mean_m")}, "join_nodes": True,
+               **{k: rec[k] for k in ("edge_count", "z_min_m", "z_max_m", "edges")}}
+    (data / "network.elevation.json").write_text(json.dumps(rec), encoding="utf-8")
 
     # --- coarse terrain grid over the whole bbox (config can OVERRIDE to include peaks + the coast) ----
     lons = [c[0] for f in F for c in f["geometry"]["coordinates"]]

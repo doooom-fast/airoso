@@ -1,0 +1,129 @@
+{
+  "_doc": "Milford Road Course (unofficial) on Lake Murray v4's engine (ledger 0078): engine lm-v4, the intake from tracks/milford-road-course, Lake Murray's assembler and fold weld, finer ground on the banked stretches, the traced kerbs when committed, the bespoke dressing, engine-july's prep / export, the gates + edge_report. Single layout: engine-july's prep lays the AC_* nodes in the road kn5.",
+  "track": "milford-road-course-lm",
+  "engine": "lm-v4",
+  "workshop": "D:/k10-scratch",
+  "workshop_project": "milford_lm",
+  "require_race_layout": false,
+  "ui_name_prefix": "doooom Michigan",
+  "steps": {
+    "draft": [
+      "lm_intake",
+      "build_loop_blend",
+      "weld_mouths",
+      "densify_ribbon",
+      "seat_edges",
+      "strip_seam",
+      "far_ground",
+      "kerbs"
+    ],
+    "author": [
+      "bespoke"
+    ],
+    "prep": [
+      "prep",
+      "split"
+    ],
+    "ship": [
+      "export_road",
+      "ai",
+      "verify_kn5",
+      "road_obj",
+      "grassfx_aerial",
+      "track_folder",
+      "verify_inis",
+      "make_map",
+      "treefx"
+    ],
+    "gate": [
+      "drive_test_street",
+      "audit_street",
+      "kn5_ground",
+      "kn5_textures",
+      "road_wear",
+      "house_seat",
+      "edge_smoothness",
+      "edge_report"
+    ]
+  },
+  "sync_in": {
+    "required": [
+      "track.config.json",
+      "source/edges/edge_evidence.json",
+      "source/road_wear/naip_2022_mrc.jpg",
+      "source/furniture/pass3/blocks.json",
+      "source/furniture/pass4/blocks.json",
+      "data/far_ground.lidar.npy",
+      "data/far_ground.lidar.meta.json",
+      "data/far_ground.lidar.fill.npy",
+      "data/far_ground.lidar.reach.npy"
+    ],
+    "_far_ground_doc": "ledger 0082 'Far ground (0.1.11)': the 2017 lidar's bare earth past the 3DEP grid (source/far_ground/scripts/far_ground_product.py), meshed by the draft step far_ground (tools/far_ground_blend.py)",
+    "_furniture_doc": "ledger 0082 pass 3 (0.1.8): the site buildings the 2017 lidar measures and NAIP 2022 shows, named once by scenery.bespoke.blocks [{\"file\": ...}]",
+    "assets": [
+      "assets/textures/tyre_wall_diffuse.png",
+      "assets/textures/metal_wall_diffuse.jpg",
+      "assets/textures/metal_wall_normal.jpg",
+      "assets/textures/roof_tan_diffuse.jpg"
+    ],
+    "_assets_doc": "ledger 0082: the tyre walls' skin (texture_overrides 1WALL_TECPRO) and the pad sheds' metal walls / tan roof (pbr rows BUILDING_METAL, ROOFTOP_TAN), from airoso's tracked assets so no engine copy has to carry them",
+    "optional": [
+      "source/vegetation/trees.lm.json",
+      "source/vegetation/trunks.json",
+      "source/vegetation/grass_classes.png",
+      "source/road_wear/fast_lane.full.ai"
+    ],
+    "globs": [
+      "source/trees/*.bin"
+    ],
+    "_vegetation_doc": "ledger 0082 vegetation pass: the planted crowns, the trunk colliders and the grass class map (committed); the TreeFX models (source/trees/*.bin: Lake Murray's Oak3.bin and SycamoreV2.bin, personal use, gitignored) the PC copies into tracks/milford-road-course-lm/source/trees/ before the chain (runbook 0082-3)"
+  },
+  "sync_out": {
+    "required": [
+      "loop.blend"
+    ],
+    "files": [
+      "data/lm_intake.json",
+      "data/centerline.local.json",
+      "data/centerline.raw.local.json",
+      "data/finished_centerline.json",
+      "data/gate_centerline.json",
+      "data/bridge.spans.auto.json",
+      "data/mouth_welds.json",
+      "data/crossfall.lm.json",
+      "data/bespoke.report.json",
+      "data/dummies.json",
+      "data/drive_test.json",
+      "data/drive_test.{id}.json",
+      "data/audit.json",
+      "data/kn5_ground_check.{id}.json",
+      "data/kn5_textures.json",
+      "data/house_seat_check.json",
+      "data/edge_report.json",
+      "data/edge_fit.json",
+      "data/edge_smoothness.json",
+      "data/kerbs.built.json",
+      "data/treefx.report.json",
+      "data/grassfx.aerial.json",
+      "data/road_wear.json",
+      "data/road_wear.line.{id}.json",
+      "data/road_wear_check.json",
+      "data/reseat_bespoke.json",
+      "data/far_ground.report.json",
+      "data/far_ground.prep.json"
+    ],
+    "map": [
+      [
+        "blender/split/split_manifest.json",
+        "data/split_manifest.json"
+      ]
+    ],
+    "dirs": [
+      "ai/{id}"
+    ]
+  },
+  "_edges_doc": "ledger 0087: the lane edges re-fitted in the intake (track.config.json lm_intake.edge_fit; the evidence synced in), every verdict in data/edge_fit.json; edge_smoothness (opt-in, this track only so far) gates the built edges' 1 m second difference and residual (tools/edge_smoothness.py GATE_DEFAULT)",
+  "_gate_doc": "ledger 0082 pass 2: kn5_textures (opt-in, this track only so far): every texture the built kn5s' materials name must be embedded (tools/kn5_textures.py). The PC's 0082-1 run 1 shipped five textures short and passed every other gate",
+  "_vegetation_doc": "ledger 0082 vegetation pass: grassfx_aerial (the measured grass zones, before the track folder's ext_config) and treefx (the measured crowns as TreeFX, after the map) run",
+  "_road_wear_doc": "ledger 0084 pilot (0.1.7): the aerial (required: track.config.json road_wear.aerial) and a recorded line when one exists (optional) sync in; the bake runs as the last part of prep (tools/ship_track.sh prep_prep, opt-in on the config key); gate road_wear (tools/road_wear_check.py) reads the built road kn5"
+}

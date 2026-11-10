@@ -254,6 +254,9 @@ def mesh_place(s, ctx, cfg, road, ground, walls=None):
             s_est, src = s_C + d_clear, "no modelled walk (run %s)" % m.get("walk_run_m")
             s_B = s_C + ps.CURB_FACE_W + walk_w      # where the walk's back edge would be
             warns.append("no modelled curb+walk found along the ray; marched from the built curb face")
+            # ledger 0079 round L: with no walk along the ray the analytic base (the walk's y_road + 0.24) describes
+            # nothing that was built (Sand Creek: "no sidewalks"); the ground under the post is the terrain ray-cast
+            s["ray"]["no_walk"] = True
         # the authoritative march: along the ray only, until the built clearance AND the GATED
         # disc AND the wall clearance hold. Cap: mainline +6 m past the built curb; connector 1.5 m behind the walk.
         s_cap = s_C + ps.RAY_EXTRA_CAP_M if is_main else s_B + CONNECTOR_BEHIND_WALK_CAP_M
@@ -613,6 +616,9 @@ def main():
                 y_base, src = analytic, "analytic (no ground hit)"
             elif beyond:        # off the back of the walk: the terrain under the post IS the ground
                 y_base, src = g, "raycast (terrain behind the walk, %+.2f m vs the walk's analytic height)" % (g - analytic)
+            elif any(p["ray"].get("no_walk") for p in ps.plates_of(s)):
+                # no modelled walk along the ray (ledger 0079 round L): no walk height to expect, the terrain is the ground
+                y_base, src = g, "raycast (no modelled walk, %+.2f m vs a walk's analytic height)" % (g - analytic)
             elif abs(g - analytic) > ps.GROUND_WARN_M:
                 y_base, src = analytic, "analytic (ray-cast %.2f is %.2f m off, gapped walk?)" % (g, g - analytic)
                 n_warn += 1

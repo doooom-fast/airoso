@@ -1,0 +1,53 @@
+{
+  "_doc": "Ledger 0054 Phase 2: held Mission Gorge Speedway north-loop candidate, NOT an enabled layout. Counts along the v0.19.1 readable road intermediates; this is a race-tool reference line, NOT new road geometry or an AI spline. J1/J5 must be reconciled with the open College work (0055) before activation. Straight interpolated joins across J1-J5 are not proof of driveable corner surfaces or race corridors.",
+  "status": "held",
+  "lap": "north",
+  "source_version": "0.19.1",
+  "spec": {
+    "pieces": [
+      {"line": "north_J1_waring#0", "from": 0, "to": 317},
+      {"line": "north_princess_view", "from": 0, "to": 355},
+      {"line": "north_mission_gorge", "from": 0, "to": 745},
+      {"line": "north_J5_jackson_north#0", "from": 651, "to": 0},
+      {"line": "MAINLINE", "from": 2317, "to": 1517, "reverse": true}
+    ],
+    "roads": ["Waring Road", "Princess View Drive", "Mission Gorge Road", "Jackson Drive", "Navajo Road"],
+    "junction_pads": ["J2", "J3", "J4"],
+    "joins_file": "source/expansion/race.north.joins.json"
+  },
+  "junction_order": ["J1", "J2", "J3", "J4", "J5"],
+  "rehearsal": {
+    "_doc": "First corridor draft on the straight-join reference, not a ship config. Five real junction boxes are required even where the current reference fails the corner detector. Whole-street start area on undivided Navajo; all physical corridor limits inherited unchanged from the existing Speedway. Box and grid positions are authored draft choices, not gate changes.",
+    "corridor": {
+      "whole": [2408, 2598],
+      "boxes": [
+        {"apex": 320, "i": 314, "j": 334},
+        {"apex": 707, "i": 695, "j": 713},
+        {"apex": 1458, "i": 1452, "j": 1468},
+        {"apex": 2130, "i": 2121, "j": 2136},
+        {"apex": 2932, "i": 2926, "j": 3}
+      ],
+      "closure_runs": [[3, 314], [334, 695], [713, 1452], [1468, 2121], [2136, 2408], [2598, 2926]],
+      "pin_rate": {}
+    },
+    "layouts": [
+      {
+        "id": "north_cw", "name": "Mission Gorge Speedway", "kind": "race",
+        "direction": "forward", "race_furniture": true, "closure_token": "ncw", "lap": "north", "map": "lap",
+        "start": {"line_vertex": 2518, "grid_vertex": 2509, "offset_right_m": 3.25, "sector_vertices": [868, 1718]}
+      },
+      {
+        "id": "north_acw", "name": "Mission Gorge Speedway Reverse", "kind": "race",
+        "direction": "reverse", "race_furniture": true, "closure_token": "nacw", "lap": "north", "map": "lap",
+        "start": {"line_vertex": 2518, "grid_vertex": 2528, "offset_right_m": 3.25, "sector_vertices": [1718, 868]}
+      }
+    ]
+  },
+  "remaining_before_activation": [
+    "Author and verify the five race-corner connections against the built road, preserving the north's seat-confirmed feel; reconcile J1 with 0055.",
+    "Declare lap-local corridor boxes, closure runs, kerbs, starts and sectors for both directions. No mainline vertex declarations may be copied blindly.",
+    "Prove the six pad-arm seals (especially Waring SW at J2 and Mission Gorge W at J3) independently of their Free Roam end barriers, plus the ordinary side streets and J1/J5 abandoned branches.",
+    "Rehearse all existing layouts and both new layouts on the built artifact, with all gate thresholds unchanged. Record AI in game; do not generate it from this reference line.",
+    "Kevin's drive and publishing approval remain required; nothing here enables a layout or changes the installed build."
+  ]
+}

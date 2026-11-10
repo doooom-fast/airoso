@@ -1,0 +1,24 @@
+{
+ "fail": false,
+ "reasons": [],
+ "kn5": [
+  "san_diego_freeway.kn5"
+ ],
+ "fidelity": "skipped: gate OBJ written from this kn5",
+ "double_sheet_cells": 0,
+ "seating": {
+  "walls": {
+   "objects": 54488,
+   "no_ground_pct": 0.0,
+   "median_m": -0.47,
+   "p95_m": -0.47,
+   "hovering": 25
+  }
+ },
+ "road_over_ground": {
+  "over": 56,
+  "samples": 27876,
+  "p95_m": 0.0,
+  "max_m": 1.052
+ }
+}

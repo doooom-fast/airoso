@@ -1,0 +1,88 @@
+start 19:51:49
+track: milford-road-course-lm   workshop project: <scratchpad>/sys/work/mf0111/b0111 (scratch: no sync-back, no install)
+engine (prep / export / spawn): <scratchpad>/sys/work/mf0111/eng
+
+=================== sync inputs airoso -> workshop (<scratchpad>/sys/work/mf0111/b0111)
+layouts: full   (race furniture: ; street: full; street AI = draft)
+
+=================== draft: the track's line, widths and 3DEP into Lake Murray v4's assembler inputs (tools/lm_engine_intake.py; ledger 0078)
+[lm_intake] profile uncapped: the stage's 32 % cap undone (0 points, max 0.0 m); its despike (33 m median) and mean kept
+[lm_intake] width steps tapered at 0.1 m per m a side: 116 points widened (max 8.89 m); none narrowed
+[lm_intake] resampled every 1.5 m: 1635 -> 3269 points
+[lm_intake] edge fit (judge, source/edges/edge_evidence.json): 2 samples rejected, every one logged in data/edge_fit.json; widths 9.00..21.71 -> 8.96..21.74 m; left edge to the evidence median 0.733 -> 0.73 m; right edge to the evidence median 0.72 -> 0.72 m
+[lm_intake] milford-road-course: 3269 pts, lap 4902 m, widths [8.96, 13.44, 21.74] m, 0 deck(s) levelled, grade cap none, steepest 14.97 % over 10 m — 0 heights moved (max 0.0 m); connectors out
+
+=================== draft: build loop.blend (scene regen — GEN layer)
+[blend] TREETRUNK: empty, skipped
+[blend] TREECANOPY: empty, skipped
+[blend] SCRUB: empty, skipped
+[blend] 0 streetlights placed (collision-checked)
+[blend] loop: 3269 pts, road elevation 0..39 m (rel origin 316 m)
+[blend] wrote <scratchpad>/sys/work/mf0111/b0111/loop.blend
+
+=================== draft: weld every side-street mouth onto its host (mitre + warp: road, curb/sidewalk, markings; self-checked)
+[weld] layout contract holds: mainline 3268 rows + 0 connector blocks in ROAD / CURB / MARKINGS / YLINE
+[weld] 0 of 0 warped ROAD quads turned to their ridge diagonal
+[weld] 0 mouth(s) welded, self-check clean; 0 connector-island point(s) follow the warped centre; saved loop.blend + data/mouth_welds.json
+
+=================== author: more columns where the mainline ribbon twists (tools/densify_ribbon_blend.py; ledger 0078; after the weld, no crease = no-op)
+[densify] 2704 mainline half-quads re-cut (worst warp 52.6 mm; columns up to 11, 4334 new row vertices, 14076 triangles for 5408); saved loop.blend
+
+=================== author: finer ground along the lane edges of the banked stretch (tools/seat_edges_blend.py; ledger 0078; no route.crossfall_file = no-op)
+[seat-edges] faces cut by bank: 3 cuts x 590, 4 cuts x 256, 5 cuts x 88, 6 cuts x 61, 7 cuts x 89, 8 cuts x 71, 9 cuts x 81, 10 cuts x 49, 11 cuts x 85, 12 cuts x 45, 13 cuts x 61, 14 cuts x 20, 15 cuts x 32, 16 cuts x 1529
+[seat-edges] 3259 banked line stations, 6516 lane-edge segments: 12918 terrain edges split (<= 0.6 m within 1.5 m of an edge), TERRAIN 13753 -> 328013 verts
+
+=================== author: a ground seam along the edge strip's outer lip (tools/strip_seam_blend.py; ledger 0078; self-checked)
+[strip-seam] 6536 seam points 0.05 m inside the strip's outer lip, 6536 joins, 0 missed; TERRAIN 328013 -> 370451 verts; saved loop.blend
+
+=================== author: the far ground from the lidar in place of the assembler's skirt (tools/far_ground_blend.py; ledger 0083 pass 4b; the grid untouched; self-checked; no terrain.far_ground = no-op)
+[far-ground] skirt out (464 vertices), 33370 ring nodes on the grid's 10.04 x 10.01 m lattice out 500 m (29049 on measured lidar, 3775 under cover, 546 past the tiles); border residual p05..p95 -0.687..0.853 m (max |2.713|), feathered over 40 m; seam step 0, grade change p95 0.2088 max 0.3622; TERRAIN 370451 -> 403357 verts; saved loop.blend
+[far-ground] beyond the lidar's reach: today's ground kept at 47 nodes, feathered to it at 560 over 40 m; 30 nodes with no ground (today or lidar), 47 ring cells and 0 nodes left with no cell out; 32763 nodes the lidar's
+
+=================== author: racing kerbs from the traced runs on the ribbon's lane edge (tools/author_kerbs_blend.py; ledger 0078; no route.kerbs_file = no-op)
+[kerbs] no route.kerbs_file: nothing to do
+
+=================== author: the bespoke dressing the config declares -> AUTH_bespoke (tools/author_bespoke_blend.py: buildings, cones, scrub on the built ground; self-checked; none declared = no-op)
+[bespoke] self-check FAILED (loop.blend not saved): block mpg_nw_complex_0: its measured roof 25.91 stands 0.19 m over the highest ground under it (< half its 5.11 m wall)
+[bespoke] scene names: ground ('TERRAIN',), far ('GRASS_FAR', 'TERRAIN'), paved ('ROAD', 'CURB', '1ROAD', '1KERB'), walls ('1WALL', 'BARRIER'); ground found, paved found
+[bespoke] building pad_tent: 20.5 x 53.4 m, gable, eave 3.50 m, ridge 7.50 m, pitch 21.3 deg; ground 14.09..15.66 (mean 14.91), level 14.91, bottom 13.94, inf m clear of road and wall
+[bespoke] rail g1_nw_corner_outside: W-beam 107 m in 1 run(s), 58 posts, top 0.70 m over the ground, 0 post(s) left out {'lane': 0, 'paved': 0, 'no ground': 0}; collider 1WALL_GHOST_RAIL_0
+[bespoke] rail g2_front_straight_east: W-beam 467 m in 3 run(s), 248 posts, top 0.70 m over the ground, 47 post(s) left out {'lane': 47, 'paved': 0, 'no ground': 0} (over the edge strip); collider 1WALL_GHOST_RAIL_1
+[bespoke] rail g3_front_straight_west: W-beam 181 m in 2 run(s), 98 posts, top 0.70 m over the ground, 7 post(s) left out {'lane': 7, 'paved': 0, 'no ground': 0} (over the edge strip); collider 1WALL_GHOST_RAIL_2
+[bespoke] rail g4_infield_esses: W-beam 364 m in 1 run(s), 192 posts, top 0.70 m over the ground, 0 post(s) left out {'lane': 0, 'paved': 0, 'no ground': 0}; collider 1WALL_GHOST_RAIL_3
+[bespoke] rail t1_nw_hairpin_exit: 71 tyres modules over 44 m, 0 left out
+[bespoke] rail t2_esses_east_leg: 85 tyres modules over 53 m, 0 left out
+[bespoke] rail t3_s1000_apron_back: 48 tyres modules over 33 m, 3 left out
+[bespoke] rail f1_nw_screen_ne: 29 screen modules over 113 m, 0 left out
+[bespoke] rail f1_nw_screen_step: 5 screen modules over 21 m, 0 left out
+[bespoke] rail f1_nw_screen_sw: 16 screen modules over 63 m, 0 left out
+[bespoke] rail f1_nw_screen_ne_end: 15 screen modules over 59 m, 0 left out
+[bespoke] block mpg_plant_a: TILTUP, walls 10.0 m, flat, ground 12.80..14.46, bottom 12.65, eave 24.25
+[bespoke] block mpg_plant_b: TILTUP, walls 11.0 m, flat, ground 9.27..12.31, bottom 9.12, eave 20.12
+[bespoke] block pad_shed_north: METAL, walls 2.6 m, flat, ground 16.78..16.90, bottom 16.46, eave 19.06
+[bespoke] block pad_shed_south: METAL, walls 2.6 m, flat, ground 16.94..17.11, bottom 16.63, eave 19.23
+[bespoke] block mpg_west_bldg_a: TILTUP, walls 12.1 m, flat, ground 45.83..48.42, bottom 45.68, eave 60.22
+[bespoke] block mpg_west_bldg_b: TILTUP, walls 13.1 m, flat, ground 38.65..46.66, bottom 38.50, eave 55.20
+[bespoke] block mpg_west_bldg_c: TILTUP, walls 7.8 m, flat, ground 37.52..38.77, bottom 37.37, eave 46.51
+[bespoke] block mpg_nw_small: TILTUP, walls 5.1 m, flat, ground 14.07..14.25, bottom 13.92, eave 19.30
+[bespoke] block mpg_far_sw_0: TILTUP, walls 6.3 m, flat, ground 33.80..34.14, bottom 33.65, eave 40.13
+[bespoke] block mpg_far_sw_1: TILTUP, walls 6.3 m, flat, ground 33.79..34.13, bottom 33.64, eave 40.14
+[bespoke] block mpg_far_sw_2: TILTUP, walls 8.4 m, flat, ground 33.80..34.38, bottom 33.65, eave 42.29
+[bespoke] block mpg_far_sw_3: TILTUP, walls 10.7 m, flat, ground 33.84..34.30, bottom 33.69, eave 44.54
+[bespoke] block mpg_far_w_small_0: TILTUP, walls 8.1 m, flat, ground 39.15..39.51, bottom 39.00, eave 47.56
+[bespoke] block mpg_nw_complex_1: TILTUP, walls 5.7 m, flat, ground 23.96..26.05, bottom 23.81, eave 30.39
+[bespoke] block mpg_nw_complex_2: TILTUP, walls 7.3 m, flat, ground 20.49..25.91, bottom 20.34, eave 30.41
+[bespoke] block mpg_nw_complex_3: TILTUP, walls 8.4 m, flat, ground 22.19..28.06, bottom 22.04, eave 33.37
+[bespoke] block mpg_nw_complex_4: TILTUP, walls 8.7 m, flat, ground 25.69..26.93, bottom 25.54, eave 33.39
+[bespoke] block mpg_nw_complex_5: TILTUP, walls 7.4 m, flat, ground 25.83..28.08, bottom 25.68, eave 33.36
+[bespoke] block mpg_nw_complex_6: TILTUP, walls 8.6 m, flat, ground 20.38..28.81, bottom 20.23, eave 33.36
+[bespoke] block mpg_nw_complex_7: TILTUP, walls 12.9 m, flat, ground 19.99..26.00, bottom 19.84, eave 35.17
+[bespoke] block mpg_nw_complex_8: TILTUP, walls 8.8 m, flat, ground 29.02..30.44, bottom 28.87, eave 37.97
+[bespoke] block mpg_nw_complex_9: TILTUP, walls 8.7 m, flat, ground 27.02..30.39, bottom 26.87, eave 37.97
+[bespoke] block mpg_nw_complex_10: TILTUP, walls 7.1 m, flat, ground 30.21..30.50, bottom 30.06, eave 37.41
+[bespoke] block mpg_nw_complex_11: TILTUP, walls 7.2 m, flat, ground 29.85..30.52, bottom 29.70, eave 37.47
+[bespoke] block mpg_nw_complex_12: TILTUP, walls 12.8 m, flat, ground 27.06..29.98, bottom 26.91, eave 39.84
+[bespoke] pad ride_pad: 1058 cells, 0 left out (over a road or off the ground)
+[bespoke] trunks (source/vegetation/trunks.json): 385 colliders, r 0.3 m, 3.0 m over the ground; nearest paved 4.72 m
+exit 1
+end 20:07:34

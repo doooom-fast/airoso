@@ -115,6 +115,10 @@ ZONES = {
     # Sand Creek's cottonwoods off NAIP: there is no cottonwood model, so the sycamores, the riparian stand-in north_riparian_trees uses
     "planted_cottonwood": [("SycamoreV1.bin", 0.8, 1.1, 3), ("SycamoreV2.bin", 0.8, 1.1, 2), ("SycamoreV3.bin", 0.8, 1.1, 2)],
     "planted_neighbourhood": [("Oak3.bin", 0.6, 0.9, 3), ("SycamoreV2.bin", 0.6, 0.9, 1)],
+    # Nevada Nights' scrub clumps off NAIP 2019 + 2022 at their lidar heights (ledger 0089): there is no creosote model;
+    # Lake Murray's Bush3 stands in, sized by planted.native_h_m. Bush.bin is out until its drawn height is settled: its
+    # tree.ini HEIGHT reads 20.66 m, ten times Bush3's, while Lake Murray draws it as a 1-2 m shrub (Nevada 0.1.5)
+    "planted_desert_scrub": [("Bush3.bin", 0.6, 1.0, 1)],
     # Waring's planted median: small median trees (A2, st 250-550). The islands' LOW planting is not here: the
     # assembler (author_median_blend) already plants every raised island, north pieces included, and exports it as
     # scatter_positions.json median_planting (v0.19.0 shipped it)
@@ -459,6 +463,50 @@ class BuiltSurfaces:
         return None
 
 
+class BuiltGround:
+    """ledger 0082 'Far ground (0.1.11)' (opt-in scenery.treefx.planted.seat_far_on_built): the gate OBJ's ground tiles
+    (1GRASS*) as triangles bucketed by plan cell; ``at(x, z)`` -> the highest ground surface over the spot (engine frame),
+    None where no ground triangle covers it"""
+
+    def __init__(self, obj_path):
+        self.cells = {}
+        self.tris = 0
+        V = []
+        on = False
+        with open(obj_path, encoding="utf-8", errors="replace") as f:
+            for ln in f:
+                c = ln[:2]
+                if c == "v ":
+                    p = ln.split()
+                    V.append((float(p[1]), float(p[2]), float(p[3])))
+                elif c in ("o ", "g "):
+                    on = ln[2:].strip().upper().startswith("1GRASS")
+                elif c == "f " and on:
+                    idx = [int(q.split("/")[0]) - 1 for q in ln.split()[1:]]
+                    for i in range(1, len(idx) - 1):
+                        a, b, cc = V[idx[0]], V[idx[i]], V[idx[i + 1]]
+                        xs, zs = (a[0], b[0], cc[0]), (a[2], b[2], cc[2])
+                        for ix in range(int(min(xs) // BUILT_CELL_M), int(max(xs) // BUILT_CELL_M) + 1):
+                            for iz in range(int(min(zs) // BUILT_CELL_M), int(max(zs) // BUILT_CELL_M) + 1):
+                                self.cells.setdefault((ix, iz), []).append((a, b, cc))
+                        self.tris += 1
+
+    def at(self, x, z):
+        best = None
+        for a, b, c in self.cells.get((int(x // BUILT_CELL_M), int(z // BUILT_CELL_M)), ()):
+            det = (b[2] - c[2]) * (a[0] - c[0]) + (c[0] - b[0]) * (a[2] - c[2])
+            if abs(det) < 1e-12:
+                continue
+            l1 = ((b[2] - c[2]) * (x - c[0]) + (c[0] - b[0]) * (z - c[2])) / det
+            l2 = ((c[2] - a[2]) * (x - c[0]) + (a[0] - c[0]) * (z - c[2])) / det
+            l3 = 1.0 - l1 - l2
+            if min(l1, l2, l3) < -1e-9:
+                continue
+            y = l1 * a[1] + l2 * b[1] + l3 * c[1]
+            best = y if best is None else max(best, y)
+        return best
+
+
 def _pick(species, i):
     wsum = sum(s[3] for s in species)
     r = _hash(i, 1) * wsum
@@ -564,6 +612,14 @@ def plan(project_dir, all_species=False, verbose=False):
     used = set()
     counts = {}
     rejected = 0
+    # ledger 0082 (Milford's vegetation pass, opt-in): scenery.treefx.planted.native_h_m {model: its height at size 1, m}
+    # sizes a planted point by its MEASURED height (size = h_m / native) instead of its rank between the file's shortest
+    # and tallest; a model it does not name keeps the rank rule. Absent (every other track) = nothing changes
+    native_h = {k: float(v) for k, v in ((tcfg.get("planted") or {}).get("native_h_m") or {}).items() if not k.startswith("_")}
+    # ... and planted.native_w_m {model: its crown width at size 1, m} (opt-in, beside native_h_m) writes `width = crown_m /
+    # (native width * size)`: TreeFX's width-only multiplier, so a tree keeps its MEASURED crown at its measured height (a
+    # uniform size alone scales the crown with the height). A model it does not name gets no width
+    native_w = {k: float(v) for k, v in ((tcfg.get("planted") or {}).get("native_w_m") or {}).items() if not k.startswith("_")}
 
     def emit_zone(zone_key, entries, idx_base=0, guard=True):
         species = [s for s in ZONES[zone_key] if s[0] in available]
@@ -595,10 +651,16 @@ def plan(project_dir, all_species=False, verbose=False):
                     if not zone_key.startswith("north_"):
                         rejected_built_loop[why] += 1
                     continue
-            s = _pick(species, i)
-            size = s[1] + (s[2] - s[1]) * e.get("_size01", _hash(i, 2))
-            angle = int(360 * _hash(i, 3))
-            out.append(f"tree: {s[0]}; pos={e['x']:.2f}, {e['y']:.2f}, {-e['z']:.2f}; angle = {angle}; size = {size:.2f}")
+            hk = idx_base + e["_key"] if "_key" in e else i   # a planted point's own key (opt-in, above), else its place
+            s = _pick(species, hk)
+            size = s[1] + (s[2] - s[1]) * e.get("_size01", _hash(hk, 2))
+            if "_h" in e and s[0] in native_h:   # ledger 0082 (opt-in planted.native_h_m): the measured height, absolute
+                size = e["_h"] / native_h[s[0]]
+            angle = int(360 * _hash(hk, 3))
+            line = f"tree: {s[0]}; pos={e['x']:.2f}, {e['y']:.2f}, {-e['z']:.2f}; angle = {angle}; size = {size:.2f}"
+            if "_w" in e and s[0] in native_w:   # ledger 0082 (opt-in planted.native_w_m): the measured crown, absolute
+                line += f"; width = {e['_w'] / (native_w[s[0]] * round(size, 2)):.2f}"
+            out.append(line)
             entries_out.append({"zone": zone_key, "model": s[0], "x": e["x"], "y": e["y"], "z": e["z"]})
             used.add(s[0])
             n += 1
@@ -612,6 +674,7 @@ def plan(project_dir, all_species=False, verbose=False):
     # (tools/plan_bespoke_vegetation.py); y is only where the snap starts: TreeFX seats each tree on SURFACE_MATERIALS
     planted = tcfg.get("planted")
     hf, meta_p = data / "heightfield.npy", data / "heightfield.meta.json"
+    far_seat_out = None
     if planted:
         d = json.loads((proj / planted["file"]).read_text(encoding="utf-8"))
         o = local["origin"]
@@ -622,21 +685,52 @@ def plan(project_dir, all_species=False, verbose=False):
         by_zone, too_near = {}, 0
         grid, ny, nx = _read_npy(hf)
         s_, w_, n_, e_ = json.loads(meta_p.read_text(encoding="utf-8"))["bbox_swne"]
+        # ledger 0082 'Far ground (0.1.11)' (opt-in planted.seat_far_on_built): a point past the 3DEP grid (whose ground_y is
+        # only the grid's nearest border node) starts on the BUILT far ground under it, the gate OBJ's 1GRASS: the far ground
+        # moved (the lidar's in place of the skirt), so its trees are re-seated on it. Inside the grid nothing changes
+        far_ground = BuiltGround(data / "track.obj") if planted.get("seat_far_on_built") and (data / "track.obj").exists() else None
+        far_seat = {"reseated": 0, "no_ground": 0, "inside_grid": 0}
+        if far_ground is not None:
+            # the grid's NODES end short of bbox_swne's east / south edge (whole spacings from its north-west corner, as
+            # build_loop_blend.project_grid lays them): inside = within the nodes, where the built ground is the grid's
+            _hm = json.loads(meta_p.read_text(encoding="utf-8"))
+            _sp = float(_hm["spacing_m"])
+            lon_last = w_ + (nx - 1) * _sp / (111_000.0 * math.cos(math.radians((s_ + n_) / 2)))
+            lat_last = n_ - (ny - 1) * _sp / 111_000.0
 
         def ground_y(lon, lat):
             j = min(ny - 1, max(0, round((n_ - lat) / (n_ - s_) * (ny - 1))))
             i = min(nx - 1, max(0, round((lon - w_) / (e_ - w_) * (nx - 1))))
             return float(grid[j][i]) - o["elev_m"]
-        for lon, lat, cell, h, _w in d["points"]:
+        # ledger 0082 / 0087, Milford 0.1.5 (opt-in by the point's shape): a 6th element is the point's KEY, the index its
+        # model / angle hashes use instead of its place in the file, so a re-segmented crown file keeps every untouched
+        # tree's model and angle (a removed or added point no longer renumbers every tree after it). Absent = the place
+        for pt in d["points"]:
+            lon, lat, cell, h, _w = pt[:5]
             x, z = (lon - o["lon"]) * m_lon, (lat - o["lat"]) * m_lat
             if field.query(x, z)[0] < clear:
                 too_near += 1
                 continue
+            y = ground_y(lon, lat)
+            if far_ground is not None:
+                if lat_last <= lat <= n_ and w_ <= lon <= lon_last:
+                    far_seat["inside_grid"] += 1
+                else:
+                    yb = far_ground.at(x, z)
+                    far_seat["no_ground" if yb is None else "reseated"] += 1
+                    y = y if yb is None else yb
             by_zone.setdefault(planted["zones"][str(cell)], []).append(
-                {"x": x, "y": ground_y(lon, lat), "z": z, "_size01": (h - h0) / max(h1 - h0, 1e-6)})
+                {"x": x, "y": y, "z": z, "_size01": (h - h0) / max(h1 - h0, 1e-6),
+                 **({"_h": float(h)} if native_h else {}), **({"_w": float(_w)} if native_w else {}),
+                 **({"_key": int(pt[5])} if len(pt) > 5 else {})})
         for k, zone in enumerate(sorted(by_zone)):
             emit_zone(zone, by_zone[zone], idx_base=k * 100000)
         rejected += too_near
+        if far_ground is not None:
+            far_seat_out = far_seat
+            print(f"[treefx] planted past the 3DEP grid, seated on the built far ground ({far_ground.tris} 1GRASS triangles): "
+                  f"{far_seat['reseated']} re-seated, {far_seat['no_ground']} with no ground under them (kept on the grid's "
+                  f"border height), {far_seat['inside_grid']} inside the grid unchanged")
         if verbose:
             print(f"[treefx] planted {planted['file']}: {sum(len(v) for v in by_zone.values())} of {len(d['points'])} points "
                   f"clear of the roads by {clear} m -> {counts}")
@@ -814,7 +908,8 @@ def plan(project_dir, all_species=False, verbose=False):
         print(f"[treefx] built-surface guard: dropped " + ", ".join(f"{k} {n}" for k, n in rejected_built.items())
               + " (of them on the loop's own zones: " + ", ".join(f"{k} {n}" for k, n in rejected_built_loop.items()) + ")")
     return {"lines": out, "entries": entries_out, "counts": counts, "used": used, "rejected": rejected,
-            "rejected_built": rejected_built, "rejected_built_loop": rejected_built_loop, "north": north_stats}
+            "rejected_built": rejected_built, "rejected_built_loop": rejected_built_loop, "north": north_stats,
+            "far_seat": far_seat_out}
 
 
 def build(project_dir):
@@ -848,7 +943,54 @@ def build(project_dir):
            "total": total, "per_zone": counts, "per_species": dict(sorted(by_model.items())), "rejected_in_corridor": rejected,
            "rejected_on_built_surface": p["rejected_built"], "rejected_on_built_surface_loop_zones": p["rejected_built_loop"],
            "surface_materials": surface_materials(proj), "north": p["north"]}
+    if p.get("far_seat") is not None:      # ledger 0082 'Far ground (0.1.11)', opt-in: absent = the report as before
+        rep["planted_far_seat"] = p["far_seat"]
     (proj / "data" / "treefx.report.json").write_text(json.dumps(rep, indent=1), encoding="utf-8")
+    g = treefx_gate(proj, p, tdir)
+    print(f"[treefx] gate: {g['written']} written of {g['planned']} planned; models named in trees.txt "
+          f"{g['named']}, all present in {tdir.name}/: {not g['absent']}"
+          + (f"; WARNING the mixes also name {g['mix_missing']}, absent from source/trees (their spots took the zone's "
+             f"other models)" if g["mix_missing"] and g["written"] == g["planned"] else "")
+          + (" -> FAIL" if g["problems"] else " -> OK"))
+    if g["problems"]:
+        raise SystemExit("[treefx] GATE FAIL (ledger 0089): " + "; ".join(g["problems"]))
+
+
+PLACEHOLDER_MAX_B = 4096   # a real TreeFX model is hundreds of kB; the Mac's stand-ins are 82 B text files
+
+
+def treefx_gate(proj, p, tdir):
+    """Ledger 0089 (hard, every TreeFX track: tools/ship_track.sh and tools/ship_sd.sh both reach it through build()). A
+    fresh workshop without the gitignored models planted 0 trees on the PC and every gate stayed green. FAIL when:
+      * fewer trees are written than the plan places with every species present (plan(all_species=True): the same
+        positions, guards and drops; only the model choice needs the files) - a missing zone's models plant nothing;
+      * a model trees.txt names is not a file beside it (extension/trees/<model>.bin) or not in source/trees/;
+      * planted.native_h_m / native_w_m say "_placeholder" while the copied models are real files (> PLACEHOLDER_MAX_B):
+        the sizes must be read off the real models' tree.ini before they ship.
+    Reads only; writes nothing, changes no line of trees.txt."""
+    proj = Path(proj)
+    full = plan(proj, all_species=True)
+    planned, written = sum(full["counts"].values()), sum(p["counts"].values())
+    named = sorted({ln.split(";", 1)[0][len("tree:"):].strip() for ln in p["lines"] if ln.startswith("tree:")})
+    src = proj / "source" / "trees"
+    absent = [m for m in named if not (tdir / m).is_file() or not (src / m).is_file()]
+    mix_missing = sorted(full["used"] - p["used"])
+    problems = []
+    if written < planned:
+        short = {z: full["counts"][z] - p["counts"].get(z, 0) for z in full["counts"] if p["counts"].get(z, 0) < full["counts"][z]}
+        problems.append(f"{written} trees written, {planned} planned (short per zone {short}; models absent from "
+                        f"{src}: {mix_missing})")
+    if absent:
+        problems.append(f"trees.txt names {absent}, not present beside it and in source/trees")
+    cfg = json.loads((proj / "track.config.json").read_text(encoding="utf-8"))
+    pl = ((cfg.get("scenery") or {}).get("treefx") or {}).get("planted") or {}
+    if any("_placeholder" in (pl.get(k) or {}) for k in ("native_h_m", "native_w_m")):
+        real = [m for m in named if (src / m).is_file() and (src / m).stat().st_size > PLACEHOLDER_MAX_B]
+        if real:
+            problems.append(f"planted.native_h_m / native_w_m are placeholders but {real} are real models: read each "
+                            f"model's tree.ini HEIGHT / WIDTH into the config first")
+    return {"planned": planned, "written": written, "named": named, "absent": absent, "mix_missing": mix_missing,
+            "problems": problems}
 
 
 if __name__ == "__main__":

@@ -1,0 +1,25 @@
+== diff vs d8d1473 under tracks/san-diego-lake-murray:
+ .../san-diego-lake-murray/engine-july-snapshot/MANIFEST.md5 |  2 +-
+ .../engine-july-snapshot/PENDING-MIRROR.md5                 |  1 +
+ .../engine-july-snapshot/scripts/ac/export_kn5_addon.py     | 13 ++++++++++++-
+ 3 files changed, 14 insertions(+), 2 deletions(-)
+== diff vs d8d1473 under scripts/:
+ scripts/ac/export_kn5_addon.py |  13 +-
+ scripts/aerial/road_wear.py    | 596 +++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 608 insertions(+), 1 deletion(-)
+tracks/san-diego-lake-murray/engine-july-snapshot/scripts/ac/build_kn5_loop.py  base 2a653ee16a916384c76fc874fe2966e9  branch 2a653ee16a916384c76fc874fe2966e9
+scripts/ac/build_kn5_loop.py  base 4b73cf73fb0ca12def2c36821a37fcdb  branch 4b73cf73fb0ca12def2c36821a37fcdb
+tracks/san-diego-lake-murray/engine-july-snapshot/scripts/ac/build_spawn_kn5.py  base 1a725cd07bb0a9a4647f00e20080b371  branch 1a725cd07bb0a9a4647f00e20080b371
+scripts/ac/build_spawn_kn5.py  base 1a725cd07bb0a9a4647f00e20080b371  branch 1a725cd07bb0a9a4647f00e20080b371
+tracks/san-diego-lake-murray/engine-july-snapshot/scripts/ac/pbr.py  base 44615dd3dab1d5699ef406ad09317dfe  branch 44615dd3dab1d5699ef406ad09317dfe
+scripts/ac/pbr.py  base 44615dd3dab1d5699ef406ad09317dfe  branch 44615dd3dab1d5699ef406ad09317dfe
+tracks/san-diego-lake-murray/engine-july-snapshot/scripts/geometry/dummies.py  base 61966948c34647774dd6abcf28e880c1  branch 61966948c34647774dd6abcf28e880c1
+scripts/geometry/dummies.py  base f00740f4ccbb5535625e75e762c45ff4  branch f00740f4ccbb5535625e75e762c45ff4
+tools/ship_sd.sh  base 5a4bbe298eb2d06eeefbd450d54f3c23  branch 5a4bbe298eb2d06eeefbd450d54f3c23
+tools/trim_connectors.py  base 8a45651657df676f71cfdfe30eca5483  branch 8a45651657df676f71cfdfe30eca5483
+== the export driver: the one engine-july file this branch changes
+base 1bdc2628253532045f5ba6d490e7da4f  branch 83b231e840c09b34ef32cde98dbf2c35  (snapshot copy 83b231e840c09b34ef32cde98dbf2c35; ENG copy 83b231e840c09b34ef32cde98dbf2c35)
+== Lake Murray's config names road_wear: False
+== ship_sd.sh mentions road_wear: 0
+trim a_base: 664da93b17d79982943d4a53dfa1f209 b73b70f4b6dc15f975cc019e739885dd f0c97952b9b71f67b4ec7d269a65b465 log 63af07ccf16d01c179f89afec997f536
+trim b_branch: 664da93b17d79982943d4a53dfa1f209 b73b70f4b6dc15f975cc019e739885dd f0c97952b9b71f67b4ec7d269a65b465 log 63af07ccf16d01c179f89afec997f536

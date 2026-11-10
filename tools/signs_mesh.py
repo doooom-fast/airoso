@@ -139,6 +139,15 @@ def load_wall_bvhs():
     common = by_tok.pop(RACE_COLLECTION, [])
     for tok, tris in by_tok.items():
         out[tok] = bvh_of(common + tris)
+    # a race layout that races the whole lap (race.corridor.whole_lap, ledger 0079 round K; Sand Creek) has an EMPTY
+    # RACE_CLOSE_<TOKEN>: its sealing walls are the common curb strips alone. Lake Murray's every token has a closure,
+    # so nothing there changes
+    for c in bpy.data.collections:
+        if c.name.startswith(RACE_CLOSE_COLLECTION) and common:
+            tok = c.name[len(RACE_CLOSE_COLLECTION):].lower()
+            if tok and tok not in out:
+                out[tok] = bvh_of(common)
+                names[tok] = list(names.get(RACE_COLLECTION, []))
     load_wall_bvhs.names = names
     return out
 

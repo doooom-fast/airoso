@@ -159,7 +159,7 @@ def black_slots(parsed: dict, textures: dict | None = None) -> list[str]:
 
 def check(parsed: dict, allowed: set[str], size_warn_b: int = SIZE_WARN_B, *, role: str | None = None,
           owner: str | None = None, expect_kerbs: int | None = None, textures: dict | None = None,
-          lap: str | None = None) -> dict:
+          lap: str | None = None, whole_lap: bool = False) -> dict:
     """{ok, fails, warns, summary} for one inspect_kn5 parse of a race-furniture kn5 (see the module doc for the roles)"""
     fails, warns = [], []
     if role is not None and role not in ROLES:
@@ -220,7 +220,13 @@ def check(parsed: dict, allowed: set[str], size_warn_b: int = SIZE_WARN_B, *, ro
             fails.append(f"{len(wrong)} meshes that are not {tok!r}'s closure ({want}*) or its sign plates — a kerb, a curb "
                          f"strip, another layout's closure or plates leaked into it: {wrong[:6]}")
         if not [u for u in upper if u.startswith(want)]:
-            fails.append(f"no {want}* mesh — the {tok!r} closure kn5 is empty")
+            if whole_lap and own_signs:
+                # race.corridor.whole_lap (opt-in, ledger 0079 round K; Sand Creek): the layout races the whole street,
+                # so it declares no closure run; its closure kn5 carries its own sign plates alone, and must carry those
+                warns.append(f"no {want}* mesh: the {tok!r} layout races the whole lap (params.whole_lap) — its closure "
+                             f"kn5 holds its {len(own_signs)} sign mesh(es) alone")
+            else:
+                fails.append(f"no {want}* mesh — the {tok!r} closure kn5 is empty")
     if role == "common" and signs:
         fails.append(f"{len(signs)} per-layout sign plates in the COMMON kn5 (each rides in its layout's closure kn5): {signs[:4]}")
     verts = sum(int(m.get("verts", 0)) for m in meshes)
@@ -270,8 +276,13 @@ def main(argv=None) -> int:
         bp = bands_p or (p.parent / ("barrier_bands.json" if not lap else f"barrier_bands.{lap}.json"))
         if bp.exists():
             expect = len(json.loads(bp.read_text(encoding="utf-8")).get("kerbs") or [])
+    whole_lap = False
+    if role == "closure":
+        bp = bands_p or (p.parent / "barrier_bands.json")
+        if bp.exists():
+            whole_lap = bool((json.loads(bp.read_text(encoding="utf-8")).get("params") or {}).get("whole_lap"))
     allowed = race_texture_set()
-    r = check(parsed, allowed, role=role, owner=owner, expect_kerbs=expect, lap=lap)
+    r = check(parsed, allowed, role=role, owner=owner, expect_kerbs=expect, lap=lap, whole_lap=whole_lap)
     s = r["summary"]
     what = ("COMMON" if not lap else f"COMMON lap {lap!r}") if role == "common" else f"CLOSURE {owner!r}"
     print(f"[race-kn5] {Path(parsed.get('file', p)).name} ({what}): {s['file_bytes']:,} B; {s['meshes']} meshes "

@@ -1,0 +1,101 @@
+[
+ {
+  "id": 21,
+  "name": "roof 21",
+  "cells": 324,
+  "in_strip": 1.0,
+  "e": -614.9,
+  "n": -641.0,
+  "green_excess_p50": 4.0,
+  "lum_p50": 184.0,
+  "lum_sd": 14.1
+ },
+ {
+  "id": 53,
+  "name": "roof 53",
+  "cells": 25,
+  "in_strip": 1.0,
+  "e": -596.0,
+  "n": -301.9,
+  "green_excess_p50": 3.5,
+  "lum_p50": 199.0,
+  "lum_sd": 7.5
+ },
+ {
+  "id": 57,
+  "name": "roof 57",
+  "cells": 39,
+  "in_strip": 1.0,
+  "e": -574.2,
+  "n": -242.1,
+  "green_excess_p50": 3.5,
+  "lum_p50": 201.0,
+  "lum_sd": 2.3
+ },
+ {
+  "id": 58,
+  "name": "roof 58",
+  "cells": 145,
+  "in_strip": 1.0,
+  "e": -596.8,
+  "n": -223.6,
+  "green_excess_p50": 4.5,
+  "lum_p50": 204.0,
+  "lum_sd": 12.5
+ },
+ {
+  "id": 59,
+  "name": "roof 59",
+  "cells": 23,
+  "in_strip": 1.0,
+  "e": -550.6,
+  "n": -236.2,
+  "green_excess_p50": 4.0,
+  "lum_p50": 196.0,
+  "lum_sd": 34.9
+ },
+ {
+  "id": 77,
+  "name": "roof 77",
+  "cells": 53,
+  "in_strip": 1.0,
+  "e": -634.1,
+  "n": 107.5,
+  "green_excess_p50": 3.5,
+  "lum_p50": 227.0,
+  "lum_sd": 9.8
+ },
+ {
+  "id": 79,
+  "name": "roof 79",
+  "cells": 39,
+  "in_strip": 1.0,
+  "e": -643.3,
+  "n": 142.1,
+  "green_excess_p50": 5.0,
+  "lum_p50": 191.0,
+  "lum_sd": 9.8
+ },
+ {
+  "id": 81,
+  "name": "roof 81",
+  "cells": 2327,
+  "in_strip": 1.0,
+  "e": -597.3,
+  "n": 385.6,
+  "green_excess_p50": 3.5,
+  "lum_p50": 203.0,
+  "lum_sd": 27.1
+ },
+ {
+  "id": 40,
+  "name": "hall b annex",
+  "cells": 418,
+  "in_strip": 0.76,
+  "e": -542.7,
+  "n": -349.1,
+  "green_excess_p50": 3.0,
+  "lum_p50": 235.0,
+  "lum_sd": 26.5
+ }
+]

@@ -7,10 +7,11 @@ and on guard-only runs (bash exits before the first file operation; nothing is b
 - stage order and the exit-code flag on every Blender call;
 - the scratch rails (SHIP_PROJ / SHIP_SPEC never sync back or install; nothing inside airoso), the install
   folder from config, the install refusing while AC / Content Manager runs, the old build parked in the archive;
-- engine-july only when the slug is san-diego-lake-murray;
-- San Diego parity: the step headers tracks/san-diego-lake-murray/ship.json selects are tools/ship_sd.sh's, in
-  its order (re-synced 2026-10-12 to ship_sd.sh after ledger 0046's tiered terrain; it must be re-synced whenever
-  ship_sd.sh changes);
+- engine-july only for san-diego-lake-murray and for a ship.json that declares "engine": "lm-v4" (ledger 0078);
+- San Diego parity: tracks/san-diego-lake-murray/ship.json is Lake Murray v4's chain of record since 2026-11-03
+  (ledger 0065, Kevin: "Lake Murray v4 should be what we build the rest from"); tools/ship_sd.sh stays the 0.19.x
+  chain. Every ship_sd.sh step header is still in v4's, in its order, and v4's own steps are exactly the named
+  extras (V4_EXTRAS) — anything else in either chain fails until this list follows;
 - the Lariat: the paint centreline wired into the draft order; its dry run stops cleanly at "no blend yet";
 - the four chain specs (ledger 0060) and the San Diego freeway network (ONE-CHAIN §4 row 8): the network's draft
   steps (net, classify, network_elev, network_mesh) are data steps on "$PROJ", then the underlay.
@@ -121,7 +122,10 @@ def test_spec_refuses_what_is_not_in_its_patterns():
     refused(lambda d: d["steps"]["draft"].append("gps; curl x"), "is not a step name")
     refused(lambda d: d["steps"].update(deploy=["x"]), "unknown phase")
     refused(lambda d: d["steps"].update(prep=["split", "prep"]), "exactly")
-    refused(lambda d: d.update(engine="C:/Users/Owner/Documents/GitHub/engine-july"), "unknown key")
+    # ledger 0078: ship.json may name an engine, but only from the closed list — never a path
+    refused(lambda d: d.update(engine="C:/Users/Owner/Documents/GitHub/engine-july"), "must be one of")
+    refused(lambda d: d.update(engine="lm-v4; rm -rf /"), "must be one of")
+    refused(lambda d: d.update(engines="lm-v4"), "unknown key")
     refused(lambda d: d.update(track="san-diego-lake-murray"), "not 'lookout-lariat'")
     refused(lambda d: d.update(workshop="../k10-workshops"), "absolute")
     refused(lambda d: d.update(workshop="C:/x/../airoso"), "absolute")
@@ -418,13 +422,18 @@ def test_the_chain_refuses_the_v1_frame_before_any_copy():
 
 # --- engine-july -----------------------------------------------------------------------------------------------
 def test_engine_july_only_for_san_diego():
+    """engine-july for San Diego (always) and for a track whose ship.json declares "engine": "lm-v4" (ledger 0078: every
+    track is built from Lake Murray v4's engine); airoso's own scripts/ for every other track."""
     hits = [(p, ln) for p, ln in _code_lines() if "engine-july" in ln]
     assert len(hits) == 1, hits
     pos, ln = hits[0]
-    # ENG=<dir> overrides it for San Diego alone (a scratch copy of engine-july, as in tools/ship_sd.sh)
+    # ENG=<dir> overrides it (a scratch copy of engine-july, as in tools/ship_sd.sh)
     assert ln.strip() == 'ENGINE="${ENG:-C:/Users/Owner/Documents/GitHub/engine-july}"', ln
-    cond = TEXT.rfind('if [ "$TRACK" = "san-diego-lake-murray" ]; then\n', 0, pos)
-    assert cond >= 0 and TEXT[cond:pos].count("\n") == 1, "the engine-july line is the SD branch's only line"
+    cond = TEXT.rfind('if [ "$TRACK" = "san-diego-lake-murray" ] || [ "$SPEC_ENGINE" = "lm-v4" ]; then\n', 0, pos)
+    assert cond >= 0 and TEXT[cond:pos].count("\n") == 1, "the engine-july line is the LM-engine branch's only line"
+    # decided after ship.json is read, before anything runs
+    assert TEXT.find("SPEC_LINES=$(") < cond < TEXT.find('echo "engine (prep / export / spawn): $ENGINE"')
+    assert 'SPEC_ENGINE="airoso"' in TEXT and '    engine) SPEC_ENGINE="$v";;' in TEXT
     assert 'else\n  ENGINE="$AIROSO"\nfi' in TEXT[pos:pos + 160]
     assert "$ENG/" not in TEXT and '"$ENG"' not in TEXT
     fns = _functions()
@@ -433,7 +442,53 @@ def test_engine_july_only_for_san_diego():
                        ("ship_export_race", '"$ENGINE/scripts/ac/export_kn5_addon.py"'),
                        ("ship_spawn_kn5", '"$ENGINE/scripts/ac/build_spawn_kn5.py"')):
         assert frag in fns[name], name
-    assert "engine" not in spec_mod.TOP
+    assert spec_mod.ENGINES == ("airoso", "lm-v4")
+    # San Diego's spec declares no engine and its lines are exactly the old ones (no engine line at all)
+    sd_lines = spec_mod.lines(spec_mod.load(SD_SPEC, "san-diego-lake-murray"))
+    assert not any(x.startswith("engine\t") for x in sd_lines)
+    # the LM assembler for an lm-v4 track without its own scripts-v021: San Diego's copy, never a per-track one
+    assert ('if [ ! -f "$V021/blender/build_loop_blend.py" ] && [ "$SPEC_ENGINE" = "lm-v4" ]; then\n'
+            '  V021="$AIROSO/tracks/san-diego-lake-murray/scripts-v021"') in TEXT
+
+
+def test_the_circuit_port_specs():
+    """High Plains and Nevada Nights on Lake Murray v4's engine (ledger 0078): own slugs, engine lm-v4, the intake first,
+    the weld, the column densify and the edge seat after the assembler, the edge report among the gates."""
+    for t, live in (("high-plains-lm", "high-plains"), ("exotics-racing-lv-lm", "exotics-racing-lv")):
+        spec = spec_mod.load(ROOT / "tracks" / t / "ship.json", t)
+        assert spec["engine"] == "lm-v4"
+        d = spec["steps"]["draft"]
+        assert d[0] == "lm_intake" and d.index("weld_mouths") < d.index("densify_ribbon") < d.index("seat_edges")
+        assert "edge_report" in spec["steps"]["gate"]
+        for ph, names in spec["steps"].items():
+            for n in names:
+                assert re.search(rf"^{ph}_{n}\(\) \{{", TEXT, re.M), (ph, n)
+        cfg = json.loads((ROOT / "tracks" / t / "track.config.json").read_text(encoding="utf-8"))
+        lc = json.loads((ROOT / "tracks" / live / "track.config.json").read_text(encoding="utf-8"))
+        assert cfg["slug"] != lc["slug"] and cfg["install_folder"] != lc["install_folder"]
+        assert cfg["lm_intake"]["source_track"] == live and cfg["lm_intake"]["profile"] == "uncapped"
+
+
+def test_the_lm_engine_pilot_spec():
+    """Sand Creek through Lake Murray v4's engine (ledger 0078): its own track folder and slug, engine lm-v4, the intake
+    first, the v021 assembler and its weld, the bespoke buildings, engine-july's prep."""
+    p = ROOT / "tracks" / "sand-creek-lm" / "ship.json"
+    spec = spec_mod.load(p, "sand-creek-lm")
+    assert spec["engine"] == "lm-v4"
+    d = spec["steps"]["draft"]
+    assert d[0] == "lm_intake" and d.index("build_loop_blend") < d.index("weld_mouths")
+    assert "bespoke" in spec["steps"]["author"]
+    for ph, names in spec["steps"].items():
+        for n in names:
+            assert re.search(rf"^{ph}_{n}\(\) \{{", TEXT, re.M), (ph, n)
+    cfg = json.loads((ROOT / "tracks" / "sand-creek-lm" / "track.config.json").read_text(encoding="utf-8"))
+    live = json.loads((ROOT / "tracks" / "sand-creek" / "track.config.json").read_text(encoding="utf-8"))
+    # 0.2.7 (ledger 0086; Kevin 2026-11-07: "Get rid of Lm Version from names", "LM is the airoso engine"): the port
+    # takes the plain slug and folder and REPLACES the old engine's install (0.2.6 and before stood beside it as
+    # sand_creek_raceway_lm for the A/B drive)
+    assert cfg["slug"] == live["slug"] == "sand_creek_raceway"
+    assert cfg["install_folder"] == "sand_creek_raceway" and "LM" not in cfg["name"]
+    assert cfg["lm_intake"]["source_track"] == "sand-creek"
 
 
 def test_engine_rule_and_no_blend_yet_on_guard_runs():
@@ -472,6 +527,46 @@ def test_engine_rule_and_no_blend_yet_on_guard_runs():
 
 
 # --- San Diego parity ------------------------------------------------------------------------------------------
+# Lake Murray v4's steps that tools/ship_sd.sh (the 0.19.x chain) does not run as steps, each with its ledger
+V4_EXTRAS = {
+    ("prep_prep", "ship: thin the terrain, every vertex where the chain put it (tools/thin_terrain_blend.py; self-checked)"):
+        "ledger 0054 P3 repair round 3: an echo in ship_sd.sh, a step here",
+    ("prep_prep", "ship: red repairs (tools/red_repairs_blend.py: the named kerb faces, the named ground slivers; self-checked)"):
+        "ledger 0065: v4's named repairs of the standing reds",
+    ("prep_prep", "ship: the stacked-leg hold again on the prepped ground (tools/hold_stacked_blend.py; self-checked)"):
+        "ledger 0078 round 7: only where the draft step cutfill wrote data/cutfill.line.json (the Lariat port); never on Lake Murray",
+    ("prep_prep", "ship: a point-to-point stage's start, splits and finish on the prepped scene (tools/stage_dummies_blend.py; self-checked)"):
+        "ledger 0078 round 8: only where the track's config says loop false (the Rangely stage ports); never on Lake Murray",
+    ("prep_prep", "ship: the median ground where the carriageways' heights differ (tools/median_ground_blend.py; ledger 0080 2a)"):
+        "ledger 0080 2a round 4: only where the track's config names lm_intake.median_barrier_file (the SD freeway port); never on Lake Murray",
+    ("prep_prep", "ship: the bespoke pads laid on the prepped ground's own triangles (tools/seat_pads_blend.py; self-checked)"):
+        "ledger 0081 round 2: only where the config sets scenery.bespoke.pads_seat \"ground\" (Nevada's port); never on Lake Murray",
+    ("prep_prep", "ship: the bespoke rails, tyre walls and screens re-seated on the prepped ground (tools/reseat_bespoke_blend.py; self-checked)"):
+        "ledger 0082 pass 3: only where the config says scenery.bespoke.reseat_on_prep true (Milford, High Plains); never on Lake Murray",
+    ("prep_prep", "ship: the far ground's sunk skirt out of the prepped ground tiles (tools/far_ground_prep_blend.py; self-checked)"):
+        "ledger 0082 'Far ground (0.1.11)': only where the config names terrain.far_ground.object (Milford); never on Lake Murray",
+    ("prep_prep", "ship: road wear where tyres run + the road's tone off the aerial (tools/road_wear_blend.py; ledger 0084; self-checked)"):
+        "ledger 0084: only where the track's config names road_wear (Milford 0.1.7, High Plains 0.1.7); never on Lake Murray",
+    ("draft_bespoke", "author: the buildings pipeline's blocks in place of the assembler's boxes (tools/author_bespoke_blend.py: scenery.bespoke.blocks, self-checked)"):
+        "ledger 0065: v4's 7,600 blocks (ship_sd.sh stands them only under SD_BESPOKE=1, an echo there)",
+    ("ship_export_street", "ship: export the STREET-ONLY kn5 (the centre line, a chicane's island; the non-race layouts alone)"):
+        "ledger 0063: the street-only kn5",
+    ("gate_houses", "gate: the houses on the built road kn5 (tools/house_gate.py: ROOFTOP / BUILDING + FARBLOCK / 1WALL_TILTUP shells against scenery.bespoke.house_gate — hard)"):
+        "ledger 0065: Kevin, \"don't lose those\"",
+}
+
+
+def _parity(sd, mine):
+    """sd's headers matched in order inside mine [(function, header)]; returns (n matched, the unmatched (fn, header)s)"""
+    i, extras = 0, []
+    for fn, h in mine:
+        if i < len(sd) and h == sd[i]:
+            i += 1
+        else:
+            extras.append((fn, h))
+    return i, extras
+
+
 def _sd_headers(text, start, end):
     seg = text[start:end]
     return re.findall(r'^\s*step "([^"]*)"', seg, re.M)
@@ -479,18 +574,20 @@ def _sd_headers(text, start, end):
 
 def test_sd_spec_reproduces_ship_sd_step_sequence_before_the_dry_stop():
     """tools/ship_sd.sh (pinned on its text by test_ship_sd_chain.py): its step headers up to the --dry-run stop,
-    every branch, in text order == the headers of the steps tracks/san-diego-lake-murray/ship.json selects, in its
-    order. Re-synced 2026-10-12 after ledger 0046 (terrain_sample / terrain_resample, triangulate_terrain,
-    slim_far_terrain retired, the ENG override); RE-SYNC whenever ship_sd.sh changes — this test fails until
-    ship.json and the vocabulary follow."""
+    every branch, in text order, all inside the headers of the steps tracks/san-diego-lake-murray/ship.json selects,
+    in the same order; v4's other headers are exactly V4_EXTRAS. Re-synced 2026-10-12 after ledger 0046; 2026-11-03
+    v4 became the line (ledger 0065). RE-SYNC whenever either chain changes."""
     sd = _sd_headers(SD_TEXT, 0, _first("DRY RUN: stopping before the kn5 exports", SD_TEXT))
     s = spec_mod.load(SD_SPEC, "san-diego-lake-murray")
     fns = _functions()
-    mine = ["sync inputs airoso -> workshop ($PROJ)"]
+    mine = [("sync", "sync inputs airoso -> workshop ($PROJ)")]
     for ph in ("draft", "author", "prep"):
         for n in s["steps"][ph]:
-            mine += _headers(fns[f"{ph}_{n}"])
-    assert mine == sd, "\n".join(f"{a!r:110} | {b!r}" for a, b in zip(mine + [""] * 40, sd + [""] * 40) if a != b)
+            mine += [(f"{ph}_{n}", h) for h in _headers(fns[f"{ph}_{n}"])]
+    n, extras = _parity(sd, mine)
+    assert n == len(sd), f"ship_sd.sh's header {sd[n]!r} is not in v4's chain in order"
+    known = {k for k in V4_EXTRAS if k[0].split("_", 1)[0] in ("draft", "author", "prep")}
+    assert set(extras) == known and len(extras) == len(known), sorted(set(extras) ^ known)
 
 
 def test_sd_spec_reproduces_ship_sd_step_sequence_after_the_dry_stop():
@@ -506,18 +603,23 @@ def test_sd_spec_reproduces_ship_sd_step_sequence_after_the_dry_stop():
             hs = _headers(fns[f"{ph}_{n}"])
             if n == "audit_street":
                 hs = [hs[0].replace("$AUDIT_NOTE", s["audit_note"])]
-            mine += hs
+            mine += [(f"{ph}_{n}", h) for h in hs]
     sd = [h.replace("models_<id>.ini x3", "models_<id>.ini per layout") for h in sd]
-    assert mine == sd, "\n".join(f"{x!r:110} | {y!r}" for x, y in zip(mine + [""] * 40, sd + [""] * 40) if x != y)
+    n, extras = _parity(sd, mine)
+    assert n == len(sd), f"ship_sd.sh's header {sd[n]!r} is not in v4's chain in order"
+    known = {k for k in V4_EXTRAS if k[0].split("_", 1)[0] in ("ship", "gate")}
+    assert set(extras) == known and len(extras) == len(known), sorted(set(extras) ^ known)
 
 
 def test_sd_spec_carries_ship_sds_sync_lists_and_names():
     s = spec_mod.load(SD_SPEC, "san-diego-lake-murray")
-    assert s["workshop"] == "C:/Users/Owner/Documents/GitHub/k10-sd-v021" and s["workshop_project"] == "project"
+    # v4's workshop and name (ledger 0065); ship_sd.sh keeps the 0.19.x workshop and the V3 name
+    assert s["workshop"] == "D:/k10-scratch" and s["workshop_project"] == "lm_v4"
     assert 'WS="C:/Users/Owner/Documents/GitHub/k10-sd-v021"' in SD_TEXT and 'WS_PROJ="$WS/project"' in SD_TEXT
     assert s["require_race_layout"] is True
     assert s["street_ai_july"] == "D:/k10-track-archive/2026-10-11/san_diego_lake_murray/ai"
-    assert 'K10 - San Diego (V3) \\u2014 ' in SD_TEXT and s["ui_name_prefix"] == "K10 - San Diego (V3)"
+    # ship_sd.sh keeps the 0.19.x V3 name; v4's layouts show as "doooom San Diego — …" (Kevin 2026-11-06: "Rename it")
+    assert 'K10 - San Diego (V3) \\u2014 ' in SD_TEXT and s["ui_name_prefix"] == "doooom San Diego"
     sync = SD_TEXT[_first('step "sync outputs workshop -> airoso"\n', SD_TEXT):_first("never synced.\nfi\n", SD_TEXT)]
     for f in ("centerline.local.json", "centerline.raw.local.json", "median_bands.json", "dummies.json",
               "finished_centerline.json", "gate_centerline.json", "lights.local.json", "connectors.local.json",
@@ -626,8 +728,12 @@ def test_the_four_chain_specs_draft_the_engine_then_the_underlay_and_run_on_airo
     for p in CHAIN_SPECS:
         track = p.parent.name
         s = spec_mod.load(p, track)
-        d = s["steps"]["draft"]
-        assert d[-1] == "underlay" and d[-2] == "mesh", (track, d)
+        d_all = s["steps"]["draft"]
+        # the engine draft's data steps end at the underlay; what follows it is scripted authoring on the blend, and only
+        # the steps an engine-draft track can serve (ledger 0070 D1: Sand Creek's lamps, planned by lamps_plan after mesh)
+        d, after = d_all[:d_all.index("underlay") + 1], d_all[d_all.index("underlay") + 1:]
+        assert set(after) <= {"lamps"} and (not after or "lamps_plan" in d), (track, d_all)
+        assert d[-1] == "underlay" and (d[-2] == "mesh" or (d[-2] == "lamps_plan" and d[-3] == "mesh")), (track, d)
         assert d[0] in ("gps", "aerial") and "elev" in d and "project" in d, (track, d)
         assert d.index("elev") < d.index("project") < d.index("mesh"), (track, d)
         for n in d[:-1]:

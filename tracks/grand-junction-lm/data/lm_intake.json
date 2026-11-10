@@ -1,0 +1,39 @@
+{
+ "source_track": "grand-junction",
+ "points": 442,
+ "lap_m": 1321.3,
+ "closed": true,
+ "widths_m": [
+  9.75,
+  9.75,
+  9.75
+ ],
+ "bridges_levelled": [],
+ "max_grade_pct": null,
+ "measured_max_grade_pct": 6.33,
+ "y_changed_points": 0,
+ "y_change_max_m": 0.0,
+ "connectors": false,
+ "bespoke_files": [],
+ "crossfall": {
+  "stations": 435,
+  "max_pct": 3.53
+ },
+ "profile": {
+  "cap_was_pct": 4.0,
+  "reproduced_within_m": 0.0067,
+  "points_moved": 69,
+  "max_move_m": 0.543
+ },
+ "width_taper": null,
+ "resample": null,
+ "edge_on_wall": null,
+ "corner_arcs": null,
+ "carried": [],
+ "grid_upsample": 2,
+ "md5": {
+  "source_centerline": "a27eb2916fd675275add14271d75b5c9",
+  "heightfield.npy": "d2f21d754445caecf96a4f753d7c8820",
+  "centerline.local.json": "a1df6da9144421047aef9b8db6e387ae"
+ }
+}

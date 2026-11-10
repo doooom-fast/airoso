@@ -217,7 +217,7 @@
     "tiltup_wall_diffuse.jpg", "tiltup_wall_normal.jpg", "metal_wall_diffuse.jpg", "metal_wall_normal.jpg",
     "stucco_wall_diffuse.jpg", "stucco_wall_normal.jpg", "siding_wall_diffuse.jpg", "siding_wall_normal.jpg",
     "roof_white_diffuse.jpg", "roof_tan_diffuse.jpg", "roof_dark_diffuse.jpg", "shingle_roof_diffuse.jpg", "pad_asphalt_diffuse.jpg",
-    "wbeam_rail_diffuse.png", "tecpro_diffuse.png", "krail_bluewhite_diffuse.png", "ghost_alpha.png",
+    "wbeam_rail_diffuse.png", "tecpro_diffuse.png", "krail_bluewhite_diffuse.png", "tyre_wall_diffuse.png", "ghost_alpha.png",
     "drystone_diffuse.jpg", "drystone_normal.jpg", "deciduous_atlas.png", "prairie_atlas.png", "conifer_foothill_atlas.png"
    ],
    "source": "self-made: tools/make_bespoke_assets.py (seeded, Pillow only; --check and tests/tools/test_bespoke_assets.py pin the bytes). No photograph, third-party mesh or third-party pixel; the K-rail and Tec-Pro colours and the W-beam section are from public standards or photographs read by eye",

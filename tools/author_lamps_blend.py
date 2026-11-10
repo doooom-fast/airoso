@@ -692,8 +692,33 @@ def main():
     moved = relocate(heads, nearest_cl, cfg, model)
     apron_moved = apron_moves(heads, nearest_cl, data, ground=_bvh(GROUND_PREFIXES, exclude=("GRASS_FAR",)),
                               skip=set(recorded))
+    # scenery.streetlights.drop_on_road (ledger 0079 round B, opt-in; Lake Murray names a relocation for each post instead):
+    # a DRAFT post that the chain's later roads stand on (Sand Creek's grid streets, trimmed into the lap after the assembler
+    # placed the lap's posts every 55 m) is left out, recorded, never moved to a spot nobody measured. Absent = as before
+    dropped = []
+    if ((cfg.get("scenery") or {}).get("streetlights") or {}).get("drop_on_road") and not recorded:
+        tagged = _bvh_tagged(GROUND_PREFIXES, exclude=("GRASS_FAR",))
+        mast_r = float(led_spec()["mast_radius_m"]) if model == LED else 0.585
+        keep = []
+        for i, h in enumerate(heads):
+            bx, bz, _rx, _rz = base_of(i, tuple(h))
+            t = _top_owner(tagged, bx, bz, h[1] + 30.0)
+            hit = footprint_on_road(tagged, bx, bz, t[0] if t else h[1] - 9.0, mast_r + ROAD_SETBACK_M)
+            if hit:
+                dropped.append({"i": i, "head": [round(v, 3) for v in h], "base_xz": [round(bx, 3), round(bz, 3)],
+                                "on": sorted({o for _x, _z, o in hit}), "points_on_road": len(hit)})
+            else:
+                keep.append(h)
+        if dropped:
+            heads[:] = keep
+            print(f"[lamps] drop_on_road: {len(dropped)} draft post(s) a later road stands on left out: "
+                  f"{[(d['i'], d['on']) for d in dropped]}")
+    if dropped:
+        lights["dropped_on_road"] = dropped
+    else:
+        lights.pop("dropped_on_road", None)
     reseated, seat_rows = reseat_and_check(heads, base_of, model, recorded)
-    if moved or apron_moved or reseated:
+    if moved or apron_moved or reseated or dropped:
         lights["lampheads_draft"] = draft
     else:
         lights.pop("lampheads_draft", None)

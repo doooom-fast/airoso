@@ -1,0 +1,9 @@
+{
+ "ok": true,
+ "n_lamps": 0,
+ "n_lights": 0,
+ "matched": 0,
+ "problems": [],
+ "ini": "D:\\k10-workshops\\san-diego-freeway\\project\\build\\san_diego_freeway\\extension\\ext_config.ini",
+ "lamps": null
+}

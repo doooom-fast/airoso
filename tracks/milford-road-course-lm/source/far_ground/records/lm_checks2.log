@@ -1,0 +1,36 @@
+head 2d810c8
+diff vs origin/claude/milford-0110 (this branch's base), tracks/san-diego-lake-murray: 0 lines
+diff vs origin/claude/milford-0110, scripts/ + tools/:
+ tools/far_ground.py            | 128 ++++++++++++++++
+ tools/far_ground_blend.py      | 330 +++++++++++++++++++++++++++++++++++++++++
+ tools/far_ground_prep_blend.py |  86 +++++++++++
+ tools/lidar_ground.py          | 180 ++++++++++++++++++++++
+ tools/make_treefx.py           |  77 +++++++++-
+ tools/ship_track.sh            |  12 ++
+ 6 files changed, 811 insertions(+), 2 deletions(-)
+trim a_fle: 664da93b17d79982943d4a53dfa1f209 b73b70f4b6dc15f975cc019e739885dd f0c97952b9b71f67b4ec7d269a65b465 log 63af07ccf16d01c179f89afec997f536
+trim b_branch: 664da93b17d79982943d4a53dfa1f209 b73b70f4b6dc15f975cc019e739885dd f0c97952b9b71f67b4ec7d269a65b465 log 63af07ccf16d01c179f89afec997f536
+== make_treefx A/B: fleet-lm-engine vs this branch
+lookout-lariat | base 117be748b4e0cf67f8cd8cede0183e03 lines 12531 | branch 117be748b4e0cf67f8cd8cede0183e03 lines 12531 | SAME
+lookout-lariat-lm | base ERR FileNotFoundError: [Errno 2] No such file or directory: '<scratchpad>/sys/wt-mf0111/tracks/l | branch ERR FileNotFoundError: [Errno 2] No such file or directory: '<scratchpad>/sys/wt-mf0111/tracks/l | SAME
+rally-dragon-tail-gravel | base 4e0099e5cca4f278128400524c2b4a8e lines 12368 | branch 4e0099e5cca4f278128400524c2b4a8e lines 12368 | SAME
+rally-dragon-tail-gravel-lm | base d41d8cd98f00b204e9800998ecf8427e lines 0 | branch d41d8cd98f00b204e9800998ecf8427e lines 0 | SAME
+rally-dragon-tail-tarmac | base cb3b805bca4c76141752618a57a1025d lines 12365 | branch cb3b805bca4c76141752618a57a1025d lines 12365 | SAME
+rally-under-the-dragon-gravel | base a6b2e0e6f84c098c9bd422f3a578304c lines 12602 | branch a6b2e0e6f84c098c9bd422f3a578304c lines 12602 | SAME
+rally-under-the-dragon-gravel-lm | base d41d8cd98f00b204e9800998ecf8427e lines 0 | branch d41d8cd98f00b204e9800998ecf8427e lines 0 | SAME
+rally-under-the-dragon-tarmac | base a6b2e0e6f84c098c9bd422f3a578304c lines 12602 | branch a6b2e0e6f84c098c9bd422f3a578304c lines 12602 | SAME
+san-diego-lake-murray | base 8ce38a015afc0e09d7144d269f77bad1 lines 21219 | branch 8ce38a015afc0e09d7144d269f77bad1 lines 21219 | SAME
+sand-creek | base 3a2cf6b2f56442fa57d73bab018404ae lines 6382 | branch 3a2cf6b2f56442fa57d73bab018404ae lines 6382 | SAME
+sand-creek-lm | base ERR FileNotFoundError: [Errno 2] No such file or directory: '<scratchpad>/sys/wt-mf0111/tracks/s | branch ERR FileNotFoundError: [Errno 2] No such file or directory: '<scratchpad>/sys/wt-mf0111/tracks/s | SAME
+== make_treefx A/B: 0.1.10 (origin/claude/milford-0110) vs this branch
+lookout-lariat | base 117be748b4e0cf67f8cd8cede0183e03 lines 12531 | branch 117be748b4e0cf67f8cd8cede0183e03 lines 12531 | SAME
+lookout-lariat-lm | base ERR FileNotFoundError: [Errno 2] No such file or directory: '<scratchpad>/sys/wt-mf0111/tracks/l | branch ERR FileNotFoundError: [Errno 2] No such file or directory: '<scratchpad>/sys/wt-mf0111/tracks/l | SAME
+rally-dragon-tail-gravel | base 4e0099e5cca4f278128400524c2b4a8e lines 12368 | branch 4e0099e5cca4f278128400524c2b4a8e lines 12368 | SAME
+rally-dragon-tail-gravel-lm | base d41d8cd98f00b204e9800998ecf8427e lines 0 | branch d41d8cd98f00b204e9800998ecf8427e lines 0 | SAME
+rally-dragon-tail-tarmac | base cb3b805bca4c76141752618a57a1025d lines 12365 | branch cb3b805bca4c76141752618a57a1025d lines 12365 | SAME
+rally-under-the-dragon-gravel | base a6b2e0e6f84c098c9bd422f3a578304c lines 12602 | branch a6b2e0e6f84c098c9bd422f3a578304c lines 12602 | SAME
+rally-under-the-dragon-gravel-lm | base d41d8cd98f00b204e9800998ecf8427e lines 0 | branch d41d8cd98f00b204e9800998ecf8427e lines 0 | SAME
+rally-under-the-dragon-tarmac | base a6b2e0e6f84c098c9bd422f3a578304c lines 12602 | branch a6b2e0e6f84c098c9bd422f3a578304c lines 12602 | SAME
+san-diego-lake-murray | base 8ce38a015afc0e09d7144d269f77bad1 lines 21219 | branch 8ce38a015afc0e09d7144d269f77bad1 lines 21219 | SAME
+sand-creek | base 3a2cf6b2f56442fa57d73bab018404ae lines 6382 | branch 3a2cf6b2f56442fa57d73bab018404ae lines 6382 | SAME
+sand-creek-lm | base ERR FileNotFoundError: [Errno 2] No such file or directory: '<scratchpad>/sys/wt-mf0111/tracks/s | branch ERR FileNotFoundError: [Errno 2] No such file or directory: '<scratchpad>/sys/wt-mf0111/tracks/s | SAME

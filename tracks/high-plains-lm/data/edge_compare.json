@@ -1,0 +1,85 @@
+{
+ "_doc": "tools/edge_report.py (ledger 0078, REPORT ONLY): the installed build's pre-prep blend (loop.blend on main) on its own gate_centerline.json, and the port's built gate OBJ",
+ "installed": {
+  "side_stations": 536,
+  "at_1m": {
+   "lane": 0.0,
+   "shoulder": 0.884,
+   "kerb": 0.116,
+   "ground": 0.0,
+   "wall": 0.0,
+   "none": 0.0,
+   "other": 0.0
+  },
+  "rise_2m_m": {
+   "median": 0.0,
+   "p95": 0.094
+  },
+  "paved_past_edge_m": {
+   "median": 4.5,
+   "p95": 5.0
+  },
+  "ground_3m": {
+   "p5": -0.077,
+   "median": -0.026,
+   "p95": 0.05,
+   "share_below_1m": 0.0,
+   "share_above_1m": 0.0
+  },
+  "ground_6m": {
+   "p5": -0.542,
+   "median": -0.3,
+   "p95": 0.05,
+   "share_below_1m": 0.0,
+   "share_above_1m": 0.0
+  },
+  "ground_10m": {
+   "p5": -1.045,
+   "median": -0.511,
+   "p95": 0.321,
+   "share_below_1m": 0.069,
+   "share_above_1m": 0.0
+  }
+ },
+ "port_built": {
+  "side_stations": 536,
+  "at_1m": {
+   "lane": 0.0,
+   "shoulder": 0.0,
+   "kerb": 0.244,
+   "ground": 0.756,
+   "wall": 0.0,
+   "none": 0.0,
+   "other": 0.0
+  },
+  "rise_2m_m": {
+   "median": 0.002,
+   "p95": 0.014
+  },
+  "paved_past_edge_m": {
+   "median": 0.0,
+   "p95": 0.0
+  },
+  "ground_3m": {
+   "p5": -0.052,
+   "median": -0.029,
+   "p95": -0.014,
+   "share_below_1m": 0.0,
+   "share_above_1m": 0.0
+  },
+  "ground_6m": {
+   "p5": -0.205,
+   "median": -0.107,
+   "p95": -0.091,
+   "share_below_1m": 0.0,
+   "share_above_1m": 0.0
+  },
+  "ground_10m": {
+   "p5": -0.305,
+   "median": -0.184,
+   "p95": -0.157,
+   "share_below_1m": 0.0,
+   "share_above_1m": 0.0
+  }
+ }
+}

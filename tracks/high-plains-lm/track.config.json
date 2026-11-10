@@ -1,0 +1,1232 @@
+{
+  "_doc": "High Plains Raceway through Lake Murray v4's engine (ledger 0078: the old quality bar, ported to check that nothing gets worse). The line, widths and 3DEP are tracks/high-plains's (installed 0.72.1), read by tools/lm_engine_intake.py; the profile is the measured one with the elevation stage's grade cap undone; the camber is the G10 lidar survey (source/lidar/camber-survey/crossfall.json, branch claude/lidar-camber-survey); the edge is the circuit's (no curb, no sidewalk). Every other key is the live track's, copied; the live config is untouched.",
+  "archetype": "race_circuit",
+  "name": "High Plains Raceway",
+  "_name_doc": "Kevin 2026-11-07: \"Get rid of Lm Version from names, nothing should be on any other engine now\" / \"LM is the airoso engine\". 0.1.5 (2026-11-09): no \"(LM engine)\" in the display name, and the slug and install_folder are the plain high_plains. The old-engine track (tracks/high-plains) gave that slug up: its slug and folder are high_plains_v072 (S7, fleet.cli lint)",
+  "slug": "high_plains",
+  "version": "0.1.7",
+  "mirror_x": false,
+  "loop": true,
+  "default_width_m": 12.0,
+  "location": {
+    "lat": 39.7353,
+    "lon": -103.898,
+    "timezone": "America/Denver",
+    "city": "Deer Trail",
+    "country": "United States"
+  },
+  "origin": "centroid",
+  "true_north_rotation_deg": 0.0,
+  "surfaces": {
+    "road": "1ROAD",
+    "grass": "GRASS",
+    "kerb": "1KERB"
+  },
+  "kerb": {
+    "height_m": 0.08,
+    "placement": "measured",
+    "end_ramp_m": 4.0,
+    "_placement_doc": "ledger 0081 round 2: each run at its measured in_m / out_m across the live lane edge it was measured on, read as an offset from this ribbon's own lane edge, on the ROAD surface where it lies over the lane (tools/author_kerbs_blend.py, tools/kerb_section.py)",
+    "width_m": 1.2,
+    "top_frac": 0.6,
+    "edge_ramp": 0.4,
+    "atlas": {
+      "blue_white": [
+        0.05,
+        0.45
+      ],
+      "blue_yellow": [
+        0.55,
+        0.95
+      ],
+      "_doc": "ledger 0081: the two paint schemes NAIP 2023 (0.3 m) shows, one texture (textures/kerb_atlas_hp.png, made by make_kerb_atlas.py); tools/author_kerbs_blend.py maps each run's u into its colour's cell"
+    }
+  },
+  "scenery": {
+    "corridor_margin_m": 3.0,
+    "tree_step_m": 45,
+    "tree_cap": 150,
+    "tree_atlas_cols": 3,
+    "tree_atlas_rows": 2,
+    "bush_spacing_m": 9,
+    "bush_density": 0.25,
+    "bush_off_min_m": 6,
+    "bush_off_span_m": 22,
+    "bush_size_min_m": 1.0,
+    "bush_size_span_m": 1.2,
+    "light_spacing_m": 90,
+    "bespoke": {
+      "blocks": [
+        {
+          "file": "source/bespoke/buildings.json",
+          "auto": true
+        },
+        {
+          "file": "source/bespoke/posts.json",
+          "auto": true,
+          "collider_tri_m": 14.0
+        }
+      ],
+      "pads": [
+        {
+          "key": "paddock",
+          "quad_lonlat": [
+            [
+              -103.8948486,
+              39.736926
+            ],
+            [
+              -103.8911407,
+              39.7364508
+            ],
+            [
+              -103.8925621,
+              39.7346924
+            ],
+            [
+              -103.8950958,
+              39.7355954
+            ]
+          ],
+          "_source": "the paddock's paved and graded ground off NAIP 2023, read by eye to about 5 m: one sheet, the lots and lanes not told apart"
+        }
+      ],
+      "_cards_doc": "0.1.6 (ledger 0089; Kevin 2026-11-08: \"We want all treefx as a rule\"): 0.1.5's 1,898 PRAIRIECARD cards (data/bespoke.report.json: 1,986 planned, 88 within 3 m of pavement) are gone from the kn5 and no TreeFX replaces them. They stood on source/bespoke/shrubs.json, a 7 m grid over the pixels NAIP 2023 shows darker green (the draws and swales), with rabbitbrush / yucca / bunchgrass / snakeweed and their heights [invented]. NAIP 2023 at 0.3 m (co_m_3910317_ne_13_030_20230928) shows those draws as continuous green swale grass with no shrub crown in them, and nothing on the uplands it can tell from ant mounds, ruts and posts: the cards were grass. Their replacement is the GrassFX zone this config already reads off the same pixels (grassfx_zones class B, 'the greener draws taller and full'), which the LM port had not run: ship.json grassfx_aerial. Plants under NAIP's resolution are owed to a lidar read (ledger 0089)",
+      "rails": [
+        {
+          "key": "infield_t",
+          "kind": "krail",
+          "auto": true,
+          "polyline_lonlat": [
+            [
+              -103.89226,
+              39.73441
+            ],
+            [
+              -103.89164,
+              39.7344
+            ],
+            [
+              -103.89091,
+              39.7345
+            ],
+            [
+              -103.89051,
+              39.73487
+            ]
+          ],
+          "_source": "the blue-and-white barrier run in the infield off NAIP 2023 at 0.3 m, read by eye to about 2 m"
+        },
+        {
+          "key": "pit_wall_naip_rest",
+          "kind": "krail",
+          "auto": true,
+          "polyline_lonlat": [
+            [
+              -103.89277462,
+              39.73487385
+            ],
+            [
+              -103.89274025,
+              39.73486787
+            ],
+            [
+              -103.89270588,
+              39.73486189
+            ],
+            [
+              -103.89267152,
+              39.73485591
+            ],
+            [
+              -103.89263715,
+              39.73484994
+            ],
+            [
+              -103.89260278,
+              39.73484396
+            ],
+            [
+              -103.89256841,
+              39.73483798
+            ],
+            [
+              -103.89253404,
+              39.73483201
+            ],
+            [
+              -103.89249967,
+              39.73482603
+            ],
+            [
+              -103.8924653,
+              39.73482005
+            ],
+            [
+              -103.89243093,
+              39.73481408
+            ],
+            [
+              -103.89239657,
+              39.7348081
+            ],
+            [
+              -103.8923622,
+              39.73480212
+            ]
+          ],
+          "_source": "as infield_t (only the part the 2018 lidar does not cover: s outside 0-150)"
+        },
+        {
+          "key": "pit_paddock_naip_rest",
+          "kind": "krail",
+          "auto": true,
+          "polyline_lonlat": [
+            [
+              -103.89308778,
+              39.73505981
+            ],
+            [
+              -103.89305325,
+              39.73505443
+            ],
+            [
+              -103.89301871,
+              39.73504904
+            ],
+            [
+              -103.89298418,
+              39.73504366
+            ],
+            [
+              -103.89294965,
+              39.73503828
+            ],
+            [
+              -103.89291512,
+              39.73503289
+            ],
+            [
+              -103.89288058,
+              39.73502751
+            ],
+            [
+              -103.89284605,
+              39.73502212
+            ],
+            [
+              -103.89281152,
+              39.73501674
+            ],
+            [
+              -103.89277699,
+              39.73501136
+            ],
+            [
+              -103.89274245,
+              39.73500597
+            ],
+            [
+              -103.89270792,
+              39.73500059
+            ],
+            [
+              -103.89267339,
+              39.73499521
+            ]
+          ],
+          "_source": "as infield_t (only the part the 2018 lidar does not cover: s outside 0-120)"
+        },
+        {
+          "key": "paddock_east_naip_rest",
+          "kind": "krail",
+          "auto": true,
+          "polyline_lonlat": [
+            [
+              -103.89099,
+              39.73634
+            ],
+            [
+              -103.89100705,
+              39.7363162
+            ],
+            [
+              -103.89102411,
+              39.7362924
+            ]
+          ],
+          "_source": "as infield_t (only the part the 2018 lidar does not cover: s outside 255-395)"
+        },
+        {
+          "key": "pit_wall_lidar",
+          "kind": "krail",
+          "auto": true,
+          "height_m": 1.03,
+          "polyline_lonlat": [
+            [
+              -103.89456011,
+              39.73514284
+            ],
+            [
+              -103.89452557,
+              39.73513749
+            ],
+            [
+              -103.89449113,
+              39.73513177
+            ],
+            [
+              -103.89445655,
+              39.73512656
+            ],
+            [
+              -103.89442201,
+              39.7351212
+            ],
+            [
+              -103.89438758,
+              39.73511543
+            ],
+            [
+              -103.89435308,
+              39.73510993
+            ],
+            [
+              -103.89431844,
+              39.73510499
+            ],
+            [
+              -103.89428388,
+              39.73509971
+            ],
+            [
+              -103.8942494,
+              39.7350941
+            ],
+            [
+              -103.89421491,
+              39.73508857
+            ],
+            [
+              -103.89418048,
+              39.73508282
+            ],
+            [
+              -103.89414592,
+              39.73507755
+            ],
+            [
+              -103.89411145,
+              39.73507191
+            ],
+            [
+              -103.89407707,
+              39.73506597
+            ],
+            [
+              -103.89404261,
+              39.73506033
+            ],
+            [
+              -103.89400812,
+              39.7350548
+            ],
+            [
+              -103.89397364,
+              39.73504922
+            ],
+            [
+              -103.89393914,
+              39.73504371
+            ],
+            [
+              -103.89390461,
+              39.7350383
+            ],
+            [
+              -103.8938701,
+              39.73503283
+            ],
+            [
+              -103.89383556,
+              39.73502749
+            ],
+            [
+              -103.89380114,
+              39.73502167
+            ],
+            [
+              -103.89376661,
+              39.73501631
+            ],
+            [
+              -103.89373191,
+              39.73501163
+            ],
+            [
+              -103.89369743,
+              39.73500605
+            ],
+            [
+              -103.89366293,
+              39.73500052
+            ],
+            [
+              -103.89362844,
+              39.73499499
+            ],
+            [
+              -103.89359401,
+              39.73498924
+            ],
+            [
+              -103.89355977,
+              39.73498286
+            ],
+            [
+              -103.89352529,
+              39.73497726
+            ],
+            [
+              -103.89349074,
+              39.73497197
+            ],
+            [
+              -103.89345605,
+              39.73496726
+            ],
+            [
+              -103.89342155,
+              39.73496173
+            ],
+            [
+              -103.89338701,
+              39.73495638
+            ],
+            [
+              -103.89335251,
+              39.7349509
+            ],
+            [
+              -103.89331799,
+              39.73494546
+            ],
+            [
+              -103.89328352,
+              39.73493982
+            ],
+            [
+              -103.89324908,
+              39.7349341
+            ],
+            [
+              -103.8932146,
+              39.73492852
+            ],
+            [
+              -103.89318009,
+              39.73492308
+            ],
+            [
+              -103.89314559,
+              39.73491756
+            ],
+            [
+              -103.89311105,
+              39.73491221
+            ],
+            [
+              -103.89307653,
+              39.73490676
+            ],
+            [
+              -103.89304204,
+              39.73490122
+            ],
+            [
+              -103.89300751,
+              39.73489583
+            ],
+            [
+              -103.89297288,
+              39.73489085
+            ],
+            [
+              -103.8929383,
+              39.73488563
+            ],
+            [
+              -103.89290377,
+              39.73488024
+            ],
+            [
+              -103.89286928,
+              39.73487469
+            ]
+          ],
+          "_source": "measured off the 2018 lidar (CO_Eastern_B3_2018; tools/lidar_wall.py --search 25, the non-ground returns over their own ground, tracks/high-plains/source/lidar/wall-survey/wall_left.json): a linear structure at s 0-150, 3.7-4.1 m past the left lane edge (5-station median), top 1.03 m (90th percentile of its returns). The blue / white K-rail NAIP shows there (source/edges/rails_zoom.jpg); the module is the K-rail section at the measured height"
+        },
+        {
+          "key": "pit_paddock_lidar",
+          "kind": "krail",
+          "auto": true,
+          "height_m": 0.59,
+          "polyline_lonlat": [
+            [
+              -103.89452155,
+              39.73528402
+            ],
+            [
+              -103.89448695,
+              39.73527892
+            ],
+            [
+              -103.89445258,
+              39.73527292
+            ],
+            [
+              -103.89441798,
+              39.73526781
+            ],
+            [
+              -103.89438352,
+              39.73526216
+            ],
+            [
+              -103.89434904,
+              39.73525657
+            ],
+            [
+              -103.89431454,
+              39.73525106
+            ],
+            [
+              -103.89428002,
+              39.73524566
+            ],
+            [
+              -103.89424556,
+              39.73523998
+            ],
+            [
+              -103.89421117,
+              39.73523408
+            ],
+            [
+              -103.89417653,
+              39.73522915
+            ],
+            [
+              -103.89414203,
+              39.73522363
+            ],
+            [
+              -103.89410752,
+              39.73521816
+            ],
+            [
+              -103.89407293,
+              39.735213
+            ],
+            [
+              -103.89403844,
+              39.73520747
+            ],
+            [
+              -103.89400397,
+              39.73520186
+            ],
+            [
+              -103.89396968,
+              39.73519562
+            ],
+            [
+              -103.89393525,
+              39.73518985
+            ],
+            [
+              -103.89390091,
+              39.73518377
+            ],
+            [
+              -103.89386643,
+              39.73517821
+            ],
+            [
+              -103.89383193,
+              39.73517269
+            ],
+            [
+              -103.89379743,
+              39.73516719
+            ],
+            [
+              -103.89376276,
+              39.73516237
+            ],
+            [
+              -103.89372811,
+              39.73515747
+            ],
+            [
+              -103.89369362,
+              39.73515193
+            ],
+            [
+              -103.89365917,
+              39.73514624
+            ],
+            [
+              -103.89362483,
+              39.73514016
+            ],
+            [
+              -103.89359033,
+              39.73513464
+            ],
+            [
+              -103.89355584,
+              39.73512913
+            ],
+            [
+              -103.89352129,
+              39.73512383
+            ],
+            [
+              -103.89348658,
+              39.73511921
+            ],
+            [
+              -103.89345207,
+              39.73511373
+            ],
+            [
+              -103.89341753,
+              39.73510836
+            ],
+            [
+              -103.8933831,
+              39.73510262
+            ],
+            [
+              -103.89334876,
+              39.73509656
+            ],
+            [
+              -103.89331424,
+              39.7350911
+            ],
+            [
+              -103.89327973,
+              39.73508566
+            ],
+            [
+              -103.89324529,
+              39.73507991
+            ],
+            [
+              -103.8932108,
+              39.73507437
+            ],
+            [
+              -103.89317635,
+              39.73506867
+            ]
+          ],
+          "_source": "measured off the 2018 lidar (CO_Eastern_B3_2018; tools/lidar_wall.py --search 25, the non-ground returns over their own ground, tracks/high-plains/source/lidar/wall-survey/wall_left.json): a linear structure at s 0-120, 19.7-19.9 m past the left lane edge (5-station median), top 0.59 m (90th percentile of its returns). The blue / white K-rail NAIP shows there (source/edges/rails_zoom.jpg); the module is the K-rail section at the measured height"
+        },
+        {
+          "key": "paddock_east_lidar",
+          "kind": "krail",
+          "auto": true,
+          "height_m": 1.0,
+          "polyline_lonlat": [
+            [
+              -103.891968,
+              39.73499305
+            ],
+            [
+              -103.89195093,
+              39.73501685
+            ],
+            [
+              -103.89193398,
+              39.73504069
+            ],
+            [
+              -103.89191779,
+              39.73506484
+            ],
+            [
+              -103.89190099,
+              39.73508875
+            ],
+            [
+              -103.89188414,
+              39.73511264
+            ],
+            [
+              -103.89186712,
+              39.73513645
+            ],
+            [
+              -103.89185004,
+              39.73516024
+            ],
+            [
+              -103.89183384,
+              39.73518439
+            ],
+            [
+              -103.8918177,
+              39.73520857
+            ],
+            [
+              -103.89180043,
+              39.73523227
+            ],
+            [
+              -103.89178322,
+              39.73525601
+            ],
+            [
+              -103.89176616,
+              39.7352798
+            ],
+            [
+              -103.89174903,
+              39.73530358
+            ],
+            [
+              -103.89173176,
+              39.73532728
+            ],
+            [
+              -103.89171447,
+              39.73535098
+            ],
+            [
+              -103.89169704,
+              39.73537462
+            ],
+            [
+              -103.89167974,
+              39.73539831
+            ],
+            [
+              -103.89166248,
+              39.73542203
+            ],
+            [
+              -103.89164503,
+              39.73544565
+            ],
+            [
+              -103.89162722,
+              39.73546912
+            ],
+            [
+              -103.89160986,
+              39.73549279
+            ],
+            [
+              -103.8915923,
+              39.73551637
+            ],
+            [
+              -103.89157503,
+              39.73554007
+            ],
+            [
+              -103.8915578,
+              39.7355638
+            ],
+            [
+              -103.89154058,
+              39.73558753
+            ],
+            [
+              -103.89152339,
+              39.73561127
+            ],
+            [
+              -103.89150595,
+              39.7356349
+            ],
+            [
+              -103.89148828,
+              39.73565841
+            ],
+            [
+              -103.89147185,
+              39.73568246
+            ],
+            [
+              -103.89145416,
+              39.73570598
+            ],
+            [
+              -103.89143567,
+              39.73572913
+            ],
+            [
+              -103.89141788,
+              39.73575261
+            ],
+            [
+              -103.89140058,
+              39.7357763
+            ],
+            [
+              -103.89138308,
+              39.73579991
+            ],
+            [
+              -103.8913656,
+              39.73582352
+            ],
+            [
+              -103.89134817,
+              39.73584716
+            ],
+            [
+              -103.89133077,
+              39.73587081
+            ],
+            [
+              -103.89131351,
+              39.73589452
+            ],
+            [
+              -103.89129632,
+              39.73591826
+            ],
+            [
+              -103.8912792,
+              39.73594204
+            ],
+            [
+              -103.8912615,
+              39.73596556
+            ],
+            [
+              -103.89124304,
+              39.73598871
+            ],
+            [
+              -103.89122417,
+              39.73601168
+            ],
+            [
+              -103.89120551,
+              39.73603475
+            ],
+            [
+              -103.89118671,
+              39.73605775
+            ]
+          ],
+          "_source": "measured off the 2018 lidar (CO_Eastern_B3_2018; tools/lidar_wall.py --search 25, the non-ground returns over their own ground, tracks/high-plains/source/lidar/wall-survey/wall_left.json): a linear structure at s 255-390, 14.2-15.9 m past the left lane edge (5-station median), top 1.0 m (90th percentile of its returns). The blue / white K-rail NAIP shows there (source/edges/rails_zoom.jpg); the module is the K-rail section at the measured height"
+        },
+        {
+          "key": "back_straight_lidar",
+          "kind": "krail",
+          "auto": true,
+          "height_m": 1.13,
+          "polyline_lonlat": [
+            [
+              -103.90205437,
+              39.73488833
+            ],
+            [
+              -103.90208347,
+              39.734873
+            ],
+            [
+              -103.90211258,
+              39.73485768
+            ],
+            [
+              -103.90214258,
+              39.73484342
+            ],
+            [
+              -103.90217158,
+              39.73482798
+            ],
+            [
+              -103.90220202,
+              39.73481428
+            ],
+            [
+              -103.90223334,
+              39.73480185
+            ],
+            [
+              -103.90226197,
+              39.734786
+            ],
+            [
+              -103.90229085,
+              39.73477042
+            ],
+            [
+              -103.90232019,
+              39.73475536
+            ],
+            [
+              -103.90234963,
+              39.73474042
+            ],
+            [
+              -103.90237889,
+              39.73472527
+            ],
+            [
+              -103.90240863,
+              39.7347107
+            ],
+            [
+              -103.90243864,
+              39.73469646
+            ],
+            [
+              -103.90246737,
+              39.73468071
+            ],
+            [
+              -103.90249697,
+              39.73466597
+            ],
+            [
+              -103.90252656,
+              39.7346512
+            ],
+            [
+              -103.90255584,
+              39.73463608
+            ],
+            [
+              -103.90258493,
+              39.73462074
+            ],
+            [
+              -103.9026145,
+              39.73460596
+            ],
+            [
+              -103.90264377,
+              39.73459082
+            ],
+            [
+              -103.9026724,
+              39.73457497
+            ],
+            [
+              -103.90270104,
+              39.73455913
+            ],
+            [
+              -103.90272982,
+              39.73454345
+            ],
+            [
+              -103.90275897,
+              39.73452818
+            ],
+            [
+              -103.90278765,
+              39.73451238
+            ],
+            [
+              -103.90281674,
+              39.73449704
+            ],
+            [
+              -103.90284628,
+              39.73448222
+            ],
+            [
+              -103.90287531,
+              39.73446681
+            ],
+            [
+              -103.90290479,
+              39.73445192
+            ],
+            [
+              -103.90293384,
+              39.73443653
+            ],
+            [
+              -103.90296255,
+              39.73442077
+            ],
+            [
+              -103.90299158,
+              39.73440536
+            ],
+            [
+              -103.90302035,
+              39.73438966
+            ],
+            [
+              -103.90304953,
+              39.73437442
+            ]
+          ],
+          "_source": "measured off the 2018 lidar (CO_Eastern_B3_2018; tools/lidar_wall.py --search 25, the non-ground returns over their own ground, tracks/high-plains/source/lidar/wall-survey/wall_left.json): a linear structure at s 1743-1848, 21.0-24.3 m past the left lane edge (5-station median), top 1.13 m (90th percentile of its returns). The blue / white K-rail NAIP shows there (source/edges/rails_zoom.jpg); the module is the K-rail section at the measured height"
+        }
+      ],
+      "grassfx_zones": {
+        "image": "source/naip_2023_hp.jpg",
+        "webmerc": {
+          "z": 17,
+          "x0": 27704,
+          "y0": 49745
+        },
+        "cell_m": 30,
+        "max_rects": 48,
+        "fade_m": 10,
+        "classes": [
+          {
+            "map": "B",
+            "mean": [
+              35,
+              105
+            ],
+            "g_over_r": [
+              1.03,
+              9
+            ],
+            "g_over_b": [
+              1.3,
+              9
+            ]
+          },
+          {
+            "map": "C",
+            "mean": [
+              158,
+              255
+            ],
+            "g_over_r": [
+              0,
+              9
+            ],
+            "g_over_b": [
+              0,
+              9
+            ]
+          }
+        ]
+      },
+      "_guardrail_dropped": "the live track's W-beam rail follows airoso's draft guard lips (1WALL_PARA), which the v021 assembler does not lay; not ported (ledger 0078)",
+      "reseat_on_prep": true,
+      "reseat_prefixes": ["1WALL_KRAIL"],
+      "_reseat_doc": "PC 2026-11-10 (ledger 0084 runbook 0084-2 step 3; 0089's seat check): the K-rails moved with the ground the prep moved under them. On 0.1.6 pit_wall_lidar (1WALL_KRAILBW_4, 147.9 m, declared 1.03 m [measured]) showed 0.69 / 0.74 / 0.90 m (p5 / p50 / p95) over the built ground, 0.29 m buried at p50: it stands 3.7-4.1 m past the lane edge, inside the prep's 3 m contact band + 6 m feather, Milford G1's mechanism. pit_wall_naip_rest showed 0.71 of 0.81, pit_paddock_lidar 0.54 of 0.59",
+      "names": {
+        "ground": [
+          "TERRAIN"
+        ],
+        "far": [
+          "GRASS_FAR"
+        ],
+        "paved": [
+          "ROAD",
+          "CURB",
+          "1ROAD",
+          "1KERB"
+        ],
+        "track_edge": [
+          "ROAD",
+          "CURB"
+        ],
+        "cone_ground": [
+          "TERRAIN",
+          "CURB"
+        ],
+        "walls": [
+          "1WALL",
+          "BARRIER"
+        ],
+        "_doc": "the assembler's names at the author stage (Lake Murray's)"
+      },
+      "prep_seats": true,
+      "_rails_doc": "ledger 0078 round 5: the K-rails the 2018 lidar sees are placed and sized by it (*_lidar, height_m measured); the NAIP traces are kept only where the lidar does not see a rail (infield_t: not in the 2018 flight; it may postdate it). No W-beam rail or chain-link fence is built: the lidar shows no linear structure on the outside within 25 m (45 m on the right) and NAIP cannot resolve one"
+    },
+    "draft_lamps": false,
+    "_draft_lamps_doc": "a circuit has no streetlight down its edge every 55 m: the v021 assembler's draft posts are off (ledger 0078)"
+  },
+  "layouts": [
+    {
+      "id": "full",
+      "ai": "ai/full",
+      "uses_connectors": []
+    }
+  ],
+  "lighting": {
+    "presets": [
+      "morning",
+      "noon",
+      "golden_hour"
+    ],
+    "grassfx": {
+      "_doc": "Dry shortgrass prairie as the base look, thin; the greener draws taller and full; the bright bare ground almost none, as NAIP 2023 shows them. mask open: the straw tile would miss the default mask's ceiling. VERIFY IN-GAME",
+      "mask": "open",
+      "shape_size": [
+        0.9,
+        1.2
+      ],
+      "shape_width": 0.5,
+      "trim_period": 365,
+      "texture": "grass_fx/highlands.dds",
+      "texture_grid": [
+        8,
+        3
+      ],
+      "configurations": {
+        "A": {
+          "texture_base_chance": 0.6
+        },
+        "B": {
+          "shape_size": [
+            1.1,
+            1.5
+          ],
+          "shape_width": 0.6,
+          "texture_base_chance": 1.0
+        },
+        "C": {
+          "texture_base_chance": 0.1
+        }
+      },
+      "adjustments": [
+        {
+          "map": "A",
+          "materials": "ALL_GRASS"
+        }
+      ]
+    }
+  },
+  "source": {
+    "type": "from_track",
+    "track": "source/osm_fixes.json",
+    "smooth_window": 0,
+    "_smooth_window_doc": "2026-10-29 (ledger 0060): osm_fixes.json is a list of 79 OSM nodes (18 m apart on the corners, up to 585 m on the straights), not a 1 Hz GPS drive; from_track's 5-fix moving average cut its corners by up to 26.8 m and parted the closed ring's ends by 466 m (bridged with a chord): the deck floated over ground the track is not on and the engine minted four bridges. 0 = no smoothing.",
+    "_note": "RE-SOURCED 2026-07-25 from the REAL High Plains Raceway at 93301 E US Hwy 36, Deer Trail CO (39.7353,-103.8980). Replaces fabricated compressed lat/lon traced off the old unified map (which placed it at 39.67,-104.77, ~70 km away). Geometry is the closed cycle of OSM highway=raceway ways: Short North, Bikers Berm, Niagara, Dannys Lesson, High Plains Drifter, Prarie Corkscrew, Full West + one unnamed link = 3220 m (2.00 mi). The north section (To Hell On A Bobsled / Ladder To Heaven) is EXCLUDED: its south end is unmapped in OSM, leaving a 110 m gap that would have to be invented to close the full 2.55-mile course (LAWS L1 — never invent geometry). Add it by tracing that 110 m off a georeferenced aerial, then re-chain. Pit Lane excluded (not the racing line). Winding CW to match the other CO circuits. Elevation from USGS 3DEP at the real site.",
+    "_width_note": "default_width_m 12.0 is INHERITED FROM THE FABRICATED CONFIG and unverified against the real circuit."
+  },
+  "route": {
+    "start_at": [
+      39.735,
+      -103.8946
+    ],
+    "_start_at_doc": "2026-10-29 (ledger 0060): the REAL S/F, mid front straight between the Prairie Corkscrew exit and T1 (~39.7350, -103.8946), as _orientation_doc gave it; until now this held the pre-July displaced frame's point (39.67456, -104.77141), 77 km from the re-sourced site, so the chain's 'rotated by 251 points to the real start line' picked an arbitrary ring point. The projection snaps to the nearest ring vertex.",
+    "_orientation_doc": "Research 2026-07-20: High Plains Raceway runs CLOCKWISE (PCA turn guide + LapMeta, 15 turns, 2.56 mi). Our ring is already CW. REAL S/F: mid front straight (~370 m, WSW->ENE ~102 deg, between the Prairie Corkscrew exit and T1) at real-world ~39.7350,-103.8946 — but THIS trace lives in a displaced frame (~77 km off; re-source pending per CLAUDE.md), so start_at is the matching straight IN THE TRACE'S OWN FRAME: the 207 m straight bearing 115.7 deg, midpoint 39.67456,-104.77141. Re-derive when re-sourced. Pit lane: real hot pits on the NORTH side of the front straight (driver's left), ~690 m incl. entry/exit; entry before S/F at the corkscrew exit, exit wraps outside T1-T2 and merges at T2 exit.",
+    "smooth_sigma_pts": 2.0,
+    "smooth_passes": 2,
+    "smooth_sigma_y_pts": 1.5,
+    "divided_double": false,
+    "lane_dividers": false,
+    "edge": {
+      "curb_h": 0.0,
+      "curb_face_w": 0.1,
+      "sidewalk_w": 0.2,
+      "connector_sidewalk_w": 0.2,
+      "grade_w": 1.0,
+      "grass_clearance": -0.08,
+      "_grass_clearance_doc": "0.1.5 (PC, 2026-11-09; Kevin, asked whether the other circuit tracks have Milford's fast-curve edge mess: \"Yes, check them\"; Milford 0.1.6 is the same fix, ledger 0087): the strip's outer lip 2 cm under the lane edge (profile point 3 at -grass_clearance = +0.08 over the unlifted edge; the lane edge at +0.10). engine-july's prep holds the ground past the ROAD edge at the lane edge's height - 0.02 for 3 m (its contact band), so the lower lip lay in a gutter with a wall of ground at its lip. Measured on the installed 0.1.4 (gate OBJ, every 10 m, both sides; strip_gutter.py): the strip's lip 14 cm under the lane edge; the ground just past it stood more than 5 cm over the lip at 90 of 538 side-stations, more than 10 cm at 36 (max 12 cm). Flush with the band, nothing stands over it",
+      "_doc": "the circuit edge (ledger 0078): no curb, no sidewalk (neither track has one). The asphalt edge is held at road height for 0.30 m and the run-off ground meets it 0.15 m lower over 1.0 m [invented: the flush meet the drive gate reads as no drop]; the ground beyond is the assembler's conform to the road (20 m + 16 m blend), then the 3DEP surface: the real run-off level. Racing kerbs and paved run-off are NOT built: no measured kerb line or run-off outline is committed for either track (owed: read off the NAIP / lidar)."
+    },
+    "crossfall_file": "data/crossfall.lm.json",
+    "kerbs_file": "source/edges/kerbs.json",
+    "_kerbs_doc": "the racing kerbs traced off the aerial (tracks/high-plains/source/edges/kerbs.json: imagery, method, the eye check); built by tools/author_kerbs_blend.py outside the lane edge, the config's kerb profile"
+  },
+  "terrain_cell_m": 1.5,
+  "corridor_refine_factor": 6,
+  "terrain_vertex_budget": 1500000,
+  "ui_tags": [
+    "circuit"
+  ],
+  "install_folder": "high_plains",
+  "_install_folder_doc": "beside high_plains for the A/B drive (ledger 0078)",
+  "ui_series": "doooom Colorado",
+  "_ui_series_doc": "Kevin 2026-10-28: 'K10 is gone. doooom.' Content Manager shows '<ui_series> - <layout name>' (tools/ship_track.sh ui_name_prefix carries the same string)",
+  "texture_overrides": {
+    "1GRASS": {
+      "diffuse": "textures/prairie_diffuse.jpg",
+      "normal": "textures/prairie_normal.jpg",
+      "_doc": "bespoke ground, the colour measured off the track's NAIP (textures/README.md; tools/make_ground_tile.py)"
+    },
+    "GRASS_FAR": {
+      "diffuse": "textures/prairie_diffuse.jpg",
+      "normal": "textures/prairie_normal.jpg",
+      "_doc": "bespoke ground, the colour measured off the track's NAIP (textures/README.md; tools/make_ground_tile.py)"
+    },
+    "SHOULDERUND": {
+      "diffuse": "textures/prairie_diffuse.jpg",
+      "normal": "textures/prairie_normal.jpg",
+      "_doc": "bespoke ground, the colour measured off the track's NAIP (textures/README.md; tools/make_ground_tile.py)"
+    },
+    "BARRIER": {
+      "diffuse": "assets/textures/tiltup_wall_diffuse.jpg",
+      "normal": "assets/textures/tiltup_wall_normal.jpg",
+      "_doc": "our own concrete in place of the Hamburg bytes"
+    },
+    "1KERB": {
+      "diffuse": "textures/kerb_atlas_hp.png",
+      "_doc": "the kerb paint the aerial shows: blue / white kerbs and blue / yellow edge stripes (ledger 0081), an atlas of two flat two-band stripes (this port's own file). Keyed 1KERB, the row the traced kerbs (1KERB_circuit_*, tools/author_kerbs_blend.py) bind; not 1KERB_RACE, which the split routes to the race kn5 as race furniture"
+    }
+  },
+  "lm_intake": {
+    "source_track": "high-plains",
+    "connectors": false,
+    "profile": "uncapped",
+    "crossfall": "source/lidar/camber-survey/crossfall.json",
+    "grid_upsample": 2,
+    "carry_source": [
+      "source/naip_2023_hp.jpg"
+    ],
+    "_carry_source_doc": "ledger 0089: the NAIP 2023 photo scenery.bespoke.grassfx_zones reads (tools/plan_grassfx_aerial.py, ship step grassfx_aerial)",
+    "_doc": "the measured profile (the elevation stage's cap undone), the G10 lidar camber, the 40 m 3DEP grid pre-divided to 20 m (the same samples)"
+  },
+  "terrain": {
+    "terrain_band_m": 22.0,
+    "_doc": "the v021 assembler's band clamp (Lake Murray's 22 m); flat sites"
+  },
+  "road_wear": {
+    "_doc": "ledger 0084 'High Plains 0.1.7' (Kevin 2026-11-07: \"road textures to include wear along where tires run, in a realistic manner\" / \"sampling the entire road's texture from aerial data and mapping it directly onto the entire road\" / \"For tracks we'll use racing lines\" / \"Which will help darken curbs realistically\"; 2026-11-08: \"the road texture from aerial isn't done yet\"; 2026-11-10: \"lets continue, drives looked good\"). Milford 0.1.7's bake (tools/road_wear_blend.py, last in prep): the large-scale tone off NAIP 2023 0.3 m, registered to the built road, under the stock cracked asphalt kept as the 4 m detail (ksPerPixelMultiMap_NMDetail); the rubber is the photo's own (rubber 'photo', below: no drawn band); the traced race kerbs get the photo's measured darkening where the line rides them (kerbs, below). scripts/aerial/road_wear.py DEFAULTS has every number, marked measured / model / invented.",
+    "surfaces": [
+      "1ROAD",
+      "1KERB_SIDEWALK"
+    ],
+    "_surfaces_doc": "the road and the edge strip beside it (ledger 0087's 1KERB_sidewalk on the circuit-edge-flush ports), as Milford: the strip shares the atlas so the rubber where the line clips the edge carries on over it. The race kerbs are not a surface here: they keep their own paint (kerbs)",
+    "texel_m": 0.25,
+    "_texel_doc": "PC 2026-11-10 (ledger 0084 'High Plains 0.1.7'): 0.25 m. 0.2 m broke the detail phase: 4096 px x 0.2 / 4 = 204.8, not whole, and the flipped v put the grain 0.8 tile off the prep's 4 m phase (both PC builds red on road_wear_check detail_phase, 0.20001 tiles); 0.25 m makes it 256, whole (Milford's), with 80 m cells = 320 px (12 x 12 = 144 slots for the 74 cells), and is still finer than the photo's 0.3 m pixel, so no tone it carries is lost. Was: the aerial is NAIP 2023 at 0.30 m (Milford's 0.50 m gave 0.25). 0.2 m: finer than the source pixel, so every tone the 0.3 m photo carries is kept, and a whole divisor of the 4 m detail tile (the cell, margin and pitch stay whole tiles, so the grain keeps the prep's 4 m grid and phase; 0.15 m, half the pixel, is not: 26.7 texels a tile). The next finer divisor, 0.125 m, needs an 8192 px atlas (4x the VRAM of Milford's 4096) for what the photo can no longer resolve; 0.2 m fits 4096 on the centreline's own cells (78 of 81 tiles, estimated off data/centerline.local.json)",
+    "rubber": "photo",
+    "_rubber_doc": "Kevin 2026-11-10: \"Use the photo's rubber\" (ledger 0084 'High Plains 0.1.7: the photo's rubber'). NAIP 2023 at 0.3 m resolves it: lit asphalt within 0.5 m of the model line reads 0.915 of the lit median, the same distance from its mirror across the centreline 1.075 (source/road_wear/mac_read/naip_read.log). So the asphalt gets NO drawn band, the photo's tone carries the rubber; the bake measures the photo's darkening across the line against its mirror (scripts/aerial/road_wear.photo_rubber) and the kerbs take that measured profile through their 16 levels instead of the drawn model (amplitude 0.22, spread 0.70 m, base 0.35: unused here). The min-curvature line stays only to measure that and to say which kerb faces it clips. The default for the other 0.3 m circuits (Pueblo, Aspen, Grand Junction, Pikes Peak) when they get road wear; Milford (0.5 m, <= 1 % seen) keeps the drawn band",
+    "aerial": {
+      "image": "source/road_wear/naip_2023_030_hp.png",
+      "bbox_lonlat": [
+        -103.90532207890708,
+        39.73355853151761,
+        -103.88959002688462,
+        39.73680613545915
+      ],
+      "_doc": "USDA NAIP 2023-09-28, co_m_3910317_ne_13_030_20230928_20240104 (public domain), the 0.3 m crop ledger 0081 measured the kerbs off (tools/naip_crop.py, /Volumes/Drive/codex/kerb_work/img/high-plains_2023_030.png, md5 4da61327; its record naip_2023_030_hp.json beside it): 4495 x 1202 px, 0.300 x 0.300 m, corners [W, N, E, S] exact (EPSG:4326 crop). It covers the whole lap: 0 of 3,205 centreline stations +-10 m fall outside it or on a black pixel"
+    },
+    "lines": [
+      {
+        "layout": "full",
+        "ai": "source/road_wear/fast_lane.full.ai",
+        "_doc": "a line Kevin records with CSP's AI recorder in this layout, copied here: the wear then follows where the car really ran. Absent (as for 0.1.7) = the minimum-curvature line inside the built edges [model]: the committed ai/full/fast_lane.ai is the generated centreline draft (ai/full/ai_draft.json: 'GENERATED DRAFT from the built centreline', offset_max 0.238 m), not a racing line"
+      }
+    ],
+    "kerbs": {
+      "prefix": "1KERB_CIRCUIT_",
+      "levels": 16,
+      "_doc": "ledger 0081's 20 traced kerb runs (tools/author_kerbs_blend.py, 1KERB_circuit_<k>: blue / white kerbs and blue / yellow paint stripes, kerb_atlas_hp.png): 18 of them lie partly over the lane (data/kerbs.built.json in_vs_ribbon_edge_m < 0) at their measured offsets, where the line's tyres run. Each face takes the photo's measured darkening at its centroid's signed offset from the line (rubber 'photo'), to one of 16 copies of its own paint (copy k = paint x (1 - k x the measured peak / 15)), its u moved into that copy (v, the stripes, untouched); the material row is the exporter's own (ksPerPixel, no VAR) with txDiffuse -> the levelled paint. 16 levels [invented]: a 1.5 % step"
+    }
+  }
+}

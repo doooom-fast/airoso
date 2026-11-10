@@ -1,0 +1,105 @@
+=================== ship: verify_kn5 (hard — spawn-free road, common race kn5 + one closure kn5 per race layout (its token only), one spawn kn5 per layout, facing, side, lane, sectors)
+✓ kn5 verification passed (no dup meshes, drivable surfaces face-up, spawns on road, per-layout spawn kn5s facing their travel, race furniture split common / per-direction closure)
+
+=================== gate: road kn5 -> gate OBJ (engine frame) + gate centreline
+san_diego_freeway.kn5 -> D:\k10-workshops\san-diego-freeway\project\data\track.obj  (73 groups, 2,535,879 v, 1,018,099 tri)
+  gate centreline -> gate_centerline.json (finished_centerline, z un-mirrored to the OBJ frame)
+
+=================== ship: track folder (models_<id>.ini per layout, ui/<id>/, <id>/{map,data,ai}; a race layout without its closure kn5 is a HARD error)
+[track_folder] layouts packed: ['freeroam'] (models.ini)
+wrote track folder → D:\k10-workshops\san-diego-freeway\project\build\san_diego_freeway
+  length_m: 225588.3
+  n_pits: 4
+  models: {'freeroam': ['san_diego_freeway.kn5']}
+[lights-ini] no data/lights.local.json — no lamps authored; 0 [LIGHT_N] in the ini: PASS
+
+=================== ship: verify_kn5 --inis (hard — each race ini lists exactly road + common race + ITS closure + its spawns; none lists another layout's closure)
+✓ models_<id>.ini verification passed (each race layout loads road + common race + ITS closure + its spawns; no ini loads another layout's closure)
+
+=================== ship: minimap in the KN5 frame, per layout (tools/make_map.py; a layout with map = lap gets its lap alone, map + outline)
+[map] wrote D:\k10-workshops\san-diego-freeway\project\build\san_diego_freeway\map.png + data/map.ini (kn5 frame, network: 590 line(s), 21.019 m/px)
+
+=================== gate: drive_test, street layout (hard)
+=================== gate: drive_test, street layout (hard)
+    ... 549 more in data/network.reference.json
+    ... 549 more in data/network.reference.json
+  => FAIL   (data/drive_test.freeroam.json)
+  => FAIL   (data/drive_test.freeroam.json)
+
+
+DRIVE TEST SUMMARY san_diego_freeway: freeroam=FAIL   (data/drive_test.json)
+DRIVE TEST SUMMARY san_diego_freeway: freeroam=FAIL   (data/drive_test.json)
+
+
+=================== gate: audit_mesh, street (hard total)
+=================== gate: audit_mesh, street (hard total)
+AUDIT san_diego_freeway   (roads 243561v, grass 1266967v, walls 340195v, piers 2457)
+AUDIT san_diego_freeway   (roads 243561v, grass 1266967v, walls 340195v, piers 2457)
+  A. supports standing in a road : 0
+  A. supports standing in a road : 0
+  B. terrain poking through road : 0  (worst +0.0 m)
+  B. terrain poking through road : 0  (worst +0.0 m)
+  C. at-grade junction crossings : 9  ({'ramp': 6, 'mainline': 3})
+  C. at-grade junction crossings : 9  ({'ramp': 6, 'mainline': 3})
+  D. walls sitting on a road     : 1311
+  D. walls sitting on a road     : 1311
+  E. walls floating over ground  : 7  (worst +12.51 m)
+  E. walls floating over ground  : 7  (worst +12.51 m)
+  F. curbs not flush             : 0  (of 0 curb verts,
+  F. curbs not flush             : 0  (of 0 curb verts,
+                                      edge-scoped, top-surface only;
+                                      edge-scoped, top-surface only;
+                                      0 skirt verts off terrain (advisory), 0 side faces skipped,
+                                      0 skirt verts off terrain (advisory), 0 side faces skipped,
+                                      grounding is gated by drive_test + E/H)
+                                      grounding is gated by drive_test + E/H)
+  G. plants floating over ground : (env not built)
+  G. plants floating over ground : (env not built)
+  H. ground cutting into road    : 0  (worst +0.0 m)
+  H. ground cutting into road    : 0  (worst +0.0 m)
+  I. sidewalk isolating pavement : 0
+  I. sidewalk isolating pavement : 0
+  K. kerb/sidewalk in carriageway: 0
+  K. kerb/sidewalk in carriageway: 0
+  J. terrain triangles over road : 23  (worst 800 m edge; limit 165 m)
+  J. terrain triangles over road : 23  (worst 800 m edge; limit 165 m)
+  => 1350 issues
+  => 1350 issues
+
+
+=================== gate: kn5_ground_check per layout (EXPANSION-PLAN V5: the kn5 set each layout loads — terrain sheets, furniture seating, lamp masts, the road on the ground)
+=================== gate: kn5_ground_check per layout (EXPANSION-PLAN V5: the kn5 set each layout loads — terrain sheets, furniture seating, lamp masts, the road on the ground)
+KN5 FIDELITY san_diego_freeway.kn5  (yaw 0 deg)  [data/track.obj is this kn5's own gate OBJ (kn5_to_gate_obj) — kn5-internal checks only]
+KN5 FIDELITY san_diego_freeway.kn5  (yaw 0 deg)  [data/track.obj is this kn5's own gate OBJ (kn5_to_gate_obj) — kn5-internal checks only]
+  double-sheet terrain cells (>12 m spread): 0
+  double-sheet terrain cells (>12 m spread): 0
+  walls     objects 54488: no-ground  0.0%  seat-gap median -0.47  p95 -0.47  hovering>0.3m 25 (0.0%)
+  walls     objects 54488: no-ground  0.0%  seat-gap median -0.47  p95 -0.47  hovering>0.3m 25 (0.0%)
+  tenting under drape band (info): 118 samples  median +0.60  p95 +6.24
+  tenting under drape band (info): 118 samples  median +0.60  p95 +6.24
+  flush edges (info): 1588 samples  deck-vs-verge median +0.48  p95 +5.39
+  flush edges (info): 1588 samples  deck-vs-verge median +0.48  p95 +5.39
+  deck-vs-mountain (tri-exact): median +0.000  p95 +0.000  max +1.052
+  deck-vs-mountain (tri-exact): median +0.000  p95 +0.000  max +1.052
+  road-over-ground: 56/27876 samples gap > 0.05 m (0.2%)  p95 +0.000 m (gate 0.1 m)
+  road-over-ground: 56/27876 samples gap > 0.05 m (0.2%)  p95 +0.000 m (gate 0.1 m)
+  => PASS — kn5 matches the audited OBJs
+  => PASS — kn5 matches the audited OBJs
+  kn5_ground_check freeroam: exit 0
+  kn5_ground_check freeroam: exit 0
+
+
+=================== sync outputs workshop -> airoso
+=================== sync outputs workshop -> airoso
+
+
+GATES: street drive_test exit 1, street audit exit 1, race drive_test exit 0, race audit exit 0, race no_route exit 0, kn5_ground_check exit 0
+GATES: street drive_test exit 1, street audit exit 1, race drive_test exit 0, race audit exit 0, race no_route exit 0, kn5_ground_check exit 0
+  race layouts red on their own gates: none
+  race layouts red on their own gates: none
+  Drive-1 road gates (road inventory, stacked legs): exit 0
+  Drive-1 road gates (road inventory, stacked legs): exit 0
+  NOT INSTALLED (Kevin never loads a build the machine failed)
+  NOT INSTALLED (Kevin never loads a build the machine failed)
+NT EXIT 1
+NT EXIT 1

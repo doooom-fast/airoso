@@ -1,0 +1,19 @@
+{
+ "item": "co_m_3810427_ne_13_030_20230920_20240104",
+ "collection": "naip",
+ "datetime": "2023-09-20T16:00:00Z",
+ "gsd": 0.3,
+ "corners": [
+  -104.67965285064224,
+  38.59485210036624,
+  -104.67320407403763,
+  38.58871919301801
+ ],
+ "w": 1873,
+ "h": 2269,
+ "m_per_px": [
+  0.3,
+  0.3
+ ],
+ "source": "Microsoft Planetary Computer data API (USDA FSA NAIP, public domain), EPSG:4326 crop"
+}

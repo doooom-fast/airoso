@@ -1,0 +1,269 @@
+{
+ "a": "nv_base/build/exotics_racing_lvms.kn5",
+ "b": "nv_br/build/exotics_racing_lvms.kn5",
+ "by_prefix": {
+  "1GRASS": {
+   "equal": 2
+  },
+  "1KERB": {
+   "equal": 7
+  },
+  "1ROAD": {
+   "equal": 1
+  },
+  "1RUNOFF": {
+   "equal": 14
+  },
+  "1WALL": {
+   "equal": 3
+  },
+  "BUILDING": {
+   "equal": 3
+  },
+  "FARBLOCK": {
+   "equal": 1
+  },
+  "MARKINGS": {
+   "equal": 1
+  },
+  "PROPCONE": {
+   "equal": 1
+  },
+  "ROOFTOP": {
+   "equal": 3
+  },
+  "SCRUBCARD": {
+   "only in a": 1
+  }
+ },
+ "textures": {
+  "only_a": [
+   "desert_scrub_atlas.png"
+  ],
+  "only_b": [],
+  "changed": []
+ },
+ "meshes": [
+  {
+   "mesh": "1GRASS_0",
+   "verdict": "equal",
+   "why": [],
+   "verts": 47797
+  },
+  {
+   "mesh": "1GRASS_1",
+   "verdict": "equal",
+   "why": [],
+   "verts": 48045
+  },
+  {
+   "mesh": "1KERB_circuit_0",
+   "verdict": "equal",
+   "why": [],
+   "verts": 792
+  },
+  {
+   "mesh": "1KERB_circuit_1",
+   "verdict": "equal",
+   "why": [],
+   "verts": 468
+  },
+  {
+   "mesh": "1KERB_circuit_2",
+   "verdict": "equal",
+   "why": [],
+   "verts": 306
+  },
+  {
+   "mesh": "1KERB_circuit_3",
+   "verdict": "equal",
+   "why": [],
+   "verts": 180
+  },
+  {
+   "mesh": "1KERB_circuit_4",
+   "verdict": "equal",
+   "why": [],
+   "verts": 540
+  },
+  {
+   "mesh": "1KERB_circuit_5",
+   "verdict": "equal",
+   "why": [],
+   "verts": 540
+  },
+  {
+   "mesh": "1KERB_sidewalk",
+   "verdict": "equal",
+   "why": [],
+   "verts": 21852
+  },
+  {
+   "mesh": "1ROAD_road",
+   "verdict": "equal",
+   "why": [],
+   "verts": 9948
+  },
+  {
+   "mesh": "1RUNOFF_apron_0",
+   "verdict": "equal",
+   "why": [],
+   "verts": 28627
+  },
+  {
+   "mesh": "1RUNOFF_apron_1",
+   "verdict": "equal",
+   "why": [],
+   "verts": 16235
+  },
+  {
+   "mesh": "1RUNOFF_apron_10",
+   "verdict": "equal",
+   "why": [],
+   "verts": 657
+  },
+  {
+   "mesh": "1RUNOFF_apron_11",
+   "verdict": "equal",
+   "why": [],
+   "verts": 963
+  },
+  {
+   "mesh": "1RUNOFF_apron_12",
+   "verdict": "equal",
+   "why": [],
+   "verts": 780
+  },
+  {
+   "mesh": "1RUNOFF_apron_13",
+   "verdict": "equal",
+   "why": [],
+   "verts": 11680
+  },
+  {
+   "mesh": "1RUNOFF_apron_2",
+   "verdict": "equal",
+   "why": [],
+   "verts": 4234
+  },
+  {
+   "mesh": "1RUNOFF_apron_3",
+   "verdict": "equal",
+   "why": [],
+   "verts": 23281
+  },
+  {
+   "mesh": "1RUNOFF_apron_4",
+   "verdict": "equal",
+   "why": [],
+   "verts": 18104
+  },
+  {
+   "mesh": "1RUNOFF_apron_5",
+   "verdict": "equal",
+   "why": [],
+   "verts": 1911
+  },
+  {
+   "mesh": "1RUNOFF_apron_6",
+   "verdict": "equal",
+   "why": [],
+   "verts": 6927
+  },
+  {
+   "mesh": "1RUNOFF_apron_7",
+   "verdict": "equal",
+   "why": [],
+   "verts": 10189
+  },
+  {
+   "mesh": "1RUNOFF_apron_8",
+   "verdict": "equal",
+   "why": [],
+   "verts": 1287
+  },
+  {
+   "mesh": "1RUNOFF_apron_9",
+   "verdict": "equal",
+   "why": [],
+   "verts": 5563
+  },
+  {
+   "mesh": "1WALL_FABRIC_exr2013_a",
+   "verdict": "equal",
+   "why": [],
+   "verts": 24
+  },
+  {
+   "mesh": "1WALL_FABRIC_exr2013_b",
+   "verdict": "equal",
+   "why": [],
+   "verts": 24
+  },
+  {
+   "mesh": "1WALL_TECPRO_0",
+   "verdict": "equal",
+   "why": [],
+   "verts": 2698
+  },
+  {
+   "mesh": "BUILDING_FABRIC_exr2013_a",
+   "verdict": "equal",
+   "why": [],
+   "verts": 30
+  },
+  {
+   "mesh": "BUILDING_FABRIC_exr2013_b",
+   "verdict": "equal",
+   "why": [],
+   "verts": 40
+  },
+  {
+   "mesh": "BUILDING_TILTUP_0",
+   "verdict": "equal",
+   "why": [],
+   "verts": 986
+  },
+  {
+   "mesh": "FARBLOCK_METAL_0",
+   "verdict": "equal",
+   "why": [],
+   "verts": 252
+  },
+  {
+   "mesh": "MARKINGS",
+   "verdict": "equal",
+   "why": [],
+   "verts": 7284
+  },
+  {
+   "mesh": "PROPCONE_0",
+   "verdict": "equal",
+   "why": [],
+   "verts": 1296
+  },
+  {
+   "mesh": "ROOFTOP_DARK_0",
+   "verdict": "equal",
+   "why": [],
+   "verts": 98
+  },
+  {
+   "mesh": "ROOFTOP_TAN_0",
+   "verdict": "equal",
+   "why": [],
+   "verts": 218
+  },
+  {
+   "mesh": "ROOFTOP_WHITE_0",
+   "verdict": "equal",
+   "why": [],
+   "verts": 104
+  },
+  {
+   "mesh": "SCRUBCARD_0",
+   "verdict": "only in a",
+   "verts": 418
+  }
+ ]
+}

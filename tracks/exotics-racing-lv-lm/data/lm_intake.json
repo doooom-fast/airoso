@@ -1,0 +1,44 @@
+{
+ "source_track": "exotics-racing-lv",
+ "points": 608,
+ "lap_m": 1821.9,
+ "closed": true,
+ "widths_m": [
+  11.5,
+  13.94,
+  20.0
+ ],
+ "bridges_levelled": [],
+ "max_grade_pct": null,
+ "measured_max_grade_pct": 3.73,
+ "y_changed_points": 0,
+ "y_change_max_m": 0.0,
+ "connectors": false,
+ "bespoke_files": [
+  "source/bespoke/buildings.json",
+  "source/edges/kerbs.json",
+  "textures/caliche_diffuse.jpg",
+  "textures/caliche_normal.jpg"
+ ],
+ "crossfall": {
+  "stations": 607,
+  "max_pct": 10.58
+ },
+ "profile": {
+  "cap_was_pct": 9.0,
+  "reproduced_within_m": 0.0067,
+  "points_moved": 0,
+  "max_move_m": 0.0
+ },
+ "width_taper": null,
+ "resample": null,
+ "edge_on_wall": null,
+ "corner_arcs": null,
+ "carried": [],
+ "grid_upsample": 2,
+ "md5": {
+  "source_centerline": "a5b9044a8f5fbfdd2e41752c39c1b6c7",
+  "heightfield.npy": "69f30aa0e6bb7ccae897357c928fc671",
+  "centerline.local.json": "54f58a5d8e6caba83b29a5cf73987668"
+ }
+}

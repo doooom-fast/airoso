@@ -1,7 +1,8 @@
 {
   "archetype": "race_circuit",
   "name": "Grand Junction Motor Speedway",
-  "slug": "grand_junction",
+  "slug": "grand_junction_v03",
+  "_slug_doc": "2026-11-09 (grand-junction-lm 0.1.2, ledger 0087): this old-engine track gave the plain slug and install folder grand_junction to tracks/grand-junction-lm (Kevin: \"Get rid of Lm Version from names\" / \"LM is the airoso engine\"), so S7 (one slug per AC folder) holds. It stays in the repo as the source the LM port's intake reads (lm_intake.source_track); it is not built or installed again (its grand_junction folder left AC in the 2026-11-06 tidy)",
   "version": "0.3.0",
   "mirror_x": false,
   "loop": true,
@@ -84,7 +85,7 @@
   "ui_tags": [
     "circuit"
   ],
-  "install_folder": "grand_junction",
+  "install_folder": "grand_junction_v03",
   "_install_folder_doc": "tools/ship_track.sh installs under content/tracks/<install_folder> (Lariat plan A11; ONE-CHAIN §3: the slug, no suffixes); the previous install is parked in the archive",
   "ui_series": "doooom Colorado",
   "_ui_series_doc": "Kevin 2026-10-28: 'K10 is gone. doooom.' Content Manager shows '<ui_series> - <layout name>' (tools/ship_track.sh ui_name_prefix carries the same string)",

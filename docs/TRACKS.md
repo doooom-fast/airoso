@@ -31,7 +31,7 @@ with one row per track: the draft's exit, the full run's exit, installed or not,
 | # | Track (folder) | Slug, install folder | Kind, source | Chain state (2026-11-01) | Installed now | What the morning run reads first / what blocks |
 |---|---|---|---|---|---|---|
 | 1 | **Nevada Nights** (`exotics-racing-lv`) | `exotics_racing_lvms` | circuit_port, NAIP aerial trace | through the chain 2026-10-29, **T1** (ledger 0060) | **0.5.0**, 2026-11-01 | re-run to the same gates. Its edges are ledger 0061's subject |
-| 2 | **Milford Road Course** (`milford-road-course`) | `milford_road_course` | circuit_port, NAIP aerial trace | through the chain, **T1** | **0.3.0**, 2026-11-01 | as above; the banked esses' severe steps 15 at s 795–808 (0060) |
+| 2 | **Milford Road Course** (`milford-road-course`) | `milford_road_course_v06` since 2026-11-07 (the plain `milford_road_course` went to `milford-road-course-lm` 0.1.5) | circuit_port, NAIP aerial trace | through the chain, **T1** | **0.3.0**, 2026-11-01 | as above; the banked esses' severe steps 15 at s 795–808 (0060) |
 | 3 | **High Plains Raceway** (`high-plains`) | `high_plains` | circuit_port, OSM raceway ways | through the chain, **T1** | **0.69.0**, 2026-11-01 | as above; the north section stays excluded (its config) |
 | 4 | **Sand Creek Raceway** (`sand-creek`) | `sand_creek_raceway` | fictional_street_circuit, KML + capture | through the chain, **T1** | **0.29.0** (forward only), 2026-11-01 | as above; the reverse layout parked until its start is declared |
 | 5 | **Lake Murray** (`san-diego-lake-murray`) | `san_diego_lake_murray` (installed as `san_diego_lake_murray_v3`) | street_port, OSM network | its own chain of record, `tools/ship_sd.sh` (ONE-CHAIN §2 row 6: the last migration) | **0.19.2**, 2026-10-31 (folder `san_diego_lake_murray_v3`); **T2** from earlier builds, 0.19.2 itself not driven yet | not in the fleet runner: `bash tools/ship_sd.sh` is its command; the migration onto airoso's engine is ONE-CHAIN §4 row 9, after the four |
@@ -47,6 +47,12 @@ with one row per track: the draft's exit, the full run's exit, installed or not,
 | 15 | **Pikes Peak International Raceway** (`pikes-peak`) | `pikes_peak_international_raceway` | circuit_port, OSM raceway way (the oval) | **chain-ready**; the frame flip carries the bank: cambers −10° (L10: 10° in all four turns; one arc per end, T1–T2 and T3–T4), `ribbon_cols` 8 against the ramps' twist (Exotics' lesson) | no | on the built deck the raised edge must be the OUTSIDE one in every turn and the AI must read counterclockwise; then drive_test's severe steps against V1's four ramp clusters |
 | 16 | IMI Motorsports Complex (`imi`) | — | circuit_port, a hand-traced placeholder off a screenshot | **not chain-ready, on purpose** (left on the V1 frame so the chain refuses it): the 33-point trace cuts across the infield and misses the course, the KML is the same placeholder, the georeference is estimated — L1: fabricated geometry is a defect, not a status (`tracks/imi/track.config.json` `_chain_doc`) | no | owed before the chain: a NAIP export of the site into `source/`, a trace off it by Exotics' method, control points from the image |
 | 17 | Second Creek (`second-creek`) | — | circuit_port, historical, closed in the 2000s | **not chain-ready**: fabricated (registry `fidelity: FABRICATED`; "must not ship as a real port", L1); re-source first (ONE-CHAIN §4 row 7: a georeferenced pre-2008 aerial + two control points, then the aerial trace) | no | nothing to run; the sourcing is the whole task |
+
+The Lake Murray v4 engine ports (ledger 0078, `docs/ENGINE-LM-V4.md`): `sand-creek-lm`, `high-plains-lm`,
+`exotics-racing-lv-lm`, `milford-road-course-lm`, `aspen-lm`, `pueblo-lm`, `grand-junction-lm`, `pikes-peak-lm`, and
+`del-mar-lm` (ledger 0083: Del Mar Grand Prix's ESTIMATED 1987-92 layout of `tracks/del-mar`, ledger 0064). Each is
+its live track's line and data through Lake Murray v4's engine (ship.json `"engine": "lm-v4"`), installing beside the live
+folder (`<slug>_lm`) for the A/B drive; not in the morning runner's order. Listed in `fleet/registry.json` with the rest.
 
 Not tracks: Nordschleife and Bathurst are the DEM answer keys under `docs/history/projects/` (calibration, never products).
 

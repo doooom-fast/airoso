@@ -3,7 +3,7 @@
  "existed": true,
  "blender": "4.2.22 LTS",
  "source_obj": "data/track.obj",
- "obj_md5": "823bf6e461d25dc8630c00811969ccd2",
+ "obj_md5": "75736e7c4427c9fc745f26dbc6f93004",
  "frame": "local (E,up,N) -> Blender (E,N,up) as (x,y,z)->(x,z,y), faces re-wound",
  "groups": [
   {
@@ -42,7 +42,7 @@
    "name": "1GRASS_e",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 56400,
+   "faces": 56410,
    "uv": true,
    "validate_dropped": 0
   },
@@ -50,7 +50,7 @@
    "name": "1GRASS_f",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 56238,
+   "faces": 56301,
    "uv": true,
    "validate_dropped": 0
   },
@@ -58,7 +58,7 @@
    "name": "1GRASS_g",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 56129,
+   "faces": 56225,
    "uv": true,
    "validate_dropped": 0
   },
@@ -66,7 +66,7 @@
    "name": "1GRASS_h",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 56172,
+   "faces": 56197,
    "uv": true,
    "validate_dropped": 0
   },
@@ -74,7 +74,7 @@
    "name": "1GRASS_i",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 56096,
+   "faces": 56115,
    "uv": true,
    "validate_dropped": 0
   },
@@ -82,7 +82,7 @@
    "name": "1GRASS_j",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 56017,
+   "faces": 56062,
    "uv": true,
    "validate_dropped": 0
   },
@@ -90,7 +90,7 @@
    "name": "1GRASS_k",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 55687,
+   "faces": 55654,
    "uv": true,
    "validate_dropped": 0
   },
@@ -98,7 +98,7 @@
    "name": "1GRASS_l",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 55326,
+   "faces": 55308,
    "uv": true,
    "validate_dropped": 0
   },
@@ -106,7 +106,7 @@
    "name": "1GRASS_m",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 55747,
+   "faces": 55781,
    "uv": true,
    "validate_dropped": 0
   },
@@ -114,7 +114,7 @@
    "name": "1GRASS_n",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 56199,
+   "faces": 56216,
    "uv": true,
    "validate_dropped": 0
   },
@@ -122,7 +122,7 @@
    "name": "1GRASS_o",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 56238,
+   "faces": 56232,
    "uv": true,
    "validate_dropped": 0
   },
@@ -130,7 +130,7 @@
    "name": "1GRASS_p",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 56261,
+   "faces": 56247,
    "uv": true,
    "validate_dropped": 0
   },
@@ -138,7 +138,7 @@
    "name": "1GRASS_q",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 55624,
+   "faces": 55617,
    "uv": true,
    "validate_dropped": 0
   },
@@ -146,7 +146,7 @@
    "name": "1GRASS_r",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 54977,
+   "faces": 54983,
    "uv": true,
    "validate_dropped": 0
   },
@@ -154,7 +154,7 @@
    "name": "1GRASS_s",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 55595,
+   "faces": 55607,
    "uv": true,
    "validate_dropped": 0
   },
@@ -162,7 +162,7 @@
    "name": "1GRASS_t",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 56222,
+   "faces": 56229,
    "uv": true,
    "validate_dropped": 0
   },
@@ -170,7 +170,7 @@
    "name": "1GRASS_u",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 56190,
+   "faces": 56189,
    "uv": true,
    "validate_dropped": 0
   },
@@ -178,7 +178,7 @@
    "name": "1GRASS_v",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 56147,
+   "faces": 56126,
    "uv": true,
    "validate_dropped": 0
   },
@@ -186,7 +186,7 @@
    "name": "1GRASS_w",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 55879,
+   "faces": 55855,
    "uv": true,
    "validate_dropped": 0
   },
@@ -194,7 +194,7 @@
    "name": "1GRASS_x",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 55792,
+   "faces": 55744,
    "uv": true,
    "validate_dropped": 0
   },
@@ -202,7 +202,7 @@
    "name": "1GRASS_y",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 55867,
+   "faces": 55819,
    "uv": true,
    "validate_dropped": 0
   },
@@ -210,7 +210,7 @@
    "name": "1GRASS_z",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 55291,
+   "faces": 55284,
    "uv": true,
    "validate_dropped": 0
   },
@@ -218,7 +218,7 @@
    "name": "1GRASS_aa",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 54757,
+   "faces": 54755,
    "uv": true,
    "validate_dropped": 0
   },
@@ -226,7 +226,7 @@
    "name": "1GRASS_ab",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 54656,
+   "faces": 54655,
    "uv": true,
    "validate_dropped": 0
   },
@@ -234,7 +234,7 @@
    "name": "1GRASS_ac",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 54634,
+   "faces": 54642,
    "uv": true,
    "validate_dropped": 0
   },
@@ -242,7 +242,7 @@
    "name": "1GRASS_ad",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 54803,
+   "faces": 54824,
    "uv": true,
    "validate_dropped": 0
   },
@@ -250,7 +250,7 @@
    "name": "1GRASS_ae",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 54956,
+   "faces": 55019,
    "uv": true,
    "validate_dropped": 0
   },
@@ -258,7 +258,7 @@
    "name": "1GRASS_af",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 55434,
+   "faces": 55500,
    "uv": true,
    "validate_dropped": 0
   },
@@ -266,7 +266,7 @@
    "name": "1GRASS_ag",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 56021,
+   "faces": 56042,
    "uv": true,
    "validate_dropped": 0
   },
@@ -274,7 +274,7 @@
    "name": "1GRASS_ah",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 55436,
+   "faces": 55441,
    "uv": true,
    "validate_dropped": 0
   },
@@ -282,7 +282,7 @@
    "name": "1GRASS_ai",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 54718,
+   "faces": 54701,
    "uv": true,
    "validate_dropped": 0
   },
@@ -298,7 +298,7 @@
    "name": "1GRASS_ak",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 56159,
+   "faces": 56172,
    "uv": true,
    "validate_dropped": 0
   },
@@ -306,7 +306,7 @@
    "name": "1GRASS_al",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 56344,
+   "faces": 56358,
    "uv": true,
    "validate_dropped": 0
   },
@@ -314,7 +314,7 @@
    "name": "1GRASS_am",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 56382,
+   "faces": 56281,
    "uv": true,
    "validate_dropped": 0
   },
@@ -322,7 +322,7 @@
    "name": "1GRASS_an",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 56367,
+   "faces": 56258,
    "uv": true,
    "validate_dropped": 0
   },
@@ -330,7 +330,7 @@
    "name": "1GRASS_ao",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 56346,
+   "faces": 56341,
    "uv": true,
    "validate_dropped": 0
   },
@@ -338,7 +338,7 @@
    "name": "1GRASS_ap",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 56359,
+   "faces": 56364,
    "uv": true,
    "validate_dropped": 0
   },
@@ -346,7 +346,7 @@
    "name": "1GRASS_aq",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 56358,
+   "faces": 56368,
    "uv": true,
    "validate_dropped": 0
   },
@@ -354,7 +354,7 @@
    "name": "1GRASS_ar",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 56352,
+   "faces": 56358,
    "uv": true,
    "validate_dropped": 0
   },
@@ -362,7 +362,7 @@
    "name": "1GRASS_as",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 56248,
+   "faces": 56085,
    "uv": true,
    "validate_dropped": 0
   },
@@ -370,7 +370,7 @@
    "name": "1GRASS_at",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 56029,
+   "faces": 56023,
    "uv": true,
    "validate_dropped": 0
   },
@@ -378,7 +378,7 @@
    "name": "1GRASS_au",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 56161,
+   "faces": 56329,
    "uv": true,
    "validate_dropped": 0
   },
@@ -386,7 +386,7 @@
    "name": "1GRASS_av",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 56458,
+   "faces": 56446,
    "uv": true,
    "validate_dropped": 0
   },
@@ -394,7 +394,7 @@
    "name": "1GRASS_aw",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 54279,
+   "faces": 54260,
    "uv": true,
    "validate_dropped": 0
   },
@@ -410,7 +410,7 @@
    "name": "1GRASS_ay",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 52034,
+   "faces": 52029,
    "uv": true,
    "validate_dropped": 0
   },
@@ -418,7 +418,7 @@
    "name": "1GRASS_az",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 52272,
+   "faces": 52266,
    "uv": true,
    "validate_dropped": 0
   },
@@ -426,7 +426,7 @@
    "name": "1GRASS_ba",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 54448,
+   "faces": 54431,
    "uv": true,
    "validate_dropped": 0
   },
@@ -434,7 +434,7 @@
    "name": "1GRASS_bb",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 56422,
+   "faces": 56410,
    "uv": true,
    "validate_dropped": 0
   },
@@ -442,7 +442,7 @@
    "name": "1GRASS_bc",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 56452,
+   "faces": 56449,
    "uv": true,
    "validate_dropped": 0
   },
@@ -450,7 +450,7 @@
    "name": "1GRASS_bd",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 56470,
+   "faces": 56485,
    "uv": true,
    "validate_dropped": 0
   },
@@ -458,7 +458,7 @@
    "name": "1GRASS_be",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 56516,
+   "faces": 56531,
    "uv": true,
    "validate_dropped": 0
   },
@@ -466,7 +466,7 @@
    "name": "1GRASS_bf",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 56549,
+   "faces": 56543,
    "uv": true,
    "validate_dropped": 0
   },
@@ -474,7 +474,7 @@
    "name": "1GRASS_bg",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 56546,
+   "faces": 56543,
    "uv": true,
    "validate_dropped": 0
   },
@@ -482,7 +482,7 @@
    "name": "1GRASS_bh",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 56540,
+   "faces": 56542,
    "uv": true,
    "validate_dropped": 0
   },
@@ -490,7 +490,7 @@
    "name": "1GRASS_bi",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 56542,
+   "faces": 56537,
    "uv": true,
    "validate_dropped": 0
   },
@@ -498,7 +498,7 @@
    "name": "1GRASS_bj",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 55846,
+   "faces": 55842,
    "uv": true,
    "validate_dropped": 0
   },
@@ -506,7 +506,7 @@
    "name": "1GRASS_bk",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 55145,
+   "faces": 55169,
    "uv": true,
    "validate_dropped": 0
   },
@@ -514,7 +514,7 @@
    "name": "1GRASS_bl",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 55788,
+   "faces": 55815,
    "uv": true,
    "validate_dropped": 0
   },
@@ -522,7 +522,7 @@
    "name": "1GRASS_bm",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 56455,
+   "faces": 56450,
    "uv": true,
    "validate_dropped": 0
   },
@@ -530,7 +530,7 @@
    "name": "1GRASS_bn",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 56452,
+   "faces": 56439,
    "uv": true,
    "validate_dropped": 0
   },
@@ -538,7 +538,7 @@
    "name": "1GRASS_bo",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 56428,
+   "faces": 56418,
    "uv": true,
    "validate_dropped": 0
   },
@@ -546,7 +546,7 @@
    "name": "1GRASS_bp",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 56292,
+   "faces": 56294,
    "uv": true,
    "validate_dropped": 0
   },
@@ -554,7 +554,7 @@
    "name": "1GRASS_bq",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 56168,
+   "faces": 56196,
    "uv": true,
    "validate_dropped": 0
   },
@@ -562,7 +562,7 @@
    "name": "1GRASS_br",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 55542,
+   "faces": 55160,
    "uv": true,
    "validate_dropped": 0
   },
@@ -570,7 +570,7 @@
    "name": "1GRASS_bs",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 54211,
+   "faces": 53794,
    "uv": true,
    "validate_dropped": 0
   },
@@ -578,7 +578,7 @@
    "name": "1GRASS_bt",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 53485,
+   "faces": 53484,
    "uv": true,
    "validate_dropped": 0
   },
@@ -586,7 +586,7 @@
    "name": "1GRASS_bu",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 53944,
+   "faces": 54299,
    "uv": true,
    "validate_dropped": 0
   },
@@ -594,7 +594,7 @@
    "name": "1GRASS_bv",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 54701,
+   "faces": 55046,
    "uv": true,
    "validate_dropped": 0
   },
@@ -602,7 +602,7 @@
    "name": "1GRASS_bw",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 54752,
+   "faces": 54743,
    "uv": true,
    "validate_dropped": 0
   },
@@ -610,7 +610,7 @@
    "name": "1GRASS_bx",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 54593,
+   "faces": 54604,
    "uv": true,
    "validate_dropped": 0
   },
@@ -618,7 +618,7 @@
    "name": "1GRASS_by",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 54703,
+   "faces": 54713,
    "uv": true,
    "validate_dropped": 0
   },
@@ -626,7 +626,7 @@
    "name": "1GRASS_bz",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 54809,
+   "faces": 55151,
    "uv": true,
    "validate_dropped": 0
   },
@@ -634,7 +634,7 @@
    "name": "1GRASS_ca",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 55553,
+   "faces": 55901,
    "uv": true,
    "validate_dropped": 0
   },
@@ -642,7 +642,7 @@
    "name": "1GRASS_cb",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 56273,
+   "faces": 56289,
    "uv": true,
    "validate_dropped": 0
   },
@@ -650,7 +650,7 @@
    "name": "1GRASS_cc",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 56326,
+   "faces": 56334,
    "uv": true,
    "validate_dropped": 0
   },
@@ -658,7 +658,7 @@
    "name": "1GRASS_cd",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 56319,
+   "faces": 56310,
    "uv": true,
    "validate_dropped": 0
   },
@@ -666,7 +666,7 @@
    "name": "1GRASS_ce",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 56292,
+   "faces": 56289,
    "uv": true,
    "validate_dropped": 0
   },
@@ -674,7 +674,7 @@
    "name": "1GRASS_cf",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 56276,
+   "faces": 56256,
    "uv": true,
    "validate_dropped": 0
   },
@@ -682,7 +682,7 @@
    "name": "1GRASS_cg",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 56253,
+   "faces": 56238,
    "uv": true,
    "validate_dropped": 0
   },
@@ -690,7 +690,7 @@
    "name": "1GRASS_ch",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 56295,
+   "faces": 56304,
    "uv": true,
    "validate_dropped": 0
   },
@@ -698,7 +698,7 @@
    "name": "1GRASS_ci",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 56184,
+   "faces": 55591,
    "uv": true,
    "validate_dropped": 0
   },
@@ -706,7 +706,7 @@
    "name": "1GRASS_cj",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 55088,
+   "faces": 54501,
    "uv": true,
    "validate_dropped": 0
   },
@@ -714,7 +714,7 @@
    "name": "1GRASS_ck",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 54178,
+   "faces": 54196,
    "uv": true,
    "validate_dropped": 0
   },
@@ -722,7 +722,7 @@
    "name": "1GRASS_cl",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 55344,
+   "faces": 55406,
    "uv": true,
    "validate_dropped": 0
   },
@@ -730,7 +730,7 @@
    "name": "1GRASS_cm",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 56543,
+   "faces": 56588,
    "uv": true,
    "validate_dropped": 0
   },
@@ -738,7 +738,7 @@
    "name": "1GRASS_cn",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 56588,
+   "faces": 56582,
    "uv": true,
    "validate_dropped": 0
   },
@@ -746,7 +746,7 @@
    "name": "1GRASS_co",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 56567,
+   "faces": 56591,
    "uv": true,
    "validate_dropped": 0
   },
@@ -754,7 +754,7 @@
    "name": "1GRASS_cp",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 56567,
+   "faces": 56601,
    "uv": true,
    "validate_dropped": 0
   },
@@ -762,7 +762,7 @@
    "name": "1GRASS_cq",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 56549,
+   "faces": 56101,
    "uv": true,
    "validate_dropped": 0
   },
@@ -770,7 +770,7 @@
    "name": "1GRASS_cr",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 54374,
+   "faces": 53896,
    "uv": true,
    "validate_dropped": 0
   },
@@ -778,7 +778,7 @@
    "name": "1GRASS_cs",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 52194,
+   "faces": 52176,
    "uv": true,
    "validate_dropped": 0
   },
@@ -794,7 +794,7 @@
    "name": "1GRASS_cu",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 53221,
+   "faces": 53974,
    "uv": true,
    "validate_dropped": 0
   },
@@ -802,7 +802,7 @@
    "name": "1GRASS_cv",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 55283,
+   "faces": 55043,
    "uv": true,
    "validate_dropped": 0
   },
@@ -810,7 +810,7 @@
    "name": "1GRASS_cw",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 55226,
+   "faces": 54240,
    "uv": true,
    "validate_dropped": 0
   },
@@ -818,7 +818,7 @@
    "name": "1GRASS_cx",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 54208,
+   "faces": 54205,
    "uv": true,
    "validate_dropped": 0
   },
@@ -826,7 +826,7 @@
    "name": "1GRASS_cy",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 55342,
+   "faces": 55313,
    "uv": true,
    "validate_dropped": 0
   },
@@ -834,7 +834,7 @@
    "name": "1GRASS_cz",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 56250,
+   "faces": 56204,
    "uv": true,
    "validate_dropped": 0
   },
@@ -842,7 +842,7 @@
    "name": "1GRASS_da",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 56120,
+   "faces": 56094,
    "uv": true,
    "validate_dropped": 0
   },
@@ -850,7 +850,7 @@
    "name": "1GRASS_db",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 56156,
+   "faces": 56174,
    "uv": true,
    "validate_dropped": 0
   },
@@ -858,7 +858,7 @@
    "name": "1GRASS_dc",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 56151,
+   "faces": 56175,
    "uv": true,
    "validate_dropped": 0
   },
@@ -866,7 +866,7 @@
    "name": "1GRASS_dd",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 55666,
+   "faces": 55698,
    "uv": true,
    "validate_dropped": 0
   },
@@ -874,7 +874,7 @@
    "name": "1GRASS_de",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 55232,
+   "faces": 55485,
    "uv": true,
    "validate_dropped": 0
   },
@@ -882,7 +882,7 @@
    "name": "1GRASS_df",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 55826,
+   "faces": 56067,
    "uv": true,
    "validate_dropped": 0
   },
@@ -890,7 +890,7 @@
    "name": "1GRASS_dg",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 56371,
+   "faces": 56383,
    "uv": true,
    "validate_dropped": 0
   },
@@ -898,7 +898,7 @@
    "name": "1GRASS_dh",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 56407,
+   "faces": 56394,
    "uv": true,
    "validate_dropped": 0
   },
@@ -906,7 +906,7 @@
    "name": "1GRASS_di",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 56394,
+   "faces": 56389,
    "uv": true,
    "validate_dropped": 0
   },
@@ -914,7 +914,7 @@
    "name": "1GRASS_dj",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 56362,
+   "faces": 56391,
    "uv": true,
    "validate_dropped": 0
   },
@@ -922,7 +922,7 @@
    "name": "1GRASS_dk",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 55884,
+   "faces": 55925,
    "uv": true,
    "validate_dropped": 0
   },
@@ -930,7 +930,7 @@
    "name": "1GRASS_dl",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 55416,
+   "faces": 55641,
    "uv": true,
    "validate_dropped": 0
   },
@@ -938,7 +938,7 @@
    "name": "1GRASS_dm",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 55795,
+   "faces": 55826,
    "uv": true,
    "validate_dropped": 0
   },
@@ -946,7 +946,7 @@
    "name": "1GRASS_dn",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 56087,
+   "faces": 55967,
    "uv": true,
    "validate_dropped": 0
   },
@@ -954,7 +954,7 @@
    "name": "1GRASS_do",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 56175,
+   "faces": 55554,
    "uv": true,
    "validate_dropped": 0
   },
@@ -962,7 +962,7 @@
    "name": "1GRASS_dp",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 55680,
+   "faces": 54986,
    "uv": true,
    "validate_dropped": 0
   },
@@ -970,7 +970,7 @@
    "name": "1GRASS_dq",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 54962,
+   "faces": 54923,
    "uv": true,
    "validate_dropped": 0
   },
@@ -978,7 +978,7 @@
    "name": "1GRASS_dr",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 55376,
+   "faces": 55548,
    "uv": true,
    "validate_dropped": 0
   },
@@ -986,7 +986,7 @@
    "name": "1GRASS_ds",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 55601,
+   "faces": 55808,
    "uv": true,
    "validate_dropped": 0
   },
@@ -994,7 +994,7 @@
    "name": "1GRASS_dt",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 55452,
+   "faces": 55836,
    "uv": true,
    "validate_dropped": 0
   },
@@ -1002,7 +1002,7 @@
    "name": "1GRASS_du",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 55901,
+   "faces": 55784,
    "uv": true,
    "validate_dropped": 0
   },
@@ -1010,7 +1010,7 @@
    "name": "1GRASS_dv",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 55392,
+   "faces": 54888,
    "uv": true,
    "validate_dropped": 0
   },
@@ -1018,7 +1018,7 @@
    "name": "1GRASS_dw",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 54458,
+   "faces": 54886,
    "uv": true,
    "validate_dropped": 0
   },
@@ -1026,7 +1026,7 @@
    "name": "1GRASS_dx",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 55254,
+   "faces": 55726,
    "uv": true,
    "validate_dropped": 0
   },
@@ -1034,7 +1034,7 @@
    "name": "1GRASS_dy",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 56018,
+   "faces": 56003,
    "uv": true,
    "validate_dropped": 0
   },
@@ -1042,7 +1042,7 @@
    "name": "1GRASS_dz",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 55831,
+   "faces": 55798,
    "uv": true,
    "validate_dropped": 0
   },
@@ -1050,7 +1050,7 @@
    "name": "1GRASS_ea",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 55656,
+   "faces": 55624,
    "uv": true,
    "validate_dropped": 0
   },
@@ -1058,7 +1058,7 @@
    "name": "1GRASS_eb",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 55488,
+   "faces": 55461,
    "uv": true,
    "validate_dropped": 0
   },
@@ -1066,7 +1066,7 @@
    "name": "1GRASS_ec",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 55344,
+   "faces": 55343,
    "uv": true,
    "validate_dropped": 0
   },
@@ -1074,7 +1074,7 @@
    "name": "1GRASS_ed",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 55218,
+   "faces": 54371,
    "uv": true,
    "validate_dropped": 0
   },
@@ -1082,7 +1082,7 @@
    "name": "1GRASS_ee",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 54007,
+   "faces": 53182,
    "uv": true,
    "validate_dropped": 0
   },
@@ -1090,7 +1090,7 @@
    "name": "1GRASS_ef",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 52899,
+   "faces": 52932,
    "uv": true,
    "validate_dropped": 0
   },
@@ -1098,7 +1098,7 @@
    "name": "1GRASS_eg",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 52965,
+   "faces": 53037,
    "uv": true,
    "validate_dropped": 0
   },
@@ -1106,7 +1106,7 @@
    "name": "1GRASS_eh",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 53100,
+   "faces": 53197,
    "uv": true,
    "validate_dropped": 0
   },
@@ -1114,7 +1114,7 @@
    "name": "1GRASS_ei",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 53251,
+   "faces": 53427,
    "uv": true,
    "validate_dropped": 0
   },
@@ -1122,7 +1122,7 @@
    "name": "1GRASS_ej",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 53941,
+   "faces": 54996,
    "uv": true,
    "validate_dropped": 0
   },
@@ -1130,7 +1130,7 @@
    "name": "1GRASS_ek",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 55484,
+   "faces": 56419,
    "uv": true,
    "validate_dropped": 0
   },
@@ -1138,7 +1138,7 @@
    "name": "1GRASS_el",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 56410,
+   "faces": 55546,
    "uv": true,
    "validate_dropped": 0
   },
@@ -1146,7 +1146,7 @@
    "name": "1GRASS_em",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 55132,
+   "faces": 54178,
    "uv": true,
    "validate_dropped": 0
   },
@@ -1154,7 +1154,7 @@
    "name": "1GRASS_en",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 53758,
+   "faces": 53700,
    "uv": true,
    "validate_dropped": 0
   },
@@ -1162,31 +1162,23 @@
    "name": "1GRASS_eo",
    "collection": "GEN_terrain",
    "verts": 29998,
-   "faces": 53751,
+   "faces": 55197,
    "uv": true,
    "validate_dropped": 0
   },
   {
    "name": "1GRASS_ep",
    "collection": "GEN_terrain",
-   "verts": 29998,
-   "faces": 55465,
-   "uv": true,
-   "validate_dropped": 0
-  },
-  {
-   "name": "1GRASS_eq",
-   "collection": "GEN_terrain",
-   "verts": 14697,
-   "faces": 19927,
+   "verts": 26351,
+   "faces": 43020,
    "uv": true,
    "validate_dropped": 0
   },
   {
    "name": "1GRASS_ring_a",
    "collection": "GEN_terrain",
-   "verts": 29998,
-   "faces": 23992,
+   "verts": 29999,
+   "faces": 23993,
    "uv": true,
    "validate_dropped": 0
   },
@@ -1201,8 +1193,8 @@
   {
    "name": "1GRASS_ring_c",
    "collection": "GEN_terrain",
-   "verts": 1872,
-   "faces": 1496,
+   "verts": 1835,
+   "faces": 1467,
    "uv": true,
    "validate_dropped": 0
   },
@@ -1233,8 +1225,8 @@
   {
    "name": "MARKINGS",
    "collection": "GEN_misc",
-   "verts": 32848,
-   "faces": 16424,
+   "verts": 26608,
+   "faces": 13304,
    "uv": true,
    "validate_dropped": 0
   },
@@ -1249,24 +1241,24 @@
   {
    "name": "1WALL_PARA_stone",
    "collection": "GEN_wall",
-   "verts": 4176,
-   "faces": 2784,
+   "verts": 4392,
+   "faces": 2928,
    "uv": true,
    "validate_dropped": 0
   },
   {
    "name": "1WALL_barrier_a",
    "collection": "GEN_wall",
-   "verts": 29999,
-   "faces": 33606,
+   "verts": 29998,
+   "faces": 33639,
    "uv": true,
    "validate_dropped": 0
   },
   {
    "name": "1WALL_barrier_b",
    "collection": "GEN_wall",
-   "verts": 3776,
-   "faces": 4212,
+   "verts": 4336,
+   "faces": 4815,
    "uv": true,
    "validate_dropped": 0
   },
@@ -1281,8 +1273,8 @@
   {
    "name": "1ROAD_grid_unclassified_0",
    "collection": "GEN_road",
-   "verts": 808,
-   "faces": 806,
+   "verts": 810,
+   "faces": 808,
    "uv": true,
    "validate_dropped": 0
   },
@@ -1921,8 +1913,8 @@
   {
    "name": "1ROAD_grid_primary_80",
    "collection": "GEN_road",
-   "verts": 78,
-   "faces": 76,
+   "verts": 82,
+   "faces": 80,
    "uv": true,
    "validate_dropped": 0
   },
@@ -2041,8 +2033,8 @@
   {
    "name": "1ROAD_grid_unclassified_96",
    "collection": "GEN_road",
-   "verts": 50,
-   "faces": 48,
+   "verts": 52,
+   "faces": 50,
    "uv": true,
    "validate_dropped": 0
   },
@@ -2063,7 +2055,7 @@
    "validate_dropped": 0
   },
   {
-   "name": "1ROAD_grid_unclassified_99",
+   "name": "1ROAD_grid_tertiary_99",
    "collection": "GEN_road",
    "verts": 46,
    "faces": 44,
@@ -2071,7 +2063,15 @@
    "validate_dropped": 0
   },
   {
-   "name": "1ROAD_grid_tertiary_100",
+   "name": "1ROAD_grid_unclassified_100",
+   "collection": "GEN_road",
+   "verts": 46,
+   "faces": 44,
+   "uv": true,
+   "validate_dropped": 0
+  },
+  {
+   "name": "1ROAD_grid_tertiary_101",
    "collection": "GEN_road",
    "verts": 44,
    "faces": 42,
@@ -2079,15 +2079,7 @@
    "validate_dropped": 0
   },
   {
-   "name": "1ROAD_grid_secondary_101",
-   "collection": "GEN_road",
-   "verts": 44,
-   "faces": 42,
-   "uv": true,
-   "validate_dropped": 0
-  },
-  {
-   "name": "1ROAD_grid_tertiary_102",
+   "name": "1ROAD_grid_secondary_102",
    "collection": "GEN_road",
    "verts": 44,
    "faces": 42,
@@ -2190,8 +2182,8 @@
   "1ROAD_grid_primary_31",
   "1ROAD_grid_residential_32",
   "1ROAD_grid_primary_33",
-  "1ROAD_grid_primary_34",
-  "1ROAD_grid_residential_35",
+  "1ROAD_grid_residential_34",
+  "1ROAD_grid_primary_35",
   "1ROAD_grid_tertiary_36",
   "1ROAD_grid_tertiary_37",
   "1ROAD_grid_unclassified_38",
@@ -2199,9 +2191,9 @@
   "1ROAD_grid_tertiary_40",
   "1ROAD_grid_unclassified_41",
   "1ROAD_grid_secondary_42",
-  "1ROAD_grid_secondary_43",
-  "1ROAD_grid_unclassified_44",
-  "1ROAD_grid_tertiary_45",
+  "1ROAD_grid_unclassified_43",
+  "1ROAD_grid_tertiary_44",
+  "1ROAD_grid_secondary_45",
   "1ROAD_grid_tertiary_46",
   "1ROAD_grid_residential_47",
   "1ROAD_grid_unclassified_48",
@@ -2220,21 +2212,21 @@
   "1ROAD_grid_unclassified_61",
   "1ROAD_grid_unclassified_62",
   "1ROAD_grid_residential_63",
-  "1ROAD_grid_unclassified_64",
-  "1ROAD_grid_primary_65",
-  "1ROAD_grid_tertiary_66",
-  "1ROAD_grid_primary_67",
+  "1ROAD_grid_primary_64",
+  "1ROAD_grid_tertiary_65",
+  "1ROAD_grid_primary_66",
+  "1ROAD_grid_unclassified_67",
   "1ROAD_grid_tertiary_68",
   "1ROAD_grid_unclassified_69",
   "1ROAD_grid_unclassified_70",
   "1ROAD_grid_primary_71",
-  "1ROAD_grid_primary_72",
-  "1ROAD_grid_unclassified_73",
+  "1ROAD_grid_unclassified_72",
+  "1ROAD_grid_primary_73",
   "1ROAD_grid_tertiary_74",
   "1ROAD_grid_tertiary_75",
   "1ROAD_grid_unclassified_76",
-  "1ROAD_grid_primary_77",
-  "1ROAD_grid_unclassified_78",
+  "1ROAD_grid_unclassified_77",
+  "1ROAD_grid_primary_78",
   "1ROAD_grid_unclassified_79",
   "1ROAD_grid_primary_80",
   "1ROAD_grid_unclassified_81",
@@ -2246,24 +2238,22 @@
   "1ROAD_grid_primary_87",
   "1ROAD_grid_primary_88",
   "1ROAD_grid_residential_89",
-  "1ROAD_grid_tertiary_90",
-  "1ROAD_grid_unclassified_91",
+  "1ROAD_grid_unclassified_90",
+  "1ROAD_grid_tertiary_91",
   "1ROAD_grid_tertiary_92",
-  "1ROAD_grid_unclassified_93",
+  "1ROAD_grid_unclassified_94",
   "1ROAD_grid_unclassified_95",
-  "1ROAD_grid_primary_96",
-  "1ROAD_grid_tertiary_97",
-  "1ROAD_grid_unclassified_98",
-  "1ROAD_grid_unclassified_99",
+  "1ROAD_grid_unclassified_96",
+  "1ROAD_grid_unclassified_97",
+  "1ROAD_grid_tertiary_98",
+  "1ROAD_grid_tertiary_99",
   "1ROAD_grid_unclassified_100",
   "1ROAD_grid_tertiary_101",
-  "1ROAD_grid_primary_102",
-  "1ROAD_grid_residential_103",
-  "1ROAD_grid_tertiary_104",
-  "1ROAD_grid_secondary_105",
-  "1ROAD_grid_tertiary_106",
-  "1ROAD_grid_unclassified_107",
-  "1ROAD_grid_residential_108",
+  "1ROAD_grid_secondary_102",
+  "1ROAD_grid_tertiary_103",
+  "1ROAD_grid_residential_104",
+  "1ROAD_grid_unclassified_105",
+  "1ROAD_grid_residential_106",
   "1GRASS_a",
   "1GRASS_b",
   "1GRASS_c",
@@ -2410,12 +2400,12 @@
   "1GRASS_en",
   "1GRASS_eo",
   "1GRASS_ep",
-  "1GRASS_eq",
   "1GRASS_ring_a",
   "1GRASS_ring_b",
   "1GRASS_ring_c",
   "1WALL_PARA_stone",
-  "1WALL_barrier"
+  "1WALL_barrier_a",
+  "1WALL_barrier_b"
  ],
  "auth_untouched": [
   "1WALL_TILTUP_0",

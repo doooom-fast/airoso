@@ -1,0 +1,106 @@
+{
+ "_doc": "tools/edge_smoothness.py, ledger 0087: the built road edge's 1 m second difference and residual to a robust fit, per side",
+ "obj": "<sys>/work/furniture/b016/data/track.obj",
+ "step_m": 1.0,
+ "thresholds": {
+  "FLARE_M": 1.5,
+  "FIT_HALF_M": 8.0,
+  "RAGGED_RESID_M": 0.05,
+  "RAGGED_D2_M": 0.04
+ },
+ "boundary_segments": {
+  "road": 6536,
+  "strip": 13072
+ },
+ "lane_edge": {
+  "left": {
+   "samples": 4887,
+   "judged": 4882,
+   "flare": 0,
+   "open": 5,
+   "d2_m": {
+    "p50": 0.001,
+    "p95": 0.0072,
+    "p99": 0.0119,
+    "max": 0.02
+   },
+   "resid_m": {
+    "p50": 0.0004,
+    "p95": 0.0023,
+    "p99": 0.0038,
+    "max": 0.0111
+   }
+  },
+  "right": {
+   "samples": 4887,
+   "judged": 4879,
+   "flare": 0,
+   "open": 8,
+   "d2_m": {
+    "p50": 0.001,
+    "p95": 0.0074,
+    "p99": 0.0122,
+    "max": 0.0196
+   },
+   "resid_m": {
+    "p50": 0.0004,
+    "p95": 0.0024,
+    "p99": 0.0039,
+    "max": 0.0091
+   }
+  }
+ },
+ "strip_outer": {
+  "left": {
+   "samples": 4887,
+   "judged": 4872,
+   "flare": 0,
+   "open": 5,
+   "d2_m": {
+    "p50": 0.001,
+    "p95": 0.0074,
+    "p99": 0.0119,
+    "max": 0.0209
+   },
+   "resid_m": {
+    "p50": 0.0005,
+    "p95": 0.0024,
+    "p99": 0.0039,
+    "max": 0.0134
+   }
+  },
+  "right": {
+   "samples": 4887,
+   "judged": 4873,
+   "flare": 0,
+   "open": 8,
+   "d2_m": {
+    "p50": 0.001,
+    "p95": 0.0075,
+    "p99": 0.012,
+    "max": 0.0225
+   },
+   "resid_m": {
+    "p50": 0.0005,
+    "p95": 0.0024,
+    "p99": 0.0039,
+    "max": 0.0093
+   }
+  }
+ },
+ "ragged_runs": {
+  "lane_edge": 0,
+  "strip_outer": 0
+ },
+ "worst_runs": [],
+ "gate": {
+  "thresholds": {
+   "d2_p99_m": 0.02,
+   "resid_p99_m": 0.012,
+   "ragged_runs_max": 0,
+   "_doc": "ledger 0087 \u00a74 (opt-in) \u26a0 [a mirror: calibrated on our own output, Milford 0.1.4 = Mac c5's built lane edge, so a no-regression bar, not a measured envelope (GATES-CHANGELOG)]: a side's p99 may not pass what 0.1.4 reaches at its single worst sample (d2 max 0.0200 m, resid max 0.0111 m; its p99 is 0.0122 / 0.0039 m); 0.1.2's staircase (p99 0.045 / 0.084 m) fails; 0 ragged stretches as on c5"
+  },
+  "fails": [],
+  "verdict": "PASS"
+ }
+}

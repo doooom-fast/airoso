@@ -365,7 +365,36 @@ def _spans(stations: list[float], lift: list[float]) -> list[list[float]]:
     return out
 
 
-def resolve(decl: dict, fc: dict, edges_rec: dict, *, snap_grid_m: float = 7.0) -> dict:
+def _trim_capped(surf, grade, widths, src, caps):
+    """network.cap_dead_ends (ledger 0075; data/network.caps.json): an end of the line that IS a capped dead end of the
+    network starts (or ends) ``line_trim_m`` inside it, at the first vertex that far along: the cap is the road's end,
+    not a barrier in the line's corridor. Returns the trimmed lists and [{end, cap, trimmed_m}]."""
+    done = []
+    for end in (0, 1):
+        if len(grade) < 3:
+            break
+        tip = grade[0] if end == 0 else grade[-1]
+        cap = next((c for c in caps if math.dist(_xz(tip), tuple(c["node_xz"])) < 1.0), None)
+        if cap is None:
+            continue
+        order = list(range(len(grade))) if end == 0 else list(range(len(grade) - 1, -1, -1))
+        acc, cut = 0.0, None
+        for a, b in zip(order, order[1:]):
+            acc += math.dist(_xz(grade[a]), _xz(grade[b]))
+            if acc >= float(cap["line_trim_m"]):
+                cut = b
+                break
+        if cut is None:
+            continue
+        if end == 0:
+            surf, grade, widths, src = surf[cut:], grade[cut:], widths[cut:], src[cut:]
+        else:
+            surf, grade, widths, src = surf[:cut + 1], grade[:cut + 1], widths[:cut + 1], src[:cut + 1]
+        done.append({"end": "start" if end == 0 else "finish", "cap": cap["id"], "trimmed_m": round(acc, 2)})
+    return surf, grade, widths, src, done
+
+
+def resolve(decl: dict, fc: dict, edges_rec: dict, *, snap_grid_m: float = 7.0, caps: list | None = None) -> dict:
     """Pure resolution (no file I/O): the chain and the line for ``decl`` on this draft. Raises RefusedError."""
     if not isinstance(decl, dict):
         raise RefusedError("network.reference_line must be an object")
@@ -457,6 +486,9 @@ def resolve(decl: dict, fc: dict, edges_rec: dict, *, snap_grid_m: float = 7.0) 
             grade.append(list(g_[i]))
             widths.append(float(w_[i]))
             src.append([e.id, ix[i]])
+    capped = []
+    if caps:
+        surf, grade, widths, src, capped = _trim_capped(surf, grade, widths, src, caps)
     st = [0.0]
     for i in range(1, len(grade)):
         st.append(st[-1] + math.dist(_xz(grade[i - 1]), _xz(grade[i])))
@@ -478,7 +510,7 @@ def resolve(decl: dict, fc: dict, edges_rec: dict, *, snap_grid_m: float = 7.0) 
                          "length_m": round(e.length, 1), "why": why})
     return {"how": how, "chain": [e.id for e in chain],
             "bridged": [{"id": e.id, "name": e.name, "length_m": round(e.length, 1)} for e in bridged],
-            "joints": joints, "side_check": side, "surface": surf, "grade": grade, "widths": widths,
+            "joints": joints, "capped_ends": capped, "side_check": side, "surface": surf, "grade": grade, "widths": widths,
             "source_by_vertex": src, "stations": st, "lift": lift, "spans": _spans(st, lift),
             "unjudged": unjudged, "built_km": round(sum(e.length for e in edges) / 1000.0, 3),
             "judged_km": round(st[-1] / 1000.0, 3), "join_tol_m": tol, "max_joint_turn_deg": max_turn}
@@ -508,7 +540,9 @@ def build(project_dir: str | Path) -> dict:
         raise RefusedError("no data/network.edges.local.json — run scripts.geometry.build_network_mesh first (it "
                            "records every swept edge line when network.reference_line is declared)")
     erec = json.loads(ep.read_text(encoding="utf-8"))
-    r = resolve(decl, fc, erec, snap_grid_m=float(net.get("snap_grid_m", 7.0)))
+    cp = data / "network.caps.json"    # build_network_mesh's dead-end caps (network.cap_dead_ends), when it wrote them
+    caps = json.loads(cp.read_text(encoding="utf-8")).get("caps") if cp.exists() else None
+    r = resolve(decl, fc, erec, snap_grid_m=float(net.get("snap_grid_m", 7.0)), caps=caps)
 
     mirror_x = bool(erec.get("mirror_x", cfg.get("mirror_x", False)))
     sx = -1.0 if mirror_x else 1.0
@@ -543,6 +577,7 @@ def build(project_dir: str | Path) -> dict:
 
     rep = {"tool": "scripts/geometry/network_reference.py", "line": {
                "label": label, "how": r["how"], "edges": r["chain"], "bridged": r["bridged"], "joints": r["joints"],
+               **({"capped_ends": r["capped_ends"]} if r["capped_ends"] else {}),
                "max_joint_gap_m": max([j["gap_m"] for j in r["joints"]] or [0.0]),
                "points": len(r["surface"]), "length_km": r["judged_km"], "spans": r["spans"],
                "side_check": r["side_check"], "join_tol_m": r["join_tol_m"],

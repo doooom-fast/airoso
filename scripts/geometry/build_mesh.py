@@ -60,19 +60,6 @@ def corridor_row_height(row, lat, half_l, step_l):
     return z1 * (1 - to) + z2 * to
 
 
-def ribbon_cols(road_profile) -> int:
-    """Lateral columns for the road ribbon: road_profile.ribbon_cols when declared, else 1 (the two-edge ribbon).
-
-    A one-quad row twists wherever its two edges change height differently between rows. A camber ramp does that (Exotics
-    T2, 2026-10-28), and so does a curve on a grade, banked or not: the inside edge's rows bunch towards the turning centre
-    while every row still drops the centreline's full fall, so the quad's diagonal splits a near-vertical sliver off the
-    inside, and the drop it carries crosses the wheel paths as a step (Milford's s 1,000 left-hander on a 15 % descent: 26
-    severe steps up to 22 cm, ledger 0069). The key used to be honoured on a banked road only; it is now honoured wherever
-    it is declared. Every track that declared it before is banked (Exotics, Pikes Peak), so their ribbon is unchanged, and a
-    track without the key still builds the two-edge ribbon byte for byte."""
-    return max(1, int((road_profile or {}).get("ribbon_cols", 1)))
-
-
 def seam_weld_tables(deck_sheets, shoulder: dict, connector_tris=(), cell: float = 4.0) -> tuple[dict, dict]:
     """The seam weld's two pavement tables, (cell i, cell j) -> triangles, both on ``cell`` m plan cells.
 
@@ -123,6 +110,19 @@ def pavement_below(table: dict, px: float, pz: float, ref: float, window: float 
             if abs(y - ref) <= window and (lo is None or y < lo):
                 lo = y
     return lo
+
+
+def ribbon_cols(road_profile) -> int:
+    """Lateral columns for the road ribbon: road_profile.ribbon_cols when declared, else 1 (the two-edge ribbon).
+
+    A one-quad row twists wherever its two edges change height differently between rows. A camber ramp does that (Exotics
+    T2, 2026-10-28), and so does a curve on a grade, banked or not: the inside edge's rows bunch towards the turning centre
+    while every row still drops the centreline's full fall, so the quad's diagonal splits a near-vertical sliver off the
+    inside, and the drop it carries crosses the wheel paths as a step (Milford's s 1,000 left-hander on a 15 % descent: 26
+    severe steps up to 22 cm, ledger 0069). The key used to be honoured on a banked road only; it is now honoured wherever
+    it is declared. Every track that declared it before is banked (Exotics, Pikes Peak), so their ribbon is unchanged, and a
+    track without the key still builds the two-edge ribbon byte for byte."""
+    return max(1, int((road_profile or {}).get("ribbon_cols", 1)))
 
 
 def read_npy(path: Path) -> list[list[float]]:
@@ -905,6 +905,12 @@ def build(project_dir: str | Path) -> dict:
     _max_grade = float(cfg_raw.get("road_profile", {}).get("max_grade_pct", 6.0)) / 100.0
     raw_pts = evidence.cap_grade(raw_pts, max_grade=_max_grade)
     widths = local["widths_m"]
+    # THE STREET'S OWN LINE (ledger 0070 B2): widths_from_osm writes the pre-flare width and the OSM lanes beside the
+    # pavement width; the paint reads them. Absent (or a different count): the paint keeps the pavement width.
+    _base_w = local.get("widths_base_m")
+    _base_w = list(_base_w) if _base_w and len(_base_w) == len(widths) else None
+    _lanes_v = local.get("lanes_osm")
+    _lanes_v = list(_lanes_v) if _lanes_v and len(_lanes_v) == len(widths) else None
     # NO SAWTOOTH EDGES. OSM lane-derived widths step instantly at junction pads (Lake Murray's
     # College Avenue: 13 -> 30 m across one 3 m vertex), and a swept ribbon turns that into a
     # visible sawtooth on a road that should stay wide. Cap the rate of change, not the value —
@@ -941,6 +947,10 @@ def build(project_dir: str | Path) -> dict:
                 _sink.append((_cx + _dx * _lead_step * _k, _cy, _cz + _dz * _lead_step * _k))
         raw_pts = list(reversed(_head)) + list(raw_pts) + _tail
         widths = [widths[0]] * _n_lead + list(widths) + [widths[-1]] * _n_lead
+        if _base_w is not None:
+            _base_w = [_base_w[0]] * _n_lead + _base_w + [_base_w[-1]] * _n_lead
+        if _lanes_v is not None:
+            _lanes_v = [_lanes_v[0]] * _n_lead + _lanes_v + [_lanes_v[-1]] * _n_lead
         _lead_offset = _lead_m
         print(f"  [lead-in/out] {_n_lead} verts ({_lead_m:.0f} m) of road past each open end")
 
@@ -1003,6 +1013,14 @@ def build(project_dir: str | Path) -> dict:
         _declared.append(_si)
         if all(abs(_stp[_si] - _stp[a]) > 30.0 for a in _apexes):
             _apexes.append(_si)
+    # route.fold_treatment "pinch" (ledger 0065, Lake Murray's redraft): no plateau, no flat disc. Each fold keeps its real profile
+    # (College / Alvarado is a hump Kevin asked for, ledger 0057) and the inside edge is levelled to one height instead
+    # (ribbon.fold_level_deltas, ledger 0050's rule): the disc's hard rim stood 0.33 m proud 50 m before the apex
+    _pinch = ((cfg_raw.get("route") or {}).get("fold_treatment") == "pinch")
+    if _pinch:
+        if _apexes:
+            print(f"  [fold pinch] {len(_apexes)} fold apex(es) keep their profile; the inside edges are levelled (route.fold_treatment)")
+        _apexes = []
     # rc10-proven treatment: LOCAL ±40 m plateau at each fold apex, at its own height.
     # road_profile.fold_plateaus false: a fitted hairpin is a graded corner, kept on its profile (V3-PLAN A2)
     _plateaus_on = fold_plateaus_enabled(cfg_raw)
@@ -1366,7 +1384,11 @@ def build(project_dir: str | Path) -> dict:
     # road_profile.ribbon_cols: lateral columns, so a row whose edges change height differently (a camber ramp, a curve on
     # a grade) doesn't twist into a step between rows (ribbon.road_ribbon; ribbon_cols above). Absent = the two-edge ribbon.
     _cols = ribbon_cols(cfg_raw.get("road_profile"))
-    road = ribbon.road_ribbon(centerline, widths, tile_m=4.0, bank_at=bnk, cols=_cols)  # 4 m = the Lake Murray asphalt scale
+    _fold_level = ribbon.fold_level_deltas(centerline, widths) if _pinch else None   # route.fold_treatment "pinch" only (ledger 0065)
+    if _fold_level:
+        _fl = [abs(v) for v in _fold_level[0] + _fold_level[1] if v]
+        print(f"  [fold pinch] {len(_fl)} edge rows levelled, largest change {max(_fl, default=0.0):.3f} m")
+    road = ribbon.road_ribbon(centerline, widths, tile_m=4.0, bank_at=bnk, cols=_cols, fold_level=_fold_level)  # 4 m = the Lake Murray asphalt scale
     # ONE SHEET THROUGH JUNCTIONS: inside a flat zone every pavement vert snaps to the plane —
     # coplanar centerlines still left each leg's CAMBERED ribbon riding proud of the pad
     # (the 20-40 cm lip across the mouth in Kevin's photo).
@@ -1580,12 +1602,13 @@ def build(project_dir: str | Path) -> dict:
                         _r = True
                         break
             _sw_roll.append(_r)
-        shoulder = ribbon.curb_sidewalk(centerline, _sw_widths, roll_flags=_sw_roll, lift=ROAD_LIFT_M,
+        shoulder = ribbon.curb_sidewalk(centerline, _sw_widths, roll_flags=_sw_roll, fold_level=_fold_level, lift=ROAD_LIFT_M,
                                         grass_clearance=GRASS_CLEARANCE_M, bank_at=bnk, ground=grass_surf,
                                         curb_h=float(edge_cfg.get("curb_h", 0.15)),
                                         curb_face_w=float(edge_cfg.get("curb_face_w", 0.08)),
                                         sidewalk_w=float(edge_cfg.get("sidewalk_w", 1.5)),
-                                        grade_w=float(edge_cfg.get("grade_w", 1.0)))
+                                        grade_w=float(edge_cfg.get("grade_w", 1.0)),
+                                        ratio=float(edge_cfg.get("ratio", 2.0)))
         # DESPIKE THE NEAR-ROAD BAND. The strip's outer edge is draped onto the real grass surface,
         # and where that lookup lands badly a SINGLE vertex gets yanked down while both its
         # neighbours stay put. Measured on Sand Creek: across the whole curb/gutter band the strip
@@ -1632,7 +1655,7 @@ def build(project_dir: str | Path) -> dict:
             # no-ground fallback: lip + 1 m verge, no sections, which also silences the ring
             # annulus, the graded floor and the stone lips downstream), raw-grid grass everywhere,
             # and a short blend band sewn in later where grass approaches the deck.
-            shoulder = ribbon.road_shoulder(centerline, widths, lift=ROAD_LIFT_M, bank_at=bnk, verge_w=_verge_w,
+            shoulder = ribbon.road_shoulder(centerline, widths, fold_level=_fold_level, lift=ROAD_LIFT_M, bank_at=bnk, verge_w=_verge_w,
                                             ground_drop=GRASS_CLEARANCE_M, bank_hold=True)
         else:
             # CONSTRUCTED (the default): the verge drapes onto grass_surf and the construction
@@ -1640,7 +1663,7 @@ def build(project_dir: str | Path) -> dict:
             # natural_ground port (6f1c734, 2026-08-19) rewrote this `else:` as
             # `elif natural_ground:`, so every track with neither a sidewalk nor natural ground
             # died on an unbound edge_group (found on Milford, 2026-10-28).
-            shoulder = ribbon.road_shoulder(centerline, widths, lift=ROAD_LIFT_M, bank_at=bnk, verge_w=_verge_w,
+            shoulder = ribbon.road_shoulder(centerline, widths, fold_level=_fold_level, lift=ROAD_LIFT_M, bank_at=bnk, verge_w=_verge_w,
                                             ground_drop=GRASS_CLEARANCE_M,
                                             # P3a: the sheet lands on the section itself (the refined grid's surface),
                                             # not on the coarse grid's chords between graded nodes
@@ -1815,10 +1838,13 @@ def build(project_dir: str | Path) -> dict:
     # tolerances — the strip's own meet vertices become the terrain's heights near the seam, so
     # the two meshes touch by construction, exactly like the pros' welded edge rings. Data
     # fidelity (corridor fetch) improves WHERE the seam sits; this guarantees THAT it seals.
-    _P5 = 4 if True else 3     # road_shoulder emits lip/verge/meet/hem per station (P=4 with ground)
+    # road_shoulder emits lip / verge / meet / hem per station (P=4 with ground, the meet at 2); curb_sidewalk emits lane edge /
+    # curb top / walk back / slope start / meet / hem (P=6, the meet at 4). Ledger 0065: the sidewalk was read with the shoulder's
+    # stride, so the bend pulled the ground towards walk tops and lane edges and the walk stood up to 1.7 m over a moat
+    _P5, _MEET5 = (6, 4) if edge_cfg.get("profile") == "sidewalk" else (4, 2)
     _sv6 = shoulder["vertices"]
     _pull = []                  # (x, z, target_y) = the meet line
-    for _i6 in range(2, len(_sv6), _P5):
+    for _i6 in range(_MEET5, len(_sv6), _P5):
         _pull.append(_sv6[_i6])           # meet point of each station/side
     from collections import defaultdict as _fdd
     _ph6 = _fdd(list)
@@ -1866,13 +1892,12 @@ def build(project_dir: str | Path) -> dict:
                                     grid_spacing=float(meta["spacing_m"]),
                                     fill_ratio=GRADE_RATIO, band=_grade_band, layer_ref=_graded_y)
     mk_cfg = cfg_raw.get("road_markings", {}) or {}
-    # EDGE LINES FOLLOW THE LANE, not the pavement boundary (Kevin: "why don't outer lines
-    # follow centerline?"): a rolling-median width line, clamped inside the real pavement —
-    # flare pavement stays OUTSIDE the stripe like a real apron.
-    _mkw = 4
-    _mk_line = [sorted(widths[max(0, i - _mkw):i + _mkw + 1])[len(widths[max(0, i - _mkw):i + _mkw + 1]) // 2]
-                for i in range(len(widths))]
-    _mk_widths = [min(m0, w0) for m0, w0 in zip(_mk_line, widths)]
+    # EDGE LINES FOLLOW THE STREET, not the pavement boundary (Kevin: "why don't outer lines follow centerline?";
+    # ledger 0070 B2): the street's own width (widths_base_m, before the junction flares; smoothed in widths_from_osm),
+    # clamped inside the real pavement, so flare pavement stays OUTSIDE the stripe like a real apron. It replaces the
+    # 27 m rolling median of the pavement width, which passed every flare longer than 27 m straight into the edge line
+    # (Sand Creek 0.33.0: 613 of 616 flared vertices, by up to 15.65 m a side). Without a street width: the pavement's.
+    _mk_widths = [min(b0, w0) for b0, w0 in zip(_base_w, widths)] if _base_w is not None else list(widths)
     if mk_cfg.get("style") == "none":
         # Unpaved road: nobody paints lane lines on graded dirt. Without this the else-branch below
         # lays track-style stripes down a gravel rally stage.
@@ -1882,7 +1907,7 @@ def build(project_dir: str | Path) -> dict:
         # Lake Murray-style painted lines: solid double-yellow centre (two-way), solid white edge
         # lines, dashed dividers where width allows (ported ribbon.lane_markings)
         _lm = ribbon.lane_markings(centerline, _mk_widths, bank_at=bnk,
-                                   center_yellow=bool(mk_cfg.get("center_yellow", True)))
+                                   center_yellow=bool(mk_cfg.get("center_yellow", True)), lanes=_lanes_v)
         marks, yline = _lm["white"], _lm["yellow"]
     else:
         marks = ribbon.road_markings(centerline, _mk_widths, bank_at=bnk)
@@ -2847,9 +2872,10 @@ def build(project_dir: str | Path) -> dict:
         # ...and DEEP CUTS get the same stone lip: a bank looming >1.2 m over the verge means a
         # bench trench beside the pavement, and the sweep's unguarded-drop rule marks the wall's
         # place identically in both directions (the last 3 imi drops, station 302.5's cut corner).
-        for _run in _runs17(lambda sc: (not sc["cutting"]) and sc["drop"] > 1.2,
+        for _run in ([] if (cfg_raw.get("scenery") or {}).get("parapets", True) is False else   # scenery.parapets: false (ledger 0065)
+                     _runs17(lambda sc: (not sc["cutting"]) and sc["drop"] > 1.2,
                             exit_flag=lambda sc: (not sc["cutting"]) and sc["drop"] > 0.9,
-                            min_run=10, max_gap=4):
+                            min_run=10, max_gap=4)):
             # smooth the cap line: a parapet is coursed masonry, its top runs fair, not jittery
             _vys = [_secs[_q]["verge"][1] for _q in _run]
             _vys = [sum(_vys[max(0, k - 2):k + 3]) / len(_vys[max(0, k - 2):k + 3]) for k in range(len(_vys))]
@@ -2919,6 +2945,11 @@ def build(project_dir: str | Path) -> dict:
     # ==========================================================================================
 
     barrier, barrier_spots = kerbs.warning_barriers(centerline, widths)
+    if (cfg_raw.get("scenery") or {}).get("warning_barriers", True) is False:
+        # scenery.warning_barriers: false (ledger 0065, Lake Murray's redraft): a real street's barriers are the ones it has, authored
+        # from the record (guard rails, K-rail stubs), not concrete invented at every sharp corner
+        barrier = {k: [] for k in barrier}
+        barrier_spots = []
     barrier_group = ("BARRIER_warning", "kerb")
     # FENCES, NOT BARRIERS (Kevin: "barriers are getting in the way of driving... reserve
     # barriers for only the tightest corners after fast sections to showcase danger"): keep the
@@ -3772,6 +3803,7 @@ def build(project_dir: str | Path) -> dict:
                             _sxH, _syH, _szH = _vxH - _txH * _rsH, _vyH, _vzH - _tzH * _rsH
                         _exH = _vxH + _txH * _reH
                         _ezH = _vzH + _tzH * _reH
+                        # ledger 0071's box (wound outward on either side), at ledger 0076's reaches (every foot on its support)
                         stone_lip_box(para_mesh, (_sxH, _syH, _szH), (_exH, _vyH, _ezH), (_lxH, _lzH))
                         _prev_endH[_sideH] = (_exH, _vyH, _ezH)
                         _guardH += 1

@@ -1,0 +1,24 @@
+{
+ "fail": false,
+ "reasons": [],
+ "kn5": [
+  "del_mar_fairgrounds.kn5"
+ ],
+ "fidelity": "skipped: gate OBJ written from this kn5",
+ "double_sheet_cells": 0,
+ "seating": {
+  "walls": {
+   "objects": 106,
+   "no_ground_pct": 0.0,
+   "median_m": -0.528,
+   "p95_m": -0.336,
+   "hovering": 0
+  }
+ },
+ "road_over_ground": {
+  "over": 3,
+  "samples": 581,
+  "p95_m": 0.014,
+  "max_m": 0.099
+ }
+}

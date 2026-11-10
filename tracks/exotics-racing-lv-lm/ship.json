@@ -1,0 +1,95 @@
+{
+  "_doc": "Nevada Nights on Lake Murray v4's engine (ledger 0078): engine lm-v4, the intake from tracks/exotics-racing-lv, Lake Murray's assembler and fold weld, finer ground on the banked stretches, the bespoke dressing, engine-july's prep / export, the gates + edge_report. Single layout: engine-july's prep lays the AC_* nodes in the road kn5.",
+  "track": "exotics-racing-lv-lm",
+  "engine": "lm-v4",
+  "workshop": "D:/k10-scratch",
+  "workshop_project": "exotics_lm",
+  "require_race_layout": false,
+  "ui_name_prefix": "doooom Nevada",
+  "steps": {
+    "draft": [
+      "lm_intake",
+      "build_loop_blend",
+      "weld_mouths",
+      "densify_ribbon",
+      "seat_edges",
+      "strip_seam",
+      "kerbs"
+    ],
+    "author": [
+      "bespoke"
+    ],
+    "prep": [
+      "prep",
+      "split"
+    ],
+    "ship": [
+      "export_road",
+      "ai",
+      "verify_kn5",
+      "road_obj",
+      "track_folder",
+      "verify_inis",
+      "make_map",
+      "treefx"
+    ],
+    "gate": [
+      "drive_test_street",
+      "audit_street",
+      "kn5_ground",
+      "house_seat",
+      "edge_report"
+    ]
+  },
+  "sync_in": {
+    "required": [
+      "track.config.json"
+    ],
+    "optional": [
+      "data/heightfield.npy",
+      "data/heightfield.meta.json",
+      "textures/kerb_redwhite.png",
+      "source/vegetation/scrub.naip.json",
+      "source/vegetation/scrub.measured.json"
+    ],
+    "globs": [
+      "source/trees/*.bin"
+    ],
+    "_vegetation_doc": "ledger 0089: the measured scrub points (committed) and the TreeFX models (source/trees/*.bin: Lake Murray's Bush.bin and Bush3.bin, personal use, gitignored) the PC copies into tracks/exotics-racing-lv-lm/source/trees/ with an md5 check before the chain (runbook 0089-2)"
+  },
+  "sync_out": {
+    "required": [
+      "loop.blend"
+    ],
+    "files": [
+      "data/lm_intake.json",
+      "data/centerline.local.json",
+      "data/centerline.raw.local.json",
+      "data/finished_centerline.json",
+      "data/gate_centerline.json",
+      "data/bridge.spans.auto.json",
+      "data/mouth_welds.json",
+      "data/crossfall.lm.json",
+      "data/bespoke.report.json",
+      "data/dummies.json",
+      "data/drive_test.json",
+      "data/drive_test.{id}.json",
+      "data/audit.json",
+      "data/kn5_ground_check.{id}.json",
+      "data/house_seat_check.json",
+      "data/edge_report.json",
+      "data/kerbs.built.json",
+      "data/treefx.report.json"
+    ],
+    "map": [
+      [
+        "blender/split/split_manifest.json",
+        "data/split_manifest.json"
+      ]
+    ],
+    "dirs": [
+      "ai/{id}"
+    ]
+  },
+  "_vegetation_doc": "ledger 0089 (Nevada Nights 0.1.4): treefx runs after the map (the measured creosote clumps as TreeFX, replacing 0.1.3's SCRUBCARD cards); tools/make_treefx.py's gate fails the chain when fewer trees are written than planned or a named model is absent"
+}

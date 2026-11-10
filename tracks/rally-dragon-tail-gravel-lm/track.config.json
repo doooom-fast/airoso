@@ -1,0 +1,292 @@
+{
+  "_doc": "Dragon Tail (Gravel) through Lake Murray v4's engine (ledger 0078 round 8). The line, its widths and the 3DEP grid are tracks/rally-dragon-tail-gravel's (read by tools/lm_engine_intake.py); the profile is the measured one with the elevation stage's grade cap undone (Kevin: \"I just want real\"); gravel physics and texture from road_surface (L8: the tarmac twin forks from this draft later, no rebuild). Every other key is the source's, copied; the source config is untouched.",
+  "name": "Dragon Tail (Gravel) (LM engine)",
+  "_name_doc": "ONE-CHAIN section 3 (Kevin 2026-10-28): rally stages are '<Stage> (Gravel)' / '<Stage> (Tarmac)', two tracks (L8: surfaces.ini is per track). The engine era called it 'Rally Colorado - Dragon Tail (Gravel)'. Installed as 'doooom Colorado — Dragon Tail (Gravel)' (tools/ship_track.sh: ship.json ui_name_prefix + the layout's name).",
+  "slug": "rally_co_dragon_tail_gravel_lm",
+  "_slug_doc": "Kept from the engine era, as Sand Creek (sand_creek_raceway) and Exotics (exotics_racing_lvms) kept theirs: every kn5 is named for it and install_folder is it, so the chain's install parks the engine-era folder of the same name instead of standing beside it. ONE-CHAIN section 3's 'folder name with _' would be rally_dragon_tail_gravel; renaming is the main session's call (it orphans the old install).",
+  "install_folder": "rally_co_dragon_tail_gravel_lm",
+  "_install_folder_doc": "beside the installed airoso-engine stage for the A/B drive (ledger 0078 round 8)",
+  "version": "0.1.0",
+  "_version_doc": "the LM-engine port's own version line (ledger 0078 round 8); the source's is 0.2.1",
+  "author": "doooom",
+  "year": 2026,
+  "ui_series": "doooom Colorado",
+  "_ui_series_doc": "Kevin 2026-10-28: 'K10 is gone. doooom.' (was 'K10 Colorado Rally'). Content Manager shows '<ui_series> - <layout name>' (tools/ship_track.sh ui_name_prefix carries the same string)",
+  "archetype": "real_road",
+  "road_surface": "gravel",
+  "_road_surface_doc": "The real thing: a graded dirt/clay county road. Forks ROAD physics (FRICTION 0.70, DAMPING 0.03, DIRT_ADDITIVE 1, gravel roll sound) and the 1ROAD/1RUNOFF texture. The tarmac twin at tracks/rally-dragon-tail-tarmac shares this exact route and elevation and differs ONLY in this key.",
+  "location": {
+    "lat": 39.8563,
+    "lon": -108.8466,
+    "timezone": "America/Denver",
+    "city": "Rangely",
+    "country": "United States"
+  },
+  "source": {
+    "type": "osm",
+    "_doc": "Whole stage lives on the OSM road network as County Road 116 - three contiguous ways, tertiary, surface=unpaved, chaining east to west with no gaps. Verified against Overpass 2026-07-24. No KML or aerial tracing needed; see docs/STAGE-SOURCING.md."
+  },
+  "route": {
+    "roads": [
+      "County Road 116"
+    ],
+    "_roads_doc": "The rally lists this stage as 'Dragon Tail - CR 116/133 NW'. Only the CR 116 portion exists in OSM (CR 133 is unmapped anywhere in the region), so this build is the CR 116 leg: 25.2 km from the eastern end at 39.8319,-108.7445 to the western end at 39.8739,-108.9443.",
+    "bbox": [
+      39.81,
+      -108.97,
+      39.9,
+      -108.72
+    ],
+    "start_at": [
+      39.8319,
+      -108.7445
+    ],
+    "_start_at_doc": "Eastern end of CR 116 - the stage runs east to west, downhill-ish toward the Douglas Creek drainage.",
+    "width_profile": "mountain",
+    "_width_profile_doc": "Rural table (3.0 m lanes, no urban parking/turn allowances). A graded county road is one narrow two-way surface, not a laned highway.",
+    "connectors": {},
+    "wide_corners": [
+      {
+        "station_m": 6364,
+        "width_m": 10.0,
+        "_doc": "First switchback of the Douglas Creek descent — three consecutive 116-126 deg turns over 30 m on a 7 m OSM radius. A graded county-road hairpin is cut wider at the apex than the road it joins."
+      },
+      {
+        "station_m": 6565,
+        "width_m": 10.0,
+        "_doc": "Second switchback, the tightest on the stage (137-150 deg). 10 m, not the 12 m first tried: the wider flare overhung its own embankment and left a 3.12 m drop off the outside edge. 10 m still clears the 9 m the corner-feasibility check needs."
+      },
+      {
+        "station_m": 7425,
+        "width_m": 11.0,
+        "_doc": "Third, gentler at 110 deg — flared just past the drive-test's undrivable threshold."
+      }
+    ],
+    "smooth_sigma_pts": 2.0,
+    "smooth_passes": 2,
+    "smooth_sigma_y_pts": 1.5,
+    "edge": {
+      "curb_h": 0.0,
+      "curb_face_w": 0.05,
+      "sidewalk_w": 0.05,
+      "connector_sidewalk_w": 0.05,
+      "grade_w": 0.3,
+      "grass_clearance": 0.05,
+      "_doc": "a graded county road's edge: the gravel held 0.10 m, then 0.30 m down to the ground (the Lariat's recipe); no curb, no sidewalk"
+    },
+    "densify": {
+      "measure": "warp",
+      "max_cols": 64,
+      "_doc": "ledger 0078 round 13: the true out-of-plane warp (Milford's measure, round 5), not the crease formula, which reads 0 on this ribbon's level-across rows however much they turn on a grade (Dragon Tail s 6,562-6,567: 278-297 mm warps read 0; Under the Dragon s 14,333-14,340 up to 179 mm, s 22,996-23,004 and 23,049-23,057 up to 78 / 127 mm), so the grass pinned 0.02 m under the deck stood over the valley crease (the four soft-top places). max_cols is set so the cap never binds (the worst quad needs 60 / 36 columns): CREASE_TOL_M's 5 mm is the only rule"
+    }
+  },
+  "loop": false,
+  "mirror_x": false,
+  "true_north_rotation_deg": 0.0,
+  "_frame_doc": "The chain's frame (ONE-CHAIN section 1, ledger 0060): local ENU metres, no mirror, no yaw, as Lake Murray 0.19.1. Stated explicitly so tools/ship_track.sh's FRAME check reads 'False 0.0' from the config itself and scripts.geometry.projection never writes the key back.",
+  "natural_ground": false,
+  "_ground_doc": "Constructed corridor (false), not natural_ground, on this pass (2026-11-01) - against ONE-CHAIN section 4's rally_stage row, deliberately. The engine's natural path (build_mesh: ribbon.road_shoulder bank_hold, a 2 m blend band, 'corridor machinery OFF') skips the measured-guard lip pass and the shoulder drape; Milford tried it on 2026-10-28 and drive_test failed on 31 lidar banks at the pavement edge, which is why every chain circuit but Exotics runs constructed; and the constructed path is the one these stages passed all four gates on (ledger 0014). Rehearsed offline 2026-11-01 on Dragon Tail (Gravel)'s engine-era cached data (40 m grid, no corridor field), drive_test: constructed 0 ground-on-top, 237 severe steps, 64.5 bumps/km, FAIL on 2 floating parapet columns only; natural_ground 1,836 ground-on-top, 449 severe, 80.2 bumps/km. Flip this key once the Windows draft (with data/corridor.elev.json, the near-native 3DEP the natural path depends on) is green constructed, and compare.",
+  "_loop_doc": "POINT-TO-POINT. A rally stage has two ends and is driven once: the grid goes at the eastern start, AC_TIME_0 (AC's start/finish) goes at the western finish, and the splits divide the run between them. See CLAUDE.md.",
+  "default_width_m": 6.5,
+  "width_overrides": [],
+  "osm_road_widths": false,
+  "_osm_road_widths_doc": "Off. OSM carries no lane count for an unpaved county road, so the lane-derived widths would be guesses dressed as data. A flat 6.5 m matches a graded two-track county road.",
+  "origin": "centroid",
+  "surfaces": {
+    "road": "1ROAD",
+    "grass": "GRASS",
+    "kerb": "1KERB"
+  },
+  "road_markings": {
+    "style": "none",
+    "_doc": "Nobody paints lane lines on graded dirt."
+  },
+  "road_text": {
+    "enabled": false
+  },
+  "kerb": {
+    "enabled": false,
+    "_doc": "No racing kerbs on a public dirt road - the edge is loose gravel into sagebrush."
+  },
+  "runoff": {
+    "enabled": false,
+    "_doc": "Run-off here is dirt, scrub and drop-off, not a paved apron."
+  },
+  "road_profile": {
+    "_doc": "Elevation is 100% real USGS 3DEP along the route - 1,833-2,216 m (6,017-7,270 ft) over the stage. max_grade_pct 18 clears the real steepest measured pitch (17.5%); the default 6% cap would flatten the mesa climbs and float the road over the drainages. Nothing hand-authored: no dips, no cambers, the terrain provides them.",
+    "max_grade_pct": 18.0,
+    "dips": [],
+    "cambers": []
+  },
+  "scenery": {
+    "_doc": "Pinyon-juniper woodland - the real vegetation of the Rio Blanco mesas at 5,000-7,000 ft. NOT the bare sagebrush flat an earlier pass assumed, and not a Front Range spruce forest either: continuous short-conifer woodland over the slopes and mesa tops, thinning into sage where the road drops into the drainages. Billboards carry the mass out to 300 m; real 3D pine geometry fills the corridor the driver actually reads. All of it bakes into the kn5 from bundled assets - nothing here depends on external models that could go missing.",
+    "fill_terrain": true,
+    "tree_style": "conifer",
+    "tree_atlas_cols": 3,
+    "tree_atlas_rows": 2,
+    "tree_step_m": 4.0,
+    "fill_per_station": 10,
+    "fill_range_m": 300.0,
+    "fill_bias": 1.5,
+    "_fill_bias_doc": "1.5, not the Lariat's 2.4: pinyon-juniper spreads evenly across a slope rather than crowding the verge, so the bias toward the road is gentle.",
+    "fill_off_min_extra_m": 6.0,
+    "tree_cap": 60000,
+    "_tree_cap_doc": "Billboards are ~12 verts each, so 40-60k of them cost under 1 M verts and are what makes the mesa read as continuous woodland. This is the immersion lever - NOT the 3D count, which is 4,006 verts per instance and blew environment.obj to 341 MB at 1,167 trees.",
+    "forest3d": {
+      "module": "pine",
+      "spacing_m": 26.0,
+      "off_min_m": 4.5,
+      "off_max_m": 45.0,
+      "cap": 500,
+      "scale_min": 0.8,
+      "scale_max": 1.7,
+      "_doc": "Real 3D trees only where the driver reads them - within 45 m of the road, 500 of them. Scale 0.8-1.7 on a 4.31 m module = 3.4-7.3 m trees, pinyon/juniper height (the Lariat's 2.2-4.2 would put 18 m alpine pines on a high-desert mesa). The cap is a hard budget: the module is 4,006 verts, so 500 instances is already ~2 M verts of forest."
+    },
+    "bush_spacing_m": 5.0,
+    "bush_density": 0.5,
+    "bush_off_min_m": 3.0,
+    "bush_off_span_m": 45.0,
+    "bush_size_min_m": 0.5,
+    "bush_size_span_m": 0.9,
+    "_bush_doc": "Sagebrush and rabbitbrush under and between the trees - the understory that makes the woodland floor read right.",
+    "corridor_margin_m": 3.0,
+    "light_spacing_m": 0,
+    "powerline_spacing_m": 0,
+    "fences": false,
+    "fence_auto": false,
+    "signs": {
+      "enabled": false
+    },
+    "road_signs": {
+      "enabled": false
+    },
+    "treefx": {
+      "enabled": false,
+      "_doc": "OFF. TreeFX renders third-party .bin models we do not have, and a species with no model is exactly the 'tree manifest missing' failure. The forest above is baked geometry + billboards from bundled assets, so it ships with the track and cannot go missing."
+    },
+    "fill_tree_h_min_m": 3.5,
+    "fill_tree_h_span_m": 4.0,
+    "_fill_tree_h_doc": "3.5-7.5 m billboards. The engine default is 8-16 m (mature montane ponderosa, the Lariat's forest); pinyon and juniper on a 6,000 ft mesa are short and bushy. Matches the forest3d scale range so the two layers read as one woodland.",
+    "draft_lamps": false,
+    "_draft_lamps_doc": "a county dirt road has no streetlight every 55 m: the v021 assembler's draft posts are off"
+  },
+  "lighting": {
+    "presets": [
+      "morning",
+      "noon",
+      "golden_hour"
+    ],
+    "_presets_doc": "The rally runs mid-July; noon is the honest high-desert look (harsh, overhead, short shadows).",
+    "grassfx": true,
+    "_grassfx_doc": "CSP-native 3D grass on the ground mesh - no external models, so nothing to go missing. This is what makes the verge read as dry scrub.",
+    "light_pollution": {
+      "color": [
+        1.0,
+        0.88,
+        0.7
+      ],
+      "density": 0.02,
+      "radius_km": 3.0,
+      "_note": "Rangely is a small town 25 km away across empty mesa - the night sky here is essentially dark."
+    }
+  },
+  "texture_overrides": {
+    "1GRASS": {
+      "diffuse": "assets/textures/ground_dry_diffuse.jpg",
+      "_doc": "Dry high-desert dirt, not green grass. Mesh stays 1GRASS so physics, audits and GrassFX are untouched."
+    },
+    "1KERB_SIDEWALK": {
+      "diffuse": "assets/textures/gravel_road_diffuse.png",
+      "normal": "assets/textures/gravel_road_normal.png",
+      "_doc": "the edge strip is the road's own gravel, not the strip's stock concrete"
+    }
+  },
+  "layouts": [
+    {
+      "id": "stage",
+      "name": "Dragon Tail (Gravel) (LM engine)",
+      "run": "Point to point, east to west along County Road 116",
+      "ai": "ai/stage",
+      "_doc": "The one layout: the stage as the rally runs it, east to west along CR 116 from route.start_at. ONE-CHAIN section 3: a rally stage's surfaces are two TRACKS (L8), never two layouts."
+    }
+  ],
+  "ui_tags": [
+    "circuit",
+    "rally",
+    "stage",
+    "point-to-point",
+    "gravel",
+    "real-roads"
+  ],
+  "_ui_tags_doc": "'circuit' first, deliberately: Content Manager refuses Race and Track Day sessions on a track not tagged 'circuit' (scripts/ac/track_folder.py ui_track_json adds it only on a loop), and L11's timing (the grid at the start, AC_TIME_0 at the finish) posts a stage time only in a session whose clock starts at the green: a one-lap Race. Practice / Hotlap arm the clock on the first AC_TIME_0 crossing, which on a stage is the finish. To be confirmed in the seat (does a 1-lap Race post the stage time?).",
+  "ui_description": "Gravel point-to-point rally stage near Rangely, Colorado, built from real OpenStreetMap county-road geometry and USGS 3DEP elevation. Drive it once, start to finish - it is a stage, not a lap.",
+  "terrain_cell_m": 8.0,
+  "_terrain_cell_doc": "The road is 6.5 m wide; the engine default gives ~10 m cells here, so a terrain triangle can span the whole carriageway. 8 m target -> x5 upsample -> ~8 m cells and ~1.46 M verts. x7 (5.7 m cells, 2.87 M verts) ran the mesh build out of memory and left a truncated track.obj, so the budget is capped deliberately.",
+  "terrain_vertex_budget": 1600000,
+  "corridor_refine_factor": 4,
+  "readme_about": "Real roads from OpenStreetMap at real USGS 3DEP elevation: County Road 116 near Rangely, Colorado, 25.2 km point to point (the CR 116 leg of the rally's 'Dragon Tail - CR 116/133 NW'; CR 133 is unmapped). A stage is driven once, start to finish - not a lap.",
+  "_chain_doc": "2026-11-01, the chain pass (ONE-CHAIN section 4 row 6; Kevin: 'get a complete track list and installed by morning'). Changed for the chain: name and ui_series (the name set), version 0.2.0, install_folder (= slug), the frame stated (mirror_x false, true_north_rotation_deg 0.0), natural_ground stated, one `stage` layout carrying its name and run text, 'circuit' in ui_tags (_ui_tags_doc), readme_about (the packed README otherwise says '... km a lap'). Unchanged and still read by the draft: source, route (roads, bbox, start_at, wide_corners), loop false (L11), default_width_m 6.5, road_profile.max_grade_pct 18, kerb / runoff / road_text off, road_markings, the terrain keys, texture_overrides, road_surface (scripts/ac/pbr.load_overrides forks the 1ROAD texture, track_folder.surfaces_ini the physics). INERT through the chain: scenery.* was read by the retired environment stage (scripts/environment/build_env.py), which the chain never runs - the pinyon-juniper woodland, rock cuts and everything else on the land are authoring (AUTH_* in loop.blend), owed. The rehearsal and what the Windows run reads first: ship.json _owed / _windows_first. Terrain (L3b): terrain_cell_m 8.0 on the 40 m 3DEP grid (434 x 136 nodes, a 17 x 5 km box) gives x5 = 8.0 m coarse cells, 2166 x 676 = 1.46 M verts under terrain_vertex_budget 1.6 M, and corridor_refine_factor 4 subdivides the quads the pavement touches to 2.0 m (20,085 quads offline): the near-road cell is finer than the 6.5 m road and near the chain circuits' 1.25-1.5 m. Those circuits declare that size for their WHOLE grid because their sites are small; a uniform 1.5 m grid over this box would be ~39 M verts (the offline mesh peaked at ~7 GB RAM at 1.46 M), so the coarse cell stays 8 m and the fine cell is the refine's (ledger 0014's fix).",
+  "lm_intake": {
+    "source_track": "rally-dragon-tail-gravel",
+    "connectors": false,
+    "profile": "uncapped",
+    "grid_upsample": 1,
+    "carry_records": [
+      "centerline.elevation.json"
+    ],
+    "road_seek": "data/road_seek.json",
+    "road_seek_widths": true,
+    "width_taper": 0.1,
+    "switchback_fit": "data/switchbacks.json",
+    "_switchback_fit_doc": "round 10: each switchback over 100 deg whose graded platform the 1 m DEM measures (tools/switchback_measure.py) built on its measured centre arc and width (tools/switchback_fit.py)",
+    "_width_taper_doc": "Milford's taper (ledger 0078 round 5), 0.1 m per m a side, widening only: a graded bench appears in a few stations (a switchback platform, a pull-out) and drive_test's width-relative wheel paths re-seat across it",
+    "_doc": "the measured profile (the elevation stage's grade cap undone: the grades are the real road's), the 40 m 3DEP grid as it is (the assembler halves it to 20 m; the prep splits it to 4.5 m within 16 m of the road); the raw 3DEP record drive_test replicates against; the line onto the graded road tools/road_seek.py found in 3DEP 1 m cross-sections, heights from that road, and its width where the DEM bounds its graded bench (data/road_seek.json; ledger 0078 round 8)"
+  },
+  "terrain": {
+    "cross_section": {
+      "build": true,
+      "rock_cut_slope": "0.25:1",
+      "fill_slope": "1.5:1 (hand-placed rock)",
+      "fill_bench_m": 1.2,
+      "cut_bench_m": 3.2,
+      "_doc": "the Lariat's road-building section (ledger 0078 round 7, tools/cutfill_blend.py): the ground beside the road graded to the verge, a bench, rock cut 0.25:1 up or fill 1.5:1 down to the natural 3DEP; between stacked switchback legs every point held on its own leg's side (tools/hold_stacked_blend.py after the prep). The slopes and benches are the Lariat's [invented there, from its gates' geometry], not surveyed on these mesas"
+    }
+  },
+  "gates": {
+    "drive1": {
+      "force_exemptions": {
+        "stage": {
+          "undrivable_corners": [
+            {
+              "id": "switchback 1",
+              "s_m": [
+                6340,
+                6400
+              ],
+              "measured": "R 13.75 m centre arc, graded platform 6.94 m wide (outside R 17.22, inside R 10.28; data/switchbacks.json S4) against drive_test's 11 m corner rule"
+            }
+          ],
+          "excursion_drops": [
+            {
+              "id": "switchback 2",
+              "s_m": [
+                6570,
+                6630
+              ],
+              "measured": "the real fill slope 0.54-1.09 m below the platform's outside edge (R 17.91 m; R 12.5 m centre arc, 10.82 m wide: S5) against the 0.2 m drop rule; no lip"
+            }
+          ],
+          "approved": "Kevin 2026-11-04, asked about the three measured rows: \"Yes, force those 3\"",
+          "versions": [
+            "0.1.0"
+          ],
+          "_doc": "ledger 0078 round 12 (fleet/GATES-CHANGELOG.md 2026-11-04): read by tools/stage_force.py, by place and row type only; any other red row, or the same row anywhere else, refuses --force-install. Not covered: Douglas Creek (s 2,403 / 2,456, waiting on the lidar), any soft top, anything at s 14.3 km"
+        }
+      }
+    }
+  },
+  "strip_seam": {
+    "scope": "local",
+    "_doc": "tools/strip_seam_blend.py at local scope (ledger 0078 round 7): a 25 km stage's terrain"
+  }
+}

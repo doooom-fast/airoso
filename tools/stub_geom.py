@@ -201,14 +201,19 @@ def host_ramp(host_rows, s, ramp_m=HOST_RAMP_M):
     return out
 
 
-def return_stations(A_row, J_row, K, b_dir, step=RETURN_STEP_M, y0_of=None):
+def return_stations(A_row, J_row, K, b_dir, step=RETURN_STEP_M, y0_of=None, meet_h=MEET_H_M):
     """the curb return as station rows (4 engine points each), A_row first and J_row last, plus the corner record.
     A_row / J_row: the host gap-end curb row and the stub's first kept curb row. y0_of(x, z): the lane edge's height
     at a station (tools/author_stubs_blend.py blends the host deck and the stub's edge by distance to each, so the
     corner pavement meets both at their own heights); default linear from A to J along the path.
     The last row is J_row exactly. The first is A_row exactly when the walk needs no compression (walk_scale 1);
     otherwise it is A_row compressed (`compress_row`, rec["A_row"]) — the caller moves the host's own row A there and
-    eases the host behind it (`host_ramp`) — and the tail B -> J eases the compression back to 1 (module doc)."""
+    eases the host behind it (`host_ramp`) — and the tail B -> J eases the compression back to 1 (module doc).
+    meet_h: the height (over the lane edge) the interior stations' grass meet rises to (MEET_H_M, the stubs' rule for
+    a raised walk's buried verge); None keeps the profile's own grass meet all the way round (tools/mouth_returns.py:
+    a no-curb edge that FALLS to the grass, Sand Creek's route.edge, carried round the corner as it is, its lip seamed).
+    A ZERO-HEIGHT CURB (route.edge curb_h 0: p1 at the lane edge's height, 0.1 m out) needs nothing else: the walk's
+    compression keys on the curb top's plan offset (walk_scale's o_top), never its height."""
     A0 = A_row[0]
     tH, phi, R, O, a_dir, B = corner(K, A0, b_dir)
     arc, arc_len = arc_points((A0[0], A0[2]), B, O, step)
@@ -248,10 +253,10 @@ def return_stations(A_row, J_row, K, b_dir, step=RETURN_STEP_M, y0_of=None):
             if p >= 2 and s < 1.0:
                 o = oA[1] + (o - oA[1]) * s if o > oA[1] else o
             h = hA[p] + (hJ[p] - hA[p]) * f
-            if p == 3:                                   # the grass meet rises to the ground the prep lays there
+            if p == 3 and meet_h is not None:            # the grass meet rises to the ground the prep lays there
                 wm = min(acc, total - acc) / MEET_RAMP_M if MEET_RAMP_M > 0 else 1.0
                 wm = 1.0 if wm >= 1.0 else max(0.0, wm) ** 2 * (3.0 - 2.0 * max(0.0, wm))
-                h = h + (MEET_H_M - h) * wm
+                h = h + (meet_h - h) * wm
             row.append((x + nx * o, y0 + h, z + nz * o))
         rows.append(tuple(row))
     rows.append(tuple(tuple(p) for p in J_row))

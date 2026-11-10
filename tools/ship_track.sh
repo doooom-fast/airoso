@@ -190,7 +190,7 @@ draft_aerial() {
   (cd "$AIROSO" && python -m scripts.aerial.build_aerial "$PROJ")
 }
 draft_profile() {
-  step "draft: the source fixes' road heights onto the projected line (tools/profile_from_fixes.py; fixes without ele = no-op)"
+  step "draft: the road heights the fixes carry (their ele) onto the projected line (tools/profile_from_fixes.py; fixes without ele = no-op)"
   (cd "$AIROSO" && python tools/profile_from_fixes.py "$PROJ")
 }
 draft_grid() {

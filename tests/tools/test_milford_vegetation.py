@@ -51,6 +51,9 @@ def test_keys_are_opt_in():
         if cfgp.parent.name == "milford-road-course-lm":
             assert has_trunks and has_native
             continue
+        if cfgp.parent.name == "exotics-racing-lv-lm":       # ledger 0089: Nevada's scrub sized by planted.native_h_m
+            assert not has_trunks and has_native, cfgp
+            continue
         assert not has_trunks and not has_native, cfgp
 
 

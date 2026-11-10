@@ -166,7 +166,11 @@ def test_the_intake_into_an_empty_workshop_leaves_every_file_the_chain_reads():
             L.intake(ws)
             cfg = json.loads((ws / "track.config.json").read_text(encoding="utf-8"))
             want = list(WORKSHOP_INPUTS)
-            if (cfg.get("lm_intake") or {}).get("connectors") or (cfg.get("lm_intake") or {}).get("connectors_file"):
+            _cf = (cfg.get("lm_intake") or {}).get("connectors_file")
+            # connectors_file as a PORT path (Pikes Peak's infield roads) brings side streets in; a bare file name is the
+            # freeway's measured carriageways in source_data, whose empty mouths record the intake writes itself
+            if ((cfg.get("lm_intake") or {}).get("connectors") or (isinstance(_cf, str) and ("/" in _cf or "\\" in _cf))) \
+                    and not (ws / "data" / "mouths.json").exists():   # the freeway's carriageways: the intake writes it
                 # side streets in (Sand Creek 0.2.3, ledger 0079): the intake deletes any old mouths.json and the chain's
                 # trim_connectors step writes it before weld_mouths reads it
                 assert "trim_connectors" in spec_steps(port), port

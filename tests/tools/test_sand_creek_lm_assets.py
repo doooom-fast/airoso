@@ -556,7 +556,7 @@ def test_round_k_keys_are_opt_in():
         assert "signs_name_blades" not in cfg, t
     # round K's candidate (live since round R, 0.2.6: test_round_r_live_is_the_candidate)
     live = json.loads((SC / "track.config.json").read_text(encoding="utf-8"))
-    assert "race_rule" not in (live.get("kerb") or {}) and live["version"] == "0.2.7"
+    assert "race_rule" not in (live.get("kerb") or {}) and live["version"] == "0.2.8"
     sc = json.loads((SC / "source" / "round_k" / "track.config.json").read_text(encoding="utf-8"))
     assert sc["version"] == "0.2.6"
     assert sc["race"]["edge_fold_chord"] is True
@@ -908,6 +908,11 @@ def _drop(cfg, path):
     d.pop(path[-1], None)
 
 
+# ledger 0087 (0.2.8, installed 2026-11-09): the mainline's edge strip flush with the prep's contact band, the side streets
+# keeping 0.2.7's lip (route.edge.grass_clearance / connector_grass_clearance and their docs)
+LIVE_0_2_8_KEYS = (("route", "edge", "grass_clearance"), ("route", "edge", "_grass_clearance_doc"),
+                   ("route", "edge", "connector_grass_clearance"), ("route", "edge", "_connector_grass_clearance_doc"))
+
 # ledger 0086 (0.2.7): every key the live config adds to, or changes from, round_k's candidate
 LIVE_0_2_7_KEYS = (("name",), ("_name_doc",), ("slug",), ("version",), ("install_folder",), ("_install_folder_doc",),
                    ("route", "mouth_returns"), ("route", "mouth_radii_file"),
@@ -925,7 +930,7 @@ def test_round_r_live_is_the_candidate():
     (race.corridor.whole_lap) and verify_kn5 runs both before (closure kn5) and after (--inis) the folder"""
     live = json.loads((SC / "track.config.json").read_text(encoding="utf-8"))
     cand = json.loads((SC / "source" / "round_k" / "track.config.json").read_text(encoding="utf-8"))
-    assert live["version"] == "0.2.7" and cand["version"] == "0.2.6"
+    assert live["version"] == "0.2.8" and cand["version"] == "0.2.6"
     assert live["slug"] == live["install_folder"] == "sand_creek_raceway" and "LM" not in live["name"]
     assert [l["name"] for l in live["layouts"]] == ["Sand Creek Raceway", "Sand Creek Free Roam"]
     assert live["route"]["mouth_returns"] == ["grid_"] and live["route"]["verify_mouth_corners"] is True
@@ -933,7 +938,7 @@ def test_round_r_live_is_the_candidate():
     # verify_mouths_allowed: round_k's rows plus grid_tertiary_74's start (ledger 0086, 0.2.7)
     va, vk = live["route"].pop("verify_mouths_allowed"), cand["route"].pop("verify_mouths_allowed")
     assert va[:len(vk)] == vk and [(r["piece"], r["end"]) for r in va[len(vk):]] == [("grid_tertiary_74#0", "start")]
-    for k in LIVE_0_2_7_KEYS:
+    for k in LIVE_0_2_7_KEYS + LIVE_0_2_8_KEYS:
         _drop(live, k)
         _drop(cand, k)
     for l in live["layouts"] + cand["layouts"]:

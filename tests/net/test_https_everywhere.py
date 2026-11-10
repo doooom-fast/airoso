@@ -31,6 +31,12 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 SCAN = ("scripts", "tools", "fleet", "tracks")
 FROZEN = {"scripts-v021", "engine-july-snapshot", "__pycache__"}
+# Installed-build records, held byte for byte at their install commit (98bb351, ledger 0089): the PC's one-off lidar
+# read plan, run on the PC with ssl.create_default_context() (it verifies; the rule is "one context, scripts.tls"). The
+# integration of 2026-11-10 keeps every installed track's directory equal to its install commit, so these are listed here
+# instead of edited; the next High Plains / Nevada build should move them onto scripts.tls.https_context().
+HELD_RECORDS = {"tracks/high-plains-lm/source/vegetation/lidar/ept_plan.py",
+                "tracks/exotics-racing-lv-lm/source/vegetation/lidar/ept_plan.py"}
 TLS_MODULE = ROOT / "scripts" / "tls.py"
 NEEDS_CONTEXT = {"urlopen", "HTTPSConnection", "HTTPSHandler"}
 FORBIDDEN_NAMES = {"CERT_NONE", "_create_unverified_context", "urlretrieve"}
@@ -53,7 +59,7 @@ def _is_https_context_call(node) -> bool:
 def _files():
     for top in SCAN:
         for p in sorted((ROOT / top).rglob("*.py")):
-            if FROZEN.intersection(p.relative_to(ROOT).parts):
+            if FROZEN.intersection(p.relative_to(ROOT).parts) or p.relative_to(ROOT).as_posix() in HELD_RECORDS:
                 continue
             yield p
 

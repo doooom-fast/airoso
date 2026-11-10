@@ -93,8 +93,11 @@ def test_the_planner_takes_a_measured_roof_over_every_other_source():
 def test_no_other_plan_names_lidar():
     for f in ROOT.glob("tracks/*/source/bespoke/buildings.plan.json"):
         plan = json.loads(f.read_text(encoding="utf-8"))
-        if f.parts[-4] != "del-mar-lm":
-            assert "lidar" not in plan, f
+        if f.parts[-4] != "del-mar-lm" and "lidar" in plan:
+            # Sand Creek's plan names lidar for tools/lidar_buildings.py's roofs (ledger 0079): plan_buildings reads that
+            # shape only, never this module's {"buildings"} (the two readers dispatch on the file, integration 2026-11-10)
+            lj = json.loads((f.parents[2] / plan["lidar"]["file"]).read_text(encoding="utf-8"))
+            assert "roofs" in lj and "buildings" not in lj, f
 
 
 def test_without_class_6_a_roof_is_its_single_returns_and_a_tree_or_bare_ground_is_not_measured():

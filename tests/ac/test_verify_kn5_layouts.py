@@ -325,7 +325,7 @@ def test_whole_street_race_has_no_closure_wall_opt_in():
     # record at 0.2.6) races the whole street
     lm = json.loads((ROOT / "tracks" / "san-diego-lake-murray" / "track.config.json").read_text(encoding="utf-8"))
     assert whole_lap_layouts(lm, lm["layouts"]) == set()
-    for p, v in (("track.config.json", "0.2.7"), ("source/round_k/track.config.json", "0.2.6")):
+    for p, v in (("track.config.json", "0.2.8"), ("source/round_k/track.config.json", "0.2.6")):
         sc = json.loads((ROOT / "tracks" / "sand-creek-lm" / p).read_text(encoding="utf-8"))
         assert whole_lap_layouts(sc, sc["layouts"]) == {"race"}, p
         assert sc["version"] == v, p

@@ -198,5 +198,9 @@ def test_the_lariat_exemption_file_loads_and_declares_the_plans_list():
         assert need in ids, need
     assert all(e["object"].startswith("AUTH_") for e in d["exemptions"])
     assert ex["inactive"] == ["d2b_reverse_route"]                       # Kevin chose D2 (a)
-    assert ex["polys"] == [] and len(ex["unmeasured"]) == len(ids) - 1   # nothing authored yet: nothing exempt
+    # the Lariat 0.17.2 WIP (claude/lariat-pads-wip, ledger 0048, held) measured three mouths' footprints; every other
+    # active exemption is still unmeasured, and a measured one is exempt only by its footprint
+    measured = [e["id"] for e in ex["polys"]]
+    assert set(measured) <= set(ids) and len(measured) + len(ex["unmeasured"]) == len(ids) - 1
+    assert all(e["match"] == "footprint" for e in ex["polys"])
     assert {e["match"] for e in d["exemptions"] if e["id"].startswith("c470")} == {"name_and_footprint"}

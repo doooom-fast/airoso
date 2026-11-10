@@ -148,5 +148,5 @@ def test_no_other_plan_or_track_names_the_pass_4b_keys():
         if p.parts[-4] != "del-mar-lm":
             assert "set_in_slope" not in json.loads(p.read_text(encoding="utf-8")), p
     for p in (ROOT / "tracks").glob("*/track.config.json"):
-        if p.parts[-2] != "del-mar-lm":
+        if p.parts[-2] not in ("del-mar-lm", "milford-road-course-lm"):    # Milford 0.1.11: ledger 0082's far ground
             assert "far_ground" not in json.dumps((json.loads(p.read_text(encoding="utf-8")).get("terrain") or {})), p

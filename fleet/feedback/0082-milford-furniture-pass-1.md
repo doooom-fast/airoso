@@ -1089,3 +1089,157 @@ standing in 0.1.8**), `pair_seat_F1_ne_end_back.jpg`, `pair_seat_straight_west_b
 7. The far ground under the west site falls up to 15 m below the lidar's (the bespoke log's rim reads 24.0-41.4 m under hall b
    against 38.5-46.4 m): a terrain question (the built ground's margin), not furniture; the walls now reach it.
 8. Pass 2's and the vegetation pass's Owed stand as they were.
+
+# Milford 0.1.9 (0.1.7 + 0.1.8 integrated) (2026-11-09, Mac)
+
+Branch `claude/milford-019`: made from 0.1.7 (`claude/milford-road-wear-017` 7e95074, ledger 0084's road wear) with 0.1.8
+(`claude/milford-furniture-018` f9e8787, pass 3 above) merged in. Both branch from 0.1.6 (d8d1473, installed).
+
+## 19.1 The merge, by intent
+
+Five files conflicted; each kept both sides.
+- **`tools/ship_track.sh` `prep_prep`**: the 0082 re-seat runs first, then the 0084 road-wear bake. The bake stays last in
+  prep, as its own comment says (it reads the final 1ROAD). The two steps commute. The re-seat reads the prepped
+  1GRASS / 1KERB *positions* and moves only the rail kinds' vertices (GUARDRAIL_W, 1WALL_GHOST_RAIL, 1WALL_TECPRO_TYRES,
+  1WALL_TILTUP_SCREEN). The bake reads 1ROAD / 1KERB_SIDEWALK and writes only their UVs and materials; its self-check
+  hashes the positions before and after. So neither step reads what the other writes. Putting the re-seat first means it
+  reads the ground the rest of prep left. The build shows the commute: `reseat_bespoke.json` is byte-identical to 0.1.8's,
+  and `road_wear.json` / `road_wear.line.full.json` / `road_wear_check.json` are identical to 0.1.7's.
+- **Both opt-in steps stay no-ops without their keys**: the re-seat runs only on `scenery.bespoke.reseat_on_prep` true, the
+  bake only on a `road_wear` key, each with its own `rm -f` of its stale report. `test_ship_track_chain.py` V4_EXTRAS names
+  both headers; `test_milford_furniture_pass3.py::test_reseat_runs_only_when_the_key_says_so` and the road-wear tests pass.
+- **`ship.json`**: sync_in.required gets both the aerial and `pass3/blocks.json`; sync_out.files gets the three road-wear
+  files and `reseat_bespoke.json`; gates as 0.1.7's (`road_wear` included).
+- **`track.config.json`**: version **0.1.9**; 0.1.7's `road_wear` key and 0.1.8's furniture keys merged on their own.
+- **`fleet/GATES-CHANGELOG.md`**: both 2026-11-09 entries, plus a 0.1.9 note (no threshold moved, no bypass).
+
+Nothing failed to merge cleanly by intent.
+
+## 19.2 The build (`source/merge_019/build.sh`: an EMPTY workshop on the system disk, `--no-install`, no force)
+
+- AIROSO = the worktree at 073038f (the merge), with the two 82 B placeholder `Oak3.bin` / `SycamoreV2.bin` in
+  `source/trees/` (gitignored, not committed). ENG = 0.1.7's approach: `mf_work/eng2` with this branch's
+  `export_kn5_addon.py`, md5 **83b231e8**. Its `assets/textures` md5-match this head's (96 / 96), and it differs from 0.1.8's
+  eng2 only in that one file.
+- Log (`source/merge_019/records/mac_019/build.log`): `[treefx] 11247 trees ... ['Oak3.bin', 'SycamoreV2.bin']`,
+  `[grassfx] 1285 rectangles, 1285 kept`, `[reseat] 14 objects moved with the prepped ground` (G1 up to +1.477 m),
+  `[road_wear] ... shift (-1.00, +0.00) m ... m0 0.8552 ... writer vertices {'1KERB_sidewalk': 27191, '1ROAD_road': 65218};
+  positions unchanged`, the four west blocks and `f1_nw_screen_ne_end` as 0.1.8, SHIP OK, exit 0, 18.5 min.
+  `ui_track.json` version 0.1.9.
+
+## 19.3 The gate column (BUILT artifacts; 0.1.7 = roadtex b17, 0.1.8 = furniture b018's kept records)
+
+| gate | 0.1.7 | 0.1.8 | **0.1.9** |
+|---|---|---|---|
+| drive_test (full): soft top / severe / undrivable / daylight; kinks /km, vertex bumps, apron steps; obstructed, floating, off-pavement, excursions | 0/0/0/0; 6.34, 16, 5; 0, 0, 0, 0 | the same | **the same: `drive_test.full.json` md5 151aaf52 in all three** |
+| audit_mesh A-K | CLEAN; road 65,218 / curb 27,191 / walls 43,335 v | CLEAN; 65,218 / 26,144 / 43,907 | **CLEAN; 65,218 / 27,191 / 43,907** (0.1.7's strip, 0.1.8's walls) |
+| verify_kn5 + `--inis` | PASS | PASS | **PASS** |
+| kn5_ground_check | PASS: 336 walls, hovering 0, median -0.461 / p95 -0.186; road over ground 2 / 9,317, max 0.052 | the same | **the same** |
+| kn5_textures | PASS 21 textures / 32 materials / 53 maps | PASS 19 / 33 / 51 | **PASS 21 / 33 / 55, missing 0, unused 0** |
+| house_seat | PASS, 3 | PASS, 3 | **PASS, 3** |
+| edge_smoothness | PASS: lane \|d2\| p99 1.19 / 1.22 cm, \|resid\| 0.38 / 0.39 cm | the same | **the same (the JSON is identical bar its path)** |
+| road_wear | PASS: density 60,956 tris, worst 0.086 %; no_repeat 0 / 87,633; phase 1e-5; tone r 0.953; rubber +0.044 m, 0.217 / 0.209 | - | **PASS, every number 0.1.7's** (`road_wear_check.json` identical bar its path) |
+| veg_verify (not a chain gate) | PASS 11,247, 385 colliders, nearest paved 4.65 m | the same | **PASS, the same** |
+| seat_built (report) | FAIL, as 0.1.6 (run on b17 for this column: GUARDRAIL_W_0 / _1 165 of 319 / 193 of 392 cells over 0.10 m under the intended top, 1WALL_TECPRO_TYRES_6 12 of 105; `records/seat_built_b17_017.json`) | PASS | **PASS: 17 objects, the same rows as 0.1.8; G1 p5 / p50 0.61 / 0.69 m** |
+| chain | SHIP OK | SHIP OK | **SHIP OK, no force** |
+
+## 19.4 What is in the kn5 (`source/merge_019/compare_019.py`, `vegetation/scripts/mesh_diff.py`; records beside the log)
+
+- **Positions = 0.1.8's**: all 33 meshes have bit-identical triangle-corner positions and transforms, with the same names
+  (`compare_019.json`).
+- **Road UVs and materials = 0.1.7's**: 1ROAD_road and 1KERB_sidewalk have bit-identical corner UVs and the same shader +
+  slots. The other 31 meshes' UVs and materials are 0.1.8's. The 21 embedded textures are 0.1.7's, byte for byte.
+- **mesh_diff 0.1.8 -> 0.1.9**: every mesh byte-equal except 1ROAD and 1KERB, which are the bake's. Textures: the bake's four
+  are added (macro, two details, flat normal), and 0.1.7's two are dropped (asphalt_cracked_diffuse.jpg, now the detail's
+  source; building_diffuse.jpg).
+- **mesh_diff 0.1.7 -> 0.1.9**: 1ROAD, 1KERB and the 8 1GRASS tiles are byte-equal. The meshes that differ are exactly P3.7's
+  0.1.8 list: G1-G4 rails and colliders, T3's tyres, FARBLOCK_TILTUP_0, ROOFTOP_WHITE_0, and the new
+  1WALL_TILTUP_SCREEN_10. No texture changed.
+- Nothing differs that is not accounted for.
+
+## 19.5 Sizes
+
+| road kn5 | 0.1.6 | 0.1.7 | 0.1.8 | **0.1.9** |
+|---|---|---|---|---|
+| bytes | 39,002,272 | 42,611,917 (+3,609,645) | 39,066,361 (+64,089) | **42,676,006** = 0.1.7 + 64,089 = 0.1.8 + 3,609,645 |
+
+The two passes' deltas add exactly.
+
+## 19.6 Lake Murray unchanged (`source/merge_019/lm_checks.sh`, `lm_checks.log`)
+
+- `git diff d8d1473 -- tracks/san-diego-lake-murray` changes only 0.1.7's opt-in exporter mirror: the snapshot's
+  `export_kn5_addon.py` (+13 / -1), its `MANIFEST.md5` line (1bdc2628 -> 83b231e8) and one `PENDING-MIRROR.md5` line.
+  Against 0.1.7 it is empty.
+- These match between base and branch: engine-july `build_kn5_loop.py`, `build_spawn_kn5.py`, `pbr.py`, `dummies.py` (both
+  copies), and airoso's `ship_sd.sh`, `trim_connectors.py` and `make_treefx.py`. Lake Murray's config names no `road_wear`,
+  `reseat_on_prep` or `roof_z_m`, and `ship_sd.sh` mentions neither step.
+- **Trim A/B** (base tools vs branch, Lake Murray's own inputs): **byte-identical**. connectors 664da93b, mouths b73b70f4,
+  median_bands f0c97952, log 63af07cc.
+- **make_treefx A/B**: Lake Murray **byte-identical (8ce38a01, 21,219 lines)**. The Lariat, the Rangely stages and Sand
+  Creek are the same.
+- **Tests**: the focused files pass, 92 of 92: `test_ship_track_chain.py` (both V4_EXTRAS headers),
+  `test_milford_furniture.py`, `test_milford_furniture_pass3.py`, `aerial/test_road_wear.py`, `test_ship_sd_chain.py`,
+  `test_milford_vegetation.py` and `test_kn5_textures.py`. Full suite (`tests/run_tests.py`): **1,320 pass, 8 fail**. The 8
+  are the known ones (draft_equiv x5, registry_moves, bench_pad x2), as 0.1.8 recorded.
+
+## 19.7 Not done here
+
+- No stills. Every mesh is byte-equal to one parent's, so 0.1.7's road stills and 0.1.8's furniture stills already show it.
+- Nothing installed. `tracks/milford-road-course-lm/data/` is left as 0.1.7 committed it; the install's sync-back writes it.
+
+## PC runbook 0082-6: rehearse 0.1.9 from an EMPTY workshop with the real TreeFX models and the 83b231e8 exporter; a green newer build installs
+
+1. `git fetch && git checkout claude/milford-019` at the head this section is pushed in; `git status` clean.
+2. **The TreeFX models first** (0.1.6's trap: without them the chain plants 0 of 11,247 trees and still goes green). Copy
+   `Oak3.bin` and `SycamoreV2.bin` from `<AC>/content/tracks/milford_road_course/extension/trees/` (the installed Milford) or
+   `san_diego_lake_murray_v4/extension/trees/` into `tracks/milford-road-course-lm/source/trees/`. `md5sum` both: Oak3
+   `24111ede…`, SycamoreV2 `7010d61f…`, else stop. Never commit a .bin.
+3. **ENG** = a copy of `eng_mflm_015` (0.1.6's engine) with this branch's `scripts/ac/export_kn5_addon.py` over its own; md5
+   **83b231e8…** (the snapshot's PENDING-MIRROR line), else stop. Its `assets/textures` must md5-match this head's (96 / 96).
+   If 0.1.7's rehearsal (0084-1) already made this copy, reuse it.
+4. **Rehearse**:
+   `ENG=<that copy> SHIP_PROJ=D:/k10-scratch/milford_019_reh AIROSO=<checkout> PYTHONUTF8=1 bash tools/ship_track.sh milford-road-course-lm --no-install`,
+   from an EMPTY `milford_019_reh`. The log must show:
+   - `[treefx] planted ...: 11247 of 11247 points` and `11247 trees ... ['Oak3.bin', 'SycamoreV2.bin']`;
+   - `[grassfx] ... 1285 rectangles, 1285 kept`;
+   - `[reseat] 14 objects moved with the prepped ground`, *then* `[road_wear] ... shift (-1.00, +0.00) m` and
+     `writer vertices {'1KERB_sidewalk': 27191, '1ROAD_road': 65218}`;
+   - the bespoke lines `block mpg_west_bldg_a` .. `mpg_nw_small` and `f1_nw_screen_ne_end` (0 left out);
+   - `SHIP OK`.
+5. **Compare every row** of 19.3's 0.1.9 column:
+   - `.../furniture/gate_table.py`, `.../vegetation/scripts/veg_verify.py` and `.../furniture/pass3/scripts/seat_built.py` on
+     the workshop;
+   - `data/road_wear_check.json` (every row PASS with 0.1.7's numbers) and `data/road_wear.json` m0 0.85518;
+   - `.../merge_019/compare_019.py <0.1.7 kn5> <0.1.8 kn5> <rehearsal kn5>` if the PC holds 0.1.7's and 0.1.8's rehearsal
+     kn5s; otherwise `.../vegetation/scripts/mesh_diff.py <installed Milford kn5> <rehearsal kn5>`. Against an installed
+     0.1.7, only P3.7's 0.1.8 furniture meshes may differ. Against an installed 0.1.8, only 1ROAD / 1KERB and the four
+     road-wear textures. Against 0.1.6, both sets.
+   - The road kn5 must be **42,676,006 B**, within tangent noise (`tools/kn5_equiv.py` against the Mac's copy if one is
+     carried; never md5).
+
+   Any row red or different: no install; report the row.
+6. **Install when green** (Kevin 2026-11-09: "I always want newer builds"; no further word needed).
+   - AC closed. List every `milford_road_course*` folder with its `ui/ui_track.json` version.
+   - Park whatever Milford is installed (0.1.6, or 0.1.7 / 0.1.8 if 0084-1 or 0082-5 installed first). Rename its workshop
+     `D:/k10-scratch/milford_lm` to `milford_lm.<that version>`.
+   - Run the chain from an EMPTY `D:/k10-scratch/milford_lm`, ENG as above, without `SHIP_PROJ` and without `--no-install`.
+     ship_track parks the installed folder in `D:/k10-track-archive/<stamp>/` itself.
+   - Afterwards there is one Milford folder: `milford_road_course` 0.1.9, with the two .bin md5s in its `extension/trees/`.
+   - Re-render the menu picture with `source/ui/preview.json`'s camera.
+   - Push the install's sync-back (ai/, data/, loop.blend) and the records on this branch.
+7. **Then ledger 0084's runbook 0084-1 step 7, in game.** CSP Objects Inspector on the road: shader
+   `ksPerPixelMultiMap_NMDetail`, the four slots bound (txDiffuse / txNormal / txDetail / txNormalDetail; the add-on's own
+   table says `txDetailNM`), detailUVMultiplier 256. Look for:
+   - the cracked grain as crisp as 0.1.6 at car height (if it is missing, the alpha reads the other way);
+   - the road neither black nor see-through (if it is, alpha is being used as transparency);
+   - the darker band on the line through the corners, and onto the inside edge strip at the hairpin;
+   - no 4 m grid in the tone.
+
+   Also look at G1 standing in the NW corner, F1's NE end, and the west site buildings. Record a racing line as 0084-1 step 8
+   says. Kevin's drive is the verdict.
+
+## Owed (after 0.1.9; start here)
+
+1. **The PC: runbook 0082-6** and the install. It replaces 0082-5 and 0084-1's install steps: the newer green build is the
+   one that installs. 0084-1 step 7 (the slot / alpha check) still needs doing in game.
+2. Pass 3's Owed 2-8 and ledger 0084's "Unverified" stand as written.

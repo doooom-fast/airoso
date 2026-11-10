@@ -1,7 +1,7 @@
 ---
 id: 0084
 title: "road textures need wear where tyres run" — one cracked-asphalt picture on a 4 m world grid; the wear repeats and ignores the lanes. Wear on the real wheel paths (streets) and the racing line (tracks, kerbs too), and the whole road sampled from the aerial
-status: open — investigated 2026-11-07; pilot built 2026-11-09 (Milford 0.1.7, Mac, every gate green, not installed, not driven); Kevin's drive closes it
+status: open — investigated 2026-11-07; pilot built 2026-11-09 (Milford 0.1.7, Mac, every gate green), integrated into Milford 0.1.9 the same day (ledger 0082), not installed, not driven; Kevin's drive closes it
 scope: every track (the LM v4 engine's road material); proof cases chosen by the investigation
 layer: engine
 train: -
@@ -380,3 +380,16 @@ The Mac scripts of this build (the build, the A side, both A/Bs, the stills, the
 8. **Record a racing line** during the drive (CSP's AI recorder, the full layout, clockwise). Copy the `fast_lane.ai` it
    writes to `tracks/milford-road-course-lm/source/road_wear/fast_lane.full.ai`. The next build's rubber then follows
    where the car really ran; the bake prints `recorded source/road_wear/fast_lane.full.ai`.
+
+### Integrated: Milford 0.1.9 (0.1.7 + 0.1.8), 2026-11-09
+
+0.1.7 is merged with ledger 0082's furniture pass 3 (0.1.8) on `claude/milford-019`. See ledger 0082
+"Milford 0.1.9 (0.1.7 + 0.1.8 integrated)" for the order in prep (the re-seat, then this bake, still last; the two
+commute), the gate column and the PC runbook **0082-6**.
+
+- `road_wear` PASS with every number above.
+- The road kn5 is 42,676,006 B (0.1.7 + 0.1.8's 64,089 B).
+- 1ROAD / 1KERB are byte-equal to 0.1.7's b17.
+
+Runbook 0082-6 supersedes this runbook's install (steps 4-6). Step 7 (the in-game slot / alpha check) and step 8 (record a
+line) now run on 0.1.9.

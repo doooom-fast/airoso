@@ -14,6 +14,19 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
+## 2026-11-09 — Milford 0.1.9: 0.1.7's `road_wear` gate and 0.1.8's re-seat in one chain (ledger 0082 "Milford 0.1.9"; no gate threshold moved, no bypass)
+
+**Wiring only.** `tools/ship_track.sh` `prep_prep` now runs 0.1.8's re-seat (`scenery.bespoke.reseat_on_prep`), then
+0.1.7's road-wear bake (`road_wear`), which stays last in prep. Each is opt-in on its own key, so a config naming neither
+gets neither header. The two commute: the re-seat moves only the rail kinds and reads 1GRASS / 1KERB positions, and the
+bake writes only 1ROAD / 1KERB_SIDEWALK UVs and materials. Milford's ship.json gates are 0.1.7's (`road_wear` included).
+
+**Proven** on the 0.1.9 Mac build (an empty workshop, no force):
+- every chain gate PASS with 0.1.7's / 0.1.8's numbers;
+- `road_wear_check.json` identical to 0.1.7's;
+- `reseat_bespoke.json` identical to 0.1.8's;
+- seat_built PASS.
+
 ## 2026-11-09 — NEW GATE (opt-in): `road_wear`, the road's macro atlas and rubber on the built kn5 (ledger 0084)
 
 **Why.** Ledger 0084's bake (`tools/road_wear_blend.py`, Milford 0.1.7 first) rewrites the road-wear surfaces' UVs and

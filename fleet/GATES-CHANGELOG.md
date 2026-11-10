@@ -199,6 +199,63 @@ Not a gate, recorded with it: `tools/author_bespoke_blend.py` blocks take `rim_s
 walk); Lake Murray declares 2.0 m, the walk v4's blocks were stood with. At 1.0 m the same plan on the same blend stands 7,601,
 a different set.
 
+## 2026-11-05 — COMPARISON RULE: `tools/draft_equiv.py --terrain-noise` adds the stub report's pinned-vertex count (ledger 0078 step 5)
+
+One key joins the written terrain-stage list (`TERRAIN_NOISE["file_keys"]`): **`data/stubs.built.json` →
+`terrain.verts_pinned`**, the count of terrain vertices the stub step pins. It follows the terrain's own vertex count,
+which the 2026-11-04 entry's evidence already shows is not bit-stable.
+
+- **Evidence (the PC, 2026-11-05, Lake Murray 5(a) A/B: two fresh lm_v4 copies, ENG eng_repro, --dry-run):** the line
+  (claude/lm-v4-line 6f96224) gave 14,468 in the Nov 3 line, line2 and fleet runs, then **14,467** in today's line run;
+  today's claude/sand-creek-lm-assets run gave 14,468. The terrain's own vertex count on the same line branch: 632,014 /
+  631,989 (Nov 3), 631,986 (today). With the key listed, today's A/B reads SAME: every blend 0 differ, every other file
+  noise / timing only (D:/k10-scratch/lm_eq_5a.txt holds the plain report).
+- **Only that leaf is allowed.** Any other key of the stub report (the stubs themselves, any lift) still makes it DIFFERENT
+  (`tests/tools/test_draft_equiv.py::test_terrain_noise_allows_the_stubs_pinned_count_only`).
+- No gate threshold moves. This is the A/B comparison's exception list, not a build gate.
+- The test file's `tmp_path` fixtures are now optional (`tests/run_tests.py`, CI's runner, passes none).
+
+## 2026-11-03 — the edge report, report-only; the LM-engine port's invented numbers (ledger 0078; no threshold, no bypass)
+
+No gate threshold changed and nothing is bypassed. `tools/edge_report.py` (chain step `edge_report`) reports what stands
+beside the lane on the built road (the surface 1 m past the edge, its rise, road physics past the edge, the ground 3 / 6
+/ 10 m out). It has **no threshold and never sets an exit code**: one would be invented; ledger 0078 compares Lake Murray
+v4, v5-bare, Sand Creek 0.35.0 and the pilot with it. New ⚠ invented numbers, none a gate: `tools/seat_edges_blend.py`
+`MAX_EDGE_M` 0.6, `BAND_M` 1.5, `PAD_M` 10, `MAX_CUTS` 16, `SKIRT_M` 60 (finer ground along a banked lane's edges);
+`tools/densify_ribbon_blend.py` `CREASE_TOL_M` 0.005, `MAX_COLS` 8 (columns where the v021 ribbon twists); the pilot's
+`route.edge` grade 1.5 m (no curb), the street-curb variant's 2.0 m, the circuits' 1.0 m with the ground 0.05 m under the
+edge strip (the shortest runs under drive_test's 0.12 m per 0.5 m). The grade caps are now per track and off for ports (`route.connector_max_grade_pct`, `lm_intake.max_grade_pct`; Lake Murray keeps
+11 % on its connectors).
+
+Round 4 (same day, same ledger; still no threshold, no bypass). New ⚠ invented numbers, none a gate:
+`tools/seat_edges_blend.py` cuts each face near a banked lane edge to t = `CHORD_M` / tan(bank) (`CHORD_M` 0.04: a grass chord
+stands at most 1 cm over the lane, half the prep's 0.02 m clearance), between `MAX_EDGE_M` and `PREP_EDGE_M` 4.5 (engine-july's
+own corridor split, not invented), the bank read within `BANK_REACH_M` 15 of the face; `tools/author_kerbs_blend.py` (the
+traced racing kerbs) `KERB_LIP_M` 0.003, `RAMP_IN_M` 0.25, `RAMP_OUT_M` 1.0 (the back falls past the painted width),
+`DROP_M` 0.05, width clamp `MIN_W_M` 0.9 / `MAX_W_M` 2.0, `STRIPE_M` 2.0, height = the track's `kerb.height_m` (0.08, the
+config's: a 1 m DEM cannot read a kerb); `tools/aerial_edges.py` colour classes (blue B > R + 25 and B > G; red R > G + 25 and
+R > B + 20; white mean >= 160, spread <= 50, B >= R - 45; asphalt max < 125, spread < 28), `STEP_M` 1, `SCAN_M` 14,
+`KERB_BAND_M` 2.5, `KERB_WIN_M` 3.0, `MIN_KERB_M` 5, `GAP_M` 8, `BREAK_M` 1, run-off `MIN_RUNOFF_W_M` 1.5 / `MIN_RUNOFF_M` 10
+(read and reported; no run-off is built from it). Pikes Peak's port: the outer wall's rail 1.4 m past the right lane edge and
+its 3.02 m resampling (config data, `tracks/pikes-peak-lm/track.config.json` `scenery.bespoke.rails`; the wall's place is
+read off NAIP, the offset is invented), and `bespoke.names.paved` the lane only on that port (a rail module may stand on the
+edge strip). Still no gate changed: Pikes Peak's drops went from FAIL to PASS because a wall now stands where NAIP shows one.
+
+Round 5 (same ledger; no threshold, no bypass). New ⚠ invented numbers, none a gate: Milford's `lm_intake.width_taper` 0.1 m
+per m a side (drive_test sets a wheel path from the width at the nearest 3 m point: a 0.3 m re-seat across a 10 % bank
+reads under its 3 % kink line), `lm_intake.resample_m` 1.5 and its doubled smoothing sigmas, `route.densify.max_cols` 24
+(densify now optionally measures the true warp); `tools/strip_seam_blend.py` `INSET_M` 0.05, `MAX_MISS_SHARE` 0.01;
+`tools/lidar_wall.py` `ALONG_M` 3.0, `EDGE_IN_M` 8, `FACE_IN_M` 5, `SEARCH_M` 8, `TRIM_M` 0.05, wall band 0.3-2.5 m, face
+= 10th percentile, top = 90th percentile within 0.8 m, `MIN_PTS` 5; Pikes Peak's wall module face 0.05 m past the lane
+edge. Measured, no longer invented: Pikes Peak's wall height (1.27 m) and place (its face, now the lane edge). Also invented,
+none a gate: `tools/lidar_wall.py` structure band 0.2-4.0 m over the local ground; the structure-run rule (a 0.5 m band, >= 2
+returns, >= 30 m); High Plains' lidar rails smoothed over 5 stations, their height the 90th percentile of their returns;
+Nevada's run-off reader (pavement |R - B| <= 12 or bluer at mean >= 120, asphalt mean < 115; tan R - B > 16; 0.5 m steps to
+20 m, a 1.5 m break, runs >= 3 m for >= 12 m, a 5-station median) and its pads from 1.35 m, built only where the median run
+is >= 4 m. Round 6: `tools/strip_seam_blend.py` `JOIN_DEPTH` 3 (midpoint levels a failed seam join may try). `tools/split_strip_blend.py` `PIECE_VERTS`
+50,000 (under engine-july's 60,000 split cap). The Lariat port's force exemptions are Kevin's declared block re-versioned
+(`versions ["0.1.0"]`), the same two keys and values: no threshold or exemption changed. `tools/draft_equiv.py` ignores JSON keys `written_utc` and `check_date` (write times).
+
 ## 2026-11-03 — EXCLUSION: race kerbs leave the prep's 0020 carve (ledger 0020 Rule 1; Lake Murray v5 race, ledger 0065)
 
 `scripts/ac/build_kn5_loop.py`: 0020's Rule 1 deletes any 1KERB face whose centre stands more than 0.15 m inside a carriageway
@@ -211,6 +268,36 @@ Race kerbs stay judged by `verify_race` E (a kerb under another ROAD sheet) and 
 `drive_test`. Street kerbs and sidewalks (`1KERB_sidewalk`, `1KERB_kerb*`) are carved exactly as before; no threshold moved. Proof:
 `tests/ac/test_build_kn5_loop_prep.py::test_the_corridor_carve_leaves_race_kerbs_alone`, and the v5 race chain past its race kn5
 export. It reaches the next track with race kerbs on airoso's engine: Sand Creek 0.35.0's race curbs.
+
+
+## 2026-11-03 — engine-draft lamps and the declared corner-flare opt-out (ledger 0070 D, Sand Creek's dressing; wiring, no threshold)
+
+No gate threshold changed and nothing is bypassed. Two new opt-ins, each with its invented numbers:
+
+- **`tools/plan_streetlights.py`** (opt-in `scenery.streetlights.planner: "engine_draft"`; ship step `lamps_plan`): the lamp
+  plan an engine draft lacked, ported from `build_loop_blend.build_streetlights` (spacing 55 m, min gap 25 m, arm 1.8 m, head
+  8.8 m over the ground, the 6 m cut-wall skip: not invented) and `scripts-v021/geometry/streetlights.py` (slide 12 m in 2 m
+  steps, the other side, then skip with the reason; pad clearance 3 m: invented there). New, ⚠ invented:
+  `SIDE_OFF_M` 3.6 (the first spot tried past the pavement edge: build_mesh's 2.5 m verge + the footprint ring + 0.5 m),
+  `OUT_STEP_M` 0.5 and `MAX_SIDE_OFF_M` 10 (where the 1ROAD shoulder sheet runs on down an embankment the post steps out,
+  never further than 10 m), `BRIDGE_PAD_M` 10 (no post within 10 m of a deck span's ends). The road / wall checks are
+  the lamp author's own self-check (`tools/author_lamps_blend.py` `ROAD_SETBACK_M`, `WALL_CLEAR_M`, `FOOTPRINT_DIRS`, the
+  LED mast radius), read early on the draft's `data/track.obj` so the author's hard check does not meet a pole it must
+  refuse. The author's self-check is unchanged and still decides.
+- **`route.corner_flare_off`** (`scripts/gps/widths_from_osm.py`, `detect_turn_corners` and its call site): a declared node
+  (an authored junction pad's, or a slip lane's merge) gets no corner flare and no junction flare within `radius_m`
+  (default `FLARE_OFF_RADIUS_M` 30, ⚠ invented: the flares it must catch sit 0-25 m from their node). Absent: byte-identical.
+
+## 2026-11-03 — drive_test: replication on an open stage compares each vertex with its own measurement (ledger 0076)
+
+`drive_test`'s "replication vs measured road" (reported, never gating) indexed `centerline.elevation.json`'s `z_raw_m`
+against the gate line vertex for vertex. On a point-to-point stage the gate line carries build_mesh's lead-in/out (10
+vertices, 30 m, at each end) and the elevation file does not, so vertex i was read against the road 30 m on: Dragon Tail
+(Gravel) 0.96 / 3.41 / 9.66 m (median / p95 / max), aligned 0.02 / 0.21 / 7.16 m. `pad_for_lead_in` pads the
+measurements with k Nones at each end only when the line is exactly 2k longer and its vertex k sits on the local line's
+first point; a closed lap or any equal-length line is compared exactly as before. No threshold, bypass or exclusion
+changed; no verdict can change (the metric does not gate). Proven on the Mac draft of Dragon Tail (Gravel); test
+`tests/geometry/test_lip_feet_and_stage_replication.py`.
 
 ## 2026-11-03 — BYPASS (declared, per build): the Lariat's Drive-1 force covers the real hairpins' corner rule and the open drops, by Kevin's word (ledger 0048)
 
@@ -260,17 +347,6 @@ both sides, the lateral cap at the medial line, the grid grading), `test_lariat_
 defaults to the old build; the loops and branches it gates, read from `build()`'s source; the Lariat opts in; no other
 track does). Byte identity: Milford's draft built with the engine at `c5722f2` and with this change: the three files
 md5-identical and the two mesh logs identical.
-
-## 2026-11-03 — drive_test: replication on an open stage compares each vertex with its own measurement (ledger 0076)
-
-`drive_test`'s "replication vs measured road" (reported, never gating) indexed `centerline.elevation.json`'s `z_raw_m`
-against the gate line vertex for vertex. On a point-to-point stage the gate line carries build_mesh's lead-in/out (10
-vertices, 30 m, at each end) and the elevation file does not, so vertex i was read against the road 30 m on: Dragon Tail
-(Gravel) 0.96 / 3.41 / 9.66 m (median / p95 / max), aligned 0.02 / 0.21 / 7.16 m. `pad_for_lead_in` pads the
-measurements with k Nones at each end only when the line is exactly 2k longer and its vertex k sits on the local line's
-first point; a closed lap or any equal-length line is compared exactly as before. No threshold, bypass or exclusion
-changed; no verdict can change (the metric does not gate). Proven on the Mac draft of Dragon Tail (Gravel); test
-`tests/geometry/test_lip_feet_and_stage_replication.py`.
 
 ## 2026-11-03 — BYPASS: Lake Murray 0.19.4 (the buildings rehearsal) installed red on 0.19.2's inherited keys, by Kevin's word (ledgers 0062, 0065)
 

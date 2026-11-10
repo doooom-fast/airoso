@@ -60,19 +60,6 @@ def corridor_row_height(row, lat, half_l, step_l):
     return z1 * (1 - to) + z2 * to
 
 
-def ribbon_cols(road_profile) -> int:
-    """Lateral columns for the road ribbon: road_profile.ribbon_cols when declared, else 1 (the two-edge ribbon).
-
-    A one-quad row twists wherever its two edges change height differently between rows. A camber ramp does that (Exotics
-    T2, 2026-10-28), and so does a curve on a grade, banked or not: the inside edge's rows bunch towards the turning centre
-    while every row still drops the centreline's full fall, so the quad's diagonal splits a near-vertical sliver off the
-    inside, and the drop it carries crosses the wheel paths as a step (Milford's s 1,000 left-hander on a 15 % descent: 26
-    severe steps up to 22 cm, ledger 0069). The key used to be honoured on a banked road only; it is now honoured wherever
-    it is declared. Every track that declared it before is banked (Exotics, Pikes Peak), so their ribbon is unchanged, and a
-    track without the key still builds the two-edge ribbon byte for byte."""
-    return max(1, int((road_profile or {}).get("ribbon_cols", 1)))
-
-
 def seam_weld_tables(deck_sheets, shoulder: dict, connector_tris=(), cell: float = 4.0) -> tuple[dict, dict]:
     """The seam weld's two pavement tables, (cell i, cell j) -> triangles, both on ``cell`` m plan cells.
 
@@ -123,6 +110,19 @@ def pavement_below(table: dict, px: float, pz: float, ref: float, window: float 
             if abs(y - ref) <= window and (lo is None or y < lo):
                 lo = y
     return lo
+
+
+def ribbon_cols(road_profile) -> int:
+    """Lateral columns for the road ribbon: road_profile.ribbon_cols when declared, else 1 (the two-edge ribbon).
+
+    A one-quad row twists wherever its two edges change height differently between rows. A camber ramp does that (Exotics
+    T2, 2026-10-28), and so does a curve on a grade, banked or not: the inside edge's rows bunch towards the turning centre
+    while every row still drops the centreline's full fall, so the quad's diagonal splits a near-vertical sliver off the
+    inside, and the drop it carries crosses the wheel paths as a step (Milford's s 1,000 left-hander on a 15 % descent: 26
+    severe steps up to 22 cm, ledger 0069). The key used to be honoured on a banked road only; it is now honoured wherever
+    it is declared. Every track that declared it before is banked (Exotics, Pikes Peak), so their ribbon is unchanged, and a
+    track without the key still builds the two-edge ribbon byte for byte."""
+    return max(1, int((road_profile or {}).get("ribbon_cols", 1)))
 
 
 def read_npy(path: Path) -> list[list[float]]:
@@ -831,6 +831,64 @@ def fold_pads_enabled(cfg: dict) -> bool:
     return ((cfg.get("road_profile") or {}).get("fold_pads", False)) is True
 
 
+LIP_HALF_LEN_M = 1.5        # a measured-guard stone lip runs this far either side of its crossing
+LIP_FOOT_STEP_M = 0.25      # a foot over a drop is pulled back toward the crossing in these steps
+LIP_FOOT_MAX_GAP_M = 0.8    # drive_test's furniture-seating rule: a 1WALL column's base within 0.8 m of the surface under it
+
+
+def lip_foot_gap(ground_at, x: float, z: float, base_y: float) -> float:
+    """How far a wall foot at (x, z) with its base at ``base_y`` stands above the surface directly beneath it,
+    read the way drive_test's FURNITURE SEATING reads a 1WALL column: the highest surface within
+    [base - 3.0, base + 2.0], else within base +- 2.5; no surface at all is floating (99.0). ``ground_at(x, z,
+    lo, hi)`` returns the highest surface height in [lo, hi] at (x, z), or None. Negative = the foot is buried."""
+    g = ground_at(x, z, base_y - 3.0, base_y + 2.0)
+    if g is None:
+        g = ground_at(x, z, base_y - 2.5, base_y + 2.5)
+    return 99.0 if g is None else base_y - g
+
+
+def lip_foot_reach(ground_at, vx: float, vz: float, tx: float, tz: float, lx: float, lz: float, base_y: float,
+                   direction: float, half_len: float = LIP_HALF_LEN_M, step: float = LIP_FOOT_STEP_M,
+                   max_gap: float = LIP_FOOT_MAX_GAP_M) -> float:
+    """How far (<= ``half_len``) a measured-guard lip can run from its crossing (vx, vz) along ``direction`` * the
+    unit tangent (tx, tz) and still stand on its support: both corners of the foot there — the inboard one and the
+    outboard one, (lx, lz) across — within ``max_gap`` of the surface under them (``lip_foot_gap``). The lip was
+    seated at the crossing only and laid flat 1.5 m either way, so where the ground falls ALONG the road's edge
+    (Dragon Tail (Gravel) s 6,645, the exit of the second switchback: 2.4 m over the lip's 3 m) one foot hung
+    1.84 m in the air and drive_test failed the stage on "floating furniture" (ledger 0076). Full length wherever
+    both feet stand (every lip that was seated before is unchanged); otherwise pulled back toward the crossing in
+    ``step`` metres, down to 0 (the lip then ends at its crossing on that side)."""
+    r = half_len
+    while r > 1e-9:
+        fx, fz = vx + tx * direction * r, vz + tz * direction * r
+        if (lip_foot_gap(ground_at, fx, fz, base_y) <= max_gap
+                and lip_foot_gap(ground_at, fx + lx, fz + lz, base_y) <= max_gap):
+            return r
+        r = round(r - step, 6)
+    return 0.0
+
+
+def end_apron_cap(px: float, pz: float, tips, reach: float):
+    """The deck height a terrain node just past an OPEN road end must stay under, or None (ledger 0076, Under the
+    Dragon (Gravel) s 25,706). ``tips`` holds one (cx, cy, cz, tx, tz, half_width) per open end: the end row's centre,
+    its deck height, the unit tangent pointing OUT of the road, and the deck half-width there. A node counts when it lies
+    past that end row (0 < along <= reach) and within half_width + reach of the axis — close enough that a grass
+    triangle from it can reach back over the deck. Beside the road the verge is capped by the shoulder over it; past an
+    end there is no pavement over the node, so nothing capped it and the seam-weld's 20 % floor raised one 0.88 m above
+    the deck, lifting the grass 2.4 cm over the last pavement row. The lowest matching end's deck wins."""
+    cap = None
+    for cx, cy, cz, tx, tz, hw in tips:
+        dx, dz = px - cx, pz - cz
+        along = dx * tx + dz * tz
+        if not (0.0 < along <= reach):
+            continue
+        if abs(-dx * tz + dz * tx) > hw + reach:
+            continue
+        if cap is None or cy < cap:
+            cap = cy
+    return cap
+
+
 def fold_plateaus_enabled(cfg: dict) -> bool:
     """Whether build() levels the profile at every fold apex (the +-40 m smoothstep plateau). Default True: unchanged.
 
@@ -905,6 +963,12 @@ def build(project_dir: str | Path) -> dict:
     _max_grade = float(cfg_raw.get("road_profile", {}).get("max_grade_pct", 6.0)) / 100.0
     raw_pts = evidence.cap_grade(raw_pts, max_grade=_max_grade)
     widths = local["widths_m"]
+    # THE STREET'S OWN LINE (ledger 0070 B2): widths_from_osm writes the pre-flare width and the OSM lanes beside the
+    # pavement width; the paint reads them. Absent (or a different count): the paint keeps the pavement width.
+    _base_w = local.get("widths_base_m")
+    _base_w = list(_base_w) if _base_w and len(_base_w) == len(widths) else None
+    _lanes_v = local.get("lanes_osm")
+    _lanes_v = list(_lanes_v) if _lanes_v and len(_lanes_v) == len(widths) else None
     # NO SAWTOOTH EDGES. OSM lane-derived widths step instantly at junction pads (Lake Murray's
     # College Avenue: 13 -> 30 m across one 3 m vertex), and a swept ribbon turns that into a
     # visible sawtooth on a road that should stay wide. Cap the rate of change, not the value —
@@ -941,6 +1005,10 @@ def build(project_dir: str | Path) -> dict:
                 _sink.append((_cx + _dx * _lead_step * _k, _cy, _cz + _dz * _lead_step * _k))
         raw_pts = list(reversed(_head)) + list(raw_pts) + _tail
         widths = [widths[0]] * _n_lead + list(widths) + [widths[-1]] * _n_lead
+        if _base_w is not None:
+            _base_w = [_base_w[0]] * _n_lead + _base_w + [_base_w[-1]] * _n_lead
+        if _lanes_v is not None:
+            _lanes_v = [_lanes_v[0]] * _n_lead + _lanes_v + [_lanes_v[-1]] * _n_lead
         _lead_offset = _lead_m
         print(f"  [lead-in/out] {_n_lead} verts ({_lead_m:.0f} m) of road past each open end")
 
@@ -1882,13 +1950,12 @@ def build(project_dir: str | Path) -> dict:
                                     grid_spacing=float(meta["spacing_m"]),
                                     fill_ratio=GRADE_RATIO, band=_grade_band, layer_ref=_graded_y)
     mk_cfg = cfg_raw.get("road_markings", {}) or {}
-    # EDGE LINES FOLLOW THE LANE, not the pavement boundary (Kevin: "why don't outer lines
-    # follow centerline?"): a rolling-median width line, clamped inside the real pavement —
-    # flare pavement stays OUTSIDE the stripe like a real apron.
-    _mkw = 4
-    _mk_line = [sorted(widths[max(0, i - _mkw):i + _mkw + 1])[len(widths[max(0, i - _mkw):i + _mkw + 1]) // 2]
-                for i in range(len(widths))]
-    _mk_widths = [min(m0, w0) for m0, w0 in zip(_mk_line, widths)]
+    # EDGE LINES FOLLOW THE STREET, not the pavement boundary (Kevin: "why don't outer lines follow centerline?";
+    # ledger 0070 B2): the street's own width (widths_base_m, before the junction flares; smoothed in widths_from_osm),
+    # clamped inside the real pavement, so flare pavement stays OUTSIDE the stripe like a real apron. It replaces the
+    # 27 m rolling median of the pavement width, which passed every flare longer than 27 m straight into the edge line
+    # (Sand Creek 0.33.0: 613 of 616 flared vertices, by up to 15.65 m a side). Without a street width: the pavement's.
+    _mk_widths = [min(b0, w0) for b0, w0 in zip(_base_w, widths)] if _base_w is not None else list(widths)
     if mk_cfg.get("style") == "none":
         # Unpaved road: nobody paints lane lines on graded dirt. Without this the else-branch below
         # lays track-style stripes down a gravel rally stage.
@@ -1898,7 +1965,7 @@ def build(project_dir: str | Path) -> dict:
         # Lake Murray-style painted lines: solid double-yellow centre (two-way), solid white edge
         # lines, dashed dividers where width allows (ported ribbon.lane_markings)
         _lm = ribbon.lane_markings(centerline, _mk_widths, bank_at=bnk,
-                                   center_yellow=bool(mk_cfg.get("center_yellow", True)))
+                                   center_yellow=bool(mk_cfg.get("center_yellow", True)), lanes=_lanes_v)
         marks, yline = _lm["white"], _lm["yellow"]
     else:
         marks = ribbon.road_markings(centerline, _mk_widths, bank_at=bnk)
@@ -3794,6 +3861,7 @@ def build(project_dir: str | Path) -> dict:
                             _sxH, _syH, _szH = _vxH - _txH * _rsH, _vyH, _vzH - _tzH * _rsH
                         _exH = _vxH + _txH * _reH
                         _ezH = _vzH + _tzH * _reH
+                        # ledger 0071's box (wound outward on either side), at ledger 0076's reaches (every foot on its support)
                         stone_lip_box(para_mesh, (_sxH, _syH, _szH), (_exH, _vyH, _ezH), (_lxH, _lzH))
                         _prev_endH[_sideH] = (_exH, _vyH, _ezH)
                         _guardH += 1

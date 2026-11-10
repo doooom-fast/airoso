@@ -569,3 +569,24 @@ def road_markings(centerline_m: list[Vertex], widths_m: list[float], *, line_w: 
     add_line(lambda s: s[5] - edge_inset, False)     # left edge, solid
     add_line(lambda s: -(s[5] - edge_inset), False)  # right edge, solid
     return {"vertices": verts, "uvs": uvs, "tris": tris}
+
+
+# ledger 0078 (the fleet on Lake Murray v4's engine): the street edge per track. Every key defaults to Lake Murray's own
+# value, so a config without route.edge sweeps exactly the curb + walk it always swept (byte-identical floats).
+EDGE_DEFAULTS = {"lift": 0.10, "curb_h": 0.14, "curb_face_w": 0.08, "sidewalk_w": 1.8, "connector_sidewalk_w": 1.5,
+                 "grade_w": 1.2, "grass_clearance": 0.10}
+
+
+def edge_profile(route):
+    """track.config.json route.edge -> the curb_sidewalk keyword set (mainline, connectors). Lake Murray declares none."""
+    e = dict(EDGE_DEFAULTS)
+    for k, v in ((route or {}).get("edge") or {}).items():
+        if k.startswith("_"):
+            continue
+        if k not in EDGE_DEFAULTS:
+            raise SystemExit(f"route.edge.{k}: unknown key (known: {sorted(EDGE_DEFAULTS)})")
+        e[k] = float(v)
+    main = {"lift": e["lift"], "curb_h": e["curb_h"], "curb_face_w": e["curb_face_w"], "sidewalk_w": e["sidewalk_w"],
+            "grade_w": e["grade_w"], "grass_clearance": e["grass_clearance"]}
+    conn = dict(main, sidewalk_w=e["connector_sidewalk_w"])
+    return main, conn

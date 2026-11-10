@@ -1,0 +1,39 @@
+{
+ "slug": "pueblo_motorsports_park_lm",
+ "obj": "track.obj",
+ "race": false,
+ "road_verts": 14050,
+ "grass_verts": 35812,
+ "piers": 0,
+ "wall_verts": 0,
+ "curb_verts": 42154,
+ "A_supports_in_road": 0,
+ "B_terrain_poke": 0,
+ "C_junction_crossings": 0,
+ "D_wall_on_road": 0,
+ "E_wall_floating": 0,
+ "J_terrain_span": 0,
+ "K_kerb_in_carriageway": 0,
+ "worst_kerb_stand_m": 0.0,
+ "worst_terrain_span_m": 0.0,
+ "F_curb_not_flush": 0,
+ "F_skirt_off_terrain": 0,
+ "F_side_faces_skipped": 0,
+ "G_prop_floating": null,
+ "H_ground_above_deck": null,
+ "I_sidewalk_isolating": 0,
+ "I_samples": [],
+ "worst_ground_cut_m": 0.0,
+ "worst_poke_m": 0.0,
+ "worst_float_m": 0.0,
+ "C_by_kind": {
+  "ramp": 0,
+  "mainline": 0
+ },
+ "samples": {
+  "supports": [],
+  "ground_cut": [],
+  "poke": [],
+  "crossings": []
+ }
+}

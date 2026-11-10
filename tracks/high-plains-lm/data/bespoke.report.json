@@ -1,0 +1,363 @@
+{
+ "buildings": [],
+ "rails": [
+  {
+   "key": "infield_t",
+   "kind": "krail",
+   "modules": 55,
+   "left_out": 0,
+   "length_m": 170.2
+  },
+  {
+   "key": "pit_wall_naip_rest",
+   "kind": "krail",
+   "modules": 12,
+   "left_out": 0,
+   "length_m": 36.2
+  },
+  {
+   "key": "pit_paddock_naip_rest",
+   "kind": "krail",
+   "modules": 12,
+   "left_out": 0,
+   "length_m": 36.2
+  },
+  {
+   "key": "paddock_east_naip_rest",
+   "kind": "krail",
+   "modules": 2,
+   "left_out": 0,
+   "length_m": 6.0
+  },
+  {
+   "key": "pit_wall_lidar",
+   "kind": "krail",
+   "modules": 49,
+   "left_out": 0,
+   "length_m": 148.0
+  },
+  {
+   "key": "pit_paddock_lidar",
+   "kind": "krail",
+   "modules": 39,
+   "left_out": 0,
+   "length_m": 117.8
+  },
+  {
+   "key": "paddock_east_lidar",
+   "kind": "krail",
+   "modules": 45,
+   "left_out": 0,
+   "length_m": 135.9
+  },
+  {
+   "key": "back_straight_lidar",
+   "kind": "krail",
+   "modules": 34,
+   "left_out": 0,
+   "length_m": 102.7
+  }
+ ],
+ "blocks": [
+  {
+   "key": "osm289311820",
+   "skin": "METAL",
+   "roof": "WHITE",
+   "form": "gable ridge 3.1 m",
+   "wall_h_m": 2.1,
+   "ground": [
+    9.31,
+    9.58
+   ],
+   "bottom": 9.05,
+   "eave": 11.15,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm289311821",
+   "skin": "METAL",
+   "roof": "WHITE",
+   "form": "gable ridge 3.9 m",
+   "wall_h_m": 2.1,
+   "ground": [
+    9.66,
+    9.88
+   ],
+   "bottom": 9.35,
+   "eave": 11.45,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm289311823",
+   "skin": "METAL",
+   "roof": "WHITE",
+   "form": "gable ridge 3.5 m",
+   "wall_h_m": 2.1,
+   "ground": [
+    9.63,
+    9.85
+   ],
+   "bottom": 9.34,
+   "eave": 11.44,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm289311824",
+   "skin": "METAL",
+   "roof": "WHITE",
+   "form": "gable ridge 2.8 m",
+   "wall_h_m": 2.2,
+   "ground": [
+    9.19,
+    9.35
+   ],
+   "bottom": 8.87,
+   "eave": 11.07,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm289314487",
+   "skin": "METAL",
+   "roof": "DARK",
+   "form": "gable ridge 2.8 m",
+   "wall_h_m": 2.4,
+   "ground": [
+    0.05,
+    0.06
+   ],
+   "bottom": -0.35,
+   "eave": 2.05,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm289316523",
+   "skin": "METAL",
+   "roof": "TAN",
+   "form": "gable ridge 3.1 m",
+   "wall_h_m": 2.1,
+   "ground": [
+    9.15,
+    9.29
+   ],
+   "bottom": 8.82,
+   "eave": 10.92,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "osm289317403",
+   "skin": "METAL",
+   "roof": "DARK",
+   "form": "gable ridge 2.8 m",
+   "wall_h_m": 2.1,
+   "ground": [
+    10.4,
+    10.41
+   ],
+   "bottom": 10.0,
+   "eave": 12.1,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "post0",
+   "skin": "METAL",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 2.8,
+   "ground": [
+    10.06,
+    10.07
+   ],
+   "bottom": 9.66,
+   "eave": 12.46,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "post1",
+   "skin": "METAL",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 2.8,
+   "ground": [
+    10.4,
+    10.4
+   ],
+   "bottom": 10.0,
+   "eave": 12.8,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "post2",
+   "skin": "METAL",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 2.8,
+   "ground": [
+    9.44,
+    9.53
+   ],
+   "bottom": 9.09,
+   "eave": 11.89,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "post3",
+   "skin": "METAL",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 2.8,
+   "ground": [
+    14.61,
+    14.76
+   ],
+   "bottom": 14.29,
+   "eave": 17.09,
+   "off_terrain": false,
+   "collider": true
+  },
+  {
+   "key": "post4",
+   "skin": "METAL",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 2.8,
+   "ground": [
+    10.86,
+    11.05
+   ],
+   "bottom": 10.55,
+   "eave": 13.35,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "post6",
+   "skin": "METAL",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 2.8,
+   "ground": [
+    9.63,
+    9.85
+   ],
+   "bottom": 9.34,
+   "eave": 12.14,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "post7",
+   "skin": "METAL",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 2.8,
+   "ground": [
+    6.47,
+    6.82
+   ],
+   "bottom": 6.24,
+   "eave": 9.04,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "post8",
+   "skin": "METAL",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 2.8,
+   "ground": [
+    9.06,
+    9.22
+   ],
+   "bottom": 8.74,
+   "eave": 11.54,
+   "off_terrain": false,
+   "collider": true
+  },
+  {
+   "key": "post9",
+   "skin": "METAL",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 2.8,
+   "ground": [
+    11.3,
+    11.71
+   ],
+   "bottom": 11.1,
+   "eave": 13.9,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "post10",
+   "skin": "METAL",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 2.8,
+   "ground": [
+    -0.42,
+    -0.28
+   ],
+   "bottom": -0.75,
+   "eave": 2.05,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "post11",
+   "skin": "METAL",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 2.8,
+   "ground": [
+    -3.39,
+    -3.19
+   ],
+   "bottom": -3.68,
+   "eave": -0.88,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "post12",
+   "skin": "METAL",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 2.8,
+   "ground": [
+    12.46,
+    13.02
+   ],
+   "bottom": 12.34,
+   "eave": 15.14,
+   "off_terrain": false,
+   "collider": false
+  }
+ ],
+ "pads": [
+  {
+   "key": "paddock",
+   "cells": 4522,
+   "left_out": 38
+  }
+ ],
+ "cards": [
+  {
+   "file": "source/bespoke/shrubs.json",
+   "prefix": "PRAIRIECARD",
+   "stood": 1898,
+   "dropped": 88
+  }
+ ]
+}

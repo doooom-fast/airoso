@@ -1,0 +1,79 @@
+{
+ "status": "GENERATED DRAFT from the built centreline \u2014 not an in-game recording (docs/HANDOFF.md :284, ledger 0023). Replace file-for-file with CSP's fast_lane.ai.candidate recorded in this layout.",
+ "layout": "full",
+ "direction": "forward",
+ "race_furniture": false,
+ "lane_offset": true,
+ "frame": "kn5 frame (median dist to centerline.local: engine 50.0 m / kn5 0.0 m)",
+ "points": 1106,
+ "spacing_m": 1.501,
+ "lap_m": 1659.6,
+ "lap_s_est": 31.5,
+ "offset_points": 0,
+ "offset_max_m": 0.0,
+ "clearance": {
+  "points": 1106,
+  "unmatched": 0,
+  "divider_stations": 0,
+  "right_side": 0,
+  "island_hits": 0,
+  "divider_hits": 0,
+  "divider_too_close": 0,
+  "edge_too_close": 0,
+  "min_divider_clear_m": null,
+  "min_edge_clear_m": 5.952222361212782,
+  "max_lat_m": 0.008192916683778405,
+  "right_side_frac": null,
+  "ok": true
+ },
+ "geometry": {
+  "ramps": [],
+  "ramp_clamped": 0,
+  "corner_approach": [],
+  "folds": [],
+  "fillets": [],
+  "smoothing": [
+   {
+    "iterations": 0,
+    "violations_before": 0,
+    "violations_after": 0,
+    "moved_points": 0,
+    "corridor_clamps": 0
+   },
+   {
+    "iterations": 0,
+    "violations_before": 0,
+    "violations_after": 0,
+    "moved_points": 0,
+    "corridor_clamps": 0
+   }
+  ],
+  "start": {
+   "xz": [
+    177.174,
+    35.264
+   ],
+   "dist_m": 0.0,
+   "requested_xz": [
+    177.174,
+    35.264
+   ],
+   "source": "dummies.json AC_TIME_0 midpoint",
+   "index": 0,
+   "grid_index": 1088,
+   "grid_behind_line_m": 27.0,
+   "grid_off_line_m": 0.1
+  },
+  "min_radius_m": 122.08,
+  "min_radius_at": 854,
+  "radius_below_floor": 0,
+  "max_turn_deg": 0.7,
+  "turns_over_limit": 0,
+  "turns_over_limit_road_tight": 0,
+  "max_lateral_jump_m": 0.008,
+  "backward_steps": 0,
+  "self_crossings": 0,
+  "min_speed_kmh": 157.6,
+  "min_speed_at": 852
+ }
+}

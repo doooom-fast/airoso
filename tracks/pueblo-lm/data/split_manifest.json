@@ -1,0 +1,123 @@
+{
+ "input": "D:\\k10-scratch\\pueblo_lm\\blender\\pueblo_motorsports_park_lm.blend",
+ "outputs": {
+  "loop_main.blend": {
+   "objects": 20,
+   "meshes": 4,
+   "positions": 53022,
+   "max_positions": 35457,
+   "materials": [
+    "1GRASS_mat",
+    "1KERB_sidewalk_mat",
+    "1ROAD_road_mat",
+    "MARKINGS_mat.001"
+   ],
+   "orphan_materials": [],
+   "ac_nodes": [
+    "AC_HOTLAP_START_0",
+    "AC_PIT_0",
+    "AC_PIT_1",
+    "AC_PIT_2",
+    "AC_PIT_3",
+    "AC_PIT_4",
+    "AC_PIT_5",
+    "AC_PIT_6",
+    "AC_PIT_7",
+    "AC_START_0",
+    "AC_TIME_0_L",
+    "AC_TIME_0_R",
+    "AC_TIME_1_L",
+    "AC_TIME_1_R",
+    "AC_TIME_2_L",
+    "AC_TIME_2_R"
+   ],
+   "race_objects": [],
+   "closure_objects": [],
+   "sign_objects": [],
+   "names": [
+    "1GRASS",
+    "1KERB_sidewalk",
+    "1ROAD_road",
+    "AC_HOTLAP_START_0",
+    "AC_PIT_0",
+    "AC_PIT_1",
+    "AC_PIT_2",
+    "AC_PIT_3",
+    "AC_PIT_4",
+    "AC_PIT_5",
+    "AC_PIT_6",
+    "AC_PIT_7",
+    "AC_START_0",
+    "AC_TIME_0_L",
+    "AC_TIME_0_R",
+    "AC_TIME_1_L",
+    "AC_TIME_1_R",
+    "AC_TIME_2_L",
+    "AC_TIME_2_R",
+    "MARKINGS"
+   ]
+  }
+ },
+ "problems": [],
+ "tokens": {},
+ "input_census": {
+  "objects": 20,
+  "meshes": 4,
+  "positions": 53022,
+  "max_positions": 35457,
+  "materials": [
+   "1GRASS_mat",
+   "1KERB_sidewalk_mat",
+   "1ROAD_road_mat",
+   "MARKINGS_mat.001"
+  ],
+  "orphan_materials": [],
+  "ac_nodes": [
+   "AC_HOTLAP_START_0",
+   "AC_PIT_0",
+   "AC_PIT_1",
+   "AC_PIT_2",
+   "AC_PIT_3",
+   "AC_PIT_4",
+   "AC_PIT_5",
+   "AC_PIT_6",
+   "AC_PIT_7",
+   "AC_START_0",
+   "AC_TIME_0_L",
+   "AC_TIME_0_R",
+   "AC_TIME_1_L",
+   "AC_TIME_1_R",
+   "AC_TIME_2_L",
+   "AC_TIME_2_R"
+  ],
+  "race_objects": [],
+  "closure_objects": [],
+  "sign_objects": [],
+  "names": [
+   "1GRASS",
+   "1KERB_sidewalk",
+   "1ROAD_road",
+   "AC_HOTLAP_START_0",
+   "AC_PIT_0",
+   "AC_PIT_1",
+   "AC_PIT_2",
+   "AC_PIT_3",
+   "AC_PIT_4",
+   "AC_PIT_5",
+   "AC_PIT_6",
+   "AC_PIT_7",
+   "AC_START_0",
+   "AC_TIME_0_L",
+   "AC_TIME_0_R",
+   "AC_TIME_1_L",
+   "AC_TIME_1_R",
+   "AC_TIME_2_L",
+   "AC_TIME_2_R",
+   "MARKINGS"
+  ]
+ },
+ "routes": {
+  "common": 0,
+  "street": 0
+ }
+}

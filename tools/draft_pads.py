@@ -414,3 +414,132 @@ def seam_blend(x: float, y: float, seams, power: float = 2.0) -> float:
         num += w * r
         den += w
     return num / den if den else 0.0
+
+
+# ---- the lap arm (ledger 0078 round 7: moved here from 0.17.2's author_draft_pads_blend.py, pure, so the Lake Murray
+# engine's tools/lm_pads_blend.py and any other author share one splice) ------------------------------------------------
+
+def row_cut(row, node_en, reach=CUT_HALF_M):
+    """the ribbon row's own line as a cut: through its two end vertices, kept side the node's, drawn +-reach"""
+    (ax, ay), (bx, by) = (row[0][0], row[0][1]), (row[-1][0], row[-1][1])
+    c = sealed_cut(((ax, ay), (bx, by)), node_en)
+    L = math.hypot(bx - ax, by - ay) or 1.0
+    ux, uy = (bx - ax) / L, (by - ay) / L
+    mx, my = (ax + bx) / 2.0, (ay + by) / 2.0
+    c["a"], c["b"] = (mx - ux * reach, my - uy * reach), (mx + ux * reach, my + uy * reach)
+    return c
+
+
+def _project(c, q):
+    s_ = side(c, *q)
+    return (q[0] - s_ * c["n"][0], q[1] - s_ * c["n"][1])
+
+
+def splice_rows(ring, cuts_rows):
+    """the measured ring with each cut's run along its MEASURED line replaced by the ribbon's ROW: the asphalt's two
+    crossings projected onto the row's own line, the row's vertices between them, and any outline point left on the
+    lap's side of the row line near it dropped (on a curve the two lines differ by a few degrees: that wedge was
+    0.17.2's sliver / hole at every seam)"""
+    out = list(ring)
+    for c, cr, row in cuts_rows:
+        on = [i for i, q in enumerate(out) if abs(side(c, *q)) <= 0.05
+              and segment_band(c["a"], c["b"], q[0], q[1], 0.5)]
+        if not on:
+            raise SystemExit(f"[pads] cut at v{c['vertex']}: the outline never runs along it (measure again)")
+        on_set, runs, seen = set(on), [], set()
+        for i in on:
+            if i in seen:
+                continue
+            j = i
+            while (j - 1) % len(out) in on_set and (j - 1) % len(out) not in seen and (j - 1) % len(out) != i:
+                j = (j - 1) % len(out)
+            run = []
+            k = j
+            while k in on_set and k not in seen:
+                run.append(k)
+                seen.add(k)
+                k = (k + 1) % len(out)
+            runs.append(run)
+        run = max(runs, key=len)
+        a, b = _project(cr, out[run[0]]), _project(cr, out[run[-1]])
+        # the row's order from the outline on either side of the run (the point before it to the point after it): a
+        # short run (the asphalt narrower than the ribbon: C18's 5 m ramp) cannot be trusted for the direction
+        pp, pn = out[(run[0] - 1) % len(out)], out[(run[-1] + 1) % len(out)]
+        ux, uy = pn[0] - pp[0], pn[1] - pp[1]
+        rv = sorted(row, key=lambda v: (v[0] - pp[0]) * ux + (v[1] - pp[1]) * uy)
+        if (a[0] - pp[0]) * ux + (a[1] - pp[1]) * uy > (b[0] - pp[0]) * ux + (b[1] - pp[1]) * uy:
+            a, b = b, a
+        # the row's own vertices always stay (they are the weld); a projected crossing within 5 cm of a row end is the
+        # row end itself
+        rowpts = [(v[0], v[1]) for v in rv]
+        clean = list(rowpts)
+        rl = math.dist(rowpts[0], rowpts[-1]) or 1e-9
+        ux, uy = (rowpts[-1][0] - rowpts[0][0]) / rl, (rowpts[-1][1] - rowpts[0][1]) / rl
+        ta = (a[0] - rowpts[0][0]) * ux + (a[1] - rowpts[0][1]) * uy
+        tb = (b[0] - rowpts[0][0]) * ux + (b[1] - rowpts[0][1]) * uy
+        # a crossing beyond the row's end (the asphalt wider than the ribbon there) stays; one INSIDE the row's span
+        # (the asphalt narrower than the ribbon: C14's out-cut) is dropped, or the outline would double back along the
+        # row (a zero-width spike the triangulation drops together with the row's end vertex)
+        if ta < -0.05:
+            clean.insert(0, a)
+        if tb > rl + 0.05:
+            clean.append(b)
+        s_, e_ = run[0], run[-1]
+        if s_ <= e_:
+            out = out[:s_] + clean + out[e_ + 1:]
+            new_idx = set(range(s_, s_ + len(clean)))
+        else:
+            out = clean + out[e_ + 1:s_]
+            new_idx = set(range(len(clean)))
+        out = [q for i, q in enumerate(out) if i in new_idx or not (
+            side(cr, *q) < -0.02 and segment_band(cr["a"], cr["b"], q[0], q[1], 6.0))]
+    protect = {(round(v[0], 6), round(v[1], 6)) for _, _, row in cuts_rows for v in row}
+    return untie(out, protect)
+
+
+def _seg_x(p1, p2, p3, p4):
+    d = (p2[0] - p1[0]) * (p4[1] - p3[1]) - (p2[1] - p1[1]) * (p4[0] - p3[0])
+    if abs(d) < 1e-12:
+        return None
+    t = ((p3[0] - p1[0]) * (p4[1] - p3[1]) - (p3[1] - p1[1]) * (p4[0] - p3[0])) / d
+    u = ((p3[0] - p1[0]) * (p2[1] - p1[1]) - (p3[1] - p1[1]) * (p2[0] - p1[0])) / d
+    if 1e-9 < t < 1 - 1e-9 and 1e-9 < u < 1 - 1e-9:
+        return (p1[0] + t * (p2[0] - p1[0]), p1[1] + t * (p2[1] - p1[1]))
+    return None
+
+
+def untie(ring, protect=frozenset(), max_rounds=200):
+    """a simple polygon: wherever two non-adjacent edges cross, the smaller loop between them is cut out at the
+    crossing (a spur the smoothing folded back, or the seam wedge); delaunay_2d_cdt's 'inside' on a crossed ring
+    leaves holes in the deck (0.17.2: C15 at 16,565 m, C18 at 24,279 m)"""
+    r = list(ring)
+    for _ in range(max_rounds):
+        n = len(r)
+        hit = None
+        for i in range(n):
+            a1, a2 = r[i], r[(i + 1) % n]
+            for j in range(i + 2, n):
+                if (j + 1) % n == i:
+                    continue
+                x = _seg_x(a1, a2, r[j], r[(j + 1) % n])
+                if x is not None:
+                    hit = (i, j, x)
+                    break
+            if hit:
+                break
+        if not hit:
+            return r
+        i, j, x = hit
+        loop_a = r[i + 1:j + 1]                               # cut this way round: the inside run goes
+        loop_b = r[j + 1:] + r[:i + 1]                        # or the other way round
+        hits_a = sum((round(q[0], 6), round(q[1], 6)) in protect for q in loop_a)
+        hits_b = sum((round(q[0], 6), round(q[1], 6)) in protect for q in loop_b)
+        if (hits_a, len(loop_a)) <= (hits_b, len(loop_b)):
+            if hits_a:
+                raise SystemExit("[pads] the outline crosses itself through a seam row: measure again")
+            r = r[:i + 1] + [x] + r[j + 1:]
+        else:
+            if hits_b:
+                raise SystemExit("[pads] the outline crosses itself through a seam row: measure again")
+            r = [x] + r[i + 1:j + 1]
+    raise SystemExit("[pads] the outline would not untie into a simple polygon")

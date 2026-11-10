@@ -1,0 +1,46 @@
+{
+ "obj": "D:\\k10-scratch\\milford_lm\\data\\track.obj",
+ "buildings": 1,
+ "no_ground": 0,
+ "floating": 0,
+ "sunken": 0,
+ "buried": 0,
+ "limits": {
+  "FLOAT_M": 0.1,
+  "SUNK_M": 1.0,
+  "MIN_SHOW_M": 1.0,
+  "STEP_M": 1.5,
+  "MAX_FLOATING": 0,
+  "MAX_SUNKEN": 0,
+  "MAX_BURIED": 0
+ },
+ "contact_m": {
+  "min": -0.15,
+  "max": -0.15
+ },
+ "show_m_min": 6.748,
+ "lens_buried_share": {
+  "over_30pct": 0,
+  "over_50pct": 0,
+  "p95": 0.113
+ },
+ "worst_floating": [],
+ "worst_sunken": [],
+ "worst_buried": [],
+ "verdict": "PASS",
+ "rows": [
+  {
+   "group": "BUILDING_FABRIC_pad_tent",
+   "x": 104.1,
+   "z": -444.1,
+   "bottom": 13.944,
+   "top": 22.408,
+   "ground_low": 14.093,
+   "ground_high": 15.661,
+   "ground_mean": 14.899,
+   "contact_m": -0.15,
+   "show_m": 6.748,
+   "lens_buried_share": 0.113
+  }
+ ]
+}

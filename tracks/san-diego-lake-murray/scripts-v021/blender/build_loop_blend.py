@@ -1149,6 +1149,59 @@ def _profile_sigma_windows(cfg, data, raw_centerline):
     return out
 
 
+def crossfall_bank(proj, route, centerline):
+    """ledger 0078: the mainline's measured crossfall as the ribbon's bank (opt-in, route.crossfall_file, a project path:
+    {"points_xz": [[x, z], ...], "bank_rad": [...]} — tools/lm_engine_intake.py writes it from a lidar crossfall.json).
+    Each point is put on THIS smoothed line by its nearest station; bank_at(arc) interpolates between them and is 0
+    outside the measured run. + = the left edge (of travel) higher, the ribbon's own convention. None when undeclared."""
+    rel = (route or {}).get("crossfall_file")
+    if not rel:
+        return None, None
+    cf = json.loads((proj / rel).read_text(encoding="utf-8"))
+    n = len(centerline)
+    st = [0.0]
+    for a, b in zip(centerline, centerline[1:]):
+        st.append(st[-1] + math.hypot(b[0] - a[0], b[2] - a[2]))
+    keyed = []
+    for (x, z), bk in zip(cf["points_xz"], cf["bank_rad"]):
+        best, bs = 1e18, None
+        for i in range(n - 1):
+            ax, az = centerline[i][0], centerline[i][2]
+            dx, dz = centerline[i + 1][0] - ax, centerline[i + 1][2] - az
+            L2 = dx * dx + dz * dz
+            t = 0.0 if L2 < 1e-12 else max(0.0, min(1.0, ((x - ax) * dx + (z - az) * dz) / L2))
+            d = (x - ax - t * dx) ** 2 + (z - az - t * dz) ** 2
+            if d < best:
+                best, bs = d, st[i] + t * (st[i + 1] - st[i])
+        if best <= 4.0 ** 2:
+            keyed.append((bs, float(bk)))
+    keyed.sort()
+    if len(keyed) < 2:
+        raise SystemExit(f"[blend] route.crossfall_file {rel}: fewer than 2 points within 4 m of the line")
+    # A whole-lap survey on a closed loop runs through the seam (L13): its last station and its first are neighbours
+    # across the closing segment, so they are joined there instead of falling to 0 (High Plains: a 19 m flat gap at the
+    # seam twisted the ribbon). A run that stops short of the seam (Sand Creek's one corner) is left alone.
+    closed = abs(centerline[0][0] - centerline[-1][0]) < 1e-6 and abs(centerline[0][2] - centerline[-1][2]) < 1e-6
+    lap = st[-1]
+    if closed and keyed[0][0] <= 30.0 and keyed[-1][0] >= lap - 30.0:
+        keyed = [(s - lap, b) for s, b in keyed[-2:]] + keyed + [(s + lap, b) for s, b in keyed[:2]]
+    ks = [k[0] for k in keyed]
+    import bisect
+
+    def bank_at(arc):
+        if arc < ks[0] or arc > ks[-1]:
+            return 0.0
+        j = bisect.bisect_left(ks, arc)
+        if j <= 0:
+            return keyed[0][1]
+        a0, b0 = keyed[j - 1]; a1, b1 = keyed[j]
+        return b0 + (b1 - b0) * ((arc - a0) / (a1 - a0) if a1 > a0 else 0.0)
+    mx = max(abs(k[1]) for k in keyed)
+    print(f"[blend] crossfall: {len(keyed)} measured stations on the line, {ks[0]:.0f}..{ks[-1]:.0f} m, "
+          f"max {100 * math.tan(mx):.2f} % (route.crossfall_file {rel})")
+    return bank_at, {"from_m": round(ks[0], 1), "to_m": round(ks[-1], 1), "max_pct": round(100 * math.tan(mx), 2)}
+
+
 def main():
     argv = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else ["project"]
     proj = Path(argv[0]).resolve()
@@ -1234,15 +1287,19 @@ def main():
     (data / "centerline.local.json").write_text(json.dumps(local))
 
     # --- road + kerbs (tight to real elevation) ---
-    road = ribbon.road_ribbon(centerline, widths)
+    edge_main, edge_conn = ribbon.edge_profile(route)   # route.edge (ledger 0078)
+    bank_at, _cf_rep = crossfall_bank(proj, route, centerline)
+    _bk = {"bank_at": bank_at} if bank_at is not None else {}     # absent = the calls exactly as before
+    road = ribbon.road_ribbon(centerline, widths, **_bk)
     road["vertices"] = [(x, y + 0.10, z) for (x, y, z) in road["vertices"]]   # ~0.1 m proud of the terrain
     # ONE continuous urban edge per side: road edge -> curb -> raised sidewalk -> graded down to the grass.
     # Gives real sidewalks the WHOLE loop (not just the sparse OSM footways) AND removes the hover — the outer
     # lip lands on the terrain, so road/curb/sidewalk/grass share heights with no floating edge.
-    kerb = ribbon.curb_sidewalk(centerline, widths, lift=0.10, curb_h=0.14, curb_face_w=0.08,
-                                sidewalk_w=1.8, grade_w=1.2, grass_clearance=0.10)
+    kerb = ribbon.curb_sidewalk(centerline, widths, **edge_main, **_bk)   # route.edge (ledger 0078); LM's values by default
     marks = ribbon.lane_markings(centerline, widths,   # painted lines: white edges/dashes + (two-way) yellow centre
-                                 center_yellow=route.get("divided_double", True))
+                                 center_yellow=route.get("divided_double", True), **_bk,
+                                 # ledger 0078: a circuit paints its edge lines only (route.lane_dividers false); absent = as before
+                                 **({"max_lanes_side": 0} if route.get("lane_dividers", True) is False else {}))
     for mk in marks.values():
         mk["vertices"] = [(x, y + 0.115, z) for (x, y, z) in mk["vertices"]]  # 1.5 cm above the road top
 
@@ -1258,8 +1315,7 @@ def main():
         crib = ribbon.road_ribbon(cpts, cw)
         crib["vertices"] = [(x, y + 0.10, z) for (x, y, z) in crib["vertices"]]
         _append(road, crib)
-        cker = ribbon.curb_sidewalk(cpts, cw, lift=0.10, curb_h=0.14, curb_face_w=0.08,
-                                    sidewalk_w=1.5, grade_w=1.2, grass_clearance=0.10)
+        cker = ribbon.curb_sidewalk(cpts, cw, **edge_conn)
         _append(kerb, cker)
         cmk = ribbon.connector_markings(cpts, cw, stub_of.get(cname), paint_of.get(cname))   # == lane_markings(.., center_yellow=True) off a stub / authored piece
         for _k in ("white", "yellow"):
@@ -1279,7 +1335,7 @@ def main():
     # too, or the hill ground is clamped down to the loop grade and the connector ribbon floats over a void.
     extra_roads = [(cpts, cw) for _n, cpts, cw in connectors]
     ribbon.conform_terrain_to_road(grid_xyz, centerline, widths, corridor=20.0, blend=16.0, clearance=0.08,
-                                   extra_roads=extra_roads)
+                                   extra_roads=extra_roads, **_bk)
     all_road_pts = list(centerline) + [p for _n, cpts, _w in connectors for p in cpts]
     band_clamp(grid_xyz, all_road_pts, band)
     carve_road_corridor(grid_xyz, centerline, widths, carve=0.2)   # guarantee no ground pokes through
@@ -1304,6 +1360,9 @@ def main():
         centerline, widths, i8, grid_xyz,
         piece_planner=lambda placed: plan_piece_streetlights(proj, cfg, data, centerline, widths, connectors,
                                                              conn_records, grid_xyz, placed))
+    if (cfg.get("scenery") or {}).get("draft_lamps", True) is False:
+        # ledger 0078: a circuit has no streetlight every 55 m down its edge (scenery.draft_lamps false); absent = as before
+        lights, lampheads, piece_plan = {"vertices": [], "uvs": [], "tris": []}, [], None
     lights_rec = {"lampheads": lampheads}                          # -> CSP [LIGHT_N]
     if piece_plan is not None:
         # the pieces' posts carry their base and road-ward unit (the author's "head -> nearest MAINLINE point" rule has

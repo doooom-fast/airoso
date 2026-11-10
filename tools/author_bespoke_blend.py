@@ -44,8 +44,9 @@ y = N, z = up). The collection is emptied first, so the tool is idempotent, and 
   names       {"ground": [...], "far": [...], "paved": [...], "track_edge": [...], "cone_ground": [...], "walls": [...]}: the scene's
               mesh-name prefixes where they are not the chain's (Lake Murray at the author stage: TERRAIN, GRASS_FAR, ROAD, CURB;
               the prep renames them to 1GRASS / 1ROAD / 1KERB later). Defaults = the chain's names below
-  rails       [{"key", "kind": "tecpro" | "krail", "polyline_lonlat", "auto"}]: collidable module lines seated on the ground ->
-              1WALL_TECPRO_<k> / 1WALL_KRAILBW_<k>; "auto" leaves a module out when it would stand on a road, instead of refusing
+  rails       [{"key", "kind": "tecpro" | "krail", "polyline_lonlat", "auto", "height_m"}]: collidable module lines seated on
+              the ground -> 1WALL_TECPRO_<k> / 1WALL_KRAILBW_<k>; "auto" leaves a module out when it would stand on a road,
+              instead of refusing; "height_m" (optional): a measured height over the ground, in place of the kind's
 
 SELF-CHECKS, exit 1 and loop.blend NOT saved: a building's footprint (ring + interior) and every scrub foot off every road
 and kerb; every cone foot off the main road; a building at least BUILDING_CLEAR_M from the road and any wall; ground under every read; no AC_* touched.
@@ -796,37 +797,49 @@ def pitched_roof(obb, eave, ridge_z, form, tile):
 def pads(col, spec, to_xy, ground, paved, bad):
     rows = []
     for k, p in enumerate(spec):
-        q = [to_xy(c) for c in p["quad_lonlat"]]
-        nu = max(1, int(math.dist(q[0], q[1]) / PAD_CELL_M))
-        nv = max(1, int(math.dist(q[1], q[2]) / PAD_CELL_M))
-        idx, verts = {}, []
-        faces, uvs, skipped = [], [], 0
-        def vert(i, j):
-            if (i, j) not in idx:
-                u, v = i / nu, j / nv
-                x = (q[0][0] * (1 - u) + q[1][0] * u) * (1 - v) + (q[3][0] * (1 - u) + q[2][0] * u) * v
-                y = (q[0][1] * (1 - u) + q[1][1] * u) * (1 - v) + (q[3][1] * (1 - u) + q[2][1] * u) * v
-                g = down(ground, x, y)
-                if g is None:
-                    return None
-                idx[(i, j)] = len(verts)
-                verts.append((x, y, g + PAD_LIFT_M))
-            return idx[(i, j)]
-        for i in range(nu):
-            for j in range(nv):
-                ids = [vert(i, j), vert(i + 1, j), vert(i + 1, j + 1), vert(i, j + 1)]
-                if None in ids:
-                    skipped += 1
-                    continue
-                c = [verts[a] for a in ids]
-                mx, my = sum(a[0] for a in c) / 4, sum(a[1] for a in c) / 4
-                if any(down(paved, x, y) is not None for x, y in [(mx, my)] + [(a[0], a[1]) for a in c]):
-                    skipped += 1
-                    continue
-                area = sum(c[a][0] * c[(a + 1) % 4][1] - c[(a + 1) % 4][0] * c[a][1] for a in range(4))
-                ord_ = ids if area > 0 else ids[::-1]
-                faces.append(tuple(ord_))
-                uvs.append(tuple((verts[a][0] / 8.0, verts[a][1] / 8.0) for a in ord_))
+        # a pad is one quad ("quad_lonlat"), or a STRIP ("strip_lonlat": {"inner": [...], "outer": [...]}, equal lengths:
+        # the quads between consecutive pairs, one mesh; ledger 0078 round 5, Nevada's measured run-off)
+        if "strip_lonlat" in p:
+            inn = [to_xy(c) for c in p["strip_lonlat"]["inner"]]
+            out = [to_xy(c) for c in p["strip_lonlat"]["outer"]]
+            if len(inn) != len(out) or len(inn) < 2:
+                bad.append(f"pad {p['key']}: strip_lonlat inner / outer must be equal and >= 2 long")
+                continue
+            quads = [[inn[i], inn[i + 1], out[i + 1], out[i]] for i in range(len(inn) - 1)]
+        else:
+            quads = [[to_xy(c) for c in p["quad_lonlat"]]]
+        verts, faces, uvs, skipped = [], [], [], 0
+        for q in quads:
+            nu = max(1, int(math.dist(q[0], q[1]) / PAD_CELL_M))
+            nv = max(1, int(math.dist(q[1], q[2]) / PAD_CELL_M))
+            idx = {}
+
+            def vert(i, j):
+                if (i, j) not in idx:
+                    u, v = i / nu, j / nv
+                    x = (q[0][0] * (1 - u) + q[1][0] * u) * (1 - v) + (q[3][0] * (1 - u) + q[2][0] * u) * v
+                    y = (q[0][1] * (1 - u) + q[1][1] * u) * (1 - v) + (q[3][1] * (1 - u) + q[2][1] * u) * v
+                    g = down(ground, x, y)
+                    if g is None:
+                        return None
+                    idx[(i, j)] = len(verts)
+                    verts.append((x, y, g + PAD_LIFT_M))
+                return idx[(i, j)]
+            for i in range(nu):
+                for j in range(nv):
+                    ids = [vert(i, j), vert(i + 1, j), vert(i + 1, j + 1), vert(i, j + 1)]
+                    if None in ids:
+                        skipped += 1
+                        continue
+                    c = [verts[a] for a in ids]
+                    mx, my = sum(a[0] for a in c) / 4, sum(a[1] for a in c) / 4
+                    if any(down(paved, x, y) is not None for x, y in [(mx, my)] + [(a[0], a[1]) for a in c]):
+                        skipped += 1
+                        continue
+                    area = sum(c[a][0] * c[(a + 1) % 4][1] - c[(a + 1) % 4][0] * c[a][1] for a in range(4))
+                    ord_ = ids if area > 0 else ids[::-1]
+                    faces.append(tuple(ord_))
+                    uvs.append(tuple((verts[a][0] / 8.0, verts[a][1] / 8.0) for a in ord_))
         if not faces:
             bad.append(f"pad {p['key']}: no cell stood")
             continue
@@ -981,6 +994,7 @@ def rails(col, spec, to_xy, ground, paved, bad):
     for k, r in enumerate(spec):
         line = [to_xy(p) for p in r["polyline_lonlat"]]
         prefix, hgt, mod, dep = RAIL_KINDS[r["kind"]]
+        hgt = float(r.get("height_m", hgt))      # a measured height (ledger 0078: Pikes Peak's wall off the lidar)
         verts, faces, uvs = [], [], []
         arc_total, modules, left_out = 0.0, 0, 0
         for a, b in zip(line, line[1:]):
@@ -1062,7 +1076,11 @@ def main():
     if spec.get("pads"):
         report["pads"] = pads(col, spec["pads"], to_xy, far, paved, bad)
     if spec.get("cards"):
-        quads = [[to_xy(c) for c in p["quad_lonlat"]] for p in spec.get("pads", [])]
+        quads = [[to_xy(c) for c in p["quad_lonlat"]] for p in spec.get("pads", []) if "quad_lonlat" in p]
+        for p in spec.get("pads", []):                 # a strip pad's quads (ledger 0078 round 5)
+            if "strip_lonlat" in p:
+                si, so = p["strip_lonlat"]["inner"], p["strip_lonlat"]["outer"]
+                quads += [[to_xy(si[i]), to_xy(si[i + 1]), to_xy(so[i + 1]), to_xy(so[i])] for i in range(len(si) - 1)]
         report["cards"] = cards(col, spec["cards"], proj, to_xy, far, paved, walls, bad, quads)
     if spec.get("guardrail"):
         report["guardrail"] = guardrail(col, spec["guardrail"], proj, bad)

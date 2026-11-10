@@ -17,6 +17,10 @@ Schema (unknown keys are refused, so a typo is never silently ignored):
 - ``ui_name_prefix`` (str, required): the installed ``ui_track.json`` name is ``<prefix> - <layout name>``.
 - ``street_ai_july`` (absolute path, optional): where ``STREET_AI=july`` copies the July AI line from (SD).
 - ``audit_note`` (str, optional): printed in the street audit's step header (SD's regression floor).
+- ``engine`` (optional, ledger 0078): ``"lm-v4"`` builds the track on Lake Murray v4's engine — the loop assembler from
+  ``tracks/san-diego-lake-murray/scripts-v021`` (when the track has no ``scripts-v021`` of its own) and the prep / exporter /
+  spawn builder from engine-july (``ENG=<dir>``, as San Diego). ``"airoso"`` (the default) is airoso's own ``scripts/``.
+  San Diego itself needs no key (ship_track.sh has always picked engine-july for it); the line is emitted only when declared.
 - ``steps`` (required): ``{"draft": [...], "author": [...], "prep": ["prep", "split"], "ship": [...],
   "gate": [...]}``. ``draft`` = the steps ``--skip-blend`` skips (the engine draft and the scripted
   authoring that edit loop.blend); ``author`` = the steps every ship runs (layout dummies + the race
@@ -54,7 +58,8 @@ GLOB_RE = re.compile(r"^[A-Za-z0-9_.{}-]+(/[A-Za-z0-9_.{}-]+)*/[A-Za-z0-9_.-]*\*
 ABS_RE = re.compile(r"^[A-Za-z]:/[A-Za-z0-9_. /()-]*$")
 TEXT_RE = re.compile(r"^[^\t\r\n\x00-\x1f]{0,240}$")
 TOP = {"track", "workshop", "workshop_project", "require_race_layout", "ui_name_prefix", "street_ai_july",
-       "audit_note", "steps", "sync_in", "sync_out"}
+       "audit_note", "engine", "steps", "sync_in", "sync_out"}
+ENGINES = ("airoso", "lm-v4")
 SYNC_IN = {"required", "optional", "globs", "dirs", "assets"}
 SYNC_OUT = {"required", "files", "map", "dirs", "remove"}
 
@@ -117,6 +122,10 @@ def load(path, track: str) -> dict:
     if not isinstance(out["workshop_project"], str) or not NAME_RE.match(out["workshop_project"]) \
             or out["workshop_project"] in (".", ".."):
         raise SpecError(f"workshop_project {out['workshop_project']!r} must be one folder name")
+    if "engine" in spec:
+        if spec["engine"] not in ENGINES:
+            raise SpecError(f"engine {spec['engine']!r} must be one of {list(ENGINES)}")
+        out["engine"] = spec["engine"]
     if not isinstance(out["require_race_layout"], bool):
         raise SpecError("require_race_layout must be true or false")
     steps = spec.get("steps")
@@ -177,6 +186,8 @@ def lines(spec: dict) -> list[str]:
            f"require_race_layout\t{1 if spec['require_race_layout'] else 0}",
            f"ui_name_prefix\t{spec['ui_name_prefix']}", f"audit_note\t{spec['audit_note']}",
            f"street_ai_july\t{spec['street_ai_july']}"]
+    if spec.get("engine"):
+        out.append(f"engine\t{spec['engine']}")      # only when declared: every older spec's lines are unchanged
     for ph in PHASES:
         out += [f"step.{ph}\t{n}" for n in spec["steps"][ph]]
     for k in ("required", "optional", "globs", "dirs", "assets"):

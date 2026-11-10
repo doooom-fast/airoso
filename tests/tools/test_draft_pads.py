@@ -96,8 +96,15 @@ def test_declarations_are_checked():
 
 
 def test_the_chain_carries_the_author_step():
+    # the Lariat V3 WIP's author step (claude/lariat-pads-wip), kept beside the LM port's draft_lm_pads step
     src = (ROOT / "tools" / "ship_track.sh").read_text(encoding="utf-8")
     assert "author_draft_pads() {" in src and "tools/author_draft_pads_blend.py" in src
+
+
+def test_the_chain_carries_the_lm_pads_step():
+    src = (ROOT / "tools" / "ship_track.sh").read_text(encoding="utf-8")
+    assert "draft_lm_pads() {" in src and "tools/lm_pads_blend.py" in src
+    assert "draft_cutfill() {" in src and "tools/cutfill_blend.py" in src
 
 
 def test_the_seam_offset_is_exact_on_the_row_linear_along_it_and_faded_in():
@@ -111,3 +118,25 @@ def test_the_seam_offset_is_exact_on_the_row_linear_along_it_and_faded_in():
     assert dp.seam_offset(prof, -4.0, dp.SEAM_FADE_M + 1.0) == 0.0          # the measured ground beyond the fade
     steps = [dp.seam_offset(prof, -4.0, y * 1.0) for y in range(0, 14)]
     assert max(abs(b - a) for a, b in zip(steps, steps[1:])) < 0.06 * 0.1 / 0.06   # a smooth fade, no step
+
+
+def test_the_row_splice_puts_the_row_into_the_ring_and_unties_it():
+    # a square pad 0..10 x 0..10, the lap entering from the south (row along y = 0 from x = 3 to x = 7)
+    ring = [(0.0, 0.0), (3.0, 0.0), (7.0, 0.0), (10.0, 0.0), (10.0, 10.0), (0.0, 10.0)]
+    c = {"p": (5.0, 0.0), "n": (0.0, 1.0), "a": (-30.0, 0.0), "b": (30.0, 0.0), "vertex": 0}
+    row = [(2.0, 0.0, 1.0), (5.0, 0.0, 1.1), (8.0, 0.0, 1.0)]
+    cr = dp.row_cut(row, (5.0, 5.0))
+    out = dp.splice_rows(ring, [(c, cr, row)])
+    keys = {(round(q[0], 6), round(q[1], 6)) for q in out}
+    assert {(2.0, 0.0), (5.0, 0.0), (8.0, 0.0)} <= keys                     # the row's vertices are the weld
+    assert abs(dp.ring_area(out)) == pytest.approx(100.0, rel=1e-6)
+
+
+def test_untie_cuts_a_folded_spur_out():
+    bow = [(0.0, 0.0), (4.0, 0.0), (4.0, 4.0), (5.0, -1.0), (6.0, -1.0), (0.0, 4.0)]
+    simple = dp.untie(bow)
+    for i in range(len(simple)):
+        for j in range(i + 2, len(simple)):
+            if (j + 1) % len(simple) == i:
+                continue
+            assert dp._seg_x(simple[i], simple[(i + 1) % len(simple)], simple[j], simple[(j + 1) % len(simple)]) is None

@@ -1,0 +1,147 @@
+{
+  "_doc": "Pueblo Motorsports Park through Lake Murray v4's engine (ledger 0078). The line, widths and profile are tracks/pueblo's (installed 0.67.0), read by tools/lm_engine_intake.py; the profile is the measured one with the elevation stage's grade cap undone; no lidar camber (the G10 survey found no usable cloud here: source/lidar/camber-survey/README.md), so flat; the 3DEP grid is this port's own fetch (the live track commits none); the edge is the circuit's (no curb, no sidewalk). Every other key is the live track's, copied; the live config is untouched.",
+  "archetype": "race_circuit",
+  "name": "Pueblo Motorsports Park (LM engine)",
+  "slug": "pueblo_motorsports_park_lm",
+  "version": "0.1.1",
+  "mirror_x": false,
+  "loop": true,
+  "default_width_m": 12.0,
+  "location": {
+    "lat": 38.303726,
+    "lon": -104.675683,
+    "timezone": "America/Denver",
+    "city": "Pueblo",
+    "country": "United States"
+  },
+  "origin": "centroid",
+  "true_north_rotation_deg": 0.0,
+  "surfaces": {
+    "road": "1ROAD",
+    "grass": "GRASS",
+    "kerb": "1KERB"
+  },
+  "kerb": {
+    "height_m": 0.08,
+    "width_m": 1.2,
+    "top_frac": 0.6,
+    "edge_ramp": 0.4
+  },
+  "scenery": {
+    "corridor_margin_m": 3.0,
+    "tree_step_m": 45,
+    "tree_cap": 150,
+    "tree_atlas_cols": 3,
+    "tree_atlas_rows": 2,
+    "bush_spacing_m": 9,
+    "bush_density": 0.25,
+    "bush_off_min_m": 6,
+    "bush_off_span_m": 22,
+    "bush_size_min_m": 1.0,
+    "bush_size_span_m": 1.2,
+    "light_spacing_m": 90,
+    "draft_lamps": false,
+    "_draft_lamps_doc": "a circuit has no streetlight down its edge every 55 m: the v021 assembler's draft posts are off (ledger 0078)",
+    "bespoke": {
+      "names": {
+        "ground": [
+          "TERRAIN"
+        ],
+        "far": [
+          "GRASS_FAR"
+        ],
+        "paved": [
+          "ROAD",
+          "CURB",
+          "1ROAD",
+          "1KERB"
+        ],
+        "track_edge": [
+          "ROAD",
+          "CURB"
+        ],
+        "cone_ground": [
+          "TERRAIN",
+          "CURB"
+        ],
+        "walls": [
+          "1WALL",
+          "BARRIER"
+        ],
+        "_doc": "the assembler's names at the author stage (Lake Murray's)"
+      },
+      "prep_seats": true
+    }
+  },
+  "layouts": [
+    {
+      "id": "full",
+      "ai": "ai/full",
+      "uses_connectors": []
+    }
+  ],
+  "lighting": {
+    "presets": [
+      "morning",
+      "noon",
+      "golden_hour"
+    ],
+    "grassfx": true
+  },
+  "source": {
+    "type": "from_track",
+    "track": "source/osm_fixes.json",
+    "smooth_window": 0,
+    "_smooth_window_doc": "2026-11-01 (ledger 0060, High Plains' lesson): source/osm_fixes.json is a list of 128 OSM nodes (6 m apart on the corners, up to 504 m on the straights), not a 1 Hz GPS drive; from_track's 5-fix moving average put the line 1.75 m median / 3.64 p95 / 6.59 m max off the source polygon and shortened the lap 3,511 -> 3,460 m. 0 = no smoothing: the line is the OSM polygon resampled at 3 m (build_mesh still corner-rounds it for the sweep). The closing 350 m (last node -> first) is the front straight's own segment (0.0 / 6.7 deg turn at its ends), not a chord.",
+    "_note": "Real 2.2-mi (~3510 m) paved ROAD COURSE at Pueblo Motorsports Park, 3733 N Pueblo Blvd, Pueblo CO. From OSM highway=raceway ways 558378826+558378823+558378824 (drag-strip staging spur excluded). Native ring winding is CW; fixes kept CW. Resampled to 3 m via scripts.gps.from_track. Flat/rolling road course — elevation from USGS 3DEP bare-earth (do NOT flatten); NO banking (not an oval)."
+  },
+  "road_profile": {
+    "_doc": "Flat road course — no banking. dips/cambers intentionally empty; deck follows bare-earth 3DEP.",
+    "dips": [],
+    "cambers": []
+  },
+  "route": {
+    "start_at": [
+      38.3,
+      -104.6774
+    ],
+    "_orientation_doc": "Research 2026-07-20: Pueblo Motorsports Park is CLOCKWISE ONLY (track rules); our ring is already CW. S/F on the wide west-side front straight near its south end (~38.3000,-104.6774), raced NNW-bound. Pit lane: east of the front straight (driver's right), ~350 m.",
+    "smooth_sigma_pts": 2.0,
+    "smooth_passes": 2,
+    "smooth_sigma_y_pts": 1.5,
+    "divided_double": false,
+    "lane_dividers": false,
+    "edge": {
+      "curb_h": 0.0,
+      "curb_face_w": 0.1,
+      "sidewalk_w": 0.2,
+      "connector_sidewalk_w": 0.2,
+      "grade_w": 1.0,
+      "grass_clearance": 0.05,
+      "_doc": "the circuit edge (ledger 0078): no curb, no sidewalk. The asphalt edge is held at road height for 0.30 m and the run-off ground meets it 0.15 m lower over 1.0 m [invented: the flush meet the drive gate reads as no drop]; the ground beyond is the assembler's conform to the road, then the 3DEP surface: the real run-off level."
+    }
+  },
+  "terrain_cell_m": 1.5,
+  "terrain_vertex_budget": 1500000,
+  "corridor_refine_factor": 6,
+  "_terrain_note": "L3b: cells finer than the road; excursion drops at the 5.0 default gated the v0.63.0 build (2026-08-07)",
+  "ui_tags": [
+    "circuit"
+  ],
+  "install_folder": "pueblo_motorsports_park_lm",
+  "_install_folder_doc": "beside pueblo_motorsports_park for the A/B drive (ledger 0078)",
+  "ui_series": "doooom Colorado",
+  "_ui_series_doc": "Kevin 2026-10-28: 'K10 is gone. doooom.' Content Manager shows '<ui_series> - <layout name>' (tools/ship_track.sh ui_name_prefix carries the same string)",
+  "_chain_doc": "2026-11-01 (ONE-CHAIN §4 row 10; Kevin 2026-11-01: 'get a complete track list and installed by morning'): to the chain. mirror_x true -> false and true_north_rotation_deg 180 -> 0 (the chain's frame, ledger 0060; road_profile has no camber, so no sign to flip); version 0.66.3 -> 0.67.0 (versions keep counting, ONE-CHAIN §3); source.smooth_window 0 (an OSM node list); terrain_cell_m 2.0 -> 1.5 (L3b; Milford's drive_test failed at 2.0, 2026-10-28); ui_series 'doooom Colorado', install_folder = the slug (ONE-CHAIN §3); ui_tags already 'circuit'; the one layout already 'full'. route.start_at checked offline on the gps line + projection (zero-elevation stand-in): the ring rotates 952 points, vertex 0 lands 6.4 m from start_at on the west front straight heading 346 deg (NNW), clockwise, as _orientation_doc says; lap 3,511 m, 1,172 points from 128 nodes (published 2.2 mi = 3,541 m: -0.8 %). The engine-era T1 (v0.66.3 gate wave, ledger 0025) is withdrawn: the track enters at T0 through the chain.",
+  "lm_intake": {
+    "source_track": "pueblo",
+    "connectors": false,
+    "profile": "uncapped",
+    "grid_upsample": 2,
+    "_doc": "the measured profile (the elevation stage's cap undone), the 40 m 3DEP grid pre-divided to 20 m (the same samples)"
+  },
+  "terrain": {
+    "terrain_band_m": 22.0,
+    "_doc": "the v021 assembler's band clamp (Lake Murray's 22 m)"
+  }
+}

@@ -1,0 +1,34 @@
+{
+ "source_track": "pueblo",
+ "points": 1172,
+ "lap_m": 3511.2,
+ "closed": true,
+ "widths_m": [
+  12.0,
+  12.0,
+  12.0
+ ],
+ "bridges_levelled": [],
+ "max_grade_pct": null,
+ "measured_max_grade_pct": 10.18,
+ "y_changed_points": 0,
+ "y_change_max_m": 0.0,
+ "connectors": false,
+ "bespoke_files": [],
+ "crossfall": null,
+ "profile": {
+  "cap_was_pct": 9.0,
+  "reproduced_within_m": 0.0067,
+  "points_moved": 22,
+  "max_move_m": 0.33
+ },
+ "width_taper": null,
+ "resample": null,
+ "edge_on_wall": null,
+ "grid_upsample": 2,
+ "md5": {
+  "source_centerline": "2fed3478aee999f45e598619577b639c",
+  "heightfield.npy": "926cbf030ef4b40444640b1a02c24407",
+  "centerline.local.json": "df96a25819fddf769f3b7d6d56919cb0"
+ }
+}

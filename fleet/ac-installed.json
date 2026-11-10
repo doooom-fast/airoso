@@ -109,11 +109,11 @@
     "pikes_peak_international_raceway": {
       "branch": "claude/pikes-peak-road-course-build",
       "engine": "lm-v4",
-      "installed": "2026-11-09",
+      "installed": "2026-11-10",
       "role": "current",
-      "sha": "dea338935591cebc41c566d0e5c39857b778ef2c",
+      "sha": "421dfb78323dc5e93f60fab44cc5516b28519d08",
       "track": "pikes-peak-lm",
-      "version": "0.2.0"
+      "version": "0.2.1"
     },
     "pikes_peak_international_raceway_lm": {
       "branch": "claude/circuit-kerbs-lm",

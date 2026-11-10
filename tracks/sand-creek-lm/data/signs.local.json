@@ -1,0 +1,3652 @@
+{
+ "frame": "engine ENU local metres: x = East, y = up, z = North (data/centerline.local.json); Blender = (x, z, y)",
+ "rule": "W1-6 at the corner, outside of the bend, in line with and facing the approach (tools/place_signs.py)",
+ "defaults": {
+  "r_sign_max_m": 30.0,
+  "defl_min_deg": 45.0,
+  "hairpin_deg": 135.0,
+  "lateral_offset_m": 1.63,
+  "lateral_offset_connector_m": 1.33,
+  "height_m": 2.13,
+  "om1_3": true,
+  "include_connectors": false,
+  "both_directions_mainline": true,
+  "lamp_clear_m": 3.0,
+  "plant_clear_m": 2.5,
+  "kappa_window_m": 12,
+  "hysteresis_stations": 6,
+  "pad_decks": true
+ },
+ "signs": [
+  {
+   "id": "SC-C50-fwd@race",
+   "kind": "W1-6R",
+   "plate": "W1-6",
+   "layout": "race",
+   "ribbon": "MAINLINE",
+   "direction": "fwd",
+   "corner": {
+    "apex_vertex": 140,
+    "apex_station_m": 417,
+    "PC": 400,
+    "PT": 435,
+    "arc_m": 35,
+    "R_apex_m": 14.1,
+    "D_deg": -92.0,
+    "turn": "right",
+    "apex_xz": [
+     -1501.8,
+     157.26
+    ],
+    "second_arrow": false,
+    "R_at_PC_m": 60.8
+   },
+   "approach": {
+    "t_xz": [
+     0.0298,
+     0.9996
+    ],
+    "bearing_deg": 1.7,
+    "pca_vs_chord_deg": -2.11,
+    "w_app_m": 18.82,
+    "w_at_apex_m": 32.9,
+    "island_m": 0.0,
+    "lane_off_m": 4.71
+   },
+   "ray": {
+    "A_xz": [
+     -1503.22,
+     141.77
+    ],
+    "len_m": 33.75,
+    "C_xz": [
+     -1502.21,
+     175.51
+    ],
+    "exit_ribbon": "MAINLINE",
+    "hw_at_exit_m": 16.45,
+    "sC_station": 423,
+    "sC_rel_PC_m": 23,
+    "sC_rel_apex_m": 6,
+    "s_S_m": 35.3,
+    "wall_in_m": 32.85,
+    "wall_out_m": 33.55,
+    "s_S_mesh_m": 35.18,
+    "C_mesh_xz": [
+     -1502.24,
+     174.61
+    ],
+    "len_mesh_m": 32.85
+   },
+   "base_xz": [
+    -1502.172,
+    176.936
+   ],
+   "curb_dir_xz": [
+    0.9585,
+    0.2851
+   ],
+   "y_road_at_sC": 18.031,
+   "y_base": {
+    "analytic": 18.271,
+    "raycast": 18.043,
+    "source": "raycast (deck: the highest of ROAD / ground under the post)",
+    "value": 18.043,
+    "road_hit": 18.043,
+    "pushed_on_road_m": 0.0
+   },
+   "face_dir_xz": [
+    -0.0298,
+    -0.9996
+   ],
+   "face_bearing_deg": 181.7,
+   "yaw_deg": -91.71,
+   "right_xz": [
+    0.9996,
+    -0.0298
+   ],
+   "arrow": "right",
+   "expect_arrow": null,
+   "lateral_offset_m": 1.63,
+   "height_m": 2.13,
+   "om1_3": true,
+   "wall": {
+    "behind_lip_m": 1.48,
+    "edge_centre_from_lip_m": -0.485,
+    "barrier_half_m": 0.335,
+    "token": "race",
+    "rule": "the layout's sealing curb strip: its far face stands in for the curb face, lateral_offset_m behind it"
+   },
+   "checks": {
+    "outside_cross": 16.43,
+    "edge_clear_m": 1.37,
+    "edge_clear_all_m": -3.58,
+    "lamp_m": 81.45,
+    "plant_m": Infinity,
+    "plant_zone": "-",
+    "pushed_m": 1.55,
+    "slid_m": 0.0,
+    "lateral_step_m": 0.0,
+    "gate_margin_m": 6.14,
+    "gate_margin_gated_m": 11.3,
+    "gate_ribbons": "MAINLINE",
+    "mouth_m": 10.7,
+    "spawn_m": 932.1,
+    "spawn": "AC_TIME_1_L@race",
+    "warnings": [
+     "layout plate for race: stands 1.48 m past the MAINLINE lip, behind its sealing wall (strip centre -0.485 m from the lip, half width 0.335 m, + lateral_offset_m 1.63); every other pavement -3.58 m away",
+     "layout plate for race: the sealing wall crossed 32.85-33.55 m along the ray, the post 1.63 m past its far face (the wall stands in for the curb); on the sealed opening's deck; every centreline's disc +6.14 m (the sealed openings' not gated here)"
+    ],
+    "slid_polyline_m": 0.0,
+    "mesh_clear_m": 1.63,
+    "mesh_clear_bearing_deg": null,
+    "mesh_shift_m": 0.12,
+    "pavement_clear_m": 0.0,
+    "walk_behind_m": null,
+    "wall_m": 1.63,
+    "on_deck": true
+   },
+   "old_rule": {
+    "rev1_xz": [
+     -1519.56,
+     89.97
+    ],
+    "rev1": "k10-colorado 5b38b59: advance diamond ~52 m BEFORE the bend, outside, w/2+2.2",
+    "rev2_xz": [
+     -1489.42,
+     142.52
+    ],
+    "rev2": "k10-colorado e2334c9: at the apex, side flipped (= INSIDE on SD), flare w/2+2.8"
+   },
+   "overrides_applied": [],
+   "exclude_plant": null,
+   "where": "N Colorado Blvd -> E 50th Ave (the colorado_50th pad)",
+   "base_xz_polyline": [
+    -1502.163,
+    177.06
+   ],
+   "base_xz_mesh": [
+    -1502.172,
+    176.936
+   ],
+   "base_source": "mesh (layout race: the ray through the sealing wall, 1.63 m past its far face, slid 0.00 m)",
+   "built": {
+    "outside_edge_xz": [
+     [
+      -1523.96,
+      135.34
+     ],
+     [
+      -1524.39,
+      137.52
+     ],
+     [
+      -1524.7,
+      139.72
+     ],
+     [
+      -1524.57,
+      142.1
+     ],
+     [
+      -1523.94,
+      144.6
+     ],
+     [
+      -1524.43,
+      147.24
+     ],
+     [
+      -1524.94,
+      150.34
+     ],
+     [
+      -1525.6,
+      154.07
+     ],
+     [
+      -1526.27,
+      158.16
+     ],
+     [
+      -1525.18,
+      162.03
+     ],
+     [
+      -1522.74,
+      166.39
+     ],
+     [
+      -1519.45,
+      170.6
+     ],
+     [
+      -1515.88,
+      174.03
+     ],
+     [
+      -1511.88,
+      176.95
+     ],
+     [
+      -1507.23,
+      179.44
+     ],
+     [
+      -1502.4,
+      181.13
+     ],
+     [
+      -1497.26,
+      176.33
+     ],
+     [
+      -1494.1,
+      178.23
+     ],
+     [
+      -1490.61,
+      177.19
+     ],
+     [
+      -1487.64,
+      175.56
+     ],
+     [
+      -1484.45,
+      182.32
+     ],
+     [
+      -1481.72,
+      182.0
+     ],
+     [
+      -1479.21,
+      181.62
+     ],
+     [
+      -1477.04,
+      181.06
+     ],
+     [
+      -1475.83,
+      175.47
+     ],
+     [
+      -1473.83,
+      175.0
+     ],
+     [
+      -1471.9,
+      174.45
+     ],
+     [
+      -1470.57,
+      170.85
+     ],
+     [
+      -1469.26,
+      167.07
+     ],
+     [
+      -1468.06,
+      162.4
+     ],
+     [
+      -1466.11,
+      162.18
+     ]
+    ],
+    "back_of_walk_xz": [
+     [
+      -1524.06,
+      135.34
+     ],
+     [
+      -1524.49,
+      137.53
+     ],
+     [
+      -1524.8,
+      139.72
+     ],
+     [
+      -1524.67,
+      142.1
+     ],
+     [
+      -1524.04,
+      144.61
+     ],
+     [
+      -1524.53,
+      147.25
+     ],
+     [
+      -1525.04,
+      150.36
+     ],
+     [
+      -1529.35,
+      155.12
+     ],
+     [
+      -1526.36,
+      158.19
+     ],
+     [
+      -1526.98,
+      162.89
+     ],
+     [
+      -1526.0,
+      168.54
+     ],
+     [
+      -1522.33,
+      173.22
+     ],
+     [
+      -1518.39,
+      177.01
+     ],
+     [
+      -1513.96,
+      180.25
+     ],
+     [
+      -1508.8,
+      183.01
+     ],
+     [
+      -1503.44,
+      184.89
+     ],
+     [
+      -1497.77,
+      179.38
+     ],
+     [
+      -1494.19,
+      179.23
+     ],
+     [
+      -1490.61,
+      177.89
+     ],
+     [
+      -1487.39,
+      179.45
+     ],
+     [
+      -1484.06,
+      186.2
+     ],
+     [
+      -1481.2,
+      185.87
+     ],
+     [
+      -1478.6,
+      185.47
+     ],
+     [
+      -1476.72,
+      182.93
+     ],
+     [
+      -1475.79,
+      175.66
+     ],
+     [
+      -1473.81,
+      175.1
+     ],
+     [
+      -1471.89,
+      174.54
+     ],
+     [
+      -1470.53,
+      171.05
+     ],
+     [
+      -1469.24,
+      167.17
+     ],
+     [
+      -1467.76,
+      164.18
+     ],
+     [
+      -1465.84,
+      163.86
+     ]
+    ]
+   },
+   "blender": {
+    "base_xyz_engine": [
+     -1502.172,
+     18.043,
+     176.936
+    ],
+    "base_xyz_blender": [
+     -1502.172,
+     176.936,
+     18.043
+    ],
+    "plate_bottom_y": 20.173,
+    "plate_top_y": 20.783,
+    "post_base_y": 17.743,
+    "post_top_y": 20.833,
+    "plates": [
+     {
+      "front_xyz": [
+       [
+        -1502.7822,
+        20.1735,
+        176.9242
+       ],
+       [
+        -1501.5636,
+        20.1735,
+        176.8878
+       ],
+       [
+        -1501.5636,
+        20.7835,
+        176.8878
+       ],
+       [
+        -1502.7822,
+        20.7835,
+        176.9242
+       ]
+      ],
+      "back_xyz": [
+       [
+        -1502.7821,
+        20.1735,
+        176.9272
+       ],
+       [
+        -1501.5635,
+        20.1735,
+        176.8908
+       ],
+       [
+        -1501.5635,
+        20.7835,
+        176.8908
+       ],
+       [
+        -1502.7821,
+        20.7835,
+        176.9272
+       ]
+      ],
+      "arrow_xyz": [
+       [
+        -1501.6779,
+        20.4783,
+        176.8873
+       ],
+       [
+        -1502.0359,
+        20.7069,
+        176.8979
+       ],
+       [
+        -1502.0207,
+        20.5628,
+        176.8975
+       ],
+       [
+        -1502.6681,
+        20.5628,
+        176.9168
+       ],
+       [
+        -1502.6681,
+        20.3937,
+        176.9168
+       ],
+       [
+        -1502.0207,
+        20.3937,
+        176.8975
+       ],
+       [
+        -1502.0359,
+        20.2497,
+        176.8979
+       ]
+      ]
+     }
+    ],
+    "post": {
+     "post_base_xyz": [
+      [
+       -1502.1463,
+       17.7435,
+       176.9602
+      ],
+      [
+       -1502.1478,
+       17.7435,
+       176.9103
+      ],
+      [
+       -1502.1977,
+       17.7435,
+       176.9118
+      ],
+      [
+       -1502.1962,
+       17.7435,
+       176.9617
+      ]
+     ],
+     "post_top_y": 20.8335
+    },
+    "meshes": {
+     "SIGNPLATE": "SIGNPLATE_race_0",
+     "SIGNARROW": "SIGNARROW_race_0",
+     "SIGNPOST": "SIGNPOST_race_0"
+    },
+    "collection": "RACE_CLOSE_RACE"
+   }
+  },
+  {
+   "id": "SC-ASH-fwd",
+   "kind": "W1-6R",
+   "plate": "W1-6",
+   "layout": null,
+   "ribbon": "MAINLINE",
+   "direction": "fwd",
+   "corner": {
+    "apex_vertex": 186,
+    "apex_station_m": 552,
+    "PC": 538,
+    "PT": 567,
+    "arc_m": 29,
+    "R_apex_m": 12.1,
+    "D_deg": -85.6,
+    "turn": "right",
+    "apex_xz": [
+     -1368.84,
+     151.07
+    ],
+    "second_arrow": false,
+    "R_at_PC_m": 64.9
+   },
+   "approach": {
+    "t_xz": [
+     0.9996,
+     0.0298
+    ],
+    "bearing_deg": 88.3,
+    "pca_vs_chord_deg": -1.12,
+    "w_app_m": 10.0,
+    "w_at_apex_m": 15.86,
+    "island_m": 0.0,
+    "lane_off_m": 2.5
+   },
+   "ray": {
+    "A_xz": [
+     -1382.0,
+     151.98
+    ],
+    "len_m": 25.75,
+    "C_xz": [
+     -1356.26,
+     152.74
+    ],
+    "exit_ribbon": "pad 50th_ash",
+    "hw_at_exit_m": 0.0,
+    "sC_station": 556,
+    "sC_rel_PC_m": 18,
+    "sC_rel_apex_m": 4,
+    "s_S_m": 27.34,
+    "C_mesh_xz": [
+     -1356.26,
+     152.75
+    ],
+    "len_mesh_m": 25.75,
+    "no_walk": true,
+    "s_S_mesh_m": 27.38,
+    "marched_m": 0.0,
+    "beyond_walk": false
+   },
+   "base_xz": [
+    -1354.631,
+    152.796
+   ],
+   "curb_dir_xz": [
+    0.4473,
+    -0.8944
+   ],
+   "y_road_at_sC": 20.265,
+   "y_base": {
+    "analytic": 20.505,
+    "raycast": 20.184,
+    "source": "raycast (no modelled walk, -0.32 m vs a walk's analytic height)",
+    "value": 20.184,
+    "road_hit": null,
+    "pushed_on_road_m": 0.0
+   },
+   "face_dir_xz": [
+    -0.9996,
+    -0.0298
+   ],
+   "face_bearing_deg": 268.3,
+   "yaw_deg": -178.29,
+   "right_xz": [
+    0.0298,
+    -0.9996
+   ],
+   "arrow": "right",
+   "expect_arrow": null,
+   "lateral_offset_m": 1.63,
+   "height_m": 2.13,
+   "om1_3": true,
+   "checks": {
+    "outside_cross": 11.24,
+    "edge_clear_m": 1.67,
+    "lamp_m": 24.32,
+    "plant_m": Infinity,
+    "plant_zone": "-",
+    "pushed_m": 1.59,
+    "slid_m": 0.0,
+    "lateral_step_m": 0.0,
+    "gate_margin_m": 7.14,
+    "gate_margin_gated_m": 7.14,
+    "gate_ribbons": "all",
+    "mouth_m": 15.3,
+    "spawn_m": 837.4,
+    "spawn": "AC_TIME_1_L@race",
+    "warnings": [
+     "no modelled curb+walk found along the ray; marched from the built curb face"
+    ],
+    "slid_polyline_m": 0.0,
+    "mesh_clear_m": 1.67,
+    "mesh_clear_bearing_deg": 180,
+    "mesh_shift_m": 0.04,
+    "walk_behind_m": -0.25,
+    "wall_m": 7.53
+   },
+   "old_rule": {
+    "rev1_xz": [
+     -1433.84,
+     161.34
+    ],
+    "rev1": "k10-colorado 5b38b59: advance diamond ~52 m BEFORE the bend, outside, w/2+2.2",
+    "rev2_xz": [
+     -1376.07,
+     143.14
+    ],
+    "rev2": "k10-colorado e2334c9: at the apex, side flipped (= INSIDE on SD), flare w/2+2.8"
+   },
+   "overrides_applied": [],
+   "exclude_plant": null,
+   "where": "E 50th Ave -> Ash St (the 50th_ash pad)",
+   "base_xz_polyline": [
+    -1354.675,
+    152.79
+   ],
+   "base_xz_mesh": [
+    -1354.631,
+    152.796
+   ],
+   "base_source": "mesh (no modelled walk (run 7.55) start, marched 0.00 m along the ray, slid 0.00 m along the curb)",
+   "built": {
+    "outside_edge_xz": [
+     [
+      -1394.21,
+      159.55
+     ],
+     [
+      -1392.27,
+      160.81
+     ],
+     [
+      -1390.33,
+      162.07
+     ],
+     [
+      -1388.36,
+      162.94
+     ],
+     [
+      -1386.32,
+      163.2
+     ],
+     [
+      -1384.22,
+      163.35
+     ],
+     [
+      -1382.09,
+      163.37
+     ],
+     [
+      -1379.79,
+      163.36
+     ],
+     [
+      -1377.32,
+      163.12
+     ],
+     [
+      -1374.76,
+      162.82
+     ],
+     [
+      -1372.07,
+      162.3
+     ],
+     [
+      -1366.77,
+      166.84
+     ],
+     [
+      -1358.81,
+      170.83
+     ],
+     [
+      -1356.39,
+      164.75
+     ],
+     [
+      -1356.39,
+      158.11
+     ],
+     [
+      -1356.39,
+      153.32
+     ],
+     [
+      -1356.31,
+      149.46
+     ],
+     [
+      -1356.32,
+      146.23
+     ],
+     [
+      -1356.32,
+      143.59
+     ],
+     [
+      -1356.29,
+      141.15
+     ],
+     [
+      -1356.28,
+      138.79
+     ],
+     [
+      -1356.27,
+      136.58
+     ],
+     [
+      -1356.19,
+      134.47
+     ],
+     [
+      -1356.25,
+      132.37
+     ],
+     [
+      -1356.22,
+      130.31
+     ],
+     [
+      -1356.21,
+      128.29
+     ],
+     [
+      -1356.2,
+      126.27
+     ],
+     [
+      -1355.89,
+      124.27
+     ],
+     [
+      -1355.89,
+      122.26
+     ],
+     [
+      -1356.18,
+      120.26
+     ],
+     [
+      -1359.08,
+      118.26
+     ]
+    ],
+    "back_of_walk_xz": [
+     [
+      -1394.21,
+      159.75
+     ],
+     [
+      -1392.38,
+      164.81
+     ],
+     [
+      -1390.46,
+      166.07
+     ],
+     [
+      -1388.49,
+      166.93
+     ],
+     [
+      -1386.44,
+      167.2
+     ],
+     [
+      -1384.23,
+      163.55
+     ],
+     [
+      -1382.09,
+      163.47
+     ],
+     [
+      -1379.79,
+      163.46
+     ],
+     [
+      -1376.98,
+      167.1
+     ],
+     [
+      -1374.16,
+      166.77
+     ],
+     [
+      -1371.37,
+      165.21
+     ],
+     [
+      -1365.33,
+      170.46
+     ],
+     [
+      -1356.74,
+      174.13
+     ],
+     [
+      -1353.76,
+      167.63
+     ],
+     [
+      -1353.29,
+      160.48
+     ],
+     [
+      -1352.87,
+      155.21
+     ],
+     [
+      -1352.55,
+      150.81
+     ],
+     [
+      -1355.06,
+      146.53
+     ],
+     [
+      -1352.37,
+      144.24
+     ],
+     [
+      -1352.31,
+      141.6
+     ],
+     [
+      -1352.29,
+      139.07
+     ],
+     [
+      -1352.27,
+      136.75
+     ],
+     [
+      -1352.19,
+      134.58
+     ],
+     [
+      -1352.25,
+      132.43
+     ],
+     [
+      -1352.23,
+      130.35
+     ],
+     [
+      -1352.21,
+      128.32
+     ],
+     [
+      -1356.0,
+      126.27
+     ],
+     [
+      -1351.89,
+      124.28
+     ],
+     [
+      -1355.69,
+      122.26
+     ],
+     [
+      -1355.88,
+      120.26
+     ],
+     [
+      -1357.18,
+      118.26
+     ]
+    ]
+   },
+   "blender": {
+    "base_xyz_engine": [
+     -1354.631,
+     20.184,
+     152.796
+    ],
+    "base_xyz_blender": [
+     -1354.631,
+     152.796,
+     20.184
+    ],
+    "plate_bottom_y": 22.314,
+    "plate_top_y": 22.924,
+    "post_base_y": 19.884,
+    "post_top_y": 22.974,
+    "plates": [
+     {
+      "front_xyz": [
+       [
+        -1354.6792,
+        22.3138,
+        153.4044
+       ],
+       [
+        -1354.6428,
+        22.3138,
+        152.1858
+       ],
+       [
+        -1354.6428,
+        22.9238,
+        152.1858
+       ],
+       [
+        -1354.6792,
+        22.9238,
+        153.4044
+       ]
+      ],
+      "back_xyz": [
+       [
+        -1354.6762,
+        22.3138,
+        153.4045
+       ],
+       [
+        -1354.6398,
+        22.3138,
+        152.1859
+       ],
+       [
+        -1354.6398,
+        22.9238,
+        152.1859
+       ],
+       [
+        -1354.6762,
+        22.9238,
+        153.4045
+       ]
+      ],
+      "arrow_xyz": [
+       [
+        -1354.6502,
+        22.6186,
+        152.2999
+       ],
+       [
+        -1354.6609,
+        22.8472,
+        152.6579
+       ],
+       [
+        -1354.6604,
+        22.7032,
+        152.6426
+       ],
+       [
+        -1354.6797,
+        22.7032,
+        153.2901
+       ],
+       [
+        -1354.6797,
+        22.5341,
+        153.2901
+       ],
+       [
+        -1354.6604,
+        22.5341,
+        152.6426
+       ],
+       [
+        -1354.6609,
+        22.39,
+        152.6579
+       ]
+      ]
+     }
+    ],
+    "post": {
+     "post_base_xyz": [
+      [
+       -1354.6053,
+       19.8838,
+       152.7718
+      ],
+      [
+       -1354.6552,
+       19.8838,
+       152.7703
+      ],
+      [
+       -1354.6567,
+       19.8838,
+       152.8202
+      ],
+      [
+       -1354.6068,
+       19.8838,
+       152.8217
+      ]
+     ],
+     "post_top_y": 22.9738
+    },
+    "meshes": {
+     "SIGNPLATE": "SIGNPLATE_0",
+     "SIGNARROW": "SIGNARROW_0",
+     "SIGNPOST": "SIGNPOST_0"
+    }
+   }
+  },
+  {
+   "id": "SC-DAH-fwd",
+   "kind": "W1-6L",
+   "plate": "W1-6",
+   "layout": null,
+   "ribbon": "MAINLINE",
+   "direction": "fwd",
+   "corner": {
+    "apex_vertex": 410,
+    "apex_station_m": 1223,
+    "PC": 1209,
+    "PT": 1239,
+    "arc_m": 30,
+    "R_apex_m": 13.1,
+    "D_deg": 82.5,
+    "turn": "left",
+    "apex_xz": [
+     -764.68,
+     71.78
+    ],
+    "second_arrow": false,
+    "R_at_PC_m": 68.2
+   },
+   "approach": {
+    "t_xz": [
+     0.9998,
+     0.0192
+    ],
+    "bearing_deg": 88.9,
+    "pca_vs_chord_deg": 1.6,
+    "w_app_m": 10.0,
+    "w_at_apex_m": 17.48,
+    "island_m": 0.0,
+    "lane_off_m": 2.5
+   },
+   "ray": {
+    "A_xz": [
+     -777.82,
+     65.44
+    ],
+    "len_m": 28.75,
+    "C_xz": [
+     -749.08,
+     65.99
+    ],
+    "exit_ribbon": "pad 50th_dahlia",
+    "hw_at_exit_m": 0.0,
+    "sC_station": 1227,
+    "sC_rel_PC_m": 18,
+    "sC_rel_apex_m": 4,
+    "s_S_m": 30.35,
+    "C_mesh_xz": [
+     -749.08,
+     65.99
+    ],
+    "len_mesh_m": 28.75,
+    "back_of_walk_m": 29.05,
+    "walk_run_m": 0.3,
+    "s_S_walk_m": 29.01,
+    "s_S_mesh_m": 30.36,
+    "marched_m": 1.35,
+    "beyond_walk": true
+   },
+   "base_xz": [
+    -747.466,
+    66.023
+   ],
+   "curb_dir_xz": [
+    0.4986,
+    0.8669
+   ],
+   "y_road_at_sC": 22.081,
+   "y_base": {
+    "analytic": 22.321,
+    "raycast": 22.0,
+    "source": "raycast (terrain behind the walk, -0.32 m vs the walk's analytic height)",
+    "value": 22.0,
+    "road_hit": null,
+    "pushed_on_road_m": 0.0
+   },
+   "face_dir_xz": [
+    -0.9998,
+    -0.0192
+   ],
+   "face_bearing_deg": 268.9,
+   "yaw_deg": -178.9,
+   "right_xz": [
+    0.0192,
+    -0.9998
+   ],
+   "arrow": "left",
+   "expect_arrow": null,
+   "lateral_offset_m": 1.63,
+   "height_m": 2.13,
+   "om1_3": true,
+   "checks": {
+    "outside_cross": 15.7,
+    "edge_clear_m": 1.64,
+    "lamp_m": 29.12,
+    "plant_m": Infinity,
+    "plant_zone": "-",
+    "pushed_m": 1.6,
+    "slid_m": 0.0,
+    "lateral_step_m": 0.0,
+    "gate_margin_m": 9.14,
+    "gate_margin_gated_m": 9.14,
+    "gate_ribbons": "all",
+    "mouth_m": 14.7,
+    "spawn_m": 680.9,
+    "spawn": "AC_TIME_1_R@race",
+    "warnings": [
+     "post stands 1.31 m behind the back of the modelled walk (marched for the built clearance/disc); ground = terrain ray-cast"
+    ],
+    "slid_polyline_m": 0.0,
+    "mesh_clear_m": 1.64,
+    "mesh_clear_bearing_deg": 175,
+    "mesh_shift_m": 0.01,
+    "walk_behind_m": 1.31,
+    "wall_m": 10.5
+   },
+   "old_rule": {
+    "rev1_xz": [
+     -829.8,
+     60.07
+    ],
+    "rev1": "k10-colorado 5b38b59: advance diamond ~52 m BEFORE the bend, outside, w/2+2.2",
+    "rev2_xz": [
+     -772.12,
+     80.6
+    ],
+    "rev2": "k10-colorado e2334c9: at the apex, side flipped (= INSIDE on SD), flare w/2+2.8"
+   },
+   "overrides_applied": [],
+   "exclude_plant": null,
+   "where": "Dahlia St -> E 50th Ave (the 50th_dahlia pad)",
+   "base_xz_polyline": [
+    -747.478,
+    66.021
+   ],
+   "base_xz_mesh": [
+    -747.466,
+    66.023
+   ],
+   "base_source": "mesh (walk fraction start, marched 1.35 m along the ray, slid 0.00 m along the curb)",
+   "built": {
+    "outside_edge_xz": [
+     [
+      -789.79,
+      60.55
+     ],
+     [
+      -787.78,
+      60.47
+     ],
+     [
+      -785.74,
+      59.39
+     ],
+     [
+      -783.69,
+      58.23
+     ],
+     [
+      -781.6,
+      58.27
+     ],
+     [
+      -779.47,
+      58.55
+     ],
+     [
+      -777.33,
+      58.65
+     ],
+     [
+      -775.02,
+      58.81
+     ],
+     [
+      -772.58,
+      59.09
+     ],
+     [
+      -770.12,
+      59.51
+     ],
+     [
+      -767.33,
+      59.74
+     ],
+     [
+      -759.56,
+      49.54
+     ],
+     [
+      -754.94,
+      51.9
+     ],
+     [
+      -751.14,
+      55.73
+     ],
+     [
+      -749.33,
+      61.32
+     ],
+     [
+      -749.1,
+      67.13
+     ],
+     [
+      -748.88,
+      71.7
+     ],
+     [
+      -748.78,
+      75.23
+     ],
+     [
+      -748.6,
+      78.16
+     ],
+     [
+      -748.55,
+      80.96
+     ],
+     [
+      -742.92,
+      83.08
+     ],
+     [
+      -737.67,
+      85.22
+     ],
+     [
+      -737.56,
+      87.67
+     ],
+     [
+      -737.51,
+      89.99
+     ],
+     [
+      -748.67,
+      92.28
+     ],
+     [
+      -748.75,
+      94.33
+     ],
+     [
+      -749.24,
+      96.37
+     ],
+     [
+      -749.74,
+      98.38
+     ],
+     [
+      -750.23,
+      100.39
+     ],
+     [
+      -750.73,
+      102.39
+     ],
+     [
+      -753.92,
+      104.4
+     ]
+    ],
+    "back_of_walk_xz": [
+     [
+      -789.75,
+      56.55
+     ],
+     [
+      -787.77,
+      60.17
+     ],
+     [
+      -785.68,
+      55.39
+     ],
+     [
+      -783.63,
+      54.93
+     ],
+     [
+      -781.49,
+      54.27
+     ],
+     [
+      -779.45,
+      58.15
+     ],
+     [
+      -777.1,
+      54.66
+     ],
+     [
+      -775.01,
+      58.61
+     ],
+     [
+      -772.55,
+      58.9
+     ],
+     [
+      -770.08,
+      59.31
+     ],
+     [
+      -767.3,
+      59.64
+     ],
+     [
+      -758.04,
+      45.95
+     ],
+     [
+      -752.91,
+      48.57
+     ],
+     [
+      -748.62,
+      52.75
+     ],
+     [
+      -746.36,
+      58.79
+     ],
+     [
+      -745.74,
+      65.15
+     ],
+     [
+      -745.25,
+      70.27
+     ],
+     [
+      -744.92,
+      74.17
+     ],
+     [
+      -748.41,
+      78.13
+     ],
+     [
+      -748.35,
+      80.94
+     ],
+     [
+      -739.03,
+      82.77
+     ],
+     [
+      -733.78,
+      85.01
+     ],
+     [
+      -733.66,
+      87.54
+     ],
+     [
+      -733.61,
+      89.92
+     ],
+     [
+      -748.47,
+      92.28
+     ],
+     [
+      -744.75,
+      94.3
+     ],
+     [
+      -745.24,
+      96.35
+     ],
+     [
+      -745.74,
+      98.37
+     ],
+     [
+      -746.23,
+      100.38
+     ],
+     [
+      -746.73,
+      102.38
+     ],
+     [
+      -752.12,
+      104.4
+     ]
+    ]
+   },
+   "blender": {
+    "base_xyz_engine": [
+     -747.466,
+     22.0,
+     66.023
+    ],
+    "base_xyz_blender": [
+     -747.466,
+     66.023,
+     22.0
+    ],
+    "plate_bottom_y": 24.13,
+    "plate_top_y": 24.74,
+    "post_base_y": 21.7,
+    "post_top_y": 24.79,
+    "plates": [
+     {
+      "front_xyz": [
+       [
+        -747.5077,
+        24.1298,
+        66.6318
+       ],
+       [
+        -747.4843,
+        24.1298,
+        65.413
+       ],
+       [
+        -747.4843,
+        24.7398,
+        65.413
+       ],
+       [
+        -747.5077,
+        24.7398,
+        66.6318
+       ]
+      ],
+      "back_xyz": [
+       [
+        -747.5047,
+        24.1298,
+        66.6319
+       ],
+       [
+        -747.4813,
+        24.1298,
+        65.4131
+       ],
+       [
+        -747.4813,
+        24.7398,
+        65.4131
+       ],
+       [
+        -747.5047,
+        24.7398,
+        66.6319
+       ]
+      ],
+      "arrow_xyz": [
+       [
+        -747.5095,
+        24.4346,
+        66.5175
+       ],
+       [
+        -747.5026,
+        24.6632,
+        66.1595
+       ],
+       [
+        -747.5029,
+        24.5191,
+        66.1747
+       ],
+       [
+        -747.4905,
+        24.5191,
+        65.5271
+       ],
+       [
+        -747.4905,
+        24.35,
+        65.5271
+       ],
+       [
+        -747.5029,
+        24.35,
+        66.1747
+       ],
+       [
+        -747.5026,
+        24.206,
+        66.1595
+       ]
+      ]
+     }
+    ],
+    "post": {
+     "post_base_xyz": [
+      [
+       -747.4405,
+       21.6998,
+       65.9985
+      ],
+      [
+       -747.4905,
+       21.6998,
+       65.9975
+      ],
+      [
+       -747.4915,
+       21.6998,
+       66.0475
+      ],
+      [
+       -747.4415,
+       21.6998,
+       66.0485
+      ]
+     ],
+     "post_top_y": 24.7898
+    },
+    "meshes": {
+     "SIGNPLATE": "SIGNPLATE_0",
+     "SIGNARROW": "SIGNARROW_0",
+     "SIGNPOST": "SIGNPOST_0"
+    }
+   }
+  },
+  {
+   "id": "M-c5-fwd",
+   "kind": "W1-6R",
+   "plate": "W1-6",
+   "layout": null,
+   "ribbon": "MAINLINE",
+   "direction": "fwd",
+   "corner": {
+    "apex_vertex": 779,
+    "apex_station_m": 2325,
+    "PC": 2303,
+    "PT": 2346,
+    "arc_m": 43,
+    "R_apex_m": 22.8,
+    "D_deg": -81.4,
+    "turn": "right",
+    "apex_xz": [
+     -899.24,
+     1111.98
+    ],
+    "second_arrow": false,
+    "R_at_PC_m": 62.4
+   },
+   "approach": {
+    "t_xz": [
+     -0.3919,
+     0.92
+    ],
+    "bearing_deg": 336.9,
+    "pca_vs_chord_deg": -3.28,
+    "w_app_m": 11.0,
+    "w_at_apex_m": 42.3,
+    "island_m": 0.0,
+    "lane_off_m": 2.75
+   },
+   "ray": {
+    "A_xz": [
+     -896.15,
+     1091.56
+    ],
+    "len_m": 42.5,
+    "C_xz": [
+     -912.8,
+     1130.66
+    ],
+    "exit_ribbon": "MAINLINE",
+    "hw_at_exit_m": 21.15,
+    "sC_station": 2332,
+    "sC_rel_PC_m": 29,
+    "sC_rel_apex_m": 7,
+    "s_S_m": 44.17,
+    "C_mesh_xz": [
+     -912.71,
+     1130.43
+    ],
+    "len_mesh_m": 42.25,
+    "back_of_walk_m": 44.35,
+    "walk_run_m": 2.1,
+    "s_S_walk_m": 44.07,
+    "s_S_mesh_m": 44.12,
+    "marched_m": 0.05,
+    "beyond_walk": false
+   },
+   "base_xz": [
+    -913.441,
+    1132.15
+   ],
+   "curb_dir_xz": [
+    0.6316,
+    0.7753
+   ],
+   "y_road_at_sC": 7.199,
+   "y_base": {
+    "analytic": 7.439,
+    "raycast": 7.282,
+    "source": "raycast",
+    "value": 7.282,
+    "road_hit": null,
+    "pushed_on_road_m": 0.0
+   },
+   "face_dir_xz": [
+    0.3919,
+    -0.92
+   ],
+   "face_bearing_deg": 156.9,
+   "yaw_deg": -66.93,
+   "right_xz": [
+    0.92,
+    0.3919
+   ],
+   "arrow": "right",
+   "expect_arrow": null,
+   "lateral_offset_m": 1.63,
+   "height_m": 2.13,
+   "om1_3": true,
+   "checks": {
+    "outside_cross": 21.3,
+    "edge_clear_m": 1.59,
+    "lamp_m": 45.66,
+    "plant_m": Infinity,
+    "plant_zone": "-",
+    "pushed_m": 1.67,
+    "slid_m": 0.0,
+    "lateral_step_m": 0.0,
+    "gate_margin_m": 11.92,
+    "gate_margin_gated_m": 11.92,
+    "gate_ribbons": "all",
+    "mouth_m": 17.0,
+    "spawn_m": 413.1,
+    "spawn": "AC_TIME_1_L@race",
+    "warnings": [],
+    "slid_polyline_m": 0.0,
+    "mesh_clear_m": 1.63,
+    "mesh_clear_bearing_deg": 325,
+    "mesh_shift_m": 0.05,
+    "walk_behind_m": -0.23,
+    "wall_m": 1.83
+   },
+   "old_rule": {
+    "rev1_xz": [
+     -875.3,
+     1041.79
+    ],
+    "rev1": "k10-colorado 5b38b59: advance diamond ~52 m BEFORE the bend, outside, w/2+2.2",
+    "rev2_xz": [
+     -877.02,
+     1103.04
+    ],
+    "rev2": "k10-colorado e2334c9: at the apex, side flipped (= INSIDE on SD), flare w/2+2.8"
+   },
+   "overrides_applied": [],
+   "exclude_plant": null,
+   "where": "",
+   "base_xz_polyline": [
+    -913.458,
+    1132.196
+   ],
+   "base_xz_mesh": [
+    -913.441,
+    1132.15
+   ],
+   "base_source": "mesh (walk fraction start, marched 0.05 m along the ray, slid 0.00 m along the curb)",
+   "built": {
+    "outside_edge_xz": [
+     [
+      -918.26,
+      1082.56
+     ],
+     [
+      -919.11,
+      1085.07
+     ],
+     [
+      -919.92,
+      1087.8
+     ],
+     [
+      -920.6,
+      1090.5
+     ],
+     [
+      -921.22,
+      1093.46
+     ],
+     [
+      -921.72,
+      1096.77
+     ],
+     [
+      -922.0,
+      1100.04
+     ],
+     [
+      -922.09,
+      1103.38
+     ],
+     [
+      -922.6,
+      1107.26
+     ],
+     [
+      -922.16,
+      1111.07
+     ],
+     [
+      -921.41,
+      1114.53
+     ],
+     [
+      -920.25,
+      1118.43
+     ],
+     [
+      -917.92,
+      1121.91
+     ],
+     [
+      -916.44,
+      1125.2
+     ],
+     [
+      -914.28,
+      1128.29
+     ],
+     [
+      -911.87,
+      1131.47
+     ],
+     [
+      -909.41,
+      1134.17
+     ],
+     [
+      -906.99,
+      1136.5
+     ],
+     [
+      -904.21,
+      1138.83
+     ],
+     [
+      -900.17,
+      1138.87
+     ],
+     [
+      -896.64,
+      1138.41
+     ],
+     [
+      -892.88,
+      1137.36
+     ],
+     [
+      -890.01,
+      1137.26
+     ],
+     [
+      -887.73,
+      1137.7
+     ],
+     [
+      -885.71,
+      1138.64
+     ],
+     [
+      -883.74,
+      1139.5
+     ],
+     [
+      -881.85,
+      1140.31
+     ],
+     [
+      -879.99,
+      1141.11
+     ],
+     [
+      -878.18,
+      1141.88
+     ],
+     [
+      -876.38,
+      1142.66
+     ],
+     [
+      -874.62,
+      1143.43
+     ]
+    ],
+    "back_of_walk_xz": [
+     [
+      -919.96,
+      1081.96
+     ],
+     [
+      -920.83,
+      1084.53
+     ],
+     [
+      -921.65,
+      1087.33
+     ],
+     [
+      -922.35,
+      1090.1
+     ],
+     [
+      -922.99,
+      1093.13
+     ],
+     [
+      -923.51,
+      1096.56
+     ],
+     [
+      -923.79,
+      1099.94
+     ],
+     [
+      -923.89,
+      1103.4
+     ],
+     [
+      -923.89,
+      1107.38
+     ],
+     [
+      -926.0,
+      1111.77
+     ],
+     [
+      -925.2,
+      1115.49
+     ],
+     [
+      -923.92,
+      1119.74
+     ],
+     [
+      -921.45,
+      1123.58
+     ],
+     [
+      -917.65,
+      1125.89
+     ],
+     [
+      -915.76,
+      1129.31
+     ],
+     [
+      -913.25,
+      1132.62
+     ],
+     [
+      -910.7,
+      1135.43
+     ],
+     [
+      -908.19,
+      1137.84
+     ],
+     [
+      -905.31,
+      1140.26
+     ],
+     [
+      -901.18,
+      1140.37
+     ],
+     [
+      -897.58,
+      1139.94
+     ],
+     [
+      -893.75,
+      1138.93
+     ],
+     [
+      -890.81,
+      1138.87
+     ],
+     [
+      -888.51,
+      1139.32
+     ],
+     [
+      -886.45,
+      1140.28
+     ],
+     [
+      -884.45,
+      1141.15
+     ],
+     [
+      -882.56,
+      1141.97
+     ],
+     [
+      -880.7,
+      1142.76
+     ],
+     [
+      -878.89,
+      1143.54
+     ],
+     [
+      -877.1,
+      1144.31
+     ],
+     [
+      -875.35,
+      1145.07
+     ]
+    ]
+   },
+   "blender": {
+    "base_xyz_engine": [
+     -913.441,
+     7.282,
+     1132.15
+    ],
+    "base_xyz_blender": [
+     -913.441,
+     1132.15,
+     7.282
+    ],
+    "plate_bottom_y": 9.412,
+    "plate_top_y": 10.022,
+    "post_base_y": 6.982,
+    "post_top_y": 10.072,
+    "plates": [
+     {
+      "front_xyz": [
+       [
+        -913.99,
+        9.412,
+        1131.8835
+       ],
+       [
+        -912.8685,
+        9.412,
+        1132.3613
+       ],
+       [
+        -912.8685,
+        10.022,
+        1132.3613
+       ],
+       [
+        -913.99,
+        10.022,
+        1131.8835
+       ]
+      ],
+      "back_xyz": [
+       [
+        -913.9912,
+        9.412,
+        1131.8863
+       ],
+       [
+        -912.8697,
+        9.412,
+        1132.364
+       ],
+       [
+        -912.8697,
+        10.022,
+        1132.364
+       ],
+       [
+        -913.9912,
+        10.022,
+        1131.8863
+       ]
+      ],
+      "arrow_xyz": [
+       [
+        -912.972,
+        9.7168,
+        1132.3128
+       ],
+       [
+        -913.3015,
+        9.9454,
+        1132.1725
+       ],
+       [
+        -913.2875,
+        9.8014,
+        1132.1784
+       ],
+       [
+        -913.8834,
+        9.8014,
+        1131.9246
+       ],
+       [
+        -913.8834,
+        9.6322,
+        1131.9246
+       ],
+       [
+        -913.2875,
+        9.6322,
+        1132.1784
+       ],
+       [
+        -913.3015,
+        9.4882,
+        1132.1725
+       ]
+      ]
+     }
+    ],
+    "post": {
+     "post_base_xyz": [
+      [
+       -913.4278,
+       6.982,
+       1132.1828
+      ],
+      [
+       -913.4082,
+       6.982,
+       1132.1368
+      ],
+      [
+       -913.4542,
+       6.982,
+       1132.1172
+      ],
+      [
+       -913.4738,
+       6.982,
+       1132.1632
+      ]
+     ],
+     "post_top_y": 10.072
+    },
+    "meshes": {
+     "SIGNPLATE": "SIGNPLATE_0",
+     "SIGNARROW": "SIGNARROW_0",
+     "SIGNPOST": "SIGNPOST_0"
+    }
+   }
+  },
+  {
+   "id": "SC-48C-fwd@race",
+   "kind": "W1-6L",
+   "plate": "W1-6",
+   "layout": "race",
+   "ribbon": "MAINLINE",
+   "direction": "fwd",
+   "corner": {
+    "apex_vertex": 3195,
+    "apex_station_m": 9578,
+    "PC": 9564,
+    "PT": 9594,
+    "arc_m": 30,
+    "R_apex_m": 17.2,
+    "D_deg": 60.1,
+    "turn": "left",
+    "apex_xz": [
+     -1484.81,
+     -305.86
+    ],
+    "second_arrow": false,
+    "R_at_PC_m": 61.6
+   },
+   "approach": {
+    "t_xz": [
+     -0.0278,
+     0.9996
+    ],
+    "bearing_deg": 358.4,
+    "pca_vs_chord_deg": 2.24,
+    "w_app_m": 11.0,
+    "w_at_apex_m": 26.86,
+    "island_m": 0.0,
+    "lane_off_m": 2.75
+   },
+   "ray": {
+    "A_xz": [
+     -1478.17,
+     -319.05
+    ],
+    "len_m": 30.5,
+    "C_xz": [
+     -1479.02,
+     -288.57
+    ],
+    "exit_ribbon": "MAINLINE",
+    "hw_at_exit_m": 16.45,
+    "sC_station": 9584,
+    "sC_rel_PC_m": 20,
+    "sC_rel_apex_m": 6,
+    "s_S_m": 32.29,
+    "wall_in_m": 29.4,
+    "wall_out_m": 30.25,
+    "s_S_mesh_m": 32.18,
+    "C_mesh_xz": [
+     -1478.99,
+     -289.66
+    ],
+    "len_mesh_m": 29.4
+   },
+   "base_xz": [
+    -1479.065,
+    -286.883
+   ],
+   "curb_dir_xz": [
+    -0.8178,
+    0.5755
+   ],
+   "y_road_at_sC": 19.575,
+   "y_base": {
+    "analytic": 19.815,
+    "raycast": 19.494,
+    "source": "raycast (deck: the highest of ROAD / ground under the post)",
+    "value": 19.494,
+    "road_hit": 19.494,
+    "pushed_on_road_m": 0.0
+   },
+   "face_dir_xz": [
+    0.0278,
+    -0.9996
+   ],
+   "face_bearing_deg": 178.4,
+   "yaw_deg": -88.41,
+   "right_xz": [
+    0.9996,
+    0.0278
+   ],
+   "arrow": "left",
+   "expect_arrow": "left",
+   "lateral_offset_m": 1.63,
+   "height_m": 2.13,
+   "om1_3": true,
+   "wall": {
+    "behind_lip_m": 1.48,
+    "edge_centre_from_lip_m": -0.485,
+    "barrier_half_m": 0.335,
+    "token": "race",
+    "rule": "the layout's sealing curb strip: its far face stands in for the curb face, lateral_offset_m behind it"
+   },
+   "checks": {
+    "outside_cross": 16.48,
+    "edge_clear_m": 1.39,
+    "edge_clear_all_m": -5.47,
+    "lamp_m": 23.7,
+    "plant_m": Infinity,
+    "plant_zone": "-",
+    "pushed_m": 1.79,
+    "slid_m": 0.0,
+    "lateral_step_m": 0.0,
+    "gate_margin_m": 4.98,
+    "gate_margin_gated_m": 11.17,
+    "gate_ribbons": "MAINLINE",
+    "mouth_m": 8.8,
+    "spawn_m": 1043.5,
+    "spawn": "AC_TIME_0_R@race",
+    "warnings": [
+     "layout plate for race: stands 1.48 m past the MAINLINE lip, behind its sealing wall (strip centre -0.485 m from the lip, half width 0.335 m, + lateral_offset_m 1.63); every other pavement -5.48 m away",
+     "layout plate for race: the sealing wall crossed 29.40-30.25 m along the ray, the post 1.63 m past its far face (the wall stands in for the curb); on the sealed opening's deck; every centreline's disc +4.98 m (the sealed openings' not gated here)"
+    ],
+    "slid_polyline_m": 0.0,
+    "mesh_clear_m": 1.64,
+    "mesh_clear_bearing_deg": null,
+    "mesh_shift_m": 0.11,
+    "pavement_clear_m": 0.0,
+    "walk_behind_m": null,
+    "wall_m": 1.64,
+    "on_deck": true
+   },
+   "old_rule": {
+    "rev1_xz": [
+     -1473.04,
+     -371.21
+    ],
+    "rev1": "k10-colorado 5b38b59: advance diamond ~52 m BEFORE the bend, outside, w/2+2.2",
+    "rev2_xz": [
+     -1498.15,
+     -315.12
+    ],
+    "rev2": "k10-colorado e2334c9: at the apex, side flipped (= INSIDE on SD), flare w/2+2.8"
+   },
+   "overrides_applied": [],
+   "exclude_plant": null,
+   "where": "E 48th Ave -> N Colorado Blvd (the S at 48th / Colorado, first turn)",
+   "base_xz_polyline": [
+    -1479.068,
+    -286.773
+   ],
+   "base_xz_mesh": [
+    -1479.065,
+    -286.883
+   ],
+   "base_source": "mesh (layout race: the ray through the sealing wall, 1.63 m past its far face, slid 0.00 m)",
+   "built": {
+    "outside_edge_xz": [
+     [
+      -1469.52,
+      -328.96
+     ],
+     [
+      -1470.55,
+      -326.9
+     ],
+     [
+      -1471.01,
+      -324.83
+     ],
+     [
+      -1470.88,
+      -322.71
+     ],
+     [
+      -1470.99,
+      -320.51
+     ],
+     [
+      -1471.16,
+      -318.29
+     ],
+     [
+      -1471.38,
+      -316.0
+     ],
+     [
+      -1471.72,
+      -313.53
+     ],
+     [
+      -1472.22,
+      -311.01
+     ],
+     [
+      -1471.43,
+      -308.09
+     ],
+     [
+      -1471.12,
+      -304.61
+     ],
+     [
+      -1471.31,
+      -300.74
+     ],
+     [
+      -1469.78,
+      -295.43
+     ],
+     [
+      -1473.56,
+      -293.34
+     ],
+     [
+      -1473.64,
+      -286.91
+     ],
+     [
+      -1476.86,
+      -283.49
+     ],
+     [
+      -1480.07,
+      -281.53
+     ],
+     [
+      -1483.22,
+      -279.92
+     ],
+     [
+      -1488.2,
+      -283.86
+     ],
+     [
+      -1490.32,
+      -283.03
+     ],
+     [
+      -1492.09,
+      -282.34
+     ],
+     [
+      -1493.3,
+      -281.75
+     ],
+     [
+      -1493.88,
+      -281.26
+     ],
+     [
+      -1494.2,
+      -280.84
+     ],
+     [
+      -1494.27,
+      -280.67
+     ],
+     [
+      -1494.0,
+      -281.12
+     ],
+     [
+      -1493.51,
+      -281.57
+     ],
+     [
+      -1493.44,
+      -281.65
+     ],
+     [
+      -1493.62,
+      -281.46
+     ],
+     [
+      -1493.9,
+      -281.25
+     ],
+     [
+      -1494.3,
+      -280.67
+     ]
+    ],
+    "back_of_walk_xz": [
+     [
+      -1468.32,
+      -328.94
+     ],
+     [
+      -1469.25,
+      -326.87
+     ],
+     [
+      -1469.51,
+      -324.79
+     ],
+     [
+      -1469.28,
+      -322.64
+     ],
+     [
+      -1469.19,
+      -320.4
+     ],
+     [
+      -1469.36,
+      -318.13
+     ],
+     [
+      -1469.59,
+      -315.79
+     ],
+     [
+      -1469.94,
+      -313.24
+     ],
+     [
+      -1470.47,
+      -310.61
+     ],
+     [
+      -1467.59,
+      -306.97
+     ],
+     [
+      -1467.41,
+      -303.12
+     ],
+     [
+      -1471.22,
+      -300.69
+     ],
+     [
+      -1469.61,
+      -295.32
+     ],
+     [
+      -1473.41,
+      -293.21
+     ],
+     [
+      -1473.51,
+      -286.76
+     ],
+     [
+      -1475.75,
+      -281.83
+     ],
+     [
+      -1478.21,
+      -278.22
+     ],
+     [
+      -1482.41,
+      -278.2
+     ],
+     [
+      -1487.75,
+      -282.75
+     ],
+     [
+      -1489.99,
+      -282.19
+     ],
+     [
+      -1491.91,
+      -281.87
+     ],
+     [
+      -1493.06,
+      -281.21
+     ],
+     [
+      -1493.69,
+      -280.9
+     ],
+     [
+      -1493.92,
+      -280.43
+     ],
+     [
+      -1494.02,
+      -280.37
+     ],
+     [
+      -1493.7,
+      -280.86
+     ],
+     [
+      -1493.0,
+      -281.25
+     ],
+     [
+      -1492.9,
+      -281.39
+     ],
+     [
+      -1492.96,
+      -281.23
+     ],
+     [
+      -1493.03,
+      -281.03
+     ],
+     [
+      -1493.81,
+      -280.59
+     ]
+    ]
+   },
+   "blender": {
+    "base_xyz_engine": [
+     -1479.065,
+     19.494,
+     -286.883
+    ],
+    "base_xyz_blender": [
+     -1479.065,
+     -286.883,
+     19.494
+    ],
+    "plate_bottom_y": 21.624,
+    "plate_top_y": 22.234,
+    "post_base_y": 19.194,
+    "post_top_y": 22.284,
+    "plates": [
+     {
+      "front_xyz": [
+       [
+        -1479.6734,
+        21.6241,
+        -286.9299
+       ],
+       [
+        -1478.4549,
+        21.6241,
+        -286.896
+       ],
+       [
+        -1478.4549,
+        22.2341,
+        -286.896
+       ],
+       [
+        -1479.6734,
+        22.2341,
+        -286.9299
+       ]
+      ],
+      "back_xyz": [
+       [
+        -1479.6735,
+        21.6241,
+        -286.9269
+       ],
+       [
+        -1478.455,
+        21.6241,
+        -286.893
+       ],
+       [
+        -1478.455,
+        22.2341,
+        -286.893
+       ],
+       [
+        -1479.6735,
+        22.2341,
+        -286.9269
+       ]
+      ],
+      "arrow_xyz": [
+       [
+        -1479.5592,
+        21.9289,
+        -286.9308
+       ],
+       [
+        -1479.2012,
+        22.1575,
+        -286.9208
+       ],
+       [
+        -1479.2164,
+        22.0135,
+        -286.9212
+       ],
+       [
+        -1478.569,
+        22.0135,
+        -286.9032
+       ],
+       [
+        -1478.569,
+        21.8444,
+        -286.9032
+       ],
+       [
+        -1479.2164,
+        21.8444,
+        -286.9212
+       ],
+       [
+        -1479.2012,
+        21.7003,
+        -286.9208
+       ]
+      ]
+     }
+    ],
+    "post": {
+     "post_base_xyz": [
+      [
+       -1479.0407,
+       19.1941,
+       -286.8573
+      ],
+      [
+       -1479.0393,
+       19.1941,
+       -286.9073
+      ],
+      [
+       -1479.0893,
+       19.1941,
+       -286.9087
+      ],
+      [
+       -1479.0907,
+       19.1941,
+       -286.8587
+      ]
+     ],
+     "post_top_y": 22.2841
+    },
+    "meshes": {
+     "SIGNPLATE": "SIGNPLATE_race_0",
+     "SIGNARROW": "SIGNARROW_race_0",
+     "SIGNPOST": "SIGNPOST_race_0"
+    },
+    "collection": "RACE_CLOSE_RACE"
+   }
+  },
+  {
+   "id": "SC-48C-rev",
+   "kind": "W1-6R",
+   "plate": "W1-6",
+   "layout": null,
+   "ribbon": "MAINLINE",
+   "direction": "rev",
+   "corner": {
+    "apex_vertex": 3195,
+    "apex_station_m": 58,
+    "PC": 42,
+    "PT": 72,
+    "arc_m": 30,
+    "R_apex_m": 17.2,
+    "D_deg": -60.1,
+    "turn": "right",
+    "apex_xz": [
+     -1484.82,
+     -305.86
+    ],
+    "second_arrow": false,
+    "R_at_PC_m": 82.3
+   },
+   "approach": {
+    "t_xz": [
+     0.7891,
+     -0.6142
+    ],
+    "bearing_deg": 127.9,
+    "pca_vs_chord_deg": 12.44,
+    "w_app_m": 16.5,
+    "w_at_apex_m": 26.87,
+    "island_m": 0.0,
+    "lane_off_m": 4.12
+   },
+   "ray": {
+    "A_xz": [
+     -1500.64,
+     -300.75
+    ],
+    "len_m": 38.0,
+    "C_xz": [
+     -1470.65,
+     -324.09
+    ],
+    "exit_ribbon": "MAINLINE",
+    "hw_at_exit_m": 9.9,
+    "sC_station": 77,
+    "sC_rel_PC_m": 35,
+    "sC_rel_apex_m": 19,
+    "s_S_m": 39.8,
+    "C_mesh_xz": [
+     -1470.97,
+     -323.84
+    ],
+    "len_mesh_m": 37.6,
+    "back_of_walk_m": 40.0,
+    "walk_run_m": 2.4,
+    "s_S_walk_m": 39.68,
+    "s_S_mesh_m": 39.68,
+    "marched_m": 0.0,
+    "beyond_walk": false
+   },
+   "base_xz": [
+    -1469.329,
+    -325.121
+   ],
+   "curb_dir_xz": [
+    0.0343,
+    -0.9994
+   ],
+   "y_road_at_sC": 19.85,
+   "y_base": {
+    "analytic": 20.09,
+    "raycast": 19.938,
+    "source": "raycast",
+    "value": 19.938,
+    "road_hit": null,
+    "pushed_on_road_m": 0.0
+   },
+   "face_dir_xz": [
+    -0.7891,
+    0.6142
+   ],
+   "face_bearing_deg": 307.9,
+   "yaw_deg": 142.11,
+   "right_xz": [
+    -0.6142,
+    -0.7891
+   ],
+   "arrow": "right",
+   "expect_arrow": "right",
+   "lateral_offset_m": 1.63,
+   "height_m": 2.13,
+   "om1_3": true,
+   "checks": {
+    "outside_cross": 9.97,
+    "edge_clear_m": 1.52,
+    "lamp_m": 16.44,
+    "plant_m": Infinity,
+    "plant_zone": "-",
+    "pushed_m": 1.8,
+    "slid_m": 0.0,
+    "lateral_step_m": 0.0,
+    "gate_margin_m": 4.58,
+    "gate_margin_gated_m": 4.58,
+    "gate_ribbons": "all",
+    "mouth_m": 13.9,
+    "spawn_m": 1019.2,
+    "spawn": "AC_TIME_0_R@race",
+    "warnings": [
+     "approach heading: 10 m chord 127.9 deg vs PCA fit 115.5 deg (differ by 12.4 deg; the chord is used)"
+    ],
+    "slid_polyline_m": 0.0,
+    "mesh_clear_m": 1.62,
+    "mesh_clear_bearing_deg": 190,
+    "mesh_shift_m": 0.12,
+    "walk_behind_m": -0.32,
+    "wall_m": 2.16
+   },
+   "old_rule": {
+    "rev1_xz": [
+     -1500.35,
+     -251.19
+    ],
+    "rev1": "k10-colorado 5b38b59: advance diamond ~52 m BEFORE the bend, outside, w/2+2.2",
+    "rev2_xz": [
+     -1498.15,
+     -315.12
+    ],
+    "rev2": "k10-colorado e2334c9: at the apex, side flipped (= INSIDE on SD), flare w/2+2.8"
+   },
+   "overrides_applied": [
+    "expect_arrow mirrored for the reverse approach (left -> right)"
+   ],
+   "exclude_plant": null,
+   "where": "E 48th Ave -> N Colorado Blvd (the S at 48th / Colorado, first turn)",
+   "base_xz_polyline": [
+    -1469.229,
+    -325.193
+   ],
+   "base_xz_mesh": [
+    -1469.329,
+    -325.121
+   ],
+   "base_source": "mesh (walk fraction start, marched 0.00 m along the ray, slid 0.00 m along the curb)",
+   "built": {
+    "outside_edge_xz": [
+     [
+      -1474.72,
+      -351.17
+     ],
+     [
+      -1474.31,
+      -349.17
+     ],
+     [
+      -1473.89,
+      -347.17
+     ],
+     [
+      -1472.78,
+      -345.16
+     ],
+     [
+      -1458.57,
+      -343.21
+     ],
+     [
+      -1458.56,
+      -341.18
+     ],
+     [
+      -1458.56,
+      -339.13
+     ],
+     [
+      -1458.56,
+      -337.09
+     ],
+     [
+      -1458.56,
+      -335.04
+     ],
+     [
+      -1463.77,
+      -333.01
+     ],
+     [
+      -1467.79,
+      -330.99
+     ],
+     [
+      -1469.52,
+      -328.96
+     ],
+     [
+      -1470.55,
+      -326.9
+     ],
+     [
+      -1471.01,
+      -324.83
+     ],
+     [
+      -1470.88,
+      -322.71
+     ],
+     [
+      -1470.99,
+      -320.51
+     ],
+     [
+      -1471.16,
+      -318.29
+     ],
+     [
+      -1471.38,
+      -316.0
+     ],
+     [
+      -1471.72,
+      -313.53
+     ],
+     [
+      -1472.22,
+      -311.01
+     ],
+     [
+      -1471.43,
+      -308.09
+     ],
+     [
+      -1471.12,
+      -304.61
+     ],
+     [
+      -1471.31,
+      -300.74
+     ],
+     [
+      -1469.78,
+      -295.43
+     ],
+     [
+      -1473.56,
+      -293.34
+     ],
+     [
+      -1473.64,
+      -286.91
+     ],
+     [
+      -1476.86,
+      -283.49
+     ],
+     [
+      -1480.07,
+      -281.53
+     ],
+     [
+      -1483.22,
+      -279.92
+     ],
+     [
+      -1488.2,
+      -283.86
+     ],
+     [
+      -1490.32,
+      -283.03
+     ]
+    ],
+    "back_of_walk_xz": [
+     [
+      -1472.92,
+      -351.19
+     ],
+     [
+      -1472.51,
+      -349.18
+     ],
+     [
+      -1472.69,
+      -347.17
+     ],
+     [
+      -1471.78,
+      -345.17
+     ],
+     [
+      -1455.47,
+      -343.23
+     ],
+     [
+      -1454.66,
+      -341.19
+     ],
+     [
+      -1454.66,
+      -339.13
+     ],
+     [
+      -1454.66,
+      -337.08
+     ],
+     [
+      -1454.66,
+      -335.02
+     ],
+     [
+      -1459.87,
+      -332.98
+     ],
+     [
+      -1466.49,
+      -330.98
+     ],
+     [
+      -1468.32,
+      -328.94
+     ],
+     [
+      -1469.25,
+      -326.87
+     ],
+     [
+      -1469.51,
+      -324.79
+     ],
+     [
+      -1469.28,
+      -322.64
+     ],
+     [
+      -1469.19,
+      -320.4
+     ],
+     [
+      -1469.36,
+      -318.13
+     ],
+     [
+      -1469.59,
+      -315.79
+     ],
+     [
+      -1469.94,
+      -313.24
+     ],
+     [
+      -1470.47,
+      -310.61
+     ],
+     [
+      -1467.59,
+      -306.97
+     ],
+     [
+      -1467.41,
+      -303.12
+     ],
+     [
+      -1471.22,
+      -300.69
+     ],
+     [
+      -1469.61,
+      -295.32
+     ],
+     [
+      -1473.41,
+      -293.21
+     ],
+     [
+      -1473.51,
+      -286.76
+     ],
+     [
+      -1475.75,
+      -281.83
+     ],
+     [
+      -1478.21,
+      -278.22
+     ],
+     [
+      -1482.41,
+      -278.2
+     ],
+     [
+      -1487.75,
+      -282.75
+     ],
+     [
+      -1489.99,
+      -282.19
+     ]
+    ]
+   },
+   "blender": {
+    "base_xyz_engine": [
+     -1469.329,
+     19.938,
+     -325.121
+    ],
+    "base_xyz_blender": [
+     -1469.329,
+     -325.121,
+     19.938
+    ],
+    "plate_bottom_y": 22.068,
+    "plate_top_y": 22.678,
+    "post_base_y": 19.638,
+    "post_top_y": 22.728,
+    "plates": [
+     {
+      "front_xyz": [
+       [
+        -1468.9783,
+        22.0685,
+        -324.6216
+       ],
+       [
+        -1469.727,
+        22.0685,
+        -325.5835
+       ],
+       [
+        -1469.727,
+        22.6785,
+        -325.5835
+       ],
+       [
+        -1468.9783,
+        22.6785,
+        -324.6216
+       ]
+      ],
+      "back_xyz": [
+       [
+        -1468.976,
+        22.0685,
+        -324.6235
+       ],
+       [
+        -1469.7247,
+        22.0685,
+        -325.5854
+       ],
+       [
+        -1469.7247,
+        22.6785,
+        -325.5854
+       ],
+       [
+        -1468.976,
+        22.6785,
+        -324.6235
+       ]
+      ],
+      "arrow_xyz": [
+       [
+        -1469.66,
+        22.3733,
+        -325.491
+       ],
+       [
+        -1469.4401,
+        22.6019,
+        -325.2084
+       ],
+       [
+        -1469.4494,
+        22.4579,
+        -325.2204
+       ],
+       [
+        -1469.0516,
+        22.4579,
+        -324.7093
+       ],
+       [
+        -1469.0516,
+        22.2887,
+        -324.7093
+       ],
+       [
+        -1469.4494,
+        22.2887,
+        -325.2204
+       ],
+       [
+        -1469.4401,
+        22.1447,
+        -325.2084
+       ]
+      ]
+     }
+    ],
+    "post": {
+     "post_base_xyz": [
+      [
+       -1469.3246,
+       19.6385,
+       -325.1561
+      ],
+      [
+       -1469.3641,
+       19.6385,
+       -325.1254
+      ],
+      [
+       -1469.3334,
+       19.6385,
+       -325.0859
+      ],
+      [
+       -1469.2939,
+       19.6385,
+       -325.1166
+      ]
+     ],
+     "post_top_y": 22.7285
+    },
+    "meshes": {
+     "SIGNPLATE": "SIGNPLATE_0",
+     "SIGNARROW": "SIGNARROW_0",
+     "SIGNPOST": "SIGNPOST_0"
+    }
+   }
+  }
+ ],
+ "skipped": [
+  {
+   "id": "SC-C50-fwd",
+   "ribbon": "MAINLINE",
+   "apex_vertex": 140,
+   "apex_station_m": 417,
+   "R_apex_m": 14.1,
+   "D_deg": -92.0,
+   "arc_m": 35,
+   "apex_xz": [
+    -1501.8,
+    157.3
+   ],
+   "reasons": [
+    "ray never leaves pavement within 80 m (through leg / junction)"
+   ],
+   "would_be": null
+  },
+  {
+   "id": "M-c3-fwd",
+   "ribbon": "MAINLINE",
+   "apex_vertex": 207,
+   "apex_station_m": 615,
+   "R_apex_m": 34.6,
+   "D_deg": 76.6,
+   "arc_m": 56,
+   "apex_xz": [
+    -1361.1,
+    89.6
+   ],
+   "reasons": [
+    "R_apex 34.6 > 30 m"
+   ]
+  },
+  {
+   "id": "M-c6-fwd",
+   "ribbon": "MAINLINE",
+   "apex_vertex": 853,
+   "apex_station_m": 2546,
+   "R_apex_m": 43.8,
+   "D_deg": -25.2,
+   "arc_m": 21,
+   "apex_xz": [
+    -713.5,
+    1222.5
+   ],
+   "reasons": [
+    "R_apex 43.8 > 30 m",
+    "|D| 25.2 < 45 deg"
+   ]
+  },
+  {
+   "id": "M-c7-fwd",
+   "ribbon": "MAINLINE",
+   "apex_vertex": 1944,
+   "apex_station_m": 5819,
+   "R_apex_m": 25.9,
+   "D_deg": -40.6,
+   "arc_m": 24,
+   "apex_xz": [
+    1789.6,
+    -492.3
+   ],
+   "reasons": [
+    "|D| 40.6 < 45 deg"
+   ]
+  },
+  {
+   "id": "M-c8-fwd",
+   "ribbon": "MAINLINE",
+   "apex_vertex": 2044,
+   "apex_station_m": 6118,
+   "R_apex_m": 57.7,
+   "D_deg": -8.7,
+   "arc_m": 8,
+   "apex_xz": [
+    1646.6,
+    -752.6
+   ],
+   "reasons": [
+    "R_apex 57.7 > 30 m",
+    "|D| 8.7 < 45 deg"
+   ]
+  },
+  {
+   "id": "M-c9-fwd",
+   "ribbon": "MAINLINE",
+   "apex_vertex": 3066,
+   "apex_station_m": 9190,
+   "R_apex_m": 54.4,
+   "D_deg": -17.1,
+   "arc_m": 16,
+   "apex_xz": [
+    -1374.4,
+    -659.3
+   ],
+   "reasons": [
+    "R_apex 54.4 > 30 m",
+    "|D| 17.1 < 45 deg"
+   ]
+  },
+  {
+   "id": "SC-48C-fwd",
+   "ribbon": "MAINLINE",
+   "apex_vertex": 3195,
+   "apex_station_m": 9578,
+   "R_apex_m": 17.2,
+   "D_deg": 60.1,
+   "arc_m": 30,
+   "apex_xz": [
+    -1484.8,
+    -305.9
+   ],
+   "reasons": [
+    "ray never leaves pavement within 80 m (through leg / junction)"
+   ],
+   "would_be": null
+  },
+  {
+   "id": "SC-48S-fwd",
+   "ribbon": "MAINLINE",
+   "apex_vertex": 3205,
+   "apex_station_m": 9605,
+   "R_apex_m": 15.6,
+   "D_deg": -62.2,
+   "arc_m": 30,
+   "apex_xz": [
+    -1507.1,
+    -291.5
+   ],
+   "reasons": [
+    "signs.json skip: both approaches. fwd: a lamp mast stands 2.2 m from the rule's spot (lamps never move, no slide <= 1.0 m clears it); the S's first turn SC-48C carries the plate. rev (ledger 0079 round O, 48th_colorado built): straight on, southbound at x -1515, crosses the pad's measured deck into N Colorado Blvd south, a through street (grid_primary_49 / 52, its two carriageways); the failed-turn ray threads the 6 m between their two ribbons and the rule stood the plate in the middle of the real road (build ro2: verify_signs c_built_edge_clearance). In Free Roam the arrow would point away from a road a driver may take (the module's through-road rule); no race layout drives rev"
+   ]
+  },
+  {
+   "id": "SC-48S-rev",
+   "ribbon": "MAINLINE(rev)",
+   "apex_vertex": 3205,
+   "apex_station_m": 31,
+   "R_apex_m": 15.6,
+   "D_deg": 62.2,
+   "arc_m": 30,
+   "apex_xz": [
+    -1507.1,
+    -291.5
+   ],
+   "reasons": [
+    "signs.json skip: both approaches. fwd: a lamp mast stands 2.2 m from the rule's spot (lamps never move, no slide <= 1.0 m clears it); the S's first turn SC-48C carries the plate. rev (ledger 0079 round O, 48th_colorado built): straight on, southbound at x -1515, crosses the pad's measured deck into N Colorado Blvd south, a through street (grid_primary_49 / 52, its two carriageways); the failed-turn ray threads the 6 m between their two ribbons and the rule stood the plate in the middle of the real road (build ro2: verify_signs c_built_edge_clearance). In Free Roam the arrow would point away from a road a driver may take (the module's through-road rule); no race layout drives rev"
+   ]
+  },
+  {
+   "id": "M-c9-rev",
+   "ribbon": "MAINLINE(rev)",
+   "apex_vertex": 3066,
+   "apex_station_m": 446,
+   "R_apex_m": 54.4,
+   "D_deg": 17.1,
+   "arc_m": 16,
+   "apex_xz": [
+    -1374.4,
+    -659.2
+   ],
+   "reasons": [
+    "R_apex 54.4 > 30 m",
+    "|D| 17.1 < 45 deg"
+   ]
+  },
+  {
+   "id": "M-c8-rev",
+   "ribbon": "MAINLINE(rev)",
+   "apex_vertex": 2044,
+   "apex_station_m": 3518,
+   "R_apex_m": 57.7,
+   "D_deg": 8.7,
+   "arc_m": 8,
+   "apex_xz": [
+    1646.6,
+    -752.6
+   ],
+   "reasons": [
+    "R_apex 57.7 > 30 m",
+    "|D| 8.7 < 45 deg"
+   ]
+  },
+  {
+   "id": "M-c7-rev",
+   "ribbon": "MAINLINE(rev)",
+   "apex_vertex": 1944,
+   "apex_station_m": 3817,
+   "R_apex_m": 25.9,
+   "D_deg": 40.6,
+   "arc_m": 24,
+   "apex_xz": [
+    1789.6,
+    -492.3
+   ],
+   "reasons": [
+    "|D| 40.6 < 45 deg"
+   ]
+  },
+  {
+   "id": "M-c6-rev",
+   "ribbon": "MAINLINE(rev)",
+   "apex_vertex": 853,
+   "apex_station_m": 7090,
+   "R_apex_m": 43.8,
+   "D_deg": 25.2,
+   "arc_m": 21,
+   "apex_xz": [
+    -713.5,
+    1222.5
+   ],
+   "reasons": [
+    "R_apex 43.8 > 30 m",
+    "|D| 25.2 < 45 deg"
+   ]
+  },
+  {
+   "id": "M-c5-rev",
+   "ribbon": "MAINLINE(rev)",
+   "apex_vertex": 779,
+   "apex_station_m": 7311,
+   "R_apex_m": 22.8,
+   "D_deg": 81.4,
+   "arc_m": 43,
+   "apex_xz": [
+    -899.2,
+    1112.0
+   ],
+   "reasons": [
+    "ray runs 12 m down grid_primary_35#0 before leaving pavement (a through road)"
+   ],
+   "would_be": [
+    -933.65,
+    1111.179
+   ]
+  },
+  {
+   "id": "SC-DAH-rev",
+   "ribbon": "MAINLINE(rev)",
+   "apex_vertex": 410,
+   "apex_station_m": 8413,
+   "R_apex_m": 13.1,
+   "D_deg": -82.5,
+   "arc_m": 30,
+   "apex_xz": [
+    -764.7,
+    71.8
+   ],
+   "reasons": [
+    "plate footprint inside drive_test's obstacle disc by 2.09 m",
+    "sign base is ON pavement (edge clearance -1.58)"
+   ],
+   "would_be": [
+    -761.006,
+    55.433
+   ]
+  },
+  {
+   "id": "M-c3-rev",
+   "ribbon": "MAINLINE(rev)",
+   "apex_vertex": 207,
+   "apex_station_m": 9021,
+   "R_apex_m": 34.6,
+   "D_deg": -76.6,
+   "arc_m": 56,
+   "apex_xz": [
+    -1361.1,
+    89.6
+   ],
+   "reasons": [
+    "R_apex 34.6 > 30 m"
+   ]
+  },
+  {
+   "id": "SC-ASH-rev",
+   "ribbon": "MAINLINE(rev)",
+   "apex_vertex": 186,
+   "apex_station_m": 9084,
+   "R_apex_m": 12.1,
+   "D_deg": 85.6,
+   "arc_m": 29,
+   "apex_xz": [
+    -1368.8,
+    151.1
+   ],
+   "reasons": [
+    "ray never leaves pavement within 80 m (through leg / junction)"
+   ],
+   "would_be": null
+  },
+  {
+   "id": "SC-C50-rev",
+   "ribbon": "MAINLINE(rev)",
+   "apex_vertex": 140,
+   "apex_station_m": 9219,
+   "R_apex_m": 14.1,
+   "D_deg": 92.0,
+   "arc_m": 35,
+   "apex_xz": [
+    -1501.8,
+    157.3
+   ],
+   "reasons": [
+    "T-end: ray re-enters grid_unclassified_9#0#1 within 3 m of the curb (W1-7 candidate, second pass)"
+   ],
+   "would_be": [
+    -1528.464,
+    172.263
+   ]
+  }
+ ],
+ "exclude_plants": [],
+ "stale_overrides": [],
+ "pairs": [],
+ "north": null,
+ "north_note": null,
+ "gated_ribbons": [
+  "MAINLINE"
+ ],
+ "layouts": [
+  {
+   "id": "race",
+   "direction": "fwd",
+   "race": true,
+   "token": "race"
+  },
+  {
+   "id": "street",
+   "direction": "fwd",
+   "race": false,
+   "token": ""
+  }
+ ],
+ "layout_plates": [
+  "SC-C50-fwd@race",
+  "SC-48C-fwd@race"
+ ],
+ "counts": {
+  "placed": 6,
+  "plates": 6,
+  "skipped": 18,
+  "layout_plates": 2
+ },
+ "blender": {
+  "blend": "D:\\k10-scratch\\sand_creek_lm\\loop.blend",
+  "ground_objects": [
+   "1KERB_sidewalk_island_fork_92",
+   "CURB",
+   "TERRAIN"
+  ],
+  "road_objects": [
+   "1ROAD_pad_48th_colorado",
+   "1ROAD_pad_50th_ash",
+   "1ROAD_pad_50th_dahlia",
+   "1ROAD_pad_colorado_50th",
+   "ROAD"
+  ],
+  "race_excluded": [
+   "1KERB_race_140_in",
+   "1KERB_race_140_out",
+   "1KERB_race_186_in",
+   "1KERB_race_186_out",
+   "1KERB_race_207_in",
+   "1KERB_race_207_out",
+   "1KERB_race_3195_in",
+   "1KERB_race_3195_out",
+   "1KERB_race_3205_in",
+   "1KERB_race_3205_out",
+   "1KERB_race_410_in",
+   "1KERB_race_410_out",
+   "1KERB_race_779_in",
+   "1KERB_race_779_out",
+   "1WALL_race_edge_L_street0_0_0",
+   "1WALL_race_edge_L_street1_140_0",
+   "1WALL_race_edge_L_street2_186_0",
+   "1WALL_race_edge_L_street3_207_0",
+   "1WALL_race_edge_L_street4_410_0",
+   "1WALL_race_edge_L_street5_779_0",
+   "1WALL_race_edge_L_street5_779_1",
+   "1WALL_race_edge_L_street5_779_2",
+   "1WALL_race_edge_L_street5_779_3",
+   "1WALL_race_edge_L_street6_3195_0",
+   "1WALL_race_edge_L_street7_3205_0",
+   "1WALL_race_edge_R_street0_0_0",
+   "1WALL_race_edge_R_street1_145_0",
+   "1WALL_race_edge_R_street2_190_0",
+   "1WALL_race_edge_R_street3_207_0",
+   "1WALL_race_edge_R_street4_410_0",
+   "1WALL_race_edge_R_street5_779_0",
+   "1WALL_race_edge_R_street5_779_1",
+   "1WALL_race_edge_R_street5_779_2",
+   "1WALL_race_edge_R_street5_779_3",
+   "1WALL_race_edge_R_street6_3195_0",
+   "1WALL_race_edge_R_street7_3210_0"
+  ],
+  "walls": {
+   "RACE": 22,
+   "all": 22,
+   "race": 22
+  },
+  "removed_existing": 0,
+  "meshes": {
+   "SIGNPLATE": [
+    "SIGNPLATE_0"
+   ],
+   "SIGNARROW": [
+    "SIGNARROW_0"
+   ],
+   "SIGNPOST": [
+    "SIGNPOST_0"
+   ]
+  },
+  "layout_meshes": {
+   "RACE_CLOSE_RACE": [
+    "SIGNPLATE_race_0",
+    "SIGNARROW_race_0",
+    "SIGNPOST_race_0"
+   ]
+  },
+  "vertices": {
+   "SIGNPLATE": 48,
+   "SIGNARROW": 138,
+   "SIGNPOST": 168
+  },
+  "faces": {
+   "SIGNPLATE": 24,
+   "SIGNARROW": 78,
+   "SIGNPOST": 84
+  },
+  "normal_mismatches": 0,
+  "ground_warnings": 0,
+  "base_rule": "built mesh authoritative: walk-fraction start, marched along the ray to polar clearance >= lateral_offset, disc footprint >= 0 and every wall >= 0.5 m; a layout plate lateral_offset past its layout's sealing wall"
+ }
+}

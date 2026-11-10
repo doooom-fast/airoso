@@ -39,6 +39,7 @@ import bmesh
 import bpy
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+import mouth_returns as mr  # noqa: E402
 import mouth_weld as mw  # noqa: E402
 
 INSET_M = 0.05          # [invented] the seam this far inside the strip's outer lip: under the strip by construction
@@ -47,6 +48,23 @@ MAX_MISS_SHARE = 0.01   # [invented] seam points that may miss (outside the terr
 JOIN_DEPTH = 3          # [invented] midpoint levels a failed join may try (ledger 0078 round 6: Sand Creek, 366 failed joins)
 CHUNK_ROWS = 120        # [invented] local scope: seam points per small mesh
 PAD_M = 8.0             # [invented] local scope: terrain faces this far around a chunk's seam points go into its small mesh
+# OFF THE ROW EDGE (ledger 0086, 0.2.7; with strip_seam.connectors only): a seam point INSET_M in from the lip ON a strip
+# row's own line sits exactly on the edge two strip triangles share. engine-july's anti-poke (build_kn5_loop 2c) finds
+# the strip under a ground vertex by a downward ray, and a ray down an edge misses both triangles, so that vertex kept
+# the contact band's road - 0.02 instead of strip - 0.02: 0.16-0.30 m over the strip, which verify_kn5's poke lens
+# (barycentric, edges inclusive) counts. Every one of m7c's 24 TERRAIN POKEs (rr2's 9 on the lap among them) was such a
+# vertex (barycentric min 0.0, 0.05 m from a lip vertex along its row). The point moves this plan vector off the line
+# into a triangle's interior: 12 mm at 36 deg, so it stays >= 38 mm inside the lip; one vector for every seam, so a
+# point two seams share (a return's first / last row) moves the same way and is still shared
+OFF_EDGE = (0.0097, 0.0071)  # [invented] metres (Blender X = E, Y = N)
+
+
+def seam_point(o, e, off_edge=False):
+    """the seam point INSET_M inside the lip o along the row towards e (plan); off_edge: moved OFF_EDGE off the row line"""
+    dx, dy = e.x - o.x, e.y - o.y
+    L = math.hypot(dx, dy) or 1.0
+    x, y = o.x + dx / L * INSET_M, o.y + dy / L * INSET_M
+    return (x + OFF_EDGE[0], y + OFF_EDGE[1]) if off_edge else (x, y)
 
 
 def main():
@@ -62,23 +80,122 @@ def main():
     curb, terr = bpy.data.objects.get("CURB"), bpy.data.objects.get("TERRAIN")
     if curb is None or terr is None:
         raise SystemExit("[strip-seam] FATAL: no CURB or TERRAIN in loop.blend (run after the assembler, before the prep)")
-    if len(curb.data.vertices) != lay["_curb_total"]:
+    cfg0 = json.loads((proj / "track.config.json").read_text(encoding="utf-8"))
+    # ledger 0086 (opt-in): tools/mouth_returns_blend.py ran first and APPENDED its corner returns to CURB (data/mouth_returns.json)
+    returns = mr.load_returns(proj) if mr.config(cfg0)[0] else None
+    seam_conn = bool((cfg0.get("strip_seam") or {}).get("connectors"))
+    if len(curb.data.vertices) != lay["_curb_total"] and not (returns and len(curb.data.vertices) > lay["_curb_total"]):
         raise SystemExit(f"[strip-seam] FATAL: CURB has {len(curb.data.vertices)} verts, the assembler's layout says "
                          f"{lay['_curb_total']}")
     CV = curb.data.vertices
+    # THE MOUTHS (ledger 0079 round B, Sand Creek's grid streets): where a side street meets the lap, tools/gap_mouths_blend.py
+    # deletes the strip across the mouth (mouth_weld.gap_window, the same window here) and the street's own ribbon stands on
+    # the ground there: no lip to seam. Those rows are left out (not counted, not seamed). No mouth on the lap = every row.
+    # With corner returns (ledger 0086) a returned mouth's window is the returns' own (data/mouth_returns.json host_rows_opened)
+    gapped = {1: set(), -1: set()}
+    mp = data / "mouths.json"
+    mouths = json.loads(mp.read_text(encoding="utf-8")).get("mouths", []) if mp.exists() else []
+    hpts = [tuple(p) for p in local["points_xyz_m"]]
+    ret_open = {}
+    if returns:
+        for m_ in returns.get("mouths", []):
+            # the A rows (a return's first row, the host's own) keep their outward faces: seamed, so the return's lip seam
+            # starts on the host's seam vertex there
+            ret_open[(m_["piece"], m_["end"])] = (m_["host"], int(m_["side"]),
+                                                  set(m_["host_rows_opened"]) - {int(c_["A_row"]) for c_ in m_["corners"]})
+    conn_gapped = {}
+    for mo in mouths:
+        if "host_seg" not in mo:
+            continue
+        ro = ret_open.get((mo.get("piece"), mo.get("end")))
+        if mo.get("host") != "MAINLINE":
+            if seam_conn and mo.get("host") in lay:
+                hp_ = [tuple(p) for p in next(c for c in conns if c["name"] == mo["host"])["points_xyz_m"]]
+                hb_ = lay[mo["host"]]
+                s_ = ro[2] if ro else mw.gap_window(hp_, hb_["rows"], hb_["closed"], int(mo["host_seg"]),
+                                                    float(mo["host_t"]), float(mo["connector_width_m"]),
+                                                    float(mo.get("angle_deg") or 90.0))
+                conn_gapped.setdefault((mo["host"], int(mo["side"])), set()).update(s_)
+            continue
+        if ro:
+            gapped[int(mo["side"])].update(ro[2])
+            continue
+        gapped[int(mo["side"])].update(mw.gap_window(hpts, rows, closed, int(mo["host_seg"]), float(mo["host_t"]),
+                                                     float(mo["connector_width_m"]), float(mo.get("angle_deg") or 90.0)))
+    if any(gapped.values()):
+        print(f"[strip-seam] {sum(len(v) for v in gapped.values())} lap rows inside side-street mouths left unseamed "
+              f"({sum(1 for mo in mouths if mo.get('host') == 'MAINLINE')} mouths on the lap)")
     seams = []
     for side in (1, -1):
         pts = []
         for r in range(rows):
+            if r in gapped[side]:
+                pts.append(None)
+                continue
             o = CV[mw.curb_index(lay, "MAINLINE", r, side, 3)].co
             e = CV[mw.curb_index(lay, "MAINLINE", r, side, 0)].co
-            dx, dy = e.x - o.x, e.y - o.y
-            L = math.hypot(dx, dy) or 1.0
-            pts.append((o.x + dx / L * INSET_M, o.y + dy / L * INSET_M))
+            pts.append(seam_point(o, e, seam_conn))
         seams.append(pts)
     cfg = json.loads((proj / "track.config.json").read_text(encoding="utf-8"))
+    # THE PADS' OUTLINES (opt-in strip_seam.pads, ledger 0079 round D): the ground seamed along each lm_pads deck's own
+    # outline (data/pads.built.json outline_en, every point), so no ground triangle spans the deck's edge. 0.2.2's try:
+    # a 0.7 m ground triangle from the contact band outside 48th / Colorado's deck in over its gutter stood 8-10 mm over
+    # the deck 0.2 m inside the edge (verify_pads P4). Absent = the lap's strip alone, as before (the Lariat)
+    bp = data / "pads.built.json"
+    if (cfg.get("strip_seam") or {}).get("pads") and bp.exists():
+        rings = [[tuple(q) for q in p["outline_en"]] for p in json.loads(bp.read_text(encoding="utf-8")).get("pads") or []]
+        for r_ in rings:
+            seams.append(r_ + [r_[0]] if closed is False else r_)
+        print(f"[strip-seam] {len(rings)} pad outline(s), {sum(len(r_) for r_ in rings)} points, seamed too")
+    # THE CONNECTORS' STRIPS (opt-in strip_seam.connectors, ledger 0086, Sand Creek's grid streets): 24.8 % of each street's
+    # first 20 m of strip stood under grass (the lap's own seam, round 5's mechanism, on the 88 pieces it never reached). Every
+    # connector's two strips are seamed as the lap's are, leaving out the rows inside a mouth hosted on it (its gap window,
+    # or the returns' own) and the rows whose strip a corner return replaced; and every corner return's lip is seamed along
+    # its stations (its first row is the host's, its last the street's: those seam points are SHARED with the host's and the
+    # street's seams, never poked twice). Open polylines (no wrap). Absent = the lap and the pads alone, as before
+    seam_open = None
+    if seam_conn:
+        if ((cfg.get("strip_seam") or {}).get("scope")) != "local":
+            raise SystemExit("[strip-seam] FATAL: strip_seam.connectors needs strip_seam.scope local")
+        seam_open = [False] * len(seams)
+        gone = {}
+        for m_ in (returns or {}).get("mouths", []):
+            for c_ in m_["corners"]:
+                n_ = lay[m_["piece"]]["rows"]
+                rr = range(int(c_["street_rows_removed"]))
+                gone.setdefault((m_["piece"], int(c_["e"])), set()).update(
+                    {r if m_["end"] == "start" else n_ - 1 - r for r in rr})
+        n_conn = n_pts = 0
+        for c in conns:
+            b_ = lay[c["name"]]
+            for side in (1, -1):
+                skip = conn_gapped.get((c["name"], side), set()) | gone.get((c["name"], side), set())
+                pts = []
+                for r in range(b_["rows"]):
+                    if r in skip:
+                        pts.append(None)
+                        continue
+                    o = CV[mw.curb_index(lay, c["name"], r, side, 3)].co
+                    e = CV[mw.curb_index(lay, c["name"], r, side, 0)].co
+                    pts.append(seam_point(o, e, True))
+                seams.append(pts)
+                seam_open.append(True)
+                n_conn += 1
+                n_pts += sum(1 for q in pts if q is not None)
+        n_ret = 0
+        for m_ in (returns or {}).get("mouths", []):
+            for c_ in m_["corners"]:
+                v0, v1 = c_["new_curb_v"]
+                pts = []
+                for k in range(v0, v1, mw.CURB_P):
+                    o, e = CV[k + 3].co, CV[k].co
+                    pts.append(seam_point(o, e, True))
+                seams.append(pts)
+                seam_open.append(True)
+                n_ret += 1
+        print(f"[strip-seam] {n_conn} connector strips ({n_pts} points) and {n_ret} corner-return lips seamed too")
     if ((cfg.get("strip_seam") or {}).get("scope")) == "local":
-        seam_local(proj, terr, seams, closed)
+        seam_local(proj, terr, seams, closed, seam_open)
         return
 
     bm = bmesh.new(); bm.from_mesh(terr.data)
@@ -118,7 +235,11 @@ def main():
     total = 0
     for pts in seams:
         verts = []
-        for x, y in pts:
+        for q in pts:
+            if q is None:                              # a lap row inside a side-street mouth (above): not seamed
+                verts.append(None)
+                continue
+            x, y = q
             total += 1
             f, z = locate(x, y)
             if f is None:
@@ -330,7 +451,7 @@ def _cells(pts, cell=100.0, top=12):
     return sorted(c.items(), key=lambda kv: -kv[1])[:top]
 
 
-def seam_local(proj, terr, seams, closed):
+def seam_local(proj, terr, seams, closed, seam_open=None):
     """the seam CHUNK_ROWS points at a time, each on a small mesh of the terrain faces within PAD_M (module doc)"""
     me = terr.data
     n0 = len(me.vertices)
@@ -462,11 +583,18 @@ def seam_local(proj, terr, seams, closed):
         return joined, miss
 
     total = joined = miss = chunks = widened = refused = 0
-    for pts in seams:
+    known = {}                     # ledger 0086 (seam_open given): a seam point another seam already placed is that vertex
+    for si, pts in enumerate(seams):
         n = len(pts)
-        total += n
+        total += sum(1 for q in pts if q is not None)
         gidx = [None] * n
-        pairs = [(i, i + 1) for i in range(n - 1)] + ([(n - 1, 0)] if closed else [])
+        cl = closed if seam_open is None else (closed and not seam_open[si])
+        if seam_open is not None:
+            for i, q in enumerate(pts):
+                if q is not None:
+                    gidx[i] = known.get((round(q[0], 4), round(q[1], 4)))
+        pairs = [(i, i + 1) for i in range(n - 1)] + ([(n - 1, 0)] if cl else [])
+        pairs = [(i, j) for i, j in pairs if pts[i] is not None and pts[j] is not None]   # a mouth's rows: not seamed
         for c0 in range(0, len(pairs), CHUNK_ROWS):
             cp = pairs[c0:c0 + CHUNK_ROWS]
             idxs = sorted({i for p in cp for i in p})
@@ -479,6 +607,10 @@ def seam_local(proj, terr, seams, closed):
             else:
                 refused += 1
                 miss += sum(1 for i in idxs if gidx[i] is None)
+        if seam_open is not None:
+            for i, q in enumerate(pts):
+                if q is not None and gidx[i] is not None:
+                    known.setdefault((round(q[0], 4), round(q[1], 4)), gidx[i])
     if miss > MAX_MISS_SHARE * total:
         raise SystemExit(f"[strip-seam] FATAL: {miss} of {total} seam points missed the terrain or failed to join "
                          f"(local scope, {refused} chunks refused {why}; off the terrain {len(lost_at)}, first {lost_at[:4]}; joins failed "

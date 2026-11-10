@@ -48,7 +48,10 @@ Coast Hwy). On such a track check 4/5 become:
       token (barrier_bands.json corridors.<id>.token, else layouts[].closure_token), >= 1; in both every
       material RACE-named (an un-purged material table or a swapped .ini ships the whole road's materials), no
       mesh over the cap, no spawn node, file under RACE_KN5_MAX_B; no duplicate 1-prefixed name across the set
-      a race layout loads (road + common + its closure: AC drops dup-named meshes from collision);
+      a race layout loads (road + common + its closure: AC drops dup-named meshes from collision).
+      WHOLE STREET (opt-in, ``race.corridor.whole_lap``; ledger 0079 round R, Kevin 2026-11-06 "Full street width"):
+      a race layout with no lap on a track that declares it races the whole street, so it has no closure line —
+      its closure kn5 must hold NO 1WALL_RACE_CLOSE_<TOKEN>_* wall in place of >= 1; every other row unchanged;
   LAPS (ledger 0054, scripts/geometry/race_lap.py): a race layout that names a lap (layouts[].lap) loads that
       lap's own common kn5 ``<slug>_race_<lap>.kn5`` (its curb strips + kerbs, every one named lap<lap>) in
       place of ``<slug>_race.kn5``; its spawns are judged on the LAP (data/lap.<lap>.json in the kn5 frame) against
@@ -313,9 +316,23 @@ def _verify_race_kn5(race_p: Path, main_meshes: list, fails: list, lap: str | No
     return rmeshes
 
 
-def _verify_closure_kn5(p: Path, lid: str, token: str, loaded_names: set, fails: list) -> list:
+def whole_lap_layouts(cfg: dict, layouts: list) -> set:
+    """the race layouts that race the WHOLE street round the whole lap: ``race.corridor.whole_lap`` (opt-in, ledger
+    0079 rounds K / R; Sand Creek, Kevin 2026-11-06: "Full street width") — the corridor tools/barrier_bands.py builds
+    data/barrier_bands.json from, so it covers the race_furniture layouts that name no lap (a lap layout's corridor is
+    its own barrier_bands.<lap>.json). Empty unless the key is true: Lake Murray and every other track declare none."""
+    cor = ((cfg.get("race") or {}).get("corridor") or {})
+    if not (isinstance(cor, dict) and cor.get("whole_lap") is True):
+        return set()
+    return {str(lo["id"]) for lo in layouts if lo.get("race_furniture") and not lo.get("lap")}
+
+
+def _verify_closure_kn5(p: Path, lid: str, token: str, loaded_names: set, fails: list,
+                        whole_lap: bool = False) -> list:
     """(f) one race layout's closure kn5: only ITS closure (1WALL_RACE_CLOSE_<TOKEN>_*), >= 1 mesh, no name shared with
-    the road + common kn5s that layout also loads"""
+    the road + common kn5s that layout also loads. ``whole_lap`` (race.corridor.whole_lap, see whole_lap_layouts): the
+    layout races the whole street, so it has no closure line — its closure kn5 must hold NO 1WALL_RACE_CLOSE_<TOKEN>_*
+    wall (in place of >= 1); every other row as without it."""
     tag = f"CLOSURE kn5 '{p.name}' ({lid})"
     _n, cmeshes, _m = _furniture_kn5(p, tag, fails, owner=token)
     want = f"{CLOSE_TAG}{token.upper()}_"
@@ -323,7 +340,12 @@ def _verify_closure_kn5(p: Path, lid: str, token: str, loaded_names: set, fails:
     if wrong:
         fails.append(f"{tag} carries {len(wrong)} mesh(es) that are not {lid}'s closure ({want}*) or its own sign plates "
                      f"e.g. {wrong[:3]} — a kerb, a curb strip or the other direction's closure / plates")
-    if not any(m["name"].upper().startswith(want) for m in cmeshes):
+    walls = [m["name"] for m in cmeshes if m["name"].upper().startswith(want)]
+    if whole_lap:
+        if walls:
+            fails.append(f"{tag} holds {len(walls)} {want}* mesh(es) e.g. {walls[:3]} — the {lid} layout races the "
+                         f"whole street (race.corridor.whole_lap): it has no closure line, so no closure wall")
+    elif not walls:
         fails.append(f"{tag} holds no {want}* mesh — the {lid} closure is empty")
     dup = sorted(loaded_names & {m["name"] for m in cmeshes if m["name"].startswith("1")})
     if dup:
@@ -518,6 +540,7 @@ def _verify_layouts(project: Path, cfg: dict, slug: str, layouts: list, kn5_dir:
         if stray_p.name not in loaded_of:
             fails.append(f"stray lap race kn5 build/{stray_p.name} — no race layout names that lap")
     tokens = closure_tokens(project, cfg, layouts)
+    whole = whole_lap_layouts(cfg, layouts)
     seen_tok = {}
     for lid in need_race:
         tok = tokens.get(lid, "")
@@ -532,7 +555,8 @@ def _verify_layouts(project: Path, cfg: dict, slug: str, layouts: list, kn5_dir:
         if not cp.exists():
             fails.append(f"race layout {lid} has no build/{cp.name} — its lane is not closed off (ledger 0049)")
             continue
-        _verify_closure_kn5(cp, lid, tok, loaded_of.get(race_kn5_name(slug, lo_of[lid]), set()), fails)
+        _verify_closure_kn5(cp, lid, tok, loaded_of.get(race_kn5_name(slug, lo_of[lid]), set()), fails,
+                            whole_lap=lid in whole)
     stray = sorted(p.name for p in kn5_dir.glob(f"{slug}_closure_*.kn5")
                    if p.name not in {closure_kn5_name(slug, lid) for lid in need_race})
     for name in stray:

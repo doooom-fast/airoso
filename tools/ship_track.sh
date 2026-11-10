@@ -345,6 +345,12 @@ draft_median_barrier() {
   (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/median_barrier_blend.py" -- "$PROJ" 2>&1 | grep "^\[median-barrier\]\|FATAL\|Error\|Traceback" )
 }
 draft_kerbs() {
+  # ledger 0079 round K: a config with kerb.race_rule (Sand Creek) gets its runs BY RULE first (tools/race_kerbs.py: apex +
+  # exit at each race corner, data/kerbs.race.json); no header otherwise (the circuits' traced runs are unchanged)
+  if [ "$(pyq "import json,sys; print(bool((json.load(open(sys.argv[1],encoding='utf-8')).get('kerb') or {}).get('race_rule')))" "$PROJ/track.config.json" | tr -d '\r')" = "True" ]; then
+    step "author: race kerbs by rule at the race layout's corners (tools/race_kerbs.py; ledger 0079 round K; AUTHORED, not measured)"
+    (cd "$AIROSO" && python tools/race_kerbs.py "$PROJ")
+  fi
   step "author: racing kerbs from the traced runs on the ribbon's lane edge (tools/author_kerbs_blend.py; ledger 0078; no route.kerbs_file = no-op)"
   (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_kerbs_blend.py" -- "$PROJ" 2>&1 | grep "^\[kerbs\]\|FATAL\|Error\|Traceback" )
 }
@@ -412,9 +418,28 @@ draft_stubs_tidy() {
     (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_stubs_blend.py" -- "$PROJ" --stage tidy 2>&1 | grep "^\[stubs\]\|Error\|Traceback" )
   fi
 }
+draft_mouth_returns() {
+  # ledger 0086 (Kevin 2026-11-07 on Sand Creek's grid streets: "Doesn't connect, floats"; the fix: "Yes, build it"): Lake
+  # Murray's stub returns on THROUGH mouths at each corner's measured radius, the corner paved, the ground pinned; after
+  # lm_pads, before strip_seam / gap_mouths (both read data/mouth_returns.json). No route.mouth_returns = no-op
+  step "author: corner returns at the through mouths (tools/mouth_returns_blend.py: measured radii, the corner paved, the ground pinned; ledger 0086; no route.mouth_returns = no-op)"
+  (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/mouth_returns_blend.py" -- "$PROJ" 2>&1 | grep "^\[returns\]\|FATAL\|Error\|Traceback" )
+}
 draft_gap_mouths() {
   step "author: gap the mainline sidewalk at every mouth"
   (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/gap_mouths_blend.py" -- "$PROJ" 2>&1 | grep "^\[gap" )
+}
+draft_islands() {
+  step "author: measured concrete islands on a street's built road (tools/author_islands_blend.py; ledger 0079 round I; self-checked; no route.islands = no-op)"
+  (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_islands_blend.py" -- "$PROJ" 2>&1 | grep "^\[islands\]\|FATAL\|Error\|Traceback" )
+}
+draft_paint() {
+  step "author: measured road paint on a street's built road (tools/author_paint_blend.py; ledger 0079 round N; self-checked; no route.paint = no-op)"
+  (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_paint_blend.py" -- "$PROJ" 2>&1 | grep "^\[paint\]\|FATAL\|Error\|Traceback" )
+}
+draft_ground_patch() {
+  step "author: TERRAIN seated on the measured lidar ground in the declared patches (tools/ground_patch_blend.py; ledger 0079 round I; self-checked; no terrain.lidar_patches = no-op)"
+  (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/ground_patch_blend.py" -- "$PROJ" 2>&1 | grep "^\[ground-patch\]\|FATAL\|Error\|Traceback" )
 }
 draft_bridges() {
   step "author: bridge bodies under the overcrossings (soffit, fascia, abutments, pier bents; visual only, self-checked)"
@@ -440,9 +465,20 @@ author_signs() {
   # ledger 0054 P4: after the race furniture, every ship (the furniture author empties the RACE_CLOSE_<TOKEN> collections
   # the race layouts' own plates live in); a track with no race layout gets its shared plates and nothing else
   step "author: W1-6 large-arrow signs at every tight corner (SIGNPLATE + SIGNARROW + SIGNPOST; the race layouts' own plates into RACE_CLOSE_<TOKEN>)"
-  (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_signs_blend.py" -- "$PROJ" 2>&1 | grep "^\[signs\]\|Error\|Traceback" )
-  (cd "$AIROSO" && python tools/verify_signs.py "$PROJ" --blend "$PROJ/loop.blend" --blender "$BL" | tail -8)
+  # ledger 0079 round K: a port whose slug names no tracks/<slug>/ (Sand Creek: sand_creek_raceway_lm in tracks/sand-creek-lm)
+  # names its signs.json in track.config.json signs_file (synced in); absent = tools/place_signs.py's own lookup, as before
+  local sg sga=()
+  sg=$(pyq "import json,sys; print(json.load(open(sys.argv[1],encoding='utf-8')).get('signs_file') or '')" "$PROJ/track.config.json" | tr -d '\r')
+  [ -n "$sg" ] && sga=(--signs "$PROJ/$sg")
+  (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_signs_blend.py" -- "$PROJ" ${sga[@]+"${sga[@]}"} 2>&1 | grep "^\[signs\]\|Error\|Traceback" )
+  (cd "$AIROSO" && python tools/verify_signs.py "$PROJ" --blend "$PROJ/loop.blend" --blender "$BL" ${sga[@]+"${sga[@]}"} | tail -8)
   (cd "$AIROSO" && PYTHONUTF8=1 python tools/plot_signs.py "$PROJ")
+}
+author_name_blades() {
+  # ledger 0079 round K: MUTCD D3-1 street-name blades from the committed plan (tools/name_blades.py, OSM names), stood on
+  # the built ground on the sign post (tools/author_name_blades_blend.py); no signs_name_blades.file = no-op. After signs.
+  step "author: street-name blades at the lap's junctions (tools/author_name_blades_blend.py; ledger 0079 round K; no signs_name_blades = no-op)"
+  (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_name_blades_blend.py" -- "$PROJ" 2>&1 | grep "^\[name-blades\]\|FATAL\|Error\|Traceback" )
 }
 
 # --- author: every ship (idempotent) ------------------------------------------------------------------------
@@ -714,6 +750,12 @@ gate_verify_mouths() {
   step "gate: verify_mouths on the built road (every side-street mouth: mouth line, host lane, notch, approach — hard)"
   (cd "$AIROSO" && python tools/verify_mouths.py "$PROJ")
 }
+gate_verify_mouth_corners() {
+  # ledger 0086: the corners beside every judged mouth (lip, the ground over the street's strip, the host's edge paint across
+  # the opening) on the built road; opt-in route.verify_mouth_corners (not opted in = prints so, exit 0) — hard
+  step "gate: verify_mouth_corners on the built road (corner lip <= 0.05 m, grass over the street strips <= 2.1 %, no edge line across an opening; R 9 turn drop reported — hard)"
+  (cd "$AIROSO" && python tools/verify_mouth_corners.py "$PROJ")
+}
 gate_verify_stubs() {
   if [ -f "$PROJ/data/stubs.plan.json" ]; then
     step "gate: verify_stubs on the built road (every declared stub: present, welded, drivable to its barrier, the barrier curb to curb and seated — hard)"
@@ -727,6 +769,13 @@ gate_verify_pads() {
     step "gate: verify_pads on the built road (every junction pad: present, single coverage, seams <= 10 mm, no grass / curb on the deck, barriers, node height vs 3DEP — hard)"
     (cd "$AIROSO" && python tools/verify_pads.py "$PROJ")
   fi
+}
+gate_textures() {
+  # ledger 0079 (Kevin 2026-11-04: "Add textures"): every visible mesh of every kn5 the folder packs binds an EMBEDDED diffuse
+  # (LAWS L7: a texture-less material renders black / AC's flat default); hard — exit 1 stops the chain
+  step "gate: textures on everything (tools/verify_textures.py: every visible mesh of every packed kn5 binds an embedded diffuse — hard)"
+  rm -f "$PROJ/data/verify_textures.json"
+  (cd "$AIROSO" && python tools/verify_textures.py "$PROJ" --json "$PROJ/data/verify_textures.json")
 }
 gate_edge_report() {
   # ledger 0078: what stands beside the lane (the kerb or shoulder 1 m out, its rise, the ground 3 / 6 / 10 m out) on the

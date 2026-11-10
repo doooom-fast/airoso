@@ -102,10 +102,11 @@ class LapIndex:
         return bi
 
 
-def row_verts(road, lay, k):
-    """the mainline row k: its three indexed vertices and every ROAD vertex on the segment between its edges"""
+def row_verts(road, lay, k, name="MAINLINE"):
+    """the mainline row k: its three indexed vertices and every ROAD vertex on the segment between its edges (`name`: a
+    connector piece's row instead, lm_pads.arms "streets")"""
     V = road.data.vertices
-    idx = [mw.road_index(lay, "MAINLINE", k, j) for j in (0, 1, 2)]
+    idx = [mw.road_index(lay, name, k, j) for j in (0, 1, 2)]
     L, R = V[idx[0]].co, V[idx[2]].co
     ux, uy = R.x - L.x, R.y - L.y
     span = math.hypot(ux, uy)
@@ -168,7 +169,7 @@ def _inset(a, b, d):
     return (a[0] + (b[0] - a[0]) * d / L, a[1] + (b[1] - a[1]) * d / L)
 
 
-def ribbon_edges(ring, cuts_rows, edges, node):
+def ribbon_edges(ring, cuts_rows, edges, node, lip_rows=None):
     """THE RIBBON'S CORNERS AT A CUT. The row spans the lap's whole width; where the measured asphalt is narrower than
     the ribbon (C14's out-cut) or the row line and the measurement's cut line differ by a few degrees, the outline goes
     straight from the row's end back in to the asphalt edge and the ribbon's corner beside it is left unpaved, under
@@ -202,12 +203,61 @@ def ribbon_edges(ring, cuts_rows, edges, node):
                 pts = []                           # the first edge point was already on the asphalt
             if not pts:
                 continue
+            if lip_rows:                           # the lane's lip at the cut row itself (lm_pads.deck.lane_lip): the patch
+                pts = [lip_rows[k][side_]] + pts   # starts on the row's own line, beside the strip's flat lip outside it
             if forward:
                 out = out[:i + 1] + pts + out[i + 1:]
             else:
                 out = out[:i] + list(reversed(pts)) + out[i:]
             added += len(pts)
     protect = {(round(v[0], 6), round(v[1], 6)) for _, _, row in cuts_rows for v in row}
+    return dp.untie(out, protect), added
+
+
+def arm_edges(ring, arm_rows, all_rows, lip=0.0, step=0.75):
+    """THE STREET'S CORNERS AT AN ARM ROW (lm_pads.arms "streets", ledger 0079 0.2.3): ribbon_edges for a street arm.
+    The street's ribbon ends at its row (trim cut it at the box edge), so its edge is walked on from each row end straight
+    into the pad (the row's normal, the street's own direction) every `step` (the outline's own resample step), the lane's
+    lip `lip` outside it as the lap's, until the edge point and the lane LANE_EDGE_M inside it are both on the outline;
+    those points go into the outline after the row end, so the deck's corner beside the row is square, not a sliver
+    (verify_pads P3 sampled a hole at four arm row ends, 0.0-0.05 m off them). Returns (ring, points added)."""
+    out = list(ring)
+    added = 0
+    span = math.dist((min(q[0] for q in ring), min(q[1] for q in ring)), (max(q[0] for q in ring), max(q[1] for q in ring)))
+    for _c, cr, row in arm_rows:
+        nx, ny = cr["n"]
+        C = ((row[0][0] + row[-1][0]) / 2.0, (row[0][1] + row[-1][1]) / 2.0)
+        row_keys = {(round(v[0], 6), round(v[1], 6)) for v in row}
+        for end in (row[0], row[-1]):
+            key = (round(end[0], 6), round(end[1], 6))
+            i = next((j for j, q in enumerate(out) if (round(q[0], 6), round(q[1], 6)) == key), None)
+            if i is None:
+                continue
+            ol = math.dist(end[:2], C) or 1.0
+            ox, oy = (end[0] - C[0]) / ol, (end[1] - C[1]) / ol
+            prv = out[i - 1]
+            forward = (round(prv[0], 6), round(prv[1], 6)) in row_keys
+            pts = []
+            d = step
+            while d <= span:
+                q = (end[0] + ox * lip + nx * d, end[1] + oy * lip + ny * d)
+                lane = (q[0] - ox * (lip + LANE_EDGE_M), q[1] - oy * (lip + LANE_EDGE_M))
+                pts.append(q)
+                if dp.point_in_ring(q[0], q[1], out) and dp.point_in_ring(lane[0], lane[1], out):
+                    break
+                d += step
+            if len(pts) == 1:
+                pts = []
+            if not pts:
+                continue
+            if lip > 0.0:
+                pts = [(end[0] + ox * lip, end[1] + oy * lip)] + pts
+            if forward:
+                out = out[:i + 1] + pts + out[i + 1:]
+            else:
+                out = out[:i] + list(reversed(pts)) + out[i:]
+            added += len(pts)
+    protect = {(round(v[0], 6), round(v[1], 6)) for _, _, row in all_rows for v in row}
     return dp.untie(out, protect), added
 
 
@@ -249,7 +299,48 @@ def union_ribbon(ring0, pts3, P, edges, lo_k, hi_k, node, segs):
     return ring, extra
 
 
-def ground_under(ring, deck_z):
+def union_arms(ring0, short, keep_on, pin):
+    """A STREET ARM SHORT OF THE MEASURED ASPHALT (lm_pads.arms "streets", ledger 0079 0.2.3): the lidar outline need not
+    reach the box edge where a street was cut (colorado_50th: grid_unclassified_10 and _76 stop 3-8 m short of it). The
+    street's own ribbon between its end row and the measured ring is united into the ring, on union_ribbon's grid and
+    with its numbers: per arm the quad from its end row (L, R) inward, perpendicular to the row, as far as the row's two
+    edges and centre all stand inside the measured ring. `short` = [row cut, (L, R) plan]. Returns the ring."""
+    import numpy as np
+    GRID_M, SMOOTH_M, STEP_M = 0.25, 1.0, 0.75
+    quads = []
+    for cr, (L, R) in short:
+        nx, ny = cr["n"]                                  # into the pad
+        C = ((L[0] + R[0]) / 2.0, (L[1] + R[1]) / 2.0)
+        d, reach = 0.0, None
+        span = math.dist((min(q[0] for q in ring0), min(q[1] for q in ring0)),
+                         (max(q[0] for q in ring0), max(q[1] for q in ring0)))
+        while d <= span:
+            if all(dp.point_in_ring(q[0] + nx * d, q[1] + ny * d, ring0) for q in (L, C, R)):
+                reach = d
+                break
+            d += GRID_M
+        if reach is None:
+            raise SystemExit(f"[lm-pads] FATAL: an arm row at ({C[0]:.1f}, {C[1]:.1f}) never meets the measured outline")
+        quads.append([L, R, (R[0] + nx * reach, R[1] + ny * reach), (L[0] + nx * reach, L[1] + ny * reach)])
+    xs_r = [q[0] for q in ring0] + [v[0] for qd in quads for v in qd]
+    ys_r = [q[1] for q in ring0] + [v[1] for qd in quads for v in qd]
+    pad = 2.0
+    x0, x1, y0, y1 = min(xs_r) - pad, max(xs_r) + pad, min(ys_r) - pad, max(ys_r) + pad
+    xs = x0 + (np.arange(int((x1 - x0) / GRID_M)) + 0.5) * GRID_M
+    ys = y1 - (np.arange(int((y1 - y0) / GRID_M)) + 0.5) * GRID_M
+    gx, gy = np.meshgrid(xs, ys)
+    region = dp.in_ring_grid(ring0, gx, gy)
+    for qd, (cr, _e) in zip(quads, short):
+        region |= dp.in_ring_grid(qd, gx, gy) & dp.half_plane_mask(cr, gx, gy)
+    ring = dp.trace_boundary(region.tolist(), xs.tolist(), ys.tolist())
+    ring = dp.smooth_ring(ring, SMOOTH_M, keep_on=keep_on, pin=pin)
+    ring = dp.resample_ring(ring, STEP_M)
+    for i, q in enumerate(ring):
+        ring[i] = dp.snap(q, keep_on)
+    return ring
+
+
+def ground_under(ring, deck_z, edge_m=GROUND_EDGE_M):
     terr = bpy.data.objects.get("TERRAIN")
     if terr is None:
         return {}
@@ -265,7 +356,7 @@ def ground_under(ring, deck_z):
             a, b = e.verts
             mx, my = (a.co.x + b.co.x) / 2.0, (a.co.y + b.co.y) / 2.0
             L = math.hypot(b.co.x - a.co.x, b.co.y - a.co.y)
-            if L > GROUND_EDGE_M and bx0 - L / 2 <= mx <= bx1 + L / 2 and by0 - L / 2 <= my <= by1 + L / 2:
+            if L > edge_m and bx0 - L / 2 <= mx <= bx1 + L / 2 and by0 - L / 2 <= my <= by1 + L / 2:
                 todo.append((L, e))
         if not todo:
             break
@@ -313,12 +404,60 @@ def build(proj, cfg, decls):
     for ob in [o for o in bpy.data.objects if o.name.startswith(("1ROAD_pad_", WALL_PREFIX))]:
         bpy.data.objects.remove(ob, do_unlink=True)
     built = []
+    # THE STREET ARMS (opt-in lm_pads.arms "streets", ledger 0079 0.2.3; Kevin "authored pad junctions", "Real
+    # junctions"): tools/trim_connectors.py (route.street_junctions.pad_arms) cut every street entering a built pad's box
+    # at the box edge (data/pad_arms.json). Each arm's end row joins the deck exactly as a lap cut row does: spliced into
+    # the outline along its box edge, a seam (its vertices pinned), its departure from the lidar faded in. The lap's faces
+    # between the cuts go only within the lap's half width + its edge strip of the lap line (the streets' own faces stay).
+    # Absent = the lap's two rows alone, as before (the Lariat)
+    arms_mode = (cfg.get("lm_pads") or {}).get("arms")
+    arm_all, lay_c, strip_w = [], None, 0.0
+    if arms_mode == "streets":
+        arm_all = json.loads((proj / "data" / "pad_arms.json").read_text(encoding="utf-8"))["arms"]
+        conns = json.loads((proj / "data" / "connectors.local.json").read_text(encoding="utf-8"))["connectors"]
+        lay_c = mw.mesh_layout([tuple(p) for p in pts3], conns)
+        re_ = (cfg.get("route") or {}).get("edge") or {}
+        strip_w = sum(float(re_.get(k) or 0.0) for k in ("curb_face_w", "sidewalk_w", "grade_w"))
+    elif arms_mode is not None:
+        raise SystemExit(f"[lm-pads] FATAL: lm_pads.arms {arms_mode!r}: only \"streets\" is known")
+
+    def lap_lateral(x_, y_, k_):
+        """plan distance from (x, y) to the lap polyline near vertex k"""
+        best = math.inf
+        for i in (k_ - 1, k_):
+            if 0 <= i < len(P) - 1:
+                (ax, ay), (bx, by) = P[i], P[i + 1]
+                dx, dy = bx - ax, by - ay
+                L2 = dx * dx + dy * dy or 1e-12
+                t = max(0.0, min(1.0, ((x_ - ax) * dx + (y_ - ay) * dy) / L2))
+                best = min(best, math.hypot(x_ - ax - dx * t, y_ - ay - dy * t))
+        return best
     for d in decls:
         pid = d["id"]
         rec = json.loads((src / f"{pid}.json").read_text(encoding="utf-8"))
         if rec.get("cuts") != d["cuts"] or rec.get("node") != d["node"]:
             raise SystemExit(f"[lm-pads] FATAL: {pid}: {src.name}/{pid}.json was measured for other cuts / node")
         lo_k, hi_k = d["cuts"]
+        # 0. THE DECK AS MEASURED, ITS HOLES FILLED FROM ITSELF, IN THE LAP'S DATUM (ledger 0079 round D; opt-in
+        # lm_pads.deck: {"fill": "lidar", "datum_m": <the assembler's ROAD lift>}; absent = the measured grid as before, the
+        # Lariat's C14 / C15 unchanged): draft_pads.deck_filled
+        deck_cfg = (cfg.get("lm_pads") or {}).get("deck") or {}
+        deck_rep = None
+        deck2 = None
+        if deck_cfg.get("fill") == "lidar":
+            rec = dict(rec)
+            # DECK BEYOND "class2" (opt-in per pad, ledger 0079 round O: 48th_colorado; the pad file's deck_class2):
+            # inside the outline a node with no road point takes the class-2 ground's plane before the road plane fill
+            # (draft_pads.deck_filled); outside it, deck_z below. Absent = as before
+            if d.get("deck_beyond") not in (None, "class2"):
+                raise SystemExit(f"[lm-pads] FATAL: {pid}: deck_beyond {d['deck_beyond']!r}: only \"class2\" is known")
+            if d.get("deck_beyond") == "class2" and not rec.get("deck_class2"):
+                raise SystemExit(f"[lm-pads] FATAL: {pid}: deck_beyond class2 but {pid}.json has no deck_class2 (measure again)")
+            deck2 = rec.get("deck_class2") if d.get("deck_beyond") == "class2" else None
+            rec["deck"], deck_rep = dp.deck_filled(rec["deck"], [tuple(q) for q in rec["outline_en"]],
+                                                   float(deck_cfg.get("datum_m") or 0.0), deck_cfg.get("smooth_m"),
+                                                   class2=deck2)
+            _log(f"{pid}: deck {deck_rep}")
         # 1. the rows
         cuts_rows, seams = [], []
         for k in d["cuts"]:
@@ -326,14 +465,61 @@ def build(proj, cfg, decls):
             row = row_verts(road, lay, k)
             cr = dp.row_cut(row, P[d["node"]])
             cr["vertex"] = k
+            ends = (rec.get("cut_ends_en") or {}).get(str(k))
+            if ends:
+                # CUT REACH "arm" (ledger 0079 round O; the measurement's own record, written by draft_pad_outline only
+                # for a pad declared cut_reach "arm"): the cut and its row line reach as far as the measurement drew
+                # them across the lap's own arm, never past the row's own ends; absent = +-CUT_HALF_M, as before
+                c = dict(c, a=tuple(ends[0]), b=tuple(ends[1]))
+                (rx0, ry0), (rx1, ry1) = (row[0][0], row[0][1]), (row[-1][0], row[-1][1])
+                rl_ = math.hypot(rx1 - rx0, ry1 - ry0) or 1.0
+                ux_, uy_ = (rx1 - rx0) / rl_, (ry1 - ry0) / rl_
+                mx_, my_ = (rx0 + rx1) / 2.0, (ry0 + ry1) / 2.0
+                ts = [(q[0] - mx_) * ux_ + (q[1] - my_) * uy_ for q in ends]
+                t0, t1 = min(min(ts), -rl_ / 2.0), max(max(ts), rl_ / 2.0)
+                cr["a"], cr["b"] = (mx_ + ux_ * t0, my_ + uy_ * t0), (mx_ + ux_ * t1, my_ + uy_ * t1)
             cuts_rows.append((c, cr, row))
             seams += row
         cut_lines = [cr for _, cr, _ in cuts_rows]
+        arm_rows, arm_meta = [], []
+        for a in [a for a in arm_all if a["pad"] == pid]:
+            if not a.get("piece") or a["piece"] not in lay_c:
+                raise SystemExit(f"[lm-pads] FATAL: {pid}: arm {a['connector']} has no final piece in the mesh layout")
+            r_ = 0 if a["end"] == "start" else lay_c[a["piece"]]["rows"] - 1
+            row = row_verts(road, lay_c, r_, a["piece"])
+            # the arm row's line drawn over the row's own span only (a lap row's reaches CUT_HALF_M): splice_rows drops
+            # outline points on its far side within 6 m of that line, and a street's row line run on 30 m took the next
+            # arm's row end (colorado_50th: grid_primary_15's took grid_unclassified_10's left end)
+            cr = dp.row_cut(row, P[d["node"]], reach=math.dist(row[0][:2], row[-1][:2]) / 2.0)
+            c = dp.sealed_cut((tuple(a["box_edge"][0]), tuple(a["box_edge"][1])), P[d["node"]])
+            c["vertex"] = f"{a['piece']} ({a['end']})"
+            cr["vertex"] = c["vertex"]
+            arm_rows.append((c, cr, row))
+            arm_meta.append({"connector": a["connector"], "piece": a["piece"], "end": a["end"], "row": r_})
+            seams += row
         RV = road.data.vertices
         edges = {}
         for k in range(lo_k, hi_k + 1):
             a_, b_ = RV[mw.road_index(lay, "MAINLINE", k, 0)].co, RV[mw.road_index(lay, "MAINLINE", k, 2)].co
             edges[k] = ((a_.x, a_.y), (b_.x, b_.y))
+        # THE LANE'S LIP (opt-in lm_pads.deck.lane_lip "route.edge", ledger 0079 round D): with no curb the lap's lane edge
+        # stays at road height for route.edge curb_face_w + sidewalk_w past the ROAD edge (Sand Creek 0.1 + 0.2 m), and
+        # drive_test's edge wheel path reads 0.25 m past the ROAD edge. Between the cuts that flat lip goes with the strip,
+        # so where the measured asphalt is narrower than the lane the deck keeps the lip paved too: the edge points this
+        # step walks stand the lip outside the ROAD edge. Absent = the ROAD edge, as before (the Lariat).
+        lip = 0.0
+        if deck_cfg.get("lane_lip") == "route.edge":
+            re_ = (cfg.get("route") or {}).get("edge") or {}
+            if float(re_.get("curb_h", 1.0)) == 0.0:
+                lip = float(re_.get("curb_face_w") or 0.0) + float(re_.get("sidewalk_w") or 0.0)
+        lip_rows = None
+        edges0 = dict(edges)
+        if lip > 0.0:
+            def _out(p_, q_):
+                L_ = math.dist(p_, q_) or 1.0
+                return (p_[0] + (p_[0] - q_[0]) / L_ * lip, p_[1] + (p_[1] - q_[1]) / L_ * lip)
+            edges = {k: (_out(a_, b_), _out(b_, a_)) for k, (a_, b_) in edges.items()}
+            lip_rows = {k: edges[k] for k in d["cuts"]}
         # 2. the lap cut twice
         removed = {}
         ribbon_bvh = None
@@ -349,6 +535,16 @@ def build(proj, cfg, decls):
                     continue
                 k = lapi.nearest(cw.x, cw.y)
                 if k is not None and lo_k <= k <= hi_k:
+                    if arms_mode == "streets":
+                        # only the lap's own faces: ROAD / CURB by the assembler's layout (the mainline block first,
+                        # densify's vertices appended past every connector block); the paint by the lateral test
+                        if name in ("ROAD", "CURB"):
+                            n_main = (3 if name == "ROAD" else 2 * mw.CURB_P) * lay_c["MAINLINE"]["rows"]
+                            total = lay_c["_road_total" if name == "ROAD" else "_curb_total"]
+                            if not all(v.index < n_main or v.index >= total for v in f.verts):
+                                continue                           # a street's own face, not the lap's
+                        elif lap_lateral(cw.x, cw.y, k) > W[k] / 2.0 + strip_w:
+                            continue                               # a street's own paint, not the lap's
                     doomed.append(f)
             if doomed and name == "ROAD":                      # the lap's own surface, where nothing measured paves it
                 rv_, rf_ = [], []
@@ -369,7 +565,7 @@ def build(proj, cfg, decls):
         def lane_off(ring_):
             off = []
             for k in range(lo_k + 1, hi_k):
-                a_, b_ = edges[k]
+                a_, b_ = edges0[k]                 # the lane check reads the ROAD edge, lip or not
                 for t, q in (("left", _inset(a_, b_, LANE_EDGE_M)), ("mid", ((a_[0] + b_[0]) / 2, (a_[1] + b_[1]) / 2)),
                              ("right", _inset(b_, a_, LANE_EDGE_M))):
                     if not dp.point_in_ring(q[0], q[1], ring_):
@@ -377,15 +573,38 @@ def build(proj, cfg, decls):
             return off
 
         def as_built(ring_in):
-            ring_ = dp.splice_rows(ring_in, cuts_rows)
+            ring_ = dp.splice_rows(ring_in, cuts_rows + arm_rows)
             if dp.ring_area(ring_) < 0:
                 ring_.reverse()
-            return ribbon_edges(ring_, cuts_rows, edges, d["node"])
+            ring_, added_ = ribbon_edges(ring_, cuts_rows, edges, d["node"], lip_rows)
+            if arm_rows:
+                ring_, a2_ = arm_edges(ring_, arm_rows, cuts_rows + arm_rows, lip)
+                added_ += a2_
+            return ring_, added_
         united = 0
-        ring, widened = as_built([tuple(q) for q in rec["outline_en"]])
+        meas_ring = [tuple(q) for q in rec["outline_en"]]
+        # a street arm whose box edge the measured outline never runs along: its own ribbon to the measured ring is
+        # united in (union_arms), and the outline then runs along the arm's ROW line, which is its splice line
+        short = []
+        for ai, (c, cr, row) in enumerate(arm_rows):
+            if not any(abs(dp.side(c, *q)) <= 0.05 and dp.segment_band(c["a"], c["b"], q[0], q[1], 0.5) for q in meas_ring):
+                short.append(ai)
+        if short:
+            lap_cuts = [c for c, _, _ in cuts_rows]
+            keep_on = lap_cuts + [dp.sealed_cut(s_, P[d["node"]]) for s_ in segs] + [arm_rows[ai][1] for ai in short]
+            meas_ring = union_arms(meas_ring, [(arm_rows[ai][1], ((arm_rows[ai][2][0][0], arm_rows[ai][2][0][1]),
+                                                                  (arm_rows[ai][2][-1][0], arm_rows[ai][2][-1][1])))
+                                               for ai in short], keep_on, lap_cuts + [arm_rows[ai][1] for ai in short])
+            for ai in short:
+                c, cr, row = arm_rows[ai]
+                arm_rows[ai] = (cr, cr, row)
+                arm_meta[ai]["spliced_on"] = "row (the street's ribbon united to the measured outline)"
+            _log(f"{pid}: {len(short)} arm(s) short of the measured outline, their ribbon united: "
+                 f"{[arm_meta[ai]['piece'] for ai in short]}")
+        ring, widened = as_built(meas_ring)
         off_deck = lane_off(ring)
         if off_deck:
-            ring0, united = union_ribbon([tuple(q) for q in rec["outline_en"]], pts3, P, edges, lo_k, hi_k, d["node"], segs)
+            ring0, united = union_ribbon(meas_ring, pts3, P, edges, lo_k, hi_k, d["node"], segs)
             try:
                 ring, widened = as_built(ring0)
             except SystemExit as ex:
@@ -420,10 +639,41 @@ def build(proj, cfg, decls):
         if abs(tri_area - ring_a) > 0.002 * ring_a:
             raise SystemExit(f"[lm-pads] FATAL: {pid}: the deck covers {tri_area:.1f} m2 of a {ring_a:.1f} m2 outline")
         seam_xy = {(round(s[0], 3), round(s[1], 3)): s[2] for s in seams}
-        prof = dp.seam_profile([(cr, row) for _, cr, row in cuts_rows], lambda x_, y_: dp.deck_near(rec["deck"], x_, y_))
+
+        def seam_base(x_, y_):
+            """the surface a seam's departure is measured against: the nearest road node (as before); with deck_beyond
+            "class2" the surface deck_z stands on there (the road deck, else the class-2 plane held under the nearest
+            road node), so the fade cancels exactly the step it is for (ledger 0079 round O, build ro5: grid_primary_49's
+            row measured against a road node 1.4 m off, 0.20 m over the class-2 surface the deck stood on, 10.7 mm at
+            its seam)"""
+            if deck2 is not None:
+                g = dp.deck_at(rec["deck"], x_, y_)
+                if g is not None:
+                    return g
+                g2 = dp.deck_at(deck2, x_, y_)
+                if g2 is not None:
+                    gn = dp.deck_near(rec["deck"], x_, y_)
+                    g2 += float(deck_cfg.get("datum_m") or 0.0)
+                    return g2 if gn is None else min(g2, gn)
+            return dp.deck_near(rec["deck"], x_, y_)
+        prof = dp.seam_profile([(cr, row) for _, cr, row in cuts_rows], seam_base)
         if d.get("seam") == "row":        # a switchback pad (round 13): each seam fades from its row, not its line
             for s_ in prof:
                 s_["near_row"] = True
+        for _c, cr, row in arm_rows:
+            # an arm's fade: seam_profile's own rule (as long as its departure needs at SEAM_MAX_SLOPE, from SEAM_FADE_M),
+            # up to 45 % of the way to the node, as the lap's two cuts are held to 45 % of the way to each other; and never
+            # onto the lap's own lane, whose seams the lap's two rows rule (round G build k2: 50th_ash's arm, 8.5 m off the
+            # lane, faded over 12 m added 3 kinks to the lap at s 549-552)
+            pa_ = dp.seam_profile([(cr, row)], seam_base)[0]
+            need = max(abs(r) for r in pa_["r"]) * math.pi / (2.0 * dp.SEAM_MAX_SLOPE)
+            mid_ = ((row[0][0] + row[-1][0]) / 2.0, (row[0][1] + row[-1][1]) / 2.0)
+            lane_d = min(math.dist(v[:2], P[k]) - W[k] / 2.0 for v in row for k in range(lo_k, hi_k + 1))
+            pa_["fade"] = min(max(dp.SEAM_FADE_M, min(need, 0.45 * math.dist(mid_, P[d["node"]]))), max(lane_d, 0.5))
+            pa_["lane_clear_m"] = round(lane_d, 2)
+            pa_["lateral"] = True
+            prof.append(pa_)
+        s_off = dp.seam_offset_multi if arm_rows else dp.seam_offset
 
         def deck_z(x_, y_):
             """the measured deck where the lidar paves it (+ the seams' departures, faded in); the lap's own ribbon
@@ -431,7 +681,19 @@ def build(proj, cfg, decls):
             the nearest measured node, then the seams, beyond"""
             g = dp.deck_at(rec["deck"], x_, y_)
             if g is not None:
-                return g + dp.seam_offset(prof, x_, y_)
+                return g + s_off(prof, x_, y_)
+            if deck2 is not None:
+                # DECK BEYOND "class2", outside the outline (ledger 0079 round O): the class-2 ground's plane in the lap's
+                # datum, before the lap's removed ribbon, held under the nearest road node (the earth that rises past
+                # the asphalt is not pavement: at grid_unclassified_67's east row end the class-2 ground climbs 0.3 m to
+                # the building, and taken as it stands it stood the deck 0.31 m over the street's row, build ro4). Where
+                # it is lower it is the surface: the concrete crosswalk at grid_primary_49's arm, no road node within 3 m,
+                # where the nearest node stood a vertex 0.16 m over the lidar (build ro3, verify_pads P4)
+                g2 = dp.deck_at(deck2, x_, y_)
+                if g2 is not None:
+                    g2 += float(deck_cfg.get("datum_m") or 0.0)
+                    gn = dp.deck_near(rec["deck"], x_, y_)
+                    return (g2 if gn is None else min(g2, gn)) + s_off(prof, x_, y_)
             if ribbon_bvh is not None:
                 hit = ribbon_bvh.ray_cast(Vector((x_, y_, 1e4)), Vector((0.0, 0.0, -1.0)))
                 if hit[0] is not None:
@@ -439,14 +701,16 @@ def build(proj, cfg, decls):
             g = dp.deck_near(rec["deck"], x_, y_)
             if g is None:
                 return dp.seam_blend(x_, y_, [(s[0], s[1], s[2]) for s in seams])
-            return g + dp.seam_offset(prof, x_, y_)
+            return g + s_off(prof, x_, y_)
         verts3 = []
         for v in vco:
             key = (round(v.x, 3), round(v.y, 3))
             verts3.append((v.x, v.y, seam_xy[key] if key in seam_xy else deck_z(v.x, v.y)))
         for sx, sy, sz in seams:
             if not any(abs(v[0] - sx) < 1e-3 and abs(v[1] - sy) < 1e-3 and abs(v[2] - sz) < 1e-4 for v in verts3):
-                raise SystemExit(f"[lm-pads] FATAL: {pid}: seam vertex ({sx:.2f}, {sy:.2f}) not in the deck at its row height")
+                near_ring = sorted((round(math.dist((sx, sy), q), 3), round(q[0], 3), round(q[1], 3)) for q in ring)[:3]
+                raise SystemExit(f"[lm-pads] FATAL: {pid}: seam vertex ({sx:.3f}, {sy:.3f}) not in the deck at its row height "
+                                 f"(the outline's nearest points {near_ring})")
         me = bpy.data.meshes.new(f"1ROAD_pad_{pid}")
         me.from_pydata(verts3, [], [tuple(f) for f in faces])
         me.update()
@@ -463,7 +727,7 @@ def build(proj, cfg, decls):
         # 4b. THE GROUND UNDER IT (0.17.2's numbers): the terrain's edges near the deck halved until under
         # GROUND_EDGE_M (longest first, triangles only), every ground vertex inside the outline GROUND_UNDER_M under the
         # deck, and within EDGE_BAND_M outside never above the deck's edge: no ground chord over a measured bowl
-        held = ground_under(ring, deck_z)
+        held = ground_under(ring, deck_z, float(deck_cfg.get("ground_edge_m") or GROUND_EDGE_M))   # opt-in finer (L3b)
         # 5. the barriers across the roads the lap does not take
         bvh = BVHTree.FromPolygons([Vector(v) for v in verts3], [tuple(f) for f in faces])
 
@@ -476,7 +740,11 @@ def build(proj, cfg, decls):
             return (min(got) if got else None), samples
         bars = []
         along_lap = 0
-        for m, (k_seg, run) in enumerate(mouth_runs(ring, segs)):
+        # lm_pads.close_arms false (ledger 0079, Sand Creek's free roam: the side streets are joined, not closed): no K-rail
+        # across a road the lap does not take; the deck stays open to the street (its weld is the junction step's).
+        # Absent = true, the Lariat's barriers as before
+        runs_ = mouth_runs(ring, segs) if (cfg.get("lm_pads") or {}).get("close_arms", True) else []
+        for m, (k_seg, run) in enumerate(runs_):
             # a box edge the outline follows BESIDE the lap (the measurement's box clipped the lap arm's own wide
             # pavement; the lap's ribbon was kept) is not a road leaving: no barrier along the lap
             near = [lapi.nearest(*q) for q in run]
@@ -533,7 +801,8 @@ def build(proj, cfg, decls):
         m_lon, m_lat = dp.meters_per_degree(lo_lat)
         built.append({
             "id": pid, "object": deck_ob.name, "cuts": d["cuts"], "node": d["node"],
-            "rows": [[[round(v, 3) for v in q] for q in row] for _, _, row in cuts_rows],
+            "rows": [[[round(v, 3) for v in q] for q in row] for _, _, row in cuts_rows + arm_rows],
+            **({"arm_rows": arm_meta} if arm_meta else {}),
             "seam_residual_m": {"max": round(max(abs(r) for p_ in prof for r in p_["r"]), 3),
                                 "fade_m": [round(p_["fade"], 1) for p_ in prof]},
             "faces_removed": removed, "deck_vertices": len(verts3), "deck_faces": len(faces),
@@ -543,9 +812,11 @@ def build(proj, cfg, decls):
                                for q in ring],
             "source": rec.get("source"), "uncertainty_m": rec.get("uncertainty_m"),
         })
+        if deck_rep is not None:
+            built[-1]["deck_fill"] = deck_rep
         _log(f"{pid}: rows v{lo_k} ({len(cuts_rows[0][2])} verts) / v{hi_k} ({len(cuts_rows[1][2])}); lap faces removed "
              f"{removed}; deck {len(verts3)} v / {len(faces)} f, {built[-1]['area_m2']} m2; seam residual max "
-             f"{built[-1]['seam_residual_m']['max']} m; {widened} ribbon-edge points, {united * 0.0625:.1f} m2 of this line's ribbon united; ground {held}; {len(bars)} mouth barrier(s) ({along_lap} box runs along the lap skipped) "
+             f"{built[-1]['seam_residual_m']['max']} m; {widened} ribbon-edge points, {united * 0.0625:.1f} m2 of this line's ribbon united; {len(arm_rows)} street arm row(s) {[m_['piece'] for m_ in arm_meta]}; ground {held}; {len(bars)} mouth barrier(s) ({along_lap} box runs along the lap skipped) "
              f"{[b['span_m'] for b in bars]} m")
     return built
 

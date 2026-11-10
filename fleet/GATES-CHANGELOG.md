@@ -380,6 +380,606 @@ failing on Nevada 0.1.4 from an empty workshop without the models: "0 trees writ
   its lidar top clears 2x its own ground plane's scatter: a two-sided 95 % bar, not tuned. `planted_desert_scrub` is now Bush3
   only. The treefx gate counts the same way (28 / 28).
 
+## 2026-11-07 (ledger 0086) — verify_mouth_corners: a new opt-in gate on every judged mouth's corners; the mouth_radii and corner-return numbers
+
+**What changed:** `tools/verify_mouth_corners.py` (new; gate step `verify_mouth_corners`; opt-in by track.config.json
+`route.verify_mouth_corners`, Sand Creek only). On the gate OBJ of the shipped kn5, with `tools/mouth_survey.py`'s own
+sampler (ledger 0086's diagnostic, unchanged), per mouth of `route.mouth_returns`' prefixes:
+- **corner lip <= 0.05 m** [measured: `scripts/ac/kn5_ground_check.ROAD_GAP_M`, read from it, not copied: the
+  barycentric sampling ceiling the contact gate already holds every road vertex to]: the host's road edge over the top
+  surface 0.05 / 0.15 m past it, 0-6 m along the host either side of the street's edges;
+- **grass over the streets' edge strips <= 2.1 %** of the samples over all judged mouths, the first 20 m [measured:
+  Sand Creek's own lap on rr2, `edge_report` at_1m ground 0.021];
+- **the host's edge line across the opening: <= 0.25 m** ⚠ [invented: policy; real paint breaks at a mouth; 0.25 m is
+  one sample, the sampler's step], read on the line's OWN band: `tools/mouth_survey.py` now samples white MARKINGS at b
+  −0.58 / −0.55 / −0.52 m (the assembler paints it at −0.61..−0.49: v021 `ribbon.lane_markings` edge_inset 0.55, line_w
+  0.12; read on m7a's OBJ 20-25 m either side of a mouth: −0.60..−0.50). Its first version sampled −0.5 / −0.3 / −0.15 and
+  counted YLINE: −0.3 / −0.15 are off the host's line, where the STREET's own edge and centre lines reach 0.17-0.31 m past
+  the host edge at the weld, so every opening read 0.25-1.5 m with the host's line gone (m7a, 92 mouths). On 0.2.6 (rr2)
+  the corrected sampler reads the host's line across 111 of 113 openings;
+- the R 9 m inside-wheel turn drop: reported, not gated.
+`route.verify_mouth_corners_allowed` lets a named mouth stand red (printed ALLOWED); Sand Creek's rows are below.
+
+**Why:** Kevin, 2026-11-07, on Sand Creek's grid streets: "They don't connect to the main road very well at all",
+"Doesn't connect, floats". verify_mouths passed all 113 mouths: its rows look inside the street's span and along straight
+approach lines; the corners beside it are in none of them (ledger 0086: corner lip median 0.175 m, max 0.327; Lake Murray
+v4 0.033).
+
+**Numbers of the fix's tools (no gate reads them; each ⚠ invented unless marked):**
+- `tools/mouth_radii.py` (the radii off NAIP 2023, z18 0.46 m px): BAND_MIN 16 gray, BAND_K 2.5 robust spreads (the
+  road band); EDGE_U 12-30 m and EDGE_OFF −3..+8 m (the legs' straight edges); R_GRID 0.5-20 m by 0.25; ARC_MID 0.7,
+  CONTRAST_M 0.7 m (1.5 px); acceptance CONTRAST_MIN 12 gray and PROM_MIN 1.4. A corner not accepted is built at the
+  median of the measured corners on its host (else of all), logged per corner.
+- `tools/mouth_returns.py` / `_blend.py`: EDGE_FIT_TO_M 22 m (a through street's edge line), HEAD_MIN_M 1.0 m;
+  TERRAIN_EDGE_M 0.75, ZONE_PAD_M 3.5, HOST_KEEP_M 0.3, PIN_UNDER_M 0.16, VERGE_UNDER_M 0.02 are the stubs' own
+  (2026-10-14 / 10-18 entries, unchanged). (`route.strip_under_road` and its UNDER_RISE_M −0.05..+0.8 m: built on
+  m7a-m7c, measured to move none of its targets, dropped for m7d.)
+- `tools/gap_mouths_blend.py` gap_paint: PAINT_BAND_M −1.2..+0.3 m, PAINT_PARALLEL 0.8.
+- `tools/strip_seam_blend.py` connectors: INSET_M 0.05 (the lap's, unchanged); every connector row is seamed (m7b left
+  out the rows whose strip faces strip_under_road took: no change in TERRAIN POKE, reverted, 74's NOTCH row allowed).
+  With `strip_seam.connectors` every strip seam point (lap, streets, returns; not the pads' outlines) moves **OFF_EDGE
+  (9.7, 7.1) mm** ⚠ [invented: any small plan vector off the row's line] off the strip row's own line: ON that line it
+  sits on the edge two strip triangles share, engine-july's anti-poke ray (build_kn5_loop 2c) misses both, and the
+  vertex keeps the contact band's road − 0.02. All 24 of m7c's verify_kn5 TERRAIN POKEs (rr2's 9 among them) were such
+  vertices (barycentric min 0.0, 0.05 m from a lip vertex along its row). verify_kn5's POKE_MAX 20 unchanged.
+- `route.mouth_returns_skip` (track.config.json, every row names its why): mouths given no returns. Sand Creek names two,
+  both ledger 0086 owed spots whose returns turned verify_mouths red on m7a (grid_primary_78 end: APPROACH 4.0 %/m, rr2
+  PASS; grid_primary_80 end, allowed since round Q: mouth line 0.072 -> 0.139 m).
+- `route.verify_mouth_corners_allowed`: Sand Creek's rows are the mouths still red on m7b, each with its why (ledger 0086
+  "Fix (0.2.7)": the corners mouth_returns could not build, and the built ones that stay over the lip).
+
+**Proven:** see ledger 0086 "Fix (0.2.7)" (the 0.2.6 rr2 / 0.2.7 m7 rows). Lake Murray names none of the keys; its trim
+A/B is byte-identical (ledger 0086).
+
+## 2026-11-06 (round R) — verify_kn5: a whole-street race has no closure wall (opt-in `race.corridor.whole_lap`; ledger 0079 round R)
+
+**What changed (scripts/ac/verify_kn5.py, rule (f)):** for a race layout that names no lap on a track whose
+`race.corridor.whole_lap` is `true` (`whole_lap_layouts`), the closure kn5's row "holds >= 1
+1WALL_RACE_CLOSE_<TOKEN>_* mesh" is REPLACED by "holds NO 1WALL_RACE_CLOSE_<TOKEN>_* mesh". Every other row is as
+before, for that layout too: the closure kn5 present and declared by its token, only its own closure / its own sign
+plates in it, race materials only, no spawn node, the cap, the size, no duplicate name across road + common + closure;
+the common race kn5's curb strips, kerbs, no closure, no centre chain; --inis unchanged.
+
+**Why (Kevin, 2026-11-06, relayed by the PC session):** asked whether Sand Creek's race on its wide streets should use
+Lake Murray's 11.36 m lane with closure walls shutting off the rest (about 15 % of the lap: Colorado, Quebec, every
+stretch >= 15.67 m) or the full street, he answered "Full street width". A whole-street race has no closure line, so
+the >= 1 row cannot hold; "no closure wall" is what is true of it (the closure kn5 carries the layout's own W1-6
+plate alone, as check_race_kn5 already reads under `params.whole_lap` since round K).
+
+**No number.** No threshold, reference or bypass moved; none added. The key is the one barrier_bands.py already reads
+(round K) and echoes into data/barrier_bands.json `params.whole_lap`; verify_kn5 reads the config's declaration
+(`is True` only; a lap layout's corridor is its own and is not covered).
+
+**Proven:**
+- Sand Creek rp2 (round P's built workshop, the candidate config): before FAIL on exactly the closure row
+  ("CLOSURE kn5 'sand_creek_raceway_lm_closure_race.kn5' (race) holds no 1WALL_RACE_CLOSE_RACE_* mesh"); after PASS;
+  --inis PASS both.
+- Lake Murray (no Lake Murray kn5 build is on the Mac: a fixture from its committed config, finished centreline,
+  barrier_bands, dummies and the committed parses of its 0.20.1 race / closure_cw / closure_acw kn5s, mesh and material
+  names as built; `sclm_work/lmvk_rr`): verify_kn5 output byte-identical before / after in five variants — as built
+  (PASS), race_cw's closure walls removed (FAIL "holds no 1WALL_RACE_CLOSE_CW_*"), a closure wall in the common kn5
+  (FAIL), --inis as packed (PASS), --inis listing the other closure (FAIL).
+- Test `tests/ac/test_verify_kn5_layouts.py::test_whole_street_race_has_no_closure_wall_opt_in`.
+
+## 2026-11-06 (round Q) — Sand Creek: a lidar curb-line tracer and its numbers; no gate, no threshold, no bypass (ledger 0079 round Q)
+
+**Not live.** No gate reads any of these. They are the reading rules of a measuring tool
+(`tools/lidar_curb_trace.py`, no build step), and every one is ⚠ invented:
+- Raster:
+  - ROW_M 0.5, BIN_M 0.25, HALF_M 30 (the raster);
+  - ALONG_M 0.75 (a cell's returns along; the lidar is ~4 class-2 returns / m² here);
+  - SMOOTH_ROWS 5 (the step map's ±1 m along). STEP_WIN_M = naip_edge's 1.0 (round J).
+- Line tracing:
+  - MOVE_COST 0.01 m per bin and MAX_MOVE 2 bins per row (the DP line's stiffness);
+  - OUTER_CAP_M 0.08 (= STEP_M), DROP_CAP_M 0.06 and INWARD_COST 0.0005 m per bin (an outer line takes a curb before a
+    drop and the innermost before a berm);
+  - WINDOWS: −3 .. +9 m off OSM's outer ribbon edge (west), −2.5 .. +11 (east), −5 .. +9 for the median faces.
+- Per row and segments:
+  - `curb` = naip_edge.STEP_M 0.08 (round J);
+  - NAIP: BAND_ALONG_M 10 (the road band's centre, a median along), the band half-width = half of round J's ROAD_BAND;
+    NAIP_IN_M 1.0-2.5, NAIP_EDGE_M −1.0 .. +2.5, NAIP_LEAVE_M 1.0 (= naip_edge.RUN_M), NAIP_NEAR_M 0.75,
+    NAIP_BRIGHT 12;
+  - GAP_M 8 (a driveway cut), NAIP_GAP_M 15 (NAIP silent: a shadow, a car), MIN_SEG_M 20.
+- `apply_plan` (what a re-centre would take; nothing reads it): BRIDGE_M 30, MIN_APPLY_M 40, TAPER_M 20,
+  DY_ALONG_M 2.5.
+
+Checked by eye on the six stills (`source/stills/quebec_curb_trace_q.jpg`): every `ok` stretch lies on a curb or a
+road edge that NAIP shows. The traced west curb at s 180-240 (the turn bay, −14.25) is not `ok`: NAIP is silent there.
+
+- **`route.verify_mouths_allowed`, candidate:**
+  - **grid_primary_78#0's row dropped.** An allowance REMOVED, so the gate is stricter: the mouth passes on rp1 / rp2
+    (approach 2.33 %/m, mouth line 0.013 m).
+  - **grid_primary_80#0's reason corrected.** No new allowance; the row's text only: it is the mouth on E 56th at v847,
+    not sandcreek_quebec's. It fails there (mouth line 0.072 m, notch 0.079 m) and is owed.
+- **`lm_intake.corner_flare_off`** (opt-in; tools/lm_engine_intake.corner_flares_off; named by no config): the port's
+  route.corner_flare_off applied to the copied widths. No new number: FLARE_OFF_RADIUS_M is widths_from_osm's own 30 m,
+  and the legs are the line's own widths. Tried on build rq1 with dahlia_56th unparked: red (lm_pads seam residual
+  6.833 m, verify_signs M-c5-rev), so reverted from the candidate.
+
+## 2026-11-06 (round P) — Sand Creek: 48th_colorado unparked; one mouth allowance dropped (ledger 0079 round P)
+
+**Not live.** The candidate in `tracks/sand-creek-lm/source/round_k/`; the live config is 0.2.5.
+
+- **`route.verify_mouths_allowed`: grid_primary_52's row dropped** (an allowance REMOVED, so the gate is stricter): its
+  mouth is now on the built 48th_colorado pad. rp1 verify_mouths PASS 113 with 2 rows left (grid_primary_78, 80).
+- **48th_colorado unparked** with round O's declaration and keys unchanged (no new number). verify_pads' tolerances
+  untouched: rp1 48th seam max 1.0 mm (limit 10 mm), grass 0, curb over pavement 0.
+- **signs.json SC-48S skip** (both approaches; no number): the rule's rev plate stood in the middle of N Colorado Blvd
+  south once the pad was built (round O build ro2: verify_signs c_built_edge_clearance). A skip with its reason, not a
+  gate change; verify_signs PASS, 6 posts.
+- **`drive_test.vertex_kinks`** (opt-in, track.config.json; scripts/geometry/drive_test.py VERTEX KINKS; Lake Murray and every
+  live config name none — `test_round_p_wall_frame_and_vertex_kinks_are_opt_in`). A MEASUREMENT change, not a threshold
+  change; no new number. A slope kink over KINK_PCT (3 %/m, unchanged) is re-measured on the wheel path's own travel with
+  VERTEX BUMPS' existing `_own_travel_step` (v0.18.1) and its existing VERTEX_MIN_TRAVEL_M (0.05 m: a metre with less
+  travel keeps its station reading); one under KINK_PCT is filed under `vertex_kinks` (reported, not counted); the station
+  rate stays in the report as `kinks_per_km_station`. Why: with 48th_colorado built, 7 new street kinks at s 9575-9578,
+  offset +6.0 (inside the S, 3.3-4.5 %/m). On the built surface the fixed-offset point creeps 0.03-0.2 m across each
+  vertex there and runs 1 m between, so a smooth real grade (−4.4 to −4.7 % over 3 m of the measured deck) reads as
+  alternating station slopes; the true parallel path at +6.0, sampled every 1 m of its own arc, reads 0 kinks, max
+  1.97 %/m (probe `scratchpad/rp/arcprobe.py` on ro5 / rp1). Not the in-cut v3193's seam: the seam row is at s ~9571 and
+  reads 0.33-0.67 %/m on both paths. rp2 street: kinks 0.52 /km counted (station 1.97, rn1 1.24), 14 re-measured under
+  3 %/m (the S's 7 at 0.25-2.52, and 7 of rn1's 12 at s 531-553 on the colorado_50th deck); race 6.85 /km (station 10.89,
+  39 re-measured). Lake Murray A/B without the key (prep_v4's built OBJs, `sclm_work/rp_lmdt`, f672525a's drive_test vs
+  this head): drive_test.street / race_cw json byte-identical (31fc2f80… / 16d1de79…; the same FAIL verdict on that
+  Mac probe both sides).
+- **`fold_fans.wall_frame: "local_deck"`** (opt-in; tools/verify_fold_fans.py WALL FRAME). A REFERENCE aligned with
+  no_route, not a threshold change: band ±0.28 m, bury 0.05 m, radius 25 m, cell 0.5 m all unchanged; no new number
+  (no_route's own DECK_LIFT_M 0.10 and DECK_REACH_M 0.70 are read from tools/no_route.py). (7) took its reference from the
+  centre line alone; no_route has read each wall triangle from the 1ROAD sheet under its plan centroid nearest its foot
+  (within DECK_REACH_M of the line's deck), a cell sealing in EITHER frame, since ledger 0054 step 2e / 2g (Lake Murray
+  0.20.2; Sand Creek round M). With the key a cell is outside the band only when it is outside in both frames (the deck of
+  the wall triangle that set the cell's base). Lake Murray A/B (`sclm_work/rp_lmk`, rn_lm's built OBJs, street + race_cw):
+  without the key verify_fold_fans.json byte-identical to f672525a's (df36a7eb…), logs equal; with it (report-only) the
+  same PASS, every pinch's wall reading unchanged, 0 cells read by the deck frame. Report-only with chords too: its seam
+  chord's 40 race_cw cells (worst −0.418 m) stay out — no deck within reach under them.
+- **Adopted on the candidate:** `fold_fans.chords` + `fold_fans.wall_frame` + `drive_test.fold_fan_severe` (Lake Murray's
+  own key) + `drive_test.vertex_kinks`, and ship.json's gate `fold_fans` after `race_gates` (Lake Murray's order), so the
+  deferred readings are judged in the chain. rp2 (rp1's built workshop cloned, the gates re-run `--from road_obj` with
+  these keys; they change no geometry): verify_fold_fans PASS — v134-141 and v3202-3206 both layouts, 0 paths with a
+  step, DT max 0.032 / 0.025 race, 0.038 / 0.028 street; (7) the S's 64 cells in band (14 by the deck frame, centre-line
+  worst −0.431 → in band; the gate's worst in-band reading −0.278 m), v140's 71 (worst −0.152); (8) 10 deferred race
+  readings, all 10 on a judged path (worst gap 0.2315 m of 0.25).
+
+## 2026-11-06 (round O) — Sand Creek: 48th_colorado re-measured and re-declared; three opt-in pad keys; NOT unparked (ledger 0079 round O)
+
+**Not live.** 48th_colorado stays in the candidate's `lm_pads.parked` (its round-O declaration kept there); the live config
+is 0.2.5. No gate threshold, floor, reference or bypass moved; `route.verify_mouths_allowed` keeps its three rows.
+
+- **The box** (measured, the declaration): pad_boxes' north-east diagonal replaced by a cut across grid_unclassified_67 at
+  z −278 (x −1487..−1470) and an east side at x −1470.0 to the old corner (−1469.58, −308.64). ⚠ [authored from
+  measurement] z −278 = 6 m past 67's curb returns (pad_boxes' own ARM_PAST_M rule); the returns at z −284..−292 and 67's
+  asphalt x −1484.5..−1477 measured on the cached lidar (intensity under the pad's threshold 490) and checked on NAIP 2023
+  in the track frame (west edge −1485.5 ± 0.5; the east edge under the building's shadow). Re-measured with
+  tools/draft_pad_outline.py on the cached lidar: 336 points, 2,369 m² (was 299 / 2,247).
+- **`cut_reach: "arm"`** (per pad; tools/draft_pads.arm_reach, draft_pad_outline, lm_pads_blend reads the recorded
+  `cut_ends_en`; only 48th_colorado declares it — `test_round_o_cut_reach_arm_is_opt_in`). ⚠ `ARM_GAP_M` 1.0 m and ⚠
+  `ARM_MARGIN_M` 1.0 m [invented]: a lap cut drawn across the lap's own arm only. The default ±30 m in-cut v3193 ran over
+  the median into grid_primary_52's carriageway; the outline met 52's arm cut for 1.5 m and lm_pads stopped ("the
+  outline never runs along it", build ro1). Measured reaches: v3193 11.75 / 16.5 m, v3216 11.75 / 15.0 m.
+- **`seam: "row"` beside street arms** (draft_pads.seam_offset_multi now honours the Lariat's existing switchback rule;
+  no other pad combines arms and seam row, so every other build is unchanged): behind the in-cut's line every deck node
+  took that row's whole departure (+0.21 m): ro2 verify_pads P3 21 mm at 52's seam. ro3: 52's seam 0.5 mm.
+- **`deck_beyond: "class2"`** (per pad; draft_pad_outline writes `deck_class2`, the plane through all class-2 points where
+  road points are too few; draft_pads.deck_filled takes it first inside the outline; lm_pads deck_z outside it before the
+  lap's removed ribbon, **held under the nearest road node** [authored rule, no number]). Inside: the S's inside lane
+  overhangs the asphalt onto a flush strip, where the 8 m road-plane fill stood 0.29 m across 2.2 m (lidar 0.05 m):
+  verify_fold_fans (2) DT 0.068–0.129 m (ro3). The fill's worst move fell 0.49 → 0.094 m. Tried and dropped: class-2
+  unheld (ro4: 0.31 m over 67's row at its east end, P3), and the road plane carried outside the outline (offline: 0.30 m
+  over the lidar at 49's crosswalk).
+- **lm_pads `seam_base`** (only with deck_beyond): each seam's departure measured against the surface the deck stands on,
+  not the nearest road node (ro5: 49's seam 10.8 mm, P4 grass 6–16 mm beside it). Written, unit-tested only: **build ro6
+  was stopped at the coordinator's wrap-up and not judged.**
+
+## 2026-11-05 (round N) — Sand Creek toward 0.2.6: verify_fold_fans learns the weld's chord mends; fork 94/95's measured paint (ledger 0079 round N)
+
+**Not live.** The candidate in `tracks/sand-creek-lm/source/round_k/` does not take the new key (below); the live config
+is 0.2.5. No gate threshold, floor, reference or bypass moved.
+
+- **`fold_fans.chords`** (opt-in, track.config.json; tools/verify_fold_fans.py CHORDS, scripts/geometry/drive_test.py
+  FOLD CHORDS; no committed config names it — `test_round_n_fold_chords_are_opt_in`). A WIDER SCOPE, not a threshold
+  change. The weld mends a fold with no self-intersection (a hook) by a forward chord and records it only as a road cut;
+  Sand Creek's two road folds are both chords (v134-141, v3202-3206), so verify_fold_fans judged 0 pinches there. With
+  the key it surveys every road cut no levelled pinch covers (both ends within 2 rows) over the pinch window it already
+  uses (rows k - B - WINDOW_PAD_ROWS .. l + 1 + B + WINDOW_PAD_ROWS), on the same paths and lane, with checks (1)-(5) at
+  their existing thresholds and (7) measured about the road edge's chord midpoint (a chord has no pinch X; (6) does not
+  apply). New check **(8)**: every reading drive_test deferred to this gate (`fold_severe`) must have both ends of its
+  metre within ⚠ `COVER_M` = PATH_DO_M 0.25 m [invented: the gate's own path spacing] of a sample whose fine-step window
+  a judged path read (on the lane, on the surface). drive_test with the key defers a reading only where those plan
+  paths run (verify_fold_fans.plan_cover, the same _paths), keeps the rest severe (`fold_severe_unjudged`), and writes
+  every deferred reading with its plan points (`fold_severe_at`) for (8). Without the key both reports are byte-identical:
+  Lake Murray A/B (prep_v4's built OBJs, `sclm_work/rn_lm`, round M's tools 14f8e46f vs this head, its config unchanged):
+  drive_test.street / race_cw json md5 72996ab2… / 16d1de79… both, verify_fold_fans.json df36a7eb… both, logs equal but
+  for timings. Lake Murray report-only with the key set in a scratch copy: drive_test unchanged (race_cw fold_severe 11,
+  all 11 on a judged path, worst gap 0.115 m; street severe 10); verify_fold_fans surveys its two chords too (the seam
+  4496-4502, Jackson / LMB 3292-3297): (1)-(5) clean on both, (7) 40 race_cw wall cells within 25 m of the seam chord's
+  midpoint outside +-0.28 (worst -0.418 m) — report-only; Lake Murray does not take the key.
+- **Sand Creek, the key in a scratch copy of rm1** (`sclm_work/rn_ff`, with `fold_fan_severe` too): the v134-141 chord
+  (under the built colorado_50th pad) PASSES both layouts (DT max 0.032 race / 0.038 street, fine 0, walls worst
+  -0.152 m); the v3202-3206 chord (the S, 48th / Colorado — the PARKED pad, so the lap ribbon is the surface) FAILS:
+  (5) two 1ROAD_road slivers 42 % / 30 % (the graded chord drops the inside edge 0.098 m over 0.67 m of plan between
+  rows 3202 and 3207; a centre-row fan triangle across two chord points 0.13 m apart reads 0.02 m over 0.047 m), both
+  layouts; street (2) DT 0.091 / 0.061 m on the paths at -15.75 / -15.00 (inside the street lane, outside the race lane).
+  So **`fold_fan_severe` is NOT adopted** (it hands readings only to a gate that passes them): 19 of the 32 fan readings
+  lie on a judged path (7 at v140, passing; 12 at the S, failing), 13 lie on none (the turning centres of v140 and the
+  S's first corner) and would stay severe anyway.
+
+- **`route.paint` + draft step `paint`** (opt-in; tools/author_paint_blend.py, `draft_paint` in tools/ship_track.sh, the
+  candidate's ship.json after `islands`; no other config names it — `test_round_n_paint_is_opt_in`). Visual only (a
+  YLINE_paint_* object: no digit prefix, no physics, no gate surface). Numbers: `PAINT_LIFT_M` 0.015 (Lake Murray's
+  connector paint over its deck: scripts-v021 build_loop_blend +0.115 on points with the 0.10 deck lift); ⚠ `PAINT_DS_M`
+  0.5 m [invented] resample step; the stripe 0.12 m and gap 0.06 m are the assembler's double yellow (lane_markings
+  line_w 0.12, read off the built YLINE_2); self-check read-back 1 mm [invented]. Fork 94/95's median, MEASURED on NAIP
+  2023 in the track frame: ⚠ the tracker's 4 grey-level peak floor, 0.6 m search window, 4 m running median and
+  ±0.25 m row mean [invented]; west line x = 855.914 + 0.00912 z (121 rows, rms 0.116 m), east x = 795.804 − 0.06906 z
+  (136 rows, rms 0.149 m); ends z −773 (the two doubles stop overlapping: centres 0.32 m apart) .. −840 (the last row
+  both lines read ≥ 19 grey levels of contrast). ⚠ [authored] clear polygon: west − 0.6 .. east − 0.2 m over the same z;
+  ⚠ [authored] both lines painted as double yellow (NAIP resolves neither single nor double). The chevron hatch is not
+  painted (not resolved).
+
+## 2026-11-05 (round M) — Sand Creek toward 0.2.6: Lake Murray 0.20.2's no_route deck frame, pad corners, dense hops (ledger 0079 round M)
+
+**Not live.** The candidate stays parked in `tracks/sand-creek-lm/source/round_k/` (the live config is 0.2.5). No gate
+threshold, floor, reference or bypass moved. Two measurement changes (no_route's, Lake Murray's own; drive_test's
+opt-in dense hops) and one opt-in declaration (pad corners):
+
+- **`tools/no_route.py` — Lake Murray 0.20.2's measurement, brought across** (ledger 0054 steps 2e / 2g; the file and
+  `tests/tools/test_no_route.py` as `claude/lm-phase2-0202` 0e256585 has them, PR 38 not merged; the rest of that PR not
+  taken). MEASUREMENT-BUG FIX, Lake Murray's: the BUILT span test runs a second time with each wall triangle measured
+  from the 1ROAD deck it stands on (within `DECK_REACH_M` = WALL_HI_M - WALL_LO_M = 0.70 m of the line's own deck,
+  derived; `DECK_BUCKET_M` 2.0 is a lookup grid, not a judgment) and a cell seals in either frame. WALL_LO_M / WALL_HI_M /
+  DECK_LIFT_M unchanged. The file also carries 0.20.2's opt-in `nose_walls` (Lake Murray's north noses; no Sand Creek or
+  committed Lake Murray declaration has the key). Proof: Lake Murray's committed data (prep_v4's built
+  `track.race_cw.obj`, barrier_bands.json md5 d7781559… = committed): race_cw BUILT PASS -> PASS (0 / 439 probes, leak 0;
+  wall_cells +59, local_deck_cells 59, reached / allowed −1 m², the three walls 0054 step 2g lists), race_cw / race_acw
+  PLANNED PASS -> PASS, every key equal. Sand Creek rl1: FAIL (door v134-v136 L, 13 / 27 probes) -> PASS (0 doors,
+  0 / 27, leak 0; the deck frame adds 553 cells, 158 of them the left strip on the colorado_50th deck +0.31..+0.33 m over
+  the line's).
+- **`race.pad_corners`** (opt-in; tools/barrier_bands.py `_pad_corners`, tools/race_furniture.py `_trim_folds(declared=)`,
+  `declared_corners`, `_kerb_declared`; Lake Murray declares none — A/B below). A strip corner declared on a junction
+  pad's curb return: the strip runs in_vertex's ring -> X -> out_vertex's ring and is written into `edge_corners`
+  (kind `pad_corner`) like a trimmed fold, so drive_test's corner probe, median_zone, no_route and verify_race D read it
+  unchanged. ⚠ [authored, measured on rl1] in / out vertices: 50th / Ash R v185 -> v190, 50th / Dahlia L v410 -> v415 (the
+  last / first rings whose band point stands 0.4-0.65 m in from the BUILT outline). X MEASURED, no new number: of the
+  outline points on the curb run between A and B, the one standing farthest toward the lane from the chord A-B, moved
+  edge_inset - barrier half (0.485 m, the strip's existing offset from its curb line) along the chord's lane-side normal
+  (Ash (-1369.571, 141.797), Dahlia (-765.456, 81.679); the strip's outer edge then stays 0.012 / 0.043 m inside the
+  deck). The inside race kerb beside it turns the same corner: its mid-line corner is X moved barrier half +
+  KERB_CLEAR_M + KERB_W / 2 (0.885 m, the kerb's existing offset from the strip centre) along the bisector at the mitre
+  scale (race_furniture's own MITRE_MAX cap); the kerb mid-line then stands 0.833-0.89 m from the strip centre.
+- **`drive_test.dense_hops`** (opt-in, scripts/geometry/drive_test.py DENSE HOPS; Lake Murray sets none). A
+  **measurement change, not a threshold change**: a severe reading (> STEP_SEVERE_M 0.06, unchanged) on a forward metre
+  where the fixed-offset wheel path (this metre or the previous one) hopped more than ⚠ `DENSE_HOP_M` 1.5 m [invented]
+  is re-measured on the same path's last two metres re-sampled every ⚠ `DENSE_DS_M` 0.25 m [invented] along their own
+  arc (heights off the built top surface); the largest 1 m second difference there is judged by the same 0.06. Under it:
+  filed `dense_hops` (reported, not gated). Measured first (rl1, the 6 jumps at s 419-422 lat +13.73 / +14.48 on the
+  colorado_50th deck): station readings 0.069-0.109 m, the same paths sampled densely 0.002-0.005 m (worst on the whole
+  s 410-423 window 0.0063 / 0.0072 m): a sampling artefact, not the surface. Without the key the report is byte-identical
+  (rl1's drive_test.race.json re-run: cmp equal). Lake Murray, report-only with its config unchanged (the key set in a
+  scratch copy, prep_v4's built OBJs): race_cw no reading moves (dense_hops 0); street ONE reading moves — s 2265 lat
+  +5.25, 0.099 m at the station, 0.051 m on the dense path (severe 10 -> 9 on that scratch build).
+- Not adopted: Lake Murray's `drive_test.fold_fan_severe: "verify_fold_fans"`. On Sand Creek verify_fold_fans judges
+  **0 pinches** (mouth_welds.json levels one CURB fold only, at v778-781; it re-finds no road swallowtail on the gate
+  centreline), while drive_test's fan discs fall back to the raw road cuts (v134-141, v3202-3206) — the key would hand
+  those severe readings to a gate that reads nothing there. Ledger 0079 round M has the numbers.
+
+## 2026-11-05 (round L) — Sand Creek toward 0.2.6: Lake Murray's race kerbs, pad-corner arrow plates (ledger 0079 round L)
+
+**Not live.** The candidate stays parked in `tracks/sand-creek-lm/source/round_k/` (the live config is 0.2.5). No gate
+threshold, floor, reference or bypass moved; no gate's wiring changed. scripts/ is untouched. The place_signs change is
+opt-in and A/B'd byte-identical on Lake Murray's data; the author_signs_blend change acts only where no modelled walk
+is found, which no Lake Murray sign hits (its committed signs_measured.json):
+
+- Race kerbs: the candidate's `kerb.race_rule` / `surface` / `end_ramp_m` / `placement`, the `kerbs` draft step and the
+  `1KERB` texture row are gone; `race.kerbs.trims` is empty, so Lake Murray's race-furniture kerbs are swept at every
+  corner its detector finds (race_furniture.KERB_DEFL_MIN_DEG 45, the outside extension clamp(2 R, 10, 30) m, 1.0 m x
+  0.05 m, 0.05 m inside the strip face — all Lake Murray's own constants, unchanged). One pair of `race.kerbs.trims`
+  pull-backs, ⚠ [authored, measured on rl1]: at the S at 48th / Colorado v3195's outside kerb ends at v3200 (was v3212;
+  built as detected it turned inside out in the right edge's fold, verify_race I) and v3205's outside kerb starts at
+  v3201 (was v3189), so each edge carries one kerb line where the two corners' kerbs overlapped.
+- Sign bases (`tools/author_signs_blend.py`): where the march found no modelled walk along the ray, the ground ray-cast
+  is the post's base (was: the walk's analytic road + 0.24 m whenever the ray-cast differed by > 0.30 m). No number;
+  Lake Murray's committed signs_measured.json has no sign on that path.
+- Arrow plates at the pad corners: `tools/place_signs.py` defaults.`pad_decks` (opt-in, in OPT_IN_DEFAULTS, absent from
+  DEFAULTS so a signs.json that names none writes the record it wrote before) puts data/pads.built.json's decks in the
+  polyline field as pavement, as the north network's decks are on Lake Murray (ledger 0054 A8);
+  `tools/expansion_lines.pad_polygons` reads lm_pads' `outline_en` where Lake Murray's pads record `outline_xz`. Sand
+  Creek's signs.json names the three pad corners per_layout (SC-C50 v140, SC-ASH v186, SC-DAH v410). **No new number**:
+  the rule's own defaults (Lake Murray's) place them.
+- Not changed, on purpose (the ledger has the measurements): drive_test's fixed-offset sampling (scripts/, frozen), no_route's
+  wall band reference (centreline y + 0.10), verify_kn5's closure rule. Lake Murray's `drive_test.fold_fan_severe` key
+  was NOT adopted for Sand Creek (it would re-route a severe reading to another gate; the coordinator's call).
+
+## 2026-11-05 (round K) — Sand Creek toward 0.2.6: race closure, race kerbs, arrow signs, street-name blades (ledger 0079 round K)
+
+**Not live.** The candidate config is `tracks/sand-creek-lm/source/round_k/` (the live config stays 0.2.5): its race
+layout is red on Lake Murray's race gates and on scripts/ac/verify_kn5 (ledger 0079 round K). No gate threshold, floor or
+bypass moved. Lake Murray's race gates (verify_race, PLANNED / BUILT no_route, check_race_kn5,
+audit / drive_test --layout race) now run on Sand Creek's race layout at their own numbers. All new keys opt-in, Sand
+Creek only (`test_round_k_keys_are_opt_in`). Every number below is **AUTHORED per Kevin's request** ("race curbs",
+street-name signs "Both"; Sand Creek's streets carry no kerb paint — NAIP, ledger 0070 Q1 — so nothing here is measured)
+unless a real reference is cited:
+
+- Race closure (`race`, tools/barrier_bands.py et al.): Lake Murray's numbers as they are — K-rail module 4.04 m, 1.2 m
+  high, strip face 0.82 m in from the lane edge (road mode, ledger 0049); the corridor is the WHOLE street, v0..v3216 (no
+  boxes, no closure runs: Sand Creek's race is the whole street one way, ledger 0063).
+  - ⚠ `race.edge_fold_chord` [authored]: where the strip's offset folds with no crossing and no extension within 8 m (two
+    junction flares, colorado_50th v135-v145 and 48th/Colorado v3202-v3210, both right edge; the lap 32.9 m wide on
+    R ~14 m) the strip is cut by the straight chord between the last / first rings not curling into the cusp
+    (FOLD_STRETCH_MIN 0.5, race_furniture's own) whose step runs within 30 deg of the way the ring faces
+    (⚠ CHORD_ALIGN_COS 0.866 [authored]).
+  - `race.corridor.whole_lap` (no number): no box, no closure run; barrier_bands writes median_bands.json with the zero
+    island widths it assumed; race_furniture / check_race_kn5 / split_exports accept a closure that holds the layout's
+    own sign plates alone. scripts/ac/verify_kn5.py (frozen: Lake Murray's rule) still demands a 1WALL_RACE_CLOSE_* wall
+    and 1KERB_RACE_* kerbs — the candidate is red there.
+  - `race.spawn_gate_layouts "race_furniture"`: the spawn self-gate (GRID_CLEAR_MIN_M 0.30, unchanged) holds the layouts
+    that load strips; the free roam (no strip) keeps its grid at +1.9 m. ⚠ The race grid is centred, offset_right_m 0.0
+    [authored]: at +1.9 m the right column stood 0.92 m into the strip on 46th's 7.5 m.
+  - `race.seat_on_pads`: the strips over the three built pads seat on the pads' measured decks (no number).
+  - The race furniture's own kerbs: all 14 dropped through `race.kerbs.trims` (each with its why), so none is swept there.
+- Race kerbs (`kerb.race_rule`, tools/race_kerbs.py; the circuit kerb tooling, tools/author_kerbs_blend.py):
+  - corners: place_signs' detector, |D| >= 45 deg (Lake Murray's race.kerbs.min_turn_deg) and R_apex <= 60 m (the
+    detector's own 1/60 bound) [authored choice of Lake Murray's corner rule];
+  - ⚠ apex kerb PC..PT on the inside, exit kerb apex..PT + clamp(2 R, 10, 30) m on the outside (Lake Murray's outside-kerb
+    extension, race_furniture.KERB_EXT_MIN_M / MAX_M) [authored]; overlapping runs on one edge merge; a run whose lane edge
+    steps backward is dropped;
+  - ⚠ across: in_m -1.4 .. out_m 0.0 from the ribbon's own lane edge (kerb.width_m 1.4, the config's) [authored]; height
+    kerb.height_m 0.05 (the config's); end ramps kerb.end_ramp_m 4.0 m (the circuits' [invented] value); author_kerbs'
+    KERB_LIP_M 0.003, RAMP_IN_M 0.25, RAMP_OUT_M 1.0, DROP_M 0.05 [invented, unchanged];
+  - `kerb.surface "road_and_pads"`: the section reads the ROAD ribbon and the pads' decks at every offset (no number).
+  - Texture: the circuits' red / white two-band stripe (Aspen's kerb_redwhite.png).
+- Arrow signs: Lake Murray's W1-6 rule and defaults verbatim (tracks/sand-creek-lm/signs.json copies
+  tracks/san-diego-lake-murray/signs.json `defaults`); one per-layout corner, 48th / Colorado (SC-48C), as Lake Murray's
+  M3 / M4 (ledger 0054 A7 / P4). No new number.
+- Street-name blades (tools/name_blades.py, tools/author_name_blades_blend.py), MUTCD 2009 cited:
+  - 2D.43 para 04: initial upper-case letters >= 6 in, lower-case >= 4.5 in (CAP_IN 6, LOWER_IN 4.5);
+  - Table 2D-1: D3-1 Street Name (1 line), conventional road "Varies x 12" (BLADE_H_IN 12);
+  - 2D.43 para 18 / 2D.03 para 02: white legend and border on green; 2D.43 para 20: both streets named, faces parallel to
+    the streets they name, a crossing's arms on diagonally opposite corners;
+  - 2A.18 para 05: the sign's bottom 7 ft (2.134 m) above the near edge of the traveled way;
+  - 1A.15 (Table 1A-2): the abbreviations (Ave, Blvd, Dr, St, N / E / S / W ...);
+  - ⚠ [authored]: side margin 3 in, border 0.5 in inset, lengths in 6 in steps, font Arial Narrow Bold (standing in for
+    FHWA Series E(M)), the post CORNER_M 3.0 m past the side street's edge (gap_mouths' CORNER_M) and SETBACK_M 2.1 m
+    outside the lane edge (Sand Creek's 1.8 m edge strip + 1 ft, 2A.19 para 11's minimum), blade 0.02 m thick, 0.03 m
+    between blades, the slide 0.25 m steps to 6 m; the post's PAVE_CLEAR_M 1.0 m (verify_signs' connector minimum) and
+    LAMP_CLEAR_M 3.0 m (place_signs' lamp rule) are the sign tools' own.
+
+## 2026-11-05 (round J) — Sand Creek 0.2.5: the streets on the lidar, the south wall, a NAIP tracer (ledger 0079 round J)
+
+No gate threshold, floor or bypass moved (LANE_TOL_M 0.02 m, the houses floor 2,181, `route.verify_mouths_allowed`'s three
+rows: as they were). All opt-in, Sand Creek only (`test_round_j_keys_are_opt_in`):
+
+- Wiring: `lm_intake.connector_profiles` now names round I's measured file (99 streets; round I's 0.5 m jump hold
+  [invented] unchanged, plus grid_primary_15 held for a measured reason: a viaduct deck with no street-bridge path).
+- `route.weld_deck_beyond_end` (tools/weld_mouths_blend.py, mouth_weld.BeyondEndDeck): past a host's open end the weld
+  reads the deck of the street that end is welded to. No number; it changes what surface is read, not a tolerance.
+  verify_mouths' grid_tertiary_1#1 mouth passes because the sheet now lies on the deck (0.0 m above), not by any allowance.
+- `terrain.lidar_patches` wall_49 polygon extended to z -1075 (measured wall line); its feather_m 10 m ⚠ [invented, round I]
+  applies to the new soft edges.
+- ⚠ `tools/naip_edge.py` (a measurement tool, no gate, no build step): RUN_M 1.0 m, STEP_M 0.08 m, STEP_WIN_M 1.0 m,
+  STEP_SEARCH_M 1.0 m, ROAD_BAND 150-195 gray (read off Quebec's corridor histogram, asphalt peak 160-190), MIN_RUN_M
+  3.0 m [all invented].
+
+## 2026-11-05 (round I) — Sand Creek toward 0.2.4: measured geometry, the numbers it adds (ledger 0079 round I)
+
+No gate threshold, floor or bypass moved this round unless listed here. All opt-in, Sand Creek only
+(`test_round_i_keys_are_opt_in`):
+
+- Numbers the round adds:
+  - ⚠ fork 94/95's NAIP edge rule: gray >= 165, a run of 3 samples (1.5 m), at least 4 m from the midline [invented; 165
+    fitted so the rule gives round G's own reads at 12 of 15 stations in round G's frame]. A measurement rule, not a gate.
+  - `route.islands` `fork_92` rise_m [0.078, 0.0] [measured]: the west edge's lidar step (median of 53 rows), the east
+    edge flush where the lidar reads it -0.05 m (the built road is level across where the real one rises east). The
+    island is 1KERB on the road: audit K (kerb > 0.10 m over the carriageway) reads it like any curb, no exemption; it
+    stands 0.078 m.
+  - ⚠ `tools/lidar_ground_patch.py` CELL_M 1.0 m, RADIUS_M 1.0 m, MIN_RETURNS 3 [invented]: the lidar ground lattice of a
+    `terrain.lidar_patches` polygon (as lidar_connector_profile's radius and count).
+  - ⚠ `tools/ground_patch_blend.py` SPLIT_M 1.5 m [invented]: the longest TERRAIN edge left in a patch's box (how sharp a
+    measured step can stand); Sand Creek's `wall_49` feather_m 10 m [invented]: the built ground eases to the lidar over
+    10 m past the polygon's soft edges.
+  - No gate moved for 1182: it stands because its ground is now the lidar's (relief under its rim 0.45 m, was 3.16 m
+    against the unchanged 2.64 m limit).
+  - ⚠ `tools/lidar_connector_profile.py --surface` (opt-in; off by default, round H's four streets read the same with it):
+    UNDER_M 2.0 m [invented] (a deck that far over the ground at a point is a second surface) and NONE_COST_M 0.3 m
+    [invented] (the chain's price for an unread point under a deck).
+  - ⚠ round I's street profiles hold a street on 3DEP whose lidar profile jumps more than 0.5 m [invented; 3DEP's own
+    largest is 0.56 m] between neighbouring points. The 100 measured streets are NOT wired this round (one mouth,
+    grid_tertiary_1 on grid_tertiary_2, reads HOST LANE 0.021 m against LANE_TOL 0.02 m; the tolerance was not moved).
+
+## 2026-11-05 (round H) — Sand Creek: the 8 mouths and 13 houses from measurement; one bypass, one gate reading (ledger 0079 round H)
+
+No threshold or floor moved (APPROACH_DG_PER_M 3 %/m ⚠ invented, MOUTH_TOL_M, LANE_TOL_M, NOTCH_TOL_M, the houses floor
+2,181: all as they were). All opt-in, Sand Creek only (`test_round_h_keys_are_opt_in`):
+
+- **A BYPASS: `route.verify_mouths_allowed`** (tools/verify_mouths.py). Three mouths named one by one, each with its reason:
+  `grid_primary_52#0` end (pad 48th_colorado parked), `grid_primary_78#0` end and `grid_primary_80#0` end (pad
+  sandcreek_quebec parked). Each is still measured and its row still FAILs; the gate's verdict ignores those three. A name
+  matching no mouth is an input error. The coordinator's call (2026-11-05: "the 3 mouths at the parked pads stay
+  allowed"). Remove a row when its pad is built. Evidence of what they read: ledger 0079 round H (h2: 52 one grass
+  sample in the host lane, 80 mouth line 0.07 m; 78 passes).
+- **A gate reading: `route.weld_exact_deck_lines`** (verify_mouths `HDx`). On a mouth already reading the host deck
+  exact (Lake Murray's `weld_exact_deck`, ledger 0054 P1, which did this for HOST LANE only), MOUTH LINE and NOTCH read
+  the host deck at each station off the host's triangles (its lowest road sheet on the mouth line) instead of its centre
+  extended level across. Evidence: `grid_tertiary_16` is not level across at the `grid_unclassified_10` crossroads (lidar
+  0.11 m over 9 m, built 0.09 m), and the level model read the host's OWN edge sheet 5-6 cm off "the host deck". Same
+  tolerances. On a level-across host the two readings are the same.
+- Numbers the round adds:
+  - ⚠ `tools/lidar_connector_profile.py` RADIUS_M 1.0 m and MIN_RETURNS 3 [invented]: the returns that make a street
+    point's lidar height (10-25 returns here).
+  - `lm_intake.connector_widths` `grid_unclassified_13` 10.0 m [measured lower bound]: NAIP + lidar 10-12 m at five
+    sections (the config's doc).
+  - `building_clear_m` 0 for Sand Creek's planned blocks: removes ⚠ BUILDING_CLEAR_M 3 m (a circuit's run-off) there; the
+    footprint-on-pavement test stays. `scenery.bespoke.names.paved` ROAD / 1ROAD only (Sand Creek has no sidewalks; its
+    CURB is the curb face + the ⚠ 1.5 m graded band).
+  - `weld_runon "mitre"`: no number.
+
+## 2026-11-05 (round G) — Sand Creek: forks merged, acute welds held, pad arms, Quebec's crossing (ledger 0079 round G)
+
+No gate threshold or floor moved. One gate reads MORE: `verify_pads` (lm_pads' shape) now judges each pad-arm end row as a
+seam (`arm_<piece>_<end>`, from pads.built.json `arm_rows`); a record without it reads the two lap rows as before. The
+numbers the round adds, all opt-in (Sand Creek only):
+
+- `route.street_junctions.merge_forks[].edges_m` [measured]: the two forks' asphalt edges off NAIP 2023 (0.46 m/px, about
+  +-0.5 m), every 5 m from the fork node. The method is in the config's `_merge_forks_doc`.
+- `weld_hold: "overlap"` (mouth_weld `hold_overlap`): no number. The held length is the guest's own mitres (first to
+  last). The ease past it is the existing `BLEND_M` 30 m.
+- `lm_pads.arms "streets"`:
+  - an arm's seam fade reuses the lap cuts' rule (⚠ `SEAM_FADE_M` 12 m and ⚠ `SEAM_MAX_SLOPE` 0.035, both already
+    [invented]; up to 45 % of the way to the node, the lap cuts' own 45 %).
+  - ⚠ The fade past an arm row's ends runs over the same length [invented: no measured falloff].
+  - The lap-face test reads `route.edge` (curb_face_w + sidewalk_w + grade_w, 0.1 + 0.2 + 1.5 m: the strip as built;
+    its 1.5 m is that config's own [invented]).
+- `median_crossings[].width_m` 10.0 [rule]: the wider of the two streets the crossing joins (NAIP reads the cross
+  street's approach about 15 m: ledger 0079 round G).
+- `min_piece_m` 0 on the crossing piece alone: it is kept at any length. `MIN_PIECE_M` 15 m is unchanged for every
+  other piece.
+- `weld_blend_m` (the piece's own length, measured) and `weld_remap_min_m` 0 on the crossing's two mouths. The
+  crossing's profile is the straight line between its two cuts (no number).
+- **A WEAKENING: `verify_pads` P3 seam sampling stops `SEAM_END_EPS_M` 0.001 m short of each segment's far end.** Before,
+  `while k * 0.25 < L` sampled the row's own end vertex whenever a half row was a multiple of 0.25 m to the float.
+  Evidence (k3): an 8.00 m street's arm rows, half row 4.000 m.
+  - The sample sat on the row's end vertex, 0.02 m to either side. The deck side was 1ROAD_PAD.
+  - The street side was the street's own 1KERB lip at the same height (20.178 / 20.178 m at `grid_unclassified_17`).
+  - 0.001 m before the end, both sides are 1ROAD.
+  - The end vertex itself is still judged by P3's 1 mm vertex rule. A lap row (half rows never a 0.25 m multiple here)
+    reads exactly as before.
+- Arm seam fades:
+  - The fade ends at the lap's lane edge (the arm row's distance to the lap line less the half width). No number: the
+    lane is the lap's.
+  - ⚠ The fade's 0.5 m floor is [invented] (an arm row on the lane would otherwise get no fade; none is closer than
+    8.5 m here).
+- `arm_edges` walks a street's edge into the pad at the outline's own resample step, 0.75 m (`union_ribbon`'s
+  `STEP_M`). `union_arms` uses `union_ribbon`'s grid and smoothing (0.25 / 1.0 / 0.75 m). A street "on" a box edge is
+  `splice_rows`' 0.05 m.
+- The houses floor (2,181) is NOT moved. Round G stands 2,168 (13 blocks against the new streets, measured in ledger 0079
+  round G); the call is Kevin's.
+
+## 2026-11-05 (round F) — Sand Creek: street-to-street junctions, the numbers they need (ledger 0079 round F; no gate changed)
+
+No gate threshold, rule or floor moved. `verify_mouths` joins Sand Creek's gate list (ship.json) unchanged. The junction
+shape needs four numbers nobody measured; each is `tools/trim_connectors.py`, opt-in (`route.street_junctions`, Sand
+Creek only):
+
+- ⚠ `join_turn_deg` 45 and `bend_turn_deg` 135 [invented]: when OSM pieces ending at one node are one street. They sit in
+  gaps of Sand Creek's data (pairs turn 0-24 deg, 88-108 deg or 157-167 deg), so any value in 25-87 / 109-156 makes the
+  same 32 joins (30 straight, 2 bends).
+- ⚠ `HEADING_M` 8 m [invented]: a piece's direction at a node, read from the node to its point 8 m along.
+- ⚠ an acute mouth's weld reach (`mouths.json` `extend_max_m`): twice (half width + edge strip) / tan(angle) where that
+  passes `mouth_weld.EXTEND_MAX_M` 25 m. The factor 2 is invented (a fork's host edge bends away). Every other mouth
+  keeps 25 m; Lake Murray's records never carry the key.
+- `MEET_R_M` 2.5 m is `tools/grid_connectors.py`'s own meeting radius (not new).
+
+## 2026-11-05 (round E) — Sand Creek: the doubled buildings out, the houses floor lowered (ledger 0079 round E)
+
+- **The houses floor is LOWERED on Sand Creek: 2,214 / 2,215 / 0 → 2,181 / 2,181 / 0.** This is a weakening, written
+  here as one. Evidence: the build's own counts off the built kn5 (Mac, empty workshop `sclm_work/d7`, every other gate
+  as 0.2.2). The 34 blocks no longer stood were each a second copy of a building already standing: a Microsoft
+  footprint over half on an OSM footprint (the coordinator's call, 2026-11-05, under Kevin's "I just want real").
+  The one-shell gap between roofs and blocks closed with it: it was `msft_buildings1333` doubled on `osm_buildings1169`.
+- **`plan_buildings.py` `dedupe.overlap`** (opt-in, Sand Creek's plan only). A later source's footprint that covers, or
+  is covered by, an earlier source's footprint over at least **0.5** [invented] of the smaller one is dropped, even with
+  its centroid outside (the old test, unchanged). Found 38: 45 at 0.25, 35 at 0.8. Same-source neighbours are never
+  tested. `OVERLAP_STEP_M` **0.5 m** [invented] is the sample spacing. Without the key the planner's output is
+  byte-identical to the committed `buildings.lm.json` (`cmp`, Mac).
+
+## 2026-11-05 (later) — Sand Creek 0.2.2: four pads on the lap, verify_pads on lm_pads' shape (ledger 0079 round D)
+
+No gate threshold moved. No floor moved. One gate is added to Sand Creek's chain, one gate reads a new record shape.
+- **Sand Creek's ship.json gains `verify_pads` (hard)**, after `kn5_ground`. Its rules and numbers are unchanged
+  (P2 SHEET_DZ_M 0.25, P3 SEAM_GAP_M 0.010 and the 1 mm / 5 cm binarity, P4 GRASS_OVER_M 0.005, P5, P7 NODE_TOL_M 1.0).
+- **`tools/verify_pads.py` reads `tools/lm_pads_blend.py`'s record** (`lm_pads_shape`: a pads.built.json whose pads carry
+  `rows` and `outline_en` and no `seams`). The outline is `outline_en`; every vertex of each cut row (densify's columns
+  included) is a seam vertex; the K-rails are the stubs; P7's reference is the lap's own 3DEP profile at the node vertex
+  (`centerline.local.json`), the same 1.0 m tolerance. **P1 does not ask for a `1KERB_sidewalk_pad` on this shape**: the
+  lm_pads deck ends at its measured outline with no curb or walk (Kevin: "no sidewalks"). This is the one rule that reads
+  less on lm_pads' shape, and it is written here as such; P5 (no curb over the pavement) still runs on it. Lake Murray's
+  record has `seams`, so it takes the old path line for line (`p.get("curb", True)`, the `order` sort key absent).
+- **New numbers, all [invented], none a gate** (`tools/draft_pads.deck_filled`, opt-in `lm_pads.deck`, Sand Creek only):
+  - `FILL_REACH_M` **1, 1.5, 2, 3, 4, 6, 8 m**: the radii a hole's plane looks out to;
+  - `FILL_MIN_NODES` **12**: measured deck nodes a hole's plane needs;
+  - `smooth_m` **1.0 m** (Gaussian sigma over the deck nodes inside the outline). It moved the nodes p95 1.7-3.1 cm,
+    max 0.075-0.26 m (the max is one node per pad standing off its neighbours: an object, not asphalt; the survey's
+    stated accuracy for QL2 is 10 cm RMSEz);
+  - `ground_edge_m` **0.7 m**: the ground under and round a deck split this fine (0.17.2's 1.4 m left grass 7-21 mm over
+    48th/Colorado's deck edge, P4; LAWS L3b).
+- **`tools/strip_seam_blend.py` `strip_seam.pads`** (opt-in; Sand Creek only): each lm_pads deck's outline is seamed into
+  the ground too, so no ground triangle spans a deck edge. With it the whole-terrain seam missed 79 of 7,355 points, over
+  `MAX_MISS_SHARE` 1 %, so Sand Creek moves to the local scope the Lariat already runs (`strip_seam.scope: "local"`).
+  The threshold is not touched.
+- **Cited, not invented:** `datum_m` 0.10 m is the assembler's own ROAD lift (scripts-v021 build_loop_blend.py
+  `y + 0.10`); `lane_lip` reads `route.edge` (curb_face_w 0.1 + sidewalk_w 0.2, already [invented] in ledger 0078).
+
+## 2026-11-05 — Sand Creek 0.2.1: the lidar heights, the first pads (ledger 0079 round C)
+
+No gate threshold changed, and no new number was added. Changed reading rules:
+- **`plan_buildings.py` `lidar.past_cap: "median"`** (opt-in; Sand Creek only). A lidar roof whose pitched-roof p95 passes
+  `CAP_M` is stood at its median return instead of being thrown away.
+  - The cap is now only the trigger for using the median. It is the old **[invented]** shadow-stage cap: shed 6, house 12,
+    commercial 25, industrial 20, apartments 35 m.
+  - It hit 80 roofs. 79 are sheds and houses whose p50 reads 3-6 m under a p95 of 11-16 m (a tree over the roof). The other
+    is a 38.7 m industrial block, a real tall structure.
+- **`plan_bespoke_vegetation.py` `lidar.drop_low`** (opt-in). A crown the lidar measured under `LIDAR_TREE_H`'s **2 m**
+  [invented, 2026-11-04] is left out as no canopy. Before, it took the ratio height. On Sand Creek: 1,955 of 5,171 measured.
+- **`tools/lm_pads_blend.py` `lm_pads.close_arms`** (default true = the Lariat's K-rails). False: no barrier across a pad
+  arm.
+- **`plan_buildings.py` `lidar.drop_low`** (opt-in). A footprint whose lidar roof stands less than
+  `ml_height_check.min_m` **2.5 m** [invented, 2026-11-04] over its ground ring is not stood. On Sand Creek: 63.
+- **The houses floor is LOWERED on Sand Creek: 2,261 / 2,261 / 0 → 2,214 / 2,215 / 0** (the 0.2.1 build's own counts off the
+  built kn5). This is a weakening, and it is written here as one. It is justified by measurement, not by loss: the 63
+  footprints `drop_low` removes have no roof in CO_DRCOG_2_2020.
+
+## 2026-11-04 (later) — Sand Creek round B: the street wiring, the pad declarations, the tree lidar (ledger 0079 round B)
+
+No gate threshold changed. These changes alter what a gate or a self-check sees:
+- **`tools/trim_connectors.py`.** A mouth whose piece was dropped (under the existing `MIN_PIECE_M` 15 m) is left out of
+  `mouths.json` instead of failing the weld. Lake Murray has none: its committed inputs through origin's trim and this
+  branch's give byte-identical `connectors.local.json`, `mouths.json` and `median_bands.json`.
+- **`tools/strip_seam_blend.py`.** Lap rows inside a side-street mouth (the `mouth_weld.gap_window` that gap_mouths deletes)
+  are not seamed. They are also not counted in `MAX_MISS_SHARE` 0.01's denominator. With no mouth on the lap, every row is
+  seamed as before.
+- **`tools/seat_terrain_blend.py`.** `route.seat_edge_m` = how far the ground is pinned under the edge. Absent = 3.1 m, the
+  old constant. Sand Creek sets 1.8 m: its `route.edge` strip, 0.1 + 0.2 + 1.5 m, the 1.5 m grade itself [invented in
+  ledger 0078].
+- **New numbers, all [invented], none a gate:**
+  - `tools/pad_boxes.py`, where a pad is measured, by rule:
+    - `CUT_M` **30 m** (within rule 4's 5-30 m);
+    - `BOX_PAD_M` **3 m**;
+    - `ARM_NEAR_M` **30 m**;
+    - `ARM_PAST_M` **6 m**.
+  - `tools/lidar_buildings.py --trees`:
+    - `TREE_MIN_R_M` **1.5 m**;
+    - `TREE_RING_M` **3 m**;
+    - `MIN_CANOPY_PTS` **4**.
+  - `plan_bespoke_vegetation.py` `LIDAR_TREE_H` **2-35 m**.
+  - `tools/grid_meetings.py` `END_M` **6 m** (a T vs an X; a report only).
+
+## 2026-11-04 — Sand Creek's assets: the `textures` gate, the houses floor, and the reading thresholds of round A (ledger 0079)
+
+- **New gate `textures`** (`tools/verify_textures.py`, chain step `gate_textures`, hard). On every kn5 the track folder
+  packs, every renderable mesh with vertices must bind a `txDiffuse` that is embedded with bytes. The threshold is 0. That is
+  LAWS L7's rule ("every material needs a texture"), not a tuned number.
+  - Proven: Sand Creek 0.1.1's kn5s read 0 untextured (24 meshes); 0.2.0 reads 0 (29).
+  - Lake Murray's ship.json does not list it.
+- **houses floor on Sand Creek's port** (`scenery.bespoke.house_gate`): roofs 2,261 / blocks 2,261 / colliders 0. These are
+  the first 0.2.0 build's own counts off the BUILT road kn5. A floor, as Lake Murray's: more passes, fewer fails.
+- **Reading thresholds, all [invented]; none of them is a gate:**
+  - `plan_buildings.py` `ml_height_check.min_m` **2.5 m**: a Microsoft ML height under a room's height, or past the
+    planner's class cap (`CAP_M`, already invented), is not taken as a measurement. On Sand Creek 345 were rejected. It is
+    the reason 11 blocks stopped reading "buried" (house_seat) without touching the gate.
+  - `lidar_buildings.py` (PC):
+    - `SHRINK_M` **0.6 m** inside the footprint for roof returns;
+    - ground ring **1.5-6 m**;
+    - `MIN_ROOF_PTS` **8**.
+  - `plan_bespoke_vegetation.py` crowns (Sand Creek's plan):
+    - `min_crown_m2` **7**;
+    - `smooth_m` **1.2**;
+    - `min_sep_m` **3.5**;
+    - `edge_m_min` **0.8**;
+    - `max_radius_m` **7**;
+    - riparian reach **60 m**;
+    - height / width ratios **0.85 / 0.8**.
+  - The z18 colour rule (g/r 1.15, g/b 1.2, excess green 38) is read off sampled pixels of the scene (ledger 0079), not
+    tuned against a gate.
+
 ## 2026-11-05 — circuit kerbs round 3: a block reader for faded kerbs, and the bar it must pass (ledger 0081 round 3; no gate threshold, no bypass)
 
 No gate threshold changed and nothing is bypassed. New ⚠ invented numbers, none a gate; `tools/kerb_offsets.py` is in no

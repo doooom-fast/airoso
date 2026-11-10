@@ -13,27 +13,27 @@
  "off_pavement_stations": 0,
  "severe_steps": 0,
  "severe_per_km": 0.0,
- "steps_per_km": 0.0,
- "kinks_per_km": 0.41,
+ "steps_per_km": 0.31,
+ "kinks_per_km": 0.52,
  "obstruction_stations": 0,
  "daylight_gaps": 0,
  "replication_vs_measured": null,
  "undrivable_corners": 0,
  "floating_furniture": 0,
  "apron_steps": 0,
- "fold_bumps": 4,
- "vertex_bumps": 0,
- "vertex_bumps_worst": [],
- "excursion_drops": 0,
- "excursion_far_ledges": 1,
- "worst_excursions": [
+ "fold_bumps": 6,
+ "vertex_bumps": 1,
+ "vertex_bumps_worst": [
   [
-   9601.3,
-   -16.5,
-   0.13,
-   false
+   1198.0,
+   3.19,
+   0.026,
+   0.0182
   ]
  ],
+ "excursion_drops": 0,
+ "excursion_far_ledges": 0,
+ "worst_excursions": [],
  "worst_gated_excursions": [],
  "obstruction_by_mesh": {},
  "worst": {
@@ -42,27 +42,127 @@
   "severe_all": [],
   "kinks": [
    [
-    1223.0,
-    6.0,
-    4.29
+    554.0,
+    -4.49,
+    4.47
    ],
    [
-    1222.0,
-    6.0,
-    3.65
+    554.0,
+    -2.99,
+    4.43
    ],
    [
-    1225.0,
-    4.9,
-    3.12
+    552.0,
+    -4.12,
+    3.6
    ],
    [
-    1220.0,
-    6.0,
-    3.09
+    584.0,
+    -4.08,
+    3.28
+   ],
+   [
+    1194.0,
+    4.08,
+    3.01
    ]
   ],
-  "obstructions": []
+  "obstructions": [],
+  "fold_severe": [],
+  "vertex_kinks": [
+   [
+    531.0,
+    5.25,
+    3.06,
+    2.22
+   ],
+   [
+    532.0,
+    5.25,
+    3.72,
+    2.74
+   ],
+   [
+    551.0,
+    -4.12,
+    3.2,
+    2.63
+   ],
+   [
+    551.0,
+    5.62,
+    3.97,
+    0.18
+   ],
+   [
+    552.0,
+    5.62,
+    4.18,
+    0.31
+   ],
+   [
+    553.0,
+    -4.49,
+    3.9,
+    2.76
+   ],
+   [
+    553.0,
+    -2.99,
+    3.55,
+    2.53
+   ],
+   [
+    9575.0,
+    6.0,
+    3.28,
+    0.25
+   ],
+   [
+    9576.0,
+    6.0,
+    3.49,
+    1.04
+   ],
+   [
+    9576.0,
+    6.0,
+    3.8,
+    0.62
+   ],
+   [
+    9577.0,
+    6.0,
+    4.48,
+    2.52
+   ],
+   [
+    9577.0,
+    6.0,
+    4.48,
+    2.52
+   ],
+   [
+    9578.0,
+    6.0,
+    3.89,
+    1.39
+   ],
+   [
+    9578.0,
+    6.0,
+    3.89,
+    1.39
+   ]
+  ],
+  "dense_hops": []
  },
+ "fold_severe": 0,
+ "fold_severe_judge": "tools/verify_fold_fans.py (real wheel paths, hard)",
+ "fold_severe_at": [],
+ "fold_severe_unjudged": [],
+ "vertex_kinks": 14,
+ "kinks_per_km_station": 1.97,
+ "dense_hops": 0,
  "fail": false
 }

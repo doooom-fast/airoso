@@ -1017,6 +1017,127 @@ Copies: `D:/k10-scratch/eng_sclm`, `eng_hplm`, `eng_nvlm`.
      `grand_junction_lm`; installs as `aspen_motorsports_park_lm`, `pueblo_motorsports_park_lm`, `grand_junction_lm`): ENG =
      plain copies of `eng_repro` (every texture they use is in REFERENCED.md5); Aspen's kerb texture
      (`textures/kerb_redwhite.png`) and each port's 3DEP grid sync in from the port folder.
+4g. **Sand Creek 0.2.0, Lake Murray's assets** (ledger 0079 round A: 2,261 buildings, 5,567 NAIP-crown trees, the port's
+   wider ground, the textures gate). Branch `claude/sand-creek-lm-assets`. It installs as `sand_creek_raceway_lm` 0.2.0,
+   replacing 0.1.1 (the chain parks 0.1.1 in the archive). **Ask Kevin before installing.**
+   1. **Worktree:**
+      `git fetch && git worktree add D:/k10-worktrees/sclm-assets origin/claude/sand-creek-lm-assets`
+   2. **Tree models.** The intake (`lm_intake.tree_models`) copies `tracks/sand-creek/source/trees/*.bin` into the
+      project. Make sure the worktree's `tracks/sand-creek/source/trees/` holds `Oak3.bin`, `SycamoreV1.bin`,
+      `SycamoreV2.bin` and `SycamoreV3.bin`, copied from wherever the live Sand Creek build takes them. They are
+      personal-use and gitignored, so never commit them. Without them the log reads `[lm_intake] tree models: 0` and
+      `[treefx] 0 trees`; that is not the build to install.
+   3. **The lidar job, run AFTER step 6 as its own job** (recommended). It reads what the Mac cannot: measured roof and tree
+      heights and the six pad outlines (ledger 0079 rounds A and B). From the worktree at the branch head (`git pull` first):
+      ```bash
+      git lfs pull --include tracks/sand-creek/source/naip_2023_sc_z18.jpg
+      PYTHONUTF8=1 python tools/lidar_buildings.py tracks/sand-creek-lm --trees source/bespoke/trees.plan.json
+      PYTHONUTF8=1 python tools/plan_buildings.py tracks/sand-creek-lm tracks/sand-creek-lm/source/bespoke/buildings.plan.json
+      PYTHONUTF8=1 python tools/plan_bespoke_vegetation.py tracks/sand-creek-lm tracks/sand-creek-lm/source/bespoke/trees.plan.json
+      for P in colorado_50th 50th_ash 50th_dahlia dahlia_56th sandcreek_quebec 48th_colorado; do
+        PYTHONUTF8=1 python tools/draft_pad_outline.py D:/k10-scratch/sand_creek_lm_a_reh $P; done
+      ```
+      - **Roofs and trees.** `lidar_buildings.py` reads CO_DRCOG_2_2020's EPT once (1,769 nodes to depth 11) and measures
+        both the 2,321 footprints and the 5,615 crowns. Expect `N of 2321 footprints measured` and
+        `trees: N of 5615 crowns measured; height p10 / p50 / p90 ...`.
+      - **Re-planning.** The two planners then print `heights by source {'lidar': N, ...}` (buildings) and
+        `heights off the lidar N` (trees).
+      - **Pad outlines.** `draft_pad_outline.py` runs on step 5's REHEARSAL workshop, because it reads the assembler's
+        smoothed `data/centerline.local.json`. The pads are declared in `lm_pads.pads` on that line's vertices
+        (`tools/pad_boxes.py`). Each run writes `source/pads/<id>.json`, `.png` and `.lidar.npz` into the workshop.
+      - **Commit and push:**
+        - `source/bespoke/lidar_roofs.json` and `lidar_trees.json`;
+        - the re-planned `buildings.lm.json` and `trees.lm.json`;
+        - each pad's `.json` and `.png`, copied into `tracks/sand-creek-lm/source/pads/` (never the `.npz`).
+
+        Then stop. The Mac rebuilds that as 0.2.1 and sets the houses floor again. **Do not install the re-planned build as
+        0.2.0.**
+   4. **ENG** = a plain copy of `eng_repro` (`D:/k10-scratch/eng_sclm_a`). No texture has to be added to ENG: the blocks'
+      textures come in through ship.json `sync_in.assets` into the workshop. Check their md5s in the workshop after the
+      sync-in (`<ws>/assets/textures/`):
+
+      | file | md5 |
+      |---|---|
+      | siding_wall_diffuse.jpg | ca60031f81cc4a1ef10876b8b34e33dd |
+      | siding_wall_normal.jpg | 0626bd936a6d6519b5f366aaca31dd4d |
+      | stucco_wall_diffuse.jpg | e0f8fbb4fc465cae65a39b15a6582cad |
+      | stucco_wall_normal.jpg | 151abcffcd938d4cd12ebe3f74b32fff |
+      | tiltup_wall_diffuse.jpg | 7a4ed52a856098256fd63b6e23a71de1 |
+      | tiltup_wall_normal.jpg | 2e7a85baf12bc77e0dd39ddeef12ea9e |
+      | metal_wall_diffuse.jpg | 326b3841477610400a7926a577926ee7 |
+      | metal_wall_normal.jpg | 5a1721de1b28d55e11b86908b27e2936 |
+      | shingle_roof_diffuse.jpg | ae9bc7a55cbb7bff2ed751808561ee64 |
+      | roof_white_diffuse.jpg | 4d681c06dcebfdba461bfb81528d1ec3 |
+      | roof_tan_diffuse.jpg | 247c5d4f295e6cf8fab875bcd21b0596 |
+      | roof_dark_diffuse.jpg | 270e354eca5ece8a56833d1663a0b481 |
+
+   5. **Rehearse from an EMPTY workshop:**
+      `SHIP_PROJ=D:/k10-scratch/sand_creek_lm_a_reh AIROSO=D:/k10-worktrees/sclm-assets ENG=D:/k10-scratch/eng_sclm_a bash tools/ship_track.sh sand-creek-lm --no-install`
+      Expect the Mac's 0.2.0 (ledger 0079):
+      - log lines: `[lm_intake] heightfield: the project's own`, `[bespoke] ... 2261 buildings stood, 60 dropped` and
+        `[treefx] planted source/bespoke/trees.lm.json: 5569 of 5615 points`;
+      - TreeFX: 5,567 trees (Oak3 3,425, SycamoreV2 1,358, SycamoreV1 461, SycamoreV3 323);
+      - drive_test both layouts PASS (kinks 0.41, fold bumps 4, drops 0, far ledges 1);
+      - audit CLEAN; kn5_ground_check PASS;
+      - house_seat PASS (2,261 judged); houses PASS (2,261 / 2,261 / 0); textures PASS (0 untextured);
+      - road kn5 48.4 MB, `_street` 1.8 MB.
+   6. **Install, with Kevin's word:** the same command without `SHIP_PROJ` and without `--no-install`, into
+      `D:/k10-scratch/sand_creek_lm`. AC closed (CM may stay open).
+
+4h. **Sand Creek 0.2.1** (ledger 0079 round C). This build carries:
+   - the lidar roofs and trees (da370cab), re-planned on the Mac;
+   - Lake Murray's sodium light (Kevin 2026-11-05: "Lake Murray's sodium");
+   - no pads: they are declared and held back.
+
+   It installs as `sand_creek_raceway_lm` 0.2.1, replacing 0.2.0. **Ask Kevin before installing.**
+   1. `git -C D:/k10-worktrees/sclm-assets pull`. The worktree is the same; check out the branch head.
+   2. Inputs, the same as step 4g: the four TreeFX `.bin` in `tracks/sand-creek/source/trees/`, and ENG = the same plain
+      copy of `eng_repro`. No new texture: the 12 asset md5s are 4g's.
+   3. Rehearse from an EMPTY workshop:
+      `SHIP_PROJ=D:/k10-scratch/sand_creek_lm_b_reh AIROSO=D:/k10-worktrees/sclm-assets ENG=D:/k10-scratch/eng_sclm_a bash tools/ship_track.sh sand-creek-lm --no-install`
+      Expect the Mac's 0.2.1:
+      - `[bespoke] ... 2215 buildings stood, 43 dropped`;
+      - `[treefx] planted source/bespoke/trees.lm.json: 3645 of 3660 points` and 3,643 TreeFX trees;
+      - drive_test both PASS (kinks 0.41, fold bumps 4, drops 0, far ledges 1); audit CLEAN; kn5_ground_check PASS;
+      - house_seat PASS (2,215 judged, 0 floating / sunken / buried); houses PASS (2,214 / 2,215 / 0); textures PASS;
+      - road kn5 48.3 MB, `_street` 1.8 MB;
+      - `[LIGHT_0]` in `build/sand_creek_raceway_lm/extension/ext_config.ini` reads `COLOR = 255, 165, 30, 0.015`,
+        `RANGE = 25.0`, `SPOT = 150`.
+   4. Install, with Kevin's word: the same command without `SHIP_PROJ` and `--no-install`. AC closed.
+   5. **The night stills** (the Mac has no AC). From the pit at the start line, CSP night, take one still in 0.2.0 before
+      the install and one in 0.2.1 after it, from the same spot. Commit both under
+      `tracks/sand-creek-lm/source/stills/night_0.2.0.jpg` and `night_0.2.1.jpg`.
+
+4i. **Sand Creek 0.2.2** (ledger 0079 round D). This build carries:
+   - three junction pads on the lap from the PC's lidar (colorado_50th, 50th_ash, 50th_dahlia), the side streets still
+     open grass beyond each deck (the streets' weld is the next build);
+   - three pads parked with their reasons (48th_colorado, dahlia_56th, sandcreek_quebec);
+   - the new hard gate `verify_pads`, and Sand Creek's strip seam on the local scope.
+
+   It installs as `sand_creek_raceway_lm` 0.2.2, replacing 0.2.1. **Ask Kevin before installing.**
+   1. `git -C D:/k10-worktrees/sclm-assets fetch` and check out **f6dd8a63** (0.2.2). A later head carries ledger 0079 round E (the de-duplicated buildings: 2,181 houses), which is 0.2.3 work and not this install.
+   2. Inputs, the same as step 4h: the four TreeFX `.bin` in `tracks/sand-creek/source/trees/`, and ENG = the same plain
+      copy of `eng_repro`. No new texture: the 12 asset md5s are 4g's. `source/pads/*.json` are da370cab's, unchanged.
+   3. Rehearse from an EMPTY workshop:
+      `SHIP_PROJ=D:/k10-scratch/sand_creek_lm_d_reh AIROSO=D:/k10-worktrees/sclm-assets ENG=D:/k10-scratch/eng_sclm_a bash tools/ship_track.sh sand-creek-lm --no-install`
+      Expect the Mac's 0.2.2:
+      - `[lm-pads] colorado_50th: deck {'filled': 1647, 'unfilled': 0, ...}`, `50th_ash ... 'filled': 477`,
+        `50th_dahlia ... 'filled': 883`; decks 2357.1 / 1099.4 / 1300.8 m2; seam residual max 0.274 / 0.111 / 0.142 m;
+      - `[strip-seam] 3 pad outline(s) ... seamed too`, then the local scope with 4 missed or so (under 1 %);
+      - `[lamps] drop_on_road: 2 draft post(s) ... (6, ...COLORADO_50TH), (7, ...)` and 173 lamps;
+      - `[bespoke] ... 2215 buildings stood, 43 dropped`; 3,643 TreeFX trees (the Mac has no `.bin`: it planted none);
+      - drive_test both PASS: soft top 0, severe 0, drops 0, far ledges 1, fold bumps 4, kinks 1.24 /km, bumps 0.31 /km;
+      - audit CLEAN; kn5_ground_check PASS (199 lamp heads, 0 orphans);
+      - verify_pads PASS x3: seams 0.9-1.6 mm, grass 0, curb over pavement 0, node -0.105 to -0.001 m vs 3DEP;
+      - house_seat PASS (2,215, 0 floating / sunken / buried); houses PASS (2,214 / 2,215 / 0); textures PASS;
+      - road kn5 52.7 MB, `_street` 1.7 MB;
+      - `[LIGHT_0]` as 0.2.1 (`COLOR = 255, 165, 30, 0.015`).
+      Anything else, stop and send the log to the Mac.
+   4. Install, with Kevin's word: the same command without `SHIP_PROJ` and `--no-install`. AC closed.
+   5. Stills, from the car, CSP daylight: one at each built pad from the lap's approach (s 380, 515 and 1,185 m on the race
+      layout, driving direction), into `tracks/sand-creek-lm/source/stills/pad_<id>_drive_0.2.2.jpg`. The night stills of
+      4h step 5 are still owed if 4h's were not taken.
+
 5. Lake Murray unchanged, apples to apples (the PC's check, 2026-11-03; it replaces a redraft-and-compare-to-v4 check that
    would have redrafted Lake Murray without its houses). Both branches carry v4's chain since the merge of
    `claude/lm-v4-line` (e78fe44): Lake Murray's `ship.json` and `track.config.json` are lm-v4-line's byte for byte, the

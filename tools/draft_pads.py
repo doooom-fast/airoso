@@ -70,6 +70,42 @@ def lap_cut(points_xyz, k: int, node: int) -> dict:
             "a": (p[0] - nx * CUT_HALF_M, p[1] - nz * CUT_HALF_M), "b": (p[0] + nx * CUT_HALF_M, p[1] + nz * CUT_HALF_M)}
 
 
+ARM_GAP_M = 1.0            # [invented] a non-asphalt run this long along a lap cut ends the lap's own arm (cut_reach "arm")
+ARM_MARGIN_M = 1.0         # [invented] the cut runs this far past the arm's last asphalt (over three 0.3 m barrier widths)
+ARM_STEP_M = 0.25          # the walk's step: draft_pad_outline's mask grid
+
+
+def arm_reach(c: dict, paved, step: float = ARM_STEP_M, gap_m: float = ARM_GAP_M, margin: float = ARM_MARGIN_M,
+              cap: float = CUT_HALF_M) -> dict:
+    """CUT REACH "arm" (opt-in per pad, ledger 0079 round O: 48th_colorado): a lap cut drawn across the LAP'S OWN ARM
+    only. From the cut's point (the lap's centre) each way along the cut line, the walk keeps going while ``paved(x, y)``
+    (the measured asphalt, or the lap's ribbon) holds, across any non-asphalt run shorter than ``gap_m`` (the mask is
+    already closed over paint); the first longer run is the arm's edge (a median, a verge). Each end then stands
+    ``margin`` past the last paved sample, never past ``cap`` (CUT_HALF_M, the cut as drawn without the key). The default
+    +-CUT_HALF_M reaches across whatever lies beside the lap's arm: at 48th / Colorado the in-cut v3193's line ran on
+    over the median into grid_primary_52's carriageway and cut its arm off the pad. Returns a copy with "a", "b" moved
+    and "reach_m" [toward a, toward b]."""
+    ax, ay = c["a"]
+    px, py = c["p"]
+    L = math.hypot(ax - px, ay - py) or 1.0
+    ux, uy = (ax - px) / L, (ay - py) / L
+    out = dict(c)
+    reach = []
+    for sgn in (1.0, -1.0):
+        last, t = 0.0, 0.0
+        while t + step <= cap:
+            t += step
+            if paved(px + sgn * ux * t, py + sgn * uy * t):
+                last = t
+            elif t - last >= gap_m:
+                break
+        reach.append(min(cap, last + margin))
+    out["a"] = (px + ux * reach[0], py + uy * reach[0])
+    out["b"] = (px - ux * reach[1], py - uy * reach[1])
+    out["reach_m"] = [round(reach[0], 3), round(reach[1], 3)]
+    return out
+
+
 def sealed_cut(seg, node_en) -> dict:
     """A declared straight cut across a leg the lap does not drive; the kept side is the node's."""
     (ax, ay), (bx, by) = seg
@@ -308,6 +344,116 @@ def deck_near(deck: dict, e: float, n: float, reach_m: float = 3.0) -> float | N
     return bv if best is not None and math.sqrt(best) * c <= reach_m else None
 
 
+FILL_REACH_M = (1.0, 1.5, 2.0, 3.0, 4.0, 6.0, 8.0)   # the hole fill's growing search radii (the plane fit's own 2 m in the middle)
+FILL_MIN_NODES = 12        # [invented] measured deck nodes a hole's plane needs (a 3 x 4 patch of the 0.5 m grid)
+
+
+def deck_filled(deck: dict, ring, datum_m: float = 0.0, smooth_m: float | None = None,
+                class2: dict | None = None) -> tuple[dict, dict]:
+    """THE MEASURED DECK WITH ITS HOLES FILLED FROM ITSELF (ledger 0079 round D, opt-in ``lm_pads.deck``). The PC's deck
+    is a plane per 0.5 m node over the ROAD-intensity class-2 points within 2 m (tools/draft_pad_outline.py); where
+    crosswalk paint, a concrete gutter pan or a parked car leaves fewer than PLANE_MIN_POINTS such points the node is
+    None. Inside the measured outline (``ring``, the lidar's own asphalt) a None node read through to the lap's removed
+    ribbon in 0.2.1's try (tools/lm_pads_blend.py deck_z): 0.10-0.33 m off the lidar around it, the severe steps at
+    50th/Ash, 50th/Dahlia and 48th/Colorado. Here each such node takes the least-squares plane through the measured
+    nodes around it (the nearest FILL_REACH_M radius holding FILL_MIN_NODES): the lidar's own surface carried across
+    the gap, slope and crown kept. Nodes outside the ring stay as measured (None stays None). ``datum_m`` is added to
+    every node (the assembler's ROAD stands 0.10 m over its sampled ground: scripts-v021 build_loop_blend.py
+    ``y + 0.10``, so a deck in the lap's datum stands the same 0.10 m over the lidar). ``class2`` (opt-in per pad,
+    deck_beyond "class2", ledger 0079 round O: the pad file's deck_class2, the plane through ALL class-2 points where
+    the road points are too few) is taken first at a None node inside the ring, as measured: the ring holds the lap's
+    ribbon union too, and at 48th / Colorado a 6-8 m stretch of it (the S's inside, offsets -14..-16 m, rows 3200-3201)
+    lies on the flush strip west of grid_unclassified_67 with no road point: the road plane carried 8 m in stood 0.29 m
+    across 2.2 m there (the lidar: 0.05 m), verify_fold_fans (2) DT 0.068-0.129 m. The plane fill then mends only what
+    the class-2 grid leaves (a parked car: no ground point under it). Returns (deck, report)."""
+    nx, ny, c = deck["nx"], deck["ny"], deck["cell_m"]
+    Y = deck["y"]
+    took2 = 0
+    if class2 is not None:
+        Y2 = class2["y"]
+        Y = [row[:] for row in Y]
+        for j in range(ny):
+            for i in range(nx):
+                if Y[j][i] is None and Y2[j][i] is not None \
+                        and point_in_ring(deck["e0"] + i * c, deck["n0"] + j * c, ring):
+                    Y[j][i] = Y2[j][i]
+                    took2 += 1
+    meas = [(i, j) for j in range(ny) for i in range(nx) if Y[j][i] is not None]
+    cell = 4.0
+    grid = {}
+    for i, j in meas:
+        grid.setdefault((int(i * c // cell), int(j * c // cell)), []).append((i, j))
+    out = [[None if v is None else v + datum_m for v in row] for row in Y]
+    filled = unfilled = 0
+    reach_used = []
+    for j in range(ny):
+        for i in range(nx):
+            if Y[j][i] is not None:
+                continue
+            e, n = deck["e0"] + i * c, deck["n0"] + j * c
+            if not point_in_ring(e, n, ring):
+                continue
+            got = None
+            for R in FILL_REACH_M:
+                r = int(math.ceil(R / cell))
+                gi, gj = int(i * c // cell), int(j * c // cell)
+                pts = []
+                for di in range(-r, r + 1):
+                    for dj in range(-r, r + 1):
+                        for a, b in grid.get((gi + di, gj + dj), ()):
+                            dx, dy = (a - i) * c, (b - j) * c
+                            if dx * dx + dy * dy <= R * R:
+                                pts.append((dx, dy, Y[b][a]))
+                if len(pts) >= FILL_MIN_NODES:
+                    got = plane_height(pts)
+                    if got is not None:
+                        reach_used.append(R)
+                        break
+            if got is None:
+                unfilled += 1
+                continue
+            out[j][i] = got + datum_m
+            filled += 1
+    moved = []
+    if smooth_m:
+        # THE LIDAR'S NOISE OUT (``smooth_m``, a Gaussian sigma): each node inside the ring becomes the Gaussian-weighted
+        # mean of the ring's nodes within 3 sigma (inside only: the verge's fall and a curb face never pull the deck).
+        # The 2 m plane per node jitters 1-6 cm from its neighbour where its trimmed point set changes (a slope change
+        # over 3 % per metre: 0.2.1's try read 3.3 kinks /km on four pads against the lap's 0.41); the real asphalt is a
+        # surface, so the move is recorded (p95 / max) against the survey's own vertical accuracy
+        inside = [[point_in_ring(deck["e0"] + i * c, deck["n0"] + j * c, ring) and out[j][i] is not None
+                   for i in range(nx)] for j in range(ny)]
+        r = int(math.ceil(3.0 * smooth_m / c))
+        w = {(di, dj): math.exp(-((di * c) ** 2 + (dj * c) ** 2) / (2.0 * smooth_m * smooth_m))
+             for di in range(-r, r + 1) for dj in range(-r, r + 1)}
+        sm = [row[:] for row in out]
+        for j in range(ny):
+            for i in range(nx):
+                if not inside[j][i]:
+                    continue
+                num = den = 0.0
+                for (di, dj), wt in w.items():
+                    a, b = i + di, j + dj
+                    if 0 <= a < nx and 0 <= b < ny and inside[b][a]:
+                        num += wt * out[b][a]
+                        den += wt
+                sm[j][i] = num / den
+                moved.append(abs(sm[j][i] - out[j][i]))
+        out = sm
+    new = dict(deck)
+    new["y"] = out
+    rep = {"filled": filled, "unfilled": unfilled, "datum_m": datum_m,
+           "reach_max_m": max(reach_used) if reach_used else None}
+    if class2 is not None:
+        rep["class2_nodes"] = took2
+    if moved:
+        moved.sort()
+        rep["smooth_m"] = smooth_m
+        rep["smooth_moved_m"] = {"p50": round(moved[len(moved) // 2], 4), "p95": round(moved[int(0.95 * (len(moved) - 1))], 4),
+                                 "max": round(moved[-1], 4), "nodes": len(moved)}
+    return new, rep
+
+
 def offset_ring(ring, d: float) -> list[list[float]]:
     """a counter-clockwise ring moved d outward at every vertex (along the mean of its two edges' outward normals)"""
     n = len(ring)
@@ -404,6 +550,67 @@ def seam_offset(prof, x: float, y: float) -> float:
             r = rs[k] + f * (rs[k + 1] - rs[k])
         off += w * r
     return off
+
+
+def seam_offset_multi(prof, x: float, y: float) -> float:
+    """seam_offset for MORE than the lap's two rows (opt-in, lm_pads.arms "streets", ledger 0079 0.2.3: the street arms'
+    end rows are seams too). Each row's raised-cosine weight w_i as in seam_offset; a profile marked "lateral" (an arm:
+    its row line is short and the pad runs on past its ends) also fades past the row's ends over the same length. The
+    rows share the departure where their fades overlap: W x sum(a_i r_i) / sum(a_i), W = 1 - prod(1 - w_j),
+    a_i = w_i prod_{j != i}(1 - w_j) -- exact on every row (w_i = 1 silences the others), w r where one fade alone
+    reaches, and seam_offset's sum wherever the fades do not overlap."""
+    ws, rs = [], []
+    for s_ in prof:
+        c = s_["c"]
+        d = side(c, x, y)
+        if d >= s_["fade"]:
+            continue
+        w = 1.0 if d <= 0.0 else 0.5 * (1.0 + math.cos(math.pi * d / s_["fade"]))
+        t = (x - c["p"][0]) * s_["u"][0] + (y - c["p"][1]) * s_["u"][1]
+        ts, rr = s_["t"], s_["r"]
+        if s_.get("near_row") and not s_.get("lateral") and not ts[0] <= t <= ts[-1]:
+            # a pad declared seam "row" (seam_offset's rule, ledger 0078 round 13), now with street arms too (ledger 0079
+            # round O, 48th_colorado): beyond a lap row's own ends its fade runs from the row, not from its infinite
+            # line. The in-cut v3193's line runs on behind grid_primary_52's arm, and every deck node there took that
+            # row's whole departure (w = 1 behind the line): +0.21 m 0.3 m inside 52's seam, a 21 mm step at it
+            d = math.hypot(d, t - min(max(t, ts[0]), ts[-1]))
+            if d >= s_["fade"]:
+                continue
+            w = 0.5 * (1.0 + math.cos(math.pi * d / s_["fade"]))
+        if s_.get("lateral"):
+            past = max(ts[0] - t, t - ts[-1], 0.0)
+            if past >= s_["fade"]:
+                continue
+            w *= 0.5 * (1.0 + math.cos(math.pi * past / s_["fade"]))
+        if t <= ts[0]:
+            r = rr[0]
+        elif t >= ts[-1]:
+            r = rr[-1]
+        else:
+            k = max(i for i in range(len(ts) - 1) if ts[i] <= t)
+            f = (t - ts[k]) / max(1e-9, ts[k + 1] - ts[k])
+            r = rr[k] + f * (rr[k + 1] - rr[k])
+        if w > 0.0:
+            ws.append(w)
+            rs.append(r)
+    if not ws:
+        return 0.0
+    full = [r for w, r in zip(ws, rs) if w >= 1.0]
+    if len(full) > 1:
+        return sum(full) / len(full)
+    a = []
+    for i in range(len(ws)):
+        p = ws[i]
+        for j in range(len(ws)):
+            if j != i:
+                p *= 1.0 - ws[j]
+        a.append(p)
+    W = 1.0
+    for w in ws:
+        W *= 1.0 - w
+    W = 1.0 - W
+    S = sum(a)
+    return W * sum(ai * r for ai, r in zip(a, rs)) / S if S > 0 else 0.0
 
 
 def seam_blend(x: float, y: float, seams, power: float = 2.0) -> float:

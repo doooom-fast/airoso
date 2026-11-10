@@ -341,7 +341,10 @@ def main():
         c = _census()
         tag = f"closure_{lid}"
         _furniture_problems(tag, c, problems)
-        if not c["closure_objects"]:
+        whole_lap = bool((bands_of[lap_of[lid]].get("params") or {}).get("whole_lap"))
+        if not c["closure_objects"] and not (whole_lap and c["sign_objects"]):
+            # race.corridor.whole_lap (opt-in, ledger 0079 round K; Sand Creek): a layout racing the whole street round
+            # the whole lap declares no closure line; its closure kn5 carries its own sign plates alone (never nothing)
             problems.append(f"{tag}: EMPTY — no 1WALL_race_close_{tok}_* object in the input")
         alien = [n for n in c["race_objects"] if rf.race_owner(n) != tok]
         if alien:

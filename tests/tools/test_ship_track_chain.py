@@ -483,7 +483,11 @@ def test_the_lm_engine_pilot_spec():
             assert re.search(rf"^{ph}_{n}\(\) \{{", TEXT, re.M), (ph, n)
     cfg = json.loads((ROOT / "tracks" / "sand-creek-lm" / "track.config.json").read_text(encoding="utf-8"))
     live = json.loads((ROOT / "tracks" / "sand-creek" / "track.config.json").read_text(encoding="utf-8"))
-    assert cfg["slug"] != live["slug"] and cfg["install_folder"] != live["install_folder"]
+    # 0.2.7 (ledger 0086; Kevin 2026-11-07: "Get rid of Lm Version from names", "LM is the airoso engine"): the port
+    # takes the plain slug and folder and REPLACES the old engine's install (0.2.6 and before stood beside it as
+    # sand_creek_raceway_lm for the A/B drive)
+    assert cfg["slug"] == live["slug"] == "sand_creek_raceway"
+    assert cfg["install_folder"] == "sand_creek_raceway" and "LM" not in cfg["name"]
     assert cfg["lm_intake"]["source_track"] == "sand-creek"
 
 

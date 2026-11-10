@@ -180,6 +180,103 @@ def _line_decks_lidar(pts, bridges, table: Path, sdata: Path, origin):
     return [tuple(p) for p in out], rep
 
 
+
+def apply_connector_profiles(proj: Path, prof_p: str) -> list:
+    """ledger 0079 round H (opt-in lm_intake.connector_profiles): the named streets' heights measured off the lidar
+    (tools/lidar_connector_profile.py: the road surface, ground + bridge deck returns, at each source point) replace the
+    3DEP grid's in <proj>/data/connectors.local.json, which cannot hold a bridge or an embankment. Each point's plan
+    position must be the profile's own (the profile was measured on these points), else the run stops."""
+    data = proj / "data"
+    prof = json.loads((proj / prof_p).read_text(encoding="utf-8"))["connectors"]
+    cj = json.loads((data / "connectors.local.json").read_text(encoding="utf-8"))
+    done = []
+    for c in cj["connectors"]:
+        pr = prof.get(c["name"])
+        if pr is None:
+            continue
+        pts = c["points_xyz_m"]
+        if len(pr["y"]) != len(pts) or any(abs(p[0] - q[0]) > 0.01 or abs(p[2] - q[1]) > 0.01
+                                           for p, q in zip(pts, pr["xz"])):
+            raise SystemExit(f"[lm_intake] {prof_p}: {c['name']} was measured on other points; re-run "
+                             "tools/lidar_connector_profile.py")
+        dy = [y - p[1] for y, p in zip(pr["y"], pts)]
+        for p, y in zip(pts, pr["y"]):
+            p[1] = float(y)
+        done.append(f"{c['name']} ({min(dy):+.2f}..{max(dy):+.2f} m)")
+    missing = sorted(set(prof) - {c["name"] for c in cj["connectors"]})
+    if missing:
+        raise SystemExit(f"[lm_intake] {prof_p}: no such connector(s) {missing}")
+    (data / "connectors.local.json").write_text(json.dumps(cj), encoding="utf-8")
+    print(f"[lm_intake] connector heights off the lidar ({prof_p}): {', '.join(done)}")
+    return done
+
+def corner_flares_off(pts, widths, origin, entries):
+    """THE DECLARED CORNERS' FLARES OFF (lm_intake.corner_flare_off; ledger 0079 round Q, Sand Creek). The source's widths
+    stage (scripts.gps.widths_from_osm) sweeps a junction flare round a turn corner unless route.corner_flare_off declares
+    it, and that list is the source track's: the port copies the widths and never re-runs the stage. route.corner_flare_off's
+    doc is the rule: a corner joins the list when its authored pad exists, because the pad's measured deck paves the
+    crossroads the flare stood in for. Each entry of the PORT's list (at [lat, lon], radius_m, default
+    widths_from_osm.FLARE_OFF_RADIUS_M) takes its flare off the copied widths: the crest of widths within radius_m (by
+    station) of the nearest lap vertex, out on both sides to where the width stops falling (each leg's own width), is
+    re-laid by station between those two widths. A crest that does not fall to a level leg on both sides is no flare (a
+    slip's ramp to the wider road it joins: its crest runs on past the radius) and is left as it is. No new number; a width
+    is only ever narrowed (refused otherwise). Returns (widths, report)."""
+    from scripts.geometry.projection import _meters_per_degree
+    from scripts.gps.widths_from_osm import FLARE_OFF_RADIUS_M
+    widths = list(widths)
+    rep = []
+    m_lon, m_lat = _meters_per_degree(float(origin["lat"]))
+    st_f = [0.0]
+    for a_, b_ in zip(pts, pts[1:]):
+        st_f.append(st_f[-1] + math.hypot(b_[0] - a_[0], b_[2] - a_[2]))
+    for cfo in entries:
+        ax = (float(cfo["at"][1]) - float(origin["lon"])) * m_lon
+        az = (float(cfo["at"][0]) - float(origin["lat"])) * m_lat
+        r_ = float(cfo.get("radius_m", FLARE_OFF_RADIUS_M))
+        kn = min(range(len(pts)), key=lambda k: (pts[k][0] - ax) ** 2 + (pts[k][2] - az) ** 2)
+        dn = math.hypot(pts[kn][0] - ax, pts[kn][2] - az)
+        if dn > r_:
+            raise SystemExit(f"[lm_intake] corner_flare_off {cfo.get('name')!r}: no lap vertex within {r_} m ({dn:.1f})")
+        near = [k for k in range(len(pts)) if abs(st_f[k] - st_f[kn]) <= r_]
+        kp = max(near, key=lambda k: widths[k])     # the flare's crest near the node
+
+        def _walk(k, step):
+            """out from the crest while the width falls (or holds on the crest), to where it levels at the leg. The crest
+            (the widths held before the fall) must lie within radius_m of the node; the fall may run past it.
+            (vertex, fell, levelled)"""
+            i, fell = k, False
+            while 0 <= i + step < len(pts):
+                w_a, w_b = widths[i], widths[i + step]
+                if w_b < w_a - 1e-9:
+                    fell = True
+                elif abs(w_b - w_a) <= 1e-9 and not fell:
+                    if not near[0] <= i + step <= near[-1]:
+                        return i, fell, False
+                else:
+                    return i, fell, True
+                i += step
+            return i, fell, False
+        (i0, f0, l0), (i1, f1, l1) = _walk(kp, -1), _walk(kp, +1)
+        w0, w1 = widths[i0], widths[i1]
+        if not (f0 and f1 and l0 and l1) or widths[kp] <= max(w0, w1) + 1e-6:
+            rep.append({"name": cfo.get("name"), "vertex": kn, "flare": None})
+            print(f"[lm_intake] corner_flare_off {cfo.get('name')!r}: no flare at v{kn} (as the source has it)")
+            continue
+        was = widths[i0:i1 + 1]
+        for k in range(i0, i1 + 1):
+            t = (st_f[k] - st_f[i0]) / max(st_f[i1] - st_f[i0], 1e-9)
+            w_new = round(w0 + (w1 - w0) * t, 3)
+            if w_new > widths[k] + 1e-6:
+                raise SystemExit(f"[lm_intake] corner_flare_off {cfo.get('name')!r}: v{k} would widen "
+                                 f"({widths[k]} -> {w_new})")
+            widths[k] = w_new
+        rep.append({"name": cfo.get("name"), "vertex": kn, "flare": [i0, i1], "legs_m": [w0, w1],
+                    "was_m": [round(min(was), 2), round(max(was), 2)]})
+        print(f"[lm_intake] corner_flare_off {cfo.get('name')!r}: the flare v{i0}..v{i1} ({min(was):.2f}..{max(was):.2f} "
+              f"m) re-laid between its legs' {w0:.2f} and {w1:.2f} m")
+    return widths, rep
+
+
 def intake(proj: Path, *, connectors: bool | None = None) -> dict:
     cfg = json.loads((proj / "track.config.json").read_text(encoding="utf-8"))
     li = cfg.get("lm_intake") or {}
@@ -208,8 +305,17 @@ def intake(proj: Path, *, connectors: bool | None = None) -> dict:
     # a source track whose heightfield is not committed (High Plains: the elev stage's output lives in its workshop) may
     # have it fetched into the PORT track (scripts.elevation.heightfield on a copy of the source; synced in by ship.json):
     # then the project's own copy is used, and its provenance is the port track's
-    hf_own = (not need[1].exists() and (proj / "data" / "heightfield.npy").exists()
+    # lm_intake.heightfield "port" (ledger 0079, Sand Creek): the port track's OWN grid even where the source commits one —
+    # a wider 3DEP grid on the source's lattice (the buildings and the grid streets past the source's 150 m margin), synced
+    # in by ship.json. Absent = the source's grid whenever it has one (every port before 0079; Lake Murray never runs this)
+    want_own = li.get("heightfield") == "port"
+    if li.get("heightfield") not in (None, "port"):
+        raise SystemExit(f"[lm_intake] lm_intake.heightfield {li.get('heightfield')!r}: only \"port\" (or absent)")
+    hf_own = ((want_own or not need[1].exists()) and (proj / "data" / "heightfield.npy").exists()
               and (proj / "data" / "heightfield.meta.json").exists())
+    if want_own and not hf_own:
+        raise SystemExit("[lm_intake] lm_intake.heightfield \"port\": the project has no data/heightfield.npy + .meta.json "
+                         "(ship.json sync_in.optional must carry the port track's grid)")
     if hf_own:
         need = need[:1]
     need.append(sdata / "centerline.geojson")              # the track folder reads it (written into the port below)
@@ -420,6 +526,12 @@ def intake(proj: Path, *, connectors: bool | None = None) -> dict:
         pts = evidence.cap_grade(pts, max_grade=max_grade)
     if closed:
         pts[-1] = pts[0]
+    # THE DECLARED CORNERS' FLARES OFF (lm_intake.corner_flare_off true; ledger 0079 round Q, Sand Creek; absent = the
+    # source's widths as traced): corner_flares_off below.
+    flare_rep = []
+    if li.get("corner_flare_off"):
+        widths, flare_rep = corner_flares_off(pts, widths, local["origin"],
+                                              (cfg.get("route") or {}).get("corner_flare_off") or [])
     # WIDTH STEPS TAPERED (lm_intake.width_taper, m of half-width per m along; absent = the widths as traced; ledger 0078
     # round 5). A traced width can jump in one station where the paved area takes in a gore or an apron (Milford s 2,604:
     # 12.2 -> 21.7 m in 3 m). The ribbon stays planar across such a row on any bank, but drive_test's wheel paths sit at
@@ -767,6 +879,26 @@ def intake(proj: Path, *, connectors: bool | None = None) -> dict:
     if want_conn and conn.exists():
         shutil.copyfile(conn, data / "connectors.local.json")
         (data / "mouths.json").unlink(missing_ok=True)       # tools/trim_connectors.py writes it for these connectors
+        # ledger 0079 round B: trim / divide / route re-read their .pre-* snapshot when one exists, so a snapshot an earlier
+        # run left would re-trim the OLD set: the fresh copy is the only source
+        for suf in (".pre-trim", ".pre-divide", ".pre-route"):
+            (data / ("connectors.local.json" + suf)).unlink(missing_ok=True)
+        if li.get("connector_profiles"):
+            apply_connector_profiles(proj, str(li["connector_profiles"]))
+        if li.get("connector_widths"):
+            # ledger 0079 round H (opt-in lm_intake.connector_widths {street: m}): a street's width measured off NAIP where
+            # OSM's is short (the config's doc carries the cross-sections); every point of the named street
+            cw = {str(k): float(v) for k, v in li["connector_widths"].items()}
+            cj = json.loads((data / "connectors.local.json").read_text(encoding="utf-8"))
+            seen = set()
+            for c in cj["connectors"]:
+                if c["name"] in cw:
+                    c["widths_m"] = [cw[c["name"]]] * len(c["points_xyz_m"])
+                    seen.add(c["name"])
+            if set(cw) - seen:
+                raise SystemExit(f"[lm_intake] lm_intake.connector_widths: no such connector(s) {sorted(set(cw) - seen)}")
+            (data / "connectors.local.json").write_text(json.dumps(cj), encoding="utf-8")
+            print(f"[lm_intake] connector widths measured: {cw}")
         recs = json.loads(conn.read_text(encoding="utf-8")).get("connectors") or []
         if recs and all(r.get("network") and not r.get("mouths") for r in recs):
             # ledger 0080 phase 2: a network port's carriageways (tools/network_connectors.py) that meet no host —
@@ -857,6 +989,17 @@ def intake(proj: Path, *, connectors: bool | None = None) -> dict:
         (proj / rel).parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(sp, proj / rel)
         copied.append(rel)
+    # THE TREE MODELS (lm_intake.tree_models true; ledger 0079): the source track's TreeFX models (source/trees/*.bin,
+    # personal-use, gitignored, present only on the machine that holds them) into the project's source/trees, where
+    # tools/make_treefx.py resolves its species; none there = every species dropped, [TREES] skipped (L7). Absent = nothing
+    if li.get("tree_models"):
+        n_bin = 0
+        for b in sorted((src / "source" / "trees").glob("*.bin")):
+            (proj / "source" / "trees").mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(b, proj / "source" / "trees" / b.name)
+            n_bin += 1
+        print(f"[lm_intake] tree models: {n_bin} TreeFX .bin from tracks/{src_track}/source/trees"
+              f"{'' if n_bin else ' (none on this machine: make_treefx drops every species)'}")
     # THE LINE'S OWN RECORDS (lm_intake.carry_records [paths under the source's data/]; ledger 0078 round 6, the Lariat).
     # Gates that re-read the draft's records of the LINE (tools/drive1_gates.py: the one-way check, the paint-centreline /
     # hairpin gate; drive_test's replication against the raw 3DEP in centerline.elevation.json) find them in the workshop;
@@ -942,7 +1085,8 @@ def intake(proj: Path, *, connectors: bool | None = None) -> dict:
            "y_changed_points": sum(1 for d in dy if abs(d) > 1e-6),
            "y_change_max_m": round(max((abs(d) for d in dy), default=0.0), 3),
            "connectors": bool(want_conn and conn.exists()), "bespoke_files": copied, "crossfall": cf_rep, "profile": prof_rep,
-           "width_taper": taper_rep, **({"pad_widths": pad_rep} if pad_rep else {}), "resample": resample_rep, "edge_on_wall": wall_rep, "corner_arcs": arcs_rep, "carried": carried,
+           "width_taper": taper_rep, **({"pad_widths": pad_rep} if pad_rep else {}),
+           **({"corner_flare_off": flare_rep} if flare_rep else {}), "resample": resample_rep, "edge_on_wall": wall_rep, "corner_arcs": arcs_rep, "carried": carried,
            "grid_upsample": up,
            "md5": {"source_centerline": _md5(need[0]), "heightfield.npy": _md5(data / "heightfield.npy"),
                    "centerline.local.json": _md5(data / "centerline.local.json")}}

@@ -33,6 +33,27 @@ from the gate centreline, so the v0.17.1 build can be judged — and fails):
           WALL_RADIUS_M of X whose base + 0.05 m bury is outside +-WALL_BAND_M of no_route's reference (its projected
           centre line + 0.10).
 
+CHORDS (opt-in, ledger 0079 round N: track.config.json ``fold_fans.chords = true``; Lake Murray sets none). The weld
+mends a fold with no self-intersection (a hook) by a forward chord and records it only as a ROAD cut, never as a levelled
+pinch, so a track whose road folds are all chords (Sand Creek: v134-141, v3202-3206) has nothing here to judge while
+drive_test's fan discs sit on those cuts. With the key every MAINLINE ROAD cut no pinch covers (within 2 rows) is
+surveyed too, over the same rows (k - B - PAD .. l + 1 + B + PAD) and lane, with checks (1)-(5) and (7) (its walls
+measured about the road edge's chord midpoint; (6) has no pinch X to read), and
+  (8) every reading drive_test deferred to this gate (data/drive_test.<id>.json ``fold_severe_at``, written with the
+      same key) must have both ends of its metre within COVER_M of a sample one of these paths JUDGED (on the lane, on
+      the surface): a deferred reading no surveyed path reaches fails here, so nothing is handed to a gate that does not
+      read it.
+Without the key every reading and verdict is exactly as before.
+
+WALL FRAME (opt-in, ledger 0079 round P: track.config.json ``fold_fans.wall_frame = "local_deck"``; Lake Murray sets
+none). (7) reads each wall cell against no_route's reference. no_route has measured a wall from the deck it stands on
+since ledger 0054 step 2e / 2g (Lake Murray 0.20.2; Sand Creek round M): the 1ROAD sheet under it nearest its foot, of
+those within no_route.DECK_REACH_M of the line's deck (its projected centre line + DECK_LIFT_M), and a cell is a wall
+when it seals in EITHER frame. With the key (7) reads the same two frames: a cell is outside the band only when its
+base + 0.05 m is outside +-WALL_BAND_M of the centre-line reference AND of that local deck (or no such deck stands
+under it). The band, bury and radius are unchanged; only the reference is no_route's own. Without the key (7) reads
+the centre line alone, exactly as before.
+
     python tools/verify_fold_fans.py <project> [--layout <id> ...] [--json <out>]
 
 Writes data/verify_fold_fans.json; exit 1 on FAIL, 2 on an input error. Pure Python (the ship chain's interpreter has
@@ -66,6 +87,7 @@ WALL_RADIUS_M = 25.0     # [invented]
 WALL_BAND_M = mw.FOLD_HALF_JUMP_MAX_M   # 0.28: no_route's [0.20, 0.90] band, a 1.20 m K-rail buried 0.05, less 0.02
 WALL_CELL_M = 0.5        # the 0050 review's walls_base aggregation
 HASH_M = 1.0
+COVER_M = PATH_DO_M      # [invented] CHORDS (8): a deferred reading's metre ends this close to a judged sample
 
 
 class InputError(Exception):
@@ -122,6 +144,22 @@ class Surface:
                 for cz in range(int(math.floor(z0 / HASH_M)), int(math.floor(z1 / HASH_M)) + 1):
                     self.cells.setdefault((cx, cz), []).append(i)
 
+    def all_at(self, x, z):
+        """every triangle's height at a plan point (exact barycentric), unordered"""
+        out = []
+        for i in self.cells.get((int(math.floor(x / HASH_M)), int(math.floor(z / HASH_M))), ()):
+            a, b, c, _g = self.tris[i]
+            d = (b[2] - c[2]) * (a[0] - c[0]) + (c[0] - b[0]) * (a[2] - c[2])
+            if abs(d) < 1e-12:
+                continue
+            w0 = ((b[2] - c[2]) * (x - c[0]) + (c[0] - b[0]) * (z - c[2])) / d
+            w1 = ((c[2] - a[2]) * (x - c[0]) + (a[0] - c[0]) * (z - c[2])) / d
+            w2 = 1.0 - w0 - w1
+            if w0 < -1e-7 or w1 < -1e-7 or w2 < -1e-7:
+                continue
+            out.append(w0 * a[1] + w1 * b[1] + w2 * c[1])
+        return out
+
     def top(self, x, z):
         best, own = None, -1
         for i in self.cells.get((int(math.floor(x / HASH_M)), int(math.floor(z / HASH_M))), ()):
@@ -153,15 +191,46 @@ def normals(P, closed):
     return out
 
 
-def pinches_from(welds, P, W, closed):
+def pinches_from(welds, P, W, closed, chords=False):
     """([{k, l, X, y_k, y_l, lane, source}], B) — the weld's own record when it has one, else re-found on the ROAD edge
-    rebuilt from the gate centreline (heights = centre + the 0.10 m deck lift; pre-0050 weld files)"""
+    rebuilt from the gate centreline (heights = centre + the 0.10 m deck lift; pre-0050 weld files).
+    chords (opt-in, CHORDS in the module doc): plus every ROAD cut none of those covers, as {.., X None, chord True,
+    ref: the road edge's chord midpoint}"""
     folds = ((welds or {}).get("folds") or {}).get("MAINLINE") or {}
     rec = [q for q in folds.get("levelled") or [] if isinstance(q, dict) and (q.get("line") or [None])[0] == "road"]
     if rec:
-        return [{"k": int(q["k"]), "l": int(q["l"]), "X": tuple(q["X"]), "y_k": float(q["y_k"]), "y_l": float(q["y_l"]),
-                 "lane": int(q["line"][1]), "source": "mouth_welds.json levelled"} for q in rec], \
-            int(folds.get("level_rows") or mw.FOLD_LEVEL_ROWS)
+        out = [{"k": int(q["k"]), "l": int(q["l"]), "X": tuple(q["X"]), "y_k": float(q["y_k"]), "y_l": float(q["y_l"]),
+                "lane": int(q["line"][1]), "source": "mouth_welds.json levelled"} for q in rec]
+        B = int(folds.get("level_rows") or mw.FOLD_LEVEL_ROWS)
+        return (out + _chords(folds, out, P, W, closed) if chords else out), B
+    out, B = _refound(folds, P, W, closed)
+    return (out + _chords(folds, out, P, W, closed) if chords else out), B
+
+
+def _chords(folds, pins, P, W, closed):
+    """CHORDS (opt-in): every MAINLINE ROAD cut no pinch covers (both ends within 2 rows): the weld's chord mends"""
+    n = len(P) - 1 if closed else len(P)
+    N = normals(P, closed)
+    cyc = (lambda a, b: min(abs(a - b), n - abs(a - b))) if closed else (lambda a, b: abs(a - b))
+    out = []
+    for c in folds.get("cuts") or []:
+        if not c or c[0] != "road":
+            continue
+        lane, k, l = int(c[1]), int(c[-2]), int(c[-1])
+        if any(p["lane"] == lane and cyc(p["k"] % n, k % n) <= 2 and cyc(p["l"] % n, l % n) <= 2 for p in pins + out):
+            continue
+        sgn = 1.0 if lane == 0 else -1.0
+        ends = []
+        for r in (k % n, (l + 1) % n):
+            ends.append((P[r][0] + sgn * N[r][0] * W[r] / 2.0, P[r][1], P[r][2] + sgn * N[r][1] * W[r] / 2.0))
+        ref = tuple(0.5 * (ends[0][i] + ends[1][i]) for i in range(3))
+        out.append({"k": k, "l": l, "X": None, "y_k": None, "y_l": None, "lane": lane, "chord": True,
+                    "ref": [round(v, 4) for v in ref],
+                    "source": "mouth_welds.json road cut with no levelled pinch: a chord mend (fold_fans.chords)"})
+    return out
+
+
+def _refound(folds, P, W, closed):
     cuts = [c for c in folds.get("cuts") or [] if c and c[0] == "road"]
     n = len(P) - 1 if closed else len(P)
     N = normals(P, closed)
@@ -193,28 +262,13 @@ def _interp(ss, sl, vals):
 
 
 # ----------------------------------------------------------------------------------------------- the survey
-def survey_pinch(pin, B, P, W, N, closed, lane_of, surf, paved, tris, names, island, race, cl_line):
-    n = len(P) - 1 if closed else len(P)
-    k, l = pin["k"], pin["l"]
-    rows = [r % n for r in range(k - B - WINDOW_PAD_ROWS, l + 2 + B + WINDOW_PAD_ROWS) if closed or 0 <= r < n]
-    # (4)'s rows: the ones the leveller moves (weight > 0: k-B+1..k, the fan k+1..l, l+1..l+B) — grass the levelling
-    # could expose; grass beyond them is drive_test's soft-top count (held to the baseline), not this gate's
-    eased = {r % n for r in range(k - B + 1, l + 1 + B) if closed or 0 <= r < n}
-    upper = [nm.upper() for nm in names]
-    kind = lambda g: "" if g < 0 else ("road" if upper[g].startswith("1ROAD") else
-                                       "rkerb" if upper[g].startswith("1KERB_RACE") else
-                                       "grass" if upper[g].startswith("1GRASS") else
-                                       "kerb" if upper[g].startswith("1KERB") else "other")
-    nm = lambda g: names[g] if g >= 0 else "-"
-    fails = []
-    info = {"rows": [rows[0], rows[-1]], "paths": 0, "paths_with_step": 0, "kerb_lip_max_m": 0.0,
-            "fine_max_m": 0.0, "dt_max_m": 0.0, "grass_on_top": 0, "grass_over_max_m": 0.0}
+def _paths(rows, P, N, lane_of, island, race):
+    """every wheel path of a pinch's window: (offset, x[], z[], in-lane[], row[]) sampled every PATH_DS_M along its own
+    arc — each fixed-offset line cut at its own self-intersection (or chorded where it hooks)"""
     C = [tuple(P[r]) for r in rows]
     lanes = [lane_of(r) for r in rows]
     lo_all = min(a for a, _b in lanes)
     hi_all = max(b for _a, b in lanes)
-    k1, k10 = int(round(1.0 / PATH_DS_M)), int(round(FINE_WIN_M / PATH_DS_M))
-    worst = []
     o = math.ceil(lo_all / PATH_DO_M) * PATH_DO_M
     while o <= hi_all + 1e-9:
         E = [(P[r][0] + N[r][0] * o, P[r][1], P[r][2] + N[r][1] * o) for r in rows]
@@ -244,12 +298,62 @@ def survey_pinch(pin, B, P, W, N, closed, lane_of, surf, paved, tris, names, isl
             while j < len(sl) - 2 and sl[j + 1] <= s:
                 j += 1
             rowi.append(rr[j])
+        yield o, px, pz, kin, rowi
+        o += PATH_DO_M
+
+
+def _mark(judged, px, pz, ok, k1, k10):
+    """CHORDS (8): every sample whose FINE window (i - 1 m, i, i + FINE_WIN_M) is on the lane (and, here, on the
+    surface) — the samples check (1) reads"""
+    for i in range(k1, len(px) - k10):
+        if ok[i - k1] and ok[i] and ok[i + k10]:
+            judged.setdefault((int(math.floor(px[i] / COVER_M)), int(math.floor(pz[i] / COVER_M))),
+                              []).append((px[i], pz[i]))
+
+
+def near_judged(judged, x, z):
+    """the plan distance from (x, z) to the nearest judged sample within one COVER_M cell, or None"""
+    cx, cz = int(math.floor(x / COVER_M)), int(math.floor(z / COVER_M))
+    best = None
+    for dx in (-1, 0, 1):
+        for dz in (-1, 0, 1):
+            for q in judged.get((cx + dx, cz + dz), ()):
+                d = math.hypot(q[0] - x, q[1] - z)
+                if best is None or d < best:
+                    best = d
+    return best
+
+
+def survey_pinch(pin, B, P, W, N, closed, lane_of, surf, paved, tris, names, island, race, cl_line, judged=None,
+                 wall_frame=None):
+    """judged (CHORDS only): a {cell: [(x, z)]} hash (COVER_M cells) that receives every sample a path judged;
+    wall_frame (WALL FRAME only): "local_deck" — (7) also reads each cell from the deck it stands on (module doc)"""
+    n = len(P) - 1 if closed else len(P)
+    k, l = pin["k"], pin["l"]
+    rows = [r % n for r in range(k - B - WINDOW_PAD_ROWS, l + 2 + B + WINDOW_PAD_ROWS) if closed or 0 <= r < n]
+    # (4)'s rows: the ones the leveller moves (weight > 0: k-B+1..k, the fan k+1..l, l+1..l+B) — grass the levelling
+    # could expose; grass beyond them is drive_test's soft-top count (held to the baseline), not this gate's
+    eased = {r % n for r in range(k - B + 1, l + 1 + B) if closed or 0 <= r < n}
+    upper = [nm.upper() for nm in names]
+    kind = lambda g: "" if g < 0 else ("road" if upper[g].startswith("1ROAD") else
+                                       "rkerb" if upper[g].startswith("1KERB_RACE") else
+                                       "grass" if upper[g].startswith("1GRASS") else
+                                       "kerb" if upper[g].startswith("1KERB") else "other")
+    nm = lambda g: names[g] if g >= 0 else "-"
+    fails = []
+    info = {"rows": [rows[0], rows[-1]], "paths": 0, "paths_with_step": 0, "kerb_lip_max_m": 0.0,
+            "fine_max_m": 0.0, "dt_max_m": 0.0, "grass_on_top": 0, "grass_over_max_m": 0.0}
+    k1, k10 = int(round(1.0 / PATH_DS_M)), int(round(FINE_WIN_M / PATH_DS_M))
+    worst = []
+    for o, px, pz, kin, rowi in _paths(rows, P, N, lane_of, island, race):
         h, ow = [], []
         for x, z in zip(px, pz):
             y, g = surf.top(x, z)
             h.append(y); ow.append(g)
         ok = [h[i] is not None and kin[i] for i in range(len(h))]
         kd = [kind(g) for g in ow]
+        if judged is not None:
+            _mark(judged, px, pz, ok, k1, k10)
         info["paths"] += 1
         for i in range(len(h)):
             if ok[i] and kd[i] == "grass" and rowi[i] in eased:
@@ -349,9 +453,17 @@ def survey_pinch(pin, B, P, W, N, closed, lane_of, surf, paved, tris, names, isl
         fails.append(f"(5) {nmg} triangle at {p_} slopes {s_:.0%} over {a_:.3f} m2 of plan")
     # (6) the pinch at its midpoint: every road vertex within 0.02 m of X in plan
     X = pin["X"]
-    mid = 0.5 * (pin["y_k"] + pin["y_l"])
-    ys = [p[1] for t in road_tris for p in t[:3] if math.hypot(p[0] - X[0], p[2] - X[2]) <= 0.02]
-    if not ys:
+    if X is None:
+        # CHORDS: a chord mend has no pinch X (6) — its walls (7) are measured about the road edge's chord midpoint
+        info["chord"] = True
+        X = tuple(pin["ref"])
+        ys = None
+    else:
+        mid = 0.5 * (pin["y_k"] + pin["y_l"])
+        ys = [p[1] for t in road_tris for p in t[:3] if math.hypot(p[0] - X[0], p[2] - X[2]) <= 0.02]
+    if ys is None:
+        pass
+    elif not ys:
         fails.append(f"(6) no road vertex at the pinch X ({X[0]:.3f}, {X[2]:.3f})")
     else:
         dev = max(abs(y - mid) for y in ys)
@@ -364,14 +476,33 @@ def survey_pinch(pin, B, P, W, N, closed, lane_of, surf, paved, tris, names, isl
     # (7) the race walls near X inside no_route's band
     if race:
         cells = {}
+        decks = None
+        if wall_frame == "local_deck":
+            # WALL FRAME (opt-in): no_route's local deck — the 1ROAD sheets of the surveyed region; each wall triangle's
+            # deck read as no_route's deck_of reads it (under its plan centroid, nearest its foot, within DECK_REACH_M
+            # of the line's deck); a cell keeps the deck of the triangle that set its base
+            decks = Surface([t for t in tris if t[3] >= 0 and upper[t[3]].startswith("1ROAD")])
+            cell_deck, n_deck, worst_cl = {}, 0, None
         for a, b, c, g in tris:
             if g < 0 or not upper[g].startswith("1WALL"):
                 continue
             if min(math.hypot(p[0] - X[0], p[2] - X[2]) for p in (a, b, c)) > WALL_RADIUS_M:
                 continue
+            if decks is not None:
+                foot = min(a[1], b[1], c[1])
+                cx, cz = (a[0] + b[0] + c[0]) / 3.0, (a[2] + b[2] + c[2]) / 3.0
+                prc = cl_line.project(cx, cz)
+                hd = None
+                if prc is not None:
+                    ref = prc[3] + nr.DECK_LIFT_M
+                    hs = [h for h in decks.all_at(cx, cz) if ref - nr.DECK_REACH_M <= h <= ref + nr.DECK_REACH_M]
+                    hd = min(hs, key=lambda h_: abs(h_ - foot)) if hs else None
             for p in (a, b, c):
                 key = (int(math.floor(p[0] / WALL_CELL_M)), int(math.floor(p[2] / WALL_CELL_M)))
-                cells[key] = min(cells.get(key, 1e9), p[1])
+                if p[1] < cells.get(key, 1e9):
+                    cells[key] = p[1]
+                    if decks is not None:
+                        cell_deck[key] = hd
         worst_w, bad_w = None, 0
         for (i, j) in cells:
             base = min(cells.get((i + a, j + b), 1e9) for a in (-1, 0, 1) for b in (-1, 0, 1))
@@ -380,18 +511,66 @@ def survey_pinch(pin, B, P, W, N, closed, lane_of, surf, paved, tris, names, isl
             if pr is None:
                 continue
             delta = base + 0.05 - (pr[3] + 0.10)
+            if decks is not None:
+                if worst_cl is None or abs(delta) > abs(worst_cl[0]):
+                    worst_cl = (delta, x, z)
+                if abs(delta) > WALL_BAND_M:
+                    # the deck the base's own wall triangle stands on (no_route's deck_of); None: the centre line only
+                    kb = min(((i + a, j + b) for a in (-1, 0, 1) for b in (-1, 0, 1) if (i + a, j + b) in cells),
+                             key=lambda q: cells[q])
+                    h = cell_deck.get(kb)
+                    if h is not None:
+                        d2 = base + 0.05 - h
+                        if abs(d2) <= WALL_BAND_M:
+                            n_deck += 1
+                        delta = d2 if abs(d2) < abs(delta) else delta
             if worst_w is None or abs(delta) > abs(worst_w[0]):
                 worst_w = (delta, x, z)
             if abs(delta) > WALL_BAND_M:
                 bad_w += 1
         info["wall_cells"] = len(cells)
         info["wall_worst_delta_m"] = round(worst_w[0], 4) if worst_w else None
+        if decks is not None:
+            info["wall_frame"] = "local_deck"
+            info["wall_cells_by_deck_frame"] = n_deck
+            info["wall_worst_centreline_delta_m"] = round(worst_cl[0], 4) if worst_cl else None
         if bad_w:
             fails.append(f"(7) {bad_w} race-wall cells within {WALL_RADIUS_M:.0f} m of X stand outside no_route's band "
                          f"(+-{WALL_BAND_M}); worst {worst_w[0]:+.3f} m at ({worst_w[1]:.1f}, {worst_w[2]:.1f})")
     for key in ("kerb_lip_max_m", "fine_max_m", "dt_max_m", "grass_over_max_m"):
         info[key] = round(info[key], 4)
     return fails, info
+
+
+def _coverage(data: Path, lid: str, judged: dict):
+    """CHORDS (8): ({deferred, covered, worst_gap_m}, [fails]) — every drive_test fold_severe reading of this layout
+    must have both ends of its metre within COVER_M of a judged sample"""
+    p = data / f"drive_test.{lid}.json"
+    if not p.exists():
+        return {"deferred": None}, [f"(8) data/drive_test.{lid}.json missing: the readings drive_test defers here "
+                                    f"cannot be checked against the judged paths"]
+    dt = json.loads(p.read_text(encoding="utf-8"))
+    n_def = int(dt.get("fold_severe") or 0)
+    at = dt.get("fold_severe_at")
+    if n_def and (at is None or len(at) != n_def):
+        return {"deferred": n_def}, [f"(8) drive_test.{lid}.json defers {n_def} fold_severe readings without their plan "
+                                     f"points (fold_severe_at: run drive_test with fold_fans.chords)"]
+
+    gap = lambda x, z: near_judged(judged, x, z)
+    fails, covered, worst, unc = [], 0, 0.0, []
+    for r in at or []:
+        g = [gap(r[3], r[4]), gap(r[5], r[6])]
+        if all(v is not None and v <= COVER_M for v in g):
+            covered += 1
+            worst = max(worst, *g)
+        else:
+            unc.append(r)
+    for r in unc[:12]:
+        fails.append(f"(8) drive_test deferred s {r[0]} offset {r[1]:+.2f} ({r[2]:.3f} m) at ({r[3]:.2f}, {r[4]:.2f}), "
+                     f"but no path this gate judged passes within {COVER_M} m of its metre")
+    if len(unc) > 12:
+        fails.append(f"(8) ... and {len(unc) - 12} more unjudged deferred readings")
+    return {"deferred": len(at or []), "covered": covered, "worst_gap_m": round(worst, 4)}, fails
 
 
 def _lap_lane(data: Path, lap: str, lid: str, n: int):
@@ -427,6 +606,54 @@ def _lap_lane(data: Path, lap: str, lid: str, n: int):
     return lane_of, set(at)
 
 
+def plan_cover(project: Path, lid: str) -> dict:
+    """CHORDS (opt-in): the plan samples this gate's paths will read on layout `lid` — every sample whose FINE window is
+    on the lane, as the {cell: [(x, z)]} hash of _mark (no surface read: drive_test defers a reading only where these
+    paths run, and (8) then requires the surface under them too). {} without the key or without a weld record."""
+    project = Path(project)
+    data = project / "data"
+    cfg = _load(project / "track.config.json")
+    if not (cfg.get("fold_fans") or {}).get("chords") or not (data / "mouth_welds.json").exists():
+        return {}
+    welds = _load(data / "mouth_welds.json")
+    gc = _load(data / "gate_centerline.json")
+    P = [tuple(p) for p in gc["points_xyz_m"]]
+    W = [float(w) for w in gc["widths_m"]]
+    closed = len(P) > 2 and abs(P[0][0] - P[-1][0]) < 1e-6 and abs(P[0][2] - P[-1][2]) < 1e-6
+    n = len(P) - 1 if closed else len(P)
+    N = normals(P, closed)
+    pins, B = pinches_from(welds, P, W, closed, chords=True)
+    mb = data / "median_bands.json"
+    iw = (json.loads(mb.read_text(encoding="utf-8")).get("island_w_by_vertex") or []) if mb.exists() else []
+    island = lambda r: float(iw[r]) if r < len(iw) else 0.0
+    lo = next((q for q in cfg.get("layouts") or [{"id": "street"}] if str(q.get("id")) == lid), None)
+    if lo is None:
+        return {}
+    race, lap = bool(lo.get("race_furniture")), lo.get("lap") or None
+    todo = pins
+    if race and lap:
+        lane_lap, covered = _lap_lane(data, lap, lid, n)
+        lane_of = lambda r, ll=lane_lap: ll(r, W)
+        todo = [pin for pin in pins if all((r % n) in covered for r in range(pin["k"] - B, pin["l"] + 2 + B))]
+    elif race:
+        bp = data / "barrier_bands.json"
+        bands = json.loads(bp.read_text(encoding="utf-8")) if bp.exists() else {}
+        lbv = (((bands.get("corridors") or {}).get(lid) or {}).get("lane_by_vertex"))
+        if not lbv:
+            return {}
+        lane_of = lambda r, lbv=lbv: (float(lbv[r][0]), float(lbv[r][1]))
+    else:
+        lane_of = lambda r: (-(W[r] / 2.0 - 0.5), W[r] / 2.0 - 0.5)
+    k1, k10 = int(round(1.0 / PATH_DS_M)), int(round(FINE_WIN_M / PATH_DS_M))
+    judged = {}
+    for pin in todo:
+        k, l = pin["k"], pin["l"]
+        rows = [r % n for r in range(k - B - WINDOW_PAD_ROWS, l + 2 + B + WINDOW_PAD_ROWS) if closed or 0 <= r < n]
+        for _o, px, pz, kin, _rowi in _paths(rows, P, N, lane_of, island, race):
+            _mark(judged, px, pz, kin, k1, k10)
+    return judged
+
+
 # ----------------------------------------------------------------------------------------------- main
 def run(project: Path, layouts=None, out: Path | None = None) -> dict:
     data = project / "data"
@@ -441,7 +668,11 @@ def run(project: Path, layouts=None, out: Path | None = None) -> dict:
     if rows_rec is not None and int(rows_rec) != n:
         raise InputError(f"mouth_welds.json indexes {rows_rec} mainline rows; data/gate_centerline.json has {n}")
     N = normals(P, closed)
-    pins, B = pinches_from(welds, P, W, closed)
+    chords = bool((cfg.get("fold_fans") or {}).get("chords"))     # CHORDS (opt-in, module doc)
+    wall_frame = (cfg.get("fold_fans") or {}).get("wall_frame")   # WALL FRAME (opt-in, module doc)
+    if wall_frame not in (None, "local_deck"):
+        raise InputError(f"fold_fans.wall_frame {wall_frame!r}: only \"local_deck\" is known")
+    pins, B = pinches_from(welds, P, W, closed, chords=chords)
     mb = data / "median_bands.json"
     iw = (json.loads(mb.read_text(encoding="utf-8")).get("island_w_by_vertex") or []) if mb.exists() else []
     island = lambda r: float(iw[r]) if r < len(iw) else 0.0
@@ -464,8 +695,19 @@ def run(project: Path, layouts=None, out: Path | None = None) -> dict:
         lays.append((lid, race, p, lo.get("lap") or None))
     rep = {"pinches": [{k: (list(v) if isinstance(v, tuple) else v) for k, v in p.items()} for p in pins],
            "level_rows": B, "layouts": {}, "fails": []}
+    if chords:
+        rep["chords"] = True
+        rep["cover_m"] = COVER_M
+    if wall_frame:
+        rep["wall_frame"] = wall_frame
     if not pins:
         rep["note"] = "no levelled mainline pinch (no swallowtail fold): nothing to judge"
+        if chords:
+            # CHORDS (8): with nothing surveyed, any reading drive_test deferred here is unjudged
+            for lid, _race, _path, _lap in lays:
+                cov, cf = _coverage(data, lid, {})
+                rep.setdefault("deferred", {})[lid] = cov
+                rep["fails"] += [f"{lid}: {x}" for x in cf]
     else:
         boxes = []
         for pin in pins:
@@ -499,11 +741,18 @@ def run(project: Path, layouts=None, out: Path | None = None) -> dict:
             else:
                 lane_of = lambda r: (-(W[r] / 2.0 - 0.5), W[r] / 2.0 - 0.5)
             res = rep["layouts"].get(lid, []) if lap else []
+            judged = {} if chords else None
             for pin in todo:
-                f, info = survey_pinch(pin, B, P, W, N, closed, lane_of, surf, paved, tris, names, island, race, cl_line)
+                f, info = survey_pinch(pin, B, P, W, N, closed, lane_of, surf, paved, tris, names, island, race, cl_line,
+                                       judged=judged, wall_frame=wall_frame)
                 res.append({"k": pin["k"] % n, "l": pin["l"] % n, "lane": pin["lane"], "fails": f, **info})
-                rep["fails"] += [f"{lid} pinch {pin['k'] % n}..{(pin['l'] + 1) % n}: {x}" for x in f]
+                what = "chord" if pin.get("chord") else "pinch"
+                rep["fails"] += [f"{lid} {what} {pin['k'] % n}..{(pin['l'] + 1) % n}: {x}" for x in f]
             rep["layouts"][lid] = res
+            if chords:
+                cov, cf = _coverage(data, lid, judged)
+                rep.setdefault("deferred", {})[lid] = cov
+                rep["fails"] += [f"{lid}: {x}" for x in cf]
     rep["fail"] = bool(rep["fails"])
     rep["thresholds"] = {"fine_step_m": FINE_STEP_M, "kerb_lip_m": KERB_LIP_M, "dt_max_m": DT_MAX_M, "grass_over_m": GRASS_OVER_M,
                          "jump_plan_m": JUMP_PLAN_M, "tri_slope_max": TRI_SLOPE_MAX, "tri_area_min": TRI_AREA_MIN,
@@ -535,6 +784,9 @@ def main(argv=None) -> int:
         print(f"[fold-fans] INPUT ERROR: {e}")
         return 2
     for p in rep.get("pinches", []):
+        if p.get("chord"):
+            print(f"[fold-fans] chord rows {p['k']}..{p['l'] + 1} (ROAD lane {p['lane']}) — {p['source']}")
+            continue
         print(f"[fold-fans] pinch rows {p['k']}..{p['l'] + 1} (ROAD lane {p['lane']}): legs {p['y_k']:.3f} / "
               f"{p['y_l']:.3f}, midpoint {0.5 * (p['y_k'] + p['y_l']):.3f} — {p['source']}")
     for lid, res in rep.get("layouts", {}).items():
@@ -549,6 +801,9 @@ def main(argv=None) -> int:
                   f"tris {r['steep_road_tris']}, X built {ap.get('built_y')} vs midpoint {ap.get('midpoint')}"
                   + (f", walls worst {r['wall_worst_delta_m']:+.3f} m over {r['wall_cells']} cells"
                      if r.get("wall_worst_delta_m") is not None else ""))
+    for lid, cov in (rep.get("deferred") or {}).items():
+        print(f"[fold-fans] {lid:9s} drive_test fold_severe deferred here: {cov.get('deferred')}, on a judged path "
+              f"{cov.get('covered')} (worst gap {cov.get('worst_gap_m')} m, limit {COVER_M})")
     for f in rep.get("fails", []):
         print(f"[fold-fans] FAIL {f}")
     print(f"[fold-fans] {'FAIL' if rep['fail'] else 'PASS'}: {len(rep.get('pinches', []))} levelled pinch(es) x "

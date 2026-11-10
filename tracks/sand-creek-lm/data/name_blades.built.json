@@ -1,0 +1,468 @@
+{
+ "source": "source/name_blades.json",
+ "posts": [
+  {
+   "id": "nb0",
+   "k": 0,
+   "vertex": 95,
+   "side": "R",
+   "xz": [
+    -1498.22,
+    17.15
+   ],
+   "along_m": -10.0,
+   "slid_m": 3.0,
+   "ground_y": 17.492,
+   "edge_y": 17.603,
+   "blade_bottom_y": 19.736,
+   "names": [
+    "N Colorado Blvd Frtg E",
+    "N Colorado Blvd"
+   ]
+  },
+  {
+   "id": "nb4",
+   "k": 4,
+   "vertex": 411,
+   "side": "R",
+   "xz": [
+    -764.59,
+    57.0
+   ],
+   "along_m": -12.0,
+   "slid_m": 5.0,
+   "ground_y": 22.038,
+   "edge_y": 22.241,
+   "blade_bottom_y": 24.374,
+   "names": [
+    "E 50th Ave",
+    "N Dahlia St"
+   ]
+  },
+  {
+   "id": "nb5",
+   "k": 5,
+   "vertex": 479,
+   "side": "L",
+   "xz": [
+    -766.25,
+    282.61
+   ],
+   "along_m": 8.75,
+   "slid_m": 1.75,
+   "ground_y": 20.3,
+   "edge_y": 20.398,
+   "blade_bottom_y": 22.532,
+   "names": [
+    "E 51st Ave",
+    "N Dahlia St"
+   ]
+  },
+  {
+   "id": "nb6",
+   "k": 6,
+   "vertex": 558,
+   "side": "R",
+   "xz": [
+    -749.53,
+    502.74
+   ],
+   "along_m": -8.0,
+   "slid_m": 0.0,
+   "ground_y": 10.437,
+   "edge_y": 10.404,
+   "blade_bottom_y": 12.571,
+   "names": [
+    "E 52nd Ave",
+    "N Dahlia St"
+   ]
+  },
+  {
+   "id": "nb7",
+   "k": 7,
+   "vertex": 559,
+   "side": "L",
+   "xz": [
+    -768.6,
+    520.86
+   ],
+   "along_m": 8.0,
+   "slid_m": 0.0,
+   "ground_y": 10.149,
+   "edge_y": 10.361,
+   "blade_bottom_y": 12.494,
+   "names": [
+    "E 52nd Ave",
+    "Dahlia St"
+   ]
+  },
+  {
+   "id": "nb8",
+   "k": 8,
+   "vertex": 779,
+   "side": "L",
+   "xz": [
+    -918.99,
+    1126.05
+   ],
+   "along_m": 7.75,
+   "slid_m": 0.0,
+   "ground_y": 7.137,
+   "edge_y": 7.334,
+   "blade_bottom_y": 9.468,
+   "names": [
+    "E 56th Ave",
+    "Dahlia St"
+   ]
+  },
+  {
+   "id": "nb9",
+   "k": 9,
+   "vertex": 847,
+   "side": "L",
+   "xz": [
+    -725.9,
+    1228.07
+   ],
+   "along_m": 7.75,
+   "slid_m": 0.0,
+   "ground_y": 5.525,
+   "edge_y": 5.841,
+   "blade_bottom_y": 7.974,
+   "names": [
+    "E 56th Ave",
+    "Sand Creek Dr S"
+   ]
+  },
+  {
+   "id": "nb10",
+   "k": 10,
+   "vertex": 1902,
+   "side": "R",
+   "xz": [
+    1748.22,
+    -363.22
+   ],
+   "along_m": -11.5,
+   "slid_m": 3.5,
+   "ground_y": 22.816,
+   "edge_y": 22.94,
+   "blade_bottom_y": 25.073,
+   "names": [
+    "E 47th Ave Dr",
+    "Sand Creek Dr S"
+   ]
+  },
+  {
+   "id": "nb11",
+   "k": 11,
+   "vertex": 1936,
+   "side": "L",
+   "xz": [
+    1806.54,
+    -473.73
+   ],
+   "along_m": 7.75,
+   "slid_m": 0.0,
+   "ground_y": 23.618,
+   "edge_y": 23.922,
+   "blade_bottom_y": 26.056,
+   "names": [
+    "N Northfield Quebec St",
+    "Sand Creek Dr S"
+   ]
+  },
+  {
+   "id": "nb12",
+   "k": 12,
+   "vertex": 1942,
+   "side": "L",
+   "xz": [
+    1809.24,
+    -495.68
+   ],
+   "along_m": 7.75,
+   "slid_m": 0.0,
+   "ground_y": 23.853,
+   "edge_y": 23.989,
+   "blade_bottom_y": 26.123,
+   "names": [
+    "N Northfield Quebec St",
+    "Sand Creek Dr S"
+   ]
+  },
+  {
+   "id": "nb13",
+   "k": 13,
+   "vertex": 2318,
+   "side": "R",
+   "xz": [
+    864.25,
+    -848.75
+   ],
+   "along_m": -15.25,
+   "slid_m": 3.25,
+   "ground_y": 33.956,
+   "edge_y": 34.112,
+   "blade_bottom_y": 36.245,
+   "names": [
+    "N Monaco St",
+    "E 45th Ave"
+   ]
+  },
+  {
+   "id": "nb14",
+   "k": 14,
+   "vertex": 2319,
+   "side": "L",
+   "xz": [
+    837.91,
+    -874.87
+   ],
+   "along_m": 8.0,
+   "slid_m": 0.0,
+   "ground_y": 33.9,
+   "edge_y": 34.089,
+   "blade_bottom_y": 36.222,
+   "names": [
+    "N Monaco St",
+    "E 45th Ave"
+   ]
+  },
+  {
+   "id": "nb15",
+   "k": 15,
+   "vertex": 2406,
+   "side": "R",
+   "xz": [
+    594.23,
+    -851.94
+   ],
+   "along_m": -9.75,
+   "slid_m": 2.75,
+   "ground_y": 34.775,
+   "edge_y": 34.772,
+   "blade_bottom_y": 36.909,
+   "names": [
+    "N Leyden St",
+    "E 45th Ave"
+   ]
+  },
+  {
+   "id": "nb16",
+   "k": 16,
+   "vertex": 2522,
+   "side": "R",
+   "xz": [
+    243.62,
+    -856.35
+   ],
+   "along_m": -7.75,
+   "slid_m": 0.75,
+   "ground_y": 31.808,
+   "edge_y": 31.741,
+   "blade_bottom_y": 33.942,
+   "names": [
+    "N Ivy St",
+    "E 45th Ave"
+   ]
+  },
+  {
+   "id": "nb18",
+   "k": 18,
+   "vertex": 2585,
+   "side": "R",
+   "xz": [
+    66.74,
+    -843.14
+   ],
+   "along_m": -18.5,
+   "slid_m": 3.25,
+   "ground_y": 28.096,
+   "edge_y": 27.823,
+   "blade_bottom_y": 30.23,
+   "names": [
+    "N Holly St",
+    "E 45th N Dr"
+   ]
+  },
+  {
+   "id": "nb19",
+   "k": 19,
+   "vertex": 2586,
+   "side": "L",
+   "xz": [
+    30.65,
+    -865.64
+   ],
+   "along_m": 12.0,
+   "slid_m": 4.0,
+   "ground_y": 27.345,
+   "edge_y": 27.765,
+   "blade_bottom_y": 29.898,
+   "names": [
+    "E 45th S Dr",
+    "E 45th N Dr"
+   ]
+  },
+  {
+   "id": "nb21",
+   "k": 21,
+   "vertex": 2691,
+   "side": "R",
+   "xz": [
+    -253.37,
+    -777.14
+   ],
+   "along_m": -7.0,
+   "slid_m": 0.0,
+   "ground_y": 28.191,
+   "edge_y": 28.35,
+   "blade_bottom_y": 30.484,
+   "names": [
+    "N Glencoe St",
+    "E 45th N Dr"
+   ]
+  },
+  {
+   "id": "nb22",
+   "k": 22,
+   "vertex": 2725,
+   "side": "R",
+   "xz": [
+    -350.76,
+    -752.88
+   ],
+   "along_m": -9.0,
+   "slid_m": 2.0,
+   "ground_y": 28.685,
+   "edge_y": 28.688,
+   "blade_bottom_y": 30.822,
+   "names": [
+    "N Forest St",
+    "E 45th N Dr"
+   ]
+  },
+  {
+   "id": "nb23",
+   "k": 23,
+   "vertex": 2791,
+   "side": "R",
+   "xz": [
+    -545.81,
+    -707.3
+   ],
+   "along_m": -7.25,
+   "slid_m": 0.25,
+   "ground_y": 27.462,
+   "edge_y": 27.518,
+   "blade_bottom_y": 29.651,
+   "names": [
+    "E 46th Ave",
+    "E 45th N Dr"
+   ]
+  },
+  {
+   "id": "nb24",
+   "k": 24,
+   "vertex": 2859,
+   "side": "L",
+   "xz": [
+    -764.32,
+    -678.86
+   ],
+   "along_m": 8.25,
+   "slid_m": 0.25,
+   "ground_y": 27.197,
+   "edge_y": 27.288,
+   "blade_bottom_y": 29.421,
+   "names": [
+    "N Dahlia St",
+    "E 46th Ave"
+   ]
+  },
+  {
+   "id": "nb25",
+   "k": 25,
+   "vertex": 2860,
+   "side": "R",
+   "xz": [
+    -747.52,
+    -659.78
+   ],
+   "along_m": -8.0,
+   "slid_m": 0.0,
+   "ground_y": 27.247,
+   "edge_y": 27.261,
+   "blade_bottom_y": 29.395,
+   "names": [
+    "N Dahlia St",
+    "E 46th Ave"
+   ]
+  },
+  {
+   "id": "nb26",
+   "k": 26,
+   "vertex": 3184,
+   "side": "R",
+   "xz": [
+    -1471.36,
+    -346.54
+   ],
+   "along_m": -8.0,
+   "slid_m": 0.0,
+   "ground_y": 19.984,
+   "edge_y": 20.323,
+   "blade_bottom_y": 22.456,
+   "names": [
+    "E 50th Ave",
+    "E 46th Ave Access"
+   ]
+  },
+  {
+   "id": "nb27",
+   "k": 27,
+   "vertex": 3198,
+   "side": "R",
+   "xz": [
+    -1472.57,
+    -290.08
+   ],
+   "along_m": -8.5,
+   "slid_m": 1.5,
+   "ground_y": 19.466,
+   "edge_y": 19.483,
+   "blade_bottom_y": 21.617,
+   "names": [
+    "N Colorado Blvd Frtg E",
+    "E 48th Ave"
+   ]
+  }
+ ],
+ "skipped": [
+  {
+   "id": "nb1",
+   "why": "no clear base within 6.0 m of the plan (on pavement)"
+  },
+  {
+   "id": "nb2",
+   "why": "no clear base within 6.0 m of the plan (on pavement)"
+  },
+  {
+   "id": "nb3",
+   "why": "no clear base within 6.0 m of the plan (on pavement)"
+  },
+  {
+   "id": "nb17",
+   "why": "no clear base within 6.0 m of the plan (on pavement)"
+  },
+  {
+   "id": "nb20",
+   "why": "no clear base within 6.0 m of the plan (within 1.0 m of pavement)"
+  },
+  {
+   "id": "nb28",
+   "why": "no clear base within 6.0 m of the plan (on pavement)"
+  }
+ ]
+}

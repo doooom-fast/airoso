@@ -114,7 +114,7 @@ def in_ring(ring, x, y):
     return inside
 
 
-def load_footprints(track, sources):
+def load_footprints(track, sources, overlap=None):
     out = []
     for src in sources:
         rows = json.loads((track / src["file"]).read_text(encoding="utf-8"))
@@ -135,13 +135,34 @@ def load_footprints(track, sources):
                 continue
             rec["ring"] = [[round(p[0], 7), round(p[1], 7)] for p in ring]
             out.append(rec)
-    return dedupe(out)
+    return dedupe(out, overlap)
 
 
 DEDUPE_CELL = 0.0005           # degrees (~50 m): the lon/lat index cell of the footprint-on-footprint test
+OVERLAP_STEP_M = 0.5           # the overlap test's sample spacing
 
 
-def dedupe(recs):
+def overlap_share(a, b):
+    """the share of the SMALLER of two lon/lat rings that the other covers, sampled every OVERLAP_STEP_M"""
+    lat0 = a[0][1]
+    m_lon, m_lat = 111320.0 * math.cos(math.radians(lat0)), 110540.0
+    small, big = (a, b) if area_m2(a) <= area_m2(b) else (b, a)
+    xs, ys = [p[0] for p in small], [p[1] for p in small]
+    dx, dy = OVERLAP_STEP_M / m_lon, OVERLAP_STEP_M / m_lat
+    n_in = n_both = 0
+    x = min(xs) + dx / 2
+    while x < max(xs):
+        y = min(ys) + dy / 2
+        while y < max(ys):
+            if in_ring(small, x, y):
+                n_in += 1
+                n_both += in_ring(big, x, y)
+            y += dy
+        x += dx
+    return n_both / n_in if n_in else 0.0
+
+
+def dedupe(recs, overlap=None):
     """Sources stand in the plan's order of trust. A footprint whose centroid lies inside an EARLIER source's footprint is
     the same building seen twice (Microsoft's tile over OSM's houses: 1,486 of Lake Murray's 12,035), so it is dropped;
     where the earlier footprint carries no height and no levels, the later one's height is offered to it as
@@ -155,6 +176,28 @@ def dedupe(recs):
             if in_ring(kept[k]["ring"], cx, cy):
                 host = kept[k]
                 break
+        if host is None and overlap:
+            # OVERLAP (opt-in plan "dedupe": {"overlap": share}; ledger 0079 round E): a footprint from a LATER source whose
+            # centroid misses every earlier footprint but which covers, or is covered by, an earlier source's footprint
+            # over at least `share` of the smaller one is the same building drawn twice (Sand Creek 0.2.2: Microsoft's
+            # msft_buildings1333 on OSM's osm_buildings1169, six shared corners, both stood). Same-source neighbours
+            # (a terrace's shared walls) are never tested
+            seen = set()
+            for i in range(int(min(xs) / DEDUPE_CELL), int(max(xs) / DEDUPE_CELL) + 1):
+                for j in range(int(min(ys) / DEDUPE_CELL), int(max(ys) / DEDUPE_CELL) + 1):
+                    for k in cells.get((i, j), ()):
+                        if k in seen or kept[k]["src"] == rec["src"]:
+                            continue
+                        seen.add(k)
+                        if overlap_share(rec["ring"], kept[k]["ring"]) >= float(overlap):
+                            host = kept[k]
+                            rec_ov = dropped.setdefault("_overlap", [])
+                            rec_ov.append((rec["key"], host["key"]))
+                            break
+                    if host is not None:
+                        break
+                if host is not None:
+                    break
         if host is not None:
             dropped[rec["src"]] = dropped.get(rec["src"], 0) + 1
             if not host.get("height") and not host.get("levels") and not host.get("alt_height") and rec.get("height"):
@@ -166,8 +209,12 @@ def dedupe(recs):
         for i in range(int(min(xs) / DEDUPE_CELL), int(max(xs) / DEDUPE_CELL) + 1):
             for j in range(int(min(ys) / DEDUPE_CELL), int(max(ys) / DEDUPE_CELL) + 1):
                 cells.setdefault((i, j), []).append(k)
+    ov = dropped.pop("_overlap", [])
     for src, n in dropped.items():
         print(f"[buildings] {n} footprints from {src[:70]} stand on an earlier source's footprint: dropped")
+    if ov:
+        print(f"[buildings] of them, {len(ov)} by overlap (>= {overlap} of the smaller footprint), centroid outside: "
+              + ", ".join(f"{a} on {b}" for a, b in ov))
     if offered:
         print(f"[buildings] {offered} earlier footprints with no height or levels take the dropped footprint's height")
     return kept
@@ -458,7 +505,7 @@ def roof_class(photo, ring_px):
 def main() -> int:
     track = Path(sys.argv[1])
     plan = json.loads(Path(sys.argv[2]).read_text(encoding="utf-8"))
-    recs = load_footprints(track, plan["footprints"])
+    recs = load_footprints(track, plan["footprints"], (plan.get("dedupe") or {}).get("overlap"))
     photo = Photo(track, plan)
     lat_c = statistics.median(r["ring"][0][1] for r in recs)
     lon_c = statistics.median(r["ring"][0][0] for r in recs)
@@ -534,17 +581,62 @@ def main() -> int:
             sun = None
         elif sun:
             print(f"[buildings] shadow stage: {verdict}")
+    # plan "lidar": {"file": ...} (ledger 0079): roofs MEASURED off 3DEP lidar by tools/lidar_buildings.py, keyed by footprint:
+    # first of every source. Flat roofs take the median roof return over the ground ring; pitched ones the p95 as the ridge
+    # and the p10 as the eave. Absent (every plan before 0079) = nothing read
+    lidar_roofs, lidar_src = {}, None
+    if plan.get("lidar") and (track / plan["lidar"]["file"]).exists():
+        lj = json.loads((track / plan["lidar"]["file"]).read_text(encoding="utf-8"))
+        lidar_roofs, lidar_src = lj["roofs"], lj.get("_source", plan["lidar"]["file"])
+        print(f"[buildings] lidar roofs: {len(lidar_roofs)} measured footprints ({plan['lidar']['file']})")
+    lidar_over_cap = lidar_past_cap = lidar_low = 0
+    ml_check, ml_rejected = plan.get("ml_height_check"), 0
     for r in kept:
         cls = r["cls"]
         h = None
         src = None
+        lidar_eave = None
+        lr = lidar_roofs.get(r["key"])
+        if lr:
+            stat = "p95" if FORM[cls] in ("hip", "gable") else "p50"
+            top = lr["roof_" + stat] - lr["ground_m"]
+            if top > CAP_M[cls] and plan["lidar"].get("past_cap") == "median":
+                # plan lidar.past_cap "median" (ledger 0079 round C, Kevin: "I just want real"): a ridge read past the class
+                # cap is not thrown away. Sand Creek's 80: the median return stays a roof (sheds and houses at p50 3-6 m
+                # under a p95 of 11-16 m: a tree over the roof); where the median itself stands past the cap it is a real
+                # tall structure (tanks, a 39 m refinery block) and stands at its median. Either way the MEDIAN, uncapped
+                stat, top = "p50", lr["roof_p50"] - lr["ground_m"]
+                lidar_past_cap += 1
+            if ml_check and top < float(ml_check["min_m"]) and plan["lidar"].get("drop_low"):
+                # plan lidar.drop_low (ledger 0079 round C): the lidar reads no roof a room's height over the ground here
+                # (a slab, a demolished or open structure: Sand Creek's industrial footprints at 0.1-1.7 m): not a building
+                lidar_low += 1
+                continue
+            if 0.0 < top <= (float("inf") if stat == "p50" and plan["lidar"].get("past_cap") == "median" else CAP_M[cls]):
+                h = top
+                src = f"lidar {stat} roof over the ground ring, n {lr['n_roof']} ({lidar_src[:90]})"
+                lidar_eave = lr["roof_p10"] - lr["ground_m"]
+            else:
+                lidar_over_cap += 1
         try:
-            if r.get("height"):
+            if h is not None:
+                pass
+            elif r.get("height") and ml_check and str(r["src"]).startswith("Microsoft") and not (
+                    float(ml_check["min_m"]) <= float(str(r["height"]).split()[0]) <= CAP_M[cls]):
+                # plan "ml_height_check" (ledger 0079): Microsoft's ML estimate outside [min_m, the class cap] is not a
+                # measurement (Sand Creek: industrial blocks at 0.7 m, 60 m2 sheds at 24 m); the next source stands
+                ml_rejected += 1
+                h = None
+            elif r.get("height"):
                 h, src = float(str(r["height"]).split()[0]), height_label(r["src"])
             elif r.get("levels"):
                 lv = float(r["levels"])
                 st = STOREY_M[cls] if lv <= 1 or cls in ("house", "apartments", "shed") else STOREY_MULTI_M
                 h, src = lv * st, f"OSM building:levels {r['levels']} x {st} m"
+            elif r.get("alt_height") and ml_check and str(r.get("alt_src")).startswith("Microsoft") and not (
+                    float(ml_check["min_m"]) <= float(r["alt_height"]) <= CAP_M[cls]):
+                ml_rejected += 1                       # the same check on a deduped Microsoft footprint's height
+                h = None
             elif r.get("alt_height"):
                 h, src = float(r["alt_height"]), height_label(r["alt_src"]) + ", its footprint standing on this one"
         except ValueError:
@@ -572,10 +664,16 @@ def main() -> int:
             ys = [p[1] * 111320.0 for p in r["ring"]]
             short = min(max(xs) - min(xs), max(ys) - min(ys))
             rise = PITCH[form] * short / 2.0
-            wall = max(MIN_WALL_M.get(cls, 2.6), h - rise)
-            row["wall_h_m"] = round(wall, 1)
-            row["ridge_h_m"] = round(wall + rise, 1)
-            row["_form"] = f"{form} at {PITCH[form]:.2f} pitch [invented by class]; wall = top - rise {rise:.1f} m, floored at {MIN_WALL_M.get(cls, 2.6)} m"
+            if lidar_eave is not None and MIN_WALL_M.get(cls, 2.6) <= lidar_eave < h:
+                # both ends measured: the eave at the roof returns' p10, the ridge at their p95
+                row["wall_h_m"] = round(lidar_eave, 1)
+                row["ridge_h_m"] = round(h, 1)
+                row["_form"] = f"{form}: eave and ridge off the lidar roof returns (p10 / p95)"
+            else:
+                wall = max(MIN_WALL_M.get(cls, 2.6), h - rise)
+                row["wall_h_m"] = round(wall, 1)
+                row["ridge_h_m"] = round(wall + rise, 1)
+                row["_form"] = f"{form} at {PITCH[form]:.2f} pitch [invented by class]; wall = top - rise {rise:.1f} m, floored at {MIN_WALL_M.get(cls, 2.6)} m"
         out.append(row)
         by_src.setdefault(src.split(" ")[0] + (" default" if "default" in src else ""), 0)
         by_src[src.split(" ")[0] + (" default" if "default" in src else "")] += 1
@@ -603,6 +701,11 @@ def main() -> int:
     classes = {}
     for row in out:
         classes[row["class"]] = classes.get(row["class"], 0) + 1
+    if lidar_roofs:
+        print(f"[buildings] lidar roofs not used (past the class cap, or no height): {lidar_over_cap}; past the cap and stood at "
+              f"their median return (lidar.past_cap median): {lidar_past_cap}; left out, no roof over {(ml_check or {}).get('min_m')} m (lidar.drop_low): {lidar_low}")
+    if ml_check:
+        print(f"[buildings] Microsoft heights outside [{ml_check['min_m']} m, the class cap]: {ml_rejected}, not used")
     print(f"[buildings] {len(out)} footprints -> {plan['out']}; left out {left}; classes {classes}; heights by source {by_src}")
     return 0
 

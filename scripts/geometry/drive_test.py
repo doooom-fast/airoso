@@ -85,6 +85,29 @@ fine step >= 0.02 m and a 1 m second difference > 0.06 m on the real wheel paths
 k - 12 ... l + 13 cover these zones), hard in the chain, never covered by --force-install — the 0050 lip read 0.42 /
 0.48 m there. Outside a levelled fan, on a forward sample, or without the key: severe as before.
 
+DENSE HOPS (opt-in, ledger 0079 round M: track.config.json ``drive_test.dense_hops = true``; Lake Murray sets none). On
+the outside of a corner the fixed-offset point hops 2.7-3.9 m at a vertex (VERTEX BUMPS below), so the 1 m second
+difference compares a hop's height change with a metre's: on Sand Creek's colorado_50th deck (a real 2-4 % grade) that
+read 0.07-0.11 m, severe, where the same wheel path sampled every 0.25 m along its own arc reads at most 0.007 m. With
+the key, a severe reading on a forward metre where the path (this metre or the previous one) hopped more than
+DENSE_HOP_M is re-measured on that path's last two metres sampled densely (_dense_step: the largest 1 m second
+difference along their own arc, heights off the built top surface); one under STEP_SEVERE_M is filed under
+``dense_hops`` (reported, not gated). A measurement change, not a threshold change: the same 6 cm judges it, and a
+real riser on the hop still reads severe. Without the key the report is byte-identical.
+
+FOLD CHORDS (opt-in, ledger 0079 round N: track.config.json ``fold_fans.chords = true``; Lake Murray sets none). The
+weld mends a fold with no self-intersection (a HOOK: the inside edge of a junction flare widening faster than the corner
+turns) by a forward chord, not a levelled pinch, and records it only as a cut. Sand Creek's two road folds are both such
+chords (v134-141, v3202-3206, the inside of its 14-17 m corners), so the fan discs above come from its road cuts.
+With the key: (1) the discs are the levelled road pinches PLUS every road cut with no levelled record, explicitly (on
+Sand Creek the same rows the pre-0050 fallback gives; on a track with levelled pinches the chords join them), and
+(2) every reading filed under ``fold_severe`` is written in full with the plan points of its metre's two ends
+(``fold_severe_at``: s, offset, step, x, z, x_prev, z_prev), so tools/verify_fold_fans.py — which with the same key
+surveys every chord on real wheel paths too — can prove each deferred reading lies on a path it judged (its check 8),
+and (3) a reading is deferred only when both ends of its metre lie within verify_fold_fans.COVER_M of the plan samples
+its paths read on this layout (verify_fold_fans.plan_cover); a folded reading in a fan that no such path reaches stays
+severe here and is listed under ``fold_severe_unjudged``. Without the key the report is byte-identical.
+
 VERTEX BUMPS (v0.18.1, ledger 0057 integration). The same fixed offset hops FORWARD at every centreline vertex where the
 segment normal turns: on the outside of a corner the point jumps ahead by offset x turn angle (2.7-3.9 m at 10 m out
 round the Navajo / Jackson fan, 1.8-3.7 m round College / Alvarado), on the inside it creeps (0.1-0.5 m). The 1 m second
@@ -96,6 +119,16 @@ difference wherever both cover 1 m). One under STEP_BUMP_M is filed under ``vert
 still over it counts. Neither travel may be under VERTEX_MIN_TRAVEL_M (a grade over a few cm of plan is facet noise —
 such a bump counts as read). The re-measure can only move a bump out of the gated count when the surface the wheel
 actually crosses is smoother than 2.5 cm per metre; it never adds one.
+
+VERTEX KINKS (opt-in, ledger 0079 round P: track.config.json ``drive_test.vertex_kinks = true``; Lake Murray sets none).
+The slope-kink count reads the same fixed-offset path, so it has the same artefact: on the inside of a corner the point
+creeps 0.03-0.2 m across a vertex and the next metre runs a full 1 m, so on a smooth real grade g the station slopes
+alternate ~0 / g and their change reads ~g per metre (Sand Creek's measured 48th_colorado deck, s 9575-9578 at +6.0
+inside the S: 3.3-4.5 %/m on a surface whose own arc-length path at +6.0 reads at most 1.97 %/m). With the key a kink
+over KINK_PCT is re-measured on the path's own travel exactly as a vertex bump is (_own_travel_step, its change of grade
+over the mean of the two metres' plan travel, as %/m); one under KINK_PCT is filed under ``vertex_kinks`` (reported, not
+counted in kinks_per_km), one still over it counts, and a metre under VERTEX_MIN_TRAVEL_M keeps its station reading. A
+measurement change, not a threshold change: KINK_PCT judges both. Without the key the report is byte-identical.
 """
 
 from __future__ import annotations
@@ -127,6 +160,10 @@ OBST_HEIGHT_M = 1.8          # car-strike ceiling: AC cars are ~1.3 m tall; wall
 #                              level and still trip this, while legit overhead furniture (cobra-head
 #                              lamps arching the lane at 2.5 m+) clears it
 STEP_M = 1.0                 # sampling step along the lap
+DENSE_HOP_M = 1.5            # [invented] ledger 0079 round M (opt-in drive_test.dense_hops): a metre whose fixed-offset wheel
+#                              path covered more plan than this (the outside of a corner: the per-segment normal turns at a
+#                              vertex and the point hops 2.7-3.9 m) is a hop metre
+DENSE_DS_M = 0.25            # [invented] ledger 0079 round M: the dense re-sample spacing along the wheel path's own arc
 VERTEX_MIN_TRAVEL_M = 0.05   # [invented] v0.18.1 VERTEX BUMPS: a metre whose wheel path covers less plan than this is not
 #                              re-measured (its grade would be a facet's noise); the bump counts as read
 
@@ -152,6 +189,43 @@ def _own_travel_step(dh1, dh0, d1, d0):
     if d1 is None or d0 is None or min(d1, d0) < VERTEX_MIN_TRAVEL_M:
         return None
     return abs(dh1 / d1 - dh0 / d0) * 2.0 * STEP_M * STEP_M / (d0 + d1)
+
+
+def _dense_step(top_at, xz3, y_ref, ds=DENSE_DS_M):
+    """DENSE HOPS (opt-in, ledger 0079 round M): the SAME wheel path's last two metres — its three samples xz3 [(x, z)
+    of samples k-2, k-1, k], as drive_test took them — re-sampled every ds along their own polyline, each point's height
+    the built top surface (top_at), and the largest 1 m second difference |h(a + 1) - 2 h(a) + h(a - 1)| along that arc
+    (a every ds / 2). A measurement change, not a threshold: the same STEP_SEVERE_M then judges it. None (the station
+    reading stands) where the arc is under 2 m or any point has no surface."""
+    pts, arc = [], [0.0]
+    for (ax, az), (bx, bz) in zip(xz3, xz3[1:]):
+        d = math.hypot(bx - ax, bz - az)
+        n = max(1, int(math.ceil(d / ds)))
+        for j in range(n):
+            pts.append((ax + (bx - ax) * j / n, az + (bz - az) * j / n))
+    pts.append(xz3[-1])
+    for (ax, az), (bx, bz) in zip(pts, pts[1:]):
+        arc.append(arc[-1] + math.hypot(bx - ax, bz - az))
+    if arc[-1] < 2.0 * STEP_M:
+        return None
+    hs = []
+    for x_, z_ in pts:
+        h_, _o = top_at(x_, z_, y_ref)
+        if h_ is None:
+            return None
+        hs.append(h_)
+
+    def h_at(a):
+        j = 0
+        while j < len(arc) - 2 and arc[j + 1] < a:
+            j += 1
+        t = (a - arc[j]) / max(arc[j + 1] - arc[j], 1e-9)
+        return hs[j] + (hs[j + 1] - hs[j]) * t
+    worst, a = 0.0, STEP_M
+    while a <= arc[-1] - STEP_M + 1e-9:
+        worst = max(worst, abs(h_at(a + STEP_M) - 2.0 * h_at(a) + h_at(a - STEP_M)))
+        a += ds / 2.0
+    return worst
 
 
 def pad_for_lead_in(z_meas, line_pts, local_pts, tol_m=1.5):
@@ -407,7 +481,7 @@ FAN_DISC_PAD_M = 0.5        # [invented] ledger 0050: a fan disc reaches the row
 FAN_LEVEL_ROWS = 8          # tools/mouth_weld.FOLD_LEVEL_ROWS, when mouth_welds.json predates its level_rows record
 
 
-def fold_fan_discs(welds: dict, pts, widths) -> list:
+def fold_fan_discs(welds: dict, pts, widths, chords: bool = False) -> list:
     """ledger 0050: flat-zone discs (x, z, 0, radius) over every levelled MAINLINE fold fan in data/mouth_welds.json
     (folds.MAINLINE.levelled; a file without it: every ROAD cut) —
     one per centreline row from k - B to l + 1 + B of each ROAD pinch (B = the weld's level_rows), centred on the row,
@@ -419,7 +493,13 @@ def fold_fan_discs(welds: dict, pts, widths) -> list:
     # (Jackson / Lake Murray Blvd, the lap seam) keep today's rule: the seam's 0.06-0.07 m step at s 12-13 lat -5..-6
     # is a pre-existing apron step the race layouts already count, not 0050's. A pre-0050 file: every road cut.
     lev = [q for q in folds.get("levelled") or [] if isinstance(q, dict) and (q.get("line") or [None])[0] == "road"]
-    if lev:
+    if lev and chords:
+        # FOLD CHORDS (opt-in, module doc): the levelled pinches and every road cut no levelled record covers
+        _lk = [("road", q["line"][1], q["k"], q["l"]) for q in lev]
+        _cov = lambda c: any(int(q[1]) == int(c[1]) and abs(int(q[2]) - int(c[-2])) <= 2 and abs(int(q[3]) - int(c[-1])) <= 2
+                             for q in _lk)
+        cuts = _lk + [c for c in cuts if not _cov(c)]
+    elif lev:
         cuts = [("road", q["line"][1], q["k"], q["l"]) for q in lev]
     if not cuts:
         return []
@@ -660,9 +740,12 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None, line: dict
     # tools/verify_fold_fans.py's arc-length wheel paths read a 1 m second difference of at most 0.025 m. Sub-6 cm
     # judgement inside the fans is verify_fold_fans' (2 cm fine steps on real paths).
     _fan_zones = []
+    # FOLD CHORDS (opt-in, ledger 0079 round N: track.config.json fold_fans.chords = true; Lake Murray sets none)
+    _fold_chords = bool((cfg.get("fold_fans") or {}).get("chords"))
     _mwp = project / "data" / "mouth_welds.json"
     if _mwp.exists() and line is None:
-        _fan_zones = fold_fan_discs(json.loads(_mwp.read_text(encoding="utf-8")), _fan_pts, _fan_w)
+        _fan_zones = fold_fan_discs(json.loads(_mwp.read_text(encoding="utf-8")), _fan_pts, _fan_w,
+                                    chords=_fold_chords)
 
     def _in_fan(px, pz):
         return any((px - a) ** 2 + (pz - b) ** 2 < d * d for a, b, c, d in _fan_zones)
@@ -670,6 +753,29 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None, line: dict
     # FOLD SEVERE (opt-in; module doc): a severe reading on a folded sample inside a levelled fan is judged by
     # tools/verify_fold_fans.py on the real wheel paths, not here
     _fold_severe_defer = bool(_fan_zones) and         str((cfg.get("drive_test") or {}).get("fold_fan_severe") or "") == "verify_fold_fans"
+    # FOLD CHORDS (opt-in): defer only a reading whose metre's two ends lie on the plan paths verify_fold_fans reads
+    # (its plan_cover: every sample whose fine-step window is on the lane, within its COVER_M); the rest stay severe
+    _fan_cover, _near_cover, _cover_m = {}, None, None
+    if _fold_severe_defer and _fold_chords:
+        _tools = str(Path(__file__).resolve().parents[2] / "tools")
+        if _tools not in sys.path:
+            sys.path.insert(0, _tools)
+        import verify_fold_fans as _vff  # noqa: E402  (pure Python; its plan geometry, no surface read)
+        _cover_lid = lid or str(((cfg.get("layouts") or [{}])[0]).get("id") or "street")
+        _fan_cover, _near_cover, _cover_m = _vff.plan_cover(project, _cover_lid), _vff.near_judged, _vff.COVER_M
+
+    def _on_fan_path(px, pz, qx, qz):
+        if not _fold_chords:
+            return True
+        a, b = _near_cover(_fan_cover, px, pz), _near_cover(_fan_cover, qx, qz)
+        return a is not None and b is not None and a <= _cover_m and b <= _cover_m
+    # DENSE HOPS (opt-in, ledger 0079 round M: track.config.json drive_test.dense_hops = true; Lake Murray sets none): a
+    # severe reading on a forward metre where this wheel path, or its previous metre, hopped more than DENSE_HOP_M is
+    # re-measured on the same path sampled densely (_dense_step); under STEP_SEVERE_M it is filed as dense_hops
+    _dense_hops = bool((cfg.get("drive_test") or {}).get("dense_hops"))
+    # VERTEX KINKS (opt-in, ledger 0079 round P: drive_test.vertex_kinks = true; Lake Murray sets none): a kink is
+    # re-measured on the wheel path's own travel, as a vertex bump is (module doc)
+    _vertex_kinks = bool((cfg.get("drive_test") or {}).get("vertex_kinks"))
 
     def _in_flat_zone(px, pz):
         return any((px - a) ** 2 + (pz - b) ** 2 < d * d for a, b, c, d in _fzones)
@@ -966,8 +1072,22 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None, line: dict
                             # the plan (FOLD BUMPS): reported as fold_kinks, as fold bumps are
                             problems.setdefault("fold_kinks", []).append((round(s, 1), round(off, 2), round(kink, 2)))
                         else:
-                            problems["kinks"].append((round(s, 1), round(off, 2), round(kink, 2)))
+                            own_k = (_own_travel_step(dh, prev_slope[pi] * STEP_M, d_now, prev_d[pi])
+                                     if _vertex_kinks else None)
+                            if own_k is not None and own_k * 100 / STEP_M <= KINK_PCT:
+                                problems.setdefault("vertex_kinks", []).append(
+                                    (round(s, 1), round(off, 2), round(kink, 2), round(own_k * 100 / STEP_M, 2)))
+                            else:
+                                problems["kinks"].append((round(s, 1), round(off, 2), round(kink, 2)))
                     step = abs(dh - prev_slope[pi] * STEP_M)
+                    if (_dense_hops and step > STEP_SEVERE_M and not folded and len(prev_p[pi]) > 4
+                            and prev_p[pi][4] is not None
+                            and max(d_now or 0.0, prev_d[pi] or 0.0) > DENSE_HOP_M):
+                        _ds = _dense_step(surface.top_at, [prev_p[pi][4], prev_p[pi][:2], (px, pz)], y_ref)
+                        if _ds is not None and _ds <= STEP_SEVERE_M:
+                            problems.setdefault("dense_hops", []).append(
+                                (round(s, 1), round(off, 2), round(step, 3), round(_ds, 4)))
+                            step = 0.0          # judged on the dense path: no step there over STEP_SEVERE_M
                     if step > STEP_SEVERE_M:
                         # flared-apron texture: on widened corner pavement (w >= 11) the OUTER
                         # offsets ride taper fans with rolled crossfall breaks — real aprons
@@ -976,13 +1096,23 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None, line: dict
                                 and not _in_fan(px, pz):
                             problems.setdefault("apron_steps", []).append(
                                 (round(s, 1), round(off, 2), round(step, 3)))
-                        elif _fold_severe_defer and folded and _in_fan(px, pz):
+                        elif _fold_severe_defer and folded and _in_fan(px, pz) and \
+                                _on_fan_path(px, pz, prev_p[pi][0], prev_p[pi][1]):
                             problems.setdefault("fold_severe", []).append(
                                 (round(s, 1), round(off, 2), round(step, 3)))
+                            if _fold_chords:
+                                # FOLD CHORDS: the metre's two ends, for verify_fold_fans' coverage check (8)
+                                problems.setdefault("fold_severe_at", []).append(
+                                    (round(s, 1), round(off, 2), round(step, 3), round(px, 3), round(pz, 3),
+                                     round(prev_p[pi][0], 3), round(prev_p[pi][1], 3)))
                         else:
                             # inside a junction flat zone the WHOLE pad is driving surface —
                             # no exemptions (Kevin: "how do your tests pass this")
                             problems["severe_steps"].append((round(s, 1), round(off, 2), round(step, 3)))
+                            if _fold_chords and _fold_severe_defer and folded and _in_fan(px, pz):
+                                # FOLD CHORDS: in a fan, folded, but on no path verify_fold_fans reads: stays severe
+                                problems.setdefault("fold_severe_unjudged", []).append(
+                                    (round(s, 1), round(off, 2), round(step, 3)))
                     elif step > STEP_BUMP_M:
                         if folded:
                             problems.setdefault("fold_bumps", []).append(
@@ -1002,7 +1132,9 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None, line: dict
                 prev_slope[pi] = slope
             prev_adv[pi] = adv
             prev_d[pi] = d_now
-            prev_p[pi] = (px, pz, x, z)
+            # (the 5th field, DENSE HOPS only: the sample before, so the last two metres can be re-sampled)
+            prev_p[pi] = (px, pz, x, z, (prev_p[pi][0], prev_p[pi][1]) if prev_p[pi] is not None else None) \
+                if _dense_hops else (px, pz, x, z)
             prev_h[pi] = h
         # daylight probe: just past each pavement edge, some surface must exist from deck level
         # down to 7 m below — a miss means a hole in the embankment skirt (sky under the road)
@@ -1414,6 +1546,19 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None, line: dict
         report["fold_severe"] = len(problems.get("fold_severe", []))
         report["fold_severe_judge"] = "tools/verify_fold_fans.py (real wheel paths, hard)"
         report["worst"]["fold_severe"] = sorted(problems.get("fold_severe", []), key=lambda r: -r[2])[:200]
+        if _fold_chords:
+            # FOLD CHORDS (opt-in): every deferred reading in full, with its metre's plan points (verify_fold_fans (8))
+            report["fold_severe_at"] = problems.get("fold_severe_at", [])
+            report["fold_severe_unjudged"] = problems.get("fold_severe_unjudged", [])
+    if _vertex_kinks:
+        # opt-in only (absent the key the report is byte-identical): kinks re-measured on the path's own travel
+        report["vertex_kinks"] = len(problems.get("vertex_kinks", []))
+        report["kinks_per_km_station"] = round((len(problems["kinks"]) + report["vertex_kinks"]) / per_km, 2)
+        report["worst"]["vertex_kinks"] = sorted(problems.get("vertex_kinks", []), key=lambda r: r[0])[:2000]
+    if _dense_hops:
+        # opt-in only (absent the key the report is byte-identical): severe readings re-measured on the dense path
+        report["dense_hops"] = len(problems.get("dense_hops", []))
+        report["worst"]["dense_hops"] = sorted(problems.get("dense_hops", []), key=lambda r: -r[2])[:200]
     out_name = f"drive_test.{lid}.json" if lid else "drive_test.json"
     if line is not None:
         out_name = f"drive_test.line.{line['id']}.json"
@@ -1509,6 +1654,12 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None, line: dict
     if _fold_severe_defer:
         print(f"  fold severe (> 6 cm where a fixed-offset path runs backwards inside a levelled fan; judged by "
               f"tools/verify_fold_fans.py on the real wheel paths): {report['fold_severe']}")
+    if _dense_hops:
+        print(f"  dense hops (> {STEP_SEVERE_M*100:.0f} cm read across a > {DENSE_HOP_M} m hop, under it on the same path "
+              f"sampled every {DENSE_DS_M} m; reported, not gated): {report['dense_hops']}")
+    if _vertex_kinks:
+        print(f"  vertex kinks (> {KINK_PCT}%/m read across a vertex creep / hop, under it on the path's own travel; "
+              f"reported, not counted): {report['vertex_kinks']} (station reading {report['kinks_per_km_station']} /km)")
     if report["vertex_bumps"]:
         print(f"  vertex bumps (2.5-6 cm read across a vertex hop, under {STEP_BUMP_M*100:.1f} cm on the path's own "
               f"travel; reported, not gated): {report['vertex_bumps']}")

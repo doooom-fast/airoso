@@ -1,0 +1,63 @@
+{
+  "_doc": "Sand Creek (ledger 0079 round K): Lake Murray's W1-6 rule (tools/place_signs.py) at the race layout's corners, with Lake Murray's own defaults (tracks/san-diego-lake-murray/signs.json) except include_connectors false: the coordinator's brief puts the arrows at the race layout's corners, not the 106 grid streets' bends. Named in track.config.json signs_file (this port's slug names no tracks/<slug>/).",
+  "defaults": {
+    "_doc": "see place_signs.DEFAULTS; lateral offsets = curb face 0.08 + raised walk 1.8 (1.5 connector) - 0.25 back-of-walk set-back; height 2.13 m = MUTCD 2A.15 7 ft over a sidewalk; om1_3 = the Type N-1(CA) all-yellow diamond under every arrow (CA MUTCD 2C.10 'should'); kappa_window_m / hysteresis_stations are the corner detector's curvature window and the straight run that ends a corner (place_signs.Ribbon.kappa / walk_to_straight)",
+    "r_sign_max_m": 30.0,
+    "defl_min_deg": 45.0,
+    "hairpin_deg": 135.0,
+    "lateral_offset_m": 1.63,
+    "lateral_offset_connector_m": 1.33,
+    "height_m": 2.13,
+    "om1_3": true,
+    "include_connectors": false,
+    "both_directions_mainline": true,
+    "lamp_clear_m": 3.0,
+    "plant_clear_m": 2.5,
+    "kappa_window_m": 12,
+    "hysteresis_stations": 6,
+    "pad_decks": true
+  },
+  "corners": {
+    "SC-48C": {
+      "ribbon": "MAINLINE",
+      "vertex": 3195,
+      "plate": "W1-6",
+      "expect_arrow": "left",
+      "where": "E 48th Ave -> N Colorado Blvd (the S at 48th / Colorado, first turn)",
+      "per_layout": true,
+      "_per_layout": "ledger 0079 round K, as Lake Murray's M3 / M4 (ledger 0054 A7 / P4): on the BUILT mesh straight on is pavement in Free Roam (a junction pad's deck or a through street; the shared rule finds no clear spot), so the race layout, whose side streets are sealed, gets its own plate behind its sealing wall, in its closure kn5"
+    },
+    "SC-48S": {
+      "ribbon": "MAINLINE",
+      "vertex": 3205,
+      "where": "the S at 48th / Colorado, second turn (right), 27 m after SC-48C",
+      "skip": true,
+      "reason": "both approaches. fwd: a lamp mast stands 2.2 m from the rule's spot (lamps never move, no slide <= 1.0 m clears it); the S's first turn SC-48C carries the plate. rev (ledger 0079 round O, 48th_colorado built): straight on, southbound at x -1515, crosses the pad's measured deck into N Colorado Blvd south, a through street (grid_primary_49 / 52, its two carriageways); the failed-turn ray threads the 6 m between their two ribbons and the rule stood the plate in the middle of the real road (build ro2: verify_signs c_built_edge_clearance). In Free Roam the arrow would point away from a road a driver may take (the module's through-road rule); no race layout drives rev"
+    },
+    "SC-C50": {
+      "ribbon": "MAINLINE",
+      "vertex": 140,
+      "plate": "W1-6",
+      "where": "N Colorado Blvd -> E 50th Ave (the colorado_50th pad)",
+      "per_layout": true,
+      "_per_layout": "ledger 0079 round L (call 5): the corner is turned on the junction pad's measured deck (tools/lm_pads_blend.py), which defaults.pad_decks puts in the polyline field as pavement, as Lake Murray's J2-J4 decks are (ledger 0054 A8). Straight on runs across the deck into a real street in Free Roam, so the shared plate is the rule's own skip there and the race layout, whose side streets are sealed, gets its own plate behind its sealing wall, in its closure kn5 (Lake Murray's M3 / M4, ledger 0054 A7 / P4)"
+    },
+    "SC-ASH": {
+      "ribbon": "MAINLINE",
+      "vertex": 186,
+      "plate": "W1-6",
+      "where": "E 50th Ave -> Ash St (the 50th_ash pad)",
+      "per_layout": true,
+      "_per_layout": "ledger 0079 round L (call 5): the corner is turned on the junction pad's measured deck (tools/lm_pads_blend.py), which defaults.pad_decks puts in the polyline field as pavement, as Lake Murray's J2-J4 decks are (ledger 0054 A8). Straight on runs across the deck into a real street in Free Roam, so the shared plate is the rule's own skip there and the race layout, whose side streets are sealed, gets its own plate behind its sealing wall, in its closure kn5 (Lake Murray's M3 / M4, ledger 0054 A7 / P4)"
+    },
+    "SC-DAH": {
+      "ribbon": "MAINLINE",
+      "vertex": 410,
+      "plate": "W1-6",
+      "where": "Dahlia St -> E 50th Ave (the 50th_dahlia pad)",
+      "per_layout": true,
+      "_per_layout": "ledger 0079 round L (call 5): the corner is turned on the junction pad's measured deck (tools/lm_pads_blend.py), which defaults.pad_decks puts in the polyline field as pavement, as Lake Murray's J2-J4 decks are (ledger 0054 A8). Straight on runs across the deck into a real street in Free Roam, so the shared plate is the rule's own skip there and the race layout, whose side streets are sealed, gets its own plate behind its sealing wall, in its closure kn5 (Lake Murray's M3 / M4, ledger 0054 A7 / P4)"
+    }
+  },
+  "_pads": "ledger 0079 round L: the three pad corners are named per_layout (SC-C50 v140, SC-ASH v186, SC-DAH v410) with defaults.pad_decks: round K's mesh-skips came from the polyline stage not seeing the pad decks"
+}

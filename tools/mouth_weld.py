@@ -202,6 +202,47 @@ class ExactHostDeck(HostDeck):
         return HostDeck.at(self, x, z)
 
 
+class BeyondEndDeck:
+    """(opt-in route.weld_deck_beyond_end, ledger 0079 round J; Sand Creek) A guest that meets its host right at the
+    host's OPEN END (the host's own mouth on a third street) lays rows past that end, on the third street's pavement.
+    `base` (HostDeck / ExactHostDeck) holds the host's end row level there: Sand Creek grid_tertiary_74#0 (24 deg) on
+    grid_tertiary_1#1 at its v1, whose start is welded onto grid_tertiary_2#0; on the measured (lidar) profiles the
+    third street falls 0.02 m over 7 m from that end row and the guest's rows stood 0.021 m over its lane (verify_mouths
+    HOST LANE). Here a point that projects past an open end of the host's window AND lies on one of `beyond` (decks of
+    the streets the host's ends are welded to) reads that street's deck where it lies: the surface under it. Every
+    other point reads `base`, as before. No number is added."""
+
+    def __init__(self, base, beyond, open_start: bool, open_end: bool):
+        self.base = base
+        self.beyond = list(beyond)
+        self.open_start, self.open_end = open_start, open_end
+        self.rows, self.idx = base.rows, base.idx
+        self.hits = 0
+
+    def _past_end(self, x, z) -> bool:
+        _d, k, t, _o = self.base.project(x, z)
+        if k == 0 and t <= 0.0 and self.open_start:
+            return True
+        return k == len(self.idx) - 2 and t >= 1.0 and self.open_end
+
+    def at(self, x, z) -> float:
+        if self._past_end(x, z):
+            for d in self.beyond:
+                if d.inside(x, z):
+                    self.hits += 1
+                    return d.at(x, z)
+        return self.base.at(x, z)
+
+    def project(self, x, z):
+        return self.base.project(x, z)
+
+    def edge_gap(self, x, z, side, inset) -> float:
+        return self.base.edge_gap(x, z, side, inset)
+
+    def inside(self, x, z, margin=0.0) -> bool:
+        return self.base.inside(x, z, margin)
+
+
 def host_window(rows, closed, x, z, reach=HOST_WINDOW_M):
     """row indices of the host within `reach` of arc from the row nearest (x, z), in order (wrapped if closed)"""
     m = len(rows)
@@ -279,9 +320,10 @@ class Line:
         a, b = p[lo], p[hi]
         return (a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t)
 
-    def crossing(self, gap) -> float:
+    def crossing(self, gap, extend_max=EXTEND_MAX_M) -> float:
         """arc u where gap(x, z) changes sign from <= 0 (inside the host target) to > 0, nearest the end:
-        marching forward along the line when the end is inside, backward along the extension when it is short"""
+        marching forward along the line when the end is inside, backward along the extension when it is short
+        (at most `extend_max`: EXTEND_MAX_M unless the mouth's record says otherwise, an acute fork's)"""
         def g(u):
             q = self.at(u)
             return gap(q[0], q[2])
@@ -300,8 +342,8 @@ class Line:
             b = 0.0
             while True:
                 a = b - MARCH_M
-                if a < -EXTEND_MAX_M:
-                    raise WeldError(f"a lateral line stops > {EXTEND_MAX_M} m short of the host edge")
+                if a < -extend_max:
+                    raise WeldError(f"a lateral line stops > {extend_max} m short of the host edge")
                 if g(a) <= 0.0:
                     break
                 b = a
@@ -317,19 +359,35 @@ class Line:
 # --------------------------------------------------------------------------------------------- the weld
 
 def weld_end(lines: dict, deck: HostDeck, side: int, inset: dict, h: dict, *, blend_m=BLEND_M,
-             remap_min=REMAP_MIN_M) -> dict:
+             remap_min=REMAP_MIN_M, extend_max=EXTEND_MAX_M, hold_overlap=False, runon_at_mitre=False) -> dict:
     """Mitre + warp the lines of ONE connector end.
 
     lines: key -> points END-FIRST (all the same row count); inset: key -> host-edge inset of that line's cut;
     h: key -> the line's profile height over the road deck (0 for road lines; curb +0.14 etc.).
     Returns {"new": key -> new points (same length), "u_x": key -> cut arc, "J": rows re-spread, "K": rows
-    touched (last + 1), "dy_end": key -> end height change}."""
+    touched (last + 1), "dy_end": key -> end height change}.
+
+    hold_overlap (opt-in, a mouth record's weld_hold "overlap": tools/trim_connectors.py street junctions, ledger 0079
+    0.2.3, an ACUTE meeting): the guest's ribbon overlaps its host for the length between its first and its last line's
+    mitre, so every row up to the furthest mitre (arc max(u_x)) lies ON the host deck (extended level across its edge),
+    and only past it does the smoothstep ease back to the line's own profile over blend_m:
+        y = q_y + (host deck + h - q_y) x w,   w = 1 up to max(u_x), smoothstep(1 - (u - max(u_x)) / blend_m) past it.
+    Off (every other mouth): the warp above, measured from each line's own mitre, as before.
+
+    runon_at_mitre (opt-in, a mouth record's weld_runon "mitre": tools/trim_connectors.py street_junctions.weld_runon,
+    ledger 0079 round H): past a line's mitre (past the held length when hold_overlap) the host deck the warp eases from
+    is the deck AT that line's mitre (its point at the held length), extended level along the line, not the deck at each
+    vertex's own projection onto the host. The projection is read inside a window of host rows round the mouth, and
+    where the host turns a corner within it (Sand Creek: grid_unclassified_67 at the 48th / Colorado corner) a vertex
+    15-20 m out projected onto the OTHER leg, 0.34 m lower: a 0.1 m dip across the wheel line (verify_mouths APPROACH
+    3.1 %/m). On the host's pavement (at or before the mitre) the deck is read where the vertex lies, as before. No
+    number is added."""
     keys = list(lines)
     n = len(next(iter(lines.values())))
     if any(len(lines[k]) != n for k in keys):
         raise WeldError("lateral lines of one end differ in row count")
     L = {k: Line(lines[k]) for k in keys}
-    ux = {k: L[k].crossing(lambda x, z, _i=inset[k]: deck.edge_gap(x, z, side, _i)) for k in keys}
+    ux = {k: L[k].crossing(lambda x, z, _i=inset[k]: deck.edge_gap(x, z, side, _i), extend_max) for k in keys}
     need = max(0.0, max(ux.values())) + remap_min
     J = None
     for j in range(1, n):
@@ -339,10 +397,15 @@ def weld_end(lines: dict, deck: HostDeck, side: int, inset: dict, h: dict, *, bl
     if J is None:
         raise WeldError(f"piece too short to re-spread its end rows (needs {need:.1f} m)")
     new, dy_end, K = {}, {}, J
+    u_hold = max(ux.values()) if hold_overlap else None
     for k in keys:
         ln = L[k]
         uJ = ln.u[J]
         y_end = ln.at(ux[k])[1]
+        run_deck = None
+        if runon_at_mitre:
+            qm = ln.at(u_hold if u_hold is not None else ux[k])
+            run_deck = deck.at(qm[0], qm[2])
         out = []
         for j in range(n):
             if j < J:
@@ -351,12 +414,21 @@ def weld_end(lines: dict, deck: HostDeck, side: int, inset: dict, h: dict, *, bl
             else:
                 u2 = ln.u[j]
                 q = ln.pts[j]
-            s = u2 - ux[k]
-            w = smoothstep(1.0 - s / blend_m)
             y = q[1]
-            if w > 0.0:
-                y = q[1] + (deck.at(q[0], q[2]) + h[k] - y_end) * w
-                K = max(K, j + 1)
+            if u_hold is not None:
+                s = u2 - u_hold
+                w = 1.0 if s <= 0.0 else smoothstep(1.0 - s / blend_m)
+                if w > 0.0:
+                    dk = run_deck if (run_deck is not None and s > 0.0) else deck.at(q[0], q[2])
+                    y = q[1] + (dk + h[k] - q[1]) * w
+                    K = max(K, j + 1)
+            else:
+                s = u2 - ux[k]
+                w = smoothstep(1.0 - s / blend_m)
+                if w > 0.0:
+                    dk = run_deck if (run_deck is not None and s > 0.0) else deck.at(q[0], q[2])
+                    y = q[1] + (dk + h[k] - y_end) * w
+                    K = max(K, j + 1)
             out.append((q[0], y, q[2]))
         new[k] = out
         dy_end[k] = out[0][1] - ln.pts[0][1]

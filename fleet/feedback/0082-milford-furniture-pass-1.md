@@ -1243,3 +1243,31 @@ The two passes' deltas add exactly.
 1. **The PC: runbook 0082-6** and the install. It replaces 0082-5 and 0084-1's install steps: the newer green build is the
    one that installs. 0084-1 step 7 (the slot / alpha check) still needs doing in game.
 2. Pass 3's Owed 2-8 and ledger 0084's "Unverified" stand as written.
+
+## PC: runbook 0082-6, the 0.1.9 rehearsals and install (2026-11-09)
+
+- **0.1.7 (0084-1)** never finished on the PC: a session restart killed its rehearsal at strip_seam. Skipped for 0.1.9, as the coordinator asked.
+- **Inputs**:
+  - Bins Oak3 24111ede and SycamoreV2 7010d61f in `source/trees/`, never committed.
+  - ENG `eng_mflm_017` = `eng_mflm_015` + this branch's `export_kn5_addon.py`. Its LF md5 is 83b231e8; the checkout's own file is CRLF, so its on-disk md5 differs.
+  - Textures 96 / 96.
+- **Rehearsal 1, dcc2ebf** (`milford_019_reh.nolight`): SHIP OK, every row equal to 19.3's column.
+  - drive_test.full.json LF-md5 151aaf52.
+  - The road kn5 is 42,676,422 B, +416 B on the Mac. All of it is the PC's JPEG encoder: road_wear_detail_1road.jpg +403 B, _1kerb_sidewalk.jpg +13 B; the macro PNG, the flat NM and every non-texture byte are equal.
+  - **Held anyway**: 1ROAD_road_mat and 1KERB_sidewalk_mat shipped NMDetail with no ksAmbient / ksDiffuse, where 0.1.6's road and strip carry 0.4 / 0.4.
+    - The kn5 add-on fills that default only when a material names no VAR; the bake's three detail VARs switched it off.
+    - Fix 4262162: road_wear_blend adds the pair; road_wear_check's materials row fails a missing or wrong declared VAR. On rehearsal 1 it fails with exactly those four.
+- **Rehearsal 2, 4262162** (`milford_019_reh`): SHIP OK, road_wear PASS (materials included).
+  - Every gate JSON is equal to rehearsal 1's (drive_test, audit, kn5_ground, edge_smoothness, house_seat, grassfx, treefx).
+  - road_wear.json differs only in the two materials' props (+ksAmbient / ksDiffuse 0.4).
+  - mesh_diff rehearsal 1 -> 2: every mesh and texture equal.
+  - The kn5 is 42,676,634 B = rehearsal 1 + 212 B (four VARs of 53 B).
+- **Installed** 2026-11-09 19:33 from the EMPTY `D:/k10-scratch/milford_lm`; 0.1.6's workshop is kept as `milford_lm.0.1.6`.
+  - "doooom Michigan — Milford Road Course (unofficial)" 0.1.9.
+  - The kn5 is kn5_equiv to rehearsal 2's.
+  - 11,247 trees, bins as above.
+  - The install step parked 0.1.6 in `D:/k10-track-archive/2026-11-09_193301/` (MOVES.tsv + README).
+  - Menu picture: 0.1.6's camera (s3, -0.5 EV, stand-in trees); the pack's own is in `2026-11-09_193349_previews`.
+- **In game (0084-1 step 7)**: not done on the PC. AC's computer-use grant was declined before; Kevin's drive is the verdict.
+  - Read-only evidence from Kunos data: every ksPerPixelMultiMap_NMDetail material in the Kunos tracks scanned binds `txNormalDetail`, including ks_black_cat_county's own "road".
+  - That road's txDiffuse alpha is p50 0 at blend 0 / alphaTest 0, so the alpha is not transparency.

@@ -95,6 +95,13 @@
    "modules": 16,
    "left_out": 0,
    "length_m": 63.1
+  },
+  {
+   "key": "f1_nw_screen_ne_end",
+   "kind": "screen",
+   "modules": 15,
+   "left_out": 0,
+   "length_m": 58.6
   }
  ],
  "blocks": [
@@ -103,13 +110,13 @@
    "skin": "TILTUP",
    "roof": "WHITE",
    "form": "flat",
-   "wall_h_m": 11.0,
+   "wall_h_m": 10.0,
    "ground": [
     8.72,
     14.42
    ],
    "bottom": 8.57,
-   "eave": 19.57,
+   "eave": 24.25,
    "off_terrain": true,
    "collider": false
   },
@@ -156,6 +163,66 @@
    "bottom": 16.63,
    "eave": 19.23,
    "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "mpg_west_bldg_a",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 12.09,
+   "ground": [
+    42.42,
+    48.08
+   ],
+   "bottom": 42.27,
+   "eave": 60.22,
+   "off_terrain": true,
+   "collider": false
+  },
+  {
+   "key": "mpg_west_bldg_b",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 13.06,
+   "ground": [
+    24.0,
+    41.41
+   ],
+   "bottom": 23.85,
+   "eave": 55.2,
+   "off_terrain": true,
+   "collider": false
+  },
+  {
+   "key": "mpg_west_bldg_c",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 7.85,
+   "ground": [
+    34.44,
+    38.48
+   ],
+   "bottom": 34.29,
+   "eave": 46.51,
+   "off_terrain": true,
+   "collider": false
+  },
+  {
+   "key": "mpg_nw_small",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 5.12,
+   "ground": [
+    14.07,
+    14.25
+   ],
+   "bottom": 13.92,
+   "eave": 19.3,
+   "off_terrain": true,
    "collider": false
   }
  ],

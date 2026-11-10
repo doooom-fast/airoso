@@ -1,10 +1,10 @@
 {
- "input": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/work/roadtex/b17/blender/milford_road_course.blend",
+ "input": "D:\\k10-scratch\\milford_lm\\blender\\milford_road_course.blend",
  "outputs": {
   "loop_main.blend": {
-   "objects": 48,
-   "meshes": 32,
-   "positions": 476372,
+   "objects": 49,
+   "meshes": 33,
+   "positions": 476540,
    "max_positions": 50368,
    "materials": [
     "1GRASS_0_mat",
@@ -26,6 +26,7 @@
     "1WALL_TECPRO_TYRES_4_mat",
     "1WALL_TECPRO_TYRES_5_mat",
     "1WALL_TECPRO_TYRES_6_mat",
+    "1WALL_TILTUP_SCREEN_10_mat",
     "1WALL_TILTUP_SCREEN_7_mat",
     "1WALL_TILTUP_SCREEN_8_mat",
     "1WALL_TILTUP_SCREEN_9_mat",
@@ -82,6 +83,7 @@
     "1WALL_TECPRO_TYRES_4",
     "1WALL_TECPRO_TYRES_5",
     "1WALL_TECPRO_TYRES_6",
+    "1WALL_TILTUP_SCREEN_10",
     "1WALL_TILTUP_SCREEN_7",
     "1WALL_TILTUP_SCREEN_8",
     "1WALL_TILTUP_SCREEN_9",
@@ -117,9 +119,9 @@
  "problems": [],
  "tokens": {},
  "input_census": {
-  "objects": 48,
-  "meshes": 32,
-  "positions": 476372,
+  "objects": 49,
+  "meshes": 33,
+  "positions": 476540,
   "max_positions": 50368,
   "materials": [
    "1GRASS_0_mat",
@@ -141,6 +143,7 @@
    "1WALL_TECPRO_TYRES_4_mat",
    "1WALL_TECPRO_TYRES_5_mat",
    "1WALL_TECPRO_TYRES_6_mat",
+   "1WALL_TILTUP_SCREEN_10_mat",
    "1WALL_TILTUP_SCREEN_7_mat",
    "1WALL_TILTUP_SCREEN_8_mat",
    "1WALL_TILTUP_SCREEN_9_mat",
@@ -197,6 +200,7 @@
    "1WALL_TECPRO_TYRES_4",
    "1WALL_TECPRO_TYRES_5",
    "1WALL_TECPRO_TYRES_6",
+   "1WALL_TILTUP_SCREEN_10",
    "1WALL_TILTUP_SCREEN_7",
    "1WALL_TILTUP_SCREEN_8",
    "1WALL_TILTUP_SCREEN_9",

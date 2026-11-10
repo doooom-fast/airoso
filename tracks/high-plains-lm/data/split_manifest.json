@@ -2,9 +2,9 @@
  "input": "D:\\k10-scratch\\high_plains_lm\\blender\\high_plains.blend",
  "outputs": {
   "loop_main.blend": {
-   "objects": 58,
-   "meshes": 42,
-   "positions": 110075,
+   "objects": 55,
+   "meshes": 39,
+   "positions": 94891,
    "max_positions": 35654,
    "materials": [
     "1GRASS_0_mat",
@@ -43,9 +43,6 @@
     "BUILDING_METAL_0_mat",
     "MARKINGS_mat.001",
     "PADAPRON_0_mat",
-    "PRAIRIECARD_0_mat",
-    "PRAIRIECARD_1_mat",
-    "PRAIRIECARD_2_mat",
     "ROOFTOP_DARK_0_mat",
     "ROOFTOP_TAN_0_mat",
     "ROOFTOP_WHITE_0_mat"
@@ -125,9 +122,6 @@
     "BUILDING_METAL_0",
     "MARKINGS",
     "PADAPRON_0",
-    "PRAIRIECARD_0",
-    "PRAIRIECARD_1",
-    "PRAIRIECARD_2",
     "ROOFTOP_DARK_0",
     "ROOFTOP_TAN_0",
     "ROOFTOP_WHITE_0"
@@ -137,9 +131,9 @@
  "problems": [],
  "tokens": {},
  "input_census": {
-  "objects": 58,
-  "meshes": 42,
-  "positions": 110075,
+  "objects": 55,
+  "meshes": 39,
+  "positions": 94891,
   "max_positions": 35654,
   "materials": [
    "1GRASS_0_mat",
@@ -178,9 +172,6 @@
    "BUILDING_METAL_0_mat",
    "MARKINGS_mat.001",
    "PADAPRON_0_mat",
-   "PRAIRIECARD_0_mat",
-   "PRAIRIECARD_1_mat",
-   "PRAIRIECARD_2_mat",
    "ROOFTOP_DARK_0_mat",
    "ROOFTOP_TAN_0_mat",
    "ROOFTOP_WHITE_0_mat",
@@ -263,9 +254,6 @@
    "BUILDING_METAL_0",
    "MARKINGS",
    "PADAPRON_0",
-   "PRAIRIECARD_0",
-   "PRAIRIECARD_1",
-   "PRAIRIECARD_2",
    "ROOFTOP_DARK_0",
    "ROOFTOP_TAN_0",
    "ROOFTOP_WHITE_0"

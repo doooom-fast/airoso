@@ -225,3 +225,28 @@ needed: the card atlases are simply no longer referenced.
      (only `size` / `width` move with the measured native sizes);
    - mesh_diff against the installed 0.1.3 kn5: only `SCRUBCARD_0` gone.
 5. Green: install as 0089-1 step 4 (old workshop to `exotics_lm.0.1.3`).
+
+## PC: rehearsals and installs (2026-11-09)
+
+- **Models**: Bush e150b090 / Bush3 e9299a59 copied from `san_diego_lake_murray_v4/extension/trees/`, never committed.
+  - tree.ini [BASIC] read from each .bin (zip): Bush HEIGHT 20.66 / WIDTH 34.38, Bush3 2.02 / 3.49.
+  - Bush's HEIGHT is ten times Bush3's though both are shrubs; their LOD0.mesh differ. Taken as read, as Oak3 / SycamoreV2 were.
+  - Placeholders removed: 968cbed.
+- **Rehearsals** from EMPTY workshops `D:/k10-scratch/{hp,nv}_treefx_reh`, ENG `eng_hplm` / `eng_nvlm`: SHIP OK, no force, every GATES row exit 0.
+  - **High Plains 0.1.6**:
+    - The road kn5 is 14,511,475 B, the Mac's to the byte.
+    - `[grassfx] ... {'B': 76, 'C': 2}; 32 rectangles`; `grassfx.aerial.json` byte-equal (LF) to `records/grassfx.aerial.json`.
+    - mesh_diff against the installed 0.1.5: only `PRAIRIECARD` x 3 gone, texture `prairie_atlas.png` gone, every other mesh equal.
+    - drive_test / audit / kn5_ground rows equal to the installed build's.
+  - **Nevada Nights 0.1.4**:
+    - The road kn5 is 18,970,521 B, the Mac's to the byte.
+    - `[treefx] gate: 49 written of 49 planned ... -> OK`.
+    - trees.txt has the same 49 species, positions and angles as `records/trees.txt`; size and width move with the measured native sizes (Bush 0.94 -> 0.09 x 20.66 m = 1.86 m, as 0.94 x 2.0).
+    - mesh_diff against 0.1.3: only `SCRUBCARD_0` gone, texture `desert_scrub_atlas.png` gone.
+    - Rows equal to 0.1.3's.
+- **Installed** 2026-11-09 18:30 / 18:34 from EMPTY workshops; the old ones are kept as `high_plains_lm.0.1.5` / `exotics_lm.0.1.3`.
+  - kn5_equiv to the rehearsals (tangents only).
+  - The install step parked 0.1.5 in `D:/k10-track-archive/2026-11-09_183038/` and 0.1.3 in `2026-11-09_183401/` (MOVES.tsv + README).
+  - Nevada's folder carries both .bin (md5 as above) and 49 trees.
+- **Menu pictures**: re-rendered with the same cameras; the packs' own are in `2026-11-09_183441_previews`.
+- Not driven.

@@ -2,9 +2,9 @@
  "input": "D:\\k10-scratch\\exotics_lm\\blender\\exotics_racing_lvms.blend",
  "outputs": {
   "loop_main.blend": {
-   "objects": 53,
-   "meshes": 37,
-   "positions": 131371,
+   "objects": 52,
+   "meshes": 36,
+   "positions": 131083,
    "max_positions": 46171,
    "materials": [
     "1GRASS_0_mat",
@@ -42,8 +42,7 @@
     "PROPCONE_0_mat",
     "ROOFTOP_DARK_0_mat",
     "ROOFTOP_TAN_0_mat",
-    "ROOFTOP_WHITE_0_mat",
-    "SCRUBCARD_0_mat"
+    "ROOFTOP_WHITE_0_mat"
    ],
    "orphan_materials": [],
    "ac_nodes": [
@@ -119,17 +118,16 @@
     "PROPCONE_0",
     "ROOFTOP_DARK_0",
     "ROOFTOP_TAN_0",
-    "ROOFTOP_WHITE_0",
-    "SCRUBCARD_0"
+    "ROOFTOP_WHITE_0"
    ]
   }
  },
  "problems": [],
  "tokens": {},
  "input_census": {
-  "objects": 53,
-  "meshes": 37,
-  "positions": 131371,
+  "objects": 52,
+  "meshes": 36,
+  "positions": 131083,
   "max_positions": 46171,
   "materials": [
    "1GRASS_0_mat",
@@ -167,8 +165,7 @@
    "PROPCONE_0_mat",
    "ROOFTOP_DARK_0_mat",
    "ROOFTOP_TAN_0_mat",
-   "ROOFTOP_WHITE_0_mat",
-   "SCRUBCARD_0_mat"
+   "ROOFTOP_WHITE_0_mat"
   ],
   "orphan_materials": [],
   "ac_nodes": [
@@ -244,8 +241,7 @@
    "PROPCONE_0",
    "ROOFTOP_DARK_0",
    "ROOFTOP_TAN_0",
-   "ROOFTOP_WHITE_0",
-   "SCRUBCARD_0"
+   "ROOFTOP_WHITE_0"
   ]
  },
  "routes": {

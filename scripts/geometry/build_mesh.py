@@ -831,64 +831,6 @@ def fold_pads_enabled(cfg: dict) -> bool:
     return ((cfg.get("road_profile") or {}).get("fold_pads", False)) is True
 
 
-LIP_HALF_LEN_M = 1.5        # a measured-guard stone lip runs this far either side of its crossing
-LIP_FOOT_STEP_M = 0.25      # a foot over a drop is pulled back toward the crossing in these steps
-LIP_FOOT_MAX_GAP_M = 0.8    # drive_test's furniture-seating rule: a 1WALL column's base within 0.8 m of the surface under it
-
-
-def lip_foot_gap(ground_at, x: float, z: float, base_y: float) -> float:
-    """How far a wall foot at (x, z) with its base at ``base_y`` stands above the surface directly beneath it,
-    read the way drive_test's FURNITURE SEATING reads a 1WALL column: the highest surface within
-    [base - 3.0, base + 2.0], else within base +- 2.5; no surface at all is floating (99.0). ``ground_at(x, z,
-    lo, hi)`` returns the highest surface height in [lo, hi] at (x, z), or None. Negative = the foot is buried."""
-    g = ground_at(x, z, base_y - 3.0, base_y + 2.0)
-    if g is None:
-        g = ground_at(x, z, base_y - 2.5, base_y + 2.5)
-    return 99.0 if g is None else base_y - g
-
-
-def lip_foot_reach(ground_at, vx: float, vz: float, tx: float, tz: float, lx: float, lz: float, base_y: float,
-                   direction: float, half_len: float = LIP_HALF_LEN_M, step: float = LIP_FOOT_STEP_M,
-                   max_gap: float = LIP_FOOT_MAX_GAP_M) -> float:
-    """How far (<= ``half_len``) a measured-guard lip can run from its crossing (vx, vz) along ``direction`` * the
-    unit tangent (tx, tz) and still stand on its support: both corners of the foot there — the inboard one and the
-    outboard one, (lx, lz) across — within ``max_gap`` of the surface under them (``lip_foot_gap``). The lip was
-    seated at the crossing only and laid flat 1.5 m either way, so where the ground falls ALONG the road's edge
-    (Dragon Tail (Gravel) s 6,645, the exit of the second switchback: 2.4 m over the lip's 3 m) one foot hung
-    1.84 m in the air and drive_test failed the stage on "floating furniture" (ledger 0076). Full length wherever
-    both feet stand (every lip that was seated before is unchanged); otherwise pulled back toward the crossing in
-    ``step`` metres, down to 0 (the lip then ends at its crossing on that side)."""
-    r = half_len
-    while r > 1e-9:
-        fx, fz = vx + tx * direction * r, vz + tz * direction * r
-        if (lip_foot_gap(ground_at, fx, fz, base_y) <= max_gap
-                and lip_foot_gap(ground_at, fx + lx, fz + lz, base_y) <= max_gap):
-            return r
-        r = round(r - step, 6)
-    return 0.0
-
-
-def end_apron_cap(px: float, pz: float, tips, reach: float):
-    """The deck height a terrain node just past an OPEN road end must stay under, or None (ledger 0076, Under the
-    Dragon (Gravel) s 25,706). ``tips`` holds one (cx, cy, cz, tx, tz, half_width) per open end: the end row's centre,
-    its deck height, the unit tangent pointing OUT of the road, and the deck half-width there. A node counts when it lies
-    past that end row (0 < along <= reach) and within half_width + reach of the axis — close enough that a grass
-    triangle from it can reach back over the deck. Beside the road the verge is capped by the shoulder over it; past an
-    end there is no pavement over the node, so nothing capped it and the seam-weld's 20 % floor raised one 0.88 m above
-    the deck, lifting the grass 2.4 cm over the last pavement row. The lowest matching end's deck wins."""
-    cap = None
-    for cx, cy, cz, tx, tz, hw in tips:
-        dx, dz = px - cx, pz - cz
-        along = dx * tx + dz * tz
-        if not (0.0 < along <= reach):
-            continue
-        if abs(-dx * tz + dz * tx) > hw + reach:
-            continue
-        if cap is None or cy < cap:
-            cap = cy
-    return cap
-
-
 def fold_plateaus_enabled(cfg: dict) -> bool:
     """Whether build() levels the profile at every fold apex (the +-40 m smoothstep plateau). Default True: unchanged.
 

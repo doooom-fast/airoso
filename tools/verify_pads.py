@@ -141,6 +141,10 @@ def verify(project):
         return None
     built = json.loads(bp.read_text(encoding="utf-8"))
     lm = lm_pads_shape(built, data)
+    # the end-vertex epsilon is round G's rule, for the street arm rows it introduced (lm_pads records with arm_rows:
+    # Sand Creek, Pikes Peak). Every other record samples each seam to its far end as before (integration 2026-11-10:
+    # five of Lake Murray's seam segments run < 1 mm past a 0.25 m multiple; the Lariat / Rangely ports have no arm rows)
+    end_eps = SEAM_END_EPS_M if lm is not None and any(p.get("arm_rows") for p in built.get("pads") or []) else 0.0
     if lm is not None:
         built, plan = lm
     else:
@@ -224,7 +228,7 @@ def verify(project):
                 # strictly inside the segment: a seam vertex itself is judged by the 1 mm rule above, and a sample landing
                 # ON a row's end vertex (a street row of exactly 4.000 m a side, ledger 0079 round G) reads the street's
                 # own edge strip beside it, not a hole (GATES-CHANGELOG 2026-11-05 round G)
-                while k * SEAM_STEP_M < L - SEAM_END_EPS_M:
+                while k * SEAM_STEP_M < L - end_eps:
                     u = k * SEAM_STEP_M
                     mx, mz = A[0] + tx * u, A[2] + tz * u
                     hs_l = [h for h, n in F.at(mx + nx * 0.02, mz + nz * 0.02) if n.startswith("1ROAD")]

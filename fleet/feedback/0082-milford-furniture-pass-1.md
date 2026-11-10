@@ -1383,3 +1383,20 @@ NW complex, small on the skyline; bottom: from above, where the far ground's 15-
 5. **Hall b's annex and the vegetation pass's two crowns on its roof** (P4.2): drop the two points (11,247 -> 11,245) and build
    the annex, on Kevin's word.
 6. Pass 3's Owed (plant B, the reseat's 1-2 mm floor, seat_built as a gate, the hedge) stand.
+
+## PC: 0.1.10 rehearsal and install (2026-11-09)
+
+- **Inputs**: bins Oak3 24111ede / SycamoreV2 7010d61f, never committed; ENG `eng_mflm_017` (exporter LF md5 83b231e8, textures 96 / 96); head 795b2f8 (builds at 004b522, containing 4262162).
+- **Rehearsal** `D:/k10-scratch/milford_0110_reh` (empty workshop): SHIP OK, every gate green, road_wear PASS.
+  - Against the PC's 0.1.9 rehearsal (4262162): drive_test / audit / kn5_ground / road_wear_check / grassfx / treefx JSONs byte-equal; edge_smoothness and house_seat equal bar paths.
+  - road_wear.json differs only in a texture source path (the worktree's).
+  - mesh_diff: only FARBLOCK_TILTUP_0 and ROOFTOP_WHITE_0 differ, no texture changed.
+  - The kn5 is 42,697,250 B = 0.1.9's + 20,616 B, the Mac's delta.
+- **Paused, then resumed**: the first install run was stopped mid-build (strip_seam) on Kevin's "pause everrything on the pc". It never reached the install step, and AC kept 0.1.9 byte for byte. Re-run on his "Resume now".
+- **Installed** 2026-11-09 21:22 from an EMPTY `D:/k10-scratch/milford_lm`; 0.1.9's workshop is kept as `milford_lm.0.1.9`, the stopped run as `milford_lm.0.1.10-stopped`.
+  - "doooom Michigan — Milford Road Course (unofficial)" 0.1.10.
+  - The kn5 is kn5_equiv to the rehearsal's; 11,247 trees.
+  - The install step parked 0.1.9 in `D:/k10-track-archive/2026-11-09_212206/` (MOVES.tsv + README).
+  - Menu picture re-rendered with the same camera, identical to 0.1.9's (the new blocks are out of its view); the pack's own is in `2026-11-09_212248_previews`.
+- **Known** (the coordinator's note): the far ground under the new blocks sits 15-25 m low, so they read as towers from above; 0.1.11 owes it.
+- Not driven.

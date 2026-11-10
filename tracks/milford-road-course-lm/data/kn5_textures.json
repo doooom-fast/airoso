@@ -1,12 +1,12 @@
 {
  "kn5s": [
   {
-   "kn5": "/private/tmp/claude-501/-Volumes-Drive-codex-airoso/830ae195-8db3-403c-a5ba-24f3f0c17f6d/scratchpad/sys/work/roadtex/b17/build/milford_road_course.kn5",
-   "bytes": 42611917,
+   "kn5": "D:\\k10-scratch\\milford_lm\\build\\milford_road_course.kn5",
+   "bytes": 42697250,
    "version": 5,
    "textures_embedded": 21,
-   "materials": 32,
-   "maps": 53,
+   "materials": 33,
+   "maps": 55,
    "missing_textures": [],
    "missing": [],
    "empty": [],

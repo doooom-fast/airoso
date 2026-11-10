@@ -62,6 +62,11 @@ def classify(project_dir: str | Path) -> None:
     # opt-in (a network that declares network.reference_line, scripts.geometry.network_reference): record each edge's
     # direction of travel from the OSM ways' own order. Absent = no travel_dir key = network.geojson byte-identical.
     want_travel = bool(net.get("reference_line"))
+    # network.stable_snap (ledger 0075): an edge's ends are then junction nodes, and a node's point can be a ramp's
+    # vertex at a gore (the 7 m snap clusters a ramp and a mainline vertex there): a short mainline piece (18.7 m on I 8
+    # eastbound) cast one of its two votes from a ramp drawn the other way and came out undecided. With the key the
+    # TRAVEL vote (only) reads the edge's interior samples, or its middle vertex where it has none.
+    travel_mid = want_travel and bool(net.get("stable_snap", False))
 
     netp = proj / "data" / "network.geojson"
     fc = json.loads(netp.read_text())
@@ -143,6 +148,8 @@ def classify(project_dir: str | Path) -> None:
             if acc >= 25.0:
                 sample_pts.append(b); sample_ix.append(k + 1); acc = 0.0
         sample_pts.append(pm[-1]); sample_ix.append(len(pm) - 1)
+        if travel_mid and len(sample_ix) == 2 and 0 < len(pm) // 2 < len(pm) - 1:
+            sample_pts.insert(1, pm[len(pm) // 2]); sample_ix.insert(1, len(pm) // 2)   # a short edge's middle
         dir_fwd = dir_rev = 0
         for si, p in zip(sample_ix, sample_pts):
             ci, cj = int(p[0] // CELL), int(p[1] // CELL)
@@ -153,7 +160,9 @@ def classify(project_dir: str | Path) -> None:
                         d, _t = _seg_dist(p, a, b)
                         if d < best_d:
                             best_d, best, best_seg = d, (cls, name, is_link, lanes), (a, b)
-            if best is not None and want_travel:
+            if travel_mid and len(sample_ix) > 2 and si in (0, len(pm) - 1):
+                pass                             # stable_snap: an end sample sits on a junction node (see above)
+            elif best is not None and want_travel:
                 # TRAVEL DIRECTION (opt-in, network.reference_line): an OSM motorway / motorway_link way is drawn in
                 # the direction of travel (oneway implied), and network.py stores each edge in node-id order, not
                 # travel order. Vote the edge's own tangent at the sample against the nearest way's segment;

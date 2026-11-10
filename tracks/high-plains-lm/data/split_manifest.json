@@ -174,12 +174,9 @@
    "PADAPRON_0_mat",
    "ROOFTOP_DARK_0_mat",
    "ROOFTOP_TAN_0_mat",
-   "ROOFTOP_WHITE_0_mat",
-   "TERRAIN_mat"
+   "ROOFTOP_WHITE_0_mat"
   ],
-  "orphan_materials": [
-   "TERRAIN_mat"
-  ],
+  "orphan_materials": [],
   "ac_nodes": [
    "AC_HOTLAP_START_0",
    "AC_PIT_0",

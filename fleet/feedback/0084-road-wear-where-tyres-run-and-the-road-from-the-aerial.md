@@ -696,3 +696,32 @@ Downloads still need his word, and none is needed here.
 - Every other row passed. The re-seat (step 3) moved pit_wall_lidar +0.30 m at p50.
 - Records: `tracks/high-plains-lm/source/road_wear/pc_017/{ref,reh}/` (399d03c).
 - The bake now refuses a fractional multiplier before baking (GATES-CHANGELOG 2026-11-10 PC).
+
+### High Plains 0.1.7: green and installed (PC, 2026-11-10)
+
+- **Head** 2981db6d (texel 0.25 m + the whole-multiplier guard on a79b6a6's K-rail re-seat). ENG `eng_hplm_rw`.
+- **Reference + rehearsal** from empty workshops `hp_rw_ref` / `hp_rw_reh`: SHIP OK, no force, every gate green.
+  - `road_wear_check` passes every row: detail_phase worst 1e-05 tiles at multiplier 256; photo_rubber shipped 0.14143 vs declared 0.14139, centroid -0.1061 vs -0.1116 m; the kerb rows.
+  - Atlas: 4096 px at 0.25 m, 74 cells, 45.2 % used.
+  - The two builds are identical: drive_test / audit / kn5_ground / house_seat / edge_report / road_wear_check / road_wear / reseat JSONs equal bar paths, and the kn5s kn5_equiv (tangents only), 17,730,716 B.
+- **Against the installed 0.1.6**:
+  - mesh_diff: 1ROAD, 1KERB x21 (the strip and the 20 circuit kerbs) and two 1WALL (KRAILBW_1 / _4, the re-seated) differ; every 1GRASS / BUILDING / MARKINGS / PADAPRON / ROOFTOP mesh is equal.
+  - Textures: asphalt_cracked_diffuse / building_diffuse / kerb_atlas_hp dropped; the road-wear set added (macro 2,089,872 B, detail_1road 3,395,491, detail_1kerb_sidewalk 331,034, flat_nm 76, kerb atlas 2,549).
+  - compare_ab's "1WALL_KRAILBW_1 / _4: UVs differ" is the re-seat's re-triangulation: the same 784 / 192 corner points (plan + UV) are each raised by the re-seat's dz (p50 +0.303 / +0.102), and the moved quads split on the other diagonal. No UV moved.
+  - Every gate scalar equals 0.1.6's, except audit wall_verts 7,078 -> 7,170 (the re-seated rails' splits).
+- **The seat** (`wall_seat_abs.py`, top-ridge points vs the ground under them):
+
+  | rail | declared | 0.1.6 showing p50 | 0.1.7 showing p50 |
+  |---|---|---|---|
+  | pit_wall_lidar | 1.03 | 0.74 | **1.03** |
+  | pit_wall_naip_rest | 0.81 | 0.71 | **0.81** |
+  | the other six | | as 0.1.6 | as 0.1.6 |
+
+  The re-seat moved none of the other six, because the band's mechanism isn't theirs: pit_paddock_lidar 0.54 of 0.59, pit_paddock_naip_rest 0.76 of 0.81, back_straight_lidar 1.23 of 1.13.
+- **Installed** 2026-11-10 13:28 from an EMPTY `D:/k10-scratch/high_plains_lm`; 0.1.6's workshop is kept as `high_plains_lm.0.1.6`.
+  - "doooom Colorado — High Plains Raceway" 0.1.7.
+  - kn5_equiv to the reference.
+  - The install step parked 0.1.6 in `D:/k10-track-archive/2026-11-10_132827/`.
+  - Menu picture: s0 at -0.3 EV, as before.
+- Records: `source/road_wear/pc_017/green_{ref,reh}/`.
+- Not driven.

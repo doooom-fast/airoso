@@ -1,0 +1,330 @@
+{
+ "a": "D:/SteamLibrary/steamapps/common/assettocorsa/content/tracks/high_plains/high_plains.kn5",
+ "b": "D:/k10-scratch/hp_rw_ref/build/high_plains/high_plains.kn5",
+ "by_prefix": {
+  "1GRASS": {
+   "equal": 2
+  },
+  "1KERB": {
+   "DIFFERS": 21
+  },
+  "1ROAD": {
+   "DIFFERS": 1
+  },
+  "1WALL": {
+   "equal": 7,
+   "DIFFERS": 2
+  },
+  "BUILDING": {
+   "equal": 1
+  },
+  "MARKINGS": {
+   "equal": 1
+  },
+  "PADAPRON": {
+   "equal": 1
+  },
+  "ROOFTOP": {
+   "equal": 3
+  }
+ },
+ "textures": {
+  "only_a": [
+   "asphalt_cracked_diffuse.jpg",
+   "building_diffuse.jpg",
+   "kerb_atlas_hp.png"
+  ],
+  "only_b": [
+   "road_wear_detail_1kerb_sidewalk.jpg",
+   "road_wear_detail_1road.jpg",
+   "road_wear_flat_nm.png",
+   "road_wear_kerb_kerb_atlas_hp.png",
+   "road_wear_macro.png"
+  ],
+  "changed": []
+ },
+ "meshes": [
+  {
+   "mesh": "1GRASS_0",
+   "verdict": "equal",
+   "why": [],
+   "verts": 36161
+  },
+  {
+   "mesh": "1GRASS_1",
+   "verdict": "equal",
+   "why": [],
+   "verts": 36162
+  },
+  {
+   "mesh": "1KERB_circuit_0",
+   "verdict": "DIFFERS",
+   "why": [
+    " vertex 0 u 0.05000000074505806 != 0.0031250000465661287"
+   ],
+   "verts": 180
+  },
+  {
+   "mesh": "1KERB_circuit_1",
+   "verdict": "DIFFERS",
+   "why": [
+    " vertex 0 u 0.550000011920929 != 0.40937501192092896"
+   ],
+   "verts": 120
+  },
+  {
+   "mesh": "1KERB_circuit_10",
+   "verdict": "DIFFERS",
+   "why": [
+    " vertex 0 u 0.949999988079071 != 0.05937499925494194"
+   ],
+   "verts": 156
+  },
+  {
+   "mesh": "1KERB_circuit_11",
+   "verdict": "DIFFERS",
+   "why": [
+    " vertex 0 u 0.05000000074505806 != 0.06562499701976776"
+   ],
+   "verts": 252
+  },
+  {
+   "mesh": "1KERB_circuit_12",
+   "verdict": "DIFFERS",
+   "why": [
+    " vertex 0 u 0.05000000074505806 != 0.0031250000465661287"
+   ],
+   "verts": 108
+  },
+  {
+   "mesh": "1KERB_circuit_13",
+   "verdict": "DIFFERS",
+   "why": [
+    " vertex 0 u 0.05000000074505806 != 0.565625011920929"
+   ],
+   "verts": 162
+  },
+  {
+   "mesh": "1KERB_circuit_14",
+   "verdict": "DIFFERS",
+   "why": [
+    " vertex 0 u 0.949999988079071 != 0.05937499925494194"
+   ],
+   "verts": 132
+  },
+  {
+   "mesh": "1KERB_circuit_15",
+   "verdict": "DIFFERS",
+   "why": [
+    " vertex 0 u 0.05000000074505806 != 0.753125011920929"
+   ],
+   "verts": 126
+  },
+  {
+   "mesh": "1KERB_circuit_16",
+   "verdict": "DIFFERS",
+   "why": [
+    " vertex 0 u 0.05000000074505806 != 0.878125011920929"
+   ],
+   "verts": 504
+  },
+  {
+   "mesh": "1KERB_circuit_17",
+   "verdict": "DIFFERS",
+   "why": [
+    " vertex 0 u 0.949999988079071 != 0.05937499925494194"
+   ],
+   "verts": 108
+  },
+  {
+   "mesh": "1KERB_circuit_18",
+   "verdict": "DIFFERS",
+   "why": [
+    " vertex 0 u 0.05000000074505806 != 0.44062501192092896"
+   ],
+   "verts": 162
+  },
+  {
+   "mesh": "1KERB_circuit_19",
+   "verdict": "DIFFERS",
+   "why": [
+    " vertex 0 u 0.550000011920929 != 0.03437500074505806"
+   ],
+   "verts": 168
+  },
+  {
+   "mesh": "1KERB_circuit_2",
+   "verdict": "DIFFERS",
+   "why": [
+    " vertex 0 u 0.550000011920929 != 0.596875011920929"
+   ],
+   "verts": 180
+  },
+  {
+   "mesh": "1KERB_circuit_3",
+   "verdict": "DIFFERS",
+   "why": [
+    " vertex 0 u 0.550000011920929 != 0.03437500074505806"
+   ],
+   "verts": 120
+  },
+  {
+   "mesh": "1KERB_circuit_4",
+   "verdict": "DIFFERS",
+   "why": [
+    " vertex 0 u 0.05000000074505806 != 0.37812501192092896"
+   ],
+   "verts": 216
+  },
+  {
+   "mesh": "1KERB_circuit_5",
+   "verdict": "DIFFERS",
+   "why": [
+    " vertex 0 u 0.550000011920929 != 0.03437500074505806"
+   ],
+   "verts": 156
+  },
+  {
+   "mesh": "1KERB_circuit_6",
+   "verdict": "DIFFERS",
+   "why": [
+    " vertex 0 u 0.550000011920929 != 0.03437500074505806"
+   ],
+   "verts": 156
+  },
+  {
+   "mesh": "1KERB_circuit_7",
+   "verdict": "DIFFERS",
+   "why": [
+    " vertex 0 u 0.05000000074505806 != 0.878125011920929"
+   ],
+   "verts": 180
+  },
+  {
+   "mesh": "1KERB_circuit_8",
+   "verdict": "DIFFERS",
+   "why": [
+    " vertex 0 u 0.05000000074505806 != 0.25312501192092896"
+   ],
+   "verts": 90
+  },
+  {
+   "mesh": "1KERB_circuit_9",
+   "verdict": "DIFFERS",
+   "why": [
+    " vertex 0 u 0.05000000074505806 != 0.690625011920929"
+   ],
+   "verts": 162
+  },
+  {
+   "mesh": "1KERB_sidewalk",
+   "verdict": "DIFFERS",
+   "why": [
+    " vertex 0 u 61.992576599121094 != 0.2968460023403168"
+   ],
+   "verts": 38628
+  },
+  {
+   "mesh": "1ROAD_road",
+   "verdict": "DIFFERS",
+   "why": [
+    " vertex 0 u 61.992576599121094 != 0.2968460023403168"
+   ],
+   "verts": 13356
+  },
+  {
+   "mesh": "1WALL_KRAILBW_0",
+   "verdict": "equal",
+   "why": [],
+   "verts": 1584
+  },
+  {
+   "mesh": "1WALL_KRAILBW_1",
+   "verdict": "DIFFERS",
+   "why": [
+    "header / indices / vertex count"
+   ],
+   "verts": 334
+  },
+  {
+   "mesh": "1WALL_KRAILBW_2",
+   "verdict": "equal",
+   "why": [],
+   "verts": 338
+  },
+  {
+   "mesh": "1WALL_KRAILBW_3",
+   "verdict": "equal",
+   "why": [],
+   "verts": 60
+  },
+  {
+   "mesh": "1WALL_KRAILBW_4",
+   "verdict": "DIFFERS",
+   "why": [
+    "header / indices / vertex count"
+   ],
+   "verts": 1402
+  },
+  {
+   "mesh": "1WALL_KRAILBW_5",
+   "verdict": "equal",
+   "why": [],
+   "verts": 1098
+  },
+  {
+   "mesh": "1WALL_KRAILBW_6",
+   "verdict": "equal",
+   "why": [],
+   "verts": 1264
+  },
+  {
+   "mesh": "1WALL_KRAILBW_7",
+   "verdict": "equal",
+   "why": [],
+   "verts": 966
+  },
+  {
+   "mesh": "1WALL_TILTUP_0",
+   "verdict": "equal",
+   "why": [],
+   "verts": 32
+  },
+  {
+   "mesh": "BUILDING_METAL_0",
+   "verdict": "equal",
+   "why": [],
+   "verts": 358
+  },
+  {
+   "mesh": "MARKINGS",
+   "verdict": "equal",
+   "why": [],
+   "verts": 12876
+  },
+  {
+   "mesh": "PADAPRON_0",
+   "verdict": "equal",
+   "why": [],
+   "verts": 27130
+  },
+  {
+   "mesh": "ROOFTOP_DARK_0",
+   "verdict": "equal",
+   "why": [],
+   "verts": 36
+  },
+  {
+   "mesh": "ROOFTOP_TAN_0",
+   "verdict": "equal",
+   "why": [],
+   "verts": 18
+  },
+  {
+   "mesh": "ROOFTOP_WHITE_0",
+   "verdict": "equal",
+   "why": [],
+   "verts": 130
+  }
+ ]
+}

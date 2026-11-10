@@ -20,6 +20,12 @@ read again from the track's own image (track.config.json road_wear.aerial).
     rubber       the mean cross-line profile of the shipped atlas at the line's high-rubber stations is darkest on the
                  declared line: its darkening centroid within line_offset_max_m of it, its depth within
                  [depth_min_frac, depth_max_frac] of the declared amplitude x rubber x tyre profile
+    (road_wear.rubber "photo", Kevin 2026-11-10 "Use the photo's rubber"; High Plains 0.1.7: no band is drawn, so the
+    rubber row above is not run, and in its place:)
+    photo_rubber per line: the shipped atlas's darkening across the declared line against its mirror across the declared
+                 centreline (measure_photo, on what the bake measured: lit asphalt >= interior_m inside the built
+                 road), its depth over |u| <= band_m within photo_depth_tol and its centroid within
+                 photo_centroid_tol_m of the bake's measurement on the photo; the photo must show >= photo_min_depth
     (only when data/road_wear.json carries "kerbs", i.e. the config names road_wear.kerbs; High Plains 0.1.7:)
     kerb_materials every declared kerb material is in the kn5 with its declared shader, the declared slots and textures
                  (the exporter's stock row with txDiffuse -> the levelled paint), each embedded, power of two, and
@@ -59,6 +65,14 @@ GATE = {
     "depth_max_frac": 1.5,       # [invented]
     # the race kerbs (opt-in road_wear.kerbs; High Plains 0.1.7)
     "kerb_paint_tol": 1,         # 8-bit rounding: a copy may differ from round(paint x (1 - k step)) by one level
+    # road_wear.rubber "photo" (opt-in, Kevin 2026-11-10 "Use the photo's rubber"; High Plains 0.1.7): the rubber row's
+    # place is taken by photo_rubber, which judges the photo's measured darkening, not a drawn band
+    "photo_depth_tol": 0.02,     # [invented] the shipped atlas's line-vs-mirror depth within this of the bake's
+                                 # measurement on the photo (8-bit rounding and the lit mask's edges are ~0.002)
+    "photo_centroid_tol_m": 0.15,  # [invented] the shipped darkening's centroid within this of the photo's measured one
+                                 # (the same distance as line_offset_max_m)
+    "photo_min_depth": 0.03,     # [invented] the photo must resolve the rubber for photo mode to be the right one
+                                 # (High Plains 0.3 m: 0.14 measured; Milford's 0.5 m showed <= 0.007)
     "kerb_level_tol": 0.55,      # [invented] levels: half a level (the rounding) + 5 % for the declared line's
                                  # 1 mm / 1e-4 rounding in road_wear.line.<layout>.json
 }
@@ -118,6 +132,114 @@ def _pip(x: float, y: float, ring) -> bool:
         if (y1 > y) != (y2 > y) and x < x1 + (y - y1) * (x2 - x1) / (y2 - y1):
             inside = not inside
     return inside
+
+
+def _left_normals(P: list, closed: bool) -> list:
+    n = len(P); out = []
+    for i in range(n):
+        a = P[(i - 1) % n] if (closed or i) else P[i]
+        b = P[(i + 1) % n] if (closed or i < n - 1) else P[i]
+        dx, dy = b[0] - a[0], b[1] - a[1]; L = math.hypot(dx, dy) or 1.0
+        out.append((-dy / L, dx / L))
+    return out
+
+
+def measure_photo(points: list, centre: list, normals: list, closed: bool, value_at, ph: dict) -> dict:
+    """scripts/aerial/road_wear.photo_rubber restated without numpy: the darkening across the line against its mirror
+    across the centreline, D(u) = 1 - sum(line side) / sum(mirror side) pooled over the stations at least a_min_m off the
+    centre where both sides are usable (``value_at(x, y)`` -> value or None)."""
+    grid = {}
+    for k, c in enumerate(centre):
+        grid.setdefault((int(c[0] // 10), int(c[1] // 10)), []).append(k)
+
+    def nearest(x, y):
+        best = (1e18, 0)
+        for r in (1, 2, 4, 8):
+            for i in range(int(x // 10) - r, int(x // 10) + r + 1):
+                for j in range(int(y // 10) - r, int(y // 10) + r + 1):
+                    for k in grid.get((i, j), ()):
+                        d = (centre[k][0] - x) ** 2 + (centre[k][1] - y) ** 2
+                        if d < best[0]:
+                            best = (d, k)
+            if best[0] < (10 * r) ** 2:
+                return best[1]
+        return min(range(len(centre)), key=lambda k: (centre[k][0] - x) ** 2 + (centre[k][1] - y) ** 2)
+    nl = _left_normals(points, closed)
+    nu = int(round(2 * ph["u_max_m"] / ph["du_m"])) + 1
+    us = [round(-ph["u_max_m"] + i * ph["du_m"], 6) for i in range(nu)]
+    sl = [0.0] * nu; sm = [0.0] * nu; cnt = [0] * nu
+    st = 0
+    for i, q in enumerate(points):
+        k = nearest(q[0], q[1])
+        cx, cy = centre[k][0], centre[k][1]; nx, ny = normals[k]
+        a = (q[0] - cx) * nx + (q[1] - cy) * ny
+        if abs(a) < ph["a_min_m"]:
+            continue
+        st += 1
+        for j, u in enumerate(us):
+            x, y = q[0] + nl[i][0] * u, q[1] + nl[i][1] * u
+            qx, qy = x - cx, y - cy
+            dd = qx * nx + qy * ny
+            mx, my = cx + qx - 2 * dd * nx, cy + qy - 2 * dd * ny
+            vl = value_at(x, y)
+            if vl is None:
+                continue
+            vm = value_at(mx, my)
+            if vm is None:
+                continue
+            sl[j] += vl; sm[j] += vm; cnt[j] += 1
+    D = [None if not cnt[j] or sm[j] <= 0 else 1.0 - sl[j] / sm[j] for j in range(nu)]
+    band = [j for j, u in enumerate(us) if abs(u) <= ph["band_m"] + 1e-9]
+    num = sum(sl[j] for j in band); den = sum(sm[j] for j in band)
+    depth = 1.0 - num / den if den > 0 else float("nan")
+    Dp = [max(0.0, v) if v is not None else 0.0 for v in D]
+    cen = sum(u * d for u, d in zip(us, Dp)) / sum(Dp) if sum(Dp) > 0 else float("nan")
+    return {"u": us, "D": [None if v is None else round(v, 5) for v in D], "depth": round(depth, 5),
+            "centroid_m": round(cen, 4), "stations": st, "samples": sum(cnt)}
+
+
+def make_photo_darkness(line_pts: list, closed: bool, profs: list, layer: float):
+    """scripts/aerial/road_wear.photo_darkness_at restated without numpy: the measured profile D(u) at each point's signed
+    offset u from its nearest line segment (left positive), 0 outside the profile; lines combined as 1 - prod(1 - D)."""
+    tabs = []
+    segs = {}
+    for li, ((pts, _rub), pr) in enumerate(zip(line_pts, profs)):
+        us = pr["u"]; Dv = [0.0 if v is None else max(0.0, v) for v in pr["D"]]
+        tabs.append((us, Dv))
+        n = len(pts)
+        for i in range(n if closed else n - 1):
+            segs.setdefault((int(pts[i][0] // 8), int(pts[i][1] // 8)), []).append((li, pts[i], pts[(i + 1) % n]))
+
+    def interp(us, Dv, u):
+        if u < us[0] - 1e-9 or u > us[-1] + 1e-9:
+            return 0.0
+        for j in range(len(us) - 1):
+            if us[j] <= u <= us[j + 1]:
+                t = (u - us[j]) / (us[j + 1] - us[j])
+                return Dv[j] * (1 - t) + Dv[j + 1] * t
+        return Dv[-1]
+
+    def darkness(x, y, z):
+        keep = 1.0
+        for li, (us, Dv) in enumerate(tabs):
+            best = (1e18, 0.0)
+            for ci in range(int(x // 8) - 1, int(x // 8) + 2):
+                for cj in range(int(y // 8) - 1, int(y // 8) + 2):
+                    for (lj, a_, b_) in segs.get((ci, cj), ()):
+                        if lj != li or (len(a_) > 2 and abs(a_[2] - z) >= layer):
+                            continue
+                        ex, ey = b_[0] - a_[0], b_[1] - a_[1]
+                        l2 = max(ex * ex + ey * ey, 1e-12)
+                        t = min(1.0, max(0.0, ((x - a_[0]) * ex + (y - a_[1]) * ey) / l2))
+                        rx, ry = x - a_[0], y - a_[1]
+                        d = math.hypot(rx - t * ex, ry - t * ey)
+                        if d < best[0]:
+                            best = (d, math.copysign(d, ex * ry - ey * rx) if (ex * ry - ey * rx) != 0 else 0.0)
+            if best[0] < 1e17:
+                keep *= 1.0 - interp(us, Dv, best[1])
+        return 1.0 - keep
+
+    return darkness
 
 
 def make_darkness(line_pts: list, closed: bool, w: dict, layer: float, amp: float):
@@ -216,7 +338,12 @@ def kerb_rows(proj: Path, cfg: dict, decl: dict, kd: dict, mats: list, p: dict, 
 
     # every shipped kerb triangle: one level at all three corners, inside a declared face of that level; every declared
     # face's level the gate's own reading of the declared line's rubber at its centroid (within half a level + 5 %)
-    darkness = make_darkness(line_pts, bool(cfg.get("loop", True)), w, float(decl["spec"].get("layer_m", 10.0)), amp)
+    if kd.get("rubber") == "photo":
+        profs = [json.loads(lf.read_text(encoding="utf-8"))["photo_rubber"]
+                 for lf in sorted((proj / "data").glob("road_wear.line.*.json"))]
+        darkness = make_photo_darkness(line_pts, bool(cfg.get("loop", True)), profs, float(decl["spec"].get("layer_m", 10.0)))
+    else:
+        darkness = make_darkness(line_pts, bool(cfg.get("loop", True)), w, float(decl["spec"].get("layer_m", 10.0)), amp)
 
     faces = []
     fh = {}
@@ -547,6 +674,69 @@ def main(argv=None) -> int:
                           "profile": {round(k * 0.25, 2): round(mean[k], 4) for k in sorted(mean)}}
     else:
         rows["rubber"] = {"pass": False, "stations": nst, "note": "too few full cross-sections on the built road"}
+    if spec.get("rubber", "drawn") == "photo":
+        # no drawn band is declared: the drawn rubber row does not judge this build (it would demand one)
+        rows.pop("rubber", None)
+        if not aer:
+            rows["photo_rubber"] = {"pass": False, "note": "road_wear.rubber 'photo' without an aerial"}
+        else:
+            ref_l = (decl["stats"].get("aerial") or {}).get("lit_median_lum")
+            road_hsh = {}
+            for ti in road_tris:
+                (P0, P1, P2), _uv = tris[ti]
+                xs = (P0[0], P1[0], P2[0]); ys = (P0[1], P1[1], P2[1])
+                for i in range(int(math.floor(min(xs) / cell)), int(math.floor(max(xs) / cell)) + 1):
+                    for j in range(int(math.floor(min(ys) / cell)), int(math.floor(max(ys) / cell)) + 1):
+                        road_hsh.setdefault((i, j), []).append(ti)
+
+            def in_road(x, y):
+                for ti in road_hsh.get((int(math.floor(x / cell)), int(math.floor(y / cell))), ()):
+                    (P0, P1, P2), _uv = tris[ti]
+                    d = (P1[1] - P2[1]) * (P0[0] - P2[0]) + (P2[0] - P1[0]) * (P0[1] - P2[1])
+                    if abs(d) < 1e-12:
+                        continue
+                    l1 = ((P1[1] - P2[1]) * (x - P2[0]) + (P2[0] - P1[0]) * (y - P2[1])) / d
+                    l2 = ((P2[1] - P0[1]) * (x - P2[0]) + (P0[0] - P2[0]) * (y - P2[1])) / d
+                    if l1 >= -1e-9 and l2 >= -1e-9 and 1 - l1 - l2 >= -1e-9:
+                        return True
+                return False
+            res = []
+            for lf in sorted((proj / "data").glob("road_wear.line.*.json")):
+                Ld = json.loads(lf.read_text(encoding="utf-8"))
+                dp = Ld.get("photo_rubber")
+                if not dp:
+                    res.append({"layout": Ld.get("layout"), "pass": False, "note": "no declared photo_rubber"}); continue
+                ph = dp["params"]
+                apx_m = max(1e-3, min(float(v) for v in (decl["stats"]["aerial"].get("aerial_px_m") or [0.3])))
+
+                def value_at(x, y, ph=ph):
+                    """the shipped atlas at (x, y), or None where the bake measured nothing: off the lit asphalt (the
+                    aerial's shadow / paint rule, grown one aerial pixel) or within interior_m of the built road's edge"""
+                    for dx, dy in ((0, 0), (ph["interior_m"], 0), (-ph["interior_m"], 0), (0, ph["interior_m"]),
+                                   (0, -ph["interior_m"])):
+                        if not in_road(x + dx, y + dy):
+                            return None
+                    for dx in (-apx_m, 0.0, apx_m):
+                        for dy in (-apx_m, 0.0, apx_m):
+                            al = aerial_lum(x + dx, y + dy)
+                            if al is None or ref_l is None:
+                                return None
+                            if (al[0] < spec["tone"]["shadow_lum"] * ref_l and al[1] > spec["tone"]["shadow_blue"]) or \
+                                    al[0] > spec["tone"]["paint_lum"] * ref_l:
+                                return None
+                    uv = uv_at(x, y)
+                    return None if uv is None else atlas_lum(uv[0], uv[1], flip)
+                got = measure_photo(Ld["points"], Ld["centre"], Ld["centre_normals"], bool(cfg.get("loop", True)),
+                                    value_at, ph)
+                ok_ = (got["stations"] >= 10 and dp["depth"] >= GATE["photo_min_depth"] and
+                       abs(got["depth"] - dp["depth"]) <= GATE["photo_depth_tol"] and
+                       abs(got["centroid_m"] - dp["centroid_m"]) <= GATE["photo_centroid_tol_m"])
+                res.append({"layout": Ld.get("layout"), "pass": ok_, "declared_depth": dp["depth"],
+                            "shipped_depth": got["depth"], "declared_centroid_m": dp["centroid_m"],
+                            "shipped_centroid_m": got["centroid_m"], "stations": got["stations"],
+                            "samples": got["samples"]})
+            rows["photo_rubber"] = {"pass": bool(res) and all(r_["pass"] for r_ in res), "lines": res,
+                                    "drawn_band": "none (road_wear.rubber photo)"}
     if kdecl:
         rows.update(kerb_rows(proj, cfg, decl, kdecl, mats, p, line_pts, w))
     ok = all(r["pass"] for r in rows.values())

@@ -243,7 +243,7 @@ def register(aerial: "Aerial", grid: Grid, road: np.ndarray, reach_m: float = 3.
 
 
 # --- the tone off the aerial ------------------------------------------------------------------------------------------
-def tone_field(aerial: Aerial, grid: Grid, road: np.ndarray, spec_tone: dict) -> tuple[np.ndarray, dict]:
+def tone_field(aerial: Aerial, grid: Grid, road: np.ndarray, spec_tone: dict, return_lit: bool = False):
     """float32 [ny, nx]: the aerial's luminance over the lit-asphalt median, on the grid; shadow and paint texels filled
     from the lit asphalt within fill_m, everything off the road filled outward from the road (the edge strip, the
     margins). Returns (tone, stats)."""
@@ -283,6 +283,8 @@ def tone_field(aerial: Aerial, grid: Grid, road: np.ndarray, spec_tone: dict) ->
              "paint_pct": round(100.0 * paint.sum() / max(1, valid.sum()), 2),
              "tone_p01_p50_p99": [round(float(v), 4) for v in np.percentile(out[road], [1, 50, 99])],
              "aerial_px_m": [round(aerial.px_m[0], 3), round(aerial.px_m[1], 3)]}
+    if return_lit:
+        return out, stats, lit
     return out, stats
 
 
@@ -474,6 +476,100 @@ def wear_at(X: np.ndarray, Y: np.ndarray, Z: float | None, line: dict, w: dict, 
     D = w["amplitude"] * best_i * tyre_profile(best_d, w["track_m"], w["spread_m"])
     D[best_d > reach] = 0.0
     return D.reshape(X.shape).astype(np.float32)
+
+
+# --- the photo's own rubber (opt-in road_wear.rubber "photo"; High Plains 0.1.7) --------------------------------------
+# Kevin, 2026-11-10: "Use the photo's rubber". Where the aerial resolves the rubber (High Plains' NAIP 2023 at 0.3 m: the
+# lit asphalt within 0.5 m of the model line reads 0.915 of the lit median, the same distance from its mirror across the
+# centreline 1.075), the asphalt gets NO drawn band: the photo's tone carries it. The line is kept to measure that
+# darkening (the line against its mirror, which takes out the road's own across-the-road shading) and to say which kerb
+# faces it clips; the kerbs, whose paint is synthetic, get the measured profile.
+PHOTO = {
+    "a_min_m": 2.0,      # [invented] stations where the line runs at least this far off the centre: line and mirror apart
+    "interior_m": 1.5,   # [invented] samples at least this far inside the built road (edge paint, kerbs and verge out)
+    "u_max_m": 4.0,      # [invented] the measured profile's half width across the line: on High Plains it is still 0.05-0.09
+                         # at 2.5 m (a kerb level jump of ~8 there) and ~0.02 by 3-4 m (naip_read.log)
+    "du_m": 0.25,        # the profile's step (a texel at 0.25 m; finer than High Plains' 0.3 m pixel needs no more)
+    "band_m": 0.75,      # the depth is read over |u| <= this (the drawn mode's rubber row reads the same band)
+}
+
+
+def nearest_station(P: np.ndarray, C: np.ndarray) -> np.ndarray:
+    """Index of the nearest centreline station (2D) for every point."""
+    out = np.empty(len(P), dtype=np.int64)
+    for s0 in range(0, len(P), 256):
+        d = np.sum((P[s0:s0 + 256, None, :2] - C[None, :, :2]) ** 2, axis=2)
+        out[s0:s0 + 256] = np.argmin(d, axis=1)
+    return out
+
+
+def reflect(Q: np.ndarray, C: np.ndarray, nC: np.ndarray, k: np.ndarray) -> np.ndarray:
+    """Q (... x 2) reflected across the centreline at station k (its point C[k], left normal nC[k])."""
+    q = Q - C[k, :2]
+    return C[k, :2] + q - 2.0 * np.sum(q * nC[k], axis=-1, keepdims=True) * nC[k]
+
+
+def photo_rubber(tone_at, P: np.ndarray, C: np.ndarray, nC: np.ndarray, closed: bool = True, ph: dict | None = None) -> dict:
+    """The photo's darkening across the line, measured against its mirror: at every line station at least a_min_m off the
+    centre, the tone at u along the line's left normal and at the reflection of that point across the centreline;
+    D(u) = 1 - mean tone on the line side / mean tone on the mirror side (pooled over the stations where both are usable).
+    ``tone_at(x, y)`` -> tone, NaN where unusable (not lit asphalt at least interior_m inside the road).
+    Returns {"u", "D", "depth" (pooled over |u| <= band_m), "centroid_m" (of max(D, 0) over the profile), "peak",
+    "stations", "samples"}."""
+    ph = dict(PHOTO, **(ph or {}))
+    P = np.asarray(P, dtype=np.float64)
+    k = nearest_station(P, C)
+    a = np.sum((P[:, :2] - C[k, :2]) * nC[k], axis=1)
+    nl = left_normals(P, closed)
+    sel = np.where(np.abs(a) >= ph["a_min_m"])[0]
+    us = np.round(np.arange(-ph["u_max_m"], ph["u_max_m"] + 1e-9, ph["du_m"]), 6)
+    Q = P[sel, None, :2] + us[None, :, None] * nl[sel, None, :]
+    M = reflect(Q, C, nC, np.repeat(k[sel, None], len(us), axis=1))
+    tl = np.asarray(tone_at(Q[..., 0], Q[..., 1]), dtype=np.float64)
+    tm = np.asarray(tone_at(M[..., 0], M[..., 1]), dtype=np.float64)
+    ok = np.isfinite(tl) & np.isfinite(tm)
+    sl = np.where(ok, tl, 0).sum(0); sm = np.where(ok, tm, 0).sum(0); n = ok.sum(0)
+    with np.errstate(invalid="ignore", divide="ignore"):
+        D = np.where(n > 0, 1.0 - sl / np.maximum(sm, 1e-12), np.nan)
+    band = np.abs(us) <= ph["band_m"] + 1e-9
+    depth = float(1.0 - sl[band].sum() / max(1e-12, sm[band].sum())) if n[band].sum() else float("nan")
+    Dp = np.where(np.isfinite(D), np.maximum(D, 0.0), 0.0)
+    cen = float((us * Dp).sum() / Dp.sum()) if Dp.sum() > 0 else float("nan")
+    return {"u": us.tolist(), "D": [None if not np.isfinite(v) else round(float(v), 5) for v in D],
+            "depth": round(depth, 5), "centroid_m": round(cen, 4), "peak": round(float(np.nanmax(D)) if np.isfinite(D).any() else 0.0, 5),
+            "stations": int(len(sel)), "samples": int(ok.sum()), "params": ph}
+
+
+def photo_darkness_at(X: np.ndarray, Y: np.ndarray, Z: float | None, line: dict, prof: dict) -> np.ndarray:
+    """The measured profile laid on world points: each point's signed offset u from its nearest line segment (left of the
+    direction of travel positive, as left_normals), D(u) interpolated from the profile, 0 outside it and where D < 0."""
+    P = line["P"]
+    pts = np.stack([np.ravel(X), np.ravel(Y)], axis=1)
+    A = P[:, :2]; B = np.roll(P[:, :2], -1, axis=0) if line["closed"] else P[1:, :2]
+    if not line["closed"]:
+        A = A[:-1]
+    us = np.array(prof["u"], dtype=np.float64)
+    Dv = np.array([0.0 if v is None else max(0.0, float(v)) for v in prof["D"]])
+    near = np.ones(len(A), dtype=bool)
+    if Z is not None and P.shape[1] > 2:
+        near &= np.abs(P[:len(A), 2] - Z) < line.get("layer_m", 10.0)
+    A = A[near]; B = B[near]
+    AB = B - A
+    L2 = np.maximum(np.sum(AB * AB, axis=1), 1e-12)
+    best_d = np.full(len(pts), np.inf); best_u = np.zeros(len(pts))
+    for s0 in range(0, len(A), 64):
+        a = A[s0:s0 + 64]; ab = AB[s0:s0 + 64]; l2 = L2[s0:s0 + 64]
+        rel = pts[:, None, :] - a[None, :, :]
+        tt = np.clip(np.sum(rel * ab[None], axis=2) / l2[None], 0.0, 1.0)
+        d = np.linalg.norm(rel - tt[..., None] * ab[None], axis=2)
+        kk = np.argmin(d, axis=1); r = np.arange(len(pts))
+        dk = d[r, kk]
+        cross = ab[kk, 0] * rel[r, kk, 1] - ab[kk, 1] * rel[r, kk, 0]
+        better = dk < best_d
+        best_d = np.where(better, dk, best_d); best_u = np.where(better, np.sign(cross) * dk, best_u)
+    out = np.interp(best_u, us, Dv, left=0.0, right=0.0)
+    out[np.abs(best_u) > us.max() + 1e-9] = 0.0
+    return out.reshape(np.shape(X))
 
 
 # --- the atlas --------------------------------------------------------------------------------------------------------

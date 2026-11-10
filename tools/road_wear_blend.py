@@ -16,6 +16,10 @@ WHAT IT DOES, in order, on the scene engine-july's prep saved (blender/<slug>.bl
 4. the racing line per layout: a recorded fast_lane.ai named in ``road_wear.lines`` when it exists, else the
    minimum-curvature line inside the built road's edges [model], with the rubber intensity a friction-limited speed model
    gives it [model];
+4b. (opt-in road_wear.rubber "photo", High Plains 0.1.7; Kevin 2026-11-10 "Use the photo's rubber") the photo's own
+   darkening across each line, measured against its mirror across the centreline (scripts/aerial/road_wear.photo_rubber,
+   on lit asphalt at least PHOTO interior_m inside the built road), written to the line's record; the asphalt then gets
+   NO drawn band (wear = 0 below: the tone carries it) and the kerbs (7b) take the measured profile, not the drawn model;
 5. the macro atlas baked tile by tile from the world (tone x (1 - wear), x m0), the detail textures (each surface's own
    stock diffuse / m0 and its stock normal), a flat normal — all PNG, power of two;
 6. every face's UVs rewritten into its cell's tile (detail on today's 4 m grid and phase: detailUVMultiplier);
@@ -201,7 +205,16 @@ def _kerbs(proj: Path, eng: Path | None, ksp: dict, spec: dict, lines: list, w: 
     copy of the kerb's own paint, the material row = the exporter's stock row with txDiffuse -> the levelled paint. No
     vertex moves; v is untouched. Returns the record for data/road_wear.json, or None on a FATAL (printed)."""
     pre = ksp["prefix"]; L = ksp["levels"]
-    amp = float(w["amplitude"])
+    photo = spec.get("rubber", "drawn") == "photo"
+    if photo:
+        # the photo's measured profile (the line against its mirror), its peak the top level: no drawn amplitude, spread
+        # or base share
+        amp = max(float(ln["photo"]["peak"]) for ln in lines)
+        if not amp > 0:
+            print(f"[road_wear] FATAL: road_wear.rubber 'photo' but the photo shows no rubber on the line (peak {amp})")
+            return None
+    else:
+        amp = float(w["amplitude"])
     step = rw.kerb_step(amp, L)
     obs = sorted([o for o in bpy.data.objects if o.type == "MESH" and o.name.upper().startswith(pre)], key=lambda o: o.name)
     if not obs:
@@ -231,7 +244,10 @@ def _kerbs(proj: Path, eng: Path | None, ksp: dict, spec: dict, lines: list, w: 
         keep = np.ones(len(cen))
         Z = float(np.mean(cen[:, 2]))
         for ln in lines:
-            keep *= 1.0 - rw.wear_at(cen[:, 0], cen[:, 1], Z, ln, w, reach).astype(np.float64)
+            if photo:
+                keep *= 1.0 - rw.photo_darkness_at(cen[:, 0], cen[:, 1], Z, ln, ln["photo"]).astype(np.float64)
+            else:
+                keep *= 1.0 - rw.wear_at(cen[:, 0], cen[:, 1], Z, ln, w, reach).astype(np.float64)
         dark = 1.0 - keep
         lev = rw.kerb_levels(dark, step, L)
         clipped += int(np.sum(np.round(dark / step) > L - 1))
@@ -288,7 +304,7 @@ def _kerbs(proj: Path, eng: Path | None, ksp: dict, spec: dict, lines: list, w: 
     srcs = {Path(k).name: {"atlas": v[0].name, "png_bytes": v[2], "source": k} for k, v in atlases.items()}
     print(f"[road_wear] kerbs: {len(obs)} meshes, {n_faces} faces, {touched} darkened (levels {L}, step {step:.4f}; per "
           f"level {hist.tolist()}); clipped {clipped}; paint {sorted(srcs)} -> {[v['atlas'] for v in srcs.values()]}")
-    return {"spec": ksp, "levels": L, "step": step, "amplitude": amp, "objects": sorted(pos0), "positions_md5": h0,
+    return {"spec": ksp, "levels": L, "step": step, "amplitude": amp, "rubber": "photo" if photo else "drawn", "objects": sorted(pos0), "positions_md5": h0,
             "materials": sorted(m for m in rows if rows[m].get("stock") is not None), "paint": srcs,
             "faces_total": n_faces, "faces_darkened": touched, "faces_clipped": clipped, "per_level": hist.tolist(),
             "darkest": round(float(max(f["darkness"] for fs in faces_rec.values() for f in fs)), 5),
@@ -347,13 +363,23 @@ def main() -> int:
           f"({time.time() - t0:.0f} s)")
     aer_spec = spec.get("aerial")
     stats = {"plan": plan, "furthest_vertex_m": round(over, 3)}
+    # road_wear.rubber (opt-in, Kevin 2026-11-10 "Use the photo's rubber"): "photo" = the aerial carries the rubber, no
+    # drawn band on the asphalt; absent / "drawn" = Milford's drawn band, unchanged
+    mode = spec.get("rubber", "drawn")
+    if mode not in ("drawn", "photo"):
+        print(f"[road_wear] FATAL: road_wear.rubber {mode!r}: 'drawn' or 'photo'")
+        return 1
+    if mode == "photo" and not aer_spec:
+        print("[road_wear] FATAL: road_wear.rubber 'photo' needs road_wear.aerial")
+        return 1
+    lit = None
     if aer_spec:
         img = _image_pixels(proj / aer_spec["image"])
         o = json.loads((proj / "data" / "centerline.local.json").read_text(encoding="utf-8"))["origin"]
         aer = rw.Aerial(img, aer_spec["bbox_lonlat"], (o["lon"], o["lat"]))
         reg = rw.register(aer, grid, road)
         aer.dx, aer.dy = reg["dx_m"], reg["dy_m"]
-        tone, tstats = rw.tone_field(aer, grid, road, spec["tone"])
+        tone, tstats, lit = rw.tone_field(aer, grid, road, spec["tone"], return_lit=True)
         stats["aerial"] = {"image": aer_spec["image"], "registration": reg, **tstats}
         print(f"[road_wear] aerial registered to the built road: shift ({reg['dx_m']:+.2f}, {reg['dy_m']:+.2f}) m, contrast "
               f"{reg['contrast_at_0']:+.4f} -> {reg['contrast_best']:+.4f}; shadow {tstats['shadow_pct']} %, paint "
@@ -371,6 +397,24 @@ def main() -> int:
     closed = bool(cfg.get("loop", True))
     Wc = Wc[:len(Pc)]
     lines = []
+    if mode == "photo":
+        # the measurement's frame: the centreline (2 m) and its left normals; the photo's lit asphalt at least interior_m
+        # inside the BUILT road (edge paint, kerbs and verge out)
+        ph = dict(rw.PHOTO, **{k: v for k, v in (spec.get("photo") or {}).items() if not str(k).startswith("_")})
+        Cc, _e, _L = rw.resample(Pc, 2.0, closed)
+        nCc = rw.left_normals(Cc, closed)
+        ri = max(1, int(round(ph["interior_m"] / tex)))
+        interior = road & (rw.box_mean(road.astype(np.float64), np.ones(road.shape), ri) >= 1.0 - 1e-9)
+        usable = interior & lit
+
+        def tone_at(x, y):
+            i, j = grid.index(x, y)
+            ok = (i >= 0) & (j >= 0) & (i < grid.nx) & (j < grid.ny)
+            out = np.full(np.shape(x), np.nan)
+            ok2 = ok.copy()
+            ok2[ok] = usable[j[ok], i[ok]]
+            out[ok2] = tone[j[ok2], i[ok2]]
+            return out
     line_specs = spec.get("lines") or [{"layout": L.get("id", "main")} for L in (cfg.get("layouts") or [{"id": "main"}])]
     for ls in line_specs:
         ai = proj / ls["ai"] if ls.get("ai") else None
@@ -391,12 +435,20 @@ def main() -> int:
             src = "model: minimum curvature inside the built edges" + (" (recorded line named but missing: "
                                                                       f"{ls['ai']})" if ai is not None else "")
         I, sp = rw.rubber_intensity(P, 2.0, w, closed)
+        extra = {}
+        if mode == "photo":
+            prof = rw.photo_rubber(tone_at, P, Cc, nCc, closed, ph)
+            extra = {"photo_rubber": prof, "centre": np.round(Cc[:, :2], 3).tolist(),
+                     "centre_normals": np.round(nCc, 6).tolist()}
+            print(f"[road_wear] line {ls.get('layout')}: the photo's rubber against the mirror: depth {prof['depth']} over "
+                  f"|u| <= {ph['band_m']} m, peak {prof['peak']}, centroid {prof['centroid_m']:+.3f} m ({prof['stations']} "
+                  f"stations, {prof['samples']} samples)")
         lines.append({"P": P, "I": I, "closed": closed, "layer_m": spec["layer_m"], "layout": ls.get("layout"),
-                      "source": src, "lap_m": round(L, 1), **sp})
+                      "source": src, "lap_m": round(L, 1), **sp, **({"photo": extra["photo_rubber"]} if extra else {})})
         out = proj / "data" / f"road_wear.line.{ls.get('layout', 'main')}.json"
         out.write_text(json.dumps({"layout": ls.get("layout"), "source": src, "frame": "Blender (x = E, y = N, height)",
                                    "spacing_m": 2.0, "points": np.round(P, 3).tolist(), "rubber": np.round(I, 4).tolist(),
-                                   **sp}, indent=0), encoding="utf-8", newline="\n")
+                                   **sp, **extra}, indent=0), encoding="utf-8", newline="\n")
         print(f"[road_wear] line {ls.get('layout')}: {src}; {L:.0f} m, model lap {sp['lap_s_model']} s "
               f"({sp['v_min_kmh']}-{sp['v_max_kmh']} km/h) -> {out.name}")
 
@@ -413,7 +465,7 @@ def main() -> int:
         T = tone[gj0:gj0 + Pp, gi0:gi0 + Pp]
         X, Y = grid.centres(gi0, gj0, Pp, Pp)
         keep = np.ones_like(T)
-        for ln in lines:
+        for ln in (lines if mode == "drawn" else ()):        # photo: the tone already carries the rubber, none drawn
             keep *= 1.0 - rw.wear_at(X, Y, k[2] * spec["layer_m"], ln, w, reach)
         dmax = max(dmax, float(1 - keep.min()))
         macro = np.clip(m0 * T * keep, 0.0, 1.0)

@@ -1,7 +1,7 @@
 ---
 id: 0084
 title: "road textures need wear where tyres run" — one cracked-asphalt picture on a 4 m world grid; the wear repeats and ignores the lanes. Wear on the real wheel paths (streets) and the racing line (tracks, kerbs too), and the whole road sampled from the aerial
-status: open — investigated 2026-11-07; pilot built 2026-11-09 (Milford 0.1.7, Mac, every gate green), integrated into Milford 0.1.9 the same day (ledger 0082); Milford 0.1.11 installed with it; High Plains 0.1.7 inputs + kerb rubber 2026-11-10 (built on the PC, runbook 0084-2); Kevin's drive closes it
+status: open — investigated 2026-11-07; pilot built 2026-11-09 (Milford 0.1.7, Mac, every gate green), integrated into Milford 0.1.9 the same day (ledger 0082); Milford 0.1.11 installed with it; High Plains 0.1.7 inputs + kerb rubber 2026-11-10, the photo's rubber by Kevin's word ("Use the photo's rubber"; built on the PC, runbook 0084-2); Kevin's drive closes it
 scope: every track (the LM v4 engine's road material); proof cases chosen by the investigation
 layer: engine
 train: -
@@ -519,13 +519,50 @@ least 1.5 m inside the edges, at stations where the model line runs 2 m or more 
   - the lateral shifts run to the search bounds (p5 / p95 -2.5 / +2.5 m) on edge paint and patches;
   - its A is 0.195.
   - It is not in the engine.
-- What 0.1.7 ships: **Milford's numbers unchanged** (0.22, spread 0.70, base 0.35). It is the feature as Milford was built,
+- What 0.1.7 first shipped, now superseded by the next section: **Milford's numbers unchanged** (0.22, spread 0.70, base 0.35). It is the feature as Milford was built,
   rolled out.
-- **Kevin's call** after the PC build:
+- **Kevin's call** (made the same day: (b), "Use the photo's rubber"; see the next section):
   - (a) keep 0.22;
   - (b) draw nothing on the asphalt (the photo is the wear) and give the kerbs the measured 0.12. This needs the rubber row
     to judge a photo-borne band, which is a gate change for Kevin's word, not a loosening slipped in;
   - (c) record a racing line in CSP (runbook step 9), which puts the drawn band where cars really run.
+
+### High Plains 0.1.7: the photo's rubber (Kevin's call, 2026-11-10)
+
+Kevin, verbatim: **"Use the photo's rubber"**. That is option (b) above, and it is what 0.1.7 now ships. It replaces
+"Milford's numbers unchanged" for this track.
+
+- **`road_wear.rubber: "photo"`** (opt-in; absent or "drawn" is Milford's mode, unchanged).
+  - The asphalt gets **no drawn band**: the photo's tone carries the rubber.
+  - The bake measures the photo's darkening across each line against its mirror across the centreline
+    (`road_wear.photo_rubber`, on lit asphalt at least 1.5 m inside the built road, stations where the line runs at least
+    2 m off the centre) and writes it to `data/road_wear.line.<layout>.json`.
+  - The min-curvature line [model] is kept only to measure that and to say which kerb faces it clips.
+- **The kerbs** take the measured profile D(u) at each face's signed offset from the line, through the 16 levels, whose top
+  is the measured peak. The drawn model's 0.22 / 0.70 m / 0.35 and the speed weighting are not used here.
+- **The gate**:
+  - The drawn `rubber` row is not run in photo mode; it would demand a band that is not drawn.
+  - The new `photo_rubber` row judges the shipped atlas's line-vs-mirror darkening against the bake's measurement on the
+    photo: depth within 0.02, centroid within 0.15 m, the photo's depth at least 0.03 (fleet/GATES-CHANGELOG.md
+    2026-11-10 later, every number marked).
+  - No threshold of the drawn mode moved.
+- **Measured on High Plains**, Mac, on the centreline corridor (`source/road_wear/mac_read/photo_sim.log`):
+  - The photo's depth is **0.146** (|u| <= 0.75 m), its peak **0.156**, its centroid +0.42 m (642 stations).
+  - The simulated shipped atlas reads 0.141 / +0.420 m, so photo_rubber **PASSES**.
+  - The drawn 0.22 still fails the old row the same way: centroid -0.175 m (`gate_sim.log`, re-run).
+  - The kerbs' top level is 0.156, in steps of 0.0104.
+  - The profile is skewed (D 0.04 at u = +4 m, 0 by -3.5 m), so a kerb face 4 m right of the line steps down about 4
+    levels at the profile's edge.
+- **Which number.** The brief quoted 0.120. That is the regression of the photo on the model line's tyre profile
+  against 3-4 m out (`fit_sim.log`). The line-against-mirror measure that was asked for reads 0.146 / 0.156, and that is
+  what the build uses. The mirror takes out the road's own across-the-road shading but keeps any off-line dust (the outside
+  of a corner reads lighter), so it reads higher than the regression.
+- **Default for the other 0.3 m circuits.** Photo mode is the default when Pueblo, Aspen, Grand Junction and Pikes Peak
+  (NAIP 2023 0.3 m on disk) get road wear, each checked by the same `photo_min_depth`.
+  - Milford keeps its drawn band: at 0.5 m its photo shows under 1 %.
+  - Lake Murray names nothing.
+- Unit tests: `tests/aerial/test_road_wear_photo.py` (6). Lake Murray as before (`mac_read/lm_checks.log`; this pass
+  touches neither its tools nor its tree).
 
 ### Lake Murray unchanged (Mac, `source/road_wear/mac_read/lm_checks.log`)
 
@@ -589,13 +626,15 @@ Downloads still need his word, and none is needed here.
      - `[road_wear] ... atlas 4096 px at 0.2 m` (8192 is possible if the built road takes more cells: record it);
      - `aerial registered to the built road: shift (...)`;
      - `line full: model: minimum curvature inside the built edges`;
-     - `kerbs: 20 meshes, ... darkened`;
+     - `line full: the photo's rubber against the mirror: depth ~0.15 ...` (the Mac's estimate on the centreline corridor:
+       0.146, peak 0.156, centroid +0.42 m; the built road may differ a little: record it);
+     - `kerbs: 20 meshes, ... darkened (levels 16, step ~0.0104 ...)`;
      - `[export] road wear: [...]` naming 1ROAD_road_mat, 1KERB_sidewalk_mat and the 20 `1KERB_circuit_<k>_mat`;
-     - every `[road_wear_check]` row PASS: materials, density, no_repeat, detail_phase, tone, rubber, kerb_materials,
-       kerb_paint, kerb_levels;
+     - every `[road_wear_check]` row PASS: materials, density, no_repeat, detail_phase, tone, **photo_rubber** (in place of
+       rubber: photo mode draws no band), kerb_materials, kerb_paint, kerb_levels;
      - SHIP OK.
-   - **If any row is red** (the Mac's simulation names `rubber`'s centroid as the likeliest, about -0.18 m against 0.15):
-     stop. Nothing is changed, loosened or forced. Commit the log and every `data/*.json` under `source/road_wear/pc_017/ref/`
+   - **If any row is red**, stop. The Mac's photo-mode simulation passes photo_rubber by 0.006 in depth and 0.002 m in
+     centroid; the drawn `rubber` row is not run in photo mode. Nothing is changed, loosened or forced. Commit the log and every `data/*.json` under `source/road_wear/pc_017/ref/`
      and report the row.
 5. **Rehearsal** from a second EMPTY workshop, `D:/k10-scratch/hp_rw_reh`, with the same command and the same head.
 6. **Compare every row, reference against rehearsal.**
@@ -642,9 +681,10 @@ Downloads still need his word, and none is needed here.
      - the cracked grain as crisp as 0.1.6 at car height (missing = the macro's alpha reads the other way: ledger 0084
        "Unverified");
      - the road neither black nor see-through;
-     - the darker band on the line through the corners, and **whether it reads twice as dark as real** (the finding above);
-     - the kerbs where the line rides them darker than the ends of the same run, their paint otherwise unchanged;
+     - the photo's own rubber (no drawn band): darker where cars really run, about 15 % against the off-line asphalt;
+     - the kerbs where the line rides them darker (up to the measured ~15 %) than the ends of the same run, their paint
+       otherwise unchanged;
      - no 4 m grid in the tone.
    - **Record a racing line** during the drive (CSP's AI recorder, the full layout). Copy its `fast_lane.ai` to
      `tracks/high-plains-lm/source/road_wear/fast_lane.full.ai`. The next build's rubber then follows where the car really
-     ran, and that answers this section's centroid question.
+     ran: the kerbs' faces are then picked by the real line, and the photo's rubber is measured against it.

@@ -14,6 +14,63 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
+## 2026-11-10 (later) — NEW ROW (opt-in): `photo_rubber`, the photo's own rubber judged in place of a drawn band (ledger 0084 "High Plains 0.1.7: the photo's rubber"; no threshold of the drawn mode moved)
+
+**Why.** Kevin, 2026-11-10: "Use the photo's rubber". At 0.3 m High Plains' NAIP resolves the rubber. Lit asphalt within
+0.5 m of the model line reads 0.915 of the lit median, and the same distance from its mirror across the centreline reads
+1.075. So with `road_wear.rubber` "photo" the bake draws **no band on the asphalt** and the photo's tone carries it. The
+drawn mode's `rubber` row would then demand a band that is not declared (want 0 on the drawn amplitude). Simulated on High
+Plains it also fails with the drawn 0.22: centroid -0.175 m against 0.15, unchanged. That row is **not run in photo mode**,
+and this one takes its place.
+
+**What.** For each line, `tools/road_wear_check.measure_photo` restates `scripts/aerial/road_wear.photo_rubber` without
+numpy, on the **shipped** atlas:
+
+- Stations: those at least `a_min_m` off the centre.
+- At u along the line's left normal, the atlas is sampled on the line side and at the reflection of that point across the
+  declared centreline. Samples count only on lit asphalt (the aerial's shadow / paint rule, grown one pixel) at least
+  `interior_m` inside the built 1ROAD.
+- D(u) = 1 - sum(line) / sum(mirror).
+- Read from that: the depth over |u| <= `band_m` and the centroid of max(D, 0).
+
+PASS when all of these hold:
+
+- at least 10 stations;
+- the bake's depth measured on the photo is >= `photo_min_depth`;
+- the shipped depth is within `photo_depth_tol` of the bake's;
+- the shipped centroid is within `photo_centroid_tol_m` of the bake's.
+
+The new numbers:
+
+| name | value | status |
+|---|---|---|
+| `photo_min_depth` | 0.03 | ⚠ [invented]: the photo must resolve the rubber; High Plains 0.146 measured, Milford's 0.5 m <= 0.007 |
+| `photo_depth_tol` | 0.02 | ⚠ [invented]: 8-bit rounding and the lit mask's edges, measured at 0.006 in the simulation |
+| `photo_centroid_tol_m` | 0.15 m | ⚠ [invented]: the same distance as `line_offset_max_m` |
+| `PHOTO.a_min_m` | 2.0 m | ⚠ [invented] |
+| `PHOTO.interior_m` | 1.5 m | ⚠ [invented] |
+| `PHOTO.u_max_m` | 4.0 m | ⚠ [invented]: the profile is still 0.04-0.09 at 2.5 m and ~0.02-0.04 by 4 m (`naip_read.log`) |
+| `PHOTO.du_m` | 0.25 m | [the profile's step] |
+| `PHOTO.band_m` | 0.75 m | [the drawn rubber row's own band] |
+
+**Measured (High Plains, Mac, on the centreline corridor; `tracks/high-plains-lm/source/road_wear/mac_read/photo_sim.log`):**
+
+- On the photo: depth 0.146, peak 0.156, centroid +0.422 m (642 stations, 9,009 samples).
+- On the simulated shipped atlas (m0 x tone, 8 bit, no band): depth 0.141, centroid +0.420 m. **PASS** (0.006 / 0.002 m).
+- `gate_sim.log`, re-run: the drawn mode at 0.22 is unchanged, centroid -0.175 m, FAIL.
+- The kerb rows in photo mode read the measured profile at each face's signed offset (`make_photo_darkness`, the bake's
+  `photo_darkness_at` restated). The 16 levels' top is the measured peak (0.156 here), not the drawn 0.22. `kerb_level_tol`
+  is unchanged.
+
+**Tests.** `tests/aerial/test_road_wear_photo.py`, 6 tests:
+
+- the mirror measures a synthetic band and cancels a symmetric crown;
+- a band moved 0.5 m reads +0.35-0.65;
+- no band reads under `photo_min_depth`;
+- the gate's restatement equals the bake to 1e-6;
+- the profile on kerb faces is signed and equal in both;
+- the kerb levels take the measured peak.
+
 ## 2026-11-10 — `road_wear` on High Plains 0.1.7, and three kerb rows (ledger 0084 "High Plains 0.1.7"; no threshold moved or loosened, no bypass)
 
 **Brought over from the Milford branches** (no Milford track file): the `road_wear` gate below as it stands at

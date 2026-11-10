@@ -1210,7 +1210,10 @@ echo "layouts: $LAYOUT_IDS   (race furniture: $RACE_IDS; street: $STREET_IDS; st
 # race.laps.<lap>; none on any config today), whether any race layout still drives the mainline, and per race layout
 # its COMMON race kn5 (RK) and its declaration (BB) — scripts/geometry/race_lap.py. With no lap declared: LAP_IDS
 # empty, HAS_MAIN 1, RK = <slug>_race.kn5 and BB = barrier_bands.json for every race layout — every step as before.
-LAP_IDS=$(pyq "import json,sys; from scripts.geometry import race_lap as L; print(' '.join(L.lap_ids(json.load(open(sys.argv[1],encoding='utf-8')))))" "$PROJ/track.config.json")
+# the laps that carry a common race set: those a FURNISHED race layout names (race_lap.furnished_lap_ids; a bare lap, Pikes
+# Peak's road course and infield, is the road's own lanes: split_exports writes it no loop_race_<lap>.blend and nothing
+# below has a curb strip to verify, export or sync for it; ledger 0085). Lake Murray's laps are all furnished: unchanged
+LAP_IDS=$(pyq "import json,sys; from scripts.geometry import race_lap as L; print(' '.join(L.furnished_lap_ids(json.load(open(sys.argv[1],encoding='utf-8')))))" "$PROJ/track.config.json")
 HAS_MAIN=$(pyq "import json,sys; from scripts.geometry import race_lap as L; print(1 if None in L.groups(json.load(open(sys.argv[1],encoding='utf-8'))) else 0)" "$PROJ/track.config.json")
 LAP_IDS="${LAP_IDS%$'\r'}"; HAS_MAIN="${HAS_MAIN%$'\r'}"
 for lap in $LAP_IDS; do case "$lap" in *[!a-z0-9]*) echo "track.config.json layouts[].lap '$lap' is not a lap token"; exit 2;; esac; done

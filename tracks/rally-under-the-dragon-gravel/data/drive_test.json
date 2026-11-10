@@ -6,14 +6,14 @@
  ],
  "layouts": {
   "stage": {
-   "fail": true,
+   "fail": false,
    "direction": "forward",
    "kind": "street",
    "race_furniture": false,
    "obj": "track.obj",
    "lane": "full width / island",
    "lap_m": 25706.1,
-   "soft_top_in_lane": 5,
+   "soft_top_in_lane": 0,
    "obstruction_stations": 0,
    "barrier_missing": 0,
    "barrier_stations": 0,
@@ -21,13 +21,13 @@
    "daylight_gaps": 0,
    "excursion_drops": 0,
    "undrivable_corners": 0,
-   "severe_steps": 222,
-   "severe_per_km": 8.64,
-   "steps_per_km": 12.92,
-   "kinks_per_km": 44.35,
+   "severe_steps": 195,
+   "severe_per_km": 7.59,
+   "steps_per_km": 12.29,
+   "kinks_per_km": 43.37,
    "file": "drive_test.stage.json"
   }
  },
- "fail": true,
+ "fail": false,
  "not_run": []
 }

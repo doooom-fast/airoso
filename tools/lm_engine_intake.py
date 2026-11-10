@@ -38,6 +38,8 @@ import sys
 from pathlib import Path
 
 AIROSO = Path(__file__).resolve().parents[1]
+SWITCHBACK_RMS_M = 1.0   # [invented] round 9: a measured switchback is fitted only where both edge circles fit within this
+SWITCHBACK_TURN_DEG = 100.0  # round 10: the turns drive_test's corner rule judges (>100 deg); a measured platform round a gentler bend is not refitted
 if str(AIROSO) not in sys.path:
     sys.path.insert(0, str(AIROSO))
 
@@ -216,6 +218,104 @@ def intake(proj: Path, *, connectors: bool | None = None) -> dict:
                     "points_moved": sum(1 for d in moved if d > 0.005), "max_move_m": round(max(moved), 3)}
         print(f"[lm_intake] profile uncapped: the stage's {cap_was:.0f} % cap undone ({prof_rep['points_moved']} points, "
               f"max {prof_rep['max_move_m']} m); its despike ({med:.0f} m median) and mean kept")
+        # THE ROAD WHERE THE DEM SAYS IT IS (lm_intake.road_seek, the port's data/road_seek.json from tools/road_seek.py;
+        # ledger 0078 round 8). Where the mapped line sits off the graded road, 3DEP read along it reads a cut bank or a
+        # fill slope; road_seek found the road's centre in 3DEP cross-sections. Each point moves onto it (along the line's
+        # own normal) and takes the road's height there; the profile is then the same despike and mean, cap off.
+        rs_rel = li.get("road_seek")
+        if rs_rel:
+            rs = json.loads((proj / rs_rel).read_text(encoding="utf-8"))
+            st_ = rs["stations"]
+            if len(st_) != len(pts) or rs.get("source_track") != src_track:
+                raise SystemExit(f"[lm_intake] road_seek: {rs_rel} was measured for another line ({len(st_)} stations, "
+                                 f"this line {len(pts)}; source {rs.get('source_track')})")
+            n_ = len(pts)
+            # THE GRADED BENCH'S WIDTH (lm_intake.road_seek_widths; round 8): where the DEM bounds the road's graded
+            # surface on both sides (a hillside: the cut and the fill), that width and its centre are the road's, the
+            # measured switchback platforms included; on level ground (unbounded) the source's width and centre stay.
+            # Both smoothed along the line (a Gaussian of 2 stations) so a width never steps.
+            shift = [0.0] * n_
+            if li.get("road_seek_widths"):
+                tw, tc = [], []
+                for w_, s_ in zip(widths, st_):
+                    bl, bh = (s_.get("bench_m") or [0.0, 0.0])
+                    if s_.get("bench_bounded"):
+                        tw.append(bh - bl); tc.append((bh + bl) / 2.0)
+                    else:
+                        tw.append(w_); tc.append(0.0)
+                sg_ = 2.0                                  # [invented] stations (6 m): a switchback platform keeps its width
+                rr = int(3 * sg_)
+                kern = [math.exp(-0.5 * (q / sg_) ** 2) for q in range(-rr, rr + 1)]
+
+                def _sm(v):
+                    out_ = []
+                    for i in range(n_):
+                        num = den = 0.0
+                        for q, kw_ in zip(range(i - rr, i + rr + 1), kern):
+                            if 0 <= q < n_:
+                                num += kw_ * v[q]; den += kw_
+                        out_.append(num / den)
+                    return out_
+                w_was = list(widths)
+                widths = [round(w, 3) for w in _sm(tw)]
+                shift = _sm(tc)
+                nb = sum(1 for s_ in st_ if s_.get("bench_bounded"))
+                prof_rep["road_seek_widths"] = {"bounded_stations": nb, "width_m": [round(min(widths), 2),
+                                                                                    round(max(widths), 2)],
+                                                "changed_by_m_max": round(max(abs(a - b) for a, b in zip(widths, w_was)), 2)}
+                print(f"[lm_intake] road_seek widths: the graded bench measured at {nb} of {n_} stations; widths now "
+                      f"{min(widths):.2f}..{max(widths):.2f} m (the source's {min(w_was):.2f}..{max(w_was):.2f})")
+            from tools import road_seek as _rsk
+            pts0_src = list(pts)
+            moved_pts, n_relaxed = _rsk.moved_line(pts, st_, shift)       # untangled where it would step backwards
+            prof_rep["road_seek_relaxed_points"] = n_relaxed
+            seg_l = [math.hypot(moved_pts[i][0] - moved_pts[i - 1][0], moved_pts[i][2] - moved_pts[i - 1][2])
+                     for i in range(1, n_)]
+            z_rs, _ = hf.profile_along([float(s_["z_m"]) for s_ in st_], seg_l, grade_cap_pct=1e9, median_m=med,
+                                       closed=closed_g, close_seg_m=None)
+            pts = [(q[0], z - elev0, q[2]) for q, z in zip(moved_pts, z_rs)]
+            # THE SWITCHBACKS AS MEASURED (lm_intake.switchback_fit, the port's data/switchbacks.json; round 10): each
+            # measured platform's centre arc taken as given and joined to the legs as they are (tools/switchback_fit.py),
+            # its width the platform's; a turn whose fit fails its proofs is left as it was, and reported
+            sbf = li.get("switchback_fit")
+            if sbf:
+                from tools import switchback_fit as _sbf
+                swb = json.loads((proj / sbf).read_text(encoding="utf-8"))
+                use = [c for c in swb["corners"] if c.get("measured") and c.get("turn_deg", 0) > SWITCHBACK_TURN_DEG
+                       and c.get("rms_outside_m", 9) <= SWITCHBACK_RMS_M
+                       and c.get("rms_inside_m", 9) <= SWITCHBACK_RMS_M]
+                # on the line the platforms were measured on (road_seek's, without the bench-centre shift, which wobbles
+                # a switchback's legs by up to ~2 m); outside each fitted span the shifted line stays
+                base0, _n0 = _rsk.moved_line(pts0_src, st_, None)
+                pts0 = [(q[0], z - elev0, q[2]) for q, z in zip(base0, z_rs)]
+                fit_p, fit_w, sb_rep = _sbf.fit_all(pts0, list(widths), use)
+                for r_ in sb_rep:
+                    if r_["status"] == "PASS":
+                        a_, b_ = r_["span_i"]
+                        for k_ in range(a_ + 1, b_):
+                            pts[k_] = fit_p[k_]
+                            widths[k_] = fit_w[k_]
+                        # the bench-centre shift eased out over BLEND stations into each join (no lateral step there)
+                        BLEND = 10
+                        for d_ in range(0, BLEND + 1):
+                            f_ = d_ / BLEND                          # 0 at the join: the unshifted line; 1: the shifted
+                            for k_ in (a_ - d_, b_ + d_):
+                                if 0 <= k_ < len(pts):
+                                    p1, p0 = pts[k_], pts0[k_]
+                                    pts[k_] = (p0[0] + (p1[0] - p0[0]) * f_, p1[1], p0[2] + (p1[2] - p0[2]) * f_)
+                prof_rep["switchbacks"] = sb_rep
+                for r_ in sb_rep:
+                    print(f"[lm_intake] switchback {r_['id']} s {r_['st_m']:.0f}: {r_['status']} R {r_['radius_m']} m, "
+                          f"width {r_['width_m']} m, inside edge R {r_.get('inside_edge_r_m')} m, joins "
+                          f"{r_.get('join_m')} m, back steps {r_.get('back_steps')}" + (f" ({r_['why']})" if r_.get("why") else ""))
+            offs_ = sorted(abs(float(s_["offset_m"])) for s_ in st_)
+            prof_rep["road_seek"] = {"file": rs_rel, "offset_abs_m": {"median": round(offs_[len(offs_) // 2], 2),
+                                                                       "max": round(offs_[-1], 2)},
+                                     "steepest_10m_pct": round(100.0 * _max_grade(pts, 10.0), 2)}
+            print(f"[lm_intake] road_seek: {n_} points onto the graded road found in 3DEP cross-sections (off the mapped "
+                  f"line median {prof_rep['road_seek']['offset_abs_m']['median']} m, max "
+                  f"{prof_rep['road_seek']['offset_abs_m']['max']} m); steepest 10 m now "
+                  f"{prof_rep['road_seek']['steepest_10m_pct']} %")
     # Y-only evidence: the declared decks (a data fact); no grade cap unless one is declared (ledger 0078: "I just want real")
     y0 = [p[1] for p in pts]
     bridges = [(float(b["center_m"]), float(b["len_m"])) for b in ((scfg.get("capture") or {}).get("bridges") or [])]
@@ -263,6 +363,39 @@ def intake(proj: Path, *, connectors: bool | None = None) -> dict:
                      "max_widening_m": round(max(moved), 2)}
         print(f"[lm_intake] width steps tapered at {rate} m per m a side: {taper_rep['points_widened']} points widened "
               f"(max {taper_rep['max_widening_m']} m); none narrowed")
+    # THE LANE ON A MEASURED PAD (lm_intake.pad_widths [pad records, tools/bench_pad.py]; ledger 0078 round 13). Between a
+    # pad's two cuts the deck is the measured platform (tools/lm_pads_blend.py) and the ribbon there is deleted; the lane
+    # drive_test reads (its wheel paths, its corner rule) is the widest one CENTRED ON THE LINE that both measured edges
+    # allow at each vertex (2 x the nearer edge), never wider than measured, and no wider than the taper allows from its
+    # neighbours and from the cut rows (width_taper a side: a lower envelope, so the lane never steps up at a cut). After
+    # the taper, so the taper never flares the ribbon outside the cuts out of a platform it does not have. The line itself
+    # is not moved: the record names its own vertices and is refused on any other line.
+    pad_rep = []
+    for rel in li.get("pad_widths") or []:
+        rec_p = json.loads((proj / rel).read_text(encoding="utf-8"))
+        k0, k1 = rec_p["cuts"]
+        lap = {int(x["k"]): x for x in rec_p.get("lap") or []}
+        if sorted(lap) != list(range(k0, k1 + 1)):
+            raise SystemExit(f"[lm_intake] pad_widths {rel}: its lap does not name every vertex v{k0}..v{k1}")
+        off = max(math.hypot(pts[k][0] - lap[k]["raw_xz"][0], pts[k][2] - lap[k]["raw_xz"][1]) for k in lap)
+        if off > 0.01:
+            raise SystemExit(f"[lm_intake] pad_widths {rel}: measured on another line (a lap vertex {off:.3f} m off) — "
+                             f"measure it again (tools/bench_pad.py) on this port's own line")
+        st_p = [0.0]
+        for a, b in zip(pts, pts[1:]):
+            st_p.append(st_p[-1] + math.hypot(b[0] - a[0], b[2] - a[2]))
+        rate_p = float(wt) if wt else 0.0
+        anchors = [(k0, widths[k0]), (k1, widths[k1])]
+        anchors += [(k, 2.0 * min(-lap[k]["edge_m"][0], lap[k]["edge_m"][1])) for k in range(k0 + 1, k1)]
+        was = widths[k0 + 1:k1]
+        for k in range(k0 + 1, k1):
+            widths[k] = round(min(w_ + 2.0 * rate_p * abs(st_p[k] - st_p[j]) for j, w_ in anchors), 3)
+        pad_rep.append({"file": rel, "id": rec_p.get("id"), "cuts": [k0, k1],
+                        "width_m": [round(min(widths[k0 + 1:k1]), 2), round(max(widths[k0 + 1:k1]), 2)],
+                        "was_m": [round(min(was), 2), round(max(was), 2)]})
+        print(f"[lm_intake] pad {rec_p.get('id')} ({rel}): the lane between v{k0} and v{k1} on its measured platform, "
+              f"{pad_rep[-1]['width_m'][0]}..{pad_rep[-1]['width_m'][1]} m (the ribbon's {pad_rep[-1]['was_m'][0]}.."
+              f"{pad_rep[-1]['was_m'][1]} m)")
     dy = [p[1] - a for p, a in zip(pts, y0)]
     # THE MEASURED CORNER ARCS (lm_intake.corner_arcs true; ledger 0078 round 6, the Lariat). The source's
     # hairpin_fit.mesh_fit corners (C12 / C13: junction nodes holding most of a 76-79 deg turn, measured on the aerial at
@@ -271,9 +404,17 @@ def intake(proj: Path, *, connectors: bool | None = None) -> dict:
     arcs_rep = None
     if li.get("corner_arcs"):
         from scripts.geometry import corner_arcs
-        hfit = scfg.get("hairpin_fit") or {}
-        mf = set(hfit.get("mesh_fit") or [])
-        decl = [c for c in (hfit.get("corners") or []) if c.get("id") in mf and c.get("radius_m")]
+        if isinstance(li["corner_arcs"], str):
+            # round 9: the port's own measured switchbacks (tools/switchback_measure.py: the graded platform's centre arc
+            # from the 1 m DEM), the ones both of whose edges the DEM bounds and fits within SWITCHBACK_RMS_M
+            swb = json.loads((proj / li["corner_arcs"]).read_text(encoding="utf-8"))
+            decl = [{"id": c["id"], "st_m": c["st_m"], "radius_m": c["radius_m"]} for c in swb["corners"]
+                    if c.get("measured") and c.get("rms_outside_m", 9) <= SWITCHBACK_RMS_M
+                    and c.get("rms_inside_m", 9) <= SWITCHBACK_RMS_M]
+        else:
+            hfit = scfg.get("hairpin_fit") or {}
+            mf = set(hfit.get("mesh_fit") or [])
+            decl = [c for c in (hfit.get("corners") or []) if c.get("id") in mf and c.get("radius_m")]
         if not decl:
             raise SystemExit("[lm_intake] lm_intake.corner_arcs: the source declares no hairpin_fit.mesh_fit corner with a radius")
         new_line, arep = corner_arcs.fit_corners([tuple(p) for p in pts], decl)
@@ -288,8 +429,9 @@ def intake(proj: Path, *, connectors: bool | None = None) -> dict:
                 r["status"] = "PASS (arm facets outside the span: " + ", ".join(
                     f"v{f['v']} {f.get('adjacent_diff_deg', f.get('step_deg'))} deg" for f in r["gate"]["fails"]) + ")"
         bad = [r["id"] for r in arep if not str(r["status"]).startswith("PASS")]
-        if bad or len(arep) != len(mf):
-            raise SystemExit(f"[lm_intake] corner arcs {sorted(mf)}: not fitted or failing the step gate: {bad}")
+        if bad or len(arep) != len(decl):
+            raise SystemExit(f"[lm_intake] corner arcs {[c['id'] for c in decl]}: not fitted or failing the step gate: "
+                             f"{[(r['id'], r['status'], r.get('why'), (r.get('gate') or {}).get('fails', [])[:3]) for r in arep if r['id'] in bad]}")
         old_pts = pts
         pts = [tuple(p) for p in new_line]
         arcs_rep = [{k: r[k] for k in ("id", "status", "radius_m", "turn_deg", "max_move_m") if k in r} for r in arep]
@@ -599,6 +741,24 @@ def intake(proj: Path, *, connectors: bool | None = None) -> dict:
         (data / rel).parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(sdata / rel, data / rel)
         carried.append(rel)
+    # THE MEASURED ROAD THE GATES REPLICATE AGAINST (round 8): with lm_intake.road_seek the line stands on the road
+    # road_seek found, so the carried raw record's heights become that road's (drive_test's replication reads z_raw_m;
+    # against the mapped line's own DEM it would read the hillside the line was moved off). geojson order, by the
+    # source's own permutation (projection.in_local_order).
+    if li.get("road_seek") and (data / "centerline.elevation.json").exists():
+        ejp = data / "centerline.elevation.json"
+        ej2 = json.loads(ejp.read_text(encoding="utf-8"))
+        st2 = json.loads((proj / li["road_seek"]).read_text(encoding="utf-8"))["stations"]
+        zr2 = list(ej2["z_raw_m"])
+        sidx = local.get("source_index") or list(range(len(zr2)))
+        if len(sidx) == len(st2) == len(zr2):
+            for i, s_ in enumerate(st2):
+                zr2[sidx[i]] = float(s_["z_m"])
+            ej2["z_raw_m"] = zr2
+            ej2["_road_seek_doc"] = (f"z_raw_m: the road tools/road_seek.py found ({li['road_seek']}), not the mapped "
+                                     "line's own DEM samples (ledger 0078 round 8)")
+            ejp.write_text(json.dumps(ej2), encoding="utf-8")
+            carried.append("centerline.elevation.json (z_raw_m: the road_seek road)")
     # THE SOURCE'S MEASUREMENTS (lm_intake.carry_source [paths under the source track's source/]; round 7): the lidar
     # pad outlines tools/lm_pads_blend.py builds the lap's junction pads from, copied to the same path in the project
     for rel in li.get("carry_source") or []:
@@ -652,7 +812,7 @@ def intake(proj: Path, *, connectors: bool | None = None) -> dict:
            "y_changed_points": sum(1 for d in dy if abs(d) > 1e-6),
            "y_change_max_m": round(max((abs(d) for d in dy), default=0.0), 3),
            "connectors": bool(want_conn and conn.exists()), "bespoke_files": copied, "crossfall": cf_rep, "profile": prof_rep,
-           "width_taper": taper_rep, "resample": resample_rep, "edge_on_wall": wall_rep, "corner_arcs": arcs_rep, "carried": carried,
+           "width_taper": taper_rep, **({"pad_widths": pad_rep} if pad_rep else {}), "resample": resample_rep, "edge_on_wall": wall_rep, "corner_arcs": arcs_rep, "carried": carried,
            "grid_upsample": up,
            "md5": {"source_centerline": _md5(need[0]), "heightfield.npy": _md5(data / "heightfield.npy"),
                    "centerline.local.json": _md5(data / "centerline.local.json")}}

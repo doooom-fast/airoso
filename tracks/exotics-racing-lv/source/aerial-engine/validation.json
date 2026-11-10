@@ -1,0 +1,34 @@
+{
+ "track": "exotics-racing-lv",
+ "stage_run": "/Volumes/Drive/aerial_engine_work/exo_final",
+ "layout": "full",
+ "reference": "tracks/exotics-racing-lv/data/centerline.geojson (2026-10-28 trace: hand seeds + refine_trace.py)",
+ "lap_m": {
+  "stage": 1822.4,
+  "trace": 1821.8
+ },
+ "centre_to_centre_m": {
+  "stage_to_trace": {
+   "p50": 0.6,
+   "p95": 3.2,
+   "max": 6.67,
+   "n": 3645
+  },
+  "trace_to_stage": {
+   "p50": 0.6,
+   "p95": 3.1,
+   "max": 6.65,
+   "n": 3644
+  }
+ },
+ "width_minus_trace_m": {
+  "median": -2.55,
+  "abs": {
+   "p50": 2.55,
+   "p95": 6.33,
+   "max": 7.6,
+   "n": 609
+  }
+ },
+ "trace_width_note": "the trace's widths are floored 11.5 m, capped 20 m and smoothed 11 stations (README)"
+}

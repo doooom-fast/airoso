@@ -505,6 +505,13 @@ prep_prep() {
     step "ship: the stacked-leg hold again on the prepped ground (tools/hold_stacked_blend.py; self-checked)"
     "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/hold_stacked_blend.py" -- "$PROJ/blender/$SLUG.blend" --project "$PROJ" 2>&1 | grep "^\[hold\]\|FATAL\|Error\|Traceback"
   fi
+  # ledger 0078 round 8: a point-to-point stage's start, splits and finish (engine-july's prep places a lap's); only an
+  # lm-v4 port whose config says loop false (the Rangely stage ports; never Lake Murray, never the freeway), no header
+  # otherwise. Part of prep (steps.prep stays prep, split)
+  if [ "$SPEC_ENGINE" = "lm-v4" ] && [ "$(pyq "import json,sys; print(json.load(open(sys.argv[1],encoding='utf-8')).get('loop', True) is False)" "$PROJ/track.config.json" | tr -d '\r')" = "True" ]; then
+    step "ship: a point-to-point stage's start, splits and finish on the prepped scene (tools/stage_dummies_blend.py; self-checked)"
+    "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/stage_dummies_blend.py" -- "$PROJ/blender/$SLUG.blend" --project "$PROJ" 2>&1 | grep "^\[stage-dummies\]\|FATAL\|Error\|Traceback"
+  fi
   rm -f "$PROJ/data/terrain_thin.json" "$PROJ/data/terrain_thin.nodes.json.gz"
   if [ -f "$PROJ/data/terrain.tiers.json.gz" ]; then
     step "ship: thin the terrain, every vertex where the chain put it (tools/thin_terrain_blend.py; self-checked)"
@@ -730,6 +737,17 @@ gate_drive_test_lines() {
 gate_audit_street() {
   if [ -n "$AUDIT_NOTE" ]; then step "gate: audit_mesh, street (hard total; $AUDIT_NOTE)"; else step "gate: audit_mesh, street (hard total)"; fi
   AU_S=0; (cd "$AIROSO" && python -m scripts.geometry.audit_mesh "$PROJ" 2>&1 | tail -16) || AU_S=$?
+}
+gate_stage_force() {
+  # ledger 0078 round 12: Kevin's force for a stage port, by place and row (tools/stage_force.py; the port's
+  # gates.drive1.force_exemptions.stage). Records only (exit 0); its verdict decides whether --force-install may pass
+  # the red drive_test. List it LAST in steps.gate.
+  step "gate: Kevin's force for a stage, by place and row (tools/stage_force.py; --force-install only where every red row is a forced one)"
+  (cd "$AIROSO" && python tools/stage_force.py "$PROJ")
+  D1_FORCE_OK=$(pyq "import json,os,sys
+p=sys.argv[1]
+print(1 if os.path.exists(p) and json.load(open(p,encoding='utf-8')).get('force_install_ok') is True else 0)" "$PROJ/data/stage_force.json")
+  D1_FORCE_OK="${D1_FORCE_OK%$'\r'}"
 }
 gate_race_gates() {
   [ -n "$RACE_IDS" ] || { no_race race_gates; return 0; }

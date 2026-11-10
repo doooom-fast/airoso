@@ -1,0 +1,43 @@
+{
+ "_doc": "scripts.aerial.engine config for Pikes Peak International Raceway's road course (ledger 0088; the route and pieces of ledger 0085, re-derived by the engine). Data only: the files, the maps' ink colours, label and S/F pixels read off the published maps, the pit lanes they draw in the course colour (exclude_px), the published direction and lengths. Imagery, maps and Kevin's sketch are not committed (PPIR_NAIP, PPIR_MAPS, PPIR_SKETCH); their sidecars are.",
+ "name": "Pikes Peak International Raceway",
+ "image": "${PPIR_NAIP:-/Volumes/Drive/codex/kerb_work/img/pikes-peak_2023_030.png}",
+ "georef": "naip_2023_030.json",
+ "origin_from": "../../data/centerline.local.json",
+ "edges": {"edge_kind": "surface", "score": "pave", "reach_m": 30.0},
+ "lidar": {"walls": [{"survey": "../lidar/wall-survey/wall_right.json", "line": "../../data/centerline.local.json"}],
+           "register": "wall_top"},
+ "start_finish_px": [394, 1442],
+ "_start_finish_px": "the start / finish line painted across the front stretch by the grandstand on NAIP 2023 (ledger 0085 maps_route.sf_aerial)",
+ "maps": {
+  "rc": {"file": "${PPIR_MAPS:-/Volumes/Drive/codex/pp_work/maps_dl}/racingcircuits_ppir_road_2017.png",
+         "title": "racingcircuits.info, Pikes Peak International Raceway road course 2017 to date",
+         "ink": {"course": {"any": [{"rgb_min": [201, 0, 0], "rgb_max": [255, 89, 89]}], "fill_holes_below": 3000, "close": 2},
+                 "other": {"any": [{"rgb_min": [131, 0, 0], "rgb_max": [173, 255, 255], "max_spread": 8}]}},
+         "sf_px": [937, 135], "sf_close_px": 24, "spur_px": 40,
+         "exclude_px": [[950, 258], [342, 697]], "_exclude_px": "the pit road, drawn in the course red inside the front stretch and down the inside of turns 1-2 to the pit exit",
+         "labels": {"T1": [273, 243], "T2": [253, 890], "T3": [1108, 1008], "T4": [1443, 733], "T5": [784, 752],
+                    "T6": [1055, 484], "T7": [1155, 497], "T8": [1226, 397], "T9": [1497, 430]},
+         "label_ink": {"any": [{"rgb_min": [201, 111, 0], "rgb_max": [255, 189, 79]}], "min_px": 500},
+         "register_to": "lidar", "direction": "ccw",
+         "_direction": "white arrows: front stretch left, back stretch right (counter-clockwise on the ground)"},
+  "scca": {"file": "${PPIR_MAPS:-/Volumes/Drive/codex/pp_work/maps_dl}/scca_trackmap_ppir.png",
+           "title": "SCCA Track Night in America (scca.com, 2026)",
+           "ink": {"course": {"any": [{"rgb_min": [191, 191, 0], "rgb_max": [255, 255, 119]},
+                                      {"rgb_max": [89, 89, 89], "open": 5}], "close": 2, "open": 3},
+                   "other": {"any": [{"min_of_rgb": [205, 243]}]}},
+           "drop_rows_above": 122, "sf_px": [317, 134], "sf_close_px": 8, "spur_px": 12,
+           "exclude_px": [[300, 170]], "_exclude_px": "the pit road, drawn black inside the front stretch",
+           "labels": {"1": [132, 186], "2": [421, 418], "3": [534, 357], "4": [315, 357], "5": [381, 313],
+                      "6": [418, 276], "7": [477, 270], "8": [538, 246], "9": [512, 196]},
+           "label_ink": {"any": [{"rgb_max": [99, 99, 99]}], "min_px": 15, "max_px": 250},
+           "register_to": "lidar", "direction": "ccw",
+           "_direction": "the front stretch arrow under 'Start/Finish' points left (counter-clockwise on the ground)"}
+ },
+ "sketches": {"infield_only": {"file": "${PPIR_SKETCH:-/Volumes/Drive/codex/pp_work/sketch/routes/infield_only.json}", "stroke": 0}},
+ "layouts": [
+  {"id": "rcd", "name": "road course (both published maps)", "route": {"maps": ["rc", "scca"]}, "direction": "ccw",
+   "published_length_m": [2074.0, 2116.0]},
+  {"id": "ifk", "name": "infield only (Kevin's shape)", "route": {"sketch": "infield_only"}, "direction_from": "rcd"}
+ ]
+}

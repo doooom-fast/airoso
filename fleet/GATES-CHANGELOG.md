@@ -156,6 +156,60 @@ compared samples 10-51 m apart in plan: 0.15-0.55 m of plain grade.
 - **Proven.** `tests/tools/test_judge_joins_built.py`: a band that shifts through a synthetic join on a 3 % grade counts no
   step, and counts one with the re-seat disabled (the test reaches the bug); a 0.15 m curb across the lane still counts.
 
+## 2026-11-05 — DECLARED FORCE: Under the Dragon's Douglas Creek fill, s 2,395-2,410 (ledger 0078 round 13; no threshold moved)
+
+Kevin, 2026-11-05, asked whether to force Under the Dragon's last red row as measured: **"Yes, force it"**.
+
+- **What is forced** (`rally-under-the-dragon-gravel-lm` `track.config.json` `gates.drive1.force_exemptions.stage`,
+  versions `["0.1.0"]`, beside his three rows of 2026-11-04): **gated excursion drops, s 2,395-2,410**, id "Douglas
+  Creek fill". The two rows there (s 2,402.8, 12.5 / 13.0 m left of the line, 0.28 / 0.32 m single steps) trip the
+  unpaved rule's 3.0 m cumulative fall past the road edge. The built ground falls 3.33 m; the lidar's class-2 ground
+  falls 3.76 m over the same 8.6 m (199.33 -> 195.57 m, ~1:2.3) and 3DEP 3.85 m, so the build is the real fill slope
+  between the hairpin's legs, slightly gentler. No lip or wall goes in to clear it.
+- **Wiring unchanged** (`tools/stage_force.py`, round 12). Re-run on the round-13 records (109e4c51): Under the Dragon
+  `force_install_ok` true (its corner at s 22,414 and the two s 2,403 drops covered), Dragon Tail true as before. Any
+  soft top, a severe-step rate over 12 /km, or the same row type anywhere else still refuses it.
+- No threshold changed; drive_test still reads the row red. No other track declares anything new.
+
+## 2026-11-04 — Rangely stage ports, round 13: the true warp, a measured pad, an aerial trace (ledger 0078 round 13; no gate threshold moved, no bypass)
+
+No gate threshold, exemption or force changed; Kevin's three-row force (below) is untouched and covers nothing new.
+What the two `_lm` ports now declare, and the numbers behind it:
+
+- **`route.densify.measure "warp"`** on both ports (Milford's measure, ledger 0078 round 5; `tools/densify_ribbon_blend.py`
+  unchanged). `max_cols` 64 is set so the cap never binds (the worst quads need 60 / 36 columns): the step's existing
+  `CREASE_TOL_M` 5 mm [invented, round 5] is the only rule. Lake Murray never runs the step.
+- **`lm_pads.pads` DC + `lm_intake.pad_widths`** on Under the Dragon: the Douglas Creek switchback as a measured pad
+  (`tools/lm_pads_blend.py`'s existing numbers) from `tools/bench_pad.py` (new). Its own numbers: road_seek's bench rule
+  as it is (0.25 m / 0.5 m face / 2 m), `EDGE_MEDIAN` 5 rays ⚠ [invented], `NAIP_RUN` 3 samples, `NAIP_MIN_CONTRAST` 20
+  grey levels, `NAIP_REACH_M` 20 ⚠ [invented]; the mask / smoothing / deck numbers are draft_pad_outline.py's. The lane
+  between the cuts is never wider than measured (2 x the nearer measured edge) and tapers at the port's existing
+  `width_taper`. drive_test's corner rule (9 m) reads that lane unchanged. The pad declares `seam: "row"`
+  (`draft_pads.seam_offset`, opt-in; the Lariat's pads declare nothing and are unchanged): beyond a row's own ends its
+  seam fades from the row, not from its infinite line (a hairpin's other leg lies behind the in-cut's line).
+- **`tools/aerial_trace.py`** (new, report-only: nothing reads its record): `BAND_W_M` 5-12 m, `NOISE_GREY` 5, `ROAD_E` 3,
+  `OFF_MIN_M` 1, `LINE_SD_GREY` 15, `RUN_MIN_M` 30, `GAP_STATIONS` 2 ⚠ [invented]; `SEEK_HALF_M` 15 (the coordinator's),
+  `ROUGH_M` / `MAX_SHIFT_M` / `SHOULDER_M` road_seek's. Round 13 drew every run it would act on and applied none.
+
+## 2026-11-04 — DECLARED FORCE: three measured rows on the Rangely stage ports (ledger 0078 round 12; no threshold moved)
+
+Kevin, 2026-11-04, asked about the three rows the measured switchbacks fail as measured: **"Yes, force those 3"**.
+
+- **What is forced, by port, place and row type only** (`track.config.json` `gates.drive1.force_exemptions.stage`,
+  versions `["0.1.0"]`):
+  - `rally-dragon-tail-gravel-lm`, **undrivable corners, s 6,340-6,400** (switchback 1: R 13.75 m centre arc, graded
+    platform 6.94 m wide, against drive_test's 11 m corner rule);
+  - `rally-dragon-tail-gravel-lm`, **gated excursion drops, s 6,570-6,630** (switchback 2's real fill slope, 0.54-1.09 m
+    below the platform's outside edge, against the 0.2 m drop rule; no stone lip or other invented edge goes back in);
+  - `rally-under-the-dragon-gravel-lm`, **undrivable corners, s 22,400-22,560** (R 15.93 m, platform 6.82 m wide).
+- **Wiring.** New gate step `stage_force` (`tools/stage_force.py`, last in each port's `steps.gate`; records only, exit
+  0). `--force-install` passes a red stage build only when the build's version is declared, every drive_test fail
+  reason is one of those row types, every undrivable corner (drive_test's `worst.undrivable_all`, written because the
+  key is declared) lies in a declared undrivable window and every gated drop in a declared drop window. A soft top, a
+  severe-step rate or the same row type anywhere else refuses it. **Not covered:** Douglas Creek (s 2,403 / 2,456:
+  waiting on the lidar), any soft top, anything at s 14.3 km.
+- No threshold changed; drive_test still reads these rows red. Lake Murray and every other track declare nothing.
+
 ## 2026-11-03 — COMPARISON RULE: "unchanged" kn5s are judged by `tools/kn5_equiv.py`, not md5 (ledger 0065)
 
 Blender's tangent pass is not bit-stable. Lake Murray v4's own workshop, rebuilt from the prep on the PC with the same engine,

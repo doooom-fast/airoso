@@ -384,11 +384,16 @@ def seam_offset(prof, x: float, y: float) -> float:
     for s_ in prof:
         c = s_["c"]
         d = side(c, x, y)
+        t = (x - c["p"][0]) * s_["u"][0] + (y - c["p"][1]) * s_["u"][1]
+        ts, rs = s_["t"], s_["r"]
+        if s_.get("near_row") and not ts[0] <= t <= ts[-1]:
+            # a pad declared seam "row" (ledger 0078 round 13, a switchback): beyond the row's own ends the fade runs from
+            # the row itself, not from its infinite line; a hairpin's other leg lies behind the in-cut's line, and took
+            # that row's whole departure there (Douglas Creek: +0.2 m beside the out-cut's row)
+            d = math.hypot(d, t - min(max(t, ts[0]), ts[-1]))
         if d >= s_["fade"]:
             continue
         w = 1.0 if d <= 0.0 else 0.5 * (1.0 + math.cos(math.pi * d / s_["fade"]))
-        t = (x - c["p"][0]) * s_["u"][0] + (y - c["p"][1]) * s_["u"][1]
-        ts, rs = s_["t"], s_["r"]
         if t <= ts[0]:
             r = rs[0]
         elif t >= ts[-1]:

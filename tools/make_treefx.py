@@ -686,6 +686,13 @@ def plan(project_dir, all_species=False, verbose=False):
         # moved (the lidar's in place of the skirt), so its trees are re-seated on it. Inside the grid nothing changes
         far_ground = BuiltGround(data / "track.obj") if planted.get("seat_far_on_built") and (data / "track.obj").exists() else None
         far_seat = {"reseated": 0, "no_ground": 0, "inside_grid": 0}
+        if far_ground is not None:
+            # the grid's NODES end short of bbox_swne's east / south edge (whole spacings from its north-west corner, as
+            # build_loop_blend.project_grid lays them): inside = within the nodes, where the built ground is the grid's
+            _hm = json.loads(meta_p.read_text(encoding="utf-8"))
+            _sp = float(_hm["spacing_m"])
+            lon_last = w_ + (nx - 1) * _sp / (111_000.0 * math.cos(math.radians((s_ + n_) / 2)))
+            lat_last = n_ - (ny - 1) * _sp / 111_000.0
 
         def ground_y(lon, lat):
             j = min(ny - 1, max(0, round((n_ - lat) / (n_ - s_) * (ny - 1))))
@@ -702,7 +709,7 @@ def plan(project_dir, all_species=False, verbose=False):
                 continue
             y = ground_y(lon, lat)
             if far_ground is not None:
-                if s_ <= lat <= n_ and w_ <= lon <= e_:
+                if lat_last <= lat <= n_ and w_ <= lon <= lon_last:
                     far_seat["inside_grid"] += 1
                 else:
                     yb = far_ground.at(x, z)

@@ -1,0 +1,45 @@
+{
+ "trees": 11247,
+ "models": {
+  "Oak3.bin": 8400,
+  "SycamoreV2.bin": 2847
+ },
+ "size_p1_p10_p50_p90_p99": [
+  0.83,
+  1.48,
+  2.38,
+  3.35,
+  3.88
+ ],
+ "height_error_m_max": 0.043,
+ "crown_error_m_max_with_width": 0.127,
+ "uniform_crown_over_measured_p1_p10_p50_p90_p99": [
+  0.55,
+  0.82,
+  1.61,
+  3.08,
+  3.95
+ ],
+ "uniform_crown_m_p50": 14.8,
+ "measured_crown_m_p50": 9.0,
+ "uniform_within_25pct": 2784,
+ "width_mult_p1_p10_p50_p90_p99": [
+  0.25,
+  0.32,
+  0.62,
+  1.22,
+  1.82
+ ],
+ "width_mult_bands": {
+  "<0.25": 0,
+  "0.25-0.5": 3707,
+  "0.5-2": 7540,
+  ">2": 0
+ },
+ "crown_over_height_p1_p50_p99": [
+  0.18,
+  0.45,
+  1.31
+ ],
+ "extreme": []
+}

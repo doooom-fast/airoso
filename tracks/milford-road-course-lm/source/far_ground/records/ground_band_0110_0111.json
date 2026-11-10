@@ -1,0 +1,21 @@
+{
+ "a": {
+  "kn5": "<scratchpad>/sys/work/mf0111/b0110/build/milford_road_course.kn5",
+  "grass_triangles": 767965,
+  "band_triangles": 767037
+ },
+ "b": {
+  "kn5": "<scratchpad>/sys/work/mf0111/b0111/build/milford_road_course.kn5",
+  "grass_triangles": 833343,
+  "band_triangles": 767037
+ },
+ "only_a": 0,
+ "only_b": 0,
+ "corners_normal_or_uv_differ": {
+  "on_the_grid_border": 1383,
+  "inside": 0,
+  "border_corners_total": 1386
+ },
+ "worst_inside": [],
+ "verdict": "EQUAL"
+}

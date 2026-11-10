@@ -1,0 +1,65 @@
+{
+ "_doc": "ledger 0082 'Far ground (0.1.11)': Milford's bare ground off the 2017 USGS 3DEP lidar (USGS_LPC_MI_31Co_Oakland_2016_LAS_2019, flown 2017-05-03; pass 2's 71 EPT nodes as the vegetation pass read them) by tracks/milford-road-course-lm/source/far_ground/scripts/far_ground_product.py (its header says how): far_ground.lidar.npy row 0 = SOUTH, column 0 = WEST, each value the NAVD88 metres at its cell's centre (x0 + (i + 0.5) cell, y0 + (j + 0.5) cell, local metres east / north of the origin); far_ground.lidar.fill.npy 0 measured (a plane through the ground returns within the first radius holding 3), 1 filled within reach or enclosed, 2 beyond the lidar's reach; far_ground.lidar.reach.npy each beyond cell's distance in from the reach, m.",
+ "origin": {
+  "lon": -83.66362827905016,
+  "lat": 42.56999810653583,
+  "elev_m": 316.26
+ },
+ "x0": -980.0,
+ "y0": -1280.0,
+ "cell_m": 5.0,
+ "nx": 402,
+ "ny": 481,
+ "classes": [
+  2
+ ],
+ "source": {
+  "project": "USGS_LPC_MI_31Co_Oakland_2016_LAS_2019",
+  "flown": "2017-05-03",
+  "nodes": 71,
+  "read": "source/vegetation/scripts/veg_read.py -> veg.npz (g_med, n_g)",
+  "crs": "EPSG:3857 EPT, z NAVD88 m"
+ },
+ "grid_bbox_xy": [
+  -455.51,
+  -757.64,
+  508.72,
+  603.4
+ ],
+ "cells": {
+  "measured": 174521,
+  "filled_within_reach": 16361,
+  "beyond_reach": 2480,
+  "measured_by_radius": {
+   "3.5 m": 95214,
+   "7.5 m": 28998,
+   "15.0 m": 19785,
+   "30.0 m": 30524
+  }
+ },
+ "ring_coverage": {
+  "ring_cells": 133200,
+  "measured_by_radius_pct": {
+   "3.5 m": 34.3,
+   "7.5 m": 19.3,
+   "15.0 m": 13.1,
+   "30.0 m": 20.3
+  },
+  "measured_pct": 86.9,
+  "filled_within_reach_pct": 11.4,
+  "beyond_reach_pct": 1.7
+ },
+ "params": {
+  "CELL_M": 5.0,
+  "R_LEVELS": [
+   3.5,
+   7.5,
+   15.0,
+   30.0
+  ],
+  "MIN_PTS": 3,
+  "REACH_M": 30.0,
+  "COLLINEAR_M2": 0.25,
+  "FILL": "tools/lidar_ground.py harmonic_fill"
+ }
+}

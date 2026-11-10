@@ -332,6 +332,10 @@ draft_strip_seam() {
   step "author: a ground seam along the edge strip's outer lip (tools/strip_seam_blend.py; ledger 0078; self-checked)"
   (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/strip_seam_blend.py" -- "$PROJ" 2>&1 | grep "^\[strip-seam\]\|Error\|Traceback" )
 }
+draft_far_ground() {
+  step "author: the far ground from the lidar in place of the assembler's skirt (tools/far_ground_blend.py; ledger 0083 pass 4b; the grid untouched; self-checked; no terrain.far_ground = no-op)"
+  (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/far_ground_blend.py" -- "$PROJ" 2>&1 | grep "^\[far-ground\]\|FATAL\|Error\|Traceback" )
+}
 draft_cutfill() {
   step "author: the ground graded to the road's built section, stacked legs held on their own side (tools/cutfill_blend.py; ledger 0078; terrain.cross_section.build false = no-op)"
   (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/cutfill_blend.py" -- "$PROJ" 2>&1 | grep "^\[cutfill\]\|FATAL\|Error\|Traceback" )
@@ -520,6 +524,14 @@ ship_grassfx_aerial() {
 prep_prep() {
   step "ship: prep (AC naming, 65k splits; multi-layout: NO AC_* dummies in the road scene)"
   "$BL" --background --python-exit-code 1 --python "$ENGINE/scripts/ac/build_kn5_loop.py" -- "$PROJ" 2>&1 | grep "prepped\|FATAL\|split 1GRASS\|split GRASS_FAR\|terrain tiles\|terrain conform\|gate line\|T-junctions\|kept-cell refinement\|house seat\|multi-layout\|Error\|Traceback" | cut -c1-200
+  # ledger 0082 "Far ground (0.1.11)" (Milford): the far ground built as its own object left TERRAIN's skirt sunk in place so the
+  # prep tiles the ground as before; take the sunk skirt out of the prepped tiles, first. Opt-in: terrain.far_ground.object;
+  # none = no header, nothing runs (Lake Murray's chain is tools/ship_sd.sh, untouched)
+  rm -f "$PROJ/data/far_ground.prep.json"
+  if [ "$(pyq "import json,sys; print(bool(((json.load(open(sys.argv[1],encoding='utf-8')).get('terrain') or {}).get('far_ground') or {}).get('object')))" "$PROJ/track.config.json" | tr -d '\r')" = "True" ]; then
+    step "ship: the far ground's sunk skirt out of the prepped ground tiles (tools/far_ground_prep_blend.py; self-checked)"
+    "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/far_ground_prep_blend.py" -- "$PROJ/blender/$SLUG.blend" --project "$PROJ" 2>&1 | grep "^\[far-ground-prep\]\|FATAL\|Error\|Traceback"
+  fi
   # ledger 0046 v0.18.0 integration fix round: the I-8's own pavement on the PREPPED scene's final ground (scenery.freeway;
   # off = no data/freeway_i8.json = nothing runs). Part of prep: the split follows it (steps.prep stays prep, split)
   # a tiered terrain's prepped tiles carry far more vertices than their surface needs (ledger 0054 P3 repair round 3, as tools/ship_sd.sh):
@@ -565,6 +577,25 @@ prep_prep() {
     step "ship: the bespoke pads laid on the prepped ground's own triangles (tools/seat_pads_blend.py; self-checked)"
     "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/seat_pads_blend.py" -- "$PROJ/blender/$SLUG.blend" --project "$PROJ" 2>&1 | grep "^\[seat-pads\]\|FATAL\|Error\|Traceback"
     [ "${PIPESTATUS[0]}" = 0 ] || { echo "seat_pads_blend failed"; exit 1; }
+  fi
+  # ledger 0082 pass 3 (Milford 0.1.8): the bespoke rails, tyre walls and screens moved with the ground the prep moved under them
+  # (seated on the author ground, they stood buried in the prepped ground: Milford's G1 a median 0.39 m under it). Opt-in:
+  # scenery.bespoke.reseat_on_prep true; no key = no header, nothing runs (Lake Murray's chain is tools/ship_sd.sh, untouched)
+  rm -f "$PROJ/data/reseat_bespoke.json"
+  if [ "$(pyq "import json,sys; print(((json.load(open(sys.argv[1],encoding='utf-8')).get('scenery') or {}).get('bespoke') or {}).get('reseat_on_prep') is True)" "$PROJ/track.config.json" | tr -d '\r')" = "True" ]; then
+    step "ship: the bespoke rails, tyre walls and screens re-seated on the prepped ground (tools/reseat_bespoke_blend.py; self-checked)"
+    "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/reseat_bespoke_blend.py" -- "$PROJ/blender/$SLUG.blend" --project "$PROJ" 2>&1 | grep "^\[reseat\]\|FATAL\|Error\|Traceback"
+  fi
+  # ledger 0084 (opt-in: a track.config.json road_wear key; none = no header, nothing runs, the stale report removed): the
+  # road's tone off the aerial and the rubber where tyres run, baked into a world atlas under the stock asphalt as detail;
+  # UVs and materials only, every vertex where the chain put it. Last in prep: it reads the final 1ROAD. Part of prep
+  # (steps.prep stays prep, split). After the 0082 re-seat above (Milford 0.1.9): the re-seat reads the prepped 1GRASS / 1KERB
+  # positions and moves only the rail kinds' vertices; the bake reads 1ROAD / 1KERB_SIDEWALK and writes only their UVs and
+  # materials, so the two commute; the re-seat goes first so it reads the ground the rest of prep left, the bake stays last
+  rm -f "$PROJ/data/road_wear.json"
+  if [ "$(pyq "import json,sys; print(bool(json.load(open(sys.argv[1],encoding='utf-8')).get('road_wear')))" "$PROJ/track.config.json" | tr -d '\r')" = "True" ]; then
+    step "ship: road wear where tyres run + the road's tone off the aerial (tools/road_wear_blend.py; ledger 0084; self-checked)"
+    "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/road_wear_blend.py" -- "$PROJ/blender/$SLUG.blend" --project "$PROJ" --eng "$ENGINE" 2>&1 | grep "^\[road_wear\]\|FATAL\|Error\|Traceback"
   fi
 }
 prep_split() {
@@ -727,6 +758,31 @@ gate_edge_report() {
 gate_rib_check() {
   step "gate: terrain ribbing on the built ground (tools/rib_check.py: sub-cell features folded into staircases — hard)"
   (cd "$AIROSO" && python tools/rib_check.py "$PROJ" --json "$PROJ/data/rib_check.json")
+}
+gate_kn5_textures() {
+  # ledger 0082 pass 2 (opt-in: only a ship.json that names it runs it): every texture the built kn5s' materials name is
+  # embedded in them. The PC's first rehearsal of Milford 0.1.1 shipped a road kn5 five textures short (ENG without
+  # airoso's assets/textures) and every other gate passed; only the byte count caught it. Hard: exit 1 stops the chain
+  step "gate: every texture the built kn5s' materials name is embedded (tools/kn5_textures.py; ledger 0082 — hard)"
+  rm -f "$PROJ/data/kn5_textures.json"
+  (cd "$AIROSO" && python tools/kn5_textures.py "$PROJ/build" --json "$PROJ/data/kn5_textures.json")
+}
+gate_edge_smoothness() {
+  # ledger 0087 (opt-in: only a ship.json that names it runs it): the built lane edge's 1 m second difference and its residual
+  # to a robust fit, per side, on data/track.obj (Kevin 2026-11-07: "Milford should very smooth edges and they're ragged in
+  # places"). Thresholds: tools/edge_smoothness.py GATE_DEFAULT (fleet/GATES-CHANGELOG.md). Hard: exit 1 stops the chain
+  step "gate: the built lane edges are smooth (tools/edge_smoothness.py; ledger 0087 — hard)"
+  rm -f "$PROJ/data/edge_smoothness.json"
+  (cd "$AIROSO" && python tools/edge_smoothness.py "$PROJ" --gate-default --json "$PROJ/data/edge_smoothness.json")
+}
+gate_road_wear() {
+  # ledger 0084 (opt-in: only a ship.json that names it runs it): on the BUILT road kn5, the road-wear surfaces' UVs are one
+  # texel per texel_m of ground, round and never repeating; the shipped atlas follows the aerial; the rubber sits on the
+  # declared line; the slots and textures are what the bake declared. Thresholds: tools/road_wear_check.py GATE
+  # (fleet/GATES-CHANGELOG.md). Hard: exit 1 stops the chain
+  step "gate: road wear on the built road kn5 (tools/road_wear_check.py; ledger 0084 — hard)"
+  rm -f "$PROJ/data/road_wear_check.json"
+  (cd "$AIROSO" && python tools/road_wear_check.py "$PROJ" --kn5 "$PROJ/build/$SLUG.kn5" --json "$PROJ/data/road_wear_check.json")
 }
 gate_house_seat() {
   step "gate: houses on the built ground (tools/house_seat_check.py: floating, sunken or buried buildings — hard)"

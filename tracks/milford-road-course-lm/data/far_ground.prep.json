@@ -1,0 +1,38 @@
+{
+ "skirt_sunk_z": -521.576,
+ "faces_out": 928,
+ "tiles": {
+  "1GRASS_0": {
+   "faces": 183,
+   "verts_out": 95
+  },
+  "1GRASS_1": {
+   "faces": 47,
+   "verts_out": 28
+  },
+  "1GRASS_2": {
+   "faces": 175,
+   "verts_out": 89
+  },
+  "1GRASS_3": {
+   "faces": 87,
+   "verts_out": 47
+  },
+  "1GRASS_4": {
+   "faces": 49,
+   "verts_out": 32
+  },
+  "1GRASS_5": {
+   "faces": 165,
+   "verts_out": 84
+  },
+  "1GRASS_6": {
+   "faces": 50,
+   "verts_out": 26
+  },
+  "1GRASS_7": {
+   "faces": 172,
+   "verts_out": 87
+  }
+ }
+}

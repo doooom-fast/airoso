@@ -1,0 +1,67 @@
+[
+ {
+  "src": 21,
+  "tier": 1,
+  "area_m2": 128,
+  "fill": 0.65,
+  "why": "a planted tree within 1 m"
+ },
+ {
+  "src": 21,
+  "tier": 1,
+  "area_m2": 152,
+  "fill": 0.76,
+  "why": "a planted tree within 1 m"
+ },
+ {
+  "src": 81,
+  "tier": 1,
+  "area_m2": 208,
+  "fill": 0.43,
+  "why": "small or empty"
+ },
+ {
+  "src": 81,
+  "tier": 3,
+  "area_m2": 64,
+  "fill": 0.67,
+  "why": "small or empty"
+ },
+ {
+  "src": 81,
+  "tier": 4,
+  "area_m2": 228,
+  "fill": 0.62,
+  "why": "a planted tree within 1 m"
+ },
+ {
+  "src": 81,
+  "tier": 4,
+  "area_m2": 80,
+  "fill": 0.83,
+  "why": "small or empty"
+ },
+ {
+  "src": 81,
+  "tier": 4,
+  "area_m2": 72,
+  "fill": 0.56,
+  "why": "small or empty"
+ },
+ {
+  "src": 81,
+  "tier": 4,
+  "area_m2": 68,
+  "fill": 0.3,
+  "why": "small or empty"
+ },
+ {
+  "src": 81,
+  "tier": 0,
+  "area_m2": 1036,
+  "fill": 0.76,
+  "why": "set into its slope",
+  "key": "mpg_nw_complex_0",
+  "_why": "set into its slope on the real ground (0.1.11): the lidar's ground 25.44-25.56 m 5-6 m east of its east wall, its roof 25.91 m; the author refuses a roof under half its wall over its rim's highest ground"
+ }
+]

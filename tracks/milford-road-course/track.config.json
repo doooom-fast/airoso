@@ -1,7 +1,8 @@
 {
   "archetype": "race_circuit",
   "name": "Milford Road Course (unofficial)",
-  "slug": "milford_road_course",
+  "slug": "milford_road_course_v06",
+  "_slug_doc": "2026-11-07 (Milford 0.1.5, ledger 0082 / 0087): this old-engine track gave the plain slug and install folder milford_road_course to tracks/milford-road-course-lm (Kevin: \"Get rid of Lm Version from names\" / \"LM is the airoso engine\"), so S7 (one slug per AC folder) holds. It stays in the repo as the source of the NAIP trace the LM port's intake reads (lm_intake.source_track); it is not built or installed again, and the PC's 0.1.5 install parks its installed milford_road_course 0.6.0 folder in the archive",
   "version": "0.6.0",
   "mirror_x": false,
   "loop": true,
@@ -284,7 +285,7 @@
   "ui_description": "Unofficial reconstruction of the Milford Road Course, Michigan: the private proving-ground road course, traced from USDA NAIP 2022 aerial imagery onto USGS 3DEP 1 m lidar (40 m of real relief, 27 % at its steepest). Clockwise. Not an official or endorsed product.",
   "author": "airoso",
   "_ground_doc": "Constructed corridor, not natural_ground (2026-10-28). Natural ground (copied from IMI) left the lidar's real banks beside the pavement unguarded: drive_test counted 31 drops over 12 cm per 0.5 m within 4 m of the edge (limit 4), worst 49 cm, because the measured-guard lip pass and the shoulder drape only run in constructed mode. The other T1 circuits (Pueblo, Aspen, High Plains) are constructed.",
-  "install_folder": "milford_road_course",
+  "install_folder": "milford_road_course_v06",
   "_install_folder_doc": "tools/ship_track.sh installs under content/tracks/<install_folder> (Lariat plan A11); the previous install is parked in the archive",
   "_ui_series_doc": "Kevin 2026-10-28: 'K10 is gone. doooom.' Content Manager shows '<ui_series> - <layout name>' (tools/ship_track.sh ui_name_prefix carries the same string)",
   "texture_overrides": {

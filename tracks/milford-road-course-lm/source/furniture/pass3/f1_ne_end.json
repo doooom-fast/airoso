@@ -1,0 +1,73 @@
+{
+  "key": "f1_nw_screen_ne_end",
+  "kind": "screen",
+  "auto": true,
+  "height_m": 4.14,
+  "polyline_lonlat": [
+    [
+      -83.6656378,
+      42.5741073
+    ],
+    [
+      -83.6656111,
+      42.5741175
+    ],
+    [
+      -83.6655664,
+      42.5741328
+    ],
+    [
+      -83.6655225,
+      42.574149
+    ],
+    [
+      -83.6654791,
+      42.5741652
+    ],
+    [
+      -83.6654357,
+      42.5741814
+    ],
+    [
+      -83.6653926,
+      42.5741982
+    ],
+    [
+      -83.6653492,
+      42.574215
+    ],
+    [
+      -83.6653054,
+      42.5742306
+    ],
+    [
+      -83.6652615,
+      42.5742462
+    ],
+    [
+      -83.6652181,
+      42.5742621
+    ],
+    [
+      -83.6651742,
+      42.5742783
+    ],
+    [
+      -83.6651304,
+      42.5742942
+    ],
+    [
+      -83.6650873,
+      42.574311
+    ],
+    [
+      -83.6650447,
+      42.5743284
+    ],
+    [
+      -83.6650021,
+      42.5743462
+    ]
+  ],
+  "_source": "source/furniture/pass3/f1ne_bins.json (ledger 0082 pass 3): F1's north-east 59 m, past pass 2's 45 m read: the canopy-free 2-6 m returns along F1's own line (3DEP USGS_LPC_MI_31Co_Oakland_2016_LAS_2019, flown 2017-05-03 (the vegetation read of pass 2's 71 EPT nodes)), per 4 m bin the median plan position (sd 0.33-0.49 m) and the p90 top; height 4.14 m = the median of 15 bins' p90 (4.03-4.31 m) [measured]; single-pulse tops 0.80-1.00 (opaque, as the built 197 m). NAIP 2022 shows the light line and its shadow to the same end (e -112, n 485). Panel and thickness as the kind's [invented]"
+}

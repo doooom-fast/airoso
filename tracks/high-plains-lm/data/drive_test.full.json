@@ -14,7 +14,7 @@
  "severe_steps": 0,
  "severe_per_km": 0.0,
  "steps_per_km": 0.0,
- "kinks_per_km": 1.87,
+ "kinks_per_km": 0.62,
  "obstruction_stations": 0,
  "daylight_gaps": 0,
  "replication_vs_measured": null,
@@ -48,34 +48,14 @@
   "severe_all": [],
   "kinks": [
    [
-    1688.0,
-    4.75,
-    3.55
+    2013.0,
+    -4.75,
+    3.15
    ],
    [
-    1691.0,
-    4.75,
-    3.41
-   ],
-   [
-    1685.0,
-    4.75,
-    3.37
-   ],
-   [
-    1687.0,
-    4.75,
-    3.14
-   ],
-   [
-    1684.0,
-    4.75,
-    3.11
-   ],
-   [
-    1690.0,
-    4.75,
-    3.06
+    2009.0,
+    -4.75,
+    3.07
    ]
   ],
   "obstructions": []

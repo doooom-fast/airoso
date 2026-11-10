@@ -1,0 +1,291 @@
+{
+ "a": "hp_base/build/high_plains.kn5",
+ "b": "hp_br/build/high_plains.kn5",
+ "by_prefix": {
+  "1GRASS": {
+   "equal": 2
+  },
+  "1KERB": {
+   "equal": 21
+  },
+  "1ROAD": {
+   "equal": 1
+  },
+  "1WALL": {
+   "equal": 9
+  },
+  "BUILDING": {
+   "equal": 1
+  },
+  "MARKINGS": {
+   "equal": 1
+  },
+  "PADAPRON": {
+   "equal": 1
+  },
+  "PRAIRIECARD": {
+   "only in a": 3
+  },
+  "ROOFTOP": {
+   "equal": 3
+  }
+ },
+ "textures": {
+  "only_a": [
+   "prairie_atlas.png"
+  ],
+  "only_b": [],
+  "changed": []
+ },
+ "meshes": [
+  {
+   "mesh": "1GRASS_0",
+   "verdict": "equal",
+   "why": [],
+   "verts": 36161
+  },
+  {
+   "mesh": "1GRASS_1",
+   "verdict": "equal",
+   "why": [],
+   "verts": 36162
+  },
+  {
+   "mesh": "1KERB_circuit_0",
+   "verdict": "equal",
+   "why": [],
+   "verts": 180
+  },
+  {
+   "mesh": "1KERB_circuit_1",
+   "verdict": "equal",
+   "why": [],
+   "verts": 120
+  },
+  {
+   "mesh": "1KERB_circuit_10",
+   "verdict": "equal",
+   "why": [],
+   "verts": 156
+  },
+  {
+   "mesh": "1KERB_circuit_11",
+   "verdict": "equal",
+   "why": [],
+   "verts": 252
+  },
+  {
+   "mesh": "1KERB_circuit_12",
+   "verdict": "equal",
+   "why": [],
+   "verts": 108
+  },
+  {
+   "mesh": "1KERB_circuit_13",
+   "verdict": "equal",
+   "why": [],
+   "verts": 162
+  },
+  {
+   "mesh": "1KERB_circuit_14",
+   "verdict": "equal",
+   "why": [],
+   "verts": 132
+  },
+  {
+   "mesh": "1KERB_circuit_15",
+   "verdict": "equal",
+   "why": [],
+   "verts": 126
+  },
+  {
+   "mesh": "1KERB_circuit_16",
+   "verdict": "equal",
+   "why": [],
+   "verts": 504
+  },
+  {
+   "mesh": "1KERB_circuit_17",
+   "verdict": "equal",
+   "why": [],
+   "verts": 108
+  },
+  {
+   "mesh": "1KERB_circuit_18",
+   "verdict": "equal",
+   "why": [],
+   "verts": 162
+  },
+  {
+   "mesh": "1KERB_circuit_19",
+   "verdict": "equal",
+   "why": [],
+   "verts": 168
+  },
+  {
+   "mesh": "1KERB_circuit_2",
+   "verdict": "equal",
+   "why": [],
+   "verts": 180
+  },
+  {
+   "mesh": "1KERB_circuit_3",
+   "verdict": "equal",
+   "why": [],
+   "verts": 120
+  },
+  {
+   "mesh": "1KERB_circuit_4",
+   "verdict": "equal",
+   "why": [],
+   "verts": 216
+  },
+  {
+   "mesh": "1KERB_circuit_5",
+   "verdict": "equal",
+   "why": [],
+   "verts": 156
+  },
+  {
+   "mesh": "1KERB_circuit_6",
+   "verdict": "equal",
+   "why": [],
+   "verts": 156
+  },
+  {
+   "mesh": "1KERB_circuit_7",
+   "verdict": "equal",
+   "why": [],
+   "verts": 180
+  },
+  {
+   "mesh": "1KERB_circuit_8",
+   "verdict": "equal",
+   "why": [],
+   "verts": 90
+  },
+  {
+   "mesh": "1KERB_circuit_9",
+   "verdict": "equal",
+   "why": [],
+   "verts": 162
+  },
+  {
+   "mesh": "1KERB_sidewalk",
+   "verdict": "equal",
+   "why": [],
+   "verts": 38628
+  },
+  {
+   "mesh": "1ROAD_road",
+   "verdict": "equal",
+   "why": [],
+   "verts": 13356
+  },
+  {
+   "mesh": "1WALL_KRAILBW_0",
+   "verdict": "equal",
+   "why": [],
+   "verts": 1584
+  },
+  {
+   "mesh": "1WALL_KRAILBW_1",
+   "verdict": "equal",
+   "why": [],
+   "verts": 334
+  },
+  {
+   "mesh": "1WALL_KRAILBW_2",
+   "verdict": "equal",
+   "why": [],
+   "verts": 338
+  },
+  {
+   "mesh": "1WALL_KRAILBW_3",
+   "verdict": "equal",
+   "why": [],
+   "verts": 60
+  },
+  {
+   "mesh": "1WALL_KRAILBW_4",
+   "verdict": "equal",
+   "why": [],
+   "verts": 1402
+  },
+  {
+   "mesh": "1WALL_KRAILBW_5",
+   "verdict": "equal",
+   "why": [],
+   "verts": 1098
+  },
+  {
+   "mesh": "1WALL_KRAILBW_6",
+   "verdict": "equal",
+   "why": [],
+   "verts": 1264
+  },
+  {
+   "mesh": "1WALL_KRAILBW_7",
+   "verdict": "equal",
+   "why": [],
+   "verts": 966
+  },
+  {
+   "mesh": "1WALL_TILTUP_0",
+   "verdict": "equal",
+   "why": [],
+   "verts": 32
+  },
+  {
+   "mesh": "BUILDING_METAL_0",
+   "verdict": "equal",
+   "why": [],
+   "verts": 358
+  },
+  {
+   "mesh": "MARKINGS",
+   "verdict": "equal",
+   "why": [],
+   "verts": 12876
+  },
+  {
+   "mesh": "PADAPRON_0",
+   "verdict": "equal",
+   "why": [],
+   "verts": 27130
+  },
+  {
+   "mesh": "PRAIRIECARD_0",
+   "verdict": "only in a",
+   "verts": 8632
+  },
+  {
+   "mesh": "PRAIRIECARD_1",
+   "verdict": "only in a",
+   "verts": 8602
+  },
+  {
+   "mesh": "PRAIRIECARD_2",
+   "verdict": "only in a",
+   "verts": 4598
+  },
+  {
+   "mesh": "ROOFTOP_DARK_0",
+   "verdict": "equal",
+   "why": [],
+   "verts": 36
+  },
+  {
+   "mesh": "ROOFTOP_TAN_0",
+   "verdict": "equal",
+   "why": [],
+   "verts": 18
+  },
+  {
+   "mesh": "ROOFTOP_WHITE_0",
+   "verdict": "equal",
+   "why": [],
+   "verts": 130
+  }
+ ]
+}

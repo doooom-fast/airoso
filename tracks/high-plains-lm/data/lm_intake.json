@@ -17,7 +17,6 @@
  "bespoke_files": [
   "source/bespoke/buildings.json",
   "source/bespoke/posts.json",
-  "source/bespoke/shrubs.json",
   "source/edges/kerbs.json",
   "textures/prairie_diffuse.jpg",
   "textures/prairie_normal.jpg"
@@ -35,6 +34,10 @@
  "width_taper": null,
  "resample": null,
  "edge_on_wall": null,
+ "corner_arcs": null,
+ "carried": [
+  "source/naip_2023_hp.jpg"
+ ],
  "grid_upsample": 2,
  "md5": {
   "source_centerline": "c61a046a44c373a75d755ccbc436b029",

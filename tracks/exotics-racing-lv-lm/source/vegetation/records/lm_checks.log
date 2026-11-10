@@ -1,0 +1,5 @@
+diff vs 07cc303, tracks/san-diego-lake-murray: 0 lines
+diff vs 07cc303, tools/ + scripts/:  1 file changed, 74 insertions(+), 6 deletions(-)
+trim_connectors.py base md5 8a45651657df676f71cfdfe30eca5483 branch 8a45651657df676f71cfdfe30eca5483
+trim a: 664da93b17d79982943d4a53dfa1f209 b73b70f4b6dc15f975cc019e739885dd log 63af07ccf16d01c179f89afec997f536
+trim b: 664da93b17d79982943d4a53dfa1f209 b73b70f4b6dc15f975cc019e739885dd log 63af07ccf16d01c179f89afec997f536

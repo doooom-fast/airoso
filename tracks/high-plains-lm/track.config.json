@@ -1,9 +1,10 @@
 {
   "_doc": "High Plains Raceway through Lake Murray v4's engine (ledger 0078: the old quality bar, ported to check that nothing gets worse). The line, widths and 3DEP are tracks/high-plains's (installed 0.72.1), read by tools/lm_engine_intake.py; the profile is the measured one with the elevation stage's grade cap undone; the camber is the G10 lidar survey (source/lidar/camber-survey/crossfall.json, branch claude/lidar-camber-survey); the edge is the circuit's (no curb, no sidewalk). Every other key is the live track's, copied; the live config is untouched.",
   "archetype": "race_circuit",
-  "name": "High Plains Raceway (LM engine)",
-  "slug": "high_plains_lm",
-  "version": "0.1.1",
+  "name": "High Plains Raceway",
+  "_name_doc": "Kevin 2026-11-07: \"Get rid of Lm Version from names, nothing should be on any other engine now\" / \"LM is the airoso engine\". 0.1.5 (2026-11-09): no \"(LM engine)\" in the display name, and the slug and install_folder are the plain high_plains. The old-engine track (tracks/high-plains) gave that slug up: its slug and folder are high_plains_v072 (S7, fleet.cli lint)",
+  "slug": "high_plains",
+  "version": "0.1.6",
   "mirror_x": false,
   "loop": true,
   "default_width_m": 12.0,
@@ -23,9 +24,23 @@
   },
   "kerb": {
     "height_m": 0.08,
+    "placement": "measured",
+    "end_ramp_m": 4.0,
+    "_placement_doc": "ledger 0081 round 2: each run at its measured in_m / out_m across the live lane edge it was measured on, read as an offset from this ribbon's own lane edge, on the ROAD surface where it lies over the lane (tools/author_kerbs_blend.py, tools/kerb_section.py)",
     "width_m": 1.2,
     "top_frac": 0.6,
-    "edge_ramp": 0.4
+    "edge_ramp": 0.4,
+    "atlas": {
+      "blue_white": [
+        0.05,
+        0.45
+      ],
+      "blue_yellow": [
+        0.55,
+        0.95
+      ],
+      "_doc": "ledger 0081: the two paint schemes NAIP 2023 (0.3 m) shows, one texture (textures/kerb_atlas_hp.png, made by make_kerb_atlas.py); tools/author_kerbs_blend.py maps each run's u into its colour's cell"
+    }
   },
   "scenery": {
     "corridor_margin_m": 3.0,
@@ -76,13 +91,7 @@
           "_source": "the paddock's paved and graded ground off NAIP 2023, read by eye to about 5 m: one sheet, the lots and lanes not told apart"
         }
       ],
-      "cards": [
-        {
-          "file": "source/bespoke/shrubs.json",
-          "prefix": "PRAIRIECARD",
-          "clear_m": 3.0
-        }
-      ],
+      "_cards_doc": "0.1.6 (ledger 0089; Kevin 2026-11-08: \"We want all treefx as a rule\"): 0.1.5's 1,898 PRAIRIECARD cards (data/bespoke.report.json: 1,986 planned, 88 within 3 m of pavement) are gone from the kn5 and no TreeFX replaces them. They stood on source/bespoke/shrubs.json, a 7 m grid over the pixels NAIP 2023 shows darker green (the draws and swales), with rabbitbrush / yucca / bunchgrass / snakeweed and their heights [invented]. NAIP 2023 at 0.3 m (co_m_3910317_ne_13_030_20230928) shows those draws as continuous green swale grass with no shrub crown in them, and nothing on the uplands it can tell from ant mounds, ruts and posts: the cards were grass. Their replacement is the GrassFX zone this config already reads off the same pixels (grassfx_zones class B, 'the greener draws taller and full'), which the LM port had not run: ship.json grassfx_aerial. Plants under NAIP's resolution are owed to a lidar read (ledger 0089)",
       "rails": [
         {
           "key": "infield_t",
@@ -1123,7 +1132,8 @@
       "sidewalk_w": 0.2,
       "connector_sidewalk_w": 0.2,
       "grade_w": 1.0,
-      "grass_clearance": 0.05,
+      "grass_clearance": -0.08,
+      "_grass_clearance_doc": "0.1.5 (PC, 2026-11-09; Kevin, asked whether the other circuit tracks have Milford's fast-curve edge mess: \"Yes, check them\"; Milford 0.1.6 is the same fix, ledger 0087): the strip's outer lip 2 cm under the lane edge (profile point 3 at -grass_clearance = +0.08 over the unlifted edge; the lane edge at +0.10). engine-july's prep holds the ground past the ROAD edge at the lane edge's height - 0.02 for 3 m (its contact band), so the lower lip lay in a gutter with a wall of ground at its lip. Measured on the installed 0.1.4 (gate OBJ, every 10 m, both sides; strip_gutter.py): the strip's lip 14 cm under the lane edge; the ground just past it stood more than 5 cm over the lip at 90 of 538 side-stations, more than 10 cm at 36 (max 12 cm). Flush with the band, nothing stands over it",
       "_doc": "the circuit edge (ledger 0078): no curb, no sidewalk (neither track has one). The asphalt edge is held at road height for 0.30 m and the run-off ground meets it 0.15 m lower over 1.0 m [invented: the flush meet the drive gate reads as no drop]; the ground beyond is the assembler's conform to the road (20 m + 16 m blend), then the 3DEP surface: the real run-off level. Racing kerbs and paved run-off are NOT built: no measured kerb line or run-off outline is committed for either track (owed: read off the NAIP / lidar)."
     },
     "crossfall_file": "data/crossfall.lm.json",
@@ -1136,7 +1146,7 @@
   "ui_tags": [
     "circuit"
   ],
-  "install_folder": "high_plains_lm",
+  "install_folder": "high_plains",
   "_install_folder_doc": "beside high_plains for the A/B drive (ledger 0078)",
   "ui_series": "doooom Colorado",
   "_ui_series_doc": "Kevin 2026-10-28: 'K10 is gone. doooom.' Content Manager shows '<ui_series> - <layout name>' (tools/ship_track.sh ui_name_prefix carries the same string)",
@@ -1162,8 +1172,8 @@
       "_doc": "our own concrete in place of the Hamburg bytes"
     },
     "1KERB": {
-      "diffuse": "textures/kerb_bluewhite.png",
-      "_doc": "the kerb paint the aerial shows (blue and white), a flat two-band stripe (this port's own file). Keyed 1KERB, the row the traced kerbs (1KERB_circuit_*, tools/author_kerbs_blend.py) bind; not 1KERB_RACE, which the split routes to the race kn5 as race furniture"
+      "diffuse": "textures/kerb_atlas_hp.png",
+      "_doc": "the kerb paint the aerial shows: blue / white kerbs and blue / yellow edge stripes (ledger 0081), an atlas of two flat two-band stripes (this port's own file). Keyed 1KERB, the row the traced kerbs (1KERB_circuit_*, tools/author_kerbs_blend.py) bind; not 1KERB_RACE, which the split routes to the race kn5 as race furniture"
     }
   },
   "lm_intake": {
@@ -1172,6 +1182,10 @@
     "profile": "uncapped",
     "crossfall": "source/lidar/camber-survey/crossfall.json",
     "grid_upsample": 2,
+    "carry_source": [
+      "source/naip_2023_hp.jpg"
+    ],
+    "_carry_source_doc": "ledger 0089: the NAIP 2023 photo scenery.bespoke.grassfx_zones reads (tools/plan_grassfx_aerial.py, ship step grassfx_aerial)",
     "_doc": "the measured profile (the elevation stage's cap undone), the G10 lidar camber, the 40 m 3DEP grid pre-divided to 20 m (the same samples)"
   },
   "terrain": {

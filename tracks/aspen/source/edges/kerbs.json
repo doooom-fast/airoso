@@ -1,198 +1,1030 @@
 {
- "_doc": "Racing kerbs traced off the aerial for the Lake Murray engine port (ledger 0078). Each run is the lane edge it lies along, as lon/lat, plus where its paint sits across that edge (in_m / out_m: metres past the lane edge of the live line's widths, - = inside). The build places the kerb OUTSIDE the lane edge (tools/author_kerbs_blend.py); its profile is the track config's kerb, NOT measured (a 1 m DEM cannot read a kerb).",
- "imagery": "USDA NAIP m_3910641_se_13_060_20190914 (2019-09-14, 0.6 m), USGS NAIP ImageServer exportImage in EPSG:4326 with square-degree pixels (the box held exactly; corners W,N,E,S -106.88306156,39.26820288,-106.87823919,39.26223671)",
- "method": "tools/aerial_edges.py colour reader first (2 runs: one the kerb at s 1025, one a blue car at s 225, rejected); every run then read by eye off 6x zooms with the live line's edges and 5 m station ticks drawn; in_m / out_m [invented]: the blocks straddle the edge, about 1.5 m wide. Not seen: kerbs at the top hairpin's exit and the south-east hairpin (white edge marks only, no blocks).",
+ "_doc": "Racing kerbs measured off the aerial by their alternating blocks, colour not used (ledger 0081 round 3, tools/kerb_offsets.py), in tools/kerb_spans.py's shape: each run is the lane edge it lies along, as lon/lat, plus where its paint sits across that edge (in_m / out_m: metres past the lane edge of the live line's widths, - = inside). The build places it there with kerb.placement \"measured\".",
+ "imagery": "USDA NAIP co_m_3910641_se_13_030_20230907_20240104 (2023-09-07), 0.3 m native, Planetary Computer crop",
+ "image_m_per_px": 0.3,
+ "method": "ledger 0081 round 3: round 4's three traced runs (L s 233-262, R s 838-862, L s 1,017-1,038) re-read on NAIP 2023 0.3 m: ends read by eye on straightened end zooms at 24 px/m (kerbs_blocks_2023_030_ends.jpg; :eye), in_m / out_m by tools/kerb_offsets.py (the block reader calibrated on High Plains, colour not used), --follow 1",
  "line": "data/gate_centerline.json of the live track (engine frame)",
+ "measurer": {
+  "tool": "tools/kerb_offsets.py",
+  "params": {
+   "DS_M": 0.25,
+   "DO_M": 0.075,
+   "O_LO_M": -3.5,
+   "O_HI_M": 3.5,
+   "STEP_M": 1.0,
+   "WIN_M": 6.0,
+   "PERIOD_M": [
+    1.25,
+    1.5,
+    1.75,
+    2.0,
+    2.25,
+    2.5,
+    3.0
+   ],
+   "REFINE": 2,
+   "HALF": 0.5,
+   "MIN_AMP": 8.0,
+   "EXT_WIN_M": 3.0,
+   "EXT_FRAC": 0.5,
+   "FOLLOW_SMOOTH": 9,
+   "FOLLOW_MAX_M": 1.5,
+   "GAP_M": 3.0,
+   "GROW_M": 15.0
+  }
+ },
  "kerbs": [
   {
    "side": "left",
-   "s0": 233.0,
-   "s1": 262.0,
-   "in_m": -0.5,
-   "out_m": 1.0,
+   "s0": 236.0,
+   "s1": 272.0,
+   "in_m": -1.11,
+   "out_m": -0.2,
    "colour": "red_white",
-   "how": "eye, station-labelled 6x zooms of the NAIP (the right-hander after the pit-out bend: white and faded-red blocks on the left edge)",
+   "profile": "kerb",
+   "s_eye": [
+    236.0,
+    272.0
+   ],
+   "stations_measured": 37,
+   "reader": {
+    "stations_tried": 37,
+    "block_amp_median": 26.8,
+    "width_p25_p75": [
+     0.79,
+     1.03
+    ],
+    "middle_p10_p90": [
+     -0.96,
+     -0.49
+    ],
+    "track": [
+     [
+      239.25,
+      -1.193
+     ],
+     [
+      240.25,
+      -1.144
+     ],
+     [
+      241.25,
+      -1.083
+     ],
+     [
+      242.25,
+      -0.974
+     ],
+     [
+      243.25,
+      -0.93
+     ],
+     [
+      244.25,
+      -0.774
+     ],
+     [
+      245.25,
+      -0.736
+     ],
+     [
+      246.25,
+      -0.684
+     ],
+     [
+      247.25,
+      -0.651
+     ],
+     [
+      248.25,
+      -0.622
+     ],
+     [
+      249.25,
+      -0.589
+     ],
+     [
+      250.25,
+      -0.519
+     ],
+     [
+      251.25,
+      -0.487
+     ],
+     [
+      252.25,
+      -0.437
+     ],
+     [
+      253.25,
+      -0.435
+     ],
+     [
+      254.25,
+      -0.455
+     ],
+     [
+      255.25,
+      -0.513
+     ],
+     [
+      256.25,
+      -0.531
+     ],
+     [
+      257.25,
+      -0.576
+     ],
+     [
+      258.25,
+      -0.603
+     ],
+     [
+      259.25,
+      -0.635
+     ],
+     [
+      260.25,
+      -0.661
+     ],
+     [
+      261.25,
+      -0.667
+     ],
+     [
+      262.25,
+      -0.678
+     ],
+     [
+      263.25,
+      -0.661
+     ],
+     [
+      264.25,
+      -0.646
+     ],
+     [
+      265.25,
+      -0.598
+     ],
+     [
+      266.25,
+      -0.582
+     ],
+     [
+      267.25,
+      -0.6
+     ],
+     [
+      268.25,
+      -0.608
+     ],
+     [
+      269.25,
+      -0.636
+     ],
+     [
+      270.25,
+      -0.75
+     ],
+     [
+      271.25,
+      -0.822
+     ],
+     [
+      272.25,
+      -0.919
+     ]
+    ],
+    "followed": true,
+    "ends": "eye (the reader's 239.2-272.2)",
+    "edge_follows_paint": {
+     "max_dev_m": 0.43
+    }
+   },
    "edge_lonlat": [
     [
-     -106.87899053,
-     39.2652498
+     -106.87899127,
+     39.26522164
     ],
     [
-     -106.87899053,
-     39.2652498
+     -106.87898887,
+     39.26520373
     ],
     [
-     -106.87898636,
-     39.26522223
+     -106.8789862,
+     39.26518475
     ],
     [
-     -106.87898264,
-     39.26519422
+     -106.87898336,
+     39.26516537
     ],
     [
-     -106.87898264,
-     39.26519422
+     -106.87898099,
+     39.2651474
     ],
     [
-     -106.87897987,
-     39.2651658
+     -106.87897945,
+     39.26512777
     ],
     [
-     -106.8789788,
-     39.26513728
+     -106.87897905,
+     39.26510857
     ],
     [
-     -106.8789788,
-     39.26513728
+     -106.87897906,
+     39.26509054
     ],
     [
-     -106.8789793,
-     39.26510926
+     -106.87898003,
+     39.26507189
     ],
     [
-     -106.87898096,
-     39.2650817
+     -106.87898137,
+     39.26505372
     ],
     [
-     -106.87898096,
-     39.2650817
+     -106.87898292,
+     39.26503575
     ],
     [
-     -106.87898295,
-     39.26505459
+     -106.87898512,
+     39.26501771
     ],
     [
-     -106.87898504,
-     39.26502757
+     -106.87898706,
+     39.26499975
     ],
     [
-     -106.87898504,
-     39.26502757
+     -106.87898856,
+     39.26498178
     ],
     [
-     -106.87898713,
-     39.26500063
+     -106.87898999,
+     39.2649638
+    ],
+    [
+     -106.87899126,
+     39.26494585
+    ],
+    [
+     -106.87899266,
+     39.26492787
+    ],
+    [
+     -106.87899401,
+     39.26490989
+    ],
+    [
+     -106.8789966,
+     39.26489192
     ]
-   ]
+   ],
+   "round4": {
+    "s0": 233.0,
+    "s1": 262.0,
+    "in_m": -0.5,
+    "out_m": 1.0,
+    "note": "round 4's trace (NAIP 2019 0.6 m) at its invented -0.5 / 1.0 m offsets, built outside the edge in 0.1.1-0.1.2"
+   }
   },
   {
    "side": "right",
-   "s0": 838.0,
-   "s1": 862.0,
-   "in_m": -0.5,
-   "out_m": 1.0,
+   "s0": 820.0,
+   "s1": 874.5,
+   "in_m": -1.68,
+   "out_m": -0.4,
    "colour": "red_white",
-   "how": "eye, station-labelled 6x zooms of the NAIP (the west leg into the U: white / red blocks on the right edge)",
+   "profile": "kerb",
+   "s_eye": [
+    820.0,
+    874.5
+   ],
+   "stations_measured": 55,
+   "reader": {
+    "stations_tried": 55,
+    "block_amp_median": 30.4,
+    "width_p25_p75": [
+     1.15,
+     1.34
+    ],
+    "middle_p10_p90": [
+     -1.2,
+     -0.83
+    ],
+    "track": [
+     [
+      819.25,
+      -0.81
+     ],
+     [
+      820.25,
+      -0.893
+     ],
+     [
+      821.25,
+      -0.955
+     ],
+     [
+      822.25,
+      -0.968
+     ],
+     [
+      823.25,
+      -0.971
+     ],
+     [
+      824.25,
+      -0.991
+     ],
+     [
+      825.25,
+      -1.01
+     ],
+     [
+      826.25,
+      -1.049
+     ],
+     [
+      827.25,
+      -1.047
+     ],
+     [
+      828.25,
+      -1.042
+     ],
+     [
+      829.25,
+      -1.058
+     ],
+     [
+      830.25,
+      -1.105
+     ],
+     [
+      831.25,
+      -1.089
+     ],
+     [
+      832.25,
+      -1.067
+     ],
+     [
+      833.25,
+      -1.085
+     ],
+     [
+      834.25,
+      -1.078
+     ],
+     [
+      835.25,
+      -1.028
+     ],
+     [
+      836.25,
+      -0.991
+     ],
+     [
+      837.25,
+      -0.961
+     ],
+     [
+      838.25,
+      -0.934
+     ],
+     [
+      839.25,
+      -0.896
+     ],
+     [
+      840.25,
+      -0.864
+     ],
+     [
+      841.25,
+      -0.835
+     ],
+     [
+      842.25,
+      -0.809
+     ],
+     [
+      843.25,
+      -0.789
+     ],
+     [
+      844.25,
+      -0.781
+     ],
+     [
+      845.25,
+      -0.805
+     ],
+     [
+      846.25,
+      -0.824
+     ],
+     [
+      847.25,
+      -0.838
+     ],
+     [
+      848.25,
+      -0.915
+     ],
+     [
+      849.25,
+      -0.953
+     ],
+     [
+      850.25,
+      -0.943
+     ],
+     [
+      851.25,
+      -0.965
+     ],
+     [
+      852.25,
+      -1.048
+     ],
+     [
+      853.25,
+      -1.043
+     ],
+     [
+      854.25,
+      -1.058
+     ],
+     [
+      855.25,
+      -1.059
+     ],
+     [
+      856.25,
+      -1.098
+     ],
+     [
+      857.25,
+      -1.134
+     ],
+     [
+      858.25,
+      -1.212
+     ],
+     [
+      859.25,
+      -1.266
+     ],
+     [
+      860.25,
+      -1.208
+     ],
+     [
+      861.25,
+      -1.218
+     ],
+     [
+      862.25,
+      -1.201
+     ],
+     [
+      863.25,
+      -1.161
+     ],
+     [
+      864.25,
+      -1.163
+     ],
+     [
+      865.25,
+      -1.167
+     ],
+     [
+      866.25,
+      -1.135
+     ],
+     [
+      867.25,
+      -1.115
+     ],
+     [
+      868.25,
+      -1.089
+     ],
+     [
+      869.25,
+      -1.057
+     ],
+     [
+      870.25,
+      -1.042
+     ],
+     [
+      871.25,
+      -1.163
+     ],
+     [
+      872.25,
+      -1.178
+     ],
+     [
+      873.25,
+      -1.239
+     ],
+     [
+      874.25,
+      -1.275
+     ]
+    ],
+    "followed": true,
+    "ends": "eye (the reader's 819.2-874.8)",
+    "edge_follows_paint": {
+     "max_dev_m": 0.22
+    }
+   },
    "edge_lonlat": [
     [
-     -106.88154213,
-     39.26386623
+     -106.88149348,
+     39.26401228
     ],
     [
-     -106.88154595,
-     39.26383861
+     -106.88150299,
+     39.26399341
     ],
     [
-     -106.8815493,
-     39.26381069
+     -106.88151174,
+     39.26397445
     ],
     [
-     -106.8815493,
-     39.26381069
+     -106.88151861,
+     39.26395724
     ],
     [
-     -106.88155182,
-     39.26378236
+     -106.88152554,
+     39.26393752
     ],
     [
-     -106.88155277,
-     39.26375398
+     -106.88153149,
+     39.26391747
     ],
     [
-     -106.88155277,
-     39.26375398
+     -106.88153568,
+     39.26389976
     ],
     [
-     -106.88155239,
-     39.26372601
+     -106.88153944,
+     39.26387998
     ],
     [
-     -106.88155085,
-     39.26369844
+     -106.88154332,
+     39.26386099
     ],
     [
-     -106.88155085,
-     39.26369844
+     -106.88154649,
+     39.26384314
     ],
     [
-     -106.8815491,
-     39.26367138
+     -106.88154963,
+     39.26382438
     ],
     [
-     -106.88154712,
-     39.26364435
+     -106.88155226,
+     39.26380534
     ],
     [
-     -106.88154712,
-     39.26364435
+     -106.88155392,
+     39.26378737
+    ],
+    [
+     -106.88155482,
+     39.2637679
+    ],
+    [
+     -106.88155436,
+     39.26374829
+    ],
+    [
+     -106.8815535,
+     39.26373028
+    ],
+    [
+     -106.88155175,
+     39.26371124
+    ],
+    [
+     -106.88155029,
+     39.26369263
+    ],
+    [
+     -106.88154875,
+     39.26367465
+    ],
+    [
+     -106.88154634,
+     39.26365658
+    ],
+    [
+     -106.88154485,
+     39.26363851
+    ],
+    [
+     -106.88154362,
+     39.26362052
+    ],
+    [
+     -106.88154274,
+     39.26360256
+    ],
+    [
+     -106.88154171,
+     39.26358452
+    ],
+    [
+     -106.88154055,
+     39.26356653
+    ],
+    [
+     -106.88153925,
+     39.26354858
+    ],
+    [
+     -106.8815377,
+     39.26353056
+    ],
+    [
+     -106.88153624,
+     39.26351259
+    ],
+    [
+     -106.88153591,
+     39.26350814
     ]
-   ]
+   ],
+   "round4": {
+    "s0": 838.0,
+    "s1": 862.0,
+    "in_m": -0.5,
+    "out_m": 1.0,
+    "note": "round 4's trace (NAIP 2019 0.6 m) at its invented -0.5 / 1.0 m offsets, built outside the edge in 0.1.1-0.1.2"
+   }
   },
   {
    "side": "left",
-   "s0": 1017.0,
-   "s1": 1038.0,
-   "in_m": -0.5,
-   "out_m": 1.0,
+   "s0": 1026.0,
+   "s1": 1076.0,
+   "in_m": -1.28,
+   "out_m": -0.16,
    "colour": "red_white",
-   "how": "eye, station-labelled 6x zooms of the NAIP (the south-west hairpin's entry: red and white blocks on the outside (left) edge)",
+   "profile": "kerb",
+   "s_eye": [
+    1026.0,
+    1076.0
+   ],
+   "stations_measured": 51,
+   "reader": {
+    "stations_tried": 51,
+    "block_amp_median": 29.4,
+    "width_p25_p75": [
+     0.76,
+     1.1
+    ],
+    "middle_p10_p90": [
+     -1.43,
+     -0.49
+    ],
+    "track": [
+     [
+      1028.25,
+      -0.059
+     ],
+     [
+      1029.25,
+      -0.171
+     ],
+     [
+      1030.25,
+      -0.206
+     ],
+     [
+      1031.25,
+      -0.508
+     ],
+     [
+      1032.25,
+      -0.543
+     ],
+     [
+      1033.25,
+      -0.464
+     ],
+     [
+      1034.25,
+      -0.383
+     ],
+     [
+      1035.25,
+      -0.689
+     ],
+     [
+      1036.25,
+      -0.54
+     ],
+     [
+      1037.25,
+      -0.63
+     ],
+     [
+      1038.25,
+      -0.721
+     ],
+     [
+      1039.25,
+      -0.704
+     ],
+     [
+      1040.25,
+      -0.705
+     ],
+     [
+      1041.25,
+      -0.691
+     ],
+     [
+      1042.25,
+      -0.701
+     ],
+     [
+      1043.25,
+      -0.686
+     ],
+     [
+      1044.25,
+      -0.637
+     ],
+     [
+      1045.25,
+      -0.628
+     ],
+     [
+      1046.25,
+      -0.618
+     ],
+     [
+      1047.25,
+      -0.577
+     ],
+     [
+      1048.25,
+      -0.572
+     ],
+     [
+      1049.25,
+      -0.568
+     ],
+     [
+      1050.25,
+      -0.635
+     ],
+     [
+      1051.25,
+      -0.7
+     ],
+     [
+      1052.25,
+      -0.781
+     ],
+     [
+      1053.25,
+      -0.845
+     ],
+     [
+      1054.25,
+      -0.916
+     ],
+     [
+      1055.25,
+      -0.942
+     ],
+     [
+      1056.25,
+      -1.046
+     ],
+     [
+      1057.25,
+      -1.084
+     ],
+     [
+      1058.25,
+      -1.259
+     ],
+     [
+      1059.25,
+      -1.239
+     ],
+     [
+      1060.25,
+      -1.23
+     ],
+     [
+      1061.25,
+      -1.252
+     ],
+     [
+      1062.25,
+      -1.232
+     ],
+     [
+      1063.25,
+      -1.239
+     ],
+     [
+      1064.25,
+      -1.263
+     ],
+     [
+      1065.25,
+      -1.287
+     ],
+     [
+      1066.25,
+      -1.355
+     ],
+     [
+      1067.25,
+      -1.322
+     ],
+     [
+      1068.25,
+      -1.431
+     ],
+     [
+      1069.25,
+      -1.428
+     ],
+     [
+      1070.25,
+      -1.439
+     ],
+     [
+      1071.25,
+      -1.463
+     ],
+     [
+      1072.25,
+      -1.47
+     ],
+     [
+      1073.25,
+      -1.486
+     ]
+    ],
+    "followed": true,
+    "ends": "eye (the reader's 1028.2-1074.0)",
+    "edge_follows_paint": {
+     "max_dev_m": 0.74
+    }
+   },
    "edge_lonlat": [
     [
-     -106.88239469,
-     39.26289638
+     -106.88241704,
+     39.2630208
     ],
     [
-     -106.88240566,
-     39.26292636
+     -106.8824135,
+     39.26303861
     ],
     [
-     -106.88241187,
-     39.26295701
+     -106.88240508,
+     39.2630609
     ],
     [
-     -106.88241374,
-     39.26298785
+     -106.88239528,
+     39.26308303
     ],
     [
-     -106.88241374,
-     39.26298785
+     -106.88238538,
+     39.26309933
     ],
     [
-     -106.88241142,
-     39.26301877
+     -106.88237113,
+     39.26311907
     ],
     [
-     -106.8824049,
-     39.26304961
+     -106.88235633,
+     39.26313668
     ],
     [
-     -106.8824049,
-     39.26304961
+     -106.88234326,
+     39.26315156
     ],
     [
-     -106.8823937,
-     39.2630798
+     -106.8823289,
+     39.26316732
     ],
     [
-     -106.88237796,
-     39.26310796
+     -106.88231564,
+     39.26318228
     ],
     [
-     -106.88237796,
-     39.26310796
+     -106.8823023,
+     39.26319701
+    ],
+    [
+     -106.88228912,
+     39.26321155
+    ],
+    [
+     -106.88227606,
+     39.263226
+    ],
+    [
+     -106.88226162,
+     39.26324013
+    ],
+    [
+     -106.88224735,
+     39.26325413
+    ],
+    [
+     -106.88223345,
+     39.26326806
+    ],
+    [
+     -106.88221878,
+     39.26328211
+    ],
+    [
+     -106.88220602,
+     39.26329654
+    ],
+    [
+     -106.88219394,
+     39.26331099
+    ],
+    [
+     -106.88218159,
+     39.26332623
+    ],
+    [
+     -106.88216983,
+     39.26334066
+    ],
+    [
+     -106.88215822,
+     39.26335459
+    ],
+    [
+     -106.88214696,
+     39.26337034
+    ],
+    [
+     -106.88213797,
+     39.26338467
+    ],
+    [
+     -106.88212977,
+     39.26339892
+    ],
+    [
+     -106.88212188,
+     39.26341586
     ]
-   ]
+   ],
+   "round4": {
+    "s0": 1017.0,
+    "s1": 1038.0,
+    "in_m": -0.5,
+    "out_m": 1.0,
+    "note": "round 4's trace (NAIP 2019 0.6 m) at its invented -0.5 / 1.0 m offsets, built outside the edge in 0.1.1-0.1.2"
+   }
+  }
+ ],
+ "previous": {
+  "imagery": "USDA NAIP m_3910641_se_13_060_20190914 (2019-09-14, 0.6 m), USGS NAIP ImageServer exportImage in EPSG:4326 with square-degree pixels (the box held exactly; corners W,N,E,S -106.88306156,39.26820288,-106.87823919,39.26223671)",
+  "method": "tools/aerial_edges.py colour reader first (2 runs: one the kerb at s 1025, one a blue car at s 225, rejected); every run then read by eye off 6x zooms with the live line's edges and 5 m station ticks drawn; in_m / out_m [invented]: the blocks straddle the edge, about 1.5 m wide. Not seen: kerbs at the top hairpin's exit and the south-east hairpin (white edge marks only, no blocks)."
+ },
+ "runoff": {
+  "built": [],
+  "note": "No paved run-off: the reader's 'asphalt' runs past the edge are the access road, the pit apron and the infield dirt tracks where they meet the lap; none is a run-off area."
+ },
+ "colour_reader": {
+  "tool": "tools/aerial_edges.py",
+  "params": {
+   "STEP_M": 1.0,
+   "SCAN_M": 14.0,
+   "KERB_BAND_M": 2.5,
+   "KERB_WIN_M": 3.0,
+   "MIN_KERB_M": 5.0,
+   "GAP_M": 8.0,
+   "BREAK_M": 1.0,
+   "MIN_RUNOFF_W_M": 1.5,
+   "MIN_RUNOFF_M": 10.0
   },
+  "m_per_px": 0.5
+ },
+ "not_built": [
   {
    "side": "left",
    "s0": 1495.0,
@@ -346,26 +1178,15 @@
      -106.8804809,
      39.26764431
     ]
-   ]
-  }
- ],
- "runoff": {
-  "built": [],
-  "note": "No paved run-off: the reader's 'asphalt' runs past the edge are the access road, the pit apron and the infield dirt tracks where they meet the lap; none is a run-off area."
- },
- "colour_reader": {
-  "tool": "tools/aerial_edges.py",
-  "params": {
-   "STEP_M": 1.0,
-   "SCAN_M": 14.0,
-   "KERB_BAND_M": 2.5,
-   "KERB_WIN_M": 3.0,
-   "MIN_KERB_M": 5.0,
-   "GAP_M": 8.0,
-   "BREAK_M": 1.0,
-   "MIN_RUNOFF_W_M": 1.5,
-   "MIN_RUNOFF_M": 10.0
+   ],
+   "not_built_why": "ledger 0081 round 2, Kevin 2026-11-05 (\"I just want real\"): read off NAIP 2019 (0.6 m); NAIP 2023 (0.3 m) shows a plain light edge band here, no blocks (kerbs_2023_030_check.jpg). The newest imagery is what is there, so it is not built"
   },
-  "m_per_px": 0.5
- }
+  {
+   "side": "left",
+   "s0": 1014.0,
+   "s1": 1026.0,
+   "how": "ledger 0081 round 3: end zooms at 24 px/m (NAIP 2023 0.3 m)",
+   "reason": "a white band under a red structure 1-2.5 m outside the edge, no blocks alternating along the edge at 0.3 m; the block reader's band climbs onto the red structure here. Not a measured kerb; the clear blocks start at s ~1,026 (built)"
+  }
+ ]
 }

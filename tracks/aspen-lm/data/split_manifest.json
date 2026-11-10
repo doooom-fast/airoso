@@ -1,17 +1,16 @@
 {
- "input": "D:\\k10-scratch\\aspen_lm\\blender\\aspen_motorsports_park_lm.blend",
+ "input": "D:\\k10-scratch\\aspen_lm\\blender\\aspen_motorsports_park.blend",
  "outputs": {
   "loop_main.blend": {
-   "objects": 24,
-   "meshes": 8,
-   "positions": 24836,
+   "objects": 23,
+   "meshes": 7,
+   "positions": 24840,
    "max_positions": 16228,
    "materials": [
     "1GRASS_mat",
     "1KERB_circuit_0_mat",
     "1KERB_circuit_1_mat",
     "1KERB_circuit_2_mat",
-    "1KERB_circuit_3_mat",
     "1KERB_sidewalk_mat",
     "1ROAD_road_mat",
     "MARKINGS_mat.001"
@@ -43,7 +42,6 @@
     "1KERB_circuit_0",
     "1KERB_circuit_1",
     "1KERB_circuit_2",
-    "1KERB_circuit_3",
     "1KERB_sidewalk",
     "1ROAD_road",
     "AC_HOTLAP_START_0",
@@ -69,16 +67,15 @@
  "problems": [],
  "tokens": {},
  "input_census": {
-  "objects": 24,
-  "meshes": 8,
-  "positions": 24836,
+  "objects": 23,
+  "meshes": 7,
+  "positions": 24840,
   "max_positions": 16228,
   "materials": [
    "1GRASS_mat",
    "1KERB_circuit_0_mat",
    "1KERB_circuit_1_mat",
    "1KERB_circuit_2_mat",
-   "1KERB_circuit_3_mat",
    "1KERB_sidewalk_mat",
    "1ROAD_road_mat",
    "MARKINGS_mat.001"
@@ -110,7 +107,6 @@
    "1KERB_circuit_0",
    "1KERB_circuit_1",
    "1KERB_circuit_2",
-   "1KERB_circuit_3",
    "1KERB_sidewalk",
    "1ROAD_road",
    "AC_HOTLAP_START_0",

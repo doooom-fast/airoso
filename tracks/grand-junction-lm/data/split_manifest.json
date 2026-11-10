@@ -1,11 +1,11 @@
 {
- "input": "D:\\k10-scratch\\grand_junction_lm\\blender\\grand_junction_lm.blend",
+ "input": "D:\\k10-scratch\\grand_junction_lm\\blender\\grand_junction.blend",
  "outputs": {
   "loop_main.blend": {
    "objects": 20,
    "meshes": 4,
-   "positions": 57752,
-   "max_positions": 50853,
+   "positions": 57753,
+   "max_positions": 50854,
    "materials": [
     "1GRASS_mat",
     "1KERB_sidewalk_mat",
@@ -63,8 +63,8 @@
  "input_census": {
   "objects": 20,
   "meshes": 4,
-  "positions": 57752,
-  "max_positions": 50853,
+  "positions": 57753,
+  "max_positions": 50854,
   "materials": [
    "1GRASS_mat",
    "1KERB_sidewalk_mat",

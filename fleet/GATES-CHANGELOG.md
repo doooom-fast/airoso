@@ -348,6 +348,101 @@ Measured, as a check of the datum (the EPT keeps NAVD88 metres): class-2 ground 
 - Not used, recorded: the source's `scenery.viaduct.layer_height_m` 5.5 m (the network draft's OSM-layer deck lift) — a
   modelled number. Phase 2's connector decks need measured heights (PC lidar, class 17).
 
+## 2026-11-09 — TreeFX: a build that plants fewer trees than it planned FAILS (ledger 0089; new hard gate, no threshold loosened)
+
+**New gate, `tools/make_treefx.py` `treefx_gate`, hard (exit 1 from `build()`).** Every TreeFX track gets it: `tools/ship_track.sh`
+`ship_treefx` and `tools/ship_sd.sh` both call `build()`. **Bought by:** a fresh PC worktree without the gitignored `.bin` models
+planted 0 trees and every gate stayed green. It FAILS when:
+- fewer trees are written than `plan(all_species=True)` places. That plan has the same positions, guards and drops, and assumes
+  every model is present. Zero tolerance: a count, not a threshold.
+- a model `trees.txt` names is not a file beside it (`extension/trees/`) or in `source/trees/`.
+- `scenery.treefx.planted.native_h_m` / `native_w_m` carry `"_placeholder"` while a copied model is larger than
+  `PLACEHOLDER_MAX_B` 4096 B. ⚠ That number is a classifier, not tuned: real TreeFX models are hundreds of kB, and the Mac's
+  stand-ins are 79-82 B text files.
+
+A mixed zone short of one model still plants every spot with its other models. That is a printed **WARNING**, not a failure:
+the existing tests and the plan contract (`plan()` is what `build()` writes) rely on it.
+
+**No output changes.** The gate reads; `trees.txt`, `ext_config.ini` and `data/treefx.report.json` are byte-for-byte what they
+were. One `[treefx] gate:` stdout line is new. Lake Murray: `plan(all_species=True)` md5 8ce38a01…, 21,219 lines, equal to
+07cc303's. With 15 stand-in models present it writes 21,171 of 21,171 planned with 14 species, so the gate passes. Proven
+failing on Nevada 0.1.4 from an empty workshop without the models: "0 trees written, 49 planned", exit 1.
+
+**Also in this commit (not gates):**
+- `make_treefx.py` takes `claude/milford-019`'s opt-in `planted.native_h_m` / `native_w_m` and the planted point's 6th-element
+  key verbatim. Absent keys give the old output (A/B above).
+- New zone `planted_desert_scrub` (Bush / Bush3).
+- High Plains 0.1.6's ship.json runs the existing `grassfx_aerial` step. Its `cell_m` 30, `max_rects` 48 and colour bounds
+  are the config's own, already marked invented in `plan_grassfx_aerial.py`'s docstring, and unchanged.
+- ⚠ `plan_scrub_naip.py` (Nevada): `K_MAD` 4.0 and `MATCH_M` 1.0 are invented, not a gate. The count is stable over 0.8-1.5 m
+  (45-52).
+- Nevada 0.1.5 (same ledger, later the same day; no gate change): `plan_scrub_measured.py` `K_SD` 2.0. A clump is planted when
+  its lidar top clears 2x its own ground plane's scatter: a two-sided 95 % bar, not tuned. `planted_desert_scrub` is now Bush3
+  only. The treefx gate counts the same way (28 / 28).
+
+## 2026-11-05 — circuit kerbs round 3: a block reader for faded kerbs, and the bar it must pass (ledger 0081 round 3; no gate threshold, no bypass)
+
+No gate threshold changed and nothing is bypassed. New ⚠ invented numbers, none a gate; `tools/kerb_offsets.py` is in no
+chain (it writes a kerbs file a person then names in `route.kerbs_file`):
+- `tools/kerb_offsets.py` tuning: grid `DS_M` 0.25 along s, `DO_M` 0.075 across, `O_LO_M` / `O_HI_M` -3.5 / +3.5;
+  station every `STEP_M` 1.0 over a `WIN_M` 6.0 window; block periods `PERIOD_M` 1.25-3.0; `REFINE` 2 passes; band edge at
+  `HALF` 0.5 of the matched-filter peak (the half-maximum of a blurred step is the step: not tuned); a station counts at a
+  block amplitude of `MIN_AMP` 8 (luminance); extent window `EXT_WIN_M` 3.0, `EXT_FRAC` 0.5 of the span's median, gaps up
+  to `GAP_M` 3.0, at most `GROW_M` 15 past either eye end. ⚠ invented, chosen once and NOT tuned against the truths (one
+  extent variant, a tracked / short-window walk, was tried and dropped: it was worse, ledger 0081 round 3).
+- **The bar for using it** ⚠ invented: a run class may be measured by the reader only if, against High Plains' colour-
+  measured runs of that class, the p95 |residual| of BOTH paint edges (in_m, out_m) is <= 0.4 m: about one NAIP 0.3 m
+  pixel plus the colour truth's own 0.15 m offset step, and under a third of the narrowest raised kerb measured there
+  (1.3 m). Raised blue / white kerbs pass (in 0.29, out 0.36, with R s 2,892's out excluded: its colour truth +2.30 m is
+  the dirt beyond the kerb, seen on the committed strips); flat blue / yellow stripes do not (in 0.48, out 0.67), so the
+  reader measures raised kerbs only. Ends (along s): no bar; the reader's ends are reported beside an eye check of the
+  same strips.
+- `tools/kerb_offsets.py --follow 1` (Pueblo 0.1.2): `FOLLOW_SMOOTH` 9 (a running median over 9 one-metre stations of the
+  band's middle; 5 left a 0.58 m zig at Pueblo R s 3,013, a parked car's shadow over the blocks, which drive_test read as
+  a kink) and `FOLLOW_MAX_M` 1.5 (a station's band further than this from the run's is not the same paint). ⚠ invented.
+- Pueblo's kerbs are built through `tools/author_kerbs_blend.py`'s existing `MIN_W_M` 0.9 floor (round 4, invented): R s
+  1,128-1,140 measured 0.63 m and L s 1,068-1,095 0.81 m are built 0.9 m wide (0.27 / 0.09 m over, inside the reader's
+  0.35 m width p95). Not changed here; said so the widths are not read as measured.
+
+## 2026-11-05 — circuit kerbs round 2: kerbs at their measured offset (ledger 0081 round 2; no gate threshold, no bypass)
+
+No gate threshold changed and nothing is bypassed. New ⚠ invented numbers, none a gate, all opt-in under keys Lake Murray
+does not set (it names no `route.kerbs_file`, so the kerbs step is a no-op there):
+- `kerb.end_ramp_m` 4.0 (each port config that sets `kerb.placement` "measured"): a raised kerb's top ramps from the lip
+  to `kerb.height_m` over this length at either end. ⚠ invented, and chosen against drive_test, said plainly: a kerb laid at
+  its measured place lies over the 12 m lane where the real track is narrower, so drive_test's interior wheel paths
+  (1.25 m and 2.75 m inside the edge) ride onto it; an abrupt 0.08 m end read as 4 severe steps (R s 2,000) and 7.8 kinks
+  /km on High Plains. 4.0 m is the shortest two-stripe length whose end slope (0.08 / 4 = 2 %, 0.02 m per metre) stays
+  under the bump (0.025 m) and kink (3 %) thresholds. Racing kerbs are ramped at their ends; this length is not measured.
+- `tools/author_kerbs_blend.py` `LAYER_M` 2.0: the ROAD surface under a kerb over the lane is read within this of the lane
+  edge's height (L4: never another layer). The measured placement drops `MAX_W_M` (the measured width stands; High
+  Plains' R s 2,892 paint is 2.85 m).
+- `tools/seat_pads_blend.py` (opt-in `scenery.bespoke.pads_seat`, Nevada): no new shape number (the pads' own
+  `PAD_LIFT_M` 0.06, round 5's); `COPLANAR_RAD` 1e-4 (a merge tolerance) and `HASH_M` 8 (a lookup cell), neither moves a vertex.
+- `tools/kerb_spans.py`: a red / white run's width is read off the red blocks alone (the white matched the pale sand and
+  concrete beside it); the colour classes themselves are unchanged.
+- `tools/kerb_spans.py --grow 10` and `GAP_M` 3.0: an eye span is grown / trimmed to its key colour (blue for the blue
+  schemes, red for red / white) at most 10 m past either end, over gaps of up to 3 m (a white block, a faded block).
+
+## 2026-11-05 — circuit kerbs off NAIP 0.3 m: the measurer's invented numbers (ledger 0081; no gate threshold, no bypass)
+
+No gate threshold changed and nothing is bypassed; every gate runs as before on each rebuilt circuit. New ⚠ invented
+numbers, none a gate, all tuning of a colour measurer or a build profile (the image is the measurement):
+- `tools/kerb_spans.py` (measures each hand-checked span): `BAND_M` 2.5 (the band across the lane edge read), `OFF_STEP_M`
+  0.15 (half a 0.3 m pixel), `MIN_HITS` 2 (a station with fewer paint pixels says nothing about width), the paint classes
+  (blue B > R + 25 and B > G; red R > G + 25, R > B + 20, G < B + 25; white mean >= 150, spread <= 50, B >= R - 45;
+  yellow R > B + 45, G > B + 35, max >= 140), and the blue / yellow width read off the blue blocks alone (NAIP's stripe
+  yellow is the dry grass's colour).
+- `tools/author_kerbs_blend.py` `MIN_PAINT_W_M` 0.45 (a flat "paint" run narrower than ~1.5 px at 0.3 m is noise). A
+  "paint" run is built FLAT at the existing `KERB_LIP_M` (no height is seen in an image, so none is built), with the
+  existing back fall; "kerb" runs keep the config's `kerb.height_m` as before.
+- `tools/kerb_blocks.py` (a lead finder, not a measurement; nothing is built from it unchecked): `SAMPLE_M` 0.25, the band
+  -2.0..+1.5 m in 0.15 m columns, `WIN_M` 6, periods 1.5-2.5 m, `MIN_AMP` 22 (luminance), `MIN_MEAN` 125, `MIN_RUN_M` 5,
+  `GAP_M` 4. Its precision is poor: on High Plains (the control) it lists 70 runs / 1,633 m against the 20 / 560 m checked.
+- `tools/apron_seat_check.py`: report only (four samples per apron triangle), no threshold.
+- The spans themselves: a colour scan's run (blue or red >= 3 px in a 5 m window of the -2.5..+1.0 m edge band) less its
+  2 m window at each end, every span checked by eye on `tools/edge_sheet.py` zooms kept beside the trace.
+
 ## 2026-11-05 — DECLARED FORCE: Under the Dragon's Douglas Creek fill, s 2,395-2,410 (ledger 0078 round 13; no threshold moved)
 
 Kevin, 2026-11-05, asked whether to force Under the Dragon's last red row as measured: **"Yes, force it"**.

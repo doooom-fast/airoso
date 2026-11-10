@@ -28,6 +28,7 @@
       "ai",
       "verify_kn5",
       "road_obj",
+      "grassfx_aerial",
       "track_folder",
       "verify_inis",
       "make_map"
@@ -47,7 +48,8 @@
     "optional": [
       "data/heightfield.npy",
       "data/heightfield.meta.json",
-      "textures/kerb_bluewhite.png"
+      "textures/kerb_bluewhite.png",
+      "textures/kerb_atlas_hp.png"
     ]
   },
   "sync_out": {
@@ -71,7 +73,8 @@
       "data/kn5_ground_check.{id}.json",
       "data/house_seat_check.json",
       "data/edge_report.json",
-      "data/kerbs.built.json"
+      "data/kerbs.built.json",
+      "data/grassfx.aerial.json"
     ],
     "map": [
       [
@@ -82,5 +85,6 @@
     "dirs": [
       "ai/{id}"
     ]
-  }
+  },
+  "_vegetation_doc": "ledger 0089 (High Plains 0.1.6): grassfx_aerial before the track folder (the config's own GrassFX zones off NAIP 2023: the draws' long grass, B, which 0.1.5's PRAIRIECARD cards stood on, and the bright bare ground, C); no TreeFX: NAIP shows no shrub there"
 }

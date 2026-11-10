@@ -14,7 +14,9 @@
  "y_changed_points": 0,
  "y_change_max_m": 0.0,
  "connectors": false,
- "bespoke_files": [],
+ "bespoke_files": [
+  "source/edges/kerbs.json"
+ ],
  "crossfall": null,
  "profile": {
   "cap_was_pct": 9.0,
@@ -25,6 +27,8 @@
  "width_taper": null,
  "resample": null,
  "edge_on_wall": null,
+ "corner_arcs": null,
+ "carried": [],
  "grid_upsample": 2,
  "md5": {
   "source_centerline": "2fed3478aee999f45e598619577b639c",

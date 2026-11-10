@@ -1,9 +1,10 @@
 {
   "_doc": "Aspen Motorsports Park through Lake Murray v4's engine (ledger 0078). The line, widths and profile are tracks/aspen's (installed 0.67.1), read by tools/lm_engine_intake.py; the profile is the measured one with the elevation stage's grade cap undone; no lidar camber (the G10 survey found no usable cloud here: source/lidar/camber-survey/README.md), so flat; the 3DEP grid is this port's own fetch (the live track commits none); the edge is the circuit's (no curb, no sidewalk). Every other key is the live track's, copied; the live config is untouched.",
   "archetype": "race_circuit",
-  "name": "Aspen Motorsports Park (LM engine)",
-  "slug": "aspen_motorsports_park_lm",
-  "version": "0.1.1",
+  "name": "Aspen Motorsports Park",
+  "_name_doc": "Kevin 2026-11-07: \"Get rid of Lm Version from names, nothing should be on any other engine now\" / \"LM is the airoso engine\". 0.1.4 (2026-11-09): no \"(LM engine)\" in the display name, and the slug and install_folder are the plain aspen_motorsports_park. The old-engine track (tracks/aspen) gave that slug up: its slug and folder are aspen_motorsports_park_v067 (S7, fleet.cli lint)",
+  "slug": "aspen_motorsports_park",
+  "version": "0.1.4",
   "mirror_x": false,
   "loop": true,
   "default_width_m": 9.0,
@@ -23,6 +24,9 @@
   },
   "kerb": {
     "height_m": 0.08,
+    "placement": "measured",
+    "end_ramp_m": 4.0,
+    "_placement_doc": "ledger 0081 round 3: each run at its measured in_m / out_m (tools/kerb_offsets.py, the block reader calibrated on High Plains, colour not used; the edge follows the paint) across the live lane edge, read as an offset from this ribbon's own lane edge, on the ROAD surface where it lies over the lane; the 4 m end ramp is High Plains' (invented, GATES-CHANGELOG)",
     "width_m": 1.2,
     "top_frac": 0.6,
     "edge_ramp": 0.4
@@ -119,11 +123,12 @@
       "sidewalk_w": 0.2,
       "connector_sidewalk_w": 0.2,
       "grade_w": 1.0,
-      "grass_clearance": 0.05,
+      "grass_clearance": -0.08,
+      "_grass_clearance_doc": "0.1.4 (PC, 2026-11-09; Kevin, asked whether the other circuit tracks have Milford's fast-curve edge mess: \"Yes, check them\"; Milford 0.1.6 is the same fix, ledger 0087): the strip's outer lip 2 cm under the lane edge (profile point 3 at -grass_clearance = +0.08 over the unlifted edge; the lane edge at +0.10). engine-july's prep holds the ground past the ROAD edge at the lane edge's height - 0.02 for 3 m (its contact band), so the lower lip lay in a gutter with a wall of ground at its lip. Measured on the installed 0.1.3 (gate OBJ, every 10 m, both sides; strip_gutter.py): the strip's lip 14 cm under the lane edge; the ground just past it stood more than 5 cm over the lip at 16 of 280 side-stations, more than 10 cm at 5 (max 12 cm). Flush with the band, nothing stands over it",
       "_doc": "the circuit edge (ledger 0078): no curb, no sidewalk. The asphalt edge is held at road height for 0.30 m and the run-off ground meets it 0.15 m lower over 1.0 m [invented: the flush meet the drive gate reads as no drop]; the ground beyond is the assembler's conform to the road, then the 3DEP surface: the real run-off level."
     },
     "kerbs_file": "source/edges/kerbs.json",
-    "_kerbs_doc": "the racing kerbs traced off the aerial (tracks/aspen/source/edges/kerbs.json: imagery, method, the eye check); built by tools/author_kerbs_blend.py outside the lane edge, the config's kerb profile"
+    "_kerbs_doc": "Aspen's three red / white kerbs (tracks/aspen/source/edges/kerbs.json: NAIP 2023 0.3 m, ends by eye on end zooms, offsets by their blocks: ledger 0081 round 3); built at their measured place by tools/author_kerbs_blend.py"
   },
   "terrain_cell_m": 1.5,
   "corridor_refine_factor": 6,
@@ -131,7 +136,7 @@
   "ui_tags": [
     "circuit"
   ],
-  "install_folder": "aspen_motorsports_park_lm",
+  "install_folder": "aspen_motorsports_park",
   "_install_folder_doc": "beside aspen_motorsports_park for the A/B drive (ledger 0078)",
   "ui_series": "doooom Colorado",
   "_ui_series_doc": "Kevin 2026-10-28: 'K10 is gone. doooom.' Content Manager shows '<ui_series> - <layout name>' (tools/ship_track.sh ui_name_prefix carries the same string)",

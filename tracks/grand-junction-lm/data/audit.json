@@ -1,9 +1,9 @@
 {
- "slug": "grand_junction_lm",
+ "slug": "grand_junction",
  "obj": "track.obj",
  "race": false,
  "road_verts": 6996,
- "grass_verts": 53171,
+ "grass_verts": 53173,
  "piers": 0,
  "wall_verts": 0,
  "curb_verts": 15874,

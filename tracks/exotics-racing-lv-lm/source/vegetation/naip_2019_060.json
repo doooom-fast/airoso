@@ -1,0 +1,19 @@
+{
+ "item": "nv_m_3611548_se_11_060_20190706_20191118",
+ "collection": "naip",
+ "datetime": "2019-07-06T00:00:00Z",
+ "gsd": 0.6,
+ "corners": [
+  -115.0217485,
+  36.2851645,
+  -115.0148821,
+  36.2794564
+ ],
+ "w": 1028,
+ "h": 1056,
+ "m_per_px": [
+  0.6001,
+  0.5998
+ ],
+ "source": "Microsoft Planetary Computer data API (USDA FSA NAIP, public domain), EPSG:4326 crop"
+}

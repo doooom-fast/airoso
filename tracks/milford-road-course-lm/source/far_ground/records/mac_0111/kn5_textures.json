@@ -1,0 +1,19 @@
+{
+ "kn5s": [
+  {
+   "kn5": "<scratchpad>/sys/work/mf0111/b0111/build/milford_road_course.kn5",
+   "bytes": 44555580,
+   "version": 5,
+   "textures_embedded": 21,
+   "materials": 34,
+   "maps": 57,
+   "missing_textures": [],
+   "missing": [],
+   "empty": [],
+   "zero_bytes": [],
+   "unused": [],
+   "ok": true
+  }
+ ],
+ "ok": true
+}

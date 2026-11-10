@@ -1400,3 +1400,247 @@ NW complex, small on the skyline; bottom: from above, where the far ground's 15-
   - Menu picture re-rendered with the same camera, identical to 0.1.9's (the new blocks are out of its view); the pack's own is in `2026-11-09_212248_previews`.
 - **Known** (the coordinator's note): the far ground under the new blocks sits 15-25 m low, so they read as towers from above; 0.1.11 owes it.
 - Not driven.
+
+---
+
+# Far ground (0.1.11) (2026-11-09, Mac): the 2017 lidar's bare earth in place of the assembler's skirt
+
+## F.0 Request and branch
+
+- 0.1.10 stood 18 far blocks (pass 4) and pass 3's 4 west buildings at the 2017 lidar's measured roof elevation, walls run
+  down to the built ground. Past the 3DEP grid (the lap + 150 m) that ground was the v021 assembler's **skirt**: a 500 m ramp
+  from the grid's border down to a floor 5 m under the lowest ground (`ribbon.grass_terrain`), 15-25 m under the real ground
+  at the blocks. From the lap the skyline was right; from above or a heli camera the blocks read as 20-30 m towers. The fix is
+  the terrain's: the far ground should be the real ground. Standing: "I just want real"; "I always want newer builds";
+  downloads need Kevin's yes (none was fetched).
+- Branch `claude/milford-0111` from `origin/claude/milford-0110` 795b2f8; merged with fd93202 (the PC's 0.1.10 install records)
+  before the push. Version **0.1.11**. Prior art: Del Mar 0.2.4 (ledger 0083 pass 4b, `claude/del-mar-lm`): its
+  `tools/far_ground.py`, `far_ground_blend.py`, `lidar_ground.py` and the draft step `far_ground` are brought over byte-equal
+  to abd16ba (5f913d9), then extended behind keys only Milford names.
+
+## F.1 The read and its coverage (no download)
+
+- **Source**: the vegetation pass's read of pass 2's 71 EPT nodes (`/Volumes/Drive/codex/mf_work/veg/read/veg.npz`, copied to
+  the system disk, every zip CRC checked: USGS 3DEP `USGS_LPC_MI_31Co_Oakland_2016_LAS_2019`, flown 2017-05-03), class 2:
+  2,516,383 ground returns as 1 m cells (median height, count) over +-1,400 m of the origin.
+- **Same datum as the grid**: the product minus 3DEP at the grid's 875 nodes: median +0.00 m, p05 -0.21, p95 +0.24, max |2.00|;
+  at the 116 border nodes median +0.02, p05 -0.31, p95 +0.64.
+- **Why not Del Mar's grid stage as it stands**: Del Mar's tiles are full density everywhere; Milford's EPT read is full density
+  only within the lane edge + 45 m, the shallower nodes reach the rest at falling density. 5 m cells holding 3 ground returns
+  (Del Mar's rule) cover only **26.2 %** of the ring past the grid; the rest would be the fill, which ignores every sparse return.
+  So `source/far_ground/scripts/far_ground_product.py` reads each 5 m cell at the first radius of 3.5 / 7.5 / 15 / 30 m
+  [invented] holding 3 ground returns: a weighted plane through them at the cell's centre, one 3-sigma outlier pass, held
+  within the samples' range +-1 m; the rest Del Mar's harmonic fill; past 30 m from any measured cell and open to the edge
+  = past the lidar's reach (`data/far_ground.lidar.{npy,fill.npy,meta.json}` + `reach.npy`, 402 x 481 cells of 5 m,
+  1.74 MB; map `source/far_ground/product_map.jpg`).
+- **Coverage of the ring past the grid** (133,200 cells of 5 m out to the skirt's 500 m reach):
+
+  | | share |
+  |---|---|
+  | measured within 3.5 m (the cell's own returns) | 34.3 % |
+  | measured within 7.5 / 15 / 30 m | 19.3 / 13.1 / 20.3 % |
+  | **measured, all radii** | **86.9 %** |
+  | filled within reach or enclosed (roofs, woods, ponds) | 11.4 % |
+  | **past the reach** (a strip along the north edge, 1.2-1.4 km north of the origin) | **1.7 %** |
+
+  Every far block's footprint and the ground 4 m round it is measured or filled under its own roof (no cell past the reach).
+  As meshed: 33,370 ring nodes, 29,049 on measured cells, 3,775 filled, 546 past the reach.
+- **Where it does not reach, today's ground stays** (`terrain.far_ground.beyond: keep`): 47 nodes keep the skirt's own height,
+  560 are feathered from the lidar's fill to it over 40 m [invented] from the reach, 30 in the skirt's empty corners have no
+  ground (as today) and their 47 cells are left out.
+
+## F.2 What 0.1.11 builds
+
+- `terrain.far_ground` {reach 500, feather 40 [Del Mar's, invented], cell 10, beyond keep, keep_feather 40 [invented],
+  object `1GRASS_LIDAR`} and the draft step `far_ground` after `strip_seam`: the ring on the grid's own 10.04 x 10.01 m lattice,
+  the border vertices' heights kept (seam step 0; border residual p05..p95 -0.69..+0.85 m, max |2.71|, feathered over 40 m;
+  grade change across the seam p50 0.036, p95 0.209, max 0.362: the 1 m lidar resolves slopes the 40 m grid smooths).
+- **Its own object, the skirt sunk, not deleted** (`object`, new, opt-in): run 2 built the ring inside TERRAIN with the skirt
+  deleted, as Del Mar does. It shipped green with every gate number equal, but **8,199 of the near ground's 383,838 vertex
+  positions moved** (triangle centroids p50 0.3 mm, max 3.4 cm, all within 20 m of the road; `records/runs/run2_*`) and
+  the rails' re-seat moved with them (up to 1 mm). Engine-july's prep tiles the ground by balanced bisection of face centres in
+  plan and then welds (`remove_doubles` 5 cm) and fills each tile on its own: dropping the skirt's 928 faces and adding the
+  ring's moved the tile seams. So the ring is now its own physical object `1GRASS_LIDAR` (the border nodes copied, vertex for
+  vertex), TERRAIN keeps every element and its order, and the skirt's 464 floor vertices only **sink** (z to -521.6 m, x / y
+  untouched: the same face centres in plan, the same tiles). `tools/far_ground_prep_blend.py` (a new prep step, opt-in by the
+  same key) takes the sunk skirt's 928 faces out of the 8 prepped tiles before anything reads them. Run 3 named the object
+  `1GRASS_FAR` and verify_kn5 refused it (a physical name carrying GRASS_FAR, the tiered terrain's visual-only ring): renamed,
+  and far_ground_blend now refuses such a name up front.
+- `scenery.bespoke.names.far` + `1GRASS_LIDAR`: a far block reads the lidar's ground, never the sunk skirt under it.
+- **The trees past the grid** (`scenery.treefx.planted.seat_far_on_built`, new, opt-in, `tools/make_treefx.py`): a planted
+  point outside the 3DEP grid started on the grid's nearest border node; it now starts on the built far ground under it
+  (TreeFX still snaps each tree onto SURFACE_MATERIALS, which now lists `1GRASS_LIDAR_mat`).
+- **One block dropped: `mpg_nw_complex_0`**, the NW complex's lowest roof (25.91 m), refused by the author on the real ground:
+  the lidar's ground is 25.44-25.56 m 5-6 m east of its east wall (outside every footprint), 19.6-20.0 m along its north wall.
+  It is set into its slope; the author refuses a roof under half its wall over the rim's highest ground, and that rule is not
+  loosened (run 1 stopped on it). Moved to `pass4/blocks_dropped.json` with its reason (`far_ground/scripts/drop_set_in.py`).
+  Del Mar's set-in form would stand it (owed). 17 of pass 4's far blocks stand.
+
+## F.3 The builds (Mac, the system disk, EMPTY workshops, `--no-install`, no force)
+
+- ENG = `<scratchpad>/sys/work/mf0111/eng`, a copy of pass 4's (`export_kn5_addon.py` md5 83b231e8, `assets/textures` 96 / 96
+  md5-equal to this head's); AIROSO = a `git archive` of the head + the two 82 B placeholder bins (never committed).
+- **b0110** = 795b2f8 (0.1.10) rebuilt for the before column, the stills and mesh_diff: road kn5 **42,696,834 B, the recorded
+  0.1.10's to the byte**; `drive_test.full.json`, `kn5_ground_check.full.json`, `audit.json`, `road_wear_check.json`,
+  `treefx.report.json`, `grassfx.aerial.json` md5-equal to pass 4's records.
+- **b0111** = 5d29b70 (run 4, from the empty workshop; runs 1-3 above, logs in `records/runs/`): `11247 of 11247 points`,
+  `11247 trees ... ['Oak3.bin', 'SycamoreV2.bin']`, `[grassfx] 1285 rectangles, 1285 kept`, `split 1GRASS (406937 verts) -> 8
+  tiles` (0.1.10's count), `[far-ground-prep] ... 928 faces from 8 tiles`, `[reseat] 14 objects`, SHIP OK, exit 0, 19 min.
+  Run 4 re-seated 7,461 trees and left 133 between the grid's last node and its `bbox_swne` edge (36 m further east) on the
+  grid's border height, up to 6.5 m off the ground; `make_treefx` now tests the nodes (2d810c8), and **run 5** re-ran the same
+  workshop `--from treefx` at 2d810c8 (every gate again; the kn5 is run 4's): `planted past the 3DEP grid, seated on the
+  built far ground: 7656 re-seated, 0 with no ground under them, 3591 inside the grid unchanged`, SHIP OK. Records:
+  `source/far_ground/records/mac_0110/`, `mac_0111/`.
+
+## F.4 The gate column (BUILT artifacts)
+
+| gate | 0.1.10 (Mac b0110) | **0.1.11 (Mac b0111)** |
+|---|---|---|
+| drive_test: soft top / severe / undrivable / daylight; kinks /km, vertex bumps, apron steps; obstructed, floating, off-pavement, excursions | 0/0/0/0; 6.34, 16, 5; 0, 0, 0, 0 | **the same: `drive_test.json` and `.full.json` byte-identical** |
+| audit_mesh A-K | CLEAN; road 65,218 / curb 27,191 / walls 43,907 / grass 418,328 v | **CLEAN; the same but grass 451,687 v** (the ring) |
+| verify_kn5 + --inis | PASS | **PASS** |
+| kn5_ground_check | PASS: double-sheet 0; 336 walls, hovering 0, median -0.461 / p95 -0.186; road over ground 2 / 9,317, max 0.052 | **the same: `kn5_ground_check.full.json` byte-identical** |
+| kn5_textures | PASS 21 textures / 33 materials / 55 maps | **PASS 21 / 34 / 57** (+ `1GRASS_LIDAR_mat`), missing 0 |
+| road_wear | PASS, every row | **`road_wear_check.json` byte-identical** |
+| house_seat | PASS, 3 | **PASS, 3 (identical bar its path)** |
+| edge_smoothness | PASS 1.19 / 1.22 cm, 0.38 / 0.39 cm | **identical bar its path** |
+| edge_report at 1 m (not a gate) | kerb 99.5 %, wall 0.5 % | **byte-identical** |
+| veg_verify (not in the chain) | PASS 11,247, 385 colliders, 0 orphans, nearest paved 4.65 m, wall 2.96 m | **identical** |
+| seat_built (report) | PASS, 17 objects; FARBLOCK exposed p5 / p50 / p95 5.2 / 21.1 / 31.0 m | **PASS, every row identical but FARBLOCK: 5.0 / 8.1 / 12.9 m** |
+| reseat_bespoke.json | 14 objects | **byte-identical** |
+| chain | SHIP OK | **SHIP OK, no force** |
+| road kn5 / track folder | 42,696,834 B / 43,882,595 B | **44,555,580 B (+1,858,746) / 45,742,094 B** |
+
+## F.5 Near the road nothing changed (`records/mesh_diff_0110_0111.json`, `ground_band_0110_0111.json`)
+
+- **mesh_diff**: 1ROAD, 1KERB, all 13 1WALL, the 3 GUARDRAIL, both BUILDING, MARKINGS, PADAPRON, ROOFTOP_TAN **equal**; no
+  texture added, changed or dropped. Differ, by design: the 8 1GRASS tiles (the sunk skirt's faces out), FARBLOCK_TILTUP_0 and
+  ROOFTOP_WHITE_0 (the blocks on the real ground, one fewer); only in 0.1.11: `1GRASS_LIDAR` (33,834 v).
+- **The near ground** (`far_ground/scripts/ground_band_diff.py`: every 1GRASS triangle inside the grid's box, keyed by its
+  corners' float32 positions): **767,037 triangles in both, 0 only in either**; normals and UVs bit-identical at every corner
+  but the 1,383 of 1,386 on the grid's border (their normals read the skirt's faces in 0.1.10, the ring is another object now).
+- **Trees** (`tree_seat_check.py`, run 5): 11,247 lines in both; 3,598 identical, 7,649 differ in their start height only
+  (model, angle, size, width and plan position equal; 7 of the 7,656 re-seated round to the same centimetre), moved -21.05 ..
+  +18.15 m (p50 -3.46). On the built ground: **0 orphans** (0.1.10: **323** trees over no ground at all, in the skirt's empty
+  corners); start height over the ground p50 0.004 m, p95 1.82, max 5.77 (0.1.10: p50 5.37, max 46.6). The 1,233 trees still
+  more than 1 m off all stand inside the grid, where nothing changed (the grid's nearest node, as 0.1.10).
+- **GrassFX** (`grass_zone_check.py`): `grassfx.aerial.json` byte-identical; all 1,285 zones' 38,275 samples on ground in both;
+  GRASS_MESHES gains `1GRASS_LIDAR`, every ground mesh listed.
+
+## F.6 Each far block's wall, lowest built ground to roof (`wall_heights.py`; scene frame m; "real" = roof - the product's lowest ground 1-4 m round the footprint)
+
+| block | roof | 0.1.10 wall | **0.1.11 wall** | real | 0.1.11 - real |
+|---|---|---|---|---|---|
+| mpg_far_sw_0 | 40.13 | 25.05 | **6.33** | 6.50 | -0.17 |
+| mpg_far_sw_1 | 40.14 | 22.15 | **6.35** | 6.35 | 0.00 |
+| mpg_far_sw_2 | 42.29 | 27.40 | **8.49** | 8.53 | -0.04 |
+| mpg_far_sw_3 | 44.54 | 27.02 | **10.70** | 10.76 | -0.06 |
+| mpg_far_w_small_0 | 47.56 | 32.77 | **8.41** | 8.76 | -0.35 |
+| mpg_nw_complex_0 | 25.91 | 18.51 | **dropped** (set into its slope, F.2) | - | - |
+| mpg_nw_complex_1 | 30.39 | 18.45 | **6.43** | 8.28 | -1.85 |
+| mpg_nw_complex_2 | 30.41 | 21.15 | **9.92** | 10.31 | -0.39 |
+| mpg_nw_complex_3 | 33.37 | 23.58 | **11.18** | 13.07 | -1.89 |
+| mpg_nw_complex_4 | 33.39 | 21.46 | **7.70** | 8.73 | -1.03 |
+| mpg_nw_complex_5 | 33.36 | 21.12 | **7.53** | 7.74 | -0.21 |
+| mpg_nw_complex_6 | 33.36 | 26.28 | **12.98** | 13.23 | -0.25 |
+| mpg_nw_complex_7 | 35.17 | 27.84 | **15.18** | 15.21 | -0.03 |
+| mpg_nw_complex_8 | 37.97 | 30.37 | **8.95** | 10.22 | -1.27 |
+| mpg_nw_complex_9 | 37.97 | 27.75 | **10.95** | 11.70 | -0.75 |
+| mpg_nw_complex_10 | 37.41 | 20.15 | **7.20** | 7.36 | -0.16 |
+| mpg_nw_complex_11 | 37.47 | 19.05 | **7.62** | 7.90 | -0.28 |
+| mpg_nw_complex_12 | 39.84 | 31.89 | **12.78** | 14.00 | -1.22 |
+| mpg_west_bldg_a | 60.22 | 17.80 | **14.39** | 14.77 | -0.38 |
+| mpg_west_bldg_b (hall b) | 55.20 | 31.20 | **16.55** | 16.72 | -0.17 |
+| mpg_west_bldg_c | 46.51 | 12.07 | **8.99** | 8.15 | +0.84 |
+| mpg_plant_a | 24.25 | 15.53 | **11.45** | 11.52 | -0.07 |
+| mpg_plant_b (11.0 m wall [invented], no roof_z_m) | 10.72 -> **20.12** | 10.85 | **10.85** | - | its roof rose 9.40 m with its ground |
+| mpg_nw_small, pad sheds | unchanged (inside the grid) | | | | |
+
+The built wall now ends within 0.4 m of the lidar's lowest ground on 14 of 21 measured blocks and within 1.9 m on all; where it
+ends higher, the 10 m ring's facets span the slope beside a footprint that the 1 m lidar resolves (the NW complex is set into
+its hill). Plant B (pass 1, 11.0 m [invented], owed since pass 3) sat on the skirt; on the real ground its roof stands at 20.12 m
+and no longer under its high side's ground.
+
+## F.7 Lake Murray unchanged (`source/far_ground/records/lm_checks.sh`, `lm_checks2.log`, at 2d810c8)
+
+- `git diff origin/claude/milford-0110 -- tracks/san-diego-lake-murray`: **empty**. Shared code changes are all behind keys no
+  other config names: `tools/far_ground*.py` (new here; `beyond`, `object` opt-in, Del Mar's path unchanged without them),
+  `tools/far_ground_prep_blend.py` + its prep step in `tools/ship_track.sh` (`terrain.far_ground.object`), `tools/make_treefx.py`
+  (`planted.seat_far_on_built`; the report gains a key only then); `tools/ship_sd.sh` untouched.
+- **Trim A/B** (fleet-lm-engine vs this branch): byte-identical, 664da93b / b73b70f4 / f0c97952, log 63af07cc.
+- **make_treefx A/B**: Lake Murray byte-identical (8ce38a01, 21,219 lines) against fleet-lm-engine and against 0.1.10; the Lariat,
+  the Rangely stages and Sand Creek the same.
+- **Tests**: `tests/tools/test_milford_far_ground.py` (new, 7), the chain test's V4_EXTRAS gains the prep header, pass 4's drop
+  test the set-in reason. Full suite (`tests/run_tests.py`, at 2d810c8): **1,331 pass, 8 fail**, the known 8 (draft_equiv x5, registry_moves, bench_pad x2).
+
+## F.8 Stills (Blender EEVEE on each build's split scene, NAIP's sun; TreeFX STAND-INS on each build's own ground)
+
+`source/far_ground/scripts/far_ground_stills_blend.py`, the same cameras on b0110 and b0111 (the car-height eye stands on each
+build's own ground). In the repo, 0.1.10 above / 0.1.11 below, `source/far_ground/stills/`: `pair_above_nw_complex.jpg`
+(the complex from 150 m: 18-32 m walls -> 6-15 m, its hill), `pair_car_nw_complex.jpg`, `pair_above_far_sw.jpg`,
+`pair_car_far_sw.jpg` (the SW building from 70 m out at car height: a 25 m tower -> its 6-11 m on its rise),
+`pair_above_west_halls.jpg`, `pair_seat_west_halls.jpg`. All 22 frames and 11 pairs: `<scratchpad>/sys/work/mf0111/stills/`.
+0.1.10's stand-in count is 10,924 (323 over no ground); 0.1.11's 11,247. Not seen in game.
+
+## F.9 What is invented (also in `fleet/GATES-CHANGELOG.md` 2026-11-09 "Milford far ground")
+
+The product's radii 3.5 / 7.5 / 15 / 30 m, 3 returns, the 3-sigma pass and +-1 m hold, the 30 m reach; the 40 m border feather
+(Del Mar's) and the 40 m feather to today's ground; the sunk skirt's 500 m and its 0.5 m clearance self-check. Measured: every
+ring height on a measured cell (a plane through 2017 ground returns), the datum agreement, the walls' "real" column.
+
+## F.10 Downloads that would fill what the read does not reach (none fetched; each needs Kevin's yes)
+
+| | what | source | size |
+|---|---|---|---|
+| a | the deeper EPT nodes of the same flight over the north strip past the reach (1.7 % of the ring, ~62,000 m2, 1.2-1.4 km north) | `https://s3-us-west-2.amazonaws.com/usgs-lidar-public/USGS_LPC_MI_31Co_Oakland_2016_LAS_2019/` (`ept-data/<node>.laz`; the node list from the hierarchy files, a few hundred kB of metadata, sized by HEAD requests as pass 2's `ept_plan.py` did) | est. 2-6 MB (2.69 returns / m2 at full depth x 6.91 B / return, node boxes overhanging) |
+| b | the same, full density over the whole ring (the 66 % now measured at 7.5-30 m radius would be at 3.5 m) | the same | est. 60-90 MB (3.3 km2 x 2.69 / m2 x 6.91 B) |
+
+## PC runbook 0082-8: rehearse 0.1.11 from an EMPTY workshop with the real TreeFX models; it installs when green
+
+1. `git fetch && git checkout claude/milford-0111` at this ledger's commit or later; `git status` clean (`GIT_LFS_SKIP_SMUDGE=1`
+   is fine: the draft rebuilds loop.blend). The lidar product is committed (`data/far_ground.lidar.*`): no lidar needed.
+2. **The TreeFX models first**: `Oak3.bin` / `SycamoreV2.bin` from the installed Milford's `extension/trees/` into
+   `tracks/milford-road-course-lm/source/trees/`; md5 Oak3 `24111ede…`, SycamoreV2 `7010d61f…`, else stop. Never commit a .bin.
+3. **ENG** = runbook 0082-7's (`eng_mflm_017`: exporter md5 83b231e8, `assets/textures` md5-equal to this head's, 96 / 96).
+4. **Rehearse** from an EMPTY `D:/k10-scratch/milford_0111_reh`:
+   `ENG=<ENG> SHIP_PROJ=D:/k10-scratch/milford_0111_reh AIROSO=<checkout> PYTHONUTF8=1 bash tools/ship_track.sh milford-road-course-lm --no-install`.
+   The log must show:
+   - `[far-ground] skirt out (464 vertices), 33370 ring nodes ... (29049 on measured lidar, 3775 under cover, 546 past the
+     tiles); border residual p05..p95 -0.687..0.853 m (max |2.713|) ... TERRAIN 370451 -> 370451 verts, the ring its own object
+     1GRASS_LIDAR (33834 verts, 464 border copies), the skirt's 464 floor vertices sunk to -521.6 m (928 faces ...)` and
+     `beyond the lidar's reach: today's ground kept at 47 nodes, feathered to it at 560 ... 30 nodes with no ground ... 47 ring cells`;
+   - `split 1GRASS (406937 verts) -> 8 tiles` (0.1.10's) and `[far-ground-prep] ... 928 faces from 8 tiles`;
+   - the block lines `mpg_far_sw_0` .. `mpg_nw_complex_12` (17; no `mpg_nw_complex_0`) with 0.1.11's grounds (F.6) and no
+     `self-check FAILED`; `[reseat] 14 objects moved`; `[road_wear] ... shift (-1.00, +0.00) m`;
+   - `[treefx] planted past the 3DEP grid ... 7656 re-seated, 0 with no ground under them, 3591 inside the grid unchanged`,
+     `11247 of 11247 points`, `11247 trees ... ['Oak3.bin', 'SycamoreV2.bin']`; `[grassfx] ... 1285 rectangles, 1285 kept`;
+   - `SHIP OK`.
+5. **Compare every row** of F.4's 0.1.11 column: `furniture/gate_table.py`, `vegetation/scripts/veg_verify.py`,
+   `furniture/pass3/scripts/seat_built.py` on the workshop; then against the installed 0.1.10 (its workshop `D:/k10-scratch/milford_lm`):
+   - `vegetation/scripts/mesh_diff.py <installed 0.1.10 kn5> <rehearsal kn5>`: only the 8 1GRASS tiles, FARBLOCK_TILTUP_0 and
+     ROOFTOP_WHITE_0 differ, `1GRASS_LIDAR` only in the rehearsal, no texture changes;
+   - `far_ground/scripts/ground_band_diff.py <installed kn5> <rehearsal kn5> <reh>/data/far_ground.report.json`: EQUAL (0 / 0,
+     inside 0);
+   - `far_ground/scripts/tree_seat_check.py D:/k10-scratch/milford_lm <reh>`: 0 orphans after, other_change 0;
+   - `far_ground/scripts/wall_heights.py <0.1.10 log> <rehearsal log> tracks/milford-road-course-lm`: F.6's 0.1.11 column;
+   - `drive_test.full.json`, `kn5_ground_check.full.json`, `road_wear_check.json`, `reseat_bespoke.json` byte-equal to the
+     installed 0.1.10's data/; the road kn5 = the installed 0.1.10's + ~1,858,746 B (Mac: 42,696,834 -> 44,555,580; the PC's
+     0.1.10 is 42,697,250 B), within tangent noise (`tools/kn5_equiv.py` against the Mac's copy if carried; never md5).
+   Any row red or different: no install; report the row.
+6. **Install when green** (Kevin: "I always want newer builds"): AC closed; list every `milford_road_course*` folder with its
+   `ui/ui_track.json` version; park 0.1.10's workshop (`milford_lm` -> `milford_lm.0.1.10`); run the chain from an EMPTY
+   `D:/k10-scratch/milford_lm` without `SHIP_PROJ` / `--no-install` (ship_track parks the installed 0.1.10). Afterwards one
+   Milford folder, 0.1.11, the two .bin md5s in its `extension/trees/`. Re-render the menu picture with `source/ui/preview.json`'s
+   camera.
+7. Push the install's sync-back and records on this branch. Then in game, a heli / free camera over the NW complex and the SW
+   building: walls to the ground, no towers; the trees past the grid on the ground. Kevin's drive is the verdict.
+
+## Owed (after the far ground; start here)
+
+1. **The PC: runbook 0082-8**, then the install and the look from above.
+2. **`mpg_nw_complex_0`**: set into its slope; Del Mar's set-in form (ledger 0083 pass 4b: `set_in` rows, house_seat's deck
+   rule) brought here would stand it as measured. Kevin's call.
+3. **The near ground from the lidar** (the grid inside lap + 150 m is still 3DEP's 40 m, pre-divided): as Del Mar's owed 1, it
+   would move the ground the lap was built and gated on, so its own pass with every gate again and Kevin's drive.
+4. **Downloads F.10 a / b** (Kevin's yes): the north strip past the reach; the whole ring at full density.
+5. Pass 4's Owed 3-6 and pass 3's stand.

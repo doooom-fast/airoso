@@ -14,6 +14,24 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
+## 2026-11-09 — Milford far ground (ledger 0082 "Far ground (0.1.11)"; no gate threshold moved, no bypass, nothing forced)
+
+No gate changed. Two self-checks are new, each opt-in by `terrain.far_ground.object` (only Milford names it):
+`tools/far_ground_blend.py` refuses a ring node standing less than **0.5 m ⚠ [invented]** over the sunk skirt and an object name
+that is not 1GRASS* or carries GRASS_FAR (verify_kn5's visual-only ring, which refused run 3); `tools/far_ground_prep_blend.py`
+refuses unless the faces it takes out are exactly the draft's sunk-skirt count, none centred inside the grid. Proven on the
+0.1.11 build: every chain gate's JSON byte-identical to 0.1.10's but audit's grass count, kn5_textures' material count and the
+paths; the near ground's 767,037 triangles bit-identical.
+
+| number | value | source |
+|---|---|---|
+| the far ground's heights | a plane through the 2017 ground returns per 5 m cell (86.9 % of the ring) | **measured** |
+| the radii a cell's returns are read within | 3.5 / 7.5 / 15 / 30 m, 3 returns, a 3-sigma pass, held to +-1 m of the samples | ⚠ [invented] (`far_ground_product.py`) |
+| past the lidar's reach | farther than 30 m from a measured cell and open to the edge | ⚠ [invented] |
+| the border feather / the feather to today's ground | 40 m / 40 m | ⚠ [invented] (Del Mar's / `keep_feather_m`) |
+| the sunk skirt's floor | 500 m under the lowest ring or grid height | ⚠ [invented] (`SINK_M`), never shipped (taken out in prep) |
+| the author's refusal of a roof under half its wall over its rim's highest ground | unchanged | pass 3's; it dropped `mpg_nw_complex_0`, set into its slope |
+
 ## 2026-11-09 — Milford furniture pass 4's numbers (ledger 0082 pass 4, 0.1.10; no gate threshold moved, no bypass, no shared code changed)
 
 | number | value | source |

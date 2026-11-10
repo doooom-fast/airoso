@@ -1,0 +1,34 @@
+{
+ "before": {
+  "planted": 11247,
+  "orphans": 323,
+  "start_over_ground_m": {
+   "p50_abs": 5.371,
+   "p95_abs": 19.679,
+   "max_abs": 46.616,
+   "over_1m": 8454
+  }
+ },
+ "after": {
+  "planted": 11247,
+  "orphans": 0,
+  "start_over_ground_m": {
+   "p50_abs": 0.004,
+   "p95_abs": 1.821,
+   "max_abs": 5.765,
+   "over_1m": 1233
+  }
+ },
+ "lines": {
+  "before": 11247,
+  "after": 11247,
+  "identical": 3598,
+  "only_y_moved": 7649,
+  "other_change": 0,
+  "y_moved_m": {
+   "min": -21.05,
+   "p50": -3.46,
+   "max": 18.15
+  }
+ }
+}

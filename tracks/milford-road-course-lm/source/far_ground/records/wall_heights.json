@@ -1,0 +1,592 @@
+{
+ "_doc": "Every off-terrain block's wall, before and after the far ground (ledger 0082 'Far ground (0.1.11)'): from each build's log line\n`[bespoke] block <key>: ..., ground <lo>..<hi>, bottom <b>, eave <e>` (tools/author_bespoke_blend.py: the built ground under the\nwalls, scene frame), the wall from the lowest built ground to the roof (eave - lo), against the REAL ground: the lidar\nproduct's (data/far_ground.lidar.npy) lowest value on a 1 m lattice over a ring LIDAR_RING_M outside the footprint (the\nreturns under a roof are none: the ground beside the walls is what the lidar measures), scene frame = NAVD88 - the origin's\nelevation.",
+ "rows": [
+  {
+   "key": "mpg_far_sw_0",
+   "lidar_ground_lo": 33.63,
+   "before": {
+    "ground": [
+     15.08,
+     18.14
+    ],
+    "eave": 40.13,
+    "wall_lo_to_roof_m": 25.05,
+    "lo_vs_lidar_m": -18.55
+   },
+   "after": {
+    "ground": [
+     33.8,
+     34.14
+    ],
+    "eave": 40.13,
+    "wall_lo_to_roof_m": 6.33,
+    "lo_vs_lidar_m": 0.17
+   },
+   "real_wall_lo_to_roof_m": 6.5
+  },
+  {
+   "key": "mpg_far_sw_1",
+   "lidar_ground_lo": 33.79,
+   "before": {
+    "ground": [
+     17.99,
+     20.88
+    ],
+    "eave": 40.14,
+    "wall_lo_to_roof_m": 22.15,
+    "lo_vs_lidar_m": -15.8
+   },
+   "after": {
+    "ground": [
+     33.79,
+     34.13
+    ],
+    "eave": 40.14,
+    "wall_lo_to_roof_m": 6.35,
+    "lo_vs_lidar_m": 0.0
+   },
+   "real_wall_lo_to_roof_m": 6.35
+  },
+  {
+   "key": "mpg_far_sw_2",
+   "lidar_ground_lo": 33.76,
+   "before": {
+    "ground": [
+     14.89,
+     17.97
+    ],
+    "eave": 42.29,
+    "wall_lo_to_roof_m": 27.4,
+    "lo_vs_lidar_m": -18.87
+   },
+   "after": {
+    "ground": [
+     33.8,
+     34.38
+    ],
+    "eave": 42.29,
+    "wall_lo_to_roof_m": 8.49,
+    "lo_vs_lidar_m": 0.04
+   },
+   "real_wall_lo_to_roof_m": 8.53
+  },
+  {
+   "key": "mpg_far_sw_3",
+   "lidar_ground_lo": 33.78,
+   "before": {
+    "ground": [
+     17.52,
+     19.78
+    ],
+    "eave": 44.54,
+    "wall_lo_to_roof_m": 27.02,
+    "lo_vs_lidar_m": -16.26
+   },
+   "after": {
+    "ground": [
+     33.84,
+     34.3
+    ],
+    "eave": 44.54,
+    "wall_lo_to_roof_m": 10.7,
+    "lo_vs_lidar_m": 0.06
+   },
+   "real_wall_lo_to_roof_m": 10.76
+  },
+  {
+   "key": "mpg_far_w_small_0",
+   "lidar_ground_lo": 38.8,
+   "before": {
+    "ground": [
+     14.79,
+     17.05
+    ],
+    "eave": 47.56,
+    "wall_lo_to_roof_m": 32.77,
+    "lo_vs_lidar_m": -24.01
+   },
+   "after": {
+    "ground": [
+     39.15,
+     39.51
+    ],
+    "eave": 47.56,
+    "wall_lo_to_roof_m": 8.41,
+    "lo_vs_lidar_m": 0.35
+   },
+   "real_wall_lo_to_roof_m": 8.76
+  },
+  {
+   "key": "mpg_nw_complex_0",
+   "before": {
+    "ground": [
+     7.4,
+     12.67
+    ],
+    "eave": 25.91,
+    "wall_lo_to_roof_m": 18.51,
+    "lo_vs_lidar_m": null
+   }
+  },
+  {
+   "key": "mpg_nw_complex_1",
+   "lidar_ground_lo": 22.11,
+   "before": {
+    "ground": [
+     11.94,
+     13.38
+    ],
+    "eave": 30.39,
+    "wall_lo_to_roof_m": 18.45,
+    "lo_vs_lidar_m": -10.17
+   },
+   "after": {
+    "ground": [
+     23.96,
+     26.05
+    ],
+    "eave": 30.39,
+    "wall_lo_to_roof_m": 6.43,
+    "lo_vs_lidar_m": 1.85
+   },
+   "real_wall_lo_to_roof_m": 8.28
+  },
+  {
+   "key": "mpg_nw_complex_10",
+   "lidar_ground_lo": 30.05,
+   "before": {
+    "ground": [
+     17.26,
+     19.97
+    ],
+    "eave": 37.41,
+    "wall_lo_to_roof_m": 20.15,
+    "lo_vs_lidar_m": -12.79
+   },
+   "after": {
+    "ground": [
+     30.21,
+     30.5
+    ],
+    "eave": 37.41,
+    "wall_lo_to_roof_m": 7.2,
+    "lo_vs_lidar_m": 0.16
+   },
+   "real_wall_lo_to_roof_m": 7.36
+  },
+  {
+   "key": "mpg_nw_complex_11",
+   "lidar_ground_lo": 29.57,
+   "before": {
+    "ground": [
+     18.42,
+     20.72
+    ],
+    "eave": 37.47,
+    "wall_lo_to_roof_m": 19.05,
+    "lo_vs_lidar_m": -11.15
+   },
+   "after": {
+    "ground": [
+     29.85,
+     30.52
+    ],
+    "eave": 37.47,
+    "wall_lo_to_roof_m": 7.62,
+    "lo_vs_lidar_m": 0.28
+   },
+   "real_wall_lo_to_roof_m": 7.9
+  },
+  {
+   "key": "mpg_nw_complex_12",
+   "lidar_ground_lo": 25.84,
+   "before": {
+    "ground": [
+     7.95,
+     13.39
+    ],
+    "eave": 39.84,
+    "wall_lo_to_roof_m": 31.89,
+    "lo_vs_lidar_m": -17.89
+   },
+   "after": {
+    "ground": [
+     27.06,
+     29.98
+    ],
+    "eave": 39.84,
+    "wall_lo_to_roof_m": 12.78,
+    "lo_vs_lidar_m": 1.22
+   },
+   "real_wall_lo_to_roof_m": 14.0
+  },
+  {
+   "key": "mpg_nw_complex_2",
+   "lidar_ground_lo": 20.1,
+   "before": {
+    "ground": [
+     9.26,
+     11.97
+    ],
+    "eave": 30.41,
+    "wall_lo_to_roof_m": 21.15,
+    "lo_vs_lidar_m": -10.84
+   },
+   "after": {
+    "ground": [
+     20.49,
+     25.91
+    ],
+    "eave": 30.41,
+    "wall_lo_to_roof_m": 9.92,
+    "lo_vs_lidar_m": 0.39
+   },
+   "real_wall_lo_to_roof_m": 10.31
+  },
+  {
+   "key": "mpg_nw_complex_3",
+   "lidar_ground_lo": 20.3,
+   "before": {
+    "ground": [
+     9.79,
+     12.4
+    ],
+    "eave": 33.37,
+    "wall_lo_to_roof_m": 23.58,
+    "lo_vs_lidar_m": -10.51
+   },
+   "after": {
+    "ground": [
+     22.19,
+     28.06
+    ],
+    "eave": 33.37,
+    "wall_lo_to_roof_m": 11.18,
+    "lo_vs_lidar_m": 1.89
+   },
+   "real_wall_lo_to_roof_m": 13.07
+  },
+  {
+   "key": "mpg_nw_complex_4",
+   "lidar_ground_lo": 24.66,
+   "before": {
+    "ground": [
+     11.93,
+     13.69
+    ],
+    "eave": 33.39,
+    "wall_lo_to_roof_m": 21.46,
+    "lo_vs_lidar_m": -12.73
+   },
+   "after": {
+    "ground": [
+     25.69,
+     26.93
+    ],
+    "eave": 33.39,
+    "wall_lo_to_roof_m": 7.7,
+    "lo_vs_lidar_m": 1.03
+   },
+   "real_wall_lo_to_roof_m": 8.73
+  },
+  {
+   "key": "mpg_nw_complex_5",
+   "lidar_ground_lo": 25.62,
+   "before": {
+    "ground": [
+     12.24,
+     13.86
+    ],
+    "eave": 33.36,
+    "wall_lo_to_roof_m": 21.12,
+    "lo_vs_lidar_m": -13.38
+   },
+   "after": {
+    "ground": [
+     25.83,
+     28.08
+    ],
+    "eave": 33.36,
+    "wall_lo_to_roof_m": 7.53,
+    "lo_vs_lidar_m": 0.21
+   },
+   "real_wall_lo_to_roof_m": 7.74
+  },
+  {
+   "key": "mpg_nw_complex_6",
+   "lidar_ground_lo": 20.13,
+   "before": {
+    "ground": [
+     7.08,
+     10.18
+    ],
+    "eave": 33.36,
+    "wall_lo_to_roof_m": 26.28,
+    "lo_vs_lidar_m": -13.05
+   },
+   "after": {
+    "ground": [
+     20.38,
+     28.81
+    ],
+    "eave": 33.36,
+    "wall_lo_to_roof_m": 12.98,
+    "lo_vs_lidar_m": 0.25
+   },
+   "real_wall_lo_to_roof_m": 13.23
+  },
+  {
+   "key": "mpg_nw_complex_7",
+   "lidar_ground_lo": 19.96,
+   "before": {
+    "ground": [
+     7.33,
+     13.36
+    ],
+    "eave": 35.17,
+    "wall_lo_to_roof_m": 27.84,
+    "lo_vs_lidar_m": -12.63
+   },
+   "after": {
+    "ground": [
+     19.99,
+     26.0
+    ],
+    "eave": 35.17,
+    "wall_lo_to_roof_m": 15.18,
+    "lo_vs_lidar_m": 0.03
+   },
+   "real_wall_lo_to_roof_m": 15.21
+  },
+  {
+   "key": "mpg_nw_complex_8",
+   "lidar_ground_lo": 27.75,
+   "before": {
+    "ground": [
+     7.6,
+     13.33
+    ],
+    "eave": 37.97,
+    "wall_lo_to_roof_m": 30.37,
+    "lo_vs_lidar_m": -20.15
+   },
+   "after": {
+    "ground": [
+     29.02,
+     30.44
+    ],
+    "eave": 37.97,
+    "wall_lo_to_roof_m": 8.95,
+    "lo_vs_lidar_m": 1.27
+   },
+   "real_wall_lo_to_roof_m": 10.22
+  },
+  {
+   "key": "mpg_nw_complex_9",
+   "lidar_ground_lo": 26.27,
+   "before": {
+    "ground": [
+     10.22,
+     16.89
+    ],
+    "eave": 37.97,
+    "wall_lo_to_roof_m": 27.75,
+    "lo_vs_lidar_m": -16.05
+   },
+   "after": {
+    "ground": [
+     27.02,
+     30.39
+    ],
+    "eave": 37.97,
+    "wall_lo_to_roof_m": 10.95,
+    "lo_vs_lidar_m": 0.75
+   },
+   "real_wall_lo_to_roof_m": 11.7
+  },
+  {
+   "key": "mpg_nw_small",
+   "lidar_ground_lo": 14.12,
+   "before": {
+    "ground": [
+     14.07,
+     14.25
+    ],
+    "eave": 19.3,
+    "wall_lo_to_roof_m": 5.23,
+    "lo_vs_lidar_m": -0.05
+   },
+   "after": {
+    "ground": [
+     14.07,
+     14.25
+    ],
+    "eave": 19.3,
+    "wall_lo_to_roof_m": 5.23,
+    "lo_vs_lidar_m": -0.05
+   },
+   "real_wall_lo_to_roof_m": 5.18
+  },
+  {
+   "key": "mpg_plant_a",
+   "lidar_ground_lo": 12.73,
+   "before": {
+    "ground": [
+     8.72,
+     14.42
+    ],
+    "eave": 24.25,
+    "wall_lo_to_roof_m": 15.53,
+    "lo_vs_lidar_m": -4.01
+   },
+   "after": {
+    "ground": [
+     12.8,
+     14.46
+    ],
+    "eave": 24.25,
+    "wall_lo_to_roof_m": 11.45,
+    "lo_vs_lidar_m": 0.07
+   },
+   "real_wall_lo_to_roof_m": 11.52
+  },
+  {
+   "key": "mpg_plant_b",
+   "lidar_ground_lo": 9.14,
+   "before": {
+    "ground": [
+     -0.13,
+     11.72
+    ],
+    "eave": 10.72,
+    "wall_lo_to_roof_m": 10.85,
+    "lo_vs_lidar_m": -9.27
+   },
+   "after": {
+    "ground": [
+     9.27,
+     12.31
+    ],
+    "eave": 20.12,
+    "wall_lo_to_roof_m": 10.85,
+    "lo_vs_lidar_m": 0.13
+   },
+   "real_wall_lo_to_roof_m": 10.98
+  },
+  {
+   "key": "mpg_west_bldg_a",
+   "lidar_ground_lo": 45.45,
+   "before": {
+    "ground": [
+     42.42,
+     48.08
+    ],
+    "eave": 60.22,
+    "wall_lo_to_roof_m": 17.8,
+    "lo_vs_lidar_m": -3.03
+   },
+   "after": {
+    "ground": [
+     45.83,
+     48.42
+    ],
+    "eave": 60.22,
+    "wall_lo_to_roof_m": 14.39,
+    "lo_vs_lidar_m": 0.38
+   },
+   "real_wall_lo_to_roof_m": 14.77
+  },
+  {
+   "key": "mpg_west_bldg_b",
+   "lidar_ground_lo": 38.48,
+   "before": {
+    "ground": [
+     24.0,
+     41.41
+    ],
+    "eave": 55.2,
+    "wall_lo_to_roof_m": 31.2,
+    "lo_vs_lidar_m": -14.48
+   },
+   "after": {
+    "ground": [
+     38.65,
+     46.66
+    ],
+    "eave": 55.2,
+    "wall_lo_to_roof_m": 16.55,
+    "lo_vs_lidar_m": 0.17
+   },
+   "real_wall_lo_to_roof_m": 16.72
+  },
+  {
+   "key": "mpg_west_bldg_c",
+   "lidar_ground_lo": 38.36,
+   "before": {
+    "ground": [
+     34.44,
+     38.48
+    ],
+    "eave": 46.51,
+    "wall_lo_to_roof_m": 12.07,
+    "lo_vs_lidar_m": -3.92
+   },
+   "after": {
+    "ground": [
+     37.52,
+     38.77
+    ],
+    "eave": 46.51,
+    "wall_lo_to_roof_m": 8.99,
+    "lo_vs_lidar_m": -0.84
+   },
+   "real_wall_lo_to_roof_m": 8.15
+  },
+  {
+   "key": "pad_shed_north",
+   "lidar_ground_lo": 16.72,
+   "before": {
+    "ground": [
+     16.78,
+     16.9
+    ],
+    "eave": 19.06,
+    "wall_lo_to_roof_m": 2.28,
+    "lo_vs_lidar_m": 0.06
+   },
+   "after": {
+    "ground": [
+     16.78,
+     16.9
+    ],
+    "eave": 19.06,
+    "wall_lo_to_roof_m": 2.28,
+    "lo_vs_lidar_m": 0.06
+   },
+   "real_wall_lo_to_roof_m": 2.34
+  },
+  {
+   "key": "pad_shed_south",
+   "lidar_ground_lo": 17.0,
+   "before": {
+    "ground": [
+     16.94,
+     17.11
+    ],
+    "eave": 19.23,
+    "wall_lo_to_roof_m": 2.29,
+    "lo_vs_lidar_m": -0.06
+   },
+   "after": {
+    "ground": [
+     16.94,
+     17.11
+    ],
+    "eave": 19.23,
+    "wall_lo_to_roof_m": 2.29,
+    "lo_vs_lidar_m": -0.06
+   },
+   "real_wall_lo_to_roof_m": 2.23
+  }
+ ]
+}

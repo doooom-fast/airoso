@@ -1,0 +1,112 @@
+== b0111 (<scratchpad>/sys/work/mf0111/src/a0111)
+start 21:03:46
+exit 0
+end 21:22:38
+[bespoke] rail g1_nw_corner_outside: W-beam 107 m in 1 run(s), 58 posts, top 0.70 m over the ground, 0 post(s) left out {'lane': 0, 'paved': 0, 'no ground': 0}; collider 1WALL_GHOST_RAIL_0
+[bespoke] rail g2_front_straight_east: W-beam 467 m in 3 run(s), 248 posts, top 0.70 m over the ground, 47 post(s) left out {'lane': 47, 'paved': 0, 'no ground': 0} (over the edge strip); collider 1WALL_GHOST_RAIL_1
+[bespoke] rail g3_front_straight_west: W-beam 181 m in 2 run(s), 98 posts, top 0.70 m over the ground, 7 post(s) left out {'lane': 7, 'paved': 0, 'no ground': 0} (over the edge strip); collider 1WALL_GHOST_RAIL_2
+[bespoke] rail g4_infield_esses: W-beam 364 m in 1 run(s), 192 posts, top 0.70 m over the ground, 0 post(s) left out {'lane': 0, 'paved': 0, 'no ground': 0}; collider 1WALL_GHOST_RAIL_3
+[bespoke] rail t1_nw_hairpin_exit: 71 tyres modules over 44 m, 0 left out
+[bespoke] rail t2_esses_east_leg: 85 tyres modules over 53 m, 0 left out
+[bespoke] rail t3_s1000_apron_back: 48 tyres modules over 33 m, 3 left out
+[bespoke] rail f1_nw_screen_ne: 29 screen modules over 113 m, 0 left out
+[bespoke] rail f1_nw_screen_step: 5 screen modules over 21 m, 0 left out
+[bespoke] rail f1_nw_screen_sw: 16 screen modules over 63 m, 0 left out
+[bespoke] rail f1_nw_screen_ne_end: 15 screen modules over 59 m, 0 left out
+[bespoke] block mpg_plant_a: TILTUP, walls 10.0 m, flat, ground 12.80..14.46, bottom 12.65, eave 24.25
+[bespoke] block mpg_plant_b: TILTUP, walls 11.0 m, flat, ground 9.27..12.31, bottom 9.12, eave 20.12
+[bespoke] block mpg_west_bldg_a: TILTUP, walls 12.1 m, flat, ground 45.83..48.42, bottom 45.68, eave 60.22
+[bespoke] block mpg_west_bldg_b: TILTUP, walls 13.1 m, flat, ground 38.65..46.66, bottom 38.50, eave 55.20
+[bespoke] block mpg_west_bldg_c: TILTUP, walls 7.8 m, flat, ground 37.52..38.77, bottom 37.37, eave 46.51
+[bespoke] block mpg_nw_small: TILTUP, walls 5.1 m, flat, ground 14.07..14.25, bottom 13.92, eave 19.30
+[bespoke] block mpg_far_sw_0: TILTUP, walls 6.3 m, flat, ground 33.80..34.14, bottom 33.65, eave 40.13
+[bespoke] block mpg_far_sw_1: TILTUP, walls 6.3 m, flat, ground 33.79..34.13, bottom 33.64, eave 40.14
+[bespoke] block mpg_far_sw_2: TILTUP, walls 8.4 m, flat, ground 33.80..34.38, bottom 33.65, eave 42.29
+[bespoke] block mpg_far_sw_3: TILTUP, walls 10.7 m, flat, ground 33.84..34.30, bottom 33.69, eave 44.54
+[bespoke] block mpg_far_w_small_0: TILTUP, walls 8.1 m, flat, ground 39.15..39.51, bottom 39.00, eave 47.56
+[bespoke] block mpg_nw_complex_1: TILTUP, walls 5.7 m, flat, ground 23.96..26.05, bottom 23.81, eave 30.39
+[bespoke] block mpg_nw_complex_2: TILTUP, walls 7.3 m, flat, ground 20.49..25.91, bottom 20.34, eave 30.41
+[bespoke] block mpg_nw_complex_3: TILTUP, walls 8.4 m, flat, ground 22.19..28.06, bottom 22.04, eave 33.37
+[bespoke] block mpg_nw_complex_4: TILTUP, walls 8.7 m, flat, ground 25.69..26.93, bottom 25.54, eave 33.39
+[bespoke] block mpg_nw_complex_5: TILTUP, walls 7.4 m, flat, ground 25.83..28.08, bottom 25.68, eave 33.36
+[bespoke] block mpg_nw_complex_6: TILTUP, walls 8.6 m, flat, ground 20.38..28.81, bottom 20.23, eave 33.36
+[bespoke] block mpg_nw_complex_7: TILTUP, walls 12.9 m, flat, ground 19.99..26.00, bottom 19.84, eave 35.17
+[bespoke] block mpg_nw_complex_8: TILTUP, walls 8.8 m, flat, ground 29.02..30.44, bottom 28.87, eave 37.97
+[bespoke] block mpg_nw_complex_9: TILTUP, walls 8.7 m, flat, ground 27.02..30.39, bottom 26.87, eave 37.97
+[bespoke] block mpg_nw_complex_10: TILTUP, walls 7.1 m, flat, ground 30.21..30.50, bottom 30.06, eave 37.41
+[bespoke] block mpg_nw_complex_11: TILTUP, walls 7.2 m, flat, ground 29.85..30.52, bottom 29.70, eave 37.47
+[bespoke] block mpg_nw_complex_12: TILTUP, walls 12.8 m, flat, ground 27.06..29.98, bottom 26.91, eave 39.84
+[bespoke] pad ride_pad: 1058 cells, 0 left out (over a road or off the ground)
+[grassfx] 100 x 131 cells of 12 m; cells per look {'C': 4640, 'D': 766, 'B': 1231}; 1285 rectangles, 1285 kept -> grassfx.aerial.json
+[lights-ini] 0 [LIGHT_N] for 0 lamps, 0 at their lens: PASS
+[treefx] planted past the 3DEP grid, seated on the built far ground (833343 1GRASS triangles): 7461 re-seated, 0 with no ground under them (kept on the grid's border height), 3786 inside the grid unchanged
+[treefx] planted source/vegetation/trees.lm.json: 11247 of 11247 points clear of the roads by 3.0 m -> {'planted_neighbourhood': 11247}
+[treefx] 11247 trees ({'planted_neighbourhood': 11247}), 0 rejected in the corridor, species ['Oak3.bin', 'SycamoreV2.bin'] -> <scratchpad>/sys/work/mf0111/b0111/build/milford_road_course/extension/trees/trees.txt + [TREES] in ext_config.ini
+  => PASS   (data/drive_test.full.json)
+DRIVE TEST SUMMARY milford_road_course: full=PASS   (data/drive_test.json)
+  => PASS — kn5 matches the audited OBJs
+PASS <scratchpad>/sys/work/mf0111/b0111/build/milford_road_course.kn5: 44,555,580 B, 21 textures embedded, 34 materials, 57 maps; missing 0, empty 0, zero-byte 0, unused 0
+[road_wear_check] materials     PASS  problems []
+[road_wear_check] density       PASS  triangles 60956, off 0, worst_scale_err 0.000858, worst_shear 0.000894, texel_m 0.25, atlas_px 4096
+[road_wear_check] no_repeat     PASS  texels_claimed 87633, claimed_twice 0
+[road_wear_check] detail_phase  PASS  worst_tiles 1e-05, detail_uv_multiplier 256.0
+[road_wear_check] tone          PASS  pearson_r 0.9526, samples 2966, v_convention -v, r_by_convention {'v': 0.0797, '-v': 0.9526, '1-v': 0}
+[road_wear_check] rubber        PASS  stations 268, centroid_m 0.044, depth_on_line 0.2174, declared_depth 0.2092, declared_amplitude 0.22
+[road_wear_check] PASS
+[houses] PASS
+[edges] gate PASS: every row under
+SHIP OK
+== gate_table
+drive_test soft_top_in_lane                   0
+drive_test severe_steps                       0
+drive_test kinks_per_km                       6.34
+drive_test vertex_bumps                       16
+drive_test fold_bumps                         0
+drive_test obstruction_stations               0
+drive_test floating_furniture                 0
+drive_test undrivable_corners                 0
+drive_test daylight_gaps                      0
+drive_test off_pavement_stations              0
+drive_test apron_steps                        5
+drive_test barrier_stations                   0
+drive_test barrier_missing                    0
+drive_test excursion drops / far ledges       (0, None)
+audit A_supports_in_road                      0
+audit B_terrain_poke                          0
+audit C_junction_crossings                    0
+audit D_wall_on_road                          0
+audit E_wall_floating                         0
+audit worst_float_m                           0.0
+audit F_curb_not_flush                        0
+audit I_sidewalk_isolating                    0
+audit K_kerb_in_carriageway                   0
+audit J_terrain_span                          0
+audit wall_verts                              43907
+kn5_ground_check                              {'fail': False, 'reasons': [], 'kn5': ['milford_road_course.kn5'], 'fidelity': 'skipped: gate OBJ written from this kn5', 'double_sheet_cells': 0, 'seating': {'walls': {'objects': 336, 'no_ground_pct': 0.0, 'median_m': -0.461, 'p95_m': -0.186, 'hovering': 0}}, 'road_over_ground': {'over': 2, 'samples': 9317, 'p95_m': 0.021, 'max_m': 0.052}}
+house_seat                                    {'obj': '<scratchpad>/sys/work/mf0111/b0111/data/track.obj', 'buildings': 3, 'no_ground': 0, 'floating': 0, 'sunken': 0, 'buried': 0, 'show_m_min': 2.117, 'verdict': 'PASS'}
+edge_report at_1m                             {'lane': 0.0, 'shoulder': 0.0, 'kerb': 0.995, 'ground': 0.0, 'wall': 0.005, 'none': 0.0, 'other': 0.0}
+b0111 ['✓ kn5 verification passed (no dup meshes, drivable surfaces face-up, spawns on road, per-layout spawn kn5s facing their travel, race furniture split common / per-direction closure)', "✓ models_<id>.ini verification passed (each race layout loads road + common race + ITS closure + its spawns; no ini loads another layout's closure)", 'GATES: street drive_test exit 0, street audit exit 0, race drive_test exit 0, race audit exit 0, race no_route exit 0, kn5_ground_check exit 0', 'SHIP OK', 'exit 0']
+    milford_road_course.kn5 44555580 B
+== kn5
+-rw-r--r--@ 1 kevinconboy  wheel  44555580 Nov  9 21:21 <scratchpad>/sys/work/mf0111/b0111/build/milford_road_course.kn5
+== veg_verify
+{"trees": 11247, "trunk_colliders": 385, "orphan_colliders": 0, "nearest_paved_m": 4.65, "within_margin_of_paved": 0, "nearest_wall_m": 2.96, "within_1m_of_wall": 0, "trees_within_reach_of_paved": 390, "collider_reach_m": 30.0, "within_reach_no_collider": 0, "reach_band_no_collider_m": [29.55, 29.85, 29.87, 29.95, 29.97], "corridor_margin_m": 3.0, "verdict": "PASS"}
+== seat_built
+[seat_built] 1WALL_GHOST_RAIL_0_mat           wbeam_collider cells    93  exposed p5/p50/p95 [0.651, 0.702, 0.746]  gap max -0.1  floating 0  buried 0  no ground 0
+[seat_built] 1WALL_GHOST_RAIL_1_mat           wbeam_collider cells   262  exposed p5/p50/p95 [0.692, 0.701, 0.716]  gap max -0.146  floating 0  buried 0  no ground 0
+[seat_built] 1WALL_GHOST_RAIL_2_mat           wbeam_collider cells   162  exposed p5/p50/p95 [0.692, 0.701, 0.711]  gap max -0.142  floating 0  buried 0  no ground 0
+[seat_built] 1WALL_GHOST_RAIL_3_mat           wbeam_collider cells   276  exposed p5/p50/p95 [0.673, 0.704, 0.763]  gap max -0.121  floating 0  buried 0  no ground 0
+[seat_built] 1WALL_TECPRO_TYRES_4_mat         tyres   cells   149  exposed p5/p50/p95 [1.005, 1.016, 1.061]  gap max -0.18  floating 0  buried 0  no ground 0
+[seat_built] 1WALL_TECPRO_TYRES_5_mat         tyres   cells   190  exposed p5/p50/p95 [0.995, 1.037, 1.652]  gap max -0.156  floating 0  buried 0  no ground 0
+[seat_built] 1WALL_TECPRO_TYRES_6_mat         tyres   cells   105  exposed p5/p50/p95 [0.998, 1.06, 1.2]  gap max -0.148  floating 0  buried 0  no ground 0
+[seat_built] 1WALL_TILTUP_SCREEN_10_mat       screen  cells    26  exposed p5/p50/p95 [4.154, 4.26, 4.293]  gap max -0.461  floating 0  buried 0  no ground 0
+[seat_built] 1WALL_TILTUP_SCREEN_7_mat        screen  cells    49  exposed p5/p50/p95 [4.052, 4.126, 4.408]  gap max -0.184  floating 0  buried 0  no ground 0
+[seat_built] 1WALL_TILTUP_SCREEN_8_mat        screen  cells     9  exposed p5/p50/p95 [3.535, 3.841, 4.088]  gap max -0.307  floating 0  buried 0  no ground 0
+[seat_built] 1WALL_TILTUP_SCREEN_9_mat        screen  cells    25  exposed p5/p50/p95 [3.185, 3.327, 3.581]  gap max -0.448  floating 0  buried 0  no ground 0
+[seat_built] BUILDING_FABRIC_pad_tent_mat     block   cells     6  exposed p5/p50/p95 [2.838, 3.912, 7.528]  gap max 7.751  floating 2  buried -  no ground 0
+[seat_built] BUILDING_METAL_0_mat             block   cells     8  exposed p5/p50/p95 [2.133, 2.179, 2.286]  gap max -0.31  floating 0  buried -  no ground 0
+[seat_built] FARBLOCK_TILTUP_0_mat            block   cells    91  exposed p5/p50/p95 [5.011, 8.108, 12.929]  gap max -0.078  floating 0  buried -  no ground 0
+[seat_built] GUARDRAIL_W_0_mat                wbeam   cells   319  exposed p5/p50/p95 [0.642, 0.695, 0.816]  gap max 0.456  floating None  buried 5  no ground 0
+[seat_built] GUARDRAIL_W_1_mat                wbeam   cells   392  exposed p5/p50/p95 [0.665, 0.696, 0.846]  gap max 1.492  floating None  buried 1  no ground 0
+[seat_built] GUARDRAIL_W_2_mat                wbeam   cells   416  exposed p5/p50/p95 [0.64, 0.694, 0.757]  gap max 0.473  floating None  buried 6  no ground 0
+[seat_built] PASS: 17 furniture objects read against the built ground (896,415 ground triangles)

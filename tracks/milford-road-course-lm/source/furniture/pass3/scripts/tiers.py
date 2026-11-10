@@ -20,17 +20,31 @@ def rect(pts):
         Rm=np.array([[cs,sn],[-sn,cs]]); q=pts4@Rm.T; lo,hi=q.min(0),q.max(0); A=np.prod(hi-lo)
         if best is None or A<best[0]: best=(A,lo,hi,Rm)
     A,lo,hi,Rm=best; return np.array([[lo[0],lo[1]],[hi[0],lo[1]],[hi[0],hi[1]],[lo[0],hi[1]]])@Rm, A
-spec=json.loads(sys.argv[1])   # {"id": [cut, cut, ...]}
+spec=json.loads(sys.argv[1]); SPLIT_FILL=float(sys.argv[sys.argv.index('--split')+1]) if '--split' in sys.argv else None   # {"id": [cut, cut, ...]}
 out=[]
 for sid,cuts in spec.items():
-    m=lab==int(sid); h=C*m; edges=[-1]+cuts+[99]
+    # a list cuts on the height over the ground; {"z": [...]} (ledger 0082 pass 4) on the roof's ELEVATION in the scene frame,
+    # for a complex on sloping ground whose roofs are level at their own elevations
+    Q=(C+GF-Z0) if isinstance(cuts,dict) else C
+    cuts=cuts["z"] if isinstance(cuts,dict) else cuts
+    m=lab==int(sid); h=C*m; edges=[-1e9]+cuts+[1e9]
     for t in range(len(edges)-1):
-        mt=m&(C>edges[t])&(C<=edges[t+1]); mt=ndi.binary_opening(mt,iterations=1) if len(cuts) else mt
+        mt=m&(Q>edges[t])&(Q<=edges[t+1]); mt=ndi.binary_opening(mt,iterations=1) if len(cuts) else mt
         lt,nl=ndi.label(mt)
-        for k in range(1,nl+1):
-            mk=lt==k
+        pieces=[lt==k for k in range(1,nl+1)]
+        while pieces:
+            mk=pieces.pop()
             if mk.sum()*4<60: continue
             jj,ii=np.nonzero(mk); pts=np.c_[E0+2*ii+1.0,N0+2*jj+1.0]; R,A=rect(pts); hh=C[mk]
+            if SPLIT_FILL and mk.sum()*4/A<SPLIT_FILL and mk.sum()*4>=4*60:
+                # (ledger 0082 pass 4, opt-in --split) an L- or T-shaped roof fills its box poorly: cut it across its box's long
+                # axis where the fewest cells cross (between its 20 % and 80 % along), and box each half
+                ax=R[1]-R[0] if np.hypot(*(R[1]-R[0]))>=np.hypot(*(R[2]-R[1])) else R[2]-R[1]; ax=ax/np.hypot(*ax)
+                al=pts@ax; lo_,hi_=np.percentile(al,20),np.percentile(al,80)
+                bins=np.arange(lo_,hi_+2,2.0); cnt=np.histogram(al,bins)[0]
+                cut=bins[int(np.argmin(cnt))]+1.0
+                sel=np.zeros_like(mk); sel[jj[al<cut],ii[al<cut]]=True
+                pieces+= [sel, mk&~sel]; continue
             out.append(dict(src=int(sid),tier=t,cells=int(mk.sum()),area_m2=int(mk.sum()*4),fill=round(mk.sum()*4/A,2),
               h10=round(float(np.percentile(hh,10)),2),h50=round(float(np.median(hh)),2),h90=round(float(np.percentile(hh,90)),2),
               roof_z_local_m=round(float(np.median((C+GF)[mk]))-Z0,2),ground_z_local_m=[round(float(GF[mk].min())-Z0,2),round(float(GF[mk].max())-Z0,2)],

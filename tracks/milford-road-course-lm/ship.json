@@ -50,7 +50,8 @@
       "track.config.json",
       "source/edges/edge_evidence.json",
       "source/road_wear/naip_2022_mrc.jpg",
-      "source/furniture/pass3/blocks.json"
+      "source/furniture/pass3/blocks.json",
+      "source/furniture/pass4/blocks.json"
     ],
     "_furniture_doc": "ledger 0082 pass 3 (0.1.8): the site buildings the 2017 lidar measures and NAIP 2022 shows, named once by scenery.bespoke.blocks [{\"file\": ...}]",
     "assets": [

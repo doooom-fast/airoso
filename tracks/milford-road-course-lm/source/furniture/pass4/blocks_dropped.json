@@ -1,0 +1,58 @@
+[
+ {
+  "src": 21,
+  "tier": 1,
+  "area_m2": 128,
+  "fill": 0.65,
+  "why": "a planted tree within 1 m"
+ },
+ {
+  "src": 21,
+  "tier": 1,
+  "area_m2": 152,
+  "fill": 0.76,
+  "why": "a planted tree within 1 m"
+ },
+ {
+  "src": 81,
+  "tier": 1,
+  "area_m2": 208,
+  "fill": 0.43,
+  "why": "small or empty"
+ },
+ {
+  "src": 81,
+  "tier": 3,
+  "area_m2": 64,
+  "fill": 0.67,
+  "why": "small or empty"
+ },
+ {
+  "src": 81,
+  "tier": 4,
+  "area_m2": 228,
+  "fill": 0.62,
+  "why": "a planted tree within 1 m"
+ },
+ {
+  "src": 81,
+  "tier": 4,
+  "area_m2": 80,
+  "fill": 0.83,
+  "why": "small or empty"
+ },
+ {
+  "src": 81,
+  "tier": 4,
+  "area_m2": 72,
+  "fill": 0.56,
+  "why": "small or empty"
+ },
+ {
+  "src": 81,
+  "tier": 4,
+  "area_m2": 68,
+  "fill": 0.3,
+  "why": "small or empty"
+ }
+]

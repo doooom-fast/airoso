@@ -1,0 +1,506 @@
+[
+  {
+    "key": "mpg_far_sw_0",
+    "footprint_lonlat": [
+      [
+        -83.6711307,
+        42.5642007
+      ],
+      [
+        -83.671496,
+        42.5642007
+      ],
+      [
+        -83.671496,
+        42.5640927
+      ],
+      [
+        -83.6711307,
+        42.5640927
+      ]
+    ],
+    "wall_h_m": 6.3,
+    "skin": "tiltup",
+    "roof": "white",
+    "form": "flat",
+    "off_terrain": true,
+    "roof_z_m": 40.13,
+    "_source": "source/furniture/pass4/tiers_p4.json (ledger 0082 pass 4): the building 375 m south-west of the lap (NAIP 2022 west strip: a two-level flat-roofed building); roof piece 0 at level 0. Footprint = the minimum-area rectangle of its roof cells (232 m2 of 2 m cells, fill 0.64; +-2 m), off 3DEP USGS_LPC_MI_31Co_Oakland_2016_LAS_2019, flown 2017-05-03; roof_z_m 40.13 m = its median roof elevation in the scene frame [measured]; wall 6.3 m over the lidar ground [measured]. NAIP 2022's strip west of the crop (download b, 2026-11-09) shows it standing (green excess 4.0, luminance 184.0, and by eye). Seen from 22 of 467 lap points. Skin [invented: no wall is seen from above]; past the built ground: a far block"
+  },
+  {
+    "key": "mpg_far_sw_1",
+    "footprint_lonlat": [
+      [
+        -83.6711307,
+        42.5642187
+      ],
+      [
+        -83.6711307,
+        42.5641107
+      ],
+      [
+        -83.6707896,
+        42.5641107
+      ],
+      [
+        -83.6707896,
+        42.5642187
+      ]
+    ],
+    "wall_h_m": 6.29,
+    "skin": "tiltup",
+    "roof": "white",
+    "form": "flat",
+    "off_terrain": true,
+    "roof_z_m": 40.14,
+    "_source": "source/furniture/pass4/tiers_p4.json (ledger 0082 pass 4): the building 375 m south-west of the lap (NAIP 2022 west strip: a two-level flat-roofed building); roof piece 1 at level 0. Footprint = the minimum-area rectangle of its roof cells (236 m2 of 2 m cells, fill 0.7; +-2 m), off 3DEP USGS_LPC_MI_31Co_Oakland_2016_LAS_2019, flown 2017-05-03; roof_z_m 40.14 m = its median roof elevation in the scene frame [measured]; wall 6.29 m over the lidar ground [measured]. NAIP 2022's strip west of the crop (download b, 2026-11-09) shows it standing (green excess 4.0, luminance 184.0, and by eye). Seen from 22 of 467 lap points. Skin [invented: no wall is seen from above]; past the built ground: a far block"
+  },
+  {
+    "key": "mpg_far_sw_2",
+    "footprint_lonlat": [
+      [
+        -83.6711553,
+        42.5643287
+      ],
+      [
+        -83.6715055,
+        42.5643
+      ],
+      [
+        -83.6714865,
+        42.5641735
+      ],
+      [
+        -83.6711363,
+        42.5642022
+      ]
+    ],
+    "wall_h_m": 8.45,
+    "skin": "tiltup",
+    "roof": "white",
+    "form": "flat",
+    "off_terrain": true,
+    "roof_z_m": 42.29,
+    "_source": "source/furniture/pass4/tiers_p4.json (ledger 0082 pass 4): the building 375 m south-west of the lap (NAIP 2022 west strip: a two-level flat-roofed building); roof piece 2 at level 1. Footprint = the minimum-area rectangle of its roof cells (312 m2 of 2 m cells, fill 0.76; +-2 m), off 3DEP USGS_LPC_MI_31Co_Oakland_2016_LAS_2019, flown 2017-05-03; roof_z_m 42.29 m = its median roof elevation in the scene frame [measured]; wall 8.45 m over the lidar ground [measured]. NAIP 2022's strip west of the crop (download b, 2026-11-09) shows it standing (green excess 4.0, luminance 184.0, and by eye). Seen from 22 of 467 lap points. Skin [invented: no wall is seen from above]; past the built ground: a far block"
+  },
+  {
+    "key": "mpg_far_sw_3",
+    "footprint_lonlat": [
+      [
+        -83.6711794,
+        42.5642007
+      ],
+      [
+        -83.6709114,
+        42.5642007
+      ],
+      [
+        -83.6709114,
+        42.5642907
+      ],
+      [
+        -83.6711794,
+        42.5642907
+      ]
+    ],
+    "wall_h_m": 10.67,
+    "skin": "tiltup",
+    "roof": "white",
+    "form": "flat",
+    "off_terrain": true,
+    "roof_z_m": 44.54,
+    "_source": "source/furniture/pass4/tiers_p4.json (ledger 0082 pass 4): the building 375 m south-west of the lap (NAIP 2022 west strip: a two-level flat-roofed building); roof piece 3 at level 2. Footprint = the minimum-area rectangle of its roof cells (184 m2 of 2 m cells, fill 0.84; +-2 m), off 3DEP USGS_LPC_MI_31Co_Oakland_2016_LAS_2019, flown 2017-05-03; roof_z_m 44.54 m = its median roof elevation in the scene frame [measured]; wall 10.67 m over the lidar ground [measured]. NAIP 2022's strip west of the crop (download b, 2026-11-09) shows it standing (green excess 4.0, luminance 184.0, and by eye). Seen from 22 of 467 lap points. Skin [invented: no wall is seen from above]; past the built ground: a far block"
+  },
+  {
+    "key": "mpg_far_w_small_0",
+    "footprint_lonlat": [
+      [
+        -83.6714717,
+        42.5710424
+      ],
+      [
+        -83.6714717,
+        42.5708983
+      ],
+      [
+        -83.6712281,
+        42.5708983
+      ],
+      [
+        -83.6712281,
+        42.5710424
+      ]
+    ],
+    "wall_h_m": 8.1,
+    "skin": "tiltup",
+    "roof": "white",
+    "form": "flat",
+    "off_terrain": true,
+    "roof_z_m": 47.56,
+    "_source": "source/furniture/pass4/tiers_p4.json (ledger 0082 pass 4): the small building west of the far-west hall (NAIP 2022 west strip: a light-roofed block); roof piece 0 at level 0. Footprint = the minimum-area rectangle of its roof cells (212 m2 of 2 m cells, fill 0.66; +-2 m), off 3DEP USGS_LPC_MI_31Co_Oakland_2016_LAS_2019, flown 2017-05-03; roof_z_m 47.56 m = its median roof elevation in the scene frame [measured]; wall 8.1 m over the lidar ground [measured]. NAIP 2022's strip west of the crop (download b, 2026-11-09) shows it standing (green excess 3.5, luminance 227.0, and by eye). Seen from 22 of 467 lap points. Skin [invented: no wall is seen from above]; past the built ground: a far block"
+  },
+  {
+    "key": "mpg_nw_complex_0",
+    "footprint_lonlat": [
+      [
+        -83.67137,
+        42.5738404
+      ],
+      [
+        -83.6705148,
+        42.5738826
+      ],
+      [
+        -83.6705305,
+        42.574057
+      ],
+      [
+        -83.6713858,
+        42.5740149
+      ]
+    ],
+    "wall_h_m": 5.11,
+    "skin": "tiltup",
+    "roof": "white",
+    "form": "flat",
+    "off_terrain": true,
+    "roof_z_m": 25.91,
+    "_source": "source/furniture/pass4/tiers_p4.json (ledger 0082 pass 4): the multi-level complex north-west of the employee lot (NAIP 2022 west strip: flat roofs at several levels); roof piece 0 at level 0. Footprint = the minimum-area rectangle of its roof cells (1036 m2 of 2 m cells, fill 0.76; +-2 m), off 3DEP USGS_LPC_MI_31Co_Oakland_2016_LAS_2019, flown 2017-05-03; roof_z_m 25.91 m = its median roof elevation in the scene frame [measured]; wall 5.11 m over the lidar ground [measured]. NAIP 2022's strip west of the crop (download b, 2026-11-09) shows it standing (green excess 3.5, luminance 203.0, and by eye). Seen from 12 of 467 lap points. Skin [invented: no wall is seen from above]; past the built ground: a far block"
+  },
+  {
+    "key": "mpg_nw_complex_1",
+    "footprint_lonlat": [
+      [
+        -83.6704486,
+        42.573689
+      ],
+      [
+        -83.6704486,
+        42.573779
+      ],
+      [
+        -83.6706679,
+        42.573779
+      ],
+      [
+        -83.6706679,
+        42.573689
+      ]
+    ],
+    "wall_h_m": 5.72,
+    "skin": "tiltup",
+    "roof": "white",
+    "form": "flat",
+    "off_terrain": true,
+    "roof_z_m": 30.39,
+    "_source": "source/furniture/pass4/tiers_p4.json (ledger 0082 pass 4): the multi-level complex north-west of the employee lot (NAIP 2022 west strip: flat roofs at several levels); roof piece 1 at level 1. Footprint = the minimum-area rectangle of its roof cells (112 m2 of 2 m cells, fill 0.62; +-2 m), off 3DEP USGS_LPC_MI_31Co_Oakland_2016_LAS_2019, flown 2017-05-03; roof_z_m 30.39 m = its median roof elevation in the scene frame [measured]; wall 5.72 m over the lidar ground [measured]. NAIP 2022's strip west of the crop (download b, 2026-11-09) shows it standing (green excess 3.5, luminance 203.0, and by eye). Seen from 12 of 467 lap points. Skin [invented: no wall is seen from above]; past the built ground: a far block"
+  },
+  {
+    "key": "mpg_nw_complex_2",
+    "footprint_lonlat": [
+      [
+        -83.6706922,
+        42.573743
+      ],
+      [
+        -83.6711307,
+        42.573743
+      ],
+      [
+        -83.6711307,
+        42.573671
+      ],
+      [
+        -83.6706922,
+        42.573671
+      ]
+    ],
+    "wall_h_m": 7.31,
+    "skin": "tiltup",
+    "roof": "white",
+    "form": "flat",
+    "off_terrain": true,
+    "roof_z_m": 30.41,
+    "_source": "source/furniture/pass4/tiers_p4.json (ledger 0082 pass 4): the multi-level complex north-west of the employee lot (NAIP 2022 west strip: flat roofs at several levels); roof piece 2 at level 1. Footprint = the minimum-area rectangle of its roof cells (224 m2 of 2 m cells, fill 0.78; +-2 m), off 3DEP USGS_LPC_MI_31Co_Oakland_2016_LAS_2019, flown 2017-05-03; roof_z_m 30.41 m = its median roof elevation in the scene frame [measured]; wall 7.31 m over the lidar ground [measured]. NAIP 2022's strip west of the crop (download b, 2026-11-09) shows it standing (green excess 3.5, luminance 203.0, and by eye). Seen from 12 of 467 lap points. Skin [invented: no wall is seen from above]; past the built ground: a far block"
+  },
+  {
+    "key": "mpg_nw_complex_3",
+    "footprint_lonlat": [
+      [
+        -83.6706679,
+        42.573671
+      ],
+      [
+        -83.6710576,
+        42.573671
+      ],
+      [
+        -83.6710576,
+        42.5734549
+      ],
+      [
+        -83.6706679,
+        42.5734549
+      ]
+    ],
+    "wall_h_m": 8.42,
+    "skin": "tiltup",
+    "roof": "white",
+    "form": "flat",
+    "off_terrain": true,
+    "roof_z_m": 33.37,
+    "_source": "source/furniture/pass4/tiers_p4.json (ledger 0082 pass 4): the multi-level complex north-west of the employee lot (NAIP 2022 west strip: flat roofs at several levels); roof piece 3 at level 2. Footprint = the minimum-area rectangle of its roof cells (552 m2 of 2 m cells, fill 0.72; +-2 m), off 3DEP USGS_LPC_MI_31Co_Oakland_2016_LAS_2019, flown 2017-05-03; roof_z_m 33.37 m = its median roof elevation in the scene frame [measured]; wall 8.42 m over the lidar ground [measured]. NAIP 2022's strip west of the crop (download b, 2026-11-09) shows it standing (green excess 3.5, luminance 203.0, and by eye). Seen from 12 of 467 lap points. Skin [invented: no wall is seen from above]; past the built ground: a far block"
+  },
+  {
+    "key": "mpg_nw_complex_4",
+    "footprint_lonlat": [
+      [
+        -83.6706922,
+        42.573689
+      ],
+      [
+        -83.6706922,
+        42.573581
+      ],
+      [
+        -83.6704243,
+        42.573581
+      ],
+      [
+        -83.6704243,
+        42.573689
+      ]
+    ],
+    "wall_h_m": 8.67,
+    "skin": "tiltup",
+    "roof": "white",
+    "form": "flat",
+    "off_terrain": true,
+    "roof_z_m": 33.39,
+    "_source": "source/furniture/pass4/tiers_p4.json (ledger 0082 pass 4): the multi-level complex north-west of the employee lot (NAIP 2022 west strip: flat roofs at several levels); roof piece 4 at level 2. Footprint = the minimum-area rectangle of its roof cells (164 m2 of 2 m cells, fill 0.62; +-2 m), off 3DEP USGS_LPC_MI_31Co_Oakland_2016_LAS_2019, flown 2017-05-03; roof_z_m 33.39 m = its median roof elevation in the scene frame [measured]; wall 8.67 m over the lidar ground [measured]. NAIP 2022's strip west of the crop (download b, 2026-11-09) shows it standing (green excess 3.5, luminance 203.0, and by eye). Seen from 12 of 467 lap points. Skin [invented: no wall is seen from above]; past the built ground: a far block"
+  },
+  {
+    "key": "mpg_nw_complex_5",
+    "footprint_lonlat": [
+      [
+        -83.6704243,
+        42.573581
+      ],
+      [
+        -83.6706679,
+        42.573581
+      ],
+      [
+        -83.6706679,
+        42.5734729
+      ],
+      [
+        -83.6704243,
+        42.5734729
+      ]
+    ],
+    "wall_h_m": 7.42,
+    "skin": "tiltup",
+    "roof": "white",
+    "form": "flat",
+    "off_terrain": true,
+    "roof_z_m": 33.36,
+    "_source": "source/furniture/pass4/tiers_p4.json (ledger 0082 pass 4): the multi-level complex north-west of the employee lot (NAIP 2022 west strip: flat roofs at several levels); roof piece 5 at level 2. Footprint = the minimum-area rectangle of its roof cells (172 m2 of 2 m cells, fill 0.72; +-2 m), off 3DEP USGS_LPC_MI_31Co_Oakland_2016_LAS_2019, flown 2017-05-03; roof_z_m 33.36 m = its median roof elevation in the scene frame [measured]; wall 7.42 m over the lidar ground [measured]. NAIP 2022's strip west of the crop (download b, 2026-11-09) shows it standing (green excess 3.5, luminance 203.0, and by eye). Seen from 12 of 467 lap points. Skin [invented: no wall is seen from above]; past the built ground: a far block"
+  },
+  {
+    "key": "mpg_nw_complex_6",
+    "footprint_lonlat": [
+      [
+        -83.6714917,
+        42.5734136
+      ],
+      [
+        -83.6710391,
+        42.5734394
+      ],
+      [
+        -83.671064,
+        42.5736789
+      ],
+      [
+        -83.6715167,
+        42.5736532
+      ]
+    ],
+    "wall_h_m": 8.55,
+    "skin": "tiltup",
+    "roof": "white",
+    "form": "flat",
+    "off_terrain": true,
+    "roof_z_m": 33.36,
+    "_source": "source/furniture/pass4/tiers_p4.json (ledger 0082 pass 4): the multi-level complex north-west of the employee lot (NAIP 2022 west strip: flat roofs at several levels); roof piece 6 at level 2. Footprint = the minimum-area rectangle of its roof cells (744 m2 of 2 m cells, fill 0.75; +-2 m), off 3DEP USGS_LPC_MI_31Co_Oakland_2016_LAS_2019, flown 2017-05-03; roof_z_m 33.36 m = its median roof elevation in the scene frame [measured]; wall 8.55 m over the lidar ground [measured]. NAIP 2022's strip west of the crop (download b, 2026-11-09) shows it standing (green excess 3.5, luminance 203.0, and by eye). Seen from 12 of 467 lap points. Skin [invented: no wall is seen from above]; past the built ground: a far block"
+  },
+  {
+    "key": "mpg_nw_complex_7",
+    "footprint_lonlat": [
+      [
+        -83.6714206,
+        42.5736987
+      ],
+      [
+        -83.6704376,
+        42.5737472
+      ],
+      [
+        -83.6704513,
+        42.5738989
+      ],
+      [
+        -83.6714343,
+        42.5738505
+      ]
+    ],
+    "wall_h_m": 12.91,
+    "skin": "tiltup",
+    "roof": "white",
+    "form": "flat",
+    "off_terrain": true,
+    "roof_z_m": 35.17,
+    "_source": "source/furniture/pass4/tiers_p4.json (ledger 0082 pass 4): the multi-level complex north-west of the employee lot (NAIP 2022 west strip: flat roofs at several levels); roof piece 7 at level 3. Footprint = the minimum-area rectangle of its roof cells (1036 m2 of 2 m cells, fill 0.76; +-2 m), off 3DEP USGS_LPC_MI_31Co_Oakland_2016_LAS_2019, flown 2017-05-03; roof_z_m 35.17 m = its median roof elevation in the scene frame [measured]; wall 12.91 m over the lidar ground [measured]. NAIP 2022's strip west of the crop (download b, 2026-11-09) shows it standing (green excess 3.5, luminance 203.0, and by eye). Seen from 12 of 467 lap points. Skin [invented: no wall is seen from above]; past the built ground: a far block"
+  },
+  {
+    "key": "mpg_nw_complex_8",
+    "footprint_lonlat": [
+      [
+        -83.6710332,
+        42.5733109
+      ],
+      [
+        -83.671496,
+        42.5733109
+      ],
+      [
+        -83.671496,
+        42.5730408
+      ],
+      [
+        -83.6710332,
+        42.5730408
+      ]
+    ],
+    "wall_h_m": 8.8,
+    "skin": "tiltup",
+    "roof": "white",
+    "form": "flat",
+    "off_terrain": true,
+    "roof_z_m": 37.97,
+    "_source": "source/furniture/pass4/tiers_p4.json (ledger 0082 pass 4): the multi-level complex north-west of the employee lot (NAIP 2022 west strip: flat roofs at several levels); roof piece 8 at level 4. Footprint = the minimum-area rectangle of its roof cells (864 m2 of 2 m cells, fill 0.76; +-2 m), off 3DEP USGS_LPC_MI_31Co_Oakland_2016_LAS_2019, flown 2017-05-03; roof_z_m 37.97 m = its median roof elevation in the scene frame [measured]; wall 8.8 m over the lidar ground [measured]. NAIP 2022's strip west of the crop (download b, 2026-11-09) shows it standing (green excess 3.5, luminance 203.0, and by eye). Seen from 12 of 467 lap points. Skin [invented: no wall is seen from above]; past the built ground: a far block"
+  },
+  {
+    "key": "mpg_nw_complex_9",
+    "footprint_lonlat": [
+      [
+        -83.6710317,
+        42.5730569
+      ],
+      [
+        -83.6703828,
+        42.5730836
+      ],
+      [
+        -83.6704044,
+        42.5733707
+      ],
+      [
+        -83.6710533,
+        42.5733441
+      ]
+    ],
+    "wall_h_m": 8.71,
+    "skin": "tiltup",
+    "roof": "white",
+    "form": "flat",
+    "off_terrain": true,
+    "roof_z_m": 37.97,
+    "_source": "source/furniture/pass4/tiers_p4.json (ledger 0082 pass 4): the multi-level complex north-west of the employee lot (NAIP 2022 west strip: flat roofs at several levels); roof piece 9 at level 4. Footprint = the minimum-area rectangle of its roof cells (1292 m2 of 2 m cells, fill 0.76; +-2 m), off 3DEP USGS_LPC_MI_31Co_Oakland_2016_LAS_2019, flown 2017-05-03; roof_z_m 37.97 m = its median roof elevation in the scene frame [measured]; wall 8.71 m over the lidar ground [measured]. NAIP 2022's strip west of the crop (download b, 2026-11-09) shows it standing (green excess 3.5, luminance 203.0, and by eye). Seen from 12 of 467 lap points. Skin [invented: no wall is seen from above]; past the built ground: a far block"
+  },
+  {
+    "key": "mpg_nw_complex_10",
+    "footprint_lonlat": [
+      [
+        -83.670591,
+        42.5728026
+      ],
+      [
+        -83.6703032,
+        42.5728292
+      ],
+      [
+        -83.670328,
+        42.5729755
+      ],
+      [
+        -83.6706158,
+        42.5729489
+      ]
+    ],
+    "wall_h_m": 7.07,
+    "skin": "tiltup",
+    "roof": "white",
+    "form": "flat",
+    "off_terrain": true,
+    "roof_z_m": 37.41,
+    "_source": "source/furniture/pass4/tiers_p4.json (ledger 0082 pass 4): the multi-level complex north-west of the employee lot (NAIP 2022 west strip: flat roofs at several levels); roof piece 10 at level 4. Footprint = the minimum-area rectangle of its roof cells (316 m2 of 2 m cells, fill 0.81; +-2 m), off 3DEP USGS_LPC_MI_31Co_Oakland_2016_LAS_2019, flown 2017-05-03; roof_z_m 37.41 m = its median roof elevation in the scene frame [measured]; wall 7.07 m over the lidar ground [measured]. NAIP 2022's strip west of the crop (download b, 2026-11-09) shows it standing (green excess 3.5, luminance 203.0, and by eye). Seen from 12 of 467 lap points. Skin [invented: no wall is seen from above]; past the built ground: a far block"
+  },
+  {
+    "key": "mpg_nw_complex_11",
+    "footprint_lonlat": [
+      [
+        -83.6703268,
+        42.5730048
+      ],
+      [
+        -83.6703268,
+        42.5727888
+      ],
+      [
+        -83.670205,
+        42.5727888
+      ],
+      [
+        -83.670205,
+        42.5730048
+      ]
+    ],
+    "wall_h_m": 7.21,
+    "skin": "tiltup",
+    "roof": "white",
+    "form": "flat",
+    "off_terrain": true,
+    "roof_z_m": 37.47,
+    "_source": "source/furniture/pass4/tiers_p4.json (ledger 0082 pass 4): the multi-level complex north-west of the employee lot (NAIP 2022 west strip: flat roofs at several levels); roof piece 11 at level 4. Footprint = the minimum-area rectangle of its roof cells (140 m2 of 2 m cells, fill 0.58; +-2 m), off 3DEP USGS_LPC_MI_31Co_Oakland_2016_LAS_2019, flown 2017-05-03; roof_z_m 37.47 m = its median roof elevation in the scene frame [measured]; wall 7.21 m over the lidar ground [measured]. NAIP 2022's strip west of the crop (download b, 2026-11-09) shows it standing (green excess 3.5, luminance 203.0, and by eye). Seen from 12 of 467 lap points. Skin [invented: no wall is seen from above]; past the built ground: a far block"
+  },
+  {
+    "key": "mpg_nw_complex_12",
+    "footprint_lonlat": [
+      [
+        -83.6705478,
+        42.5734771
+      ],
+      [
+        -83.6714089,
+        42.5734397
+      ],
+      [
+        -83.6713967,
+        42.5732866
+      ],
+      [
+        -83.6705356,
+        42.5733241
+      ]
+    ],
+    "wall_h_m": 12.77,
+    "skin": "tiltup",
+    "roof": "white",
+    "form": "flat",
+    "off_terrain": true,
+    "roof_z_m": 39.84,
+    "_source": "source/furniture/pass4/tiers_p4.json (ledger 0082 pass 4): the multi-level complex north-west of the employee lot (NAIP 2022 west strip: flat roofs at several levels); roof piece 12 at level 5. Footprint = the minimum-area rectangle of its roof cells (940 m2 of 2 m cells, fill 0.78; +-2 m), off 3DEP USGS_LPC_MI_31Co_Oakland_2016_LAS_2019, flown 2017-05-03; roof_z_m 39.84 m = its median roof elevation in the scene frame [measured]; wall 12.77 m over the lidar ground [measured]. NAIP 2022's strip west of the crop (download b, 2026-11-09) shows it standing (green excess 3.5, luminance 203.0, and by eye). Seen from 12 of 467 lap points. Skin [invented: no wall is seen from above]; past the built ground: a far block"
+  }
+]

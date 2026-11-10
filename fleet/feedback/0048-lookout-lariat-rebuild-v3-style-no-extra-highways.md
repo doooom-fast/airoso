@@ -194,6 +194,51 @@ Blender on the PC (the plan's route), (b) a survey pass with manual seeds giving
 same mesh arcs with the line resampled at 1 m through them (engine change), or (c) Kevin accepting an engine-rule radius
 (invented) for the three as a Drive-1 interim.
 
+### 0.17.2 run e: held WIP (2026-11-03, branch `claude/lariat-pads-wip`)
+
+P3b's method (1), built and gated on the PC, **red and held**. It is the last iteration on airoso's engine: Kevin moved the
+fleet onto Lake Murray v4's engine the same evening, so the work is parked here, not on PR 32.
+
+**What it is.** The three mouths are engine-draft pads (JUNCTIONS topology B), from a general module:
+- `tools/draft_pads.py` (pure)
+- `tools/draft_pad_outline.py` (the lidar measurement)
+- `tools/author_draft_pads_blend.py` (the Blender author, the chain's `author_draft_pads` step)
+- declared in `track.config.json route.draft_pads`
+
+How each pad is made:
+- The lap is cut at two of its own ribbon rows.
+- The outline is the asphalt edge read off USGS lidar `CO_DRCOG_2_2020` intensity (asphalt dark, verge bright; ±0.4 m), unioned with the lap's own ribbon.
+- The deck is local planes fitted to class-2 ground points on the asphalt.
+- The seam weld fades the ribbon row's departure from the ground in over 12 m. It is longer where 3.5 cm/m needs it: C18's out-cut, 37 m.
+- There are no invented radii.
+
+| mouth | ground pts (density) | intensity road / verge / threshold | outline pts | paint-flagged | ribbon-only area | deck | seam departure max |
+|---|---|---|---|---|---|---|---|
+| C14 | 25,525 (3.15/m²) | 1,856 / 3,214 / 2,535 | 332 | 0 | 6.5 m² | 2,127 v / 3,952 f, 2,293 m² | 0.245 m |
+| C15 | 29,927 (3.69/m²) | 1,539 / 2,856 / 2,198 | 430 | 89 (zebra) | 50.4 m² | 2,549 v / 4,722 f, 2,730 m² | 0.25 m |
+| C18 | 28,553 (1.98/m²) | 1,557 / 3,196 / 2,376 | 351 | 15 | 122.8 m² | 1,281 v / 2,227 f, 1,248 m² | 0.94 m |
+
+**Paint flags.** At paint-flagged outline points the closing bridged a painted stripe, so the edge there is the paint's outer side ±1 m.
+
+**C18's out-cut.** The engine line climbs to the lid: 0.39 m over the cut, 0.835 m at v14233. It is noted and left alone (the seam fade carries it).
+
+**Run e (`--no-install --from mesh`).**
+- **Green:**
+  - verify_kn5
+  - road inventory
+  - stacked legs
+  - kn5_ground_check (road-over-ground p95 0.062 m, 532 / 7,793 over 5 cm)
+  - lid ends, one-way, hairpin / paint centreline, roll rate
+- **Kevin's two rows, as declared:** undrivable corners 80; far ledges 1,038 (≤ 1,045).
+- **Red beyond them** (so `--force-install` is refused):
+  - **severe steps 10** (run d 22). The seam crowns at C14 / C15 are gone: the departure is now sampled every 0.25 m along the row, not linearly between its two edge vertices. Left:
+    - C18 st 24,309-24,310 lateral −3.86, 0.23 / 0.44 m, and st 24,282-24,295 −2.6, 0.06-0.11 m. Under the lap's ribbon strip beside the real asphalt, the deck still follows the embankment, even fitted to road points only.
+    - C14's out-cut st 11,726 +0.75, 0.087 m.
+    - 6.0-7.3 cm at st 11,677 −3.29, 16,599 +3.75 and 24,225 −2.1.
+  - **soft_top_in_lane 28** at C14's out-cut, st 11,723-11,725, lateral +0.75…+5.6. A probe on a scratch blend shows a **hole, not ground on top**: on the + side, the last 0.25-0.75 m before the v10020 ribbon row carries no deck. The splice replaces the outline's run along the MEASURED cut line with the row, but on that side the two lines diverge. The wedge between them is in neither the deck nor the lap, and the ground shows through. Fix owed in `splice_rows`: close the ring along the row line out to both row ends.
+  - **audit B_terrain_poke 28**, new in run e, NOT located. Suspects: the ground hold band widened to 2.5 m (`EDGE_BAND_M`), or the ground subdivision under the deck.
+- **Not installed.** No Lariat build is installed. 0.17.1 never was (above).
+
 ## Started (Kevin, 2026-11-01)
 
 > "Start the lariat"

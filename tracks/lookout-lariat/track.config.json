@@ -2,7 +2,8 @@
   "archetype": "real_road",
   "name": "Lookout Mountain Lariat",
   "slug": "lookout_lariat",
-  "version": "0.17.1",
+  "version": "0.17.2",
+  "_version_0_17_2_doc": "0.17.2 (2026-11-03, ledger 0048 P3b): the three junction mouths C14 / C15 / C18 as engine-draft pads (route.draft_pads; tools/draft_pads.py, draft_pad_outline.py, author_draft_pads_blend.py): outline = the 2020 USGS DRCOG lidar pavement edge, deck = its class-2 ground, welded to the lap's own rows; nothing else changed (gates.drive1.force_exemptions: 0.17.2 added to versions, the rows untouched).",
   "_version_0_17_1_doc": "0.17.1 (2026-11-03, ledger 0048 'Drive 1 on the Mac'): gates.drive1.force_exemptions, Kevin's 'Yes, force it' for the real hairpins' corner rule and the open drops, for this build only; the chain's Drive-1 summary line names each gate's own exit. The ground and road geometry are 0.17.0's.",
   "_version_0_17_doc": "0.17.0 (2026-11-03, ledger 0048 'Drive 1 on the Mac'): A2's C12 / C13 arcs at the mesh (hairpin_fit.mesh_fit), no fold plateaus or pads on the fitted hairpins (road_profile.fold_plateaus / fold_pads false), no engine walls in the Drive-1 draft (road_edge.draft_walls false), and P3a's ground: the road-building cross-section by station with stacked legs held to their own leg (terrain.cross_section.build), on a 13.3 m medium grid refined to 1.11 m in the corridor (terrain_cell_m, corridor_refine_*). Built and gated on the Mac's engine draft only; not yet through the PC chain.",
   "_version_doc": "The V3 config (2026-10-11). Nothing has been built at this version; the installed July build is 0.15.0. ui_track.json stamps '[build <version>]' so a stale install is visible at a glance.",
@@ -65,7 +66,9 @@
       ]
     },
     "_measured_widths_doc": "P2 step 1 (scripts/gps/measured_widths.py, after scripts.gps.widths_from_osm): the aerial pass's MEASURED widths (NAIP 2019: width stations, hairpin legs, hairpin apexes) override the published width_overrides, which override the 'mountain' OSM table, per top-level width_overrides stretch; a measured width is the painted travelled way (edge-line centre to centre + one 0.10 m stripe); in a town_segments stretch with no edge lines, the curb-to-curb pavement. widths_from_osm's junction flares, hard-corner flares and 10 m fold floors are not laid (not measurements; A2 keeps hairpin widening off, P3b authors the mouths). The record is data/widths.measured.json.",
-    "connectors": {}
+    "connectors": {},
+    "draft_pads": [{"id": "C14", "node": 10003, "cuts": [9995, 10020], "sealed": [], "source": {"kind": "lidar_ept", "ept": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept.json"}, "half_m": 45, "box": [[-1683.1, -2525.4], [-1678.1, -2512.9], [-1662.3, -2512.9], [-1662.3, -2542.1], [-1625.6, -2542.1], [-1625.6, -2592.9], [-1697.3, -2592.9], [-1697.3, -2553.7]]}, {"id": "C15", "node": 11642, "cuts": [11627, 11655], "sealed": [[[2493.1, -3049.4], [2522.5, -3065.3]], [[2546.1, -3024.9], [2549.5, -3046.5]]], "source": {"kind": "lidar_ept", "ept": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept.json"}, "half_m": 45}, {"id": "C18", "node": 14211, "cuts": [14196, 14233], "sealed": [], "source": {"kind": "lidar_ept", "ept": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept.json"}, "half_m": 60, "box": [[850.5, 1869.2], [869.7, 1889.2], [890.5, 1899.2], [900.5, 1905.9], [910.5, 1907.6], [915.5, 1897.6], [913.8, 1890.9], [918.8, 1874.2], [922.2, 1865.9], [925.5, 1860.9], [925.5, 1850.9], [908.8, 1850.9], [897.2, 1865.9], [898.8, 1882.6], [897.2, 1886.7], [886.3, 1882.6], [875.5, 1871.7], [867.2, 1860.9], [862.2, 1850.9], [850.5, 1850.9]]}],
+    "_draft_pads_doc": "Ledger 0048 P3b (Kevin: measured, not invented): the three junction mouths the engine leaves at a 4.7-7.6 m centreline radius under a 7-10 m ribbon, each one JUNCTIONS topology-B deck (tools/draft_pads.py, tools/draft_pad_outline.py, tools/author_draft_pads_blend.py). Outline = the 2020 USGS DRCOG lidar pavement edge (ground-point intensity), deck = its class-2 ground; the intermediates are source/pads/<id>.json. cuts = the lap rows the pad replaces between; sealed = the box edge across each leg the lap does not drive."
   },
   "hairpin_fit": {
     "mesh_fit": ["C12", "C13"],
@@ -369,7 +372,7 @@
         "_doc": "[measured on the installed July v0.46.0 build] (V3-PLAN P5 '--force-install rule', 0047): a red street run may still install with --force-install only if no worse than these on every key; obstruction, floating furniture and soft-top are always 0. tools/ship_track.sh refuses a forced install when data/drive1_gates.json force_install_ok is false."
       },
       "force_exemptions": {
-        "versions": ["0.17.1"],
+        "versions": ["0.17.1", "0.17.2"],
         "approved": "Kevin 2026-11-03, asked 'Install the Lariat for Drive 1 at real hairpin widths, with open drops?': \"Yes, force it\"",
         "keys": {
           "undrivable_corners": {"corners": ["C4", "C5", "C6", "C7", "C8", "C9", "C10"], "window_m": 40.0,

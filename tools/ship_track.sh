@@ -415,6 +415,11 @@ author_race_verify() {
   (cd "$AIROSO" && python tools/plot_race_furniture.py "$PROJ" | tail -3)   # data/race_plots/*.png
 }
 
+author_draft_pads() {
+  step "author: engine-draft junction pads -> AUTH_pads (tools/author_draft_pads_blend.py: the lap cut at each pad's two rows, one deck to the measured outline in source/pads/<id>.json, the ground under it; self-checked; none declared = no-op)"
+  (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_draft_pads_blend.py" -- "$PROJ" 2>&1 | grep "^\[pads\]\|Error\|Traceback" )
+}
+
 author_bespoke() {
   step "author: the bespoke dressing the config declares -> AUTH_bespoke (tools/author_bespoke_blend.py: buildings, cones, scrub on the built ground; self-checked; none declared = no-op)"
   (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_bespoke_blend.py" -- "$PROJ" 2>&1 | grep "^\[bespoke\]\|Error\|Traceback" )

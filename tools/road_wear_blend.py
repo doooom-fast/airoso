@@ -364,7 +364,12 @@ def main() -> int:
                                   "textures": [[s, imgs[s].name, str(f)] for s, f in (("txDiffuse", m["diffuse"]),
                                                ("txNormal", m["normal"]), ("txDetail", m["detail"]),
                                                ("txNormalDetail", m["detail_nm"]))],
-                                  "props": {"detailUVMultiplier": mult, "detailNormalBlend": 1.0, "useDetail": 1.0}}
+                                  # ksAmbient / ksDiffuse 0.40 / 0.40: what 0.1.6's 1ROAD and 1KERB shipped. pbr.KS_PROPS
+                                  # has no row for them, so the exporter writes no VAR and the kn5 add-on fills its own
+                                  # 0.4 / 0.4 default; but it fills that only when a material names NO VAR, so the detail
+                                  # VARs alone dropped both (PC, 2026-11-09: 0.1.9's road shipped no ksAmbient / ksDiffuse)
+                                  "props": {"ksAmbient": 0.40, "ksDiffuse": 0.40,
+                                            "detailUVMultiplier": mult, "detailNormalBlend": 1.0, "useDetail": 1.0}}
     # 8. the writer's vertex count (engine-july's own), split when over
     caps = {}
     for key, obl in objs.items():

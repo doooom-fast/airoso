@@ -326,6 +326,10 @@ draft_strip_seam() {
   step "author: a ground seam along the edge strip's outer lip (tools/strip_seam_blend.py; ledger 0078; self-checked)"
   (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/strip_seam_blend.py" -- "$PROJ" 2>&1 | grep "^\[strip-seam\]\|Error\|Traceback" )
 }
+draft_far_ground() {
+  step "author: the far ground from the lidar in place of the assembler's skirt (tools/far_ground_blend.py; ledger 0083 pass 4b; the grid untouched; self-checked; no terrain.far_ground = no-op)"
+  (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/far_ground_blend.py" -- "$PROJ" 2>&1 | grep "^\[far-ground\]\|FATAL\|Error\|Traceback" )
+}
 draft_cutfill() {
   step "author: the ground graded to the road's built section, stacked legs held on their own side (tools/cutfill_blend.py; ledger 0078; terrain.cross_section.build false = no-op)"
   (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/cutfill_blend.py" -- "$PROJ" 2>&1 | grep "^\[cutfill\]\|FATAL\|Error\|Traceback" )

@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Frame georeferencer</title>
+<style>
+  :root { --bg: #111; --fg: #eee; --bar: #222; --accent: #ffd400; }
+  html, body { margin: 0; height: 100%; background: var(--bg); color: var(--fg); font: 12px/1.3 system-ui, sans-serif; overflow: hidden; }
+  #bar { position: fixed; top: 0; left: 0; right: 0; height: 28px; background: var(--bar); display: flex; gap: 6px; align-items: center; padding: 0 6px; z-index: 2; }
+  #bar button, #bar select { font: 11px system-ui, sans-serif; padding: 2px 6px; background: #333; color: var(--fg); border: 1px solid #555; border-radius: 3px; cursor: pointer; }
+  #bar button.on { background: var(--accent); color: #000; }
+  #status { position: fixed; bottom: 0; left: 0; right: 0; height: 20px; background: var(--bar); padding: 2px 6px; white-space: nowrap; overflow: hidden; z-index: 2; }
+  canvas { position: fixed; top: 28px; left: 0; cursor: crosshair; }
+</style>
+</head>
+<body>
+<div id="bar">
+  <button id="bView">View: FRAME</button>
+  <select id="frameSel"></select>
+  <button id="mCP" class="on">CP</button><button id="mTrace">Trace</button><button id="mPan">Pan</button>
+  <button id="zIn">+</button><button id="zOut">−</button><button id="zFit">Fit</button>
+  <button id="bSolve">Solve</button><button id="bUndo">Undo</button><button id="bSave">Save</button><button id="bExport">Export</button>
+</div>
+<canvas id="c"></canvas>
+<div id="status">loading…</div>
+<script src="naip_roads.js"></script>
+<script>
+// ---------- data ----------
+const FRAMES = [
+  "1987_0745_straight_bleachers_hall_return.jpg", "1987_0807_T8_wide.jpg", "1987_0754_T6.jpg", "1987_2107_helicopter_over_oval.jpg",
+  "1987_0736_T3_paddock_hairpin_by_oval.jpg", "1987_0730_T2_main_lot.jpg", "1987_0330_pit_straight_aerial.jpg", "1987_0810_T9_tent.jpg",
+  "1987_0210_title_aerial_looking_south.jpg", "1987_3205_blimp_wide_east.jpg"];
+const state = { view: "frame", frame: 0, mode: "cp", zoom: 1, ox: 0, oy: 0, cps: {}, traces: {}, H: {}, pending: null, roads: null, georef: null, drag: null };
+const imgs = { frame: {}, naip: new Image() };
+imgs.naip.src = "naip_2012_z18.jpg";
+for (const f of FRAMES) { const im = new Image(); im.src = "../frames/" + f; imgs.frame[f] = im; }
+if (window.ROADS) { state.roads = ROADS.roads; state.georef = ROADS.georef; }
+const sel = document.getElementById("frameSel");
+FRAMES.forEach((f, i) => { const o = document.createElement("option"); o.value = i; o.textContent = f.replace(".jpg", ""); sel.appendChild(o); });
+function curFrame() { return FRAMES[state.frame]; }
+function curImg() { return state.view === "frame" ? imgs.frame[curFrame()] : imgs.naip; }
+function cps() { return state.cps[curFrame()] || (state.cps[curFrame()] = []); }
+function trace() { return state.traces[curFrame()] || (state.traces[curFrame()] = []); }
+// ---------- canvas ----------
+const cv = document.getElementById("c"), ctx = cv.getContext("2d");
+function resize() { cv.width = innerWidth; cv.height = innerHeight - 48; draw(); }
+addEventListener("resize", resize);
+function toImg(cx, cy) { return [(cx - state.ox) / state.zoom, (cy - state.oy) / state.zoom]; }
+function toCv(ix, iy) { return [ix * state.zoom + state.ox, iy * state.zoom + state.oy]; }
+function fit() { const im = curImg(); if (!im.naturalWidth) return; state.zoom = Math.min(cv.width / im.naturalWidth, cv.height / im.naturalHeight); state.ox = (cv.width - im.naturalWidth * state.zoom) / 2; state.oy = (cv.height - im.naturalHeight * state.zoom) / 2; draw(); }
+function zoomAt(f, cx, cy) { const [ix, iy] = toImg(cx, cy); state.zoom *= f; state.ox = cx - ix * state.zoom; state.oy = cy - iy * state.zoom; draw(); }
+function centerOn(ix, iy, zoom) { if (zoom) state.zoom = zoom; state.ox = cv.width / 2 - ix * state.zoom; state.oy = cv.height / 2 - iy * state.zoom; draw(); }
+// ---------- homography (normalized DLT, 8 unknowns, h33 = 1) ----------
+function solveLinear(A, b) { const n = b.length; const M = A.map((r, i) => [...r, b[i]]);
+  for (let c = 0; c < n; c++) { let p = c; for (let r = c + 1; r < n; r++) if (Math.abs(M[r][c]) > Math.abs(M[p][c])) p = r; [M[c], M[p]] = [M[p], M[c]];
+    if (Math.abs(M[c][c]) < 1e-12) return null; for (let r = 0; r < n; r++) if (r !== c) { const f = M[r][c] / M[c][c]; for (let k = c; k <= n; k++) M[r][k] -= f * M[c][k]; } }
+  return M.map((r, i) => r[n] / r[i]); }
+function normalize(pts) { const n = pts.length; const cx = pts.reduce((s, p) => s + p[0], 0) / n, cy = pts.reduce((s, p) => s + p[1], 0) / n;
+  const d = pts.reduce((s, p) => s + Math.hypot(p[0] - cx, p[1] - cy), 0) / n; const s = Math.SQRT2 / d;
+  return { T: [[s, 0, -s * cx], [0, s, -s * cy], [0, 0, 1]], pts: pts.map(p => [(p[0] - cx) * s, (p[1] - cy) * s]) }; }
+function mul(A, B) { return A.map((r, i) => B[0].map((_, j) => r.reduce((s, _, k) => s + A[i][k] * B[k][j], 0))); }
+function inv3(m) { const [a, b, c] = m[0], [d, e, f] = m[1], [g, h, i] = m[2]; const A = e * i - f * h, B = -(d * i - f * g), C = d * h - e * g; const det = a * A + b * B + c * C;
+  return [[A / det, -(b * i - c * h) / det, (b * f - c * e) / det], [B / det, (a * i - c * g) / det, -(a * f - c * d) / det], [C / det, -(a * h - b * g) / det, (a * e - b * d) / det]]; }
+function homography(src, dst) { if (src.length < 4) return null; const ns = normalize(src), nd = normalize(dst); const A = [], b = [];
+  ns.pts.forEach((p, i) => { const [x, y] = p, [X, Y] = nd.pts[i]; A.push([x, y, 1, 0, 0, 0, -x * X, -y * X]); b.push(X); A.push([0, 0, 0, x, y, 1, -x * Y, -y * Y]); b.push(Y); });
+  // least squares via normal equations
+  const AtA = A[0].map((_, i) => A[0].map((_, j) => A.reduce((s, r) => s + r[i] * r[j], 0))); const Atb = A[0].map((_, i) => A.reduce((s, r, k) => s + r[i] * b[k], 0));
+  const h = solveLinear(AtA, Atb); if (!h) return null; const Hn = [[h[0], h[1], h[2]], [h[3], h[4], h[5]], [h[6], h[7], 1]];
+  const H = mul(inv3(nd.T), mul(Hn, ns.T)); return H.map(r => r.map(v => v / H[2][2])); }
+function apply(H, p) { const w = H[2][0] * p[0] + H[2][1] * p[1] + H[2][2]; return [(H[0][0] * p[0] + H[0][1] * p[1] + H[0][2]) / w, (H[1][0] * p[0] + H[1][1] * p[1] + H[1][2]) / w]; }
+function solve() { const c = cps().filter(p => p.f && p.n); const H = homography(c.map(p => p.f), c.map(p => p.n)); state.H[curFrame()] = H; draw(); return H; }
+function residuals() { const H = state.H[curFrame()]; if (!H) return []; return cps().filter(p => p.f && p.n).map(p => { const q = apply(H, p.f); return { name: p.name, dx: q[0] - p.n[0], dy: q[1] - p.n[1] }; }); }
+// ---------- georef (Web Mercator tiles) ----------
+function pxToLonLat(px, py) { const g = state.georef, n = 2 ** g.z; const tx = px / 256 + g.x0, ty = py / 256 + g.y0; const lon = tx / n * 360 - 180; const lat = Math.atan(Math.sinh(Math.PI * (1 - 2 * ty / n))) * 180 / Math.PI; return [lon, lat]; }
+// ---------- drawing ----------
+function cross(x, y, col, label) { const [cx, cy] = toCv(x, y); ctx.strokeStyle = col; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(cx - 9, cy); ctx.lineTo(cx + 9, cy); ctx.moveTo(cx, cy - 9); ctx.lineTo(cx, cy + 9); ctx.stroke(); if (label) { ctx.fillStyle = col; ctx.font = "11px system-ui"; ctx.fillText(label, cx + 6, cy - 6); } }
+function poly(pts, col, w, close) { if (pts.length < 2) return; ctx.strokeStyle = col; ctx.lineWidth = w; ctx.beginPath(); pts.forEach((p, i) => { const [x, y] = toCv(p[0], p[1]); i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); }); if (close) ctx.closePath(); ctx.stroke(); }
+function draw() { ctx.fillStyle = "#111"; ctx.fillRect(0, 0, cv.width, cv.height); const im = curImg(); if (!im.naturalWidth) { status("image loading…"); return; }
+  ctx.imageSmoothingEnabled = state.zoom < 2; ctx.drawImage(im, state.ox, state.oy, im.naturalWidth * state.zoom, im.naturalHeight * state.zoom);
+  const H = state.H[curFrame()];
+  if (state.view === "frame") {
+    if (H && state.roads) { const Hi = inv3(H); for (const r of state.roads) poly(r.px.map(p => apply(Hi, p)), r.hw === "service" ? "rgba(0,200,255,0.7)" : "rgba(0,255,120,0.9)", 1); }
+    cps().forEach((p, i) => { if (p.f) cross(p.f[0], p.f[1], p.n ? "#ffd400" : "#ff8800", p.name || String(i + 1)); });
+    poly(trace(), "#ff3030", 2); trace().forEach(p => cross(p[0], p[1], "#ff3030"));
+  } else {
+    if (state.roads) for (const r of state.roads) poly(r.px, r.hw === "service" ? "rgba(0,200,255,0.35)" : "rgba(0,255,120,0.6)", 1);
+    cps().forEach((p, i) => { if (p.n) cross(p.n[0], p.n[1], p.f ? "#ffd400" : "#ff8800", p.name || String(i + 1)); if (H && p.f) { const q = apply(H, p.f); cross(q[0], q[1], "#ff00ff"); } });
+    for (const f of FRAMES) { const Hf = state.H[f], t = state.traces[f]; if (Hf && t && t.length) { const P = t.map(p => apply(Hf, p)); poly(P, f === curFrame() ? "#ff3030" : "rgba(255,80,80,0.6)", 2); P.forEach(p => cross(p[0], p[1], "#ff3030")); } }
+  }
+  if (state.pending) cross(state.pending[0], state.pending[1], "#ff8800", "?");
+  updateStatus(); }
+function status(s) { document.getElementById("status").textContent = s; }
+function updateStatus(extra) { const res = residuals(); const rms = res.length ? Math.sqrt(res.reduce((s, r) => s + r.dx * r.dx + r.dy * r.dy, 0) / res.length) : null;
+  status(`${state.view.toUpperCase()} ${curFrame()} | mode ${state.mode} | zoom ${state.zoom.toFixed(2)} | CPs ${cps().length} (${cps().filter(p => p.f && p.n).length} paired) | trace ${trace().length} pts | ${state.H[curFrame()] ? "H solved, rms " + rms.toFixed(1) + " NAIP px" : "no H"} ${extra || ""}`); }
+// ---------- interaction ----------
+cv.addEventListener("mousedown", e => { state.drag = { x: e.clientX, y: e.clientY - 28, ox: state.ox, oy: state.oy, moved: false }; });
+cv.addEventListener("mousemove", e => { const cx = e.clientX, cy = e.clientY - 28; if (state.drag && (state.mode === "pan" || e.buttons === 1 && (Math.abs(cx - state.drag.x) > 3 || Math.abs(cy - state.drag.y) > 3))) { state.drag.moved = true; state.ox = state.drag.ox + cx - state.drag.x; state.oy = state.drag.oy + cy - state.drag.y; draw(); } else { const [ix, iy] = toImg(cx, cy); updateStatus(`| cursor ${ix.toFixed(1)}, ${iy.toFixed(1)}`); } });
+cv.addEventListener("mouseup", e => { const moved = state.drag && state.drag.moved; state.drag = null; if (moved || state.mode === "pan") return; const [ix, iy] = toImg(e.clientX, e.clientY - 28); click(ix, iy); });
+cv.addEventListener("wheel", e => { e.preventDefault(); zoomAt(e.deltaY < 0 ? 1.25 : 0.8, e.clientX, e.clientY - 28); }, { passive: false });
+function click(ix, iy) { if (state.mode === "trace") { if (state.view !== "frame") return; trace().push([ix, iy]); draw(); return; }
+  // CP mode: in FRAME view add/replace the pending frame point; in NAIP view pair it
+  if (state.view === "frame") { const c = cps(); const open = c.find(p => p.f && !p.n); if (open) open.f = [ix, iy]; else c.push({ f: [ix, iy], n: null, name: String(c.length + 1) }); }
+  else { const c = cps(); const open = c.find(p => p.f && !p.n); if (open) open.n = [ix, iy]; else c.push({ f: null, n: [ix, iy], name: String(c.length + 1) }); }
+  draw(); }
+function setMode(m) { state.mode = m; for (const id of ["mCP", "mTrace", "mPan"]) document.getElementById(id).classList.toggle("on", id === { cp: "mCP", trace: "mTrace", pan: "mPan" }[m]); draw(); }
+function setView(v) { state.view = v; document.getElementById("bView").textContent = "View: " + v.toUpperCase(); fit(); }
+document.getElementById("bView").onclick = () => setView(state.view === "frame" ? "naip" : "frame");
+sel.onchange = () => { state.frame = +sel.value; if (state.view === "frame") fit(); else draw(); };
+document.getElementById("mCP").onclick = () => setMode("cp"); document.getElementById("mTrace").onclick = () => setMode("trace"); document.getElementById("mPan").onclick = () => setMode("pan");
+document.getElementById("zIn").onclick = () => zoomAt(1.5, cv.width / 2, cv.height / 2); document.getElementById("zOut").onclick = () => zoomAt(1 / 1.5, cv.width / 2, cv.height / 2); document.getElementById("zFit").onclick = fit;
+document.getElementById("bSolve").onclick = solve;
+document.getElementById("bUndo").onclick = () => { if (state.mode === "trace") trace().pop(); else { const c = cps(); const open = c.find(p => p.f && !p.n); if (open) c.splice(c.indexOf(open), 1); else c.pop(); } draw(); };
+document.getElementById("bSave").onclick = save;
+document.getElementById("bExport").onclick = () => { const s = exportJSON(); navigator.clipboard && navigator.clipboard.writeText(s); updateStatus("| exported to clipboard (" + s.length + " chars)"); };
+addEventListener("keydown", e => { const step = 40; if (e.key === "ArrowLeft") { state.ox += step; draw(); } if (e.key === "ArrowRight") { state.ox -= step; draw(); } if (e.key === "ArrowUp") { state.oy += step; draw(); } if (e.key === "ArrowDown") { state.oy -= step; draw(); } if (e.key === "+" || e.key === "=") zoomAt(1.25, cv.width / 2, cv.height / 2); if (e.key === "-") zoomAt(0.8, cv.width / 2, cv.height / 2); });
+// ---------- persistence / export / scripted API ----------
+function save() { localStorage.setItem("georef.delmar", JSON.stringify({ cps: state.cps, traces: state.traces, H: state.H })); updateStatus("| saved"); }
+function load() { try { const j = JSON.parse(localStorage.getItem("georef.delmar") || "null"); if (j) { state.cps = j.cps || {}; state.traces = j.traces || {}; state.H = j.H || {}; } } catch (e) {} }
+function exportJSON() { const out = { georef: state.georef, frames: {} };
+  for (const f of FRAMES) { const H = state.H[f], c = state.cps[f] || [], t = state.traces[f] || []; if (!c.length && !t.length) continue;
+    const proj = H ? t.map(p => apply(H, p)) : []; out.frames[f] = { cps: c, H, residuals_naip_px: H ? c.filter(p => p.f && p.n).map(p => { const q = apply(H, p.f); return [q[0] - p.n[0], q[1] - p.n[1]]; }) : [], trace_frame_px: t, trace_naip_px: proj, trace_lonlat: state.georef ? proj.map(p => pxToLonLat(p[0], p[1])) : [] }; }
+  return JSON.stringify(out); }
+window.G = { state, addCP: (fx, fy, nx, ny, name) => { cps().push({ f: [fx, fy], n: [nx, ny], name: name || String(cps().length + 1) }); draw(); }, setCP: (i, fx, fy, nx, ny) => { const p = cps()[i]; if (fx != null) p.f = [fx, fy]; if (nx != null) p.n = [nx, ny]; draw(); }, removeCP: i => { cps().splice(i, 1); draw(); },
+  addTrace: pts => { trace().push(...pts); draw(); }, clearTrace: () => { state.traces[curFrame()] = []; draw(); }, solve, residuals, exportJSON, save, load,
+  setFrame: i => { state.frame = typeof i === "number" ? i : FRAMES.indexOf(i); sel.value = state.frame; fit(); }, setView, setMode, centerOn, fit, apply: (p) => apply(state.H[curFrame()], p), applyInv: (p) => apply(inv3(state.H[curFrame()]), p), frames: FRAMES };
+load(); resize(); let tries = 0; const t = setInterval(() => { if (curImg().naturalWidth) { fit(); clearInterval(t); } else if (++tries > 100) clearInterval(t); }, 100);
+</script>
+</body>
+</html>

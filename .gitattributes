@@ -5,3 +5,4 @@ tracks/san-diego-lake-murray/source/expansion/aerial__paint_north.json -text
 *.blend filter=lfs diff=lfs merge=lfs -text
 tracks/*/source/naip_*_z18.png filter=lfs diff=lfs merge=lfs -text
 tracks/*/source/naip_*_z18.jpg filter=lfs diff=lfs merge=lfs -text
+tracks/del-mar/source/naip_*.png filter=lfs diff=lfs merge=lfs -text

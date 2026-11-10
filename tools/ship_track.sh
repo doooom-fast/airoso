@@ -633,8 +633,7 @@ prep_prep() {
   # scenery.bespoke.reseat_on_prep true; no key = no header, nothing runs (Lake Murray's chain is tools/ship_sd.sh, untouched).
   # Before the road-wear bake (as Milford 0.1.9): the re-seat moves only the named furniture, the bake writes only road UVs.
   rm -f "$PROJ/data/reseat_bespoke.json"
-  if [ "$(pyq "import json,sys; print(((json.load(open(sys.argv[1],encoding='utf-8')).get('scenery') or {}).get('bespoke') or {}).get('reseat_on_prep') is True)" "$PROJ/track.config.json" | tr -d '
-')" = "True" ]; then
+  if [ "$(pyq "import json,sys; print(((json.load(open(sys.argv[1],encoding='utf-8')).get('scenery') or {}).get('bespoke') or {}).get('reseat_on_prep') is True)" "$PROJ/track.config.json" | tr -d '\r')" = "True" ]; then
     step "ship: the bespoke rails, tyre walls and screens re-seated on the prepped ground (tools/reseat_bespoke_blend.py; self-checked)"
     "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/reseat_bespoke_blend.py" -- "$PROJ/blender/$SLUG.blend" --project "$PROJ" 2>&1 | grep "^\[reseat\]\|FATAL\|Error\|Traceback"
     [ "${PIPESTATUS[0]}" = 0 ] || { echo "reseat_bespoke_blend failed"; exit 1; }

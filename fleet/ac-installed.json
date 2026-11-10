@@ -21,7 +21,8 @@
     "2026-11-09 (Kevin on the PC: 'I always want newer builds'): Milford 0.1.9 to milford_road_course; ship_track's install step parked 0.1.6 in D:/k10-track-archive/2026-11-09_193301/ (MOVES.tsv).",
     "2026-11-09 (Kevin on the PC: 'I always want newer builds' / 'Resume now'): Milford 0.1.10 to milford_road_course; ship_track's install step parked 0.1.9 in D:/k10-track-archive/2026-11-09_212206/ (MOVES.tsv).",
     "2026-11-09 (ledger 0089; Kevin: 'I always want newer builds'): Nevada Nights 0.1.5 installed over 0.1.4 (parked by the install step in D:/k10-track-archive/2026-11-09_213254/).",
-    "2026-11-09 (Kevin on the PC: 'I always want newer builds'): Milford 0.1.11 to milford_road_course; ship_track's install step parked 0.1.10 in D:/k10-track-archive/2026-11-09_224638/ (MOVES.tsv)."
+    "2026-11-09 (Kevin on the PC: 'I always want newer builds'): Milford 0.1.11 to milford_road_course; ship_track's install step parked 0.1.10 in D:/k10-track-archive/2026-11-09_224638/ (MOVES.tsv).",
+    "2026-11-10 (Kevin on the PC: 'I always want newer builds'; via the Mac: 'Use the photo's rubber'): High Plains 0.1.7 to high_plains; ship_track's install step parked 0.1.6 in D:/k10-track-archive/2026-11-10_132827/ (MOVES.tsv)."
   ],
   "ac_tracks": "D:/SteamLibrary/steamapps/common/assettocorsa/content/tracks",
   "archive": "D:/k10-track-archive",
@@ -78,14 +79,14 @@
       "note": "0.1.2 = the edge strip flush with the prep's contact band (route.edge.grass_clearance -0.08, ledger 0087 / 0081), the plain folder; grand_junction_lm 0.1.1 moved to D:/k10-track-archive/2026-11-09_110115_grand_junction/; records + menu picture on claude/circuit-edge-flush 07cc303"
     },
     "high_plains": {
-      "branch": "claude/treefx-cards",
+      "branch": "claude/high-plains-road-wear",
       "engine": "lm-v4",
-      "installed": "2026-11-09",
-      "note": "0.1.6 = 0.1.5 with the PRAIRIECARD cards out (grass on NAIP 2023) and GrassFX from the aerial (32 rectangles; ledger 0089); records + menu picture on claude/treefx-cards 1aeecb84",
+      "installed": "2026-11-10",
+      "note": "0.1.7 = 0.1.6 + road wear in photo mode (NAIP 2023 0.3 m tone, the photo's own rubber, the kerbs darkened; texel 0.25 m; ledger 0084) + the K-rails re-seated on the prepped ground (pit_wall_lidar 1.03 m showing, was 0.74); records + menu picture on claude/high-plains-road-wear a3fa0093",
       "role": "current",
-      "sha": "5ce76a7e",
+      "sha": "2981db6d",
       "track": "high-plains-lm",
-      "version": "0.1.6"
+      "version": "0.1.7"
     },
     "lookout_lariat_lm": {
       "track": "lookout-lariat-lm",

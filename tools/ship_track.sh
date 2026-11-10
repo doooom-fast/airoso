@@ -34,6 +34,9 @@
 #   track.config.json slug          every file name inside (<slug>.kn5, <slug>_race.kn5, ...)
 #   track.config.json install_folder  the folder the install writes under content/tracks (plan A11)
 #   track.config.json layouts[]     every per-layout step; race stages run only for race_furniture layouts
+#   track.config.json layouts[].lap a race layout on its own LAP (ledger 0054, race.laps.<lap>; ported from tools/ship_sd.sh's
+#                                   LAP_IDS blocks 2026-11-04): its common race kn5 <slug>_race_<lap>.kn5, its declaration
+#                                   data/barrier_bands.<lap>.json, verify_race --lap; with no lap every step is as before
 #
 # THE ENGINE. The prep / exporter / spawn builder run from engine-july (SD's build of record, pinned by
 # tracks/san-diego-lake-murray/engine-july-snapshot) ONLY when the track is san-diego-lake-murray; every other
@@ -340,6 +343,14 @@ draft_stubs_author() {
     (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_stubs_blend.py" -- "$PROJ" --stage author 2>&1 | grep "^\[stubs\]\|Error\|Traceback" )
   fi
 }
+draft_bespoke() {
+  # ledger 0065 (Lake Murray v4 is the line, Kevin 2026-11-03: "don't lose those"): the buildings pipeline's planned blocks
+  # (track.config.json scenery.bespoke.blocks -> source/bespoke/buildings.json) in place of the assembler's HOUSE / BUILDING
+  # boxes, at the point tools/ship_sd.sh's SD_BESPOKE=1 rehearsal stood them (after the stubs, before the mouths are gapped),
+  # so a full redraft stands v4's 7,600 blocks again; gate_houses counts them on the built road kn5. Exit 1 = loop.blend not saved
+  step "author: the buildings pipeline's blocks in place of the assembler's boxes (tools/author_bespoke_blend.py: scenery.bespoke.blocks, self-checked)"
+  (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_bespoke_blend.py" -- "$PROJ" 2>&1 | grep "^\[bespoke\]\|Error\|Traceback" )
+}
 draft_stubs_tidy() {
   if [ -f "$PROJ/data/stubs.plan.json" ]; then
     (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_stubs_blend.py" -- "$PROJ" --stage tidy 2>&1 | grep "^\[stubs\]\|Error\|Traceback" )
@@ -411,7 +422,13 @@ author_race_author() {
 author_race_verify() {
   [ -n "$RACE_IDS" ] || { no_race race_verify; return 0; }
   step "author: verify the authored furniture against its declaration (tools/verify_race.py, hard: common set + each layout)"
+  if [ "$HAS_MAIN" = 1 ]; then
   (cd "$AIROSO" && python tools/verify_race.py "$PROJ")            # data/race_verify.json; exit 1
+  fi
+  local lap
+  for lap in $LAP_IDS; do                                          # ledger 0054: each lap's group on its own line
+    (cd "$AIROSO" && python tools/verify_race.py "$PROJ" --lap "$lap")   # data/race_verify.<lap>.json; exit 1
+  done
   (cd "$AIROSO" && python tools/plot_race_furniture.py "$PROJ" | tail -3)   # data/race_plots/*.png
 }
 
@@ -436,6 +453,13 @@ prep_prep() {
   "$BL" --background --python-exit-code 1 --python "$ENGINE/scripts/ac/build_kn5_loop.py" -- "$PROJ" 2>&1 | grep "prepped\|FATAL\|split 1GRASS\|split GRASS_FAR\|terrain tiles\|terrain conform\|gate line\|T-junctions\|kept-cell refinement\|house seat\|multi-layout\|Error\|Traceback" | cut -c1-200
   # ledger 0046 v0.18.0 integration fix round: the I-8's own pavement on the PREPPED scene's final ground (scenery.freeway;
   # off = no data/freeway_i8.json = nothing runs). Part of prep: the split follows it (steps.prep stays prep, split)
+  # a tiered terrain's prepped tiles carry far more vertices than their surface needs (ledger 0054 P3 repair round 3, as tools/ship_sd.sh):
+  # thinned by error-bounded half-edge collapse, no vertex moves; no tier plan = no-op. Before the freeway drape, which reads this ground
+  rm -f "$PROJ/data/terrain_thin.json" "$PROJ/data/terrain_thin.nodes.json.gz"
+  if [ -f "$PROJ/data/terrain.tiers.json.gz" ]; then
+    step "ship: thin the terrain, every vertex where the chain put it (tools/thin_terrain_blend.py; self-checked)"
+    "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/thin_terrain_blend.py" -- "$PROJ/blender/$SLUG.blend" --project "$PROJ" 2>&1 | grep "^\[thin\]\|Error\|Traceback"
+  fi
   step "ship: the I-8's own pavement, lane lines and median barrier on the final ground (visual only; self-checked)"
   (cd "$AIROSO" && python tools/freeway_i8.py "$PROJ")
   if [ -f "$PROJ/data/freeway_i8.json" ]; then
@@ -447,6 +471,11 @@ prep_prep() {
   step "ship: the road cuts' rock faces split out of the ground tiles (tools/rock_faces_blend.py: 1GRASS_ROCK_*, the sandstone skin, GRASS physics kept; self-checked; no auto cut declared = no-op)"
   rm -f "$PROJ/data/rock_faces.json"
   "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/rock_faces_blend.py" -- "$PROJ/blender/$SLUG.blend" --project "$PROJ" 2>&1 | grep "^\[rock\]\|Error\|Traceback"
+  # ledger 0065: named repairs of the standing red gates on the prepped scene (tools/red_repairs.py names them off the last gate OBJ); no plan = no-op
+  if [ -f "$PROJ/data/red_repairs.plan.json" ]; then
+    step "ship: red repairs (tools/red_repairs_blend.py: the named kerb faces, the named ground slivers; self-checked)"
+    "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/red_repairs_blend.py" -- "$PROJ/blender/$SLUG.blend" --project "$PROJ" 2>&1 | grep "^\[red\]\|Error\|Traceback"
+  fi
 }
 prep_split() {
   local lid
@@ -454,6 +483,10 @@ prep_split() {
   "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/split_exports_blend.py" -- "$PROJ/blender/$SLUG.blend" --project "$PROJ" --out-dir "$PROJ/blender/split" 2>&1 | grep "^\[split\]"
   for lid in $RACE_IDS; do
     [ -f "$PROJ/blender/split/loop_closure_$lid.blend" ] || { echo "split wrote no loop_closure_$lid.blend — race layout $lid would load no closure"; exit 1; }
+  done
+  local lap
+  for lap in $LAP_IDS; do
+    [ -f "$PROJ/blender/split/loop_race_$lap.blend" ] || { echo "split wrote no loop_race_$lap.blend — lap $lap would load no curb strip"; exit 1; }
   done
 }
 
@@ -464,15 +497,26 @@ ship_export_road() {
 }
 ship_export_race() {
   [ -n "$RACE_IDS" ] || { no_race export_race; return 0; }
-  local lid tok
+  local lid tok lap
+  rm -f "$PROJ/build/${SLUG}_race_"*.kn5      # a retired lap's common kn5 never rides along (ledger 0054)
+  if [ "$HAS_MAIN" = 1 ]; then
   step "ship: export the COMMON race-furniture kn5 (curb strips + kerbs; loaded by every race layout)"
   "$BL" --background --python-exit-code 1 --python "$ENGINE/scripts/ac/export_kn5_addon.py" -- "$PROJ" --blend "$PROJ/blender/split/loop_race.blend" --out "${SLUG}_race.kn5" 2>&1 | grep "KN5 EXISTS\|INI materials"
   # content guard: every mesh 1WALL_RACE* / 1KERB_RACE*, the race textures only, no AC_* node — exit 1 otherwise
   (cd "$AIROSO" && python -m scripts.modkit.inspect_kn5 "$PROJ/build/${SLUG}_race.kn5" --json "$PROJ/data/race_kn5.json" >/dev/null)
   (cd "$AIROSO" && python tools/check_race_kn5.py "$PROJ/data/race_kn5.json" --role common --bands "$PROJ/data/barrier_bands.json")
+  fi
+  for lap in $LAP_IDS; do
+    # (an echo, not a `step`, as in tools/ship_sd.sh: tests/tools/test_ship_track_chain.py diffs the step headers)
+    echo; echo "=================== ship: export lap $lap's COMMON race-furniture kn5 (its curb strips + kerbs; loaded by the race layouts on lap $lap)"
+    "$BL" --background --python-exit-code 1 --python "$ENGINE/scripts/ac/export_kn5_addon.py" -- "$PROJ" --blend "$PROJ/blender/split/loop_race_$lap.blend" --out "${SLUG}_race_$lap.kn5" 2>&1 | grep "KN5 EXISTS\|INI materials"
+    (cd "$AIROSO" && python -m scripts.modkit.inspect_kn5 "$PROJ/build/${SLUG}_race_$lap.kn5" --json "$PROJ/data/race_$lap.kn5.json" >/dev/null)
+    (cd "$AIROSO" && python tools/check_race_kn5.py "$PROJ/data/race_$lap.kn5.json" --role common --lap "$lap" --bands "$PROJ/data/barrier_bands.$lap.json")
+  done
   for lid in $RACE_IDS; do
-    # the owner token is the declaration's (barrier_bands.json corridors.<id>.token, from layouts[].closure_token)
-    tok=$(pyq "import json,sys; print(json.load(open(sys.argv[1],encoding='utf-8'))['corridors'][sys.argv[2]]['token'])" "$PROJ/data/barrier_bands.json" "$lid")
+    # the owner token is the declaration's (barrier_bands.json corridors.<id>.token, from layouts[].closure_token;
+    # a layout on a lap: its barrier_bands.<lap>.json — BB)
+    tok=$(pyq "import json,sys; print(json.load(open(sys.argv[1],encoding='utf-8'))['corridors'][sys.argv[2]]['token'])" "$PROJ/data/${BB[$lid]}" "$lid")
     tok="${tok%$'\r'}"
     step "ship: export the $lid CLOSURE kn5 (1WALL_RACE_CLOSE_${tok^^}_* only; loaded by $lid alone)"
     "$BL" --background --python-exit-code 1 --python "$ENGINE/scripts/ac/export_kn5_addon.py" -- "$PROJ" --blend "$PROJ/blender/split/loop_closure_$lid.blend" --out "${SLUG}_closure_$lid.kn5" 2>&1 | grep "KN5 EXISTS\|INI materials"
@@ -507,7 +551,7 @@ ship_ai() {
     # the kn5 set it loads (data/track.<id>.obj, extracted here: the writer refuses a missing or stale one) and is
     # judged at once against them. A track without the block writes the old draft, unjudged (as ship_sd.sh did).
     if ai_layout "$lid"; then
-      (cd "$AIROSO" && python -m scripts.modkit.kn5_to_gate_obj "$PROJ" --kn5 "$PROJ/build/$SLUG.kn5" --kn5 "$PROJ/build/${SLUG}_race.kn5" --kn5 "$PROJ/build/${SLUG}_closure_$lid.kn5" --out "$PROJ/data/track.$lid.obj")
+      (cd "$AIROSO" && python -m scripts.modkit.kn5_to_gate_obj "$PROJ" --kn5 "$PROJ/build/$SLUG.kn5" --kn5 "$PROJ/build/${RK[$lid]}" --kn5 "$PROJ/build/${SLUG}_closure_$lid.kn5" --out "$PROJ/data/track.$lid.obj")
     fi
     (cd "$AIROSO" && python -m scripts.ac.write_ai_line "$PROJ" --layout "$lid" | grep -v "^  v\|^frame")
     if ai_layout "$lid"; then
@@ -564,7 +608,13 @@ ship_treefx() {
 ship_race_scenery_gate() {
   [ -n "$RACE_IDS" ] || { no_race race_scenery_gate; return 0; }
   step "gate: scenery vs the race lanes and walls, on the WRITTEN trees.txt (tools/verify_race.py --scenery-only, hard)"
+  if [ "$HAS_MAIN" = 1 ]; then
   (cd "$AIROSO" && python tools/verify_race.py "$PROJ" --scenery-only --trees "$PROJ/build/$SLUG/extension/trees/trees.txt")
+  fi
+  local lap
+  for lap in $LAP_IDS; do                                          # ledger 0054: each lap's lanes and walls
+    (cd "$AIROSO" && python tools/verify_race.py "$PROJ" --scenery-only --lap "$lap" --trees "$PROJ/build/$SLUG/extension/trees/trees.txt")
+  done
 }
 
 # --- gate (exit codes collected; the verdict below decides the install) --------------------------------------
@@ -594,6 +644,14 @@ gate_house_seat() {
   step "gate: houses on the built ground (tools/house_seat_check.py: floating, sunken or buried buildings — hard)"
   (cd "$AIROSO" && python tools/house_seat_check.py "$PROJ" --json "$PROJ/data/house_seat_check.json")
 }
+gate_houses() {
+  # ledger 0065 (Kevin 2026-11-03: "Lake Murray v4 had many more houses I[n] it this time, don't lose those"): the blocks
+  # counted as connected shells on the BUILT road kn5 against the floors in track.config.json scenery.bespoke.house_gate
+  # (v4's own counts); hard — exit 1 stops the chain, --force-install does not cover it
+  step "gate: the houses on the built road kn5 (tools/house_gate.py: ROOFTOP / BUILDING + FARBLOCK / 1WALL_TILTUP shells against scenery.bespoke.house_gate — hard)"
+  rm -f "$PROJ/data/house_gate.json"
+  (cd "$AIROSO" && python tools/house_gate.py "$PROJ" --kn5 "$PROJ/build/$SLUG.kn5" --json "$PROJ/data/house_gate.json")
+}
 gate_drive_test_street() {
   local lid rc
   step "gate: drive_test, street layout (hard)"
@@ -622,7 +680,7 @@ gate_race_gates() {
   local lid rc
   for lid in $RACE_IDS; do
     step "gate: $lid — road + common race + ITS closure kn5 -> ONE gate OBJ (the kn5 set $lid loads) — data/track.$lid.obj"
-    (cd "$AIROSO" && python -m scripts.modkit.kn5_to_gate_obj "$PROJ" --kn5 "$PROJ/build/$SLUG.kn5" --kn5 "$PROJ/build/${SLUG}_race.kn5" --kn5 "$PROJ/build/${SLUG}_closure_$lid.kn5" --out "$PROJ/data/track.$lid.obj")
+    (cd "$AIROSO" && python -m scripts.modkit.kn5_to_gate_obj "$PROJ" --kn5 "$PROJ/build/$SLUG.kn5" --kn5 "$PROJ/build/${RK[$lid]}" --kn5 "$PROJ/build/${SLUG}_closure_$lid.kn5" --out "$PROJ/data/track.$lid.obj")
     step "gate: drive_test --layout $lid (hard; the declared corridor lane — barrier_missing and obstruction_stations must be 0)"
     rc=0; (cd "$AIROSO" && python -m scripts.geometry.drive_test "$PROJ" --layout "$lid" 2>&1 | grep -v "drive-time\] sweep" | tail -40) || rc=$?
     [ "$rc" = 0 ] || DT_R=$rc
@@ -652,7 +710,7 @@ gate_kn5_ground() {
   KG=0
   for lid in $LAYOUT_IDS; do
     rm -f "$PROJ/data/kn5_ground_check.$lid.json"
-    if [[ " $RACE_IDS " == *" $lid "* ]]; then KX="--kn5 $PROJ/build/${SLUG}_race.kn5 --kn5 $PROJ/build/${SLUG}_closure_$lid.kn5"
+    if [[ " $RACE_IDS " == *" $lid "* ]]; then KX="--kn5 $PROJ/build/${RK[$lid]} --kn5 $PROJ/build/${SLUG}_closure_$lid.kn5"
     elif [[ " $BARE_RACE_IDS " == *" $lid "* ]]; then KX=""   # a race with no furniture loads the road and its spawns alone
     elif [ -f "$PROJ/build/${SLUG}_street.kn5" ]; then KX="--kn5 $PROJ/build/${SLUG}_street.kn5"; else KX=""; fi
     rc=0; (cd "$AIROSO" && python -m scripts.ac.kn5_ground_check "$PROJ" $KX --json "$PROJ/data/kn5_ground_check.$lid.json" 2>&1 | tail -14) || rc=$?
@@ -742,7 +800,7 @@ is_data_step() {
 SPEC_LINES=$(cd "$AIROSO" && python tools/ship_track_spec.py "$SPEC" "$TRACK") || { echo "ship.json refused (above): $SPEC"; exit 2; }
 WS=""; WS_SUB=""; REQUIRE_RACE=0; UI_PREFIX=""; AUDIT_NOTE=""; JULY_AI=""
 DRAFT=(); AUTHOR=(); PREP=(); SHIP=(); GATE=()
-IN_REQ=(); IN_OPT=(); IN_GLOB=(); IN_DIR=()
+IN_REQ=(); IN_OPT=(); IN_GLOB=(); IN_DIR=(); IN_ASSET=()
 OUT_REQ=(); OUT_FILE=(); OUT_DIR=(); OUT_RM=(); OUT_MAP_FROM=(); OUT_MAP_TO=()
 while IFS=$'\t' read -r k v w; do
   v="${v%$'\r'}"; w="${w%$'\r'}"
@@ -762,6 +820,7 @@ while IFS=$'\t' read -r k v w; do
     in.optional) IN_OPT+=("$v");;
     in.globs) IN_GLOB+=("$v");;
     in.dirs) IN_DIR+=("$v");;
+    in.assets) IN_ASSET+=("$v");;
     out.required) OUT_REQ+=("$v");;
     out.files) OUT_FILE+=("$v");;
     out.dirs) OUT_DIR+=("$v");;
@@ -878,6 +937,12 @@ done
 for d in ${IN_DIR[@]+"${IN_DIR[@]}"}; do
   [ -d "$SRC/$d" ] && { mkdir -p "$PROJ/$d"; cp -r "$SRC/$d/." "$PROJ/$d/"; }
 done
+# airoso's own assets a track names (ship.json sync_in.assets, under assets/): the same relative path in the project, every
+# one required — Lake Murray's house textures, which its engine does not carry (ledger 0065; track.config.json texture_overrides)
+for f in ${IN_ASSET[@]+"${IN_ASSET[@]}"}; do
+  [ -f "$AIROSO/$f" ] || { echo "ship.json sync_in.assets names $f but airoso has no $AIROSO/$f"; exit 1; }
+  mkdir -p "$(dirname "$PROJ/$f")"; cp "$AIROSO/$f" "$PROJ/$f"
+done
 # the declared layouts drive every per-layout step below (never a hand-typed list)
 LAYOUT_IDS=$(pyq "import json,sys; d=json.load(open(sys.argv[1],encoding='utf-8')); print(' '.join(str(l['id']) for l in d['layouts']))" "$PROJ/track.config.json")
 RACE_IDS=$(pyq "import json,sys; d=json.load(open(sys.argv[1],encoding='utf-8')); print(' '.join(str(l['id']) for l in d['layouts'] if l.get('race_furniture')))" "$PROJ/track.config.json")
@@ -890,6 +955,22 @@ LAYOUT_IDS="${LAYOUT_IDS%$'\r'}"; RACE_IDS="${RACE_IDS%$'\r'}"; STREET_IDS="${ST
 case "$SLUG" in ""|*[!a-z0-9_]*) echo "track.config.json slug '$SLUG' is not a file-name slug"; exit 2;; esac
 case "$INSTALL_FOLDER" in ""|*[!A-Za-z0-9_]*) echo "track.config.json install_folder '$INSTALL_FOLDER' missing or not a folder name (plan A11)"; exit 2;; esac
 echo "layouts: $LAYOUT_IDS   (race furniture: $RACE_IDS; street: $STREET_IDS; street AI = $STREET_AI)"
+# ledger 0054 LAPS (ported from tools/ship_sd.sh 2026-11-04, Phase 2): the laps the race layouts name (layouts[].lap +
+# race.laps.<lap>; none on any config today), whether any race layout still drives the mainline, and per race layout
+# its COMMON race kn5 (RK) and its declaration (BB) — scripts/geometry/race_lap.py. With no lap declared: LAP_IDS
+# empty, HAS_MAIN 1, RK = <slug>_race.kn5 and BB = barrier_bands.json for every race layout — every step as before.
+LAP_IDS=$(pyq "import json,sys; from scripts.geometry import race_lap as L; print(' '.join(L.lap_ids(json.load(open(sys.argv[1],encoding='utf-8')))))" "$PROJ/track.config.json")
+HAS_MAIN=$(pyq "import json,sys; from scripts.geometry import race_lap as L; print(1 if None in L.groups(json.load(open(sys.argv[1],encoding='utf-8'))) else 0)" "$PROJ/track.config.json")
+LAP_IDS="${LAP_IDS%$'\r'}"; HAS_MAIN="${HAS_MAIN%$'\r'}"
+for lap in $LAP_IDS; do case "$lap" in *[!a-z0-9]*) echo "track.config.json layouts[].lap '$lap' is not a lap token"; exit 2;; esac; done
+declare -A RK BB
+while read -r lid rk bb; do [ -n "$lid" ] && RK[$lid]=$rk && BB[$lid]=$bb; done < <(pyq "import json,sys
+from scripts.geometry import race_lap as L
+d=json.load(open(sys.argv[1],encoding='utf-8'))
+for lo in d['layouts']:
+    if lo.get('race_furniture'):
+        lap=L.lap_of(lo); print(lo['id'], d['slug']+('_race.kn5' if not lap else '_race_%s.kn5'%lap), L.bands_file(lap))" "$PROJ/track.config.json" | tr -d '\r')   # (Windows python prints CRLF into the pipe; read keeps the CR)
+if [ -n "$LAP_IDS" ]; then echo "laps: $LAP_IDS (mainline race layouts: $HAS_MAIN) — $(for lid in $RACE_IDS; do printf '%s->%s ' "$lid" "${RK[$lid]}"; done)"; fi
 # a D4 variant run (SHIP_VARIANT): the variant's verge into the WORKSHOP config (never airoso's), its folder and name
 if [ -n "$VARIANT" ]; then
   VLINES=$(pyq "import json,re,sys
@@ -916,6 +997,11 @@ if [ "$REQUIRE_RACE" = 1 ] && [ -z "$RACE_IDS" ]; then echo "no race layout decl
 if [ -n "$RACE_IDS" ]; then
   case " ${AUTHOR[*]:-} " in *" race_author "*) ;; *) echo "layouts $RACE_IDS declare race_furniture but ship.json steps.author has no race_author — they would ship without it"; exit 2;; esac
 fi
+# ledger 0054 Phase 2 step 2g: verify_race's scenery check (G) reads data/signs.local.json, which the signs step writes —
+# signs after race_verify judged the LAST run's plates (the PC's re-used workshop stopped at G on 33 stale plates)
+case " ${AUTHOR[*]:-} " in
+  *" race_verify "*" signs "*) echo "ship.json steps.author: race_verify runs before signs — it would read the last run's data/signs.local.json; list signs before race_verify"; exit 2;;
+esac
 
 if [ "$SKIP_BLEND" = 0 ]; then
   for n in ${DRAFT[@]+"${DRAFT[@]}"}; do
@@ -972,12 +1058,14 @@ for lid in sys.argv[3:]:
 print(' '.join(bad))" "$PROJ/data/drive_test.json" "$PROJ/data" $RACE_IDS)
 RACE_RED="${RACE_RED%$'\r'}"
 
-# expand {id} / {race} in a ship.json sync_out path: one path per line
+# expand {id} / {race} / {lap} in a ship.json sync_out path: one path per line ({lap}: every lap a race layout names,
+# ledger 0054 — none on a config without laps, so such a path expands to nothing)
 expand() {
   local p="$1" lid
   case "$p" in
     *"{id}"*) for lid in $LAYOUT_IDS; do printf '%s\n' "${p//"{id}"/$lid}"; done;;
     *"{race}"*) for lid in $RACE_IDS; do printf '%s\n' "${p//"{race}"/$lid}"; done;;
+    *"{lap}"*) for lid in $LAP_IDS; do printf '%s\n' "${p//"{lap}"/$lid}"; done;;
     *) printf '%s\n' "$p";;
   esac
 }

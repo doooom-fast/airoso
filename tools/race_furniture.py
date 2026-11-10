@@ -1284,7 +1284,45 @@ def closure_plans(pts, widths, bands, layout_id, height=BARRIER_H):
         for part in _count_inserted(split_plan(whole)):
             part["fold_corners"], part["fold_skipped"] = [], 0
             plans.append(part)
+    # ledger 0054 Phase 2 (opt-in: corridors.<id>.nose_walls, absent on every declaration before it): the K-rail across
+    # the far carriageway at each declared median nose, in this layout's closure kn5
+    for w in c.get("nose_walls") or []:
+        plans.append(nose_wall_plan(w, pts, m, st, tok, layout_id, side, height))
     return plans
+
+
+NOSE_RING_M = 1.0   # INVENTED (ledger 0054 Phase 2): a nose K-rail's rings at most this far apart, so its base follows the
+#                     road's crown across the carriageway (a closure's rings follow the centreline's own vertices)
+
+
+def nose_wall_plan(w, pts, m, st, tok, layout_id, side, height=BARRIER_H):
+    """ONE nose K-rail as a closure plan (wall "nose"): a straight swept jersey strip along its declared
+    polyline_xyz_m — from the closure's race face at the pin vertex to the far curb strip's centre — rings every
+    <= NOSE_RING_M, both ends full height and width ('pin': its first end holds the closure's end cap inside its
+    footprint, its last is buried in the far strip). Named 1WALL_race_close_<token>_nose_<pin vertex>_0."""
+    k = int(w["vertex"]) % m
+    (ax, _ay, az), (bx, _by, bz) = w["polyline_xyz_m"][0], w["polyline_xyz_m"][-1]
+    length = math.hypot(bx - ax, bz - az)
+    if length < 2 * BARRIER_HALF_W:
+        raise SystemExit(f"[race] corridors.{layout_id} nose K-rail at v{k}: {length:.2f} m long — a declaration error")
+    tx, tz = (bx - ax) / length, (bz - az) / length
+    nseg = max(1, math.ceil(length / NOSE_RING_M - 1e-9))
+    rings = []
+    for q in range(nseg + 1):
+        u = q / nseg
+        rings.append({"k": k, "u": 0.0, "s": st[k], "cx": ax + (bx - ax) * u, "cz": az + (bz - az) * u,
+                      "y_hint": pts[k][1] + LIFT, "tx": tx, "tz": tz, "lat": 0.0, "ls": 1.0, "h": height,
+                      "arc": length * u, "seg_chord_m": 0.0 if q < nseg else None})
+    far = "edge_" + side
+    plan = {"kind": "close", "street": "nose", "side": side, "run": (k, k), "rings": rings, "start_kind": "pin",
+            "end_kind": "pin", "token": tok, "layout": layout_id, "wall": "nose", "closed_loop": False,
+            "pins": [{"vertex": k, "y": round(float(w["y_from"]), 4), "joins": "closure"},
+                     {"vertex": k, "y": round(float(w["y_to"]), 4), "joins": far}],
+            "nose": {"vertex": k, "median": int(w["median"]), "end": int(w["end"])},
+            "run_length_m": round(length, 1)}
+    part = dict(plan, cap_start=True, cap_end=True, part=0, densified=0)
+    part["fold_corners"], part["fold_skipped"] = [], 0
+    return part
 
 
 # ---------------------------------------------------------------------------------------------
@@ -1720,6 +1758,86 @@ def trim_folded_stations(sts, sgn, search=FOLD_SEARCH_STATIONS):
     def place(a, nxt, X, din, dout, t):
         return corner_station(a, nxt, X, din, dout, t, sgn)
     return _trim_folds(sts, lambda s: kerb_mid_xz(s, sgn), place, KERB_W / 2.0, search, "kerb")
+
+
+RECORD_ROUND_M = 0.01      # the author records ring / station centres to 0.01 m (race_authored ring_centres); verify_race
+#                            judges inside-out (I) on THAT record, so a column must advance by more than two roundings
+COLUMN_ADVANCE_MIN_M = RECORD_ROUND_M * math.sqrt(2.0)   # the worst a 0.01 m-rounded pair can move a difference in plan
+
+
+def recorded_inside_out(recs, pos, half):
+    """inside_out_spans on the record the author WRITES and verify_race I READS (centres rounded to RECORD_ROUND_M,
+    frames to 5 / 4 decimals): the author-time pre-check then reads exactly what the gate reads (ledger 0054 Phase 2
+    step 2d: J4's inside kerb advanced 2 mm per station unrounded, 0 inside-out spans, and 2 on the record)"""
+    rr = []
+    for r in recs:
+        x, z = pos(r)
+        rr.append({"tx": round(r["tx"], 5), "tz": round(r["tz"], 5), "ls": round(r.get("ls", 1.0), 4),
+                   "_xz": (round(x, 2), round(z, 2))})
+    return inside_out_spans(rr, lambda q: q["_xz"], half)
+
+
+def column_advance(recs, pos, half):
+    """[min over the two extreme columns of the plan distance each moves along the span's mean tangent] per span
+    (metres; <= 0 = inside-out, < COLUMN_ADVANCE_MIN_M = inside-out or not on the 0.01 m record)"""
+    out = []
+    for i in range(len(recs) - 1):
+        a, b = recs[i], recs[i + 1]
+        tm = (a["tx"] + b["tx"], a["tz"] + b["tz"])
+        L = math.hypot(*tm) or 1.0
+        pa, pb = pos(a), pos(b)
+        la, lb = left_normal(a["tx"], a["tz"]), left_normal(b["tx"], b["tz"])
+        sa, sb = half * a.get("ls", 1.0), half * b.get("ls", 1.0)
+        best = float("inf")
+        for o in (-1.0, 1.0):
+            dx = (pb[0] + lb[0] * o * sb) - (pa[0] + la[0] * o * sa)
+            dz = (pb[1] + lb[1] * o * sb) - (pa[1] + la[1] * o * sa)
+            best = min(best, (dx * tm[0] + dz * tm[1]) / L)
+        out.append(best)
+    return out
+
+
+def kerb_column_margin(plan):
+    """(smallest column advance of a kerb plan's spans, [span indices under COLUMN_ADVANCE_MIN_M]) — its stations' own
+    geometry, the inside-out measure with the record's resolution"""
+    sgn = 1.0 if plan["side"] == "L" else -1.0
+    adv = column_advance(plan["stations"], lambda s, g=sgn: kerb_mid_xz(s, g), KERB_W / 2.0)
+    return (min(adv) if adv else float("inf")), [i for i, a in enumerate(adv) if a < COLUMN_ADVANCE_MIN_M]
+
+
+def kerb_standing_run(plan, cum):
+    """the pull-back a kerb's own geometry allows: the longest run of its stations whose every span advances by at least
+    COLUMN_ADVANCE_MIN_M, as the vertex run it covers rounded inward (i = the first vertex at or after its first station,
+    j = the last at or before its last; cum = the line's vertex stations, the frame the stations' `s` live in) —
+    (i, j, first station, last station, metres), or None when no run of two vertices stands (drop the kerb). A declared
+    race.kerbs.trims pull-back is this run (ledger 0054 Phase 2 step 2d)"""
+    sgn = 1.0 if plan["side"] == "L" else -1.0
+    sts = plan["stations"]
+    adv = column_advance(sts, lambda s, g=sgn: kerb_mid_xz(s, g), KERB_W / 2.0)
+    best, a = None, None
+    for i, ok in enumerate([x >= COLUMN_ADVANCE_MIN_M for x in adv] + [False]):
+        if ok and a is None:
+            a = i
+        if not ok and a is not None:
+            if best is None or sts[i]["s"] - sts[a]["s"] > best[1] - best[0]:
+                best = (sts[a]["s"], sts[i]["s"], a, i)
+            a = None
+    if best is None:
+        return None
+    s0, s1, a, b = best
+    run = [int(v) for v in plan["run"]]
+    n = len(cum)
+    vs = [run[0]]
+    while vs[-1] != run[1]:
+        vs.append((vs[-1] + 1) % n)
+    inside = [v for v in vs if s0 - 1e-6 <= cum[v] <= s1 + 1e-6]
+    if a == 0:
+        inside = [run[0]] + [v for v in inside if v != run[0]]
+    if b == len(sts) - 1:
+        inside = [v for v in inside if v != run[1]] + [run[1]]
+    if len(inside) < 2:
+        return None
+    return inside[0], inside[-1], a, b, round(s1 - s0, 2)
 
 
 def kerb_mid_xz(s, sgn):

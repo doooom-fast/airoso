@@ -633,7 +633,9 @@ class Context:
         except Exception:
             cfg_t = {}
         self.layouts = [{"id": str(lo.get("id")), "direction": "rev" if str(lo.get("direction") or "forward").lower() == "reverse" else "fwd",
-                         "race": bool(lo.get("race_furniture")), "token": str(lo.get("closure_token") or "").lower()}
+                         "race": bool(lo.get("race_furniture")), "token": str(lo.get("closure_token") or "").lower(),
+                         # a layout on its own lap (ledger 0054) carries its lap; a mainline layout's record is as before
+                         **({"lap": str(lo["lap"])} if lo.get("lap") not in (None, "") else {})}
                         for lo in (cfg_t.get("layouts") or []) if isinstance(lo, dict)]
         bb = data / "barrier_bands.json"
         self.walls = None
@@ -669,8 +671,10 @@ class Context:
                     self.spawn_pts.append(p)
 
     def race_layouts(self, direction):
-        """the race layouts that drive `direction` ('fwd' / 'rev')"""
-        return [lo for lo in self.layouts if lo["race"] and lo["direction"] == direction]
+        """the race layouts that drive `direction` ('fwd' / 'rev') ON THE MAINLINE: a per_layout corner is a MAINLINE
+        corner, so a layout on its own lap (layouts[].lap, ledger 0054) never gets its plate — the 0.20.2 run stood
+        M3-fwd@north_cw in north_cw's lane at lap v0, race_cw's J1 spot"""
+        return [lo for lo in self.layouts if lo["race"] and lo["direction"] == direction and lo.get("lap") is None]
 
     def layout_behind_lip_m(self, cfg):
         """how far past the MAINLINE lip a layout plate stands: the sealing curb strip's centre (edge_centre_from_lip_m,

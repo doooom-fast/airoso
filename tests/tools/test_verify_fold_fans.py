@@ -177,3 +177,16 @@ def test_exit_codes():
     (d / "data" / "mouth_welds.json").unlink()
     assert vf.main([str(d)]) == 2
     assert vf.main([]) == 2
+
+
+def test_a_lap_layouts_skipped_pinch_prints_without_a_survey():
+    """ledger 0054 step 2e: a lap layout's pinch behind its walls is recorded {k, l, lane, fails, skipped} — the
+    printer read r['rows'] off it and crashed (KeyError, the 0.20.2 north run); the record itself is unchanged"""
+    rep = {"pinches": [], "fails": [], "fail": False,
+           "layouts": {"north_cw": [{"k": 10, "l": 12, "lane": 1, "fails": [], "skipped": "not on lap north (behind its walls)"}]}}
+    real = vf.run
+    vf.run = lambda *a, **k: rep
+    try:
+        assert vf.main([str(_project())]) == 0
+    finally:
+        vf.run = real

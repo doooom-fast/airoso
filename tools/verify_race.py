@@ -905,6 +905,8 @@ def _verify_density(authored, bands, pts, widths, fails, warns, counts):
     for o in objects:
         if o.get("kind") not in ("edge", "close"):
             continue
+        if o.get("wall") == "nose":
+            continue                 # a straight K-rail across the road: C' judges every ring on its declared line
         side = _curve_side(o)
         if side not in curves:
             curves[side] = declared_curve(bands, pts, widths, side)
@@ -1070,6 +1072,60 @@ def _verify_chicane_walls(lid, c, objs, rc, bands, pts, widths, m, fails, row):
     row.update({"chicane_off_curve_max_m": round(worst, 3), "chicane_pins": pin_rows})
 
 
+def _poly_seg_dist(p, poly):
+    """xz distance from p to the polyline [(x, z), ...]"""
+    return min((_seg_dist(p, a, b) for a, b in zip(poly, poly[1:])), default=float("inf"))
+
+
+def _verify_nose_walls(lid, c, objs, close_objs, rc, bands, pts, widths, m, fails, row):
+    """C' for the K-rails at the declared median noses (ledger 0054 Phase 2; corridors.<id>.nose_walls): one object
+    per declared K-rail (by its pin vertex), EVERY ring within CLOSE_TOL_M of the declared line, its last ring ON the
+    declared far curb-strip line (PIN_TOL_M) and its first ON the declared closure's race face (|distance to the
+    declared closure line - half| <= PIN_TOL_M)"""
+    walls = {int(w["vertex"]) % m: w for w in c.get("nose_walls") or []}
+    by_k: dict[int, list] = {}
+    for o in objs:
+        by_k.setdefault(int(o["run"][0]) % m, []).append(o)
+    for k in walls:
+        if len(by_k.get(k, [])) != 1:
+            fails.append(f"C': {lid}: the nose K-rail declared at v{k} has {len(by_k.get(k, []))} objects (one expected)")
+    for k in by_k:
+        if k not in walls:
+            fails.append(f"C': {lid}: nose K-rail objects at v{k}, which is not declared")
+    bh = float((bands.get("params") or {}).get("barrier_half_m", 0.335))
+    n_samples = m * DENSE_PER_VERTEX
+    far_side = _closure_side(c)
+    far_curve = declared_curve(bands, pts, widths, far_side) if widths is not None else None
+    fgrid = _SampleGrid(far_curve) if far_curve is not None else None
+    curve = declared_curve(bands, pts, widths, f"close:{lid}")
+    cgrid = _SampleGrid(curve)
+    worst, rows = 0.0, []
+    for k, w in sorted(walls.items()):
+        line = [(float(q[0]), float(q[2])) for q in w.get("polyline_xyz_m") or []]
+        for o in by_k.get(k, []):
+            cs = rc.get(o["name"], [])
+            if not cs:
+                fails.append(f"C': {o['name']}: no ring centres")
+                continue
+            off = [_poly_seg_dist((q[0], q[2]), line) for q in cs]
+            worst = max(worst, max(off))
+            if max(off) > CLOSE_TOL_M + ROUND_M:
+                fails.append(f"C': {o['name']}: {sum(1 for d in off if d > CLOSE_TOL_M + ROUND_M)} rings stand more than "
+                             f"{CLOSE_TOL_M} m off the declared nose K-rail (worst {max(off):.2f} m)")
+            d_far = curve_distance((cs[-1][0], cs[-1][2]), far_curve, fgrid, n_samples)[0] if far_curve is not None else None
+            d_close = curve_distance((cs[0][0], cs[0][2]), curve, cgrid, n_samples)[0]
+            rows.append({"object": o["name"], "vertex": k, "far_line_m": None if d_far is None else round(d_far, 3),
+                         "closure_face_m": round(abs(d_close - bh), 3)})
+            if d_far is not None and d_far > PIN_TOL_M + ROUND_M:
+                fails.append(f"C': {o['name']}: its last ring is {d_far:.2f} m off the declared far curb-strip line "
+                             f"({far_side}) — the K-rail is not buried in the far strip")
+            if abs(d_close - bh) > PIN_TOL_M + ROUND_M:
+                fails.append(f"C': {o['name']}: its first ring is {abs(d_close - bh):.2f} m off the closure's race face "
+                             f"(> {PIN_TOL_M} m) — a gap at the closure's end")
+    row.update({"nose_walls": len(walls), "nose_objects": len(objs), "nose_off_line_max_m": round(worst, 3),
+                "nose_pins": rows})
+
+
 def _verify_authored(authored, bands, pts, island_w, allow_standin, fails, warns, counts, widths=None, lap=None):
     m = _unique_count(pts)
     grid = VertexGrid(pts[:m])
@@ -1187,10 +1243,15 @@ def _verify_authored(authored, bands, pts, island_w, allow_standin, fails, warns
     for lid, c in sorted(cors.items()):
         tok = tokens[lid]
         row = counts["by_layout"].setdefault(lid, {"token": tok})
-        objs = [o for o in objects if o.get("kind") == "close" and race_owner(o["name"]) == tok and o.get("wall") != "chicane"]
+        objs = [o for o in objects if o.get("kind") == "close" and race_owner(o["name"]) == tok
+                and o.get("wall") not in ("chicane", "nose")]
         chic_objs = [o for o in objects if o.get("kind") == "close" and race_owner(o["name"]) == tok and o.get("wall") == "chicane"]
-        close_polys[lid] = [[(q[0], q[2]) for q in rc.get(o["name"], [])] for o in objs + chic_objs]
+        # ledger 0054 Phase 2 (opt-in): the K-rails at the declared median noses (none on a declaration without noses)
+        nose_objs = [o for o in objects if o.get("kind") == "close" and race_owner(o["name"]) == tok and o.get("wall") == "nose"]
+        close_polys[lid] = [[(q[0], q[2]) for q in rc.get(o["name"], [])] for o in objs + chic_objs + nose_objs]
         _verify_chicane_walls(lid, c, chic_objs, rc, bands, pts, widths, m, fails, row)
+        if c.get("nose_walls") or nose_objs:
+            _verify_nose_walls(lid, c, nose_objs, objs, rc, bands, pts, widths, m, fails, row)
         y = c.get("closure_y_by_vertex") or []
         zone = c.get("zone_by_vertex") or []
         bad_zone = [k for k in range(min(m, len(y), len(zone))) if y[k] is not None and str(zone[k]) in ("box", "whole")]
@@ -1215,6 +1276,8 @@ def _verify_authored(authored, bands, pts, island_w, allow_standin, fails, warns
         far_side = _closure_side(c)
         far_curve = declared_curve(bands, pts, widths, far_side) if widths is not None else None
         fgrid = _SampleGrid(far_curve) if far_curve is not None else None
+        nose_line = {int(w["vertex"]) % m: [(float(q[0]), float(q[2])) for q in w.get("polyline_xyz_m") or []]
+                     for w in c.get("nose_walls") or []}
         off, worst_off = 0, 0.0
         pin_rows = []
         for run in declared:
@@ -1234,9 +1297,21 @@ def _verify_authored(authored, bands, pts, island_w, allow_standin, fails, warns
             for idx, (o, end_c, v) in enumerate(((parts[0], rc.get(parts[0]["name"], [[0, 0, 0]])[0], run[0]),
                                                  (parts[-1], rc.get(parts[-1]["name"], [[0, 0, 0]])[-1], run[1]))):
                 p2 = (end_c[0], end_c[2])
-                d_decl = curve_distance(p2, far_curve, fgrid, n_samples)[0] if far_curve is not None else None
                 _d, si = curve_distance(p2, curve, cgrid, n_samples)
                 kv = (si // DENSE_PER_VERTEX) if si is not None else None
+                if v in nose_line:
+                    # ledger 0054 Phase 2: a run end at a median nose stands ON its declared K-rail's line
+                    d_nose = _poly_seg_dist(p2, nose_line[v])
+                    pin_rows.append({"object": o["name"], "end": "start" if idx == 0 else "end", "vertex": v,
+                                     "ring_vertex": kv, "nose_line_m": round(d_nose, 3)})
+                    if d_nose > PIN_TOL_M + ROUND_M:
+                        fails.append(f"C': {o['name']}: its {'first' if idx == 0 else 'last'} ring is {d_nose:.2f} m off "
+                                     f"the declared nose K-rail at v{v} (> {PIN_TOL_M} m) — the closure stops short of it")
+                    if kv is None or min((kv - v) % m, (v - kv) % m) > VERTEX_TOL:
+                        fails.append(f"C': {o['name']}: its {'first' if idx == 0 else 'last'} ring stands at v{kv}, not "
+                                     f"at the declared nose pin v{v}")
+                    continue
+                d_decl = curve_distance(p2, far_curve, fgrid, n_samples)[0] if far_curve is not None else None
                 pin_rows.append({"object": o["name"], "end": "start" if idx == 0 else "end", "vertex": v,
                                  "ring_vertex": kv, "far_line_m": None if d_decl is None else round(d_decl, 3)})
                 if d_decl is not None and d_decl > PIN_TOL_M + ROUND_M:
@@ -1353,8 +1428,17 @@ def _verify_authored(authored, bands, pts, island_w, allow_standin, fails, warns
                 pins_seen += 1
                 e = ends[idx] if idx < len(ends) and isinstance(ends[idx], dict) else {}
                 far = str(e.get("joins") or ("edge_" + _closure_side(cors.get(o.get("layout"), {}))))
-                g = edge_side_grid.get(far[-1])
-                gap = g.dist((pt[0], pt[2]), reach=3) if g is not None else float("inf")
+                if far in ("nose", "closure"):
+                    # ledger 0054 Phase 2: a closure end at a median nose ON its authored K-rail's centre line; the
+                    # K-rail's first end ON the authored closure's race face (|distance to its centre - half|)
+                    mates = [[(q[0], q[2]) for q in rc.get(q_["name"], [])] for q_ in objects
+                             if q_ is not o and q_.get("kind") == "close" and race_owner(q_["name"]) == race_owner(o["name"])
+                             and (q_.get("wall") == "nose") == (far == "nose") and q_.get("wall") != "chicane"]
+                    dd = SegGrid(mates).dist((pt[0], pt[2]), reach=3) if mates else float("inf")
+                    gap = dd if far == "nose" else abs(dd - bh)
+                else:
+                    g = edge_side_grid.get(far[-1])
+                    gap = g.dist((pt[0], pt[2]), reach=3) if g is not None else float("inf")
                 pin_gap_worst = max(pin_gap_worst, gap if gap < float("inf") else 99.0)
                 if gap > PIN_TOL_M + ROUND_M:
                     fails.append(f"J: {o['name']}: pinned {where} stands {gap:.2f} m off the authored {far} strip "
@@ -1680,7 +1764,7 @@ def main(argv=None) -> int:
             print(f"[verify-race] {lid} (token {row.get('token')}): closure {row.get('closure_objects')} objects / "
                   f"{row.get('closure_runs')} runs / {row.get('closure_rings')} rings, off the declared line max "
                   f"{row.get('closure_off_curve_max_m')} m; pins vs the far strip line "
-                  f"{[p['far_line_m'] for p in row.get('pins', [])]}")
+                  f"{[p.get('far_line_m', p.get('nose_line_m')) for p in row.get('pins', [])]}")
         print(f"[verify-race] J pins {c.get('pins')} (gap to the authored far strip max {c.get('pin_gap_max_m')} m); "
               f"E kerb clearance to the closures {c.get('kerb_closure_clear_m')}")
     if not pre_author and "chord_max_m" in c:

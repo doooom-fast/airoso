@@ -70,6 +70,7 @@ CELL_M = 8.0
 ALONG_M = 2.0
 ISLAND_KINDS = ("island",)
 ALL_KINDS = ("island", "barrier")
+CURVE_SAMPLES = 16     # the offset curve between two band points, as a polyline (race_furniture.DENSIFY_SAMPLES)
 
 
 def _load_pts(project: Path):
@@ -281,10 +282,43 @@ class MedianZone:
                                          f"vs centreline ({len(pts)}) - re-run tools/barrier_bands.py")
                     kw.update({"closure_y": cy, "lane": lane, "zone_kind": cor.get("zone_by_vertex"),
                                "layout": str(layout), "race_wall_y": cor.get("race_wall_y_by_vertex")})
+                    if cor.get("nose_walls"):
+                        # ledger 0054 Phase 2 (opt-in): THIS layout's K-rails across the far carriageway at the declared
+                        # median noses are declared bands too, segment bands like the sealed-mouth lines (D / drive_test
+                        # exempt a wall standing on them, as on a closure) — absent on every declaration without noses
+                        kw["mouths"] = kw["mouths"] + [w.get("polyline_xyz_m", []) for w in cor["nose_walls"]]
         zone = cls(pts, iw, extra, widths=widths, **kw)
         if zone.n_island == 0 and zone.n_barrier == 0 and zone.n_edge == 0 and zone.n_closure == 0:
             return None
         return zone
+
+    @classmethod
+    def road_islands(cls, project_dir, layout) -> "MedianZone | None":
+        """The road kn5's OWN islands beside a layout that runs on a LAP (ledger 0054 step 2e): the mainline line's
+        island_w_by_vertex (as a race layout meets it: scripts/geometry/race_chicane.race_island_w) plus the divided
+        connectors' islands, island kind only. A lap's gate OBJ is the whole road kn5 + the lap's race kn5 + its
+        closure, so it carries every mainline median while load(layout=<lap layout>) zones only the lap's — the
+        mainline's island curbs and posts then read as D / K / I. None for a layout on no lap (load() already
+        zones the mainline) and for a track without median_bands.json."""
+        project = Path(project_dir)
+        data = project / "data"
+        bands = data / "median_bands.json"
+        _cp = project / "track.config.json"
+        cfg = json.loads(_cp.read_text(encoding="utf-8")) if _cp.exists() else {}
+        from scripts.geometry import race_lap as _rl
+        if layout is None or not _rl.lap_of_layout(cfg, layout) or not bands.exists():
+            return None
+        pts, _w = _load_pts(project)
+        mj = json.loads(bands.read_text(encoding="utf-8"))
+        iw = mj.get("island_w_by_vertex", [])
+        if len(iw) != len(pts):
+            print(f"  [median-zone] road islands: bands ({len(iw)}) vs centreline ({len(pts)}) length mismatch — none")
+            return None
+        from scripts.geometry import race_chicane as _rc
+        extra = [([tuple(p) for p in ci["points_xyz_m"]], ci["island_w_by_point"])
+                 for ci in mj.get("connector_islands", [])]
+        zone = cls(pts, _rc.race_island_w(iw, cfg), extra)
+        return zone if zone.n_island else None
 
     # ---- per-vertex lookups (index into the mainline the gate walks) -----------------------
     def island_half_at(self, i: int) -> float:
@@ -430,7 +464,54 @@ class MedianZone:
                             q = self._band_point(kind, j)
                             if q is not None and self._span_dist(x, z, bx, bz, q[0], q[2]) <= reach:
                                 return True
+                            # ...and ON THE OFFSET CURVE the strip itself follows there (ledger 0054 Phase 2 step 2g):
+                            # race_furniture.densify_rings puts rings on the declared offset curve (centre lerped,
+                            # tangents lerped, laterals lerped), not on the chord. Round the outside of the north lap's
+                            # J1 (R 8.3 m apex, a 30 m box) its band points stand 11-13 m apart and the curve bows
+                            # ~0.95 m off the chord: the lap's own Navajo edge wall read D 32. Same lateral reach.
+                            if q is not None and self._curve_dist(kind, i, j, x, z) <= reach:
+                                return True
         return False
+
+    def _band_lat(self, kind, j):
+        """the declared band's signed lateral (+ = left of this zone's travel) at vertex j, None where none stands"""
+        if kind == "centre":
+            return 0.0 if self.centre_w[j] > 0 else None
+        if kind in ("closure", "chicane"):
+            row = self.closure_y if kind == "closure" else self.race_wall_y
+            return None if row is None or row[j] is None else row[j]
+        if kind in ("edge_L", "edge_R") and self.edge_strip[j] and j not in self.removed.get(kind[-1], ()):
+            return (self.widths[j] / 2.0 + self.edge_centre_from_lip) * (1.0 if kind == "edge_L" else -1.0)
+        return None
+
+    def _curve_dist(self, kind, i, j, x, z, samples=CURVE_SAMPLES):
+        """distance to the declared offset curve between vertices i and j (adjacent): race_furniture.offset_xz's
+        construction — the centre lerped, the left normal of the normalised lerp of the two tangents, the laterals
+        lerped — as a polyline of `samples` pieces"""
+        if self.closed:
+            m = len(self.pts) - 1
+            i, j = i % m, j % m
+        a, b = min(i, j), max(i, j)
+        if self.closed and {i, j} == {0, len(self.pts) - 2}:
+            a, b = len(self.pts) - 2, 0                   # across the seam: the last vertex -> vertex 0
+        la, lb = self._band_lat(kind, a), self._band_lat(kind, b)
+        if la is None or lb is None:
+            return float("inf")
+        pa, pb = self.pts[a], self.pts[b]
+        na, nb = self._normal(a), self._normal(b)
+        ta, tb = (na[1], -na[0]), (nb[1], -nb[0])           # tangent from the left normal (-tz, tx)
+        prev, best = None, float("inf")
+        for q in range(samples + 1):
+            u = q / samples
+            tx, tz = ta[0] + (tb[0] - ta[0]) * u, ta[1] + (tb[1] - ta[1]) * u
+            L = math.hypot(tx, tz) or 1.0
+            lat = la + (lb - la) * u
+            px = pa[0] + (pb[0] - pa[0]) * u - tz / L * lat
+            pz = pa[2] + (pb[2] - pa[2]) * u + tx / L * lat
+            if prev is not None:
+                best = min(best, self._span_dist(x, z, prev[0], prev[1], px, pz))
+            prev = (px, pz)
+        return best
 
     @staticmethod
     def _span_dist(x, z, ax, az, bx, bz):

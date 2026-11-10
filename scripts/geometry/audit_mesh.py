@@ -384,6 +384,15 @@ def audit(project_dir: str | Path, *, race: bool = False, obj: str = "track.obj"
         _in_band_D = lambda x, z: _zone.contains(x, z, ALL_KINDS)   # noqa: E731
     else:
         _in_band_D = _in_island
+    # ledger 0054 step 2e: a layout on a LAP is zoned on its lap (its barrier_bands.<lap>.json, its islands) — but its
+    # gate OBJ carries the whole road kn5, every mainline median included; those islands are exempt as on the street.
+    # None for every layout on no lap: nothing below changes for them.
+    _road_isl = MedianZone.road_islands(project_dir, layout) if layout is not None else None
+    if _road_isl is not None:
+        _lap_island, _lap_band_D = _in_island, _in_band_D
+        _in_island = lambda x, z: _lap_island(x, z) or _road_isl.contains(x, z)     # noqa: E731
+        _in_band_D = lambda x, z: _lap_band_D(x, z) or _road_isl.contains(x, z)     # noqa: E731
+        print(f"  (lap layout {layout}: + the road kn5's own islands on {_road_isl.n_island} mainline verts — D/K/I exempt there)")
     if _zone:
         print(f"  (median island declared on {_zone.n_island} centreline verts — D/K/I exempt there"
               + (f"; --race: barrier bands on {_zone.n_barrier} centre / {_zone.n_edge} edge"

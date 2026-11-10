@@ -1,0 +1,106 @@
+{
+ "_doc": "Judge the north loop's five joins on v4's COMMITTED records (Mac side; ledger 0054 Phase 2 step 1). Stdlib only.",
+ "band_m": 4.0,
+ "rows": [
+  {
+   "join": "J2",
+   "from": [
+    "north_J1_waring#0",
+    317
+   ],
+   "to": [
+    "north_princess_view",
+    0
+   ],
+   "chord_m": 27.992,
+   "length_m": 31.339,
+   "declared": "J2",
+   "samples": 927,
+   "uncovered": 0,
+   "uncovered_share": 0.0,
+   "uncovered_left": 0,
+   "uncovered_right": 0,
+   "worst": []
+  },
+  {
+   "join": "J3",
+   "from": [
+    "north_princess_view",
+    355
+   ],
+   "to": [
+    "north_mission_gorge",
+    0
+   ],
+   "chord_m": 46.039,
+   "length_m": 51.704,
+   "declared": "J3",
+   "samples": 1296,
+   "uncovered": 0,
+   "uncovered_share": 0.0,
+   "uncovered_left": 0,
+   "uncovered_right": 0,
+   "worst": []
+  },
+  {
+   "join": "J4",
+   "from": [
+    "north_mission_gorge",
+    745
+   ],
+   "to": [
+    "north_J5_jackson_north#0",
+    651
+   ],
+   "chord_m": 41.995,
+   "length_m": 47.149,
+   "declared": "J4",
+   "samples": 1215,
+   "uncovered": 0,
+   "uncovered_share": 0.0,
+   "uncovered_left": 0,
+   "uncovered_right": 0,
+   "worst": []
+  },
+  {
+   "join": "J5",
+   "from": [
+    "north_J5_jackson_north#0",
+    0
+   ],
+   "to": [
+    "MAINLINE",
+    2317
+   ],
+   "chord_m": 11.614,
+   "length_m": 11.614,
+   "declared": null,
+   "samples": 576,
+   "uncovered": 0,
+   "uncovered_share": 0.0,
+   "uncovered_left": 0,
+   "uncovered_right": 0,
+   "worst": []
+  },
+  {
+   "join": "J1",
+   "from": [
+    "MAINLINE",
+    1517
+   ],
+   "to": [
+    "north_J1_waring#0",
+    0
+   ],
+   "chord_m": 14.6,
+   "length_m": 14.6,
+   "declared": null,
+   "samples": 630,
+   "uncovered": 0,
+   "uncovered_share": 0.0,
+   "uncovered_left": 0,
+   "uncovered_right": 0,
+   "worst": []
+  }
+ ]
+}

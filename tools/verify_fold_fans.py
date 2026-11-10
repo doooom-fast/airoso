@@ -539,6 +539,9 @@ def main(argv=None) -> int:
               f"{p['y_l']:.3f}, midpoint {0.5 * (p['y_k'] + p['y_l']):.3f} — {p['source']}")
     for lid, res in rep.get("layouts", {}).items():
         for r in res:
+            if r.get("skipped"):        # a lap layout's pinch behind its walls carries no survey (ledger 0054)
+                print(f"[fold-fans] {lid:9s} pinch {r['k']}..{(r['l'] + 1)}: skipped — {r['skipped']}")
+                continue
             ap = r.get("apex") or {}
             print(f"[fold-fans] {lid:9s} rows {r['rows'][0]}..{r['rows'][1]}: {r['paths']} paths, {r['paths_with_step']} "
                   f"with a step; fine max {r['fine_max_m']:.3f}, DT max {r['dt_max_m']:.3f}, race-kerb lip max "

@@ -117,3 +117,7 @@ corridor excavation, deferred; 1 severe at 1274 unprobed), lookout-lariat FAIL (
 drops 184 — the mountain road is its own campaign). Aspen carries a known blemish inside its
 passing budget: a 13 cm/m kink in finished_centerline y at stations 1517-1519 — elevation-side,
 not mesh-side.
+
+*2026-10-28:* sand-creek's deferred soft-top at 8047 is fixed — not by excavation: the seam-weld's 20% floor
+had lifted the shoulder's pinned grass through the verge from the cut's bank crest; a shoulder cap on that floor
+cleared it (ledger 0058, drive_test PASS).

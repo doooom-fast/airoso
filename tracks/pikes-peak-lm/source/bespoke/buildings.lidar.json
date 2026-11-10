@@ -1,0 +1,1438 @@
+[
+ {
+  "key": "grandstand_0",
+  "footprint_lonlat": [
+   [
+    -104.67811994,
+    38.59032899
+   ],
+   [
+    -104.67887417,
+    38.59138045
+   ],
+   [
+    -104.67893419,
+    38.59135394
+   ],
+   [
+    -104.67817996,
+    38.59030248
+   ]
+  ],
+  "wall_h_m": 4.85,
+  "roof_z_m": 6.78,
+  "skin": "tiltup",
+  "roof": "dark",
+  "_source": "the west grandstand, seating tier 1 of 6: v 0-6 m back from its track-side edge, 133.9 m long (buildings_lidar.py row 0, its minimum rectangle); wall_h 4.85 m = the band's median height over the lidar ground of 1233 points [measured, CO_Eastern_ElPaso_2018 (lidar 2018) against NAIP 2023-09-20]; skin tilt-up [invented: the fleet's concrete]; roof dark: the seating's own top [invented]"
+ },
+ {
+  "key": "grandstand_1",
+  "footprint_lonlat": [
+   [
+    -104.67817996,
+    38.59030248
+   ],
+   [
+    -104.67893419,
+    38.59135394
+   ],
+   [
+    -104.6789942,
+    38.59132743
+   ],
+   [
+    -104.67823997,
+    38.59027597
+   ]
+  ],
+  "wall_h_m": 7.26,
+  "roof_z_m": 9.16,
+  "skin": "tiltup",
+  "roof": "dark",
+  "_source": "the west grandstand, seating tier 2 of 6: v 6-12 m back from its track-side edge, 133.9 m long (buildings_lidar.py row 0, its minimum rectangle); wall_h 7.26 m = the band's median height over the lidar ground of 1715 points [measured, CO_Eastern_ElPaso_2018 (lidar 2018) against NAIP 2023-09-20]; skin tilt-up [invented: the fleet's concrete]; roof dark: the seating's own top [invented]"
+ },
+ {
+  "key": "grandstand_2",
+  "footprint_lonlat": [
+   [
+    -104.67823997,
+    38.59027597
+   ],
+   [
+    -104.6789942,
+    38.59132743
+   ],
+   [
+    -104.67905422,
+    38.59130092
+   ],
+   [
+    -104.67829999,
+    38.59024946
+   ]
+  ],
+  "wall_h_m": 10.33,
+  "roof_z_m": 12.17,
+  "skin": "tiltup",
+  "roof": "dark",
+  "_source": "the west grandstand, seating tier 3 of 6: v 12-18 m back from its track-side edge, 133.9 m long (buildings_lidar.py row 0, its minimum rectangle); wall_h 10.33 m = the band's median height over the lidar ground of 1719 points [measured, CO_Eastern_ElPaso_2018 (lidar 2018) against NAIP 2023-09-20]; skin tilt-up [invented: the fleet's concrete]; roof dark: the seating's own top [invented]"
+ },
+ {
+  "key": "grandstand_3",
+  "footprint_lonlat": [
+   [
+    -104.67829999,
+    38.59024946
+   ],
+   [
+    -104.67905422,
+    38.59130092
+   ],
+   [
+    -104.67911424,
+    38.59127441
+   ],
+   [
+    -104.67836001,
+    38.59022295
+   ]
+  ],
+  "wall_h_m": 13.41,
+  "roof_z_m": 15.2,
+  "skin": "tiltup",
+  "roof": "dark",
+  "_source": "the west grandstand, seating tier 4 of 6: v 18-24 m back from its track-side edge, 133.9 m long (buildings_lidar.py row 0, its minimum rectangle); wall_h 13.41 m = the band's median height over the lidar ground of 1755 points [measured, CO_Eastern_ElPaso_2018 (lidar 2018) against NAIP 2023-09-20]; skin tilt-up [invented: the fleet's concrete]; roof dark: the seating's own top [invented]"
+ },
+ {
+  "key": "grandstand_4",
+  "footprint_lonlat": [
+   [
+    -104.67836001,
+    38.59022295
+   ],
+   [
+    -104.67911424,
+    38.59127441
+   ],
+   [
+    -104.67917425,
+    38.5912479
+   ],
+   [
+    -104.67842002,
+    38.59019644
+   ]
+  ],
+  "wall_h_m": 16.46,
+  "roof_z_m": 18.23,
+  "skin": "tiltup",
+  "roof": "dark",
+  "_source": "the west grandstand, seating tier 5 of 6: v 24-30 m back from its track-side edge, 133.9 m long (buildings_lidar.py row 0, its minimum rectangle); wall_h 16.46 m = the band's median height over the lidar ground of 1756 points [measured, CO_Eastern_ElPaso_2018 (lidar 2018) against NAIP 2023-09-20]; skin tilt-up [invented: the fleet's concrete]; roof dark: the seating's own top [invented]"
+ },
+ {
+  "key": "grandstand_5",
+  "footprint_lonlat": [
+   [
+    -104.67842002,
+    38.59019644
+   ],
+   [
+    -104.67917425,
+    38.5912479
+   ],
+   [
+    -104.67923427,
+    38.59122139
+   ],
+   [
+    -104.67848004,
+    38.59016993
+   ]
+  ],
+  "wall_h_m": 19.86,
+  "roof_z_m": 21.62,
+  "skin": "tiltup",
+  "roof": "dark",
+  "_source": "the west grandstand, seating tier 6 of 6: v 30-36 m back from its track-side edge, 133.9 m long (buildings_lidar.py row 0, its minimum rectangle); wall_h 19.86 m = the band's median height over the lidar ground of 2238 points [measured, CO_Eastern_ElPaso_2018 (lidar 2018) against NAIP 2023-09-20]; skin tilt-up [invented: the fleet's concrete]; roof dark: the seating's own top [invented]"
+ },
+ {
+  "key": "grandstand_6",
+  "footprint_lonlat": [
+   [
+    -104.67848004,
+    38.59016993
+   ],
+   [
+    -104.67923427,
+    38.59122139
+   ],
+   [
+    -104.67944433,
+    38.5911286
+   ],
+   [
+    -104.67869009,
+    38.59007714
+   ]
+  ],
+  "wall_h_m": 33.04,
+  "roof_z_m": 34.68,
+  "skin": "tiltup",
+  "roof": "white",
+  "_source": "the west grandstand, the suites block: v 36-57 m back from its track-side edge, 133.9 m long (buildings_lidar.py row 0, its minimum rectangle); wall_h 33.04 m = the band's median height over the lidar ground of 5211 points [measured, CO_Eastern_ElPaso_2018 (lidar 2018) against NAIP 2023-09-20]; skin tilt-up [invented: the fleet's concrete]; roof white [measured class, NAIP median RGB [193, 197, 203]]"
+ },
+ {
+  "key": "pit_building_south",
+  "footprint_lonlat": [
+   [
+    -104.67658853,
+    38.5907413
+   ],
+   [
+    -104.67612148,
+    38.59009486
+   ],
+   [
+    -104.67591774,
+    38.59018549
+   ],
+   [
+    -104.67638479,
+    38.59083193
+   ]
+  ],
+  "wall_h_m": 4.02,
+  "roof_z_m": 2.33,
+  "skin": "metal",
+  "roof": "white",
+  "_source": "buildings_lidar.py row 1 (rectangle, 82.5 x 20.4 m, 1483.2 m2); wall_h 4.02 m = its median height over the lidar ground (p10 3.92, p95 4.11) [measured, CO_Eastern_ElPaso_2018 (lidar 2018) against NAIP 2023-09-20]; skin metal [invented: the fleet's skins]; roof white [measured class, NAIP median RGB [197, 202, 209]]"
+ },
+ {
+  "key": "pit_building_north",
+  "footprint_lonlat": [
+   [
+    -104.67647558,
+    38.59095733
+   ],
+   [
+    -104.67691359,
+    38.59156782
+   ],
+   [
+    -104.67711687,
+    38.59147792
+   ],
+   [
+    -104.67667886,
+    38.59086751
+   ]
+  ],
+  "wall_h_m": 4.01,
+  "roof_z_m": 2.47,
+  "skin": "metal",
+  "roof": "white",
+  "_source": "buildings_lidar.py row 2 (rectangle, 77.8 x 20.3 m, 1432.5 m2); wall_h 4.01 m = its median height over the lidar ground (p10 3.93, p95 4.1) [measured, CO_Eastern_ElPaso_2018 (lidar 2018) against NAIP 2023-09-20]; skin metal [invented: the fleet's skins]; roof white [measured class, NAIP median RGB [199, 204, 211]]"
+ },
+ {
+  "key": "striped_building",
+  "footprint_lonlat": [
+   [
+    -104.67733484,
+    38.59136973
+   ],
+   [
+    -104.67739223,
+    38.59135171
+   ],
+   [
+    -104.67739797,
+    38.5913382
+   ],
+   [
+    -104.67742666,
+    38.5913382
+   ],
+   [
+    -104.67747831,
+    38.59130667
+   ],
+   [
+    -104.67744388,
+    38.59126613
+   ],
+   [
+    -104.67745536,
+    38.59124361
+   ],
+   [
+    -104.67741518,
+    38.59118055
+   ],
+   [
+    -104.67737501,
+    38.59116254
+   ],
+   [
+    -104.67738649,
+    38.59115353
+   ],
+   [
+    -104.67738075,
+    38.59113551
+   ],
+   [
+    -104.67734631,
+    38.591122
+   ],
+   [
+    -104.67736353,
+    38.59110849
+   ],
+   [
+    -104.67734631,
+    38.59110398
+   ],
+   [
+    -104.6773291,
+    38.59107245
+   ],
+   [
+    -104.67730614,
+    38.59106795
+   ],
+   [
+    -104.6773291,
+    38.59106344
+   ],
+   [
+    -104.67730614,
+    38.59103192
+   ],
+   [
+    -104.67728318,
+    38.59103642
+   ],
+   [
+    -104.67724875,
+    38.59098687
+   ],
+   [
+    -104.67723153,
+    38.59098687
+   ],
+   [
+    -104.67722005,
+    38.59100489
+   ],
+   [
+    -104.6771971,
+    38.59100039
+   ],
+   [
+    -104.67709379,
+    38.59104993
+   ],
+   [
+    -104.67711101,
+    38.59107696
+   ],
+   [
+    -104.67711101,
+    38.59105444
+   ],
+   [
+    -104.67713971,
+    38.59104543
+   ],
+   [
+    -104.67715118,
+    38.59105444
+   ],
+   [
+    -104.67713397,
+    38.59106344
+   ],
+   [
+    -104.67715692,
+    38.59107245
+   ],
+   [
+    -104.67715118,
+    38.59108146
+   ],
+   [
+    -104.67720858,
+    38.59114452
+   ],
+   [
+    -104.67720858,
+    38.59116254
+   ],
+   [
+    -104.67723153,
+    38.59115803
+   ],
+   [
+    -104.67724301,
+    38.59116704
+   ],
+   [
+    -104.67722005,
+    38.59117155
+   ],
+   [
+    -104.67720284,
+    38.59119407
+   ],
+   [
+    -104.67719136,
+    38.59118956
+   ],
+   [
+    -104.67718562,
+    38.59121659
+   ],
+   [
+    -104.67721431,
+    38.5912346
+   ],
+   [
+    -104.67723727,
+    38.5912256
+   ],
+   [
+    -104.67726597,
+    38.5912346
+   ],
+   [
+    -104.67731762,
+    38.59131568
+   ],
+   [
+    -104.67733484,
+    38.59132018
+   ],
+   [
+    -104.6773291,
+    38.59132919
+   ],
+   [
+    -104.67734631,
+    38.59135171
+   ],
+   [
+    -104.67733484,
+    38.59136072
+   ],
+   [
+    -104.67731188,
+    38.59135171
+   ],
+   [
+    -104.67731762,
+    38.59136973
+   ]
+  ],
+  "wall_h_m": 8.05,
+  "roof_z_m": 6.72,
+  "skin": "tiltup",
+  "roof": "white",
+  "_source": "buildings_lidar.py row 3 (outline, 43.4 x 20.1 m, 606.8 m2; the striped building by the pit road (grey roof, sat 0.07; its 3.7-12.6 m spread read it as a canopy)); wall_h 8.05 m = its median height over the lidar ground (p10 3.69, p95 12.63) [measured, CO_Eastern_ElPaso_2018 (lidar 2018) against NAIP 2023-09-20]; skin tilt-up [invented: the fleet's skins]; roof white [measured class, NAIP median RGB [192, 196, 204]]"
+ },
+ {
+  "key": "sw_shed_a",
+  "footprint_lonlat": [
+   [
+    -104.67945095,
+    38.59073671
+   ],
+   [
+    -104.67961566,
+    38.59101138
+   ],
+   [
+    -104.67979139,
+    38.59094643
+   ],
+   [
+    -104.6796268,
+    38.59067176
+   ]
+  ],
+  "wall_h_m": 4.12,
+  "roof_z_m": 6.18,
+  "skin": "metal",
+  "roof": "dark",
+  "_source": "buildings_lidar.py row 4 (rectangle, 33.7 x 16.9 m, 480.8 m2); wall_h 4.12 m = its median height over the lidar ground (p10 2.88, p95 5.38) [measured, CO_Eastern_ElPaso_2018 (lidar 2018) against NAIP 2023-09-20]; skin metal [invented: the fleet's skins]; roof dark [measured class, NAIP median RGB [108, 119, 107]]"
+ },
+ {
+  "key": "s_shed_a",
+  "footprint_lonlat": [
+   [
+    -104.67837281,
+    38.58924411
+   ],
+   [
+    -104.67814209,
+    38.58905061
+   ],
+   [
+    -104.67799311,
+    38.58916006
+   ],
+   [
+    -104.67822382,
+    38.58935347
+   ]
+  ],
+  "wall_h_m": 4.07,
+  "roof_z_m": 5.8,
+  "skin": "metal",
+  "roof": "dark",
+  "_source": "buildings_lidar.py row 5 (rectangle, 29.4 x 17.8 m, 441.0 m2); wall_h 4.07 m = its median height over the lidar ground (p10 2.9, p95 5.39) [measured, CO_Eastern_ElPaso_2018 (lidar 2018) against NAIP 2023-09-20]; skin metal [invented: the fleet's skins]; roof dark [measured class, NAIP median RGB [113, 126, 116]]"
+ },
+ {
+  "key": "sw_shed_b",
+  "footprint_lonlat": [
+   [
+    -104.6789303,
+    38.58992839
+   ],
+   [
+    -104.67900491,
+    38.58988335
+   ],
+   [
+    -104.67898769,
+    38.58987884
+   ],
+   [
+    -104.67898769,
+    38.58986083
+   ],
+   [
+    -104.678959,
+    38.58986533
+   ],
+   [
+    -104.67894752,
+    38.58985632
+   ],
+   [
+    -104.67897621,
+    38.58984731
+   ],
+   [
+    -104.67895326,
+    38.5898338
+   ],
+   [
+    -104.67894752,
+    38.58981578
+   ],
+   [
+    -104.67892456,
+    38.58981128
+   ],
+   [
+    -104.67893604,
+    38.58980227
+   ],
+   [
+    -104.67888439,
+    38.58978876
+   ],
+   [
+    -104.67890734,
+    38.58978425
+   ],
+   [
+    -104.67890734,
+    38.58977074
+   ],
+   [
+    -104.67885569,
+    38.58977525
+   ],
+   [
+    -104.67884421,
+    38.58976624
+   ],
+   [
+    -104.67885569,
+    38.58975723
+   ],
+   [
+    -104.67889587,
+    38.58975723
+   ],
+   [
+    -104.67885569,
+    38.58974372
+   ],
+   [
+    -104.67887865,
+    38.58973921
+   ],
+   [
+    -104.67884421,
+    38.5897212
+   ],
+   [
+    -104.67884995,
+    38.58971219
+   ],
+   [
+    -104.678827,
+    38.58968967
+   ],
+   [
+    -104.67880978,
+    38.58969417
+   ],
+   [
+    -104.67877535,
+    38.5897212
+   ],
+   [
+    -104.67876387,
+    38.58971669
+   ],
+   [
+    -104.67873517,
+    38.58973471
+   ],
+   [
+    -104.67874665,
+    38.58975723
+   ],
+   [
+    -104.67879256,
+    38.58978876
+   ],
+   [
+    -104.67878108,
+    38.58979777
+   ],
+   [
+    -104.678827,
+    38.58984281
+   ],
+   [
+    -104.67884421,
+    38.58985632
+   ],
+   [
+    -104.67886717,
+    38.58985182
+   ],
+   [
+    -104.67887865,
+    38.58986083
+   ],
+   [
+    -104.67885569,
+    38.58986533
+   ],
+   [
+    -104.67886143,
+    38.58988335
+   ],
+   [
+    -104.67890734,
+    38.58990587
+   ],
+   [
+    -104.67889587,
+    38.58991488
+   ],
+   [
+    -104.67890734,
+    38.58992388
+   ]
+  ],
+  "wall_h_m": 3.54,
+  "roof_z_m": 5.45,
+  "skin": "metal",
+  "roof": "dark",
+  "_source": "buildings_lidar.py row 6 (outline, 28.7 x 11.5 m, 263.0 m2); wall_h 3.54 m = its median height over the lidar ground (p10 2.78, p95 4.42) [measured, CO_Eastern_ElPaso_2018 (lidar 2018) against NAIP 2023-09-20]; skin metal [invented: the fleet's skins]; roof dark [measured class, NAIP median RGB [114, 125, 117]]"
+ },
+ {
+  "key": "infield_shed_a",
+  "footprint_lonlat": [
+   [
+    -104.67752801,
+    38.59159332
+   ],
+   [
+    -104.67723865,
+    38.5917216
+   ],
+   [
+    -104.67729925,
+    38.59180565
+   ],
+   [
+    -104.6775885,
+    38.59167728
+   ]
+  ],
+  "wall_h_m": 3.48,
+  "roof_z_m": 1.91,
+  "skin": "metal",
+  "roof": "dark",
+  "_source": "buildings_lidar.py row 7 (rectangle, 29.0 x 10.7 m, 260.2 m2); wall_h 3.48 m = its median height over the lidar ground (p10 2.74, p95 4.29) [measured, CO_Eastern_ElPaso_2018 (lidar 2018) against NAIP 2023-09-20]; skin metal [invented: the fleet's skins]; roof dark [measured class, NAIP median RGB [105, 117, 112]]"
+ },
+ {
+  "key": "infield_se_shed",
+  "footprint_lonlat": [
+   [
+    -104.6756705,
+    38.58958607
+   ],
+   [
+    -104.67568198,
+    38.58957706
+   ],
+   [
+    -104.67565902,
+    38.58956355
+   ],
+   [
+    -104.67567624,
+    38.58955904
+   ],
+   [
+    -104.67567624,
+    38.58954553
+   ],
+   [
+    -104.67565328,
+    38.58948698
+   ],
+   [
+    -104.67562459,
+    38.58949599
+   ],
+   [
+    -104.67565328,
+    38.58950499
+   ],
+   [
+    -104.67564181,
+    38.589514
+   ],
+   [
+    -104.67560737,
+    38.58950049
+   ],
+   [
+    -104.67560737,
+    38.58948247
+   ],
+   [
+    -104.67547537,
+    38.58949599
+   ],
+   [
+    -104.67546389,
+    38.58950499
+   ],
+   [
+    -104.67542372,
+    38.58950049
+   ],
+   [
+    -104.67539503,
+    38.589514
+   ],
+   [
+    -104.67536059,
+    38.5895095
+   ],
+   [
+    -104.67537207,
+    38.58959057
+   ],
+   [
+    -104.67550981,
+    38.58958157
+   ],
+   [
+    -104.67552129,
+    38.58956805
+   ],
+   [
+    -104.67559015,
+    38.58957256
+   ],
+   [
+    -104.67559589,
+    38.58955904
+   ],
+   [
+    -104.67562459,
+    38.58956355
+   ],
+   [
+    -104.67561311,
+    38.58955004
+   ],
+   [
+    -104.67562459,
+    38.589514
+   ],
+   [
+    -104.67564181,
+    38.58952752
+   ],
+   [
+    -104.67564755,
+    38.58958607
+   ]
+  ],
+  "wall_h_m": 3.4,
+  "roof_z_m": 2.03,
+  "skin": "metal",
+  "roof": "dark",
+  "_source": "buildings_lidar.py row 8 (outline, 28.5 x 12.5 m, 243.2 m2); wall_h 3.40 m = its median height over the lidar ground (p10 2.76, p95 4.29) [measured, CO_Eastern_ElPaso_2018 (lidar 2018) against NAIP 2023-09-20]; skin metal [invented: the fleet's skins]; roof dark [measured class, NAIP median RGB [116, 125, 116]]"
+ },
+ {
+  "key": "sw_shed_c",
+  "footprint_lonlat": [
+   [
+    -104.67936647,
+    38.59040133
+   ],
+   [
+    -104.67942386,
+    38.59035629
+   ],
+   [
+    -104.67943534,
+    38.59036079
+   ],
+   [
+    -104.67940664,
+    38.59032476
+   ],
+   [
+    -104.67938369,
+    38.59032025
+   ],
+   [
+    -104.67939517,
+    38.59031124
+   ],
+   [
+    -104.67936073,
+    38.59029773
+   ],
+   [
+    -104.67937221,
+    38.59028872
+   ],
+   [
+    -104.67932056,
+    38.59023017
+   ],
+   [
+    -104.67932056,
+    38.59021215
+   ],
+   [
+    -104.67930334,
+    38.59020765
+   ],
+   [
+    -104.67931482,
+    38.59019864
+   ],
+   [
+    -104.6792976,
+    38.59018963
+   ],
+   [
+    -104.67930334,
+    38.59018062
+   ],
+   [
+    -104.67928038,
+    38.59017612
+   ],
+   [
+    -104.67929186,
+    38.59018513
+   ],
+   [
+    -104.67928038,
+    38.59019414
+   ],
+   [
+    -104.67925743,
+    38.59018963
+   ],
+   [
+    -104.67922299,
+    38.59020314
+   ],
+   [
+    -104.67922299,
+    38.59023467
+   ],
+   [
+    -104.67929186,
+    38.59030224
+   ],
+   [
+    -104.6792976,
+    38.59033377
+   ],
+   [
+    -104.67933778,
+    38.59034728
+   ],
+   [
+    -104.67931482,
+    38.59035629
+   ],
+   [
+    -104.67934925,
+    38.5903698
+   ],
+   [
+    -104.67933778,
+    38.59037881
+   ],
+   [
+    -104.67934351,
+    38.59039232
+   ]
+  ],
+  "wall_h_m": 3.69,
+  "roof_z_m": 5.97,
+  "skin": "metal",
+  "roof": "dark",
+  "_source": "buildings_lidar.py row 9 (outline, 26.3 x 9.8 m, 196.0 m2); wall_h 3.69 m = its median height over the lidar ground (p10 2.8, p95 5.27) [measured, CO_Eastern_ElPaso_2018 (lidar 2018) against NAIP 2023-09-20]; skin metal [invented: the fleet's skins]; roof dark [measured class, NAIP median RGB [108, 120, 109]]"
+ },
+ {
+  "key": "s_shed_b",
+  "footprint_lonlat": [
+   [
+    -104.67802903,
+    38.58900161
+   ],
+   [
+    -104.67792229,
+    38.58891089
+   ],
+   [
+    -104.6778331,
+    38.58897548
+   ],
+   [
+    -104.67793985,
+    38.5890662
+   ]
+  ],
+  "wall_h_m": 3.52,
+  "roof_z_m": 5.02,
+  "skin": "metal",
+  "roof": "dark",
+  "_source": "buildings_lidar.py row 11 (rectangle, 13.7 x 10.6 m, 116.0 m2); wall_h 3.52 m = its median height over the lidar ground (p10 2.76, p95 4.31) [measured, CO_Eastern_ElPaso_2018 (lidar 2018) against NAIP 2023-09-20]; skin metal [invented: the fleet's skins]; roof dark [measured class, NAIP median RGB [114, 126, 117]]"
+ },
+ {
+  "key": "infield_shed_b",
+  "footprint_lonlat": [
+   [
+    -104.67716324,
+    38.59175691
+   ],
+   [
+    -104.67702871,
+    38.59181555
+   ],
+   [
+    -104.67708691,
+    38.5918978
+   ],
+   [
+    -104.67722143,
+    38.59183916
+   ]
+  ],
+  "wall_h_m": 3.55,
+  "roof_z_m": 1.96,
+  "skin": "metal",
+  "roof": "dark",
+  "_source": "buildings_lidar.py row 12 (rectangle, 13.4 x 10.4 m, 112.2 m2); wall_h 3.55 m = its median height over the lidar ground (p10 2.8, p95 4.32) [measured, CO_Eastern_ElPaso_2018 (lidar 2018) against NAIP 2023-09-20]; skin metal [invented: the fleet's skins]; roof dark [measured class, NAIP median RGB [104, 115, 107]]"
+ },
+ {
+  "key": "sw_shed_d",
+  "footprint_lonlat": [
+   [
+    -104.67945256,
+    38.59062203
+   ],
+   [
+    -104.67946403,
+    38.59060852
+   ],
+   [
+    -104.67948699,
+    38.59061303
+   ],
+   [
+    -104.67952716,
+    38.59059501
+   ],
+   [
+    -104.67951569,
+    38.59057249
+   ],
+   [
+    -104.67947551,
+    38.59053195
+   ],
+   [
+    -104.67947551,
+    38.59050943
+   ],
+   [
+    -104.67946403,
+    38.59051844
+   ],
+   [
+    -104.67938943,
+    38.59051844
+   ],
+   [
+    -104.67937221,
+    38.59052745
+   ],
+   [
+    -104.67937221,
+    38.59054096
+   ],
+   [
+    -104.67939517,
+    38.59057699
+   ],
+   [
+    -104.67941238,
+    38.5905815
+   ],
+   [
+    -104.67940664,
+    38.59059951
+   ],
+   [
+    -104.6794296,
+    38.59062654
+   ]
+  ],
+  "wall_h_m": 3.49,
+  "roof_z_m": 5.5,
+  "skin": "metal",
+  "roof": "dark",
+  "_source": "buildings_lidar.py row 13 (outline, 13.8 x 10.5 m, 111.2 m2); wall_h 3.49 m = its median height over the lidar ground (p10 2.77, p95 4.3) [measured, CO_Eastern_ElPaso_2018 (lidar 2018) against NAIP 2023-09-20]; skin metal [invented: the fleet's skins]; roof dark [measured class, NAIP median RGB [112, 123, 115]]"
+ },
+ {
+  "key": "pit_canopy",
+  "footprint_lonlat": [
+   [
+    -104.67682406,
+    38.59153188
+   ],
+   [
+    -104.67683554,
+    38.59151837
+   ],
+   [
+    -104.67681258,
+    38.59149585
+   ],
+   [
+    -104.67681832,
+    38.59148684
+   ],
+   [
+    -104.67672075,
+    38.59135622
+   ],
+   [
+    -104.6766978,
+    38.59137423
+   ],
+   [
+    -104.67670354,
+    38.59139225
+   ],
+   [
+    -104.67675519,
+    38.59142828
+   ],
+   [
+    -104.67673797,
+    38.59143729
+   ],
+   [
+    -104.67674945,
+    38.59145531
+   ],
+   [
+    -104.67677241,
+    38.59148233
+   ],
+   [
+    -104.67680684,
+    38.59149134
+   ],
+   [
+    -104.67678388,
+    38.59150035
+   ]
+  ],
+  "wall_h_m": 4.01,
+  "roof_z_m": 2.37,
+  "skin": "metal",
+  "roof": "tan",
+  "_source": "buildings_lidar.py row 15 (outline, 22.3 x 4.4 m, 61.0 m2); wall_h 4.01 m = its median height over the lidar ground (p10 3.59, p95 4.05) [measured, CO_Eastern_ElPaso_2018 (lidar 2018) against NAIP 2023-09-20]; skin metal [invented: the fleet's skins]; roof tan [measured class, NAIP median RGB [172, 163, 155]]"
+ },
+ {
+  "key": "s_container_a",
+  "footprint_lonlat": [
+   [
+    -104.67810387,
+    38.58927528
+   ],
+   [
+    -104.67812109,
+    38.58926627
+   ],
+   [
+    -104.67810961,
+    38.58925726
+   ],
+   [
+    -104.67808092,
+    38.58926177
+   ],
+   [
+    -104.67806944,
+    38.58925276
+   ],
+   [
+    -104.67809239,
+    38.58924375
+   ],
+   [
+    -104.678035,
+    38.58921222
+   ],
+   [
+    -104.678035,
+    38.58919421
+   ],
+   [
+    -104.67801205,
+    38.58919421
+   ],
+   [
+    -104.67800057,
+    38.58920772
+   ],
+   [
+    -104.67809239,
+    38.58927978
+   ]
+  ],
+  "wall_h_m": 2.88,
+  "roof_z_m": 4.32,
+  "skin": "metal",
+  "roof": "tan",
+  "_source": "buildings_lidar.py row 17 (outline, 13.1 x 3.9 m, 33.8 m2); wall_h 2.88 m = its median height over the lidar ground (p10 2.82, p95 2.93) [measured, CO_Eastern_ElPaso_2018 (lidar 2018) against NAIP 2023-09-20]; skin metal [invented: the fleet's skins]; roof tan [measured class, NAIP median RGB [165, 152, 136]]"
+ },
+ {
+  "key": "s_container_b",
+  "footprint_lonlat": [
+   [
+    -104.67797187,
+    38.58927078
+   ],
+   [
+    -104.67798909,
+    38.58926627
+   ],
+   [
+    -104.67797187,
+    38.58925726
+   ],
+   [
+    -104.67797761,
+    38.58924826
+   ],
+   [
+    -104.677903,
+    38.58919871
+   ],
+   [
+    -104.67788579,
+    38.58921673
+   ],
+   [
+    -104.67794318,
+    38.58926627
+   ]
+  ],
+  "wall_h_m": 3.16,
+  "roof_z_m": 4.24,
+  "skin": "metal",
+  "roof": "tan",
+  "_source": "buildings_lidar.py row 18 (outline, 11.3 x 4.2 m, 33.0 m2); wall_h 3.16 m = its median height over the lidar ground (p10 1.54, p95 3.24) [measured, CO_Eastern_ElPaso_2018 (lidar 2018) against NAIP 2023-09-20]; skin metal [invented: the fleet's skins]; roof tan [measured class, NAIP median RGB [179, 162, 147]]"
+ },
+ {
+  "key": "kart_shed_a",
+  "footprint_lonlat": [
+   [
+    -104.67774231,
+    38.59203635
+   ],
+   [
+    -104.67776527,
+    38.59203635
+   ],
+   [
+    -104.67778248,
+    38.59200932
+   ],
+   [
+    -104.67781118,
+    38.59201383
+   ],
+   [
+    -104.67779396,
+    38.59200032
+   ],
+   [
+    -104.67780544,
+    38.59199131
+   ],
+   [
+    -104.67778248,
+    38.5919868
+   ],
+   [
+    -104.67775379,
+    38.59200482
+   ],
+   [
+    -104.67771361,
+    38.59200482
+   ],
+   [
+    -104.67772509,
+    38.59204085
+   ]
+  ],
+  "wall_h_m": 3.0,
+  "roof_z_m": 1.45,
+  "skin": "metal",
+  "roof": "dark",
+  "_source": "buildings_lidar.py row 20 (outline, 9.1 x 5.5 m, 31.2 m2); wall_h 3.00 m = its median height over the lidar ground (p10 2.7, p95 3.37) [measured, CO_Eastern_ElPaso_2018 (lidar 2018) against NAIP 2023-09-20]; skin metal [invented: the fleet's skins]; roof dark [measured class, NAIP median RGB [117, 129, 115]]"
+ },
+ {
+  "key": "kart_shed_b",
+  "footprint_lonlat": [
+   [
+    -104.67787431,
+    38.59199581
+   ],
+   [
+    -104.67789153,
+    38.5919823
+   ],
+   [
+    -104.67786283,
+    38.59194176
+   ],
+   [
+    -104.67781692,
+    38.59195978
+   ],
+   [
+    -104.67786283,
+    38.59196879
+   ],
+   [
+    -104.67785135,
+    38.5919778
+   ],
+   [
+    -104.67782266,
+    38.59197329
+   ],
+   [
+    -104.67784561,
+    38.59200032
+   ]
+  ],
+  "wall_h_m": 2.64,
+  "roof_z_m": 1.2,
+  "skin": "metal",
+  "roof": "tan",
+  "_source": "buildings_lidar.py row 22 (outline, 6.9 x 5.8 m, 26.5 m2); wall_h 2.64 m = its median height over the lidar ground (p10 2.59, p95 2.75) [measured, CO_Eastern_ElPaso_2018 (lidar 2018) against NAIP 2023-09-20]; skin metal [invented: the fleet's skins]; roof tan [measured class, NAIP median RGB [201, 178, 180]]"
+ },
+ {
+  "key": "se_container_a",
+  "footprint_lonlat": [
+   [
+    -104.67588859,
+    38.58976624
+   ],
+   [
+    -104.67588859,
+    38.58974822
+   ],
+   [
+    -104.67585989,
+    38.58971219
+   ],
+   [
+    -104.67582546,
+    38.58971219
+   ],
+   [
+    -104.67586563,
+    38.58977074
+   ]
+  ],
+  "wall_h_m": 3.68,
+  "roof_z_m": 1.87,
+  "skin": "metal",
+  "roof": "tan",
+  "_source": "buildings_lidar.py row 25 (outline, 8.9 x 3.9 m, 23.2 m2); wall_h 3.68 m = its median height over the lidar ground (p10 3.61, p95 3.74) [measured, CO_Eastern_ElPaso_2018 (lidar 2018) against NAIP 2023-09-20]; skin metal [invented: the fleet's skins]; roof tan [measured class, NAIP median RGB [174, 152, 140]]"
+ },
+ {
+  "key": "se_container_b",
+  "footprint_lonlat": [
+   [
+    -104.67556146,
+    38.58985182
+   ],
+   [
+    -104.67554998,
+    38.58981128
+   ],
+   [
+    -104.67553276,
+    38.58980227
+   ],
+   [
+    -104.67554424,
+    38.58979326
+   ],
+   [
+    -104.67551555,
+    38.58979326
+   ],
+   [
+    -104.67550981,
+    38.58980678
+   ],
+   [
+    -104.67553276,
+    38.58982029
+   ],
+   [
+    -104.67552129,
+    38.5898338
+   ],
+   [
+    -104.6755385,
+    38.58985632
+   ]
+  ],
+  "wall_h_m": 2.62,
+  "roof_z_m": 0.7,
+  "skin": "metal",
+  "roof": "tan",
+  "_source": "buildings_lidar.py row 26 (outline, 8.5 x 3.9 m, 20.8 m2); wall_h 2.62 m = its median height over the lidar ground (p10 2.53, p95 2.76) [measured, CO_Eastern_ElPaso_2018 (lidar 2018) against NAIP 2023-09-20]; skin metal [invented: the fleet's skins]; roof tan [measured class, NAIP median RGB [174, 159, 145]]"
+ },
+ {
+  "key": "far_se_shed",
+  "footprint_lonlat": [
+   [
+    -104.67368478,
+    38.58868974
+   ],
+   [
+    -104.67367904,
+    38.58865821
+   ],
+   [
+    -104.67365608,
+    38.5886537
+   ],
+   [
+    -104.67366756,
+    38.58864469
+   ],
+   [
+    -104.67366182,
+    38.58863118
+   ],
+   [
+    -104.67362739,
+    38.58862668
+   ],
+   [
+    -104.6736733,
+    38.58868523
+   ],
+   [
+    -104.67366756,
+    38.58869424
+   ]
+  ],
+  "wall_h_m": 2.71,
+  "roof_z_m": -1.52,
+  "skin": "metal",
+  "roof": "tan",
+  "_source": "buildings_lidar.py row 28 (outline, 9.4 x 3.6 m, 20.0 m2); wall_h 2.71 m = its median height over the lidar ground (p10 2.67, p95 2.83) [measured, CO_Eastern_ElPaso_2018 (lidar 2018) against NAIP 2023-09-20]; skin metal [invented: the fleet's skins]; roof tan [measured class, NAIP median RGB [193, 179, 162]]"
+ },
+ {
+  "key": "far_ne_shed",
+  "footprint_lonlat": [
+   [
+    -104.67365035,
+    38.59441456
+   ],
+   [
+    -104.67360443,
+    38.59436952
+   ],
+   [
+    -104.67360443,
+    38.59438754
+   ],
+   [
+    -104.67362739,
+    38.59439204
+   ],
+   [
+    -104.67361017,
+    38.59441006
+   ],
+   [
+    -104.67362165,
+    38.59441907
+   ]
+  ],
+  "wall_h_m": 4.07,
+  "roof_z_m": 3.38,
+  "skin": "metal",
+  "roof": "tan",
+  "_source": "buildings_lidar.py row 31 (outline, 7.2 x 3.6 m, 14.0 m2); wall_h 4.07 m = its median height over the lidar ground (p10 2.81, p95 4.1) [measured, CO_Eastern_ElPaso_2018 (lidar 2018) against NAIP 2023-09-20]; skin metal [invented: the fleet's skins]; roof tan [measured class, NAIP median RGB [140, 136, 121]]"
+ }
+]

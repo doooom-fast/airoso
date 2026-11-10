@@ -13,6 +13,8 @@ lowest ground its walls stand on.
     FLOATING  contact >  FLOAT_M      (a wall bottom in the air)
     SUNKEN    contact < -SUNK_M       (the box pushed down into the ground it stands on)
     BURIED    roof - highest ground under the walls < MIN_SHOW_M   (a wall swallowed on the uphill side)
+    SET IN    (opt-in, data/house_seat.set_in.json; ledger 0083 pass 4b) a deck the plan set into its slope by
+              measurement: in place of BURIED, its top within SET_IN_TOL_M of its declared deck
 
 The prep also raises a building whose footprint straddles more relief than half its height (a cut edge) so that
 half of it stands above the highest ground under its walls (house_seat ``show``); every building in the draft is at
@@ -48,6 +50,18 @@ MAX_FLOATING = 0      # [invented]
 MAX_SUNKEN = 0        # [invented]
 MAX_BURIED = 0        # [invented]
 CELL = 8.0            # ground triangle bucket (m)
+SET_IN_TOL_M = 0.3    # [invented] a set-in deck's built top within this of its declared deck (ledger 0083 pass 4b)
+
+
+def _in_ring(ring, x, z):
+    """Pure: (x, z) of the gate frame inside a ring of Blender (x east, y north) points (the gate's z IS north)"""
+    inside = False
+    n = len(ring)
+    for k in range(n):
+        (ax, ay), (bx, by) = ring[k], ring[(k + 1) % n]
+        if (ay > z) != (by > z) and x < ax + (z - ay) * (bx - ax) / (by - ay):
+            inside = not inside
+    return inside
 
 
 def read_obj(path: Path):
@@ -193,12 +207,36 @@ def run(proj: Path, obj: Path | None = None):
         rows.append({"group": g, "x": round(cx, 1), "z": round(cz, 1), "bottom": round(bottom, 3), "top": round(top, 3),
                      "ground_low": round(min(hs), 3), "ground_high": round(max(hs), 3), "ground_mean": round(gmean, 3),
                      "contact_m": round(bottom - min(hs), 3), "show_m": round(top - max(hs), 3),
-                     "lens_buried_share": round((gmean - bottom) / max(top - bottom, 0.1), 3)})
+                     "lens_buried_share": round((gmean - bottom) / max(top - bottom, 0.1), 3),
+                     "_box": corners})
+    # SET IN (ledger 0083 pass 4b, opt-in: data/house_seat.set_in.json, written by tools/author_bespoke_blend.py for a planned
+    # row the plan set into its slope): a deck built into a hill stands with its uphill wall in the hill by measurement (Del
+    # Mar's two garages: the top deck at the uphill grade, the downhill face 13 m tall). Its island is judged floating and
+    # sunken as every building, and in place of BURIED its top must be its declared deck's within SET_IN_TOL_M
+    decks = []
+    sp = proj / "data" / "house_seat.set_in.json"
+    if sp.exists():
+        decks = json.loads(sp.read_text(encoding="utf-8")).get("decks", [])
+    for r in rows:
+        # a deck's parts share their walls, so the gate (which joins faces by position) reads one island per deck: an
+        # island is a declared deck's when its wall corners ARE that deck's ring (the author stands the walls on it), and
+        # its top is the highest of the parts it holds. A building merely standing inside a deck's outline is not set in
+        corners = r.pop("_box")
+        mine = [dk for dk in decks if sum(1 for p in dk["ring_xy"] if any(abs(p[0] - cx) < 0.05 and abs(p[1] - cz) < 0.05
+                                                                          for cx, cz in corners)) >= 3]
+        if mine:
+            r["set_in"] = "+".join(dk["key"] for dk in mine)
+            r["deck_off_m"] = round(r["top"] - max(dk["deck_top"] for dk in mine), 3)
+    for r in rows:
+        r.pop("_box", None)
     floating = [r for r in rows if r["contact_m"] > FLOAT_M]
     sunken = [r for r in rows if r["contact_m"] < -SUNK_M]
-    buried = [r for r in rows if r["show_m"] < MIN_SHOW_M]
+    buried = [r for r in rows if (abs(r["deck_off_m"]) > SET_IN_TOL_M if "set_in" in r else r["show_m"] < MIN_SHOW_M)]
     share = sorted(r["lens_buried_share"] for r in rows)
     rep = {"obj": str(obj), "buildings": len(rows), "no_ground": no_ground,
+           "set_in": {"declared": len(decks), "judged": sum(1 for r in rows if "set_in" in r),
+                      "rows": [{k: r[k] for k in ("set_in", "x", "z", "top", "deck_off_m", "contact_m", "ground_low", "ground_high")}
+                               for r in rows if "set_in" in r]},
            "floating": len(floating), "sunken": len(sunken), "buried": len(buried),
            "limits": {"FLOAT_M": FLOAT_M, "SUNK_M": SUNK_M, "MIN_SHOW_M": MIN_SHOW_M, "STEP_M": STEP_M,
                       "MAX_FLOATING": MAX_FLOATING, "MAX_SUNKEN": MAX_SUNKEN, "MAX_BURIED": MAX_BURIED},
@@ -230,6 +268,11 @@ def main(argv=None):
           f"sunken (> {SUNK_M:g} m below): {rep['sunken']} (limit {MAX_SUNKEN}); buried (roof < {MIN_SHOW_M:g} m over "
           f"the highest ground under the walls): {rep['buried']} (limit {MAX_BURIED}); lowest roof over that ground "
           f"{rep['show_m_min']} m")
+    if rep["set_in"]["declared"]:
+        print(f"[houses] set in their slope (data/house_seat.set_in.json): {rep['set_in']['declared']} declared, "
+              f"{rep['set_in']['judged']} judged against their deck (within {SET_IN_TOL_M:g} m), not their uphill ground: "
+              + ", ".join(f"{r['set_in']} top {r['deck_off_m']:+.2f} m off its deck, ground {r['ground_low']}..{r['ground_high']}"
+                          for r in rep["set_in"]["rows"]))
     for r in rep["worst_floating"][:5] + rep["worst_sunken"][:5] + rep["worst_buried"][:5]:
         print(f"[houses]   {r['group']} ({r['x']}, {r['z']}): contact {r['contact_m']:+.2f} m, roof over the highest "
               f"ground {r['show_m']:+.2f} m, ground {r['ground_low']}..{r['ground_high']}, bottom {r['bottom']}")

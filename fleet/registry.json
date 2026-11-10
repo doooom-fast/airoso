@@ -40,6 +40,8 @@
       "tracks_glob": [
         "tracks/aspen-lm/track.config.json",
         "tracks/aspen/track.config.json",
+        "tracks/del-mar-lm/track.config.json",
+        "tracks/del-mar/track.config.json",
         "tracks/exotics-racing-lv-lm/track.config.json",
         "tracks/exotics-racing-lv/track.config.json",
         "tracks/grand-junction-lm/track.config.json",

@@ -1,0 +1,15 @@
+{
+ "query": "[out:json][timeout:120];(way[\"building\"](32.967505,-117.265841,32.982193,-117.246463);relation[\"building\"](32.967505,-117.265841,32.982193,-117.246463););out geom;",
+ "server": "https://overpass-api.de/api/interpreter",
+ "osm_base": "2026-11-06T17:15:36Z",
+ "bbox_swne": [
+  32.967505,
+  -117.265841,
+  32.982193,
+  -117.246463
+ ],
+ "bbox_doc": "the lap (tracks/del-mar/data/centerline.geojson) + 600 m",
+ "ways": 373,
+ "relation_outer_rings": 2,
+ "_doc": "ledger 0083 buildings pass 1: the pipeline's phase-1 OSM query (ODbL, (c) OpenStreetMap contributors)"
+}

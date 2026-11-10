@@ -22,7 +22,13 @@ y = N, z = up). The collection is emptied first, so the tool is idempotent, and 
   blocks      [{"file": "source/bespoke/buildings.json", "auto": true, "replace": ["HOUSE", "BUILDING"]}] or inline {"key", "footprint_lonlat", "wall_h_m", "skin",
               "roof", "form", "ridge_h_m", "off_terrain"}: "form" (tools/plan_buildings.py) = flat | flat_parapet (a PARAPET_M lip
               round the roof) | hip | gable (the ridge along the long axis of the footprint's oriented box, ridge_h_m over the
-              level; a ring that fills less than RECT_FILL of its box is roofed flat instead); "off_terrain" = a far backdrop past the built ground: it stands at the nearest ground's
+              level; a ring that fills less than RECT_FILL of its box is roofed flat instead) | posts (ledger 0083 pass 3, opt-in
+              by a planned row only: an open-sided roof, canopy_on_posts, one welded island BUILDING_METAL_CANOPY_<k>, no walls,
+              no collider, refused within COLLIDER_REACH_M of the lap) | shed (ledger 0083 pass 4, by a planned row only: one
+              measured plane, "plane" {"ref_lonlat", "h_m", "gx", "gy"}; the walls rise to it, the roof is the ring on it).
+              Planned-row keys of pass 4, each absent = as before: "parapet_m" (a measured parapet, in place of PARAPET_M),
+              "ridge_axis": "short" (a gable's measured ridge across the box), "roof": "NAIP" + "roof_uv" (the measured
+              colour's cell of the plan's palette: ROOFTOP_NAIP_<k>, bound by the track's texture_overrides ROOF key); "off_terrain" = a far backdrop past the built ground: it stands at the nearest ground's
               height with OFF_TERRAIN_SKIRT_M more wall below -> FARBLOCK_<SKIN>_<k>, no collider: never a GrassFX occluder (the
               TDR lesson in scripts/ac/ext_config.py) and never read by the seat gate. "replace": the scene's own meshes of these exact
               names (the v021 assembler's HOUSE / BUILDING boxes on Lake Murray) are removed first, so the pipeline's stand alone. Any ring, flat roof, walls batched by skin -> BUILDING_TILTUP_<k> / BUILDING_METAL_<k> /
@@ -112,6 +118,9 @@ PARAPET_M = 0.7                # [invented] a flat commercial roof's parapet, as
 # (scenery.bespoke.prep_seats true) the block is authored AT the floor so the prep moves its walls by nothing and the roof, another
 # object the prep never touches, stays on them; where it does not, the walls carry on down to the foundation themselves
 PREP_SINK_M, PREP_SHOW, PREP_FOOT_M = 0.4, 0.5, 0.15
+SET_IN_SUFFIX = "_SETIN"       # ledger 0083 pass 4b: a set-in deck's walls, BUILDING_<SKIN>_SETIN_<k> (pbr binds BUILDING_<SKIN>)
+SET_IN_LIFT_M = 1.0            # their object transform (the same world positions): the prep's house seat leaves them be
+ELEV0 = 0.0                    # the origin's NAVD88 height (centerline.local.json), set in main
 RECT_FILL = 0.82               # [invented] a ring filling less of its oriented box than this is not a rectangle: flat roof
 PAD_CELL_M = 4.0               # [invented] a cell of a draped pad
 PAD_LIFT_M = 0.06              # [invented] above the ground, under any kerb
@@ -542,6 +551,51 @@ class Batcher:
             self.v, self.f, self.uv = [], [], []
 
 
+CANOPY_SLAB_M = 0.3            # [invented] an open-sided roof's slab: its top is the measured roof, its soffit this under it
+CANOPY_POST_W = 0.3            # [invented] a canopy post's square section
+CANOPY_POST_M = 6.0            # [invented] posts at every ring corner and at most this far apart along an edge
+
+
+def canopy_on_posts(ring, bottom, top, slab=CANOPY_SLAB_M, post_w=CANOPY_POST_W, step=CANOPY_POST_M):
+    """Pure: the "posts" form (ledger 0083 pass 3): an open-sided roof (a pavilion, a fuel canopy). ``ring`` counter-clockwise
+    seen from above; the slab is the ring extruded from ``top - slab`` to ``top``; a square post stands at every ring corner
+    and every ``step`` along each edge, from ``bottom`` to the soffit, inside the ring. Each post's outer top corner IS a
+    slab vertex (shared index), so posts and slab are ONE island: the prep re-seats it by its feet (the lowest vertices)
+    and tools/house_seat_check.py judges it by them. Returns (verts, faces, uvs, n_posts); no walls, no collider."""
+    pts = []
+    for i, a in enumerate(ring):
+        b = ring[(i + 1) % len(ring)]
+        n = max(1, math.ceil(math.dist(a, b) / step))
+        pts += [(a[0] + (b[0] - a[0]) * k / n, a[1] + (b[1] - a[1]) * k / n) for k in range(n)]
+    m = len(pts)
+    soffit = top - slab
+    verts = [(x, y, soffit) for x, y in pts] + [(x, y, top) for x, y in pts]
+    faces, uvs = [], []
+    for i in range(m):                                         # the slab's edge band
+        j = (i + 1) % m
+        faces.append((i, j, m + j, m + i))
+        uvs.append(((0.0, 0.0), (1.0, 0.0), (1.0, slab), (0.0, slab)))
+    faces.append(tuple(range(m, 2 * m)))                        # top, facing up (ccw)
+    uvs.append(tuple((x / 4.0, y / 4.0) for x, y in pts))
+    faces.append(tuple(range(m - 1, -1, -1)))                   # soffit, facing down
+    uvs.append(tuple((pts[i][0] / 4.0, pts[i][1] / 4.0) for i in range(m - 1, -1, -1)))
+    for i in range(m):
+        a, b = pts[i], pts[(i + 1) % m]
+        L = math.dist(a, b) or 1.0
+        e1 = ((b[0] - a[0]) / L, (b[1] - a[1]) / L)
+        e2 = (-e1[1], e1[0])                                    # inward for a counter-clockwise ring
+        q = [a, (a[0] + e1[0] * post_w, a[1] + e1[1] * post_w),
+             (a[0] + (e1[0] + e2[0]) * post_w, a[1] + (e1[1] + e2[1]) * post_w), (a[0] + e2[0] * post_w, a[1] + e2[1] * post_w)]
+        o = len(verts)
+        verts += [(x, y, bottom) for x, y in q] + [(x, y, soffit) for x, y in q[1:]]
+        tops = [i, o + 4, o + 5, o + 6]                         # the outer top corner is the slab's own vertex i
+        for k in range(4):
+            kk = (k + 1) % 4
+            faces.append((o + k, o + kk, tops[kk], tops[k]))
+            uvs.append(((0.0, 0.0), (post_w, 0.0), (post_w, top - bottom), (0.0, top - bottom)))
+    return verts, faces, uvs, m
+
+
 def ring_points(ring, step=2.0):
     """a ring of any shape walked every ``step`` m + a grid of interior points"""
     pts = []
@@ -603,8 +657,10 @@ def blocks(col, spec, proj, to_xy, ground, near_ground, paved, walls, bad):
                 why = "no ground under part of its walls"
             else:
                 lo, hi, mean = min(gs), max(gs), sum(gs) / len(gs)
-                limit = max(MAX_RELIEF_M, wall_h * AUTO_RELIEF_SHARE) if auto else MAX_RELIEF_M
-                if hi - lo > limit:
+                # a shed's (ledger 0083 pass 4) walls rise from its low eave to its high one: its mean wall is the share's measure
+                wall_m = (wall_h + float(b.get("ridge_h_m", wall_h))) / 2 if b.get("form") == "shed" else wall_h
+                limit = max(MAX_RELIEF_M, wall_m * AUTO_RELIEF_SHARE) if auto else MAX_RELIEF_M
+                if hi - lo > limit and not b.get("set_in"):   # a set-in deck (pass 4b) stands in the relief it was measured in
                     why = f"{hi - lo:.1f} m of relief under it"
                 elif any(down(paved, x, y) is not None for x, y in rim + inner):
                     why = "on a road or kerb"
@@ -627,7 +683,8 @@ def blocks(col, spec, proj, to_xy, ground, near_ground, paved, walls, bad):
             skin = str(b.get("skin", "tiltup")).upper()
             bay = TILE_BAY[skin]
             form = str(b.get("form", "flat"))
-            total_h = wall_h + (max(0.0, float(b.get("ridge_h_m", wall_h)) - wall_h) if form in ("hip", "gable") else (PARAPET_M if form == "flat_parapet" else 0.0))
+            par_m = float(b.get("parapet_m", PARAPET_M))      # a planned row's MEASURED parapet (ledger 0083 pass 4), else PARAPET_M
+            total_h = wall_h + (max(0.0, float(b.get("ridge_h_m", wall_h)) - wall_h) if form in ("hip", "gable", "shed") else (par_m if form == "flat_parapet" else 0.0))
             floor = max(mean - PREP_SINK_M, hi - (1.0 - PREP_SHOW) * total_h)         # the prep's floor, see PREP_SINK_M
             if off:
                 bottom, eave = lo - BOTTOM_UNDER_M, lo - BOTTOM_UNDER_M + wall_h
@@ -635,19 +692,56 @@ def blocks(col, spec, proj, to_xy, ground, near_ground, paved, walls, bad):
                 bottom, eave = floor, floor + wall_h
             else:
                 bottom, eave = min(floor, lo - PREP_FOOT_M), floor + wall_h
+            set_in = b.get("set_in") if not off else None
+            if set_in:
+                # set into the slope (ledger 0083 pass 4b, a planned row's "set_in"): every height of the row is over its MEASURED
+                # low ground, at that ground's own height (NAVD88 less the origin's); the walls run down to the real ground on
+                # every side (PREP_FOOT_M under the lowest under its walls), so the uphill side stands in the hill as built
+                floor = float(set_in["ground_navd88"]) - ELEV0
+                bottom, eave = min(floor, lo) - PREP_FOOT_M, floor + wall_h
             n = len(ring)
+            if form == "posts":
+                # an open-sided roof on posts (ledger 0083 pass 3), opt-in: only a planned row whose form names it
+                # (tools/plan_buildings.py's plan key canopy_posts, a MEASURED roof only). One welded island per canopy,
+                # ribbed metal; no walls, no collider (a canopy within COLLIDER_REACH_M of the lap is refused instead)
+                reach = min(math.hypot(x - q[0], y - q[2]) for x, y in ring[:: max(1, n // 4)] for q in lap[::4])
+                if reach <= COLLIDER_REACH_M or off:
+                    (dropped if auto else bad).append(f"block {key}: a canopy on posts {reach:.0f} m from the lap"
+                                                      f"{' (off the ground)' if off else ''}: no post collider yet")
+                    continue
+                cv, cf, cu, n_posts = canopy_on_posts(ring, bottom, eave)
+                cb = walls_by.setdefault(("CANOPY", off), Batcher(col, "BUILDING_METAL_CANOPY"))
+                cb.room(len(cv))
+                cb.add(cv, cf, cu)
+                rows.append({"key": key, "skin": "METAL", "roof": "METAL", "form": f"posts ({n_posts}), slab {CANOPY_SLAB_M} m",
+                             "wall_h_m": wall_h, "ground": [round(lo, 2), round(hi, 2)], "bottom": round(bottom, 2),
+                             "eave": round(eave, 2), "off_terrain": off, "collider": False})
+                continue
             cx_, cy_ = sum(p[0] for p in ring) / n, sum(p[1] for p in ring) / n
-            batch = walls_by.setdefault((skin, off), Batcher(col, f"FARBLOCK_{skin}" if off else f"BUILDING_{skin}"))
+            if set_in:
+                batch = walls_by.setdefault((skin, "set_in"), Batcher(col, f"BUILDING_{skin}{SET_IN_SUFFIX}"))
+            else:
+                batch = walls_by.setdefault((skin, off), Batcher(col, f"FARBLOCK_{skin}" if off else f"BUILDING_{skin}"))
             batch.room(5 * n)
             bay_h0 = (floor - bottom) if not off else 0.0        # the wall tile starts at the floor: the foundation shows the tile below it
-            batch_v = [(x, y, bottom) for x, y in ring] + [(x, y, eave) for x, y in ring]
+            tops = [eave] * n
+            if form == "shed":
+                # one measured plane (ledger 0083 pass 4, a planned row's "plane"): the walls rise to it at every ring vertex and
+                # the roof IS the ring at those heights. h_m over the level at ref_lonlat, gx / gy per metre east / north
+                pl = b["plane"]
+                rx, ry = to_xy(pl["ref_lonlat"])
+                base_z = eave - wall_h
+                tops = [base_z + float(pl["h_m"]) + float(pl["gx"]) * (x - rx) + float(pl["gy"]) * (y - ry) for x, y in ring]
+                tops = [max(t, base_z + 0.3) for t in tops]
+            batch_v = [(x, y, bottom) for x, y in ring] + [(x, y, t) for (x, y), t in zip(ring, tops)]
             faces, uvs, arc = [], [], 0.0
             h = eave - bottom
             for i in range(n):
                 j = (i + 1) % n
                 w = math.dist(ring[i], ring[j])
                 faces.append((i, j, n + j, n + i))
-                uvs.append(((arc / bay, -bay_h0 / bay), ((arc + w) / bay, -bay_h0 / bay), ((arc + w) / bay, (h - bay_h0) / bay), (arc / bay, (h - bay_h0) / bay)))
+                hi_, hj_ = tops[i] - bottom, tops[j] - bottom
+                uvs.append(((arc / bay, -bay_h0 / bay), ((arc + w) / bay, -bay_h0 / bay), ((arc + w) / bay, (hj_ - bay_h0) / bay), (arc / bay, (hi_ - bay_h0) / bay)))
                 arc += w
             if form == "flat_parapet":
                 # the parapet carries on from the eave ring's OWN vertices (one island: the prep re-seats a building by island),
@@ -657,9 +751,9 @@ def blocks(col, spec, proj, to_xy, ground, near_ground, paved, walls, bad):
                     d = math.hypot(cx_ - x, cy_ - y) or 1.0
                     inset.append((x + (cx_ - x) / d * 0.25, y + (cy_ - y) / d * 0.25))
                 top_o = len(batch_v)
-                batch_v += [(x, y, eave + PARAPET_M) for x, y in ring]
+                batch_v += [(x, y, eave + par_m) for x, y in ring]
                 top_i = len(batch_v)
-                batch_v += [(x, y, eave + PARAPET_M) for x, y in inset]
+                batch_v += [(x, y, eave + par_m) for x, y in inset]
                 bot_i = len(batch_v)
                 batch_v += [(x, y, eave) for x, y in inset]
                 arc = 0.0
@@ -667,27 +761,38 @@ def blocks(col, spec, proj, to_xy, ground, near_ground, paved, walls, bad):
                     j = (i + 1) % n
                     w = math.dist(ring[i], ring[j])
                     faces += [(n + i, n + j, top_o + j, top_o + i), (top_o + i, top_o + j, top_i + j, top_i + i), (top_i + i, top_i + j, bot_i + j, bot_i + i)]
-                    uvs += [((arc / bay, (h - bay_h0) / bay), ((arc + w) / bay, (h - bay_h0) / bay), ((arc + w) / bay, (h - bay_h0 + PARAPET_M) / bay), (arc / bay, (h - bay_h0 + PARAPET_M) / bay))] * 3
+                    uvs += [((arc / bay, (h - bay_h0) / bay), ((arc + w) / bay, (h - bay_h0) / bay), ((arc + w) / bay, (h - bay_h0 + par_m) / bay), (arc / bay, (h - bay_h0 + par_m) / bay))] * 3
                     arc += w
             batch.add(batch_v, faces, uvs)
             rclass = str(b.get("roof", "white")).upper()
             rb = roofs_by.setdefault(rclass, Batcher(col, f"ROOFTOP_{rclass}"))
             rtile = ROOF_TILE_M.get(rclass, ROOF_TILE_DEFAULT_M)
             obb = oriented_box(ring)
+            if obb is not None and b.get("ridge_axis") == "short":
+                # a gable whose MEASURED ridge runs across the footprint (ledger 0083 pass 4): the box turned a quarter, the
+                # same right-handed turn oriented_box makes, so the windings still face up and out
+                obb = dict(obb, u=obb["v"], v=(-obb["u"][0], -obb["u"][1]), hw=obb["hh"], hh=obb["hw"])
             if form in ("hip", "gable") and obb is not None and obb["fill"] >= RECT_FILL:
                 ridge_z = max(eave + 0.3, bottom + float(b.get("ridge_h_m", wall_h + 1.0)))
                 rv, rf, ruv = pitched_roof(obb, eave, ridge_z, form, rtile)
                 rb.room(len(rv))
+                if rclass == "NAIP":
+                    ruv = [tuple(naip_uv(b["roof_uv"], ring, (p[0], p[1])) for p in (rv[i] for i in f)) for f in rf]
                 rb.add(rv, rf, ruv)
-                roof_note = f"{form} ridge {ridge_z - (eave - wall_h):.1f} m"
+                roof_note = f"{form} ridge {ridge_z - (eave - wall_h):.1f} m" + (" across" if b.get("ridge_axis") == "short" else "")
             else:
                 rb.room(n)
                 tris = tessellate_polygon([[Vector((x, y, 0.0)) for x, y in ring]])
                 ruv = [(x / rtile, y / rtile) for x, y in ring]
-                rb.add([(x, y, eave) for x, y in ring], [tuple(t) for t in tris], [tuple(ruv[i] for i in t) for t in tris])
+                if rclass == "NAIP":
+                    ruv = [naip_uv(b["roof_uv"], ring, p) for p in ring]
+                top_z = tops if form == "shed" else [eave] * n
+                rb.add([(x, y, z) for (x, y), z in zip(ring, top_z)], [tuple(t) for t in tris], [tuple(ruv[i] for i in t) for t in tris])
                 roof_note = "flat"
                 if form == "flat_parapet":
-                    roof_note = f"flat, parapet {PARAPET_M} m"
+                    roof_note = f"flat, parapet {par_m} m"
+                elif form == "shed":
+                    roof_note = f"shed {min(tops) - (eave - wall_h):.1f}..{max(tops) - (eave - wall_h):.1f} m"
             # a collider only within COLLIDER_REACH_M of the lap, on fine ground: drive_test culls ground triangles by centroid around a
             # wall's cell, so past the corridor's fine terrain a coarse triangle under a wall is culled and the wall reads floating 99.
             # Past that reach no lap is near it, so it is left see-through
@@ -721,6 +826,10 @@ def blocks(col, spec, proj, to_xy, ground, near_ground, paved, walls, bad):
                              [((0.0, 0.0), (1.0, 0.0), (1.0, 1.0), (0.0, 1.0))] * m)
             rows.append({"key": key, "skin": skin, "roof": rclass, "form": roof_note, "wall_h_m": wall_h, "ground": [round(lo, 2), round(hi, 2)],
                          "bottom": round(bottom, 2), "eave": round(eave, 2), "off_terrain": off, "collider": footed})
+            if set_in:
+                rows[-1]["set_in"] = {"ground_navd88": float(set_in["ground_navd88"]), "floor": round(floor, 3),
+                                      "deck_top": round(max(tops), 3), "deck_low": round(min(tops), 3),
+                                      "ring_xy": [[round(x, 3), round(y, 3)] for x, y in ring]}
             if not auto:
                 print(f"[bespoke] block {key}: {skin}, walls {wall_h:.1f} m, {roof_note}, ground {lo:.2f}..{hi:.2f}, bottom {bottom:.2f}, eave {eave:.2f}")
         n_kept, n_drop = len(rows) - kept0, len(dropped) - drop0
@@ -741,6 +850,17 @@ def blocks(col, spec, proj, to_xy, ground, near_ground, paved, walls, bad):
                 bad.append(f"{group['file']}: {n_drop} of {n_kept + n_drop} planned buildings refused (> {AUTO_DROP_MAX:.0%})")
     for b in list(walls_by.values()) + list(roofs_by.values()) + [collider]:
         b.flush()
+    # a set-in deck's walls (ledger 0083 pass 4b) are not re-seated by the prep: engine-july's house seat (build_kn5_loop)
+    # seats only a BUILDING mesh at the identity transform ("not the draft's own mesh: left to the delta ride") and would
+    # lift a deck set into a hill until half of it stood over its uphill ground. The same world positions, carried by an
+    # object lift of SET_IN_LIFT_M, keep the measured placement; the delta ride moves it only by the prep's own ground
+    # change under it (none past the corridor the prep reshapes)
+    for ob in list(col.objects):
+        if ob.type == "MESH" and SET_IN_SUFFIX in ob.name:
+            for v in ob.data.vertices:
+                v.co.z -= SET_IN_LIFT_M
+            ob.location.z += SET_IN_LIFT_M
+            ob.data.update()
     return rows
 
 
@@ -769,6 +889,16 @@ def oriented_box(ring):
     if hw < hh:                      # u along the long side
         u, v, hw, hh = v, (-u[0], -u[1]), hh, hw
     return {"c": c, "u": u, "v": v, "hw": hw, "hh": hh, "fill": area / (4 * hw * hh)}
+
+
+def naip_uv(rect, ring, p):
+    """Pure: a roof vertex's UV in its MEASURED colour's palette cell (ledger 0083 pass 4, tools/plan_buildings.py roof_palette):
+    the footprint's box mapped onto the cell's inner rect [u0, v0, u1, v1], so the roof reads one solid colour and its UVs
+    still span a real area (no degenerate tangents)"""
+    xs, ys = [q[0] for q in ring], [q[1] for q in ring]
+    w, h = (max(xs) - min(xs)) or 1.0, (max(ys) - min(ys)) or 1.0
+    s, t = min(1.0, max(0.0, (p[0] - min(xs)) / w)), min(1.0, max(0.0, (p[1] - min(ys)) / h))
+    return (rect[0] + (rect[2] - rect[0]) * s, rect[1] + (rect[3] - rect[1]) * t)
 
 
 def pitched_roof(obb, eave, ridge_z, form, tile):
@@ -1074,8 +1204,9 @@ def main():
         return
     origin = json.loads((proj / "data" / "centerline.local.json").read_text(encoding="utf-8"))["origin"]
     to_xy = lonlat_to_xy(origin)
-    global GROUND, GROUND_FAR, PAVED, TRACK_EDGE, CONE_GROUND, WALLS, PREP_SEATS
+    global GROUND, GROUND_FAR, PAVED, TRACK_EDGE, CONE_GROUND, WALLS, PREP_SEATS, ELEV0
     PREP_SEATS = bool(spec.get("prep_seats", False))
+    ELEV0 = float(origin.get("elev_m", 0.0))
     names = spec.get("names") or {}
     GROUND = tuple(names.get("ground", GROUND))
     GROUND_FAR = tuple(names.get("far", GROUND_FAR)) + GROUND
@@ -1119,6 +1250,16 @@ def main():
     if bad:
         raise SystemExit("[bespoke] self-check FAILED (loop.blend not saved): " + "; ".join(bad))
     (proj / "data" / "bespoke.report.json").write_text(json.dumps(report, indent=1), encoding="utf-8")
+    # the set-in decks (ledger 0083 pass 4b) declared for tools/house_seat_check.py, which judges each against its own
+    # measured deck instead of its uphill ground; no set-in deck = no file (and a stale one removed)
+    si = [{"key": r["key"], **r["set_in"]} for r in report.get("blocks", []) if r.get("set_in")]
+    sp = proj / "data" / "house_seat.set_in.json"
+    if si:
+        sp.write_text(json.dumps({"_doc": "ledger 0083 pass 4b: decks set into their slope by tools/author_bespoke_blend.py "
+                                          "(rows with set_in); Blender frame (x east, y north, z up)", "decks": si}, indent=1),
+                      encoding="utf-8")
+    elif sp.exists():
+        sp.unlink()
     bpy.ops.wm.save_mainfile(filepath=str(proj / "loop.blend"))
     print(f"[bespoke] saved loop.blend: {len(col.objects)} objects in {COLLECTION}; {len(report['buildings'])} buildings, "
           f"{len(report.get('blocks', []))} blocks, {len(report.get('cones', []))} cones, {len(report.get('scrub', []))} scrub clumps")

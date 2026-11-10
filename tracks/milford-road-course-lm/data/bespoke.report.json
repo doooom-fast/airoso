@@ -112,10 +112,10 @@
    "form": "flat",
    "wall_h_m": 10.0,
    "ground": [
-    8.72,
-    14.42
+    12.8,
+    14.46
    ],
-   "bottom": 8.57,
+   "bottom": 12.65,
    "eave": 24.25,
    "off_terrain": true,
    "collider": false
@@ -127,11 +127,11 @@
    "form": "flat",
    "wall_h_m": 11.0,
    "ground": [
-    -0.13,
-    11.72
+    9.27,
+    12.31
    ],
-   "bottom": -0.28,
-   "eave": 10.72,
+   "bottom": 9.12,
+   "eave": 20.12,
    "off_terrain": true,
    "collider": false
   },
@@ -172,10 +172,10 @@
    "form": "flat",
    "wall_h_m": 12.09,
    "ground": [
-    42.42,
-    48.08
+    45.83,
+    48.42
    ],
-   "bottom": 42.27,
+   "bottom": 45.68,
    "eave": 60.22,
    "off_terrain": true,
    "collider": false
@@ -187,10 +187,10 @@
    "form": "flat",
    "wall_h_m": 13.06,
    "ground": [
-    24.0,
-    41.41
+    38.65,
+    46.66
    ],
-   "bottom": 23.85,
+   "bottom": 38.5,
    "eave": 55.2,
    "off_terrain": true,
    "collider": false
@@ -202,10 +202,10 @@
    "form": "flat",
    "wall_h_m": 7.85,
    "ground": [
-    34.44,
-    38.48
+    37.52,
+    38.77
    ],
-   "bottom": 34.29,
+   "bottom": 37.37,
    "eave": 46.51,
    "off_terrain": true,
    "collider": false
@@ -232,10 +232,10 @@
    "form": "flat",
    "wall_h_m": 6.3,
    "ground": [
-    15.08,
-    18.14
+    33.8,
+    34.14
    ],
-   "bottom": 14.93,
+   "bottom": 33.65,
    "eave": 40.13,
    "off_terrain": true,
    "collider": false
@@ -247,10 +247,10 @@
    "form": "flat",
    "wall_h_m": 6.29,
    "ground": [
-    17.99,
-    20.88
+    33.79,
+    34.13
    ],
-   "bottom": 17.84,
+   "bottom": 33.64,
    "eave": 40.14,
    "off_terrain": true,
    "collider": false
@@ -262,10 +262,10 @@
    "form": "flat",
    "wall_h_m": 8.45,
    "ground": [
-    14.89,
-    17.97
+    33.8,
+    34.38
    ],
-   "bottom": 14.74,
+   "bottom": 33.65,
    "eave": 42.29,
    "off_terrain": true,
    "collider": false
@@ -277,10 +277,10 @@
    "form": "flat",
    "wall_h_m": 10.67,
    "ground": [
-    17.52,
-    19.78
+    33.84,
+    34.3
    ],
-   "bottom": 17.37,
+   "bottom": 33.69,
    "eave": 44.54,
    "off_terrain": true,
    "collider": false
@@ -292,26 +292,11 @@
    "form": "flat",
    "wall_h_m": 8.1,
    "ground": [
-    14.79,
-    17.05
+    39.15,
+    39.51
    ],
-   "bottom": 14.64,
+   "bottom": 39.0,
    "eave": 47.56,
-   "off_terrain": true,
-   "collider": false
-  },
-  {
-   "key": "mpg_nw_complex_0",
-   "skin": "TILTUP",
-   "roof": "WHITE",
-   "form": "flat",
-   "wall_h_m": 5.11,
-   "ground": [
-    7.4,
-    12.67
-   ],
-   "bottom": 7.25,
-   "eave": 25.91,
    "off_terrain": true,
    "collider": false
   },
@@ -322,10 +307,10 @@
    "form": "flat",
    "wall_h_m": 5.72,
    "ground": [
-    11.94,
-    13.38
+    23.96,
+    26.05
    ],
-   "bottom": 11.79,
+   "bottom": 23.81,
    "eave": 30.39,
    "off_terrain": true,
    "collider": false
@@ -337,10 +322,10 @@
    "form": "flat",
    "wall_h_m": 7.31,
    "ground": [
-    9.26,
-    11.97
+    20.49,
+    25.91
    ],
-   "bottom": 9.11,
+   "bottom": 20.34,
    "eave": 30.41,
    "off_terrain": true,
    "collider": false
@@ -352,10 +337,10 @@
    "form": "flat",
    "wall_h_m": 8.42,
    "ground": [
-    9.79,
-    12.4
+    22.19,
+    28.06
    ],
-   "bottom": 9.64,
+   "bottom": 22.04,
    "eave": 33.37,
    "off_terrain": true,
    "collider": false
@@ -367,10 +352,10 @@
    "form": "flat",
    "wall_h_m": 8.67,
    "ground": [
-    11.93,
-    13.69
+    25.69,
+    26.93
    ],
-   "bottom": 11.78,
+   "bottom": 25.54,
    "eave": 33.39,
    "off_terrain": true,
    "collider": false
@@ -382,10 +367,10 @@
    "form": "flat",
    "wall_h_m": 7.42,
    "ground": [
-    12.24,
-    13.86
+    25.83,
+    28.08
    ],
-   "bottom": 12.09,
+   "bottom": 25.68,
    "eave": 33.36,
    "off_terrain": true,
    "collider": false
@@ -397,10 +382,10 @@
    "form": "flat",
    "wall_h_m": 8.55,
    "ground": [
-    7.08,
-    10.18
+    20.38,
+    28.81
    ],
-   "bottom": 6.93,
+   "bottom": 20.23,
    "eave": 33.36,
    "off_terrain": true,
    "collider": false
@@ -412,10 +397,10 @@
    "form": "flat",
    "wall_h_m": 12.91,
    "ground": [
-    7.33,
-    13.36
+    19.99,
+    26.0
    ],
-   "bottom": 7.18,
+   "bottom": 19.84,
    "eave": 35.17,
    "off_terrain": true,
    "collider": false
@@ -427,10 +412,10 @@
    "form": "flat",
    "wall_h_m": 8.8,
    "ground": [
-    7.6,
-    13.33
+    29.02,
+    30.44
    ],
-   "bottom": 7.45,
+   "bottom": 28.87,
    "eave": 37.97,
    "off_terrain": true,
    "collider": false
@@ -442,10 +427,10 @@
    "form": "flat",
    "wall_h_m": 8.71,
    "ground": [
-    10.22,
-    16.89
+    27.02,
+    30.39
    ],
-   "bottom": 10.07,
+   "bottom": 26.87,
    "eave": 37.97,
    "off_terrain": true,
    "collider": false
@@ -457,10 +442,10 @@
    "form": "flat",
    "wall_h_m": 7.07,
    "ground": [
-    17.26,
-    19.97
+    30.21,
+    30.5
    ],
-   "bottom": 17.11,
+   "bottom": 30.06,
    "eave": 37.41,
    "off_terrain": true,
    "collider": false
@@ -472,10 +457,10 @@
    "form": "flat",
    "wall_h_m": 7.21,
    "ground": [
-    18.42,
-    20.72
+    29.85,
+    30.52
    ],
-   "bottom": 18.27,
+   "bottom": 29.7,
    "eave": 37.47,
    "off_terrain": true,
    "collider": false
@@ -487,10 +472,10 @@
    "form": "flat",
    "wall_h_m": 12.77,
    "ground": [
-    7.95,
-    13.39
+    27.06,
+    29.98
    ],
-   "bottom": 7.8,
+   "bottom": 26.91,
    "eave": 39.84,
    "off_terrain": true,
    "collider": false

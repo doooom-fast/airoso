@@ -21,6 +21,11 @@
   "walk": 0,
   "building": 0
  },
- "surface_materials": "1GRASS_0_mat, 1GRASS_1_mat, 1GRASS_2_mat, 1GRASS_3_mat, 1GRASS_4_mat, 1GRASS_5_mat, 1GRASS_6_mat, 1GRASS_7_mat, 1ROAD_road_mat",
- "north": null
+ "surface_materials": "1GRASS_0_mat, 1GRASS_1_mat, 1GRASS_2_mat, 1GRASS_3_mat, 1GRASS_4_mat, 1GRASS_5_mat, 1GRASS_6_mat, 1GRASS_7_mat, 1GRASS_LIDAR_mat, 1ROAD_road_mat",
+ "north": null,
+ "planted_far_seat": {
+  "reseated": 7656,
+  "no_ground": 0,
+  "inside_grid": 3591
+ }
 }

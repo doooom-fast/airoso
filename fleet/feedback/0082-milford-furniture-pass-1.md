@@ -1644,3 +1644,24 @@ ring height on a measured cell (a plane through 2017 ground returns), the datum 
    would move the ground the lap was built and gated on, so its own pass with every gate again and Kevin's drive.
 4. **Downloads F.10 a / b** (Kevin's yes): the north strip past the reach; the whole ring at full density.
 5. Pass 4's Owed 3-6 and pass 3's stand.
+
+## PC: runbook 0082-8, 0.1.11 rehearsal and install (2026-11-09)
+
+- **Inputs**: bins Oak3 24111ede / SycamoreV2 7010d61f from the installed Milford, never committed; ENG `eng_mflm_017` (exporter LF md5 83b231e8, textures 96 / 96); the committed `data/far_ground.lidar.*` (real .npy).
+- **Rehearsal** `D:/k10-scratch/milford_0111_reh` (empty workshop, bb93889): SHIP OK, every gate green, road_wear PASS.
+  - Every line step 4 names is there: skirt out 464, 33,370 ring nodes; split 1GRASS 406,937 -> 8 tiles; far-ground-prep 928 faces; 17 blocks, no mpg_nw_complex_0; reseat 14; shift -1.00; treefx 7,656 re-seated / 0 with no ground / 3,591 unchanged, 11,247 of 11,247; grassfx 1,285.
+  - Against the installed 0.1.10:
+    - drive_test.full.json, kn5_ground_check.full.json, road_wear_check.json and reseat_bespoke.json are byte-equal.
+    - mesh_diff: only the 8 1GRASS tiles, FARBLOCK_TILTUP_0 and ROOFTOP_WHITE_0 differ; 1GRASS_LIDAR only in 0.1.11; no texture changed.
+    - ground_band_diff: EQUAL (767,037 / 767,037 inside, 0 / 0 only-in).
+    - tree_seat_check: orphans 323 -> 0, other_change 0.
+    - wall_heights: every block equals F.6's 0.1.11 column.
+  - veg_verify (11,247, 385, 0 orphans, paved 4.65 m, wall 2.96 m) and seat_built (PASS 17; FARBLOCK exposed 5.0 / 8.1 / 12.9 m) equal F.4.
+  - Audit CLEAN with grass 451,687 v.
+  - The road kn5 is 44,555,996 B = the PC's 0.1.10 + 1,858,746 B, the Mac's delta (+416 B on the Mac's bytes: the detail JPEGs, as 0.1.9).
+- **Installed** 2026-11-09 22:46 from an EMPTY `D:/k10-scratch/milford_lm`; 0.1.10's workshop is kept as `milford_lm.0.1.10`.
+  - "doooom Michigan — Milford Road Course (unofficial)" 0.1.11.
+  - The kn5 is kn5_equiv to the rehearsal's; 11,247 trees, bins as above.
+  - The install step parked 0.1.10 in `D:/k10-track-archive/2026-11-09_224638/` (MOVES.tsv + README).
+  - Menu picture: the same camera.
+- **Owed**: step 7's look from above in game (Kevin's): walls to the ground, no towers, the trees past the grid on the ground.

@@ -519,6 +519,17 @@ prep_prep() {
     "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/seat_pads_blend.py" -- "$PROJ/blender/$SLUG.blend" --project "$PROJ" 2>&1 | grep "^\[seat-pads\]\|FATAL\|Error\|Traceback"
     [ "${PIPESTATUS[0]}" = 0 ] || { echo "seat_pads_blend failed"; exit 1; }
   fi
+  # ledger 0082 pass 3 (Milford 0.1.8): the bespoke rails, tyre walls and screens moved with the ground the prep moved under them
+  # (seated on the author ground, they stood buried in the prepped ground: Milford's G1 a median 0.39 m under it; High Plains'
+  # pit-wall K-rail 0.29 m, ledger 0084 / 0089, its prefix added by scenery.bespoke.reseat_prefixes). Opt-in:
+  # scenery.bespoke.reseat_on_prep true; no key = no header, nothing runs (Lake Murray's chain is tools/ship_sd.sh, untouched).
+  # Before the road-wear bake (as Milford 0.1.9): the re-seat moves only the named furniture, the bake writes only road UVs.
+  rm -f "$PROJ/data/reseat_bespoke.json"
+  if [ "$(pyq "import json,sys; print(((json.load(open(sys.argv[1],encoding='utf-8')).get('scenery') or {}).get('bespoke') or {}).get('reseat_on_prep') is True)" "$PROJ/track.config.json" | tr -d '')" = "True" ]; then
+    step "ship: the bespoke rails, tyre walls and screens re-seated on the prepped ground (tools/reseat_bespoke_blend.py; self-checked)"
+    "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/reseat_bespoke_blend.py" -- "$PROJ/blender/$SLUG.blend" --project "$PROJ" 2>&1 | grep "^\[reseat\]\|FATAL\|Error\|Traceback"
+    [ "${PIPESTATUS[0]}" = 0 ] || { echo "reseat_bespoke_blend failed"; exit 1; }
+  fi
   # ledger 0084 (opt-in: a track.config.json road_wear key; none = no header, nothing runs, the stale report removed): the
   # road's tone off the aerial and the rubber where tyres run, baked into a world atlas under the stock asphalt as detail;
   # UVs and materials only, every vertex where the chain put it. Last in prep: it reads the final 1ROAD (after the pads

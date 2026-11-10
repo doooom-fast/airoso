@@ -1022,6 +1022,9 @@
         ]
       },
       "_guardrail_dropped": "the live track's W-beam rail follows airoso's draft guard lips (1WALL_PARA), which the v021 assembler does not lay; not ported (ledger 0078)",
+      "reseat_on_prep": true,
+      "reseat_prefixes": ["1WALL_KRAIL"],
+      "_reseat_doc": "PC 2026-11-10 (ledger 0084 runbook 0084-2 step 3; 0089's seat check): the K-rails moved with the ground the prep moved under them. On 0.1.6 pit_wall_lidar (1WALL_KRAILBW_4, 147.9 m, declared 1.03 m [measured]) showed 0.69 / 0.74 / 0.90 m (p5 / p50 / p95) over the built ground, 0.29 m buried at p50: it stands 3.7-4.1 m past the lane edge, inside the prep's 3 m contact band + 6 m feather, Milford G1's mechanism. pit_wall_naip_rest showed 0.71 of 0.81, pit_paddock_lidar 0.54 of 0.59",
       "names": {
         "ground": [
           "TERRAIN"

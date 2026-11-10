@@ -1,12 +1,11 @@
 {
  "_doc": "tools/make_treefx.py: what trees.txt holds (counts per zone and per species; the north network per piece per species, its planted area, the loop's density and the area-scaled caps \u2014 ledger 0054 P4 / A9)",
- "total": 49,
+ "total": 28,
  "per_zone": {
-  "planted_desert_scrub": 49
+  "planted_desert_scrub": 28
  },
  "per_species": {
-  "Bush.bin": 24,
-  "Bush3.bin": 25
+  "Bush3.bin": 28
  },
  "rejected_in_corridor": 0,
  "rejected_on_built_surface": {

@@ -368,3 +368,45 @@ cameras. In 0.1.5 most clumps draw as low mats. Mac only: `work/treefx/stills/pa
 - Bush's drawn height (0089-3 step 2).
 - Nevada: what the dark NAIP clumps are. The lidar says they stand 0.1-0.2 m. A site photo or Street View from Speedway
   Blvd would settle it; nothing more to fetch.
+
+## PC: runbook 0089-3, Nevada 0.1.5 and the models' drawn size (2026-11-09)
+
+### The models' mesh extents (step 2)
+
+Read off each .bin's LOD meshes with `tracks/exotics-racing-lv-lm/source/vegetation/scripts/treefx_mesh_extent.py` (read-only).
+
+The format:
+- Header: u32 version, u8 flag, u32 ntex, and per texture a 4-byte hash, u32 length and the name.
+- Parts: u32, u32, u32 nidx, u16 indices, u32 nverts, then nverts x 44 B: position 3 f32, normal 3 f32, uv 2 f32, and 3 f32 zeros. Normals read |n| = 1.000.
+- Every mesh parses to within its last 12 bytes.
+
+| model | tree.ini HEIGHT / WIDTH | LOD0 position y (up) | LOD0 x / z extent |
+|---|---|---|---|
+| Bush.bin (e150b090) | 20.660 / 34.384 | -0.015 .. 1.000 | 1.52 / 1.83 |
+| Bush3.bin (e9299a59) | 2.024 / 3.491 | -0.003 .. 0.956 | 1.58 / 1.80 |
+| Oak3.bin (24111ede) | 8.673 / 6.089 | -0.034 .. 0.994 | 1.73 / 1.81 |
+| SycamoreV2.bin (7010d61f) | 8.194 / 6.620 | -0.009 .. 1.000 | 1.52 / 1.70 |
+
+- Every model's mesh is normalised the same way: its height runs 0 .. 1 and its plan about +-0.8 .. 0.95.
+- So the mesh itself carries no size. The drawn size can only come from tree.ini's HEIGHT / WIDTH times the list's `size` / `width`.
+- Read that way:
+  - Bush at size 1 is a 20.66 m object, Bush3 a 2.02 m one.
+  - 0.1.4's Bush shrubs (size 0.05-0.09 on 20.66 m) drew at their intended 1-2 m, not a tenth of it.
+  - Lake Murray's 3,904 Bush (size p10 / p50 / p90 0.34 / 0.76 / 0.95) would draw ~7-20 m tall and ~12-33 m wide.
+- If Lake Murray really shows Bush as a 1-2 m shrub, TreeFX does not scale this model by tree.ini.
+- **Not settled from the files**: one Bush and one Bush3 side by side in game, or one look at a Lake Murray bush, decides it. Lake Murray is unchanged; nothing here acts on it.
+
+### Nevada 0.1.5 (1148c58)
+
+- **Inputs**: Bush3 e9299a59 only in `source/trees/`; the Bush.bin copy was moved out of the source tree. Never committed.
+- **Rehearsal** `D:/k10-scratch/nv_treefx5_reh` (empty workshop, ENG `eng_nvlm`): SHIP OK, every gate green.
+  - `[treefx] gate: 28 written of 28 planned ... ['Bush3.bin'] ... -> OK`.
+  - trees.txt byte-equal (LF) to `records/0.1.5/trees.txt`; treefx.report equal bar paths.
+  - The road kn5 is 18,970,521 B, the Mac's.
+  - mesh_diff against 0.1.4's rehearsal: every mesh and texture equal. drive_test / audit / kn5_ground byte-equal, house_seat equal.
+- **Installed** 2026-11-09 21:32 from an EMPTY `D:/k10-scratch/exotics_lm`; 0.1.4's workshop is kept as `exotics_lm.0.1.4`.
+  - "doooom Nevada — Nevada Nights" 0.1.5.
+  - kn5_equiv to the rehearsal; `extension/trees/` holds Bush3.bin + trees.txt (28).
+  - The install step parked 0.1.4 in `D:/k10-track-archive/2026-11-09_213254/` (MOVES.tsv + README).
+  - Menu picture: the same camera; the pack's own is in `2026-11-09_213322_previews`.
+- Not driven.

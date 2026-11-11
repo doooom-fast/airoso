@@ -767,6 +767,25 @@ The same brief and rule as Pueblo above. Photo mode on NAIP 2023 at 0.3 m; stop 
 - Installed: still **0.1.4**. Records: `source/road_wear/pc_015/{ref,reh}/`.
 - Open, as Pueblo: the mode (drawn or none) is Kevin's call, and the kerbs need their UVs into 0..1.
 
+### Grand Junction 0.1.3: red, not installed (PC, 2026-11-10 overnight)
+
+The same brief and rule as Pueblo above. Photo mode on NAIP 2023 at 0.3 m; no kerbs key (no traced kerb runs).
+
+- **Head** 25c728c6 on `claude/grand-junction-road-wear` (from 6a788506). ENG `eng_gjlm_rw` = eng_gjlm plus the current
+  exporter (900ea391).
+- **Reference `gj_rw_ref` + rehearsal `gj_rw_reh`**, both from empty workshops, both EXIT 1 at gate road_wear. They are
+  identical: the same rows, every data/*.json equal (road_wear.json and lights_ini_check.json differ only in their
+  own workshop's path).
+  - `aerial registered to the built road: shift (+0.75, +0.25) m`, contrast +0.0511 -> +0.0541; shadow 0.0 %, paint 0.0 %.
+  - **The photo's rubber: depth 0.00193**, peak 0.0348, centroid -1.171 m (358 stations): no rubber the photo resolves.
+  - road_wear_check: materials, density (atlas 2048 px), no_repeat, detail_phase (multiplier 128.0, worst 0.0 tiles) and
+    tone (pearson_r 0.9349) PASS. **photo_rubber FAIL**: declared depth 0.00193 under photo_min_depth 0.03; shipped
+    -0.01907, centroid -1.397 m vs -1.171 m.
+  - The other gates were not reached: the chain stops at the first red gate.
+- Installed: still **0.1.2**. Records: `source/road_wear/pc_013/{ref,reh}/`.
+- So the bake and its rows work on a circuit without kerbs. Only the photo lacks rubber. Of the four 0.3 m circuits so far,
+  only High Plains' NAIP shows its rubber (0.146); Pueblo 0.022, Aspen -0.008, Grand Junction 0.002.
+
 ## Engine fixes after the overnight run (Mac, 2026-11-10; code and tests only, no track build)
 
 The PC's overnight run (Kevin: "build the road wear for the other circuits on the pc overnight") hit two engine limits.

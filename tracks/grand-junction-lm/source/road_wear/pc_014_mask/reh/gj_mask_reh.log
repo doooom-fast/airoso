@@ -1,0 +1,180 @@
+START 2026-11-11 00:35:26 HEAD f421b750 ENG eng_gjlm_rw track grand-junction-lm (edge flush, ledger 0087)
+track: grand-junction-lm   workshop project: D:/k10-scratch/gj_mask_reh (scratch: no sync-back, no install)
+engine (prep / export / spawn): D:/k10-scratch/eng_gjlm_rw
+
+=================== sync inputs airoso -> workshop (D:/k10-scratch/gj_mask_reh)
+layouts: full   (race furniture: ; street: full; street AI = draft)
+
+=================== draft: the track's line, widths and 3DEP into Lake Murray v4's assembler inputs (tools/lm_engine_intake.py; ledger 0078)
+[lm_intake] profile uncapped: the stage's 4 % cap undone (69 points, max 0.543 m); its despike (90 m median) and mean kept
+[lm_intake] heightfield: the project's own (the port track's fetched 3DEP grid; the source commits none)
+[lm_intake] grand-junction: 442 pts, lap 1321 m, widths [9.75, 9.75, 9.75] m, 0 deck(s) levelled, grade cap none, steepest 6.33 % over 10 m — 0 heights moved (max 0.0 m); connectors out
+
+=================== draft: build loop.blend (scene regen — GEN layer)
+[blend] TREETRUNK: empty, skipped
+[blend] TREECANOPY: empty, skipped
+[blend] SCRUB: empty, skipped
+[blend] 0 streetlights placed (collision-checked)
+[blend] loop: 442 pts, road elevation 0..6 m (rel origin 1458 m)
+[blend] wrote D:\k10-scratch\gj_mask_reh\loop.blend
+
+=================== draft: weld every side-street mouth onto its host (mitre + warp: road, curb/sidewalk, markings; self-checked)
+[weld] layout contract holds: mainline 441 rows + 0 connector blocks in ROAD / CURB / MARKINGS / YLINE
+[weld] 0 of 0 warped ROAD quads turned to their ridge diagonal
+[weld] 0 mouth(s) welded, self-check clean; 0 connector-island point(s) follow the warped centre; saved loop.blend + data/mouth_welds.json
+
+=================== author: more columns where the mainline ribbon twists (tools/densify_ribbon_blend.py; ledger 0078; after the weld, no crease = no-op)
+[densify] 248 mainline half-quads re-cut (worst crease 14.6 mm; columns up to 3, 284 new row vertices, 1064 triangles for 496); saved loop.blend
+
+=================== author: finer ground along the lane edges of the banked stretch (tools/seat_edges_blend.py; ledger 0078; no route.crossfall_file = no-op)
+[seat-edges] faces cut by bank: 3 cuts x 66, 4 cuts x 36, 5 cuts x 69, 6 cuts x 143, 7 cuts x 143, 8 cuts x 55, 9 cuts x 56, 10 cuts x 66, 11 cuts x 28, 12 cuts x 30
+[seat-edges] 442 banked line stations, 882 lane-edge segments: 3225 terrain edges split (<= 0.6 m within 1.5 m of an edge), TERRAIN 3017 -> 38065 verts
+
+=================== author: a ground seam along the edge strip's outer lip (tools/strip_seam_blend.py; ledger 0078; self-checked)
+[strip-seam] 882 seam points 0.05 m inside the strip's outer lip, 882 joins, 0 missed; TERRAIN 38065 -> 45658 verts; saved loop.blend
+
+=================== author: racing kerbs from the traced runs on the ribbon's lane edge (tools/author_kerbs_blend.py; ledger 0078; no route.kerbs_file = no-op)
+[kerbs] no route.kerbs_file: nothing to do
+
+=================== author: the bespoke dressing the config declares -> AUTH_bespoke (tools/author_bespoke_blend.py: buildings, cones, scrub on the built ground; self-checked; none declared = no-op)
+[bespoke] scene names: ground ('TERRAIN',), far ('GRASS_FAR', 'TERRAIN'), paved ('ROAD', 'CURB', '1ROAD', '1KERB'), walls ('1WALL', 'BARRIER'); ground found, paved found
+[bespoke] saved loop.blend: 0 objects in AUTH_bespoke; 0 buildings, 0 blocks, 0 cones, 0 scrub clumps
+
+=================== ship: prep (AC naming, 65k splits; multi-layout: NO AC_* dummies in the road scene)
+[build_kn5_loop] terrain conform: 7087 corridor edges split, 14557 verts pinned to deck-0.02, 29715 feathered
+[build_kn5_loop] house seat: 0 buildings seated on the final ground under their footprints, 0 with a foundation reaching down a slope (deepest 0.00 m)
+[build_kn5_loop] terrain tiles: 1GRASS x1 (max 50854 v, total 50854 v)
+[build_kn5_loop] prepped ['1GRASS', '1KERB_sidewalk', '1ROAD_road', 'MARKINGS']  + 16 dummies -> D:\k10-scratch\gj_mask_reh\blender\grand_junction.blend
+
+=================== ship: the I-8's own pavement, lane lines and median barrier on the final ground (visual only; self-checked)
+[freeway] scenery.freeway not enabled — nothing to do
+
+=================== ship: the road cuts' rock faces split out of the ground tiles (tools/rock_faces_blend.py: 1GRASS_ROCK_*, the sandstone skin, GRASS physics kept; self-checked; no auto cut declared = no-op)
+[rock] no auto cuts declared (data/ground_release.auto_cuts.json / expansion.north.json) or terrain.rock_faces.enabled false — nothing to do
+
+=================== ship: road wear where tyres run + the road's tone off the aerial (tools/road_wear_blend.py; ledger 0084; self-checked)
+[road_wear] 7624 faces on ['1KERB_sidewalk', '1ROAD_road']; furthest vertex 3.44 m off its centroid; atlas 2048 px at 0.25 m (21 cells of 64 m + 4 m margin, 41.5 % of the atlas used)
+[road_wear] grid 1312 x 1312 at 0.25 m; the built 1ROAD covers 12382 m2 (0 s)
+[road_wear] aerial registered to the built road: shift (+0.75, +0.25) m, contrast +0.0511 -> +0.0541; shadow 0.0 %, paint 0.0 % of the road; tone p01/p50/p99 [0.8291, 1.0, 1.2379]
+[road_wear] line full: the photo's rubber against the mirror: depth 0.00193 over |u| <= 0.75 m, peak 0.0348, centroid -1.171 m (358 stations, 5459 samples)
+[road_wear] line full: model: minimum curvature inside the built edges (recorded line named but missing: source/road_wear/fast_lane.full.ai); 1271 m, model lap 60.5 s (23.9-143.7 km/h) -> road_wear.line.full.json
+[road_wear] macro atlas 2048 x 2048: m0 0.7950, deepest rubber 0.0 %, 533162 B (17 s)
+[road_wear] 2 materials -> ksPerPixelMultiMap_NMDetail (detailUVMultiplier 128); writer vertices {'1KERB_sidewalk': 15874, '1ROAD_road': 6996}; positions unchanged; -> road_wear.json, grand_junction.blend saved (17 s)
+
+=================== ship: split the prepped scene -> road / common race / closure per race layout / spawn scenes (tools/split_exports_blend.py)
+[split] main: 4 meshes / 57753 positions / 4 materials / 16 AC nodes / 0 race objects -> loop_main.blend
+[split] spawn: single layout — the 16 AC_* object(s) stay in loop_main.blend (the prep's data/dummies.json); no spawn scene
+[split] manifest -> D:\k10-scratch\gj_mask_reh\blender\split\split_manifest.json; input untouched: D:\k10-scratch\gj_mask_reh\blender\grand_junction.blend
+
+=================== ship: export road kn5 (shared by all layouts, spawn-free)
+INI materials=4 textures_staged=8
+KN5 EXISTS: True SIZE: 11207631 FILE: grand_junction.kn5
+
+=================== ship: AI lines per layout (race: V3 lane-offset drafts — GENERATED, ledger 0023; street: draft)
+direction: FORWARD (layouts[full].direction)
+  grid check: +1.00 (grid→timing chord over 30 m) -> FORWARD
+  [island] median_bands.json absent — island_w_by_vertex = 0 everywhere
+  race furniture OFF for this line: centre chain / kerb-line inset not applied
+lane: 111/850 pts offset into the right-hand carriageway (max 1.03 m); divider stations 0, on the correct side n/a; island hits 0, within 0.6 m of a divider face 0, of a kerb-line barrier face / pavement edge 0, edge 3.84 m
+geometry: 0 offset tapers (clamped 0), 0 inside corners taken from the lane's outside, 0 folds trimmed [], 10 corners filleted (R 7.6-12.6 m), smoothing 2+0 iterations moved 14+0 pts; min radius 7.52 m, max turn 11.4 deg, turns > 10 deg: 0 (+13 where the road is that tight), radius under the floor 0, max lateral jump 0.307 m, backward steps 0, self-crossings 0; start 0.005 m from the dummies.json AC_TIME_0 midpoint
+closed loop, 850 pts at 1.50 m over 1,275.2 m; est lap 63.4 s (135 km/h peak) -> D:\k10-scratch\gj_mask_reh\ai\full
+  fast_lane.ai: v7, 850 pts, 1.50 m spacing over 1,274 m, lap 63.4 s, extras=yes
+
+=================== ship: verify_kn5 (hard — spawn-free road, common race kn5 + one closure kn5 per race layout (its token only), one spawn kn5 per layout, facing, side, lane, sectors)
+✓ kn5 verification passed (no dup meshes, drivable surfaces face-up, spawns on road, per-layout spawn kn5s facing their travel, race furniture split common / per-direction closure)
+
+=================== gate: road kn5 -> gate OBJ (engine frame) + gate centreline
+grand_junction.kn5 -> D:\k10-scratch\gj_mask_reh\data\track.obj  (4 groups, 81,335 v, 110,885 tri)
+  gate centreline -> gate_centerline.json (finished_centerline, z un-mirrored to the OBJ frame)
+
+=================== ship: track folder (models_<id>.ini per layout, ui/<id>/, <id>/{map,data,ai}; a race layout without its closure kn5 is a HARD error)
+[track_folder] layouts packed: ['full'] (models.ini)
+wrote track folder → D:\k10-scratch\gj_mask_reh\build\grand_junction
+  length_m: 1320.6
+  n_pits: 8
+  models: {'full': ['grand_junction.kn5']}
+[lights-ini] 0 [LIGHT_N] for 0 lamps, 0 at their lens: PASS
+
+=================== ship: verify_kn5 --inis (hard — each race ini lists exactly road + common race + ITS closure + its spawns; none lists another layout's closure)
+✓ models_<id>.ini verification passed (each race layout loads road + common race + ITS closure + its spawns; no ini loads another layout's closure)
+
+=================== ship: minimap in the KN5 frame, per layout (tools/make_map.py; a layout with map = lap gets its lap alone, map + outline)
+[map] wrote D:\k10-scratch\gj_mask_reh\build\grand_junction\map.png + data/map.ini (kn5 frame, network: 1 line(s), 0.302 m/px)
+
+=================== gate: drive_test, street layout (hard)
+  [drive] corridor cull: skipped 495 triangles beyond 120 m
+  [drive-time] load + hash                0.4s
+  layout full: direction forward, kind street, furniture none, OBJ data/track.obj
+  [drive-time] pre-sweep setup            0.0s
+  [drive-time] post-sweep passes          0.4s
+DRIVE TEST grand_junction [full forward street]  lap 1.27 km  (10 wheel paths @ 1.0 m)
+  ground on top mid-lane : 0
+  floating furniture (walls/fences off support): 0 
+  undrivable corners (>100deg @ <11m): 0 
+  severe steps (>6 cm)  : 0
+  bumps >2.5 cm /km      : 0.0 (limit 75 for tarmac)
+  vertex bumps (2.5-6 cm read across a vertex hop, under 2.5 cm on the path's own travel; reported, not gated): 4
+  slope kinks >3.0%% /km   : 17.31
+  daylight gaps at edges : 0
+  off-road excursion drops>20cm : 0  (far flare ledges, reported: 0)
+  obstructed stations    : 0
+  => PASS   (data/drive_test.full.json)
+
+DRIVE TEST SUMMARY grand_junction: full=PASS   (data/drive_test.json)
+
+=================== gate: audit_mesh, street (hard total)
+AUDIT grand_junction   (roads 6996v, grass 53173v, walls 0v, piers 0)
+  A. supports standing in a road : 0
+  B. terrain poking through road : 0  (worst +0.0 m)
+  C. at-grade junction crossings : 0  ({'ramp': 0, 'mainline': 0})
+  D. walls sitting on a road     : 0
+  E. walls floating over ground  : 0  (worst +0.0 m)
+  F. curbs not flush             : 0  (of 15874 curb verts,
+                                      edge-scoped, top-surface only;
+                                      0 skirt verts off terrain (advisory), 0 side faces skipped,
+                                      grounding is gated by drive_test + E/H)
+  G. plants floating over ground : (env not built)
+  H. ground cutting into road    : (no ground grid)  (worst +0.0 m)
+  I. sidewalk isolating pavement : 0
+  K. kerb/sidewalk in carriageway: 0
+  J. terrain triangles over road : 0
+  => CLEAN
+
+=================== gate: kn5_ground_check per layout (EXPANSION-PLAN V5: the kn5 set each layout loads — terrain sheets, furniture seating, lamp masts, the road on the ground)
+KN5 FIDELITY grand_junction.kn5  (yaw 0 deg)  [data/track.obj is this kn5's own gate OBJ (kn5_to_gate_obj) — kn5-internal checks only]
+  double-sheet terrain cells (>12 m spread): 0
+  flush edges (info): 356 samples  deck-vs-verge median -0.02  p95 +0.13
+  deck-vs-mountain (tri-exact): median +0.019  p95 +0.021  max +0.028
+  road-over-ground: 0/1000 samples gap > 0.05 m (0.0%)  p95 +0.021 m (gate 0.1 m)
+  => PASS — kn5 matches the audited OBJs
+  kn5_ground_check full: exit 0
+
+=================== gate: road wear on the built road kn5 (tools/road_wear_check.py; ledger 0084 — hard)
+[road_wear_check] materials     PASS  problems []
+[road_wear_check] density       PASS  triangles 7624, off 0, worst_scale_err 0.000304, worst_shear 0.000317, texel_m 0.25, atlas_px 2048, jacobian_judged 7624, jacobian_off 0, edge_judged 0, edge_off 0, worst_edge_err 0.0, v_sign -1.0, unjudged 0
+[road_wear_check] no_repeat     PASS  texels_claimed 10960, claimed_twice 0
+[road_wear_check] detail_phase  PASS  worst_tiles 0.0, detail_uv_multiplier 128.0
+[road_wear_check] tone          PASS  pearson_r 0.9349, samples 735, v_convention -v, r_by_convention {'v': -0.2022, '-v': 0.9349, '1-v': -0.0}
+[road_wear_check] no_rubber     PASS  lines [{'layout': 'full', 'pass': True, 'declared_depth': 0.00193, 'shipped_depth': 0.00218, 'declared_centroid_m': -1.1713, 'shipped_centroid_m': -1.1681, 'stations': 358, 'samples': 5460, 'declared_samples': 5459, 'mask': {'road_cells': 198105, 'median_lum': 0.61669, 'grow_cells': 2, 'interior_cells': 6, 'shadow_or_paint_cells': 0}}], drawn_band none (road_wear.rubber none)
+[road_wear_check] PASS
+
+=================== gate: houses on the built ground (tools/house_seat_check.py: floating, sunken or buried buildings — hard)
+[houses] D:\k10-scratch\gj_mask_reh\data\track.obj: 0 buildings judged, 0 with no ground under them
+[houses] contact (bottom - lowest ground under the walls): min None m, max None m
+[houses] floating (> 0.1 m above): 0 (limit 0); sunken (> 1 m below): 0 (limit 0); buried (roof < 1 m over the highest ground under the walls): 0 (limit 0); lowest roof over that ground None m
+[houses] the visual lens's buried share (mean ground over the height, foundation included; not gated): {'over_30pct': 0, 'over_50pct': 0, 'p95': None}
+[houses] PASS
+
+=================== report: the road edge and the near-road ground on the built road (tools/edge_report.py; ledger 0078; not a gate)
+[edge] {"side_stations": 218, "at_1m": {"lane": 0.0, "shoulder": 0.0, "kerb": 1.0, "ground": 0.0, "wall": 0.0, "none": 0.0, "other": 0.0}, "rise_2m_m": {"median": 0.0, "p95": 0.01}, "paved_past_edge_m": {"median": 0.0, "p95": 0.0}, "ground_3m": {"p5": -0.046, "median": -0.027, "p95": -0.012, "share_below_1m": 0.0, "share_above_1m": 0.0}, "ground_6m": {"p5": -0.244, "median": -0.112, "p95": -0.059, "share_below_1m": 0.0, "share_above_1m": 0.0}, "ground_10m": {"p5": -0.471, "median": -0.183, "p95": -0.005, "share_below_1m": 0.0, "share_above_1m": 0.0}}
+
+=================== sync outputs workshop -> airoso: SKIPPED
+the project is a scratch copy or a rehearsal (D:/k10-scratch/gj_mask_reh; ship.json D:/k10-worktrees/rw-gj/tracks/grand-junction-lm/ship.json), not the workshop (D:/k10-scratch/grand_junction_lm): its outputs
+stay in the scratch copy — only the workshop feeds D:/k10-worktrees/rw-gj/tracks/grand-junction-lm.
+
+GATES: street drive_test exit 0, street audit exit 0, race drive_test exit 0, race audit exit 0, race no_route exit 0, kn5_ground_check exit 0
+  race layouts red on their own gates: none
+  Drive-1 road gates: road inventory exit -, stacked legs exit -, the Drive-1 verdict exit - ('-' = not run)
+
+SHIP OK
+EXIT 0 2026-11-11 00:37:04

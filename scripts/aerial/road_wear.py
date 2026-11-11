@@ -494,6 +494,27 @@ PHOTO = {
 }
 
 
+# --- tone only (opt-in road_wear.rubber "none"; Pueblo, Aspen, Grand Junction, Pikes Peak) ------------------------------
+# Kevin, 2026-11-10: "Tone only, no rubber". Where the 0.3 m aerial shows no rubber the gate can use (the photo's own depth
+# under photo_min_depth 0.03: Pueblo 0.022, Aspen -0.008, Grand Junction 0.002, Pikes Peak -0.008, the PC's overnight
+# run), the asphalt takes the photo's tone and nothing else: no drawn band (as photo mode) and no kerb levels (nothing
+# measured to level them by, so road_wear.kerbs is refused). The line is still found and the photo measured across it
+# against its mirror (photo_rubber, as photo mode), so the gate can show the shipped atlas adds nothing to the photo.
+RUBBER_MODES = ("drawn", "photo", "none")
+
+
+def rubber_mode(spec: dict) -> tuple[str, str | None]:
+    """road_wear.rubber, checked: (mode, None), or (mode, the FATAL's text). Absent = "drawn" (Milford, unchanged)."""
+    mode = spec.get("rubber", "drawn")
+    if mode not in RUBBER_MODES:
+        return mode, f"road_wear.rubber {mode!r}: 'drawn', 'photo' or 'none'"
+    if mode in ("photo", "none") and not spec.get("aerial"):
+        return mode, f"road_wear.rubber {mode!r} needs road_wear.aerial"
+    if mode == "none" and kerb_spec(spec) is not None:
+        return mode, "road_wear.rubber 'none' draws no rubber, so nothing levels the kerbs: drop road_wear.kerbs"
+    return mode, None
+
+
 def nearest_station(P: np.ndarray, C: np.ndarray) -> np.ndarray:
     """Index of the nearest centreline station (2D) for every point."""
     out = np.empty(len(P), dtype=np.int64)
@@ -671,19 +692,68 @@ def kerb_levels(darkness: np.ndarray, step: float, levels: int) -> np.ndarray:
     return np.clip(np.round(np.asarray(darkness, dtype=np.float64) / step), 0, levels - 1).astype(np.int64)
 
 
-def kerb_wear_atlas(base: np.ndarray, levels: int, step: float) -> np.ndarray:
-    """uint8 H x (W * levels) x C: ``levels`` copies of the kerb paint side by side, copy k = round(paint x (1 - k step)).
-    Copy 0 is the paint byte for byte."""
+def kerb_wear_atlas(base: np.ndarray, levels: int, step: float, repeats: int = 1) -> np.ndarray:
+    """uint8 H x (W * repeats * levels) x C: ``levels`` copies of the kerb paint side by side, copy k = round(paint x
+    (1 - k step)); each copy holds ``repeats`` tiles of the paint side by side (kerb_repeats; 1 = High Plains 0.1.7's
+    atlas, unchanged). Copy 0 is the paint byte for byte."""
     b = np.asarray(base, dtype=np.uint8)
+    if repeats != 1:
+        b = np.tile(b, (1, int(repeats)) + (1,) * (b.ndim - 2))
     out = np.empty((b.shape[0], b.shape[1] * levels) + b.shape[2:], dtype=np.uint8)
     for k in range(levels):
         out[:, k * b.shape[1]:(k + 1) * b.shape[1]] = np.clip(np.round(b.astype(np.float64) * (1.0 - k * step)), 0, 255)
     return out
 
 
-def kerb_u(u: np.ndarray, level: np.ndarray, levels: int) -> np.ndarray:
-    """A kerb UV's u moved into its level's copy (u in [0, 1] of the paint texture -> (level + u) / levels)."""
-    return (np.asarray(level, dtype=np.float64) + np.asarray(u, dtype=np.float64)) / levels
+def kerb_u(u: np.ndarray, level: np.ndarray, levels: int, repeats: int = 1) -> np.ndarray:
+    """A kerb UV's u moved into its level's copy (u in [0, repeats] of the paint texture, a face's own u after
+    kerb_unwrap -> (level + u / repeats) / levels; repeats 1: (level + u) / levels, High Plains 0.1.7's arithmetic)."""
+    if repeats == 1:
+        return (np.asarray(level, dtype=np.float64) + np.asarray(u, dtype=np.float64)) / levels
+    return (np.asarray(level, dtype=np.float64) + np.asarray(u, dtype=np.float64) / float(repeats)) / levels
+
+
+# The paint REPEATS (Pueblo / Aspen, PC 2026-11-10: "1KERB_circuit_0: u 0.000..2.111 outside the paint texture"): a kerb
+# without a kerb.atlas cell has u = offset / painted width (tools/author_kerbs_blend.py), so the back fall past the
+# painted width runs on to u = (w + ramp_out) / w, and the stock exporter's wrap addressing repeats the paint there. A
+# level copy is not wrapped (its neighbour copy sits beside it), so:
+#   1. every face's u moves back by the whole repeats under it, floor(its smallest u) (kerb_unwrap): frac is what the
+#      wrap sampled, so the paint at every point is the same texel as before;
+#   2. a face that still spans a repeat boundary (Pueblo's back fall: 1.0 .. 2.111, 1.11 repeats wide) is not split:
+#      each copy holds ``repeats`` tiles of the paint side by side (kerb_repeats, kerb_wear_atlas), so u in
+#      [0, repeats) inside the copy reads the paint exactly as the wrap did, the tile seam inside the copy being the
+#      same column-W-1-to-column-0 seam the wrap had. No face, triangle or vertex changes (the physics, the gate's
+#      face join and the writer's vertex count are as before); the cost is a wider atlas (Pueblo: 64 x 16 x 2 = 2048 px).
+# High Plains 0.1.7 (cells inside 0.05 .. 0.95) unwraps by 0 and takes repeats 1: its UVs and atlas are byte for byte as
+# before.
+KERB_U_EPS = 1e-6               # the bake's own tolerance on a kerb's u (its 0..1 check, before): a corner within this
+                                # of a whole repeat counts as on it (float32 holds u to ~1e-7)
+KERB_ATLAS_MAX_PX = 16384       # the largest 2D texture Direct3D 11 (AC's renderer) creates
+
+
+def kerb_unwrap(u: np.ndarray, face_of_loop: np.ndarray, n_faces: int) -> tuple[np.ndarray, np.ndarray]:
+    """(each loop's u less its face's whole repeats, the repeats per face): face f moves by floor(min u over its loops
+    + KERB_U_EPS), so its smallest u lies in [-KERB_U_EPS, 1). A face inside [0, 1] moves by exactly 0."""
+    u = np.asarray(u, dtype=np.float64)
+    fl = np.asarray(face_of_loop, dtype=np.int64)
+    lo = np.full(int(n_faces), np.inf)
+    np.minimum.at(lo, fl, u)
+    shift = np.floor(lo + KERB_U_EPS)
+    shift[~np.isfinite(shift)] = 0.0                       # a face with no loops (none in a built mesh)
+    return u - shift[fl], shift
+
+
+def kerb_repeats(u_max: float, levels: int) -> int:
+    """The tiles of paint each level copy holds: the smallest power of two R (the atlas stays a power of two, L7) whose
+    copy holds every face's unwrapped u (u_max) with the copy's right edge more than one float32 step (2^-23, its spacing
+    just under 1) past the shipped (level + u_max / R) / levels, so no corner of copy k is stored as copy k + 1's first
+    column. High Plains 0.1.7: u_max 0.95 -> 1."""
+    if not math.isfinite(u_max):
+        raise ValueError(f"road_wear.kerbs: a kerb u is not finite ({u_max})")
+    R = 1
+    while (R - u_max) / (R * levels) < 2.0 ** -23:
+        R *= 2
+    return R
 
 
 # --- PNG --------------------------------------------------------------------------------------------------------------

@@ -48,6 +48,7 @@
       "kn5_ground",
       "verify_pads",
       "verify_mouths",
+      "textures",
       "house_seat",
       "edge_report",
       "stage_force"
@@ -61,10 +62,21 @@
       "data/heightfield.npy",
       "data/heightfield.meta.json",
       "source/ground_patches.lidar.json",
-      "source/connectors.infield.json"
+      "source/connectors.infield.json",
+      "source/bespoke/buildings.lidar.json"
     ],
     "globs": [
       "source/pads/*.json"
+    ],
+    "assets": [
+      "assets/textures/tiltup_wall_diffuse.jpg",
+      "assets/textures/tiltup_wall_normal.jpg",
+      "assets/textures/metal_wall_diffuse.jpg",
+      "assets/textures/metal_wall_normal.jpg",
+      "assets/textures/roof_white_diffuse.jpg",
+      "assets/textures/roof_tan_diffuse.jpg",
+      "assets/textures/roof_dark_diffuse.jpg",
+      "assets/textures/pad_asphalt_diffuse.jpg"
     ]
   },
   "sync_out": {
@@ -98,7 +110,8 @@
       "data/pads.built.json",
       "data/verify_pads.json",
       "data/pad_arms.json",
-      "data/stage_force.json"
+      "data/stage_force.json",
+      "data/verify_textures.json"
     ],
     "map": [
       [

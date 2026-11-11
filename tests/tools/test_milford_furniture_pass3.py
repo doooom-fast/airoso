@@ -52,6 +52,8 @@ def test_no_other_track_names_pass3():
         for key in keys:
             assert key not in txt, (cfgp, key)
     for f in (ROOT / "tracks").glob("*/source/bespoke/*.json"):
+        if f.parts[-4] == "pikes-peak-lm":     # Pikes Peak 0.2.1 (ledger 0085): its lidar blocks stand at their measured roofs
+            continue
         assert "roof_z_m" not in f.read_text(encoding="utf-8"), f
 
 

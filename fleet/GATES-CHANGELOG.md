@@ -14,6 +14,91 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
+## 2026-11-10 (Mac, later) — NEW ROW (opt-in): `no_rubber`, road_wear.rubber "none" (tone only) judged in place of `photo_rubber` (ledger 0084 "Tone only, no rubber"; no threshold moved, no new threshold)
+
+**Why.** Kevin, 2026-11-10, on Pueblo, Aspen, Grand Junction and Pikes Peak: "Tone only, no rubber". Their 0.3 m NAIP
+photos show no rubber the gate can use: the photo's own line-vs-mirror depth was Pueblo 0.022, Aspen -0.008, Grand
+Junction 0.002, Pikes Peak -0.008 (the PC's overnight run), all under `photo_min_depth` 0.03, so `photo_rubber` failed
+them, correctly: photo mode claims the photo carries rubber.
+
+**What.** `tools/road_wear_check.py`, `tools/road_wear_blend.py`, `scripts/aerial/road_wear.py`; nothing else.
+- The bake (`rw.rubber_mode`): "none" makes the asphalt exactly what photo mode makes, the tone and no drawn band. The
+  line is found and the photo measured across it against its mirror as in photo mode (recorded in
+  data/road_wear.line.<layout>.json `photo_rubber`). "none" refuses `road_wear.kerbs` (FATAL: no rubber is drawn, so
+  nothing levels them) and needs `road_wear.aerial`. An unknown mode is still a FATAL.
+- The gate: with "none", the drawn `rubber` row is not run (as with photo), and `no_rubber` takes its place. For each
+  line, `measure_photo` on the shipped atlas, the same measurement as `photo_rubber`, must have >= 10 stations and a
+  depth within `photo_depth_tol` 0.02 of the photo's own. That is the atlas adding no band to the photo: Milford's drawn
+  band reads ~0.1-0.2 there. The row fails if kerb levels are declared.
+- What `no_rubber` does not ask, unlike `photo_rubber`: that the photo shows >= `photo_min_depth`, and that the
+  darkening's centroid matches the photo's (with no rubber the centroid of near-zero darkening is noise).
+- The verdict is one function, `photo_line_pass(mode, got, dp)`. With "photo" it is the old expression, term for term.
+- No threshold moved and none is added: `photo_depth_tol` 0.02 ⚠ [invented] is the existing one. "drawn" and "photo"
+  builds are judged exactly as before (High Plains 0.1.7: photo; Milford 0.1.11, Nevada 0.1.6: drawn).
+- Proven (Mac, no build): `tests/aerial/test_road_wear_photo.py`, 3 new tests (34 of 34 road-wear tests pass).
+  - rubber_mode: drawn by default; photo / none need the aerial; "tone" (a typo) is refused; none + kerbs is refused;
+    photo + kerbs (High Plains) as before.
+  - A photo with no band: none PASSES the atlas that is the photo, photo FAILS it (min depth), and none FAILS the same
+    photo with a 0.15 band drawn on it.
+  - A photo with a band: photo's verdict equals the old expression; a centroid moved 0.3 m fails photo and not none.
+
+## 2026-11-10 (Mac) — MEASUREMENT-BUG FIX: road_wear density judges a sliver by its edges; the kerb rows read repeating paint (ledger 0084, "Engine fixes after the overnight run"; no threshold moved)
+
+Two engine limits the PC's overnight road-wear run found (ledger 0084: Pikes Peak 0.2.2, Pueblo 0.1.4, Aspen 0.1.5).
+`tools/road_wear_check.py`, `tools/road_wear_blend.py`, `scripts/aerial/road_wear.py`; nothing else.
+
+**density (the measurement).** Pikes Peak 0.2.2 failed on 2 of 28,656 triangles, both slivers on the oval's apron pads:
+1ROAD_pad_NE 0.0020 m2 (edges 1.01 / 5.06 / 6.07 m, 0.66 mm tall) read 0.86 % off, 1ROAD_pad_NW 0.0189 m2 0.51 %, against
+density_tol 0.005. The bake maps every face exactly (u = east / (atlas_px x texel_m) + its tile's offset, one tile per
+face). What moved them is the measurement: the UV Jacobian J = dUV / dP divides by the triangle's height, so the kn5's
+float32 rounding (u ~ 0.5 holds 6e-8 = 6e-5 m at 4096 px x 0.25 m) is amplified by length / height. NE-shaped slivers
+mapped exactly and stored as float32 fail the old row 197 times in 200 (median 3.5 % off; `tests/aerial/
+test_road_wear_density.py`). The comment the row was written with ("float32 UVs at 4096 px hold 1e-6") is true for the
+road's triangles and false for a sliver.
+
+- Now (`density_row`): each triangle's Jacobian gets a first-order rounding bound, beta = (|dU| + s1 |dP|) /
+  sigma_min(P) / s0, each stored number taken as off by `f32_ulps` float32 steps at its magnitude.
+  - beta < density_tol and 2 beta < shear_tol: judged by J **exactly as before** (density_tol 0.005, shear_tol 0.005).
+    A 2 x 2 m road triangle has beta ~2e-4. On the installed tracks' own ribbons (below) every triangle is judged this
+    way and every number equals the old row's.
+  - Otherwise (a sliver; also |det| = 0, which the old row skipped without a word): judged by the texel footprint of its
+    edges. Each edge's UV step x atlas_px x texel_m against the edge on the ground (the shipped v's sense read off the
+    J-judged triangles): |footprint - edge| <= density_tol x |edge|, on every edge whose own rounding bound is under
+    density_tol x |edge|. A sliver stretched 1 %, or with one corner a texel off, fails. What float32 cannot see is the
+    scale across a sliver a fraction of a millimetre wide, which holds no texel to misallocate.
+  - A triangle with no edge float32 resolves either (every edge under ~4 cm at 0.25 m / 4096 px) is the one exemption:
+    counted and listed in the row (`unjudged`, `unjudged_list`), and it passes. It holds a hundredth of a texel.
+  - `f32_ulps` 1.0 ⚠ [invented: one float32 step per stored number, half for the bake's UV rounding and half for the
+    writer's matrix_world @ co].
+  - New row keys: jacobian_judged, jacobian_off, edge_judged, edge_off, worst_edge_err, v_sign, edge_offenders (the
+    first 20 with area / edges / place), unjudged, unjudged_list. worst_scale_err / worst_shear are over the J-judged
+    triangles.
+- No threshold moved: density_tol and shear_tol stay 0.005, there is no area cut-off, and no_repeat / detail_phase are
+  untouched (they keep their |det| < 1e-6 skip).
+- Proven (Mac, no build): `test_road_wear_density.py` 7 tests. Pikes Peak's two sliver shapes mapped exactly PASS on their
+  edges (worst 8e-6). Mis-mapped slivers FAIL: stretched 1 % east, stretched 1 % both ways, one corner a texel off,
+  another 3 texels off. A well-shaped triangle 0.6 % / 1 % anisotropic / -0.6 % off FAILs and 0.4 % passes, the old row
+  agreeing. 400 random road triangles mis-scaled up to 0.8 % get the old row's verdict, all J-judged. A 1 cm triangle
+  is listed unjudged, and a zero-area one is edge-judged (a 2 % stretch on it fails).
+  - `tracks/pikes-peak-lm/source/road_wear/mac_fix/density_ab.py` + `.log`: Milford 0.1.11, High Plains 0.1.7 and
+    Nevada 0.1.6's own roads, rebuilt from their records (finished_centerline + road_wear.json's plan, mapped as the
+    bake maps, float32). Before and after: the same verdict (PASS), the same worst_scale_err / worst_shear (9.8e-05 /
+    6.3e-05 / 3.9e-05), every triangle J-judged (19,608 / 6,438 / 3,642).
+
+**kerb_paint (repeating paint).** The bake now handles kerb paint that repeats (below: no face is split, no vertex
+moves). Each level copy of the paint then holds `repeats` tiles of it side by side, recorded in data/road_wear.json
+`kerbs.repeats`, written only when it is over 1. kerb_paint reads that number: the atlas must be paint_w x repeats x
+levels wide, and every tile of copy k must equal round(paint x (1 - k step)) within kerb_paint_tol (copy 0 byte for
+byte).
+- Absent = 1. That is High Plains 0.1.7's record, and there the comparison is the one it shipped with.
+- kerb_levels is unchanged: floor(u x levels) at all three corners, inside a declared face of that level. The bake keeps
+  every corner strictly inside its copy (kerb_repeats leaves more than one float32 step before the copy's right edge).
+- No threshold moved.
+- Proven: `test_road_wear_kerbs.py` (4 new tests). One of them: a 16-copy x 2-tile atlas PASSES, one texel of copy 3's
+  second tile off by 2 FAILS, and a one-tile atlas declared as two FAILS. `tracks/pueblo-lm/source/road_wear/mac_fix/
+  kerb_ab.log`: High Plains' shape gives main's rows and this branch's rows identical; a Pueblo-shaped run passes all
+  three rows with repeats 2; a triangle moved one level fails kerb_levels on both.
+
 ## 2026-11-10 — WIRING FIX: the lap gates run over furnished laps only, and the rail re-seat runs again on the PC (ledger 0090)
 
 Two faults in `tools/ship_track.sh` on main ca297e2, found by rebuilding the installed tracks from main in empty
@@ -1311,6 +1396,32 @@ over the highest ground under the walls) reads such a deck as a buried wall: run
 - **The prep is not changed:** engine-july's house seat re-seats only a BUILDING mesh at the identity transform; the
   author carries a set-in deck's walls in `BUILDING_<SKIN>_SETIN_<k>` with a 1 m object lift (the same world positions),
   which the prep leaves to its terrain-delta ride (0 past the corridor it reshapes), so the measured placement ships.
+
+## 2026-11-10 (ledger 0085, furniture pass 1) — Pikes Peak 0.2.1: buildings off the lidar on disk, the skid pad as a driven pad; no gate threshold moved
+
+**What changed (opt-in; no other track declares any of it):**
+- `tracks/pikes-peak/source/lidar/infield/buildings_lidar.py` (new, the read): every non-ground 2018 lidar point's
+  height over the 1 m DEM on a **0.5 m** grid; a roof stands over **2.5 m** (the outer wall's 1.27 m and a car are
+  under it), at least **12 m2**; a piece under **3 m2** standing over **6 m** is a pole (reported, not built). A
+  footprint is its minimum rectangle when the cells fill **80 %** of it, else its outline simplified to **0.75 m**.
+  NAIP's saturation under **0.20** and a height spread (p95 - p10) under **4 m** read as a roof, else a tree. All ⚠
+  [invented] sampling choices; the heights themselves are measured (each block's `_source`).
+- `plan_furniture.py` (new): the grandstand cut along its depth into **6 m** bands ⚠ [invented], each a block at its
+  band's measured median height. A block over **6 m** is tilt-up, under it metal ⚠ [invented: the fleet's skins; no wall
+  photo on disk]. Roof class off NAIP's median RGB: WHITE when grey over **170** and saturation under 0.10, TAN when red
+  exceeds blue by **12** ⚠ [invented cuts], else DARK.
+- `skid_pad.py` (new): junction_pads.py's pavement rule over the lot, the infield road's ribbon + its **1.3 m** strip
+  (route.edge's) taken out.
+- `tools/author_bespoke_blend.py` pads: `cell_m` (opt-in) sets a pad's cell (default PAD_CELL_M 4 m; the skid pad
+  **1 m** ⚠ [invented]). The skid pad is a visual sheet laid on the prepped ground (`pads_seat` "ground", Nevada's). A
+  driven-surface option was tried and taken out: the lot stands up to 0.15 m under the infield road, so as a road the
+  road's edge strip read as a kerb between two roads (audit K 30, I 42) and its edge as 3 gated drops.
+- `tracks/pikes-peak-lm/ship.json`: gate `textures` (tools/verify_textures.py, hard) added before `house_seat`.
+- `gates.drive1.force_exemptions.stage.versions` += "0.2.1": Kevin's force for the infield hairpin, carried to the
+  furniture pass for the same hairpin at the same place (the pass changes no road), as the Lariat's force was carried
+  to its LM port (ledger 0078 round 6). Every other row's refusal is unchanged.
+
+**Proof:** the reference and rehearsal builds from empty workshops (ledger 0085 section 10).
 
 ## 2026-11-09 — Milford far ground (ledger 0082 "Far ground (0.1.11)"; no gate threshold moved, no bypass, nothing forced)
 

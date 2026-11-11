@@ -1,0 +1,33 @@
+# kerb_ab_blend.py (Blender 5.1.2, --factory-startup) on main 06d782f's tools/road_wear_blend.py ('old') and this branch's ('new'); paths shortened
+## old-hp
+[road_wear] kerbs: 1 meshes, 145 faces, 122 darkened (levels 16, step 0.0147; per level [23, 6, 0, 0, 19, 10, 0, 0, 0, 0, 0, 23, 6, 0, 0, 58]); clipped 0; paint ['kerb_atlas_hp.png'] -> ['road_wear_kerb_kerb_atlas_hp.png']
+RESULT {"case": "hp", "tree": "<main 06d782f>", "ok": true, "positions_same": true, "topology_same": true, "positions_md5": "16779fa98024f15162aaca75575fb7fa", "uv_before_md5": "e6baaf796199b2d1091931e2cef79fbc", "uv_after_md5": "5a7f9442e45c61a2e08a1af4e92bd524", "v_same": true, "atlas": {"road_wear_kerb_kerb_atlas_hp.png": "ce55a094b1ded9b76ff06c9bcc569c48"}, "record_md5": "efd65ba855de89405f5b4e9341102dd3", "rows_md5": "dca5721d4cd5863319515ba4431c1314"}
+## old-repeat
+[road_wear] FATAL: 1KERB_circuit_0: u 0.000..2.100 outside the paint texture (0..1): its copies would bleed into each other
+RESULT {"case": "repeat", "tree": "<main 06d782f>", "ok": false}
+## new-hp
+[road_wear] kerbs: 1 meshes, 145 faces, 122 darkened (levels 16, step 0.0147; per level [23, 6, 0, 0, 19, 10, 0, 0, 0, 0, 0, 23, 6, 0, 0, 58]); clipped 0; paint ['kerb_atlas_hp.png'] -> ['road_wear_kerb_kerb_atlas_hp.png']
+RESULT {"case": "hp", "tree": "<branch>", "ok": true, "positions_same": true, "topology_same": true, "positions_md5": "16779fa98024f15162aaca75575fb7fa", "uv_before_md5": "e6baaf796199b2d1091931e2cef79fbc", "uv_after_md5": "5a7f9442e45c61a2e08a1af4e92bd524", "v_same": true, "atlas": {"road_wear_kerb_kerb_atlas_hp.png": "ce55a094b1ded9b76ff06c9bcc569c48"}, "record_md5": "efd65ba855de89405f5b4e9341102dd3", "rows_md5": "f217f8b4ef4a8519c9c3d51c0027f2ba"}
+## new-repeat
+[road_wear] kerbs: the paint repeats (u 0.000..2.111): 58 faces moved back by whole repeats, the widest face then reaching u 1.300; each level copy holds 2 tile(s) of the paint
+[road_wear] kerbs: 2 meshes, 145 faces, 145 darkened (levels 16, step 0.0147; per level [0, 29, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 35, 6, 0, 58]); clipped 0; paint ['kerb_redwhite.png'] -> ['road_wear_kerb_kerb_redwhite.png']
+RESULT {"case": "repeat", "tree": "<branch>", "ok": true, "positions_same": true, "topology_same": true, "positions_md5": "5b2c6faad7809006ccb6a1ef5bcaeb8f", "uv_before_md5": "3dc46d7a80e5f7b93b87d4afdd87956b", "uv_after_md5": "3dbeb64b8685abd7084699bf9ff668d3", "v_same": true, "atlas": {"road_wear_kerb_kerb_redwhite.png": "1a9b721b6f393fdec4d279a5dc4bf45a"}, "record_md5": "eeec093a5a49f365eeabad851d83045f", "rows_md5": "ff0f4bc6785209a58df25baf1ec32024"}
+## the gate's kerb rows (kt_gate_ab.py), main's gate on old-hp
+kerb_materials {"pass": true, "materials": 1, "problems": []}
+kerb_paint {"pass": true, "levels": 16, "step": 0.01467, "problems": []}
+kerb_levels {"pass": true, "triangles": 290, "corners_in_two_levels": 0, "outside_every_declared_face": 0, "level_not_its_face": 0, "faces": 145, "faces_off_the_line_rubber": 0, "worst_level_err": 0.4906, "faces_darkened": 122, "darkest_face": 0.22406, "per_level": [23, 6, 0, 0, 19, 10, 0, 0, 0, 0, 0, 23, 6, 0, 0, 58]}
+tampered (one triangle a level up): kerb_levels pass = False
+## this branch's gate on new-hp (identical to the above: diff empty)
+kerb_materials {"pass": true, "materials": 1, "problems": []}
+kerb_paint {"pass": true, "levels": 16, "step": 0.01467, "problems": []}
+kerb_levels {"pass": true, "triangles": 290, "corners_in_two_levels": 0, "outside_every_declared_face": 0, "level_not_its_face": 0, "faces": 145, "faces_off_the_line_rubber": 0, "worst_level_err": 0.4906, "faces_darkened": 122, "darkest_face": 0.22406, "per_level": [23, 6, 0, 0, 19, 10, 0, 0, 0, 0, 0, 23, 6, 0, 0, 58]}
+tampered (one triangle a level up): kerb_levels pass = False
+## this branch's gate on new-repeat
+kerb_materials {"pass": true, "materials": 2, "problems": []}
+kerb_paint {"pass": true, "levels": 16, "step": 0.01467, "repeats": 2, "problems": []}
+kerb_levels {"pass": true, "triangles": 290, "corners_in_two_levels": 0, "outside_every_declared_face": 0, "level_not_its_face": 0, "faces": 145, "faces_off_the_line_rubber": 0, "worst_level_err": 0.4804, "faces_darkened": 145, "darkest_face": 0.22332, "per_level": [0, 29, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 35, 6, 0, 58]}
+tampered (one triangle a level up): kerb_levels pass = False
+## paint per corner (paint_per_corner.py)
+new-hp: 580 corners, repeats 1, worst paint offset 1.90e-07 repeats (float32), texel mismatches 0
+new-repeat: 580 corners, repeats 2, worst paint offset 7.15e-07 repeats (float32), texel mismatches 0
+## the material rows: old-hp == new-hp once the code tree's path in the stock row's texture paths is replaced (True)

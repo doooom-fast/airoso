@@ -785,3 +785,151 @@ The same brief and rule as Pueblo above. Photo mode on NAIP 2023 at 0.3 m; no ke
 - Installed: still **0.1.2**. Records: `source/road_wear/pc_013/{ref,reh}/`.
 - So the bake and its rows work on a circuit without kerbs. Only the photo lacks rubber. Of the four 0.3 m circuits so far,
   only High Plains' NAIP shows its rubber (0.146); Pueblo 0.022, Aspen -0.008, Grand Junction 0.002.
+
+## Engine fixes after the overnight run (Mac, 2026-11-10; code and tests only, no track build)
+
+The PC's overnight run (Kevin: "build the road wear for the other circuits on the pc overnight") hit two engine limits.
+Its notes are on `claude/pueblo-road-wear` a181c607, `claude/aspen-road-wear` 9992b8a3 and
+`claude/pikes-peak-road-wear` d3fb491f (`pc_022/density_offenders.txt`). Branch `claude/road-wear-engine-fixes`, from main
+06d782f. Gate log: fleet/GATES-CHANGELOG.md 2026-11-10 (Mac). No threshold moved.
+
+### 1. The kerbs: paint that repeats (Pueblo 0.1.4, Aspen 0.1.5)
+
+- **The failure.** `FATAL: 1KERB_circuit_0: u 0.000..2.111 outside the paint texture (0..1)` (Aspen 0..2.099).
+- **Why u passes 1.** A kerb without a `kerb.atlas` cell gets u = offset / painted width (`tools/author_kerbs_blend.py`).
+  The back fall past the painted width runs on to u = (w + ramp_out) / w, and the stock exporter's wrap addressing
+  repeats the paint there. A level copy can't wrap, because its neighbour copy sits beside it.
+- **The fix** (`scripts/aerial/road_wear.kerb_unwrap / kerb_repeats`, `kerb_wear_atlas` / `kerb_u` with `repeats`):
+  - Every face's u moves back by its whole repeats, floor(its smallest u + 1e-6). frac(u) is what the wrap sampled, so
+    every point reads the same texel.
+  - A face still wider than one repeat (Pueblo's back fall, 1.0 .. 2.111) is **not split**. Each level copy holds
+    `repeats` tiles of the paint side by side. That is the smallest power of two that holds every face, with more than
+    one float32 step left before the copy's right edge. The tile seam inside a copy is the same column-W-1-to-column-0
+    seam the wrap had.
+  - Splitting would add vertices and faces and re-triangulate. This way no face, triangle or vertex changes: the
+    physics, the gate's face join and the writer's vertex count are all as before.
+  - The cost is the atlas width. Pueblo / Aspen's 64 px kerb_redwhite.png gives 64 x 2 x 16 = 2048 x 256. The bake
+    refuses anything wider than 16,384 px (Direct3D 11's largest texture).
+  - data/road_wear.json `kerbs` gains `repeats`, `faces_unwrapped`, `u_range` and `u_max_unwrapped`, only when the paint
+    repeats.
+- **The gate.** kerb_paint reads `repeats`: every tile of copy k is the paint x (1 - k step). kerb_levels is unchanged.
+- **Unchanged where the paint doesn't repeat.** High Plains 0.1.7's cells (u 0.05 .. 0.95) move by exactly 0 and get
+  repeats 1, so the arithmetic is the old code's, bit for bit.
+- **The edge of a copy.** Bilinear filtering at a copy's outer edge reads half a texel of the next copy, as High
+  Plains' copies always have. That isn't changed here.
+
+### 2. The density row: slivers (Pikes Peak 0.2.2)
+
+- **The failure.** 2 of 28,656 triangles, both slivers on the oval's apron pads:
+  - 1ROAD_pad_NE 0.0020 m2, edges 1.01 / 5.06 / 6.07 m, 0.66 mm tall, read 0.86 % off;
+  - 1ROAD_pad_NW 0.0189 m2, read 0.51 % off.
+- **Why: the measurement, not the atlas.**
+  - The bake gives every face one tile and u = east / (atlas_px x texel_m) + the tile's offset. That is exact for any
+    shape.
+  - The row's UV Jacobian divides by the triangle's height. So the kn5's float32 rounding (6e-5 m in u at 4096 px x
+    0.25 m) is amplified by length / height, here ~10,000.
+  - NE-shaped slivers mapped exactly and stored as float32 fail the old row 197 times in 200.
+- **The fix** (`tools/road_wear_check.density_row`):
+  - Each triangle gets a rounding bound on its Jacobian. Where that bound is under the tolerance (every road triangle),
+    the triangle is judged by the Jacobian exactly as before.
+  - Where it isn't, the triangle is judged by the texel footprint of its edges: |UV step in metres - the edge on the
+    ground| <= density_tol x |edge|. A really mis-mapped sliver still fails (stretched 1 %, or one corner a texel off).
+  - A triangle no float32 number can judge (every edge under ~4 cm) is counted and listed as `unjudged`. That is the one
+    exemption, and its rounding model `f32_ulps` 1.0 is **[invented]**.
+  - The old row's silent |det| < 1e-6 skip is gone from density: those triangles are edge-judged now.
+
+### Proven (Mac)
+
+- **Tests.** `tests/aerial/test_road_wear_*.py` 31 of 31 (20 before):
+  - `test_road_wear_density.py`: 7 new;
+  - `test_road_wear_kerbs.py`: 4 new. A run with u 0..2.1, its faces straddling 1.0 and 2.0: every texel centre each face
+    covers reads the wrap's paint column from its level's copy; v is untouched; no loop is added. High Plains' range is
+    byte for byte; kerb_paint passes 16 x 2 tiles and fails one texel off.
+- **The bake in Blender, on synthetic scenes** (Blender 5.1.2 on the Mac, not the PC's 4.2;
+  `tracks/pueblo-lm/source/road_wear/mac_fix/kerb_ab.log`), main's `_kerbs` against this branch's:
+  - High Plains' shape gives identical UVs, atlas, record and gate rows (the material rows equal bar the code tree's
+    path).
+  - A Pueblo-shaped scene (u 0..2.111): main FATALs. This branch bakes it with repeats 2, positions and topology
+    unchanged, every corner on its own paint texel, and all three kerb rows PASS. A triangle moved one level FAILS.
+- **The installed tracks.** Milford 0.1.11, High Plains 0.1.7 and Nevada 0.1.6:
+  - They name no repeating kerb paint, and the bake's non-kerb code is untouched (the diff is inside `_kerbs` only).
+  - Their own roads, rebuilt from their records and mapped as the bake maps them
+    (`tracks/pikes-peak-lm/source/road_wear/mac_fix/density_ab.log`), get the same density verdict and the same worst
+    numbers before and after. Every triangle is judged by the Jacobian.
+  - The kn5s are on the PC, so the gate has not been re-run on them here.
+- **Lake Murray** names no road_wear key, and no shared code outside the three road-wear files changed. There is no LM
+  A/B to run.
+- `tests/tools/test_ship_track_chain.py` fails 4 tests on the Mac on main 06d782f as well. That is unrelated.
+
+### Runbook 0084-3 (PC): rebuild Pueblo, Aspen and Pikes Peak on these fixes
+
+(Superseded by "Runbook 0084-3, as Kevin picked" below: tone only, all four circuits.)
+
+Run this once Kevin picks each track's rubber mode. All three photos show no rubber the gate can use: Pueblo 0.022,
+Aspen -0.008, Pikes Peak -0.008, all under photo_min_depth 0.03. So it is "drawn" (Milford's band, its numbers
+[invented]) or no road wear. Nothing is tuned until he says.
+
+1. Merge `claude/road-wear-engine-fixes` (after Kevin's yes) into each track's branch, set `road_wear.rubber` to his
+   pick, and rebuild reference + rehearsal from EMPTY workshops, as runbook 0084-2.
+2. **Pueblo / Aspen.** The bake log shows `kerbs: the paint repeats (u 0.000..2.111): N faces moved back ...; each level
+   copy holds 2 tile(s)`, and the kerb atlas `road_wear_kerb_kerb_redwhite.png` is 2048 x 256. kerb_paint reports
+   `repeats 2`. kerb_levels: corners_in_two_levels 0, outside_every_declared_face 0.
+3. **Pikes Peak.** density PASS. edge_judged should include 1ROAD_pad_NE / _NW's slivers (edge_off 0), with every other
+   triangle jacobian_judged. Report edge_judged and unjudged and list unjudged_list. Then stage_force (the hairpin's
+   verdict), which the red chain never reached.
+4. **The installed tracks.** Re-run `python tools/road_wear_check.py <proj> --kn5 <installed road kn5>` on Milford
+   0.1.11, High Plains 0.1.7 and Nevada 0.1.6. Every row should equal its record: density equal, plus the new keys
+   (expect edge_judged = the slivers, if any, and unjudged 0). No rebuild is needed for them.
+5. Green = install, older build archived (Kevin 2026-11-09). Red = stop and report.
+
+## Tone only, no rubber (Kevin 2026-11-10; Mac, code and tests only, no track build)
+
+Kevin, 2026-11-10, asked whether Pueblo, Aspen, Grand Junction and Pikes Peak (their photos show no rubber) take tone
+only or Milford's drawn band: "Tone only, no rubber".
+
+- **What the four photos show.** The photo's own line-vs-mirror depth (the PC's overnight run): Pueblo 0.022, Aspen
+  -0.008, Grand Junction 0.002, Pikes Peak -0.008, all under `photo_min_depth` 0.03. Only High Plains' NAIP shows its
+  rubber (0.146).
+- **The new mode, `road_wear.rubber: "none"`** (`scripts/aerial/road_wear.rubber_mode`, `tools/road_wear_blend.py` 4c):
+  - On the asphalt it bakes exactly what photo mode bakes, the photo's tone with no band drawn. Whatever the photo shows
+    is in the tone; nothing is added.
+  - The line is still found and the photo measured across it against its mirror, recorded in
+    `data/road_wear.line.<layout>.json` as in photo mode, so the gate can show the atlas adds nothing.
+  - It refuses `road_wear.kerbs` (FATAL): no rubber is drawn, so nothing levels the kerbs. Pueblo and Aspen drop the
+    key, and their kerbs keep the stock paint and material they shipped before road wear. The repeating-paint fix above
+    stays in the engine for a track that levels its kerbs.
+  - It needs `road_wear.aerial` (FATAL without).
+- **The gate row `no_rubber`** takes `photo_rubber`'s place (fleet/GATES-CHANGELOG.md 2026-11-10 (Mac, later)). For each
+  line, the shipped atlas's line-vs-mirror depth must be within `photo_depth_tol` 0.02 of the photo's own: the atlas adds
+  no band. The photo isn't asked to show rubber, and the centroid isn't judged. No threshold moved and none is added.
+- **Unchanged.** "drawn" (Milford 0.1.11, Nevada 0.1.6) and "photo" (High Plains 0.1.7) are judged exactly as before;
+  `photo_line_pass("photo", ...)` is the old expression term for term. Lake Murray names no road_wear key.
+- **Proven (Mac).** `tests/aerial/test_road_wear_*.py` 34 of 34 (3 new, in `test_road_wear_photo.py`). On a photo with
+  no band, "none" passes the atlas that is the photo and fails the same photo with a 0.15 band drawn on it, and "photo"
+  fails it on min depth.
+
+### Runbook 0084-3, as Kevin picked (PC): Pueblo, Aspen, Grand Junction, Pikes Peak, tone only
+
+Kevin's words: "build the road wear for the other circuits on the pc overnight", then "Tone only, no rubber".
+
+1. **Base.** This branch, `claude/road-wear-engine-fixes`, carries the kerb, density and tone-only fixes. Bring each
+   track's overnight branch onto it (`claude/pueblo-road-wear` a181c607, `claude/aspen-road-wear` 9992b8a3,
+   `claude/grand-junction-road-wear` c67ac595, `claude/pikes-peak-road-wear` d3fb491f). Nothing goes into main.
+2. **Config, per track.**
+   - `road_wear.rubber: "none"`, with `_rubber_doc` quoting Kevin's words.
+   - Pueblo and Aspen: remove `road_wear.kerbs`.
+   - Bump the version past the red overnight one: Pueblo 0.1.5, Aspen 0.1.6, Grand Junction 0.1.4, Pikes Peak 0.2.3.
+3. **Build.** A reference build and a rehearsal, each from its own EMPTY workshop, matched row for row (runbook 0084-2),
+   with every gate green and no force.
+4. **What to expect.**
+   - road_wear_check shows `no_rubber` PASS, with no `rubber` and no `photo_rubber` row. Report each line's
+     declared_depth and shipped_depth.
+   - The bake log reads `deepest rubber 0.0 %`.
+   - No kerb rows on any of the four.
+   - Pikes Peak: density PASS. Report edge_judged, unjudged and unjudged_list.
+   - Pikes Peak's stage_force (the hairpin) comes next. Kevin's exemption was "for 0.2.0 only". If the hairpin needs
+     the force, stop Pikes Peak there and report; don't force it without his word.
+5. **The installed tracks.** As step 4 of the runbook above: re-run the gate on the installed Milford 0.1.11, High Plains
+   0.1.7 and Nevada 0.1.6 road kn5s. Every row should equal its record. No rebuild.
+6. **Green = install**, with the older build archived (Kevin 2026-11-09: "I always want newer builds"). Re-render the
+   menu picture and push the records. Red = record why, skip that track, go on to the next. Change no threshold.

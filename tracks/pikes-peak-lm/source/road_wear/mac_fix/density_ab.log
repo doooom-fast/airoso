@@ -1,0 +1,9 @@
+milford-road-course-lm 0.1.11: 19608 triangles (atlas 4096 px, texel 0.25 m, 123 cells)
+  before: {'pass': True, 'off': 0, 'worst_scale_err': 9.8e-05, 'worst_shear': 0.00011}
+  after : pass True, off 0, worst_scale_err 9.8e-05, worst_shear 0.00011, jacobian_judged 19608, edge_judged 0 (worst 0.0), unjudged 0, v_sign -1.0
+high-plains-lm 0.1.7: 6438 triangles (atlas 4096 px, texel 0.25 m, 73 cells)
+  before: {'pass': True, 'off': 0, 'worst_scale_err': 6.3e-05, 'worst_shear': 6.8e-05}
+  after : pass True, off 0, worst_scale_err 6.3e-05, worst_shear 6.8e-05, jacobian_judged 6438, edge_judged 0 (worst 0.0), unjudged 0, v_sign -1.0
+exotics-racing-lv-lm 0.1.6: 3642 triangles (atlas 2048 px, texel 0.25 m, 78 cells)
+  before: {'pass': True, 'off': 0, 'worst_scale_err': 3.9e-05, 'worst_shear': 4.3e-05}
+  after : pass True, off 0, worst_scale_err 3.9e-05, worst_shear 4.3e-05, jacobian_judged 3642, edge_judged 0 (worst 0.0), unjudged 0, v_sign -1.0

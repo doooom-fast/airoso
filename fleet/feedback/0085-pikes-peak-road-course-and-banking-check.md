@@ -479,3 +479,61 @@ after driving".
   `D:/k10-track-archive/2026-11-09_menu_pikes_peak_020/`.
 - Pikes Peak carries no personal-use tree bins (none to lose). GrassFX names all 8 ground pieces.
 - **Not driven yet.**
+
+**10. Furniture pass 1: 0.2.1 (PC, 2026-11-10).** The Mac's fleet furniture inventory ranked Pikes Peak first, and the
+pass was handed here. Kevin's words: "Lots to furniture needed all over", "I always want newer builds", "drives look
+good keep going". Nothing was downloaded: the 2018 lidar box and the NAIP 2023 crop were already on the PC.
+
+- **The tools**: Milford's furniture tools came in by merge (claude/milford-0111 2dc444cd, 246e7d2a: the rail kinds,
+  blocks with `roof_z_m`, `reseat_on_prep`, `seat_built`, far ground, road wear). The five conflicts were resolved by
+  keeping both sides.
+- **The buildings, off the lidar** (`source/lidar/infield/buildings_lidar.py`):
+  - Every non-ground point's height over the 1 m DEM. 21 roofs, 12 trees (the SW row) and 33 poles (light masts).
+  - `plan_furniture.py` turns the roofs into 28 blocks (`tracks/pikes-peak-lm/source/bespoke/buildings.lidar.json`).
+    Footprints, heights and roof colour classes are measured; the skins are the fleet's [invented].
+
+| what | measured |
+|---|---|
+| the west grandstand (134 x 59 m, 18 m off the lap) | six seating tiers 4.85 / 7.26 / 10.33 / 13.41 / 16.46 / 19.86 m, the suites block 33.04 m |
+| the two pit / paddock buildings | 82.5 x 20.4 m and 77.8 x 20.3 m, 4.0 m, white roofs |
+| the striped building by the pit road | 43 x 20 m outline, 8.05 m |
+| sheds, garages and containers (19) | 2.6-4.1 m, in and round the infield and to the SW |
+
+- **The skid pad** (`skid_pad.py`): the lot inside the road course's loop, 10,336 m2.
+  - The outline uses junction_pads' pavement rule, less the infield road's ribbon and strip.
+  - It is a visual pad in two halves laid on the prepped ground (`pads_seat` "ground"). Whole, it stood 69,997 verts,
+    over AC's cap.
+  - A driven-road version was tried and taken out (audit K 30 / I 42, 3 gated drops: the lot stands up to 0.15 m
+    under the road beside it). It drives the ground under it, as in 0.2.0.
+- **Skins**: copied in through sync_in.assets with texture_overrides, as Sand Creek's (eng_pplm carries none). A new
+  gate, `textures`.
+- **Kevin's hairpin force** is carried to 0.2.1: the same hairpin, at the same place.
+- **The builds**: a reference and a rehearsal from empty workshops (`D:/k10-scratch/pp_c5`, `pp_c6`). Every gate row
+  is identical.
+  - Oval and road course PASS. The infield is red on the forced hairpin only ("would be allowed").
+  - Audit 0 (D 0 with 1,780 held-band wall verts exempt). Textures, houses (28 judged, 0 floating / sunken / buried),
+    verify_pads, verify_mouths and kn5 x3 PASS.
+  - `seat_built` PASS. wall_seat_abs: the outer wall 1.28 m exposed, 0 buried. The NW branch K-rail reads as in
+    0.2.0 (its module shape).
+  - The two road kn5s are 51.5 MB each. They differ only inside the ground tiles (1GRASS_*, one by 176 bytes). The
+    0.2.0 pair (pp_b6 against the install) differed the same way (88 bytes), so it is the chain's ground, not the
+    furniture. Every road, wall, block and pad byte matches.
+- **Stills**: `tracks/pikes-peak-lm/source/bespoke/stills_0.2.1_before_after.jpg` (five views, 0.2.0 installed against
+  0.2.1).
+- **Not built** (owed):
+  - The 33 light masts and the 12 trees: reported, not built.
+  - The low pit wall along the pit road: the lidar shows it at 0.5-1.5 m.
+  - The flag stand at the S/F: on the wall, 5.3 m.
+  - The dark box at the pit road's south end: NAIP only, no lidar height.
+  - The kart track.
+  - The skid pad as a driven surface.
+- **Installed: 0.2.1** (2026-11-10 14:18, under Kevin's standing "I always want newer builds"). Built from an empty
+  workshop at 421dfb78 (`D:/k10-scratch/ppir_lm`, log `D:/k10-scratch/ppir_install_021.log`; 0.2.0's workshop parked
+  as `ppir_lm.0.2.0-parked-2026-11-10`).
+  - The verdicts are as the reference / rehearsal. stage_force "would be allowed", so the forced install passed
+    ship_track's new check.
+  - SHIP OK: the plain `pikes_peak_international_raceway`, three layouts at 0.2.1. 0.2.0 was parked by the chain in
+    `D:/k10-track-archive/2026-11-10_141829/` (ac-tidy 52253b3d).
+  - Menu pictures re-rendered from the installed split, the same stations as 0.2.0's. The oval's now shows the
+    grandstand at the S/F. The pack's placeholders are in `D:/k10-track-archive/2026-11-10_menu_pikes_peak_021/`.
+  - Not driven yet. The hairpin question still waits for Kevin's drive.

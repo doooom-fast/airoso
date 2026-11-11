@@ -1231,3 +1231,40 @@ installed one.
   something transient like Del Mar's parked cars, so installed, and flagged here for Kevin's look.
 - 0.1.2 parked in D:/k10-track-archive/2026-11-11_003921/; the same 13 files. Menu picture re-rendered (s1 of 6, same
   camera). ac-tidy 01d160a1.
+
+#### Pikes Peak 0.2.3: INSTALLED forced (2026-11-11 11:19; built at a3bde5d6, records on `claude/pikes-peak-road-wear`)
+
+- **Kevin's word, typed on the PC.** Asked "Install Pikes Peak 0.2.3 forced past the infield hairpin?", he answered
+  "Yes, force it". It is recorded in `force_exemptions.stage._versions_doc` (a3bde5d6) before the build. His relayed
+  "Carry it over" had already put 0.2.3 in the declared versions (ab15787b).
+- **The install build.**
+  - `ship_track.sh pikes-peak-lm --force-install` (install_edge.sh takes no force flag), from an EMPTY workshop. 0.2.1's
+    workshop is kept as `D:/k10-scratch/ppir_lm.0.2.1`.
+  - Judged by adf3828's gate inside the build (runbook 0084-4 step 4). road_wear_check, every row PASS:
+    - density: 28,656 triangles; jacobian_judged 27,853, edge_judged 803, edge_off 0, unjudged 0;
+    - tone r 0.8684;
+    - **no_rubber**: declared_depth -0.00791, shipped_depth **-0.00794**, samples 7,333 = the bake's 7,333.
+  - **stage_force: every red row covered** (infield, undrivable corners at s 665-681 m, the S-curve hairpin),
+    force_install_ok true, why_not []. GATES: street drive_test exit 1 (the infield), every other gate exit 0, race
+    layouts red on their own gates: none.
+  - The log reads "--force-install: installing RED", then SHIP OK.
+- **Against the rehearsal** (`pc_023/install/install_vs_reh.txt`):
+  - build files 67 / 67, 65 md5-equal; the two road kn5 copies are kn5_equiv EQUIVALENT (tangents only; the tangent noise
+    moves one grass vertex merge: audit grass 391,579 vs 391,580);
+  - AI lines 12 / 12 equal.
+  - The other differences are the newer gate's no_rubber numbers (those of the step 2 re-run) and the declared versions.
+- **Against the installed 0.2.1** (compare_ab on all four kn5s, `pc_023/install/compare_ab_vs_021.*.json`):
+  - the three layout kn5s are identical;
+  - in the road kn5, 23 of 25 meshes' positions are bit-identical; UVs and material changed on the road-wear surfaces
+    only; kn5 **51,513,251 -> 55,096,760 B**;
+  - PADAPRON_0 / _1 differ: main's pad-fold fix 84fefe1a, proven by the A/B above.
+- **The atlas, looked at after the install** (a miss: the forced install ran straight on Kevin's yes, before the look).
+  - Most cells are the photo's asphalt with its crack sealant, paint and the catch fence's posts.
+  - On the oval at s 410-440 m (racing surface and inside apron) the photo's tone carries pole shadows across the
+    lane, one darker rectangle about 10 x 14 m (most likely a resurfaced patch), and a small dark object with a shadow
+    (a cart or car). Two or three more small dark objects sit in other cells. Evidence: `pc_023/install/macro_x4.png`,
+    `macro_oval_s410-440_x3.png`. Far less than Del Mar's lot of parked cars; reported to Kevin, 0.2.1 kept in the
+    archive for a put-back on his word.
+- 0.2.1 parked by the install step in D:/k10-track-archive/2026-11-11_111915/; the same 44 files, with no TreeFX bins
+  before or after. The three menu pictures re-rendered from 0.2.1's cameras (oval s0, road course s2, infield s0; the
+  sidecar cameras equal 0.2.1's) and copied in, the old ones backed up in 2026-11-11_112400_previews. ac-tidy 917dae9a.

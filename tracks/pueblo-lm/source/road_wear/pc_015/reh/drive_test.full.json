@@ -1,0 +1,168 @@
+{
+ "lap_m": 3495.6,
+ "layout": "full",
+ "direction": "forward",
+ "kind": "street",
+ "race_furniture": false,
+ "obj": "track.obj",
+ "lane": "full width / island",
+ "barrier_stations": 0,
+ "barrier_missing": 0,
+ "barrier_missing_runs": [],
+ "soft_top_in_lane": 0,
+ "off_pavement_stations": 0,
+ "severe_steps": 0,
+ "severe_per_km": 0.0,
+ "steps_per_km": 0.29,
+ "kinks_per_km": 8.3,
+ "obstruction_stations": 0,
+ "daylight_gaps": 0,
+ "replication_vs_measured": null,
+ "undrivable_corners": 0,
+ "floating_furniture": 0,
+ "apron_steps": 0,
+ "fold_bumps": 0,
+ "vertex_bumps": 11,
+ "vertex_bumps_worst": [
+  [
+   2279.0,
+   3.25,
+   0.03,
+   0.0228
+  ],
+  [
+   1839.0,
+   -3.25,
+   0.03,
+   0.0224
+  ],
+  [
+   2273.0,
+   3.25,
+   0.035,
+   0.013
+  ],
+  [
+   2265.0,
+   3.25,
+   0.028,
+   0.0111
+  ],
+  [
+   2266.0,
+   3.25,
+   0.027,
+   0.0093
+  ],
+  [
+   2271.0,
+   -3.25,
+   0.03,
+   0.0076
+  ],
+  [
+   2268.0,
+   -3.25,
+   0.029,
+   0.0073
+  ],
+  [
+   1856.0,
+   -3.25,
+   0.025,
+   0.0066
+  ],
+  [
+   2274.0,
+   -3.25,
+   0.026,
+   0.0063
+  ],
+  [
+   2270.0,
+   3.25,
+   0.025,
+   0.0061
+  ],
+  [
+   2267.0,
+   -3.25,
+   0.026,
+   0.0054
+  ]
+ ],
+ "excursion_drops": 0,
+ "excursion_far_ledges": 0,
+ "worst_excursions": [],
+ "worst_gated_excursions": [],
+ "obstruction_by_mesh": {},
+ "worst": {
+  "soft_top": [],
+  "severe_steps": [],
+  "severe_all": [],
+  "kinks": [
+   [
+    2267.0,
+    4.75,
+    4.73
+   ],
+   [
+    2266.0,
+    4.75,
+    4.46
+   ],
+   [
+    2273.0,
+    4.75,
+    4.26
+   ],
+   [
+    2270.0,
+    4.75,
+    4.24
+   ],
+   [
+    2276.0,
+    3.25,
+    4.12
+   ],
+   [
+    2271.0,
+    4.75,
+    4.11
+   ],
+   [
+    2276.0,
+    4.75,
+    4.08
+   ],
+   [
+    2265.0,
+    4.75,
+    3.87
+   ],
+   [
+    2268.0,
+    4.75,
+    3.75
+   ],
+   [
+    1851.0,
+    -4.75,
+    3.62
+   ],
+   [
+    1848.0,
+    -4.75,
+    3.61
+   ],
+   [
+    2274.0,
+    4.75,
+    3.56
+   ]
+  ],
+  "obstructions": []
+ },
+ "fail": false
+}

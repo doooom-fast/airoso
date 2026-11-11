@@ -867,8 +867,9 @@ Kevin's words: "build the road wear for the other circuits on the pc overnight",
    - The bake log reads `deepest rubber 0.0 %`.
    - No kerb rows on any of the four.
    - Pikes Peak: density PASS. Report edge_judged, unjudged and unjudged_list.
-   - Pikes Peak's stage_force (the hairpin) comes next. Kevin's exemption was "for 0.2.0 only". If the hairpin needs
-     the force, stop Pikes Peak there and report; don't force it without his word.
+   - Pikes Peak's stage_force (the hairpin) comes next. Kevin's exemption was "for 0.2.0 only". Asked on 2026-11-11
+     "May Pikes Peak 0.2.3 use the hairpin exemption you gave 0.2.0?", he said "Carry it over". So 0.2.3 may take
+     that one forced verdict, the same as 0.2.0, and nothing else. It does not extend to later builds.
 5. **The installed tracks.** As step 4 of the runbook above: re-run the gate on the installed Milford 0.1.11, High Plains
    0.1.7 and Nevada 0.1.6 road kn5s. Every row should equal its record. No rebuild.
 6. **Green = install**, with the older build archived (Kevin 2026-11-09: "I always want newer builds"). Re-render the

@@ -1,0 +1,1 @@
+{"bbox_swne": [32.971559, -117.261008, 32.978139, -117.251296], "nx": 89, "ny": 73, "spacing_m": 10.0, "margin_m": 150.0, "row0": "north", "lm_intake_upsample": {"factor": 4, "source_spacing_m": 40.0, "_doc": "bilinear from the source 3DEP grid (tools/lm_engine_intake.py)"}}

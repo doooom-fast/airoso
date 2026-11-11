@@ -1,0 +1,249 @@
+START 2026-11-10 21:19:02 HEAD 15b31f4f ENG eng_nvlm_rw track exotics-racing-lv-lm (edge flush, ledger 0087)
+track: exotics-racing-lv-lm   workshop project: D:/k10-scratch/nv_rw_reh (scratch: no sync-back, no install)
+engine (prep / export / spawn): D:/k10-scratch/eng_nvlm_rw
+
+=================== sync inputs airoso -> workshop (D:/k10-scratch/nv_rw_reh)
+layouts: full   (race furniture: ; street: full; street AI = draft)
+
+=================== draft: the track's line, widths and 3DEP into Lake Murray v4's assembler inputs (tools/lm_engine_intake.py; ledger 0078)
+[lm_intake] profile uncapped: the stage's 9 % cap undone (0 points, max 0.0 m); its despike (33 m median) and mean kept
+[lm_intake] exotics-racing-lv: 608 pts, lap 1822 m, widths [11.5, 13.94, 20.0] m, 0 deck(s) levelled, grade cap none, steepest 3.73 % over 10 m — 0 heights moved (max 0.0 m); connectors out
+
+=================== draft: build loop.blend (scene regen — GEN layer)
+[blend] TREETRUNK: empty, skipped
+[blend] TREECANOPY: empty, skipped
+[blend] SCRUB: empty, skipped
+[blend] 0 streetlights placed (collision-checked)
+[blend] loop: 608 pts, road elevation 0..11 m (rel origin 613 m)
+[blend] wrote D:\k10-scratch\nv_rw_reh\loop.blend
+
+=================== draft: weld every side-street mouth onto its host (mitre + warp: road, curb/sidewalk, markings; self-checked)
+[weld] layout contract holds: mainline 607 rows + 0 connector blocks in ROAD / CURB / MARKINGS / YLINE
+[weld] 0 of 0 warped ROAD quads turned to their ridge diagonal
+[weld] 0 mouth(s) welded, self-check clean; 0 connector-island point(s) follow the warped centre; saved loop.blend + data/mouth_welds.json
+
+=================== author: more columns where the mainline ribbon twists (tools/densify_ribbon_blend.py; ledger 0078; after the weld, no crease = no-op)
+[densify] 322 mainline half-quads re-cut (worst crease 18.3 mm; columns up to 4, 444 new row vertices, 1532 triangles for 644); saved loop.blend
+
+=================== author: finer ground along the lane edges of the banked stretch (tools/seat_edges_blend.py; ledger 0078; no route.crossfall_file = no-op)
+[seat-edges] faces cut by bank: 3 cuts x 160, 4 cuts x 20, 5 cuts x 54, 6 cuts x 133, 7 cuts x 483, 8 cuts x 56, 9 cuts x 9, 10 cuts x 13, 11 cuts x 6, 12 cuts x 17, 13 cuts x 20, 14 cuts x 2, 15 cuts x 2, 16 cuts x 165
+[seat-edges] 608 banked line stations, 1214 lane-edge segments: 4100 terrain edges split (<= 0.6 m within 1.5 m of an edge), TERRAIN 7561 -> 72337 verts
+
+=================== author: a ground seam along the edge strip's outer lip (tools/strip_seam_blend.py; ledger 0078; self-checked)
+[strip-seam] 1214 seam points 0.05 m inside the strip's outer lip, 1214 joins, 0 missed; TERRAIN 72337 -> 83597 verts; saved loop.blend
+
+=================== author: racing kerbs from the traced runs on the ribbon's lane edge (tools/author_kerbs_blend.py; ledger 0078; no route.kerbs_file = no-op)
+[kerbs] 6 kerb runs, 439 m, height 0.08 m (config), outside the lane edge; saved loop.blend
+
+=================== author: the bespoke dressing the config declares -> AUTH_bespoke (tools/author_bespoke_blend.py: buildings, cones, scrub on the built ground; self-checked; none declared = no-op)
+[bespoke] scene names: ground ('TERRAIN',), far ('GRASS_FAR', 'TERRAIN'), paved ('ROAD', 'CURB', '1ROAD', '1KERB'), walls ('1WALL', 'BARRIER'); ground found, paved found
+[bespoke] building exr2013_a: 26.2 x 29.5 m, flat, walls 3.00 m; ground 2.45..3.83 (mean 3.32), level 3.32, bottom 2.30, 18.4 m clear of road and wall
+[bespoke] building exr2013_b: 20.2 x 53.3 m, gable, eave 2.60 m, ridge 5.30 m, pitch 14.9 deg; ground 1.83..3.52 (mean 3.08), level 3.08, bottom 1.68, 21.9 m clear of road and wall
+[bespoke] cone  0 corner 1 brake s   272.4 L: track edge  8.80 m from the centreline, foot (  152.9,   261.2) seated at 9.13
+[bespoke] cone  1 corner 1 apex  s   366.5 R: track edge  8.00 m from the centreline, foot (  239.4,   254.1) seated at 9.68
+[bespoke] cone  2 corner 1 exit  s   426.5 L: track edge  9.40 m from the centreline, foot (  279.6,   209.0) seated at 10.90
+[bespoke] cone  3 corner 2 brake s   670.9 L: track edge  7.70 m from the centreline, foot (  229.8,   -32.0) seated at 8.62
+[bespoke] cone  4 corner 2 apex  s   746.9 R: track edge  9.10 m from the centreline, foot (  185.1,   -88.7) seated at 7.06
+[bespoke] cone  5 corner 2 exit  s   785.9 L: track edge  8.90 m from the centreline, foot (  152.1,  -114.9) seated at 6.41
+[bespoke] cone  6 corner 3 brake s   857.1 R: track edge  8.00 m from the centreline, foot (   85.1,   -82.0) seated at 5.03
+[bespoke] cone  7 corner 3 apex  s   939.2 L: track edge  7.10 m from the centreline, foot (    9.5,  -105.6) seated at 4.46
+[bespoke] cone  8 corner 3 exit  s   990.2 R: track edge  8.60 m from the centreline, foot (  -35.8,  -134.5) seated at 4.86
+[bespoke] cone  9 corner 4 brake s  1099.9 L: track edge  9.00 m from the centreline, foot (  -47.5,  -245.9) seated at 3.88
+[bespoke] cone 10 corner 4 apex  s  1193.9 R: track edge  8.10 m from the centreline, foot ( -115.6,  -295.3) seated at 2.21
+[bespoke] cone 11 corner 4 exit  s  1238.9 L: track edge  9.30 m from the centreline, foot ( -160.9,  -284.5) seated at 1.37
+[bespoke] cone 12 corner 5 brake s  1387.6 R: track edge  7.10 m from the centreline, foot ( -189.8,  -136.5) seated at 0.82
+[bespoke] cone 13 corner 5 apex  s  1451.6 L: track edge  8.20 m from the centreline, foot ( -231.5,   -89.6) seated at 1.75
+[bespoke] cone 14 corner 5 exit  s  1469.6 R: track edge  7.90 m from the centreline, foot ( -236.6,   -65.2) seated at 1.96
+[bespoke] cone 15 corner 6 apex  s  1490.6 R: track edge  8.30 m from the centreline, foot ( -250.6,   -54.4) seated at 2.19
+[bespoke] cone 16 corner 6 exit  s  1499.6 L: track edge  8.00 m from the centreline, foot ( -270.3,   -58.2) seated at 2.34
+[bespoke] cone 17 corner 7 brake s  1531.5 L: track edge  8.20 m from the centreline, foot ( -286.8,   -28.9) seated at 2.82
+[bespoke] cone 18 corner 7 apex  s  1592.4 R: track edge  7.10 m from the centreline, foot ( -275.3,    29.4) seated at 3.73
+[bespoke] cone 19 corner 7 exit  s  1631.4 L: track edge 10.40 m from the centreline, foot ( -259.7,    69.3) seated at 4.24
+[bespoke] rail tecpro_t1: 94 tecpro modules over 144 m, 0 left out
+[bespoke] block lvms_section1: METAL, walls 38.0 m, flat, ground -11.25..-7.25, bottom -11.40, eave 26.60
+[bespoke] block lvms_section2: METAL, walls 38.0 m, flat, ground -7.25..-6.79, bottom -7.40, eave 30.60
+[bespoke] block lvms_section3: METAL, walls 38.0 m, flat, ground -11.25..-7.25, bottom -11.40, eave 26.60
+[bespoke] block lvms_section4: METAL, walls 38.0 m, flat, ground -11.25..-7.25, bottom -11.40, eave 26.60
+[bespoke] source/bespoke/buildings.json: 27 buildings stood, 24 dropped (24 of them past 450 m of the lap)
+[bespoke] pad runoff_left_345: 108 cells, 11 left out (over a road or off the ground)
+[bespoke] pad runoff_left_639: 112 cells, 23 left out (over a road or off the ground)
+[bespoke] pad runoff_left_966: 16 cells, 30 left out (over a road or off the ground)
+[bespoke] pad runoff_left_1119: 184 cells, 32 left out (over a road or off the ground)
+[bespoke] pad runoff_left_1452: 132 cells, 9 left out (over a road or off the ground)
+[bespoke] pad runoff_left_1785: 20 cells, 4 left out (over a road or off the ground)
+[bespoke] pad runoff_right_0: 51 cells, 11 left out (over a road or off the ground)
+[bespoke] pad runoff_right_165: 29 cells, 21 left out (over a road or off the ground)
+[bespoke] pad runoff_right_831: 16 cells, 5 left out (over a road or off the ground)
+[bespoke] pad runoff_right_900: 30 cells, 9 left out (over a road or off the ground)
+[bespoke] pad runoff_right_1221: 6 cells, 20 left out (over a road or off the ground)
+[bespoke] pad runoff_right_1314: 10 cells, 10 left out (over a road or off the ground)
+[bespoke] pad runoff_right_1404: 5 cells, 87 left out (over a road or off the ground)
+[bespoke] pad runoff_right_1698: 98 cells, 12 left out (over a road or off the ground)
+[bespoke] saved loop.blend: 25 objects in AUTH_bespoke; 2 buildings, 31 blocks, 20 cones, 0 scrub clumps
+
+=================== ship: prep (AC naming, 65k splits; multi-layout: NO AC_* dummies in the road scene)
+[build_kn5_loop] terrain conform: 10899 corridor edges split, 32209 verts pinned to deck-0.02, 45129 feathered
+[build_kn5_loop] house seat: 27 buildings seated on the final ground under their footprints, 18 with a foundation reaching down a slope (deepest 0.77 m)
+[build_kn5_loop] split 1GRASS (94496 verts) -> 2 tiles under 60000 (balanced bisection)
+[build_kn5_loop] terrain tiles: 1GRASS x2 (max 46171 v, total 91581 v)
+[build_kn5_loop] prepped ['1GRASS_0', '1GRASS_1', '1KERB_circuit_0', '1KERB_circuit_1', '1KERB_circuit_2', '1KERB_circuit_3', '1KERB_circuit_4', '1KERB_circuit_5', '1KERB_sidewalk', '1ROAD_road', '1WA
+
+=================== ship: the I-8's own pavement, lane lines and median barrier on the final ground (visual only; self-checked)
+[freeway] scenery.freeway not enabled — nothing to do
+
+=================== ship: the road cuts' rock faces split out of the ground tiles (tools/rock_faces_blend.py: 1GRASS_ROCK_*, the sandstone skin, GRASS physics kept; self-checked; no auto cut declared = no-op)
+[rock] no auto cuts declared (data/ground_release.auto_cuts.json / expansion.north.json) or terrain.rock_faces.enabled false — nothing to do
+
+=================== ship: the bespoke pads laid on the prepped ground's own triangles (tools/seat_pads_blend.py; self-checked)
+[seat-pads] PADAPRON_0 -> 1RUNOFF_apron_0: 9543 triangles on the ground, 5984 verts, ground over 0 / 5984
+[seat-pads] PADAPRON_1 -> 1RUNOFF_apron_1: 5413 triangles on the ground, 3318 verts, ground over 0 / 3318
+[seat-pads] PADAPRON_10 -> 1RUNOFF_apron_10: 219 triangles on the ground, 167 verts, ground over 0 / 167
+[seat-pads] PADAPRON_11 -> 1RUNOFF_apron_11: 321 triangles on the ground, 243 verts, ground over 0 / 243
+[seat-pads] PADAPRON_12 -> 1RUNOFF_apron_12: 260 triangles on the ground, 205 verts, ground over 0 / 205
+[seat-pads] PADAPRON_13 -> 1RUNOFF_apron_13: 3894 triangles on the ground, 2316 verts, ground over 0 / 2316
+[seat-pads] PADAPRON_2 -> 1RUNOFF_apron_2: 1412 triangles on the ground, 1013 verts, ground over 0 / 1013
+[seat-pads] PADAPRON_3 -> 1RUNOFF_apron_3: 7763 triangles on the ground, 4761 verts, ground over 0 / 4761
+[seat-pads] PADAPRON_4 -> 1RUNOFF_apron_4: 6036 triangles on the ground, 3514 verts, ground over 0 / 3514
+[seat-pads] PADAPRON_5 -> 1RUNOFF_apron_5: 640 triangles on the ground, 385 verts, ground over 0 / 385
+[seat-pads] PADAPRON_6 -> 1RUNOFF_apron_6: 2309 triangles on the ground, 1590 verts, ground over 0 / 1590
+[seat-pads] PADAPRON_7 -> 1RUNOFF_apron_7: 3399 triangles on the ground, 2304 verts, ground over 0 / 2304
+[seat-pads] PADAPRON_8 -> 1RUNOFF_apron_8: 429 triangles on the ground, 297 verts, ground over 0 / 297
+[seat-pads] PADAPRON_9 -> 1RUNOFF_apron_9: 1855 triangles on the ground, 1174 verts, ground over 0 / 1174
+[seat-pads] 14 pads laid on the prepped ground (181853 ground triangles read); saved
+
+=================== ship: road wear where tyres run + the road's tone off the aerial (tools/road_wear_blend.py; ledger 0084; self-checked)
+[road_wear] 10600 faces on ['1KERB_sidewalk', '1ROAD_road']; furthest vertex 5.87 m off its centroid; atlas 2048 px at 0.25 m (78 cells of 40 m + 8 m margin, 93.3 % of the atlas used)
+[road_wear] grid 2464 x 2624 at 0.25 m; the built 1ROAD covers 25296 m2 (0 s)
+[road_wear] aerial registered to the built road: shift (+4.00, +0.75) m, contrast -0.0500 -> -0.0648; shadow 2.61 %, paint 0.0 % of the road; tone p01/p50/p99 [0.7982, 1.0003, 1.1486]
+[road_wear] line full: model: minimum curvature inside the built edges (recorded line named but missing: source/road_wear/fast_lane.full.ai); 1814 m, model lap 48.6 s (84.3-232.8 km/h) -> road_wear.line.full.json
+[road_wear] macro atlas 2048 x 2048: m0 0.8521, deepest rubber 22.5 %, 874345 B (38 s)
+[road_wear] 2 materials -> ksPerPixelMultiMap_NMDetail (detailUVMultiplier 128); writer vertices {'1KERB_sidewalk': 21852, '1ROAD_road': 9948}; positions unchanged; -> road_wear.json, exotics_racing_lvms.blend saved (38 s)
+
+=================== ship: split the prepped scene -> road / common race / closure per race layout / spawn scenes (tools/split_exports_blend.py)
+[split] main: 36 meshes / 131083 positions / 36 materials / 16 AC nodes / 0 race objects -> loop_main.blend
+[split] spawn: single layout — the 16 AC_* object(s) stay in loop_main.blend (the prep's data/dummies.json); no spawn scene
+[split] manifest -> D:\k10-scratch\nv_rw_reh\blender\split\split_manifest.json; input untouched: D:\k10-scratch\nv_rw_reh\blender\exotics_racing_lvms.blend
+
+=================== ship: export road kn5 (shared by all layouts, spawn-free)
+INI materials=36 textures_staged=22
+KN5 EXISTS: True SIZE: 21094392 FILE: exotics_racing_lvms.kn5
+
+=================== ship: AI lines per layout (race: V3 lane-offset drafts — GENERATED, ledger 0023; street: draft)
+direction: FORWARD (layouts[full].direction)
+  grid check: +1.00 (grid→timing chord over 30 m) -> FORWARD
+  [island] median_bands.json absent — island_w_by_vertex = 0 everywhere
+  race furniture OFF for this line: centre chain / kerb-line inset not applied
+lane: 0/1,209 pts offset into the right-hand carriageway (max 0.00 m); divider stations 0, on the correct side n/a; island hits 0, within 0.6 m of a divider face 0, of a kerb-line barrier face / pavement edge 0, edge 5.74 m
+geometry: 0 offset tapers (clamped 0), 0 inside corners taken from the lane's outside, 0 folds trimmed [], 0 corners filleted (R 0.0-0.0 m), smoothing 0+0 iterations moved 0+0 pts; min radius 23.32 m, max turn 3.7 deg, turns > 10 deg: 0 (+0 where the road is that tight), radius under the floor 0, max lateral jump 0.003 m, backward steps 0, self-crossings 0; start 0.0 m from the dummies.json AC_TIME_0 midpoint
+closed loop, 1,209 pts at 1.50 m over 1,813.7 m; est lap 57.6 s (210 km/h peak) -> D:\k10-scratch\nv_rw_reh\ai\full
+  fast_lane.ai: v7, 1,209 pts, 1.50 m spacing over 1,812 m, lap 57.6 s, extras=yes
+
+=================== ship: verify_kn5 (hard — spawn-free road, common race kn5 + one closure kn5 per race layout (its token only), one spawn kn5 per layout, facing, side, lane, sectors)
+✓ kn5 verification passed (no dup meshes, drivable surfaces face-up, spawns on road, per-layout spawn kn5s facing their travel, race furniture split common / per-direction closure)
+
+=================== gate: road kn5 -> gate OBJ (engine frame) + gate centreline
+exotics_racing_lvms.kn5 -> D:\k10-scratch\nv_rw_reh\data\track.obj  (36 groups, 273,960 v, 241,586 tri)
+  gate centreline -> gate_centerline.json (finished_centerline, z un-mirrored to the OBJ frame)
+
+=================== ship: track folder (models_<id>.ini per layout, ui/<id>/, <id>/{map,data,ai}; a race layout without its closure kn5 is a HARD error)
+[track_folder] layouts packed: ['full'] (models.ini)
+wrote track folder → D:\k10-scratch\nv_rw_reh\build\exotics_racing_lvms
+  length_m: 1821.9
+  n_pits: 8
+  models: {'full': ['exotics_racing_lvms.kn5']}
+[lights-ini] 0 [LIGHT_N] for 0 lamps, 0 at their lens: PASS
+
+=================== ship: verify_kn5 --inis (hard — each race ini lists exactly road + common race + ITS closure + its spawns; none lists another layout's closure)
+✓ models_<id>.ini verification passed (each race layout loads road + common race + ITS closure + its spawns; no ini loads another layout's closure)
+
+=================== ship: minimap in the KN5 frame, per layout (tools/make_map.py; a layout with map = lap gets its lap alone, map + outline)
+[map] wrote D:\k10-scratch\nv_rw_reh\build\exotics_racing_lvms\map.png + data/map.ini (kn5 frame, network: 1 line(s), 0.683 m/px)
+
+=================== ship: TreeFX palms / street trees / scrub + the north network by zone (tools/make_treefx.py; the loop's cells byte-identical, the added cells per the aerial bins, caps by area)
+[treefx] built-surface guard on track.obj: plan triangles rock 0, road 3316, walk 8226, building 7
+[treefx] planted source/vegetation/scrub.measured.json: 28 of 28 points clear of the roads by 4.0 m -> {'planted_desert_scrub': 28}
+[treefx] built-surface guard: dropped rock 0, road 0, walk 0, building 0 (of them on the loop's own zones: rock 0, road 0, walk 0, building 0)
+[treefx] 28 trees ({'planted_desert_scrub': 28}), 0 rejected in the corridor, species ['Bush3.bin'] -> D:\k10-scratch\nv_rw_reh\build\exotics_racing_lvms\extension\trees\trees.txt + [TREES] in ext_config.ini
+[treefx] gate: 28 written of 28 planned; models named in trees.txt ['Bush3.bin'], all present in trees/: True -> OK
+
+=================== gate: drive_test, street layout (hard)
+  [drive] corridor cull: skipped 3480 triangles beyond 120 m
+  [drive-time] load + hash                0.9s
+  layout full: direction forward, kind street, furniture none, OBJ data/track.obj
+  [drive-time] pre-sweep setup            0.0s
+  [drive-time] post-sweep passes          0.6s
+DRIVE TEST exotics_racing_lvms [full forward street]  lap 1.81 km  (10 wheel paths @ 1.0 m)
+  ground on top mid-lane : 0
+  floating furniture (walls/fences off support): 0 
+  undrivable corners (>100deg @ <11m): 0 
+  severe steps (>6 cm)  : 0
+  bumps >2.5 cm /km      : 0.0 (limit 75 for tarmac)
+  slope kinks >3.0%% /km   : 0.0
+  daylight gaps at edges : 0
+  off-road excursion drops>20cm : 0  (far flare ledges, reported: 4)
+    worst excursion drop: (452.1, 13.5, 0.14, False)
+    worst excursion drop: (452.1, 15.0, 0.13, False)
+    worst excursion drop: (452.1, 15.5, 0.13, False)
+    worst excursion drop: (452.1, 16.0, 0.13, False)
+  obstructed stations    : 0
+  => PASS   (data/drive_test.full.json)
+
+DRIVE TEST SUMMARY exotics_racing_lvms: full=PASS   (data/drive_test.json)
+
+=================== gate: audit_mesh, street (hard total)
+AUDIT exotics_racing_lvms   (roads 9948v, grass 95842v, walls 2746v, piers 0)
+  A. supports standing in a road : 0
+  B. terrain poking through road : 0  (worst +0.0 m)
+  C. at-grade junction crossings : 0  ({'ramp': 0, 'mainline': 0})
+  D. walls sitting on a road     : 0
+  E. walls floating over ground  : 0  (worst +0.0 m)
+  F. curbs not flush             : 0  (of 24678 curb verts,
+                                      edge-scoped, top-surface only;
+                                      0 skirt verts off terrain (advisory), 0 side faces skipped,
+                                      grounding is gated by drive_test + E/H)
+  G. plants floating over ground : (env not built)
+  H. ground cutting into road    : (no ground grid)  (worst +0.0 m)
+  I. sidewalk isolating pavement : 0
+  K. kerb/sidewalk in carriageway: 0
+  J. terrain triangles over road : 0
+  => CLEAN
+
+=================== gate: kn5_ground_check per layout (EXPANSION-PLAN V5: the kn5 set each layout loads — terrain sheets, furniture seating, lamp masts, the road on the ground)
+KN5 FIDELITY exotics_racing_lvms.kn5  (yaw 0 deg)  [data/track.obj is this kn5's own gate OBJ (kn5_to_gate_obj) — kn5-internal checks only]
+  double-sheet terrain cells (>12 m spread): 0
+  walls     objects     9: no-ground  0.0%  seat-gap median -0.93  p95 -0.15  hovering>0.3m 0 (0.0%)
+  flush edges (info): 488 samples  deck-vs-verge median -0.00  p95 +0.61
+  deck-vs-mountain (tri-exact): median +0.020  p95 +0.021  max +0.023
+  road-over-ground: 0/1422 samples gap > 0.05 m (0.0%)  p95 +0.021 m (gate 0.1 m)
+  => PASS — kn5 matches the audited OBJs
+  kn5_ground_check full: exit 0
+
+=================== gate: road wear on the built road kn5 (tools/road_wear_check.py; ledger 0084 — hard)
+[road_wear_check] materials     PASS  problems []
+[road_wear_check] density       PASS  triangles 10600, off 0, worst_scale_err 0.000388, worst_shear 0.000434, texel_m 0.25, atlas_px 2048
+[road_wear_check] no_repeat     PASS  texels_claimed 15607, claimed_twice 0
+[road_wear_check] detail_phase  PASS  worst_tiles 0.0, detail_uv_multiplier 128.0
+[road_wear_check] tone          PASS  pearson_r 0.963, samples 1087, v_convention -v, r_by_convention {'v': -0.0213, '-v': 0.963, '1-v': 0}
+[road_wear_check] rubber        PASS  stations 102, centroid_m 0.05, depth_on_line 0.2175, declared_depth 0.2053, declared_amplitude 0.22
+[road_wear_check] PASS
+
+=================== gate: houses on the built ground (tools/house_seat_check.py: floating, sunken or buried buildings — hard)
+[houses] D:\k10-scratch\nv_rw_reh\data\track.obj: 29 buildings judged, 0 with no ground under them
+[houses] contact (bottom - lowest ground under the walls): min -0.321 m, max -0.149 m
+[houses] floating (> 0.1 m above): 0 (limit 0); sunken (> 1 m below): 0 (limit 0); buried (roof < 1 m over the highest ground under the walls): 0 (limit 0); lowest roof over that ground 2.499 m
+[houses] the visual lens's buried share (mean ground over the height, foundation included; not gated): {'over_30pct': 0, 'over_50pct': 0, 'p95': 0.126}
+[houses] PASS
+
+=================== report: the road edge and the near-road ground on the built road (tools/edge_report.py; ledger 0078; not a gate)
+[edge] {"side_stations": 304, "at_1m": {"lane": 0.0, "shoulder": 0.0, "kerb": 1.0, "ground": 0.0, "wall": 0.0, "none": 0.0, "other": 0.0}, "rise_2m_m": {"median": 0.015, "p95": 0.078}, "paved_past_edge_m": {"median": 0.0, "p95": 0.0}, "ground_3m": {"p5": -0.057, "median": -0.018, "p95": 0.053, "share_below_1m": 0.0, "share_above_1m": 0.0}, "ground_6m": {"p5": -0.322, "median": -0.119, "p95": -0.052, "share_below_1m": 0.0, "share_above_1m": 0.0}, "ground_10m": {"p5": -0.458, "median": -0.193, "p95": -0.131, "share_below_1m": 0.0, "share_above_1m": 0.0}}
+
+=================== sync outputs workshop -> airoso: SKIPPED
+the project is a scratch copy or a rehearsal (D:/k10-scratch/nv_rw_reh; ship.json D:/k10-worktrees/rw-nevada/tracks/exotics-racing-lv-lm/ship.json), not the workshop (D:/k10-scratch/exotics_lm): its outputs
+stay in the scratch copy — only the workshop feeds D:/k10-worktrees/rw-nevada/tracks/exotics-racing-lv-lm.
+
+GATES: street drive_test exit 0, street audit exit 0, race drive_test exit 0, race audit exit 0, race no_route exit 0, kn5_ground_check exit 0
+  race layouts red on their own gates: none
+  Drive-1 road gates: road inventory exit -, stacked legs exit -, the Drive-1 verdict exit - ('-' = not run)
+
+SHIP OK
+EXIT 0 2026-11-10 21:22:39

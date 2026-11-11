@@ -725,3 +725,109 @@ Downloads still need his word, and none is needed here.
   - Menu picture: s0 at -0.3 EV, as before.
 - Records: `source/road_wear/pc_017/green_{ref,reh}/`.
 - Not driven.
+
+### Pueblo 0.1.4: red, not installed (PC, 2026-11-10 overnight)
+
+Kevin to the Mac: "build the road wear for the other circuits on the pc overnight". The Mac's rule for the 0.3 m
+circuits: photo mode, and "If a 0.3 m track's photo shows no measurable rubber (its own depth under 0.03), stop that
+track and report. Don't switch modes or tune."
+
+- **Head** 483038aa on `claude/pueblo-road-wear` (from 6a788506). ENG `eng_pulm_rw` = eng_pulm plus the current exporter
+  (export_kn5_addon.py 900ea391, as eng_hplm_rw).
+- **Reference `pu_rw_ref` + rehearsal `pu_rw_reh`**, both from empty workshops, EXIT 1 in prep at the bake. They are
+  identical: every data/*.json byte-equal, the same rows.
+  - `aerial registered to the built road: shift (+1.75, +0.25) m`, contrast +0.0328 -> +0.0413; shadow 8.21 %, paint 2.2 %.
+  - **The photo's rubber: depth 0.02166** over |u| <= 0.75 m, peak 0.02964, centroid +0.216 m (1275 stations). That is
+    under the gate's photo_min_depth 0.03; High Plains' read 0.146. NAIP 2023 does not resolve Pueblo's rubber. By the
+    Mac's rule the track stops here: no drawn band, nothing tuned.
+  - **And the bake refused the kerbs:** `FATAL: 1KERB_circuit_0: u 0.000..2.111 outside the paint texture (0..1): its
+    copies would bleed into each other`. Pueblo's red / white kerbs (textures/kerb_redwhite.png) repeat their paint along
+    the run. The level copies need each face's u inside one copy of the texture, as High Plains' kerb atlas has it. Pueblo
+    would need its kerbs re-mapped into 0..1 (or the levels laid out another way) before road_wear.kerbs can level them.
+- Installed: still **0.1.3**. Records: `source/road_wear/pc_014/{ref,reh}/` (both logs, every data/*.json).
+- Open, for the Mac and Kevin:
+  - Pueblo's road wear needs a decision: drawn mode, as Nevada and Del Mar (Kevin's "Use the photo's rubber" was for
+    photos that show it), or no road wear.
+  - Its kerbs need their UVs into 0..1 first.
+
+### Aspen 0.1.5: red, not installed (PC, 2026-11-10 overnight)
+
+The same brief and rule as Pueblo above. Photo mode on NAIP 2023 at 0.3 m; stop when the photo's own depth is under 0.03.
+
+- **Head** a473d209 on `claude/aspen-road-wear` (from 6a788506). ENG `eng_aslm_rw` = eng_aslm plus the current exporter
+  (900ea391).
+- **Reference `as_rw_ref` + rehearsal `as_rw_reh`**, both from empty workshops, EXIT 1 in prep at the bake. They are
+  identical: every data/*.json byte-equal, the same rows.
+  - `aerial registered to the built road: shift (-1.25, -0.25) m`, contrast +0.0252 -> +0.0276; shadow 0.0 %, paint 3.85 %.
+  - **The photo's rubber: depth -0.00792** over |u| <= 0.75 m, peak 0.041, centroid +0.299 m (500 stations). The model
+    line reads no darker than its mirror, so the photo shows no rubber (High Plains 0.146, Pueblo 0.022). The track stops
+    by the Mac's rule.
+  - **And the kerbs:** `FATAL: 1KERB_circuit_0: u 0.000..2.099 outside the paint texture (0..1)`, as Pueblo. The three
+    kerb runs repeat their paint along the run.
+- Installed: still **0.1.4**. Records: `source/road_wear/pc_015/{ref,reh}/`.
+- Open, as Pueblo: the mode (drawn or none) is Kevin's call, and the kerbs need their UVs into 0..1.
+
+### Grand Junction 0.1.3: red, not installed (PC, 2026-11-10 overnight)
+
+The same brief and rule as Pueblo above. Photo mode on NAIP 2023 at 0.3 m; no kerbs key (no traced kerb runs).
+
+- **Head** 25c728c6 on `claude/grand-junction-road-wear` (from 6a788506). ENG `eng_gjlm_rw` = eng_gjlm plus the current
+  exporter (900ea391).
+- **Reference `gj_rw_ref` + rehearsal `gj_rw_reh`**, both from empty workshops, both EXIT 1 at gate road_wear. They are
+  identical: the same rows, every data/*.json equal (road_wear.json and lights_ini_check.json differ only in their
+  own workshop's path).
+  - `aerial registered to the built road: shift (+0.75, +0.25) m`, contrast +0.0511 -> +0.0541; shadow 0.0 %, paint 0.0 %.
+  - **The photo's rubber: depth 0.00193**, peak 0.0348, centroid -1.171 m (358 stations): no rubber the photo resolves.
+  - road_wear_check: materials, density (atlas 2048 px), no_repeat, detail_phase (multiplier 128.0, worst 0.0 tiles) and
+    tone (pearson_r 0.9349) PASS. **photo_rubber FAIL**: declared depth 0.00193 under photo_min_depth 0.03; shipped
+    -0.01907, centroid -1.397 m vs -1.171 m.
+  - The other gates were not reached: the chain stops at the first red gate.
+- Installed: still **0.1.2**. Records: `source/road_wear/pc_013/{ref,reh}/`.
+- So the bake and its rows work on a circuit without kerbs. Only the photo lacks rubber. Of the four 0.3 m circuits so far,
+  only High Plains' NAIP shows its rubber (0.146); Pueblo 0.022, Aspen -0.008, Grand Junction 0.002.
+
+### Nevada Nights 0.1.6: green and installed (PC, 2026-11-10 overnight)
+
+The Mac's brief for Nevada and Del Mar: Milford's drawn mode, because their photos are too coarse to show rubber. Their
+rubber numbers stay marked [invented].
+
+- **Head** 15b31f4f on `claude/nevada-road-wear` (from main 06d782f).
+  - ENG `eng_nvlm_rw` = eng_nvlm plus the current exporter, `scripts/ac/export_kn5_addon.py` md5 **900ea391**. That is
+    eng_hplm_rw's and the one High Plains 0.1.7 reproduced with; the runbook's 83b231e8 predates 4262162.
+  - The TreeFX model Bush3.bin is copied in from the installed build (md5 e9299a59) and never committed.
+- **The spec.** surfaces 1ROAD + 1KERB_SIDEWALK, texel 0.25 m, rubber "drawn" (Milford's defaults: amplitude 0.22,
+  spread 0.70 m, base 0.35, all [invented]), and the model line on the full layout. No kerbs key, as Milford.
+  - The aerial is the committed NAIP 2022-06-11 at 0.6 m (`source/vegetation/naip_2022_060.png`). It covers the built
+    road with 19-22 m to spare.
+- **Reference `nv_rw_ref` + rehearsal `nv_rw_reh`**, both from empty workshops: SHIP OK, no force, every gate green.
+  - `[road_wear] 10600 faces on ['1KERB_sidewalk', '1ROAD_road']`; atlas 2048 px at 0.25 m, 78 cells, 93.3 % used.
+  - `aerial registered to the built road: shift (+4.00, +0.75) m`, contrast -0.0500 -> -0.0648; shadow 2.61 %.
+    - That shift is the edge of the bake's window (coarse +-3 m, then a fine +-1 m).
+    - The same registration over +-10 m (scripts/aerial/road_wear.register on the gate OBJ's 1ROAD, read-only) puts the
+      best at (+4.50, +1.00) m, contrast -0.0650. That is 0.5 m further, under one 0.6 m pixel, for 0.0002 of contrast.
+    - So the 2022 photo stands ~4.5 m east of the built road, and the bake's 4.0 m takes almost all of it.
+  - road_wear_check, every row PASS:
+    - materials;
+    - density (worst scale error 0.00039);
+    - no_repeat;
+    - detail_phase (multiplier 128.0, worst 0.0 tiles);
+    - tone (pearson_r 0.963);
+    - rubber (depth on the line 0.2175 vs declared 0.2053, centroid 0.05 m, 102 stations).
+  - TreeFX: 28 trees, Bush3, as 0.1.5.
+  - The two builds are identical: the gate rows the same (156 / 156), the kn5s kn5_equiv (tangents only, max 1.79e-7),
+    the AI lines byte-equal, every data/*.json equal bar the workshop paths.
+- **Against the installed 0.1.5** (`compare_ab.py` and `mesh_diff.py`):
+  - **all 36 meshes' positions bit-identical**;
+  - UVs and material changed on 1ROAD_road and 1KERB_sidewalk only (ksPerPixelMultiMap -> ksPerPixelMultiMap_NMDetail);
+  - textures added: road_wear_macro.png 874,345 B, road_wear_detail_1road.jpg 3,302,437, road_wear_detail_1kerb_sidewalk.jpg
+    319,109, road_wear_flat_nm.png 76;
+  - dropped: asphalt_cracked_diffuse.jpg; changed: none;
+  - every other gate row equal to 0.1.5's (audit's vertex counts included);
+  - the road kn5 **18,970,521 -> 21,094,392 B**.
+- **Installed** 2026-11-10 21:29 from an EMPTY `D:/k10-scratch/exotics_lm`; 0.1.5's workshop is kept as `exotics_lm.0.1.5`.
+  - "doooom Nevada — Nevada Nights 0.1.6", kn5_equiv to the reference. The trees came along.
+  - The install step parked 0.1.5 in `D:/k10-track-archive/2026-11-10_212917/` (MOVES.tsv, README).
+  - Menu picture: s4 at -0.8 EV, 0.1.5's camera. Blender shows the scene's own road, not the kn5's road-wear shader.
+  - Recorded on claude/ac-tidy a9e96fc8.
+- Records: `source/road_wear/pc_016/` (both logs, every data/*.json, compare_ab.json, mesh_diff.json).
+- Not driven.

@@ -1,0 +1,205 @@
+{
+ "_doc": "ledger 0084 road wear (tools/road_wear_blend.py): the material rows engine-july's export_kn5_addon binds, and every number the bake used",
+ "materials": {
+  "1KERB_sidewalk_mat": {
+   "shader": "ksPerPixelMultiMap_NMDetail",
+   "textures": [
+    [
+     "txDiffuse",
+     "road_wear_macro.png",
+     "D:\\k10-scratch\\nv_rw_ref\\textures\\road_wear\\road_wear_macro.png"
+    ],
+    [
+     "txNormal",
+     "road_wear_flat_nm.png",
+     "D:\\k10-scratch\\nv_rw_ref\\textures\\road_wear\\road_wear_flat_nm.png"
+    ],
+    [
+     "txDetail",
+     "road_wear_detail_1kerb_sidewalk.jpg",
+     "D:\\k10-scratch\\nv_rw_ref\\textures\\road_wear\\road_wear_detail_1kerb_sidewalk.jpg"
+    ],
+    [
+     "txNormalDetail",
+     "building_normal.jpg",
+     "D:\\k10-worktrees\\rw-nevada\\assets\\textures\\building_normal.jpg"
+    ]
+   ],
+   "props": {
+    "ksAmbient": 0.4,
+    "ksDiffuse": 0.4,
+    "detailUVMultiplier": 128.0,
+    "detailNormalBlend": 1.0,
+    "useDetail": 1.0
+   }
+  },
+  "1ROAD_road_mat": {
+   "shader": "ksPerPixelMultiMap_NMDetail",
+   "textures": [
+    [
+     "txDiffuse",
+     "road_wear_macro.png",
+     "D:\\k10-scratch\\nv_rw_ref\\textures\\road_wear\\road_wear_macro.png"
+    ],
+    [
+     "txNormal",
+     "road_wear_flat_nm.png",
+     "D:\\k10-scratch\\nv_rw_ref\\textures\\road_wear\\road_wear_flat_nm.png"
+    ],
+    [
+     "txDetail",
+     "road_wear_detail_1road.jpg",
+     "D:\\k10-scratch\\nv_rw_ref\\textures\\road_wear\\road_wear_detail_1road.jpg"
+    ],
+    [
+     "txNormalDetail",
+     "asphalt_cracked_normal.jpg",
+     "D:\\k10-worktrees\\rw-nevada\\assets\\textures\\asphalt_cracked_normal.jpg"
+    ]
+   ],
+   "props": {
+    "ksAmbient": 0.4,
+    "ksDiffuse": 0.4,
+    "detailUVMultiplier": 128.0,
+    "detailNormalBlend": 1.0,
+    "useDetail": 1.0
+   }
+  }
+ },
+ "spec": {
+  "surfaces": [
+   "1ROAD",
+   "1KERB_SIDEWALK"
+  ],
+  "texel_m": 0.25,
+  "detail_tile_m": 4.0,
+  "max_atlas_px": 8192,
+  "layer_m": 10.0,
+  "tone": {
+   "shadow_lum": 0.72,
+   "shadow_blue": 1.06,
+   "paint_lum": 1.45,
+   "fill_m": 3.0,
+   "clip": [
+    0.7,
+    1.3
+   ],
+   "headroom_pct": 99.5
+  },
+  "wear": {
+   "amplitude": 0.22,
+   "track_m": 1.6,
+   "spread_m": 0.7,
+   "base": 0.35,
+   "smooth_m": 12.0,
+   "margin_m": 0.95,
+   "lat_g": 1.2,
+   "brake_g": 1.1,
+   "accel_g": 0.45,
+   "v_top_ms": 70.0,
+   "edge_reach_m": 1.0
+  },
+  "lines": [
+   {
+    "layout": "full",
+    "ai": "source/road_wear/fast_lane.full.ai",
+    "_doc": "a line Kevin records with CSP's AI recorder in this layout, copied here; absent = the minimum-curvature line inside the built edges [model]"
+   }
+  ],
+  "rubber": "drawn",
+  "aerial": {
+   "image": "source/vegetation/naip_2022_060.png",
+   "bbox_lonlat": [
+    -115.0217485,
+    36.2794564,
+    -115.0148821,
+    36.2851645
+   ],
+   "_doc": "nv_m_3611548_se_11_060_20220611 (2022-06-11, 0.6 m, USDA NAIP, public domain; Microsoft Planetary Computer data API (USDA FSA NAIP, public domain), EPSG:4326 crop), bbox from its corners. Covers the whole built road with 19-22 m to spare on every side (PC 2026-11-10, the gate OBJ projected about centerline.local.json's origin)"
+  }
+ },
+ "stats": {
+  "plan": {
+   "cell_m": 40.0,
+   "margin_m": 8.0,
+   "pitch_px": 224,
+   "atlas_px": 2048,
+   "cells": 78,
+   "tiles_per_row": 9,
+   "atlas_fill_pct": 93.3
+  },
+  "furthest_vertex_m": 5.87,
+  "aerial": {
+   "image": "source/vegetation/naip_2022_060.png",
+   "registration": {
+    "dx_m": 4.0,
+    "dy_m": 0.75,
+    "contrast_at_0": -0.05,
+    "contrast_best": -0.0648
+   },
+   "lit_median_lum": 0.5681,
+   "road_cells": 404730,
+   "shadow_pct": 2.61,
+   "paint_pct": 0.0,
+   "tone_p01_p50_p99": [
+    0.7982,
+    1.0003,
+    1.1486
+   ],
+   "aerial_px_m": [
+    0.6,
+    0.6
+   ]
+  }
+ },
+ "m0": 0.85209,
+ "detail_uv_multiplier": 128.0,
+ "detail": {
+  "1KERB_SIDEWALK": {
+   "from": "building_diffuse.jpg",
+   "normal": "building_normal.jpg",
+   "clipped_pct": 0.0,
+   "size": [
+    1024,
+    1024
+   ]
+  },
+  "1ROAD": {
+   "from": "asphalt_cracked_diffuse.jpg",
+   "normal": "asphalt_cracked_normal.jpg",
+   "clipped_pct": 0.468,
+   "size": [
+    2048,
+    2048
+   ]
+  }
+ },
+ "deepest_rubber": 0.2245,
+ "centre": {
+  "file": "finished_centerline.json",
+  "z_sign": -1.0,
+  "on_road_frac": 1.0
+ },
+ "lines": [
+  {
+   "closed": true,
+   "layer_m": 10.0,
+   "layout": "full",
+   "source": "model: minimum curvature inside the built edges (recorded line named but missing: source/road_wear/fast_lane.full.ai)",
+   "lap_m": 1813.6,
+   "lap_s_model": 48.6,
+   "v_min_kmh": 84.3,
+   "v_max_kmh": 232.8
+  }
+ ],
+ "writer_vertices": {
+  "1KERB_sidewalk": 21852,
+  "1ROAD_road": 9948
+ },
+ "positions_md5": "422a8e6d51bb7f94b2fb24df18163579",
+ "macro_png_bytes": 874345,
+ "textures": {
+  "macro": "road_wear_macro.png",
+  "flat_nm": "road_wear_flat_nm.png"
+ }
+}

@@ -6010,7 +6010,8 @@
           "approved": "Kevin 2026-11-09, asked 'How should the infield's hairpin go, so I can install 0.2.0?' (Drop infield, install / Exempt hairpin, install): \"Exempt hairpin with a note to ask after driving\"",
           "versions": [
             "0.2.0",
-            "0.2.1"
+            "0.2.1",
+            "0.2.2"
           ],
           "undrivable_corners": [
             {
@@ -6026,7 +6027,7 @@
           "excursion_drops": [],
           "ask_after_driving": "Kevin asked for this note: after he has driven the infield layout, ask him how the hairpin drives (keep the exemption, widen it, or drop the infield layout). The exemption is for 0.2.0 only",
           "_doc": "tools/stage_force.py (gate step stage_force, last): --force-install may pass the red infield drive_test only where every red row is this hairpin, on the infield layout, for 0.2.0; any other red row (a soft top, a step rate, a corner anywhere else, another layout) refuses it (tools/ship_track.sh checks the verdict before a forced install)",
-          "_versions_doc": "0.2.1 (furniture pass 1, 2026-11-10) carries Kevin's force for the same hairpin at the same place, as the Lariat's Drive-1 force was carried to its LM port (ledger 0078 round 6): the furniture pass changes no road; the window, the layout and every other row's refusal are unchanged, and the ask_after_driving note still stands"
+          "_versions_doc": "0.2.1 (furniture pass 1, 2026-11-10) carries Kevin's force for the same hairpin at the same place, as the Lariat's Drive-1 force was carried to its LM port (ledger 0078 round 6): the furniture pass changes no road; the window, the layout and every other row's refusal are unchanged, and the ask_after_driving note still stands. 0.2.2 (road wear, 2026-11-10 overnight; the Mac: carry it \"the same way: same place, same window\") carries it the same way: the road wear moves no position (compare_ab: every mesh bit-identical), only the road's UVs and material. NOT installed forced on that: the PC installs nothing forced on a relayed word; Kevin's own yes for 0.2.2 is asked first"
         }
       }
     }

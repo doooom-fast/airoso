@@ -14,6 +14,34 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
+## 2026-11-10 (Mac, later) — NEW ROW (opt-in): `no_rubber`, road_wear.rubber "none" (tone only) judged in place of `photo_rubber` (ledger 0084 "Tone only, no rubber"; no threshold moved, no new threshold)
+
+**Why.** Kevin, 2026-11-10, on Pueblo, Aspen, Grand Junction and Pikes Peak: "Tone only, no rubber". Their 0.3 m NAIP
+photos show no rubber the gate can use: the photo's own line-vs-mirror depth was Pueblo 0.022, Aspen -0.008, Grand
+Junction 0.002, Pikes Peak -0.008 (the PC's overnight run), all under `photo_min_depth` 0.03, so `photo_rubber` failed
+them, correctly: photo mode claims the photo carries rubber.
+
+**What.** `tools/road_wear_check.py`, `tools/road_wear_blend.py`, `scripts/aerial/road_wear.py`; nothing else.
+- The bake (`rw.rubber_mode`): "none" makes the asphalt exactly what photo mode makes, the tone and no drawn band. The
+  line is found and the photo measured across it against its mirror as in photo mode (recorded in
+  data/road_wear.line.<layout>.json `photo_rubber`). "none" refuses `road_wear.kerbs` (FATAL: no rubber is drawn, so
+  nothing levels them) and needs `road_wear.aerial`. An unknown mode is still a FATAL.
+- The gate: with "none", the drawn `rubber` row is not run (as with photo), and `no_rubber` takes its place. For each
+  line, `measure_photo` on the shipped atlas, the same measurement as `photo_rubber`, must have >= 10 stations and a
+  depth within `photo_depth_tol` 0.02 of the photo's own. That is the atlas adding no band to the photo: Milford's drawn
+  band reads ~0.1-0.2 there. The row fails if kerb levels are declared.
+- What `no_rubber` does not ask, unlike `photo_rubber`: that the photo shows >= `photo_min_depth`, and that the
+  darkening's centroid matches the photo's (with no rubber the centroid of near-zero darkening is noise).
+- The verdict is one function, `photo_line_pass(mode, got, dp)`. With "photo" it is the old expression, term for term.
+- No threshold moved and none is added: `photo_depth_tol` 0.02 ⚠ [invented] is the existing one. "drawn" and "photo"
+  builds are judged exactly as before (High Plains 0.1.7: photo; Milford 0.1.11, Nevada 0.1.6: drawn).
+- Proven (Mac, no build): `tests/aerial/test_road_wear_photo.py`, 3 new tests (34 of 34 road-wear tests pass).
+  - rubber_mode: drawn by default; photo / none need the aerial; "tone" (a typo) is refused; none + kerbs is refused;
+    photo + kerbs (High Plains) as before.
+  - A photo with no band: none PASSES the atlas that is the photo, photo FAILS it (min depth), and none FAILS the same
+    photo with a 0.15 band drawn on it.
+  - A photo with a band: photo's verdict equals the old expression; a centroid moved 0.3 m fails photo and not none.
+
 ## 2026-11-10 (Mac) — MEASUREMENT-BUG FIX: road_wear density judges a sliver by its edges; the kerb rows read repeating paint (ledger 0084, "Engine fixes after the overnight run"; no threshold moved)
 
 Two engine limits the PC's overnight road-wear run found (ledger 0084: Pikes Peak 0.2.2, Pueblo 0.1.4, Aspen 0.1.5).

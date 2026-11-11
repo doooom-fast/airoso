@@ -30,6 +30,12 @@ read again from the track's own image (track.config.json road_wear.aerial).
                  centreline (measure_photo, on what the bake measured: lit asphalt >= interior_m inside the built
                  road), its depth over |u| <= band_m within photo_depth_tol and its centroid within
                  photo_centroid_tol_m of the bake's measurement on the photo; the photo must show >= photo_min_depth
+    (road_wear.rubber "none", Kevin 2026-11-10 "Tone only, no rubber"; Pueblo, Aspen, Grand Junction, Pikes Peak: the
+    rubber row is not run, and in its place:)
+    no_rubber    per line: the same measurement as photo_rubber, the shipped atlas's line-vs-mirror depth within
+                 photo_depth_tol of the photo's own, so the atlas adds no band to the photo (Milford's drawn band reads
+                 ~0.1-0.2 there); the photo is not asked to show rubber and the centroid is not judged (with no rubber it
+                 is noise); no kerb levels may be declared
     (only when data/road_wear.json carries "kerbs", i.e. the config names road_wear.kerbs; High Plains 0.1.7:)
     kerb_materials every declared kerb material is in the kn5 with its declared shader, the declared slots and textures
                  (the exporter's stock row with txDiffuse -> the levelled paint), each embedded, power of two, and
@@ -152,6 +158,18 @@ def _left_normals(P: list, closed: bool) -> list:
         dx, dy = b[0] - a[0], b[1] - a[1]; L = math.hypot(dx, dy) or 1.0
         out.append((-dy / L, dx / L))
     return out
+
+
+def photo_line_pass(mode: str, got: dict, dp: dict) -> bool:
+    """One line's verdict. got = measure_photo on the shipped atlas, dp = the bake's measurement on the photo.
+    photo: the photo shows the rubber (>= photo_min_depth) and the atlas carries it (depth and centroid);
+    none (Kevin 2026-11-10 "Tone only, no rubber"): the atlas's depth is the photo's own, nothing drawn on it."""
+    if got["stations"] < 10 or abs(got["depth"] - dp["depth"]) > GATE["photo_depth_tol"]:
+        return False
+    if mode == "photo":
+        return (dp["depth"] >= GATE["photo_min_depth"] and
+                abs(got["centroid_m"] - dp["centroid_m"]) <= GATE["photo_centroid_tol_m"])
+    return mode == "none"
 
 
 def measure_photo(points: list, centre: list, normals: list, closed: bool, value_at, ph: dict) -> dict:
@@ -794,11 +812,13 @@ def main(argv=None) -> int:
                           "profile": {round(k * 0.25, 2): round(mean[k], 4) for k in sorted(mean)}}
     else:
         rows["rubber"] = {"pass": False, "stations": nst, "note": "too few full cross-sections on the built road"}
-    if spec.get("rubber", "drawn") == "photo":
+    mode = spec.get("rubber", "drawn")
+    if mode in ("photo", "none"):
         # no drawn band is declared: the drawn rubber row does not judge this build (it would demand one)
         rows.pop("rubber", None)
+        rname = "photo_rubber" if mode == "photo" else "no_rubber"
         if not aer:
-            rows["photo_rubber"] = {"pass": False, "note": "road_wear.rubber 'photo' without an aerial"}
+            rows[rname] = {"pass": False, "note": f"road_wear.rubber {mode!r} without an aerial"}
         else:
             ref_l = (decl["stats"].get("aerial") or {}).get("lit_median_lum")
             road_hsh = {}
@@ -848,15 +868,15 @@ def main(argv=None) -> int:
                     return None if uv is None else atlas_lum(uv[0], uv[1], flip)
                 got = measure_photo(Ld["points"], Ld["centre"], Ld["centre_normals"], bool(cfg.get("loop", True)),
                                     value_at, ph)
-                ok_ = (got["stations"] >= 10 and dp["depth"] >= GATE["photo_min_depth"] and
-                       abs(got["depth"] - dp["depth"]) <= GATE["photo_depth_tol"] and
-                       abs(got["centroid_m"] - dp["centroid_m"]) <= GATE["photo_centroid_tol_m"])
+                ok_ = photo_line_pass(mode, got, dp)
                 res.append({"layout": Ld.get("layout"), "pass": ok_, "declared_depth": dp["depth"],
                             "shipped_depth": got["depth"], "declared_centroid_m": dp["centroid_m"],
                             "shipped_centroid_m": got["centroid_m"], "stations": got["stations"],
                             "samples": got["samples"]})
-            rows["photo_rubber"] = {"pass": bool(res) and all(r_["pass"] for r_ in res), "lines": res,
-                                    "drawn_band": "none (road_wear.rubber photo)"}
+            rows[rname] = {"pass": bool(res) and all(r_["pass"] for r_ in res), "lines": res,
+                           "drawn_band": f"none (road_wear.rubber {mode})"}
+            if mode == "none" and kdecl:
+                rows[rname].update({"pass": False, "note": "road_wear.rubber 'none' but kerb levels are declared"})
     if kdecl:
         rows.update(kerb_rows(proj, cfg, decl, kdecl, mats, p, line_pts, w))
     ok = all(r["pass"] for r in rows.values())

@@ -20,6 +20,9 @@ WHAT IT DOES, in order, on the scene engine-july's prep saved (blender/<slug>.bl
    darkening across each line, measured against its mirror across the centreline (scripts/aerial/road_wear.photo_rubber,
    on lit asphalt at least PHOTO interior_m inside the built road), written to the line's record; the asphalt then gets
    NO drawn band (wear = 0 below: the tone carries it) and the kerbs (7b) take the measured profile, not the drawn model;
+4c. (opt-in road_wear.rubber "none", Kevin 2026-11-10 "Tone only, no rubber"; Pueblo, Aspen, Grand Junction, Pikes Peak:
+   their photos show no rubber) as 4b, measured and recorded the same way, but the gate does not ask the photo to show
+   rubber; the asphalt gets the tone alone and road_wear.kerbs is refused (rw.rubber_mode);
 5. the macro atlas baked tile by tile from the world (tone x (1 - wear), x m0), the detail textures (each surface's own
    stock diffuse / m0 and its stock normal), a flat normal — all PNG, power of two;
 6. every face's UVs rewritten into its cell's tile (detail on today's 4 m grid and phase: detailUVMultiplier);
@@ -398,13 +401,11 @@ def main() -> int:
     aer_spec = spec.get("aerial")
     stats = {"plan": plan, "furthest_vertex_m": round(over, 3)}
     # road_wear.rubber (opt-in, Kevin 2026-11-10 "Use the photo's rubber"): "photo" = the aerial carries the rubber, no
-    # drawn band on the asphalt; absent / "drawn" = Milford's drawn band, unchanged
-    mode = spec.get("rubber", "drawn")
-    if mode not in ("drawn", "photo"):
-        print(f"[road_wear] FATAL: road_wear.rubber {mode!r}: 'drawn' or 'photo'")
-        return 1
-    if mode == "photo" and not aer_spec:
-        print("[road_wear] FATAL: road_wear.rubber 'photo' needs road_wear.aerial")
+    # drawn band on the asphalt; "none" (Kevin 2026-11-10 "Tone only, no rubber") = the same asphalt, the photo not asked
+    # to show rubber, no kerb levels; absent / "drawn" = Milford's drawn band, unchanged
+    mode, err = rw.rubber_mode(spec)
+    if err:
+        print(f"[road_wear] FATAL: {err}")
         return 1
     lit = None
     if aer_spec:
@@ -431,7 +432,7 @@ def main() -> int:
     closed = bool(cfg.get("loop", True))
     Wc = Wc[:len(Pc)]
     lines = []
-    if mode == "photo":
+    if mode in ("photo", "none"):
         # the measurement's frame: the centreline (2 m) and its left normals; the photo's lit asphalt at least interior_m
         # inside the BUILT road (edge paint, kerbs and verge out)
         ph = dict(rw.PHOTO, **{k: v for k, v in (spec.get("photo") or {}).items() if not str(k).startswith("_")})
@@ -470,7 +471,7 @@ def main() -> int:
                                                                       f"{ls['ai']})" if ai is not None else "")
         I, sp = rw.rubber_intensity(P, 2.0, w, closed)
         extra = {}
-        if mode == "photo":
+        if mode in ("photo", "none"):
             prof = rw.photo_rubber(tone_at, P, Cc, nCc, closed, ph)
             extra = {"photo_rubber": prof, "centre": np.round(Cc[:, :2], 3).tolist(),
                      "centre_normals": np.round(nCc, 6).tolist()}
@@ -499,7 +500,7 @@ def main() -> int:
         T = tone[gj0:gj0 + Pp, gi0:gi0 + Pp]
         X, Y = grid.centres(gi0, gj0, Pp, Pp)
         keep = np.ones_like(T)
-        for ln in (lines if mode == "drawn" else ()):        # photo: the tone already carries the rubber, none drawn
+        for ln in (lines if mode == "drawn" else ()):        # photo / none: the tone alone, no band drawn
             keep *= 1.0 - rw.wear_at(X, Y, k[2] * spec["layer_m"], ln, w, reach)
         dmax = max(dmax, float(1 - keep.min()))
         macro = np.clip(m0 * T * keep, 0.0, 1.0)

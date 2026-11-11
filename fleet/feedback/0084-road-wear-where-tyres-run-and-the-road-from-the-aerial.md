@@ -803,6 +803,8 @@ Its notes are on `claude/pueblo-road-wear` a181c607, `claude/aspen-road-wear` 99
 
 ### Runbook 0084-3 (PC): rebuild Pueblo, Aspen and Pikes Peak on these fixes
 
+(Superseded by "Runbook 0084-3, as Kevin picked" below: tone only, all four circuits.)
+
 Run this once Kevin picks each track's rubber mode. All three photos show no rubber the gate can use: Pueblo 0.022,
 Aspen -0.008, Pikes Peak -0.008, all under photo_min_depth 0.03. So it is "drawn" (Milford's band, its numbers
 [invented]) or no road wear. Nothing is tuned until he says.
@@ -819,3 +821,55 @@ Aspen -0.008, Pikes Peak -0.008, all under photo_min_depth 0.03. So it is "drawn
    0.1.11, High Plains 0.1.7 and Nevada 0.1.6. Every row should equal its record: density equal, plus the new keys
    (expect edge_judged = the slivers, if any, and unjudged 0). No rebuild is needed for them.
 5. Green = install, older build archived (Kevin 2026-11-09). Red = stop and report.
+
+## Tone only, no rubber (Kevin 2026-11-10; Mac, code and tests only, no track build)
+
+Kevin, 2026-11-10, asked whether Pueblo, Aspen, Grand Junction and Pikes Peak (their photos show no rubber) take tone
+only or Milford's drawn band: "Tone only, no rubber".
+
+- **What the four photos show.** The photo's own line-vs-mirror depth (the PC's overnight run): Pueblo 0.022, Aspen
+  -0.008, Grand Junction 0.002, Pikes Peak -0.008, all under `photo_min_depth` 0.03. Only High Plains' NAIP shows its
+  rubber (0.146).
+- **The new mode, `road_wear.rubber: "none"`** (`scripts/aerial/road_wear.rubber_mode`, `tools/road_wear_blend.py` 4c):
+  - On the asphalt it bakes exactly what photo mode bakes, the photo's tone with no band drawn. Whatever the photo shows
+    is in the tone; nothing is added.
+  - The line is still found and the photo measured across it against its mirror, recorded in
+    `data/road_wear.line.<layout>.json` as in photo mode, so the gate can show the atlas adds nothing.
+  - It refuses `road_wear.kerbs` (FATAL): no rubber is drawn, so nothing levels the kerbs. Pueblo and Aspen drop the
+    key, and their kerbs keep the stock paint and material they shipped before road wear. The repeating-paint fix above
+    stays in the engine for a track that levels its kerbs.
+  - It needs `road_wear.aerial` (FATAL without).
+- **The gate row `no_rubber`** takes `photo_rubber`'s place (fleet/GATES-CHANGELOG.md 2026-11-10 (Mac, later)). For each
+  line, the shipped atlas's line-vs-mirror depth must be within `photo_depth_tol` 0.02 of the photo's own: the atlas adds
+  no band. The photo isn't asked to show rubber, and the centroid isn't judged. No threshold moved and none is added.
+- **Unchanged.** "drawn" (Milford 0.1.11, Nevada 0.1.6) and "photo" (High Plains 0.1.7) are judged exactly as before;
+  `photo_line_pass("photo", ...)` is the old expression term for term. Lake Murray names no road_wear key.
+- **Proven (Mac).** `tests/aerial/test_road_wear_*.py` 34 of 34 (3 new, in `test_road_wear_photo.py`). On a photo with
+  no band, "none" passes the atlas that is the photo and fails the same photo with a 0.15 band drawn on it, and "photo"
+  fails it on min depth.
+
+### Runbook 0084-3, as Kevin picked (PC): Pueblo, Aspen, Grand Junction, Pikes Peak, tone only
+
+Kevin's words: "build the road wear for the other circuits on the pc overnight", then "Tone only, no rubber".
+
+1. **Base.** This branch, `claude/road-wear-engine-fixes`, carries the kerb, density and tone-only fixes. Bring each
+   track's overnight branch onto it (`claude/pueblo-road-wear` a181c607, `claude/aspen-road-wear` 9992b8a3,
+   `claude/grand-junction-road-wear` c67ac595, `claude/pikes-peak-road-wear` d3fb491f). Nothing goes into main.
+2. **Config, per track.**
+   - `road_wear.rubber: "none"`, with `_rubber_doc` quoting Kevin's words.
+   - Pueblo and Aspen: remove `road_wear.kerbs`.
+   - Bump the version past the red overnight one: Pueblo 0.1.5, Aspen 0.1.6, Grand Junction 0.1.4, Pikes Peak 0.2.3.
+3. **Build.** A reference build and a rehearsal, each from its own EMPTY workshop, matched row for row (runbook 0084-2),
+   with every gate green and no force.
+4. **What to expect.**
+   - road_wear_check shows `no_rubber` PASS, with no `rubber` and no `photo_rubber` row. Report each line's
+     declared_depth and shipped_depth.
+   - The bake log reads `deepest rubber 0.0 %`.
+   - No kerb rows on any of the four.
+   - Pikes Peak: density PASS. Report edge_judged, unjudged and unjudged_list.
+   - Pikes Peak's stage_force (the hairpin) comes next. Kevin's exemption was "for 0.2.0 only". If the hairpin needs
+     the force, stop Pikes Peak there and report; don't force it without his word.
+5. **The installed tracks.** As step 4 of the runbook above: re-run the gate on the installed Milford 0.1.11, High Plains
+   0.1.7 and Nevada 0.1.6 road kn5s. Every row should equal its record. No rebuild.
+6. **Green = install**, with the older build archived (Kevin 2026-11-09: "I always want newer builds"). Re-render the
+   menu picture and push the records. Red = record why, skip that track, go on to the next. Change no threshold.

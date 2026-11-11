@@ -494,6 +494,27 @@ PHOTO = {
 }
 
 
+# --- tone only (opt-in road_wear.rubber "none"; Pueblo, Aspen, Grand Junction, Pikes Peak) ------------------------------
+# Kevin, 2026-11-10: "Tone only, no rubber". Where the 0.3 m aerial shows no rubber the gate can use (the photo's own depth
+# under photo_min_depth 0.03: Pueblo 0.022, Aspen -0.008, Grand Junction 0.002, Pikes Peak -0.008, the PC's overnight
+# run), the asphalt takes the photo's tone and nothing else: no drawn band (as photo mode) and no kerb levels (nothing
+# measured to level them by, so road_wear.kerbs is refused). The line is still found and the photo measured across it
+# against its mirror (photo_rubber, as photo mode), so the gate can show the shipped atlas adds nothing to the photo.
+RUBBER_MODES = ("drawn", "photo", "none")
+
+
+def rubber_mode(spec: dict) -> tuple[str, str | None]:
+    """road_wear.rubber, checked: (mode, None), or (mode, the FATAL's text). Absent = "drawn" (Milford, unchanged)."""
+    mode = spec.get("rubber", "drawn")
+    if mode not in RUBBER_MODES:
+        return mode, f"road_wear.rubber {mode!r}: 'drawn', 'photo' or 'none'"
+    if mode in ("photo", "none") and not spec.get("aerial"):
+        return mode, f"road_wear.rubber {mode!r} needs road_wear.aerial"
+    if mode == "none" and kerb_spec(spec) is not None:
+        return mode, "road_wear.rubber 'none' draws no rubber, so nothing levels the kerbs: drop road_wear.kerbs"
+    return mode, None
+
+
 def nearest_station(P: np.ndarray, C: np.ndarray) -> np.ndarray:
     """Index of the nearest centreline station (2D) for every point."""
     out = np.empty(len(P), dtype=np.int64)

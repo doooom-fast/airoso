@@ -2,9 +2,9 @@
  "input": "D:\\k10-scratch\\ppir_lm\\blender\\pikes_peak_international_raceway.blend",
  "outputs": {
   "loop_main.blend": {
-   "objects": 17,
-   "meshes": 17,
-   "positions": 400381,
+   "objects": 25,
+   "meshes": 25,
+   "positions": 471882,
    "max_positions": 54613,
    "materials": [
     "1GRASS_0_mat",
@@ -22,7 +22,15 @@
     "1ROAD_road_mat",
     "1WALL_KRAILBW_0_mat",
     "1WALL_STUB_PAD_NW_m13_mat",
+    "1WALL_TILTUP_0_mat",
+    "BUILDING_METAL_0_mat",
+    "BUILDING_TILTUP_0_mat",
     "MARKINGS_mat.001",
+    "PADAPRON_0_mat",
+    "PADAPRON_1_mat",
+    "ROOFTOP_DARK_0_mat",
+    "ROOFTOP_TAN_0_mat",
+    "ROOFTOP_WHITE_0_mat",
     "YLINE_mat.001"
    ],
    "orphan_materials": [],
@@ -46,7 +54,15 @@
     "1ROAD_road",
     "1WALL_KRAILBW_0",
     "1WALL_STUB_PAD_NW_m13",
+    "1WALL_TILTUP_0",
+    "BUILDING_METAL_0",
+    "BUILDING_TILTUP_0",
     "MARKINGS",
+    "PADAPRON_0",
+    "PADAPRON_1",
+    "ROOFTOP_DARK_0",
+    "ROOFTOP_TAN_0",
+    "ROOFTOP_WHITE_0",
     "YLINE"
    ]
   },
@@ -240,9 +256,9 @@
  "problems": [],
  "tokens": {},
  "input_census": {
-  "objects": 17,
-  "meshes": 17,
-  "positions": 400381,
+  "objects": 25,
+  "meshes": 25,
+  "positions": 471882,
   "max_positions": 54613,
   "materials": [
    "1GRASS_0_mat",
@@ -260,13 +276,18 @@
    "1ROAD_road_mat",
    "1WALL_KRAILBW_0_mat",
    "1WALL_STUB_PAD_NW_m13_mat",
+   "1WALL_TILTUP_0_mat",
+   "BUILDING_METAL_0_mat",
+   "BUILDING_TILTUP_0_mat",
    "MARKINGS_mat.001",
-   "TERRAIN_mat",
+   "PADAPRON_0_mat",
+   "PADAPRON_1_mat",
+   "ROOFTOP_DARK_0_mat",
+   "ROOFTOP_TAN_0_mat",
+   "ROOFTOP_WHITE_0_mat",
    "YLINE_mat.001"
   ],
-  "orphan_materials": [
-   "TERRAIN_mat"
-  ],
+  "orphan_materials": [],
   "ac_nodes": [],
   "race_objects": [],
   "closure_objects": [],
@@ -287,7 +308,15 @@
    "1ROAD_road",
    "1WALL_KRAILBW_0",
    "1WALL_STUB_PAD_NW_m13",
+   "1WALL_TILTUP_0",
+   "BUILDING_METAL_0",
+   "BUILDING_TILTUP_0",
    "MARKINGS",
+   "PADAPRON_0",
+   "PADAPRON_1",
+   "ROOFTOP_DARK_0",
+   "ROOFTOP_TAN_0",
+   "ROOFTOP_WHITE_0",
    "YLINE"
   ]
  },

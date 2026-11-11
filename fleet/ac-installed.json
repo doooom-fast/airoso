@@ -22,7 +22,8 @@
     "2026-11-09 (Kevin on the PC: 'I always want newer builds' / 'Resume now'): Milford 0.1.10 to milford_road_course; ship_track's install step parked 0.1.9 in D:/k10-track-archive/2026-11-09_212206/ (MOVES.tsv).",
     "2026-11-09 (ledger 0089; Kevin: 'I always want newer builds'): Nevada Nights 0.1.5 installed over 0.1.4 (parked by the install step in D:/k10-track-archive/2026-11-09_213254/).",
     "2026-11-09 (Kevin on the PC: 'I always want newer builds'): Milford 0.1.11 to milford_road_course; ship_track's install step parked 0.1.10 in D:/k10-track-archive/2026-11-09_224638/ (MOVES.tsv).",
-    "2026-11-10 (Kevin on the PC: 'I always want newer builds'; via the Mac: 'Use the photo's rubber'): High Plains 0.1.7 to high_plains; ship_track's install step parked 0.1.6 in D:/k10-track-archive/2026-11-10_132827/ (MOVES.tsv)."
+    "2026-11-10 (Kevin on the PC: 'I always want newer builds'; via the Mac: 'Use the photo's rubber'): High Plains 0.1.7 to high_plains; ship_track's install step parked 0.1.6 in D:/k10-track-archive/2026-11-10_132827/ (MOVES.tsv).",
+    "2026-11-10 (Kevin via the Mac: 'build the road wear for the other circuits on the pc overnight'; Kevin on the PC: 'I always want newer builds'): Nevada Nights 0.1.6 to exotics_racing_lvms; ship_track's install step parked 0.1.5 in D:/k10-track-archive/2026-11-10_212917/ (MOVES.tsv)."
   ],
   "ac_tracks": "D:/SteamLibrary/steamapps/common/assettocorsa/content/tracks",
   "archive": "D:/k10-track-archive",
@@ -59,14 +60,14 @@
       "version": "0.2.5"
     },
     "exotics_racing_lvms": {
-      "branch": "claude/treefx-cards",
+      "branch": "claude/nevada-road-wear",
       "engine": "lm-v4",
-      "installed": "2026-11-09",
-      "note": "0.1.5 = 0.1.4 with the scrub at its lidar heights: 28 TreeFX Bush3 (personal-use, md5 e9299a59, in extension/trees/; ledger 0089); records + menu picture on claude/treefx-cards 98bb3510",
+      "installed": "2026-11-10",
+      "note": "0.1.6 = 0.1.5 + road wear in Milford's drawn mode (NAIP 2022 0.6 m tone registered +4.0/+0.75 m, the drawn band 0.22 [invented]; texel 0.25 m; ledger 0084); every mesh's position bit-identical to 0.1.5, only 1ROAD_road / 1KERB_sidewalk re-mapped; kn5 21,094,392 B (was 18,970,521); records + menu picture on claude/nevada-road-wear",
       "role": "current",
-      "sha": "1148c584",
+      "sha": "15b31f4f",
       "track": "exotics-racing-lv-lm",
-      "version": "0.1.5"
+      "version": "0.1.6"
     },
     "grand_junction": {
       "branch": "claude/circuit-edge-flush",

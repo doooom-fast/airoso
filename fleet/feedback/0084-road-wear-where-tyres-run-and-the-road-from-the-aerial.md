@@ -939,3 +939,157 @@ Kevin's words: "build the road wear for the other circuits on the pc overnight",
   2. Rebuild Grand Junction 0.1.4: reference and rehearsal from empty workshops, as runbook 0084-3. Green = install;
      red = stop and report.
 
+### Runbook 0084-3 on the PC: tone only, Pueblo / Aspen / Grand Junction / Pikes Peak (PC, 2026-11-11)
+
+Kevin's words (relayed by the Mac): "build the road wear for the other circuits on the pc overnight", then "Tone only,
+no rubber". Installs under his "I always want newer builds" (typed on the PC); no force anywhere.
+
+- **Base.** Each overnight branch merged with `claude/road-wear-engine-fixes` f71757b, nothing into main. The ledger was
+  the only conflict: both sides appended, both kept. Exporter md5 900ea391 in every worktree and ENG copy. ENG copies as
+  overnight (`eng_<x>_rw`). `tests/aerial/test_road_wear*.py`: 33 of 34 pass here. The one failure,
+  `test_gate_kerb_paint_reads_the_repeated_copies`, is this PC's environment, not the code: Blender's python 3.11 loading
+  the 3.14 PIL.
+- **Configs** (rw_none.py, checked to round-trip):
+  - `road_wear.rubber` photo -> `"none"`, with a `_rubber_doc` quoting Kevin and the overnight photo depth;
+  - Pueblo and Aspen: `road_wear.kerbs` removed, so their race kerbs keep the stock paint;
+  - `_doc` and ship.json's `_road_wear_doc` say tone only;
+  - versions Pueblo 0.1.5, Aspen 0.1.6, Grand Junction 0.1.4, Pikes Peak 0.2.3.
+- **Builds.** A reference + a rehearsal per track, each from its own EMPTY workshop (`<x>_none_ref` / `<x>_none_reh`),
+  `--no-install`. Each install then built again from an empty workshop.
+
+#### Pueblo 0.1.5: INSTALLED (2026-11-11 00:09; built at 39544272, records 4d825651)
+
+- Reference, rehearsal and the install build are identical: gate rows 94 / 94 the same, kn5 kn5_equiv (tangents only,
+  every other byte identical), AI lines equal, data/*.json equal bar workshop paths.
+- road_wear_check, every row PASS:
+  - materials;
+  - density: 18,736 triangles; jacobian_judged 16,621, edge_judged 2,115, edge_off 0, unjudged 0;
+  - no_repeat;
+  - detail_phase (256.0);
+  - tone (pearson_r 0.9235);
+  - **no_rubber**, line full: declared_depth **0.02166**, shipped_depth **0.02615**.
+  - No rubber or photo_rubber row, and no kerb rows. The bake reads `deepest rubber 0.0 %`.
+- Against the installed 0.1.3 (compare_ab, prefixes 1ROAD 1KERB_SIDEWALK only, so the race kerbs had to stay as they
+  were):
+  - **19 / 19 meshes' positions bit-identical**;
+  - UVs and material changed on 1ROAD_road and 1KERB_sidewalk only;
+  - kn5 **10,742,931 -> 14,214,954 B**.
+- Atlas looked at before installing (`pc_015/macro_cell_*.png`): the photo's asphalt with its crack sealant and edge
+  paint; nothing parked on it.
+- 0.1.3 parked in D:/k10-track-archive/2026-11-11_000936/. The folder holds the same 13 files, with no TreeFX bins
+  before or after. Menu picture re-rendered (s3 of 6, -0.8 EV, same camera); the old one is backed up in
+  2026-11-11_001157_previews.
+- Records: `source/road_wear/pc_015/{ref,reh}/`, compare_ab_vs_installed.json, install.log.
+
+#### Aspen 0.1.6: INSTALLED (2026-11-11 00:10; built at ca88fb14, records e3b0ab05)
+
+- Reference, rehearsal and the install build are identical (gate rows 94 / 94, the one "differ" a path cut at a fixed
+  width; kn5 tangents only; AI lines equal).
+- road_wear_check, every row PASS:
+  - density: 8,960 triangles; jacobian_judged 8,921, edge_judged 39, edge_off 0, unjudged 0;
+  - detail_phase (128.0);
+  - tone (pearson_r 0.8173);
+  - **no_rubber**: declared_depth **-0.00792**, shipped_depth **-0.01293**;
+  - no kerb rows; `deepest rubber 0.0 %`.
+- Against 0.1.4: **7 / 7 meshes' positions bit-identical**; UVs and material on 1ROAD_road and 1KERB_sidewalk only; kn5
+  **7,848,715 -> 9,739,836 B**.
+- Atlas looked at (`pc_016/macro_cell.png`): clean asphalt tone.
+- 0.1.4 parked in D:/k10-track-archive/2026-11-11_001032/; the same 13 files. Menu picture re-rendered.
+- Records: `source/road_wear/pc_016/`.
+
+#### Grand Junction 0.1.4: red on f71757b's gate (records a5118c97), then INSTALLED on adf3828's (below)
+
+- Reference and rehearsal are identical (gate rows 84 / 84, kn5 tangents only). Both EXIT 1 at gate road_wear.
+- materials, density (7,624 triangles, all jacobian_judged), no_repeat, detail_phase (128.0) and tone (r 0.9349) PASS.
+- **no_rubber FAIL**: declared_depth 0.00193, shipped_depth -0.01907, 0.0210 apart against photo_depth_tol 0.02 (over by
+  0.0010). Centroids -1.171 / -1.397 m; 358 stations; 6,250 atlas samples against the bake's 5,459.
+- No threshold touched. The Mac traced it to the gate's mask, not the atlas (adf3828, runbook 0084-4 below).
+- Records: `source/road_wear/pc_014/{ref,reh}/`.
+
+#### Pikes Peak 0.2.3
+
+- **Green on road wear, HELD at the forced install** (built at beb2a64c, records on `claude/pikes-peak-road-wear`).
+- Reference and rehearsal from empty workshops (`pp_none_ref` / `pp_none_reh`) are identical but for 2 grass vertices.
+  The audit reads grass 391,578 / 391,580: the tangent noise merging pairs, as overnight. The kn5s are kn5_equiv
+  EQUIVALENT; AI lines 12 / 12 equal.
+- road_wear_check, every row PASS:
+  - density: 28,656 triangles; jacobian_judged 27,853, **edge_judged 803**, edge_off 0, **unjudged 0, unjudged_list []**
+    (the overnight slivers now edge-judged);
+  - detail_phase (256.0);
+  - tone (r 0.8684);
+  - **no_rubber** (oval): declared_depth -0.00791, shipped_depth -0.0121 (-0.00794 on adf3828's gate).
+  - `deepest rubber 0.0 %`; no kerb rows.
+- **The only red: drive_test infield FAIL**, the S-curve hairpin (s 650-695 m).
+  - stage_force: every red row is inside the declared hairpin window.
+  - why_not was only "build version 0.2.3 is not in the declared versions ['0.2.0', '0.2.1', '0.2.2']".
+  - Installing it needs --force-install.
+- **Kevin's word.** The Mac relayed his "Carry it over" (asked "May Pikes Peak 0.2.3 use the hairpin exemption you gave
+  0.2.0?").
+  - Recorded as data: `force_exemptions.stage.versions` + "0.2.3", with his words in `_versions_doc`.
+  - NOT acted on: the PC forces an install only on Kevin's yes typed on the PC. On that yes, the install build is judged
+    with adf3828's gate first (runbook 0084-4 step 4).
+- **Against the installed 0.2.1** (compare_ab on all four kn5s):
+  - the three layout kn5s are identical;
+  - in the road kn5, 23 of 25 meshes' positions are bit-identical, UVs and material changed on the five road-wear
+    surfaces only, kn5 51,513,251 -> 55,096,716 B;
+  - **PADAPRON_0 / _1 differ**: 8 triangles fewer each.
+  - That is main's pad-fold fix in `tools/seat_pads_blend.py` (84fefe1a, Nevada, 2026-11-09), which 0.2.1's branch
+    d7d40c2 lacked.
+  - Proven by an A/B: the same head with only that file from d7d40c2, from an empty workshop, gives seat-pads 58,946 /
+    57,488 (0.2.1's) and **25 / 25 meshes' positions bit-identical to 0.2.1** (`pc_023/pad_ab/README.md`).
+- Installed: still **0.2.1**. Records: `source/road_wear/pc_023/{ref,reh,pad_ab}/`.
+
+#### The installed tracks, re-checked with f71757b's gate (no rebuild)
+
+`tools/road_wear_check.py <workshop> --kn5 <installed road kn5>`; each workshop's build kn5 is md5-equal to the
+installed one.
+
+- **Milford 0.1.11, High Plains 0.1.7, Nevada 0.1.6: every row PASS.**
+- Nevada: every shared key equals its record.
+- Milford and High Plains: every shared key equals its record except density's maxima, which drop:
+  - Milford worst_scale_err 0.000858 -> 0.000636 and worst_shear 0.000894 -> 0.00063;
+  - High Plains worst_shear 0.000676 -> 0.000632.
+  - The sliver triangles that set those maxima are now edge_judged: Milford 8,805 (worst_edge_err 0.000863), High
+    Plains 2,055, Nevada 123.
+  - edge_off 0 and unjudged 0 on all three.
+- The new keys only add; off counts are 0 before and after.
+
+### Runbook 0084-4 on the PC: the gate on the bake's own cells (adf3828), 2026-11-11
+
+- **Base.** adf3828 merged into the four track branches with no conflict. It changes `tools/road_wear_check.py` and
+  tests only, no bake code, so no built kn5 changes.
+- **Tests here.** 33 of the 36 road-wear tests pass under Blender's python. The other 3 can't run on this PC: Blender's
+  python has numpy, but its PIL import fails (it can only reach the 3.14 PIL). Plain python 3.14 has PIL but no numpy.
+  The 3 are `test_photo_mask_is_the_bakes`, `test_gate_measures_the_bakes_samples` and
+  `test_gate_kerb_paint_reads_the_repeated_copies`. Installing either package is a download, so not done.
+- **Re-run of the new gate, no rebuild.** Every row PASS on all six. The line-vs-mirror depth, old gate -> new
+  [samples], against the photo's own [declared_samples]:
+
+| build | photo's own | f71757b gate | adf3828 gate |
+|---|---|---|---|
+| High Plains 0.1.7 installed (photo_rubber) | 0.14139 [16,255] | 0.14143 [18,066] | 0.14095 [16,232] |
+| Pueblo 0.1.5 installed | 0.02166 [19,019] | 0.02615 [21,018] | 0.02156 [19,020] |
+| Aspen 0.1.6 installed | -0.00792 [7,122] | -0.01293 [7,700] | -0.00811 [7,122] |
+| Pikes Peak 0.2.3 ref and reh | -0.00791 [7,333] | -0.01210 [7,735] | -0.00794 [7,333] |
+| Grand Junction 0.1.4 (the red build) | 0.00193 [5,459] | -0.01907 [6,250] | 0.00218 [5,460] |
+
+  - Samples now match the bake's: equal on Aspen and Pikes Peak, +1 on Pueblo and Grand Junction.
+  - High Plains reads 23 fewer of 16,255 (0.14 %). It is the one photo_rubber track, and its bake found shadow or paint
+    on 31,983 cells.
+  - Records: each track's `source/road_wear/pc_0xx/gate_0084_4*.json`.
+
+#### Grand Junction 0.1.4: INSTALLED (2026-11-11 00:39; built at f421b750, records 1f42c6f5)
+
+- Reference and rehearsal from empty workshops (`gj_mask_ref` / `gj_mask_reh`) and the install build are identical
+  (gate rows 95 / 95, kn5 tangents only, AI lines equal).
+- Every gate green, no force.
+  - **no_rubber PASS**: declared_depth 0.00193, shipped_depth **0.00218** (5,460 samples, the bake's 5,459).
+  - density: 7,624 triangles, all jacobian_judged, unjudged 0.
+  - tone r 0.9349.
+- Against 0.1.2: **4 / 4 meshes' positions bit-identical**; UVs and material on 1ROAD_road and 1KERB_sidewalk only; kn5
+  **9,586,200 -> 11,207,631 B**.
+- Atlas looked at: the photo's asphalt. On the main straight the photo's painted start grid (the staggered boxes and
+  the line) shows faintly in the tone (`pc_014_mask/macro_cell_start_grid.png`). It is the track's own paint, not
+  something transient like Del Mar's parked cars, so installed, and flagged here for Kevin's look.
+- 0.1.2 parked in D:/k10-track-archive/2026-11-11_003921/; the same 13 files. Menu picture re-rendered (s1 of 6, same
+  camera). ac-tidy 01d160a1.

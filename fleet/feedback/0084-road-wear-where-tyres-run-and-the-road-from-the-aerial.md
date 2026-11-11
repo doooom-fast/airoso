@@ -1046,9 +1046,34 @@ Kevin's words: "build the road wear for the other circuits on the pc overnight",
    - The bake log reads `deepest rubber 0.0 %`.
    - No kerb rows on any of the four.
    - Pikes Peak: density PASS. Report edge_judged, unjudged and unjudged_list.
-   - Pikes Peak's stage_force (the hairpin) comes next. Kevin's exemption was "for 0.2.0 only". If the hairpin needs
-     the force, stop Pikes Peak there and report; don't force it without his word.
+   - Pikes Peak's stage_force (the hairpin) comes next. Kevin's exemption was "for 0.2.0 only". Asked on 2026-11-11
+     "May Pikes Peak 0.2.3 use the hairpin exemption you gave 0.2.0?", he said "Carry it over". So 0.2.3 may take
+     that one forced verdict, the same as 0.2.0, and nothing else. It does not extend to later builds.
 5. **The installed tracks.** As step 4 of the runbook above: re-run the gate on the installed Milford 0.1.11, High Plains
    0.1.7 and Nevada 0.1.6 road kn5s. Every row should equal its record. No rebuild.
 6. **Green = install**, with the older build archived (Kevin 2026-11-09: "I always want newer builds"). Re-render the
    menu picture and push the records. Red = record why, skip that track, go on to the next. Change no threshold.
+
+### Grand Junction 0.1.4: the gate's mask (Mac, 2026-11-11; code and tests only)
+
+- **The PC's result** (records a5118c97). Reference and rehearsal are identical, and every row passes except no_rubber:
+  the photo's own depth 0.00193 against the shipped atlas's -0.01907, 0.0210 apart against photo_depth_tol 0.02. Same 358
+  stations, but the gate read 6,250 samples to the bake's 5,459.
+- **The cause: the measurement, not the atlas.** The gate's restatement of where the bake measured was looser than the
+  bake:
+  - a 5-point edge test where the bake uses a ±1.5 m square;
+  - a ±0.3 m shadow and paint growth where the bake grows them ±0.5 m;
+  - the lit median where the bake uses the road median;
+  - the nearest pixel where the bake samples bilinearly.
+  So it took in samples near the edge at the corners, and on Grand Junction's flat photo that moved the depth by 0.02.
+  The bake found 0.0 % shadow and 0.0 % paint there, so the edge test is most of it.
+- **The fix.** `tools/road_wear_check.photo_mask` rebuilds the bake's own cells (GATES-CHANGELOG 2026-11-11 (Mac)). On a
+  synthetic scene it equals the bake's numpy mask on all 58,466 road cells, and the two measurements agree sample for
+  sample. No threshold moved.
+- **Runbook 0084-4 (PC).**
+  1. Re-run `tools/road_wear_check.py` on the installed High Plains 0.1.7, Pueblo 0.1.5, Aspen 0.1.6 and the built
+     Pikes Peak 0.2.3. Each line should have shipped samples = declared samples (to float32 rounding), and every row
+     should still pass. Report the depths before and after.
+  2. Rebuild Grand Junction 0.1.4: reference and rehearsal from empty workshops, as runbook 0084-3. Green = install;
+     red = stop and report.
+

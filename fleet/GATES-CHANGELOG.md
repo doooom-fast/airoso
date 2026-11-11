@@ -14,6 +14,48 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
+## 2026-11-11 (Mac) — MEASUREMENT-BUG FIX: photo_rubber / no_rubber measure on the bake's own cells (ledger 0084 "Grand Junction 0.1.4: the gate's mask"; no threshold moved)
+
+**The failure.** Grand Junction 0.1.4 (tone only, PC 2026-11-11): every row passed except `no_rubber`. The photo's own
+depth was 0.00193 and the shipped atlas's -0.01907, 0.0210 apart against `photo_depth_tol` 0.02. Same 358 stations,
+but the gate read **6,250 samples to the bake's 5,459**.
+
+**Why: two different masks.** The bake measures the photo on `usable = interior & lit`, its grid's cells. The gate's
+restatement used a different and looser rule:
+- **The interior.** The bake requires every cell within round(interior_m / texel) cells (a ±1.5 m square) to be road.
+  The gate checked five points (the sample and ±1.5 m along x and y), so it let in samples near the edge on the
+  diagonal: the corners, where the line runs close to the edge.
+- **The growth.** The bake grows shadow and paint by ceil(px_m / texel) cells (±0.5 m at 0.3 m / 0.25 m). The gate grew
+  them by ±1 photo pixel (±0.3 m).
+- **The reference.** The bake judges shadow and paint against the median of every road cell. The gate used the lit
+  median.
+- **The sampling.** The bake samples the photo bilinearly at cell centres. The gate took the nearest pixel at the
+  sample point.
+
+On a photo this flat (Grand Junction's own profile swings ±0.03-0.05 from bin to bin), 14 % more samples moves the
+depth by 0.02. Nothing was drawn: the atlas is the tone.
+
+**The fix** (`tools/road_wear_check.py` only):
+- `bake_grid` rebuilds the bake's grid from the shipped triangles: cells keyed by centroid, x0 = min cell x cell_m -
+  margin_m. cell_m and margin_m are whole texels, so every texel edge is the bake's.
+- `aerial_rgb_at` restates `Aerial.sample`: bilinear at pixel centres, after the registration shift.
+- `photo_mask` restates `rw.rasterize` + `tone_field`'s lit + the bake's interior on that grid, so value_at reads the
+  atlas only where the bake read the tone.
+- The row now also reports `declared_samples` and the mask's stats.
+- `photo_rubber` (High Plains) and `no_rubber` both use it. No threshold moved: photo_depth_tol, photo_centroid_tol_m and
+  photo_min_depth are unchanged.
+
+**Proven (Mac, no build).** `tests/aerial/test_road_wear_photo.py`, 2 new tests (36 of 36 road-wear tests pass). The scene:
+an oval road of varying width; a 0.3 m photo with 60 paint and bluish-shadow blobs; registration (+0.75, +0.25) m.
+- The bake's own numpy mask (rw.rasterize, rw.tone_field, the bake's box interior) against `photo_mask`: **0 of 58,466
+  road cells differ**.
+- rw.photo_rubber against measure_photo on the same tone: 1,469 samples each, depth 0.00262 each.
+- The old rule on the same scene read 1,784 samples and depth 0.00056.
+
+**Owed (PC).** Re-run the gate on the installed High Plains 0.1.7, Pueblo 0.1.5, Aspen 0.1.6 and Pikes Peak 0.2.3 kn5s:
+shipped_samples should equal declared_samples (to float32 rounding) and shipped_depth sit close to declared_depth. Then
+rebuild Grand Junction 0.1.4.
+
 ## 2026-11-10 (Mac, later) — NEW ROW (opt-in): `no_rubber`, road_wear.rubber "none" (tone only) judged in place of `photo_rubber` (ledger 0084 "Tone only, no rubber"; no threshold moved, no new threshold)
 
 **Why.** Kevin, 2026-11-10, on Pueblo, Aspen, Grand Junction and Pikes Peak: "Tone only, no rubber". Their 0.3 m NAIP

@@ -725,3 +725,44 @@ Downloads still need his word, and none is needed here.
   - Menu picture: s0 at -0.3 EV, as before.
 - Records: `source/road_wear/pc_017/green_{ref,reh}/`.
 - Not driven.
+
+### Pueblo 0.1.4: red, not installed (PC, 2026-11-10 overnight)
+
+Kevin to the Mac: "build the road wear for the other circuits on the pc overnight". The Mac's rule for the 0.3 m
+circuits: photo mode, and "If a 0.3 m track's photo shows no measurable rubber (its own depth under 0.03), stop that
+track and report. Don't switch modes or tune."
+
+- **Head** 483038aa on `claude/pueblo-road-wear` (from 6a788506). ENG `eng_pulm_rw` = eng_pulm plus the current exporter
+  (export_kn5_addon.py 900ea391, as eng_hplm_rw).
+- **Reference `pu_rw_ref` + rehearsal `pu_rw_reh`**, both from empty workshops, EXIT 1 in prep at the bake. They are
+  identical: every data/*.json byte-equal, the same rows.
+  - `aerial registered to the built road: shift (+1.75, +0.25) m`, contrast +0.0328 -> +0.0413; shadow 8.21 %, paint 2.2 %.
+  - **The photo's rubber: depth 0.02166** over |u| <= 0.75 m, peak 0.02964, centroid +0.216 m (1275 stations). That is
+    under the gate's photo_min_depth 0.03; High Plains' read 0.146. NAIP 2023 does not resolve Pueblo's rubber. By the
+    Mac's rule the track stops here: no drawn band, nothing tuned.
+  - **And the bake refused the kerbs:** `FATAL: 1KERB_circuit_0: u 0.000..2.111 outside the paint texture (0..1): its
+    copies would bleed into each other`. Pueblo's red / white kerbs (textures/kerb_redwhite.png) repeat their paint along
+    the run. The level copies need each face's u inside one copy of the texture, as High Plains' kerb atlas has it. Pueblo
+    would need its kerbs re-mapped into 0..1 (or the levels laid out another way) before road_wear.kerbs can level them.
+- Installed: still **0.1.3**. Records: `source/road_wear/pc_014/{ref,reh}/` (both logs, every data/*.json).
+- Open, for the Mac and Kevin:
+  - Pueblo's road wear needs a decision: drawn mode, as Nevada and Del Mar (Kevin's "Use the photo's rubber" was for
+    photos that show it), or no road wear.
+  - Its kerbs need their UVs into 0..1 first.
+
+### Aspen 0.1.5: red, not installed (PC, 2026-11-10 overnight)
+
+The same brief and rule as Pueblo above. Photo mode on NAIP 2023 at 0.3 m; stop when the photo's own depth is under 0.03.
+
+- **Head** a473d209 on `claude/aspen-road-wear` (from 6a788506). ENG `eng_aslm_rw` = eng_aslm plus the current exporter
+  (900ea391).
+- **Reference `as_rw_ref` + rehearsal `as_rw_reh`**, both from empty workshops, EXIT 1 in prep at the bake. They are
+  identical: every data/*.json byte-equal, the same rows.
+  - `aerial registered to the built road: shift (-1.25, -0.25) m`, contrast +0.0252 -> +0.0276; shadow 0.0 %, paint 3.85 %.
+  - **The photo's rubber: depth -0.00792** over |u| <= 0.75 m, peak 0.041, centroid +0.299 m (500 stations). The model
+    line reads no darker than its mirror, so the photo shows no rubber (High Plains 0.146, Pueblo 0.022). The track stops
+    by the Mac's rule.
+  - **And the kerbs:** `FATAL: 1KERB_circuit_0: u 0.000..2.099 outside the paint texture (0..1)`, as Pueblo. The three
+    kerb runs repeat their paint along the run.
+- Installed: still **0.1.4**. Records: `source/road_wear/pc_015/{ref,reh}/`.
+- Open, as Pueblo: the mode (drawn or none) is Kevin's call, and the kerbs need their UVs into 0..1.

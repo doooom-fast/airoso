@@ -1,0 +1,62 @@
+START 2026-11-10 21:13:52 HEAD a473d209 ENG eng_aslm_rw track aspen-lm (edge flush, ledger 0087)
+track: aspen-lm   workshop project: D:/k10-scratch/as_rw_reh (scratch: no sync-back, no install)
+engine (prep / export / spawn): D:/k10-scratch/eng_aslm_rw
+
+=================== sync inputs airoso -> workshop (D:/k10-scratch/as_rw_reh)
+layouts: full   (race furniture: ; street: full; street AI = draft)
+
+=================== draft: the track's line, widths and 3DEP into Lake Murray v4's assembler inputs (tools/lm_engine_intake.py; ledger 0078)
+[lm_intake] profile uncapped: the stage's 9 % cap undone (0 points, max 0.0 m); its despike (33 m median) and mean kept
+[lm_intake] heightfield: the project's own (the port track's fetched 3DEP grid; the source commits none)
+[lm_intake] aspen: 561 pts, lap 1676 m, widths [9.0, 9.0, 9.0] m, 0 deck(s) levelled, grade cap none, steepest 6.05 % over 10 m — 0 heights moved (max 0.0 m); connectors out
+
+=================== draft: build loop.blend (scene regen — GEN layer)
+[blend] TREETRUNK: empty, skipped
+[blend] TREECANOPY: empty, skipped
+[blend] SCRUB: empty, skipped
+[blend] 0 streetlights placed (collision-checked)
+[blend] loop: 561 pts, road elevation 0..6 m (rel origin 2275 m)
+[blend] wrote D:\k10-scratch\as_rw_reh\loop.blend
+
+=================== draft: weld every side-street mouth onto its host (mitre + warp: road, curb/sidewalk, markings; self-checked)
+[weld] layout contract holds: mainline 560 rows + 0 connector blocks in ROAD / CURB / MARKINGS / YLINE
+[weld] 0 of 0 warped ROAD quads turned to their ridge diagonal
+[weld] 0 mouth(s) welded, self-check clean; 0 connector-island point(s) follow the warped centre; saved loop.blend + data/mouth_welds.json
+
+=================== author: more columns where the mainline ribbon twists (tools/densify_ribbon_blend.py; ledger 0078; after the weld, no crease = no-op)
+[densify] worst mainline crease 0.0 mm <= 5 mm: nothing to do
+
+=================== author: finer ground along the lane edges of the banked stretch (tools/seat_edges_blend.py; ledger 0078; no route.crossfall_file = no-op)
+[seat-edges] no route.crossfall_file: nothing banked, nothing to do
+
+=================== author: a ground seam along the edge strip's outer lip (tools/strip_seam_blend.py; ledger 0078; self-checked)
+[strip-seam] 1120 seam points 0.05 m inside the strip's outer lip, 1113 joins, 4 missed; TERRAIN 5125 -> 6986 verts; saved loop.blend
+
+=================== author: racing kerbs from the traced runs on the ribbon's lane edge (tools/author_kerbs_blend.py; ledger 0078; no route.kerbs_file = no-op)
+[kerbs] 3 kerb runs, 144 m, height 0.08 m (config), at their measured offsets (ROAD read missed 0); saved loop.blend
+
+=================== author: the bespoke dressing the config declares -> AUTH_bespoke (tools/author_bespoke_blend.py: buildings, cones, scrub on the built ground; self-checked; none declared = no-op)
+[bespoke] scene names: ground ('TERRAIN',), far ('GRASS_FAR', 'TERRAIN'), paved ('ROAD', 'CURB', '1ROAD', '1KERB'), walls ('1WALL', 'BARRIER'); ground found, paved found
+[bespoke] saved loop.blend: 0 objects in AUTH_bespoke; 0 buildings, 0 blocks, 0 cones, 0 scrub clumps
+
+=================== ship: prep (AC naming, 65k splits; multi-layout: NO AC_* dummies in the road scene)
+[build_kn5_loop] terrain conform: 9482 corridor edges split, 3087 verts pinned to deck-0.02, 6391 feathered
+[build_kn5_loop] house seat: 0 buildings seated on the final ground under their footprints, 0 with a foundation reaching down a slope (deepest 0.00 m)
+[build_kn5_loop] terrain tiles: 1GRASS x1 (max 16228 v, total 16228 v)
+[build_kn5_loop] prepped ['1GRASS', '1KERB_circuit_0', '1KERB_circuit_1', '1KERB_circuit_2', '1KERB_sidewalk', '1ROAD_road', 'MARKINGS']  + 16 dummies -> D:\k10-scratch\as_rw_reh\blender\aspen_motorsp
+
+=================== ship: the I-8's own pavement, lane lines and median barrier on the final ground (visual only; self-checked)
+[freeway] scenery.freeway not enabled — nothing to do
+
+=================== ship: the road cuts' rock faces split out of the ground tiles (tools/rock_faces_blend.py: 1GRASS_ROCK_*, the sandstone skin, GRASS physics kept; self-checked; no auto cut declared = no-op)
+[rock] no auto cuts declared (data/ground_release.auto_cuts.json / expansion.north.json) or terrain.rock_faces.enabled false — nothing to do
+
+=================== ship: road wear where tyres run + the road's tone off the aerial (tools/road_wear_blend.py; ledger 0084; self-checked)
+[road_wear] 8960 faces on ['1KERB_sidewalk', '1ROAD_road']; furthest vertex 3.19 m off its centroid; atlas 2048 px at 0.25 m (39 cells of 64 m + 4 m margin, 77.1 % of the atlas used)
+[road_wear] grid 1568 x 2592 at 0.25 m; the built 1ROAD covers 14920 m2 (0 s)
+[road_wear] aerial registered to the built road: shift (-1.25, -0.25) m, contrast +0.0252 -> +0.0276; shadow 0.0 %, paint 3.85 % of the road; tone p01/p50/p99 [0.8658, 1.0014, 1.3]
+[road_wear] line full: the photo's rubber against the mirror: depth -0.00792 over |u| <= 0.75 m, peak 0.041, centroid +0.299 m (500 stations, 7122 samples)
+[road_wear] line full: model: minimum curvature inside the built edges (recorded line named but missing: source/road_wear/fast_lane.full.ai); 1659 m, model lap 55.2 s (40.4-218.3 km/h) -> road_wear.line.full.json
+[road_wear] macro atlas 2048 x 2048: m0 0.7692, deepest rubber 0.0 %, 768013 B (21 s)
+[road_wear] FATAL: 1KERB_circuit_0: u 0.000..2.099 outside the paint texture (0..1): its copies would bleed into each other
+EXIT 1 2026-11-10 21:14:33

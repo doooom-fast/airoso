@@ -881,7 +881,8 @@ Photo mode on NAIP 2023 at 0.3 m, the Mac's rule as Pueblo. Kevin's hairpin forc
   plus the current exporter (900ea391). One line, on the oval: the bake's model line comes off the mainline centre for
   every layout.
 - **Reference `pp_rw_ref` + rehearsal `pp_rw_reh`**, both from empty workshops, both EXIT 1 at gate road_wear. They are
-  identical: the same rows.
+  identical but for one grass vertex: audit grass_verts 391,580 / 391,579, the tangent noise merging one more pair
+  (the road kn5s kn5_equiv EQUIVALENT, corner by corner), every road-wear row the same.
   - `28656 faces on ['1KERB_sidewalk', '1ROAD_apron', '1ROAD_pad_NE', '1ROAD_pad_NW', '1ROAD_road']`; atlas 4096 px at
     0.25 m, 54 cells of 64 m, 39.9 % used.
   - `aerial registered to the built road: shift (+3.00, +2.50) m`, contrast -0.0269 -> -0.0418.

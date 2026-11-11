@@ -633,8 +633,7 @@ prep_prep() {
   # scenery.bespoke.reseat_on_prep true; no key = no header, nothing runs (Lake Murray's chain is tools/ship_sd.sh, untouched).
   # Before the road-wear bake (as Milford 0.1.9): the re-seat moves only the named furniture, the bake writes only road UVs.
   rm -f "$PROJ/data/reseat_bespoke.json"
-  if [ "$(pyq "import json,sys; print(((json.load(open(sys.argv[1],encoding='utf-8')).get('scenery') or {}).get('bespoke') or {}).get('reseat_on_prep') is True)" "$PROJ/track.config.json" | tr -d '
-')" = "True" ]; then
+  if [ "$(pyq "import json,sys; print(((json.load(open(sys.argv[1],encoding='utf-8')).get('scenery') or {}).get('bespoke') or {}).get('reseat_on_prep') is True)" "$PROJ/track.config.json" | tr -d '\r')" = "True" ]; then
     step "ship: the bespoke rails, tyre walls and screens re-seated on the prepped ground (tools/reseat_bespoke_blend.py; self-checked)"
     "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/reseat_bespoke_blend.py" -- "$PROJ/blender/$SLUG.blend" --project "$PROJ" 2>&1 | grep "^\[reseat\]\|FATAL\|Error\|Traceback"
     [ "${PIPESTATUS[0]}" = 0 ] || { echo "reseat_bespoke_blend failed"; exit 1; }
@@ -1210,7 +1209,10 @@ echo "layouts: $LAYOUT_IDS   (race furniture: $RACE_IDS; street: $STREET_IDS; st
 # race.laps.<lap>; none on any config today), whether any race layout still drives the mainline, and per race layout
 # its COMMON race kn5 (RK) and its declaration (BB) — scripts/geometry/race_lap.py. With no lap declared: LAP_IDS
 # empty, HAS_MAIN 1, RK = <slug>_race.kn5 and BB = barrier_bands.json for every race layout — every step as before.
-LAP_IDS=$(pyq "import json,sys; from scripts.geometry import race_lap as L; print(' '.join(L.lap_ids(json.load(open(sys.argv[1],encoding='utf-8')))))" "$PROJ/track.config.json")
+# the laps that carry a common race set: those a FURNISHED race layout names (race_lap.furnished_lap_ids; a bare lap, Pikes
+# Peak's road course and infield, is the road's own lanes: split_exports writes it no loop_race_<lap>.blend and nothing
+# below has a curb strip to verify, export or sync for it; ledger 0085). Lake Murray's laps are all furnished: unchanged
+LAP_IDS=$(pyq "import json,sys; from scripts.geometry import race_lap as L; print(' '.join(L.furnished_lap_ids(json.load(open(sys.argv[1],encoding='utf-8')))))" "$PROJ/track.config.json")
 HAS_MAIN=$(pyq "import json,sys; from scripts.geometry import race_lap as L; print(1 if None in L.groups(json.load(open(sys.argv[1],encoding='utf-8'))) else 0)" "$PROJ/track.config.json")
 LAP_IDS="${LAP_IDS%$'\r'}"; HAS_MAIN="${HAS_MAIN%$'\r'}"
 for lap in $LAP_IDS; do case "$lap" in *[!a-z0-9]*) echo "track.config.json layouts[].lap '$lap' is not a lap token"; exit 2;; esac; done

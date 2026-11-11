@@ -1004,10 +1004,13 @@ def pads(col, spec, to_xy, ground, paved, bad):
             quads = [[inn[i], inn[i + 1], out[i + 1], out[i]] for i in range(len(inn) - 1)]
         else:
             quads = [[to_xy(c) for c in p["quad_lonlat"]]]
+        # opt-in (ledger 0085, Pikes Peak's skid pad): "cell_m" = the pad's cell (default PAD_CELL_M), so it meets the road
+        # within that (its cells over a road are left out)
+        cell = float(p.get("cell_m") or PAD_CELL_M)
         verts, faces, uvs, skipped = [], [], [], 0
         for q in quads:
-            nu = max(1, int(math.dist(q[0], q[1]) / PAD_CELL_M))
-            nv = max(1, int(math.dist(q[1], q[2]) / PAD_CELL_M))
+            nu = max(1, int(math.dist(q[0], q[1]) / cell))
+            nv = max(1, int(math.dist(q[1], q[2]) / cell))
             idx = {}
 
             def vert(i, j):

@@ -154,6 +154,19 @@ def test_groups_and_the_config_view():
     assert race_lap.line_for(d, cfg, "race_cw")["bands_path"].name == "barrier_bands.json"
 
 
+def test_only_a_furnished_laps_layouts_give_it_a_common_set():
+    """ship_track.sh's lap steps run over race_lap.furnished_lap_ids, the same laps tools/split_exports_blend.py
+    writes a loop_race_<lap>.blend for: a lap only bare race layouts drive (Pikes Peak's road course, ledger 0085) is
+    the road's own lanes and has no curb strip to check, export or verify"""
+    cfg = {"layouts": [{"id": "street"},
+                       {"id": "a_f", "lap": "a", "race_furniture": True}, {"id": "a_r", "lap": "a"},
+                       {"id": "b_f", "lap": "b"}, {"id": "b_r", "lap": "b", "race_furniture": False},
+                       {"id": "race_cw", "race_furniture": True}]}
+    assert race_lap.lap_ids(cfg) == ["a", "b"]
+    assert race_lap.furnished_lap_ids(cfg) == ["a"]                         # one furnished layout is enough
+    assert race_lap.furnished_lap_ids({"layouts": [{"id": "x", "lap": "b"}]}) == [] == race_lap.furnished_lap_ids({})
+
+
 # --------------------------------------------------------------------------------- barrier_bands
 def test_the_mainline_declaration_is_byte_identical_with_or_without_the_lap():
     d, _f, main, _l = _world()

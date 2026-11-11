@@ -14,6 +14,32 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
+## 2026-11-10 — WIRING FIX: the lap gates run over furnished laps only, and the rail re-seat runs again on the PC (ledger 0090)
+
+Two faults in `tools/ship_track.sh` on main ca297e2, found by rebuilding the installed tracks from main in empty
+workshops (ledger 0090).
+
+- **The lap steps** (verify_race --lap, the split's loop_race_<lap>.blend check, the lap's common race kn5, the scenery
+  gate per lap, the {lap} syncs) ran over `race_lap.lap_ids`: every lap any layout names. `tools/split_exports_blend.py`
+  writes a lap's common blend only for laps a FURNISHED race layout names (ledger 0085). So main asked Pikes Peak for
+  blends that split never makes: its road course and infield are bare laps. The rebuild of 0.2.0 stopped with EXIT 1.
+  - LAP_IDS now comes from `race_lap.furnished_lap_ids`, the set split uses. Lake Murray's one lap (north) is
+    furnished, so its gates are unchanged.
+  - Pikes Peak runs the step set 0.2.0 was built with: no lap steps.
+  - No gate is removed for a lap that has a curb strip. Nothing ran for a bare lap before c4094785 either.
+- **The re-seat step** (`tools/reseat_bespoke_blend.py`, opt-in `scenery.bespoke.reseat_on_prep`, Milford and High
+  Plains) is an author step, not a gate. Its on/off test read `tr -d '<newline>'`: a79b6a68 wrote a raw CR byte
+  there, and the merge turned it into a line break.
+  - The PC's python prints `True<CR>`, so on the PC the step never ran. Every gate stayed green: none measures rail
+    seating against the declared heights.
+  - Restored to `tr -d '\r'`. `test_every_tr_strips_the_windows_cr_spelled_as_an_escape` reads ship_track.sh as bytes
+    and fails on ca297e2.
+- **Proven.** Rebuilt from this branch in empty workshops:
+  - Pikes Peak equals 0.2.0 (kn5 equivalent, AI lines identical, gate rows identical, 0.2.0's forced street red
+    included).
+  - Milford runs the re-seat (14 objects) and equals 0.1.11 (ledger 0090).
+  - `tests/tools/test_race_lap.py` and `test_ship_track_chain.py` green: 50 passed.
+
 ## 2026-11-04 (step 2g) — MEASUREMENT-BUG FIX: the edge band between two vertices is the offset curve the strip follows (audit_mesh D; ledger 0054 Phase 2; no threshold moved)
 
 `scripts/geometry/median_zone.py` made a declared band continuous between consecutive vertices with the straight CHORD
@@ -1285,6 +1311,32 @@ over the highest ground under the walls) reads such a deck as a buried wall: run
 - **The prep is not changed:** engine-july's house seat re-seats only a BUILDING mesh at the identity transform; the
   author carries a set-in deck's walls in `BUILDING_<SKIN>_SETIN_<k>` with a 1 m object lift (the same world positions),
   which the prep leaves to its terrain-delta ride (0 past the corridor it reshapes), so the measured placement ships.
+
+## 2026-11-10 (ledger 0085, furniture pass 1) — Pikes Peak 0.2.1: buildings off the lidar on disk, the skid pad as a driven pad; no gate threshold moved
+
+**What changed (opt-in; no other track declares any of it):**
+- `tracks/pikes-peak/source/lidar/infield/buildings_lidar.py` (new, the read): every non-ground 2018 lidar point's
+  height over the 1 m DEM on a **0.5 m** grid; a roof stands over **2.5 m** (the outer wall's 1.27 m and a car are
+  under it), at least **12 m2**; a piece under **3 m2** standing over **6 m** is a pole (reported, not built). A
+  footprint is its minimum rectangle when the cells fill **80 %** of it, else its outline simplified to **0.75 m**.
+  NAIP's saturation under **0.20** and a height spread (p95 - p10) under **4 m** read as a roof, else a tree. All ⚠
+  [invented] sampling choices; the heights themselves are measured (each block's `_source`).
+- `plan_furniture.py` (new): the grandstand cut along its depth into **6 m** bands ⚠ [invented], each a block at its
+  band's measured median height. A block over **6 m** is tilt-up, under it metal ⚠ [invented: the fleet's skins; no wall
+  photo on disk]. Roof class off NAIP's median RGB: WHITE when grey over **170** and saturation under 0.10, TAN when red
+  exceeds blue by **12** ⚠ [invented cuts], else DARK.
+- `skid_pad.py` (new): junction_pads.py's pavement rule over the lot, the infield road's ribbon + its **1.3 m** strip
+  (route.edge's) taken out.
+- `tools/author_bespoke_blend.py` pads: `cell_m` (opt-in) sets a pad's cell (default PAD_CELL_M 4 m; the skid pad
+  **1 m** ⚠ [invented]). The skid pad is a visual sheet laid on the prepped ground (`pads_seat` "ground", Nevada's). A
+  driven-surface option was tried and taken out: the lot stands up to 0.15 m under the infield road, so as a road the
+  road's edge strip read as a kerb between two roads (audit K 30, I 42) and its edge as 3 gated drops.
+- `tracks/pikes-peak-lm/ship.json`: gate `textures` (tools/verify_textures.py, hard) added before `house_seat`.
+- `gates.drive1.force_exemptions.stage.versions` += "0.2.1": Kevin's force for the infield hairpin, carried to the
+  furniture pass for the same hairpin at the same place (the pass changes no road), as the Lariat's force was carried
+  to its LM port (ledger 0078 round 6). Every other row's refusal is unchanged.
+
+**Proof:** the reference and rehearsal builds from empty workshops (ledger 0085 section 10).
 
 ## 2026-11-09 — Milford far ground (ledger 0082 "Far ground (0.1.11)"; no gate threshold moved, no bypass, nothing forced)
 

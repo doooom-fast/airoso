@@ -27,8 +27,8 @@ read again from the track's own image (track.config.json road_wear.aerial).
     (road_wear.rubber "photo", Kevin 2026-11-10 "Use the photo's rubber"; High Plains 0.1.7: no band is drawn, so the
     rubber row above is not run, and in its place:)
     photo_rubber per line: the shipped atlas's darkening across the declared line against its mirror across the declared
-                 centreline (measure_photo, on what the bake measured: lit asphalt >= interior_m inside the built
-                 road), its depth over |u| <= band_m within photo_depth_tol and its centroid within
+                 centreline (measure_photo, on the cells the bake measured: photo_mask restates its grid, road raster,
+                 lit asphalt and square interior_m margin, 2026-11-11), its depth over |u| <= band_m within photo_depth_tol and its centroid within
                  photo_centroid_tol_m of the bake's measurement on the photo; the photo must show >= photo_min_depth
     (road_wear.rubber "none", Kevin 2026-11-10 "Tone only, no rubber"; Pueblo, Aspen, Grand Junction, Pikes Peak: the
     rubber row is not run, and in its place:)
@@ -158,6 +158,108 @@ def _left_normals(P: list, closed: bool) -> list:
         dx, dy = b[0] - a[0], b[1] - a[1]; L = math.hypot(dx, dy) or 1.0
         out.append((-dy / L, dx / L))
     return out
+
+
+def aerial_rgb_at(apx, size: tuple, bbox: tuple, origin: tuple, reg: dict):
+    """scripts/aerial/road_wear.Aerial.sample restated without numpy: (x, y) local metres -> (r, g, b) 0..1, bilinear
+    at the photo's pixel centres after the bake's registration shift, or None off the photo. apx: a PIL pixel access."""
+    aw, ah = size; Wb, Sb, Eb, Nb = bbox; lon0, lat0 = origin
+    phi = math.radians(lat0)
+    m_lat = 111132.954 - 559.822 * math.cos(2 * phi) + 1.175 * math.cos(4 * phi)
+    m_lon = 111412.84 * math.cos(phi) - 93.5 * math.cos(3 * phi) + 0.118 * math.cos(5 * phi)
+    dx, dy = reg.get("dx_m", 0.0), reg.get("dy_m", 0.0)
+
+    def rgb_at(x, y):
+        lon = lon0 + (x + dx) / m_lon; lat = lat0 + (y + dy) / m_lat
+        u = (lon - Wb) / (Eb - Wb) * aw - 0.5; v = (Nb - lat) / (Nb - Sb) * ah - 0.5
+        if not (u >= 0 and v >= 0 and u <= aw - 1 and v <= ah - 1):
+            return None
+        i0 = min(max(int(math.floor(u)), 0), aw - 2); j0 = min(max(int(math.floor(v)), 0), ah - 2)
+        fu = u - i0; fv = v - j0
+        a_, b_, c_, d_ = apx[i0, j0], apx[i0 + 1, j0], apx[i0, j0 + 1], apx[i0 + 1, j0 + 1]
+        return tuple(((a_[q] * (1 - fu) + b_[q] * fu) * (1 - fv) + (c_[q] * (1 - fu) + d_[q] * fu) * fv) / 255.0
+                     for q in range(3))
+    rgb_at.px_m = max((Eb - Wb) * m_lon / aw, (Nb - Sb) * m_lat / ah)
+    return rgb_at
+
+
+def bake_grid(tris: list, plan: dict, tex: float) -> tuple[float, float, int, int]:
+    """The bake's grid (tools/road_wear_blend.py step 3) off the shipped triangles: x0 = min cell x C - margin, the same
+    for y, nx / ny to the last cell + margin. The bake keys its cells by face centroid; the kn5's triangles key the same
+    cells (a different min only shifts x0 by whole cells, and cell_m / margin_m are whole texels, so every texel edge is
+    where the bake's was)."""
+    C = float(plan["cell_m"]); M = float(plan["margin_m"])
+    ci = [math.floor(((P0[0] + P1[0] + P2[0]) / 3) / C) for (P0, P1, P2), _uv in tris]
+    cj = [math.floor(((P0[1] + P1[1] + P2[1]) / 3) / C) for (P0, P1, P2), _uv in tris]
+    x0, y0 = min(ci) * C - M, min(cj) * C - M
+    return (x0, y0, int(round(((max(ci) + 1) * C + M - x0) / tex)), int(round(((max(cj) + 1) * C + M - y0) / tex)))
+
+
+def photo_mask(road_xy: list, grid: tuple, tex: float, rgb_at, tone: dict, px_m: float, interior_m: float):
+    """The cells the bake measured the photo on, restated without numpy: scripts/aerial/road_wear.tone_field's lit
+    asphalt (shadow and paint against the median luminance of every road cell, each grown by one aerial pixel,
+    ceil(px_m / tex) cells) and the bake's interior (every cell within round(interior_m / tex) cells, a square, is road).
+    road_xy: the first surface's triangles ((x, y) x 3); rgb_at(x, y) -> (r, g, b) 0..1 bilinear at the photo's pixel
+    centres, or None off the photo (Aerial.sample). Returns (usable(i, j) -> bool, stats). Equal to the bake's
+    ``interior & lit`` up to float32 rounding at a threshold (the bake samples in float32)."""
+    x0, y0, nx, ny = grid
+    road = bytearray(nx * ny)
+    for (ax, ay), (bx, by), (cx, cy) in road_xy:                  # rw.rasterize: cell centres inside any triangle
+        d = (by - cy) * (ax - cx) + (cx - bx) * (ay - cy)
+        if abs(d) < 1e-12:
+            continue
+        lox, hix = min(ax, bx, cx), max(ax, bx, cx); loy, hiy = min(ay, by, cy), max(ay, by, cy)
+        i0 = max(0, int(math.floor((lox - x0) / tex - 0.5))); i1 = min(nx - 1, int(math.ceil((hix - x0) / tex - 0.5)))
+        j0 = max(0, int(math.floor((loy - y0) / tex - 0.5))); j1 = min(ny - 1, int(math.ceil((hiy - y0) / tex - 0.5)))
+        for j in range(j0, j1 + 1):
+            Y = y0 + (j + 0.5) * tex
+            for i in range(i0, i1 + 1):
+                X = x0 + (i + 0.5) * tex
+                l1 = ((by - cy) * (X - cx) + (cx - bx) * (Y - cy)) / d
+                l2 = ((cy - ay) * (X - cx) + (ax - cx) * (Y - cy)) / d
+                if l1 >= -1e-9 and l2 >= -1e-9 and l1 + l2 <= 1 + 1e-9:
+                    road[j * nx + i] = 1
+    lum = {}; br = {}
+    for k in range(nx * ny):
+        if road[k]:
+            j, i = divmod(k, nx)
+            c = rgb_at(x0 + (i + 0.5) * tex, y0 + (j + 0.5) * tex)
+            if c is not None:
+                lum[k] = 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2]
+                br[k] = c[2] / max(c[0], 1e-3)
+    if not lum:
+        return (lambda i, j: False), {"road_cells": 0}
+    v = sorted(lum.values()); n = len(v)
+    ref = v[n // 2] if n % 2 else 0.5 * (v[n // 2 - 1] + v[n // 2])     # np.median over the valid road
+    raw = bytearray(nx * ny)                                          # shadow or paint before the growth
+    for k, L_ in lum.items():
+        if (L_ < tone["shadow_lum"] * ref and br[k] > tone["shadow_blue"]) or L_ > tone["paint_lum"] * ref:
+            raw[k] = 1
+    rp = max(1, int(math.ceil(px_m / tex)))
+    ri = max(1, int(round(interior_m / tex)))
+    memo = {}
+
+    def usable(i, j):
+        if not (0 <= i < nx and 0 <= j < ny):
+            return False
+        k = j * nx + i
+        got = memo.get(k)
+        if got is None:
+            got = k in lum
+            if got:                                                   # not shadow / paint within rp (grown)
+                for jj in range(max(0, j - rp), min(ny, j + rp + 1)):
+                    row = jj * nx
+                    if any(raw[row + ii] for ii in range(max(0, i - rp), min(nx, i + rp + 1))):
+                        got = False; break
+            if got:                                                   # the interior: the square all road
+                for jj in range(max(0, j - ri), min(ny, j + ri + 1)):
+                    row = jj * nx
+                    if not all(road[row + ii] for ii in range(max(0, i - ri), min(nx, i + ri + 1))):
+                        got = False; break
+            memo[k] = got
+        return got
+    return usable, {"road_cells": len(lum), "median_lum": round(ref, 5), "grow_cells": rp, "interior_cells": ri,
+                    "shadow_or_paint_cells": int(sum(raw))}
 
 
 def photo_line_pass(mode: str, got: dict, dp: dict) -> bool:
@@ -820,26 +922,14 @@ def main(argv=None) -> int:
         if not aer:
             rows[rname] = {"pass": False, "note": f"road_wear.rubber {mode!r} without an aerial"}
         else:
-            ref_l = (decl["stats"].get("aerial") or {}).get("lit_median_lum")
-            road_hsh = {}
-            for ti in road_tris:
-                (P0, P1, P2), _uv = tris[ti]
-                xs = (P0[0], P1[0], P2[0]); ys = (P0[1], P1[1], P2[1])
-                for i in range(int(math.floor(min(xs) / cell)), int(math.floor(max(xs) / cell)) + 1):
-                    for j in range(int(math.floor(min(ys) / cell)), int(math.floor(max(ys) / cell)) + 1):
-                        road_hsh.setdefault((i, j), []).append(ti)
+            # the cells the bake measured on, restated (photo_mask): its grid, its road raster, its lit asphalt and its
+            # interior. (Before 2026-11-11 the gate tested the road at five points and the photo pixel by pixel against
+            # the lit median: Grand Junction 0.1.4 read 6,250 samples to the bake's 5,459, ledger 0084.)
+            gx0, gy0, gnx, gny = bake_grid(tris, plan, tex)
 
-            def in_road(x, y):
-                for ti in road_hsh.get((int(math.floor(x / cell)), int(math.floor(y / cell))), ()):
-                    (P0, P1, P2), _uv = tris[ti]
-                    d = (P1[1] - P2[1]) * (P0[0] - P2[0]) + (P2[0] - P1[0]) * (P0[1] - P2[1])
-                    if abs(d) < 1e-12:
-                        continue
-                    l1 = ((P1[1] - P2[1]) * (x - P2[0]) + (P2[0] - P1[0]) * (y - P2[1])) / d
-                    l2 = ((P2[1] - P0[1]) * (x - P2[0]) + (P0[0] - P2[0]) * (y - P2[1])) / d
-                    if l1 >= -1e-9 and l2 >= -1e-9 and 1 - l1 - l2 >= -1e-9:
-                        return True
-                return False
+            rgb_at = aerial_rgb_at(apx, (aw, ah), (Wb, Sb, Eb, Nb), (o["lon"], o["lat"]), reg)
+            road_xy = [tris[ti][0] for ti in sorted(road_tris)]
+            masks = {}
             res = []
             for lf in sorted((proj / "data").glob("road_wear.line.*.json")):
                 Ld = json.loads(lf.read_text(encoding="utf-8"))
@@ -847,23 +937,16 @@ def main(argv=None) -> int:
                 if not dp:
                     res.append({"layout": Ld.get("layout"), "pass": False, "note": "no declared photo_rubber"}); continue
                 ph = dp["params"]
-                apx_m = max(1e-3, min(float(v) for v in (decl["stats"]["aerial"].get("aerial_px_m") or [0.3])))
+                mk = round(float(ph["interior_m"]), 6)
+                if mk not in masks:
+                    masks[mk] = photo_mask(road_xy, (gx0, gy0, gnx, gny), tex, rgb_at, spec["tone"], rgb_at.px_m,
+                                           ph["interior_m"])
+                usable, mstats = masks[mk]
 
-                def value_at(x, y, ph=ph):
-                    """the shipped atlas at (x, y), or None where the bake measured nothing: off the lit asphalt (the
-                    aerial's shadow / paint rule, grown one aerial pixel) or within interior_m of the built road's edge"""
-                    for dx, dy in ((0, 0), (ph["interior_m"], 0), (-ph["interior_m"], 0), (0, ph["interior_m"]),
-                                   (0, -ph["interior_m"])):
-                        if not in_road(x + dx, y + dy):
-                            return None
-                    for dx in (-apx_m, 0.0, apx_m):
-                        for dy in (-apx_m, 0.0, apx_m):
-                            al = aerial_lum(x + dx, y + dy)
-                            if al is None or ref_l is None:
-                                return None
-                            if (al[0] < spec["tone"]["shadow_lum"] * ref_l and al[1] > spec["tone"]["shadow_blue"]) or \
-                                    al[0] > spec["tone"]["paint_lum"] * ref_l:
-                                return None
+                def value_at(x, y, usable=usable):
+                    """the shipped atlas at (x, y), or None where the bake measured nothing (photo_mask)"""
+                    if not usable(int(math.floor((x - gx0) / tex)), int(math.floor((y - gy0) / tex))):
+                        return None
                     uv = uv_at(x, y)
                     return None if uv is None else atlas_lum(uv[0], uv[1], flip)
                 got = measure_photo(Ld["points"], Ld["centre"], Ld["centre_normals"], bool(cfg.get("loop", True)),
@@ -872,7 +955,7 @@ def main(argv=None) -> int:
                 res.append({"layout": Ld.get("layout"), "pass": ok_, "declared_depth": dp["depth"],
                             "shipped_depth": got["depth"], "declared_centroid_m": dp["centroid_m"],
                             "shipped_centroid_m": got["centroid_m"], "stations": got["stations"],
-                            "samples": got["samples"]})
+                            "samples": got["samples"], "declared_samples": dp.get("samples"), "mask": mstats})
             rows[rname] = {"pass": bool(res) and all(r_["pass"] for r_ in res), "lines": res,
                            "drawn_band": f"none (road_wear.rubber {mode})"}
             if mode == "none" and kdecl:

@@ -1,0 +1,101 @@
+{
+ "mouths": [
+  {
+   "connector": "if_link",
+   "piece": "if_link#0",
+   "end": "start",
+   "host": "rc_infield#0",
+   "side": -1,
+   "host_vertex": 394,
+   "angle_deg": 62.46,
+   "host_grade": -0.0075,
+   "rows_respread": 5,
+   "rows_touched": 17,
+   "markings_moved": 288,
+   "deck": "exact (route.weld_exact_deck)",
+   "cut_arc_m": {
+    "road+0": 1.376,
+    "road+1": -0.108,
+    "road+2": -2.342,
+    "curb+1+0": 1.779,
+    "curb+1+1": 1.798,
+    "curb+1+2": 1.828,
+    "curb+1+3": 1.987,
+    "curb-1+0": -1.908,
+    "curb-1+1": -1.95,
+    "curb-1+2": -2.034,
+    "curb-1+3": -2.452
+   },
+   "end_dy_m": [
+    -0.034,
+    0.002,
+    0.046
+   ],
+   "end_vs_host_before_m": [
+    0.033,
+    -0.002
+   ],
+   "end_vs_host_after_max_m": 0.0,
+   "above_host_after": [],
+   "folds": []
+  },
+  {
+   "connector": "if_link",
+   "piece": "if_link#0",
+   "end": "end",
+   "host": "rc_infield#0",
+   "side": -1,
+   "host_vertex": 92,
+   "angle_deg": 71.77,
+   "host_grade": -0.003,
+   "rows_respread": 7,
+   "rows_touched": 22,
+   "markings_moved": 360,
+   "deck": "exact (route.weld_exact_deck)",
+   "cut_arc_m": {
+    "road+0": 0.215,
+    "road+1": -0.106,
+    "road+2": -1.175,
+    "curb+1+0": 0.615,
+    "curb+1+1": 0.612,
+    "curb+1+2": 0.606,
+    "curb+1+3": 0.534,
+    "curb-1+0": -0.77,
+    "curb-1+1": -0.785,
+    "curb-1+2": -0.814,
+    "curb-1+3": -0.958
+   },
+   "end_dy_m": [
+    0.007,
+    -0.004,
+    -0.026
+   ],
+   "end_vs_host_before_m": [
+    -0.007,
+    0.004
+   ],
+   "end_vs_host_after_max_m": 0.0,
+   "above_host_after": [],
+   "folds": []
+  }
+ ],
+ "folds": {
+  "MAINLINE": {
+   "cuts": [],
+   "left": [],
+   "paint_verts_moved": 0
+  },
+  "rc_infield#0": {
+   "cuts": [],
+   "left": [],
+   "paint_verts_moved": 0
+  },
+  "if_link#0": {
+   "cuts": [],
+   "left": [],
+   "paint_verts_moved": 0
+  }
+ },
+ "ridge_diagonals_turned": 59,
+ "island_points_moved": 0
+}

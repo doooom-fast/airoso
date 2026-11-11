@@ -1,0 +1,40 @@
+{
+ "mouths": [
+  {
+   "connector": "if_link",
+   "host": "rc_infield#0",
+   "host_vertex": 394,
+   "side": -1,
+   "connector_width_m": 13.0,
+   "cut_xyz": [
+    -121.892,
+    -1.174,
+    153.54
+   ],
+   "host_seg": 393,
+   "host_t": 1.0,
+   "angle_deg": 62.46,
+   "host_grade": -0.0075,
+   "piece": "if_link#0",
+   "end": "start"
+  },
+  {
+   "connector": "if_link",
+   "host": "rc_infield#0",
+   "host_vertex": 92,
+   "side": -1,
+   "connector_width_m": 13.0,
+   "cut_xyz": [
+    -60.888,
+    -1.126,
+    196.387
+   ],
+   "host_seg": 91,
+   "host_t": 0.7179,
+   "angle_deg": 71.77,
+   "host_grade": -0.003,
+   "piece": "if_link#0",
+   "end": "end"
+  }
+ ]
+}

@@ -1,0 +1,3 @@
+28656 triangles measured, 2 over 0.005
+  1ROAD_pad_NE tri 4006: scale err 0.00856, plan area 0.001988 m2, edges [1.0097, 5.0603, 6.07] m, at (E, N) [46.44, 198.46]
+  1ROAD_pad_NW tri 3672: scale err 0.0051, plan area 0.018891 m2, edges [5.8443, 8.9227, 14.767] m, at (E, N) [-208.3, 170.43]

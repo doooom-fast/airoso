@@ -1,0 +1,20 @@
+{
+ "lift_m": 0.06,
+ "surface": null,
+ "pads": [
+  {
+   "pad": "PADAPRON_0",
+   "name": "PADAPRON_0",
+   "tris": 58938,
+   "verts": 35640,
+   "ground_over": 0
+  },
+  {
+   "pad": "PADAPRON_1",
+   "name": "PADAPRON_1",
+   "tris": 57480,
+   "verts": 34550,
+   "ground_over": 0
+  }
+ ]
+}

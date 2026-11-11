@@ -20,6 +20,9 @@ WHAT IT DOES, in order, on the scene engine-july's prep saved (blender/<slug>.bl
    darkening across each line, measured against its mirror across the centreline (scripts/aerial/road_wear.photo_rubber,
    on lit asphalt at least PHOTO interior_m inside the built road), written to the line's record; the asphalt then gets
    NO drawn band (wear = 0 below: the tone carries it) and the kerbs (7b) take the measured profile, not the drawn model;
+4c. (opt-in road_wear.rubber "none", Kevin 2026-11-10 "Tone only, no rubber"; Pueblo, Aspen, Grand Junction, Pikes Peak:
+   their photos show no rubber) as 4b, measured and recorded the same way, but the gate does not ask the photo to show
+   rubber; the asphalt gets the tone alone and road_wear.kerbs is refused (rw.rubber_mode);
 5. the macro atlas baked tile by tile from the world (tone x (1 - wear), x m0), the detail textures (each surface's own
    stock diffuse / m0 and its stock normal), a flat normal — all PNG, power of two;
 6. every face's UVs rewritten into its cell's tile (detail on today's 4 m grid and phase: detailUVMultiplier);
@@ -29,7 +32,9 @@ WHAT IT DOES, in order, on the scene engine-july's prep saved (blender/<slug>.bl
 7b. (opt-in road_wear.kerbs, High Plains 0.1.7) the race kerbs (1KERB_circuit_*): each face's darkness off the same lines
    at its centroid, to one of ``levels`` copies of the kerb's own paint laid side by side (copy k = paint x (1 - k step)),
    its u moved into that copy (v untouched); the material row = the exporter's own stock row with txDiffuse -> the
-   levelled paint; every face's ring and level recorded for the gate's join;
+   levelled paint; every face's ring and level recorded for the gate's join. Paint that repeats (u past 1: Pueblo,
+   Aspen) is unwrapped per face by its whole repeats and each copy holds ``repeats`` tiles of it (rw.kerb_unwrap /
+   kerb_repeats; no face is split, no vertex moves);
 8. the kn5 WRITER's vertex count re-checked on every surface (engine-july's own _export_vertex_keys); a surface over
    the cap is tiled under unique names by engine-july's own _split_for_writer.
 
@@ -228,6 +233,10 @@ def _kerbs(proj: Path, eng: Path | None, ksp: dict, spec: dict, lines: list, w: 
     faces_rec = {}
     hist = np.zeros(L, dtype=np.int64)
     n_faces = 0; touched = 0; clipped = 0
+    # pass 1: every face's u back by its whole repeats of the paint (rw.kerb_unwrap; 0 for a face inside 0..1), and the
+    # tiles each level copy must hold (rw.kerb_repeats: 1 = High Plains 0.1.7's atlas)
+    unwrapped = {}
+    u_max = 0.0; moved = 0; u_raw = [np.inf, -np.inf]
     for ob in obs:
         me = ob.data
         uvl = me.uv_layers.active
@@ -237,10 +246,27 @@ def _kerbs(proj: Path, eng: Path | None, ksp: dict, spec: dict, lines: list, w: 
         P, fl, cen, _t, _co = _faces(ob)
         nl = len(me.loops)
         uv = np.empty(nl * 2, dtype=np.float32); uvl.data.foreach_get("uv", uv); uv = uv.reshape(nl, 2).astype(np.float64)
-        if uv[:, 0].min() < -1e-6 or uv[:, 0].max() > 1 + 1e-6:
-            print(f"[road_wear] FATAL: {ob.name}: u {uv[:, 0].min():.3f}..{uv[:, 0].max():.3f} outside the paint texture "
-                  f"(0..1): its copies would bleed into each other")
+        if not np.all(np.isfinite(uv)):
+            print(f"[road_wear] FATAL: {ob.name}: a UV is not finite")
             return None
+        loc, shift = rw.kerb_unwrap(uv[:, 0], fl, len(cen))
+        unwrapped[ob.name] = (P, fl, cen, uv, loc)
+        if nl:
+            u_max = max(u_max, float(loc.max()))
+            u_raw = [min(u_raw[0], float(uv[:, 0].min())), max(u_raw[1], float(uv[:, 0].max()))]
+        moved += int(np.count_nonzero(shift))
+    try:
+        R = rw.kerb_repeats(u_max, L)
+    except ValueError as e:
+        print(f"[road_wear] FATAL: {e}")
+        return None
+    if R > 1 or moved:
+        print(f"[road_wear] kerbs: the paint repeats (u {u_raw[0]:.3f}..{u_raw[1]:.3f}): {moved} faces moved back by whole "
+              f"repeats, the widest face then reaching u {u_max:.3f}; each level copy holds {R} tile(s) of the paint")
+    for ob in obs:
+        me = ob.data
+        uvl = me.uv_layers.active
+        P, fl, cen, uv, loc = unwrapped[ob.name]
         keep = np.ones(len(cen))
         Z = float(np.mean(cen[:, 2]))
         for ln in lines:
@@ -252,7 +278,7 @@ def _kerbs(proj: Path, eng: Path | None, ksp: dict, spec: dict, lines: list, w: 
         lev = rw.kerb_levels(dark, step, L)
         clipped += int(np.sum(np.round(dark / step) > L - 1))
         uv2 = uv.copy()
-        uv2[:, 0] = rw.kerb_u(np.clip(uv[:, 0], 0.0, 1.0), lev[fl], L)
+        uv2[:, 0] = rw.kerb_u(np.clip(loc, 0.0, float(R)), lev[fl], L, R)
         uvl.data.foreach_set("uv", uv2.astype(np.float32).ravel())
         me.update()
         hist += np.bincount(lev, minlength=L)
@@ -277,9 +303,13 @@ def _kerbs(proj: Path, eng: Path | None, ksp: dict, spec: dict, lines: list, w: 
                     if s & (s - 1):
                         print(f"[road_wear] FATAL: {src.name} is not a power of two ({base.shape[1]} x {base.shape[0]})")
                         return None
+                if base.shape[1] * L * R > rw.KERB_ATLAS_MAX_PX:
+                    print(f"[road_wear] FATAL: {src.name}: {L} levels x {R} repeats of its {base.shape[1]} px make a "
+                          f"{base.shape[1] * L * R} px atlas, over {rw.KERB_ATLAS_MAX_PX} (Direct3D 11's largest)")
+                    return None
                 b8 = np.round(np.clip(base, 0, 1) * 255).astype(np.uint8)
                 fn = texdir / f"road_wear_kerb_{src.stem}.png"
-                nb = rw.write_png(fn, rw.kerb_wear_atlas(b8, L, step))
+                nb = rw.write_png(fn, rw.kerb_wear_atlas(b8, L, step, R))
                 im = bpy.data.images.load(str(fn), check_existing=True)
                 im.name = fn.name
                 if not im.packed_file:
@@ -308,6 +338,9 @@ def _kerbs(proj: Path, eng: Path | None, ksp: dict, spec: dict, lines: list, w: 
             "materials": sorted(m for m in rows if rows[m].get("stock") is not None), "paint": srcs,
             "faces_total": n_faces, "faces_darkened": touched, "faces_clipped": clipped, "per_level": hist.tolist(),
             "darkest": round(float(max(f["darkness"] for fs in faces_rec.values() for f in fs)), 5),
+            # only when the paint repeats (Pueblo, Aspen): High Plains 0.1.7's record is unchanged; absent = 1 / 0
+            **({"repeats": R, "faces_unwrapped": moved, "u_range": [round(u_raw[0], 4), round(u_raw[1], 4)],
+                "u_max_unwrapped": round(u_max, 4)} if (R > 1 or moved) else {}),
             "faces": faces_rec}
 
 
@@ -368,13 +401,11 @@ def main() -> int:
     aer_spec = spec.get("aerial")
     stats = {"plan": plan, "furthest_vertex_m": round(over, 3)}
     # road_wear.rubber (opt-in, Kevin 2026-11-10 "Use the photo's rubber"): "photo" = the aerial carries the rubber, no
-    # drawn band on the asphalt; absent / "drawn" = Milford's drawn band, unchanged
-    mode = spec.get("rubber", "drawn")
-    if mode not in ("drawn", "photo"):
-        print(f"[road_wear] FATAL: road_wear.rubber {mode!r}: 'drawn' or 'photo'")
-        return 1
-    if mode == "photo" and not aer_spec:
-        print("[road_wear] FATAL: road_wear.rubber 'photo' needs road_wear.aerial")
+    # drawn band on the asphalt; "none" (Kevin 2026-11-10 "Tone only, no rubber") = the same asphalt, the photo not asked
+    # to show rubber, no kerb levels; absent / "drawn" = Milford's drawn band, unchanged
+    mode, err = rw.rubber_mode(spec)
+    if err:
+        print(f"[road_wear] FATAL: {err}")
         return 1
     lit = None
     if aer_spec:
@@ -401,7 +432,7 @@ def main() -> int:
     closed = bool(cfg.get("loop", True))
     Wc = Wc[:len(Pc)]
     lines = []
-    if mode == "photo":
+    if mode in ("photo", "none"):
         # the measurement's frame: the centreline (2 m) and its left normals; the photo's lit asphalt at least interior_m
         # inside the BUILT road (edge paint, kerbs and verge out)
         ph = dict(rw.PHOTO, **{k: v for k, v in (spec.get("photo") or {}).items() if not str(k).startswith("_")})
@@ -440,7 +471,7 @@ def main() -> int:
                                                                       f"{ls['ai']})" if ai is not None else "")
         I, sp = rw.rubber_intensity(P, 2.0, w, closed)
         extra = {}
-        if mode == "photo":
+        if mode in ("photo", "none"):
             prof = rw.photo_rubber(tone_at, P, Cc, nCc, closed, ph)
             extra = {"photo_rubber": prof, "centre": np.round(Cc[:, :2], 3).tolist(),
                      "centre_normals": np.round(nCc, 6).tolist()}
@@ -469,7 +500,7 @@ def main() -> int:
         T = tone[gj0:gj0 + Pp, gi0:gi0 + Pp]
         X, Y = grid.centres(gi0, gj0, Pp, Pp)
         keep = np.ones_like(T)
-        for ln in (lines if mode == "drawn" else ()):        # photo: the tone already carries the rubber, none drawn
+        for ln in (lines if mode == "drawn" else ()):        # photo / none: the tone alone, no band drawn
             keep *= 1.0 - rw.wear_at(X, Y, k[2] * spec["layer_m"], ln, w, reach)
         dmax = max(dmax, float(1 - keep.min()))
         macro = np.clip(m0 * T * keep, 0.0, 1.0)

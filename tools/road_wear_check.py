@@ -10,7 +10,11 @@ read again from the track's own image (track.config.json road_wear.aerial).
                  txDiffuse / txNormal / txDetail / txNormalDetail, each texture embedded, power of two, and
                  detailUVMultiplier = atlas_px * texel_m / detail_tile_m
     density      per triangle, the UV Jacobian over the ground (east, north) has both singular values within
-                 density_tol of 1 / (atlas_px * texel_m) and no shear (roundness): one texel per texel_m, square
+                 density_tol of 1 / (atlas_px * texel_m) and no shear (roundness): one texel per texel_m, square.
+                 A triangle whose Jacobian float32 cannot resolve to density_tol (a sliver: its rounding bound grows
+                 as length / height; Pikes Peak 0.2.2's pad slivers) is judged instead by its edges' texel footprint,
+                 |UV step x atlas_px x texel_m - the edge on the ground| <= density_tol x |edge|; one with no edge
+                 float32 resolves either is counted as unjudged (density_row; GATES-CHANGELOG 2026-11-10 Mac)
     no_repeat    no texel is claimed by two places on the ground more than repeat_m apart (corners and centroids of
                  every triangle): the atlas never repeats
     detail_phase the detail UV (UV x detailUVMultiplier) at every vertex equals east / 4, north / 4 modulo 1 within
@@ -23,15 +27,22 @@ read again from the track's own image (track.config.json road_wear.aerial).
     (road_wear.rubber "photo", Kevin 2026-11-10 "Use the photo's rubber"; High Plains 0.1.7: no band is drawn, so the
     rubber row above is not run, and in its place:)
     photo_rubber per line: the shipped atlas's darkening across the declared line against its mirror across the declared
-                 centreline (measure_photo, on what the bake measured: lit asphalt >= interior_m inside the built
-                 road), its depth over |u| <= band_m within photo_depth_tol and its centroid within
+                 centreline (measure_photo, on the cells the bake measured: photo_mask restates its grid, road raster,
+                 lit asphalt and square interior_m margin, 2026-11-11), its depth over |u| <= band_m within photo_depth_tol and its centroid within
                  photo_centroid_tol_m of the bake's measurement on the photo; the photo must show >= photo_min_depth
+    (road_wear.rubber "none", Kevin 2026-11-10 "Tone only, no rubber"; Pueblo, Aspen, Grand Junction, Pikes Peak: the
+    rubber row is not run, and in its place:)
+    no_rubber    per line: the same measurement as photo_rubber, the shipped atlas's line-vs-mirror depth within
+                 photo_depth_tol of the photo's own, so the atlas adds no band to the photo (Milford's drawn band reads
+                 ~0.1-0.2 there); the photo is not asked to show rubber and the centroid is not judged (with no rubber it
+                 is noise); no kerb levels may be declared
     (only when data/road_wear.json carries "kerbs", i.e. the config names road_wear.kerbs; High Plains 0.1.7:)
     kerb_materials every declared kerb material is in the kn5 with its declared shader, the declared slots and textures
                  (the exporter's stock row with txDiffuse -> the levelled paint), each embedded, power of two, and
                  every declared VAR at its value
     kerb_paint   the shipped levelled paint is ``levels`` copies of the kerb's own paint side by side: copy 0 byte for
-                 byte, copy k within kerb_paint_tol of round(paint x (1 - k step))
+                 byte, copy k within kerb_paint_tol of round(paint x (1 - k step)); each copy ``repeats`` tiles of the
+                 paint when the paint repeats (the bake's record; absent = 1, High Plains 0.1.7)
     kerb_levels  every shipped kerb triangle has one level (floor(u x levels)) at its three corners and lies inside a
                  declared face of that level; every declared face's level is the gate's own reading of the declared
                  line's rubber at its centroid within kerb_level_tol levels
@@ -75,6 +86,11 @@ GATE = {
                                  # (High Plains 0.3 m: 0.14 measured; Milford's 0.5 m showed <= 0.007)
     "kerb_level_tol": 0.55,      # [invented] levels: half a level (the rounding) + 5 % for the declared line's
                                  # 1 mm / 1e-4 rounding in road_wear.line.<layout>.json
+    # the density row's resolution (Pikes Peak 0.2.2, PC 2026-11-10: two sliver pad triangles, 0.002 / 0.019 m2, read
+    # 0.86 % / 0.51 % off on float32 rounding alone): each number the kn5 stores (position, UV) is taken as off by this
+    # many float32 steps at its magnitude when the row decides which measure can resolve density_tol on a triangle
+    "f32_ulps": 1.0,             # [invented] one step: the bake's UV is rounded once to float32 (half a step) and the
+                                 # writer's matrix_world @ co once more (half a step); first-order propagation
 }
 SLOTS = ("txDiffuse", "txNormal", "txDetail", "txNormalDetail")
 
@@ -142,6 +158,120 @@ def _left_normals(P: list, closed: bool) -> list:
         dx, dy = b[0] - a[0], b[1] - a[1]; L = math.hypot(dx, dy) or 1.0
         out.append((-dy / L, dx / L))
     return out
+
+
+def aerial_rgb_at(apx, size: tuple, bbox: tuple, origin: tuple, reg: dict):
+    """scripts/aerial/road_wear.Aerial.sample restated without numpy: (x, y) local metres -> (r, g, b) 0..1, bilinear
+    at the photo's pixel centres after the bake's registration shift, or None off the photo. apx: a PIL pixel access."""
+    aw, ah = size; Wb, Sb, Eb, Nb = bbox; lon0, lat0 = origin
+    phi = math.radians(lat0)
+    m_lat = 111132.954 - 559.822 * math.cos(2 * phi) + 1.175 * math.cos(4 * phi)
+    m_lon = 111412.84 * math.cos(phi) - 93.5 * math.cos(3 * phi) + 0.118 * math.cos(5 * phi)
+    dx, dy = reg.get("dx_m", 0.0), reg.get("dy_m", 0.0)
+
+    def rgb_at(x, y):
+        lon = lon0 + (x + dx) / m_lon; lat = lat0 + (y + dy) / m_lat
+        u = (lon - Wb) / (Eb - Wb) * aw - 0.5; v = (Nb - lat) / (Nb - Sb) * ah - 0.5
+        if not (u >= 0 and v >= 0 and u <= aw - 1 and v <= ah - 1):
+            return None
+        i0 = min(max(int(math.floor(u)), 0), aw - 2); j0 = min(max(int(math.floor(v)), 0), ah - 2)
+        fu = u - i0; fv = v - j0
+        a_, b_, c_, d_ = apx[i0, j0], apx[i0 + 1, j0], apx[i0, j0 + 1], apx[i0 + 1, j0 + 1]
+        return tuple(((a_[q] * (1 - fu) + b_[q] * fu) * (1 - fv) + (c_[q] * (1 - fu) + d_[q] * fu) * fv) / 255.0
+                     for q in range(3))
+    rgb_at.px_m = max((Eb - Wb) * m_lon / aw, (Nb - Sb) * m_lat / ah)
+    return rgb_at
+
+
+def bake_grid(tris: list, plan: dict, tex: float) -> tuple[float, float, int, int]:
+    """The bake's grid (tools/road_wear_blend.py step 3) off the shipped triangles: x0 = min cell x C - margin, the same
+    for y, nx / ny to the last cell + margin. The bake keys its cells by face centroid; the kn5's triangles key the same
+    cells (a different min only shifts x0 by whole cells, and cell_m / margin_m are whole texels, so every texel edge is
+    where the bake's was)."""
+    C = float(plan["cell_m"]); M = float(plan["margin_m"])
+    ci = [math.floor(((P0[0] + P1[0] + P2[0]) / 3) / C) for (P0, P1, P2), _uv in tris]
+    cj = [math.floor(((P0[1] + P1[1] + P2[1]) / 3) / C) for (P0, P1, P2), _uv in tris]
+    x0, y0 = min(ci) * C - M, min(cj) * C - M
+    return (x0, y0, int(round(((max(ci) + 1) * C + M - x0) / tex)), int(round(((max(cj) + 1) * C + M - y0) / tex)))
+
+
+def photo_mask(road_xy: list, grid: tuple, tex: float, rgb_at, tone: dict, px_m: float, interior_m: float):
+    """The cells the bake measured the photo on, restated without numpy: scripts/aerial/road_wear.tone_field's lit
+    asphalt (shadow and paint against the median luminance of every road cell, each grown by one aerial pixel,
+    ceil(px_m / tex) cells) and the bake's interior (every cell within round(interior_m / tex) cells, a square, is road).
+    road_xy: the first surface's triangles ((x, y) x 3); rgb_at(x, y) -> (r, g, b) 0..1 bilinear at the photo's pixel
+    centres, or None off the photo (Aerial.sample). Returns (usable(i, j) -> bool, stats). Equal to the bake's
+    ``interior & lit`` up to float32 rounding at a threshold (the bake samples in float32)."""
+    x0, y0, nx, ny = grid
+    road = bytearray(nx * ny)
+    for (ax, ay), (bx, by), (cx, cy) in road_xy:                  # rw.rasterize: cell centres inside any triangle
+        d = (by - cy) * (ax - cx) + (cx - bx) * (ay - cy)
+        if abs(d) < 1e-12:
+            continue
+        lox, hix = min(ax, bx, cx), max(ax, bx, cx); loy, hiy = min(ay, by, cy), max(ay, by, cy)
+        i0 = max(0, int(math.floor((lox - x0) / tex - 0.5))); i1 = min(nx - 1, int(math.ceil((hix - x0) / tex - 0.5)))
+        j0 = max(0, int(math.floor((loy - y0) / tex - 0.5))); j1 = min(ny - 1, int(math.ceil((hiy - y0) / tex - 0.5)))
+        for j in range(j0, j1 + 1):
+            Y = y0 + (j + 0.5) * tex
+            for i in range(i0, i1 + 1):
+                X = x0 + (i + 0.5) * tex
+                l1 = ((by - cy) * (X - cx) + (cx - bx) * (Y - cy)) / d
+                l2 = ((cy - ay) * (X - cx) + (ax - cx) * (Y - cy)) / d
+                if l1 >= -1e-9 and l2 >= -1e-9 and l1 + l2 <= 1 + 1e-9:
+                    road[j * nx + i] = 1
+    lum = {}; br = {}
+    for k in range(nx * ny):
+        if road[k]:
+            j, i = divmod(k, nx)
+            c = rgb_at(x0 + (i + 0.5) * tex, y0 + (j + 0.5) * tex)
+            if c is not None:
+                lum[k] = 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2]
+                br[k] = c[2] / max(c[0], 1e-3)
+    if not lum:
+        return (lambda i, j: False), {"road_cells": 0}
+    v = sorted(lum.values()); n = len(v)
+    ref = v[n // 2] if n % 2 else 0.5 * (v[n // 2 - 1] + v[n // 2])     # np.median over the valid road
+    raw = bytearray(nx * ny)                                          # shadow or paint before the growth
+    for k, L_ in lum.items():
+        if (L_ < tone["shadow_lum"] * ref and br[k] > tone["shadow_blue"]) or L_ > tone["paint_lum"] * ref:
+            raw[k] = 1
+    rp = max(1, int(math.ceil(px_m / tex)))
+    ri = max(1, int(round(interior_m / tex)))
+    memo = {}
+
+    def usable(i, j):
+        if not (0 <= i < nx and 0 <= j < ny):
+            return False
+        k = j * nx + i
+        got = memo.get(k)
+        if got is None:
+            got = k in lum
+            if got:                                                   # not shadow / paint within rp (grown)
+                for jj in range(max(0, j - rp), min(ny, j + rp + 1)):
+                    row = jj * nx
+                    if any(raw[row + ii] for ii in range(max(0, i - rp), min(nx, i + rp + 1))):
+                        got = False; break
+            if got:                                                   # the interior: the square all road
+                for jj in range(max(0, j - ri), min(ny, j + ri + 1)):
+                    row = jj * nx
+                    if not all(road[row + ii] for ii in range(max(0, i - ri), min(nx, i + ri + 1))):
+                        got = False; break
+            memo[k] = got
+        return got
+    return usable, {"road_cells": len(lum), "median_lum": round(ref, 5), "grow_cells": rp, "interior_cells": ri,
+                    "shadow_or_paint_cells": int(sum(raw))}
+
+
+def photo_line_pass(mode: str, got: dict, dp: dict) -> bool:
+    """One line's verdict. got = measure_photo on the shipped atlas, dp = the bake's measurement on the photo.
+    photo: the photo shows the rubber (>= photo_min_depth) and the atlas carries it (depth and centroid);
+    none (Kevin 2026-11-10 "Tone only, no rubber"): the atlas's depth is the photo's own, nothing drawn on it."""
+    if got["stations"] < 10 or abs(got["depth"] - dp["depth"]) > GATE["photo_depth_tol"]:
+        return False
+    if mode == "photo":
+        return (dp["depth"] >= GATE["photo_min_depth"] and
+                abs(got["centroid_m"] - dp["centroid_m"]) <= GATE["photo_centroid_tol_m"])
+    return mode == "none"
 
 
 def measure_photo(points: list, centre: list, normals: list, closed: bool, value_at, ph: dict) -> dict:
@@ -275,6 +405,124 @@ def make_darkness(line_pts: list, closed: bool, w: dict, layer: float, amp: floa
     return darkness
 
 
+def _ulp32(x: float) -> float:
+    """The spacing of float32 values at |x| (the kn5 stores positions and UVs as float32)."""
+    x = abs(x)
+    if x < 1.1754943508222875e-38:
+        return 1.401298464324817e-45
+    return 2.0 ** (math.frexp(x)[1] - 24)
+
+
+def _sv2(a: float, b: float, c: float, d: float) -> tuple[float, float]:
+    """(largest, smallest) singular value of [[a, b], [c, d]] (the smallest as |det| / largest: stable on a sliver)."""
+    S = a * a + b * b + c * c + d * d
+    D = abs(a * d - b * c)
+    smax = math.sqrt(S / 2 + math.sqrt(max(0.0, S * S / 4 - D * D)))
+    return smax, (D / smax if smax > 0 else 0.0)
+
+
+def density_row(tris: list, A: int, tex: float, names: list | None = None) -> dict:
+    """The density row: one texel per texel_m, square, on every road-wear triangle, judged by the measure the kn5's
+    float32 numbers can resolve on that triangle.
+
+    1. The UV Jacobian over the ground (east, north), J = dUV / dP: both singular values within density_tol of
+       s0 = 1 / (atlas_px x texel_m) and no shear (s1 - s2 <= shear_tol x s0), as since 2026-11-09. Its rounding bound
+       beta = (|dU| + s1 |dP|) / sigma_min(P) / s0 (first order; |dU|, |dP| the edge differences' float32 steps x
+       f32_ulps, sigma_min(P) the edge matrix's smallest singular value) grows as 1 / the triangle's thinness: on a
+       2 x 2 m road triangle it is ~2e-4, on Pikes Peak's 0.002 m2 pad sliver (edges 1.01 / 5.06 / 6.07 m) ~0.4. A
+       triangle with beta < density_tol and 2 beta < shear_tol is judged by J exactly as before.
+    2. A triangle J cannot resolve (beta at or over the tolerance: a sliver, or |det| = 0) is judged by the texel
+       footprint of its edges: each edge's UV step in metres (du, dv) x atlas_px x texel_m against the edge on the ground
+       (de, dn x v_sign, the shipped v's sense read off the J-judged triangles), |footprint - edge| <= density_tol x
+       |edge|, on every edge whose own rounding bound is under density_tol x |edge|. A face mapped at the wrong scale,
+       stretched along itself or with a corner off in another place fails; what no float32 can see is the scale across
+       a sliver a fraction of a millimetre wide, which holds no texel to misallocate.
+    3. A triangle with no edge float32 can resolve either (every edge shorter than ~4 cm at 0.25 m / 4096 px) is
+       counted and listed as ``unjudged`` (it passes: it holds a hundredth of a texel); f32_ulps is [invented].
+
+    ``tris``: [((P0, P1, P2) ground (east, north), (U0, U1, U2) shipped (u, v))]. Pure python (the PC's interpreter)."""
+    tol = GATE["density_tol"]; stol = GATE["shear_tol"]; k = GATE["f32_ulps"]
+    s0 = 1.0 / (A * tex); m = A * tex
+    worst_d = 0.0; worst_sh = 0.0; n_bad = 0; n_j = 0
+    votes = [0, 0]
+    edge_tris = []
+    for ti, ((P0, P1, P2), (U0, U1, U2)) in enumerate(tris):
+        ex, ey = P1[0] - P0[0], P1[1] - P0[1]; fx, fy = P2[0] - P0[0], P2[1] - P0[1]
+        det = ex * fy - ey * fx
+        beta = float("inf")
+        if det != 0.0:
+            du1, dv1 = U1[0] - U0[0], U1[1] - U0[1]; du2, dv2 = U2[0] - U0[0], U2[1] - U0[1]
+            j11 = (du1 * fy - du2 * ey) / det; j12 = (du2 * ex - du1 * fx) / det
+            j21 = (dv1 * fy - dv2 * ey) / det; j22 = (dv2 * ex - dv1 * fx) / det
+            sA = j11 * j11 + j12 * j12 + j21 * j21 + j22 * j22
+            dt = abs(j11 * j22 - j12 * j21)
+            r = math.sqrt(max(0.0, sA * sA / 4 - dt * dt))
+            s1 = math.sqrt(sA / 2 + r); s2 = math.sqrt(max(0.0, sA / 2 - r))
+            nU = k * math.sqrt(sum((_ulp32(a) + _ulp32(b)) ** 2 for a, b in
+                                   ((U1[0], U0[0]), (U1[1], U0[1]), (U2[0], U0[0]), (U2[1], U0[1]))))
+            nP = k * math.sqrt(sum((_ulp32(a) + _ulp32(b)) ** 2 for a, b in
+                                   ((P1[0], P0[0]), (P1[1], P0[1]), (P2[0], P0[0]), (P2[1], P0[1]))))
+            _pmax, pmin = _sv2(ex, fx, ey, fy)
+            if pmin > 0:
+                beta = (nU + s1 * nP) / pmin / s0
+        if beta < tol and 2 * beta < stol:
+            n_j += 1
+            d = max(abs(s1 / s0 - 1), abs(s2 / s0 - 1)); sh = (s1 - s2) / s0
+            worst_d = max(worst_d, d); worst_sh = max(worst_sh, sh)
+            if d > tol or sh > stol:
+                n_bad += 1
+            votes[0 if j11 * j22 - j12 * j21 > 0 else 1] += 1
+        else:
+            edge_tris.append((ti, beta))
+
+    def edge_errs(ti, sv):
+        """[(error, |edge|)] over the triangle's edges float32 resolves at density_tol."""
+        (P, U) = tris[ti]
+        out = []
+        for a, b in ((0, 1), (1, 2), (2, 0)):
+            de, dn = P[b][0] - P[a][0], P[b][1] - P[a][1]
+            L = math.hypot(de, dn)
+            fu, fv = (U[b][0] - U[a][0]) * m, sv * (U[b][1] - U[a][1]) * m
+            bnd = k * (math.hypot(_ulp32(U[a][0]) + _ulp32(U[b][0]), _ulp32(U[a][1]) + _ulp32(U[b][1])) * m +
+                       math.hypot(_ulp32(P[a][0]) + _ulp32(P[b][0]), _ulp32(P[a][1]) + _ulp32(P[b][1])))
+            if L > 0 and bnd < tol * L:
+                out.append((math.hypot(fu - de, fv - dn) / L, L))
+        return out
+
+    if votes[0] or votes[1]:
+        signs = [1.0 if votes[0] >= votes[1] else -1.0]
+    else:                         # nothing J-judged: the sense the edges themselves fit best
+        signs = [1.0, -1.0]
+    best = None
+    for sv in signs:
+        off = 0; worst_e = 0.0; judged = 0; unj = []; offenders = []
+        for ti, beta in edge_tris:
+            ee = edge_errs(ti, sv)
+            if not ee:
+                unj.append(ti); continue
+            judged += 1
+            e = max(q[0] for q in ee)
+            worst_e = max(worst_e, e)
+            if e > tol:
+                off += 1; offenders.append((ti, e, beta))
+        if best is None or off < best[1]:
+            best = (sv, off, worst_e, judged, unj, offenders)
+    sv, e_off, worst_e, e_judged, unj, offenders = best
+
+    def where(ti):
+        (P, _U) = tris[ti]
+        L = [math.hypot(P[b][0] - P[a][0], P[b][1] - P[a][1]) for a, b in ((0, 1), (1, 2), (2, 0))]
+        area = abs((P[1][0] - P[0][0]) * (P[2][1] - P[0][1]) - (P[1][1] - P[0][1]) * (P[2][0] - P[0][0])) / 2
+        return {"tri": names[ti] if names else ti, "area_m2": round(area, 6), "edges_m": [round(v, 4) for v in L],
+                "at_en": [round(sum(q[0] for q in P) / 3, 2), round(sum(q[1] for q in P) / 3, 2)]}
+    return {"pass": n_bad == 0 and e_off == 0, "triangles": len(tris), "off": n_bad + e_off,
+            "worst_scale_err": round(worst_d, 6), "worst_shear": round(worst_sh, 6), "texel_m": tex, "atlas_px": A,
+            "jacobian_judged": n_j, "jacobian_off": n_bad,
+            "edge_judged": e_judged, "edge_off": e_off, "worst_edge_err": round(worst_e, 6), "v_sign": sv,
+            "edge_offenders": [dict(where(ti), err=round(e, 6), jacobian_bound=round(b, 4)) for ti, e, b in offenders[:20]],
+            "unjudged": len(unj), "unjudged_list": [where(ti) for ti in unj[:20]]}
+
+
 def kerb_rows(proj: Path, cfg: dict, decl: dict, kd: dict, mats: list, p: dict, line_pts: list, w: dict) -> dict:
     """The race kerbs (road_wear.kerbs): their materials as declared, the shipped levelled paint against the kerb's own
     paint, and every shipped kerb triangle's level against the rubber the declared line puts on its face."""
@@ -306,7 +554,10 @@ def kerb_rows(proj: Path, cfg: dict, decl: dict, kd: dict, mats: list, p: dict, 
                 bad.append(f"{mn}: {pn} {kv} != declared {pv}")
     out["kerb_materials"] = {"pass": not bad, "materials": len(kd["materials"]), "problems": bad}
 
-    # the shipped levelled paint: copy 0 is the kerb's own paint byte for byte, copy k = round(paint x (1 - k step)) +- 1
+    # the shipped levelled paint: copy 0 is the kerb's own paint byte for byte, copy k = round(paint x (1 - k step)) +- 1;
+    # each copy ``repeats`` tiles of the paint side by side (the bake's kerb_repeats when the paint repeats, Pueblo /
+    # Aspen; absent = 1, High Plains 0.1.7: the comparison below is then the one it shipped with)
+    R = int(kd.get("repeats", 1))
     bad = []
     for src_name, rec in kd["paint"].items():
         blob = p["textures"].get(rec["atlas"])
@@ -317,15 +568,15 @@ def kerb_rows(proj: Path, cfg: dict, decl: dict, kd: dict, mats: list, p: dict, 
             bad.append(f"{rec['atlas']}: not embedded or its paint {src} missing"); continue
         a = Image.open(io.BytesIO(blob)).convert("RGB"); b = Image.open(src).convert("RGB")
         (aw, ah), (bw, bh) = a.size, b.size
-        if (aw, ah) != (bw * L, bh):
-            bad.append(f"{rec['atlas']}: {aw} x {ah} != {L} x the paint's {bw} x {bh}"); continue
+        if (aw, ah) != (bw * R * L, bh):
+            bad.append(f"{rec['atlas']}: {aw} x {ah} != {L} x {R} x the paint's {bw} x {bh}"); continue
         A_ = a.tobytes(); B_ = b.tobytes()
         worst = 0
         for k in range(L):
             f = 1.0 - k * step
             for y in range(0, bh, max(1, bh // 64)):
-                for x in range(bw):
-                    o_a = 3 * (y * aw + k * bw + x); o_b = 3 * (y * bw + x)
+                for x in range(bw * R):
+                    o_a = 3 * (y * aw + k * bw * R + x); o_b = 3 * (y * bw + x % bw)
                     for c in range(3):
                         e = abs(A_[o_a + c] - round(B_[o_b + c] * f))
                         if k == 0 and e:
@@ -334,7 +585,8 @@ def kerb_rows(proj: Path, cfg: dict, decl: dict, kd: dict, mats: list, p: dict, 
         if worst > GATE["kerb_paint_tol"]:
             bad.append(f"{rec['atlas']}: a copy is {worst} off the paint x (1 - k step)" if worst < 99 else
                        f"{rec['atlas']}: copy 0 is not the paint")
-    out["kerb_paint"] = {"pass": not bad, "levels": L, "step": round(step, 5), "problems": bad}
+    out["kerb_paint"] = {"pass": not bad, "levels": L, "step": round(step, 5), **({"repeats": R} if R != 1 else {}),
+                         "problems": bad}
 
     # every shipped kerb triangle: one level at all three corners, inside a declared face of that level; every declared
     # face's level the gate's own reading of the declared line's rubber at its centroid (within half a level + 5 %)
@@ -459,6 +711,7 @@ def main(argv=None) -> int:
 
     # the meshes: world (east, north), uv
     tris = []
+    tri_names = []
     road_tris = set()            # the first surface's (1ROAD): the tone row reads only these (the edge strip's tone is
     for me in p["meshes"]:       # the road's carried outward, not the photo's verge)
         if me["matid"] >= len(mats) or mats[me["matid"]]["name"] not in road_mats:
@@ -472,28 +725,17 @@ def main(argv=None) -> int:
             a_, b_, c_ = V[idx[t]], V[idx[t + 1]], V[idx[t + 2]]
             tris.append((((a_[0], -a_[2]), (b_[0], -b_[2]), (c_[0], -c_[2])),
                          ((a_[3], a_[4]), (b_[3], b_[4]), (c_[3], c_[4]))))
+            tri_names.append(f"{me['name']} tri {t // 3}")
     if not tris:
         print("[road_wear_check] input error: no road-wear triangles in the kn5")
         return 2
-    s0 = 1.0 / (A * tex)
-    worst_d = 0.0; worst_sh = 0.0; n_bad = 0
+    rows["density"] = density_row(tris, A, tex, tri_names)
     tex_claim = {}; repeats = 0; phase_by = [0.0, 0.0]
     for (P0, P1, P2), (U0, U1, U2) in tris:
         ex, ey = P1[0] - P0[0], P1[1] - P0[1]; fx, fy = P2[0] - P0[0], P2[1] - P0[1]
         det = ex * fy - ey * fx
-        if abs(det) < 1e-6:
+        if abs(det) < 1e-6:      # no_repeat / detail_phase as before (density judges every triangle: density_row)
             continue
-        du1, dv1 = U1[0] - U0[0], U1[1] - U0[1]; du2, dv2 = U2[0] - U0[0], U2[1] - U0[1]
-        j11 = (du1 * fy - du2 * ey) / det; j12 = (du2 * ex - du1 * fx) / det
-        j21 = (dv1 * fy - dv2 * ey) / det; j22 = (dv2 * ex - dv1 * fx) / det
-        sA = j11 * j11 + j12 * j12 + j21 * j21 + j22 * j22
-        dt = abs(j11 * j22 - j12 * j21)
-        r = math.sqrt(max(0.0, sA * sA / 4 - dt * dt))
-        s1 = math.sqrt(sA / 2 + r); s2 = math.sqrt(max(0.0, sA / 2 - r))
-        d = max(abs(s1 / s0 - 1), abs(s2 / s0 - 1)); sh = (s1 - s2) / s0
-        worst_d = max(worst_d, d); worst_sh = max(worst_sh, sh)
-        if d > GATE["density_tol"] or sh > GATE["shear_tol"]:
-            n_bad += 1
         cen = ((P0[0] + P1[0] + P2[0]) / 3, (P0[1] + P1[1] + P2[1]) / 3)
         cu = ((U0[0] + U1[0] + U2[0]) / 3, (U0[1] + U1[1] + U2[1]) / 3)
         for (pe, pn), (u, v) in ((P0, U0), (P1, U1), (P2, U2), (cen, cu)):
@@ -510,8 +752,6 @@ def main(argv=None) -> int:
                 pv = (vv * mult - pn / tile) % 1.0
                 phase_by[c] = max(phase_by[c], min(pu, 1 - pu), min(pv, 1 - pv))
     worst_phase = min(phase_by)
-    rows["density"] = {"pass": n_bad == 0, "triangles": len(tris), "off": n_bad, "worst_scale_err": round(worst_d, 6),
-                       "worst_shear": round(worst_sh, 6), "texel_m": tex, "atlas_px": A}
     rows["no_repeat"] = {"pass": repeats == 0, "texels_claimed": len(tex_claim), "claimed_twice": repeats}
     rows["detail_phase"] = {"pass": worst_phase <= GATE["phase_tol"], "worst_tiles": round(worst_phase, 5),
                             "detail_uv_multiplier": mult}
@@ -674,32 +914,22 @@ def main(argv=None) -> int:
                           "profile": {round(k * 0.25, 2): round(mean[k], 4) for k in sorted(mean)}}
     else:
         rows["rubber"] = {"pass": False, "stations": nst, "note": "too few full cross-sections on the built road"}
-    if spec.get("rubber", "drawn") == "photo":
+    mode = spec.get("rubber", "drawn")
+    if mode in ("photo", "none"):
         # no drawn band is declared: the drawn rubber row does not judge this build (it would demand one)
         rows.pop("rubber", None)
+        rname = "photo_rubber" if mode == "photo" else "no_rubber"
         if not aer:
-            rows["photo_rubber"] = {"pass": False, "note": "road_wear.rubber 'photo' without an aerial"}
+            rows[rname] = {"pass": False, "note": f"road_wear.rubber {mode!r} without an aerial"}
         else:
-            ref_l = (decl["stats"].get("aerial") or {}).get("lit_median_lum")
-            road_hsh = {}
-            for ti in road_tris:
-                (P0, P1, P2), _uv = tris[ti]
-                xs = (P0[0], P1[0], P2[0]); ys = (P0[1], P1[1], P2[1])
-                for i in range(int(math.floor(min(xs) / cell)), int(math.floor(max(xs) / cell)) + 1):
-                    for j in range(int(math.floor(min(ys) / cell)), int(math.floor(max(ys) / cell)) + 1):
-                        road_hsh.setdefault((i, j), []).append(ti)
+            # the cells the bake measured on, restated (photo_mask): its grid, its road raster, its lit asphalt and its
+            # interior. (Before 2026-11-11 the gate tested the road at five points and the photo pixel by pixel against
+            # the lit median: Grand Junction 0.1.4 read 6,250 samples to the bake's 5,459, ledger 0084.)
+            gx0, gy0, gnx, gny = bake_grid(tris, plan, tex)
 
-            def in_road(x, y):
-                for ti in road_hsh.get((int(math.floor(x / cell)), int(math.floor(y / cell))), ()):
-                    (P0, P1, P2), _uv = tris[ti]
-                    d = (P1[1] - P2[1]) * (P0[0] - P2[0]) + (P2[0] - P1[0]) * (P0[1] - P2[1])
-                    if abs(d) < 1e-12:
-                        continue
-                    l1 = ((P1[1] - P2[1]) * (x - P2[0]) + (P2[0] - P1[0]) * (y - P2[1])) / d
-                    l2 = ((P2[1] - P0[1]) * (x - P2[0]) + (P0[0] - P2[0]) * (y - P2[1])) / d
-                    if l1 >= -1e-9 and l2 >= -1e-9 and 1 - l1 - l2 >= -1e-9:
-                        return True
-                return False
+            rgb_at = aerial_rgb_at(apx, (aw, ah), (Wb, Sb, Eb, Nb), (o["lon"], o["lat"]), reg)
+            road_xy = [tris[ti][0] for ti in sorted(road_tris)]
+            masks = {}
             res = []
             for lf in sorted((proj / "data").glob("road_wear.line.*.json")):
                 Ld = json.loads(lf.read_text(encoding="utf-8"))
@@ -707,36 +937,29 @@ def main(argv=None) -> int:
                 if not dp:
                     res.append({"layout": Ld.get("layout"), "pass": False, "note": "no declared photo_rubber"}); continue
                 ph = dp["params"]
-                apx_m = max(1e-3, min(float(v) for v in (decl["stats"]["aerial"].get("aerial_px_m") or [0.3])))
+                mk = round(float(ph["interior_m"]), 6)
+                if mk not in masks:
+                    masks[mk] = photo_mask(road_xy, (gx0, gy0, gnx, gny), tex, rgb_at, spec["tone"], rgb_at.px_m,
+                                           ph["interior_m"])
+                usable, mstats = masks[mk]
 
-                def value_at(x, y, ph=ph):
-                    """the shipped atlas at (x, y), or None where the bake measured nothing: off the lit asphalt (the
-                    aerial's shadow / paint rule, grown one aerial pixel) or within interior_m of the built road's edge"""
-                    for dx, dy in ((0, 0), (ph["interior_m"], 0), (-ph["interior_m"], 0), (0, ph["interior_m"]),
-                                   (0, -ph["interior_m"])):
-                        if not in_road(x + dx, y + dy):
-                            return None
-                    for dx in (-apx_m, 0.0, apx_m):
-                        for dy in (-apx_m, 0.0, apx_m):
-                            al = aerial_lum(x + dx, y + dy)
-                            if al is None or ref_l is None:
-                                return None
-                            if (al[0] < spec["tone"]["shadow_lum"] * ref_l and al[1] > spec["tone"]["shadow_blue"]) or \
-                                    al[0] > spec["tone"]["paint_lum"] * ref_l:
-                                return None
+                def value_at(x, y, usable=usable):
+                    """the shipped atlas at (x, y), or None where the bake measured nothing (photo_mask)"""
+                    if not usable(int(math.floor((x - gx0) / tex)), int(math.floor((y - gy0) / tex))):
+                        return None
                     uv = uv_at(x, y)
                     return None if uv is None else atlas_lum(uv[0], uv[1], flip)
                 got = measure_photo(Ld["points"], Ld["centre"], Ld["centre_normals"], bool(cfg.get("loop", True)),
                                     value_at, ph)
-                ok_ = (got["stations"] >= 10 and dp["depth"] >= GATE["photo_min_depth"] and
-                       abs(got["depth"] - dp["depth"]) <= GATE["photo_depth_tol"] and
-                       abs(got["centroid_m"] - dp["centroid_m"]) <= GATE["photo_centroid_tol_m"])
+                ok_ = photo_line_pass(mode, got, dp)
                 res.append({"layout": Ld.get("layout"), "pass": ok_, "declared_depth": dp["depth"],
                             "shipped_depth": got["depth"], "declared_centroid_m": dp["centroid_m"],
                             "shipped_centroid_m": got["centroid_m"], "stations": got["stations"],
-                            "samples": got["samples"]})
-            rows["photo_rubber"] = {"pass": bool(res) and all(r_["pass"] for r_ in res), "lines": res,
-                                    "drawn_band": "none (road_wear.rubber photo)"}
+                            "samples": got["samples"], "declared_samples": dp.get("samples"), "mask": mstats})
+            rows[rname] = {"pass": bool(res) and all(r_["pass"] for r_ in res), "lines": res,
+                           "drawn_band": f"none (road_wear.rubber {mode})"}
+            if mode == "none" and kdecl:
+                rows[rname].update({"pass": False, "note": "road_wear.rubber 'none' but kerb levels are declared"})
     if kdecl:
         rows.update(kerb_rows(proj, cfg, decl, kdecl, mats, p, line_pts, w))
     ok = all(r["pass"] for r in rows.values())
@@ -745,7 +968,8 @@ def main(argv=None) -> int:
         Path(a.json).write_text(json.dumps(out, indent=1), encoding="utf-8", newline="\n")
     for k, r in rows.items():
         print(f"[road_wear_check] {k:13s} {'PASS' if r['pass'] else 'FAIL'}  " +
-              ", ".join(f"{kk} {vv}" for kk, vv in r.items() if kk not in ("pass", "profile", "materials")))
+              ", ".join(f"{kk} {vv}" for kk, vv in r.items() if kk not in ("pass", "profile", "materials",
+                                                                            "edge_offenders", "unjudged_list")))
     print(f"[road_wear_check] {'PASS' if ok else 'FAIL'}")
     return 0 if ok else 1
 

@@ -774,7 +774,8 @@ The same brief and rule as Pueblo above. Photo mode on NAIP 2023 at 0.3 m; no ke
 - **Head** 25c728c6 on `claude/grand-junction-road-wear` (from 6a788506). ENG `eng_gjlm_rw` = eng_gjlm plus the current
   exporter (900ea391).
 - **Reference `gj_rw_ref` + rehearsal `gj_rw_reh`**, both from empty workshops, both EXIT 1 at gate road_wear. They are
-  identical: every data/*.json byte-equal, the same rows.
+  identical: the same rows, every data/*.json equal (road_wear.json and lights_ini_check.json differ only in their
+  own workshop's path).
   - `aerial registered to the built road: shift (+0.75, +0.25) m`, contrast +0.0511 -> +0.0541; shadow 0.0 %, paint 0.0 %.
   - **The photo's rubber: depth 0.00193**, peak 0.0348, centroid -1.171 m (358 stations): no rubber the photo resolves.
   - road_wear_check: materials, density (atlas 2048 px), no_repeat, detail_phase (multiplier 128.0, worst 0.0 tiles) and

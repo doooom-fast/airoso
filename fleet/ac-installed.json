@@ -27,7 +27,8 @@
     "2026-11-11 (Kevin on the PC: 'I always want newer builds'; via the Mac: 'Tone only, no rubber'): Pueblo 0.1.5 to pueblo_motorsports_park; ship_track's install step parked 0.1.3 in D:/k10-track-archive/2026-11-11_000936/.",
     "2026-11-11 (Kevin on the PC: 'I always want newer builds'; via the Mac: 'Tone only, no rubber'): Aspen 0.1.6 to aspen_motorsports_park; ship_track's install step parked 0.1.4 in D:/k10-track-archive/2026-11-11_001032/.",
     "2026-11-11 (Kevin on the PC: 'I always want newer builds'; via the Mac: 'Tone only, no rubber'): Grand Junction 0.1.4 to grand_junction; ship_track's install step parked 0.1.2 in D:/k10-track-archive/2026-11-11_003921/.",
-    "2026-11-11 (Kevin on the PC: 'Yes, force it'; via the Mac: 'Tone only, no rubber', 'Carry it over'): Pikes Peak 0.2.3 to pikes_peak_international_raceway, --force-install past the infield hairpin; ship_track's install step parked 0.2.1 in D:/k10-track-archive/2026-11-11_111915/."
+    "2026-11-11 (Kevin on the PC: 'Yes, force it'; via the Mac: 'Tone only, no rubber', 'Carry it over'): Pikes Peak 0.2.3 to pikes_peak_international_raceway, --force-install past the infield hairpin; ship_track's install step parked 0.2.1 in D:/k10-track-archive/2026-11-11_111915/.",
+    "2026-11-11 (Kevin on the PC: 'I always want newer builds'; via the Mac: 'Drawn band, no photo'): Del Mar 0.2.7 to del_mar_fairgrounds; ship_track's install step parked 0.2.5 in D:/k10-track-archive/2026-11-11_153828/."
   ],
   "ac_tracks": "D:/SteamLibrary/steamapps/common/assettocorsa/content/tracks",
   "archive": "D:/k10-track-archive",
@@ -54,14 +55,14 @@
       "version": "0.1.6"
     },
     "del_mar_fairgrounds": {
-      "branch": "claude/del-mar-edge-flush",
+      "branch": "claude/del-mar-0.2.7",
       "engine": "lm-v4",
-      "installed": "2026-11-09",
-      "note": "0.2.5 = 0.2.4 + the edge strip flush with the prep's contact band (route.edge.grass_clearance -0.08, ledger 0087 / 0083); records + menu picture on claude/del-mar-edge-flush fd462189",
+      "installed": "2026-11-11",
+      "note": "0.2.7 = 0.2.5 + Milford's drawn rubber band on the stock asphalt, no photo (Kevin: 'Drawn band, no photo'; road_wear.aerial removed, tone 1.0; ledger 0084 runbook 0084-5). 0.2.6 (the NAIP 2012 tone with the lot's parked cars) was never installed. Menu picture: 0.2.5's render kept (the 0.2.7 render showed the road black: tools/menu_preview_blend.py, ledger 0084).",
       "role": "current",
-      "sha": "36aef610",
+      "sha": "08b0ec43",
       "track": "del-mar-lm",
-      "version": "0.2.5"
+      "version": "0.2.7"
     },
     "exotics_racing_lvms": {
       "branch": "claude/nevada-road-wear",

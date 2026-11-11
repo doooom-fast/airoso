@@ -46,6 +46,7 @@
       "drive_test_street",
       "audit_street",
       "kn5_ground",
+      "road_wear",
       "verify_pads",
       "verify_mouths",
       "textures",
@@ -56,14 +57,16 @@
   },
   "sync_in": {
     "required": [
-      "track.config.json"
+      "track.config.json",
+      "source/road_wear/naip_2023_030_ppir.png"
     ],
     "optional": [
       "data/heightfield.npy",
       "data/heightfield.meta.json",
       "source/ground_patches.lidar.json",
       "source/connectors.infield.json",
-      "source/bespoke/buildings.lidar.json"
+      "source/bespoke/buildings.lidar.json",
+      "source/road_wear/fast_lane.oval.ai"
     ],
     "globs": [
       "source/pads/*.json"
@@ -111,7 +114,10 @@
       "data/verify_pads.json",
       "data/pad_arms.json",
       "data/stage_force.json",
-      "data/verify_textures.json"
+      "data/verify_textures.json",
+      "data/road_wear.json",
+      "data/road_wear.line.{id}.json",
+      "data/road_wear_check.json"
     ],
     "map": [
       [
@@ -122,5 +128,6 @@
     "dirs": [
       "ai/{id}"
     ]
-  }
+  },
+  "_road_wear_doc": "ledger 0084 (High Plains 0.1.7's wiring): the aerial (required: track.config.json road_wear.aerial) and a recorded line when one exists (optional) sync in; the bake (tone only, rubber \"none\": Kevin \"Tone only, no rubber\") runs as the last part of prep (tools/ship_track.sh prep_prep, opt-in on the config key); gate road_wear (tools/road_wear_check.py) reads the built road kn5"
 }

@@ -1,0 +1,446 @@
+{
+ "buildings": [],
+ "rails": [
+  {
+   "key": "outer_wall",
+   "kind": "krail",
+   "modules": 546,
+   "left_out": 18,
+   "length_m": 1703.2
+  }
+ ],
+ "blocks": [
+  {
+   "key": "grandstand_0",
+   "skin": "TILTUP",
+   "roof": "DARK",
+   "form": "flat",
+   "wall_h_m": 4.85,
+   "ground": [
+    0.17,
+    1.6
+   ],
+   "bottom": 0.66,
+   "eave": 5.51,
+   "off_terrain": false,
+   "collider": true
+  },
+  {
+   "key": "grandstand_1",
+   "skin": "TILTUP",
+   "roof": "DARK",
+   "form": "flat",
+   "wall_h_m": 7.26,
+   "ground": [
+    0.94,
+    1.67
+   ],
+   "bottom": 1.07,
+   "eave": 8.33,
+   "off_terrain": false,
+   "collider": true
+  },
+  {
+   "key": "grandstand_2",
+   "skin": "TILTUP",
+   "roof": "DARK",
+   "form": "flat",
+   "wall_h_m": 10.33,
+   "ground": [
+    1.46,
+    1.81
+   ],
+   "bottom": 1.21,
+   "eave": 11.54,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "grandstand_3",
+   "skin": "TILTUP",
+   "roof": "DARK",
+   "form": "flat",
+   "wall_h_m": 13.41,
+   "ground": [
+    1.56,
+    1.89
+   ],
+   "bottom": 1.33,
+   "eave": 14.74,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "grandstand_4",
+   "skin": "TILTUP",
+   "roof": "DARK",
+   "form": "flat",
+   "wall_h_m": 16.46,
+   "ground": [
+    1.59,
+    1.89
+   ],
+   "bottom": 1.38,
+   "eave": 17.84,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "grandstand_5",
+   "skin": "TILTUP",
+   "roof": "DARK",
+   "form": "flat",
+   "wall_h_m": 19.86,
+   "ground": [
+    1.54,
+    1.87
+   ],
+   "bottom": 1.35,
+   "eave": 21.21,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "grandstand_6",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 33.04,
+   "ground": [
+    1.45,
+    1.83
+   ],
+   "bottom": 1.27,
+   "eave": 34.31,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "pit_building_south",
+   "skin": "METAL",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 4.02,
+   "ground": [
+    -1.82,
+    -1.66
+   ],
+   "bottom": -2.11,
+   "eave": 1.91,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "pit_building_north",
+   "skin": "METAL",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 4.01,
+   "ground": [
+    -1.64,
+    -1.53
+   ],
+   "bottom": -1.96,
+   "eave": 2.05,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "striped_building",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 8.05,
+   "ground": [
+    -1.39,
+    -1.31
+   ],
+   "bottom": -1.75,
+   "eave": 6.3,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "sw_shed_a",
+   "skin": "METAL",
+   "roof": "DARK",
+   "form": "flat",
+   "wall_h_m": 4.12,
+   "ground": [
+    1.71,
+    2.04
+   ],
+   "bottom": 1.47,
+   "eave": 5.59,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "s_shed_a",
+   "skin": "METAL",
+   "roof": "DARK",
+   "form": "flat",
+   "wall_h_m": 4.07,
+   "ground": [
+    1.25,
+    1.63
+   ],
+   "bottom": 1.0,
+   "eave": 5.07,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "sw_shed_b",
+   "skin": "METAL",
+   "roof": "DARK",
+   "form": "flat",
+   "wall_h_m": 3.54,
+   "ground": [
+    1.43,
+    1.85
+   ],
+   "bottom": 1.26,
+   "eave": 4.8,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "infield_shed_a",
+   "skin": "METAL",
+   "roof": "DARK",
+   "form": "flat",
+   "wall_h_m": 3.48,
+   "ground": [
+    -1.7,
+    -1.58
+   ],
+   "bottom": -2.06,
+   "eave": 1.42,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "infield_se_shed",
+   "skin": "METAL",
+   "roof": "DARK",
+   "form": "flat",
+   "wall_h_m": 3.4,
+   "ground": [
+    -1.56,
+    -1.34
+   ],
+   "bottom": -1.82,
+   "eave": 1.58,
+   "off_terrain": false,
+   "collider": true
+  },
+  {
+   "key": "sw_shed_c",
+   "skin": "METAL",
+   "roof": "DARK",
+   "form": "flat",
+   "wall_h_m": 3.69,
+   "ground": [
+    1.82,
+    2.0
+   ],
+   "bottom": 1.5,
+   "eave": 5.19,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "s_shed_b",
+   "skin": "METAL",
+   "roof": "DARK",
+   "form": "flat",
+   "wall_h_m": 3.52,
+   "ground": [
+    0.99,
+    1.2
+   ],
+   "bottom": 0.7,
+   "eave": 4.22,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "infield_shed_b",
+   "skin": "METAL",
+   "roof": "DARK",
+   "form": "flat",
+   "wall_h_m": 3.55,
+   "ground": [
+    -1.73,
+    -1.65
+   ],
+   "bottom": -2.08,
+   "eave": 1.47,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "sw_shed_d",
+   "skin": "METAL",
+   "roof": "DARK",
+   "form": "flat",
+   "wall_h_m": 3.49,
+   "ground": [
+    1.87,
+    2.04
+   ],
+   "bottom": 1.56,
+   "eave": 5.05,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "pit_canopy",
+   "skin": "METAL",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 4.01,
+   "ground": [
+    -1.7,
+    -1.56
+   ],
+   "bottom": -2.02,
+   "eave": 1.99,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "s_container_a",
+   "skin": "METAL",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 2.88,
+   "ground": [
+    1.28,
+    1.33
+   ],
+   "bottom": 0.91,
+   "eave": 3.79,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "s_container_b",
+   "skin": "METAL",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 3.16,
+   "ground": [
+    1.24,
+    1.31
+   ],
+   "bottom": 0.88,
+   "eave": 4.04,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "kart_shed_a",
+   "skin": "METAL",
+   "roof": "DARK",
+   "form": "flat",
+   "wall_h_m": 3.0,
+   "ground": [
+    -1.66,
+    -1.54
+   ],
+   "bottom": -2.01,
+   "eave": 0.99,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "kart_shed_b",
+   "skin": "METAL",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 2.64,
+   "ground": [
+    -1.56,
+    -1.39
+   ],
+   "bottom": -1.86,
+   "eave": 0.78,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "se_container_a",
+   "skin": "METAL",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 3.68,
+   "ground": [
+    -1.86,
+    -1.75
+   ],
+   "bottom": -2.21,
+   "eave": 1.47,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "se_container_b",
+   "skin": "METAL",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 2.62,
+   "ground": [
+    -2.0,
+    -1.87
+   ],
+   "bottom": -2.34,
+   "eave": 0.28,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "far_se_shed",
+   "skin": "METAL",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 2.71,
+   "ground": [
+    -4.59,
+    -4.51
+   ],
+   "bottom": -4.96,
+   "eave": -2.25,
+   "off_terrain": false,
+   "collider": false
+  },
+  {
+   "key": "far_ne_shed",
+   "skin": "METAL",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 4.07,
+   "ground": [
+    -0.96,
+    -0.82
+   ],
+   "bottom": -1.3,
+   "eave": 2.77,
+   "off_terrain": false,
+   "collider": false
+  }
+ ],
+ "pads": [
+  {
+   "key": "skid_pad_a",
+   "cells": 9075,
+   "left_out": 0
+  },
+  {
+   "key": "skid_pad_b",
+   "cells": 8835,
+   "left_out": 0
+  }
+ ]
+}

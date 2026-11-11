@@ -3,7 +3,7 @@
   "archetype": "race_circuit",
   "name": "Pikes Peak International Raceway",
   "slug": "pikes_peak_international_raceway",
-  "version": "0.2.1",
+  "version": "0.2.3",
   "mirror_x": false,
   "loop": true,
   "default_width_m": 15.0,
@@ -6010,7 +6010,9 @@
           "approved": "Kevin 2026-11-09, asked 'How should the infield's hairpin go, so I can install 0.2.0?' (Drop infield, install / Exempt hairpin, install): \"Exempt hairpin with a note to ask after driving\"",
           "versions": [
             "0.2.0",
-            "0.2.1"
+            "0.2.1",
+            "0.2.2",
+            "0.2.3"
           ],
           "undrivable_corners": [
             {
@@ -6026,9 +6028,38 @@
           "excursion_drops": [],
           "ask_after_driving": "Kevin asked for this note: after he has driven the infield layout, ask him how the hairpin drives (keep the exemption, widen it, or drop the infield layout). The exemption is for 0.2.0 only",
           "_doc": "tools/stage_force.py (gate step stage_force, last): --force-install may pass the red infield drive_test only where every red row is this hairpin, on the infield layout, for 0.2.0; any other red row (a soft top, a step rate, a corner anywhere else, another layout) refuses it (tools/ship_track.sh checks the verdict before a forced install)",
-          "_versions_doc": "0.2.1 (furniture pass 1, 2026-11-10) carries Kevin's force for the same hairpin at the same place, as the Lariat's Drive-1 force was carried to its LM port (ledger 0078 round 6): the furniture pass changes no road; the window, the layout and every other row's refusal are unchanged, and the ask_after_driving note still stands"
+          "_versions_doc": "0.2.1 (furniture pass 1, 2026-11-10) carries Kevin's force for the same hairpin at the same place, as the Lariat's Drive-1 force was carried to its LM port (ledger 0078 round 6): the furniture pass changes no road; the window, the layout and every other row's refusal are unchanged, and the ask_after_driving note still stands. 0.2.2 (road wear, 2026-11-10 overnight; the Mac: carry it \"the same way: same place, same window\") carries it the same way: the road wear moves no position (compare_ab: every mesh bit-identical), only the road's UVs and material. NOT installed forced on that: the PC installs nothing forced on a relayed word; Kevin's own yes for 0.2.2 is asked first. 0.2.3 (road wear tone only, runbook 0084-3, 2026-11-11): Kevin to the Mac, asked \"May Pikes Peak 0.2.3 use the hairpin exemption you gave 0.2.0?\": \"Carry it over\" (relayed, ledger 0084). The same place and window. The road wear changes only the road's UVs and material. The pad aprons carry main's pad-fold fix (84fefe1a): 8 triangles fewer each. With 0.2.1's pad tool every mesh's positions equal 0.2.1's (pc_023/pad_ab). NOT installed forced on the relayed word: the PC forces only on Kevin's yes typed on the PC. Kevin typed on the PC, 2026-11-11, asked \"Install Pikes Peak 0.2.3 forced past the infield hairpin?\": \"Yes, force it\". Installed with --force-install on that yes (runbook 0084-4 step 4), the road-wear gate being adf3828's."
         }
       }
     }
+  },
+  "road_wear": {
+    "_doc": "ledger 0084 (Kevin 2026-11-07: \"road textures to include wear along where tires run, in a realistic manner\" / \"For tracks we'll use racing lines\" / \"Which will help darken curbs realistically\"; 2026-11-10, to the Mac: \"build the road wear for the other circuits on the pc overnight\", then \"Tone only, no rubber\"). High Plains 0.1.7's bake (tools/road_wear_blend.py, last in prep): the large-scale tone off the aerial, registered to the built road, under the stock cracked asphalt kept as the 4 m detail (ksPerPixelMultiMap_NMDetail); tone only, no rubber (rubber 'none': no band drawn, the photo's tone as it is). scripts/aerial/road_wear.py DEFAULTS has every number, marked measured / model / invented.",
+    "surfaces": [
+      "1ROAD",
+      "1KERB_SIDEWALK"
+    ],
+    "_surfaces_doc": "the road and the edge strip beside it (ledger 0087's 1KERB_sidewalk), as Milford and High Plains: the strip shares the atlas so the rubber where the line clips the edge carries on over it",
+    "texel_m": 0.25,
+    "_texel_doc": "as High Plains 0.1.7: 0.25 m keeps the detail multiplier whole (4096 px x 0.25 / 4 = 256; the bake refuses a fractional one) and is finer than a 0.3 m photo's pixel",
+    "rubber": "none",
+    "_rubber_doc": "Kevin 2026-11-10, to the Mac, asked \"Pueblo, Aspen, Grand Junction and Pikes Peak show no rubber: tone only, or the drawn band?\": \"Tone only, no rubber\" (ledger 0084, runbook 0084-3). The asphalt bakes the photo's tone with no band drawn (scripts/aerial/road_wear.rubber_mode); the line and the photo's line-vs-mirror depth are still measured and recorded (data/road_wear.line.<layout>.json), and the gate's no_rubber row needs the shipped atlas's depth within photo_depth_tol 0.02 of the photo's own: the atlas adds no band. The overnight photo-mode build (0.2.2) measured the photo's own depth -0.008, under photo_min_depth 0.03.",
+    "aerial": {
+      "image": "source/road_wear/naip_2023_030_ppir.png",
+      "bbox_lonlat": [
+        -104.67965285064224,
+        38.58871919301801,
+        -104.67320407403763,
+        38.59485210036624
+      ],
+      "_doc": "co_m_3810427_ne_13_030_20230920_20240104 (2023-09-20, 0.3 m, USDA NAIP, public domain; Microsoft Planetary Computer data API (USDA FSA NAIP, public domain), EPSG:4326 crop), bbox from its corners. Covers the whole built road with 31-34 m to spare on every side (PC 2026-11-10, the gate OBJ projected about centerline.local.json's origin)"
+    },
+    "lines": [
+      {
+        "layout": "oval",
+        "ai": "source/road_wear/fast_lane.oval.ai",
+        "_doc": "a line Kevin records with CSP's AI recorder in this layout, copied here; absent = the minimum-curvature line inside the built edges [model]"
+      }
+    ]
   }
 }

@@ -1,0 +1,17 @@
+{
+ "meshes": 0,
+ "positions_equal": 0,
+ "positions_moved_declared": [],
+ "uvs_changed": [],
+ "materials_changed": [],
+ "textures_added": [],
+ "textures_dropped": [],
+ "textures_changed": [],
+ "texture_bytes": {},
+ "kn5_bytes": [
+  2104,
+  2104
+ ],
+ "pass": true,
+ "problems": []
+}

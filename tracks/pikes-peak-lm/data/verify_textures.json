@@ -3,11 +3,11 @@
  "kn5": [
   {
    "kn5": "pikes_peak_international_raceway.kn5",
-   "mb": 51.5,
+   "mb": 55.1,
    "visible_meshes": 29,
    "materials_used": 25,
-   "textures": 17,
-   "texture_mb": 7.9,
+   "textures": 19,
+   "texture_mb": 11.5,
    "untextured": []
   },
   {

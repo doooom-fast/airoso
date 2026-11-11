@@ -1,0 +1,57 @@
+== D:/k10-scratch/ppir_lm vs D:/k10-scratch/pp_none_reh
+installed log end: EXIT 0 2026-11-11 11:19:16
+proof log end:     EXIT 1 2026-11-11 00:24:57
+== gate rows: 234 / 235
+gate rows: DIFFER
+162c162
+< AUDIT pikes_peak_international_raceway   (roads 59742v, grass 391579v, walls 18264v, piers 0)
+---
+> AUDIT pikes_peak_international_raceway   (roads 59742v, grass 391580v, walls 18264v, piers 0)
+205c205
+< [road_wear_check] no_rubber     PASS  lines [{'layout': 'oval', 'pass': True, 'declared_depth': -0.00791, 'shipped_depth': -0.00794, 'declared_centroid_m': -2.9937, 'shipped_centroid_m': -2.9934, 'stations': 286, 'samples': 7333, 'declared_samples': 7333, 'mask': {'road_cells': 893169, 'median_lum': 0.59269, 'grow_cells': 2, 'interior_cells': 6, 'shadow_or_paint_cells': 4163}}], drawn_band none (road_wear.rubber none)
+---
+> [road_wear_check] no_rubber     PASS  lines [{'layout': 'oval', 'pass': True, 'declared_depth': -0.00791, 'shipped_depth': -0.0121, 'declared_centroid_m': -2.9937, 'shipped_centroid_m': -2.996, 'stations': 286, 'samples': 7735}], drawn_band none (road_wear.rubber none)
+230c230,231
+< [stage-force] --force-install would be allowed
+---
+> [stage-force] NOT covered: build version 0.2.3 is not in the declared versions ['0.2.0', '0.2.1', '0.2.2']
+> [stage-force] --force-install would be REFUSED
+234c235
+< SHIP OK
+---
+>   NOT INSTALLED (Kevin never loads a build the machine failed)
+== build/ files (md5)
+files: 67 / 67; same md5: 65
+differing md5: 2
+  ./pikes_peak_international_raceway.kn5: [kn5_equiv] pikes_peak_international_raceway.kn5: EQUIVALENT (tangents only: 295022 values, max 1.79e-07 <= 1e-06; every other byte identical; vertex merge moved by the tangent noise: ['1GRASS_5 61051 -> 61052 vertices'])
+  ./pikes_peak_international_raceway/pikes_peak_international_raceway.kn5: [kn5_equiv] pikes_peak_international_raceway.kn5: EQUIVALENT (tangents only: 295022 values, max 1.79e-07 <= 1e-06; every other byte identical; vertex merge moved by the tangent noise: ['1GRASS_5 61051 -> 61052 vertices'])
+== AI lines (ai/*.ai anywhere in the workshop)
+ai files: 12 / 12
+ai: SAME
+== data/*.json
+json: 42 / 42; same md5: 35
+-- audit.json: 1 leaf values differ, 1 numeric; max |delta| 1.0000
+  .grass_verts: 391579 -> 391580
+-- house_seat_check.json: 1 leaf values differ, 0 numeric; max |delta| 0.0000
+  .obj: D:\k10-scratch\ppir_lm\data\track.obj -> D:\k10-scratch\pp_none_reh\data\track.obj
+-- lights_ini_check.json: 1 leaf values differ, 0 numeric; max |delta| 0.0000
+  .ini: D:\k10-scratch\ppir_lm\build\pikes_peak_international_racewa -> D:\k10-scratch\pp_none_reh\build\pikes_peak_international_ra
+-- pads.built.json: 1 leaf values differ, 0 numeric; max |delta| 0.0000
+  .written: 2026-11-11T17:59:27+00:00 -> 2026-11-11T07:01:40+00:00
+-- road_wear.json: 15 leaf values differ, 0 numeric; max |delta| 0.0000
+  .materials.1KERB_sidewalk_mat.textures[0][2]: D:\k10-scratch\ppir_lm\textures\road_wear\road_wear_macro.pn -> D:\k10-scratch\pp_none_reh\textures\road_wear\road_wear_macr
+  .materials.1KERB_sidewalk_mat.textures[1][2]: D:\k10-scratch\ppir_lm\textures\road_wear\road_wear_flat_nm. -> D:\k10-scratch\pp_none_reh\textures\road_wear\road_wear_flat
+  .materials.1KERB_sidewalk_mat.textures[2][2]: D:\k10-scratch\ppir_lm\textures\road_wear\road_wear_detail_1 -> D:\k10-scratch\pp_none_reh\textures\road_wear\road_wear_deta
+  .materials.1ROAD_apron_mat.textures[0][2]: D:\k10-scratch\ppir_lm\textures\road_wear\road_wear_macro.pn -> D:\k10-scratch\pp_none_reh\textures\road_wear\road_wear_macr
+  .materials.1ROAD_apron_mat.textures[1][2]: D:\k10-scratch\ppir_lm\textures\road_wear\road_wear_flat_nm. -> D:\k10-scratch\pp_none_reh\textures\road_wear\road_wear_flat
+-- road_wear_check.json: 5 leaf values differ, 3 numeric; max |delta| 402.0000
+  .rows.no_rubber.lines[0].declared_samples: 7333 -> None
+  .rows.no_rubber.lines[0].mask: {'road_cells': 893169, 'median_lum': 0.59269, 'grow_cells':  -> None
+  .rows.no_rubber.lines[0].samples: 7333 -> 7735
+  .rows.no_rubber.lines[0].shipped_centroid_m: -2.9934 -> -2.996
+  .rows.no_rubber.lines[0].shipped_depth: -0.00794 -> -0.0121
+-- stage_force.json: 4 leaf values differ, 1 numeric; max |delta| 1.0000
+  .declared._versions_doc: 0.2.1 (furniture pass 1, 2026-11-10) carries Kevin's force f -> 0.2.1 (furniture pass 1, 2026-11-10) carries Kevin's force f
+  .declared.versions: ['0.2.0', '0.2.1', '0.2.2', '0.2.3'] -> ['0.2.0', '0.2.1', '0.2.2']
+  .force_install_ok: True -> False
+  .why_not: [] -> ["build version 0.2.3 is not in the declared versions ['0.2.

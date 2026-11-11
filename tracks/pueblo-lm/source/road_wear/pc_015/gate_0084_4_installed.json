@@ -1,0 +1,93 @@
+{
+ "pass": true,
+ "gate": {
+  "density_tol": 0.005,
+  "shear_tol": 0.005,
+  "repeat_m": 0.75,
+  "phase_tol": 0.002,
+  "tone_r_min": 0.6,
+  "line_offset_max_m": 0.15,
+  "depth_min_frac": 0.5,
+  "depth_max_frac": 1.5,
+  "kerb_paint_tol": 1,
+  "photo_depth_tol": 0.02,
+  "photo_centroid_tol_m": 0.15,
+  "photo_min_depth": 0.03,
+  "kerb_level_tol": 0.55,
+  "f32_ulps": 1.0
+ },
+ "kn5": "pueblo_motorsports_park.kn5",
+ "rows": {
+  "materials": {
+   "pass": true,
+   "materials": [
+    "1KERB_sidewalk_mat",
+    "1ROAD_road_mat"
+   ],
+   "problems": []
+  },
+  "density": {
+   "pass": true,
+   "triangles": 18736,
+   "off": 0,
+   "worst_scale_err": 0.00052,
+   "worst_shear": 0.000573,
+   "texel_m": 0.25,
+   "atlas_px": 4096,
+   "jacobian_judged": 16621,
+   "jacobian_off": 0,
+   "edge_judged": 2115,
+   "edge_off": 0,
+   "worst_edge_err": 0.000763,
+   "v_sign": -1.0,
+   "edge_offenders": [],
+   "unjudged": 0,
+   "unjudged_list": []
+  },
+  "no_repeat": {
+   "pass": true,
+   "texels_claimed": 26737,
+   "claimed_twice": 0
+  },
+  "detail_phase": {
+   "pass": true,
+   "worst_tiles": 1e-05,
+   "detail_uv_multiplier": 256.0
+  },
+  "tone": {
+   "pass": true,
+   "pearson_r": 0.9235,
+   "samples": 1574,
+   "v_convention": "-v",
+   "r_by_convention": {
+    "v": 0.1154,
+    "-v": 0.9235,
+    "1-v": 0
+   }
+  },
+  "no_rubber": {
+   "pass": true,
+   "lines": [
+    {
+     "layout": "full",
+     "pass": true,
+     "declared_depth": 0.02166,
+     "shipped_depth": 0.02156,
+     "declared_centroid_m": 0.216,
+     "shipped_centroid_m": 0.2148,
+     "stations": 1275,
+     "samples": 19020,
+     "declared_samples": 19019,
+     "mask": {
+      "road_cells": 671090,
+      "median_lum": 0.59537,
+      "grow_cells": 2,
+      "interior_cells": 6,
+      "shadow_or_paint_cells": 44696
+     }
+    }
+   ],
+   "drawn_band": "none (road_wear.rubber none)"
+  }
+ }
+}

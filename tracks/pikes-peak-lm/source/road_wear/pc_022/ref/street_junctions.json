@@ -1,0 +1,11 @@
+{
+ "_doc": "tools/trim_connectors.py route.street_junctions (ledger 0079 0.2.3): the OSM pieces joined into one street at a node, and the order the street-to-street passes cut pieces in (each against the hosts named)",
+ "config": {
+  "pad_arms": true,
+  "join_turn_deg": 45.0,
+  "bend_turn_deg": 135.0,
+  "_doc": "ledger 0085: only pad_arms is wanted (tools/trim_connectors.py cut_at_pads: rc_infield cut at both pads' box edges, data/pad_arms.json for lm_pads); join_turn_deg / bend_turn_deg are Sand Creek's (the street-junction passes need them; this track's two connectors have no pieces to join)"
+ },
+ "joins": [],
+ "ranked": []
+}

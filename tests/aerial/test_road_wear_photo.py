@@ -93,3 +93,144 @@ if np is not None:
     def test_kerb_levels_take_the_measured_peak():
         step = rw.kerb_step(0.142, 16)
         assert rw.kerb_levels(np.array([0.142, 0.0, 0.142 * 8 / 15, 0.142 * 7.4 / 15]), step, 16).tolist() == [15, 0, 8, 7]
+
+
+# --- road_wear.rubber "none" (Kevin 2026-11-10 "Tone only, no rubber"; Pueblo, Aspen, Grand Junction, Pikes Peak) --------
+if np is not None:
+    _AER = {"image": "x.png", "bbox_lonlat": [0, 0, 1, 1]}
+
+    def test_rubber_mode_checks():
+        assert rw.rubber_mode({}) == ("drawn", None)                       # Milford: unchanged
+        assert rw.rubber_mode({"rubber": "photo", "aerial": _AER}) == ("photo", None)
+        assert rw.rubber_mode({"rubber": "none", "aerial": _AER}) == ("none", None)
+        assert rw.rubber_mode({"rubber": "photo"})[1]                      # photo / none need the aerial
+        assert rw.rubber_mode({"rubber": "none"})[1]
+        assert rw.rubber_mode({"rubber": "tone"})[1]                       # a typo is refused, not read as drawn
+        err = rw.rubber_mode({"rubber": "none", "aerial": _AER, "kerbs": {"prefix": "1KERB_CIRCUIT_", "levels": 16}})[1]
+        assert err and "kerbs" in err                                      # nothing to level the kerbs by
+        assert rw.rubber_mode({"rubber": "photo", "aerial": _AER,          # High Plains 0.1.7: photo + kerbs, as before
+                               "kerbs": {"prefix": "1KERB_CIRCUIT_", "levels": 16}}) == ("photo", None)
+
+    def _measure(C, n, P, tone_at):
+        return rwc.measure_photo(P.tolist(), C[:, :2].tolist(), n.tolist(), True,
+                                 lambda x, y: float(tone_at(np.array([x]), np.array([y]))[0]), rw.PHOTO)
+
+    def test_none_passes_the_photo_as_it_is_and_fails_a_drawn_band():
+        C, n, _a, P = _lap()
+        photo = _tone_fn(C, n, P, depth=0.0)                               # Grand Junction: no rubber in the photo
+        dp = rw.photo_rubber(photo, P, C, n, True)
+        assert dp["depth"] < rwc.GATE["photo_min_depth"]
+        same = _measure(C, n, P, photo)                                    # the shipped atlas = the photo's tone
+        assert rwc.photo_line_pass("none", same, dp)
+        assert not rwc.photo_line_pass("photo", same, dp)                  # photo mode still needs the photo's rubber
+        drawn = _tone_fn(C, n, P, depth=0.15)                              # a Milford-sized band drawn on top of it
+        got = _measure(C, n, P, drawn)
+        assert got["depth"] - dp["depth"] > rwc.GATE["photo_depth_tol"]
+        assert not rwc.photo_line_pass("none", got, dp)
+
+    def test_photo_verdict_unchanged():
+        C, n, _a, P = _lap()
+        photo = _tone_fn(C, n, P)                                          # High Plains: the photo shows its rubber
+        dp = rw.photo_rubber(photo, P, C, n, True)
+        got = _measure(C, n, P, photo)
+        old = (got["stations"] >= 10 and dp["depth"] >= rwc.GATE["photo_min_depth"] and
+               abs(got["depth"] - dp["depth"]) <= rwc.GATE["photo_depth_tol"] and
+               abs(got["centroid_m"] - dp["centroid_m"]) <= rwc.GATE["photo_centroid_tol_m"])
+        assert old and rwc.photo_line_pass("photo", got, dp) == old
+        moved = dict(got, centroid_m=got["centroid_m"] + 0.3)
+        assert not rwc.photo_line_pass("photo", moved, dp)                 # the centroid still judges photo mode
+        assert rwc.photo_line_pass("none", moved, dp)                      # and not none (no rubber: noise)
+        assert not rwc.photo_line_pass("drawn", got, dp)
+
+
+# --- the gate measures on the bake's own cells (photo_mask; Grand Junction 0.1.4, 2026-11-11) ---------------------------
+if np is not None:
+    _TONE = {"shadow_lum": 0.72, "shadow_blue": 1.06, "paint_lum": 1.45, "fill_m": 3.0, "clip": [0.7, 1.3],
+             "headroom_pct": 99.5}
+    _PLAN = {"cell_m": 64.0, "margin_m": 4.0}
+    _REG = {"dx_m": 0.75, "dy_m": 0.25}
+
+    def _mask_scene(seed=3):
+        """An oval road of varying width, its triangles, and a 0.3 m photo with paint and bluish shadow blobs on it."""
+        from PIL import Image
+        rng = np.random.default_rng(seed)
+        t = np.linspace(0, 2 * np.pi, 240, endpoint=False)
+        C = np.column_stack([70 * np.cos(t), 45 * np.sin(t), np.zeros(len(t))])
+        n = rw.left_normals(C, True)
+        hw = 5.0 + 1.5 * np.sin(3 * t)
+        L = C[:, :2] + hw[:, None] * n; R = C[:, :2] - hw[:, None] * n
+        tris = []
+        for k in range(len(C)):
+            k2 = (k + 1) % len(C)
+            tris.append((tuple(L[k]), tuple(R[k]), tuple(R[k2])))
+            tris.append((tuple(L[k]), tuple(R[k2]), tuple(L[k2])))
+        lon0, lat0 = -108.55, 39.06
+        m_lon, m_lat = rw.meters_per_degree(lat0)
+        bbox = (lon0 - 90 / m_lon, lat0 - 65 / m_lat, lon0 + 90 / m_lon, lat0 + 65 / m_lat)
+        w, h = 600, 434
+        img = np.clip(120 + rng.normal(0, 6, (h, w, 3)), 0, 255)
+        yy, xx = np.mgrid[0:h, 0:w]
+        for _ in range(60):                                  # paint (bright) and shadow (dark, blue) blobs on the road
+            k = rng.integers(len(C)); off = rng.uniform(-6, 6)
+            px = (C[k, 0] + off * n[k, 0] + 90) / 0.3; py = (65 - (C[k, 1] + off * n[k, 1])) / (130 / h)
+            r = rng.uniform(1.5, 5)
+            m = (xx - px) ** 2 + (yy - py) ** 2 < r * r
+            img[m] = (235, 235, 230) if rng.random() < 0.5 else (45, 50, 75)
+        img = img.astype(np.uint8)
+        return C, n, tris, img, Image.fromarray(img), bbox, (lon0, lat0)
+
+    def _bake_mask(tris, img, bbox, origin, tex=0.25, interior_m=1.5):
+        T = np.array(tris)
+        cen = T.mean(axis=1)
+        ci = np.floor(cen[:, 0] / _PLAN["cell_m"]).astype(int); cj = np.floor(cen[:, 1] / _PLAN["cell_m"]).astype(int)
+        C_, M_ = _PLAN["cell_m"], _PLAN["margin_m"]
+        x0, y0 = ci.min() * C_ - M_, cj.min() * C_ - M_
+        grid = rw.Grid(x0, y0, int(round(((ci.max() + 1) * C_ + M_ - x0) / tex)),
+                       int(round(((cj.max() + 1) * C_ + M_ - y0) / tex)), tex)
+        aer = rw.Aerial(img, bbox, origin); aer.dx, aer.dy = _REG["dx_m"], _REG["dy_m"]
+        road = rw.rasterize(grid, T)
+        tone, _st, lit = rw.tone_field(aer, grid, road, _TONE, return_lit=True)
+        ri = max(1, int(round(interior_m / tex)))
+        interior = road & (rw.box_mean(road.astype(np.float64), np.ones(road.shape), ri) >= 1.0 - 1e-9)
+        return grid, road, lit, interior & lit, tone
+
+    def test_photo_mask_is_the_bakes():
+        C, n, tris, img, pim, bbox, origin = _mask_scene()
+        grid, road, lit, ub, _tone = _bake_mask(tris, img, bbox, origin)
+        assert (road & ~lit).sum() > 500 and (lit & ~ub).sum() > 500       # paint, shadow and the interior all bite
+        rgb_at = rwc.aerial_rgb_at(pim.load(), pim.size, bbox, origin, _REG)
+        g = rwc.bake_grid([(t_, None) for t_ in tris], _PLAN, 0.25)
+        assert g == (grid.x0, grid.y0, grid.nx, grid.ny)
+        usable, ms = rwc.photo_mask(tris, g, 0.25, rgb_at, _TONE, rgb_at.px_m, 1.5)
+        assert ms["road_cells"] == int(road.sum())
+        js, is_ = np.nonzero(road)
+        off = sum(1 for j, i in zip(js[::2].tolist(), is_[::2].tolist()) if usable(i, j) != bool(ub[j, i]))
+        assert off <= 0.001 * len(js[::2]), off                              # float32 rounding at a threshold only
+
+    def test_gate_measures_the_bakes_samples():
+        C, n, tris, img, pim, bbox, origin = _mask_scene()
+        grid, road, lit, ub, tone = _bake_mask(tris, img, bbox, origin)
+        Cc, _e, _L = rw.resample(C, 2.0, True)
+        nCc = rw.left_normals(Cc, True)
+        th = np.arctan2(Cc[:, 1] / 45, Cc[:, 0] / 70)
+        P = np.column_stack([Cc[:, :2] + (3.0 * np.sin(2 * th))[:, None] * nCc, Cc[:, 2]])
+
+        def tone_at(x, y):                                                  # the bake's (tools/road_wear_blend.py)
+            i, j = grid.index(x, y)
+            ok = (i >= 0) & (j >= 0) & (i < grid.nx) & (j < grid.ny)
+            out = np.full(np.shape(x), np.nan)
+            ok2 = ok.copy(); ok2[ok] = ub[j[ok], i[ok]]
+            out[ok2] = tone[j[ok2], i[ok2]]
+            return out
+        dp = rw.photo_rubber(tone_at, P, Cc, nCc, True, rw.PHOTO)
+        rgb_at = rwc.aerial_rgb_at(pim.load(), pim.size, bbox, origin, _REG)
+        g = rwc.bake_grid([(t_, None) for t_ in tris], _PLAN, 0.25)
+        usable, _ms = rwc.photo_mask(tris, g, 0.25, rgb_at, _TONE, rgb_at.px_m, 1.5)
+
+        def value_at(x, y):                                                 # the gate's, on the same tone
+            i = int(np.floor((x - g[0]) / 0.25)); j = int(np.floor((y - g[1]) / 0.25))
+            return float(tone[j, i]) if usable(i, j) else None
+        got = rwc.measure_photo(P.tolist(), Cc[:, :2].tolist(), nCc.tolist(), True, value_at, rw.PHOTO)
+        assert got["stations"] == dp["stations"]
+        assert abs(got["samples"] - dp["samples"]) <= 0.002 * dp["samples"], (got["samples"], dp["samples"])
+        assert abs(got["depth"] - dp["depth"]) < 1e-3, (got["depth"], dp["depth"])

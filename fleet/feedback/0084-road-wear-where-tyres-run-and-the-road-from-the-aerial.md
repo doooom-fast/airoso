@@ -1271,3 +1271,44 @@ installed one.
 - 0.2.1 parked by the install step in D:/k10-track-archive/2026-11-11_111915/; the same 44 files, with no TreeFX bins
   before or after. The three menu pictures re-rendered from 0.2.1's cameras (oval s0, road course s2, infield s0; the
   sidecar cameras equal 0.2.1's) and copied in, the old ones backed up in 2026-11-11_112400_previews. ac-tidy 917dae9a.
+
+### Del Mar 0.2.7: Milford's drawn band on the stock asphalt, no photo (Kevin 2026-11-11)
+
+Kevin, 2026-11-11, asked which road Del Mar's next build should use after 0.2.6's ghost cars (above): "Drawn band, no
+photo". That is option (a). 0.2.6 is superseded and never installs.
+
+- **The config** (`tracks/del-mar-lm/track.config.json` 0.2.7, `ship.json`):
+  - `road_wear.aerial` is removed, and `_aerial_doc` says why. The NAIP 2012 photo stays in `source/road_wear/`, unused,
+    and leaves ship.json's `sync_in.required`.
+  - Everything else is as 0.2.6: surfaces 1ROAD + 1KERB_SIDEWALK, texel 0.25 m, rubber "drawn" with Milford's defaults
+    (amplitude 0.22, spread 0.70 m, base 0.35, all [invented]), and the model line on the full layout.
+- **What the engine does with no photo** (read on the Mac; Del Mar is the first track built this way):
+  - `scripts/aerial/road_wear.rubber_mode` gives ("drawn", None), and `spec_from_config` loads Milford's wear numbers.
+  - The bake (`tools/road_wear_blend.py`, step 3) skips the registration and sets the tone to 1.0 on every cell;
+    `stats.aerial` is null.
+  - The gate's `tone` row passes with "no aerial declared: tone = 1 (nothing to follow)". The `rubber` row judges the
+    drawn band as on Milford and Nevada. No threshold moved and none was added.
+  - So the road is the stock cracked asphalt (the 4 m detail at the 0.25 m texel) with the band drawn on it. The photo's
+    tone, cars included, is gone.
+- No test exercises this path yet: every `tests/aerial/test_road_wear*.py` case gives an aerial. The PC's build is its
+  first run.
+
+### Runbook 0084-5 (PC): Del Mar 0.2.7, the drawn band with no photo
+
+Branch `claude/del-mar-0.2.7`. ENG `eng_dmlm_rw`, as 0.2.6 (exporter 900ea391).
+
+1. Reference + rehearsal, each from an EMPTY workshop, as 0.2.6 (runbook 0084-2). No force.
+2. The bake log has no `aerial registered` line, and `data/road_wear.json` has `stats.aerial` null.
+3. road_wear_check: materials, density, no_repeat, detail_phase, tone (its note "no aerial declared") and rubber all
+   PASS. Report the rubber depth on the line against the declared one, and the centroid.
+4. The two builds are identical, as 0.2.6's were: gate rows, kn5 kn5_equiv, AI lines byte-equal, data/*.json equal bar
+   the workshop paths.
+5. Against the installed 0.2.5 (`compare_ab.py`, `mesh_diff.py`): positions bit-identical; UVs and material changed on
+   1ROAD_road and 1KERB_sidewalk only; list the textures added and dropped, and the kn5 sizes.
+6. Look at the baked `textures/road_wear/road_wear_macro.png` as 0.2.6's `macro_cells_cars.png` was looked at: it
+   should hold the band and nothing else, with no cars and no stall stripes. Save the same crop as
+   `source/road_wear/pc_027/macro_cells.png`.
+7. Green, with the macro clean = install (Kevin 2026-11-09: "I always want newer builds"), with 0.2.5 parked in the
+   archive; menu picture from 0.2.5's camera. Red, or anything in the macro besides the band = stop and report.
+8. Records to `source/road_wear/pc_027/{ref,reh}/` (both logs, every data/*.json, compare_ab.json, mesh_diff.json),
+   pushed to the branch.

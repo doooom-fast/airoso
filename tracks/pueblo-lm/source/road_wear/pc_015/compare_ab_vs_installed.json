@@ -1,0 +1,36 @@
+{
+ "meshes": 19,
+ "positions_equal": 19,
+ "positions_moved_declared": [],
+ "uvs_changed": [
+  "1KERB_sidewalk",
+  "1ROAD_road"
+ ],
+ "materials_changed": [
+  "1KERB_sidewalk: ksPerPixelMultiMap -> ksPerPixelMultiMap_NMDetail",
+  "1ROAD_road: ksPerPixelMultiMap -> ksPerPixelMultiMap_NMDetail"
+ ],
+ "textures_added": [
+  "road_wear_detail_1kerb_sidewalk.jpg",
+  "road_wear_detail_1road.jpg",
+  "road_wear_flat_nm.png",
+  "road_wear_macro.png"
+ ],
+ "textures_dropped": [
+  "asphalt_cracked_diffuse.jpg",
+  "building_diffuse.jpg"
+ ],
+ "textures_changed": [],
+ "texture_bytes": {
+  "road_wear_detail_1kerb_sidewalk.jpg": 331034,
+  "road_wear_detail_1road.jpg": 3395491,
+  "road_wear_flat_nm.png": 76,
+  "road_wear_macro.png": 2348915
+ },
+ "kn5_bytes": [
+  10742931,
+  14214954
+ ],
+ "pass": true,
+ "problems": []
+}

@@ -1312,3 +1312,63 @@ Branch `claude/del-mar-0.2.7`. ENG `eng_dmlm_rw`, as 0.2.6 (exporter 900ea391).
    archive; menu picture from 0.2.5's camera. Red, or anything in the macro besides the band = stop and report.
 8. Records to `source/road_wear/pc_027/{ref,reh}/` (both logs, every data/*.json, compare_ab.json, mesh_diff.json),
    pushed to the branch.
+
+#### Del Mar 0.2.7: INSTALLED (2026-11-11 15:38; built at 08b0ec43, records on `claude/del-mar-0.2.7`)
+
+Runbook 0084-5 on the PC. Installed under Kevin's "I always want newer builds" (typed on the PC); his "Drawn band, no
+photo" reached the PC through the Mac. No force.
+
+- **Builds.** Reference `dm027_ref` and rehearsal `dm027_reh`, each from an EMPTY workshop, ENG `eng_dmlm_rw` (exporter
+  900ea391; its 95 textures md5-equal to its TEXTURES_AT_4810cdbd list). The ENG lacks main's `tyre_wall_diffuse.png`
+  (Milford's tyre walls); Del Mar has none. Both SHIP OK, every gate green.
+- **The no-photo path** (Del Mar is the first track down it), as the runbook expected:
+  - no `aerial registered` line; `data/road_wear.json` `stats.aerial` null;
+  - `macro atlas 2048 x 2048: m0 1.0000, deepest rubber 22.5 %`, 175,554 B (0.2.6's carried the photo);
+  - same faces (21,392 on 1KERB_sidewalk + 1ROAD_road), atlas (49 cells of 56 m, 96.9 % used) and model line (1,947 m,
+    model lap 69.0 s) as 0.2.6;
+  - the log still says `recorded line named but missing: source/road_wear/fast_lane.full.ai`, as 0.2.6 did: the line
+    is the model's until Kevin records one;
+  - the bake's banner still reads "the road's tone off the aerial" (a fixed heading, not a fault).
+- **road_wear_check, every row PASS:** materials; density (21,392 triangles, jacobian_judged 21,162, edge_judged 230,
+  off 0); no_repeat (30,195 texels, claimed twice 0); detail_phase (128.0); **tone** ("no aerial declared: tone = 1");
+  **rubber**: 80 stations, **depth on the line 0.1918 = declared 0.1918**, **centroid -0.004 m** (0.2.6: 0.1979 and
+  -0.039 m, the photo's tone in the sum).
+- **Twins identical** (`pc_027/ref_vs_reh.txt`): gate rows 112 / 112 the same (0.2.6 had 113: the aerial line);
+  34 / 34 build files, the two kn5s kn5_equiv (tangents only, max 1.79e-07); AI lines equal; data/*.json equal bar
+  workshop paths. The macro PNGs are md5-equal.
+- **Against the installed 0.2.5** (`compare_ab.json`, `mesh_diff.json`): 15 / 15 meshes' positions bit-identical; UVs
+  and material (ksPerPixelMultiMap -> ksPerPixelMultiMap_NMDetail) on 1ROAD_road and 1KERB_sidewalk only; every 1GRASS,
+  1WALL, BUILDING, MARKINGS and ROOFTOP mesh equal. Textures added: road_wear_macro.png (175,554 B),
+  road_wear_detail_1road.jpg (3,199,656), road_wear_detail_1kerb_sidewalk.jpg (299,033), road_wear_flat_nm.png (76);
+  dropped from the kn5: asphalt_cracked_diffuse.jpg and building_diffuse.jpg (they live on as the detail layers). kn5
+  **16,928,625 -> 17,999,451 B**.
+- **The macro, looked at BEFORE installing** (`pc_027/macro_cells.png`, the crop 0.2.6's `macro_cells_cars.png` used;
+  `macro_atlas_half.png`, the whole atlas at half size): the drawn band on plain white, nothing else. No cars and no
+  stall stripes. Measured: 93.6 % of the atlas is pure white (255); the darkest texel is 198 = 255 x (1 - 0.225), the
+  band's own deepest. 0.2.6's darkest was 106, from the cars' outlines.
+- **Install** (`install_edge.sh`, an empty workshop; the old one kept as `D:/k10-scratch/del_mar_lm.0.2.5`): every gate
+  green; ship_track parked 0.2.5 in `D:/k10-track-archive/2026-11-11_153828/`. The install build equals the rehearsal
+  (`pc_027/install/install_vs_reh.txt`: gate rows the same, kn5 tangents only, AI equal). The installed kn5 is md5-equal
+  to its build. The folder holds the same 13 files as 0.2.5's, with no TreeFX bins before or after.
+- **The menu picture: 0.2.5's kept, the 0.2.7 render NOT used.** The re-render from 0.2.5's camera (s5, -0.8 EV; the
+  sidecar camera equals 0.2.5's) shows the road and the strip black (`pc_027/menu_render_black_road.png`).
+  - The cause is `tools/menu_preview_blend.py`, not the build. The split scene's road material wires txDiffuse = the
+    macro into Base Color, and the macro's alpha is 0 everywhere (scripts/aerial/road_wear.py: "alpha 0 = full detail",
+    as AC reads it). Blender's renderer premultiplies, so the road's colour comes out about 0, and txDetail is not
+    wired at all.
+  - In the split blend: macro rgb mean 0.994, alpha mean 0.000; the rendered road reads about (38, 41, 44).
+  - **Every road-wear track's menu picture rendered since road wear has this black road.** Pueblo 0.1.5's (4d825651) is
+    looked at and confirmed; Aspen, Grand Junction and Pikes Peak (2026-11-11) were made the same way. They are
+    installed. The game is not affected; this is only the menu picture.
+  - Del Mar's installed folder came with the build's own outline picture. 0.2.5's render (c3c83f5d, the same camera,
+    stock asphalt, no band) is copied in with a backup (`D:/k10-track-archive/2026-11-11_154157_previews/PREVIEWS.tsv`).
+  - `source/ui` is unchanged.
+- Installed: **0.2.7**.
+- **Put back (correction).** `tools/ac_tidy.py restore` puts back only what a MOVES.tsv lists, and it skips a name
+  already in AC. ship_track's own parking (a same-name install) writes no MOVES.tsv, so restore does nothing here.
+  The put-back is by hand, with acs.exe closed:
+  1. move the installed `del_mar_fairgrounds` into a new archive dir;
+  2. move `D:/k10-track-archive/2026-11-11_153828/del_mar_fairgrounds` back into content/tracks;
+  3. then `ac_tidy record` and the picture.
+  The same holds for Pikes Peak's 0.2.1 in `2026-11-11_111915` (the Pikes Peak section above names `restore`: it
+  would do nothing there).

@@ -1,0 +1,105 @@
+{
+ "pass": true,
+ "gate": {
+  "density_tol": 0.005,
+  "shear_tol": 0.005,
+  "repeat_m": 0.75,
+  "phase_tol": 0.002,
+  "tone_r_min": 0.6,
+  "line_offset_max_m": 0.15,
+  "depth_min_frac": 0.5,
+  "depth_max_frac": 1.5,
+  "kerb_paint_tol": 1,
+  "photo_depth_tol": 0.02,
+  "photo_centroid_tol_m": 0.15,
+  "photo_min_depth": 0.03,
+  "kerb_level_tol": 0.55,
+  "f32_ulps": 1.0
+ },
+ "kn5": "del_mar_fairgrounds_lm.kn5",
+ "rows": {
+  "materials": {
+   "pass": true,
+   "materials": [
+    "1KERB_sidewalk_mat",
+    "1ROAD_road_mat"
+   ],
+   "problems": []
+  },
+  "density": {
+   "pass": true,
+   "triangles": 21392,
+   "off": 0,
+   "worst_scale_err": 0.000377,
+   "worst_shear": 0.000439,
+   "texel_m": 0.25,
+   "atlas_px": 2048,
+   "jacobian_judged": 21162,
+   "jacobian_off": 0,
+   "edge_judged": 230,
+   "edge_off": 0,
+   "worst_edge_err": 0.000341,
+   "v_sign": -1.0,
+   "edge_offenders": [],
+   "unjudged": 0,
+   "unjudged_list": []
+  },
+  "no_repeat": {
+   "pass": true,
+   "texels_claimed": 30195,
+   "claimed_twice": 0
+  },
+  "detail_phase": {
+   "pass": true,
+   "worst_tiles": 0.0,
+   "detail_uv_multiplier": 128.0
+  },
+  "tone": {
+   "pass": true,
+   "note": "no aerial declared: tone = 1 (nothing to follow)"
+  },
+  "rubber": {
+   "pass": true,
+   "stations": 80,
+   "centroid_m": -0.004,
+   "depth_on_line": 0.1918,
+   "declared_depth": 0.1918,
+   "declared_amplitude": 0.22,
+   "profile": {
+    "-4.0": 0.0,
+    "-3.75": 0.0,
+    "-3.5": 0.0,
+    "-3.25": 0.0,
+    "-3.0": 0.0002,
+    "-2.75": 0.004,
+    "-2.5": 0.0098,
+    "-2.25": 0.022,
+    "-2.0": 0.0416,
+    "-1.75": 0.0731,
+    "-1.5": 0.1092,
+    "-1.25": 0.1477,
+    "-1.0": 0.1785,
+    "-0.75": 0.1936,
+    "-0.5": 0.1948,
+    "-0.25": 0.1896,
+    "0.0": 0.1866,
+    "0.25": 0.1899,
+    "0.5": 0.1948,
+    "0.75": 0.1937,
+    "1.0": 0.1774,
+    "1.25": 0.1458,
+    "1.5": 0.1074,
+    "1.75": 0.0714,
+    "2.0": 0.0419,
+    "2.25": 0.0213,
+    "2.5": 0.0098,
+    "2.75": 0.004,
+    "3.0": 0.0005,
+    "3.25": 0.0,
+    "3.5": 0.0,
+    "3.75": 0.0,
+    "4.0": 0.0
+   }
+  }
+ }
+}

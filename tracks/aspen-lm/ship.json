@@ -89,5 +89,5 @@
       "ai/{id}"
     ]
   },
-  "_road_wear_doc": "ledger 0084 (High Plains 0.1.7's wiring): the aerial (required: track.config.json road_wear.aerial) and a recorded line when one exists (optional) sync in; the bake runs as the last part of prep (tools/ship_track.sh prep_prep, opt-in on the config key), the race kerbs included (road_wear.kerbs); gate road_wear (tools/road_wear_check.py) reads the built road kn5"
+  "_road_wear_doc": "ledger 0084 (High Plains 0.1.7's wiring): the aerial (required: track.config.json road_wear.aerial) and a recorded line when one exists (optional) sync in; the bake (tone only, rubber \"none\": Kevin \"Tone only, no rubber\") runs as the last part of prep (tools/ship_track.sh prep_prep, opt-in on the config key); gate road_wear (tools/road_wear_check.py) reads the built road kn5"
 }

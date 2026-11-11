@@ -227,6 +227,17 @@ def test_safety_rails():
     assert _first('if [ -n "$RACE_RED" ]; then') < _first('elif [ "$FORCE" = 1 ]; then')
 
 
+def test_every_tr_strips_the_windows_cr_spelled_as_an_escape():
+    r"""the python that pyq runs on the PC prints CRLF, so every $(pyq ...) compared against a word strips the CR with
+    tr -d '\r' spelled as an escape. A raw CR byte typed into those quotes works on the PC only until a merge turns it
+    into a line break: main ca297e2 had tr -d '<newline>' on the reseat_on_prep test (from a79b6a68), so on the PC
+    "True<CR>" never equalled "True" and Milford / High Plains rebuilt from main skipped the rail re-seat, gates green.
+    Read as bytes: TEXT has the CRLFs folded away."""
+    raw = SH.read_bytes().replace(b"\r\n", b"\n")
+    forms = re.findall(rb"tr -d '([^']*)'", raw)
+    assert forms and all(f == b"\\r" for f in forms), sorted(set(forms))
+
+
 def test_bash_syntax():
     bash = shutil.which("bash")
     if not bash:

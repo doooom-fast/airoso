@@ -109,6 +109,14 @@ def lap_ids(cfg: dict) -> list[str]:
     return sorted({lap_of(lo) for lo in (cfg.get("layouts") or []) if isinstance(lo, dict) and lap_of(lo)})
 
 
+def furnished_lap_ids(cfg: dict) -> list[str]:
+    """every lap a FURNISHED race layout names (layouts[].race_furniture), sorted: the laps that carry a common
+    race set (curb strips + kerbs, <slug>_race_<lap>.kn5). A lap only bare race layouts drive (Pikes Peak's road
+    course and infield, ledger 0085) is the road's own lanes and has none, as tools/split_exports_blend.py decides
+    (it writes loop_race_<lap>.blend for these laps alone). Lake Murray's laps are all furnished: equal to lap_ids."""
+    return sorted({lap_of(lo) for lo in (cfg.get("layouts") or []) if isinstance(lo, dict) and lo.get("race_furniture") and lap_of(lo)})
+
+
 def layouts_on(cfg: dict, lap_id: str | None) -> list[dict]:
     """the layouts that drive `lap_id` (None = every layout that names no lap — street layouts included)"""
     return [lo for lo in (cfg.get("layouts") or []) if isinstance(lo, dict) and lap_of(lo) == lap_id]

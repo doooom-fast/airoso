@@ -2448,3 +2448,44 @@ python tracks/san-diego-lake-murray/source/expansion/phase2/proofs/probe_seam.py
 
 Then step 5's held state stands. The next full run, whenever there is one, authors signs before race_verify by itself.
 Install only on Kevin's word.
+
+### Proof rebuild from main (PC, 2026-11-10, `claude/proof-records-20261110`): 0.20.2 reproduces, but only from its own workshop
+
+The Mac's brief: rebuild the installed tracks from main ca297e2 and compare each against what is installed (kn5_equiv on
+every kn5, the AI lines, every gate JSON). Lake Murray's run, as 0.20.2's step 2f:
+
+```
+# the workshop: a copy of D:/k10-scratch/lm_phase2/project minus build/ (lm_phase2/project itself untouched)
+SHIP_PROJ=D:/k10-scratch/proof_lm AIROSO=<main ca297e2 worktree> ENG=D:/k10-scratch/eng_repro \
+  bash tools/ship_track.sh san-diego-lake-murray --no-install --skip-blend
+```
+
+- **The build is 0.20.2.** Against `content/tracks/san_diego_lake_murray_v4` (90 files each, the same names), 71 files are
+  byte-identical, every AI line among them. All eight kn5s (road, race, race_north, street, four closures) are
+  EQUIVALENT by `tools/kn5_equiv.py`: tangents only, max 1.79e-7, every other byte identical. The rest:
+  - the five ui_track.json names and five preview.png, which the install and the menu pictures set;
+  - LICENSES.md, where main's asset table now also names tyre_wall_diffuse.png (Milford's). The kn5s' embedded
+    textures are identical.
+- **The gates read as 0.20.2's did.** The same 59 steps as 2f. GATES equals 2f's except race audit 1 -> 0 (D. walls
+  sitting on a road 32 -> 0, as step 2g's re-run); audit.race_*.json is byte-identical to the workshop's.
+  - Street drive_test is red as 0.20.2 was: drive_test.street.json byte-identical, the 96 inherited drops Kevin's
+    install forced past. So the run ends NOT INSTALLED, as it should.
+  - data/*.json: 80 of 109 byte-identical. The other 29 differ only in:
+    - paths and run seconds;
+    - new empty fields (house_seat_check set_in, verify_pads grass_at_xz);
+    - race_authored removed_existing 43 -> 85 (the seed blend already held 2f's furniture).
+  - New rows only: the TreeFX gate (ledger 0089) and no_route's per-object deck rows. The Drive-1 road gates ran in
+    neither run (not in this ship.json); main's summary prints '-' where 2f's printed exit 0.
+- **What it cannot do: an empty workshop.** The line depends on `D:/k10-scratch/lm_phase2/project`.
+  - The blend that builds 0.20.2 is committed: `tracks/san-diego-lake-murray/loop.blend`, sha256 3f13b887…, the
+    workshop's byte for byte. But ship.json lists it under sync_out only, and sync_in never brings it in.
+  - The author-stage data the --skip-blend steps read (connectors, mouths, pads, stubs and the rest of sync_out's
+    files) is the same: written back to airoso, never read in.
+  - An empty workshop therefore has no blend for --skip-blend to start from.
+  - **Rebuild = `tools/ship_track.sh san-diego-lake-murray --skip-blend` on a copy of lm_phase2/project.** Not
+    `tools/ship_sd.sh`: its run on the same copy (2026-11-10, kept as D:/k10-scratch/proof_lm.shipsd) failed
+    verify_ai_line north_cw. Its road kn5 differs: no red-repairs step, 1GRASS_0 and 1KERB_sidewalk changed.
+  - Making the empty-workshop path real (loop.blend and those data files into sync_in, then a rebuild matched row
+    for row against this one) is open work for the Mac to schedule.
+- Records on the PC: D:/k10-scratch/proof_lm.log, proof_lm.vs_installed.txt (the AC folder), proof_lm.vs_workshop.txt
+  (lm_phase2/project), proof_lm.rows_vs_2f.txt (the gate rows, order-free).

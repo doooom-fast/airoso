@@ -93,3 +93,51 @@ if np is not None:
     def test_kerb_levels_take_the_measured_peak():
         step = rw.kerb_step(0.142, 16)
         assert rw.kerb_levels(np.array([0.142, 0.0, 0.142 * 8 / 15, 0.142 * 7.4 / 15]), step, 16).tolist() == [15, 0, 8, 7]
+
+
+# --- road_wear.rubber "none" (Kevin 2026-11-10 "Tone only, no rubber"; Pueblo, Aspen, Grand Junction, Pikes Peak) --------
+if np is not None:
+    _AER = {"image": "x.png", "bbox_lonlat": [0, 0, 1, 1]}
+
+    def test_rubber_mode_checks():
+        assert rw.rubber_mode({}) == ("drawn", None)                       # Milford: unchanged
+        assert rw.rubber_mode({"rubber": "photo", "aerial": _AER}) == ("photo", None)
+        assert rw.rubber_mode({"rubber": "none", "aerial": _AER}) == ("none", None)
+        assert rw.rubber_mode({"rubber": "photo"})[1]                      # photo / none need the aerial
+        assert rw.rubber_mode({"rubber": "none"})[1]
+        assert rw.rubber_mode({"rubber": "tone"})[1]                       # a typo is refused, not read as drawn
+        err = rw.rubber_mode({"rubber": "none", "aerial": _AER, "kerbs": {"prefix": "1KERB_CIRCUIT_", "levels": 16}})[1]
+        assert err and "kerbs" in err                                      # nothing to level the kerbs by
+        assert rw.rubber_mode({"rubber": "photo", "aerial": _AER,          # High Plains 0.1.7: photo + kerbs, as before
+                               "kerbs": {"prefix": "1KERB_CIRCUIT_", "levels": 16}}) == ("photo", None)
+
+    def _measure(C, n, P, tone_at):
+        return rwc.measure_photo(P.tolist(), C[:, :2].tolist(), n.tolist(), True,
+                                 lambda x, y: float(tone_at(np.array([x]), np.array([y]))[0]), rw.PHOTO)
+
+    def test_none_passes_the_photo_as_it_is_and_fails_a_drawn_band():
+        C, n, _a, P = _lap()
+        photo = _tone_fn(C, n, P, depth=0.0)                               # Grand Junction: no rubber in the photo
+        dp = rw.photo_rubber(photo, P, C, n, True)
+        assert dp["depth"] < rwc.GATE["photo_min_depth"]
+        same = _measure(C, n, P, photo)                                    # the shipped atlas = the photo's tone
+        assert rwc.photo_line_pass("none", same, dp)
+        assert not rwc.photo_line_pass("photo", same, dp)                  # photo mode still needs the photo's rubber
+        drawn = _tone_fn(C, n, P, depth=0.15)                              # a Milford-sized band drawn on top of it
+        got = _measure(C, n, P, drawn)
+        assert got["depth"] - dp["depth"] > rwc.GATE["photo_depth_tol"]
+        assert not rwc.photo_line_pass("none", got, dp)
+
+    def test_photo_verdict_unchanged():
+        C, n, _a, P = _lap()
+        photo = _tone_fn(C, n, P)                                          # High Plains: the photo shows its rubber
+        dp = rw.photo_rubber(photo, P, C, n, True)
+        got = _measure(C, n, P, photo)
+        old = (got["stations"] >= 10 and dp["depth"] >= rwc.GATE["photo_min_depth"] and
+               abs(got["depth"] - dp["depth"]) <= rwc.GATE["photo_depth_tol"] and
+               abs(got["centroid_m"] - dp["centroid_m"]) <= rwc.GATE["photo_centroid_tol_m"])
+        assert old and rwc.photo_line_pass("photo", got, dp) == old
+        moved = dict(got, centroid_m=got["centroid_m"] + 0.3)
+        assert not rwc.photo_line_pass("photo", moved, dp)                 # the centroid still judges photo mode
+        assert rwc.photo_line_pass("none", moved, dp)                      # and not none (no rubber: noise)
+        assert not rwc.photo_line_pass("drawn", got, dp)

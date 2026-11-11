@@ -1,0 +1,201 @@
+{
+ "obj": "track.obj",
+ "mouths": [
+  {
+   "connector": "if_link",
+   "piece": "if_link#0",
+   "end": "start",
+   "host": "rc_infield#0",
+   "host_vertex": 394,
+   "side": -1,
+   "side_recorded": -1,
+   "angle_deg": 79.19,
+   "angle_recorded_deg": 62.46,
+   "span_half_m": 6.62,
+   "span_mouth_line_m": [
+    -6.0,
+    6.0
+   ],
+   "span_notch_m": [
+    -6.0,
+    6.0
+   ],
+   "host_half_m": 7.25,
+   "mouth_line": {
+    "samples": 43,
+    "fail": 0,
+    "max_dev_m": 0.001,
+    "no_road": 0,
+    "worst": [
+     -2.25,
+     -122.28,
+     150.97,
+     [
+      0.0,
+      0.001
+     ]
+    ]
+   },
+   "host_lane": {
+    "samples": 546,
+    "road_kerb_above": 0,
+    "grass_at_or_above": 0,
+    "max_above_m": 0.0,
+    "max_grass_m": -0.02,
+    "worst": []
+   },
+   "notch": {
+    "samples": 43,
+    "fail": 0,
+    "max_dev_m": 0.001,
+    "worst": []
+   },
+   "approach": {
+    "lines": {
+     "-5.50": {
+      "max_dg_per_m": 0.0016,
+      "at_m": 0.75,
+      "max_dg_per_m_1m": 0.0022,
+      "at_m_1m": 1.25,
+      "unmeasured": 104,
+      "holes": 109,
+      "grass_on_road": [],
+      "grass_unmeasured_folded": 4
+     },
+     "+0.00": {
+      "max_dg_per_m": 0.0012,
+      "at_m": 7.25,
+      "max_dg_per_m_1m": 0.0018,
+      "at_m_1m": 26.25,
+      "unmeasured": 0,
+      "holes": 0,
+      "grass_on_road": [],
+      "grass_unmeasured_folded": 0
+     },
+     "+5.50": {
+      "max_dg_per_m": 0.001,
+      "at_m": 1.5,
+      "max_dg_per_m_1m": 0.0021,
+      "at_m_1m": 1.25,
+      "unmeasured": 104,
+      "holes": 109,
+      "grass_on_road": [],
+      "grass_unmeasured_folded": 4
+     }
+    },
+    "max_dg_per_m": 0.0016,
+    "max_dg_per_m_1m": 0.0022,
+    "wheelbase_m": 2.5,
+    "grass_on_road": 0
+   },
+   "host_lane_deck": "exact: the host's lowest road sheet at each sample (route.weld_exact_deck)",
+   "mouth_line_notch_deck": "exact: the host's lowest road sheet on the mouth line at each station (route.weld_exact_deck_lines)",
+   "fails": [],
+   "fail": false
+  },
+  {
+   "connector": "if_link",
+   "piece": "if_link#0",
+   "end": "end",
+   "host": "rc_infield#0",
+   "host_vertex": 92,
+   "side": -1,
+   "side_recorded": -1,
+   "angle_deg": 85.06,
+   "angle_recorded_deg": 71.77,
+   "span_half_m": 6.52,
+   "span_mouth_line_m": [
+    -4.83,
+    6.92
+   ],
+   "span_notch_m": [
+    -4.8,
+    6.92
+   ],
+   "host_half_m": 6.22,
+   "mouth_line": {
+    "samples": 42,
+    "fail": 0,
+    "max_dev_m": 0.001,
+    "no_road": 0,
+    "worst": [
+     1.67,
+     -60.09,
+     194.91,
+     [
+      0.001,
+      0.0
+     ]
+    ]
+   },
+   "host_lane": {
+    "samples": 468,
+    "road_kerb_above": 0,
+    "grass_at_or_above": 0,
+    "max_above_m": 0.0,
+    "max_grass_m": -0.019,
+    "worst": []
+   },
+   "notch": {
+    "samples": 42,
+    "fail": 0,
+    "max_dev_m": 0.0,
+    "worst": []
+   },
+   "approach": {
+    "lines": {
+     "-5.50": {
+      "max_dg_per_m": 0.0023,
+      "at_m": 7.0,
+      "max_dg_per_m_1m": 0.0027,
+      "at_m_1m": 15.0,
+      "unmeasured": 86,
+      "holes": 60,
+      "grass_on_road": [],
+      "grass_unmeasured_folded": 8
+     },
+     "+0.00": {
+      "max_dg_per_m": 0.0015,
+      "at_m": 9.75,
+      "max_dg_per_m_1m": 0.0024,
+      "at_m_1m": 8.75,
+      "unmeasured": 0,
+      "holes": 0,
+      "grass_on_road": [],
+      "grass_unmeasured_folded": 0
+     },
+     "+5.50": {
+      "max_dg_per_m": 0.0014,
+      "at_m": 10.0,
+      "max_dg_per_m_1m": 0.0015,
+      "at_m_1m": 14.75,
+      "unmeasured": 86,
+      "holes": 60,
+      "grass_on_road": [],
+      "grass_unmeasured_folded": 18
+     }
+    },
+    "max_dg_per_m": 0.0023,
+    "max_dg_per_m_1m": 0.0027,
+    "wheelbase_m": 2.5,
+    "grass_on_road": 0
+   },
+   "host_lane_deck": "exact: the host's lowest road sheet at each sample (route.weld_exact_deck)",
+   "mouth_line_notch_deck": "exact: the host's lowest road sheet on the mouth line at each station (route.weld_exact_deck_lines)",
+   "fails": [],
+   "fail": false
+  }
+ ],
+ "fail": false,
+ "thresholds": {
+  "mouth_tol_m": 0.05,
+  "lane_tol_m": 0.02,
+  "lane_edge_m": 0.45,
+  "grass_at_m": 0.005,
+  "notch_out_m": 0.15,
+  "notch_tol_m": 0.05,
+  "approach_m": 30.0,
+  "approach_dg_per_m_invented": 0.03,
+  "wheelbase_m": 2.5
+ }
+}

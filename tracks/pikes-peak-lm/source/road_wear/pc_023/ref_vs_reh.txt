@@ -1,0 +1,31 @@
+== D:/k10-scratch/pp_none_ref vs D:/k10-scratch/pp_none_reh
+installed log end: EXIT 1 2026-11-11 00:25:11
+proof log end:     EXIT 1 2026-11-11 00:24:57
+== gate rows: 235 / 235
+gate rows: DIFFER
+162c162
+< AUDIT pikes_peak_international_raceway   (roads 59742v, grass 391578v, walls 18264v, piers 0)
+---
+> AUDIT pikes_peak_international_raceway   (roads 59742v, grass 391580v, walls 18264v, piers 0)
+== build/ files (md5)
+files: 67 / 67; same md5: 65
+differing md5: 2
+  ./pikes_peak_international_raceway.kn5: [kn5_equiv] pikes_peak_international_raceway.kn5: EQUIVALENT (tangents only: 287774 values, max 1.79e-07 <= 1e-06; every other byte identical; vertex merge moved by the tangent noise: ['1GRASS_5 61050 -> 61052 vertices'])
+  ./pikes_peak_international_raceway/pikes_peak_international_raceway.kn5: [kn5_equiv] pikes_peak_international_raceway.kn5: EQUIVALENT (tangents only: 287774 values, max 1.79e-07 <= 1e-06; every other byte identical; vertex merge moved by the tangent noise: ['1GRASS_5 61050 -> 61052 vertices'])
+== AI lines (ai/*.ai anywhere in the workshop)
+ai files: 12 / 12
+ai: SAME
+== data/*.json
+json: 42 / 42; same md5: 38
+-- audit.json: 1 leaf values differ, 1 numeric; max |delta| 2.0000
+  .grass_verts: 391578 -> 391580
+-- house_seat_check.json: 1 leaf values differ, 0 numeric; max |delta| 0.0000
+  .obj: D:\k10-scratch\pp_none_ref\data\track.obj -> D:\k10-scratch\pp_none_reh\data\track.obj
+-- lights_ini_check.json: 1 leaf values differ, 0 numeric; max |delta| 0.0000
+  .ini: D:\k10-scratch\pp_none_ref\build\pikes_peak_international_ra -> D:\k10-scratch\pp_none_reh\build\pikes_peak_international_ra
+-- road_wear.json: 15 leaf values differ, 0 numeric; max |delta| 0.0000
+  .materials.1KERB_sidewalk_mat.textures[0][2]: D:\k10-scratch\pp_none_ref\textures\road_wear\road_wear_macr -> D:\k10-scratch\pp_none_reh\textures\road_wear\road_wear_macr
+  .materials.1KERB_sidewalk_mat.textures[1][2]: D:\k10-scratch\pp_none_ref\textures\road_wear\road_wear_flat -> D:\k10-scratch\pp_none_reh\textures\road_wear\road_wear_flat
+  .materials.1KERB_sidewalk_mat.textures[2][2]: D:\k10-scratch\pp_none_ref\textures\road_wear\road_wear_deta -> D:\k10-scratch\pp_none_reh\textures\road_wear\road_wear_deta
+  .materials.1ROAD_apron_mat.textures[0][2]: D:\k10-scratch\pp_none_ref\textures\road_wear\road_wear_macr -> D:\k10-scratch\pp_none_reh\textures\road_wear\road_wear_macr
+  .materials.1ROAD_apron_mat.textures[1][2]: D:\k10-scratch\pp_none_ref\textures\road_wear\road_wear_flat -> D:\k10-scratch\pp_none_reh\textures\road_wear\road_wear_flat

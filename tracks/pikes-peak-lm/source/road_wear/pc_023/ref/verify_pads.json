@@ -1,0 +1,44 @@
+{
+ "_doc": "tools/verify_pads.py (ledger 0054 P3): the junction pads on the BUILT road",
+ "pads": [
+  {
+   "id": "NE",
+   "raster_points": 9395,
+   "multi_coverage_m2": 0.0,
+   "grass_on_deck": 0,
+   "grass_at_xz": [],
+   "seam_max_gap_m": 0.00135,
+   "seam_near_misses": 0,
+   "curb_over_pavement": 0,
+   "barriers": [],
+   "node_deck_minus_3dep_m": -0.003,
+   "node_z_3dep_m": 1635.274,
+   "fails": [],
+   "fail": false
+  },
+  {
+   "id": "NW",
+   "raster_points": 18264,
+   "multi_coverage_m2": 0.0,
+   "grass_on_deck": 0,
+   "grass_at_xz": [],
+   "seam_max_gap_m": 0.00816,
+   "seam_near_misses": 0,
+   "curb_over_pavement": 0,
+   "barriers": [
+    {
+     "stub": "1WALL_STUB_PAD_NW_m13",
+     "min_height_over_deck_m": 1.08,
+     "max_float_m": 0.0,
+     "tris": 1376,
+     "base_y": -0.8667
+    }
+   ],
+   "node_deck_minus_3dep_m": -0.033,
+   "node_z_3dep_m": 1636.373,
+   "fails": [],
+   "fail": false
+  }
+ ],
+ "fail": false
+}

@@ -832,6 +832,79 @@ rubber numbers stay marked [invented].
 - Records: `source/road_wear/pc_016/` (both logs, every data/*.json, compare_ab.json, mesh_diff.json).
 - Not driven.
 
+### Del Mar 0.2.6: every gate green, NOT installed: the photo's parked cars are in the road's tone (PC, 2026-11-10 overnight)
+
+Milford's drawn mode, as Nevada, on the NAIP 2012 photo the lap was placed on.
+
+- **Head** 7f1593af on `claude/del-mar-road-wear` (from main 06d782f). ENG `eng_dmlm_rw` = eng_dmlm_024 plus the current
+  exporter (900ea391).
+- **Reference `dm_rw_ref` + rehearsal `dm_rw_reh`**, both from empty workshops: SHIP OK, no force, every gate green.
+  - `21392 faces on ['1KERB_sidewalk', '1ROAD_road']`; atlas 2048 px at 0.25 m, 49 cells of 56 m, 96.9 % used.
+  - `aerial registered to the built road: shift (-3.00, -3.25) m`, contrast **+0.0048 -> +0.0099**.
+    - That is weak: Nevada read 0.065, High Plains 0.04. The course ran on the fairgrounds' parking lot, so road and ring
+      are both asphalt.
+    - The same search over +-10 m finds the same (-3.00, -3.25) m, so it is a real optimum, only a shallow one.
+  - road_wear_check, every row PASS:
+    - materials, density, no_repeat;
+    - detail_phase (128.0);
+    - tone (pearson_r 0.9861);
+    - rubber (0.1979 vs declared 0.1918, centroid -0.039 m).
+  - The two builds are identical: gate rows 113 / 113 the same, kn5 kn5_equiv (tangents only), AI lines byte-equal,
+    data/*.json equal bar workshop paths.
+  - Against the installed 0.2.5 (compare_ab PASS):
+    - 15 / 15 meshes' positions bit-identical;
+    - UVs and material changed on 1ROAD_road and 1KERB_sidewalk only;
+    - the road-wear textures in for asphalt_cracked_diffuse / building_diffuse;
+    - kn5 **16,928,625 -> 18,998,165 B**.
+- **Why it is not installed.** The baked macro (`textures/road_wear/road_wear_macro.png`) carries the photo's car park
+  into the road.
+  - Inside the road band, beside the drawn rubber line, are rows of car-sized rectangles with dark outlines, and the
+    lot's parking-stall stripes across the asphalt (`source/road_wear/pc_026/macro_cells_cars.png`, cells at full
+    resolution x2).
+  - NAIP 2012 shows the fairgrounds lot in everyday use. The tone keeps it inside its [0.70, 1.30] clip, so the cars read
+    as up to 30 % bright and dark patches on the racing surface.
+  - No gate measures this. `tone` only checks that the shipped atlas matches the bake's own tone (r 0.986).
+  - Installing it would put ghost cars on the track, so the PC holds it, gates green, and asks.
+- **Options (Kevin's / the Mac's call; nothing changed tonight):**
+  - (a) drawn rubber without the aerial: road_wear.aerial left out, so the tone is flat 1.0, Milford's band on the stock
+    asphalt;
+  - (b) a photo of the lot without cars (none on disk; a download needs Kevin's yes);
+  - (c) keep 0.2.5.
+- Installed: still **0.2.5**. Records: `source/road_wear/pc_026/`.
+
+### Pikes Peak 0.2.2: red, not installed (PC, 2026-11-10 overnight)
+
+Photo mode on NAIP 2023 at 0.3 m, the Mac's rule as Pueblo. Kevin's hairpin force is carried to 0.2.2 as data only
+(d712b405); a forced install would still wait for his own yes.
+
+- **Head** d712b405 on `claude/pikes-peak-road-wear` (from main 06d782f, 0.2.1 = d7d40c2). ENG `eng_pplm_rw` = eng_pplm
+  plus the current exporter (900ea391). One line, on the oval: the bake's model line comes off the mainline centre for
+  every layout.
+- **Reference `pp_rw_ref` + rehearsal `pp_rw_reh`**, both from empty workshops, both EXIT 1 at gate road_wear. They are
+  identical but for one grass vertex: audit grass_verts 391,580 / 391,579, the tangent noise merging one more pair
+  (the road kn5s kn5_equiv EQUIVALENT, corner by corner), every road-wear row the same.
+  - `28656 faces on ['1KERB_sidewalk', '1ROAD_apron', '1ROAD_pad_NE', '1ROAD_pad_NW', '1ROAD_road']`; atlas 4096 px at
+    0.25 m, 54 cells of 64 m, 39.9 % used.
+  - `aerial registered to the built road: shift (+3.00, +2.50) m`, contrast -0.0269 -> -0.0418.
+  - **The photo's rubber: depth -0.00791**, peak 0.0378, centroid -2.994 m (286 stations): no rubber the photo resolves.
+  - road_wear_check:
+    - materials, no_repeat, detail_phase (256.0, 1e-05 tiles) and tone (pearson_r 0.8684) PASS;
+    - **photo_rubber FAIL** (declared -0.00791, under 0.03);
+    - **density FAIL**, 2 of 28,656 triangles over density_tol 0.005, both slivers on the oval's apron pads:
+      - 1ROAD_pad_NE tri 4006: 0.00856, plan area 0.0020 m2, edges 1.01 / 5.06 / 6.07 m, at (E, N) (46.4, 198.5);
+      - 1ROAD_pad_NW tri 3672: 0.0051, 0.0189 m2, edges 5.84 / 8.92 / 14.77 m, at (-208.3, 170.4).
+      - At those aspect ratios float32 positions alone move the UV Jacobian by that much. The row skips only
+        |det| < 1e-6.
+      - A construction / measurement matter on near-degenerate pad faces, not a visible one. No threshold touched; the
+        Mac's to decide.
+  - The chain stops at the first red gate, so stage_force (the hairpin's verdict) was not reached.
+- Installed: still **0.2.1**. Records: `source/road_wear/pc_022/{ref,reh}/` and `density_offenders.txt`.
+- So all four 0.3 m circuits besides High Plains lack measurable rubber in NAIP 2023:
+  - Pueblo 0.022;
+  - Aspen -0.008;
+  - Grand Junction 0.002;
+  - Pikes Peak -0.008.
+
 ## Engine fixes after the overnight run (Mac, 2026-11-10; code and tests only, no track build)
 
 The PC's overnight run (Kevin: "build the road wear for the other circuits on the pc overnight") hit two engine limits.
@@ -1158,3 +1231,40 @@ installed one.
   something transient like Del Mar's parked cars, so installed, and flagged here for Kevin's look.
 - 0.1.2 parked in D:/k10-track-archive/2026-11-11_003921/; the same 13 files. Menu picture re-rendered (s1 of 6, same
   camera). ac-tidy 01d160a1.
+
+#### Pikes Peak 0.2.3: INSTALLED forced (2026-11-11 11:19; built at a3bde5d6, records on `claude/pikes-peak-road-wear`)
+
+- **Kevin's word, typed on the PC.** Asked "Install Pikes Peak 0.2.3 forced past the infield hairpin?", he answered
+  "Yes, force it". It is recorded in `force_exemptions.stage._versions_doc` (a3bde5d6) before the build. His relayed
+  "Carry it over" had already put 0.2.3 in the declared versions (ab15787b).
+- **The install build.**
+  - `ship_track.sh pikes-peak-lm --force-install` (install_edge.sh takes no force flag), from an EMPTY workshop. 0.2.1's
+    workshop is kept as `D:/k10-scratch/ppir_lm.0.2.1`.
+  - Judged by adf3828's gate inside the build (runbook 0084-4 step 4). road_wear_check, every row PASS:
+    - density: 28,656 triangles; jacobian_judged 27,853, edge_judged 803, edge_off 0, unjudged 0;
+    - tone r 0.8684;
+    - **no_rubber**: declared_depth -0.00791, shipped_depth **-0.00794**, samples 7,333 = the bake's 7,333.
+  - **stage_force: every red row covered** (infield, undrivable corners at s 665-681 m, the S-curve hairpin),
+    force_install_ok true, why_not []. GATES: street drive_test exit 1 (the infield), every other gate exit 0, race
+    layouts red on their own gates: none.
+  - The log reads "--force-install: installing RED", then SHIP OK.
+- **Against the rehearsal** (`pc_023/install/install_vs_reh.txt`):
+  - build files 67 / 67, 65 md5-equal; the two road kn5 copies are kn5_equiv EQUIVALENT (tangents only; the tangent noise
+    moves one grass vertex merge: audit grass 391,579 vs 391,580);
+  - AI lines 12 / 12 equal.
+  - The other differences are the newer gate's no_rubber numbers (those of the step 2 re-run) and the declared versions.
+- **Against the installed 0.2.1** (compare_ab on all four kn5s, `pc_023/install/compare_ab_vs_021.*.json`):
+  - the three layout kn5s are identical;
+  - in the road kn5, 23 of 25 meshes' positions are bit-identical; UVs and material changed on the road-wear surfaces
+    only; kn5 **51,513,251 -> 55,096,760 B**;
+  - PADAPRON_0 / _1 differ: main's pad-fold fix 84fefe1a, proven by the A/B above.
+- **The atlas, looked at after the install** (a miss: the forced install ran straight on Kevin's yes, before the look).
+  - Most cells are the photo's asphalt with its crack sealant, paint and the catch fence's posts.
+  - On the oval at s 410-440 m (racing surface and inside apron) the photo's tone carries pole shadows across the
+    lane, one darker rectangle about 10 x 14 m (most likely a resurfaced patch), and a small dark object with a shadow
+    (a cart or car). Two or three more small dark objects sit in other cells. Evidence: `pc_023/install/macro_x4.png`,
+    `macro_oval_s410-440_x3.png`. Far less than Del Mar's lot of parked cars; reported to Kevin, 0.2.1 kept in the
+    archive for a put-back on his word.
+- 0.2.1 parked by the install step in D:/k10-track-archive/2026-11-11_111915/; the same 44 files, with no TreeFX bins
+  before or after. The three menu pictures re-rendered from 0.2.1's cameras (oval s0, road course s2, infield s0; the
+  sidecar cameras equal 0.2.1's) and copied in, the old ones backed up in 2026-11-11_112400_previews. ac-tidy 917dae9a.

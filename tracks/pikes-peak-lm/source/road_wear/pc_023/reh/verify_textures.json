@@ -1,0 +1,43 @@
+{
+ "_doc": "tools/verify_textures.py (ledger 0079): every visible mesh of every packed kn5 binds an embedded diffuse",
+ "kn5": [
+  {
+   "kn5": "pikes_peak_international_raceway.kn5",
+   "mb": 55.1,
+   "visible_meshes": 29,
+   "materials_used": 25,
+   "textures": 19,
+   "texture_mb": 11.5,
+   "untextured": []
+  },
+  {
+   "kn5": "pikes_peak_international_raceway__infield.kn5",
+   "mb": 0.0,
+   "visible_meshes": 0,
+   "materials_used": 0,
+   "textures": 0,
+   "texture_mb": 0.0,
+   "untextured": []
+  },
+  {
+   "kn5": "pikes_peak_international_raceway__oval.kn5",
+   "mb": 0.0,
+   "visible_meshes": 0,
+   "materials_used": 0,
+   "textures": 0,
+   "texture_mb": 0.0,
+   "untextured": []
+  },
+  {
+   "kn5": "pikes_peak_international_raceway__roadcourse.kn5",
+   "mb": 0.0,
+   "visible_meshes": 0,
+   "materials_used": 0,
+   "textures": 0,
+   "texture_mb": 0.0,
+   "untextured": []
+  }
+ ],
+ "untextured": 0,
+ "fail": false
+}

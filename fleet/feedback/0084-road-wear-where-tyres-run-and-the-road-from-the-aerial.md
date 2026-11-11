@@ -786,6 +786,52 @@ The same brief and rule as Pueblo above. Photo mode on NAIP 2023 at 0.3 m; no ke
 - So the bake and its rows work on a circuit without kerbs. Only the photo lacks rubber. Of the four 0.3 m circuits so far,
   only High Plains' NAIP shows its rubber (0.146); Pueblo 0.022, Aspen -0.008, Grand Junction 0.002.
 
+### Nevada Nights 0.1.6: green and installed (PC, 2026-11-10 overnight)
+
+The Mac's brief for Nevada and Del Mar: Milford's drawn mode, because their photos are too coarse to show rubber. Their
+rubber numbers stay marked [invented].
+
+- **Head** 15b31f4f on `claude/nevada-road-wear` (from main 06d782f).
+  - ENG `eng_nvlm_rw` = eng_nvlm plus the current exporter, `scripts/ac/export_kn5_addon.py` md5 **900ea391**. That is
+    eng_hplm_rw's and the one High Plains 0.1.7 reproduced with; the runbook's 83b231e8 predates 4262162.
+  - The TreeFX model Bush3.bin is copied in from the installed build (md5 e9299a59) and never committed.
+- **The spec.** surfaces 1ROAD + 1KERB_SIDEWALK, texel 0.25 m, rubber "drawn" (Milford's defaults: amplitude 0.22,
+  spread 0.70 m, base 0.35, all [invented]), and the model line on the full layout. No kerbs key, as Milford.
+  - The aerial is the committed NAIP 2022-06-11 at 0.6 m (`source/vegetation/naip_2022_060.png`). It covers the built
+    road with 19-22 m to spare.
+- **Reference `nv_rw_ref` + rehearsal `nv_rw_reh`**, both from empty workshops: SHIP OK, no force, every gate green.
+  - `[road_wear] 10600 faces on ['1KERB_sidewalk', '1ROAD_road']`; atlas 2048 px at 0.25 m, 78 cells, 93.3 % used.
+  - `aerial registered to the built road: shift (+4.00, +0.75) m`, contrast -0.0500 -> -0.0648; shadow 2.61 %.
+    - That shift is the edge of the bake's window (coarse +-3 m, then a fine +-1 m).
+    - The same registration over +-10 m (scripts/aerial/road_wear.register on the gate OBJ's 1ROAD, read-only) puts the
+      best at (+4.50, +1.00) m, contrast -0.0650. That is 0.5 m further, under one 0.6 m pixel, for 0.0002 of contrast.
+    - So the 2022 photo stands ~4.5 m east of the built road, and the bake's 4.0 m takes almost all of it.
+  - road_wear_check, every row PASS:
+    - materials;
+    - density (worst scale error 0.00039);
+    - no_repeat;
+    - detail_phase (multiplier 128.0, worst 0.0 tiles);
+    - tone (pearson_r 0.963);
+    - rubber (depth on the line 0.2175 vs declared 0.2053, centroid 0.05 m, 102 stations).
+  - TreeFX: 28 trees, Bush3, as 0.1.5.
+  - The two builds are identical: the gate rows the same (156 / 156), the kn5s kn5_equiv (tangents only, max 1.79e-7),
+    the AI lines byte-equal, every data/*.json equal bar the workshop paths.
+- **Against the installed 0.1.5** (`compare_ab.py` and `mesh_diff.py`):
+  - **all 36 meshes' positions bit-identical**;
+  - UVs and material changed on 1ROAD_road and 1KERB_sidewalk only (ksPerPixelMultiMap -> ksPerPixelMultiMap_NMDetail);
+  - textures added: road_wear_macro.png 874,345 B, road_wear_detail_1road.jpg 3,302,437, road_wear_detail_1kerb_sidewalk.jpg
+    319,109, road_wear_flat_nm.png 76;
+  - dropped: asphalt_cracked_diffuse.jpg; changed: none;
+  - every other gate row equal to 0.1.5's (audit's vertex counts included);
+  - the road kn5 **18,970,521 -> 21,094,392 B**.
+- **Installed** 2026-11-10 21:29 from an EMPTY `D:/k10-scratch/exotics_lm`; 0.1.5's workshop is kept as `exotics_lm.0.1.5`.
+  - "doooom Nevada — Nevada Nights 0.1.6", kn5_equiv to the reference. The trees came along.
+  - The install step parked 0.1.5 in `D:/k10-track-archive/2026-11-10_212917/` (MOVES.tsv, README).
+  - Menu picture: s4 at -0.8 EV, 0.1.5's camera. Blender shows the scene's own road, not the kn5's road-wear shader.
+  - Recorded on claude/ac-tidy a9e96fc8.
+- Records: `source/road_wear/pc_016/` (both logs, every data/*.json, compare_ab.json, mesh_diff.json).
+- Not driven.
+
 ## Engine fixes after the overnight run (Mac, 2026-11-10; code and tests only, no track build)
 
 The PC's overnight run (Kevin: "build the road wear for the other circuits on the pc overnight") hit two engine limits.

@@ -4,7 +4,7 @@
   "name": "Aspen Motorsports Park",
   "_name_doc": "Kevin 2026-11-07: \"Get rid of Lm Version from names, nothing should be on any other engine now\" / \"LM is the airoso engine\". 0.1.4 (2026-11-09): no \"(LM engine)\" in the display name, and the slug and install_folder are the plain aspen_motorsports_park. The old-engine track (tracks/aspen) gave that slug up: its slug and folder are aspen_motorsports_park_v067 (S7, fleet.cli lint)",
   "slug": "aspen_motorsports_park",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "mirror_x": false,
   "loop": true,
   "default_width_m": 9.0,
@@ -157,5 +157,39 @@
   "terrain": {
     "terrain_band_m": 22.0,
     "_doc": "the v021 assembler's band clamp (Lake Murray's 22 m)"
+  },
+  "road_wear": {
+    "_doc": "ledger 0084 (Kevin 2026-11-07: \"road textures to include wear along where tires run, in a realistic manner\" / \"For tracks we'll use racing lines\" / \"Which will help darken curbs realistically\"; 2026-11-10, to the Mac: \"build the road wear for the other circuits on the pc overnight\"). High Plains 0.1.7's bake (tools/road_wear_blend.py, last in prep): the large-scale tone off the aerial, registered to the built road, under the stock cracked asphalt kept as the 4 m detail (ksPerPixelMultiMap_NMDetail); the rubber is the photo's own (rubber 'photo': no drawn band); the traced race kerbs get the line's darkening where it rides them (kerbs). scripts/aerial/road_wear.py DEFAULTS has every number, marked measured / model / invented.",
+    "surfaces": [
+      "1ROAD",
+      "1KERB_SIDEWALK"
+    ],
+    "_surfaces_doc": "the road and the edge strip beside it (ledger 0087's 1KERB_sidewalk), as Milford and High Plains: the strip shares the atlas so the rubber where the line clips the edge carries on over it",
+    "texel_m": 0.25,
+    "_texel_doc": "as High Plains 0.1.7: 0.25 m keeps the detail multiplier whole (4096 px x 0.25 / 4 = 256; the bake refuses a fractional one) and is finer than a 0.3 m photo's pixel",
+    "rubber": "photo",
+    "_rubber_doc": "Kevin 2026-11-10: \"Use the photo's rubber\" (ledger 0084), the default for the 0.3 m circuits: the asphalt gets no drawn band, the photo's tone carries the rubber; the bake measures the photo's darkening across the line against its mirror (scripts/aerial/road_wear.photo_rubber), and the gate's photo_rubber row needs the photo's own depth >= 0.03",
+    "aerial": {
+      "image": "source/road_wear/naip_2023_030_aspen.png",
+      "bbox_lonlat": [
+        -106.88282515083195,
+        39.262418819093476,
+        -106.87847232759137,
+        39.26801589128868
+      ],
+      "_doc": "co_m_3910641_se_13_030_20230907_20240104 (2023-09-07, 0.3 m, USDA NAIP, public domain; Microsoft Planetary Computer data API (USDA FSA NAIP, public domain), EPSG:4326 crop), bbox from its corners. Covers the built road with ~30 m to spare on every side (PC 2026-11-10, the gate OBJ projected about centerline.local.json's origin)"
+    },
+    "lines": [
+      {
+        "layout": "full",
+        "ai": "source/road_wear/fast_lane.full.ai",
+        "_doc": "a line Kevin records with CSP's AI recorder in this layout, copied here; absent = the minimum-curvature line inside the built edges [model]"
+      }
+    ],
+    "kerbs": {
+      "prefix": "1KERB_CIRCUIT_",
+      "levels": 16,
+      "_doc": "the traced kerb runs (data/kerbs.built.json): each face takes the line's darkening at its offset through 16 levelled copies of its own paint, as High Plains 0.1.7"
+    }
   }
 }

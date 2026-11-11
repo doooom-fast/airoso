@@ -10,7 +10,11 @@ read again from the track's own image (track.config.json road_wear.aerial).
                  txDiffuse / txNormal / txDetail / txNormalDetail, each texture embedded, power of two, and
                  detailUVMultiplier = atlas_px * texel_m / detail_tile_m
     density      per triangle, the UV Jacobian over the ground (east, north) has both singular values within
-                 density_tol of 1 / (atlas_px * texel_m) and no shear (roundness): one texel per texel_m, square
+                 density_tol of 1 / (atlas_px * texel_m) and no shear (roundness): one texel per texel_m, square.
+                 A triangle whose Jacobian float32 cannot resolve to density_tol (a sliver: its rounding bound grows
+                 as length / height; Pikes Peak 0.2.2's pad slivers) is judged instead by its edges' texel footprint,
+                 |UV step x atlas_px x texel_m - the edge on the ground| <= density_tol x |edge|; one with no edge
+                 float32 resolves either is counted as unjudged (density_row; GATES-CHANGELOG 2026-11-10 Mac)
     no_repeat    no texel is claimed by two places on the ground more than repeat_m apart (corners and centroids of
                  every triangle): the atlas never repeats
     detail_phase the detail UV (UV x detailUVMultiplier) at every vertex equals east / 4, north / 4 modulo 1 within
@@ -31,7 +35,8 @@ read again from the track's own image (track.config.json road_wear.aerial).
                  (the exporter's stock row with txDiffuse -> the levelled paint), each embedded, power of two, and
                  every declared VAR at its value
     kerb_paint   the shipped levelled paint is ``levels`` copies of the kerb's own paint side by side: copy 0 byte for
-                 byte, copy k within kerb_paint_tol of round(paint x (1 - k step))
+                 byte, copy k within kerb_paint_tol of round(paint x (1 - k step)); each copy ``repeats`` tiles of the
+                 paint when the paint repeats (the bake's record; absent = 1, High Plains 0.1.7)
     kerb_levels  every shipped kerb triangle has one level (floor(u x levels)) at its three corners and lies inside a
                  declared face of that level; every declared face's level is the gate's own reading of the declared
                  line's rubber at its centroid within kerb_level_tol levels
@@ -75,6 +80,11 @@ GATE = {
                                  # (High Plains 0.3 m: 0.14 measured; Milford's 0.5 m showed <= 0.007)
     "kerb_level_tol": 0.55,      # [invented] levels: half a level (the rounding) + 5 % for the declared line's
                                  # 1 mm / 1e-4 rounding in road_wear.line.<layout>.json
+    # the density row's resolution (Pikes Peak 0.2.2, PC 2026-11-10: two sliver pad triangles, 0.002 / 0.019 m2, read
+    # 0.86 % / 0.51 % off on float32 rounding alone): each number the kn5 stores (position, UV) is taken as off by this
+    # many float32 steps at its magnitude when the row decides which measure can resolve density_tol on a triangle
+    "f32_ulps": 1.0,             # [invented] one step: the bake's UV is rounded once to float32 (half a step) and the
+                                 # writer's matrix_world @ co once more (half a step); first-order propagation
 }
 SLOTS = ("txDiffuse", "txNormal", "txDetail", "txNormalDetail")
 
@@ -275,6 +285,124 @@ def make_darkness(line_pts: list, closed: bool, w: dict, layer: float, amp: floa
     return darkness
 
 
+def _ulp32(x: float) -> float:
+    """The spacing of float32 values at |x| (the kn5 stores positions and UVs as float32)."""
+    x = abs(x)
+    if x < 1.1754943508222875e-38:
+        return 1.401298464324817e-45
+    return 2.0 ** (math.frexp(x)[1] - 24)
+
+
+def _sv2(a: float, b: float, c: float, d: float) -> tuple[float, float]:
+    """(largest, smallest) singular value of [[a, b], [c, d]] (the smallest as |det| / largest: stable on a sliver)."""
+    S = a * a + b * b + c * c + d * d
+    D = abs(a * d - b * c)
+    smax = math.sqrt(S / 2 + math.sqrt(max(0.0, S * S / 4 - D * D)))
+    return smax, (D / smax if smax > 0 else 0.0)
+
+
+def density_row(tris: list, A: int, tex: float, names: list | None = None) -> dict:
+    """The density row: one texel per texel_m, square, on every road-wear triangle, judged by the measure the kn5's
+    float32 numbers can resolve on that triangle.
+
+    1. The UV Jacobian over the ground (east, north), J = dUV / dP: both singular values within density_tol of
+       s0 = 1 / (atlas_px x texel_m) and no shear (s1 - s2 <= shear_tol x s0), as since 2026-11-09. Its rounding bound
+       beta = (|dU| + s1 |dP|) / sigma_min(P) / s0 (first order; |dU|, |dP| the edge differences' float32 steps x
+       f32_ulps, sigma_min(P) the edge matrix's smallest singular value) grows as 1 / the triangle's thinness: on a
+       2 x 2 m road triangle it is ~2e-4, on Pikes Peak's 0.002 m2 pad sliver (edges 1.01 / 5.06 / 6.07 m) ~0.4. A
+       triangle with beta < density_tol and 2 beta < shear_tol is judged by J exactly as before.
+    2. A triangle J cannot resolve (beta at or over the tolerance: a sliver, or |det| = 0) is judged by the texel
+       footprint of its edges: each edge's UV step in metres (du, dv) x atlas_px x texel_m against the edge on the ground
+       (de, dn x v_sign, the shipped v's sense read off the J-judged triangles), |footprint - edge| <= density_tol x
+       |edge|, on every edge whose own rounding bound is under density_tol x |edge|. A face mapped at the wrong scale,
+       stretched along itself or with a corner off in another place fails; what no float32 can see is the scale across
+       a sliver a fraction of a millimetre wide, which holds no texel to misallocate.
+    3. A triangle with no edge float32 can resolve either (every edge shorter than ~4 cm at 0.25 m / 4096 px) is
+       counted and listed as ``unjudged`` (it passes: it holds a hundredth of a texel); f32_ulps is [invented].
+
+    ``tris``: [((P0, P1, P2) ground (east, north), (U0, U1, U2) shipped (u, v))]. Pure python (the PC's interpreter)."""
+    tol = GATE["density_tol"]; stol = GATE["shear_tol"]; k = GATE["f32_ulps"]
+    s0 = 1.0 / (A * tex); m = A * tex
+    worst_d = 0.0; worst_sh = 0.0; n_bad = 0; n_j = 0
+    votes = [0, 0]
+    edge_tris = []
+    for ti, ((P0, P1, P2), (U0, U1, U2)) in enumerate(tris):
+        ex, ey = P1[0] - P0[0], P1[1] - P0[1]; fx, fy = P2[0] - P0[0], P2[1] - P0[1]
+        det = ex * fy - ey * fx
+        beta = float("inf")
+        if det != 0.0:
+            du1, dv1 = U1[0] - U0[0], U1[1] - U0[1]; du2, dv2 = U2[0] - U0[0], U2[1] - U0[1]
+            j11 = (du1 * fy - du2 * ey) / det; j12 = (du2 * ex - du1 * fx) / det
+            j21 = (dv1 * fy - dv2 * ey) / det; j22 = (dv2 * ex - dv1 * fx) / det
+            sA = j11 * j11 + j12 * j12 + j21 * j21 + j22 * j22
+            dt = abs(j11 * j22 - j12 * j21)
+            r = math.sqrt(max(0.0, sA * sA / 4 - dt * dt))
+            s1 = math.sqrt(sA / 2 + r); s2 = math.sqrt(max(0.0, sA / 2 - r))
+            nU = k * math.sqrt(sum((_ulp32(a) + _ulp32(b)) ** 2 for a, b in
+                                   ((U1[0], U0[0]), (U1[1], U0[1]), (U2[0], U0[0]), (U2[1], U0[1]))))
+            nP = k * math.sqrt(sum((_ulp32(a) + _ulp32(b)) ** 2 for a, b in
+                                   ((P1[0], P0[0]), (P1[1], P0[1]), (P2[0], P0[0]), (P2[1], P0[1]))))
+            _pmax, pmin = _sv2(ex, fx, ey, fy)
+            if pmin > 0:
+                beta = (nU + s1 * nP) / pmin / s0
+        if beta < tol and 2 * beta < stol:
+            n_j += 1
+            d = max(abs(s1 / s0 - 1), abs(s2 / s0 - 1)); sh = (s1 - s2) / s0
+            worst_d = max(worst_d, d); worst_sh = max(worst_sh, sh)
+            if d > tol or sh > stol:
+                n_bad += 1
+            votes[0 if j11 * j22 - j12 * j21 > 0 else 1] += 1
+        else:
+            edge_tris.append((ti, beta))
+
+    def edge_errs(ti, sv):
+        """[(error, |edge|)] over the triangle's edges float32 resolves at density_tol."""
+        (P, U) = tris[ti]
+        out = []
+        for a, b in ((0, 1), (1, 2), (2, 0)):
+            de, dn = P[b][0] - P[a][0], P[b][1] - P[a][1]
+            L = math.hypot(de, dn)
+            fu, fv = (U[b][0] - U[a][0]) * m, sv * (U[b][1] - U[a][1]) * m
+            bnd = k * (math.hypot(_ulp32(U[a][0]) + _ulp32(U[b][0]), _ulp32(U[a][1]) + _ulp32(U[b][1])) * m +
+                       math.hypot(_ulp32(P[a][0]) + _ulp32(P[b][0]), _ulp32(P[a][1]) + _ulp32(P[b][1])))
+            if L > 0 and bnd < tol * L:
+                out.append((math.hypot(fu - de, fv - dn) / L, L))
+        return out
+
+    if votes[0] or votes[1]:
+        signs = [1.0 if votes[0] >= votes[1] else -1.0]
+    else:                         # nothing J-judged: the sense the edges themselves fit best
+        signs = [1.0, -1.0]
+    best = None
+    for sv in signs:
+        off = 0; worst_e = 0.0; judged = 0; unj = []; offenders = []
+        for ti, beta in edge_tris:
+            ee = edge_errs(ti, sv)
+            if not ee:
+                unj.append(ti); continue
+            judged += 1
+            e = max(q[0] for q in ee)
+            worst_e = max(worst_e, e)
+            if e > tol:
+                off += 1; offenders.append((ti, e, beta))
+        if best is None or off < best[1]:
+            best = (sv, off, worst_e, judged, unj, offenders)
+    sv, e_off, worst_e, e_judged, unj, offenders = best
+
+    def where(ti):
+        (P, _U) = tris[ti]
+        L = [math.hypot(P[b][0] - P[a][0], P[b][1] - P[a][1]) for a, b in ((0, 1), (1, 2), (2, 0))]
+        area = abs((P[1][0] - P[0][0]) * (P[2][1] - P[0][1]) - (P[1][1] - P[0][1]) * (P[2][0] - P[0][0])) / 2
+        return {"tri": names[ti] if names else ti, "area_m2": round(area, 6), "edges_m": [round(v, 4) for v in L],
+                "at_en": [round(sum(q[0] for q in P) / 3, 2), round(sum(q[1] for q in P) / 3, 2)]}
+    return {"pass": n_bad == 0 and e_off == 0, "triangles": len(tris), "off": n_bad + e_off,
+            "worst_scale_err": round(worst_d, 6), "worst_shear": round(worst_sh, 6), "texel_m": tex, "atlas_px": A,
+            "jacobian_judged": n_j, "jacobian_off": n_bad,
+            "edge_judged": e_judged, "edge_off": e_off, "worst_edge_err": round(worst_e, 6), "v_sign": sv,
+            "edge_offenders": [dict(where(ti), err=round(e, 6), jacobian_bound=round(b, 4)) for ti, e, b in offenders[:20]],
+            "unjudged": len(unj), "unjudged_list": [where(ti) for ti in unj[:20]]}
+
+
 def kerb_rows(proj: Path, cfg: dict, decl: dict, kd: dict, mats: list, p: dict, line_pts: list, w: dict) -> dict:
     """The race kerbs (road_wear.kerbs): their materials as declared, the shipped levelled paint against the kerb's own
     paint, and every shipped kerb triangle's level against the rubber the declared line puts on its face."""
@@ -306,7 +434,10 @@ def kerb_rows(proj: Path, cfg: dict, decl: dict, kd: dict, mats: list, p: dict, 
                 bad.append(f"{mn}: {pn} {kv} != declared {pv}")
     out["kerb_materials"] = {"pass": not bad, "materials": len(kd["materials"]), "problems": bad}
 
-    # the shipped levelled paint: copy 0 is the kerb's own paint byte for byte, copy k = round(paint x (1 - k step)) +- 1
+    # the shipped levelled paint: copy 0 is the kerb's own paint byte for byte, copy k = round(paint x (1 - k step)) +- 1;
+    # each copy ``repeats`` tiles of the paint side by side (the bake's kerb_repeats when the paint repeats, Pueblo /
+    # Aspen; absent = 1, High Plains 0.1.7: the comparison below is then the one it shipped with)
+    R = int(kd.get("repeats", 1))
     bad = []
     for src_name, rec in kd["paint"].items():
         blob = p["textures"].get(rec["atlas"])
@@ -317,15 +448,15 @@ def kerb_rows(proj: Path, cfg: dict, decl: dict, kd: dict, mats: list, p: dict, 
             bad.append(f"{rec['atlas']}: not embedded or its paint {src} missing"); continue
         a = Image.open(io.BytesIO(blob)).convert("RGB"); b = Image.open(src).convert("RGB")
         (aw, ah), (bw, bh) = a.size, b.size
-        if (aw, ah) != (bw * L, bh):
-            bad.append(f"{rec['atlas']}: {aw} x {ah} != {L} x the paint's {bw} x {bh}"); continue
+        if (aw, ah) != (bw * R * L, bh):
+            bad.append(f"{rec['atlas']}: {aw} x {ah} != {L} x {R} x the paint's {bw} x {bh}"); continue
         A_ = a.tobytes(); B_ = b.tobytes()
         worst = 0
         for k in range(L):
             f = 1.0 - k * step
             for y in range(0, bh, max(1, bh // 64)):
-                for x in range(bw):
-                    o_a = 3 * (y * aw + k * bw + x); o_b = 3 * (y * bw + x)
+                for x in range(bw * R):
+                    o_a = 3 * (y * aw + k * bw * R + x); o_b = 3 * (y * bw + x % bw)
                     for c in range(3):
                         e = abs(A_[o_a + c] - round(B_[o_b + c] * f))
                         if k == 0 and e:
@@ -334,7 +465,8 @@ def kerb_rows(proj: Path, cfg: dict, decl: dict, kd: dict, mats: list, p: dict, 
         if worst > GATE["kerb_paint_tol"]:
             bad.append(f"{rec['atlas']}: a copy is {worst} off the paint x (1 - k step)" if worst < 99 else
                        f"{rec['atlas']}: copy 0 is not the paint")
-    out["kerb_paint"] = {"pass": not bad, "levels": L, "step": round(step, 5), "problems": bad}
+    out["kerb_paint"] = {"pass": not bad, "levels": L, "step": round(step, 5), **({"repeats": R} if R != 1 else {}),
+                         "problems": bad}
 
     # every shipped kerb triangle: one level at all three corners, inside a declared face of that level; every declared
     # face's level the gate's own reading of the declared line's rubber at its centroid (within half a level + 5 %)
@@ -459,6 +591,7 @@ def main(argv=None) -> int:
 
     # the meshes: world (east, north), uv
     tris = []
+    tri_names = []
     road_tris = set()            # the first surface's (1ROAD): the tone row reads only these (the edge strip's tone is
     for me in p["meshes"]:       # the road's carried outward, not the photo's verge)
         if me["matid"] >= len(mats) or mats[me["matid"]]["name"] not in road_mats:
@@ -472,28 +605,17 @@ def main(argv=None) -> int:
             a_, b_, c_ = V[idx[t]], V[idx[t + 1]], V[idx[t + 2]]
             tris.append((((a_[0], -a_[2]), (b_[0], -b_[2]), (c_[0], -c_[2])),
                          ((a_[3], a_[4]), (b_[3], b_[4]), (c_[3], c_[4]))))
+            tri_names.append(f"{me['name']} tri {t // 3}")
     if not tris:
         print("[road_wear_check] input error: no road-wear triangles in the kn5")
         return 2
-    s0 = 1.0 / (A * tex)
-    worst_d = 0.0; worst_sh = 0.0; n_bad = 0
+    rows["density"] = density_row(tris, A, tex, tri_names)
     tex_claim = {}; repeats = 0; phase_by = [0.0, 0.0]
     for (P0, P1, P2), (U0, U1, U2) in tris:
         ex, ey = P1[0] - P0[0], P1[1] - P0[1]; fx, fy = P2[0] - P0[0], P2[1] - P0[1]
         det = ex * fy - ey * fx
-        if abs(det) < 1e-6:
+        if abs(det) < 1e-6:      # no_repeat / detail_phase as before (density judges every triangle: density_row)
             continue
-        du1, dv1 = U1[0] - U0[0], U1[1] - U0[1]; du2, dv2 = U2[0] - U0[0], U2[1] - U0[1]
-        j11 = (du1 * fy - du2 * ey) / det; j12 = (du2 * ex - du1 * fx) / det
-        j21 = (dv1 * fy - dv2 * ey) / det; j22 = (dv2 * ex - dv1 * fx) / det
-        sA = j11 * j11 + j12 * j12 + j21 * j21 + j22 * j22
-        dt = abs(j11 * j22 - j12 * j21)
-        r = math.sqrt(max(0.0, sA * sA / 4 - dt * dt))
-        s1 = math.sqrt(sA / 2 + r); s2 = math.sqrt(max(0.0, sA / 2 - r))
-        d = max(abs(s1 / s0 - 1), abs(s2 / s0 - 1)); sh = (s1 - s2) / s0
-        worst_d = max(worst_d, d); worst_sh = max(worst_sh, sh)
-        if d > GATE["density_tol"] or sh > GATE["shear_tol"]:
-            n_bad += 1
         cen = ((P0[0] + P1[0] + P2[0]) / 3, (P0[1] + P1[1] + P2[1]) / 3)
         cu = ((U0[0] + U1[0] + U2[0]) / 3, (U0[1] + U1[1] + U2[1]) / 3)
         for (pe, pn), (u, v) in ((P0, U0), (P1, U1), (P2, U2), (cen, cu)):
@@ -510,8 +632,6 @@ def main(argv=None) -> int:
                 pv = (vv * mult - pn / tile) % 1.0
                 phase_by[c] = max(phase_by[c], min(pu, 1 - pu), min(pv, 1 - pv))
     worst_phase = min(phase_by)
-    rows["density"] = {"pass": n_bad == 0, "triangles": len(tris), "off": n_bad, "worst_scale_err": round(worst_d, 6),
-                       "worst_shear": round(worst_sh, 6), "texel_m": tex, "atlas_px": A}
     rows["no_repeat"] = {"pass": repeats == 0, "texels_claimed": len(tex_claim), "claimed_twice": repeats}
     rows["detail_phase"] = {"pass": worst_phase <= GATE["phase_tol"], "worst_tiles": round(worst_phase, 5),
                             "detail_uv_multiplier": mult}
@@ -745,7 +865,8 @@ def main(argv=None) -> int:
         Path(a.json).write_text(json.dumps(out, indent=1), encoding="utf-8", newline="\n")
     for k, r in rows.items():
         print(f"[road_wear_check] {k:13s} {'PASS' if r['pass'] else 'FAIL'}  " +
-              ", ".join(f"{kk} {vv}" for kk, vv in r.items() if kk not in ("pass", "profile", "materials")))
+              ", ".join(f"{kk} {vv}" for kk, vv in r.items() if kk not in ("pass", "profile", "materials",
+                                                                            "edge_offenders", "unjudged_list")))
     print(f"[road_wear_check] {'PASS' if ok else 'FAIL'}")
     return 0 if ok else 1
 

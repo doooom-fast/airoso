@@ -29,7 +29,9 @@ WHAT IT DOES, in order, on the scene engine-july's prep saved (blender/<slug>.bl
 7b. (opt-in road_wear.kerbs, High Plains 0.1.7) the race kerbs (1KERB_circuit_*): each face's darkness off the same lines
    at its centroid, to one of ``levels`` copies of the kerb's own paint laid side by side (copy k = paint x (1 - k step)),
    its u moved into that copy (v untouched); the material row = the exporter's own stock row with txDiffuse -> the
-   levelled paint; every face's ring and level recorded for the gate's join;
+   levelled paint; every face's ring and level recorded for the gate's join. Paint that repeats (u past 1: Pueblo,
+   Aspen) is unwrapped per face by its whole repeats and each copy holds ``repeats`` tiles of it (rw.kerb_unwrap /
+   kerb_repeats; no face is split, no vertex moves);
 8. the kn5 WRITER's vertex count re-checked on every surface (engine-july's own _export_vertex_keys); a surface over
    the cap is tiled under unique names by engine-july's own _split_for_writer.
 
@@ -228,6 +230,10 @@ def _kerbs(proj: Path, eng: Path | None, ksp: dict, spec: dict, lines: list, w: 
     faces_rec = {}
     hist = np.zeros(L, dtype=np.int64)
     n_faces = 0; touched = 0; clipped = 0
+    # pass 1: every face's u back by its whole repeats of the paint (rw.kerb_unwrap; 0 for a face inside 0..1), and the
+    # tiles each level copy must hold (rw.kerb_repeats: 1 = High Plains 0.1.7's atlas)
+    unwrapped = {}
+    u_max = 0.0; moved = 0; u_raw = [np.inf, -np.inf]
     for ob in obs:
         me = ob.data
         uvl = me.uv_layers.active
@@ -237,10 +243,27 @@ def _kerbs(proj: Path, eng: Path | None, ksp: dict, spec: dict, lines: list, w: 
         P, fl, cen, _t, _co = _faces(ob)
         nl = len(me.loops)
         uv = np.empty(nl * 2, dtype=np.float32); uvl.data.foreach_get("uv", uv); uv = uv.reshape(nl, 2).astype(np.float64)
-        if uv[:, 0].min() < -1e-6 or uv[:, 0].max() > 1 + 1e-6:
-            print(f"[road_wear] FATAL: {ob.name}: u {uv[:, 0].min():.3f}..{uv[:, 0].max():.3f} outside the paint texture "
-                  f"(0..1): its copies would bleed into each other")
+        if not np.all(np.isfinite(uv)):
+            print(f"[road_wear] FATAL: {ob.name}: a UV is not finite")
             return None
+        loc, shift = rw.kerb_unwrap(uv[:, 0], fl, len(cen))
+        unwrapped[ob.name] = (P, fl, cen, uv, loc)
+        if nl:
+            u_max = max(u_max, float(loc.max()))
+            u_raw = [min(u_raw[0], float(uv[:, 0].min())), max(u_raw[1], float(uv[:, 0].max()))]
+        moved += int(np.count_nonzero(shift))
+    try:
+        R = rw.kerb_repeats(u_max, L)
+    except ValueError as e:
+        print(f"[road_wear] FATAL: {e}")
+        return None
+    if R > 1 or moved:
+        print(f"[road_wear] kerbs: the paint repeats (u {u_raw[0]:.3f}..{u_raw[1]:.3f}): {moved} faces moved back by whole "
+              f"repeats, the widest face then reaching u {u_max:.3f}; each level copy holds {R} tile(s) of the paint")
+    for ob in obs:
+        me = ob.data
+        uvl = me.uv_layers.active
+        P, fl, cen, uv, loc = unwrapped[ob.name]
         keep = np.ones(len(cen))
         Z = float(np.mean(cen[:, 2]))
         for ln in lines:
@@ -252,7 +275,7 @@ def _kerbs(proj: Path, eng: Path | None, ksp: dict, spec: dict, lines: list, w: 
         lev = rw.kerb_levels(dark, step, L)
         clipped += int(np.sum(np.round(dark / step) > L - 1))
         uv2 = uv.copy()
-        uv2[:, 0] = rw.kerb_u(np.clip(uv[:, 0], 0.0, 1.0), lev[fl], L)
+        uv2[:, 0] = rw.kerb_u(np.clip(loc, 0.0, float(R)), lev[fl], L, R)
         uvl.data.foreach_set("uv", uv2.astype(np.float32).ravel())
         me.update()
         hist += np.bincount(lev, minlength=L)
@@ -277,9 +300,13 @@ def _kerbs(proj: Path, eng: Path | None, ksp: dict, spec: dict, lines: list, w: 
                     if s & (s - 1):
                         print(f"[road_wear] FATAL: {src.name} is not a power of two ({base.shape[1]} x {base.shape[0]})")
                         return None
+                if base.shape[1] * L * R > rw.KERB_ATLAS_MAX_PX:
+                    print(f"[road_wear] FATAL: {src.name}: {L} levels x {R} repeats of its {base.shape[1]} px make a "
+                          f"{base.shape[1] * L * R} px atlas, over {rw.KERB_ATLAS_MAX_PX} (Direct3D 11's largest)")
+                    return None
                 b8 = np.round(np.clip(base, 0, 1) * 255).astype(np.uint8)
                 fn = texdir / f"road_wear_kerb_{src.stem}.png"
-                nb = rw.write_png(fn, rw.kerb_wear_atlas(b8, L, step))
+                nb = rw.write_png(fn, rw.kerb_wear_atlas(b8, L, step, R))
                 im = bpy.data.images.load(str(fn), check_existing=True)
                 im.name = fn.name
                 if not im.packed_file:
@@ -308,6 +335,9 @@ def _kerbs(proj: Path, eng: Path | None, ksp: dict, spec: dict, lines: list, w: 
             "materials": sorted(m for m in rows if rows[m].get("stock") is not None), "paint": srcs,
             "faces_total": n_faces, "faces_darkened": touched, "faces_clipped": clipped, "per_level": hist.tolist(),
             "darkest": round(float(max(f["darkness"] for fs in faces_rec.values() for f in fs)), 5),
+            # only when the paint repeats (Pueblo, Aspen): High Plains 0.1.7's record is unchanged; absent = 1 / 0
+            **({"repeats": R, "faces_unwrapped": moved, "u_range": [round(u_raw[0], 4), round(u_raw[1], 4)],
+                "u_max_unwrapped": round(u_max, 4)} if (R > 1 or moved) else {}),
             "faces": faces_rec}
 
 

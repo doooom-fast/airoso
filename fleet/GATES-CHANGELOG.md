@@ -14,6 +14,63 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
+## 2026-11-10 (Mac) — MEASUREMENT-BUG FIX: road_wear density judges a sliver by its edges; the kerb rows read repeating paint (ledger 0084, "Engine fixes after the overnight run"; no threshold moved)
+
+Two engine limits the PC's overnight road-wear run found (ledger 0084: Pikes Peak 0.2.2, Pueblo 0.1.4, Aspen 0.1.5).
+`tools/road_wear_check.py`, `tools/road_wear_blend.py`, `scripts/aerial/road_wear.py`; nothing else.
+
+**density (the measurement).** Pikes Peak 0.2.2 failed on 2 of 28,656 triangles, both slivers on the oval's apron pads:
+1ROAD_pad_NE 0.0020 m2 (edges 1.01 / 5.06 / 6.07 m, 0.66 mm tall) read 0.86 % off, 1ROAD_pad_NW 0.0189 m2 0.51 %, against
+density_tol 0.005. The bake maps every face exactly (u = east / (atlas_px x texel_m) + its tile's offset, one tile per
+face). What moved them is the measurement: the UV Jacobian J = dUV / dP divides by the triangle's height, so the kn5's
+float32 rounding (u ~ 0.5 holds 6e-8 = 6e-5 m at 4096 px x 0.25 m) is amplified by length / height. NE-shaped slivers
+mapped exactly and stored as float32 fail the old row 197 times in 200 (median 3.5 % off; `tests/aerial/
+test_road_wear_density.py`). The comment the row was written with ("float32 UVs at 4096 px hold 1e-6") is true for the
+road's triangles and false for a sliver.
+
+- Now (`density_row`): each triangle's Jacobian gets a first-order rounding bound, beta = (|dU| + s1 |dP|) /
+  sigma_min(P) / s0, each stored number taken as off by `f32_ulps` float32 steps at its magnitude.
+  - beta < density_tol and 2 beta < shear_tol: judged by J **exactly as before** (density_tol 0.005, shear_tol 0.005).
+    A 2 x 2 m road triangle has beta ~2e-4. On the installed tracks' own ribbons (below) every triangle is judged this
+    way and every number equals the old row's.
+  - Otherwise (a sliver; also |det| = 0, which the old row skipped without a word): judged by the texel footprint of its
+    edges. Each edge's UV step x atlas_px x texel_m against the edge on the ground (the shipped v's sense read off the
+    J-judged triangles): |footprint - edge| <= density_tol x |edge|, on every edge whose own rounding bound is under
+    density_tol x |edge|. A sliver stretched 1 %, or with one corner a texel off, fails. What float32 cannot see is the
+    scale across a sliver a fraction of a millimetre wide, which holds no texel to misallocate.
+  - A triangle with no edge float32 resolves either (every edge under ~4 cm at 0.25 m / 4096 px) is the one exemption:
+    counted and listed in the row (`unjudged`, `unjudged_list`), and it passes. It holds a hundredth of a texel.
+  - `f32_ulps` 1.0 ⚠ [invented: one float32 step per stored number, half for the bake's UV rounding and half for the
+    writer's matrix_world @ co].
+  - New row keys: jacobian_judged, jacobian_off, edge_judged, edge_off, worst_edge_err, v_sign, edge_offenders (the
+    first 20 with area / edges / place), unjudged, unjudged_list. worst_scale_err / worst_shear are over the J-judged
+    triangles.
+- No threshold moved: density_tol and shear_tol stay 0.005, there is no area cut-off, and no_repeat / detail_phase are
+  untouched (they keep their |det| < 1e-6 skip).
+- Proven (Mac, no build): `test_road_wear_density.py` 7 tests. Pikes Peak's two sliver shapes mapped exactly PASS on their
+  edges (worst 8e-6). Mis-mapped slivers FAIL: stretched 1 % east, stretched 1 % both ways, one corner a texel off,
+  another 3 texels off. A well-shaped triangle 0.6 % / 1 % anisotropic / -0.6 % off FAILs and 0.4 % passes, the old row
+  agreeing. 400 random road triangles mis-scaled up to 0.8 % get the old row's verdict, all J-judged. A 1 cm triangle
+  is listed unjudged, and a zero-area one is edge-judged (a 2 % stretch on it fails).
+  - `tracks/pikes-peak-lm/source/road_wear/mac_fix/density_ab.py` + `.log`: Milford 0.1.11, High Plains 0.1.7 and
+    Nevada 0.1.6's own roads, rebuilt from their records (finished_centerline + road_wear.json's plan, mapped as the
+    bake maps, float32). Before and after: the same verdict (PASS), the same worst_scale_err / worst_shear (9.8e-05 /
+    6.3e-05 / 3.9e-05), every triangle J-judged (19,608 / 6,438 / 3,642).
+
+**kerb_paint (repeating paint).** The bake now handles kerb paint that repeats (below: no face is split, no vertex
+moves). Each level copy of the paint then holds `repeats` tiles of it side by side, recorded in data/road_wear.json
+`kerbs.repeats`, written only when it is over 1. kerb_paint reads that number: the atlas must be paint_w x repeats x
+levels wide, and every tile of copy k must equal round(paint x (1 - k step)) within kerb_paint_tol (copy 0 byte for
+byte).
+- Absent = 1. That is High Plains 0.1.7's record, and there the comparison is the one it shipped with.
+- kerb_levels is unchanged: floor(u x levels) at all three corners, inside a declared face of that level. The bake keeps
+  every corner strictly inside its copy (kerb_repeats leaves more than one float32 step before the copy's right edge).
+- No threshold moved.
+- Proven: `test_road_wear_kerbs.py` (4 new tests). One of them: a 16-copy x 2-tile atlas PASSES, one texel of copy 3's
+  second tile off by 2 FAILS, and a one-tile atlas declared as two FAILS. `tracks/pueblo-lm/source/road_wear/mac_fix/
+  kerb_ab.log`: High Plains' shape gives main's rows and this branch's rows identical; a Pueblo-shaped run passes all
+  three rows with repeats 2; a triangle moved one level fails kerb_levels on both.
+
 ## 2026-11-10 — WIRING FIX: the lap gates run over furnished laps only, and the rail re-seat runs again on the PC (ledger 0090)
 
 Two faults in `tools/ship_track.sh` on main ca297e2, found by rebuilding the installed tracks from main in empty

@@ -5,7 +5,7 @@
   "_name_engine_doc": "ledger 0083 pass 4 (Kevin 2026-11-07: \"Get rid of Lm Version from names, nothing should be on any other engine now\" / \"LM is the airoso engine\"): no '(LM engine)' in the name; installed as the plain del_mar_fairgrounds (install_folder). The slug stays del_mar_fairgrounds_lm (the file names inside the folder) while tracks/del-mar still holds del_mar_fairgrounds: fleet lint S7 refuses two tracks on one slug; the directories are renamed in one pass later.",
   "slug": "del_mar_fairgrounds_lm",
   "ui_series": "doooom California",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "mirror_x": false,
   "loop": true,
   "default_width_m": 13.0,
@@ -2588,5 +2588,34 @@
       "_doc": "ledger 0083 pass 4b (Kevin 2026-11-07: \"Yes\", to \"Should Del Mar's far ground be built from the lidar?\"): the assembler's 500 m skirt (a ramp from the 3DEP grid's border down to a floor 5 m under the lowest ground) replaced by the real ground over the same reach, off the 2024 USGS lidar's ground points (tools/lidar_ground.py -> data/far_ground.lidar.npy, 5 m cells; the SE corner past the five tiles harmonically filled, flagged), meshed by tools/far_ground_blend.py on the grid's own 10 m lattice; the grid's border vertices kept, the border residual (lidar - grid) feathered out over feather_m [invented] so the seam has no step. The 3DEP grid inside (the lap + 150 m) is untouched."
     }
   },
-  "_grid_doc": "lm_intake.grid_upsample 4 (ledger 0083): at 2 the ground's 20 m facets chorded over the crossings' ramps (35 grass-on-top); 4 took it to 7, 8 bought nothing more"
+  "_grid_doc": "lm_intake.grid_upsample 4 (ledger 0083): at 2 the ground's 20 m facets chorded over the crossings' ramps (35 grass-on-top); 4 took it to 7, 8 bought nothing more",
+  "road_wear": {
+    "_doc": "ledger 0084 (Kevin 2026-11-07: \"road textures to include wear along where tires run, in a realistic manner\" / \"For tracks we'll use racing lines\" / \"Which will help darken curbs realistically\"; 2026-11-10, to the Mac: \"build the road wear for the other circuits on the pc overnight\"). High Plains 0.1.7's bake (tools/road_wear_blend.py, last in prep): the large-scale tone off the aerial, registered to the built road, under the stock cracked asphalt kept as the 4 m detail (ksPerPixelMultiMap_NMDetail); the rubber is Milford's drawn band (rubber 'drawn'; its numbers stay [invented]: the photo is too coarse to show rubber). scripts/aerial/road_wear.py DEFAULTS has every number, marked measured / model / invented.",
+    "surfaces": [
+      "1ROAD",
+      "1KERB_SIDEWALK"
+    ],
+    "_surfaces_doc": "the road and the edge strip beside it (ledger 0087's 1KERB_sidewalk), as Milford and High Plains: the strip shares the atlas so the rubber where the line clips the edge carries on over it",
+    "texel_m": 0.25,
+    "_texel_doc": "as High Plains 0.1.7: 0.25 m keeps the detail multiplier whole (4096 px x 0.25 / 4 = 256; the bake refuses a fractional one) and is finer than a 0.3 m photo's pixel",
+    "rubber": "drawn",
+    "_rubber_doc": "Milford's drawn mode: this photo is too coarse to resolve rubber (Milford's NAIP at 0.5 m read <= ~1 %), so the band is drawn from the model line; amplitude / spread / base stay [invented] until Kevin's drive",
+    "aerial": {
+      "image": "source/road_wear/naip_2012_delmar.png",
+      "bbox_lonlat": [
+        -117.26132869720459,
+        32.971290727355154,
+        -117.251136302948,
+        32.977816128510895
+      ],
+      "_doc": "ca_m_3211706_ne_11_1_20120519_20120627 (2012-05-19, 0.5 m, USDA NAIP, public domain; tracks/del-mar/source/naip_2012_delmar.png byte for byte (sha256 992a3ad5): USDA NAIP 2012-05-19, public domain, a Web Mercator z18 crop; corners = tracks/del-mar/source/estimate/placement.json control_points NW / SE (the image edges). Mercator vs lon/lat over 0.65 km of latitude: under 0.1 m, inside the bake registration), bbox from its corners. Covers the whole built road with 108-176 m to spare on every side (PC 2026-11-10, the gate OBJ projected about centerline.local.json's origin)"
+    },
+    "lines": [
+      {
+        "layout": "full",
+        "ai": "source/road_wear/fast_lane.full.ai",
+        "_doc": "a line Kevin records with CSP's AI recorder in this layout, copied here; absent = the minimum-curvature line inside the built edges [model]"
+      }
+    ]
+  }
 }

@@ -1,0 +1,15 @@
+{
+ "item": "ca_m_3211706_ne_11_1_20120519_20120627",
+ "collection": "naip",
+ "datetime": "2012-05-19T00:00:00Z",
+ "gsd": 0.5,
+ "corners": [
+  -117.26132869720459,
+  32.977816128510895,
+  -117.251136302948,
+  32.971290727355154
+ ],
+ "w": 1900,
+ "h": 1450,
+ "source": "tracks/del-mar/source/naip_2012_delmar.png byte for byte (sha256 992a3ad5): USDA NAIP 2012-05-19, public domain, a Web Mercator z18 crop; corners = tracks/del-mar/source/estimate/placement.json control_points NW / SE (the image edges). Mercator vs lon/lat over 0.65 km of latitude: under 0.1 m, inside the bake registration"
+}

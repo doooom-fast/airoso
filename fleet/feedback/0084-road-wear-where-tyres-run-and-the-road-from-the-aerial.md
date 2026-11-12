@@ -871,6 +871,9 @@ Milford's drawn mode, as Nevada, on the NAIP 2012 photo the lap was placed on.
   - (b) a photo of the lot without cars (none on disk; a download needs Kevin's yes);
   - (c) keep 0.2.5.
 - Installed: still **0.2.5**. Records: `source/road_wear/pc_026/`.
+- **Merged into main** 2026-11-11 (Kevin: "merge del mar"), as a record of the build. Still **not installed**:
+  the ghost cars stand, and (a) / (b) / (c) above is still Kevin's call. main's track.config.json now reads 0.2.6
+  while the installed build is 0.2.5; nothing installs 0.2.6 until that call.
 
 ### Pikes Peak 0.2.2: red, not installed (PC, 2026-11-10 overnight)
 

@@ -294,11 +294,15 @@ def warning_barriers(centerline_m: list[Vertex], widths_m: list[float], *, sharp
                 verts.append((bx + nx * lat, y + base_lift + ht, bz + nz * lat))
                 uvs.append((plen[pi] / ptot, arc / tile_m))       # U around the profile, V along the run
             rows.append(row)
+        # wound OUTWARD (ledger 0071): the profile runs up the +lat face, over the top and down the
+        # -lat face, rows advance along the run, and (a0, c1, a1) faces away from the barrier. The old
+        # (a0, a1, c1) faced into it on both sides: Exotics' PC-built loop.blend had all 430 of its
+        # BARRIER_warning top faces pointing down.
         for idx in range(len(rows) - 1):
             r0, r1 = rows[idx], rows[idx + 1]
             for pi in range(len(prof) - 1):
                 a0, a1 = r0[pi], r0[pi + 1]; c1, c0 = r1[pi + 1], r1[pi]
-                tris.append((a0, a1, c1)); tris.append((a0, c1, c0))
+                tris.append((a0, c1, a1)); tris.append((a0, c0, c1))
 
     i = 1
     while i < n - 1:

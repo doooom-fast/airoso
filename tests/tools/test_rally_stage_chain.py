@@ -44,7 +44,7 @@ def test_each_stage_spec_is_the_rally_stage_draft_row():
         assert s["steps"]["ship"] == ["export_road", "ai", "verify_kn5", "road_obj", "track_folder", "verify_inis",
                                       "make_map"], track
         assert s["steps"]["gate"] == ["drive_test_street", "audit_street", "kn5_ground"], track
-        assert s["workshop"] == f"C:/Users/Owner/Documents/k10-workshops/{track}"
+        assert s["workshop"] in (f"C:/Users/Owner/Documents/k10-workshops/{track}", f"D:/k10-workshops/{track}"), track
         assert s["require_race_layout"] is False and s["street_ai_july"] == ""
         assert s["ui_name_prefix"] == "doooom Colorado"
         assert s["sync_in"]["required"] == ["track.config.json"]

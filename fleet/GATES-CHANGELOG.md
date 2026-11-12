@@ -14,6 +14,48 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
+## 2026-11-03 — EXCLUSION: race kerbs leave the prep's 0020 carve (ledger 0020 Rule 1; Lake Murray v5 race, ledger 0065)
+
+`scripts/ac/build_kn5_loop.py`: 0020's Rule 1 deletes any 1KERB face whose centre stands more than 0.15 m inside a carriageway
+(the corridor hash, deck-height guarded), the sweep-through-junction artifact 0020 was written for. It now asks
+`corridor_carves_kerb(name)`, which is false for `1KERB_RACE_*`. A race kerb (`tools/author_race_furniture_blend.py`) is laid on the
+lane's edge at a corner on purpose. On Lake Murray v5 (the engine ribbon) the carve took 2,450 of the 2,775 race-kerb faces, emptied
+`1KERB_race_1_in` and `1KERB_race_766_in`, and the common race kn5 failed to export ("Tangent space computation needs a UV Map").
+engine-july, which v4 and every earlier Lake Murray race build prepped on, has no such carve, so this is the first build where it met a race kerb.
+Race kerbs stay judged by `verify_race` E (a kerb under another ROAD sheet) and O (another deck over a ring) and by the race layouts' own
+`drive_test`. Street kerbs and sidewalks (`1KERB_sidewalk`, `1KERB_kerb*`) are carved exactly as before; no threshold moved. Proof:
+`tests/ac/test_build_kn5_loop_prep.py::test_the_corridor_carve_leaves_race_kerbs_alone`, and the v5 race chain past its race kn5
+export. It reaches the next track with race kerbs on airoso's engine: Sand Creek 0.35.0's race curbs.
+
+## 2026-11-03 — BYPASS: Lake Murray 0.19.4 (the buildings rehearsal) installed red on 0.19.2's inherited keys, by Kevin's word (ledgers 0062, 0065)
+
+The chain's `--force-install` rule, applied by hand to a scratch build: `D:/k10-scratch/lm_bespoke` (rehearsal 2, `SD_BESPOKE=1`,
+`--no-install`) installed over 0.19.2 as `san_diego_lake_murray_v3` 0.19.4. Kevin's word: "Over 0.19.2". Red as 0.19.2 is red, on
+the street and race `drive_test` and `audit_mesh` exits, with no key worse than the installed 0.19.2's committed files: every
+`drive_test` key of every layout identical (floating furniture 0), `audit_mesh` skirt-off-terrain 1,564 → 1,563, the rest of
+the audit's classes unchanged; `kn5_ground_check`, `no_route`, `house_seat`, `rib_check` and `verify_kn5` PASS. A `SHIP_PROJ`
+scratch build never installs itself, so the chain's install step (park, copy, ui names) was replayed by hand with the
+version written 0.19.4. No threshold changed.
+
+## 2026-11-01 — BYPASS: Lake Murray v4 installed red on one gate, by Kevin's word (ledger 0065)
+
+`--force-install` on `san_diego_lake_murray_v4` 0.20.0, over the street layout's `drive_test` excursion drops alone: 96 against the limit of 13. Kevin's word: "Force". The count equals the installed 0.19.2's. No threshold changed; this is one install, not a rule. Every other gate on the proof build: soft top 0 / 0 / 0, audit 0 on all three layouts, race drive_test and no_route PASS, kn5_ground_check PASS, house seat floating / sunken / buried 0.
+
+## 2026-11-01 — a race layout without furniture; the street-only kn5 carries the centre line (ledger 0063)
+
+No threshold moved. Three wiring changes, each so a new shape of track is judged on the kn5 set it loads:
+
+- `drive_test`: a layout of `kind: race` with no `race_furniture` (Sand Creek's lap) is judged on `data/track.obj`; it has no race or closure kn5 to
+  build a `track.race.obj` from. A furnished race layout's requirement is unchanged. `track.obj` here includes the street-only kn5's paint, and paint is
+  no obstruction (`PAINT`), so the drive reads the same.
+- `verify_kn5 --inis`: such a layout must list exactly the road kn5 and its spawn kn5, and no race layout may list `<slug>_street.kn5`.
+- `race_chicane.is_street_only_name` also matches the road's `YLINE*` (not the I-8's `YLINE_I8_*`), and `has_street_kn5` is true on any track with both kinds of
+  layout, so `check_street_kn5` and `verify_kn5` hold the yellow line to the street set.
+
+Not a gate, recorded because it decides what a gate measures: `corridor_refine_connectors: "ribbon"` (Sand Creek) refines the ground under a street's pavement and
+not under its verge, with `corridor_refine_factor` 4 where it was 6. Proven on the built kn5: lap numbers unchanged from 0.30.0 (severe 1, kinks 11.06 /km, fold bumps
+21, replication median 0.01), excursion drops 2 -> 3, far ledges 7 -> 9, and `kn5_ground_check` road-over-ground p95 0.049 m, double-sheet cells 0 -> 10.
+
 ## 2026-11-01 — the block collider is a skirt; Microsoft's footprints as a planner source; a big low footprint is a house
 
 No gate threshold changed. Lake Murray's second rehearsal (ledger 0062), not installed.

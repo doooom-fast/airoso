@@ -1,0 +1,160 @@
+"""Ledger 0066: tools/lidar_crossfall.py keeps a real road's camber as measured (no deadband, no runoff ramp)."""
+import importlib.util
+import json
+import math
+import random
+import tempfile
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[2]
+spec = importlib.util.spec_from_file_location("lidar_crossfall", ROOT / "tools" / "lidar_crossfall.py")
+lc = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(lc)
+
+
+def _section(tilt_pct, *, n=60, noise=0.01, curb=False, seed=1):
+    rnd = random.Random(seed)
+    lat = [rnd.uniform(-lc.HALF_M, lc.HALF_M) for _ in range(n)]
+    z = [100.0 + tilt_pct / 100.0 * x + rnd.gauss(0, noise) for x in lat]
+    if curb:                                   # a few points on a 15 cm curb top at the right edge
+        lat += [-4.4, -4.3, -4.2]
+        z += [100.0 - tilt_pct / 100.0 * 4.3 + 0.15] * 3
+    return lat, z
+
+
+def test_a_tilted_section_reads_its_tilt_and_drops_the_curb():
+    for t in (-5.0, -1.0, 0.0, 2.0, 5.5):
+        lat, z = _section(t, curb=True)
+        got, sd, kept = lc.fit_tilt(lat, z)
+        assert abs(got - t) < 0.3, (t, got)
+        assert sd < 0.03 and kept >= 55
+
+
+def test_too_few_points_is_no_fit():
+    lat, z = _section(3.0, n=lc.MIN_POINTS - 1)
+    assert lc.fit_tilt(lat, z) is None
+
+
+def test_compose_keeps_a_fast_real_roll_and_fills_gaps():
+    # -1 % to +5.5 % within 21 m: the DEM tool's 0.12 %/m ramp held a roll to 3.6 % per 30 m; this one keeps 6 %
+    raw = [-1.0] * 40 + [-1.0 + 6.5 * k / 7 for k in range(8)] + [5.5] * 40 + [None, None] + [5.5] * 10 + [-1.0] * 40
+    out = lc.compose(raw)
+    assert all(v is not None for v in out)
+    st = [3.0 * i for i in range(len(out))]
+    worst = lc.roll_worst(st, out, 3.0 * len(out))
+    assert 5.0 < worst <= 30.0 * lc.ROLL_RATE + 1e-6, worst
+    assert max(out) <= lc.CAP_PCT and abs(out[48 + 41] - 5.5) < 1e-6      # the filled gap reads its neighbours
+
+
+def test_compose_caps_at_the_legacy_six_percent():
+    out = lc.compose([7.5] * 60 + [-7.5] * 60)
+    assert max(out) == lc.CAP_PCT and min(out) == -lc.CAP_PCT
+
+
+def test_a_long_run_without_a_road_fit_is_held_flat():
+    gap = int(lc.MAX_GAP_M / lc.STEP_M) + 5
+    out = lc.compose([4.0] * 30 + [None] * gap + [4.0] * 30)
+    assert abs(out[30 + gap // 2]) < 1e-9
+    short = lc.compose([4.0] * 30 + [None] * 3 + [4.0] * 30)
+    assert abs(short[31] - 4.0) < 1e-9
+
+
+def test_a_bank_or_an_overpass_is_not_a_road_fit():
+    assert lc.is_road([3.0, 0.03, 50])
+    assert not lc.is_road(None)
+    assert not lc.is_road([3.0, lc.MAX_SD_M + 0.01, 50])        # a deck overhead mixed in, a median, a curb run
+    assert not lc.is_road([lc.MAX_READ_PCT + 1.0, 0.03, 50])    # an embankment's face
+
+
+def _ring_project(d: Path, bridges=()):
+    (d / "data").mkdir()
+    pts = [[100.0 * math.cos(2 * math.pi * k / 200), 0.0, 100.0 * math.sin(2 * math.pi * k / 200)] for k in range(200)]
+    pts.append(pts[0])
+    (d / "data" / "centerline.local.json").write_text(json.dumps(
+        {"origin": {"lon": -104.9, "lat": 39.8, "elev_m": 1500.0}, "points_xyz_m": pts}))
+    (d / "track.config.json").write_text(json.dumps({"capture": {"bridges": list(bridges)}}))
+    return lc.stations([(p[0], p[2]) for p in pts])[0]
+
+
+def test_build_from_the_cache_writes_build_meshs_legacy_shape():
+    with tempfile.TemporaryDirectory() as td:
+        d = Path(td)
+        sts = _ring_project(d)
+        fits = [[[4.0, 0.01, 50] if i % 2 else None, None] for i in range(len(sts))]
+        (d / "data" / "crossfall.lidar.json").write_text(json.dumps(
+            {"fingerprint": lc._fingerprint(lc.EPT_DEFAULT, sts), "fits": fits}))
+        out = lc.build(d, log=lambda *_: None)
+        cf = json.loads((d / "data" / "crossfall.json").read_text())
+        assert cf["status"] == "measured" and cf["method"] == "lidar"
+        assert len(cf["station_m"]) == len(cf["bank_rad"]) == len(sts)
+        assert all(abs(b - math.atan(0.04)) < 1e-4 for b in cf["bank_rad"])
+        assert out["summary"]["dropped_stations"] == len(sts) // 2
+
+
+def test_a_declared_bridge_reads_its_deck_and_never_the_ground_under_it():
+    with tempfile.TemporaryDirectory() as td:
+        d = Path(td)
+        sts = _ring_project(d, bridges=[{"center_m": 300.0, "len_m": 60.0}])
+        fits = [[[-2.0, 0.02, 50], [3.0, 0.02, 40]] for _ in sts]     # ground says -2 %, the deck +3 %
+        (d / "data" / "crossfall.lidar.json").write_text(json.dumps(
+            {"fingerprint": lc._fingerprint(lc.EPT_DEFAULT, sts), "fits": fits}))
+        cf = lc.build(d, log=lambda *_: None)
+        tilt = dict(zip(cf["station_m"], cf["tilt_pct"]))
+        assert abs(tilt[300.0] - 3.0) < 1e-6 and abs(tilt[150.0] + 2.0) < 1e-6
+
+
+def test_the_dem_tool_leaves_a_lidar_file_alone():
+    spec2 = importlib.util.spec_from_file_location("crossfall_0066", ROOT / "scripts" / "elevation" / "crossfall.py")
+    cfm = importlib.util.module_from_spec(spec2)
+    spec2.loader.exec_module(cfm)
+    with tempfile.TemporaryDirectory() as td:
+        d = Path(td)
+        (d / "data").mkdir()
+        (d / "track.config.json").write_text(json.dumps({"road_profile": {"crossfall": {"method": "lidar"}}}))
+        (d / "data" / "crossfall.json").write_text('{"status": "measured"}')
+        assert cfm.main([str(d)]) == 0
+        assert json.loads((d / "data" / "crossfall.json").read_text()) == {"status": "measured"}
+
+
+def test_the_camber_is_keyed_to_the_swept_line_not_the_draft():
+    """0.31.0's first build keyed the draft line (23 m longer round Sand Creek) and its camber drifted along the lap and
+    broke at the seam: with a finished_centerline.json the stations are its own, so the last one meets the first."""
+    with tempfile.TemporaryDirectory() as td:
+        d = Path(td)
+        _ring_project(d)
+        draft = json.loads((d / "data" / "centerline.local.json").read_text())["points_xyz_m"]
+        fin = [[p[0] * 0.98, p[1], -p[2] * 0.98] for p in draft]          # kn5 frame, a shorter swept line
+        (d / "data" / "finished_centerline.json").write_text(json.dumps({"points_xyz_m": fin}))
+        pts, line = lc.line_points(d, {})
+        assert line == "finished_centerline.json" and abs(pts[10][1] - draft[10][2] * 0.98) < 1e-9
+        sts, lap = lc.stations(pts)
+        fits = [[[2.0 + (i % 7) * 0.1, 0.02, 50], None] for i in range(len(sts))]
+        (d / "data" / "crossfall.lidar.json").write_text(json.dumps(
+            {"fingerprint": lc._fingerprint(lc.EPT_DEFAULT, sts), "fits": fits}))
+        cf = lc.build(d, log=lambda *_: None)
+        assert cf["line"] == "finished_centerline.json"
+        assert cf["station_m"][-1] < lap <= cf["station_m"][-1] + lc.STEP_M
+
+
+def test_a_draft_swept_line_is_read_in_its_own_mesh_frame():
+    """Ledger 0073: straight after a Mac draft, finished_centerline.json is build_mesh's (frame "mesh ...": z = north),
+    not the prep's kn5 frame (z = -north). Read as kn5 it put every station on the line's north-south mirror image."""
+    with tempfile.TemporaryDirectory() as td:
+        d = Path(td)
+        _ring_project(d)
+        draft = json.loads((d / "data" / "centerline.local.json").read_text())["points_xyz_m"]
+        (d / "data" / "finished_centerline.json").write_text(json.dumps(
+            {"frame": "mesh (mirrored) local metres — same frame as track.obj", "points_xyz_m": draft}))
+        pts, _ = lc.line_points(d, {})
+        assert all(abs(p[0] - q[0]) < 1e-9 and abs(p[1] - q[2]) < 1e-9 for p, q in zip(pts, draft))
+        pts_m, _ = lc.line_points(d, {"mirror_x": True})          # mirror_x: the mesh's x is mirrored, east = -x
+        assert abs(pts_m[50][0] + draft[50][0]) < 1e-9 and abs(pts_m[50][1] - draft[50][2]) < 1e-9
+
+
+def test_declared_spans_keep_the_camber_and_flatten_the_rest():
+    raw = [3.0] * 200
+    out = lc.compose(raw, spans=[(150.0, 300.0)])
+    assert abs(out[75] - 3.0) < 1e-9                    # inside (225 m)
+    assert abs(out[10]) < 1e-9 and abs(out[150]) < 1e-9  # well outside, flat
+    st = [3.0 * i for i in range(200)]
+    assert lc.roll_worst(st, out, 600.0) <= 30.0 * lc.ROLL_RATE + 1e-6

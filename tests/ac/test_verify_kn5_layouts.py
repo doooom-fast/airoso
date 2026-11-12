@@ -148,6 +148,7 @@ def _synthetic(*, spawn_in_main=False, drop_spawn_kn5=None, flip_heading=None, w
     if closures != "no_token":
         layouts[1]["closure_token"], layouts[2]["closure_token"] = "cw", "acw"
     (d / "track.config.json").write_text(json.dumps({"slug": "t", "loop": False, "layouts": layouts,
+                                                      "road_markings": {"center_yellow": False},   # ledger 0063: no t_street.kn5
                                                       "race": {"grid_slots": 8, "pit_slots": 8}}))
     if lanes:
         (d / "data" / "barrier_bands.json").write_text(json.dumps({"corridors": {

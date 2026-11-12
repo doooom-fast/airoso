@@ -1627,7 +1627,11 @@ def _trim_folds(recs, pos, place, half, search, what):
     cuts = []
     for f0, f1 in clusters:
         best = None
-        for a in range(f0 - 1, max(-1, f0 - 1 - search), -1):         # in-leg segment (a, a+1), a < f0
+        # in-leg segment (a, a+1), a + 1 < f0: the segment INTO the first backward record (f0 - 1, f0) is the backward
+        # step itself, never the in-leg (write_ai_line.trim_loops starts here too). At a Z-fold (the width steps at the
+        # corner: LM v5's seam, 27.5 -> 17.0 m in one vertex) it 'crosses' the next out-leg segment at once and the cut
+        # dropped one ring, leaving a 4.9 m hook of strip standing back across the lane (the AI line 1.26 m off it).
+        for a in range(f0 - 2, max(-1, f0 - 2 - search), -1):
             for b in range(f1, min(n - 1, f1 + search)):               # out-leg segment (b, b+1), b >= f1
                 r = _seg_cross(P[a], P[a + 1], P[b], P[b + 1])
                 if r and 0.0 <= r[0] <= 1.0 and 0.0 <= r[1] <= 1.0 and (best is None or b - a < best[1] - best[0]):

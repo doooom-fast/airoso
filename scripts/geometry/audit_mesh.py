@@ -415,11 +415,35 @@ def audit(project_dir: str | Path, *, race: bool = False, obj: str = "track.obj"
               f"— D exempt there)")
     else:
         _stub_verts = set()
-    wall_on_road = 0
+    # A JUNCTION PAD'S HELD BAND (ledger 0085, Pikes Peak: tools/lm_pads_blend.py lm_pads.deck.hold_beyond_lane, recorded
+    # as pads.built.json held_band): between a pad's cuts the deck replaces the lap's edge strip on the wall's side and
+    # runs under the outer wall's foot, held at the lane edge's height; a wall vert inside that band (past the lane edge,
+    # never in the lane) stands on its own footing, as it stands on the edge strip everywhere else. Any other wall on a
+    # deck still counts; the wall's seating is drive_test's (floating) and E's. No held band recorded: nothing read.
+    _held = []
+    _pbp = data / "pads.built.json"
+    if _pbp.exists():
+        _held = [[tuple(q) for q in p["held_band"]["polygon_xz"]]
+                 for p in json.loads(_pbp.read_text(encoding="utf-8")).get("pads", []) if p.get("held_band")]
+
+    def _in_held(x, z):
+        for ring in _held:
+            ins = False
+            for i in range(len(ring)):
+                (ax, az), (bx, bz) = ring[i - 1], ring[i]
+                if (az > z) != (bz > z) and x < ax + (bx - ax) * (z - az) / (bz - az):
+                    ins = not ins
+            if ins:
+                return True
+        return False
+    wall_on_road = held_ok = 0
     for x, y, z in g["1WALL"]:
         if _in_band_D(x, z):
             continue
         if _stub_verts and (round(x, 4), round(y, 4), round(z, 4)) in _stub_verts and _stub_ok(x, z):
+            continue
+        if _held and _in_held(x, z):
+            held_ok += 1
             continue
         ry = _surf_at(main_th, 8.0, x, z, y, dy_max=1.2)
         if ry is not None and abs(y - ry) < 1.2:
@@ -759,6 +783,7 @@ def audit(project_dir: str | Path, *, race: bool = False, obj: str = "track.obj"
         "B_terrain_poke": len(poke_hits),
         "C_junction_crossings": len(cross),
         "D_wall_on_road": wall_on_road,
+        **({"D_held_band_exempt": held_ok} if held_ok else {}),
         "E_wall_floating": wall_float,
         "J_terrain_span": span_bad,
         "K_kerb_in_carriageway": kerb_on_road,
@@ -787,7 +812,8 @@ def audit(project_dir: str | Path, *, race: bool = False, obj: str = "track.obj"
     print(f"  A. supports standing in a road : {len(support_hits)}")
     print(f"  B. terrain poking through road : {len(poke_hits)}  (worst +{report['worst_poke_m']} m)")
     print(f"  C. at-grade junction crossings : {len(cross)}  ({report['C_by_kind']})")
-    print(f"  D. walls sitting on a road     : {wall_on_road}")
+    print(f"  D. walls sitting on a road     : {wall_on_road}"
+          + (f"  ({held_ok} wall verts on a junction pad's held band beside the lane: their footing, exempt)" if held_ok else ""))
     print(f"  E. walls floating over ground  : {wall_float}  (worst +{report['worst_float_m']} m)")
     print(f"  F. curbs not flush             : {curb_bad}  (of {len(g['1KERB'])} curb verts,\n                                      edge-scoped, top-surface only;\n                                      {curb_skirt} skirt verts off terrain (advisory), {curb_faces} side faces skipped,\n                                      grounding is gated by drive_test + E/H)")
     print(f"  G. plants floating over ground : {'(env not built)' if prop_float is None else prop_float}")

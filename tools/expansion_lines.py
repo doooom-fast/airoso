@@ -310,12 +310,15 @@ def centre_ribbon(proj):
 
 def pad_polygons(proj):
     """[(pad id, [(x, z)...] outline, [kind...])] of every junction pad as BUILT (data/pads.built.json, the deck's
-    outline with its stub arms; kinds per vertex: cut / edge / seam_* / stub_bar / stub_far); [] without the file"""
+    outline with its stub arms; kinds per vertex: cut / edge / seam_* / stub_bar / stub_far); [] without the file.
+    Lake Murray's pads record outline_xz; tools/lm_pads_blend.py's (Sand Creek, ledger 0079) record the same
+    engine-frame ring as outline_en (tools/plot_signs.py reads either the same way)"""
     pb = Path(proj) / "data" / "pads.built.json"
     if not pb.exists():
         return []
     d = json.loads(pb.read_text(encoding="utf-8"))
-    return [(pad["id"], [tuple(q) for q in pad["outline_xz"]], list(pad.get("kind") or [])) for pad in d.get("pads", [])]
+    return [(pad["id"], [tuple(q) for q in (pad.get("outline_xz") or pad["outline_en"])], list(pad.get("kind") or []))
+            for pad in d.get("pads", [])]
 
 
 def pad_stub_reach_m(proj):

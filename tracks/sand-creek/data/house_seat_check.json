@@ -1,6 +1,6 @@
 {
  "obj": "D:\\k10-workshops\\sand-creek\\project\\data\\track.obj",
- "buildings": 443,
+ "buildings": 444,
  "no_ground": 0,
  "floating": 0,
  "sunken": 0,
@@ -307,13 +307,13 @@
    "x": 147.8,
    "z": -788.3,
    "bottom": 28.95,
-   "top": 37.435,
+   "top": 37.436,
    "ground_low": 29.106,
    "ground_high": 30.565,
-   "ground_mean": 29.747,
+   "ground_mean": 29.736,
    "contact_m": -0.157,
    "show_m": 6.871,
-   "lens_buried_share": 0.094
+   "lens_buried_share": 0.093
   },
   {
    "group": "BUILDING_TILTUP_0",
@@ -736,10 +736,10 @@
    "x": 193.5,
    "z": -825.8,
    "bottom": 30.101,
-   "top": 38.336,
+   "top": 38.335,
    "ground_low": 30.251,
    "ground_high": 31.303,
-   "ground_mean": 30.777,
+   "ground_mean": 30.773,
    "contact_m": -0.15,
    "show_m": 7.032,
    "lens_buried_share": 0.082
@@ -923,7 +923,7 @@
    "ground_high": 22.624,
    "ground_mean": 21.852,
    "contact_m": -0.15,
-   "show_m": 4.04,
+   "show_m": 4.041,
    "lens_buried_share": 0.092
   },
   {
@@ -2065,10 +2065,10 @@
    "top": 40.803,
    "ground_low": 32.657,
    "ground_high": 34.199,
-   "ground_mean": 33.118,
+   "ground_mean": 33.142,
    "contact_m": -0.15,
    "show_m": 6.604,
-   "lens_buried_share": 0.074
+   "lens_buried_share": 0.077
   },
   {
    "group": "BUILDING_TILTUP_0",
@@ -2868,13 +2868,13 @@
    "x": -1216.5,
    "z": -581.5,
    "bottom": 22.057,
-   "top": 30.07,
+   "top": 30.073,
    "ground_low": 22.208,
    "ground_high": 23.2,
-   "ground_mean": 22.496,
+   "ground_mean": 22.577,
    "contact_m": -0.15,
-   "show_m": 6.87,
-   "lens_buried_share": 0.055
+   "show_m": 6.873,
+   "lens_buried_share": 0.065
   },
   {
    "group": "BUILDING_TILTUP_0",
@@ -3203,6 +3203,19 @@
   },
   {
    "group": "BUILDING_TILTUP_0",
+   "x": -798.5,
+   "z": 1232.2,
+   "bottom": 6.254,
+   "top": 14.272,
+   "ground_low": 6.403,
+   "ground_high": 6.949,
+   "ground_mean": 6.556,
+   "contact_m": -0.15,
+   "show_m": 7.323,
+   "lens_buried_share": 0.038
+  },
+  {
+   "group": "BUILDING_TILTUP_0",
    "x": 164.9,
    "z": 1043.6,
    "bottom": 9.837,
@@ -3505,12 +3518,12 @@
    "x": -1573.7,
    "z": 69.8,
    "bottom": 16.797,
-   "top": 24.894,
+   "top": 24.895,
    "ground_low": 16.999,
    "ground_high": 17.647,
-   "ground_mean": 17.259,
+   "ground_mean": 17.26,
    "contact_m": -0.202,
-   "show_m": 7.247,
+   "show_m": 7.248,
    "lens_buried_share": 0.057
   },
   {
@@ -4050,13 +4063,13 @@
    "group": "BUILDING_TILTUP_0",
    "x": -89.6,
    "z": -801.3,
-   "bottom": 25.601,
-   "top": 33.601,
-   "ground_low": 25.938,
+   "bottom": 25.604,
+   "top": 33.604,
+   "ground_low": 25.955,
    "ground_high": 26.061,
-   "ground_mean": 25.99,
-   "contact_m": -0.337,
-   "show_m": 7.54,
+   "ground_mean": 25.994,
+   "contact_m": -0.351,
+   "show_m": 7.542,
    "lens_buried_share": 0.049
   },
   {
@@ -4194,12 +4207,12 @@
    "x": -111.2,
    "z": -781.9,
    "bottom": 25.323,
-   "top": 33.689,
+   "top": 33.688,
    "ground_low": 25.473,
    "ground_high": 26.452,
-   "ground_mean": 26.075,
+   "ground_mean": 26.072,
    "contact_m": -0.15,
-   "show_m": 7.237,
+   "show_m": 7.236,
    "lens_buried_share": 0.09
   },
   {
@@ -4363,13 +4376,13 @@
    "x": -910.9,
    "z": -618.1,
    "bottom": 25.166,
-   "top": 33.278,
+   "top": 33.279,
    "ground_low": 25.305,
    "ground_high": 26.277,
-   "ground_mean": 25.615,
+   "ground_mean": 25.62,
    "contact_m": -0.139,
    "show_m": 7.001,
-   "lens_buried_share": 0.055
+   "lens_buried_share": 0.056
   },
   {
    "group": "BUILDING_TILTUP_0",

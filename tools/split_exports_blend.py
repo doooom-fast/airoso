@@ -195,7 +195,11 @@ def main():
     LAP = rf._race_lap()
     # ledger 0054: the lap groups — the mainline's declaration (barrier_bands.json) and one per lap a race layout
     # names (barrier_bands.<lap>.json); with no lap declared, the mainline's alone. No race layout = no common set.
-    laps = LAP.lap_ids(cfg)
+    # ledger 0085: a lap only BARE race layouts drive (kind race, no race_furniture: Pikes Peak's road course and infield)
+    # has no common set — it is the road's own lanes; the common blends are the furnished layouts' laps alone (every lap
+    # today's other tracks name is a furnished one, so their split is unchanged)
+    laps = sorted({LAP.lap_of(lo) for lo in (cfg.get("layouts") or [])
+                   if isinstance(lo, dict) and lo.get("race_furniture") and LAP.lap_of(lo)})
     has_main = bool(race_ids) and None in LAP.groups(cfg)
     bands_of = {None: rf.load_bands(proj) or {}}
     for lap in laps:
@@ -341,7 +345,10 @@ def main():
         c = _census()
         tag = f"closure_{lid}"
         _furniture_problems(tag, c, problems)
-        if not c["closure_objects"]:
+        whole_lap = bool((bands_of[lap_of[lid]].get("params") or {}).get("whole_lap"))
+        if not c["closure_objects"] and not (whole_lap and c["sign_objects"]):
+            # race.corridor.whole_lap (opt-in, ledger 0079 round K; Sand Creek): a layout racing the whole street round
+            # the whole lap declares no closure line; its closure kn5 carries its own sign plates alone (never nothing)
             problems.append(f"{tag}: EMPTY — no 1WALL_race_close_{tok}_* object in the input")
         alien = [n for n in c["race_objects"] if rf.race_owner(n) != tok]
         if alien:

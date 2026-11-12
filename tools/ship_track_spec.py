@@ -17,13 +17,20 @@ Schema (unknown keys are refused, so a typo is never silently ignored):
 - ``ui_name_prefix`` (str, required): the installed ``ui_track.json`` name is ``<prefix> - <layout name>``.
 - ``street_ai_july`` (absolute path, optional): where ``STREET_AI=july`` copies the July AI line from (SD).
 - ``audit_note`` (str, optional): printed in the street audit's step header (SD's regression floor).
+- ``engine`` (optional, ledger 0078): ``"lm-v4"`` builds the track on Lake Murray v4's engine — the loop assembler from
+  ``tracks/san-diego-lake-murray/scripts-v021`` (when the track has no ``scripts-v021`` of its own) and the prep / exporter /
+  spawn builder from engine-july (``ENG=<dir>``, as San Diego). ``"airoso"`` (the default) is airoso's own ``scripts/``.
+  San Diego itself needs no key (ship_track.sh has always picked engine-july for it); the line is emitted only when declared.
 - ``steps`` (required): ``{"draft": [...], "author": [...], "prep": ["prep", "split"], "ship": [...],
   "gate": [...]}``. ``draft`` = the steps ``--skip-blend`` skips (the engine draft and the scripted
   authoring that edit loop.blend); ``author`` = the steps every ship runs (layout dummies + the race
   furniture, idempotent); ``prep`` = exactly prep then split (the ``--dry-run`` stop comes after split);
   ``ship`` = exports, AI, packer, map, trees; ``gate`` = the gates on the built kn5.
-- ``sync_in`` : ``{"required": [...], "optional": [...], "globs": [...], "dirs": [...]}`` paths relative to
-  ``tracks/<track>/`` copied into the workshop project before the chain runs.
+- ``sync_in`` : ``{"required": [...], "optional": [...], "globs": [...], "dirs": [...], "assets": [...]}`` paths
+  relative to ``tracks/<track>/`` copied into the workshop project before the chain runs. ``assets`` alone is
+  relative to airoso's root and must lie under ``assets/``: each file is copied to the SAME relative path in the
+  project, every one required (Lake Murray v4's house textures, ledger 0065: a config ``texture_overrides`` path
+  ``assets/textures/<f>`` resolves to the engine's own file first and to the project's copy when the engine lacks it).
 - ``sync_out``: ``{"required": [...], "files": [...], "map": [[from, to], ...], "dirs": [...], "remove": [...]}``
   paths relative to the workshop project copied back into ``tracks/<track>/`` after the gates (the real
   workshop only). ``{id}`` expands to every layout id, ``{race}`` to every race layout id.
@@ -50,8 +57,9 @@ GLOB_RE = re.compile(r"^[A-Za-z0-9_.{}-]+(/[A-Za-z0-9_.{}-]+)*/[A-Za-z0-9_.-]*\*
 ABS_RE = re.compile(r"^[A-Za-z]:/[A-Za-z0-9_. /()-]*$")
 TEXT_RE = re.compile(r"^[^\t\r\n\x00-\x1f]{0,240}$")
 TOP = {"track", "workshop", "workshop_project", "require_race_layout", "ui_name_prefix", "street_ai_july",
-       "audit_note", "steps", "sync_in", "sync_out"}
-SYNC_IN = {"required", "optional", "globs", "dirs"}
+       "audit_note", "engine", "steps", "sync_in", "sync_out"}
+ENGINES = ("airoso", "lm-v4")
+SYNC_IN = {"required", "optional", "globs", "dirs", "assets"}
 SYNC_OUT = {"required", "files", "map", "dirs", "remove"}
 
 
@@ -113,6 +121,10 @@ def load(path, track: str) -> dict:
     if not isinstance(out["workshop_project"], str) or not NAME_RE.match(out["workshop_project"]) \
             or out["workshop_project"] in (".", ".."):
         raise SpecError(f"workshop_project {out['workshop_project']!r} must be one folder name")
+    if "engine" in spec:
+        if spec["engine"] not in ENGINES:
+            raise SpecError(f"engine {spec['engine']!r} must be one of {list(ENGINES)}")
+        out["engine"] = spec["engine"]
     if not isinstance(out["require_race_layout"], bool):
         raise SpecError("require_race_layout must be true or false")
     steps = spec.get("steps")
@@ -145,8 +157,12 @@ def load(path, track: str) -> dict:
     out["sync_in"] = {"required": [_rel(p, "sync_in.required") for p in _list(si, "required", "sync_in")],
                       "optional": [_rel(p, "sync_in.optional") for p in _list(si, "optional", "sync_in")],
                       "globs": [_rel(p, "sync_in.globs", glob=True) for p in _list(si, "globs", "sync_in")],
-                      "dirs": [_rel(p, "sync_in.dirs") for p in _list(si, "dirs", "sync_in")]}
-    for k in ("required", "optional", "dirs"):
+                      "dirs": [_rel(p, "sync_in.dirs") for p in _list(si, "dirs", "sync_in")],
+                      "assets": [_rel(p, "sync_in.assets") for p in _list(si, "assets", "sync_in")]}
+    for p in out["sync_in"]["assets"]:
+        if not p.startswith("assets/"):
+            raise SpecError(f"sync_in.assets: {p!r} is not under airoso's assets/")
+    for k in ("required", "optional", "dirs", "assets"):
         for p in out["sync_in"][k]:
             if "{" in p:
                 raise SpecError(f"sync_in.{k}: {p!r}: templates are for sync_out only")
@@ -169,9 +185,11 @@ def lines(spec: dict) -> list[str]:
            f"require_race_layout\t{1 if spec['require_race_layout'] else 0}",
            f"ui_name_prefix\t{spec['ui_name_prefix']}", f"audit_note\t{spec['audit_note']}",
            f"street_ai_july\t{spec['street_ai_july']}"]
+    if spec.get("engine"):
+        out.append(f"engine\t{spec['engine']}")      # only when declared: every older spec's lines are unchanged
     for ph in PHASES:
         out += [f"step.{ph}\t{n}" for n in spec["steps"][ph]]
-    for k in ("required", "optional", "globs", "dirs"):
+    for k in ("required", "optional", "globs", "dirs", "assets"):
         out += [f"in.{k}\t{p}" for p in spec["sync_in"][k]]
     for k in ("required", "files", "dirs", "remove"):
         out += [f"out.{k}\t{p}" for p in spec["sync_out"][k]]

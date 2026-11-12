@@ -126,12 +126,36 @@ def main():
     if cfgp.exists():
         exact_prefixes = [str(x) for x in (json.loads(cfgp.read_text(encoding="utf-8")).get("route", {})
                                            .get("weld_exact_deck") or [])]
+    # ledger 0079 round J (opt-in, Sand Creek): route.weld_deck_beyond_end — piece-name prefixes whose weld reads, past
+    # the host's open end, the deck of the street that end is welded to (mouth_weld.BeyondEndDeck); absent = as before
+    beyond_prefixes = []
+    if cfgp.exists():
+        beyond_prefixes = [str(x) for x in (json.loads(cfgp.read_text(encoding="utf-8")).get("route", {})
+                                            .get("weld_deck_beyond_end") or [])]
+    # ledger 0078: the connectors' edge is the assembler's own (route.edge; absent = Lake Murray's curb + 1.5 m walk)
+    cfg_route = (json.loads(cfgp.read_text(encoding="utf-8")).get("route") or {}) if cfgp.exists() else {}
+    # ledger 0085 (opt-in, Pikes Peak): route.weld_deck_apron — a mouth on the mainline's apron side reads the deck past
+    # the edge as the measured apron (route.edge_apron_file: width and fall per point, keyed by position); absent = as before
+    apron = None
+    if cfg_route.get("weld_deck_apron"):
+        rel_a = cfg_route.get("edge_apron_file")
+        if not rel_a:
+            raise SystemExit("[weld] FATAL: route.weld_deck_apron needs route.edge_apron_file")
+        aj = json.loads((proj / rel_a).read_text(encoding="utf-8"))
+        apron = {"side": 1 if aj["side"] == "left" else -1, "pts": aj["points_xz"], "w": aj["width_m"],
+                 "s": aj["slope"], "rows": None, "round_m": float(aj.get("round_m") or 0.0)}
+    _edge_main, edge_conn = wr.edge_profile(cfg_route)
     main_pts = [tuple(p) for p in local["points_xyz_m"]]
     lay = mw.mesh_layout(main_pts, conns)
     cdict = {c["name"]: c for c in conns}
 
     bpy.ops.wm.open_mainfile(filepath=str(proj / "loop.blend"))
     obs = {n: bpy.data.objects.get(n) for n in ("ROAD", "CURB", "MARKINGS", "YLINE")}
+    # ledger 0078: a track that paints no centre line (route.divided_double false, a circuit) has no YLINE at all — the
+    # assembler skips an empty mesh. Every connector then paints none either (its yellow block is empty), so the weld has
+    # nothing to move there. Lake Murray always has one.
+    if obs["YLINE"] is None and cfg_route.get("divided_double", True) is False:
+        obs.pop("YLINE")
     for n, ob in obs.items():
         if ob is None:
             raise SystemExit(f"[weld] FATAL: no {n} object in loop.blend")
@@ -139,6 +163,8 @@ def main():
         raise SystemExit("[weld] FATAL: loop.blend is already welded (ROAD carries the mouth_weld stamp) — rebuild "
                          "it with build_loop_blend first; the weld runs once per rebuild")
     V = {n: _read(ob) for n, ob in obs.items()}
+    if "YLINE" not in V:
+        V["YLINE"] = np.empty((0, 3), dtype=np.float64)
     if len(V["ROAD"]) != lay["_road_total"] or len(V["CURB"]) != lay["_curb_total"]:
         raise SystemExit(f"[weld] FATAL: ROAD {len(V['ROAD'])} / CURB {len(V['CURB'])} verts, the assembler's layout "
                          f"says {lay['_road_total']} / {lay['_curb_total']} — the row order changed; not welding")
@@ -154,8 +180,7 @@ def main():
         cpts = ws.smooth_centerline(cpts, sigma_pts=1.5, passes=1, sigma_y_pts=1.0)
         cw = list(c["widths_m"])
         rib = [(x, y + 0.10, z) for (x, y, z) in wr.road_ribbon(cpts, cw)["vertices"]]
-        ker = wr.curb_sidewalk(cpts, cw, lift=0.10, curb_h=0.14, curb_face_w=0.08, sidewalk_w=1.5, grade_w=1.2,
-                               grass_clearance=0.10)["vertices"]
+        ker = wr.curb_sidewalk(cpts, cw, **edge_conn)["vertices"]   # the assembler's own connector edge (route.edge)
         cmk = wr.connector_markings(cpts, cw, c.get("stub"), c.get("paint"))     # the assembler's own call (a phase-5 stub: its street's paint; a P3 piece: its authored paint)
         mk = {"MARKINGS": [(x, y + 0.115, z) for (x, y, z) in cmk["white"]["vertices"]],
               "YLINE": [(x, y + 0.115, z) for (x, y, z) in cmk["yellow"]["vertices"]]}
@@ -364,7 +389,31 @@ def main():
         cx, _cy, cz = mo["cut_xyz"]
         Deck = mw.ExactHostDeck if any(str(mo["connector"]).startswith(px) for px in exact_prefixes) else mw.HostDeck
         deck = Deck(hrows, mw.host_window(hrows, lay[host]["closed"], cx, cz))
-        far = rows_old[min(len(rows_old) - 1, 6)][1]
+        if any(str(piece).startswith(px) for px in beyond_prefixes):
+            # ledger 0079 round J (opt-in route.weld_deck_beyond_end, Sand Creek): past the host's open end, on the
+            # street that end is welded to, the deck is that street's (mouth_weld.BeyondEndDeck); absent = as before
+            hw = deck.idx
+            third = []
+            for m2 in mouths:
+                if m2.get("piece") == host and m2["host"] in lay and m2.get("end") in ("start", "end"):
+                    r3 = rows_of(m2["host"])
+                    c3 = m2["cut_xyz"]
+                    third.append(mw.ExactHostDeck(r3, mw.host_window(r3, lay[m2["host"]]["closed"], c3[0], c3[2])))
+            deck = mw.BeyondEndDeck(deck, third, open_start=not lay[host]["closed"] and hw[0] == 0,
+                                    open_end=not lay[host]["closed"] and hw[-1] == lay[host]["rows"] - 1)
+        if apron is not None and host == "MAINLINE" and side == apron["side"]:
+            # ledger 0085 (opt-in route.weld_deck_apron): past the mainline's edge on its apron side the deck is the
+            # measured apron (mouth_weld.ApronDeck), per host row off route.edge_apron_file; absent = as before
+            if apron.get("rows") is None:
+                PA, WA, SA = apron["pts"], apron["w"], apron["s"]
+                aw, as_ = [], []
+                for (_l, c_, _r) in hrows:
+                    j = min(range(len(PA)), key=lambda q: (PA[q][0] - c_[0]) ** 2 + (PA[q][1] - c_[2]) ** 2)
+                    aw.append(float(WA[j]))
+                    as_.append(float(SA[j]))
+                apron["rows"] = (aw, as_)
+            deck = mw.ApronDeck(deck, apron["side"], *apron["rows"], round_m=apron["round_m"])
+        far =rows_old[min(len(rows_old) - 1, 6)][1]
         if (1 if deck.project(far[0], far[2])[3] >= 0 else -1) != side:
             raise SystemExit(f"[weld] FATAL: mouth {tag}: the piece approaches from side "
                              f"{-side:+d}, mouths.json says {side:+d}")
@@ -387,7 +436,18 @@ def main():
             if deck.inside(q[0], q[2]):
                 before.append(q[1] - deck.at(q[0], q[2]))
         try:
-            res = mw.weld_end(lines, deck, side, inset, h)
+            # a mouth record's own extend_max_m (tools/trim_connectors.py street junctions, ledger 0079 0.2.3: an acute
+            # fork's outer lines run on along the host edge for (half width + edge strip) / tan(angle)); absent = as before
+            # and its weld_hold "overlap" (the same acute mouths): rows on the host deck up to the furthest mitre
+            # and its weld_runon "mitre" (ledger 0079 round H, street_junctions.weld_runon): past each line's mitre the
+            # warp eases from the deck at that mitre, not from each vertex's projection onto the host
+            # and a median crossing's weld_blend_m / weld_remap_min_m (the piece's own length, 0: both ends welded, the two
+            # eases summing to one); absent = BLEND_M / REMAP_MIN_M
+            res = mw.weld_end(lines, deck, side, inset, h, extend_max=float(mo.get("extend_max_m", mw.EXTEND_MAX_M)),
+                              hold_overlap=mo.get("weld_hold") == "overlap",
+                              runon_at_mitre=mo.get("weld_runon") == "mitre",
+                              blend_m=float(mo.get("weld_blend_m", mw.BLEND_M)),
+                              remap_min=float(mo.get("weld_remap_min_m", mw.REMAP_MIN_M)))
         except mw.WeldError as e:
             raise SystemExit(f"[weld] FATAL: mouth {tag}: {e}")
         new, K, J = res["new"], res["K"], res["J"]
@@ -440,11 +500,16 @@ def main():
                "host_vertex": mo["host_vertex"], "angle_deg": mo.get("angle_deg"), "host_grade": mo.get("host_grade"),
                "rows_respread": J, "rows_touched": K, "markings_moved": moved_mk,
                **({"deck": "exact (route.weld_exact_deck)"} if Deck is mw.ExactHostDeck else {}),
+               **({"deck_beyond_end": {"third": len(deck.beyond), "points_read": deck.hits}}
+                  if isinstance(deck, mw.BeyondEndDeck) else {}),
                "cut_arc_m": {f"{k[0]}{''.join('%+d' % v for v in k[1:])}": round(v, 3) for k, v in res["u_x"].items()},
                "end_dy_m": [round(res["dy_end"][("road", lane)], 3) for lane in range(3)],
                "end_vs_host_before_m": [round(v, 3) for v in before],
                "end_vs_host_after_max_m": round(end_dev, 4),
                "above_host_after": above[:12], "folds": folds[:12]}
+        if isinstance(deck, mw.BeyondEndDeck):
+            print(f"[weld] {tag}: past the host's open end, {deck.hits} point(s) read the deck of the street it is "
+                  f"welded to ({len(deck.beyond)} street(s); route.weld_deck_beyond_end)")
         report.append(rec)
         print(f"[weld] {piece} ({end}) -> {host} side {side:+d}: angle {mo.get('angle_deg')} deg, grade "
               f"{100 * (mo.get('host_grade') or 0):+.2f} %; road cut arcs L/C/R "

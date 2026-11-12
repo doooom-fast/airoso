@@ -24,8 +24,8 @@
  "leak_cells": 0,
  "leak_m2": 0,
  "escaped": false,
- "wall_cells": 587313,
- "wall_tris_in_band": 166026,
+ "wall_cells": 594423,
+ "wall_tris_in_band": 167949,
  "door_clusters": 0,
  "doors": [],
  "doors_by_class": {},
@@ -37,5 +37,5 @@
  "spawns_unreached": [],
  "fail": false,
  "fails": [],
- "seconds": 22.8
+ "seconds": 26.7
 }

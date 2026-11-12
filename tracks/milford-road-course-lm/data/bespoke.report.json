@@ -1,0 +1,67 @@
+{
+ "buildings": [
+  {
+   "key": "pad_tent",
+   "sides_m": [
+    20.53,
+    53.38,
+    20.53,
+    53.38
+   ],
+   "ground": [
+    14.094,
+    15.661
+   ],
+   "bottom": 13.944,
+   "eave": 18.408,
+   "clear_m": Infinity
+  }
+ ],
+ "blocks": [
+  {
+   "key": "mpg_plant_a",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 11.0,
+   "ground": [
+    8.72,
+    14.42
+   ],
+   "bottom": 8.57,
+   "eave": 19.57,
+   "off_terrain": true,
+   "collider": false
+  },
+  {
+   "key": "mpg_plant_b",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 11.0,
+   "ground": [
+    -0.13,
+    11.72
+   ],
+   "bottom": -0.28,
+   "eave": 10.72,
+   "off_terrain": true,
+   "collider": false
+  }
+ ],
+ "pads": [
+  {
+   "key": "ride_pad",
+   "cells": 1058,
+   "left_out": 0
+  }
+ ],
+ "cards": [
+  {
+   "file": "source/bespoke/trees.json",
+   "prefix": "TREECARD",
+   "stood": 4431,
+   "dropped": 26
+  }
+ ]
+}

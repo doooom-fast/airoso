@@ -1,0 +1,188 @@
+{
+ "_doc": "Declared pavement that may lie off the lap: the road-inventory gate's exemption polygons (tools/verify_road_inventory.py; V3-PLAN P5 'road inventory', ledger 0048). Every pavement triangle of the BUILT track must lie within half-width + 2 m of the route [invented] or inside one of these polygons. Each entry names the AUTH_* object it covers (the hand-authored Blender object, P3); its polygon is drawn when that object is authored, from the aerial / the object itself, never before. An entry with no polygon exempts NOTHING: the gate lists it as unmeasured, so pavement built before its polygon is declared fails, which is the point. match 'footprint' = any pavement triangle inside the polygon is exempt; 'name_and_footprint' = only triangles of a group whose name contains the object name (the C-470 decks: the plan exempts them 'by name and footprint'). active false = not declared for this build (kept so the plan's list stays visible). Polygons go in polygon_lonlat ([lon, lat] pairs, WGS84; the gate projects them with data/centerline.local.json's origin, so they never depend on a build's frame) or polygon_xz (the gate OBJ's own frame, metres, x east, z north). Stations are metres along the V3 paint centreline from the pylons (track.config.json's frame), approximate where marked ~, as anchors for the author only: the gate reads the polygon, never the station.",
+ "pavement_prefixes": ["1ROAD", "AUTH_OVERPASS"],
+ "_pavement_prefixes_doc": "Which built groups are pavement: every drivable road (1ROAD*, the ribbon and anything authored drivable) and the C-470 deck slabs, which are visual-only (no prefix) but are paved road all the same (D5: 'named AUTH_overpass_*, never HIGHWAY*'). HIGHWAY* / HWYSTRUCT* / MOUNTAINS* are refused outright by name, exemption or not.",
+ "exemptions": [
+  {
+   "id": "c1_pad",
+   "object": "AUTH_hairpin_pad_C1",
+   "what": "C1's 14 m widening pad at the base hairpin (A2; built as an AUTH_ object, hidden for Drive 1, decided after Drive 1)",
+   "anchor": {"corner": "C1", "st_m": 276},
+   "match": "footprint",
+   "polygon_lonlat": [],
+   "status": "unmeasured: drawn with the pad (P3c)"
+  },
+  {
+   "id": "mouth_c12",
+   "object": "AUTH_mouth_C12",
+   "what": "C12 Paradise Rd tee: the race-turn box with Lookout Mountain Rd's south leg welded on (P3b; D3 a open box)",
+   "anchor": {"corner": "C12", "st_m": 9750},
+   "match": "footprint",
+   "polygon_lonlat": [],
+   "status": "unmeasured: drawn with the mouth (P3b)"
+  },
+  {
+   "id": "mouth_c14",
+   "object": "AUTH_mouth_C14",
+   "what": "C14 Paradise Rd -> US-40 (P3b; open box)",
+   "anchor": {"corner": "C14", "st_m": "~11,652"},
+   "match": "footprint",
+   "polygon_lonlat": [],
+   "status": "unmeasured: drawn with the mouth (P3b)"
+  },
+  {
+   "id": "mouth_c15",
+   "object": "AUTH_mouth_C15",
+   "what": "C15 exit 259 signals (P3b; open box)",
+   "anchor": {"corner": "C15", "st_m": "~16,546"},
+   "match": "footprint",
+   "polygon_lonlat": [],
+   "status": "unmeasured: drawn with the mouth (P3b)"
+  },
+  {
+   "id": "mouth_c16",
+   "object": "AUTH_mouth_C16",
+   "what": "C16 Colfax -> US-6, the 152 deg signal (P3b; open box)",
+   "anchor": {"corner": "C16", "st_m": "~20,190"},
+   "match": "footprint",
+   "polygon_lonlat": [],
+   "status": "unmeasured: drawn with the mouth (P3b)"
+  },
+  {
+   "id": "mouth_c18",
+   "object": "AUTH_mouth_C18",
+   "what": "C18 ramp end -> 19th St (P3b; open box)",
+   "anchor": {"corner": "C18", "st_m": "~24,250"},
+   "match": "footprint",
+   "polygon_lonlat": [],
+   "status": "unmeasured: drawn with the mouth (P3b)"
+  },
+  {
+   "id": "side_road_stubs",
+   "object": "AUTH_stub",
+   "what": "the ~45 named side-road and ramp stubs (A9; dossier 4b; JUNCTIONS R18(c): short visual stubs with curb returns, no physics). One entry per stub replaces this one when P3b authors them (AUTH_stub_<name>), each with its own polygon",
+   "anchor": {"list": "DOSSIER.md 4b"},
+   "match": "name_and_footprint",
+   "polygon_lonlat": [],
+   "status": "unmeasured: split into one polygon per stub in P3b"
+  },
+  {
+   "id": "windy_saddle_lot",
+   "object": "AUTH_lot_windy_saddle",
+   "what": "the Windy Saddle trailhead lot (open, flat ground; dossier: second pass)",
+   "anchor": {"st_m": "~4,950"},
+   "match": "footprint",
+   "polygon_lonlat": [],
+   "status": "unmeasured: drawn on the aerial when the lot is authored"
+  },
+  {
+   "id": "overlook_1",
+   "object": "AUTH_overlook_1",
+   "what": "paved overlook 1 of 4 (DOSSIER: '4 paved overlooks'; candidates on st ~1,700-2,300: Lariat Scenic View, Sensation Point). Renamed to the real overlook when the dossier 12 survey identifies it",
+   "anchor": {"st_m": "~1,700-2,300"},
+   "match": "footprint",
+   "polygon_lonlat": [],
+   "status": "unmeasured: unidentified until the survey"
+  },
+  {
+   "id": "overlook_2",
+   "object": "AUTH_overlook_2",
+   "what": "paved overlook 2 of 4 (as overlook_1)",
+   "anchor": {"st_m": "unknown"},
+   "match": "footprint",
+   "polygon_lonlat": [],
+   "status": "unmeasured: unidentified until the survey"
+  },
+  {
+   "id": "overlook_3",
+   "object": "AUTH_overlook_3",
+   "what": "paved overlook 3 of 4 (as overlook_1)",
+   "anchor": {"st_m": "unknown"},
+   "match": "footprint",
+   "polygon_lonlat": [],
+   "status": "unmeasured: unidentified until the survey"
+  },
+  {
+   "id": "overlook_4",
+   "object": "AUTH_overlook_4",
+   "what": "paved overlook 4 of 4 (as overlook_1)",
+   "anchor": {"st_m": "unknown"},
+   "match": "footprint",
+   "polygon_lonlat": [],
+   "status": "unmeasured: unidentified until the survey"
+  },
+  {
+   "id": "lid",
+   "object": "AUTH_lid_19th",
+   "what": "the 19th St 'Linking Lookout' lid over US-6: a park deck ~85 m wide along US-6, held level across its span (P2 step 5, P3b; config scenery.structures.lid)",
+   "anchor": {"st_m": [24362, 24375], "tunnel_ways": [533503591, 533679737]},
+   "match": "footprint",
+   "polygon_lonlat": [],
+   "status": "unmeasured: footprint 'measure on the aerial' (config)"
+  },
+  {
+   "id": "c470_deck_colfax",
+   "object": "AUTH_overpass_c470_colfax",
+   "what": "C-470's bridges over West Colfax (D5: scenery deck slabs at C-470's real alignment and width, both directions plus two ramps; no prefix, never HIGHWAY*)",
+   "anchor": {"st_m": [19349, 19378], "ways": [84721006, 84720931, 84720904, 1459465701]},
+   "match": "name_and_footprint",
+   "polygon_lonlat": [],
+   "status": "unmeasured: deck width and clearance 'aerial + Street View' (config scenery.structures.c470_bridges)"
+  },
+  {
+   "id": "c470_deck_us6",
+   "object": "AUTH_overpass_c470_us6",
+   "what": "C-470's bridge over US-6 (D5)",
+   "anchor": {"st_m": 21149, "ways": [84720905]},
+   "match": "name_and_footprint",
+   "polygon_lonlat": [],
+   "status": "unmeasured: as c470_deck_colfax"
+  },
+  {
+   "id": "d2_slab_exit259",
+   "object": "AUTH_slab_exit259",
+   "what": "D2 (a) slab at exit 259: both sides and the median, one piece (P3e); the other side is way 42005706",
+   "anchor": {"st_m": [16621.1, 16707.3], "other_side_ways": [42005706]},
+   "match": "footprint",
+   "polygon_lonlat": [],
+   "status": "unmeasured: drawn with the slab (P3e)"
+  },
+  {
+   "id": "d2_slab_colfax",
+   "object": "AUTH_slab_colfax",
+   "what": "D2 (a) slab on West Colfax's one-way piece before the US-6 signal (P3e); the other side is way 815581608",
+   "anchor": {"st_m": [19968.2, 20279.8], "other_side_ways": [815581608]},
+   "match": "footprint",
+   "polygon_lonlat": [],
+   "status": "unmeasured: drawn with the slab (P3e)"
+  },
+  {
+   "id": "d2_slab_us6_offramp",
+   "object": "AUTH_slab_us6",
+   "what": "D2 (a) slab on US-6 and its off-ramp to 19th St (4,035 m; P3e); the other carriageway's 20 ways are in track.config.json divided.stretches[us6_offramp].other_side_ways",
+   "anchor": {"st_m": [20294.3, 24329.2]},
+   "match": "footprint",
+   "polygon_lonlat": [],
+   "status": "unmeasured: drawn with the slab (P3e)"
+  },
+  {
+   "id": "d2_slab_nineteenth",
+   "object": "AUTH_slab_nineteenth",
+   "what": "D2 (a) slab on 19th St at the ramp terminal, the westbound side driven (P3e); the other side is way 533500102",
+   "anchor": {"st_m": [24329.2, 24382.8], "other_side_ways": [533500102]},
+   "match": "footprint",
+   "polygon_lonlat": [],
+   "status": "unmeasured: drawn with the slab (P3e)"
+  },
+  {
+   "id": "d2b_reverse_route",
+   "object": "AUTH_route_reverse_d2b",
+   "what": "D2 (b)'s second Reverse route (US-6's other carriageway, on-ramp 642334992, 19th St eastbound, the southbound Colfax approach, exit 259's way 42005706)",
+   "active": false,
+   "_why_inactive": "Kevin chose D2 (a) on 2026-10-11 (track.config.json divided.treatment one_slab_with_median): there is no second route to exempt. Listed because the plan names it; it becomes active only if D2 (b) is ever chosen.",
+   "match": "footprint",
+   "polygon_lonlat": [],
+   "status": "not declared (D2 a)"
+  }
+ ]
+}

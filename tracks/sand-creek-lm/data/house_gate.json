@@ -1,0 +1,26 @@
+{
+ "kn5": "D:\\k10-scratch\\sand_creek_lm\\build\\sand_creek_raceway.kn5",
+ "counts": {
+  "roofs": 2182,
+  "blocks": 2182,
+  "colliders": 0
+ },
+ "floor": {
+  "roofs": 2181,
+  "blocks": 2181,
+  "colliders": 0
+ },
+ "detail": {
+  "BUILDING_METAL": 173,
+  "BUILDING_SIDING": 1291,
+  "BUILDING_STUCCO": 9,
+  "BUILDING_TILTUP": 709,
+  "ROOFTOP_DARK": 102,
+  "ROOFTOP_SHINGLE": 1291,
+  "ROOFTOP_TAN": 515,
+  "ROOFTOP_WHITE": 274
+ },
+ "weld_m": 0.001,
+ "fail": false,
+ "below": []
+}

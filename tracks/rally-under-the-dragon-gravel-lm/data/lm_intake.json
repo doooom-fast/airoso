@@ -1,0 +1,102 @@
+{
+ "source_track": "rally-under-the-dragon-gravel",
+ "points": 8576,
+ "lap_m": 25716.5,
+ "closed": false,
+ "widths_m": [
+  4.0,
+  7.3,
+  15.51
+ ],
+ "bridges_levelled": [],
+ "max_grade_pct": null,
+ "measured_max_grade_pct": 20.91,
+ "y_changed_points": 0,
+ "y_change_max_m": 0.0,
+ "connectors": false,
+ "bespoke_files": [],
+ "crossfall": null,
+ "profile": {
+  "cap_was_pct": 18.0,
+  "reproduced_within_m": 0.0067,
+  "points_moved": 43,
+  "max_move_m": 1.033,
+  "road_seek_widths": {
+   "bounded_stations": 2184,
+   "width_m": [
+    4.22,
+    15.51
+   ],
+   "changed_by_m_max": 9.01
+  },
+  "road_seek_relaxed_points": 14,
+  "switchbacks": [
+   {
+    "id": "S9",
+    "st_m": 22542.1,
+    "radius_m": 15.93,
+    "width_m": 6.82,
+    "side": "left",
+    "span_i": [
+     7510,
+     7531
+    ],
+    "join_m": [
+     33.1,
+     28.7
+    ],
+    "points": 20,
+    "arc_deg": 147.3,
+    "back_steps": 0,
+    "inside_edge_r_m": 12.52,
+    "arc_points": 14,
+    "on_platform": true,
+    "status": "PASS"
+   }
+  ],
+  "road_seek": {
+   "file": "data/road_seek.json",
+   "offset_abs_m": {
+    "median": 0.0,
+    "max": 13.09
+   },
+   "steepest_10m_pct": 20.91
+  }
+ },
+ "width_taper": {
+  "rate_m_per_m": 0.1,
+  "points_widened": 908,
+  "max_widening_m": 5.17
+ },
+ "pad_widths": [
+  {
+   "file": "source/pads/DC.json",
+   "id": "DC",
+   "cuts": [
+    816,
+    848
+   ],
+   "width_m": [
+    4.0,
+    10.69
+   ],
+   "was_m": [
+    5.7,
+    10.34
+   ]
+  }
+ ],
+ "resample": null,
+ "edge_on_wall": null,
+ "corner_arcs": null,
+ "carried": [
+  "centerline.elevation.json",
+  "centerline.elevation.json (z_raw_m: the road_seek road)"
+ ],
+ "grid_upsample": 1,
+ "md5": {
+  "source_centerline": "57c1c45c8a4ec1bf224166a1ac0be20e",
+  "heightfield.npy": "83276580a96741aa852b35c3c3a4cd81",
+  "centerline.local.json": "f114a89a89c1b28481ce92056fb9df7a"
+ }
+}

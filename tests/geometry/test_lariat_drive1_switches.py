@@ -94,6 +94,9 @@ def test_no_other_track_opts_in():
     for p in sorted((ROOT / "tracks").glob("*/track.config.json")):
         if p.parent.name == "lookout-lariat":
             continue
+        sp = p.parent / "ship.json"
+        if sp.exists() and json.loads(sp.read_text(encoding="utf-8")).get("engine") == "lm-v4":
+            continue        # an LM-engine port (ledger 0078): build_mesh never runs on it, so its switches are unread
         cfg = json.loads(p.read_text(encoding="utf-8"))
         assert fold_plateaus_enabled(cfg) is True, p
         assert draft_walls_enabled(cfg) is True, p

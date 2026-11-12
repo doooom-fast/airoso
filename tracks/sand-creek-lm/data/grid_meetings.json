@@ -1,0 +1,2822 @@
+{
+ "_doc": "tools/grid_meetings.py (ledger 0079 round B): every place two grid pieces meet, its kind, shape and what the LM junction chain does with it (lap / host = trimmed to a mouth; overlap = left as two ribbons)",
+ "source": "connectors.local.json.pre-trim",
+ "hosts": [
+  "grid_primary*",
+  "grid_secondary*"
+ ],
+ "meetings": [
+  {
+   "a": "grid_unclassified_0",
+   "b": "grid_tertiary_3",
+   "kind": "minor/minor",
+   "classes": [
+    "unclassified",
+    "tertiary"
+   ],
+   "shape": "X",
+   "fate": "overlap",
+   "xz": [
+    -359.3,
+    -298.6
+   ],
+   "lonlat": [
+    -104.926993,
+    39.783747
+   ]
+  },
+  {
+   "a": "grid_unclassified_0",
+   "b": "grid_unclassified_41",
+   "kind": "minor/minor",
+   "classes": [
+    "unclassified",
+    "unclassified"
+   ],
+   "shape": "T",
+   "fate": "overlap",
+   "xz": [
+    -358.9,
+    -589.6
+   ],
+   "lonlat": [
+    -104.926988,
+    39.781115
+   ]
+  },
+  {
+   "a": "grid_unclassified_0",
+   "b": "grid_unclassified_43",
+   "kind": "minor/minor",
+   "classes": [
+    "unclassified",
+    "unclassified"
+   ],
+   "shape": "X",
+   "fate": "overlap",
+   "xz": [
+    -358.6,
+    -703.6
+   ],
+   "lonlat": [
+    -104.926985,
+    39.780084
+   ]
+  },
+  {
+   "a": "grid_unclassified_0",
+   "b": "grid_unclassified_43",
+   "kind": "minor/minor",
+   "classes": [
+    "unclassified",
+    "unclassified"
+   ],
+   "shape": "X",
+   "fate": "overlap",
+   "xz": [
+    -358.5,
+    -700.6
+   ],
+   "lonlat": [
+    -104.926985,
+    39.780111
+   ]
+  },
+  {
+   "a": "grid_tertiary_1",
+   "b": "grid_tertiary_2",
+   "kind": "minor/minor",
+   "classes": [
+    "tertiary",
+    "tertiary"
+   ],
+   "shape": "T",
+   "fate": "overlap",
+   "xz": [
+    379.4,
+    108.2
+   ],
+   "lonlat": [
+    -104.918358,
+    39.787428
+   ]
+  },
+  {
+   "a": "grid_tertiary_1",
+   "b": "grid_unclassified_38",
+   "kind": "minor/minor",
+   "classes": [
+    "tertiary",
+    "unclassified"
+   ],
+   "shape": "X",
+   "fate": "overlap",
+   "xz": [
+    1084.0,
+    -134.4
+   ],
+   "lonlat": [
+    -104.910121,
+    39.785233
+   ]
+  },
+  {
+   "a": "grid_tertiary_1",
+   "b": "grid_unclassified_38",
+   "kind": "minor/minor",
+   "classes": [
+    "tertiary",
+    "unclassified"
+   ],
+   "shape": "X",
+   "fate": "overlap",
+   "xz": [
+    1087.0,
+    -134.4
+   ],
+   "lonlat": [
+    -104.910086,
+    39.785233
+   ]
+  },
+  {
+   "a": "grid_tertiary_1",
+   "b": "grid_tertiary_40",
+   "kind": "minor/minor",
+   "classes": [
+    "tertiary",
+    "tertiary"
+   ],
+   "shape": "X",
+   "fate": "overlap",
+   "xz": [
+    844.0,
+    -135.3
+   ],
+   "lonlat": [
+    -104.912927,
+    39.785225
+   ]
+  },
+  {
+   "a": "grid_tertiary_1",
+   "b": "grid_tertiary_40",
+   "kind": "minor/minor",
+   "classes": [
+    "tertiary",
+    "tertiary"
+   ],
+   "shape": "X",
+   "fate": "overlap",
+   "xz": [
+    847.0,
+    -135.3
+   ],
+   "lonlat": [
+    -104.912892,
+    39.785225
+   ]
+  },
+  {
+   "a": "grid_tertiary_1",
+   "b": "grid_unclassified_58",
+   "kind": "minor/minor",
+   "classes": [
+    "tertiary",
+    "unclassified"
+   ],
+   "shape": "T",
+   "fate": "overlap",
+   "xz": [
+    985.0,
+    -134.8
+   ],
+   "lonlat": [
+    -104.911279,
+    39.78523
+   ]
+  },
+  {
+   "a": "grid_tertiary_1",
+   "b": "grid_unclassified_59",
+   "kind": "minor/minor",
+   "classes": [
+    "tertiary",
+    "unclassified"
+   ],
+   "shape": "T",
+   "fate": "overlap",
+   "xz": [
+    1246.0,
+    -133.5
+   ],
+   "lonlat": [
+    -104.908228,
+    39.785241
+   ]
+  },
+  {
+   "a": "grid_tertiary_1",
+   "b": "grid_unclassified_60",
+   "kind": "minor/minor",
+   "classes": [
+    "tertiary",
+    "unclassified"
+   ],
+   "shape": "L",
+   "fate": "overlap",
+   "xz": [
+    1356.0,
+    -133.5
+   ],
+   "lonlat": [
+    -104.906942,
+    39.785241
+   ]
+  },
+  {
+   "a": "grid_tertiary_1",
+   "b": "grid_unclassified_61",
+   "kind": "minor/minor",
+   "classes": [
+    "tertiary",
+    "unclassified"
+   ],
+   "shape": "T",
+   "fate": "overlap",
+   "xz": [
+    712.0,
+    -135.6
+   ],
+   "lonlat": [
+    -104.91447,
+    39.785222
+   ]
+  },
+  {
+   "a": "grid_tertiary_1",
+   "b": "grid_unclassified_72",
+   "kind": "minor/minor",
+   "classes": [
+    "tertiary",
+    "unclassified"
+   ],
+   "shape": "L",
+   "fate": "overlap",
+   "xz": [
+    1356.0,
+    -133.5
+   ],
+   "lonlat": [
+    -104.906942,
+    39.785241
+   ]
+  },
+  {
+   "a": "grid_tertiary_1",
+   "b": "grid_unclassified_79",
+   "kind": "minor/minor",
+   "classes": [
+    "tertiary",
+    "unclassified"
+   ],
+   "shape": "T",
+   "fate": "overlap",
+   "xz": [
+    509.4,
+    -103.3
+   ],
+   "lonlat": [
+    -104.916838,
+    39.785515
+   ]
+  },
+  {
+   "a": "grid_tertiary_1",
+   "b": "grid_unclassified_79",
+   "kind": "minor/minor",
+   "classes": [
+    "tertiary",
+    "unclassified"
+   ],
+   "shape": "T",
+   "fate": "overlap",
+   "xz": [
+    511.8,
+    -105.0
+   ],
+   "lonlat": [
+    -104.91681,
+    39.785499
+   ]
+  },
+  {
+   "a": "grid_tertiary_1",
+   "b": "grid_tertiary_85",
+   "kind": "minor/minor",
+   "classes": [
+    "tertiary",
+    "tertiary"
+   ],
+   "shape": "L",
+   "fate": "overlap",
+   "xz": [
+    1356.0,
+    -133.5
+   ],
+   "lonlat": [
+    -104.906942,
+    39.785241
+   ]
+  },
+  {
+   "a": "grid_tertiary_2",
+   "b": "grid_tertiary_37",
+   "kind": "minor/minor",
+   "classes": [
+    "tertiary",
+    "tertiary"
+   ],
+   "shape": "L",
+   "fate": "overlap",
+   "xz": [
+    244.9,
+    108.8
+   ],
+   "lonlat": [
+    -104.91993,
+    39.787433
+   ]
+  },
+  {
+   "a": "grid_tertiary_2",
+   "b": "grid_unclassified_38",
+   "kind": "minor/minor",
+   "classes": [
+    "tertiary",
+    "unclassified"
+   ],
+   "shape": "T",
+   "fate": "overlap",
+   "xz": [
+    1087.8,
+    112.3
+   ],
+   "lonlat": [
+    -104.910076,
+    39.787465
+   ]
+  },
+  {
+   "a": "grid_tertiary_2",
+   "b": "grid_tertiary_40",
+   "kind": "minor/minor",
+   "classes": [
+    "tertiary",
+    "tertiary"
+   ],
+   "shape": "T",
+   "fate": "overlap",
+   "xz": [
+    844.9,
+    110.8
+   ],
+   "lonlat": [
+    -104.912917,
+    39.787451
+   ]
+  },
+  {
+   "a": "grid_tertiary_2",
+   "b": "grid_tertiary_40",
+   "kind": "minor/minor",
+   "classes": [
+    "tertiary",
+    "tertiary"
+   ],
+   "shape": "T",
+   "fate": "overlap",
+   "xz": [
+    847.9,
+    110.8
+   ],
+   "lonlat": [
+    -104.912881,
+    39.787451
+   ]
+  },
+  {
+   "a": "grid_tertiary_2",
+   "b": "grid_tertiary_46",
+   "kind": "minor/minor",
+   "classes": [
+    "tertiary",
+    "tertiary"
+   ],
+   "shape": "L",
+   "fate": "overlap",
+   "xz": [
+    244.9,
+    108.8
+   ],
+   "lonlat": [
+    -104.91993,
+    39.787433
+   ]
+  },
+  {
+   "a": "grid_tertiary_2",
+   "b": "grid_tertiary_50",
+   "kind": "minor/minor",
+   "classes": [
+    "tertiary",
+    "tertiary"
+   ],
+   "shape": "L",
+   "fate": "overlap",
+   "xz": [
+    1356.2,
+    112.3
+   ],
+   "lonlat": [
+    -104.906939,
+    39.787465
+   ]
+  },
+  {
+   "a": "grid_tertiary_2",
+   "b": "grid_unclassified_58",
+   "kind": "minor/minor",
+   "classes": [
+    "tertiary",
+    "unclassified"
+   ],
+   "shape": "T",
+   "fate": "overlap",
+   "xz": [
+    985.8,
+    111.8
+   ],
+   "lonlat": [
+    -104.911269,
+    39.78746
+   ]
+  },
+  {
+   "a": "grid_tertiary_2",
+   "b": "grid_unclassified_59",
+   "kind": "minor/minor",
+   "classes": [
+    "tertiary",
+    "unclassified"
+   ],
+   "shape": "T",
+   "fate": "overlap",
+   "xz": [
+    1243.8,
+    112.5
+   ],
+   "lonlat": [
+    -104.908253,
+    39.787467
+   ]
+  },
+  {
+   "a": "grid_tertiary_2",
+   "b": "grid_unclassified_60",
+   "kind": "minor/minor",
+   "classes": [
+    "tertiary",
+    "unclassified"
+   ],
+   "shape": "L",
+   "fate": "overlap",
+   "xz": [
+    1356.2,
+    112.3
+   ],
+   "lonlat": [
+    -104.906939,
+    39.787465
+   ]
+  },
+  {
+   "a": "grid_tertiary_2",
+   "b": "grid_unclassified_61",
+   "kind": "minor/minor",
+   "classes": [
+    "tertiary",
+    "unclassified"
+   ],
+   "shape": "T",
+   "fate": "overlap",
+   "xz": [
+    709.9,
+    109.1
+   ],
+   "lonlat": [
+    -104.914494,
+    39.787436
+   ]
+  },
+  {
+   "a": "grid_tertiary_3",
+   "b": "grid_tertiary_14",
+   "kind": "minor/minor",
+   "classes": [
+    "tertiary",
+    "tertiary"
+   ],
+   "shape": "L",
+   "fate": "overlap",
+   "xz": [
+    -758.3,
+    -337.3
+   ],
+   "lonlat": [
+    -104.931658,
+    39.783397
+   ]
+  },
+  {
+   "a": "grid_tertiary_3",
+   "b": "grid_tertiary_20",
+   "kind": "minor/minor",
+   "classes": [
+    "tertiary",
+    "tertiary"
+   ],
+   "shape": "L",
+   "fate": "overlap",
+   "xz": [
+    243.3,
+    -297.6
+   ],
+   "lonlat": [
+    -104.919949,
+    39.783757
+   ]
+  },
+  {
+   "a": "grid_tertiary_3",
+   "b": "grid_unclassified_25",
+   "kind": "minor/minor",
+   "classes": [
+    "tertiary",
+    "unclassified"
+   ],
+   "shape": "T",
+   "fate": "overlap",
+   "xz": [
+    234.7,
+    -297.6
+   ],
+   "lonlat": [
+    -104.920049,
+    39.783756
+   ]
+  },
+  {
+   "a": "grid_tertiary_3",
+   "b": "grid_tertiary_36",
+   "kind": "minor/minor",
+   "classes": [
+    "tertiary",
+    "tertiary"
+   ],
+   "shape": "T",
+   "fate": "overlap",
+   "xz": [
+    42.8,
+    -294.9
+   ],
+   "lonlat": [
+    -104.922293,
+    39.783781
+   ]
+  },
+  {
+   "a": "grid_tertiary_3",
+   "b": "grid_tertiary_37",
+   "kind": "minor/minor",
+   "classes": [
+    "tertiary",
+    "tertiary"
+   ],
+   "shape": "L",
+   "fate": "overlap",
+   "xz": [
+    243.3,
+    -297.6
+   ],
+   "lonlat": [
+    -104.919949,
+    39.783757
+   ]
+  },
+  {
+   "a": "grid_tertiary_3",
+   "b": "grid_tertiary_44",
+   "kind": "minor/minor",
+   "classes": [
+    "tertiary",
+    "tertiary"
+   ],
+   "shape": "L",
+   "fate": "overlap",
+   "xz": [
+    -758.3,
+    -337.3
+   ],
+   "lonlat": [
+    -104.931658,
+    39.783397
+   ]
+  },
+  {
+   "a": "grid_tertiary_3",
+   "b": "grid_tertiary_54",
+   "kind": "minor/minor",
+   "classes": [
+    "tertiary",
+    "tertiary"
+   ],
+   "shape": "L",
+   "fate": "overlap",
+   "xz": [
+    -758.3,
+    -337.3
+   ],
+   "lonlat": [
+    -104.931658,
+    39.783397
+   ]
+  },
+  {
+   "a": "grid_tertiary_4",
+   "b": "grid_tertiary_46",
+   "kind": "minor/minor",
+   "classes": [
+    "tertiary",
+    "tertiary"
+   ],
+   "shape": "L",
+   "fate": "overlap",
+   "xz": [
+    227.0,
+    495.8
+   ],
+   "lonlat": [
+    -104.920139,
+    39.790934
+   ]
+  },
+  {
+   "a": "grid_tertiary_4",
+   "b": "grid_unclassified_48",
+   "kind": "minor/minor",
+   "classes": [
+    "tertiary",
+    "unclassified"
+   ],
+   "shape": "T",
+   "fate": "overlap",
+   "xz": [
+    -366.7,
+    512.1
+   ],
+   "lonlat": [
+    -104.92708,
+    39.791081
+   ]
+  },
+  {
+   "a": "grid_tertiary_4",
+   "b": "grid_unclassified_48",
+   "kind": "minor/minor",
+   "classes": [
+    "tertiary",
+    "unclassified"
+   ],
+   "shape": "T",
+   "fate": "overlap",
+   "xz": [
+    -363.7,
+    512.1
+   ],
+   "lonlat": [
+    -104.927045,
+    39.791081
+   ]
+  },
+  {
+   "a": "grid_tertiary_4",
+   "b": "grid_unclassified_55",
+   "kind": "minor/minor",
+   "classes": [
+    "tertiary",
+    "unclassified"
+   ],
+   "shape": "L",
+   "fate": "overlap",
+   "xz": [
+    227.0,
+    495.8
+   ],
+   "lonlat": [
+    -104.920139,
+    39.790934
+   ]
+  },
+  {
+   "a": "grid_tertiary_5",
+   "b": "grid_unclassified_13",
+   "kind": "minor/minor",
+   "classes": [
+    "tertiary",
+    "unclassified"
+   ],
+   "shape": "L",
+   "fate": "overlap",
+   "xz": [
+    899.5,
+    -291.9
+   ],
+   "lonlat": [
+    -104.912278,
+    39.783809
+   ]
+  },
+  {
+   "a": "grid_tertiary_5",
+   "b": "grid_tertiary_20",
+   "kind": "minor/minor",
+   "classes": [
+    "tertiary",
+    "tertiary"
+   ],
+   "shape": "L",
+   "fate": "overlap",
+   "xz": [
+    899.5,
+    -291.9
+   ],
+   "lonlat": [
+    -104.912278,
+    39.783809
+   ]
+  },
+  {
+   "a": "grid_tertiary_5",
+   "b": "grid_unclassified_23",
+   "kind": "minor/minor",
+   "classes": [
+    "tertiary",
+    "unclassified"
+   ],
+   "shape": "T",
+   "fate": "overlap",
+   "xz": [
+    1127.7,
+    -451.2
+   ],
+   "lonlat": [
+    -104.90961,
+    39.782367
+   ]
+  },
+  {
+   "a": "grid_tertiary_5",
+   "b": "grid_unclassified_23",
+   "kind": "minor/minor",
+   "classes": [
+    "tertiary",
+    "unclassified"
+   ],
+   "shape": "T",
+   "fate": "overlap",
+   "xz": [
+    1454.7,
+    -447.4
+   ],
+   "lonlat": [
+    -104.905788,
+    39.782401
+   ]
+  },
+  {
+   "a": "grid_tertiary_5",
+   "b": "grid_unclassified_70",
+   "kind": "minor/minor",
+   "classes": [
+    "tertiary",
+    "unclassified"
+   ],
+   "shape": "T",
+   "fate": "overlap",
+   "xz": [
+    1641.8,
+    -400.9
+   ],
+   "lonlat": [
+    -104.9036,
+    39.782822
+   ]
+  },
+  {
+   "a": "grid_tertiary_5",
+   "b": "grid_unclassified_105",
+   "kind": "minor/minor",
+   "classes": [
+    "tertiary",
+    "unclassified"
+   ],
+   "shape": "T",
+   "fate": "overlap",
+   "xz": [
+    955.0,
+    -325.4
+   ],
+   "lonlat": [
+    -104.911629,
+    39.783505
+   ]
+  },
+  {
+   "a": "grid_primary_6",
+   "b": "grid_unclassified_27",
+   "kind": "arterial/minor",
+   "classes": [
+    "primary",
+    "unclassified"
+   ],
+   "shape": "L",
+   "fate": "host",
+   "xz": [
+    1649.2,
+    789.4
+   ],
+   "lonlat": [
+    -104.903514,
+    39.79359
+   ]
+  },
+  {
+   "a": "grid_primary_6",
+   "b": "grid_primary_30",
+   "kind": "arterial/arterial",
+   "classes": [
+    "primary",
+    "primary"
+   ],
+   "shape": "L",
+   "fate": "overlap",
+   "xz": [
+    1649.2,
+    789.4
+   ],
+   "lonlat": [
+    -104.903514,
+    39.79359
+   ]
+  },
+  {
+   "a": "grid_primary_7",
+   "b": "grid_primary_31",
+   "kind": "arterial/arterial",
+   "classes": [
+    "primary",
+    "primary"
+   ],
+   "shape": "L",
+   "fate": "overlap",
+   "xz": [
+    1662.7,
+    789.4
+   ],
+   "lonlat": [
+    -104.903356,
+    39.79359
+   ]
+  },
+  {
+   "a": "grid_primary_7",
+   "b": "grid_tertiary_65",
+   "kind": "arterial/minor",
+   "classes": [
+    "primary",
+    "tertiary"
+   ],
+   "shape": "L",
+   "fate": "host",
+   "xz": [
+    1662.7,
+    789.4
+   ],
+   "lonlat": [
+    -104.903356,
+    39.79359
+   ]
+  },
+  {
+   "a": "grid_secondary_8",
+   "b": "grid_primary_11",
+   "kind": "arterial/arterial",
+   "classes": [
+    "secondary",
+    "primary"
+   ],
+   "shape": "L",
+   "fate": "overlap",
+   "xz": [
+    -758.2,
+    -748.3
+   ],
+   "lonlat": [
+    -104.931657,
+    39.77968
+   ]
+  },
+  {
+   "a": "grid_secondary_8",
+   "b": "grid_tertiary_68",
+   "kind": "arterial/minor",
+   "classes": [
+    "secondary",
+    "tertiary"
+   ],
+   "shape": "L",
+   "fate": "host",
+   "xz": [
+    -758.2,
+    -748.3
+   ],
+   "lonlat": [
+    -104.931657,
+    39.77968
+   ]
+  },
+  {
+   "a": "grid_secondary_8",
+   "b": "grid_unclassified_83",
+   "kind": "arterial/minor",
+   "classes": [
+    "secondary",
+    "unclassified"
+   ],
+   "shape": "T",
+   "fate": "host",
+   "xz": [
+    -355.7,
+    -843.7
+   ],
+   "lonlat": [
+    -104.926952,
+    39.778816
+   ]
+  },
+  {
+   "a": "grid_secondary_8",
+   "b": "grid_unclassified_90",
+   "kind": "arterial/minor",
+   "classes": [
+    "secondary",
+    "unclassified"
+   ],
+   "shape": "T",
+   "fate": "host",
+   "xz": [
+    -259.8,
+    -868.3
+   ],
+   "lonlat": [
+    -104.925831,
+    39.778593
+   ]
+  },
+  {
+   "a": "grid_secondary_8",
+   "b": "grid_unclassified_90",
+   "kind": "arterial/minor",
+   "classes": [
+    "secondary",
+    "unclassified"
+   ],
+   "shape": "T",
+   "fate": "host",
+   "xz": [
+    -256.9,
+    -869.1
+   ],
+   "lonlat": [
+    -104.925797,
+    39.778587
+   ]
+  },
+  {
+   "a": "grid_secondary_8",
+   "b": "grid_tertiary_99",
+   "kind": "arterial/minor",
+   "classes": [
+    "secondary",
+    "tertiary"
+   ],
+   "shape": "L",
+   "fate": "host",
+   "xz": [
+    -758.2,
+    -748.3
+   ],
+   "lonlat": [
+    -104.931657,
+    39.77968
+   ]
+  },
+  {
+   "a": "grid_secondary_8",
+   "b": "grid_unclassified_100",
+   "kind": "arterial/minor",
+   "classes": [
+    "secondary",
+    "unclassified"
+   ],
+   "shape": "T",
+   "fate": "host",
+   "xz": [
+    -157.5,
+    -892.0
+   ],
+   "lonlat": [
+    -104.924635,
+    39.77838
+   ]
+  },
+  {
+   "a": "grid_secondary_8",
+   "b": "grid_tertiary_103",
+   "kind": "arterial/minor",
+   "classes": [
+    "secondary",
+    "tertiary"
+   ],
+   "shape": "L",
+   "fate": "host",
+   "xz": [
+    36.9,
+    -931.6
+   ],
+   "lonlat": [
+    -104.922361,
+    39.778021
+   ]
+  },
+  {
+   "a": "grid_unclassified_9",
+   "b": "grid_primary_51",
+   "kind": "arterial/minor",
+   "classes": [
+    "unclassified",
+    "primary"
+   ],
+   "shape": "L",
+   "fate": "host",
+   "xz": [
+    -1520.1,
+    173.8
+   ],
+   "lonlat": [
+    -104.940564,
+    39.788021
+   ]
+  },
+  {
+   "a": "grid_unclassified_9",
+   "b": "grid_unclassified_96",
+   "kind": "minor/minor",
+   "classes": [
+    "unclassified",
+    "unclassified"
+   ],
+   "shape": "X",
+   "fate": "overlap",
+   "xz": [
+    -1533.9,
+    90.3
+   ],
+   "lonlat": [
+    -104.940724,
+    39.787266
+   ]
+  },
+  {
+   "a": "grid_unclassified_9",
+   "b": "grid_tertiary_98",
+   "kind": "minor/minor",
+   "classes": [
+    "unclassified",
+    "tertiary"
+   ],
+   "shape": "X",
+   "fate": "overlap",
+   "xz": [
+    -1551.0,
+    -298.4
+   ],
+   "lonlat": [
+    -104.940924,
+    39.783749
+   ]
+  },
+  {
+   "a": "grid_unclassified_10",
+   "b": "grid_tertiary_16",
+   "kind": "minor/minor",
+   "classes": [
+    "unclassified",
+    "tertiary"
+   ],
+   "shape": "X",
+   "fate": "overlap",
+   "xz": [
+    -1434.2,
+    505.9
+   ],
+   "lonlat": [
+    -104.93956,
+    39.791026
+   ]
+  },
+  {
+   "a": "grid_primary_11",
+   "b": "grid_primary_66",
+   "kind": "arterial/arterial",
+   "classes": [
+    "primary",
+    "primary"
+   ],
+   "shape": "L",
+   "fate": "overlap",
+   "xz": [
+    -1533.3,
+    -744.4
+   ],
+   "lonlat": [
+    -104.940717,
+    39.779715
+   ]
+  },
+  {
+   "a": "grid_primary_11",
+   "b": "grid_tertiary_68",
+   "kind": "arterial/minor",
+   "classes": [
+    "primary",
+    "tertiary"
+   ],
+   "shape": "L",
+   "fate": "host",
+   "xz": [
+    -758.2,
+    -748.3
+   ],
+   "lonlat": [
+    -104.931657,
+    39.77968
+   ]
+  },
+  {
+   "a": "grid_primary_11",
+   "b": "grid_primary_87",
+   "kind": "arterial/arterial",
+   "classes": [
+    "primary",
+    "primary"
+   ],
+   "shape": "L",
+   "fate": "overlap",
+   "xz": [
+    -1533.3,
+    -744.4
+   ],
+   "lonlat": [
+    -104.940717,
+    39.779715
+   ]
+  },
+  {
+   "a": "grid_primary_11",
+   "b": "grid_tertiary_99",
+   "kind": "arterial/minor",
+   "classes": [
+    "primary",
+    "tertiary"
+   ],
+   "shape": "L",
+   "fate": "host",
+   "xz": [
+    -758.2,
+    -748.3
+   ],
+   "lonlat": [
+    -104.931657,
+    39.77968
+   ]
+  },
+  {
+   "a": "grid_residential_12",
+   "b": "grid_unclassified_27",
+   "kind": "minor/minor",
+   "classes": [
+    "residential",
+    "unclassified"
+   ],
+   "shape": "T",
+   "fate": "overlap",
+   "xz": [
+    1113.4,
+    787.6
+   ],
+   "lonlat": [
+    -104.909777,
+    39.793574
+   ]
+  },
+  {
+   "a": "grid_residential_12",
+   "b": "grid_unclassified_28",
+   "kind": "minor/minor",
+   "classes": [
+    "residential",
+    "unclassified"
+   ],
+   "shape": "T",
+   "fate": "overlap",
+   "xz": [
+    1113.9,
+    1024.6
+   ],
+   "lonlat": [
+    -104.909771,
+    39.795718
+   ]
+  },
+  {
+   "a": "grid_residential_12",
+   "b": "grid_residential_34",
+   "kind": "minor/minor",
+   "classes": [
+    "residential",
+    "residential"
+   ],
+   "shape": "L",
+   "fate": "overlap",
+   "xz": [
+    1113.0,
+    583.6
+   ],
+   "lonlat": [
+    -104.909782,
+    39.791728
+   ]
+  },
+  {
+   "a": "grid_residential_12",
+   "b": "grid_residential_63",
+   "kind": "minor/minor",
+   "classes": [
+    "residential",
+    "residential"
+   ],
+   "shape": "L",
+   "fate": "overlap",
+   "xz": [
+    1113.0,
+    583.6
+   ],
+   "lonlat": [
+    -104.909782,
+    39.791728
+   ]
+  },
+  {
+   "a": "grid_unclassified_13",
+   "b": "grid_tertiary_20",
+   "kind": "minor/minor",
+   "classes": [
+    "unclassified",
+    "tertiary"
+   ],
+   "shape": "L",
+   "fate": "overlap",
+   "xz": [
+    899.5,
+    -291.9
+   ],
+   "lonlat": [
+    -104.912278,
+    39.783809
+   ]
+  },
+  {
+   "a": "grid_unclassified_13",
+   "b": "grid_unclassified_38",
+   "kind": "minor/minor",
+   "classes": [
+    "unclassified",
+    "unclassified"
+   ],
+   "shape": "T",
+   "fate": "overlap",
+   "xz": [
+    1085.5,
+    -291.5
+   ],
+   "lonlat": [
+    -104.910104,
+    39.783811
+   ]
+  },
+  {
+   "a": "grid_unclassified_13",
+   "b": "grid_tertiary_50",
+   "kind": "minor/minor",
+   "classes": [
+    "unclassified",
+    "tertiary"
+   ],
+   "shape": "L",
+   "fate": "overlap",
+   "xz": [
+    1463.9,
+    -132.4
+   ],
+   "lonlat": [
+    -104.90568,
+    39.785252
+   ]
+  },
+  {
+   "a": "grid_unclassified_13",
+   "b": "grid_unclassified_72",
+   "kind": "minor/minor",
+   "classes": [
+    "unclassified",
+    "unclassified"
+   ],
+   "shape": "T",
+   "fate": "overlap",
+   "xz": [
+    1370.5,
+    -291.9
+   ],
+   "lonlat": [
+    -104.906772,
+    39.783808
+   ]
+  },
+  {
+   "a": "grid_unclassified_13",
+   "b": "grid_tertiary_74",
+   "kind": "minor/minor",
+   "classes": [
+    "unclassified",
+    "tertiary"
+   ],
+   "shape": "L",
+   "fate": "overlap",
+   "xz": [
+    1463.9,
+    -132.4
+   ],
+   "lonlat": [
+    -104.90568,
+    39.785252
+   ]
+  },
+  {
+   "a": "grid_unclassified_13",
+   "b": "grid_tertiary_75",
+   "kind": "minor/minor",
+   "classes": [
+    "unclassified",
+    "tertiary"
+   ],
+   "shape": "L",
+   "fate": "overlap",
+   "xz": [
+    1463.9,
+    -132.4
+   ],
+   "lonlat": [
+    -104.90568,
+    39.785252
+   ]
+  },
+  {
+   "a": "grid_unclassified_13",
+   "b": "grid_tertiary_85",
+   "kind": "minor/minor",
+   "classes": [
+    "unclassified",
+    "tertiary"
+   ],
+   "shape": "L",
+   "fate": "overlap",
+   "xz": [
+    1463.9,
+    -132.4
+   ],
+   "lonlat": [
+    -104.90568,
+    39.785252
+   ]
+  },
+  {
+   "a": "grid_unclassified_13",
+   "b": "grid_unclassified_105",
+   "kind": "minor/minor",
+   "classes": [
+    "unclassified",
+    "unclassified"
+   ],
+   "shape": "T",
+   "fate": "overlap",
+   "xz": [
+    998.5,
+    -292.7
+   ],
+   "lonlat": [
+    -104.911121,
+    39.783801
+   ]
+  },
+  {
+   "a": "grid_tertiary_14",
+   "b": "grid_tertiary_44",
+   "kind": "minor/minor",
+   "classes": [
+    "tertiary",
+    "tertiary"
+   ],
+   "shape": "L",
+   "fate": "overlap",
+   "xz": [
+    -758.3,
+    -337.3
+   ],
+   "lonlat": [
+    -104.931658,
+    39.783397
+   ]
+  },
+  {
+   "a": "grid_tertiary_14",
+   "b": "grid_tertiary_54",
+   "kind": "minor/minor",
+   "classes": [
+    "tertiary",
+    "tertiary"
+   ],
+   "shape": "L",
+   "fate": "overlap",
+   "xz": [
+    -758.3,
+    -337.3
+   ],
+   "lonlat": [
+    -104.931658,
+    39.783397
+   ]
+  },
+  {
+   "a": "grid_primary_15",
+   "b": "grid_primary_51",
+   "kind": "arterial/arterial",
+   "classes": [
+    "primary",
+    "primary"
+   ],
+   "shape": "L",
+   "fate": "overlap",
+   "xz": [
+    -1475.9,
+    506.6
+   ],
+   "lonlat": [
+    -104.940046,
+    39.791032
+   ]
+  },
+  {
+   "a": "grid_tertiary_16",
+   "b": "grid_primary_33",
+   "kind": "arterial/minor",
+   "classes": [
+    "tertiary",
+    "primary"
+   ],
+   "shape": "L",
+   "fate": "host",
+   "xz": [
+    -1459.2,
+    506.3
+   ],
+   "lonlat": [
+    -104.939852,
+    39.791029
+   ]
+  },
+  {
+   "a": "grid_tertiary_16",
+   "b": "grid_primary_53",
+   "kind": "arterial/minor",
+   "classes": [
+    "tertiary",
+    "primary"
+   ],
+   "shape": "L",
+   "fate": "host",
+   "xz": [
+    -1459.2,
+    506.3
+   ],
+   "lonlat": [
+    -104.939852,
+    39.791029
+   ]
+  },
+  {
+   "a": "grid_unclassified_18",
+   "b": "grid_tertiary_20",
+   "kind": "minor/minor",
+   "classes": [
+    "unclassified",
+    "tertiary"
+   ],
+   "shape": "T",
+   "fate": "overlap",
+   "xz": [
+    434.2,
+    -294.4
+   ],
+   "lonlat": [
+    -104.917717,
+    39.783786
+   ]
+  },
+  {
+   "a": "grid_residential_19",
+   "b": "grid_residential_34",
+   "kind": "minor/minor",
+   "classes": [
+    "residential",
+    "residential"
+   ],
+   "shape": "T",
+   "fate": "overlap",
+   "xz": [
+    995.7,
+    655.1
+   ],
+   "lonlat": [
+    -104.911153,
+    39.792375
+   ]
+  },
+  {
+   "a": "grid_tertiary_20",
+   "b": "grid_tertiary_37",
+   "kind": "minor/minor",
+   "classes": [
+    "tertiary",
+    "tertiary"
+   ],
+   "shape": "L",
+   "fate": "overlap",
+   "xz": [
+    243.3,
+    -297.6
+   ],
+   "lonlat": [
+    -104.919949,
+    39.783757
+   ]
+  },
+  {
+   "a": "grid_tertiary_20",
+   "b": "grid_tertiary_40",
+   "kind": "minor/minor",
+   "classes": [
+    "tertiary",
+    "tertiary"
+   ],
+   "shape": "T",
+   "fate": "overlap",
+   "xz": [
+    846.2,
+    -291.7
+   ],
+   "lonlat": [
+    -104.912901,
+    39.78381
+   ]
+  },
+  {
+   "a": "grid_residential_21",
+   "b": "grid_residential_34",
+   "kind": "minor/minor",
+   "classes": [
+    "residential",
+    "residential"
+   ],
+   "shape": "T",
+   "fate": "overlap",
+   "xz": [
+    896.7,
+    728.7
+   ],
+   "lonlat": [
+    -104.912311,
+    39.793041
+   ]
+  },
+  {
+   "a": "grid_residential_22",
+   "b": "grid_residential_29",
+   "kind": "minor/minor",
+   "classes": [
+    "residential",
+    "residential"
+   ],
+   "shape": "X",
+   "fate": "overlap",
+   "xz": [
+    545.9,
+    1120.8
+   ],
+   "lonlat": [
+    -104.916412,
+    39.796588
+   ]
+  },
+  {
+   "a": "grid_residential_22",
+   "b": "grid_residential_29",
+   "kind": "minor/minor",
+   "classes": [
+    "residential",
+    "residential"
+   ],
+   "shape": "X",
+   "fate": "overlap",
+   "xz": [
+    548.6,
+    1122.1
+   ],
+   "lonlat": [
+    -104.91638,
+    39.7966
+   ]
+  },
+  {
+   "a": "grid_residential_22",
+   "b": "grid_residential_106",
+   "kind": "minor/minor",
+   "classes": [
+    "residential",
+    "residential"
+   ],
+   "shape": "L",
+   "fate": "overlap",
+   "xz": [
+    679.9,
+    868.9
+   ],
+   "lonlat": [
+    -104.914845,
+    39.794309
+   ]
+  },
+  {
+   "a": "grid_residential_24",
+   "b": "grid_residential_29",
+   "kind": "minor/minor",
+   "classes": [
+    "residential",
+    "residential"
+   ],
+   "shape": "X",
+   "fate": "overlap",
+   "xz": [
+    604.2,
+    1121.9
+   ],
+   "lonlat": [
+    -104.91573,
+    39.796598
+   ]
+  },
+  {
+   "a": "grid_residential_24",
+   "b": "grid_residential_29",
+   "kind": "minor/minor",
+   "classes": [
+    "residential",
+    "residential"
+   ],
+   "shape": "X",
+   "fate": "overlap",
+   "xz": [
+    604.2,
+    1124.9
+   ],
+   "lonlat": [
+    -104.91573,
+    39.796625
+   ]
+  },
+  {
+   "a": "grid_residential_24",
+   "b": "grid_residential_32",
+   "kind": "minor/minor",
+   "classes": [
+    "residential",
+    "residential"
+   ],
+   "shape": "T",
+   "fate": "overlap",
+   "xz": [
+    797.8,
+    931.5
+   ],
+   "lonlat": [
+    -104.913467,
+    39.794876
+   ]
+  },
+  {
+   "a": "grid_residential_24",
+   "b": "grid_residential_47",
+   "kind": "minor/minor",
+   "classes": [
+    "residential",
+    "residential"
+   ],
+   "shape": "T",
+   "fate": "overlap",
+   "xz": [
+    701.8,
+    932.6
+   ],
+   "lonlat": [
+    -104.914589,
+    39.794886
+   ]
+  },
+  {
+   "a": "grid_residential_26",
+   "b": "grid_tertiary_65",
+   "kind": "minor/minor",
+   "classes": [
+    "residential",
+    "tertiary"
+   ],
+   "shape": "T",
+   "fate": "overlap",
+   "xz": [
+    1816.6,
+    775.0
+   ],
+   "lonlat": [
+    -104.901557,
+    39.79346
+   ]
+  },
+  {
+   "a": "grid_residential_26",
+   "b": "grid_residential_104",
+   "kind": "minor/minor",
+   "classes": [
+    "residential",
+    "residential"
+   ],
+   "shape": "T",
+   "fate": "overlap",
+   "xz": [
+    1816.7,
+    886.0
+   ],
+   "lonlat": [
+    -104.901555,
+    39.794464
+   ]
+  },
+  {
+   "a": "grid_unclassified_27",
+   "b": "grid_primary_30",
+   "kind": "arterial/minor",
+   "classes": [
+    "unclassified",
+    "primary"
+   ],
+   "shape": "L",
+   "fate": "host",
+   "xz": [
+    1649.2,
+    789.4
+   ],
+   "lonlat": [
+    -104.903514,
+    39.79359
+   ]
+  },
+  {
+   "a": "grid_unclassified_28",
+   "b": "grid_primary_30",
+   "kind": "arterial/minor",
+   "classes": [
+    "unclassified",
+    "primary"
+   ],
+   "shape": "T",
+   "fate": "host",
+   "xz": [
+    1647.8,
+    1025.3
+   ],
+   "lonlat": [
+    -104.90353,
+    39.795724
+   ]
+  },
+  {
+   "a": "grid_residential_29",
+   "b": "grid_residential_32",
+   "kind": "minor/minor",
+   "classes": [
+    "residential",
+    "residential"
+   ],
+   "shape": "T",
+   "fate": "overlap",
+   "xz": [
+    797.5,
+    1122.9
+   ],
+   "lonlat": [
+    -104.91347,
+    39.796607
+   ]
+  },
+  {
+   "a": "grid_residential_29",
+   "b": "grid_residential_47",
+   "kind": "minor/minor",
+   "classes": [
+    "residential",
+    "residential"
+   ],
+   "shape": "X",
+   "fate": "overlap",
+   "xz": [
+    701.5,
+    1122.9
+   ],
+   "lonlat": [
+    -104.914592,
+    39.796607
+   ]
+  },
+  {
+   "a": "grid_primary_31",
+   "b": "grid_tertiary_65",
+   "kind": "arterial/minor",
+   "classes": [
+    "primary",
+    "tertiary"
+   ],
+   "shape": "L",
+   "fate": "host",
+   "xz": [
+    1662.7,
+    789.4
+   ],
+   "lonlat": [
+    -104.903356,
+    39.79359
+   ]
+  },
+  {
+   "a": "grid_residential_32",
+   "b": "grid_residential_106",
+   "kind": "minor/minor",
+   "classes": [
+    "residential",
+    "residential"
+   ],
+   "shape": "L",
+   "fate": "overlap",
+   "xz": [
+    722.7,
+    868.3
+   ],
+   "lonlat": [
+    -104.914344,
+    39.794304
+   ]
+  },
+  {
+   "a": "grid_primary_33",
+   "b": "grid_primary_53",
+   "kind": "arterial/arterial",
+   "classes": [
+    "primary",
+    "primary"
+   ],
+   "shape": "L",
+   "fate": "overlap",
+   "xz": [
+    -1459.2,
+    506.3
+   ],
+   "lonlat": [
+    -104.939852,
+    39.791029
+   ]
+  },
+  {
+   "a": "grid_residential_34",
+   "b": "grid_residential_63",
+   "kind": "minor/minor",
+   "classes": [
+    "residential",
+    "residential"
+   ],
+   "shape": "L",
+   "fate": "overlap",
+   "xz": [
+    1113.0,
+    583.6
+   ],
+   "lonlat": [
+    -104.909782,
+    39.791728
+   ]
+  },
+  {
+   "a": "grid_tertiary_36",
+   "b": "grid_unclassified_41",
+   "kind": "minor/minor",
+   "classes": [
+    "tertiary",
+    "unclassified"
+   ],
+   "shape": "T",
+   "fate": "overlap",
+   "xz": [
+    43.4,
+    -587.4
+   ],
+   "lonlat": [
+    -104.922286,
+    39.781135
+   ]
+  },
+  {
+   "a": "grid_tertiary_36",
+   "b": "grid_tertiary_91",
+   "kind": "minor/minor",
+   "classes": [
+    "tertiary",
+    "tertiary"
+   ],
+   "shape": "L",
+   "fate": "overlap",
+   "xz": [
+    42.5,
+    -752.4
+   ],
+   "lonlat": [
+    -104.922296,
+    39.779642
+   ]
+  },
+  {
+   "a": "grid_tertiary_36",
+   "b": "grid_tertiary_92",
+   "kind": "minor/minor",
+   "classes": [
+    "tertiary",
+    "tertiary"
+   ],
+   "shape": "L",
+   "fate": "overlap",
+   "xz": [
+    42.5,
+    -752.4
+   ],
+   "lonlat": [
+    -104.922296,
+    39.779642
+   ]
+  },
+  {
+   "a": "grid_tertiary_37",
+   "b": "grid_tertiary_46",
+   "kind": "minor/minor",
+   "classes": [
+    "tertiary",
+    "tertiary"
+   ],
+   "shape": "L",
+   "fate": "overlap",
+   "xz": [
+    244.9,
+    108.8
+   ],
+   "lonlat": [
+    -104.91993,
+    39.787433
+   ]
+  },
+  {
+   "a": "grid_secondary_39",
+   "b": "grid_secondary_42",
+   "kind": "arterial/arterial",
+   "classes": [
+    "secondary",
+    "secondary"
+   ],
+   "shape": "L",
+   "fate": "overlap",
+   "xz": [
+    844.7,
+    -939.9
+   ],
+   "lonlat": [
+    -104.912919,
+    39.777946
+   ]
+  },
+  {
+   "a": "grid_secondary_39",
+   "b": "grid_secondary_42",
+   "kind": "arterial/arterial",
+   "classes": [
+    "secondary",
+    "secondary"
+   ],
+   "shape": "L",
+   "fate": "overlap",
+   "xz": [
+    846.3,
+    -939.9
+   ],
+   "lonlat": [
+    -104.912899,
+    39.777946
+   ]
+  },
+  {
+   "a": "grid_secondary_39",
+   "b": "grid_secondary_45",
+   "kind": "arterial/arterial",
+   "classes": [
+    "secondary",
+    "secondary"
+   ],
+   "shape": "L",
+   "fate": "overlap",
+   "xz": [
+    442.7,
+    -942.6
+   ],
+   "lonlat": [
+    -104.917617,
+    39.777922
+   ]
+  },
+  {
+   "a": "grid_secondary_39",
+   "b": "grid_secondary_102",
+   "kind": "arterial/arterial",
+   "classes": [
+    "secondary",
+    "secondary"
+   ],
+   "shape": "L",
+   "fate": "overlap",
+   "xz": [
+    844.7,
+    -939.9
+   ],
+   "lonlat": [
+    -104.912919,
+    39.777946
+   ]
+  },
+  {
+   "a": "grid_secondary_39",
+   "b": "grid_secondary_102",
+   "kind": "arterial/arterial",
+   "classes": [
+    "secondary",
+    "secondary"
+   ],
+   "shape": "L",
+   "fate": "overlap",
+   "xz": [
+    846.3,
+    -939.9
+   ],
+   "lonlat": [
+    -104.912899,
+    39.777946
+   ]
+  },
+  {
+   "a": "grid_unclassified_41",
+   "b": "grid_unclassified_69",
+   "kind": "minor/minor",
+   "classes": [
+    "unclassified",
+    "unclassified"
+   ],
+   "shape": "T",
+   "fate": "overlap",
+   "xz": [
+    -259.9,
+    -588.1
+   ],
+   "lonlat": [
+    -104.925831,
+    39.781128
+   ]
+  },
+  {
+   "a": "grid_unclassified_41",
+   "b": "grid_unclassified_69",
+   "kind": "minor/minor",
+   "classes": [
+    "unclassified",
+    "unclassified"
+   ],
+   "shape": "T",
+   "fate": "overlap",
+   "xz": [
+    -256.9,
+    -588.1
+   ],
+   "lonlat": [
+    -104.925796,
+    39.781129
+   ]
+  },
+  {
+   "a": "grid_unclassified_41",
+   "b": "grid_unclassified_81",
+   "kind": "minor/minor",
+   "classes": [
+    "unclassified",
+    "unclassified"
+   ],
+   "shape": "T",
+   "fate": "overlap",
+   "xz": [
+    -157.9,
+    -587.7
+   ],
+   "lonlat": [
+    -104.924639,
+    39.781133
+   ]
+  },
+  {
+   "a": "grid_secondary_42",
+   "b": "grid_unclassified_77",
+   "kind": "arterial/minor",
+   "classes": [
+    "secondary",
+    "unclassified"
+   ],
+   "shape": "L",
+   "fate": "host",
+   "xz": [
+    1244.9,
+    -945.9
+   ],
+   "lonlat": [
+    -104.908241,
+    39.777892
+   ]
+  },
+  {
+   "a": "grid_secondary_42",
+   "b": "grid_secondary_102",
+   "kind": "arterial/arterial",
+   "classes": [
+    "secondary",
+    "secondary"
+   ],
+   "shape": "L",
+   "fate": "overlap",
+   "xz": [
+    846.3,
+    -939.9
+   ],
+   "lonlat": [
+    -104.912899,
+    39.777946
+   ]
+  },
+  {
+   "a": "grid_unclassified_43",
+   "b": "grid_unclassified_69",
+   "kind": "minor/minor",
+   "classes": [
+    "unclassified",
+    "unclassified"
+   ],
+   "shape": "X",
+   "fate": "overlap",
+   "xz": [
+    -259.5,
+    -701.3
+   ],
+   "lonlat": [
+    -104.925827,
+    39.780104
+   ]
+  },
+  {
+   "a": "grid_unclassified_43",
+   "b": "grid_unclassified_69",
+   "kind": "minor/minor",
+   "classes": [
+    "unclassified",
+    "unclassified"
+   ],
+   "shape": "X",
+   "fate": "overlap",
+   "xz": [
+    -256.5,
+    -701.3
+   ],
+   "lonlat": [
+    -104.925792,
+    39.780105
+   ]
+  },
+  {
+   "a": "grid_unclassified_43",
+   "b": "grid_unclassified_81",
+   "kind": "minor/minor",
+   "classes": [
+    "unclassified",
+    "unclassified"
+   ],
+   "shape": "L",
+   "fate": "overlap",
+   "xz": [
+    -158.4,
+    -701.0
+   ],
+   "lonlat": [
+    -104.924645,
+    39.780108
+   ]
+  },
+  {
+   "a": "grid_unclassified_43",
+   "b": "grid_unclassified_86",
+   "kind": "minor/minor",
+   "classes": [
+    "unclassified",
+    "unclassified"
+   ],
+   "shape": "L",
+   "fate": "overlap",
+   "xz": [
+    -158.4,
+    -701.0
+   ],
+   "lonlat": [
+    -104.924645,
+    39.780108
+   ]
+  },
+  {
+   "a": "grid_tertiary_44",
+   "b": "grid_tertiary_54",
+   "kind": "minor/minor",
+   "classes": [
+    "tertiary",
+    "tertiary"
+   ],
+   "shape": "L",
+   "fate": "overlap",
+   "xz": [
+    -758.3,
+    -337.3
+   ],
+   "lonlat": [
+    -104.931658,
+    39.783397
+   ]
+  },
+  {
+   "a": "grid_secondary_45",
+   "b": "grid_tertiary_101",
+   "kind": "arterial/minor",
+   "classes": [
+    "secondary",
+    "tertiary"
+   ],
+   "shape": "L",
+   "fate": "host",
+   "xz": [
+    51.2,
+    -933.0
+   ],
+   "lonlat": [
+    -104.922195,
+    39.778008
+   ]
+  },
+  {
+   "a": "grid_tertiary_46",
+   "b": "grid_unclassified_55",
+   "kind": "minor/minor",
+   "classes": [
+    "tertiary",
+    "unclassified"
+   ],
+   "shape": "L",
+   "fate": "overlap",
+   "xz": [
+    227.0,
+    495.8
+   ],
+   "lonlat": [
+    -104.920139,
+    39.790934
+   ]
+  },
+  {
+   "a": "grid_primary_49",
+   "b": "grid_primary_88",
+   "kind": "arterial/arterial",
+   "classes": [
+    "primary",
+    "primary"
+   ],
+   "shape": "L",
+   "fate": "overlap",
+   "xz": [
+    -1560.7,
+    -648.6
+   ],
+   "lonlat": [
+    -104.941038,
+    39.780582
+   ]
+  },
+  {
+   "a": "grid_tertiary_50",
+   "b": "grid_unclassified_60",
+   "kind": "minor/minor",
+   "classes": [
+    "tertiary",
+    "unclassified"
+   ],
+   "shape": "L",
+   "fate": "overlap",
+   "xz": [
+    1356.2,
+    112.3
+   ],
+   "lonlat": [
+    -104.906939,
+    39.787465
+   ]
+  },
+  {
+   "a": "grid_tertiary_50",
+   "b": "grid_tertiary_74",
+   "kind": "minor/minor",
+   "classes": [
+    "tertiary",
+    "tertiary"
+   ],
+   "shape": "L",
+   "fate": "overlap",
+   "xz": [
+    1463.9,
+    -132.4
+   ],
+   "lonlat": [
+    -104.90568,
+    39.785252
+   ]
+  },
+  {
+   "a": "grid_tertiary_50",
+   "b": "grid_tertiary_75",
+   "kind": "minor/minor",
+   "classes": [
+    "tertiary",
+    "tertiary"
+   ],
+   "shape": "L",
+   "fate": "overlap",
+   "xz": [
+    1463.9,
+    -132.4
+   ],
+   "lonlat": [
+    -104.90568,
+    39.785252
+   ]
+  },
+  {
+   "a": "grid_tertiary_50",
+   "b": "grid_tertiary_85",
+   "kind": "minor/minor",
+   "classes": [
+    "tertiary",
+    "tertiary"
+   ],
+   "shape": "L",
+   "fate": "overlap",
+   "xz": [
+    1463.9,
+    -132.4
+   ],
+   "lonlat": [
+    -104.90568,
+    39.785252
+   ]
+  },
+  {
+   "a": "grid_primary_52",
+   "b": "grid_primary_87",
+   "kind": "arterial/arterial",
+   "classes": [
+    "primary",
+    "primary"
+   ],
+   "shape": "L",
+   "fate": "overlap",
+   "xz": [
+    -1533.1,
+    -649.3
+   ],
+   "lonlat": [
+    -104.940715,
+    39.780575
+   ]
+  },
+  {
+   "a": "grid_unclassified_60",
+   "b": "grid_unclassified_72",
+   "kind": "minor/minor",
+   "classes": [
+    "unclassified",
+    "unclassified"
+   ],
+   "shape": "L",
+   "fate": "overlap",
+   "xz": [
+    1356.0,
+    -133.5
+   ],
+   "lonlat": [
+    -104.906942,
+    39.785241
+   ]
+  },
+  {
+   "a": "grid_unclassified_60",
+   "b": "grid_tertiary_85",
+   "kind": "minor/minor",
+   "classes": [
+    "unclassified",
+    "tertiary"
+   ],
+   "shape": "L",
+   "fate": "overlap",
+   "xz": [
+    1356.0,
+    -133.5
+   ],
+   "lonlat": [
+    -104.906942,
+    39.785241
+   ]
+  },
+  {
+   "a": "grid_unclassified_62",
+   "b": "grid_unclassified_94",
+   "kind": "minor/minor",
+   "classes": [
+    "unclassified",
+    "unclassified"
+   ],
+   "shape": "L",
+   "fate": "overlap",
+   "xz": [
+    847.3,
+    -764.5
+   ],
+   "lonlat": [
+    -104.912889,
+    39.779533
+   ]
+  },
+  {
+   "a": "grid_unclassified_62",
+   "b": "grid_unclassified_95",
+   "kind": "minor/minor",
+   "classes": [
+    "unclassified",
+    "unclassified"
+   ],
+   "shape": "L",
+   "fate": "overlap",
+   "xz": [
+    847.3,
+    -764.5
+   ],
+   "lonlat": [
+    -104.912889,
+    39.779533
+   ]
+  },
+  {
+   "a": "grid_residential_63",
+   "b": "grid_residential_89",
+   "kind": "minor/minor",
+   "classes": [
+    "residential",
+    "residential"
+   ],
+   "shape": "T",
+   "fate": "overlap",
+   "xz": [
+    1245.0,
+    581.8
+   ],
+   "lonlat": [
+    -104.908239,
+    39.791712
+   ]
+  },
+  {
+   "a": "grid_primary_64",
+   "b": "grid_primary_88",
+   "kind": "arterial/arterial",
+   "classes": [
+    "primary",
+    "primary"
+   ],
+   "shape": "L",
+   "fate": "overlap",
+   "xz": [
+    -1561.5,
+    -743.2
+   ],
+   "lonlat": [
+    -104.941047,
+    39.779725
+   ]
+  },
+  {
+   "a": "grid_primary_66",
+   "b": "grid_primary_87",
+   "kind": "arterial/arterial",
+   "classes": [
+    "primary",
+    "primary"
+   ],
+   "shape": "L",
+   "fate": "overlap",
+   "xz": [
+    -1533.3,
+    -744.4
+   ],
+   "lonlat": [
+    -104.940717,
+    39.779715
+   ]
+  },
+  {
+   "a": "grid_tertiary_68",
+   "b": "grid_tertiary_99",
+   "kind": "minor/minor",
+   "classes": [
+    "tertiary",
+    "tertiary"
+   ],
+   "shape": "L",
+   "fate": "overlap",
+   "xz": [
+    -758.2,
+    -748.3
+   ],
+   "lonlat": [
+    -104.931657,
+    39.77968
+   ]
+  },
+  {
+   "a": "grid_unclassified_72",
+   "b": "grid_tertiary_85",
+   "kind": "minor/minor",
+   "classes": [
+    "unclassified",
+    "tertiary"
+   ],
+   "shape": "L",
+   "fate": "overlap",
+   "xz": [
+    1356.0,
+    -133.5
+   ],
+   "lonlat": [
+    -104.906942,
+    39.785241
+   ]
+  },
+  {
+   "a": "grid_tertiary_74",
+   "b": "grid_tertiary_75",
+   "kind": "minor/minor",
+   "classes": [
+    "tertiary",
+    "tertiary"
+   ],
+   "shape": "L",
+   "fate": "overlap",
+   "xz": [
+    1463.9,
+    -132.4
+   ],
+   "lonlat": [
+    -104.90568,
+    39.785252
+   ]
+  },
+  {
+   "a": "grid_tertiary_74",
+   "b": "grid_tertiary_75",
+   "kind": "minor/minor",
+   "classes": [
+    "tertiary",
+    "tertiary"
+   ],
+   "shape": "L",
+   "fate": "overlap",
+   "xz": [
+    1610.6,
+    -133.2
+   ],
+   "lonlat": [
+    -104.903964,
+    39.785244
+   ]
+  },
+  {
+   "a": "grid_tertiary_74",
+   "b": "grid_tertiary_85",
+   "kind": "minor/minor",
+   "classes": [
+    "tertiary",
+    "tertiary"
+   ],
+   "shape": "L",
+   "fate": "overlap",
+   "xz": [
+    1463.9,
+    -132.4
+   ],
+   "lonlat": [
+    -104.90568,
+    39.785252
+   ]
+  },
+  {
+   "a": "grid_tertiary_75",
+   "b": "grid_tertiary_85",
+   "kind": "minor/minor",
+   "classes": [
+    "tertiary",
+    "tertiary"
+   ],
+   "shape": "L",
+   "fate": "overlap",
+   "xz": [
+    1463.9,
+    -132.4
+   ],
+   "lonlat": [
+    -104.90568,
+    39.785252
+   ]
+  },
+  {
+   "a": "grid_unclassified_81",
+   "b": "grid_unclassified_86",
+   "kind": "minor/minor",
+   "classes": [
+    "unclassified",
+    "unclassified"
+   ],
+   "shape": "L",
+   "fate": "overlap",
+   "xz": [
+    -158.4,
+    -701.0
+   ],
+   "lonlat": [
+    -104.924645,
+    39.780108
+   ]
+  },
+  {
+   "a": "grid_tertiary_91",
+   "b": "grid_tertiary_92",
+   "kind": "minor/minor",
+   "classes": [
+    "tertiary",
+    "tertiary"
+   ],
+   "shape": "L",
+   "fate": "overlap",
+   "xz": [
+    42.5,
+    -752.4
+   ],
+   "lonlat": [
+    -104.922296,
+    39.779642
+   ]
+  },
+  {
+   "a": "grid_unclassified_94",
+   "b": "grid_unclassified_95",
+   "kind": "minor/minor",
+   "classes": [
+    "unclassified",
+    "unclassified"
+   ],
+   "shape": "L",
+   "fate": "overlap",
+   "xz": [
+    847.3,
+    -764.5
+   ],
+   "lonlat": [
+    -104.912889,
+    39.779533
+   ]
+  }
+ ],
+ "summary": [
+  {
+   "fate": "host",
+   "kind": "arterial/minor",
+   "shape": "L",
+   "n": 14
+  },
+  {
+   "fate": "host",
+   "kind": "arterial/minor",
+   "shape": "T",
+   "n": 5
+  },
+  {
+   "fate": "overlap",
+   "kind": "arterial/arterial",
+   "shape": "L",
+   "n": 17
+  },
+  {
+   "fate": "overlap",
+   "kind": "minor/minor",
+   "shape": "L",
+   "n": 53
+  },
+  {
+   "fate": "overlap",
+   "kind": "minor/minor",
+   "shape": "T",
+   "n": 40
+  },
+  {
+   "fate": "overlap",
+   "kind": "minor/minor",
+   "shape": "X",
+   "n": 17
+  }
+ ]
+}

@@ -1,0 +1,47 @@
+{
+ "height_m": 0.08,
+ "runs": [
+  {
+   "k": 0,
+   "side": "right",
+   "rows": 45,
+   "length_m": 119.9,
+   "width_m": 1.5
+  },
+  {
+   "k": 1,
+   "side": "right",
+   "rows": 27,
+   "length_m": 69.2,
+   "width_m": 1.5
+  },
+  {
+   "k": 2,
+   "side": "right",
+   "rows": 18,
+   "length_m": 54.2,
+   "width_m": 1.5
+  },
+  {
+   "k": 3,
+   "side": "left",
+   "rows": 11,
+   "length_m": 27.7,
+   "width_m": 1.5
+  },
+  {
+   "k": 4,
+   "side": "right",
+   "rows": 31,
+   "length_m": 75.4,
+   "width_m": 1.5
+  },
+  {
+   "k": 5,
+   "side": "right",
+   "rows": 31,
+   "length_m": 92.8,
+   "width_m": 1.5
+  }
+ ]
+}

@@ -34,7 +34,9 @@ MAIN_PAD = 1.0
 DCB_REACH = 12.0
 MIN_PIECE_M = 30.0
 WIDTH_M = 10.0
-MAX_GRADE = 0.11
+MAX_GRADE = 0.11   # Lake Murray's connector grade cap. Per track (ledger 0078, Kevin 2026-11-03: "I just want real"):
+                   # track.config.json route.connector_max_grade_pct — absent = 11 (Lake Murray, byte-identical), null = no
+                   # cap (every ported track: the measured profile, despiked and smoothed, never clamped)
 
 
 def _mpd(lat):
@@ -84,6 +86,8 @@ def _despike_smooth_cap(z, spacing):
     sm = list(med)
     for _ in range(2):
         sm = [sum(sm[max(0, i - h):min(n, i + h + 1)]) / len(sm[max(0, i - h):min(n, i + h + 1)]) for i in range(n)]
+    if MAX_GRADE is None:
+        return sm
     cap = MAX_GRADE * spacing
     for i in range(1, n):
         sm[i] = max(sm[i - 1] - cap, min(sm[i - 1] + cap, sm[i]))
@@ -120,7 +124,7 @@ def _authored_take(rname, path, ids, local):
             out.append(c)
             print(f"[route-conn] {rname}: piece {pid} taken from {path.name} -> {c['name']} ({len(c['points_xyz_m'])} "
                   f"pts, width {min(c['widths_m']):.1f}..{max(c['widths_m']):.1f} m, steepest {100 * g:.1f} %"
-                  f"{' - OVER the 11 % cap' if g > MAX_GRADE + 1e-9 else ', the 11 % cap binds nowhere'}; ledger 0054 P3)")
+                  f"{'' if MAX_GRADE is None else (' - OVER the 11 % cap' if g > MAX_GRADE + 1e-9 else ', the 11 % cap binds nowhere')}; ledger 0054 P3)")
     covered = {w["id"] for w in doc.get("welds", []) if w.get("piece") in taken_pieces}
     for wid in ids:
         if wid in piece_ids or wid in covered:
@@ -143,6 +147,12 @@ def build(project_dir):
     proj = Path(project_dir)
     data = proj / "data"
     cfg = json.loads((proj / "track.config.json").read_text(encoding="utf-8"))
+    global MAX_GRADE
+    if "connector_max_grade_pct" in (cfg.get("route") or {}):
+        g = cfg["route"]["connector_max_grade_pct"]
+        MAX_GRADE = None if g is None else float(g) / 100.0
+        print(f"[route-conn] connector grade cap: {'none (the measured profile)' if MAX_GRADE is None else f'{g} %'}"
+              f" (route.connector_max_grade_pct)")
     rc = cfg.get("route", {}).get("route_connectors")
     if not rc:
         print("[route-conn] no route.route_connectors configured — nothing to do")

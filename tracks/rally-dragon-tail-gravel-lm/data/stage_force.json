@@ -1,0 +1,40 @@
+{
+ "force_install_ok": true,
+ "why_not": [],
+ "covered": [
+  "stage: undrivable corner s 6356 (112 deg at 6.9 m) \u2014 switchback 1",
+  "stage: undrivable corner s 6361 (119 deg at 6.9 m) \u2014 switchback 1",
+  "stage: undrivable corner s 6366 (115 deg at 6.9 m) \u2014 switchback 1",
+  "stage: gated drop s 6600 at -12.5 m, 1.09 m \u2014 switchback 2",
+  "stage: gated drop s 6600 at -13.0 m, 1.07 m \u2014 switchback 2",
+  "stage: gated drop s 6600 at -12.0 m, 0.88 m \u2014 switchback 2",
+  "stage: gated drop s 6600 at -11.5 m, 0.54 m \u2014 switchback 2"
+ ],
+ "declared": {
+  "undrivable_corners": [
+   {
+    "id": "switchback 1",
+    "s_m": [
+     6340,
+     6400
+    ],
+    "measured": "R 13.75 m centre arc, graded platform 6.94 m wide (outside R 17.22, inside R 10.28; data/switchbacks.json S4) against drive_test's 11 m corner rule"
+   }
+  ],
+  "excursion_drops": [
+   {
+    "id": "switchback 2",
+    "s_m": [
+     6570,
+     6630
+    ],
+    "measured": "the real fill slope 0.54-1.09 m below the platform's outside edge (R 17.91 m; R 12.5 m centre arc, 10.82 m wide: S5) against the 0.2 m drop rule; no lip"
+   }
+  ],
+  "approved": "Kevin 2026-11-04, asked about the three measured rows: \"Yes, force those 3\"",
+  "versions": [
+   "0.1.0"
+  ],
+  "_doc": "ledger 0078 round 12 (fleet/GATES-CHANGELOG.md 2026-11-04): read by tools/stage_force.py, by place and row type only; any other red row, or the same row anywhere else, refuses --force-install. Not covered: Douglas Creek (s 2,403 / 2,456, waiting on the lidar), any soft top, anything at s 14.3 km"
+ }
+}

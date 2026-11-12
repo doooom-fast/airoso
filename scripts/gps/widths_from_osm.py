@@ -275,13 +275,33 @@ def _smooth(vals: list[float], win: int = 9) -> list[float]:
 MAJOR = {"motorway", "trunk", "primary", "secondary", "tertiary"}   # "real" intersections cross these
 
 
+def road_ident(wv: dict, wi: int = -1) -> str:
+    """One ROAD's identity across the OSM ways it is split into: its name, else its ref, else the way itself. OSM
+    splits a street wherever a tag changes, at every bridge end and at every side street; the same name/ref continuing
+    is one road (detect_turn_corners, from the Lariat's switchbacks; detect_junctions since ledger 0070 B1)."""
+    return (wv.get("name") or wv.get("ref") or f"way{wv.get('id', wi)}").strip().lower()
+
+
+def lanes_tag(wv: dict | None) -> int | None:
+    """The way's OSM ``lanes`` tag (both directions), or None where untagged (ledger 0070 B2: the paint's lane count)."""
+    try:
+        return max(int(wv["lanes"]), 1) if wv and wv.get("lanes") else None
+    except (TypeError, ValueError):
+        return None
+
+
 def detect_junctions(ways: list[dict], cl: list[Vertex], *, near_m: float = 16.0,
                      profile: str = "urban") -> list[dict]:
-    """Real intersections the circuit drives THROUGH: OSM nodes where ≥2 ARTERIAL (tertiary+) ways meet,
+    """Real intersections the circuit drives THROUGH: OSM nodes where ≥2 DISTINCT ARTERIAL (tertiary+) roads meet,
     within ``near_m`` of the racing line — the corners where the circuit turns street-to-street and the
     major crossings, NOT every minor residential T-junction. Returns ``[{idx, size}]`` — the centerline
     vertex index nearest the junction + the intersection's pavement size — used to FLARE the road ribbon
-    width there (one continuous surface, no overlapping pad → no bumps)."""
+    width there (one continuous surface, no overlapping pad → no bumps).
+
+    DISTINCT ROADS, NOT WAYS (ledger 0070 B1): counting ways flared every node where OSM merely splits one arterial (a tag
+    change, a bridge end, a side street's node): on Sand Creek 0.33.0, 50 of the 64 flared nodes were a bare way split
+    (32) or a minor side street on one arterial (18). The arterial ways at the node must carry >= 2 road identities
+    (road_ident); a residential side street is never one, since only MAJOR ways are counted."""
     from collections import defaultdict
     node_ll: dict[int, Vertex] = {}
     node_ways: dict[int, list[int]] = defaultdict(list)
@@ -295,7 +315,7 @@ def detect_junctions(ways: list[dict], cl: list[Vertex], *, near_m: float = 16.0
     out: list[dict] = []
     for nid, wl in node_ways.items():
         major = {wi for wi in wl if ways[wi].get("highway") in MAJOR}
-        if len(major) < 2:
+        if len({road_ident(ways[wi], wi) for wi in major}) < 2:
             continue
         lo, la = node_ll[nid]
         nx, nz = lo * kx, la * ky
@@ -309,15 +329,25 @@ def detect_junctions(ways: list[dict], cl: list[Vertex], *, near_m: float = 16.0
     return out
 
 
+FLARE_OFF_RADIUS_M = 30.0   # [invented] route.corner_flare_off's default reach: a flare this near the declared node is off
+
+
 def detect_turn_corners(ways: list[dict], cl: list[Vertex], *, profile: str = "urban",
-                        kink_deg: float = 45.0, near_m: float = 16.0) -> list[dict]:
+                        kink_deg: float = 45.0, near_m: float = 16.0,
+                        flare_off: list | None = None) -> list[dict]:
     """Corners where the LAP ITSELF turns street-to-street hard — junction-grade pavement
     regardless of road class. detect_junctions gates on >=2 ARTERIAL ways, which misses a
     minor-street corner mouth entirely (Kevin: "a corner at the bottom of the hill that is
     impossible to make ... treat it like a wide intersection"). A heading kink > kink_deg
     concentrated within +-12 m, at a vertex near an OSM node shared by >=2 drivable ways,
     is a paved corner — flare it like an intersection. Mountain hairpins never trigger:
-    they are one way bending back on itself, not two ways sharing a node."""
+    they are one way bending back on itself, not two ways sharing a node.
+
+    ``flare_off`` (ledger 0070 D, opt-in per track: route.corner_flare_off): [(lon, lat, radius_m)] — a corner whose
+    vertex lies within radius_m of one is NOT flared. Two reasons a track declares one: an authored junction pad owns
+    that pavement (REALISM §8: a flare swept under it is a second, overlapping surface), or the "corner" is a slip
+    lane's merge, which has no crossing pavement to stand for (Sand Creek's 56th slip, ledgers 0073 / 0070).
+    Absent or empty: byte-identical to before."""
     from collections import defaultdict
     lat0 = sum(p[1] for p in cl) / len(cl)
     kx = 111320.0 * math.cos(math.radians(lat0)); ky = 110540.0
@@ -333,8 +363,7 @@ def detect_turn_corners(ways: list[dict], cl: list[Vertex], *, profile: str = "u
             node_ways[nid].add(wi)
 
     def _ident(wi):
-        wv = ways[wi]
-        return (wv.get("name") or wv.get("ref") or f"way{wv.get('id', wi)}").strip().lower()
+        return road_ident(ways[wi], wi)
 
     # >=2 DISTINCT ROADS at the node — OSM splits one road into multiple ways at every junction
     # node, so counting ways flags every hairpin of a split mountain road as a 'corner' (the
@@ -360,6 +389,9 @@ def detect_turn_corners(ways: list[dict], cl: list[Vertex], *, profile: str = "u
             px, pz = xs[i], zs[i]
             near = [ws for (qx, qz), ws in shared if (qx - px) ** 2 + (qz - pz) ** 2 <= near_m * near_m]
             if near:
+                if any((lo * kx - px) ** 2 + (la * ky - pz) ** 2 <= r * r for lo, la, r in (flare_off or ())):
+                    i = j1 + 5  # a declared corner: no flare (route.corner_flare_off)
+                    continue
                 wset = set().union(*near)
                 two = sorted((pavement_width(ways[w], profile) for w in wset), reverse=True)[:2]
                 out.append({"idx": i, "size": round(max(14.0, sum(two) * 0.9), 1)})
@@ -468,8 +500,23 @@ def build(project_dir: str | Path, *, allow_stale: bool = False, max_age_days: f
     # FLARE the ribbon at the real intersections the circuit drives through (widen the road itself, one
     # continuous surface — NOT an overlapping pad, which poked above the sloped road and read as bumps).
     widths_base_cl = widths_cl[:]        # pre-flare: the street's own line (sidewalks follow THIS)
+    lanes_cl = [lanes_tag(ways[wi] if wi >= 0 else None) for wi in idx]   # B2: the paint's lane count per vertex
     junctions = detect_junctions(ways, cl, profile=profile)
-    corners = detect_turn_corners(ways, cl, profile=profile)
+    # ledger 0070 D (opt-in): route.corner_flare_off [{"name", "at": [lat, lon], "radius_m", "why"}] — an authored
+    # junction pad owns the pavement there, or it is a slip's merge: neither flare is swept (the corner's, nor a junction
+    # node's inside the radius)
+    flare_off = [(float(c["at"][1]), float(c["at"][0]), float(c.get("radius_m", FLARE_OFF_RADIUS_M)))
+              for c in (route.get("corner_flare_off") or [])]
+    if flare_off:
+        _lat0p = sum(p[1] for p in cl) / len(cl)
+        _kxp = 111320.0 * math.cos(math.radians(_lat0p)); _kyp = 110540.0
+        _n0 = len(junctions)
+        junctions = [j for j in junctions
+                     if not any(((cl[j["idx"]][0] - lo) * _kxp) ** 2 + ((cl[j["idx"]][1] - la) * _kyp) ** 2 <= r * r
+                                for lo, la, r in flare_off)]
+        print(f"  [widths_from_osm] route.corner_flare_off: {len(flare_off)} corner(s) — no corner flare there, "
+              f"{_n0 - len(junctions)} junction flare(s) inside them dropped")
+    corners = detect_turn_corners(ways, cl, profile=profile, flare_off=flare_off)
     if corners:
         print(f"  [widths_from_osm] {len(corners)} hard route corners flared to junction grade "
               f"(sizes {[c['size'] for c in corners]})")
@@ -537,8 +584,14 @@ def build(project_dir: str | Path, *, allow_stale: bool = False, max_age_days: f
     # width k vertices off on a rotated ring. projection records the permutation (source_index); it is applied here
     # once, and widths_order says so. A track with no recorded permutation (every track built before 2026-10-29, and
     # any unrotated ring) is the identity: byte-identical but for the new key.
+    if len(lanes_cl) != n_local:
+        lanes_v = [lanes_cl[min(len(lanes_cl) - 1, round(i * (len(lanes_cl) - 1) / max(n_local - 1, 1)))]
+                   for i in range(n_local)]
+    else:
+        lanes_v = lanes_cl
     from scripts.geometry.projection import in_local_order
     local["widths_base_m"] = [round(w, 2) for w in in_local_order(local, widths_base)]
+    local["lanes_osm"] = in_local_order(local, lanes_v)      # ledger 0070 B2: OSM lanes per vertex, None = untagged
     local["widths_m"] = in_local_order(local, widths)
     local["widths_order"] = "local"
     local["default_width_m"] = round(sum(widths) / len(widths), 2)

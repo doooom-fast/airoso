@@ -1,0 +1,39 @@
+---- R170-230.npz returns 5047
+  o  -4.0: cells  90  median   19275  block-period amp    604  null p95    806  p-value 0.480
+  o  -3.5: cells  88  median   19483  block-period amp    652  null p95    581  p-value 0.005
+  o  -3.0: cells  92  median   20264  block-period amp    464  null p95    523  p-value 0.205
+  o  -2.5: cells  90  median   20362  block-period amp    313  null p95    534  p-value 0.975
+  o  -2.0: cells  87  median   20072  block-period amp    320  null p95    595  p-value 0.995
+  o  -1.5: cells  84  median   20362  block-period amp    505  null p95    660  p-value 0.405
+  o  -1.0: cells  80  median   20544  block-period amp    666  null p95   1036  p-value 0.890
+  o  -0.5: cells  85  median   20550  block-period amp   1345  null p95   1804  p-value 0.705
+  o  +0.0: cells  81  median   21111  block-period amp   1497  null p95   2067  p-value 0.675
+  o  +0.5: cells  83  median   23913  block-period amp   1670  null p95   2624  p-value 0.945
+  o  +1.0: cells  77  median   28227  block-period amp   1002  null p95   2189  p-value 1.000
+  o  +1.5: cells  75  median   29144  block-period amp   1107  null p95   1411  p-value 0.530
+  o  +2.0: cells  75  median   28010  block-period amp   1265  null p95   1541  p-value 0.310
+  o  +2.5: cells  77  median   29350  block-period amp    722  null p95    995  p-value 0.635
+  o  +3.0: cells  76  median   29968  block-period amp    773  null p95   1089  p-value 0.625
+  o  +3.5: cells  76  median   30099  block-period amp    804  null p95   1145  p-value 0.690
+  o  +4.0: cells  71  median   30474  block-period amp    763  null p95   1125  p-value 0.805
+  o +16.0: 0 cells, too few
+---- R970-1030.npz returns 4742
+  o  -4.0: cells  89  median   18864  block-period amp    387  null p95    652  p-value 0.960
+  o  -3.5: cells  75  median   20362  block-period amp    321  null p95    416  p-value 0.440
+  o  -3.0: cells  84  median   20450  block-period amp    310  null p95    362  p-value 0.190
+  o  -2.5: cells  83  median   20450  block-period amp    328  null p95    409  p-value 0.430
+  o  -2.0: cells  85  median   20639  block-period amp    287  null p95    347  p-value 0.250
+  o  -1.5: cells  86  median   20737  block-period amp    281  null p95    419  p-value 0.755
+  o  -1.0: cells  86  median   21111  block-period amp    566  null p95    755  p-value 0.745
+  o  -0.5: cells  82  median   21064  block-period amp   1346  null p95   1994  p-value 0.895
+  o  +0.0: cells  77  median   21860  block-period amp   1733  null p95   2245  p-value 0.700
+  o  +0.5: cells  82  median   29278  block-period amp    916  null p95   1396  p-value 0.870
+  o  +1.0: cells  75  median   31412  block-period amp    813  null p95   1311  p-value 0.900
+  o  +1.5: cells  74  median   31128  block-period amp    444  null p95    943  p-value 1.000
+  o  +2.0: cells  76  median   31899  block-period amp    668  null p95    750  p-value 0.265
+  o  +2.5: cells  75  median   31972  block-period amp    529  null p95    706  p-value 0.490
+  o  +3.0: cells  77  median   31790  block-period amp    353  null p95    627  p-value 0.980
+  o  +3.5: cells  75  median   31597  block-period amp    560  null p95    777  p-value 0.510
+  o  +4.0: cells  83  median   32346  block-period amp    362  null p95    683  p-value 0.995
+  o +13.5: cells  71  median   33095  block-period amp    743  null p95    659  p-value 0.010
+  o +16.0: 0 cells, too few

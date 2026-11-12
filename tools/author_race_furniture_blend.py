@@ -789,6 +789,33 @@ def main():
             raise SystemExit(f"[race] ROAD row {k} centre {tuple(round(v, 2) for v in c)} is not centreline v{k} — ribbon layout changed")
     road_main = _bvh(road_name, keep=lambda f: all(v.index < main_n for v in f.verts))
     road_any = _bvh(road_name)
+    if race_cfg.get("seat_on_pads"):
+        # race.seat_on_pads (opt-in, ledger 0079 round K; Lake Murray declares none): the lap's ribbon is cut at every
+        # built junction pad (tools/lm_pads_blend.py, 1ROAD_pad_<id>: the measured deck stands in), so the mainline seat
+        # reads every ROAD face AND the pads' decks — a strip crossing a pad stands on its deck, never interpolated
+        # over it
+        pads = sorted((o for o in bpy.data.objects if o.type == "MESH" and o.name.startswith("1ROAD_pad_")), key=lambda o: o.name)
+        if pads:
+            vs, fs = [], []
+            rm = road.matrix_world
+            vs += [rm @ v.co for v in road.data.vertices]
+            # every ROAD face, the welded mouths' too: across a flared mouth (Sand Creek's 56th slip, v847-v868) the weld
+            # replaced the lap's edge faces and the strip found no mainline face under it (66 rings interpolated, round K);
+            # the seat stays the LOWEST deck near the data height (_seat_lowest), as a lap's is on road_any
+            fs += [tuple(p.vertices) for p in road.data.polygons]
+            for ob in pads:
+                b0 = len(vs)
+                vs += [ob.matrix_world @ v.co for v in ob.data.vertices]
+                fs += [tuple(b0 + i for i in p.vertices) for p in ob.data.polygons]
+            road_main = BVHTree.FromPolygons(vs, fs)
+            vs2 = [rm @ v.co for v in road.data.vertices]
+            fs2 = [tuple(p.vertices) for p in road.data.polygons]
+            for ob in pads:
+                b0 = len(vs2)
+                vs2 += [ob.matrix_world @ v.co for v in ob.data.vertices]
+                fs2 += [tuple(b0 + i for i in p.vertices) for p in ob.data.polygons]
+            road_any = BVHTree.FromPolygons(vs2, fs2)
+            print(f"[race] seat_on_pads: the mainline seat reads ROAD + {len(pads)} pad deck(s): {[o.name for o in pads]}")
     curb_name = "CURB" if bpy.data.objects.get("CURB") else "1KERB_sidewalk"
     curb_bvh = _bvh(curb_name) if any(G["mode"] == "walk" for G in groups) else None
     removed = _remove_existing()

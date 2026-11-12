@@ -1,0 +1,47 @@
+{
+ "source_track": "sand-creek",
+ "points": 3218,
+ "lap_m": 9662.3,
+ "closed": true,
+ "widths_m": [
+  5.5,
+  12.12,
+  42.3
+ ],
+ "bridges_levelled": [
+  [
+   2415.0,
+   118.0
+  ],
+  [
+   5887.0,
+   128.0
+  ],
+  [
+   6484.0,
+   110.0
+  ]
+ ],
+ "max_grade_pct": null,
+ "measured_max_grade_pct": 6.84,
+ "y_changed_points": 219,
+ "y_change_max_m": 7.91,
+ "connectors": true,
+ "bespoke_files": [],
+ "crossfall": {
+  "stations": 60,
+  "max_pct": 4.93
+ },
+ "profile": null,
+ "width_taper": null,
+ "resample": null,
+ "edge_on_wall": null,
+ "corner_arcs": null,
+ "carried": [],
+ "grid_upsample": 2,
+ "md5": {
+  "source_centerline": "0bbfe1453bd32b4ae2cd637da3931e08",
+  "heightfield.npy": "6e143be117c1ba26be8ce1f724f2610d",
+  "centerline.local.json": "7f0661fde7c595b6ae8ad63d9de33a29"
+ }
+}

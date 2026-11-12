@@ -1,0 +1,128 @@
+{
+ "source_track": "rally-dragon-tail-gravel",
+ "points": 8413,
+ "lap_m": 25292.7,
+ "closed": false,
+ "widths_m": [
+  4.48,
+  7.48,
+  14.94
+ ],
+ "bridges_levelled": [],
+ "max_grade_pct": null,
+ "measured_max_grade_pct": 24.64,
+ "y_changed_points": 0,
+ "y_change_max_m": 0.0,
+ "connectors": false,
+ "bespoke_files": [],
+ "crossfall": null,
+ "profile": {
+  "cap_was_pct": 18.0,
+  "reproduced_within_m": 0.0067,
+  "points_moved": 158,
+  "max_move_m": 6.99,
+  "road_seek_widths": {
+   "bounded_stations": 2693,
+   "width_m": [
+    4.36,
+    14.94
+   ],
+   "changed_by_m_max": 8.44
+  },
+  "road_seek_relaxed_points": 23,
+  "switchbacks": [
+   {
+    "id": "S1",
+    "st_m": 5946.5,
+    "radius_m": 22.85,
+    "width_m": 6.51,
+    "side": "right",
+    "span_i": [
+     1967,
+     1986
+    ],
+    "join_m": [
+     26.8,
+     29.9
+    ],
+    "points": 18,
+    "arc_deg": 101.7,
+    "back_steps": 0,
+    "inside_edge_r_m": 19.6,
+    "arc_points": 15,
+    "on_platform": true,
+    "status": "PASS"
+   },
+   {
+    "id": "S4",
+    "st_m": 6380.8,
+    "radius_m": 13.75,
+    "width_m": 6.94,
+    "side": "left",
+    "span_i": [
+     2115,
+     2130
+    ],
+    "join_m": [
+     18.0,
+     26.8
+    ],
+    "points": 14,
+    "arc_deg": 151.5,
+    "back_steps": 0,
+    "inside_edge_r_m": 10.28,
+    "arc_points": 13,
+    "on_platform": true,
+    "status": "PASS"
+   },
+   {
+    "id": "S5",
+    "st_m": 6590.2,
+    "radius_m": 12.5,
+    "width_m": 10.82,
+    "side": "right",
+    "span_i": [
+     2185,
+     2199
+    ],
+    "join_m": [
+     17.7,
+     23.8
+    ],
+    "points": 13,
+    "arc_deg": 171.2,
+    "back_steps": 0,
+    "inside_edge_r_m": 7.09,
+    "arc_points": 12,
+    "on_platform": true,
+    "status": "PASS"
+   }
+  ],
+  "road_seek": {
+   "file": "data/road_seek.json",
+   "offset_abs_m": {
+    "median": 0.0,
+    "max": 35.99
+   },
+   "steepest_10m_pct": 24.64
+  }
+ },
+ "width_taper": {
+  "rate_m_per_m": 0.1,
+  "points_widened": 916,
+  "max_widening_m": 4.63
+ },
+ "resample": null,
+ "edge_on_wall": null,
+ "corner_arcs": null,
+ "carried": [
+  "centerline.elevation.json",
+  "centerline.elevation.json (z_raw_m: the road_seek road)"
+ ],
+ "grid_upsample": 1,
+ "md5": {
+  "source_centerline": "d78764cf7bb623d64a856abf0e1771be",
+  "heightfield.npy": "cb7addf0a4e4df7e792073fc5ac902e7",
+  "centerline.local.json": "0e701d0b3b49f00c5e123edb3348fb8c"
+ }
+}

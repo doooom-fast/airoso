@@ -133,3 +133,25 @@ def test_grade_capped_blend_keeps_30_m_where_30_m_is_within_the_cap():
     out = tc._trim_against([_crossing(angle=90.0, y=10.5)], [("MAINLINE", hpts, hw)], mouths, {}, capped=["x"])
     tc.resolve_pieces(mouths, out)
     assert all(mo["blend_m"] == tc.BLEND_M for mo in mouths)
+
+
+def test_a_banked_host_cut_lands_on_its_banked_deck():
+    """ledger 0085 (route.trim_host_bank, Pikes Peak): with the host's bank declared, each cut lands on the deck where it
+    stands (centreline + signed lateral x tan(bank), + = the host's left edge higher), not on the centreline; without
+    it the centreline height, as before"""
+    hpts, hw = _host()
+    bank = -0.17                                                     # the left edge 17 % lower, as the oval's inside
+    try:
+        tc.HOST_BANK["MAINLINE"] = lambda x, z: math.atan(bank)
+        mouths = []
+        tc._trim_against([_crossing()], [("MAINLINE", hpts, hw)], mouths, {})
+    finally:
+        tc.HOST_BANK.clear()
+    assert len(mouths) == 2
+    for mo in mouths:
+        cx, cy, cz = mo["cut_xyz"]
+        lat = cz                                                     # the host runs +x: its left is +z
+        assert abs(cy - (10.0 + GRADE * cx + lat * bank)) < 2e-3, mo
+    plain = []
+    tc._trim_against([_crossing()], [("MAINLINE", hpts, hw)], plain, {})
+    assert all(abs(mo["cut_xyz"][1] - (10.0 + GRADE * mo["cut_xyz"][0])) < 2e-3 for mo in plain)

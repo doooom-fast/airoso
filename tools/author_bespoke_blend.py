@@ -35,6 +35,8 @@ y = N, z = up). The collection is emptied first, so the tool is idempotent, and 
   cards       [{"file", "prefix": "TREECARD", "clear_m"}]: {"cols", "rows", "points": [[lon, lat, cell, h, w], ...]}; crossed
               double-sided cards on the ground, anything within clear_m of pavement or a wall dropped and counted -> <prefix>_<k>
   (blocks group key) "collider_tri_m": the longest ground-polygon edge a collider may stand over (default COLLIDER_TRI_M, 8 m)
+  (blocks group key) "rim_step_m": the rim walk that finds a block's ground (default BLOCK_RIM_STEP_M, 1 m; Lake Murray v4's 7,600
+              blocks were stood at 2.0 m, the walk before ledger 0063, and its config keeps that: ledger 0065)
   guardrail   {"from": "1WALL_PARA"}: a W-beam rail and posts along the draft's guard lips (RAIL_* below), road side. The
               lips keep their shape and are renamed 1WALL_GHOST_*, a transparent skin: the collider the gates judged stays
   prep_seats  true where the prep that follows is engine-july's (Lake Murray): it re-seats every BUILDING* island itself, so a
@@ -42,8 +44,9 @@ y = N, z = up). The collection is emptied first, so the tool is idempotent, and 
   names       {"ground": [...], "far": [...], "paved": [...], "track_edge": [...], "cone_ground": [...], "walls": [...]}: the scene's
               mesh-name prefixes where they are not the chain's (Lake Murray at the author stage: TERRAIN, GRASS_FAR, ROAD, CURB;
               the prep renames them to 1GRASS / 1ROAD / 1KERB later). Defaults = the chain's names below
-  rails       [{"key", "kind": "tecpro" | "krail", "polyline_lonlat", "auto"}]: collidable module lines seated on the ground ->
-              1WALL_TECPRO_<k> / 1WALL_KRAILBW_<k>; "auto" leaves a module out when it would stand on a road, instead of refusing
+  rails       [{"key", "kind": "tecpro" | "krail", "polyline_lonlat", "auto", "height_m"}]: collidable module lines seated on
+              the ground -> 1WALL_TECPRO_<k> / 1WALL_KRAILBW_<k>; "auto" leaves a module out when it would stand on a road,
+              instead of refusing; "height_m" (optional): a measured height over the ground, in place of the kind's
 
 SELF-CHECKS, exit 1 and loop.blend NOT saved: a building's footprint (ring + interior) and every scrub foot off every road
 and kerb; every cone foot off the main road; a building at least BUILDING_CLEAR_M from the road and any wall; ground under every read; no AC_* touched.
@@ -131,12 +134,13 @@ RAIL_KINDS = {"tecpro": ("1WALL_TECPRO", 1.2, 1.5, 0.8),
 EDGE_OF = {}                   # id(BVH) -> the longest edge of each polygon, in metres (for the collider's fine-ground rule)
 
 
-def bvh(prefixes):
-    """(BVH, owner name per polygon) over every mesh whose name starts with a prefix, world space"""
+def bvh(prefixes, exclude=()):
+    """(BVH, owner name per polygon) over every mesh whose name starts with a prefix (and none of `exclude`), world space"""
     verts, polys, owner, edges = [], [], [], []
     for o in bpy.data.objects:
         u = o.name.upper()
-        if o.type != "MESH" or not u.startswith(prefixes) or u.startswith(OWN_PREFIXES):
+        if (o.type != "MESH" or not u.startswith(prefixes) or u.startswith(OWN_PREFIXES)
+                or (exclude and u.startswith(tuple(exclude)))):
             continue
         mw = o.matrix_world
         off = len(verts)
@@ -570,7 +574,7 @@ def blocks(col, spec, proj, to_xy, ground, near_ground, paved, walls, bad):
         for b in items:
             key, why = b["key"], None
             ring = inward_ring([to_xy(p) for p in b["footprint_lonlat"]])
-            rim, inner = ring_points(ring, BLOCK_RIM_STEP_M)
+            rim, inner = ring_points(ring, float(group.get("rim_step_m", BLOCK_RIM_STEP_M)))
             gs = [down(ground, x, y) for x, y in rim]
             wall_h = float(b["wall_h_m"])
             near = [down(near_ground, x, y) for x, y in ring]
@@ -611,7 +615,11 @@ def blocks(col, spec, proj, to_xy, ground, near_ground, paved, walls, bad):
                             hit = tree.find_nearest(Vector((x, y, mean + 1.0)), 30.0) if tree is not None else (None,)
                             if hit[0] is not None:
                                 clear = min(clear, float(hit[3]))
-                    if clear < BUILDING_CLEAR_M:
+                    # ledger 0079 round H (opt-in, a blocks group's building_clear_m; Sand Creek 0): the clearance a planned
+                    # building keeps from a road or wall. BUILDING_CLEAR_M is a circuit's run-off [invented]; on a street
+                    # port a real house stands 2-5 m from the kerb (Sand Creek round G: 12 measured houses dropped at
+                    # 0.4-2.6 m from the 1.8 m edge strip). A footprint ON the paved stays dropped (the test above)
+                    if clear < float(group.get("building_clear_m", BUILDING_CLEAR_M)):
                         why = f"{clear:.1f} m from a road or wall"
             if why:
                 (dropped if auto else bad).append(f"block {key}: {why}")
@@ -794,37 +802,49 @@ def pitched_roof(obb, eave, ridge_z, form, tile):
 def pads(col, spec, to_xy, ground, paved, bad):
     rows = []
     for k, p in enumerate(spec):
-        q = [to_xy(c) for c in p["quad_lonlat"]]
-        nu = max(1, int(math.dist(q[0], q[1]) / PAD_CELL_M))
-        nv = max(1, int(math.dist(q[1], q[2]) / PAD_CELL_M))
-        idx, verts = {}, []
-        faces, uvs, skipped = [], [], 0
-        def vert(i, j):
-            if (i, j) not in idx:
-                u, v = i / nu, j / nv
-                x = (q[0][0] * (1 - u) + q[1][0] * u) * (1 - v) + (q[3][0] * (1 - u) + q[2][0] * u) * v
-                y = (q[0][1] * (1 - u) + q[1][1] * u) * (1 - v) + (q[3][1] * (1 - u) + q[2][1] * u) * v
-                g = down(ground, x, y)
-                if g is None:
-                    return None
-                idx[(i, j)] = len(verts)
-                verts.append((x, y, g + PAD_LIFT_M))
-            return idx[(i, j)]
-        for i in range(nu):
-            for j in range(nv):
-                ids = [vert(i, j), vert(i + 1, j), vert(i + 1, j + 1), vert(i, j + 1)]
-                if None in ids:
-                    skipped += 1
-                    continue
-                c = [verts[a] for a in ids]
-                mx, my = sum(a[0] for a in c) / 4, sum(a[1] for a in c) / 4
-                if any(down(paved, x, y) is not None for x, y in [(mx, my)] + [(a[0], a[1]) for a in c]):
-                    skipped += 1
-                    continue
-                area = sum(c[a][0] * c[(a + 1) % 4][1] - c[(a + 1) % 4][0] * c[a][1] for a in range(4))
-                ord_ = ids if area > 0 else ids[::-1]
-                faces.append(tuple(ord_))
-                uvs.append(tuple((verts[a][0] / 8.0, verts[a][1] / 8.0) for a in ord_))
+        # a pad is one quad ("quad_lonlat"), or a STRIP ("strip_lonlat": {"inner": [...], "outer": [...]}, equal lengths:
+        # the quads between consecutive pairs, one mesh; ledger 0078 round 5, Nevada's measured run-off)
+        if "strip_lonlat" in p:
+            inn = [to_xy(c) for c in p["strip_lonlat"]["inner"]]
+            out = [to_xy(c) for c in p["strip_lonlat"]["outer"]]
+            if len(inn) != len(out) or len(inn) < 2:
+                bad.append(f"pad {p['key']}: strip_lonlat inner / outer must be equal and >= 2 long")
+                continue
+            quads = [[inn[i], inn[i + 1], out[i + 1], out[i]] for i in range(len(inn) - 1)]
+        else:
+            quads = [[to_xy(c) for c in p["quad_lonlat"]]]
+        verts, faces, uvs, skipped = [], [], [], 0
+        for q in quads:
+            nu = max(1, int(math.dist(q[0], q[1]) / PAD_CELL_M))
+            nv = max(1, int(math.dist(q[1], q[2]) / PAD_CELL_M))
+            idx = {}
+
+            def vert(i, j):
+                if (i, j) not in idx:
+                    u, v = i / nu, j / nv
+                    x = (q[0][0] * (1 - u) + q[1][0] * u) * (1 - v) + (q[3][0] * (1 - u) + q[2][0] * u) * v
+                    y = (q[0][1] * (1 - u) + q[1][1] * u) * (1 - v) + (q[3][1] * (1 - u) + q[2][1] * u) * v
+                    g = down(ground, x, y)
+                    if g is None:
+                        return None
+                    idx[(i, j)] = len(verts)
+                    verts.append((x, y, g + PAD_LIFT_M))
+                return idx[(i, j)]
+            for i in range(nu):
+                for j in range(nv):
+                    ids = [vert(i, j), vert(i + 1, j), vert(i + 1, j + 1), vert(i, j + 1)]
+                    if None in ids:
+                        skipped += 1
+                        continue
+                    c = [verts[a] for a in ids]
+                    mx, my = sum(a[0] for a in c) / 4, sum(a[1] for a in c) / 4
+                    if any(down(paved, x, y) is not None for x, y in [(mx, my)] + [(a[0], a[1]) for a in c]):
+                        skipped += 1
+                        continue
+                    area = sum(c[a][0] * c[(a + 1) % 4][1] - c[(a + 1) % 4][0] * c[a][1] for a in range(4))
+                    ord_ = ids if area > 0 else ids[::-1]
+                    faces.append(tuple(ord_))
+                    uvs.append(tuple((verts[a][0] / 8.0, verts[a][1] / 8.0) for a in ord_))
         if not faces:
             bad.append(f"pad {p['key']}: no cell stood")
             continue
@@ -974,11 +994,29 @@ def guardrail(col, spec, proj, bad):
     return {"runs": len(runs), "rail_m": round(total, 1), "posts": n_post}
 
 
-def rails(col, spec, to_xy, ground, paved, bad):
+def rails(col, spec, to_xy, ground, paved, bad, edge=None):
     rows = []
     for k, r in enumerate(spec):
+        # SEATED ON WHAT IT STANDS ON (opt-in "seat": "surface", ledger 0085, Pikes Peak's outer wall): the module's
+        # ring reads the higher of the ground and the track edge's own surface (names.track_edge, the circuit edge strip
+        # the wall stands on) — at the author stage the ground under a BANKED edge strip is the assembler's terrain, up
+        # to 1.6 m under the strip (the prep pins it only later): 0.1.0's wall stood its 1.27 m on that ground, so no
+        # module rose more than 0.61 m over the pavement and 56 % were under it. Absent = the ground, as before.
+        on_surface = r.get("seat") == "surface"
+        if r.get("seat") not in (None, "surface"):
+            bad.append(f"rail {r['key']}: seat {r.get('seat')!r} (only \"surface\")")
+            continue
+        if on_surface and edge is None:
+            bad.append(f"rail {r['key']}: seat surface but no track_edge mesh in the scene")
+            continue
+        # MAY STAND ON (opt-in "stand_on": [name prefixes], ledger 0085, Pikes Peak's junction pads): a module over those
+        # paved meshes is not "on a road" (the outer wall's foot on a pad deck's edge, where the deck replaces the lap's
+        # edge strip; names.track_edge then seats it on the deck). Absent = every paved mesh, as before
+        stand_on = tuple(str(p).upper() for p in r.get("stand_on") or [])
+        paved_r = bvh(PAVED, exclude=stand_on)[0] if stand_on else paved
         line = [to_xy(p) for p in r["polyline_lonlat"]]
         prefix, hgt, mod, dep = RAIL_KINDS[r["kind"]]
+        hgt = float(r.get("height_m", hgt))      # a measured height (ledger 0078: Pikes Peak's wall off the lidar)
         verts, faces, uvs = [], [], []
         arc_total, modules, left_out = 0.0, 0, 0
         for a, b in zip(line, line[1:]):
@@ -988,12 +1026,19 @@ def rails(col, spec, to_xy, ground, paved, bad):
             cnt = int(seg // mod)
             for m in range(cnt):
                 x0, y0 = a[0] + ux * m * mod, a[1] + uy * m * mod
-                x1, y1 = x0 + ux * (mod - 0.02), y0 + uy * (mod - 0.02)
+                # opt-in "overlap_m" (ledger 0085, Pikes Peak's outer wall): the modules interlock, each running this far
+                # into the next (a K-rail line is pinned end to end; the 2 cm joint let drive_test's wall probe through at
+                # s 1200.8); absent = the 2 cm joint, as before
+                run = mod + float(r["overlap_m"]) if r.get("overlap_m") is not None else mod - 0.02
+                x1, y1 = x0 + ux * run, y0 + uy * run
                 ring = [(x0 - nx * dep / 2, y0 - ny * dep / 2), (x1 - nx * dep / 2, y1 - ny * dep / 2),
                         (x1 + nx * dep / 2, y1 + ny * dep / 2), (x0 + nx * dep / 2, y0 + ny * dep / 2)]
                 ring = inward_ring(ring)
                 gs = [down(ground, x, y) for x, y in ring]
-                if any(g is None for g in gs) or any(down(paved, x, y) is not None for x, y in ring):
+                if on_surface:
+                    es = [down(edge, x, y) for x, y in ring]
+                    gs = [g if e is None else (e if g is None else max(g, e)) for g, e in zip(gs, es)]
+                if any(g is None for g in gs) or any(down(paved_r, x, y) is not None for x, y in ring):
                     if r.get("auto"):
                         left_out += 1
                     else:
@@ -1054,13 +1099,18 @@ def main():
         report["scrub"] = scrub(col, spec["scrub"], to_xy, ground, paved, walls, bad)
     far = bvh(GROUND_FAR)[0]
     if spec.get("rails"):
-        report["rails"] = rails(col, spec["rails"], to_xy, ground, paved, bad)
+        report["rails"] = rails(col, spec["rails"], to_xy, ground, paved, bad,
+                                edge=bvh(TRACK_EDGE)[0] if any(r.get("seat") for r in spec["rails"]) else None)
     if spec.get("blocks"):
         report["blocks"] = blocks(col, spec["blocks"], proj, to_xy, far, ground, paved, walls, bad)
     if spec.get("pads"):
         report["pads"] = pads(col, spec["pads"], to_xy, far, paved, bad)
     if spec.get("cards"):
-        quads = [[to_xy(c) for c in p["quad_lonlat"]] for p in spec.get("pads", [])]
+        quads = [[to_xy(c) for c in p["quad_lonlat"]] for p in spec.get("pads", []) if "quad_lonlat" in p]
+        for p in spec.get("pads", []):                 # a strip pad's quads (ledger 0078 round 5)
+            if "strip_lonlat" in p:
+                si, so = p["strip_lonlat"]["inner"], p["strip_lonlat"]["outer"]
+                quads += [[to_xy(si[i]), to_xy(si[i + 1]), to_xy(so[i + 1]), to_xy(so[i])] for i in range(len(si) - 1)]
         report["cards"] = cards(col, spec["cards"], proj, to_xy, far, paved, walls, bad, quads)
     if spec.get("guardrail"):
         report["guardrail"] = guardrail(col, spec["guardrail"], proj, bad)

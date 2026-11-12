@@ -344,7 +344,9 @@ def test_install_folder_is_one_name_in_the_config_and_the_chain():
     cfg = json.loads((ROOT / "tracks" / "san-diego-lake-murray" / "track.config.json").read_text(encoding="utf-8"))
     slug = cfg["slug"]
     assert 'SLUG="%s"' % slug in TEXT
-    assert cfg["install_folder"] == f"{slug}_v3"
+    # 2026-11-03 (ledger 0065): v4 is Lake Murray's line and installs as <slug>_v4 through tools/ship_track.sh, which
+    # reads install_folder from the config; this script (the 0.19.x chain) still installs the V3 folder Kevin keeps 0.19.4 in
+    assert cfg["install_folder"] == f"{slug}_v4"
     assert 'cp -r "$B" "$AC/${SLUG}_v3"' in TEXT
 
 
@@ -450,7 +452,7 @@ def test_mouth_weld_and_its_gate_are_wired():
     own ribbon module) and the exit-code flag; verify_mouths judges the BUILT road right after its gate OBJ, hard
     (set -e: no `|| rc`), its stale verdict removed first; both reports sync back; AIROSO is overridable for a
     worktree rehearsal and defaults to the main checkout"""
-    assert 'AIROSO="${AIROSO:-$_here}"' in TEXT and "Documents/GitHub/airoso}" not in TEXT   # the script's own repo
+    assert 'AIROSO="${AIROSO:-C:/Users/Owner/Documents/GitHub/airoso}"' in TEXT
     blb = [p for p, ln in _code_lines() if "build_loop_blend.py" in ln and '"$BL"' in ln]
     weld = [(p, ln) for p, ln in _code_lines() if "weld_mouths_blend.py" in ln]
     assert len(weld) == 1, weld

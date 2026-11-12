@@ -1,0 +1,629 @@
+{
+ "ok": true,
+ "fails": [],
+ "warnings": [
+  "F: race: author-time: minimum spawn clearance 0.98 m at AC_START_1 v2770 (edge-strip face 2.93 m) (hard floor 0.30 m)",
+  "built deck vs data height, worst 0.429 m"
+ ],
+ "counts": {
+  "by_layout": {
+   "race": {
+    "token": "race",
+    "chicane_walls": 0,
+    "chicane_objects": 0,
+    "closure_objects": 0,
+    "closure_runs": 0,
+    "closure_rings": 0,
+    "closure_off_curve_max_m": 0.0,
+    "pins": []
+   }
+  },
+  "rings_total": 9152,
+  "interpolated": 0,
+  "objects": 36,
+  "kbar_objects": 0,
+  "edge_objects": 22,
+  "edge_declared_vertices": 3217,
+  "edge_missing": {
+   "L": 0,
+   "R": 9
+  },
+  "edge_missing_undeclared": {
+   "L": 0,
+   "R": 0
+  },
+  "edge_trimmed_declared": {
+   "L": 4,
+   "R": 20
+  },
+  "edge_corners_declared": 4,
+  "edge_corners": [
+   {
+    "side": "L",
+    "in_vertex": 410,
+    "out_vertex": 415,
+    "xz": [
+     -765.456,
+     81.679
+    ],
+    "nearest_ring_m": 0.004
+   },
+   {
+    "side": "R",
+    "in_vertex": 135,
+    "out_vertex": 145,
+    "xz": [
+     -1489.87,
+     149.904
+    ],
+    "nearest_ring_m": 0.004
+   },
+   {
+    "side": "R",
+    "in_vertex": 185,
+    "out_vertex": 190,
+    "xz": [
+     -1369.571,
+     141.797
+    ],
+    "nearest_ring_m": 0.003
+   },
+   {
+    "side": "R",
+    "in_vertex": 3202,
+    "out_vertex": 3210,
+    "xz": [
+     -1497.424,
+     -280.58
+    ],
+    "nearest_ring_m": 0.004
+   }
+  ],
+  "edge_fold_dropped": {
+   "L": 4,
+   "R": 20
+  },
+  "edge_gap_worst_m": 3.491,
+  "edge_rings": 6555,
+  "free_ends": 0,
+  "pins": 0,
+  "pin_gap_max_m": 0.0,
+  "kerb_objects": 14,
+  "corners": 7,
+  "kerbs_dropped": [],
+  "kerb_under_road": {
+   "1KERB_race_140_out": 0,
+   "1KERB_race_140_in": 0,
+   "1KERB_race_186_out": 0,
+   "1KERB_race_186_in": 0,
+   "1KERB_race_207_out": 0,
+   "1KERB_race_207_in": 0,
+   "1KERB_race_410_out": 0,
+   "1KERB_race_410_in": 0,
+   "1KERB_race_779_out": 0,
+   "1KERB_race_779_in": 0,
+   "1KERB_race_3195_out": 0,
+   "1KERB_race_3195_in": 0,
+   "1KERB_race_3205_out": 0,
+   "1KERB_race_3205_in": 0
+  },
+  "kerb_fold_dropped": 277,
+  "kerb_closure_clear_m": {
+   "1KERB_race_140_out": [
+    null,
+    "race"
+   ],
+   "1KERB_race_140_in": [
+    null,
+    "race"
+   ],
+   "1KERB_race_186_out": [
+    null,
+    "race"
+   ],
+   "1KERB_race_186_in": [
+    null,
+    "race"
+   ],
+   "1KERB_race_207_out": [
+    null,
+    "race"
+   ],
+   "1KERB_race_207_in": [
+    null,
+    "race"
+   ],
+   "1KERB_race_410_out": [
+    null,
+    "race"
+   ],
+   "1KERB_race_410_in": [
+    null,
+    "race"
+   ],
+   "1KERB_race_779_out": [
+    null,
+    "race"
+   ],
+   "1KERB_race_779_in": [
+    null,
+    "race"
+   ],
+   "1KERB_race_3195_out": [
+    null,
+    "race"
+   ],
+   "1KERB_race_3195_in": [
+    null,
+    "race"
+   ],
+   "1KERB_race_3205_out": [
+    null,
+    "race"
+   ],
+   "1KERB_race_3205_in": [
+    null,
+    "race"
+   ]
+  },
+  "kerb_clips": {
+   "1KERB_race_140_out": [
+    0,
+    0
+   ],
+   "1KERB_race_140_in": [
+    0,
+    0
+   ],
+   "1KERB_race_186_out": [
+    0,
+    0
+   ],
+   "1KERB_race_186_in": [
+    0,
+    0
+   ],
+   "1KERB_race_207_out": [
+    0,
+    0
+   ],
+   "1KERB_race_207_in": [
+    0,
+    0
+   ],
+   "1KERB_race_410_out": [
+    0,
+    0
+   ],
+   "1KERB_race_410_in": [
+    0,
+    0
+   ],
+   "1KERB_race_779_out": [
+    0,
+    0
+   ],
+   "1KERB_race_779_in": [
+    0,
+    0
+   ],
+   "1KERB_race_3195_out": [
+    0,
+    0
+   ],
+   "1KERB_race_3195_in": [
+    0,
+    0
+   ],
+   "1KERB_race_3205_out": [
+    0,
+    0
+   ],
+   "1KERB_race_3205_in": [
+    0,
+    0
+   ]
+  },
+  "mouths": [
+   {
+    "host_vertex": 95,
+    "side": "R",
+    "strip_off_m": 0.005
+   },
+   {
+    "host_vertex": 479,
+    "side": "L",
+    "strip_off_m": 0.004
+   },
+   {
+    "host_vertex": 558,
+    "side": "R",
+    "strip_off_m": 0.004
+   },
+   {
+    "host_vertex": 559,
+    "side": "L",
+    "strip_off_m": 0.004
+   },
+   {
+    "host_vertex": 779,
+    "side": "L",
+    "strip_off_m": 0.005
+   },
+   {
+    "host_vertex": 847,
+    "side": "L",
+    "strip_off_m": 0.005
+   },
+   {
+    "host_vertex": 1902,
+    "side": "R",
+    "strip_off_m": 0.005
+   },
+   {
+    "host_vertex": 1936,
+    "side": "L",
+    "strip_off_m": 0.004
+   },
+   {
+    "host_vertex": 1942,
+    "side": "L",
+    "strip_off_m": 0.005
+   },
+   {
+    "host_vertex": 2318,
+    "side": "R",
+    "strip_off_m": 0.004
+   },
+   {
+    "host_vertex": 2319,
+    "side": "L",
+    "strip_off_m": 0.004
+   },
+   {
+    "host_vertex": 2406,
+    "side": "R",
+    "strip_off_m": 0.005
+   },
+   {
+    "host_vertex": 2522,
+    "side": "R",
+    "strip_off_m": 0.005
+   },
+   {
+    "host_vertex": 2581,
+    "side": "L",
+    "strip_off_m": 0.004
+   },
+   {
+    "host_vertex": 2585,
+    "side": "R",
+    "strip_off_m": 0.005
+   },
+   {
+    "host_vertex": 2586,
+    "side": "L",
+    "strip_off_m": 0.004
+   },
+   {
+    "host_vertex": 2656,
+    "side": "R",
+    "strip_off_m": 0.005
+   },
+   {
+    "host_vertex": 2691,
+    "side": "R",
+    "strip_off_m": 0.002
+   },
+   {
+    "host_vertex": 2725,
+    "side": "R",
+    "strip_off_m": 0.005
+   },
+   {
+    "host_vertex": 2791,
+    "side": "R",
+    "strip_off_m": 0.005
+   },
+   {
+    "host_vertex": 2859,
+    "side": "L",
+    "strip_off_m": 0.004
+   },
+   {
+    "host_vertex": 2860,
+    "side": "R",
+    "strip_off_m": 0.005
+   },
+   {
+    "host_vertex": 3184,
+    "side": "R",
+    "strip_off_m": 0.003
+   }
+  ],
+  "other_deck_above": 0,
+  "inside_out_spans": 0,
+  "inside_out_by_object": {},
+  "inside_out_unmeasured": 0,
+  "chord_max_m": 0.0879,
+  "chord_worst": {
+   "chord_m": 0.0879,
+   "object": "1WALL_race_edge_L_street6_3195_0",
+   "ring": 0,
+   "at_xz": [
+    -1494.22,
+    -312.84
+   ]
+  },
+  "chord_fail_m": 0.15,
+  "chord_spans_measured": 6533,
+  "chord_spans_fold": 0,
+  "chord_spans_unmeasured": 0,
+  "chord_spans_over": 0,
+  "ring_spacing_max_m": 3.491,
+  "ring_spacing_max_measured_m": 3.491,
+  "spawn_margin_m": 0.3,
+  "spawn_min_clear_m": {
+   "race": 0.98
+  },
+  "spawn_slots": {
+   "race": [
+    {
+     "name": "AC_HOTLAP_START_0",
+     "vertex": 2772,
+     "lat_m": 0.0,
+     "edge_face_m": 2.93,
+     "clear_edge_m": 1.98,
+     "clear_centre_m": null,
+     "lane_m": [
+      -2.93,
+      2.93
+     ],
+     "clear_lane_m": 1.98
+    },
+    {
+     "name": "AC_PIT_0",
+     "vertex": 2755,
+     "lat_m": 0.001,
+     "edge_face_m": 2.93,
+     "clear_edge_m": 1.979,
+     "clear_centre_m": null,
+     "lane_m": [
+      -2.93,
+      2.93
+     ],
+     "clear_lane_m": 1.979
+    },
+    {
+     "name": "AC_PIT_1",
+     "vertex": 2752,
+     "lat_m": 0.0,
+     "edge_face_m": 2.93,
+     "clear_edge_m": 1.98,
+     "clear_centre_m": null,
+     "lane_m": [
+      -2.93,
+      2.93
+     ],
+     "clear_lane_m": 1.98
+    },
+    {
+     "name": "AC_PIT_2",
+     "vertex": 2750,
+     "lat_m": 0.0,
+     "edge_face_m": 2.93,
+     "clear_edge_m": 1.98,
+     "clear_centre_m": null,
+     "lane_m": [
+      -2.93,
+      2.93
+     ],
+     "clear_lane_m": 1.98
+    },
+    {
+     "name": "AC_PIT_3",
+     "vertex": 2748,
+     "lat_m": 0.0,
+     "edge_face_m": 2.93,
+     "clear_edge_m": 1.98,
+     "clear_centre_m": null,
+     "lane_m": [
+      -2.93,
+      2.93
+     ],
+     "clear_lane_m": 1.98
+    },
+    {
+     "name": "AC_PIT_4",
+     "vertex": 2745,
+     "lat_m": 0.001,
+     "edge_face_m": 2.93,
+     "clear_edge_m": 1.979,
+     "clear_centre_m": null,
+     "lane_m": [
+      -2.93,
+      2.93
+     ],
+     "clear_lane_m": 1.979
+    },
+    {
+     "name": "AC_PIT_5",
+     "vertex": 2743,
+     "lat_m": 0.0,
+     "edge_face_m": 2.93,
+     "clear_edge_m": 1.98,
+     "clear_centre_m": null,
+     "lane_m": [
+      -2.93,
+      2.93
+     ],
+     "clear_lane_m": 1.98
+    },
+    {
+     "name": "AC_PIT_6",
+     "vertex": 2741,
+     "lat_m": 0.0,
+     "edge_face_m": 2.93,
+     "clear_edge_m": 1.98,
+     "clear_centre_m": null,
+     "lane_m": [
+      -2.93,
+      2.93
+     ],
+     "clear_lane_m": 1.98
+    },
+    {
+     "name": "AC_PIT_7",
+     "vertex": 2738,
+     "lat_m": 0.0,
+     "edge_face_m": 2.93,
+     "clear_edge_m": 1.98,
+     "clear_centre_m": null,
+     "lane_m": [
+      -2.93,
+      2.93
+     ],
+     "clear_lane_m": 1.98
+    },
+    {
+     "name": "AC_START_0",
+     "vertex": 2772,
+     "lat_m": 0.0,
+     "edge_face_m": 2.93,
+     "clear_edge_m": 1.98,
+     "clear_centre_m": null,
+     "lane_m": [
+      -2.93,
+      2.93
+     ],
+     "clear_lane_m": 1.98
+    },
+    {
+     "name": "AC_START_1",
+     "vertex": 2770,
+     "lat_m": -1.0,
+     "edge_face_m": 2.93,
+     "clear_edge_m": 0.98,
+     "clear_centre_m": null,
+     "lane_m": [
+      -2.93,
+      2.93
+     ],
+     "clear_lane_m": 0.98
+    },
+    {
+     "name": "AC_START_2",
+     "vertex": 2768,
+     "lat_m": 1.0,
+     "edge_face_m": 2.93,
+     "clear_edge_m": 0.98,
+     "clear_centre_m": null,
+     "lane_m": [
+      -2.93,
+      2.93
+     ],
+     "clear_lane_m": 0.98
+    },
+    {
+     "name": "AC_START_3",
+     "vertex": 2767,
+     "lat_m": -1.0,
+     "edge_face_m": 2.93,
+     "clear_edge_m": 0.98,
+     "clear_centre_m": null,
+     "lane_m": [
+      -2.93,
+      2.93
+     ],
+     "clear_lane_m": 0.98
+    },
+    {
+     "name": "AC_START_4",
+     "vertex": 2765,
+     "lat_m": 1.0,
+     "edge_face_m": 2.93,
+     "clear_edge_m": 0.98,
+     "clear_centre_m": null,
+     "lane_m": [
+      -2.93,
+      2.93
+     ],
+     "clear_lane_m": 0.98
+    },
+    {
+     "name": "AC_START_5",
+     "vertex": 2763,
+     "lat_m": -1.0,
+     "edge_face_m": 2.93,
+     "clear_edge_m": 0.98,
+     "clear_centre_m": null,
+     "lane_m": [
+      -2.93,
+      2.93
+     ],
+     "clear_lane_m": 0.98
+    },
+    {
+     "name": "AC_START_6",
+     "vertex": 2761,
+     "lat_m": 1.0,
+     "edge_face_m": 2.93,
+     "clear_edge_m": 0.98,
+     "clear_centre_m": null,
+     "lane_m": [
+      -2.93,
+      2.93
+     ],
+     "clear_lane_m": 0.98
+    },
+    {
+     "name": "AC_START_7",
+     "vertex": 2759,
+     "lat_m": -1.0,
+     "edge_face_m": 2.93,
+     "clear_edge_m": 0.98,
+     "clear_centre_m": null,
+     "lane_m": [
+      -2.93,
+      2.93
+     ],
+     "clear_lane_m": 0.98
+    }
+   ]
+  },
+  "lamps": 171,
+  "lamps_checked": 171,
+  "lamp_arm_m": 1.8,
+  "lamp_post_h_m": 10.668,
+  "lamp_model": "led_cobra",
+  "mast_r_m": 0.124,
+  "lamp_min_margin_m": 2.825,
+  "lamp_min": {
+   "lamp": 21,
+   "vertex": 444,
+   "lat_m": -8.3,
+   "base_xz": [
+    -750.91,
+    168.87
+   ],
+   "against": "edge",
+   "margin_m": 2.825,
+   "fallback": false,
+   "closure": null,
+   "closure_margin_m": null
+  },
+  "lamps_inside": 0,
+  "lamp_min_vs_closure": null,
+  "scenery_source": "trees: none (no data/scatter_positions.json)",
+  "scenery_items": {},
+  "scenery_beside": 0,
+  "scenery_hits": 0,
+  "scenery_min": {
+   "race": null
+  },
+  "scenery_r_m": {
+   "tree": 0.3,
+   "sign": 0.03
+  }
+ }
+}

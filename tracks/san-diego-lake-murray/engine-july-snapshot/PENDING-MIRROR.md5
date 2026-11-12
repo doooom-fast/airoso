@@ -3,3 +3,4 @@
 # md5). Written by tools/snapshot_engine_july.py; tests accept the old md5 until then.
 dd5657ae2d2454af1f08770f3cfa658b  2a653ee16a916384c76fc874fe2966e9  scripts/ac/build_kn5_loop.py
 56c3307f29e1072ad4748f1a85ecd8cf  44615dd3dab1d5699ef406ad09317dfe  scripts/ac/pbr.py
+1bdc2628253532045f5ba6d490e7da4f  83b231e840c09b34ef32cde98dbf2c35  scripts/ac/export_kn5_addon.py

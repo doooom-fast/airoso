@@ -1,0 +1,81 @@
+{
+ "_doc": "ledger 0083 pass 4b: the bare ground off the 2024 USGS 3DEP lidar (CA_SanDiegoCo_D24) by tools/lidar_ground.py (its header says how): far_ground.lidar.npy row 0 = SOUTH, column 0 = WEST, each value the NAVD88 metres at its cell's centre (x0 + (i + 0.5) cell, y0 + (j + 0.5) cell, local metres east / north of the origin); far_ground.lidar.fill.npy 0 measured, 1 filled under cover (a building, a dense tree), 2 filled past the tiles.",
+ "origin": {
+  "lon": -117.25646198705739,
+  "lat": 32.974685411604284,
+  "elev_m": 2.65
+ },
+ "x0": -946.0,
+ "y0": -859.0,
+ "cell_m": 5.0,
+ "nx": 386,
+ "ny": 353,
+ "classes": [
+  2,
+  9
+ ],
+ "tiles": [
+  {
+   "file": "USGS_LPC_CA_SanDiegoCo_D24_11SMS475647.laz",
+   "bytes": 90940763,
+   "bbox": [
+    475000.0,
+    3647000.0,
+    475999.99,
+    3648000.0
+   ]
+  },
+  {
+   "file": "USGS_LPC_CA_SanDiegoCo_D24_11SMS475648.laz",
+   "bytes": 62882222,
+   "bbox": [
+    475000.0,
+    3648000.0100000002,
+    476000.0,
+    3648999.99
+   ]
+  },
+  {
+   "file": "USGS_LPC_CA_SanDiegoCo_D24_11SMS475649.laz",
+   "bytes": 81488775,
+   "bbox": [
+    475000.0,
+    3649000.0,
+    476000.0,
+    3650000.0
+   ]
+  },
+  {
+   "file": "USGS_LPC_CA_SanDiegoCo_D24_11SMS476648.laz",
+   "bytes": 65934024,
+   "bbox": [
+    476000.0,
+    3648000.0100000002,
+    477000.0,
+    3648999.99
+   ]
+  },
+  {
+   "file": "USGS_LPC_CA_SanDiegoCo_D24_11SMS476649.laz",
+   "bytes": 79285690,
+   "bbox": [
+    476000.0,
+    3649000.0,
+    477000.0,
+    3650000.0
+   ]
+  }
+ ],
+ "crs": "NAD83(2011) / UTM zone 11N",
+ "cells": {
+  "measured": 111012,
+  "filled_under_cover": 8935,
+  "filled_off_the_tiles": 16311
+ },
+ "params": {
+  "CELL_M": 5.0,
+  "MIN_PTS": 3,
+  "FILL_ITERS": 400,
+  "EXTRACT_CELL_M": 1.0
+ }
+}

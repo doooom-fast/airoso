@@ -1,0 +1,8 @@
+1GRASS                   {'equal': 2}
+1KERB                    {'DIFFERS': 1}
+1ROAD                    {'DIFFERS': 1}
+1WALL                    {'equal': 1}
+BUILDING                 {'equal': 5}
+MARKINGS                 {'equal': 1}
+ROOFTOP                  {'equal': 4}
+textures: {'only_a': ['asphalt_cracked_diffuse.jpg', 'building_diffuse.jpg'], 'only_b': ['road_wear_detail_1kerb_sidewalk.jpg', 'road_wear_detail_1road.jpg', 'road_wear_flat_nm.png', 'road_wear_macro.png'], 'changed': []}

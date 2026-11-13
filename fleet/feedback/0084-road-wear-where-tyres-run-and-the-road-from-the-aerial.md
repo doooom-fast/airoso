@@ -1372,3 +1372,26 @@ photo" reached the PC through the Mac. No force.
   3. then `ac_tidy record` and the picture.
   The same holds for Pikes Peak's 0.2.1 in `2026-11-11_111915` (the Pikes Peak section above names `restore`: it
   would do nothing there).
+
+### Menu pictures: the black road fixed (PC, 2026-11-11)
+
+Kevin, on the PC: "Yes, fix them" (asked: "Fix the menu-picture renderer and re-render the road-wear tracks' pictures?").
+Branch `claude/menu-preview-road-wear` from main b90e851, commit fc9a3a82; not merged.
+
+- **The defect.** `tools/menu_preview_blend.py` rendered the split scene as it is. The road-wear materials wire only
+  txDiffuse's colour into Base Color. The macro ships with alpha 0 (= full detail in the game), and Blender keeps a
+  straight-alpha image premultiplied, so every road-wear road came out black. txDetail was unwired. The game was never
+  affected.
+- **The fix** (`road_wear_look`): for a material with both a txDiffuse and a txDetail image, the macro's alpha is read
+  as data (CHANNEL_PACKED). Base Color = macro x mix(detail, 1, macro alpha), the detail at UV x detailUVMultiplier
+  from the build's data/road_wear.json. A track with no road wear renders as before. The sidecar gains `road_wear`.
+- **Proof.** Del Mar 0.2.7 against 0.2.5's pre-road-wear render from the same camera: the cracks on the same 4 m grid
+  and phase, road patch mean grey 110.5 vs 112.0, the drawn band on top.
+- **Re-rendered: 10 pictures**, each from its installed workshop (every kn5 md5-equal to AC's), with camera, sun,
+  line, layout, station, trees and reversal equal to the preview.json it replaces: Del Mar, Pueblo, Aspen, Grand
+  Junction, Pikes Peak (oval, road course, infield), Nevada, High Plains, Milford.
+- **In AC before: 9 of 10 black** (all but Del Mar, which had 0.2.5's picture back). All 10 looked at, then copied in;
+  the old ones are in D:/k10-track-archive/2026-11-11_200339_previews (PREVIEWS.tsv). Every AC preview.png is
+  md5-equal to its source on the branch.
+- **Pikes Peak road course** shows the aerial's pole shadow and faint paint dashes in the road tone. They are in the
+  installed texture (the s 410-440 m finding above), so the game draws them too.

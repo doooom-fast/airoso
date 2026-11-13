@@ -20,6 +20,7 @@ each planted tree's measured height and crown width; the game draws its TreeFX m
 import argparse
 import json
 import math
+import re
 import sys
 from pathlib import Path
 
@@ -85,6 +86,66 @@ for o in bpy.data.objects:
         o.hide_render = True
         hidden += 1
 print(f"[preview] hidden from render (ghost / collider / AC dummies): {hidden}")
+
+
+def road_wear_look():
+    """The road-wear surfaces (tools/road_wear_blend.py step 7: ksPerPixelMultiMap_NMDetail) drawn as the game draws
+    them. txDiffuse is the macro (m0 x tone x (1 - wear), RGBA, alpha 0 = full detail) and the game multiplies it by
+    txDetail (the stock asphalt / m0) at UV x detailUVMultiplier: rgb = macro.rgb x mix(detail.rgb, 1, macro.a)
+    (scripts/aerial/road_wear.py: "macro x detail' at the median road texel is today's look exactly").
+    The split scene wires only txDiffuse's colour into Base Color, and Blender keeps a straight-alpha image
+    premultiplied, so alpha 0 drew every road-wear road BLACK (PC, 2026-11-11, Del Mar 0.2.7; Pueblo 0.1.5, Aspen
+    0.1.6, Grand Junction 0.1.4 and Pikes Peak 0.2.3 went into AC that way). Here the macro's alpha is read as data
+    (channel packed, so its colour is kept) and Base Color is that product. Only a material holding both a txDiffuse
+    and a txDetail image is touched, so a track with no road wear renders exactly as before; the normal maps stay
+    unwired, as on every other surface here."""
+    f = DATA / "road_wear.json"
+    rec = json.loads(f.read_text(encoding="utf-8")) if f.exists() else {}
+    rows, top = rec.get("materials", {}), rec.get("detail_uv_multiplier")
+    done, macros = [], set()
+    for mat in bpy.data.materials:
+        nt = mat.node_tree if mat.use_nodes else None
+        if nt is None:
+            continue
+        tex = {nd.label: nd for nd in nt.nodes if nd.type == "TEX_IMAGE" and nd.image is not None}
+        bsdf = nt.nodes.get("Principled BSDF")
+        if "txDiffuse" not in tex or "txDetail" not in tex or bsdf is None:
+            continue
+        row = rows.get(mat.name) or rows.get(re.sub(r"\.\d{3}$", "", mat.name)) or {}
+        mult = row.get("props", {}).get("detailUVMultiplier", top)
+        if mult is None:
+            print(f"[preview] road wear: {mat.name} has txDiffuse + txDetail but no detailUVMultiplier in "
+                  f"{f.name}; left as it was")
+            continue
+        macro, det = tex["txDiffuse"], tex["txDetail"]
+        macro.image.alpha_mode = "CHANNEL_PACKED"
+        macros.add(macro.image.name)
+        uv = nt.nodes.new("ShaderNodeTexCoord")
+        sc_uv = nt.nodes.new("ShaderNodeVectorMath")
+        sc_uv.operation = "SCALE"
+        sc_uv.inputs["Scale"].default_value = float(mult)
+        nt.links.new(uv.outputs["UV"], sc_uv.inputs[0])
+        nt.links.new(sc_uv.outputs["Vector"], det.inputs["Vector"])
+        mix = nt.nodes.new("ShaderNodeMix")                      # mix(detail, 1, macro alpha)
+        mix.data_type, mix.blend_type = "RGBA", "MIX"
+        mul = nt.nodes.new("ShaderNodeMix")                      # macro x that
+        mul.data_type, mul.blend_type = "RGBA", "MULTIPLY"
+        sock = lambda socks, ident: next(s for s in socks if s.identifier == ident)
+        nt.links.new(macro.outputs["Alpha"], sock(mix.inputs, "Factor_Float"))
+        nt.links.new(det.outputs["Color"], sock(mix.inputs, "A_Color"))
+        sock(mix.inputs, "B_Color").default_value = (1.0, 1.0, 1.0, 1.0)
+        sock(mul.inputs, "Factor_Float").default_value = 1.0
+        nt.links.new(macro.outputs["Color"], sock(mul.inputs, "A_Color"))
+        nt.links.new(sock(mix.outputs, "Result_Color"), sock(mul.inputs, "B_Color"))
+        nt.links.new(sock(mul.outputs, "Result_Color"), bsdf.inputs["Base Color"])
+        done.append(f"{mat.name} (x{float(mult):g})")
+    if done:
+        print(f"[preview] road wear drawn as the game draws it (macro x detail at UV x detailUVMultiplier, the macro's "
+              f"alpha read as data): {len(done)} materials {', '.join(done)}; macros {sorted(macros)}")
+    return done
+
+
+ROAD_WEAR = road_wear_look()
 
 
 def road_bvh():
@@ -285,6 +346,9 @@ def shoot(name, eye, look, fov, station):
             "sky": "Nishita, strength 0.35, altitude 120 m, air 1.2, dust 1.5",
             "trees": (f"{N_STAND} stand-ins (trunk + ellipsoid crown at measured height and crown) from {A.standins}; the game draws its TreeFX models there" if N_STAND else "as in the kn5"),
             "render": f"EEVEE Next, AgX, exposure {A.exposure:+.1f} EV, {sc.render.resolution_x}x{sc.render.resolution_y}"}
+    if ROAD_WEAR:
+        side["road_wear"] = ("macro x detail at UV x detailUVMultiplier, the macro's alpha read as data (as the game "
+                             "draws ksPerPixelMultiMap_NMDetail): " + ", ".join(ROAD_WEAR))
     Path(f"{OUT}_{name}.json").write_text(json.dumps(side, indent=2), encoding="utf-8")
     print(f"[preview] {name}: eye ({eye[0]:.1f}, {eye[1]:.1f}, {eye[2]:.1f}) look ({look[0]:.1f}, {look[1]:.1f}, "
           f"{look[2]:.1f}) fov {fov} sun az {SUN_AZ} el {SUN_EL} -> {sc.render.filepath}")

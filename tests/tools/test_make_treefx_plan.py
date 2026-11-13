@@ -374,3 +374,22 @@ def test_built_surface_guard_judges_the_spot_as_written():
     assert [(e["x"], e["y"], e["z"]) for e in p["entries"]] == [(140.0, 0.12, 30.0)]
     assert p["rejected_built"]["building"] == 1
     assert any(ln.startswith("tree: ") and "pos=140.00, 0.12, -30.00" in ln for ln in p["lines"])
+
+
+def test_bush_bin_is_drawn_at_bush3_height_not_its_20_m_tree_ini():
+    """Kevin 2026-11-13 after driving Lake Murray: "bushes are too big". Bush.bin's tree.ini says HEIGHT 20.66 m, so its
+    rank-rule size takes RANK_SIZE_FIX (Bush3's height at the same size) and is written to 3 decimals; others unchanged"""
+    p = mt.plan(_north_project(), all_species=True)
+
+    def size_of(line):
+        return line.rsplit("size = ", 1)[1].split(";")[0]
+
+    bush = [ln for ln in p["lines"] if ln.startswith("tree: Bush.bin;")]
+    assert bush
+    for ln in bush:
+        s = size_of(ln)
+        assert len(s.split(".")[1]) == 3, ln
+        assert float(s) <= mt.RANK_SIZE_FIX["Bush.bin"] * 1.0 + 0.0005, ln
+        assert 20.66 * float(s) <= 2.1, ln          # drawn height, m
+    rest = [ln for ln in p["lines"] if ln.startswith("tree: ") and not ln.startswith("tree: Bush.bin;")]
+    assert rest and all(len(size_of(ln).split(".")[1]) == 2 for ln in rest)

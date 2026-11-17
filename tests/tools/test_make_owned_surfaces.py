@@ -66,15 +66,19 @@ def test_seamless_in_u_and_v():
         assert seam_u < 1.5 * inner and seam_v < 1.5 * inner, (name, inner, seam_u, seam_v)
 
 
-def test_asphalt_has_little_large_scale_structure():
-    """a repeat shows from structure bigger than ~25 cm: what is left after a 25 cm box blur stays small (the borrowed
-    asphalt_cracked_diffuse.jpg measured 0.0142 of full scale there, 2026-11-16; the owned one 0.0035)"""
-    dif = mo.asphalt_dense(scale=SMALL)[0]
-    L = _lum(dif)
-    n = L.size[0]
-    k = max(3, int(round(0.25 / mo.TILE_M * n)) | 1)
+def _large_scale(path):
+    """the spread left after a 25 cm box blur, as a fraction of full scale: a 4 m repeat shows from this structure"""
+    L = Image.open(path).convert("L")
+    k = int(round(0.25 / mo.TILE_M * L.size[0]))
     blurred = mo._wrapf(L, lambda im: im.filter(ImageFilter.BoxBlur(k // 2)), k)
-    assert ImageStat.Stat(blurred).stddev[0] / 255.0 < 0.008
+    return ImageStat.Stat(blurred).stddev[0] / 255.0
+
+
+def test_asphalt_has_less_large_scale_structure_than_the_borrowed():
+    """measured 2026-11-16 (scipy, wrap): borrowed asphalt_cracked 0.0142, owned asphalt_dense 0.0035"""
+    tex = ROOT / "assets" / "textures"
+    owned, borrowed = _large_scale(tex / "asphalt_dense_diffuse.jpg"), _large_scale(tex / "asphalt_cracked_diffuse.jpg")
+    assert owned < 0.006 and owned < 0.5 * borrowed, (owned, borrowed)
 
 
 def test_normal_map_is_opengl_green_up():
@@ -82,9 +86,9 @@ def test_normal_map_is_opengl_green_up():
     n = 64
     ramp = Image.new("L", (n, n))
     ramp.putdata([int(200 - 2 * y) for y in range(n) for _ in range(n)])   # bright (high) at the top row
-    nor = mo._normal(ramp, strength=4.0)
+    nor = mo._normal(ramp, strength=1.0)                                  # Sobel: 4 x (-4) per pixel -> G = 128 - 16 x 2
     r, g, b = nor.getpixel((n // 2, n // 2))
-    assert g < 120 and abs(r - 128) <= 1 and b > 200, (r, g, b)
+    assert g < 110 and abs(r - 128) <= 1 and b > 200, (r, g, b)
 
 
 def test_committed_files_are_the_generators_and_cc0():

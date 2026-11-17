@@ -50,6 +50,7 @@
     "required": [
       "track.config.json",
       "source/edges/edge_evidence.json",
+      "source/surface/road_surface.fit.json",
       "source/road_wear/naip_2022_mrc.jpg",
       "source/furniture/pass3/blocks.json",
       "source/furniture/pass4/blocks.json",
@@ -101,6 +102,7 @@
       "data/house_seat_check.json",
       "data/edge_report.json",
       "data/edge_fit.json",
+      "data/edge_retrace.json",
       "data/edge_smoothness.json",
       "data/kerbs.built.json",
       "data/treefx.report.json",
@@ -125,5 +127,6 @@
   "_edges_doc": "ledger 0087: the lane edges re-fitted in the intake (track.config.json lm_intake.edge_fit; the evidence synced in), every verdict in data/edge_fit.json; edge_smoothness (opt-in, this track only so far) gates the built edges' 1 m second difference and residual (tools/edge_smoothness.py GATE_DEFAULT)",
   "_gate_doc": "ledger 0082 pass 2: kn5_textures (opt-in, this track only so far): every texture the built kn5s' materials name must be embedded (tools/kn5_textures.py). The PC's 0082-1 run 1 shipped five textures short and passed every other gate",
   "_vegetation_doc": "ledger 0082 vegetation pass: grassfx_aerial (the measured grass zones, before the track folder's ext_config) and treefx (the measured crowns as TreeFX, after the map) run",
-  "_road_wear_doc": "ledger 0084 pilot (0.1.7): the aerial (required: track.config.json road_wear.aerial) and a recorded line when one exists (optional) sync in; the bake runs as the last part of prep (tools/ship_track.sh prep_prep, opt-in on the config key); gate road_wear (tools/road_wear_check.py) reads the built road kn5"
+  "_road_wear_doc": "ledger 0084 pilot (0.1.7): the aerial (required: track.config.json road_wear.aerial) and a recorded line when one exists (optional) sync in; the bake runs as the last part of prep (tools/ship_track.sh prep_prep, opt-in on the config key); gate road_wear (tools/road_wear_check.py) reads the built road kn5",
+  "_surface_doc": "0.1.12 fleet round 1: the lanes' measured surface (source/surface/road_surface.fit.json, tools/measured_surface.py) syncs in for lm_intake.measured_surface; data/edge_retrace.json (lm_intake.edge_retrace's per-row record) syncs out"
 }

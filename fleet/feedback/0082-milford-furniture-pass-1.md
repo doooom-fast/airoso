@@ -1752,3 +1752,18 @@ changes (smooth instead of faceted).
 
 Owed: install on Kevin's word (replaces milford_road_course 0.1.11; park it; ac_tidy record; menu picture); Kevin's drive is
 the verdict on "wavy".
+
+**Tests (PC, 2026-11-17, at 65fd8064; the Mac's ask before any merge).** `tests/run_tests.py` stops at the first test file that
+imports pytest (none on the PC; installing it needs Kevin's yes), so its own loop was run with that one change: a file that
+cannot import is counted as not run (`<scratchpad>/mf_r1/run_all.py`, D:/k10-scratch/lidar-venv's python for numpy), on this
+branch and, as the control, on main 0902c2c (`D:/k10-worktrees/milford-main0902`):
+- **this branch: 1,572 passed, 5 failed, 8 files not imported**; main: 1,566 passed, the same 5 failed, the same 8 files.
+  The +6 are `tests/tools/test_edge_retrace_measured_surface.py`, all PASS; no test changes state.
+- The 5 (both, so not this branch's): test_build_kn5_loop::test_the_terrain_conform_skips_an_engine_draft_unless_the_config_forces_it,
+  test_export_kn5_addon_args::test_engine_july_mirror_is_byte_identical, test_bespoke_assets::test_generator_reproduces_the_committed_files,
+  test_network_connectors::test_naip_edge_limit_widens_steps_and_never_passes_the_barrier,
+  test_plan_buildings::test_the_plans_tag_class_classes_only_tags_the_shared_table_lacks. Not the Mac's known 8
+  (draft_equiv x5, registry_moves, bench_pad x2: bench_pad is among the 8 files not imported here).
+- Not imported (pytest): test_v021_edge_profile, test_ac_tidy, test_aerial_trace, test_bench_pad, test_draft_pads,
+  test_fwlm_terrain, test_naip_carriageways, test_road_seek. A full count with them needs pytest on the PC or the Mac's .venv.
+- Logs: D:/k10-scratch/milford_0112_tests_all.log, D:/k10-scratch/main0902_tests_all.log.

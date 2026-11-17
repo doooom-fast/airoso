@@ -86,9 +86,9 @@ def test_normal_map_is_opengl_green_up():
     n = 64
     ramp = Image.new("L", (n, n))
     ramp.putdata([int(200 - 2 * y) for y in range(n) for _ in range(n)])   # bright (high) at the top row
-    nor = mo._normal(ramp, strength=1.0)                                  # Sobel: 4 x (-4) per pixel -> G = 128 - 16 x 2
+    nor = mo._normal(ramp, strength=1.0)            # Sobel: weights 1 + 2 + 1 times a 4-level step -> G = 128 - 16
     r, g, b = nor.getpixel((n // 2, n // 2))
-    assert g < 110 and abs(r - 128) <= 1 and b > 200, (r, g, b)
+    assert g == 112 and abs(r - 128) <= 1 and b > 200, (r, g, b)
 
 
 def test_committed_files_are_the_generators_and_cc0():

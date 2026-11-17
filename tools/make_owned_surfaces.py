@@ -285,7 +285,7 @@ def concrete(scale=1.0, seed=SEEDS["concrete_plain"], aged=False):
     mott_b = _stretch(_noise(rng, 128, n))                # 3 cm
     sand = _stretch(_white(rng, n, blur=0.5 * scale + 0.2))
     paste = Image.new("L", (n, n), 150)
-    paste = _mod(paste, mott_big, 0.05 if aged else 0.025)
+    paste = _mod(paste, mott_big, 0.025)                  # half-metre patches stay faint: they would show the repeat
     paste = _mod(paste, mott_a, 0.07 if aged else 0.035)
     paste = _mod(paste, mott_b, 0.05 if aged else 0.03)
     paste = _mod(paste, sand, 0.16 if aged else 0.10)
@@ -294,8 +294,10 @@ def concrete(scale=1.0, seed=SEEDS["concrete_plain"], aged=False):
     if aged:
         fines = _levels(_white(rng, n), 200, 255, 0, 255)
         warm = Image.composite(Image.new("RGB", (n, n), (182, 176, 164)), warm, fines.point(lambda p: p * 40 // 100))
-        stain = _levels(_stretch(_noise(rng, 16, n, blur=2.0)), 150, 245, 0, 255)
-        warm = Image.composite(Image.new("RGB", (n, n), (70, 66, 58)), warm, stain.point(lambda p: p * 45 // 100))
+        # soft staining, no hard-edged blots: a thresholded stain field makes distinct dark shapes, and a distinct
+        # shape is what shows the 4 m repeat (the first cut did, in the 2026-11-16 stills)
+        warm = _mod(warm, _stretch(_noise(rng, 32, n, blur=1.0)), 0.07)
+        warm = _mod(warm, _stretch(_noise(rng, 64, n)), 0.05)
     holes = Image.new("L", (n, n), 0)
     dh = ImageDraw.Draw(holes)
     px_mm = n / (TILE_M * 1000.0)

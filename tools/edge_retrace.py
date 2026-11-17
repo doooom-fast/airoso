@@ -12,10 +12,12 @@ its own smoothing, as tools/edge_fit.py), inside each declared span:
   widen     the edge never moves in: max(today's edge, measured)
   rails     and never onto a rail: every rail of the side (config scenery.bespoke.rails, by key) is projected onto the rows;
             the edge stops clear_m short of its face (the face is the rail's polyline; the W bulges 6.3 cm toward the road:
-            author_bespoke_blend RAIL_D). Past a rail's end the limit opens at RAIL_FLARE m per m, so the edge never steps
+            author_bespoke_blend RAIL_D). Past a rail's end the limit opens as a parabola (RAIL_FLARE_R_M), so the edge never kinks
             at a rail end. A rail that stands inside today's edge pulls the edge in to it there (the rail stands whole)
-  blend     outside each span the change fades to nothing over taper_m (a raised cosine); then each side is Gaussian
-            smoothed (SMOOTH_M) and clamped to the rail limit again
+  blend     outside each span the change fades to nothing over taper_m (a raised cosine); then each side's CHANGE is
+            eroded (the least change within +-ERODE_M) and Gaussian smoothed (SMOOTH_M), so the edge never runs past its
+            target and nothing shorter than the assembler's own line smoothing is left to split into kinks on both edges;
+            then clamped to the rail limit again
 The lane is +-width/2 about the line, so a side that moves alone moves the line: the line shifts (left - right)/2 along
 its left normal and the width is left + right. Pure Python (the intake is stdlib only).
 """
@@ -30,9 +32,15 @@ ALONG_M = 1.0          # an evidence point within 1 m along of its row (edge_fit
 SEARCH_IN_M = 1.0      # [invented] and at most 1 m inside today's edge (NAIP reads painted lines 2-3 m in: 5.2-5.9 m on 8.0)
 SEARCH_OUT_M = 4.0     # [invented] and at most 4 m outside it (the evidence was searched +-3.5 m of the trace's edge)
 MIN_POINTS = 8         # [invented] evidence points inside a row's window before it measures (fewer: today's edge stays)
-RAIL_FLARE = 0.10      # [invented] past a rail's end its limit opens 0.1 m per m (1:10, a gentle flare)
+RAIL_FLARE_R_M = 150.0 # [invented] past a rail's end its limit opens as a parabola of radius 150 m (d^2 / 2R: +1.3 m at
+#                        40 m): no slope step at the end (a 1:10 line put a 0.1 m kink in the edge there: 0.1.12 c1's
+#                        ragged stretches at both G2 ends and G3's)
 RAIL_REACH_M = 40.0    # [invented] how far past its end a rail's limit reaches
-SMOOTH_M = 3.0         # [invented] the final edge's Gaussian sigma (rows), against the soft corners of max / min
+SMOOTH_M = 8.0         # [invented] the final edge's Gaussian sigma (m): the assembler smooths the LINE (sigma 6 m, 2 passes)
+#                        but not the widths, so a feature shorter than ~20 m on one side splits into half-kinks on both
+#                        (0.1.12 c1); smoothing a min() of the target and the rail limit stays under the limit (it is concave)
+ERODE_M = 10.0         # [invented] the erosion's half window: 16 m (2 x SMOOTH_M) gave back 1-1.6 m of the measured widening
+#                        near every dip; 10 m keeps s 4,705 within 0.6 m of today's 14.7 m
 MED_HALF_M = 7.5       # [invented] the measured edge: the median of the points within +-7.5 m (NAIP's points cluster within
 #                        +-0.1-0.2 m per 15 m along Milford's front straight; the lidar's intensity steps scatter 1-3 m)
 MED_SMOOTH_M = 5.0     # [invented] then a Gaussian of 5 m over the rows that measured
@@ -72,7 +80,7 @@ def retrace(pts, widths, closed, evidence, spans, rails, *, src="naip", clear_m=
     lap = (st[-1] + math.hypot(P[0][0] - P[-1][0], P[0][2] - P[-1][2])) if closed else st[-1]
     T = _ef._normals(P, closed)
     hw = [w / 2.0 for w in widths[:m]]
-    reach = taper_m + half + 5.0
+    reach = taper_m + RAIL_REACH_M + ERODE_M + 3 * SMOOTH_M + 5.0   # every change fades to 0 inside the region
     region = [i for i in range(m) if any(_dist_out(st[i], a, b, lap) <= reach for a, b in spans)]
     rset = set(region)
     cell = 8.0
@@ -132,7 +140,7 @@ def retrace(pts, widths, closed, evidence, spans, rails, *, src="naip", clear_m=
         face = {i: min(abs(u) for u in v) for i, v in rows_hit.items()}
         for i, f in face.items():
             lim[side][i] = f - clear_m if lim[side][i] is None else min(lim[side][i], f - clear_m)
-        # past its ends: the limit opens at RAIL_FLARE per m. The ends are the two rows either side of the largest gap
+        # past its ends: the limit opens as a parabola (RAIL_FLARE_R_M). The ends are the two rows either side of the largest gap
         # between the rail's rows round the lap (a rail across the seam, G2 over the S/F, has its ends there, not at 0 / lap)
         srt = sorted(face, key=lambda i: st[i])
         gaps = [((st[srt[(k + 1) % len(srt)]] - st[srt[k]]) % lap if closed else
@@ -147,7 +155,7 @@ def retrace(pts, widths, closed, evidence, spans, rails, *, src="naip", clear_m=
                 d = (st[i] - st[e_]) % lap if ahead else (st[e_] - st[i]) % lap
                 if d > RAIL_REACH_M:
                     continue
-                v_ = face[e_] - clear_m + RAIL_FLARE * d
+                v_ = face[e_] - clear_m + d * d / (2.0 * RAIL_FLARE_R_M)
                 lim[side][i] = v_ if lim[side][i] is None else min(lim[side][i], v_)
         rail_rep.append({"key": r["key"], "side": side, "rows": len(face),
                          "s_m": [round(s_first, 1), round(s_last, 1)],
@@ -213,28 +221,40 @@ def retrace(pts, widths, closed, evidence, spans, rails, *, src="naip", clear_m=
             d = min(_dist_out(st[i], a, b, lap) for a, b in spans)
             w_ = 1.0 if d <= 0 else (0.5 + 0.5 * math.cos(math.pi * d / taper_m) if d < taper_m else 0.0)
             want = max(hw[i], f.get(i, hw[i]))
-            if lim[side][i] is not None:
-                want = min(want, lim[side][i])
             tgt[i] = hw[i] + w_ * (want - hw[i])
-        # Gaussian smoothing over the region (rows), then the rail limit again
-        sg = SMOOTH_M
-        rr = int(3 * sg) + 1
+            if lim[side][i] is not None:              # a rail binds everywhere in the region, the taper included
+                tgt[i] = min(tgt[i], lim[side][i])
+        # THE CHANGE, ERODED THEN SMOOTHED (an opening): each row's change is first the least change within +-ERODE_M, then
+        # a Gaussian (SMOOTH_M) of that. A Gaussian alone spills a plateau's widening past its end (0.1.12 c2: +1.7 m of
+        # paving at s 4,705 where the real paving narrows to 14 m); after the erosion the smoothed edge stays inside the
+        # target (to the Gaussian's tails). Then the rail limit again (a safety: rows it binds are counted)
+        chg = {}
+        for i in region:
+            lo_ = tgt[i] - hw[i]
+            for j in region:
+                d = abs(st[j] - st[i])
+                d = min(d, lap - d) if closed else d
+                if d <= ERODE_M and tgt[j] - hw[j] < lo_:
+                    lo_ = tgt[j] - hw[j]
+            chg[i] = lo_
         out = list(tgt)
+        clamped = 0
         for i in region:
             num = den = 0.0
-            for q in range(-rr, rr + 1):
-                j = (i + q) % m if closed else i + q
-                if not (0 <= j < m):
-                    continue
-                kw = math.exp(-0.5 * (q / sg) ** 2)
-                num += kw * tgt[j]
-                den += kw
-            out[i] = min(num / den, tgt[i] + 0.15)     # the smoothing rounds corners; it never lifts an edge 0.15 m
-            if lim[side][i] is not None:                # past its own target (it spilled across s 4,690's narrowing)
-                out[i] = min(out[i], lim[side][i])
+            for j in region:
+                d = abs(st[j] - st[i])
+                d = min(d, lap - d) if closed else d
+                if d <= 3 * SMOOTH_M:
+                    kw = math.exp(-0.5 * (d / SMOOTH_M) ** 2)
+                    num += kw * chg[j]                 # the CHANGE is smoothed (0 at the region's ends), not the edge:
+                    den += kw                          # today's own shape stays, and nothing steps where the region ends
+            out[i] = hw[i] + num / den
+            if lim[side][i] is not None and out[i] > lim[side][i]:
+                clamped += 1
+                out[i] = lim[side][i]
         new_half[side] = out
         moved = [out[i] - hw[i] for i in region]
-        rep["sides"][side] = {"rows_measured": len(med), "points": len(pts_s),
+        rep["sides"][side] = {"rows_measured": len(med), "points": len(pts_s), "rows_clamped_after_smoothing": clamped,
                               "other_sensors": {k: len(v) for k, v in pts_by[side].items() if k != src},
                               "moved_m": {"min": round(min(moved), 3), "max": round(max(moved), 3)}}
     shift = [0.0] * n

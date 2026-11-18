@@ -105,14 +105,14 @@
       "installed": "2026-11-04"
     },
     "milford_road_course": {
-      "branch": "claude/milford-0111",
+      "branch": "claude/milford-round1",
       "engine": "lm-v4",
-      "installed": "2026-11-09",
-      "note": "0.1.11 = 0.1.10 + the far ground from the 2017 lidar (1GRASS_LIDAR ring; far blocks' walls p50 21.1 -> 8.1 m; mpg_nw_complex_0 dropped, set into its slope); road wear + furniture 3/4 as 0.1.10; TreeFX 11,247 trees; records + menu picture on claude/milford-0111 2dc444cd",
+      "installed": "2026-11-17",
+      "note": "0.1.12 = fleet round 1: the front straight re-traced to the measured paving (16 m -> 16.4-19.5 m, G2/G3 whole, 0 m over the lane) + the lanes' height and bank from the G10's lidar surface (waviness 3-6 cm -> 1-1.4 cm); 0.1.11's far ground, road wear and furniture kept; TreeFX 11,247 trees; records + menu picture on claude/milford-round1 7488829b; 0.1.11 parked in D:/k10-track-archive/2026-11-17_214954",
       "role": "current",
-      "sha": "bb93889d",
+      "sha": "b86a7bd5",
       "track": "milford-road-course-lm",
-      "version": "0.1.11"
+      "version": "0.1.12"
     },
     "pikes_peak_international_raceway": {
       "branch": "claude/pikes-peak-road-wear",

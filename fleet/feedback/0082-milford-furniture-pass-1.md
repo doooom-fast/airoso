@@ -1767,3 +1767,20 @@ branch and, as the control, on main 0902c2c (`D:/k10-worktrees/milford-main0902`
 - Not imported (pytest): test_v021_edge_profile, test_ac_tidy, test_aerial_trace, test_bench_pad, test_draft_pads,
   test_fwlm_terrain, test_naip_carriageways, test_road_seek. A full count with them needs pytest on the PC or the Mac's .venv.
 - Logs: D:/k10-scratch/milford_0112_tests_all.log, D:/k10-scratch/main0902_tests_all.log.
+
+## Installed (PC, 2026-11-17 21:49 MST, on Kevin's "Yes, install")
+
+- Built from an EMPTY workshop (D:/k10-scratch/milford_lm; 0.1.11's parked as milford_lm.0.1.11) at b86a7bd5, ENG
+  eng_mflm_017: SHIP OK, every gate green; its 51 gate / record lines identical to the reference build's
+  (milford_0112_ref.log). Log: D:/k10-scratch/milford_lm.install.log.
+- Installed as the plain `milford_road_course` 0.1.12 over 0.1.11, which is parked in
+  D:/k10-track-archive/2026-11-17_214954/.
+- The installed folder against the rehearsal's pack, file by file: every file md5-equal but the kn5 (kn5_equiv:
+  EQUIVALENT, tangents only, 206,689 values, max 1.79e-07) and ui_track.json (the install's name carries the real
+  em dash; the rehearsal's prefix had a hyphen). kn5 42,337,727 B. TreeFX: trees.txt 11,247 trees, byte-equal to
+  0.1.11's; Oak3.bin 24111ede, SycamoreV2.bin 7010d61f.
+- Menu picture re-rendered from the installed workshop with 0.1.11's camera, station, light, exposure and stand-ins
+  (sidecar equal key for key), looked at, cut into source/ui and copied into AC (old one in
+  D:/k10-track-archive/2026-11-17_215150_previews, PREVIEWS.tsv). The small ground fold inside the bend in 0.1.11's
+  picture is gone.
+- Not driven. Kevin's drive is the verdict on "wavy" and the wider straight.

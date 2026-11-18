@@ -116,14 +116,21 @@ ZONES = {
     "planted_cottonwood": [("SycamoreV1.bin", 0.8, 1.1, 3), ("SycamoreV2.bin", 0.8, 1.1, 2), ("SycamoreV3.bin", 0.8, 1.1, 2)],
     "planted_neighbourhood": [("Oak3.bin", 0.6, 0.9, 3), ("SycamoreV2.bin", 0.6, 0.9, 1)],
     # Nevada Nights' scrub clumps off NAIP 2019 + 2022 at their lidar heights (ledger 0089): there is no creosote model;
-    # Lake Murray's Bush3 stands in, sized by planted.native_h_m. Bush.bin is out until its drawn height is settled: its
-    # tree.ini HEIGHT reads 20.66 m, ten times Bush3's, while Lake Murray draws it as a 1-2 m shrub (Nevada 0.1.5)
+    # Lake Murray's Bush3 stands in, sized by planted.native_h_m. Bush.bin's tree.ini HEIGHT reads 20.66 m (WIDTH 34.38),
+    # ten times Bush3's: see RANK_SIZE_FIX below
     "planted_desert_scrub": [("Bush3.bin", 0.6, 1.0, 1)],
     # Waring's planted median: small median trees (A2, st 250-550). The islands' LOW planting is not here: the
     # assembler (author_median_blend) already plants every raised island, north pieces included, and exports it as
     # scatter_positions.json median_planting (v0.19.0 shipped it)
     "north_median_trees": [("PepperV1.bin", 0.45, 0.65, 2), ("Oak3.bin", 0.40, 0.55, 1)],
 }
+# The mixes' size ranges above assume a model about Bush3's height at size 1 for the bushes. TreeFX draws a tree at its
+# tree.ini HEIGHT x size, and Bush.bin's tree.ini says HEIGHT 20.66 m / WIDTH 34.38 m (its own track, Algarve, plants it
+# at size 0.10-0.25). Ranked at 0.6-1.0 it stood 12-21 m tall in Lake Murray 0.20.2 (Kevin 2026-11-13 after driving:
+# "Lm, bushes are too big"). A model named here has its RANK-rule size multiplied by the factor, which makes it the
+# height Bush3 has at the same size (1.4 m at 0.7), and is written to 3 decimals. A measured size
+# (planted.native_h_m) is absolute and takes no factor
+RANK_SIZE_FIX = {"Bush.bin": 2.02436637878418 / 20.660005569458}
 NORTH_ZONE_ORDER = ("north_suburb_trees", "north_suburb_bushes", "north_canyon_trees", "north_scrub",
                     "north_riparian_trees", "north_street_trees", "north_gum_belt", "north_median_trees")
 NORTH_IDX_BASE = 500000            # emit_zone index bases continue past the loop's four fill zones (100000..400000)
@@ -656,8 +663,11 @@ def plan(project_dir, all_species=False, verbose=False):
             size = s[1] + (s[2] - s[1]) * e.get("_size01", _hash(hk, 2))
             if "_h" in e and s[0] in native_h:   # ledger 0082 (opt-in planted.native_h_m): the measured height, absolute
                 size = e["_h"] / native_h[s[0]]
+            elif s[0] in RANK_SIZE_FIX:          # a model far taller than its mix assumes (Bush.bin, above)
+                size *= RANK_SIZE_FIX[s[0]]
             angle = int(360 * _hash(hk, 3))
-            line = f"tree: {s[0]}; pos={e['x']:.2f}, {e['y']:.2f}, {-e['z']:.2f}; angle = {angle}; size = {size:.2f}"
+            size_txt = f"{size:.3f}" if s[0] in RANK_SIZE_FIX else f"{size:.2f}"
+            line = f"tree: {s[0]}; pos={e['x']:.2f}, {e['y']:.2f}, {-e['z']:.2f}; angle = {angle}; size = {size_txt}"
             if "_w" in e and s[0] in native_w:   # ledger 0082 (opt-in planted.native_w_m): the measured crown, absolute
                 line += f"; width = {e['_w'] / (native_w[s[0]] * round(size, 2)):.2f}"
             out.append(line)

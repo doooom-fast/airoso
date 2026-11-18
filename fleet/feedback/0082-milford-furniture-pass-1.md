@@ -1768,6 +1768,18 @@ branch and, as the control, on main 0902c2c (`D:/k10-worktrees/milford-main0902`
   test_fwlm_terrain, test_naip_carriageways, test_road_seek. A full count with them needs pytest on the PC or the Mac's .venv.
 - Logs: D:/k10-scratch/milford_0112_tests_all.log, D:/k10-scratch/main0902_tests_all.log.
 
+**Tests (Mac, 2026-11-18, at 7488829b, before the merge; Kevin: "Leprosy is back, run the tests").** pytest on every file,
+fixtures included (`python -m pytest tests -q -p no:cacheprovider`, as CI runs it; the Mac's venv: Python 3.14.7, pytest
+9.2.0, numpy 2.5.4, scipy 1.18.1, Pillow 13.0.0), in clean detached worktrees of this branch and of main 0902c2c:
+- **this branch: 1,621 passed, 0 failed**; main: 1,615 passed, 0 failed. Per test (junit xml), the only difference is the
+  6 new tests in `tests/tools/test_edge_retrace_measured_surface.py`, all PASS; no test changes state, none is on main alone.
+- The 8 files the PC could not import all ran and passed. The PC's 5 failures all pass here: they are the PC's
+  environment, not this branch.
+- `tests/run_tests.py` for the older counts: 1,606 passed, 13 failed here, the same 13 on main (1,600 / 13): every one is
+  a pytest-fixture test the stdlib runner calls with no arguments (test_ac_tidy x10, test_bench_pad x2,
+  test_fwlm_terrain x1); each passes under pytest.
+- The same 4 warnings on both (Pillow's `Image.getdata` is deprecated, removal in Pillow 14).
+
 ## Installed (PC, 2026-11-17 21:49 MST, on Kevin's "Yes, install")
 
 - Built from an EMPTY workshop (D:/k10-scratch/milford_lm; 0.1.11's parked as milford_lm.0.1.11) at b86a7bd5, ENG

@@ -972,6 +972,108 @@ def intake(proj: Path, *, connectors: bool | None = None) -> dict:
               f"data/edge_fit.json; widths {min(w_was):.2f}..{max(w_was):.2f} -> {min(widths):.2f}..{max(widths):.2f} m; "
               + "; ".join(f"{sd} edge to the evidence median {v['edge_to_evidence_m']['before']['median']} -> "
                           f"{v['edge_to_evidence_m']['after']['median']} m" for sd, v in edge_fit_rep["sides"].items()))
+    # A STRETCH RE-TRACED TO THE MEASURED PAVEMENT EDGE, SHORT OF EVERY RAIL (lm_intake.edge_retrace {"evidence", "spans":
+    # [[s0, s1]], "rails": [scenery.bespoke.rails keys], "src"?, "clear_m"?, "taper_m"?}; ledger 0087 Q1, Kevin 2026-11-17:
+    # "Yes, widen Milford's front straight"; absent = nothing runs). tools/edge_retrace.py, on the line the assembler will
+    # build: per side the measured edge (never in), never closer than clear_m to a rail's face; a side that moves alone moves
+    # the line (by (left - right) / 2), the width is left + right. Every row is logged in data/edge_retrace.json.
+    er_cfg = li.get("edge_retrace")
+    edge_retrace_rep = None
+    if er_cfg:
+        from tools import edge_fit as _ef2
+        from tools import edge_retrace as _er
+        rel_e = er_cfg["evidence"]
+        if rel_e.startswith(("/", "\\")) or ".." in Path(rel_e).parts:
+            raise SystemExit(f"[lm_intake] lm_intake.edge_retrace.evidence {rel_e!r} must be a plain path inside the port track")
+        evj = json.loads((proj / rel_e).read_text(encoding="utf-8"))
+        o_ev, o_ln = evj.get("origin") or {}, local["origin"]
+        if abs(o_ev.get("lon", 1e9) - o_ln["lon"]) > 1e-9 or abs(o_ev.get("lat", 1e9) - o_ln["lat"]) > 1e-9:
+            raise SystemExit(f"[lm_intake] edge_retrace: {rel_e} was measured about another origin ({o_ev}) than this line's")
+        import importlib.util
+        _sp = importlib.util.spec_from_file_location(
+            "_lm_smooth", AIROSO / "tracks" / "san-diego-lake-murray" / "scripts-v021" / "geometry" / "smooth.py")
+        _sm = importlib.util.module_from_spec(_sp)
+        _sp.loader.exec_module(_sm)
+        route_ = cfg.get("route") or {}
+        sm_pts = _sm.smooth_centerline(pts, sigma_pts=float(route_.get("smooth_sigma_pts", 2.0)),
+                                       passes=int(route_.get("smooth_passes", 2)), sigma_y_pts=0.0)
+        rails_ = _er.rails_in_frame(((cfg.get("scenery") or {}).get("bespoke") or {}).get("rails") or [],
+                                    list(er_cfg.get("rails") or []), local["origin"])
+        w_was = list(widths)
+        widths, shift_, er_full = _er.retrace(sm_pts, widths, closed, evj["points"],
+                                              [[float(a), float(b)] for a, b in er_cfg["spans"]], rails_,
+                                              src=str(er_cfg.get("src", "naip")),
+                                              clear_m=float(er_cfg.get("clear_m", 0.10)),
+                                              taper_m=float(er_cfg.get("taper_m", 60.0)))
+        m_ = len(sm_pts) - 1 if closed else len(sm_pts)
+        T_ = _ef2._normals(sm_pts[:m_], closed)
+        pts = [(p[0] - T_[i % m_][1] * shift_[i], p[1], p[2] + T_[i % m_][0] * shift_[i]) for i, p in enumerate(pts)]
+        if closed:
+            pts[-1] = pts[0]
+        er_full["evidence"] = rel_e
+        (proj / "data").mkdir(parents=True, exist_ok=True)
+        (proj / "data" / "edge_retrace.json").write_text(json.dumps(er_full), encoding="utf-8")
+        edge_retrace_rep = {k: v for k, v in er_full.items() if k != "rows"}
+        print(f"[lm_intake] edge retrace ({er_full['src']}, spans {er_cfg['spans']}, rails {list(er_cfg.get('rails') or [])}, "
+              f"clear {er_full['clear_m']} m): widths {min(w_was):.2f}..{max(w_was):.2f} -> {min(widths):.2f}.."
+              f"{max(widths):.2f} m (change {er_full['width_change_m']['min']:+.2f}..{er_full['width_change_m']['max']:+.2f} m), "
+              f"the line moved {er_full['shift_m']['min']:+.2f}..{er_full['shift_m']['max']:+.2f} m; every row in "
+              f"data/edge_retrace.json")
+    # THE ROAD'S HEIGHT AND BANK FROM THE MEASURED SURFACE (lm_intake.measured_surface {"file": <the product, a path inside
+    # the PORT track>, "deck_m"}; fleet round 1, Kevin 2026-11-13: "Milford still seems wavy as driven"; absent = nothing
+    # runs). tools/measured_surface.py: the line's Y at each point of the line the assembler will build = the measured
+    # surface's height there - the deck (build_loop_blend lifts the ribbon +0.10), its bank = the measured plane's, written
+    # as data/crossfall.lm.json (route.crossfall_file). It replaces the 3DEP profile and the camber survey, so it refuses a
+    # port that also takes lm_intake.crossfall, and one whose assembler would smooth the measured heights again
+    # (route.smooth_sigma_y_pts must be 0: the product is the filtered surface).
+    ms_cfg = li.get("measured_surface")
+    surface_rep = None
+    ms_cf_rep = None
+    if ms_cfg:
+        from tools import measured_surface as _ms
+        if li.get("crossfall"):
+            raise SystemExit("[lm_intake] lm_intake.measured_surface replaces lm_intake.crossfall: declare one")
+        route_ = cfg.get("route") or {}
+        if float(route_.get("smooth_sigma_y_pts", 1.5)) != 0.0:
+            raise SystemExit("[lm_intake] lm_intake.measured_surface: route.smooth_sigma_y_pts must be 0 (the product is "
+                             "already the filtered surface; the assembler would smooth it again)")
+        if route_.get("crossfall_file") != "data/crossfall.lm.json":
+            raise SystemExit("[lm_intake] lm_intake.measured_surface: route.crossfall_file must be data/crossfall.lm.json")
+        rel_m = str(ms_cfg["file"])
+        if rel_m.startswith(("/", "\\")) or ".." in Path(rel_m).parts:
+            raise SystemExit(f"[lm_intake] lm_intake.measured_surface.file {rel_m!r} must be a plain path inside the port track")
+        prod = json.loads((proj / rel_m).read_text(encoding="utf-8"))
+        import importlib.util
+        _sp = importlib.util.spec_from_file_location(
+            "_lm_smooth", AIROSO / "tracks" / "san-diego-lake-murray" / "scripts-v021" / "geometry" / "smooth.py")
+        _sm = importlib.util.module_from_spec(_sp)
+        _sp.loader.exec_module(_sm)
+        sm_pts = _sm.smooth_centerline(pts, sigma_pts=float(route_.get("smooth_sigma_pts", 2.0)),
+                                       passes=int(route_.get("smooth_passes", 2)), sigma_y_pts=0.0)
+        deck = float(ms_cfg.get("deck_m", 0.10))
+        ys_, banks_, srep = _ms.apply(prod, [(p[0], p[2]) for p in sm_pts], deck)
+        dys = [abs(y - p[1]) for y, p in zip(ys_, pts)]
+        pts = [(p[0], y, p[2]) for p, y in zip(pts, ys_)]
+        if closed:
+            pts[-1] = pts[0]
+        m_ = len(sm_pts) - 1 if closed else len(sm_pts)
+        (proj / "data").mkdir(parents=True, exist_ok=True)
+        (proj / "data" / "crossfall.lm.json").write_text(json.dumps({
+            "points_xz": [[round(p[0], 3), round(p[2], 3)] for p in sm_pts[:m_]],
+            "bank_rad": [round(b, 6) for b in banks_[:m_]],
+            "source": f"{rel_m} (tools/measured_surface.py; the G10's raw-lidar read of the lanes)",
+            "source_status": "measured",
+            "_doc": "+ = the left edge (of travel) higher; keyed by position on the smoothed line (ledger 0078)"}),
+            encoding="utf-8")
+        sd_ = sorted(dys)
+        surface_rep = {"file": rel_m, "deck_m": deck, **srep, "product_input": prod.get("input"),
+                       "line_y_moved_m": {"p50": round(sd_[len(sd_) // 2], 3), "p99": round(sd_[int(0.99 * (len(sd_) - 1))], 3),
+                                          "max": round(sd_[-1], 3)}}
+        ms_cf_rep = {"stations": m_, "max_pct": srep["bank_max_pct"], "source": rel_m}
+        print(f"[lm_intake] measured surface ({rel_m}): the line's heights and bank from the lidar planes at {len(ys_)} points "
+              f"(off the measured line p50 {srep['lateral_off_measured_line_m']['p50']} / max "
+              f"{srep['lateral_off_measured_line_m']['max']} m); heights moved p50 {surface_rep['line_y_moved_m']['p50']} / "
+              f"max {surface_rep['line_y_moved_m']['max']} m; bank max {srep['bank_max_pct']} %; data/crossfall.lm.json written")
     data = proj / "data"
     data.mkdir(parents=True, exist_ok=True)
     out = {"frame": "ENU local meters (X=east, Y=up, Z=north)", "origin": local["origin"],
@@ -1140,6 +1242,8 @@ def intake(proj: Path, *, connectors: bool | None = None) -> dict:
                                       "_doc": "+ = the left edge (of travel) higher; keyed by position (ledger 0078)"}),
                           encoding="utf-8")
         cf_rep = {"stations": len(pbk), "max_pct": round(100 * math.tan(max(abs(b) for b in pbk)), 2) if pbk else 0.0}
+    elif ms_cfg:
+        cf_rep = ms_cf_rep                      # lm_intake.measured_surface wrote data/crossfall.lm.json above
     else:
         cf_out.unlink(missing_ok=True)
     # THE BUILDINGS (Kevin 2026-11-03: "Lake Murray v4 had many more houses in it this time, don't lose those"): the
@@ -1278,6 +1382,8 @@ def intake(proj: Path, *, connectors: bool | None = None) -> dict:
            **({"corner_flare_off": flare_rep} if flare_rep else {}), "resample": resample_rep, "edge_on_wall": wall_rep,
            **({"edge_on_bank": bank_rep} if bank_rep else {}), "corner_arcs": arcs_rep, "carried": carried,
            **({"edge_fit": edge_fit_rep} if edge_fit_rep else {}),
+           **({"edge_retrace": edge_retrace_rep} if edge_retrace_rep else {}),
+           **({"measured_surface": surface_rep} if surface_rep else {}),
            "grid_upsample": up,
            "md5": {"source_centerline": _md5(need[0]), "heightfield.npy": _md5(data / "heightfield.npy"),
                    "centerline.local.json": _md5(data / "centerline.local.json")}}

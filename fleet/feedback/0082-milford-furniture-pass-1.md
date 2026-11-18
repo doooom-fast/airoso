@@ -1693,3 +1693,106 @@ ring height on a measured cell (a plane through 2017 ground returns), the datum 
 - **In game (0084-1 step 7)**: not done on the PC. AC's computer-use grant was declined before; Kevin's drive is the verdict.
   - Read-only evidence from Kunos data: every ksPerPixelMultiMap_NMDetail material in the Kunos tracks scanned binds `txNormalDetail`, including ks_black_cat_county's own "road".
   - That road's txDiffuse alpha is p50 0 at blend 0 / alphaTest 0, so the alpha is not transparency.
+
+# Round 1 (0.1.12, PC, 2026-11-17): the lanes' height and bank from the measured surface
+
+Kevin, 2026-11-13: "Milford still seems wavy as driven" (fleet round 1: every improvement to every track in one round); built together with
+ledger 0087 Q1 (the front straight) on `claude/milford-round1`.
+
+**Cause, measured on 0.1.11's built lanes** against the G10's raw-lidar read (board asset d74be8dc7f28b114c66f909ae18e2fcb,
+`D:/k10-scratch/round1_inputs/milford_road_surface.lidar.g10.json`: a robust plane through the class-2 returns within
+1.25 m at seven offsets -4.5..+4.5 m every 0.5 m, with its noise and a noise_beats_signal flag). The PC's own sampling of
+the installed gate OBJ reproduces the G10's numbers (-4.5 m lane 30-60 m diff 3.01 vs its 2.97 cm). The centre is the
+3DEP profile (33 m median + 9 m mean, then the assembler's sigma_y 4.5 m); the bank is the 2017 camber survey, which
+DROPPED every read over 12 % (`MAX_READ_PCT`) and capped at 12 %. On the +-4.5 m lanes the built 30-120 m waves were not
+the lidar's (2.3-4.6 cm RMS off), the bank's 30-300 m changes 0.5-1.1 % off (gain 0.06-0.58), and two infield corners the
+lidar reads at 17-18 % across seven independent planes (fit sd ~2 cm; s 862-923 and 991-1233) were built at ~3 %.
+
+**The fix** (`tools/measured_surface.py`; opt-in `lm_intake.measured_surface`): `fit` (numpy, run once) takes a weighted
+plane per station across the seven offsets (1 / noise^2; one pass drops points > 4 noise + 2 cm off), then low-passes c
+and b with a raised cosine in log wavelength, flat above 30 m, nothing below 15 m [the lidar's 2-30 m content is its own
+~1 cm noise], 60 / 30 m where the G10 flags noise_beats_signal (smoothed 10 m). A Gaussian was tried first: it dulls the
+120-300 m hills (0.97 gain on 69 cm RMS of relief = 2 cm). Product: `source/surface/road_surface.fit.json` (every 1.5 m,
+207 kB; input md5 in its `input`). `apply` (in the intake, stdlib) puts each point of the line the assembler will build
+on the product's plane (c + u b, so the front straight's moved line keeps the measured surface), line Y = c - 0.10 (the
+ribbon's lift, `build_loop_blend.py:1327`; measured on 0.1.11 as built centre - line Y, median 0.09999 m), bank = atan(b)
+into `data/crossfall.lm.json`. `route.smooth_sigma_y_pts` 0 (the intake refuses anything else). `lm_intake.crossfall`
+(the survey) is gone from the config.
+
+**Built (0.1.12 c2, gate OBJ, against the lidar), 0.1.11 -> 0.1.12, cm RMS of built - lidar:**
+
+| path | 30-60 m | 60-120 m | 120-300 m |
+|---|---|---|---|
+| -4.5 m | 3.01 -> 1.05 | 4.52 -> 1.13 | 5.49 -> 1.23 |
+| 0 m | 1.50 -> 0.61 | 1.82 -> 0.67 | 2.60 -> 0.80 |
+| +4.5 m | 2.54 -> 1.11 | 4.63 -> 1.12 | 6.01 -> 1.43 |
+
+Every lane's gain on the lidar 0.92-1.03 at 30-300 m (was 0.40-0.98). Bank, built - lidar: 0.50 / 0.92 / 1.06 % -> 0.06 / 0.04
+/ 0.05 % at 30-60 / 60-120 / 120-300 m; max bank 18.3 %. The banked corners: s 862-923 -13.7 % lidar, -2.9 % 0.1.11,
+-14.0 % 0.1.12; s 991-1233 14.2 / 3.3 / 14.3 %. The G10's ranked stretches, built - lidar RMS: s 860-970 outer lane
+31.8 -> 2.9 cm; s 1210-1300 18.1 -> 2.1; s 3330-3489 (east, 232 km/h) 6.3 -> 3.2; the front straight s 40-150 (noise
+level) 1.46 -> 1.42. Worst bank change 22.7 % in 30 m, at the corners' entries (s 978: -7.6 -> +15.1 %); no gate in this
+chain reads a roll rate (verify_crossfall is the airoso draft path's), so it is reported here, not gated.
+
+**Gates, 0.1.12 c2 (reference D:/k10-scratch/milford_0112_ref and rehearsal milford_0112_reh, both EMPTY workshops,
+--no-install, 0cc3f51f, ENG eng_mflm_017 (textures 96 / 96 = this head's), the TreeFX bins md5-checked):** SHIP OK both;
+every record byte-equal between them (edge_smoothness / house_seat_check differ only by the workshop path); kn5
+EQUIVALENT (tangents only, max 1.79e-07); 42,337,727 B. Against 0.1.11: drive_test PASS (kinks 6.34 -> 5.73 / km; severe
+0; excursion drops 0 -> 2 gated, 12-14 cm, 10.5-11 m off the line in the run-off beside the banked corners, s 901 / 1201);
+audit CLEAN; kn5_ground PASS; textures 21 PASS; road_wear PASS (tone r 0.9526 -> 0.959; rubber centroid 0.041 m); houses
+PASS; edge_smoothness PASS (0087); 11,247 trees (0 rejected); GrassFX 1,285 -> 1,277 rectangles (the wider road). The
+road mesh: 1ROAD 65,218 -> 17,194 writer vertices for 21,740 -> 24,474 triangles (positions 14,138 -> 15,505), and the kn5
+2.2 MB smaller. Why, proved by a control (main 0902c2c as is, `--dry-run` from an EMPTY `D:/k10-scratch/milford_main0902_dry`:
+65,218 writer vertices, 21,740 polygons, 0 smooth): the real banking transitions twist the ribbon more (densify's worst
+warp 52.6 -> 94.6 mm), so densify cuts more columns (up to 11 -> 19; 2,704 -> 2,883 half-quads), the road passes 65,535
+triangle corners, and engine-july's prep smooth-shades any mesh past that ("smooth-shade big meshes so render-verts fit the
+16-bit cap", build_kn5_loop.py ~1430): 24,474 of 24,474 polygons smooth in 0.1.12's blend, 0 of 21,740 in the control's.
+Flat-shaded, every corner was its own writer vertex. Collision reads triangles, not normals; only the road's shading
+changes (smooth instead of faceted).
+
+Owed: install on Kevin's word (replaces milford_road_course 0.1.11; park it; ac_tidy record; menu picture); Kevin's drive is
+the verdict on "wavy".
+
+**Tests (PC, 2026-11-17, at 65fd8064; the Mac's ask before any merge).** `tests/run_tests.py` stops at the first test file that
+imports pytest (none on the PC; installing it needs Kevin's yes), so its own loop was run with that one change: a file that
+cannot import is counted as not run (`<scratchpad>/mf_r1/run_all.py`, D:/k10-scratch/lidar-venv's python for numpy), on this
+branch and, as the control, on main 0902c2c (`D:/k10-worktrees/milford-main0902`):
+- **this branch: 1,572 passed, 5 failed, 8 files not imported**; main: 1,566 passed, the same 5 failed, the same 8 files.
+  The +6 are `tests/tools/test_edge_retrace_measured_surface.py`, all PASS; no test changes state.
+- The 5 (both, so not this branch's): test_build_kn5_loop::test_the_terrain_conform_skips_an_engine_draft_unless_the_config_forces_it,
+  test_export_kn5_addon_args::test_engine_july_mirror_is_byte_identical, test_bespoke_assets::test_generator_reproduces_the_committed_files,
+  test_network_connectors::test_naip_edge_limit_widens_steps_and_never_passes_the_barrier,
+  test_plan_buildings::test_the_plans_tag_class_classes_only_tags_the_shared_table_lacks. Not the Mac's known 8
+  (draft_equiv x5, registry_moves, bench_pad x2: bench_pad is among the 8 files not imported here).
+- Not imported (pytest): test_v021_edge_profile, test_ac_tidy, test_aerial_trace, test_bench_pad, test_draft_pads,
+  test_fwlm_terrain, test_naip_carriageways, test_road_seek. A full count with them needs pytest on the PC or the Mac's .venv.
+- Logs: D:/k10-scratch/milford_0112_tests_all.log, D:/k10-scratch/main0902_tests_all.log.
+
+**Tests (Mac, 2026-11-18, at 7488829b, before the merge; Kevin: "Leprosy is back, run the tests").** pytest on every file,
+fixtures included (`python -m pytest tests -q -p no:cacheprovider`, as CI runs it; the Mac's venv: Python 3.14.7, pytest
+9.2.0, numpy 2.5.4, scipy 1.18.1, Pillow 13.0.0), in clean detached worktrees of this branch and of main 0902c2c:
+- **this branch: 1,621 passed, 0 failed**; main: 1,615 passed, 0 failed. Per test (junit xml), the only difference is the
+  6 new tests in `tests/tools/test_edge_retrace_measured_surface.py`, all PASS; no test changes state, none is on main alone.
+- The 8 files the PC could not import all ran and passed. The PC's 5 failures all pass here: they are the PC's
+  environment, not this branch.
+- `tests/run_tests.py` for the older counts: 1,606 passed, 13 failed here, the same 13 on main (1,600 / 13): every one is
+  a pytest-fixture test the stdlib runner calls with no arguments (test_ac_tidy x10, test_bench_pad x2,
+  test_fwlm_terrain x1); each passes under pytest.
+- The same 4 warnings on both (Pillow's `Image.getdata` is deprecated, removal in Pillow 14).
+
+## Installed (PC, 2026-11-17 21:49 MST, on Kevin's "Yes, install")
+
+- Built from an EMPTY workshop (D:/k10-scratch/milford_lm; 0.1.11's parked as milford_lm.0.1.11) at b86a7bd5, ENG
+  eng_mflm_017: SHIP OK, every gate green; its 51 gate / record lines identical to the reference build's
+  (milford_0112_ref.log). Log: D:/k10-scratch/milford_lm.install.log.
+- Installed as the plain `milford_road_course` 0.1.12 over 0.1.11, which is parked in
+  D:/k10-track-archive/2026-11-17_214954/.
+- The installed folder against the rehearsal's pack, file by file: every file md5-equal but the kn5 (kn5_equiv:
+  EQUIVALENT, tangents only, 206,689 values, max 1.79e-07) and ui_track.json (the install's name carries the real
+  em dash; the rehearsal's prefix had a hyphen). kn5 42,337,727 B. TreeFX: trees.txt 11,247 trees, byte-equal to
+  0.1.11's; Oak3.bin 24111ede, SycamoreV2.bin 7010d61f.
+- Menu picture re-rendered from the installed workshop with 0.1.11's camera, station, light, exposure and stand-ins
+  (sidecar equal key for key), looked at, cut into source/ui and copied into AC (old one in
+  D:/k10-track-archive/2026-11-17_215150_previews, PREVIEWS.tsv). The small ground fold inside the bend in 0.1.11's
+  picture is gone.
+- Not driven. Kevin's drive is the verdict on "wavy" and the wider straight.

@@ -30,19 +30,19 @@
   {
    "key": "g2_front_straight_east",
    "kind": "wbeam",
-   "runs": 3,
-   "posts": 248,
-   "left_out": 47,
-   "length_m": 466.7,
+   "runs": 1,
+   "posts": 295,
+   "left_out": 0,
+   "length_m": 558.8,
    "height_m": 0.7
   },
   {
    "key": "g3_front_straight_west",
    "kind": "wbeam",
-   "runs": 2,
-   "posts": 98,
-   "left_out": 7,
-   "length_m": 181.4,
+   "runs": 1,
+   "posts": 105,
+   "left_out": 0,
+   "length_m": 196.6,
    "height_m": 0.7
   },
   {
@@ -493,6 +493,6 @@
   "stood": 385,
   "radius_m": 0.3,
   "height_m": 3.0,
-  "nearest_paved_m": 4.72
+  "nearest_paved_m": 4.76
  }
 }

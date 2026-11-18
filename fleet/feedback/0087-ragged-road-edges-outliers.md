@@ -374,3 +374,62 @@ Kevin (PC session, 2026-11-08 ~22:15): **"Milford still looks messy on the edges
 - **Menu picture**: re-rendered off 0.1.6 with 0.1.5's camera (s3, eye -50.04 / 375.41 / 13.41, -0.5 EV, stand-in
   trees). The pack's own preview is in `D:/k10-track-archive/2026-11-09_093221_previews/`.
 - Not driven.
+
+## Q1 answered: the front straight re-traced to the measured paving (Milford 0.1.12, PC, 2026-11-17)
+
+Kevin, 2026-11-17 (the Mac's handoff, then typed on the PC): "Yes, widen Milford's front straight" / "build it into round
+1's Milford rebuild, report each rail's distance from the new edge, and install on my word". Built on
+`claude/milford-round1` with fleet round 1's waviness fix (ledger 0082, "Round 1 (0.1.12)").
+
+**What the measurements say on this straight** (`source/edges/edge_evidence.json`, both sensors, per 15 m bin): NAIP's
+edge points cluster within 0.1-0.2 m (the west edge 9.4-10.0 m off the line at s 0-150, the east 9.5-10.6 m at s
+4,780-4,880); the 2017 lidar's intensity step scatters 1-3 m and reads 0.8-2.5 m inside them. The two agree (0.6 m) only on
+the east side at s 4,530-4,680, so §3's "fit" rule would widen only there (+0.2-1.2 m, tested). A 7x zoom of NAIP shows
+paving out to NAIP's points; the trace is NAIP's own. So the edge is NAIP's, and both sensors' readings are in the
+per-row record. G2 / G3 stand on that paving: at s 90-170 G2's face is 0.5 m INSIDE today's 16 m (0.1.11 left 47 posts
+out on the lane, the rail in 3 pieces), G3's at s 4,506-4,630 within 0.1 m of it.
+
+**The tool** (`tools/edge_retrace.py`, opt-in `lm_intake.edge_retrace`, after the edge fit): per side the median of the
+NAIP points within +-7.5 m, a 5 m Gaussian (never 0.3 m past a row's own median), gaps up to 40 m interpolated; the edge
+never moves in, and never closer than `clear_m` 0.20 to a rail's face (a parabola of radius 150 m past each rail end);
+the change faded over 60 m outside the span, eroded (+-10 m) and smoothed (8 m); a side that moves alone moves the line
+by (left - right) / 2. Every row in `data/edge_retrace.json`.
+
+**Build 1 (b873c681) failed edge_smoothness only** (both builds, 6 ragged stretches at G2's two ends and G3's): a 1:10
+flare kinked the edge at a rail end, and the assembler smooths the LINE (sigma 6 m x 2) but not the widths, so a
+one-sided kink became two half-kinks. c2 (0cc3f51f) fixed it as above, checked first on a proxy (the shifted line through
+the assembler's own smoothing, `tools/edge_smoothness.py --gate-default` on the ribbon: it reproduces 0.1.11's p99s and
+c1's 6 stretches exactly). clear_m 0.10 left a face 1.2 cm off the edge on the proxy; 0.20 leaves >= 0.15 m.
+
+**Milford 0.1.12 c2, the front straight as built** (gate OBJ, 1ROAD boundary; widths along today's line; the line moved
+-0.44..+1.15 m):
+
+| s | 0.1.11 width | 0.1.12 width | left / right edge | NAIP L / R | lidar L / R | G3 / G2 face to the edge |
+|---|---|---|---|---|---|---|
+| 4,530 | 16.00 | 16.40 | 7.81 / 8.59 | 8.97 / - | 9.20 / 9.12 | 0.21 / 1.55 |
+| 4,580 | 15.99 | 16.69 | 8.15 / 8.54 | 9.06 / 8.67 | 9.51 / 8.54 | 0.26 / 1.58 |
+| 4,630 | 15.98 | 17.12 | 8.68 / 8.44 | 9.40 / 8.59 | - / 9.04 | 0.43 / 1.36 |
+| 4,680 | 15.98 | 17.22 | 9.16 / 8.06 | 9.32 / 8.15 | 9.61 / 8.13 | 1.16 / 0.67 |
+| 4,730 | 13.98 | 13.79 | 7.00 / 6.79 | 6.98 / 6.83 | 7.15 / 7.19 | - / 0.32 |
+| 4,805 | 16.00 | 19.53 | 9.91 / 9.62 | 10.28 / 10.59 | 9.22 / 8.40 | - / 0.38 |
+| 4,855 | 16.00 | 18.23 | 9.44 / 8.79 | 9.57 / 9.88 | 8.44 / - | - / 0.38 |
+| 0 | 16.00 | 17.71 | 9.31 / 8.40 | 9.62 / 9.49 | 8.72 / 8.85 | - / 0.23 |
+| 50 | 16.00 | 17.77 | 9.54 / 8.23 | 9.75 / 9.64 | 8.33 / 8.95 | - / 0.25 |
+| 100 | 15.98 | 17.35 | 9.69 / 7.66 | 10.19 / 10.23 | 7.95 / 8.92 | - / 0.36 |
+| 150 | 15.99 | 16.55 | 9.21 / 7.34 | 9.18 / 9.64 | 8.42 / 8.26 | - / 0.28 |
+
+(every 25 m: `<scratchpad>/mf_r1/rails_c2ref.json`). The east edge is G2's wherever G2 stands (s 4,700-150); the west edge
+is NAIP's except at s 4,506-4,650, where G3 holds it at 7.8-8.7 m (it moves IN 0.19 m at s 4,530).
+
+**Each rail against the built lane edge** (its face line every 1 m; + = off the lane):
+
+| rail | 0.1.11: face over the lane | 0.1.11 min / p50 | 0.1.11 posts left out | 0.1.12: face over the lane | 0.1.12 min / p5 / p50 / max | 0.1.12 run, posts left out |
+|---|---|---|---|---|---|---|
+| G2 (east, 557 m) | 88 m | -0.48 / 0.76 m | 47 (3 runs) | 0 m | 0.167 / 0.201 / 0.419 / 1.701 m | 559 m in 1 run, 0 out |
+| G3 (west, 196 m) | 13 m | -0.07 / 0.77 m | 7 (2 runs) | 0 m | 0.172 / 0.203 / 0.389 / 4.029 m | 197 m in 1 run, 0 out |
+
+**edge_smoothness, 0.1.11 -> 0.1.12** (lane edge, left / right): d2 p99 0.0119 / 0.0122 -> 0.0120 / 0.0120 m, max 0.0200 /
+0.0196 -> 0.0199 / 0.0196; resid p99 0.0038 / 0.0039 -> 0.0040 / 0.0040, max 0.0111 / 0.0091 -> 0.0111 / 0.0101; 0
+ragged stretches; PASS. No threshold moved.
+
+Owed: install on Kevin's word; his drive is the verdict. Q2 (Sand Creek's one-sided flares) is still open and unbuilt.

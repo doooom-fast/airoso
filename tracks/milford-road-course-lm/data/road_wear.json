@@ -22,7 +22,7 @@
     [
      "txNormalDetail",
      "building_normal.jpg",
-     "D:\\k10-worktrees\\milford-0111\\assets\\textures\\building_normal.jpg"
+     "D:\\k10-worktrees\\milford-r1\\assets\\textures\\building_normal.jpg"
     ]
    ],
    "props": {
@@ -54,7 +54,7 @@
     [
      "txNormalDetail",
      "asphalt_cracked_normal.jpg",
-     "D:\\k10-worktrees\\milford-0111\\assets\\textures\\asphalt_cracked_normal.jpg"
+     "D:\\k10-worktrees\\milford-r1\\assets\\textures\\asphalt_cracked_normal.jpg"
     ]
    ],
    "props": {
@@ -123,27 +123,27 @@
    "margin_m": 8.0,
    "pitch_px": 320,
    "atlas_px": 4096,
-   "cells": 131,
+   "cells": 134,
    "tiles_per_row": 12,
-   "atlas_fill_pct": 80.0
+   "atlas_fill_pct": 81.8
   },
-  "furthest_vertex_m": 7.265,
+  "furthest_vertex_m": 7.118,
   "aerial": {
    "image": "source/road_wear/naip_2022_mrc.jpg",
    "registration": {
-    "dx_m": -1.0,
+    "dx_m": -0.75,
     "dy_m": 0.0,
-    "contrast_at_0": -0.067,
-    "contrast_best": -0.0725
+    "contrast_at_0": -0.069,
+    "contrast_best": -0.0742
    },
    "lit_median_lum": 0.7287,
-   "road_cells": 1050616,
-   "shadow_pct": 8.33,
+   "road_cells": 1060938,
+   "shadow_pct": 8.46,
    "paint_pct": 0.0,
    "tone_p01_p50_p99": [
-    0.7305,
+    0.7323,
     0.9966,
-    1.1428
+    1.1422
    ],
    "aerial_px_m": [
     0.501,
@@ -151,7 +151,7 @@
    ]
   }
  },
- "m0": 0.85518,
+ "m0": 0.85588,
  "detail_uv_multiplier": 256.0,
  "detail": {
   "1KERB_SIDEWALK": {
@@ -187,16 +187,16 @@
    "source": "model: minimum curvature inside the built edges (recorded line named but missing: source/road_wear/fast_lane.full.ai)",
    "lap_m": 4886.9,
    "lap_s_model": 107.1,
-   "v_min_kmh": 45.2,
+   "v_min_kmh": 45.5,
    "v_max_kmh": 252.0
   }
  ],
  "writer_vertices": {
-  "1KERB_sidewalk": 27191,
-  "1ROAD_road": 65218
+  "1KERB_sidewalk": 27208,
+  "1ROAD_road": 17194
  },
- "positions_md5": "bf5b692b92bdbad74009867d44728d1e",
- "macro_png_bytes": 2548583,
+ "positions_md5": "a7020f0adc9baab7a7dafd43a9980bf3",
+ "macro_png_bytes": 2600418,
  "textures": {
   "macro": "road_wear_macro.png",
   "flat_nm": "road_wear_flat_nm.png"

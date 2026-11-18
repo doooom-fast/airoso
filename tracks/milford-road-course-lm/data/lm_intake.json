@@ -1,16 +1,17 @@
 {
  "source_track": "milford-road-course",
  "points": 3269,
- "lap_m": 4901.7,
+ "lap_m": 4901.8,
  "closed": true,
  "widths_m": [
   8.96,
-  13.44,
+  13.57,
   21.74
  ],
  "bridges_levelled": [],
+ "line_decks_lidar": null,
  "max_grade_pct": null,
- "measured_max_grade_pct": 14.97,
+ "measured_max_grade_pct": 14.86,
  "y_changed_points": 0,
  "y_change_max_m": 0.0,
  "connectors": false,
@@ -19,8 +20,9 @@
   "textures/turf_normal.jpg"
  ],
  "crossfall": {
-  "stations": 1624,
-  "max_pct": 11.87
+  "stations": 3268,
+  "max_pct": 18.31,
+  "source": "source/surface/road_surface.fit.json"
  },
  "profile": {
   "cap_was_pct": 32.0,
@@ -131,10 +133,104 @@
   "evidence": "source/edges/edge_evidence.json",
   "rejected": 2
  },
+ "edge_retrace": {
+  "src": "naip",
+  "clear_m": 0.2,
+  "taper_m": 60.0,
+  "fit_half_m": 15.0,
+  "spans": [
+   [
+    4530.0,
+    150.0
+   ]
+  ],
+  "rails": [
+   {
+    "key": "g2_front_straight_east",
+    "side": "right",
+    "rows": 375,
+    "s_m": [
+     4485.0,
+     159.0
+    ],
+    "face_off_line_m": [
+     6.93,
+     10.27
+    ]
+   },
+   {
+    "key": "g3_front_straight_west",
+    "side": "left",
+    "rows": 131,
+    "s_m": [
+     4517.9,
+     4712.9
+    ],
+    "face_off_line_m": [
+     7.93,
+     11.27
+    ]
+   }
+  ],
+  "sides": {
+   "left": {
+    "rows_measured": 399,
+    "points": 576,
+    "rows_clamped_after_smoothing": 5,
+    "other_sensors": {
+     "lidar": 528
+    },
+    "moved_m": {
+     "min": -0.271,
+     "max": 2.064
+    }
+   },
+   "right": {
+    "rows_measured": 476,
+    "points": 688,
+    "rows_clamped_after_smoothing": 15,
+    "other_sensors": {
+     "lidar": 590
+    },
+    "moved_m": {
+     "min": -0.683,
+     "max": 1.681
+    }
+   }
+  },
+  "width_change_m": {
+   "min": -0.35,
+   "max": 3.74
+  },
+  "shift_m": {
+   "min": -0.441,
+   "max": 1.146
+  },
+  "evidence": "source/edges/edge_evidence.json"
+ },
+ "measured_surface": {
+  "file": "source/surface/road_surface.fit.json",
+  "deck_m": 0.1,
+  "points": 3269,
+  "lateral_off_measured_line_m": {
+   "p50": 0.0,
+   "max": 1.119
+  },
+  "bank_max_pct": 18.31,
+  "product_input": {
+   "file": "milford_road_surface.lidar.g10.json",
+   "md5": "6368404dbe83dde54f2d8c8a8940a4a4"
+  },
+  "line_y_moved_m": {
+   "p50": 0.017,
+   "p99": 0.122,
+   "max": 0.204
+  }
+ },
  "grid_upsample": 2,
  "md5": {
   "source_centerline": "f46d2f9b3e3ab4641e6ea2d1ac6a6bcd",
   "heightfield.npy": "5f86445a8846bc11a512dae247ac4fbf",
-  "centerline.local.json": "06c77f07d08144032ff89af1d5e0a73b"
+  "centerline.local.json": "69add48ce4fbdd5ee74635a528e0dcee"
  }
 }

@@ -7,42 +7,42 @@
    "verts": 252,
    "dz_p5_p50_p95_m": [
     0.0,
-    1.064,
-    1.37
+    1.104,
+    1.499
    ],
    "dz_min_max_m": [
     0.0,
-    1.457
+    1.594
    ],
    "moved_over_1cm": 232
   },
   {
    "object": "1WALL_GHOST_RAIL_1",
-   "verts": 1000,
+   "verts": 1188,
    "dz_p5_p50_p95_m": [
     0.0,
     0.0,
-    0.172
+    0.162
    ],
    "dz_min_max_m": [
     -0.0,
-    0.183
+    0.178
    ],
-   "moved_over_1cm": 472
+   "moved_over_1cm": 254
   },
   {
    "object": "1WALL_GHOST_RAIL_2",
-   "verts": 396,
+   "verts": 424,
    "dz_p5_p50_p95_m": [
     0.0,
     0.0,
-    0.665
+    0.656
    ],
    "dz_min_max_m": [
     0.0,
-    0.689
+    0.724
    ],
-   "moved_over_1cm": 174
+   "moved_over_1cm": 68
   },
   {
    "object": "1WALL_GHOST_RAIL_3",
@@ -54,7 +54,7 @@
    ],
    "dz_min_max_m": [
     -0.0,
-    0.0
+    0.001
    ],
    "moved_over_1cm": 0
   },
@@ -76,7 +76,7 @@
    "object": "1WALL_TECPRO_TYRES_5",
    "verts": 680,
    "dz_p5_p50_p95_m": [
-    -0.0,
+    0.0,
     0.0,
     0.0
    ],
@@ -92,11 +92,11 @@
    "dz_p5_p50_p95_m": [
     -0.0,
     0.0,
-    0.172
+    0.133
    ],
    "dz_min_max_m": [
     -0.0,
-    0.188
+    0.151
    ],
    "moved_over_1cm": 112
   },
@@ -158,45 +158,45 @@
   },
   {
    "object": "GUARDRAIL_W_0",
-   "verts": 7168,
+   "verts": 2296,
    "dz_p5_p50_p95_m": [
     0.0,
-    0.126,
-    1.284
+    1.113,
+    1.515
    ],
    "dz_min_max_m": [
     -0.0,
-    1.477
+    1.608
    ],
-   "moved_over_1cm": 3732
+   "moved_over_1cm": 2108
   },
   {
    "object": "GUARDRAIL_W_1",
-   "verts": 8848,
+   "verts": 11776,
    "dz_p5_p50_p95_m": [
     0.0,
-    0.152,
-    0.662
+    0.0,
+    0.162
    ],
    "dz_min_max_m": [
     -0.0,
-    1.046
+    0.178
    ],
-   "moved_over_1cm": 4786
+   "moved_over_1cm": 2468
   },
   {
    "object": "GUARDRAIL_W_2",
-   "verts": 7656,
+   "verts": 11832,
    "dz_p5_p50_p95_m": [
     0.0,
     0.0,
-    0.0
+    0.295
    ],
    "dz_min_max_m": [
     -0.0,
-    0.0
+    0.727
    ],
-   "moved_over_1cm": 0
+   "moved_over_1cm": 632
   }
  ]
 }

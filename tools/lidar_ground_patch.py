@@ -30,6 +30,11 @@ then carries a weight per node ("w"), off the node's distance d to the lane edge
 rising linearly to 1 at in1_m, 1 to full_m, falling linearly to 0 at zero_m; only nodes with w > 0 are filled and written
 (the rest null), and tools/ground_patch_blend.py moves a vertex by that weight. The default --out is then
 terrain.lidar_patches_file (a build product: the chain measures it in its draft step ground_patch).
+The corridor's lane edge is the one the assembler builds (ledger 0091): data/centerline.local.json through the route's own
+smoothing (scripts-v021 geometry/smooth.py, route.smooth_*). With lm_intake.line_precomp the intake's line is not the built
+one (Milford 0.1.13: 0.21 m p50, up to 4.25 m off it at the s 1,000 hairpin), and in0_m read off it weighted lattice nodes
+as close as 6.18 m to the built lane edge (1,305 inside 9 m: drive_test's excursion reach); on 0.1.12's line 8.08 m (730).
+Off the assembler's line: 9.00 m, none inside.
 """
 from __future__ import annotations
 
@@ -253,9 +258,25 @@ def main(argv=None) -> int:
     return 0
 
 
+def assembler_line(line, route):
+    """the intake's line as the assembler builds it (scripts-v021 geometry/smooth.py with route.smooth_*, horizontal only;
+    widths and origin kept): the lane a corridor's distances are read off (ledger 0091)"""
+    import importlib.util
+    f = Path(__file__).resolve().parents[1] / "tracks" / "san-diego-lake-murray" / "scripts-v021" / "geometry" / "smooth.py"
+    sp = importlib.util.spec_from_file_location("_lm_smooth", f)
+    sm = importlib.util.module_from_spec(sp)
+    sp.loader.exec_module(sm)
+    pts = sm.smooth_centerline([tuple(p) for p in line["points_xyz_m"]], sigma_pts=float(route.get("smooth_sigma_pts", 2.0)),
+                               passes=int(route.get("smooth_passes", 2)), sigma_y_pts=0.0)
+    return dict(line, points_xyz_m=[list(p) for p in pts])
+
+
 def main_grid(a, proj, ter, patches, npz) -> int:
     """opt-in (ledger 0092): every patch off the committed grid, no network"""
     line = json.loads((proj / "data" / "centerline.local.json").read_text(encoding="utf-8"))
+    if any(p.get("corridor") for p in patches):
+        route = json.loads((proj / "track.config.json").read_text(encoding="utf-8")).get("route") or {}
+        line = assembler_line(line, route)
     grid = load_grid(npz, line["origin"]["elev_m"])
     out = {}
     for p in patches:

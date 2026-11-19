@@ -173,15 +173,28 @@ def test_milford_runoff_pads_are_the_outliners_and_seat_on_the_ground():
     assert tex["diffuse"] == "assets/textures/building_diffuse.jpg" and (REPO / tex["diffuse"]).exists()
 
 
-def test_runoff_outliner_reproduces_the_committed_record():
+def test_runoff_outliner_reproduces_the_committed_record(tmp_path):
+    """deterministic: the committed record is what the outliner writes off the line it names (its md5). Ledger 0091 moved the
+    line (lm_intake.line_precomp, 0.75 m rows): the record is made off the intake's own line of this config, run here into
+    an empty workshop (the build commits that line as data/centerline.local.json; the committed one may still be 0.1.12's)"""
     pytest.importorskip("PIL")
+    import hashlib
+    import lm_engine_intake as L
     rec_p = MF / "source" / "runoff" / "runoff_pads.json"
     before = rec_p.read_bytes()
+    ws = tmp_path / "ws"
+    spec = json.loads((MF / "ship.json").read_text(encoding="utf-8"))["sync_in"]
+    for rel in spec.get("required", []) + [r for r in spec.get("optional", []) if (MF / r).exists()]:
+        (ws / rel).parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(MF / rel, ws / rel)
+    L.intake(ws)
+    line_p = ws / "data" / "centerline.local.json"
+    assert json.loads(before)["line"]["md5"] == hashlib.md5(line_p.read_bytes()).hexdigest()
     try:
-        out = subprocess.run([sys.executable, str(MF / "source" / "runoff" / "scripts" / "runoff_pads.py")], cwd=REPO,
-                             capture_output=True, text=True)
+        out = subprocess.run([sys.executable, str(MF / "source" / "runoff" / "scripts" / "runoff_pads.py"), "--line",
+                              str(line_p)], cwd=REPO, capture_output=True, text=True)
         assert out.returncode == 0, out.stderr
-        assert rec_p.read_bytes() == before            # deterministic: the committed record is what it writes
+        assert rec_p.read_bytes() == before
     finally:
         rec_p.write_bytes(before)
 

@@ -279,3 +279,50 @@ def test_the_0091_options_are_milfords_alone():
     assert "lm_intake" not in cfgs.get("san-diego-lake-murray", {})      # Lake Murray runs no intake
     text = (ROOT / "tools" / "lm_engine_intake.py").read_text(encoding="utf-8")
     assert 'li.get("line_precomp")' in text and 'li.get("width_smooth_m")' in text
+
+
+# ------------------------------------------------------------------------------------------------ 0092's ground, on this line
+def test_the_corridor_reads_the_lane_edge_the_assembler_builds(tmp_path):
+    """tools/lidar_ground_patch.py: a corridor patch's in0_m is read off the assembler's line (the route's smooth of the
+    intake's line), not the intake's line itself, which lm_intake.line_precomp sets outside every bend"""
+    np = __import__("pytest").importorskip("numpy")
+    import lidar_ground_patch as lgp
+    import lm_engine_intake as L
+    r = 60.0
+    n = int(round(2 * math.pi * r / 1.5))
+    trace = _loop(n=n, r=r)
+    line_pts, _rep = L.precomp_line(trace, True, sm, sigma_pts=5.0, passes=2)    # the intake's line, as Milford's
+    proj = tmp_path / "p"
+    (proj / "data").mkdir(parents=True)
+    (proj / "source").mkdir()
+    g = np.full((240, 240), 500, np.int16)                    # flat ground, 240 x 240 m about the circle
+    np.savez(proj / "source" / "grid.npz", e0=np.int64(-120), n0=np.int64(-120), cell=np.float64(1.0), nx=np.int64(240),
+             ny=np.int64(240), z0_m=np.float64(100.0), ground_z_cm_over_z0=g)
+    line = {"origin": {"lon": 0.0, "lat": 0.0, "elev_m": 100.0}, "points_xyz_m": [list(p) for p in line_pts],
+            "widths_m": [12.0] * len(line_pts)}
+    (proj / "data" / "centerline.local.json").write_text(json.dumps(line), encoding="utf-8")
+    cor = {"in0_m": 9.0, "in1_m": 16.0, "full_m": 35.0, "zero_m": 45.0}
+    (proj / "track.config.json").write_text(json.dumps({
+        "route": {"smooth_sigma_pts": 5.0, "smooth_passes": 2},
+        "terrain": {"lidar_patches_npz": "source/grid.npz", "lidar_patches_file": "data/patches.json",
+                    "lidar_patches": [{"id": "corridor", "polygon": [[-100, -100], [100, -100], [100, 100], [-100, 100]],
+                                       "corridor": cor}]}}), encoding="utf-8")
+    assert lgp.main([str(proj)]) == 0
+    c = json.loads((proj / "data" / "patches.json").read_text())["patches"]["corridor"]
+    w = np.array(c["w"]).reshape(c["nz"], c["nx"])
+    gx, gz = np.meshgrid(c["x0"] + np.arange(c["nx"]), c["z0"] + np.arange(c["nz"]))
+    built = lgp.assembler_line(line, {"smooth_sigma_pts": 5.0, "smooth_passes": 2})
+    d_built = lgp.lane_edge_distance(built, gx[w > 0], gz[w > 0])
+    d_intake = lgp.lane_edge_distance(line, gx[w > 0], gz[w > 0])
+    assert d_built.min() >= 9.0 - 1e-6, d_built.min()        # nothing weighted inside the 9 m drive_test reach
+    assert d_intake.min() < 8.6                               # (off the intake's own line it would have been ~1 m short)
+
+
+def test_the_run_off_pads_are_outlined_off_this_line():
+    """source/runoff/runoff_pads.json was made off this config's intake line (ledger 0091 re-ran it): none folds, and every
+    kept pad that meets the lane edge starts at the edge strip's lip of the line the assembler builds"""
+    rec = json.loads((ROOT / "tracks" / MF / "source" / "runoff" / "runoff_pads.json").read_text(encoding="utf-8"))
+    kept = [b for b in rec["blobs"] if b["kept"]]
+    assert rec["line"]["frame"].startswith("the intake's data/centerline.local.json through the route's own smoothing")
+    assert len(kept) == 19 and rec["left_out"] == 5 and all(b["folds"] == 0 for b in kept)
+    assert sum(b.get("rows_dropped", 0) for b in rec["blobs"]) <= 2

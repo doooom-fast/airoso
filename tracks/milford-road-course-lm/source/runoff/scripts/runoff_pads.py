@@ -10,10 +10,15 @@ that reaches within ADJ_M of the lane edge starts at the edge strip's outer lip 
 pavement as the photograph shows it does. Nevada's route (ledger 0081): the config seats the pads on the prepped ground as
 1RUNOFF (scenery.bespoke.pads_seat "ground", pads_surface "1RUNOFF").
 
-    python runoff_pads.py [--write]
+    python runoff_pads.py [--write] [--line <a centerline.local.json>]
 
-Reads the committed class map, NAIP 2022 (source/road_wear/naip_2022_mrc.jpg, the same bbox), data/centerline.local.json and the
-config's ride pad. Writes ../runoff_pads.json (every blob: area, D / grey share, stations, offsets, NAIP colour, kept or why
+Reads the committed class map, NAIP 2022 (source/road_wear/naip_2022_mrc.jpg, the same bbox), data/centerline.local.json (or
+--line: the intake's line of a workshop, e.g. a dry run's, before the build commits it) and the config's ride pad. The lane edge
+is the one the assembler builds (ledger 0091): that line through the route's own smoothing (scripts-v021 geometry/smooth.py,
+route.smooth_*), +- widths_m / 2. With lm_intake.line_precomp the intake's line is not the built one (Milford 0.1.13: 0.21 m
+p50, 4.25 m at most off it; 0.1.12's 0.12 / 1.68 m), and outlining on it put a pad 0.92 m onto the lane at s 355 and folded
+7 quads. A quad that still folds (the inside of a tight bend at a large offset: the offset curve turns back) loses the row
+that turns it back, until none does (the blob's "rows_dropped"). The record carries the line's md5. Writes ../runoff_pads.json (every blob: area, D / grey share, stations, offsets, NAIP colour, kept or why
 not, the fold check); with --write, the config's scenery.bespoke.pads = the ride pad (kept first: PADAPRON_0) + one strip pad
 per kept blob (the file is re-dumped indent 2, as it is committed, so nothing else in it moves). Deterministic: re-run it after
 the line or the widths move.
@@ -47,9 +52,22 @@ LIP_M = 1.9         # measured: the edge strip's outer lip, lane edge + 1.73-1.8
 ADJ_M = 3.0         # [invented] a blob whose pixels come within this of the lane edge is run-off at the edge
 
 
-def load_line():
-    cl = json.loads((T / "data" / "centerline.local.json").read_text(encoding="utf-8"))
-    P = np.array(cl["points_xyz_m"], float)[:, [0, 2]]
+def load_line(cfg, path=None):
+    """the lane the assembler builds: the intake's line through the route's own smoothing, its widths (ledger 0091)"""
+    import hashlib
+    import importlib.util
+    lp = Path(path) if path else T / "data" / "centerline.local.json"
+    raw = lp.read_bytes()
+    cl = json.loads(raw.decode("utf-8"))
+    sp = importlib.util.spec_from_file_location(
+        "_lm_smooth", REPO / "tracks" / "san-diego-lake-murray" / "scripts-v021" / "geometry" / "smooth.py")
+    sm = importlib.util.module_from_spec(sp)
+    sp.loader.exec_module(sm)
+    route = cfg.get("route") or {}
+    pts = sm.smooth_centerline([tuple(p) for p in cl["points_xyz_m"]], sigma_pts=float(route.get("smooth_sigma_pts", 2.0)),
+                               passes=int(route.get("smooth_passes", 2)), sigma_y_pts=0.0)
+    load_line.md5 = hashlib.md5(raw).hexdigest()
+    P = np.array(pts, float)[:, [0, 2]]
     half = np.array(cl["widths_m"], float) / 2.0
     s = np.concatenate([[0.0], np.cumsum(np.hypot(*np.diff(P, axis=0).T))])
     return cl["origin"], P, half, s
@@ -124,6 +142,18 @@ def outline(rows, P, half, s, side):
     return inner, outer
 
 
+def _quad_sign(inner, outer, i):
+    quad = [inner[i], inner[i + 1], outer[i + 1], outer[i]]
+    cr = [(quad[(a + 1) % 4][0] - quad[a][0]) * (quad[(a + 2) % 4][1] - quad[(a + 1) % 4][1])
+          - (quad[(a + 1) % 4][1] - quad[a][1]) * (quad[(a + 2) % 4][0] - quad[(a + 1) % 4][0]) for a in range(4)]
+    return 1 if all(v > 0 for v in cr) else -1 if all(v < 0 for v in cr) else 0
+
+
+def _major_sign(inner, outer):
+    sg = [_quad_sign(inner, outer, i) for i in range(len(inner) - 1)]
+    return 1 if sg.count(1) >= sg.count(-1) else -1
+
+
 def folds_of(inner, outer):
     """quads that are not convex, plus 1 when the quads do not all keep one winding"""
     sgn = []
@@ -146,7 +176,8 @@ def main(argv=None) -> int:
     cfg = json.loads(cfg_p.read_text(encoding="utf-8"))
     bes = cfg["scenery"]["bespoke"]
     gz = bes["grassfx_zones"]
-    origin, P, half, s = load_line()
+    line_p = argv[argv.index("--line") + 1] if "--line" in argv else None
+    origin, P, half, s = load_line(cfg, line_p)
     lap = float(s[-1])
     m_lon, m_lat = _meters_per_degree(origin["lat"])
     W_, S_, E_, N_ = gz["bbox_lonlat"]
@@ -216,6 +247,12 @@ def main(argv=None) -> int:
             rows[0] = (max(rows[0][0], float(st.min()) - HALF_PX_M), rows[0][1], rows[0][2])
             rows[-1] = (min(rows[-1][0], float(st.max()) + HALF_PX_M), rows[-1][1], rows[-1][2])
         inner, outer = outline(rows, P, half, s, side)
+        dropped = 0
+        while folds_of(inner, outer) and len(rows) > 2:  # a quad the offset curve turns back in: drop its turning row
+            k_ = next(i for i in range(len(inner) - 1) if _quad_sign(inner, outer, i) != _major_sign(inner, outer))
+            del rows[k_ + 1 if k_ + 1 < len(rows) - 1 else k_]
+            inner, outer = outline(rows, P, half, s, side)
+            dropped += 1
         rgb = np.median(naip[m], 0)
         b_over_r = float(rgb[2] / max(rgb[0], 1.0))
         s_mid = float(np.median(st)) % lap
@@ -231,6 +268,7 @@ def main(argv=None) -> int:
             "why": "pavement (NAIP grey)" if b_over_r >= PAVED_B_OVER_R else
                    f"NAIP blue / red {b_over_r:.2f} under {PAVED_B_OVER_R}: bare ground or gravel, not pavement",
             "outline_m2": round(area_of(inner, outer)), "quads": len(inner) - 1, "folds": folds_of(inner, outer),
+            **({"rows_dropped": dropped} if dropped else {}),
             "inner_xz": [[round(x, 2), round(z, 2)] for x, z in inner],
             "outer_xz": [[round(x, 2), round(z, 2)] for x, z in outer]})
     blobs.sort(key=lambda b_: (b_["s_median"], b_["side"]))
@@ -260,6 +298,8 @@ def main(argv=None) -> int:
                              "all": round(float(m30.sum() * px_m2)),
                              "in_kept_blobs": sum(b_["within_30m_m2"] for b_ in kept),
                              "in_blobs_left_out": sum(b_["within_30m_m2"] for b_ in blobs if not b_["kept"])},
+           "line": {"md5": load_line.md5, "frame": "the intake's data/centerline.local.json through the route's own smoothing "
+                                                  "(the assembler's line), +- widths_m / 2"},
            "kept": len(kept), "left_out": len(blobs) - len(kept), "overlaps": overlaps,
            "reference_colours": ref, "blobs": blobs}
     (T / "source" / "runoff" / "runoff_pads.json").write_text(json.dumps(rec, indent=1) + "\n", encoding="utf-8")

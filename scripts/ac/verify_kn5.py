@@ -722,6 +722,91 @@ def far_ring_checks(meshes) -> list[str]:
     return fails
 
 
+def race_start_checks(race_start: dict, local: dict, nodes3: list) -> tuple[list[str], list[str]]:
+    """(ledger 0093, opt-in: track.config.json race_start) a single-layout CIRCUIT's declared start judged in its road kn5,
+    with the multi-layout rows' own thresholds: (c) HEADING every facing node's local +Z along the lap's travel within
+    HEADING_MIN_DEG; (d) ROAD every START / PIT car (CAR_HALF_W_M) LANE_MARGIN_M inside the road's width (a circuit's
+    grid stands on both sides of the line, so the street rule "right of travel" does not apply); (e) LINE the AC_TIME_0
+    pair's midpoint within LINE_TOL_M of the declared line, AC_TIME_0 0 < d <= LINE_AHEAD_MAX_M ahead of AC_START_0,
+    AC_TIME_1 / AC_TIME_2 in driving order; and the declared count of grid slots and pits. ``nodes3`` is _parse_full's
+    (name, kn5 position, kn5 local +Z); ``local`` is data/centerline.local.json (engine frame: kn5 z = -engine z).
+    Returns (fails, summary lines)."""
+    from scripts.geometry import circuit_start as cs
+    fails: list[str] = []
+    pl = cs.plan(race_start, local)
+    fails += [f"RACE_START declaration: {p}" for p in pl["problems"]]
+    line = cs.Line(local["points_xyz_m"], local["widths_m"])
+    ac = {n: ((p[0], p[1], -p[2]), (z[0], -z[2])) for n, p, z in nodes3 if n.upper().startswith("AC_")}
+    want = {n for n in pl["nodes"]}
+    missing = sorted(want - set(ac))
+    if missing:
+        fails.append(f"RACE_START: the road kn5 lacks {len(missing)} declared node(s) {missing[:6]}")
+    extra = sorted(n for n in ac if n.upper().startswith(SPAWN_PREFIXES) and n not in want)
+    if extra:
+        fails.append(f"RACE_START: the road kn5 carries {len(extra)} node(s) the declaration does not place {extra[:6]}")
+    cos_min = math.cos(math.radians(HEADING_MIN_DEG))
+    heads, clears = [], []
+    for nm, ((x, _y, z), (zx, zz)) in sorted(ac.items()):
+        if not nm.upper().startswith(FACING):
+            continue
+        s, lat = line.project(x, z)
+        tx, tz = line.tangent(s)
+        zl = math.hypot(zx, zz)
+        if zl < 1e-6:
+            fails.append(f"HEADING '{nm}' has no horizontal +Z (matrix degenerate)")
+            continue
+        dot = (zx * tx + zz * tz) / zl
+        heads.append((nm, dot))
+        if dot < cos_min:
+            fails.append(f"HEADING '{nm}' local +Z . travel = {dot:+.2f} < {cos_min:.2f} at s {s:.1f} (engine-july's "
+                         f"atan2(tx, tz) from pts[0] -> pts[1] reads this; tools/circuit_dummies_blend.py writes atan2(tx, -tz))")
+        if nm.upper().startswith(("AC_START", "AC_PIT")):
+            clear = line.width(s) / 2.0 - (abs(lat) + CAR_HALF_W_M)
+            clears.append((nm, clear))
+            if clear < LANE_MARGIN_M:
+                fails.append(f"ROAD '{nm}' at s {s:.1f}, lateral {lat:+.2f}: the car stands {clear:.2f} m inside the "
+                             f"road's edge (< {LANE_MARGIN_M} m{'; OFF the road' if clear < 0 else ''})")
+    lt, rt = ac.get("AC_TIME_0_L"), ac.get("AC_TIME_0_R")
+    if lt and rt:
+        mx, mz = (lt[0][0] + rt[0][0]) / 2.0, (lt[0][2] + rt[0][2]) / 2.0
+        lx, _ly, lz = line.point(pl["line_station_m"])
+        d = math.hypot(mx - lx, mz - lz)
+        if d > LINE_TOL_M:
+            fails.append(f"LINE: AC_TIME_0's midpoint is {d:.1f} m from the declared line (s {pl['line_station_m']:.1f}; "
+                         f"> {LINE_TOL_M} m)")
+        s0, _l0 = line.project(mx, mz)
+        st0 = ac.get("AC_START_0")
+        if st0:
+            ss, _sl = line.project(st0[0][0], st0[0][2])
+            ahead = line.ahead(ss, s0)
+            if not (0.0 < ahead <= LINE_AHEAD_MAX_M):
+                fails.append(f"LINE: AC_TIME_0 is {ahead:.1f} m ahead of AC_START_0 — must be 0 < d <= "
+                             f"{LINE_AHEAD_MAX_M:.0f} m")
+        prev = 0.0
+        for k in (1, 2):
+            a, b = ac.get(f"AC_TIME_{k}_L"), ac.get(f"AC_TIME_{k}_R")
+            if not (a and b):
+                fails.append(f"SECTORS: no AC_TIME_{k}_L/R pair")
+                continue
+            sk, _lk = line.project((a[0][0] + b[0][0]) / 2.0, (a[0][2] + b[0][2]) / 2.0)
+            dk = line.ahead(s0, sk)
+            if dk <= prev or dk >= line.lap - 1.0:
+                fails.append(f"SECTORS: AC_TIME_{k} is {dk:.0f} m from the line in driving order — not after "
+                             f"AC_TIME_{k - 1} ({prev:.0f} m)")
+            prev = dk
+    else:
+        fails.append("LINE: the road kn5 has no AC_TIME_0_L/R pair")
+    out = []
+    if heads:
+        w = min(heads, key=lambda r: r[1])
+        out.append(f"  [race_start] heading: {len(heads)} facing nodes, local +Z . travel min {w[1]:+.2f} ({w[0]}), "
+                   f"AC_START_0 {dict(heads).get('AC_START_0', float('nan')):+.2f}")
+    if clears:
+        w = min(clears, key=lambda r: r[1])
+        out.append(f"  [race_start] road: {len(clears)} START/PIT cars inside the road, nearest edge {w[1]:+.2f} m ({w[0]})")
+    return fails, out
+
+
 def verify(project_dir: str | Path) -> list[str]:
     project = Path(project_dir)
     cfg = json.loads((project / "track.config.json").read_text(encoding="utf-8"))
@@ -782,6 +867,17 @@ def verify(project_dir: str | Path) -> list[str]:
                     d = math.hypot(nr[0] - x, nr[2] - z)
                     if d > PIT_ROAD_MAX_M or abs(y - nr[1]) > PIT_DY_MAX_M:
                         fails.append(f"SPAWN off-road '{spk.name}:{nm}': {d:.1f} m from road, dY {y - nr[1]:+.1f} m")
+        # (ledger 0093, opt-in: track.config.json race_start) a circuit's declared start in the road kn5: heading, road,
+        # line, sectors, with the multi-layout rows' own thresholds; no key = nothing read
+        if cfg.get("race_start"):
+            lp = project / "data" / "centerline.local.json"
+            if not lp.exists():
+                fails.append("race_start declared but no data/centerline.local.json to judge it on")
+            else:
+                rs_fails, rs_lines = race_start_checks(cfg["race_start"], json.loads(lp.read_text(encoding="utf-8")), nodes3)
+                for ln in rs_lines:
+                    print(ln)
+                fails += rs_fails
 
     # 6. terrain-poke ON THE SHIPPED BINARY — a 1GRASS vert sitting above the drivable surface AT
     #    ITS OWN XZ launches the car. audit_mesh checks this on track.obj (pre-export); this re-checks

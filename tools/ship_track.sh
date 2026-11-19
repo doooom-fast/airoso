@@ -439,7 +439,7 @@ draft_islands() {
 }
 draft_paint() {
   step "author: measured road paint on a street's built road (tools/author_paint_blend.py; ledger 0079 round N; self-checked; no route.paint = no-op)"
-  (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_paint_blend.py" -- "$PROJ" 2>&1 | grep "^\[paint\]\|FATAL\|Error\|Traceback" )
+  (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_paint_blend.py" -- "$PROJ" --stage draft 2>&1 | grep "^\[paint\]\|FATAL\|Error\|Traceback" )
 }
 draft_apron_road() {
   step "author: the mainline's measured apron (the edge strip's apron side) as its own 1ROAD object (tools/apron_road_blend.py; ledger 0085; self-checked; no route.edge_apron_file = no-op)"
@@ -555,6 +555,13 @@ author_bespoke() {
   step "author: the bespoke dressing the config declares -> AUTH_bespoke (tools/author_bespoke_blend.py: buildings, cones, scrub on the built ground; self-checked; none declared = no-op)"
   (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_bespoke_blend.py" -- "$PROJ" 2>&1 | grep "^\[bespoke\]\|Error\|Traceback" )
 }
+author_paint() {
+  # ledger 0093: the measured paint that lies on the bespoke dressing's own surfaces (route.paint items with a "surface": High
+  # Plains' pit-lane lines and gores on its PADAPRON pit lane and paddock), every ship, after author_bespoke rebuilt them;
+  # the draft's paint (on ROAD) stays draft_paint's. No such item = no-op
+  step "author: measured paint on the bespoke surfaces the config names (tools/author_paint_blend.py --stage author; ledger 0093; self-checked; no route.paint surface item = no-op)"
+  (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_paint_blend.py" -- "$PROJ" --stage author 2>&1 | grep "^\[paint\]\|FATAL\|Error\|Traceback" )
+}
 
 ship_grassfx_aerial() {
   step "ship: GrassFX zones off the track's aerial (tools/plan_grassfx_aerial.py; none declared = no-op), read by the track folder's ext_config"
@@ -589,6 +596,16 @@ prep_prep() {
   if [ "$SPEC_ENGINE" = "lm-v4" ] && [ "$(pyq "import json,sys; print(json.load(open(sys.argv[1],encoding='utf-8')).get('loop', True) is False)" "$PROJ/track.config.json" | tr -d '\r')" = "True" ]; then
     step "ship: a point-to-point stage's start, splits and finish on the prepped scene (tools/stage_dummies_blend.py; self-checked)"
     "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/stage_dummies_blend.py" -- "$PROJ/blender/$SLUG.blend" --project "$PROJ" 2>&1 | grep "^\[stage-dummies\]\|FATAL\|Error\|Traceback"
+  fi
+  # ledger 0093: a circuit's DECLARED line, grid, pits and sectors in place of the prep's rule set (engine-july's: the grid on
+  # the straightest 260 m, one AC_START, every facing node yawed from pts[0] -> pts[1]); only a config that declares
+  # race_start (High Plains), no header otherwise: Lake Murray's chain is tools/ship_sd.sh, untouched. Part of prep
+  # (steps.prep stays prep, split); before the road-wear bake, which reads only the road
+  rm -f "$PROJ/data/circuit_dummies.json"
+  if [ "$(pyq "import json,sys; print(bool(json.load(open(sys.argv[1],encoding='utf-8')).get('race_start')))" "$PROJ/track.config.json" | tr -d '\r')" = "True" ]; then
+    step "ship: a circuit's declared line, grid, pits and sectors on the prepped scene (tools/circuit_dummies_blend.py; ledger 0093; self-checked)"
+    "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/circuit_dummies_blend.py" -- "$PROJ/blender/$SLUG.blend" --project "$PROJ" 2>&1 | grep "^\[circuit-dummies\]\|FATAL\|Error\|Traceback"
+    [ "${PIPESTATUS[0]}" = 0 ] || { echo "circuit_dummies_blend failed"; exit 1; }
   fi
   # ledger 0080 2a round 4: the median ground between two carriageways at different heights, as the lidar shows it, on the
   # PREPPED scene (the prep's pin would undo it); only a track whose config names lm_intake.median_barrier_file (the SD

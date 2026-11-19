@@ -151,7 +151,8 @@ def test_no_other_plan_names_the_pass_4_keys():
 def test_no_other_track_overrides_the_roof_row():
     for f in ROOT.glob("tracks/*/track.config.json"):
         cfg = json.loads(f.read_text(encoding="utf-8"))
-        if f.parent.name != "del-mar-lm":
+        # ledger 0094 item 4: Milford takes Del Mar's measured roof palette too (its ROOF row, opt-in)
+        if f.parent.name not in ("del-mar-lm", "milford-road-course-lm"):
             assert "ROOF" not in (cfg.get("texture_overrides") or {}), f
 
 

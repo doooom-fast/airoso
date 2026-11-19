@@ -59,12 +59,20 @@
       "blocks": [
         {
           "file": "source/bespoke/buildings.race.json",
-          "auto": true
+          "auto": true,
+          "skin": "garage",
+          "eave_overhang_m": 0.3,
+          "fascia_m": 0.2,
+          "base_grime_m": 0.5,
+          "_facade_doc": "ledger 0094 (opt-in): every walled shed in the facade atlas's garage skin (roll-up doors facing the lap), a 0.3 m eave and rake overhang with a 0.2 m fascia, a 0.5 m grime band, all [invented] (no photograph of the paddock's walls); the container stack's row names its own container_row skin; the carport row and the pit-entry canopy stand open on posts (form posts, their own rows)"
         },
         {
           "file": "source/bespoke/posts.race.json",
           "auto": true,
-          "collider_tri_m": 14.0
+          "collider_tri_m": 14.0,
+          "skin": "post",
+          "base_grime_m": 0.4,
+          "_facade_doc": "ledger 0094 (opt-in): the marshal posts in the facade atlas's post skin (windows facing the lap, the door behind), a 0.4 m grime band, all [invented]"
         }
       ],
       "pads": [
@@ -2661,6 +2669,36 @@
     "1KERB": {
       "diffuse": "textures/kerb_atlas_hp.png",
       "_doc": "the kerb paint the aerial shows: blue / white kerbs and blue / yellow edge stripes (ledger 0081), an atlas of two flat two-band stripes (this port's own file). Keyed 1KERB, the row the traced kerbs (1KERB_circuit_*, tools/author_kerbs_blend.py) bind; not 1KERB_RACE, which the split routes to the race kn5 as race furniture"
+    },
+    "BUILDING_METAL": {
+      "diffuse": "assets/textures/circuit_facade_diffuse.jpg",
+      "normal": "assets/textures/circuit_facade_normal.jpg",
+      "_doc": "ledger 0094 (opt-in): the facade atlas (tools/make_bespoke_assets.py third batch, tools/circuit_facades.py cells; CC0); every block on this row wears an atlas skin"
+    },
+    "FARBLOCK_METAL": {
+      "diffuse": "assets/textures/circuit_facade_diffuse.jpg",
+      "normal": "assets/textures/circuit_facade_normal.jpg",
+      "_doc": "ledger 0094 (opt-in): the facade atlas (tools/make_bespoke_assets.py third batch, tools/circuit_facades.py cells; CC0); every block on this row wears an atlas skin"
+    },
+    "BUILDING_SIDING": {
+      "diffuse": "assets/textures/metal_wall_diffuse.jpg",
+      "normal": "assets/textures/metal_wall_normal.jpg",
+      "_doc": "ledger 0094: the open canopies on posts (BUILDING_SIDING_CANOPY_<k>) keep their ribbed metal: BUILDING_METAL is the facade atlas here, and engine-july's frozen pbr table binds by row, so the canopies ride this house row (unused on a circuit; its UVs kept and its islands seated by engine-july's prep, as BUILDING_METAL's) with the metal skin, as the tyre walls ride 1WALL_TECPRO (ledger 0082)"
+    },
+    "ROOFTOP_WHITE": {
+      "diffuse": "assets/textures/roof_white_diffuse.jpg",
+      "normal": "assets/textures/roof_rib_normal.jpg",
+      "_doc": "ledger 0094 (opt-in): the class's own diffuse (unchanged) with ribbed metal roofing as its normal, so the row renders ksPerPixelMultiMap on this track only"
+    },
+    "ROOFTOP_TAN": {
+      "diffuse": "assets/textures/roof_tan_diffuse.jpg",
+      "normal": "assets/textures/roof_rib_normal.jpg",
+      "_doc": "ledger 0094 (opt-in): the class's own diffuse (unchanged) with ribbed metal roofing as its normal, so the row renders ksPerPixelMultiMap on this track only"
+    },
+    "ROOFTOP_DARK": {
+      "diffuse": "assets/textures/roof_dark_diffuse.jpg",
+      "normal": "assets/textures/roof_rib_normal.jpg",
+      "_doc": "ledger 0094 (opt-in): the class's own diffuse (unchanged) with ribbed metal roofing as its normal, so the row renders ksPerPixelMultiMap on this track only"
     }
   },
   "lm_intake": {

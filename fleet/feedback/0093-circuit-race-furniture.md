@@ -71,7 +71,7 @@ at `tracks/high-plains-lm/source/road_wear/naip_2023_030_hp.png`. The furniture 
 - **osm289317403:** the same 17 m² roof as post1, centroid within 0.1 m.
 - **osm289314487:** the planner's own `roof_class` reads it white on the 0.3 m crop, not dark.
 - **OSM 289311821** is the 16-stall carport row. Its official ceiling is 8 ft (2.44 m) (HPR's RV-carport page,
-  sources audit §3).
+  sources audit §3). Ledger 0094 stands it open-sided on posts, as it is.
 - **Posts:** 9 of 12 have a white roof on the crop. post0 and post2 sit 5.1 m from their configured footprints.
   Each post stands on a dark pad of 59-68 m² of dark pixels (post9: 93 m²).
 
@@ -191,8 +191,8 @@ These are the port's own files, synced in by ship.json. `tracks/high-plains` kee
 - Roofs as `plan_buildings.roof_class` reads the 0.3 m crop.
 - Plus three traced structures:
   - the white building, 12.2 × 8.5 m, top 3.9 m;
-  - the pit-entry canopy, 9.5 × 8.1 m, top 3.1 m. It stands closed, because the `posts` form is refused within 60 m
-    of the lap;
+  - the pit-entry canopy, 9.5 × 8.1 m, top 3.1 m. This commit stood it closed, because the `posts` form was refused
+    within 60 m of the lap; ledger 0094 stands it open on posts, each with a collider (`post_collider`);
   - the container stack, 24.9 × 12.2 m, 2.6 m [invented: ISO 668's 2.59 m].
 
 `source/bespoke/posts.race.json`:
@@ -265,7 +265,8 @@ The PC runs the runbook below. The gates are unchanged; their thresholds are unc
 ## Open decisions for Kevin
 
 - **Pits on the racing surface** (s 20-129, the grid's stagger), until a drivable pit lane exists. Or keep 8.
-- **The pit-entry canopy as a closed box.** Drop it, or wait for a posts collider.
+- ~~**The pit-entry canopy as a closed box.**~~ Settled by ledger 0094: it and the carport row (open sides, an 8 ft
+  ceiling) stand open on posts, a collider in every post.
 - **The containers' 2.6 m height** [invented], and the 11 × 23 m grey roof east of them, not built: the photo cannot
   tell roof from ground.
 - **The tyres' skin.** `1WALL_TECPRO_TYRES` is bound by `texture_overrides["1WALL_TECPRO"]` where a track declares one.

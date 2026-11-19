@@ -446,6 +446,15 @@ draft_apron_road() {
   (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/apron_road_blend.py" -- "$PROJ" 2>&1 | grep "^\[apron-road\]\|FATAL\|Error\|Traceback" )
 }
 draft_ground_patch() {
+  # ledger 0092 (Milford): a config that names terrain.lidar_patches_npz has its patches measured first, off that committed 1 m
+  # lidar grid (tools/lidar_ground_patch.py --npz: no network; into terrain.lidar_patches_file, a build product); no key = no
+  # header, nothing runs (Sand Creek and Pikes Peak commit their measured patches)
+  local npz
+  npz="$(pyq "import json,sys; print((json.load(open(sys.argv[1],encoding='utf-8')).get('terrain') or {}).get('lidar_patches_npz') or '')" "$PROJ/track.config.json" | tr -d '\r')"
+  if [ -n "$npz" ]; then
+    step "draft: the declared patches' lidar ground off the committed 1 m grid (tools/lidar_ground_patch.py --npz $npz; ledger 0092; no network)"
+    (cd "$AIROSO" && python tools/lidar_ground_patch.py "$PROJ" --npz "$PROJ/$npz")
+  fi
   step "author: TERRAIN seated on the measured lidar ground in the declared patches (tools/ground_patch_blend.py; ledger 0079 round I; self-checked; no terrain.lidar_patches = no-op)"
   (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/ground_patch_blend.py" -- "$PROJ" 2>&1 | grep "^\[ground-patch\]\|FATAL\|Error\|Traceback" )
 }

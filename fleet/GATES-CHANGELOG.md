@@ -14,6 +14,25 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
+## 2026-11-18 — REPORTED, NOT GATED: kn5_ground_check splits the walls lens; Milford's ground beside the road, the numbers it adds (ledger 0092; no threshold moved)
+
+No gate threshold, floor or bypass moved. All opt-in, Milford only (`tests/tools/test_milford_ground_0092.py`
+`test_only_milford_names_the_new_keys`):
+
+- `scripts/ac/kn5_ground_check.py`: the walls / fences / lamps lens is one function (the same expressions on the same
+  points); when the kn5 holds `1WALL_GHOST_TRUNK_*` (the unseen trunk colliders, Milford only), two info lines and
+  `seating_info.walls_trunk` / `walls_rest` follow the walls line, `"gated": false`. The walls verdict is computed exactly as
+  before (0.1.5's kn5: the old and new tool print the same gated lines and JSON).
+- Numbers the change adds (none is a gate):
+  - ⚠ `terrain.lidar_patches` corridor: weight 0 to 9 m off the lane edge, 1 from 16 m to 35 m, 0 at 45 m [invented: 9 m =
+    engine-july's 3 m shelf + 6 m feather and drive_test's sweep reach; 16 m = the prep's FEATHER_M + 10; 45 m = the lidar
+    grid's reach]; `split_m` 4 m [invented]; `culvert_4349_w` feather_m 3 m [invented], split_m 1 m (the lattice's).
+  - `tools/ground_patch_blend.py` `split_mode: "bisect"`: longest-edge bisection (no number).
+  - ⚠ `source/runoff/scripts/runoff_pads.py`: MIN_M2 150 m², GREY_SPREAD 24, PAVED_B_OVER_R 0.88, STEP_M 4 m, ADJ_M 3 m,
+    LIP_M's 0.1 m margin [invented]; GREY_MEAN 165 and the 40 / 30 m reaches are the scenery audit's.
+  - ⚠ GrassFX (`scenery.bespoke.grassfx_zones`): `near` 6 m cells within 30 m of the lane edge (the audit's band); B's
+    fade 12 m [invented].
+
 ## 2026-11-11 (Mac) — MEASUREMENT-BUG FIX: photo_rubber / no_rubber measure on the bake's own cells (ledger 0084 "Grand Junction 0.1.4: the gate's mask"; no threshold moved)
 
 **The failure.** Grand Junction 0.1.4 (tone only, PC 2026-11-11): every row passed except `no_rubber`. The photo's own

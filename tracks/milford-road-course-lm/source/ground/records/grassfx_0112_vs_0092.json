@@ -1,0 +1,75 @@
+{
+ "before": {
+  "rects": 1277,
+  "by_map": {
+   "B": 409,
+   "C": 588,
+   "D": 280
+  },
+  "look_boundary_m_within_30m": 14978,
+  "look_boundary_m_within_30m_off_pads": 13920,
+  "pairs_m": {
+   "B/base": 8078,
+   "C/base": 4734,
+   "D/base": 1280,
+   "B/C": 466,
+   "B/D": 380,
+   "C/D": 40
+  },
+  "class_eq_look_pct_0_30m_off_pads": {
+   "C": 82.1,
+   "B": 65.4,
+   "D": 42.7,
+   "base": 83.8
+  },
+  "ride_pad_cells_look_pct": {
+   "base": 100.0,
+   "B": 0.0,
+   "C": 0.0,
+   "D": 0.0
+  },
+  "under_runoff_pads_look_pct": {
+   "base": 53.1,
+   "B": 4.1,
+   "C": 0.1,
+   "D": 42.8
+  }
+ },
+ "after": {
+  "rects": 2059,
+  "by_map": {
+   "B": 848,
+   "C": 908,
+   "D": 303
+  },
+  "look_boundary_m_within_30m": 21270,
+  "look_boundary_m_within_30m_off_pads": 20922,
+  "pairs_m": {
+   "B/base": 13440,
+   "C/base": 6072,
+   "B/C": 722,
+   "D/base": 528,
+   "B/D": 392,
+   "C/D": 116
+  },
+  "class_eq_look_pct_0_30m_off_pads": {
+   "C": 89.4,
+   "B": 76.8,
+   "D": 65.1,
+   "base": 86.6
+  },
+  "ride_pad_cells_look_pct": {
+   "base": 3.9,
+   "B": 0.0,
+   "C": 0.0,
+   "D": 96.1
+  },
+  "under_runoff_pads_look_pct": {
+   "base": 95.3,
+   "B": 0.9,
+   "C": 0.3,
+   "D": 3.5
+  }
+ },
+ "class_boundary_m_within_30m": 44878
+}

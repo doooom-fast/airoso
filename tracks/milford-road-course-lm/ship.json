@@ -15,7 +15,8 @@
       "seat_edges",
       "strip_seam",
       "far_ground",
-      "kerbs"
+      "kerbs",
+      "ground_patch"
     ],
     "author": [
       "bespoke"
@@ -57,7 +58,8 @@
       "data/far_ground.lidar.npy",
       "data/far_ground.lidar.meta.json",
       "data/far_ground.lidar.fill.npy",
-      "data/far_ground.lidar.reach.npy"
+      "data/far_ground.lidar.reach.npy",
+      "source/lidar/milford_lidar_1m.npz"
     ],
     "_far_ground_doc": "ledger 0082 'Far ground (0.1.11)': the 2017 lidar's bare earth past the 3DEP grid (source/far_ground/scripts/far_ground_product.py), meshed by the draft step far_ground (tools/far_ground_blend.py)",
     "_furniture_doc": "ledger 0082 pass 3 (0.1.8): the site buildings the 2017 lidar measures and NAIP 2022 shows, named once by scenery.bespoke.blocks [{\"file\": ...}]",
@@ -65,7 +67,9 @@
       "assets/textures/tyre_wall_diffuse.png",
       "assets/textures/metal_wall_diffuse.jpg",
       "assets/textures/metal_wall_normal.jpg",
-      "assets/textures/roof_tan_diffuse.jpg"
+      "assets/textures/roof_tan_diffuse.jpg",
+      "assets/textures/building_diffuse.jpg",
+      "assets/textures/building_normal.jpg"
     ],
     "_assets_doc": "ledger 0082: the tyre walls' skin (texture_overrides 1WALL_TECPRO) and the pad sheds' metal walls / tan roof (pbr rows BUILDING_METAL, ROOFTOP_TAN), from airoso's tracked assets so no engine copy has to carry them",
     "optional": [
@@ -77,7 +81,8 @@
     "globs": [
       "source/trees/*.bin"
     ],
-    "_vegetation_doc": "ledger 0082 vegetation pass: the planted crowns, the trunk colliders and the grass class map (committed); the TreeFX models (source/trees/*.bin: Lake Murray's Oak3.bin and SycamoreV2.bin, personal use, gitignored) the PC copies into tracks/milford-road-course-lm/source/trees/ before the chain (runbook 0082-3)"
+    "_vegetation_doc": "ledger 0082 vegetation pass: the planted crowns, the trunk colliders and the grass class map (committed); the TreeFX models (source/trees/*.bin: Lake Murray's Oak3.bin and SycamoreV2.bin, personal use, gitignored) the PC copies into tracks/milford-road-course-lm/source/trees/ before the chain (runbook 0082-3)",
+    "_ground_doc": "ledger 0092: the 2017 lidar's 1 m grid of the lane edge + 45 m (ledger 0082 pass 2) the draft step ground_patch reads (tools/lidar_ground_patch.py --npz, then tools/ground_patch_blend.py); the run-off pads' concrete skin (texture_overrides 1RUNOFF, Nevada's building_*)"
   },
   "sync_out": {
     "required": [
@@ -128,5 +133,6 @@
   "_gate_doc": "ledger 0082 pass 2: kn5_textures (opt-in, this track only so far): every texture the built kn5s' materials name must be embedded (tools/kn5_textures.py). The PC's 0082-1 run 1 shipped five textures short and passed every other gate",
   "_vegetation_doc": "ledger 0082 vegetation pass: grassfx_aerial (the measured grass zones, before the track folder's ext_config) and treefx (the measured crowns as TreeFX, after the map) run",
   "_road_wear_doc": "ledger 0084 pilot (0.1.7): the aerial (required: track.config.json road_wear.aerial) and a recorded line when one exists (optional) sync in; the bake runs as the last part of prep (tools/ship_track.sh prep_prep, opt-in on the config key); gate road_wear (tools/road_wear_check.py) reads the built road kn5",
-  "_surface_doc": "0.1.12 fleet round 1: the lanes' measured surface (source/surface/road_surface.fit.json, tools/measured_surface.py) syncs in for lm_intake.measured_surface; data/edge_retrace.json (lm_intake.edge_retrace's per-row record) syncs out"
+  "_surface_doc": "0.1.12 fleet round 1: the lanes' measured surface (source/surface/road_surface.fit.json, tools/measured_surface.py) syncs in for lm_intake.measured_surface; data/edge_retrace.json (lm_intake.edge_retrace's per-row record) syncs out",
+  "_ground_doc": "ledger 0092 (the 2026-11-18 scenery audit, items 1 and 3): draft step ground_patch, last: TERRAIN past the lane edge + 9 m seated on the 2017 lidar (terrain.lidar_patches, a corridor weighted off the lane edge); prep's seat_pads lays the ride pad and the 19 paved run-off blobs on the prepped ground as 1RUNOFF (scenery.bespoke.pads_seat / pads_surface)"
 }

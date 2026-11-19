@@ -158,10 +158,16 @@ def check(project_dir: str | Path, extra_kn5=(), stats: dict | None = None) -> d
     stats["kn5"] = [kn5p.name] + [Path(ek).name for ek in extra_kn5 or ()]
     stats["fidelity"] = "skipped: gate OBJ written from this kn5" if gate_obj else "run"
     kn5: dict[str, list] = defaultdict(list)
+    # ledger 0092 (the 2026-11-18 Milford scenery audit, item 7b): the unseen tree-trunk colliders (author_bespoke trunks(),
+    # 1WALL_GHOST_TRUNK_*) ride the 1WALL bucket and set its seat-gap median (Milford 0.1.5: 312 of 336 objects); the walls
+    # lens below is unchanged, and an info line reports them and the rest apart (a kn5 without them prints nothing new)
+    ghost: dict[str, list] = defaultdict(list)
     for m in meshes:
         b = _bucket(m["name"])
         if b:
             kn5[b].extend(m["P"])
+            if b == "1WALL":
+                ghost["trunk" if m["name"].upper().startswith("1WALL_GHOST_TRUNK") else "rest"].extend(m["P"])
 
     # the exporter applies R(yaw) about the vertical; try both sign conventions and keep the one
     # that fits (measured, not assumed — the convention lives in build_kn5/Blender internals).
@@ -412,12 +418,7 @@ def check(project_dir: str | Path, extra_kn5=(), stats: dict | None = None) -> d
                         if best is None or ry > best:
                             best = ry
         return best
-    for b, label in (("1WALL", "walls"), ("FENCEWOOD", "fences"), ("LIGHTPOST", "lampposts"),
-                     ("GANTRY", "pylons"), ("SIGNPOST", "signposts"),
-                     ("PALMTRUNK", "palms"), ("TREETRUNK", "trees")):   # loop-path 3D vegetation
-        pts_b = kn5.get(b, [])
-        if not pts_b:
-            continue
+    def seat_lens(b, pts_b):
         # keep the ACTUAL coords of each column's lowest vert — testing at the quantized column
         # center (up to 0.75 m away) reads phantom floats past drape lips (the audit-G lesson).
         colmin: dict = {}
@@ -510,12 +511,32 @@ def check(project_dir: str | Path, extra_kn5=(), stats: dict | None = None) -> d
         big = sum(1 for g2 in cluster_gaps if g2 > 0.30)
         bigf = big / max(1, n2)
         nogf = nog / max(1, len(foot_gaps) + nog)
+        return n2, nogf, med, p95, big, bigf
+
+    for b, label in (("1WALL", "walls"), ("FENCEWOOD", "fences"), ("LIGHTPOST", "lampposts"),
+                     ("GANTRY", "pylons"), ("SIGNPOST", "signposts"),
+                     ("PALMTRUNK", "palms"), ("TREETRUNK", "trees")):   # loop-path 3D vegetation
+        pts_b = kn5.get(b, [])
+        if not pts_b:
+            continue
+        n2, nogf, med, p95, big, bigf = seat_lens(b, pts_b)
         print(f"  {label:9s} objects {n2:5d}: no-ground {100*nogf:4.1f}%  seat-gap median {med:+.2f}  "
               f"p95 {p95:+.2f}  hovering>0.3m {big} ({100*bigf:.1f}%)")
         stats.setdefault("seating", {})[label] = {"objects": n2, "no_ground_pct": round(100 * nogf, 1),
                                                   "median_m": round(med, 3), "p95_m": round(p95, 3), "hovering": big}
         if med > 0.2 or p95 > 0.4 or bigf > 0.01 or nogf > 0.10:
             fails.append(f"{label}: median {med:.2f} p95 {p95:.2f} hovering {100*bigf:.1f}% no-ground {100*nogf:.1f}%")
+        if b == "1WALL" and ghost.get("trunk"):
+            # info only (ledger 0092): the walls lens above, on the unseen trunk colliders and on the rest apart; never gated
+            for part, name in (("trunk", "trunk colliders (1WALL_GHOST_TRUNK)"), ("rest", "the other walls")):
+                if not ghost.get(part):
+                    continue
+                q = seat_lens(b, ghost[part])
+                print(f"    walls, {name} (info, not gated): objects {q[0]:5d}: no-ground {100*q[1]:4.1f}%  seat-gap median "
+                      f"{q[2]:+.2f}  p95 {q[3]:+.2f}  hovering>0.3m {q[4]} ({100*q[5]:.1f}%)")
+                stats.setdefault("seating_info", {})[f"walls_{part}"] = {
+                    "objects": q[0], "no_ground_pct": round(100 * q[1], 1), "median_m": round(q[2], 3), "p95_m": round(q[3], 3),
+                    "hovering": q[4], "gated": False}
 
     # LAMP INTEGRITY: every lens cluster (LIGHTS) must have a mast (LIGHTPOST) under it that reaches
     # it — an orphan head floats in the sky AND its clustered CSP light becomes a mid-air floodlight

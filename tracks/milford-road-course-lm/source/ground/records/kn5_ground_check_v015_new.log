@@ -1,0 +1,8 @@
+KN5 FIDELITY milford_road_course.kn5  (yaw 0 deg)  [data/track.obj is this kn5's own gate OBJ (kn5_to_gate_obj) — kn5-internal checks only]
+  double-sheet terrain cells (>12 m spread): 0
+  walls     objects   336: no-ground  0.0%  seat-gap median -0.46  p95 -0.19  hovering>0.3m 0 (0.0%)
+    walls, trunk colliders (1WALL_GHOST_TRUNK) (info, not gated): objects   312: no-ground  0.0%  seat-gap median -0.44  p95 -0.19  hovering>0.3m 0 (0.0%)
+    walls, the other walls (info, not gated): objects    24: no-ground  0.0%  seat-gap median -1.24  p95 -0.26  hovering>0.3m 0 (0.0%)
+  deck-vs-mountain (tri-exact): median +0.020  p95 +0.021  max +0.073
+  road-over-ground: 9/9317 samples gap > 0.05 m (0.1%)  p95 +0.021 m (gate 0.1 m)
+  => PASS — kn5 matches the audited OBJs

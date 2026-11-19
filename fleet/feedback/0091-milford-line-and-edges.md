@@ -203,6 +203,104 @@ Then Kevin drives it: the edges at the NW corner, the s 2,550 gore and the botto
 5. Report the numbers into this ledger. **No install** until Kevin says so; then his drive is the verdict (the NW corner,
    the s 2,550 gore, the bottom service-road mouths, the front straight).
 
+(Runbook 0091-1 is superseded by the combined one below: 0.1.13 carries both 0091 and 0092.)
+
+## 0092 on this line (Mac, 2026-11-19, branch claude/milford-0.1.13-20261119)
+
+Ledger 0092 owed "If the line or the widths move: re-run runoff_pads.py --write". The intake's dry run on the merge
+(843cd8a2 + 5f227e29) writes the same line as 0091 alone (`data/centerline.local.json` md5 `0923d812…`, crossfall
+`23f8a78f…`): 0092 changed no intake input. Two of 0092's readers took `data/centerline.local.json` for the lane, which
+with `lm_intake.line_precomp` it no longer is: the intake's line sits outside every bend so that the assembler's smoothing
+lands on the trace (0.21 m p50 / 0.80 p90 / 2.27 p99 / 4.25 m max off the built line, the worst at the s 1,000 hairpin;
+on 0.1.12 the same file sat 0.12 / 0.43 / 0.98 / 1.68 m off its own built line). Both now read the assembler's line (the
+route's own smooth of that file, +- widths / 2):
+
+**The run-off pads** (`source/runoff/scripts/runoff_pads.py`, re-run with `--write --line <the dry run's line>`; the
+committed `data/centerline.local.json` untouched):
+- Outlined on the intake's line, pad R0355 (the NW corner's inside) lay 0.92 m onto the lane and 7 quads folded. On the
+  assembler's line: 0 folds after one row dropped where the offset curve turns back on the inside of the NW hairpin
+  (R 25 m, 10-14 m off the edge: R0356, `rows_dropped` 1), and every kept pad that meets the lane starts 1.83-1.90 m off
+  the built lane edge (LIP_M 1.9; the edge strip ends at +1.3 m). The committed pads against 0.1.13's built edge would
+  have stood at 0.55 m (s 993), 0.98 m (s 1,169) and 1.15 m (s 394): on the edge strip.
+- **The same 24 blobs, the same 19 kept and 5 left out** (no blob changed side; 0 overlaps). Outlines against 0092's:
+  IoU p50 0.89 (min 0.71, L3500 -> L3510, 168 m2; R0993 -> R0998 0.83, 660 -> 580 m2); 1,105 m2 only in 0092's, 837 m2
+  only in the new; vertices moved p50 0.03-1.29 m per pad; ends moved by up to 12 m where a blob's pixels now project to
+  other stations (R0356 starts at s 256, not 268). Kept area within 30 m 15,252 -> 15,160 m2.
+- The keys carry the new stations: runoff_R0125, L0338, R0356, L0395, L0883, R0998, L1175, L1530, L2508, L2588, R3239,
+  R3370, R3453, L3510, R3883, L4359, R4375, L4512, L4775 (left out: L3717, L3770, L3874, L3939, L4385). Only
+  `scenery.bespoke.pads` changed in the config. The record carries its line's md5 (`0923d812…`), and
+  `tests/tools/test_milford_ground_0092.py` now reproduces it off the intake run into an empty workshop.
+
+**The corridor** (`tools/lidar_ground_patch.py`, corridor patches only: Milford's alone): `in0_m` 9 m read off the
+intake's line weighted lattice nodes as close as 6.18 m to the built lane edge (1,305 nodes inside drive_test's 9 m
+excursion reach, 53 inside 8 m; on 0.1.12's line 8.08 m, 730), the band 0092 kept off the lidar because seating it moved
+a model of 0.1.5 from 0 gated drops to 5. Off the assembler's line: 9.00 m, none inside. 318,126 nodes weighted (0.1.12:
+317,872).
+
+**GrassFX** (`tools/plan_grassfx_aerial.py`, not changed: it reads the intake's line for its 30 m near band, a look, not
+a gate): 2,656 near cells, 2,090 rectangles on 0.1.13's line (2,638 / 2,066 on 0.1.12's with the new pads).
+
+## Runbook 0091+0092 (PC): Milford 0.1.13 — one rehearsal, NO install without Kevin's word
+
+1. `git fetch && git checkout claude/milford-0.1.13-20261119` at the head the orchestrator pushed; `git status` clean
+   (`GIT_LFS_SKIP_SMUDGE=1` is fine: the draft rebuilds loop.blend). The lidar grid is committed
+   (`source/lidar/milford_lidar_1m.npz`, 942,695 B): no lidar fetch, no network in the patch step.
+2. The TreeFX models into `tracks/milford-road-course-lm/source/trees/` (Oak3 `24111ede…`, SycamoreV2 `7010d61f…`, else stop;
+   never commit a .bin). ENG = `eng_mflm_017` (0.1.12's) or the install's.
+3. Rehearse from an EMPTY workshop:
+   `ENG=<ENG> SHIP_PROJ=D:/k10-scratch/milford_0113_reh AIROSO=<checkout> PYTHONUTF8=1 bash tools/ship_track.sh milford-road-course-lm --no-install`.
+   The log must show, in order:
+   - the intake (0091; the Mac's dry run, byte-equal when the inputs are):
+     - `resampled every 0.75 m: 1635 -> 6537 points`;
+     - `line pre-compensated for the assembler's smoothing (sigma 10.0 pts x 2): points moved p50 0.201 / max 3.231 m outward; lap 4901.8 -> 4927.4 m`;
+     - `edge fit (judge, ...): 0 samples rejected` (0.1.12: 2; at 0.75 m rows the s 2,942 dip is no longer a 1-2 row spike);
+     - `widths smoothed (Gaussian sigma 10.0 m; 691 rows held for a widen retrace, 160 blended): changed p50 0.044 / p99 0.551 / max 0.655 m`;
+     - `edge retrace (naip, widen, ... shift pre-compensated): widths 9.19..21.62 -> 9.19..21.62 m (change -0.34..+3.35 m), the line moved -0.47..+1.11 m`;
+     - `edge retrace (naip+lidar, agree, ... shift pre-compensated): widths 9.19..21.62 -> 9.46..21.62 m (change -1.78..+1.66 m), the line moved -1.10..+0.97 m`;
+     - `measured surface ...: off the measured line p50 0.176 / max 1.359 m ... bank max 18.33 %`;
+     - `milford-road-course: 6537 pts, lap 4928 m, widths [9.46, 13.51, 21.62] m`;
+     - md5 `data/centerline.local.json` `0923d812…`, `data/crossfall.lm.json` `23f8a78f…`. If they differ, stop: the pads,
+       the corridor and every station below were measured on the Mac's line.
+   - the ground patch (0092; **shifted by 0091's line**):
+     - `draft: the declared patches' lidar ground off the committed 1 m grid`, then
+       `[lidar_patch] corridor: 812 x 1184 nodes of the 1 m grid, 275249 read, 42877 filled from their neighbours, 318126 weighted`
+       (0092-1 said 275331 / 42541 / 317872, on 0.1.12's line and off the intake's line) and
+       `[lidar_patch] culvert_4349_w: 26 x 19 nodes of the 1 m grid, 409 read, 26 filled` (unchanged);
+     - `[ground-patch] corridor: TERRAIN <n> -> <n + ~83,000> vertices ..., ~99,000 seated ..., largest move ~7.9 m` and
+       `[ground-patch] culvert_4349_w: ... +~1,700 vertices ... largest move ~4.3 m` (0092's model on 0.1.5's loop.blend;
+       the corridor's nodes moved by 0.1 %, and TERRAIN's own count moves with the 0.75 m road rows: not modelled);
+   - the pads (0092; **re-outlined on 0091's line**): `[bespoke] pad ride_pad: ... cells` and 19 `[bespoke] pad runoff_...`
+     lines with the keys above (runoff_R0125 ... runoff_L4775), no `self-check FAILED`;
+   - seat-pads: `[seat-pads] PADAPRON_0 -> 1RUNOFF_apron_0 ...` through `PADAPRON_19 -> 1RUNOFF_apron_19`, `ground over 0`
+     each (the same 20);
+   - grassfx: `[grassfx] 100 x 131 cells of 12 m, 2656 of them read as 4 cells of 6 m (within 30 m of the lane edge); ...
+     2090 rectangles, 2090 kept` (0092-1: ~2,640 / ~2,060 on 0.1.12's line; the Mac's run on this config and line);
+   - `SHIP OK`, no force.
+4. Read every gate on the BUILT artifacts (no threshold moves; any FAIL: stop, no install, report the rows):
+   - `drive_test.full.json` (street): severe 0; kinks ~9 (1.8 / km, s 990-1,000) and vertex bumps ~5 [0091's ribbon
+     model; 0.1.12 28 / 16]; `excursion_drops` / `excursion_far_ledges` not more than 0.1.12's 2 / 30 (0092: the sweep's
+     reach is left as built, now 9 m off the built edge everywhere; 0091 moves the lane outward in the bends, so the reach
+     reads other ground: not modelled — any new gated drop, report its station and offset);
+   - `audit.json` CLEAN; `edge_smoothness.json` PASS, 0 ragged (0091's proxy: d2 p99 0.0075 / 0.0076, resid p99
+     0.0019 / 0.0017 m);
+   - verify_kn5: 1ROAD under 65,535 writer vertices (0.1.12 17,194 smooth-shaded; ~33,400 road triangles here, ~23,000
+     expected [estimate]); `kn5_textures.json` PASS with 1RUNOFF's `building_diffuse.jpg` / `building_normal.jpg` embedded;
+   - `kn5_ground_check.full.json` PASS, `seating.walls` against 0.1.12's, and report `seating_info.walls_trunk` /
+     `walls_rest`;
+   - `house_seat_check.json` PASS; `road_wear_check.json` PASS (it registers on the line, which moved: report the rubber
+     centroid and tone r against 0.1.12's 0.041 m / 0.959);
+   - the road kn5's size against 0.1.12's 42,337,727 B: +4-6 MB from 0092 [its model] plus the road's +36 % triangles
+     (not modelled in bytes); the prep's time.
+5. Measure where the Mac could not: `data/bespoke.report.json` (no rail post left out: G1-G4, T1-T3); each rail's face to
+   the built 1ROAD edge (G2 / G3 >= 0.15 m: the Mac's proxy 0.167 / 0.176; T3 0.39 m at its closest; G1 3.64 m); the 19
+   pads' inner edges on the gate OBJ (the Mac: 1.83-1.90 m off the lane edge where they meet it); the agree stretches
+   (s 431-459, 2,556-2,600, 4,113-4,144, 4,224-4,249) against `data/edge_retrace.json` runs[1]; edge_report's rise /
+   ground rows against 0.1.12's.
+6. Report every number of steps 3-5 into this ledger. **No install** until Kevin says so; then his drive is the verdict:
+   the edges at the NW corner, the s 2,550 gore and the bottom service-road mouths; the front straight; the hillsides past
+   the run-off (s 1,000-1,225, the s 4,350 culvert from the left); the run-off pads (driven onto: paved, not grass); grass
+   at the pad edges and none through the ride pad; B's softer edge. VERIFY IN-GAME.
+
 ## Open, for Kevin
 
 1. **Gap 7's trade** (the front straight): 12 / 12 is in the config. Jerk p95 48.6 -> 40.9 m/s3 (36.5 at 1.5 m rows),

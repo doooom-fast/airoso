@@ -31,6 +31,19 @@ The second batch (all chain tracks, 2026-10-31):
   assets/textures/siding_wall_diffuse.jpg, _normal.jpg    the same bay in white lap siding. pbr row BUILDING_SIDING
   assets/textures/shingle_roof_diffuse.jpg                asphalt shingle, one tile = 2 m. pbr row ROOFTOP_SHINGLE
 
+The third batch (circuit buildings, ledger 0094, 2026-11-18; numpy, tools/circuit_facades.py's cell table):
+  assets/textures/circuit_facade_diffuse.jpg, _normal.jpg the facade atlas: 16 cells of one bay x one module each, ribbed
+                                                          metal (plain, roll-up door, man door + window, window band), tilt-up
+                                                          (plain panel, dock door, man door + louvre, louvre + downspout),
+                                                          corrugated containers (white / tan / blue sides and door ends), a
+                                                          rooftop unit's side, two grime bands. Bound by a track's
+                                                          texture_overrides on BUILDING_/FARBLOCK_METAL / _TILTUP
+  assets/textures/roof_membrane_normal.jpg                a single-ply membrane's laps and fasteners, 12 m a tile (ROOFTOP_*)
+  assets/textures/roof_rib_normal.jpg                     ribbed metal roofing, 12 m a tile (ROOFTOP_*)
+  assets/textures/fabric_tent_diffuse.jpg, _normal.jpg    a clearspan tent's panel with its frame's keder and creases (BUILDING_FABRIC)
+
+    PYTHONUTF8=1 python tools/make_bespoke_assets.py --only circuit    # writes the third batch alone
+
 DIMENSIONS:
   cone height      0.71 m (28 in)   MUTCD Part 6, channelizing cones: at least 28 in where speeds are high; cited from
                                     memory, not re-read
@@ -586,6 +599,423 @@ def shingle_roof(out_dir: Path) -> None:
     ImageChops.multiply(base, Image.merge("RGB", (f, f, f))).save(out_dir / "shingle_roof_diffuse.jpg", quality=88, optimize=True)
 
 
+# --- the third batch (ledger 0094, Kevin 2026-11-18: "the buildings are all flat on milford and high plains") ---------------
+# numpy, imported here only: the first two batches stay Pillow only and their bytes are untouched. Every layout and size
+# below is [invented] (no photograph of either site's walls is in the repo) unless it says otherwise; the colours of the
+# white and tan containers are the roofs of Milford's pad sheds S1 / S2 as NAIP 2022 shows them (the median pixel inside
+# each footprint, tools/plan_buildings.py roof_colour) [measured], the walls assumed to wear the roof's paint [invented].
+FACADE_SEED = 20261118
+CONTAINER_RGB = {"white": (199, 214, 205), "tan": (218, 185, 153), "blue": (52, 90, 140)}
+METAL_RGB = (214, 215, 211)       # [invented] light grey siding (walls cannot be seen from above)
+TILT_RGB = (184, 180, 171)        # [invented] weathered tilt-up concrete
+RIB_H_M, RIB_FACE_DEG, RIB_TOP_M = 0.032, 52.0, 0.025    # R-panel: a 1.25 in rib (cited from memory) whose faces stand at 52 deg
+                                                        # [invented, inside the 45-60 deg the audit asked for]
+CORR_H_M, CORR_FACE_DEG = 0.036, 55.0                    # [invented by eye] a container side's corrugation, 11 per 3.05 m
+ROOF_N_FINE = 2048                # the ribbed roof's normal: a 52 deg rib face is 4 px wide at 12 m a tile
+MEMBRANE_SHEET_M = 3.0            # [invented] a single-ply membrane's sheet (10 ft rolls are common; cited from memory)
+
+
+def _np():
+    import numpy as np
+    return np
+
+
+def _grid(w_px, h_px, w_m, h_m):
+    """metric coordinates of each pixel centre: X across (m from the left), Y up (m from the bottom), row 0 at the top"""
+    np = _np()
+    x = (np.arange(w_px) + 0.5) / w_px * w_m
+    y = h_m - (np.arange(h_px) + 0.5) / h_px * h_m
+    return np.meshgrid(x, y)
+
+
+def _periodic(X, Y, pw, ph, seed, terms=48, fmax=6, power=1.6):
+    """a smooth field periodic over pw x ph metres (so any cell of the same family meets its neighbours), about -1..1"""
+    np = _np()
+    rng = np.random.default_rng(seed)
+    f = np.zeros_like(X)
+    for _ in range(terms):
+        kx, ky = int(rng.integers(-fmax, fmax + 1)), int(rng.integers(0, fmax + 1))
+        if kx == 0 and ky == 0:
+            continue
+        a = 1.0 / (kx * kx + ky * ky) ** (power / 2)
+        f += a * np.cos(2 * np.pi * (kx * X / pw + ky * Y / ph) + rng.uniform(0, 2 * np.pi))
+    return f / (np.abs(f).max() or 1.0)
+
+
+def _trapezoid(x, period, depth, face_deg, top_w, centre):
+    """a trapezoidal rib (or corrugation) profile, its height at x (m): a flat top ``top_w`` wide, faces at ``face_deg``"""
+    np = _np()
+    run = depth / math.tan(math.radians(face_deg))
+    d = np.abs(((x - centre + period / 2) % period) - period / 2)        # distance to the nearest rib centre
+    return np.clip((top_w / 2 + run - d) / run, 0.0, 1.0) * depth
+
+
+def _box(X, Y, x0, y0, x1, y1):
+    return (X >= x0) & (X < x1) & (Y >= y0) & (Y < y1)
+
+
+def _paint(alb, mask, rgb, k=1.0):
+    np = _np()
+    alb[mask] = alb[mask] * (1 - k) + np.array(rgb, dtype=float) * k
+
+
+def _normal_np(H, w_m, h_m):
+    """height (m, row 0 at the top) -> the OpenGL normal map _normal_from_height writes (+y up the image)"""
+    np = _np()
+    hp, wp = H.shape
+    grow, gcol = np.gradient(H)
+    gx = gcol / (w_m / wp)
+    gy = -grow / (h_m / hp)
+    ln = np.sqrt(gx * gx + gy * gy + 1.0)
+    n = np.stack([-gx / ln, -gy / ln, 1.0 / ln], axis=-1)
+    return np.clip(np.round(127.5 + 127.5 * n), 0, 255).astype(np.uint8)
+
+
+def _metal_base(X, Y, w_m, h_m, seed):
+    """R-panel siding: major ribs every 0.3048 m (12 per bay, a pan at each bay edge), two low stiffeners in each pan, a
+    faint periodic weathering; the ribs' feet a little darker (they shade)"""
+    np = _np()
+    H = _trapezoid(X, 0.3048, RIB_H_M, RIB_FACE_DEG, RIB_TOP_M, 0.1524)
+    for c in (0.1524 + 0.3048 / 3, 0.1524 + 2 * 0.3048 / 3):
+        d = np.abs(((X - c + 0.1524) % 0.3048) - 0.1524)
+        H += np.where(d < 0.015, 0.003 * np.cos(d / 0.015 * np.pi / 2) ** 2, 0.0)
+    w = _periodic(X, Y, w_m, h_m, seed, fmax=5)
+    alb = np.ones(X.shape + (3,)) * np.array(METAL_RGB, dtype=float)
+    alb *= (1.0 + 0.025 * w)[..., None]
+    foot = (H > 0.002) & (H < 0.012)
+    alb[foot] *= 0.93
+    return alb, H
+
+
+def _tilt_base(X, Y, w_m, h_m, seed, rng):
+    """tilt-up concrete: periodic cure blotches, fine grain, a caulked joint at both bay edges, a reveal at 4.6 m"""
+    np = _np()
+    blot = _periodic(X, Y, w_m, 8.0, seed, fmax=4, power=1.8)
+    alb = np.ones(X.shape + (3,)) * np.array(TILT_RGB, dtype=float)
+    alb *= (1.0 + 0.05 * blot + 0.025 * rng.standard_normal(X.shape))[..., None]
+    H = 0.001 * rng.standard_normal(X.shape) + 0.002 * blot
+    joint = (X < 0.035) | (X > w_m - 0.035)
+    _paint(alb, joint, (78, 76, 72))
+    H[joint] -= 0.012
+    rev = (np.abs((Y % 8.0) - 4.6) < 0.0125)
+    _paint(alb, rev, (150, 146, 138), 0.8)
+    H[rev] -= 0.012
+    return alb, H
+
+
+def _container_base(X, Y, w_m, h_m, rgb, seed, rng, period):
+    """a container's corrugated steel: trapezoidal corrugation, the top and bottom rails, dents, a few rust runs"""
+    np = _np()
+    H = _trapezoid(X, period, CORR_H_M, CORR_FACE_DEG, period * 0.36, period / 2)
+    H += 0.003 * _periodic(X, Y, w_m, h_m, seed, fmax=4)
+    alb = np.ones(X.shape + (3,)) * np.array(rgb, dtype=float)
+    alb *= (1.0 + 0.03 * _periodic(X, Y, w_m, h_m, seed + 1, fmax=6) + 0.015 * rng.standard_normal(X.shape))[..., None]
+    alb[(H < 0.004)] *= 0.94                                      # the corrugation's inner flats sit in shade
+    top = Y > h_m - 0.12
+    bot = Y < 0.16
+    H[top] = 0.04
+    H[bot] = 0.045
+    alb[top] = np.array(rgb, dtype=float) * 0.9
+    alb[bot] = np.array(rgb, dtype=float) * 0.72
+    for _ in range(4):                                            # rust runs down from the top rail
+        x0 = rng.uniform(0.1, w_m - 0.1)
+        ln = rng.uniform(0.3, 1.4)
+        m = (np.abs(X - x0) < rng.uniform(0.01, 0.03)) & (Y > h_m - 0.12 - ln) & (Y < h_m - 0.1)
+        _paint(alb, m, (122, 74, 44), 0.35)
+    _paint(alb, bot & (rng.random(X.shape) < 0.25), (110, 70, 44), 0.5)
+    return alb, H
+
+
+def _louvre(alb, H, X, Y, x0, y0, x1, y1, pitch=0.1, rgb=(92, 94, 96)):
+    """a louvre: a frame and blades sloped 45 deg, dark gaps between them"""
+    np = _np()
+    m = _box(X, Y, x0, y0, x1, y1)
+    frame = m & ~_box(X, Y, x0 + 0.05, y0 + 0.05, x1 - 0.05, y1 - 0.05)
+    t = ((Y - y0) % pitch) / pitch
+    _paint(alb, m, rgb)
+    alb[m & (t < 0.25) & ~frame] *= 0.35
+    H[m] = np.where(frame[m], 0.03, 0.03 * t[m] * 0.9)
+    return m
+
+
+def _fwindow(alb, H, X, Y, x0, y0, x1, y1, mullions=1, frame_rgb=(232, 232, 228)):
+    np = _np()
+    m = _box(X, Y, x0, y0, x1, y1)
+    _paint(alb, m, frame_rgb)
+    H[m] = 0.012
+    g = _box(X, Y, x0 + 0.05, y0 + 0.05, x1 - 0.05, y1 - 0.05)
+    _paint(alb, g, (38, 46, 56))
+    sky = g & (Y > y0 + (y1 - y0) * 0.62)
+    _paint(alb, sky, (98, 118, 140))
+    H[g] = -0.03
+    for k in range(1, mullions + 1):
+        xm = x0 + (x1 - x0) * k / (mullions + 1)
+        mm = g & (np.abs(X - xm) < 0.025)
+        _paint(alb, mm, frame_rgb)
+        H[mm] = 0.0
+    _paint(alb, _box(X, Y, x0 - 0.04, y0 - 0.05, x1 + 0.04, y0), (200, 200, 196))     # the sill
+    return m
+
+
+def _door(alb, H, X, Y, x0, x1, top, rgb, frame_rgb):
+    fr = _box(X, Y, x0 - 0.05, 0.0, x1 + 0.05, top + 0.05)
+    _paint(alb, fr, frame_rgb)
+    H[fr] = 0.015
+    d = _box(X, Y, x0, 0.0, x1, top)
+    _paint(alb, d, rgb)
+    H[d] = -0.01
+    hx = x1 - 0.12 if x1 - x0 < 1.2 else (x0 + x1) / 2
+    hd = _box(X, Y, hx - 0.06, 0.92, hx + 0.02, 1.0)
+    _paint(alb, hd, (40, 40, 42))
+    H[hd] = 0.02
+    return d
+
+
+def _cell(name, w_px, h_px, rng):
+    """one facade cell: (albedo HxWx3 float, height HxW metres, w_m, h_m)"""
+    import circuit_facades as cf
+    np = _np()
+    _, _, _, w_m, h_m, _ = cf.CELLS[name]
+    X, Y = _grid(w_px, h_px, w_m, h_m)
+    if name.startswith(("metal_", "grime_metal")):
+        alb, H = _metal_base(X, Y, w_m, cf.METAL_MODULE_M, FACADE_SEED)
+        base = _box(X, Y, 0.0, 0.0, w_m, 0.06)                      # the base angle
+        _paint(alb, base, (176, 178, 178))
+        H[base] = 0.02
+        if name == "metal_rollup":
+            x0, x1, top = (w_m - 2.74) / 2, (w_m + 2.74) / 2, 2.44
+            jam = _box(X, Y, x0 - 0.07, 0.0, x1 + 0.07, top) & ~_box(X, Y, x0, 0.0, x1, top)
+            _paint(alb, jam, (236, 236, 232))
+            H[jam] = 0.03
+            d = _box(X, Y, x0, 0.0, x1, top)
+            t = (Y % 0.0762) / 0.0762
+            slat = np.array((170, 172, 175), dtype=float) * (0.94 + 0.06 * np.sin(np.pi * t))[..., None]
+            alb[d] = slat[d]
+            H[d] = 0.006 * np.sin(np.pi * t[d]) ** 2
+            seal = _box(X, Y, x0, 0.0, x1, 0.035)
+            _paint(alb, seal, (28, 28, 30))
+            bar = _box(X, Y, x0, 0.035, x1, 0.11)
+            _paint(alb, bar, (150, 152, 155))
+            H[bar] = 0.012
+            for hx in (x0 + 0.35, x1 - 0.45):
+                hd = _box(X, Y, hx, 0.14, hx + 0.1, 0.2)
+                _paint(alb, hd, (50, 50, 52))
+            hood = _box(X, Y, x0 - 0.12, top, x1 + 0.12, top + 0.34)
+            _paint(alb, hood, (196, 197, 195))
+            H[hood] = 0.25
+            _paint(alb, _box(X, Y, x0 - 0.12, top + 0.32, x1 + 0.12, top + 0.34), (236, 236, 232))
+        elif name == "metal_mandoor":
+            _door(alb, H, X, Y, 0.55, 1.464, 2.13, (88, 92, 96), (236, 236, 232))
+            _fwindow(alb, H, X, Y, 2.0, 1.1, 3.2, 2.0)
+            lamp = _box(X, Y, 0.93, 2.36, 1.09, 2.48)
+            _paint(alb, lamp, (60, 60, 62))
+            H[lamp] = 0.12
+        elif name == "metal_window":
+            _fwindow(alb, H, X, Y, (w_m - 2.44) / 2, 1.0, (w_m + 2.44) / 2, 2.0, mullions=2)
+        elif name == "grime_metal":
+            a = (0.42 * np.exp(-Y / 0.22) + 0.12 * np.exp(-Y / 0.6))
+            a *= 0.75 + 0.5 * rng.random(X.shape)
+            alb[:] = alb * (1 - a[..., None]) + np.array((96, 84, 70), dtype=float) * a[..., None]
+            for _ in range(10):
+                xd = rng.uniform(0.0, w_m)
+                m = (np.abs(X - xd) < 0.012) & (Y < rng.uniform(0.2, 0.7))
+                _paint(alb, m, (120, 92, 66), 0.4)
+    elif name.startswith(("tilt_", "grime_tilt")):
+        alb, H = _tilt_base(X, Y, w_m, h_m, FACADE_SEED + 1, rng)
+        if name == "tilt_dock":
+            x0, x1, sill, top = 2.63, 5.37, 1.22, 4.27
+            face = _box(X, Y, x0 - 0.5, 0.0, x1 + 0.5, sill)
+            alb[face] *= 0.9
+            for bx in (x0 - 0.3, x1 + 0.05):
+                b = _box(X, Y, bx, 0.72, bx + 0.25, 1.16)
+                _paint(alb, b, (30, 30, 30))
+                H[b] = 0.1
+            lip = _box(X, Y, x0, sill - 0.05, x1, sill)
+            _paint(alb, lip, (130, 130, 128))
+            seal = _box(X, Y, x0 - 0.3, sill - 0.05, x1 + 0.3, top + 0.4) & ~_box(X, Y, x0, sill, x1, top)
+            _paint(alb, seal, (34, 34, 35))
+            H[seal] = 0.3
+            d = _box(X, Y, x0, sill, x1, top)
+            sec = ((Y - sill) % 0.7625) / 0.7625
+            _paint(alb, d, (214, 214, 208))
+            H[d] = 0.004 * np.sin(2 * np.pi * sec[d] * 2) ** 2
+            j = d & (sec < 0.02)
+            alb[j] *= 0.6
+            H[j] = -0.005
+            vis = d & _box(X, Y, x0 + 0.4, sill + 1.6, x1 - 0.4, sill + 1.9)
+            _paint(alb, vis, (60, 70, 80))
+            lamp = _box(X, Y, x1 + 0.55, top + 0.1, x1 + 0.75, top + 0.25)
+            _paint(alb, lamp, (60, 60, 62))
+            H[lamp] = 0.15
+        elif name == "tilt_mandoor":
+            _door(alb, H, X, Y, 3.543, 4.457, 2.13, (78, 70, 60), (120, 116, 110))
+            can = _box(X, Y, 3.2, 2.45, 4.8, 2.6)
+            _paint(alb, can, (150, 152, 154))
+            H[can] = 0.4
+            sh = _box(X, Y, 3.2, 2.2, 4.8, 2.45) & ~_box(X, Y, 3.493, 0.0, 4.507, 2.18)
+            alb[sh] *= 0.82
+            lamp = _box(X, Y, 3.92, 2.85, 4.08, 3.0)
+            _paint(alb, lamp, (60, 60, 62))
+            H[lamp] = 0.12
+            _louvre(alb, H, X, Y, 3.25, 5.2, 4.75, 6.2)
+        elif name == "tilt_louvre":
+            _louvre(alb, H, X, Y, 2.8, 5.0, 5.2, 6.6)
+            pipe = np.abs(X - 7.62) < 0.075
+            _paint(alb, pipe, (142, 144, 142))
+            H[pipe] = 0.05 * np.sqrt(np.clip(1 - ((X[pipe] - 7.62) / 0.075) ** 2, 0, 1))
+            boot = pipe & (Y < 0.3)
+            alb[boot] *= 0.6
+            for ys in (2.0, 4.0, 6.0):
+                st = pipe & (np.abs(Y - ys) < 0.02)
+                alb[st] *= 0.7
+        elif name == "grime_tilt":
+            a = 0.38 * np.exp(-Y / 0.3) * (0.7 + 0.6 * rng.random(X.shape))
+            alb[:] = alb * (1 - a[..., None]) + np.array((104, 98, 90), dtype=float) * a[..., None]
+            eff = (rng.random(X.shape) < 0.01) & (Y < 0.5)
+            _paint(alb, eff, (214, 212, 204), 0.5)
+    elif name.startswith("container_"):
+        colour = name.rsplit("_", 1)[1]
+        rgb = CONTAINER_RGB[colour]
+        if name.startswith("container_side"):
+            alb, H = _container_base(X, Y, w_m, h_m, rgb, FACADE_SEED + 2, rng, w_m / 11)
+        else:
+            alb, H = _container_base(X, Y, w_m, h_m, rgb, FACADE_SEED + 3, rng, w_m / 10)
+            H *= 0.6
+            seam = np.abs(X - w_m / 2) < 0.012
+            _paint(alb, seam, (30, 30, 30))
+            H[seam] = -0.01
+            for xe in (0.0, w_m):
+                fr = np.abs(X - xe) < 0.07
+                _paint(alb, fr, np.array(rgb) * 0.85)
+                H[fr] = 0.05
+            for xb in (0.26, 0.95, w_m - 0.95, w_m - 0.26):
+                bar = (np.abs(X - xb) < 0.0135) & (Y > 0.16) & (Y < h_m - 0.12)
+                _paint(alb, bar, np.array(rgb) * 0.7)
+                H[bar] = 0.05 + 0.0135 * np.sqrt(np.clip(1 - ((X[bar] - xb) / 0.0135) ** 2, 0, 1))
+                for yk in (0.22, h_m - 0.2):
+                    k_ = _box(X, Y, xb - 0.04, yk - 0.04, xb + 0.04, yk + 0.04)
+                    _paint(alb, k_, (60, 60, 60))
+                    H[k_] = 0.07
+                hd = _box(X, Y, xb - 0.02, 1.0, xb + 0.2, 1.06)
+                _paint(alb, hd, (50, 50, 50))
+                H[hd] = 0.09
+            for xe in (0.03, w_m - 0.03):
+                for yh in (0.45, 1.05, 1.65, 2.2):
+                    hg = _box(X, Y, xe - 0.035, yh, xe + 0.035, yh + 0.1)
+                    _paint(alb, hg, (70, 70, 70))
+                    H[hg] = 0.08
+    elif name == "rtu_side":
+        alb = np.ones(X.shape + (3,)) * np.array((168, 170, 170), dtype=float)
+        alb *= (1.0 + 0.03 * _periodic(X, Y, w_m, h_m, FACADE_SEED + 4, fmax=5))[..., None]
+        H = np.zeros_like(X)
+        _louvre(alb, H, X, Y, 0.1, 0.15, 1.3, 1.35, pitch=0.05, rgb=(150, 152, 152))
+        pnl = _box(X, Y, 1.4, 0.15, 1.9, 1.35)
+        _paint(alb, pnl, (176, 178, 178))
+        H[pnl] = 0.006
+        for sx in (1.45, 1.85):
+            for sy in (0.2, 1.3):
+                sc = _box(X, Y, sx - 0.008, sy - 0.008, sx + 0.008, sy + 0.008)
+                _paint(alb, sc, (90, 90, 90))
+        hd = _box(X, Y, 1.62, 0.7, 1.68, 0.85)
+        _paint(alb, hd, (60, 60, 62))
+        H[hd] = 0.02
+        _paint(alb, _box(X, Y, 0.0, h_m - 0.08, w_m, h_m), (204, 206, 206))
+        _paint(alb, _box(X, Y, 0.0, 0.0, w_m, 0.08), (120, 122, 122))
+        H[np.abs(X - 0.0) < 0.01] = -0.005
+    else:
+        raise ValueError(name)
+    return alb, H, w_m, h_m
+
+
+def circuit_facades(out_dir: Path) -> None:
+    """the facade atlas (tools/circuit_facades.py: its cell table): every cell painted at its slot's drawn size, the gutter
+    filled with the cell's own edge pixels, the diffuse and its normal map (4:4:4, so a 4 px rib face keeps its tilt)"""
+    np = _np()
+    sys.path.insert(0, str(AIROSO / "tools"))
+    import circuit_facades as cf
+    n = cf.ATLAS_PX
+    dif = np.zeros((n, n, 3), dtype=np.uint8)
+    nor = np.zeros((n, n, 3), dtype=np.uint8)
+    rng = np.random.default_rng(FACADE_SEED)
+    for name in cf.CELLS:
+        x0, y0, x1, y1 = cf.cell_px(name)
+        alb, H, w_m, h_m = _cell(name, x1 - x0, y1 - y0, rng)
+        a = np.clip(np.round(alb), 0, 255).astype(np.uint8)
+        nm = _normal_np(H, w_m, h_m)
+        p = cf.PAD_PX
+        dif[y0 - p:y1 + p, x0 - p:x1 + p] = np.pad(a, ((p, p), (p, p), (0, 0)), mode="edge")
+        nor[y0 - p:y1 + p, x0 - p:x1 + p] = np.pad(nm, ((p, p), (p, p), (0, 0)), mode="edge")
+    Image.fromarray(dif, "RGB").save(out_dir / cf.ATLAS_DIFFUSE, quality=90, optimize=True)
+    Image.fromarray(nor, "RGB").save(out_dir / cf.ATLAS_NORMAL, quality=92, subsampling=0, optimize=True)
+
+
+def roof_normals(out_dir: Path) -> None:
+    """two roof normals at the author's ROOF_TILE_DEFAULT_M (12 m a tile), each bound by a track's texture_overrides on its
+    ROOFTOP_<class> rows next to the class's own unchanged diffuse:
+      roof_membrane_normal.jpg  a single-ply membrane: a welded lap every MEMBRANE_SHEET_M (u), an end lap at the tile's edge
+                                (v), fastener plates under each lap every 0.3 m, a faint billow between [all invented]
+      roof_rib_normal.jpg       ribbed metal: the walls' R-panel rib on 0.3 m centres (40 a tile), running up a pitched
+                                roof's slope (v), its faces at RIB_FACE_DEG"""
+    np = _np()
+    tile = 12.0
+    n = 1024
+    X, Y = _grid(n, n, tile, tile)
+    rng = np.random.default_rng(FACADE_SEED + 7)
+    H = 0.008 * _periodic(X, Y, tile, tile, FACADE_SEED + 8, fmax=10, power=1.2)
+    for s in np.arange(0.0, tile, MEMBRANE_SHEET_M):
+        d = (X - s) % tile
+        H += np.where(d < 0.10, 0.003, 0.0)                            # the lap: the next sheet laid over this one
+        H += np.where(np.abs(d - 0.05) < 0.012, 0.002, 0.0)             # its weld bead
+        for yp in np.arange(0.15, tile, 0.3):
+            r = np.hypot(d - 0.05, Y - yp)
+            H += np.where(r < 0.04, 0.002 * (1 - r / 0.04), 0.0)
+    H += np.where((Y % tile) < 0.10, 0.003, 0.0)
+    H += 0.0002 * rng.standard_normal(X.shape)
+    Image.fromarray(_normal_np(H, tile, tile), "RGB").save(out_dir / "roof_membrane_normal.jpg", quality=90, subsampling=0, optimize=True)
+    n = ROOF_N_FINE
+    X, Y = _grid(n, n, tile, tile)
+    H = _trapezoid(X, 0.3, RIB_H_M, RIB_FACE_DEG, RIB_TOP_M, 0.15)
+    for c in (0.05, 0.25):
+        d = np.abs(((X - c + 0.15) % 0.3) - 0.15)
+        H += np.where(d < 0.015, 0.003 * np.cos(d / 0.015 * np.pi / 2) ** 2, 0.0)
+    H += 0.0015 * _periodic(X, Y, tile, tile, FACADE_SEED + 9, fmax=8)
+    Image.fromarray(_normal_np(H, tile, tile), "RGB").save(out_dir / "roof_rib_normal.jpg", quality=90, subsampling=0, optimize=True)
+
+
+def tent_fabric(out_dir: Path) -> None:
+    """a clearspan tent's wall and roof panel, one tile = FABRIC_BAY_M x FABRIC_BAY_M as fabric(): the keder bead of the
+    frame at u = 0 (every 5 m: the legs on a wall, the rafters on the roof), the panel bowing between them and its tension
+    creases fanning from the frame. No skirt: the tile repeats up the roof's slope, so a foot band would stripe the roof. The
+    same off-white as fabric() [invented]; bound by a track's texture_overrides["BUILDING_FABRIC"] only (Nevada Nights keeps
+    fabric_white_*)"""
+    np = _np()
+    n = FABRIC_N
+    w = FABRIC_BAY_M
+    X, Y = _grid(n, n, w, w)
+    rng = np.random.default_rng(FACADE_SEED + 5)
+    d = np.minimum(X, w - X)                                               # distance to the frame
+    H = 0.012 * np.clip(1 - d / 0.03, 0, 1)                                # the keder bead
+    sag = 0.02 * np.sin(np.pi * X / w)                                     # the panel bows between two legs
+    crease = 0.003 * np.cos(2 * np.pi * (X + 0.6 * Y) / 0.35) * np.exp(-d / 0.7)
+    crease += 0.003 * np.cos(2 * np.pi * (X - 0.6 * Y) / 0.35) * np.exp(-d / 0.7)
+    H = H - sag + crease + 0.004 * _periodic(X, Y, w, w, FACADE_SEED + 6, fmax=6)
+    g = 226 + 14 * _periodic(X, Y, w, w, FACADE_SEED + 10, fmax=5) + 3 * rng.standard_normal(X.shape)
+    alb = np.stack([g, g, g - 6], axis=-1)
+    alb[d < 0.03] *= 0.86
+    Image.fromarray(np.clip(np.round(alb), 0, 255).astype(np.uint8), "RGB").save(out_dir / "fabric_tent_diffuse.jpg", quality=90, optimize=True)
+    Image.fromarray(_normal_np(H, w, w), "RGB").save(out_dir / "fabric_tent_normal.jpg", quality=90, subsampling=0, optimize=True)
+
+
+def circuit_batch(tex_dir: Path) -> None:
+    circuit_facades(tex_dir)
+    roof_normals(tex_dir)
+    tent_fabric(tex_dir)
+
+
+CIRCUIT_FILES = ("circuit_facade_diffuse.jpg", "circuit_facade_normal.jpg", "roof_membrane_normal.jpg", "roof_rib_normal.jpg",
+                 "fabric_tent_diffuse.jpg", "fabric_tent_normal.jpg")
+
+
 def write_all(tex_dir: Path, model_dir: Path) -> None:
     fabric(tex_dir)
     cone_texture(tex_dir)
@@ -606,6 +1036,7 @@ def write_all(tex_dir: Path, model_dir: Path) -> None:
     conifer_atlas(tex_dir)
     house_walls(tex_dir)
     shingle_roof(tex_dir)
+    circuit_batch(tex_dir)
 
 
 TEX_FILES = ("fabric_white_diffuse.jpg", "fabric_white_normal.jpg", "traffic_cone_diffuse.png", "desert_scrub_atlas.png",
@@ -613,7 +1044,7 @@ TEX_FILES = ("fabric_white_diffuse.jpg", "fabric_white_normal.jpg", "traffic_con
              "roof_white_diffuse.jpg", "roof_tan_diffuse.jpg", "roof_dark_diffuse.jpg", "pad_asphalt_diffuse.jpg",
              "wbeam_rail_diffuse.png", "ghost_alpha.png", "deciduous_atlas.png", "prairie_atlas.png",
              "tecpro_diffuse.png", "krail_bluewhite_diffuse.png", "tyre_wall_diffuse.png", "drystone_diffuse.jpg", "drystone_normal.jpg", "conifer_foothill_atlas.png",
-             "stucco_wall_diffuse.jpg", "stucco_wall_normal.jpg", "siding_wall_diffuse.jpg", "siding_wall_normal.jpg", "shingle_roof_diffuse.jpg")
+             "stucco_wall_diffuse.jpg", "stucco_wall_normal.jpg", "siding_wall_diffuse.jpg", "siding_wall_normal.jpg", "shingle_roof_diffuse.jpg") + CIRCUIT_FILES
 MODEL_FILES = ("traffic_cone.obj", "traffic_cone.json")
 
 
@@ -629,6 +1060,16 @@ def _same_image(a: Path, b: Path) -> bool:
 
 
 def main() -> int:
+    if "--only" in sys.argv:
+        # one batch alone (ledger 0094: "circuit"), so the files of the other batches are never re-encoded by this machine's
+        # Pillow (their bytes stay the committed ones)
+        batch = sys.argv[sys.argv.index("--only") + 1]
+        if batch != "circuit":
+            print(f"--only knows one batch, circuit (got {batch!r})")
+            return 2
+        circuit_batch(TEX)
+        print("wrote", ", ".join(CIRCUIT_FILES))
+        return 0
     if "--check" not in sys.argv:
         write_all(TEX, MODELS)
         print("wrote", ", ".join(TEX_FILES + MODEL_FILES))

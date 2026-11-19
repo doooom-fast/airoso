@@ -59,7 +59,10 @@
       "data/far_ground.lidar.meta.json",
       "data/far_ground.lidar.fill.npy",
       "data/far_ground.lidar.reach.npy",
-      "source/lidar/milford_lidar_1m.npz"
+      "source/lidar/milford_lidar_1m.npz",
+      "source/furniture/rooftop/roof_naip_palette.png",
+      "source/furniture/rooftop/roof_flat_normal.png",
+      "source/furniture/rooftop/rooftop_units.json"
     ],
     "_far_ground_doc": "ledger 0082 'Far ground (0.1.11)': the 2017 lidar's bare earth past the 3DEP grid (source/far_ground/scripts/far_ground_product.py), meshed by the draft step far_ground (tools/far_ground_blend.py)",
     "_furniture_doc": "ledger 0082 pass 3 (0.1.8): the site buildings the 2017 lidar measures and NAIP 2022 shows, named once by scenery.bespoke.blocks [{\"file\": ...}]",
@@ -69,7 +72,13 @@
       "assets/textures/metal_wall_normal.jpg",
       "assets/textures/roof_tan_diffuse.jpg",
       "assets/textures/building_diffuse.jpg",
-      "assets/textures/building_normal.jpg"
+      "assets/textures/building_normal.jpg",
+      "assets/textures/circuit_facade_diffuse.jpg",
+      "assets/textures/circuit_facade_normal.jpg",
+      "assets/textures/roof_membrane_normal.jpg",
+      "assets/textures/roof_white_diffuse.jpg",
+      "assets/textures/fabric_tent_diffuse.jpg",
+      "assets/textures/fabric_tent_normal.jpg"
     ],
     "_assets_doc": "ledger 0082: the tyre walls' skin (texture_overrides 1WALL_TECPRO) and the pad sheds' metal walls / tan roof (pbr rows BUILDING_METAL, ROOFTOP_TAN), from airoso's tracked assets so no engine copy has to carry them",
     "optional": [
@@ -82,7 +91,8 @@
       "source/trees/*.bin"
     ],
     "_vegetation_doc": "ledger 0082 vegetation pass: the planted crowns, the trunk colliders and the grass class map (committed); the TreeFX models (source/trees/*.bin: Lake Murray's Oak3.bin and SycamoreV2.bin, personal use, gitignored) the PC copies into tracks/milford-road-course-lm/source/trees/ before the chain (runbook 0082-3)",
-    "_ground_doc": "ledger 0092: the 2017 lidar's 1 m grid of the lane edge + 45 m (ledger 0082 pass 2) the draft step ground_patch reads (tools/lidar_ground_patch.py --npz, then tools/ground_patch_blend.py); the run-off pads' concrete skin (texture_overrides 1RUNOFF, Nevada's building_*)"
+    "_ground_doc": "ledger 0092: the 2017 lidar's 1 m grid of the lane edge + 45 m (ledger 0082 pass 2) the draft step ground_patch reads (tools/lidar_ground_patch.py --npz, then tools/ground_patch_blend.py); the run-off pads' concrete skin (texture_overrides 1RUNOFF, Nevada's building_*)",
+    "_facades_doc": "ledger 0094: the facade atlas, the roof membrane normal, the tent fabric (texture_overrides) and the traced rooftop units"
   },
   "sync_out": {
     "required": [

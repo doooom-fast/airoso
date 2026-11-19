@@ -1,0 +1,45 @@
+{
+ "_doc": "ledger 0093: the port's buildings plan on the 0.3 m NAIP 2023 crop that IS in the repo (tracks/high-plains's plan names source/naip_2023_hp_z18.png, an LFS object a checkout without LFS holds as a pointer). The sun is the furniture audit's hand read (2026-11-18, work/hp_shadow_fit.json: the median of 6 roofs' fitted shadows) and the stage is trusted unchecked: High Plains has no OSM height to check it against. Its output, buildings.planned.json, is the planner's own cross-check; the config stands source/bespoke/buildings.race.json, the audit's fit heights with osm289317403 (post1's roof) dropped and the carport row's official ceiling: python tools/plan_buildings.py tracks/high-plains-lm tracks/high-plains-lm/source/bespoke/buildings.plan.json",
+ "image": "source/road_wear/naip_2023_030_hp.png",
+ "bbox_lonlat": [
+  -103.90532207890708,
+  39.73355853151761,
+  -103.88959002688462,
+  39.73680613545915
+ ],
+ "naip_date": "2023-09-28",
+ "utc_offset": "-06:00",
+ "footprints": [
+  {
+   "file": "../high-plains/source/bespoke/osm_buildings.json",
+   "kind": "overpass"
+  },
+  {
+   "file": "source/bespoke/buildings.traced.json",
+   "kind": "cache"
+  }
+ ],
+ "out": "source/bespoke/buildings.planned.json",
+ "min_area_m2": 25,
+ "yes_by_area": [
+  [
+   60,
+   "shed"
+  ],
+  [
+   1000000000.0,
+   "shed"
+  ]
+ ],
+ "house_skin": "siding",
+ "sun": {
+  "azimuth_deg": 146.9,
+  "elevation_deg": 42.9,
+  "_source": "furniture audit 2026-11-18 work/hp_shadow_fit.json: shadow azimuth 327 (median of 6 roofs), NOAA sun at 17:12 UTC"
+ },
+ "shadow": {
+  "enabled": true,
+  "max_m": 60,
+  "trust_unchecked": true
+ }
+}

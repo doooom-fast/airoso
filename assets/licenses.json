@@ -243,6 +243,20 @@
    "license": "CC0-1.0",
    "url": "",
    "_note": "Replaces the stock ground_dry_diffuse.jpg (LA Canyons bytes) on Nevada Nights. Ours outright, safe in both the CC0 and the full package."
+  },
+  {
+   "name": "Bespoke dressing, third batch (generated): the circuit facade atlas (ribbed metal, tilt-up, containers, a rooftop unit, grime), membrane and ribbed-metal roof normals, a clearspan tent's fabric",
+   "files": [
+    "circuit_facade_diffuse.jpg",
+    "circuit_facade_normal.jpg",
+    "roof_membrane_normal.jpg",
+    "roof_rib_normal.jpg",
+    "fabric_tent_diffuse.jpg",
+    "fabric_tent_normal.jpg"
+   ],
+   "source": "self-made: tools/make_bespoke_assets.py's third batch (seeded, numpy + Pillow; --check and tests/tools/test_bespoke_assets.py pin the pixels; the cell table is tools/circuit_facades.py). No photograph, third-party mesh or third-party pixel; the white and tan containers' colours are two roof colours read off USDA NAIP 2022 (public domain)",
+   "license": "CC0-1.0",
+   "url": ""
   }
  ],
  "stock_audio_note": "Surface scrub/rumble (data/surfaces.ini WAV=) references the player's own stock Assetto Corsa sounds (content/sfx). No audio is bundled or redistributed."

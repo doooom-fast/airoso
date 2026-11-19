@@ -92,11 +92,27 @@
             ]
           ],
           "wall_h_m": 10.0,
-          "skin": "tiltup",
-          "roof": "white",
+          "skin": "plant",
+          "roof": "NAIP",
           "off_terrain": true,
           "_source": "footprint off NAIP 2022 (source/naip_2022_mrc.jpg on its true extent), read by eye to about 5 m, ground-level backdrop past the built ground; height 10.0 m = the median roof height over the lidar ground of its southern 5748 m2 that the read reaches (p10 9.42 / p90 10.96 m; 3DEP USGS_LPC_MI_31Co_Oakland_2016_LAS_2019, flown 2017-05-03 (the vegetation read of pass 2's 71 EPT nodes)) [measured, ledger 0082 pass 3; was 11.0 m invented]; roof_z_m 24.25 m, its roof's median elevation in the scene frame [measured]: seated at its lowest built ground it stood ~5 m low (the built ground under its rim 8.7-14.4 m against the lidar's 13.8-19.2 m)",
-          "roof_z_m": 24.25
+          "roof_z_m": 24.25,
+          "base_grime_m": 0.8,
+          "rooftop_units": "source/furniture/rooftop/rooftop_units.json",
+          "_facade_doc": "ledger 0094 (opt-in): the facade atlas skin, its layout [invented] (no photograph of the site's walls); base_grime_m [invented]; rooftop_units traced off NAIP 2022, heights [invented]",
+          "_roof_class": "white",
+          "_roof": "measured: the median NAIP colour inside the footprint, rgb [228, 229, 226] (NAIP 2022-08-16, source/road_wear/naip_2022_mrc.jpg); was white",
+          "roof_rgb": [
+            228,
+            229,
+            226
+          ],
+          "roof_uv": [
+            0.011719,
+            0.980469,
+            0.019531,
+            0.988281
+          ]
         },
         {
           "key": "mpg_plant_b",
@@ -119,10 +135,26 @@
             ]
           ],
           "wall_h_m": 11.0,
-          "skin": "tiltup",
-          "roof": "white",
+          "skin": "plant",
+          "roof": "NAIP",
           "off_terrain": true,
-          "_source": "as mpg_plant_a"
+          "_source": "as mpg_plant_a",
+          "base_grime_m": 0.8,
+          "rooftop_units": "source/furniture/rooftop/rooftop_units.json",
+          "_facade_doc": "ledger 0094 (opt-in): the facade atlas skin, its layout [invented] (no photograph of the site's walls); base_grime_m [invented]; rooftop_units traced off NAIP 2022, heights [invented]",
+          "_roof_class": "white",
+          "_roof": "measured: the median NAIP colour inside the footprint, rgb [196, 193, 183] (NAIP 2022-08-16, source/road_wear/naip_2022_mrc.jpg); was white",
+          "roof_rgb": [
+            196,
+            193,
+            183
+          ],
+          "roof_uv": [
+            0.042969,
+            0.980469,
+            0.050781,
+            0.988281
+          ]
         },
         {
           "key": "pad_shed_north",
@@ -145,9 +177,23 @@
             ]
           ],
           "wall_h_m": 2.6,
-          "skin": "metal",
-          "roof": "tan",
-          "_source": "source/furniture/inventory.json S1: footprint off NAIP 2022 (4.5 x 12.8 m, +-1 px), the roof colour as the photo shows it; height 2.6 m [invented: a container / site trailer, no shadow resolvable on the tree side] | LIDAR (ledger 0082 pass 2): 207-257 m from the lap, outside the approved 45 m read: the height stays [invented]"
+          "skin": "container_tan",
+          "roof": "NAIP",
+          "_source": "source/furniture/inventory.json S1: footprint off NAIP 2022 (4.5 x 12.8 m, +-1 px), the roof colour as the photo shows it; height 2.6 m [invented: a container / site trailer, no shadow resolvable on the tree side] | LIDAR (ledger 0082 pass 2): 207-257 m from the lap, outside the approved 45 m read: the height stays [invented]",
+          "_facade_doc": "ledger 0094 (opt-in): the facade atlas skin, its layout [invented] (no photograph of the site's walls); base_grime_m [invented]",
+          "_roof_class": "tan",
+          "_roof": "measured: the median NAIP colour inside the footprint, rgb [218, 185, 153] (NAIP 2022-08-16, source/road_wear/naip_2022_mrc.jpg); was tan",
+          "roof_rgb": [
+            218,
+            185,
+            153
+          ],
+          "roof_uv": [
+            0.074219,
+            0.980469,
+            0.082031,
+            0.988281
+          ]
         },
         {
           "key": "pad_shed_south",
@@ -170,17 +216,38 @@
             ]
           ],
           "wall_h_m": 2.6,
-          "skin": "metal",
-          "roof": "white",
-          "_source": "source/furniture/inventory.json S2: footprint off NAIP 2022 (3.5 x 12.1 m, +-1 px), the roof colour as the photo shows it; height 2.6 m [invented: a container / site trailer, no shadow resolvable on the tree side] | LIDAR (ledger 0082 pass 2): 207-257 m from the lap, outside the approved 45 m read: the height stays [invented]"
+          "skin": "container_white",
+          "roof": "NAIP",
+          "_source": "source/furniture/inventory.json S2: footprint off NAIP 2022 (3.5 x 12.1 m, +-1 px), the roof colour as the photo shows it; height 2.6 m [invented: a container / site trailer, no shadow resolvable on the tree side] | LIDAR (ledger 0082 pass 2): 207-257 m from the lap, outside the approved 45 m read: the height stays [invented]",
+          "_facade_doc": "ledger 0094 (opt-in): the facade atlas skin, its layout [invented] (no photograph of the site's walls); base_grime_m [invented]",
+          "_roof_class": "white",
+          "_roof": "measured: the median NAIP colour inside the footprint, rgb [199, 214, 205] (NAIP 2022-08-16, source/road_wear/naip_2022_mrc.jpg); was white",
+          "roof_rgb": [
+            199,
+            214,
+            205
+          ],
+          "roof_uv": [
+            0.105469,
+            0.980469,
+            0.113281,
+            0.988281
+          ]
         },
         {
           "file": "source/furniture/pass3/blocks.json",
-          "_source": "ledger 0082 pass 3: the site buildings west of the front straight the 2017 lidar measures and NAIP 2022 still shows, each entry's _source says how (source/furniture/pass3/)"
+          "_source": "ledger 0082 pass 3: the site buildings west of the front straight the 2017 lidar measures and NAIP 2022 still shows, each entry's _source says how (source/furniture/pass3/)",
+          "skin": "plant",
+          "base_grime_m": 0.8,
+          "rooftop_units": "source/furniture/rooftop/rooftop_units.json",
+          "_facade_doc": "ledger 0094 (opt-in): the facade atlas skin, its layout [invented] (no photograph of the site's walls); base_grime_m [invented]; rooftop_units traced off NAIP 2022, heights [invented]"
         },
         {
           "file": "source/furniture/pass4/blocks.json",
-          "_source": "ledger 0082 pass 4: the 2017-lidar roofs west of the NAIP crop that NAIP 2022's west strip (Kevin's yes, 2026-11-09) shows standing; each entry's _source says how (source/furniture/pass4/)"
+          "_source": "ledger 0082 pass 4: the 2017-lidar roofs west of the NAIP crop that NAIP 2022's west strip (Kevin's yes, 2026-11-09) shows standing; each entry's _source says how (source/furniture/pass4/)",
+          "skin": "plant",
+          "base_grime_m": 0.8,
+          "_facade_doc": "ledger 0094 (opt-in): the facade atlas skin, its layout [invented] (no photograph of the site's walls); base_grime_m [invented]"
         }
       ],
       "pads": [
@@ -4410,6 +4477,46 @@
       "diffuse": "assets/textures/building_diffuse.jpg",
       "normal": "assets/textures/building_normal.jpg",
       "_doc": "ledger 0092: the run-off pads and the ride pad (1RUNOFF_apron_*) wear concrete, Nevada's apron skin (ledger 0081); NAIP 2022 reads them grey (blue / red 0.91-0.99)"
+    },
+    "BUILDING_METAL": {
+      "diffuse": "assets/textures/circuit_facade_diffuse.jpg",
+      "normal": "assets/textures/circuit_facade_normal.jpg",
+      "_doc": "ledger 0094 (opt-in): the facade atlas (tools/make_bespoke_assets.py third batch, tools/circuit_facades.py cells; CC0); every block on this row wears an atlas skin"
+    },
+    "FARBLOCK_METAL": {
+      "diffuse": "assets/textures/circuit_facade_diffuse.jpg",
+      "normal": "assets/textures/circuit_facade_normal.jpg",
+      "_doc": "ledger 0094 (opt-in): the facade atlas (tools/make_bespoke_assets.py third batch, tools/circuit_facades.py cells; CC0); every block on this row wears an atlas skin"
+    },
+    "BUILDING_TILTUP": {
+      "diffuse": "assets/textures/circuit_facade_diffuse.jpg",
+      "normal": "assets/textures/circuit_facade_normal.jpg",
+      "_doc": "ledger 0094 (opt-in): the facade atlas (tools/make_bespoke_assets.py third batch, tools/circuit_facades.py cells; CC0); every block on this row wears an atlas skin"
+    },
+    "FARBLOCK_TILTUP": {
+      "diffuse": "assets/textures/circuit_facade_diffuse.jpg",
+      "normal": "assets/textures/circuit_facade_normal.jpg",
+      "_doc": "ledger 0094 (opt-in): the facade atlas (tools/make_bespoke_assets.py third batch, tools/circuit_facades.py cells; CC0); every block on this row wears an atlas skin"
+    },
+    "ROOFTOP_WHITE": {
+      "diffuse": "assets/textures/roof_white_diffuse.jpg",
+      "normal": "assets/textures/roof_membrane_normal.jpg",
+      "_doc": "ledger 0094 (opt-in): the class's own diffuse (unchanged) with a single-ply membrane's laps as its normal, so the row renders ksPerPixelMultiMap on this track only"
+    },
+    "ROOFTOP_TAN": {
+      "diffuse": "assets/textures/roof_tan_diffuse.jpg",
+      "normal": "assets/textures/roof_membrane_normal.jpg",
+      "_doc": "ledger 0094 (opt-in): the class's own diffuse (unchanged) with a single-ply membrane's laps as its normal, so the row renders ksPerPixelMultiMap on this track only"
+    },
+    "BUILDING_FABRIC": {
+      "diffuse": "assets/textures/fabric_tent_diffuse.jpg",
+      "normal": "assets/textures/fabric_tent_normal.jpg",
+      "_doc": "ledger 0094 (opt-in): the pad tent's panels with the frame's keder every 5 m and tension creases [invented]; Nevada Nights keeps fabric_white_*"
+    },
+    "ROOF": {
+      "diffuse": "source/furniture/rooftop/roof_naip_palette.png",
+      "normal": "source/furniture/rooftop/roof_flat_normal.png",
+      "_doc": "ledger 0094 item 4, Del Mar's route (ledger 0083 pass 4): the MEASURED roof colours of the blocks NAIP 2022 covers, one solid cell each (source/furniture/rooftop/roof_palette_blocks.py, tools/plan_buildings.py roof_palette); their roofs stand as ROOFTOP_NAIP_<k>, which binds this row"
     }
   },
   "lm_intake": {

@@ -91,7 +91,8 @@ def test_screen_kind_needs_a_measured_height():
 
 
 def test_keys_are_opt_in():
-    """no config but Milford's port names the wbeam / tyres / screen kinds, depth_m or the tyre skin"""
+    """no config but Milford's port names the wbeam / tyres / screen kinds, depth_m or the tyre skin; High Plains' port
+    names one tyres rail with its depth_m (ledger 0093: the pit wall's nose), in the Tec-Pro skin, not the tyre skin"""
     for cfgp in sorted((ROOT / "tracks").glob("*/track.config.json")):
         txt = cfgp.read_text(encoding="utf-8")
         cfg = json.loads(txt)
@@ -100,6 +101,10 @@ def test_keys_are_opt_in():
         if cfgp.parent.name == "milford-road-course-lm":
             assert {"wbeam", "tyres", "screen"} <= kinds
             continue
+        if cfgp.parent.name == "high-plains-lm":
+            assert [r["key"] for r in rails if r.get("kind") == "tyres"] == ["pit_wall_nose"], cfgp
+            rails = [r for r in rails if r.get("key") != "pit_wall_nose"]
+            kinds = {r.get("kind") for r in rails}
         assert not kinds & {"wbeam", "tyres", "screen"}, cfgp
         assert not any("depth_m" in r or "over_strip" in r for r in rails), cfgp
         assert "tyre_wall_diffuse" not in txt, cfgp

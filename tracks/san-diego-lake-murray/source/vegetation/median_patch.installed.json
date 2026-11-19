@@ -1,0 +1,44 @@
+{
+ "block_lines": [
+  2291,
+  3395
+ ],
+ "tree_lines": 1102,
+ "measured": 252,
+ "crown_measured": 201,
+ "kept": 850,
+ "per_model": {
+  "Sage.bin": {
+   "lines": 450,
+   "measured": 103,
+   "HEIGHT": 1.5,
+   "WIDTH": 2.0
+  },
+  "Bush.bin": {
+   "lines": 652,
+   "measured": 149,
+   "HEIGHT": 20.660005569458,
+   "WIDTH": 34.3843803405762
+  }
+ },
+ "drawn_h_before_m": {
+  "p10": 0.52,
+  "p25": 0.57,
+  "p50": 0.65,
+  "p75": 0.72,
+  "p90": 0.76
+ },
+ "drawn_h_after_m": {
+  "p10": 0.83,
+  "p25": 3.45,
+  "p50": 5.16,
+  "p75": 7.11,
+  "p90": 11.82
+ },
+ "spots_without_a_line": 0,
+ "_doc": "tools/patch_median_measured.py (Kevin 2026-11-18: \"B: lidar height each\")",
+ "trees_txt": "<AC>/content/tracks/san_diego_lake_murray_v4/extension/trees/trees.txt",
+ "out": "installed over it 2026-11-19 13:23 MST (PC); before md5 ff802cfe16cda1272b783b7275d7f74d, after aa0cfae01fe9308913e7e637dae04bdd; before parked in D:/k10-track-archive/2026-11-19_132227_lm_median/",
+ "lines_total": 21159,
+ "lines_changed": 252
+}

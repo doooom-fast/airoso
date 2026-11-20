@@ -59,7 +59,8 @@ y = N, z = up). The collection is emptied first, so the tool is idempotent, and 
               grid, cells over a road left out -> PADAPRON_<k>
   cards       [{"file", "prefix": "TREECARD", "clear_m"}]: {"cols", "rows", "points": [[lon, lat, cell, h, w], ...]}; crossed
               double-sided cards on the ground, anything within clear_m of pavement or a wall dropped and counted -> <prefix>_<k>
-  (blocks group key) "collider_tri_m": the longest ground-polygon edge a collider may stand over (default COLLIDER_TRI_M, 8 m)
+  (blocks group key) "collider_tri_m": the longest ground-polygon edge a collider may stand over (default COLLIDER_TRI_M, 8 m);
+              a canopy row (form posts) may name its own, for its post colliders only (ledger 0094 round 2)
   (blocks group key) "rim_step_m": the rim walk that finds a block's ground (default BLOCK_RIM_STEP_M, 1 m; Lake Murray v4's 7,600
               blocks were stood at 2.0 m, the walk before ledger 0063, and its config keeps that: ledger 0065)
   guardrail   {"from": "1WALL_PARA"}: a W-beam rail and posts along the draft's guard lips (RAIL_* below), road side. The
@@ -921,7 +922,10 @@ def blocks(col, spec, proj, to_xy, ground, near_ground, paved, walls, bad):
                     ceiling = eave - CANOPY_SLAB_M
                 n_col = 0
                 if with_col and reach <= COLLIDER_REACH_M:
-                    boxes, why_c = canopy_post_colliders(ring, step, ceiling, near_ground, float(group.get("collider_tri_m", COLLIDER_TRI_M)))
+                    # ledger 0094 round 2 (opt-in): a canopy row may name its own collider_tri_m (High Plains' two canopies stand
+                    # on the paddock's 10 m terrain grid, whose diagonals read 14.17 m under their posts); absent = the group's
+                    lim_c = b.get("collider_tri_m", group.get("collider_tri_m", COLLIDER_TRI_M))
+                    boxes, why_c = canopy_post_colliders(ring, step, ceiling, near_ground, float(lim_c))
                     if why_c:
                         (dropped if auto else bad).append(f"block {key}: a canopy on posts {reach:.0f} m from the lap: {why_c}")
                         continue

@@ -127,6 +127,14 @@ ENGINE=""
 
 step() { echo; echo "=================== $1"; }
 pyq() { (cd "$AIROSO" && python -c "$@"); }
+# a python that has numpy, for the plain-python draft steps that need it (ledger 0092's tools/lidar_ground_patch.py; every
+# other numpy step runs inside Blender): $AIROSO_NUMPY_PY when set, else `python` when it imports numpy, else none (the
+# PC's first Milford 0.1.13 rehearsal stopped there: "No module named 'numpy'", 2026-11-20)
+numpy_py() {
+  if [ -n "${AIROSO_NUMPY_PY:-}" ]; then printf '%s' "$AIROSO_NUMPY_PY"; return 0; fi
+  if python -c "import numpy" >/dev/null 2>&1; then printf 'python'; return 0; fi
+  return 1
+}
 no_race() { echo; echo "(no race layout declared: $1 skipped)"; }
 # run_step <phase> <step>: the phase's function — with --from, skipped (and said so) until the named step is reached.
 # The gates never go through here: every gate runs on every run, whatever --from says.
@@ -453,7 +461,12 @@ draft_ground_patch() {
   npz="$(pyq "import json,sys; print((json.load(open(sys.argv[1],encoding='utf-8')).get('terrain') or {}).get('lidar_patches_npz') or '')" "$PROJ/track.config.json" | tr -d '\r')"
   if [ -n "$npz" ]; then
     step "draft: the declared patches' lidar ground off the committed 1 m grid (tools/lidar_ground_patch.py --npz $npz; ledger 0092; no network)"
-    (cd "$AIROSO" && python tools/lidar_ground_patch.py "$PROJ" --npz "$PROJ/$npz")
+    local npy
+    if ! npy="$(numpy_py)"; then
+      echo "FATAL: tools/lidar_ground_patch.py needs numpy and \`python\` has none: set AIROSO_NUMPY_PY to a python that has it (a venv)" >&2
+      exit 1
+    fi
+    (cd "$AIROSO" && "$npy" tools/lidar_ground_patch.py "$PROJ" --npz "$PROJ/$npz")
   fi
   step "author: TERRAIN seated on the measured lidar ground in the declared patches (tools/ground_patch_blend.py; ledger 0079 round I; self-checked; no terrain.lidar_patches = no-op)"
   (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/ground_patch_blend.py" -- "$PROJ" 2>&1 | grep "^\[ground-patch\]\|FATAL\|Error\|Traceback" )

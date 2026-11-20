@@ -2502,7 +2502,9 @@
             "color": "yellow",
             "w": 0.4
           }
-        ]
+        ],
+        "clip_to_surface": true,
+        "_clip_doc": "ledger 0093 round 2 (the PC's first 0.1.8 rehearsal, 2026-11-20: '[paint] FATAL: pit_out_gore line 0: no PADAPRON under (435.20, -9.11)'): the traced hatch's tip (s 189-191, +16.7 m) lies past the paddock sheet's edge (its last outline corner 4.2 m outside the PADAPRON quad, the corner before it 0.75 m inside, measured on the Mac off this config), where the build has no paving; the paint is drawn only over the built PADAPRON and the length left out is printed. The pavement past the sheet (the pit exit's merge) is not built: not measured yet"
       }
     ],
     "_paint_doc": "ledger 0093: tools/author_paint_blend.py. The items with no surface (the line, the grid marks) drape on the built ROAD in the draft (ship.json draft paint); the pit-lane items name surface PADAPRON and drape on the pit-lane / paddock sheets after the bespoke dressing (author paint). MARKINGS_paint_* / YLINE_paint_*: visual only, engine-july's line_white / line_yellow"

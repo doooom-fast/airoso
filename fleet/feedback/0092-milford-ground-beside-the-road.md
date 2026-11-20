@@ -211,3 +211,10 @@ here, the same 50.
    Owed 3); whether B's size step (1.1-1.5 against base 0.7-1.1) should shrink too.
 3. If the line or the widths move (another coder's lm_intake / route work): re-run `runoff_pads.py --write`.
 4. Sand Creek / Pikes Peak: count duplicate faces in their patched TERRAIN (the latent fault above).
+
+## PC rehearsal 1 (2026-11-20, 4fdb3c9f)
+
+Milford 0.1.13's first run stopped at the new draft step: `tools/lidar_ground_patch.py` ran as plain `python`, and the PC's
+system python has no numpy. The PC re-ran with its lidar venv first on PATH. `tools/ship_track.sh` now resolves the
+interpreter for that step (`numpy_py`): `$AIROSO_NUMPY_PY` when set, else `python` when it imports numpy, else it stops
+with a FATAL naming the variable. Every other numpy step runs inside Blender.

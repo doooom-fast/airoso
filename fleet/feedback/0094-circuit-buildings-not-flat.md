@@ -193,3 +193,19 @@ then open on posts), each `_before.png` / `_after.png`.
   roofs relief only.
 - Owned concrete (`claude/owned-surfaces-20261116`) in place of the tilt-up base is still Kevin's call; the atlas cells
   would be repainted from it.
+
+## PC rehearsal 1 (2026-11-20, 4fdb3c9f) and round 2
+
+The author log dropped both High Plains canopies, so none of the 44 post colliders stood:
+`osm289311821 (59 m from the lap): post 0 at (337.7, 61.3) stands over ground the collider rule refuses (edges [14.174 x5])`,
+and `traced_pit_entry_canopy (23 m from the lap): post 0 at (211.1, 46.8) ... (edges [14.176 x5])`. The ground there is the
+paddock's 10 m terrain grid; 14.17 m is its diagonal. The buildings group names no `collider_tri_m`, so the limit was 8 m.
+
+- **Fix (opt-in):** a canopy row may name its own `collider_tri_m`, for its post colliders only (`author_bespoke_blend.py`,
+  row first, then the group's, then COLLIDER_TRI_M). The two canopy rows name 14.5 m [invented]: over the grid's 14.17 m
+  diagonals. Ledger 0072 let the marshal posts (the posts group) stand on 12.3 m slivers at 14 m, and drive_test read them
+  0 floating on the PC. No other row in any port's block file names one.
+- **Proof owed (PC):** `house_gate` 44 post colliders; `drive_test` no floating furniture; `house_seat` as before. The drive
+  into a post is Kevin's (no computer use of AC on the PC). If another post is refused for a reason past this one, the log
+  names it.
+- `tests/tools/test_circuit_buildings.py::test_high_plains_canopy_posts_stand_on_the_paddock_grid_by_their_own_limit`.

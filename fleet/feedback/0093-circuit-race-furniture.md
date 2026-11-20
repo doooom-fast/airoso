@@ -276,3 +276,29 @@ The PC runs the runbook below. The gates are unchanged; their thresholds are unc
     marks.
   - Its spawn: engine-july's reflected yaw reads ≈ −1 on a north-south straight like Milford's front straight
     (computed, not seen in game).
+
+## PC rehearsal 1 (2026-11-20, 4fdb3c9f) and round 2
+
+The PC's first 0.1.8 rehearsal (empty workshop, ENG eng_hplm_0108) stopped in the author paint:
+`[paint] FATAL: pit_out_gore line 0: no PADAPRON under (435.20, -9.11)`. `pit_lane_line`, `pit_lane_end` and
+`pit_in_gore` painted, read-back 0.00 mm.
+
+- **Cause (measured on the Mac off this config):** the traced gore's tip lies past the paddock sheet. Its last outline
+  corner (s 190.9, +16.7) is 4.2 m outside the PADAPRON quad (pad 0, the 0.1.7 sheet), the corner before it 0.75 m inside.
+  Past the quad's edge the build has terrain, not paving. It is not a left-out cell: the point is 10.7 m off the road's
+  edge, and 4 m cells are left out only over a road.
+- **Fix (opt-in):** route.paint `clip_to_surface` (`tools/paint_shapes.drape`, which `tools/author_paint_blend.py` paint()
+  now calls; without the key it is the old loop, vertex for vertex). It paints only where every stripe edge has surface
+  under it, prints the length left out, and still stops if nothing is left. `pit_out_gore` alone names it.
+- **Proof (Mac, Blender 5.1):** a stand-in scene of the 11 pads off this config, flat. Without the key the paint step stops
+  on exactly the PC's line and point. With it: `[paint] pit_out_gore: clip_to_surface: 14.5 m of 144.3 m of line has no
+  PADAPRON under it, not painted`, `YLINE_paint_pit_out_gore: 19 yellow lines, 129.8 m in all (273 quads, read-back
+  0.00 mm)`. The other three items print as on the PC. Left out: hatch stripes 0 and 1 (1.2, 2.5 m), 1.0 m of stripe 2 and
+  9.7 m of the outline. `tests/tools/test_paint_drape.py`.
+- **Not fixed:** the pit exit's merge past the paddock sheet is built as terrain. Paving it needs its edges measured off
+  the 0.3 m photo.
+
+Two auto K-rail rows stand no module: `paddock_row_3` (37 m, 12 left out) and `paddock_row_8` (21 m, 6 left out). Measured
+on this config's centreline (12 m road): row 3 runs s 262-299 at -6.5 to -6.7 m, its 0.6 m modules over the road's edge;
+row 8 runs s 212-236 at +4.8 m, on the racing surface. The author is right to leave them out. What the photo's blue
+sections there are (a layout's temporary rails?) is Kevin's call; they stay in the config, standing nothing.

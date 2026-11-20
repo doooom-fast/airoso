@@ -14,6 +14,7 @@ the welded road:
                  "double_gap_m": 0.06}],     # optional: two stripes this far apart (a double line)
       "clear": [[x, z], ...],                # optional: a polygon; the assembler's paint faces (YLINE* / MARKINGS*)
       "surface": ["PADAPRON"],               # optional (ledger 0093): drape on these mesh-name prefixes, not on ROAD
+      "clip_to_surface": true,               # optional (ledger 0093 round 2): paint only where the surface is (below)
   }, ...]                                    # whose centre lies inside it are removed (paint NAIP does not show)
 
 Ledger 0093 (High Plains' race furniture; every key opt-in, an item without them is painted exactly as before):
@@ -33,6 +34,11 @@ binds YLINE / MARKINGS by name and turns the faces up. No physics, no gate surfa
 Self-check, exit 1 and loop.blend not saved: a line with fewer than 2 points; a stripe point with no surface under it; a
 painted vertex not PAINT_LIFT_M over the surface it was read from (re-read after the build, 1 mm).
 
+"clip_to_surface" (opt-in, ledger 0093 round 2; an item without it is painted exactly as before): a measured shape that
+runs past the built surface (High Plains' pit-out gore: its tip lies past the paddock sheet's edge, where the build has
+no paving) is painted only where every stripe edge has surface under it (tools/paint_shapes.drape); the length not
+painted is printed, and an item with nothing left on the surface still stops the step.
+
 No route.paint = no-op (Lake Murray and the Lariat name none).
 
     blender --background --python tools/author_paint_blend.py -- <project-dir> [--stage draft|author]
@@ -40,7 +46,6 @@ No route.paint = no-op (Lake Murray and the Lariat name none).
 from __future__ import annotations
 
 import json
-import math
 import sys
 from pathlib import Path
 
@@ -125,53 +130,29 @@ def clear(poly, pid):
     return out
 
 
-def resample(pts, ds):
-    out = [pts[0]]
-    for a, b in zip(pts, pts[1:]):
-        L = math.hypot(b[0] - a[0], b[1] - a[1])
-        n = max(1, int(math.ceil(L / ds)))
-        for k in range(1, n + 1):
-            t = k / n
-            out.append((a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t))
-    return out
-
-
-def stripes(line):
-    w = float(line.get("w", 0.12))
-    g = line.get("double_gap_m")
-    if g is None:
-        return [(-w / 2.0, w / 2.0)]
-    g = float(g)
-    return [(-g / 2.0 - w, -g / 2.0), (g / 2.0, g / 2.0 + w)]
+resample = paint_shapes.resample            # the drape is pure (tools/paint_shapes.drape); these names stay for callers
+stripes = paint_shapes.stripes
 
 
 def paint(bvh, item, lines=None, surface="ROAD"):
     pid = item["id"]
-    verts, faces, made = [], [], []
-    for li, line in enumerate((item.get("lines") or []) if lines is None else lines):
-        pts = [(float(p[0]), float(p[1])) for p in line["pts"]]
-        if len(pts) < 2:
-            raise SystemExit(f"[paint] FATAL: {pid} line {li}: fewer than 2 points; loop.blend not saved")
-        P = resample(pts, PAINT_DS_M)
-        for lo, hi in stripes(line):
-            base = len(verts)
-            for k, (x, z) in enumerate(P):
-                a, b = P[max(0, k - 1)], P[min(len(P) - 1, k + 1)]
-                tx, tz = b[0] - a[0], b[1] - a[1]
-                L = math.hypot(tx, tz) or 1e-9
-                nx, nz = -tz / L, tx / L
-                for o in (lo, hi):
-                    px, pz = x + nx * o, z + nz * o
-                    y = road_top(bvh, px, pz)
-                    if y is None:
-                        raise SystemExit(f"[paint] FATAL: {pid} line {li}: no {surface} under ({px:.2f}, {pz:.2f}); "
-                                         "loop.blend not saved")
-                    verts.append((px, pz, y + PAINT_LIFT_M))
-            for k in range(len(P) - 1):
-                i0 = base + 2 * k
-                faces.append((i0, i0 + 1, i0 + 3, i0 + 2))
-        L = sum(math.hypot(b[0] - a[0], b[1] - a[1]) for a, b in zip(pts, pts[1:]))
-        made.append((line.get("color", "yellow"), L, len(stripes(line))))
+    clip = bool(item.get("clip_to_surface"))
+    todo = (item.get("lines") or []) if lines is None else lines
+    try:
+        verts, faces, made, clipped = paint_shapes.drape(todo, lambda x, z: road_top(bvh, x, z), PAINT_DS_M, PAINT_LIFT_M,
+                                                         clip=clip)
+    except paint_shapes.ShortLine as e:
+        raise SystemExit(f"[paint] FATAL: {pid} line {e.li}: fewer than 2 points; loop.blend not saved")
+    except paint_shapes.NoSurface as e:
+        raise SystemExit(f"[paint] FATAL: {pid} line {e.li}: no {surface} under ({e.x:.2f}, {e.z:.2f}); "
+                         "loop.blend not saved")
+    if clip:
+        total = sum(m[1] for m in made) + clipped
+        if not faces:
+            raise SystemExit(f"[paint] FATAL: {pid}: clip_to_surface left nothing on the built {surface} ({total:.1f} m "
+                             "declared); loop.blend not saved")
+        print(f"[paint] {pid}: clip_to_surface: {clipped:.1f} m of {total:.1f} m of line has no {surface} under it, "
+              "not painted")
     colors = {m[0] for m in made}
     if len(colors) != 1 or next(iter(colors)) not in PREFIX:
         raise SystemExit(f"[paint] FATAL: {pid}: one colour per paint item (yellow / white); got {sorted(colors)}")

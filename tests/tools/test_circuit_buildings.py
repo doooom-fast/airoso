@@ -373,3 +373,31 @@ def test_the_existing_skins_are_untouched():
             "roof_dark_diffuse.jpg": 3493}
     for f, size in want.items():
         assert (TEX / f).stat().st_size == size, f
+
+
+def test_high_plains_canopy_posts_stand_on_the_paddock_grid_by_their_own_limit():
+    """ledger 0094 round 2: the PC's first 0.1.8 rehearsal dropped both canopies, every post over the paddock's 10 m terrain
+    grid (edges 14.174 / 14.176 m under post 0) and the group's 8 m limit. The two canopy rows name collider_tri_m 14.5;
+    no other row in any port's block file names one (the group's limit, or COLLIDER_TRI_M, as before)"""
+    m = _author()
+    ring = [(0.0, 0.0), (20.0, 0.0), (20.0, 6.0), (0.0, 6.0)]
+    m.down_edge = lambda tree, x, y: 14.174                         # the grid the PC read under the posts
+    m.down = lambda tree, x, y: 0.0
+    boxes, why = m.canopy_post_colliders(ring, 4.39, 2.4, object(), 14.0)
+    assert boxes == [] and "refuses" in why                          # ledger 0072's 14 m still refuses that grid
+    boxes, why = m.canopy_post_colliders(ring, 4.39, 2.4, object(), 14.5)
+    assert why is None and len(boxes) == len(m.canopy_post_squares(ring, m.CANOPY_POST_W, 4.39)) > 0
+    rows = {r["key"]: r for r in json.loads((HP / "source/bespoke/buildings.race.json").read_text(encoding="utf-8"))}
+    assert rows["osm289311821"]["collider_tri_m"] == 14.5 and rows["traced_pit_entry_canopy"]["collider_tri_m"] == 14.5
+    named = []
+    for f in sorted((ROOT / "tracks").glob("*/source/bespoke/*.json")):
+        try:
+            data = json.loads(f.read_text(encoding="utf-8"))
+        except (UnicodeDecodeError, json.JSONDecodeError):
+            continue
+        for r in data if isinstance(data, list) else []:
+            if isinstance(r, dict) and "collider_tri_m" in r:
+                named.append((f.parent.parent.parent.name, r.get("key"), r.get("form")))
+    assert sorted(named) == [("high-plains-lm", "osm289311821", "posts"), ("high-plains-lm", "traced_pit_entry_canopy", "posts")]
+    src = (ROOT / "tools" / "author_bespoke_blend.py").read_text(encoding="utf-8")
+    assert 'b.get("collider_tri_m", group.get("collider_tri_m", COLLIDER_TRI_M))' in src   # the canopy path reads the row's

@@ -135,3 +135,114 @@ def expand(item: dict, origin: dict | None = None, line_pts=None) -> list[dict]:
     for ln in item.get("lines") or []:
         out += expand_line(ln, origin, line_pts)
     return out
+
+
+# --- the drape (pure; tools/author_paint_blend.py paint() calls it with the built surface's ray) ------------------------
+class ShortLine(ValueError):
+    """a line with fewer than 2 points"""
+
+    def __init__(self, li):
+        super().__init__(f"line {li}: fewer than 2 points")
+        self.li = li
+
+
+class NoSurface(ValueError):
+    """a stripe point with no surface under it (and the item does not clip)"""
+
+    def __init__(self, li, x, z):
+        super().__init__(f"line {li}: no surface under ({x:.2f}, {z:.2f})")
+        self.li, self.x, self.z = li, x, z
+
+
+def resample(pts, ds):
+    out = [pts[0]]
+    for a, b in zip(pts, pts[1:]):
+        L = math.hypot(b[0] - a[0], b[1] - a[1])
+        n = max(1, int(math.ceil(L / ds)))
+        for k in range(1, n + 1):
+            t = k / n
+            out.append((a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t))
+    return out
+
+
+def stripes(line):
+    w = float(line.get("w", 0.12))
+    g = line.get("double_gap_m")
+    if g is None:
+        return [(-w / 2.0, w / 2.0)]
+    g = float(g)
+    return [(-g / 2.0 - w, -g / 2.0), (g / 2.0, g / 2.0 + w)]
+
+
+def drape(lines, top, ds, lift, clip=False):
+    """plain lines -> (verts, faces, made, clipped_m) on a surface whose height under a local (x, z) is ``top(x, z)``
+    (None: nothing there). Each line is resampled every ``ds`` m; each stripe's two edge points stand ``lift`` over the
+    surface; ``made`` is one (color, length m, stripes) per line. A point with no surface under it raises NoSurface (the
+    first one, in stripe order), as tools/author_paint_blend.py always did.
+
+    ``clip`` (opt-in route.paint "clip_to_surface", ledger 0093 round 2: High Plains' pit-out gore runs past the paddock
+    sheet): a resampled point is painted only when every stripe's two edge points have surface under them; the segments
+    between two painted points are drawn, the rest is not, its length summed into clipped_m, and a line's length in
+    ``made`` is what was drawn. Unclipped, the vertices and faces are exactly the old loop's."""
+    verts, faces, made, clipped = [], [], [], 0.0
+    for li, line in enumerate(lines):
+        pts = [(float(p[0]), float(p[1])) for p in line["pts"]]
+        if len(pts) < 2:
+            raise ShortLine(li)
+        P = resample(pts, ds)
+        st = stripes(line)
+        L = sum(math.hypot(b[0] - a[0], b[1] - a[1]) for a, b in zip(pts, pts[1:]))
+        normals = []
+        for k, (x, z) in enumerate(P):
+            a, b = P[max(0, k - 1)], P[min(len(P) - 1, k + 1)]
+            tx, tz = b[0] - a[0], b[1] - a[1]
+            Ln = math.hypot(tx, tz) or 1e-9
+            normals.append((-tz / Ln, tx / Ln))
+        if not clip:
+            for lo, hi in st:
+                base = len(verts)
+                for k, (x, z) in enumerate(P):
+                    nx, nz = normals[k]
+                    for o in (lo, hi):
+                        px, pz = x + nx * o, z + nz * o
+                        y = top(px, pz)
+                        if y is None:
+                            raise NoSurface(li, px, pz)
+                        verts.append((px, pz, y + lift))
+                for k in range(len(P) - 1):
+                    i0 = base + 2 * k
+                    faces.append((i0, i0 + 1, i0 + 3, i0 + 2))
+            made.append((line.get("color", "yellow"), L, len(st)))
+            continue
+        tops = []                                    # per point: [(px, pz, y) per stripe edge] or None
+        for k, (x, z) in enumerate(P):
+            nx, nz = normals[k]
+            row = []
+            for lo, hi in st:
+                for o in (lo, hi):
+                    px, pz = x + nx * o, z + nz * o
+                    row.append((px, pz, top(px, pz)))
+            tops.append(None if any(r[2] is None for r in row) else row)
+        drawn = 0.0
+        on = [r is not None for r in tops]
+        lone = [on[k] and not ((k > 0 and on[k - 1]) or (k + 1 < len(on) and on[k + 1])) for k in range(len(on))]
+        for j in range(len(st)):
+            idx = {}
+            for k, row in enumerate(tops):
+                if row is None or lone[k]:           # a lone point draws no segment: no vertex for it
+                    continue
+                idx[k] = len(verts)
+                for px, pz, y in row[2 * j:2 * j + 2]:
+                    verts.append((px, pz, y + lift))
+            for k in range(len(P) - 1):
+                if k in idx and k + 1 in idx:
+                    i0, i1 = idx[k], idx[k + 1]
+                    faces.append((i0, i0 + 1, i1 + 1, i1))
+        for k in range(len(P) - 1):
+            seg = math.hypot(P[k + 1][0] - P[k][0], P[k + 1][1] - P[k][1])
+            if tops[k] is not None and tops[k + 1] is not None:
+                drawn += seg
+            else:
+                clipped += seg
+        made.append((line.get("color", "yellow"), drawn, len(st)))
+    return verts, faces, made, clipped

@@ -406,3 +406,11 @@ and bank max 18.33 %, `6537 pts, lap 4928 m, widths [9.46, 13.51, 21.62] m`. In 
   - at 6 m: median -0.148 -> -0.147;
   - at 10 m: median -0.227 -> -0.305, p95 -0.158 -> -0.101, below 1 m 0.030 -> 0.021.
 - Stills: 0095 below. **Not done:** the drive (Kevin's), and in-game checks.
+
+**The corridor's counts (Mac's reading of the PC's numbers).** Runs 2 and 3 both read `275174 / 42503 / 317677` (read /
+filled / weighted), 0.03 / 0.87 / 0.14 % under the runbook's `275249 / 42877 / 318126`. GrassFX reads `2636 / 2067`
+against the Mac's `2656 / 2090`. Both steps take their keep-out off the assembler's swept line
+(`data/centerline.local.json`, md5 1244fc50 on the PC). The PC swept it in its Blender 4.2 assembler; the runbook's
+numbers came from the Mac's dry run in Blender 5.1. The intake's line, which every measured station sits on, is
+byte-identical (0923d812). [inference: the Mac has no copy of the PC's swept line to diff, so this explains the
+difference but does not measure it.] The counts are stable on the PC, and no gate reads them.

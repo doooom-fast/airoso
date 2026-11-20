@@ -313,3 +313,17 @@ a gate): 2,656 near cells, 2,090 rectangles on 0.1.13's line (2,638 / 2,066 on 0
 4. Not reached: the far edge at s 2,571-2,600 (right) and 2,655-2,676 (right) — only one sensor reads it there (or the
    two disagree by 1-4 m), so the agree record leaves today's edge. A NAIP year with less shadow would decide them
    (the audit's §5, a download: his yes).
+
+## PC rehearsal 2 (2026-11-20, 4fdb3c9f): T3
+
+The author log had `t3_s1000_apron_back: 47 tyres modules over 33 m, 4 LEFT OUT`; the runbook expected none. The PC re-walked
+the rail on run 2's authored blend (read-only, md5 unchanged) and reproduced it. The 4 are modules 0-3, the first 2.5 m
+of the rail from its start (-213.72, -106.58); past them the rail angles away (+3.9 to +20.3 m off the lane edge).
+- Modules 1-3: their corners touch only the edge strip (CURB), 0.21-1.02 m outside the lane edge; every corner has ground.
+- Module 0: one corner 0.18 m over the lane (ROAD).
+
+With this entry's line the lane edge came about 0.5 m toward the wall's start (the Mac's proxy: face to lane edge 0.88 ->
+0.39 m). **Fix (config):** T3 names `stand_on` ["CURB", "1KERB"] and `seat` "surface", as Pikes Peak's outer wall
+(ledger 0085): its modules may stand on the edge strip, seated on its top where that is higher than the ground. The lane
+stays refused, so module 0 stays out and the wall starts 0.62 m later. Expect `50 tyres modules over 33 m, 1 left out`.
+Moving the traced start about 0.2 m off the lane (within NAIP 2022's 0.5 m pixel) would stand module 0 too: Kevin's call.

@@ -3983,7 +3983,13 @@
               42.5687519
             ]
           ],
-          "_source": "source/furniture/inventory.json T3: line off NAIP 2022 (+-1 px, 32.4 m); width 1.5 m off NAIP (the bar's width less a pixel of blur); height 1.0 m [invented: five tyres]; identity medium | LIDAR (ledger 0082 pass 2): the 3DEP flight of 2017-05-03 (source/lidar/) holds 0.00 returns per metre 0.35-1.6 m over the ground within 1 m of this line (a W-beam or a tyre stack would hold ~0.5-1.0 / m at the 1.4-2.9 ground returns / m2 there; the F1 screen 3.1 / m): nothing stood here in May 2017, five years before the NAIP that shows it. The height is NOT measurable from it and stays [invented]"
+          "_source": "source/furniture/inventory.json T3: line off NAIP 2022 (+-1 px, 32.4 m); width 1.5 m off NAIP (the bar's width less a pixel of blur); height 1.0 m [invented: five tyres]; identity medium | LIDAR (ledger 0082 pass 2): the 3DEP flight of 2017-05-03 (source/lidar/) holds 0.00 returns per metre 0.35-1.6 m over the ground within 1 m of this line (a W-beam or a tyre stack would hold ~0.5-1.0 / m at the 1.4-2.9 ground returns / m2 there; the F1 screen 3.1 / m): nothing stood here in May 2017, five years before the NAIP that shows it. The height is NOT measurable from it and stays [invented]",
+          "stand_on": [
+            "CURB",
+            "1KERB"
+          ],
+          "seat": "surface",
+          "_stand_on_doc": "ledger 0091 round 2 (the PC's 0.1.13 rehearsal, 2026-11-20): with 0091's line the lane edge came ~0.5 m toward the wall's start, and its first four 0.62 m modules were left out as 'on a road'. Read off the authored blend: modules 1-3 touch only the edge strip (CURB, 0.21-1.02 m outside the lane edge), module 0 reaches 0.18 m over the lane. As Pikes Peak's outer wall (ledger 0085): the modules may stand on the strip (stand_on), seated on its top where it is higher than the ground (seat surface); the lane stays refused, so module 0 stays out (the wall starts 0.62 m later)"
         },
         {
           "key": "f1_nw_screen_ne",

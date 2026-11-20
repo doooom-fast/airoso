@@ -145,3 +145,16 @@ def test_tyre_skin_is_generated():
     assert im.size == (256, 256)                     # power of two (L7)
     mean = sum(im.convert("L").getdata()) / (256 * 256)
     assert mean < 60                                 # black rubber, as NAIP reads it
+
+
+def test_t3_may_stand_on_the_edge_strip_never_on_the_lane():
+    """ledger 0091 round 2: T3's first modules touch the edge strip since 0091 moved the lane edge toward it; it stands on
+    the strip (stand_on, seat surface, as Pikes Peak's wall, ledger 0085), the lane stays refused; no other Milford rail opts in"""
+    cfg = json.loads((ROOT / "tracks" / "milford-road-course-lm" / "track.config.json").read_text(encoding="utf-8"))
+    names = cfg["scenery"]["bespoke"]["names"]
+    rails = {r["key"]: r for r in cfg["scenery"]["bespoke"]["rails"]}
+    t3 = rails["t3_s1000_apron_back"]
+    assert t3["stand_on"] == ["CURB", "1KERB"] and t3["seat"] == "surface"
+    assert not {s.upper() for s in t3["stand_on"]} & {"ROAD", "1ROAD"}                 # never the lane
+    assert set(t3["stand_on"]) <= set(names["paved"]) and "CURB" in names["track_edge"]
+    assert [k for k, r in rails.items() if "stand_on" in r or "seat" in r] == ["t3_s1000_apron_back"]

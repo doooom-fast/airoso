@@ -218,3 +218,19 @@ Milford 0.1.13's first run stopped at the new draft step: `tools/lidar_ground_pa
 system python has no numpy. The PC re-ran with its lidar venv first on PATH. `tools/ship_track.sh` now resolves the
 interpreter for that step (`numpy_py`): `$AIROSO_NUMPY_PY` when set, else `python` when it imports numpy, else it stops
 with a FATAL naming the variable. Every other numpy step runs inside Blender.
+
+Run 2 (lidar venv) stopped later, in the ship step: `[seat-pads] FATAL: 1RUNOFF_apron_9: ground over 1 of its vertices`
+(apron_9 = runoff_L2508, s 2,505.5, 13.8 m left of the line). The PC read the vertex: (-2.068, 444.711, 7.1748), ground hit
+7.1165, so the pad stands 58.3 mm over the ground there, not 60, and the self-check allows 1 mm. A fold of the prepped
+ground: a second triangle 1.7 mm over the piece the vertex was cut from, at no shared vertex, so the step's "the pad takes
+the higher piece" (Nevada 0.1.3's 1.5 mm, ledger 0087) did not reach it.
+
+- **Fix:** `tools/pad_clip.lift_over_folds`, called by `tools/seat_pads_blend.py` after the rebuild. A vertex the
+  self-check would fail is raised onto the highest ground under it, by at most `FOLD_MAX_M` 10 mm [invented]; more than
+  that is ground through the pad, and the self-check stops the build as before. The self-check and its 1 mm are unchanged,
+  and a pad that passed before is unchanged, vertex for vertex. The step prints `N vertex(es) raised onto a fold of the
+  ground, at most X mm` and `data/seat_pads.json` records `fold_raised` / `fold_worst_m`.
+- **Proof (Mac, Blender 5.1):** a synthetic prepped scene with an uneven 4 m ground and a fold 1.8 mm over one triangle,
+  across its diagonal, under a pad of 3 m cells. Before: `FATAL: 1RUNOFF_apron_0: ground over 9 of its vertices`. After:
+  `9 vertex(es) raised onto a fold of the ground, at most 1.8 mm`, ground over 0 / 168, saved. Two scenes with no failing
+  vertex gave the same pad before and after. `tests/tools/test_pad_folds.py` (the PC's vertex).

@@ -88,14 +88,14 @@
       "version": "0.1.4"
     },
     "high_plains": {
-      "branch": "claude/high-plains-road-wear",
+      "branch": "claude/road-owned-pilot-20261119",
       "engine": "lm-v4",
-      "installed": "2026-11-10",
-      "note": "0.1.7 = 0.1.6 + road wear in photo mode (NAIP 2023 0.3 m tone, the photo's own rubber, the kerbs darkened; texel 0.25 m; ledger 0084) + the K-rails re-seated on the prepped ground (pit_wall_lidar 1.03 m showing, was 0.74); records + menu picture on claude/high-plains-road-wear a3fa0093",
+      "installed": "2026-11-20",
+      "note": "0.1.8 = 0.1.7 + race furniture (25-car grid facing forward, pit-lane paint with the gore clipped to the surface, canopies on 46 post colliders; ledger 0093) + building skins (0094) + the owned asphalt with the 0.5 m high-pass (asphalt_dense, clipped 0.408 %; ledger 0095); 1ROAD geometry = 0.1.7's; kn5 22,156,060 B; install build = the PC rehearsal (180/180 gate rows, kn5 equivalent); Kevin 2026-11-20: \"Yes, install both\"",
       "role": "current",
-      "sha": "2981db6d",
+      "sha": "9ac81398",
       "track": "high-plains-lm",
-      "version": "0.1.7"
+      "version": "0.1.8"
     },
     "lookout_lariat_lm": {
       "track": "lookout-lariat-lm",

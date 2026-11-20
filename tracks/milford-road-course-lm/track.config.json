@@ -4517,6 +4517,11 @@
       "diffuse": "source/furniture/rooftop/roof_naip_palette.png",
       "normal": "source/furniture/rooftop/roof_flat_normal.png",
       "_doc": "ledger 0094 item 4, Del Mar's route (ledger 0083 pass 4): the MEASURED roof colours of the blocks NAIP 2022 covers, one solid cell each (source/furniture/rooftop/roof_palette_blocks.py, tools/plan_buildings.py roof_palette); their roofs stand as ROOFTOP_NAIP_<k>, which binds this row"
+    },
+    "1ROAD": {
+      "diffuse": "assets/textures/asphalt_dense_diffuse.jpg",
+      "normal": "assets/textures/asphalt_dense_normal.jpg",
+      "_doc": "ledger 0095 (Kevin 2026-11-19: \"Yes, pilot the owned asphalt with the high-pass\"): the owned dense-graded asphalt (tools/make_owned_surfaces.py, CC0) as the road's 4 m detail and its normal, in place of the borrowed cracked tile (LA Canyons, personal-use only). Its mean colour and relief were measured off the borrowed tile, so road wear's m0 and calibration hold. A pilot on Milford and High Plains only: every other track keeps pbr.TEXTURES' borrowed pair until Kevin swaps it fleet-wide"
     }
   },
   "lm_intake": {
@@ -4755,6 +4760,10 @@
         "ai": "source/road_wear/fast_lane.full.ai",
         "_doc": "a line Kevin records with CSP's AI recorder in this layout, clockwise, copied here: the wear then follows where the car really ran. Absent (as for 0.1.7) = the minimum-curvature line inside the built edges [model]: the committed ai/full/fast_lane.ai is the generated centreline draft (ai_draft.json: offset_max 0.012 m), not a racing line"
       }
-    ]
+    ],
+    "detail_highpass_m": {
+      "1ROAD": 0.5
+    },
+    "_detail_highpass_doc": "ledger 0095: the road's detail diffuse loses what is coarser than 0.5 m (scripts/aerial/road_wear.detail_highpass) before the / m0, so its far mips go flat and the NAIP macro alone carries the large scale; the normal is kept. The 4 m repeat on this track's renders (Mac 2026-11-18, 20-50 / 50-100 / 100-200 m): 3.34 / 2.17 / 1.11 % (the borrowed tile) -> 0.70 / 0.33 / 0.16 (owned) -> 0.29 / 0.09 / 0.05 (owned + 0.5 m) [measured]; the band it removes is 0.10 % of the tile's variance, so the close look is unchanged [measured]. 0.5 m [invented] (a 1 m cut gave about half the gain). The edge strip (1KERB_SIDEWALK) keeps its detail as it is (its repeat not measured)"
   }
 }

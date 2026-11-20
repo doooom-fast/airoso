@@ -66,9 +66,12 @@
       "assets/textures/metal_wall_normal.jpg",
       "assets/textures/roof_white_diffuse.jpg",
       "assets/textures/roof_tan_diffuse.jpg",
-      "assets/textures/roof_dark_diffuse.jpg"
+      "assets/textures/roof_dark_diffuse.jpg",
+      "assets/textures/asphalt_dense_diffuse.jpg",
+      "assets/textures/asphalt_dense_normal.jpg"
     ],
-    "_facades_doc": "ledger 0094: the facade atlas, the rib roof normal and the canopies' metal skin (texture_overrides), from airoso's tracked assets"
+    "_facades_doc": "ledger 0094: the facade atlas, the rib roof normal and the canopies' metal skin (texture_overrides), from airoso's tracked assets",
+    "_road_pilot_doc": "ledger 0095: the owned asphalt pair the 1ROAD override binds (texture_overrides), from airoso's tracked assets"
   },
   "sync_out": {
     "required": [

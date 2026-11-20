@@ -327,3 +327,82 @@ With this entry's line the lane edge came about 0.5 m toward the wall's start (t
 (ledger 0085): its modules may stand on the edge strip, seated on its top where that is higher than the ground. The lane
 stays refused, so module 0 stays out and the wall starts 0.62 m later. Expect `50 tyres modules over 33 m, 1 left out`.
 Moving the traced start about 0.2 m off the lane (within NAIP 2022's 0.5 m pixel) would stand module 0 too: Kevin's call.
+
+## PC rehearsal 3 (2026-11-20, 8aed08ff): Milford 0.1.13 green, not installed
+
+From an EMPTY workshop (`D:/k10-scratch/milford_0113_reh`), ENG `eng_mflm_0113` (= `eng_mflm_017` plus the eight new
+textures of 0094-1 and 0095-1, md5-checked), `AIROSO_NUMPY_PY` set to the PC's lidar venv (Python 3.14.3, numpy 2.5.4,
+Pillow 13.0.0), TreeFX bins in (Oak3 24111ede, SycamoreV2 7010d61f), `--no-install`. Started 13:13.
+- The run stopped at `ship_grassfx_aerial`: `plan_grassfx_aerial.py` needs numpy too and was called as plain `python`;
+  ce765a73 fixes that (ledger 0092).
+- It was resumed at 14:11 with `--from grassfx_aerial` in the same workshop, the venv first on PATH. Every gate ran again.
+- **SHIP OK**, no force, at 14:13. The whole build took 57 + 2 min (the 0.1.12 main reference: 32 min).
+- Baseline: `D:/k10-scratch/milford_0112_mainref`, the main build that reproduces the installed 0.1.12 (kn5 equivalent,
+  2026-11-19).
+- Runs 1 and 2 (4fdb3c9f, stopped) are kept as `milford_0113_reh.nonumpy` / `.r2seatpads`.
+
+**Intake (step 3):** every line equals the runbook's: 1635 -> 6537 points, pre-compensated p50 0.201 / max 3.231 m, edge
+fit 0 rejected, widths smoothed p50 0.044 / p99 0.551 / max 0.655, both retraces, measured surface p50 0.176 / max 1.359 m
+and bank max 18.33 %, `6537 pts, lap 4928 m, widths [9.46, 13.51, 21.62] m`. In a full build the intake's line is
+`data/centerline.raw.local.json` = **0923d812**; the assembler writes its swept line into `data/centerline.local.json`
+(1244fc50). A `--draft-only` intake alone writes 0923d812 as `centerline.local.json` (twice, both on the PC).
+
+**Gates (step 4), against 0.1.12's reference:**
+- drive_test (street) PASS:
+  - severe 0; kinks **1.84 / km** (runbook ~1.8); vertex bumps **5** (~5);
+  - excursion drops **3** (0.1.12: 2), far ledges **32** (0.1.12: 30, reported, not gated).
+  - The gated drops, (s, offset, drop): 0.1.12 (900.8, -10.5, 0.14), (1201.4, +11.0, 0.12) -> 0.1.13 (900.2, -10.5, 0.14),
+    **(1050.6, +11.0, 0.14) new**, (1200.6, +11.0, 0.13).
+  - The worst ungated: (300.1, +14.5, 0.24) (0.1.12: (301.5, +15.0, 0.16)).
+- audit CLEAN (road_verts 17,194 -> 26,283, grass 442,942 -> 513,251, curb 27,208 -> 53,473).
+- edge_smoothness PASS, 0 ragged: lane edge d2 p99 **0.0075 / 0.0075 m**, resid p99 **0.0019 / 0.0019 m**. That is the
+  proxy's 0.0075 / 0.0076 and 0.0019 / 0.0017; 0.1.12 had 0.012 / 0.012 and 0.004 / 0.004.
+- verify_kn5 PASS. 1ROAD **26,283** writer vertices for 33,404 triangles: under 65,535 (the runbook's estimate ~23,000).
+- kn5_textures PASS: 25 embedded, 0 missing, 1RUNOFF's skin in. verify_textures: untextured 0.
+- kn5_ground PASS. `seating.walls` 332 -> 324 objects, median -0.48 -> -0.619 m, p95 -0.188 -> -0.267 m. `seating_info`
+  walls_trunk 312 (median -0.601) and walls_rest 12 (median -1.389, p95 -0.151); 0 hovering.
+- house_seat PASS (3 judged, 0 floating / sunken / buried). road_wear_check PASS: rubber centroid **0.045 m** (0.1.12
+  0.041), tone r **0.9555** (0.959); the rest in 0095.
+- Road kn5 **62,055,573 B** (0.1.12: 42,337,727), +19.72 MB; the runbook modelled +4-6 MB for 0092 plus the road.
+  - Geometry, at 44 B a vertex and 6 B a triangle: +16.92 MB. `1RUNOFF` pads +11.37 (ledger 0092), `1GRASS` +3.88
+    (ground vertices 442,942 -> 513,251), `1KERB` +1.39, FARBLOCK +0.60 (0094's rooftop units), `1ROAD` +0.45, MARKINGS
+    -0.50, PADAPRON -0.29.
+  - Textures and headers: +2.80 MB.
+
+**Measured where the Mac could not (step 5), on the gate OBJ:**
+- `data/bespoke.report.json`: G1 58 posts, G2 295, G3 105, G4 192, each 1 run and 0 left out. T1 71 and T2 85 modules, 0
+  out. **T3 50 modules, 1 left out** (module 0, as round 2 says).
+- Each rail's face to the built 1ROAD edge (W-beam: the polyline every 1 m; tyres: the stack's vertices); 0 m over the lane
+  on every rail.
+
+  | rail | min | p5 | p50 m |
+  |---|---|---|---|
+  | G1 | 3.640 | 3.656 | 4.36 |
+  | G2 | **0.167** | 0.198 | 0.508 |
+  | G3 | **0.177** | 0.202 | 0.443 |
+  | G4 | 10.712 | 10.929 | 19.17 |
+  | T1 | 13.454 | 13.477 | 15.87 |
+  | T2 | 15.165 | 15.191 | 18.17 |
+  | T3 | **0.214** | 1.762 | 11.35 |
+
+  G2 / G3 are at or over 0.15 m (the proxy: 0.167 / 0.176). T3's 0.214 m is rail module 1's corner on the edge strip (the
+  runbook's 0.39 m was the proxy's T3 before round 2).
+- T3's first modules on the strip: rail modules 1-4 have corners on the strip's top (1KERB 27.411-27.452 m over ground
+  27.402-27.432) 0.21-1.02 m outside the lane edge. Each module's top stands 1.118 / 1.166 / 1.150 / 1.146 m over the
+  highest surface under it (height 1.0 m over the higher of strip and ground at the author stage).
+- The agree stretches, built width minus `data/edge_retrace.json` runs[1]'s `width_new_m`, every 1.5 m on the built line:
+
+  | s | p50 | min | max m |
+  |---|---|---|---|
+  | 431-459 | +0.113 | +0.036 | +0.192 |
+  | 2,556-2,600 | -0.157 | -0.296 | -0.068 |
+  | 4,113-4,144 | +0.034 | -0.170 | +0.134 |
+  | 4,224-4,249 | -0.116 | -0.169 | -0.058 |
+
+- edge_report (not a gate), 0.1.12 -> 0.1.13, over the same 934 side-stations:
+  - at 1 m: kerb 0.997 -> 0.996, wall 0.003 -> 0.004;
+  - rise in 2 m: median 0.003 -> 0.004, p95 0.082 -> 0.088 m;
+  - ground at 3 m: median -0.027 -> -0.024, p95 0.044 -> 0.051;
+  - at 6 m: median -0.148 -> -0.147;
+  - at 10 m: median -0.227 -> -0.305, p95 -0.158 -> -0.101, below 1 m 0.030 -> 0.021.
+- Stills: 0095 below. **Not done:** the drive (Kevin's), and in-game checks.

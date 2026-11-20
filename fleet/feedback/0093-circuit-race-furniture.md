@@ -302,3 +302,49 @@ Two auto K-rail rows stand no module: `paddock_row_3` (37 m, 12 left out) and `p
 on this config's centreline (12 m road): row 3 runs s 262-299 at -6.5 to -6.7 m, its 0.6 m modules over the road's edge;
 row 8 runs s 212-236 at +4.8 m, on the racing surface. The author is right to leave them out. What the photo's blue
 sections there are (a layout's temporary rails?) is Kevin's call; they stay in the config, standing nothing.
+
+## PC rehearsal 2 (2026-11-20, 1941dfba): High Plains 0.1.8 green, not installed
+
+From an EMPTY workshop (`D:/k10-scratch/hp_0108_reh`, a detached 1941dfba checkout, ENG `eng_hplm_0108` = `eng_hplm_rw`
+plus the eight new textures of 0094-1 and 0095-1, md5-checked; `AIROSO_NUMPY_PY` the PC's lidar venv), `--no-install`,
+12:29-12:34: **SHIP OK**, no force, no FATAL, every gate green. 8aed08ff changes nothing High Plains reads (its config names
+no `pads_seat`, so the seat-pads step does not run, and T3 is Milford's), so this run stands for 8aed08ff. Compared with
+`D:/k10-scratch/hp_0107_mainref`, the main build that reproduces the installed 0.1.7 (kn5 equivalent, 2026-11-19).
+
+- **Draft paint:** `MARKINGS_paint_sf_line: white 11.7 m x 1 stripe(s) (24 quads, 0.015 m over the built ROAD, read-back
+  0.00 mm)`, `MARKINGS_paint_grid_marks: 50 white lines, 15.0 m in all (50 quads, ... read-back 0.00 mm)`.
+- **Author paint, over the built PADAPRON, read-back 0.00 mm each:**
+  - `YLINE_paint_pit_lane_line` 185.0 m (380 quads);
+  - `MARKINGS_paint_pit_lane_end` 11.6 m (24);
+  - `YLINE_paint_pit_in_gore` 9 lines, 83.4 m (172);
+  - the Mac's two lines exactly: `pit_out_gore: clip_to_surface: 14.5 m of 144.3 m of line has no PADAPRON under it, not
+    painted`, then `YLINE_paint_pit_out_gore: 19 yellow lines, 129.8 m in all (273 quads)`.
+- **Bespoke:** 26 rails. `paddock_row_3` (0 of 12) and `paddock_row_8` (0 of 6) stand nothing, as above; every other row has
+  0 left out. Pads: paddock 4,522 cells (38 left out, as 0.1.7), pitlane 90 (0), and 9 post pads (post0-4, post6-9). Blocks:
+  `buildings.race.json` 9 stood, 0 dropped; `posts.race.json` 12 stood, 0 dropped.
+- **Prep:** `[circuit-dummies] 16 prep dummies replaced by 57: the line at s 12.1, 25 grid slots, 25 pits, sectors at s 1080,
+  2149; kn5 heading min +1.000 (the prep's AC_START_0 read -0.974)`.
+- **verify_kn5:** `[race_start] heading: 51 facing nodes, local +Z . travel min +1.00 (AC_START_8), AC_START_0 +1.00` and
+  `[race_start] road: 50 START/PIT cars inside the road, nearest edge +2.07 m (AC_START_10)`.
+- **AI:** `grid check: +0.94 (grid→timing chord over 8 m) -> FORWARD`. fast_lane / pit_lane .ai md5 33cfd2a1 -> 00df7c46
+  (point 0 moved to the line at s 12).
+- **Folder:** `ui_track.json` pitboxes 8 -> 25.
+- **Gates, against the reference:**
+  - drive_test (street and race) and audit: every row equal but audit's `wall_verts` 7,170 -> 13,844 (the new rails);
+  - `floating furniture (walls/fences off support): 0`; `E. walls floating over ground: 0 (worst +0.0 m)`;
+  - kn5_ground PASS, `seating.walls` 10 -> 22 objects, median -0.222 -> -0.235 m;
+  - road_wear_check and house_seat PASS (0095 and 0094 below);
+  - kn5_textures 0 missing (23 embedded); verify_textures untextured 0 (71 meshes).
+- **mesh_diff against the reference:**
+  - equal: `1ROAD_road` (geometry), `1KERB` x22, `1GRASS` x2, `MARKINGS`, `PADAPRON_0`, `1WALL_KRAILBW_0..7`;
+  - new: `MARKINGS_paint_*` x3, `YLINE_paint_*` x3, `PADAPRON_1..10`, `1WALL_KRAILBW_8, 9, 11-13, 15-18, 20-25` (14 and 19
+    are rows 3 and 8, empty), `1WALL_TECPRO_TYRES_10`, `BUILDING_SIDING_CANOPY_0`;
+  - changed: `1WALL_TILTUP_0` (the post colliders), `BUILDING_METAL_0`, `ROOFTOP_TAN_0` / `ROOFTOP_WHITE_0`;
+  - gone: `ROOFTOP_DARK_0`.
+  The textures follow: `asphalt_cracked_normal` and `roof_dark_diffuse` out; `asphalt_dense_normal`,
+  `circuit_facade_diffuse` / `_normal`, `roof_rib_normal`, `line_yellow` and `tecpro_diffuse` in. kn5 17,730,716 ->
+  22,156,060 B.
+- **For the Mac:** the reseat lifted `1WALL_KRAILBW_8` (`pit_wall_west`) onto the prepped ground by p50 0.227 / max
+  0.47 m (124 of its 136 vertices over 1 cm), and `KRAILBW_16` by up to 0.086 m. Every other new rail moved under 1 cm.
+  The author ground and the prepped ground differ by that much at the pit wall's west end. drive_test reads 0 floating.
+- **Not done:** the drive and the 25-car start in game (Kevin's). Stills: the front straight in 0095 below.

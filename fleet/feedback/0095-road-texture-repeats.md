@@ -97,3 +97,45 @@ Mac:
   large variation is meant to come from the aerial).
 - Fleet-wide (every road-wear track, and `pbr.TEXTURES` 1ROAD / 1RUNOFF / HIGHWAY for the rest) after the drive.
 - The run-off and the edge strip, if they repeat in his view.
+
+## PC rehearsal (2026-11-20): Milford 0.1.13 and High Plains 0.1.8, not installed
+
+Milford: ledger 0091's "PC rehearsal 3" (8aed08ff, SHIP OK). High Plains: ledger 0093's "PC rehearsal 2" (1941dfba, SHIP
+OK; nothing after it changes what High Plains reads). Both from EMPTY workshops, compared with the main builds that
+reproduce the installed 0.1.12 / 0.1.7.
+
+- **The pair in both engine copies** (`eng_mflm_0113`, `eng_hplm_0108`): `asphalt_dense_diffuse.jpg`
+  339c4244d8b07494be81df14eb963c8c (2,346,705 B), `asphalt_dense_normal.jpg` 7a71dfcefbbce0267cb0d17f0c931fb0
+  (3,198,685 B), as the runbook says.
+- **Ship log, both:** `[road_wear] 1ROAD: detail high-pass 0.5 m on asphalt_dense_diffuse.jpg: std/mean 27.90 -> 27.87 %`.
+- **`data/road_wear.json` `detail.1ROAD`** (from / normal / highpass_m / clipped_pct; m0):
+
+  | | from | normal | highpass_m | clipped_pct | m0 |
+  |---|---|---|---|---|---|
+  | Milford 0.1.12 | asphalt_cracked | asphalt_cracked | - | 0.444 | 0.85588 |
+  | Milford 0.1.13 | asphalt_dense | asphalt_dense | 0.5 | **0.069** | 0.85537 |
+  | High Plains 0.1.7 | asphalt_cracked | asphalt_cracked | - | 1.27 | 0.76923 |
+  | High Plains 0.1.8 | asphalt_dense | asphalt_dense | 0.5 | **0.408** | 0.76923 |
+
+  0091 moves Milford's road, so its m0 moved by 0.0005. High Plains' road is unchanged, and so is its m0.
+- **road_wear_check:** PASS on every row, both.
+  - Milford: density (111,836 triangles, 0 off), no_repeat (0 claimed twice), detail_phase (worst 1e-05), tone r 0.9555
+    (0.1.12 0.959), rubber centroid 0.045 m / depth on line 0.2168 (declared 0.2073).
+  - High Plains: tone r 0.8587 and photo_rubber (shipped depth 0.14095 against declared 0.14139) identical to 0.1.7;
+    density, no_repeat, detail_phase and the three kerb rows PASS.
+- **kn5_textures:** 0 missing on both, `asphalt_dense_normal.jpg` embedded (txNormalDetail) in place of
+  `asphalt_cracked_normal.jpg`.
+- **mesh_diff against the references:**
+  - High Plains' `1ROAD_road` is **equal**: geometry and UVs unchanged; its material's two maps change as said.
+  - Milford's 1ROAD changes as 0091 says. Its `road_wear_detail_1road.jpg`, `road_wear_detail_1kerb_sidewalk.jpg` and
+    `road_wear_macro.png` change: the line moved.
+- **kn5 bytes:** Milford 42,337,727 -> 62,055,573; High Plains 17,730,716 -> 22,156,060. The pilot's own share is small
+  (the audit's +1.07 MB); the rest is 0091-0094: Milford's run-off pads alone +11.37 MB (ledger 0092).
+- **Stills** (Blender, not the game: no computer use of AC on the PC): a driver's eye 1.1 m over the built road, looking
+  60 m ahead along the lap, fov 60, the menu pictures' sun. Each is the reference's next to the rehearsal's from the same
+  spot:
+  - `tracks/high-plains-lm/source/road_wear/stills/front_straight_s3021_0107_vs_0108.jpg`;
+  - `tracks/milford-road-course-lm/source/road_wear/stills/front_straight_s4600_0112_vs_0113.jpg` and `..._s4840_...`.
+  The cracked 4 m tile's grid reads plainly in every reference; the owned asphalt shows none. Script: the PC's scratch
+  copy of `tools/menu_preview_blend.py` with a seat camera (`SEAT_SPOTS`).
+- **Not done:** the far road in game (Kevin's drive).

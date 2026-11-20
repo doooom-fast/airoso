@@ -209,3 +209,53 @@ paddock's 10 m terrain grid; 14.17 m is its diagonal. The buildings group names 
   into a post is Kevin's (no computer use of AC on the PC). If another post is refused for a reason past this one, the log
   names it.
 - `tests/tools/test_circuit_buildings.py::test_high_plains_canopy_posts_stand_on_the_paddock_grid_by_their_own_limit`.
+
+## PC rehearsal 2 (2026-11-20, 1941dfba): High Plains, the proof owed
+
+The same run as ledger 0093's "PC rehearsal 2" (SHIP OK, empty workshop).
+
+- **Canopies, author log:** `block osm289311821: canopy on 38 posts, 59 m from the lap, 38 post colliders` and `block
+  traced_pit_entry_canopy: canopy on 8 posts, 23 m from the lap, 8 post colliders`. That is **46 post colliders, not 44**:
+  the carport row stands 38 posts, not 36. No post was refused for any reason.
+- **house_seat** PASS: 21 buildings judged (0.1.7: 19), 0 floating / sunken / buried, contact -0.397..-0.15 m.
+- **house_gate:** no floor is declared, so the gate skips. Its own `count()` on the built kn5, 0.1.7 -> 0.1.8:
+  - colliders (1WALL_TILTUP shells) 2 -> 47;
+  - blocks 19 -> 21 (BUILDING_METAL 19, plus BUILDING_SIDING 2);
+  - roofs 19 -> 20.
+- **drive_test:** `floating furniture (walls/fences off support): 0`. The posts read 0 floating on the 14.5 m limit.
+- **Facades** (`data/bespoke.report.json`):
+  - the six garages, skin `garage`, bays / openings: osm289311820 12 / 7, osm289311823 16 / 7, osm289311824 6 / 5,
+    osm289314487 6 / 5, osm289316523 13 / 7, traced_white_w_of_osm289311820 10 / 6;
+  - `traced_container_row` container_row 28 / 25;
+  - the 12 posts post 4 / 4;
+  - the two canopies carry no facade row.
+- kn5_textures 0 missing (the facade atlas and `roof_rib_normal` embedded); verify_textures untextured 0.
+- **Not done:** the drive into a post (Kevin's; no computer use of AC on the PC), and a look at rib shimmer or atlas seams
+  at distance.
+
+## PC rehearsal 3 (2026-11-20, 8aed08ff): Milford
+
+The run of ledger 0091's "PC rehearsal 3" (SHIP OK, empty workshop).
+
+- **Author log:** 25 blocks, each with its `TILTUP` / `METAL` line; `rooftop units: 85 stood, 0 dropped`; no self-check
+  FAILED.
+- **Facades** (`data/bespoke.report.json`), skin, bays / openings:
+  - every plant building `plant`: mpg_plant_a 76 / 34, mpg_plant_b 74 / 35, mpg_west_bldg_a / b / c 20 / 10, 50 / 24,
+    14 / 8, mpg_nw_small 6 / 4;
+  - mpg_far_sw_0..3 10, 10, 12, 8 bays / 8 openings each; mpg_far_w_small_0 10 / 8; mpg_nw_complex_1..12 6-24 bays /
+    4-14 openings;
+  - the pad sheds `container_tan` 12 / 2 (north) and `container_white` 10 / 1 (south).
+- **house_seat** PASS: 3 judged, 0 floating / sunken / buried, contact -0.323..-0.15 m.
+- **house_gate:** no floor is declared, so the gate skips. Its own `count()` on the built kn5, 0.1.12 -> 0.1.13:
+  - blocks 25 -> **110** (FARBLOCK_METAL 85, the rooftop units, + FARBLOCK_TILTUP 23 + BUILDING_METAL 2);
+  - roofs 25 -> 25 (ROOFTOP_NAIP 7 + ROOFTOP_WHITE 18, was ROOFTOP_WHITE 24 + ROOFTOP_TAN 1);
+  - colliders 65 -> 65.
+- **kn5_textures** 0 missing: `circuit_facade_diffuse` / `_normal`, `fabric_tent_diffuse` / `_normal`,
+  `roof_membrane_normal`, `roof_flat_normal.png` and `roof_naip_palette.png` are in; `metal_wall_*` and `roof_tan_diffuse`
+  are out. verify_textures: untextured 0 (54 meshes).
+- **mesh_diff against the 0.1.12 reference:**
+  - BUILDING_METAL_0, FARBLOCK_TILTUP_0 and ROOFTOP_WHITE_0 differ; FARBLOCK_METAL_RTU_0 and ROOFTOP_NAIP_0 are new;
+    ROOFTOP_TAN_0 is gone; BUILDING_FABRIC_pad_tent is equal.
+  - The road, ground, kerbs, walls and guardrails differ too, from 0091 / 0092 (the line and the ground), not from 0094.
+- **Not done:** the stills of the plants, the pad sheds and the tent in game, and a look at rib shimmer / atlas seams
+  (Kevin's drive).

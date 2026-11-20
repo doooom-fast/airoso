@@ -239,3 +239,35 @@ the higher piece" (Nevada 0.1.3's 1.5 mm, ledger 0087) did not reach it.
   across its diagonal, under a pad of 3 m cells. Before: `FATAL: 1RUNOFF_apron_0: ground over 9 of its vertices`. After:
   `9 vertex(es) raised onto a fold of the ground, at most 1.8 mm`, ground over 0 / 168, saved. Two scenes with no failing
   vertex gave the same pad before and after. `tests/tools/test_pad_folds.py` (the PC's vertex).
+
+## PC rehearsal 3 (2026-11-20, 8aed08ff): green
+
+The run of ledger 0091's "PC rehearsal 3" (SHIP OK; empty workshop; resumed at `grassfx_aerial` for the second numpy step,
+which ce765a73 now routes through `py_with numpy PIL`; the lidar venv's python imports both).
+
+- **Ground patch:** `[lidar_patch] corridor: 812 x 1184 nodes of the 1 m grid, 275174 read, 42503 filled from their
+  neighbours, 317677 weighted`.
+  - The runbook's 275249 / 42877 / 318126 came from the Mac's dry run. The PC reads the same counts on runs 2 and 3: the
+    PC assembler's swept line (1244fc50) against the dry run's.
+  - `culvert_4349_w: 26 x 19 nodes, 409 read, 26 filled`, unchanged.
+  - `[ground-patch] corridor: TERRAIN 377098 -> 460565 vertices` (+83,467; model ~83,000), `101314 seated on the lidar
+    ground`, `largest move 7.95 m`.
+  - `culvert_4349_w: TERRAIN 460565 -> 462305` (+1,740), `826 seated (323 in the 3 m feather), largest move 4.24 m`.
+- **Pads:** `ride_pad` 1,058 cells and the 19 runoff keys exactly as listed (R0125 ... L4775), 0 left out, no self-check
+  FAILED.
+- **Seat-pads:** `[seat-pads] PADAPRON_9: 1 vertex(es) raised onto a fold of the ground, at most 1.8 mm`, then
+  `PADAPRON_9 -> 1RUNOFF_apron_9: 3567 triangles on the ground, 1991 verts, ground over 0 / 1991`. All 20 aprons ground
+  over 0; `data/seat_pads.json` records apron_9's fold raise only.
+- **The pads' inner edges on the gate OBJ:** 0 vertices over the lane on every pad.
+  - The kept pads that meet the lane start **1.704-1.895 m** off its edge (the Mac: 1.83-1.90):
+    - R0125 1.895, R0356 1.876, L0395 **1.764**, L0883 1.883, R0998 **1.704**, L1175 1.865, L1530 1.889, L2508 1.866;
+    - L2588 1.882, R3239 1.890, R3370 1.894, R3453 1.883, R3883 1.868, L4512 1.863, L4775 1.891.
+  - Away from it: L0338 29.5, L3510 13.7, L4359 10.3, R4375 13.5 m; the ride pad 103 m.
+- **The pads' cost in bytes:** the 20 aprons are 247,197 writer vertices for 82,408 triangles, 3.0 a triangle. seat_pads
+  builds them flat-shaded (`shade_flat=True`, from the ground's own triangles). That is +11.37 MB of the road kn5's
+  +19.72 MB. 0.1.12's one PADAPRON was 6,348 vertices.
+- **GrassFX:** `100 x 131 cells of 12 m, 2636 of them read as 4 cells of 6 m ...; 2067 rectangles, 2067 kept` (the Mac's run:
+  2656 / 2090, on its line).
+- **drive_test:** one new gated excursion drop at (s 1050.6, +11.0 m, 0.14 m). The two others are 0.1.12's, moved under
+  1 m along the lap. Far ledges 30 -> 32 (ledger 0091 above).
+- **Not done:** the drive onto the pads (Kevin's).

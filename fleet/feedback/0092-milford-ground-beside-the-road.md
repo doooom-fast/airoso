@@ -217,7 +217,12 @@ here, the same 50.
 Milford 0.1.13's first run stopped at the new draft step: `tools/lidar_ground_patch.py` ran as plain `python`, and the PC's
 system python has no numpy. The PC re-ran with its lidar venv first on PATH. `tools/ship_track.sh` now resolves the
 interpreter for that step (`numpy_py`): `$AIROSO_NUMPY_PY` when set, else `python` when it imports numpy, else it stops
-with a FATAL naming the variable. Every other numpy step runs inside Blender.
+with a FATAL naming the variable. ~~Every other numpy step runs inside Blender.~~ Wrong: run 3 stopped again at
+`ship_grassfx_aerial`, where `tools/plan_grassfx_aerial.py`'s refined path (this entry's 6 m looks) imports numpy, and the
+script imports PIL at the top. `ship_track.sh` now has `py_with <modules>`: `$AIROSO_NUMPY_PY` first, then `python`, the
+first that imports them all. The ground patch takes `py_with numpy`; the GrassFX step takes `py_with numpy PIL`, falling
+back to plain `python` (only the refined path needs numpy, so other tracks run as before). The network chain's
+`scripts.elevation.network_elev` also imports numpy and stays on plain python: it is not in a circuit's chain.
 
 Run 2 (lidar venv) stopped later, in the ship step: `[seat-pads] FATAL: 1RUNOFF_apron_9: ground over 1 of its vertices`
 (apron_9 = runoff_L2508, s 2,505.5, 13.8 m left of the line). The PC read the vertex: (-2.068, 444.711, 7.1748), ground hit

@@ -127,14 +127,19 @@ ENGINE=""
 
 step() { echo; echo "=================== $1"; }
 pyq() { (cd "$AIROSO" && python -c "$@"); }
-# a python that has numpy, for the plain-python draft steps that need it (ledger 0092's tools/lidar_ground_patch.py; every
-# other numpy step runs inside Blender): $AIROSO_NUMPY_PY when set, else `python` when it imports numpy, else none (the
-# PC's first Milford 0.1.13 rehearsal stopped there: "No module named 'numpy'", 2026-11-20)
-numpy_py() {
-  if [ -n "${AIROSO_NUMPY_PY:-}" ]; then printf '%s' "$AIROSO_NUMPY_PY"; return 0; fi
-  if python -c "import numpy" >/dev/null 2>&1; then printf 'python'; return 0; fi
+# a python that imports every module named, for the plain-python steps that need numpy (ledger 0092: tools/lidar_ground_patch.py
+# --npz, numpy; tools/plan_grassfx_aerial.py's refined path, numpy + PIL; the PC's system python has no numpy, and Milford
+# 0.1.13's rehearsals stopped on both, 2026-11-20): $AIROSO_NUMPY_PY first, then `python`, the first that imports them all;
+# none = return 1. (scripts.elevation.network_elev, the network chain's, is left on plain python: it needs more than numpy)
+py_with() {
+  local c
+  for c in "${AIROSO_NUMPY_PY:-}" python; do
+    [ -n "$c" ] || continue
+    if "$c" -c "import $(IFS=,; printf '%s' "$*")" >/dev/null 2>&1; then printf '%s' "$c"; return 0; fi
+  done
   return 1
 }
+numpy_py() { py_with numpy; }
 no_race() { echo; echo "(no race layout declared: $1 skipped)"; }
 # run_step <phase> <step>: the phase's function — with --from, skipped (and said so) until the named step is reached.
 # The gates never go through here: every gate runs on every run, whatever --from says.
@@ -587,7 +592,9 @@ author_paint() {
 
 ship_grassfx_aerial() {
   step "ship: GrassFX zones off the track's aerial (tools/plan_grassfx_aerial.py; none declared = no-op), read by the track folder's ext_config"
-  python "$AIROSO/tools/plan_grassfx_aerial.py" "$PROJ"
+  local gpy
+  gpy="$(py_with numpy PIL)" || gpy=python     # only 0092's refined path imports numpy: without it, plain python as before
+  "$gpy" "$AIROSO/tools/plan_grassfx_aerial.py" "$PROJ"
 }
 
 # --- prep: exactly these two, in this order ------------------------------------------------------------------

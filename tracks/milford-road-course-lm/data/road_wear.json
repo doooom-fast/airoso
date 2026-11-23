@@ -21,8 +21,8 @@
     ],
     [
      "txNormalDetail",
-     "building_normal.jpg",
-     "D:\\k10-worktrees\\road-pilot\\assets\\textures\\building_normal.jpg"
+     "concrete_plain_normal.jpg",
+     "D:\\k10-worktrees\\mf-finish\\assets\\textures\\concrete_plain_normal.jpg"
     ]
    ],
    "props": {
@@ -54,7 +54,7 @@
     [
      "txNormalDetail",
      "asphalt_dense_normal.jpg",
-     "D:\\k10-worktrees\\road-pilot\\assets\\textures\\asphalt_dense_normal.jpg"
+     "D:\\k10-worktrees\\mf-finish\\assets\\textures\\asphalt_dense_normal.jpg"
     ]
    ],
    "props": {
@@ -158,8 +158,8 @@
  "detail_uv_multiplier": 256.0,
  "detail": {
   "1KERB_SIDEWALK": {
-   "from": "building_diffuse.jpg",
-   "normal": "building_normal.jpg",
+   "from": "concrete_plain_diffuse.jpg",
+   "normal": "concrete_plain_normal.jpg",
    "clipped_pct": 0.0,
    "size": [
     1024,

@@ -170,7 +170,7 @@
   "pins": 10,
   "pin_gap_max_m": 0.0,
   "bridge_seating": {
-   "hit": 273,
+   "hit": 270,
    "near": 0,
    "interpolated": 0
   },
@@ -570,7 +570,7 @@
   },
   "scenery_source": "trees: tools/make_treefx.py plan (every species); signs: data/signs.local.json",
   "scenery_items": {
-   "tree": 21484,
+   "tree": 21387,
    "sign": 29
   },
   "scenery_beside": 391,
@@ -579,7 +579,7 @@
    "race_acw": {
     "layout": "race_acw",
     "kind": "tree",
-    "id": "Gum.bin@lidar_trees#21468",
+    "id": "Gum.bin@lidar_trees#21371",
     "vertex": 1409,
     "lat_m": -6.261,
     "xz": [

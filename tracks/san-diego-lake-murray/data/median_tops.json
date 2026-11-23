@@ -1,5 +1,5 @@
 {
- "_doc": "tools/author_median_tops_blend.py (ledger 0055): the medians' grass tops moved out of TERRAIN into their own object, which the prep does not pin under the road",
+ "_doc": "tools/author_median_tops_blend.py (ledgers 0055, 0099 round 3): the medians' tops moved out of TERRAIN into their own objects, which the prep does not pin under the road: grass tops (1LAWN...) and paved tops (1KERB_PAVER...)",
  "object": "1LAWN_median",
  "only": null,
  "islands": [
@@ -9,6 +9,7 @@
     846,
     1073
    ],
+   "surface": "grass",
    "strips": 1,
    "vertices": 456,
    "faces": 454
@@ -19,6 +20,7 @@
     1096,
     1116
    ],
+   "surface": "grass",
    "strips": 1,
    "vertices": 42,
    "faces": 40
@@ -29,6 +31,7 @@
     1476,
     1487
    ],
+   "surface": "grass",
    "strips": 1,
    "vertices": 24,
    "faces": 22
@@ -39,6 +42,7 @@
     1540,
     1739
    ],
+   "surface": "grass",
    "strips": 1,
    "vertices": 400,
    "faces": 398
@@ -49,6 +53,7 @@
     2183,
     2297
    ],
+   "surface": "grass",
    "strips": 1,
    "vertices": 230,
    "faces": 228
@@ -59,6 +64,7 @@
     5,
     215
    ],
+   "surface": "grass",
    "strips": 1,
    "vertices": 422,
    "faces": 420
@@ -69,6 +75,7 @@
     240,
     308
    ],
+   "surface": "grass",
    "strips": 1,
    "vertices": 138,
    "faces": 136
@@ -79,6 +86,7 @@
     320,
     473
    ],
+   "surface": "grass",
    "strips": 1,
    "vertices": 308,
    "faces": 306
@@ -89,6 +97,7 @@
     8,
     315
    ],
+   "surface": "grass",
    "strips": 1,
    "vertices": 616,
    "faces": 614
@@ -99,6 +108,7 @@
     129,
     173
    ],
+   "surface": "grass",
    "strips": 1,
    "vertices": 90,
    "faces": 88
@@ -109,6 +119,7 @@
     200,
     228
    ],
+   "surface": "grass",
    "strips": 1,
    "vertices": 58,
    "faces": 56
@@ -117,21 +128,34 @@
    "line": "north_mission_gorge",
    "rows": [
     8,
-    48
+    53
    ],
+   "surface": "paver",
    "strips": 1,
-   "vertices": 82,
-   "faces": 80
+   "vertices": 92,
+   "faces": 45
   },
   {
    "line": "north_mission_gorge",
    "rows": [
-    63,
+    67,
+    354
+   ],
+   "surface": "paver",
+   "strips": 1,
+   "vertices": 576,
+   "faces": 287
+  },
+  {
+   "line": "north_mission_gorge",
+   "rows": [
+    365,
     741
    ],
+   "surface": "paver",
    "strips": 1,
-   "vertices": 1358,
-   "faces": 1356
+   "vertices": 754,
+   "faces": 376
   },
   {
    "line": "north_J5_jackson_north",
@@ -139,19 +163,38 @@
     621,
     649
    ],
+   "surface": "grass",
    "strips": 1,
    "vertices": 58,
    "faces": 56
   }
  ],
- "strips": 14,
- "vertices": 4282,
- "faces": 4254,
+ "strips": 15,
+ "vertices": 4264,
+ "faces": 3526,
+ "grass": {
+  "object": "1LAWN_median",
+  "islands": 12,
+  "strips": 12,
+  "vertices": 2842,
+  "faces": 2818
+ },
+ "paver": {
+  "object": "1KERB_PAVER_median",
+  "islands": 3,
+  "strips": 3,
+  "vertices": 1422,
+  "faces": 708
+ },
+ "moved_this_run": {
+  "out_of_terrain": 0,
+  "from_one_top_object_to_the_other": 3
+ },
  "deck_over_the_road_m": {
   "min": 0.1415,
   "max": 0.2283
  },
- "rows_checked": 2123,
+ "rows_checked": 2110,
  "rows_with_no_top": 0,
  "rows_with_the_top_at_two_of_three_points": [
   {
@@ -167,26 +210,26 @@
    "band_w_m": 4.89
   }
  ],
- "_rows_two_of_three_doc": "the built island is narrower than its band in data/median_bands.json on one side there; the row still reads grass by the measure's own rule (two of three points)",
+ "_rows_two_of_three_doc": "the built island is narrower than its band in data/median_bands.json on one side there; the row still reads as topped by the measure's own rule (two of three points)",
  "islands_with_no_deck_in_the_scene": [],
- "_no_deck_doc": "the scene holds no grass top for these islands (nothing stands 0.185 m over the road between their rows), so there is nothing to move: they show the road between their curbs, as before",
+ "_no_deck_doc": "the scene holds no top for these islands (nothing stands 0.185 m over the road between their rows), so there is nothing to move: they show the road between their curbs, as before",
  "band_runs_too_short_to_be_islands": [
   {
    "line": "north_mission_gorge",
    "rows": [
-    54,
-    57
+    58,
+    61
    ]
   }
  ],
  "_short_runs_doc": "runs of the median band under 6 rows: tools/author_median_blend.py builds no island for them (no curb, no top), so they are no part of this step",
  "terrain": {
   "vertices": [
-   675413,
+   671131,
    671131
   ],
   "faces": [
-   1323069,
+   1318815,
    1318815
   ]
  },

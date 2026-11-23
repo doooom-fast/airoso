@@ -18,7 +18,7 @@
   "overridden": true
  },
  "bands": 16,
- "faces_in_bands": 153984,
+ "faces_in_bands": 154000,
  "steep_under_pavement_left_grass": 5213,
  "rock_raw": 13729,
  "boundary_smoothing": {

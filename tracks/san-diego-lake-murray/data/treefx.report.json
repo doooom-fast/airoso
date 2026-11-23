@@ -1,11 +1,11 @@
 {
  "_doc": "tools/make_treefx.py: what trees.txt holds (counts per zone and per species; the north network per piece per species, its planted area, the loop's density and the area-scaled caps \u2014 ledger 0054 P4 / A9)",
- "total": 21424,
+ "total": 21327,
  "per_zone": {
   "palms": 890,
   "trees": 408,
   "scrub": 983,
-  "median_planting": 1020,
+  "median_planting": 923,
   "fill_yard_trees": 1660,
   "fill_yard_bushes": 1567,
   "fill_slope_trees": 1770,
@@ -23,7 +23,7 @@
  },
  "per_species": {
   "Agave.bin": 1122,
-  "Bush.bin": 3937,
+  "Bush.bin": 3868,
   "Bush3.bin": 1898,
   "Gum.bin": 1460,
   "Oak3.bin": 1416,
@@ -32,7 +32,7 @@
   "PalmV3.bin": 102,
   "PepperV1.bin": 758,
   "Pine_Aleppo.bin": 1182,
-  "Sage.bin": 5724,
+  "Sage.bin": 5696,
   "SycamoreV1.bin": 531,
   "SycamoreV2.bin": 132,
   "Yucca.bin": 2179
@@ -50,7 +50,7 @@
   "walk": 2,
   "building": 33
  },
- "surface_materials": "1GRASS_0_mat, 1GRASS_1_mat, 1GRASS_2_mat, 1GRASS_3_mat, 1GRASS_4_mat, 1GRASS_5_mat, 1GRASS_6_mat, 1GRASS_7_mat, 1GRASS_8_mat, 1GRASS_9_mat, 1GRASS_10_mat, 1GRASS_11_mat, 1GRASS_12_mat, 1GRASS_13_mat, 1GRASS_14_mat, 1GRASS_15_mat, 1GRASS_ROCK_4_mat, 1GRASS_ROCK_5_mat, 1GRASS_ROCK_6_mat, 1GRASS_ROCK_7_mat, 1GRASS_ROCK_12_mat, 1GRASS_ROCK_13_mat, 1GRASS_ROCK_14_mat, 1LAWN_median_mat, 1ROAD_road_mat",
+ "surface_materials": "1GRASS_0_mat, 1GRASS_1_mat, 1GRASS_2_mat, 1GRASS_3_mat, 1GRASS_4_mat, 1GRASS_5_mat, 1GRASS_6_mat, 1GRASS_7_mat, 1GRASS_8_mat, 1GRASS_9_mat, 1GRASS_10_mat, 1GRASS_11_mat, 1GRASS_12_mat, 1GRASS_13_mat, 1GRASS_14_mat, 1GRASS_15_mat, 1GRASS_ROCK_4_mat, 1GRASS_ROCK_5_mat, 1GRASS_ROCK_6_mat, 1GRASS_ROCK_7_mat, 1GRASS_ROCK_12_mat, 1GRASS_ROCK_13_mat, 1GRASS_ROCK_14_mat, 1KERB_PAVER_median_mat, 1LAWN_median_mat, 1ROAD_road_mat",
  "north": {
   "area_loop_m2": 4720500,
   "area_north_m2": 2019500,
@@ -143,8 +143,9 @@
   "kept_rank_rule": 850
  },
  "median_spots": {
-  "dropped": 82,
-  "foot_moved": 36
+  "dropped": 179,
+  "foot_moved": 36,
+  "moved": 6
  },
  "lidar_plants": {
   "split_h_m": 4.0,

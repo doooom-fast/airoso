@@ -1,0 +1,269 @@
+{
+ "_doc": "tools/author_median_rebuild_blend.py (ledger 0099 round 3, items 1b and 2): the median islands of one line re-authored in the scene from corrected data, by the island's own rule (tools/median_island.py) and the assembler's own paint function",
+ "line": "north_mission_gorge",
+ "was_rows": [
+  [
+   8,
+   48
+  ],
+  [
+   63,
+   741
+  ]
+ ],
+ "now_rows": [
+  [
+   8,
+   53
+  ],
+  [
+   67,
+   354
+  ],
+  [
+   365,
+   741
+  ]
+ ],
+ "record": "source/expansion/mg_median/mg_median_correction.json",
+ "signature": "cdb678a880e832d1",
+ "the_old_island_as_found": {
+  "curb": [
+   {
+    "rows": [
+     8,
+     48
+    ],
+    "object": "CURB",
+    "vertices": 246,
+    "bounds_xyz": [
+     [
+      -2988.33,
+      -2876.0
+     ],
+     [
+      2057.62,
+      2101.79
+     ],
+     [
+      -66.49,
+      -62.84
+     ]
+    ]
+   },
+   {
+    "rows": [
+     63,
+     741
+    ],
+    "object": "CURB",
+    "vertices": 4074,
+    "bounds_xyz": [
+     [
+      -2833.49,
+      -1238.7
+     ],
+     [
+      2115.15,
+      3174.41
+     ],
+     [
+      -61.1,
+      14.01
+     ]
+    ]
+   }
+  ],
+  "deck": [
+   {
+    "rows": [
+     8,
+     48
+    ],
+    "object": "1LAWN_median",
+    "vertices": 82,
+    "bounds_xyz": [
+     [
+      -2988.27,
+      -2876.09
+     ],
+     [
+      2057.81,
+      2101.61
+     ],
+     [
+      -66.29,
+      -62.84
+     ]
+    ]
+   },
+   {
+    "rows": [
+     63,
+     741
+    ],
+    "object": "1LAWN_median",
+    "vertices": 1358,
+    "bounds_xyz": [
+     [
+      -2833.47,
+      -1238.7
+     ],
+     [
+      2115.35,
+      3174.21
+     ],
+     [
+      -60.9,
+      14.02
+     ]
+    ]
+   }
+  ],
+  "barrier": {
+   "object": "GUARDRAIL",
+   "vertices": 4712,
+   "beams": 2,
+   "posts": 235
+  },
+  "markings": {
+   "object": "MARKINGS",
+   "strips": 693,
+   "of": 693
+  },
+  "yline": {
+   "object": "YLINE",
+   "strips": 1480,
+   "of": 1480
+  }
+ },
+ "objects": {
+  "CURB": {
+   "vertices_out": 4320,
+   "faces_out": 2880,
+   "vertices_in": 4266,
+   "faces_in": 2844,
+   "vertices": [
+    86690,
+    86636
+   ],
+   "faces": [
+    112524,
+    112488
+   ]
+  },
+  "GUARDRAIL": {
+   "vertices_out": 4712,
+   "faces_out": 3764,
+   "vertices_in": 4612,
+   "faces_in": 3680,
+   "vertices": [
+    13508,
+    13408
+   ],
+   "faces": [
+    10804,
+    10720
+   ]
+  },
+  "MARKINGS": {
+   "vertices_out": 2772,
+   "faces_out": 1386,
+   "vertices_in": 2864,
+   "faces_in": 1432,
+   "vertices": [
+    100812,
+    100904
+   ],
+   "faces": [
+    50406,
+    50452
+   ]
+  },
+  "YLINE": {
+   "vertices_out": 5920,
+   "faces_out": 2960,
+   "vertices_in": 5712,
+   "faces_in": 2856,
+   "vertices": [
+    71440,
+    71232
+   ],
+   "faces": [
+    35720,
+    35616
+   ]
+  },
+  "1LAWN_median": {
+   "vertices_out": 1440,
+   "faces_out": 1436,
+   "vertices_in": 1422,
+   "faces_in": 708,
+   "vertices": [
+    4282,
+    4264
+   ],
+   "faces": [
+    4254,
+    3526
+   ]
+  }
+ },
+ "new": {
+  "curb_vertices": [
+   276,
+   1728,
+   2262
+  ],
+  "deck_vertices": [
+   92,
+   576,
+   754
+  ],
+  "beam_vertices": [
+   160,
+   1128,
+   1484
+  ],
+  "posts": 230,
+  "paint_strips": {
+   "MARKINGS": 716,
+   "YLINE": 1428
+  }
+ },
+ "old": {
+  "curb_vertices": [
+   246,
+   4074
+  ],
+  "deck_vertices": [
+   82,
+   1358
+  ],
+  "beam_vertices": [
+   140,
+   2692
+  ],
+  "posts": 235,
+  "paint_strips": {
+   "MARKINGS": 693,
+   "YLINE": 1480
+  }
+ },
+ "deck_over_the_road_m": {
+  "min": 0.1727,
+  "max": 0.2015
+ },
+ "curb_base_over_the_road_m": {
+  "new": [
+   -0.0333,
+   -0.0025
+  ],
+  "old": [
+   -0.0295,
+   -0.0089
+  ],
+  "_doc": "the rule sets a ring's base 0.02 m under its line's own height; where the road falls away from that line the base stands over the road by the difference"
+ },
+ "deck_object": "1LAWN_median"
+}

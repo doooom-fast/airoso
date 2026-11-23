@@ -6,7 +6,7 @@
   "by_layout": {},
   "scenery_source": "trees: trees.txt (written); signs: data/signs.local.json",
   "scenery_items": {
-   "tree": 21424,
+   "tree": 21327,
    "sign": 29
   },
   "scenery_beside": 367,
@@ -15,7 +15,7 @@
    "race_cw": {
     "layout": "race_cw",
     "kind": "tree",
-    "id": "SycamoreV1.bin#21327",
+    "id": "SycamoreV1.bin#21230",
     "vertex": 1323,
     "lat_m": 4.956,
     "xz": [

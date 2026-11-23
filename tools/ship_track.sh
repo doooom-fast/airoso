@@ -30,7 +30,9 @@
 #
 # Per track, from data, never from this script:
 #   tracks/<track>/ship.json        workshop root + project folder, the steps, what syncs in and out, the
-#                                   installed name prefix (tools/ship_track_spec.py has the schema)
+#                                   installed name prefix (tools/ship_track_spec.py has the schema); sync_in.seed
+#                                   (opt-in, ledger 0099): files copied only into a project that lacks them — a
+#                                   seeded loop.blend lets an EMPTY workshop resume with --skip-blend
 #   track.config.json slug          every file name inside (<slug>.kn5, <slug>_race.kn5, ...)
 #   track.config.json install_folder  the folder the install writes under content/tracks (plan A11)
 #   track.config.json layouts[]     every per-layout step; race stages run only for race_furniture layouts
@@ -573,6 +575,14 @@ author_race_verify() {
   (cd "$AIROSO" && python tools/plot_race_furniture.py "$PROJ" | tail -3)   # data/race_plots/*.png
 }
 
+author_lamp_heads() {
+  # ledger 0099 (Kevin 2026-11-22: "Yes, light both heads"; opt-in scenery.streetlights.light_both_heads): every two-arm lamp's
+  # back head gets its lens (LIGHTS_back, each LIGHTS_0 lens turned about its own pole), so ext_config clusters a second CSP
+  # light per lamp and check_lights_ini wants both; key absent = no-op, the blend not saved. Only a ship.json that names it
+  step "author: the back head of every two-arm lamp lit (tools/author_lamp_heads_blend.py: LIGHTS_back, one lens per back head; ledger 0099; self-checked; not opted in = no-op)"
+  (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_lamp_heads_blend.py" -- "$PROJ" 2>&1 | grep "^\[heads\]\|FATAL\|Error\|Traceback" )
+}
+
 author_draft_pads() {
   step "author: engine-draft junction pads -> AUTH_pads (tools/author_draft_pads_blend.py: the lap cut at each pad's two rows, one deck to the measured outline in source/pads/<id>.json, the ground under it; self-checked; none declared = no-op)"
   (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_draft_pads_blend.py" -- "$PROJ" 2>&1 | grep "^\[pads\]\|Error\|Traceback" )
@@ -1086,7 +1096,7 @@ is_data_step() {
 SPEC_LINES=$(cd "$AIROSO" && python tools/ship_track_spec.py "$SPEC" "$TRACK") || { echo "ship.json refused (above): $SPEC"; exit 2; }
 WS=""; WS_SUB=""; REQUIRE_RACE=0; UI_PREFIX=""; AUDIT_NOTE=""; JULY_AI=""; SPEC_ENGINE="airoso"
 DRAFT=(); AUTHOR=(); PREP=(); SHIP=(); GATE=()
-IN_REQ=(); IN_OPT=(); IN_GLOB=(); IN_DIR=(); IN_ASSET=()
+IN_REQ=(); IN_OPT=(); IN_GLOB=(); IN_DIR=(); IN_ASSET=(); IN_SEED=()
 OUT_REQ=(); OUT_FILE=(); OUT_DIR=(); OUT_RM=(); OUT_MAP_FROM=(); OUT_MAP_TO=()
 while IFS=$'\t' read -r k v w; do
   v="${v%$'\r'}"; w="${w%$'\r'}"
@@ -1108,6 +1118,7 @@ while IFS=$'\t' read -r k v w; do
     in.globs) IN_GLOB+=("$v");;
     in.dirs) IN_DIR+=("$v");;
     in.assets) IN_ASSET+=("$v");;
+    in.seed) IN_SEED+=("$v");;
     out.required) OUT_REQ+=("$v");;
     out.files) OUT_FILE+=("$v");;
     out.dirs) OUT_DIR+=("$v");;
@@ -1195,7 +1206,16 @@ blend_builder_ready() {
   esac; done
   return 1
 }
-if [ "$DRAFT_ONLY" = 0 ] && [ ! -f "$PROJ/loop.blend" ] && ! blend_builder_ready; then
+# ledger 0099 (opt-in, ship.json sync_in.seed): a seeded loop.blend is a blend — the sync-in below copies airoso's
+# committed one into a project that has none (Lake Murray: the hand-authored blend no draft may regenerate)
+seed_blend_ready() {
+  local f
+  for f in ${IN_SEED[@]+"${IN_SEED[@]}"}; do
+    [ "$f" = "loop.blend" ] && [ -f "$SRC/loop.blend" ] && return 0
+  done
+  return 1
+}
+if [ "$DRAFT_ONLY" = 0 ] && [ ! -f "$PROJ/loop.blend" ] && ! seed_blend_ready && ! blend_builder_ready; then
   echo; echo "no blend yet: $PROJ/loop.blend does not exist and nothing in this run can build it"
   if [ "$SKIP_BLEND" = 1 ]; then echo "  (--skip-blend resumes from an authored loop.blend)"
   elif [ -n "$FROM" ]; then echo "  (--from $FROM resumes past the draft; the draft that builds the blend ran in no earlier run)"
@@ -1239,6 +1259,26 @@ for f in ${IN_ASSET[@]+"${IN_ASSET[@]}"}; do
   [ -f "$AIROSO/$f" ] || { echo "ship.json sync_in.assets names $f but airoso has no $AIROSO/$f"; exit 1; }
   mkdir -p "$(dirname "$PROJ/$f")"; cp "$AIROSO/$f" "$PROJ/$f"
 done
+# ledger 0099 (opt-in, ship.json sync_in.seed): what an EMPTY workshop lacks and airoso holds — copied only where the project
+# has no file yet, never over a workshop's own; every seed must exist in airoso and none may be a Git LFS pointer (an
+# un-pulled loop.blend is 130 bytes of text: the prep would open no blend)
+if [ ${#IN_SEED[@]} -gt 0 ]; then
+  n_seeded=0; n_kept=0; n_differ=0
+  for f in "${IN_SEED[@]}"; do
+    [ -f "$SRC/$f" ] || { echo "ship.json sync_in.seed names $f but airoso has no $SRC/$f"; exit 1; }
+    sig=""; IFS= read -r -n 23 sig < "$SRC/$f" || true      # the pointer's first 23 bytes (read, not a pipe: NUL-safe)
+    if [ "$sig" = "version https://git-lfs" ]; then
+      echo "ship.json sync_in.seed: $SRC/$f is a Git LFS pointer, not the file (run git lfs pull in airoso)"; exit 1
+    fi
+    if [ -e "$PROJ/$f" ]; then
+      n_kept=$((n_kept + 1))
+      if ! cmp -s "$SRC/$f" "$PROJ/$f"; then n_differ=$((n_differ + 1)); echo "  seed kept the workshop's own $f (it differs from airoso's)"; fi
+    else
+      mkdir -p "$(dirname "$PROJ/$f")"; cp "$SRC/$f" "$PROJ/$f"; n_seeded=$((n_seeded + 1))
+    fi
+  done
+  echo "  seeds: $n_seeded copied from airoso, $n_kept kept as the workshop had them ($n_differ of those differ from airoso's)"
+fi
 # the declared layouts drive every per-layout step below (never a hand-typed list)
 LAYOUT_IDS=$(pyq "import json,sys; d=json.load(open(sys.argv[1],encoding='utf-8')); print(' '.join(str(l['id']) for l in d['layouts']))" "$PROJ/track.config.json")
 RACE_IDS=$(pyq "import json,sys; d=json.load(open(sys.argv[1],encoding='utf-8')); print(' '.join(str(l['id']) for l in d['layouts'] if l.get('race_furniture')))" "$PROJ/track.config.json")

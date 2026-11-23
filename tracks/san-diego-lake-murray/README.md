@@ -44,7 +44,13 @@ arcs still open. C3's real site measured: the College south-end hairpin (verts 7
 the seam. The gates themselves were fixed this day (frame + island awareness —
 fleet/GATES-CHANGELOG.md); the July reference has NEVER passed them.
 
-**Build it:** `bash tools/ship_sd.sh` from airoso (draft → author → ship → gate → install;
+**Build it (since ledger 0099, 0.20.3):** `bash tools/ship_track.sh san-diego-lake-murray --skip-blend` from airoso, on
+an EMPTY workshop: ship.json `sync_in.seed` copies the committed `loop.blend` (LFS) and the draft's data in where the
+workshop has none (never over a workshop's own file); the chain's workshop is `lm_line`. PC-only inputs: engine-july (or
+its snapshot plus `assets/textures`), Blender 4.2 with the AC add-on, and the 16 personal-use TreeFX models in
+`source/trees/` (gitignored). Runbook: fleet/feedback/0099. The 0.19.x chain of record below stays as it was.
+
+**Build it (0.19.x):** `bash tools/ship_sd.sh` from airoso (draft → author → ship → gate → install;
 `--no-install`, `--force-install`, `--skip-blend`). Spawn site: `start_positions.json` → `active`.
 
 The installed kn5 (~66 MB, ui version 0.15.0) is the standing drive-feel reference (0029) —

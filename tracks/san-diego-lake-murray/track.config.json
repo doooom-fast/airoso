@@ -4,7 +4,7 @@
   "ui_series": "",
   "_ui_series_doc": "Engine track_folder prefixes the CM display name with ui_series (default 'K10 Colorado'); empty = use the track name as-is (SD names already carry the K10 - San Diego branding).",
   "slug": "san_diego_lake_murray",
-  "version": "0.20.2",
+  "version": "0.20.3",
   "author": "k10-san-diego",
   "year": 2026,
   "_about": "A single drivable LOOP around Lake Murray (Kevin's childhood neighborhood). This repo is the standalone, Blender-first home for the track: the loop is mapped from the REAL roads (OpenStreetMap) at REAL elevation (USGS 3DEP), imported into Blender, and shaped there interactively (Kevin designs, Claude operates) BEFORE any kn5 export. Start point = just the 5-road main loop; everything else is added deliberately, in Blender.",
@@ -192,7 +192,19 @@
     "kerb": "1KERB"
   },
   "_texture_overrides_doc": "Engine-pbr parity: the engine's 1GRASS default is dry chaparral (Colorado tracks); Lake Murray's neighborhood terrain is irrigated green turf. Paths resolve against the engine checkout's assets/textures/ (pbr.load_overrides).",
+  "kerb_ff_effect": 1,
+  "_kerb_ff_effect_doc": "ledger 0053 Q1 / 0099 (Kevin 2026-11-22: \"Turn it on, sidewalks included\"): FF_EFFECT=1 on the KERB surface in surfaces.ini (scripts/ac/track_folder.surfaces_ini; the Kunos convention, 8 of the 10 installed references 0053 read). KERB also covers 1KERB_sidewalk, so the street sidewalks give the wheel kerb effect too, as Kevin chose. VIBRATION, FRICTION and the sound are unchanged.",
   "texture_overrides": {
+    "1ROAD": {
+      "diffuse": "assets/textures/asphalt_dense_diffuse.jpg",
+      "normal": "assets/textures/asphalt_dense_normal.jpg",
+      "_doc": "ledger 0099 (Kevin 2026-11-22, owned asphalt and concrete: \"On every track now\"), the High Plains / Milford pattern of ledger 0095: the road (1ROAD_road, every 1ROAD_pad / _apron / _mouthfill) binds the owned dense-graded asphalt (tools/make_owned_surfaces.py, seed 84, CC0) in place of pbr's borrowed asphalt_cracked pair (LA Canyons, personal-use only). Same 4 m tile on the prep's planar grid; its mean colour was measured off asphalt_cracked (0.3806 / 0.3871 / 0.3962), so the road's tone holds. Lake Murray has no road_wear key, so no detail_highpass_m: the pair is the road's own diffuse and normal. The engine lacks the pair, so ship.json sync_in.assets brings it and pbr.load_overrides falls back to the project's copy."
+    },
+    "1KERB_SIDEWALK": {
+      "diffuse": "assets/textures/concrete_plain_diffuse.jpg",
+      "normal": "assets/textures/concrete_plain_normal.jpg",
+      "_doc": "ledger 0099 (owned concrete, \"On every track now\"): the street curb + sidewalk (CURB -> 1KERB_sidewalk in the prep, every 1KERB_sidewalk_pad / _ap / _streetonly) binds the owned plain cast concrete (tools/make_owned_surfaces.py, seed 85, CC0; MEANT FOR 1KERB_SIDEWALK) in place of pbr's building_* (Hamburg board-formed wall concrete, mined, personal use). 4 m tile; mean measured off building_diffuse (0.5286 / 0.5156 / 0.4891). Synced in by ship.json sync_in.assets. The race kerbs (1KERB_RACE, owned) are untouched."
+    },
     "1GRASS": {
       "diffuse": "assets/textures/grass_diffuse.jpg",
       "normal": "assets/textures/grass_normal.jpg"
@@ -1224,6 +1236,8 @@
     "streetlights": {
       "model": "led_cobra",
       "arms": 2,
+      "light_both_heads": true,
+      "_light_both_heads_doc": "ledger 0099 (Kevin 2026-11-22: \"Yes, light both heads\"): tools/author_lamp_heads_blend.py (author step lamp_heads, every ship) gives every two-arm lamp its back lens, LIGHTS_back: each LIGHTS_0 lens turned half a turn about its own pole (the twin model is symmetric), so ext_config clusters two CSP [LIGHT_N] per lamp, 8.07 m apart at the closest (link 2 m), both lenses lit at night; tools/check_lights_ini.py then wants one light at every front and every back lens (data/lights.heads.json). The light's look (colour, intensity, cone, range) is unchanged per light; the night's total light on the road from the back heads is [not measured].",
       "relocate": [
         {
           "name": "lamp_53_college_junction",

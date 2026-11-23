@@ -1,0 +1,5042 @@
+{
+ "_doc": "Signs on the Denver Grand Prix lap: ONLY what OSM implies per junction (grade tagged). No sign was seen; no post position and no face is claimed. Posts that may carry signs are in lamps.json / signals.json (a sign post and a lamp post are not told apart from the air unless the eye could). Written by signs_build.py from source/osm.json.",
+ "osm_as_of": "2026-11-23T01:12:49Z",
+ "written_utc": "2026-11-23T21:46:20Z",
+ "grade_shares": {
+  "tagged": 1.0,
+  "measured": 0.0,
+  "detected": 0.0
+ },
+ "counts": {
+  "junctions": 57,
+  "with_signals": 49,
+  "signal_nodes": 55,
+  "with_a_stop_or_yield_node": 2,
+  "nothing_tagged": 6,
+  "rail_crossings_at_grade": 5,
+  "one_way_cross_streets": 82
+ },
+ "speed_limit_along_the_lap": [
+  {
+   "from_s_m": 0.0,
+   "street": "East Colfax Avenue",
+   "maxspeed": "30 mph",
+   "implies": "a speed limit sign (R2-1) on this block if the limit is posted; none seen",
+   "osm_way": 1550341229
+  },
+  {
+   "from_s_m": 1189.8,
+   "street": "North Speer Boulevard",
+   "maxspeed": "35 mph",
+   "implies": "a speed limit sign (R2-1) on this block if the limit is posted; none seen",
+   "osm_way": 933332973
+  },
+  {
+   "from_s_m": 1338.6,
+   "street": "Stout Street",
+   "maxspeed": "25 mph",
+   "implies": "a speed limit sign (R2-1) on this block if the limit is posted; none seen",
+   "osm_way": 37812132
+  },
+  {
+   "from_s_m": 1910.4,
+   "street": "15th Street",
+   "maxspeed": "30 mph",
+   "implies": "a speed limit sign (R2-1) on this block if the limit is posted; none seen",
+   "osm_way": 628378945
+  },
+  {
+   "from_s_m": 2634.9,
+   "street": "15th Street",
+   "maxspeed": "not tagged",
+   "implies": "a speed limit sign (R2-1) on this block if the limit is posted; none seen",
+   "osm_way": 99883921
+  },
+  {
+   "from_s_m": 2652.3,
+   "street": "Blake Street",
+   "maxspeed": "25 mph",
+   "implies": "a speed limit sign (R2-1) on this block if the limit is posted; none seen",
+   "osm_way": 541284847
+  },
+  {
+   "from_s_m": 2775.5,
+   "street": "Blake Street",
+   "maxspeed": "30 mph",
+   "implies": "a speed limit sign (R2-1) on this block if the limit is posted; none seen",
+   "osm_way": 1384814966
+  },
+  {
+   "from_s_m": 2946.2,
+   "street": "Auraria Parkway",
+   "maxspeed": "35 mph",
+   "implies": "a speed limit sign (R2-1) on this block if the limit is posted; none seen",
+   "osm_way": 628634511
+  },
+  {
+   "from_s_m": 3755.8,
+   "street": "North Kalamath Street",
+   "maxspeed": "25 mph",
+   "implies": "a speed limit sign (R2-1) on this block if the limit is posted; none seen",
+   "osm_way": 130886776
+  },
+  {
+   "from_s_m": 4147.0,
+   "street": "West 14th Avenue",
+   "maxspeed": "30 mph",
+   "implies": "a speed limit sign (R2-1) on this block if the limit is posted; none seen",
+   "osm_way": 700604346
+  },
+  {
+   "from_s_m": 4215.7,
+   "street": "North Santa Fe Drive",
+   "maxspeed": "25 mph",
+   "implies": "a speed limit sign (R2-1) on this block if the limit is posted; none seen",
+   "osm_way": 628689591
+  },
+  {
+   "from_s_m": 4549.8,
+   "street": "North Speer Boulevard",
+   "maxspeed": "35 mph",
+   "implies": "a speed limit sign (R2-1) on this block if the limit is posted; none seen",
+   "osm_way": 427699953
+  },
+  {
+   "from_s_m": 4893.0,
+   "street": "West 14th Avenue",
+   "maxspeed": "30 mph",
+   "implies": "a speed limit sign (R2-1) on this block if the limit is posted; none seen",
+   "osm_way": 628677808
+  },
+  {
+   "from_s_m": 6259.7,
+   "street": "Logan Street",
+   "maxspeed": "not tagged",
+   "implies": "a speed limit sign (R2-1) on this block if the limit is posted; none seen",
+   "osm_way": 330579569
+  },
+  {
+   "from_s_m": 6439.9,
+   "street": "East Colfax Avenue",
+   "maxspeed": "30 mph",
+   "implies": "a speed limit sign (R2-1) on this block if the limit is posted; none seen",
+   "osm_way": 1548629056
+  }
+ ],
+ "rail_crossings_at_grade": [
+  {
+   "osm_node": 7309384258,
+   "s_m": 1759.0,
+   "off_lap_m": 0.3,
+   "leg": "Stout to 15th St",
+   "street": "Stout Street",
+   "lonlat": [
+    -104.9954664,
+    39.7439944
+   ],
+   "grade": "tagged",
+   "implies": "light rail crosses the street at grade: crossing signs and signals; none seen",
+   "tags": {
+    "crossing:activation": "automatic",
+    "crossing:barrier": "no",
+    "crossing:light": "traffic_signals",
+    "railway": "level_crossing"
+   }
+  },
+  {
+   "osm_node": 3286973982,
+   "s_m": 1787.0,
+   "off_lap_m": 0.3,
+   "leg": "Stout to 15th St",
+   "street": "Stout Street",
+   "lonlat": [
+    -104.9952347,
+    39.7441723
+   ],
+   "grade": "tagged",
+   "implies": "light rail crosses the street at grade: crossing signs and signals; none seen",
+   "tags": {
+    "crossing:activation": "automatic",
+    "crossing:barrier": "no",
+    "crossing:light": "traffic_signals",
+    "railway": "level_crossing"
+   }
+  },
+  {
+   "osm_node": 724644286,
+   "s_m": 1910.0,
+   "off_lap_m": 0.4,
+   "leg": "15th St to Blake",
+   "street": "15th Street",
+   "lonlat": [
+    -104.994305,
+    39.7449539
+   ],
+   "grade": "tagged",
+   "implies": "light rail crosses the street at grade: crossing signs and signals; none seen",
+   "tags": {
+    "check_date:crossing:barrier": "2024-09-02",
+    "crossing:barrier": "no",
+    "railway": "level_crossing"
+   }
+  },
+  {
+   "osm_node": 3283811469,
+   "s_m": 3872.0,
+   "off_lap_m": 0.2,
+   "leg": "Kalamath S to W 14th Ave",
+   "street": "North Kalamath Street",
+   "lonlat": [
+    -105.0001475,
+    39.7408683
+   ],
+   "grade": "tagged",
+   "implies": "light rail crosses the street at grade: crossing signs and signals; none seen",
+   "tags": {
+    "crossing:activation": "automatic",
+    "crossing:light": "traffic_signals",
+    "railway": "level_crossing"
+   }
+  },
+  {
+   "osm_node": 1040543463,
+   "s_m": 3879.0,
+   "off_lap_m": 0.4,
+   "leg": "Kalamath S to W 14th Ave",
+   "street": "North Kalamath Street",
+   "lonlat": [
+    -105.0001472,
+    39.7408111
+   ],
+   "grade": "tagged",
+   "implies": "light rail crosses the street at grade: crossing signs and signals; none seen",
+   "tags": {
+    "crossing:activation": "automatic",
+    "crossing:light": "traffic_signals",
+    "railway": "level_crossing"
+   }
+  }
+ ],
+ "bus_lane_tags_along_the_lap": [
+  {
+   "s_m": 0.0,
+   "leg": "Colfax WB to Speer NB",
+   "street": "East Colfax Avenue",
+   "tag": "bus:lanes",
+   "value": "designated|yes",
+   "osm_way": 1550341229,
+   "was": null
+  },
+  {
+   "s_m": 230.8,
+   "leg": "Colfax WB to Speer NB",
+   "street": "West Colfax Avenue",
+   "tag": "bus:lanes",
+   "value": "not tagged",
+   "osm_way": 16985345,
+   "was": "designated|yes"
+  },
+  {
+   "s_m": 6439.9,
+   "leg": "Colfax W to S/F",
+   "street": "East Colfax Avenue",
+   "tag": "bus:lanes",
+   "value": "designated|yes",
+   "osm_way": 1548629056,
+   "was": "not tagged"
+  }
+ ],
+ "colfax_note": "OSM today tags Colfax two lanes each way with bus:lanes=designated (the bus rapid transit rebuild). The newest free pictures (2022, and NAIP 2023-09) show the street before it. Bus-lane signs implied by those tags are therefore NOT in the surveyed state (PLAN D8); they are listed here as changed since, not surveyed.",
+ "junctions": [
+  {
+   "junction": "East Colfax Avenue / Sherman Street",
+   "s_m": [
+    0.0
+   ],
+   "leg": [
+    "Colfax WB to Speer NB"
+   ],
+   "centre_lonlat": [
+    -104.9848631,
+    39.7401191
+   ],
+   "osm_nodes": [
+    14073675884
+   ],
+   "grade": "tagged",
+   "position": "none claimed beyond the junction",
+   "control": "traffic signals",
+   "signal_nodes": [
+    14073675884
+   ],
+   "stop_nodes": [],
+   "rail_crossing_nodes": [],
+   "lap_street": [
+    {
+     "osm_way": 1547338993,
+     "name": "East Colfax Avenue",
+     "oneway": "yes",
+     "maxspeed": "30 mph",
+     "lanes": "2",
+     "bus:lanes": "designated|yes",
+     "access:lanes": "no|yes",
+     "highway": "primary"
+    },
+    {
+     "osm_way": 1550341229,
+     "name": "East Colfax Avenue",
+     "oneway": "yes",
+     "maxspeed": "30 mph",
+     "lanes": "2",
+     "bus:lanes": "designated|yes",
+     "access:lanes": "no|yes",
+     "highway": "primary"
+    }
+   ],
+   "cross_streets": [
+    {
+     "osm_way": 628588223,
+     "name": "Sherman Street",
+     "maxspeed": "25 mph",
+     "lanes": "2",
+     "cycleway": "shared_lane",
+     "highway": "residential"
+    },
+    {
+     "osm_way": 1550341228,
+     "name": "Sherman Street",
+     "maxspeed": "25 mph",
+     "lanes": "2",
+     "cycleway": "shared_lane",
+     "highway": "residential"
+    }
+   ],
+   "implied_by_osm": [
+    {
+     "what": "signal faces for every approach",
+     "basis": "highway=traffic_signals on 1 node(s)",
+     "see": "signals.json for the masts read off the aerial"
+    }
+   ],
+   "faces": "not read: no source from the air",
+   "street_level_source_must_supply": [
+    "the post of every sign (position to about a metre, which corner, on its own post or on a signal mast / lamp post)",
+    "each face: the MUTCD code or the legend, its size, which way it faces",
+    "street-name blades (overhead on the mast arm or on a corner post) and their text",
+    "turn restrictions and lane-use signs at the stop line (R3 series): OSM holds turn:lanes for some approaches only, and no restriction relations are in the extract",
+    "parking, bus-stop and loading signs along the kerb",
+    "whether the tagged signal is a full signal or a pedestrian / rail signal"
+   ]
+  },
+  {
+   "junction": "East Colfax Avenue / North Lincoln Street",
+   "s_m": [
+    108.0
+   ],
+   "leg": [
+    "Colfax WB to Speer NB"
+   ],
+   "centre_lonlat": [
+    -104.9861268,
+    39.7401379
+   ],
+   "osm_nodes": [
+    176103304
+   ],
+   "grade": "tagged",
+   "position": "none claimed beyond the junction",
+   "control": "traffic signals",
+   "signal_nodes": [
+    176103304
+   ],
+   "stop_nodes": [],
+   "rail_crossing_nodes": [],
+   "lap_street": [
+    {
+     "osm_way": 130808957,
+     "name": "East Colfax Avenue",
+     "oneway": "yes",
+     "maxspeed": "30 mph",
+     "lanes": "2",
+     "bus:lanes": "designated|yes",
+     "access:lanes": "no|yes",
+     "highway": "primary"
+    },
+    {
+     "osm_way": 702462464,
+     "name": "East Colfax Avenue",
+     "oneway": "yes",
+     "maxspeed": "30 mph",
+     "lanes": "2",
+     "bus:lanes": "designated|yes",
+     "access:lanes": "no|yes",
+     "highway": "primary"
+    }
+   ],
+   "cross_streets": [
+    {
+     "osm_way": 647582785,
+     "name": "North Lincoln Street",
+     "oneway": "yes",
+     "maxspeed": "30 mph",
+     "lanes": "4",
+     "highway": "primary"
+    },
+    {
+     "osm_way": 1131095158,
+     "name": "North Lincoln Street",
+     "oneway": "yes",
+     "maxspeed": "30 mph",
+     "lanes": "5",
+     "turn:lanes": "left|left;through|none|none|none",
+     "highway": "primary"
+    }
+   ],
+   "implied_by_osm": [
+    {
+     "what": "signal faces for every approach",
+     "basis": "highway=traffic_signals on 1 node(s)",
+     "see": "signals.json for the masts read off the aerial"
+    },
+    {
+     "what": "ONE WAY (R6-1 / R6-2) facing the lap's approach, and no turn against it (R3-1 / R3-2) or DO NOT ENTER (R5-1) at its exit end",
+     "on": "North Lincoln Street",
+     "basis": "oneway=yes on way 647582785"
+    },
+    {
+     "what": "ONE WAY (R6-1 / R6-2) facing the lap's approach, and no turn against it (R3-1 / R3-2) or DO NOT ENTER (R5-1) at its exit end",
+     "on": "North Lincoln Street",
+     "basis": "oneway=yes on way 1131095158"
+    }
+   ],
+   "faces": "not read: no source from the air",
+   "street_level_source_must_supply": [
+    "the post of every sign (position to about a metre, which corner, on its own post or on a signal mast / lamp post)",
+    "each face: the MUTCD code or the legend, its size, which way it faces",
+    "street-name blades (overhead on the mast arm or on a corner post) and their text",
+    "turn restrictions and lane-use signs at the stop line (R3 series): OSM holds turn:lanes for some approaches only, and no restriction relations are in the extract",
+    "parking, bus-stop and loading signs along the kerb",
+    "whether the tagged signal is a full signal or a pedestrian / rail signal"
+   ]
+  },
+  {
+   "junction": "East Colfax Avenue / West Colfax Avenue / North Broadway",
+   "s_m": [
+    218.0
+   ],
+   "leg": [
+    "Colfax WB to Speer NB"
+   ],
+   "centre_lonlat": [
+    -104.987401,
+    39.7401457
+   ],
+   "osm_nodes": [
+    176072933
+   ],
+   "grade": "tagged",
+   "position": "none claimed beyond the junction",
+   "control": "traffic signals",
+   "signal_nodes": [
+    176072933
+   ],
+   "stop_nodes": [],
+   "rail_crossing_nodes": [],
+   "lap_street": [
+    {
+     "osm_way": 16985345,
+     "name": "West Colfax Avenue",
+     "oneway": "yes",
+     "maxspeed": "30 mph",
+     "lanes": "3",
+     "highway": "primary"
+    },
+    {
+     "osm_way": 600545919,
+     "name": "East Colfax Avenue",
+     "oneway": "yes",
+     "maxspeed": "30 mph",
+     "lanes": "2",
+     "bus:lanes": "designated|yes",
+     "access:lanes": "no|yes",
+     "highway": "primary"
+    }
+   ],
+   "cross_streets": [
+    {
+     "osm_way": 450174379,
+     "name": "North Broadway",
+     "oneway": "yes",
+     "maxspeed": "30 mph",
+     "lanes": "4",
+     "highway": "primary"
+    },
+    {
+     "osm_way": 970104138,
+     "name": "North Broadway",
+     "oneway": "yes",
+     "maxspeed": "30 mph",
+     "lanes": "6",
+     "turn:lanes": "left|||||",
+     "highway": "primary"
+    }
+   ],
+   "implied_by_osm": [
+    {
+     "what": "signal faces for every approach",
+     "basis": "highway=traffic_signals on 1 node(s)",
+     "see": "signals.json for the masts read off the aerial"
+    },
+    {
+     "what": "ONE WAY (R6-1 / R6-2) facing the lap's approach, and no turn against it (R3-1 / R3-2) or DO NOT ENTER (R5-1) at its exit end",
+     "on": "North Broadway",
+     "basis": "oneway=yes on way 450174379"
+    },
+    {
+     "what": "ONE WAY (R6-1 / R6-2) facing the lap's approach, and no turn against it (R3-1 / R3-2) or DO NOT ENTER (R5-1) at its exit end",
+     "on": "North Broadway",
+     "basis": "oneway=yes on way 970104138"
+    }
+   ],
+   "faces": "not read: no source from the air",
+   "street_level_source_must_supply": [
+    "the post of every sign (position to about a metre, which corner, on its own post or on a signal mast / lamp post)",
+    "each face: the MUTCD code or the legend, its size, which way it faces",
+    "street-name blades (overhead on the mast arm or on a corner post) and their text",
+    "turn restrictions and lane-use signs at the stop line (R3 series): OSM holds turn:lanes for some approaches only, and no restriction relations are in the extract",
+    "parking, bus-stop and loading signs along the kerb",
+    "whether the tagged signal is a full signal or a pedestrian / rail signal"
+   ]
+  },
+  {
+   "junction": "West Colfax Avenue / Cheyenne Place",
+   "s_m": [
+    283.0
+   ],
+   "leg": [
+    "Colfax WB to Speer NB"
+   ],
+   "centre_lonlat": [
+    -104.988124,
+    39.7402717
+   ],
+   "osm_nodes": [
+    3096774183
+   ],
+   "grade": "tagged",
+   "position": "none claimed beyond the junction",
+   "control": "stop / give-way on an approach",
+   "signal_nodes": [],
+   "stop_nodes": [
+    {
+     "osm_node": 3111001301,
+     "tag": "stop",
+     "direction": "forward",
+     "on": [
+      "Cheyenne Place"
+     ]
+    }
+   ],
+   "rail_crossing_nodes": [],
+   "lap_street": [
+    {
+     "osm_way": 16985345,
+     "name": "West Colfax Avenue",
+     "oneway": "yes",
+     "maxspeed": "30 mph",
+     "lanes": "3",
+     "highway": "primary"
+    },
+    {
+     "osm_way": 645821543,
+     "name": "West Colfax Avenue",
+     "oneway": "yes",
+     "maxspeed": "30 mph",
+     "lanes": "3",
+     "highway": "primary"
+    }
+   ],
+   "cross_streets": [
+    {
+     "osm_way": 305098126,
+     "name": "Cheyenne Place",
+     "oneway": "yes",
+     "maxspeed": "25 mph",
+     "lanes": "1",
+     "highway": "primary"
+    }
+   ],
+   "implied_by_osm": [
+    {
+     "what": "STOP (R1-1)",
+     "on": [
+      "Cheyenne Place"
+     ],
+     "basis": "highway=stop node 3111001301"
+    },
+    {
+     "what": "ONE WAY (R6-1 / R6-2) facing the lap's approach, and no turn against it (R3-1 / R3-2) or DO NOT ENTER (R5-1) at its exit end",
+     "on": "Cheyenne Place",
+     "basis": "oneway=yes on way 305098126"
+    }
+   ],
+   "faces": "not read: no source from the air",
+   "street_level_source_must_supply": [
+    "the post of every sign (position to about a metre, which corner, on its own post or on a signal mast / lamp post)",
+    "each face: the MUTCD code or the legend, its size, which way it faces",
+    "street-name blades (overhead on the mast arm or on a corner post) and their text",
+    "turn restrictions and lane-use signs at the stop line (R3 series): OSM holds turn:lanes for some approaches only, and no restriction relations are in the extract",
+    "parking, bus-stop and loading signs along the kerb",
+    "whether the junction is really uncontrolled, or the stop sign is simply not mapped"
+   ]
+  },
+  {
+   "junction": "West Colfax Avenue / 15th Street / ?",
+   "s_m": [
+    325.0,
+    339.0,
+    356.0
+   ],
+   "leg": [
+    "Colfax WB to Speer NB"
+   ],
+   "centre_lonlat": [
+    -104.9886429,
+    39.7405872
+   ],
+   "osm_nodes": [
+    176095701,
+    6145823773,
+    5935638592
+   ],
+   "grade": "tagged",
+   "position": "none claimed beyond the junction",
+   "control": "traffic signals",
+   "signal_nodes": [
+    6145823773
+   ],
+   "stop_nodes": [],
+   "rail_crossing_nodes": [],
+   "lap_street": [
+    {
+     "osm_way": 100394655,
+     "name": "West Colfax Avenue",
+     "oneway": "yes",
+     "maxspeed": "30 mph",
+     "lanes": "2",
+     "highway": "primary"
+    },
+    {
+     "osm_way": 628677811,
+     "name": "West Colfax Avenue",
+     "oneway": "yes",
+     "maxspeed": "30 mph",
+     "lanes": "3",
+     "turn:lanes": "left|left;through|through",
+     "highway": "primary"
+    },
+    {
+     "osm_way": 628677813,
+     "name": "West Colfax Avenue",
+     "oneway": "yes",
+     "maxspeed": "30 mph",
+     "lanes": "2",
+     "highway": "primary"
+    }
+   ],
+   "cross_streets": [
+    {
+     "osm_way": 25679991,
+     "name": "15th Street",
+     "oneway": "yes",
+     "maxspeed": "30 mph",
+     "lanes": "2",
+     "highway": "secondary"
+    },
+    {
+     "osm_way": 628677812,
+     "oneway": "yes",
+     "lanes": "1",
+     "highway": "primary_link"
+    },
+    {
+     "osm_way": 628677815,
+     "oneway": "yes",
+     "lanes": "1",
+     "highway": "primary_link"
+    }
+   ],
+   "implied_by_osm": [
+    {
+     "what": "signal faces for every approach",
+     "basis": "highway=traffic_signals on 1 node(s)",
+     "see": "signals.json for the masts read off the aerial"
+    },
+    {
+     "what": "ONE WAY (R6-1 / R6-2) facing the lap's approach, and no turn against it (R3-1 / R3-2) or DO NOT ENTER (R5-1) at its exit end",
+     "on": "15th Street",
+     "basis": "oneway=yes on way 25679991"
+    },
+    {
+     "what": "ONE WAY (R6-1 / R6-2) facing the lap's approach, and no turn against it (R3-1 / R3-2) or DO NOT ENTER (R5-1) at its exit end",
+     "on": "unnamed",
+     "basis": "oneway=yes on way 628677812"
+    },
+    {
+     "what": "ONE WAY (R6-1 / R6-2) facing the lap's approach, and no turn against it (R3-1 / R3-2) or DO NOT ENTER (R5-1) at its exit end",
+     "on": "unnamed",
+     "basis": "oneway=yes on way 628677815"
+    }
+   ],
+   "faces": "not read: no source from the air",
+   "street_level_source_must_supply": [
+    "the post of every sign (position to about a metre, which corner, on its own post or on a signal mast / lamp post)",
+    "each face: the MUTCD code or the legend, its size, which way it faces",
+    "street-name blades (overhead on the mast arm or on a corner post) and their text",
+    "turn restrictions and lane-use signs at the stop line (R3 series): OSM holds turn:lanes for some approaches only, and no restriction relations are in the extract",
+    "parking, bus-stop and loading signs along the kerb",
+    "whether the tagged signal is a full signal or a pedestrian / rail signal"
+   ]
+  },
+  {
+   "junction": "West Colfax Avenue / 14th Street",
+   "s_m": [
+    515.0
+   ],
+   "leg": [
+    "Colfax WB to Speer NB"
+   ],
+   "centre_lonlat": [
+    -104.9904352,
+    39.7401173
+   ],
+   "osm_nodes": [
+    1160435647
+   ],
+   "grade": "tagged",
+   "position": "none claimed beyond the junction",
+   "control": "traffic signals",
+   "signal_nodes": [
+    1160435647
+   ],
+   "stop_nodes": [],
+   "rail_crossing_nodes": [],
+   "lap_street": [
+    {
+     "osm_way": 100394655,
+     "name": "West Colfax Avenue",
+     "oneway": "yes",
+     "maxspeed": "30 mph",
+     "lanes": "2",
+     "highway": "primary"
+    },
+    {
+     "osm_way": 670422527,
+     "name": "West Colfax Avenue",
+     "oneway": "yes",
+     "maxspeed": "30 mph",
+     "lanes": "2",
+     "highway": "primary"
+    }
+   ],
+   "cross_streets": [
+    {
+     "osm_way": 670422528,
+     "name": "14th Street",
+     "oneway": "yes",
+     "maxspeed": "30 mph",
+     "lanes": "3",
+     "turn:lanes": "left||",
+     "cycleway:left": "no",
+     "cycleway:right": "separate",
+     "highway": "secondary"
+    },
+    {
+     "osm_way": 1179813341,
+     "name": "14th Street",
+     "oneway": "yes",
+     "maxspeed": "30 mph",
+     "lanes": "3",
+     "turn:lanes": "left||",
+     "cycleway:left": "no",
+     "cycleway:right": "separate",
+     "highway": "secondary"
+    }
+   ],
+   "implied_by_osm": [
+    {
+     "what": "signal faces for every approach",
+     "basis": "highway=traffic_signals on 1 node(s)",
+     "see": "signals.json for the masts read off the aerial"
+    },
+    {
+     "what": "ONE WAY (R6-1 / R6-2) facing the lap's approach, and no turn against it (R3-1 / R3-2) or DO NOT ENTER (R5-1) at its exit end",
+     "on": "14th Street",
+     "basis": "oneway=yes on way 670422528"
+    },
+    {
+     "what": "ONE WAY (R6-1 / R6-2) facing the lap's approach, and no turn against it (R3-1 / R3-2) or DO NOT ENTER (R5-1) at its exit end",
+     "on": "14th Street",
+     "basis": "oneway=yes on way 1179813341"
+    }
+   ],
+   "faces": "not read: no source from the air",
+   "street_level_source_must_supply": [
+    "the post of every sign (position to about a metre, which corner, on its own post or on a signal mast / lamp post)",
+    "each face: the MUTCD code or the legend, its size, which way it faces",
+    "street-name blades (overhead on the mast arm or on a corner post) and their text",
+    "turn restrictions and lane-use signs at the stop line (R3 series): OSM holds turn:lanes for some approaches only, and no restriction relations are in the extract",
+    "parking, bus-stop and loading signs along the kerb",
+    "whether the tagged signal is a full signal or a pedestrian / rail signal"
+   ]
+  },
+  {
+   "junction": "West Colfax Avenue / Court Place",
+   "s_m": [
+    618.0
+   ],
+   "leg": [
+    "Colfax WB to Speer NB"
+   ],
+   "centre_lonlat": [
+    -104.9916422,
+    39.7401229
+   ],
+   "osm_nodes": [
+    1160438174
+   ],
+   "grade": "tagged",
+   "position": "none claimed beyond the junction",
+   "control": "traffic signals",
+   "signal_nodes": [
+    1160438174
+   ],
+   "stop_nodes": [],
+   "rail_crossing_nodes": [],
+   "lap_street": [
+    {
+     "osm_way": 427702697,
+     "name": "West Colfax Avenue",
+     "oneway": "yes",
+     "maxspeed": "30 mph",
+     "lanes": "3",
+     "highway": "primary"
+    },
+    {
+     "osm_way": 670422527,
+     "name": "West Colfax Avenue",
+     "oneway": "yes",
+     "maxspeed": "30 mph",
+     "lanes": "2",
+     "highway": "primary"
+    }
+   ],
+   "cross_streets": [
+    {
+     "osm_way": 16986021,
+     "name": "Court Place",
+     "oneway": "yes",
+     "lanes": "2",
+     "cycleway:right": "lane",
+     "highway": "tertiary"
+    }
+   ],
+   "implied_by_osm": [
+    {
+     "what": "signal faces for every approach",
+     "basis": "highway=traffic_signals on 1 node(s)",
+     "see": "signals.json for the masts read off the aerial"
+    },
+    {
+     "what": "ONE WAY (R6-1 / R6-2) facing the lap's approach, and no turn against it (R3-1 / R3-2) or DO NOT ENTER (R5-1) at its exit end",
+     "on": "Court Place",
+     "basis": "oneway=yes on way 16986021"
+    }
+   ],
+   "faces": "not read: no source from the air",
+   "street_level_source_must_supply": [
+    "the post of every sign (position to about a metre, which corner, on its own post or on a signal mast / lamp post)",
+    "each face: the MUTCD code or the legend, its size, which way it faces",
+    "street-name blades (overhead on the mast arm or on a corner post) and their text",
+    "turn restrictions and lane-use signs at the stop line (R3 series): OSM holds turn:lanes for some approaches only, and no restriction relations are in the extract",
+    "parking, bus-stop and loading signs along the kerb",
+    "whether the tagged signal is a full signal or a pedestrian / rail signal"
+   ]
+  },
+  {
+   "junction": "West Colfax Avenue / Tremont Place",
+   "s_m": [
+    738.0
+   ],
+   "leg": [
+    "Colfax WB to Speer NB"
+   ],
+   "centre_lonlat": [
+    -104.9930387,
+    39.740134
+   ],
+   "osm_nodes": [
+    2443906933
+   ],
+   "grade": "tagged",
+   "position": "none claimed beyond the junction",
+   "control": "traffic signals",
+   "signal_nodes": [
+    2443906933
+   ],
+   "stop_nodes": [],
+   "rail_crossing_nodes": [],
+   "lap_street": [
+    {
+     "osm_way": 427702691,
+     "name": "West Colfax Avenue",
+     "oneway": "yes",
+     "maxspeed": "30 mph",
+     "lanes": "4",
+     "turn:lanes": "left|||",
+     "highway": "primary"
+    },
+    {
+     "osm_way": 628677822,
+     "name": "West Colfax Avenue",
+     "oneway": "yes",
+     "maxspeed": "30 mph",
+     "lanes": "3",
+     "highway": "primary"
+    }
+   ],
+   "cross_streets": [
+    {
+     "osm_way": 322008847,
+     "name": "Tremont Place",
+     "oneway": "yes",
+     "lanes": "2",
+     "turn:lanes": "left;through|right",
+     "highway": "tertiary"
+    }
+   ],
+   "implied_by_osm": [
+    {
+     "what": "signal faces for every approach",
+     "basis": "highway=traffic_signals on 1 node(s)",
+     "see": "signals.json for the masts read off the aerial"
+    },
+    {
+     "what": "ONE WAY (R6-1 / R6-2) facing the lap's approach, and no turn against it (R3-1 / R3-2) or DO NOT ENTER (R5-1) at its exit end",
+     "on": "Tremont Place",
+     "basis": "oneway=yes on way 322008847"
+    }
+   ],
+   "faces": "not read: no source from the air",
+   "street_level_source_must_supply": [
+    "the post of every sign (position to about a metre, which corner, on its own post or on a signal mast / lamp post)",
+    "each face: the MUTCD code or the legend, its size, which way it faces",
+    "street-name blades (overhead on the mast arm or on a corner post) and their text",
+    "turn restrictions and lane-use signs at the stop line (R3 series): OSM holds turn:lanes for some approaches only, and no restriction relations are in the extract",
+    "parking, bus-stop and loading signs along the kerb",
+    "whether the tagged signal is a full signal or a pedestrian / rail signal"
+   ]
+  },
+  {
+   "junction": "West Colfax Avenue / 12th Street / Glenarm Place",
+   "s_m": [
+    929.0
+   ],
+   "leg": [
+    "Colfax WB to Speer NB"
+   ],
+   "centre_lonlat": [
+    -104.9952715,
+    39.7401412
+   ],
+   "osm_nodes": [
+    1160443953
+   ],
+   "grade": "tagged",
+   "position": "none claimed beyond the junction",
+   "control": "traffic signals",
+   "signal_nodes": [
+    1160443953
+   ],
+   "stop_nodes": [],
+   "rail_crossing_nodes": [],
+   "lap_street": [
+    {
+     "osm_way": 119006770,
+     "name": "West Colfax Avenue",
+     "oneway": "yes",
+     "maxspeed": "30 mph",
+     "lanes": "3",
+     "highway": "primary"
+    },
+    {
+     "osm_way": 628677821,
+     "name": "West Colfax Avenue",
+     "oneway": "yes",
+     "maxspeed": "30 mph",
+     "lanes": "4",
+     "turn:lanes": "left|||",
+     "highway": "primary"
+    }
+   ],
+   "cross_streets": [
+    {
+     "osm_way": 124661418,
+     "name": "Glenarm Place",
+     "lanes": "3",
+     "highway": "tertiary"
+    },
+    {
+     "osm_way": 576125196,
+     "name": "12th Street",
+     "highway": "unclassified"
+    },
+    {
+     "osm_way": 628677823,
+     "name": "Glenarm Place",
+     "lanes": "2",
+     "highway": "tertiary"
+    }
+   ],
+   "implied_by_osm": [
+    {
+     "what": "signal faces for every approach",
+     "basis": "highway=traffic_signals on 1 node(s)",
+     "see": "signals.json for the masts read off the aerial"
+    }
+   ],
+   "faces": "not read: no source from the air",
+   "street_level_source_must_supply": [
+    "the post of every sign (position to about a metre, which corner, on its own post or on a signal mast / lamp post)",
+    "each face: the MUTCD code or the legend, its size, which way it faces",
+    "street-name blades (overhead on the mast arm or on a corner post) and their text",
+    "turn restrictions and lane-use signs at the stop line (R3 series): OSM holds turn:lanes for some approaches only, and no restriction relations are in the extract",
+    "parking, bus-stop and loading signs along the kerb",
+    "whether the tagged signal is a full signal or a pedestrian / rail signal"
+   ]
+  },
+  {
+   "junction": "West Colfax Avenue / Galapago Street / Welton Street",
+   "s_m": [
+    1034.0
+   ],
+   "leg": [
+    "Colfax WB to Speer NB"
+   ],
+   "centre_lonlat": [
+    -104.9964874,
+    39.74015
+   ],
+   "osm_nodes": [
+    1160446238
+   ],
+   "grade": "tagged",
+   "position": "none claimed beyond the junction",
+   "control": "traffic signals",
+   "signal_nodes": [
+    1160446238
+   ],
+   "stop_nodes": [],
+   "rail_crossing_nodes": [],
+   "lap_street": [
+    {
+     "osm_way": 119006770,
+     "name": "West Colfax Avenue",
+     "oneway": "yes",
+     "maxspeed": "30 mph",
+     "lanes": "3",
+     "highway": "primary"
+    }
+   ],
+   "cross_streets": [
+    {
+     "osm_way": 16983968,
+     "name": "Welton Street",
+     "oneway": "yes",
+     "lanes": "2",
+     "cycleway:left": "no",
+     "cycleway:right": "lane",
+     "highway": "secondary"
+    },
+    {
+     "osm_way": 646120467,
+     "name": "Galapago Street",
+     "oneway": "yes",
+     "cycleway:left": "no",
+     "cycleway:right": "lane",
+     "highway": "secondary"
+    }
+   ],
+   "implied_by_osm": [
+    {
+     "what": "signal faces for every approach",
+     "basis": "highway=traffic_signals on 1 node(s)",
+     "see": "signals.json for the masts read off the aerial"
+    },
+    {
+     "what": "ONE WAY (R6-1 / R6-2) facing the lap's approach, and no turn against it (R3-1 / R3-2) or DO NOT ENTER (R5-1) at its exit end",
+     "on": "Welton Street",
+     "basis": "oneway=yes on way 16983968"
+    },
+    {
+     "what": "ONE WAY (R6-1 / R6-2) facing the lap's approach, and no turn against it (R3-1 / R3-2) or DO NOT ENTER (R5-1) at its exit end",
+     "on": "Galapago Street",
+     "basis": "oneway=yes on way 646120467"
+    }
+   ],
+   "faces": "not read: no source from the air",
+   "street_level_source_must_supply": [
+    "the post of every sign (position to about a metre, which corner, on its own post or on a signal mast / lamp post)",
+    "each face: the MUTCD code or the legend, its size, which way it faces",
+    "street-name blades (overhead on the mast arm or on a corner post) and their text",
+    "turn restrictions and lane-use signs at the stop line (R3 series): OSM holds turn:lanes for some approaches only, and no restriction relations are in the extract",
+    "parking, bus-stop and loading signs along the kerb",
+    "whether the tagged signal is a full signal or a pedestrian / rail signal"
+   ]
+  },
+  {
+   "junction": "North Speer Boulevard / West Colfax Avenue",
+   "s_m": [
+    1175.0
+   ],
+   "leg": [
+    "Colfax WB to Speer NB"
+   ],
+   "centre_lonlat": [
+    -104.9981376,
+    39.7401689
+   ],
+   "osm_nodes": [
+    1160446242
+   ],
+   "grade": "tagged",
+   "position": "none claimed beyond the junction",
+   "control": "traffic signals",
+   "signal_nodes": [
+    1160446242
+   ],
+   "stop_nodes": [],
+   "rail_crossing_nodes": [],
+   "lap_street": [
+    {
+     "osm_way": 306779271,
+     "name": "West Colfax Avenue",
+     "oneway": "yes",
+     "maxspeed": "30 mph",
+     "lanes": "4",
+     "turn:lanes": "||through;right|right",
+     "highway": "primary"
+    },
+    {
+     "osm_way": 933332973,
+     "name": "North Speer Boulevard",
+     "oneway": "yes",
+     "maxspeed": "35 mph",
+     "lanes": "5",
+     "highway": "primary"
+    }
+   ],
+   "cross_streets": [
+    {
+     "osm_way": 933332971,
+     "name": "North Speer Boulevard",
+     "oneway": "yes",
+     "maxspeed": "35 mph",
+     "lanes": "5",
+     "highway": "primary"
+    },
+    {
+     "osm_way": 933332972,
+     "name": "West Colfax Avenue",
+     "oneway": "yes",
+     "maxspeed": "30 mph",
+     "lanes": "3",
+     "highway": "primary"
+    }
+   ],
+   "implied_by_osm": [
+    {
+     "what": "signal faces for every approach",
+     "basis": "highway=traffic_signals on 1 node(s)",
+     "see": "signals.json for the masts read off the aerial"
+    },
+    {
+     "what": "ONE WAY (R6-1 / R6-2) facing the lap's approach, and no turn against it (R3-1 / R3-2) or DO NOT ENTER (R5-1) at its exit end",
+     "on": "North Speer Boulevard",
+     "basis": "oneway=yes on way 933332971"
+    },
+    {
+     "what": "ONE WAY (R6-1 / R6-2) facing the lap's approach, and no turn against it (R3-1 / R3-2) or DO NOT ENTER (R5-1) at its exit end",
+     "on": "West Colfax Avenue",
+     "basis": "oneway=yes on way 933332972"
+    }
+   ],
+   "faces": "not read: no source from the air",
+   "street_level_source_must_supply": [
+    "the post of every sign (position to about a metre, which corner, on its own post or on a signal mast / lamp post)",
+    "each face: the MUTCD code or the legend, its size, which way it faces",
+    "street-name blades (overhead on the mast arm or on a corner post) and their text",
+    "turn restrictions and lane-use signs at the stop line (R3 series): OSM holds turn:lanes for some approaches only, and no restriction relations are in the extract",
+    "parking, bus-stop and loading signs along the kerb",
+    "whether the tagged signal is a full signal or a pedestrian / rail signal"
+   ]
+  },
+  {
+   "junction": "North Speer Boulevard / Stout Street",
+   "s_m": [
+    1327.0
+   ],
+   "leg": [
+    "Stout to 15th St"
+   ],
+   "centre_lonlat": [
+    -104.9988393,
+    39.7414203
+   ],
+   "osm_nodes": [
+    176094984
+   ],
+   "grade": "tagged",
+   "position": "none claimed beyond the junction",
+   "control": "traffic signals",
+   "signal_nodes": [
+    176094984
+   ],
+   "stop_nodes": [],
+   "rail_crossing_nodes": [],
+   "lap_street": [
+    {
+     "osm_way": 37812132,
+     "name": "Stout Street",
+     "oneway": "yes",
+     "maxspeed": "25 mph",
+     "lanes": "2",
+     "highway": "secondary"
+    },
+    {
+     "osm_way": 628622209,
+     "name": "North Speer Boulevard",
+     "oneway": "yes",
+     "maxspeed": "35 mph",
+     "lanes": "5",
+     "turn:lanes": "through|through|through|through|right",
+     "highway": "primary"
+    }
+   ],
+   "cross_streets": [
+    {
+     "osm_way": 88160288,
+     "name": "Stout Street",
+     "oneway": "yes",
+     "maxspeed": "25 mph",
+     "lanes": "4",
+     "turn:lanes": "left|left|through|through",
+     "highway": "secondary"
+    },
+    {
+     "osm_way": 453021197,
+     "name": "North Speer Boulevard",
+     "oneway": "yes",
+     "maxspeed": "35 mph",
+     "lanes": "4",
+     "highway": "primary"
+    }
+   ],
+   "implied_by_osm": [
+    {
+     "what": "signal faces for every approach",
+     "basis": "highway=traffic_signals on 1 node(s)",
+     "see": "signals.json for the masts read off the aerial"
+    },
+    {
+     "what": "ONE WAY (R6-1 / R6-2) facing the lap's approach, and no turn against it (R3-1 / R3-2) or DO NOT ENTER (R5-1) at its exit end",
+     "on": "Stout Street",
+     "basis": "oneway=yes on way 88160288"
+    },
+    {
+     "what": "ONE WAY (R6-1 / R6-2) facing the lap's approach, and no turn against it (R3-1 / R3-2) or DO NOT ENTER (R5-1) at its exit end",
+     "on": "North Speer Boulevard",
+     "basis": "oneway=yes on way 453021197"
+    }
+   ],
+   "faces": "not read: no source from the air",
+   "street_level_source_must_supply": [
+    "the post of every sign (position to about a metre, which corner, on its own post or on a signal mast / lamp post)",
+    "each face: the MUTCD code or the legend, its size, which way it faces",
+    "street-name blades (overhead on the mast arm or on a corner post) and their text",
+    "turn restrictions and lane-use signs at the stop line (R3 series): OSM holds turn:lanes for some approaches only, and no restriction relations are in the extract",
+    "parking, bus-stop and loading signs along the kerb",
+    "whether the tagged signal is a full signal or a pedestrian / rail signal"
+   ]
+  },
+  {
+   "junction": "Stout Street / 14th Street",
+   "s_m": [
+    1758.0
+   ],
+   "leg": [
+    "Stout to 15th St"
+   ],
+   "centre_lonlat": [
+    -104.995475,
+    39.7439878
+   ],
+   "osm_nodes": [
+    176086275
+   ],
+   "grade": "tagged",
+   "position": "none claimed beyond the junction",
+   "control": "traffic signals",
+   "signal_nodes": [
+    176086275
+   ],
+   "stop_nodes": [],
+   "rail_crossing_nodes": [],
+   "lap_street": [
+    {
+     "osm_way": 305577945,
+     "name": "Stout Street",
+     "oneway": "yes",
+     "maxspeed": "25 mph",
+     "lanes": "2",
+     "turn:lanes": "left;through|through",
+     "highway": "secondary"
+    },
+    {
+     "osm_way": 1051799389,
+     "name": "Stout Street",
+     "oneway": "yes",
+     "maxspeed": "25 mph",
+     "lanes": "2",
+     "highway": "secondary"
+    }
+   ],
+   "cross_streets": [
+    {
+     "osm_way": 628389351,
+     "name": "14th Street",
+     "oneway": "yes",
+     "maxspeed": "30 mph",
+     "lanes": "2",
+     "cycleway:left": "no",
+     "cycleway:right": "separate",
+     "highway": "secondary"
+    },
+    {
+     "osm_way": 628389356,
+     "name": "14th Street",
+     "oneway": "yes",
+     "maxspeed": "30 mph",
+     "lanes": "3",
+     "turn:lanes": "left||",
+     "cycleway:left": "no",
+     "cycleway:right": "separate",
+     "highway": "secondary"
+    }
+   ],
+   "implied_by_osm": [
+    {
+     "what": "signal faces for every approach",
+     "basis": "highway=traffic_signals on 1 node(s)",
+     "see": "signals.json for the masts read off the aerial"
+    },
+    {
+     "what": "ONE WAY (R6-1 / R6-2) facing the lap's approach, and no turn against it (R3-1 / R3-2) or DO NOT ENTER (R5-1) at its exit end",
+     "on": "14th Street",
+     "basis": "oneway=yes on way 628389351"
+    },
+    {
+     "what": "ONE WAY (R6-1 / R6-2) facing the lap's approach, and no turn against it (R3-1 / R3-2) or DO NOT ENTER (R5-1) at its exit end",
+     "on": "14th Street",
+     "basis": "oneway=yes on way 628389356"
+    }
+   ],
+   "faces": "not read: no source from the air",
+   "street_level_source_must_supply": [
+    "the post of every sign (position to about a metre, which corner, on its own post or on a signal mast / lamp post)",
+    "each face: the MUTCD code or the legend, its size, which way it faces",
+    "street-name blades (overhead on the mast arm or on a corner post) and their text",
+    "turn restrictions and lane-use signs at the stop line (R3 series): OSM holds turn:lanes for some approaches only, and no restriction relations are in the extract",
+    "parking, bus-stop and loading signs along the kerb",
+    "whether the tagged signal is a full signal or a pedestrian / rail signal"
+   ]
+  },
+  {
+   "junction": "15th Street / Stout Street",
+   "s_m": [
+    1905.0
+   ],
+   "leg": [
+    "Stout to 15th St"
+   ],
+   "centre_lonlat": [
+    -104.9942609,
+    39.7449199
+   ],
+   "osm_nodes": [
+    176113163
+   ],
+   "grade": "tagged",
+   "position": "none claimed beyond the junction",
+   "control": "traffic signals",
+   "signal_nodes": [
+    176113163
+   ],
+   "stop_nodes": [],
+   "rail_crossing_nodes": [],
+   "lap_street": [
+    {
+     "osm_way": 305577945,
+     "name": "Stout Street",
+     "oneway": "yes",
+     "maxspeed": "25 mph",
+     "lanes": "2",
+     "turn:lanes": "left;through|through",
+     "highway": "secondary"
+    },
+    {
+     "osm_way": 628378945,
+     "name": "15th Street",
+     "oneway": "yes",
+     "maxspeed": "30 mph",
+     "lanes": "3",
+     "cycleway:left": "separate",
+     "cycleway:right": "no",
+     "highway": "secondary"
+    }
+   ],
+   "cross_streets": [
+    {
+     "osm_way": 628378946,
+     "name": "15th Street",
+     "oneway": "yes",
+     "maxspeed": "30 mph",
+     "lanes": "3",
+     "turn:lanes": "none|through|right",
+     "cycleway:left": "separate",
+     "cycleway:right": "no",
+     "highway": "secondary"
+    },
+    {
+     "osm_way": 1051799390,
+     "name": "Stout Street",
+     "oneway": "yes",
+     "maxspeed": "25 mph",
+     "lanes": "2",
+     "highway": "secondary"
+    }
+   ],
+   "implied_by_osm": [
+    {
+     "what": "signal faces for every approach",
+     "basis": "highway=traffic_signals on 1 node(s)",
+     "see": "signals.json for the masts read off the aerial"
+    },
+    {
+     "what": "ONE WAY (R6-1 / R6-2) facing the lap's approach, and no turn against it (R3-1 / R3-2) or DO NOT ENTER (R5-1) at its exit end",
+     "on": "15th Street",
+     "basis": "oneway=yes on way 628378946"
+    },
+    {
+     "what": "ONE WAY (R6-1 / R6-2) facing the lap's approach, and no turn against it (R3-1 / R3-2) or DO NOT ENTER (R5-1) at its exit end",
+     "on": "Stout Street",
+     "basis": "oneway=yes on way 1051799390"
+    }
+   ],
+   "faces": "not read: no source from the air",
+   "street_level_source_must_supply": [
+    "the post of every sign (position to about a metre, which corner, on its own post or on a signal mast / lamp post)",
+    "each face: the MUTCD code or the legend, its size, which way it faces",
+    "street-name blades (overhead on the mast arm or on a corner post) and their text",
+    "turn restrictions and lane-use signs at the stop line (R3 series): OSM holds turn:lanes for some approaches only, and no restriction relations are in the extract",
+    "parking, bus-stop and loading signs along the kerb",
+    "whether the tagged signal is a full signal or a pedestrian / rail signal"
+   ]
+  },
+  {
+   "junction": "15th Street / Champa Street",
+   "s_m": [
+    2011.0
+   ],
+   "leg": [
+    "15th St to Blake"
+   ],
+   "centre_lonlat": [
+    -104.9951313,
+    39.7455932
+   ],
+   "osm_nodes": [
+    176112279
+   ],
+   "grade": "tagged",
+   "position": "none claimed beyond the junction",
+   "control": "traffic signals",
+   "signal_nodes": [
+    176112279
+   ],
+   "stop_nodes": [],
+   "rail_crossing_nodes": [],
+   "lap_street": [
+    {
+     "osm_way": 132261659,
+     "name": "15th Street",
+     "oneway": "yes",
+     "maxspeed": "30 mph",
+     "lanes": "4",
+     "cycleway:left": "separate",
+     "cycleway:right": "no",
+     "highway": "secondary"
+    },
+    {
+     "osm_way": 628378944,
+     "name": "15th Street",
+     "oneway": "yes",
+     "maxspeed": "30 mph",
+     "lanes": "3",
+     "turn:lanes": "left;through||",
+     "cycleway:left": "separate",
+     "cycleway:right": "no",
+     "highway": "secondary"
+    }
+   ],
+   "cross_streets": [
+    {
+     "osm_way": 922432402,
+     "name": "Champa Street",
+     "oneway": "yes",
+     "maxspeed": "25 mph",
+     "lanes": "2",
+     "cycleway:right": "lane",
+     "highway": "secondary"
+    }
+   ],
+   "implied_by_osm": [
+    {
+     "what": "signal faces for every approach",
+     "basis": "highway=traffic_signals on 1 node(s)",
+     "see": "signals.json for the masts read off the aerial"
+    },
+    {
+     "what": "ONE WAY (R6-1 / R6-2) facing the lap's approach, and no turn against it (R3-1 / R3-2) or DO NOT ENTER (R5-1) at its exit end",
+     "on": "Champa Street",
+     "basis": "oneway=yes on way 922432402"
+    }
+   ],
+   "faces": "not read: no source from the air",
+   "street_level_source_must_supply": [
+    "the post of every sign (position to about a metre, which corner, on its own post or on a signal mast / lamp post)",
+    "each face: the MUTCD code or the legend, its size, which way it faces",
+    "street-name blades (overhead on the mast arm or on a corner post) and their text",
+    "turn restrictions and lane-use signs at the stop line (R3 series): OSM holds turn:lanes for some approaches only, and no restriction relations are in the extract",
+    "parking, bus-stop and loading signs along the kerb",
+    "whether the tagged signal is a full signal or a pedestrian / rail signal"
+   ]
+  },
+  {
+   "junction": "15th Street / Curtis Street",
+   "s_m": [
+    2117.0
+   ],
+   "leg": [
+    "15th St to Blake"
+   ],
+   "centre_lonlat": [
+    -104.9960105,
+    39.7462733
+   ],
+   "osm_nodes": [
+    3114170041
+   ],
+   "grade": "tagged",
+   "position": "none claimed beyond the junction",
+   "control": "traffic signals",
+   "signal_nodes": [
+    3114170041
+   ],
+   "stop_nodes": [],
+   "rail_crossing_nodes": [],
+   "lap_street": [
+    {
+     "osm_way": 628378942,
+     "name": "15th Street",
+     "oneway": "yes",
+     "maxspeed": "30 mph",
+     "lanes": "4",
+     "cycleway:left": "separate",
+     "cycleway:right": "no",
+     "highway": "secondary"
+    },
+    {
+     "osm_way": 795818886,
+     "name": "15th Street",
+     "oneway": "yes",
+     "maxspeed": "30 mph",
+     "lanes": "4",
+     "turn:lanes": "none|none|through|right",
+     "cycleway:left": "separate",
+     "cycleway:right": "no",
+     "highway": "secondary"
+    }
+   ],
+   "cross_streets": [
+    {
+     "osm_way": 27829270,
+     "name": "Curtis Street",
+     "oneway": "yes",
+     "maxspeed": "30 mph",
+     "lanes": "2",
+     "highway": "tertiary"
+    },
+    {
+     "osm_way": 317974696,
+     "name": "Curtis Street",
+     "oneway": "yes",
+     "lanes": "2",
+     "highway": "tertiary"
+    }
+   ],
+   "implied_by_osm": [
+    {
+     "what": "signal faces for every approach",
+     "basis": "highway=traffic_signals on 1 node(s)",
+     "see": "signals.json for the masts read off the aerial"
+    },
+    {
+     "what": "ONE WAY (R6-1 / R6-2) facing the lap's approach, and no turn against it (R3-1 / R3-2) or DO NOT ENTER (R5-1) at its exit end",
+     "on": "Curtis Street",
+     "basis": "oneway=yes on way 27829270"
+    },
+    {
+     "what": "ONE WAY (R6-1 / R6-2) facing the lap's approach, and no turn against it (R3-1 / R3-2) or DO NOT ENTER (R5-1) at its exit end",
+     "on": "Curtis Street",
+     "basis": "oneway=yes on way 317974696"
+    }
+   ],
+   "faces": "not read: no source from the air",
+   "street_level_source_must_supply": [
+    "the post of every sign (position to about a metre, which corner, on its own post or on a signal mast / lamp post)",
+    "each face: the MUTCD code or the legend, its size, which way it faces",
+    "street-name blades (overhead on the mast arm or on a corner post) and their text",
+    "turn restrictions and lane-use signs at the stop line (R3 series): OSM holds turn:lanes for some approaches only, and no restriction relations are in the extract",
+    "parking, bus-stop and loading signs along the kerb",
+    "whether the tagged signal is a full signal or a pedestrian / rail signal"
+   ]
+  },
+  {
+   "junction": "15th Street / Arapahoe Street",
+   "s_m": [
+    2220.0
+   ],
+   "leg": [
+    "15th St to Blake"
+   ],
+   "centre_lonlat": [
+    -104.9968678,
+    39.7469139
+   ],
+   "osm_nodes": [
+    176086584
+   ],
+   "grade": "tagged",
+   "position": "none claimed beyond the junction",
+   "control": "traffic signals",
+   "signal_nodes": [
+    176086584
+   ],
+   "stop_nodes": [],
+   "rail_crossing_nodes": [],
+   "lap_street": [
+    {
+     "osm_way": 628378943,
+     "name": "15th Street",
+     "oneway": "yes",
+     "maxspeed": "30 mph",
+     "lanes": "3",
+     "cycleway:left": "separate",
+     "cycleway:right": "no",
+     "highway": "secondary"
+    },
+    {
+     "osm_way": 628634465,
+     "name": "15th Street",
+     "oneway": "yes",
+     "maxspeed": "30 mph",
+     "lanes": "4",
+     "turn:lanes": "left;through|none|through|through",
+     "cycleway:left": "separate",
+     "cycleway:right": "no",
+     "highway": "secondary"
+    }
+   ],
+   "cross_streets": [
+    {
+     "osm_way": 133953246,
+     "name": "Arapahoe Street",
+     "oneway": "yes",
+     "lanes": "2",
+     "cycleway:left": "no",
+     "cycleway:right": "separate",
+     "highway": "tertiary"
+    },
+    {
+     "osm_way": 628393629,
+     "name": "Arapahoe Street",
+     "oneway": "yes",
+     "lanes": "3",
+     "turn:lanes": "||right",
+     "cycleway:left": "no",
+     "cycleway:right": "separate",
+     "highway": "tertiary"
+    }
+   ],
+   "implied_by_osm": [
+    {
+     "what": "signal faces for every approach",
+     "basis": "highway=traffic_signals on 1 node(s)",
+     "see": "signals.json for the masts read off the aerial"
+    },
+    {
+     "what": "ONE WAY (R6-1 / R6-2) facing the lap's approach, and no turn against it (R3-1 / R3-2) or DO NOT ENTER (R5-1) at its exit end",
+     "on": "Arapahoe Street",
+     "basis": "oneway=yes on way 133953246"
+    },
+    {
+     "what": "ONE WAY (R6-1 / R6-2) facing the lap's approach, and no turn against it (R3-1 / R3-2) or DO NOT ENTER (R5-1) at its exit end",
+     "on": "Arapahoe Street",
+     "basis": "oneway=yes on way 628393629"
+    }
+   ],
+   "faces": "not read: no source from the air",
+   "street_level_source_must_supply": [
+    "the post of every sign (position to about a metre, which corner, on its own post or on a signal mast / lamp post)",
+    "each face: the MUTCD code or the legend, its size, which way it faces",
+    "street-name blades (overhead on the mast arm or on a corner post) and their text",
+    "turn restrictions and lane-use signs at the stop line (R3 series): OSM holds turn:lanes for some approaches only, and no restriction relations are in the extract",
+    "parking, bus-stop and loading signs along the kerb",
+    "whether the tagged signal is a full signal or a pedestrian / rail signal"
+   ]
+  },
+  {
+   "junction": "15th Street / Lawrence Street",
+   "s_m": [
+    2328.0
+   ],
+   "leg": [
+    "15th St to Blake"
+   ],
+   "centre_lonlat": [
+    -104.9977622,
+    39.7475986
+   ],
+   "osm_nodes": [
+    176101775
+   ],
+   "grade": "tagged",
+   "position": "none claimed beyond the junction",
+   "control": "traffic signals",
+   "signal_nodes": [
+    176101775
+   ],
+   "stop_nodes": [],
+   "rail_crossing_nodes": [],
+   "lap_street": [
+    {
+     "osm_way": 130888010,
+     "name": "15th Street",
+     "oneway": "yes",
+     "maxspeed": "30 mph",
+     "lanes": "3",
+     "cycleway:left": "separate",
+     "cycleway:right": "no",
+     "highway": "secondary"
+    },
+    {
+     "osm_way": 628378943,
+     "name": "15th Street",
+     "oneway": "yes",
+     "maxspeed": "30 mph",
+     "lanes": "3",
+     "cycleway:left": "separate",
+     "cycleway:right": "no",
+     "highway": "secondary"
+    }
+   ],
+   "cross_streets": [
+    {
+     "osm_way": 628393627,
+     "name": "Lawrence Street",
+     "oneway": "yes",
+     "maxspeed": "25 mph",
+     "lanes": "3",
+     "cycleway:left": "no",
+     "cycleway:right": "separate",
+     "highway": "tertiary"
+    },
+    {
+     "osm_way": 628634466,
+     "name": "Lawrence Street",
+     "oneway": "yes",
+     "maxspeed": "25 mph",
+     "lanes": "4",
+     "turn:lanes": "left|left;through|none|none",
+     "cycleway:left": "no",
+     "cycleway:right": "separate",
+     "highway": "tertiary"
+    }
+   ],
+   "implied_by_osm": [
+    {
+     "what": "signal faces for every approach",
+     "basis": "highway=traffic_signals on 1 node(s)",
+     "see": "signals.json for the masts read off the aerial"
+    },
+    {
+     "what": "ONE WAY (R6-1 / R6-2) facing the lap's approach, and no turn against it (R3-1 / R3-2) or DO NOT ENTER (R5-1) at its exit end",
+     "on": "Lawrence Street",
+     "basis": "oneway=yes on way 628393627"
+    },
+    {
+     "what": "ONE WAY (R6-1 / R6-2) facing the lap's approach, and no turn against it (R3-1 / R3-2) or DO NOT ENTER (R5-1) at its exit end",
+     "on": "Lawrence Street",
+     "basis": "oneway=yes on way 628634466"
+    }
+   ],
+   "faces": "not read: no source from the air",
+   "street_level_source_must_supply": [
+    "the post of every sign (position to about a metre, which corner, on its own post or on a signal mast / lamp post)",
+    "each face: the MUTCD code or the legend, its size, which way it faces",
+    "street-name blades (overhead on the mast arm or on a corner post) and their text",
+    "turn restrictions and lane-use signs at the stop line (R3 series): OSM holds turn:lanes for some approaches only, and no restriction relations are in the extract",
+    "parking, bus-stop and loading signs along the kerb",
+    "whether the tagged signal is a full signal or a pedestrian / rail signal"
+   ]
+  },
+  {
+   "junction": "15th Street / Larimer Street",
+   "s_m": [
+    2432.0
+   ],
+   "leg": [
+    "15th St to Blake"
+   ],
+   "centre_lonlat": [
+    -104.9986107,
+    39.7482708
+   ],
+   "osm_nodes": [
+    3114138908
+   ],
+   "grade": "tagged",
+   "position": "none claimed beyond the junction",
+   "control": "traffic signals",
+   "signal_nodes": [
+    3114138908
+   ],
+   "stop_nodes": [],
+   "rail_crossing_nodes": [],
+   "lap_street": [
+    {
+     "osm_way": 106395269,
+     "name": "15th Street",
+     "oneway": "yes",
+     "maxspeed": "30 mph",
+     "lanes": "3",
+     "highway": "secondary"
+    },
+    {
+     "osm_way": 628639108,
+     "name": "15th Street",
+     "oneway": "yes",
+     "maxspeed": "30 mph",
+     "lanes": "3",
+     "turn:lanes": "left;through||",
+     "cycleway:left": "separate",
+     "cycleway:right": "no",
+     "highway": "secondary"
+    }
+   ],
+   "cross_streets": [
+    {
+     "osm_way": 628636725,
+     "name": "Larimer Street",
+     "oneway": "yes",
+     "maxspeed": "25 mph",
+     "lanes": "3",
+     "turn:lanes": "through|through;right|right",
+     "highway": "tertiary"
+    }
+   ],
+   "implied_by_osm": [
+    {
+     "what": "signal faces for every approach",
+     "basis": "highway=traffic_signals on 1 node(s)",
+     "see": "signals.json for the masts read off the aerial"
+    },
+    {
+     "what": "ONE WAY (R6-1 / R6-2) facing the lap's approach, and no turn against it (R3-1 / R3-2) or DO NOT ENTER (R5-1) at its exit end",
+     "on": "Larimer Street",
+     "basis": "oneway=yes on way 628636725"
+    }
+   ],
+   "faces": "not read: no source from the air",
+   "street_level_source_must_supply": [
+    "the post of every sign (position to about a metre, which corner, on its own post or on a signal mast / lamp post)",
+    "each face: the MUTCD code or the legend, its size, which way it faces",
+    "street-name blades (overhead on the mast arm or on a corner post) and their text",
+    "turn restrictions and lane-use signs at the stop line (R3 series): OSM holds turn:lanes for some approaches only, and no restriction relations are in the extract",
+    "parking, bus-stop and loading signs along the kerb",
+    "whether the tagged signal is a full signal or a pedestrian / rail signal"
+   ]
+  },
+  {
+   "junction": "15th Street / Market Street",
+   "s_m": [
+    2539.0
+   ],
+   "leg": [
+    "15th St to Blake"
+   ],
+   "centre_lonlat": [
+    -104.9994791,
+    39.7489609
+   ],
+   "osm_nodes": [
+    176110270
+   ],
+   "grade": "tagged",
+   "position": "none claimed beyond the junction",
+   "control": "traffic signals",
+   "signal_nodes": [
+    176110270
+   ],
+   "stop_nodes": [],
+   "rail_crossing_nodes": [],
+   "lap_street": [
+    {
+     "osm_way": 106395269,
+     "name": "15th Street",
+     "oneway": "yes",
+     "maxspeed": "30 mph",
+     "lanes": "3",
+     "highway": "secondary"
+    },
+    {
+     "osm_way": 130911257,
+     "name": "15th Street",
+     "oneway": "yes",
+     "maxspeed": "30 mph",
+     "lanes": "4",
+     "highway": "secondary"
+    }
+   ],
+   "cross_streets": [
+    {
+     "osm_way": 130885097,
+     "name": "Market Street",
+     "oneway": "yes",
+     "maxspeed": "30 mph",
+     "lanes": "3",
+     "cycleway:left": "no",
+     "cycleway:right": "track",
+     "highway": "primary"
+    },
+    {
+     "osm_way": 130911258,
+     "name": "Market Street",
+     "oneway": "yes",
+     "lanes": "3",
+     "cycleway:left": "no",
+     "cycleway:right": "track",
+     "highway": "primary"
+    }
+   ],
+   "implied_by_osm": [
+    {
+     "what": "signal faces for every approach",
+     "basis": "highway=traffic_signals on 1 node(s)",
+     "see": "signals.json for the masts read off the aerial"
+    },
+    {
+     "what": "ONE WAY (R6-1 / R6-2) facing the lap's approach, and no turn against it (R3-1 / R3-2) or DO NOT ENTER (R5-1) at its exit end",
+     "on": "Market Street",
+     "basis": "oneway=yes on way 130885097"
+    },
+    {
+     "what": "ONE WAY (R6-1 / R6-2) facing the lap's approach, and no turn against it (R3-1 / R3-2) or DO NOT ENTER (R5-1) at its exit end",
+     "on": "Market Street",
+     "basis": "oneway=yes on way 130911258"
+    }
+   ],
+   "faces": "not read: no source from the air",
+   "street_level_source_must_supply": [
+    "the post of every sign (position to about a metre, which corner, on its own post or on a signal mast / lamp post)",
+    "each face: the MUTCD code or the legend, its size, which way it faces",
+    "street-name blades (overhead on the mast arm or on a corner post) and their text",
+    "turn restrictions and lane-use signs at the stop line (R3 series): OSM holds turn:lanes for some approaches only, and no restriction relations are in the extract",
+    "parking, bus-stop and loading signs along the kerb",
+    "whether the tagged signal is a full signal or a pedestrian / rail signal"
+   ]
+  },
+  {
+   "junction": "15th Street / ?",
+   "s_m": [
+    2602.0
+   ],
+   "leg": [
+    "15th St to Blake"
+   ],
+   "centre_lonlat": [
+    -104.9999944,
+    39.7493678
+   ],
+   "osm_nodes": [
+    1154767197
+   ],
+   "grade": "tagged",
+   "position": "none claimed beyond the junction",
+   "control": "none tagged",
+   "signal_nodes": [],
+   "stop_nodes": [],
+   "rail_crossing_nodes": [],
+   "lap_street": [
+    {
+     "osm_way": 99883921,
+     "name": "15th Street",
+     "oneway": "yes",
+     "lanes": "2",
+     "highway": "secondary"
+    },
+    {
+     "osm_way": 628636724,
+     "name": "15th Street",
+     "oneway": "yes",
+     "maxspeed": "30 mph",
+     "lanes": "4",
+     "turn:lanes": "left|left|left;through|through",
+     "highway": "secondary"
+    }
+   ],
+   "cross_streets": [
+    {
+     "osm_way": 99883939,
+     "oneway": "yes",
+     "lanes": "3",
+     "turn:lanes": "left|left|left",
+     "highway": "primary_link"
+    }
+   ],
+   "implied_by_osm": [
+    {
+     "what": "ONE WAY (R6-1 / R6-2) facing the lap's approach, and no turn against it (R3-1 / R3-2) or DO NOT ENTER (R5-1) at its exit end",
+     "on": "unnamed",
+     "basis": "oneway=yes on way 99883939"
+    }
+   ],
+   "faces": "not read: no source from the air",
+   "street_level_source_must_supply": [
+    "the post of every sign (position to about a metre, which corner, on its own post or on a signal mast / lamp post)",
+    "each face: the MUTCD code or the legend, its size, which way it faces",
+    "street-name blades (overhead on the mast arm or on a corner post) and their text",
+    "turn restrictions and lane-use signs at the stop line (R3 series): OSM holds turn:lanes for some approaches only, and no restriction relations are in the extract",
+    "parking, bus-stop and loading signs along the kerb",
+    "whether the junction is really uncontrolled, or the stop sign is simply not mapped"
+   ]
+  },
+  {
+   "junction": "15th Street / Blake Street",
+   "s_m": [
+    2644.0
+   ],
+   "leg": [
+    "15th St to Blake"
+   ],
+   "centre_lonlat": [
+    -105.0003498,
+    39.7496302
+   ],
+   "osm_nodes": [
+    176091533
+   ],
+   "grade": "tagged",
+   "position": "none claimed beyond the junction",
+   "control": "traffic signals",
+   "signal_nodes": [
+    176091533
+   ],
+   "stop_nodes": [],
+   "rail_crossing_nodes": [],
+   "lap_street": [
+    {
+     "osm_way": 99883921,
+     "name": "15th Street",
+     "oneway": "yes",
+     "lanes": "2",
+     "highway": "secondary"
+    },
+    {
+     "osm_way": 541284847,
+     "name": "Blake Street",
+     "oneway": "yes",
+     "maxspeed": "25 mph",
+     "lanes": "3",
+     "cycleway:left": "separate",
+     "cycleway:right": "no",
+     "highway": "primary"
+    }
+   ],
+   "cross_streets": [
+    {
+     "osm_way": 541284846,
+     "name": "15th Street",
+     "oneway": "yes",
+     "lanes": "2",
+     "highway": "secondary"
+    },
+    {
+     "osm_way": 648929103,
+     "name": "Blake Street",
+     "oneway": "yes",
+     "maxspeed": "25 mph",
+     "lanes": "3",
+     "cycleway:left": "separate",
+     "cycleway:right": "no",
+     "highway": "primary"
+    }
+   ],
+   "implied_by_osm": [
+    {
+     "what": "signal faces for every approach",
+     "basis": "highway=traffic_signals on 1 node(s)",
+     "see": "signals.json for the masts read off the aerial"
+    },
+    {
+     "what": "ONE WAY (R6-1 / R6-2) facing the lap's approach, and no turn against it (R3-1 / R3-2) or DO NOT ENTER (R5-1) at its exit end",
+     "on": "15th Street",
+     "basis": "oneway=yes on way 541284846"
+    },
+    {
+     "what": "ONE WAY (R6-1 / R6-2) facing the lap's approach, and no turn against it (R3-1 / R3-2) or DO NOT ENTER (R5-1) at its exit end",
+     "on": "Blake Street",
+     "basis": "oneway=yes on way 648929103"
+    }
+   ],
+   "faces": "not read: no source from the air",
+   "street_level_source_must_supply": [
+    "the post of every sign (position to about a metre, which corner, on its own post or on a signal mast / lamp post)",
+    "each face: the MUTCD code or the legend, its size, which way it faces",
+    "street-name blades (overhead on the mast arm or on a corner post) and their text",
+    "turn restrictions and lane-use signs at the stop line (R3 series): OSM holds turn:lanes for some approaches only, and no restriction relations are in the extract",
+    "parking, bus-stop and loading signs along the kerb",
+    "whether the tagged signal is a full signal or a pedestrian / rail signal"
+   ]
+  },
+  {
+   "junction": "Blake Street / ?",
+   "s_m": [
+    2677.0
+   ],
+   "leg": [
+    "Blake to Speer SB"
+   ],
+   "centre_lonlat": [
+    -105.0006176,
+    39.749423
+   ],
+   "osm_nodes": [
+    3114163232
+   ],
+   "grade": "tagged",
+   "position": "none claimed beyond the junction",
+   "control": "none tagged",
+   "signal_nodes": [],
+   "stop_nodes": [],
+   "rail_crossing_nodes": [],
+   "lap_street": [
+    {
+     "osm_way": 99883930,
+     "name": "Blake Street",
+     "oneway": "yes",
+     "maxspeed": "25 mph",
+     "lanes": "2",
+     "cycleway:left": "separate",
+     "cycleway:right": "no",
+     "highway": "primary"
+    },
+    {
+     "osm_way": 541284847,
+     "name": "Blake Street",
+     "oneway": "yes",
+     "maxspeed": "25 mph",
+     "lanes": "3",
+     "cycleway:left": "separate",
+     "cycleway:right": "no",
+     "highway": "primary"
+    }
+   ],
+   "cross_streets": [
+    {
+     "osm_way": 99883939,
+     "oneway": "yes",
+     "lanes": "3",
+     "turn:lanes": "left|left|left",
+     "highway": "primary_link"
+    }
+   ],
+   "implied_by_osm": [
+    {
+     "what": "ONE WAY (R6-1 / R6-2) facing the lap's approach, and no turn against it (R3-1 / R3-2) or DO NOT ENTER (R5-1) at its exit end",
+     "on": "unnamed",
+     "basis": "oneway=yes on way 99883939"
+    }
+   ],
+   "faces": "not read: no source from the air",
+   "street_level_source_must_supply": [
+    "the post of every sign (position to about a metre, which corner, on its own post or on a signal mast / lamp post)",
+    "each face: the MUTCD code or the legend, its size, which way it faces",
+    "street-name blades (overhead on the mast arm or on a corner post) and their text",
+    "turn restrictions and lane-use signs at the stop line (R3 series): OSM holds turn:lanes for some approaches only, and no restriction relations are in the extract",
+    "parking, bus-stop and loading signs along the kerb",
+    "whether the junction is really uncontrolled, or the stop sign is simply not mapped"
+   ]
+  },
+  {
+   "junction": "Blake Street / 14th Street",
+   "s_m": [
+    2772.0
+   ],
+   "leg": [
+    "Blake to Speer SB"
+   ],
+   "centre_lonlat": [
+    -105.001398,
+    39.7488118
+   ],
+   "osm_nodes": [
+    176086282
+   ],
+   "grade": "tagged",
+   "position": "none claimed beyond the junction",
+   "control": "none tagged",
+   "signal_nodes": [],
+   "stop_nodes": [],
+   "rail_crossing_nodes": [],
+   "lap_street": [
+    {
+     "osm_way": 1384814966,
+     "name": "Blake Street",
+     "oneway": "yes",
+     "maxspeed": "30 mph",
+     "lanes": "3",
+     "cycleway:left": "separate",
+     "cycleway:right": "no",
+     "highway": "primary"
+    },
+    {
+     "osm_way": 1563606689,
+     "name": "Blake Street",
+     "oneway": "yes",
+     "maxspeed": "25 mph",
+     "lanes": "2",
+     "cycleway:left": "separate",
+     "cycleway:right": "no",
+     "highway": "primary"
+    }
+   ],
+   "cross_streets": [
+    {
+     "osm_way": 16984028,
+     "name": "14th Street",
+     "oneway": "yes",
+     "maxspeed": "25 mph",
+     "lanes": "1",
+     "cycleway:left": "no",
+     "cycleway:right": "separate",
+     "highway": "secondary"
+    }
+   ],
+   "implied_by_osm": [
+    {
+     "what": "ONE WAY (R6-1 / R6-2) facing the lap's approach, and no turn against it (R3-1 / R3-2) or DO NOT ENTER (R5-1) at its exit end",
+     "on": "14th Street",
+     "basis": "oneway=yes on way 16984028"
+    }
+   ],
+   "faces": "not read: no source from the air",
+   "street_level_source_must_supply": [
+    "the post of every sign (position to about a metre, which corner, on its own post or on a signal mast / lamp post)",
+    "each face: the MUTCD code or the legend, its size, which way it faces",
+    "street-name blades (overhead on the mast arm or on a corner post) and their text",
+    "turn restrictions and lane-use signs at the stop line (R3 series): OSM holds turn:lanes for some approaches only, and no restriction relations are in the extract",
+    "parking, bus-stop and loading signs along the kerb",
+    "whether the junction is really uncontrolled, or the stop sign is simply not mapped"
+   ]
+  },
+  {
+   "junction": "Blake Street / 14th Street",
+   "s_m": [
+    2835.0
+   ],
+   "leg": [
+    "Blake to Speer SB"
+   ],
+   "centre_lonlat": [
+    -105.0020958,
+    39.7486586
+   ],
+   "osm_nodes": [
+    176085736
+   ],
+   "grade": "tagged",
+   "position": "none claimed beyond the junction",
+   "control": "traffic signals",
+   "signal_nodes": [
+    176085736
+   ],
+   "stop_nodes": [],
+   "rail_crossing_nodes": [],
+   "lap_street": [
+    {
+     "osm_way": 25679930,
+     "name": "Blake Street",
+     "oneway": "yes",
+     "maxspeed": "30 mph",
+     "lanes": "4",
+     "turn:lanes": "through|through|through|right",
+     "highway": "primary"
+    },
+    {
+     "osm_way": 628634516,
+     "name": "Blake Street",
+     "oneway": "yes",
+     "maxspeed": "30 mph",
+     "lanes": "4",
+     "turn:lanes": "through|through|through|right",
+     "highway": "primary"
+    }
+   ],
+   "cross_streets": [
+    {
+     "osm_way": 1561052289,
+     "name": "14th Street",
+     "highway": "tertiary"
+    },
+    {
+     "osm_way": 1561052290,
+     "name": "14th Street",
+     "highway": "unclassified"
+    }
+   ],
+   "implied_by_osm": [
+    {
+     "what": "signal faces for every approach",
+     "basis": "highway=traffic_signals on 1 node(s)",
+     "see": "signals.json for the masts read off the aerial"
+    }
+   ],
+   "faces": "not read: no source from the air",
+   "street_level_source_must_supply": [
+    "the post of every sign (position to about a metre, which corner, on its own post or on a signal mast / lamp post)",
+    "each face: the MUTCD code or the legend, its size, which way it faces",
+    "street-name blades (overhead on the mast arm or on a corner post) and their text",
+    "turn restrictions and lane-use signs at the stop line (R3 series): OSM holds turn:lanes for some approaches only, and no restriction relations are in the extract",
+    "parking, bus-stop and loading signs along the kerb",
+    "whether the tagged signal is a full signal or a pedestrian / rail signal"
+   ]
+  },
+  {
+   "junction": "Auraria Parkway / Blake Street / North Speer Boulevard / North Speer Boulevard",
+   "s_m": [
+    2924.0,
+    2946.0
+   ],
+   "leg": [
+    "Blake to Speer SB"
+   ],
+   "centre_lonlat": [
+    -105.0032369,
+    39.7484745
+   ],
+   "osm_nodes": [
+    807523462,
+    279934061
+   ],
+   "grade": "tagged",
+   "position": "none claimed beyond the junction",
+   "control": "traffic signals",
+   "signal_nodes": [
+    807523462,
+    279934061
+   ],
+   "stop_nodes": [],
+   "rail_crossing_nodes": [],
+   "lap_street": [
+    {
+     "osm_way": 25679930,
+     "name": "Blake Street",
+     "oneway": "yes",
+     "maxspeed": "30 mph",
+     "lanes": "4",
+     "turn:lanes": "through|through|through|right",
+     "highway": "primary"
+    },
+    {
+     "osm_way": 628622164,
+     "name": "North Speer Boulevard",
+     "oneway": "yes",
+     "maxspeed": "35 mph",
+     "lanes": "4",
+     "highway": "primary"
+    },
+    {
+     "osm_way": 628634511,
+     "name": "Auraria Parkway",
+     "oneway": "yes",
+     "maxspeed": "35 mph",
+     "lanes": "3",
+     "highway": "primary"
+    }
+   ],
+   "cross_streets": [
+    {
+     "osm_way": 317966284,
+     "name": "North Speer Boulevard",
+     "oneway": "yes",
+     "maxspeed": "35 mph",
+     "lanes": "4",
+     "highway": "primary"
+    },
+    {
+     "osm_way": 628634477,
+     "name": "Auraria Parkway",
+     "oneway": "yes",
+     "maxspeed": "35 mph",
+     "lanes": "5",
+     "turn:lanes": "left|left;through|through|through|right",
+     "highway": "primary"
+    },
+    {
+     "osm_way": 628634524,
+     "name": "North Speer Boulevard",
+     "oneway": "yes",
+     "maxspeed": "35 mph",
+     "lanes": "5",
+     "turn:lanes": "through|through|through|through;right|right",
+     "highway": "primary"
+    },
+    {
+     "osm_way": 944157437,
+     "name": "North Speer Boulevard",
+     "oneway": "yes",
+     "maxspeed": "35 mph",
+     "lanes": "7",
+     "turn:lanes": "left|left|||||",
+     "highway": "primary"
+    }
+   ],
+   "implied_by_osm": [
+    {
+     "what": "signal faces for every approach",
+     "basis": "highway=traffic_signals on 2 node(s)",
+     "see": "signals.json for the masts read off the aerial"
+    },
+    {
+     "what": "ONE WAY (R6-1 / R6-2) facing the lap's approach, and no turn against it (R3-1 / R3-2) or DO NOT ENTER (R5-1) at its exit end",
+     "on": "North Speer Boulevard",
+     "basis": "oneway=yes on way 317966284"
+    },
+    {
+     "what": "ONE WAY (R6-1 / R6-2) facing the lap's approach, and no turn against it (R3-1 / R3-2) or DO NOT ENTER (R5-1) at its exit end",
+     "on": "Auraria Parkway",
+     "basis": "oneway=yes on way 628634477"
+    },
+    {
+     "what": "ONE WAY (R6-1 / R6-2) facing the lap's approach, and no turn against it (R3-1 / R3-2) or DO NOT ENTER (R5-1) at its exit end",
+     "on": "North Speer Boulevard",
+     "basis": "oneway=yes on way 628634524"
+    },
+    {
+     "what": "ONE WAY (R6-1 / R6-2) facing the lap's approach, and no turn against it (R3-1 / R3-2) or DO NOT ENTER (R5-1) at its exit end",
+     "on": "North Speer Boulevard",
+     "basis": "oneway=yes on way 944157437"
+    }
+   ],
+   "faces": "not read: no source from the air",
+   "street_level_source_must_supply": [
+    "the post of every sign (position to about a metre, which corner, on its own post or on a signal mast / lamp post)",
+    "each face: the MUTCD code or the legend, its size, which way it faces",
+    "street-name blades (overhead on the mast arm or on a corner post) and their text",
+    "turn restrictions and lane-use signs at the stop line (R3 series): OSM holds turn:lanes for some approaches only, and no restriction relations are in the extract",
+    "parking, bus-stop and loading signs along the kerb",
+    "whether the tagged signal is a full signal or a pedestrian / rail signal"
+   ]
+  },
+  {
+   "junction": "North Speer Boulevard / Auraria Parkway",
+   "s_m": [
+    3055.0
+   ],
+   "leg": [
+    "Speer SB to Kalamath"
+   ],
+   "centre_lonlat": [
+    -105.0026615,
+    39.7476216
+   ],
+   "osm_nodes": [
+    176086937
+   ],
+   "grade": "tagged",
+   "position": "none claimed beyond the junction",
+   "control": "traffic signals",
+   "signal_nodes": [
+    176086937
+   ],
+   "stop_nodes": [],
+   "rail_crossing_nodes": [],
+   "lap_street": [
+    {
+     "osm_way": 204336217,
+     "name": "North Speer Boulevard",
+     "oneway": "yes",
+     "maxspeed": "35 mph",
+     "lanes": "4",
+     "highway": "primary"
+    },
+    {
+     "osm_way": 628622164,
+     "name": "North Speer Boulevard",
+     "oneway": "yes",
+     "maxspeed": "35 mph",
+     "lanes": "4",
+     "highway": "primary"
+    }
+   ],
+   "cross_streets": [
+    {
+     "osm_way": 27822941,
+     "name": "Auraria Parkway",
+     "oneway": "yes",
+     "maxspeed": "30 mph",
+     "lanes": "5",
+     "turn:lanes": "left|through|through|through|through",
+     "highway": "primary"
+    },
+    {
+     "osm_way": 99883935,
+     "name": "Auraria Parkway",
+     "oneway": "yes",
+     "maxspeed": "35 mph",
+     "lanes": "5",
+     "turn:lanes": "left|through|through|through|through;right",
+     "highway": "primary"
+    }
+   ],
+   "implied_by_osm": [
+    {
+     "what": "signal faces for every approach",
+     "basis": "highway=traffic_signals on 1 node(s)",
+     "see": "signals.json for the masts read off the aerial"
+    },
+    {
+     "what": "ONE WAY (R6-1 / R6-2) facing the lap's approach, and no turn against it (R3-1 / R3-2) or DO NOT ENTER (R5-1) at its exit end",
+     "on": "Auraria Parkway",
+     "basis": "oneway=yes on way 27822941"
+    },
+    {
+     "what": "ONE WAY (R6-1 / R6-2) facing the lap's approach, and no turn against it (R3-1 / R3-2) or DO NOT ENTER (R5-1) at its exit end",
+     "on": "Auraria Parkway",
+     "basis": "oneway=yes on way 99883935"
+    }
+   ],
+   "faces": "not read: no source from the air",
+   "street_level_source_must_supply": [
+    "the post of every sign (position to about a metre, which corner, on its own post or on a signal mast / lamp post)",
+    "each face: the MUTCD code or the legend, its size, which way it faces",
+    "street-name blades (overhead on the mast arm or on a corner post) and their text",
+    "turn restrictions and lane-use signs at the stop line (R3 series): OSM holds turn:lanes for some approaches only, and no restriction relations are in the extract",
+    "parking, bus-stop and loading signs along the kerb",
+    "whether the tagged signal is a full signal or a pedestrian / rail signal"
+   ]
+  },
+  {
+   "junction": "North Speer Boulevard / Larimer Street",
+   "s_m": [
+    3226.0
+   ],
+   "leg": [
+    "Speer SB to Kalamath"
+   ],
+   "centre_lonlat": [
+    -105.001433,
+    39.7464083
+   ],
+   "osm_nodes": [
+    176099154
+   ],
+   "grade": "tagged",
+   "position": "none claimed beyond the junction",
+   "control": "traffic signals",
+   "signal_nodes": [
+    176099154
+   ],
+   "stop_nodes": [],
+   "rail_crossing_nodes": [],
+   "lap_street": [
+    {
+     "osm_way": 204336217,
+     "name": "North Speer Boulevard",
+     "oneway": "yes",
+     "maxspeed": "35 mph",
+     "lanes": "4",
+     "highway": "primary"
+    },
+    {
+     "osm_way": 628634529,
+     "name": "North Speer Boulevard",
+     "oneway": "yes",
+     "maxspeed": "35 mph",
+     "lanes": "4",
+     "highway": "primary"
+    }
+   ],
+   "cross_streets": [
+    {
+     "osm_way": 628634463,
+     "name": "Larimer Street",
+     "oneway": "yes",
+     "maxspeed": "25 mph",
+     "lanes": "3",
+     "turn:lanes": "left|left|",
+     "bus:lanes": "||designated",
+     "cycleway:left": "separate",
+     "cycleway:right": "no",
+     "highway": "unclassified"
+    },
+    {
+     "osm_way": 1476967327,
+     "name": "Larimer Street",
+     "maxspeed": "15 mph",
+     "cycleway:left": "lane",
+     "cycleway:right": "shared_lane",
+     "highway": "unclassified"
+    }
+   ],
+   "implied_by_osm": [
+    {
+     "what": "signal faces for every approach",
+     "basis": "highway=traffic_signals on 1 node(s)",
+     "see": "signals.json for the masts read off the aerial"
+    },
+    {
+     "what": "ONE WAY (R6-1 / R6-2) facing the lap's approach, and no turn against it (R3-1 / R3-2) or DO NOT ENTER (R5-1) at its exit end",
+     "on": "Larimer Street",
+     "basis": "oneway=yes on way 628634463"
+    }
+   ],
+   "faces": "not read: no source from the air",
+   "street_level_source_must_supply": [
+    "the post of every sign (position to about a metre, which corner, on its own post or on a signal mast / lamp post)",
+    "each face: the MUTCD code or the legend, its size, which way it faces",
+    "street-name blades (overhead on the mast arm or on a corner post) and their text",
+    "turn restrictions and lane-use signs at the stop line (R3 series): OSM holds turn:lanes for some approaches only, and no restriction relations are in the extract",
+    "parking, bus-stop and loading signs along the kerb",
+    "whether the tagged signal is a full signal or a pedestrian / rail signal"
+   ]
+  },
+  {
+   "junction": "North Speer Boulevard / Lawrence Street",
+   "s_m": [
+    3368.0
+   ],
+   "leg": [
+    "Speer SB to Kalamath"
+   ],
+   "centre_lonlat": [
+    -105.0007254,
+    39.7452556
+   ],
+   "osm_nodes": [
+    5934861525
+   ],
+   "grade": "tagged",
+   "position": "none claimed beyond the junction",
+   "control": "traffic signals",
+   "signal_nodes": [
+    5934861525
+   ],
+   "stop_nodes": [],
+   "rail_crossing_nodes": [],
+   "lap_street": [
+    {
+     "osm_way": 16989043,
+     "name": "North Speer Boulevard",
+     "oneway": "yes",
+     "maxspeed": "35 mph",
+     "lanes": "4",
+     "highway": "primary"
+    },
+    {
+     "osm_way": 628622238,
+     "name": "North Speer Boulevard",
+     "oneway": "yes",
+     "maxspeed": "35 mph",
+     "lanes": "5",
+     "turn:lanes": "left|through|through|through|through",
+     "highway": "primary"
+    }
+   ],
+   "cross_streets": [
+    {
+     "osm_way": 628622239,
+     "name": "Lawrence Street",
+     "oneway": "yes",
+     "maxspeed": "25 mph",
+     "lanes": "2",
+     "cycleway:left": "no",
+     "cycleway:right": "separate",
+     "highway": "tertiary"
+    }
+   ],
+   "implied_by_osm": [
+    {
+     "what": "signal faces for every approach",
+     "basis": "highway=traffic_signals on 1 node(s)",
+     "see": "signals.json for the masts read off the aerial"
+    },
+    {
+     "what": "ONE WAY (R6-1 / R6-2) facing the lap's approach, and no turn against it (R3-1 / R3-2) or DO NOT ENTER (R5-1) at its exit end",
+     "on": "Lawrence Street",
+     "basis": "oneway=yes on way 628622239"
+    }
+   ],
+   "faces": "not read: no source from the air",
+   "street_level_source_must_supply": [
+    "the post of every sign (position to about a metre, which corner, on its own post or on a signal mast / lamp post)",
+    "each face: the MUTCD code or the legend, its size, which way it faces",
+    "street-name blades (overhead on the mast arm or on a corner post) and their text",
+    "turn restrictions and lane-use signs at the stop line (R3 series): OSM holds turn:lanes for some approaches only, and no restriction relations are in the extract",
+    "parking, bus-stop and loading signs along the kerb",
+    "whether the tagged signal is a full signal or a pedestrian / rail signal"
+   ]
+  },
+  {
+   "junction": "North Speer Boulevard / Arapahoe Street",
+   "s_m": [
+    3501.0
+   ],
+   "leg": [
+    "Speer SB to Kalamath"
+   ],
+   "centre_lonlat": [
+    -105.0005954,
+    39.7440639
+   ],
+   "osm_nodes": [
+    672562134
+   ],
+   "grade": "tagged",
+   "position": "none claimed beyond the junction",
+   "control": "traffic signals",
+   "signal_nodes": [
+    672562134
+   ],
+   "stop_nodes": [],
+   "rail_crossing_nodes": [],
+   "lap_street": [
+    {
+     "osm_way": 16989043,
+     "name": "North Speer Boulevard",
+     "oneway": "yes",
+     "maxspeed": "35 mph",
+     "lanes": "4",
+     "highway": "primary"
+    }
+   ],
+   "cross_streets": [
+    {
+     "osm_way": 44932622,
+     "name": "Arapahoe Street",
+     "lanes": "3",
+     "cycleway:right": "lane",
+     "highway": "tertiary"
+    }
+   ],
+   "implied_by_osm": [
+    {
+     "what": "signal faces for every approach",
+     "basis": "highway=traffic_signals on 1 node(s)",
+     "see": "signals.json for the masts read off the aerial"
+    }
+   ],
+   "faces": "not read: no source from the air",
+   "street_level_source_must_supply": [
+    "the post of every sign (position to about a metre, which corner, on its own post or on a signal mast / lamp post)",
+    "each face: the MUTCD code or the legend, its size, which way it faces",
+    "street-name blades (overhead on the mast arm or on a corner post) and their text",
+    "turn restrictions and lane-use signs at the stop line (R3 series): OSM holds turn:lanes for some approaches only, and no restriction relations are in the extract",
+    "parking, bus-stop and loading signs along the kerb",
+    "whether the tagged signal is a full signal or a pedestrian / rail signal"
+   ]
+  },
+  {
+   "junction": "North Speer Boulevard / Saint Francis Way",
+   "s_m": [
+    3683.0
+   ],
+   "leg": [
+    "Speer SB to Kalamath"
+   ],
+   "centre_lonlat": [
+    -105.000125,
+    39.7424805
+   ],
+   "osm_nodes": [
+    176108120
+   ],
+   "grade": "tagged",
+   "position": "none claimed beyond the junction",
+   "control": "none tagged",
+   "signal_nodes": [],
+   "stop_nodes": [],
+   "rail_crossing_nodes": [],
+   "lap_street": [
+    {
+     "osm_way": 16989043,
+     "name": "North Speer Boulevard",
+     "oneway": "yes",
+     "maxspeed": "35 mph",
+     "lanes": "4",
+     "highway": "primary"
+    },
+    {
+     "osm_way": 628622236,
+     "name": "North Speer Boulevard",
+     "oneway": "yes",
+     "maxspeed": "35 mph",
+     "lanes": "4",
+     "highway": "primary"
+    }
+   ],
+   "cross_streets": [
+    {
+     "osm_way": 16987774,
+     "name": "Saint Francis Way",
+     "highway": "unclassified"
+    }
+   ],
+   "implied_by_osm": [],
+   "faces": "not read: no source from the air",
+   "street_level_source_must_supply": [
+    "the post of every sign (position to about a metre, which corner, on its own post or on a signal mast / lamp post)",
+    "each face: the MUTCD code or the legend, its size, which way it faces",
+    "street-name blades (overhead on the mast arm or on a corner post) and their text",
+    "turn restrictions and lane-use signs at the stop line (R3 series): OSM holds turn:lanes for some approaches only, and no restriction relations are in the extract",
+    "parking, bus-stop and loading signs along the kerb",
+    "whether the junction is really uncontrolled, or the stop sign is simply not mapped"
+   ]
+  },
+  {
+   "junction": "North Kalamath Street / North Speer Boulevard / Champa Street",
+   "s_m": [
+    3750.0
+   ],
+   "leg": [
+    "Kalamath S to W 14th Ave"
+   ],
+   "centre_lonlat": [
+    -104.9998498,
+    39.7419149
+   ],
+   "osm_nodes": [
+    279898948
+   ],
+   "grade": "tagged",
+   "position": "none claimed beyond the junction",
+   "control": "traffic signals",
+   "signal_nodes": [
+    279898948
+   ],
+   "stop_nodes": [],
+   "rail_crossing_nodes": [],
+   "lap_street": [
+    {
+     "osm_way": 130886776,
+     "name": "North Kalamath Street",
+     "oneway": "yes",
+     "maxspeed": "25 mph",
+     "lanes": "3",
+     "highway": "secondary"
+    },
+    {
+     "osm_way": 962281032,
+     "name": "North Speer Boulevard",
+     "oneway": "yes",
+     "maxspeed": "35 mph",
+     "lanes": "5",
+     "turn:lanes": "through|through|through|through;right|right",
+     "highway": "primary"
+    }
+   ],
+   "cross_streets": [
+    {
+     "osm_way": 306249027,
+     "name": "Champa Street",
+     "oneway": "yes",
+     "maxspeed": "25 mph",
+     "lanes": "4",
+     "turn:lanes": "left|||",
+     "highway": "secondary"
+    },
+    {
+     "osm_way": 427699951,
+     "name": "North Speer Boulevard",
+     "oneway": "yes",
+     "maxspeed": "35 mph",
+     "lanes": "6",
+     "highway": "primary"
+    }
+   ],
+   "implied_by_osm": [
+    {
+     "what": "signal faces for every approach",
+     "basis": "highway=traffic_signals on 1 node(s)",
+     "see": "signals.json for the masts read off the aerial"
+    },
+    {
+     "what": "ONE WAY (R6-1 / R6-2) facing the lap's approach, and no turn against it (R3-1 / R3-2) or DO NOT ENTER (R5-1) at its exit end",
+     "on": "Champa Street",
+     "basis": "oneway=yes on way 306249027"
+    },
+    {
+     "what": "ONE WAY (R6-1 / R6-2) facing the lap's approach, and no turn against it (R3-1 / R3-2) or DO NOT ENTER (R5-1) at its exit end",
+     "on": "North Speer Boulevard",
+     "basis": "oneway=yes on way 427699951"
+    }
+   ],
+   "faces": "not read: no source from the air",
+   "street_level_source_must_supply": [
+    "the post of every sign (position to about a metre, which corner, on its own post or on a signal mast / lamp post)",
+    "each face: the MUTCD code or the legend, its size, which way it faces",
+    "street-name blades (overhead on the mast arm or on a corner post) and their text",
+    "turn restrictions and lane-use signs at the stop line (R3 series): OSM holds turn:lanes for some approaches only, and no restriction relations are in the extract",
+    "parking, bus-stop and loading signs along the kerb",
+    "whether the tagged signal is a full signal or a pedestrian / rail signal"
+   ]
+  },
+  {
+   "junction": "North Kalamath Street / ?",
+   "s_m": [
+    3892.0
+   ],
+   "leg": [
+    "Kalamath S to W 14th Ave"
+   ],
+   "centre_lonlat": [
+    -105.0001476,
+    39.7406886
+   ],
+   "osm_nodes": [
+    3459075899
+   ],
+   "grade": "tagged",
+   "position": "none claimed beyond the junction",
+   "control": "none tagged",
+   "signal_nodes": [],
+   "stop_nodes": [],
+   "rail_crossing_nodes": [],
+   "lap_street": [
+    {
+     "osm_way": 628622219,
+     "name": "North Kalamath Street",
+     "oneway": "yes",
+     "maxspeed": "25 mph",
+     "lanes": "4",
+     "turn:lanes": "left|through|through|through",
+     "highway": "secondary"
+    },
+    {
+     "osm_way": 628622224,
+     "name": "North Kalamath Street",
+     "oneway": "yes",
+     "maxspeed": "25 mph",
+     "lanes": "4",
+     "turn:lanes": "through|through|through|right",
+     "highway": "secondary"
+    }
+   ],
+   "cross_streets": [
+    {
+     "osm_way": 338768340,
+     "oneway": "yes",
+     "lanes": "1",
+     "highway": "primary_link"
+    }
+   ],
+   "implied_by_osm": [
+    {
+     "what": "ONE WAY (R6-1 / R6-2) facing the lap's approach, and no turn against it (R3-1 / R3-2) or DO NOT ENTER (R5-1) at its exit end",
+     "on": "unnamed",
+     "basis": "oneway=yes on way 338768340"
+    }
+   ],
+   "faces": "not read: no source from the air",
+   "street_level_source_must_supply": [
+    "the post of every sign (position to about a metre, which corner, on its own post or on a signal mast / lamp post)",
+    "each face: the MUTCD code or the legend, its size, which way it faces",
+    "street-name blades (overhead on the mast arm or on a corner post) and their text",
+    "turn restrictions and lane-use signs at the stop line (R3 series): OSM holds turn:lanes for some approaches only, and no restriction relations are in the extract",
+    "parking, bus-stop and loading signs along the kerb",
+    "whether the junction is really uncontrolled, or the stop sign is simply not mapped"
+   ]
+  },
+  {
+   "junction": "North Kalamath Street / North Santa Fe Drive / West Colfax Avenue",
+   "s_m": [
+    3945.0,
+    3967.0,
+    4393.0,
+    4415.0
+   ],
+   "leg": [
+    "Kalamath NB branch to Speer SB",
+    "Kalamath S to W 14th Ave",
+    "Santa Fe N to Colfax"
+   ],
+   "centre_lonlat": [
+    -105.0000581,
+    39.740117
+   ],
+   "osm_nodes": [
+    176089697,
+    1024452690,
+    1024452734,
+    4574957858
+   ],
+   "grade": "tagged",
+   "position": "none claimed beyond the junction",
+   "control": "traffic signals",
+   "signal_nodes": [
+    176089697,
+    1024452690,
+    1024452734,
+    4574957858
+   ],
+   "stop_nodes": [],
+   "rail_crossing_nodes": [],
+   "lap_street": [
+    {
+     "osm_way": 131620808,
+     "name": "North Kalamath Street",
+     "oneway": "yes",
+     "maxspeed": "25 mph",
+     "lanes": "3",
+     "highway": "secondary"
+    },
+    {
+     "osm_way": 343784768,
+     "name": "North Kalamath Street",
+     "oneway": "yes",
+     "maxspeed": "25 mph",
+     "lanes": "3",
+     "highway": "secondary"
+    },
+    {
+     "osm_way": 343784769,
+     "name": "North Santa Fe Drive",
+     "oneway": "yes",
+     "maxspeed": "25 mph",
+     "lanes": "4",
+     "turn:lanes": "left|||",
+     "highway": "secondary"
+    },
+    {
+     "osm_way": 628622219,
+     "name": "North Kalamath Street",
+     "oneway": "yes",
+     "maxspeed": "25 mph",
+     "lanes": "4",
+     "turn:lanes": "left|through|through|through",
+     "highway": "secondary"
+    },
+    {
+     "osm_way": 628677830,
+     "name": "North Kalamath Street",
+     "oneway": "yes",
+     "maxspeed": "25 mph",
+     "lanes": "4",
+     "turn:lanes": "left|through|through|through",
+     "highway": "secondary"
+    },
+    {
+     "osm_way": 1183404166,
+     "name": "North Kalamath Street",
+     "oneway": "yes",
+     "maxspeed": "25 mph",
+     "highway": "secondary"
+    }
+   ],
+   "cross_streets": [
+    {
+     "osm_way": 131620812,
+     "name": "West Colfax Avenue",
+     "oneway": "yes",
+     "maxspeed": "30 mph",
+     "lanes": "4",
+     "turn:lanes": "left|||",
+     "highway": "primary"
+    },
+    {
+     "osm_way": 646049976,
+     "name": "West Colfax Avenue",
+     "oneway": "yes",
+     "maxspeed": "30 mph",
+     "lanes": "3",
+     "highway": "primary"
+    },
+    {
+     "osm_way": 646099526,
+     "name": "West Colfax Avenue",
+     "oneway": "yes",
+     "maxspeed": "30 mph",
+     "lanes": "5",
+     "turn:lanes": "left|left|through|through|through",
+     "highway": "primary"
+    },
+    {
+     "osm_way": 944728794,
+     "name": "West Colfax Avenue",
+     "oneway": "yes",
+     "maxspeed": "30 mph",
+     "lanes": "5",
+     "turn:lanes": "left|left|||",
+     "highway": "primary"
+    },
+    {
+     "osm_way": 946368627,
+     "name": "West Colfax Avenue",
+     "oneway": "yes",
+     "maxspeed": "30 mph",
+     "lanes": "5",
+     "turn:lanes": "left|left|through|through|through",
+     "highway": "primary"
+    }
+   ],
+   "implied_by_osm": [
+    {
+     "what": "signal faces for every approach",
+     "basis": "highway=traffic_signals on 4 node(s)",
+     "see": "signals.json for the masts read off the aerial"
+    },
+    {
+     "what": "ONE WAY (R6-1 / R6-2) facing the lap's approach, and no turn against it (R3-1 / R3-2) or DO NOT ENTER (R5-1) at its exit end",
+     "on": "West Colfax Avenue",
+     "basis": "oneway=yes on way 131620812"
+    },
+    {
+     "what": "ONE WAY (R6-1 / R6-2) facing the lap's approach, and no turn against it (R3-1 / R3-2) or DO NOT ENTER (R5-1) at its exit end",
+     "on": "West Colfax Avenue",
+     "basis": "oneway=yes on way 646049976"
+    },
+    {
+     "what": "ONE WAY (R6-1 / R6-2) facing the lap's approach, and no turn against it (R3-1 / R3-2) or DO NOT ENTER (R5-1) at its exit end",
+     "on": "West Colfax Avenue",
+     "basis": "oneway=yes on way 646099526"
+    },
+    {
+     "what": "ONE WAY (R6-1 / R6-2) facing the lap's approach, and no turn against it (R3-1 / R3-2) or DO NOT ENTER (R5-1) at its exit end",
+     "on": "West Colfax Avenue",
+     "basis": "oneway=yes on way 944728794"
+    },
+    {
+     "what": "ONE WAY (R6-1 / R6-2) facing the lap's approach, and no turn against it (R3-1 / R3-2) or DO NOT ENTER (R5-1) at its exit end",
+     "on": "West Colfax Avenue",
+     "basis": "oneway=yes on way 946368627"
+    }
+   ],
+   "faces": "not read: no source from the air",
+   "street_level_source_must_supply": [
+    "the post of every sign (position to about a metre, which corner, on its own post or on a signal mast / lamp post)",
+    "each face: the MUTCD code or the legend, its size, which way it faces",
+    "street-name blades (overhead on the mast arm or on a corner post) and their text",
+    "turn restrictions and lane-use signs at the stop line (R3 series): OSM holds turn:lanes for some approaches only, and no restriction relations are in the extract",
+    "parking, bus-stop and loading signs along the kerb",
+    "whether the tagged signal is a full signal or a pedestrian / rail signal"
+   ]
+  },
+  {
+   "junction": "North Kalamath Street / West 14th Avenue",
+   "s_m": [
+    4138.0
+   ],
+   "leg": [
+    "W 14th Ave to Santa Fe"
+   ],
+   "centre_lonlat": [
+    -105.000146,
+    39.7384776
+   ],
+   "osm_nodes": [
+    4574957440
+   ],
+   "grade": "tagged",
+   "position": "none claimed beyond the junction",
+   "control": "traffic signals",
+   "signal_nodes": [
+    4574957440
+   ],
+   "stop_nodes": [],
+   "rail_crossing_nodes": [],
+   "lap_street": [
+    {
+     "osm_way": 628689599,
+     "name": "North Kalamath Street",
+     "oneway": "yes",
+     "maxspeed": "25 mph",
+     "lanes": "4",
+     "turn:lanes": "left|||",
+     "highway": "secondary"
+    },
+    {
+     "osm_way": 700604346,
+     "name": "West 14th Avenue",
+     "maxspeed": "30 mph",
+     "cycleway:left": "no",
+     "cycleway:right": "separate",
+     "highway": "secondary"
+    }
+   ],
+   "cross_streets": [
+    {
+     "osm_way": 322014447,
+     "name": "West 14th Avenue",
+     "cycleway:left": "no",
+     "cycleway:right": "separate",
+     "highway": "tertiary"
+    },
+    {
+     "osm_way": 462077117,
+     "name": "North Kalamath Street",
+     "oneway": "yes",
+     "maxspeed": "30 mph",
+     "lanes": "3",
+     "highway": "secondary"
+    }
+   ],
+   "implied_by_osm": [
+    {
+     "what": "signal faces for every approach",
+     "basis": "highway=traffic_signals on 1 node(s)",
+     "see": "signals.json for the masts read off the aerial"
+    },
+    {
+     "what": "ONE WAY (R6-1 / R6-2) facing the lap's approach, and no turn against it (R3-1 / R3-2) or DO NOT ENTER (R5-1) at its exit end",
+     "on": "North Kalamath Street",
+     "basis": "oneway=yes on way 462077117"
+    }
+   ],
+   "faces": "not read: no source from the air",
+   "street_level_source_must_supply": [
+    "the post of every sign (position to about a metre, which corner, on its own post or on a signal mast / lamp post)",
+    "each face: the MUTCD code or the legend, its size, which way it faces",
+    "street-name blades (overhead on the mast arm or on a corner post) and their text",
+    "turn restrictions and lane-use signs at the stop line (R3 series): OSM holds turn:lanes for some approaches only, and no restriction relations are in the extract",
+    "parking, bus-stop and loading signs along the kerb",
+    "whether the tagged signal is a full signal or a pedestrian / rail signal"
+   ]
+  },
+  {
+   "junction": "North Santa Fe Drive / West 14th Avenue",
+   "s_m": [
+    4204.0
+   ],
+   "leg": [
+    "Santa Fe N to Colfax"
+   ],
+   "centre_lonlat": [
+    -104.9993739,
+    39.7384802
+   ],
+   "osm_nodes": [
+    176080253
+   ],
+   "grade": "tagged",
+   "position": "none claimed beyond the junction",
+   "control": "traffic signals",
+   "signal_nodes": [
+    176080253
+   ],
+   "stop_nodes": [],
+   "rail_crossing_nodes": [],
+   "lap_street": [
+    {
+     "osm_way": 628689591,
+     "name": "North Santa Fe Drive",
+     "oneway": "yes",
+     "maxspeed": "25 mph",
+     "lanes": "3",
+     "highway": "secondary"
+    },
+    {
+     "osm_way": 700604346,
+     "name": "West 14th Avenue",
+     "maxspeed": "30 mph",
+     "cycleway:left": "no",
+     "cycleway:right": "separate",
+     "highway": "secondary"
+    }
+   ],
+   "cross_streets": [
+    {
+     "osm_way": 130911272,
+     "name": "West 14th Avenue",
+     "oneway": "yes",
+     "maxspeed": "30 mph",
+     "lanes": "4",
+     "cycleway:left": "no",
+     "cycleway:right": "separate",
+     "highway": "secondary"
+    },
+    {
+     "osm_way": 340054386,
+     "name": "North Santa Fe Drive",
+     "oneway": "yes",
+     "maxspeed": "30 mph",
+     "lanes": "3",
+     "highway": "secondary"
+    }
+   ],
+   "implied_by_osm": [
+    {
+     "what": "signal faces for every approach",
+     "basis": "highway=traffic_signals on 1 node(s)",
+     "see": "signals.json for the masts read off the aerial"
+    },
+    {
+     "what": "ONE WAY (R6-1 / R6-2) facing the lap's approach, and no turn against it (R3-1 / R3-2) or DO NOT ENTER (R5-1) at its exit end",
+     "on": "West 14th Avenue",
+     "basis": "oneway=yes on way 130911272"
+    },
+    {
+     "what": "ONE WAY (R6-1 / R6-2) facing the lap's approach, and no turn against it (R3-1 / R3-2) or DO NOT ENTER (R5-1) at its exit end",
+     "on": "North Santa Fe Drive",
+     "basis": "oneway=yes on way 340054386"
+    }
+   ],
+   "faces": "not read: no source from the air",
+   "street_level_source_must_supply": [
+    "the post of every sign (position to about a metre, which corner, on its own post or on a signal mast / lamp post)",
+    "each face: the MUTCD code or the legend, its size, which way it faces",
+    "street-name blades (overhead on the mast arm or on a corner post) and their text",
+    "turn restrictions and lane-use signs at the stop line (R3 series): OSM holds turn:lanes for some approaches only, and no restriction relations are in the extract",
+    "parking, bus-stop and loading signs along the kerb",
+    "whether the tagged signal is a full signal or a pedestrian / rail signal"
+   ]
+  },
+  {
+   "junction": "North Santa Fe Drive / ?",
+   "s_m": [
+    4344.0
+   ],
+   "leg": [
+    "Santa Fe N to Colfax"
+   ],
+   "centre_lonlat": [
+    -104.9999917,
+    39.7395754
+   ],
+   "osm_nodes": [
+    3506108815
+   ],
+   "grade": "tagged",
+   "position": "none claimed beyond the junction",
+   "control": "none tagged",
+   "signal_nodes": [],
+   "stop_nodes": [],
+   "rail_crossing_nodes": [],
+   "lap_street": [
+    {
+     "osm_way": 343784769,
+     "name": "North Santa Fe Drive",
+     "oneway": "yes",
+     "maxspeed": "25 mph",
+     "lanes": "4",
+     "turn:lanes": "left|||",
+     "highway": "secondary"
+    },
+    {
+     "osm_way": 628689590,
+     "name": "North Santa Fe Drive",
+     "oneway": "yes",
+     "maxspeed": "25 mph",
+     "lanes": "5",
+     "turn:lanes": "left||||",
+     "highway": "secondary"
+    }
+   ],
+   "cross_streets": [
+    {
+     "osm_way": 338768370,
+     "oneway": "yes",
+     "lanes": "1",
+     "highway": "primary_link"
+    }
+   ],
+   "implied_by_osm": [
+    {
+     "what": "ONE WAY (R6-1 / R6-2) facing the lap's approach, and no turn against it (R3-1 / R3-2) or DO NOT ENTER (R5-1) at its exit end",
+     "on": "unnamed",
+     "basis": "oneway=yes on way 338768370"
+    }
+   ],
+   "faces": "not read: no source from the air",
+   "street_level_source_must_supply": [
+    "the post of every sign (position to about a metre, which corner, on its own post or on a signal mast / lamp post)",
+    "each face: the MUTCD code or the legend, its size, which way it faces",
+    "street-name blades (overhead on the mast arm or on a corner post) and their text",
+    "turn restrictions and lane-use signs at the stop line (R3 series): OSM holds turn:lanes for some approaches only, and no restriction relations are in the extract",
+    "parking, bus-stop and loading signs along the kerb",
+    "whether the junction is really uncontrolled, or the stop sign is simply not mapped"
+   ]
+  },
+  {
+   "junction": "North Kalamath Street / North Speer Boulevard / Stout Street",
+   "s_m": [
+    4541.0
+   ],
+   "leg": [
+    "Kalamath NB branch to Speer SB"
+   ],
+   "centre_lonlat": [
+    -104.9994651,
+    39.7412073
+   ],
+   "osm_nodes": [
+    176112894
+   ],
+   "grade": "tagged",
+   "position": "none claimed beyond the junction",
+   "control": "traffic signals",
+   "signal_nodes": [
+    176112894
+   ],
+   "stop_nodes": [],
+   "rail_crossing_nodes": [],
+   "lap_street": [
+    {
+     "osm_way": 321937332,
+     "name": "North Kalamath Street",
+     "oneway": "yes",
+     "maxspeed": "25 mph",
+     "lanes": "3",
+     "highway": "secondary"
+    },
+    {
+     "osm_way": 427699953,
+     "name": "North Speer Boulevard",
+     "oneway": "yes",
+     "maxspeed": "35 mph",
+     "lanes": "5",
+     "highway": "primary"
+    }
+   ],
+   "cross_streets": [
+    {
+     "osm_way": 132706719,
+     "name": "North Speer Boulevard",
+     "oneway": "yes",
+     "maxspeed": "35 mph",
+     "lanes": "6",
+     "turn:lanes": "left|through||||",
+     "highway": "primary"
+    },
+    {
+     "osm_way": 628622228,
+     "name": "Stout Street",
+     "oneway": "yes",
+     "maxspeed": "25 mph",
+     "lanes": "4",
+     "highway": "secondary"
+    }
+   ],
+   "implied_by_osm": [
+    {
+     "what": "signal faces for every approach",
+     "basis": "highway=traffic_signals on 1 node(s)",
+     "see": "signals.json for the masts read off the aerial"
+    },
+    {
+     "what": "ONE WAY (R6-1 / R6-2) facing the lap's approach, and no turn against it (R3-1 / R3-2) or DO NOT ENTER (R5-1) at its exit end",
+     "on": "North Speer Boulevard",
+     "basis": "oneway=yes on way 132706719"
+    },
+    {
+     "what": "ONE WAY (R6-1 / R6-2) facing the lap's approach, and no turn against it (R3-1 / R3-2) or DO NOT ENTER (R5-1) at its exit end",
+     "on": "Stout Street",
+     "basis": "oneway=yes on way 628622228"
+    }
+   ],
+   "faces": "not read: no source from the air",
+   "street_level_source_must_supply": [
+    "the post of every sign (position to about a metre, which corner, on its own post or on a signal mast / lamp post)",
+    "each face: the MUTCD code or the legend, its size, which way it faces",
+    "street-name blades (overhead on the mast arm or on a corner post) and their text",
+    "turn restrictions and lane-use signs at the stop line (R3 series): OSM holds turn:lanes for some approaches only, and no restriction relations are in the extract",
+    "parking, bus-stop and loading signs along the kerb",
+    "whether the tagged signal is a full signal or a pedestrian / rail signal"
+   ]
+  },
+  {
+   "junction": "North Speer Boulevard / West Colfax Avenue",
+   "s_m": [
+    4664.0,
+    4686.0
+   ],
+   "leg": [
+    "Speer SB to W 14th Ave"
+   ],
+   "centre_lonlat": [
+    -104.9988404,
+    39.7401045
+   ],
+   "osm_nodes": [
+    176092292,
+    1024442600
+   ],
+   "grade": "tagged",
+   "position": "none claimed beyond the junction",
+   "control": "traffic signals",
+   "signal_nodes": [
+    176092292,
+    1024442600
+   ],
+   "stop_nodes": [],
+   "rail_crossing_nodes": [],
+   "lap_street": [
+    {
+     "osm_way": 132706724,
+     "name": "North Speer Boulevard",
+     "oneway": "yes",
+     "maxspeed": "35 mph",
+     "lanes": "4",
+     "highway": "primary"
+    },
+    {
+     "osm_way": 427699952,
+     "name": "North Speer Boulevard",
+     "oneway": "yes",
+     "maxspeed": "35 mph",
+     "lanes": "6",
+     "turn:lanes": "left|left;through||||right",
+     "highway": "primary"
+    },
+    {
+     "osm_way": 427890846,
+     "name": "North Speer Boulevard",
+     "oneway": "yes",
+     "maxspeed": "35 mph",
+     "lanes": "4",
+     "highway": "primary"
+    }
+   ],
+   "cross_streets": [
+    {
+     "osm_way": 44932758,
+     "name": "West Colfax Avenue",
+     "oneway": "yes",
+     "maxspeed": "30 mph",
+     "lanes": "3",
+     "highway": "primary"
+    },
+    {
+     "osm_way": 131620812,
+     "name": "West Colfax Avenue",
+     "oneway": "yes",
+     "maxspeed": "30 mph",
+     "lanes": "4",
+     "turn:lanes": "left|||",
+     "highway": "primary"
+    },
+    {
+     "osm_way": 132706721,
+     "name": "West Colfax Avenue",
+     "oneway": "yes",
+     "maxspeed": "30 mph",
+     "lanes": "4",
+     "highway": "primary"
+    },
+    {
+     "osm_way": 682209210,
+     "name": "West Colfax Avenue",
+     "oneway": "yes",
+     "maxspeed": "30 mph",
+     "lanes": "3",
+     "highway": "primary"
+    }
+   ],
+   "implied_by_osm": [
+    {
+     "what": "signal faces for every approach",
+     "basis": "highway=traffic_signals on 2 node(s)",
+     "see": "signals.json for the masts read off the aerial"
+    },
+    {
+     "what": "ONE WAY (R6-1 / R6-2) facing the lap's approach, and no turn against it (R3-1 / R3-2) or DO NOT ENTER (R5-1) at its exit end",
+     "on": "West Colfax Avenue",
+     "basis": "oneway=yes on way 44932758"
+    },
+    {
+     "what": "ONE WAY (R6-1 / R6-2) facing the lap's approach, and no turn against it (R3-1 / R3-2) or DO NOT ENTER (R5-1) at its exit end",
+     "on": "West Colfax Avenue",
+     "basis": "oneway=yes on way 131620812"
+    },
+    {
+     "what": "ONE WAY (R6-1 / R6-2) facing the lap's approach, and no turn against it (R3-1 / R3-2) or DO NOT ENTER (R5-1) at its exit end",
+     "on": "West Colfax Avenue",
+     "basis": "oneway=yes on way 132706721"
+    },
+    {
+     "what": "ONE WAY (R6-1 / R6-2) facing the lap's approach, and no turn against it (R3-1 / R3-2) or DO NOT ENTER (R5-1) at its exit end",
+     "on": "West Colfax Avenue",
+     "basis": "oneway=yes on way 682209210"
+    }
+   ],
+   "faces": "not read: no source from the air",
+   "street_level_source_must_supply": [
+    "the post of every sign (position to about a metre, which corner, on its own post or on a signal mast / lamp post)",
+    "each face: the MUTCD code or the legend, its size, which way it faces",
+    "street-name blades (overhead on the mast arm or on a corner post) and their text",
+    "turn restrictions and lane-use signs at the stop line (R3 series): OSM holds turn:lanes for some approaches only, and no restriction relations are in the extract",
+    "parking, bus-stop and loading signs along the kerb",
+    "whether the tagged signal is a full signal or a pedestrian / rail signal"
+   ]
+  },
+  {
+   "junction": "North Speer Boulevard / West 14th Avenue",
+   "s_m": [
+    4884.0
+   ],
+   "leg": [
+    "14th Ave E to Logan"
+   ],
+   "centre_lonlat": [
+    -104.9976451,
+    39.7384663
+   ],
+   "osm_nodes": [
+    176080251
+   ],
+   "grade": "tagged",
+   "position": "none claimed beyond the junction",
+   "control": "traffic signals",
+   "signal_nodes": [
+    176080251
+   ],
+   "stop_nodes": [],
+   "rail_crossing_nodes": [],
+   "lap_street": [
+    {
+     "osm_way": 132706724,
+     "name": "North Speer Boulevard",
+     "oneway": "yes",
+     "maxspeed": "35 mph",
+     "lanes": "4",
+     "highway": "primary"
+    },
+    {
+     "osm_way": 628677808,
+     "name": "West 14th Avenue",
+     "oneway": "yes",
+     "maxspeed": "30 mph",
+     "lanes": "3",
+     "turn:lanes": "left||",
+     "cycleway:left": "no",
+     "cycleway:right": "separate",
+     "highway": "secondary"
+    }
+   ],
+   "cross_streets": [
+    {
+     "osm_way": 628677807,
+     "name": "West 14th Avenue",
+     "oneway": "yes",
+     "maxspeed": "30 mph",
+     "lanes": "4",
+     "turn:lanes": "|||right",
+     "cycleway:left": "no",
+     "cycleway:right": "separate",
+     "highway": "secondary"
+    },
+    {
+     "osm_way": 1059315815,
+     "name": "North Speer Boulevard",
+     "oneway": "yes",
+     "maxspeed": "35 mph",
+     "lanes": "4",
+     "highway": "primary"
+    }
+   ],
+   "implied_by_osm": [
+    {
+     "what": "signal faces for every approach",
+     "basis": "highway=traffic_signals on 1 node(s)",
+     "see": "signals.json for the masts read off the aerial"
+    },
+    {
+     "what": "ONE WAY (R6-1 / R6-2) facing the lap's approach, and no turn against it (R3-1 / R3-2) or DO NOT ENTER (R5-1) at its exit end",
+     "on": "West 14th Avenue",
+     "basis": "oneway=yes on way 628677807"
+    },
+    {
+     "what": "ONE WAY (R6-1 / R6-2) facing the lap's approach, and no turn against it (R3-1 / R3-2) or DO NOT ENTER (R5-1) at its exit end",
+     "on": "North Speer Boulevard",
+     "basis": "oneway=yes on way 1059315815"
+    }
+   ],
+   "faces": "not read: no source from the air",
+   "street_level_source_must_supply": [
+    "the post of every sign (position to about a metre, which corner, on its own post or on a signal mast / lamp post)",
+    "each face: the MUTCD code or the legend, its size, which way it faces",
+    "street-name blades (overhead on the mast arm or on a corner post) and their text",
+    "turn restrictions and lane-use signs at the stop line (R3 series): OSM holds turn:lanes for some approaches only, and no restriction relations are in the extract",
+    "parking, bus-stop and loading signs along the kerb",
+    "whether the tagged signal is a full signal or a pedestrian / rail signal"
+   ]
+  },
+  {
+   "junction": "West 14th Avenue / North Speer Boulevard",
+   "s_m": [
+    4948.0
+   ],
+   "leg": [
+    "14th Ave E to Logan"
+   ],
+   "centre_lonlat": [
+    -104.9968967,
+    39.7384591
+   ],
+   "osm_nodes": [
+    176080247
+   ],
+   "grade": "tagged",
+   "position": "none claimed beyond the junction",
+   "control": "traffic signals",
+   "signal_nodes": [
+    176080247
+   ],
+   "stop_nodes": [],
+   "rail_crossing_nodes": [],
+   "lap_street": [
+    {
+     "osm_way": 61135128,
+     "name": "West 14th Avenue",
+     "oneway": "yes",
+     "maxspeed": "30 mph",
+     "lanes": "2",
+     "cycleway:left": "no",
+     "cycleway:right": "separate",
+     "highway": "secondary"
+    }
+   ],
+   "cross_streets": [
+    {
+     "osm_way": 381551546,
+     "name": "North Speer Boulevard",
+     "oneway": "yes",
+     "maxspeed": "35 mph",
+     "lanes": "4",
+     "highway": "primary"
+    }
+   ],
+   "implied_by_osm": [
+    {
+     "what": "signal faces for every approach",
+     "basis": "highway=traffic_signals on 1 node(s)",
+     "see": "signals.json for the masts read off the aerial"
+    },
+    {
+     "what": "ONE WAY (R6-1 / R6-2) facing the lap's approach, and no turn against it (R3-1 / R3-2) or DO NOT ENTER (R5-1) at its exit end",
+     "on": "North Speer Boulevard",
+     "basis": "oneway=yes on way 381551546"
+    }
+   ],
+   "faces": "not read: no source from the air",
+   "street_level_source_must_supply": [
+    "the post of every sign (position to about a metre, which corner, on its own post or on a signal mast / lamp post)",
+    "each face: the MUTCD code or the legend, its size, which way it faces",
+    "street-name blades (overhead on the mast arm or on a corner post) and their text",
+    "turn restrictions and lane-use signs at the stop line (R3 series): OSM holds turn:lanes for some approaches only, and no restriction relations are in the extract",
+    "parking, bus-stop and loading signs along the kerb",
+    "whether the tagged signal is a full signal or a pedestrian / rail signal"
+   ]
+  },
+  {
+   "junction": "West 14th Avenue / Galapago Street",
+   "s_m": [
+    4982.0
+   ],
+   "leg": [
+    "14th Ave E to Logan"
+   ],
+   "centre_lonlat": [
+    -104.9964942,
+    39.7384591
+   ],
+   "osm_nodes": [
+    176080245
+   ],
+   "grade": "tagged",
+   "position": "none claimed beyond the junction",
+   "control": "traffic signals",
+   "signal_nodes": [
+    176080245
+   ],
+   "stop_nodes": [],
+   "rail_crossing_nodes": [],
+   "lap_street": [
+    {
+     "osm_way": 61135128,
+     "name": "West 14th Avenue",
+     "oneway": "yes",
+     "maxspeed": "30 mph",
+     "lanes": "2",
+     "cycleway:left": "no",
+     "cycleway:right": "separate",
+     "highway": "secondary"
+    }
+   ],
+   "cross_streets": [
+    {
+     "osm_way": 16987965,
+     "name": "Galapago Street",
+     "oneway": "yes",
+     "lanes": "2",
+     "cycleway:left": "no",
+     "cycleway:right": "lane",
+     "highway": "tertiary"
+    }
+   ],
+   "implied_by_osm": [
+    {
+     "what": "signal faces for every approach",
+     "basis": "highway=traffic_signals on 1 node(s)",
+     "see": "signals.json for the masts read off the aerial"
+    },
+    {
+     "what": "ONE WAY (R6-1 / R6-2) facing the lap's approach, and no turn against it (R3-1 / R3-2) or DO NOT ENTER (R5-1) at its exit end",
+     "on": "Galapago Street",
+     "basis": "oneway=yes on way 16987965"
+    }
+   ],
+   "faces": "not read: no source from the air",
+   "street_level_source_must_supply": [
+    "the post of every sign (position to about a metre, which corner, on its own post or on a signal mast / lamp post)",
+    "each face: the MUTCD code or the legend, its size, which way it faces",
+    "street-name blades (overhead on the mast arm or on a corner post) and their text",
+    "turn restrictions and lane-use signs at the stop line (R3 series): OSM holds turn:lanes for some approaches only, and no restriction relations are in the extract",
+    "parking, bus-stop and loading signs along the kerb",
+    "whether the tagged signal is a full signal or a pedestrian / rail signal"
+   ]
+  },
+  {
+   "junction": "West 14th Avenue / Fox Street",
+   "s_m": [
+    5085.0
+   ],
+   "leg": [
+    "14th Ave E to Logan"
+   ],
+   "centre_lonlat": [
+    -104.9952999,
+    39.738459
+   ],
+   "osm_nodes": [
+    176080243
+   ],
+   "grade": "tagged",
+   "position": "none claimed beyond the junction",
+   "control": "stop / give-way on an approach",
+   "signal_nodes": [],
+   "stop_nodes": [
+    {
+     "osm_node": 6648413349,
+     "tag": "stop",
+     "direction": "forward",
+     "on": [
+      "Fox Street"
+     ]
+    },
+    {
+     "osm_node": 6648413350,
+     "tag": "stop",
+     "direction": "backward",
+     "on": [
+      "Fox Street"
+     ]
+    }
+   ],
+   "rail_crossing_nodes": [],
+   "lap_street": [
+    {
+     "osm_way": 61135128,
+     "name": "West 14th Avenue",
+     "oneway": "yes",
+     "maxspeed": "30 mph",
+     "lanes": "2",
+     "cycleway:left": "no",
+     "cycleway:right": "separate",
+     "highway": "secondary"
+    }
+   ],
+   "cross_streets": [
+    {
+     "osm_way": 326132259,
+     "name": "Fox Street",
+     "highway": "residential"
+    }
+   ],
+   "implied_by_osm": [
+    {
+     "what": "STOP (R1-1)",
+     "on": [
+      "Fox Street"
+     ],
+     "basis": "highway=stop node 6648413349"
+    },
+    {
+     "what": "STOP (R1-1)",
+     "on": [
+      "Fox Street"
+     ],
+     "basis": "highway=stop node 6648413350"
+    }
+   ],
+   "faces": "not read: no source from the air",
+   "street_level_source_must_supply": [
+    "the post of every sign (position to about a metre, which corner, on its own post or on a signal mast / lamp post)",
+    "each face: the MUTCD code or the legend, its size, which way it faces",
+    "street-name blades (overhead on the mast arm or on a corner post) and their text",
+    "turn restrictions and lane-use signs at the stop line (R3 series): OSM holds turn:lanes for some approaches only, and no restriction relations are in the extract",
+    "parking, bus-stop and loading signs along the kerb",
+    "whether the junction is really uncontrolled, or the stop sign is simply not mapped"
+   ]
+  },
+  {
+   "junction": "West 14th Avenue / Elati Street",
+   "s_m": [
+    5186.0
+   ],
+   "leg": [
+    "14th Ave E to Logan"
+   ],
+   "centre_lonlat": [
+    -104.9941204,
+    39.7384589
+   ],
+   "osm_nodes": [
+    176080241
+   ],
+   "grade": "tagged",
+   "position": "none claimed beyond the junction",
+   "control": "traffic signals",
+   "signal_nodes": [
+    176080241
+   ],
+   "stop_nodes": [],
+   "rail_crossing_nodes": [],
+   "lap_street": [
+    {
+     "osm_way": 61135128,
+     "name": "West 14th Avenue",
+     "oneway": "yes",
+     "maxspeed": "30 mph",
+     "lanes": "2",
+     "cycleway:left": "no",
+     "cycleway:right": "separate",
+     "highway": "secondary"
+    },
+    {
+     "osm_way": 798188692,
+     "name": "West 14th Avenue",
+     "oneway": "yes",
+     "maxspeed": "30 mph",
+     "lanes": "2",
+     "cycleway:left": "no",
+     "cycleway:right": "separate",
+     "highway": "secondary"
+    }
+   ],
+   "cross_streets": [
+    {
+     "osm_way": 16985107,
+     "name": "Elati Street",
+     "highway": "residential"
+    }
+   ],
+   "implied_by_osm": [
+    {
+     "what": "signal faces for every approach",
+     "basis": "highway=traffic_signals on 1 node(s)",
+     "see": "signals.json for the masts read off the aerial"
+    }
+   ],
+   "faces": "not read: no source from the air",
+   "street_level_source_must_supply": [
+    "the post of every sign (position to about a metre, which corner, on its own post or on a signal mast / lamp post)",
+    "each face: the MUTCD code or the legend, its size, which way it faces",
+    "street-name blades (overhead on the mast arm or on a corner post) and their text",
+    "turn restrictions and lane-use signs at the stop line (R3 series): OSM holds turn:lanes for some approaches only, and no restriction relations are in the extract",
+    "parking, bus-stop and loading signs along the kerb",
+    "whether the tagged signal is a full signal or a pedestrian / rail signal"
+   ]
+  },
+  {
+   "junction": "West 14th Avenue / Delaware Street",
+   "s_m": [
+    5286.0
+   ],
+   "leg": [
+    "14th Ave E to Logan"
+   ],
+   "centre_lonlat": [
+    -104.9929512,
+    39.7384588
+   ],
+   "osm_nodes": [
+    4940096571
+   ],
+   "grade": "tagged",
+   "position": "none claimed beyond the junction",
+   "control": "traffic signals",
+   "signal_nodes": [
+    4940096571
+   ],
+   "stop_nodes": [],
+   "rail_crossing_nodes": [],
+   "lap_street": [
+    {
+     "osm_way": 798188692,
+     "name": "West 14th Avenue",
+     "oneway": "yes",
+     "maxspeed": "30 mph",
+     "lanes": "2",
+     "cycleway:left": "no",
+     "cycleway:right": "separate",
+     "highway": "secondary"
+    }
+   ],
+   "cross_streets": [
+    {
+     "osm_way": 503732560,
+     "name": "Delaware Street",
+     "oneway": "no",
+     "lanes": "2",
+     "highway": "tertiary"
+    },
+    {
+     "osm_way": 1046756921,
+     "name": "Delaware Street",
+     "oneway": "yes",
+     "lanes": "2",
+     "turn:lanes": "left|",
+     "highway": "tertiary"
+    }
+   ],
+   "implied_by_osm": [
+    {
+     "what": "signal faces for every approach",
+     "basis": "highway=traffic_signals on 1 node(s)",
+     "see": "signals.json for the masts read off the aerial"
+    },
+    {
+     "what": "ONE WAY (R6-1 / R6-2) facing the lap's approach, and no turn against it (R3-1 / R3-2) or DO NOT ENTER (R5-1) at its exit end",
+     "on": "Delaware Street",
+     "basis": "oneway=yes on way 1046756921"
+    }
+   ],
+   "faces": "not read: no source from the air",
+   "street_level_source_must_supply": [
+    "the post of every sign (position to about a metre, which corner, on its own post or on a signal mast / lamp post)",
+    "each face: the MUTCD code or the legend, its size, which way it faces",
+    "street-name blades (overhead on the mast arm or on a corner post) and their text",
+    "turn restrictions and lane-use signs at the stop line (R3 series): OSM holds turn:lanes for some approaches only, and no restriction relations are in the extract",
+    "parking, bus-stop and loading signs along the kerb",
+    "whether the tagged signal is a full signal or a pedestrian / rail signal"
+   ]
+  },
+  {
+   "junction": "West 14th Avenue / Cherokee Street",
+   "s_m": [
+    5398.0
+   ],
+   "leg": [
+    "14th Ave E to Logan"
+   ],
+   "centre_lonlat": [
+    -104.991647,
+    39.7384593
+   ],
+   "osm_nodes": [
+    176080237
+   ],
+   "grade": "tagged",
+   "position": "none claimed beyond the junction",
+   "control": "traffic signals",
+   "signal_nodes": [
+    176080237
+   ],
+   "stop_nodes": [],
+   "rail_crossing_nodes": [],
+   "lap_street": [
+    {
+     "osm_way": 130911269,
+     "name": "West 14th Avenue",
+     "oneway": "yes",
+     "maxspeed": "30 mph",
+     "lanes": "2",
+     "cycleway:left": "no",
+     "cycleway:right": "separate",
+     "highway": "secondary"
+    },
+    {
+     "osm_way": 798188692,
+     "name": "West 14th Avenue",
+     "oneway": "yes",
+     "maxspeed": "30 mph",
+     "lanes": "2",
+     "cycleway:left": "no",
+     "cycleway:right": "separate",
+     "highway": "secondary"
+    }
+   ],
+   "cross_streets": [
+    {
+     "osm_way": 130911277,
+     "name": "Cherokee Street",
+     "lanes": "3",
+     "highway": "tertiary"
+    },
+    {
+     "osm_way": 132735681,
+     "name": "Cherokee Street",
+     "lanes": "3",
+     "highway": "tertiary"
+    }
+   ],
+   "implied_by_osm": [
+    {
+     "what": "signal faces for every approach",
+     "basis": "highway=traffic_signals on 1 node(s)",
+     "see": "signals.json for the masts read off the aerial"
+    }
+   ],
+   "faces": "not read: no source from the air",
+   "street_level_source_must_supply": [
+    "the post of every sign (position to about a metre, which corner, on its own post or on a signal mast / lamp post)",
+    "each face: the MUTCD code or the legend, its size, which way it faces",
+    "street-name blades (overhead on the mast arm or on a corner post) and their text",
+    "turn restrictions and lane-use signs at the stop line (R3 series): OSM holds turn:lanes for some approaches only, and no restriction relations are in the extract",
+    "parking, bus-stop and loading signs along the kerb",
+    "whether the tagged signal is a full signal or a pedestrian / rail signal"
+   ]
+  },
+  {
+   "junction": "West 14th Avenue / West 14th Avenue Parkway / Bannock Street",
+   "s_m": [
+    5514.0,
+    5542.0
+   ],
+   "leg": [
+    "14th Ave E to Logan"
+   ],
+   "centre_lonlat": [
+    -104.9901507,
+    39.7384102
+   ],
+   "osm_nodes": [
+    176080234,
+    2863652549
+   ],
+   "grade": "tagged",
+   "position": "none claimed beyond the junction",
+   "control": "traffic signals",
+   "signal_nodes": [
+    176080234
+   ],
+   "stop_nodes": [],
+   "rail_crossing_nodes": [],
+   "lap_street": [
+    {
+     "osm_way": 1102883776,
+     "name": "West 14th Avenue Parkway",
+     "oneway": "yes",
+     "maxspeed": "30 mph",
+     "lanes": "2",
+     "cycleway:left": "no",
+     "cycleway:right": "separate",
+     "highway": "secondary"
+    },
+    {
+     "osm_way": 1178151878,
+     "name": "West 14th Avenue",
+     "oneway": "yes",
+     "maxspeed": "30 mph",
+     "lanes": "2",
+     "cycleway:left": "no",
+     "cycleway:right": "separate",
+     "highway": "secondary"
+    },
+    {
+     "osm_way": 1222114207,
+     "name": "West 14th Avenue Parkway",
+     "oneway": "yes",
+     "maxspeed": "30 mph",
+     "lanes": "2",
+     "cycleway:left": "no",
+     "cycleway:right": "separate",
+     "highway": "secondary"
+    }
+   ],
+   "cross_streets": [
+    {
+     "osm_way": 282445354,
+     "name": "Bannock Street",
+     "oneway": "yes",
+     "lanes": "1",
+     "highway": "tertiary"
+    },
+    {
+     "osm_way": 1531678599,
+     "name": "Bannock Street",
+     "oneway": "yes",
+     "lanes": "1",
+     "cycleway": "shared_lane",
+     "highway": "tertiary"
+    }
+   ],
+   "implied_by_osm": [
+    {
+     "what": "signal faces for every approach",
+     "basis": "highway=traffic_signals on 1 node(s)",
+     "see": "signals.json for the masts read off the aerial"
+    },
+    {
+     "what": "ONE WAY (R6-1 / R6-2) facing the lap's approach, and no turn against it (R3-1 / R3-2) or DO NOT ENTER (R5-1) at its exit end",
+     "on": "Bannock Street",
+     "basis": "oneway=yes on way 282445354"
+    },
+    {
+     "what": "ONE WAY (R6-1 / R6-2) facing the lap's approach, and no turn against it (R3-1 / R3-2) or DO NOT ENTER (R5-1) at its exit end",
+     "on": "Bannock Street",
+     "basis": "oneway=yes on way 1531678599"
+    }
+   ],
+   "faces": "not read: no source from the air",
+   "street_level_source_must_supply": [
+    "the post of every sign (position to about a metre, which corner, on its own post or on a signal mast / lamp post)",
+    "each face: the MUTCD code or the legend, its size, which way it faces",
+    "street-name blades (overhead on the mast arm or on a corner post) and their text",
+    "turn restrictions and lane-use signs at the stop line (R3 series): OSM holds turn:lanes for some approaches only, and no restriction relations are in the extract",
+    "parking, bus-stop and loading signs along the kerb",
+    "whether the tagged signal is a full signal or a pedestrian / rail signal"
+   ]
+  },
+  {
+   "junction": "West 14th Avenue Parkway",
+   "s_m": [
+    5657.0
+   ],
+   "leg": [
+    "14th Ave E to Logan"
+   ],
+   "centre_lonlat": [
+    -104.9889476,
+    39.7377743
+   ],
+   "osm_nodes": [
+    4104203211
+   ],
+   "grade": "tagged",
+   "position": "none claimed beyond the junction",
+   "control": "traffic signals",
+   "signal_nodes": [
+    4104203211
+   ],
+   "stop_nodes": [],
+   "rail_crossing_nodes": [],
+   "lap_street": [
+    {
+     "osm_way": 101312232,
+     "name": "West 14th Avenue Parkway",
+     "oneway": "yes",
+     "maxspeed": "30 mph",
+     "lanes": "2",
+     "cycleway:left": "no",
+     "cycleway:right": "separate",
+     "highway": "secondary"
+    }
+   ],
+   "cross_streets": [],
+   "implied_by_osm": [
+    {
+     "what": "signal faces for every approach",
+     "basis": "highway=traffic_signals on 1 node(s)",
+     "see": "signals.json for the masts read off the aerial"
+    }
+   ],
+   "faces": "not read: no source from the air",
+   "street_level_source_must_supply": [
+    "the post of every sign (position to about a metre, which corner, on its own post or on a signal mast / lamp post)",
+    "each face: the MUTCD code or the legend, its size, which way it faces",
+    "street-name blades (overhead on the mast arm or on a corner post) and their text",
+    "turn restrictions and lane-use signs at the stop line (R3 series): OSM holds turn:lanes for some approaches only, and no restriction relations are in the extract",
+    "parking, bus-stop and loading signs along the kerb",
+    "whether the tagged signal is a full signal or a pedestrian / rail signal"
+   ]
+  },
+  {
+   "junction": "East 14th Avenue / West 14th Avenue Parkway / North Broadway",
+   "s_m": [
+    5817.0
+   ],
+   "leg": [
+    "14th Ave E to Logan"
+   ],
+   "centre_lonlat": [
+    -104.9873961,
+    39.7384585
+   ],
+   "osm_nodes": [
+    176072932
+   ],
+   "grade": "tagged",
+   "position": "none claimed beyond the junction",
+   "control": "traffic signals",
+   "signal_nodes": [
+    176072932
+   ],
+   "stop_nodes": [],
+   "rail_crossing_nodes": [],
+   "lap_street": [
+    {
+     "osm_way": 282445356,
+     "name": "West 14th Avenue Parkway",
+     "oneway": "yes",
+     "maxspeed": "30 mph",
+     "lanes": "3",
+     "turn:lanes": "||through;right|right",
+     "cycleway:left": "no",
+     "cycleway:right": "separate",
+     "highway": "secondary"
+    },
+    {
+     "osm_way": 628643749,
+     "name": "East 14th Avenue",
+     "oneway": "yes",
+     "maxspeed": "30 mph",
+     "lanes": "3",
+     "cycleway:left": "no",
+     "cycleway:right": "separate",
+     "highway": "secondary"
+    }
+   ],
+   "cross_streets": [
+    {
+     "osm_way": 963866754,
+     "name": "North Broadway",
+     "oneway": "yes",
+     "maxspeed": "30 mph",
+     "lanes": "6",
+     "turn:lanes": "left|none|none|none|none|none",
+     "highway": "primary"
+    },
+    {
+     "osm_way": 963866755,
+     "name": "North Broadway",
+     "oneway": "yes",
+     "maxspeed": "30 mph",
+     "lanes": "5",
+     "turn:lanes": "none|none|none|none|right",
+     "highway": "primary"
+    }
+   ],
+   "implied_by_osm": [
+    {
+     "what": "signal faces for every approach",
+     "basis": "highway=traffic_signals on 1 node(s)",
+     "see": "signals.json for the masts read off the aerial"
+    },
+    {
+     "what": "ONE WAY (R6-1 / R6-2) facing the lap's approach, and no turn against it (R3-1 / R3-2) or DO NOT ENTER (R5-1) at its exit end",
+     "on": "North Broadway",
+     "basis": "oneway=yes on way 963866754"
+    },
+    {
+     "what": "ONE WAY (R6-1 / R6-2) facing the lap's approach, and no turn against it (R3-1 / R3-2) or DO NOT ENTER (R5-1) at its exit end",
+     "on": "North Broadway",
+     "basis": "oneway=yes on way 963866755"
+    }
+   ],
+   "faces": "not read: no source from the air",
+   "street_level_source_must_supply": [
+    "the post of every sign (position to about a metre, which corner, on its own post or on a signal mast / lamp post)",
+    "each face: the MUTCD code or the legend, its size, which way it faces",
+    "street-name blades (overhead on the mast arm or on a corner post) and their text",
+    "turn restrictions and lane-use signs at the stop line (R3 series): OSM holds turn:lanes for some approaches only, and no restriction relations are in the extract",
+    "parking, bus-stop and loading signs along the kerb",
+    "whether the tagged signal is a full signal or a pedestrian / rail signal"
+   ]
+  },
+  {
+   "junction": "East 14th Avenue / North Lincoln Street",
+   "s_m": [
+    5925.0
+   ],
+   "leg": [
+    "14th Ave E to Logan"
+   ],
+   "centre_lonlat": [
+    -104.9861306,
+    39.7384548
+   ],
+   "osm_nodes": [
+    176098353
+   ],
+   "grade": "tagged",
+   "position": "none claimed beyond the junction",
+   "control": "traffic signals",
+   "signal_nodes": [
+    176098353
+   ],
+   "stop_nodes": [],
+   "rail_crossing_nodes": [],
+   "lap_street": [
+    {
+     "osm_way": 628643749,
+     "name": "East 14th Avenue",
+     "oneway": "yes",
+     "maxspeed": "30 mph",
+     "lanes": "3",
+     "cycleway:left": "no",
+     "cycleway:right": "separate",
+     "highway": "secondary"
+    },
+    {
+     "osm_way": 1024245346,
+     "name": "East 14th Avenue",
+     "oneway": "yes",
+     "maxspeed": "30 mph",
+     "lanes": "3",
+     "cycleway:left": "no",
+     "cycleway:right": "separate",
+     "highway": "secondary"
+    }
+   ],
+   "cross_streets": [
+    {
+     "osm_way": 130912251,
+     "name": "North Lincoln Street",
+     "oneway": "yes",
+     "maxspeed": "30 mph",
+     "lanes": "4",
+     "highway": "primary"
+    },
+    {
+     "osm_way": 1024245345,
+     "name": "North Lincoln Street",
+     "oneway": "yes",
+     "maxspeed": "30 mph",
+     "lanes": "5",
+     "turn:lanes": "||||right",
+     "highway": "primary"
+    }
+   ],
+   "implied_by_osm": [
+    {
+     "what": "signal faces for every approach",
+     "basis": "highway=traffic_signals on 1 node(s)",
+     "see": "signals.json for the masts read off the aerial"
+    },
+    {
+     "what": "ONE WAY (R6-1 / R6-2) facing the lap's approach, and no turn against it (R3-1 / R3-2) or DO NOT ENTER (R5-1) at its exit end",
+     "on": "North Lincoln Street",
+     "basis": "oneway=yes on way 130912251"
+    },
+    {
+     "what": "ONE WAY (R6-1 / R6-2) facing the lap's approach, and no turn against it (R3-1 / R3-2) or DO NOT ENTER (R5-1) at its exit end",
+     "on": "North Lincoln Street",
+     "basis": "oneway=yes on way 1024245345"
+    }
+   ],
+   "faces": "not read: no source from the air",
+   "street_level_source_must_supply": [
+    "the post of every sign (position to about a metre, which corner, on its own post or on a signal mast / lamp post)",
+    "each face: the MUTCD code or the legend, its size, which way it faces",
+    "street-name blades (overhead on the mast arm or on a corner post) and their text",
+    "turn restrictions and lane-use signs at the stop line (R3 series): OSM holds turn:lanes for some approaches only, and no restriction relations are in the extract",
+    "parking, bus-stop and loading signs along the kerb",
+    "whether the tagged signal is a full signal or a pedestrian / rail signal"
+   ]
+  },
+  {
+   "junction": "East 14th Avenue / Sherman Street",
+   "s_m": [
+    6033.0
+   ],
+   "leg": [
+    "14th Ave E to Logan"
+   ],
+   "centre_lonlat": [
+    -104.984876,
+    39.7384511
+   ],
+   "osm_nodes": [
+    176070187
+   ],
+   "grade": "tagged",
+   "position": "none claimed beyond the junction",
+   "control": "traffic signals",
+   "signal_nodes": [
+    176070187
+   ],
+   "stop_nodes": [],
+   "rail_crossing_nodes": [],
+   "lap_street": [
+    {
+     "osm_way": 628643747,
+     "name": "East 14th Avenue",
+     "oneway": "yes",
+     "maxspeed": "30 mph",
+     "lanes": "3",
+     "cycleway:left": "no",
+     "cycleway:right": "separate",
+     "highway": "secondary"
+    },
+    {
+     "osm_way": 628643748,
+     "name": "East 14th Avenue",
+     "oneway": "yes",
+     "maxspeed": "30 mph",
+     "lanes": "3",
+     "turn:lanes": "left;through|through|through;right",
+     "cycleway:left": "no",
+     "cycleway:right": "separate",
+     "highway": "secondary"
+    }
+   ],
+   "cross_streets": [
+    {
+     "osm_way": 1176119047,
+     "name": "Sherman Street",
+     "oneway": "no",
+     "lanes": "2",
+     "highway": "unclassified"
+    }
+   ],
+   "implied_by_osm": [
+    {
+     "what": "signal faces for every approach",
+     "basis": "highway=traffic_signals on 1 node(s)",
+     "see": "signals.json for the masts read off the aerial"
+    }
+   ],
+   "faces": "not read: no source from the air",
+   "street_level_source_must_supply": [
+    "the post of every sign (position to about a metre, which corner, on its own post or on a signal mast / lamp post)",
+    "each face: the MUTCD code or the legend, its size, which way it faces",
+    "street-name blades (overhead on the mast arm or on a corner post) and their text",
+    "turn restrictions and lane-use signs at the stop line (R3 series): OSM holds turn:lanes for some approaches only, and no restriction relations are in the extract",
+    "parking, bus-stop and loading signs along the kerb",
+    "whether the tagged signal is a full signal or a pedestrian / rail signal"
+   ]
+  },
+  {
+   "junction": "East 14th Avenue / Grant Street",
+   "s_m": [
+    6142.0
+   ],
+   "leg": [
+    "14th Ave E to Logan"
+   ],
+   "centre_lonlat": [
+    -104.9835976,
+    39.7384473
+   ],
+   "osm_nodes": [
+    176072803
+   ],
+   "grade": "tagged",
+   "position": "none claimed beyond the junction",
+   "control": "traffic signals",
+   "signal_nodes": [
+    176072803
+   ],
+   "stop_nodes": [],
+   "rail_crossing_nodes": [],
+   "lap_street": [
+    {
+     "osm_way": 628643742,
+     "name": "East 14th Avenue",
+     "oneway": "yes",
+     "maxspeed": "30 mph",
+     "lanes": "3",
+     "cycleway": "no",
+     "highway": "secondary"
+    },
+    {
+     "osm_way": 628643746,
+     "name": "East 14th Avenue",
+     "oneway": "yes",
+     "maxspeed": "30 mph",
+     "lanes": "4",
+     "turn:lanes": "through|through|through;right|right",
+     "cycleway:left": "no",
+     "cycleway:right": "separate",
+     "highway": "secondary"
+    }
+   ],
+   "cross_streets": [
+    {
+     "osm_way": 628657314,
+     "name": "Grant Street",
+     "oneway": "yes",
+     "lanes": "3",
+     "turn:lanes": "through|through|through;right",
+     "highway": "secondary"
+    },
+    {
+     "osm_way": 1053818837,
+     "name": "Grant Street",
+     "oneway": "yes",
+     "lanes": "4",
+     "turn:lanes": "left|left;through|none|none",
+     "highway": "secondary"
+    }
+   ],
+   "implied_by_osm": [
+    {
+     "what": "signal faces for every approach",
+     "basis": "highway=traffic_signals on 1 node(s)",
+     "see": "signals.json for the masts read off the aerial"
+    },
+    {
+     "what": "ONE WAY (R6-1 / R6-2) facing the lap's approach, and no turn against it (R3-1 / R3-2) or DO NOT ENTER (R5-1) at its exit end",
+     "on": "Grant Street",
+     "basis": "oneway=yes on way 628657314"
+    },
+    {
+     "what": "ONE WAY (R6-1 / R6-2) facing the lap's approach, and no turn against it (R3-1 / R3-2) or DO NOT ENTER (R5-1) at its exit end",
+     "on": "Grant Street",
+     "basis": "oneway=yes on way 1053818837"
+    }
+   ],
+   "faces": "not read: no source from the air",
+   "street_level_source_must_supply": [
+    "the post of every sign (position to about a metre, which corner, on its own post or on a signal mast / lamp post)",
+    "each face: the MUTCD code or the legend, its size, which way it faces",
+    "street-name blades (overhead on the mast arm or on a corner post) and their text",
+    "turn restrictions and lane-use signs at the stop line (R3 series): OSM holds turn:lanes for some approaches only, and no restriction relations are in the extract",
+    "parking, bus-stop and loading signs along the kerb",
+    "whether the tagged signal is a full signal or a pedestrian / rail signal"
+   ]
+  },
+  {
+   "junction": "East 14th Avenue / Logan Street",
+   "s_m": [
+    6251.0
+   ],
+   "leg": [
+    "Logan N to Colfax"
+   ],
+   "centre_lonlat": [
+    -104.9823323,
+    39.7384439
+   ],
+   "osm_nodes": [
+    176097374
+   ],
+   "grade": "tagged",
+   "position": "none claimed beyond the junction",
+   "control": "traffic signals",
+   "signal_nodes": [
+    176097374
+   ],
+   "stop_nodes": [],
+   "rail_crossing_nodes": [],
+   "lap_street": [
+    {
+     "osm_way": 330579569,
+     "name": "Logan Street",
+     "oneway": "yes",
+     "lanes": "2",
+     "highway": "secondary"
+    },
+    {
+     "osm_way": 628643741,
+     "name": "East 14th Avenue",
+     "oneway": "yes",
+     "maxspeed": "30 mph",
+     "lanes": "3",
+     "turn:lanes": "through;left|through|through",
+     "cycleway": "no",
+     "highway": "secondary"
+    }
+   ],
+   "cross_streets": [
+    {
+     "osm_way": 628643740,
+     "name": "East 14th Avenue",
+     "oneway": "yes",
+     "maxspeed": "30 mph",
+     "lanes": "3",
+     "cycleway": "no",
+     "highway": "secondary"
+    },
+    {
+     "osm_way": 1262831439,
+     "name": "Logan Street",
+     "oneway": "yes",
+     "lanes": "2",
+     "highway": "secondary"
+    }
+   ],
+   "implied_by_osm": [
+    {
+     "what": "signal faces for every approach",
+     "basis": "highway=traffic_signals on 1 node(s)",
+     "see": "signals.json for the masts read off the aerial"
+    },
+    {
+     "what": "ONE WAY (R6-1 / R6-2) facing the lap's approach, and no turn against it (R3-1 / R3-2) or DO NOT ENTER (R5-1) at its exit end",
+     "on": "East 14th Avenue",
+     "basis": "oneway=yes on way 628643740"
+    },
+    {
+     "what": "ONE WAY (R6-1 / R6-2) facing the lap's approach, and no turn against it (R3-1 / R3-2) or DO NOT ENTER (R5-1) at its exit end",
+     "on": "Logan Street",
+     "basis": "oneway=yes on way 1262831439"
+    }
+   ],
+   "faces": "not read: no source from the air",
+   "street_level_source_must_supply": [
+    "the post of every sign (position to about a metre, which corner, on its own post or on a signal mast / lamp post)",
+    "each face: the MUTCD code or the legend, its size, which way it faces",
+    "street-name blades (overhead on the mast arm or on a corner post) and their text",
+    "turn restrictions and lane-use signs at the stop line (R3 series): OSM holds turn:lanes for some approaches only, and no restriction relations are in the extract",
+    "parking, bus-stop and loading signs along the kerb",
+    "whether the tagged signal is a full signal or a pedestrian / rail signal"
+   ]
+  },
+  {
+   "junction": "East Colfax Avenue / Logan Street / East Colfax Avenue",
+   "s_m": [
+    6424.0,
+    6431.0
+   ],
+   "leg": [
+    "Colfax W to S/F",
+    "Logan N to Colfax"
+   ],
+   "centre_lonlat": [
+    -104.9823493,
+    39.7400358
+   ],
+   "osm_nodes": [
+    176097376,
+    14073675876
+   ],
+   "grade": "tagged",
+   "position": "none claimed beyond the junction",
+   "control": "traffic signals",
+   "signal_nodes": [
+    176097376,
+    14073675876
+   ],
+   "stop_nodes": [],
+   "rail_crossing_nodes": [],
+   "lap_street": [
+    {
+     "osm_way": 330579569,
+     "name": "Logan Street",
+     "oneway": "yes",
+     "lanes": "2",
+     "highway": "secondary"
+    },
+    {
+     "osm_way": 1417020223,
+     "name": "Logan Street",
+     "oneway": "yes",
+     "lanes": "2",
+     "highway": "secondary"
+    },
+    {
+     "osm_way": 1548629056,
+     "name": "East Colfax Avenue",
+     "oneway": "yes",
+     "maxspeed": "30 mph",
+     "lanes": "2",
+     "bus:lanes": "designated|yes",
+     "access:lanes": "no|yes",
+     "highway": "primary"
+    }
+   ],
+   "cross_streets": [
+    {
+     "osm_way": 600546003,
+     "name": "East Colfax Avenue",
+     "oneway": "yes",
+     "maxspeed": "30 mph",
+     "lanes": "2",
+     "bus:lanes": "designated|yes",
+     "access:lanes": "no|yes",
+     "highway": "primary"
+    },
+    {
+     "osm_way": 628643783,
+     "name": "East Colfax Avenue",
+     "oneway": "yes",
+     "maxspeed": "30 mph",
+     "lanes": "2",
+     "bus:lanes": "designated|yes",
+     "access:lanes": "no|yes",
+     "highway": "primary"
+    }
+   ],
+   "implied_by_osm": [
+    {
+     "what": "signal faces for every approach",
+     "basis": "highway=traffic_signals on 2 node(s)",
+     "see": "signals.json for the masts read off the aerial"
+    },
+    {
+     "what": "ONE WAY (R6-1 / R6-2) facing the lap's approach, and no turn against it (R3-1 / R3-2) or DO NOT ENTER (R5-1) at its exit end",
+     "on": "East Colfax Avenue",
+     "basis": "oneway=yes on way 600546003"
+    },
+    {
+     "what": "ONE WAY (R6-1 / R6-2) facing the lap's approach, and no turn against it (R3-1 / R3-2) or DO NOT ENTER (R5-1) at its exit end",
+     "on": "East Colfax Avenue",
+     "basis": "oneway=yes on way 628643783"
+    }
+   ],
+   "faces": "not read: no source from the air",
+   "street_level_source_must_supply": [
+    "the post of every sign (position to about a metre, which corner, on its own post or on a signal mast / lamp post)",
+    "each face: the MUTCD code or the legend, its size, which way it faces",
+    "street-name blades (overhead on the mast arm or on a corner post) and their text",
+    "turn restrictions and lane-use signs at the stop line (R3 series): OSM holds turn:lanes for some approaches only, and no restriction relations are in the extract",
+    "parking, bus-stop and loading signs along the kerb",
+    "whether the tagged signal is a full signal or a pedestrian / rail signal"
+   ]
+  },
+  {
+   "junction": "East Colfax Avenue / Pennsylvania Street",
+   "s_m": [
+    6430.0
+   ],
+   "leg": [
+    "Logan N to Colfax"
+   ],
+   "centre_lonlat": [
+    -104.9811184,
+    39.7400552
+   ],
+   "osm_nodes": [
+    14073675873
+   ],
+   "grade": "tagged",
+   "position": "none claimed beyond the junction",
+   "control": "traffic signals",
+   "signal_nodes": [
+    14073675873
+   ],
+   "stop_nodes": [],
+   "rail_crossing_nodes": [],
+   "lap_street": [
+    {
+     "osm_way": 1548629056,
+     "name": "East Colfax Avenue",
+     "oneway": "yes",
+     "maxspeed": "30 mph",
+     "lanes": "2",
+     "bus:lanes": "designated|yes",
+     "access:lanes": "no|yes",
+     "highway": "primary"
+    }
+   ],
+   "cross_streets": [
+    {
+     "osm_way": 596451653,
+     "name": "Pennsylvania Street",
+     "oneway": "no",
+     "lanes": "2",
+     "highway": "residential"
+    },
+    {
+     "osm_way": 1547338992,
+     "name": "East Colfax Avenue",
+     "oneway": "yes",
+     "maxspeed": "30 mph",
+     "lanes": "2",
+     "bus:lanes": "designated|yes",
+     "access:lanes": "no|yes",
+     "highway": "primary"
+    },
+    {
+     "osm_way": 1548629055,
+     "name": "Pennsylvania Street",
+     "oneway": "no",
+     "lanes": "2",
+     "highway": "residential"
+    }
+   ],
+   "implied_by_osm": [
+    {
+     "what": "signal faces for every approach",
+     "basis": "highway=traffic_signals on 1 node(s)",
+     "see": "signals.json for the masts read off the aerial"
+    },
+    {
+     "what": "ONE WAY (R6-1 / R6-2) facing the lap's approach, and no turn against it (R3-1 / R3-2) or DO NOT ENTER (R5-1) at its exit end",
+     "on": "East Colfax Avenue",
+     "basis": "oneway=yes on way 1547338992"
+    }
+   ],
+   "faces": "not read: no source from the air",
+   "street_level_source_must_supply": [
+    "the post of every sign (position to about a metre, which corner, on its own post or on a signal mast / lamp post)",
+    "each face: the MUTCD code or the legend, its size, which way it faces",
+    "street-name blades (overhead on the mast arm or on a corner post) and their text",
+    "turn restrictions and lane-use signs at the stop line (R3 series): OSM holds turn:lanes for some approaches only, and no restriction relations are in the extract",
+    "parking, bus-stop and loading signs along the kerb",
+    "whether the tagged signal is a full signal or a pedestrian / rail signal"
+   ]
+  },
+  {
+   "junction": "Logan Street",
+   "s_m": [
+    6432.0
+   ],
+   "leg": [
+    "Colfax W to S/F"
+   ],
+   "centre_lonlat": [
+    -104.982329,
+    39.7415529
+   ],
+   "osm_nodes": [
+    14321744491
+   ],
+   "grade": "tagged",
+   "position": "none claimed beyond the junction",
+   "control": "traffic signals",
+   "signal_nodes": [
+    14321744491
+   ],
+   "stop_nodes": [],
+   "rail_crossing_nodes": [],
+   "lap_street": [
+    {
+     "osm_way": 1417020223,
+     "name": "Logan Street",
+     "oneway": "yes",
+     "lanes": "2",
+     "highway": "secondary"
+    }
+   ],
+   "cross_streets": [],
+   "implied_by_osm": [
+    {
+     "what": "signal faces for every approach",
+     "basis": "highway=traffic_signals on 1 node(s)",
+     "see": "signals.json for the masts read off the aerial"
+    }
+   ],
+   "faces": "not read: no source from the air",
+   "street_level_source_must_supply": [
+    "the post of every sign (position to about a metre, which corner, on its own post or on a signal mast / lamp post)",
+    "each face: the MUTCD code or the legend, its size, which way it faces",
+    "street-name blades (overhead on the mast arm or on a corner post) and their text",
+    "turn restrictions and lane-use signs at the stop line (R3 series): OSM holds turn:lanes for some approaches only, and no restriction relations are in the extract",
+    "parking, bus-stop and loading signs along the kerb",
+    "whether the tagged signal is a full signal or a pedestrian / rail signal"
+   ]
+  },
+  {
+   "junction": "East Colfax Avenue / Grant Street",
+   "s_m": [
+    6537.0
+   ],
+   "leg": [
+    "Colfax W to S/F"
+   ],
+   "centre_lonlat": [
+    -104.9835918,
+    39.7400967
+   ],
+   "osm_nodes": [
+    14073675880
+   ],
+   "grade": "tagged",
+   "position": "none claimed beyond the junction",
+   "control": "traffic signals",
+   "signal_nodes": [
+    14073675880
+   ],
+   "stop_nodes": [],
+   "rail_crossing_nodes": [],
+   "lap_street": [
+    {
+     "osm_way": 1547338993,
+     "name": "East Colfax Avenue",
+     "oneway": "yes",
+     "maxspeed": "30 mph",
+     "lanes": "2",
+     "bus:lanes": "designated|yes",
+     "access:lanes": "no|yes",
+     "highway": "primary"
+    },
+    {
+     "osm_way": 1548629056,
+     "name": "East Colfax Avenue",
+     "oneway": "yes",
+     "maxspeed": "30 mph",
+     "lanes": "2",
+     "bus:lanes": "designated|yes",
+     "access:lanes": "no|yes",
+     "highway": "primary"
+    }
+   ],
+   "cross_streets": [
+    {
+     "osm_way": 628634627,
+     "name": "Grant Street",
+     "oneway": "yes",
+     "lanes": "4",
+     "turn:lanes": "left|||",
+     "highway": "secondary"
+    }
+   ],
+   "implied_by_osm": [
+    {
+     "what": "signal faces for every approach",
+     "basis": "highway=traffic_signals on 1 node(s)",
+     "see": "signals.json for the masts read off the aerial"
+    },
+    {
+     "what": "ONE WAY (R6-1 / R6-2) facing the lap's approach, and no turn against it (R3-1 / R3-2) or DO NOT ENTER (R5-1) at its exit end",
+     "on": "Grant Street",
+     "basis": "oneway=yes on way 628634627"
+    }
+   ],
+   "faces": "not read: no source from the air",
+   "street_level_source_must_supply": [
+    "the post of every sign (position to about a metre, which corner, on its own post or on a signal mast / lamp post)",
+    "each face: the MUTCD code or the legend, its size, which way it faces",
+    "street-name blades (overhead on the mast arm or on a corner post) and their text",
+    "turn restrictions and lane-use signs at the stop line (R3 series): OSM holds turn:lanes for some approaches only, and no restriction relations are in the extract",
+    "parking, bus-stop and loading signs along the kerb",
+    "whether the tagged signal is a full signal or a pedestrian / rail signal"
+   ]
+  }
+ ]
+}

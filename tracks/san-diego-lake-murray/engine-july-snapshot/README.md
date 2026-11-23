@@ -62,6 +62,13 @@ Ledger 0046 (2026-10-11, tiered terrain) is the first such change: `scripts/ac/b
 tiles by balanced bisection, `GRASS_FAR` face-up, the T-junction weld) and `scripts/ac/pbr.py` (the textured
 `GRASS_FAR` row; airoso's `scripts/ac/pbr.py` carries the same bytes).
 
+Ledger 0096 (2026-11-23, Denver Grand Prix PLAN 4b items 8 and 10): `scripts/ac/build_kn5_loop.py` again — `SIGNFACE`
+in the planar-UV and weld skip lists, and `drop_bywidth_paint` (opt-in by `inventory.paint`; no track names it). Made on
+the Mac, where neither engine-july nor Blender's add-on folder exists, so this copy was edited directly and
+`MANIFEST.md5` / `PENDING-MIRROR.md5` brought to what a refresh from a scratch ENG copy would have written (old md5
+`dd5657ae…` still live on the PC, new `07d23c05…`). Proven against the previous copy in Blender on one scene: every
+object identical but the `SIGNFACE` plate (GATES-CHANGELOG 2026-11-23).
+
 ## Refresh (after a deliberate ENG change)
 
 ```bash

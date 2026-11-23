@@ -14,6 +14,80 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
+## 2026-11-23 (Mac) — NEW GATES (opt-in) + A NEW EXEMPTION (opt-in): the inventory gates; covered spans in drive_test and kn5_ground_check (ledger 0096, Denver Grand Prix PLAN §4 item 1 and §4b items 8, 10, 11; no existing threshold moved; no track opted in)
+
+Kevin, 2026-11-23: "streetlights and road signs that are as accurate as you can make them. Same with road paint ...
+Currently track builds don't depend on this." · E1: "Hard gates for Denver, opt-in elsewhere until proven." Nothing here
+runs for a track that does not ask for it: no `track.config.json` has an `inventory` key or a `capture.covered_spans`,
+no `ship.json` names the two new steps, and `tests/tools/test_inventory_gates.py` fails the suite if one appears
+unannounced. Denver's own config does not exist yet. Manuals: `docs/INVENTORY.md`, `docs/COVERED-ROAD.md`.
+
+**1. Three new gates per class, on the built kn5 (L5): `tools/inventory_gate.py`, chain step `gate_inventory`.**
+Classes paint, lamps, signals, signs; each on by `inventory.<class>.gate: true`. Hard where on (exit 1 stops the chain,
+`--force-install` does not cover it).
+
+| Gate | Rule | ⚠ numbers, all [invented] 2026-11-23 |
+|---|---|---|
+| present | every inventory item of a built grade is in the kn5 within its grade's tolerance, right type, facing the right way | paint 0.30 / 0.60 / 3.0 m (measured / detected / tagged), on 95 % of samples every 0.5 m; posts and signs 0.5 / 3.0 / 15.0 m; facing 15° / 30° / 45° |
+| nothing extra | nothing of the class in the kn5 that the inventory lacks (L1) | paint: 0.01 m² off every inventory stripe of its colour; posts and signs: 0 objects |
+| covered | every metre of the line and every junction has a record or a declared `"none": true` | a record within 15 m (paint), 50 m (lamps), 40 m (signals, signs) of the metre; 30 m of a junction's node; an item within 25 m of the line inside a declared-none stretch is a contradiction |
+
+- **Where the numbers come from:** PLAN §4b's words ("measured: about ±0.5 m", "detected: a few metres", "tagged: stood
+  where the standard puts it") and the pilot's own check of its paint against the 2020 lidar (±0.3 m,
+  `tracks/denver-grand-prix/source/survey/pilot/PILOT.md`). **None is calibrated against a built track**: there is no
+  built track with an inventory. The reaches, the 95 %, the 0.01 m², the facing angles and the 0.25 m that joins a mast
+  to its arm are guesses to be replaced by the first surveyed build.
+- **Not judged, on purpose:** a line's width (the pilot over-reads thin lines by one to two pixels), a lamp's height
+  (the pilot could not read heights), what a sign's face shows, a facing the inventory does not give (counted).
+- **Proven** (`tests/tools/test_inventory_gates.py`, 28 tests, the pilot's files as fixtures, every verdict read from a
+  kn5 file written by `scripts/ac/kn5_write.py`): the pilot's 125 measured paint items built where read pass all three;
+  one item left out, paint moved 1.0 m, a wrong colour, a broken line built solid, a by-width line, a post left out, a
+  post 0.8 m off, a wrong type, an arm 90° round, a lamp every 55 m by rule and a W1-6 plate by rule each fail the gate
+  that should catch them and no other; 150 m of lap past the surveyed box is not covered until a `none` record says so;
+  a `none` over surveyed marks is a contradiction.
+- **Not proven:** anything on a kn5 the Windows exporter wrote. In particular the way a sign's face is read (the
+  triangle winding as the kn5 holds it) is tied here to `verify_kn5`'s own up-face rule on a test kn5; a real exported
+  plate has to confirm it.
+
+**2. Paint from an inventory: by-width paint is removed, not judged (`drop_bywidth_paint` in both preps; the author
+step `tools/author_paint_inventory_blend.py`).** Not a gate, recorded here because it changes what the paint gate can
+ever see: with `inventory.paint.file` written, every `MARKINGS*` / `YLINE*` / `ROADTEXT*` mesh that is not
+`MARKINGS_inv_*` / `YLINE_inv_*` or a declared `keep_prefixes` addition leaves the scene before the export, and the prep
+stops if the inventory's paint is absent. Without the key the function returns before it looks at the scene.
+
+**3. Sign plates keep their UVs: `SIGNFACE` added to the prep's planar-UV skip list and its weld skip list, both
+preps.** No gate reads UVs. `engine-july-snapshot/scripts/ac/build_kn5_loop.py` changes md5 (2a653ee1… → 07d23c05…,
+`PENDING-MIRROR.md5`); the real engine-july on the PC has not received it.
+
+**4. A new exemption, opt-in: `capture.covered_spans` (`scripts/geometry/covered_spans.py`), the bridge-span exemption
+the other way up.** Inside a declared span's footprint, a triangle wholly `min_clear_m` or more above the road is not
+read by `drive_test` (surface, corridor, wall seating) nor by `kn5_ground_check`'s kn5-internal half (ground under the
+deck, foot support, lamp heads). ⚠ [invented]: `min_clear_m` 2.5 m (refused under 2.0 m: `drive_test`'s strike ceiling
+is 1.8 m), `reach_m` 6.0 m past the half-width.
+- **It also adds a failure:** with `clear_m` declared, overhead geometry over the road's own width lower than
+  `clear_m` − 0.5 m ⚠ [invented] fails `drive_test` (`covered_low_overhead`). Only a track that declares a span can fail
+  on it.
+- **Why an exemption at all:** measured on a 200 m synthetic road with a roof 5 m over 80 m of it. A plain roof turned
+  neither gate red (both window by height). A parapet on the roof read as 4 floating furniture (`drive_test`) and walls
+  100 % no-ground (`kn5_ground_check`); soffit lights as 32 lamp heads without a mast; a pavement on the roof as a road
+  5.02 m over the ground; under a grass-named roof 5 of 12 road-over-ground samples went unread. Declared, each reads
+  right (`tests/geometry/test_covered_spans.py`, 14 tests).
+- **It does not hide:** anything with a vertex under `min_clear_m` (a wall across the lane under the roof is still an
+  obstruction), anything outside the two stations (square ends), anything on a track that declares no span.
+- `audit_mesh` and `verify_kn5` are not changed.
+
+**That nothing moved for a track that opts into none of it:**
+
+| Compared | How | Result |
+|---|---|---|
+| the prep, airoso's and the engine-july copy | Blender 5.1.2 on this Mac, one scene (road, kerb, ground, by-width paint, lamp, sign post, `SIGNPLATE`, one `SIGNFACE` plate): main `bcef7339`'s prep against this branch's, every output object digested (vertices, faces, UVs, smoothing, materials, dummies) | 31 of 32 objects identical (airoso), 24 of 25 (engine-july); the one that differs in each is `SIGNFACE_R1_1`, UVs only: collapsed to a line before, as authored now |
+| `drive_test`, `audit_mesh`, `kn5_ground_check` | main's code against this branch's, in separate processes, on nine synthetic tracks from the suite's own fixtures (straight, a wall across the lane, an apron, a deck panel, a banked turn, lamps seated, lamps hovering, an undeclared roof with a parapet and lights, an undeclared pavement on a roof): everything printed, everything returned, the md5 of `drive_test.json` and `audit.json` | identical on all nine |
+| the suite | `tests/run_tests.py` on this Mac before and after | the same 39 tests fail before and after (Windows paths, bash 3.2, Git LFS not smudged); 1,813 passed before, 1,859 after |
+
+**Not compared, and it cannot be on this Mac:** a real track's cached build. No gate OBJ or kn5 of an installed track is
+in the repo or on this machine. The PC has them: a `--dry-run` rehearsal of any installed track on this branch against
+its last green run is the remaining proof.
+
 ## 2026-11-23 — MEASUREMENT CHANGE (opt-in): drive_test's daylight probe hung from the road's own edge height on a banked turn (ledger 0102 section 6, Milford only; no threshold moved, no bypass)
 
 It moves where the probe looks, not its limit: the same 5 m window, the same limit (0 gaps), the same probe point 0.8 m

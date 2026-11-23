@@ -349,3 +349,78 @@ triangle)` (expected ~43,000-46,000), and by area p95 / max on faces over 10 cm2
 Only apron_0 (the Mac's A/B pad) and apron_1 are inside the bound; apron_16 and _17 are far outside. Shared corners over
 the ground's folds average across creases. Per step 5 ("A pad much worse: stop and report it") this build is **not
 installed**; JSON `D:/k10-scratch/milford_0114_reh/pads_kn5.json`. Everything else in 0.1.14 is ready.
+
+## Round 1b (Mac, 2026-11-22): the pads' crease limit, after the PC's stop
+
+The PC's 0.1.14 pads shared every vertex, so their normals averaged across the ground's creases (dark streaks): 18 of 20 pads
+were outside the runbook's bound. The fix (the orchestrator's decision under Kevin's "Shrink it") is
+`scenery.bespoke.pads_shade_crease_deg` **10** [invented], opt-in beside `pads_shade` "smooth" (`tools/seat_pads_blend.py`,
+`tools/pad_clip.crease_normals`). At each vertex the faces are grouped so that every two in a group have normals within 10 deg of
+each other, and a group's corners share the area-weighted mean of its faces' normals. That mean stands within 10 deg of every
+face it serves (about half that where the group is balanced). Across a sharper crease the corner splits. Without the key, 0.1.14's
+one normal per vertex.
+
+**The model's inputs are the PC's.** The 0.1.13 build's synced-out `loop.blend` (be6cbbdd, Blender 4.2) goes through
+engine-july's prep (the frozen snapshot, `build_kn5_loop.py` md5 2a653ee1) and `tools/far_ground_prep_blend.py` on the Mac
+(Blender 5.1.2), then `tools/seat_pads_blend.py` in three modes. Each pad is read back as the kn5 writer keeps it
+(`source/runoff/scripts/pads_shade_check.py` -> `records/pads_shade_0113_20pads.json`):
+- flat: 247,203 writer vertices for 82,410 triangles (the PC's 0.1.13: 247,197 / 82,408);
+- 0.1.14's shared corners: 47,713 (the PC: 47,724);
+- the PC's per-pad table is reproduced: every p95 within 0.03 deg, every max within 2.2 deg (apron_8, _16).
+
+| pad | triangles | 0.1.14 on the PC, p95 / max deg | the Mac's model of it | **round 1b, p95 / max deg** | writer vertices flat / 0.1.14 / **1b** |
+|---|---|---|---|---|---|
+| apron_0 | 5,837 | 0.276 / 3.25 | 0.276 / 3.25 | **0.276 / 3.25** | 17,511 / 3,041 / **3,047** |
+| apron_1 | 2,131 | 0.387 / 0.73 | 0.387 / 0.73 | **0.386 / 0.73** | 6,389 / 1,387 / **1,393** |
+| apron_2 | 631 | 2.006 / 5.63 | 2.005 / 5.63 | **2.005 / 5.63** | 1,893 / 410 / **410** |
+| apron_3 | 8,253 | 1.523 / 7.52 | 1.523 / 7.52 | **1.522 / 7.47** | 24,757 / 4,863 / **4,884** |
+| apron_4 | 10,969 | 6.851 / 73.3 | 6.851 / 73.35 | **3.619 / 9.67** | 32,904 / 6,486 / **7,723** |
+| apron_5 | 4,948 | 4.313 / 26.14 | 4.313 / 26.14 | **3.644 / 9.39** | 14,842 / 2,751 / **2,849** |
+| apron_6 | 4,338 | 4.121 / 25.01 | 4.121 / 25.01 | **3.719 / 9.44** | 13,014 / 2,444 / **2,643** |
+| apron_7 | 6,401 | 6.52 / 37.49 | 6.52 / 37.49 | **4.17 / 9.34** | 19,203 / 3,650 / **4,129** |
+| apron_8 | 2,138 | 1.625 / 19.62 | 1.625 / 17.43 | **1.619 / 4.86** | 6,414 / 1,421 / **1,445** |
+| apron_9 | 3,571 | 2.846 / 75.74 | 2.868 / 75.71 | **2.665 / 9.28** | 10,713 / 2,012 / **2,083** |
+| apron_10 | 5,993 | 4.712 / 78.71 | 4.712 / 78.71 | **3.094 / 9.6** | 17,979 / 3,490 / **3,753** |
+| apron_11 | 4,398 | 2.159 / 12.44 | 2.16 / 12.44 | **2.157 / 6.59** | 13,194 / 2,517 / **2,533** |
+| apron_12 | 5,346 | 1.479 / 50.92 | 1.479 / 50.92 | **1.444 / 7.68** | 16,034 / 3,162 / **3,211** |
+| apron_13 | 3,276 | 2.444 / 7.3 | 2.444 / 7.3 | **2.442 / 7.1** | 9,828 / 1,824 / **1,835** |
+| apron_14 | 512 | 2.784 / 9.73 | 2.784 / 9.73 | **2.784 / 9.73** | 1,536 / 333 / **333** |
+| apron_15 | 6,216 | 2.433 / 9.28 | 2.433 / 9.28 | **2.305 / 9.28** | 18,648 / 3,496 / **3,524** |
+| apron_16 | 2,804 | 23.657 / 117.2 | 23.656 / 118.72 | **3.701 / 9.18** | 8,400 / 1,541 / **2,000** |
+| apron_17 | 587 | 30.771 / 79.58 | 30.771 / 79.58 | **3.965 / 9.83** | 1,761 / 354 / **530** |
+| apron_18 | 2,553 | 3.881 / 18.5 | 3.881 / 18.5 | **2.513 / 8.94** | 7,659 / 1,492 / **1,593** |
+| apron_19 | 1,508 | 5.814 / 50.73 | 5.814 / 50.73 | **3.758 / 9.47** | 4,524 / 1,039 / **1,113** |
+| **all 20** | 82,410 | | | **p95 <= 4.17, max <= 9.83** | 247,203 / 47,713 / **51,031** |
+
+- **Every pad's corner normals stand within 9.83 deg of their faces** (faces over 10 cm2); p95 at most 4.17 deg. apron_16 / _17
+  go from 23.7 / 30.8 deg p95 to 3.7 / 4.0.
+- **51,031 writer vertices**: +3,318 on 0.1.14's 47,713, 0.619 a triangle.
+- **The road kn5 about 53.21 MB**: the PC's 0.1.14 53,067,848 B + 3,318 x 44 B = 53,213,840 B, -8.84 MB on 0.1.13's
+  62,055,573 B.
+- Blender 4.2 keeps custom normals one per smooth fan. 438 of the 50,050 corner groups span faces that are not edge-connected
+  around their vertex, so 4.2 may write up to about 440 vertices (+19 kB) more than this 5.1 model.
+- `source/runoff/scripts/pads_kn5_check.py` now judges the 10 deg rule. It passes when every pad's largest corner-to-face angle
+  on a face over 10 cm2 is within `--crease-deg` (10) + 0.5 deg [invented: float32 on thin faces and the normal's encoding;
+  0.1.13's flat pads read up to 1.71 deg on such slivers], and exits 1 naming the pads otherwise.
+  - It is a check the PC runs, not a chain gate: `tools/ship_track.sh` does not run it, so `fleet/GATES-CHANGELOG.md` only lists
+    the 10 deg and the 0.5 deg among the round's numbers.
+  - On the PC's 0.1.14 table it fails 13 pads; on this model it passes all 20.
+- Tests: `tests/tools/test_milford_finish_0100.py`, three new.
+  - 180 deg equals 0.1.14's per-vertex normals; every corner stays within the limit on a rough patch with a sliver; a plane
+    keeps its corners shared.
+  - Only Milford names the key.
+  - The record reproduces the PC's table and meets the bound.
+
+**Runbook 0100-1, delta for the rehearsal of this commit.**
+- Run as 0100-1, from an empty workshop at this branch's head: ENG `eng_mflm_0114`, `AIROSO_NUMPY_PY`, a scratch `SHIP_PROJ`,
+  `--no-install`.
+- Step 4: every `[seat-pads]` line ends `smooth (corners shared) within 10 deg`, with the same triangles and verts as 0.1.13
+  and 0.1.14 (apron_9's 1.8 mm fold raise).
+- Step 5: run `python tracks/milford-road-course-lm/source/runoff/scripts/pads_kn5_check.py <road kn5> --crease-deg 10
+  --json <scratch>/pads_kn5.json`. Expect:
+  - `PASS`;
+  - about 51,000 vertices (51,031-51,470) for 82,408 triangles;
+  - every pad's max at most 10.5 deg, and p95 at most about 4.2;
+  - the road kn5 about 53.21 MB (53,213,840 B +- 20 kB), against 0.1.14's 53,067,848 B and 0.1.13's 62,055,573 B;
+  - every other row as the 0.1.14 rehearsal (225 rows): only the kn5 bytes and the seat-pads lines move.
+- A FAIL names the pads: stop and report them. Install only on Kevin's word.

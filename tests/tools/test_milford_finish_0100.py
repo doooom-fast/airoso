@@ -270,3 +270,87 @@ def test_version_is_0_1_14_and_the_ledger_is_filed():
     assert _cfg()["version"] == "0.1.14" and _cfg()["slug"] == "milford_road_course"
     led = (ROOT / "fleet" / "feedback" / "0100-milford-to-finished.md").read_text(encoding="utf-8")
     assert led.startswith("---\nid: 0100\n") and "Runbook 0100-1" in led and "62,055,573" in led
+
+
+# --- 6b. round 1b: the pads' crease limit (the PC's 0.1.14 rehearsal, 2af260a9) ------------------------------------------------
+
+PC_0114_SMOOTH = {0: (0.276, 3.25), 1: (0.387, 0.73), 2: (2.006, 5.63), 3: (1.523, 7.52), 4: (6.851, 73.30), 5: (4.313, 26.14),
+                  6: (4.121, 25.01), 7: (6.520, 37.49), 8: (1.625, 19.62), 9: (2.846, 75.74), 10: (4.712, 78.71),
+                  11: (2.159, 12.44), 12: (1.479, 50.92), 13: (2.444, 7.30), 14: (2.784, 9.73), 15: (2.433, 9.28),
+                  16: (23.657, 117.20), 17: (30.771, 79.58), 18: (3.881, 18.50), 19: (5.814, 50.73)}   # ledger 0100, the PC's table
+
+
+def _angle(a, b):
+    return math.degrees(math.acos(max(-1.0, min(1.0, sum(x * y for x, y in zip(a, b))))))
+
+
+def _face_n(v, f):
+    p0, p1, p2 = v[f[0]], v[f[1]], v[f[2]]
+    u = [p1[k] - p0[k] for k in range(3)]
+    w = [p2[k] - p0[k] for k in range(3)]
+    c = (u[1] * w[2] - u[2] * w[1], u[2] * w[0] - u[0] * w[2], u[0] * w[1] - u[1] * w[0])
+    n = math.sqrt(sum(x * x for x in c))
+    return tuple(x / n for x in c)
+
+
+def test_crease_normals_split_across_a_crease_and_stay_within_the_limit():
+    import random
+    rnd = random.Random(7)
+    # a rough ground patch: a 9 x 9 grid of 1 m cells, heights up to 0.4 m, two triangles a cell, plus a vertical sliver
+    v = [(i * 1.0, j * 1.0, rnd.uniform(0.0, 0.4)) for j in range(9) for i in range(9)]
+    f = []
+    for j in range(8):
+        for i in range(8):
+            a, b, c, d = j * 9 + i, j * 9 + i + 1, (j + 1) * 9 + i + 1, (j + 1) * 9 + i
+            f += [(a, b, c), (a, c, d)]
+    v.append((v[10][0], v[10][1], v[10][2] + 0.001))
+    f.append((10, 11, len(v) - 1))
+    a180 = pc.area_normals(v, f)
+    c180 = pc.crease_normals(v, f, 180)
+    assert all(_angle(c180[i][k], a180[fv]) < 1e-4 for i, fc in enumerate(f) for k, fv in enumerate(fc))   # 180 = 0.1.14
+    c10 = pc.crease_normals(v, f, 10)
+    worst = max(_angle(c10[i][k], _face_n(v, fc)) for i, fc in enumerate(f) for k in range(3))
+    assert worst <= 10.0 + 1e-9                                              # every corner within the limit of its face
+    assert max(_angle(a180[fv], _face_n(v, fc)) for fc in f for fv in fc) > 10.0   # shared at every vertex it was not
+    # a corner splits only where the faces differ: on a plane every corner of a vertex keeps one normal
+    plane = [(i * 1.0, j * 1.0, 0.1 * i) for j in range(3) for i in range(3)]
+    pf = [(0, 1, 4), (0, 4, 3), (1, 2, 5), (1, 5, 4), (3, 4, 7), (3, 7, 6), (4, 5, 8), (4, 8, 7)]
+    pn = pc.crease_normals(plane, pf, 10)
+    per_vertex = {}
+    for fc, corners in zip(pf, pn):
+        for vi, n in zip(fc, corners):
+            per_vertex.setdefault(vi, set()).add(n)
+    assert all(len(ns) == 1 for ns in per_vertex.values())                  # one shared normal per vertex: corners kept shared
+    # a zero-area face weighs nothing and takes its vertex's first group
+    z = pc.crease_normals([(0.0, 0.0, 0.0), (1.0, 0.0, 0.0), (0.0, 1.0, 0.0), (2.0, 0.0, 0.0)], [(0, 1, 2), (0, 1, 3)], 10)
+    assert z[1][0] == z[0][0] and z[1][1] == z[0][1]
+
+
+def test_pads_crease_is_opt_in_and_milford_names_10():
+    src = (ROOT / "tools" / "seat_pads_blend.py").read_text(encoding="utf-8")
+    assert 'crease = bes.get("pads_shade_crease_deg")' in src and "pc.crease_normals(verts, fl, float(crease))" in src
+    assert "me.normals_split_custom_set(per_loop)" in src
+    assert "normals_split_custom_set_from_vertices(pc.area_normals(verts, fl))" in src   # no key: 0.1.14's per vertex
+    b = _cfg()["scenery"]["bespoke"]
+    assert b["pads_shade"] == "smooth" and b["pads_shade_crease_deg"] == 10 and "[invented]" in b["_pads_shade_crease_doc"]
+    named = [t.parent.name for t in sorted((ROOT / "tracks").glob("*/track.config.json"))
+             if '"pads_shade_crease_deg"' in t.read_text(encoding="utf-8")]
+    assert named == ["milford-road-course-lm"]
+
+
+def test_round_1b_model_reproduces_the_pcs_table_and_meets_the_bound():
+    rec = json.loads((MF / "source" / "runoff" / "records" / "pads_shade_0113_20pads.json").read_text(encoding="utf-8"))
+    flat, smooth, crease = (rec["modes"][m] for m in ("flat", "smooth", "crease10"))
+    assert flat["tris"] == smooth["tris"] == crease["tris"] == 82410                # the PC's 0.1.13: 82,408
+    assert flat["writer_verts"] == 247203 and smooth["writer_verts"] == 47713       # the PC's: 247,197 / 47,724
+    for name, p in smooth["pads"].items():                                         # the model's inputs are the PC's
+        assert abs(p["deg_by_area"]["95"] - PC_0114_SMOOTH[int(name.rsplit("_", 1)[1])][0]) < 0.03, name
+    assert crease["writer_verts"] == 51031
+    assert all(p["max_deg_on_faces_over_10cm2"] <= 10.0 for p in crease["pads"].values())
+    assert max(p["deg_by_area"]["95"] for p in crease["pads"].values()) <= 4.2
+    chk = _load(MF / "source" / "runoff" / "scripts" / "pads_kn5_check.py", "pads_kn5_check_0100")
+    rows = [{"name": n, "max_deg_on_faces_over_10cm2": p["max_deg_on_faces_over_10cm2"]} for n, p in crease["pads"].items()]
+    assert chk.verdict(rows, 10) == (True, [])
+    pc_rows = [{"name": f"1RUNOFF_apron_{k}", "max_deg_on_faces_over_10cm2": m} for k, (_p, m) in PC_0114_SMOOTH.items()]
+    ok, over = chk.verdict(pc_rows, 10)
+    assert not ok and len(over) == 13 and "1RUNOFF_apron_0" not in over            # 0.1.14 as the PC built it fails

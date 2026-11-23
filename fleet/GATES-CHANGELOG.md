@@ -40,6 +40,8 @@ No gate threshold, floor or bypass moved; every key opt-in and named by Milford 
 | GrassFX cells | 12 m (+ 6 m within 30 m) -> 6 m everywhere | Kevin: "Use the 6 m cells" |
 | the verge trees' neighbours | within 30 m, at least 3 | ⚠ [invented]; their heights and crowns are the neighbours' measured ones (780 trees); 103 trees take the read's median [invented] |
 | the pads' shading normals | flat -> area-weighted vertex normals | `seat_pads_blend.py` opt-in `pads_shade`; positions, UVs and the self-check unchanged |
+| the pads' crease limit (round 1b) | a corner shared only among faces within **10 deg** | ⚠ [invented] (`seat_pads_blend.py` opt-in `pads_shade_crease_deg`, `pad_clip.crease_normals`): the PC's 0.1.14 pads, shared at every vertex, read up to 117 deg off a face |
+| `pads_kn5_check.py`'s bound (a check the PC runs, not a gate: no chain runs it) | every corner within the crease + **0.5 deg** | ⚠ [invented] tolerance: float32 on thin faces and the normal's encoding (0.1.13's flat pads read up to 1.71 deg on slivers) |
 
 ## 2026-11-18 — REPORTED, NOT GATED: kn5_ground_check splits the walls lens; Milford's ground beside the road, the numbers it adds (ledger 0092; no threshold moved)
 

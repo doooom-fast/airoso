@@ -155,6 +155,44 @@ haze by distance). One test kn5: three walls at 25, 60 and 105 km, driven on the
 is a uniform shrink toward the track origin by the smallest factor that draws, with the parallax error it costs
 stated in degrees for the lap's extremes, for Kevin to accept or not.
 
+## 3b. If AC cannot draw the true distance — and what "look right" means either way
+
+Playbox read the player's CSP settings without running AC: `[ADAPTIVE_CLIP_PLANES] FAR_PLANE=20000,30000`. Untested
+prediction: nothing past 20–30 km draws. The skyline is formed 20–100 km out. Kevin, 2026-11-23: *"How can we fake
+it"* · *"it needs to look right"* · *"not just be closer"*.
+
+**Order of preference.** 1. Raise the far plane from the track's own config, if CSP allows it (the PC test finds
+out): the mountains stay where they are. 2. Failing that, the pulled-in backdrop below. Either way the same six
+things decide whether it looks right, and **moving the mesh closer supplies only the first.**
+
+| # | What makes a far mountain look far | True distance | Pulled in | How it is kept |
+|---|---|---|---|---|
+| 1 | Bearing and height of every peak on the skyline | exact | exact from the lap's centre, drifting off it | the map below |
+| 2 | **Layering:** near ridges slide against far ones as you drive | exact | lost on a single shell | pull in by a monotonic map, not onto one shell: 14 km stays 14, 105 km lands at 26 km, everything between keeps its order and its spacing in proportion (log of distance). Foothills still move more than the Divide. |
+| 3 | **Haze:** contrast falls and colour goes blue with real distance | the game's fog does it, **but AC's fog is tuned for a few km and may swallow a 60 km peak whole** | the game fogs it as 20 km: too crisp | haze baked into the mesh's colour from each vertex's **real** distance; the backdrop taken out of the game's distance fog if CSP allows, so it is not fogged twice. Untested. |
+| 4 | **Shading:** the sun models the real slopes | exact | squeezing depth flattens every face toward the viewer, so the game would light it as a wall | normals carried over from the real surface, not recomputed from the squeezed one |
+| 5 | **Surface:** forest below, rock and snow above, by real elevation and aspect | same work either way | same | colour from elevation, slope and aspect of the real surface; snow line per season as a choice |
+| 6 | **It answers the weather and the hour:** disappears in murk, silhouettes at dusk | free if 3 works | a baked haze does not change with the weather | the open risk. Needs CSP to drive the backdrop's fade from the weather; unknown until tried. |
+
+**Measured cost of pulling in** (worst case anywhere on the lap, which reaches 1,087 m from its centre; error against the
+true view; `source/horizon` peaks):
+
+| Peak (true distance) | Single shell at 17 km: bearing error, size error | Layered map (14–26 km): bearing error, size error |
+|---|---|---|
+| Mt Blue Sky (58.8 km) | 2.06°, 3.4 % | 1.34°, 2.2 % |
+| Longs Peak (78.5 km) | 2.35°, 4.8 % | 1.45°, 3.0 % |
+| Pikes Peak (100.2 km) | 2.78°, 3.1 % | 1.64°, 1.9 % |
+| Lookout Mtn (21.7 km) | 0.54°, 1.2 % | 0.59°, 1.3 % |
+| Green Mtn (17.2 km) | 0.03°, 0.1 % | 0.38°, 0.6 % |
+
+For scale, the whole range is 2.4° tall. The layered map halves the far peaks' error and keeps the layering; it is
+the form to build if the far plane cannot be raised. A wider far plane (28 km in place of 20) shrinks every number.
+
+**Acceptance is a picture, not a number.** For each named sightline (the start line down Colfax first), a still
+from the game beside a real photograph from the same spot, same hour, clear and hazy. The peak gate (bearing and
+height within 0.1° from the start line) only proves row 1. **Kevin's eye on the stills, then from the seat, passes
+rows 2–6.** Reference photographs are a dossier item: dated, located, with the lens known.
+
 ## 4. Every technique, and where it lands here
 
 | Technique | Proven on | Here |

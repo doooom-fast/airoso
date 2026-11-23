@@ -377,6 +377,25 @@ out = {"what": "College split, the data (college_split_data.py)", "report": repo
        "mainline": {"from_v": A0, "to_v": A1, "points_xyz_m": [[round(c, 4) for c in P1[v]] for v in range(A0, A1 + 1)],
                     "widths_m": [round(W1[v], 3) for v in range(A0, A1 + 1)], "offset_m": [round(main_off[v], 3) for v in range(A0, A1 + 1)]}}
 (HERE / "college_split.data.json").write_text(json.dumps(out, indent=1), encoding="utf-8")
+# the datum's offset from the lidar, station by station (the Mac, 2026-11-23): the heights here are NOT measured heights
+datum = {"what": "College split: how far the height datum (the BUILT west pavement edge, kept in place and height) stands off the "
+                 "lidar, per centreline vertex. Every height the split builds carries this offset; only the SHAPE across the "
+                 "road (each carriageway's crossfall, the northbound road's rise) is measured.",
+         "lidar_there": "college_design.json's section at the built west edge: the lidar averaged over about 15 m, read half a "
+                        "metre inside the measured southbound outer edge and held flat outside it (the built edge stands about "
+                        "2 m outside the measured one)",
+         "built_height_from": "not established. The built line is within 0.4 m of data/centerline.elevation.json's profile (3DEP "
+                              "on the raw centreline of the one slab, 33 m median, smoothed twice over 39 m) through this zone but "
+                              "is not that profile; which later step set it is unknown. The built rows are flat across at the "
+                              "line + 0.10.",
+         "follow_up": "on the list for after College, not part of this round",
+         "columns": ["v", "s_m (along the built line)", "built_west_edge_y", "lidar_y_there", "built_minus_lidar_m"],
+         "rows": [[v, round(S0[v], 1), round(P0[v][1] + LIFT, 3), round(surface(v, west(v)), 3),
+                   round(P0[v][1] + LIFT - surface(v, west(v)), 3)] for v in ZONE]}
+dd = [r[4] for r in datum["rows"]]
+datum["summary"] = {"min_m": min(dd), "max_m": max(dd), "median_m": sorted(dd)[len(dd) // 2],
+                    "at_the_two_outer_rows_m": [dd[0], dd[-1]]}
+(HERE / "college_datum_offset.json").write_text(json.dumps(datum, indent=1), encoding="utf-8")
 print(json.dumps(report, indent=1))
 
 if WRITE:

@@ -304,7 +304,12 @@ merged into `claude/lm-finish-r2-20261122`. The College step runs first in the a
   built line: 1.08); largest grade step between segments 0.65 points (built: 0.57). Heights: the built west edge
   keeps its place and its height (stage A: the west walk, the house lots and the ground behind them stay put), and
   the lidar gives the shape laid onto it: each road's crossfall (within about 5 %) and the northbound road's rise.
-  So absolute heights stand off the lidar by what the built west edge does (-0.54 to +0.83 m).
+  So absolute heights stand off the lidar by what the built west edge does (-0.54 to +0.83 m): **they are the built
+  edge's heights, not measured ones; only the crossfall and the northbound rise are measured.** The offset is
+  recorded per vertex in `source/college_r2/college_datum_offset.json` (v, station, built edge, lidar there, built
+  minus lidar). Where the built height came from is not established (within 0.4 m of
+  `data/centerline.elevation.json`'s smoothed 3DEP profile, but not that profile). Putting College on the lidar
+  would move the west walk and the house lots: on the list for after College, not in this round.
 - **The no-route gate does not cover the forks yet.** `race_lap.stitch` does not list the other carriageway at a fork
   as a mouth of the lap ("MAINLINE beyond v1130" and "MAINLINE before v1476" are skipped, "the branch is the lap": its
   probe 10 m past the fork row still stands on the lap's own pavement). The closures and probes that seal the

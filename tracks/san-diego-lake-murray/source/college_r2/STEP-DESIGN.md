@@ -14,12 +14,13 @@ corridor, the dummies, the signs and every gate read the split road.
    moves sideways to the southbound pavement's midline, and its width becomes that carriageway's. No vertex is added
    or removed, so every vertex-keyed entry (below) still names the same place along the road.
 2. **The northbound carriageway is a new named piece** (a record in `data/connectors.local.json`: name, points,
-   widths; heights the measured ones), built by the step itself, since no draft step runs on a seeded blend.
+   widths), built by the step itself, since no draft step runs on a seeded blend. Its heights are NOT measured
+   heights: they are the built west edge's height plus the measured rise ("Step 1 done", `college_datum_offset.json`).
 3. **Pavement is covered once.** West of the shared line the mainline, east of it the piece; where there is no island
    the two ribbons share one edge (the crown) vertex for vertex; where the island stands, nothing is paved between
    its edges. No old slab stays underneath.
-4. **The ground** between the carriageways (the planted bank) and east of the northbound road goes to the surveyed
-   heights; real hills are not reshaped, only the road's own zone (Kevin: "Why are we changing ridges?").
+4. **The ground** between the carriageways (the planted bank) and east of the northbound road follows the two roads
+   (which carry the datum's offset from the lidar) and meets the surveyed ground beyond the road's own zone; real hills are not reshaped, only the road's own zone (Kevin: "Why are we changing ridges?").
 5. **Curbs, walks, paint, the yellow line, the rail and the streetonly median** are rebuilt on the new section; the
    east lamps are re-seated; the houses are not moved (a check reports any whose seat the raised ground changes).
 6. **The data that mirrors the scene** is rewritten in the same step: `centerline.local.json`, `finished_centerline.json`,
@@ -197,6 +198,12 @@ The numbers (`college_split.data.json` `report`):
   tail (one point, see step 2), up to 6.11 m; the bank's slope is up to 52 %.
 - The bank between them: no width at the nose and the tail (the two roads meet in a point), up to 12.18 m.
 - After smoothing the inner edges stand up to 0.38 m (southbound) and 0.73 m (northbound) off the measured edges.
+- **What is measured and what is not** (the Mac, 2026-11-23). Measured: each road's crossfall and the northbound
+  road's rise over the southbound one. NOT measured: the absolute heights, which are the built west edge's; that
+  edge stands -0.54 to +0.83 m off the lidar. `college_datum_offset.json` records it per vertex (v, station, built
+  edge, lidar there, built minus lidar). Where the built height came from is not established: it is within 0.4 m
+  of `data/centerline.elevation.json`'s smoothed 3DEP profile through the zone but is not that profile. Putting
+  the road on the lidar would move the west walk and the house lots; it is on the list for after College.
 - Heights. A row is tilted, not flat: west edge, line + 0.10, east edge, each at its own height (`edges` in the data
   file). The built west edge keeps its height, so every height here stands off the lidar by what that edge does
   (-0.54 to +0.83 m, smooth along the road). The mainline's line moves -0.25 to +0.23 m from its built height (the

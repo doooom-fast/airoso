@@ -62,6 +62,10 @@
       "ribbon": "MAINLINE",
       "vertex": 780,
       "where": "Dahlia St -> E 56th Ave (the dahlia_56th pad, unparked 2026-11-22)",
+      "fwd": {
+        "base_xz": [-913.928, 1133.297],
+        "_base_xz_doc": "2026-11-23 (PC; the 0.2.9 rehearsal at 2d26aabc, D:/k10-scratch/sand_creek_lm_0209b_reh): tools/place_signs.py's own polyline stage, with defaults.pad_decks, stands the plate here on the failed-turn ray, 1.63 m (lateral_offset_m) past the built dahlia_56th deck's north edge (data/pads.built.json's outline; the ray leaves the deck at (-913.29, 1131.81)); the gated disc margin 16.87 m, the nearest lamp 40.24 m. The mesh stage then started its march 1.50 m further out (its curb crossing / walk read past the deck edge, where the pad's ground band stands at the deck's height) and stopped at (-914.518, 1134.68), 3.13 m from the deck: verify_signs FAILED l_named_corner on 'built-edge clearance 3.13 m > 3.0 m'. Pinned at the polyline stage's own spot (measured on the built outline, not marched)"
+      },
       "rev": {
         "skip": true,
         "reason": "ledger 0079 round Q build rq1 (dahlia_56th unparked with lm_intake.corner_flare_off, as now): verify_signs FAILED M-c5-rev c_built_edge_clearance, the W1-6L plate at (-941.8, 1107.5). Reversed, the lap comes west on E 56th and turns left onto Dahlia; straight on runs across the pad's measured deck into E 56th west (grid_primary_35, a through street the sign field does not hold: include_connectors false), and the failed-turn rule stood the plate on that street's pavement. As SC-48S rev: no race layout drives rev, and in Free Roam the arrow would point away from a road a driver may take"

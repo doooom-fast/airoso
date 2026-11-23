@@ -1616,534 +1616,6 @@
    }
   },
   {
-   "id": "M-c5-fwd",
-   "kind": "W1-6R",
-   "plate": "W1-6",
-   "layout": null,
-   "ribbon": "MAINLINE",
-   "direction": "fwd",
-   "corner": {
-    "apex_vertex": 779,
-    "apex_station_m": 2325,
-    "PC": 2303,
-    "PT": 2346,
-    "arc_m": 43,
-    "R_apex_m": 22.8,
-    "D_deg": -81.4,
-    "turn": "right",
-    "apex_xz": [
-     -899.24,
-     1111.98
-    ],
-    "second_arrow": false,
-    "R_at_PC_m": 62.4
-   },
-   "approach": {
-    "t_xz": [
-     -0.3919,
-     0.92
-    ],
-    "bearing_deg": 336.9,
-    "pca_vs_chord_deg": -3.28,
-    "w_app_m": 11.0,
-    "w_at_apex_m": 42.3,
-    "island_m": 0.0,
-    "lane_off_m": 2.75
-   },
-   "ray": {
-    "A_xz": [
-     -896.15,
-     1091.56
-    ],
-    "len_m": 42.5,
-    "C_xz": [
-     -912.8,
-     1130.66
-    ],
-    "exit_ribbon": "MAINLINE",
-    "hw_at_exit_m": 21.15,
-    "sC_station": 2332,
-    "sC_rel_PC_m": 29,
-    "sC_rel_apex_m": 7,
-    "s_S_m": 44.17,
-    "C_mesh_xz": [
-     -912.71,
-     1130.43
-    ],
-    "len_mesh_m": 42.25,
-    "back_of_walk_m": 44.35,
-    "walk_run_m": 2.1,
-    "s_S_walk_m": 44.07,
-    "s_S_mesh_m": 44.12,
-    "marched_m": 0.05,
-    "beyond_walk": false
-   },
-   "base_xz": [
-    -913.441,
-    1132.15
-   ],
-   "curb_dir_xz": [
-    0.6316,
-    0.7753
-   ],
-   "y_road_at_sC": 7.199,
-   "y_base": {
-    "analytic": 7.439,
-    "raycast": 7.282,
-    "source": "raycast",
-    "value": 7.282,
-    "road_hit": null,
-    "pushed_on_road_m": 0.0
-   },
-   "face_dir_xz": [
-    0.3919,
-    -0.92
-   ],
-   "face_bearing_deg": 156.9,
-   "yaw_deg": -66.93,
-   "right_xz": [
-    0.92,
-    0.3919
-   ],
-   "arrow": "right",
-   "expect_arrow": null,
-   "lateral_offset_m": 1.63,
-   "height_m": 2.13,
-   "om1_3": true,
-   "checks": {
-    "outside_cross": 21.3,
-    "edge_clear_m": 1.59,
-    "lamp_m": 45.66,
-    "plant_m": Infinity,
-    "plant_zone": "-",
-    "pushed_m": 1.67,
-    "slid_m": 0.0,
-    "lateral_step_m": 0.0,
-    "gate_margin_m": 11.92,
-    "gate_margin_gated_m": 11.92,
-    "gate_ribbons": "all",
-    "mouth_m": 17.0,
-    "spawn_m": 413.1,
-    "spawn": "AC_TIME_1_L@race",
-    "warnings": [],
-    "slid_polyline_m": 0.0,
-    "mesh_clear_m": 1.63,
-    "mesh_clear_bearing_deg": 325,
-    "mesh_shift_m": 0.05,
-    "walk_behind_m": -0.23,
-    "wall_m": 1.83
-   },
-   "old_rule": {
-    "rev1_xz": [
-     -875.3,
-     1041.79
-    ],
-    "rev1": "k10-colorado 5b38b59: advance diamond ~52 m BEFORE the bend, outside, w/2+2.2",
-    "rev2_xz": [
-     -877.02,
-     1103.04
-    ],
-    "rev2": "k10-colorado e2334c9: at the apex, side flipped (= INSIDE on SD), flare w/2+2.8"
-   },
-   "overrides_applied": [],
-   "exclude_plant": null,
-   "where": "",
-   "base_xz_polyline": [
-    -913.458,
-    1132.196
-   ],
-   "base_xz_mesh": [
-    -913.441,
-    1132.15
-   ],
-   "base_source": "mesh (walk fraction start, marched 0.05 m along the ray, slid 0.00 m along the curb)",
-   "built": {
-    "outside_edge_xz": [
-     [
-      -918.26,
-      1082.56
-     ],
-     [
-      -919.11,
-      1085.07
-     ],
-     [
-      -919.92,
-      1087.8
-     ],
-     [
-      -920.6,
-      1090.5
-     ],
-     [
-      -921.22,
-      1093.46
-     ],
-     [
-      -921.72,
-      1096.77
-     ],
-     [
-      -922.0,
-      1100.04
-     ],
-     [
-      -922.09,
-      1103.38
-     ],
-     [
-      -922.6,
-      1107.26
-     ],
-     [
-      -922.16,
-      1111.07
-     ],
-     [
-      -921.41,
-      1114.53
-     ],
-     [
-      -920.25,
-      1118.43
-     ],
-     [
-      -917.92,
-      1121.91
-     ],
-     [
-      -916.44,
-      1125.2
-     ],
-     [
-      -914.28,
-      1128.29
-     ],
-     [
-      -911.87,
-      1131.47
-     ],
-     [
-      -909.41,
-      1134.17
-     ],
-     [
-      -906.99,
-      1136.5
-     ],
-     [
-      -904.21,
-      1138.83
-     ],
-     [
-      -900.17,
-      1138.87
-     ],
-     [
-      -896.64,
-      1138.41
-     ],
-     [
-      -892.88,
-      1137.36
-     ],
-     [
-      -890.01,
-      1137.26
-     ],
-     [
-      -887.73,
-      1137.7
-     ],
-     [
-      -885.71,
-      1138.64
-     ],
-     [
-      -883.74,
-      1139.5
-     ],
-     [
-      -881.85,
-      1140.31
-     ],
-     [
-      -879.99,
-      1141.11
-     ],
-     [
-      -878.18,
-      1141.88
-     ],
-     [
-      -876.38,
-      1142.66
-     ],
-     [
-      -874.62,
-      1143.43
-     ]
-    ],
-    "back_of_walk_xz": [
-     [
-      -919.96,
-      1081.96
-     ],
-     [
-      -920.83,
-      1084.53
-     ],
-     [
-      -921.65,
-      1087.33
-     ],
-     [
-      -922.35,
-      1090.1
-     ],
-     [
-      -922.99,
-      1093.13
-     ],
-     [
-      -923.51,
-      1096.56
-     ],
-     [
-      -923.79,
-      1099.94
-     ],
-     [
-      -923.89,
-      1103.4
-     ],
-     [
-      -923.89,
-      1107.38
-     ],
-     [
-      -926.0,
-      1111.77
-     ],
-     [
-      -925.2,
-      1115.49
-     ],
-     [
-      -923.92,
-      1119.74
-     ],
-     [
-      -921.45,
-      1123.58
-     ],
-     [
-      -917.65,
-      1125.89
-     ],
-     [
-      -915.76,
-      1129.31
-     ],
-     [
-      -913.25,
-      1132.62
-     ],
-     [
-      -910.7,
-      1135.43
-     ],
-     [
-      -908.19,
-      1137.84
-     ],
-     [
-      -905.31,
-      1140.26
-     ],
-     [
-      -901.18,
-      1140.37
-     ],
-     [
-      -897.58,
-      1139.94
-     ],
-     [
-      -893.75,
-      1138.93
-     ],
-     [
-      -890.81,
-      1138.87
-     ],
-     [
-      -888.51,
-      1139.32
-     ],
-     [
-      -886.45,
-      1140.28
-     ],
-     [
-      -884.45,
-      1141.15
-     ],
-     [
-      -882.56,
-      1141.97
-     ],
-     [
-      -880.7,
-      1142.76
-     ],
-     [
-      -878.89,
-      1143.54
-     ],
-     [
-      -877.1,
-      1144.31
-     ],
-     [
-      -875.35,
-      1145.07
-     ]
-    ]
-   },
-   "blender": {
-    "base_xyz_engine": [
-     -913.441,
-     7.282,
-     1132.15
-    ],
-    "base_xyz_blender": [
-     -913.441,
-     1132.15,
-     7.282
-    ],
-    "plate_bottom_y": 9.412,
-    "plate_top_y": 10.022,
-    "post_base_y": 6.982,
-    "post_top_y": 10.072,
-    "plates": [
-     {
-      "front_xyz": [
-       [
-        -913.99,
-        9.412,
-        1131.8835
-       ],
-       [
-        -912.8685,
-        9.412,
-        1132.3613
-       ],
-       [
-        -912.8685,
-        10.022,
-        1132.3613
-       ],
-       [
-        -913.99,
-        10.022,
-        1131.8835
-       ]
-      ],
-      "back_xyz": [
-       [
-        -913.9912,
-        9.412,
-        1131.8863
-       ],
-       [
-        -912.8697,
-        9.412,
-        1132.364
-       ],
-       [
-        -912.8697,
-        10.022,
-        1132.364
-       ],
-       [
-        -913.9912,
-        10.022,
-        1131.8863
-       ]
-      ],
-      "arrow_xyz": [
-       [
-        -912.972,
-        9.7168,
-        1132.3128
-       ],
-       [
-        -913.3015,
-        9.9454,
-        1132.1725
-       ],
-       [
-        -913.2875,
-        9.8014,
-        1132.1784
-       ],
-       [
-        -913.8834,
-        9.8014,
-        1131.9246
-       ],
-       [
-        -913.8834,
-        9.6322,
-        1131.9246
-       ],
-       [
-        -913.2875,
-        9.6322,
-        1132.1784
-       ],
-       [
-        -913.3015,
-        9.4882,
-        1132.1725
-       ]
-      ]
-     }
-    ],
-    "post": {
-     "post_base_xyz": [
-      [
-       -913.4278,
-       6.982,
-       1132.1828
-      ],
-      [
-       -913.4082,
-       6.982,
-       1132.1368
-      ],
-      [
-       -913.4542,
-       6.982,
-       1132.1172
-      ],
-      [
-       -913.4738,
-       6.982,
-       1132.1632
-      ]
-     ],
-     "post_top_y": 10.072
-    },
-    "meshes": {
-     "SIGNPLATE": "SIGNPLATE_0",
-     "SIGNARROW": "SIGNARROW_0",
-     "SIGNPOST": "SIGNPOST_0"
-    }
-   }
-  },
-  {
    "id": "SC-48C-fwd@race",
    "kind": "W1-6L",
    "plate": "W1-6",
@@ -2160,56 +1632,56 @@
     "D_deg": 60.1,
     "turn": "left",
     "apex_xz": [
-     -1484.81,
-     -305.86
+     -1484.83,
+     -305.85
     ],
     "second_arrow": false,
-    "R_at_PC_m": 61.6
+    "R_at_PC_m": 61.4
    },
    "approach": {
     "t_xz": [
-     -0.0278,
+     -0.0279,
      0.9996
     ],
     "bearing_deg": 358.4,
-    "pca_vs_chord_deg": 2.24,
+    "pca_vs_chord_deg": 2.25,
     "w_app_m": 11.0,
-    "w_at_apex_m": 26.86,
+    "w_at_apex_m": 26.9,
     "island_m": 0.0,
     "lane_off_m": 2.75
    },
    "ray": {
     "A_xz": [
      -1478.17,
-     -319.05
+     -319.03
     ],
     "len_m": 30.5,
     "C_xz": [
      -1479.02,
-     -288.57
+     -288.54
     ],
     "exit_ribbon": "MAINLINE",
     "hw_at_exit_m": 16.45,
     "sC_station": 9584,
     "sC_rel_PC_m": 20,
     "sC_rel_apex_m": 6,
-    "s_S_m": 32.29,
+    "s_S_m": 32.27,
     "wall_in_m": 29.4,
     "wall_out_m": 30.25,
-    "s_S_mesh_m": 32.18,
+    "s_S_mesh_m": 32.13,
     "C_mesh_xz": [
      -1478.99,
-     -289.66
+     -289.64
     ],
     "len_mesh_m": 29.4
    },
    "base_xz": [
-    -1479.065,
-    -286.883
+    -1479.066,
+    -286.913
    ],
    "curb_dir_xz": [
-    -0.8178,
-    0.5755
+    -0.8187,
+    0.5743
    ],
    "y_road_at_sC": 19.575,
    "y_base": {
@@ -2221,14 +1693,14 @@
     "pushed_on_road_m": 0.0
    },
    "face_dir_xz": [
-    0.0278,
+    0.0279,
     -0.9996
    ],
    "face_bearing_deg": 178.4,
-   "yaw_deg": -88.41,
+   "yaw_deg": -88.4,
    "right_xz": [
     0.9996,
-    0.0278
+    0.0279
    ],
    "arrow": "left",
    "expect_arrow": "left",
@@ -2243,43 +1715,43 @@
     "rule": "the layout's sealing curb strip: its far face stands in for the curb face, lateral_offset_m behind it"
    },
    "checks": {
-    "outside_cross": 16.48,
-    "edge_clear_m": 1.39,
-    "edge_clear_all_m": -5.47,
-    "lamp_m": 23.7,
+    "outside_cross": 16.5,
+    "edge_clear_m": 1.37,
+    "edge_clear_all_m": -5.48,
+    "lamp_m": 23.68,
     "plant_m": Infinity,
     "plant_zone": "-",
-    "pushed_m": 1.79,
+    "pushed_m": 1.77,
     "slid_m": 0.0,
     "lateral_step_m": 0.0,
-    "gate_margin_m": 4.98,
-    "gate_margin_gated_m": 11.17,
+    "gate_margin_m": 5.01,
+    "gate_margin_gated_m": 11.15,
     "gate_ribbons": "MAINLINE",
     "mouth_m": 8.8,
     "spawn_m": 1043.5,
     "spawn": "AC_TIME_0_R@race",
     "warnings": [
      "layout plate for race: stands 1.48 m past the MAINLINE lip, behind its sealing wall (strip centre -0.485 m from the lip, half width 0.335 m, + lateral_offset_m 1.63); every other pavement -5.48 m away",
-     "layout plate for race: the sealing wall crossed 29.40-30.25 m along the ray, the post 1.63 m past its far face (the wall stands in for the curb); on the sealed opening's deck; every centreline's disc +4.98 m (the sealed openings' not gated here)"
+     "layout plate for race: the sealing wall crossed 29.40-30.25 m along the ray, the post 1.63 m past its far face (the wall stands in for the curb); on the sealed opening's deck; every centreline's disc +5.01 m (the sealed openings' not gated here)"
     ],
     "slid_polyline_m": 0.0,
-    "mesh_clear_m": 1.64,
+    "mesh_clear_m": 1.62,
     "mesh_clear_bearing_deg": null,
-    "mesh_shift_m": 0.11,
+    "mesh_shift_m": 0.14,
     "pavement_clear_m": 0.0,
     "walk_behind_m": null,
-    "wall_m": 1.64,
+    "wall_m": 1.62,
     "on_deck": true
    },
    "old_rule": {
     "rev1_xz": [
      -1473.04,
-     -371.21
+     -371.18
     ],
     "rev1": "k10-colorado 5b38b59: advance diamond ~52 m BEFORE the bend, outside, w/2+2.2",
     "rev2_xz": [
-     -1498.15,
-     -315.12
+     -1498.16,
+     -315.13
     ],
     "rev2": "k10-colorado e2334c9: at the apex, side flipped (= INSIDE on SD), flare w/2+2.8"
    },
@@ -2287,115 +1759,115 @@
    "exclude_plant": null,
    "where": "E 48th Ave -> N Colorado Blvd (the S at 48th / Colorado, first turn)",
    "base_xz_polyline": [
-    -1479.068,
-    -286.773
+    -1479.072,
+    -286.769
    ],
    "base_xz_mesh": [
-    -1479.065,
-    -286.883
+    -1479.066,
+    -286.913
    ],
    "base_source": "mesh (layout race: the ray through the sealing wall, 1.63 m past its far face, slid 0.00 m)",
    "built": {
     "outside_edge_xz": [
      [
-      -1469.52,
-      -328.96
+      -1469.62,
+      -328.94
      ],
      [
       -1470.55,
-      -326.9
+      -326.88
      ],
      [
-      -1471.01,
-      -324.83
+      -1471.11,
+      -324.81
      ],
      [
       -1470.88,
-      -322.71
+      -322.69
      ],
      [
       -1470.99,
-      -320.51
+      -320.49
      ],
      [
       -1471.16,
-      -318.29
+      -318.26
      ],
      [
       -1471.38,
-      -316.0
+      -315.98
      ],
      [
       -1471.72,
-      -313.53
+      -313.51
      ],
      [
-      -1472.22,
-      -311.01
+      -1472.23,
+      -310.98
      ],
      [
-      -1471.43,
-      -308.09
+      -1471.44,
+      -308.06
      ],
      [
-      -1471.12,
-      -304.61
+      -1471.13,
+      -304.58
      ],
      [
-      -1471.31,
-      -300.74
+      -1471.33,
+      -300.7
      ],
      [
-      -1469.78,
-      -295.43
+      -1469.81,
+      -295.39
      ],
      [
-      -1473.56,
-      -293.34
+      -1473.59,
+      -293.31
      ],
      [
-      -1473.64,
-      -286.91
+      -1473.61,
+      -286.8
      ],
      [
-      -1476.86,
-      -283.49
+      -1476.91,
+      -283.46
      ],
      [
-      -1480.07,
-      -281.53
+      -1480.11,
+      -281.51
      ],
      [
-      -1483.22,
-      -279.92
+      -1483.25,
+      -279.9
      ],
      [
-      -1488.2,
-      -283.86
+      -1488.22,
+      -283.85
      ],
      [
-      -1490.32,
-      -283.03
+      -1490.34,
+      -283.02
      ],
      [
-      -1492.09,
-      -282.34
+      -1492.11,
+      -282.33
      ],
      [
-      -1493.3,
+      -1493.32,
       -281.75
      ],
      [
-      -1493.88,
-      -281.26
+      -1493.89,
+      -281.25
      ],
      [
-      -1494.2,
-      -280.84
+      -1494.19,
+      -280.85
      ],
      [
-      -1494.27,
-      -280.67
+      -1494.26,
+      -280.68
      ],
      [
       -1494.0,
@@ -2407,112 +1879,112 @@
      ],
      [
       -1493.44,
-      -281.65
+      -281.66
      ],
      [
       -1493.62,
-      -281.46
+      -281.47
      ],
      [
-      -1493.9,
-      -281.25
+      -1493.91,
+      -281.23
      ],
      [
       -1494.3,
-      -280.67
+      -280.65
      ]
     ],
     "back_of_walk_xz": [
      [
       -1468.32,
-      -328.94
+      -328.92
      ],
      [
       -1469.25,
-      -326.87
+      -326.85
      ],
      [
       -1469.51,
-      -324.79
+      -324.76
      ],
      [
       -1469.28,
-      -322.64
+      -322.62
      ],
      [
       -1469.19,
-      -320.4
+      -320.38
      ],
      [
       -1469.36,
-      -318.13
+      -318.1
      ],
      [
-      -1469.59,
-      -315.79
+      -1469.6,
+      -315.77
      ],
      [
-      -1469.94,
-      -313.24
+      -1469.95,
+      -313.21
      ],
      [
       -1470.47,
-      -310.61
+      -310.58
      ],
      [
-      -1467.59,
-      -306.97
+      -1467.6,
+      -306.93
      ],
      [
-      -1467.41,
-      -303.12
+      -1467.42,
+      -303.08
      ],
      [
-      -1471.22,
-      -300.69
+      -1471.24,
+      -300.66
      ],
      [
-      -1469.61,
-      -295.32
+      -1469.64,
+      -295.27
+     ],
+     [
+      -1473.44,
+      -293.18
      ],
      [
       -1473.41,
-      -293.21
+      -286.57
      ],
      [
-      -1473.51,
-      -286.76
+      -1475.74,
+      -281.71
      ],
      [
-      -1475.75,
-      -281.83
+      -1478.26,
+      -278.19
      ],
      [
-      -1478.21,
-      -278.22
+      -1482.44,
+      -278.18
      ],
      [
-      -1482.41,
-      -278.2
+      -1487.77,
+      -282.74
      ],
      [
-      -1487.75,
-      -282.75
+      -1490.01,
+      -282.18
      ],
      [
-      -1489.99,
-      -282.19
-     ],
-     [
-      -1491.91,
+      -1491.92,
       -281.87
      ],
      [
-      -1493.06,
-      -281.21
+      -1493.07,
+      -281.2
      ],
      [
-      -1493.69,
+      -1493.7,
       -280.9
      ],
      [
@@ -2520,20 +1992,20 @@
       -280.43
      ],
      [
-      -1494.02,
-      -280.37
+      -1493.94,
+      -280.3
      ],
      [
       -1493.7,
-      -280.86
+      -280.85
      ],
      [
       -1493.0,
-      -281.25
+      -281.24
      ],
      [
       -1492.9,
-      -281.39
+      -281.4
      ],
      [
       -1492.96,
@@ -2541,23 +2013,23 @@
      ],
      [
       -1493.03,
-      -281.03
+      -281.02
      ],
      [
       -1493.81,
-      -280.59
+      -280.57
      ]
     ]
    },
    "blender": {
     "base_xyz_engine": [
-     -1479.065,
+     -1479.066,
      19.494,
-     -286.883
+     -286.913
     ],
     "base_xyz_blender": [
-     -1479.065,
-     -286.883,
+     -1479.066,
+     -286.913,
      19.494
     ],
     "plate_bottom_y": 21.624,
@@ -2568,83 +2040,83 @@
      {
       "front_xyz": [
        [
-        -1479.6734,
-        21.6241,
-        -286.9299
+        -1479.6744,
+        21.6244,
+        -286.96
        ],
        [
-        -1478.4549,
-        21.6241,
-        -286.896
+        -1478.4559,
+        21.6244,
+        -286.926
        ],
        [
-        -1478.4549,
-        22.2341,
-        -286.896
+        -1478.4559,
+        22.2344,
+        -286.926
        ],
        [
-        -1479.6734,
-        22.2341,
-        -286.9299
+        -1479.6744,
+        22.2344,
+        -286.96
        ]
       ],
       "back_xyz": [
        [
-        -1479.6735,
-        21.6241,
-        -286.9269
+        -1479.6745,
+        21.6244,
+        -286.957
        ],
        [
-        -1478.455,
-        21.6241,
-        -286.893
+        -1478.456,
+        21.6244,
+        -286.923
        ],
        [
-        -1478.455,
-        22.2341,
-        -286.893
+        -1478.456,
+        22.2344,
+        -286.923
        ],
        [
-        -1479.6735,
-        22.2341,
-        -286.9269
+        -1479.6745,
+        22.2344,
+        -286.957
        ]
       ],
       "arrow_xyz": [
        [
-        -1479.5592,
-        21.9289,
-        -286.9308
+        -1479.5602,
+        21.9292,
+        -286.9608
        ],
        [
-        -1479.2012,
-        22.1575,
-        -286.9208
+        -1479.2022,
+        22.1578,
+        -286.9508
        ],
        [
-        -1479.2164,
-        22.0135,
-        -286.9212
+        -1479.2174,
+        22.0138,
+        -286.9512
        ],
        [
-        -1478.569,
-        22.0135,
-        -286.9032
+        -1478.5699,
+        22.0138,
+        -286.9332
        ],
        [
-        -1478.569,
-        21.8444,
-        -286.9032
+        -1478.5699,
+        21.8446,
+        -286.9332
        ],
        [
-        -1479.2164,
-        21.8444,
-        -286.9212
+        -1479.2174,
+        21.8446,
+        -286.9512
        ],
        [
-        -1479.2012,
-        21.7003,
-        -286.9208
+        -1479.2022,
+        21.7006,
+        -286.9508
        ]
       ]
      }
@@ -2652,27 +2124,27 @@
     "post": {
      "post_base_xyz": [
       [
-       -1479.0407,
-       19.1941,
-       -286.8573
+       -1479.0417,
+       19.1944,
+       -286.8873
       ],
       [
-       -1479.0393,
-       19.1941,
-       -286.9073
+       -1479.0403,
+       19.1944,
+       -286.9373
       ],
       [
-       -1479.0893,
-       19.1941,
-       -286.9087
+       -1479.0903,
+       19.1944,
+       -286.9387
       ],
       [
-       -1479.0907,
-       19.1941,
-       -286.8587
+       -1479.0917,
+       19.1944,
+       -286.8887
       ]
      ],
-     "post_top_y": 22.2841
+     "post_top_y": 22.2844
     },
     "meshes": {
      "SIGNPLATE": "SIGNPLATE_race_0",
@@ -2805,7 +2277,7 @@
    "old_rule": {
     "rev1_xz": [
      -1500.35,
-     -251.19
+     -251.21
     ],
     "rev1": "k10-colorado 5b38b59: advance diamond ~52 m BEFORE the bend, outside, w/2+2.2",
     "rev2_xz": [
@@ -2832,253 +2304,253 @@
     "outside_edge_xz": [
      [
       -1474.72,
-      -351.17
+      -351.15
      ],
      [
       -1474.31,
-      -349.17
+      -349.15
      ],
      [
       -1473.89,
-      -347.17
+      -347.14
      ],
      [
       -1472.78,
-      -345.16
+      -345.14
      ],
      [
       -1458.57,
-      -343.21
+      -343.19
      ],
      [
       -1458.56,
-      -341.18
+      -341.15
      ],
      [
       -1458.56,
-      -339.13
+      -339.11
      ],
      [
       -1458.56,
-      -337.09
+      -337.06
      ],
      [
       -1458.56,
-      -335.04
+      -335.02
      ],
      [
-      -1463.77,
-      -333.01
+      -1463.87,
+      -332.98
      ],
      [
       -1467.79,
-      -330.99
+      -330.97
      ],
      [
-      -1469.52,
-      -328.96
+      -1469.62,
+      -328.94
      ],
      [
       -1470.55,
-      -326.9
+      -326.88
      ],
      [
-      -1471.01,
-      -324.83
+      -1471.11,
+      -324.81
      ],
      [
       -1470.88,
-      -322.71
+      -322.69
      ],
      [
       -1470.99,
-      -320.51
+      -320.49
      ],
      [
       -1471.16,
-      -318.29
+      -318.26
      ],
      [
       -1471.38,
-      -316.0
+      -315.98
      ],
      [
       -1471.72,
-      -313.53
+      -313.51
      ],
      [
-      -1472.22,
-      -311.01
+      -1472.23,
+      -310.98
      ],
      [
-      -1471.43,
-      -308.09
+      -1471.44,
+      -308.06
      ],
      [
-      -1471.12,
-      -304.61
+      -1471.13,
+      -304.58
      ],
      [
-      -1471.31,
-      -300.74
+      -1471.33,
+      -300.7
      ],
      [
-      -1469.78,
-      -295.43
+      -1469.81,
+      -295.39
      ],
      [
-      -1473.56,
-      -293.34
+      -1473.59,
+      -293.31
      ],
      [
-      -1473.64,
-      -286.91
+      -1473.61,
+      -286.8
      ],
      [
-      -1476.86,
-      -283.49
+      -1476.91,
+      -283.46
      ],
      [
-      -1480.07,
-      -281.53
+      -1480.11,
+      -281.51
      ],
      [
-      -1483.22,
-      -279.92
+      -1483.25,
+      -279.9
      ],
      [
-      -1488.2,
-      -283.86
+      -1488.22,
+      -283.85
      ],
      [
-      -1490.32,
-      -283.03
+      -1490.34,
+      -283.02
      ]
     ],
     "back_of_walk_xz": [
      [
       -1472.92,
-      -351.19
+      -351.16
      ],
      [
       -1472.51,
-      -349.18
+      -349.16
      ],
      [
       -1472.69,
-      -347.17
+      -347.15
      ],
      [
       -1471.78,
-      -345.17
+      -345.15
      ],
      [
-      -1455.47,
-      -343.23
-     ],
-     [
-      -1454.66,
-      -341.19
+      -1455.57,
+      -343.2
      ],
      [
       -1454.66,
-      -339.13
+      -341.16
      ],
      [
       -1454.66,
-      -337.08
+      -339.11
      ],
      [
       -1454.66,
-      -335.02
+      -337.06
      ],
      [
-      -1459.87,
-      -332.98
+      -1454.66,
+      -335.0
+     ],
+     [
+      -1459.97,
+      -332.96
      ],
      [
       -1466.49,
-      -330.98
+      -330.95
      ],
      [
       -1468.32,
-      -328.94
+      -328.92
      ],
      [
       -1469.25,
-      -326.87
+      -326.85
      ],
      [
       -1469.51,
-      -324.79
+      -324.76
      ],
      [
       -1469.28,
-      -322.64
+      -322.62
      ],
      [
       -1469.19,
-      -320.4
+      -320.38
      ],
      [
       -1469.36,
-      -318.13
+      -318.1
      ],
      [
-      -1469.59,
-      -315.79
+      -1469.6,
+      -315.77
      ],
      [
-      -1469.94,
-      -313.24
+      -1469.95,
+      -313.21
      ],
      [
       -1470.47,
-      -310.61
+      -310.58
      ],
      [
-      -1467.59,
-      -306.97
+      -1467.6,
+      -306.93
      ],
      [
-      -1467.41,
-      -303.12
+      -1467.42,
+      -303.08
      ],
      [
-      -1471.22,
-      -300.69
+      -1471.24,
+      -300.66
      ],
      [
-      -1469.61,
-      -295.32
+      -1469.64,
+      -295.27
+     ],
+     [
+      -1473.44,
+      -293.18
      ],
      [
       -1473.41,
-      -293.21
+      -286.57
      ],
      [
-      -1473.51,
-      -286.76
+      -1475.74,
+      -281.71
      ],
      [
-      -1475.75,
-      -281.83
+      -1478.26,
+      -278.19
      ],
      [
-      -1478.21,
-      -278.22
+      -1482.44,
+      -278.18
      ],
      [
-      -1482.41,
-      -278.2
+      -1487.77,
+      -282.74
      ],
      [
-      -1487.75,
-      -282.75
-     ],
-     [
-      -1489.99,
-      -282.19
+      -1490.01,
+      -282.18
      ]
     ]
    },
@@ -3250,6 +2722,22 @@
    ]
   },
   {
+   "id": "SC-D56-fwd",
+   "ribbon": "MAINLINE",
+   "apex_vertex": 779,
+   "apex_station_m": 2325,
+   "R_apex_m": 22.8,
+   "D_deg": -81.4,
+   "arc_m": 43,
+   "apex_xz": [
+    -899.2,
+    1112.0
+   ],
+   "reasons": [
+    "signs.json skip: both approaches (2026-11-23, PC). fwd (the T's top is Sand Creek's bank): place_signs' polyline stage stands the plate on the failed-turn ray 1.63 m (lateral_offset_m) past the built dahlia_56th deck's north edge, at (-913.928, 1133.297), where the built ground ray-casts 0.51 m under the road's height (6.92 vs 7.44); past GROUND_WARN_M 0.30 the post keeps a walk's analytic base and stands in the air (rehearsal 313fadd3, the spot pinned: verify_signs e_plate_height, f_post_sunk). Unpinned, the mesh stage's march stops 3.13 m from the deck, over the 3.0 m limit (rehearsal 2d26aabc); why its march starts 1.50 m further out is NOT proven (the reading: the pad's ground band past the deck edge taken for a walk). Every spot the rule allows is on the falling bank. In Free Roam the T also turns left onto E 56th west (grid_primary_35), a road the right arrow would point away from. Owed: the mesh stage's march and a post with no built walk under it on falling ground; when that lands, the corner comes back (fwd, the polyline spot above). rev: ledger 0079 round Q build rq1 (dahlia_56th unparked with lm_intake.corner_flare_off, as now): verify_signs FAILED M-c5-rev c_built_edge_clearance, the W1-6L plate at (-941.8, 1107.5). Reversed, the lap comes west on E 56th and turns left onto Dahlia; straight on runs across the pad's measured deck into E 56th west (grid_primary_35, a through street the sign field does not hold: include_connectors false), and the failed-turn rule stood the plate on that street's pavement. As SC-48S rev: no race layout drives rev, and in Free Roam the arrow would point away from a road a driver may take"
+   ]
+  },
+  {
    "id": "M-c6-fwd",
    "ribbon": "MAINLINE",
    "apex_vertex": 853,
@@ -3309,7 +2797,7 @@
    "arc_m": 16,
    "apex_xz": [
     -1374.4,
-    -659.3
+    -659.2
    ],
    "reasons": [
     "R_apex 54.4 > 30 m",
@@ -3326,7 +2814,7 @@
    "arc_m": 30,
    "apex_xz": [
     -1484.8,
-    -305.9
+    -305.8
    ],
    "reasons": [
     "ray never leaves pavement within 80 m (through leg / junction)"
@@ -3338,8 +2826,8 @@
    "ribbon": "MAINLINE",
    "apex_vertex": 3205,
    "apex_station_m": 9605,
-   "R_apex_m": 15.6,
-   "D_deg": -62.2,
+   "R_apex_m": 15.5,
+   "D_deg": -62.3,
    "arc_m": 30,
    "apex_xz": [
     -1507.1,
@@ -3391,7 +2879,7 @@
    "D_deg": 8.7,
    "arc_m": 8,
    "apex_xz": [
-    1646.6,
+    1646.7,
     -752.6
    ],
    "reasons": [
@@ -3433,7 +2921,7 @@
    ]
   },
   {
-   "id": "M-c5-rev",
+   "id": "SC-D56-rev",
    "ribbon": "MAINLINE(rev)",
    "apex_vertex": 779,
    "apex_station_m": 7311,
@@ -3445,11 +2933,7 @@
     1112.0
    ],
    "reasons": [
-    "ray runs 12 m down grid_primary_35#0 before leaving pavement (a through road)"
-   ],
-   "would_be": [
-    -933.65,
-    1111.179
+    "signs.json skip: both approaches (2026-11-23, PC). fwd (the T's top is Sand Creek's bank): place_signs' polyline stage stands the plate on the failed-turn ray 1.63 m (lateral_offset_m) past the built dahlia_56th deck's north edge, at (-913.928, 1133.297), where the built ground ray-casts 0.51 m under the road's height (6.92 vs 7.44); past GROUND_WARN_M 0.30 the post keeps a walk's analytic base and stands in the air (rehearsal 313fadd3, the spot pinned: verify_signs e_plate_height, f_post_sunk). Unpinned, the mesh stage's march stops 3.13 m from the deck, over the 3.0 m limit (rehearsal 2d26aabc); why its march starts 1.50 m further out is NOT proven (the reading: the pad's ground band past the deck edge taken for a walk). Every spot the rule allows is on the falling bank. In Free Roam the T also turns left onto E 56th west (grid_primary_35), a road the right arrow would point away from. Owed: the mesh stage's march and a post with no built walk under it on falling ground; when that lands, the corner comes back (fwd, the polyline spot above). rev: ledger 0079 round Q build rq1 (dahlia_56th unparked with lm_intake.corner_flare_off, as now): verify_signs FAILED M-c5-rev c_built_edge_clearance, the W1-6L plate at (-941.8, 1107.5). Reversed, the lap comes west on E 56th and turns left onto Dahlia; straight on runs across the pad's measured deck into E 56th west (grid_primary_35, a through street the sign field does not hold: include_connectors false), and the failed-turn rule stood the plate on that street's pavement. As SC-48S rev: no race layout drives rev, and in Free Roam the arrow would point away from a road a driver may take"
    ]
   },
   {
@@ -3470,7 +2954,7 @@
    ],
    "would_be": [
     -761.006,
-    55.433
+    55.661
    ]
   },
   {
@@ -3498,7 +2982,7 @@
    "D_deg": 85.6,
    "arc_m": 29,
    "apex_xz": [
-    -1368.8,
+    -1368.9,
     151.1
    ],
    "reasons": [
@@ -3516,14 +3000,14 @@
    "arc_m": 35,
    "apex_xz": [
     -1501.8,
-    157.3
+    157.2
    ],
    "reasons": [
     "T-end: ray re-enters grid_unclassified_9#0#1 within 3 m of the curb (W1-7 candidate, second pass)"
    ],
    "would_be": [
-    -1528.464,
-    172.263
+    -1528.487,
+    172.264
    ]
   }
  ],
@@ -3554,16 +3038,19 @@
   "SC-48C-fwd@race"
  ],
  "counts": {
-  "placed": 6,
-  "plates": 6,
-  "skipped": 18,
+  "placed": 5,
+  "plates": 5,
+  "skipped": 19,
   "layout_plates": 2
  },
  "blender": {
   "blend": "D:\\k10-scratch\\sand_creek_lm\\loop.blend",
   "ground_objects": [
    "1KERB_sidewalk_island_fork_92",
-   "CURB",
+   "1KERB_sidewalk_lm0",
+   "1KERB_sidewalk_lm1",
+   "1KERB_sidewalk_lm2",
+   "1KERB_sidewalk_lm3",
    "TERRAIN"
   ],
   "road_objects": [
@@ -3571,6 +3058,8 @@
    "1ROAD_pad_50th_ash",
    "1ROAD_pad_50th_dahlia",
    "1ROAD_pad_colorado_50th",
+   "1ROAD_pad_dahlia_56th",
+   "1ROAD_pad_sandcreek_quebec",
    "ROAD"
   ],
   "race_excluded": [
@@ -3636,14 +3125,14 @@
    ]
   },
   "vertices": {
-   "SIGNPLATE": 48,
-   "SIGNARROW": 138,
-   "SIGNPOST": 168
+   "SIGNPLATE": 40,
+   "SIGNARROW": 115,
+   "SIGNPOST": 140
   },
   "faces": {
-   "SIGNPLATE": 24,
-   "SIGNARROW": 78,
-   "SIGNPOST": 84
+   "SIGNPLATE": 20,
+   "SIGNARROW": 65,
+   "SIGNPOST": 70
   },
   "normal_mismatches": 0,
   "ground_warnings": 0,

@@ -81,6 +81,7 @@ def main():
     data = proj / "data"
     cfg = json.loads((proj / "track.config.json").read_text(encoding="utf-8"))
     prefixes, radii_rel = mr.config(cfg)
+    fit_past = mr.fit_past_respread(cfg)
     outp = proj / mr.RETURNS_FILE
     if not prefixes:
         if outp.exists():
@@ -180,6 +181,12 @@ def main():
                     raise Skip("the street is shorter than its edge fit")
                 j1 = max(j1, jw)
                 j2 = max(r for r, a in enumerate(arcs) if a <= max(arcs[j1] + 1e-6, mr.EDGE_FIT_TO_M))
+                past = False
+                if j2 - j1 < mr.EDGE_FIT_ROWS and fit_past:
+                    # route.mouth_returns_fit past_respread (mouth_returns.fit_past_respread): the window past the re-spread
+                    j2p = max(r for r, a in enumerate(arcs) if a <= arcs[j1] + mr.EDGE_FIT_TO_M - mr.EDGE_FIT_FROM_M)
+                    if j2p - j1 >= mr.EDGE_FIT_ROWS:
+                        j2, past = j2p, True
                 if j2 - j1 < mr.EDGE_FIT_ROWS:
                     raise Skip(f"only {j2 - j1} rows to fit the street's edge on")
                 E1, E2 = rows[j1][lane], rows[j2][lane]
@@ -201,6 +208,13 @@ def main():
                         Kq, Kt = qq, hit[3]
                 if Kp is None:
                     raise Skip("its road edge line never meets the host edge")
+                if past:
+                    e0 = rows[0][lane]
+                    miss = math.hypot(Kp[0] - e0[0], Kp[2] - e0[2])
+                    if miss > mr.FIT_PAST_K_MAX_M:
+                        raise Skip(f"fitted past the re-spread (rows {j1}-{j2}), its edge line meets the host {miss:.1f} m "
+                                   f"from the street's own edge at the cut (> {mr.FIT_PAST_K_MAX_M} m)")
+                    print(f"[returns] {key}: fitted past the re-spread (rows {j1}-{j2}), K {miss:.2f} m from the cut's edge")
                 lat = sg.unit2(rows[j1][lane][0] - rows[j1][1][0], rows[j1][lane][2] - rows[j1][1][2])
                 a0, a1 = hedge[Kq], hedge[(Kq + 1) % mh]
                 dirn = 1 if (a1[0] - a0[0]) * lat[0] + (a1[2] - a0[2]) * lat[1] > 0 else -1

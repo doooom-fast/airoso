@@ -3,7 +3,7 @@
  "fails": [],
  "warnings": [
   "F: race: author-time: minimum spawn clearance 0.98 m at AC_START_1 v2770 (edge-strip face 2.93 m) (hard floor 0.30 m)",
-  "built deck vs data height, worst 0.429 m"
+  "built deck vs data height, worst 0.718 m"
  ],
  "counts": {
   "by_layout": {
@@ -18,7 +18,7 @@
     "pins": []
    }
   },
-  "rings_total": 9152,
+  "rings_total": 9208,
   "interpolated": 0,
   "objects": 36,
   "kbar_objects": 0,
@@ -84,7 +84,7 @@
    "R": 20
   },
   "edge_gap_worst_m": 3.491,
-  "edge_rings": 6555,
+  "edge_rings": 6541,
   "free_ends": 0,
   "pins": 0,
   "pin_gap_max_m": 0.0,
@@ -107,7 +107,7 @@
    "1KERB_race_3205_out": 0,
    "1KERB_race_3205_in": 0
   },
-  "kerb_fold_dropped": 277,
+  "kerb_fold_dropped": 206,
   "kerb_closure_clear_m": {
    "1KERB_race_140_out": [
     null,
@@ -246,11 +246,6 @@
     "strip_off_m": 0.004
    },
    {
-    "host_vertex": 779,
-    "side": "L",
-    "strip_off_m": 0.005
-   },
-   {
     "host_vertex": 847,
     "side": "L",
     "strip_off_m": 0.005
@@ -261,14 +256,9 @@
     "strip_off_m": 0.005
    },
    {
-    "host_vertex": 1936,
+    "host_vertex": 2050,
     "side": "L",
-    "strip_off_m": 0.004
-   },
-   {
-    "host_vertex": 1942,
-    "side": "L",
-    "strip_off_m": 0.005
+    "strip_off_m": 0.003
    },
    {
     "host_vertex": 2318,
@@ -308,7 +298,7 @@
    {
     "host_vertex": 2656,
     "side": "R",
-    "strip_off_m": 0.005
+    "strip_off_m": 0.004
    },
    {
     "host_vertex": 2691,
@@ -356,7 +346,7 @@
    ]
   },
   "chord_fail_m": 0.15,
-  "chord_spans_measured": 6533,
+  "chord_spans_measured": 6519,
   "chord_spans_fold": 0,
   "chord_spans_unmeasured": 0,
   "chord_spans_over": 0,

@@ -36,6 +36,23 @@ EDGE_FIT_FROM_M = 8.0    # the street's edge line is fitted on rows at least thi
 EDGE_FIT_TO_M = 22.0     # [invented] ... and no further (a through street may curve; a stub was fitted to its end)
 EDGE_FIT_ROWS = 3
 MIN_TAIL_ROWS = 3        # J must leave at least this many street rows past it
+FIT_PAST_K_MAX_M = 1.0   # [invented] route.mouth_returns_fit past_respread: the fitted edge line must meet the host within
+#                          this of the street's own edge at its cut row (0.2.8: the four corners it builds read 0.38-0.89 m,
+#                          the ones it refuses 2.3-72.9 m)
+
+
+def fit_past_respread(cfg):
+    """route.mouth_returns_fit {"past_respread": true} (opt-in, 2026-11-22, ledger 0086 owed item 3): where the weld's
+    re-spread runs past EDGE_FIT_TO_M (the fit window then holds fewer than EDGE_FIT_ROWS rows: "only N rows to fit the
+    street's edge on"), fit on the rows from the re-spread's end out EDGE_FIT_TO_M - EDGE_FIT_FROM_M further, and build
+    the corner only if that line meets the host within FIT_PAST_K_MAX_M of the street's own edge at its cut row (an
+    acute fork, a merge or a curving street's line misses by metres and stays skipped). Absent = as before"""
+    f = (cfg.get("route") or {}).get("mouth_returns_fit")
+    if f is None:
+        return False
+    if not isinstance(f, dict) or set(f) - {"past_respread", "_doc"} or not isinstance(f.get("past_respread"), bool):
+        raise SystemExit(f"route.mouth_returns_fit {f!r}: {{\"past_respread\": true|false}}")
+    return f["past_respread"]
 
 
 def config(cfg):

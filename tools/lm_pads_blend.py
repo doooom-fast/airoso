@@ -74,6 +74,8 @@ BARRIER_INSET_M = 0.45          # [invented] the K-rail's centre this far inside
 LANE_EDGE_M = 0.3               # the lane-on-deck check samples the lap's width less this at each side
 GROUND_EDGE_M = 1.4             # 0.17.2's [invented]: ground edges near a deck halved until under this
 GROUND_UNDER_M = 0.04           # 0.17.2's [invented]: the ground under a deck (under kn5_ground_check's 0.05 m gap)
+CHORD_ROUNDS = 8                # ground_on_mesh: rounds of halving a ground edge that crosses over a deck crease
+CHORD_MIN_M = 0.05              # [invented] ... an edge shorter than this is left as it is
 EDGE_BAND_M = 2.5               # 0.17.2's [invented]: outside the outline the ground this close never stands over its edge
 LAP_CLEAR_M = 1.0               # [invented] an outline run along a mouth line closer than the lap's half width + this is the lap's own edge
 EXEMPT_MARGIN_M = 0.15          # 0.17.2's: the exemption polygon this far outside the deck's outline
@@ -345,7 +347,7 @@ def union_arms(ring0, short, keep_on, pin):
     return ring
 
 
-def ground_under(ring, deck_z, edge_m=GROUND_EDGE_M):
+def ground_under(ring, deck_z, edge_m=GROUND_EDGE_M, mesh_z=None):
     terr = bpy.data.objects.get("TERRAIN")
     if terr is None:
         return {}
@@ -391,8 +393,42 @@ def ground_under(ring, deck_z, edge_m=GROUND_EDGE_M):
         elif not inside and v.co.z > want:
             v.co.z = want
             lowered += 1
+    rep = {"edges_split": split, "lowered": lowered, "raised": raised}
+    if mesh_z is not None:
+        # GROUND ON THE DECK MESH, its chords (opt-in per pad, ground_on_mesh; 2026-11-23): a ground edge across a crease
+        # of the deck (where it turns up to a seam) stands over the deck between its two pinned ends. It is halved, the
+        # new vertex pinned as the ends are, until no edge over the deck comes within GROUND_UNDER_M / 2 of it at its
+        # quarter points (sandcreek_quebec on rehearsal 1's blend: 2 raster points 0.025 m over the deck after the pins)
+        refined = 0
+        for _ in range(CHORD_ROUNDS):
+            todo = []
+            for e in bm.edges:
+                a, b = e.verts
+                mx, my = (a.co.x + b.co.x) / 2.0, (a.co.y + b.co.y) / 2.0
+                if not (bx0 <= mx <= bx1 and by0 <= my <= by1) \
+                        or math.hypot(b.co.x - a.co.x, b.co.y - a.co.y) < CHORD_MIN_M:
+                    continue
+                for t in (0.25, 0.5, 0.75):
+                    x, y = a.co.x + (b.co.x - a.co.x) * t, a.co.y + (b.co.y - a.co.y) * t
+                    top = mesh_z(x, y)
+                    if top is not None and a.co.z + (b.co.z - a.co.z) * t > top - GROUND_UNDER_M / 2.0:
+                        todo.append(e)
+                        break
+            if not todo:
+                break
+            for e in todo:
+                if not e.is_valid:
+                    continue
+                tris = [(f, next(v for v in f.verts if v not in e.verts)) for f in e.link_faces if len(f.verts) == 3]
+                _ne, nv = bmesh.utils.edge_split(e, e.verts[0], 0.5)
+                for f, far in tris:
+                    if f.is_valid and len(f.verts) == 4:
+                        bmesh.utils.face_split(f, nv, far)
+                nv.co.z = min(nv.co.z, deck_z(nv.co.x, nv.co.y) - GROUND_UNDER_M)
+                refined += 1
+        rep["chords_halved"] = refined
     bm.to_mesh(terr.data); bm.free(); terr.data.update()
-    return {"edges_split": split, "lowered": lowered, "raised": raised}
+    return rep
 
 
 def build(proj, cfg, decls):
@@ -779,15 +815,38 @@ def build(proj, cfg, decls):
         # 4b. THE GROUND UNDER IT (0.17.2's numbers): the terrain's edges near the deck halved until under
         # GROUND_EDGE_M (longest first, triangles only), every ground vertex inside the outline GROUND_UNDER_M under the
         # deck, and within EDGE_BAND_M outside never above the deck's edge: no ground chord over a measured bowl
+        # GROUND ON THE DECK MESH (opt-in per pad, "ground_on_mesh": true; 2026-11-23, Sand Creek 0.2.9's
+        # sandcreek_quebec): the ground is pinned GROUND_UNDER_M under the LOWER of deck_z and the deck as built (its
+        # faces are flat between its vertices). Where a seam climbs steeply (the lap's flared ribbon edge 0.39 m over the
+        # measured junction within 0.45 m) deck_z stood up to 0.06 m over those faces, and one ground vertex came through
+        # the deck by 0.017 m (verify_pads P4, the 928f7bad pre-check). Outside the deck the ray misses: deck_z, as
+        # before. Absent = deck_z alone, as before. The membrane (above) holds its ground to the built deck already, so
+        # the two are refused together
+        gom = d.get("ground_on_mesh")
+        if gom not in (None, True, False):
+            raise SystemExit(f"[lm-pads] FATAL: {pid}: ground_on_mesh {gom!r}: true|false")
+        if gom and membrane is not None:
+            raise SystemExit(f"[lm-pads] FATAL: {pid}: ground_on_mesh with deck fill \"membrane\": the membrane's ground "
+                             f"is held to the built deck already; one or the other")
         bvh = BVHTree.FromPolygons([Vector(v) for v in verts3], [tuple(f) for f in faces])
+        edge_m = float(deck_cfg.get("ground_edge_m") or GROUND_EDGE_M)   # opt-in finer (L3b)
         if membrane is not None:
             def built_z(x_, y_):
                 """the built membrane deck where it stands, deck_z past its outline (the ground's edge band)"""
                 hit = bvh.ray_cast(Vector((x_, y_, 1e4)), Vector((0.0, 0.0, -1.0)))
                 return hit[0].z if hit[0] is not None else deck_z(x_, y_)
-            held = ground_under(ring, built_z, float(deck_cfg.get("ground_edge_m") or GROUND_EDGE_M))
+            held = ground_under(ring, built_z, edge_m)
+        elif gom:
+            def mesh_z(x_, y_):
+                hit = bvh.ray_cast(Vector((x_, y_, 1e4)), Vector((0.0, 0.0, -1.0)))
+                return None if hit[0] is None else hit[0].z
+
+            def ground_z(x_, y_):
+                z_, m_ = deck_z(x_, y_), mesh_z(x_, y_)
+                return z_ if m_ is None else min(z_, m_)
+            held = ground_under(ring, ground_z, edge_m, mesh_z=mesh_z)
         else:
-            held = ground_under(ring, deck_z, float(deck_cfg.get("ground_edge_m") or GROUND_EDGE_M))   # opt-in finer (L3b)
+            held = ground_under(ring, deck_z, edge_m)
         # 5. the barriers across the roads the lap does not take
 
         def base_of(x_, z_, ax, az):

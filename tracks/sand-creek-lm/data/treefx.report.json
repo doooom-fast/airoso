@@ -1,17 +1,17 @@
 {
  "_doc": "tools/make_treefx.py: what trees.txt holds (counts per zone and per species; the north network per piece per species, its planted area, the loop's density and the area-scaled caps \u2014 ledger 0054 P4 / A9)",
- "total": 3471,
+ "total": 3472,
  "per_zone": {
-  "planted_cottonwood": 562,
+  "planted_cottonwood": 563,
   "planted_neighbourhood": 2909
  },
  "per_species": {
   "Oak3.bin": 2221,
   "SycamoreV1.bin": 237,
   "SycamoreV2.bin": 844,
-  "SycamoreV3.bin": 169
+  "SycamoreV3.bin": 170
  },
- "rejected_in_corridor": 187,
+ "rejected_in_corridor": 186,
  "rejected_on_built_surface": {
   "rock": 0,
   "road": 0,
@@ -24,6 +24,6 @@
   "walk": 0,
   "building": 2
  },
- "surface_materials": "1GRASS_0_mat, 1GRASS_1_mat, 1GRASS_2_mat, 1GRASS_3_mat, 1GRASS_4_mat, 1GRASS_5_mat, 1GRASS_6_mat, 1GRASS_7_mat, 1GRASS_8_mat, 1GRASS_9_mat, 1GRASS_10_mat, 1GRASS_11_mat, 1GRASS_12_mat, 1GRASS_13_mat, 1GRASS_14_mat, 1GRASS_15_mat, 1GRASS_16_mat, 1GRASS_17_mat, 1GRASS_18_mat, 1GRASS_19_mat, 1GRASS_20_mat, 1GRASS_21_mat, 1ROAD_road_mat",
+ "surface_materials": "1GRASS_0_mat, 1GRASS_1_mat, 1GRASS_2_mat, 1GRASS_3_mat, 1GRASS_4_mat, 1GRASS_5_mat, 1GRASS_6_mat, 1GRASS_7_mat, 1GRASS_8_mat, 1GRASS_9_mat, 1GRASS_10_mat, 1GRASS_11_mat, 1GRASS_12_mat, 1GRASS_13_mat, 1GRASS_14_mat, 1GRASS_15_mat, 1GRASS_16_mat, 1GRASS_17_mat, 1GRASS_18_mat, 1GRASS_19_mat, 1GRASS_20_mat, 1GRASS_21_mat, 1GRASS_22_mat, 1GRASS_23_mat, 1GRASS_24_mat, 1GRASS_25_mat, 1GRASS_26_mat, 1GRASS_27_mat, 1GRASS_28_mat, 1GRASS_29_mat, 1GRASS_30_mat, 1GRASS_31_mat, 1GRASS_32_mat, 1GRASS_33_mat, 1GRASS_34_mat, 1GRASS_35_mat, 1GRASS_36_mat, 1GRASS_37_mat, 1GRASS_38_mat, 1GRASS_39_mat, 1GRASS_40_mat, 1GRASS_41_mat, 1GRASS_42_mat, 1GRASS_43_mat, 1ROAD_road_mat",
  "north": null
 }

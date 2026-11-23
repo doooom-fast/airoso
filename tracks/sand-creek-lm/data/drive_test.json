@@ -21,10 +21,10 @@
    "daylight_gaps": 0,
    "excursion_drops": 0,
    "undrivable_corners": 0,
-   "severe_steps": 22,
-   "severe_per_km": 2.28,
-   "steps_per_km": 1.04,
-   "kinks_per_km": 6.85,
+   "severe_steps": 26,
+   "severe_per_km": 2.7,
+   "steps_per_km": 2.28,
+   "kinks_per_km": 7.57,
    "file": "drive_test.race.json"
   },
   "street": {
@@ -46,7 +46,7 @@
    "severe_steps": 0,
    "severe_per_km": 0.0,
    "steps_per_km": 0.31,
-   "kinks_per_km": 0.52,
+   "kinks_per_km": 0.62,
    "file": "drive_test.street.json"
   }
  },

@@ -14,6 +14,29 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
+## 2026-11-23 (PC) — WIRING: check_lights_ini's two both-heads paths told apart, at the 0.2.9 merge with main (ledgers 0098 / 0099; opt-in; no threshold moved)
+
+The same key, `scenery.streetlights.light_both_heads`, was written twice in two rounds (the Mac, 2026-11-22). Ledger 0098 (Sand
+Creek) lights the back head in the draft's lamps step (`tools/author_lamps_blend.py`, `heads_lit` 2); ledger 0099 (Lake
+Murray) lights it in the author step lamp_heads (`tools/author_lamp_heads_blend.py`, `data/lights.heads.json`). Lake Murray's
+ship.json runs both steps, so after a plain merge its lamps step would have lit the back head as well: three lenses a lamp, or
+a refusal. The two are now told apart by one opt-in key, Sand Creek only:
+
+- `scenery.streetlights.both_heads_by: "lamps"` (with light_both_heads true): ledger 0098's path. The lamps step lays both
+  lenses; `check_lights_ini` counts the lamps times `heads_lit` and wants no heads file, and FAILS when `heads_lit` is not 2;
+  lamp_heads refuses to run.
+- light_both_heads alone: ledger 0099's path, as on main. The lamps step lays the road-ward lens only (as before 0098);
+  `check_lights_ini` wants `data/lights.heads.json` and counts its back lenses.
+- A record holding both (`heads_lit` 2 AND back lenses) is the back head lit twice: refused by the check itself.
+- Any other value of both_heads_by, or both_heads_by without light_both_heads: refused.
+
+The count rule (one [LIGHT_N] per recorded lens), POS_TOL_M 0.05 m, the no-duplicate / no-orphan rules and the look are the
+same on both paths. Sand Creek 0.2.9 (installed) and Lake Murray 0.20.4 were built by their own paths and are unchanged.
+Teeth: `tests/tools/test_sand_creek_0098.py` (`test_the_lamps_step_lights_the_back_head_only_by_both_heads_by`: Lake Murray's
+config as main has it lights ONE head in the lamps step; `test_the_check_reads_heads_lit_by_the_lamps_and_the_heads_file_otherwise`;
+`test_lamp_heads_refuses_the_lamps_path`), `tests/tools/test_lake_murray_0099.py`. Sand Creek's round 2 moves onto lamp_heads
+(its LIGHTS mesh changes anyway) and both_heads_by goes.
+
 ## 2026-11-23 — WIRING: High Plains' merge judged by verify_mouth_corners (ledger 0097 round 4; opt-in; no threshold moved)
 
 No gate threshold, floor or bypass moved, and no gate's code changed. One wiring change, opt-in by High Plains' own config
@@ -34,6 +57,25 @@ No gate threshold, floor or bypass moved, and no gate's code changed. One wiring
 
 Proven on High Plains 0.1.12 (Mac, Blender 4.2.9, an empty workshop): `[mouth-corners] ... lip 0.023 m, teeth 1/354, edge
 paint 0.0 m ... PASS`; verify_mouths PASS (mouth line 0.012 m, notch 0.003 m, approach 0.61 %/m, as 0.1.11).
+
+## 2026-11-22 (Mac) — COUNT FOLLOWS THE AUTHORED LENSES: check_lights_ini with both lamp heads lit; the sampling numbers of Sand Creek 0.2.9 (ledger 0098; no threshold moved)
+
+No gate threshold, tolerance, floor or bypass moved. All opt-in, Sand Creek only (`tests/tools/test_sand_creek_0098.py`
+`test_the_0098_keys_are_opt_in`):
+
+- `tools/check_lights_ini.py`: "the [LIGHT_N] count equals the lamp count" now reads "equals the lamp count times
+  `provenance.heads_lit`" (1 when absent, every track but Sand Creek). `tools/author_lamps_blend.py` records `heads_lit` 2
+  only with `scenery.streetlights.light_both_heads` (Kevin 2026-11-22: "Yes, light both heads"), when it lays the back
+  head's lens. Every other rule (one light per recorded lens, POS_TOL_M 0.05 m, no duplicate, no orphan, the same look on
+  every block) is unchanged and judges both lenses.
+- Numbers the change adds (none is a gate):
+  - ⚠ `tools/grid_reach.py` (the grid's map-edge cut reached): SNAP_M 1.5 m, TURN_MAX_DEG 60, VIA_NEAR_M 6 m, VIA_LOOK_M
+    150 m, MAX_WALK_M 4000 m [invented: walk geometry]; RESAMPLE_M 3 m = grid_connectors', EASE_M 30 m = trim's BLEND_M,
+    the lidar reading = tools/lidar_connector_profile's (RADIUS_M 1 m, MIN_RETURNS 3, its --surface rule, both
+    [invented] there); the stop x 1877.5 m = the grid's own east extent [measured on the grid].
+  - ⚠ `tools/flare_one_sided.py`: SEARCH_IN_M 1.5, SEARCH_OUT_M 1.5, FAR_PAST_M 3, MEDIAN_ROWS 5 [invented: sampling];
+    STEP_M 0.08 = tools/naip_edge's (round J, [invented] there), BIN_M / ALONG_M = tools/lidar_curb_trace's, BASE_REACH_M
+    25 m = ledger 0087's flare census.
 
 ## 2026-11-22 — WIRING: a multi-layout circuit's spawn kn5s judged by race_start's own rows (ledger 0097 round 3; opt-in; no threshold moved)
 

@@ -2,6 +2,7 @@
 objects for measuring, and stills from the split's cameras.
 
     blender --background <prepped.blend> --python college_prep_look_blend.py -- <out obj> <stills dir> <tag>
+    (tag "raw": a scene before the prep; TERRAIN / ROAD / CURB are written as 1GRASS_raw / 1ROAD_raw / 1KERB_raw, no stills)
 
 The OBJ is in the engine frame (x east, y up, z north), one `o` per object, only objects whose name starts with 1GRASS,
 1ROAD or 1KERB and only their faces near College (within BOX_M of the split's frame), so the file stays small.
@@ -25,13 +26,15 @@ BOX_M = 80.0
 x0, x1 = min(F["x"]) - BOX_M, max(F["x"]) + BOX_M
 y0, y1 = min(F["z"]) - BOX_M, max(F["z"]) + BOX_M
 KINDS = ("1GRASS", "1ROAD", "1KERB")
+# a scene BEFORE the prep (tag "raw"): its TERRAIN / ROAD / CURB are written under the kind the prep gives them; no stills
+RAW = {"TERRAIN": "1GRASS_raw", "ROAD": "1ROAD_raw", "CURB": "1KERB_raw"} if TAG == "raw" else {}
 
 # --- the OBJ -----------------------------------------------------------------------------------------------------------------
 n_out = 0
 with open(OBJ, "w", encoding="utf-8") as fh:
     base = 1
     for ob in sorted(bpy.data.objects, key=lambda o: o.name):
-        if ob.type != "MESH" or not ob.name.upper().startswith(KINDS):
+        if ob.type != "MESH" or not (ob.name.upper().startswith(KINDS) or ob.name in RAW):
             continue
         me = ob.data
         M = np.array(ob.matrix_world)
@@ -46,7 +49,7 @@ with open(OBJ, "w", encoding="utf-8") as fh:
             continue
         used = sorted({i for f in faces for i in f})
         remap = {i: k for k, i in enumerate(used)}
-        fh.write(f"o {ob.name}\n")
+        fh.write(f"o {RAW.get(ob.name, ob.name)}\n")
         for i in used:
             fh.write(f"v {w[i, 0]:.4f} {w[i, 2]:.4f} {w[i, 1]:.4f}\n")
         for f in faces:
@@ -55,6 +58,8 @@ with open(OBJ, "w", encoding="utf-8") as fh:
         n_out += 1
         print(f"[look] {ob.name}: {len(used)} vertices, {len(faces)} faces near College")
 print(f"[look] wrote {OBJ} ({n_out} objects)")
+if RAW:
+    sys.exit(0)
 
 # --- the stills ----------------------------------------------------------------------------------------------------------------
 COLOURS = (("1ROAD", (0.16, 0.16, 0.17, 1.0)), ("1GRASS", (0.36, 0.47, 0.27, 1.0)), ("1KERB", (0.62, 0.61, 0.58, 1.0)),

@@ -187,14 +187,14 @@ The numbers (`college_split.data.json` `report`):
 | | Built line | Mainline (southbound road) | Lap `college` (joins + `college_nb`) |
 |---|---|---|---|
 | Largest turn between segments | 1.08 deg | 1.53 deg | 1.38 deg |
-| Steepest grade down / up | -8.16 / +8.76 % | -8.03 / +8.77 % | -8.79 / +8.77 % |
-| Largest grade step between segments | 0.57 points | 0.65 | 0.75 |
+| Steepest grade down / up | -8.16 / +8.76 % | -7.91 / +8.76 % | -8.74 / +8.76 % |
+| Largest grade step between segments | 0.57 points | 0.61 | 0.74 |
 | Segment length | 3.0 m | 2.94 to 3.11 m | 2.72 to 3.28 m |
 | Width through the two roads | 25 to 32.5 m (whole road) | 9.99 to 15.34 m | 8.36 to 14.1 m |
 
 - The mainline moves up to 10.67 m west; its length grows by 1.93 m (13,471.3 to 13,473.2 m to the last vertex).
-- The northbound road rides up to 5.81 m over the southbound one, line to line; 0.57 m where the island begins, 0.56 m
-  where it ends (the road is banked there). Across the bank, inner edge to inner edge: nothing at the nose and the
+- The northbound road rides up to 5.82 m over the southbound one, line to line; 0.46 m where the island begins and
+  where it ends (the road is banked there; rows planar since step 4, see "Step 4a to 4c done"). Across the bank, inner edge to inner edge: nothing at the nose and the
   tail (one point, see step 2), up to 6.11 m; the bank's slope is up to 52 %.
 - The bank between them: no width at the nose and the tail (the two roads meet in a point), up to 12.18 m.
 - After smoothing the inner edges stand up to 0.38 m (southbound) and 0.73 m (northbound) off the measured edges.
@@ -447,3 +447,100 @@ prep will hold its first 3 m beside whichever road each vertex is given to at th
 there; the old ground under the bank and under the northbound road is treated the same way. The first thing to do in
 step 4 is therefore to run the prep on the scratch scene once (a scratch workshop, below-normal priority) and look at
 what the bank, the forks and the east side come out as. The ground is designed from that picture.
+
+## Step 4a to 4c done: the prep read and run, the ground, the east lamps (2026-11-23)
+
+**Correction to "Step 4, what is settled before code".** What that section says about the prep was read off airoso's
+`scripts/ac/build_kn5_loop.py`. Lake Murray does not run that file: `tools/ship_track.sh` runs the prep from `ENG`, a
+copy of engine-july (`D:/k10-scratch/eng_repro`, as ledger 0099's runbooks name it), and its `build_kn5_loop.py` is a
+different program. What Lake Murray's prep does with ground (`_conform_and_reseat`):
+
+- A ground vertex with pavement straight above or below it (the highest road surface there; no legs, no stations) is
+  SET to that surface less 0.02 m. Only at the ground's own vertices.
+- Past the edge, the first 3 m are held at the nearest pavement's height and the next 6 m blend back, UNLESS the vertex
+  is in a released zone (`data/ground_release.json`: a station range on the mainline, a side, from 0.5 m inside the
+  pavement edge out to `reach_m`). Released ground is left exactly as the scene has it. So it IS read, and it is the
+  mechanism for the split's ground.
+- Ground edges near a road are cut to about 4.5 m BEFORE the pin, at heights interpolated from the old ground; a vertex
+  the prep makes inside a released zone keeps that height.
+- Any ground vertex over the lowest road or kerb surface at its place is pushed under it.
+- Before all that the ground is welded at 5 cm and its holes of up to 16 sides are filled.
+
+**The test set-up** (scratch only): workshop `D:/k10-scratch/lm_r2_college/ws4` (the split's data, the scene after
+steps 2 to 4 with the old race furniture taken out, since the chain re-authors it), engine copy
+`D:/k10-scratch/eng_r2_college` (identical to `eng_repro`), the released zone `college_split_cut` widened in the
+workshop's `ground_release.json` to the whole split (rows v1130-1476, the mainline's right side, 40 m).
+`college_prep_look_blend.py` exports the prepped ground, road and kerbs near College and renders stills;
+`college_prep_measure.py` samples them (no Blender). **Six prep runs** were needed (the Mac had cleared one; each took
+4 minutes at below-normal priority, one Blender at a time): each run showed a real fault of mine, listed here because
+every one of them would have reached a build.
+
+| Run | What it showed | What changed |
+|---|---|---|
+| 1 | ground through the southbound road at 148 samples and the forks at 16; the east walk up to 1.9 m over its ground on rows v1131-1197; old ground 0.35 m through the bank's top | see below |
+| 2 | the east side and the forks clean; the southbound road still 332 of 2,439 | rows planar; the east shelf as its own strip |
+| 3 | the bank's top cut to pieces by my own step | old ground cut fine under the split |
+| 4 | the bank's top whole again; southbound road 75 | the bank's top tagged on the mesh |
+| 5 | southbound road 34, all at the inner edge on rows v1257-1304 | old ground in the bank pushed under the lower inner edge |
+| 6 | **clean** | cut and split triangles in the same round |
+
+What the faults were, and the rule each one left in the scripts:
+
+1. **Rows are planar across** (`college_split_data.py`). A line used to carry a height of its own, up to 0.06 m under
+   the chord of its road's two edges (0.10 m in the forks): a shallow valley along the line that ground facets bridged.
+   Now every line rides on that chord. Where the two roads part and meet, their rows and the fork's row are one
+   straight section (the shared point is put on the chord from the built west edge to the east edge: 0.108 m at the
+   nose, 0.144 m at the tail), and that correction is eased out over 20 rows with each row's own value, so neither
+   line's grade steps there (0.61 and 0.74 points at most, the built line 0.57).
+2. **The east ground is a strip of its own** (`college_ground_blend.py`). Raising the old ground's vertices worked only
+   where it is dense. The strip runs along rows v1130-1476 from the built east edge: at the edge's road height less
+   0.02 m for 3.5 m, then falling 1 in 2 until it is under the old ground (4.5 to 8.5 m out, on all 347 rows), then
+   0.3 m under it. Where the hill is higher the old ground shows (the cut); where it is lower the strip is a fill.
+3. **The old ground under the split is cut to 1.5 m edges first**, under the whole footprint (both roads, the bank, the
+   forks): 47,628 edges in 13 rounds. Under the one slab it was a few triangles 10 to 70 m across; the prep pins them
+   at their own corners only, and puts its own vertices on their long edges inside the released bank at the old slab's
+   height.
+4. **Old ground inside the bank is pushed 0.10 m under the lower of the two inner edges** (3,589 of 10,371 vertices,
+   up to 0.47 m). The southbound road's inner edge lies up to 0.5 m under the old slab.
+5. **A vertex is told apart by a tag on the mesh, never by a Python reference.** `bmesh.ops.subdivide_edges` leaves
+   every earlier reference invalid; after its first round the bank's top was no longer protected. The same weakness
+   was in step 3's "no other vertex moved" check, which could not fail; it now compares 83,646 surviving vertices by an
+   id stored on the mesh.
+6. **A cut splits its own triangles** (`use_single_edge`, `use_grid_fill`). Triangulating the many-sided leftovers
+   afterwards fans out in long diagonals, which the prep then cuts itself.
+
+**Measured on run 6** (`college_prep_measure.scratch.json`; stills `college_split_prepped.jpg`):
+
+| What | Samples | Result |
+|---|---|---|
+| The bank's top against what was authored | 1,335 | all within 0.02 m (largest 0.000) |
+| Ground against the southbound road | 2,439 | none within 5 mm of the surface or over it (closest 0.016 m under) |
+| Ground against the northbound road | 2,439 | none (closest 0.018 m under) |
+| Ground against the forks' pavement | 340 | none (closest 0.019 m under) |
+| Ground behind the east walk, 0.5 to 3.3 m past the edge | 170 rows | 0.02 m under the road's edge height on every row |
+| The east walk's lip against the ground beside it | 170 rows | 0.157 m under the ground on every row (none in the air) |
+| The bank's two curb tops over their road edges | 89 rows each | 0.18 m on every row |
+| The two College islands that stay | 22 rows | grass 0.02 m under the road: the known defect (ledger 0055), not touched |
+
+**The east lamps** rise with the walk in the same step: 70 parts of `LIGHTPOST_3` / `_4` and 10 of `LIGHTS_0`, up to
+5.52 m. `data/lights.local.json` still has them at the old heights: step 4d.
+
+**The median plants** (`college_plants_data.py`, report only so far, `college_plants.report.json`): 120 of the
+track's 1,102 median spots stand on rows v1114-1478. **53 are dropped**: all bare on the lidar (under 0.3 m), 44 on the
+forks' pavement, 7 on the southbound pavement, 2 beside a new island nose. **67 stay**: 38 with a lidar height (37 on
+the bank, 1 on an island that stays) and 29 bare ones (28 on the bank, 1 on an island). Of Kevin's 33 tall plants
+(10 m and over), 14 stand on these rows, **all 14 on the bank; none lands on pavement, so there is nothing to list**.
+The kept bank plants' feet go 0.14 to 3.72 m up, onto the bank's top. **Nothing new is planted**: the lidar's plant
+tops (`lm_shrub.tops.npz`) are on the G10, not on this machine. A dropped spot leaves both files
+(`scatter_positions.json`, `median_heights.lidar.json`) so they stay in step, and every spot that stays gets `_key` =
+its old index, which `tools/make_treefx.py` uses in place of the index, so no other median plant changes its model,
+size or angle.
+
+**The barrier at the top of the bank: cannot be told from here.** The aerial on this machine is 0.6 m a pixel and the
+lidar here is the bare-ground grid; a 0.3 m beam shows in neither. The G10's lidar returns could show it (a line of
+returns 0.5 to 1 m over the ground along the northbound road's inner edge, rows v1176-1440). Until that is read the
+rail stays `[invented]`.
+
+Still open in step 4: 4d the data step (the plants written, `lights.local.json`, the released zone and the config:
+the chicane out, the corridor on the piece at its real width, the fork closures and probes), 4e the chain's author and
+race steps in the workshop.

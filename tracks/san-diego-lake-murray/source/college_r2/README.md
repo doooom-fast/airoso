@@ -138,3 +138,11 @@ Run on a scene that carries step 2: `blender --background <loop.blend> --python-
 Takes the old island, its top, barrier, street-only pieces and paint out and builds the bank, the barrier, the raised
 east walk and the paint. `STEP-DESIGN.md`, "Step 3 done", has the numbers. `college_split_stills_blend.py` takes a third
 argument naming the objects to show.
+
+## The ground, the lamps, the prep run and the plants (step 4a to 4c)
+
+- `college_ground_blend.py`: on a scene that carries step 3. Cuts the old ground fine under the split, pushes it under the bank, adds the east ground as a strip, raises the east lamps. Self-checked, idempotent.
+- `college_prep_look_blend.py <out obj> <stills dir> <tag>`: on a PREPPED scene (or, tag `raw`, one before the prep): an OBJ of ground, road and kerbs near College, and stills.
+- `college_prep_measure.py <obj> [--out json]`: no Blender; what the prep made of the ground. `college_prep_measure.scratch.json` and `college_split_prepped.jpg` are the scratch run's.
+- `college_plants_data.py <project> [--write]`: the median plants on the split's rows; `college_plants.report.json`.
+- `median_tops_check.py <workshop>`: grass or asphalt between every median's curbs on a built gate OBJ; `median_tops_0_20_3.json` is the 0.20.3 rehearsal's (ledger 0055, the known defect).

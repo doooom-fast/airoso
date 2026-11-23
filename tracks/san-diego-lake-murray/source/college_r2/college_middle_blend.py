@@ -205,7 +205,11 @@ if int(walk_e.sum()) != 4 * (A1 - A0 - 1):
     die(f"CURB: {int(walk_e.sum())} east-walk vertices on rows v{A0 + 1}..v{A1 - 1}, not 4 a row ({4 * (A1 - A0 - 1)})")
 bm = open_bm(curb)
 nv0 = len(bm.verts)
-orig_co = {x: x.co.copy() for x in bm.verts}
+# an id on the mesh itself (an integer vertex layer): the check that nothing else moved must not lean on Python
+# references to vertices, which Blender does not keep across every edit
+OID = bm.verts.layers.int.new("college_orig_id")
+for x in bm.verts:
+    x[OID] = x.index + 1
 ring_at ={r: sorted((bm.verts[i] for i in rows_isl[r]), key=lambda x, o=off: o[x.index])
            for r in list(range(CUT0 - NOSE_VERTS + 1, CUT0 + 1)) + list(range(CUT1, CUT1 + NOSE_VERTS))}
 walk_verts = [(bm.verts[int(i)], int(st[i])) for i in np.nonzero(walk_e)[0]]
@@ -267,10 +271,20 @@ for end, first in ((NOSE, NOSE + 1), (TAIL, TAIL - 1)):
         bm.faces.new((apex, rb[q], rb[p]) if end == NOSE else (rb[p], rb[q], apex))
         n_new += 1
 rep["added_faces"]["CURB"] = n_new
-strays = sum(1 for x in bm.verts if x in orig_co and x not in moved_curb and (x.co - orig_co[x]).length > 1e-9)
+moved_ids = {x[OID] for x in moved_curb if x.is_valid}
+if len(moved_ids) != len(moved_curb):
+    die(f"CURB: {len(moved_curb) - len(moved_ids)} references to moved vertices were lost")
+strays = survivors = 0
+for x in bm.verts:
+    oid = x[OID]
+    if oid:
+        survivors += 1
+        if oid not in moved_ids and max(abs(x.co[c] - w[oid - 1, c]) for c in range(3)) > 1e-5:
+            strays += 1
 if strays:
     die(f"CURB: {strays} vertices moved that are neither the east walk's nor a tapered row's")
-rep["CURB"] ={"island_rows_tapered": sorted(tapers), "east_walk_vertices_raised": len(walk_verts),
+bm.verts.layers.int.remove(OID)
+rep["CURB"] = {"old_vertices_checked_unmoved": survivors - len(moved_ids), "island_rows_tapered": sorted(tapers), "east_walk_vertices_raised": len(walk_verts),
                "east_walk_rise_m": [round(min(dz_e.values()), 3), round(max(dz_e.values()), 3)],
                "island_north_of_the_split": [CUT1, north_end], "bank_rings": len(rings)}
 close_bm(bm, curb)

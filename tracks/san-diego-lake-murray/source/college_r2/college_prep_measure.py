@@ -111,7 +111,7 @@ for nm, keys in (("southbound", ("sb_west", "sb_line", "sb_east")), ("northbound
     for v in range(NOSE + 1, TAIL):
         k = K[v]
         a, b = O[keys[0]][k], O[keys[2]][k]
-        for t in (0.12, 0.35, 0.5, 0.65, 0.88):
+        for t in (0.04, 0.12, 0.2, 0.35, 0.5, 0.65, 0.8, 0.88, 0.96):
             o = a + (b - a) * t
             x, z = plan(v, o)
             r = top("1ROAD", x, z)
@@ -124,7 +124,9 @@ for nm, keys in (("southbound", ("sb_west", "sb_line", "sb_east")), ("northbound
             dif.append(g - r)
             if g > r - 0.005:
                 over.append((v, round(o, 2), round(g - r, 3)))
-    rep[f"ground_minus_{nm}_road_m"] = dict(stat(dif) or {}, ground_over_the_road=len(over), first=over[:5], no_road_at=none)
+    rep[f"ground_minus_{nm}_road_m"] = dict(stat(dif) or {}, ground_within_5mm_or_over=len(over),
+                                            over_by_more_than_1cm=sum(1 for *_x, d in over if d > 0.01),
+                                            largest=sorted(over, key=lambda q: -q[2])[:5], no_road_at=none)
 # --- the forks: ground against the pavement inside the old island's footprint ----------------------------------------------
 dif, over = [], []
 for v in list(range(A0 + 2, NOSE - 1)) + list(range(TAIL + 2, A1 - 1)):
@@ -136,7 +138,7 @@ for v in list(range(A0 + 2, NOSE - 1)) + list(range(TAIL + 2, A1 - 1)):
         dif.append(g - r)
         if g > r - 0.005:
             over.append((v, o, round(g - r, 3)))
-rep["fork_ground_minus_pavement_m"] = dict(stat(dif) or {}, ground_over_the_pavement=len(over), first=over[:5])
+rep["fork_ground_minus_pavement_m"] = dict(stat(dif) or {}, ground_within_5mm_or_over=len(over), first=over[:5])
 # --- the east side ------------------------------------------------------------------------------------------------------------
 EDGE = {}
 for v in range(A0 + 1, A1):

@@ -377,3 +377,27 @@ not something round 2 introduces.
   under it; its top is released ground, which the prep pins only under pavement, so it stays grass (checked on the
   scratch scene's prep run, below). The two College islands that stay (to v1116; v1476-1487) and every other median
   are NOT touched in this round. Whether the rest joins round 2 or goes after is the Mac's call.
+
+## Round 2, stage B steps 4a to 4c (the PC, 2026-11-23): the prep run on the scratch scene; the ground; the plants
+
+Numbers, the six prep runs and what each one showed are in `source/college_r2/STEP-DESIGN.md`, "Step 4a to 4c done".
+
+- **The prep Lake Murray runs is engine-july's** (`ENG`, a copy of `D:/k10-scratch/eng_repro`), not airoso's
+  `scripts/ac/build_kn5_loop.py`; my first notes on it were read off the wrong file and are corrected there. It pins
+  ground under pavement at the ground's own vertices, leaves released ground (`data/ground_release.json`) as the
+  scene has it, and cuts long ground edges before it pins.
+- **On the scratch scene the split comes out of the prep clean** (run 6): no ground within 5 mm of either road's
+  surface or the forks' at 5,218 samples; the bank's grass top exactly as authored at 1,335 samples, so **College's
+  bank is grass, not asphalt**; behind the raised east walk the ground stands 0.02 m under the road's edge on all 170
+  rows sampled and the walk's lip is under it on every one.
+- That took fixes in the scripts, each from a measured fault: rows planar across; the east ground as a strip of its
+  own; the old ground under the split cut to 1.5 m edges and pushed under the lower inner edge inside the bank;
+  vertices told apart by a tag on the mesh, not by a Python reference (step 3's "no other vertex moved" check could
+  not fail before; it now compares 83,646 vertices).
+- **The median plants** on rows v1114-1478: 120 spots; 53 dropped (all bare on the lidar: 44 on the forks' pavement, 7
+  on the southbound pavement, 2 beside a new island nose); 67 kept (38 with a lidar height, 29 bare), their feet put
+  on the bank's top. Kevin's 33 tall plants ("Keep all 33 at their lidar heights"): 14 are on these rows, all 14 on
+  the bank, none on pavement. Nothing new is planted: the lidar's plant tops are on the G10. Report only so far
+  (`college_plants.report.json`); written in step 4d.
+- **The barrier at the top of the bank cannot be told from the PC's data** (aerial 0.6 m a pixel, bare-ground lidar).
+  It stays `[invented]` until the G10's lidar returns are read along the northbound road's inner edge.

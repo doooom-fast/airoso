@@ -221,6 +221,50 @@ for k, v in enumerate(range(NOSE, TAIL + 1)):
 centre_y = heights({v: 0.0 for v in ZONE})          # the built line's own column: the fork rows' centre vertex
 if max(abs(edge_y["sb_west"][v] - (P0[v][1] + LIFT)) for v in ZONE) > 1e-9:
     raise SystemExit("the built west edge moved in height")
+
+
+# Where the two roads part and meet again (the nose row, the tail row) their two rows and the fork's row are ONE
+# straight section: the point the roads share is put on the chord from the built west edge to the east edge, and
+# that correction is eased out over the next EASE_ROWS rows of the two inner edges. Left where the smoothed section
+# had it, the shared point stood about 0.1 m under that chord: a pocket in the fork's pavement, and a step in both
+# lines' heights where they leave the fork's row for their own road's (grade steps of 2.4 and 3.8 points).
+EASE_ROWS = 20                    # [invented] about 60 m (10 rows left a twist of 0.06 m per row at the tail: near the prep's 0.02 m ground clearance)
+meet_corr = {}
+for end, sgn in ((NOSE, 1), (TAIL, -1)):
+    for j in range(EASE_ROWS + 1):
+        v = end + sgn * j
+        wgt = 1.0 - smooth(j / EASE_ROWS)
+        yw_, ye_ = edge_y["sb_west"][v], edge_y["nb_east"][v]
+        for key, offs in (("sb_east", sb_east), ("nb_west", nb_west)):
+            # each row's own distance to the chord, weighted: the correction then keeps its slope across the nose row
+            # (the same constant on every row left a grade step of 1.2 to 1.3 points in both lines there)
+            on_chord = yw_ + (ye_ - yw_) * (west(v) - offs[v]) / (west(v) - east(v))
+            d_ = (on_chord - edge_y[key][v]) * wgt
+            edge_y[key][v] += d_
+            if j == 0 and key == "sb_east":
+                meet_corr[end] = d_
+
+# Rows are PLANAR across: a line rides on the straight chord between its own road's two edges, it does not carry a
+# height of its own. Sampled on its own the line stood up to 0.06 m under that chord on the southbound road (83 rows
+# by more than 0.02 m) and 0.10 m in the forks: a shallow valley along the line. The prep pins the ground 0.02 m under
+# the pavement at the ground's own vertices only, so ground facets bridged the valley and stood through the asphalt
+# (measured on the scratch scene's prep run: 148 samples on the southbound road, 16 in the forks).
+def chord(v, off, road):
+    if NOSE <= v <= TAIL and road == "sb":
+        (o0, y0), (o1, y1) = (west(v), edge_y["sb_west"][v]), (sb_east[v], edge_y["sb_east"][v])
+    elif NOSE <= v <= TAIL:
+        (o0, y0), (o1, y1) = (nb_west[v], edge_y["nb_west"][v]), (east(v), edge_y["nb_east"][v])
+    else:                                        # a fork row: one road, the built west edge to the built east edge
+        (o0, y0), (o1, y1) = (west(v), edge_y["sb_west"][v]), (east(v), edge_y["nb_east"][v])
+    return y0 + (y1 - y0) * (o0 - off) / (o0 - o1)
+
+
+main_y = {v: chord(v, main_off[v], "sb") - LIFT for v in ZONE}
+lap_y = {v: chord(v, lap_off[v], "nb") - LIFT for v in ZONE}
+centre_y = {v: chord(v, 0.0, "sb") for v in ZONE}        # used on the fork rows only
+for v in range(A0 + 1, A1):
+    main_pts[v] = at(v, main_off[v], main_y[v])
+    P1[v] = main_pts[v]
 lap_zone = {v: P0[v] if v in (A0, A1) else at(v, lap_off[v], lap_y[v]) for v in ZONE}
 piece_off = [lap_off[v] for v in range(NOSE, TAIL + 1)]
 piece_pts = [lap_zone[v] for v in range(NOSE, TAIL + 1)]
@@ -232,7 +276,7 @@ shift = [P0[v][1] + LIFT - surface(v, west(v)) for v in TWO]
 xf_sb = [100.0 * (edge_y["sb_east"][v] - edge_y["sb_west"][v]) / (west(v) - sb_east[v]) for v in TWO]      # + = rises to the east
 xf_nb = [100.0 * (edge_y["nb_east"][v] - edge_y["nb_west"][v]) / (nb_west[v] - east(v)) for v in TWO]
 step_in = [edge_y["nb_west"][v] - edge_y["sb_east"][v] for v in TWO]                                       # across the bank
-height_rep = {"datum": "the built west edge: its place and height are kept; the measured shape across the road is laid onto it",
+height_rep = {"rows": "planar across: a line rides on the chord of its own road's two edges", "shared_point_put_on_the_fork_rows_chord_m": {"nose": round(meet_corr[NOSE], 3), "tail": round(meet_corr[TAIL], 3), "eased_out_over_rows": EASE_ROWS}, "datum": "the built west edge: its place and height are kept; the measured shape across the road is laid onto it",
               "datum_shift_m": {"_doc": "built west edge minus the lidar there: how far every height here stands off the lidar",
                                 "min": round(min(shift), 2), "max": round(max(shift), 2)},
               "crossfall_pct_rising_east": {"southbound": [round(min(xf_sb), 2), round(max(xf_sb), 2)],

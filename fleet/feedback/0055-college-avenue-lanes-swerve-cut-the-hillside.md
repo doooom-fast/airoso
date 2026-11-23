@@ -451,9 +451,14 @@ Scratch workshop only; nothing built into the chain, nothing installed. `source/
   not take as ground. The name is the surface and the material in AC; `lawn_as_grass` writes the LAWN key with
   GRASS's own values, so the grip is grass. TreeFX seats the median plants on it.
 - **Measured through the build's own prep on scratch:** one island first (Navajo v1540-1739: 200 of 200 rows
-  grass), then all: **2,123 of 2,127 island rows read grass** (0.20.3: 0 of 2,486). The top stands 0.141 to 0.228 m over the road after the prep on all 4,282 of its vertices (median 0.185), the same as before it: the prep does not move it, and no vertex is without road under it.
-- **Still asphalt: one island, 4 rows.** Mission Gorge v54-57 (9 m) has no grass top in the scene at all, so there
-  was nothing to move.
+  grass), then all 14: **2,123 of 2,123 island rows read grass** (0.20.3: 0 of 2,486). The top stands 0.141 to 0.228 m over the road after the prep on all 4,282 of its vertices (median 0.185), the same as before it: the prep does not move it, and no vertex is without road under it.
+- **Mission Gorge v54-57 is not an island (corrected the same day).** First reported as "one island, 4 rows, still
+  asphalt". The median tool builds an island only from a run of 6 rows or more, so it built nothing there: no curb
+  ring, only the two yellow lines. Nothing is authored; a raised island there (the plan's MD12, 12.5 m) would be new
+  geometry, owed if wanted. The measure and the step's report now count a run under 6 rows apart.
+- **Mission Gorge's raised median is declared terracotta in the plan.** The median tool authors every island's top
+  as grass and the pipeline has no terracotta surface, so its 2.15 km now read grass where 0.20.4 showed asphalt.
+  Not decided here.
 - **Checks.** No check refuses grass over pavement for this object. `verify_kn5` check 6 and `audit_mesh` B read
   1GRASS only and do not judge the top; `verify_kn5` face-up and `drive_test`'s soft-top-in-lane do
   (`fleet/GATES-CHANGELOG.md`, 2026-11-23). The full chain's gates have not run on it: that is the rehearsal.

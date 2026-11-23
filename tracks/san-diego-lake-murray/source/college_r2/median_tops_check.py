@@ -36,6 +36,9 @@ names = {"1GRASS": set(), "1ROAD": set()}
 GRASS_NAMES = ("1GRASS", "1LAWN_MEDIAN")
 NOSE_VERTS, NOSE_HALF, DECK_INSET = 3, 0.25, 0.22      # tools/author_median_blend.py
 END_IN = 0.3         # an island's end row is measured this far inside it, along its line (the row is the deck's own edge)
+MIN_ISLAND_ROWS = 6  # tools/author_median_blend.py _segments: a run of the band under six rows is not built as an island (no
+#                      curb, no top). Its rows are counted apart ("short_run"), never as asphalt between curbs (2026-11-23:
+#                      Mission Gorge v54-57 was first read as an island of four asphalt rows; the scene has only paint there)
 kind = None
 with open(proj / "data" / "track.obj", "r", encoding="utf-8", errors="replace") as fh:
     for line in fh:
@@ -106,9 +109,12 @@ for name, pts, iw, s in lines:
         j = k
         while j < m and iw[j] > 0:
             j += 1
-        rows = {"grass": 0, "asphalt": 0, "no_slab": 0, "nose": 0}
+        rows = {"grass": 0, "asphalt": 0, "no_slab": 0, "nose": 0, "short_run": 0}
         diffs = []
-        for r in range(k, j):
+        is_island = j - k >= MIN_ISLAND_ROWS
+        if not is_island:
+            rows["short_run"] = j - k
+        for r in (range(k, j) if is_island else ()):
             if iw[r] < MIN_W:
                 rows["nose"] += 1
                 continue
@@ -143,14 +149,14 @@ for name, pts, iw, s in lines:
             v = max(set(votes), key=votes.count)
             rows[v] += 1
         road = next((nm for (i0, j0), nm in runs_named.items() if name == "MAINLINE" and i0 <= k and j - 1 <= j0), None)
-        rec = {"line": name, "road": road, "rows": [k, j - 1], "station_m": [round(s[k], 1), round(s[j - 1], 1)],
+        rec = {"line": name, "road": road, "island": is_island, "rows": [k, j - 1], "station_m": [round(s[k], 1), round(s[j - 1], 1)],
                "length_m": round(s[j - 1] - s[k], 1), "width_m": [round(min(iw[k:j]), 2), round(max(iw[k:j]), 2)], **rows,
                "grass_under_the_road_m_median": round(float(np.median(diffs)), 3) if diffs else None}
         out.append(rec)
         print("[tops] " + json.dumps(rec))
         k = j
-tot = {key: sum(r[key] for r in out) for key in ("grass", "asphalt", "no_slab", "nose")}
-print(f"[tops] {len(out)} islands; rows: {tot}")
+tot = {key: sum(r[key] for r in out) for key in ("grass", "asphalt", "no_slab", "nose", "short_run")}
+print(f"[tops] {sum(1 for r in out if r['island'])} islands, {sum(1 for r in out if not r['island'])} band runs too short to be one; rows: {tot}")
 if OUT:
     OUT.write_text(json.dumps({"what": "built medians: grass or asphalt between the curbs (median_tops_check.py)", "workshop": str(proj),
                                "params": {"MIN_W": MIN_W, "OVER_M": OVER_M, "_doc": "[invented]"},

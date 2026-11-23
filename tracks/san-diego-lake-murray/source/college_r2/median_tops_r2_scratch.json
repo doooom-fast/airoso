@@ -8,14 +8,16 @@
  },
  "totals_rows": {
   "grass": 2123,
-  "asphalt": 4,
+  "asphalt": 0,
   "no_slab": 0,
-  "nose": 18
+  "nose": 18,
+  "short_run": 4
  },
  "islands": [
   {
    "line": "MAINLINE",
    "road": "College Avenue",
+   "island": true,
    "rows": [
     846,
     1073
@@ -33,11 +35,13 @@
    "asphalt": 0,
    "no_slab": 0,
    "nose": 0,
+   "short_run": 0,
    "grass_under_the_road_m_median": null
   },
   {
    "line": "MAINLINE",
    "road": "College Avenue",
+   "island": true,
    "rows": [
     1096,
     1116
@@ -55,11 +59,13 @@
    "asphalt": 0,
    "no_slab": 0,
    "nose": 0,
+   "short_run": 0,
    "grass_under_the_road_m_median": null
   },
   {
    "line": "MAINLINE",
    "road": "College Avenue",
+   "island": true,
    "rows": [
     1476,
     1487
@@ -77,11 +83,13 @@
    "asphalt": 0,
    "no_slab": 0,
    "nose": 0,
+   "short_run": 0,
    "grass_under_the_road_m_median": null
   },
   {
    "line": "MAINLINE",
    "road": "Navajo Road",
+   "island": true,
    "rows": [
     1540,
     1739
@@ -99,11 +107,13 @@
    "asphalt": 0,
    "no_slab": 0,
    "nose": 0,
+   "short_run": 0,
    "grass_under_the_road_m_median": null
   },
   {
    "line": "MAINLINE",
    "road": "Navajo Road",
+   "island": true,
    "rows": [
     2183,
     2297
@@ -121,11 +131,13 @@
    "asphalt": 0,
    "no_slab": 0,
    "nose": 0,
+   "short_run": 0,
    "grass_under_the_road_m_median": null
   },
   {
    "line": "del_cerro_blvd",
    "road": null,
+   "island": true,
    "rows": [
     5,
     215
@@ -143,11 +155,13 @@
    "asphalt": 0,
    "no_slab": 0,
    "nose": 0,
+   "short_run": 0,
    "grass_under_the_road_m_median": null
   },
   {
    "line": "del_cerro_blvd",
    "road": null,
+   "island": true,
    "rows": [
     240,
     308
@@ -165,11 +179,13 @@
    "asphalt": 0,
    "no_slab": 0,
    "nose": 0,
+   "short_run": 0,
    "grass_under_the_road_m_median": null
   },
   {
    "line": "del_cerro_blvd",
    "road": null,
+   "island": true,
    "rows": [
     320,
     473
@@ -187,11 +203,13 @@
    "asphalt": 0,
    "no_slab": 0,
    "nose": 0,
+   "short_run": 0,
    "grass_under_the_road_m_median": null
   },
   {
    "line": "north_J1_waring",
    "road": null,
+   "island": true,
    "rows": [
     8,
     315
@@ -209,11 +227,13 @@
    "asphalt": 0,
    "no_slab": 0,
    "nose": 0,
+   "short_run": 0,
    "grass_under_the_road_m_median": null
   },
   {
    "line": "north_princess_view",
    "road": null,
+   "island": true,
    "rows": [
     129,
     173
@@ -231,11 +251,13 @@
    "asphalt": 0,
    "no_slab": 0,
    "nose": 2,
+   "short_run": 0,
    "grass_under_the_road_m_median": null
   },
   {
    "line": "north_princess_view",
    "road": null,
+   "island": true,
    "rows": [
     200,
     228
@@ -253,11 +275,13 @@
    "asphalt": 0,
    "no_slab": 0,
    "nose": 0,
+   "short_run": 0,
    "grass_under_the_road_m_median": -0.02
   },
   {
    "line": "north_mission_gorge",
    "road": null,
+   "island": true,
    "rows": [
     8,
     48
@@ -275,11 +299,13 @@
    "asphalt": 0,
    "no_slab": 0,
    "nose": 16,
+   "short_run": 0,
    "grass_under_the_road_m_median": null
   },
   {
    "line": "north_mission_gorge",
    "road": null,
+   "island": false,
    "rows": [
     54,
     57
@@ -294,14 +320,16 @@
     1.76
    ],
    "grass": 0,
-   "asphalt": 4,
+   "asphalt": 0,
    "no_slab": 0,
    "nose": 0,
-   "grass_under_the_road_m_median": -0.021
+   "short_run": 4,
+   "grass_under_the_road_m_median": null
   },
   {
    "line": "north_mission_gorge",
    "road": null,
+   "island": true,
    "rows": [
     63,
     741
@@ -319,11 +347,13 @@
    "asphalt": 0,
    "no_slab": 0,
    "nose": 0,
+   "short_run": 0,
    "grass_under_the_road_m_median": null
   },
   {
    "line": "north_J5_jackson_north",
    "road": null,
+   "island": true,
    "rows": [
     621,
     649
@@ -341,6 +371,7 @@
    "asphalt": 0,
    "no_slab": 0,
    "nose": 0,
+   "short_run": 0,
    "grass_under_the_road_m_median": null
   }
  ]

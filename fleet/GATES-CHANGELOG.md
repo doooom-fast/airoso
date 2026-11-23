@@ -34,9 +34,10 @@ No gate's code, threshold or tolerance changed. What changed is which object two
   measured points, every face is wound up.
 - **Why not another way.** The prep sets every 1GRASS vertex with pavement above or below it to the deck less
   0.02 m, released ground included, and the prep of record is not changed. An island stands on pavement.
-- **Proof.** On the scratch scene through the build's own prep: 2,123 of 2,127 island rows read grass
-  (`tracks/san-diego-lake-murray/source/college_r2/median_tops_r2_scratch.json`); the 4 others are an island with no
-  top in the scene. The gates of the full chain have not run on it yet (Lake Murray 0.20.5's rehearsal).
+- **Proof.** On the scratch scene through the build's own prep: 2,123 of 2,123 island rows read grass on all 14
+  islands (`tracks/san-diego-lake-murray/source/college_r2/median_tops_r2_scratch.json`); a 4-row run of the band on
+  Mission Gorge is not an island (the median tool builds none under 6 rows) and is counted apart. The gates of the
+  full chain have not run on it yet (Lake Murray 0.20.5's rehearsal).
 
 ## 2026-11-23 — BEHAVIOUR (opt-in by data): verify_signs (m) holds a race layout on a lap to its plate at a per-layout corner its lap drives (ledger 0055 round 2; no threshold moved)
 

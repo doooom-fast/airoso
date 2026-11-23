@@ -720,14 +720,23 @@ prep from the engine copy, then `median_tops_check.py` on the prepped ground, ro
 |---|---|
 | 0.20.3 as built (`median_tops_0_20_3.json`): rows sampled / grass / asphalt | 2,486 / 0 / 2,486 |
 | One island first, Navajo v1540-1739: grass / asphalt on that island | 200 / 0 (every other island still asphalt) |
-| All islands, after the prep: rows sampled / grass / asphalt | 2,127 / **2,123** / 4 |
+| All 14 islands, after the prep: rows sampled / grass / asphalt | 2,123 / **2,123** / 0 |
 
-- 2,127, not 2,486: College's 359 rows between v1117 and v1475 are the bank now, which has no slab under it and was
-  already grass.
+- 2,123, not 2,486: College's 359 rows between v1117 and v1475 are the bank now, which has no slab under it and was
+  already grass; and 4 rows were never an island (next point).
 - The top stands 0.141 to 0.228 m over the road after the prep on all 4,282 of its vertices (median 0.185), the same as before it: the prep does not move it, and no vertex is without road under it.
-- **The 4 asphalt rows are one island that has no top in the scene at all**: Mission Gorge v54-57, 9 m, 1.7 m wide.
-  Nothing stands 0.185 m over the road between its rows, so there is nothing to move. It still shows the road
-  between its curbs. Giving it a top means authoring one; not done here.
+- **Mission Gorge v54-57 is not an island, and none is authored there.** The band in the data is 1.7 m wide over 4
+  rows (9 m; the plan's MD12, a 12.5 m terracotta island). The median tool builds an island only from a run of 6
+  rows or more (`tools/author_median_blend.py` `_segments`: its two three-row noses need them), so it built nothing
+  there: the scene has no curb ring, only the two yellow lines either side. A top alone, by the tool's rule, would be
+  a strip 0.1 to 0.33 m wide standing 0.185 m over the road with no curb round it. The measure first counted these 4
+  rows as an island showing asphalt (that was the "2,123 of 2,127" first reported); it now counts a run under 6
+  rows apart, and so does the author step's report. Owed, if the real island is wanted: a raised island there, curb
+  and all, which is new geometry and not this step.
+- **Mission Gorge's raised median is declared terracotta** (the plan, `data/expansion.north.json` MD11 to MD13:
+  "terracotta raised median"). The median tool has always authored its top as grass, like every island, and nothing
+  in the pipeline has a terracotta surface (no material row). So its 2.15 km now read grass, where 0.20.4 showed
+  asphalt. Whether it should be terracotta is not decided here.
 - Two rows (Princess View v204 and v210) have the top at two of their three points: the built island is narrower
   than its band in the data on one side there. They read grass by the measure's own rule.
 - 14 strips, 4,282 vertices, 4,254 faces moved; before the prep the decks stand 0.142 to 0.228 m over the road's own

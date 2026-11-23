@@ -168,17 +168,18 @@
   }
  ],
  "_rows_two_of_three_doc": "the built island is narrower than its band in data/median_bands.json on one side there; the row still reads grass by the measure's own rule (two of three points)",
- "islands_with_no_deck_in_the_scene": [
+ "islands_with_no_deck_in_the_scene": [],
+ "_no_deck_doc": "the scene holds no grass top for these islands (nothing stands 0.185 m over the road between their rows), so there is nothing to move: they show the road between their curbs, as before",
+ "band_runs_too_short_to_be_islands": [
   {
    "line": "north_mission_gorge",
    "rows": [
     54,
     57
-   ],
-   "length_rows": 4
+   ]
   }
  ],
- "_no_deck_doc": "the scene holds no grass top for these islands (nothing stands 0.185 m over the road between their rows), so there is nothing to move: they show the road between their curbs, as before",
+ "_short_runs_doc": "runs of the median band under 6 rows: tools/author_median_blend.py builds no island for them (no curb, no top), so they are no part of this step",
  "terrain": {
   "vertices": [
    686735,

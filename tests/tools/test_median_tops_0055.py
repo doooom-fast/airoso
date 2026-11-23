@@ -60,7 +60,10 @@ def test_lake_murrays_islands_are_read_off_its_own_data():
     got = [(s["line"], s["first"], s["last"]) for s in isl]
     # College's island is two short ones since the split (ledger 0055 round 2): the bank between the two roads is ground
     assert ("MAINLINE", 846, 1073) in got and ("MAINLINE", 1096, 1116) in got and ("MAINLINE", 1476, 1487) in got
-    assert ("MAINLINE", 1540, 1739) in got and ("north_mission_gorge", 63, 741) in got and len(got) == 15
+    assert ("MAINLINE", 1540, 1739) in got and ("north_mission_gorge", 63, 741) in got and len(got) == 14
+    # a run of the band under six rows is not an island: the median tool builds nothing for it (its _segments rule)
+    assert [(s["line"], s["first"], s["last"]) for s in MT.islands(LM, short=True)] == [("north_mission_gorge", 54, 57)]
+    assert "if j - i >= 6:" in (ROOT / "tools" / "author_median_blend.py").read_text(encoding="utf-8") and MT.MIN_ISLAND_ROWS == 6
     assert not any(line == "MAINLINE" and first <= 1300 <= last for line, first, last in got)
     for s in isl:
         assert len(s["rows"]) == s["last"] - s["first"] + 1 and all(r[4] > 0 for r in s["rows"])

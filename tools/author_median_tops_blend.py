@@ -42,6 +42,9 @@ MIN_ROW_W_M = 1.2         # a row narrower than this is a nose's taper (source/c
 LOOSE_MAX_VERTS = 6000    # [invented] a loose part of TERRAIN larger than this is ground, never a median's deck
 NOSE_VERTS, NOSE_HALF_M, DECK_INSET_M = 3, 0.25, 0.22   # tools/author_median_blend.py: an island's last three rows taper
 END_IN_M = 0.3            # [invented] an island's end row is measured this far inside it (the row itself is the deck's edge)
+MIN_ISLAND_ROWS = 6       # tools/author_median_blend.py _segments (`if j - i >= 6`): a shorter run of the band is not built as
+#                           an island at all (no curb, no deck: its two three-row noses need six rows). Lake Murray has one,
+#                           Mission Gorge v54-57: paint only in the scene
 
 
 def deck_half(w, k, n):
@@ -68,8 +71,9 @@ def spec(cfg):
     return {"object": name}
 
 
-def islands(proj):
-    """[{line, first, last, rows: [(x, z, nx, nz, w)]}] off data/centerline.local.json + data/median_bands.json"""
+def islands(proj, short=False):
+    """[{line, first, last, rows: [(x, z, nx, nz, w)]}] off data/centerline.local.json + data/median_bands.json: the runs
+    of the band the median tool builds as islands (MIN_ISLAND_ROWS or more); short=True: the runs it does not"""
     data = Path(proj) / "data"
     P = json.loads((data / "centerline.local.json").read_text(encoding="utf-8"))["points_xyz_m"]
     mb = json.loads((data / "median_bands.json").read_text(encoding="utf-8"))
@@ -92,7 +96,8 @@ def islands(proj):
                 tx, tz = b[0] - a[0], b[2] - a[2]
                 L = math.hypot(tx, tz) or 1.0
                 rows.append((pts[r][0], pts[r][2], -tz / L, tx / L, float(iw[r])))
-            out.append({"line": name, "first": k, "last": j - 1, "rows": rows})
+            if (j - k >= MIN_ISLAND_ROWS) != short:
+                out.append({"line": name, "first": k, "last": j - 1, "rows": rows})
             k = j
     return out
 
@@ -301,6 +306,9 @@ def main():
                                                   "length_rows": isl[i]["last"] - isl[i]["first"] + 1} for i in no_deck],
            "_no_deck_doc": "the scene holds no grass top for these islands (nothing stands 0.185 m over the road between their "
                            "rows), so there is nothing to move: they show the road between their curbs, as before",
+           "band_runs_too_short_to_be_islands": [{"line": s["line"], "rows": [s["first"], s["last"]]} for s in islands(proj, short=True)],
+           "_short_runs_doc": "runs of the median band under %d rows: tools/author_median_blend.py builds no island for them (no "
+                              "curb, no top), so they are no part of this step" % MIN_ISLAND_ROWS,
            "terrain": {"vertices": [n_v0, n_v0 - len(verts)], "faces": [n_f0, n_f0 - len(faces)]},
            "loose_strips_left_in_terrain_with_no_road_under_them": "left as ground (College's bank top)"}
     ob["median_tops"] = json.dumps({k: rep[k] for k in ("strips", "vertices", "faces", "only")})

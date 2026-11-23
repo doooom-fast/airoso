@@ -1493,6 +1493,19 @@
     "_doc": "tools/lm_engine_intake.py: the source track's projected line + widths + 3DEP grid, capture.bridges decks levelled and the road_profile grade net (Y only), into data/. connectors false: the pilot is the lap alone; the free roam's 106 grid streets need the LM chain's junction tools (route/trim connectors, weld_mouths, gap_mouths), owed (ledger 0078).",
     "heightfield": "port",
     "_heightfield_doc": "ledger 0079: the port's own 3DEP grid (data/heightfield.*, synced in): margin 470 m = 150 + 8 x 40 on the source's lattice (every one of the source grid's 5,400 samples is a sample of this one, 0.000 m apart), so the ground reaches the buildings within 450 m of the lap and the grid streets; fetched by scripts.elevation.heightfield.build_heightfield",
+    "corner_flare_off": [
+      {
+        "name": "Dahlia St -> E 56th Ave (the dahlia_56th pad)",
+        "at": [
+          39.796478,
+          -104.933283
+        ],
+        "radius_m": 30.0,
+        "why": "the pad's measured deck paves the crossroads (route.corner_flare_off's rule: a corner joins when its authored pad exists)",
+        "_doc": "at = the lap's v780 (the pad's node) on this port's line. Round Q's scratch intake: v767-v787 re-laid 11.0 -> 23.5 m (the source's 42.3 m crest off); the PC re-ran tools/lm_engine_intake.corner_flares_off on data/centerline.local.json 2026-11-22: the same span, v770 42.3 -> 12.93, v780 -> 19.16, v786 27.67 -> 22.86"
+      }
+    ],
+    "_corner_flare_off_doc": "ledger 0079 round Q (tools/lm_engine_intake.corner_flares_off) wired 2026-11-22 with dahlia_56th unparked (PC, claude/sc-finish-pc-20261122; the Mac: \"go ahead with lm_intake.corner_flare_off for Dahlia\"). sandcreek_quebec keeps its flare (v1937-1946, 34.2 m) for now",
     "tree_models": true,
     "_tree_models_doc": "ledger 0079: the source's TreeFX models (tracks/sand-creek/source/trees/*.bin, personal use, on the PC only) into the project",
     "connector_profiles": "source/connector_profiles.lidar.round_i.json",
@@ -1734,7 +1747,13 @@
           -909.8,
           1119.8
         ],
-        "curb_return_m": 15
+        "curb_return_m": 15,
+        "cut_m": [
+          30.0,
+          17.0
+        ],
+        "half_m": 57.15,
+        "_cut_m_doc": "2026-11-22 (PC): the out cut 17 m past the node (v786, the last lap row on the ground; v788 on is the 56th bridge over Sand Creek), the in cut 30 m as before; half_m = the measurement window of the PC's cached dahlia_56th.lidar.npz (pad_boxes' default would be 45.6 m with the flare off: another window, a fetch)"
       },
       {
         "id": "sandcreek_quebec",
@@ -2139,9 +2158,75 @@
         "_deck_beyond_doc": "ledger 0079 round O (tools/draft_pad_outline.py writes deck_class2: the plane through ALL class-2 lidar points round a node where the road-intensity points are too few; tools/draft_pads.deck_filled, tools/lm_pads_blend.py deck_z). Inside the measured outline such a node takes the class-2 plane before the road-plane fill: the outline holds the lap's ribbon union, and the S's inside lane (offsets -14..-16 m, rows 3200-3201) lies on the flush strip west of grid_unclassified_67 with no road point, where the road plane carried up to 8 m in stood 0.29 m across 2.2 m (the lidar: 0.05 m): verify_fold_fans (2) DT 0.068-0.129 m (build ro3, probe ro3_ff). Outside it (an arm row's or the lane's overhang) the class-2 plane comes before the lap's removed ribbon, held under the nearest road node: at the concrete crosswalk on grid_primary_49's arm (no road node within 3 m) the nearest node stood a vertex 0.16 m over the lidar, 12 mm of grass over the deck (ro3, verify_pads P4); unheld, it climbed the ground's rise to the building at grid_unclassified_67's east row end, 0.31 m over the street's row (build ro4, verify_pads P3). Tried and dropped: the road plane carried outside the outline too (0.30 m over the lidar at the crosswalk, offline)",
         "_by": "tools/pad_boxes.py from lm_pads.plan 48th_colorado: node v3205 nearest [-1511.1, -297.4], cuts 30 m of arc either side, box reach 26.4 m (half width 16.4 + curb return 4 + 6.0) [rule, invented pads], 3 street arm(s)",
         "_box_doc": "ledger 0079 round O (unparked): tools/pad_boxes.py's box, its north-east diagonal (-1469.58, -308.64) -> (-1499.67, -261.39) replaced, because it cut the crossroads' east half (grid_unclassified_67's mouth: the lidar's road-intensity asphalt at x -1485..-1477 for z -284..-292 lay outside it). Measured on the cached lidar (scratchpad ro/edges67.py, ro/prof67.py: intensity under the pad's own threshold 490, class-2 heights) and NAIP 2023 in the track frame: 67's asphalt runs x -1484.5..-1477 (west edge on NAIP -1485.5 +- 0.5, a dark seam between the dirt strip and the asphalt; the east edge is under the building's shadow on NAIP, the lidar's -1477 where the ground rises 0.9 m to the building) and is its own width north of z -284, where its curb returns into the crossroads start. New edges: the cut across 67 at z -278 (6 m past the returns: pad_boxes' ARM_PAST_M rule) from x -1487 to -1470, and the east side x -1470.0 at z -278 to the old corner (-1469.58, -308.64), past the measured asphalt edge (x -1476.5 +- 0.5 at z -296..-306: the lot beyond reads concrete-bright), so the measurement, not the box, ends the deck there. grid_unclassified_67 becomes a street arm (route.street_junctions.pad_arms cuts it at the box edge)"
-      }
-    ],
-    "parked": [
+      },
+      {
+        "id": "dahlia_56th",
+        "node": 780,
+        "cuts": [
+          769,
+          786
+        ],
+        "box": [
+          [
+            -929.0,
+            1110.24
+          ],
+          [
+            -904.08,
+            1079.18
+          ],
+          [
+            -887.34,
+            1086.54
+          ],
+          [
+            -879.4,
+            1112.66
+          ],
+          [
+            -887.75,
+            1127.86
+          ],
+          [
+            -900.0,
+            1132.75
+          ],
+          [
+            -912.0,
+            1132.25
+          ],
+          [
+            -930.63,
+            1125.66
+          ]
+        ],
+        "arms": [
+          {
+            "connector": "grid_primary_35",
+            "cut": [
+              [
+                -929.0,
+                1110.24
+              ],
+              [
+                -930.63,
+                1125.66
+              ]
+            ]
+          }
+        ],
+        "half_m": 57.15,
+        "source": {
+          "kind": "lidar_ept",
+          "ept": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept.json"
+        },
+        "edge": "shoulder",
+        "_by": "tools/pad_boxes.py from lm_pads.plan dahlia_56th: node v780 nearest [-909.8, 1119.8], cuts 30 m of arc before and 17 m after, box reach 30.6 m (half width 9.6 + curb return 15 + 6.0) [rule, invented pads], 1 street arm(s)",
+        "deck_floor_m": 0.75,
+        "_deck_floor_doc": "2026-11-22 (PC, claude/sc-finish-pc-20261122; tools/draft_pad_outline.py, opt-in per pad): class-2 points more than 0.75 m under the nearest lap vertex's height are left out of the deck's planes. A wet creek bank reads as dark as asphalt, so the road-intensity planes took the bank: dahlia_56th's old deck read 0.24 m (the 56th bridge's creek bed; round Q's 6.833 m seam residual and its 63 unfilled nodes), sandcreek_quebec's (round C) up to 5.97 m under the lap beside the Sand Creek bridge (v1946-1953, 3-17 m off the line). 0.75 m [invented, between the measured bounds]: the four built pads' decks stand at most 0.55 m under the lap (colorado_50th 0.55, 48th_colorado 0.47, 50th_dahlia 0.24, 50th_ash 0.21; lap minus deck inside each outline), the banks 1-6 m. With it: dahlia_56th 0.51 m max, sandcreek_quebec 0.78 m max (14,549 / 6,900 points left out)",
+        "_box_doc": "2026-11-22 (PC): tools/pad_boxes.py's box for cut_m [30, 17] (lm_pads.plan), its north side replaced by 56th's measured bank top, (-930.63, 1125.66) -> (-912.0, 1132.25) -> (-900.0, 1132.75) -> (-887.75, 1127.86) on the out-cut line: the last point every metre of x where the class-2 ground stands within 0.30 m [invented] of the road's own height (the median of N 1110-1120) before it falls to Sand Creek (scratchpad scq, the cached dahlia_56th.lidar.npz, nothing fetched). The rule's north-east corner (-893.29, 1137.97) stood 5-6 m over the bank, whose dark points the outline took as asphalt",
+        "_unparked": "2026-11-22 (PC, the Mac's job; Kevin's calls-1122 go): ledger 0079 round Q's cause, measured: the lap runs on the ground to v784-v787 (lap minus lidar within 0.04 m from v760) and onto the 56th bridge over Sand Creek from v788 (no class-2 within 2 m; the auto bridge span [2324.4, 2478.0]). The old out-cut v791 (s 2358.9) stood on the bridge, so the deck there read the creek bed 6-7 m down. Now: cut_m [30, 17] -> cuts [769, 786] (v786 = the last row on the ground, 17.2 m past the node), the flare off (lm_intake.corner_flare_off, round Q's fix), the box's north side on the bank top, deck_floor_m 0.75. Re-measured on the PC's cache: outline 1,593 m2 (was 3,098), the lap's ribbon 149.6 m2 of it (was 1,405.9)"
+      },
       {
         "id": "sandcreek_quebec",
         "node": 1942,
@@ -2218,66 +2303,13 @@
         },
         "edge": "shoulder",
         "_by": "tools/pad_boxes.py from lm_pads.plan sandcreek_quebec: node v1942 nearest [1795.4, -488.9], cuts 30 m of arc either side, box reach 29.1 m (half width 17.1 + curb return 6 + 6.0) [rule, invented pads], 2 street arm(s)",
-        "_parked_why": "ledger 0079 round C: the lidar found 0 road-intensity points in the window; its outline is the box and the lap ribbon, and on NAIP it misses the north-east and south arms of the Quebec junction. Parked until the edge is traced off NAIP (owed)"
-      },
-      {
-        "id": "dahlia_56th",
-        "node": 780,
-        "cuts": [
-          769,
-          791
-        ],
-        "box": [
-          [
-            -941.22,
-            1109.26
-          ],
-          [
-            -912.26,
-            1075.58
-          ],
-          [
-            -879.16,
-            1090.14
-          ],
-          [
-            -866.91,
-            1117.94
-          ],
-          [
-            -878.6,
-            1145.02
-          ],
-          [
-            -942.33,
-            1124.72
-          ]
-        ],
-        "arms": [
-          {
-            "connector": "grid_primary_35",
-            "cut": [
-              [
-                -941.22,
-                1109.26
-              ],
-              [
-                -942.33,
-                1124.72
-              ]
-            ]
-          }
-        ],
-        "half_m": 57.15,
-        "source": {
-          "kind": "lidar_ept",
-          "ept": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept.json"
-        },
-        "edge": "shoulder",
-        "_by": "tools/pad_boxes.py from lm_pads.plan dahlia_56th: node v780 nearest [-909.8, 1119.8], cuts 30 m of arc either side, box reach 42.1 m (half width 21.1 + curb return 15 + 6.0) [rule, invented pads], 1 street arm(s)",
-        "_parked_why": "ledger 0079 round C: tools/lm_pads_blend.py refused it on the Mac: a lane sample at its in-cut row (v770, right edge) stands off the measured deck even with the ribbon united; the outline also adds 1,406 m2 of ribbon. Parked until the outline is re-read (NAIP)"
+        "deck_floor_m": 0.75,
+        "_deck_floor_doc": "2026-11-22 (PC, claude/sc-finish-pc-20261122; tools/draft_pad_outline.py, opt-in per pad): class-2 points more than 0.75 m under the nearest lap vertex's height are left out of the deck's planes. A wet creek bank reads as dark as asphalt, so the road-intensity planes took the bank: dahlia_56th's old deck read 0.24 m (the 56th bridge's creek bed; round Q's 6.833 m seam residual and its 63 unfilled nodes), sandcreek_quebec's (round C) up to 5.97 m under the lap beside the Sand Creek bridge (v1946-1953, 3-17 m off the line). 0.75 m [invented, between the measured bounds]: the four built pads' decks stand at most 0.55 m under the lap (colorado_50th 0.55, 48th_colorado 0.47, 50th_dahlia 0.24, 50th_ash 0.21; lap minus deck inside each outline), the banks 1-6 m. With it: dahlia_56th 0.51 m max, sandcreek_quebec 0.78 m max (14,549 / 6,900 points left out)",
+        "_unparked": "2026-11-22 (PC, the Mac's job; Kevin's calls-1122: \"Build it on the PC with its lidar, no download\"): round C's outline as measured (tools/draft_pad_outline.py on the PC's cached sandcreek_quebec.lidar.npz, nothing fetched; re-run, byte-identical outline): the intensity is not empty, the road reads 0 and the verge 728 (threshold 364), and on a 1.5 m mean the pavement, the island and Quebec's median read plainly. The box seals the junction's south leg (no built street). grid_primary_78 / 84 weld in as pad arms (route.street_junctions.pad_arms): the two I-70 bridge joins (ledger 0086 owed). The lap's 34.2 m flare (v1937-1946) stays (682 m2 of the outline), as on the four built pads; the deck under it is the road's, deck_floor_m 0.75"
       }
     ],
+    "parked": [],
+    "_parked_doc": "2026-11-22 (PC): sandcreek_quebec and dahlia_56th unparked (each pad's _unparked says how); none parked",
     "close_arms": false,
     "_close_arms_doc": "ledger 0079: the free roam joins the side streets, so no K-rail closes a pad arm (tools/lm_pads_blend.py)",
     "deck": {

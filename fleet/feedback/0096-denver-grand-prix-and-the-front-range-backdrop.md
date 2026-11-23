@@ -135,3 +135,30 @@ first; failing that, a layered pull-in (14 km stays, 105 km lands at 26 km, orde
 distance, normals from the real surface, colour from real elevation. Worst error on the lap for the far peaks: about
 1.3–1.6° in bearing against 2.1–2.8° on a single shell. Whether the backdrop can follow the weather is the open risk.
 Acceptance is a game still beside a real photograph per sightline, and Kevin's eye.
+
+## P0's facts, measured (2026-11-23, a second cloud session that reaches USGS)
+
+Files under `tracks/denver-grand-prix/`; the first dossier is [`DOSSIER.md`](../../tracks/denver-grand-prix/DOSSIER.md), waiting on Kevin's approval.
+
+- **Elevation along the lap** (`data/lap_profile.3dep.json`, 3DEP 1 m cells every 2 m): relief 31.6 m; start line 1,606.6 m,
+  high point 1,611.0 m at 14th / Logan, low road about 1,582.5 m at 15th / Blake. Colfax falls 5.6 % from Sherman to Lincoln
+  (steepest 50 m 6.6 %); E 14th Ave climbs 6.0 % from Lincoln to Sherman (steepest 50 m 7.2 %). The plan's 1,617 / 1,596 m
+  were 10 and 6 m high.
+- **Bare earth against the road:** 3DEP drops 4–5 m at the Blake bridge and 3–4 m at the W 14th Ave bridge; the lidar has
+  class 17 deck returns on both. The lap crosses Cherry Creek only at those two; it does not use Colfax's bridge, and its
+  part of Stout starts east of the creek. Under the Convention Center the lidar has **no ground return for 304 m**: 3DEP's
+  line there is interpolated, so the road under the roof has no elevation source from the air. A 5 m pit in 3DEP on 15th St
+  short of Lawrence is read as an artefact (NAIP shows a plain street); not yet checked on the points.
+- **The horizon on 3DEP 1/3 arc-second** (`source/horizon/horizon.3dep13.json`, `horizon.compare.json`): two altitudes moved
+  by more than 0.1°, both from the start line (Mt Morrison 1.93 → 2.03°, Green Mtn Lakewood 1.46 → 1.56°); no visibility
+  changed. **Pikes Peak from Sand Creek:** the far terrain clears it by 0.35°; it is hidden from the origin point only by
+  ground 8 m higher 300 m south of it. Not run: a viewshed from Sand Creek's own roads.
+- **Survey sources:** NAIP 2023-09-25 at 0.3 m, one scene over the whole lap. Lidar CO_DRCOG_2_2020: flown 2020-05-27,
+  4.0 returns per m² along the lap (2.0 ground). **DRCOG's 3-inch aerials: 2022 (and 2020, 2018, 2016) download freely from
+  `drapparchive.s3.amazonaws.com`; 2024 is listed and refused (403).** Six tiles cover the lap, 2.68 GB a year. A window of
+  the 2022 tile at the start line shows every lane dash, crosswalk block, mast arm and lamp post. No large raster is in git;
+  `source/survey/` holds the tile lists and the scripts.
+- **Not measured:** any width, kerb, median, pole, sign or paint line; the day of the 2022 flight; the free-roam grid's count.
+- **Refused to that session:** overpass-api.de, data.drcog.org, gis.drcog.org, the NAIP blob store, The National Map's product API.
+
+Owed now: Kevin's approval of the dossier; the far-clip test; then the survey itself (PLAN §4b) on a machine that keeps the tiles.

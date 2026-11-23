@@ -94,7 +94,10 @@ street: 0 m against traffic.** The free roam and the race drive the same way rou
 then y +123 to W 14th Ave), and crosses Colfax's two carriageways three times at junctions it does not otherwise
 use. It never shares or crosses its own pavement. `tools/no_route.py` still decides it on the built walls.
 
-**Relief:** about 30 m (plan-grade DEM: 1,617 m at Colfax / Sherman, 1,596 m at Speer / Colfax). Real grades in P0's elevation step.
+**Relief: 31.6 m on 3DEP, measured 2026-11-23** (1 m cells, `data/lap_profile.3dep.json`): 1,606.6 m at the start line, 1,611.0 m at
+14th / Logan, about 1,582.5 m at 15th / Blake, the creek bed 1,579.4 m under the Blake bridge. Colfax falls 5.6 % from Sherman
+to Lincoln; E 14th Ave climbs 6.0 % from Lincoln to Sherman. The grades per leg are in [DOSSIER.md](DOSSIER.md) §2–§3.
+(The plan-grade figures first printed here, 1,617 m and 1,596 m, were 10 m and 6 m high.)
 
 ## 3. The mountains — measured
 
@@ -102,6 +105,12 @@ Method: the terrain skyline by bearing, from a car's eye (1.2 m) at three points
 refraction applied. DEM: AWS Terrain Tiles zoom 10 (about 60 m cells), the one elevation host this session could
 reach. **Plan-grade: re-run on 3DEP before any mesh is cut.** Script and numbers:
 `source/horizon/horizon_study.py`, `source/horizon/horizon.plan-grade.json`.
+
+> **Re-run on 3DEP 1/3 arc-second (10 m cells), 2026-11-23:** `source/horizon/horizon.3dep13.json`, compared in
+> `source/horizon/horizon.compare.json`; the table of record is DOSSIER §6. Two altitudes moved by more than 0.1°, both from
+> the start line: Mt Morrison 1.93° → 2.03°, Green Mtn (Lakewood) 1.46° → 1.56°. No peak's visibility changed. **Pikes Peak
+> from Sand Creek:** the far terrain clears it by 0.35°; it is hidden from the origin point only by ground 8 m higher 300 m
+> to the south, so it belongs in Sand Creek's mesh and a viewshed from that lap's roads decides where it is seen.
 
 **What the numbers say**
 
@@ -264,8 +273,8 @@ ways, bike lanes on 33, bus lanes on 6. Limits 25–35 mph. Surface asphalt with
 
 | Class | Position | Type and face | Not confirmed |
 |---|---|---|---|
-| **Paint** | the aerial, read by the aerial engine (ledger 0088) that already measures edge lines at the sub-pixel boundary; lidar intensity as a second reading; OSM `lanes` / `turn:lanes` / `crossing:markings` to settle a count the picture leaves open | colour and pattern from the same picture; MUTCD dimensions for arrows, stop bars and crosswalk blocks | NAIP (0.3–0.6 m) shows crosswalks and stop bars but not a 10 cm lane line reliably. The region's 3-inch aerials (DRCOG's DRAPP) would; past years are said to be free from DRCOG's catalog, the current year is sold. **Which year we can get is P0's first check.** |
-| **Streetlights** | lidar (CO_DRCOG_2_2020): a pole is a thin vertical cluster, its height read directly; the aerial's shadow as the check | fixture class per street from street-level imagery; one owned model per class (downtown has more than one: cobra heads, pedestrian globes) | the lidar is 2020: a post moved since is caught only by newer imagery |
+| **Paint** | the aerial, read by the aerial engine (ledger 0088) that already measures edge lines at the sub-pixel boundary; lidar intensity as a second reading; OSM `lanes` / `turn:lanes` / `crossing:markings` to settle a count the picture leaves open | colour and pattern from the same picture; MUTCD dimensions for arrows, stop bars and crosswalk blocks | NAIP (0.3–0.6 m) shows crosswalks and stop bars but not a 10 cm lane line reliably. The region's 3-inch aerials (DRCOG's DRAPP) would; past years are said to be free from DRCOG's catalog, the current year is sold. **Which year we can get is P0's first check.** Checked 2026-11-23: **2022 at 3 inches downloads freely** from DRCOG's public bucket (six tiles over the lap, 2.68 GB); 2024 is listed and refused. NAIP 2023 is 0.3 m. DOSSIER §9. |
+| **Streetlights** | lidar (CO_DRCOG_2_2020): a pole is a thin vertical cluster, its height read directly; the aerial's shadow as the check | fixture class per street from street-level imagery; one owned model per class (downtown has more than one: cobra heads, pedestrian globes) | the lidar is 2020: a post moved since is caught only by newer imagery. Measured 2026-11-23: 4.0 returns per m² along the lap (2.0 ground), so a post is a handful of returns; the 2022 3-inch aerial shows posts and mast arms plainly and is the better position source (DOSSIER §5) |
 | **Signals** | OSM's 55 nodes say which junctions; masts and arms from lidar and the aerial | mast-arm, pedestal and pedestrian heads as owned models | new furniture: none exists in the asset library |
 | **Signs** | hardest. OSM gives the junction and the rule (stop, one-way, limit), not the post. Street-level detections (Mapillary publishes sign positions by class) give candidates; each is checked against a frame | MUTCD artwork is public domain and already drawn procedurally for W1 (`tools/make_sign_textures.py`); extended to the regulatory and guide set | Mapillary needs an access key and its licence read before anything from it ships. Without it, signs are `tagged` grade at best, plus whatever your own captures show. |
 

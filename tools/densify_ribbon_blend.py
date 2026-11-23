@@ -286,4 +286,5 @@ def main():
     bpy.ops.wm.save_as_mainfile(filepath=str(proj / "loop.blend"))
 
 
-main()
+if __name__ == "__main__":      # blender --python runs it as __main__; the tests import Section
+    main()

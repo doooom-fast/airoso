@@ -398,4 +398,5 @@ def main():
     print(f"[shoulder] saved {blend.name}")
 
 
-main()
+if __name__ == "__main__":      # blender --python runs it as __main__; the tests import the helpers
+    main()

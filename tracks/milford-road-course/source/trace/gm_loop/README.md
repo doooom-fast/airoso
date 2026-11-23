@@ -36,7 +36,8 @@ Mac's crop: board asset `8a8086d41a7cbf20b69318824f7da18b`, md5 7f53c304b91f2a10
    - concrete: lum 206-222.
    The centre and width are the whole pavement's. Output: `inner_ortho.ortho2025.json`.
 3. `splice_gm_loop.py` writes `../../../data_gm/`, which the port reads through `lm_intake.source_data`.
-   - Every station outside geojson points 279-369 is the committed line's, bit for bit.
+   - Every station outside geojson points 279-369 keeps its committed position, width and raw 3DEP sample bit for bit;
+     the projected heights agree to 1.1 cm (2 cm at the junction point: the profile's windows reach across it).
    - The new piece:
      - 91 points every 3 m, 276.5 m;
      - the joins a cubic Hermite over 30 m [invented], then 4 binomial passes [invented];

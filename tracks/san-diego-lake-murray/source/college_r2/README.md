@@ -12,6 +12,7 @@ is authored here and nothing in the shared config changes.
 | `j1_waring.lidar.g10.json` | measured: the J1 crossroads on a 1 m grid, Waring sections s 0-200 m, the crossroads plane |
 | `college_sections.py` | reads the lidar and the 0.20.2 gate OBJ, writes `college_sections.json` (benches, the built extent, built minus measured per station) |
 | `college_sheet_data.py`, `college_sheet.py` | the picture `college_sections.png` (twelve stations) |
+| `college_strip.py`, `college_strip_labels.py` | the picture `college_strip.png`: the road straightened, the 2022 aerial over the surveyed heights, the built edges drawn on both (needs the NAIP crops in `tools/naip_carriageways.py`'s cache, Lake Murray frame) |
 
 Run: `<blender python> college_sections.py <workshop>/data/track.obj`, then `college_sheet_data.py` (same python),
 then `python college_sheet.py` (Pillow). Offsets: + = left of travel = west on College northbound. Heights: engine
@@ -32,6 +33,10 @@ y = NAVD88 - 100.8.
   wide; the bank between them is about 9 m wide and rises up to 6 m.
 - **The build is one slab**, -14 to +16 m, at the southbound grade. Its northbound half sits **up to 6.1 m below** the
   real northbound carriageway (built minus measured: -6.1 m at v1260), cut into the hillside the real road rides on.
+- **In plan** (`college_strip.png`, v1240-1340): southbound pavement about W 14 to W 5 m, a planted island on the bank
+  about W 5 to E 6 m, northbound pavement about E 6 to E 15 m. The built slab's outer edges (14 to 16 m each side) sit
+  close to the real outer pavement edges; what is wrong is the northbound half's height and the middle, where the
+  build paves the bank. [read by eye off the picture; the per-station edges are the next step]
 - At v880 the built road is 7 m above the class-2 ground: a bridge deck, as built.
 - `[invented]` in the reading: a bench = at least 6 m of measured ground with cross slope under 8 % (taken over 1.5 m).
 

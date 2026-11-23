@@ -57,6 +57,15 @@
       "where": "Dahlia St -> E 50th Ave (the 50th_dahlia pad)",
       "per_layout": true,
       "_per_layout": "ledger 0079 round L (call 5): the corner is turned on the junction pad's measured deck (tools/lm_pads_blend.py), which defaults.pad_decks puts in the polyline field as pavement, as Lake Murray's J2-J4 decks are (ledger 0054 A8). Straight on runs across the deck into a real street in Free Roam, so the shared plate is the rule's own skip there and the race layout, whose side streets are sealed, gets its own plate behind its sealing wall, in its closure kn5 (Lake Murray's M3 / M4, ledger 0054 A7 / P4)"
+    },
+    "SC-D56": {
+      "ribbon": "MAINLINE",
+      "vertex": 780,
+      "where": "Dahlia St -> E 56th Ave (the dahlia_56th pad, unparked 2026-11-22)",
+      "rev": {
+        "skip": true,
+        "reason": "ledger 0079 round Q build rq1 (dahlia_56th unparked with lm_intake.corner_flare_off, as now): verify_signs FAILED M-c5-rev c_built_edge_clearance, the W1-6L plate at (-941.8, 1107.5). Reversed, the lap comes west on E 56th and turns left onto Dahlia; straight on runs across the pad's measured deck into E 56th west (grid_primary_35, a through street the sign field does not hold: include_connectors false), and the failed-turn rule stood the plate on that street's pavement. As SC-48S rev: no race layout drives rev, and in Free Roam the arrow would point away from a road a driver may take"
+      }
     }
   },
   "_pads": "ledger 0079 round L: the three pad corners are named per_layout (SC-C50 v140, SC-ASH v186, SC-DAH v410) with defaults.pad_decks: round K's mesh-skips came from the polyline stage not seeing the pad decks"

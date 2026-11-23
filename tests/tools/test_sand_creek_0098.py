@@ -139,7 +139,10 @@ def test_sand_creek_trim_meets_e56th_and_the_lap(tmp_path):
     assert len(on80) == 13 and len(set(on80)) == 12 and "grid_primary_6#0" in on80 and "grid_primary_7#0" in on80
     assert any(m["piece"] == "grid_primary_71#0" and m["host"] == "MAINLINE" for m in mouths)
     assert any(m["piece"] == "grid_primary_73#0" and m["host"] == "grid_primary_71#0" for m in mouths)
-    assert len(mouths) == 128
+    # 128 on the Mac's round 1 alone; the PC's pads (claude/sc-finish-pc-20261122, merged into 0.2.9) take three of them as pad
+    # arms: grid_primary_35#0 at Dahlia/56th, grid_primary_78#0 and grid_primary_84#0#0 at Quebec
+    assert len(mouths) == 125
+    assert not any(m["host"] == "MAINLINE" and m["piece"] in ("grid_primary_35#0", "grid_primary_78#0", "grid_primary_84#0#0") for m in mouths)
     cfg = _cfg(SC / "track.config.json")
     for key in ("verify_mouth_corners_allowed", "verify_mouths_allowed", "mouth_returns_skip"):
         for row in cfg["route"][key]:

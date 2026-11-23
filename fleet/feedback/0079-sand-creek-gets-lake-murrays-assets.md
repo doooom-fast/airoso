@@ -2582,3 +2582,48 @@ Earlier list, kept for the record:
   - The install step parked 0.2.7 in `D:/k10-track-archive/2026-11-09_140029/` (MOVES.tsv + README).
   - Menu pictures: the same cameras (race s0, street s1 phase 0.5); the pack's own are in `2026-11-09_140058_previews`.
 - Not driven.
+
+
+## PC, 2026-11-22: sandcreek_quebec and dahlia_56th unparked (claude/sc-finish-pc-20261122; NOT rehearsed yet)
+
+Kevin's calls-1122 (row finish-sc): "the Quebec pad: on the PC, no download". The Mac's job: the pad, and dahlia_56th's red
+seam (round Q item 3). Everything from the PC's caches (`D:/k10-scratch/sand_creek_lm_a_reh/source/pads/*.lidar.npz`);
+nothing fetched.
+
+**Both pads sit on auto bridge spans** (data/bridge.spans.auto.json [2324.4, 2478.0] and [5789.0, 5953.7]).
+- **dahlia_56th:**
+  - Lap minus lidar ground is within 0.04 m from v760 to v784. From v788 on there is no class-2 return within 2 m: the 56th
+    bridge over Sand Creek, whose bed lies 5-7 m down.
+  - Round Q's out-cut v791 (s 2358.9) stood on the bridge, so the deck there read the creek bed. That is the 6.833 m seam
+    residual and the 63 unfilled nodes; the old deck reads down to 0.24 m.
+  - The intensity treats a wet bank as asphalt (road 153 / verge 1504, the bank 0-300).
+- **sandcreek_quebec:**
+  - The junction is on real ground. The lap's straight bridge ramp stands +0.05 to +0.41 m over it at v1937-1952.
+  - Round C's deck read 5.97 m under the lap beside the Sand Creek bridge (v1946-1953, 3-17 m off the line).
+  - Its intensity is NOT empty: road 0, verge 728, threshold 364. On a 1.5 m mean the pavement, the island and Quebec's
+    median read plainly.
+  - draft_pad_outline on the cache reproduces round C's outline exactly (2,390 m2, 682 m2 of it the lap's 34.2 m flare).
+
+**What 803c6cb7 / 4b4ea1be build (opt-in keys only):**
+1. tools/pad_boxes.py: `cut_m` [in_m, out_m]. dahlia_56th's plan is [30, 17], so the cuts are [769, 786]; v786 is the last
+   row on the ground, 17.2 m past the node. half_m stays 57.15, the cache's window.
+2. tools/draft_pad_outline.py: `deck_floor_m` per pad. Class-2 points more than that under the nearest lap vertex are left
+   out of the deck's planes.
+   - Lap minus deck inside each outline, max: colorado_50th 0.55, 48th_colorado 0.47, 50th_dahlia 0.24, 50th_ash 0.21.
+     The banks sit 1-6 m.
+   - 0.75 m [invented, between those bounds].
+3. dahlia_56th:
+   - lm_intake.corner_flare_off (round Q's key) on the Dahlia corner: v767-v787 re-laid 11.0 -> 23.5 m (v770 42.3 -> 12.93).
+   - The box's north side replaced by 56th's measured bank top: the last point every metre where class-2 stands within
+     0.30 m [invented] of the road's own height before falling to the creek. The rule's corner stood 5-6 m out over the bank.
+   - Re-measured: outline 1,593 m2 (was 3,098), the lap's ribbon 149.6 m2 of it (was 1,405.9); lap minus deck max 0.51 m.
+4. sandcreek_quebec: round C's declaration and outline, deck_floor_m 0.75; lap minus deck max 0.78 m (was 5.97). The lap's
+   flare there stays, as on the four built pads.
+5. signs.json SC-D56 rev skip: rq1's M-c5-rev c_built_edge_clearance on E 56th west. Handled as SC-48S rev: no race layout
+   drives rev.
+
+Tests: 134 sign / pad / name-blade / flare tests pass under the PC's numpy venv. Under system Python the 5 that need numpy
+fail, as on main.
+
+**Rehearsal:** queued third on the PC, as ONE 0.2.9 build with the Mac's claude/sc-finish-20261122 (the Mac merges both into
+claude/sc-finish-0209-20261122). Results go here.

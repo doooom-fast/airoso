@@ -879,7 +879,7 @@ def test_round_q_corner_flares_off_is_opt_in_and_only_narrows():
     """ledger 0079 round Q (tools/lm_engine_intake.corner_flares_off): a declared corner's flare (a crest that falls to a
     level leg on both sides) is re-laid by station between the two legs' widths; a slip's ramp up to a wider road (no
     fall on its far side within the radius) is left alone; Lake Murray never runs the intake and the Lariat's port does
-    not name the key, nor (yet) Sand Creek's"""
+    not name the key; Sand Creek names the dahlia_56th corner (2026-11-22)"""
     import lm_engine_intake as li
     from scripts.geometry.projection import _meters_per_degree
     origin = {"lat": 39.78, "lon": -104.92, "elev_m": 1500.0}
@@ -898,9 +898,13 @@ def test_round_q_corner_flares_off_is_opt_in_and_only_narrows():
     assert "lm_intake" not in lm
     lar = json.loads((ROOT / "tracks" / "lookout-lariat-lm" / "track.config.json").read_text(encoding="utf-8"))
     assert "corner_flare_off" not in (lar.get("lm_intake") or {})
-    # round Q's build rq1 (dahlia_56th unparked with the flare off) went red: the candidate does not name the key yet
-    for cfgp in (SC / "track.config.json", SC / "source" / "round_k" / "track.config.json"):
-        assert "corner_flare_off" not in (json.loads(cfgp.read_text(encoding="utf-8")).get("lm_intake") or {})
+    # round Q's build rq1 went red with the out-cut on the 56th bridge; 2026-11-22 dahlia_56th is unparked with its out-cut
+    # on the last ground row and the key names that corner alone (the round K candidate names none)
+    sc = json.loads((SC / "track.config.json").read_text(encoding="utf-8"))
+    assert [c["name"] for c in sc["lm_intake"]["corner_flare_off"]] == ["Dahlia St -> E 56th Ave (the dahlia_56th pad)"]
+    assert "dahlia_56th" in [p["id"] for p in sc["lm_pads"]["pads"]]
+    rk = json.loads((SC / "source" / "round_k" / "track.config.json").read_text(encoding="utf-8"))
+    assert "corner_flare_off" not in (rk.get("lm_intake") or {})
 
 
 def _drop(cfg, path):
@@ -935,6 +939,25 @@ LIVE_0_2_7_KEYS = (("name",), ("_name_doc",), ("slug",), ("version",), ("install
                    ("road_markings", "gap_mouths"), ("road_markings", "_gap_mouths_doc"),
                    ("strip_seam", "connectors"), ("strip_seam", "_connectors_doc"))
 
+# 2026-11-22 (PC, claude/sc-finish-pc-20261122): sandcreek_quebec and dahlia_56th unparked, the Dahlia corner's flare off
+LIVE_FINISH_PC_KEYS = (("lm_intake", "corner_flare_off"), ("lm_intake", "_corner_flare_off_doc"),
+                       ("lm_pads", "pads"), ("lm_pads", "parked"), ("lm_pads", "_parked_doc"),
+                       ("route", "mouth_returns_fit"), ("route", "_pads_0209_doc"))
+
+
+def _finish_pc_pads(live, cand):
+    """the live pads are the candidate's four plus its two parked ones, unparked; the plan's dahlia_56th gains cut_m / half_m"""
+    lp, cp, ck = live["lm_pads"]["pads"], cand["lm_pads"]["pads"], cand["lm_pads"]["parked"]
+    assert lp[:len(cp)] == cp and live["lm_pads"]["parked"] == []
+    assert sorted(p["id"] for p in lp[len(cp):]) == sorted(p["id"] for p in ck)
+    assert all(p.get("_unparked") and p.get("deck_floor_m") == 0.75 for p in lp[len(cp):])
+    q = next(p for p in lp if p["id"] == "sandcreek_quebec")
+    qk = next(p for p in ck if p["id"] == "sandcreek_quebec")
+    assert {k: v for k, v in q.items() if k not in ("_unparked", "deck_floor_m", "_deck_floor_doc")} ==         {k: v for k, v in qk.items() if k != "_parked_why"}          # round C's declaration, as measured
+    for pl in live["lm_pads"]["plan"]:
+        if pl["id"] == "dahlia_56th":
+            assert pl.pop("cut_m") == [30.0, 17.0] and pl.pop("half_m") == 57.15 and pl.pop("_cut_m_doc")
+
 
 def test_round_r_live_is_the_candidate():
     """ledger 0079 round R (Kevin 2026-11-06: "Full street width"): the round_k candidate was adopted as the live config
@@ -952,7 +975,8 @@ def test_round_r_live_is_the_candidate():
     # verify_mouths_allowed: round_k's rows plus grid_tertiary_74's start (ledger 0086, 0.2.7)
     va, vk = live["route"].pop("verify_mouths_allowed"), cand["route"].pop("verify_mouths_allowed")
     assert va[:len(vk)] == vk and [(r["piece"], r["end"]) for r in va[len(vk):]] == [("grid_tertiary_74#0", "start")]
-    for k in LIVE_0_2_7_KEYS + LIVE_0_2_8_KEYS + LIVE_0_2_9_KEYS:
+    _finish_pc_pads(live, cand)
+    for k in LIVE_0_2_7_KEYS + LIVE_0_2_8_KEYS + LIVE_0_2_9_KEYS + LIVE_FINISH_PC_KEYS:
         _drop(live, k)
         _drop(cand, k)
     for l in live["layouts"] + cand["layouts"]:

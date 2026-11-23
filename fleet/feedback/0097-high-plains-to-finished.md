@@ -167,16 +167,26 @@ pavement edge read off the photo:
   (s 1,100: lines at -5.8 / +4.65 m), ledger 0059's 10.5 m. Built edge against the readings: median +0.03 m (left) /
   +0.01 m (right), p5 / p95 -0.27 / +0.43 and -0.28 / +0.39 m, 86 / 88 % within 0.3 m. Lap 3,204.7 -> 3,209.7 m.
 - **What hangs off the edges**: the 20 kerbs stay where their paint is (absolute, `kerb_section.edge_delta`); with the
-  lane now ending at their outer edge, 19 of them lie over the lane (`kerbs.built.json` out_vs_ribbon_edge -0.39..+0.48 m;
-  L s 2,843, in the merge's mouth, +1.94 m). The 1.25 m wheel path now rides five of them: drive_test slope kinks 0.62 ->
-  **1.87 /km** (6: L s 1,699-1,702, R s 627-630, L s 2,634; the worst 4.57 %/m), every one on a kerb; vertex bumps 2 -> 0;
+  lane now ending at their outer edge, every one starts inside it (`kerbs.built.json` in_vs_ribbon_edge -0.16..-1.89 m) and
+  ends within -0.39..+0.48 m of it, but L s 2,843 (+1.94 m, in the merge's mouth). The 1.25 m wheel path now rides three of
+  them: drive_test slope kinks 0.62 -> **1.87 /km** (6: L s 1,699-1,702 on the kerb L s 1,681-1,716, R s 627-630 on
+  R s 622-638, L s 2,634 at L s 2,636-2,666; the worst 4.57 %/m), every one on a kerb; vertex bumps 2 -> 0;
   severe, bumps, floating, obstructions 0. The rails: 0 modules left out but rows 3 / 8 (below); the pit wall 3.5 m clear
   of the edge. The grid and pits: 50 cars inside the road, nearest edge 2.07 -> 2.27 m. The paint: read-back 0.00 mm, the
   S/F band 11.7 m as before. road_wear_check tone r 0.8587 -> 0.874 (the road now lies on the photo's asphalt).
 
-### 2. The Full layout: not built this round
+### 2. The Full layout: its extra pieces measured, not built
 
-See "Still to do (round 3)" below: what it takes, and what is on disk for it.
+The data half is in the port (`source/full/`, nothing reads it yet): the OSM snapshot of the ten raceway ways
+(`osm_full_course.json`, 2026-10-28, ledger 0059's), 3DEP beside the north section (`corridor_3dep_north.json`, 295
+stations of native samples every 6 m x 5 m, +-60 m), and `measure_north.py` -> `north_loop.json`: To Hell On A Bobsled +
+Ladder To Heaven from the fork (node 1454637759) to the merge (node 1454637805) in the engine's connector shape, **1,001 m**,
+502 points every 2 m, both ends within 6 m of the West lap's built line. Widths read as the lap's (the same reader, the 0.3 m
+crop where it reaches, the z18 0.46 m photo to lat 39.73887): both sides read over **469 m, widths p5 / p50 / p95 10.6 /
+11.2 / 13.0 m** (the centre 2.4 m left to 1.7 m right of OSM's); **carried 11.2 m** (that median, marked "carried" per point)
+over the other 533 m: 346 m where neither side reads (the top of the loop is in no photo) and 188 m with one side only (a
+gradual verge with no edge line that the step reader does not catch). Heights 1,514.1-1,536.0 m (3DEP, a 9 m mean). The
+build itself is round 3 (below).
 
 ### 3. K-rail rows 3 and 8: not moved, not stood (Kevin's call needed)
 
@@ -231,7 +241,7 @@ binds the pair, `ship.json` syncs it. Road wear: `detail.1KERB_SIDEWALK.from` co
 ### Shared files touched
 
 `tools/edge_retrace.py` (mode "measured", opt-in: widen and agree as before), `tests/tools/test_edge_retrace_measured_surface.py`
-(the opt-in list now names High Plains). New: `tests/tools/test_high_plains_round2.py`. Not touched: assets/licenses.json
+(the opt-in list now names High Plains). New: `tests/tools/test_high_plains_round2.py` (11 tests). Not touched: assets/licenses.json
 (the concrete pair's row exists), fleet/ac-installed.json.
 
 ### Mac build against 0.1.9 (both from an empty workshop)
@@ -260,7 +270,7 @@ the AI line 2,137 -> 2,140 points, lap 98.9 -> 96.0 s (generated); the circuit d
 
 ## Still to do (round 3)
 
-- **The Full 2.55 mi layout (4,092 m on OSM).** Its extra pieces are To Hell On A Bobsled (132189631, 568 m) and Ladder To
+- **The Full 2.55 mi layout (4,092 m on OSM): the build** (its pieces are measured, item 2 above). Its extra pieces are To Hell On A Bobsled (132189631, 568 m) and Ladder To
   Heaven (289314483, 433 m): they leave the West lap at the fork (OSM node 1454637759, built s ~2,709) and rejoin it at node
   1454637805 (s ~2,831, Prarie Corkscrew's vertex 7); the Full layout skips the West's first 130 m of the Corkscrew. On disk
   for it (no download): the ten ways' OSM snapshot of 2026-10-28 and its 3DEP (heightfield to lat 39.74124, the north

@@ -201,3 +201,23 @@ def test_version_and_every_round2_key_is_high_plains_own():
         # (the Lariat binds its gravel verge on this row; no other track binds the owned concrete there)
         ov = ((cfg.get("texture_overrides") or {}).get("1KERB_SIDEWALK") or {}).get("diffuse", "")
         assert "concrete_plain" not in ov, t
+
+
+def test_full_layouts_extra_pieces_are_measured_data_nothing_reads_yet():
+    """item 2's data half: Bobsled + Ladder from the fork to the merge, in the engine's connector shape; both ends on the West
+    lap's line; the widths measured where both sides read and CARRIED (marked) elsewhere; no config or ship.json names it"""
+    d = json.loads((HP / "source" / "full" / "north_loop.json").read_text(encoding="utf-8"))
+    c, = d["connectors"]
+    assert c["name"] == "full_north" and c["kind"] == "connector"
+    assert len(c["points_xyz_m"]) == len(c["widths_m"]) == d["summary"]["points"]
+    assert 990.0 <= d["summary"]["length_m"] <= 1010.0                 # OSM: 568.3 + 432.8 m
+    assert all(10.0 <= w <= 15.0 for w in c["widths_m"])
+    assert {r["width"] for r in d["rows"]} == {"measured", "carried"}
+    carried = d["summary"]["carried_width_m"]
+    assert all(abs(r["width_m"] - carried) < 1e-6 for r in d["rows"] if r["width"] == "carried")
+    lap = json.loads((HP / "data" / "gate_centerline.json").read_text(encoding="utf-8"))["points_xyz_m"]
+    for end in (c["points_xyz_m"][0], c["points_xyz_m"][-1]):
+        near = min(math.hypot(end[0] - p[0], end[2] - p[2]) for p in lap)
+        assert near < 6.0, near                                         # the fork and the merge lie on the West lap
+    text = (HP / "track.config.json").read_text(encoding="utf-8") + (HP / "ship.json").read_text(encoding="utf-8")
+    assert "north_loop.json" not in text and len(_cfg()["layouts"]) == 1

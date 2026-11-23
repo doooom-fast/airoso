@@ -1142,3 +1142,40 @@ for the Margerum Avenue crossing with a narrow strip beside each turn lane, and 
 side and has its two openings where they really are. Known and owed: the road itself is up to 3 m off its real place
 over about 750 m (its edges were read by eye), a short island near J3 (MD12) is only a painted outline, and the painted
 lanes drop from 3 to 2 on one side in five short stretches where the road as built is too narrow.
+
+## Round 3 (items 1 + 1b + 2): 0.20.6 rehearsed green and INSTALLED, no force (the PC, 2026-11-23)
+
+- **Rehearsal** (ce61480c, empty workshop `D:/k10-scratch/rehearse_0206`, ENG `eng_0206` = eng_repro + the engine snapshot's
+  `scripts/ac/pbr.py` (git bytes md5 e414f407: the 1KERB_PAVER row and its comment, nothing else), `--no-install --skip-blend`,
+  14:11-14:48): SHIP OK, every gate exit 0. The signs: `median_rebuild` finds curb [246, 4074] and builds rows
+  [[8, 53], [67, 354], [365, 741]]; `median_tops` moves 3 tops to the paver (12 grass islands, 3 paver); treefx
+  `median_spots` moved 6; verify_race G 21,387 trees; the main kn5 gains `1KERB_PAVER_median_mat` (ksPerPixelMultiMap on
+  terracotta_median_diffuse / _normal, not the kerb) and those two textures. `kn5_ground_check` 0 double sheets on all five
+  layouts, deck +0.313. The College steps read "already carries" on the seeded 0.20.5 blend; walk-grade raises 0.
+- **Against 0.20.5's rehearsal 2:** race, race_college, race_north and both race closures EQUIVALENT; changed the main kn5
+  (the paver object), both north closures and the street kn5 (YLINE 23,909 -> 24,013 tris); the north AI lines move only along
+  Mission Gorge (point-to-line: 0.000 m elsewhere, up to 1.41 m on lap.north idx 2113-3686); race AI identical. Street
+  drive_test excursions 17 / 21 -> 16 / 19; curbs not flush 0. north_cw's est lap 205.3 -> 212.7 s is the estimate's
+  sampling (one more 1.5 m point), +0.2 s on +-6 m chords (Playbox); the same corner past Mission Gorge's J3 end reads
+  min radius 23.3 -> 15.68 m, below no floor. Bridge spans hit 273 -> 270 (race) / 269 -> 266 (college) with the race kn5
+  byte-equivalent: reported.
+- **The install** (14:52-15:29, the chain's own empty workshop `D:/k10-scratch/lm_line`; 0.20.5's kept as
+  `D:/k10-scratch/lm_line.0.20.5`): SHIP OK, all five layouts 0.20.6, 0.20.5 parked in `D:/k10-track-archive/2026-11-23_152915/`.
+  = the rehearsal: 1,136/1,136 gate rows (the workshop's name aside), every kn5 equivalent, AI identical; the 14 kn5 in AC
+  byte-identical to the build; trees came along (14 .bin, 0.20.5's list).
+- **Menu pictures.** The install brought the outline again; the five 0.20.6 renders at 0.20.2's cameras match 0.20.5's
+  pictures within 1/255 (Mission Gorge's island is in none of the five views), so 0.20.5's (faa4c5a9) went into AC; the
+  outlines in `D:/k10-track-archive/2026-11-23_153500_lm0206_pictures`.
+- **The blend: kept on the PC, not committed.** 0.20.6's install synced back `loop.blend` at 204,498,836 B, sha256
+  bd5b407c.... The push of it was refused: the repository is over its GitHub LFS budget ("This repository exceeded its LFS
+  budget"), a billing matter, Kevin's. On the Mac's option (b) the records carry everything but the blend: the committed
+  `loop.blend` stays 0.20.5's (bc7f772e..., 204,545,652 B, still pinned in `tests/tools/test_lake_murray_0099.py`), which
+  is the blend 0.20.6's rehearsal and install seeded and built from. The next empty workshop seeds 0.20.5's blend and the
+  author steps re-author it (median_rebuild finds the old islands and rebuilds them; median_tops, the College steps and
+  walk-grade are idempotent, as this rehearsal showed), so it builds the same. 0.20.6's blend is kept, not deleted, in
+  `D:/k10-track-archive/2026-11-23_lm0206_synced_back_blend/` (README there) and in `D:/k10-scratch/lm_line` while that
+  workshop stands. Until the budget is raised no session pushes new LFS objects. New synced-back records:
+  `data/median_rebuild.json` (now a seed, 100 -> 101) and 12 north race plots. The 33 older plots the sync-back dropped
+  are restored.
+- Records on `claude/lm-0206-install-20261123` (sync-back ed2dc7df without the blend, seed 85bb98d7, origin/main 9c1cb999 merged 61fce49d). Kevin's standing word on
+  the PC: "Yes and I always want newer builds".

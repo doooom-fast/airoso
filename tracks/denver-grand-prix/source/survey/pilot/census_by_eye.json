@@ -1,0 +1,17 @@
+{
+ "_doc": "Posts at the Colfax / Sherman junction read BY EYE (Claude, 2026-11-23) off the 2022 3-inch aerial at 2x, window px x 1500-2140, y 290-870 of the pilot mosaic. Pixel picks, about +-0.5 m; no second source. 'candidate' is the shadow reader's kept candidate index when it found the same post (pilot/poles.json 'k'), null when it missed it. This is the ground truth the shadow reader's recall and precision are measured against, for this one junction only.",
+ "posts": [
+  {"what": "signal mast, NW corner, arm south over Colfax westbound", "class": "signal_mast_arm", "px": [1659, 442], "arm_bearing_deg": 180, "arm_length_m_by_eye": 10.5, "candidate": null},
+  {"what": "signal mast, SW corner, arm east over Sherman, a luminaire bracket on top", "class": "signal_mast_arm", "px": [1695, 747], "arm_bearing_deg": 90, "arm_length_m_by_eye": 7.6, "candidate": 110},
+  {"what": "signal mast, SE corner, arm north over Colfax eastbound; a cabinet beside it", "class": "signal_mast_arm", "px": [1985, 732], "arm_bearing_deg": 0, "arm_length_m_by_eye": 11, "candidate": null},
+  {"what": "short post, NE corner (a pedestal or pedestrian signal: not readable from the air)", "class": "signal_pedestal_or_post", "px": [2016, 435], "candidate": null},
+  {"what": "globe lamp, north sidewalk west of Sherman", "class": "lamp_pedestrian_globe", "px": [1574, 438], "candidate": 99},
+  {"what": "lamp or post against the wall, north side", "class": "lamp_or_post", "px": [1624, 385], "candidate": null},
+  {"what": "globe lamp, south side west of Sherman (Capitol lawn)", "class": "lamp_pedestrian_globe", "px": [1559, 818], "candidate": 169},
+  {"what": "globe lamp, south side east of Sherman", "class": "lamp_pedestrian_globe", "px": [2104, 820], "candidate": 175},
+  {"what": "tall post, Sherman St east sidewalk north of Colfax (its shadow runs 5-6 m)", "class": "tall_post", "px": [1999, 371], "candidate": 83},
+  {"what": "short post, NW corner (a sign post by its size)", "class": "post", "px": [1702, 385], "candidate": 85}
+ ],
+ "reader_false_candidates_in_window": [36, 40, 56, 58, 71, 87, 149, 193, 19],
+ "reader_duplicate_in_window": [59]
+}

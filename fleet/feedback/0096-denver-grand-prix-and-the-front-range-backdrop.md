@@ -127,3 +127,11 @@ Read by Playbox from the settings files alone (no AC run): CSP 0.3.0-preview581;
 **Prediction, untested: the far clip is 20–30 km, so the 60 and 105 km walls will not draw and 25 km is borderline.**
 The Front Range skyline is formed 20–100 km out (median 42 km), so at these settings most of it would be clipped.
 Whether a track's own `ext_config.ini` can raise the far plane is not known; it is part of the test.
+
+## "It needs to look right, not just be closer" (Kevin, 2026-11-23)
+
+Asked how to fake the mountains if AC clips at 20–30 km. PLAN §3b: raising the far plane from the track's config comes
+first; failing that, a layered pull-in (14 km stays, 105 km lands at 26 km, order kept) with haze baked from the real
+distance, normals from the real surface, colour from real elevation. Worst error on the lap for the far peaks: about
+1.3–1.6° in bearing against 2.1–2.8° on a single shell. Whether the backdrop can follow the weather is the open risk.
+Acceptance is a game still beside a real photograph per sightline, and Kevin's eye.

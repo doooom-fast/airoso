@@ -173,7 +173,7 @@ def test_paddock_buildings_drop_the_duplicate_and_name_a_source_per_height():
     by = {r["key"]: r for r in rows}
     assert by["osm289314487"]["roof"] == "white"                          # bright on the 0.3 m crop, not dark
     for r in rows:
-        assert any(w in r["_h"] for w in ("shadow estimate", "official", "[invented]")), r["key"]
+        assert any(w in r["_h"] for w in ("shadow estimate", "official", "[invented]", "measured: the 2018 lidar")), r["key"]
         if r["form"] == "gable":
             assert r["ridge_h_m"] > r["wall_h_m"] >= 2.1, r["key"]
     posts = json.loads((HP / "source" / "bespoke" / "posts.race.json").read_text(encoding="utf-8"))

@@ -94,6 +94,27 @@ the south-west 85 m up. The 1 m grid agrees with the design on the line (median 
 A shape study only: no paint, lamps, trees, curbs or closed seams; the stills and the .blend stay in
 `D:/k10-scratch/lm_r2_college/proof`.
 
+## Stage B: what the authored scene holds on College (read off `loop.blend` of 0.20.2, read-only)
+
+The scratch copy is `D:/k10-scratch/lm_r2_college/project` (a copy of `lm_phase2/project`; `inspect_college.py` and
+`inspect_columns.py` beside it print this). Offsets are from the lap line, + = west.
+
+| Object | On College (v1130-1480) | What the split does to it |
+|---|---|---|
+| `ROAD` | **three columns** per station: the two edges (12.5 to 16.3 m out) and the line, all at the line's height + 0.10: one flat slab | new columns at the island's two edges; the northbound half takes the measured heights; no pavement between the island's edges |
+| `CURB` | walks outside each edge (curb, 1.8 m walk, outer drop), and the 7 m raised island at +-3.5 m where it is part of the street | the east walk rises with the northbound road; the island's curbs move to the measured island edges |
+| `1KERB_sidewalk_streetonly_median`, `1WALL_guard_streetonly_median`, `GUARDRAIL` | the island and a rail on the line; "streetonly" pieces exist in Free Roam only, because the Speedways cross here today | replaced by the planted bank; the crossover goes |
+| `MARKINGS`, `YLINE` | lane lines at +-3.7 / 7.4 / 11 m, edge lines, a yellow line on the lap line | repainted per carriageway on the new surfaces |
+| `TERRAIN` | dense (about 60 vertices across +-45 m at each station); east of the road it is cut down to the slab (the hill stands 6.7 m over the line 30 m east at v1260) | the bank between the roads and the hill east of the northbound road go to the surveyed ground |
+| `LIGHTPOST_3`, `LIGHTPOST_4`, `LIGHTS_0` | lamps about 21 to 22 m out on both sides | the east ones stand on the raised ground |
+| `1WALL_race_edge_*_college_*`, `RACE_CLOSE_*`, race kerbs | the Speedways' corridor walls and closures (collections `RACE`, `RACE_CLOSE_CW / ACW`) | rebuilt for one carriageway per direction |
+| `AUTH_bespoke` buildings | houses 20 to 36 m out on both sides | untouched; their seats on the east side need a check against the raised ground |
+
+Not read yet, and needed before authoring: which tool makes each of these (the assembler's GEN layer or a later author
+step), what `ship_track --skip-blend` re-runs on an authored scene, how `median_bands.json` / `barrier_bands.json` and
+the gates' centreline use the lap line (it will lie in the planted bank), and whether round 1's empty-workshop rebuild
+(the Mac's `claude/lm-finish-20261122`) changes where a new author step should sit.
+
 ## Next (ledger 0055, "Bounded proof" steps 3 to 7)
 
 Author both carriageways, the bank and both transitions together as one connected system, on a scratch copy; prove

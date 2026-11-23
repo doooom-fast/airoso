@@ -623,6 +623,49 @@ def plan_atlas(centroids: np.ndarray, heights: np.ndarray, overhang_m: float, sp
     return best[1]
 
 
+# --- a flat tone on named stretches (opt-in road_wear.tone.flat; ledger 0099 round 3, item 3) ----------------------------
+FLAT_SKIRT_M = 2.0     # [invented] the flat tone reaches this far past the stretch's paved edge (the atlas's bilinear
+#                        footprint and its mips read a little past the road)
+FLAT_EASE_M = 25.0     # [invented] a stretch's flat tone eases in and out over this length at its two ends
+
+
+def flat_alpha(X: np.ndarray, Y: np.ndarray, P: np.ndarray, half: np.ndarray, ease_m: float) -> np.ndarray:
+    """How much of the flat tone a world point takes, 0..1 (same shape as X): 1 on the carriageway of the polyline P
+    (N x 2: x, y) whose half widths are ``half`` (N), eased straight to 0 over ``ease_m`` at the polyline's two ends, 0
+    off it. A point belongs to its nearest segment and is on the carriageway when it lies within the half width there
+    (drawn straight along the segment). Why: Lake Murray's Mission Gorge Rd is built 1.6-3.0 m off the real road over
+    some stretches (its edges were read by eye), so the photo's tone at the built road's place is partly the real
+    verge and the real median there; those stretches take the lit-asphalt tone (ratio 1.0) instead."""
+    P = np.asarray(P, dtype=np.float64); half = np.asarray(half, dtype=np.float64)
+    pts = np.stack([np.asarray(X, dtype=np.float64).ravel(), np.asarray(Y, dtype=np.float64).ravel()], axis=1)
+    A = P[:-1]; AB = P[1:] - A
+    L = np.sqrt(np.sum(AB * AB, axis=1)); L2 = np.maximum(L * L, 1e-12)
+    S0 = np.concatenate([[0.0], np.cumsum(L)[:-1]]); total = float(L.sum())
+    out = np.zeros(len(pts), dtype=np.float32)
+    reach = float(half.max())
+    lo = P.min(axis=0) - reach; hi = P.max(axis=0) + reach
+    cand = np.nonzero((pts[:, 0] >= lo[0]) & (pts[:, 0] <= hi[0]) & (pts[:, 1] >= lo[1]) & (pts[:, 1] <= hi[1]))[0]
+    for c0 in range(0, len(cand), 20000):                  # chunked both ways: points x segments
+        idx = cand[c0:c0 + 20000]
+        q = pts[idx]
+        best_d = np.full(len(q), np.inf); best_s = np.zeros(len(q)); best_h = np.zeros(len(q))
+        r = np.arange(len(q))
+        for s0 in range(0, len(A), 64):
+            a = A[s0:s0 + 64]; ab = AB[s0:s0 + 64]; l2 = L2[s0:s0 + 64]
+            rel = q[:, None, :] - a[None, :, :]
+            t = np.clip(np.sum(rel * ab[None], axis=2) / l2[None], 0.0, 1.0)
+            d = np.sqrt(np.sum((rel - t[..., None] * ab[None]) ** 2, axis=2))
+            j = np.argmin(d, axis=1)
+            dj = d[r, j]; tj = t[r, j]; k = s0 + j
+            better = dj < best_d
+            best_d = np.where(better, dj, best_d)
+            best_s = np.where(better, S0[k] + tj * L[k], best_s)
+            best_h = np.where(better, half[k] + tj * (half[k + 1] - half[k]), best_h)
+        ease = np.clip(np.minimum(best_s, total - best_s) / ease_m, 0.0, 1.0) if ease_m > 0 else np.ones(len(q))
+        out[idx] = np.where(best_d <= best_h, ease, 0.0)
+    return out.reshape(np.shape(X))
+
+
 def cell_keys(centroids: np.ndarray, heights: np.ndarray, plan: dict, spec: dict) -> list[tuple[int, int, int]]:
     C = plan["cell_m"]
     return list(zip(np.floor(centroids[:, 0] / C).astype(int).tolist(), np.floor(centroids[:, 1] / C).astype(int).tolist(),

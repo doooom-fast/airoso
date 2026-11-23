@@ -14,6 +14,49 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
+## 2026-11-23 (PC) — WIRING + EXCLUSION: road_wear_check judges a lanes bake (lane_rubber; tone with the lanes taken off) and leaves declared flat-tone stretches out of tone; no threshold moved (ledger 0099 round 3, item 3; opt-in, Lake Murray)
+
+A street's wear lines are its lanes (ledger 0084's owed "lanes" source, tools/road_lanes.py), and the lanes cover the
+whole road. Two of the gate's rows assumed a racing line and could not judge that. Both changes apply only where the
+bake's own record (data/road_wear.json) declares lanes or flat stretches; every other track's rows run as they did.
+
+| Row | Before | With road_wear.lanes |
+|---|---|---|
+| tone | Pearson r of the shipped atlas against the aerial at road triangles "off the line" (further than the rubber's reach + 0.5 m from any declared line), r >= tone_r_min 0.60 | lanes leave no asphalt off the line (they stand 3.65 m apart and the reach is 3.0 m), so no sample would be left. Each sample's atlas luminance is divided by what the declared lanes leave of it (1 - the gate's own reading of their rubber there, make_lane_darkness: wear_at restated, as make_darkness). The same r, the same 0.60. The racing-line exclusion still applies where a line is declared too |
+| rubber | the mean cross-line profile at a racing line's high-rubber stations, against a reference 3-4 m out | not run when no racing line is declared (a lane's neighbours stand at that reference). **lane_rubber** in its place: across every tenth point of every lane, +-1.75 m, the shipped darkening against the section's two outer samples, set against the gate's own reading of the declared lanes at the same points; the mean profile's centroid within line_offset_max_m 0.15 m of the declared one, its depth over the wheel paths (|u| <= 1.25 m) within depth_min_frac 0.5 .. depth_max_frac 1.5 of the declared one. The three thresholds are rubber's own, unchanged |
+
+**The exclusion (road_wear.tone.flat).** Named stretches of a connector take the lit-asphalt tone (ratio 1.0) instead of
+the photo's. The tone row leaves samples on those stretches out and reports how many: there the macro is DECLARED not to
+follow the photograph, so asking it to would fail a correct bake. Every other row judges those stretches as any road
+(lane_rubber included: the lanes are drawn there as everywhere).
+
+*The measurement that justifies it:* Lake Murray's Mission Gorge Rd is built 1.6-3.0 m off the real road over part of
+its length (its edges were read by eye; ledger 0099 round 3, item 2, the G10's outer curbs). Per 50 m of piece C, the
+share of the BUILT carriageway's lit photo samples that do not read as asphalt
+(`source/road_wear/tone_piece.py` -> `tone_piece_C.json`): 0.00-0.08 (median 0.02) where the plan's edges are right,
+0.14-0.25 over s 1250-2000. The stretches are the 19 bins over 0.12 **[invented]** (950 m of 2,228). They are owed with
+the road-edge round, and the list shrinks to nothing when the road stands where the real one does.
+
+What could go vacuous, and what holds it: a config could name a flat stretch over the whole road and so empty the tone
+row. The row reports `samples` and `samples_left_out_on_flat_tone_stretches` on every run, and Lake Murray's list is
+pinned by a test to the measured bins. Teeth: tests/tools/test_road_wear_lanes_0099.py (the gate's reading of the lanes
+against the formula; a flat stretch's extent; lane_rubber passes the bake it is given and fails a road with no band, a
+band 0.5 m off its lanes, and a band twice as deep; the four thresholds at their old values).
+
+## 2026-11-23 (PC) — WIRING: the road-wear bake takes lanes as its lines and a flat tone on named stretches (ledger 0099 round 3, item 3; opt-in, no gate threshold touched)
+
+`tools/road_wear_blend.py`, both opt-in, both absent on every track before this:
+
+- **road_wear.lanes** (step 4d): the lines are the lanes. The bake runs `tools/road_lanes.py` (data/road_wear.lanes.json)
+  and takes its `bake_lines()`: one line per lane, both directions, uniform rubber. No racing line is made unless
+  `road_wear.lines` names one. Refused with road_wear.rubber "photo" / "none" (those draw nothing).
+- **road_wear.tone.flat** (step 3b): rows of a named connector take the tone ratio 1.0, eased over `ease_m` (25 m
+  **[invented]**) at the stretch's ends and reaching 2 m **[invented]** past its paved edge
+  (`scripts/aerial/road_wear.flat_alpha`). Refused without an aerial, and for a road or rows the data does not hold.
+  The bake records each stretch's line, half widths and texel counts in data/road_wear.json (`stats.flat_tone`), which
+  is what the gate reads.
+- `tools/road_lanes.py` gains College Ave's split-zone reader and no longer needs numpy to load.
+
 ## 2026-11-23 (PC) — WIRING: scenery.treefx.median_spots gets a third list, "move"; one new refusal, no threshold moved (ledger 0099 round 3, item 2; opt-in, Lake Murray)
 
 Mission Gorge's island was corrected to the lidar's faces, so six median spots the lidar saw a real plant at no longer

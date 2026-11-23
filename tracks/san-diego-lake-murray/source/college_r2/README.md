@@ -119,3 +119,9 @@ the gates' centreline use the lap line (it will lie in the planted bank), and wh
 
 Author both carriageways, the bank and both transitions together as one connected system, on a scratch copy; prove
 connected pavement through College / Navajo / Waring in both directions on the built proof; only then integrate.
+
+## The split as data (step 1, `college_split_data.py` -> `college_split.data.json`, `college_split.png`)
+
+The two roads as lap data, no Blender: the mainline moved onto the southbound road, the northbound road as the piece
+`college_nb`, the Speedway lap `college` with its two declared joins. `python college_split_data.py <project> [--write]`;
+`python college_split_plot.py` draws the picture. The numbers and what was learned are in `STEP-DESIGN.md`, "Step 1 done".

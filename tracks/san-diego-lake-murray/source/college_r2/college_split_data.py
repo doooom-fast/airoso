@@ -1,0 +1,364 @@
+"""College split, order of work step 1: THE DATA (no Blender, no scene). STEP-DESIGN.md has the why.
+
+    python college_split_data.py <project dir> [--write]
+
+Computes, from college_design.json (the measured section) and the centreline's own widths (the built outer edges):
+
+  the MAINLINE through the split = the southbound carriageway. Vertex NUMBERS are kept; v1131..v1475 move sideways.
+      two roads   v1172..v1444   west edge = the built west edge, east edge = the island's west side (measured)
+      south fork  v1130..v1172   the east edge runs from the built east edge (v1130, the whole road) to the island's
+                                 nose; inside a fork the line is a reference only (the fork deck paves it)
+      north fork  v1444..v1476   the same, from the island's tail out to the built east edge
+      line = the midline of [east edge, west edge], width = west - east, height = the measured surface there less LIFT
+  the NORTHBOUND PIECE `college_nb` (a connectors.local.json record), one point per mainline station v1172..v1444:
+      east edge = the built east edge, west edge = the island's east side; midline, width, measured height less LIFT
+  the island: `median_bands.json` island_w_by_vertex = 0 for v1117..v1475 (the real road has none in the two forks,
+      and through the split the bank is plain ground between two roads)
+  the SPEEDWAY LAP `race.laps.college`: MAINLINE 0..1130, college_nb, MAINLINE 1476..4497, with two DECLARED joins of
+      exactly one point per mainline station (v1131..1171 and v1445..1475), so the lap's vertex k IS the mainline's
+      vertex k and every vertex-keyed race declaration carries over unchanged
+  the metre-keyed entries of track.config.json after the split, each with its old and new station.
+
+Without --write it only reports and writes college_split.data.json beside this file. With --write it rewrites the
+project's data (each file kept once as <name>.pre-split) and adds race.laps.college to the PROJECT's
+track.config.json: a scratch workshop only, never airoso's own config."""
+import json
+import math
+import shutil
+import sys
+from pathlib import Path
+
+HERE = Path(__file__).resolve().parent
+LIFT = 0.10                       # the road rides this far over the centreline's y (tools/race_furniture.py LIFT)
+A0, NOSE, TAIL, A1 = 1130, 1172, 1444, 1476
+ISLAND_OFF = (1117, 1475)         # island width 0 on the mainline, inclusive
+PIECE = "college_nb"
+LAP = "college"
+
+proj = Path(sys.argv[1])
+WRITE = "--write" in sys.argv[2:]
+D = {r["v"]: r for r in json.loads((HERE / "college_design.json").read_text(encoding="utf-8"))["stations"]}
+data = proj / "data"
+src_cl = data / ("centerline.local.json.pre-split" if (data / "centerline.local.json.pre-split").exists() else "centerline.local.json")
+cl = json.loads(src_cl.read_text(encoding="utf-8"))
+P0 = [tuple(p) for p in cl["points_xyz_m"]]
+W0 = list(cl["widths_m"])
+n_all = len(P0)
+closed = math.dist(P0[0], P0[-1]) < 1e-6
+m = n_all - 1 if closed else n_all
+
+
+def frame(v):
+    """the OLD line's left normal at v (x east, z north): n = (-tz, tx) of the central difference"""
+    a, b = P0[(v - 1) % m], P0[(v + 1) % m]
+    tx, tz = b[0] - a[0], b[2] - a[2]
+    L = math.hypot(tx, tz) or 1.0
+    return -tz / L, tx / L
+
+
+def smooth(t):
+    t = max(0.0, min(1.0, t))
+    return t * t * (3.0 - 2.0 * t)
+
+
+def west(v):
+    """the built road's west edge, as an offset from the OLD line: ROAD's edge column, half the centreline's width.
+    (college_edges.json's built_to_m / built_from_m are the same edge floored to the lidar's 0.5 m cells: they step
+    by half a metre from station to station and put a 6 degree kink in a midline taken from them.)"""
+    return 0.5 * W0[v]
+
+
+def east(v):
+    return -0.5 * W0[v]
+
+
+def surface(v, off):
+    """the design's surface height at (v, offset): linear through its four control points, flat outside them"""
+    r = D[v]
+    pts = sorted((r[k]["offset_m"], r[k]["y"]) for k in ("nb_outer", "nb_inner", "sb_inner", "sb_outer"))
+    if off <= pts[0][0]:
+        return pts[0][1]
+    for (o0, y0), (o1, y1) in zip(pts, pts[1:]):
+        if off <= o1:
+            return y0 if o1 - o0 < 1e-9 else y0 + (y1 - y0) * (off - o0) / (o1 - o0)
+    return pts[-1][1]
+
+
+def at(v, off, y):
+    nx, nz = frame(v)
+    return (P0[v][0] + off * nx, y, P0[v][2] + off * nz)
+
+
+SMOOTH_PASSES = 24                # [invented] 1-2-1 passes over an edge's sideways offset (about +-15 m), ends held
+
+
+def relax(vals, passes=SMOOTH_PASSES):
+    """an edge's sideways offset per station, smoothed with its two ends held: the measured edges step by decimetres
+    from station to station, and a road edge must not. A convex average, so a series that is never negative stays so."""
+    a = list(vals)
+    for _ in range(passes):
+        b = a[:]
+        for k in range(1, len(a) - 1):
+            b[k] = 0.25 * a[k - 1] + 0.5 * a[k] + 0.25 * a[k + 1]
+        a = b
+    return a
+
+
+def grade(pts):
+    """a polyline's grades in percent: [steepest down, steepest up, largest step between consecutive segments]"""
+    g = [100.0 * (b[1] - a[1]) / math.hypot(b[0] - a[0], b[2] - a[2]) for a, b in zip(pts, pts[1:])]
+    return [round(min(g), 2), round(max(g), 2), round(max(abs(y - x) for x, y in zip(g, g[1:])), 2)]
+
+
+def turn_deg(pts):
+    """the largest change of heading between consecutive segments of a polyline, degrees"""
+    worst = 0.0
+    for a, b, c in zip(pts, pts[1:], pts[2:]):
+        h0 = math.atan2(b[0] - a[0], b[2] - a[2])
+        h1 = math.atan2(c[0] - b[0], c[2] - b[2])
+        worst = max(worst, abs((h1 - h0 + math.pi) % (2 * math.pi) - math.pi))
+    return math.degrees(worst)
+
+
+def fork_offsets(v_out, v_in, c_in, slope_in):
+    """a line's sideways offset through a fork, per station from the untouched row v_out (offset 0, running straight on)
+    to the row v_in where a carriageway begins (offset c_in, drifting by slope_in per station INTO the carriageway): a
+    cubic that meets both ends in place and in direction. Inside a fork the line is a reference only (the deck paves
+    it), so it takes nothing from the built edges there: the built road's edge has a 6 degree corner at v1171 and a
+    midline taken from it carried half of that."""
+    L = abs(v_in - v_out)
+    step = 1 if v_in > v_out else -1
+    out = {}
+    for k in range(L + 1):
+        s = k / L
+        out[v_out + step * k] = c_in * (3.0 * s * s - 2.0 * s ** 3) + L * slope_in * (s ** 3 - s * s)
+    return out
+
+
+# --- the mainline -----------------------------------------------------------------------------------------------------
+# Through the two roads EDGES are smoothed, not centrelines. The WEST edge is the built one exactly as it stands (its
+# column in ROAD does not move sideways, the built walk keeps its place); the EAST edge is the measured island side,
+# relaxed with its two ends (the nose, the tail) held; the line is their midline. Smoothing the midline instead moved
+# the inner edge by twice the correction and laid the two roads over each other by 0.24 m at the nose.
+ZONE = range(A0, A1 + 1)
+sb_east = dict(zip(range(NOSE, TAIL + 1), relax([D[v]["sb_inner"]["offset_m"] for v in range(NOSE, TAIL + 1)])))
+main_off = {v: 0.5 * (west(v) + sb_east[v]) for v in range(NOSE, TAIL + 1)}
+main_off.update(fork_offsets(A0, NOSE, main_off[NOSE], main_off[NOSE + 1] - main_off[NOSE]))
+main_off.update(fork_offsets(A1, TAIL, main_off[TAIL], main_off[TAIL - 1] - main_off[TAIL]))
+blend_t = {v: 1.0 if NOSE <= v <= TAIL else smooth((v - A0) / (NOSE - A0)) if v < NOSE else smooth((A1 - v) / (A1 - TAIL))
+           for v in ZONE}
+
+
+def heights(off):
+    """a line's height per station of the zone: the BUILT line's height plus the relaxed departure of the measured
+    surface (less LIFT) from it, the departure eased in over the forks and zero on the two outer rows. The departure is
+    smoothed, never the road: sampled raw, the measured section puts 2 cm of noise on every station (grade steps of 2
+    points between segments, against the built line's 0.6), and smoothing heights themselves would shave the crest."""
+    dep = [blend_t[v] * (surface(v, off[v]) - LIFT - P0[v][1]) for v in ZONE]
+    dep[0] = dep[-1] = 0.0
+    return {v: P0[v][1] + d for v, d in zip(ZONE, relax(dep))}
+
+
+main_y = heights(main_off)
+main_pts, main_w = {}, {}
+for v in ZONE:
+    if v in (A0, A1):                            # the two outer rows are the untouched road
+        main_pts[v], main_w[v] = P0[v], W0[v]
+    else:                                        # width = twice (built west edge - line): the west edge never moves
+        main_pts[v], main_w[v] = at(v, main_off[v], main_y[v]), 2.0 * (west(v) - main_off[v])
+P1 = list(P0)
+W1 = list(W0)
+for v in range(A0 + 1, A1):                     # nothing outside the zone is written, the closing point included
+    P1[v], W1[v] = main_pts[v], main_w[v]
+
+# --- the northbound piece and the Speedway lap's two joins -------------------------------------------------------------------
+# The piece's EAST edge is the built east edge as it stands; its WEST edge is the mainline's east edge less the bank's
+# width, and the bank's width (measured, never negative) is relaxed with its two ends held: so the roads cannot
+# overlap, and at the nose and the tail the bank is exactly as wide as it was measured.
+# The lap through the zone is ONE line: the south join (one point per mainline station), the piece, the north join. Its
+# sideways offset is the piece's midline between the nose and the tail and the same cubic as the mainline's fork line
+# outside them; its heights are one relaxed departure from the built line over the whole zone.
+raw_b = [D[v]["sb_inner"]["offset_m"] - D[v]["nb_inner"]["offset_m"] for v in range(NOSE, TAIL + 1)]
+if min(raw_b) < -1e-9:
+    raise SystemExit(f"college_design.json: the two inner edges cross (bank {min(raw_b):.3f} m)")
+bank_w = relax(raw_b)
+nb_west = {v: sb_east[v] - bank_w[k] for k, v in enumerate(range(NOSE, TAIL + 1))}
+lap_off = {v: 0.5 * (nb_west[v] + east(v)) for v in range(NOSE, TAIL + 1)}
+lap_off.update(fork_offsets(A0, NOSE, lap_off[NOSE], lap_off[NOSE + 1] - lap_off[NOSE]))
+lap_off.update(fork_offsets(A1, TAIL, lap_off[TAIL], lap_off[TAIL - 1] - lap_off[TAIL]))
+lap_y = heights(lap_off)
+lap_zone = {v: P0[v] if v in (A0, A1) else at(v, lap_off[v], lap_y[v]) for v in ZONE}
+piece_off = [lap_off[v] for v in range(NOSE, TAIL + 1)]
+piece_pts = [lap_zone[v] for v in range(NOSE, TAIL + 1)]
+piece_w = [nb_west[v] - east(v) for v in range(NOSE, TAIL + 1)]
+edge_dev = {"sb_inner_max_m": max(abs(sb_east[v] - D[v]["sb_inner"]["offset_m"]) for v in range(NOSE, TAIL + 1)),
+            "nb_inner_max_m": max(abs(nb_west[v] - D[v]["nb_inner"]["offset_m"]) for v in range(NOSE, TAIL + 1))}
+height_dev = {"mainline_max_m": max(abs(main_y[v] - (surface(v, main_off[v]) - LIFT)) for v in range(NOSE, TAIL + 1)),
+              "piece_max_m": max(abs(lap_y[v] - (surface(v, lap_off[v]) - LIFT)) for v in range(NOSE, TAIL + 1))}
+south = [(v, lap_zone[v]) for v in range(A0, NOSE + 1)]            # mainline v1130 -> the piece's first point
+north = [(v, lap_zone[v]) for v in range(TAIL, A1 + 1)]            # the piece's last point -> mainline v1476
+joins = [{"id": "college_south_fork", "from": ["MAINLINE", A0], "to": [PIECE, 0],
+          "points_xyz_m": [[round(c, 4) for c in p] for _v, p in south]},
+         {"id": "college_north_fork", "from": [PIECE, len(piece_pts) - 1], "to": ["MAINLINE", A1],
+          "points_xyz_m": [[round(c, 4) for c in p] for _v, p in north]}]
+lap = {"pieces": [{"line": "MAINLINE", "from": 0, "to": A0}, {"line": PIECE, "from": 0, "to": len(piece_pts) - 1},
+                  {"line": "MAINLINE", "from": A1, "to": m - 1}],
+       "joins": joins, "join_spacing_m": 3.0}
+
+
+# --- stations: old and new ----------------------------------------------------------------------------------------------
+def stations(P):
+    s = [0.0]
+    for k in range(1, m):
+        s.append(s[-1] + math.hypot(P[k][0] - P[k - 1][0], P[k][2] - P[k - 1][2]))
+    return s
+
+
+S0, S1 = stations(P0), stations(P1)
+
+
+def remap(s_old):
+    """an old station (m along the old line) -> the same place along the new line"""
+    lo, hi = 0, m - 1
+    while hi - lo > 1:
+        mid = (lo + hi) // 2
+        if S0[mid] <= s_old:
+            lo = mid
+        else:
+            hi = mid
+    f = 0.0 if S0[hi] == S0[lo] else (s_old - S0[lo]) / (S0[hi] - S0[lo])
+    return S1[lo] + f * (S1[hi] - S1[lo])
+
+
+cfg_path = proj / "track.config.json"
+cfg = json.loads(cfg_path.read_text(encoding="utf-8"))
+keyed = []
+
+
+def walk(o, path):
+    if isinstance(o, dict):
+        for k, v in o.items():
+            if not k.startswith("_"):
+                walk(v, path + "." + k)
+    elif isinstance(o, list):
+        nums = [x for x in o if isinstance(x, (int, float)) and not isinstance(x, bool)]
+        key = path.rsplit(".", 1)[-1]
+        if nums and len(nums) == len(o) and len(o) <= 4 and (key.endswith("_m") or key == "s_m"):
+            if any(x > S0[A0] for x in nums) and max(nums) <= S0[-1] + 50:
+                keyed.append((path, o))
+        else:
+            for i, v in enumerate(o):
+                walk(v, f"{path}[{i}]")
+
+
+for top in ("terrain", "road_datum"):
+    walk(cfg.get(top) or {}, "." + top)
+shift = [{"path": p, "old": o, "new": [round(remap(x), 1) if x > S0[A0] else x for x in o]} for p, o in keyed]
+
+lat = [abs(main_off[v]) for v in range(A0, A1 + 1)]
+step_max = max(math.hypot(P1[v][0] - P1[v - 1][0], P1[v][2] - P1[v - 1][2]) for v in range(A0, A1 + 1))
+step_min = min(math.hypot(P1[v][0] - P1[v - 1][0], P1[v][2] - P1[v - 1][2]) for v in range(A0, A1 + 1))
+kink = turn_deg(P1[A0 - 3:A1 + 4])
+kink_old = turn_deg(P0[A0 - 3:A1 + 4])
+lap_pts = P1[:A0 + 1] + [p for _v, p in south[1:-1]] + piece_pts + [p for _v, p in north[1:-1]] + P1[A1:m]
+lap_len = sum(math.hypot(b[0] - a[0], b[2] - a[2]) for a, b in zip(lap_pts, lap_pts[1:] + lap_pts[:1]))
+lap_seg = [math.hypot(b[0] - a[0], b[2] - a[2]) for a, b in zip(lap_pts[A0 - 1:A1 + 1], lap_pts[A0:A1 + 2])]
+report = {
+    "rows": {"south_fork": [A0, NOSE], "two_roads": [NOSE, TAIL], "north_fork": [TAIL, A1]},
+    "smoothing": {"passes_121": SMOOTH_PASSES, "what": "the two inner edges and the bank's width; the outer edges are the built ones, unmoved",
+                  "inner_edge_off_the_measured_edge_max_m": {k: round(x, 2) for k, x in edge_dev.items()},
+                  "built_road_middle_off_the_line_at_outer_rows_m": [round(0.5 * (west(A0) + east(A0)), 3), round(0.5 * (west(A1) + east(A1)), 3)]},
+    "heights": {"line_off_the_measured_surface_max_m": {k: round(x, 3) for k, x in height_dev.items()},
+                "grade_pct_min_max_and_largest_step_between_segments": {
+                    "built_line": grade(P0[A0 - 3:A1 + 4]), "mainline": grade(P1[A0 - 3:A1 + 4]),
+                    "lap": grade(lap_pts[A0 - 3:A1 + 4])}},
+    "mainline": {"vertices_moved": A1 - A0 - 1, "lateral_max_m": round(max(lat), 2),
+                 "width_m": {"at_nose": round(main_w[NOSE], 2), "at_tail": round(main_w[TAIL], 2),
+                             "two_roads_min": round(min(main_w[v] for v in range(NOSE, TAIL + 1)), 2),
+                             "two_roads_max": round(max(main_w[v] for v in range(NOSE, TAIL + 1)), 2)},
+                 "segment_m": {"min": round(step_min, 2), "max": round(step_max, 2)},
+                 "largest_turn_between_segments_deg": {"new": round(kink, 2), "old": round(kink_old, 2)},
+                 "lap_length_m": {"old": round(S0[-1], 1), "new": round(S1[-1], 1), "change": round(S1[-1] - S0[-1], 2)}},
+    "bank_between_the_roads_m": {"min": round(min(bank_w), 2), "at_nose": round(bank_w[0], 2), "at_tail": round(bank_w[-1], 2),
+                                 "max": round(max(bank_w), 2)},
+    "piece": {"name": PIECE, "points": len(piece_pts), "width_m": {"min": round(min(piece_w), 2), "max": round(max(piece_w), 2),
+                                                                     "at_nose": round(piece_w[0], 2), "at_tail": round(piece_w[-1], 2)},
+              "largest_turn_between_segments_deg": round(turn_deg(piece_pts), 2),
+              "over_mainline_m": {"max": round(max(piece_pts[k][1] - main_pts[NOSE + k][1] for k in range(len(piece_pts))), 2),
+                                  "at_nose": round(piece_pts[0][1] - main_pts[NOSE][1], 2),
+                                  "at_tail": round(piece_pts[-1][1] - main_pts[TAIL][1], 2)}},
+    "lap": {"id": LAP, "south_join_points": len(south) - 2, "north_join_points": len(north) - 2,
+            "vertices": len(lap_pts), "mainline_vertices": m,
+            "largest_turn_between_segments_deg": round(turn_deg(lap_pts[A0 - 3:A1 + 4]), 2),
+            "segment_m": {"min": round(min(lap_seg), 2), "max": round(max(lap_seg), 2)},
+            "length_m": round(lap_len, 1), "against_the_mainline_m": round(lap_len - S1[-1] - math.hypot(P1[0][0] - P1[m - 1][0], P1[0][2] - P1[m - 1][2]), 2),
+            "join_ends_off_their_piece_ends_m": [round(math.dist(south[0][1], P1[A0]), 4), round(math.dist(south[-1][1], piece_pts[0]), 4),
+                                                 round(math.dist(north[0][1], piece_pts[-1]), 4), round(math.dist(north[-1][1], P1[A1]), 4)]},
+    "island_w_zero": list(ISLAND_OFF), "station_keyed": shift,
+}
+out = {"what": "College split, the data (college_split_data.py)", "report": report, "lap": lap,
+       "piece": {"name": PIECE, "kind": "connector", "points_xyz_m": [[round(c, 4) for c in p] for p in piece_pts],
+                 "widths_m": [round(w, 3) for w in piece_w]},
+       "edges": {"_doc": "offsets from the OLD line per station of the two roads, + = west: what the scene rows are built to "
+                         "(the mainline row = sb_west, its line, sb_east; the piece row = nb_west, its line, nb_east)",
+                 "v": list(range(NOSE, TAIL + 1)),
+                 "sb_west_m": [round(west(v), 3) for v in range(NOSE, TAIL + 1)], "sb_east_m": [round(sb_east[v], 3) for v in range(NOSE, TAIL + 1)],
+                 "nb_west_m": [round(nb_west[v], 3) for v in range(NOSE, TAIL + 1)], "nb_east_m": [round(east(v), 3) for v in range(NOSE, TAIL + 1)]},
+       "built_line_y": [round(P0[v][1], 4) for v in ZONE],
+       "lap_zone": {"_doc": "the Speedway lap through the zone, one point per mainline station (south join, the piece, north join)",
+                    "from_v": A0, "to_v": A1, "offset_m": [round(lap_off[v], 3) for v in ZONE],
+                    "points_xyz_m": [[round(c, 4) for c in lap_zone[v]] for v in ZONE]},
+       "mainline": {"from_v": A0, "to_v": A1, "points_xyz_m": [[round(c, 4) for c in P1[v]] for v in range(A0, A1 + 1)],
+                    "widths_m": [round(W1[v], 3) for v in range(A0, A1 + 1)], "offset_m": [round(main_off[v], 3) for v in range(A0, A1 + 1)]}}
+(HERE / "college_split.data.json").write_text(json.dumps(out, indent=1), encoding="utf-8")
+print(json.dumps(report, indent=1))
+
+if WRITE:
+    def keep(p):
+        b = p.with_name(p.name + ".pre-split")
+        if not b.exists():
+            shutil.copy2(p, b)
+
+    def load(name):
+        p = data / name
+        b = p.with_name(p.name + ".pre-split")
+        return p, json.loads((b if b.exists() else p).read_text(encoding="utf-8"))
+
+    p, j = load("centerline.local.json")
+    keep(p)
+    j["points_xyz_m"] = [[round(c, 4) for c in q] for q in P1]
+    j["widths_m"] = [round(w, 3) for w in W1]
+    p.write_text(json.dumps(j), encoding="utf-8")
+    for name in ("finished_centerline.json", "gate_centerline.json"):
+        p, j = load(name)
+        keep(p)
+        old = j["points_xyz_m"]
+        sgn = 1.0 if abs(old[A0][2] - P0[A0][2]) < 1e-3 else -1.0          # finished carries z negated, gate does not
+        if abs(old[A0][2] - sgn * P0[A0][2]) > 1e-3 or abs(old[A0][0] - P0[A0][0]) > 1e-3:
+            raise SystemExit(f"{name}: v{A0} is not the centreline's point in either z sign")
+        for v in range(A0 + 1, A1):
+            old[v] = [round(P1[v][0], 4), round(P1[v][1], 4), round(sgn * P1[v][2], 4)]
+            j["widths_m"][v] = round(W1[v], 3)
+        p.write_text(json.dumps(j), encoding="utf-8")
+    p, j = load("median_bands.json")
+    keep(p)
+    for v in range(ISLAND_OFF[0], ISLAND_OFF[1] + 1):
+        j["island_w_by_vertex"][v] = 0.0
+    runs = []                                    # the record of island runs follows: the College run is two runs now
+    for r in j.get("runs") or []:
+        if r["i"] < ISLAND_OFF[0] and r["j"] > ISLAND_OFF[1]:
+            runs += [dict(r, j=ISLAND_OFF[0] - 1), dict(r, i=ISLAND_OFF[1] + 1)]
+        else:
+            runs.append(r)
+    j["runs"] = runs
+    p.write_text(json.dumps(j), encoding="utf-8")
+    p, j = load("connectors.local.json")
+    keep(p)
+    conns = j["connectors"] if isinstance(j, dict) and "connectors" in j else j
+    conns[:] = [c for c in conns if c.get("name") != PIECE] + [out["piece"]]
+    p.write_text(json.dumps(j), encoding="utf-8")
+    keep(cfg_path)
+    c2 = json.loads(cfg_path.with_name(cfg_path.name + ".pre-split").read_text(encoding="utf-8"))
+    c2.setdefault("race", {}).setdefault("laps", {})[LAP] = lap
+    cfg_path.write_text(json.dumps(c2, indent=2), encoding="utf-8")
+    print("[written]", proj)

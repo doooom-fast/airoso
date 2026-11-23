@@ -152,3 +152,77 @@ set in its real direction, as that tool already writes each direction as its own
 3. The two fork decks, their curbs and seams; `verify_pads` on the built OBJ of the scratch scene.
 4. Ground, curbs, walks, paint, lamps; then the race steps of the chain in the scratch workshop.
 5. A full rehearsal through the Mac's queue.
+
+## Step 1 done: the data (2026-11-22)
+
+`college_split_data.py` (pure Python, no Blender) computes it, `college_split.data.json` is its output and
+`college_split.png` the picture of it. `--write` puts it into a project's data; so far only into the scratch copy
+`D:/k10-scratch/lm_r2_college/project` (each file kept once beside itself as `<name>.pre-split`).
+
+What `--write` changes, checked against the pre-split files:
+
+- `centerline.local.json`, `finished_centerline.json`, `gate_centerline.json`: 345 vertices moved (v1131-1475) and
+  their 345 widths. Nothing else: 4,499 points with the closing one, every other point, width and key identical.
+- `median_bands.json`: island width 0 on v1117-1475 (359 vertices, were 4.39 to 7.0 m); the College entry of `runs`
+  becomes two (825-1116 and 1476-1509).
+- `connectors.local.json`: one record added, `college_nb` (273 points and widths); the 34 others unchanged.
+- the project's own `track.config.json`: `race.laps.college` added, nothing else.
+
+How the lines are made. Each rule is there because the simpler one measured wrong:
+
+| Tried first | What it measured | What the script does now |
+|---|---|---|
+| Line = midline of the raw measured edges | 7.8 deg turn between 3 m segments (the built line: 1.08) | the inner edges are relaxed (1-2-1, 24 passes, ends held) |
+| Relax the midline itself | the inner edge moves by twice the correction: the two roads overlap 0.24 m at the nose | relax the EDGES; the northbound inner edge = the southbound one less the bank's width, and the bank's width is relaxed with its ends held, so it is never negative |
+| Built outer edges from `college_edges.json` | 5.9 deg: `built_from_m` / `built_to_m` are floored to the lidar's 0.5 m cells | built outer edge = half the centreline's width (ROAD's own edge column) |
+| Fork line = midline of the built edges | 3.3 deg at v1171: the built road's own edge has a 6 deg corner there | in a fork the line is a cubic that meets both ends in place and in direction; it takes nothing from the built edges |
+| Heights sampled raw from the measured section | grade steps of 2.1 points between segments (the built line: 0.57) | height = the built line's height + the relaxed departure of the measured surface from it (the departure is smoothed, never the road) |
+
+`SMOOTH_PASSES = 24` (about +-10 m along the road) is `[invented]`.
+
+The numbers (`college_split.data.json` `report`):
+
+| | Built line | Mainline (southbound road) | Lap `college` (joins + `college_nb`) |
+|---|---|---|---|
+| Largest turn between segments | 1.08 deg | 1.53 deg | 1.39 deg |
+| Steepest grade down / up | -8.16 / +8.76 % | -8.56 / +8.76 % | -9.12 / +8.76 % |
+| Largest grade step between segments | 0.57 points | 0.79 | 0.83 |
+| Segment length | 3.0 m | 2.94 to 3.11 m | 2.72 to 3.28 m |
+| Width through the two roads | 25 to 32.5 m (whole road) | 9.99 to 15.34 m | 8.36 to 13.8 m |
+
+- The mainline moves up to 10.67 m west; its length grows by 1.93 m (13,471.3 to 13,473.2 m to the last vertex).
+- The northbound road rides up to 5.81 m over the southbound one; 0.58 m where the island begins, 0.57 m where it ends.
+- The bank between them: 0.35 m at the nose, up to 12.18 m, 0.30 m at the tail.
+- After smoothing the inner edges stand up to 0.38 m (southbound) and 0.73 m (northbound) off the measured edges, and
+  the line heights up to 0.074 m and 0.095 m off the measured surface.
+
+The lap. `race_lap.stitch(proj, cfg, "college")` on the scratch project: 4,498 lap vertices, the mainline's own count;
+both declared joins accepted (their ends 0.000 m off the piece ends; 41 and 31 points, 127.3 m and 96.7 m); every lap
+vertex taken from the mainline has the mainline's number, and the piece is lap v1172-1444; lap length 13,472.9 m.
+Mission Gorge Speedway's lap (`north`) stitched again on the same data is identical to its `data/lap.north.json`
+(0.0 m, same widths, same islands).
+
+Metre-keyed config entries after the zone (the rest of `terrain.ground_release.zones` ends at 2,745 m, before the
+zone's 3,386 m, or is keyed by vertex, so none of it shifts):
+
+| Entry | Old (m) | New (m) |
+|---|---|---|
+| `road_datum.decks[1].deck_m` | 13347.0, 13424.0 | 13348.9, 13425.9 |
+| `road_datum.decks[1].window_m` | 13322.0, 13432.0 | 13323.9, 13433.9 |
+| `road_datum.decks[2].deck_m` | 13432.0, 13457.0 | 13433.9, 13458.9 |
+| `road_datum.decks[2].window_m` | 13424.0, 13472.0 | 13425.9, 13473.9 |
+| `road_datum.profiles[1].window_m` | 13280.0, 230.0 | 13281.9, 230.0 |
+
+Found for the next steps:
+
+1. **The forks' other road is not a mouth the lap knows.** Stitch skips both ("MAINLINE beyond v1130" and "MAINLINE
+   before v1476": "the branch is the lap"), because its probe 10 m past the fork row still stands on the lap's own
+   pavement. So the no-route gate will not ask on its own that the other carriageway is sealed: the southbound road
+   at the nose and the tail for Speedway, the northbound piece's two ends for Reverse. Those closures and their probes
+   have to be declared in step 4; until they are, a green no-route gate says nothing about them.
+2. **`college_edges.json`'s built edges are floored to 0.5 m.** Not to be used as the built edge anywhere.
+3. **Lake Murray 0.20.4** (round 1c, `claude/lm-sidewalk-20261122` c8debb5f, ledger 0099) re-authors the walk's back
+   grade for the street drops. The College walks this step rebuilds have to follow that authoring: read it before
+   step 4, and build step 2 onward on that base once it is green.
+4. **The Speedway lane on the northbound road** is 8.36 m at its narrowest against the 11.36 m the corridor asks for
+   elsewhere: still open (above).

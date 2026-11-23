@@ -226,6 +226,6 @@ def test_the_toned_pair_is_on_the_measured_tone_and_holds_two_repeats_a_side():
 
 
 def test_version_and_the_round():
-    assert CFG["version"] == "0.20.6"
+    assert CFG["version"] == "0.20.7"                 # 0.20.6 was this item's; 0.20.7 is road wear (item 3)
     doc = CFG["route"]["median_tops"]["paver"]["_doc"]
     assert "[inferred from MD13]" in doc and "item 1b" in doc.lower()         # what is inferred, and what item 1b did after it

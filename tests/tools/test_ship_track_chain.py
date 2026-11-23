@@ -588,6 +588,8 @@ V4_EXTRAS = {
         "ledger 0099 round 1c: only where the config sets route.walk_back_grade (Lake Murray); the author step's raised lips on the prepped ground",
     ("gate_houses", "gate: the houses on the built road kn5 (tools/house_gate.py: ROOFTOP / BUILDING + FARBLOCK / 1WALL_TILTUP shells against scenery.bespoke.house_gate — hard)"):
         "ledger 0065: Kevin, \"don't lose those\"",
+    ("gate_road_wear", "gate: road wear on the built road kn5 (tools/road_wear_check.py; ledger 0084 — hard)"):
+        "ledger 0099 round 3, item 3 (0.20.7): Lake Murray's road wear, its lanes as the lines",
 }
 
 

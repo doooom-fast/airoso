@@ -362,7 +362,9 @@ def test_bake_lines_put_the_tyre_profile_on_each_lanes_wheel_paths(tmp_path):
 @pytest.mark.skipif(not (LM / "data" / "connectors.local.json").exists(), reason="Lake Murray's data is not here")
 def test_lake_murray_college_left_out_no_lane_over_a_median_north_as_authored():
     cfg = json.loads((LM / "track.config.json").read_text(encoding="utf-8"))
-    assert rl.spec_from_config(cfg) is None                       # no key on Lake Murray: the tool writes nothing
+    # Lake Murray names the key since 0.20.7 (ledger 0099 round 3, item 3), with College as a split zone; this test
+    # keeps reading its data with College left out, set in memory
+    assert [z["kind"] for z in rl.spec_from_config(cfg)["split_zones"]] == ["college_split"]
     cfg["road_wear"] = {"lanes": {"exclude": [{"from": 1130, "to": 1476, "why": "College Ave round 2"}]}}
     doc = rl.build(LM, cfg, rl.spec_from_config(cfg))
     lanes = doc["lanes"]

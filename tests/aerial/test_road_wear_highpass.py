@@ -81,7 +81,8 @@ def test_only_the_pilot_tracks_opt_in_and_they_bind_the_owned_pair():
                 # Creek has none, so no high-pass), and synced in. Ledger 0099 (the same words): Lake Murray binds the pair
                 # with no road_wear key, so no high-pass; its ship.json brings the pair (tests/tools/test_lake_murray_0099.py)
                 assert [ov["diffuse"], ov["normal"]] == PAIR, slug
-                assert "road_wear" not in cfg, slug
+                # Lake Murray bakes road wear since 0.20.7 (ledger 0099 round 3, item 3), with no high-pass (hp above)
+                assert "road_wear" not in cfg or slug == "san-diego-lake-murray", slug
                 ship = json.loads((cfgp.parent / "ship.json").read_text(encoding="utf-8"))
                 assert set(PAIR) <= set(ship["sync_in"]["assets"]), slug
                 continue

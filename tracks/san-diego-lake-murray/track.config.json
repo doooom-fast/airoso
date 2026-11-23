@@ -4,7 +4,7 @@
   "ui_series": "",
   "_ui_series_doc": "Engine track_folder prefixes the CM display name with ui_series (default 'K10 Colorado'); empty = use the track name as-is (SD names already carry the K10 - San Diego branding).",
   "slug": "san_diego_lake_murray",
-  "version": "0.20.6",
+  "version": "0.20.7",
   "author": "k10-san-diego",
   "year": 2026,
   "_about": "A single drivable LOOP around Lake Murray (Kevin's childhood neighborhood). This repo is the standalone, Blender-first home for the track: the loop is mapped from the REAL roads (OpenStreetMap) at REAL elevation (USGS 3DEP), imported into Blender, and shaped there interactively (Kevin designs, Claude operates) BEFORE any kn5 export. Start point = just the 5-road main loop; everything else is added deliberately, in Blender.",
@@ -1246,6 +1246,69 @@
     ],
     "assembler_smooth": "tracks/san-diego-lake-murray/scripts-v021/geometry/smooth.py",
     "_assembler_smooth_doc": "the assembler of record's smoothing module, read by tools/deck_datum.py's fold-fan fit to predict the centreline build_loop_blend will build (plan smoothing + per-window sigma_y): the fit judges the ribbon the build will carry, not the pre-median line (ledger 0057 fix round)"
+  },
+  "road_wear": {
+    "_doc": "ledger 0099 round 3, item 3 (0.20.7): road wear on Lake Murray (ledger 0084: tools/road_wear_blend.py in prep, the hard gate tools/road_wear_check.py on the built road kn5). A street: the wear lines are the LANES (lanes, below), not a racing line, one bake for all five layouts (the Mac 2026-11-23: 'lanes only'; a racing line would cross the street lanes in Free Roam). The road's tone is the aerial's (aerial), flat where the road is built off the real one (tone.flat). Everything not named here is scripts/aerial/road_wear.DEFAULTS.",
+    "surfaces": [
+      "1ROAD"
+    ],
+    "_surfaces_doc": "the road alone. Lake Murray's 1KERB_sidewalk is a real sidewalk beside the road, not Milford's asphalt edge strip, so it keeps its own concrete.",
+    "texel_m": 0.5,
+    "_texel_doc": "KEVIN 2026-11-23: '50 cm now'. His 'Full road wear at 10 cm' (2026-11-22) was offered as one texture of 89 MB; that was a perfect-packing estimate. Replayed on the built road (52,946 faces, 502,157 m2; a face reaches 11.21 m from its centroid, so the planner's margin is 12-16 m): 0.50 m = 1 atlas of 8192, 0.25 m = 2, 0.125 m = 5, 10 cm = 7 (about 623 MB), and the bake holds one. At 0.50 m: 8192 x 0.5 / 4 = 1024, whole (the detail's phase); a tile's pitch (64 + 32) / 0.5 = 192 px, whole. The macro carries the photo's tone (the photo is 0.50 m a pixel) and the lanes' wear; the asphalt's grain is the detail texture, at its own resolution. 25 cm stays open as its own item (per-face margins, or a multi-atlas bake).",
+    "aerial": {
+      "image": "source/naip_2022_lm_full_z18.jpg",
+      "bbox_lonlat": [
+        -117.101898193,
+        32.77110995,
+        -117.01675415,
+        32.818440774
+      ],
+      "_doc": "USDA NAIP 2022-04-25 (public domain), the whole-box z18 mosaic (source/naip_2022_lm_full_z18.md; Git LFS, sha256 1764a80b...). bbox = its 62 x 41 tiles from x 45801, y 105749 (its georef). The mosaic is Web Mercator and the bake reads an image as linear in latitude: over its 5,260 m north to south that is off by at most 0.35 m, at mid-height [measured on the georef], under one photo pixel and under the texel; the bake's own registration shift takes up what is common."
+    },
+    "lanes": {
+      "split_zones": [
+        {
+          "kind": "college_split",
+          "from": 1130,
+          "to": 1476,
+          "source": "source/college_r2/college_split.data.json"
+        }
+      ],
+      "_doc": "tools/road_lanes.py (ledger 0084's 'lanes' source): one line per lane, both directions, from the paint's own rule; the bake runs it and writes data/road_wear.lanes.json. College Ave's two one-way roads and their forks (rows 1130-1476) are read by read_college_split off the data the scene's rows were built to. Defaults: every connector, min_edge_lane_m 2.9 [invented], rubber 1.0 [invented]. 233 lane lines, 48.7 km forward and 50.8 km reverse (2026-11-23)."
+    },
+    "wear": {
+      "spread_m": 0.55,
+      "_spread_doc": "[invented, road_wear's own first value] 0.55 leaves 'two tyre stripes with a lighter middle, a lane's look' (scripts/aerial/road_wear.DEFAULTS' note; the circuit default 0.70 merges them into one band). amplitude stays the default 0.22 [invented]: Kevin's drive judges both."
+    },
+    "tone": {
+      "flat": [
+        {
+          "road": "north_mission_gorge",
+          "from": 193,
+          "to": 209,
+          "why": "piece C s 600-650: 0.233 of the built road's lit photo samples do not read as asphalt"
+        },
+        {
+          "road": "north_mission_gorge",
+          "from": 410,
+          "to": 659,
+          "why": "piece C s 1250-2000 (15 bins): 0.139-0.252; the outer curbs put the road 1.6-3.0 m north-west of the real one here"
+        },
+        {
+          "road": "north_mission_gorge",
+          "from": 677,
+          "to": 710,
+          "why": "piece C s 2050-2150: 0.238 and 0.140"
+        },
+        {
+          "road": "north_mission_gorge",
+          "from": 727,
+          "to": 743,
+          "why": "piece C s 2200-2250: 0.125"
+        }
+      ],
+      "_flat_doc": "the Mac's rule, 2026-11-23: where Mission Gorge Rd is built off the real road, the photo's tone at the built road's place is partly the real verge and the real median's terracotta, so those stretches take the lit-asphalt tone (ratio 1.0), eased over 25 m at their ends; the lanes are drawn there as everywhere. Measured per 50 m of piece C (source/road_wear/tone_piece.py -> tone_piece_C.json): where the plan's edges are right the share that does not read as asphalt is 0.00-0.08 (median 0.02); the rows here are the 19 bins over 0.12 [invented], 950 m of 2,228. Rows are the connector's points (about 3 m apart). OWED with the road-edge round: the list goes when the road stands where the real one does."
+    }
   },
   "scenery": {
     "treefx": {

@@ -125,3 +125,63 @@ def test_the_bake_takes_lanes_and_a_flat_tone_only_when_the_config_names_them():
     rw = (ROOT / "scripts" / "aerial" / "road_wear.py").read_text(encoding="utf-8")
     assert "def flat_alpha(X: np.ndarray, Y: np.ndarray, P: np.ndarray, half: np.ndarray, ease_m: float) -> np.ndarray:" in rw
     assert "FLAT_SKIRT_M = 2.0 " in rw and "FLAT_EASE_M = 25.0 " in rw and '"flat"' not in rw.split("DEFAULTS = {")[1].split("\n}\n")[0]
+
+
+# ---- Lake Murray's own key (0.20.7) --------------------------------------------------------------------------------------
+
+def test_lake_murrays_road_wear_is_lanes_at_half_a_metre_with_the_flat_tone_on_the_measured_bins():
+    import json
+    lm = ROOT / "tracks" / "san-diego-lake-murray"
+    cfg = json.loads((lm / "track.config.json").read_text(encoding="utf-8"))
+    ship = json.loads((lm / "ship.json").read_text(encoding="utf-8"))
+    rw = cfg["road_wear"]
+    assert cfg["version"] == "0.20.7" and rw["surfaces"] == ["1ROAD"] and "lines" not in rw and "rubber" not in rw   # lanes only, drawn
+    # Kevin 2026-11-23: "50 cm now". One 8192 atlas: the detail's phase and a tile's pitch are both whole
+    assert rw["texel_m"] == 0.5 and "50 cm now" in rw["_texel_doc"]
+    assert (8192 * rw["texel_m"] / 4.0) == 1024.0 and ((64 + 2 * 16) / rw["texel_m"]) == 192.0
+    assert rw["wear"] == {k: v for k, v in rw["wear"].items() if k.startswith("_") or k == "spread_m"} and rw["wear"]["spread_m"] == 0.55
+    assert rw["lanes"]["split_zones"] == [{"kind": "college_split", "from": 1130, "to": 1476,
+                                           "source": "source/college_r2/college_split.data.json"}]
+    # the aerial: the whole-box mosaic, its box off its own georef (62 x 41 tiles of z18)
+    g = json.loads((lm / "source" / "naip_2022_lm_full_z18.georef.json").read_text(encoding="utf-8"))
+    n = 2 ** g["z"]
+    nx, ny = g["w"] // 256, g["h"] // 256
+
+    def lon(tx):
+        return tx / n * 360.0 - 180.0
+
+    def lat(ty):
+        return math.degrees(math.atan(math.sinh(math.pi * (1 - 2 * ty / n))))
+    box = [lon(g["x0"]), lat(g["y0"] + ny), lon(g["x0"] + nx), lat(g["y0"])]
+    assert rw["aerial"]["image"] == "source/naip_2022_lm_full_z18.jpg" and (nx, ny) == (62, 41)
+    assert all(abs(a - b) < 1e-8 for a, b in zip(rw["aerial"]["bbox_lonlat"], box)), box
+    # read as linear in latitude (the bake's Aerial), the Mercator mosaic is off by under a texel
+    worst = max(abs(lat(g["y0"] + ny * k / 400.0) - (box[3] + (box[1] - box[3]) * k / 400.0)) for k in range(401)) * 111132.0
+    assert 0.30 < worst < 0.40 and worst < rw["texel_m"]
+    # the flat tone: exactly the bins of piece C whose built road reads non-asphalt on the photo at over 0.12
+    tone = json.loads((lm / "source" / "road_wear" / "tone_piece_C.json").read_text(encoding="utf-8"))
+    over = [b["s"][0] for b in tone["bins"] if b["samples"] > 500 and b["off_share_of_lit"] > 0.12]
+    good = [b["off_share_of_lit"] for b in tone["bins"] if 100 <= b["s"][0] < 600 or 1100 <= b["s"][0] < 1200]
+    assert len(over) == 19 and max(good) < 0.08 < 0.12 < min(b["off_share_of_lit"] for b in tone["bins"] if b["s"][0] in over)
+    if str(ROOT / "tools") not in sys.path:
+        sys.path.insert(0, str(ROOT / "tools"))
+    import expansion_pieces as ep
+    pc = ep.load(lm / "data" / "expansion.north.json")[1]["C"]
+    conn = next(c for c in json.loads((lm / "data" / "connectors.local.json").read_text(encoding="utf-8"))["connectors"]
+                if c["name"] == "north_mission_gorge")
+    st = [pc.project(p[0], p[2])[1] for p in conn["points_xyz_m"]]
+    rows = sorted(i for i, s in enumerate(st) if any(a <= s < a + 50.0 for a in over))
+    flat = rw["tone"]["flat"]
+    assert all(f["road"] == "north_mission_gorge" and f["why"] for f in flat)
+    assert sorted(i for f in flat for i in range(f["from"], f["to"] + 1)) == rows
+    assert [(f["from"], f["to"]) for f in flat] == [(193, 209), (410, 659), (677, 710), (727, 743)]
+    # the chain: the aerial and College's data sync in, the gate runs, the records sync out
+    for f in ("source/naip_2022_lm_full_z18.jpg", "source/college_r2/college_split.data.json"):
+        assert f in ship["sync_in"]["optional"] and (lm / f).is_file(), f
+    assert ship["steps"]["gate"][-1] == "road_wear"
+    for f in ("data/road_wear.json", "data/road_wear.lanes.json", "data/road_wear_check.json"):
+        assert f in ship["sync_out"]["files"], f
+    for p in sorted((ROOT / "tracks").glob("*/track.config.json")):       # no other track names lanes or a flat tone
+        if p.parent != lm:
+            other = json.loads(p.read_text(encoding="utf-8")).get("road_wear") or {}
+            assert "lanes" not in other and "flat" not in (other.get("tone") or {}), p

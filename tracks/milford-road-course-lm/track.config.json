@@ -4,7 +4,8 @@
   "name": "Milford Road Course (unofficial)",
   "_name_doc": "Kevin 2026-11-07: \"Get rid of Lm Version from names, nothing should be on any other engine now\" / \"LM is the airoso engine\". 0.1.5 (the merge of 0.1.4 edges, ledger 0087, and 0.1.3 vegetation, ledger 0082): no \"(LM engine)\" in the display name, and the slug and install_folder are the plain milford_road_course. The old-engine track (tracks/milford-road-course, 0.6.0) gave that slug up: its slug and folder are milford_road_course_v06 (S7, fleet.cli lint). The repo directory keeps its -lm suffix until the one rename pass after the current agents land",
   "slug": "milford_road_course",
-  "version": "0.1.13",
+  "version": "0.1.14",
+  "_version_doc": "0.1.14 (ledger 0100, Milford round 1; Kevin's answers of 2026-11-22): T3's start 0.2 m off the lane, the painted line as start / finish (race_start, route.paint), GrassFX at 6 m cells, the collider reach 20 m off the barrier lines, mpg_nw_complex_0 set in its slope, the pads' shared corners (pads_shade), the NAIP-only verge trees, the owned concrete. 0.1.13 installed 2026-11-22",
   "mirror_x": false,
   "loop": true,
   "default_width_m": 11.0,
@@ -3594,6 +3595,10 @@
       ],
       "pads_seat": "ground",
       "pads_surface": "1RUNOFF",
+      "pads_shade": "smooth",
+      "_pads_shade_doc": "ledger 0100 item 6 (Kevin 2026-11-22, the track file: \"Shrink it\"): tools/seat_pads_blend.py shades the 20 rebuilt pads smooth, each vertex's normal the area-weighted mean of its faces' (tools/pad_clip.area_normals), so the kn5 writer keeps one vertex per pad vertex instead of three per triangle (0.1.13: 247,197 writer vertices for 82,408 triangles, +11.37 MB). Measured on the Mac on the 0.1.5 prepped ground's ride pad (5,837 triangles): writer vertices 17,511 -> 3,041 (-82.6 %); positions and UVs identical; the shading normal moves p50 0.015 / p95 0.28 / p99 0.95 deg by area, at most 3.25 deg on any face over 10 cm2, 0.095 % of the area over 2 deg (the 1GRASS ground under it is smooth-shaded already); no UV seam (world-planar UVs). Expected on 0.1.14 [modelled from the PC's apron_9, 1,991 vertices for 3,567 triangles, and that ride pad]: about 43,000-46,000 writer vertices, -8.9 to -9.0 MB",
+      "pads_shade_crease_deg": 10,
+      "_pads_shade_crease_doc": "ledger 0100 round 1b (the PC's 0.1.14 rehearsal, 2af260a9: shared at every vertex, the pads averaged across the ground's creases, dark streaks; by area p95 up to 30.8 deg and up to 117 deg off a face, apron_16 / _17; the orchestrator's decision under Kevin's \"Shrink it\"): a vertex is shared only among faces whose normals lie within 10 deg [invented] of each other (tools/pad_clip.crease_normals, area-weighted per group), split across a sharper crease. Modelled on the Mac on 0.1.13's own synced-out loop.blend through engine-july's prep (which reproduces the PC's 0.1.14 table pad for pad: every p95 within 0.03 deg, 47,713 writer vertices against the PC's 47,724): every pad's corner normals within 9.83 deg of their faces (p95 at most 4.17 deg), 51,031 writer vertices for 82,410 triangles (0.1.13 flat: 247,203; 0.1.14 shared: 47,713); the road kn5 about 53.21 MB (the PC's 0.1.14 53,067,848 B + 3,318 x 44 B; 0.1.13 62,055,573 B). source/runoff/records/pads_shade_0113_20pads.json",
       "_pads_seat_doc": "ledger 0092 (the 2026-11-18 scenery audit, item 3: ~16,900 m2 of pavement within 30 m drawn as turf): the ride pad and the 19 paved blobs beside the lap (source/runoff/scripts/runoff_pads.py: class D or NAIP grey, outlined in the road's frame from the edge strip's lip, source/runoff/runoff_pads.json) rebuilt on the PREPPED ground's own triangles 6 cm over it (tools/seat_pads_blend.py, Nevada's route, ledger 0081) and named 1RUNOFF_apron_<k>: paved run-off physics (surfaces.ini RUNOFF), the concrete skin (texture_overrides 1RUNOFF)",
       "grassfx_zones": {
         "image": "source/vegetation/grass_classes.png",
@@ -3604,7 +3609,8 @@
           42.57950439
         ],
         "margin_m": 250,
-        "cell_m": 12,
+        "cell_m": 6,
+        "_cell_doc": "ledger 0100 item 3 (Kevin 2026-11-22: \"Use the 6 m cells\"): every cell of the reading is 6 m (was 12 m, with 0092's near: {cell_m 6, reach_m 30} reading only the cells within 30 m of the lane edge at 6 m; near is dropped, the whole map is fine now). The class map's 2 m cells support it. Measured on the Mac with tools/plan_grassfx_aerial.py on the 0.1.13 build's swept line (data/centerline.local.json; today's reading reproduces the installed data/grassfx.aerial.json byte for byte): 200 x 262 cells, 3,952 rectangles (0.1.13: 2,067; 0.1.5-0.1.12: 1,285; ledger 0082 Owed 4's 4,131 was the plain reading without 0092's projection frame and pad looks); each zone's cells under its own look (source/vegetation/scripts/grass_coverage.py) C 93.0 -> 95.2 %, B 71.2 -> 77.1 %, D 63.8 -> 74.3 %, rectangle area off its zone 14.55 -> 11.88 ha; within 30 m of the lane edge unchanged (it was 6 m already: class = look C 89.3, B 76.8, D 61.9, base 86.8 %). What 3,952 [GRASS_FX_ADJUSTMENT] sections cost in CSP is VERIFY IN-GAME",
         "max_rects": null,
         "_max_rects_doc": "Milford 0.1.5 (ledger 0082 Owed 4): every rectangle the reading makes (1,285 at 12 m cells), no cap. 0.1.3's 96 [invented, 0.1.0's 48 doubled] covered 64 % of the measured wood floor C, 16 % of long grass B and 16 % of no grass D; all of them cover 92 / 67 / 71 % (source/vegetation/scripts/grass_coverage.py). The cap was this planner's (tools/plan_grassfx_aerial.py), not CSP's: no limit on [GRASS_FX_ADJUSTMENT_...] sections is known; what 1,285 cost in game is VERIFY IN-GAME. What is left uncovered is the 12 m cell's majority rule [invented] (6 m cells: 4,131 rectangles, 95 / 78 / 84 %)",
         "fade_m": 6,
@@ -3657,10 +3663,6 @@
         ],
         "_source": "ledger 0082 vegetation pass: the image is the MEASURED class map (source/vegetation/scripts/veg_plan.py), one pixel per 2 m cell, coded so the colour rules here read each class back exactly: C (0,120,0) the wood floor, NAIP 2022's canopy (its rule calibrated on the 2017 lidar, 97 % / 97 %); B (200,200,0) long grass, NAIP 2022 by 0.1.0's own rule (the lidar, flown 2017-05-03, holds no standing grass to confirm it); D (0,0,200) no grass, pavement or gravel the build carries as ground (lidar ground intensity at or under the build's own pavement p75 AND NAIP grey); white = the base look (mown)",
         "frame": "projection",
-        "near": {
-          "cell_m": 6,
-          "reach_m": 30
-        },
         "pad_looks": [
           {
             "prefix": "ride_pad",
@@ -3674,7 +3676,7 @@
         "fade_by_map": {
           "B": 12
         },
-        "_near_doc": "ledger 0092 (the 2026-11-18 scenery audit, item 5: 14,982 m of look boundary within 30 m of the lane edge on the 12 m staircase, High Plains 656 m): every 12 m cell with a part within reach_m 30 m [the audit's band] of the lane edge read as four 6 m cells (the class map's 2 m cells support it; ledger 0082 Owed 4 measured 6 m cells at 95 / 78 / 84 % coverage); frame projection: the cells read the class map in the draft's own frame (scripts.geometry.projection), not at 111,320 m per degree (0.2 % off: up to 1.6 m at the lap's ends); pad_looks: the ride pad's cells take the no-blade look D (audit item 6: its 4,203 cells read base, mown blades under a pad 6 cm over 1GRASS), the run-off pads' cells drop their class-map D (they are 1RUNOFF, which scripts/ac/ext_config.py lists in OCCLUDING_MESHES); fade_by_map B 12 m [invented, twice fade_m]: the long grass eases into the mown base over twice the fade. VERIFY IN-GAME"
+        "_near_doc": "ledger 0100 item 3: near DROPPED in 0.1.14, every cell is 6 m (cell_m); the rest of this note stands for frame, pad_looks and fade_by_map. Was: ledger 0092 (the 2026-11-18 scenery audit, item 5: 14,982 m of look boundary within 30 m of the lane edge on the 12 m staircase, High Plains 656 m): every 12 m cell with a part within reach_m 30 m [the audit's band] of the lane edge read as four 6 m cells (the class map's 2 m cells support it; ledger 0082 Owed 4 measured 6 m cells at 95 / 78 / 84 % coverage); frame projection: the cells read the class map in the draft's own frame (scripts.geometry.projection), not at 111,320 m per degree (0.2 % off: up to 1.6 m at the lap's ends); pad_looks: the ride pad's cells take the no-blade look D (audit item 6: its 4,203 cells read base, mown blades under a pad 6 cm over 1GRASS), the run-off pads' cells drop their class-map D (they are 1RUNOFF, which scripts/ac/ext_config.py lists in OCCLUDING_MESHES); fade_by_map B 12 m [invented, twice fade_m]: the long grass eases into the mown base over twice the fade. VERIFY IN-GAME"
       },
       "_guardrail_dropped": "the live track's W-beam rail follows airoso's draft guard lips (1WALL_PARA), which the v021 assembler does not lay; not ported (ledger 0078)",
       "names": {
@@ -3971,8 +3973,8 @@
           "depth_m": 1.5,
           "polyline_lonlat": [
             [
-              -83.6662312,
-              42.5690387
+              -83.666229668,
+              42.5690373
             ],
             [
               -83.6662678,
@@ -3989,7 +3991,8 @@
             "1KERB"
           ],
           "seat": "surface",
-          "_stand_on_doc": "ledger 0091 round 2 (the PC's 0.1.13 rehearsal, 2026-11-20): with 0091's line the lane edge came ~0.5 m toward the wall's start, and its first four 0.62 m modules were left out as 'on a road'. Read off the authored blend: modules 1-3 touch only the edge strip (CURB, 0.21-1.02 m outside the lane edge), module 0 reaches 0.18 m over the lane. As Pikes Peak's outer wall (ledger 0085): the modules may stand on the strip (stand_on), seated on its top where it is higher than the ground (seat surface); the lane stays refused, so module 0 stays out (the wall starts 0.62 m later)"
+          "_stand_on_doc": "ledger 0091 round 2 (the PC's 0.1.13 rehearsal, 2026-11-20): with 0091's line the lane edge came ~0.5 m toward the wall's start, and its first four 0.62 m modules were left out as 'on a road'. Read off the authored blend: modules 1-3 touch only the edge strip (CURB, 0.21-1.02 m outside the lane edge), module 0 reaches 0.18 m over the lane. As Pikes Peak's outer wall (ledger 0085): the modules may stand on the strip (stand_on), seated on its top where it is higher than the ground (seat surface); the lane stays refused, so module 0 stays out (the wall starts 0.62 m later)",
+          "_start_moved_doc": "ledger 0100 item 1 (Kevin 2026-11-22: \"Move the start 0.2 m\"): the traced start [-83.6662312, 42.5690387] moved 0.200 m off the lane, square to the built lane edge at s 1016.1 (engine x +0.126, z -0.156), inside NAIP 2022's 0.5 m pixel the trace was read on. On the 0.1.13 build's swept line (data/centerline.local.json) module 0's nearest corner goes from 0.184 m over the lane to 0.011 m outside its edge [measured: the proxy of tests/tools/test_milford_finish_0100.py, which gives the PC's own 0.214 m for module 1 and 0.18 m over for module 0 on the 0.1.13 build], so module 0 stands on the edge strip as modules 1-4 do: 51 modules, 0 left out"
         },
         {
           "key": "f1_nw_screen_ne",
@@ -4310,7 +4313,7 @@
         "file": "source/vegetation/trunks.json",
         "radius_m": 0.3,
         "height_m": 3.0,
-        "_source": "ledger 0082 vegetation pass: an unseen collider round every planted tree within 30 m [invented reach] of the build's paved surface (source/vegetation/scripts/veg_plan.py COLLIDER_REACH_M): TreeFX trees have no physics. radius 0.30 m [invented: tools/verify_race.py TREE_TRUNK_R_M, the fleet's trunk], 3.0 m over the ground [invented: over any car's roof]"
+        "_source": "ledger 0082 vegetation pass, reach narrowed by ledger 0100 item 4 (Kevin 2026-11-22: \"Narrower\", no number given): an unseen collider round every planted tree within 20 m of the drivable surface (source/vegetation/scripts/veg_trunks_reach.py: the lane edge of 0.1.13's swept line + the 1.84 m edge strip, and every scenery.bespoke.pads outline). The 20 m is DERIVED from measured lines, not a measured stopping distance: the widest median standoff of any of Milford's W-beams and tyre walls (lines off NAIP 2022) from the lane edge, G4 19.07 m (T2 18.07, T1 15.71, T3 11.60, G1 4.35, G2 0.51, G3 0.44), rounded up: the most run-off the facility leaves before a barrier. 261 colliders, 87 of them round the NAIP-only verge trees of ledger 0100 item 7 (0.1.13: 385 at 30 m [invented]; the lidar's trees alone: 174 at 20 m). TreeFX trees have no physics. radius 0.30 m [invented: tools/verify_race.py TREE_TRUNK_R_M, the fleet's trunk], 3.0 m over the ground [invented: over any car's roof]"
       },
       "reseat_on_prep": true,
       "_reseat_doc": "ledger 0082 pass 3: the rails, tyre walls and screens move with the ground the prep moves under them (tools/reseat_bespoke_blend.py, run by tools/ship_track.sh prep_prep): seated on the author ground, 0.1.5 / 0.1.6's G1 stood a median 0.39 m under the built grass (source/furniture/pass3/scripts/seat_built.py)"
@@ -4320,6 +4323,7 @@
     "treefx": {
       "planted": {
         "file": "source/vegetation/trees.lm.json",
+        "_verge_doc": "ledger 0100 item 7 (Kevin 2026-11-22: \"Plant them from the photo\"): the file also holds 883 trees (7th element \"naip_verge\", keys from 1,000,000) where NAIP 2022 shows canopy the 2017 lidar does not hold (source/vegetation/naip_only_canopy.png: the 428 blobs, 4.43 ha, of inventory.json flags.naip_new_since_2017), planted by source/vegetation/scripts/veg_naip_verge.py: each blob's measured neighbours' median height and crown (the lidar crowns within 30 m [invented] of it, at least 3 [invented]; 780 trees), else the read's median 20.4 m / 9.0 m [invented, 103 trees, each marked in source/vegetation/naip_verge.json]; on a hexagonal lattice at that crown over the blob's own cells; the lidar planting's clearances (29 left out within the corridor margin). h p10 / p50 / p90 7.3 / 14.7 / 20.4 m; the drawn crowns cover 3.94 of the blobs' 4.43 ha; within 30 m of the lane edge the crowns cover 8.6 -> 10.9 % (NAIP 2022's canopy 18.4 %, ledger 0082). The 11,247 lidar trees keep their keys, models and angles",
         "clear_m": 3.0,
         "seat_far_on_built": true,
         "_seat_far_doc": "ledger 0082 'Far ground (0.1.11)': a planted point past the 3DEP grid starts on the BUILT far ground under it (the gate OBJ's 1GRASS: the lidar's ground since 0.1.11), not the grid's nearest border node (tools/make_treefx.py BuiltGround); TreeFX still snaps each tree onto SURFACE_MATERIALS. Inside the grid nothing changes",
@@ -4347,6 +4351,41 @@
       "uses_connectors": []
     }
   ],
+  "race_start": {
+    "_doc": "ledger 0100 item 2 (Kevin 2026-11-22: \"Make the painted line the start/finish\"): the line, grid, pits and sectors the AC nodes stand on, placed on the prepped scene by tools/circuit_dummies_blend.py (scripts/geometry/circuit_start.py, ledger 0093, as High Plains 0.1.8) in place of engine-july's rule set. That rule put the grid on the lap's straightest 260 m: on 0.1.12's line the front straight (AC_TIME_0 at s 4564.5, 64 m short of the paint); on 0.1.13's line the EAST straight (AC_START_0 at s 3017.2, AC_TIME_0 at s 3047.2 of data/centerline.local.json), every facing node yawed from pts[0] -> pts[1]. Judged in the road kn5 by scripts/ac/verify_kn5 race_start_checks",
+    "line": {
+      "lonlat": [
+        -83.667339,
+        42.568319
+      ],
+      "_source": "the only transverse line NAIP 2022-08-16 shows on the front straight (0.5 x 0.68 m pixels; the furniture audit 2026-11-18, section 4.2, its mrc_white_line_zoom.png): its centre at -83.667339, 42.568319 +-0.7 m, about 1 m wide and 10.5 m long (lateral -4.9 to +5.6 m on 0.1.12's line). Declared by its MEASURED lon/lat, not by station: it projects to s 4639.86, lateral +0.37 m on 0.1.13's swept line (data/centerline.local.json, lap 4898.2 m); 0.1.12's line put it at s 4628.6. A station moves whenever the line is rebuilt, the paint does not. Identity medium (the audit): Kevin chose it as the start / finish"
+    },
+    "grid": {
+      "pattern": {
+        "first_m": -7.4,
+        "step_m": -4.55,
+        "lateral_m": [
+          -2.25,
+          3.0
+        ],
+        "slots": 20
+      },
+      "_source": "NO grid marks are resolvable on NAIP 2022 from s 4500 through the line to s 200 (the audit), so every number here is [invented] but these two: the laterals sit at the middles of the two halves of the MEASURED painted line (its centre +0.37 m on 0.1.13's line +- a quarter of its 10.5 m length: -2.25 m and +3.00 m, the right column first as High Plains'), and the grid ends inside the measured straight (the lap runs within 2 deg [invented tolerance] of the line's heading from 101.0 m behind it to 67.0 m ahead, measured on data/centerline.local.json). [invented]: first slot 7.4 m behind the line and 4.55 m stagger (9.1 m per column) = High Plains' measured grid (ledger 0093) borrowed; 20 slots (the last 93.9 m behind the line); which column is pole"
+    },
+    "pits": {
+      "pattern": {
+        "first_m": 8.0,
+        "step_m": 4.55,
+        "lateral_m": [
+          -2.25,
+          3.0
+        ],
+        "slots": 20
+      },
+      "_source": "[invented], as High Plains': Milford has no pit lane (the audit: nothing on NAIP 2022), so the 20 pit boxes stand on the racing surface ahead of the line (s 4647.9-4734.3 on 0.1.13's line), staggered like the grid, as many as the grid has slots"
+    },
+    "_sectors_doc": "no sectors declared: AC_TIME_1 / AC_TIME_2 divide the lap in equal thirds from the line (engine-july's rule; the proving ground's own timing points are not known)"
+  },
   "lighting": {
     "presets": [
       "morning",
@@ -4438,7 +4477,29 @@
       "max_cols": 24,
       "_doc": "ledger 0078 round 5: the true out-of-plane warp, not the crease formula (which read the s 984-992 corner's 105 mm warp as 16 mm and a planar trapezoid at s 2,588 as 177 mm); up to 24 columns [invented] so the worst column is under 5 mm"
     },
-    "_smooth_doc": "ledger 0091 (2026-11-18): 10 pts on lm_intake.resample_m 0.75 m rows = 7.5 m, x 2 passes. 5 pts at 1.5 m [the Milford geometry audit's model, sim_smoothing.py: with lm_intake.line_precomp it is the least smoothing that leaves the line no noisier than 0.1.12's: 20-40 m curvature 9.3e-4 -> 8.8e-4 1/m, min R 15.0 m; 4 pts precompensated 1.35e-3 and R 14.4], doubled with the rows (the same in metres). Was 4.0 at 1.5 m (0.1.12), doubled from the trace's 3 m"
+    "_smooth_doc": "ledger 0091 (2026-11-18): 10 pts on lm_intake.resample_m 0.75 m rows = 7.5 m, x 2 passes. 5 pts at 1.5 m [the Milford geometry audit's model, sim_smoothing.py: with lm_intake.line_precomp it is the least smoothing that leaves the line no noisier than 0.1.12's: 20-40 m curvature 9.3e-4 -> 8.8e-4 1/m, min R 15.0 m; 4 pts precompensated 1.35e-3 and R 14.4], doubled with the rows (the same in metres). Was 4.0 at 1.5 m (0.1.12), doubled from the trace's 3 m",
+    "paint": [
+      {
+        "id": "sf_line",
+        "_source": "ledger 0100 item 2: the start / finish line where NAIP 2022-08-16 shows it (the furniture audit 2026-11-18, section 4.2: the only transverse line on the front straight, its centre -83.667339, 42.568319 +-0.7 m, about 1 m wide and 10.5 m long, from the lane line to the east edge, lateral -4.9 to +5.6 m on 0.1.12's line). Painted 1.0 m wide, 10.5 m long, square to the lap at the measured centre (lateral -4.88 to +5.62 m on 0.1.13's swept line); plain white [invented: NAIP's 0.5 m pixel resolves no chequer or text]",
+        "lines": [
+          {
+            "pts_lonlat": [
+              [
+                -83.66727506,
+                42.5683189
+              ],
+              [
+                -83.66740294,
+                42.5683191
+              ]
+            ],
+            "color": "white",
+            "w": 1.0
+          }
+        ]
+      }
+    ]
   },
   "terrain_cell_m": 1.25,
   "terrain_vertex_budget": 1500000,
@@ -4480,9 +4541,14 @@
       "_doc": "ledger 0082: the tyre walls (rails kind tyres, 1WALL_TECPRO_TYRES_*) ride the Tec-Pro row, whose UVs engine-july's prep keeps; Milford has no Tec-Pro, so the row is the tyre skin here (tools/make_bespoke_assets.py tyre_wall, CC0)"
     },
     "1RUNOFF": {
-      "diffuse": "assets/textures/building_diffuse.jpg",
-      "normal": "assets/textures/building_normal.jpg",
-      "_doc": "ledger 0092: the run-off pads and the ride pad (1RUNOFF_apron_*) wear concrete, Nevada's apron skin (ledger 0081); NAIP 2022 reads them grey (blue / red 0.91-0.99)"
+      "diffuse": "assets/textures/concrete_plain_diffuse.jpg",
+      "normal": "assets/textures/concrete_plain_normal.jpg",
+      "_doc": "ledger 0100 item 8 (Kevin 2026-11-22, owned asphalt and concrete: \"On every track now\"): the run-off pads and the ride pad (1RUNOFF_apron_*, ledger 0092; NAIP 2022 reads them grey, blue / red 0.91-0.99) wear the owned plain cast concrete (tools/make_owned_surfaces.py, CC0; assets/licenses.json's owned-surfaces row) in place of building_diffuse / _normal.jpg (Hamburg's board-formed wall concrete, mined, personal use). Its mean colour was measured off that file: 0.5279 / 0.5159 / 0.4886 against 0.5286 / 0.5156 / 0.4891 (Mac, Pillow), so road wear's m0 calibration holds (clip over 0.1.13's m0 0.85537: 0.000 % either way); its relief was tuned to building_normal's tilt. Its repeat on the 4 m tile is [not measured]. 0.1.13: building_diffuse / _normal.jpg, Nevada's apron skin (ledger 0081)"
+    },
+    "1KERB_SIDEWALK": {
+      "diffuse": "assets/textures/concrete_plain_diffuse.jpg",
+      "normal": "assets/textures/concrete_plain_normal.jpg",
+      "_doc": "ledger 0100 item 8: the concrete edge strip beside the lane (1KERB_SIDEWALK, pbr.TEXTURES' building_* row; road_wear.surfaces bakes its detail through pbr.resolve, so the override is its detail and its normal) wears the owned plain cast concrete (tools/make_owned_surfaces.py, CC0; assets/licenses.json's owned-surfaces row) in place of building_diffuse / _normal.jpg (Hamburg's board-formed wall concrete, mined, personal use). Its mean colour was measured off that file: 0.5279 / 0.5159 / 0.4886 against 0.5286 / 0.5156 / 0.4891 (Mac, Pillow), so road wear's m0 calibration holds (clip over 0.1.13's m0 0.85537: 0.000 % either way); its relief was tuned to building_normal's tilt. Its repeat on the 4 m tile is [not measured]"
     },
     "BUILDING_METAL": {
       "diffuse": "assets/textures/circuit_facade_diffuse.jpg",

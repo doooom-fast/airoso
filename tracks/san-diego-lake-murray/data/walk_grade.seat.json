@@ -1,0 +1,59 @@
+{
+ "_doc": "ledger 0099 round 1c: tools/author_walk_grade_blend.py --seat. On the prepped scene, every walk lip standing over 0.03 m under the ground beneath it lowered to that height, never below the draft's back grade (DRAFT_SLOPE) and never raised",
+ "objects": {
+  "1KERB_sidewalk_0": {
+   "lips": 11434,
+   "lowered": 2098,
+   "at_draft_grade": 200,
+   "lowered_m": {
+    "p50": 0.028,
+    "max": 0.238
+   }
+  },
+  "1KERB_sidewalk_1": {
+   "lips": 5693,
+   "lowered": 1081,
+   "at_draft_grade": 93,
+   "lowered_m": {
+    "p50": 0.017,
+    "max": 0.188
+   }
+  },
+  "1KERB_sidewalk_apAP1": {
+   "lips": 51,
+   "lowered": 10,
+   "at_draft_grade": 2,
+   "lowered_m": {
+    "p50": 0.018,
+    "max": 0.041
+   }
+  },
+  "1KERB_sidewalk_padJ2": {
+   "lips": 168,
+   "lowered": 20,
+   "at_draft_grade": 0,
+   "lowered_m": {
+    "p50": 0.015,
+    "max": 0.025
+   }
+  },
+  "1KERB_sidewalk_padJ3": {
+   "lips": 205,
+   "lowered": 30,
+   "at_draft_grade": 0,
+   "lowered_m": {
+    "p50": 0.019,
+    "max": 0.047
+   }
+  },
+  "1KERB_sidewalk_padJ4": {
+   "lips": 212,
+   "lowered": 45,
+   "at_draft_grade": 0,
+   "lowered_m": {
+    "p50": 0.012,
+    "max": 0.058
+   }
+  }
+ }
+}

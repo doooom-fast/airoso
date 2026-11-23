@@ -1,0 +1,230 @@
+{
+ "AC_TIME_0_L": [
+  -1066.186,
+  67.349,
+  1348.605
+ ],
+ "AC_TIME_0_R": [
+  -1062.978,
+  67.349,
+  1331.911
+ ],
+ "AC_TIME_1_L": [
+  -955.031,
+  8.875,
+  3039.337
+ ],
+ "AC_TIME_1_R": [
+  -949.729,
+  8.875,
+  3058.377
+ ],
+ "AC_TIME_2_L": [
+  -3019.878,
+  -60.247,
+  1699.109
+ ],
+ "AC_TIME_2_R": [
+  -3044.108,
+  -60.247,
+  1696.167
+ ],
+ "AC_START_0": [
+  -1093.018,
+  67.351,
+  1330.706
+ ],
+ "AC_HOTLAP_START_0": [
+  -1093.018,
+  67.351,
+  1330.706
+ ],
+ "AC_START_1": [
+  -1097.925,
+  67.264,
+  1328.202
+ ],
+ "AC_START_2": [
+  -1103.74,
+  67.169,
+  1328.474
+ ],
+ "AC_START_3": [
+  -1108.356,
+  67.066,
+  1324.889
+ ],
+ "AC_START_4": [
+  -1114.18,
+  66.956,
+  1325.083
+ ],
+ "AC_START_5": [
+  -1118.691,
+  66.839,
+  1321.432
+ ],
+ "AC_START_6": [
+  -1124.463,
+  66.716,
+  1321.459
+ ],
+ "AC_START_7": [
+  -1128.759,
+  66.588,
+  1317.61
+ ],
+ "AC_PIT_0": [
+  -1141.464,
+  66.255,
+  1313.229
+ ],
+ "AC_PIT_1": [
+  -1147.859,
+  66.073,
+  1310.398
+ ],
+ "AC_PIT_2": [
+  -1154.256,
+  65.887,
+  1307.56
+ ],
+ "AC_PIT_3": [
+  -1160.646,
+  65.696,
+  1304.717
+ ],
+ "AC_PIT_4": [
+  -1166.984,
+  65.502,
+  1301.854
+ ],
+ "AC_PIT_5": [
+  -1173.252,
+  65.305,
+  1298.896
+ ],
+ "AC_PIT_6": [
+  -1179.426,
+  65.107,
+  1295.767
+ ],
+ "AC_PIT_7": [
+  -1185.529,
+  64.909,
+  1292.492
+ ],
+ "_layout": "north_acw",
+ "_direction": "reverse",
+ "_kind": "race",
+ "_frame": "engine x=E, y=up, z=N (centerline.local.json); Blender = (x, z, y); kn5 z = -z",
+ "_doc": "underscore keys are metadata \u2014 consumers (build_spawn_kn5, track_folder, write_ai_line, verify_kn5) must skip every key starting with '_'",
+ "_yaw_doc": "Blender rotation_euler.z in degrees for the FACING dummies: atan2(u_x, -u_z) of this layout's travel at the dummy's own vertex (kn5 local +Z then points along travel; measured calibration: deepforest +1.00). AC_TIME_* carry no yaw.",
+ "_line": {
+  "vertex": 2536,
+  "station_m": 7538.01,
+  "width_m": 17.0,
+  "pole_vertex": 2546,
+  "pole_behind_line_m": 30.03,
+  "sector_vertices": [
+   1565,
+   584
+  ]
+ },
+ "_issue_spawn": null,
+ "_yaw_deg": {
+  "AC_START_0": 105.865,
+  "AC_HOTLAP_START_0": 105.865,
+  "AC_START_1": 107.142,
+  "AC_START_2": 107.729,
+  "AC_START_3": 107.892,
+  "AC_START_4": 108.318,
+  "AC_START_5": 109.262,
+  "AC_START_6": 110.792,
+  "AC_START_7": 112.364,
+  "AC_PIT_0": 113.797,
+  "AC_PIT_1": 113.914,
+  "AC_PIT_2": 113.935,
+  "AC_PIT_3": 114.041,
+  "AC_PIT_4": 114.847,
+  "AC_PIT_5": 116.05,
+  "AC_PIT_6": 117.438,
+  "AC_PIT_7": 118.734
+ },
+ "_vertex": {
+  "AC_TIME_0_L": 2536,
+  "AC_TIME_0_R": 2536,
+  "AC_TIME_1_L": 1565,
+  "AC_TIME_1_R": 1565,
+  "AC_TIME_2_L": 584,
+  "AC_TIME_2_R": 584,
+  "AC_START_0": 2546,
+  "AC_HOTLAP_START_0": 2546,
+  "AC_START_1": 2548,
+  "AC_START_2": 2550,
+  "AC_START_3": 2551,
+  "AC_START_4": 2553,
+  "AC_START_5": 2555,
+  "AC_START_6": 2557,
+  "AC_START_7": 2559,
+  "AC_PIT_0": 2563,
+  "AC_PIT_1": 2566,
+  "AC_PIT_2": 2568,
+  "AC_PIT_3": 2570,
+  "AC_PIT_4": 2573,
+  "AC_PIT_5": 2575,
+  "AC_PIT_6": 2577,
+  "AC_PIT_7": 2580
+ },
+ "_station_m": {
+  "AC_TIME_0_L": 7538.01,
+  "AC_TIME_0_R": 7538.01,
+  "AC_TIME_1_L": 4629.03,
+  "AC_TIME_1_R": 4629.03,
+  "AC_TIME_2_L": 1726.28,
+  "AC_TIME_2_R": 1726.28,
+  "AC_START_0": 7568.04,
+  "AC_HOTLAP_START_0": 7568.04,
+  "AC_START_1": 7573.54,
+  "AC_START_2": 7579.04,
+  "AC_START_3": 7584.54,
+  "AC_START_4": 7590.04,
+  "AC_START_5": 7595.54,
+  "AC_START_6": 7601.04,
+  "AC_START_7": 7606.54,
+  "AC_PIT_0": 7620.04,
+  "AC_PIT_1": 7627.04,
+  "AC_PIT_2": 7634.04,
+  "AC_PIT_3": 7641.04,
+  "AC_PIT_4": 7648.04,
+  "AC_PIT_5": 7655.04,
+  "AC_PIT_6": 7662.04,
+  "AC_PIT_7": 7669.04
+ },
+ "_right_of_travel_m": {
+  "AC_TIME_0_L": -8.5,
+  "AC_TIME_0_R": 8.5,
+  "AC_TIME_1_L": -9.883,
+  "AC_TIME_1_R": 9.883,
+  "AC_TIME_2_L": -12.204,
+  "AC_TIME_2_R": 12.204,
+  "AC_START_0": 3.25,
+  "AC_HOTLAP_START_0": 3.25,
+  "AC_START_1": 4.25,
+  "AC_START_2": 2.25,
+  "AC_START_3": 4.25,
+  "AC_START_4": 2.25,
+  "AC_START_5": 4.25,
+  "AC_START_6": 2.25,
+  "AC_START_7": 4.25,
+  "AC_PIT_0": 3.25,
+  "AC_PIT_1": 3.25,
+  "AC_PIT_2": 3.25,
+  "AC_PIT_3": 3.25,
+  "AC_PIT_4": 3.25,
+  "AC_PIT_5": 3.25,
+  "AC_PIT_6": 3.25,
+  "AC_PIT_7": 3.25
+ },
+ "_lap": "north"
+}

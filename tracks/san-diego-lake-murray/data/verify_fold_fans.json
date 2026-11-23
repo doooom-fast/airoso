@@ -374,6 +374,52 @@
     "wall_cells": 156,
     "wall_worst_delta_m": 0.2629
    }
+  ],
+  "north_cw": [
+   {
+    "k": 763,
+    "l": 773,
+    "lane": 2,
+    "fails": [],
+    "skipped": "not on lap north (behind its walls)"
+   },
+   {
+    "k": 1508,
+    "l": 1516,
+    "lane": 2,
+    "fails": [],
+    "skipped": "not on lap north (behind its walls)"
+   },
+   {
+    "k": 2315,
+    "l": 2323,
+    "lane": 2,
+    "fails": [],
+    "skipped": "not on lap north (behind its walls)"
+   }
+  ],
+  "north_acw": [
+   {
+    "k": 763,
+    "l": 773,
+    "lane": 2,
+    "fails": [],
+    "skipped": "not on lap north (behind its walls)"
+   },
+   {
+    "k": 1508,
+    "l": 1516,
+    "lane": 2,
+    "fails": [],
+    "skipped": "not on lap north (behind its walls)"
+   },
+   {
+    "k": 2315,
+    "l": 2323,
+    "lane": 2,
+    "fails": [],
+    "skipped": "not on lap north (behind its walls)"
+   }
   ]
  },
  "fails": [],

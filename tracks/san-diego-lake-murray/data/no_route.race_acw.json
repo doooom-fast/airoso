@@ -19,13 +19,58 @@
  },
  "seed": "AC_START_0",
  "domain_m2": 940418,
- "reached_m2": 138218,
- "allowed_m2": 138218,
+ "reached_m2": 138216,
+ "allowed_m2": 138216,
  "leak_cells": 0,
  "leak_m2": 0,
  "escaped": false,
- "wall_cells": 594423,
+ "wall_cells": 594485,
  "wall_tris_in_band": 167949,
+ "local_deck_cells": 62,
+ "local_deck_walls": [
+  {
+   "object": "1WALL_race_edge_R_college_774_0",
+   "cells": 6,
+   "deck_minus_line_m": [
+    -0.131,
+    0.014
+   ],
+   "base_m": 0.019,
+   "top_m": 1.199,
+   "vertices": [
+    763,
+    776
+   ]
+  },
+  {
+   "object": "1WALL_race_edge_R_navajo_1517_0",
+   "cells": 10,
+   "deck_minus_line_m": [
+    -0.241,
+    0.244
+   ],
+   "base_m": 0.002,
+   "top_m": 1.208,
+   "vertices": [
+    2314,
+    2323
+   ]
+  },
+  {
+   "object": "1WALL_race_edge_R_jackson_2324_0",
+   "cells": 52,
+   "deck_minus_line_m": [
+    -0.244,
+    -0.131
+   ],
+   "base_m": 0.036,
+   "top_m": 1.18,
+   "vertices": [
+    2324,
+    2327
+   ]
+  }
+ ],
  "door_clusters": 0,
  "doors": [],
  "doors_by_class": {},
@@ -37,5 +82,5 @@
  "spawns_unreached": [],
  "fail": false,
  "fails": [],
- "seconds": 26.7
+ "seconds": 59.1
 }

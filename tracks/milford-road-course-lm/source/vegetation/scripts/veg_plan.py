@@ -30,7 +30,9 @@ from scipy import ndimage as ndi
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from veg_common import Frame, naip_features, obj_surfaces  # noqa: E402
 
-COLLIDER_REACH_M = 30.0   # [invented] a car off the road at speed reaches this far before it stops; trees nearer get a trunk
+COLLIDER_REACH_M = 20.0   # ledger 0100 item 4 (Kevin: "Narrower"): DERIVED, veg_trunks_reach.py: the widest median standoff of any
+                          # W-beam / tyre wall off the lane edge (G4 19.07 m), rounded up; 0.1.3-0.1.13: 30.0 [invented]. trunks.json
+                          # is written by veg_trunks_reach.py now (the drivable surface incl. the 0.1.13 run-off pads)
 HALF_DIAG_M = math.sqrt(2.0)   # half a 2 m cell's diagonal: the grid's own position error
 CLEAR_BUILT_M = 1.0       # tools/make_treefx.py BUILT_BUILDING_CLEAR_M
 ZONE_HARDWOOD = 1         # every planted tree: the deciduous hardwood mix (track.config.json scenery.treefx.planted.zones)

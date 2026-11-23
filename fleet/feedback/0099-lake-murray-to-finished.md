@@ -607,3 +607,46 @@ sync_out + the two reports), README.md, source/walk_grade/ (the two drop lists a
   if the PC reads the street drive_test as the Mac did).
 - **The slot at s 2100** between Alvarado and College's south approach (1.52 m, the release zone's earth): a ground fix in a
   later round, or keep it as the counted drop it is now.
+
+## PC rehearsal 0099-2 and install (2026-11-23, c8debb5f): Lake Murray 0.20.4 INSTALLED, no force
+
+- **Rehearsal** (`D:/k10-scratch/rehearse_0099_2`, worktree `D:/k10-worktrees/lm-sidewalk`, ENG `eng_0099_2` = a copy of
+  `eng_repro`, loop.blend 3f13b887, the 16 TreeFX models as run A, 00:36-01:13): seeds 70 copied. `[walk-grade] CURB: 17272
+  lips, 15351 raised (rise p50 0.1 max 0.195 m), 910 already at grade, held 1571 + 513 + 0 + 10`; padJ2 / J3 / J4 156 / 193 /
+  200, AP1 30: the Mac's numbers. `--seat`: 3,284 lips lowered. **Street drive_test: 8 drops** (far ledges 107 -> 53), fail
+  False; its JSON differs from run A only in excursion_drops / excursion_far_ledges / fail / worst_*. Line gate fwd 13, rev
+  18, both PASS; race and north drive_tests 0 drops. GATES all exit 0, race red none, **no force**.
+- **kn5 against run A:** race, race_north, the four closures and the street-only kn5 EQUIVALENT; the five spawns
+  byte-identical. The road kn5 109,292,738 -> 109,240,992 B: 37 meshes not equivalent: 1GRASS_* x16, 1GRASS_ROCK_6 / 13 / 14,
+  1KERB_sidewalk_0 / _1 / padJ2 / padJ3 / padJ4 / apAP1, BUILDING_STUCCO_0-7 and BUILDING_TILTUP_0 (re-seated, dy +0.001 ..
+  +0.006 m), and **SIGNPOST_0 / SIGNPLATE_0 / SIGNARROW_0**, not in the runbook's list: matched by position, the signs at 15
+  places re-seat by -0.023 .. +0.007 m in height (the walks under them rose), nothing more. LIGHTPOST_*, LIGHTS_0 / _back,
+  1ROAD_*, MARKINGS, YLINE and every 1WALL equivalent; materials: 0 differences.
+- **As run A:** 646 lights (lights_ini ok, 646 / 646, both heads); `lamp integrity: 781 heads, orphaned 0` on all five
+  layouts; house_seat 6,239 judged, 0 with no ground; house_gate PASS; trees.txt byte-identical (df2c722f, 21,111 written);
+  AI lines identical; ui_track 0.20.4 on all five.
+- **Install** (Kevin's standing word: "I always want newer builds"; his Nov 22 "When they're done, install them"; no
+  `--force-install`): the chain's own new EMPTY workshop `D:/k10-scratch/lm_line`, 01:16-01:51, SHIP OK; 0.20.2 parked in
+  `D:/k10-track-archive/2026-11-23_015157/`. The same as the rehearsal: 1048 / 1048 gate rows (workshop names only), every kn5
+  EQUIVALENT (tangents only), AI the same; AC's 14 TreeFX models md5 = 0.20.2's. All five layouts read 0.20.4.
+- The sync-back adds the north layouts' gate records and walk_grade*.json and drops 14 stale diagnostic plots (race_plots
+  nose_*, signs_plots sign_*). fleet/ac-installed.json: san_diego_lake_murray_v4 0.20.4 (sha c8debb5f). Menu pictures: to
+  come after the Sand Creek build (one Blender at a time). Not driven.
+
+## The Mac's merge of 0.20.4's records (2026-11-23)
+
+The full suite on the records head (4dcb76cf, origin/main b8d39f78 merged in) failed three of this ledger's own tests, all
+from what the install synced back or what main brought, none from the build:
+- **The round trip** (`test_the_round_trip_is_closed_...`): the install synced back 23 files airoso never held before: the
+  north laps' records (lap, barrier bands, dummies, closures, drive tests, ground checks, no_route plans, race verify),
+  `data/lights.heads.json`, `data/walk_grade.json` and `data/walk_grade.seat.json`. By the seed rule (every sync_out file
+  airoso holds that sync_in does not bring) they are seeds now: `sync_in.seed` 70 -> 93. The steps rewrite every one.
+- **The blend pin** (`test_the_committed_blend_is_...`): the committed `loop.blend` is now the one 0.20.4's install
+  synced back, 189,120,404 B, sha256 495a2198067c3562... (0.20.2's was 189,063,384 B, 3f13b887...). The next empty
+  workshop seeds it. Every author step on it is idempotent (above: walk_grade and the seat move nothing on a second run;
+  the lamp heads pair each lens with its lamp), so a seed of an authored blend builds the same.
+- **The owned concrete** (`test_the_road_and_the_sidewalks_bind_the_owned_pairs`): Milford binds `concrete_plain` since
+  0.1.14 (ledger 0100). The test now allows the owned pairs on the four tracks Kevin is finishing (his "On every track
+  now", scoped to those four on 2026-11-22) and refuses them everywhere else.
+- The 14 older diagnostic plots the sync-back dropped (`race_plots/*/nose_1258|1374.png`, `signs_plots/sign_M*.png`,
+  drawn before 0.20.2) are restored unchanged (4dcb76cf): nothing is deleted.

@@ -28,6 +28,7 @@ SH = ROOT / "tools" / "ship_track.sh"
 TEXT = SH.read_text(encoding="utf-8").replace("\r\n", "\n")
 CFG = json.loads((LM / "track.config.json").read_text(encoding="utf-8"))
 SHIP = json.loads((LM / "ship.json").read_text(encoding="utf-8"))
+FINISH_FOUR = ("high-plains-lm", "milford-road-course-lm", "sand-creek-lm")   # the other three Kevin is finishing
 OTHER_CONFIGS = sorted(p for p in (ROOT / "tracks").glob("*/track.config.json") if p.parent.name != LM.name)
 OTHER_SPECS = sorted(p for p in (ROOT / "tracks").glob("*/ship.json") if p.parent.name != LM.name)
 
@@ -64,7 +65,7 @@ def _is_lfs_pointer(p: Path) -> bool:
 def test_spec_takes_a_seed_list_and_emits_it_only_when_named():
     s = SPEC.load(LM / "ship.json", "san-diego-lake-murray")
     seeds = [ln.split("\t", 1)[1] for ln in SPEC.lines(s) if ln.startswith("in.seed\t")]
-    assert seeds == s["sync_in"]["seed"] and seeds[0] == "loop.blend" and len(seeds) == 70
+    assert seeds == s["sync_in"]["seed"] and seeds[0] == "loop.blend" and len(seeds) == 93
     # no other spec names a seed: their key<TAB>value lines carry no in.seed line (the chain as before)
     for p in OTHER_SPECS:
         o = SPEC.load(p, json.loads(p.read_text(encoding="utf-8"))["track"])
@@ -101,17 +102,20 @@ def test_the_round_trip_is_closed_every_synced_back_file_airoso_holds_comes_back
     assert len(si["seed"]) == len(set(si["seed"]))
 
 
-def test_the_committed_blend_is_the_one_that_built_0_20_2():
+def test_the_committed_blend_is_the_one_the_last_install_synced_back():
+    """0.20.4's install (2026-11-23) synced its authored blend back; the next empty workshop seeds it. 0.20.2's was
+    189,063,384 B, sha256 3f13b887... Every author step on it is idempotent (ledger 0099), so a seed of an authored blend
+    builds the same"""
     p = LM / "loop.blend"
     if _is_lfs_pointer(p):
         print("  (loop.blend is an LFS pointer on this checkout — the bytes check skipped; the chain refuses a pointer)")
         return
-    assert p.stat().st_size == 189_063_384
+    assert p.stat().st_size == 189_120_404
     h = hashlib.sha256()
     with open(p, "rb") as f:
         for chunk in iter(lambda: f.read(1 << 20), b""):
             h.update(chunk)
-    assert h.hexdigest() == "3f13b887446e6fe921faeec0672201d9d8846e538347bc8248ff5b453999a082"
+    assert h.hexdigest() == "495a2198067c35626608df2c225903ce8e80d37b9b310b155ed096d13c98de65"
 
 
 def _config_files(o, path=""):
@@ -411,11 +415,18 @@ def test_the_road_and_the_sidewalks_bind_the_owned_pairs():
     # the 4 m tile the prep's planar UV lays (build_kn5_loop UV_TILE) is the pairs' own tile
     prep = (LM / "engine-july-snapshot" / "scripts" / "ac" / "build_kn5_loop.py").read_text(encoding="utf-8")
     assert "UV_TILE = 4.0" in prep
-    # the owned concrete is Lake Murray's first binding; the owned asphalt is High Plains' and Milford's too (ledger 0095)
+    # the owned asphalt is High Plains' and Milford's too (ledger 0095). Kevin 2026-11-22 "On every track now" for the owned
+    # asphalt and concrete means the four tracks he is finishing (Lake Murray, Sand Creek, High Plains, Milford), never the
+    # rest: Milford binds concrete_plain since 0.1.14 (ledger 0100), High Plains and Sand Creek in their finish rounds
     for p in OTHER_CONFIGS:
         t = p.read_text(encoding="utf-8")
-        assert "concrete_plain" not in t, p
-        assert ("asphalt_dense" in t) == (p.parent.name in ("high-plains-lm", "milford-road-course-lm")), p
+        name = p.parent.name
+        if "concrete_plain" in t:
+            assert name in FINISH_FOUR, p
+        if name in ("high-plains-lm", "milford-road-course-lm"):
+            assert "asphalt_dense" in t, p
+        elif "asphalt_dense" in t:
+            assert name in FINISH_FOUR, p
 
 
 def test_version_is_0_20_4():

@@ -173,6 +173,8 @@ FILL_BANDS = [   # (off_min, off_max, tree zone, p_tree, bush zone, p_bush) per 
 FILL_STEP_M = 10.0
 LAKE_DROP_M = 8.0
 APRON_PLANT_CLEAR_M = 1.0   # [invented] ledger 0054 P1 fix round: no plant within this of a corner apron's outline
+MEDIAN_SPOT_MOVE_MAX_M = 5.0  # [invented] ledger 0099 round 3: a median spot is moved at most this far (median_spots.move:
+#                               a plant top within 2 m of it, carried by the largest shift an island was given, 2.93 m)
 BUILT_BUILDING_CLEAR_M = 1.0   # [invented] ledger 0054 P4 integration fix round: no plant inside a built HOUSE / BUILDING
                                # footprint or within this of its walls (the apron rule's own margin; a bush against a wall
                                # is a hedge, a trunk inside the wall is a tree through the roof)
@@ -576,10 +578,16 @@ def plan(project_dir, all_species=False, verbose=False):
     # x / z: a list written for another draft of the spots is refused, never applied to whatever stands at that index.
     # The two lists may stand in a file of their own: {"file": "<project-relative path>"}, and further lists in files of
     # theirs: {"files": ["<path>", ...]} (ledger 0099 round 3: Mission Gorge's corrected island beside College's split).
+    # "move" (ledger 0099 round 3, item 2; the Mac 2026-11-23: "a real plant the lidar saw is never dropped because the
+    # island moved under it"): the spot is planted at to_x / to_z instead, with everything else it has (its model, size,
+    # angle, and the height and crown the lidar measured at its own place). The spots are the draft's, drawn on the
+    # island as the plan declared it; where the island was corrected, the plant goes with it. The move is applied after
+    # the measured heights are read, so that file's own check of every spot's place still holds.
     # Absent (every other track) = nothing changes.
-    ms_cfg, ms_stats = tcfg.get("median_spots"), None
+    ms_cfg, ms_stats, ms_moves_ = tcfg.get("median_spots"), None, {}
     if ms_cfg and (ms_cfg.get("file") or ms_cfg.get("files")):   # the lists in files of their own ({"drop": [...], "foot_y": [...]})
-        ms_lists_ = {"drop": list(ms_cfg.get("drop") or []), "foot_y": list(ms_cfg.get("foot_y") or [])}
+        ms_lists_ = {"drop": list(ms_cfg.get("drop") or []), "foot_y": list(ms_cfg.get("foot_y") or []),
+                     "move": list(ms_cfg.get("move") or [])}
         for ms_name_ in ([ms_cfg["file"]] if ms_cfg.get("file") else []) + list(ms_cfg.get("files") or []):
             ms_file_ = proj / ms_name_
             if not ms_file_.exists():
@@ -591,8 +599,10 @@ def plan(project_dir, all_species=False, verbose=False):
     if ms_cfg:
         mpos_ = pos.get("median_planting", [])
         ms_stats = {"dropped": 0, "foot_moved": 0}
+        if ms_cfg.get("move"):                       # the count is reported only where the list is used
+            ms_stats["moved"] = 0
         seen_ = set()
-        for kind_ in ("drop", "foot_y"):
+        for kind_ in ("drop", "foot_y", "move"):
             for e_ in ms_cfg.get(kind_) or []:
                 i_ = int(e_["index"])
                 if not 0 <= i_ < len(mpos_):
@@ -608,6 +618,14 @@ def plan(project_dir, all_species=False, verbose=False):
                 if kind_ == "drop":
                     excluded.add(("median_planting", i_))
                     ms_stats["dropped"] += 1
+                elif kind_ == "move":
+                    to_ = (float(e_["to_x"]), float(e_["to_z"]))
+                    if math.hypot(to_[0] - mpos_[i_]["x"], to_[1] - mpos_[i_]["z"]) > MEDIAN_SPOT_MOVE_MAX_M:
+                        raise SystemExit(f"[treefx] scenery.treefx.median_spots.move: index {i_} would go "
+                                         f"{math.hypot(to_[0] - mpos_[i_]['x'], to_[1] - mpos_[i_]['z']):.2f} m, over "
+                                         f"{MEDIAN_SPOT_MOVE_MAX_M} m: that is another plant's place, not this one's")
+                    ms_moves_[i_] = to_
+                    ms_stats["moved"] += 1
                 else:
                     mpos_[i_]["y"] = float(e_["y"])
                     ms_stats["foot_moved"] += 1
@@ -716,6 +734,8 @@ def plan(project_dir, all_species=False, verbose=False):
                 mm_stats["crown_measured"] += crown is not None
             else:
                 mm_stats["kept_rank_rule"] += 1
+    for i_, to_ in ms_moves_.items():                # scenery.treefx.median_spots.move (above): the plant goes with its island
+        pos["median_planting"][i_]["x"], pos["median_planting"][i_]["z"] = to_
 
     def emit_zone(zone_key, entries, idx_base=0, guard=True, mix=None, natives=None):
         # mix / natives (scenery.treefx.lidar_plants, below): the zone takes another zone's species mix, and every entry

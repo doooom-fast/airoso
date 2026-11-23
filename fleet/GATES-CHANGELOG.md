@@ -14,6 +14,25 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
+## 2026-11-23 (PC) — WIRING: scenery.treefx.median_spots gets a third list, "move"; one new refusal, no threshold moved (ledger 0099 round 3, item 2; opt-in, Lake Murray)
+
+Mission Gorge's island was corrected to the lidar's faces, so six median spots the lidar saw a real plant at no longer
+stand on its deck. The Mac (2026-11-23): "a real plant the lidar saw is never dropped because the island moved under
+it." `tools/make_treefx.py` reads a `move` list beside `drop` and `foot_y` (in the config or in the lists' own files):
+the spot is planted at `to_x` / `to_z` with everything else it has. What it checks, as for the other two lists: the
+index exists, the entry's own x / z are the spot's (a list made for another draft is refused), no index is declared
+twice across the three lists. One new refusal: a move over MEDIAN_SPOT_MOVE_MAX_M = 5.0 m **[invented]** (a plant top
+within 2 m of the spot, carried by the largest shift an island was given, 2.93 m) is "another plant's place, not this
+one's". The move is applied after the measured heights are read, so that file's own check of every spot's place still
+holds and the spot keeps its own lidar height.
+
+What this does to gates: verify_race G (no trunk in a lane or a wall) reads the same plan, so it judges the plant where
+it is planted. That gate is how the need showed: on the scratch chain one such spot, left where it stood, read 0.015 m
+inside the anticlockwise north lap's closure, and the run stopped there (red, not forced). Absent (every other track)
+= nothing changes; the report gains `"moved"` only where the list is used. Teeth: tests/tools/test_make_treefx_plan.py
+(`test_median_spots_move_plants_the_spot_at_its_new_place_with_everything_else_it_has`), tests/tools/test_mg_median_0099.py
+(every moved spot has a plant on the lidar and lands with its trunk on the deck).
+
 ## 2026-11-23 (PC) — WIRING: median_rebuild takes several old islands, each found exactly or refused; no threshold moved (ledger 0099 round 3, item 2; opt-in, Lake Murray)
 
 Item 2 corrects the J3 end of the same median, where two built islands change (MD11, rows 8-48, and MD13, rows 63-741).
@@ -28,9 +47,9 @@ Item 2 corrects the J3 end of the same median, where two built islands change (M
   run given two, and refused.
 - TOL_M, DECK_OVER_M / DECK_TOL_M and every after-check are as item 1b left them. No tolerance moved.
 
-Proven on the committed blend (a scratch workshop): both old islands found whole (curb 246 and 4,074 vertices, deck 82
-and 1,358, beams 140 and 2,692, 235 posts, 114 + 250 paint strips), three built (rows 8-51, 68-354, 367-741), the new
-decks 0.177-0.196 m over the road. Teeth: tests/tools/test_mg_median_0099.py
+Proven on the committed blend (a scratch workshop, the lidar's data): both old islands found whole (curb 246 and 4,074
+vertices, deck 82 and 1,358, beams 140 and 2,692, 235 posts, 693 + 1,480 paint strips), three built (rows 8-53, 67-354,
+365-741), the new decks 0.173-0.202 m over the road. Teeth: tests/tools/test_mg_median_0099.py
 (`test_the_step_takes_every_island_named_and_refuses_one_left_out`: one pair still reads, the list is put in the line's
 order, five malformed lists are refused, and the record's data holds exactly the two islands named between rows 8 and
 741).

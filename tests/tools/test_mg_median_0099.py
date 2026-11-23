@@ -1,14 +1,16 @@
 """Ledger 0099 round 3, items 1b and 2: Mission Gorge Rd's long median island (MD13) was declared, and built, unbroken
 across the real Margerum Avenue / Mission Vista Drive crossing (1b), and the J3 end of the median stood about 13 m from
-where the photo has it (2: MD11's last 60 m, the two openings, MD12, MD13's start). Both are corrected at the source from
-the photo (source/expansion/mg_median/fix_mg_median.py) and re-authored in the scene by an author step
-(tools/author_median_rebuild_blend.py), because Lake Murray's chain never runs its draft again.
+where it really is (2: MD11's last 60 m, the two openings, MD12, MD13's start). Both are corrected at the source
+(source/expansion/mg_median/fix_mg_median.py) and re-authored in the scene by an author step
+(tools/author_median_rebuild_blend.py), because Lake Murray's chain never runs its draft again. The numbers were the
+photo's first; they are the 2024 lidar's now (the G10's faces, mg_median_faces.lidar.g10.json), because the photo's
+readings had been "corrected" against a band the island does not fill.
 
-Held here, without Blender: the corrected data is the fit applied to the declared values and nothing else; the
-correction is idempotent; the scene step's pure parts give, from the record, exactly the island the committed blend
-holds (the counts the scratch run found in the scene) and the two islands that replace it; the plants dropped are the
-ones on pavement, every one bare on the lidar; the wiring. The scene work is self-checked in Blender and measured
-through the chain's own steps on a scratch workshop. Plain ``test_*`` for tests/run_tests.py."""
+Held here, without Blender: a row takes the lidar's two faces by a stated rule (on a made-up piece, then on the data);
+the correction is idempotent; the scene step's pure parts give, from the record, exactly the islands the committed blend
+holds (the counts the scratch run found in the scene) and the islands that replace them; no plant the lidar saw is
+dropped; the wiring. The scene work is self-checked in Blender and measured through the chain's own steps on a scratch
+workshop. Plain ``test_*`` for tests/run_tests.py."""
 from __future__ import annotations
 
 import hashlib
@@ -47,117 +49,227 @@ MI = _load("median_island_0099", ROOT / "tools" / "median_island.py")
 
 # ---- the data -------------------------------------------------------------------------------------------------------
 
-def test_the_fit_is_what_the_photo_measured():
-    """the README's table: strip A 1.96 m with its middle 0.43 m left, strip B 1.84 m with its middle 1.50 m right, no
-    median between the noses at s 1085 and s 1120, tapers from s 982.5 and to s 1212.5"""
-    assert FIX.STRIP_A == (0.43, 1.96) and FIX.STRIP_B == (-1.50, 1.84)
-    assert (FIX.JOIN_A, FIX.STRIP_A_FROM, FIX.NOSE_A, FIX.NOSE_B, FIX.STRIP_B_TO, FIX.JOIN_B) == (982.5, 1010.0, 1085.0, 1120.0, 1192.5, 1212.5)
-    t = "terracotta"
-    assert FIX.fit(900.0, t, 4.4, 0.4) == (t, 4.4, 0.4) and FIX.fit(1300.0, t, 5.5, -0.6) == (t, 5.5, -0.6)
-    assert FIX.fit(982.5, t, 4.5, 0.5) == (t, 4.5, 0.5) and FIX.fit(1212.5, t, 5.4, -0.5) == (t, 5.4, -0.5)
-    ty, w, o = FIX.fit(1050.0, t, 4.74, 0.23)
-    assert ty == t and w == 1.96 and abs(o - 0.66) < 1e-9
-    assert FIX.fit(1085.0, t, 4.87, 0.08)[1] == 1.96 and FIX.fit(1120.0, t, 5.01, -0.07)[1] == 1.84
-    for s in (1087.5, 1100.0, 1117.5):
-        assert FIX.fit(s, t, 4.9, 0.0) == ("none", 0.0, 0.0)
-    ty, w, o = FIX.fit(1150.0, t, 5.12, -0.2)
-    assert w == 1.84 and abs(o + 1.70) < 1e-9
-    w_mid = FIX.fit(996.25, t, 4.5, 0.5)[1]                                  # half way down the first taper
-    assert abs(w_mid - (4.5 + 1.96) / 2) < 1e-9
-    # the J3 end (item 2): MD11 leaves its declared line from s 100, 3.6 m left by s 136, and ends at s 177.5; the two
-    # openings; MD12 where it stands, 3.40 m wide, its middle 1.0 m left at s 195 and 2.3 m at s 207.5; MD13 from s 225
-    assert (FIX.VEER_FROM, FIX.VEER_TO, FIX.VEER_M, FIX.MD11_TO) == (100.0, 136.0, 3.6, 177.5)
-    assert (FIX.MD12_FROM, FIX.MD12_TO, FIX.MD12_W, FIX.MD12_MID, FIX.MD13_FROM) == (195.0, 207.5, 3.40, (1.0, 2.3), 225.0)
-    assert FIX.fit(40.0, "none", 0.0, -0.2) == ("none", 0.0, -0.2) and FIX.fit(100.0, t, 1.24, -0.5) == (t, 1.24, -0.5)
-    v118, v150 = FIX.fit(118.0, t, 1.3, -0.5), FIX.fit(150.0, t, 1.52, -0.5)
-    assert v118[1] == 1.3 and abs(v118[2] - 1.3) < 1e-9 and v150[1] == 1.52 and abs(v150[2] - 3.1) < 1e-9   # half way up the veer; on it
-    assert abs(FIX.fit(177.5, t, 1.67, -0.5)[2] - 3.1) < 1e-9
-    for s in (180.0, 192.5, 210.0, 222.5):
-        assert FIX.fit(s, t, 1.8, -0.5) == ("none", 0.0, -0.5)
-    a195, a207 = FIX.fit(195.0, t, 1.77, -0.5), FIX.fit(207.5, t, 1.84, -0.5)
-    assert a195[:2] == (t, 3.40) and abs(a195[2] - 0.5) < 1e-9 and a207[:2] == (t, 3.40) and abs(a207[2] - 1.8) < 1e-9
-    assert FIX.fit(225.0, t, 1.94, -0.5) == (t, 1.94, -0.5) and FIX.fit(600.0, t, 4.0, 0.1) == (t, 4.0, 0.1)
-    assert FIX.STRETCHES == [(100.0, 231.0), (982.5, 1212.5)]
-    assert FIX.ISLANDS == [("MD11", 45.0, 177.5), ("MD12", 195.0, 207.5), ("MD13", 225.0, 1085.0), ("MD13b", 1120.0, 2245.0)]
-    readme = (MG / "README.md").read_text(encoding="utf-8")
-    for frag in ("1.96 m", "1.84 m", "0.43 m", "1.50 m", "[inferred]", "3.6 m", "3.40 m", "s 177.5", "owed"):
-        assert frag in readme, frag
+def _tab(rows):
+    return {FIX.key(s): {"s": s, "verdict": v, "left_m": lf, "right_m": rt, "reason": "made up"} for s, v, lf, rt in rows}
 
 
-def test_piece_cs_rows_are_the_fit_on_the_declared_values_and_nothing_else():
+def _piece_rows():
     pc = next(p for p in DOC["pieces"] if p["id"] == "C")
     cols = pc["columns"]
     it, iw, io = cols.index("median_type"), cols.index("median_w_m"), cols.index("median_off_m")
-    rows = {float(r[0]): r for r in pc["stations"]}
-    rec_rows = {float(r["s"]): r for r in REC["rows"]}
-    assert len(rec_rows) == 146 and min(rec_rows) == 100.0 and max(rec_rows) == 1212.5      # 53 at the J3 end, 93 at the crossing
-    changed = 0
-    for s, r in rec_rows.items():
-        ty, w, o = FIX.fit(s, r["median_type"][0], r["median_w_m"][0], r["median_off_m"][0])
-        assert (r["median_type"][1], r["median_w_m"][1], r["median_off_m"][1]) == (ty, round(w, 2), round(o, 2)), s
-        assert (rows[s][it], rows[s][iw], rows[s][io]) == (ty, round(w, 2), round(o, 2)), s      # the file holds the fit
-        assert r["median_type"][0] == "terracotta"
-        changed += (r["median_w_m"][0], r["median_off_m"][0]) != (r["median_w_m"][1], r["median_off_m"][1])
-    assert changed == 91 + 49                                                                    # the join rows hold
-    gap = [s for s, r in rows.items() if r[it] == "none" and s > 100]
-    assert gap == [180.0 + 2.5 * k for k in range(6)] + [210.0 + 2.5 * k for k in range(6)] + [1087.5 + 2.5 * k for k in range(13)]
-    assert all(rows[s][iw] == 0 for s in gap)
+    return {FIX.key(r[0]): (r[it], float(r[iw]), float(r[io])) for r in pc["stations"]}
 
 
-def test_md13_ends_at_its_nose_and_md13b_begins_at_the_other():
+def _declared_of(rows):
+    rec_rows = {FIX.key(r["s"]): r for r in REC["rows"]}
+
+    def declared_of(s):
+        d = rec_rows.get(FIX.key(s))
+        return (d["median_type"][0], float(d["median_w_m"][0]), float(d["median_off_m"][0])) if d else rows[FIX.key(s)]
+    return declared_of
+
+
+def test_a_row_takes_the_lidars_two_faces_by_this_rule():
+    """FIX.measure on a made-up piece, s 0-100, whose plan is one island 4 m wide on the line. The lidar covers s 10-90:
+    an island 2 m wide to s 37.5, no median s 40-47.5, an island 1.5 m wide from s 50 with its right face 0.5 m in"""
+    S = [2.5 * k for k in range(41)]
+    rows = []
+    for k in range(4, 37):
+        st = 2.5 * k
+        if 40.0 <= st <= 47.5:
+            rows.append((st, "none", None, None))
+        elif st == 30.0:
+            rows.append((st, "island", 2.0, -1.0))          # one station's left face a metre out
+        elif st == 37.5:
+            rows.append((st, "unclear", None, None))        # a nose the lidar could not read
+        elif st == 60.0:
+            rows.append((st, "unclear", 0.9, -0.2))         # an unclear station inside an island, with faces of its own
+        else:
+            rows.append((st, "island", 1.0, -1.0 + (0.5 if st >= 50 else 0.0)))
+    keep = FIX.DECLARED, FIX.HOLD_BEFORE_S
+    FIX.DECLARED, FIX.HOLD_BEFORE_S = {"MD11": (0.0, 100.0)}, None
+    try:
+        got = FIX.measure(S, _tab(rows), lambda st: ("terracotta", 4.0, 0.0))
+        FIX.HOLD_BEFORE_S = 20.0
+        held = FIX.measure(S, _tab(rows), lambda st: ("terracotta", 4.0, 0.0))
+    finally:
+        FIX.DECLARED, FIX.HOLD_BEFORE_S = keep
+    R = got["rows"]
+    assert got["segments"] == [[10.0, 90.0]] and sorted(R) == [2.5 * k for k in range(4, 37)]
+    assert got["runs"] == [(0.0, 37.5), (50.0, 100.0)]                  # the unclear nose is the island's last station
+    assert R[35.0] == ("terracotta", 2.0, 0.0)
+    assert R[30.0] == ("terracotta", 2.0, 0.0)                          # the median of three: one station's face does not kink the curb
+    assert R[37.5] == ("terracotta", 2.0, 0.0)                          # the nose takes the clear station beside it
+    assert R[60.0] == ("terracotta", 1.5, 0.25)                         # drawn straight between its clear neighbours, not its own reading
+    assert R[55.0] == ("terracotta", 1.5, 0.25)
+    assert [R[st] for st in (40.0, 42.5, 45.0, 47.5)] == [("none", 0.0, 0.05), ("none", 0.0, 0.1), ("none", 0.0, 0.15), ("none", 0.0, 0.2)]
+    # where the coverage ends inside an island the faces go back to the plan's over BLEND_M
+    assert FIX.BLEND_M == 20.0 and R[10.0] == ("terracotta", 4.0, 0.0) and R[90.0] == ("terracotta", 4.0, 0.0)
+    assert R[20.0] == ("terracotta", 3.0, 0.0) and R[80.0][1] == 2.75 and abs(R[80.0][2] - 0.125) <= 0.0051
+    assert got["blended"] == [10.0 + 2.5 * k for k in range(8)] + [72.5 + 2.5 * k for k in range(8)]
+    assert [(u["s"], u["taken"].split(":")[0]) for u in got["unclear"]] == [(37.5, "the nearest clear lidar"), (60.0, "the nearest clear lidar")]
+    assert "the island's end" in got["unclear"][0]["taken"] and "between s 57.5 and s 62.5" in got["unclear"][1]["taken"]
+    # rows before HOLD_BEFORE_S keep the plan's values: the lidar's stations there are not read
+    assert held["segments"] == [[20.0, 90.0]] and 17.5 not in held["rows"] and held["rows"][20.0] == ("terracotta", 4.0, 0.0)
+    assert FIX.MEDIAN_OF == 3 and FIX.island_id(0) == "MD11" and [FIX.island_id(k) for k in (2, 3, 4)] == ["MD13", "MD13b", "MD13c"]
+
+
+def test_the_islands_place_follows_each_50_m_bins_verdict():
+    """FIX.measure with bins, on a made-up piece s 0-200 whose lidar island is 2 m wide on the line everywhere but a gap
+    at s 100-110. Bins: the plan's edges true (s 0-47.5), off by -2 m (50-97.5), too few (100-147.5), off by -1 m (150 on)"""
+    S = [2.5 * k for k in range(81)]
+    tab = _tab([(st, "none" if 100.0 <= st <= 110.0 else "island", None if 100.0 <= st <= 110.0 else 1.0,
+                 None if 100.0 <= st <= 110.0 else -1.0) for st in S])
+    bins = [{"s": [0.0, 47.5], "kind": "true", "shift_m": 0.0}, {"s": [50.0, 97.5], "kind": "off", "shift_m": -2.0},
+            {"s": [100.0, 147.5], "kind": "too_few", "shift_m": -1.5}, {"s": [150.0, 200.0], "kind": "off", "shift_m": -1.0}]
+    keep = FIX.DECLARED, FIX.HOLD_BEFORE_S, FIX.TOO_FEW
+    FIX.DECLARED, FIX.HOLD_BEFORE_S = {"MD11": (0.0, 200.0)}, None
+    try:
+        FIX.TOO_FEW = "between"
+        got = FIX.measure(S, tab, lambda st: ("terracotta", 4.0, 0.3), bins)
+        FIX.TOO_FEW = "declared"
+        lit = FIX.measure(S, tab, lambda st: ("terracotta", 4.0, 0.3), bins)
+        plain = FIX.measure(S, tab, lambda st: ("terracotta", 4.0, 0.3))
+    finally:
+        FIX.DECLARED, FIX.HOLD_BEFORE_S, FIX.TOO_FEW = keep
+    R = got["rows"]
+    assert got["runs"] == [(0.0, 97.5), (112.5, 200.0)] and not got["blended"]
+    assert all(v[1] == 2.0 for v in R.values() if v[0] == "terracotta")            # the width is the lidar's, whatever the place
+    assert R[20.0] == ("terracotta", 2.0, 0.0)                                     # edges true: the lidar's own place
+    assert R[50.0] == ("terracotta", 2.0, 1.05)                                    # drawn straight from one bin's centre to the next
+    assert R[75.0][2] == 2.0 and R[97.5] == ("terracotta", 2.0, 2.0)               # to its nose: nothing is drawn across the gap
+    assert R[112.5] == ("terracotta", 2.0, 1.5) and R[122.5][2] == 1.5             # the too-few bin: between its called neighbours
+    assert R[125.0][2] == 1.49 and R[175.0] == ("terracotta", 2.0, 1.0) == R[200.0]
+    assert got["shift"][75.0] == -2.0 and got["shift"][20.0] == 0.0 and sorted(got["shift"]) == sorted(st for st in S if not 100.0 <= st <= 110.0)
+    assert lit["rows"][112.5] == ("terracotta", 2.0, 0.3) and lit["rows"][125.0][2] == 0.32      # the first rule: the plan's own middle there
+    assert lit["rows"][75.0] == R[75.0] and plain["rows"][75.0] == ("terracotta", 2.0, 0.0) and plain["shift"] == {}
+    # the G10's bins as this script reads them: 41 of 50 m, a too-few bin's shift between its called neighbours
+    rb = FIX.road_bins()
+    assert FIX.TOO_FEW == "between" and len(rb) == 41 and rb[0]["s"] == [225.0, 247.5] and rb[-1]["s"] == [2200.0, 2245.0]
+    assert {k: sum(1 for b in rb if b["kind"] == k) for k in ("true", "off", "too_few")} == {"true": 6, "off": 28, "too_few": 7}
+    assert [b["s"][0] for b in rb if b["kind"] == "too_few"] == [400.0, 750.0, 850.0, 900.0, 1500.0, 1850.0, 2000.0]
+    for i, b in enumerate(rb):
+        if b["kind"] == "true":
+            assert b["shift_m"] == 0.0 and abs(b["real_road_middle_minus_plan_m"]) <= 0.30
+        elif b["kind"] == "off":
+            assert b["shift_m"] == b["real_road_middle_minus_plan_m"]
+        else:
+            lo = next(rb[j] for j in range(i - 1, -1, -1) if rb[j]["kind"] != "too_few")
+            hi = next(rb[j] for j in range(i + 1, len(rb)) if rb[j]["kind"] != "too_few")
+            assert min(lo["shift_m"], hi["shift_m"]) - 1e-9 <= b["shift_m"] <= max(lo["shift_m"], hi["shift_m"]) + 1e-9, b
+    assert REC["lidar"]["placement"]["bins"] == rb and REC["lidar"]["placement"]["too_few_rule"] == "between"
+    tf = REC["lidar"]["placement"]["too_few_bins"]
+    assert tf["bins_s"] == [b["s"] for b in rb if b["kind"] == "too_few"] and tf["rule"].startswith("[inferred: interpolated]")
+    assert 1.0 < tf["against_the_declared_middle_m"]["max"] < 2.5                  # what the first rule would have swung the island by
+
+
+def test_piece_cs_rows_are_the_lidars_faces_and_nothing_else():
+    rows = _piece_rows()
+    tab, files = FIX.lidar_table()
+    got = FIX.measure(sorted(rows), tab, _declared_of(rows), FIX.road_bins())
+    rec_rows = {FIX.key(r["s"]): r for r in REC["rows"]}
+    assert sorted(rec_rows) == got["covered"] and len(got["covered"]) > 200
+    for st in got["covered"]:
+        assert rows[st] == got["rows"][st], st                                                   # the file holds what the rule gives
+        assert tuple(rec_rows[st][k][1] for k in ("median_type", "median_w_m", "median_off_m")) == got["rows"][st], st
+    assert REC["lidar"]["files"] == files and [f["file"] for f in files] == ["mg_median_faces.lidar.g10.json", "mg_median_faces_full.lidar.g10.json"]
+    assert got["segments"] == [[45.0, 2245.0]] and not got["blended"]                           # the whole island is measured
+    assert REC["lidar"]["covered_s"] == got["segments"] and REC["lidar"]["unclear"] == got["unclear"]
+    assert (REC["lidar"]["median_of"], REC["lidar"]["blend_m"], REC["lidar"]["hold_before_s"]) == (3, 20.0, 45.0)
+    # a clear island station with clear neighbours: the row's WIDTH is the lidar's own (each face the median of three), and
+    # where no bin moves it (the J3 end, and a station an edges-true bin leaves alone) so are its two faces, to 0.01 m
+    blended, cov, n = set(got["blended"]), set(got["covered"]), 0
+    for st in got["covered"]:
+        beside = [FIX.key(st + d) for d in (-2.5, 0.0, 2.5)]
+        if st in blended or any(q not in cov or tab[q]["verdict"] != "island" for q in beside):
+            continue
+        trio = [tab[q] for q in beside]
+        _ty, w, o = rows[st]
+        lf, rt = (sorted(float(t[k]) for t in trio)[1] for k in ("left_m", "right_m"))
+        assert abs(w - (lf - rt)) <= 0.0051, st
+        if got["shift"].get(st, 0.0) == 0.0:
+            assert abs(o + w / 2.0 - lf) <= 0.0101 and abs(o - w / 2.0 - rt) <= 0.0101, st
+            n += 1
+        else:
+            assert abs(o + got["shift"][st] - (lf + rt) / 2.0) <= 0.0061, st                    # its middle: the lidar's less the bin's shift
+    assert n > 60 and all(st >= 222.5 for st in got["shift"]) and len(got["shift"]) > 780
+    # every station the lidar calls none is a row with no median, and every unclear one is accounted for
+    for st in got["covered"]:
+        if tab[st]["verdict"] == "none":
+            assert rows[st][:2] == ("none", 0.0), st
+    assert all(u["taken"].startswith("the nearest clear lidar") for u in got["unclear"]) and len(got["unclear"]) >= 13
+    assert sorted(u["s"] for u in got["unclear"]) == sorted(st for st in got["covered"] if tab[st]["verdict"] == "unclear")
+    # MD11 is held at its declared start: the lidar has an island before it (s 25-42.5), which is owed
+    assert min(got["covered"]) == FIX.HOLD_BEFORE_S == 45.0
+    assert all(tab[FIX.key(st)]["verdict"] in ("island", "unclear") for st in (25.0, 27.5, 30.0, 32.5, 35.0, 37.5, 40.0, 42.5))
+    assert rows[40.0][:2] == ("none", 0.0)
+    # the two strips beside the turn pockets are the lidar's 1.2-1.3 m, not the 1.96 / 1.84 m the photo fit built
+    for a_, b_ in ((1012.5, 1077.5), (1127.5, 1190.0)):
+        ws = sorted(rows[FIX.key(a_ + 2.5 * k)][1] for k in range(int((b_ - a_) / 2.5) + 1))
+        assert 1.15 <= ws[len(ws) // 2] <= 1.40 and ws[-1] < 1.6, (a_, ws[len(ws) // 2], ws[-1])
+
+
+def test_the_islands_are_the_runs_the_lidar_found():
     meds = DOC["medians"]
     ids = [m["id"] for m in meds]
     assert ids == [f"MD{k}" for k in range(1, 14)] + ["MD13b"] + [f"MD{k}" for k in range(14, 23)]   # no other id moved
-    a, b = (next(m for m in meds if m["id"] == i) for i in ("MD13", "MD13b"))
-    m11, m12 = (next(m for m in meds if m["id"] == i) for i in ("MD11", "MD12"))
-    assert (a["s_from"], a["s_to"], b["s_from"], b["s_to"]) == (225.0, 1085.0, 1120.0, 2245.0)
-    assert (m11["s_from"], m11["s_to"], m12["s_from"], m12["s_to"], m12["width_m"]) == (45.0, 177.5, 195.0, 207.5, [3.4, 3.4])
+    m11, m12, a, b = (next(m for m in meds if m["id"] == i) for i in ("MD11", "MD12", "MD13", "MD13b"))
+    assert [(m["s_from"], m["s_to"]) for m in (m11, m12, a, b)] == [(45.0, 182.5), (195.0, 207.5), (222.5, 1085.0), (1115.0, 2245.0)]
+    assert REC["lidar"]["islands"] == [{"id": m["id"], "s": [m["s_from"], m["s_to"]]} for m in (m11, m12, a, b)]
+    assert REC["lidar"]["no_median_s"] == [[182.5, 195.0], [207.5, 222.5], [1085.0, 1115.0]]
     assert a["piece"] == b["piece"] == "C" and a["raised"] and b["raised"] and a["type"] == b["type"] == "terracotta"
     # one ring point a side per 2.5 m station
-    assert [len(m["polygon_xz"]) for m in (m11, m12, a, b)] == [2 * 54, 2 * 6, 2 * 345, 2 * 451]
+    assert [len(m["polygon_xz"]) for m in (m11, m12, a, b)] == [2 * 56, 2 * 6, 2 * 346, 2 * 453]
+    assert REC["lidar"]["placement"]["bins_by_kind"] == {"true": 6, "off": 28, "too_few": 7}
     assert REC["rings_before"] == {"MD11": {"s_from": 45.0, "s_to": 167.5, "points": 100}, "MD12": {"s_from": 182.5, "s_to": 195.0, "points": 12},
                                    "MD13": {"s_from": 210.0, "s_to": 2245.0, "points": 1630}}
     for m in (m11, m12, a, b):
         c = m["correction"]
         assert c["ledger"] == "0099 round 3, items 1b and 2"
-        assert c["fit"]["no_median_s"] == [[177.5, 195.0], [207.5, 225.0], [1085.0, 1120.0]]
-        assert c["fit"]["stretches_s"] == [[100.0, 231.0], [982.5, 1212.5]]
-        assert c["centre_paint_where_there_is_no_median"]["source"] == "photo" and "[inferred]" in c["inferred"]
-        assert "owed" in c["not_built"]
-    # the ring's new noses taper to the generator's blunt end (tools/author_expansion.py NOSE_W_M)
+        assert c["lidar"]["no_median_s"] == REC["lidar"]["no_median_s"] and c["lidar"]["files"] == REC["lidar"]["files"]
+        assert c["centre_paint_where_there_is_no_median"]["source"] == "photo"
+        assert "owed" in c["not_built"] and "s 25" in c["not_built"]
+        # the photo method's error is said plainly, where the data is
+        err = c["the_photo_method_and_its_error"]
+        assert "0.61 m narrower and 0.86 m right" in err and "+0.30 m of width and +0.49 m of middle" in err
+    # the rings' new ends taper to the generator's blunt end (tools/author_expansion.py NOSE_W_M)
     import math
-    na, nb = len(a["polygon_xz"]) // 2, len(b["polygon_xz"]) // 2
-    end_a = math.dist(a["polygon_xz"][na - 1], a["polygon_xz"][na])
-    start_b = math.dist(b["polygon_xz"][0], b["polygon_xz"][-1])
-    assert abs(end_a - FIX.NOSE_W_M) < 0.01 and abs(start_b - FIX.NOSE_W_M) < 0.01
-    n11 = len(m11["polygon_xz"]) // 2
-    assert abs(math.dist(m11["polygon_xz"][n11 - 1], m11["polygon_xz"][n11]) - FIX.NOSE_W_M) < 0.01       # MD11's new end, s 177.5
-    assert abs(math.dist(a["polygon_xz"][0], a["polygon_xz"][-1]) - FIX.NOSE_W_M) < 0.01                 # MD13's new start, s 225
+    for m, ends in ((m11, "end"), (a, "both"), (b, "start")):
+        n = len(m["polygon_xz"]) // 2
+        if ends in ("end", "both"):
+            assert abs(math.dist(m["polygon_xz"][n - 1], m["polygon_xz"][n]) - FIX.NOSE_W_M) < 0.01, m["id"]
+        if ends in ("start", "both"):
+            assert abs(math.dist(m["polygon_xz"][0], m["polygon_xz"][-1]) - FIX.NOSE_W_M) < 0.01, m["id"]
     src = (ROOT / "tools" / "author_expansion.py").read_text(encoding="utf-8")
     assert "NOSE_M = 6.0 " in src and "NOSE_W_M = 0.6 " in src and (FIX.NOSE_M, FIX.NOSE_W_M) == (6.0, 0.6)
+    readme = (MG / "README.md").read_text(encoding="utf-8")
+    for frag in ("mg_median_faces.lidar.g10.json", "0.61 m narrower", "0.86 m", "owed", "s 182.5", "nearest clear lidar"):
+        assert frag in readme, frag
 
 
-def test_the_island_and_the_paint_are_decorates_and_the_crossing_carries_no_centre_line():
+def test_the_island_and_the_paint_are_decorates_and_the_gaps_carry_no_centre_line():
     w = ISLAND["island_w_by_point"]
-    assert [(i, j - 1) for i, j in MI.segments(w)] == [(8, 51), (68, 354), (367, 741)]            # MD12's four points are no island
-    assert REC["island"]["runs_of_points_with_an_island"] == [[8, 51], [58, 61], [68, 354], [367, 741]]
-    assert REC["island"]["points_changed_runs"] == [[26, 51], [54, 61], [63, 67], [321, 397]]
-    assert REC["island"]["points_changed"] == len(REC["island"]["before"]) == 116
-    assert all(w[k] == 1.96 for k in range(331, 352)) and all(w[k] == 1.84 for k in range(370, 389))
-    assert all(w[k] == 3.4 for k in range(58, 62))
-    assert REC["island"]["points_with_no_median_runs"] == [[53, 57], [63, 67], [356, 365]]
+    assert [(i, j - 1) for i, j in MI.segments(w)] == [(8, 53), (67, 354), (365, 741)]            # MD12's four points are no island
+    assert REC["island"]["runs_of_points_with_an_island"] == [[8, 53], [58, 61], [67, 354], [365, 741]]
+    assert REC["island"]["points_changed"] == len(REC["island"]["before"]) > 150
+    ch = [k for a_, b_ in REC["island"]["points_changed_runs"] for k in range(a_, b_ + 1)]
+    assert sorted(int(k) for k in REC["island"]["before"]) == ch
+    assert all(1.0 <= w[k] <= 1.6 for k in list(range(331, 352)) + list(range(370, 389)))          # the two strips beside the pockets
+    assert all(1.1 <= w[k] <= 3.7 for k in range(58, 62))                                          # MD12, up to 3.6 m wide
+    assert REC["island"]["points_with_no_median_runs"] == [[54, 57], [63, 66], [356, 364]]
     gap = [k for a_, b_ in REC["island"]["points_with_no_median_runs"] for k in range(a_, b_ + 1)]
-    assert len(gap) == 20 and all(w[k] == 0 for k in gap)
+    assert len(gap) == 17 and all(w[k] == 0 for k in gap)
     lines = CONN["paint"]["lines"]
-    assert len(lines) == REC["paint"]["lines"] == 14 and REC["paint"]["centre_line_offsets_cleared_where_there_is_no_median"] == 40
+    assert len(lines) == REC["paint"]["lines"] == 14 and REC["paint"]["centre_line_offsets_cleared_where_there_is_no_median"] == 34
     for k in range(58, 62):                                          # MD12: the painted outline, its two edge lines, and no island
         assert len([ln for ln in lines if ln["color"] == "yellow" and not ln["dash"] and ln["off"][k] is not None]) == 2, k
-    for k in gap:                                                    # no solid yellow line of any kind between the noses
+    for k in gap:                                                    # no solid yellow line of any kind where there is no median
         assert not [ln for ln in lines if ln["color"] == "yellow" and not ln["dash"] and ln["off"][k] is not None], k
         assert sum(1 for ln in lines if ln["color"] == "white" and ln["off"][k] is not None) >= 4      # lanes and bike lines run on
     before = REC["paint"]["before"]
     assert set(int(k) for k in before) <= set(range(14)) and {3, 4, 6, 7, 8, 9} <= set(int(k) for k in before)
-    assert all(26 <= int(i) <= 67 or 321 <= int(i) <= 397 for d in before.values() for i in d)
+    near = set(q for k in ch + gap for q in range(k - 3, k + 4))
+    assert all(int(i) in near for d in before.values() for i in d)                               # paint changes only where the island did
 
 
 def test_the_correction_changes_nothing_on_a_second_run():
@@ -192,16 +304,23 @@ def test_the_record_gives_back_the_island_the_committed_blend_holds():
     assert [len(v) for v, _f in o13["deck"]] == [1358] and [len(v) for v, _f in o13["beam"]] == [2692] and len(o13["posts"]) == 224
     pts1, iw1 = [list(p) for p in ISLAND["points_xyz_m"]], [float(x) for x in ISLAND["island_w_by_point"]]
     new = RB.island_parts(pts1, iw1, 8, 741)
-    assert new["runs"] == [[8, 51], [68, 354], [367, 741]]
-    assert [len(v) for v, _f in new["curb"]] == [264, 1722, 2250] and [len(v) for v, _f in new["deck"]] == [88, 574, 750]
-    assert [len(v) for v, _f in new["beam"]] == [152, 1124, 1476] and len(new["posts"]) == 228
-    # outside the points the corrections changed (26-67, 321-397), the one point each side whose direction they turn (a
-    # ring stands across the line from its neighbours) and a new island's own three-point nose, old and new are the same
-    # islands, vertex for vertex
-    assert o11["curb"][0][0][:6 * (25 - 8)] == new["curb"][0][0][:6 * (25 - 8)]
-    assert o13["curb"][0][0][6 * (71 - 63):6 * (320 - 63)] == new["curb"][1][0][6 * (71 - 68):6 * (320 - 68)]
-    assert o13["curb"][0][0][6 * (399 - 63):] == new["curb"][2][0][6 * (399 - 367):]
-    assert o13["deck"][0][0][2 * (399 - 63):] == new["deck"][2][0][2 * (399 - 367):]
+    assert new["runs"] == [[8, 53], [67, 354], [365, 741]]
+    assert [len(v) for v, _f in new["curb"]] == [6 * 46, 6 * 288, 6 * 377] and [len(v) for v, _f in new["deck"]] == [2 * 46, 2 * 288, 2 * 377]
+    assert len(new["beam"]) == 3 and 220 <= len(new["posts"]) <= 240          # each of the three is over the rule's 120 m
+    # away from the points the correction changed, the one point each side whose direction they turn (a ring stands
+    # across the line from its neighbours) and an island's own three-point nose, old and new are the same islands,
+    # vertex for vertex
+    ch = set(int(k) for k in REC["island"]["before"])
+    same = 0
+    for (o_first, o_last, o_parts), n_idx in (((8, 48, o11), 0), ((63, 741, o13), 1), ((63, 741, o13), 2)):
+        n_first, n_last = new["runs"][n_idx]
+        for k in range(max(o_first, n_first) + 4, min(o_last, n_last) - 3):
+            if any(q in ch for q in range(k - 1, k + 2)):
+                continue
+            assert o_parts["curb"][0][0][6 * (k - o_first):6 * (k - o_first) + 6] == new["curb"][n_idx][0][6 * (k - n_first):6 * (k - n_first) + 6], k
+            assert o_parts["deck"][0][0][2 * (k - o_first):2 * (k - o_first) + 2] == new["deck"][n_idx][0][2 * (k - n_first):2 * (k - n_first) + 2], k
+            same += 1
+    assert same > 0 or len(ch) > 700                    # (when the whole island is measured no point is left as it was)
     for bad in ({"line": LINE}, {"line": LINE, "was_rows": [63], "record": "x"}, {"was_rows": [63, 741], "record": "x"},
                 {"line": LINE, "was_rows": [[8, 70], [63, 741]], "record": "x"}, {"line": LINE, "was_rows": [[48, 8]], "record": "x"}):
         try:
@@ -270,25 +389,62 @@ def test_the_step_takes_every_island_named_and_refuses_one_left_out():
 
 # ---- the plants -----------------------------------------------------------------------------------------------------
 
-def test_the_plants_on_pavement_are_dropped_and_every_one_is_bare_on_the_lidar():
+def test_the_plants_on_pavement_are_dropped_and_no_plant_the_lidar_saw_is():
     sp = json.loads((MG / "mg_median.median_spots.json").read_text(encoding="utf-8"))
     spots = json.loads((LM / "data" / "scatter_positions.json").read_text(encoding="utf-8"))["median_planting"]
     lidar = json.loads((LM / "source" / "vegetation" / "median_heights.lidar.json").read_text(encoding="utf-8"))
-    assert len(sp["drop"]) == 21 and len(sp["kept_on_the_new_deck"]) == 18
-    assert sp["points_runs"] == [[26, 51], [54, 61], [63, 67], [321, 397]]              # no spot stands on the J3 end's narrow islands
-    where = {}
+    PL = _load("mg_plants_data_0099", MG / "mg_plants_data.py")
+    assert sp["points_runs"] == REC["island"]["points_changed_runs"] and len(sp["drop"]) >= 21
     for d in sp["drop"]:
         s = spots[d["index"]]
         assert (s["x"], s["z"]) == (d["x"], d["z"])                                  # the spot's own place: make_treefx checks it too
         assert lidar["spots"][d["index"]][2] < lidar["min_h_m"] == 0.3                # no plant the lidar saw is dropped
         assert d["half_m"] == 0 or abs(d["lateral_m"]) > d["half_m"] - MI.DECK_INSET
-        where[d["where"]] = where.get(d["where"], 0) + 1
-    assert where == {"no median: between the two noses": 6, "pavement beside the island": 14, "the strip's curb ring": 1}
+        assert d["where"] in ("no median: between the two noses", "pavement beside the island", "the strip's curb ring")
     for k in sp["kept_on_the_new_deck"]:
         assert abs(k["lateral_m"]) <= k["deck_half_m"]
-    assert not {d["index"] for d in sp["drop"]} & {k["index"] for k in sp["kept_on_the_new_deck"]}
+    # a spot the lidar saw a plant at, which the corrected deck no longer reaches, is MOVED onto it (the Mac 2026-11-23:
+    # rule (3) the G10's lm-shrub top within 2 m, else rule (2) straight across onto the deck), never dropped
+    P, W = ISLAND["points_xyz_m"], [float(x) for x in ISLAND["island_w_by_point"]]
+    segs = MI.segments(W)
+    mt = _load("make_treefx_mg_move", ROOT / "tools" / "make_treefx.py")
+    import math
+    for m in sp["move"]:
+        s = spots[m["index"]]
+        assert (s["x"], s["z"]) == (m["x"], m["z"]) and lidar["spots"][m["index"]][2] >= 0.3
+        assert m["rule"].startswith("(2) ") or m["rule"].startswith("(3) ")
+        assert ("[inferred position]" in m["rule"]) == m["rule"].startswith("(2) ")
+        assert 0 < m["moved_m"] <= mt.MEDIAN_SPOT_MOVE_MAX_M and abs(m["moved_m"] - math.hypot(m["to_x"] - s["x"], m["to_z"] - s["z"])) < 0.011
+        k = min(range(len(P)), key=lambda q: math.hypot(m["to_x"] - P[q][0], m["to_z"] - P[q][2]))
+        seg = next((i0, j0) for i0, j0 in segs if i0 <= k < j0)                      # its new place is on an island
+        tx, tz = MI.tangent(P, k)
+        lat = (m["to_x"] - P[k][0]) * (-tz) + (m["to_z"] - P[k][2]) * tx
+        assert abs(lat) <= MI.half_width(W, seg[0], seg[1], k) - MI.DECK_INSET - PL.TRUNK_R_M + 0.011, m     # and its trunk on the deck
+    assert (PL.TRUNK_R_M, PL.TOP_WITHIN_M, PL.TALL_M) == (0.3, 2.0, 10.0)
+    # rule (3) rests on the tops the Mac read off the G10's lm_shrub.tops.npz; a top is carried across by the shift its
+    # island was given, and the spot keeps its own lidar height (median_heights.lidar.json stays the one source)
+    tops = {t["spot"]: t for t in json.loads((MG / "mg_plant_tops.g10.json").read_text(encoding="utf-8"))["spots"]}
+    assert sorted(tops) == sorted(m["index"] for m in sp["move"]) and sp["tops_file"] == "mg_plant_tops.g10.json"
+    for m in sp["move"]:
+        near = tops[m["index"]]["nearest_plant_top"]
+        assert m["lidar_h_m"] == lidar["spots"][m["index"]][2]
+        if m["rule"].startswith("(3) "):
+            assert m["top"]["index"] == near["top"] and m["top"]["on_the_deck"] and m["top"]["from_the_spot_m"] <= 2.0
+            assert abs(math.hypot(m["to_x"] - near["x"], m["to_z"] - near["z"]) - abs(m["top"]["carried_across_m"])) < 0.011
+        else:
+            assert near is None or (m["top"]["index"] == near["top"] and not m["top"]["on_the_deck"])
+    assert sorted(m["rule"][:3] for m in sp["move"]) == ["(2)", "(2)", "(2)", "(3)", "(3)", "(3)"]
+    shifts = REC["lidar"]["placement"]["shift_m_by_station"]
+    assert len(shifts) == REC["lidar"]["placement"]["stations_placed_by_a_bin"] and shifts[0][0] == 222.5 and shifts[-1][0] == 2245.0
+    assert sp["tall_plants_moved"] == [{"index": m["index"], "lidar_h_m": m["lidar_h_m"], "rule": m["rule"], "moved_m": m["moved_m"]}
+                                       for m in sp["move"] if m["lidar_h_m"] >= 10.0]
+    assert "plant_off_the_deck" not in sp
+    lists = [{d["index"] for d in sp[k]} for k in ("drop", "kept_on_the_new_deck", "move")]
+    assert not (lists[0] & lists[1] or lists[0] & lists[2] or lists[1] & lists[2])
+    src = (MG / "mg_plants_data.py").read_text(encoding="utf-8")
+    assert "the gap is wrong, not the plant" in src                                    # a plant where there is no island at all stays fatal
     college = json.loads((LM / "source" / "college_r2" / "college_plants.median_spots.json").read_text(encoding="utf-8"))
-    assert not {d["index"] for d in sp["drop"]} & {d["index"] for d in college["drop"] + college["foot_y"]}
+    assert not {d["index"] for d in sp["drop"] + sp["move"]} & {d["index"] for d in college["drop"] + college["foot_y"]}
     ms = CFG["scenery"]["treefx"]["median_spots"]
     assert ms["file"] == "source/college_r2/college_plants.median_spots.json"
     assert ms["files"] == ["source/expansion/mg_median/mg_median.median_spots.json"]
@@ -298,7 +454,7 @@ def test_make_treefx_reads_every_list_it_is_given():
     mt = _load("make_treefx_mg", ROOT / "tools" / "make_treefx.py")
     src = (ROOT / "tools" / "make_treefx.py").read_text(encoding="utf-8")
     for frag in ('for ms_name_ in ([ms_cfg["file"]] if ms_cfg.get("file") else []) + list(ms_cfg.get("files") or []):',
-                 "ms_lists_[kind_] += list(ms_one_.get(kind_) or [])"):
+                 "ms_lists_[kind_] += list(ms_one_.get(kind_) or [])", '"move": list(ms_cfg.get("move") or [])'):
         assert frag in src, frag
     assert hasattr(mt, "plan")
 
@@ -317,7 +473,7 @@ def test_median_rebuild_is_lake_murrays_alone_and_runs_before_the_tops():
     mr = CFG["route"]["median_rebuild"]
     assert (mr["line"], mr["was_rows"], mr["record"]) == (LINE, [[8, 48], [63, 741]], "source/expansion/mg_median/mg_median_correction.json")
     paved = [(i["line"], i["rows"]) for i in CFG["route"]["median_tops"]["paver"]["islands"]]
-    assert paved == [(LINE, [8, 51]), (LINE, [68, 354]), (LINE, [367, 741])]             # the islands the rebuild leaves
+    assert paved == [(LINE, [8, 53]), (LINE, [67, 354]), (LINE, [365, 741])]             # the islands the rebuild leaves
     for p in sorted((ROOT / "tracks").glob("*/track.config.json")):
         if p.parent != LM:
             assert "median_rebuild" not in (json.loads(p.read_text(encoding="utf-8")).get("route") or {}), p

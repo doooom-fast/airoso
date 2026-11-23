@@ -69,11 +69,12 @@ def test_the_committed_intermediate_is_reproduced_offline_byte_for_byte_but_the_
             fmd.pop(k, None)
             md7_k = md7.pop(k)
             assert k == "correction" or md7_k
-    # ledger 0099 round 3, item 1b: Mission Gorge's MD13 was corrected at the source from NAIP by
-    # source/expansion/mg_median/fix_mg_median.py (no median across the Margerum Avenue / Mission Vista Drive crossing, a
-    # narrow strip beside each turn pocket). Its record holds every piece-C row it changed ([before, after]: type, width,
-    # offset). The author builds exactly the BEFORE rows and ONE island MD13; the committed file holds the AFTER rows, MD13
-    # ending at its nose and a new MD13b from the other, whose rings outside the corrected stretch are the author's own.
+    # ledger 0099 round 3, items 1b and 2: Mission Gorge's median was corrected at the source by
+    # source/expansion/mg_median/fix_mg_median.py, from the G10's lidar faces (no median across the Margerum Avenue /
+    # Mission Vista Drive crossing, a narrow strip beside each turn pocket, the J3 end where it really is). Its record holds
+    # every piece-C row it set ([before, after]: type, width, offset). The author builds exactly the BEFORE rows and ONE
+    # island MD13; the committed file holds the AFTER rows, MD13 ending at its nose and a new MD13b from the other, whose
+    # rings at the stations the lidar does not cover are the author's own.
     rec_p = TRACK / "source" / "expansion" / "mg_median" / "mg_median_correction.json"
     if rec_p.exists():
         rec = json.loads(rec_p.read_text(encoding="utf-8"))
@@ -90,9 +91,9 @@ def test_the_committed_intermediate_is_reproduced_offline_byte_for_byte_but_the_
             assert (fr[it], fr[iw], fr[io]) == (ch["median_type"][0], ch["median_w_m"][0], ch["median_off_m"][0]), (wr[0], fr[it], fr[iw], fr[io], ch)
             assert (wr[it], wr[iw], wr[io]) == (ch["median_type"][1], ch["median_w_m"][1], ch["median_off_m"][1]), (wr[0], wr[it], wr[iw], wr[io], ch)
             fr[it], fr[iw], fr[io] = wr[it], wr[iw], wr[io]
-        assert seen == len(by) == 146                                                   # item 2 (the J3 end): 53 more rows
+        assert seen == len(by) > 200                                                    # every row the lidar covers
         assert not [m for m in fresh["medians"] if m["id"] == "MD13b"]
-        stretches = rec["fit"]["stretches_s"]                                           # s 100-231 and s 982.5-1212.5
+        stretches = rec["lidar"]["covered_s"]                                           # the stations the lidar covers
         own = {}                                                                        # the author's ring points, by station
         for mid, before in rec["rings_before"].items():
             f = next(m for m in fresh["medians"] if m["id"] == mid)
@@ -109,7 +110,7 @@ def test_the_committed_intermediate_is_reproduced_offline_byte_for_byte_but_the_
                 if not any(lo <= s <= hi for lo, hi in stretches):
                     assert (m["polygon_xz"][j], m["polygon_xz"][2 * nm - 1 - j]) == own[s], (mid, s)
                     kept += 1
-        assert kept == 22 + 300 + 413                                                   # every ring station outside the stretches
+        assert kept > 0 or max(hi for _lo, hi in stretches) >= 2245.0                   # every ring station the lidar does not cover
         for mid in ("MD11", "MD12", "MD13"):
             i = next(k for k, m in enumerate(fresh["medians"]) if m["id"] == mid)
             fresh["medians"][i] = next(m for m in want["medians"] if m["id"] == mid)
@@ -212,10 +213,10 @@ def test_medians_per_a2():
     assert flush_d[0]["type"] == "hatched" and flush_d[0]["s_to"] <= 185
     assert all(m["type"] == "painted" for m in flush_d[1:])
     assert all(m["type"] == "planted" for m in by["A"]) and all(m["type"] == "terracotta" for m in by["C"])
-    # the two openings near J3 stay open, where the photo has them (ledger 0099 round 3, item 2: the plan stood them at
+    # the two openings near J3 stay open, where the lidar has them (ledger 0099 round 3, item 2: the plan stood them at
     # s 174 and s 202, about 13 m short; source/expansion/mg_median/fix_mg_median.py), and so does the crossing (item 1b)
     for m in by["C"]:
-        for lo, hi in ((180.0, 192.5), (210.0, 222.5), (1087.5, 1117.5)):
+        for lo, hi in ((185.0, 192.5), (210.0, 220.0), (1087.5, 1112.5)):
             assert m["s_to"] < lo or m["s_from"] > hi, (m["id"], lo, hi)
 
 

@@ -793,6 +793,13 @@ sounds and rumbles like a sidewalk if driven on.
 
 ## Round 3, item 1b (the PC, 2026-11-23): Mission Gorge's median no longer crosses a real intersection. Green on scratch, not rehearsed
 
+***Superseded in its numbers by item 2 (below), the same day.*** *This section is the record of the first build
+(ff406378), measured off the photo. Its finding stands: the island was built across a real crossing. Its strips do not:
+I "corrected" the photo's readings against a band the island does not fill, and built the two strips 1.96 and 1.84 m
+wide with their middles 0.70 and 0.58 m off. The lidar has them 1.24 and 1.30 m wide, and the gap at s 1087.5-1112.5
+(11 stations, not 13). What ships is item 2's: the whole island on the lidar's faces. Nothing of this section was
+rehearsed or installed.*
+
 Item 1's aerial bins left four that read grey (MD13, s 1010-1210). Looked at on the mosaic, the grey is asphalt: the
 photo shows the Margerum Avenue / Mission Vista Drive crossing there, with marked crosswalks on all four legs and no
 median for about 33 m, and a narrow strip beside a left-turn pocket each side. The plan's median width on piece C is
@@ -925,3 +932,213 @@ The full suite was not run again on the PC after that one test changed.
 Nothing to decide. On the next drive, Mission Gorge at Margerum Avenue: the median stops for the crossing and is a
 narrow strip beside the turn lanes, as on the photo. The paint inside the crossing is plain lane dashes with no
 crosswalks or stop lines (none are measured).
+
+## Round 3, item 2 (the PC, 2026-11-23): Mission Gorge's median is the lidar's, in width and in place, and its J3 end stands where it is. Green on scratch, not rehearsed
+
+The Mac's order asked for the plan's short island MD12 "only on measured rows". Looking for it on the aerial showed
+the whole J3 end of the median off: MD11 leaves its declared line, the two openings stand about 13 m from the real
+ones, and MD12 was declared on the first opening's asphalt. The Mac (2026-11-23): "make the J3 end true now, in this
+round, with one rehearsal for 1 + 1b + 2." Then the G10 read the island's faces off the 2024 lidar
+(`claude/lm-mg-median-lidar-20261123`, ef7c7bfa and 19cf9cc9), and that changed more than the J3 end: **the photo fit
+item 1b was built on was wrong, and the whole island is narrower than the plan and off its place.** This item rebuilds
+MD11, MD13 and MD13b over their full length on the lidar's faces. Everything measured is in
+`source/expansion/mg_median/` (README.md; the G10's `mg_median_faces.lidar.g10.md`).
+
+### What I got wrong
+
+Item 1b measured the two strips beside the crossing's turn pockets off NAIP. To take out the photo's blur and
+registration I read its bias on two stretches "where the island fills its declared band" (s 930-985, 1215-1260: width
+0.30 m short, middle 0.49 m right) and added both back. **The island does not fill that band there.** The lidar has it
+0.61 m narrower and 0.86 m right of it, over 41 stations. So what I took for the photo's error was the island's real
+difference from the plan, and my correction moved good readings off: the photo's RAW readings agree with the lidar
+(strip B's middle -2.24 against -2.32). Item 1b's commit ff406378 built the strips **1.96 and 1.84 m wide, their middles
+0.70 and 0.58 m left of where the lidar has them**; they are 1.24 and 1.30 m. It was scratch-green and passed the
+Mac's suite, because nothing in either measures the island against the ground. It was not rehearsed and not installed.
+Item 1b's numbers above are the record of that first build; what ships is this section's.
+
+The J3 end was first measured off the photo too (checkpoint d54f3909, scratch-green 12:56, never pushed on its own). No
+correction was added there, and the lidar agrees with it to the photo's own +-0.75 m, except at MD11's end (below).
+
+### The measurement
+
+`mg_median_faces.lidar.g10.json` (s 25-300, 930-1260) and `mg_median_faces_full.lidar.g10.json` (s 225-2245): per 2.5 m
+station the island's two curb faces (+- a median 0.03 m) and the road's two outer curbs, in piece C's frame (+ = left
+of J3 -> J4 travel = north-west). Not measured there: the lidar's absolute horizontal accuracy (stated to 2 m).
+
+| | the plan | the lidar |
+|---|---|---|
+| MD11 | s 45-167.5, on the line | s 25-182.5, 1.25 m wide; over s 132.5-182.5 it stands 3.2 m north-west of the declared band |
+| the two openings | s 167.5-182.5, s 195-210 | s 185-192.5, s 210-220 |
+| MD12 | s 182.5-195, 1.7 m wide | s 195-207.5, up to 3.6 m wide |
+| MD13's start | s 210 | a nose at s 222.5 |
+| the crossing | one island straight across | no median s 1087.5-1112.5; the strips 1.24 and 1.30 m wide |
+| MD13b, s 1850-2000 | widens to 7.1-8.0 m | 4.8-5.4 m: the widening is not real |
+| MD13b's last 70 m | 3-4 m wide | 1.1-1.4 m wide from s 2177.5 |
+| MD13 / MD13b, 747 stations | | 0.73 m narrower than declared; the top 0.152 m over the road |
+
+The photo had MD11 ending at s 177.5: the terracotta stops there and a paler strip runs on along the same line. That is
+the island's plain nose (the lidar: raised to s 182.5).
+
+### Where in the road the island goes
+
+Its width needs no frame; its place does. The plan's road edges are eye readings on NAIP every 250 m (+-1.0 to 1.5 m
+each) and the median was declared on the middle between them, so "0.7 m south-east of the declared band" could be the
+island off in the road or the road off in the world. I asked for the road's outer curbs off the same lidar; the G10
+read them (both curbs at 399 stations) and called each 50 m bin. **Over s 1250-2000 both of the plan's curbs sit
+1.6-3.0 m north-west of the real ones**: the real road is about as wide as planned but displaced, and the real island
+stands within 0.6 m of the real road's middle. Over s 1100-1200 the plan's edges are right and the island is off in the
+road, as strip B really is.
+
+The Mac's rule (2026-11-23), with three refinements it accepted the same hour:
+
+- **Width:** the lidar's everywhere.
+- **Place, per bin.** Edges true (6 bins): the lidar's own place. Edges off (28): the island's middle measured from the
+  REAL road's middle, set from the PLAN's road's middle, so the lane room either side is the real one inside a road that
+  is itself misplaced. Too few curb readings (7: s 400, 750, 850, 900, 1500, 1850, 2000): **[inferred: interpolated]**
+  the shift drawn straight between the nearest called bins either side.
+- **No jog at a bin's edge:** a bin's rule holds at its centre and is drawn straight to the next centre, inside one
+  island (neighbouring bins differ by up to 1.5 m). Nothing is drawn across a real gap.
+- **The J3 end (MD11, MD12) stays at the lidar's own place:** the bins there are not sound (the north-west "edges" are
+  the side street's mouth and a bank), the south-east curb reads clean and within 0.33 m of the plan's over s 100-200,
+  and the plan's middle cannot carry MD11's 3.2 m veer.
+
+The first form of the too-few rule (the plan's own middle) would have swung the island off its line and back by up to
+1.95 m (s 772.5; over 0.3 m at 172 stations).
+
+**What the rule does.** Over MD13 / MD13b the island is set a median 1.65 m north-west of where the lidar has it (2.93 m
+north-west to 1.71 m south-east). Against the plan it is a median 0.70 m narrower and 1.07 m north-west. At the 374
+stations where the island and both real curbs read, lane room as built minus the real one:
+
+| the island at | north-west side | south-east side |
+|---|---|---|
+| this rule | -0.15 m (p10 -1.44) | -0.18 m (p10 -1.41) |
+| the lidar's own place everywhere | +1.41 m | -1.74 m |
+| the plan's place (0.20.5, installed) | +0.11 m | -1.44 m |
+
+Painted lanes (decorate spreads 3 + 3 evenly and drops to 2 under a 2.9 m lane): 0.20.5 has 2 instead of 3 on one side
+at 220 station-sides, the south-east side over s 1585-2020 (435 m) among them. This build has 111 (north-west
+s 345-362.5, 755-827.5, 897.5-1010; south-east s 2000-2042.5, 2060-2080), all where the plan's road is narrower than the
+real one.
+
+### What was built
+
+1. **The data** (`fix_mg_median.py`, rewritten; `mg_median_correction.json`). 881 rows of piece C (s 45-2245) take the
+   lidar: each face the median of its own station and the two beside it in its island; the 55 unclear stations from the
+   nearest clear lidar (the record lists each); a row with no median gets an offset drawn straight between the islands
+   either side, so the lane lines do not jog across an opening **[inferred]**. Islands: **MD11 s 45-182.5, MD12
+   s 195-207.5, MD13 s 222.5-1085, MD13b s 1115-2245**; on connector points 8-53, 67-354, 365-741 and MD12's four
+   points 58-61. 733 of the line's 746 points change; 4,433 paint offsets; 34 centre-line offsets cleared at the 17
+   points with no median (source: the photo). Idempotent; the record keeps every declared value.
+2. **The scene step takes several islands** (`tools/author_median_rebuild_blend.py`; `route.median_rebuild.was_rows` is
+   one pair or a list). Each old island is found on its own, exactly, or the step refuses; an island left unnamed
+   between them is refused; the stamp's checksum covers the list. No tolerance moved (GATES-CHANGELOG).
+3. **The plants** (`mg_plants_data.py`, `mg_median.median_spots.json`, `mg_plant_tops.g10.json`). Of the island's 329
+   spots, 226 lie on the new deck and stay, 97 are dropped (every one bare on the lidar), and **6 have a plant on the
+   lidar that the deck no longer reaches**. The Mac: "a real plant the lidar saw is never dropped because the island
+   moved under it" (Kevin, 2026-11-18: "we've reduced lake murrays center bushes far too much"). They are moved, by a new
+   opt-in list in `tools/make_treefx.py` (`median_spots.move`; a move over 5 m [invented] is refused): three to the
+   lm-shrub plant top within 2 m (tops 400701, 401191, 403275, read by the Mac off the G10's `lm_shrub.tops.npz`),
+   carried across by the shift their island was given so each keeps its place ON its island; three straight across onto
+   the deck, an **[inferred position]** (two have no top within 2 m; one's top lands off the deck). They move 0.44 to
+   1.53 m; each keeps its own lidar height. None is 10 m or taller.
+4. **`route.median_tops.paver`** lists the three islands by their new rows (8-53, 67-354, 365-741).
+5. **Item 1's MD11 sentence** is corrected above.
+
+### The corridor (`tools/barrier_bands.py`, not changed)
+
+On the corrected data, before the scene: exit 0, every self-gate, all four planned no_routes PASS. The north lap's
+openings are v764-776 (the J3 end; 0.20.5's data: v759-772), v1065-1074 (the crossing, new) and the two corners'; whole,
+boxes and closure runs are identical, and the five noses are unchanged. Against 0.20.5's data the closure follows the
+island on 736 vertices of north_cw (at most 2.93 m, v1344) and 699 of north_acw (1.95 m, v970). On Mission Gorge the
+clockwise lane is 8.35 m at its narrowest (0.20.5's data: 7.87) and the anticlockwise 8.12 (8.88).
+
+**MD11 from s 25 was tried and is not built.** The corridor tool refuses it: "v718 is not the first vertex of an
+authored island run", and the closure's pin at v712-713 goes to 1:0.17 with a 9-10 m plan radius (limits 1:3 and 20 m).
+It needs the J3 corner re-declared. The Mac: "Don't force it."
+
+### Measured on a scratch workshop, through the chain's own commands
+
+`run_full.ps1` then `run_gates.ps1` (street, race_cw, north_cw), a workshop seeded as the chain seeds one, Blender 4.2
+below normal. Every step exit 0. Pictures: `mg_median/j3_before_after.png`, `crossing_before_after.png`,
+`crossing_before_after_close.png` (the photo, 0.20.5, this build).
+
+| | 0.20.5's islands, paved (item 1 on scratch) | this build |
+|---|---|---|
+| `median_rebuild` | not there | both old islands found whole: curb 246 + 4,074 v (CURB), deck 82 + 1,358 (`1LAWN_median`), beams 140 + 2,692 and 235 posts (GUARDRAIL), 693 + 1,480 paint strips; built: curb 276 / 1,728 / 2,262, deck 92 / 576 / 754, beams 160 / 1,128 / 1,484, 230 posts, 716 + 1,428 strips; new decks 0.173-0.202 m over the road; the curbs' base -0.033..-0.003 m against the road (the old islands': -0.030..-0.009) |
+| `median_tops` | 2 tops across; paved 1,440 v; 2,123 rows | 3 tops across; 12 grass islands (2,842 v), 3 paved (1,422 v); 2,110 rows checked, 0 without a top; MD12's 4 rows reported as too short to be an island |
+| signs / verify_race G | 29 posts; 21,484 plants | 29 posts, PASS; 21,387 plants (97 dropped, 6 moved), 0 in a lane or a wall on all three laps |
+| planned no_route, the north lap | PASS | PASS, 89.9 k m2 (cw) and 91.6 k m2 (acw) |
+| the prep's conform | 79,062 / 203,540 / 53,792 | the same three numbers |
+| the thinning / the walk's seat | 540,045 vertices / 3,202 lips | 540,057 / 3,201 |
+| kn5_ground_check, street / race_cw / north_cw | 0 cells; max +0.313; 43 of 10,900 | the same on all three |
+| street drive_test / audit | PASS 10 drops, 44 far / CLEAN, F 0 of 101,834 | PASS 10 drops, 44 far, severe 0 / CLEAN, F 0 of 101,739, K 0, I 0 |
+| race_cw drive_test / audit / no_route | PASS severe 7, fold 13, 0 drops / CLEAN / PASS | PASS severe 7, fold 13, 0 drops, 142 far / CLEAN, F 0 of 109,543, W 0 / PASS, leak 0, 0 of 377 probes, 138.2 k m2 |
+| north_cw drive_test / audit / no_route | PASS severe 5, fold 12, 0 drops, 34 far / CLEAN / PASS, 88.4 k m2 | PASS severe 5, fold 12, 0 drops, 34 far / CLEAN, F 0 of 107,969, W 0 / PASS, leak 0, 0 of 326 probes, 90.0 k m2 |
+| the built medians (`median_tops_check.py`) | 14 islands: 1,419 grass + 704 paved rows | 15 islands: 1,419 grass + **691 paved** (MD11 40, MD13 279, MD13b 372), 0 asphalt; 22 rows under 1.2 m wide are not probed |
+
+- **A red gate on the way, kept red.** The mechanism was first run on the stations the first lidar file covered. It
+  stopped at verify_race G on the anticlockwise north lap: one median plant (spot 880, 3.87 m tall on the lidar), left
+  standing where the corrected island's deck no longer reached it, read 0.015 m inside the closure. Nothing was forced
+  or loosened; that gate is why the plants have a move rule. With the island placed by the road's bins spot 880 is back
+  on the deck, and the six spots listed above are the ones moved.
+- **What stands on the paved islands:** only their own barrier (`1WALL_guard`), rebuilt with them.
+- **The thinning and the lip** differ by a handful as in item 1b (540,057 ground vertices against 540,045; 3,201 lips
+  against 3,202): the thinning reads its distances to the pavement's own vertices, and the islands' curbs are pavement.
+  Every gate reads as before.
+- **Not run on scratch:** race_acw and north_acw, the whole of verify_kn5, the AI lines, TreeFX, the track folder.
+  The rehearsal runs them.
+
+### Owed, on the board
+
+- **Piece C's road edges.** 28 of the 41 bins read the plan's edges off, 22 of them by 1 m or more (1,100 m), up to
+  2.9 m. Blast radius of re-fitting them: the ROAD ribbon of `north_mission_gorge` in the committed blend (746 points,
+  both edges), both curbs and sidewalks, all 14 paint lines, the ground's conform band beside the road; 7 side-street
+  stubs with their 7 welded mouths (Conestoga Way, Mission Vista Dr twice, Margerum Ave, Mission Montana Dr, Deerfield
+  Crescent, Deerfield St) and 16 curb cuts; 40 lamp posts (every one within 3 m of a plan curb); the north ribbon's
+  signs; the trees and houses beside it (not counted); the north lap's closure (2,204 m on both layouts), curb strips,
+  the J3 and J4 corner kerbs and pads, both AI lines; every north gate. Lake Murray never re-drafts, so it needs an
+  author step that re-ribbons a road in the scene, which nothing in round 3 does. Its own round (the Mac agreed).
+- **The painted lanes** that drop to 2 at 111 station-sides go with it.
+- **MD12**, the island itself (12.5-17.5 m long; four connector points; the tools build on six).
+- **MD11, s 25-45** (with the J3 corner).
+- For that round, from the outer curbs: over s 50-100 the plan's south-east edge is 1.27 m too far out (16 curb stations).
+
+### For the rehearsal
+
+- As items 1 and 1b: the engine copy must carry the snapshot's `scripts/ac/pbr.py`.
+- On the first build from the committed blend `median_rebuild` prints both old islands as found (curb [246, 4074]) and
+  saves; `median_tops` then prints `"from_one_top_object_to_the_other": 3`. A second run of either does nothing.
+- `make_treefx` reports `"median_spots": {"dropped": N, "foot_moved": M, "moved": 6}`.
+- Against 0.20.5 the road kn5 differs along the whole of Mission Gorge: `1KERB_sidewalk_*` (the islands' curbs),
+  `1KERB_PAVER_median`, `1LAWN_median`, `1WALL_guard`, MARKINGS and YLINE, the trees, and the north layouts' closures
+  and AI lines.
+
+### Tests
+
+`tests/tools/test_mg_median_0099.py` (13): the row rule on a made-up piece (the median of three, an unclear nose, an
+unclear station inside an island, a gap's offsets, the return to the plan where coverage ends, the held start); the
+placement on a made-up piece (edges true, edges off, a too-few bin both ways, nothing drawn across a gap) and the G10's
+41 bins as the script reads them; piece C's rows against the lidar, station by station; the islands; decorate's island
+and paint; idempotence; the record giving back the committed islands part for part; the old paint; the refusals; the
+several-islands form; the plants (no spot with a plant dropped, every move lands with its trunk on the deck, the tops);
+the wiring. `tests/tools/test_make_treefx_plan.py` gains the move list's test (the spot at its new place with its
+model, angle, size and measured height; the three refusals). `tests/tools/test_author_expansion.py` learns the lidar
+correction as it knows Princess View's. `test_terracotta_median_0099.py` and `test_median_tops_0055.py` follow the rows.
+
+On the PC the full run reads **1,703 pass**; the 11 failures and the 10 files that do not load are the same set as
+before item 1, all this machine's own (no numpy; the live engine-july), none in a file this item touches. The nine test
+files around the change were run again after the last edit: 130 pass.
+
+### Shared files touched
+
+`tools/author_median_rebuild_blend.py` (several islands), `tools/make_treefx.py` (`median_spots.move`, opt-in),
+`data/expansion.north.json`, `data/median_bands.json`, `data/connectors.local.json` (Mission Gorge's records only).
+`fleet/GATES-CHANGELOG.md`.
+
+### Needs Kevin
+
+Nothing to decide. On the next drive, Mission Gorge Rd: the median is narrower (about 0.7 m), paved terracotta, stops
+for the Margerum Avenue crossing with a narrow strip beside each turn lane, and near J3 it swings toward the north-west
+side and has its two openings where they really are. Known and owed: the road itself is up to 3 m off its real place
+over about 750 m (its edges were read by eye), a short island near J3 (MD12) is only a painted outline, and the painted
+lanes drop from 3 to 2 on one side in five short stretches where the road as built is too narrow.

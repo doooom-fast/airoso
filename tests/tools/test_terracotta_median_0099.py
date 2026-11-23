@@ -120,8 +120,8 @@ def test_lake_murray_tones_the_row_with_its_own_pair_and_touches_no_other_kerb()
 def test_the_config_lists_mission_gorges_islands_as_paved():
     sp = MT.spec(CFG)
     assert sp == {"object": "1LAWN_median",
-                  "paver": {"object": OBJECT, "islands": [("north_mission_gorge", 8, 51), ("north_mission_gorge", 68, 354),
-                                                          ("north_mission_gorge", 367, 741)]}}   # three since item 1b; rows since item 2
+                  "paver": {"object": OBJECT, "islands": [("north_mission_gorge", 8, 53), ("north_mission_gorge", 67, 354),
+                                                          ("north_mission_gorge", 365, 741)]}}   # three since item 1b; rows as the lidar has the islands (item 2)
     isl = MT.islands(LM)
     paved = MT.surfaces(sp, isl)
     assert sorted((isl[i]["line"], isl[i]["first"], isl[i]["last"]) for i in paved) == sp["paver"]["islands"]
@@ -139,15 +139,15 @@ def test_the_step_refuses_a_paved_top_it_cannot_name_or_place():
             return True
         return False
 
-    ok = {"object": "1LAWN_median", "paver": {"object": OBJECT, "islands": [{"line": "north_mission_gorge", "rows": [8, 51]}]}}
+    ok = {"object": "1LAWN_median", "paver": {"object": OBJECT, "islands": [{"line": "north_mission_gorge", "rows": [8, 53]}]}}
     assert not refused(ok)
     for bad_name in ("1KERB_median", "1LAWN_paver", "1KERB_SIDEWALK_median", "PAVER", ""):
         assert refused({"object": "1LAWN_median", "paver": {"object": bad_name, "islands": ok["paver"]["islands"]}}), bad_name
     for bad_islands in ([], [{"line": "north_mission_gorge"}], [{"rows": [8, 48]}],
-                        [{"line": "north_mission_gorge", "rows": [8, 51]}, {"line": "north_mission_gorge", "rows": [8, 51]}],
+                        [{"line": "north_mission_gorge", "rows": [8, 53]}, {"line": "north_mission_gorge", "rows": [8, 53]}],
                         [{"line": "north_mission_gorge", "rows": [8, 50]}],      # not an island as built, row for row
                         [{"line": "north_mission_gorge", "rows": [58, 61]}],     # a run too short to be an island (MD12)
-                        [{"line": "no_such_line", "rows": [8, 51]}]):
+                        [{"line": "no_such_line", "rows": [8, 53]}]):
         assert refused({"object": "1LAWN_median", "paver": {"object": OBJECT, "islands": bad_islands}}), bad_islands
 
 

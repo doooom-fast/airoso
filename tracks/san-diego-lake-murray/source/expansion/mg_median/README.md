@@ -1,15 +1,146 @@
-# Mission Gorge Rd's raised median, read off the aerial (ledger 0099 round 3, 2026-11-23)
+# Mission Gorge Rd's raised median, measured (ledger 0099 round 3, 2026-11-23)
 
 The measurements behind three items of Lake Murray's round 3: item 1 (the median's top is terracotta pavers, not grass),
 item 1b (the island as the plan declares it runs across a real intersection) and item 2 (the J3 end of the median
-stands about 13 m from where the photo has it). The measuring scripts read; `fix_mg_median.py` and `mg_plants_data.py`
-write the corrected data and its records; nothing here touches the scene.
+stands about 13 m from where it really is; and the whole island is narrower than declared and off its place).
+
+**What is built is the lidar's.** The G10 read the island's two curb faces, and the road's two outer curbs, off the
+USGS 2024 lidar at every 2.5 m station (`mg_median_faces_g10.py` -> `mg_median_faces.lidar.g10.json`, s 25-300 and
+930-1260, and `mg_median_faces_full.lidar.g10.json`, s 225-2245; `mg_median_faces.lidar.g10.md` is its method and its
+checks). `fix_mg_median.py` sets the plan's rows from those two files and `mg_plants_data.py` the plants; nothing here
+touches the scene.
+
+**The photo came first, and my correction of it was wrong.** The sections from "What the photo shows" down are the
+NAIP 2022 readings items 1 and 1b were first built on. They are kept as the record: the colour evidence (terracotta, not
+grass; a real crossing) stands, and so do the raw readings. The numbers the first build took from them do not; see "The
+photo method, and where it went wrong".
 
 The photo is `tracks/san-diego-lake-murray/source/naip_2022_lm_full_z18.jpg` + `.georef.json` (USDA NAIP, flown
 2022-04-25, about 0.50 m per pixel; Git LFS, sha256 `1764a80b...`, branch `claude/lm-naip-full-20261123` until that
 branch is merged). The islands are `medians[].polygon_xz` of `data/expansion.north.json`: side A's stations, then side
 B's reversed, 2.5 m apart along piece C (Mission Gorge Rd, J3 to J4). A point goes to a pixel exactly as
-`tools/measure_median_tone.py` does it.
+`tools/measure_median_tone.py` does it. Everything below is in piece C's frame: metres off its line, + = left of J3 ->
+J4 travel = north-west.
+
+## What is built: the lidar's faces (`fix_mg_median.py`, `mg_median_correction.json`)
+
+A face is placed between the two neighbouring returns where the fewest fall on the wrong side; its +- is half that gap,
+a median 0.03 m. Not measured there: the lidar's absolute horizontal accuracy (the NAD83(2011) -> WGS84 step is the null
+transform, stated to 2 m).
+
+| | the plan | the lidar |
+|---|---|---|
+| MD11, s 45-100 | 0.6-1.2 m wide on the line (-0.5) | 1.25 m wide, its middle -1.0 |
+| MD11, s 102.5-130 | straight on | runs diagonally north-west, its middle -0.8 -> +2.65 |
+| MD11, s 132.5-182.5 | ends at s 167.5 | faces +3.34 / +2.02: 3.2 m north-west of the declared band; last island station s 182.5 (a 0.61 m nose) |
+| the first opening | s 167.5-182.5 | s 185-192.5 (four stations with none) |
+| MD12 | s 182.5-195, 1.7 m wide | **s 195-207.5**, up to 3.6 m wide, its middle +1.14 |
+| the second opening | s 195-210 | s 210-220 (five stations with none) |
+| MD13's start | s 210 | a nose at s 222.5, an island from s 225, 1.26 m wide |
+| MD13, s 285-310 | 2.5-3.0 m wide | widens 1.37 -> 4.77 m |
+| the crossing | one island straight across | **no median s 1087.5-1112.5**; strip A (s 1012.5-1077.5) 1.24 m wide; strip B (s 1127.5-1192.5) 1.30 m wide, 2.3 m right of the line |
+| MD13b, s 1850-2000 | widens to 7.1-8.0 m | 4.8-5.4 m: the widening is not real |
+| MD13b, s 2152.5-2177.5 | 3-4 m wide to its end | narrows 4.3 -> 3.6, then 1.1-1.4 m wide from s 2177.5 to its end |
+| the whole of MD13 / MD13b (747 island stations) | | **0.73 m narrower** than declared; its top 0.152 m over the road |
+
+**How a row is set.** The lidar calls each station island, none or unclear.
+
+- **island:** the two faces, each the median of its own station and the two beside it in the same island (a face off by
+  one return's spacing at one station does not kink the curb; a ramp keeps its shape). Width = left - right.
+- **none:** no median. The row's offset runs straight from the middle of the island before to the middle of the island
+  after, so the lane lines do not jog across the opening **[inferred: there is nothing to measure]**.
+- **unclear** (55 stations: a top just under 0.10 m, a nose, a taper, vegetation on the top, one face flush with a turn
+  pocket): the Mac's rule was "use the photo there, or the nearest clear lidar, and say which". All 55 take **the
+  nearest clear lidar**: a raised station if the nearest clear station on either side is an island, its faces drawn
+  straight between the clear island stations either side of it (a nose takes the station beside it). The record lists
+  each (`lidar.unclear`). The longest run is s 2162.5-2175, where the island tapers to its last narrow stretch.
+
+881 rows of piece C (s 45-2245) are set; every one changes; 20 have no median. The islands: **MD11 s 45-182.5, MD12
+s 195-207.5, MD13 s 222.5-1085 and MD13b s 1115-2245** (MD13b is new, so no other median's id moves). Each ring is
+re-cut by the generator's own nose rule. The island and the paint of `north_mission_gorge` are
+`tools/expansion_pieces.decorate`'s own output for piece C: islands on connector points 8-53, 67-354 and 365-741, and
+MD12's four points 58-61, which are no island; 733 of the 746 points change. The two centre lines decorate's rule draws
+where a road has no median are cleared at the 17 points with none (34 offsets; the photo shows no yellow there).
+Idempotent: a further run leaves all four files byte-identical. The record keeps every declared value it replaced.
+
+**Owed, and why.**
+
+- **MD12** is 12.5 to 17.5 m long. Four connector points lie inside it; the median tool builds an island on six or
+  more, and so does the lap's corridor. The Mac's rule: only on measured rows, never lengthened, no denser rows for this
+  island alone. What is set is its PLACE: the plan's painted outline lies where the real island stands.
+- **MD11 before s 45.** The lidar has the island from s 25 (1.0-1.3 m wide, its middle about -1.2; the J3 pad cuts at
+  s 24.74). Tried on a scratch copy, the corridor tool refuses it: "v718 is not the first vertex of an authored island
+  run", and the closure's pin at v712-713 goes to 1:0.17 with a 9-10 m plan radius (its limits: 1:3 and 20 m). It needs
+  the J3 corner re-declared. Not forced: rows before s 45 keep the plan's values (`HOLD_BEFORE_S`).
+
+## Where in the road the island goes (the 50 m bins)
+
+The island's WIDTH needs no frame. Its PLACE does, and the plan's road is not a survey: its two edges are eye readings
+on NAIP every 250 m, +-1.0 to 1.5 m each, and its median was declared on the middle between them. So "the island is
+0.7 m south-east of the declared band" can mean the island is off in the road, or the road is off in the world. The
+G10's outer curbs settle it per 50 m (its `reads`; 0.30 m **[invented]** as the line; both curbs read at 399 stations):
+
+- over **s 1250-2000** both of the plan's curbs sit 1.6-3.0 m north-west of the real ones. The real road is about as
+  wide as planned but displaced, and the real island stands within 0.6 m of the real road's middle;
+- over **s 1100-1200** (strip B) the plan's edges are right, and the island is off in the road, as strip B really is.
+
+**The rule (the Mac, 2026-11-23).** Width: the lidar's everywhere. Place, per bin:
+
+| the bin reads | bins | the island's middle |
+|---|---|---|
+| the road edges are where the plan has them | 6 | the lidar's own place |
+| the plan's road edges are off (or both off) | 28 | measured from the REAL road's middle, set from the PLAN's road's middle: lidar middle - (real road middle - plan road middle). The lane room either side is then the real one, inside a road that is itself misplaced |
+| too few stations with both curbs read | 7 | **[inferred: interpolated]** the shift drawn straight between the nearest called bins either side; the lidar's width and shape kept (s 400, 750, 850, 900, 1500, 1850, 2000) |
+
+A bin's rule holds at the bin's centre and is drawn straight to the next bin's centre, inside one island, so the curb
+never steps sideways at a bin's edge (neighbouring bins differ by up to 1.5 m). Nothing is drawn across a real gap:
+strip A keeps its bin's shift to its nose and strip B starts on its own. The first form of the rule gave a too-few bin
+the plan's own middle; that swings the island off its line and back between called neighbours (by up to 1.95 m, at
+s 772.5; over 0.3 m at 172 stations), which is not on the ground.
+
+**The J3 end (MD11, MD12; s 45-207.5) stays at the lidar's own place.** The bins there are not sound: on the
+north-west side the "edge" readings are the side street's mouth and a bank, not a curb (s 150-197.5: 0 curbs, 11 edges,
+2.2 m outside the plan's). The south-east curb reads clean and within 0.33 m of the plan's over s 100-200. And the
+plan's middle cannot carry MD11's 3.2 m veer. For the road-edge round: over s 50-100 the plan's south-east edge is
+1.27 m too far out (16 curb stations).
+
+**What it does.** Over MD13 / MD13b the island is set a median 1.65 m north-west of where the lidar has it (from
+2.93 m north-west to 1.71 m south-east), because the plan's road is that far off the real one. Against the plan it is a
+median 0.70 m narrower and 1.07 m north-west. Checked at the 374 stations where the island and both real curbs read,
+lane room as built minus the real one:
+
+| the island at | north-west side | south-east side |
+|---|---|---|
+| this rule | -0.15 m (p10 -1.44, p90 +0.48) | -0.18 m (p10 -1.41, p90 +0.29) |
+| the lidar's own place, everywhere | +1.41 m | -1.74 m |
+| the plan's place (0.20.5) | +0.11 m | -1.44 m |
+
+Painted lanes (decorate spreads 3 + 3 evenly and drops to 2 under a 2.9 m lane): the plan had 2 instead of 3 on one
+side at 220 station-sides (the south-east side over s 1585-2020, 435 m, and the north-west over s 465-520 and
+952-1005). It is 111 now (north-west s 345-362.5, 755-827.5, 897.5-1010; south-east s 2000-2042.5, 2060-2080), all
+where the plan's road is narrower than the real one. Those go with the road's edges.
+
+**Owed: the road's edges.** Re-fitting piece C's edges to the measured curbs moves a six-lane road 1.6-3.0 m over
+about 750 m. That is its own round (the ledger has its blast radius).
+
+## The photo method, and where it went wrong
+
+The photo readings below are per station the **equivalent width** (the excess R - G over the asphalt's, summed across
+the island, over a full island's plateau) and that excess's **centroid**. Raw, they agree with the lidar: strip B's
+middle -2.24 against -2.32; within 0.22 m on the reference stretches; MD11's veer, the two openings and MD12 where the
+lidar has them.
+
+What I added to them was wrong. To take out the photo's blur and registration I measured its bias "where the island
+fills its declared band" (s 930-985 and 1215-1260: width 0.30 m short, middle 0.49 m right) and added both back. **The
+island does not fill that band.** The lidar has it there 0.61 m narrower and 0.86 m right of it, over 41 stations. So
+the 0.30 m and 0.49 m were the island's real difference from the plan, read as an error of the photo, and the
+correction moved good readings off. The first build of item 1b made the strips beside the turn pockets **1.96 and
+1.84 m wide, with their middles 0.70 and 0.58 m left of where the lidar has them**; they are 1.24 and 1.30 m. It was
+not installed, and not rehearsed.
+
+Two smaller things the lidar put right. MD11 runs to s 182.5, not 177.5: the terracotta stops at s 177.5 and a paler
+strip runs on along the same line (R - G +0 to +4, which the measure does not count); that is the island's plain nose.
+And the crossing's gap ends at s 1112.5, not 1117.5: strip B's nose starts 2.5-5 m earlier than the photo's.
 
 ## What the photo shows
 
@@ -41,7 +172,10 @@ station by station across the declared band (`profile_md.py` -> `md13_profile_s9
 "Terracotta" in these two scripts is R - G >= 10 on the 8-bit values. That number is **[invented]**: a look aid between
 the asphalt's own value there (about -2 to -4) and the terracotta's (+13 to +27), not a gate and not a measured split.
 
-## The faces, measured (`faces_md.py` -> the fit in `fix_mg_median.py`)
+## The faces off the photo (`faces_md.py`): the first build's numbers, superseded by the lidar
+
+*Kept as the record of what item 1b was first built on. The strips' widths and middles in this section carry the
++0.30 m / +0.49 m that should not have been added (above); the lidar's are in "What is built".*
 
 A 2 m strip is four pixels on this photo, and the mosaic stores one colour sample per about 1 m, so a face is not read
 off a threshold. Two quantities survive the blur: the **equivalent width** (the excess R - G over the asphalt's, summed
@@ -70,7 +204,10 @@ the yellowest pixel reads (R + G) / 2 - B = +3.5 to +7.5, the asphalt 5-8 m eith
 yellow reads at this resolution was not measured on this photo, so this is "no yellower than the asphalt", not a
 threshold passed.
 
-## The J3 end, measured (item 2; `faces_piece.py` -> `pieceC_faces_s40-250.json`)
+## The J3 end off the photo (item 2; `faces_piece.py` -> `pieceC_faces_s40-250.json`): superseded by the lidar
+
+*Kept as the record. No correction was added to these readings, and the lidar agrees with them to the photo's own
+error, except at MD11's end (s 182.5, not 177.5: the plain nose).*
 
 Looking for the plan's short island MD12 showed the whole J3 end of the median standing off the photo. The same measure
 as above, per 2.5 m station and in 10 m windows, but off the piece's declared centre (there is no ring to follow where
@@ -87,7 +224,7 @@ are off the DECLARED centre, + = left = north-west:
 | 210-222.5 | MD13 from s 210 | **no terracotta** at any of the six stations: the second real opening |
 | 225 on | MD13 | a strip 1.0-1.4 m wide, 0.3-0.8 m right of the declared centre (inside the lateral error): MD13's real start |
 
-**Built from it** (`fix_mg_median.py`): MD11 leaves its declared line from s 100 and stands **3.6 m left** of it from
+**What the first build took from it** (the checkpoint commit d54f3909; not what is built now): MD11 leaves its declared line from s 100 and stands **3.6 m left** of it from
 s 136 to its end at **s 177.5**, one straight line through the four measured windows, at its declared width; no median
 s 180-192.5 and s 210-222.5; **MD12 at s 195-207.5, 3.40 m wide** (the middle five stations' median 3.10 + 0.30), its
 middle 1.0 m left at s 195 and 2.3 m left at s 207.5; MD13 from **s 225**, as declared from there.
@@ -108,47 +245,44 @@ an island, as the plan's own MD12 was) now lies where the real island stands, in
 s 187.5-192.5 and s 212.5-217.5 read (R + G) / 2 - B = +4.0 to +5.5 against the asphalt's +2.0 to +4.5. The stations
 beside the noses read +8 to +14 on light grey pixels (red, green and blue within 16 of each other): not yellow.
 
-**To be compared with the lidar.** The Mac started a job on the G10 (2026-11-23) that reads the island's curb faces
-directly off the 2024 lidar's ground returns, every 2.5 m over s 40-250 and s 980-1215. Where it differs from the photo
-by more than the photo's stated error (+-0.15 m in width at the crossing, +-0.75 m laterally at the J3 end), the
-lidar's figure replaces the photo's.
-
-## The correction (`fix_mg_median.py`, `mg_median_correction.json`)
-
-The MD7 precedent (`source/expansion/phase2/fix_pv_median.py`), one script for both places. It is driven by two tables:
-the stretches of s whose rows take the fit (s 100-231 and s 982.5-1212.5) and the islands the piece holds after it.
-
-- **The rows.** 146 piece-C rows lie in the stretches and 140 change (91 at the crossing, 49 at the J3 end); 25 lose
-  their median (13 between the crossing's noses, 6 in each real opening).
-- **The medians.** MD11 s 45-177.5, MD12 s 195-207.5, MD13 s 225-1085 and a new **MD13b** s 1120-2245, so no other
-  median's id moves. Each ring is re-cut inside the stretches by the generator's own nose rule and kept point for point
-  outside them: 735 ring stations are the generator's own points (22 of MD11, 300 of MD13, 413 of MD13b).
-- **The island and the paint** of `north_mission_gorge` are `tools/expansion_pieces.decorate`'s own output for piece C
-  (decorate reproduces Mission Gorge's committed record exactly, so nothing rides along): 116 points change (26-51,
-  54-61, 63-67 and 321-397); islands on points 8-51, 68-354 and 367-741, and MD12's four points 58-61, which are no
-  island. Every other piece's record is identical.
-- **The centre lines** decorate's rule draws where a road has no median are cleared at the 20 points with none
-  (53-57, 63-67 and 356-365: 40 offsets). The photo shows no yellow there.
-- Idempotent: a further run leaves all four files byte-identical. The record keeps every declared value it replaced
-  (the rows, the island's points, the paint's offsets, the three rings' extents).
+**Compared with the lidar** (the Mac's rule: where they differ by more than the photo's stated error, the lidar's).
+Put in the piece's frame, the photo's middles stand 0.15-0.35 m north-west of the lidar's along MD11 and MD12 and
+0.21 m south-east of it at MD13's start: inside the photo's +-0.75 m. Its widths read 0.0-0.4 m under the lidar's. What
+differs is MD11's end (s 182.5, not 177.5: the plain nose), and with it the first opening (s 185-192.5); the second is
+s 210-220, MD12 is s 195-207.5 and up to 3.6 m wide, and MD13's nose is at s 222.5.
 
 ## The scene (`tools/author_median_rebuild_blend.py`, author step `median_rebuild`)
 
 Lake Murray never runs its draft again, so the islands are re-authored in the committed scene. The two islands the
 blend holds on the line (MD11, rows 8-48; MD13, rows 63-741) are each found exactly as the record's data built them:
-curb 246 and 4,074 vertices in CURB, deck 82 and 1,358, beams 140 and 2,692 and 235 posts in GUARDRAIL, 114 + 250
+curb 246 and 4,074 vertices in CURB, deck 82 and 1,358, beams 140 and 2,692 and 235 posts in GUARDRAIL, 693 + 1,480
 paint strips, every vertex within 2 mm of the rule's own, or the step refuses. They are taken out, and the three islands
 the corrected data holds are built by the same rule (`tools/median_island.py`, the rule the draft tool builds with):
-curb 264 / 1,722 / 2,250 vertices, deck 88 / 574 / 750, beams 152 / 1,124 / 1,476, 228 posts; the 115 + 188 changed
-paint strips by the assembler's own paint function.
+curb 276 / 1,728 / 2,262 vertices, deck 92 / 576 / 754, beams 160 / 1,128 / 1,484, 230 posts; the 716 + 1,428 changed
+paint strips by the assembler's own paint function. The new decks stand 0.173-0.202 m over the road.
 
-## The plants (`mg_plants_data.py`, `mg_median.median_spots.json`)
+## The plants (`mg_plants_data.py`, `mg_median.median_spots.json`, `mg_plant_tops.g10.json`)
 
-39 of the median's plant spots stand on the changed points, all of them at the crossing: no spot stands on the J3 end's
-narrow islands. 18 lie on the new deck and stay where they are. **21 are dropped** (6 between the noses, 14 on pavement
-beside the island, 1 on a strip's curb ring); none is moved. Every dropped spot is bare on the lidar (0.04-0.25 m, under
-its 0.3 m floor): no plant the lidar saw is lost, and the script refuses to drop one it did see, because that would mean
-the outline is wrong.
+The median's plant spots are the draft's own, drawn on the island as the plan declared it. 329 of them stand on
+Mission Gorge's island:
+
+- **226 lie on the new deck** and stay where they are.
+- **97 are dropped** (77 on pavement beside the island, 15 on a curb ring, 5 between the crossing's noses). Every one is
+  bare on the lidar (under its 0.3 m floor): no plant the lidar saw is dropped.
+- **6 have a plant on the lidar and the deck no longer reaches them** (spots 846, 852, 857, 862, 871, 888; 0.68 to
+  5.46 m tall; none is 10 m or taller). The Mac, 2026-11-23: "a real plant the lidar saw is never dropped because the
+  island moved under it" (Kevin, 2026-11-18: "we've reduced lake murrays center bushes far too much"). They are MOVED
+  (`tools/make_treefx.py` `scenery.treefx.median_spots` "move", new):
+  - **rule (3), three of them** (852, 857, 871): the lm-shrub plant top within 2 m (tops 400701, 401191, 403275, read by
+    the Mac off the G10's `lm_shrub.tops.npz`): the spot takes the top's own place, a measured place. All six stand at
+    s 745-996, where the island is set from the plan's road, so the top is carried across by the same shift the island
+    was given (1.69-1.89 m) and the plant keeps its place ON its island.
+  - **rule (2), the other three:** straight across onto the deck, 0.3 m inside its edge, an **[inferred position]**.
+    Spots 862 and 888 have no plant top within 2 m; spot 846's top, carried across, lands off the deck.
+  - They move 0.44 to 1.53 m. Each keeps its own lidar height (`source/vegetation/median_heights.lidar.json` stays the
+    one source of heights).
+- A spot with a plant where there is no island at all (between two noses) is FATAL in the script: that would mean the
+  gap is wrong. There is none.
 
 Why the plan has the crossing so: piece C's `median_w_m` is linear between eye readings every 250 m (st 1000: 4.5 m,
 st 1250: 5.5 m), and the plan holds no side road there.
@@ -184,6 +318,7 @@ python -I tracks/san-diego-lake-murray/source/expansion/mg_median/crop_md.py . <
 python -I tracks/san-diego-lake-murray/source/expansion/mg_median/osm_near.py . MD13 1103
 python -I tracks/san-diego-lake-murray/source/expansion/mg_median/faces_md.py . <mosaic.jpg> <georef.json> --from 960 --to 1240
 python -I tracks/san-diego-lake-murray/source/expansion/mg_median/faces_piece.py . <mosaic.jpg> <georef.json> C 40 250 <the declared expansion.north.json>
+python -I tracks/san-diego-lake-murray/source/expansion/mg_median/mg_median_faces_g10.py <tiles> <lm-shrub tool> <airoso> <out>   # the G10: the lidar's faces (its .md)
 python -I tracks/san-diego-lake-murray/source/expansion/mg_median/fix_mg_median.py            # the table; --write applies it
 python -I tracks/san-diego-lake-murray/source/expansion/mg_median/mg_plants_data.py           # the plants; --write
 python -I tracks/san-diego-lake-murray/source/expansion/mg_median/props_on_islands.py . <project before> <project after>
@@ -191,8 +326,8 @@ python -I tracks/san-diego-lake-murray/source/expansion/mg_median/props_on_islan
 
 `gaps_md.py`, `profile_md.py` and `faces_md.py` read MD13's ring as it was declared (one ring, s 210-2245), and
 `faces_piece.py` the declared rows: run them on the data before the correction (git: 366a5a4c) to reproduce the
-numbers above. The `*_scratch.json` files and the two
-`crossing_before_after*.png` pictures are what the scratch chain runs of items 1 and 1b measured.
+photo's numbers. The `*_scratch.json` files are what the scratch chain runs measured (item 1; item 1b on the photo fit;
+the lidar build), and `crossing_before_after*.png` / `j3_before_after.png` the scene before and after, beside the photo.
 
 131.7 is MD13's own median luminance after the canopy cut (`md_bins_50m.json` `shadow_ref_lum`), the reference of the
 tool's shadow rule. Pillow only; no numpy.

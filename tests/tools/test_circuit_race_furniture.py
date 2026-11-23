@@ -157,7 +157,8 @@ def test_pit_lane_sheet_meets_the_paddock_sheet_and_keeps_the_old_names():
     assert new["pit_wall_west"]["height_m"] == 1.03 and new["pit_paddock_west"]["height_m"] == 0.59
     assert new["pit_wall_nose"]["kind"] == "tyres"
     rows = [r for k, r in new.items() if k.startswith("paddock_row_")]
-    assert len(rows) == 15 and all(r["kind"] == "krail" and "height_m" not in r for r in rows)   # 0.81 m [invented]
+    assert len(rows) == 13 and all(r["kind"] == "krail" and "height_m" not in r for r in rows)   # 0.81 m [invented]
+    assert not {"paddock_row_3", "paddock_row_8"} & set(new)   # 2026-11-22: the kerb paint, not K-rails (ledger 0097 round 2)
     # the west pit wall ends where the lidar's begins, the paddock rail likewise
     by = {r["key"]: r for r in bes["rails"]}
     assert by["pit_wall_west"]["polyline_lonlat"][-1] == by["pit_wall_lidar"]["polyline_lonlat"][0]

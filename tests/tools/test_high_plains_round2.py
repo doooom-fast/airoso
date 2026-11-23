@@ -182,10 +182,13 @@ def test_owned_concrete_on_the_edge_strip_and_synced():
         assert f in assets and (ROOT / f).exists()
 
 
-def test_rows_3_and_8_are_documented_not_moved():
-    rails = {r["key"]: r for r in _cfg()["scenery"]["bespoke"]["rails"]}
-    for k in ("paddock_row_3", "paddock_row_8"):
-        assert "NOT moved" in rails[k]["_round2"]
+def test_rows_3_and_8_are_removed_as_kerb_paint():
+    """ledger 0097 round 2: the two rows' blue sections are the kerb paint, not K-rails; standing them would invent barriers,
+    so the Mac removed them (Kevin 2026-11-22: decide on my own, 'I just want real'); the config says why"""
+    bes = _cfg()["scenery"]["bespoke"]
+    keys = {r["key"] for r in bes["rails"]}
+    assert not {"paddock_row_3", "paddock_row_8"} & keys
+    assert "kerb paint" in bes["_rows_3_8_doc"]
 
 
 def test_version_and_every_round2_key_is_high_plains_own():

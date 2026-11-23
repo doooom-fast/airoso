@@ -283,3 +283,12 @@ the AI line 2,137 -> 2,140 points, lap 98.9 -> 96.0 s (generated); the circuit d
   second AI line, road wear per layout, and every gate on both layouts.
 - Parapets: run the G10 job above on Kevin's word to the download.
 - K-rail rows 3 / 8: Kevin's call (remove them from the config, or leave them standing nothing).
+
+### Round 2 addendum (Mac, 2026-11-22): rows 3 and 8 removed
+
+Round 2 found the two auto K-rail rows `paddock_row_3` (R s 263-299, -6.48..-6.66 m) and `paddock_row_8` (L s 212-239,
++4.87 m) were read off the photo's blue sections, and those are the kerb paint, not barriers. The photo shows no K-rail
+off the road beside either. Kevin's answer ("Move them off the road and stand them") assumed they were K-rails; with
+his later word to decide on my own and his rule "I just want real", the Mac removed both from the config rather than
+invent barriers (`scenery.bespoke._rows_3_8_doc` says why; their entries are in git history at 165ab3f9).
+`test_circuit_race_furniture` now expects 13 paddock rows; `test_high_plains_round2` checks they are gone.

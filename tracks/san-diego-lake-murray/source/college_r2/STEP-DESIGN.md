@@ -37,14 +37,39 @@ corridor, the dummies, the signs and every gate read the split road.
 - **Speedway Reverse** stays on the mainline, now the southbound carriageway.
 - The crossover goes: `race.chicanes` entry `college_split` (`out_leg [1253, 1289]`, `back_leg [1343, 1379]`) is
   removed with its streetonly median pieces.
-- **Mission Gorge Speedway** (`race.laps.north`) turns at College / Navajo with its box at v1452-1472 (apex 1463),
-  noses ending at v1452 and closure runs to v1452. **Decided (the Mac, 2026-11-23): the split ends before that box.**
-  The island ends at v1444 and the blend into the built road finishes by v1452, where northbound is about 0.6 m over
-  southbound; the box is not re-declared. `college_design.py`'s zone (today v1130-1480, blended over its last 30 m)
-  is re-cut to end at v1452 when the step is written.
+- **Correction (2026-11-23): Mission Gorge Speedway does not run on College's split.** `race.laps.north`'s box at
+  "v1452-1472" is in that LAP's own vertices (pad J4, Mission Gorge / Jackson north), not the mainline's; I read it as
+  mainline vertices and the Mac's "end the split before that box" followed from my misreading. That lap uses the
+  mainline only from v2317 back to v1517 (Navajo Road) and turns at J1 = the **mainline's** College / Navajo box,
+  v1506-1521 (apex 1514), the same box both Speedways turn at. So the split's north end has from the island's tail
+  (v1444) to that box (v1506), about 186 m; the south end has v1130 to the nose (v1172), about 126 m.
 - **J1's tilt** (Kevin: "Tilt it now"; measured 6.08 % falling toward bearing 277°, rms 0.13 m on the r 25 m plane) is
-  its own change on the box's vertices, in the same round, with that lap's corridor and closures re-checked after it.
-  A gate the tilt turns red is reported, never loosened.
+  its own change on the vertices of the box at v1506-1521, in the same round, with every lap that turns there
+  (Speedway, Reverse, Mission Gorge Speedway both ways) re-checked after it. A gate the tilt turns red is reported,
+  never loosened.
+- **The crossover was Kevin's.** `race.chicanes` `college_split` records his words (seat, 2026-10-14): "for the
+  racetrack versions, I do like the chicane that kind of goes from one side of the road across to the other and
+  back". Ledger 0055's realism+ decision (2026-10-27, "can you split them up and do something fun?") supersedes
+  keeping it on a road that is not real, and says no replacement race feature was chosen. Each direction on its own
+  carriageway, 6 m apart in height, is the proposal; Kevin has been asked and has not answered.
+
+## The two ends: the open problem
+
+Through the split the mainline is the southbound carriageway; outside it the mainline is the whole road with the
+7 m island on its line (the College run of `median_bands.json`, v825-1509). Between the two meanings the line has to
+move sideways by 5 to 6.4 m (the southbound midline against the road's centre) and the width has to change from the
+whole road (25 to 30 m) to one carriageway (about 10 m). The room is there (126 m south, 186 m north: a drift of
+about 2 to 3 degrees). What the model cannot say yet, as far as I have read:
+
+- while the line drifts, the built island is **off the line**: `island_w_by_vertex` is a width about the line
+  (`median_zone.island_half_at`). `race.laps.north.island_offsets` exists for a lap's islands (Waring's median,
+  "1.3 m right of the line"); whether the mainline's island can carry an offset is not read yet;
+- the northbound piece starts as a wedge (no width at the east curb, the whole carriageway at the island's nose):
+  whether a connector record may start at zero width, and how `race_lap.py` joins Speedway from the mainline onto a
+  piece that leaves it at a taper and not at a pad;
+- `drive_test` reads the surface within 2.5 m of the line's height (`TriField.top_at(x, z, y_ref, window=2.5)`), so
+  inside each ribbon the heights must stay within that of its own line: fine for two separate ribbons, and the reason
+  option A was dropped.
 
 ## Keyed entries in `track.config.json` (round 1's base)
 

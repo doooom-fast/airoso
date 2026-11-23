@@ -64,9 +64,11 @@ def test_lake_murrays_islands_are_read_off_its_own_data():
     # Mission Gorge's long island is two since ledger 0099 round 3, item 1b: no median across the Margerum Avenue /
     # Mission Vista Drive crossing (source/expansion/mg_median/)
     assert ("MAINLINE", 1540, 1739) in got and len(got) == 15
-    assert ("north_mission_gorge", 63, 354) in got and ("north_mission_gorge", 367, 741) in got
+    assert ("north_mission_gorge", 68, 354) in got and ("north_mission_gorge", 367, 741) in got
+    assert ("north_mission_gorge", 8, 51) in got                                  # MD11 on its real line, to its real end (item 2)
     # a run of the band under six rows is not an island: the median tool builds nothing for it (its _segments rule)
-    assert [(s["line"], s["first"], s["last"]) for s in MT.islands(LM, short=True)] == [("north_mission_gorge", 54, 57)]
+    # MD12, where the photo has it since item 2: four points, owed
+    assert [(s["line"], s["first"], s["last"]) for s in MT.islands(LM, short=True)] == [("north_mission_gorge", 58, 61)]
     rule = (ROOT / "tools" / "median_island.py").read_text(encoding="utf-8")
     assert "if j - i >= MIN_ISLAND_VERTS:" in rule and "MIN_ISLAND_VERTS = 6" in rule and MT.MIN_ISLAND_ROWS == 6
     assert not any(line == "MAINLINE" and first <= 1300 <= last for line, first, last in got)

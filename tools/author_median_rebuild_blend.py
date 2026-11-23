@@ -1,4 +1,5 @@
-"""Re-author ONE raised median island in loop.blend from corrected data (ledger 0099 round 3, item 1b; Lake Murray).
+"""Re-author the raised median islands of ONE line in loop.blend from corrected data (ledger 0099 round 3, items 1b and 2;
+Lake Murray).
 
     blender --background --python-exit-code 1 --python tools/author_median_rebuild_blend.py -- <project>
             --v021 <the track's scripts-v021> [--blend <loop.blend>] [--save-as <copy.blend>]
@@ -11,9 +12,10 @@ else: Mission Gorge Rd's long island MD13, declared and built unbroken across th
 Drive crossing (source/expansion/mg_median/: the measurement, fix_mg_median.py, its record).
 
 WHAT. Opt-in, track.config.json route.median_rebuild {"line": <a line of data/median_bands.json>, "was_rows": [first,
-last], "record": <the correction's record, project-relative>}; key absent = no-op, the blend not opened.
-  1. THE OLD ISLAND IS FOUND BY WHAT IT IS, AND REFUSED IF IT IS NOT EXACTLY THAT (the Mac, 2026-11-23). The record
-     holds the island's data as it stood before the correction. From it the island's own rule (tools/median_island.py)
+last] or a list of such pairs (every built island of the line the correction touches: item 2 corrects two),
+"record": <the correction's record, project-relative>}; key absent = no-op, the blend not opened.
+  1. EACH OLD ISLAND IS FOUND BY WHAT IT IS, AND REFUSED IF IT IS NOT EXACTLY THAT (the Mac, 2026-11-23). The record
+     holds the line's data as it stood before the correction. From it the island's own rule (tools/median_island.py)
      gives every vertex the draft built for rows was_rows: the curb ring, the deck, the beam, each post. Each is looked
      for in the scene as ONE loose part of exactly that many vertices, every vertex within TOL_M of where the rule
      puts it: the curb in CURB, the deck in the medians' top object (route.median_tops: the grass object, the paved
@@ -21,8 +23,10 @@ last], "record": <the correction's record, project-relative>}; key absent = no-o
      correction changes are found the same way, strip by strip, in MARKINGS / YLINE, by the assembler's own paint
      function on the paint as it stood. Anything missing, extra, or off: fatal, nothing saved. Counts and bounds are
      printed.
-  2. It is taken out, and the islands the corrected data holds on those rows are built by the same rule into the same
-     objects (a new deck goes where the old one lay; the tops step then gives it the object of its island). The
+  2. They are taken out, and the islands the corrected data holds between the first and the last of those rows are
+     built by the same rule into the same objects (a new deck goes where an old one lay; the tops step then gives it the
+     object of its island; an island the corrected data makes long enough gets the rule's barrier, one it makes shorter
+     than the rule's 120 m loses it). The
      changed paint strips are laid by the assembler's own function. Nothing else in any object moves.
   3. Self-checks (fatal, nothing saved): every object lost exactly the old vertices and gained exactly the new; each
      new part is there as the rule made it; every new deck vertex stands DECK_OVER_M +- DECK_TOL_M over the road (the
@@ -68,9 +72,14 @@ def spec(cfg):
     if not s:
         return None
     rows = s.get("was_rows") or []
-    if not s.get("line") or len(rows) != 2 or not s.get("record"):
-        die(f"route.median_rebuild {s!r} is not {{line, was_rows: [first, last], record}}")
-    return {"line": str(s["line"]), "was": (int(rows[0]), int(rows[1])), "record": str(s["record"])}
+    if rows and not isinstance(rows[0], (list, tuple)):
+        rows = [rows]
+    if not s.get("line") or not rows or any(len(r) != 2 for r in rows) or not s.get("record"):
+        die(f"route.median_rebuild {s!r} is not {{line, was_rows: [first, last] or a list of them, record}}")
+    was = sorted((int(a), int(b)) for a, b in rows)
+    if any(a > b for a, b in was) or any(was[k][1] >= was[k + 1][0] for k in range(len(was) - 1)):
+        die(f"route.median_rebuild.was_rows {rows!r}: the islands overlap or run backwards")
+    return {"line": str(s["line"]), "was": was, "record": str(s["record"])}
 
 
 def old_data(island, record):
@@ -140,9 +149,9 @@ def paint_quads(wr, ws, conn, paint):
 
 
 def signature(sp, pts, iw, quads):
-    a, b = sp["was"]
+    a, b = sp["was"][0][0], sp["was"][-1][1]
     h = hashlib.sha256()
-    h.update(json.dumps([sp["line"], a, b, [[round(c, 4) for c in p] for p in pts[a:b + 1]], [round(w, 4) for w in iw[a:b + 1]],
+    h.update(json.dumps([sp["line"], sp["was"], [[round(c, 4) for c in p] for p in pts[a:b + 1]], [round(w, 4) for w in iw[a:b + 1]],
                          {n: [[[round(c, 4) for c in v] for v in q] for q in qs] for n, qs in sorted(quads.items())}]).encode("utf-8"))
     return h.hexdigest()[:16]
 
@@ -182,12 +191,19 @@ def main():
     if island is None:
         die(f"data/median_bands.json holds no connector island {sp['line']}")
     conn = next(c for c in json.loads((data / "connectors.local.json").read_text(encoding="utf-8"))["connectors"] if c["name"] == sp["line"])
-    a, b = sp["was"]
+    a, b = sp["was"][0][0], sp["was"][-1][1]                 # the rows this step re-authors: from the first old island to the last
     pts_new, iw_new = [list(p) for p in island["points_xyz_m"]], [float(w) for w in island["island_w_by_point"]]
     pts_old, iw_old = old_data(island, record)
-    if (a, b + 1) not in MI.segments(iw_old):
-        die(f"the record's data holds no island of exactly points {a}-{b} on {sp['line']} (its islands: {[(i, j - 1) for i, j in MI.segments(iw_old)]})")
-    old = island_parts(pts_old, iw_old, a, b)
+    old = {"curb": [], "deck": [], "beam": [], "posts": [], "runs": []}
+    for (a_, b_) in sp["was"]:
+        if (a_, b_ + 1) not in MI.segments(iw_old):
+            die(f"the record's data holds no island of exactly points {a_}-{b_} on {sp['line']} (its islands: {[(i, j - 1) for i, j in MI.segments(iw_old)]})")
+        one = island_parts(pts_old, iw_old, a_, b_)
+        for k in old:
+            old[k] += one[k]
+    between = [(i, j - 1) for i, j in MI.segments(iw_old) if a <= i and j - 1 <= b and (i, j - 1) not in sp["was"]]
+    if between:
+        die(f"the record's data holds islands {between} between the rows given: name every built island the step re-authors")
     new = island_parts(pts_new, iw_new, a, b)
     q_old, q_new = paint_quads(wr, ws, conn, old_paint(conn["paint"], record)), paint_quads(wr, ws, conn, conn["paint"])
 
@@ -206,7 +222,7 @@ def main():
     if stamp:
         st = json.loads(stamp)
         if st.get("signature") == sig and st.get("line") == sp["line"]:
-            print(TAG + f"the scene already carries {sp['line']} rows {a}-{b} rebuilt from this data ({sig}): nothing to do, nothing saved")
+            print(TAG + f"the scene already carries {sp['line']} rows {sp['was']} rebuilt from this data ({sig}): nothing to do, nothing saved")
             return
         die(f"the scene carries a median_rebuild stamp of other data ({st}); this data is {sig}")
     tops = (cfg.get("route") or {}).get("median_tops") or {}
@@ -276,27 +292,35 @@ def main():
     # ---- 1. the old island, found by what it is -------------------------------------------------------------------
     M = {n: Mesh(n) for n in ("CURB", "GUARDRAIL", "MARKINGS", "YLINE")}
     found, miss = {}, []
-    idx = M["CURB"].part(old["curb"][0][0], "curb")
-    if idx is None:
-        miss.append(f"CURB holds no loose part of exactly {len(old['curb'][0][0])} vertices on the old island's ring "
-                    f"(bounds {bounds(old['curb'][0][0])})")
-    else:
-        M["CURB"].out += idx
-        found["curb"] = {"object": "CURB", "vertices": len(idx), "bounds_xyz": bounds([M["CURB"].co[i] for i in idx])}
+    found["curb"], found["deck"] = [], []
+    for (verts, _f), rows_ in zip(old["curb"], old["runs"]):
+        idx = M["CURB"].part(verts, "curb")
+        if idx is None:
+            miss.append(f"CURB holds no loose part of exactly {len(verts)} vertices on the ring of the old island rows {rows_} "
+                        f"(bounds {bounds(verts)})")
+        else:
+            M["CURB"].out += idx
+            found["curb"].append({"rows": rows_, "object": "CURB", "vertices": len(idx), "bounds_xyz": bounds([M["CURB"].co[i] for i in idx])})
     deck_ob = None
-    for name in deck_homes:
-        if bpy.data.objects.get(name) is None:
-            continue
-        if name not in M:
-            M[name] = Mesh(name)
-        idx = M[name].part(old["deck"][0][0], "deck")
-        if idx is not None:
-            deck_ob = name
-            M[name].out += idx
-            found["deck"] = {"object": name, "vertices": len(idx), "bounds_xyz": bounds([M[name].co[i] for i in idx])}
-            break
-    if deck_ob is None:
-        miss.append(f"none of {deck_homes} holds the old island's deck as one loose part of {len(old['deck'][0][0])} vertices")
+    for (verts, _f), rows_ in zip(old["deck"], old["runs"]):
+        home = None
+        for name in deck_homes:
+            if bpy.data.objects.get(name) is None:
+                continue
+            if name not in M:
+                M[name] = Mesh(name)
+            idx = M[name].part(verts, "deck")
+            if idx is not None:
+                home = name
+                M[name].out += idx
+                found["deck"].append({"rows": rows_, "object": name, "vertices": len(idx), "bounds_xyz": bounds([M[name].co[i] for i in idx])})
+                break
+        if home is None:
+            miss.append(f"none of {deck_homes} holds the deck of the old island rows {rows_} as one loose part of {len(verts)} vertices")
+        elif deck_ob not in (None, home):
+            miss.append(f"the old islands' decks lie in two objects ({deck_ob}, {home}): the new decks have one home")
+        else:
+            deck_ob = home
     n_rail = 0
     for what, parts in (("beam", old["beam"]), ("post", old["posts"])):
         for verts, _f in parts:
@@ -317,11 +341,11 @@ def main():
                 M[name].out += idx
                 n += 1
         found[name.lower()] = {"object": name, "strips": n, "of": len(paint_out[name])}
-    print(TAG + f"the old island of {sp['line']} rows {a}-{b}, as the rule and the record give it: curb {len(old['curb'][0][0])} v, "
-          f"deck {len(old['deck'][0][0])} v, beam {sum(len(v) for v, _f in old['beam'])} v, {len(old['posts'])} posts, "
+    print(TAG + f"the old islands of {sp['line']} rows {old['runs']}, as the rule and the record give them: curb {[len(v) for v, _f in old['curb']]} v, "
+          f"deck {[len(v) for v, _f in old['deck']]} v, beam {sum(len(v) for v, _f in old['beam'])} v, {len(old['posts'])} posts, "
           f"{len(paint_out['MARKINGS'])} + {len(paint_out['YLINE'])} paint strips to change; found: {json.dumps(found)}")
     if miss:
-        die(f"the scene does not hold the island exactly as rows {a}-{b} were built ({len(miss)} things): " + "; ".join(miss[:6]))
+        die(f"the scene does not hold the island exactly as rows {old['runs']} were built ({len(miss)} things): " + "; ".join(miss[:6]))
     for name, m in M.items():
         if len(set(m.out)) != len(m.out):
             die(f"{name}: a vertex was claimed twice")
@@ -396,17 +420,17 @@ def main():
              [over_road(verts[k + 5]) for verts, _f in new["curb"] for k in range(0, len(verts), 6)]
     if any(x is None for x in base_d):
         die(f"{sum(1 for x in base_d if x is None)} vertices of a new curb's base stand outside the road's pavement")
-    old_base = [over_road(old["curb"][0][0][k]) for k in range(0, len(old["curb"][0][0]), 6)] + \
-               [over_road(old["curb"][0][0][k + 5]) for k in range(0, len(old["curb"][0][0]), 6)]
+    old_base = [over_road(verts[k]) for verts, _f in old["curb"] for k in range(0, len(verts), 6)] + \
+               [over_road(verts[k + 5]) for verts, _f in old["curb"] for k in range(0, len(verts), 6)]
     old_base = [x for x in old_base if x is not None]
-    rep = {"_doc": "tools/author_median_rebuild_blend.py (ledger 0099 round 3, item 1b): one median island re-authored in the scene "
+    rep = {"_doc": "tools/author_median_rebuild_blend.py (ledger 0099 round 3, items 1b and 2): the median islands of one line re-authored in the scene "
                    "from corrected data, by the island's own rule (tools/median_island.py) and the assembler's own paint function",
-           "line": sp["line"], "was_rows": [a, b], "now_rows": new["runs"], "record": sp["record"], "signature": sig,
+           "line": sp["line"], "was_rows": old["runs"], "now_rows": new["runs"], "record": sp["record"], "signature": sig,
            "the_old_island_as_found": found, "objects": added,
            "new": {"curb_vertices": [len(v) for v, _f in new["curb"]], "deck_vertices": [len(v) for v, _f in new["deck"]],
                    "beam_vertices": [len(v) for v, _f in new["beam"]], "posts": len(new["posts"]),
                    "paint_strips": {n: len(paint_in[n]) for n in paint_in}},
-           "old": {"curb_vertices": len(old["curb"][0][0]), "deck_vertices": len(old["deck"][0][0]),
+           "old": {"curb_vertices": [len(v) for v, _f in old["curb"]], "deck_vertices": [len(v) for v, _f in old["deck"]],
                    "beam_vertices": [len(v) for v, _f in old["beam"]], "posts": len(old["posts"]),
                    "paint_strips": {n: len(paint_out[n]) for n in paint_out}},
            "deck_over_the_road_m": {"min": round(min(deck_d), 4), "max": round(max(deck_d), 4)},
@@ -415,7 +439,7 @@ def main():
                                          "_doc": "the rule sets a ring's base 0.02 m under its line's own height; where the road "
                                                  "falls away from that line the base stands over the road by the difference"},
            "deck_object": deck_ob}
-    scene["median_rebuild"] = json.dumps({"line": sp["line"], "was_rows": [a, b], "now_rows": new["runs"], "signature": sig})
+    scene["median_rebuild"] = json.dumps({"line": sp["line"], "was_rows": old["runs"], "now_rows": new["runs"], "signature": sig})
     (data / "median_rebuild.json").write_text(json.dumps(rep, indent=1), encoding="utf-8")
     print(TAG + json.dumps({k: v for k, v in rep.items() if k != "_doc"}))
     if "--save-as" in opt:

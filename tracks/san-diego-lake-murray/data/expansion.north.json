@@ -14516,7 +14516,7 @@
      16.5,
      -15.5,
      1.25,
-     -0.5,
+     -0.25,
      "terracotta",
      15.33,
      "3",
@@ -14532,7 +14532,7 @@
      16.47,
      -15.47,
      1.26,
-     -0.5,
+     0.0,
      "terracotta",
      15.25,
      "3",
@@ -14548,7 +14548,7 @@
      16.44,
      -15.44,
      1.28,
-     -0.5,
+     0.25,
      "terracotta",
      15.15,
      "3",
@@ -14564,7 +14564,7 @@
      16.42,
      -15.42,
      1.29,
-     -0.5,
+     0.5,
      "terracotta",
      15.07,
      "3",
@@ -14580,7 +14580,7 @@
      16.39,
      -15.39,
      1.31,
-     -0.5,
+     0.75,
      "terracotta",
      14.98,
      "3",
@@ -14596,7 +14596,7 @@
      16.36,
      -15.36,
      1.32,
-     -0.5,
+     1.0,
      "terracotta",
      14.86,
      "3",
@@ -14612,7 +14612,7 @@
      16.33,
      -15.33,
      1.33,
-     -0.5,
+     1.25,
      "terracotta",
      14.85,
      "3",
@@ -14628,7 +14628,7 @@
      16.3,
      -15.3,
      1.35,
-     -0.5,
+     1.5,
      "terracotta",
      14.86,
      "3",
@@ -14644,7 +14644,7 @@
      16.28,
      -15.28,
      1.36,
-     -0.5,
+     1.75,
      "terracotta",
      14.87,
      "3",
@@ -14660,7 +14660,7 @@
      16.25,
      -15.25,
      1.38,
-     -0.5,
+     2.0,
      "terracotta",
      14.9,
      "4",
@@ -14676,7 +14676,7 @@
      16.22,
      -15.22,
      1.39,
-     -0.5,
+     2.25,
      "terracotta",
      14.96,
      "4",
@@ -14692,7 +14692,7 @@
      16.19,
      -15.19,
      1.4,
-     -0.5,
+     2.5,
      "terracotta",
      15.01,
      "4",
@@ -14708,7 +14708,7 @@
      16.16,
      -15.16,
      1.42,
-     -0.5,
+     2.75,
      "terracotta",
      15.05,
      "4",
@@ -14724,7 +14724,7 @@
      16.13,
      -15.13,
      1.43,
-     -0.5,
+     3.0,
      "terracotta",
      15.12,
      "4",
@@ -14740,7 +14740,7 @@
      16.11,
      -15.11,
      1.45,
-     -0.5,
+     3.1,
      "terracotta",
      15.18,
      "4",
@@ -14756,7 +14756,7 @@
      16.08,
      -15.08,
      1.46,
-     -0.5,
+     3.1,
      "terracotta",
      15.23,
      "4",
@@ -14772,7 +14772,7 @@
      16.05,
      -15.05,
      1.48,
-     -0.5,
+     3.1,
      "terracotta",
      15.27,
      "4",
@@ -14788,7 +14788,7 @@
      16.02,
      -15.02,
      1.49,
-     -0.5,
+     3.1,
      "terracotta",
      15.34,
      "4",
@@ -14804,7 +14804,7 @@
      15.99,
      -14.99,
      1.5,
-     -0.5,
+     3.1,
      "terracotta",
      15.4,
      "4",
@@ -14820,7 +14820,7 @@
      15.96,
      -14.96,
      1.52,
-     -0.5,
+     3.1,
      "terracotta",
      15.45,
      "4",
@@ -14836,7 +14836,7 @@
      15.94,
      -14.94,
      1.53,
-     -0.5,
+     3.1,
      "terracotta",
      15.49,
      "4",
@@ -14852,7 +14852,7 @@
      15.91,
      -14.91,
      1.55,
-     -0.5,
+     3.1,
      "terracotta",
      15.56,
      "4",
@@ -14868,7 +14868,7 @@
      15.88,
      -14.88,
      1.56,
-     -0.5,
+     3.1,
      "terracotta",
      15.62,
      "4",
@@ -14884,7 +14884,7 @@
      15.85,
      -14.85,
      1.57,
-     -0.5,
+     3.1,
      "terracotta",
      15.67,
      "4",
@@ -14900,7 +14900,7 @@
      15.82,
      -14.82,
      1.59,
-     -0.5,
+     3.1,
      "terracotta",
      15.7,
      "4",
@@ -14916,7 +14916,7 @@
      15.8,
      -14.8,
      1.6,
-     -0.5,
+     3.1,
      "terracotta",
      15.55,
      "4",
@@ -14932,7 +14932,7 @@
      15.77,
      -14.77,
      1.62,
-     -0.5,
+     3.1,
      "terracotta",
      15.4,
      "4",
@@ -14948,7 +14948,7 @@
      15.74,
      -14.74,
      1.63,
-     -0.5,
+     3.1,
      "terracotta",
      15.3,
      "4",
@@ -14964,7 +14964,7 @@
      15.71,
      -14.71,
      1.64,
-     -0.5,
+     3.1,
      "terracotta",
      15.2,
      "4",
@@ -14980,7 +14980,7 @@
      15.68,
      -14.68,
      1.66,
-     -0.5,
+     3.1,
      "terracotta",
      15.07,
      "3",
@@ -14996,7 +14996,7 @@
      15.65,
      -14.65,
      1.67,
-     -0.5,
+     3.1,
      "terracotta",
      15.0,
      "3",
@@ -15011,9 +15011,9 @@
      -62.471,
      15.63,
      -14.63,
-     1.69,
+     0.0,
      -0.5,
-     "terracotta",
+     "none",
      14.95,
      "3",
      "3",
@@ -15027,9 +15027,9 @@
      -62.367,
      15.6,
      -14.6,
-     1.7,
+     0.0,
      -0.5,
-     "terracotta",
+     "none",
      14.9,
      "3",
      "3",
@@ -15043,9 +15043,9 @@
      -62.261,
      15.57,
      -14.57,
-     1.72,
+     0.0,
      -0.5,
-     "terracotta",
+     "none",
      14.89,
      "3",
      "3",
@@ -15059,9 +15059,9 @@
      -62.155,
      15.54,
      -14.54,
-     1.73,
+     0.0,
      -0.5,
-     "terracotta",
+     "none",
      14.81,
      "3",
      "3",
@@ -15075,9 +15075,9 @@
      -62.047,
      15.51,
      -14.51,
-     1.74,
+     0.0,
      -0.5,
-     "terracotta",
+     "none",
      14.75,
      "3",
      "3",
@@ -15091,9 +15091,9 @@
      -61.938,
      15.48,
      -14.48,
-     1.76,
+     0.0,
      -0.5,
-     "terracotta",
+     "none",
      14.68,
      "3",
      "3",
@@ -15107,8 +15107,8 @@
      -61.829,
      15.46,
      -14.46,
-     1.77,
-     -0.5,
+     3.4,
+     0.5,
      "terracotta",
      14.59,
      "3",
@@ -15123,8 +15123,8 @@
      -61.718,
      15.43,
      -14.43,
-     1.79,
-     -0.5,
+     3.4,
+     0.76,
      "terracotta",
      14.5,
      "3",
@@ -15139,8 +15139,8 @@
      -61.607,
      15.4,
      -14.4,
-     1.8,
-     -0.5,
+     3.4,
+     1.02,
      "terracotta",
      14.44,
      "3",
@@ -15155,8 +15155,8 @@
      -61.494,
      15.37,
      -14.37,
-     1.81,
-     -0.5,
+     3.4,
+     1.28,
      "terracotta",
      14.38,
      "3",
@@ -15171,8 +15171,8 @@
      -61.381,
      15.34,
      -14.34,
-     1.83,
-     -0.5,
+     3.4,
+     1.54,
      "terracotta",
      14.4,
      "3",
@@ -15187,8 +15187,8 @@
      -61.266,
      15.31,
      -14.31,
-     1.84,
-     -0.5,
+     3.4,
+     1.8,
      "terracotta",
      14.42,
      "3",
@@ -15203,9 +15203,9 @@
      -61.15,
      15.29,
      -14.29,
-     1.86,
+     0.0,
      -0.5,
-     "terracotta",
+     "none",
      14.43,
      "3",
      "3",
@@ -15219,9 +15219,9 @@
      -61.033,
      15.26,
      -14.26,
-     1.87,
+     0.0,
      -0.5,
-     "terracotta",
+     "none",
      14.44,
      "3",
      "3",
@@ -15235,9 +15235,9 @@
      -60.915,
      15.23,
      -14.23,
-     1.88,
+     0.0,
      -0.5,
-     "terracotta",
+     "none",
      14.46,
      "3",
      "3",
@@ -15251,9 +15251,9 @@
      -60.795,
      15.2,
      -14.2,
-     1.9,
+     0.0,
      -0.5,
-     "terracotta",
+     "none",
      14.48,
      "3",
      "3",
@@ -15267,9 +15267,9 @@
      -60.674,
      15.17,
      -14.17,
-     1.91,
+     0.0,
      -0.5,
-     "terracotta",
+     "none",
      14.49,
      "3",
      "3",
@@ -15283,9 +15283,9 @@
      -60.552,
      15.15,
      -14.15,
-     1.93,
+     0.0,
      -0.5,
-     "terracotta",
+     "none",
      14.5,
      "3",
      "3",
@@ -46933,10 +46933,10 @@
    "type": "terracotta",
    "raised": true,
    "s_from": 45.0,
-   "s_to": 167.5,
+   "s_to": 177.5,
    "width_m": [
     0.57,
-    1.62
+    1.67
    ],
    "polygon_xz": [
     [
@@ -47028,228 +47028,260 @@
      2077.836
     ],
     [
-     -2938.987,
-     2078.792
+     -2938.988,
+     2078.794
     ],
     [
-     -2936.665,
-     2079.749
+     -2936.76,
+     2079.981
     ],
     [
-     -2934.333,
-     2080.707
+     -2934.521,
+     2081.169
     ],
     [
-     -2931.995,
-     2081.663
+     -2932.276,
+     2082.359
     ],
     [
-     -2929.658,
-     2082.612
+     -2930.029,
+     2083.539
     ],
     [
-     -2927.326,
-     2083.549
+     -2927.787,
+     2084.712
     ],
     [
-     -2924.997,
-     2084.472
+     -2925.542,
+     2085.869
     ],
     [
-     -2922.666,
-     2085.381
+     -2923.293,
+     2087.013
     ],
     [
-     -2920.332,
-     2086.276
+     -2921.038,
+     2088.148
     ],
     [
-     -2917.993,
-     2087.16
+     -2918.779,
+     2089.267
     ],
     [
-     -2915.652,
-     2088.037
+     -2916.519,
+     2090.383
     ],
     [
-     -2913.308,
-     2088.908
+     -2914.257,
+     2091.489
     ],
     [
-     -2910.964,
-     2089.775
+     -2911.994,
+     2092.59
     ],
     [
-     -2908.619,
-     2090.641
+     -2909.736,
+     2093.693
     ],
     [
-     -2906.273,
-     2091.506
+     -2907.475,
+     2094.792
     ],
     [
-     -2903.928,
-     2092.371
+     -2905.164,
+     2095.754
     ],
     [
-     -2901.583,
-     2093.235
+     -2902.819,
+     2096.616
     ],
     [
-     -2899.238,
-     2094.1
+     -2900.474,
+     2097.484
     ],
     [
-     -2896.893,
-     2094.965
+     -2898.129,
+     2098.346
     ],
     [
-     -2894.547,
-     2095.829
+     -2895.782,
+     2099.209
     ],
     [
-     -2892.201,
-     2096.694
+     -2893.438,
+     2100.077
     ],
     [
-     -2889.85,
-     2097.56
+     -2891.084,
+     2100.942
     ],
     [
-     -2887.483,
-     2098.431
+     -2888.711,
+     2101.817
     ],
     [
-     -2885.075,
-     2099.308
+     -2886.29,
+     2102.696
     ],
     [
-     -2882.617,
-     2100.19
+     -2883.809,
+     2103.585
     ],
     [
-     -2880.082,
-     2100.936
+     -2881.291,
+     2104.468
     ],
     [
-     -2877.496,
-     2101.464
+     -2878.784,
+     2105.321
     ],
     [
-     -2875.048,
-     2102.237
+     -2876.328,
+     2106.142
     ],
     [
-     -2874.862,
-     2101.666
+     -2873.912,
+     2106.934
     ],
     [
-     -2877.284,
-     2100.831
+     -2871.475,
+     2107.58
     ],
     [
-     -2879.651,
-     2099.685
+     -2868.986,
+     2108.017
     ],
     [
-     -2882.095,
-     2098.705
+     -2866.597,
+     2108.723
     ],
     [
-     -2884.55,
-     2097.839
+     -2866.417,
+     2108.15
     ],
     [
-     -2886.955,
-     2096.977
+     -2868.777,
+     2107.358
     ],
     [
-     -2889.325,
-     2096.121
+     -2871.059,
+     2106.278
     ],
     [
-     -2891.681,
-     2095.269
+     -2873.41,
+     2105.383
     ],
     [
-     -2894.031,
-     2094.417
+     -2875.823,
+     2104.603
     ],
     [
-     -2896.381,
-     2093.566
+     -2878.277,
+     2103.803
     ],
     [
-     -2898.731,
-     2092.714
+     -2880.776,
+     2102.964
     ],
     [
-     -2901.081,
-     2091.863
+     -2883.289,
+     2102.103
     ],
     [
-     -2903.431,
-     2091.011
+     -2885.764,
+     2101.228
     ],
     [
-     -2905.781,
-     2090.16
+     -2888.183,
+     2100.36
     ],
     [
-     -2908.131,
-     2089.308
+     -2890.559,
+     2099.505
     ],
     [
-     -2910.481,
-     2088.456
+     -2892.916,
+     2098.649
     ],
     [
-     -2912.829,
-     2087.603
+     -2895.268,
+     2097.8
     ],
     [
-     -2915.174,
-     2086.746
+     -2897.617,
+     2096.947
     ],
     [
-     -2917.516,
-     2085.884
+     -2899.966,
+     2096.094
     ],
     [
-     -2919.856,
-     2085.014
+     -2902.318,
+     2095.245
     ],
     [
-     -2922.19,
-     2084.134
+     -2904.666,
+     2094.392
     ],
     [
-     -2924.518,
-     2083.243
+     -2906.984,
+     2093.449
     ],
     [
-     -2926.844,
-     2082.335
+     -2909.248,
+     2092.36
     ],
     [
-     -2929.177,
-     2081.413
+     -2911.513,
+     2091.275
     ],
     [
-     -2931.517,
-     2080.478
+     -2913.778,
+     2090.184
     ],
     [
-     -2933.857,
-     2079.537
+     -2916.041,
+     2089.089
     ],
     [
-     -2936.192,
-     2078.593
+     -2918.304,
+     2087.993
+    ],
+    [
+     -2920.561,
+     2086.885
+    ],
+    [
+     -2922.816,
+     2085.771
+    ],
+    [
+     -2925.063,
+     2084.64
+    ],
+    [
+     -2927.305,
+     2083.494
+    ],
+    [
+     -2929.549,
+     2082.341
+    ],
+    [
+     -2931.797,
+     2081.172
+    ],
+    [
+     -2934.047,
+     2080.001
+    ],
+    [
+     -2936.287,
+     2078.824
     ],
     [
      -2938.519,
-     2077.649
+     2077.647
     ],
     [
      -2940.839,
@@ -47339,117 +47371,293 @@
      -2989.491,
      2057.039
     ]
-   ]
+   ],
+   "correction": {
+    "what": "Mission Gorge Rd's raised median on piece C, in two places: the Margerum Avenue / Mission Vista Drive crossing (s 982.5-1212.5: no median s 1085-1120, a narrow strip beside each turn pocket) and the J3 end (s 100-231: MD11 on its real line and to its real end, the two openings where they are, MD12 where it stands, MD13 from its real start)",
+    "why": "the plan's median is linear between eye readings 250 m apart: MD13 was declared, and built, unbroken across a real crossing whose two side streets are built stubs; and its two openings near J3 stand about 13 m from the real ones (tools/author_expansion.py GAPS 174 / 202; the dossier's station labels run about 14.6 m ahead of s on this piece, and 202 - 14.6 is the middle of the first real opening: my reading of two numbers, not traced in the dossier)",
+    "measured": "the PC, 2026-11-23: NAIP 2022 z18 full mosaic (source/naip_2022_lm_full_z18.jpg, sha256 1764a80b...). Per station the equivalent width (excess R - G summed across the island over a full island's plateau, +24.0 over the asphalt) and the excess's centroid. THE CROSSING (faces_md.py): medians over 24 stations (s 1012.5-1077.5: 1.66 m, +0.18 m) and 26 stations (s 1127.5-1192.5: 1.54 m, -2.24 m), against the same measure where the island fills its band (37 stations: width 0.30 m short, middle 0.49 m right of the declared band; one station p10..p90 -1.41..+1.23 m in width, -0.94..+0.18 m in the middle). THE J3 END (faces_piece.py, 10 m windows off the declared centre, no registration correction): MD11's middle +1.12 at s 110, +1.98 at 120, +3.17 at 130, +3.76 at 140 and 150, +3.39 at 160, +3.40 at 170, its last station with terracotta s 177.5; none at the six stations s 180-192.5 nor at the six s 210-222.5; MD12 at s 195-207.5 reads 1.02 / 2.73 / 3.79 / 3.45 / 3.10 / 2.60 m wide with its middle +0.90 / +1.18 / +1.73 / +1.34 / +2.20 / +2.36; MD13's first station with terracotta s 225",
+    "method": "piece C rows inside the stretches set to the fit; the four medians' rings re-cut inside the stretches with the generator's nose rule and kept outside them; the island and the paint re-derived by tools/expansion_pieces.decorate (piece C's output only); the two centre lines cleared where there is no median",
+    "inferred": "the taper s 1192.5-1212.5 lies under tree shadow on the photo: its two ends are measured, the line between is [inferred]. MD11's veer is drawn as one straight line from s 100 to s 136 through four measured windows",
+    "not_built": "MD12: 12.5 to 17.5 m long on the photo, four connector points inside its measured run; the median tool and the lap's corridor build an island on six or more. Its place is set (the plan's painted outline lies where the real island stands); the island itself is owed",
+    "centre_paint_where_there_is_no_median": {
+     "what": "no centre line: the two lines decorate's rule draws where a road has no median are cleared at the points between the crossing's noses and in the two openings near J3",
+     "source": "photo",
+     "measured": "the PC, 2026-11-23, the same mosaic. The crossing: within 3 m of the declared centre over s 1090-1112.5 (ten stations) the yellowest pixel reads (R + G) / 2 - B = +3.5 to +7.5, the asphalt 5-8 m either side +1.5 to +5.5. The openings: within 4 m of where the islands either side stand, s 187.5-192.5 and s 212.5-217.5 read +4.0 to +5.5 against the asphalt's +2.0 to +4.5; the stations beside the noses read +8 to +14 on light grey pixels (red, green and blue within 16 of each other: not yellow). What a double yellow reads at this resolution was not measured on this photo, so the reading is 'no yellower than the asphalt', not a threshold passed"
+    },
+    "ledger": "0099 round 3, items 1b and 2",
+    "fit": {
+     "crossing": {
+      "strip_a": {
+       "d_centre_m": 0.43,
+       "width_m": 1.96,
+       "s": [
+        1010.0,
+        1085.0
+       ]
+      },
+      "strip_b": {
+       "d_centre_m": -1.5,
+       "width_m": 1.84,
+       "s": [
+        1120.0,
+        1192.5
+       ]
+      },
+      "tapers_s": [
+       [
+        982.5,
+        1010.0
+       ],
+       [
+        1192.5,
+        1212.5
+       ]
+      ]
+     },
+     "j3_end": {
+      "md11_veer": {
+       "s": [
+        100.0,
+        136.0
+       ],
+       "d_centre_m": 3.6
+      },
+      "md11_to_s": 177.5,
+      "md12": {
+       "s": [
+        195.0,
+        207.5
+       ],
+       "width_m": 3.4,
+       "d_centre_m": [
+        1.0,
+        2.3
+       ]
+      },
+      "md13_from_s": 225.0
+     },
+     "no_median_s": [
+      [
+       177.5,
+       195.0
+      ],
+      [
+       207.5,
+       225.0
+      ],
+      [
+       1085.0,
+       1120.0
+      ]
+     ],
+     "stretches_s": [
+      [
+       100.0,
+       231.0
+      ],
+      [
+       982.5,
+       1212.5
+      ]
+     ]
+    },
+    "this_median": {
+     "s": [
+      45.0,
+      177.5
+     ],
+     "declared_s": [
+      45.0,
+      167.5
+     ]
+    }
+   }
   },
   {
    "id": "MD12",
    "piece": "C",
    "type": "terracotta",
    "raised": true,
-   "s_from": 182.5,
-   "s_to": 195.0,
+   "s_from": 195.0,
+   "s_to": 207.5,
    "width_m": [
-    1.7,
-    1.77
+    3.4,
+    3.4
    ],
    "polygon_xz": [
     [
-     -2860.806,
-     2106.779
+     -2849.321,
+     2111.627
     ],
     [
-     -2858.475,
-     2107.59
+     -2847.161,
+     2113.053
     ],
     [
-     -2856.234,
-     2108.708
+     -2845.086,
+     2114.761
     ],
     [
-     -2853.874,
-     2109.497
+     -2842.781,
+     2115.788
     ],
     [
-     -2851.393,
-     2109.947
+     -2840.255,
+     2116.131
     ],
     [
-     -2849.003,
-     2110.678
+     -2837.822,
+     2116.75
     ],
     [
-     -2848.813,
-     2110.109
+     -2837.641,
+     2116.178
     ],
     [
-     -2851.16,
-     2109.253
+     -2839.823,
+     2114.782
     ],
     [
-     -2853.414,
-     2108.119
+     -2841.906,
+     2113.093
     ],
     [
-     -2855.781,
-     2107.339
+     -2844.2,
+     2112.069
     ],
     [
-     -2858.254,
-     2106.911
+     -2846.713,
+     2111.709
     ],
     [
-     -2860.624,
-     2106.207
+     -2849.13,
+     2111.058
     ]
-   ]
+   ],
+   "correction": {
+    "what": "Mission Gorge Rd's raised median on piece C, in two places: the Margerum Avenue / Mission Vista Drive crossing (s 982.5-1212.5: no median s 1085-1120, a narrow strip beside each turn pocket) and the J3 end (s 100-231: MD11 on its real line and to its real end, the two openings where they are, MD12 where it stands, MD13 from its real start)",
+    "why": "the plan's median is linear between eye readings 250 m apart: MD13 was declared, and built, unbroken across a real crossing whose two side streets are built stubs; and its two openings near J3 stand about 13 m from the real ones (tools/author_expansion.py GAPS 174 / 202; the dossier's station labels run about 14.6 m ahead of s on this piece, and 202 - 14.6 is the middle of the first real opening: my reading of two numbers, not traced in the dossier)",
+    "measured": "the PC, 2026-11-23: NAIP 2022 z18 full mosaic (source/naip_2022_lm_full_z18.jpg, sha256 1764a80b...). Per station the equivalent width (excess R - G summed across the island over a full island's plateau, +24.0 over the asphalt) and the excess's centroid. THE CROSSING (faces_md.py): medians over 24 stations (s 1012.5-1077.5: 1.66 m, +0.18 m) and 26 stations (s 1127.5-1192.5: 1.54 m, -2.24 m), against the same measure where the island fills its band (37 stations: width 0.30 m short, middle 0.49 m right of the declared band; one station p10..p90 -1.41..+1.23 m in width, -0.94..+0.18 m in the middle). THE J3 END (faces_piece.py, 10 m windows off the declared centre, no registration correction): MD11's middle +1.12 at s 110, +1.98 at 120, +3.17 at 130, +3.76 at 140 and 150, +3.39 at 160, +3.40 at 170, its last station with terracotta s 177.5; none at the six stations s 180-192.5 nor at the six s 210-222.5; MD12 at s 195-207.5 reads 1.02 / 2.73 / 3.79 / 3.45 / 3.10 / 2.60 m wide with its middle +0.90 / +1.18 / +1.73 / +1.34 / +2.20 / +2.36; MD13's first station with terracotta s 225",
+    "method": "piece C rows inside the stretches set to the fit; the four medians' rings re-cut inside the stretches with the generator's nose rule and kept outside them; the island and the paint re-derived by tools/expansion_pieces.decorate (piece C's output only); the two centre lines cleared where there is no median",
+    "inferred": "the taper s 1192.5-1212.5 lies under tree shadow on the photo: its two ends are measured, the line between is [inferred]. MD11's veer is drawn as one straight line from s 100 to s 136 through four measured windows",
+    "not_built": "MD12: 12.5 to 17.5 m long on the photo, four connector points inside its measured run; the median tool and the lap's corridor build an island on six or more. Its place is set (the plan's painted outline lies where the real island stands); the island itself is owed",
+    "centre_paint_where_there_is_no_median": {
+     "what": "no centre line: the two lines decorate's rule draws where a road has no median are cleared at the points between the crossing's noses and in the two openings near J3",
+     "source": "photo",
+     "measured": "the PC, 2026-11-23, the same mosaic. The crossing: within 3 m of the declared centre over s 1090-1112.5 (ten stations) the yellowest pixel reads (R + G) / 2 - B = +3.5 to +7.5, the asphalt 5-8 m either side +1.5 to +5.5. The openings: within 4 m of where the islands either side stand, s 187.5-192.5 and s 212.5-217.5 read +4.0 to +5.5 against the asphalt's +2.0 to +4.5; the stations beside the noses read +8 to +14 on light grey pixels (red, green and blue within 16 of each other: not yellow). What a double yellow reads at this resolution was not measured on this photo, so the reading is 'no yellower than the asphalt', not a threshold passed"
+    },
+    "ledger": "0099 round 3, items 1b and 2",
+    "fit": {
+     "crossing": {
+      "strip_a": {
+       "d_centre_m": 0.43,
+       "width_m": 1.96,
+       "s": [
+        1010.0,
+        1085.0
+       ]
+      },
+      "strip_b": {
+       "d_centre_m": -1.5,
+       "width_m": 1.84,
+       "s": [
+        1120.0,
+        1192.5
+       ]
+      },
+      "tapers_s": [
+       [
+        982.5,
+        1010.0
+       ],
+       [
+        1192.5,
+        1212.5
+       ]
+      ]
+     },
+     "j3_end": {
+      "md11_veer": {
+       "s": [
+        100.0,
+        136.0
+       ],
+       "d_centre_m": 3.6
+      },
+      "md11_to_s": 177.5,
+      "md12": {
+       "s": [
+        195.0,
+        207.5
+       ],
+       "width_m": 3.4,
+       "d_centre_m": [
+        1.0,
+        2.3
+       ]
+      },
+      "md13_from_s": 225.0
+     },
+     "no_median_s": [
+      [
+       177.5,
+       195.0
+      ],
+      [
+       207.5,
+       225.0
+      ],
+      [
+       1085.0,
+       1120.0
+      ]
+     ],
+     "stretches_s": [
+      [
+       100.0,
+       231.0
+      ],
+      [
+       982.5,
+       1212.5
+      ]
+     ]
+    },
+    "this_median": {
+     "s": [
+      195.0,
+      207.5
+     ],
+     "declared_s": [
+      182.5,
+      195.0
+     ]
+    }
+   }
   },
   {
    "id": "MD13",
    "piece": "C",
    "type": "terracotta",
    "raised": true,
-   "s_from": 210.0,
+   "s_from": 225.0,
    "s_to": 1085.0,
    "width_m": [
-    1.86,
+    1.94,
     4.99
    ],
    "polygon_xz": [
     [
-     -2834.743,
-     2115.311
+     -2820.438,
+     2119.822
     ],
     [
-     -2832.386,
-     2116.149
+     -2818.085,
+     2120.678
     ],
     [
-     -2830.121,
-     2117.278
-    ],
-    [
-     -2827.786,
-     2118.186
-    ],
-    [
-     -2825.404,
-     2118.945
-    ],
-    [
-     -2823.021,
-     2119.703
-    ],
-    [
-     -2820.639,
-     2120.462
-    ],
-    [
-     -2818.257,
-     2121.22
-    ],
-    [
-     -2815.875,
-     2121.979
+     -2815.825,
+     2121.822
     ],
     [
      -2813.492,
@@ -50188,87 +50396,117 @@
      2120.844
     ],
     [
-     -2815.283,
-     2120.1
+     -2815.332,
+     2120.256
     ],
     [
-     -2817.669,
-     2119.355
+     -2817.84,
+     2119.899
     ],
     [
-     -2820.055,
-     2118.61
-    ],
-    [
-     -2822.442,
-     2117.865
-    ],
-    [
-     -2824.828,
-     2117.12
-    ],
-    [
-     -2827.215,
-     2116.375
-    ],
-    [
-     -2829.648,
-     2115.78
-    ],
-    [
-     -2832.151,
-     2115.405
-    ],
-    [
-     -2834.562,
-     2114.739
+     -2820.257,
+     2119.25
     ]
    ],
    "correction": {
-    "what": "Mission Gorge Rd's raised median MD13 over piece C s 982.5-1212.5: the Margerum Avenue / Mission Vista Drive crossing (no median s 1085-1120) and the narrow strips beside its two turn pockets",
-    "why": "the plan's median width is linear between eye readings 250 m apart and holds no crossing there: MD13 was declared, and built, as one unbroken island 4.5-5.4 m wide across a real crossing whose two side streets are built stubs",
-    "measured": "the PC, 2026-11-23: NAIP 2022 z18 full mosaic (source/naip_2022_lm_full_z18.jpg, sha256 1764a80b...) with source/expansion/mg_median/faces_md.py: per station the equivalent width (excess R - G summed across the island over a full island's plateau, +24.0 over the asphalt's -1.0) and the excess's centroid; medians over 24 stations (s 1012.5-1077.5: 1.66 m, +0.18 m) and 26 stations (s 1127.5-1192.5: 1.54 m, -2.24 m), against the same measure where the island fills its band (37 stations: width 0.30 m short, middle 0.49 m right of the declared band; one station p10..p90 -1.41..+1.23 m in width, -0.94..+0.18 m in the middle)",
-    "method": "piece C rows inside s 982.5-1212.5 set to the fit (linear tapers from / to the declared band; type none and width 0 between the noses); MD13 re-cut to end at s 1085 and MD13b added from s 1120 with the generator's nose rule; the island and the paint re-derived by tools/expansion_pieces.decorate (piece C's output only); the two centre lines cleared between the noses",
-    "inferred": "the taper s 1192.5-1212.5 lies under tree shadow on the photo: its two ends are measured, the line between is [inferred]",
-    "centre_paint_between_the_noses": {
-     "what": "no centre line: the two lines decorate's rule draws where a road has no median are cleared at the points between the noses",
+    "what": "Mission Gorge Rd's raised median on piece C, in two places: the Margerum Avenue / Mission Vista Drive crossing (s 982.5-1212.5: no median s 1085-1120, a narrow strip beside each turn pocket) and the J3 end (s 100-231: MD11 on its real line and to its real end, the two openings where they are, MD12 where it stands, MD13 from its real start)",
+    "why": "the plan's median is linear between eye readings 250 m apart: MD13 was declared, and built, unbroken across a real crossing whose two side streets are built stubs; and its two openings near J3 stand about 13 m from the real ones (tools/author_expansion.py GAPS 174 / 202; the dossier's station labels run about 14.6 m ahead of s on this piece, and 202 - 14.6 is the middle of the first real opening: my reading of two numbers, not traced in the dossier)",
+    "measured": "the PC, 2026-11-23: NAIP 2022 z18 full mosaic (source/naip_2022_lm_full_z18.jpg, sha256 1764a80b...). Per station the equivalent width (excess R - G summed across the island over a full island's plateau, +24.0 over the asphalt) and the excess's centroid. THE CROSSING (faces_md.py): medians over 24 stations (s 1012.5-1077.5: 1.66 m, +0.18 m) and 26 stations (s 1127.5-1192.5: 1.54 m, -2.24 m), against the same measure where the island fills its band (37 stations: width 0.30 m short, middle 0.49 m right of the declared band; one station p10..p90 -1.41..+1.23 m in width, -0.94..+0.18 m in the middle). THE J3 END (faces_piece.py, 10 m windows off the declared centre, no registration correction): MD11's middle +1.12 at s 110, +1.98 at 120, +3.17 at 130, +3.76 at 140 and 150, +3.39 at 160, +3.40 at 170, its last station with terracotta s 177.5; none at the six stations s 180-192.5 nor at the six s 210-222.5; MD12 at s 195-207.5 reads 1.02 / 2.73 / 3.79 / 3.45 / 3.10 / 2.60 m wide with its middle +0.90 / +1.18 / +1.73 / +1.34 / +2.20 / +2.36; MD13's first station with terracotta s 225",
+    "method": "piece C rows inside the stretches set to the fit; the four medians' rings re-cut inside the stretches with the generator's nose rule and kept outside them; the island and the paint re-derived by tools/expansion_pieces.decorate (piece C's output only); the two centre lines cleared where there is no median",
+    "inferred": "the taper s 1192.5-1212.5 lies under tree shadow on the photo: its two ends are measured, the line between is [inferred]. MD11's veer is drawn as one straight line from s 100 to s 136 through four measured windows",
+    "not_built": "MD12: 12.5 to 17.5 m long on the photo, four connector points inside its measured run; the median tool and the lap's corridor build an island on six or more. Its place is set (the plan's painted outline lies where the real island stands); the island itself is owed",
+    "centre_paint_where_there_is_no_median": {
+     "what": "no centre line: the two lines decorate's rule draws where a road has no median are cleared at the points between the crossing's noses and in the two openings near J3",
      "source": "photo",
-     "measured": "the PC, 2026-11-23, the same mosaic: within 3 m of the declared centre over s 1090-1112.5 (ten stations) the yellowest pixel reads (R + G) / 2 - B = +3.5 to +7.5, the asphalt 5-8 m either side +1.5 to +5.5: no more than 5.5 levels over it. What a double yellow reads at this resolution was not measured on this photo, so the reading is 'no yellower than the asphalt', not a threshold passed"
+     "measured": "the PC, 2026-11-23, the same mosaic. The crossing: within 3 m of the declared centre over s 1090-1112.5 (ten stations) the yellowest pixel reads (R + G) / 2 - B = +3.5 to +7.5, the asphalt 5-8 m either side +1.5 to +5.5. The openings: within 4 m of where the islands either side stand, s 187.5-192.5 and s 212.5-217.5 read +4.0 to +5.5 against the asphalt's +2.0 to +4.5; the stations beside the noses read +8 to +14 on light grey pixels (red, green and blue within 16 of each other: not yellow). What a double yellow reads at this resolution was not measured on this photo, so the reading is 'no yellower than the asphalt', not a threshold passed"
     },
-    "ledger": "0099 round 3, item 1b",
+    "ledger": "0099 round 3, items 1b and 2",
     "fit": {
-     "strip_a": {
-      "d_centre_m": 0.43,
-      "width_m": 1.96,
-      "s": [
-       1010.0,
-       1085.0
+     "crossing": {
+      "strip_a": {
+       "d_centre_m": 0.43,
+       "width_m": 1.96,
+       "s": [
+        1010.0,
+        1085.0
+       ]
+      },
+      "strip_b": {
+       "d_centre_m": -1.5,
+       "width_m": 1.84,
+       "s": [
+        1120.0,
+        1192.5
+       ]
+      },
+      "tapers_s": [
+       [
+        982.5,
+        1010.0
+       ],
+       [
+        1192.5,
+        1212.5
+       ]
       ]
      },
-     "strip_b": {
-      "d_centre_m": -1.5,
-      "width_m": 1.84,
-      "s": [
-       1120.0,
-       1192.5
-      ]
+     "j3_end": {
+      "md11_veer": {
+       "s": [
+        100.0,
+        136.0
+       ],
+       "d_centre_m": 3.6
+      },
+      "md11_to_s": 177.5,
+      "md12": {
+       "s": [
+        195.0,
+        207.5
+       ],
+       "width_m": 3.4,
+       "d_centre_m": [
+        1.0,
+        2.3
+       ]
+      },
+      "md13_from_s": 225.0
      },
-     "tapers_s": [
+     "no_median_s": [
       [
-       982.5,
-       1010.0
+       177.5,
+       195.0
       ],
       [
-       1192.5,
-       1212.5
+       207.5,
+       225.0
+      ],
+      [
+       1085.0,
+       1120.0
       ]
      ],
-     "no_median_s": [
-      1085.0,
-      1120.0
+     "stretches_s": [
+      [
+       100.0,
+       231.0
+      ],
+      [
+       982.5,
+       1212.5
+      ]
      ]
     },
-    "split": "the run from s 1120.0 is MD13b"
+    "this_median": {
+     "s": [
+      225.0,
+      1085.0
+     ],
+     "declared_s": [
+      210.0,
+      2245.0
+     ]
+    }
    }
   },
   {
@@ -53893,50 +54131,103 @@
     ]
    ],
    "correction": {
-    "what": "Mission Gorge Rd's raised median MD13 over piece C s 982.5-1212.5: the Margerum Avenue / Mission Vista Drive crossing (no median s 1085-1120) and the narrow strips beside its two turn pockets",
-    "why": "the plan's median width is linear between eye readings 250 m apart and holds no crossing there: MD13 was declared, and built, as one unbroken island 4.5-5.4 m wide across a real crossing whose two side streets are built stubs",
-    "measured": "the PC, 2026-11-23: NAIP 2022 z18 full mosaic (source/naip_2022_lm_full_z18.jpg, sha256 1764a80b...) with source/expansion/mg_median/faces_md.py: per station the equivalent width (excess R - G summed across the island over a full island's plateau, +24.0 over the asphalt's -1.0) and the excess's centroid; medians over 24 stations (s 1012.5-1077.5: 1.66 m, +0.18 m) and 26 stations (s 1127.5-1192.5: 1.54 m, -2.24 m), against the same measure where the island fills its band (37 stations: width 0.30 m short, middle 0.49 m right of the declared band; one station p10..p90 -1.41..+1.23 m in width, -0.94..+0.18 m in the middle)",
-    "method": "piece C rows inside s 982.5-1212.5 set to the fit (linear tapers from / to the declared band; type none and width 0 between the noses); MD13 re-cut to end at s 1085 and MD13b added from s 1120 with the generator's nose rule; the island and the paint re-derived by tools/expansion_pieces.decorate (piece C's output only); the two centre lines cleared between the noses",
-    "inferred": "the taper s 1192.5-1212.5 lies under tree shadow on the photo: its two ends are measured, the line between is [inferred]",
-    "centre_paint_between_the_noses": {
-     "what": "no centre line: the two lines decorate's rule draws where a road has no median are cleared at the points between the noses",
+    "what": "Mission Gorge Rd's raised median on piece C, in two places: the Margerum Avenue / Mission Vista Drive crossing (s 982.5-1212.5: no median s 1085-1120, a narrow strip beside each turn pocket) and the J3 end (s 100-231: MD11 on its real line and to its real end, the two openings where they are, MD12 where it stands, MD13 from its real start)",
+    "why": "the plan's median is linear between eye readings 250 m apart: MD13 was declared, and built, unbroken across a real crossing whose two side streets are built stubs; and its two openings near J3 stand about 13 m from the real ones (tools/author_expansion.py GAPS 174 / 202; the dossier's station labels run about 14.6 m ahead of s on this piece, and 202 - 14.6 is the middle of the first real opening: my reading of two numbers, not traced in the dossier)",
+    "measured": "the PC, 2026-11-23: NAIP 2022 z18 full mosaic (source/naip_2022_lm_full_z18.jpg, sha256 1764a80b...). Per station the equivalent width (excess R - G summed across the island over a full island's plateau, +24.0 over the asphalt) and the excess's centroid. THE CROSSING (faces_md.py): medians over 24 stations (s 1012.5-1077.5: 1.66 m, +0.18 m) and 26 stations (s 1127.5-1192.5: 1.54 m, -2.24 m), against the same measure where the island fills its band (37 stations: width 0.30 m short, middle 0.49 m right of the declared band; one station p10..p90 -1.41..+1.23 m in width, -0.94..+0.18 m in the middle). THE J3 END (faces_piece.py, 10 m windows off the declared centre, no registration correction): MD11's middle +1.12 at s 110, +1.98 at 120, +3.17 at 130, +3.76 at 140 and 150, +3.39 at 160, +3.40 at 170, its last station with terracotta s 177.5; none at the six stations s 180-192.5 nor at the six s 210-222.5; MD12 at s 195-207.5 reads 1.02 / 2.73 / 3.79 / 3.45 / 3.10 / 2.60 m wide with its middle +0.90 / +1.18 / +1.73 / +1.34 / +2.20 / +2.36; MD13's first station with terracotta s 225",
+    "method": "piece C rows inside the stretches set to the fit; the four medians' rings re-cut inside the stretches with the generator's nose rule and kept outside them; the island and the paint re-derived by tools/expansion_pieces.decorate (piece C's output only); the two centre lines cleared where there is no median",
+    "inferred": "the taper s 1192.5-1212.5 lies under tree shadow on the photo: its two ends are measured, the line between is [inferred]. MD11's veer is drawn as one straight line from s 100 to s 136 through four measured windows",
+    "not_built": "MD12: 12.5 to 17.5 m long on the photo, four connector points inside its measured run; the median tool and the lap's corridor build an island on six or more. Its place is set (the plan's painted outline lies where the real island stands); the island itself is owed",
+    "centre_paint_where_there_is_no_median": {
+     "what": "no centre line: the two lines decorate's rule draws where a road has no median are cleared at the points between the crossing's noses and in the two openings near J3",
      "source": "photo",
-     "measured": "the PC, 2026-11-23, the same mosaic: within 3 m of the declared centre over s 1090-1112.5 (ten stations) the yellowest pixel reads (R + G) / 2 - B = +3.5 to +7.5, the asphalt 5-8 m either side +1.5 to +5.5: no more than 5.5 levels over it. What a double yellow reads at this resolution was not measured on this photo, so the reading is 'no yellower than the asphalt', not a threshold passed"
+     "measured": "the PC, 2026-11-23, the same mosaic. The crossing: within 3 m of the declared centre over s 1090-1112.5 (ten stations) the yellowest pixel reads (R + G) / 2 - B = +3.5 to +7.5, the asphalt 5-8 m either side +1.5 to +5.5. The openings: within 4 m of where the islands either side stand, s 187.5-192.5 and s 212.5-217.5 read +4.0 to +5.5 against the asphalt's +2.0 to +4.5; the stations beside the noses read +8 to +14 on light grey pixels (red, green and blue within 16 of each other: not yellow). What a double yellow reads at this resolution was not measured on this photo, so the reading is 'no yellower than the asphalt', not a threshold passed"
     },
-    "ledger": "0099 round 3, item 1b",
+    "ledger": "0099 round 3, items 1b and 2",
     "fit": {
-     "strip_a": {
-      "d_centre_m": 0.43,
-      "width_m": 1.96,
-      "s": [
-       1010.0,
-       1085.0
+     "crossing": {
+      "strip_a": {
+       "d_centre_m": 0.43,
+       "width_m": 1.96,
+       "s": [
+        1010.0,
+        1085.0
+       ]
+      },
+      "strip_b": {
+       "d_centre_m": -1.5,
+       "width_m": 1.84,
+       "s": [
+        1120.0,
+        1192.5
+       ]
+      },
+      "tapers_s": [
+       [
+        982.5,
+        1010.0
+       ],
+       [
+        1192.5,
+        1212.5
+       ]
       ]
      },
-     "strip_b": {
-      "d_centre_m": -1.5,
-      "width_m": 1.84,
-      "s": [
-       1120.0,
-       1192.5
-      ]
+     "j3_end": {
+      "md11_veer": {
+       "s": [
+        100.0,
+        136.0
+       ],
+       "d_centre_m": 3.6
+      },
+      "md11_to_s": 177.5,
+      "md12": {
+       "s": [
+        195.0,
+        207.5
+       ],
+       "width_m": 3.4,
+       "d_centre_m": [
+        1.0,
+        2.3
+       ]
+      },
+      "md13_from_s": 225.0
      },
-     "tapers_s": [
+     "no_median_s": [
       [
-       982.5,
-       1010.0
+       177.5,
+       195.0
       ],
       [
-       1192.5,
-       1212.5
+       207.5,
+       225.0
+      ],
+      [
+       1085.0,
+       1120.0
       ]
      ],
-     "no_median_s": [
-      1085.0,
-      1120.0
+     "stretches_s": [
+      [
+       100.0,
+       231.0
+      ],
+      [
+       982.5,
+       1212.5
+      ]
      ]
     },
-    "split": "split off MD13, which ends at s 1085.0"
+    "this_median": {
+     "s": [
+      1120.0,
+      2245.0
+     ],
+     "declared_s": [
+      "split off MD13"
+     ]
+    }
    }
   },
   {

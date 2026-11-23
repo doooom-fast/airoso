@@ -664,9 +664,13 @@ The side branch merged for it: `claude/lm-terracotta-tex-20261123` (4e4cab53, th
 
 **What the photo shows** (`source/expansion/mg_median/`, its README holds every number): on NAIP 2022, MD13's kept pixels
 read terracotta (R - G +13 to +27) in every 50 m bin over s 260-1010 and s 1210-2245, and no bin is planted end to end
-(highest canopy share 0.27). MD11 is narrower than the photo's colour resolution and reads near-grey: it is built
-terracotta as the plan declares, and its tone is **[inferred from MD13]**, not measured. So both islands are paved over
-their whole built length: no grass stretch, no concrete stretch. The plants keep their measured places.
+(highest canopy share 0.27). MD11's declared band reads near-grey: it is built terracotta as the plan declares, and its
+tone is **[inferred from MD13]**, not measured. So both islands are paved over their whole built length: no grass
+stretch, no concrete stretch. The plants keep their measured places.
+
+*Corrected in item 2 (2026-11-23):* this paragraph first said MD11 reads grey because it is narrower than the photo's
+colour resolution. That holds only for s 45-105. Over s 105-167.5 the declared band was not on the real strip, which
+runs up to 3.8 m to its left, so the band's pixels were asphalt. Item 2 moves MD11 onto its measured line.
 
 ### What was built
 

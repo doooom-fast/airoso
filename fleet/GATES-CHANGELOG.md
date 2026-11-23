@@ -14,6 +14,27 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
+## 2026-11-23 (PC) — WIRING: median_rebuild takes several old islands, each found exactly or refused; no threshold moved (ledger 0099 round 3, item 2; opt-in, Lake Murray)
+
+Item 2 corrects the J3 end of the same median, where two built islands change (MD11, rows 8-48, and MD13, rows 63-741).
+`route.median_rebuild.was_rows` is one pair, as item 1b wrote it, or a list of pairs. What changed in the step's checks:
+
+- **Each island named is held to item 1b's rule on its own**: its curb ring and its deck must each be in the scene as
+  ONE loose part of exactly the rule's vertices, every vertex within TOL_M; the refusal names the island by its rows.
+- **New refusals, all fatal with nothing saved:** the pairs overlap or run backwards; the record's data holds a built
+  island between the first and the last row given that is not named ("name every built island the step re-authors": an
+  island left out is not skipped over); the old decks lie in two different objects (the new decks have one home).
+- **The stamp's checksum covers the list of pairs**, so a scene stamped from one pair is "a stamp of other data" to a
+  run given two, and refused.
+- TOL_M, DECK_OVER_M / DECK_TOL_M and every after-check are as item 1b left them. No tolerance moved.
+
+Proven on the committed blend (a scratch workshop): both old islands found whole (curb 246 and 4,074 vertices, deck 82
+and 1,358, beams 140 and 2,692, 235 posts, 114 + 250 paint strips), three built (rows 8-51, 68-354, 367-741), the new
+decks 0.177-0.196 m over the road. Teeth: tests/tools/test_mg_median_0099.py
+(`test_the_step_takes_every_island_named_and_refuses_one_left_out`: one pair still reads, the list is put in the line's
+order, five malformed lists are refused, and the record's data holds exactly the two islands named between rows 8 and
+741).
+
 ## 2026-11-23 (PC) — WIRING: a new author step, median_rebuild, that refuses unless it finds the island exactly; no threshold moved (ledger 0099 round 3, item 1b; opt-in, Lake Murray)
 
 Mission Gorge Rd's long median island was built unbroken across the real Margerum Avenue / Mission Vista Drive crossing.

@@ -1,48 +1,888 @@
 {
- "what": "Mission Gorge Rd's raised median MD13 over piece C s 982.5-1212.5: the Margerum Avenue / Mission Vista Drive crossing (no median s 1085-1120) and the narrow strips beside its two turn pockets",
- "why": "the plan's median width is linear between eye readings 250 m apart and holds no crossing there: MD13 was declared, and built, as one unbroken island 4.5-5.4 m wide across a real crossing whose two side streets are built stubs",
- "measured": "the PC, 2026-11-23: NAIP 2022 z18 full mosaic (source/naip_2022_lm_full_z18.jpg, sha256 1764a80b...) with source/expansion/mg_median/faces_md.py: per station the equivalent width (excess R - G summed across the island over a full island's plateau, +24.0 over the asphalt's -1.0) and the excess's centroid; medians over 24 stations (s 1012.5-1077.5: 1.66 m, +0.18 m) and 26 stations (s 1127.5-1192.5: 1.54 m, -2.24 m), against the same measure where the island fills its band (37 stations: width 0.30 m short, middle 0.49 m right of the declared band; one station p10..p90 -1.41..+1.23 m in width, -0.94..+0.18 m in the middle)",
- "method": "piece C rows inside s 982.5-1212.5 set to the fit (linear tapers from / to the declared band; type none and width 0 between the noses); MD13 re-cut to end at s 1085 and MD13b added from s 1120 with the generator's nose rule; the island and the paint re-derived by tools/expansion_pieces.decorate (piece C's output only); the two centre lines cleared between the noses",
- "inferred": "the taper s 1192.5-1212.5 lies under tree shadow on the photo: its two ends are measured, the line between is [inferred]",
- "centre_paint_between_the_noses": {
-  "what": "no centre line: the two lines decorate's rule draws where a road has no median are cleared at the points between the noses",
+ "what": "Mission Gorge Rd's raised median on piece C, in two places: the Margerum Avenue / Mission Vista Drive crossing (s 982.5-1212.5: no median s 1085-1120, a narrow strip beside each turn pocket) and the J3 end (s 100-231: MD11 on its real line and to its real end, the two openings where they are, MD12 where it stands, MD13 from its real start)",
+ "why": "the plan's median is linear between eye readings 250 m apart: MD13 was declared, and built, unbroken across a real crossing whose two side streets are built stubs; and its two openings near J3 stand about 13 m from the real ones (tools/author_expansion.py GAPS 174 / 202; the dossier's station labels run about 14.6 m ahead of s on this piece, and 202 - 14.6 is the middle of the first real opening: my reading of two numbers, not traced in the dossier)",
+ "measured": "the PC, 2026-11-23: NAIP 2022 z18 full mosaic (source/naip_2022_lm_full_z18.jpg, sha256 1764a80b...). Per station the equivalent width (excess R - G summed across the island over a full island's plateau, +24.0 over the asphalt) and the excess's centroid. THE CROSSING (faces_md.py): medians over 24 stations (s 1012.5-1077.5: 1.66 m, +0.18 m) and 26 stations (s 1127.5-1192.5: 1.54 m, -2.24 m), against the same measure where the island fills its band (37 stations: width 0.30 m short, middle 0.49 m right of the declared band; one station p10..p90 -1.41..+1.23 m in width, -0.94..+0.18 m in the middle). THE J3 END (faces_piece.py, 10 m windows off the declared centre, no registration correction): MD11's middle +1.12 at s 110, +1.98 at 120, +3.17 at 130, +3.76 at 140 and 150, +3.39 at 160, +3.40 at 170, its last station with terracotta s 177.5; none at the six stations s 180-192.5 nor at the six s 210-222.5; MD12 at s 195-207.5 reads 1.02 / 2.73 / 3.79 / 3.45 / 3.10 / 2.60 m wide with its middle +0.90 / +1.18 / +1.73 / +1.34 / +2.20 / +2.36; MD13's first station with terracotta s 225",
+ "method": "piece C rows inside the stretches set to the fit; the four medians' rings re-cut inside the stretches with the generator's nose rule and kept outside them; the island and the paint re-derived by tools/expansion_pieces.decorate (piece C's output only); the two centre lines cleared where there is no median",
+ "inferred": "the taper s 1192.5-1212.5 lies under tree shadow on the photo: its two ends are measured, the line between is [inferred]. MD11's veer is drawn as one straight line from s 100 to s 136 through four measured windows",
+ "not_built": "MD12: 12.5 to 17.5 m long on the photo, four connector points inside its measured run; the median tool and the lap's corridor build an island on six or more. Its place is set (the plan's painted outline lies where the real island stands); the island itself is owed",
+ "centre_paint_where_there_is_no_median": {
+  "what": "no centre line: the two lines decorate's rule draws where a road has no median are cleared at the points between the crossing's noses and in the two openings near J3",
   "source": "photo",
-  "measured": "the PC, 2026-11-23, the same mosaic: within 3 m of the declared centre over s 1090-1112.5 (ten stations) the yellowest pixel reads (R + G) / 2 - B = +3.5 to +7.5, the asphalt 5-8 m either side +1.5 to +5.5: no more than 5.5 levels over it. What a double yellow reads at this resolution was not measured on this photo, so the reading is 'no yellower than the asphalt', not a threshold passed"
+  "measured": "the PC, 2026-11-23, the same mosaic. The crossing: within 3 m of the declared centre over s 1090-1112.5 (ten stations) the yellowest pixel reads (R + G) / 2 - B = +3.5 to +7.5, the asphalt 5-8 m either side +1.5 to +5.5. The openings: within 4 m of where the islands either side stand, s 187.5-192.5 and s 212.5-217.5 read +4.0 to +5.5 against the asphalt's +2.0 to +4.5; the stations beside the noses read +8 to +14 on light grey pixels (red, green and blue within 16 of each other: not yellow). What a double yellow reads at this resolution was not measured on this photo, so the reading is 'no yellower than the asphalt', not a threshold passed"
  },
- "ledger": "0099 round 3, item 1b",
+ "ledger": "0099 round 3, items 1b and 2",
  "fit": {
-  "strip_a": {
-   "d_centre_m": 0.43,
-   "width_m": 1.96,
-   "s": [
-    1010.0,
-    1085.0
+  "crossing": {
+   "strip_a": {
+    "d_centre_m": 0.43,
+    "width_m": 1.96,
+    "s": [
+     1010.0,
+     1085.0
+    ]
+   },
+   "strip_b": {
+    "d_centre_m": -1.5,
+    "width_m": 1.84,
+    "s": [
+     1120.0,
+     1192.5
+    ]
+   },
+   "tapers_s": [
+    [
+     982.5,
+     1010.0
+    ],
+    [
+     1192.5,
+     1212.5
+    ]
    ]
   },
-  "strip_b": {
-   "d_centre_m": -1.5,
-   "width_m": 1.84,
-   "s": [
-    1120.0,
-    1192.5
-   ]
+  "j3_end": {
+   "md11_veer": {
+    "s": [
+     100.0,
+     136.0
+    ],
+    "d_centre_m": 3.6
+   },
+   "md11_to_s": 177.5,
+   "md12": {
+    "s": [
+     195.0,
+     207.5
+    ],
+    "width_m": 3.4,
+    "d_centre_m": [
+     1.0,
+     2.3
+    ]
+   },
+   "md13_from_s": 225.0
   },
-  "tapers_s": [
+  "no_median_s": [
    [
-    982.5,
-    1010.0
+    177.5,
+    195.0
    ],
    [
-    1192.5,
-    1212.5
+    207.5,
+    225.0
+   ],
+   [
+    1085.0,
+    1120.0
    ]
   ],
-  "no_median_s": [
-   1085.0,
-   1120.0
+  "stretches_s": [
+   [
+    100.0,
+    231.0
+   ],
+   [
+    982.5,
+    1212.5
+   ]
   ]
  },
  "rows": [
+  {
+   "s": 100.0,
+   "median_type": [
+    "terracotta",
+    "terracotta"
+   ],
+   "median_w_m": [
+    1.24,
+    1.24
+   ],
+   "median_off_m": [
+    -0.5,
+    -0.5
+   ]
+  },
+  {
+   "s": 102.5,
+   "median_type": [
+    "terracotta",
+    "terracotta"
+   ],
+   "median_w_m": [
+    1.25,
+    1.25
+   ],
+   "median_off_m": [
+    -0.5,
+    -0.25
+   ]
+  },
+  {
+   "s": 105.0,
+   "median_type": [
+    "terracotta",
+    "terracotta"
+   ],
+   "median_w_m": [
+    1.26,
+    1.26
+   ],
+   "median_off_m": [
+    -0.5,
+    0.0
+   ]
+  },
+  {
+   "s": 107.5,
+   "median_type": [
+    "terracotta",
+    "terracotta"
+   ],
+   "median_w_m": [
+    1.28,
+    1.28
+   ],
+   "median_off_m": [
+    -0.5,
+    0.25
+   ]
+  },
+  {
+   "s": 110.0,
+   "median_type": [
+    "terracotta",
+    "terracotta"
+   ],
+   "median_w_m": [
+    1.29,
+    1.29
+   ],
+   "median_off_m": [
+    -0.5,
+    0.5
+   ]
+  },
+  {
+   "s": 112.5,
+   "median_type": [
+    "terracotta",
+    "terracotta"
+   ],
+   "median_w_m": [
+    1.31,
+    1.31
+   ],
+   "median_off_m": [
+    -0.5,
+    0.75
+   ]
+  },
+  {
+   "s": 115.0,
+   "median_type": [
+    "terracotta",
+    "terracotta"
+   ],
+   "median_w_m": [
+    1.32,
+    1.32
+   ],
+   "median_off_m": [
+    -0.5,
+    1.0
+   ]
+  },
+  {
+   "s": 117.5,
+   "median_type": [
+    "terracotta",
+    "terracotta"
+   ],
+   "median_w_m": [
+    1.33,
+    1.33
+   ],
+   "median_off_m": [
+    -0.5,
+    1.25
+   ]
+  },
+  {
+   "s": 120.0,
+   "median_type": [
+    "terracotta",
+    "terracotta"
+   ],
+   "median_w_m": [
+    1.35,
+    1.35
+   ],
+   "median_off_m": [
+    -0.5,
+    1.5
+   ]
+  },
+  {
+   "s": 122.5,
+   "median_type": [
+    "terracotta",
+    "terracotta"
+   ],
+   "median_w_m": [
+    1.36,
+    1.36
+   ],
+   "median_off_m": [
+    -0.5,
+    1.75
+   ]
+  },
+  {
+   "s": 125.0,
+   "median_type": [
+    "terracotta",
+    "terracotta"
+   ],
+   "median_w_m": [
+    1.38,
+    1.38
+   ],
+   "median_off_m": [
+    -0.5,
+    2.0
+   ]
+  },
+  {
+   "s": 127.5,
+   "median_type": [
+    "terracotta",
+    "terracotta"
+   ],
+   "median_w_m": [
+    1.39,
+    1.39
+   ],
+   "median_off_m": [
+    -0.5,
+    2.25
+   ]
+  },
+  {
+   "s": 130.0,
+   "median_type": [
+    "terracotta",
+    "terracotta"
+   ],
+   "median_w_m": [
+    1.4,
+    1.4
+   ],
+   "median_off_m": [
+    -0.5,
+    2.5
+   ]
+  },
+  {
+   "s": 132.5,
+   "median_type": [
+    "terracotta",
+    "terracotta"
+   ],
+   "median_w_m": [
+    1.42,
+    1.42
+   ],
+   "median_off_m": [
+    -0.5,
+    2.75
+   ]
+  },
+  {
+   "s": 135.0,
+   "median_type": [
+    "terracotta",
+    "terracotta"
+   ],
+   "median_w_m": [
+    1.43,
+    1.43
+   ],
+   "median_off_m": [
+    -0.5,
+    3.0
+   ]
+  },
+  {
+   "s": 137.5,
+   "median_type": [
+    "terracotta",
+    "terracotta"
+   ],
+   "median_w_m": [
+    1.45,
+    1.45
+   ],
+   "median_off_m": [
+    -0.5,
+    3.1
+   ]
+  },
+  {
+   "s": 140.0,
+   "median_type": [
+    "terracotta",
+    "terracotta"
+   ],
+   "median_w_m": [
+    1.46,
+    1.46
+   ],
+   "median_off_m": [
+    -0.5,
+    3.1
+   ]
+  },
+  {
+   "s": 142.5,
+   "median_type": [
+    "terracotta",
+    "terracotta"
+   ],
+   "median_w_m": [
+    1.48,
+    1.48
+   ],
+   "median_off_m": [
+    -0.5,
+    3.1
+   ]
+  },
+  {
+   "s": 145.0,
+   "median_type": [
+    "terracotta",
+    "terracotta"
+   ],
+   "median_w_m": [
+    1.49,
+    1.49
+   ],
+   "median_off_m": [
+    -0.5,
+    3.1
+   ]
+  },
+  {
+   "s": 147.5,
+   "median_type": [
+    "terracotta",
+    "terracotta"
+   ],
+   "median_w_m": [
+    1.5,
+    1.5
+   ],
+   "median_off_m": [
+    -0.5,
+    3.1
+   ]
+  },
+  {
+   "s": 150.0,
+   "median_type": [
+    "terracotta",
+    "terracotta"
+   ],
+   "median_w_m": [
+    1.52,
+    1.52
+   ],
+   "median_off_m": [
+    -0.5,
+    3.1
+   ]
+  },
+  {
+   "s": 152.5,
+   "median_type": [
+    "terracotta",
+    "terracotta"
+   ],
+   "median_w_m": [
+    1.53,
+    1.53
+   ],
+   "median_off_m": [
+    -0.5,
+    3.1
+   ]
+  },
+  {
+   "s": 155.0,
+   "median_type": [
+    "terracotta",
+    "terracotta"
+   ],
+   "median_w_m": [
+    1.55,
+    1.55
+   ],
+   "median_off_m": [
+    -0.5,
+    3.1
+   ]
+  },
+  {
+   "s": 157.5,
+   "median_type": [
+    "terracotta",
+    "terracotta"
+   ],
+   "median_w_m": [
+    1.56,
+    1.56
+   ],
+   "median_off_m": [
+    -0.5,
+    3.1
+   ]
+  },
+  {
+   "s": 160.0,
+   "median_type": [
+    "terracotta",
+    "terracotta"
+   ],
+   "median_w_m": [
+    1.57,
+    1.57
+   ],
+   "median_off_m": [
+    -0.5,
+    3.1
+   ]
+  },
+  {
+   "s": 162.5,
+   "median_type": [
+    "terracotta",
+    "terracotta"
+   ],
+   "median_w_m": [
+    1.59,
+    1.59
+   ],
+   "median_off_m": [
+    -0.5,
+    3.1
+   ]
+  },
+  {
+   "s": 165.0,
+   "median_type": [
+    "terracotta",
+    "terracotta"
+   ],
+   "median_w_m": [
+    1.6,
+    1.6
+   ],
+   "median_off_m": [
+    -0.5,
+    3.1
+   ]
+  },
+  {
+   "s": 167.5,
+   "median_type": [
+    "terracotta",
+    "terracotta"
+   ],
+   "median_w_m": [
+    1.62,
+    1.62
+   ],
+   "median_off_m": [
+    -0.5,
+    3.1
+   ]
+  },
+  {
+   "s": 170.0,
+   "median_type": [
+    "terracotta",
+    "terracotta"
+   ],
+   "median_w_m": [
+    1.63,
+    1.63
+   ],
+   "median_off_m": [
+    -0.5,
+    3.1
+   ]
+  },
+  {
+   "s": 172.5,
+   "median_type": [
+    "terracotta",
+    "terracotta"
+   ],
+   "median_w_m": [
+    1.64,
+    1.64
+   ],
+   "median_off_m": [
+    -0.5,
+    3.1
+   ]
+  },
+  {
+   "s": 175.0,
+   "median_type": [
+    "terracotta",
+    "terracotta"
+   ],
+   "median_w_m": [
+    1.66,
+    1.66
+   ],
+   "median_off_m": [
+    -0.5,
+    3.1
+   ]
+  },
+  {
+   "s": 177.5,
+   "median_type": [
+    "terracotta",
+    "terracotta"
+   ],
+   "median_w_m": [
+    1.67,
+    1.67
+   ],
+   "median_off_m": [
+    -0.5,
+    3.1
+   ]
+  },
+  {
+   "s": 180.0,
+   "median_type": [
+    "terracotta",
+    "none"
+   ],
+   "median_w_m": [
+    1.69,
+    0.0
+   ],
+   "median_off_m": [
+    -0.5,
+    -0.5
+   ]
+  },
+  {
+   "s": 182.5,
+   "median_type": [
+    "terracotta",
+    "none"
+   ],
+   "median_w_m": [
+    1.7,
+    0.0
+   ],
+   "median_off_m": [
+    -0.5,
+    -0.5
+   ]
+  },
+  {
+   "s": 185.0,
+   "median_type": [
+    "terracotta",
+    "none"
+   ],
+   "median_w_m": [
+    1.72,
+    0.0
+   ],
+   "median_off_m": [
+    -0.5,
+    -0.5
+   ]
+  },
+  {
+   "s": 187.5,
+   "median_type": [
+    "terracotta",
+    "none"
+   ],
+   "median_w_m": [
+    1.73,
+    0.0
+   ],
+   "median_off_m": [
+    -0.5,
+    -0.5
+   ]
+  },
+  {
+   "s": 190.0,
+   "median_type": [
+    "terracotta",
+    "none"
+   ],
+   "median_w_m": [
+    1.74,
+    0.0
+   ],
+   "median_off_m": [
+    -0.5,
+    -0.5
+   ]
+  },
+  {
+   "s": 192.5,
+   "median_type": [
+    "terracotta",
+    "none"
+   ],
+   "median_w_m": [
+    1.76,
+    0.0
+   ],
+   "median_off_m": [
+    -0.5,
+    -0.5
+   ]
+  },
+  {
+   "s": 195.0,
+   "median_type": [
+    "terracotta",
+    "terracotta"
+   ],
+   "median_w_m": [
+    1.77,
+    3.4
+   ],
+   "median_off_m": [
+    -0.5,
+    0.5
+   ]
+  },
+  {
+   "s": 197.5,
+   "median_type": [
+    "terracotta",
+    "terracotta"
+   ],
+   "median_w_m": [
+    1.79,
+    3.4
+   ],
+   "median_off_m": [
+    -0.5,
+    0.76
+   ]
+  },
+  {
+   "s": 200.0,
+   "median_type": [
+    "terracotta",
+    "terracotta"
+   ],
+   "median_w_m": [
+    1.8,
+    3.4
+   ],
+   "median_off_m": [
+    -0.5,
+    1.02
+   ]
+  },
+  {
+   "s": 202.5,
+   "median_type": [
+    "terracotta",
+    "terracotta"
+   ],
+   "median_w_m": [
+    1.81,
+    3.4
+   ],
+   "median_off_m": [
+    -0.5,
+    1.28
+   ]
+  },
+  {
+   "s": 205.0,
+   "median_type": [
+    "terracotta",
+    "terracotta"
+   ],
+   "median_w_m": [
+    1.83,
+    3.4
+   ],
+   "median_off_m": [
+    -0.5,
+    1.54
+   ]
+  },
+  {
+   "s": 207.5,
+   "median_type": [
+    "terracotta",
+    "terracotta"
+   ],
+   "median_w_m": [
+    1.84,
+    3.4
+   ],
+   "median_off_m": [
+    -0.5,
+    1.8
+   ]
+  },
+  {
+   "s": 210.0,
+   "median_type": [
+    "terracotta",
+    "none"
+   ],
+   "median_w_m": [
+    1.86,
+    0.0
+   ],
+   "median_off_m": [
+    -0.5,
+    -0.5
+   ]
+  },
+  {
+   "s": 212.5,
+   "median_type": [
+    "terracotta",
+    "none"
+   ],
+   "median_w_m": [
+    1.87,
+    0.0
+   ],
+   "median_off_m": [
+    -0.5,
+    -0.5
+   ]
+  },
+  {
+   "s": 215.0,
+   "median_type": [
+    "terracotta",
+    "none"
+   ],
+   "median_w_m": [
+    1.88,
+    0.0
+   ],
+   "median_off_m": [
+    -0.5,
+    -0.5
+   ]
+  },
+  {
+   "s": 217.5,
+   "median_type": [
+    "terracotta",
+    "none"
+   ],
+   "median_w_m": [
+    1.9,
+    0.0
+   ],
+   "median_off_m": [
+    -0.5,
+    -0.5
+   ]
+  },
+  {
+   "s": 220.0,
+   "median_type": [
+    "terracotta",
+    "none"
+   ],
+   "median_w_m": [
+    1.91,
+    0.0
+   ],
+   "median_off_m": [
+    -0.5,
+    -0.5
+   ]
+  },
+  {
+   "s": 222.5,
+   "median_type": [
+    "terracotta",
+    "none"
+   ],
+   "median_w_m": [
+    1.93,
+    0.0
+   ],
+   "median_off_m": [
+    -0.5,
+    -0.5
+   ]
+  },
+  {
+   "s": 225.0,
+   "median_type": [
+    "terracotta",
+    "terracotta"
+   ],
+   "median_w_m": [
+    1.94,
+    1.94
+   ],
+   "median_off_m": [
+    -0.5,
+    -0.5
+   ]
+  },
+  {
+   "s": 227.5,
+   "median_type": [
+    "terracotta",
+    "terracotta"
+   ],
+   "median_w_m": [
+    1.96,
+    1.96
+   ],
+   "median_off_m": [
+    -0.5,
+    -0.5
+   ]
+  },
+  {
+   "s": 230.0,
+   "median_type": [
+    "terracotta",
+    "terracotta"
+   ],
+   "median_w_m": [
+    1.97,
+    1.97
+   ],
+   "median_off_m": [
+    -0.5,
+    -0.5
+   ]
+  },
   {
    "s": 982.5,
    "median_type": [
@@ -1439,24 +2279,36 @@
    ]
   }
  ],
- "ring_before": {
-  "s_from": 210.0,
-  "s_to": 2245.0,
-  "points": 1630
+ "rings_before": {
+  "MD13": {
+   "s_from": 210.0,
+   "s_to": 2245.0,
+   "points": 1630
+  },
+  "MD11": {
+   "s_from": 45.0,
+   "s_to": 167.5,
+   "points": 100
+  },
+  "MD12": {
+   "s_from": 182.5,
+   "s_to": 195.0,
+   "points": 12
+  }
  },
  "island": {
   "line": "north_mission_gorge",
   "runs_of_points_with_an_island": [
    [
     8,
-    48
+    51
    ],
    [
-    54,
-    57
+    58,
+    61
    ],
    [
-    63,
+    68,
     354
    ],
    [
@@ -1464,16 +2316,352 @@
     741
    ]
   ],
-  "points_changed": [
-   321,
-   397,
-   77
+  "points_changed_runs": [
+   [
+    26,
+    51
+   ],
+   [
+    54,
+    61
+   ],
+   [
+    63,
+    67
+   ],
+   [
+    321,
+    397
+   ]
   ],
-  "points_with_no_median_between_the_noses": [
-   356,
-   365
+  "points_changed": 116,
+  "points_with_no_median_runs": [
+   [
+    53,
+    57
+   ],
+   [
+    63,
+    67
+   ],
+   [
+    356,
+    365
+   ]
   ],
   "before": {
+   "26": {
+    "w": 1.242,
+    "p": [
+     -2938.396,
+     -65.366,
+     2078.366
+    ]
+   },
+   "27": {
+    "w": 1.254,
+    "p": [
+     -2935.608,
+     -65.282,
+     2079.506
+    ]
+   },
+   "28": {
+    "w": 1.271,
+    "p": [
+     -2932.807,
+     -65.193,
+     2080.644
+    ]
+   },
+   "29": {
+    "w": 1.287,
+    "p": [
+     -2930.003,
+     -65.098,
+     2081.776
+    ]
+   },
+   "30": {
+    "w": 1.309,
+    "p": [
+     -2927.208,
+     -64.999,
+     2082.893
+    ]
+   },
+   "31": {
+    "w": 1.321,
+    "p": [
+     -2924.416,
+     -64.895,
+     2083.989
+    ]
+   },
+   "32": {
+    "w": 1.337,
+    "p": [
+     -2921.623,
+     -64.792,
+     2085.064
+    ]
+   },
+   "33": {
+    "w": 1.355,
+    "p": [
+     -2918.822,
+     -64.693,
+     2086.122
+    ]
+   },
+   "34": {
+    "w": 1.375,
+    "p": [
+     -2916.016,
+     -64.601,
+     2087.167
+    ]
+   },
+   "35": {
+    "w": 1.389,
+    "p": [
+     -2913.207,
+     -64.513,
+     2088.205
+    ]
+   },
+   "36": {
+    "w": 1.403,
+    "p": [
+     -2910.395,
+     -64.427,
+     2089.235
+    ]
+   },
+   "37": {
+    "w": 1.423,
+    "p": [
+     -2907.581,
+     -64.337,
+     2090.265
+    ]
+   },
+   "38": {
+    "w": 1.441,
+    "p": [
+     -2904.768,
+     -64.244,
+     2091.294
+    ]
+   },
+   "39": {
+    "w": 1.457,
+    "p": [
+     -2901.954,
+     -64.147,
+     2092.322
+    ]
+   },
+   "40": {
+    "w": 1.479,
+    "p": [
+     -2899.14,
+     -64.047,
+     2093.351
+    ]
+   },
+   "41": {
+    "w": 1.491,
+    "p": [
+     -2896.327,
+     -63.945,
+     2094.379
+    ]
+   },
+   "42": {
+    "w": 1.507,
+    "p": [
+     -2893.513,
+     -63.838,
+     2095.407
+    ]
+   },
+   "43": {
+    "w": 1.525,
+    "p": [
+     -2890.695,
+     -63.726,
+     2096.437
+    ]
+   },
+   "44": {
+    "w": 1.545,
+    "p": [
+     -2887.864,
+     -63.609,
+     2097.469
+    ]
+   },
+   "45": {
+    "w": 1.559,
+    "p": [
+     -2884.989,
+     -63.489,
+     2098.509
+    ]
+   },
+   "46": {
+    "w": 1.572,
+    "p": [
+     -2882.045,
+     -63.368,
+     2099.555
+    ]
+   },
+   "47": {
+    "w": 1.593,
+    "p": [
+     -2879.065,
+     -63.245,
+     2100.581
+    ]
+   },
+   "48": {
+    "w": 1.61,
+    "p": [
+     -2876.118,
+     -63.121,
+     2101.568
+    ]
+   },
+   "49": {
+    "w": 0.0,
+    "p": [
+     -2873.532,
+     -62.993,
+     2103.466
+    ]
+   },
+   "50": {
+    "w": 0.0,
+    "p": [
+     -2870.667,
+     -62.864,
+     2104.39
+    ]
+   },
+   "51": {
+    "w": 0.0,
+    "p": [
+     -2867.816,
+     -62.732,
+     2105.297
+    ]
+   },
+   "54": {
+    "w": 1.714,
+    "p": [
+     -2859.037,
+     -62.317,
+     2107.034
+    ]
+   },
+   "55": {
+    "w": 1.729,
+    "p": [
+     -2856.214,
+     -62.178,
+     2107.955
+    ]
+   },
+   "56": {
+    "w": 1.742,
+    "p": [
+     -2853.382,
+     -62.042,
+     2108.895
+    ]
+   },
+   "57": {
+    "w": 1.763,
+    "p": [
+     -2850.543,
+     -61.911,
+     2109.846
+    ]
+   },
+   "58": {
+    "w": 0.0,
+    "p": [
+     -2848.021,
+     -61.784,
+     2111.745
+    ]
+   },
+   "59": {
+    "w": 0.0,
+    "p": [
+     -2845.177,
+     -61.661,
+     2112.69
+    ]
+   },
+   "60": {
+    "w": 0.0,
+    "p": [
+     -2842.328,
+     -61.541,
+     2113.625
+    ]
+   },
+   "61": {
+    "w": 0.0,
+    "p": [
+     -2839.474,
+     -61.423,
+     2114.545
+    ]
+   },
+   "63": {
+    "w": 1.865,
+    "p": [
+     -2833.458,
+     -61.184,
+     2115.402
+    ]
+   },
+   "64": {
+    "w": 1.877,
+    "p": [
+     -2830.601,
+     -61.059,
+     2116.303
+    ]
+   },
+   "65": {
+    "w": 1.898,
+    "p": [
+     -2827.742,
+     -60.93,
+     2117.204
+    ]
+   },
+   "66": {
+    "w": 1.912,
+    "p": [
+     -2824.885,
+     -60.795,
+     2118.105
+    ]
+   },
+   "67": {
+    "w": 1.933,
+    "p": [
+     -2822.027,
+     -60.657,
+     2119.006
+    ]
+   },
    "321": {
     "w": 4.49,
     "p": [
@@ -2093,11 +3281,53 @@
   }
  },
  "paint": {
-  "centre_line_offsets_cleared_between_the_noses": 20,
+  "centre_line_offsets_cleared_where_there_is_no_median": 40,
   "lines": 14,
-  "_before_doc": "line index -> point index -> the offset the line had there before (null = no line); every other offset of the piece's paint is as it was",
+  "_before_doc": "line index -> point index -> the offset the line had there before any of this (null = no line); every other offset of the piece's paint is as it was",
   "before": {
    "3": {
+    "26": 4.689,
+    "27": 4.681,
+    "28": 4.675,
+    "29": 4.671,
+    "30": 4.667,
+    "31": 4.659,
+    "32": 4.652,
+    "33": 4.648,
+    "34": 4.644,
+    "35": 4.637,
+    "36": 4.63,
+    "37": 4.624,
+    "38": 4.62,
+    "39": 4.616,
+    "40": 4.61,
+    "41": 4.603,
+    "42": 4.595,
+    "43": 4.592,
+    "44": 4.588,
+    "45": 4.58,
+    "46": 4.573,
+    "47": 4.569,
+    "48": 4.565,
+    "49": 4.359,
+    "50": 4.351,
+    "51": 4.346,
+    "52": 4.34,
+    "53": 4.336,
+    "54": 4.531,
+    "55": 4.524,
+    "56": 4.516,
+    "57": 4.512,
+    "58": 4.308,
+    "59": 4.302,
+    "60": 4.294,
+    "61": 4.289,
+    "62": 4.283,
+    "63": 4.48,
+    "64": 4.472,
+    "65": 4.467,
+    "66": 4.46,
+    "67": 4.458,
     "321": 7.735,
     "322": 7.74,
     "323": 7.755,
@@ -2177,6 +3407,48 @@
     "397": 6.133
    },
    "4": {
+    "26": 9.457,
+    "27": 9.435,
+    "28": 9.414,
+    "29": 9.398,
+    "30": 9.379,
+    "31": 9.357,
+    "32": 9.335,
+    "33": 9.319,
+    "34": 9.301,
+    "35": 9.28,
+    "36": 9.258,
+    "37": 9.237,
+    "38": 9.22,
+    "39": 9.202,
+    "40": 9.181,
+    "41": 9.159,
+    "42": 9.137,
+    "43": 9.121,
+    "44": 9.103,
+    "45": 9.081,
+    "46": 9.06,
+    "47": 9.041,
+    "48": 9.025,
+    "49": 8.904,
+    "50": 8.882,
+    "51": 8.861,
+    "52": 8.842,
+    "53": 8.825,
+    "54": 8.905,
+    "55": 8.883,
+    "56": 8.862,
+    "57": 8.843,
+    "58": 8.726,
+    "59": 8.706,
+    "60": 8.683,
+    "61": 8.663,
+    "62": 8.643,
+    "63": 8.727,
+    "64": 8.706,
+    "65": 8.685,
+    "66": 8.664,
+    "67": 8.65,
     "324": null,
     "325": null,
     "326": null,
@@ -2253,6 +3525,48 @@
     "397": 10.232
    },
    "6": {
+    "26": -6.022,
+    "27": -6.014,
+    "28": -6.008,
+    "29": -6.004,
+    "30": -6.0,
+    "31": -5.992,
+    "32": -5.986,
+    "33": -5.981,
+    "34": -5.978,
+    "35": -5.97,
+    "36": -5.963,
+    "37": -5.958,
+    "38": -5.953,
+    "39": -5.948,
+    "40": -5.944,
+    "41": -5.936,
+    "42": -5.929,
+    "43": -5.925,
+    "44": -5.921,
+    "45": -5.914,
+    "46": -5.906,
+    "47": -5.902,
+    "48": -5.898,
+    "49": -5.692,
+    "50": -5.683,
+    "51": -5.679,
+    "52": -5.673,
+    "53": -5.67,
+    "54": -5.864,
+    "55": -5.857,
+    "56": -5.85,
+    "57": -5.846,
+    "58": -5.642,
+    "59": -5.635,
+    "60": -5.627,
+    "61": -5.623,
+    "62": -5.617,
+    "63": -5.814,
+    "64": -5.805,
+    "65": -5.8,
+    "66": -5.794,
+    "67": -5.791,
     "321": -5.03,
     "322": -5.03,
     "323": -5.024,
@@ -2332,6 +3646,48 @@
     "397": -7.399
    },
    "7": {
+    "26": -10.124,
+    "27": -10.102,
+    "28": -10.081,
+    "29": -10.065,
+    "30": -10.046,
+    "31": -10.024,
+    "32": -10.003,
+    "33": -9.985,
+    "34": -9.968,
+    "35": -9.946,
+    "36": -9.924,
+    "37": -9.904,
+    "38": -9.886,
+    "39": -9.868,
+    "40": -9.848,
+    "41": -9.826,
+    "42": -9.805,
+    "43": -9.787,
+    "44": -9.769,
+    "45": -9.748,
+    "46": -9.726,
+    "47": -9.708,
+    "48": -9.691,
+    "49": -9.57,
+    "50": -9.548,
+    "51": -9.528,
+    "52": -9.508,
+    "53": -9.492,
+    "54": -9.571,
+    "55": -9.55,
+    "56": -9.528,
+    "57": -9.51,
+    "58": -9.393,
+    "59": -9.372,
+    "60": -9.35,
+    "61": -9.33,
+    "62": -9.311,
+    "63": -9.395,
+    "64": -9.372,
+    "65": -9.351,
+    "66": -9.331,
+    "67": -9.316,
     "321": -8.49,
     "322": -8.49,
     "323": -8.494,
@@ -2411,6 +3767,45 @@
     "397": -10.864
    },
    "8": {
+    "26": -0.079,
+    "27": -0.073,
+    "28": -0.064,
+    "29": -0.056,
+    "30": -0.045,
+    "31": -0.039,
+    "32": -0.032,
+    "33": -0.022,
+    "34": -0.013,
+    "35": -0.005,
+    "36": 0.002,
+    "37": 0.012,
+    "38": 0.02,
+    "39": 0.029,
+    "40": 0.039,
+    "41": 0.046,
+    "42": 0.053,
+    "43": 0.063,
+    "44": 0.073,
+    "45": 0.079,
+    "46": 0.086,
+    "47": 0.097,
+    "48": 0.105,
+    "49": null,
+    "50": null,
+    "51": null,
+    "54": 0.157,
+    "55": 0.165,
+    "56": 0.171,
+    "57": 0.182,
+    "58": null,
+    "59": null,
+    "60": null,
+    "61": null,
+    "63": 0.232,
+    "64": 0.239,
+    "65": 0.249,
+    "66": 0.256,
+    "67": 0.267,
     "321": 3.52,
     "322": 3.53,
     "323": 3.547,
@@ -2490,6 +3885,45 @@
     "397": 2.035
    },
    "9": {
+    "26": -1.921,
+    "27": -1.927,
+    "28": -1.935,
+    "29": -1.944,
+    "30": -1.954,
+    "31": -1.961,
+    "32": -1.969,
+    "33": -1.978,
+    "34": -1.988,
+    "35": -1.995,
+    "36": -2.001,
+    "37": -2.012,
+    "38": -2.02,
+    "39": -2.028,
+    "40": -2.039,
+    "41": -2.046,
+    "42": -2.054,
+    "43": -2.063,
+    "44": -2.072,
+    "45": -2.08,
+    "46": -2.086,
+    "47": -2.097,
+    "48": -2.105,
+    "49": null,
+    "50": null,
+    "51": null,
+    "54": -2.157,
+    "55": -2.164,
+    "56": -2.171,
+    "57": -2.181,
+    "58": null,
+    "59": null,
+    "60": null,
+    "61": null,
+    "63": -2.233,
+    "64": -2.238,
+    "65": -2.249,
+    "66": -2.256,
+    "67": -2.266,
     "321": -1.57,
     "322": -1.57,
     "323": -1.554,
@@ -2569,18 +4003,58 @@
     "397": -3.934
    },
    "10": {
+    "49": -0.246,
+    "50": -0.24,
+    "51": -0.229,
+    "52": -0.222,
+    "53": -0.212,
+    "58": -0.17,
+    "59": -0.161,
+    "60": -0.156,
+    "61": -0.145,
+    "62": -0.137,
     "355": null,
     "366": null
    },
    "11": {
+    "49": -0.486,
+    "50": -0.48,
+    "51": -0.469,
+    "52": -0.462,
+    "53": -0.452,
+    "58": -0.41,
+    "59": -0.401,
+    "60": -0.396,
+    "61": -0.385,
+    "62": -0.377,
     "355": null,
     "366": null
    },
    "12": {
+    "49": -1.753,
+    "50": -1.759,
+    "51": -1.771,
+    "52": -1.778,
+    "53": -1.788,
+    "58": -1.83,
+    "59": -1.838,
+    "60": -1.845,
+    "61": -1.856,
+    "62": -1.863,
     "355": null,
     "366": null
    },
    "13": {
+    "49": -1.513,
+    "50": -1.519,
+    "51": -1.531,
+    "52": -1.538,
+    "53": -1.548,
+    "58": -1.59,
+    "59": -1.598,
+    "60": -1.605,
+    "61": -1.616,
+    "62": -1.623,
     "355": null,
     "366": null
    }

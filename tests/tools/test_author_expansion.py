@@ -90,25 +90,31 @@ def test_the_committed_intermediate_is_reproduced_offline_byte_for_byte_but_the_
             assert (fr[it], fr[iw], fr[io]) == (ch["median_type"][0], ch["median_w_m"][0], ch["median_off_m"][0]), (wr[0], fr[it], fr[iw], fr[io], ch)
             assert (wr[it], wr[iw], wr[io]) == (ch["median_type"][1], ch["median_w_m"][1], ch["median_off_m"][1]), (wr[0], wr[it], wr[iw], wr[io], ch)
             fr[it], fr[iw], fr[io] = wr[it], wr[iw], wr[io]
-        assert seen == len(by) == 93
-        f13 = next(m for m in fresh["medians"] if m["id"] == "MD13")
-        w13, w13b = (next(m for m in want["medians"] if m["id"] == i) for i in ("MD13", "MD13b"))
+        assert seen == len(by) == 146                                                   # item 2 (the J3 end): 53 more rows
         assert not [m for m in fresh["medians"] if m["id"] == "MD13b"]
-        assert {"s_from": f13["s_from"], "s_to": f13["s_to"], "points": len(f13["polygon_xz"])} == rec["ring_before"]
-        lo, hi = rec["fit"]["tapers_s"][0][0], rec["fit"]["tapers_s"][1][1]            # the corrected stretch, s 982.5-1212.5
-        n = len(f13["polygon_xz"]) // 2
-        f_left, f_right = f13["polygon_xz"][:n], f13["polygon_xz"][n:][::-1]
+        stretches = rec["fit"]["stretches_s"]                                           # s 100-231 and s 982.5-1212.5
+        own = {}                                                                        # the author's ring points, by station
+        for mid, before in rec["rings_before"].items():
+            f = next(m for m in fresh["medians"] if m["id"] == mid)
+            assert {"s_from": f["s_from"], "s_to": f["s_to"], "points": len(f["polygon_xz"])} == before, mid
+            n = len(f["polygon_xz"]) // 2
+            for k in range(n):
+                own[round(f["s_from"] + 2.5 * k, 1)] = (f["polygon_xz"][k], f["polygon_xz"][2 * n - 1 - k])
         kept = 0
-        for m in (w13, w13b):
-            k0, nm = round((m["s_from"] - f13["s_from"]) / 2.5), len(m["polygon_xz"]) // 2
-            m_left, m_right = m["polygon_xz"][:nm], m["polygon_xz"][nm:][::-1]
+        for mid in ("MD11", "MD12", "MD13", "MD13b"):
+            m = next(x for x in want["medians"] if x["id"] == mid)
+            nm = len(m["polygon_xz"]) // 2
             for j in range(nm):
-                if not (lo <= m["s_from"] + 2.5 * j <= hi):
-                    assert m_left[j] == f_left[k0 + j] and m_right[j] == f_right[k0 + j], (m["id"], m["s_from"] + 2.5 * j)
+                s = round(m["s_from"] + 2.5 * j, 1)
+                if not any(lo <= s <= hi for lo, hi in stretches):
+                    assert (m["polygon_xz"][j], m["polygon_xz"][2 * nm - 1 - j]) == own[s], (mid, s)
                     kept += 1
-        assert kept == 722                                                             # every ring station outside the stretch
-        i13 = fresh["medians"].index(f13)
-        fresh["medians"][i13:i13 + 1] = [w13, w13b]
+        assert kept == 22 + 300 + 413                                                   # every ring station outside the stretches
+        for mid in ("MD11", "MD12", "MD13"):
+            i = next(k for k, m in enumerate(fresh["medians"]) if m["id"] == mid)
+            fresh["medians"][i] = next(m for m in want["medians"] if m["id"] == mid)
+        i13 = next(k for k, m in enumerate(fresh["medians"]) if m["id"] == "MD13")
+        fresh["medians"].insert(i13 + 1, next(m for m in want["medians"] if m["id"] == "MD13b"))
     assert fresh == want
 
 
@@ -206,8 +212,11 @@ def test_medians_per_a2():
     assert flush_d[0]["type"] == "hatched" and flush_d[0]["s_to"] <= 185
     assert all(m["type"] == "painted" for m in flush_d[1:])
     assert all(m["type"] == "planted" for m in by["A"]) and all(m["type"] == "terracotta" for m in by["C"])
-    for m in by["C"]:                                                       # the two crossovers stay open
-        assert not (m["s_from"] <= 174 <= m["s_to"]) and not (m["s_from"] <= 202 <= m["s_to"])
+    # the two openings near J3 stay open, where the photo has them (ledger 0099 round 3, item 2: the plan stood them at
+    # s 174 and s 202, about 13 m short; source/expansion/mg_median/fix_mg_median.py), and so does the crossing (item 1b)
+    for m in by["C"]:
+        for lo, hi in ((180.0, 192.5), (210.0, 222.5), (1087.5, 1117.5)):
+            assert m["s_to"] < lo or m["s_from"] > hi, (m["id"], lo, hi)
 
 
 def test_width_stations_are_built_at_their_eye_readings():

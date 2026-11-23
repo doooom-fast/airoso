@@ -3,10 +3,11 @@
     python -I tracks/san-diego-lake-murray/source/expansion/mg_median/mg_plants_data.py [--write]
 
 data/scatter_positions.json's median_planting spots were drawn on the island as it was declared: one unbroken island
-4.5-5.4 m wide. fix_mg_median.py made it two islands with no median between their noses and a narrow strip beside each
-turn pocket, so some spots now stand on asphalt. No spot is moved (Kevin 2026-11-18, the spots' places; the Mac
+4.5-5.4 m wide. fix_mg_median.py corrected it in two places (the crossing: two islands with no median between their noses and a narrow
+strip beside each turn pocket; the J3 end: MD11 on its real line, the openings where they are), so some spots now stand
+on asphalt. No spot is moved (Kevin 2026-11-18, the spots' places; the Mac
 2026-11-23: "plants on new asphalt listed and dropped, none moved"). A spot of the changed stretch (the points the
-correction changed, by its nearest point of the island as it was) is:
+correction changed, by its nearest point of the islands as they were) is:
 
   kept     on the new island's deck: within the deck's half width of the island's middle at its nearest point
            (tools/median_island.py: the nose-tapered half width less DECK_INSET);
@@ -54,7 +55,8 @@ def main(argv=None) -> int:
     P0, W0 = [list(p) for p in P], list(W)
     for k, v in rec["island"]["before"].items():
         P0[int(k)], W0[int(k)] = v["p"], float(v["w"])
-    a, b = rec["island"]["points_changed"][:2]
+    runs = [tuple(r) for r in rec["island"]["points_changed_runs"]]
+    a, b = runs[0][0], runs[-1][1]
     lidar = json.loads((PROJECT / "source" / "vegetation" / "median_heights.lidar.json").read_text(encoding="utf-8"))
     min_h = float(lidar["min_h_m"])
     if len(lidar["spots"]) != len(spots):
@@ -63,7 +65,7 @@ def main(argv=None) -> int:
     drop, kept = [], []
     for i, s in enumerate(spots):
         k0 = min(range(max(0, a - 6), min(len(P0), b + 7)), key=lambda k: math.hypot(s["x"] - P0[k][0], s["z"] - P0[k][2]))
-        if not (a <= k0 <= b) or math.hypot(s["x"] - P0[k0][0], s["z"] - P0[k0][2]) > 0.5 * W0[k0] + REACH_M:
+        if not any(r0 <= k0 <= r1 for r0, r1 in runs) or W0[k0] <= 0 or math.hypot(s["x"] - P0[k0][0], s["z"] - P0[k0][2]) > 0.5 * W0[k0] + REACH_M:
             continue
         k = min(range(max(0, a - 6), min(len(P), b + 7)), key=lambda q: math.hypot(s["x"] - P[q][0], s["z"] - P[q][2]))
         tx, tz = MI.tangent(P, k)
@@ -87,7 +89,7 @@ def main(argv=None) -> int:
     by = {}
     for d in drop:
         by[d["where"]] = by.get(d["where"], 0) + 1
-    print(f"[mg-plants] {len(drop) + len(kept)} spots on the island as it was over points {a}-{b}: {len(kept)} kept on the new deck "
+    print(f"[mg-plants] {len(drop) + len(kept)} spots on the islands as they were over points {[list(r) for r in runs]}: {len(kept)} kept on the new deck "
           f"(lidar {min(k['lidar_h_m'] for k in kept):.2f}-{max(k['lidar_h_m'] for k in kept):.2f} m), {len(drop)} dropped {by}; "
           f"every dropped spot is bare on the lidar (under {min_h} m)")
     if "--write" in argv:
@@ -98,7 +100,7 @@ def main(argv=None) -> int:
                     "between the two noses, a narrow strip beside each turn pocket). Every one is bare on the lidar. No spot is "
                     "moved; the spots kept stand on the new deck where they were. Written by "
                     "source/expansion/mg_median/mg_plants_data.py.",
-            "line": LINE, "points": [a, b], "drop": drop, "kept_on_the_new_deck": kept}, indent=1) + "\n", encoding="utf-8")
+            "line": LINE, "points_runs": [list(r) for r in runs], "drop": drop, "kept_on_the_new_deck": kept}, indent=1) + "\n", encoding="utf-8")
         print(f"[mg-plants] wrote {OUT.name}")
     return 0
 

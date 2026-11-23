@@ -1,9 +1,23 @@
 {
  "_doc": "ledger 0099 round 3, item 1b (Mission Gorge Rd's island corrected), tools/make_treefx.py scenery.treefx.median_spots: median_planting spots of data/scatter_positions.json by index. drop = not planted: the spot stands on pavement, or on a strip's curb ring, since the island was corrected (no median between the two noses, a narrow strip beside each turn pocket). Every one is bare on the lidar. No spot is moved; the spots kept stand on the new deck where they were. Written by source/expansion/mg_median/mg_plants_data.py.",
  "line": "north_mission_gorge",
- "points": [
-  321,
-  397
+ "points_runs": [
+  [
+   26,
+   51
+  ],
+  [
+   54,
+   61
+  ],
+  [
+   63,
+   67
+  ],
+  [
+   321,
+   397
+  ]
  ],
  "drop": [
   {

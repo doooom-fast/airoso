@@ -1,6 +1,7 @@
-"""Ledger 0099 round 3, item 1b: Mission Gorge Rd's long median island (MD13) was declared, and built, unbroken across
-the real Margerum Avenue / Mission Vista Drive crossing. It is corrected at the source from the photo
-(source/expansion/mg_median/fix_mg_median.py) and re-authored in the scene by an author step
+"""Ledger 0099 round 3, items 1b and 2: Mission Gorge Rd's long median island (MD13) was declared, and built, unbroken
+across the real Margerum Avenue / Mission Vista Drive crossing (1b), and the J3 end of the median stood about 13 m from
+where the photo has it (2: MD11's last 60 m, the two openings, MD12, MD13's start). Both are corrected at the source from
+the photo (source/expansion/mg_median/fix_mg_median.py) and re-authored in the scene by an author step
 (tools/author_median_rebuild_blend.py), because Lake Murray's chain never runs its draft again.
 
 Held here, without Blender: the corrected data is the fit applied to the declared values and nothing else; the
@@ -51,19 +52,35 @@ def test_the_fit_is_what_the_photo_measured():
     median between the noses at s 1085 and s 1120, tapers from s 982.5 and to s 1212.5"""
     assert FIX.STRIP_A == (0.43, 1.96) and FIX.STRIP_B == (-1.50, 1.84)
     assert (FIX.JOIN_A, FIX.STRIP_A_FROM, FIX.NOSE_A, FIX.NOSE_B, FIX.STRIP_B_TO, FIX.JOIN_B) == (982.5, 1010.0, 1085.0, 1120.0, 1192.5, 1212.5)
-    assert FIX.fit(900.0, 4.4, 0.4) == ("terracotta", 4.4, 0.4) and FIX.fit(1300.0, 5.5, -0.6) == ("terracotta", 5.5, -0.6)
-    assert FIX.fit(982.5, 4.5, 0.5) == ("terracotta", 4.5, 0.5) and FIX.fit(1212.5, 5.4, -0.5) == ("terracotta", 5.4, -0.5)
-    ty, w, o = FIX.fit(1050.0, 4.74, 0.23)
-    assert ty == "terracotta" and w == 1.96 and abs(o - 0.66) < 1e-9
-    assert FIX.fit(1085.0, 4.87, 0.08)[1] == 1.96 and FIX.fit(1120.0, 5.01, -0.07)[1] == 1.84
+    t = "terracotta"
+    assert FIX.fit(900.0, t, 4.4, 0.4) == (t, 4.4, 0.4) and FIX.fit(1300.0, t, 5.5, -0.6) == (t, 5.5, -0.6)
+    assert FIX.fit(982.5, t, 4.5, 0.5) == (t, 4.5, 0.5) and FIX.fit(1212.5, t, 5.4, -0.5) == (t, 5.4, -0.5)
+    ty, w, o = FIX.fit(1050.0, t, 4.74, 0.23)
+    assert ty == t and w == 1.96 and abs(o - 0.66) < 1e-9
+    assert FIX.fit(1085.0, t, 4.87, 0.08)[1] == 1.96 and FIX.fit(1120.0, t, 5.01, -0.07)[1] == 1.84
     for s in (1087.5, 1100.0, 1117.5):
-        assert FIX.fit(s, 4.9, 0.0) == ("none", 0.0, 0.0)
-    ty, w, o = FIX.fit(1150.0, 5.12, -0.2)
+        assert FIX.fit(s, t, 4.9, 0.0) == ("none", 0.0, 0.0)
+    ty, w, o = FIX.fit(1150.0, t, 5.12, -0.2)
     assert w == 1.84 and abs(o + 1.70) < 1e-9
-    w_mid = FIX.fit(996.25, 4.5, 0.5)[1]                                     # half way down the first taper
+    w_mid = FIX.fit(996.25, t, 4.5, 0.5)[1]                                  # half way down the first taper
     assert abs(w_mid - (4.5 + 1.96) / 2) < 1e-9
+    # the J3 end (item 2): MD11 leaves its declared line from s 100, 3.6 m left by s 136, and ends at s 177.5; the two
+    # openings; MD12 where it stands, 3.40 m wide, its middle 1.0 m left at s 195 and 2.3 m at s 207.5; MD13 from s 225
+    assert (FIX.VEER_FROM, FIX.VEER_TO, FIX.VEER_M, FIX.MD11_TO) == (100.0, 136.0, 3.6, 177.5)
+    assert (FIX.MD12_FROM, FIX.MD12_TO, FIX.MD12_W, FIX.MD12_MID, FIX.MD13_FROM) == (195.0, 207.5, 3.40, (1.0, 2.3), 225.0)
+    assert FIX.fit(40.0, "none", 0.0, -0.2) == ("none", 0.0, -0.2) and FIX.fit(100.0, t, 1.24, -0.5) == (t, 1.24, -0.5)
+    v118, v150 = FIX.fit(118.0, t, 1.3, -0.5), FIX.fit(150.0, t, 1.52, -0.5)
+    assert v118[1] == 1.3 and abs(v118[2] - 1.3) < 1e-9 and v150[1] == 1.52 and abs(v150[2] - 3.1) < 1e-9   # half way up the veer; on it
+    assert abs(FIX.fit(177.5, t, 1.67, -0.5)[2] - 3.1) < 1e-9
+    for s in (180.0, 192.5, 210.0, 222.5):
+        assert FIX.fit(s, t, 1.8, -0.5) == ("none", 0.0, -0.5)
+    a195, a207 = FIX.fit(195.0, t, 1.77, -0.5), FIX.fit(207.5, t, 1.84, -0.5)
+    assert a195[:2] == (t, 3.40) and abs(a195[2] - 0.5) < 1e-9 and a207[:2] == (t, 3.40) and abs(a207[2] - 1.8) < 1e-9
+    assert FIX.fit(225.0, t, 1.94, -0.5) == (t, 1.94, -0.5) and FIX.fit(600.0, t, 4.0, 0.1) == (t, 4.0, 0.1)
+    assert FIX.STRETCHES == [(100.0, 231.0), (982.5, 1212.5)]
+    assert FIX.ISLANDS == [("MD11", 45.0, 177.5), ("MD12", 195.0, 207.5), ("MD13", 225.0, 1085.0), ("MD13b", 1120.0, 2245.0)]
     readme = (MG / "README.md").read_text(encoding="utf-8")
-    for frag in ("1.96 m", "1.84 m", "0.43 m", "1.50 m", "[inferred]"):
+    for frag in ("1.96 m", "1.84 m", "0.43 m", "1.50 m", "[inferred]", "3.6 m", "3.40 m", "s 177.5", "owed"):
         assert frag in readme, frag
 
 
@@ -73,17 +90,17 @@ def test_piece_cs_rows_are_the_fit_on_the_declared_values_and_nothing_else():
     it, iw, io = cols.index("median_type"), cols.index("median_w_m"), cols.index("median_off_m")
     rows = {float(r[0]): r for r in pc["stations"]}
     rec_rows = {float(r["s"]): r for r in REC["rows"]}
-    assert len(rec_rows) == 93 and min(rec_rows) == 982.5 and max(rec_rows) == 1212.5
+    assert len(rec_rows) == 146 and min(rec_rows) == 100.0 and max(rec_rows) == 1212.5      # 53 at the J3 end, 93 at the crossing
     changed = 0
     for s, r in rec_rows.items():
-        ty, w, o = FIX.fit(s, r["median_w_m"][0], r["median_off_m"][0])
+        ty, w, o = FIX.fit(s, r["median_type"][0], r["median_w_m"][0], r["median_off_m"][0])
         assert (r["median_type"][1], r["median_w_m"][1], r["median_off_m"][1]) == (ty, round(w, 2), round(o, 2)), s
         assert (rows[s][it], rows[s][iw], rows[s][io]) == (ty, round(w, 2), round(o, 2)), s      # the file holds the fit
         assert r["median_type"][0] == "terracotta"
         changed += (r["median_w_m"][0], r["median_off_m"][0]) != (r["median_w_m"][1], r["median_off_m"][1])
-    assert changed == 91                                                                         # the two join rows hold
+    assert changed == 91 + 49                                                                    # the join rows hold
     gap = [s for s, r in rows.items() if r[it] == "none" and s > 100]
-    assert gap == [1087.5 + 2.5 * k for k in range(13)]                                          # s 1087.5 .. 1117.5
+    assert gap == [180.0 + 2.5 * k for k in range(6)] + [210.0 + 2.5 * k for k in range(6)] + [1087.5 + 2.5 * k for k in range(13)]
     assert all(rows[s][iw] == 0 for s in gap)
 
 
@@ -92,40 +109,55 @@ def test_md13_ends_at_its_nose_and_md13b_begins_at_the_other():
     ids = [m["id"] for m in meds]
     assert ids == [f"MD{k}" for k in range(1, 14)] + ["MD13b"] + [f"MD{k}" for k in range(14, 23)]   # no other id moved
     a, b = (next(m for m in meds if m["id"] == i) for i in ("MD13", "MD13b"))
-    assert (a["s_from"], a["s_to"], b["s_from"], b["s_to"]) == (210.0, 1085.0, 1120.0, 2245.0)
+    m11, m12 = (next(m for m in meds if m["id"] == i) for i in ("MD11", "MD12"))
+    assert (a["s_from"], a["s_to"], b["s_from"], b["s_to"]) == (225.0, 1085.0, 1120.0, 2245.0)
+    assert (m11["s_from"], m11["s_to"], m12["s_from"], m12["s_to"], m12["width_m"]) == (45.0, 177.5, 195.0, 207.5, [3.4, 3.4])
     assert a["piece"] == b["piece"] == "C" and a["raised"] and b["raised"] and a["type"] == b["type"] == "terracotta"
-    assert len(a["polygon_xz"]) == 2 * 351 and len(b["polygon_xz"]) == 2 * 451                      # one ring point a side per 2.5 m
-    assert REC["ring_before"] == {"s_from": 210.0, "s_to": 2245.0, "points": 1630}
-    for m in (a, b):
+    # one ring point a side per 2.5 m station
+    assert [len(m["polygon_xz"]) for m in (m11, m12, a, b)] == [2 * 54, 2 * 6, 2 * 345, 2 * 451]
+    assert REC["rings_before"] == {"MD11": {"s_from": 45.0, "s_to": 167.5, "points": 100}, "MD12": {"s_from": 182.5, "s_to": 195.0, "points": 12},
+                                   "MD13": {"s_from": 210.0, "s_to": 2245.0, "points": 1630}}
+    for m in (m11, m12, a, b):
         c = m["correction"]
-        assert c["ledger"] == "0099 round 3, item 1b" and c["fit"]["no_median_s"] == [1085.0, 1120.0]
-        assert c["centre_paint_between_the_noses"]["source"] == "photo" and "[inferred]" in c["inferred"]
+        assert c["ledger"] == "0099 round 3, items 1b and 2"
+        assert c["fit"]["no_median_s"] == [[177.5, 195.0], [207.5, 225.0], [1085.0, 1120.0]]
+        assert c["fit"]["stretches_s"] == [[100.0, 231.0], [982.5, 1212.5]]
+        assert c["centre_paint_where_there_is_no_median"]["source"] == "photo" and "[inferred]" in c["inferred"]
+        assert "owed" in c["not_built"]
     # the ring's new noses taper to the generator's blunt end (tools/author_expansion.py NOSE_W_M)
     import math
     na, nb = len(a["polygon_xz"]) // 2, len(b["polygon_xz"]) // 2
     end_a = math.dist(a["polygon_xz"][na - 1], a["polygon_xz"][na])
     start_b = math.dist(b["polygon_xz"][0], b["polygon_xz"][-1])
     assert abs(end_a - FIX.NOSE_W_M) < 0.01 and abs(start_b - FIX.NOSE_W_M) < 0.01
+    n11 = len(m11["polygon_xz"]) // 2
+    assert abs(math.dist(m11["polygon_xz"][n11 - 1], m11["polygon_xz"][n11]) - FIX.NOSE_W_M) < 0.01       # MD11's new end, s 177.5
+    assert abs(math.dist(a["polygon_xz"][0], a["polygon_xz"][-1]) - FIX.NOSE_W_M) < 0.01                 # MD13's new start, s 225
     src = (ROOT / "tools" / "author_expansion.py").read_text(encoding="utf-8")
     assert "NOSE_M = 6.0 " in src and "NOSE_W_M = 0.6 " in src and (FIX.NOSE_M, FIX.NOSE_W_M) == (6.0, 0.6)
 
 
 def test_the_island_and_the_paint_are_decorates_and_the_crossing_carries_no_centre_line():
     w = ISLAND["island_w_by_point"]
-    assert [(i, j - 1) for i, j in MI.segments(w)] == [(8, 48), (63, 354), (367, 741)]
-    assert REC["island"]["runs_of_points_with_an_island"] == [[8, 48], [54, 57], [63, 354], [367, 741]]
-    assert REC["island"]["points_changed"] == [321, 397, 77] and len(REC["island"]["before"]) == 77
+    assert [(i, j - 1) for i, j in MI.segments(w)] == [(8, 51), (68, 354), (367, 741)]            # MD12's four points are no island
+    assert REC["island"]["runs_of_points_with_an_island"] == [[8, 51], [58, 61], [68, 354], [367, 741]]
+    assert REC["island"]["points_changed_runs"] == [[26, 51], [54, 61], [63, 67], [321, 397]]
+    assert REC["island"]["points_changed"] == len(REC["island"]["before"]) == 116
     assert all(w[k] == 1.96 for k in range(331, 352)) and all(w[k] == 1.84 for k in range(370, 389))
-    gap = list(range(REC["island"]["points_with_no_median_between_the_noses"][0], REC["island"]["points_with_no_median_between_the_noses"][1] + 1))
-    assert gap == list(range(356, 366)) and all(w[k] == 0 for k in gap)
+    assert all(w[k] == 3.4 for k in range(58, 62))
+    assert REC["island"]["points_with_no_median_runs"] == [[53, 57], [63, 67], [356, 365]]
+    gap = [k for a_, b_ in REC["island"]["points_with_no_median_runs"] for k in range(a_, b_ + 1)]
+    assert len(gap) == 20 and all(w[k] == 0 for k in gap)
     lines = CONN["paint"]["lines"]
-    assert len(lines) == REC["paint"]["lines"] == 14 and REC["paint"]["centre_line_offsets_cleared_between_the_noses"] == 20
+    assert len(lines) == REC["paint"]["lines"] == 14 and REC["paint"]["centre_line_offsets_cleared_where_there_is_no_median"] == 40
+    for k in range(58, 62):                                          # MD12: the painted outline, its two edge lines, and no island
+        assert len([ln for ln in lines if ln["color"] == "yellow" and not ln["dash"] and ln["off"][k] is not None]) == 2, k
     for k in gap:                                                    # no solid yellow line of any kind between the noses
         assert not [ln for ln in lines if ln["color"] == "yellow" and not ln["dash"] and ln["off"][k] is not None], k
         assert sum(1 for ln in lines if ln["color"] == "white" and ln["off"][k] is not None) >= 4      # lanes and bike lines run on
     before = REC["paint"]["before"]
-    assert sorted(int(k) for k in before) == [3, 4, 6, 7, 8, 9, 10, 11, 12, 13]
-    assert all(321 <= int(i) <= 397 for d in before.values() for i in d)
+    assert set(int(k) for k in before) <= set(range(14)) and {3, 4, 6, 7, 8, 9} <= set(int(k) for k in before)
+    assert all(26 <= int(i) <= 67 or 321 <= int(i) <= 397 for d in before.values() for i in d)
 
 
 def test_the_correction_changes_nothing_on_a_second_run():
@@ -147,25 +179,31 @@ def test_the_correction_changes_nothing_on_a_second_run():
 
 def test_the_record_gives_back_the_island_the_committed_blend_holds():
     sp = RB.spec(CFG)
-    assert sp == {"line": LINE, "was": (63, 741), "record": "source/expansion/mg_median/mg_median_correction.json"}
+    assert sp == {"line": LINE, "was": [(8, 48), (63, 741)], "record": "source/expansion/mg_median/mg_median_correction.json"}
     assert RB.spec({}) is None and RB.spec({"route": {}}) is None
+    assert RB.spec({"route": {"median_rebuild": {"line": LINE, "was_rows": [63, 741], "record": "x"}}})["was"] == [(63, 741)]   # one pair
     pts0, iw0 = RB.old_data(ISLAND, REC)
-    assert (63, 742) in MI.segments(iw0) and [(i, j - 1) for i, j in MI.segments(iw0)] == [(8, 48), (63, 741)]
-    old = RB.island_parts(pts0, iw0, 63, 741)
+    assert [(i, j - 1) for i, j in MI.segments(iw0)] == [(8, 48), (63, 741)]            # the line as the committed blend holds it
+    o11, o13 = RB.island_parts(pts0, iw0, 8, 48), RB.island_parts(pts0, iw0, 63, 741)
     # what the scratch run found in the committed blend, part for part (2026-11-23)
-    assert [len(v) for v, _f in old["curb"]] == [4074] and [len(f) for _v, f in old["curb"]] == [2716]
-    assert [len(v) for v, _f in old["deck"]] == [1358] and [len(v) for v, _f in old["beam"]] == [2692] and len(old["posts"]) == 224
+    assert [len(v) for v, _f in o11["curb"]] == [246] and [len(v) for v, _f in o11["deck"]] == [82]
+    assert [len(v) for v, _f in o11["beam"]] == [140] and len(o11["posts"]) == 11
+    assert [len(v) for v, _f in o13["curb"]] == [4074] and [len(f) for _v, f in o13["curb"]] == [2716]
+    assert [len(v) for v, _f in o13["deck"]] == [1358] and [len(v) for v, _f in o13["beam"]] == [2692] and len(o13["posts"]) == 224
     pts1, iw1 = [list(p) for p in ISLAND["points_xyz_m"]], [float(x) for x in ISLAND["island_w_by_point"]]
-    new = RB.island_parts(pts1, iw1, 63, 741)
-    assert new["runs"] == [[63, 354], [367, 741]]
-    assert [len(v) for v, _f in new["curb"]] == [1752, 2250] and [len(v) for v, _f in new["deck"]] == [584, 750]
-    assert [len(v) for v, _f in new["beam"]] == [1144, 1476] and len(new["posts"]) == 218
-    # outside the points the correction changed (321-397) and the one point each side whose direction they turn (a ring
-    # stands across the line from its neighbours), the two are the same island, vertex for vertex
-    assert old["curb"][0][0][:6 * (320 - 63)] == new["curb"][0][0][:6 * (320 - 63)]
-    assert old["curb"][0][0][6 * (399 - 63):] == new["curb"][1][0][6 * (399 - 367):]
-    assert old["deck"][0][0][2 * (399 - 63):] == new["deck"][1][0][2 * (399 - 367):]
-    for bad in ({"line": LINE}, {"line": LINE, "was_rows": [63], "record": "x"}, {"was_rows": [63, 741], "record": "x"}):
+    new = RB.island_parts(pts1, iw1, 8, 741)
+    assert new["runs"] == [[8, 51], [68, 354], [367, 741]]
+    assert [len(v) for v, _f in new["curb"]] == [264, 1722, 2250] and [len(v) for v, _f in new["deck"]] == [88, 574, 750]
+    assert [len(v) for v, _f in new["beam"]] == [152, 1124, 1476] and len(new["posts"]) == 228
+    # outside the points the corrections changed (26-67, 321-397), the one point each side whose direction they turn (a
+    # ring stands across the line from its neighbours) and a new island's own three-point nose, old and new are the same
+    # islands, vertex for vertex
+    assert o11["curb"][0][0][:6 * (25 - 8)] == new["curb"][0][0][:6 * (25 - 8)]
+    assert o13["curb"][0][0][6 * (71 - 63):6 * (320 - 63)] == new["curb"][1][0][6 * (71 - 68):6 * (320 - 68)]
+    assert o13["curb"][0][0][6 * (399 - 63):] == new["curb"][2][0][6 * (399 - 367):]
+    assert o13["deck"][0][0][2 * (399 - 63):] == new["deck"][2][0][2 * (399 - 367):]
+    for bad in ({"line": LINE}, {"line": LINE, "was_rows": [63], "record": "x"}, {"was_rows": [63, 741], "record": "x"},
+                {"line": LINE, "was_rows": [[8, 70], [63, 741]], "record": "x"}, {"line": LINE, "was_rows": [[48, 8]], "record": "x"}):
         try:
             RB.spec({"route": {"median_rebuild": bad}})
         except SystemExit:
@@ -176,8 +214,9 @@ def test_the_record_gives_back_the_island_the_committed_blend_holds():
 def test_the_old_paint_is_the_new_with_the_records_offsets_put_back():
     old = RB.old_paint(CONN["paint"], REC)
     n_diff = sum(1 for a, b in zip(old["lines"], CONN["paint"]["lines"]) for x, y in zip(a["off"], b["off"]) if x != y)
-    assert n_diff == sum(len(d) for d in REC["paint"]["before"].values()) and n_diff > 400
+    assert n_diff == sum(len(d) for d in REC["paint"]["before"].values()) and n_diff > 600
     assert CONN["paint"]["lines"][3]["off"][340] != old["lines"][3]["off"][340]            # and the file's own is not touched
+    assert CONN["paint"]["lines"][8]["off"][45] != old["lines"][8]["off"][45]              # MD11's edge line where it veers
 
 
 def test_the_step_refuses_an_island_that_is_not_exactly_the_one_recorded():
@@ -204,13 +243,39 @@ def test_the_step_refuses_an_island_that_is_not_exactly_the_one_recorded():
         raise AssertionError("an island reaching outside the rows given was taken")
 
 
+def test_the_step_takes_every_island_named_and_refuses_one_left_out():
+    """item 2: two built islands change (MD11 rows 8-48, MD13 rows 63-741), each found on its own or refused"""
+    one = RB.spec({"route": {"median_rebuild": {"line": "L", "was_rows": [63, 741], "record": "r.json"}}})
+    assert one["was"] == [(63, 741)]                                                      # item 1b's form still reads
+    two = RB.spec({"route": {"median_rebuild": {"line": "L", "was_rows": [[63, 741], [8, 48]], "record": "r.json"}}})
+    assert two["was"] == [(8, 48), (63, 741)]                                             # in the line's order
+    assert RB.spec(CFG)["was"] == [(8, 48), (63, 741)]
+    for bad in ([[8, 48], [48, 741]], [[8, 80], [63, 741]], [[48, 8]], [[8, 48, 63]], []):
+        try:
+            RB.spec({"route": {"median_rebuild": {"line": "L", "was_rows": bad, "record": "r.json"}}})
+        except SystemExit:
+            continue
+        raise AssertionError(f"was_rows {bad} was taken")
+    src = (ROOT / "tools" / "author_median_rebuild_blend.py").read_text(encoding="utf-8")
+    for frag in ("between the rows given: name every built island the step re-authors",   # an island left out is not skipped
+                 "the old islands' decks lie in two objects",
+                 "on the ring of the old island rows {rows_}",                            # each island is found on its own
+                 "json.dumps([sp[\"line\"], sp[\"was\"],"):                               # the stamp's checksum covers the list
+        assert frag in src, frag
+    # the record's data holds exactly the two islands named, and none between them
+    _pts, iw_old = RB.old_data(ISLAND, REC)
+    segs = [(i, j - 1) for i, j in MI.segments(iw_old)]
+    assert [g for g in segs if 8 <= g[0] and g[1] <= 741] == [(8, 48), (63, 741)], segs
+
+
 # ---- the plants -----------------------------------------------------------------------------------------------------
 
 def test_the_plants_on_pavement_are_dropped_and_every_one_is_bare_on_the_lidar():
     sp = json.loads((MG / "mg_median.median_spots.json").read_text(encoding="utf-8"))
     spots = json.loads((LM / "data" / "scatter_positions.json").read_text(encoding="utf-8"))["median_planting"]
     lidar = json.loads((LM / "source" / "vegetation" / "median_heights.lidar.json").read_text(encoding="utf-8"))
-    assert len(sp["drop"]) == 21 and len(sp["kept_on_the_new_deck"]) == 18 and sp["points"] == [321, 397]
+    assert len(sp["drop"]) == 21 and len(sp["kept_on_the_new_deck"]) == 18
+    assert sp["points_runs"] == [[26, 51], [54, 61], [63, 67], [321, 397]]              # no spot stands on the J3 end's narrow islands
     where = {}
     for d in sp["drop"]:
         s = spots[d["index"]]
@@ -250,9 +315,9 @@ def test_median_rebuild_is_lake_murrays_alone_and_runs_before_the_tops():
         assert f in SHIP["sync_in"]["optional"] and (LM / f).is_file(), f
     assert "data/median_rebuild.json" in SHIP["sync_out"]["files"]
     mr = CFG["route"]["median_rebuild"]
-    assert (mr["line"], mr["was_rows"], mr["record"]) == (LINE, [63, 741], "source/expansion/mg_median/mg_median_correction.json")
+    assert (mr["line"], mr["was_rows"], mr["record"]) == (LINE, [[8, 48], [63, 741]], "source/expansion/mg_median/mg_median_correction.json")
     paved = [(i["line"], i["rows"]) for i in CFG["route"]["median_tops"]["paver"]["islands"]]
-    assert paved == [(LINE, [8, 48]), (LINE, [63, 354]), (LINE, [367, 741])]             # the islands the rebuild leaves
+    assert paved == [(LINE, [8, 51]), (LINE, [68, 354]), (LINE, [367, 741])]             # the islands the rebuild leaves
     for p in sorted((ROOT / "tracks").glob("*/track.config.json")):
         if p.parent != LM:
             assert "median_rebuild" not in (json.loads(p.read_text(encoding="utf-8")).get("route") or {}), p

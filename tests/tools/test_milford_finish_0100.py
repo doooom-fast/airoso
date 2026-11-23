@@ -262,3 +262,11 @@ def test_owned_concrete_on_milfords_concrete_surfaces():
     lic = json.loads((ROOT / "assets" / "licenses.json").read_text(encoding="utf-8"))
     assert "concrete_plain_diffuse.jpg" in json.dumps(lic)                    # the owned row exists (CC0, generated)
     # (no "nowhere else" check: Kevin's "On every track now" is the fleet's own pass; this one binds Milford's two rows only)
+
+
+# --- 10. the version ------------------------------------------------------------------------------------------------------------
+
+def test_version_is_0_1_14_and_the_ledger_is_filed():
+    assert _cfg()["version"] == "0.1.14" and _cfg()["slug"] == "milford_road_course"
+    led = (ROOT / "fleet" / "feedback" / "0100-milford-to-finished.md").read_text(encoding="utf-8")
+    assert led.startswith("---\nid: 0100\n") and "Runbook 0100-1" in led and "62,055,573" in led

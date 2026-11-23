@@ -4,7 +4,8 @@
   "name": "Milford Road Course (unofficial)",
   "_name_doc": "Kevin 2026-11-07: \"Get rid of Lm Version from names, nothing should be on any other engine now\" / \"LM is the airoso engine\". 0.1.5 (the merge of 0.1.4 edges, ledger 0087, and 0.1.3 vegetation, ledger 0082): no \"(LM engine)\" in the display name, and the slug and install_folder are the plain milford_road_course. The old-engine track (tracks/milford-road-course, 0.6.0) gave that slug up: its slug and folder are milford_road_course_v06 (S7, fleet.cli lint). The repo directory keeps its -lm suffix until the one rename pass after the current agents land",
   "slug": "milford_road_course",
-  "version": "0.1.13",
+  "version": "0.1.14",
+  "_version_doc": "0.1.14 (ledger 0100, Milford round 1; Kevin's answers of 2026-11-22): T3's start 0.2 m off the lane, the painted line as start / finish (race_start, route.paint), GrassFX at 6 m cells, the collider reach 20 m off the barrier lines, mpg_nw_complex_0 set in its slope, the pads' shared corners (pads_shade), the NAIP-only verge trees, the owned concrete. 0.1.13 installed 2026-11-22",
   "mirror_x": false,
   "loop": true,
   "default_width_m": 11.0,
@@ -3673,7 +3674,7 @@
         "fade_by_map": {
           "B": 12
         },
-        "_near_doc": "ledger 0092 (the 2026-11-18 scenery audit, item 5: 14,982 m of look boundary within 30 m of the lane edge on the 12 m staircase, High Plains 656 m): every 12 m cell with a part within reach_m 30 m [the audit's band] of the lane edge read as four 6 m cells (the class map's 2 m cells support it; ledger 0082 Owed 4 measured 6 m cells at 95 / 78 / 84 % coverage); frame projection: the cells read the class map in the draft's own frame (scripts.geometry.projection), not at 111,320 m per degree (0.2 % off: up to 1.6 m at the lap's ends); pad_looks: the ride pad's cells take the no-blade look D (audit item 6: its 4,203 cells read base, mown blades under a pad 6 cm over 1GRASS), the run-off pads' cells drop their class-map D (they are 1RUNOFF, which scripts/ac/ext_config.py lists in OCCLUDING_MESHES); fade_by_map B 12 m [invented, twice fade_m]: the long grass eases into the mown base over twice the fade. VERIFY IN-GAME"
+        "_near_doc": "ledger 0100 item 3: near DROPPED in 0.1.14, every cell is 6 m (cell_m); the rest of this note stands for frame, pad_looks and fade_by_map. Was: ledger 0092 (the 2026-11-18 scenery audit, item 5: 14,982 m of look boundary within 30 m of the lane edge on the 12 m staircase, High Plains 656 m): every 12 m cell with a part within reach_m 30 m [the audit's band] of the lane edge read as four 6 m cells (the class map's 2 m cells support it; ledger 0082 Owed 4 measured 6 m cells at 95 / 78 / 84 % coverage); frame projection: the cells read the class map in the draft's own frame (scripts.geometry.projection), not at 111,320 m per degree (0.2 % off: up to 1.6 m at the lap's ends); pad_looks: the ride pad's cells take the no-blade look D (audit item 6: its 4,203 cells read base, mown blades under a pad 6 cm over 1GRASS), the run-off pads' cells drop their class-map D (they are 1RUNOFF, which scripts/ac/ext_config.py lists in OCCLUDING_MESHES); fade_by_map B 12 m [invented, twice fade_m]: the long grass eases into the mown base over twice the fade. VERIFY IN-GAME"
       },
       "_guardrail_dropped": "the live track's W-beam rail follows airoso's draft guard lips (1WALL_PARA), which the v021 assembler does not lay; not ported (ledger 0078)",
       "names": {

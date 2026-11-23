@@ -716,3 +716,34 @@ The bands of the second read and the kerbs' spans are read by eye on the photos 
 3. Green: install as `high_plains` (0.1.11, or whatever stands, parked as every install); if 0.1.11 was never installed the
    folder changes shape here (one layout -> `west`, `full_course`; Runbook 0097-3 step 3), say so to Kevin. Then the records and
    menu pictures (both layouts) to the branch (no force); the Mac merges. Red: records only, no install.
+
+## PC rehearsal 0097-4 and install (2026-11-23, 4a055e11): High Plains 0.1.12 INSTALLED, West + Full
+
+0.1.11 (Runbook 0097-3) never ran on the PC on its own: the Mac folded it into 0.1.12, so this run rehearses rounds 2-4 at
+once, read against the installed 0.1.9 and the Mac's numbers. **0.1.10 and 0.1.11 were never installed.**
+
+- **Rehearsal** (`D:/k10-scratch/high_plains_lm_0112_reh`, worktree `D:/k10-worktrees/hp-r4-pc`, ENG `eng_hplm_0112` =
+  `eng_hplm_0109` + concrete_plain diffuse d77c7ca9 / normal 2692b423 (the other textures md5 = the branch's), the lidar venv,
+  03:32-03:37): `layouts: west full_course`; `naip_2023_hp_mosaic.png` (12,031,563 B) and `mouth_radii.naip.json` synced in;
+  `[returns] 1 corner return(s) at 1 mouth(s) (radius measured 1, a median 0); 1 skipped; 87 return stations, 83 corner
+  pavement tris`; `[gap-mouths] ... the host's edge line broken at 1 mouth(s) (24 paint faces ...)`; `[kerbs] 26 kerb runs, 803
+  m ... (ROAD read missed 9)`; `[lap] full: 1527 vertices, 4085.3 m`; `10 buildings stood, 0 dropped`; the white shed
+  `form "shed 2.9..3.8 m"`, shed_faces 10, collider true; `[road_wear] aerial registered ... shift (-0.75, +1.00) m`; macro
+  atlas 3,184,897 B. drive_test West: kinks 1.87 /km, severe 0; Full: severe 0, kinks 8.57 /km, 14 vertex bumps (reported);
+  floating 0; audit CLEAN; road_wear_check tone PASS r 0.8831; verify_mouths PASS; **verify_mouth_corners PASS** (lip 0.023 m,
+  teeth 1/354 = 0.28 %, edge paint 0.0 m); verify_pads FORK PASS (seam 1.2 mm); house_seat 22, PASS. GATES all exit 0, SHIP OK.
+  Road kn5 **26,463,938 B** (the Mac: 26,463,672); the two spawn kn5s 5,058 B each.
+- **Install** (Kevin's standing word: "I always want newer builds"; his Nov 22 "When they're done, install them"): an EMPTY
+  workshop (`D:/k10-scratch/high_plains_lm`, 0.1.9's kept as `high_plains_lm.0.1.9`), 03:37-03:42, SHIP OK; 0.1.9 parked in
+  `D:/k10-track-archive/2026-11-23_034232/`. = the rehearsal: 251 / 251 gate rows, kn5 EQUIVALENT (tangents only), AI the same.
+  The folder changes shape: `ui/west` + `ui/full_course`, `models_west.ini` / `models_full_course.ini`; Content Manager files
+  the West course under a new layout id.
+- **The installed names:** ship_track writes `<ui_name_prefix> — <layout name>`, and the config's layout names are "West" /
+  "Full", so AC read "doooom Colorado — West" / "— Full" (the build's own "doooom Colorado - High Plains Raceway — West"
+  was overwritten). Renamed by hand in AC to "doooom Colorado — High Plains Raceway — West" / "— Full"; the originals are in
+  `D:/k10-track-archive/2026-11-23_034323_hp_names/` (RENAMES.tsv). The config's layout names want "High Plains Raceway —
+  West" / "— Full" so the next install writes it (Open).
+- **Menu pictures:** both layouts at s0 (they share the front straight), -0.3 EV, the camera of 0.1.9's; new
+  `source/ui/west/` and `source/ui/full_course/`. The old ones in `D:/k10-track-archive/2026-11-23_034419_previews/`.
+- fleet/ac-installed.json: high_plains 0.1.12 (sha 4a055e11; origin/main merged first, its GATES-CHANGELOG conflict resolved
+  by keeping both sides). Not driven.

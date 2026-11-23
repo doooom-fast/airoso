@@ -632,3 +632,21 @@ sync_out + the two reports), README.md, source/walk_grade/ (the two drop lists a
 - The sync-back adds the north layouts' gate records and walk_grade*.json and drops 14 stale diagnostic plots (race_plots
   nose_*, signs_plots sign_*). fleet/ac-installed.json: san_diego_lake_murray_v4 0.20.4 (sha c8debb5f). Menu pictures: to
   come after the Sand Creek build (one Blender at a time). Not driven.
+
+## The Mac's merge of 0.20.4's records (2026-11-23)
+
+The full suite on the records head (4dcb76cf, origin/main b8d39f78 merged in) failed three of this ledger's own tests, all
+from what the install synced back or what main brought, none from the build:
+- **The round trip** (`test_the_round_trip_is_closed_...`): the install synced back 23 files airoso never held before: the
+  north laps' records (lap, barrier bands, dummies, closures, drive tests, ground checks, no_route plans, race verify),
+  `data/lights.heads.json`, `data/walk_grade.json` and `data/walk_grade.seat.json`. By the seed rule (every sync_out file
+  airoso holds that sync_in does not bring) they are seeds now: `sync_in.seed` 70 -> 93. The steps rewrite every one.
+- **The blend pin** (`test_the_committed_blend_is_...`): the committed `loop.blend` is now the one 0.20.4's install
+  synced back, 189,120,404 B, sha256 495a2198067c3562... (0.20.2's was 189,063,384 B, 3f13b887...). The next empty
+  workshop seeds it. Every author step on it is idempotent (above: walk_grade and the seat move nothing on a second run;
+  the lamp heads pair each lens with its lamp), so a seed of an authored blend builds the same.
+- **The owned concrete** (`test_the_road_and_the_sidewalks_bind_the_owned_pairs`): Milford binds `concrete_plain` since
+  0.1.14 (ledger 0100). The test now allows the owned pairs on the four tracks Kevin is finishing (his "On every track
+  now", scoped to those four on 2026-11-22) and refuses them everywhere else.
+- The 14 older diagnostic plots the sync-back dropped (`race_plots/*/nose_1258|1374.png`, `signs_plots/sign_M*.png`,
+  drawn before 0.20.2) are restored unchanged (4dcb76cf): nothing is deleted.

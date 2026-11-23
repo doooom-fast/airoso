@@ -306,3 +306,46 @@ commit that files this entry: **1,721 passed, 0 failed** (main 9aacb34c: 1,710 /
    - T3's start; the pads' look; the new verge trees and their colliders;
    - the 6 m grass's cost in frames;
    - the owned concrete on the edge strip and the pads. VERIFY IN-GAME.
+
+## PC rehearsal (2026-11-22, 08a1c8f2): Milford 0.1.14 SHIP OK, NOT installed: the pads' shading fails step 5's stop rule
+
+Runbook 0100-1 as written: an EMPTY workshop (`D:/k10-scratch/milford_0114_reh`), worktree `D:/k10-worktrees/mf-finish`
+at 08a1c8f2, ENG `eng_mflm_0114` (= `eng_mflm_0113` + concrete_plain diffuse d77c7ca9 / normal 2692b423, md5 = the
+checkout's), TreeFX bins Oak3 24111ede / SycamoreV2 7010d61f, `AIROSO_NUMPY_PY` the lidar venv, `--no-install`.
+20:37-21:41: **SHIP OK**, every gate green, no force.
+
+**Step 4, every line as the runbook expects:** intake `6537 pts, lap 4928 m`, `centerline.raw.local.json` 0923d812; one
+`MARKINGS_paint_sf_line` (10.5 m, read-back 0.00 mm); `t3_s1000_apron_back: 51 tyres modules over 32 m, 0 left out`;
+26 blocks with `mpg_nw_complex_0`-`_12`, no FAILED; `trunks: 261 colliders`; all 20 `[seat-pads] ... smooth (corners
+shared)`, the same triangles / verts as 0.1.13 (apron_9's fold raise 1.8 mm); `[circuit-dummies] ... 47: the line at s
+4639.9, 20 grid slots, 20 pits, sectors at s 1374, 3007; kn5 heading min +1.000 (the prep's AC_START_0 read 0.997)`;
+`[grassfx] 200 x 262 cells of 6 m ... 3952 rectangles, 3952 kept`; verify_kn5 PASS with `[race_start] heading: 41 facing
+nodes ... min +1.00` and `[race_start] road: 40 START/PIT cars inside the road, nearest edge +2.91 m (AC_PIT_19)`; AI
+`grid check: +0.96 ... -> FORWARD`; `[treefx] 12130 trees`, both species; `ui_track.json` pitboxes 20.
+
+**Step 5 against 0.1.13's install build** (`D:/k10-scratch/milford_lm`): 225 / 221 gate rows; the differences are this
+round's own (paint, T3, the NW blocks, trunks 385 -> 261, the pads' "smooth", the 47 dummies, grassfx, split, grid check,
+TYRES_6's reseat 400 -> 408 verts). drive_test as 0.1.13 (severe 0, kinks 1.84 /km, gated drops 3, far ledges 32, floating
+0); AUDIT CLEAN, walls 45,550v -> 38,242v; kn5_ground walls 324 -> 245 objects, hovering 0. kn5_textures PASS, 0
+missing, 25 embedded. road_wear.json `detail.1KERB_SIDEWALK.from` concrete_plain_diffuse.jpg, clipped 0.0 %; 1ROAD
+asphalt_dense, 0.069 %. Road kn5 **53,067,848 B** (modelled 52.9-53.1 MB).
+
+**The stop: `pads_kn5_check.py`** on the road kn5: `20 1RUNOFF_apron* meshes: 47724 vertices for 82408 triangles (0.579 a
+triangle)` (expected ~43,000-46,000), and by area p95 / max on faces over 10 cm2, against the runbook's ~0.3 deg / ~3.3 deg:
+
+| pad | p95 deg | max deg | pad | p95 deg | max deg |
+|---|---|---|---|---|---|
+| apron_0 | 0.276 | 3.25 | apron_10 | 4.712 | 78.71 |
+| apron_1 | 0.387 | 0.73 | apron_11 | 2.159 | 12.44 |
+| apron_2 | 2.006 | 5.63 | apron_12 | 1.479 | 50.92 |
+| apron_3 | 1.523 | 7.52 | apron_13 | 2.444 | 7.30 |
+| apron_4 | 6.851 | 73.30 | apron_14 | 2.784 | 9.73 |
+| apron_5 | 4.313 | 26.14 | apron_15 | 2.433 | 9.28 |
+| apron_6 | 4.121 | 25.01 | apron_16 | 23.657 | 117.20 |
+| apron_7 | 6.520 | 37.49 | apron_17 | 30.771 | 79.58 |
+| apron_8 | 1.625 | 19.62 | apron_18 | 3.881 | 18.50 |
+| apron_9 | 2.846 | 75.74 | apron_19 | 5.814 | 50.73 |
+
+Only apron_0 (the Mac's A/B pad) and apron_1 are inside the bound; apron_16 and _17 are far outside. Shared corners over
+the ground's folds average across creases. Per step 5 ("A pad much worse: stop and report it") this build is **not
+installed**; JSON `D:/k10-scratch/milford_0114_reh/pads_kn5.json`. Everything else in 0.1.14 is ready.

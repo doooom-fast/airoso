@@ -424,3 +424,21 @@ engine-july's prep (the frozen snapshot, `build_kn5_loop.py` md5 2a653ee1) and `
   - the road kn5 about 53.21 MB (53,213,840 B +- 20 kB), against 0.1.14's 53,067,848 B and 0.1.13's 62,055,573 B;
   - every other row as the 0.1.14 rehearsal (225 rows): only the kn5 bytes and the seat-pads lines move.
 - A FAIL names the pads: stop and report them. Install only on Kevin's word.
+
+## PC rehearsal 1b and install (2026-11-22/23, 7af6bed2): Milford 0.1.14 INSTALLED
+
+- **Rehearsal 1b** (`D:/k10-scratch/milford_0114b_reh`, ENG `eng_mflm_0114`, 22:19-23:19): SHIP OK, every gate green. Every
+  `[seat-pads]` line ends `smooth (corners shared) within 10 deg`, with the same triangles / verts (apron_9's 1.8 mm raise as
+  before). `pads_kn5_check.py --crease-deg 10`: **PASS**, 51,040 vertices for 82,408 triangles (0.619 a triangle); every
+  pad's max on faces over 10 cm2 <= 9.83 deg (apron_17), p95 <= 4.17 deg (apron_7); apron_0 0.276 / 3.25 as the A/B.
+  Road kn5 53,213,752 B (the Mac modelled 53,213,840). Gate rows 225 / 225 against rehearsal 1, only the seat-pads lines
+  differ; kn5_equiv's first difference is apron_0's normals.
+- **Install** (Kevin's standing word: "I always want newer builds"; his Nov 22 "When they're done, install them"): an EMPTY
+  workshop (`D:/k10-scratch/milford_lm`, 0.1.13's kept as `milford_lm.0.1.13`) at 7af6bed2, 23:19-00:19, SHIP OK;
+  0.1.13 parked in `D:/k10-track-archive/2026-11-23_001936/`. The same as rehearsal 1b: 225 / 225 gate rows, kn5
+  EQUIVALENT (tangents only, 225,863 values, max 1.79e-07), AI the same. Trees in (Oak3, SycamoreV2, trees.txt
+  1,022,544 B).
+- **Menu picture:** s3 of 6 at -0.5 EV with the stand-ins. The preview now reads the new spawn ("drives against the line"),
+  so the camera at line point 3268 faces the way the cars drive, toward the NW complex: a new view, not 0.1.13's.
+  The old picture is in `D:/k10-track-archive/2026-11-23_002047_previews/`.
+- fleet/ac-installed.json: milford_road_course 0.1.14 (sha 7af6bed2; origin/main 39666d15 merged in first). Not driven.

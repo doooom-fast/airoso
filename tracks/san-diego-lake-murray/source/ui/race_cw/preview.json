@@ -3,7 +3,7 @@
   "project": "D:/k10-scratch/lm_line",
   "scenes": [
     "loop_main.blend",
-    "loop_race.blend",
+    "loop_race_college.blend",
     "loop_closure_race_cw.blend"
   ],
   "line": "data/centerline.local.json",

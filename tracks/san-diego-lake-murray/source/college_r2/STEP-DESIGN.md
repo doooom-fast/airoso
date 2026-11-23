@@ -221,8 +221,14 @@ Found for the next steps:
    at the nose and the tail for Speedway, the northbound piece's two ends for Reverse. Those closures and their probes
    have to be declared in step 4; until they are, a green no-route gate says nothing about them.
 2. **`college_edges.json`'s built edges are floored to 0.5 m.** Not to be used as the built edge anywhere.
-3. **Lake Murray 0.20.4** (round 1c, `claude/lm-sidewalk-20261122` c8debb5f, ledger 0099) re-authors the walk's back
-   grade for the street drops. The College walks this step rebuilds have to follow that authoring: read it before
-   step 4, and build step 2 onward on that base once it is green.
+3. **Lake Murray 0.20.4 is the base now** (round 1c, `claude/lm-sidewalk-20261122` c8debb5f, ledger 0099; merged into
+   this branch 2026-11-22, c6e1b599). It adds the author step `walk_grade` (`tools/author_walk_grade_blend.py`,
+   second after `lamp_heads`) and the prep sub-step `--seat`. `walk_grade` finds a walk's back-grade lip by shape (an
+   edge 1.0 to 1.45 m in plan and 0.10 to 0.45 m down from the walk's back edge) and raises it to a slope the drive
+   test passes. So the walks this step rebuilds must have the draft's own section (0.08 m batter up 0.14 m, a flat
+   walk, a 1.2 m back grade) for it to find them, and the College step must run BEFORE `walk_grade`: first in the
+   author phase, as planned above, then `lamp_heads`, `walk_grade`, the race steps. A lip in a ground-release zone is
+   held to the released ground: `college_split_cut` goes with the split, so the zone that replaces it decides what
+   the east walk's lip is held to.
 4. **The Speedway lane on the northbound road** is 8.36 m at its narrowest against the 11.36 m the corridor asks for
    elsewhere: still open (above).

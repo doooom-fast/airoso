@@ -1,26 +1,26 @@
 {
- "obj": "D:\\k10-scratch\\lm_v4_0201\\data\\track.obj",
- "lattice_nodes": 555668,
- "terrain_vertices": 564474,
+ "obj": "D:\\k10-scratch\\lm_line\\data\\track.obj",
+ "lattice_nodes": 557746,
+ "terrain_vertices": 566611,
  "near_m": 20.0,
  "thinned": {
-  "nodes_read_on_the_surface": 187039,
-  "line_vertices": 101249
+  "nodes_read_on_the_surface": 189828,
+  "line_vertices": 108710
  },
  "nyquist": {
   "rib_m": 2.0,
   "max": 100,
   "by_amplitude": {
    ">0.5m": {
-    "beyond_near": 5096,
-    "near_road": 571
+    "beyond_near": 5108,
+    "near_road": 559
    },
    ">1m": {
-    "beyond_near": 957,
-    "near_road": 199
+    "beyond_near": 973,
+    "near_road": 191
    },
    ">2m": {
-    "beyond_near": 87,
+    "beyond_near": 97,
     "near_road": 27
    },
    ">4m": {
@@ -66,6 +66,18 @@
     "max_m": 3.48
    },
    {
+    "x": -1525,
+    "z": -275,
+    "n": 3,
+    "max_m": 2.22
+   },
+   {
+    "x": -1475,
+    "z": -325,
+    "n": 3,
+    "max_m": 2.75
+   },
+   {
     "x": 3925,
     "z": -1225,
     "n": 3,
@@ -76,18 +88,6 @@
     "z": -875,
     "n": 2,
     "max_m": 3.75
-   },
-   {
-    "x": -3425,
-    "z": -925,
-    "n": 2,
-    "max_m": 3.82
-   },
-   {
-    "x": -2825,
-    "z": -1025,
-    "n": 2,
-    "max_m": 2.54
    }
   ],
   "boxes": {},
@@ -97,15 +97,15 @@
   },
   "straight_info": {
    ">0.5m": {
-    "beyond_near": 4320,
-    "near_road": 188
+    "beyond_near": 4339,
+    "near_road": 190
    },
    ">1m": {
-    "beyond_near": 1360,
-    "near_road": 89
+    "beyond_near": 1372,
+    "near_road": 93
    },
    ">2m": {
-    "beyond_near": 113,
+    "beyond_near": 124,
     "near_road": 4
    },
    ">4m": {
@@ -113,7 +113,7 @@
     "near_road": 0
    }
   },
-  "gated": 87
+  "gated": 97
  },
  "cross_grain": {
   "fold_m": 1.0,
@@ -207,8 +207,8 @@
   "max": 5,
   "by_amplitude": {
    ">2m": {
-    "beyond_near": 69,
-    "near_road": 11
+    "beyond_near": 74,
+    "near_road": 12
    }
   },
   "hotspots": [
@@ -235,6 +235,12 @@
     "z": 1025,
     "n": 2,
     "max_m": 4.75
+   },
+   {
+    "x": -1475,
+    "z": -325,
+    "n": 2,
+    "max_m": 2.08
    },
    {
     "x": 2825,
@@ -265,20 +271,14 @@
     "z": -925,
     "n": 1,
     "max_m": 2.05
-   },
-   {
-    "x": -3675,
-    "z": -825,
-    "n": 1,
-    "max_m": 2.22
    }
   ],
   "boxes": {},
-  "jogs_beyond_near": 69,
-  "gated": 4,
+  "jogs_beyond_near": 74,
+  "gated": 5,
   "densest_at": [
-   -1421.0,
-   1201.0
+   -1504.3,
+   -264.1
   ]
  },
  "verdict": "PASS"

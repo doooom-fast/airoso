@@ -18,18 +18,105 @@
   "barrier_half_m": 0.335
  },
  "seed": "AC_START_0",
- "domain_m2": 940418,
- "reached_m2": 138776,
- "allowed_m2": 138776,
+ "domain_m2": 922377,
+ "reached_m2": 138249,
+ "allowed_m2": 138249,
  "leak_cells": 0,
  "leak_m2": 0,
  "escaped": false,
- "wall_cells": 594479,
- "wall_tris_in_band": 167961,
+ "wall_cells": 578599,
+ "wall_tris_in_band": 161635,
+ "local_deck_cells": 2472,
+ "local_deck_walls": [
+  {
+   "object": "1WALL_race_edge_lapcollege_R_college_774_0",
+   "cells": 1521,
+   "deck_minus_line_m": [
+    -0.198,
+    0.014
+   ],
+   "base_m": -0.02,
+   "top_m": 1.234,
+   "vertices": [
+    763,
+    1369
+   ]
+  },
+  {
+   "object": "1WALL_race_edge_lapcollege_L_college_770_0",
+   "cells": 858,
+   "deck_minus_line_m": [
+    -0.22,
+    -0.112
+   ],
+   "base_m": -0.075,
+   "top_m": 1.245,
+   "vertices": [
+    1160,
+    1461
+   ]
+  },
+  {
+   "object": "1WALL_race_close_cw_college_777_0",
+   "cells": 103,
+   "deck_minus_line_m": [
+    -0.214,
+    -0.125
+   ],
+   "base_m": -0.003,
+   "top_m": 1.185,
+   "vertices": [
+    1164,
+    1170
+   ]
+  },
+  {
+   "object": "1WALL_race_close_cw_college_1445_0",
+   "cells": 33,
+   "deck_minus_line_m": [
+    -0.18,
+    -0.123
+   ],
+   "base_m": -0.061,
+   "top_m": 1.223,
+   "vertices": [
+    1444,
+    1447
+   ]
+  },
+  {
+   "object": "1WALL_race_edge_lapcollege_R_navajo_1517_0",
+   "cells": 11,
+   "deck_minus_line_m": [
+    -0.241,
+    0.247
+   ],
+   "base_m": 0.002,
+   "top_m": 1.208,
+   "vertices": [
+    2314,
+    2323
+   ]
+  },
+  {
+   "object": "1WALL_race_edge_lapcollege_R_jackson_2324_0",
+   "cells": 50,
+   "deck_minus_line_m": [
+    -0.244,
+    -0.131
+   ],
+   "base_m": 0.036,
+   "top_m": 1.18,
+   "vertices": [
+    2324,
+    2327
+   ]
+  }
+ ],
  "door_clusters": 0,
  "doors": [],
  "doors_by_class": {},
- "forbidden_probes": 439,
+ "forbidden_probes": 377,
  "forbidden_reached": [],
  "lap_vertices": 4498,
  "blocked": [],
@@ -37,5 +124,5 @@
  "spawns_unreached": [],
  "fail": false,
  "fails": [],
- "seconds": 26.7
+ "seconds": 57.8
 }

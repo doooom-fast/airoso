@@ -44,6 +44,163 @@ install that rests on it.
   (an 8 m road on a 70 % bank: one gap a station without the key, none with it; every other gated reading equal; a flat
   road's report equal but for the new field).
 
+## 2026-11-23 (PC) — WIRING: check_lights_ini's two both-heads paths told apart, at the 0.2.9 merge with main (ledgers 0098 / 0099; opt-in; no threshold moved)
+
+The same key, `scenery.streetlights.light_both_heads`, was written twice in two rounds (the Mac, 2026-11-22). Ledger 0098 (Sand
+Creek) lights the back head in the draft's lamps step (`tools/author_lamps_blend.py`, `heads_lit` 2); ledger 0099 (Lake
+Murray) lights it in the author step lamp_heads (`tools/author_lamp_heads_blend.py`, `data/lights.heads.json`). Lake Murray's
+ship.json runs both steps, so after a plain merge its lamps step would have lit the back head as well: three lenses a lamp, or
+a refusal. The two are now told apart by one opt-in key, Sand Creek only:
+
+- `scenery.streetlights.both_heads_by: "lamps"` (with light_both_heads true): ledger 0098's path. The lamps step lays both
+  lenses; `check_lights_ini` counts the lamps times `heads_lit` and wants no heads file, and FAILS when `heads_lit` is not 2;
+  lamp_heads refuses to run.
+- light_both_heads alone: ledger 0099's path, as on main. The lamps step lays the road-ward lens only (as before 0098);
+  `check_lights_ini` wants `data/lights.heads.json` and counts its back lenses.
+- A record holding both (`heads_lit` 2 AND back lenses) is the back head lit twice: refused by the check itself.
+- Any other value of both_heads_by, or both_heads_by without light_both_heads: refused.
+
+The count rule (one [LIGHT_N] per recorded lens), POS_TOL_M 0.05 m, the no-duplicate / no-orphan rules and the look are the
+same on both paths. Sand Creek 0.2.9 (installed) and Lake Murray 0.20.4 were built by their own paths and are unchanged.
+Teeth: `tests/tools/test_sand_creek_0098.py` (`test_the_lamps_step_lights_the_back_head_only_by_both_heads_by`: Lake Murray's
+config as main has it lights ONE head in the lamps step; `test_the_check_reads_heads_lit_by_the_lamps_and_the_heads_file_otherwise`;
+`test_lamp_heads_refuses_the_lamps_path`), `tests/tools/test_lake_murray_0099.py`. Sand Creek's round 2 moves onto lamp_heads
+(its LIGHTS mesh changes anyway) and both_heads_by goes.
+
+## 2026-11-23 — WIRING: High Plains' merge judged by verify_mouth_corners (ledger 0097 round 4; opt-in; no threshold moved)
+
+No gate threshold, floor or bypass moved, and no gate's code changed. One wiring change, opt-in by High Plains' own config
+(`tests/tools/test_high_plains_round4.py` `test_version_and_no_other_track_declares_any_round4_key`):
+
+- `tracks/high-plains-lm`: `route.verify_mouth_corners: true` and the gate step `verify_mouth_corners` in its ship.json
+  (Sand Creek's gate of ledger 0086, its rows and limits as they are: CORNER LIP <= 0.05 m, TEETH <= 2.1 %, EDGE PAINT
+  <= 0.25 m, the R 9 turn drop reported) now judges the Full layout's merge, whose west bellmouth this round builds as a
+  measured corner return (`route.mouth_returns`). Its first run read EDGE PAINT 14.0 m: the West lap's edge line ran across
+  the opening, which NAIP 2023 0.3 m shows unpainted; `road_markings.gap_mouths` (ledger 0086's, opt-in) breaks it there,
+  and the gate reads 0.0 m.
+- Not gates, opt-in, recorded here because they shape what the gates see: `tools/mouth_returns_blend.py`
+  `route.mouth_returns_measured_only` (a corner without its own measured radius is skipped, not built at another corner's
+  median); `tools/author_kerbs_blend.py` a run's `"line"` (a kerb keyed to a connector's rows); `tools/author_bespoke_blend.py`
+  a row's `"atlas_shed"` with `tools/circuit_facades.py` `facade_walls(shed_tops=...)` (a shed on an atlas skin);
+  road wear's aerial is a new image (`source/road_wear/naip_2023_hp_mosaic.png`), which tools/road_wear_check.py reads exactly
+  as it read the crop (`road_wear.aerial`, one north-up lon/lat image and its box).
+
+Proven on High Plains 0.1.12 (Mac, Blender 4.2.9, an empty workshop): `[mouth-corners] ... lip 0.023 m, teeth 1/354, edge
+paint 0.0 m ... PASS`; verify_mouths PASS (mouth line 0.012 m, notch 0.003 m, approach 0.61 %/m, as 0.1.11).
+
+## 2026-11-23 — COVERAGE (opt-in by data): Lake Murray's median tops are 1LAWN_median, outside the two 1GRASS poke checks (ledger 0055; no threshold moved, no check edited)
+
+No gate's code, threshold or tolerance changed. What changed is which object two checks read.
+
+- **Before.** Each raised median's grass top was part of TERRAIN (1GRASS). The prep pinned it 0.02 m under the slab
+  it stands on, so it was never over the road and `scripts/ac/verify_kn5.py` check 6 (terrain poke) and
+  `scripts/geometry/audit_mesh.py` B had nothing to flag there. In the game every median showed asphalt (2,486 of
+  2,486 island rows on 0.20.3).
+- **Now** (opt-in `route.median_tops`, `tools/author_median_tops_blend.py`): the top is its own object,
+  `1LAWN_median`, 0.185 m over the slab between the island's curbs. Both poke checks key on the name prefix `1GRASS`
+  and do not judge it. Had it stayed 1GRASS at that height it would be 4,282 pokes (0.185 m is over
+  `POKE_ABOVE_M` 0.15): the checks are not loosened to let it through, the object is not in the set they read, and
+  that is the point to know when reading a green poke count.
+- **What does judge it.** `verify_kn5` check 2 (every drivable surface faces up) lists `1LAWN`.
+  `scripts/geometry/drive_test.py` `soft_top_in_lane` lists `1LAWN`: a top under a wheel path of a driven lane fails,
+  as ground through the road does. The author step's own checks: every moved vertex stands 0.185 m (+- 0.06,
+  measured 0.142 to 0.228) over a road surface, every island row has the top under at least two of its three
+  measured points, every face is wound up.
+- **Why not another way.** The prep sets every 1GRASS vertex with pavement above or below it to the deck less
+  0.02 m, released ground included, and the prep of record is not changed. An island stands on pavement.
+- **Proof.** On the scratch scene through the build's own prep: 2,123 of 2,123 island rows read grass on all 14
+  islands (`tracks/san-diego-lake-murray/source/college_r2/median_tops_r2_scratch.json`); a 4-row run of the band on
+  Mission Gorge is not an island (the median tool builds none under 6 rows) and is counted apart. The gates of the
+  full chain have not run on it yet (Lake Murray 0.20.5's rehearsal).
+
+## 2026-11-23 — BEHAVIOUR (opt-in by data): verify_signs (m) holds a race layout on a lap to its plate at a per-layout corner its lap drives (ledger 0055 round 2; no threshold moved)
+
+No threshold, tolerance or bypass moved. The entry is late by one commit: the change is in d3e8ee23, already pushed
+when the entry was asked for (no history rewrite on a pushed branch).
+
+- **What was wrong.** Lake Murray's Speedway (`race_cw`) now runs on its own lap, `college` (the mainline with the
+  northbound road of College's split in place of rows v1130-1476). `tools/place_signs.py` gave no layout plate to a
+  layout on a lap, a rule written for the north lap, which turns off the mainline before both per-layout corners.
+  So the Speedway lost its arrows at College/Navajo (M3) and Navajo/Jackson (M4), and `tools/verify_signs.py` check
+  (l) failed for both on the scratch workshop: "MAINLINE corner M3 (named in signs.json) has no plate for fwd".
+- **The rule now.** `scripts/geometry/race_lap.mainline_approach`: a layout on a lap drives a mainline corner where
+  its lap walks the mainline for `MAINLINE_CORNER_REACH` vertices either side of the apex, all one way (a piece
+  walked backwards turns the approach round). The reach is 20 vertices, `[invented]`: the approach the sign rule
+  reads its tangent from and the bend itself. `tools/place_signs.py` places a per-layout corner's layout plate by it.
+- **What check (m) now checks.** Beside the layouts on the mainline (`driven_directions`, unchanged), it judges
+  every race layout on a lap at each per-layout corner of signs.json that its lap drives (`verify_signs.lap_driven`),
+  by the same test as a mainline layout: a plate that layout loads (shared, or its own), or a skip record whose
+  reasons are the rule's own. Before, a layout on a lap was not judged at all. Checks (k) and (l) are unchanged.
+- **The north lap reads as before.** Its mainline piece is v1517-2317; M3 (v1514) and M4 (v2319) stand 3 and 2
+  vertices outside it, so `north_cw` / `north_acw` drive neither, get no plate and are not judged at them: the
+  0.20.2 fault ("M3-fwd@north_cw in north_cw's lane") stays fixed.
+- **Other tracks.** No other track has a per-layout corner in its signs.json, and without one `lap_driven` is
+  empty: check (m) is as it was.
+- **Proof.** `tests/tools/test_race_lap.py::test_a_lap_drives_a_mainline_corner_only_where_it_walks_the_mainline_through_it`
+  (the College lap at all five mainline corners, the north lap at neither, the split's own rows, a piece walked both
+  ways, an open line) and `tests/tools/test_p4_signs.py::test_a_layout_on_a_lap_that_walks_the_mainline_through_a_per_layout_corner_gets_its_plate`
+  (the plate is the one a mainline layout gets; taking it away fails (l); (m) fails the lap layout by name when it has
+  neither plate nor record, and does not judge it without `lap_driven`; a lap that turns off before the corner gets
+  no plate and no record). On the scratch workshop (`D:/k10-scratch/lm_r2_college/ws5`): 29 posts, 4 layout plates
+  (M3-fwd@race_cw, M4-fwd@race_cw, M4-rev@race_acw, M3-rev@race_acw), PASS.
+
+## 2026-11-22 (Mac) — COUNT FOLLOWS THE AUTHORED LENSES: check_lights_ini with both lamp heads lit; the sampling numbers of Sand Creek 0.2.9 (ledger 0098; no threshold moved)
+
+No gate threshold, tolerance, floor or bypass moved. All opt-in, Sand Creek only (`tests/tools/test_sand_creek_0098.py`
+`test_the_0098_keys_are_opt_in`):
+
+- `tools/check_lights_ini.py`: "the [LIGHT_N] count equals the lamp count" now reads "equals the lamp count times
+  `provenance.heads_lit`" (1 when absent, every track but Sand Creek). `tools/author_lamps_blend.py` records `heads_lit` 2
+  only with `scenery.streetlights.light_both_heads` (Kevin 2026-11-22: "Yes, light both heads"), when it lays the back
+  head's lens. Every other rule (one light per recorded lens, POS_TOL_M 0.05 m, no duplicate, no orphan, the same look on
+  every block) is unchanged and judges both lenses.
+- Numbers the change adds (none is a gate):
+  - ⚠ `tools/grid_reach.py` (the grid's map-edge cut reached): SNAP_M 1.5 m, TURN_MAX_DEG 60, VIA_NEAR_M 6 m, VIA_LOOK_M
+    150 m, MAX_WALK_M 4000 m [invented: walk geometry]; RESAMPLE_M 3 m = grid_connectors', EASE_M 30 m = trim's BLEND_M,
+    the lidar reading = tools/lidar_connector_profile's (RADIUS_M 1 m, MIN_RETURNS 3, its --surface rule, both
+    [invented] there); the stop x 1877.5 m = the grid's own east extent [measured on the grid].
+  - ⚠ `tools/flare_one_sided.py`: SEARCH_IN_M 1.5, SEARCH_OUT_M 1.5, FAR_PAST_M 3, MEDIAN_ROWS 5 [invented: sampling];
+    STEP_M 0.08 = tools/naip_edge's (round J, [invented] there), BIN_M / ALONG_M = tools/lidar_curb_trace's, BASE_REACH_M
+    25 m = ledger 0087's flare census.
+
+## 2026-11-22 — WIRING: a multi-layout circuit's spawn kn5s judged by race_start's own rows (ledger 0097 round 3; opt-in; no threshold moved)
+
+No gate threshold, floor or bypass moved. One wiring change, opt-in by `track.config.json race_start.layouts` (High Plains
+only; `tests/tools/test_high_plains_round3.py` `test_no_other_track_declares_any_round3_key`):
+
+- `scripts/ac/verify_kn5.py` `_verify_layouts`: a layout named in `race_start.layouts` has its nodes-only spawn kn5 judged by
+  `race_start_checks` (the single-layout circuit's rows of ledger 0093: HEADING_MIN_DEG, the ROAD row CAR_HALF_W_M +
+  LANE_MARGIN_M inside the road's width, LINE_TOL_M, LINE_AHEAD_MAX_M, the sectors in driving order, the declared set) on THAT
+  layout's own line (`data/centerline.local.json`, or the lap it names), plus the declared-set and on-road (PIT_ROAD_MAX_M /
+  PIT_DY_MAX_M) checks every spawn kn5 gets. In place of `_verify_spawn_kn5`'s (d) SIDE row ("right of travel", the street
+  rule) and its `start.line_vertex` LINE row, which a declared circuit grid on both sides of the line cannot meet and which
+  race_start_checks' ROAD and LINE rows replace exactly as they do for the single-layout circuit. Every other multi-layout
+  track (no `race_start.layouts`) is judged exactly as before; the single-layout circuit too.
+- Not gates, opt-in, recorded here because they shape what the gates see: `tools/circuit_dummies_blend.py` per-layout spawn
+  sets (`race_start.layouts`); `tools/lm_pads_blend.py` `lm_pads.deck.fill "membrane"` (the deck's paving off the lap's ribbon
+  is the discrete Laplace surface between the ribbon and the arm rows: MEMBRANE_TOL_M 1e-5 m, MEMBRANE_SOR 1.7 [invented:
+  solver settings, not a judgement]); `tools/trim_connectors.py` carries a record's line paint through its cuts;
+  `tools/weld_mouths_blend.py` `_dev` reads an empty marking block as matching (it read inf and stopped the weld);
+  `tools/make_map.py` `map "race_lap"`.
+
+Proven on High Plains 0.1.11 (Mac, Blender 4.2.9, an empty workshop): both layouts' spawn kn5s pass (`[race_start west]` /
+`[race_start full_course]`: 51 facing nodes, local +Z . travel min +1.00; 50 START / PIT cars inside the road, nearest edge
++2.27 m), verify_pads FORK and verify_mouths PASS. Teeth: `tests/tools/test_high_plains_round3.py`.
+
+## 2026-11-22 — WIRING (opt-in): check_lights_ini counts both heads of a two-arm lamp; a seeded workshop passes the "no blend yet" guard (ledger 0099; no threshold moved)
+
+No gate threshold, tolerance or bypass moved. Both opt-in, Lake Murray only (`tests/tools/test_lake_murray_0099.py`):
+
+- `tools/check_lights_ini.py` (the hard read-back of the written ext_config.ini): with `scenery.streetlights.light_both_heads`
+  true it reads `data/lights.heads.json` (tools/author_lamp_heads_blend.py's back lenses) and wants one `[LIGHT_N]` at
+  every front AND every back lens, each within the same `POS_TOL_M` 0.05 m, no duplicate, no orphan, the same look on
+  every block. Opted in with no heads file = FAIL. Not opted in = the one-per-lamp check as before (its tests pass
+  unchanged). On Lake Murray's record: 323 lamps, 646 lenses, the closest two 8.073 m apart against ext_config's 2 m link.
+- `tools/ship_track.sh`: a project with no loop.blend no longer stops at "no blend yet" when ship.json `sync_in.seed`
+  names `loop.blend` and airoso holds it (the seed copies it in before anything runs; a Git LFS pointer is refused,
+  exit 1). A spec without `seed` (every other track) stops exactly as before (the Lariat and SD guard runs in
+  `tests/tools/test_ship_track_chain.py`).
+
 ## 2026-11-22 — Milford round 1 (ledger 0100): a set-in far block's roof judged by its downhill face; the trunk reach derived; no threshold moved, no bypass
 
 No gate threshold, floor or bypass moved; every key opt-in and named by Milford only (`tests/tools/test_milford_finish_0100.py`).

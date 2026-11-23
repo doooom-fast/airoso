@@ -1,0 +1,436 @@
+{
+ "layout": "north_acw",
+ "mode": "built",
+ "obj": "track.north_acw.obj",
+ "declaration": "v2 corridors.north_acw",
+ "bands_version": 2,
+ "params": {
+  "cell_m": 0.25,
+  "tile_m": 64.0,
+  "domain_pad_m": 25.0,
+  "probe_r_m": 0.5,
+  "tol_m": 0.75,
+  "wall_span_m": [
+   0.2,
+   0.9
+  ],
+  "deck": "centreline y + 0.10",
+  "barrier_half_m": 0.335
+ },
+ "seed": "AC_START_0",
+ "domain_m2": 649381,
+ "reached_m2": 91715,
+ "allowed_m2": 91715,
+ "leak_cells": 0,
+ "leak_m2": 0,
+ "escaped": false,
+ "wall_cells": 407996,
+ "wall_tris_in_band": 146950,
+ "local_deck_cells": 3847,
+ "local_deck_walls": [
+  {
+   "object": "1WALL_STUB_galewood_street_5984405_L",
+   "cells": 108,
+   "deck_minus_line_m": [
+    -0.535,
+    -0.172
+   ],
+   "base_m": 0.071,
+   "top_m": 1.18,
+   "vertices": [
+    34,
+    38
+   ]
+  },
+  {
+   "object": "1WALL_STUB_eldridge_street_6013754_L",
+   "cells": 145,
+   "deck_minus_line_m": [
+    -0.506,
+    -0.447
+   ],
+   "base_m": 0.071,
+   "top_m": 1.173,
+   "vertices": [
+    132,
+    136
+   ]
+  },
+  {
+   "object": "1WALL_STUB_birchwood_street_1370375341_R",
+   "cells": 102,
+   "deck_minus_line_m": [
+    0.274,
+    0.346
+   ],
+   "base_m": 0.079,
+   "top_m": 1.176,
+   "vertices": [
+    224,
+    225
+   ]
+  },
+  {
+   "object": "1WALL_STUB_PAD_J2_S1",
+   "cells": 179,
+   "deck_minus_line_m": [
+    -0.673,
+    -0.623
+   ],
+   "base_m": 0.087,
+   "top_m": 1.178,
+   "vertices": [
+    318,
+    319
+   ]
+  },
+  {
+   "object": "1WALL_race_edge_lapnorth_L_waring_0_0",
+   "cells": 47,
+   "deck_minus_line_m": [
+    -0.173,
+    -0.113
+   ],
+   "base_m": 0.05,
+   "top_m": 1.166,
+   "vertices": [
+    318,
+    321
+   ]
+  },
+  {
+   "object": "1WALL_STUB_PAD_J2_S2",
+   "cells": 183,
+   "deck_minus_line_m": [
+    0.276,
+    0.356
+   ],
+   "base_m": 0.087,
+   "top_m": 1.178,
+   "vertices": [
+    326,
+    327
+   ]
+  },
+  {
+   "object": "1WALL_STUB_princess_view_court_5998286_R",
+   "cells": 83,
+   "deck_minus_line_m": [
+    -0.519,
+    -0.14
+   ],
+   "base_m": 0.069,
+   "top_m": 1.184,
+   "vertices": [
+    383,
+    386
+   ]
+  },
+  {
+   "object": "1WALL_STUB_princess_view_place_5998259_R",
+   "cells": 126,
+   "deck_minus_line_m": [
+    0.311,
+    0.699
+   ],
+   "base_m": 0.063,
+   "top_m": 1.179,
+   "vertices": [
+    430,
+    433
+   ]
+  },
+  {
+   "object": "1WALL_STUB_princess_view_way_6018734_R",
+   "cells": 115,
+   "deck_minus_line_m": [
+    0.29,
+    0.615
+   ],
+   "base_m": 0.064,
+   "top_m": 1.176,
+   "vertices": [
+    454,
+    456
+   ]
+  },
+  {
+   "object": "1WALL_STUB_fontaine_street_5986946_R",
+   "cells": 15,
+   "deck_minus_line_m": [
+    -0.287,
+    -0.156
+   ],
+   "base_m": 0.089,
+   "top_m": 1.184,
+   "vertices": [
+    506,
+    507
+   ]
+  },
+  {
+   "object": "1WALL_STUB_fontaine_street_5986946_L",
+   "cells": 54,
+   "deck_minus_line_m": [
+    0.564,
+    0.698
+   ],
+   "base_m": 0.062,
+   "top_m": 1.172,
+   "vertices": [
+    507,
+    508
+   ]
+  },
+  {
+   "object": "1WALL_STUB_laura_street_6042836_R",
+   "cells": 83,
+   "deck_minus_line_m": [
+    -0.7,
+    -0.169
+   ],
+   "base_m": 0.069,
+   "top_m": 1.185,
+   "vertices": [
+    563,
+    566
+   ]
+  },
+  {
+   "object": "1WALL_race_edge_lapnorth_L_princessview_326_0",
+   "cells": 457,
+   "deck_minus_line_m": [
+    -0.325,
+    -0.104
+   ],
+   "base_m": 0.046,
+   "top_m": 1.164,
+   "vertices": [
+    688,
+    704
+   ]
+  },
+  {
+   "object": "1WALL_STUB_PAD_J3_S3",
+   "cells": 418,
+   "deck_minus_line_m": [
+    -0.406,
+    -0.341
+   ],
+   "base_m": 0.091,
+   "top_m": 1.18,
+   "vertices": [
+    692,
+    697
+   ]
+  },
+  {
+   "object": "1WALL_race_edge_lapnorth_L_missiongorge_705_0",
+   "cells": 53,
+   "deck_minus_line_m": [
+    -0.222,
+    -0.135
+   ],
+   "base_m": 0.05,
+   "top_m": 1.161,
+   "vertices": [
+    704,
+    707
+   ]
+  },
+  {
+   "object": "1WALL_STUB_conestoga_way_6042936_R",
+   "cells": 122,
+   "deck_minus_line_m": [
+    0.282,
+    0.583
+   ],
+   "base_m": 0.067,
+   "top_m": 1.178,
+   "vertices": [
+    846,
+    849
+   ]
+  },
+  {
+   "object": "1WALL_STUB_mission_montana_drive_5988290_L",
+   "cells": 67,
+   "deck_minus_line_m": [
+    0.273,
+    0.309
+   ],
+   "base_m": 0.08,
+   "top_m": 1.175,
+   "vertices": [
+    1174,
+    1175
+   ]
+  },
+  {
+   "object": "1WALL_STUB_mission_vista_drive_5977531_L_560",
+   "cells": 128,
+   "deck_minus_line_m": [
+    0.474,
+    0.7
+   ],
+   "base_m": 0.063,
+   "top_m": 1.174,
+   "vertices": [
+    1268,
+    1271
+   ]
+  },
+  {
+   "object": "1WALL_STUB_deerfield_crescent_638144640_L",
+   "cells": 170,
+   "deck_minus_line_m": [
+    0.36,
+    0.437
+   ],
+   "base_m": 0.073,
+   "top_m": 1.174,
+   "vertices": [
+    1376,
+    1379
+   ]
+  },
+  {
+   "object": "1WALL_STUB_deerfield_street_6055959_R",
+   "cells": 16,
+   "deck_minus_line_m": [
+    0.687,
+    0.7
+   ],
+   "base_m": 0.094,
+   "top_m": 1.168,
+   "vertices": [
+    1378,
+    1379
+   ]
+  },
+  {
+   "object": "1WALL_race_edge_lapnorth_R_missiongorge_705_0",
+   "cells": 25,
+   "deck_minus_line_m": [
+    -0.203,
+    -0.112
+   ],
+   "base_m": 0.056,
+   "top_m": 1.161,
+   "vertices": [
+    1456,
+    1462
+   ]
+  },
+  {
+   "object": "1WALL_race_edge_lapnorth_R_jackson_1463_0",
+   "cells": 178,
+   "deck_minus_line_m": [
+    -0.285,
+    -0.008
+   ],
+   "base_m": 0.025,
+   "top_m": 1.202,
+   "vertices": [
+    1463,
+    2134
+   ]
+  },
+  {
+   "object": "1WALL_STUB_PAD_J4_S5",
+   "cells": 477,
+   "deck_minus_line_m": [
+    0.31,
+    0.444
+   ],
+   "base_m": 0.078,
+   "top_m": 1.175,
+   "vertices": [
+    1465,
+    1476
+   ]
+  },
+  {
+   "object": "1WALL_race_edge_lapnorth_L_jackson_1463_0",
+   "cells": 86,
+   "deck_minus_line_m": [
+    -0.169,
+    -0.126
+   ],
+   "base_m": 0.051,
+   "top_m": 1.163,
+   "vertices": [
+    1465,
+    1473
+   ]
+  },
+  {
+   "object": "1WALL_STUB_winding_creek_drive_5968105_R",
+   "cells": 138,
+   "deck_minus_line_m": [
+    -0.581,
+    -0.166
+   ],
+   "base_m": 0.07,
+   "top_m": 1.184,
+   "vertices": [
+    1679,
+    1683
+   ]
+  },
+  {
+   "object": "1WALL_STUB_tuxedo_road_6051501_R",
+   "cells": 122,
+   "deck_minus_line_m": [
+    -0.418,
+    -0.197
+   ],
+   "base_m": 0.081,
+   "top_m": 1.181,
+   "vertices": [
+    1729,
+    1734
+   ]
+  },
+  {
+   "object": "1WALL_STUB_park_ridge_boulevard_1224664714_L",
+   "cells": 127,
+   "deck_minus_line_m": [
+    -0.548,
+    -0.246
+   ],
+   "base_m": 0.07,
+   "top_m": 1.179,
+   "vertices": [
+    2006,
+    2009
+   ]
+  },
+  {
+   "object": "1WALL_STUB_birchcreek_road_6024742_R",
+   "cells": 36,
+   "deck_minus_line_m": [
+    -0.298,
+    -0.148
+   ],
+   "base_m": 0.086,
+   "top_m": 1.182,
+   "vertices": [
+    2068,
+    2070
+   ]
+  }
+ ],
+ "door_clusters": 0,
+ "doors": [],
+ "doors_by_class": {},
+ "forbidden_probes": 325,
+ "forbidden_reached": [],
+ "lap_vertices": 2936,
+ "blocked": [],
+ "spawns_checked": 16,
+ "spawns_unreached": [],
+ "fail": false,
+ "fails": [],
+ "seconds": 44.8
+}

@@ -21,7 +21,10 @@ intensity edge, +-0.4 m, and its class-2 deck grid):
   4. THE DECK: the outline + interior points every DECK_STEP_M, triangulated inside it (delaunay_2d_cdt, the outline as
      the constraint); heights = the measured deck grid + each seam's departure from it, faded in over the seam's own
      length (draft_pads.seam_profile / seam_offset): the rows exact, the inside on the lidar; the lap's own ribbon
-     surface where only the ribbon paves. One object 1ROAD_pad_<id> with ROAD's material. The ground under it is split
+     surface where only the ribbon paves. One object 1ROAD_pad_<id> with ROAD's material.
+     (opt-in lm_pads.deck.fill "membrane", ledger 0097 round 3: no lidar over the junction) the deck's vertices on the lap's
+     removed ribbon and on the seam rows keep those heights, every other one is the discrete Laplace surface between them
+     (membrane_fill), the ground under it held to that built deck. The ground under it is split
      to GROUND_EDGE_M and held GROUND_UNDER_M under the deck (0.17.2's numbers); the prep then pins it as under any
      1ROAD.
   5. THE ROADS THE LAP DOES NOT TAKE (Kevin: "a road we are not completing gets a barrier, not a curve"; JUNCTIONS
@@ -71,6 +74,8 @@ BARRIER_INSET_M = 0.45          # [invented] the K-rail's centre this far inside
 LANE_EDGE_M = 0.3               # the lane-on-deck check samples the lap's width less this at each side
 GROUND_EDGE_M = 1.4             # 0.17.2's [invented]: ground edges near a deck halved until under this
 GROUND_UNDER_M = 0.04           # 0.17.2's [invented]: the ground under a deck (under kn5_ground_check's 0.05 m gap)
+CHORD_ROUNDS = 8                # ground_on_mesh: rounds of halving a ground edge that crosses over a deck crease
+CHORD_MIN_M = 0.05              # [invented] ... an edge shorter than this is left as it is
 EDGE_BAND_M = 2.5               # 0.17.2's [invented]: outside the outline the ground this close never stands over its edge
 LAP_CLEAR_M = 1.0               # [invented] an outline run along a mouth line closer than the lap's half width + this is the lap's own edge
 EXEMPT_MARGIN_M = 0.15          # 0.17.2's: the exemption polygon this far outside the deck's outline
@@ -342,7 +347,7 @@ def union_arms(ring0, short, keep_on, pin):
     return ring
 
 
-def ground_under(ring, deck_z, edge_m=GROUND_EDGE_M):
+def ground_under(ring, deck_z, edge_m=GROUND_EDGE_M, mesh_z=None):
     terr = bpy.data.objects.get("TERRAIN")
     if terr is None:
         return {}
@@ -388,8 +393,42 @@ def ground_under(ring, deck_z, edge_m=GROUND_EDGE_M):
         elif not inside and v.co.z > want:
             v.co.z = want
             lowered += 1
+    rep = {"edges_split": split, "lowered": lowered, "raised": raised}
+    if mesh_z is not None:
+        # GROUND ON THE DECK MESH, its chords (opt-in per pad, ground_on_mesh; 2026-11-23): a ground edge across a crease
+        # of the deck (where it turns up to a seam) stands over the deck between its two pinned ends. It is halved, the
+        # new vertex pinned as the ends are, until no edge over the deck comes within GROUND_UNDER_M / 2 of it at its
+        # quarter points (sandcreek_quebec on rehearsal 1's blend: 2 raster points 0.025 m over the deck after the pins)
+        refined = 0
+        for _ in range(CHORD_ROUNDS):
+            todo = []
+            for e in bm.edges:
+                a, b = e.verts
+                mx, my = (a.co.x + b.co.x) / 2.0, (a.co.y + b.co.y) / 2.0
+                if not (bx0 <= mx <= bx1 and by0 <= my <= by1) \
+                        or math.hypot(b.co.x - a.co.x, b.co.y - a.co.y) < CHORD_MIN_M:
+                    continue
+                for t in (0.25, 0.5, 0.75):
+                    x, y = a.co.x + (b.co.x - a.co.x) * t, a.co.y + (b.co.y - a.co.y) * t
+                    top = mesh_z(x, y)
+                    if top is not None and a.co.z + (b.co.z - a.co.z) * t > top - GROUND_UNDER_M / 2.0:
+                        todo.append(e)
+                        break
+            if not todo:
+                break
+            for e in todo:
+                if not e.is_valid:
+                    continue
+                tris = [(f, next(v for v in f.verts if v not in e.verts)) for f in e.link_faces if len(f.verts) == 3]
+                _ne, nv = bmesh.utils.edge_split(e, e.verts[0], 0.5)
+                for f, far in tris:
+                    if f.is_valid and len(f.verts) == 4:
+                        bmesh.utils.face_split(f, nv, far)
+                nv.co.z = min(nv.co.z, deck_z(nv.co.x, nv.co.y) - GROUND_UNDER_M)
+                refined += 1
+        rep["chords_halved"] = refined
     bm.to_mesh(terr.data); bm.free(); terr.data.update()
-    return {"edges_split": split, "lowered": lowered, "raised": raised}
+    return rep
 
 
 def build(proj, cfg, decls):
@@ -746,6 +785,15 @@ def build(proj, cfg, decls):
         for v in vco:
             key = (round(v.x, 3), round(v.y, 3))
             verts3.append((v.x, v.y, seam_xy[key] if key in seam_xy else deck_z(v.x, v.y)))
+        # THE MEMBRANE (opt-in lm_pads.deck.fill "membrane", ledger 0097 round 3, High Plains: no lidar over its junctions):
+        # the deck's vertices on a seam row or on the lap's own removed ribbon keep those heights (the roads' own measured
+        # surfaces, exact); every other vertex (the junction's paving off the lap: a fork's flare, a merge's bellmouth, the
+        # arm's approach) is the smoothest surface between them, the discrete Laplace equation on the deck's own edges
+        # (Gauss-Seidel), its outline free. Absent = deck_z everywhere, as before
+        membrane = None
+        if deck_cfg.get("fill") == "membrane":
+            verts3, membrane = membrane_fill(verts3, faces, seam_xy, ribbon_bvh)
+            _log(f"{pid}: deck membrane {membrane}")
         for sx, sy, sz in seams:
             if not any(abs(v[0] - sx) < 1e-3 and abs(v[1] - sy) < 1e-3 and abs(v[2] - sz) < 1e-4 for v in verts3):
                 near_ring = sorted((round(math.dist((sx, sy), q), 3), round(q[0], 3), round(q[1], 3)) for q in ring)[:3]
@@ -767,9 +815,39 @@ def build(proj, cfg, decls):
         # 4b. THE GROUND UNDER IT (0.17.2's numbers): the terrain's edges near the deck halved until under
         # GROUND_EDGE_M (longest first, triangles only), every ground vertex inside the outline GROUND_UNDER_M under the
         # deck, and within EDGE_BAND_M outside never above the deck's edge: no ground chord over a measured bowl
-        held = ground_under(ring, deck_z, float(deck_cfg.get("ground_edge_m") or GROUND_EDGE_M))   # opt-in finer (L3b)
-        # 5. the barriers across the roads the lap does not take
+        # GROUND ON THE DECK MESH (opt-in per pad, "ground_on_mesh": true; 2026-11-23, Sand Creek 0.2.9's
+        # sandcreek_quebec): the ground is pinned GROUND_UNDER_M under the LOWER of deck_z and the deck as built (its
+        # faces are flat between its vertices). Where a seam climbs steeply (the lap's flared ribbon edge 0.39 m over the
+        # measured junction within 0.45 m) deck_z stood up to 0.06 m over those faces, and one ground vertex came through
+        # the deck by 0.017 m (verify_pads P4, the 928f7bad pre-check). Outside the deck the ray misses: deck_z, as
+        # before. Absent = deck_z alone, as before. The membrane (above) holds its ground to the built deck already, so
+        # the two are refused together
+        gom = d.get("ground_on_mesh")
+        if gom not in (None, True, False):
+            raise SystemExit(f"[lm-pads] FATAL: {pid}: ground_on_mesh {gom!r}: true|false")
+        if gom and membrane is not None:
+            raise SystemExit(f"[lm-pads] FATAL: {pid}: ground_on_mesh with deck fill \"membrane\": the membrane's ground "
+                             f"is held to the built deck already; one or the other")
         bvh = BVHTree.FromPolygons([Vector(v) for v in verts3], [tuple(f) for f in faces])
+        edge_m = float(deck_cfg.get("ground_edge_m") or GROUND_EDGE_M)   # opt-in finer (L3b)
+        if membrane is not None:
+            def built_z(x_, y_):
+                """the built membrane deck where it stands, deck_z past its outline (the ground's edge band)"""
+                hit = bvh.ray_cast(Vector((x_, y_, 1e4)), Vector((0.0, 0.0, -1.0)))
+                return hit[0].z if hit[0] is not None else deck_z(x_, y_)
+            held = ground_under(ring, built_z, edge_m)
+        elif gom:
+            def mesh_z(x_, y_):
+                hit = bvh.ray_cast(Vector((x_, y_, 1e4)), Vector((0.0, 0.0, -1.0)))
+                return None if hit[0] is None else hit[0].z
+
+            def ground_z(x_, y_):
+                z_, m_ = deck_z(x_, y_), mesh_z(x_, y_)
+                return z_ if m_ is None else min(z_, m_)
+            held = ground_under(ring, ground_z, edge_m, mesh_z=mesh_z)
+        else:
+            held = ground_under(ring, deck_z, edge_m)
+        # 5. the barriers across the roads the lap does not take
 
         def base_of(x_, z_, ax, az):
             samples = []
@@ -864,6 +942,8 @@ def build(proj, cfg, decls):
         })
         if deck_rep is not None:
             built[-1]["deck_fill"] = deck_rep
+        if membrane is not None:
+            built[-1]["deck_fill"] = dict(membrane, fill="membrane")
         if hold is not None:
             # the held band (hold_beyond_lane): the deck past the lap's lane edge on that side, from the in-cut to the
             # out-cut, out to HELD_BAND_M past the edge: where the deck runs under the wall's foot (audit_mesh D reads
@@ -882,6 +962,55 @@ def build(proj, cfg, decls):
              f"{built[-1]['seam_residual_m']['max']} m; {widened} ribbon-edge points, {united * 0.0625:.1f} m2 of this line's ribbon united; {len(arm_rows)} street arm row(s) {[m_['piece'] for m_ in arm_meta]}; ground {held}; {len(bars)} mouth barrier(s) ({along_lap} box runs along the lap skipped) "
              f"{[b['span_m'] for b in bars]} m")
     return built
+
+
+MEMBRANE_TOL_M = 1e-5       # [invented] the Gauss-Seidel sweeps stop when no free vertex moves more than this
+MEMBRANE_MAX_SWEEPS = 20000
+MEMBRANE_SOR = 1.7          # [invented] over-relaxation (1 = plain Gauss-Seidel; the same fixed point, fewer sweeps)
+
+
+def membrane_fill(verts3, faces, seam_xy, ribbon_bvh):
+    """lm_pads.deck.fill "membrane" (see the call): pinned = a seam row's vertex (seam_xy) or a vertex over the lap's own
+    removed ribbon (ribbon_bvh, its height there); free = the rest, each the mean of its edge neighbours until no vertex
+    moves MEMBRANE_TOL_M (successive over-relaxation, MEMBRANE_SOR). Returns (verts3, report). Pure but for the BVH"""
+    n = len(verts3)
+    nb = [set() for _ in range(n)]
+    for f in faces:
+        for i in range(len(f)):
+            a, b = f[i], f[(i + 1) % len(f)]
+            nb[a].add(b)
+            nb[b].add(a)
+    z = [v[2] for v in verts3]
+    pinned = [False] * n
+    on_ribbon = 0
+    for i, (x, y, _z) in enumerate(verts3):
+        if (round(x, 3), round(y, 3)) in seam_xy:
+            pinned[i] = True
+            continue
+        if ribbon_bvh is not None:
+            hit = ribbon_bvh.ray_cast(Vector((x, y, 1e4)), Vector((0.0, 0.0, -1.0)))
+            if hit[0] is not None:
+                z[i] = hit[0].z
+                pinned[i] = True
+                on_ribbon += 1
+    free = [i for i in range(n) if not pinned[i] and nb[i]]
+    if not any(pinned):
+        raise SystemExit("[lm-pads] FATAL: deck membrane: nothing pins the deck (no seam row, no lap ribbon under it)")
+    z0 = list(z)
+    sweeps, worst = 0, math.inf
+    while sweeps < MEMBRANE_MAX_SWEEPS and worst > MEMBRANE_TOL_M:
+        worst = 0.0
+        for i in free:
+            v = sum(z[j] for j in nb[i]) / len(nb[i])
+            worst = max(worst, abs(v - z[i]))
+            z[i] += MEMBRANE_SOR * (v - z[i])
+        sweeps += 1
+    if worst > MEMBRANE_TOL_M:
+        raise SystemExit(f"[lm-pads] FATAL: deck membrane did not settle in {sweeps} sweeps ({worst:.2e} m)")
+    moved = [abs(z[i] - z0[i]) for i in free]
+    rep = {"pinned_seam": sum(1 for i in range(n) if pinned[i]) - on_ribbon, "pinned_ribbon": on_ribbon,
+           "free": len(free), "sweeps": sweeps, "moved_from_deck_z_max_m": round(max(moved), 3) if moved else 0.0}
+    return [(v[0], v[1], z[i]) for i, v in enumerate(verts3)], rep
 
 
 def exemptions(proj, built):

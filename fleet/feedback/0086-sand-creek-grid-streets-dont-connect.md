@@ -339,3 +339,68 @@ the grid 60 m inside the source heightfield's north edge (lat 39.798823, local z
 ```
 python -I tools/sc_disconnects.py --project tracks/sand-creek-lm --obj <workshop>/data/track.obj --osm tracks/sand-creek/data/osm.widths.cache.json --out <dir>
 ```
+
+
+## PC, 2026-11-22: the owed list measured on 0.2.8, and what claude/sc-finish-pc-20261122 builds (NOT rehearsed yet)
+
+The Mac's job for the PC (Kevin's calls-1122 go; row finish-sc): items 3-4 of "Owed after 0.2.7". Measured read-only on
+the installed 0.2.8 workshop (`D:/k10-scratch/sand_creek_lm`, gate OBJ `data/track.obj`); scratch `D:/k10-scratch/scpc_diag`.
+
+**road_over_ground on 0.2.8** (`mouth_survey --rog`, 3 min 42 s): 14 / 12,956 over 0.05 m (0.2.7: 17), 4 in a mouth's corner.
+- 7 are at the two parked pads, which this branch builds (ledger 0079, 2026-11-22):
+  - sandcreek_quebec (the I-70 bridge joins, owed item 4): 78#0 end 0.241, 84#0#0 start 0.166, grid_residential_26#0
+    0.161 / 0.155.
+  - dahlia_56th: 35#0 end 0.205 / 0.194 (corner lo), grid_residential_29#1 0.161.
+- grid_primary_7#0 (owed): 0.295, 0.221, 0.083.
+  - It is NOT ground under a deck. Every surface over (1857.65, 44.08): 7's edge strip 20.217, a second edge strip 19.925,
+    grass 19.905.
+  - Quebec's two carriageways (6 / 7) each drop their no-curb strip into the 1.75-2 m raised median round Q measured, and
+    the two strips overlap there.
+  - The fix is the median itself (finish-sc "Quebec north of the lap with its raised median"), not a deck edge. Not built here.
+- The pad deck edges:
+  - 48th_colorado's 0.055 is gone on 0.2.8.
+  - colorado_50th reads 0.054 (0.2.7: 0.217). 0.2.8's flush mainline strip took most of both.
+  - 50th_dahlia reads 0.152 at (-751.05, 55.68):
+    - The deck at 22.175 runs ~0.7 m out over the lap's edge strip.
+    - The ground under that overhang is pulled down to the strip's lip (22.005; 0.7 m either side it reads 22.155 under
+      the deck and 22.025 on the strip).
+    - Owed: an lm_pads outline / ground_edge change. Not built blind.
+- 43#0#0 start corner hi 0.109 (allowed row), tertiary_4#0#1 end 0.061.
+
+**verify_mouth_corners on 0.2.8**: 19 allowed rows fail (0.2.7's list less two).
+- grid_secondary_39#0 start and grid_primary_11#0#0 end now PASS: 0.2.8's flush mainline edge. Their allowed rows are unused.
+- Four of the 19 are the unparked pads' mouths (35#0 end, 78#0 end, 84#0#0 start; 84#0#0 end is the bridge's own fork).
+
+**Why the "0-2 rows to fit" corners were skipped, measured.** tools/mouth_returns_blend.py fits the street's edge on rows
+8-22 m out and past the weld's re-spread. A re-spread longer than 22 m leaves nothing to fit. Re-spreads:
+- grid_primary_7#0 start: 41 rows (the 2 deg fork with 6).
+- grid_tertiary_5#0#0 start: 10 rows (18.6 deg).
+- grid_tertiary_74#0 start / end: 10 / 9 rows (24 deg).
+- grid_residential_29#2 start: 7 rows (26.6 deg).
+- grid_unclassified_105#0 end: 6 rows (29.6 deg).
+- 43#0#0 start, 49#0#0 end, residential_19#0 start: 5 rows each.
+- The 27/65 crossing is shorter than the fit, 13 m.
+
+An offline replica of the K step on 0.2.8's dumped rows (`scpc_diag/proto_fit.py`, rows from a copy of loop.blend)
+reproduces all 195 built corners exactly. Fitting on the 14 m past the re-spread:
+- **Lands within 1 m** of the street's own edge at its cut: residential_19 x2 (0.49 / 0.50 m), residential_29#2 x2
+  (0.89 / 0.38 m).
+- **Misses by metres**, so a round corner there would be invented: 7 (72.9: the fork), 43 (35.6 / 12.1), tertiary_5
+  (4.9 / 19.7), tertiary_74 (5.3 / 4.5), 105 (2.3 / 6.2).
+- **Built (69efb0a7)**: `route.mouth_returns_fit {"past_respread": true}`, opt-in. It builds the corner only when the line
+  lands within FIT_PAST_K_MAX_M 1.0 m [invented]. The rest stay skipped, with their allowed rows and these readings.
+
+**The E 56th mouth (grid_primary_80#0 end, v847).** The lap there is the one-lane E 56th slip (5.5 m, route.corner_flare_off's
+merge), on a ramp:
+- grade -0.5 % at v835, -4.1 % at v844, -3.7 % at v847, -0.5 % at v853;
+- grid_primary_80 is E 56th itself leaving it.
+
+A fork on a sag, not a side street. m7a's returns made its mouth line 0.072 -> 0.139 m. Kept on its skip and allowed rows;
+owed (a fork treatment).
+
+**Street-name posts nb17 / nb28** (skipped on 0.2.8: "no clear base within 6.0 m (on pavement)"):
+- nb17: E 44th Ave (grid_secondary_39) is a 27 m divided street. +8..+14 m along the lap lands on its carriageways.
+- nb28: +7.75..+13.75 m lies on 48th_colorado's deck and grid_primary_52.
+- Measured on 0.2.8's gate OBJ with the author's rule (ROAD = pavement, KERB = ground, >= 1.0 m from ROAD, lamp >= 3 m).
+  The same search puts nb19 at 12.0 and nb27 at -8.75; they stand at 12.0 / -8.5.
+- Result: nb17 along -5.0, nb28 along -10.5 (source/name_blades.json, 803c6cb7).

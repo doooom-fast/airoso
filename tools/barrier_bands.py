@@ -420,7 +420,12 @@ def build(project_dir, out_name: str | None = None, config_path=None, *, planned
 
     # ---- zones (declared) ----------------------------------------------------------------------------
     try:
-        whole = (int(cor_cfg["whole"][0]) % m, int(cor_cfg["whole"][1]) % m)
+        # ledger 0055 round 2 (Lake Murray's College split, opt-in): whole may be SEVERAL intervals, [[i, j], [i, j]]: a
+        # stretch of whole street that is no corner's box (a carriageway that IS the whole road). One interval [i, j]
+        # = exactly as before, in every output.
+        _w = cor_cfg["whole"]
+        wholes = [(int(a) % m, int(b) % m) for a, b in (_w if isinstance(_w[0], (list, tuple)) else [_w])]
+        whole = wholes[0]
         boxes = [{"apex": int(b["apex"]), "i": int(b["i"]) % m, "j": int(b["j"]) % m} for b in cor_cfg.get("boxes", [])]
         pinned = [(int(a) % m, int(b) % m) for a, b in cor_cfg["closure_runs"]]
     except (KeyError, TypeError, ValueError, IndexError) as e:
@@ -428,11 +433,14 @@ def build(project_dir, out_name: str | None = None, config_path=None, *, planned
     # race.corridor.whole_lap (opt-in, ledger 0079 round K; Sand Creek): the race is the whole street round the whole lap —
     # no box, no closure run; echoed in params so race_furniture / check_race_kn5 accept a layout with no closure line
     whole_lap = bool(cor_cfg.get("whole_lap"))
-    if whole_lap and (boxes or pinned or not all(_RC.in_rng(v, whole[0], whole[1], m) for v in range(m))):
+    if whole_lap and (boxes or pinned or not all(any(_RC.in_rng(v, a_, b_, m) for a_, b_ in wholes) for v in range(m))):
         fails.append("race.corridor.whole_lap: whole must cover every vertex, with no boxes and no closure_runs")
 
+    def in_whole(v):
+        return any(_RC.in_rng(v, a_, b_, m) for a_, b_ in wholes)
+
     def free(v):
-        return _RC.in_rng(v, whole[0], whole[1], m) or any(_RC.in_rng(v, b["i"], b["j"], m) for b in boxes)
+        return in_whole(v) or any(_RC.in_rng(v, b["i"], b["j"], m) for b in boxes)
 
     # ---- the Alvarado re-measure (clear width = what the driver gets on Alvarado as raced) ---------------
     src = str(cor_cfg.get("clear_width_source", "")).strip().lower()
@@ -490,7 +498,7 @@ def build(project_dir, out_name: str | None = None, config_path=None, *, planned
         walls, ch_lane, ch_fails = _apply_chicanes(sol, mine, direction, pts, widths, m, st, edge_inset, bhalf, P)
         fails += [f"chicanes {lid}: {f_}" for f_ in ch_fails]
         corridors[lid] = _corridor_record(lid, tok, direction, sol, ctx, P, pts, widths, n, m, st, street_at,
-                                          edge_inset, bhalf, strip_c, whole, chicane_lane=ch_lane,
+                                          edge_inset, bhalf, strip_c, wholes, chicane_lane=ch_lane,
                                           **({"noses": noses} if noses else {}))
         _chicane_record(corridors[lid], walls, mine, direction, pts, widths, n, m, st, edge_inset, bhalf, P)
 
@@ -638,7 +646,7 @@ def build(project_dir, out_name: str | None = None, config_path=None, *, planned
             **({"pad_corners": pad_corners} if pad_corners else {}),
             **({"whole_lap": True} if whole_lap else {}),
         },
-        "zones": {"whole": [whole[0], whole[1]], "boxes": boxes, "closure_runs": [list(r) for r in pinned],
+        "zones": {"whole": [whole[0], whole[1]] if len(wholes) == 1 else [list(w_) for w_ in wholes], "boxes": boxes, "closure_runs": [list(r) for r in pinned],
                   "island_zones": [list(z) for z in ctx["island_zones"]], "openings": [list(z) for z in ctx["openings"]]},
         "centre_w_by_vertex": [0.0] * n,
         "edge_strip_by_vertex": edge_strip,
@@ -665,7 +673,7 @@ def build(project_dir, out_name: str | None = None, config_path=None, *, planned
                               "source_by_vertex maps it back to its source line); the race layouts on it: "
                               + ", ".join(str(lo.get("id")) for lo in race_layouts)}
     vctx = {"pts": pts, "widths": widths, "island_w": island_w, "half_auth": half_auth, "m": m, "n": n, "st": st,
-            "params": P, "free": free, "whole": whole, "boxes": boxes, "pinned": pinned, "corners": corners,
+            "params": P, "free": free, "whole": whole, "in_whole": in_whole, "boxes": boxes, "pinned": pinned, "corners": corners,
             "corner_by_apex": corner_by_apex, "removed": removed, "layouts": race_layouts, "cfg": cfg,
             "edge_inset": edge_inset, "bhalf": bhalf, "strip_c": strip_c}
     if ctx.get("island_off") is not None:
@@ -749,7 +757,7 @@ def _corridor_record(lid, tok, direction, sol, ctx, P, pts, widths, n, m, st, st
         elif y[v] is not None:
             zone.append("island" if half_auth[v] > 0 else "closure")
         else:
-            zone.append("whole" if _RC.in_rng(v, whole[0], whole[1], m) else "box")
+            zone.append("whole" if any(_RC.in_rng(v, a_, b_, m) for a_, b_ in whole) else "box")   # whole: every interval
     nose_pin = {nz["pin"]: nz for nz in (noses or []) if nz["pin"] in pins}
     lane = _RC.lane_by_vertex(y, widths, m, "acw" if reverse else "cw", inset=inset, half=bhalf,
                               pins=pins - set(nose_pin) if nose_pin else pins)
@@ -1679,6 +1687,7 @@ def validate(out: dict, ctx: dict) -> list[str]:
     inset, bhalf, strip_c = ctx["edge_inset"], ctx["bhalf"], ctx["strip_c"]
     pts = ctx["pts"]
     whole, boxes, pinned, free = ctx["whole"], ctx["boxes"], ctx["pinned"], ctx["free"]
+    in_whole = ctx["in_whole"]
     corridors = out.get("corridors") or {}
     removed = ctx["removed"]
 
@@ -1700,11 +1709,10 @@ def validate(out: dict, ctx: dict) -> list[str]:
         if not (_RC.in_rng(c["PC"], b["i"], b["j"], m) and _RC.in_rng(c["PT"], b["i"], b["j"], m)
                 and _RC.in_rng(c["apex"], b["i"], b["j"], m)):
             fails.append(f"zones: box v{b['i']}-v{b['j']} does not hold its corner's arc PC v{c['PC']} .. PT v{c['PT']}")
-        if _RC.in_rng(b["i"], whole[0], whole[1], m) or _RC.in_rng(b["j"], whole[0], whole[1], m):
+        if in_whole(b["i"]) or in_whole(b["j"]):
             fails.append(f"zones: box v{b['i']}-v{b['j']} overlaps the whole-street zone")
     for c in ctx["corners"]:
-        if _RC.in_rng(c["apex"], whole[0], whole[1], m) and not (
-                _RC.in_rng(c["PC"], whole[0], whole[1], m) and _RC.in_rng(c["PT"], whole[0], whole[1], m)):
+        if in_whole(c["apex"]) and not (in_whole(c["PC"]) and in_whole(c["PT"])):
             fails.append(f"zones: the whole-street zone holds corner v{c['apex']} but not its arc PC v{c['PC']} .. PT v{c['PT']}")
     derived = []
     v = 0
@@ -1753,9 +1761,9 @@ def validate(out: dict, ctx: dict) -> list[str]:
             elif fr:
                 if y[k] is not None:
                     fails.append(f"zones {lid}: a closure stands at v{k} inside the "
-                                 f"{'whole-street zone' if _RC.in_rng(k, whole[0], whole[1], m) else 'open box'}")
+                                 f"{'whole-street zone' if in_whole(k) else 'open box'}")
                     break
-                want = "whole" if _RC.in_rng(k, whole[0], whole[1], m) else "box"
+                want = "whole" if in_whole(k) else "box"
                 if zn[k] != want:
                     fails.append(f"zones {lid}: v{k} zone {zn[k]!r}, expected {want!r}")
                     break
@@ -2047,7 +2055,8 @@ def _report(proj, out, fails):
           f"{len(out['closed_mouths'])} sealed mouths; clear width {out['params']['corridor']['clear_width_m']} m "
           f"(measured {out['params']['corridor']['clear_width_measured_m']})")
     z = out["zones"]
-    print(f"[bands]   whole v{z['whole'][0]}->v{z['whole'][1]}; boxes {[(b['i'], b['j']) for b in z['boxes']]}; "
+    _wz = z["whole"] if isinstance(z["whole"][0], list) else [z["whole"]]
+    print(f"[bands]   whole {', '.join(f'v{a_}->v{b_}' for a_, b_ in _wz)}; boxes {[(b['i'], b['j']) for b in z['boxes']]}; "
           f"closure runs {z['closure_runs']}; openings {z['openings']}")
     for lid, c in out["corridors"].items():
         L = s["layouts"][lid]

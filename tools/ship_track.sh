@@ -30,7 +30,9 @@
 #
 # Per track, from data, never from this script:
 #   tracks/<track>/ship.json        workshop root + project folder, the steps, what syncs in and out, the
-#                                   installed name prefix (tools/ship_track_spec.py has the schema)
+#                                   installed name prefix (tools/ship_track_spec.py has the schema); sync_in.seed
+#                                   (opt-in, ledger 0099): files copied only into a project that lacks them — a
+#                                   seeded loop.blend lets an EMPTY workshop resume with --skip-blend
 #   track.config.json slug          every file name inside (<slug>.kn5, <slug>_race.kn5, ...)
 #   track.config.json install_folder  the folder the install writes under content/tracks (plan A11)
 #   track.config.json layouts[]     every per-layout step; race stages run only for race_furniture layouts
@@ -126,6 +128,24 @@ if [ -n "${SHIP_SPEC:-}" ]; then REHEARSAL=1; else REHEARSAL=0; fi
 ENGINE=""
 
 step() { echo; echo "=================== $1"; }
+# bl_filtered <grep BRE> <blender args...>: a Blender step's output filtered to its own lines (as `2>&1 | grep` did), and
+# on a failure its error output too, which a prefix filter can hide (2026-11-23: the lm_pads step's filter hid draft_pads'
+# "[pads] the outline crosses itself through a seam row", so Sand Creek 0.2.9's rehearsal log ended on the last [lm-pads]
+# line with EXIT 1 and no cause). stderr is kept apart: a SystemExit's message goes there unbuffered, ahead of the
+# buffered stdout, so a tail of the merged output missed it. Blender's own start-up noise is left out. Returns Blender's status
+bl_filtered() {
+  local pat="$1"; shift
+  local out err rc=0
+  out="$(mktemp)"; err="$(mktemp)"
+  "$BL" "$@" > "$out" 2> "$err" || rc=$?
+  cat "$out" "$err" | grep "$pat" || true
+  if [ "$rc" -ne 0 ]; then
+    echo "[step] FAILED (exit $rc); its error output:"
+    grep -v "^Read prefs\|^Read blend\|^register_class\|^Warning: '.*' does not contain\|^Blender \|^$" "$err" | tail -12 || true
+  fi
+  rm -f "$out" "$err"
+  return "$rc"
+}
 pyq() { (cd "$AIROSO" && python -c "$@"); }
 # a python that imports every module named, for the plain-python steps that need numpy (ledger 0092: tools/lidar_ground_patch.py
 # --npz, numpy; tools/plan_grassfx_aerial.py's refined path, numpy + PIL; the PC's system python has no numpy, and Milford
@@ -385,7 +405,7 @@ draft_cutfill() {
 }
 draft_lm_pads() {
   step "author: the lap's junction pads, the mainline arm (tools/lm_pads_blend.py: the lap cut at two rows, the measured deck, K-rails across the roads not taken; ledger 0078; self-checked; none declared = no-op)"
-  (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/lm_pads_blend.py" -- "$PROJ" 2>&1 | grep "^\[lm-pads\]\|FATAL\|Error\|Traceback" )
+  (cd "$WS" && bl_filtered "^\[lm-pads\]\|FATAL\|Error\|Traceback" --background --python-exit-code 1 --python "$AIROSO/tools/lm_pads_blend.py" -- "$PROJ" )
 }
 draft_split_strip() {
   step "author: a long lap's edge strip cut along the line under AC's vertex cap (tools/split_strip_blend.py; ledger 0078; under the cap = no-op)"
@@ -573,6 +593,56 @@ author_race_verify() {
   (cd "$AIROSO" && python tools/plot_race_furniture.py "$PROJ" | tail -3)   # data/race_plots/*.png
 }
 
+author_college_split() {
+  # ledger 0055 round 2 (Kevin: "realism+"; Lake Murray, opt-in route.college_split): College Avenue between rows v1130 and
+  # v1476 as two roads. The track's own step (tracks/<track>/source/college_r2). The data first: college_split_data.py
+  # --chain puts the mainline on the southbound road, makes the northbound road a connector, takes the island off those
+  # rows, raises the east lamps and widens the released zone; what it computes from the project must BE the committed
+  # college_split.data.json (the scene scripts read that file), and a project whose data already carries the split (seeded
+  # from a College build) is verified and left as it is. Then three edits of loop.blend, each self-checked (exit 1 = not
+  # saved) and a no-op on a scene that already carries it: the two ribbons, the middle (the old island out; the bank's
+  # island and grass top, the east walk, the paint in), the ground and the east lamps. FIRST in the author phase:
+  # walk_grade and the race steps author on the roads as they ship. Key absent = no-op, nothing read. Only a ship.json
+  # that names it
+  step "author: College Avenue as two roads (source/college_r2: the data held to the committed split, then the ribbons, the middle and the ground into loop.blend; ledger 0055 round 2; self-checked; not opted in = no-op)"
+  local on s r2="$SRC/source/college_r2"
+  on=$(pyq "import json,sys; print(1 if (json.load(open(sys.argv[1],encoding='utf-8')).get('route') or {}).get('college_split') else 0)" "$PROJ/track.config.json" | tr -d '\r')
+  [ "$on" = 1 ] || { echo "  (route.college_split not declared: nothing to do)"; return 0; }
+  (cd "$AIROSO" && python "$r2/college_split_data.py" "$PROJ" --chain)
+  for s in split middle ground; do
+    (cd "$WS" && "$BL" --background "$PROJ/loop.blend" --python-exit-code 1 --python "$r2/college_${s}_blend.py" 2>&1 | grep "^\[college_${s}\]\|FATAL\|Error\|Traceback" )
+  done
+}
+
+author_median_tops() {
+  # ledger 0055, "Known defect" (the Mac 2026-11-23: option (a); Lake Murray, opt-in route.median_tops): every raised median
+  # showed the road's asphalt between its curbs, because the median tool's grass top is part of TERRAIN and the prep (the
+  # engine's, not changed) sets every 1GRASS vertex that has pavement under it to the deck less 0.02 m. The top of every
+  # island is moved, face for face, out of TERRAIN into route.median_tops.object (1LAWN_...: in AC the name is the surface
+  # and picks the material; track.config.json lawn_as_grass gives the LAWN key GRASS's own values). After college_split
+  # (which rebuilds College's islands), before every step that reads the scene. Key absent = no-op, the blend not opened.
+  # Only a ship.json that names it
+  step "author: every median's grass top into its own object (tools/author_median_tops_blend.py: out of TERRAIN, which the prep pins under the road; ledger 0055; self-checked; not opted in = no-op)"
+  (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_median_tops_blend.py" -- "$PROJ" 2>&1 | grep "^\[median-tops\]\|FATAL\|Error\|Traceback" )
+}
+
+author_lamp_heads() {
+  # ledger 0099 (Kevin 2026-11-22: "Yes, light both heads"; opt-in scenery.streetlights.light_both_heads): every two-arm lamp's
+  # back head gets its lens (LIGHTS_back, each LIGHTS_0 lens turned about its own pole), so ext_config clusters a second CSP
+  # light per lamp and check_lights_ini wants both; key absent = no-op, the blend not saved. Only a ship.json that names it
+  step "author: the back head of every two-arm lamp lit (tools/author_lamp_heads_blend.py: LIGHTS_back, one lens per back head; ledger 0099; self-checked; not opted in = no-op)"
+  (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_lamp_heads_blend.py" -- "$PROJ" 2>&1 | grep "^\[heads\]\|FATAL\|Error\|Traceback" )
+}
+
+author_walk_grade() {
+  # ledger 0099 round 1c (the street drops; opt-in route.walk_back_grade): the draft's walk falls 0.34 m over its 1.2 m back
+  # grade, which drive_test's excursion sweep reads as a 0.142 m drop every 0.5 m (94 of Lake Murray's 96 street drops);
+  # every back-grade lip is raised to the declared max_slope, nothing else moves. Key absent = no-op, the blend not saved.
+  # Only a ship.json that names it
+  step "author: the street walk's back grade no steeper than route.walk_back_grade (tools/author_walk_grade_blend.py: every lip raised, nothing else moves; ledger 0099; self-checked; not opted in = no-op)"
+  (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_walk_grade_blend.py" -- "$PROJ" 2>&1 | grep "^\[walk-grade\]\|FATAL\|Error\|Traceback" )
+}
+
 author_draft_pads() {
   step "author: engine-draft junction pads -> AUTH_pads (tools/author_draft_pads_blend.py: the lap cut at each pad's two rows, one deck to the measured outline in source/pads/<id>.json, the ground under it; self-checked; none declared = no-op)"
   (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_draft_pads_blend.py" -- "$PROJ" 2>&1 | grep "^\[pads\]\|Error\|Traceback" )
@@ -674,6 +744,16 @@ prep_prep() {
   if [ -f "$PROJ/data/red_repairs.plan.json" ]; then
     step "ship: red repairs (tools/red_repairs_blend.py: the named kerb faces, the named ground slivers; self-checked)"
     "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/red_repairs_blend.py" -- "$PROJ/blender/$SLUG.blend" --project "$PROJ" 2>&1 | grep "^\[red\]\|Error\|Traceback"
+  fi
+  # ledger 0099 round 1c (opt-in route.walk_back_grade, as the author step walk_grade): the ground is final only here, so a
+  # raised walk lip standing over the prepped ground (a fill, where the prep's feather falls away 3 m out) is lowered onto
+  # it, never past the draft's own back grade, never raised. After the red repairs (they match kerb vertices by place); no
+  # key = no header, nothing runs. Part of prep (steps.prep stays prep, split); exit 1 = the blend not saved
+  rm -f "$PROJ/data/walk_grade.seat.json"
+  if [ "$(pyq "import json,sys; print(bool((json.load(open(sys.argv[1],encoding='utf-8')).get('route') or {}).get('walk_back_grade')))" "$PROJ/track.config.json" | tr -d '\r')" = "True" ]; then
+    step "ship: the walk's raised lips seated on the prepped ground (tools/author_walk_grade_blend.py --seat: none over the ground, none past the draft's grade; ledger 0099; self-checked)"
+    "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_walk_grade_blend.py" -- "$PROJ/blender/$SLUG.blend" --project "$PROJ" --seat 2>&1 | grep "^\[walk-grade\]\|FATAL\|Error\|Traceback"
+    [ "${PIPESTATUS[0]}" = 0 ] || { echo "author_walk_grade_blend --seat failed"; exit 1; }
   fi
   # ledger 0081 round 2: bespoke pads re-laid on the PREPPED ground's own triangles (Nevada's apron sat under the ground the
   # prep re-seated); only a config that sets scenery.bespoke.pads_seat "ground", no header otherwise (Lake Murray's chain is
@@ -1096,7 +1176,7 @@ is_data_step() {
 SPEC_LINES=$(cd "$AIROSO" && python tools/ship_track_spec.py "$SPEC" "$TRACK") || { echo "ship.json refused (above): $SPEC"; exit 2; }
 WS=""; WS_SUB=""; REQUIRE_RACE=0; UI_PREFIX=""; AUDIT_NOTE=""; JULY_AI=""; SPEC_ENGINE="airoso"
 DRAFT=(); AUTHOR=(); PREP=(); SHIP=(); GATE=()
-IN_REQ=(); IN_OPT=(); IN_GLOB=(); IN_DIR=(); IN_ASSET=()
+IN_REQ=(); IN_OPT=(); IN_GLOB=(); IN_DIR=(); IN_ASSET=(); IN_SEED=()
 OUT_REQ=(); OUT_FILE=(); OUT_DIR=(); OUT_RM=(); OUT_MAP_FROM=(); OUT_MAP_TO=()
 while IFS=$'\t' read -r k v w; do
   v="${v%$'\r'}"; w="${w%$'\r'}"
@@ -1118,6 +1198,7 @@ while IFS=$'\t' read -r k v w; do
     in.globs) IN_GLOB+=("$v");;
     in.dirs) IN_DIR+=("$v");;
     in.assets) IN_ASSET+=("$v");;
+    in.seed) IN_SEED+=("$v");;
     out.required) OUT_REQ+=("$v");;
     out.files) OUT_FILE+=("$v");;
     out.dirs) OUT_DIR+=("$v");;
@@ -1205,7 +1286,16 @@ blend_builder_ready() {
   esac; done
   return 1
 }
-if [ "$DRAFT_ONLY" = 0 ] && [ ! -f "$PROJ/loop.blend" ] && ! blend_builder_ready; then
+# ledger 0099 (opt-in, ship.json sync_in.seed): a seeded loop.blend is a blend — the sync-in below copies airoso's
+# committed one into a project that has none (Lake Murray: the hand-authored blend no draft may regenerate)
+seed_blend_ready() {
+  local f
+  for f in ${IN_SEED[@]+"${IN_SEED[@]}"}; do
+    [ "$f" = "loop.blend" ] && [ -f "$SRC/loop.blend" ] && return 0
+  done
+  return 1
+}
+if [ "$DRAFT_ONLY" = 0 ] && [ ! -f "$PROJ/loop.blend" ] && ! seed_blend_ready && ! blend_builder_ready; then
   echo; echo "no blend yet: $PROJ/loop.blend does not exist and nothing in this run can build it"
   if [ "$SKIP_BLEND" = 1 ]; then echo "  (--skip-blend resumes from an authored loop.blend)"
   elif [ -n "$FROM" ]; then echo "  (--from $FROM resumes past the draft; the draft that builds the blend ran in no earlier run)"
@@ -1249,6 +1339,26 @@ for f in ${IN_ASSET[@]+"${IN_ASSET[@]}"}; do
   [ -f "$AIROSO/$f" ] || { echo "ship.json sync_in.assets names $f but airoso has no $AIROSO/$f"; exit 1; }
   mkdir -p "$(dirname "$PROJ/$f")"; cp "$AIROSO/$f" "$PROJ/$f"
 done
+# ledger 0099 (opt-in, ship.json sync_in.seed): what an EMPTY workshop lacks and airoso holds — copied only where the project
+# has no file yet, never over a workshop's own; every seed must exist in airoso and none may be a Git LFS pointer (an
+# un-pulled loop.blend is 130 bytes of text: the prep would open no blend)
+if [ ${#IN_SEED[@]} -gt 0 ]; then
+  n_seeded=0; n_kept=0; n_differ=0
+  for f in "${IN_SEED[@]}"; do
+    [ -f "$SRC/$f" ] || { echo "ship.json sync_in.seed names $f but airoso has no $SRC/$f"; exit 1; }
+    sig=""; IFS= read -r -n 23 sig < "$SRC/$f" || true      # the pointer's first 23 bytes (read, not a pipe: NUL-safe)
+    if [ "$sig" = "version https://git-lfs" ]; then
+      echo "ship.json sync_in.seed: $SRC/$f is a Git LFS pointer, not the file (run git lfs pull in airoso)"; exit 1
+    fi
+    if [ -e "$PROJ/$f" ]; then
+      n_kept=$((n_kept + 1))
+      if ! cmp -s "$SRC/$f" "$PROJ/$f"; then n_differ=$((n_differ + 1)); echo "  seed kept the workshop's own $f (it differs from airoso's)"; fi
+    else
+      mkdir -p "$(dirname "$PROJ/$f")"; cp "$SRC/$f" "$PROJ/$f"; n_seeded=$((n_seeded + 1))
+    fi
+  done
+  echo "  seeds: $n_seeded copied from airoso, $n_kept kept as the workshop had them ($n_differ of those differ from airoso's)"
+fi
 # the declared layouts drive every per-layout step below (never a hand-typed list)
 LAYOUT_IDS=$(pyq "import json,sys; d=json.load(open(sys.argv[1],encoding='utf-8')); print(' '.join(str(l['id']) for l in d['layouts']))" "$PROJ/track.config.json")
 RACE_IDS=$(pyq "import json,sys; d=json.load(open(sys.argv[1],encoding='utf-8')); print(' '.join(str(l['id']) for l in d['layouts'] if l.get('race_furniture')))" "$PROJ/track.config.json")

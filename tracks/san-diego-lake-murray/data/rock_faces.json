@@ -13,20 +13,20 @@
  },
  "texture": {
   "key": "1GRASS_ROCK",
-  "diffuse": "D:\\k10-scratch\\lm_v4_0201\\textures\\sandstone_cut_diffuse.jpg",
-  "normal": "D:\\k10-scratch\\lm_v4_0201\\textures\\sandstone_cut_normal.jpg",
+  "diffuse": "D:\\k10-scratch\\lm_line\\textures\\sandstone_cut_diffuse.jpg",
+  "normal": "D:\\k10-scratch\\lm_line\\textures\\sandstone_cut_normal.jpg",
   "overridden": true
  },
  "bands": 16,
- "faces_in_bands": 153901,
- "steep_under_pavement_left_grass": 5208,
- "rock_raw": 13731,
+ "faces_in_bands": 153984,
+ "steep_under_pavement_left_grass": 5213,
+ "rock_raw": 13729,
  "boundary_smoothing": {
-  "teeth_filled": 934,
+  "teeth_filled": 933,
   "teeth_eroded": 1682,
   "passes": 4,
   "teeth_before_grass_rock": [
-   380,
+   379,
    893
   ],
   "teeth_after_grass_rock": [
@@ -109,35 +109,29 @@
   "faces": 179,
   "components": 82
  },
- "patches_dropped": 3358,
+ "patches_dropped": 3354,
  "holes_filled": 0,
- "rock_faces": 9804,
- "rock_area_m2": 11935.7,
- "thin_triangles_in_bands_before_split": 1719,
+ "rock_faces": 9805,
+ "rock_area_m2": 11935.6,
+ "thin_triangles_in_bands_before_split": 1710,
  "meshes": [
   {
    "name": "1GRASS_ROCK_12",
    "from": "1GRASS_12",
-   "vertices": 885,
-   "faces": 1085
+   "vertices": 898,
+   "faces": 1098
   },
   {
    "name": "1GRASS_ROCK_13",
    "from": "1GRASS_13",
-   "vertices": 825,
-   "faces": 1054
+   "vertices": 741,
+   "faces": 943
   },
   {
    "name": "1GRASS_ROCK_14",
    "from": "1GRASS_14",
-   "vertices": 1449,
-   "faces": 1983
-  },
-  {
-   "name": "1GRASS_ROCK_2",
-   "from": "1GRASS_2",
-   "vertices": 44,
-   "faces": 50
+   "vertices": 1523,
+   "faces": 2082
   },
   {
    "name": "1GRASS_ROCK_4",
@@ -148,20 +142,20 @@
   {
    "name": "1GRASS_ROCK_5",
    "from": "1GRASS_5",
-   "vertices": 50,
-   "faces": 66
+   "vertices": 44,
+   "faces": 50
   },
   {
    "name": "1GRASS_ROCK_6",
    "from": "1GRASS_6",
-   "vertices": 1989,
-   "faces": 3123
+   "vertices": 1985,
+   "faces": 3124
   },
   {
    "name": "1GRASS_ROCK_7",
    "from": "1GRASS_7",
-   "vertices": 1330,
-   "faces": 1934
+   "vertices": 1388,
+   "faces": 1999
   }
  ],
  "zones": {
@@ -222,8 +216,8 @@
    "slope_max": 1.28
   },
   "auto_cut_D_right_25_1595": {
-   "faces": 4038,
-   "area_m2": 4181.2,
+   "faces": 4039,
+   "area_m2": 4181.1,
    "rise_max_m": 2.8,
    "slope_min": 0.34,
    "slope_max": 2.46

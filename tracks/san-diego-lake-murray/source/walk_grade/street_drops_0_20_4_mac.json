@@ -1,0 +1,103 @@
+{
+ "_doc": "ledger 0099 round 1c: every gated excursion drop of the street drive_test (scripts/geometry/drive_test.py, unchanged) with what it fell from and onto, engine frame (x east, y up, z north); offset + = left of travel. Read on the Mac stand-in gate OBJ (the split blends' meshes, scene -> engine frame), whose report equals the PC's 0.20.3 run A / 0090 proof data/drive_test.street.json key for key. 'from' / 'to': the surface owner of the sample before and at the drop.",
+ "build": "0.20.4 (seeded workshop + walk_grade + --seat, Mac stand-in)",
+ "gated": 8,
+ "rows": [
+  {
+   "s_m": 602.0,
+   "offset_m": -9.0,
+   "past_lane_edge_m": 2.5,
+   "drop_m": 0.127,
+   "x": -473.079,
+   "z": -1336.723,
+   "y": 12.116,
+   "from": "1KERB_sidewalk_0",
+   "to": "1KERB_sidewalk_0",
+   "class": "walk back grade, both samples on it"
+  },
+  {
+   "s_m": 1650.2,
+   "offset_m": 9.0,
+   "past_lane_edge_m": 2.5,
+   "drop_m": 0.142,
+   "x": -1488.561,
+   "z": -1078.041,
+   "y": 3.156,
+   "from": "1KERB_sidewalk_0",
+   "to": "1KERB_sidewalk_0",
+   "class": "walk back grade, both samples on it"
+  },
+  {
+   "s_m": 1800.4,
+   "offset_m": 9.0,
+   "past_lane_edge_m": 2.5,
+   "drop_m": 0.142,
+   "x": -1630.471,
+   "z": -1044.345,
+   "y": 2.108,
+   "from": "1KERB_sidewalk_0",
+   "to": "1KERB_sidewalk_0",
+   "class": "walk back grade, both samples on it"
+  },
+  {
+   "s_m": 1950.6,
+   "offset_m": 9.0,
+   "past_lane_edge_m": 2.5,
+   "drop_m": 0.142,
+   "x": -1778.729,
+   "z": -1049.958,
+   "y": 0.638,
+   "from": "1KERB_sidewalk_0",
+   "to": "1KERB_sidewalk_0",
+   "class": "walk back grade, both samples on it"
+  },
+  {
+   "s_m": 2100.3,
+   "offset_m": -13.0,
+   "past_lane_edge_m": 6.5,
+   "drop_m": 1.52,
+   "x": -1901.872,
+   "z": -1121.92,
+   "y": 3.826,
+   "from": "1GRASS_0",
+   "to": "1GRASS_0",
+   "class": "ground"
+  },
+  {
+   "s_m": 2402.7,
+   "offset_m": 15.0,
+   "past_lane_edge_m": 6.5,
+   "drop_m": 0.2,
+   "x": -1964.909,
+   "z": -1174.162,
+   "y": 6.025,
+   "from": "1GRASS_0",
+   "to": "1GRASS_0",
+   "class": "ground"
+  },
+  {
+   "s_m": 2402.7,
+   "offset_m": -11.0,
+   "past_lane_edge_m": 2.5,
+   "drop_m": 0.142,
+   "x": -1942.155,
+   "z": -1186.741,
+   "y": 6.336,
+   "from": "1KERB_sidewalk_0",
+   "to": "1KERB_sidewalk_0",
+   "class": "walk back grade, both samples on it"
+  },
+  {
+   "s_m": 5550.8,
+   "offset_m": 11.0,
+   "past_lane_edge_m": 2.5,
+   "drop_m": 0.12,
+   "x": -1232.787,
+   "z": 1282.565,
+   "y": 63.4,
+   "from": "1KERB_sidewalk_0",
+   "to": "1KERB_sidewalk_0",
+   "class": "walk back grade, both samples on it"
+  }
+ ]
+}

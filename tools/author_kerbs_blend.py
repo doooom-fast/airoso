@@ -31,6 +31,9 @@ active layer, UV_LAYER: engine-july's prep writes its top-down planar UVs into a
 made active), and the kn5 exporter writes the ACTIVE layer, so the stripe survives the prep. The texture is the track's
 (texture_overrides["1KERB"]; the ports carry no other 1KERB mesh). Self-check, exit 1 and loop.blend not saved: a run that keys to fewer than 2 rows.
 
+A run's "line" (opt-in, ledger 0097 round 4; High Plains' north loop): the run is keyed to that connector's rows (its name
+in data/connectors.local.json, the trimmed piece's) and laid on its ribbon exactly as a mainline run is; absent = the mainline.
+
 kerb.race_rule (opt-in, ledger 0079 round K; Sand Creek): no traced runs — tools/race_kerbs.py writes RACE_RULE_FILE by rule
 (apex + exit at each race corner), each run "edge": "ribbon" (in_m / out_m from this ribbon's own lane edge, no live edge);
 kerb.surface "road_and_pads" reads the ROAD ribbon and the junction pads' decks (1ROAD_pad_*) under every offset.
@@ -101,13 +104,16 @@ def main():
         bpy.data.objects.remove(ob, do_unlink=True)          # idempotent
     V = road.data.vertices
 
+    cur = ["MAINLINE"]       # the line a run is keyed to: the mainline, or (opt-in, a run's "line") a connector
+
     def row_pts(r):
-        L = V[mw.road_index(lay, "MAINLINE", r, 0)].co
-        C = V[mw.road_index(lay, "MAINLINE", r, 1)].co
-        R = V[mw.road_index(lay, "MAINLINE", r, 2)].co
+        L = V[mw.road_index(lay, cur[0], r, 0)].co
+        C = V[mw.road_index(lay, cur[0], r, 1)].co
+        R = V[mw.road_index(lay, cur[0], r, 2)].co
         return L, C, R                                         # Blender frame: x = E, y = N, z = up
 
     centres = [row_pts(r)[1] for r in range(rows)]
+    main_rows = (rows, closed, centres)
     # kerb.placement "measured" (opt-in, ledger 0081 round 2): each run at its measured place across THIS ribbon's lane
     # edge (tools/kerb_section.py), its base on the ROAD ribbon's own surface where it lies over the lane
     kcfg = cfg.get("kerb") or {}
@@ -142,6 +148,17 @@ def main():
 
     report = []
     for k, run in enumerate(K.get("kerbs", [])):
+        # ledger 0097 round 4 (opt-in, a run's "line": High Plains' north-loop kerbs): the run is keyed to that connector's
+        # rows (its name in data/connectors.local.json, e.g. full_north#0#0 after the trim) instead of the mainline's
+        cur[0] = run.get("line") or "MAINLINE"
+        if cur[0] == "MAINLINE":
+            rows, closed, centres = main_rows
+        else:
+            if cur[0] not in lay:
+                raise SystemExit(f"[kerbs] FATAL: run {k} names line {cur[0]!r}, not a line of this build "
+                                 f"({sorted(n for n in lay if not n.startswith('_'))})")
+            rows, closed = lay[cur[0]]["rows"], lay[cur[0]]["closed"]
+            centres = [row_pts(r)[1] for r in range(rows)]
         side = 0 if run["side"] == "left" else 2
         idx = []
         for lon, lat in run["edge_lonlat"]:
@@ -151,6 +168,8 @@ def main():
             raise SystemExit(f"[kerbs] FATAL: run {k} ({run['side']} s {run['s0']}-{run['s1']}) keys to {len(set(idx))} row(s)")
         a, b = idx[0], idx[-1]
         if closed and (b - a) % rows > rows // 2:
+            a, b = b, a
+        if run.get("line") and not closed and b < a:      # a connector's run traced against its direction (opt-in, round 4)
             a, b = b, a
         span = [(a + i) % rows for i in range(((b - a) % rows if closed else b - a) + 1)]
         paint = run.get("profile") == "paint"
@@ -243,6 +262,8 @@ def main():
         bpy.context.scene.collection.objects.link(ob)
         rec = {"k": k, "side": run["side"], "rows": len(span), "length_m": round(arc, 1), "width_m": round(w, 2),
                "profile": "paint" if paint else "kerb", "colour": run.get("colour")}
+        if run.get("line"):
+            rec["line"] = run["line"]                              # ledger 0097 round 4 (opt-in): a connector's run
         if measured:
             ds = sorted(deltas)
             rec.update({"s0": run.get("s0"), "s1": run.get("s1"), "in_m": k_in, "out_m": k_out,

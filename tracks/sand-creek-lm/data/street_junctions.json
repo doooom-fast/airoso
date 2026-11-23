@@ -608,9 +608,16 @@
  ],
  "ranked": [
   {
+   "piece": "grid_primary_6",
+   "hosts": [
+    "grid_primary_80#0"
+   ]
+  },
+  {
    "piece": "grid_primary_7",
    "hosts": [
-    "grid_primary_6"
+    "grid_primary_6",
+    "grid_primary_80#0"
    ]
   },
   {
@@ -626,9 +633,15 @@
    ]
   },
   {
+   "piece": "grid_primary_73",
+   "hosts": [
+    "grid_primary_71#0"
+   ]
+  },
+  {
    "piece": "grid_primary_84#0",
    "hosts": [
-    "grid_primary_78#0"
+    "grid_primary_78"
    ]
   },
   {
@@ -819,11 +832,11 @@
   {
    "piece": "grid_residential_34",
    "hosts": [
-    "grid_residential_22"
+    "grid_residential_22#0"
    ]
   },
   {
-   "piece": "grid_residential_12",
+   "piece": "grid_residential_12#0",
    "hosts": [
     "grid_residential_34"
    ]
@@ -831,51 +844,51 @@
   {
    "piece": "grid_unclassified_27#0",
    "hosts": [
-    "grid_residential_12"
+    "grid_residential_12#0"
    ]
   },
   {
    "piece": "grid_unclassified_28#0",
    "hosts": [
-    "grid_residential_12"
+    "grid_residential_12#0"
    ]
   },
   {
-   "piece": "grid_residential_19",
+   "piece": "grid_residential_19#0",
    "hosts": [
     "grid_residential_34"
    ]
   },
   {
-   "piece": "grid_residential_21",
+   "piece": "grid_residential_21#0",
    "hosts": [
     "grid_residential_34"
    ]
   },
   {
-   "piece": "grid_residential_24",
+   "piece": "grid_residential_24#0",
    "hosts": [
-    "grid_residential_22"
+    "grid_residential_22#0"
    ]
   },
   {
-   "piece": "grid_residential_26",
+   "piece": "grid_residential_29#0",
+   "hosts": [
+    "grid_residential_22#0",
+    "grid_residential_24#0"
+   ]
+  },
+  {
+   "piece": "grid_residential_26#0",
    "hosts": [
     "grid_tertiary_65#0"
    ]
   },
   {
-   "piece": "grid_residential_29",
+   "piece": "grid_residential_47#0",
    "hosts": [
-    "grid_residential_22",
-    "grid_residential_24"
-   ]
-  },
-  {
-   "piece": "grid_residential_47",
-   "hosts": [
-    "grid_residential_24",
-    "grid_residential_29"
+    "grid_residential_24#0",
+    "grid_residential_29#0"
    ]
   },
   {
@@ -887,7 +900,7 @@
   {
    "piece": "grid_residential_104",
    "hosts": [
-    "grid_residential_26"
+    "grid_residential_26#0"
    ]
   }
  ]

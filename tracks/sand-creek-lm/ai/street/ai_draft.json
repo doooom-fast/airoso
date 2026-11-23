@@ -8,7 +8,7 @@
  "points": 6427,
  "spacing_m": 1.5,
  "lap_m": 9641.0,
- "lap_s_est": 199.6,
+ "lap_s_est": 200.0,
  "offset_points": 45,
  "offset_max_m": 0.326,
  "clearance": {
@@ -21,8 +21,8 @@
   "divider_too_close": 0,
   "edge_too_close": 0,
   "min_divider_clear_m": null,
-  "min_edge_clear_m": 2.730588923427645,
-  "max_lat_m": 0.4642458457974369,
+  "min_edge_clear_m": 2.730882059844678,
+  "max_lat_m": 0.4643906846840707,
   "right_side_frac": null,
   "ok": true
  },
@@ -60,7 +60,7 @@
      71.43
     ],
     "radius_m": 12.6,
-    "floor_m": 11.34,
+    "floor_m": 11.35,
     "lane": "comfort",
     "window_pts": 11,
     "turn_deg": 70.6
@@ -135,10 +135,17 @@
   "max_turn_deg": 7.1,
   "turns_over_limit": 0,
   "turns_over_limit_road_tight": 0,
-  "max_lateral_jump_m": 0.169,
+  "max_lateral_jump_m": 0.168,
   "backward_steps": 0,
   "self_crossings": 0,
   "min_speed_kmh": 49.7,
   "min_speed_at": 826
+ },
+ "ai_0052": {
+  "opts": {
+   "fillet_split": true
+  },
+  "built": null,
+  "payload": null
  }
 }

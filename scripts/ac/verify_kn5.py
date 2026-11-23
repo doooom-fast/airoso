@@ -481,6 +481,52 @@ def _verify_spawn_kn5(lo: dict, spk: Path, dummies_p: Path, road: list, line: _L
         prev = a
 
 
+def _verify_race_start_spawn(project: Path, cfg: dict, lo: dict, spk: Path, dummies_p: Path, road: list,
+                             fails: list) -> None:
+    """(ledger 0097 round 3, opt-in: track.config.json race_start.layouts) a multi-layout CIRCUIT whose layouts all start at
+    the declared line (tools/circuit_dummies_blend.py writes each data/dummies_<id>.json): each layout's nodes-only spawn kn5
+    judged as the single-layout circuit's road kn5 is (race_start_checks, the same thresholds) on THAT layout's own line
+    (data/centerline.local.json, or the lap it names) — the grid stands on both sides of the line, so the street rule (d)
+    "right of travel" is race_start_checks' ROAD row here — plus (b) the declared set and the on-road drop check every spawn
+    kn5 gets"""
+    from scripts.geometry import circuit_start as cs
+    from scripts.geometry import race_lap
+    lid = str(lo.get("id"))
+    snodes, smeshes, _m = _parse_full(spk)
+    if smeshes:
+        fails.append(f"spawn kn5 '{spk.name}' carries {len(smeshes)} mesh(es) — a spawn kn5 is nodes only")
+    ac = {n: p for n, p, _z in snodes if n.upper().startswith("AC_")}
+    if not dummies_p.exists():
+        fails.append(f"layout {lid}: race_start.layouts names it but there is no data/{dummies_p.name}")
+        return
+    declared = {k for k in json.loads(dummies_p.read_text(encoding="utf-8")) if not k.startswith("_")}
+    missing, extra = sorted(declared - set(ac)), sorted(set(ac) - declared)
+    if missing:
+        fails.append(f"spawn kn5 '{spk.name}' lacks {len(missing)} node(s) of {dummies_p.name}: {missing[:6]}")
+    if extra:
+        fails.append(f"spawn kn5 '{spk.name}' carries {len(extra)} node(s) not in {dummies_p.name}: {extra[:6]}")
+    if road:
+        for nm, (x, y, z) in ac.items():
+            if not nm.upper().startswith(FACING):
+                continue
+            nr = min(road, key=lambda v: (v[0] - x) ** 2 + (v[2] - z) ** 2)
+            d = math.hypot(nr[0] - x, nr[2] - z)
+            if d > PIT_ROAD_MAX_M or abs(y - nr[1]) > PIT_DY_MAX_M:
+                fails.append(f"SPAWN off-road '{spk.name}:{nm}': {d:.1f} m from road, dY {y - nr[1]:+.1f} m")
+    else:
+        fails.append("no 1ROAD mesh in the road kn5 to validate spawns against")
+    local = json.loads((project / "data" / "centerline.local.json").read_text(encoding="utf-8"))
+    lap = race_lap.lap_of(lo)
+    if lap and not (project / "data" / race_lap.lap_file(lap)).exists():
+        fails.append(f"layout {lid}: lap {lap!r} but no data/{race_lap.lap_file(lap)} — its spawns cannot be judged")
+        return
+    line_rec = cs.layout_line(local, race_lap.load(project, lap) if lap else None)
+    rs_fails, rs_lines = race_start_checks(cfg["race_start"], line_rec, snodes)
+    for ln in rs_lines:
+        print(ln.replace("[race_start]", f"[race_start {lid}]"))
+    fails += [f"{lid}: {f}".replace("the road kn5", f"'{spk.name}'") for f in rs_fails]
+
+
 def _bands_name(lo: dict) -> str:
     """barrier_bands.json, or barrier_bands.<lap>.json for a layout that names a lap (ledger 0054)"""
     return "barrier_bands.json" if not lo.get("lap") else f"barrier_bands.{lo['lap']}.json"
@@ -626,9 +672,18 @@ def _verify_layouts(project: Path, cfg: dict, slug: str, layouts: list, kn5_dir:
             for llid, c in (json.loads(lb.read_text(encoding="utf-8")).get("corridors") or {}).items():
                 if c.get("lane_by_vertex"):
                     lanes[llid] = c["lane_by_vertex"]
+    # ledger 0097 round 3 (opt-in: race_start.layouts): a multi-layout circuit's layouts that all start at the declared line
+    rs_ids = None
+    if cfg.get("race_start"):
+        from scripts.geometry import circuit_start as _cs
+        rs_ids, rs_why = _cs.layout_ids(cfg["race_start"], layouts)
+        fails += [f"RACE_START declaration: {w}" for w in rs_why]
     for lid, lo in zip(ids, layouts):
         spk = kn5_dir / f"{slug}__{lid}.kn5"
         if not spk.exists():
+            continue
+        if rs_ids is not None and lid in rs_ids:
+            _verify_race_start_spawn(project, cfg, lo, spk, project / "data" / f"dummies_{lid}.json", road, fails)
             continue
         if lo.get("lap") and lo["lap"] not in lap_lines:
             continue

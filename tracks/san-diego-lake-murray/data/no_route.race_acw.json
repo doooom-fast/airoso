@@ -18,18 +18,77 @@
   "barrier_half_m": 0.335
  },
  "seed": "AC_START_0",
- "domain_m2": 940418,
- "reached_m2": 138218,
- "allowed_m2": 138218,
+ "domain_m2": 924148,
+ "reached_m2": 139741,
+ "allowed_m2": 139741,
  "leak_cells": 0,
  "leak_m2": 0,
  "escaped": false,
- "wall_cells": 594423,
- "wall_tris_in_band": 167949,
+ "wall_cells": 578339,
+ "wall_tris_in_band": 161676,
+ "local_deck_cells": 3060,
+ "local_deck_walls": [
+  {
+   "object": "1WALL_race_edge_R_college_774_0",
+   "cells": 1194,
+   "deck_minus_line_m": [
+    -0.266,
+    0.014
+   ],
+   "base_m": -0.021,
+   "top_m": 1.234,
+   "vertices": [
+    763,
+    1327
+   ]
+  },
+  {
+   "object": "1WALL_race_edge_L_college_770_0",
+   "cells": 1811,
+   "deck_minus_line_m": [
+    -0.297,
+    -0.113
+   ],
+   "base_m": -0.069,
+   "top_m": 1.221,
+   "vertices": [
+    1159,
+    1468
+   ]
+  },
+  {
+   "object": "1WALL_race_edge_R_navajo_1517_0",
+   "cells": 11,
+   "deck_minus_line_m": [
+    -0.241,
+    0.247
+   ],
+   "base_m": 0.002,
+   "top_m": 1.208,
+   "vertices": [
+    2314,
+    2323
+   ]
+  },
+  {
+   "object": "1WALL_race_edge_R_jackson_2324_0",
+   "cells": 50,
+   "deck_minus_line_m": [
+    -0.244,
+    -0.131
+   ],
+   "base_m": 0.036,
+   "top_m": 1.18,
+   "vertices": [
+    2324,
+    2327
+   ]
+  }
+ ],
  "door_clusters": 0,
  "doors": [],
  "doors_by_class": {},
- "forbidden_probes": 439,
+ "forbidden_probes": 403,
  "forbidden_reached": [],
  "lap_vertices": 4498,
  "blocked": [],
@@ -37,5 +96,5 @@
  "spawns_unreached": [],
  "fail": false,
  "fails": [],
- "seconds": 26.7
+ "seconds": 58.2
 }

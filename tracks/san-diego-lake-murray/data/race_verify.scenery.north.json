@@ -1,0 +1,47 @@
+{
+ "ok": true,
+ "fails": [],
+ "warnings": [],
+ "counts": {
+  "by_layout": {},
+  "scenery_source": "trees: trees.txt (written); signs: data/signs.local.json",
+  "scenery_items": {
+   "tree": 21424,
+   "sign": 29
+  },
+  "scenery_beside": 670,
+  "scenery_hits": 0,
+  "scenery_min": {
+   "north_cw": {
+    "layout": "north_cw",
+    "kind": "tree",
+    "id": "Bush.bin#3115",
+    "vertex": 1091,
+    "lat_m": -2.307,
+    "xz": [
+     -1949.54,
+     2395.04
+    ],
+    "against": "closure",
+    "margin_m": 0.661
+   },
+   "north_acw": {
+    "layout": "north_acw",
+    "kind": "tree",
+    "id": "Bush.bin#3048",
+    "vertex": 957,
+    "lat_m": 0.67,
+    "xz": [
+     -2290.0,
+     2204.66
+    ],
+    "against": "closure",
+    "margin_m": 0.67
+   }
+  },
+  "scenery_r_m": {
+   "tree": 0.3,
+   "sign": 0.03
+  }
+ }
+}

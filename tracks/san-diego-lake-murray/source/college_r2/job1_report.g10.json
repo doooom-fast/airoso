@@ -1,0 +1,139 @@
+{
+ "area_engine_xz": [
+  -2120.5490961404475,
+  -1342.8161770015,
+  -1277.2302379738553,
+  831.4057984553986
+ ],
+ "kept_engine_xz": [
+  -2137.1965672495135,
+  -1342.8161770015,
+  -1277.2302379738553,
+  831.4057984553986
+ ],
+ "area_utm_6340": [
+  493483.2291662975,
+  3626473.7669177027,
+  494364.20704398945,
+  3628667.6459679483
+ ],
+ "utm_cells_km": [
+  [
+   493,
+   3626
+  ],
+  [
+   493,
+   3627
+  ],
+  [
+   493,
+   3628
+  ],
+  [
+   494,
+   3626
+  ],
+  [
+   494,
+   3627
+  ],
+  [
+   494,
+   3628
+  ]
+ ],
+ "tiles_needed": [
+  "USGS_LPC_CA_SanDiegoCo_D24_11SMS493626.laz",
+  "USGS_LPC_CA_SanDiegoCo_D24_11SMS493627.laz",
+  "USGS_LPC_CA_SanDiegoCo_D24_11SMS493628.laz",
+  "USGS_LPC_CA_SanDiegoCo_D24_11SMS494626.laz",
+  "USGS_LPC_CA_SanDiegoCo_D24_11SMS494627.laz",
+  "USGS_LPC_CA_SanDiegoCo_D24_11SMS494628.laz"
+ ],
+ "tiles_missing": [],
+ "tiles": [
+  {
+   "name": "USGS_LPC_CA_SanDiegoCo_D24_11SMS493626.laz",
+   "bytes": 66292299,
+   "md5": "5fab52dca2733b7a8e4691d6999473bf",
+   "points": 14807968,
+   "class2": 2082697,
+   "class2_withheld_dropped": 0,
+   "class2_overlap_flag_kept": 0,
+   "class2_kept_in_box": 635327,
+   "seconds": 2.9
+  },
+  {
+   "name": "USGS_LPC_CA_SanDiegoCo_D24_11SMS493627.laz",
+   "bytes": 68637669,
+   "md5": "72a07c8ed439dd188d9940fb750b57a7",
+   "points": 14752408,
+   "class2": 1964658,
+   "class2_withheld_dropped": 0,
+   "class2_overlap_flag_kept": 0,
+   "class2_kept_in_box": 1051302,
+   "seconds": 3.0
+  },
+  {
+   "name": "USGS_LPC_CA_SanDiegoCo_D24_11SMS493628.laz",
+   "bytes": 69496708,
+   "md5": "aa719b282b771223b5a0bf7aee77fcc3",
+   "points": 15160829,
+   "class2": 2164729,
+   "class2_withheld_dropped": 0,
+   "class2_overlap_flag_kept": 0,
+   "class2_kept_in_box": 768296,
+   "seconds": 3.1
+  },
+  {
+   "name": "USGS_LPC_CA_SanDiegoCo_D24_11SMS494626.laz",
+   "bytes": 62517902,
+   "md5": "cb9101c11550238d4ba744aa70f64a2c",
+   "points": 14564890,
+   "class2": 2168279,
+   "class2_withheld_dropped": 0,
+   "class2_overlap_flag_kept": 0,
+   "class2_kept_in_box": 426869,
+   "seconds": 2.7
+  },
+  {
+   "name": "USGS_LPC_CA_SanDiegoCo_D24_11SMS494627.laz",
+   "bytes": 61317496,
+   "md5": "3e19b2e848ecdaf8a825016730c1d20b",
+   "points": 14183582,
+   "class2": 2135884,
+   "class2_withheld_dropped": 0,
+   "class2_overlap_flag_kept": 0,
+   "class2_kept_in_box": 781919,
+   "seconds": 2.8
+  },
+  {
+   "name": "USGS_LPC_CA_SanDiegoCo_D24_11SMS494628.laz",
+   "bytes": 61792687,
+   "md5": "00302f53e57467391074c5cb991c8fc3",
+   "points": 14296988,
+   "class2": 2220778,
+   "class2_withheld_dropped": 0,
+   "class2_overlap_flag_kept": 0,
+   "class2_kept_in_box": 524448,
+   "seconds": 2.7
+  }
+ ],
+ "transformer": {
+  "from": "NAD83(2011) / UTM zone 11N",
+  "from_epsg": 6340,
+  "to": "EPSG:4326",
+  "vertical": "NAVD88 height - Geoid18 (m)",
+  "pyproj_description": "Inverse of UTM zone 11N + NAD83(2011) to WGS 84 (1) (with axis order normalized for visualization)",
+  "pyproj_definition": "proj=pipeline step inv proj=utm zone=11 ellps=GRS80 step proj=unitconvert xy_in=rad xy_out=deg"
+ },
+ "ground_points_kept": 4188161,
+ "area_grid": {
+  "nx": 843,
+  "nz": 2174,
+  "cells_read": 1342644,
+  "ground_points": 4117174
+ },
+ "seconds": 39.6
+}

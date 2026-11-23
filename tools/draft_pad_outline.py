@@ -28,6 +28,13 @@ THE DECLARATION (track.config.json ``route.draft_pads``, a list; each entry):
                 +-CUT_HALF_M (ledger 0079 round O: 48th_colorado's in-cut ran over the median into grid_primary_52)
   deck_beyond   (optional) "class2": a deck node with too few road points also gets the plane through all the class-2
                 points round it, in its own grid (deck_class2), for tools/lm_pads_blend.py (ledger 0079 round O)
+  deck_floor_m  (optional, metres > 0; ledger 0079 / 2026-11-22, dahlia_56th and sandcreek_quebec): a class-2 point
+                standing more than this under the lap's own height (the nearest lap vertex of node +- FLOOR_REACH_V, in
+                plan) is not the road: the deck's planes (and deck_class2's) leave it out. A wet creek bank reads as dark as
+                asphalt, so where the lap's ribbon or the box runs over a bank the road-intensity planes read the bank 1-6 m
+                down (dahlia_56th's 6.833 m seam beside the 56th bridge; sandcreek_quebec beside the Sand Creek bridge).
+                A node left with too few points carries none, as any other (the author fills it from the road round it).
+                Absent = every class-2 point, as before
 
 WHAT IT MEASURES:
   * the asphalt mask: intensity / brightness interpolated on a 0.25 m grid (the mean within 0.6 m), thresholded midway
@@ -75,6 +82,7 @@ DECK_R_M = 2.0           # [invented] the plane-fit radius per deck node (~25-50
 EDGE_UNC_M = 0.4         # two point spacings at 2-4 pts/m2: the edge's own uncertainty
 PAINT_K = 1.6            # [invented] a cell brighter than the verge's median x this inside the asphalt is paint
 BARRIER_W_M = 0.3        # a cut is the cells within this of its segment (just over one cell either side)
+FLOOR_REACH_V = 60       # [invented] deck_floor_m's lap vertices: the node's +- this many (the window's own stretch of lap)
 
 
 def _get(url):
@@ -255,12 +263,21 @@ def main(argv=None):
     beyond = decl.get("deck_beyond")
     if beyond not in (None, "class2"):
         raise SystemExit(f"draft_pad_outline {pid}: deck_beyond {beyond!r}: only \"class2\" is known")
+    floor = decl.get("deck_floor_m")
+    if floor is not None and not (isinstance(floor, (int, float)) and not isinstance(floor, bool) and floor > 0):
+        raise SystemExit(f"draft_pad_outline {pid}: deck_floor_m {floor!r}: metres > 0")
+    low = np.zeros(len(E), dtype=bool)
+    if floor is not None:
+        lk = list(range(max(0, node - FLOOR_REACH_V), min(len(P), node + FLOOR_REACH_V + 1)))
+        _, li = cKDTree(np.array([P[k] for k in lk])).query(np.c_[E, N])
+        lap_y = np.array([loc["points_xyz_m"][lk[q]][1] for q in li])
+        low = zl < lap_y - float(floor)
     deck2, n2 = [], 0
     for j in range(ny):
         row, row2 = [], []
         for i in range(nx):
             x, y = bx0 + i * DECK_CELL_M, by0 + j * DECK_CELL_M
-            near = tree.query_ball_point((x, y), DECK_R_M)
+            near = [k for k in tree.query_ball_point((x, y), DECK_R_M) if not low[k]]   # deck_floor_m: never a bank
             ids = [k for k in near if I[k] < thr]                                        # the ROAD's points only:
             row.append(dp.plane_height([(E[k] - x, N[k] - y, zl[k]) for k in ids]))      # never the verge's fall
             v2 = None
@@ -283,7 +300,11 @@ def main(argv=None):
         **({"deck_class2": {"e0": round(bx0, 3), "n0": round(by0, 3), "cell_m": DECK_CELL_M, "nx": nx, "ny": ny,
                             "nodes": n2, "y": deck2,
                             "_doc": "deck_beyond class2: the plane through all class-2 points, where the road deck has none"}}
-           if beyond == "class2" else {}),        "source": {"kind": "lidar_ept", "ept": src["ept"], "ground_points": int(len(E)),
+           if beyond == "class2" else {}),
+        **({"deck_floor_m": float(floor), "deck_floor_points_left_out": int(low.sum()),
+            "_deck_floor_doc": "class-2 points more than deck_floor_m under the nearest lap vertex's height: not the road"}
+           if floor is not None else {}),
+        "source": {"kind": "lidar_ept", "ept": src["ept"], "ground_points": int(len(E)),
                    "density_per_m2": round(len(E) / (2 * half) ** 2, 2), "intensity_road_median": round(on),
                    "intensity_verge_median": round(off), "threshold": round(thr), "window_half_m": half,
                    "method": "tools/draft_pad_outline.py (intensity edge, class-2 deck)"},

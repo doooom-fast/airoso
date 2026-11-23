@@ -1,0 +1,60 @@
+{
+ "_doc": "The one-road College as tracks/san-diego-lake-murray/track.config.json declared it up to Lake Murray 0.20.4 (main 04e0a9b4), frozen 2026-11-23 when ledger 0055 round 2 made College two roads in the live config. tests/sd_v0180.one_road_college puts these back over today's config, so the tests that pin numbers measured on the v0.18.0 road (one slab, its island, the crossover chicane) keep reading the declaration those numbers came from.",
+ "race.chicanes": [
+  {
+   "name": "college_split",
+   "out_leg": [
+    1253,
+    1289
+   ],
+   "back_leg": [
+    1343,
+    1379
+   ],
+   "layouts": [
+    "race_cw",
+    "race_acw"
+   ],
+   "street_only_island": true,
+   "why": "Ledger 0055 (Kevin, seat, 2026-10-14: 'for the racetrack versions, I do like the chicane that kind of goes from one side of the road across to the other and back'). v0.18.0's crossing was the ROAD jogging ~12 m sideways off the northbound carriageway onto the southbound one and back (tools/median_envelope.py's trust test, reading OSM through its own sphere projection, split College's divided run at v1280-1352); with the road where it really runs, the Speedways keep the crossing as race geometry on it (scripts/geometry/race_chicane.py, tools/barrier_bands.py: the closure sweeps into the far curb strip while a race-side wall sweeps in parallel from the race-side strip, ~108 m legs (36 vertices) centred on the v0.18.0 jogs (v1262-1280 / v1352-1370): 26 vertices stood at 1:2.85-3.0 against race.corridor.steepest_pin_rate 1:3, and 30 with race_chicane.EASE 0.2 bunched the AI line's turn-in under verify_ai_line's car scale; at 36 / EASE 0.35 the walls run 1:3.2-3.5, the lane held ~160 m on the far carriageway between the legs). Each Speedway crosses in its own direction: Speedway (race_cw, northbound) over to the southbound carriageway and back, Speedway Reverse (race_acw) the mirror. The median island from v1253 to v1379 stands in Lake Murray Free Roam only (<slug>_street.kn5): a race layout's road there is the bare slab the island stands on."
+  }
+ ],
+ "race.corridor.whole": [
+  4454,
+  777
+ ],
+ "race.corridor.closure_runs": [
+  [
+   777,
+   1506
+  ],
+  [
+   1521,
+   2311
+  ],
+  [
+   2328,
+   3289
+  ],
+  [
+   3304,
+   4454
+  ]
+ ],
+ "terrain.ground_release.zones.college_split_cut": {
+  "name": "college_split_cut",
+  "kind": "bank",
+  "v": [
+   1197.643,
+   1468.542
+  ],
+  "sides": [
+   "right"
+  ],
+  "reach_m": 40.0,
+  "cut_reach_m": 20.0,
+  "round_m": 3.0,
+  "rails": false,
+  "why": "Ledger 0055 (Kevin, seat, 2026-10-14: 'cut into the hillside the way California does and has like a flat side of the hill alongside one side of the road'). College Ave north of Del Cerro is a split-level divided road: on fresh 3DEP 1 m the northbound carriageway rides a bench 2.4-5.7 m over the southbound one (v1216-1414) and the hill east of it rises another 4-8 m within 20 m (to 168-171 m against a road at ~157 m). The build carries both carriageways at the southbound grade (one slab, ledger 0037; the L3 note in 0055: the northbound lanes run up to ~5.7 m under their real bench, by Kevin's choice). East of the slab (right of the street layout's northbound travel) the ground is the real earth cut back by a planar earth batter (ground_release_blend BATTER_CUT, 1 m per metre) from the east pavement edge, read out to cut_reach_m 20 m (= terrain.clamp_corridor_m, the construction zone: at v1279-1306 the hill stands 12-13.8 m over the deck 12-14 m out, beyond the default 12 m reach), its top rounded into the real hill over round_m 3 m (docs/ROAD-CONSTRUCTION.md: 2-5 m). Past the daylight line it is untouched 3DEP; the west side (house lots at grade) has no zone. rails false: the ground rises from the kerb (a cut), so the release makes no drop to guard; the only fall a station reads there is the sidewalk's own outer apron, as on every street of the loop (the first rehearsal stood a jersey rail along all 816 m). Declared by centreline vertex, v1197.6-1468.5 (round 2: a station slides when the road before it changes length; the split level fades out north of v1400, the hillside cut runs on to ~v1470). Round 2 (the truth lens): with College registered onto its measured carriageways (route.median_registration) the cut's toe stands at the real northbound east kerb (~22-25 m east of the raw line); the face is ~10-11 m tall where the real one is ~5 m, because the deck keeps the southbound grade ~5-5.9 m under the real northbound bench (Kevin's choice)"
+ }
+}

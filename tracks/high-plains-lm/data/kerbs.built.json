@@ -2,13 +2,13 @@
  "height_m": 0.08,
  "placement": "measured",
  "end_ramp_m": 4.0,
- "road_misses": 0,
+ "road_misses": 9,
  "runs": [
   {
    "k": 0,
    "side": "left",
    "rows": 11,
-   "length_m": 22.1,
+   "length_m": 21.9,
    "width_m": 1.65,
    "profile": "kerb",
    "colour": "blue_white",
@@ -17,12 +17,12 @@
    "in_m": 0.05,
    "out_m": 1.7,
    "edge_delta_m": [
-    -0.78,
-    -0.66,
-    -0.55
+    -1.36,
+    -1.26,
+    -0.71
    ],
-   "in_vs_ribbon_edge_m": -0.61,
-   "out_vs_ribbon_edge_m": 1.04
+   "in_vs_ribbon_edge_m": -1.21,
+   "out_vs_ribbon_edge_m": 0.44
   },
   {
    "k": 1,
@@ -37,12 +37,12 @@
    "in_m": -1.0,
    "out_m": 0.05,
    "edge_delta_m": [
-    -0.0,
-    0.0,
+    -0.47,
+    -0.28,
     0.02
    ],
-   "in_vs_ribbon_edge_m": -1.0,
-   "out_vs_ribbon_edge_m": 0.05
+   "in_vs_ribbon_edge_m": -1.28,
+   "out_vs_ribbon_edge_m": -0.23
   },
   {
    "k": 2,
@@ -57,12 +57,12 @@
    "in_m": -1.15,
    "out_m": -0.85,
    "edge_delta_m": [
-    -0.0,
-    0.0,
-    0.08
+    0.24,
+    0.31,
+    0.56
    ],
-   "in_vs_ribbon_edge_m": -1.15,
-   "out_vs_ribbon_edge_m": -0.7
+   "in_vs_ribbon_edge_m": -0.84,
+   "out_vs_ribbon_edge_m": -0.39
   },
   {
    "k": 3,
@@ -77,18 +77,18 @@
    "in_m": -0.7,
    "out_m": 0.2,
    "edge_delta_m": [
-    -0.0,
-    0.0,
-    0.05
+    -0.35,
+    -0.31,
+    -0.22
    ],
-   "in_vs_ribbon_edge_m": -0.7,
-   "out_vs_ribbon_edge_m": 0.2
+   "in_vs_ribbon_edge_m": -1.01,
+   "out_vs_ribbon_edge_m": -0.11
   },
   {
    "k": 4,
    "side": "left",
    "rows": 13,
-   "length_m": 28.8,
+   "length_m": 28.7,
    "width_m": 1.65,
    "profile": "kerb",
    "colour": "blue_white",
@@ -97,12 +97,12 @@
    "in_m": -0.85,
    "out_m": 0.8,
    "edge_delta_m": [
-    -0.84,
-    -0.69,
-    -0.35
+    -1.21,
+    -0.85,
+    -0.04
    ],
-   "in_vs_ribbon_edge_m": -1.54,
-   "out_vs_ribbon_edge_m": 0.11
+   "in_vs_ribbon_edge_m": -1.7,
+   "out_vs_ribbon_edge_m": -0.05
   },
   {
    "k": 5,
@@ -117,12 +117,12 @@
    "in_m": -1.45,
    "out_m": -0.4,
    "edge_delta_m": [
-    -0.0,
-    0.0,
-    0.26
+    0.58,
+    0.61,
+    0.75
    ],
-   "in_vs_ribbon_edge_m": -1.45,
-   "out_vs_ribbon_edge_m": -0.4
+   "in_vs_ribbon_edge_m": -0.84,
+   "out_vs_ribbon_edge_m": 0.21
   },
   {
    "k": 6,
@@ -137,18 +137,18 @@
    "in_m": -0.4,
    "out_m": 0.35,
    "edge_delta_m": [
-    -0.0,
-    0.0,
-    0.03
+    -0.75,
+    -0.74,
+    -0.66
    ],
-   "in_vs_ribbon_edge_m": -0.4,
-   "out_vs_ribbon_edge_m": 0.35
+   "in_vs_ribbon_edge_m": -1.14,
+   "out_vs_ribbon_edge_m": -0.39
   },
   {
    "k": 7,
    "side": "left",
-   "rows": 11,
-   "length_m": 19.9,
+   "rows": 12,
+   "length_m": 21.1,
    "width_m": 1.35,
    "profile": "kerb",
    "colour": "blue_white",
@@ -157,18 +157,18 @@
    "in_m": -1.15,
    "out_m": 0.2,
    "edge_delta_m": [
-    -1.16,
-    -1.1,
-    -1.01
+    -0.2,
+    -0.1,
+    0.1
    ],
-   "in_vs_ribbon_edge_m": -2.25,
-   "out_vs_ribbon_edge_m": -0.9
+   "in_vs_ribbon_edge_m": -1.25,
+   "out_vs_ribbon_edge_m": 0.1
   },
   {
    "k": 8,
    "side": "left",
    "rows": 6,
-   "length_m": 13.3,
+   "length_m": 13.4,
    "width_m": 2.1,
    "profile": "kerb",
    "colour": "blue_white",
@@ -177,18 +177,18 @@
    "in_m": -1.15,
    "out_m": 0.95,
    "edge_delta_m": [
-    -0.04,
-    0.16,
-    0.21
+    0.52,
+    0.99,
+    2.5
    ],
-   "in_vs_ribbon_edge_m": -0.99,
-   "out_vs_ribbon_edge_m": 1.11
+   "in_vs_ribbon_edge_m": -0.16,
+   "out_vs_ribbon_edge_m": 1.94
   },
   {
    "k": 9,
    "side": "left",
    "rows": 10,
-   "length_m": 22.0,
+   "length_m": 22.2,
    "width_m": 1.65,
    "profile": "kerb",
    "colour": "blue_white",
@@ -197,18 +197,18 @@
    "in_m": -1.75,
    "out_m": -0.1,
    "edge_delta_m": [
-    -0.61,
-    -0.48,
-    -0.37
+    -0.12,
+    0.08,
+    0.26
    ],
-   "in_vs_ribbon_edge_m": -2.23,
-   "out_vs_ribbon_edge_m": -0.58
+   "in_vs_ribbon_edge_m": -1.67,
+   "out_vs_ribbon_edge_m": -0.02
   },
   {
    "k": 10,
    "side": "right",
    "rows": 14,
-   "length_m": 36.0,
+   "length_m": 36.1,
    "width_m": 0.9,
    "profile": "paint",
    "colour": "blue_yellow",
@@ -217,18 +217,18 @@
    "in_m": 0.05,
    "out_m": 0.95,
    "edge_delta_m": [
-    -0.0,
-    0.0,
-    0.06
+    -1.23,
+    -1.18,
+    -1.1
    ],
-   "in_vs_ribbon_edge_m": 0.05,
-   "out_vs_ribbon_edge_m": 0.95
+   "in_vs_ribbon_edge_m": -1.13,
+   "out_vs_ribbon_edge_m": -0.23
   },
   {
    "k": 11,
    "side": "right",
    "rows": 15,
-   "length_m": 32.9,
+   "length_m": 32.4,
    "width_m": 1.65,
    "profile": "kerb",
    "colour": "blue_white",
@@ -237,18 +237,18 @@
    "in_m": 0.05,
    "out_m": 1.7,
    "edge_delta_m": [
-    -0.84,
-    -0.58,
-    -0.22
+    -1.68,
+    -1.34,
+    -0.32
    ],
-   "in_vs_ribbon_edge_m": -0.53,
-   "out_vs_ribbon_edge_m": 1.12
+   "in_vs_ribbon_edge_m": -1.29,
+   "out_vs_ribbon_edge_m": 0.36
   },
   {
    "k": 12,
    "side": "right",
-   "rows": 7,
-   "length_m": 12.4,
+   "rows": 8,
+   "length_m": 12.1,
    "width_m": 1.65,
    "profile": "kerb",
    "colour": "blue_white",
@@ -257,12 +257,12 @@
    "in_m": 0.05,
    "out_m": 1.7,
    "edge_delta_m": [
-    -0.96,
-    -0.7,
-    -0.41
+    -1.78,
+    -1.31,
+    -0.75
    ],
-   "in_vs_ribbon_edge_m": -0.65,
-   "out_vs_ribbon_edge_m": 1.0
+   "in_vs_ribbon_edge_m": -1.26,
+   "out_vs_ribbon_edge_m": 0.39
   },
   {
    "k": 13,
@@ -277,18 +277,18 @@
    "in_m": -0.85,
    "out_m": 0.8,
    "edge_delta_m": [
-    -0.63,
-    -0.48,
-    -0.33
+    -0.75,
+    -0.61,
+    -0.12
    ],
-   "in_vs_ribbon_edge_m": -1.33,
-   "out_vs_ribbon_edge_m": 0.32
+   "in_vs_ribbon_edge_m": -1.46,
+   "out_vs_ribbon_edge_m": 0.19
   },
   {
    "k": 14,
    "side": "right",
    "rows": 12,
-   "length_m": 28.0,
+   "length_m": 28.1,
    "width_m": 0.9,
    "profile": "paint",
    "colour": "blue_yellow",
@@ -297,18 +297,18 @@
    "in_m": -0.4,
    "out_m": 0.5,
    "edge_delta_m": [
-    -0.0,
-    0.0,
-    0.1
+    -0.49,
+    -0.41,
+    -0.26
    ],
-   "in_vs_ribbon_edge_m": -0.4,
-   "out_vs_ribbon_edge_m": 0.5
+   "in_vs_ribbon_edge_m": -0.81,
+   "out_vs_ribbon_edge_m": 0.09
   },
   {
    "k": 15,
    "side": "right",
    "rows": 8,
-   "length_m": 13.9,
+   "length_m": 14.6,
    "width_m": 1.65,
    "profile": "kerb",
    "colour": "blue_white",
@@ -317,12 +317,12 @@
    "in_m": -2.05,
    "out_m": -0.4,
    "edge_delta_m": [
-    -0.99,
-    -0.93,
-    -0.87
+    0.03,
+    0.18,
+    0.31
    ],
-   "in_vs_ribbon_edge_m": -2.98,
-   "out_vs_ribbon_edge_m": -1.33
+   "in_vs_ribbon_edge_m": -1.87,
+   "out_vs_ribbon_edge_m": -0.22
   },
   {
    "k": 16,
@@ -337,18 +337,18 @@
    "in_m": -1.75,
    "out_m": -0.1,
    "edge_delta_m": [
-    -0.41,
-    -0.24,
-    -0.13
+    -0.77,
+    -0.14,
+    0.18
    ],
-   "in_vs_ribbon_edge_m": -1.99,
-   "out_vs_ribbon_edge_m": -0.34
+   "in_vs_ribbon_edge_m": -1.89,
+   "out_vs_ribbon_edge_m": -0.24
   },
   {
    "k": 17,
    "side": "right",
    "rows": 10,
-   "length_m": 26.6,
+   "length_m": 26.5,
    "width_m": 0.9,
    "profile": "paint",
    "colour": "blue_yellow",
@@ -357,18 +357,18 @@
    "in_m": -0.85,
    "out_m": 0.05,
    "edge_delta_m": [
-    0.03,
-    0.39,
-    0.45
+    -0.29,
+    0.43,
+    2.49
    ],
-   "in_vs_ribbon_edge_m": -0.46,
-   "out_vs_ribbon_edge_m": 0.44
+   "in_vs_ribbon_edge_m": -0.42,
+   "out_vs_ribbon_edge_m": 0.48
   },
   {
    "k": 18,
    "side": "right",
    "rows": 10,
-   "length_m": 18.3,
+   "length_m": 18.1,
    "width_m": 1.6,
    "profile": "kerb",
    "colour": "blue_white",
@@ -377,12 +377,12 @@
    "in_m": -0.55,
    "out_m": 1.05,
    "edge_delta_m": [
-    -0.64,
-    -0.58,
-    -0.55
+    -0.99,
+    -0.93,
+    -0.75
    ],
-   "in_vs_ribbon_edge_m": -1.13,
-   "out_vs_ribbon_edge_m": 0.47
+   "in_vs_ribbon_edge_m": -1.48,
+   "out_vs_ribbon_edge_m": 0.12
   },
   {
    "k": 19,
@@ -397,12 +397,138 @@
    "in_m": 0.5,
    "out_m": 1.1,
    "edge_delta_m": [
-    -0.06,
-    -0.01,
-    0.01
+    -1.53,
+    -1.46,
+    -0.81
    ],
-   "in_vs_ribbon_edge_m": 0.49,
-   "out_vs_ribbon_edge_m": 1.09
+   "in_vs_ribbon_edge_m": -0.96,
+   "out_vs_ribbon_edge_m": -0.36
+  },
+  {
+   "k": 20,
+   "side": "right",
+   "rows": 23,
+   "length_m": 39.9,
+   "width_m": 1.64,
+   "profile": "kerb",
+   "colour": "blue_white",
+   "line": "full_north#0#0",
+   "s0": 56.75,
+   "s1": 98.25,
+   "in_m": -1.83,
+   "out_m": -0.19,
+   "edge_delta_m": [
+    -0.32,
+    -0.03,
+    0.4
+   ],
+   "in_vs_ribbon_edge_m": -1.86,
+   "out_vs_ribbon_edge_m": -0.22
+  },
+  {
+   "k": 21,
+   "side": "left",
+   "rows": 25,
+   "length_m": 45.4,
+   "width_m": 1.69,
+   "profile": "kerb",
+   "colour": "blue_white",
+   "line": "full_north#0#0",
+   "s0": 169.8,
+   "s1": 216.3,
+   "in_m": -1.96,
+   "out_m": -0.27,
+   "edge_delta_m": [
+    -0.51,
+    0.09,
+    0.49
+   ],
+   "in_vs_ribbon_edge_m": -1.87,
+   "out_vs_ribbon_edge_m": -0.18
+  },
+  {
+   "k": 22,
+   "side": "right",
+   "rows": 16,
+   "length_m": 24.2,
+   "width_m": 1.63,
+   "profile": "kerb",
+   "colour": "blue_white",
+   "line": "full_north#0#0",
+   "s0": 307.5,
+   "s1": 334.8,
+   "in_m": -1.57,
+   "out_m": 0.06,
+   "edge_delta_m": [
+    -0.4,
+    -0.15,
+    0.17
+   ],
+   "in_vs_ribbon_edge_m": -1.72,
+   "out_vs_ribbon_edge_m": -0.09
+  },
+  {
+   "k": 23,
+   "side": "right",
+   "rows": 49,
+   "length_m": 80.8,
+   "width_m": 1.79,
+   "profile": "kerb",
+   "colour": "blue_white",
+   "line": "full_north#0#0",
+   "s0": 545.7,
+   "s1": 637.8,
+   "in_m": -1.92,
+   "out_m": -0.13,
+   "edge_delta_m": [
+    -0.3,
+    -0.07,
+    0.22
+   ],
+   "in_vs_ribbon_edge_m": -1.99,
+   "out_vs_ribbon_edge_m": -0.2
+  },
+  {
+   "k": 24,
+   "side": "left",
+   "rows": 17,
+   "length_m": 27.5,
+   "width_m": 1.86,
+   "profile": "kerb",
+   "colour": "blue_white",
+   "line": "full_north#0#0",
+   "s0": 732.75,
+   "s1": 761.0,
+   "in_m": -2.34,
+   "out_m": -0.48,
+   "edge_delta_m": [
+    -0.28,
+    0.09,
+    0.39
+   ],
+   "in_vs_ribbon_edge_m": -2.25,
+   "out_vs_ribbon_edge_m": -0.39
+  },
+  {
+   "k": 25,
+   "side": "left",
+   "rows": 4,
+   "length_m": 6.5,
+   "width_m": 1.88,
+   "profile": "kerb",
+   "colour": "blue_white",
+   "line": "full_north#0#0",
+   "s0": 982.8,
+   "s1": 990.3,
+   "in_m": -0.73,
+   "out_m": 1.15,
+   "edge_delta_m": [
+    -0.52,
+    0.11,
+    0.13
+   ],
+   "in_vs_ribbon_edge_m": -0.62,
+   "out_vs_ribbon_edge_m": 1.26
   }
  ]
 }

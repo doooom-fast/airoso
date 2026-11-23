@@ -726,6 +726,36 @@ def driven_directions(proj):
     return out or {"fwd": ["(no layouts: forward)"]}
 
 
+def lap_driven(proj, entries):
+    """{corner: {"fwd" / "rev": [layout ids]}}: the race layouts ON A LAP that drive a per_layout MAINLINE corner of
+    signs.json, by the approach they drive it (ledger 0055 round 2). A layout on a lap is no part of driven_directions
+    (its lap is not the mainline); it is still owed its own plate at a per_layout corner its lap walks the mainline
+    through (scripts/geometry/race_lap.mainline_approach, the rule tools/place_signs.py places by). Check (m) reads
+    this beside driven_directions; (k) and (l) do not. No lap, no per_layout corner, no file = {}."""
+    try:
+        cfg = json.loads((Path(proj) / "track.config.json").read_text(encoding="utf-8"))
+        cl = json.loads((Path(proj) / "data" / "centerline.local.json").read_text(encoding="utf-8"))
+    except Exception:
+        return {}
+    if str(AIROSO) not in sys.path:
+        sys.path.insert(0, str(AIROSO))
+    from scripts.geometry import race_lap
+    pts = cl.get("points_xyz_m") or []
+    closed = len(pts) > 2 and math.dist((pts[0][0], pts[0][2]), (pts[-1][0], pts[-1][2])) < 1e-6
+    n = len(pts) - 1 if closed else len(pts)
+    out = {}
+    for base, e in sorted((entries or {}).items()):
+        if not isinstance(e, dict) or not e.get("per_layout") or e.get("skip") or str(e.get("ribbon") or "MAINLINE") != "MAINLINE":
+            continue
+        for lay in cfg.get("layouts") or []:
+            if not isinstance(lay, dict) or lay.get("lap") in (None, "") or not lay.get("race_furniture"):
+                continue
+            dr = race_lap.mainline_approach(cfg, str(lay["lap"]), str(lay.get("direction") or "forward"), int(e["vertex"]), n, closed)
+            if dr:
+                out.setdefault(base, {}).setdefault(dr, []).append(str(lay.get("id")))
+    return out
+
+
 def direction_coverage(d, driven, ribbon="MAINLINE", entries=None):
     """check (k): -> (fails, rows). See the module doc. entries = signs.json's corners as read by
     this gate (None: not read; a "signs.json skip" then counts only on its non-empty reason)."""
@@ -848,11 +878,14 @@ def named_coverage(d, driven, entries):
     return fails, rows
 
 
-def layout_coverage(d, driven, entries):
+def layout_coverage(d, driven, entries, on_laps=None):
     """check (m) (ledger 0054 P4): per layout, in the direction it drives, every MAINLINE corner with a plate anywhere
     has a plate THAT layout loads — shared (no "layout") or its own (record.layout == the id) — or a skip record for
     that direction that applies to it (shared, or carrying its id) whose reasons are coverage as (k) words them.
-    -> (fails, rows). driven = {direction: [layout ids]} (driven_directions)."""
+    -> (fails, rows). driven = {direction: [layout ids]} (driven_directions). on_laps = lap_driven(): the layouts on
+    a lap owed a plate at a per_layout corner, judged at that corner exactly as a mainline layout is (ledger 0055
+    round 2); None / {} = as before."""
+    on_laps = on_laps or {}
     fails, rows = [], []
     placed = {s["id"] for s in d["signs"]} | {p["id"] for s in d["signs"] for p in (s.get("plates") or []) if "id" in p}
     plates, skips = {}, {}
@@ -872,8 +905,8 @@ def layout_coverage(d, driven, entries):
         skips.setdefault(base, {}).setdefault(direction, []).append((sk.get("layout"), list(sk.get("reasons") or [])))
     by_layout = {}
     for base in sorted(plates):
-        for dr, lids in sorted(driven.items()):
-            for lid in lids:
+        for dr in sorted(set(driven) | set(on_laps.get(base, {}))):
+            for lid in list(driven.get(dr, [])) + [l_ for l_ in on_laps.get(base, {}).get(dr, []) if l_ not in driven.get(dr, [])]:
                 mine = [pid for pid, lay in plates[base].get(dr, []) if lay is None or lay == lid]
                 if mine:
                     by_layout.setdefault(lid, []).append("%s %s" % (base, "/".join(mine)))
@@ -1136,7 +1169,8 @@ def main():
         driven = driven_directions(proj)
         k_fails, k_rows = direction_coverage(d, driven, entries=entries if sj is not None else None)
         l_fails, l_rows = named_coverage(d, driven, entries if sj is not None else None)
-        m_fails, m_rows = layout_coverage(d, driven, entries if sj is not None else None)
+        m_fails, m_rows = layout_coverage(d, driven, entries if sj is not None else None,
+                                          lap_driven(proj, entries if sj is not None else None))
     except ValueError as e:
         k_fails, k_rows = ["k_direction_coverage: %s" % e], []
         l_fails, l_rows = [], []

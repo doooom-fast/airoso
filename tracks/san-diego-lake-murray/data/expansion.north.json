@@ -22,7 +22,7 @@
   },
   "centerline.local.json": {
    "path": "tracks/san-diego-lake-murray/data/centerline.local.json",
-   "sha256_16": "2d2fbb7dff5bc437"
+   "sha256_16": "6d2908ca8f2b2eaa"
   },
   "osm.expansion.json": {
    "path": "tracks/san-diego-lake-murray/data/osm.expansion.json",

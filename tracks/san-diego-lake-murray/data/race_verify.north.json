@@ -1,0 +1,1135 @@
+{
+ "ok": true,
+ "fails": [],
+ "warnings": [
+  "F: north_cw: author-time: minimum spawn clearance 2.48 m at AC_START_5 v2518 (edge-strip face 7.68 m) (hard floor 0.30 m)",
+  "F: north_acw: author-time: minimum spawn clearance 2.48 m at AC_START_5 v2555 (edge-strip face 7.68 m) (hard floor 0.30 m)",
+  "built deck vs data height, worst 0.322 m"
+ ],
+ "counts": {
+  "by_layout": {
+   "north_acw": {
+    "token": "nacw",
+    "chicane_walls": 0,
+    "chicane_objects": 0,
+    "nose_walls": 5,
+    "nose_objects": 5,
+    "nose_off_line_max_m": 0.007,
+    "nose_pins": [
+     {
+      "object": "1WALL_race_close_nacw_nose_7_0",
+      "vertex": 7,
+      "far_line_m": 0.006,
+      "closure_face_m": 0.0
+     },
+     {
+      "object": "1WALL_race_close_nacw_nose_316_0",
+      "vertex": 316,
+      "far_line_m": 0.002,
+      "closure_face_m": 0.0
+     },
+     {
+      "object": "1WALL_race_close_nacw_nose_717_0",
+      "vertex": 717,
+      "far_line_m": 0.003,
+      "closure_face_m": 0.004
+     },
+     {
+      "object": "1WALL_race_close_nacw_nose_1452_0",
+      "vertex": 1452,
+      "far_line_m": 0.004,
+      "closure_face_m": 0.004
+     },
+     {
+      "object": "1WALL_race_close_nacw_nose_1477_0",
+      "vertex": 1477,
+      "far_line_m": 0.004,
+      "closure_face_m": 0.0
+     }
+    ],
+    "closure_objects": 6,
+    "closure_runs": 6,
+    "closure_rings": 2652,
+    "closure_off_curve_max_m": 0.007,
+    "pins": [
+     {
+      "object": "1WALL_race_close_nacw_navajo_2616_0",
+      "end": "start",
+      "vertex": 2616,
+      "ring_vertex": 2616,
+      "far_line_m": 0.002
+     },
+     {
+      "object": "1WALL_race_close_nacw_navajo_2616_0",
+      "end": "end",
+      "vertex": 2926,
+      "ring_vertex": 2926,
+      "far_line_m": 0.002
+     },
+     {
+      "object": "1WALL_race_close_nacw_navajo_2136_0",
+      "end": "start",
+      "vertex": 2136,
+      "ring_vertex": 2136,
+      "far_line_m": 0.003
+     },
+     {
+      "object": "1WALL_race_close_nacw_navajo_2136_0",
+      "end": "end",
+      "vertex": 2426,
+      "ring_vertex": 2426,
+      "far_line_m": 0.003
+     },
+     {
+      "object": "1WALL_race_close_nacw_jackson_1477_0",
+      "end": "start",
+      "vertex": 1477,
+      "ring_vertex": 1477,
+      "nose_line_m": 0.001
+     },
+     {
+      "object": "1WALL_race_close_nacw_jackson_1477_0",
+      "end": "end",
+      "vertex": 2121,
+      "ring_vertex": 2121,
+      "far_line_m": 0.0
+     },
+     {
+      "object": "1WALL_race_close_nacw_missiongorge_717_0",
+      "end": "start",
+      "vertex": 717,
+      "ring_vertex": 717,
+      "nose_line_m": 0.0
+     },
+     {
+      "object": "1WALL_race_close_nacw_missiongorge_717_0",
+      "end": "end",
+      "vertex": 1452,
+      "ring_vertex": 1452,
+      "nose_line_m": 0.002
+     },
+     {
+      "object": "1WALL_race_close_nacw_princessview_333_0",
+      "end": "start",
+      "vertex": 333,
+      "ring_vertex": 333,
+      "far_line_m": 0.001
+     },
+     {
+      "object": "1WALL_race_close_nacw_princessview_333_0",
+      "end": "end",
+      "vertex": 691,
+      "ring_vertex": 691,
+      "far_line_m": 0.005
+     },
+     {
+      "object": "1WALL_race_close_nacw_waring_7_0",
+      "end": "start",
+      "vertex": 7,
+      "ring_vertex": 7,
+      "nose_line_m": 0.001
+     },
+     {
+      "object": "1WALL_race_close_nacw_waring_7_0",
+      "end": "end",
+      "vertex": 316,
+      "ring_vertex": 316,
+      "nose_line_m": 0.005
+     }
+    ]
+   },
+   "north_cw": {
+    "token": "ncw",
+    "chicane_walls": 0,
+    "chicane_objects": 0,
+    "nose_walls": 5,
+    "nose_objects": 5,
+    "nose_off_line_max_m": 0.006,
+    "nose_pins": [
+     {
+      "object": "1WALL_race_close_ncw_nose_7_0",
+      "vertex": 7,
+      "far_line_m": 0.001,
+      "closure_face_m": 0.003
+     },
+     {
+      "object": "1WALL_race_close_ncw_nose_316_0",
+      "vertex": 316,
+      "far_line_m": 0.004,
+      "closure_face_m": 0.004
+     },
+     {
+      "object": "1WALL_race_close_ncw_nose_717_0",
+      "vertex": 717,
+      "far_line_m": 0.002,
+      "closure_face_m": 0.003
+     },
+     {
+      "object": "1WALL_race_close_ncw_nose_1452_0",
+      "vertex": 1452,
+      "far_line_m": 0.001,
+      "closure_face_m": 0.001
+     },
+     {
+      "object": "1WALL_race_close_ncw_nose_1477_0",
+      "vertex": 1477,
+      "far_line_m": 0.003,
+      "closure_face_m": 0.006
+     }
+    ],
+    "closure_objects": 6,
+    "closure_runs": 6,
+    "closure_rings": 2653,
+    "closure_off_curve_max_m": 0.007,
+    "pins": [
+     {
+      "object": "1WALL_race_close_ncw_waring_7_0",
+      "end": "start",
+      "vertex": 7,
+      "ring_vertex": 7,
+      "nose_line_m": 0.004
+     },
+     {
+      "object": "1WALL_race_close_ncw_waring_7_0",
+      "end": "end",
+      "vertex": 316,
+      "ring_vertex": 316,
+      "nose_line_m": 0.005
+     },
+     {
+      "object": "1WALL_race_close_ncw_princessview_333_0",
+      "end": "start",
+      "vertex": 333,
+      "ring_vertex": 333,
+      "far_line_m": 0.001
+     },
+     {
+      "object": "1WALL_race_close_ncw_princessview_333_0",
+      "end": "end",
+      "vertex": 691,
+      "ring_vertex": 691,
+      "far_line_m": 0.002
+     },
+     {
+      "object": "1WALL_race_close_ncw_missiongorge_717_0",
+      "end": "start",
+      "vertex": 717,
+      "ring_vertex": 717,
+      "nose_line_m": 0.003
+     },
+     {
+      "object": "1WALL_race_close_ncw_missiongorge_717_0",
+      "end": "end",
+      "vertex": 1452,
+      "ring_vertex": 1452,
+      "nose_line_m": 0.002
+     },
+     {
+      "object": "1WALL_race_close_ncw_jackson_1477_0",
+      "end": "start",
+      "vertex": 1477,
+      "ring_vertex": 1477,
+      "nose_line_m": 0.001
+     },
+     {
+      "object": "1WALL_race_close_ncw_jackson_1477_0",
+      "end": "end",
+      "vertex": 2121,
+      "ring_vertex": 2121,
+      "far_line_m": 0.002
+     },
+     {
+      "object": "1WALL_race_close_ncw_navajo_2136_0",
+      "end": "start",
+      "vertex": 2136,
+      "ring_vertex": 2136,
+      "far_line_m": 0.003
+     },
+     {
+      "object": "1WALL_race_close_ncw_navajo_2136_0",
+      "end": "end",
+      "vertex": 2426,
+      "ring_vertex": 2426,
+      "far_line_m": 0.001
+     },
+     {
+      "object": "1WALL_race_close_ncw_navajo_2616_0",
+      "end": "start",
+      "vertex": 2616,
+      "ring_vertex": 2616,
+      "far_line_m": 0.002
+     },
+     {
+      "object": "1WALL_race_close_ncw_navajo_2616_0",
+      "end": "end",
+      "vertex": 2926,
+      "ring_vertex": 2926,
+      "far_line_m": 0.003
+     }
+    ]
+   }
+  },
+  "rings_total": 12406,
+  "interpolated": 0,
+  "objects": 42,
+  "kbar_objects": 0,
+  "edge_objects": 12,
+  "edge_declared_vertices": 2936,
+  "edge_missing": {
+   "L": 0,
+   "R": 9
+  },
+  "edge_missing_undeclared": {
+   "L": 0,
+   "R": 0
+  },
+  "edge_trimmed_declared": {
+   "L": 0,
+   "R": 14
+  },
+  "edge_corners_declared": 2,
+  "edge_corners": [
+   {
+    "side": "R",
+    "in_vertex": 2128,
+    "out_vertex": 2135,
+    "xz": [
+     33.001,
+     1727.255
+    ],
+    "nearest_ring_m": 0.005
+   },
+   {
+    "side": "R",
+    "in_vertex": 2927,
+    "out_vertex": 0,
+    "xz": [
+     -1970.54,
+     621.942
+    ],
+    "nearest_ring_m": 0.002
+   }
+  ],
+  "edge_fold_dropped": {
+   "L": 0,
+   "R": 14
+  },
+  "edge_gap_worst_m": 3.501,
+  "edge_rings": 5931,
+  "free_ends": 0,
+  "pins": 44,
+  "pin_gap_max_m": 0.008,
+  "kerb_objects": 8,
+  "corners": 5,
+  "kerbs_dropped": [
+   [
+    2130,
+    "inside"
+   ],
+   [
+    2932,
+    "inside"
+   ]
+  ],
+  "kerb_under_road": {
+   "1KERB_race_lapnorth_326_out": 0,
+   "1KERB_race_lapnorth_326_in": 0,
+   "1KERB_race_lapnorth_705_out": 0,
+   "1KERB_race_lapnorth_705_in": 0,
+   "1KERB_race_lapnorth_1463_out": 0,
+   "1KERB_race_lapnorth_1463_in": 0,
+   "1KERB_race_lapnorth_2130_out": 0,
+   "1KERB_race_lapnorth_2932_out": 0
+  },
+  "kerb_fold_dropped": 0,
+  "kerb_closure_clear_m": {
+   "1KERB_race_lapnorth_326_out": [
+    2.667,
+    "north_cw"
+   ],
+   "1KERB_race_lapnorth_326_in": [
+    2.648,
+    "north_acw"
+   ],
+   "1KERB_race_lapnorth_705_out": [
+    2.048,
+    "north_cw"
+   ],
+   "1KERB_race_lapnorth_705_in": [
+    3.34,
+    "north_acw"
+   ],
+   "1KERB_race_lapnorth_1463_out": [
+    2.458,
+    "north_cw"
+   ],
+   "1KERB_race_lapnorth_1463_in": [
+    null,
+    "north_acw"
+   ],
+   "1KERB_race_lapnorth_2130_out": [
+    2.485,
+    "north_cw"
+   ],
+   "1KERB_race_lapnorth_2932_out": [
+    2.316,
+    "north_cw"
+   ]
+  },
+  "kerb_clips": {
+   "1KERB_race_lapnorth_326_out": [
+    0,
+    0
+   ],
+   "1KERB_race_lapnorth_326_in": [
+    0,
+    0
+   ],
+   "1KERB_race_lapnorth_705_out": [
+    0,
+    0
+   ],
+   "1KERB_race_lapnorth_705_in": [
+    0,
+    0
+   ],
+   "1KERB_race_lapnorth_1463_out": [
+    0,
+    0
+   ],
+   "1KERB_race_lapnorth_1463_in": [
+    0,
+    0
+   ],
+   "1KERB_race_lapnorth_2130_out": [
+    0,
+    0
+   ],
+   "1KERB_race_lapnorth_2932_out": [
+    0,
+    0
+   ]
+  },
+  "mouths": [
+   {
+    "host_vertex": 36,
+    "side": "L",
+    "strip_off_m": 0.003
+   },
+   {
+    "host_vertex": 36,
+    "side": "R",
+    "strip_off_m": 0.004
+   },
+   {
+    "host_vertex": 135,
+    "side": "L",
+    "strip_off_m": 0.004
+   },
+   {
+    "host_vertex": 135,
+    "side": "R",
+    "strip_off_m": 0.006
+   },
+   {
+    "host_vertex": 224,
+    "side": "R",
+    "strip_off_m": 0.003
+   },
+   {
+    "host_vertex": 320,
+    "side": "L",
+    "strip_off_m": 0.004
+   },
+   {
+    "host_vertex": 325,
+    "side": "L",
+    "strip_off_m": 0.005
+   },
+   {
+    "host_vertex": 352,
+    "side": "L",
+    "strip_off_m": 0.004
+   },
+   {
+    "host_vertex": 352,
+    "side": "R",
+    "strip_off_m": 0.004
+   },
+   {
+    "host_vertex": 385,
+    "side": "R",
+    "strip_off_m": 0.004
+   },
+   {
+    "host_vertex": 432,
+    "side": "R",
+    "strip_off_m": 0.004
+   },
+   {
+    "host_vertex": 455,
+    "side": "R",
+    "strip_off_m": 0.005
+   },
+   {
+    "host_vertex": 509,
+    "side": "L",
+    "strip_off_m": 0.004
+   },
+   {
+    "host_vertex": 509,
+    "side": "R",
+    "strip_off_m": 0.006
+   },
+   {
+    "host_vertex": 565,
+    "side": "R",
+    "strip_off_m": 0.003
+   },
+   {
+    "host_vertex": 697,
+    "side": "L",
+    "strip_off_m": 0.005
+   },
+   {
+    "host_vertex": 706,
+    "side": "L",
+    "strip_off_m": 0.005
+   },
+   {
+    "host_vertex": 848,
+    "side": "R",
+    "strip_off_m": 0.004
+   },
+   {
+    "host_vertex": 1072,
+    "side": "L",
+    "strip_off_m": 0.003
+   },
+   {
+    "host_vertex": 1072,
+    "side": "R",
+    "strip_off_m": 0.003
+   },
+   {
+    "host_vertex": 1176,
+    "side": "L",
+    "strip_off_m": 0.003
+   },
+   {
+    "host_vertex": 1270,
+    "side": "L",
+    "strip_off_m": 0.003
+   },
+   {
+    "host_vertex": 1379,
+    "side": "L",
+    "strip_off_m": 0.005
+   },
+   {
+    "host_vertex": 1380,
+    "side": "R",
+    "strip_off_m": 0.003
+   },
+   {
+    "host_vertex": 1460,
+    "side": "L",
+    "strip_off_m": 0.005
+   },
+   {
+    "host_vertex": 1466,
+    "side": "L",
+    "strip_off_m": 0.005
+   },
+   {
+    "host_vertex": 1525,
+    "side": "R",
+    "strip_off_m": 0.006
+   },
+   {
+    "host_vertex": 1633,
+    "side": "R",
+    "strip_off_m": 0.003
+   },
+   {
+    "host_vertex": 1681,
+    "side": "L",
+    "strip_off_m": 0.005
+   },
+   {
+    "host_vertex": 1730,
+    "side": "L",
+    "strip_off_m": 0.004
+   },
+   {
+    "host_vertex": 2008,
+    "side": "R",
+    "strip_off_m": 0.004
+   },
+   {
+    "host_vertex": 2068,
+    "side": "L",
+    "strip_off_m": 0.002
+   },
+   {
+    "host_vertex": 2131,
+    "side": "L",
+    "strip_off_m": 0.007
+   },
+   {
+    "host_vertex": 2931,
+    "side": "L",
+    "strip_off_m": 0.005
+   }
+  ],
+  "other_deck_above": 0,
+  "inside_out_spans": 0,
+  "inside_out_by_object": {},
+  "inside_out_unmeasured": 0,
+  "chord_max_m": 0.0802,
+  "chord_worst": {
+   "chord_m": 0.0802,
+   "object": "1WALL_race_edge_lapnorth_L_navajo_2130_0",
+   "ring": 4,
+   "at_xz": [
+    56.27,
+    1715.66
+   ]
+  },
+  "chord_fail_m": 0.15,
+  "chord_spans_measured": 11212,
+  "chord_spans_fold": 0,
+  "chord_spans_unmeasured": 0,
+  "chord_spans_over": 0,
+  "ring_spacing_max_m": 3.501,
+  "ring_spacing_max_measured_m": 3.501,
+  "spawn_margin_m": 0.3,
+  "spawn_min_clear_m": {
+   "north_acw": 2.477,
+   "north_cw": 2.481
+  },
+  "spawn_slots": {
+   "north_acw": [
+    {
+     "name": "AC_HOTLAP_START_0",
+     "vertex": 2546,
+     "lat_m": 3.25,
+     "edge_face_m": 7.68,
+     "clear_edge_m": 3.48,
+     "clear_centre_m": null,
+     "lane_m": [
+      -7.68,
+      7.68
+     ],
+     "clear_lane_m": 3.48
+    },
+    {
+     "name": "AC_PIT_0",
+     "vertex": 2563,
+     "lat_m": 3.251,
+     "edge_face_m": 7.68,
+     "clear_edge_m": 3.479,
+     "clear_centre_m": null,
+     "lane_m": [
+      -7.68,
+      7.68
+     ],
+     "clear_lane_m": 3.479
+    },
+    {
+     "name": "AC_PIT_1",
+     "vertex": 2566,
+     "lat_m": 3.25,
+     "edge_face_m": 7.68,
+     "clear_edge_m": 3.48,
+     "clear_centre_m": null,
+     "lane_m": [
+      -7.68,
+      7.68
+     ],
+     "clear_lane_m": 3.48
+    },
+    {
+     "name": "AC_PIT_2",
+     "vertex": 2568,
+     "lat_m": 3.25,
+     "edge_face_m": 7.68,
+     "clear_edge_m": 3.48,
+     "clear_centre_m": null,
+     "lane_m": [
+      -7.68,
+      7.68
+     ],
+     "clear_lane_m": 3.48
+    },
+    {
+     "name": "AC_PIT_3",
+     "vertex": 2570,
+     "lat_m": 3.251,
+     "edge_face_m": 7.68,
+     "clear_edge_m": 3.479,
+     "clear_centre_m": null,
+     "lane_m": [
+      -7.68,
+      7.68
+     ],
+     "clear_lane_m": 3.479
+    },
+    {
+     "name": "AC_PIT_4",
+     "vertex": 2573,
+     "lat_m": 3.254,
+     "edge_face_m": 7.68,
+     "clear_edge_m": 3.476,
+     "clear_centre_m": null,
+     "lane_m": [
+      -7.68,
+      7.68
+     ],
+     "clear_lane_m": 3.476
+    },
+    {
+     "name": "AC_PIT_5",
+     "vertex": 2575,
+     "lat_m": 3.25,
+     "edge_face_m": 7.68,
+     "clear_edge_m": 3.48,
+     "clear_centre_m": null,
+     "lane_m": [
+      -7.68,
+      7.68
+     ],
+     "clear_lane_m": 3.48
+    },
+    {
+     "name": "AC_PIT_6",
+     "vertex": 2577,
+     "lat_m": 3.255,
+     "edge_face_m": 7.68,
+     "clear_edge_m": 3.475,
+     "clear_centre_m": null,
+     "lane_m": [
+      -7.68,
+      7.68
+     ],
+     "clear_lane_m": 3.475
+    },
+    {
+     "name": "AC_PIT_7",
+     "vertex": 2580,
+     "lat_m": 3.253,
+     "edge_face_m": 7.68,
+     "clear_edge_m": 3.477,
+     "clear_centre_m": null,
+     "lane_m": [
+      -7.68,
+      7.68
+     ],
+     "clear_lane_m": 3.477
+    },
+    {
+     "name": "AC_START_0",
+     "vertex": 2546,
+     "lat_m": 3.25,
+     "edge_face_m": 7.68,
+     "clear_edge_m": 3.48,
+     "clear_centre_m": null,
+     "lane_m": [
+      -7.68,
+      7.68
+     ],
+     "clear_lane_m": 3.48
+    },
+    {
+     "name": "AC_START_1",
+     "vertex": 2548,
+     "lat_m": 4.252,
+     "edge_face_m": 7.68,
+     "clear_edge_m": 2.478,
+     "clear_centre_m": null,
+     "lane_m": [
+      -7.68,
+      7.68
+     ],
+     "clear_lane_m": 2.478
+    },
+    {
+     "name": "AC_START_2",
+     "vertex": 2550,
+     "lat_m": 2.251,
+     "edge_face_m": 7.68,
+     "clear_edge_m": 4.479,
+     "clear_centre_m": null,
+     "lane_m": [
+      -7.68,
+      7.68
+     ],
+     "clear_lane_m": 4.479
+    },
+    {
+     "name": "AC_START_3",
+     "vertex": 2551,
+     "lat_m": 4.252,
+     "edge_face_m": 7.68,
+     "clear_edge_m": 2.478,
+     "clear_centre_m": null,
+     "lane_m": [
+      -7.68,
+      7.68
+     ],
+     "clear_lane_m": 2.478
+    },
+    {
+     "name": "AC_START_4",
+     "vertex": 2553,
+     "lat_m": 2.252,
+     "edge_face_m": 7.68,
+     "clear_edge_m": 4.478,
+     "clear_centre_m": null,
+     "lane_m": [
+      -7.68,
+      7.68
+     ],
+     "clear_lane_m": 4.478
+    },
+    {
+     "name": "AC_START_5",
+     "vertex": 2555,
+     "lat_m": 4.253,
+     "edge_face_m": 7.68,
+     "clear_edge_m": 2.477,
+     "clear_centre_m": null,
+     "lane_m": [
+      -7.68,
+      7.68
+     ],
+     "clear_lane_m": 2.477
+    },
+    {
+     "name": "AC_START_6",
+     "vertex": 2557,
+     "lat_m": 2.25,
+     "edge_face_m": 7.68,
+     "clear_edge_m": 4.48,
+     "clear_centre_m": null,
+     "lane_m": [
+      -7.68,
+      7.68
+     ],
+     "clear_lane_m": 4.48
+    },
+    {
+     "name": "AC_START_7",
+     "vertex": 2559,
+     "lat_m": 4.253,
+     "edge_face_m": 7.68,
+     "clear_edge_m": 2.477,
+     "clear_centre_m": null,
+     "lane_m": [
+      -7.68,
+      7.68
+     ],
+     "clear_lane_m": 2.477
+    }
+   ],
+   "north_cw": [
+    {
+     "name": "AC_HOTLAP_START_0",
+     "vertex": 2527,
+     "lat_m": -3.25,
+     "edge_face_m": 7.68,
+     "clear_edge_m": 3.48,
+     "clear_centre_m": null,
+     "lane_m": [
+      -7.68,
+      7.68
+     ],
+     "clear_lane_m": 3.48
+    },
+    {
+     "name": "AC_PIT_0",
+     "vertex": 2510,
+     "lat_m": -3.246,
+     "edge_face_m": 7.68,
+     "clear_edge_m": 3.484,
+     "clear_centre_m": null,
+     "lane_m": [
+      -7.68,
+      7.68
+     ],
+     "clear_lane_m": 3.484
+    },
+    {
+     "name": "AC_PIT_1",
+     "vertex": 2507,
+     "lat_m": -3.249,
+     "edge_face_m": 7.68,
+     "clear_edge_m": 3.481,
+     "clear_centre_m": null,
+     "lane_m": [
+      -7.68,
+      7.68
+     ],
+     "clear_lane_m": 3.481
+    },
+    {
+     "name": "AC_PIT_2",
+     "vertex": 2505,
+     "lat_m": -3.25,
+     "edge_face_m": 7.68,
+     "clear_edge_m": 3.48,
+     "clear_centre_m": null,
+     "lane_m": [
+      -7.68,
+      7.68
+     ],
+     "clear_lane_m": 3.48
+    },
+    {
+     "name": "AC_PIT_3",
+     "vertex": 2503,
+     "lat_m": -3.25,
+     "edge_face_m": 7.68,
+     "clear_edge_m": 3.48,
+     "clear_centre_m": null,
+     "lane_m": [
+      -7.68,
+      7.68
+     ],
+     "clear_lane_m": 3.48
+    },
+    {
+     "name": "AC_PIT_4",
+     "vertex": 2500,
+     "lat_m": -3.25,
+     "edge_face_m": 7.68,
+     "clear_edge_m": 3.48,
+     "clear_centre_m": null,
+     "lane_m": [
+      -7.68,
+      7.68
+     ],
+     "clear_lane_m": 3.48
+    },
+    {
+     "name": "AC_PIT_5",
+     "vertex": 2498,
+     "lat_m": -3.25,
+     "edge_face_m": 7.68,
+     "clear_edge_m": 3.48,
+     "clear_centre_m": null,
+     "lane_m": [
+      -7.68,
+      7.68
+     ],
+     "clear_lane_m": 3.48
+    },
+    {
+     "name": "AC_PIT_6",
+     "vertex": 2496,
+     "lat_m": -3.25,
+     "edge_face_m": 7.68,
+     "clear_edge_m": 3.48,
+     "clear_centre_m": null,
+     "lane_m": [
+      -7.68,
+      7.68
+     ],
+     "clear_lane_m": 3.48
+    },
+    {
+     "name": "AC_PIT_7",
+     "vertex": 2493,
+     "lat_m": -3.25,
+     "edge_face_m": 7.68,
+     "clear_edge_m": 3.48,
+     "clear_centre_m": null,
+     "lane_m": [
+      -7.68,
+      7.68
+     ],
+     "clear_lane_m": 3.48
+    },
+    {
+     "name": "AC_START_0",
+     "vertex": 2527,
+     "lat_m": -3.25,
+     "edge_face_m": 7.68,
+     "clear_edge_m": 3.48,
+     "clear_centre_m": null,
+     "lane_m": [
+      -7.68,
+      7.68
+     ],
+     "clear_lane_m": 3.48
+    },
+    {
+     "name": "AC_START_1",
+     "vertex": 2525,
+     "lat_m": -4.248,
+     "edge_face_m": 7.68,
+     "clear_edge_m": 2.482,
+     "clear_centre_m": null,
+     "lane_m": [
+      -7.68,
+      7.68
+     ],
+     "clear_lane_m": 2.482
+    },
+    {
+     "name": "AC_START_2",
+     "vertex": 2523,
+     "lat_m": -2.248,
+     "edge_face_m": 7.68,
+     "clear_edge_m": 4.482,
+     "clear_centre_m": null,
+     "lane_m": [
+      -7.68,
+      7.68
+     ],
+     "clear_lane_m": 4.482
+    },
+    {
+     "name": "AC_START_3",
+     "vertex": 2522,
+     "lat_m": -4.248,
+     "edge_face_m": 7.68,
+     "clear_edge_m": 2.482,
+     "clear_centre_m": null,
+     "lane_m": [
+      -7.68,
+      7.68
+     ],
+     "clear_lane_m": 2.482
+    },
+    {
+     "name": "AC_START_4",
+     "vertex": 2520,
+     "lat_m": -2.249,
+     "edge_face_m": 7.68,
+     "clear_edge_m": 4.481,
+     "clear_centre_m": null,
+     "lane_m": [
+      -7.68,
+      7.68
+     ],
+     "clear_lane_m": 4.481
+    },
+    {
+     "name": "AC_START_5",
+     "vertex": 2518,
+     "lat_m": -4.249,
+     "edge_face_m": 7.68,
+     "clear_edge_m": 2.481,
+     "clear_centre_m": null,
+     "lane_m": [
+      -7.68,
+      7.68
+     ],
+     "clear_lane_m": 2.481
+    },
+    {
+     "name": "AC_START_6",
+     "vertex": 2516,
+     "lat_m": -2.25,
+     "edge_face_m": 7.68,
+     "clear_edge_m": 4.48,
+     "clear_centre_m": null,
+     "lane_m": [
+      -7.68,
+      7.68
+     ],
+     "clear_lane_m": 4.48
+    },
+    {
+     "name": "AC_START_7",
+     "vertex": 2514,
+     "lat_m": -4.245,
+     "edge_face_m": 7.68,
+     "clear_edge_m": 2.485,
+     "clear_centre_m": null,
+     "lane_m": [
+      -7.68,
+      7.68
+     ],
+     "clear_lane_m": 2.485
+    }
+   ]
+  },
+  "lamps": 323,
+  "lamps_checked": 323,
+  "lamp_arm_m": 1.8,
+  "lamp_post_h_m": 10.668,
+  "lamp_model": "led_cobra",
+  "mast_r_m": 0.124,
+  "lamp_min_margin_m": 0.773,
+  "lamp_min": {
+   "lamp": 310,
+   "vertex": 1426,
+   "lat_m": 15.515,
+   "base_xz": [
+    -1316.93,
+    3161.64
+   ],
+   "against": "edge",
+   "margin_m": 0.773,
+   "fallback": false,
+   "closure": "closure_north_acw",
+   "closure_margin_m": 11.347
+  },
+  "lamps_inside": 0,
+  "lamp_min_vs_closure": {
+   "lamp": 120,
+   "vertex": 2136,
+   "lat_m": 15.075,
+   "base_xz": [
+    45.99,
+    1703.29
+   ],
+   "against": "edge",
+   "margin_m": 2.826,
+   "fallback": false,
+   "closure": "closure_north_cw",
+   "closure_margin_m": 2.826
+  },
+  "scenery_source": "trees: tools/make_treefx.py plan (every species); signs: data/signs.local.json",
+  "scenery_items": {
+   "tree": 21484,
+   "sign": 29
+  },
+  "scenery_beside": 671,
+  "scenery_hits": 0,
+  "scenery_min": {
+   "north_cw": {
+    "layout": "north_cw",
+    "kind": "tree",
+    "id": "Bush.bin@median_planting#3127",
+    "vertex": 1091,
+    "lat_m": -2.307,
+    "xz": [
+     -1949.54,
+     2395.04
+    ],
+    "against": "closure",
+    "margin_m": 0.661
+   },
+   "north_acw": {
+    "layout": "north_acw",
+    "kind": "tree",
+    "id": "Bush.bin@median_planting#3060",
+    "vertex": 957,
+    "lat_m": 0.67,
+    "xz": [
+     -2290.0,
+     2204.66
+    ],
+    "against": "closure",
+    "margin_m": 0.67
+   }
+  },
+  "scenery_r_m": {
+   "tree": 0.3,
+   "sign": 0.03
+  }
+ }
+}

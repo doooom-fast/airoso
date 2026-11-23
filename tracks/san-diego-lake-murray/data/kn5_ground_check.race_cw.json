@@ -3,17 +3,17 @@
  "reasons": [],
  "kn5": [
   "san_diego_lake_murray.kn5",
-  "san_diego_lake_murray_race.kn5",
+  "san_diego_lake_murray_race_college.kn5",
   "san_diego_lake_murray_closure_race_cw.kn5"
  ],
  "fidelity": "skipped: gate OBJ written from this kn5",
  "double_sheet_cells": 0,
  "seating": {
   "walls": {
-   "objects": 312,
+   "objects": 314,
    "no_ground_pct": 0.0,
-   "median_m": -0.62,
-   "p95_m": -0.192,
+   "median_m": -0.611,
+   "p95_m": -0.191,
    "hovering": 0
   },
   "lampposts": {
@@ -27,16 +27,16 @@
    "objects": 26,
    "no_ground_pct": 0.0,
    "median_m": -0.363,
-   "p95_m": -0.3,
+   "p95_m": -0.301,
    "hovering": 0
   }
  },
- "lamp_heads": 393,
+ "lamp_heads": 781,
  "lamp_orphans": 0,
  "road_over_ground": {
-  "over": 24,
-  "samples": 10785,
+  "over": 43,
+  "samples": 10900,
   "p95_m": 0.022,
-  "max_m": 0.255
+  "max_m": 0.313
  }
 }

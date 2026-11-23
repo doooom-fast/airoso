@@ -1,5 +1,5 @@
 {
- "blend": "D:/k10-scratch/lm_v4_0201/loop.blend",
+ "blend": "D:/k10-scratch/lm_line/loop.blend",
  "road_objects": [
   "1ROAD_apron_AP1",
   "1ROAD_mouthfill_0",
@@ -14,7 +14,6 @@
   "1KERB_sidewalk_padJ2",
   "1KERB_sidewalk_padJ3",
   "1KERB_sidewalk_padJ4",
-  "1KERB_sidewalk_streetonly_median",
   "CURB",
   "TERRAIN"
  ],
@@ -25,22 +24,60 @@
   "1KERB_race_3296_out",
   "1KERB_race_770_in",
   "1KERB_race_770_out",
-  "1WALL_race_close_acw_college_1253_0",
-  "1WALL_race_close_acw_college_1343_0",
+  "1KERB_race_lapcollege_0_in",
+  "1KERB_race_lapcollege_0_out",
+  "1KERB_race_lapcollege_1514_in",
+  "1KERB_race_lapcollege_1514_out",
+  "1KERB_race_lapcollege_2319_in",
+  "1KERB_race_lapcollege_2319_out",
+  "1KERB_race_lapcollege_3296_in",
+  "1KERB_race_lapcollege_3296_out",
+  "1KERB_race_lapcollege_770_in",
+  "1KERB_race_lapcollege_770_out",
+  "1KERB_race_lapnorth_1463_in",
+  "1KERB_race_lapnorth_1463_out",
+  "1KERB_race_lapnorth_2130_out",
+  "1KERB_race_lapnorth_2932_out",
+  "1KERB_race_lapnorth_326_in",
+  "1KERB_race_lapnorth_326_out",
+  "1KERB_race_lapnorth_705_in",
+  "1KERB_race_lapnorth_705_out",
+  "1WALL_race_close_acw_college_1445_0",
   "1WALL_race_close_acw_college_777_0",
   "1WALL_race_close_acw_jackson_2328_0",
   "1WALL_race_close_acw_jackson_2328_1",
   "1WALL_race_close_acw_lakemurray_3304_0",
   "1WALL_race_close_acw_lakemurray_3304_1",
   "1WALL_race_close_acw_navajo_1521_0",
-  "1WALL_race_close_cw_college_1253_0",
-  "1WALL_race_close_cw_college_1343_0",
+  "1WALL_race_close_cw_college_1445_0",
   "1WALL_race_close_cw_college_777_0",
   "1WALL_race_close_cw_jackson_2328_0",
   "1WALL_race_close_cw_jackson_2328_1",
   "1WALL_race_close_cw_lakemurray_3304_0",
   "1WALL_race_close_cw_lakemurray_3304_1",
   "1WALL_race_close_cw_navajo_1521_0",
+  "1WALL_race_close_nacw_jackson_1477_0",
+  "1WALL_race_close_nacw_missiongorge_717_0",
+  "1WALL_race_close_nacw_navajo_2136_0",
+  "1WALL_race_close_nacw_navajo_2616_0",
+  "1WALL_race_close_nacw_nose_1452_0",
+  "1WALL_race_close_nacw_nose_1477_0",
+  "1WALL_race_close_nacw_nose_316_0",
+  "1WALL_race_close_nacw_nose_717_0",
+  "1WALL_race_close_nacw_nose_7_0",
+  "1WALL_race_close_nacw_princessview_333_0",
+  "1WALL_race_close_nacw_waring_7_0",
+  "1WALL_race_close_ncw_jackson_1477_0",
+  "1WALL_race_close_ncw_missiongorge_717_0",
+  "1WALL_race_close_ncw_navajo_2136_0",
+  "1WALL_race_close_ncw_navajo_2616_0",
+  "1WALL_race_close_ncw_nose_1452_0",
+  "1WALL_race_close_ncw_nose_1477_0",
+  "1WALL_race_close_ncw_nose_316_0",
+  "1WALL_race_close_ncw_nose_717_0",
+  "1WALL_race_close_ncw_nose_7_0",
+  "1WALL_race_close_ncw_princessview_333_0",
+  "1WALL_race_close_ncw_waring_7_0",
   "1WALL_race_edge_L_alvarado_0_0",
   "1WALL_race_edge_L_college_770_0",
   "1WALL_race_edge_L_jackson_2319_0",
@@ -49,6 +86,33 @@
   "1WALL_race_edge_L_lakemurray_3296_1",
   "1WALL_race_edge_L_navajo_1514_0",
   "1WALL_race_edge_L_navajo_1514_1",
+  "1WALL_race_edge_lapcollege_L_alvarado_0_0",
+  "1WALL_race_edge_lapcollege_L_college_770_0",
+  "1WALL_race_edge_lapcollege_L_jackson_2319_0",
+  "1WALL_race_edge_lapcollege_L_jackson_2319_1",
+  "1WALL_race_edge_lapcollege_L_lakemurray_3296_0",
+  "1WALL_race_edge_lapcollege_L_lakemurray_3296_1",
+  "1WALL_race_edge_lapcollege_L_navajo_1514_0",
+  "1WALL_race_edge_lapcollege_L_navajo_1514_1",
+  "1WALL_race_edge_lapcollege_R_alvarado_5_0",
+  "1WALL_race_edge_lapcollege_R_college_774_0",
+  "1WALL_race_edge_lapcollege_R_jackson_2324_0",
+  "1WALL_race_edge_lapcollege_R_jackson_2324_1",
+  "1WALL_race_edge_lapcollege_R_lakemurray_3300_0",
+  "1WALL_race_edge_lapcollege_R_lakemurray_3300_1",
+  "1WALL_race_edge_lapcollege_R_navajo_1517_0",
+  "1WALL_race_edge_lapnorth_L_jackson_1463_0",
+  "1WALL_race_edge_lapnorth_L_missiongorge_705_0",
+  "1WALL_race_edge_lapnorth_L_navajo_2130_0",
+  "1WALL_race_edge_lapnorth_L_navajo_2130_1",
+  "1WALL_race_edge_lapnorth_L_princessview_326_0",
+  "1WALL_race_edge_lapnorth_L_waring_0_0",
+  "1WALL_race_edge_lapnorth_L_waringj1_2932_0",
+  "1WALL_race_edge_lapnorth_R_jackson_1463_0",
+  "1WALL_race_edge_lapnorth_R_missiongorge_705_0",
+  "1WALL_race_edge_lapnorth_R_navajo_2135_0",
+  "1WALL_race_edge_lapnorth_R_princessview_326_0",
+  "1WALL_race_edge_lapnorth_R_waring_0_0",
   "1WALL_race_edge_R_alvarado_5_0",
   "1WALL_race_edge_R_college_774_0",
   "1WALL_race_edge_R_jackson_2324_0",
@@ -59,19 +123,21 @@
  ],
  "walls": {
   "RACE": 15,
-  "acw": 8,
-  "all": 66,
-  "cw": 8
+  "acw": 7,
+  "all": 112,
+  "cw": 7,
+  "nacw": 11,
+  "ncw": 11
  },
  "scan": "5-degree polar, 0.25 m steps, bisected; ROAD top vs CURB/SIDEWALK/TERRAIN top; ground = top hit at the base (SIGN* excluded); plate normals = Mesh.polygons[].normal of the vertical SIGNPLATE faces within 1.2 m of the post; plate bottom = lowest SIGNPLATE vertex 0.5-0.75 m off the post axis; post base = lowest SIGNPOST vertex within 0.1 m of it; walk_behind_m = the ground profile from the base toward the nearest pavement (> 0 behind the walk, < 0 on it); wall_m = the nearest 1WALL* face 0.6 m up the post; a layout plate: layout_wall_m = the nearest face of the walls its layout loads (RACE + RACE_CLOSE_<TOKEN>), on_wall = a wall top over the deck at the base, ground_y = the highest of ROAD / ground under it",
  "signs": {
   "M1-fwd": {
-   "clear_m": 1.787,
+   "clear_m": 1.84,
    "bearing_deg": 85,
    "on_road": false,
    "ground_y": 24.6313,
    "walk_behind_m": -0.25,
-   "wall_m": 2.032,
+   "wall_m": 2.082,
    "plate_normals_xz": [
     [
      0.44279,
@@ -83,29 +149,29 @@
    "post_base_y": 24.3313
   },
   "M2-fwd": {
-   "clear_m": 1.768,
+   "clear_m": 1.823,
    "bearing_deg": 120,
    "on_road": false,
-   "ground_y": 9.8254,
+   "ground_y": 9.8262,
    "walk_behind_m": -0.2,
-   "wall_m": 2.012,
+   "wall_m": 2.065,
    "plate_normals_xz": [
     [
-     0.28458,
-     0.95865
+     0.28446,
+     0.95869
     ]
    ],
    "n_plate_faces": 4,
-   "plate_bottom_y": 11.9554,
-   "post_base_y": 9.5254
+   "plate_bottom_y": 11.9562,
+   "post_base_y": 9.5262
   },
   "M2-fwd-2": {
-   "clear_m": 1.783,
+   "clear_m": 1.823,
    "bearing_deg": 0,
    "on_road": false,
-   "ground_y": 10.6062,
+   "ground_y": 10.6064,
    "walk_behind_m": -0.25,
-   "wall_m": 1.987,
+   "wall_m": 2.024,
    "plate_normals_xz": [
     [
      0.99056,
@@ -113,79 +179,79 @@
     ]
    ],
    "n_plate_faces": 4,
-   "plate_bottom_y": 12.7362,
-   "post_base_y": 10.3062
+   "plate_bottom_y": 12.7364,
+   "post_base_y": 10.3064
   },
   "M3-fwd@race_cw": {
    "clear_m": 0.0,
    "bearing_deg": 0,
    "on_road": true,
-   "ground_y": 24.3364,
-   "walk_behind_m": -1.05,
-   "wall_m": 1.63,
+   "ground_y": 24.3357,
+   "walk_behind_m": -1.1,
+   "wall_m": 1.646,
    "plate_normals_xz": [
     [
-     0.64003,
-     -0.76835
+     0.63948,
+     -0.76881
     ]
    ],
    "n_plate_faces": 4,
-   "plate_bottom_y": 26.4664,
-   "post_base_y": 24.0364,
+   "plate_bottom_y": 26.4657,
+   "post_base_y": 24.0357,
    "layout_token": "cw",
-   "layout_walls": 8,
-   "layout_wall_m": 1.665,
+   "layout_walls": 7,
+   "layout_wall_m": 1.681,
    "on_wall": false
   },
   "M4-fwd@race_cw": {
-   "clear_m": 1.534,
-   "bearing_deg": 230,
+   "clear_m": 1.504,
+   "bearing_deg": 225,
    "on_road": false,
-   "ground_y": 109.2178,
+   "ground_y": 109.2253,
    "walk_behind_m": 0.25,
-   "wall_m": 1.758,
+   "wall_m": 1.733,
    "plate_normals_xz": [
     [
-     -0.75142,
-     -0.65982
+     -0.75154,
+     -0.65969
     ]
    ],
    "n_plate_faces": 4,
-   "plate_bottom_y": 111.3478,
-   "post_base_y": 108.9178,
+   "plate_bottom_y": 111.3553,
+   "post_base_y": 108.9253,
    "layout_token": "cw",
-   "layout_walls": 8,
-   "layout_wall_m": 1.758,
+   "layout_walls": 7,
+   "layout_wall_m": 1.733,
    "on_wall": false
   },
   "M5-fwd": {
-   "clear_m": 1.763,
+   "clear_m": 1.825,
    "bearing_deg": 160,
    "on_road": false,
-   "ground_y": 92.0793,
+   "ground_y": 92.0789,
    "walk_behind_m": -0.25,
-   "wall_m": 2.021,
+   "wall_m": 2.079,
    "plate_normals_xz": [
     [
-     -0.80871,
-     0.58821
+     -0.80867,
+     0.58826
     ]
    ],
    "n_plate_faces": 4,
-   "plate_bottom_y": 94.2093,
-   "post_base_y": 91.7793
+   "plate_bottom_y": 94.2089,
+   "post_base_y": 91.7789
   },
   "M5-rev": {
-   "clear_m": 1.747,
+   "clear_m": 1.778,
    "bearing_deg": 195,
    "on_road": false,
    "ground_y": 92.0706,
-   "walk_behind_m": -0.25,
-   "wall_m": 1.933,
+   "walk_behind_m": -0.3,
+   "wall_m": 1.96,
    "plate_normals_xz": [
     [
      -0.58149,
-     -0.81355
+     -0.81356
     ]
    ],
    "n_plate_faces": 4,
@@ -198,7 +264,7 @@
    "on_road": true,
    "ground_y": 109.1152,
    "walk_behind_m": -3.25,
-   "wall_m": 1.578,
+   "wall_m": 0.777,
    "plate_normals_xz": [
     [
      0.36325,
@@ -209,7 +275,7 @@
    "plate_bottom_y": 111.2452,
    "post_base_y": 108.8152,
    "layout_token": "acw",
-   "layout_walls": 8,
+   "layout_walls": 7,
    "layout_wall_m": 1.624,
    "on_wall": false
   },
@@ -219,7 +285,7 @@
    "on_road": false,
    "ground_y": 24.5139,
    "walk_behind_m": -0.5,
-   "wall_m": 1.615,
+   "wall_m": 1.614,
    "plate_normals_xz": [
     [
      0.87003,
@@ -230,21 +296,21 @@
    "plate_bottom_y": 26.6439,
    "post_base_y": 24.2139,
    "layout_token": "acw",
-   "layout_walls": 8,
+   "layout_walls": 7,
    "layout_wall_m": 1.615,
    "on_wall": false
   },
   "M2-rev": {
-   "clear_m": 1.741,
+   "clear_m": 1.785,
    "bearing_deg": 35,
    "on_road": false,
    "ground_y": 10.6125,
    "walk_behind_m": -0.3,
-   "wall_m": 1.907,
+   "wall_m": 1.946,
    "plate_normals_xz": [
     [
-     0.3693,
-     0.92931
+     0.36889,
+     0.92947
     ]
    ],
    "n_plate_faces": 4,
@@ -252,45 +318,45 @@
    "post_base_y": 10.3125
   },
   "M1-rev": {
-   "clear_m": 1.733,
+   "clear_m": 1.779,
    "bearing_deg": 95,
    "on_road": false,
-   "ground_y": 24.623,
+   "ground_y": 24.6228,
    "walk_behind_m": -0.3,
-   "wall_m": 1.975,
+   "wall_m": 2.019,
    "plate_normals_xz": [
     [
-     -0.87101,
-     0.49127
+     -0.8714,
+     0.49057
     ]
    ],
    "n_plate_faces": 4,
-   "plate_bottom_y": 26.753,
-   "post_base_y": 24.323
+   "plate_bottom_y": 26.7528,
+   "post_base_y": 24.3228
   },
   "MED-1-fwd": {
-   "clear_m": 1.55,
+   "clear_m": 1.619,
    "bearing_deg": 0,
    "on_road": false,
-   "ground_y": 25.8101,
-   "walk_behind_m": -0.2,
-   "wall_m": 36.572,
+   "ground_y": 25.8025,
+   "walk_behind_m": -0.15,
+   "wall_m": 36.649,
    "plate_normals_xz": [
     [
-     0.8725,
-     -0.48862
+     0.87251,
+     -0.4886
     ]
    ],
    "n_plate_faces": 4,
-   "plate_bottom_y": 27.9401,
-   "post_base_y": 25.5101
+   "plate_bottom_y": 27.9325,
+   "post_base_y": 25.5025
   },
   "MED-6-fwd": {
    "clear_m": 1.341,
    "bearing_deg": 205,
    "on_road": false,
    "ground_y": 60.4438,
-   "walk_behind_m": -0.3,
+   "walk_behind_m": -0.35,
    "wall_m": 460.451,
    "plate_normals_xz": [
     [
@@ -307,7 +373,7 @@
    "bearing_deg": 340,
    "on_road": false,
    "ground_y": 56.8867,
-   "walk_behind_m": -0.4,
+   "walk_behind_m": -0.45,
    "wall_m": 446.08,
    "plate_normals_xz": [
     [
@@ -320,28 +386,28 @@
    "post_base_y": 56.5867
   },
   "MED-8-fwd": {
-   "clear_m": 1.399,
+   "clear_m": 1.438,
    "bearing_deg": 100,
    "on_road": false,
-   "ground_y": 39.9236,
-   "walk_behind_m": -0.3,
-   "wall_m": 251.811,
+   "ground_y": 39.9231,
+   "walk_behind_m": -0.35,
+   "wall_m": 251.775,
    "plate_normals_xz": [
     [
-     0.05181,
-     0.99866
+     0.0519,
+     0.99865
     ]
    ],
    "n_plate_faces": 4,
-   "plate_bottom_y": 42.0536,
-   "post_base_y": 39.6236
+   "plate_bottom_y": 42.0531,
+   "post_base_y": 39.6231
   },
   "MED-10-fwd": {
    "clear_m": 1.318,
    "bearing_deg": 280,
    "on_road": false,
    "ground_y": 24.7708,
-   "walk_behind_m": -0.4,
+   "walk_behind_m": -0.45,
    "wall_m": 224.898,
    "plate_normals_xz": [
     [
@@ -354,28 +420,28 @@
    "post_base_y": 24.4708
   },
   "MED-13-fwd": {
-   "clear_m": 1.588,
+   "clear_m": 1.731,
    "bearing_deg": 15,
    "on_road": false,
-   "ground_y": 13.5732,
-   "walk_behind_m": -0.15,
-   "wall_m": 91.887,
+   "ground_y": 13.55,
+   "walk_behind_m": -0.05,
+   "wall_m": 91.883,
    "plate_normals_xz": [
     [
-     0.95305,
-     -0.3028
+     0.95306,
+     -0.30278
     ]
    ],
    "n_plate_faces": 4,
-   "plate_bottom_y": 15.7032,
-   "post_base_y": 13.2732
+   "plate_bottom_y": 15.68,
+   "post_base_y": 13.25
   },
   "MED-13-rev": {
    "clear_m": 1.193,
    "bearing_deg": 5,
    "on_road": false,
    "ground_y": 13.8572,
-   "walk_behind_m": -0.55,
+   "walk_behind_m": -0.6,
    "wall_m": 96.923,
    "plate_normals_xz": [
     [
@@ -388,29 +454,29 @@
    "post_base_y": 13.5572
   },
   "MED-10-rev": {
-   "clear_m": 1.774,
+   "clear_m": 2.013,
    "bearing_deg": 250,
    "on_road": false,
-   "ground_y": 25.5322,
-   "walk_behind_m": 0.1,
-   "wall_m": 227.89,
+   "ground_y": 25.5159,
+   "walk_behind_m": 0.25,
+   "wall_m": 228.123,
    "plate_normals_xz": [
     [
-     -0.82131,
-     -0.57048
+     -0.8213,
+     -0.5705
     ]
    ],
    "n_plate_faces": 4,
-   "plate_bottom_y": 27.6622,
-   "post_base_y": 25.2322
+   "plate_bottom_y": 27.6459,
+   "post_base_y": 25.2159
   },
   "MED-8-rev": {
-   "clear_m": 1.511,
+   "clear_m": 1.651,
    "bearing_deg": 145,
    "on_road": false,
-   "ground_y": 40.1428,
-   "walk_behind_m": -0.2,
-   "wall_m": 257.24,
+   "ground_y": 40.1238,
+   "walk_behind_m": -0.1,
+   "wall_m": 257.314,
    "plate_normals_xz": [
     [
      -0.99982,
@@ -418,16 +484,16 @@
     ]
    ],
    "n_plate_faces": 4,
-   "plate_bottom_y": 42.2728,
-   "post_base_y": 39.8428
+   "plate_bottom_y": 42.2538,
+   "post_base_y": 39.8238
   },
   "MED-7-rev": {
-   "clear_m": 1.553,
+   "clear_m": 1.65,
    "bearing_deg": 310,
    "on_road": false,
-   "ground_y": 57.2341,
-   "walk_behind_m": -0.2,
-   "wall_m": 459.94,
+   "ground_y": 57.2222,
+   "walk_behind_m": -0.15,
+   "wall_m": 460.059,
    "plate_normals_xz": [
     [
      -0.04104,
@@ -435,16 +501,16 @@
     ]
    ],
    "n_plate_faces": 4,
-   "plate_bottom_y": 59.3641,
-   "post_base_y": 56.9341
+   "plate_bottom_y": 59.3522,
+   "post_base_y": 56.9222
   },
   "MED-6-rev": {
-   "clear_m": 1.404,
+   "clear_m": 1.443,
    "bearing_deg": 205,
    "on_road": false,
    "ground_y": 60.501,
    "walk_behind_m": -0.2,
-   "wall_m": 457.938,
+   "wall_m": 457.91,
    "plate_normals_xz": [
     [
      -0.9717,
@@ -460,7 +526,7 @@
    "bearing_deg": 35,
    "on_road": false,
    "ground_y": 25.5007,
-   "walk_behind_m": -0.4,
+   "walk_behind_m": -0.45,
    "wall_m": 27.244,
    "plate_normals_xz": [
     [
@@ -473,38 +539,38 @@
    "post_base_y": 25.2007
   },
   "J2-fwd": {
-   "clear_m": 1.558,
-   "bearing_deg": 350,
+   "clear_m": 1.647,
+   "bearing_deg": 340,
    "on_road": false,
-   "ground_y": 3.2268,
-   "walk_behind_m": -0.2,
-   "wall_m": 19.702,
+   "ground_y": 3.2148,
+   "walk_behind_m": -0.15,
+   "wall_m": 5.095,
    "plate_normals_xz": [
     [
-     0.83018,
-     0.5575
+     0.83032,
+     0.55729
     ]
    ],
    "n_plate_faces": 4,
-   "plate_bottom_y": 5.3568,
-   "post_base_y": 2.9268
+   "plate_bottom_y": 5.3448,
+   "post_base_y": 2.9148
   },
   "J3-fwd": {
-   "clear_m": 1.508,
+   "clear_m": 1.546,
    "bearing_deg": 295,
    "on_road": false,
-   "ground_y": -66.7556,
+   "ground_y": -66.7549,
    "walk_behind_m": -0.25,
-   "wall_m": 23.363,
+   "wall_m": 1.828,
    "plate_normals_xz": [
     [
-     0.07009,
+     0.07011,
      -0.99754
     ]
    ],
    "n_plate_faces": 4,
-   "plate_bottom_y": -64.6256,
-   "post_base_y": -67.0556
+   "plate_bottom_y": -64.6249,
+   "post_base_y": -67.0549
   },
   "J4-fwd": {
    "clear_m": 2.753,
@@ -524,16 +590,16 @@
    "post_base_y": -8.1403
   },
   "J4-rev": {
-   "clear_m": 1.501,
+   "clear_m": 1.54,
    "bearing_deg": 305,
    "on_road": false,
    "ground_y": -8.0068,
    "walk_behind_m": -0.25,
-   "wall_m": 30.848,
+   "wall_m": 2.441,
    "plate_normals_xz": [
     [
-     0.76684,
-     -0.64184
+     0.76679,
+     -0.64189
     ]
    ],
    "n_plate_faces": 4,
@@ -545,8 +611,8 @@
    "bearing_deg": 290,
    "on_road": false,
    "ground_y": -67.1865,
-   "walk_behind_m": -0.45,
-   "wall_m": 27.368,
+   "walk_behind_m": -0.5,
+   "wall_m": 8.975,
    "plate_normals_xz": [
     [
      0.90986,
@@ -562,7 +628,7 @@
    "bearing_deg": 40,
    "on_road": false,
    "ground_y": 3.05,
-   "walk_behind_m": -0.4,
+   "walk_behind_m": -0.45,
    "wall_m": 14.296,
    "plate_normals_xz": [
     [

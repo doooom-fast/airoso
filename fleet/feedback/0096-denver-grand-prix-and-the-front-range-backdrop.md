@@ -114,3 +114,16 @@ Kevin to the cloud session: "You should have answers for those from the mac agen
 
 Kevin, directly in the cloud session, the same day: "Defaults for e1-4" · "New hairpin is good" · "Sc mountains after
 Denver". **Every decision in the plan is now answered.** Owed: the dossier, the far-clip test, the survey sources of §4b.
+
+## The far-clip test: asked of the PC, not yet run (2026-11-23)
+
+Kevin: "have the pc run the far-clip test". Spec: `tracks/denver-grand-prix/source/farclip/README.md`. Playbox's reply:
+nothing built, copied or run. Two blocks, both Kevin's to lift, to the PC session directly: anything written into AC
+needs his yes typed there; and looking at AC needs either computer use on the PC (he declined it earlier) or his own
+eyes from a checklist.
+
+Read by Playbox from the settings files alone (no AC run): CSP 0.3.0-preview581; the player's
+`graphics_adjustments.ini` has `[ADAPTIVE_CLIP_PLANES] FAR_PLANE=20000,30000`; AC's `video.ini` `FARPLANE=600`.
+**Prediction, untested: the far clip is 20–30 km, so the 60 and 105 km walls will not draw and 25 km is borderline.**
+The Front Range skyline is formed 20–100 km out (median 42 km), so at these settings most of it would be clipped.
+Whether a track's own `ext_config.ini` can raise the far plane is not known; it is part of the test.

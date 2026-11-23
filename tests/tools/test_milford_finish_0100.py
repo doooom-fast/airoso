@@ -247,3 +247,18 @@ def test_naip_only_blobs_reproduce_the_inventory_and_the_verge_trees_reproduce()
     assert sum(1 for t in rec["trees"] if not t["measured"]) == 103 and rec["left_out"] == {
         "within the corridor margin of the drivable surface": 29}
     assert all(t["neighbours"] >= 3 for t in rec["trees"] if t["measured"])
+
+
+# --- 8. the owned concrete ------------------------------------------------------------------------------------------------------
+
+def test_owned_concrete_on_milfords_concrete_surfaces():
+    pair = ["assets/textures/concrete_plain_diffuse.jpg", "assets/textures/concrete_plain_normal.jpg"]
+    ov = _cfg()["texture_overrides"]
+    for row in ("1RUNOFF", "1KERB_SIDEWALK"):
+        assert [ov[row]["diffuse"], ov[row]["normal"]] == pair, row
+    assert all((ROOT / f).is_file() for f in pair)
+    ship = json.loads((MF / "ship.json").read_text(encoding="utf-8"))
+    assert set(pair) <= set(ship["sync_in"]["assets"])                     # the PC's workshop gets the pair
+    lic = json.loads((ROOT / "assets" / "licenses.json").read_text(encoding="utf-8"))
+    assert "concrete_plain_diffuse.jpg" in json.dumps(lic)                    # the owned row exists (CC0, generated)
+    # (no "nowhere else" check: Kevin's "On every track now" is the fleet's own pass; this one binds Milford's two rows only)

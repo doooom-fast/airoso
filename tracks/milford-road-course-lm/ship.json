@@ -81,7 +81,9 @@
       "assets/textures/fabric_tent_diffuse.jpg",
       "assets/textures/fabric_tent_normal.jpg",
       "assets/textures/asphalt_dense_diffuse.jpg",
-      "assets/textures/asphalt_dense_normal.jpg"
+      "assets/textures/asphalt_dense_normal.jpg",
+      "assets/textures/concrete_plain_diffuse.jpg",
+      "assets/textures/concrete_plain_normal.jpg"
     ],
     "_assets_doc": "ledger 0082: the tyre walls' skin (texture_overrides 1WALL_TECPRO) and the pad sheds' metal walls / tan roof (pbr rows BUILDING_METAL, ROOFTOP_TAN), from airoso's tracked assets so no engine copy has to carry them",
     "optional": [

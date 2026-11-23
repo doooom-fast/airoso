@@ -170,7 +170,8 @@ def test_milford_runoff_pads_are_the_outliners_and_seat_on_the_ground():
     assert all(b["folds"] == 0 for b in kept) and not rec["overlaps"]
     assert all(b["naip_b_over_r"] >= rec["params"]["PAVED_B_OVER_R"] for b in kept)
     tex = _cfg(MF)["texture_overrides"]["1RUNOFF"]
-    assert tex["diffuse"] == "assets/textures/building_diffuse.jpg" and (REPO / tex["diffuse"]).exists()
+    # ledger 0100 item 8: the owned plain concrete in place of the borrowed building_* skin (Kevin: "On every track now")
+    assert tex["diffuse"] == "assets/textures/concrete_plain_diffuse.jpg" and (REPO / tex["diffuse"]).exists()
 
 
 def test_runoff_outliner_reproduces_the_committed_record(tmp_path):

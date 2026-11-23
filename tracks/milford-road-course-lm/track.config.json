@@ -4538,9 +4538,14 @@
       "_doc": "ledger 0082: the tyre walls (rails kind tyres, 1WALL_TECPRO_TYRES_*) ride the Tec-Pro row, whose UVs engine-july's prep keeps; Milford has no Tec-Pro, so the row is the tyre skin here (tools/make_bespoke_assets.py tyre_wall, CC0)"
     },
     "1RUNOFF": {
-      "diffuse": "assets/textures/building_diffuse.jpg",
-      "normal": "assets/textures/building_normal.jpg",
-      "_doc": "ledger 0092: the run-off pads and the ride pad (1RUNOFF_apron_*) wear concrete, Nevada's apron skin (ledger 0081); NAIP 2022 reads them grey (blue / red 0.91-0.99)"
+      "diffuse": "assets/textures/concrete_plain_diffuse.jpg",
+      "normal": "assets/textures/concrete_plain_normal.jpg",
+      "_doc": "ledger 0100 item 8 (Kevin 2026-11-22, owned asphalt and concrete: \"On every track now\"): the run-off pads and the ride pad (1RUNOFF_apron_*, ledger 0092; NAIP 2022 reads them grey, blue / red 0.91-0.99) wear the owned plain cast concrete (tools/make_owned_surfaces.py, CC0; assets/licenses.json's owned-surfaces row) in place of building_diffuse / _normal.jpg (Hamburg's board-formed wall concrete, mined, personal use). Its mean colour was measured off that file: 0.5279 / 0.5159 / 0.4886 against 0.5286 / 0.5156 / 0.4891 (Mac, Pillow), so road wear's m0 calibration holds (clip over 0.1.13's m0 0.85537: 0.000 % either way); its relief was tuned to building_normal's tilt. Its repeat on the 4 m tile is [not measured]. 0.1.13: building_diffuse / _normal.jpg, Nevada's apron skin (ledger 0081)"
+    },
+    "1KERB_SIDEWALK": {
+      "diffuse": "assets/textures/concrete_plain_diffuse.jpg",
+      "normal": "assets/textures/concrete_plain_normal.jpg",
+      "_doc": "ledger 0100 item 8: the concrete edge strip beside the lane (1KERB_SIDEWALK, pbr.TEXTURES' building_* row; road_wear.surfaces bakes its detail through pbr.resolve, so the override is its detail and its normal) wears the owned plain cast concrete (tools/make_owned_surfaces.py, CC0; assets/licenses.json's owned-surfaces row) in place of building_diffuse / _normal.jpg (Hamburg's board-formed wall concrete, mined, personal use). Its mean colour was measured off that file: 0.5279 / 0.5159 / 0.4886 against 0.5286 / 0.5156 / 0.4891 (Mac, Pillow), so road wear's m0 calibration holds (clip over 0.1.13's m0 0.85537: 0.000 % either way); its relief was tuned to building_normal's tilt. Its repeat on the 4 m tile is [not measured]"
     },
     "BUILDING_METAL": {
       "diffuse": "assets/textures/circuit_facade_diffuse.jpg",

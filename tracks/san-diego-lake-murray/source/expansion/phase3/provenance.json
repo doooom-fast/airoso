@@ -1,0 +1,347 @@
+{
+ "_doc": "every file in this folder: what it is, what made it, its bytes and sha256 (README.md has the story)",
+ "files": {
+  "routes__routes_analysis.json": {
+   "what": "legs, ways, controls, junction turns, median crossings",
+   "from": "scripts/p3x_legs.py on osm.expansion.json (this folder)",
+   "bytes": 62372,
+   "sha256": "6a5e2c95cab27f2f01576ebbea568850d616fe2a90ac25c0314acbb5cdd19afd"
+  },
+  "routes__legs.geojson": {
+   "what": "the six legs (3 roads x cw / acw) as GeoJSON, WGS84",
+   "from": "scripts/p3x_legs.py",
+   "bytes": 8087,
+   "sha256": "00f75eafd70da018c6b9496b42e740e8b6cb3eed298381e4994add9304800c48"
+  },
+  "routes__mouths.json": {
+   "what": "side mouths, junction arms, median crossings, the census against the plan",
+   "from": "scripts/p3x_legs.py + p3x_3dep.py + p3x_profiles.py",
+   "bytes": 78010,
+   "sha256": "8fd2eb3f0445378af1a928fbff3088f4a7a0f82e04eb3a9b05696815b07eb1a1"
+  },
+  "routes__osm_diff.json": {
+   "what": "the fresh OSM against data/osm.expansion.json (2026-10-14) on the six legs and every way within 60 m",
+   "from": "scripts/p3x_legs.py",
+   "bytes": 1252,
+   "sha256": "f9900eba1e77fc98fc5abd1dc6523e07e63422a3bfa058df6629a60e7362b777"
+  },
+  "routes__stations.west.json": {
+   "what": "the station frame (midline every 2.5 m, y_3dep, re-read curb offsets and medians): the frame the paint was measured in; NOT Step 1's expansion.west.json",
+   "from": "scripts/p3x_legs.py + p3x_profiles.py",
+   "bytes": 189344,
+   "sha256": "c7a9131411711ee056fad3cf80acaaaf16f50d5db7031dc4d5fd615a4411eab2"
+  },
+  "routes__profile_3dep.json": {
+   "what": "3DEP 1 m every 25 m along each cw leg",
+   "from": "scripts/p3x_3dep.py + p3x_profiles.py",
+   "bytes": 6616,
+   "sha256": "ae7b48622c62939db20e38ea83d777ca9d6c038c251c190069e8af37955e3807"
+  },
+  "revise__measure.json": {
+   "what": "3DEP 1 m every 5 m: both carriageways and the midline, junction heights, max grades, the plan's checks",
+   "from": "scripts/p3x_3dep.py + p3x_profiles.py",
+   "bytes": 111161,
+   "sha256": "0b5398d126ee04ff771fd75c0c335959b8cde1b57a2c8b40db5cc59077a1c24d"
+  },
+  "pipeline__mouth_geometry.json": {
+   "what": "the J2 / J3 arm conversions against Phase 1's records; the J6 / J7 arms",
+   "from": "scripts/p3x_mouthgeo.py",
+   "bytes": 14037,
+   "sha256": "95c909ef72097626f142b3a628fbf9e6ef2b026489e8724c617cfae49234dd8f"
+  },
+  "pipeline__osm_lamps_signals.json": {
+   "what": "OSM street lamps (none mapped here) and traffic signals",
+   "from": "scripts/p3x_fetch_osm.py lamps (download) + p3x_assemble.py (near_phase3)",
+   "bytes": 17248,
+   "sha256": "5365c7626e371fc61be30366ae8b3957907776101facadcc575cdabf494162d5"
+  },
+  "aerial__widths_eye.csv": {
+   "what": "curb to curb at the A4 stations and the junction arms: A4's eye width of record where it exists, this run's re-read (median, split, reread_*) everywhere; the automatic pavement read beside it",
+   "from": "EXPANSION-PHASE3-PLAN rev 2 A4 + scripts/eye_reread.json (p3x_crops.py panels) + p3x_profiles.py",
+   "bytes": 9774,
+   "sha256": "fa5ec779127e61916954bedc6706234b58ac384216ffaff8ab7022f683ac5b4d"
+  },
+  "aerial__widths_reread.json": {
+   "what": "this run's eye re-read with the panel geometry of every station",
+   "from": "scripts/p3x_crops.py + eye_reread.json",
+   "bytes": 24836,
+   "sha256": "9c9383c269b426955c0cd4e5e48c917d3ade7c3e7c4c763031773e69ff476528"
+  },
+  "aerial__veg_bins.json": {
+   "what": "per piece / 250 m / side: [other, canopy, water, scrub] NAIP CIR samples of the 10-40 m band",
+   "from": "scripts/p3x_veg.py bins (thresholds from aerial__veg_bins.calibration.json)",
+   "bytes": 1872,
+   "sha256": "5c48f8871c11c68e6fb1c77b9e5d9f56e603431d28ea277c40780be13234fb69"
+  },
+  "aerial__veg_bins.calibration.json": {
+   "what": "the [invented] NDVI / brightness thresholds, picked on the Phase 2 legs against Phase 2's own bins",
+   "from": "scripts/p3x_veg.py calibrate",
+   "bytes": 8186,
+   "sha256": "b0c47a26bc61f19360678358ae4e9aabc74e5b9e9ccef4398b608c3117c9e44d"
+  },
+  "aerial__paint_west.json": {
+   "what": "the centre paint measured off NAIP every 2.5 m (tools/aerial_paint_north.py, unchanged, run on routes__stations.west.json; its intermediate_sha256_12 is that file's)",
+   "from": "tools/aerial_paint_north.py via scripts/p3x_paint.py",
+   "bytes": 619824,
+   "sha256": "d3a71d1642717ce8875c8dc6b2970b14c6f2e62957857d4883cbec17a30cd6ab"
+  },
+  "osm.expansion.json": {
+   "what": "fresh OSM roads + service ways, the exact box and query of data/osm.expansion.json",
+   "from": "tools/fetch_osm.py --service via scripts/p3x_fetch_osm.py (download)",
+   "bytes": 8443525,
+   "sha256": "1a6452be1f77fcb649e7b984bcbfb02cb17225f457dd3dd3002ffbe4d7cfec51"
+  },
+  "buildings.expansion.cache.json": {
+   "what": "fresh OSM building footprints, the box of data/buildings.expansion.cache.json (reaches -117.115)",
+   "from": "tools/fetch_buildings_cache.py via scripts/p3x_fetch_osm.py (download)",
+   "bytes": 8066314,
+   "sha256": "49f8adc82df2678573b38979e7aafb24cf6733f84214c781c703de29c750c6ea"
+  },
+  "buildings.expansion.cache.json.provenance.json": {
+   "what": "the buildings fetch's own provenance (server, OSM timestamp, compare with the 2026-10-14 cache)",
+   "from": "tools/fetch_buildings_cache.py",
+   "bytes": 1060,
+   "sha256": "2d0c57d09bde65d38d04a9e7775ec6f0fe4aef15177545f41b65703a5a87892f"
+  },
+  "terrain/heightfield.88.npy": {
+   "what": "reused from the 2026-11-22/23 round-2 data job (Step 0.5 / 0.6)",
+   "from": "round-2 job scripts p3_grow.py / p3_plan.py / p3_remap.py / p3_west.py (scripts/round2/)",
+   "bytes": 282024,
+   "sha256": "cec6f315cb8755c73c49146856bfd9e8e65619c3155701ec750a1424d73d92ec"
+  },
+  "terrain/heightfield.88.meta.json": {
+   "what": "reused from the 2026-11-22/23 round-2 data job (Step 0.5 / 0.6)",
+   "from": "round-2 job scripts p3_grow.py / p3_plan.py / p3_remap.py / p3_west.py (scripts/round2/)",
+   "bytes": 334,
+   "sha256": "e8d13ace5193211efe59ed381c3bc396cf2e4fd9b56f75bba011294f9d718f9b"
+  },
+  "terrain/heightfield.88.grow.proof.json": {
+   "what": "reused from the 2026-11-22/23 round-2 data job (Step 0.5 / 0.6)",
+   "from": "round-2 job scripts p3_grow.py / p3_plan.py / p3_remap.py / p3_west.py (scripts/round2/); home paths and host name replaced, original sha256 3e9163434cccdd61c1631b2476227cac2b969759845396aeb1961343ec78c4c5",
+   "bytes": 1452,
+   "sha256": "805cccbf38d8520f9ff461540808b764b6edc41192afefc4153db6adc7643757"
+  },
+  "terrain/p3_tier_samples.json.gz": {
+   "what": "reused from the 2026-11-22/23 round-2 data job (Step 0.5 / 0.6)",
+   "from": "round-2 job scripts p3_grow.py / p3_plan.py / p3_remap.py / p3_west.py (scripts/round2/)",
+   "bytes": 340001,
+   "sha256": "aff152f0cfe1ccc93753432cbeef96853c5c70d3151960e951b9553958dcfe82"
+  },
+  "terrain/plan_p3_fetch.report.json": {
+   "what": "reused from the 2026-11-22/23 round-2 data job (Step 0.5 / 0.6)",
+   "from": "round-2 job scripts p3_grow.py / p3_plan.py / p3_remap.py / p3_west.py (scripts/round2/); home paths and host name replaced, original sha256 9773f10884dadeffaed44815a95a312ac89a219f23c8b3a6730d8d4c921620a7",
+   "bytes": 2970,
+   "sha256": "3d960bf5208ae71cc250e4edd958769335a56d30a7cc51c438da075abe37e9f2"
+  },
+  "terrain/plan_p3_count.report.json": {
+   "what": "reused from the 2026-11-22/23 round-2 data job (Step 0.5 / 0.6)",
+   "from": "round-2 job scripts p3_grow.py / p3_plan.py / p3_remap.py / p3_west.py (scripts/round2/); home paths and host name replaced, original sha256 997b99fdd4d17f02ea806c3415eea107a354b8eb6d8774cd1ad997d122f55c08",
+   "bytes": 2646,
+   "sha256": "3bf1c90de06fe8369b760fed161dccf459af6c05bd958b9f2e7160128560d6b0"
+  },
+  "terrain/plan_baseline26.report.json": {
+   "what": "reused from the 2026-11-22/23 round-2 data job (Step 0.5 / 0.6)",
+   "from": "round-2 job scripts p3_grow.py / p3_plan.py / p3_remap.py / p3_west.py (scripts/round2/); home paths and host name replaced, original sha256 644c6b29a8250e32327258d4c218769497b302f6ce785a341bb9256e7ed6426d",
+   "bytes": 2527,
+   "sha256": "f12cc920290b48e28316fa067fb62fb3c220d95cda6e1b73ce46cf69fdc26e11"
+  },
+  "terrain/remap.proof.json": {
+   "what": "reused from the 2026-11-22/23 round-2 data job (Step 0.5 / 0.6)",
+   "from": "round-2 job scripts p3_grow.py / p3_plan.py / p3_remap.py / p3_west.py (scripts/round2/)",
+   "bytes": 3300,
+   "sha256": "df84e144e811968824f861dc7c0dd5ded0526ff250c0e2ac72d1f8a6f5ba98d8"
+  },
+  "terrain/tier_plan_input.expansion.west.planned.json": {
+   "what": "reused from the 2026-11-22/23 round-2 data job (Step 0.5 / 0.6)",
+   "from": "round-2 job scripts p3_grow.py / p3_plan.py / p3_remap.py / p3_west.py (scripts/round2/)",
+   "bytes": 89248,
+   "sha256": "dab70031ce6a0ffd121e76c017ece972adba1f28d0e80da0c5b3d052f233bb30"
+  },
+  "aerial__eye_panels/P3-WAR_1.jpg": {
+   "what": "eye-reading panels: E_st150, E_st300, E_st450, E_st600",
+   "from": "scripts/p3x_crops.py (NAIP 2022-04-25 0.6 m; 0.1 m a pixel drawn, 1 m ticks)",
+   "bytes": 276930,
+   "sha256": "e1d6ffd1406a85ecfae68b34d1282aeea7f4c2c1ba7ff45f7bbad18578ace5db"
+  },
+  "aerial__eye_panels/P3-WAR_2.jpg": {
+   "what": "eye-reading panels: E_p1arm",
+   "from": "scripts/p3x_crops.py (NAIP 2022-04-25 0.6 m; 0.1 m a pixel drawn, 1 m ticks)",
+   "bytes": 78263,
+   "sha256": "5b768d8e440d438a3cd7fe427633265d9f3acb2378555849b68b5d6158f36286"
+  },
+  "aerial__eye_panels/P3-ZION_1.jpg": {
+   "what": "eye-reading panels: F_st150, F_st300, F_st450, F_st600",
+   "from": "scripts/p3x_crops.py (NAIP 2022-04-25 0.6 m; 0.1 m a pixel drawn, 1 m ticks)",
+   "bytes": 164778,
+   "sha256": "96dacc44887569f0c7f014451034a8f130724072c18942fb1b35e1ed319cb96b"
+  },
+  "aerial__eye_panels/P3-ZION_2.jpg": {
+   "what": "eye-reading panels: F_st750, F_st900, F_st1050, F_st1200",
+   "from": "scripts/p3x_crops.py (NAIP 2022-04-25 0.6 m; 0.1 m a pixel drawn, 1 m ticks)",
+   "bytes": 179528,
+   "sha256": "ee2a0e942fa01293cafaabbc3c8592a03c94f57e5588521386609a557d613177"
+  },
+  "aerial__eye_panels/P3-ZION_3.jpg": {
+   "what": "eye-reading panels: F_st1350, F_st1500",
+   "from": "scripts/p3x_crops.py (NAIP 2022-04-25 0.6 m; 0.1 m a pixel drawn, 1 m ticks)",
+   "bytes": 93424,
+   "sha256": "9aa134bf2bc0f1b057ca542779a89a71e55b44f3fa9a9568c433b0ab2924e607"
+  },
+  "aerial__eye_panels/P3-MG_1.jpg": {
+   "what": "eye-reading panels: G_st150, G_st300, G_st450, G_st600",
+   "from": "scripts/p3x_crops.py (NAIP 2022-04-25 0.6 m; 0.1 m a pixel drawn, 1 m ticks)",
+   "bytes": 295889,
+   "sha256": "796ce722da597f5625a50cfbbeca348650e0a0864e328ee8fef1eb95f0b47386"
+  },
+  "aerial__eye_panels/P3-MG_2.jpg": {
+   "what": "eye-reading panels: G_st750, G_st900, G_st1050, G_st1200",
+   "from": "scripts/p3x_crops.py (NAIP 2022-04-25 0.6 m; 0.1 m a pixel drawn, 1 m ticks)",
+   "bytes": 279827,
+   "sha256": "8b176db1277a2bcdd21fec92059c7141d204429899c8802c4d679c58b1adb60c"
+  },
+  "aerial__eye_panels/P3-MG_3.jpg": {
+   "what": "eye-reading panels: G_st1350, G_st1500, G_st1650, G_st1800",
+   "from": "scripts/p3x_crops.py (NAIP 2022-04-25 0.6 m; 0.1 m a pixel drawn, 1 m ticks)",
+   "bytes": 286515,
+   "sha256": "2d00b74ce3abf68a47df026e2a3ba9924ac33c94d1668531afeebc7bc8670d99"
+  },
+  "aerial__eye_panels/P3-MG_4.jpg": {
+   "what": "eye-reading panels: G_st1950, G_st2100, G_st2250, G_p1arm",
+   "from": "scripts/p3x_crops.py (NAIP 2022-04-25 0.6 m; 0.1 m a pixel drawn, 1 m ticks)",
+   "bytes": 277738,
+   "sha256": "f4265e278b376767143373e2a53777465bc4dc75f5741f4c99f927d312f0b2a8"
+  },
+  "aerial__eye_panels/arms_1.jpg": {
+   "what": "eye-reading panels: J6_arm_220, J6_arm_132, J6_arm_273, J6_arm_041",
+   "from": "scripts/p3x_crops.py (NAIP 2022-04-25 0.6 m; 0.1 m a pixel drawn, 1 m ticks)",
+   "bytes": 300006,
+   "sha256": "f2ea2b8417be6ce64f803c67052e7b79707db982eb63d64af8b5a995024c6c01"
+  },
+  "aerial__eye_panels/arms_2.jpg": {
+   "what": "eye-reading panels: J7_arm_189, J7_arm_013, J7_arm_269, J7_arm_089",
+   "from": "scripts/p3x_crops.py (NAIP 2022-04-25 0.6 m; 0.1 m a pixel drawn, 1 m ticks)",
+   "bytes": 304504,
+   "sha256": "291635b727ce67ec5354e74e3f65df8d9f201ea20648adfa55e8591605befa56"
+  },
+  "scripts/p3x_3dep.py": {
+   "what": "this run's script / reading of record",
+   "from": "this run",
+   "bytes": 5124,
+   "sha256": "383f943885a66e02a4f21a5b34b49f8e3a6b85e2409a7bc78d1d0bf83e40c444"
+  },
+  "scripts/p3x_assemble.py": {
+   "what": "this run's script / reading of record",
+   "from": "this run",
+   "bytes": 18082,
+   "sha256": "afaeedfef18fb5430a6d30a99762fc2e55cf28c24d6a094b1f03e33c9d706807"
+  },
+  "scripts/p3x_check_formats.py": {
+   "what": "this run's script / reading of record",
+   "from": "this run",
+   "bytes": 4583,
+   "sha256": "255b25e1bb13ddb7b871920384397d3fae8d91de001632d190ad037ae8872e57"
+  },
+  "scripts/p3x_crops.py": {
+   "what": "this run's script / reading of record",
+   "from": "this run",
+   "bytes": 11174,
+   "sha256": "f768726204475e81f89affa42df6fdcf3950f53a896b471c22e5ec916b79a858"
+  },
+  "scripts/p3x_fetch_osm.py": {
+   "what": "this run's script / reading of record",
+   "from": "this run",
+   "bytes": 3998,
+   "sha256": "33c5f91db1019982ada6dffda0c1a6d04e0298df12e6a7f24f362779b8a3e5ae"
+  },
+  "scripts/p3x_legs.py": {
+   "what": "this run's script / reading of record",
+   "from": "this run",
+   "bytes": 23306,
+   "sha256": "53e98fb4c236a887e7ae06076a55c1e7ae36740f000bb7caca0456379deec8c5"
+  },
+  "scripts/p3x_mouthgeo.py": {
+   "what": "this run's script / reading of record",
+   "from": "this run",
+   "bytes": 9858,
+   "sha256": "aa2773fae75b14bf0a58a23eda0b12e2e566b684c00db3d187cfd5f00fe4133d"
+  },
+  "scripts/p3x_paint.py": {
+   "what": "this run's script / reading of record",
+   "from": "this run",
+   "bytes": 1824,
+   "sha256": "7af1105cdbc9002e49a2856d0042ddcee58c5f80b0cdb776737dac7f42a17bf3"
+  },
+  "scripts/p3x_profiles.py": {
+   "what": "this run's script / reading of record",
+   "from": "this run",
+   "bytes": 15670,
+   "sha256": "2642444e08b3d1b0a69fb9375eb212ca146eea85f2366a1758c3a051942f74fd"
+  },
+  "scripts/p3x_ua.py": {
+   "what": "this run's script / reading of record",
+   "from": "this run",
+   "bytes": 585,
+   "sha256": "fb3291a5fc74431666554b07a22636d6b4d32a21ab455d796fa3f325184c558d"
+  },
+  "scripts/p3x_veg.py": {
+   "what": "this run's script / reading of record",
+   "from": "this run",
+   "bytes": 6558,
+   "sha256": "32c045b86e83cbc148cf51a979ee4a7ed298d3c88318036ef78e1f48fb44c5de"
+  },
+  "scripts/eye_reread.json": {
+   "what": "this run's script / reading of record",
+   "from": "this run",
+   "bytes": 8305,
+   "sha256": "5755f9d07d1f794b271cfa4f9c5c4b09f811ec72cf0e1bbda15416e683a4ea4a"
+  },
+  "scripts/p3_net_r2.py": {
+   "what": "this run's script / reading of record (round-2 p3_net.py, imported by p3x_3dep.py)",
+   "from": "this run; host name replaced, original sha256 777c2550749c989bb811467a63760febf93d33a0b73305d71e8f2aeb23e725b4",
+   "bytes": 5286,
+   "sha256": "fb39e320a0db5797c272a0606938ddddcbbbbe34e462575b9997e76307ef7c34"
+  },
+  "scripts/round2/p3_net.py": {
+   "what": "the round-2 job's script behind terrain/ and the NAIP tiles this run read",
+   "from": "round-2 job; host name / home paths replaced, original sha256 777c2550749c989bb811467a63760febf93d33a0b73305d71e8f2aeb23e725b4",
+   "bytes": 5286,
+   "sha256": "fb39e320a0db5797c272a0606938ddddcbbbbe34e462575b9997e76307ef7c34"
+  },
+  "scripts/round2/p3_plan.py": {
+   "what": "the round-2 job's script behind terrain/ and the NAIP tiles this run read",
+   "from": "round-2 job",
+   "bytes": 9593,
+   "sha256": "f4343e094dd375b64daeb7ae446084b421cb3c30dc22543e56ef2073af5ef134"
+  },
+  "scripts/round2/p3_grow.py": {
+   "what": "the round-2 job's script behind terrain/ and the NAIP tiles this run read",
+   "from": "round-2 job; host name / home paths replaced, original sha256 cd270ee98063e424a1f5df15cf3c21c3535cd800c1f9ef81fa4f93aa474ea214",
+   "bytes": 4782,
+   "sha256": "2628ade81d921968c612cd3674e213b7333cc6d75c18a1eabbf9593443fa2d90"
+  },
+  "scripts/round2/p3_remap.py": {
+   "what": "the round-2 job's script behind terrain/ and the NAIP tiles this run read",
+   "from": "round-2 job; host name / home paths replaced, original sha256 8e831ee30266f4e4070ae3f16c7e069d956a220724569dfd900c372ab630c7aa",
+   "bytes": 5297,
+   "sha256": "cc47fc8bffa6e12b385d113852855df2d6472833937e727da2c1617101748dbc"
+  },
+  "scripts/round2/p3_west.py": {
+   "what": "the round-2 job's script behind terrain/ and the NAIP tiles this run read",
+   "from": "round-2 job",
+   "bytes": 8493,
+   "sha256": "bc29904807d734f9a499e5d267696b37d60d5aaac57d76c618b9c30d819c13c3"
+  },
+  "scripts/round2/p3_config.py": {
+   "what": "the round-2 job's script behind terrain/ and the NAIP tiles this run read",
+   "from": "round-2 job; host name / home paths replaced, original sha256 a2d531e9d14ca7ab17fa4dc21c2492c1040e4b2bd6a5a9866923c176cebd8baa",
+   "bytes": 1817,
+   "sha256": "b44d29676dd75680f7ae31e0ac6b7750885c802615a3f86f5234f37136c4128f"
+  },
+  "scripts/round2/p3_naip.py": {
+   "what": "the round-2 job's script behind terrain/ and the NAIP tiles this run read",
+   "from": "round-2 job",
+   "bytes": 6124,
+   "sha256": "481fb5d2bc8a33b1c226df0f9caaa446d91e7ceff400eddcd668f8fb43d1b5e8"
+  }
+ }
+}

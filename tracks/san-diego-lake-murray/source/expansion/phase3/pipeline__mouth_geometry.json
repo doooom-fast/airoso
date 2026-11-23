@@ -1,0 +1,658 @@
+{
+ "_doc": "Phase 3 pipeline lens: the mouth geometry (the shape of source/expansion/pipeline__mouth_geometry.json).",
+ "origin": {
+  "lon": -117.04666413020487,
+  "lat": 32.78835571285328,
+  "elev_m": 100.8
+ },
+ "phase1_records": {
+  "expansion.north.json": "2026-10-28T16:25:11Z",
+  "pads.built.json": "repo at the branch base"
+ },
+ "conversions": [
+  {
+   "junction": "J2",
+   "stub": "S2",
+   "piece": "P3-WAR",
+   "piece_end": "start",
+   "arm": {
+    "name": "Waring Road (south-west, off route)",
+    "kind": "stub",
+    "piece": null,
+    "piece_end": null,
+    "stub": "S2",
+    "bearing_out_deg": 228.0,
+    "width_m": 23.0,
+    "left_m": 11.5,
+    "right_m": -11.5,
+    "cut_from_node_m": 19.91
+   },
+   "cut_line_xz": [
+    [
+     -2750.079,
+     967.25
+    ],
+    [
+     -2765.469,
+     984.343
+    ]
+   ],
+   "stub_pavement_xz": [
+    [
+     -2750.079,
+     967.25
+    ],
+    [
+     -2765.469,
+     984.343
+    ],
+    [
+     -2776.616,
+     974.306
+    ],
+    [
+     -2761.226,
+     957.214
+    ]
+   ],
+   "stub_length_m": 15.0,
+   "stub_width_src": "eye reading 'J2 arm Waring Road brg 228' (23.0 m)",
+   "midline_s_at_cut_mid_m": 20.08,
+   "midline_off_cut_mid_m": 3.12,
+   "piece_heading_out_of_pad_deg": 224.6,
+   "angle_vs_arm_axis_deg": -3.4,
+   "widths_m": {
+    "phase1_declared": 23.0,
+    "reread_at_phase1_point": null,
+    "reread_at_phase1_point_note": "Phase 1's S2 reading point: the right carriageway reads 9.0 m; the left carriageway is under canopy (not readable at 0.6 m)",
+    "frame_at_cut_m": 27.5,
+    "frame_at_cut_from": "the station frame at the cut: this run's re-read 'P3-WAR st 150' (held flat from the reading nearest the cut, not read at the cut)",
+    "a4_nearest": {
+     "label": "P3-WAR st 150",
+     "a4_m": 28.0,
+     "metres_from_cut": 129.9
+    }
+   },
+   "heights_m": {
+    "pad_z_3dep": 103.86,
+    "pad_y_3dep": 3.058,
+    "midline_3dep_at_cut": 103.9,
+    "midline_3dep_minus_pad": 0.04
+   },
+   "built_barrier": {
+    "object": "1WALL_STUB_PAD_J2_S2",
+    "style": "krail",
+    "mid_xz": [
+     -2768.841,
+     965.665
+    ],
+    "d_from_cut_mid_m": 15.0
+   },
+   "nearest_installed_lamps_first_100m": [
+    {
+     "lamp": 254,
+     "base_xz": [
+      -2797.001,
+      1034.58
+     ],
+     "d_m": 66.2,
+     "nearest_s": 10.0
+    },
+    {
+     "lamp": 253,
+     "base_xz": [
+      -2688.949,
+      1044.068
+     ],
+     "d_m": 77.0,
+     "nearest_s": 0.0
+    },
+    {
+     "lamp": 252,
+     "base_xz": [
+      -2627.474,
+      1036.525
+     ],
+     "d_m": 126.4,
+     "nearest_s": 0.0
+    }
+   ]
+  },
+  {
+   "junction": "J3",
+   "stub": "S3",
+   "piece": "P3-MG",
+   "piece_end": "end",
+   "arm": {
+    "name": "Mission Gorge Road (west, off route)",
+    "kind": "stub",
+    "piece": null,
+    "piece_end": null,
+    "stub": "S3",
+    "bearing_out_deg": 252.0,
+    "width_m": 28.0,
+    "left_m": 14.0,
+    "right_m": -14.0,
+    "cut_from_node_m": 26.93
+   },
+   "cut_line_xz": [
+    [
+     -3049.216,
+     2010.472
+    ],
+    [
+     -3057.869,
+     2037.101
+    ]
+   ],
+   "stub_pavement_xz": [
+    [
+     -3049.216,
+     2010.472
+    ],
+    [
+     -3057.869,
+     2037.101
+    ],
+    [
+     -3072.135,
+     2032.466
+    ],
+    [
+     -3063.482,
+     2005.836
+    ]
+   ],
+   "stub_length_m": 15.0,
+   "stub_width_src": "eye reading 'J3 arm Mission Gorge Road brg 252' (28.0 m)",
+   "midline_s_at_cut_mid_m": 2350.26,
+   "midline_off_cut_mid_m": 5.61,
+   "piece_heading_out_of_pad_deg": 245.7,
+   "angle_vs_arm_axis_deg": -6.3,
+   "widths_m": {
+    "phase1_declared": 28.0,
+    "reread_at_phase1_point": 30.0,
+    "reread_at_phase1_point_note": "Phase 1's S3 reading point (Phase 1 read 28.0 m)",
+    "frame_at_cut_m": 30.0,
+    "frame_at_cut_from": "the station frame at the cut: this run's re-read 'J3 arm Mission Gorge Road brg 252 (S3 re-read)' (held flat from the reading nearest the cut, not read at the cut)",
+    "a4_nearest": {
+     "label": "P3-MG st 2250",
+     "a4_m": 33.7,
+     "metres_from_cut": 100.3
+    }
+   },
+   "heights_m": {
+    "pad_z_3dep": 33.43,
+    "pad_y_3dep": -67.374,
+    "midline_3dep_at_cut": 33.39,
+    "midline_3dep_minus_pad": -0.04
+   },
+   "built_barrier": {
+    "object": "1WALL_STUB_PAD_J3_S3",
+    "style": "krail",
+    "mid_xz": [
+     -3067.876,
+     2019.128
+    ],
+    "d_from_cut_mid_m": 15.07
+   },
+   "nearest_installed_lamps_first_100m": [
+    {
+     "lamp": 272,
+     "base_xz": [
+      -2966.769,
+      2086.305
+     ],
+     "d_m": 79.7,
+     "nearest_s": 2370.0
+    },
+    {
+     "lamp": 271,
+     "base_xz": [
+      -3005.168,
+      1926.28
+     ],
+     "d_m": 114.3,
+     "nearest_s": 2350.0
+    },
+    {
+     "lamp": 273,
+     "base_xz": [
+      -2903.469,
+      2075.267
+     ],
+     "d_m": 132.7,
+     "nearest_s": 2370.0
+    }
+   ]
+  }
+ ],
+ "new_junctions": {
+  "J6": {
+   "nodes_cw_acw": [
+    49397489,
+    49333076
+   ],
+   "node_lonlat": [
+    -117.0806983,
+    32.7927593
+   ],
+   "node_xz": [
+    -3188.173,
+    488.361
+   ],
+   "z_3dep_m": {
+    "cw": 99.67,
+    "acw": 99.67
+   },
+   "arms": [
+    {
+     "way": 436411980,
+     "name": "Waring Road",
+     "highway": "secondary",
+     "oneway": "yes",
+     "flow": "out",
+     "lanes": "2",
+     "maxspeed": "35 mph",
+     "node": 49333076,
+     "bearing_deg": 40.7,
+     "phase3_route": true
+    },
+    {
+     "way": 436411988,
+     "name": "Waring Road",
+     "highway": "secondary",
+     "oneway": "yes",
+     "flow": "in",
+     "lanes": "3",
+     "maxspeed": "35 mph",
+     "node": 49397489,
+     "bearing_deg": 40.7,
+     "phase3_route": true
+    },
+    {
+     "way": 1430783899,
+     "name": "Zion Avenue",
+     "highway": "residential",
+     "oneway": null,
+     "flow": null,
+     "lanes": "2",
+     "maxspeed": "25 mph",
+     "node": 49333076,
+     "bearing_deg": 131.8,
+     "phase3_route": false
+    },
+    {
+     "way": 436411991,
+     "name": "Waring Road",
+     "highway": "secondary",
+     "oneway": "yes",
+     "flow": "in",
+     "lanes": "3",
+     "maxspeed": "35 mph",
+     "node": 49333076,
+     "bearing_deg": 220.3,
+     "phase3_route": false
+    },
+    {
+     "way": 1214006896,
+     "name": "Waring Road",
+     "highway": "secondary",
+     "oneway": "yes",
+     "flow": "out",
+     "lanes": "2",
+     "maxspeed": "35 mph",
+     "node": 49397489,
+     "bearing_deg": 220.7,
+     "phase3_route": false
+    },
+    {
+     "way": 1220464886,
+     "name": "Zion Avenue",
+     "highway": "secondary",
+     "oneway": null,
+     "flow": null,
+     "lanes": "3",
+     "maxspeed": "30 mph",
+     "node": 49397489,
+     "bearing_deg": 297.3,
+     "phase3_route": true
+    }
+   ],
+   "angles_between_arms": [
+    {
+     "from_way": 436411980,
+     "to_way": 436411988,
+     "clockwise_angle_deg": 0.0
+    },
+    {
+     "from_way": 436411988,
+     "to_way": 1430783899,
+     "clockwise_angle_deg": 91.1
+    },
+    {
+     "from_way": 1430783899,
+     "to_way": 436411991,
+     "clockwise_angle_deg": 88.5
+    },
+    {
+     "from_way": 436411991,
+     "to_way": 1214006896,
+     "clockwise_angle_deg": 0.4
+    },
+    {
+     "from_way": 1214006896,
+     "to_way": 1220464886,
+     "clockwise_angle_deg": 76.6
+    },
+    {
+     "from_way": 1220464886,
+     "to_way": 436411980,
+     "clockwise_angle_deg": 103.4
+    }
+   ],
+   "eye_arms": [
+    {
+     "label": "J6 arm Waring Road brg 220",
+     "reread_total_m": "25.0",
+     "median_m": "1.5",
+     "median_kind": "raised (narrow)",
+     "conf_m": "1.5",
+     "note": "about the arm's own OSM carriageway; yellow school ladder at the mouth"
+    },
+    {
+     "label": "J6 arm Zion Avenue brg 132",
+     "reread_total_m": "11.5",
+     "median_m": "0.0",
+     "median_kind": "none",
+     "conf_m": "1.5",
+     "note": "Zion Ave east (residential); yellow ladder at the mouth"
+    },
+    {
+     "label": "J6 arm Zion Avenue brg 273",
+     "reread_total_m": "12.5",
+     "median_m": "0.0",
+     "median_kind": "none",
+     "conf_m": "1.5",
+     "note": "the left edge is the slip lane's island (the free right Zion EB -> Waring SB, beyond it at +7..+17)"
+    },
+    {
+     "label": "J6 arm Waring Road brg 041",
+     "reread_total_m": "30.0",
+     "median_m": "1.5",
+     "median_kind": "raised nose",
+     "conf_m": "2.0",
+     "note": "read on the wide panel; turn pockets either side of the nose"
+    }
+   ],
+   "signals_within_40m": [
+    11309199923,
+    11309199948,
+    11309199955,
+    11309199967
+   ],
+   "turns": [
+    {
+     "junction": "J6",
+     "sense": "cw",
+     "from": "Waring Road",
+     "to": "Zion Avenue",
+     "node_in": 49397489,
+     "node_out": 49397489,
+     "at": [
+      -117.0806983,
+      32.7927593
+     ],
+     "bearing_in": 220.7,
+     "bearing_out": 294.2,
+     "turn_deg(+R/-L)": 73.5,
+     "turn_last_segment_deg": 76.7,
+     "gap_in_out_m": 0.0,
+     "signals_near": [
+      11309199923,
+      11309199948,
+      11309199955,
+      11309199967
+     ]
+    },
+    {
+     "junction": "J6",
+     "sense": "acw",
+     "from": "Zion Avenue",
+     "to": "Waring Road",
+     "node_in": 49333076,
+     "node_out": 49333076,
+     "at": [
+      -117.0806205,
+      32.792698
+     ],
+     "bearing_in": 125.1,
+     "bearing_out": 40.8,
+     "turn_deg(+R/-L)": -84.3,
+     "turn_last_segment_deg": -92.1,
+     "gap_in_out_m": 0.0,
+     "signals_near": [
+      11309199923,
+      11309199948,
+      11309199955,
+      11309199967
+     ]
+    }
+   ],
+   "curb_return_radii": "owed: not measured (NAIP 0.6 m; Step 1 reads them)"
+  },
+  "J7": {
+   "nodes_cw_acw": [
+    49317051,
+    49317049
+   ],
+   "node_lonlat": [
+    -117.097426,
+    32.7929771
+   ],
+   "node_xz": [
+    -4755.152,
+    512.515
+   ],
+   "z_3dep_m": {
+    "cw": 33.78,
+    "acw": 34.04
+   },
+   "arms": [
+    {
+     "way": 436411957,
+     "name": "Mission Gorge Road",
+     "highway": "primary",
+     "oneway": "yes",
+     "flow": "out",
+     "lanes": "3",
+     "maxspeed": "45 mph",
+     "node": 49317051,
+     "bearing_deg": 11.0,
+     "phase3_route": true
+    },
+    {
+     "way": 436428811,
+     "name": "Mission Gorge Road",
+     "highway": "primary",
+     "oneway": "yes",
+     "flow": "in",
+     "lanes": "4",
+     "maxspeed": "45 mph",
+     "node": 49317049,
+     "bearing_deg": 11.0,
+     "phase3_route": true
+    },
+    {
+     "way": 641705013,
+     "name": "Zion Avenue",
+     "highway": "secondary",
+     "oneway": null,
+     "flow": null,
+     "lanes": "3",
+     "maxspeed": "30 mph",
+     "node": 49317051,
+     "bearing_deg": 88.9,
+     "phase3_route": true
+    },
+    {
+     "way": 436428806,
+     "name": "Mission Gorge Road",
+     "highway": "primary",
+     "oneway": "yes",
+     "flow": "in",
+     "lanes": "5",
+     "maxspeed": "45 mph",
+     "node": 49317051,
+     "bearing_deg": 189.5,
+     "phase3_route": false
+    },
+    {
+     "way": 436428813,
+     "name": "Mission Gorge Road",
+     "highway": "primary",
+     "oneway": "yes",
+     "flow": "out",
+     "lanes": "3",
+     "maxspeed": "45 mph",
+     "node": 49317049,
+     "bearing_deg": 191.0,
+     "phase3_route": false
+    },
+    {
+     "way": 1220464880,
+     "name": "Zion Avenue",
+     "highway": "tertiary",
+     "oneway": null,
+     "flow": null,
+     "lanes": "3",
+     "maxspeed": null,
+     "node": 49317049,
+     "bearing_deg": 269.3,
+     "phase3_route": false
+    }
+   ],
+   "angles_between_arms": [
+    {
+     "from_way": 436411957,
+     "to_way": 436428811,
+     "clockwise_angle_deg": 0.0
+    },
+    {
+     "from_way": 436428811,
+     "to_way": 641705013,
+     "clockwise_angle_deg": 77.9
+    },
+    {
+     "from_way": 641705013,
+     "to_way": 436428806,
+     "clockwise_angle_deg": 100.6
+    },
+    {
+     "from_way": 436428806,
+     "to_way": 436428813,
+     "clockwise_angle_deg": 1.5
+    },
+    {
+     "from_way": 436428813,
+     "to_way": 1220464880,
+     "clockwise_angle_deg": 78.3
+    },
+    {
+     "from_way": 1220464880,
+     "to_way": 436411957,
+     "clockwise_angle_deg": 101.7
+    }
+   ],
+   "eye_arms": [
+    {
+     "label": "J7 arm Mission Gorge Road brg 189",
+     "reread_total_m": "34.0",
+     "median_m": "1.0",
+     "median_kind": "double yellow",
+     "conf_m": "1.5",
+     "note": "read on the wide panel; 5 lanes in (above the yellow) / 3 out, as OSM"
+    },
+    {
+     "label": "J7 arm Mission Gorge Road brg 013",
+     "reread_total_m": "35.0",
+     "median_m": "2.5",
+     "median_kind": "terracotta raised (curving)",
+     "conf_m": "2.0",
+     "note": "read on the wide panel; the junction's turn pockets"
+    },
+    {
+     "label": "J7 arm Zion Avenue brg 269",
+     "reread_total_m": "14.5",
+     "median_m": "0.0",
+     "median_kind": "none",
+     "conf_m": "1.0",
+     "note": "Zion Ave west (tertiary to Riverdale St); planted strips both sides"
+    },
+    {
+     "label": "J7 arm Zion Avenue brg 089",
+     "reread_total_m": "15.5",
+     "median_m": "0.0",
+     "median_kind": "none",
+     "conf_m": "1.0",
+     "note": "the route arm of P3-ZION at J7 (30 m east of the node); J7's crosswalk at the panel's start"
+    }
+   ],
+   "signals_within_40m": [
+    11309199874,
+    11309199896,
+    11309199928,
+    11309199931
+   ],
+   "turns": [
+    {
+     "junction": "J7",
+     "sense": "cw",
+     "from": "Zion Avenue",
+     "to": "Mission Gorge Road",
+     "node_in": 49317051,
+     "node_out": 49317051,
+     "at": [
+      -117.097426,
+      32.7929771
+     ],
+     "bearing_in": 268.9,
+     "bearing_out": 11.0,
+     "turn_deg(+R/-L)": 102.1,
+     "turn_last_segment_deg": 102.1,
+     "gap_in_out_m": 0.0,
+     "signals_near": [
+      11309199874,
+      11309199896,
+      11309199928,
+      11309199931
+     ]
+    },
+    {
+     "junction": "J7",
+     "sense": "acw",
+     "from": "Mission Gorge Road",
+     "to": "Zion Avenue",
+     "node_in": 49317049,
+     "node_out": 49317049,
+     "at": [
+      -117.0976091,
+      32.7929755
+     ],
+     "bearing_in": 191.0,
+     "bearing_out": 89.3,
+     "turn_deg(+R/-L)": -101.7,
+     "turn_last_segment_deg": -101.6,
+     "gap_in_out_m": 0.0,
+     "signals_near": [
+      11309199874,
+      11309199896,
+      11309199928,
+      11309199931
+     ]
+    }
+   ],
+   "curb_return_radii": "owed: not measured (NAIP 0.6 m; Step 1 reads them)"
+  }
+ }
+}

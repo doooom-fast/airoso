@@ -1,0 +1,54 @@
+{
+ "what": "ledger 0054 P2: the installed 40 m heightfield grown by whole cells (tools/grow_heightfield.py)",
+ "utc": "2026-11-23T03:47:55Z",
+ "grid_grow": {
+  "rows_n": 37,
+  "rows_s": 37,
+  "cols_w": 88,
+  "cols_e": 0
+ },
+ "installed": {
+  "nx": 123,
+  "ny": 93,
+  "bbox_swne": [
+   32.771983,
+   -117.069563,
+   32.805287,
+   -117.017103
+  ]
+ },
+ "grown": {
+  "nx": 211,
+  "ny": 167,
+  "bbox_swne": [
+   32.75864966666666,
+   -117.10728476879906,
+   32.818620333333335,
+   -117.017103
+  ]
+ },
+ "nodes": 35237,
+ "old_nodes_from_installed_grid": 11439,
+ "new_nodes_from_3dep": 23798,
+ "requests": 53,
+ "old_block_identical_to_installed": true,
+ "positions": "scripts-v021 heightfield.build_heightfield(grow=...): every old node at its bit-identical position (looked up by exact float pair)",
+ "source": "USGS 3DEP 1 m bare earth, ImageServer getSamples (scripts.elevation.usgs_3dep, TLS verified)",
+ "seconds": 320.6,
+ "p3": {
+  "what": "EXPANSION-PHASE3-PLAN Step 0.5, cols_w 26 -> 88 (data host data run 2026-11-22)",
+  "fetch_hook": {
+   "asked": 23798,
+   "from_grown26": 13444,
+   "to_3dep": 10354,
+   "max_match_deg": 0.0
+  },
+  "grown26_block_identical": true,
+  "requests_sent": 24,
+  "bytes": 2438729,
+  "backoffs": 4,
+  "user_agent": "airoso-fetch/1.0",
+  "seconds": 320.7,
+  "note": "the tool's own 'requests' / 'new_nodes_from_3dep' count every non-installed node; the fetch hook served the 26-column growth from data/heightfield.npy"
+ }
+}

@@ -1,0 +1,97 @@
+{
+ "project": "<round-2 job>/p3/proj88",
+ "far_bbox_swne": [
+  32.755,
+  -117.14,
+  32.85,
+  -116.998
+ ],
+ "frame_pin": {
+  "bbox_swne": [
+   32.771983,
+   -117.069563,
+   32.805287,
+   -117.017103
+  ],
+  "spacing_m": 40.0,
+  "rows_n": 37,
+  "cols_w": 88,
+  "_doc": "Ledger 0054 P0 step 6 (2026-10-14); applied in P2 (2026-10-14): rows_n 37 / cols_w 26, in the same change as the grown data/heightfield.npy + .meta.json (tools/grow_heightfield.py: the 11,439 installed nodes byte for byte, 13,444 new ones from 3DEP) and the re-keyed data/terrain.samples.json.gz (tools/remap_sample_cache.py, PASS: source/expansion/p2-proofs/). The lattice frame is computed from THIS anchor - the installed v0.18.0 data/heightfield.meta.json's rounded bbox_swne (40 m grid, 123 x 93) - shifted by rows_n rows north / cols_w columns west of whole 40 m cells, never from a regrown meta's own (re-rounded) anchor, so growing the grid cannot move a lattice node (terrain_tiers.Frame.heightfield; the meta's recorded grid_grow must equal these offsets and its anchor must be this one shifted, else ValueError). Offsets 0 on the installed meta = today's frame, bit for bit. P2 sets rows_n 37 / cols_w 26 in the SAME change that writes the grown heightfield (terrain.grid_grow, scripts-v021 heightfield.py) and the re-keyed 3DEP cache (tools/remap_sample_cache.py --rows-n 37 --cols-w 26: keys shift by [+416, -592] base units, the identity proof is the tool's)."
+ },
+ "planned_files": [
+  "data/expansion.north.json",
+  "data/expansion.west.planned.json"
+ ],
+ "corridors": [
+  {
+   "name": "i8",
+   "key_fresh": false,
+   "rebuilt_line_identical": false,
+   "line_m": 11455.6,
+   "rebuild_samples": 38325,
+   "rebuild_requests": 86,
+   "old_line_m": 10875.6
+  }
+ ],
+ "frame": [
+  -5678.685519344186,
+  3356.3902548377737,
+  2.5096704987920786,
+  2.4977803755637766
+ ],
+ "plan_lines": 16,
+ "topology": {
+  "vertices": 478592,
+  "triangles": 946958,
+  "leaves_by_cell_m": {
+   "5.0": 176576,
+   "20.0": 65800,
+   "40.0": 68771
+  },
+  "kept_cells": 4937,
+  "kept_vertices": 15427,
+  "refine_cells": 46937,
+  "refine_nodes": 106078,
+  "physical_vertices": 298993,
+  "far_vertices": 181164,
+  "physical_triangles": 587425,
+  "far_triangles": 359533
+ },
+ "need": {
+  "vertices": 478592,
+  "refine_keys": 106078,
+  "aa_keys": 391207,
+  "need_total": 1163093,
+  "cached": 1018431,
+  "missing": 176366,
+  "missing_requests": 392,
+  "missing_west_of_-117.108": 40481,
+  "missing_east_of_-117.108": 135885,
+  "missing_lon_range": [
+   -117.14029131649824,
+   -117.07384956463626
+  ],
+  "missing_lat_range": [
+   32.75483654954955,
+   32.85033204504504
+  ]
+ },
+ "fetch": {
+  "points": 176366,
+  "requests": 392,
+  "bytes": 41472461,
+  "backoffs": 14,
+  "no_value": 0,
+  "no_value_first": [],
+  "seconds": 2716.6,
+  "user_agent": "airoso-fetch/1.0"
+ },
+ "breaks_not_fetched": {
+  "cells": 70720,
+  "edges": 12775,
+  "fine_needed": 114975,
+  "fine_missing": 4149,
+  "requests": 10
+ },
+ "seconds": 2746.5
+}

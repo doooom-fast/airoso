@@ -1,0 +1,3631 @@
+{
+ "meta": {
+  "osm_file": "osm.expansion.json (this folder)",
+  "osm_base": "2026-11-23T09:33:51Z",
+  "fetched_utc": "2026-11-23T09:35:56Z",
+  "mirror": "https://overpass-api.de/api/interpreter",
+  "bbox_swne": [
+   32.755,
+   -117.115,
+   32.85,
+   -116.985
+  ],
+  "query": "[out:json][timeout:180];\nway[\"highway\"~\"^(motorway|trunk|primary|secondary|tertiary|unclassified|residential|living_street|motorway_link|trunk_link|primary_link|secondary_link|tertiary_link|road|service)$\"](32.755,-117.115,32.85,-116.985);\nout body;\n>;\nout body qt;\n",
+  "query_fingerprint": "a6f0af1c83e4994a",
+  "osm_sha256": "1a6452be1f77fcb649e7b984bcbfb02cb17225f457dd3dd3002ffbe4d7cfec51",
+  "frame": {
+   "origin": {
+    "lon": -117.04666413020487,
+    "lat": 32.78835571285328,
+    "elev_m": 100.8
+   },
+   "what": "data/centerline.local.json's local frame (x east, z north), tools/author_expansion.Frame"
+  },
+  "legs": {
+   "P3-WAR": {
+    "plan_id": "P3-WAR",
+    "from": "J2",
+    "to": "J6"
+   },
+   "P3-ZION": {
+    "plan_id": "P3-ZION",
+    "from": "J6",
+    "to": "J7"
+   },
+   "P3-MG": {
+    "plan_id": "P3-MG",
+    "from": "J7",
+    "to": "J3"
+   }
+  },
+  "junction_nodes_cw_acw": {
+   "J2": [
+    1713352279,
+    49333080
+   ],
+   "J6": [
+    49397489,
+    49333076
+   ],
+   "J7": [
+    49317051,
+    49317049
+   ],
+   "J3": [
+    1484501766,
+    1484501883
+   ]
+  },
+  "parameters": {
+   "CROSS_M": 80.0,
+   "BRANCH_M": 15.0,
+   "CHORD_M": 20.0,
+   "SIGNAL_NEAR_M": 40.0,
+   "DIVIDED_SEP_M": 3.0,
+   "SMOOTH_SIGMA_M": 4.0
+  }
+ },
+ "cw": [
+  {
+   "leg": "P3-WAR",
+   "road": "Waring Road",
+   "sense": "cw",
+   "length_m": 671.2,
+   "start_node": 1713352279,
+   "end_node": 49397489,
+   "start": [
+    -117.0760127,
+    32.7973374
+   ],
+   "end": [
+    -117.0806983,
+    32.7927593
+   ],
+   "ways": [
+    {
+     "id": 436411990,
+     "len_m": 314.3,
+     "name": "Waring Road",
+     "highway": "secondary",
+     "oneway": "yes",
+     "lanes": "2",
+     "maxspeed": "35 mph",
+     "surface": "asphalt",
+     "cycleway:right": "lane"
+    },
+    {
+     "id": 436411984,
+     "len_m": 32.2,
+     "name": "Waring Road",
+     "highway": "secondary",
+     "oneway": "yes",
+     "lanes": "3",
+     "maxspeed": "40 mph",
+     "surface": "asphalt",
+     "turn:lanes": "left||",
+     "cycleway:right": "lane"
+    },
+    {
+     "id": 436411982,
+     "len_m": 280.8,
+     "name": "Waring Road",
+     "highway": "secondary",
+     "oneway": "yes",
+     "lanes": "2",
+     "maxspeed": "35 mph",
+     "surface": "asphalt"
+    },
+    {
+     "id": 436411988,
+     "len_m": 43.9,
+     "name": "Waring Road",
+     "highway": "secondary",
+     "oneway": "yes",
+     "lanes": "3",
+     "maxspeed": "35 mph",
+     "surface": "asphalt",
+     "turn:lanes": "left||"
+    }
+   ],
+   "controls_on_path": [
+    {
+     "arc_m": 11.8,
+     "node": 11309199881,
+     "highway": "crossing",
+     "crossing": "traffic_signals"
+    },
+    {
+     "arc_m": 333.8,
+     "node": 11309199900,
+     "highway": "traffic_signals",
+     "traffic_signals:direction": "forward"
+    },
+    {
+     "arc_m": 337.2,
+     "node": 11309199911,
+     "highway": "crossing",
+     "crossing": "traffic_signals",
+     "crossing:markings": "zebra"
+    },
+    {
+     "arc_m": 353.2,
+     "node": 11309199901,
+     "highway": "crossing",
+     "crossing": "traffic_signals",
+     "crossing:markings": "zebra"
+    },
+    {
+     "arc_m": 654.3,
+     "node": 11309199923,
+     "highway": "traffic_signals",
+     "traffic_signals": "signal",
+     "traffic_signals:direction": "forward"
+    },
+    {
+     "arc_m": 659.9,
+     "node": 12527532023,
+     "highway": "crossing",
+     "crossing": "traffic_signals",
+     "crossing:markings": "zebra"
+    }
+   ],
+   "bridges": [],
+   "path_nodes": [
+    1713352279,
+    11309199881,
+    1713352277,
+    4343038521,
+    11309199900,
+    11309199911,
+    1713352275,
+    11309199901,
+    4343038519,
+    11309199923,
+    12527532023,
+    49397489
+   ],
+   "geom": [
+    [
+     -117.0760127,
+     32.7973374
+    ],
+    [
+     -117.0761002,
+     32.7972604
+    ],
+    [
+     -117.0763706,
+     32.7970225
+    ],
+    [
+     -117.0782147,
+     32.7952
+    ],
+    [
+     -117.0783497,
+     32.7950666
+    ],
+    [
+     -117.0783738,
+     32.7950428
+    ],
+    [
+     -117.0784382,
+     32.7949792
+    ],
+    [
+     -117.078485,
+     32.7949331
+    ],
+    [
+     -117.0803929,
+     32.7930593
+    ],
+    [
+     -117.0805803,
+     32.7928752
+    ],
+    [
+     -117.0806201,
+     32.7928365
+    ],
+    [
+     -117.0806983,
+     32.7927593
+    ]
+   ]
+  },
+  {
+   "leg": "P3-ZION",
+   "road": "Zion Avenue",
+   "sense": "cw",
+   "length_m": 1569.1,
+   "start_node": 49397489,
+   "end_node": 49317051,
+   "start": [
+    -117.0806983,
+    32.7927593
+   ],
+   "end": [
+    -117.097426,
+    32.7929771
+   ],
+   "ways": [
+    {
+     "id": 1220464886,
+     "len_m": 62.1,
+     "name": "Zion Avenue",
+     "highway": "secondary",
+     "lanes": "3",
+     "lanes:forward": "2",
+     "lanes:backward": "1",
+     "maxspeed": "30 mph",
+     "surface": "asphalt",
+     "turn:lanes:forward": "left|left;through"
+    },
+    {
+     "id": 1461857196,
+     "len_m": 42.2,
+     "name": "Zion Avenue",
+     "highway": "secondary",
+     "lanes": "3",
+     "lanes:forward": "2",
+     "lanes:backward": "1",
+     "maxspeed": "30 mph",
+     "surface": "asphalt",
+     "turn:lanes:forward": "left|left;through;right"
+    },
+    {
+     "id": 1220464890,
+     "len_m": 107.0,
+     "name": "Zion Avenue",
+     "highway": "secondary",
+     "lanes": "2",
+     "maxspeed": "30 mph",
+     "surface": "asphalt",
+     "sidewalk:both": "yes"
+    },
+    {
+     "id": 1024233068,
+     "len_m": 31.4,
+     "name": "Zion Avenue",
+     "highway": "secondary",
+     "lanes": "3",
+     "lanes:forward": "1",
+     "lanes:backward": "2",
+     "maxspeed": "30 mph",
+     "surface": "asphalt",
+     "turn:lanes:backward": "left|none"
+    },
+    {
+     "id": 1220464882,
+     "len_m": 37.1,
+     "name": "Zion Avenue",
+     "highway": "secondary",
+     "lanes": "3",
+     "lanes:forward": "2",
+     "lanes:backward": "1",
+     "maxspeed": "30 mph",
+     "surface": "asphalt",
+     "turn:lanes:forward": "left|none"
+    },
+    {
+     "id": 1224809084,
+     "len_m": 400.3,
+     "name": "Zion Avenue",
+     "highway": "secondary",
+     "lanes": "2",
+     "maxspeed": "30 mph",
+     "surface": "asphalt",
+     "cycleway:both": "no",
+     "sidewalk:both": "yes"
+    },
+    {
+     "id": 5993797,
+     "len_m": 255.3,
+     "name": "Zion Avenue",
+     "highway": "secondary",
+     "lanes": "2",
+     "maxspeed": "30 mph",
+     "surface": "asphalt"
+    },
+    {
+     "id": 1460399528,
+     "len_m": 24.9,
+     "name": "Zion Avenue",
+     "highway": "secondary",
+     "lanes": "3",
+     "lanes:forward": "1",
+     "lanes:backward": "2",
+     "maxspeed": "30 mph",
+     "surface": "asphalt",
+     "turn:lanes:backward": "left|none"
+    },
+    {
+     "id": 1460399527,
+     "len_m": 24.2,
+     "name": "Zion Avenue",
+     "highway": "secondary",
+     "lanes": "3",
+     "lanes:forward": "2",
+     "lanes:backward": "1",
+     "maxspeed": "30 mph",
+     "surface": "asphalt",
+     "turn:lanes:forward": "left|none"
+    },
+    {
+     "id": 1460399525,
+     "len_m": 159.5,
+     "name": "Zion Avenue",
+     "highway": "secondary",
+     "lanes": "2",
+     "maxspeed": "30 mph",
+     "surface": "asphalt"
+    },
+    {
+     "id": 1220464887,
+     "len_m": 61.6,
+     "name": "Zion Avenue",
+     "highway": "secondary",
+     "lanes": "2",
+     "maxspeed": "30 mph",
+     "surface": "asphalt",
+     "cycleway:both": "no",
+     "sidewalk:both": "yes"
+    },
+    {
+     "id": 663865266,
+     "len_m": 27.8,
+     "name": "Zion Avenue",
+     "highway": "secondary",
+     "lanes": "3",
+     "lanes:forward": "1",
+     "lanes:backward": "2",
+     "maxspeed": "30 mph",
+     "surface": "asphalt",
+     "turn:lanes:backward": "left|none"
+    },
+    {
+     "id": 1220464883,
+     "len_m": 26.4,
+     "name": "Zion Avenue",
+     "highway": "secondary",
+     "lanes": "3",
+     "lanes:forward": "2",
+     "lanes:backward": "1",
+     "maxspeed": "30 mph",
+     "turn:lanes:forward": "left|none"
+    },
+    {
+     "id": 663865268,
+     "len_m": 42.9,
+     "name": "Zion Avenue",
+     "highway": "secondary",
+     "maxspeed": "30 mph"
+    },
+    {
+     "id": 1220464879,
+     "len_m": 148.9,
+     "name": "Zion Avenue",
+     "highway": "secondary",
+     "lanes": "2",
+     "maxspeed": "30 mph",
+     "sidewalk:both": "yes"
+    },
+    {
+     "id": 1009823170,
+     "len_m": 60.6,
+     "name": "Zion Avenue",
+     "highway": "secondary",
+     "lanes": "3",
+     "lanes:forward": "1",
+     "lanes:backward": "2",
+     "maxspeed": "30 mph",
+     "turn:lanes:backward": "left|through;right"
+    },
+    {
+     "id": 1009823171,
+     "len_m": 2.1,
+     "name": "Zion Avenue",
+     "highway": "secondary"
+    },
+    {
+     "id": 1009823172,
+     "len_m": 11.6,
+     "name": "Zion Avenue",
+     "highway": "secondary",
+     "lanes": "3",
+     "lanes:forward": "1",
+     "lanes:backward": "2",
+     "maxspeed": "30 mph",
+     "turn:lanes:backward": "left|through;right",
+     "sidewalk:both": "yes"
+    },
+    {
+     "id": 641705013,
+     "len_m": 43.4,
+     "name": "Zion Avenue",
+     "highway": "secondary",
+     "lanes": "3",
+     "lanes:forward": "1",
+     "lanes:backward": "2",
+     "maxspeed": "30 mph",
+     "turn:lanes:backward": "left|through;right"
+    }
+   ],
+   "controls_on_path": [
+    {
+     "arc_m": 11.4,
+     "node": 12527532025,
+     "highway": "crossing",
+     "crossing": "traffic_signals",
+     "crossing:markings": "zebra"
+    },
+    {
+     "arc_m": 12.8,
+     "node": 11309199955,
+     "highway": "traffic_signals",
+     "traffic_signals": "signal",
+     "traffic_signals:direction": "backward"
+    },
+    {
+     "arc_m": 232.6,
+     "node": 3256214412,
+     "highway": "crossing",
+     "crossing": "traffic_signals",
+     "crossing:markings": "zebra"
+    },
+    {
+     "arc_m": 242.6,
+     "node": 49397482,
+     "highway": "traffic_signals"
+    },
+    {
+     "arc_m": 255.0,
+     "node": 3256214410,
+     "highway": "crossing",
+     "crossing": "traffic_signals",
+     "crossing:markings": "zebra"
+    },
+    {
+     "arc_m": 1222.7,
+     "node": 11309199908,
+     "highway": "traffic_signals",
+     "traffic_signals:direction": "backward"
+    },
+    {
+     "arc_m": 1224.2,
+     "node": 11309206482,
+     "highway": "crossing",
+     "crossing": "traffic_signals"
+    },
+    {
+     "arc_m": 1241.1,
+     "node": 11309199953,
+     "highway": "crossing",
+     "crossing": "traffic_signals"
+    },
+    {
+     "arc_m": 1243.3,
+     "node": 11309199912,
+     "highway": "traffic_signals",
+     "traffic_signals:direction": "forward"
+    },
+    {
+     "arc_m": 1318.1,
+     "node": 3257725246,
+     "highway": "crossing",
+     "crossing": "uncontrolled"
+    },
+    {
+     "arc_m": 1558.2,
+     "node": 11309199874,
+     "highway": "traffic_signals",
+     "traffic_signals:direction": "backward"
+    },
+    {
+     "arc_m": 1560.2,
+     "node": 11309199932,
+     "highway": "crossing",
+     "crossing": "traffic_signals"
+    }
+   ],
+   "bridges": [],
+   "path_nodes": [
+    49397489,
+    12527532025,
+    11309199955,
+    49397487,
+    49397485,
+    11247597273,
+    48980333,
+    5531917238,
+    49082521,
+    49082518,
+    11309199892,
+    3256214412,
+    49397482,
+    3256214410,
+    11309199968,
+    49397480,
+    5545639369,
+    5545639365,
+    49397479,
+    49397476,
+    49170599,
+    13394304335,
+    49335421,
+    13394304334,
+    13394304336,
+    49397473,
+    49335707,
+    11309199942,
+    11309199908,
+    11309206482,
+    49397470,
+    11309199953,
+    11309199912,
+    11309199957,
+    3257725245,
+    49103367,
+    3257725246,
+    1904490073,
+    5545639310,
+    1463300311,
+    5545639640,
+    5668093069,
+    1463298609,
+    5545639897,
+    1463298607,
+    11309199874,
+    11309199932,
+    49317051
+   ],
+   "geom": [
+    [
+     -117.0806983,
+     32.7927593
+    ],
+    [
+     -117.080807,
+     32.7928065
+    ],
+    [
+     -117.0808202,
+     32.7928124
+    ],
+    [
+     -117.080856,
+     32.792828
+    ],
+    [
+     -117.080971,
+     32.792843
+    ],
+    [
+     -117.0812321,
+     32.7928463
+    ],
+    [
+     -117.0813398,
+     32.7928463
+    ],
+    [
+     -117.0814839,
+     32.7928478
+    ],
+    [
+     -117.0817903,
+     32.79285
+    ],
+    [
+     -117.082397,
+     32.792862
+    ],
+    [
+     -117.0829319,
+     32.7928669
+    ],
+    [
+     -117.0831601,
+     32.7928689
+    ],
+    [
+     -117.083267,
+     32.79287
+    ],
+    [
+     -117.083399,
+     32.7928717
+    ],
+    [
+     -117.0836626,
+     32.7928751
+    ],
+    [
+     -117.086243,
+     32.792908
+    ],
+    [
+     -117.0867745,
+     32.7929127
+    ],
+    [
+     -117.0874049,
+     32.7929183
+    ],
+    [
+     -117.087936,
+     32.792923
+    ],
+    [
+     -117.088966,
+     32.792931
+    ],
+    [
+     -117.089897,
+     32.792934
+    ],
+    [
+     -117.0906609,
+     32.7929438
+    ],
+    [
+     -117.090927,
+     32.792946
+    ],
+    [
+     -117.0911857,
+     32.7929469
+    ],
+    [
+     -117.0912495,
+     32.7929471
+    ],
+    [
+     -117.0919035,
+     32.7929494
+    ],
+    [
+     -117.092888,
+     32.792957
+    ],
+    [
+     -117.0935451,
+     32.7929597
+    ],
+    [
+     -117.0937289,
+     32.7929605
+    ],
+    [
+     -117.0937446,
+     32.7929606
+    ],
+    [
+     -117.093842,
+     32.792961
+    ],
+    [
+     -117.0939257,
+     32.7929618
+    ],
+    [
+     -117.0939489,
+     32.792962
+    ],
+    [
+     -117.0941234,
+     32.7929637
+    ],
+    [
+     -117.0945808,
+     32.7929681
+    ],
+    [
+     -117.094658,
+     32.792969
+    ],
+    [
+     -117.0947476,
+     32.7929696
+    ],
+    [
+     -117.0960051,
+     32.7929774
+    ],
+    [
+     -117.0960443,
+     32.7929778
+    ],
+    [
+     -117.0961704,
+     32.7929791
+    ],
+    [
+     -117.0964453,
+     32.7929809
+    ],
+    [
+     -117.0965965,
+     32.7929819
+    ],
+    [
+     -117.0968168,
+     32.7929834
+    ],
+    [
+     -117.0968396,
+     32.7929836
+    ],
+    [
+     -117.096963,
+     32.7929844
+    ],
+    [
+     -117.0973103,
+     32.7929789
+    ],
+    [
+     -117.0973317,
+     32.7929786
+    ],
+    [
+     -117.097426,
+     32.7929771
+    ]
+   ]
+  },
+  {
+   "leg": "P3-MG",
+   "road": "Mission Gorge Road",
+   "sense": "cw",
+   "length_m": 2369.3,
+   "start_node": 49317051,
+   "end_node": 1484501766,
+   "start": [
+    -117.097426,
+    32.7929771
+   ],
+   "end": [
+    -117.0789846,
+    32.8066715
+   ],
+   "ways": [
+    {
+     "id": 436411957,
+     "len_m": 503.7,
+     "name": "Mission Gorge Road",
+     "highway": "primary",
+     "oneway": "yes",
+     "lanes": "3",
+     "maxspeed": "45 mph",
+     "surface": "asphalt",
+     "cycleway:right": "lane"
+    },
+    {
+     "id": 1057587542,
+     "len_m": 87.6,
+     "name": "Mission Gorge Road",
+     "highway": "primary",
+     "oneway": "yes",
+     "lanes": "4",
+     "maxspeed": "45 mph",
+     "surface": "asphalt",
+     "turn:lanes": "left|none|none|none",
+     "cycleway:right": "lane"
+    },
+    {
+     "id": 1057587541,
+     "len_m": 271.7,
+     "name": "Mission Gorge Road",
+     "highway": "primary",
+     "oneway": "yes",
+     "lanes": "3",
+     "maxspeed": "45 mph",
+     "surface": "asphalt",
+     "cycleway:right": "lane"
+    },
+    {
+     "id": 436411967,
+     "len_m": 68.4,
+     "name": "Mission Gorge Road",
+     "highway": "primary",
+     "oneway": "yes",
+     "lanes": "4",
+     "maxspeed": "45 mph",
+     "surface": "asphalt",
+     "turn:lanes": "left|||",
+     "cycleway:right": "lane"
+    },
+    {
+     "id": 436411948,
+     "len_m": 11.9,
+     "name": "Mission Gorge Road",
+     "highway": "primary",
+     "oneway": "yes",
+     "maxspeed": "55 mph",
+     "surface": "asphalt"
+    },
+    {
+     "id": 436411954,
+     "len_m": 41.0,
+     "name": "Mission Gorge Road",
+     "highway": "primary",
+     "oneway": "yes",
+     "lanes": "3",
+     "maxspeed": "55 mph",
+     "surface": "asphalt",
+     "turn:lanes": "||merge_to_left"
+    },
+    {
+     "id": 436411973,
+     "len_m": 122.6,
+     "name": "Mission Gorge Road",
+     "highway": "primary",
+     "oneway": "yes",
+     "lanes": "2",
+     "maxspeed": "55 mph",
+     "surface": "asphalt",
+     "cycleway:right": "lane"
+    },
+    {
+     "id": 436411965,
+     "len_m": 29.4,
+     "name": "Mission Gorge Road",
+     "highway": "primary",
+     "oneway": "yes",
+     "lanes": "3",
+     "maxspeed": "55 mph",
+     "surface": "asphalt",
+     "turn:lanes": "left||"
+    },
+    {
+     "id": 436411971,
+     "len_m": 107.8,
+     "name": "Mission Gorge Road",
+     "highway": "primary",
+     "oneway": "yes",
+     "lanes": "2",
+     "maxspeed": "55 mph",
+     "surface": "asphalt",
+     "cycleway:right": "lane"
+    },
+    {
+     "id": 436411946,
+     "len_m": 35.8,
+     "name": "Mission Gorge Road",
+     "highway": "primary",
+     "oneway": "yes",
+     "lanes": "3",
+     "maxspeed": "55 mph",
+     "surface": "asphalt",
+     "turn:lanes": "left||",
+     "cycleway:right": "lane"
+    },
+    {
+     "id": 436411970,
+     "len_m": 232.9,
+     "name": "Mission Gorge Road",
+     "highway": "primary",
+     "oneway": "yes",
+     "lanes": "2",
+     "maxspeed": "55 mph",
+     "surface": "asphalt",
+     "cycleway:right": "lane"
+    },
+    {
+     "id": 1075961359,
+     "len_m": 138.2,
+     "name": "Mission Gorge Road",
+     "highway": "primary",
+     "oneway": "yes",
+     "lanes": "3",
+     "maxspeed": "55 mph",
+     "surface": "asphalt",
+     "cycleway:right": "lane"
+    },
+    {
+     "id": 436411968,
+     "len_m": 88.3,
+     "name": "Mission Gorge Road",
+     "highway": "primary",
+     "oneway": "yes",
+     "lanes": "5",
+     "maxspeed": "55 mph",
+     "surface": "asphalt",
+     "turn:lanes": "reverse||||right",
+     "cycleway:right": "lane"
+    },
+    {
+     "id": 436411969,
+     "len_m": 195.7,
+     "name": "Mission Gorge Road",
+     "highway": "primary",
+     "oneway": "yes",
+     "lanes": "4",
+     "maxspeed": "55 mph",
+     "surface": "asphalt",
+     "cycleway:right": "lane"
+    },
+    {
+     "id": 436411947,
+     "len_m": 92.9,
+     "name": "Mission Gorge Road",
+     "highway": "primary",
+     "oneway": "yes",
+     "lanes": "4",
+     "maxspeed": "55 mph",
+     "surface": "asphalt",
+     "turn:lanes": "|||right",
+     "cycleway:right": "lane"
+    },
+    {
+     "id": 1075804983,
+     "len_m": 68.7,
+     "name": "Mission Gorge Road",
+     "highway": "primary",
+     "oneway": "yes",
+     "lanes": "4",
+     "maxspeed": "55 mph",
+     "surface": "asphalt",
+     "cycleway:right": "lane"
+    },
+    {
+     "id": 436424132,
+     "len_m": 61.6,
+     "name": "Mission Gorge Road",
+     "highway": "primary",
+     "oneway": "yes",
+     "lanes": "3",
+     "maxspeed": "55 mph",
+     "surface": "asphalt",
+     "cycleway:right": "lane"
+    },
+    {
+     "id": 1089535710,
+     "len_m": 72.8,
+     "name": "Mission Gorge Road",
+     "highway": "primary",
+     "oneway": "yes",
+     "lanes": "3",
+     "maxspeed": "55 mph",
+     "surface": "asphalt",
+     "cycleway:right": "lane"
+    },
+    {
+     "id": 1089535711,
+     "len_m": 79.5,
+     "name": "Mission Gorge Road",
+     "highway": "primary",
+     "oneway": "yes",
+     "lanes": "3",
+     "maxspeed": "55 mph",
+     "surface": "asphalt"
+    },
+    {
+     "id": 436424129,
+     "len_m": 58.8,
+     "name": "Mission Gorge Road",
+     "highway": "primary",
+     "oneway": "yes",
+     "lanes": "4",
+     "maxspeed": "55 mph",
+     "surface": "asphalt",
+     "turn:lanes": "left|||"
+    }
+   ],
+   "controls_on_path": [
+    {
+     "arc_m": 13.2,
+     "node": 11309199922,
+     "highway": "crossing",
+     "crossing": "traffic_signals"
+    },
+    {
+     "arc_m": 591.2,
+     "node": 49317064,
+     "highway": "traffic_signals"
+    },
+    {
+     "arc_m": 931.4,
+     "node": 49110991,
+     "highway": "traffic_signals"
+    },
+    {
+     "arc_m": 2351.9,
+     "node": 11357299136,
+     "highway": "traffic_signals",
+     "traffic_signals:direction": "forward"
+    }
+   ],
+   "bridges": [],
+   "path_nodes": [
+    49317051,
+    11309199922,
+    1484501736,
+    5545639895,
+    1484501737,
+    5545639313,
+    1484501738,
+    1484501739,
+    5545639571,
+    1484501740,
+    5545639492,
+    1484501741,
+    7237987523,
+    1484501742,
+    5545637889,
+    1484501743,
+    49317063,
+    9717816275,
+    1484501744,
+    49317064,
+    1484501745,
+    1484501746,
+    8413690632,
+    1484501747,
+    7908102965,
+    1484501748,
+    4343038526,
+    1484501749,
+    49110991,
+    1484501750,
+    4343038527,
+    1484501751,
+    5545642072,
+    1484501752,
+    4343038529,
+    1484501753,
+    4343038530,
+    1484501754,
+    1484501755,
+    4343038532,
+    5545645882,
+    1484501756,
+    5545646457,
+    1484501757,
+    5545646397,
+    5545645895,
+    5545646462,
+    1484501758,
+    4343038534,
+    1484501759,
+    1484501760,
+    1484501761,
+    4343038536,
+    49317081,
+    9866161299,
+    1484501762,
+    1484501763,
+    9980422667,
+    9980422668,
+    1484501764,
+    1484501765,
+    11357299136,
+    1484501766
+   ],
+   "geom": [
+    [
+     -117.097426,
+     32.7929771
+    ],
+    [
+     -117.097399,
+     32.7930941
+    ],
+    [
+     -117.0973763,
+     32.7931928
+    ],
+    [
+     -117.0973143,
+     32.7934254
+    ],
+    [
+     -117.0972195,
+     32.7936384
+    ],
+    [
+     -117.0971437,
+     32.7937854
+    ],
+    [
+     -117.0969973,
+     32.7940117
+    ],
+    [
+     -117.0968696,
+     32.7941662
+    ],
+    [
+     -117.096452,
+     32.7945904
+    ],
+    [
+     -117.0963287,
+     32.7947168
+    ],
+    [
+     -117.0958748,
+     32.7951488
+    ],
+    [
+     -117.0956417,
+     32.7953707
+    ],
+    [
+     -117.095539,
+     32.7954613
+    ],
+    [
+     -117.0948858,
+     32.7960378
+    ],
+    [
+     -117.094794,
+     32.7961135
+    ],
+    [
+     -117.0943306,
+     32.7965098
+    ],
+    [
+     -117.0942941,
+     32.7965405
+    ],
+    [
+     -117.0942712,
+     32.7965596
+    ],
+    [
+     -117.0937629,
+     32.796987
+    ],
+    [
+     -117.0936178,
+     32.7971238
+    ],
+    [
+     -117.0934272,
+     32.7973034
+    ],
+    [
+     -117.092916,
+     32.7980206
+    ],
+    [
+     -117.0929007,
+     32.7980438
+    ],
+    [
+     -117.0925019,
+     32.7986481
+    ],
+    [
+     -117.0922758,
+     32.7989748
+    ],
+    [
+     -117.0921789,
+     32.7991148
+    ],
+    [
+     -117.0921064,
+     32.7992096
+    ],
+    [
+     -117.0919311,
+     32.7994391
+    ],
+    [
+     -117.0916971,
+     32.7997206
+    ],
+    [
+     -117.0916257,
+     32.799809
+    ],
+    [
+     -117.0913837,
+     32.8001175
+    ],
+    [
+     -117.0911155,
+     32.8004595
+    ],
+    [
+     -117.0911032,
+     32.8004754
+    ],
+    [
+     -117.0908646,
+     32.8007838
+    ],
+    [
+     -117.0906462,
+     32.8010308
+    ],
+    [
+     -117.0906199,
+     32.8010606
+    ],
+    [
+     -117.0904287,
+     32.8012214
+    ],
+    [
+     -117.0902278,
+     32.8013902
+    ],
+    [
+     -117.0897479,
+     32.801725
+    ],
+    [
+     -117.0895382,
+     32.8018322
+    ],
+    [
+     -117.0892503,
+     32.8019794
+    ],
+    [
+     -117.0892115,
+     32.8019992
+    ],
+    [
+     -117.0888382,
+     32.8021727
+    ],
+    [
+     -117.0882298,
+     32.8024553
+    ],
+    [
+     -117.0882087,
+     32.8024649
+    ],
+    [
+     -117.0873368,
+     32.8028607
+    ],
+    [
+     -117.0870266,
+     32.8030015
+    ],
+    [
+     -117.0870159,
+     32.8030064
+    ],
+    [
+     -117.0857265,
+     32.8035908
+    ],
+    [
+     -117.0852186,
+     32.803821
+    ],
+    [
+     -117.0848979,
+     32.8039703
+    ],
+    [
+     -117.0844312,
+     32.8041875
+    ],
+    [
+     -117.0830617,
+     32.8048128
+    ],
+    [
+     -117.082189,
+     32.8052112
+    ],
+    [
+     -117.0815428,
+     32.8055034
+    ],
+    [
+     -117.0815267,
+     32.805511
+    ],
+    [
+     -117.0811754,
+     32.8056903
+    ],
+    [
+     -117.0809753,
+     32.8057832
+    ],
+    [
+     -117.0802942,
+     32.8060992
+    ],
+    [
+     -117.0795506,
+     32.8064443
+    ],
+    [
+     -117.0792777,
+     32.8065708
+    ],
+    [
+     -117.0791563,
+     32.8066116
+    ],
+    [
+     -117.0789846,
+     32.8066715
+    ]
+   ]
+  }
+ ],
+ "acw": [
+  {
+   "leg": "P3-WAR",
+   "road": "Waring Road",
+   "sense": "acw",
+   "length_m": 670.3,
+   "start_node": 49333076,
+   "end_node": 49333080,
+   "start": [
+    -117.0806205,
+    32.792698
+   ],
+   "end": [
+    -117.0759414,
+    32.7972692
+   ],
+   "ways": [
+    {
+     "id": 436411980,
+     "len_m": 288.4,
+     "name": "Waring Road",
+     "highway": "secondary",
+     "oneway": "yes",
+     "lanes": "2",
+     "maxspeed": "35 mph",
+     "surface": "asphalt",
+     "cycleway:right": "lane"
+    },
+    {
+     "id": 436411989,
+     "len_m": 36.6,
+     "name": "Waring Road",
+     "highway": "secondary",
+     "oneway": "yes",
+     "lanes": "3",
+     "maxspeed": "35 mph",
+     "surface": "asphalt",
+     "turn:lanes": "left||",
+     "cycleway:right": "lane"
+    },
+    {
+     "id": 436411987,
+     "len_m": 274.4,
+     "name": "Waring Road",
+     "highway": "secondary",
+     "oneway": "yes",
+     "lanes": "2",
+     "maxspeed": "35 mph",
+     "surface": "asphalt",
+     "cycleway:right": "lane"
+    },
+    {
+     "id": 436411992,
+     "len_m": 71.0,
+     "name": "Waring Road",
+     "highway": "secondary",
+     "oneway": "yes",
+     "lanes": "3",
+     "maxspeed": "35 mph",
+     "surface": "asphalt",
+     "turn:lanes": "left||",
+     "cycleway:right": "lane"
+    }
+   ],
+   "controls_on_path": [
+    {
+     "arc_m": 10.4,
+     "node": 12527532022,
+     "highway": "crossing",
+     "crossing": "traffic_signals",
+     "crossing:markings": "zebra"
+    },
+    {
+     "arc_m": 314.7,
+     "node": 11309199909,
+     "highway": "traffic_signals",
+     "traffic_signals:direction": "forward"
+    },
+    {
+     "arc_m": 318.4,
+     "node": 11309199965,
+     "highway": "crossing",
+     "crossing": "traffic_signals",
+     "crossing:markings": "zebra"
+    },
+    {
+     "arc_m": 334.5,
+     "node": 11309199952,
+     "highway": "crossing",
+     "crossing": "traffic_signals",
+     "crossing:markings": "zebra"
+    },
+    {
+     "arc_m": 656.2,
+     "node": 11309199920,
+     "highway": "traffic_signals",
+     "traffic_signals:direction": "forward"
+    },
+    {
+     "arc_m": 658.9,
+     "node": 11309199925,
+     "highway": "crossing",
+     "crossing": "traffic_signals"
+    }
+   ],
+   "bridges": [],
+   "path_nodes": [
+    49333076,
+    12527532022,
+    4343038520,
+    11309199909,
+    11309199965,
+    49333077,
+    11309199952,
+    4343038524,
+    49333078,
+    11309199920,
+    11309199925,
+    49333080
+   ],
+   "geom": [
+    [
+     -117.0806205,
+     32.792698
+    ],
+    [
+     -117.0805482,
+     32.7927686
+    ],
+    [
+     -117.078614,
+     32.7946704
+    ],
+    [
+     -117.0784312,
+     32.7948501
+    ],
+    [
+     -117.078405,
+     32.7948759
+    ],
+    [
+     -117.0783594,
+     32.7949206
+    ],
+    [
+     -117.0782937,
+     32.7949862
+    ],
+    [
+     -117.0764655,
+     32.796808
+    ],
+    [
+     -117.0763183,
+     32.7969547
+    ],
+    [
+     -117.0760488,
+     32.7971795
+    ],
+    [
+     -117.0760282,
+     32.7971967
+    ],
+    [
+     -117.0759414,
+     32.7972692
+    ]
+   ]
+  },
+  {
+   "leg": "P3-ZION",
+   "road": "Zion Avenue",
+   "sense": "acw",
+   "length_m": 1596.2,
+   "start_node": 49317049,
+   "end_node": 49333076,
+   "start": [
+    -117.0976091,
+    32.7929755
+   ],
+   "end": [
+    -117.0806205,
+    32.792698
+   ],
+   "ways": [
+    {
+     "id": 641705017,
+     "len_m": 17.2,
+     "name": "Zion Avenue",
+     "highway": "secondary",
+     "lanes": "4",
+     "lanes:forward": "2",
+     "lanes:backward": "2",
+     "turn:lanes:forward": "left|through",
+     "turn:lanes:backward": "left|through"
+    },
+    {
+     "id": 641705013,
+     "len_m": 43.4,
+     "name": "Zion Avenue",
+     "highway": "secondary",
+     "lanes": "3",
+     "lanes:forward": "1",
+     "lanes:backward": "2",
+     "maxspeed": "30 mph",
+     "turn:lanes:backward": "left|through;right"
+    },
+    {
+     "id": 1009823172,
+     "len_m": 11.6,
+     "name": "Zion Avenue",
+     "highway": "secondary",
+     "lanes": "3",
+     "lanes:forward": "1",
+     "lanes:backward": "2",
+     "maxspeed": "30 mph",
+     "turn:lanes:backward": "left|through;right",
+     "sidewalk:both": "yes"
+    },
+    {
+     "id": 1009823171,
+     "len_m": 2.1,
+     "name": "Zion Avenue",
+     "highway": "secondary"
+    },
+    {
+     "id": 1009823170,
+     "len_m": 60.6,
+     "name": "Zion Avenue",
+     "highway": "secondary",
+     "lanes": "3",
+     "lanes:forward": "1",
+     "lanes:backward": "2",
+     "maxspeed": "30 mph",
+     "turn:lanes:backward": "left|through;right"
+    },
+    {
+     "id": 1220464879,
+     "len_m": 148.9,
+     "name": "Zion Avenue",
+     "highway": "secondary",
+     "lanes": "2",
+     "maxspeed": "30 mph",
+     "sidewalk:both": "yes"
+    },
+    {
+     "id": 663865268,
+     "len_m": 42.9,
+     "name": "Zion Avenue",
+     "highway": "secondary",
+     "maxspeed": "30 mph"
+    },
+    {
+     "id": 1220464883,
+     "len_m": 26.4,
+     "name": "Zion Avenue",
+     "highway": "secondary",
+     "lanes": "3",
+     "lanes:forward": "2",
+     "lanes:backward": "1",
+     "maxspeed": "30 mph",
+     "turn:lanes:forward": "left|none"
+    },
+    {
+     "id": 663865266,
+     "len_m": 27.8,
+     "name": "Zion Avenue",
+     "highway": "secondary",
+     "lanes": "3",
+     "lanes:forward": "1",
+     "lanes:backward": "2",
+     "maxspeed": "30 mph",
+     "surface": "asphalt",
+     "turn:lanes:backward": "left|none"
+    },
+    {
+     "id": 1220464887,
+     "len_m": 61.6,
+     "name": "Zion Avenue",
+     "highway": "secondary",
+     "lanes": "2",
+     "maxspeed": "30 mph",
+     "surface": "asphalt",
+     "cycleway:both": "no",
+     "sidewalk:both": "yes"
+    },
+    {
+     "id": 1460399525,
+     "len_m": 159.5,
+     "name": "Zion Avenue",
+     "highway": "secondary",
+     "lanes": "2",
+     "maxspeed": "30 mph",
+     "surface": "asphalt"
+    },
+    {
+     "id": 1460399527,
+     "len_m": 24.2,
+     "name": "Zion Avenue",
+     "highway": "secondary",
+     "lanes": "3",
+     "lanes:forward": "2",
+     "lanes:backward": "1",
+     "maxspeed": "30 mph",
+     "surface": "asphalt",
+     "turn:lanes:forward": "left|none"
+    },
+    {
+     "id": 1460399528,
+     "len_m": 24.9,
+     "name": "Zion Avenue",
+     "highway": "secondary",
+     "lanes": "3",
+     "lanes:forward": "1",
+     "lanes:backward": "2",
+     "maxspeed": "30 mph",
+     "surface": "asphalt",
+     "turn:lanes:backward": "left|none"
+    },
+    {
+     "id": 5993797,
+     "len_m": 255.3,
+     "name": "Zion Avenue",
+     "highway": "secondary",
+     "lanes": "2",
+     "maxspeed": "30 mph",
+     "surface": "asphalt"
+    },
+    {
+     "id": 1224809084,
+     "len_m": 400.3,
+     "name": "Zion Avenue",
+     "highway": "secondary",
+     "lanes": "2",
+     "maxspeed": "30 mph",
+     "surface": "asphalt",
+     "cycleway:both": "no",
+     "sidewalk:both": "yes"
+    },
+    {
+     "id": 1220464882,
+     "len_m": 37.1,
+     "name": "Zion Avenue",
+     "highway": "secondary",
+     "lanes": "3",
+     "lanes:forward": "2",
+     "lanes:backward": "1",
+     "maxspeed": "30 mph",
+     "surface": "asphalt",
+     "turn:lanes:forward": "left|none"
+    },
+    {
+     "id": 1024233068,
+     "len_m": 31.4,
+     "name": "Zion Avenue",
+     "highway": "secondary",
+     "lanes": "3",
+     "lanes:forward": "1",
+     "lanes:backward": "2",
+     "maxspeed": "30 mph",
+     "surface": "asphalt",
+     "turn:lanes:backward": "left|none"
+    },
+    {
+     "id": 1220464890,
+     "len_m": 107.0,
+     "name": "Zion Avenue",
+     "highway": "secondary",
+     "lanes": "2",
+     "maxspeed": "30 mph",
+     "surface": "asphalt",
+     "sidewalk:both": "yes"
+    },
+    {
+     "id": 1461857196,
+     "len_m": 42.2,
+     "name": "Zion Avenue",
+     "highway": "secondary",
+     "lanes": "3",
+     "lanes:forward": "2",
+     "lanes:backward": "1",
+     "maxspeed": "30 mph",
+     "surface": "asphalt",
+     "turn:lanes:forward": "left|left;through;right"
+    },
+    {
+     "id": 1220464886,
+     "len_m": 62.1,
+     "name": "Zion Avenue",
+     "highway": "secondary",
+     "lanes": "3",
+     "lanes:forward": "2",
+     "lanes:backward": "1",
+     "maxspeed": "30 mph",
+     "surface": "asphalt",
+     "turn:lanes:forward": "left|left;through"
+    },
+    {
+     "id": 641705003,
+     "len_m": 10.0,
+     "name": "Zion Avenue",
+     "highway": "secondary",
+     "surface": "asphalt"
+    }
+   ],
+   "controls_on_path": [
+    {
+     "arc_m": 26.0,
+     "node": 11309199932,
+     "highway": "crossing",
+     "crossing": "traffic_signals"
+    },
+    {
+     "arc_m": 28.0,
+     "node": 11309199874,
+     "highway": "traffic_signals",
+     "traffic_signals:direction": "backward"
+    },
+    {
+     "arc_m": 268.1,
+     "node": 3257725246,
+     "highway": "crossing",
+     "crossing": "uncontrolled"
+    },
+    {
+     "arc_m": 342.9,
+     "node": 11309199912,
+     "highway": "traffic_signals",
+     "traffic_signals:direction": "forward"
+    },
+    {
+     "arc_m": 345.1,
+     "node": 11309199953,
+     "highway": "crossing",
+     "crossing": "traffic_signals"
+    },
+    {
+     "arc_m": 362.0,
+     "node": 11309206482,
+     "highway": "crossing",
+     "crossing": "traffic_signals"
+    },
+    {
+     "arc_m": 363.5,
+     "node": 11309199908,
+     "highway": "traffic_signals",
+     "traffic_signals:direction": "backward"
+    },
+    {
+     "arc_m": 1331.2,
+     "node": 3256214410,
+     "highway": "crossing",
+     "crossing": "traffic_signals",
+     "crossing:markings": "zebra"
+    },
+    {
+     "arc_m": 1343.6,
+     "node": 49397482,
+     "highway": "traffic_signals"
+    },
+    {
+     "arc_m": 1353.6,
+     "node": 3256214412,
+     "highway": "crossing",
+     "crossing": "traffic_signals",
+     "crossing:markings": "zebra"
+    },
+    {
+     "arc_m": 1573.4,
+     "node": 11309199955,
+     "highway": "traffic_signals",
+     "traffic_signals": "signal",
+     "traffic_signals:direction": "backward"
+    },
+    {
+     "arc_m": 1574.8,
+     "node": 12527532025,
+     "highway": "crossing",
+     "crossing": "traffic_signals",
+     "crossing:markings": "zebra"
+    }
+   ],
+   "bridges": [],
+   "path_nodes": [
+    49317049,
+    49317051,
+    11309199932,
+    11309199874,
+    1463298607,
+    5545639897,
+    1463298609,
+    5668093069,
+    5545639640,
+    1463300311,
+    5545639310,
+    1904490073,
+    3257725246,
+    49103367,
+    3257725245,
+    11309199957,
+    11309199912,
+    11309199953,
+    49397470,
+    11309206482,
+    11309199908,
+    11309199942,
+    49335707,
+    49397473,
+    13394304336,
+    13394304334,
+    49335421,
+    13394304335,
+    49170599,
+    49397476,
+    49397479,
+    5545639365,
+    5545639369,
+    49397480,
+    11309199968,
+    3256214410,
+    49397482,
+    3256214412,
+    11309199892,
+    49082518,
+    49082521,
+    5531917238,
+    48980333,
+    11247597273,
+    49397485,
+    49397487,
+    11309199955,
+    12527532025,
+    49397489,
+    49333076
+   ],
+   "geom": [
+    [
+     -117.0976091,
+     32.7929755
+    ],
+    [
+     -117.097426,
+     32.7929771
+    ],
+    [
+     -117.0973317,
+     32.7929786
+    ],
+    [
+     -117.0973103,
+     32.7929789
+    ],
+    [
+     -117.096963,
+     32.7929844
+    ],
+    [
+     -117.0968396,
+     32.7929836
+    ],
+    [
+     -117.0968168,
+     32.7929834
+    ],
+    [
+     -117.0965965,
+     32.7929819
+    ],
+    [
+     -117.0964453,
+     32.7929809
+    ],
+    [
+     -117.0961704,
+     32.7929791
+    ],
+    [
+     -117.0960443,
+     32.7929778
+    ],
+    [
+     -117.0960051,
+     32.7929774
+    ],
+    [
+     -117.0947476,
+     32.7929696
+    ],
+    [
+     -117.094658,
+     32.792969
+    ],
+    [
+     -117.0945808,
+     32.7929681
+    ],
+    [
+     -117.0941234,
+     32.7929637
+    ],
+    [
+     -117.0939489,
+     32.792962
+    ],
+    [
+     -117.0939257,
+     32.7929618
+    ],
+    [
+     -117.093842,
+     32.792961
+    ],
+    [
+     -117.0937446,
+     32.7929606
+    ],
+    [
+     -117.0937289,
+     32.7929605
+    ],
+    [
+     -117.0935451,
+     32.7929597
+    ],
+    [
+     -117.092888,
+     32.792957
+    ],
+    [
+     -117.0919035,
+     32.7929494
+    ],
+    [
+     -117.0912495,
+     32.7929471
+    ],
+    [
+     -117.0911857,
+     32.7929469
+    ],
+    [
+     -117.090927,
+     32.792946
+    ],
+    [
+     -117.0906609,
+     32.7929438
+    ],
+    [
+     -117.089897,
+     32.792934
+    ],
+    [
+     -117.088966,
+     32.792931
+    ],
+    [
+     -117.087936,
+     32.792923
+    ],
+    [
+     -117.0874049,
+     32.7929183
+    ],
+    [
+     -117.0867745,
+     32.7929127
+    ],
+    [
+     -117.086243,
+     32.792908
+    ],
+    [
+     -117.0836626,
+     32.7928751
+    ],
+    [
+     -117.083399,
+     32.7928717
+    ],
+    [
+     -117.083267,
+     32.79287
+    ],
+    [
+     -117.0831601,
+     32.7928689
+    ],
+    [
+     -117.0829319,
+     32.7928669
+    ],
+    [
+     -117.082397,
+     32.792862
+    ],
+    [
+     -117.0817903,
+     32.79285
+    ],
+    [
+     -117.0814839,
+     32.7928478
+    ],
+    [
+     -117.0813398,
+     32.7928463
+    ],
+    [
+     -117.0812321,
+     32.7928463
+    ],
+    [
+     -117.080971,
+     32.792843
+    ],
+    [
+     -117.080856,
+     32.792828
+    ],
+    [
+     -117.0808202,
+     32.7928124
+    ],
+    [
+     -117.080807,
+     32.7928065
+    ],
+    [
+     -117.0806983,
+     32.7927593
+    ],
+    [
+     -117.0806205,
+     32.792698
+    ]
+   ]
+  },
+  {
+   "leg": "P3-MG",
+   "road": "Mission Gorge Road",
+   "sense": "acw",
+   "length_m": 2394.3,
+   "start_node": 1484501883,
+   "end_node": 49317049,
+   "start": [
+    -117.0790063,
+    32.8068387
+   ],
+   "end": [
+    -117.0976091,
+    32.7929755
+   ],
+   "ways": [
+    {
+     "id": 436424134,
+     "len_m": 544.2,
+     "name": "Mission Gorge Road",
+     "highway": "primary",
+     "oneway": "yes",
+     "lanes": "2",
+     "maxspeed": "55 mph",
+     "surface": "asphalt",
+     "cycleway:right": "lane"
+    },
+    {
+     "id": 436411975,
+     "len_m": 92.9,
+     "name": "Mission Gorge Road",
+     "highway": "primary",
+     "oneway": "yes",
+     "lanes": "4",
+     "maxspeed": "55 mph",
+     "surface": "asphalt",
+     "turn:lanes": "left|left||",
+     "cycleway:right": "lane"
+    },
+    {
+     "id": 436411972,
+     "len_m": 426.6,
+     "name": "Mission Gorge Road",
+     "highway": "primary",
+     "oneway": "yes",
+     "lanes": "2",
+     "maxspeed": "55 mph",
+     "surface": "asphalt",
+     "cycleway:right": "lane"
+    },
+    {
+     "id": 436411951,
+     "len_m": 32.5,
+     "name": "Mission Gorge Road",
+     "highway": "primary",
+     "oneway": "yes",
+     "lanes": "3",
+     "maxspeed": "55 mph",
+     "surface": "asphalt",
+     "turn:lanes": "left||",
+     "cycleway:right": "lane"
+    },
+    {
+     "id": 436411976,
+     "len_m": 285.6,
+     "name": "Mission Gorge Road",
+     "highway": "primary",
+     "oneway": "yes",
+     "lanes": "2",
+     "maxspeed": "55 mph",
+     "surface": "asphalt",
+     "cycleway:right": "lane"
+    },
+    {
+     "id": 436411974,
+     "len_m": 71.2,
+     "name": "Mission Gorge Road",
+     "highway": "primary",
+     "oneway": "yes",
+     "lanes": "3",
+     "maxspeed": "55 mph",
+     "surface": "asphalt",
+     "turn:lanes": "left||",
+     "cycleway:right": "lane"
+    },
+    {
+     "id": 1089535712,
+     "len_m": 124.2,
+     "name": "Mission Gorge Road",
+     "highway": "primary",
+     "oneway": "yes",
+     "lanes": "3",
+     "maxspeed": "45 mph",
+     "surface": "asphalt",
+     "cycleway:right": "lane"
+    },
+    {
+     "id": 622961805,
+     "len_m": 126.7,
+     "name": "Mission Gorge Road",
+     "highway": "primary",
+     "oneway": "yes",
+     "lanes": "3",
+     "maxspeed": "45 mph",
+     "surface": "asphalt",
+     "cycleway:right": "lane"
+    },
+    {
+     "id": 1074461416,
+     "len_m": 83.8,
+     "name": "Mission Gorge Road",
+     "highway": "primary",
+     "oneway": "yes",
+     "lanes": "4",
+     "maxspeed": "45 mph",
+     "surface": "asphalt",
+     "turn:lanes": "left|||",
+     "cycleway:right": "lane"
+    },
+    {
+     "id": 622961804,
+     "len_m": 3.2,
+     "name": "Mission Gorge Road",
+     "highway": "primary",
+     "oneway": "yes",
+     "maxspeed": "45 mph",
+     "cycleway:right": "lane"
+    },
+    {
+     "id": 436411961,
+     "len_m": 525.3,
+     "name": "Mission Gorge Road",
+     "highway": "primary",
+     "oneway": "yes",
+     "lanes": "3",
+     "maxspeed": "45 mph",
+     "surface": "asphalt",
+     "cycleway:right": "lane"
+    },
+    {
+     "id": 436428811,
+     "len_m": 78.1,
+     "name": "Mission Gorge Road",
+     "highway": "primary",
+     "oneway": "yes",
+     "lanes": "4",
+     "maxspeed": "45 mph",
+     "surface": "asphalt",
+     "turn:lanes": "left|||",
+     "cycleway:right": "lane"
+    }
+   ],
+   "controls_on_path": [
+    {
+     "arc_m": 1453.0,
+     "node": 49110990,
+     "highway": "traffic_signals"
+    },
+    {
+     "arc_m": 1787.8,
+     "node": 5545639280,
+     "highway": "traffic_signals"
+    },
+    {
+     "arc_m": 1791.0,
+     "node": 5545639273,
+     "highway": "traffic_signals"
+    },
+    {
+     "arc_m": 2383.2,
+     "node": 11309199928,
+     "highway": "traffic_signals",
+     "traffic_signals:direction": "forward"
+    },
+    {
+     "arc_m": 2385.5,
+     "node": 11309199886,
+     "highway": "crossing",
+     "crossing": "traffic_signals"
+    }
+   ],
+   "bridges": [],
+   "path_nodes": [
+    1484501883,
+    1484501884,
+    1484501885,
+    5531917388,
+    1484501886,
+    5531917392,
+    1484501887,
+    1484501888,
+    4343038535,
+    1484501889,
+    1484501890,
+    1484501891,
+    1484501892,
+    1484501893,
+    4343038533,
+    5195038200,
+    1484501895,
+    1484501896,
+    4343038531,
+    1484501897,
+    1484501898,
+    6916162777,
+    4343038528,
+    1484501899,
+    1484501900,
+    49110990,
+    1484501901,
+    6911563752,
+    1484501902,
+    5545641748,
+    1484501903,
+    49030849,
+    6909296559,
+    1484501904,
+    9855293002,
+    1484501905,
+    5545639280,
+    5545639273,
+    1484501906,
+    7928138745,
+    5545639490,
+    5545639567,
+    1484501907,
+    5545639284,
+    5545639281,
+    1484501908,
+    1484501909,
+    1484501910,
+    1484501911,
+    5545639650,
+    1484501912,
+    5545639899,
+    1484501913,
+    4343187270,
+    11068963789,
+    2356792163,
+    1484501914,
+    11309199928,
+    11309199886,
+    49317049
+   ],
+   "geom": [
+    [
+     -117.0790063,
+     32.8068387
+    ],
+    [
+     -117.0793341,
+     32.8067185
+    ],
+    [
+     -117.0800744,
+     32.8063731
+    ],
+    [
+     -117.0806614,
+     32.8061017
+    ],
+    [
+     -117.0810154,
+     32.8059381
+    ],
+    [
+     -117.0816512,
+     32.8056398
+    ],
+    [
+     -117.0826339,
+     32.8051788
+    ],
+    [
+     -117.0835028,
+     32.8047834
+    ],
+    [
+     -117.084108,
+     32.8044943
+    ],
+    [
+     -117.0844469,
+     32.8043325
+    ],
+    [
+     -117.0848986,
+     32.8041242
+    ],
+    [
+     -117.0849754,
+     32.804089
+    ],
+    [
+     -117.0858239,
+     32.8036998
+    ],
+    [
+     -117.0879475,
+     32.8027374
+    ],
+    [
+     -117.0889818,
+     32.802261
+    ],
+    [
+     -117.0892868,
+     32.8021205
+    ],
+    [
+     -117.089842,
+     32.8018358
+    ],
+    [
+     -117.0903282,
+     32.8014956
+    ],
+    [
+     -117.0905366,
+     32.8013205
+    ],
+    [
+     -117.0907454,
+     32.801145
+    ],
+    [
+     -117.0909775,
+     32.800884
+    ],
+    [
+     -117.0913399,
+     32.8004168
+    ],
+    [
+     -117.091412,
+     32.8003239
+    ],
+    [
+     -117.0914417,
+     32.8002855
+    ],
+    [
+     -117.0917303,
+     32.7999216
+    ],
+    [
+     -117.091837,
+     32.7997913
+    ],
+    [
+     -117.0920628,
+     32.7995156
+    ],
+    [
+     -117.092335,
+     32.7991176
+    ],
+    [
+     -117.0923639,
+     32.7990753
+    ],
+    [
+     -117.0925292,
+     32.7988371
+    ],
+    [
+     -117.0925835,
+     32.7987589
+    ],
+    [
+     -117.0926051,
+     32.7987263
+    ],
+    [
+     -117.0927083,
+     32.7985708
+    ],
+    [
+     -117.093054,
+     32.7980496
+    ],
+    [
+     -117.093201,
+     32.7978452
+    ],
+    [
+     -117.0935308,
+     32.7973878
+    ],
+    [
+     -117.0937,
+     32.7972199
+    ],
+    [
+     -117.0937225,
+     32.797198
+    ],
+    [
+     -117.093835,
+     32.7970951
+    ],
+    [
+     -117.0939986,
+     32.796957
+    ],
+    [
+     -117.094157,
+     32.7968232
+    ],
+    [
+     -117.0943931,
+     32.7966238
+    ],
+    [
+     -117.0944937,
+     32.7965388
+    ],
+    [
+     -117.0949093,
+     32.7961997
+    ],
+    [
+     -117.0950794,
+     32.7960609
+    ],
+    [
+     -117.0951336,
+     32.7960167
+    ],
+    [
+     -117.0957484,
+     32.7954709
+    ],
+    [
+     -117.0964479,
+     32.7948038
+    ],
+    [
+     -117.0966518,
+     32.7946219
+    ],
+    [
+     -117.097039,
+     32.7942317
+    ],
+    [
+     -117.0971774,
+     32.7940521
+    ],
+    [
+     -117.0973397,
+     32.7937934
+    ],
+    [
+     -117.0973889,
+     32.7936911
+    ],
+    [
+     -117.0974013,
+     32.7936561
+    ],
+    [
+     -117.0974717,
+     32.7934808
+    ],
+    [
+     -117.0975302,
+     32.7932942
+    ],
+    [
+     -117.0975457,
+     32.7932508
+    ],
+    [
+     -117.0975865,
+     32.7930737
+    ],
+    [
+     -117.0975911,
+     32.7930536
+    ],
+    [
+     -117.0976091,
+     32.7929755
+    ]
+   ]
+  }
+ ],
+ "princess_view_cw": {
+  "leg": "P",
+  "road": "Princess View Drive",
+  "sense": "cw",
+  "length_m": 1109.2,
+  "start_node": 1484501766,
+  "end_node": 1713352279,
+  "start": [
+   -117.0789846,
+   32.8066715
+  ],
+  "end": [
+   -117.0760127,
+   32.7973374
+  ],
+  "ways": [
+   {
+    "id": 1224662142,
+    "len_m": 508.8,
+    "name": "Princess View Drive",
+    "highway": "secondary",
+    "lanes": "5",
+    "lanes:forward": "3",
+    "lanes:backward": "2",
+    "surface": "asphalt",
+    "turn:lanes:forward": "left|left|none"
+   },
+   {
+    "id": 1224662147,
+    "len_m": 53.6,
+    "name": "Princess View Drive",
+    "highway": "secondary",
+    "lanes": "5",
+    "lanes:forward": "2",
+    "lanes:backward": "3",
+    "surface": "asphalt",
+    "turn:lanes:backward": "left|none|none"
+   },
+   {
+    "id": 1224662143,
+    "len_m": 53.4,
+    "name": "Princess View Drive",
+    "highway": "secondary",
+    "lanes": "5",
+    "lanes:forward": "3",
+    "lanes:backward": "2",
+    "surface": "asphalt",
+    "turn:lanes:forward": "left|none|none"
+   },
+   {
+    "id": 1343339700,
+    "len_m": 414.3,
+    "name": "Princess View Drive",
+    "highway": "secondary",
+    "lanes": "4",
+    "surface": "asphalt"
+   },
+   {
+    "id": 1220464885,
+    "len_m": 36.5,
+    "name": "Princess View Drive",
+    "highway": "secondary",
+    "lanes": "4",
+    "surface": "asphalt"
+   },
+   {
+    "id": 1220464891,
+    "len_m": 42.6,
+    "name": "Princess View Drive",
+    "highway": "secondary",
+    "lanes": "4",
+    "lanes:forward": "2",
+    "lanes:backward": "2",
+    "surface": "asphalt",
+    "turn:lanes:backward": "left|through;right"
+   }
+  ],
+  "controls_on_path": [
+   {
+    "arc_m": 8.3,
+    "node": 11357299134,
+    "highway": "crossing",
+    "crossing": "traffic_signals"
+   },
+   {
+    "arc_m": 11.0,
+    "node": 49317085,
+    "highway": "traffic_signals",
+    "traffic_signals:direction": "forward"
+   },
+   {
+    "arc_m": 553.1,
+    "node": 11357299118,
+    "highway": "crossing",
+    "crossing": "uncontrolled",
+    "crossing:markings": "zebra"
+   },
+   {
+    "arc_m": 562.4,
+    "node": 49336331,
+    "highway": "stop",
+    "stop": "all"
+   },
+   {
+    "arc_m": 573.2,
+    "node": 11357299142,
+    "highway": "crossing",
+    "crossing": "uncontrolled",
+    "crossing:markings": "zebra"
+   },
+   {
+    "arc_m": 1017.5,
+    "node": 11309199949,
+    "highway": "traffic_signals",
+    "traffic_signals:direction": "backward"
+   },
+   {
+    "arc_m": 1021.1,
+    "node": 11309199939,
+    "highway": "crossing",
+    "crossing": "traffic_signals"
+   },
+   {
+    "arc_m": 1039.7,
+    "node": 11309199910,
+    "highway": "crossing",
+    "crossing": "traffic_signals"
+   },
+   {
+    "arc_m": 1043.0,
+    "node": 11309199930,
+    "highway": "traffic_signals",
+    "traffic_signals:direction": "forward"
+   },
+   {
+    "arc_m": 1097.5,
+    "node": 11309199918,
+    "highway": "traffic_signals",
+    "traffic_signals:direction": "backward"
+   },
+   {
+    "arc_m": 1100.8,
+    "node": 11309199929,
+    "highway": "crossing",
+    "crossing": "traffic_signals"
+   }
+  ],
+  "bridges": [],
+  "path_nodes": [
+   1484501766,
+   11357299134,
+   49317085,
+   49614653,
+   49614651,
+   5531917334,
+   49614649,
+   5531917326,
+   49614648,
+   49614646,
+   49614643,
+   49614640,
+   49614637,
+   49614636,
+   11357299121,
+   11357299118,
+   49336331,
+   11357299142,
+   11357299131,
+   49614633,
+   49561835,
+   49614628,
+   49425611,
+   49614627,
+   49614624,
+   49614623,
+   49425764,
+   49614619,
+   49614617,
+   11309199949,
+   11309199939,
+   49082539,
+   11309199910,
+   11309199930,
+   11309199893,
+   11309199918,
+   11309199929,
+   1713352279
+  ],
+  "geom": [
+   [
+    -117.0789846,
+    32.8066715
+   ],
+   [
+    -117.0789498,
+    32.8066022
+   ],
+   [
+    -117.0789514,
+    32.8065783
+   ],
+   [
+    -117.078903,
+    32.80637
+   ],
+   [
+    -117.078873,
+    32.806126
+   ],
+   [
+    -117.078873,
+    32.805986
+   ],
+   [
+    -117.078873,
+    32.805862
+   ],
+   [
+    -117.0789735,
+    32.8046398
+   ],
+   [
+    -117.079008,
+    32.80422
+   ],
+   [
+    -117.07901,
+    32.804195
+   ],
+   [
+    -117.079033,
+    32.804062
+   ],
+   [
+    -117.079033,
+    32.803856
+   ],
+   [
+    -117.078979,
+    32.803486
+   ],
+   [
+    -117.078873,
+    32.803154
+   ],
+   [
+    -117.0783688,
+    32.8022062
+   ],
+   [
+    -117.078175,
+    32.8018418
+   ],
+   [
+    -117.0781342,
+    32.8017652
+   ],
+   [
+    -117.0780866,
+    32.8016765
+   ],
+   [
+    -117.0778991,
+    32.8013269
+   ],
+   [
+    -117.077637,
+    32.800838
+   ],
+   [
+    -117.077507,
+    32.800415
+   ],
+   [
+    -117.077477,
+    32.800247
+   ],
+   [
+    -117.077461,
+    32.799789
+   ],
+   [
+    -117.077423,
+    32.799202
+   ],
+   [
+    -117.077362,
+    32.798931
+   ],
+   [
+    -117.077278,
+    32.798695
+   ],
+   [
+    -117.077202,
+    32.798557
+   ],
+   [
+    -117.07708,
+    32.798374
+   ],
+   [
+    -117.076927,
+    32.79821
+   ],
+   [
+    -117.0766467,
+    32.7979672
+   ],
+   [
+    -117.0766196,
+    32.7979437
+   ],
+   [
+    -117.076553,
+    32.797886
+   ],
+   [
+    -117.0764872,
+    32.7978192
+   ],
+   [
+    -117.0764644,
+    32.7977961
+   ],
+   [
+    -117.0763035,
+    32.7976327
+   ],
+   [
+    -117.0760928,
+    32.7974187
+   ],
+   [
+    -117.07607,
+    32.7973955
+   ],
+   [
+    -117.0760127,
+    32.7973374
+   ]
+  ]
+ },
+ "princess_view_acw": {
+  "leg": "P",
+  "road": "Princess View Drive",
+  "sense": "acw",
+  "length_m": 1137.9,
+  "start_node": 49333080,
+  "end_node": 1484501883,
+  "start": [
+   -117.0759414,
+   32.7972692
+  ],
+  "end": [
+   -117.0790063,
+   32.8068387
+  ],
+  "ways": [
+   {
+    "id": 135149733,
+    "len_m": 10.1,
+    "name": "Princess View Drive",
+    "highway": "secondary",
+    "lanes": "3",
+    "lanes:forward": "1",
+    "lanes:backward": "2",
+    "surface": "asphalt",
+    "turn:lanes:backward": "left|through",
+    "cycleway:both": "no"
+   },
+   {
+    "id": 1220464891,
+    "len_m": 42.6,
+    "name": "Princess View Drive",
+    "highway": "secondary",
+    "lanes": "4",
+    "lanes:forward": "2",
+    "lanes:backward": "2",
+    "surface": "asphalt",
+    "turn:lanes:backward": "left|through;right"
+   },
+   {
+    "id": 1220464885,
+    "len_m": 36.5,
+    "name": "Princess View Drive",
+    "highway": "secondary",
+    "lanes": "4",
+    "surface": "asphalt"
+   },
+   {
+    "id": 1343339700,
+    "len_m": 414.3,
+    "name": "Princess View Drive",
+    "highway": "secondary",
+    "lanes": "4",
+    "surface": "asphalt"
+   },
+   {
+    "id": 1224662143,
+    "len_m": 53.4,
+    "name": "Princess View Drive",
+    "highway": "secondary",
+    "lanes": "5",
+    "lanes:forward": "3",
+    "lanes:backward": "2",
+    "surface": "asphalt",
+    "turn:lanes:forward": "left|none|none"
+   },
+   {
+    "id": 1224662147,
+    "len_m": 53.6,
+    "name": "Princess View Drive",
+    "highway": "secondary",
+    "lanes": "5",
+    "lanes:forward": "2",
+    "lanes:backward": "3",
+    "surface": "asphalt",
+    "turn:lanes:backward": "left|none|none"
+   },
+   {
+    "id": 1224662142,
+    "len_m": 508.8,
+    "name": "Princess View Drive",
+    "highway": "secondary",
+    "lanes": "5",
+    "lanes:forward": "3",
+    "lanes:backward": "2",
+    "surface": "asphalt",
+    "turn:lanes:forward": "left|left|none"
+   },
+   {
+    "id": 1224662145,
+    "len_m": 18.7,
+    "name": "Princess View Drive",
+    "highway": "secondary",
+    "lanes": "4",
+    "lanes:forward": "3",
+    "lanes:backward": "1",
+    "surface": "asphalt",
+    "turn:lanes:forward": "left|left|none"
+   }
+  ],
+  "controls_on_path": [
+   {
+    "arc_m": 18.5,
+    "node": 11309199929,
+    "highway": "crossing",
+    "crossing": "traffic_signals"
+   },
+   {
+    "arc_m": 21.8,
+    "node": 11309199918,
+    "highway": "traffic_signals",
+    "traffic_signals:direction": "backward"
+   },
+   {
+    "arc_m": 76.3,
+    "node": 11309199930,
+    "highway": "traffic_signals",
+    "traffic_signals:direction": "forward"
+   },
+   {
+    "arc_m": 79.6,
+    "node": 11309199910,
+    "highway": "crossing",
+    "crossing": "traffic_signals"
+   },
+   {
+    "arc_m": 98.2,
+    "node": 11309199939,
+    "highway": "crossing",
+    "crossing": "traffic_signals"
+   },
+   {
+    "arc_m": 101.8,
+    "node": 11309199949,
+    "highway": "traffic_signals",
+    "traffic_signals:direction": "backward"
+   },
+   {
+    "arc_m": 546.1,
+    "node": 11357299142,
+    "highway": "crossing",
+    "crossing": "uncontrolled",
+    "crossing:markings": "zebra"
+   },
+   {
+    "arc_m": 556.9,
+    "node": 49336331,
+    "highway": "stop",
+    "stop": "all"
+   },
+   {
+    "arc_m": 566.2,
+    "node": 11357299118,
+    "highway": "crossing",
+    "crossing": "uncontrolled",
+    "crossing:markings": "zebra"
+   },
+   {
+    "arc_m": 1108.3,
+    "node": 49317085,
+    "highway": "traffic_signals",
+    "traffic_signals:direction": "forward"
+   },
+   {
+    "arc_m": 1110.9,
+    "node": 11357299134,
+    "highway": "crossing",
+    "crossing": "traffic_signals"
+   }
+  ],
+  "bridges": [],
+  "path_nodes": [
+   49333080,
+   1713352279,
+   11309199929,
+   11309199918,
+   11309199893,
+   11309199930,
+   11309199910,
+   49082539,
+   11309199939,
+   11309199949,
+   49614617,
+   49614619,
+   49425764,
+   49614623,
+   49614624,
+   49614627,
+   49425611,
+   49614628,
+   49561835,
+   49614633,
+   11357299131,
+   11357299142,
+   49336331,
+   11357299118,
+   11357299121,
+   49614636,
+   49614637,
+   49614640,
+   49614643,
+   49614646,
+   49614648,
+   5531917326,
+   49614649,
+   5531917334,
+   49614651,
+   49614653,
+   49317085,
+   11357299134,
+   1484501766,
+   1484501883
+  ],
+  "geom": [
+   [
+    -117.0759414,
+    32.7972692
+   ],
+   [
+    -117.0760127,
+    32.7973374
+   ],
+   [
+    -117.07607,
+    32.7973955
+   ],
+   [
+    -117.0760928,
+    32.7974187
+   ],
+   [
+    -117.0763035,
+    32.7976327
+   ],
+   [
+    -117.0764644,
+    32.7977961
+   ],
+   [
+    -117.0764872,
+    32.7978192
+   ],
+   [
+    -117.076553,
+    32.797886
+   ],
+   [
+    -117.0766196,
+    32.7979437
+   ],
+   [
+    -117.0766467,
+    32.7979672
+   ],
+   [
+    -117.076927,
+    32.79821
+   ],
+   [
+    -117.07708,
+    32.798374
+   ],
+   [
+    -117.077202,
+    32.798557
+   ],
+   [
+    -117.077278,
+    32.798695
+   ],
+   [
+    -117.077362,
+    32.798931
+   ],
+   [
+    -117.077423,
+    32.799202
+   ],
+   [
+    -117.077461,
+    32.799789
+   ],
+   [
+    -117.077477,
+    32.800247
+   ],
+   [
+    -117.077507,
+    32.800415
+   ],
+   [
+    -117.077637,
+    32.800838
+   ],
+   [
+    -117.0778991,
+    32.8013269
+   ],
+   [
+    -117.0780866,
+    32.8016765
+   ],
+   [
+    -117.0781342,
+    32.8017652
+   ],
+   [
+    -117.078175,
+    32.8018418
+   ],
+   [
+    -117.0783688,
+    32.8022062
+   ],
+   [
+    -117.078873,
+    32.803154
+   ],
+   [
+    -117.078979,
+    32.803486
+   ],
+   [
+    -117.079033,
+    32.803856
+   ],
+   [
+    -117.079033,
+    32.804062
+   ],
+   [
+    -117.07901,
+    32.804195
+   ],
+   [
+    -117.079008,
+    32.80422
+   ],
+   [
+    -117.0789735,
+    32.8046398
+   ],
+   [
+    -117.078873,
+    32.805862
+   ],
+   [
+    -117.078873,
+    32.805986
+   ],
+   [
+    -117.078873,
+    32.806126
+   ],
+   [
+    -117.078903,
+    32.80637
+   ],
+   [
+    -117.0789514,
+    32.8065783
+   ],
+   [
+    -117.0789498,
+    32.8066022
+   ],
+   [
+    -117.0789846,
+    32.8066715
+   ],
+   [
+    -117.0790063,
+    32.8068387
+   ]
+  ]
+ },
+ "junctions": [
+  {
+   "junction": "J6",
+   "sense": "cw",
+   "from": "Waring Road",
+   "to": "Zion Avenue",
+   "node_in": 49397489,
+   "node_out": 49397489,
+   "at": [
+    -117.0806983,
+    32.7927593
+   ],
+   "bearing_in": 220.7,
+   "bearing_out": 294.2,
+   "turn_deg(+R/-L)": 73.5,
+   "turn_last_segment_deg": 76.7,
+   "gap_in_out_m": 0.0,
+   "signals_near": [
+    11309199923,
+    11309199948,
+    11309199955,
+    11309199967
+   ]
+  },
+  {
+   "junction": "J7",
+   "sense": "cw",
+   "from": "Zion Avenue",
+   "to": "Mission Gorge Road",
+   "node_in": 49317051,
+   "node_out": 49317051,
+   "at": [
+    -117.097426,
+    32.7929771
+   ],
+   "bearing_in": 268.9,
+   "bearing_out": 11.0,
+   "turn_deg(+R/-L)": 102.1,
+   "turn_last_segment_deg": 102.1,
+   "gap_in_out_m": 0.0,
+   "signals_near": [
+    11309199874,
+    11309199896,
+    11309199928,
+    11309199931
+   ]
+  },
+  {
+   "junction": "J3",
+   "sense": "cw",
+   "from": "Mission Gorge Road",
+   "to": "Princess View Drive",
+   "node_in": 1484501766,
+   "node_out": 1484501766,
+   "at": [
+    -117.0789846,
+    32.8066715
+   ],
+   "bearing_in": 67.7,
+   "bearing_out": 165.8,
+   "turn_deg(+R/-L)": 98.2,
+   "turn_last_segment_deg": 89.5,
+   "gap_in_out_m": 0.0,
+   "signals_near": [
+    49317085,
+    11357299136,
+    11357299145,
+    11357299150
+   ]
+  },
+  {
+   "junction": "J2",
+   "sense": "cw",
+   "from": "Princess View Drive",
+   "to": "Waring Road",
+   "node_in": 1713352279,
+   "node_out": 1713352279,
+   "at": [
+    -117.0760127,
+    32.7973374
+   ],
+   "bearing_in": 140.2,
+   "bearing_out": 223.8,
+   "turn_deg(+R/-L)": 83.6,
+   "turn_last_segment_deg": 83.6,
+   "gap_in_out_m": 0.0,
+   "signals_near": [
+    11309199880,
+    11309199907,
+    11309199918,
+    11309199920
+   ]
+  },
+  {
+   "junction": "J2",
+   "sense": "acw",
+   "from": "Waring Road",
+   "to": "Princess View Drive",
+   "node_in": 49333080,
+   "node_out": 49333080,
+   "at": [
+    -117.0759414,
+    32.7972692
+   ],
+   "bearing_in": 45.3,
+   "bearing_out": 319.4,
+   "turn_deg(+R/-L)": -86.0,
+   "turn_last_segment_deg": -86.8,
+   "gap_in_out_m": 0.0,
+   "signals_near": [
+    11309199880,
+    11309199907,
+    11309199918,
+    11309199920
+   ]
+  },
+  {
+   "junction": "J3",
+   "sense": "acw",
+   "from": "Princess View Drive",
+   "to": "Mission Gorge Road",
+   "node_in": 1484501883,
+   "node_out": 1484501883,
+   "at": [
+    -117.0790063,
+    32.8068387
+   ],
+   "bearing_in": 352.6,
+   "bearing_out": 246.5,
+   "turn_deg(+R/-L)": -106.1,
+   "turn_last_segment_deg": -107.2,
+   "gap_in_out_m": 0.0,
+   "signals_near": [
+    49317085,
+    11357299136,
+    11357299145,
+    11357299150
+   ]
+  },
+  {
+   "junction": "J7",
+   "sense": "acw",
+   "from": "Mission Gorge Road",
+   "to": "Zion Avenue",
+   "node_in": 49317049,
+   "node_out": 49317049,
+   "at": [
+    -117.0976091,
+    32.7929755
+   ],
+   "bearing_in": 191.0,
+   "bearing_out": 89.3,
+   "turn_deg(+R/-L)": -101.7,
+   "turn_last_segment_deg": -101.6,
+   "gap_in_out_m": 0.0,
+   "signals_near": [
+    11309199874,
+    11309199896,
+    11309199928,
+    11309199931
+   ]
+  },
+  {
+   "junction": "J6",
+   "sense": "acw",
+   "from": "Zion Avenue",
+   "to": "Waring Road",
+   "node_in": 49333076,
+   "node_out": 49333076,
+   "at": [
+    -117.0806205,
+    32.792698
+   ],
+   "bearing_in": 125.1,
+   "bearing_out": 40.8,
+   "turn_deg(+R/-L)": -84.3,
+   "turn_last_segment_deg": -92.1,
+   "gap_in_out_m": 0.0,
+   "signals_near": [
+    11309199923,
+    11309199948,
+    11309199955,
+    11309199967
+   ]
+  }
+ ],
+ "median_crossings": {
+  "P3-WAR": [
+   {
+    "station_cw_m": 346.5,
+    "way": 1214012065,
+    "name": "Greenbrier Avenue",
+    "highway": "tertiary",
+    "service": null,
+    "from_node": 1713352275,
+    "to_node": 49333077,
+    "length_m": 9.8,
+    "at": [
+     -117.0784382,
+     32.7949792
+    ]
+   }
+  ],
+  "P3-ZION": [],
+  "P3-MG": [
+   {
+    "station_cw_m": 590.8,
+    "way": 622961803,
+    "name": null,
+    "highway": "tertiary",
+    "service": null,
+    "from_node": 5545639273,
+    "to_node": 49317064,
+    "length_m": 12.8,
+    "at": [
+     -117.0937225,
+     32.797198
+    ]
+   },
+   {
+    "station_cw_m": 591.2,
+    "way": 622961808,
+    "name": null,
+    "highway": "tertiary",
+    "service": null,
+    "from_node": 49317064,
+    "to_node": 5545639280,
+    "length_m": 13.1,
+    "at": [
+     -117.0936178,
+     32.7971238
+    ]
+   },
+   {
+    "station_cw_m": 930.3,
+    "way": 5962176,
+    "name": "Old Cliffs Road",
+    "highway": "residential",
+    "service": null,
+    "from_node": 49110990,
+    "to_node": 49110991,
+    "length_m": 15.3,
+    "at": [
+     -117.091837,
+     32.7997913
+    ]
+   },
+   {
+    "station_cw_m": 1136.3,
+    "way": 436411997,
+    "name": null,
+    "highway": "service",
+    "service": null,
+    "from_node": 4343038530,
+    "to_node": 4343038531,
+    "length_m": 14.9,
+    "at": [
+     -117.0904287,
+     32.8012214
+    ]
+   },
+   {
+    "station_cw_m": 1279.9,
+    "way": 436411998,
+    "name": null,
+    "highway": "service",
+    "service": null,
+    "from_node": 1484501756,
+    "to_node": 5195038200,
+    "length_m": 15.2,
+    "at": [
+     -117.0892115,
+     32.8019992
+    ]
+   },
+   {
+    "station_cw_m": 1739.3,
+    "way": 5963053,
+    "name": "Katelyn Court",
+    "highway": "residential",
+    "service": null,
+    "from_node": 1484501760,
+    "to_node": 1484501891,
+    "length_m": 15.0,
+    "at": [
+     -117.0848979,
+     32.8039703
+    ]
+   }
+  ]
+ },
+ "summary": {
+  "P3-WAR_cw_m": 671.2,
+  "P3-WAR_acw_m": 670.3,
+  "P3-ZION_cw_m": 1569.1,
+  "P3-ZION_acw_m": 1596.2,
+  "P3-MG_cw_m": 2369.3,
+  "P3-MG_acw_m": 2394.3,
+  "new_road_cw_m": 4609.6,
+  "new_road_acw_m": 4660.8,
+  "princess_view_cw_J3_J2_m": 1109.2,
+  "princess_view_acw_J2_J3_m": 1137.9,
+  "western_loop_cw_m": 5718.8,
+  "western_loop_acw_m": 5798.7,
+  "plan_rev2_cw_acw_m": {
+   "P3-WAR": [
+    669.8,
+    668.9
+   ],
+   "P3-ZION": [
+    1567.3,
+    1594.4
+   ],
+   "P3-MG": [
+    2364.8,
+    2389.7
+   ]
+  }
+ },
+ "_doc": "Phase 3 routes lens on fresh OSM (scripts/p3x_legs.py): the legs in both directions (cw = the plan's clockwise J2 -> J6 -> J7 -> J3, acw = back; Phase 2's file calls them fwd / rev), way lists, one-way-aware paths, controls on the path, the turns at J2 / J6 / J7 / J3 over 20 m chords, the median crossings. Lengths are in data/centerline.local.json's local frame (the build's frame); the plan's lengths run ~0.2 % shorter (another metric), as Phase 2's routes lens against data/expansion.north.json."
+}

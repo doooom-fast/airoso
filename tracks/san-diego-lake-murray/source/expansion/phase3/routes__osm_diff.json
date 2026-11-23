@@ -1,0 +1,64 @@
+{
+ "old": {
+  "osm_base": "2026-10-14T10:13:39Z",
+  "fetched_utc": "2026-10-14T10:16:45Z",
+  "query_fingerprint": "a6f0af1c83e4994a"
+ },
+ "new": {
+  "osm_base": "2026-11-23T09:33:51Z",
+  "fetched_utc": "2026-11-23T09:35:56Z",
+  "query_fingerprint": "a6f0af1c83e4994a"
+ },
+ "legs": {
+  "E.cw": {
+   "ways": 4,
+   "path_nodes": 12,
+   "nodes_new_or_moved": [],
+   "ways_tags_changed": [],
+   "ways_nodes_changed": []
+  },
+  "E.acw": {
+   "ways": 4,
+   "path_nodes": 12,
+   "nodes_new_or_moved": [],
+   "ways_tags_changed": [],
+   "ways_nodes_changed": []
+  },
+  "F.cw": {
+   "ways": 19,
+   "path_nodes": 48,
+   "nodes_new_or_moved": [],
+   "ways_tags_changed": [],
+   "ways_nodes_changed": []
+  },
+  "F.acw": {
+   "ways": 21,
+   "path_nodes": 50,
+   "nodes_new_or_moved": [],
+   "ways_tags_changed": [],
+   "ways_nodes_changed": []
+  },
+  "G.cw": {
+   "ways": 20,
+   "path_nodes": 63,
+   "nodes_new_or_moved": [],
+   "ways_tags_changed": [],
+   "ways_nodes_changed": []
+  },
+  "G.acw": {
+   "ways": 12,
+   "path_nodes": 60,
+   "nodes_new_or_moved": [],
+   "ways_tags_changed": [],
+   "ways_nodes_changed": []
+  }
+ },
+ "corridor_60m": {
+  "ways_new": 239,
+  "ways_old": 239,
+  "added": [],
+  "removed": [],
+  "tags_changed": [],
+  "nodes_changed": []
+ }
+}

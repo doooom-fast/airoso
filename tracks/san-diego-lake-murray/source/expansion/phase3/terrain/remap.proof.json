@@ -1,0 +1,56 @@
+{
+ "from_frame": [
+  -3189.092384542444,
+  3356.3902548377737,
+  2.5096704987920786,
+  2.4977803755637766
+ ],
+ "to_frame": [
+  -5678.685519344186,
+  3356.3902548377737,
+  2.5096704987920786,
+  2.4977803755637766
+ ],
+ "pin26": {
+  "bbox_swne": [
+   32.771983,
+   -117.069563,
+   32.805287,
+   -117.017103
+  ],
+  "spacing_m": 40.0,
+  "rows_n": 37,
+  "cols_w": 26,
+  "_doc": "Ledger 0054 P0 step 6 (2026-10-14); applied in P2 (2026-10-14): rows_n 37 / cols_w 26, in the same change as the grown data/heightfield.npy + .meta.json (tools/grow_heightfield.py: the 11,439 installed nodes byte for byte, 13,444 new ones from 3DEP) and the re-keyed data/terrain.samples.json.gz (tools/remap_sample_cache.py, PASS: source/expansion/p2-proofs/). The lattice frame is computed from THIS anchor - the installed v0.18.0 data/heightfield.meta.json's rounded bbox_swne (40 m grid, 123 x 93) - shifted by rows_n rows north / cols_w columns west of whole 40 m cells, never from a regrown meta's own (re-rounded) anchor, so growing the grid cannot move a lattice node (terrain_tiers.Frame.heightfield; the meta's recorded grid_grow must equal these offsets and its anchor must be this one shifted, else ValueError). Offsets 0 on the installed meta = today's frame, bit for bit. P2 sets rows_n 37 / cols_w 26 in the SAME change that writes the grown heightfield (terrain.grid_grow, scripts-v021 heightfield.py) and the re-keyed 3DEP cache (tools/remap_sample_cache.py --rows-n 37 --cols-w 26: keys shift by [+416, -592] base units, the identity proof is the tool's)."
+ },
+ "pin88": {
+  "bbox_swne": [
+   32.771983,
+   -117.069563,
+   32.805287,
+   -117.017103
+  ],
+  "spacing_m": 40.0,
+  "rows_n": 37,
+  "cols_w": 88,
+  "_doc": "Ledger 0054 P0 step 6 (2026-10-14); applied in P2 (2026-10-14): rows_n 37 / cols_w 26, in the same change as the grown data/heightfield.npy + .meta.json (tools/grow_heightfield.py: the 11,439 installed nodes byte for byte, 13,444 new ones from 3DEP) and the re-keyed data/terrain.samples.json.gz (tools/remap_sample_cache.py, PASS: source/expansion/p2-proofs/). The lattice frame is computed from THIS anchor - the installed v0.18.0 data/heightfield.meta.json's rounded bbox_swne (40 m grid, 123 x 93) - shifted by rows_n rows north / cols_w columns west of whole 40 m cells, never from a regrown meta's own (re-rounded) anchor, so growing the grid cannot move a lattice node (terrain_tiers.Frame.heightfield; the meta's recorded grid_grow must equal these offsets and its anchor must be this one shifted, else ValueError). Offsets 0 on the installed meta = today's frame, bit for bit. P2 sets rows_n 37 / cols_w 26 in the SAME change that writes the grown heightfield (terrain.grid_grow, scripts-v021 heightfield.py) and the re-keyed 3DEP cache (tools/remap_sample_cache.py --rows-n 37 --cols-w 26: keys shift by [+416, -592] base units, the identity proof is the tool's)."
+ },
+ "key_shift_base_from_26": [
+  992,
+  0
+ ],
+ "key_shift_base_from_installed": [
+  1408,
+  -592
+ ],
+ "keys": 1018431,
+ "fine_keys": 132210,
+ "max_position_diff_deg_all_keys": 1.4210854715202004e-14,
+ "max_position_diff_deg_fine_keys": 1.4210854715202004e-14,
+ "tol_deg": 1e-09,
+ "h_cm_lists_byte_identical": true,
+ "random_nodes": 1000,
+ "random_nodes_failing": [],
+ "loads_under_new_frame": true,
+ "pass": true
+}

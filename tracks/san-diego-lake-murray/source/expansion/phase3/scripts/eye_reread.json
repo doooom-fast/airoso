@@ -1,0 +1,437 @@
+{
+ "_doc": "This run's eye re-read of the Phase 3 width stations, 2026-11-23, off the p3x_crops.py panels (NAIP 2022-04-25 ca_m_3211716_sw_11_060_20220425, 0.6 m, nearest pixel at 0.2 m, drawn at 0.1 m, 60 m along, 1 m ticks). Offsets in metres about the panel's centre line (the midline skeleton for 'st' rows; the reading point or the arm's OSM way for arm rows), + = left of the reading direction. L / R = the asphalt's edge where the continuous light band (gutter pan, curb, sidewalk) begins: NAIP's 0.6 m pixel does not separate the gutter pan from the curb, so these read about one gutter narrower than face-of-curb. med = the median's two edges [hi, lo]; null = none / not readable. conf = the reader's own +- in metres.",
+ "rows": [
+  {
+   "key": "E_st150",
+   "L": 14.0,
+   "R": -13.5,
+   "med": [
+    3.5,
+    -1.0
+   ],
+   "kind": "raised planted, trees",
+   "conf": 1.0,
+   "note": "sidewalks both sides"
+  },
+  {
+   "key": "E_st300",
+   "L": 14.0,
+   "R": -14.0,
+   "med": [
+    3.5,
+    2.5
+   ],
+   "kind": "raised nose (narrow)",
+   "conf": 1.5,
+   "note": "right carriageway carries the Greenbrier left-turn pocket (s 347)"
+  },
+  {
+   "key": "E_st450",
+   "L": 13.5,
+   "R": -13.5,
+   "med": [
+    3.0,
+    -1.5
+   ],
+   "kind": "raised planted, trees",
+   "conf": 1.5,
+   "note": "median partly bare (mulch) on the far side of the panel"
+  },
+  {
+   "key": "E_st600",
+   "L": 13.0,
+   "R": -12.5,
+   "med": [
+    3.0,
+    -1.0
+   ],
+   "kind": "raised planted, trees",
+   "conf": 2.0,
+   "note": "canopy over both carriageways"
+  },
+  {
+   "key": "F_st150",
+   "L": 5.5,
+   "R": -5.5,
+   "med": null,
+   "kind": "none",
+   "conf": 1.0,
+   "note": "parked cars on the left (south) side"
+  },
+  {
+   "key": "F_st300",
+   "L": 5.0,
+   "R": -5.5,
+   "med": null,
+   "kind": "none",
+   "conf": 1.0,
+   "note": "parked cars on the left"
+  },
+  {
+   "key": "F_st450",
+   "L": 6.0,
+   "R": -6.0,
+   "med": null,
+   "kind": "none",
+   "conf": 1.0,
+   "note": ""
+  },
+  {
+   "key": "F_st600",
+   "L": 5.5,
+   "R": -6.0,
+   "med": null,
+   "kind": "none",
+   "conf": 1.0,
+   "note": "the 10 % pitch"
+  },
+  {
+   "key": "F_st750",
+   "L": 6.5,
+   "R": -6.5,
+   "med": null,
+   "kind": "none",
+   "conf": 1.0,
+   "note": ""
+  },
+  {
+   "key": "F_st900",
+   "L": 5.5,
+   "R": -5.5,
+   "med": [
+    1.0,
+    -1.5
+   ],
+   "kind": "painted (two-way left-turn lane)",
+   "conf": 1.0,
+   "note": "two yellow lines about 2.5 m apart"
+  },
+  {
+   "key": "F_st1050",
+   "L": 5.0,
+   "R": -6.0,
+   "med": null,
+   "kind": "double yellow",
+   "conf": 1.5,
+   "note": "at the Seaman St crossing (s 1052)"
+  },
+  {
+   "key": "F_st1200",
+   "L": 5.5,
+   "R": -6.0,
+   "med": null,
+   "kind": "double yellow",
+   "conf": 1.0,
+   "note": "a yellow pocket line at -3..-4 (the Crawford St left turn, s 1233)"
+  },
+  {
+   "key": "F_st1350",
+   "L": 8.5,
+   "R": -7.0,
+   "med": [
+    1.5,
+    -1.0
+   ],
+   "kind": "painted (two yellow lines)",
+   "conf": 1.0,
+   "note": "parked cars both sides; Grantville commercial"
+  },
+  {
+   "key": "F_st1500",
+   "L": 7.5,
+   "R": -6.5,
+   "med": null,
+   "kind": "double yellow",
+   "conf": 1.0,
+   "note": "white transverse marks at 0..-5 (a marked crossing)"
+  },
+  {
+   "key": "G_st150",
+   "L": 15.0,
+   "R": -16.5,
+   "med": [
+    1.0,
+    -4.0
+   ],
+   "kind": "raised planted, trees",
+   "conf": 1.0,
+   "note": ""
+  },
+  {
+   "key": "G_st300",
+   "L": 15.0,
+   "R": -14.0,
+   "med": [
+    0.5,
+    -1.0
+   ],
+   "kind": "terracotta raised",
+   "conf": 1.5,
+   "note": "right edge partly under canopy"
+  },
+  {
+   "key": "G_st450",
+   "L": 14.0,
+   "R": -12.5,
+   "med": [
+    1.0,
+    -1.0
+   ],
+   "kind": "terracotta raised, low planting",
+   "conf": 1.5,
+   "note": "right edge under shadow"
+  },
+  {
+   "key": "G_st600",
+   "L": 14.5,
+   "R": -12.5,
+   "med": [
+    1.0,
+    -0.5
+   ],
+   "kind": "raised nose",
+   "conf": 1.5,
+   "note": "the Greenbrier signal: crosswalks, turn pockets"
+  },
+  {
+   "key": "G_st750",
+   "L": 14.5,
+   "R": -13.0,
+   "med": [
+    1.5,
+    -2.0
+   ],
+   "kind": "terracotta raised",
+   "conf": 1.0,
+   "note": ""
+  },
+  {
+   "key": "G_st900",
+   "L": 15.0,
+   "R": -15.0,
+   "med": [
+    0.5,
+    -1.5
+   ],
+   "kind": "terracotta raised",
+   "conf": 1.0,
+   "note": "the median ends at the Old Cliffs opening (s 930)"
+  },
+  {
+   "key": "G_st1050",
+   "L": 15.0,
+   "R": -13.5,
+   "med": [
+    0.5,
+    -1.0
+   ],
+   "kind": "terracotta raised (strip)",
+   "conf": 1.0,
+   "note": ""
+  },
+  {
+   "key": "G_st1200",
+   "L": 14.5,
+   "R": -13.5,
+   "med": [
+    0.5,
+    -1.0
+   ],
+   "kind": "terracotta raised (strip)",
+   "conf": 1.5,
+   "note": "tall-tree shadows across the right carriageway"
+  },
+  {
+   "key": "G_st1350",
+   "L": 15.5,
+   "R": -11.5,
+   "med": [
+    3.0,
+    -1.0
+   ],
+   "kind": "unclear pale strip",
+   "conf": 2.5,
+   "note": "a pale shoulder at +12.5..+15.5 (dirt or worn asphalt); right edge under trees"
+  },
+  {
+   "key": "G_st1500",
+   "L": 14.5,
+   "R": -13.5,
+   "med": [
+    2.5,
+    -2.0
+   ],
+   "kind": "raised planted, trees",
+   "conf": 1.5,
+   "note": ""
+  },
+  {
+   "key": "G_st1650",
+   "L": 15.0,
+   "R": -16.0,
+   "med": [
+    3.5,
+    2.0
+   ],
+   "kind": "terracotta raised (strip)",
+   "conf": 1.5,
+   "note": "the median sits left of the midline; the right carriageway carries a left-turn pocket"
+  },
+  {
+   "key": "G_st1800",
+   "L": 15.5,
+   "R": -15.0,
+   "med": [
+    0.0,
+    -1.5
+   ],
+   "kind": "terracotta raised (strip)",
+   "conf": 1.5,
+   "note": ""
+  },
+  {
+   "key": "G_st1950",
+   "L": 16.0,
+   "R": -14.5,
+   "med": [
+    3.0,
+    -0.5
+   ],
+   "kind": "terracotta raised, planted",
+   "conf": 2.0,
+   "note": "right edge under trees"
+  },
+  {
+   "key": "G_st2100",
+   "L": 16.5,
+   "R": -14.5,
+   "med": [
+    3.0,
+    -0.5
+   ],
+   "kind": "terracotta raised, planted",
+   "conf": 2.0,
+   "note": "right edge under trees; a pale lot beyond the left curb"
+  },
+  {
+   "key": "G_st2250",
+   "L": 17.5,
+   "R": -14.5,
+   "med": [
+    3.0,
+    -1.5
+   ],
+   "kind": "terracotta raised, planted",
+   "conf": 1.5,
+   "note": "the left carriageway's pale (concrete?) lanes before J3"
+  },
+  {
+   "key": "E_p1arm",
+   "L": null,
+   "R": -9.5,
+   "med": [
+    1.0,
+    -0.5
+   ],
+   "kind": "raised (narrow)",
+   "conf": 3.0,
+   "note": "Phase 1's S2 reading point: the right carriageway reads 9.0 m; the left carriageway is under canopy (not readable at 0.6 m)"
+  },
+  {
+   "key": "G_p1arm",
+   "L": 16.0,
+   "R": -14.0,
+   "med": [
+    3.0,
+    2.0
+   ],
+   "kind": "raised (narrow)",
+   "conf": 1.5,
+   "note": "Phase 1's S3 reading point (Phase 1 read 28.0 m)"
+  },
+  {
+   "key": "J6_arm_220",
+   "L": 7.5,
+   "R": -17.5,
+   "med": [
+    -4.5,
+    -6.0
+   ],
+   "kind": "raised (narrow)",
+   "conf": 1.5,
+   "note": "about the arm's own OSM carriageway; yellow school ladder at the mouth"
+  },
+  {
+   "key": "J6_arm_132",
+   "L": 6.0,
+   "R": -5.5,
+   "med": null,
+   "kind": "none",
+   "conf": 1.5,
+   "note": "Zion Ave east (residential); yellow ladder at the mouth"
+  },
+  {
+   "key": "J6_arm_273",
+   "L": 5.0,
+   "R": -7.5,
+   "med": null,
+   "kind": "none",
+   "conf": 1.5,
+   "note": "the left edge is the slip lane's island (the free right Zion EB -> Waring SB, beyond it at +7..+17)"
+  },
+  {
+   "key": "J6_arm_041",
+   "L": 22.0,
+   "R": -8.0,
+   "med": [
+    6.5,
+    5.0
+   ],
+   "kind": "raised nose",
+   "conf": 2.0,
+   "note": "read on the wide panel; turn pockets either side of the nose"
+  },
+  {
+   "key": "J7_arm_189",
+   "L": 10.0,
+   "R": -24.0,
+   "med": [
+    -9.5,
+    -10.5
+   ],
+   "kind": "double yellow",
+   "conf": 1.5,
+   "note": "read on the wide panel; 5 lanes in (above the yellow) / 3 out, as OSM"
+  },
+  {
+   "key": "J7_arm_013",
+   "L": 27.0,
+   "R": -8.0,
+   "med": [
+    8.0,
+    5.5
+   ],
+   "kind": "terracotta raised (curving)",
+   "conf": 2.0,
+   "note": "read on the wide panel; the junction's turn pockets"
+  },
+  {
+   "key": "J7_arm_269",
+   "L": 8.0,
+   "R": -6.5,
+   "med": null,
+   "kind": "none",
+   "conf": 1.0,
+   "note": "Zion Ave west (tertiary to Riverdale St); planted strips both sides"
+  },
+  {
+   "key": "J7_arm_089",
+   "L": 8.0,
+   "R": -7.5,
+   "med": null,
+   "kind": "none",
+   "conf": 1.0,
+   "note": "the route arm of P3-ZION at J7 (30 m east of the node); J7's crosswalk at the panel's start"
+  }
+ ]
+}

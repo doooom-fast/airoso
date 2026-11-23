@@ -1,0 +1,73 @@
+{
+ "project": "<round-2 job>/p3/airoso/tracks/san-diego-lake-murray",
+ "far_bbox_swne": [
+  32.755,
+  -117.108,
+  32.85,
+  -116.998
+ ],
+ "frame_pin": {
+  "bbox_swne": [
+   32.771983,
+   -117.069563,
+   32.805287,
+   -117.017103
+  ],
+  "spacing_m": 40.0,
+  "rows_n": 37,
+  "cols_w": 26,
+  "_doc": "Ledger 0054 P0 step 6 (2026-10-14); applied in P2 (2026-10-14): rows_n 37 / cols_w 26, in the same change as the grown data/heightfield.npy + .meta.json (tools/grow_heightfield.py: the 11,439 installed nodes byte for byte, 13,444 new ones from 3DEP) and the re-keyed data/terrain.samples.json.gz (tools/remap_sample_cache.py, PASS: source/expansion/p2-proofs/). The lattice frame is computed from THIS anchor - the installed v0.18.0 data/heightfield.meta.json's rounded bbox_swne (40 m grid, 123 x 93) - shifted by rows_n rows north / cols_w columns west of whole 40 m cells, never from a regrown meta's own (re-rounded) anchor, so growing the grid cannot move a lattice node (terrain_tiers.Frame.heightfield; the meta's recorded grid_grow must equal these offsets and its anchor must be this one shifted, else ValueError). Offsets 0 on the installed meta = today's frame, bit for bit. P2 sets rows_n 37 / cols_w 26 in the SAME change that writes the grown heightfield (terrain.grid_grow, scripts-v021 heightfield.py) and the re-keyed 3DEP cache (tools/remap_sample_cache.py --rows-n 37 --cols-w 26: keys shift by [+416, -592] base units, the identity proof is the tool's)."
+ },
+ "planned_files": [
+  "data/expansion.north.json"
+ ],
+ "corridors": [
+  {
+   "name": "i8",
+   "key_fresh": true,
+   "rebuilt_line_identical": true,
+   "line_m": 10875.6,
+   "rebuild_samples": 36404,
+   "rebuild_requests": 82,
+   "old_line_m": 10875.6
+  }
+ ],
+ "frame": [
+  -3189.092384542444,
+  3356.3902548377737,
+  2.5096704987920786,
+  2.4977803755637766
+ ],
+ "plan_lines": 13,
+ "topology": {
+  "vertices": 381746,
+  "triangles": 753383,
+  "leaves_by_cell_m": {
+   "5.0": 142240,
+   "20.0": 58606,
+   "40.0": 51231
+  },
+  "kept_cells": 4937,
+  "kept_vertices": 15427,
+  "refine_cells": 46937,
+  "refine_nodes": 106078,
+  "physical_vertices": 229493,
+  "far_vertices": 153602,
+  "physical_triangles": 448641,
+  "far_triangles": 304742
+ },
+ "need": {
+  "vertices": 381746,
+  "refine_keys": 106078,
+  "aa_keys": 326240,
+  "need_total": 986727,
+  "cached": 1018431,
+  "missing": 0,
+  "missing_requests": 0,
+  "missing_west_of_-117.108": 0,
+  "missing_east_of_-117.108": 0,
+  "missing_lon_range": null,
+  "missing_lat_range": null
+ },
+ "seconds": 21.4
+}

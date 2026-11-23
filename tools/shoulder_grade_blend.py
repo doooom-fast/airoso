@@ -21,8 +21,8 @@ takes a graded shoulder T instead of the trench:
 Nothing under the drivable surface or within from_m of its edge moves (the prep's pin and shelf stay bit for bit).
 
 Opt-in: terrain.shoulder_grade in track.config.json:
-    {"npz": "source/lidar/milford_lidar_1m.npz", "from_m": 2.0, "full_m": 15.0, "to_m": 20.0,
-     "fall_max": 0.1667, "rise_max": 0.5}
+    {"npz": "source/lidar/milford_lidar_1m.npz", "lidar_shift_m": [-0.375, 0.938], "from_m": 2.0, "full_m": 15.0,
+     "to_m": 20.0, "fall_max": 0.1667, "rise_max": 0.5, "max_fill_m": 1.0, "keep_patches": ["culvert_4349_w"]}
 (none = no-op, the blend not saved, no report). Self-check (exit 1, the blend not saved): the graded grid must hold the
 fall_max / rise_max rule between every pair of graded neighbours, no moved vertex may lie under the drivable surface or
 within from_m of its edge, and the npz must cover every edge point. Writes data/shoulder_grade.json.
@@ -163,6 +163,11 @@ def main():
     # --- the lidar grid --------------------------------------------------------------------------------------------------
     npz = np.load(str(proj / sg.get("npz", "source/lidar/milford_lidar_1m.npz")))
     e0, n0, cell = float(npz["e0"]), float(npz["n0"]), float(npz["cell"])
+    # lidar_shift_m (opt-in): the grid's registration to the line's frame, frame = lidar + shift (tools/measured_surface.py's
+    # registration_lidar_shift_m; Milford's committed grid sits (-0.375, +0.938) m off the frame the road is built in, and
+    # on the banked turn's 45 % outer slope that metre is ~0.45 m of height). Absent = the grid as committed
+    SHIFT = [float(v) for v in (sg.get("lidar_shift_m") or [0.0, 0.0])]
+    e0, n0 = e0 + SHIFT[0], n0 + SHIFT[1]
     gz = npz["ground_z_cm_over_z0"]
     ny, nx = gz.shape
     Lg = np.where(gz != -1, float(npz["z0_m"]) + gz / 100.0 - elev0, np.nan)
@@ -376,7 +381,7 @@ def main():
         fail(f"{bad} moved vertices within from_m of the edge")
     rep = {"_doc": "ledger 0102: the road shoulder graded onto the lidar ground (tools/shoulder_grade_blend.py)",
            "params": {"from_m": FROM, "full_m": FULL, "to_m": TO, "fall_max": FALL,
-                      "max_fill_m": None if MAX_FILL == math.inf else MAX_FILL,
+                      "max_fill_m": None if MAX_FILL == math.inf else MAX_FILL, "lidar_shift_m": SHIFT,
                       "rise_max": None if RISE == math.inf else RISE, "ground_clear_m": GROUND_CLEAR},
            "edge": {"outer_edges": len(outer), "seam_edges_dropped": seams, "points": len(pts)},
            "grid": {"cells_corridor": int(corr.sum()), "cells_seed": int(seed.sum()), "cells_graded": int(len(order)),

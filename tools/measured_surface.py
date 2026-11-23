@@ -27,6 +27,7 @@ The fix, in two halves:
          IS the filtered surface.
 
     python tools/measured_surface.py fit <g10 surface.json> <out product.json> [--built <built paths .npy>]
+    python tools/measured_surface.py section <g10 wide read of a stretch.json> <the fit product.json> <out section.json>
 """
 from __future__ import annotations
 
@@ -237,7 +238,71 @@ def apply(product: dict, pts_xz, deck_m: float):
                        "bank_max_pct": round(100 * max(abs(math.tan(b)) for b in banks), 2)}
 
 
+def section(g10w: dict, product: dict) -> dict:
+    """ledger 0102 (Milford round 2, a real banked turn whose cross-section is not a plane): a WIDE read of one stretch (the
+    G10's same read, more paths across, the same line) against the committed fit product. Per path the height is low-passed
+    along the stretch by fit()'s own raised cosine (PASS_M / STOP_M; the stretch is not a lap, so the series is mirrored at
+    both ends first), then delta = that height - the product's plane (c + u b) at the same point: what the plane misses, per
+    station and offset, for tools/densify_ribbon_blend.py's opt-in route.densify.section."""
+    import numpy as np
+    keys = list(g10w["paths"].keys())
+    offs = [float(k) for k in keys]
+    if offs != sorted(offs):
+        raise SystemExit(f"[measured_surface] section: offsets {offs} not in order")
+    if (g10w.get("inputs") or {}).get("line_md5") != product.get("line_md5"):
+        raise SystemExit(f"[measured_surface] section: the read's line {(g10w.get('inputs') or {}).get('line_md5')} is not "
+                         f"the product's {product.get('line_md5')}")
+    n = len(g10w["s"])
+    step = float(g10w["step_m"])
+    Y = np.array([[np.nan if v is None else v for v in g10w["paths"][k]["y_m"]] for k in keys], dtype=float)
+    k_ = np.fft.rfftfreq(3 * n, d=step)
+    lam = np.where(k_ > 0, 1.0 / np.maximum(k_, 1e-12), np.inf)
+    H = 0.5 - 0.5 * np.cos(np.pi * np.clip((np.log(lam) - math.log(STOP_M)) / (math.log(PASS_M) - math.log(STOP_M)),
+                                           0.0, 1.0))
+    P = Product(product)
+    X, Z, NX, NZ, S = (np.asarray(g10w[q], dtype=float) for q in ("x", "z", "nx", "nz", "s"))
+    D = np.full(Y.shape, np.nan)
+    filled = []
+    for j, u in enumerate(offs):
+        v = Y[j]
+        good = np.isfinite(v)
+        filled.append(int((~good).sum()))
+        if good.sum() < 10:
+            continue
+        vf = np.interp(np.arange(n), np.flatnonzero(good), v[good])
+        ext = np.concatenate([vf[::-1], vf, vf[::-1]])
+        lp = np.fft.irfft(np.fft.rfft(ext) * H, 3 * n)[n:2 * n]
+        for i in range(n):
+            r = P.at(X[i] + u * NX[i], Z[i] + u * NZ[i])
+            if r is not None:
+                D[j, i] = lp[i] - r[0]
+    sel = list(range(0, n, RESAMPLE_EVERY))
+    a = np.abs(D[:, sel])
+    rep = {"stations": n, "step_m": step, "s_m": [round(float(S[0]), 1), round(float(S[-1]), 1)], "offsets_m": offs,
+           "missing_samples_per_path": dict(zip(keys, filled)),
+           "delta_abs_m": {"p50": round(float(np.nanpercentile(a, 50)), 3), "p95": round(float(np.nanpercentile(a, 95)), 3),
+                           "max": round(float(np.nanmax(a)), 3)}}
+    return {"_doc": "tools/measured_surface.py section (ledger 0102): what the fit product's plane misses across one stretch, "
+                    "per station and offset: delta = the wide read's height (low-passed along, PASS_M / STOP_M) - (c + u b)",
+            "frame": product.get("frame"), "line_md5": product.get("line_md5"), "lap_m": product.get("lap_m"),
+            "offsets_m": offs, "report": rep,
+            "s": [round(float(S[i]), 2) for i in sel], "x": [round(float(X[i]), 3) for i in sel],
+            "z": [round(float(Z[i]), 3) for i in sel], "nx": [round(float(NX[i]), 5) for i in sel],
+            "nz": [round(float(NZ[i]), 5) for i in sel],
+            "delta": [[None if not np.isfinite(D[j, i]) else round(float(D[j, i]), 4) for j in range(len(offs))] for i in sel]}
+
+
 def main(argv):
+    if len(argv) >= 4 and argv[0] == "section":
+        import hashlib
+        g10w = json.loads(Path(argv[1]).read_text(encoding="utf-8"))
+        prod = json.loads(Path(argv[2]).read_text(encoding="utf-8"))
+        out = section(g10w, prod)
+        out["input"] = {"file": Path(argv[1]).name, "md5": hashlib.md5(Path(argv[1]).read_bytes()).hexdigest(),
+                        "product": Path(argv[2]).name, "product_md5": hashlib.md5(Path(argv[2]).read_bytes()).hexdigest()}
+        Path(argv[3]).write_text(json.dumps(out, separators=(",", ":")), encoding="utf-8")
+        print(json.dumps(out["report"], indent=1))
+        return 0
     if len(argv) >= 3 and argv[0] == "fit":
         g10 = json.loads(Path(argv[1]).read_text(encoding="utf-8"))
         built = None

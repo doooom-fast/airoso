@@ -22,7 +22,7 @@
     [
      "txNormalDetail",
      "building_normal.jpg",
-     "D:\\k10-worktrees\\milford-r1\\assets\\textures\\building_normal.jpg"
+     "D:\\k10-worktrees\\road-pilot\\assets\\textures\\building_normal.jpg"
     ]
    ],
    "props": {
@@ -53,8 +53,8 @@
     ],
     [
      "txNormalDetail",
-     "asphalt_cracked_normal.jpg",
-     "D:\\k10-worktrees\\milford-r1\\assets\\textures\\asphalt_cracked_normal.jpg"
+     "asphalt_dense_normal.jpg",
+     "D:\\k10-worktrees\\road-pilot\\assets\\textures\\asphalt_dense_normal.jpg"
     ]
    ],
    "props": {
@@ -115,6 +115,9 @@
     42.57950439
    ],
    "_doc": "USDA NAIP 2022-08-16 (public domain), the same export the lap was traced off (tracks/milford-road-course/source/naip_2022_mrc.jpg, byte-identical; its true extent, ledger 0062): 0.50 m E-W x 0.68 m N-S per pixel"
+  },
+  "detail_highpass_m": {
+   "1ROAD": 0.5
   }
  },
  "stats": {
@@ -127,23 +130,23 @@
    "tiles_per_row": 12,
    "atlas_fill_pct": 81.8
   },
-  "furthest_vertex_m": 7.118,
+  "furthest_vertex_m": 7.205,
   "aerial": {
    "image": "source/road_wear/naip_2022_mrc.jpg",
    "registration": {
-    "dx_m": -0.75,
-    "dy_m": 0.0,
-    "contrast_at_0": -0.069,
-    "contrast_best": -0.0742
+    "dx_m": -1.0,
+    "dy_m": 0.25,
+    "contrast_at_0": -0.0701,
+    "contrast_best": -0.0771
    },
-   "lit_median_lum": 0.7287,
-   "road_cells": 1060938,
-   "shadow_pct": 8.46,
+   "lit_median_lum": 0.7293,
+   "road_cells": 1058747,
+   "shadow_pct": 8.3,
    "paint_pct": 0.0,
    "tone_p01_p50_p99": [
-    0.7323,
+    0.7369,
     0.9966,
-    1.1422
+    1.1426
    ],
    "aerial_px_m": [
     0.501,
@@ -151,7 +154,7 @@
    ]
   }
  },
- "m0": 0.85588,
+ "m0": 0.85537,
  "detail_uv_multiplier": 256.0,
  "detail": {
   "1KERB_SIDEWALK": {
@@ -164,13 +167,14 @@
    ]
   },
   "1ROAD": {
-   "from": "asphalt_cracked_diffuse.jpg",
-   "normal": "asphalt_cracked_normal.jpg",
-   "clipped_pct": 0.444,
+   "from": "asphalt_dense_diffuse.jpg",
+   "normal": "asphalt_dense_normal.jpg",
+   "clipped_pct": 0.069,
    "size": [
     2048,
     2048
-   ]
+   ],
+   "highpass_m": 0.5
   }
  },
  "deepest_rubber": 0.2245,
@@ -185,18 +189,18 @@
    "layer_m": 10.0,
    "layout": "full",
    "source": "model: minimum curvature inside the built edges (recorded line named but missing: source/road_wear/fast_lane.full.ai)",
-   "lap_m": 4886.9,
-   "lap_s_model": 107.1,
-   "v_min_kmh": 45.5,
+   "lap_m": 4898.2,
+   "lap_s_model": 108.0,
+   "v_min_kmh": 45.4,
    "v_max_kmh": 252.0
   }
  ],
  "writer_vertices": {
-  "1KERB_sidewalk": 27208,
-  "1ROAD_road": 17194
+  "1KERB_sidewalk": 53473,
+  "1ROAD_road": 26283
  },
- "positions_md5": "a7020f0adc9baab7a7dafd43a9980bf3",
- "macro_png_bytes": 2600418,
+ "positions_md5": "3f97fc75d4ddac11f82089f43134b3fb",
+ "macro_png_bytes": 2602046,
  "textures": {
   "macro": "road_wear_macro.png",
   "flat_nm": "road_wear_flat_nm.png"

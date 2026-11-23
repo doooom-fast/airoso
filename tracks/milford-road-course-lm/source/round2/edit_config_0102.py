@@ -85,6 +85,14 @@ d["terrain"]["shoulder_grade"] = {
              "rise_max (1V:2H [invented]), no fill deeper than max_fill_m (1 m [invented]: a deeper real drop stays real), "
              "the culvert's headwall patch kept; blended back to the prepped ground by to_m")}
 
+# 6. the road wear's line: the recorded fast lane (0.1.13's AI line) rides the dropped 2022 loop; tools/road_wear_blend.py's
+#    own model line (minimum curvature inside the built edges) until a GM-loop line is recorded
+rw = d["road_wear"]
+rw["lines"] = [{k: v for k, v in ln.items() if k != "ai"} for ln in rw["lines"]]
+rw["_lines_0102_doc"] = ("ledger 0102: source/road_wear/fast_lane.full.ai is 0.1.13's AI line, round the dropped 2022 "
+                         "loop; the bake's model line (minimum curvature inside the built edges) until the GM loop's own "
+                         "fast lane is recorded")
+
 out = json.dumps(d, indent=2, ensure_ascii=False) + ("\n" if raw.endswith("\n") else "")
 p.write_text(out, encoding="utf-8", newline="\n")
 print(f"[0102] {p}: 0.1.14 -> 0.1.15; rails {len(b['rails'])}, pads {len(b['pads'])}")

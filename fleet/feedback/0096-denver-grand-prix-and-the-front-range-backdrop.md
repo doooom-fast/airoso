@@ -34,7 +34,7 @@ Denver Grand Prix track." His lap, in his words:
 
 ## State
 
-**Planned, nothing built.** The plan and its eight decisions: [`tracks/denver-grand-prix/PLAN.md`](../../tracks/denver-grand-prix/PLAN.md).
+**Planned and decided (defaults on all eight, Kevin 2026-11-23), nothing built.** The plan: [`tracks/denver-grand-prix/PLAN.md`](../../tracks/denver-grand-prix/PLAN.md).
 
 ## Evidence so far
 
@@ -51,7 +51,7 @@ Denver Grand Prix track." His lap, in his words:
 ## Owed
 
 1. P0 (PLAN §5): the OSM extract and the lap as way ids; the dossier; the AC far-clip test at 25 / 60 / 105 km.
-2. Kevin's answers to D1–D8 ("defaults" is an answer).
+2. ~~Kevin's answers to D1–D8.~~ **Answered 2026-11-23: "new project, defaults on all eight".** Every default in the plan stands; on the board Denver is a new project.
 3. The horizon study re-run on 3DEP.
 
 ## Coordination

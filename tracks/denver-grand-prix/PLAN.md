@@ -14,6 +14,12 @@
 
 ## Decisions for Kevin
 
+> **DECIDED 2026-11-23 (Kevin): "defaults on all eight".** Every Default below stands: Stout under the Convention
+> Center (D1); the Kalamath hairpin at W 13th Ave with the street split by a K-rail (D2), still to be confirmed on the
+> map in P0; race as listed and free roam as the streets are (D3); the lap, everything inside it and one block outside
+> (D4); no pit lane for Drive 1 (D5); mountains at true distance and size from one shared source (D6); Sand Creek
+> 0.2.9 gets them first (D7); today's streets (D8). On the board it is a **new project** (Kevin, the same message).
+
 **Eight questions. "Defaults" is a complete answer.** Ordered by what they hold up first.
 
 | # | Question | Default | Why |

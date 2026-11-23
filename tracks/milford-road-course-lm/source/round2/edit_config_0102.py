@@ -72,15 +72,30 @@ d["route"]["densify"]["section"] = {
              "the fit's plane misses it by over 1 m at both edges. The rows over the spans (the section product's own s, "
              "the GM line) take its measured profile: columns every col_m [invented], taper_m [invented]")}
 
+# 5a. the committed 1 m grid's registration to the road's frame (the measured surface's: frame = lidar + shift), read by
+#     tools/lidar_ground_patch.py and tools/shoulder_grade_blend.py; the culvert's patch polygon was drawn on the
+#     unshifted lidar (its headwall's line), so it moves with it. The corridor patch is the lap's box: unchanged
+SHIFT = [-0.375, 0.938]
+t = d["terrain"]
+t["lidar_shift_m"] = SHIFT
+t["_lidar_shift_doc"] = ("ledger 0102: the committed grid sits (-0.375, +0.938) m off the frame the road is built in "
+                         "(tools/measured_surface.py's registration_lidar_shift_m; with it the grid meets the G10's paths "
+                         "to p50 1.9 / p90 7.3 cm, without 6.9 / 25.9). Across the corridor's 9-45 m band it moves the "
+                         "ground p50 0.05 / p90 0.14 / p99 0.29 m, the culvert's headwall up to 2.2 m. culvert_4349_w's "
+                         "polygon, drawn on the unshifted lidar, moved by the same")
+for q in t["lidar_patches"]:
+    if q["id"] == "culvert_4349_w":
+        q["polygon"] = [[round(x + SHIFT[0], 3), round(z + SHIFT[1], 3)] for x, z in q["polygon"]]
+
 # 5. the shoulder
 d["terrain"]["shoulder_grade"] = {
-    "npz": "source/lidar/milford_lidar_1m.npz", "lidar_shift_m": [-0.375, 0.938],
+    "npz": "source/lidar/milford_lidar_1m.npz",
     "from_m": 2.0, "full_m": 15.0, "to_m": 20.0, "fall_max": 0.1667, "rise_max": 0.5, "max_fill_m": 1.0,
     "keep_patches": ["culvert_4349_w"],
     "_doc": ("ledger 0102 (Kevin 2026-11-22: \"Reshape the shoulder\"): 0.1.13's 32 far ledges are, every 3 m, 1,491 "
              "drops on ~1.2 km of edge, 1,382 where the lidar is flatter (the built ground a median 0.58 m under it: the "
              "prep's shelf / feather meeting the corridor ramp's draft TERRAIN). tools/shoulder_grade_blend.py grades the "
-             "ground 2-15 m off the drivable edge outward on the lidar (registered: lidar_shift_m, the measured surface's), "
+             "ground 2-15 m off the drivable edge outward on the lidar (registered: terrain.lidar_shift_m), "
              "falling no faster than fall_max (1V:6H, AASHTO's preferred foreslope [invented here]) nor rising faster than "
              "rise_max (1V:2H [invented]), no fill deeper than max_fill_m (1 m [invented]: a deeper real drop stays real), "
              "the culvert's headwall patch kept; blended back to the prepped ground by to_m")}

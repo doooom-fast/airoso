@@ -899,12 +899,37 @@ def test_round_q_corner_flares_off_is_opt_in_and_only_narrows():
     lar = json.loads((ROOT / "tracks" / "lookout-lariat-lm" / "track.config.json").read_text(encoding="utf-8"))
     assert "corner_flare_off" not in (lar.get("lm_intake") or {})
     # round Q's build rq1 went red with the out-cut on the 56th bridge; 2026-11-22 dahlia_56th is unparked with its out-cut
-    # on the last ground row and the key names that corner alone (the round K candidate names none)
+    # on the last ground row. lm_intake.corner_flare_off is the SWITCH; the corners are route.corner_flare_off's, the
+    # port's list (2026-11-23: the corner had been put in the switch's place, so the 0.2.9 rehearsal built the 42.3 m crest).
+    # The round K candidate names none
     sc = json.loads((SC / "track.config.json").read_text(encoding="utf-8"))
-    assert [c["name"] for c in sc["lm_intake"]["corner_flare_off"]] == ["Dahlia St -> E 56th Ave (the dahlia_56th pad)"]
+    assert sc["lm_intake"]["corner_flare_off"] is True
+    assert [c["name"] for c in sc["route"]["corner_flare_off"]] == ["the 56th -> Sand Creek Dr slip's merge",
+                                                                     "Dahlia St -> E 56th Ave (the dahlia_56th pad)"]
     assert "dahlia_56th" in [p["id"] for p in sc["lm_pads"]["pads"]]
     rk = json.loads((SC / "source" / "round_k" / "track.config.json").read_text(encoding="utf-8"))
     assert "corner_flare_off" not in (rk.get("lm_intake") or {})
+
+
+def test_sand_creek_corner_flares_off_reach_the_dahlia_crest():
+    """2026-11-23 (the 0.2.9 rehearsal at 903c3436 kept the source's 42.3 m crest; lm_pads then refused dahlia_56th): the
+    live config's list, run through the intake's own function on the source line it copies, re-lays the Dahlia corner's
+    flare v767..v787 between its legs' 11.0 and 23.5 m and leaves the slip's merge as the source has it"""
+    import lm_engine_intake as li
+    sc = json.loads((SC / "track.config.json").read_text(encoding="utf-8"))
+    src = json.loads((ROOT / "tracks" / "sand-creek" / "data" / "centerline.local.json").read_text(encoding="utf-8"))
+    assert sc["lm_intake"]["corner_flare_off"] is True
+    pts = [tuple(p) for p in src["points_xyz_m"]]
+    got, rep = li.corner_flares_off(pts, src["widths_m"], src["origin"], sc["route"]["corner_flare_off"])
+    by = {r["name"]: r for r in rep}
+    assert by["the 56th -> Sand Creek Dr slip's merge"]["flare"] is None
+    d = by["Dahlia St -> E 56th Ave (the dahlia_56th pad)"]
+    assert d["vertex"] == 780 and d["flare"] == [767, 787] and d["legs_m"] == [11.0, 23.5] and d["was_m"] == [11.0, 42.3]
+    # the port re-lays by its own line's stations (0.2.9's intake: v770 12.93, v786 22.863); the source's differ by cm
+    run = got[767:788]
+    assert run[0] == 11.0 and run[-1] == 23.5 and all(a <= b for a, b in zip(run, run[1:]))
+    assert 12.5 < got[770] < 13.5 and 22.5 < got[786] < 23.5
+    assert [k for k, (a, b) in enumerate(zip(got, src["widths_m"])) if a != b] == list(range(768, 787))
 
 
 def _drop(cfg, path):
@@ -957,6 +982,10 @@ def _finish_pc_pads(live, cand):
     for pl in live["lm_pads"]["plan"]:
         if pl["id"] == "dahlia_56th":
             assert pl.pop("cut_m") == [30.0, 17.0] and pl.pop("half_m") == 57.15 and pl.pop("_cut_m_doc")
+    # the port's route.corner_flare_off: the candidate's slip merge, then the Dahlia corner (2026-11-23)
+    rc, kc = live["route"]["corner_flare_off"], cand["route"]["corner_flare_off"]
+    assert rc[:len(kc)] == kc and [c["name"] for c in rc[len(kc):]] == ["Dahlia St -> E 56th Ave (the dahlia_56th pad)"]
+    del rc[len(kc):]
 
 
 def test_round_r_live_is_the_candidate():

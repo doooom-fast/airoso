@@ -2627,3 +2627,42 @@ fail, as on main.
 
 **Rehearsal:** queued third on the PC, as ONE 0.2.9 build with the Mac's claude/sc-finish-20261122 (the Mac merges both into
 claude/sc-finish-0209-20261122). Results go here.
+
+
+## PC, 2026-11-23: the 0.2.9 rehearsal's red step (lm_pads refused dahlia_56th), the two causes, fixed
+
+The rehearsal (runbook 0098-1, the combined head 903c3436, empty workshop `D:/k10-scratch/sand_creek_lm_0209_reh`,
+--no-install) stopped at 00:35, 14 min in, at the author step lm_pads: `[pads] the outline crosses itself through a seam
+row: measure again` on dahlia_56th (the step's grep hides that line; the pads before it built as on 0.2.8).
+
+Found without Blender: a pure-python replica of lm_pads_blend's rows + outline-as-built (scratchpad `scq/pads_replica.py`,
+its functions exec'd with bpy stubbed; the lap rows rebuilt as point +- width/2 on the central-difference normal, which
+matches 0.2.8's loop.blend MAINLINE rows to 0.1 mm here). It passes colorado_50th (the same 2 short arms the build names),
+50th_ash and 50th_dahlia (ring 1,301.3 m2, the build's deck area) and refuses dahlia_56th in splice_rows, as the build did.
+
+1. **The flare stayed on.** `lm_intake.corner_flare_off` is the intake's SWITCH: tools/lm_engine_intake.py runs
+   corner_flares_off over `route.corner_flare_off`, the port's list. 4b4ea1be put the Dahlia corner in the switch's place,
+   so the switch was on and the corner never reached the list (the log names the slip alone). The lap kept the source's
+   42.3 m crest: v786's row 27.67 m wide, its north end 5.8 m past the measured bank top.
+   - Fixed: the corner moved into `route.corner_flare_off` after the slip's merge; `lm_intake.corner_flare_off: true`.
+     The intake's own function on the build's line: v767..v787 re-laid 11.0 -> 23.5 m (v770 12.93, v786 22.863), the slip
+     "no flare", 19 widths changed.
+2. **The box cut the lap's own row.** With the flare off the replica still refused: the box's north-east corner
+   (-887.75, 1127.86) stood on the out-cut line INSIDE row v786 (its north end + route.edge's 0.3 m lip is 8.83 m further
+   along the line). The measurement unions the lap's ribbon into the outline (never clipped by a box), so the outline's
+   run along the cut broke at that corner (a 0.22 m notch: one point 0.222 m past the line, the next 0.255 m inside);
+   splice_rows replaced the longer half with the row and left the other half lying on it.
+   - Fixed: the corner is the row's north end + the lip, (-891.99, 1135.6) on the cut line; the north side follows the
+     lipped ribbon edge (v785's end (-895.02, 1133.45)) to where it meets the bank top (-897.22, 1131.64), then the bank
+     top as before. No new number.
+   - Re-measured with tools/draft_pad_outline.py on the PC's cache (every fetch refused): outline 1,596 m2 (was 1,593),
+     the ribbon's 149.6 m2 the same, 14,549 points under the deck floor the same. Lap minus deck over v769-786 (11 points
+     across each row): p50 -0.007 / max 0.442 m (was -0.007 / 0.439); the two decks differ by 0.011 m at most.
+   - The replica on the fixed line and the new outline: splice, ribbon_edges and arm_edges pass, 0 lane samples off the
+     deck, ring 1,597.0 m2. sandcreek_quebec passes too (2,409.1 m2, 0 lane samples off).
+3. Tests: `test_round_q` reads the switch and the port's list; new `test_sand_creek_corner_flares_off_reach_the_dahlia_crest`
+   runs the live list through corner_flares_off on tracks/sand-creek's line (the crest found, re-laid 11.0 -> 23.5, the
+   slip untouched); `_finish_pc_pads` takes the Dahlia corner off the live list before the round-R comparison. 162 pad /
+   sign / intake / mouth tests pass under the PC's venv.
+
+What the replica does not cover: the deck, seams, ground and barriers after the outline (the rehearsal reads those).

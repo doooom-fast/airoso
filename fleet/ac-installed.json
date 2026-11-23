@@ -31,7 +31,8 @@
     "2026-11-11 (Kevin on the PC: 'I always want newer builds'; via the Mac: 'Drawn band, no photo'): Del Mar 0.2.7 to del_mar_fairgrounds; ship_track's install step parked 0.2.5 in D:/k10-track-archive/2026-11-11_153828/.",
     "2026-11-13 (Kevin on the PC, after driving every installed track: 'all rally tracks so let's kill those entirely'): rally_co_dragon_tail_gravel_lm 0.1.0 and rally_co_under_the_dragon_gravel_lm 0.1.0 moved to D:/k10-track-archive/2026-11-13_165045_tidy/ (MOVES.tsv; `python tools/ac_tidy.py restore <dir>` puts them back) and dropped from this list. Their old-engine copies were already parked on 2026-11-06. No more rally tracks; Project Kaido's pk_tail_of_the_dragon is not ours and stays.",
     "2026-11-13 (Kevin on the PC after driving: 'Lm, bushes are too big'): config-only fix in san_diego_lake_murray_v4/extension/trees/trees.txt: Bush.bin sizes x 2.02437/20.66001 (its tree.ini HEIGHT 20.66 m; now Bush3's height at the same size), 3,904 of 21,111 lines, every other line unchanged; the old file in D:/k10-track-archive/2026-11-13_165535_lm_bushes/ (README: the put-back). Version stays 0.20.2. Tool fix f2b40eb7 on claude/lm-bush-size.",
-    "2026-11-19 (Kevin 2026-11-18, relayed by the Mac: 'B: lidar height each'): config-only fix in san_diego_lake_murray_v4/extension/trees/trees.txt: the median bushes at their lidar heights (tools/patch_median_measured.py, claude/lm-median-measured e6d234b1): 252 of 1,102 median lines changed (drawn p50 0.65 -> 5.16 m, 33 spots 10 m or more, max 24.87 m), every other line byte-identical; md5 ff802cfe -> aa0cfae0; old file in D:/k10-track-archive/2026-11-19_132227_lm_median"
+    "2026-11-19 (Kevin 2026-11-18, relayed by the Mac: 'B: lidar height each'): config-only fix in san_diego_lake_murray_v4/extension/trees/trees.txt: the median bushes at their lidar heights (tools/patch_median_measured.py, claude/lm-median-measured e6d234b1): 252 of 1,102 median lines changed (drawn p50 0.65 -> 5.16 m, 33 spots 10 m or more, max 24.87 m), every other line byte-identical; md5 ff802cfe -> aa0cfae0; old file in D:/k10-track-archive/2026-11-19_132227_lm_median",
+    "2026-11-22 (Kevin, via the Mac: 'I want all of the others deleted from a set of courses now' / 'Assetto Corsa'; then 'Actually add Nevada to the list of keepers'): Kevin removed by hand aspen_motorsports_park, grand_junction, lookout_lariat_lm, pikes_peak_international_raceway, pueblo_motorsports_park and san_diego_freeway_lm (into the Windows Recycle Bin, 20:32-20:33); pikes_peak_international_raceway_lm (superseded) was no longer in AC. Their entries are dropped here; the last entry of each is in git history (this file at 7e31699c). Kept: high_plains, milford_road_course, san_diego_lake_murray_v4, sand_creek_raceway, exotics_racing_lvms. del_mar_fairgrounds (0.2.7, not a keeper) was then parked by the PC, not deleted: D:/k10-track-archive/2026-11-22_203608_kevin_keepers_only/ with MOVES.tsv (python tools/ac_tidy.py restore <that dir> brings it back)."
   ],
   "ac_tracks": "D:/SteamLibrary/steamapps/common/assettocorsa/content/tracks",
   "archive": "D:/k10-track-archive",
@@ -47,26 +48,6 @@
     ]
   },
   "folders": {
-    "aspen_motorsports_park": {
-      "branch": "claude/aspen-road-wear",
-      "engine": "lm-v4",
-      "installed": "2026-11-11",
-      "note": "0.1.6 = 0.1.4 + road wear, tone only (rubber 'none', Kevin: 'Tone only, no rubber'; NAIP 2023 0.3 m tone, no band drawn, texel 0.25 m; ledger 0084 runbook 0084-3); race kerbs keep their stock paint; records + menu picture on claude/aspen-road-wear e3b0ab05",
-      "role": "current",
-      "sha": "ca88fb14",
-      "track": "aspen-lm",
-      "version": "0.1.6"
-    },
-    "del_mar_fairgrounds": {
-      "branch": "claude/del-mar-0.2.7",
-      "engine": "lm-v4",
-      "installed": "2026-11-11",
-      "note": "0.2.7 = 0.2.5 + Milford's drawn rubber band on the stock asphalt, no photo (Kevin: 'Drawn band, no photo'; road_wear.aerial removed, tone 1.0; ledger 0084 runbook 0084-5). 0.2.6 (the NAIP 2012 tone with the lot's parked cars) was never installed. Menu picture: 0.2.5's render kept (the 0.2.7 render showed the road black: tools/menu_preview_blend.py, ledger 0084).",
-      "role": "current",
-      "sha": "08b0ec43",
-      "track": "del-mar-lm",
-      "version": "0.2.7"
-    },
     "exotics_racing_lvms": {
       "branch": "claude/nevada-road-wear",
       "engine": "lm-v4",
@@ -76,16 +57,6 @@
       "sha": "15b31f4f",
       "track": "exotics-racing-lv-lm",
       "version": "0.1.6"
-    },
-    "grand_junction": {
-      "branch": "claude/grand-junction-road-wear",
-      "engine": "lm-v4",
-      "installed": "2026-11-11",
-      "note": "0.1.4 = 0.1.2 + road wear, tone only (rubber 'none', Kevin: 'Tone only, no rubber'; NAIP 2023 0.3 m tone, no band drawn, texel 0.25 m; the gate on the bake's own cells, adf3828; ledger 0084 runbooks 0084-3/-4); the photo's painted start grid shows faintly in the tone; records + menu picture on claude/grand-junction-road-wear 1f42c6f5",
-      "role": "current",
-      "sha": "f421b750",
-      "track": "grand-junction-lm",
-      "version": "0.1.4"
     },
     "high_plains": {
       "branch": "claude/hp-finish-20261122",
@@ -97,61 +68,15 @@
       "track": "high-plains-lm",
       "version": "0.1.9"
     },
-    "lookout_lariat_lm": {
-      "track": "lookout-lariat-lm",
-      "engine": "lm-v4",
-      "role": "current",
-      "version": "0.1.0",
-      "branch": "claude/fleet-lm-engine",
-      "installed": "2026-11-04"
-    },
     "milford_road_course": {
-      "branch": "claude/road-owned-pilot-20261119",
+      "branch": "claude/mf-finish-20261122",
       "engine": "lm-v4",
-      "installed": "2026-11-22",
-      "note": "0.1.13 = 0.1.12 + the line and edges re-fit (ledger 0091: road 0.36/1.01 -> 0.23/0.65 m off the measured centre, flares fixed, kinks 28 -> 9; tyre wall T3) + the ground beside the road and the paved run-off as pads (0092) + building skins (0094) + the owned asphalt with the 0.5 m high-pass (0095); kn5 62,055,573 B (flat-shaded run-off pads +11.4 MB, flagged); install build = the PC rehearsal (221/221 gate rows, kn5 equivalent); the Nov 20 install run died at a power-off, rebuilt Nov 22 from an empty workshop; records + menu picture be6cbbdd; 0.1.12 parked in D:/k10-track-archive/2026-11-22_181727; Kevin 2026-11-20: \"Yes, install both\", 2026-11-22: \"Keep it running\"",
+      "installed": "2026-11-23",
+      "note": "0.1.14 = 0.1.13 + T3's start moved 0.2 m (51 modules, 0 left out) + the start/finish on the painted line (s 4639.9; 20 grid, 20 pits, spawn forward) + grass at 6 m (3,952 patches) + tree colliders at 20 m (261) + the NW complex stood (set_in) + the run-off pads smooth-shaded within a 10 deg crease + 883 verge trees from NAIP (12,130 TreeFX) + concrete_plain on 1RUNOFF / 1KERB_SIDEWALK; ledger 0100 rounds 1 / 1b; kn5 53,213,752 B; install build = the PC rehearsal 1b (225/225 gate rows, kn5 equivalent); 0.1.13 parked in D:/k10-track-archive/2026-11-23_001936; Kevin: \"I always want newer builds\" / \"When they're done, install them\"",
       "role": "current",
-      "sha": "9ac81398",
+      "sha": "7af6bed2",
       "track": "milford-road-course-lm",
-      "version": "0.1.13"
-    },
-    "pikes_peak_international_raceway": {
-      "branch": "claude/pikes-peak-road-wear",
-      "engine": "lm-v4",
-      "installed": "2026-11-11",
-      "role": "current",
-      "sha": "a3bde5d6",
-      "track": "pikes-peak-lm",
-      "version": "0.2.3",
-      "note": "0.2.3 = 0.2.1 + road wear, tone only (rubber 'none', Kevin: 'Tone only, no rubber'; NAIP 2023 0.3 m tone, no band drawn, texel 0.25 m; the gate on the bake's own cells, adf3828; ledger 0084 runbooks 0084-3/-4); installed --force-install past the infield S-curve hairpin on Kevin's typed 'Yes, force it' (the 0.2.0 exemption, same place and window); the pad aprons carry main's pad-fold fix 84fefe1a (8 triangles fewer each); the photo's tone carries pole shadows, a darker patch and a small dark object on the oval at s 410-440 m; records + menu pictures on claude/pikes-peak-road-wear"
-    },
-    "pikes_peak_international_raceway_lm": {
-      "branch": "claude/circuit-kerbs-lm",
-      "engine": "lm-v4",
-      "installed": "2026-11-04",
-      "role": "superseded",
-      "successor": "pikes_peak_international_raceway",
-      "track": "pikes-peak-lm",
-      "version": "0.1.0"
-    },
-    "pueblo_motorsports_park": {
-      "branch": "claude/pueblo-road-wear",
-      "engine": "lm-v4",
-      "installed": "2026-11-11",
-      "note": "0.1.5 = 0.1.3 + road wear, tone only (rubber 'none', Kevin: 'Tone only, no rubber'; NAIP 2023 0.3 m tone, no band drawn, texel 0.25 m; ledger 0084 runbook 0084-3); race kerbs keep their stock paint; records + menu picture on claude/pueblo-road-wear 4d825651",
-      "role": "current",
-      "sha": "39544272",
-      "track": "pueblo-lm",
-      "version": "0.1.5"
-    },
-    "san_diego_freeway_lm": {
-      "track": "san-diego-freeway-lm",
-      "engine": "lm-v4",
-      "role": "current",
-      "version": "0.1.0",
-      "branch": "claude/freeway-lm",
-      "sha": "e733c0a9",
-      "installed": "2026-11-06"
+      "version": "0.1.14"
     },
     "san_diego_lake_murray_v4": {
       "track": "san-diego-lake-murray",

@@ -14,6 +14,35 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
+## 2026-11-22 — Milford round 1 (ledger 0100): a set-in far block's roof judged by its downhill face; the trunk reach derived; no threshold moved, no bypass
+
+No gate threshold, floor or bypass moved; every key opt-in and named by Milford only (`tests/tools/test_milford_finish_0100.py`).
+
+- **The author's far-block roof rule, for a set-in row only** (`tools/author_bespoke_blend.py` `far_roof_refusal`): a far block
+  standing at its measured roof (`roof_z_m`, pass 3) is refused when its roof stands under half its wall over the HIGHEST built
+  ground under its rim (unchanged, the same message, byte for byte). A row that carries `set_in` (Del Mar's set-in form, ledger
+  0083 pass 4b, brought to far blocks) is judged by the same half-wall share over its LOWEST ground, its downhill face, as
+  `house_seat` judges a set-in deck by its deck (2026-11-07). Named by one row: Milford's `mpg_nw_complex_0` (roof 25.91 m;
+  its rim's lidar ground 19.79-26.43 m on the 5 m far ground: 6.12 m over its downhill ground, at grade at its south-east end).
+  Kevin 2026-11-22: "Stand it with the set-in form". FARBLOCKs are not judged by `house_seat` (BUILT = HOUSE, BUILDING).
+- Numbers the round adds or changes (none is a gate):
+
+| number | value | source |
+|---|---|---|
+| the trunk colliders' reach | 30 m -> **20 m** | **derived**: the widest median standoff of any W-beam or tyre wall off the lane edge (G4 19.07 m), rounded up (`source/vegetation/scripts/veg_trunks_reach.py`); not a measured stopping distance |
+| the edge strip counted as drivable | 1.84 m | **measured**: the 0.1.5 OBJ's 1KERB p99 per 250 m (ledger 0092) |
+| T3's traced start | moved 0.200 m off the lane | inside NAIP 2022's 0.5 m pixel; Kevin: "Move the start 0.2 m" |
+| the start / finish | the painted line's lon/lat | **measured** (NAIP 2022, +-0.7 m) |
+| the grid: first slot 7.4 m behind the line, 4.55 m stagger, 20 slots, which column is pole | | ⚠ [invented] (High Plains' measured grid borrowed; no marks on NAIP 2022) |
+| the grid's laterals | -2.25 / +3.00 m | **measured**: the middles of the painted line's two halves |
+| the grid's straight | within 2 deg of the line's heading | ⚠ [invented] tolerance (the 101.0 m it gives is measured on the line) |
+| the 20 pit boxes on the racing surface ahead of the line | | ⚠ [invented] (no pit lane at Milford) |
+| GrassFX cells | 12 m (+ 6 m within 30 m) -> 6 m everywhere | Kevin: "Use the 6 m cells" |
+| the verge trees' neighbours | within 30 m, at least 3 | ⚠ [invented]; their heights and crowns are the neighbours' measured ones (780 trees); 103 trees take the read's median [invented] |
+| the pads' shading normals | flat -> area-weighted vertex normals | `seat_pads_blend.py` opt-in `pads_shade`; positions, UVs and the self-check unchanged |
+| the pads' crease limit (round 1b) | a corner shared only among faces within **10 deg** | ⚠ [invented] (`seat_pads_blend.py` opt-in `pads_shade_crease_deg`, `pad_clip.crease_normals`): the PC's 0.1.14 pads, shared at every vertex, read up to 117 deg off a face |
+| `pads_kn5_check.py`'s bound (a check the PC runs, not a gate: no chain runs it) | every corner within the crease + **0.5 deg** | ⚠ [invented] tolerance: float32 on thin faces and the normal's encoding (0.1.13's flat pads read up to 1.71 deg on slivers) |
+
 ## 2026-11-18 — REPORTED, NOT GATED: kn5_ground_check splits the walls lens; Milford's ground beside the road, the numbers it adds (ledger 0092; no threshold moved)
 
 No gate threshold, floor or bypass moved. All opt-in, Milford only (`tests/tools/test_milford_ground_0092.py`

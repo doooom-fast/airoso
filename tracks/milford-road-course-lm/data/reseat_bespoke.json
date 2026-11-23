@@ -88,17 +88,17 @@
   },
   {
    "object": "1WALL_TECPRO_TYRES_6",
-   "verts": 400,
+   "verts": 408,
    "dz_p5_p50_p95_m": [
     0.0,
     0.0,
-    0.12
+    0.125
    ],
    "dz_min_max_m": [
     0.0,
-    0.15
+    0.149
    ],
-   "moved_over_1cm": 134
+   "moved_over_1cm": 136
   },
   {
    "object": "1WALL_TILTUP_SCREEN_10",

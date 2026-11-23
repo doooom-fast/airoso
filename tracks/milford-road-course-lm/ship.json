@@ -16,6 +16,7 @@
       "strip_seam",
       "far_ground",
       "kerbs",
+      "paint",
       "ground_patch"
     ],
     "author": [
@@ -80,7 +81,9 @@
       "assets/textures/fabric_tent_diffuse.jpg",
       "assets/textures/fabric_tent_normal.jpg",
       "assets/textures/asphalt_dense_diffuse.jpg",
-      "assets/textures/asphalt_dense_normal.jpg"
+      "assets/textures/asphalt_dense_normal.jpg",
+      "assets/textures/concrete_plain_diffuse.jpg",
+      "assets/textures/concrete_plain_normal.jpg"
     ],
     "_assets_doc": "ledger 0082: the tyre walls' skin (texture_overrides 1WALL_TECPRO) and the pad sheds' metal walls / tan roof (pbr rows BUILDING_METAL, ROOFTOP_TAN), from airoso's tracked assets so no engine copy has to carry them",
     "optional": [
@@ -147,5 +150,6 @@
   "_vegetation_doc": "ledger 0082 vegetation pass: grassfx_aerial (the measured grass zones, before the track folder's ext_config) and treefx (the measured crowns as TreeFX, after the map) run",
   "_road_wear_doc": "ledger 0084 pilot (0.1.7): the aerial (required: track.config.json road_wear.aerial) and a recorded line when one exists (optional) sync in; the bake runs as the last part of prep (tools/ship_track.sh prep_prep, opt-in on the config key); gate road_wear (tools/road_wear_check.py) reads the built road kn5",
   "_surface_doc": "0.1.12 fleet round 1: the lanes' measured surface (source/surface/road_surface.fit.json, tools/measured_surface.py) syncs in for lm_intake.measured_surface; data/edge_retrace.json (lm_intake.edge_retrace's per-row record) syncs out",
-  "_ground_doc": "ledger 0092 (the 2026-11-18 scenery audit, items 1 and 3): draft step ground_patch, last: TERRAIN past the lane edge + 9 m seated on the 2017 lidar (terrain.lidar_patches, a corridor weighted off the lane edge); prep's seat_pads lays the ride pad and the 19 paved run-off blobs on the prepped ground as 1RUNOFF (scenery.bespoke.pads_seat / pads_surface)"
+  "_ground_doc": "ledger 0092 (the 2026-11-18 scenery audit, items 1 and 3): draft step ground_patch, last: TERRAIN past the lane edge + 9 m seated on the 2017 lidar (terrain.lidar_patches, a corridor weighted off the lane edge); prep's seat_pads lays the ride pad and the 19 paved run-off blobs on the prepped ground as 1RUNOFF (scenery.bespoke.pads_seat / pads_surface)",
+  "_paint_doc": "ledger 0100 item 2: the draft step paint (tools/author_paint_blend.py --stage draft, as High Plains 0.1.8's) drapes route.paint's measured start / finish line on the built ROAD; the line, grid and pits the AC nodes stand on are race_start's (tools/ship_track.sh prep_prep runs tools/circuit_dummies_blend.py for any config that declares it)"
 }

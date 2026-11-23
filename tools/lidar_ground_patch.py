@@ -278,6 +278,16 @@ def main_grid(a, proj, ter, patches, npz) -> int:
         route = json.loads((proj / "track.config.json").read_text(encoding="utf-8")).get("route") or {}
         line = assembler_line(line, route)
     grid = load_grid(npz, line["origin"]["elev_m"])
+    # terrain.lidar_shift_m (opt-in, ledger 0102): the committed grid's registration to the line's frame, frame = lidar + shift
+    # (tools/measured_surface.py's registration_lidar_shift_m; Milford's grid sits (-0.375, +0.938) m off it: across the
+    # corridor's 9-45 m band that metre moves the ground p50 0.05 / p90 0.14 / p99 0.29 m, the culvert's headwall up to
+    # 2.2 m). The lattice nodes stay the grid's own cell centres, moved into the frame; a polygon drawn on the lidar moves
+    # with it in the config. Absent = the grid as committed
+    shift = [float(v) for v in (ter.get("lidar_shift_m") or [0.0, 0.0])]
+    grid["e0"] += shift[0]
+    grid["n0"] += shift[1]
+    if any(shift):
+        print(f"[lidar_patch] the grid moved into the line's frame by ({shift[0]:+.3f}, {shift[1]:+.3f}) m (terrain.lidar_shift_m)")
     out = {}
     for p in patches:
         r = measure_grid(grid, [tuple(q) for q in p["polygon"]], float(p.get("feather_m", 0.0)), p.get("corridor"), line)
@@ -291,6 +301,7 @@ def main_grid(a, proj, ter, patches, npz) -> int:
     out_p = Path(a.out) if a.out else proj / rel
     out_p.parent.mkdir(parents=True, exist_ok=True)
     out_p.write_text(json.dumps({
+        "lidar_shift_m": shift,
         "_doc": "tools/lidar_ground_patch.py --npz (ledger 0092): each terrain.lidar_patches polygon's lattice on the committed "
                 "lidar grid's own cell centres (the grid's mean class-2 ground per cell); nodes with no reading inside the "
                 "polygon (and, for a corridor patch, with weight > 0) filled from their neighbours; a corridor patch's "

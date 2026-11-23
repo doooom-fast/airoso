@@ -679,6 +679,16 @@ prep_prep() {
     step "ship: the far ground's sunk skirt out of the prepped ground tiles (tools/far_ground_prep_blend.py; self-checked)"
     "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/far_ground_prep_blend.py" -- "$PROJ/blender/$SLUG.blend" --project "$PROJ" 2>&1 | grep "^\[far-ground-prep\]\|FATAL\|Error\|Traceback"
   fi
+  # ledger 0102 (Milford round 2; Kevin 2026-11-22 "Reshape the shoulder"): the ground between the prep's shelf and the
+  # corridor patch's full weight graded outward on the lidar (no trench, no fall faster than fall_max) on the prepped scene,
+  # before the pads, the re-seat and the road wear, which follow it. Opt-in: terrain.shoulder_grade; none = no header,
+  # nothing runs (Lake Murray's chain is tools/ship_sd.sh, untouched); exit 1 = the blend not saved
+  rm -f "$PROJ/data/shoulder_grade.json"
+  if [ "$(pyq "import json,sys; print(bool((json.load(open(sys.argv[1],encoding='utf-8')).get('terrain') or {}).get('shoulder_grade')))" "$PROJ/track.config.json" | tr -d '\r')" = "True" ]; then
+    step "ship: the road shoulder graded on the lidar ground (tools/shoulder_grade_blend.py; ledger 0102; self-checked)"
+    "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/shoulder_grade_blend.py" -- "$PROJ/blender/$SLUG.blend" --project "$PROJ" 2>&1 | grep "^\[shoulder\]\|FATAL\|Error\|Traceback"
+    [ "${PIPESTATUS[0]}" = 0 ] || { echo "shoulder_grade_blend failed"; exit 1; }
+  fi
   # ledger 0046 v0.18.0 integration fix round: the I-8's own pavement on the PREPPED scene's final ground (scenery.freeway;
   # off = no data/freeway_i8.json = nothing runs). Part of prep: the split follows it (steps.prep stays prep, split)
   # a tiered terrain's prepped tiles carry far more vertices than their surface needs (ledger 0054 P3 repair round 3, as tools/ship_sd.sh):

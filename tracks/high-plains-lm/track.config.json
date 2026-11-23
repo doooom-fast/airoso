@@ -4,7 +4,7 @@
   "name": "High Plains Raceway",
   "_name_doc": "Kevin 2026-11-07: \"Get rid of Lm Version from names, nothing should be on any other engine now\" / \"LM is the airoso engine\". 0.1.5 (2026-11-09): no \"(LM engine)\" in the display name, and the slug and install_folder are the plain high_plains. The old-engine track (tracks/high-plains) gave that slug up: its slug and folder are high_plains_v072 (S7, fleet.cli lint)",
   "slug": "high_plains",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "mirror_x": false,
   "loop": true,
   "default_width_m": 12.0,
@@ -60,6 +60,8 @@
         {
           "file": "source/bespoke/buildings.race.json",
           "auto": true,
+          "collider_tri_m": 14.5,
+          "_collider_doc": "ledger 0097: the paddock buildings within the 60 m reach (osm289311820, 289311823, 289314487, the traced white shed) stand on TERRAIN triangles with a 14.17-14.18 m longest edge (measured on 0.1.8's loop.blend), over the 8 m default, so none had a collider; 14.5 m as the posts and canopies",
           "skin": "garage",
           "eave_overhang_m": 0.3,
           "fascia_m": 0.2,
@@ -69,7 +71,8 @@
         {
           "file": "source/bespoke/posts.race.json",
           "auto": true,
-          "collider_tri_m": 14.0,
+          "collider_tri_m": 14.5,
+          "_collider_doc": "ledger 0097 (Kevin 2026-11-22: start the work; drive-through posts): measured on 0.1.8's loop.blend, every post within the 60 m reach stands on TERRAIN triangles whose longest edge is 14.17-14.27 m (the 10 m grid's diagonals); at 14.0 only post3 (11.68 m) got a collider. 14.5 m clears them all, the limit the two canopies stand on with drive_test 0 floating (ledger 0094 round 2)",
           "skin": "post",
           "base_grime_m": 0.4,
           "_facade_doc": "ledger 0094 (opt-in): the marshal posts in the facade atlas's post skin (windows facing the lap, the door behind), a 0.4 m grime band, all [invented]"
@@ -1892,8 +1895,9 @@
           "x0": 27704,
           "y0": 49745
         },
-        "cell_m": 30,
-        "max_rects": 48,
+        "cell_m": 15,
+        "max_rects": 123,
+        "_resolution_doc": "Kevin 2026-11-22 (the calls page): 15 m cells. Ledger 0089 measured 15 m with every rectangle kept (123) covering 1,339 of the 1,986 card spots (1,716 within the fade), against 906 (1,186) at 30 m / 48",
         "fade_m": 10,
         "classes": [
           {
@@ -2648,6 +2652,10 @@
   "ui_series": "doooom Colorado",
   "_ui_series_doc": "Kevin 2026-10-28: 'K10 is gone. doooom.' Content Manager shows '<ui_series> - <layout name>' (tools/ship_track.sh ui_name_prefix carries the same string)",
   "texture_overrides": {
+    "1WALL_TECPRO": {
+      "diffuse": "assets/textures/tyre_wall_diffuse.png",
+      "_doc": "Kevin 2026-11-22 (the calls page): Milford's tyre skin on the tyre nose. High Plains' only Tec-Pro row is 1WALL_TECPRO_TYRES_10 (split_manifest), so the row is the tyre skin here as on Milford (ledger 0082; tools/make_bespoke_assets.py tyre_wall, CC0)"
+    },
     "1GRASS": {
       "diffuse": "textures/prairie_diffuse.jpg",
       "normal": "textures/prairie_normal.jpg",

@@ -188,3 +188,11 @@ survey"). Report: [`source/survey/pilot/PILOT.md`](../../tracks/denver-grand-pri
 Owed before the lap is run: a decision on posts (better reader plus an eye check, or by eye throughout), and on Colfax's
 present layout. Paint can run on the lap as it stands.
 
+
+## The far-clip test: run (PC, 2026-11-22 MST)
+
+`tracks/denver-grand-prix/source/farclip/RESULT.md` (commit 7d7b4f2e). AC + CSP 0.3.0-preview581 draws 25, 60 and 105 km
+when the track's `ext_config.ini` sets `DISTANT_FIX = 1` and `DISABLE_FAR_PLANE_CLIPPING = 1` on the backdrop's meshes,
+present at load; without it drawing stops between 19 and 25 km. **True distance (D6) stands; the pull-in is a fallback.**
+Under Pure the fog saturates by 15-20 km: past that only outline and fog colour read (PLAN 3a). Not tested: motion,
+frame rate, which key alone suffices. Kevin has not seen the working version.

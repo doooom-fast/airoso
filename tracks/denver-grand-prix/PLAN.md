@@ -164,6 +164,25 @@ haze by distance). One test kn5: three walls at 25, 60 and 105 km, driven on the
 is a uniform shrink toward the track origin by the smallest factor that draws, with the parallax error it costs
 stated in degrees for the lap's extremes, for Kevin to accept or not.
 
+## 3a. The far-clip test: true distance works (PC, 2026-11-22; `source/farclip/RESULT.md`)
+
+- **AC with CSP 0.3.0-preview581 draws geometry at 25, 60 and 105 km when the track's own `extension/ext_config.ini`
+  marks the backdrop's meshes** (`[SHADER_REPLACEMENT_...] MESHES = ..., DISTANT_FIX = 1, DISABLE_FAR_PLANE_CLIPPING = 1`).
+  The track carries it; the player changes nothing. It must be there when the track loads.
+- With nothing set, drawing stops between 19 and 25 km (the player's CSP adaptive far plane).
+- **So D6 stands as decided: the mountains go at their true distance and size. The pull-in of §3b is the fallback
+  only**, kept for a CSP that lacks the setting.
+- **Haze is now the whole question of the look.** Under Kevin's weather (Pure), by 15–20 km the game's fog is
+  saturated: a red wall at 25 km and a green one at 60 km are the same flat blue at midday, darker than the sky behind
+  them, and near-black silhouettes at dusk. Past about 15 km the backdrop's own colour and texture barely show; its
+  outline and the fog's colour do. Rows 3–6 of §3b's table therefore apply at true distance too: whether a 60 km peak
+  reads as a pale far range or as a dark blue slab is set by how the backdrop's material takes the fog, not by its
+  texture. That is the next thing to try on the PC, on real terrain, against a photograph.
+- Not tested: motion (popping while driving), frame rate, which of the two keys alone suffices, and Kevin's own look
+  at the working version (his one drive was the first version without the setting: "There's no mountains there.").
+- The spec's viewpoint was wrong: from Sand Creek's grid the track's own buildings hide a 2° wall, as Kevin said they
+  do in life. Sightlines are per place; the dossier lists them.
+
 ## 3b. If AC cannot draw the true distance — and what "look right" means either way
 
 Playbox read the player's CSP settings without running AC: `[ADAPTIVE_CLIP_PLANES] FAR_PLANE=20000,30000`. Untested

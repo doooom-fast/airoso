@@ -140,3 +140,64 @@ def test_untie_cuts_a_folded_spur_out():
             if (j + 1) % len(simple) == i:
                 continue
             assert dp._seg_x(simple[i], simple[(i + 1) % len(simple)], simple[j], simple[(j + 1) % len(simple)]) is None
+
+
+def test_pad_boxes_cut_m_pair_is_opt_in():
+    """2026-11-22 (dahlia_56th): lm_pads.plan cut_m may be [in_m, out_m]; a number is both cuts, as before"""
+    from tools import pad_boxes as pb
+    assert pb.cut_pair(30.0) == (30.0, 30.0) and pb.cut_pair(30) == (30.0, 30.0)
+    assert pb.cut_pair([30.0, 17.0]) == (30.0, 17.0)
+    for bad in (True, [30.0], [30.0, 0.0], [-1.0, 5.0], "30", [30.0, True]):
+        with pytest.raises(SystemExit):
+            pb.cut_pair(bad)
+
+
+def test_pad_boxes_asymmetric_cuts_on_a_straight_lap(tmp_path):
+    import json
+    from tools import pad_boxes as pb
+    pts = [[0.0, 0.0, 2.0 * k] for k in range(60)]            # a straight lap north, a vertex every 2 m
+    (tmp_path / "data").mkdir()
+    (tmp_path / "data" / "centerline.local.json").write_text(json.dumps({"points_xyz_m": pts, "widths_m": [10.0] * 60}))
+    plan = {"id": "p", "node_xz": [0.0, 60.0], "curb_return_m": 3}
+    for cut, want in ((30.0, [15, 45]), ([30.0, 17.0], [15, 39])):
+        (tmp_path / "track.config.json").write_text(json.dumps({"lm_pads": {"plan": [dict(plan, cut_m=cut)]}}))
+        _, out = pb.build(tmp_path)
+        assert out[0]["node"] == 30 and out[0]["cuts"] == want
+    assert "either side" not in out[0]["_by"] and "30 m of arc before and 17 m after" in out[0]["_by"]
+
+
+def test_deck_floor_leaves_a_dark_creek_bank_out_of_the_deck(tmp_path):
+    """2026-11-22 (dahlia_56th's 6.833 m seam): a wet bank reads as dark as asphalt; with deck_floor_m a class-2 point more
+    than that under the nearest lap vertex is not the road. Absent = every point, as before"""
+    np = pytest.importorskip("numpy")
+    pytest.importorskip("scipy")
+    pytest.importorskip("PIL")
+    import json
+    from tools import draft_pad_outline as dpo
+    pts = [[0.0, 10.0, 2.0 * k - 60.0] for k in range(61)]       # the lap north along x = 0 at y 10, node v30 at (0, 0)
+    rng = np.random.default_rng(1)
+    E = rng.uniform(-30, 30, 9000)
+    N = rng.uniform(-30, 30, 9000)
+    bank = (E > 8.0) & (E < 16.0)                                  # x 8..16: a creek bank 4 m down, as dark as the road
+    Z = np.where(bank, 6.0, 10.0) + 1000.0
+    I = np.where((np.abs(E) < 8.0) | bank, 0.0, 900.0)             # the verges (x < -8, x > 16) bright
+    (tmp_path / "data").mkdir()
+    (tmp_path / "source" / "pads").mkdir(parents=True)
+    (tmp_path / "data" / "centerline.local.json").write_text(json.dumps(
+        {"origin": {"lat": 39.0, "lon": -104.0, "elev_m": 1000.0}, "points_xyz_m": pts, "widths_m": [12.0] * 61}))
+    np.savez(tmp_path / "source" / "pads" / "p.lidar.npz", E=E, N=N, Z=Z, I=I, half=30.0, cE=0.0, cN=0.0)
+    decl = {"id": "p", "node": 30, "cuts": [20, 40], "box": [[-12, -22], [12, -22], [12, 22], [-12, 22]],
+            "half_m": 30.0, "source": {"kind": "lidar_ept", "ept": "https://example.invalid/ept.json"}}
+    deck_at = {}
+    for floor in (None, 0.75):
+        d = dict(decl, **({"deck_floor_m": floor} if floor else {}))
+        (tmp_path / "track.config.json").write_text(json.dumps({"lm_pads": {"pads": [d]}}))
+        dpo.main([str(tmp_path), "p"])
+        rec = json.loads((tmp_path / "source" / "pads" / "p.json").read_text(encoding="utf-8"))
+        dk = rec["deck"]
+        i = int(round((10.5 - dk["e0"]) / dk["cell_m"]))
+        j = int(round((0.0 - dk["n0"]) / dk["cell_m"]))
+        deck_at[floor] = dk["y"][j][i]
+        assert ("deck_floor_m" in rec) == (floor is not None)
+    assert abs(deck_at[None] - 6.0) < 0.05                        # without the floor the bank is "road"
+    assert deck_at[0.75] is None                                   # with it the node carries none: filled from the road

@@ -588,6 +588,10 @@
       "grid_"
     ],
     "mouth_radii_file": "source/mouth_radii.naip.json",
+    "mouth_returns_fit": {
+      "past_respread": true,
+      "_doc": "2026-11-22 (PC, claude/sc-finish-pc-20261122; tools/mouth_returns.fit_past_respread, ledger 0086 owed item 3): where the weld's re-spread runs past EDGE_FIT_TO_M 22 m (\"only N rows to fit the street's edge on\"), the street's edge is fitted on the 14 m past the re-spread and the corner built only if that line meets the host within FIT_PAST_K_MAX_M 1.0 m [invented] of the street's own edge at its cut. On 0.2.8's rows (an offline replica of the K step that reproduces all 195 built corners): grid_residential_19#0 start x2 (0.49 / 0.50 m) and grid_residential_29#2 start x2 (0.89 / 0.38 m) pass; grid_primary_7#0 (72.9 m: the 2 deg fork), grid_unclassified_43#0#0 (35.6 / 12.1 m), grid_tertiary_5#0#0 (4.9 / 19.7 m), grid_tertiary_74#0 (5.3 / 4.5 m) and grid_unclassified_105#0 end (2.3 / 6.2 m) stay skipped"
+    },
     "mouth_returns_skip": [
       {
         "piece": "grid_primary_78#0",

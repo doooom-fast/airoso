@@ -132,3 +132,19 @@ def test_skip_list_names_its_why():
         pass
     cfg = json.loads((ROOT / "tracks" / "sand-creek-lm" / "track.config.json").read_text(encoding="utf-8"))
     assert set(mr.skip_list(cfg)) == {("grid_primary_78#0", "end"), ("grid_primary_80#0", "end")}
+
+
+def test_fit_past_respread_is_opt_in_and_checked():
+    """2026-11-22 (ledger 0086 owed item 3): route.mouth_returns_fit {"past_respread": true}; absent = as before"""
+    assert mr.fit_past_respread({}) is False and mr.fit_past_respread({"route": {}}) is False
+    assert mr.fit_past_respread({"route": {"mouth_returns_fit": {"past_respread": True, "_doc": "x"}}}) is True
+    assert mr.fit_past_respread({"route": {"mouth_returns_fit": {"past_respread": False}}}) is False
+    for bad in (True, {"past_respread": 1}, {"past_respread": True, "k_max": 2}, []):
+        try:
+            mr.fit_past_respread({"route": {"mouth_returns_fit": bad}})
+        except SystemExit:
+            continue
+        raise AssertionError(bad)
+    lm = json.loads((ROOT / "tracks" / "san-diego-lake-murray" / "track.config.json").read_text(encoding="utf-8"))
+    assert "mouth_returns_fit" not in (lm.get("route") or {})
+    assert 0.0 < mr.FIT_PAST_K_MAX_M <= 1.0

@@ -1274,13 +1274,27 @@
           "source": "source/college_r2/college_split.data.json"
         }
       ],
-      "_doc": "tools/road_lanes.py (ledger 0084's 'lanes' source): one line per lane, both directions, from the paint's own rule; the bake runs it and writes data/road_wear.lanes.json. College Ave's two one-way roads and their forks (rows 1130-1476) are read by read_college_split off the data the scene's rows were built to. Defaults: every connector, min_edge_lane_m 2.9 [invented], rubber 1.0 [invented]. 233 lane lines, 48.7 km forward and 50.8 km reverse (2026-11-23)."
+      "exclude": [
+        {
+          "road": "college_nb",
+          "from": 0,
+          "to": 345,
+          "why": "the Speedway lap's line along College's NORTHBOUND road (ledger 0055 round 2; race.laps.college), a plain connector record, so the paint rule read it as a two-way road with a centre yellow: 8 lane lines laid over the split zone's own lanes for that road, 1.0 km of lane drawn twice and half of it against the traffic (the first trial bake's deepest rubber, 39.4 %, was two lanes' stripes multiplied). The split zone's reader supplies that road's lanes"
+        }
+      ],
+      "ends": {
+        "fade_m": 8.0
+      },
+      "_ends_doc": "tools/road_lanes.py LANE ENDS (opt-in). A lane that goes on in another record is welded to it (College's 12 joints at rows 1129 / 1130 and 1476 / 1477, 3 m apart; two authored lanes that drop out for two stations); every other open end fades over fade_m and is cut square, so no wheel path is drawn round a lane's end. fade_m 8.0 [invented]: two car lengths, where a driver leaves the lane's wheel paths for the turn, and over twice the wear band's 3.0 m reach, so the end reads as a fade. At a junction (the Mac 2026-11-23, ledger 0084 'Junction boxes and pads get the tone only'): no lane enters a pad and a side road's lanes stop at the through road's edge [measured], so pads and mouths carry the tone only, reached over the fade; a through road's own lanes run on through the box. Kevin's drive judges the length",
+      "_doc": "tools/road_lanes.py (ledger 0084's 'lanes' source): one line per lane, both directions, from the paint's own rule; the bake runs it and writes data/road_wear.lanes.json. College Ave's two one-way roads and their forks (rows 1130-1476) are read by read_college_split off the data the scene's rows were built to. Defaults: every connector, min_edge_lane_m 2.9 [invented], rubber 1.0 [invented]. 221 lane lines, 47.4 km forward and 49.4 km reverse once college_nb is left out (2026-11-23; the first trial bake had 233 with it)."
     },
     "wear": {
       "spread_m": 0.55,
       "_spread_doc": "[invented, road_wear's own first value] 0.55 leaves 'two tyre stripes with a lighter middle, a lane's look' (scripts/aerial/road_wear.DEFAULTS' note; the circuit default 0.70 merges them into one band). amplitude stays the default 0.22 [invented]: Kevin's drive judges both."
     },
     "tone": {
+      "smooth_m": 8.0,
+      "_smooth_doc": "the Mac 2026-11-23, after the first trial bake's look: 'the tone smoothed so nothing under ~8 m survives (cars, paint bars, shadow edges), with the broad old/new-asphalt patches kept'. Baked as read, the photo's tone printed its cars (dark blobs in the lanes), its crosswalks, stop bars and lane paint, and tree-shadow edges onto the road (Del Mar 0.2.6 was held for the first). scripts/aerial/road_wear.smooth_tone: the median of the lit asphalt in a 16 m window, on nodes every 4 m, drawn straight between them. 8.0 [invented]: over a car's length (4.5-5 m) and a crosswalk with its stop bar (3-4 m), so neither can be half of a 16 m window; whole-width patches of asphalt are kept from 8 m up. The gate's tone row reads the photo the same way (tools/road_wear_check.py, GATES-CHANGELOG 2026-11-23). Kevin's drive judges the look",
       "flat": [
         {
           "road": "north_mission_gorge",

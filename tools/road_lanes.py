@@ -18,8 +18,9 @@ OPT-IN. track.config.json ``road_wear.lanes`` (no track names it yet). Absent, `
         "rubber": 1.0,             # NUMBERS
         "exclude": [{"from": 1130, "to": 1476, "why": "..."}],
                                    # source rows (inclusive) with no lanes; "road": "mainline" (default) or a connector name
-        "split_zones": [{"kind": "...", "from": 1130, "to": 1476, "source": "..."}]
+        "split_zones": [{"kind": "...", "from": 1130, "to": 1476, "source": "..."}],
                                    # mainline rows whose lanes another reader supplies (SPLIT ZONES)
+        "ends": {"fade_m": 8.0}    # opt-in, no default (LANE ENDS): a lane's wear at its two ends
     }}
 
 Lake Murray, for the session that turns it on: College Ave's mainline rows v1130-1476 are being rebuilt as two one-way
@@ -116,6 +117,41 @@ looked up, never imported from the config), and Lake Murray's key moves the rows
 which mirrors the paint section expression for expression (``college_split_bounds``) and adds the two forks, where the
 divider base runs from the old line's centre to the yellow at the point where the roads part.
 
+LANE ENDS (opt-in ``ends``; ledger 0099 round 3, item 3, Lake Murray 0.20.7). A lane record is a run of rows, and a
+run stops for two different reasons. Measured on Lake Murray (221 lanes, 219 of them open):
+  * the lane goes on in another record. College's split zone hands rows 1130-1476 to its reader, so the mainline's
+    lanes stop at row 1129 and the reader's start at row 1130: 12 ends 2.98-3.11 m apart, 0.00-0.08 m to the side,
+    0.0-1.6 degrees apart in direction. Two authored lanes drop out for two stations and resume (9.0 m, 0.11 and
+    0.23 m to the side). Every other pair of ends is a lane and its neighbour, 3.2 m or more to the side;
+  * the lane ends: at a junction pad's edge, at the mouth where a side road meets a through road, at a stub's
+    barrier, or where the road narrows and the paint gives the lane up.
+  Without the key a lane is uniform to its last point, and the bake rounds every open end (road_wear.wear_at: a point
+  past the end is as far from the line as from its end point), which draws the two wheel paths round the end as a
+  horseshoe and leaves a 3 m hole in College's lanes at both ends of the split. With it:
+  * WELDED: a lane's last point (its tail) is welded to another lane's first point (a head) when the head lies no more
+    than ``join_gap_m`` ahead of the tail along its direction, no more than ``join_side_m`` to the side, the two
+    directions within ``join_angle_deg`` and the heights within 3 m. The tail's record gains ``"bridge_to_xyz_m"``,
+    the head's first point, and ``"joined"`` names the other lane at each welded end. The nearest head wins and a
+    head is welded once;
+  * FADED: every other open end. ``"rubber_share"`` (one number per point, 0..1) rises from 0 at the end to 1 over
+    ``fade_m`` of lane, smoothly (smoothstep); a lane shorter than twice that never reaches 1 (a short stub carries
+    less: few cars use it). A welded end and a closed lane keep 1.
+  ``bake_lines`` hands the share to the bake as the line's rubber along its length, the bridge as one more point, and
+  asks for square ends (``"butt_ends"``), so two welded lanes meet in a plane and nothing is drawn past an end.
+  WHAT THIS DOES AT A JUNCTION, and what it does not (measured, 2026-11-23): no lane enters a junction pad (the pieces
+  stop at its edge) and a side road's lanes stop at the through road's edge, so with the fade a pad and a side road's
+  mouth carry the tone only (0084: "Junction boxes and pads get the tone only"), reached over ``fade_m``. A through
+  road's own lanes run on through the box, as the wheel paths of a real arterial do past a side street. Lanes of two
+  different roads cross at two places only, 6.4 and 3.5 m long (a connector's last points inside the mainline's
+  outer lane). The one long overlap was a mistake of the config, not a junction: ``college_nb``, the Speedway lap's
+  line along College's northbound road, read as a two-way road on top of the split zone's own lanes (1.0 km, twice);
+  Lake Murray's key excludes it.
+  Numbers, all [invented]: fade_m 8.0 on Lake Murray (two car lengths: where a driver leaves the lane's wheel paths
+  for the turn; and over twice the wear band's 3.0 m reach, so the end reads as a fade, not a blunt stop);
+  join_gap_m 10.0 (three stations of 3 m and a little: a lane that drops out for two stations is the same lane);
+  join_side_m 0.5 and join_angle_deg 15 (between the measured welds, 0.23 m and 3 degrees at most, and the nearest
+  thing that is not one, a neighbouring lane 3.2 m to the side).
+
 NUMBERS. From the paint rule (read, not restated): lane_w 3.65, edge_inset 0.55, line_w 0.12, max_lanes_side 6, and
 ribbon's STUB_PAINT_STOP_M / STUB_BARRIER_HALF_BASE_M. From the assembler: CONNECTOR_SMOOTH (sigma 1.5 points, one
 pass, height sigma 1.0: build_loop_blend's own call, pinned by a test). Measured, read from
@@ -153,7 +189,15 @@ DEFAULTS = {
     "rubber": 1.0,              # [invented] the share of the bake's wear.amplitude every lane carries (NUMBERS)
     "exclude": [],
     "split_zones": [],
+    # "ends" (opt-in, no default here so a spec without it is unchanged): LANE ENDS in the docstring
 }
+ENDS_DEFAULTS = {
+    "fade_m": 8.0,              # [invented] LANE ENDS
+    "join_gap_m": 10.0,         # [invented]
+    "join_side_m": 0.5,         # [invented]
+    "join_angle_deg": 15.0,     # [invented]
+}
+JOIN_HEIGHT_M = 3.0             # [invented] two ends more than this apart in height are on different decks
 EPS = 1e-9
 
 
@@ -410,6 +454,83 @@ def road_lanes(name: str, group: str, fr, closed: bool, per_station, islands, ex
     return out
 
 
+def lane_ends(lanes: list[dict], e: dict) -> dict:
+    """LANE ENDS (module docstring), in place: welds a tail to the head it runs into (``bridge_to_xyz_m``, ``joined``)
+    and gives every lane its ``rubber_share``. Returns the summary."""
+    def unit(a, b):
+        dx, dz = b[0] - a[0], b[2] - a[2]
+        L = math.hypot(dx, dz)
+        return (dx / L, dz / L) if L > EPS else (0.0, 0.0)
+
+    opens = [i for i, ln in enumerate(lanes) if not ln["closed"] and len(ln["points_xyz_m"]) >= 2]
+    cell = max(1.0, e["join_gap_m"])
+    heads: dict[tuple[int, int], list[int]] = {}
+    for i in opens:
+        h = lanes[i]["points_xyz_m"][0]
+        heads.setdefault((int(h[0] // cell), int(h[2] // cell)), []).append(i)
+    cos_min = math.cos(math.radians(e["join_angle_deg"]))
+    cand = []
+    for i in opens:
+        P = lanes[i]["points_xyz_m"]
+        t = P[-1]
+        ut = unit(P[-2], P[-1])
+        for ci in range(int(t[0] // cell) - 1, int(t[0] // cell) + 2):
+            for cj in range(int(t[2] // cell) - 1, int(t[2] // cell) + 2):
+                for j in heads.get((ci, cj), ()):
+                    if j == i:
+                        continue
+                    Q = lanes[j]["points_xyz_m"]
+                    h = Q[0]
+                    dx, dz = h[0] - t[0], h[2] - t[2]
+                    along = dx * ut[0] + dz * ut[1]
+                    side = -dx * ut[1] + dz * ut[0]
+                    uh = unit(Q[0], Q[1])
+                    if (EPS < along <= e["join_gap_m"] and abs(side) <= e["join_side_m"] and abs(h[1] - t[1]) <= JOIN_HEIGHT_M
+                            and ut[0] * uh[0] + ut[1] * uh[1] >= cos_min):
+                        cand.append((math.hypot(dx, dz), i, j, abs(side)))
+    tail_of, head_of = {}, {}
+    gaps, sides = [], []
+    for d, i, j, sd in sorted(cand):                       # the nearest head wins; a head is welded once
+        if i in tail_of or j in head_of:
+            continue
+        tail_of[i] = j
+        head_of[j] = i
+        gaps.append(d); sides.append(sd)
+    fade = e["fade_m"]
+    full_m = total_m = 0.0
+    n_faded = 0
+    for i, ln in enumerate(lanes):
+        P = ln["points_xyz_m"]
+        n = len(P)
+        if ln["closed"]:
+            ln["rubber_share"] = [1.0] * n
+            total_m += ln["length_m"]; full_m += ln["length_m"]
+            continue
+        if i in tail_of:
+            ln["bridge_to_xyz_m"] = [float(v) for v in lanes[tail_of[i]]["points_xyz_m"][0]]
+        ln["joined"] = {"head": lanes[head_of[i]]["id"] if i in head_of else None,
+                        "tail": lanes[tail_of[i]]["id"] if i in tail_of else None}
+        seg = [math.dist(P[k], P[k + 1]) for k in range(n - 1)]
+        s_head = [0.0]
+        for d in seg:
+            s_head.append(s_head[-1] + d)
+        L = s_head[-1]
+        share = []
+        for k in range(n):
+            a = 1.0 if (i in head_of or fade <= 0) else _smoothstep(s_head[k] / fade)
+            b = 1.0 if (i in tail_of or fade <= 0) else _smoothstep((L - s_head[k]) / fade)
+            share.append(round(min(a, b), 4))
+        ln["rubber_share"] = share
+        n_faded += (i not in head_of) + (i not in tail_of)
+        for k in range(n - 1):
+            m = 0.5 * (share[k] + share[k + 1])
+            total_m += seg[k]; full_m += seg[k] * m
+    return {"fade_m": fade, "join_gap_m": e["join_gap_m"], "join_side_m": e["join_side_m"],
+            "join_angle_deg": e["join_angle_deg"], "welds": len(tail_of), "ends_faded": n_faded,
+            "weld_gap_m_max": round(max(gaps), 3) if gaps else None, "weld_side_m_max": round(max(sides), 3) if sides else None,
+            "lane_km": round(total_m / 1000.0, 2), "rubber_km": round(full_m / 1000.0, 2)}
+
+
 def station_spacing(fr, closed: bool) -> list[float]:
     """The length of road each station stands for: half the segment before it plus half the one after."""
     m = len(fr)
@@ -444,9 +565,21 @@ def spec_from_config(cfg: dict) -> dict | None:
         return None
     out = {k: (list(v) if isinstance(v, list) else v) for k, v in DEFAULTS.items()}
     out.update({k: v for k, v in ln.items() if not str(k).startswith("_") and k != "enabled"})
-    unknown = sorted(set(out) - set(DEFAULTS))
+    unknown = sorted(set(out) - set(DEFAULTS) - {"ends"})
     if unknown:
-        raise SystemExit(f"[road_lanes] FATAL: road_wear.lanes.{unknown[0]}: unknown key (known: {sorted(DEFAULTS)})")
+        raise SystemExit(f"[road_lanes] FATAL: road_wear.lanes.{unknown[0]}: unknown key (known: {sorted(DEFAULTS) + ['ends']})")
+    if "ends" in out:
+        e = out["ends"]
+        if e is None or e is False:
+            del out["ends"]
+        else:
+            e = {} if e is True else {k: v for k, v in dict(e).items() if not str(k).startswith("_")}
+            bad = sorted(set(e) - set(ENDS_DEFAULTS))
+            if bad:
+                raise SystemExit(f"[road_lanes] FATAL: road_wear.lanes.ends.{bad[0]}: unknown key (known: {sorted(ENDS_DEFAULTS)})")
+            out["ends"] = {k: float(e.get(k, v)) for k, v in ENDS_DEFAULTS.items()}
+            if out["ends"]["fade_m"] < 0 or out["ends"]["join_gap_m"] < 0:
+                raise SystemExit("[road_lanes] FATAL: road_wear.lanes.ends: fade_m and join_gap_m are lengths, not negative")
     return out
 
 
@@ -680,7 +813,9 @@ def build(proj: Path, cfg: dict, spec: dict) -> dict:
     for k in ("edge_strip_km", "island_trimmed_km", "no_car_fits_km"):
         stats[k] = round(stats[k], 2)
     stats["distinct_lanes"] = len({(ln["road"], ln["direction"], ln["lane"]) for ln in lanes})
+    ends = lane_ends(lanes, spec["ends"]) if spec.get("ends") else None
     return {
+        **({"ends": ends} if ends is not None else {}),
         "what": "lane centres for road wear on streets (ledger 0084's 'lanes' source): one line per lane, both "
                 "directions, the lanes the paint rule paints; tools/road_lanes.py",
         "ledger": ["0084", "0099"],
@@ -697,14 +832,28 @@ def build(proj: Path, cfg: dict, spec: dict) -> dict:
 def bake_lines(doc: dict, layer_m: float = 10.0) -> list[dict]:
     """The output as tools/road_wear_blend.py's ``lines`` (HOW IT FEEDS THE BAKE): per lane {"P" (N x 3, Blender
     x = east, y = north, height), "I" (uniform rubber), "closed", "layer_m", "layout" "lanes", "source" the lane id,
-    "lap_m"}, ready for scripts/aerial/road_wear.wear_at."""
+    "lap_m"}, ready for scripts/aerial/road_wear.wear_at. Where the tool was run with ``ends`` (LANE ENDS; the doc
+    carries "ends"): "I" is the rubber times the lane's ``rubber_share``, a welded tail has its bridge point as its
+    last point, and every line asks for square ends ("butt_ends")."""
     import numpy as np
     out = []
+    ends = bool(doc.get("ends"))
     for ln in doc["lanes"]:
-        P = np.array([[x, z, y] for x, y, z in ln["points_xyz_m"]], dtype=np.float64)
-        out.append({"P": P, "I": np.full(len(P), float(doc["rubber"])), "closed": bool(ln["closed"]),
-                    "layer_m": float(layer_m), "layout": "lanes", "source": ln["id"], "lap_m": ln["length_m"]})
+        pts, share = lane_line(ln) if ends else (ln["points_xyz_m"], [1.0] * len(ln["points_xyz_m"]))
+        P = np.array([[x, z, y] for x, y, z in pts], dtype=np.float64)
+        out.append({"P": P, "I": float(doc["rubber"]) * np.array(share, dtype=np.float64), "closed": bool(ln["closed"]),
+                    "layer_m": float(layer_m), "layout": "lanes", "source": ln["id"], "lap_m": ln["length_m"],
+                    **({"butt_ends": True} if ends else {})})
     return out
+
+
+def lane_line(ln: dict) -> tuple[list, list]:
+    """A lane as it is drawn under LANE ENDS: (points, rubber share per point), the bridge point of a welded tail added
+    at full share. The bake (bake_lines) and the gate (tools/road_wear_check.py) both draw this."""
+    pts = list(ln["points_xyz_m"]); share = list(ln.get("rubber_share") or [1.0] * len(pts))
+    if ln.get("bridge_to_xyz_m"):
+        pts.append(list(ln["bridge_to_xyz_m"])); share.append(share[-1])
+    return pts, share
 
 
 def run(proj: Path, out: Path | None = None) -> dict | None:
@@ -727,6 +876,11 @@ def run(proj: Path, out: Path | None = None) -> dict | None:
           f"{s['island_trimmed_km']} km trimmed by an island -> {out}")
     for g, v in sorted(s["by_group"].items()):
         print(f"[road_lanes]   {g}: {v['lanes']} lanes, {v['km_forward']} km forward, {v['km_reverse']} km reverse")
+    if doc.get("ends"):
+        e = doc["ends"]
+        print(f"[road_lanes]   ends: {e['welds']} welded to the lane they run into (gap <= {e['weld_gap_m_max']} m, "
+              f"{e['weld_side_m_max']} m to the side at most), {e['ends_faded']} faded over {e['fade_m']} m; "
+              f"{e['rubber_km']} km of rubber on {e['lane_km']} km of lane")
     return doc
 
 

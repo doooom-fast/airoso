@@ -9,6 +9,7 @@ were, and the bake's wiring by its source. scripts/aerial/road_wear.flat_alpha h
 from __future__ import annotations
 
 import importlib.util
+import json
 import math
 import sys
 from pathlib import Path
@@ -185,3 +186,45 @@ def test_lake_murrays_road_wear_is_lanes_at_half_a_metre_with_the_flat_tone_on_t
         if p.parent != lm:
             other = json.loads(p.read_text(encoding="utf-8")).get("road_wear") or {}
             assert "lanes" not in other and "flat" not in (other.get("tone") or {}), p
+
+
+# --- after the first trial bake's look (2026-11-23): lane ends, and the tone smoothed -----------------------------------
+def test_the_gate_reads_a_lanes_share_and_lays_nothing_past_a_square_end():
+    pts = [(float(x), 0.0) for x in range(0, 31, 3)]
+    whole = RC.make_lane_darkness([(pts, False)], W, AMP)                       # as before: uniform, round ends
+    share = [0.0, 0.5] + [1.0] * 9
+    ends = RC.make_lane_darkness([(pts, False, share, True)], W, AMP)
+    peak = AMP * RC.tyre_profile(0.8, W["track_m"], W["spread_m"])
+    assert abs(whole(15.0, 0.8) - peak) < 1e-12 and abs(ends(15.0, 0.8) - peak) < 1e-12
+    # the share is drawn straight along a segment: 0.25 half way along the first, 0.75 half way along the second
+    assert abs(ends(1.5, 0.8) - 0.25 * peak) < 1e-12 and abs(ends(4.5, 0.8) - 0.75 * peak) < 1e-12
+    # a round end draws the wheel paths round it; a square end lays nothing past the first and the last point
+    assert whole(-0.5, 0.6) > 0.1 and whole(30.5, 0.6) > 0.1
+    assert ends(-0.5, 0.6) == 0.0 and ends(30.5, 0.6) == 0.0 and ends(29.9, 0.8) == whole(29.9, 0.8)
+    # two welded lanes meet in a plane: together they are the one line
+    a = (pts[:6], False, [1.0] * 6, True)
+    b = (pts[5:], False, [1.0] * 6, True)
+    one = RC.make_lane_darkness([(pts, False, [1.0] * 11, True)], W, AMP)
+    two = RC.make_lane_darkness([a, b], W, AMP)
+    for x in (13.0, 14.9, 15.0, 15.1, 17.0):
+        for y in (0.8, 0.2, -1.3):
+            assert abs(two(x, y) - one(x, y)) < 1e-12, (x, y)
+    # the row takes lanes that carry a share
+    assert RC.lane_rubber_row([(pts, False, [1.0] * 11, True)], lambda x, y: None, one)["pass"] is False
+
+
+def test_the_tone_row_reads_the_photo_smoothed_only_where_the_bake_smoothed_it():
+    src = (ROOT / "tools" / "road_wear_check.py").read_text(encoding="utf-8")
+    assert RC.SMOOTH_MIN_SHARE == 0.375 and RC.GATE["tone_r_min"] == 0.60
+    assert 'smooth_m = float(spec["tone"].get("smooth_m") or 0.0)' in src
+    # without the key the samples are filtered as they always were
+    assert "samples = [s_ for s_ in samples if max(0.8, lo) * med <= s_[0] <= hi * med]" in src
+    assert '"photo": "smoothed as declared: the median lit-asphalt ratio within +- smooth_m of each sample"' in src
+    # the gate's lit asphalt is the bake's rule: a shadow is dark AND blue, paint is bright; the ratio clipped as the bake clips
+    assert 'if (a2[0] < tn["shadow_lum"] * med and a2[1] > tn["shadow_blue"]) or a2[0] > tn["paint_lum"] * med:' in src
+    assert "vals.append(min(hi, max(lo, a2[0] / med)))" in src
+    bake = (ROOT / "scripts" / "aerial" / "road_wear.py").read_text(encoding="utf-8")
+    assert "SMOOTH_MIN_LIT_SHARE = 0.375" in bake and 'if spec_tone.get("smooth_m"):' in bake
+    assert '"smooth_m":' not in bake.split('    "tone": {')[1].split("    },")[0]                    # no default: opt-in
+    cfg = json.loads((ROOT / "tracks" / "san-diego-lake-murray" / "track.config.json").read_text(encoding="utf-8"))
+    assert cfg["road_wear"]["tone"]["smooth_m"] == 8.0 and "[invented]" in cfg["road_wear"]["tone"]["_smooth_doc"]

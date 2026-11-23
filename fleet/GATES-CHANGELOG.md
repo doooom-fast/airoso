@@ -14,6 +14,52 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
+## 2026-11-23 (PC) — WIRING: road_wear_check's tone row reads the photo smoothed where the bake smoothed it, and its lane reading follows the lanes' ends; no threshold moved (ledger 0099 round 3, item 3, after the first trial bake's look; opt-in, Lake Murray)
+
+The first trial bake of Lake Murray's road wear was looked at before any rehearsal. Two things were wrong with the look,
+and neither was a gate's to catch: the photo's tone printed what stands ON a street (cars as dark blobs in the lanes,
+crosswalks, stop bars and lane paint, the ragged edge of tree shadows), and every lane's two wheel paths were drawn
+round its end as a horseshoe. The bake gained two opt-in keys (the entry below), and the gate reads both. Both changes
+apply only where the bake's own record declares the key; every other track's rows run as they did.
+
+| Row | Before | With the key |
+|---|---|---|
+| tone, with `road_wear.tone.smooth_m` | Pearson r of the shipped atlas against the photo's luminance AT each sample (a road triangle's centroid), the sample kept when its own luminance is lit asphalt; r >= tone_r_min 0.60 | the bake keeps nothing of the photo smaller than smooth_m, so the photo at a point is no longer what the macro is declared to follow. The row compares the atlas with THE PHOTO SMOOTHED THE SAME WAY, by the gate's own reading: the median of the photo's lit-asphalt ratio over the built road within +- smooth_m of the sample, on a 1 m lattice (shadow: dark AND blue; paint: bright; the ratio clipped; all three the bake's own rules and numbers), where at least SMOOTH_MIN_SHARE 0.375 of the lattice reads lit asphalt. A sample whose own point is in shadow is kept (the reading is round it). The same r >= tone_r_min 0.60 |
+| lane_rubber and tone, with `road_wear.lanes.ends` | the gate's reading of the declared lanes: uniform rubber on every lane, to its last point and round it | `make_lane_darkness` reads each lane as declared: its rubber share per point, drawn straight along a segment; a welded tail's bridge point as one more point; nothing past an open lane's first and last point. lane_rubber therefore judges the shipped atlas against the lanes with their fades. Thresholds as they were (line_offset_max_m 0.15, depth 0.5-1.5) |
+
+The gate does not restate the bake's nodes: the bake takes the median on nodes every smooth_m / 2 and draws the field
+straight between them; the gate takes its own median about each sample. They agree where the tone is smooth and differ a
+little at a patch's edge, which is what an independent reading is for.
+
+**[invented]**, all the bake's own and logged with it: smooth_m 8.0 m and the minimum lit share 0.375 (Lake Murray's
+config and scripts/aerial/road_wear.SMOOTH_MIN_LIT_SHARE; restated in the gate as SMOOTH_MIN_SHARE).
+
+What could go vacuous, and what holds it: a huge smooth_m would flatten the tone to one number, and a row that compares
+two flat fields has no correlation to find; it would FAIL (r near 0), not pass. A config could ask for a smooth_m so
+small that it changes nothing; then the row is today's. The row reports `smooth` (the window, the lattice, the minimum
+and how many samples had too little lit asphalt) and `samples` on every run. Teeth:
+tests/tools/test_road_wear_lanes_0099.py (the gate's reading of a share and of a square end against the formula; two
+welded lanes read as one line; the smoothed form is taken only with the key and uses the bake's own rules; no threshold
+moved), tests/aerial/test_road_wear_smooth_0099.py (numpy: a car, a crosswalk and a row of parked cars go and a patch of
+older asphalt stays; the banded sampling is the whole-grid call bit for bit; a square end lays nothing past it).
+
+## 2026-11-23 (PC) — WIRING: the road-wear bake takes a smoothed tone and lane ends (ledger 0099 round 3, item 3; both opt-in, no gate threshold touched)
+
+| What | Before | After |
+|---|---|---|
+| `road_wear.tone.smooth_m` (opt-in; scripts/aerial/road_wear.smooth_tone, inside tone_field) | the tone is the photo's lit-asphalt ratio texel by texel (shadow and paint filled from within 3 m) | with the key: the median of the lit-asphalt ratio in a window 2 x smooth_m wide, on nodes every smooth_m / 2, drawn straight between them; a node with under SMOOTH_MIN_LIT_SHARE of its window on lit asphalt is filled from its neighbours. Lake Murray: 8.0 m **[invented]** (over a car's length and a crosswalk with its stop bar, so neither can be half of a 16 m window; whole-width patches of asphalt are kept from 8 m up); the share 0.375 **[invented]** (between a node standing on the road's edge, which reads half its window, and one a node spacing outside it, which reads a quarter: the gutter, the parked cars and the kerbside shadow) |
+| the photo's sampling in tone_field | one call over the whole grid | bands of 256 rows: the same values bit for bit (a test holds it), without the whole-grid call's index and corner arrays (Lake Murray's 11584 x 10048 grid: a 19.7 GB peak measured on the whole-grid call) |
+| `road_wear.lanes.ends` (opt-in; tools/road_lanes.py LANE ENDS) | every lane uniform to its last point; an open end drawn round | a lane that goes on in another record is welded to it (the head no more than join_gap_m 10.0 ahead, join_side_m 0.5 to the side, join_angle_deg 15 apart, 3 m in height: all **[invented]**, between the measured welds, 0.23 m and 3 degrees at most, and the nearest thing that is not one, a neighbouring lane 3.2 m to the side); every other open end fades over fade_m (Lake Murray 8.0 m **[invented]**: two car lengths) |
+| scripts/aerial/road_wear.wear_at | an open line's end is round (a point past the end is as far from the line as from its end point) | a line that asks for it (`"butt_ends"`, set by road_lanes.bake_lines under `ends`) lays nothing past its first and last point. A line that does not ask is as it was: Pikes Peak's open racing line keeps its round ends |
+| Lake Murray's `road_wear.lanes.exclude` | - | `college_nb` rows 0-345: the Speedway lap's line along College's northbound road, a plain connector record, which the paint rule read as a two-way road on top of the split zone's own lanes (8 lane lines, 1.0 km of lane drawn twice; the first trial bake's deepest rubber, 39.4 %, was two lanes multiplied). 233 lane lines become 221 |
+
+Measured before the choice (2026-11-23, Lake Murray's 221 lanes, 219 of them open): the ends that are the same lane are
+College's 12 joints (2.98-3.11 m apart, 0.00-0.08 m to the side) and two authored lanes that drop out for two stations
+(9.0 m, 0.11 and 0.23 m to the side); no lane enters a junction pad and a side road's lanes stop at the through road's
+edge; lanes of two different roads cross at two places, 6.4 and 3.5 m long. So with the fade, a pad and a side road's
+mouth carry the tone only (0084: "Junction boxes and pads get the tone only"), and a through road's lanes run on through
+the box. Teeth: tests/tools/test_road_lanes_ends_0099.py, tests/aerial/test_road_wear_smooth_0099.py.
+
 ## 2026-11-23 (PC) — WIRING + EXCLUSION: road_wear_check judges a lanes bake (lane_rubber; tone with the lanes taken off) and leaves declared flat-tone stretches out of tone; no threshold moved (ledger 0099 round 3, item 3; opt-in, Lake Murray)
 
 A street's wear lines are its lanes (ledger 0084's owed "lanes" source, tools/road_lanes.py), and the lanes cover the

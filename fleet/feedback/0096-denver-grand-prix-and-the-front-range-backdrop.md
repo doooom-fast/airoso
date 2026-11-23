@@ -267,6 +267,10 @@ Mesh minus study, degrees:
 - 19 visible peaks, all within 0.1°. Hidden in the study, not gated: Grays and Torreys are not in the mesh (dropped by the
   viewshed); Mt Rosalie, Mt Bierstadt and Chief Mtn are in it (the margin, or seen from elsewhere on the lap) and read within 0.08°.
 - **Skyline, reported, not gated:** 311 bearings, none over 0.1°, mean −0.003°, worst −0.024° (at 299.0°).
+- **The same mesh from Speer / Colfax** (1.3 km west of the origin, the study's second site; run by hand, not recorded
+  as a gate): all 19 visible peaks within 0.094° of bearing (Mt Meeker; the next is 0.019°) and 0.035° of altitude;
+  skyline, 311 bearings, none over 0.1°, worst −0.044°, mean −0.010°. The mean is the tilt the bake predicts for an
+  eye 1.3 km from the origin (0.009° per km).
 
 **Found on the way**
 
@@ -289,7 +293,7 @@ Mesh minus study, degrees:
   plan's backdrop is 100 to 140 k). Triangles go with 1 / `pixel_rad`²; `radial_factor` and `near_m` are the other knobs.
 - The viewshed is from bare earth along the lap at 12 m, not from buildings: it keeps far more than a driver downtown
   sees, by design. It has not been checked against a second, independent viewshed. The skyline check from the start line
-  is the only evidence that nothing visible was dropped; from Speer / Colfax and the rest of the lap it is unchecked.
+  and from Speer / Colfax is the only evidence that nothing visible was dropped; the rest of the lap is unchecked.
 - The seam between the backdrop's near edge (2 km) and the track's own ground: no track ground exists yet.
 - Haze, fog and the material (PLAN 3a); colour by elevation; the towers; Sand Creek's and the Lariat's bakes; the kn5
   export and the `models_*.ini` listing; `DISTANT_FIX` on real terrain; motion.

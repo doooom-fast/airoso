@@ -965,9 +965,11 @@ def _finish_pc_pads(live, cand):
     assert lp[:len(cp)] == cp and live["lm_pads"]["parked"] == []
     assert sorted(p["id"] for p in lp[len(cp):]) == sorted(p["id"] for p in ck)
     assert all(p.get("_unparked") and p.get("deck_floor_m") == 0.75 for p in lp[len(cp):])
+    assert [p["id"] for p in lp if p.get("ground_on_mesh")] == ["sandcreek_quebec"]      # 2026-11-23, the P4 grass
     q = next(p for p in lp if p["id"] == "sandcreek_quebec")
     qk = next(p for p in ck if p["id"] == "sandcreek_quebec")
-    assert {k: v for k, v in q.items() if k not in ("_unparked", "deck_floor_m", "_deck_floor_doc")} ==         {k: v for k, v in qk.items() if k != "_parked_why"}          # round C's declaration, as measured
+    assert {k: v for k, v in q.items() if k not in ("_unparked", "deck_floor_m", "_deck_floor_doc",
+                                                                 "ground_on_mesh", "_ground_on_mesh_doc")} ==         {k: v for k, v in qk.items() if k != "_parked_why"}          # round C's declaration, as measured
     for pl in live["lm_pads"]["plan"]:
         if pl["id"] == "dahlia_56th":
             assert pl.pop("cut_m") == [30.0, 17.0] and pl.pop("half_m") == 57.15 and pl.pop("_cut_m_doc")

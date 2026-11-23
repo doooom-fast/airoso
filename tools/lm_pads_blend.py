@@ -767,7 +767,24 @@ def build(proj, cfg, decls):
         # 4b. THE GROUND UNDER IT (0.17.2's numbers): the terrain's edges near the deck halved until under
         # GROUND_EDGE_M (longest first, triangles only), every ground vertex inside the outline GROUND_UNDER_M under the
         # deck, and within EDGE_BAND_M outside never above the deck's edge: no ground chord over a measured bowl
-        held = ground_under(ring, deck_z, float(deck_cfg.get("ground_edge_m") or GROUND_EDGE_M))   # opt-in finer (L3b)
+        # GROUND ON THE DECK MESH (opt-in per pad, "ground_on_mesh": true; 2026-11-23, Sand Creek 0.2.9's
+        # sandcreek_quebec): the ground is pinned GROUND_UNDER_M under the LOWER of deck_z and the deck as built (its
+        # faces are flat between its vertices). Where a seam climbs steeply (the lap's flared ribbon edge 0.39 m over the
+        # measured junction within 0.45 m) deck_z stood up to 0.06 m over those faces, and one ground vertex came through
+        # the deck by 0.017 m (verify_pads P4, the 928f7bad pre-check). Outside the deck the ray misses: deck_z, as
+        # before. Absent = deck_z alone, as before
+        gom = d.get("ground_on_mesh")
+        if gom not in (None, True, False):
+            raise SystemExit(f"[lm-pads] FATAL: {pid}: ground_on_mesh {gom!r}: true|false")
+        ground_z = deck_z
+        if gom:
+            deck_bvh = BVHTree.FromPolygons([Vector(v) for v in verts3], [tuple(f) for f in faces])
+
+            def ground_z(x_, y_):
+                z_ = deck_z(x_, y_)
+                hit = deck_bvh.ray_cast(Vector((x_, y_, 1e4)), Vector((0.0, 0.0, -1.0)))
+                return z_ if hit[0] is None else min(z_, hit[0].z)
+        held = ground_under(ring, ground_z, float(deck_cfg.get("ground_edge_m") or GROUND_EDGE_M))   # opt-in finer (L3b)
         # 5. the barriers across the roads the lap does not take
         bvh = BVHTree.FromPolygons([Vector(v) for v in verts3], [tuple(f) for f in faces])
 

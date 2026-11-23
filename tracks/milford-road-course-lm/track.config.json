@@ -4646,5 +4646,9 @@
       "1ROAD": 0.5
     },
     "_detail_highpass_doc": "ledger 0095: the road's detail diffuse loses what is coarser than 0.5 m (scripts/aerial/road_wear.detail_highpass) before the / m0, so its far mips go flat and the NAIP macro alone carries the large scale; the normal is kept. The 4 m repeat on this track's renders (Mac 2026-11-18, 20-50 / 50-100 / 100-200 m): 3.34 / 2.17 / 1.11 % (the borrowed tile) -> 0.70 / 0.33 / 0.16 (owned) -> 0.29 / 0.09 / 0.05 (owned + 0.5 m) [measured]; the band it removes is 0.10 % of the tile's variance, so the close look is unchanged [measured]. 0.5 m [invented] (a 1 m cut gave about half the gain). The edge strip (1KERB_SIDEWALK) keeps its detail as it is (its repeat not measured)"
+  },
+  "drive_test": {
+    "daylight_edge_ref": true,
+    "_daylight_edge_ref_doc": "ledger 0102: the second rehearsal of 0.1.15 (milford_0115b_reh, 2026-11-23) read 69 daylight gaps, every one at s 912-980 on the left, 0.8 m past the edge of the bowl's banked outer side. None is a hole: the built left edge stands 2.59-3.68 m over the centre deck (the measured bank, section 4) and the kerb or grass there 0.03 m under to 0.30 m over that edge, above the probe's window (7.5 m under to 2.5 m over the centre deck). scripts/geometry/drive_test.py hangs the same window from the road's own height at each edge (the highest 1ROAD face 0.15 m inside it [invented]): 69 -> 0, no new gap in 9,448 probes; on 0.1.14 0 -> 0 in 9,798. It moves where the probe looks, not its limit (0)"
   }
 }

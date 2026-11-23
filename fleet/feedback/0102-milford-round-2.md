@@ -304,6 +304,9 @@ The PC rehearsed b61ebc05 from an empty workshop on 2026-11-23, 03:45-04:41 (`D:
 ENG eng_mflm_0114, AIROSO_NUMPY_PY = the lidar venv). It was **red on one gate**: the street drive_test read 1 "ground on top
 mid-lane" (s 947.0, u -0.75, 1GRASS_1). Nothing was installed.
 
+Correction (2026-11-23, after the second rehearsal): the same street drive_test also read **69 daylight gaps**, a second
+failing row. The PC reported only the ground on top. Section 6 has the 69.
+
 Everything else was green:
 
 - race drive_test / audit / no_route; audit CLEAN;
@@ -367,9 +370,68 @@ Two causes:
 - The 2 cm clearance is unchanged. `edit_config_0102.py` writes the key (step 4b), so the one-command flow from 0.1.14
   reproduces the committed config.
 
+## 6. The second rehearsal (red) and the daylight probe
+
+The PC rehearsed a05c4924 (both fixes) from an empty workshop on 2026-11-23, 07:51-08:48 (`D:/k10-scratch/milford_0115b_reh`,
+`--no-install`, ENG eng_mflm_0114, AIROSO_NUMPY_PY = the lidar venv). Nothing was installed.
+
+### Both fixes held
+
+- lane_poke on s 922-975 (0.25 x 0.25 m, 11,855 lane points): **0 above the road**, 0 within 5 mm under. The whole lap
+  (1.0 x 0.25 m, 257,791 points): 0 above, 14 within 5 mm under (0.1.14: 4 above, max 2.6 mm).
+- drive_test's ground on top mid-lane: 0 (the first rehearsal: 1).
+- The seat-edges section, s 845-1,055:
+  - 23,164 faces under the road read, fold excess max 5.11 cm;
+  - cut 1 / 2 / 3 / 4 / 5 times x 962 / 304 / 102 / 21 / 2, 3,697 edges split;
+  - TERRAIN 310,656 -> 316,625 vertices (+5,969);
+  - after: excess max 1.94 cm, 371 faces over 1 cm, 0 over the 2 cm clearance.
+- The road kn5 51,527,489 B (the first rehearsal 51,192,541: +334,948 B, +0.65 %).
+- The lines byte for byte the committed prediction.
+- Green: verify_kn5 and its --inis; street audit CLEAN; race drive_test / audit / no_route; kn5_ground_check PASS; textures;
+  road wear (all six rows); houses; edge smoothness.
+
+### The one red row: 69 daylight gaps
+
+The street drive_test's other rows were the first rehearsal's: bumps 4.87 / km, kinks 12.7 / km (not gated on Milford),
+vertex bumps 2, severe 0, gated excursions 0. It failed on **daylight gaps 69** (limit 0). The first rehearsal read the same
+69 (see the correction in section 5).
+
+Measured with read-only copies of drive_test on the finished workshop (scratchpad `r2/dt_daylight.py`,
+`r2/dt_daylight_cmp.py`, the report write redirected):
+
+- All 69 lie at s 912-980, on the left, at the probe's point 0.8 m past the edge: the outer side of section 2's banked
+  turn.
+- **None is a hole.** At every one the kerb or the grass stands 0.03 m under to 0.30 m over the road's own edge.
+- The built left edge stands 2.59-3.68 m over the centre deck (s 936: +0.96 m at u -2, +3.50 m at u -7.5), the measured
+  bank of section 2.
+- drive_test's window runs from 7.5 m under to 2.5 m over the **centre** deck (`top_at(..., deck_c - 2.5, 5.0)`), so on
+  this bank the surface beside the edge is above its top.
+
+### The fix: opt-in `drive_test.daylight_edge_ref`
+
+The Mac's call, 2026-11-23: "Build (a), not (b); no force-install."
+
+- `scripts/geometry/drive_test.py`: with the key, the same window (5 m, limit 0) hangs from the road's own height at each
+  edge, the highest 1ROAD face 0.15 m inside it [invented] (`_road_top_at`, `DAYLIGHT_EDGE_INSET_M`). A station with no
+  road there keeps the centre deck. The report carries `daylight_edge_ref` (the inset, the probes read off the edge, the
+  ones that fell back). It moves where the probe looks, not its limit. Without the key the report is byte for byte as before.
+- `edit_config_0102.py` step 4c writes the key into Milford's config, so the one-command flow from 0.1.14 reproduces it.
+- Entry in `fleet/GATES-CHANGELOG.md` (2026-11-23).
+
+Proven with the old (a05c4924) and the new drive_test on finished workshops (scratchpad `r2/dt_run.py`, `r2/dt_proofs.sh`):
+
+| build | without the key: old vs new | with the key |
+|---|---|---|
+| High Plains `full_course` | byte-identical (md5 278bbe21) | not named |
+| Milford 0.1.14 (`milford_lm`) | byte-identical (230089e7), 0 gaps | 0 gaps in 9,798 probes, all read off the edge, 0 fell back; no other field moves |
+| Milford 0.1.15 (`milford_0115b_reh`) | byte-identical (b1698c84), 69 gaps | **0 gaps** in 9,448 probes, all read off the edge, 0 fell back; only `daylight_gaps` and `fail` move: the street drive_test **passes** |
+
+Install waits for Kevin's word on the key (the Mac is asking him, with before and after: his Nov 22 "Show me before and
+after first").
+
 ## Tests
 
-`tests/tools/test_milford_round2_0102.py`: 15 tests, all PASS on the PC (the numpy ones under the lidar venv). They cover:
+`tests/tools/test_milford_round2_0102.py`: 16 tests, all PASS on the PC (the numpy ones under the lidar venv). They cover:
 
 - the GM loop's kept stations and its new piece;
 - section recovering a known curvature;
@@ -381,7 +443,15 @@ Two causes:
 - the start / finish on the GM lap;
 - the pads as the outliner's, round 1's shading kept;
 - section 5: the ring search finishing (synthetic), the s 970-976 points taking their own station with no step in the
-  committed section, the fold rule, and the key opt-in (Milford only, written by the edit script).
+  committed section, the fold rule, and the key opt-in (Milford only, written by the edit script);
+- section 6: the daylight key opt-in (Milford only, written by the edit script, drive_test reads it).
+
+`tests/geometry/test_drive_test.py::test_daylight_edge_ref_hangs_the_probe_from_the_banked_edge_ledger_0102` (synthetic):
+an 8 m road on a 70 % bank, its left edge 2.8 m over the centre deck and the grass beside it 3.31 m over. Without the key
+there is one gap a station; with it none, every probe read off the edge. Every other gated reading is equal, and a flat
+road's report is equal but for the new field. The drive_test test files (`tests/geometry/test_drive_test*.py`,
+`test_lariat_drive1_switches.py`, `tests/tools/test_calibrate_kinks.py`, `test_seat_edges_grade.py`): 41 passed;
+`test_sand_creek_lm_assets.py` (dense_hops / vertex_kinks opt-ins): 44 PASS under the lidar venv.
 
 `test_seat_edges_grade.py` pins the tool's early return; it now names the third opt-in (`sec_s is None`).
 
@@ -401,7 +471,9 @@ Pillow missing on that python); every Milford test that needs numpy passes under
 
 ## Not done
 
-- **The second rehearsal** from an empty workshop, on the fixes' head, when the PC has the slot. Then check: lane_poke reads
-  0 grass over the road on s 922-975 and the rest of the lap is as 0.1.14 (4 points, max 2.6 mm) or better; the
-  seat-edges section line (vertices); every gate; the kn5 size against 51,192,541 B.
+- **The third rehearsal** from an empty workshop, on section 6's head, when the PC queue reaches it, still 0.1.15. Then
+  check: the street drive_test's daylight gaps 0 with `daylight_edge_ref` 0 fell back; lane_poke as the second rehearsal
+  (0 over on s 922-975 and the lap); every gate; the kn5 expected at the second rehearsal's 51,527,489 B [inferred: nothing in
+  section 6 touches a build step].
+- **Install** only after Kevin's word on the key (the Mac is asking him).
 - **In game:** the GM loop's inner turn and its bank, the shoulder beside the banked corners, the culvert.

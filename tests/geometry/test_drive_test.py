@@ -272,3 +272,51 @@ def test_a_plane_round_a_polygon_corner_reads_vertex_bumps_not_gated_bumps_v0181
     assert dtm._own_travel_step(0.03, -0.01, 1.0, 1.0) == abs(0.03 - -0.01)
     assert dtm._own_travel_step(0.03, 0.01, 1.0, dtm.VERTEX_MIN_TRAVEL_M / 2) is None
     assert abs(dtm._own_travel_step(0.05 * 1.65, 0.05, 1.65, 1.0)) < 1e-12           # a plane across a hop
+
+
+def _banked_project(edge_ref, bank=0.7) -> Path:
+    """ledger 0102: a straight 8 m road on a plane banked across it (y = -bank * x: the left edge, x = -4, stands
+    4 * bank over the centre deck) with the grass continuing the same plane 5 cm under it out to 20 m a side;
+    ``edge_ref``: track.config.json drive_test.daylight_edge_ref"""
+    d = Path(tempfile.mkdtemp())
+    (d / "data").mkdir()
+    cfg = {"slug": "t", "mirror_x": False}
+    if edge_ref:
+        cfg["drive_test"] = {"daylight_edge_ref": True}
+    (d / "track.config.json").write_text(json.dumps(cfg))
+    fy = lambda x, z: -bank * x
+    cl = [(0.0, 0.0, float(z)) for z in range(0, N_M + 1, 5)]
+    (d / "data" / "centerline.local.json").write_text(json.dumps(
+        {"points_xyz_m": [list(p) for p in cl], "widths_m": [W] * len(cl),
+         "origin": {"lon": 0.0, "lat": 0.0, "elev_m": 0.0}}))
+    _write_obj(d / "data" / "track.obj", [("1ROAD_main", _plane_grid(fy, -W / 2, W / 2, -20.0, N_M + 20.0, cell=4.0)),
+                                          ("1GRASS", _plane_grid(lambda x, z: fy(x, z) - 0.05, -20.0, 20.0, -20.0,
+                                                                 N_M + 20.0, cell=4.0))])
+    return d
+
+
+def test_daylight_edge_ref_hangs_the_probe_from_the_banked_edge_ledger_0102():
+    """ledger 0102 DAYLIGHT EDGE REF (opt-in drive_test.daylight_edge_ref): on a 70 % bank the left edge stands 2.8 m
+    over the centre deck and the grass 0.8 m past it 3.31 m over, above the probe's window (7.5 m under to 2.5 m over
+    the centre deck): one gap a station on that side, none on the low side. With the key the same 5 m window hangs from
+    the road's own height 0.15 m inside each edge: no gap, every probe read off the edge, none fell back to the centre.
+    Without the key the report carries no daylight_edge_ref field (the file as before). On a flat road the key changes
+    nothing."""
+    from scripts.geometry import drive_test as dtm
+    old = drive_run(_banked_project(False))
+    new = drive_run(_banked_project(True))
+    stations = old["daylight_gaps"]
+    assert stations > 0, old
+    assert "daylight_edge_ref" not in old
+    assert new["daylight_gaps"] == 0, new
+    dl = new["daylight_edge_ref"]
+    assert dl["inset_m"] == dtm.DAYLIGHT_EDGE_INSET_M == 0.15
+    assert dl["centre_fallback"] == 0 and dl["edge_read"] == 2 * stations, dl
+    # nothing else the gate reads moves with the key
+    for k in ("soft_top_in_lane", "steps_per_km", "severe_steps", "kinks_per_km", "obstruction_stations",
+              "undrivable_corners", "excursion_drops", "floating_furniture", "barrier_missing"):
+        assert new[k] == old[k], k
+    # a flat road: the edge is the centre deck, so the key reads the same window
+    flat_old, flat_new = drive_run(_banked_project(False, bank=0.0)), drive_run(_banked_project(True, bank=0.0))
+    assert flat_old["daylight_gaps"] == flat_new["daylight_gaps"] == 0
+    assert {k: v for k, v in flat_new.items() if k != "daylight_edge_ref"} == flat_old

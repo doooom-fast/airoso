@@ -286,3 +286,21 @@ def test_seat_edges_section_is_opt_in_only_milford_names_it_and_its_config_repro
     src = (MF / "source" / "round2" / "edit_config_0102.py").read_text(encoding="utf-8")
     assert 'd["route"]["seat_edges_section"] = True' in src
     assert _j(MF / "track.config.json")["route"]["_seat_edges_section_doc"] in src.replace('"\n    "', "")
+
+
+def test_daylight_edge_ref_is_opt_in_only_milford_names_it_and_its_config_reproduces():
+    """ledger 0102 section 6: drive_test.daylight_edge_ref (the daylight probe hung from the road's own edge height, the
+    second rehearsal's 69 readings on the bowl's banked side) is named by Milford only; every other track's drive_test
+    reads the centre deck as before (tests/geometry/test_drive_test.py proves the report without the key)"""
+    text = (ROOT / "scripts" / "geometry" / "drive_test.py").read_text(encoding="utf-8")
+    assert '_daylight_edge_ref = bool((cfg.get("drive_test") or {}).get("daylight_edge_ref"))' in text
+    assert "gy_probe, _own = surface.top_at(x + nx * off, z + nz * off, y_ref - 2.5, 5.0)" in text
+    for cfgp in sorted((ROOT / "tracks").glob("*/track.config.json")):
+        dt = _j(cfgp).get("drive_test") or {}
+        if cfgp.parent.name == "milford-road-course-lm":
+            assert dt["daylight_edge_ref"] is True
+        else:
+            assert "daylight_edge_ref" not in dt, cfgp
+    src = (MF / "source" / "round2" / "edit_config_0102.py").read_text(encoding="utf-8")
+    assert 'd.setdefault("drive_test", {})["daylight_edge_ref"] = True' in src
+    assert _j(MF / "track.config.json")["drive_test"]["_daylight_edge_ref_doc"] in src.replace('"\n    "', "")

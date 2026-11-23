@@ -14,6 +14,36 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
+## 2026-11-23 — MEASUREMENT CHANGE (opt-in): drive_test's daylight probe hung from the road's own edge height on a banked turn (ledger 0102 section 6, Milford only; no threshold moved, no bypass)
+
+It moves where the probe looks, not its limit: the same 5 m window, the same limit (0 gaps), the same probe point 0.8 m
+past each pavement edge. Opt-in `drive_test.daylight_edge_ref`, named by Milford only
+(`tests/tools/test_milford_round2_0102.py`). The Mac's call (a) on 2026-11-23; Kevin is shown before and after before any
+install that rests on it.
+
+- **What it was:** `scripts/geometry/drive_test.py` looks 0.8 m past each edge for a surface from 7.5 m under to 2.5 m over
+  the **centre** deck (`top_at(..., deck_c - 2.5, 5.0)`).
+- **Why it misread Milford:** the GM loop's banked inner turn (ledger 0102 section 2, measured: the 1 m lidar grid +3.50 m
+  at u -8, 45-55 % at the outer edge) built its left edge 2.59-3.68 m over the centre deck. 0.1.15's second rehearsal
+  (`milford_0115b_reh`) read 69 daylight gaps, all at s 912-980 on that side. None is a hole: at every one the kerb or
+  grass stands 0.03 m under to 0.30 m over the road's own edge, above the window's top. 0.1.15's first rehearsal read the
+  same 69.
+- **What it is with the key:** the same window hangs from the road's own height at that edge, the highest 1ROAD face
+  `DAYLIGHT_EDGE_INSET_M` 0.15 m [invented] inside it (`_road_top_at`). A station with no road there keeps the centre
+  deck. The report then carries `daylight_edge_ref`: the inset, how many probes read the edge, how many fell back.
+- **Proven** (read-only runs of the old a05c4924 and the new `drive_test.py` on finished workshops, the report write
+  redirected; scratchpad `r2/dt_run.py`, `r2/dt_proofs.sh`):
+
+| build | without the key: old vs new report | with the key |
+|---|---|---|
+| High Plains `full_course` (`high_plains_lm`) | byte-identical (md5 278bbe21) | not named |
+| Milford 0.1.14 (`milford_lm`) | byte-identical (230089e7), 0 gaps | 0 -> **0** gaps in 9,798 probes, every one read off the edge, 0 fell back; no other report field moves |
+| Milford 0.1.15 (`milford_0115b_reh`) | byte-identical (b1698c84), 69 gaps | 69 -> **0** gaps, no new gap in 9,448 probes, every one read off the edge, 0 fell back; only `daylight_gaps` and `fail` move |
+
+- Synthetic: `tests/geometry/test_drive_test.py::test_daylight_edge_ref_hangs_the_probe_from_the_banked_edge_ledger_0102`
+  (an 8 m road on a 70 % bank: one gap a station without the key, none with it; every other gated reading equal; a flat
+  road's report equal but for the new field).
+
 ## 2026-11-22 — Milford round 1 (ledger 0100): a set-in far block's roof judged by its downhill face; the trunk reach derived; no threshold moved, no bypass
 
 No gate threshold, floor or bypass moved; every key opt-in and named by Milford only (`tests/tools/test_milford_finish_0100.py`).

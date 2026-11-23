@@ -11,7 +11,8 @@
    re-outlined on the GM line by their own tool afterwards (source/runoff/scripts/runoff_pads.py --write: "re-run it after
    the line or the widths move"), not edited here.
 4. The banked inner turn's measured cross-section (route.densify.section), and the ground under it cut by the road's folds
-   (route.seat_edges_section).
+   (route.seat_edges_section); drive_test's daylight probe hung from the road's own edge height on that bank
+   (drive_test.daylight_edge_ref, the second rehearsal's 69 readings).
 5. The shoulder (Kevin 2026-11-22, calls page: "Reshape the shoulder"): terrain.shoulder_grade.
 
     python -I tracks/milford-road-course-lm/source/round2/edit_config_0102.py --docs tracks/milford-road-course-lm/track.config.json
@@ -142,6 +143,16 @@ d["route"]["_seat_edges_section_doc"] = (
     "stood up to 2.1 cm over it (61 points, s 925-962). tools/seat_edges_blend.py (tools/seat_edges_section.py) cuts every "
     "face under the road on the section's stretch by the road's own fold under it to <= 1 cm of chord (seat_edges' CHORD "
     "rule, half the prep's 2 cm clearance); nothing moves; self-checked")
+# 4c. drive_test's daylight probe on that bank (0.1.15's second rehearsal, milford_0115b_reh: 69 daylight gaps, s 912-980,
+#     left, every one with kerb or grass 0.03 m under to 0.30 m over the road's own edge; the rehearsal before read the same 69)
+d.setdefault("drive_test", {})["daylight_edge_ref"] = True
+d["drive_test"]["_daylight_edge_ref_doc"] = (
+    "ledger 0102: the second rehearsal of 0.1.15 (milford_0115b_reh, 2026-11-23) read 69 daylight gaps, every one at s "
+    "912-980 on the left, 0.8 m past the edge of the bowl's banked outer side. None is a hole: the built left edge stands "
+    "2.59-3.68 m over the centre deck (the measured bank, section 4) and the kerb or grass there 0.03 m under to 0.30 m over "
+    "that edge, above the probe's window (7.5 m under to 2.5 m over the centre deck). scripts/geometry/drive_test.py hangs the "
+    "same window from the road's own height at each edge (the highest 1ROAD face 0.15 m inside it [invented]): 69 -> 0, no "
+    "new gap in 9,448 probes; on 0.1.14 0 -> 0 in 9,798. It moves where the probe looks, not its limit (0)")
 
 # 5a. the committed 1 m grid's registration to the road's frame (the measured surface's: frame = lidar + shift), read by
 #     tools/lidar_ground_patch.py and tools/shoulder_grade_blend.py; the culvert's patch polygon was drawn on the

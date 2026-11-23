@@ -556,7 +556,7 @@ def test_round_k_keys_are_opt_in():
         assert "signs_name_blades" not in cfg, t
     # round K's candidate (live since round R, 0.2.6: test_round_r_live_is_the_candidate)
     live = json.loads((SC / "track.config.json").read_text(encoding="utf-8"))
-    assert "race_rule" not in (live.get("kerb") or {}) and live["version"] == "0.2.9"
+    assert "race_rule" not in (live.get("kerb") or {}) and live["version"] == "0.2.10"
     sc = json.loads((SC / "source" / "round_k" / "track.config.json").read_text(encoding="utf-8"))
     assert sc["version"] == "0.2.6"
     assert sc["race"]["edge_fold_chord"] is True
@@ -965,7 +965,10 @@ SHIP_0_2_9 = {"source/grid_reach.json", "source/flares_one_sided.lidar.json",
 # Sand Creek round 2 (0.2.10, the Mac 2026-11-23): both heads lit by Lake Murray's author step (ledger 0099)
 SHIP_0_2_10 = {"lamp_heads", "data/lights.heads.json", "source/connector_profiles.lidar.round_2.json"}
 # Sand Creek round 2 (0.2.10): three of round I's held streets on the lidar at their true lon / lat (the round 2 profile file)
-LIVE_R2_KEYS = (("lm_intake", "connector_profiles"), ("lm_intake", "_connector_profiles_doc"))
+LIVE_R2_KEYS = (("lm_intake", "connector_profiles"), ("lm_intake", "_connector_profiles_doc"),
+                # round 2 item 2: the Quebec arm patches and lift zones after wall_49 (wall_49 itself checked unchanged in
+                # tests/tools/test_sand_creek_0098.py::test_sand_creek_quebec_patches_as_measured)
+                ("terrain", "lidar_patches"), ("terrain", "_lidar_patches_doc"))
 
 # ledger 0086 (0.2.7): every key the live config adds to, or changes from, round_k's candidate
 LIVE_0_2_7_KEYS = (("name",), ("_name_doc",), ("slug",), ("version",), ("install_folder",), ("_install_folder_doc",),
@@ -1012,7 +1015,7 @@ def test_round_r_live_is_the_candidate():
     (race.corridor.whole_lap) and verify_kn5 runs both before (closure kn5) and after (--inis) the folder"""
     live = json.loads((SC / "track.config.json").read_text(encoding="utf-8"))
     cand = json.loads((SC / "source" / "round_k" / "track.config.json").read_text(encoding="utf-8"))
-    assert live["version"] == "0.2.9" and cand["version"] == "0.2.6"   # 0.2.9: ledger 0098
+    assert live["version"] == "0.2.10" and cand["version"] == "0.2.6"   # 0.2.9: ledger 0098; 0.2.10: its round 2
     assert live["slug"] == live["install_folder"] == "sand_creek_raceway" and "LM" not in live["name"]
     assert [l["name"] for l in live["layouts"]] == ["Sand Creek Raceway", "Sand Creek Free Roam"]
     assert live["route"]["mouth_returns"] == ["grid_"] and live["route"]["verify_mouth_corners"] is True

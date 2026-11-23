@@ -295,6 +295,82 @@ def test_round_2_profiles_are_round_i_plus_three_streets_at_their_true_lonlat():
     assert "source/connector_profiles.lidar.round_2.json" in _cfg(SC / "ship.json")["sync_in"]["required"] +         _cfg(SC / "ship.json")["sync_in"].get("optional", [])
 
 
+# ------------------------------------------------------------------ the ground beside the Quebec arms (round 2 item 2)
+def _gp_funcs(names):
+    """tools/ground_patch_blend.py's pure helpers, compiled on their own (the module imports bpy and runs main())"""
+    import ast
+    path = ROOT / "tools" / "ground_patch_blend.py"
+    tree = ast.parse(path.read_text(encoding="utf-8"))
+    mod = ast.Module(body=[n for n in tree.body if isinstance(n, ast.FunctionDef) and n.name in names], type_ignores=[])
+    ns = {"math": math}
+    exec(compile(mod, str(path), "exec"), ns)
+    return ns
+
+
+def test_the_edge_lift_goes_up_to_the_lidar_or_the_lip_and_never_down():
+    """ledger 0098 round 2 item 2: a lift patch raises a vertex to min(the measured lidar ground, the lip) and nothing else"""
+    ns = _gp_funcs({"lift_to", "tri_height"})
+    lift = ns["lift_to"]
+    assert lift(24.0, 24.9, 24.7) == 24.7           # the lip (deck - clear) caps it: never past the lip
+    assert lift(24.0, 24.5, 24.7) == 24.5           # the lidar caps it: never above the real ground
+    assert lift(24.8, 24.9, 24.7) is None           # already over its target: it stays (nothing is lowered)
+    assert lift(24.69995, 24.9, 24.7) is None       # within 0.1 mm: no move
+    assert lift(24.0, None, 24.7) is None and lift(24.0, 24.9, None) is None
+    th = ns["tri_height"]
+    t = ((0.0, 0.0, 1.0), (2.0, 0.0, 3.0), (0.0, 2.0, 1.0))  # z = 1 + x
+    assert th(t, 0.5, 0.5) == pytest.approx(1.5) and th(t, 1.0, 0.25) == pytest.approx(2.0)
+    assert th(((0.0, 0.0, 1.0), (1.0, 1.0, 2.0), (2.0, 2.0, 3.0)), 0.5, 0.5) is None     # no plan area
+    src = (ROOT / "tools" / "ground_patch_blend.py").read_text(encoding="utf-8")
+    # a lift patch cuts nothing and carries no feather, weight or split; every other patch takes the old path
+    assert 'if p.get("lift") is not None:' in src and "a lift patch cuts nothing and has no feather, weight or" in src
+    assert 'if p.get("feather_spares_roads") is not None:' in src and "spare.find_nearest((x, z, 0.0), 1e-3)" in src
+    assert "for _ in range(0 if p.get(\"split_mode\") == \"bisect\" else 12):" in src
+
+
+WALL_49_SHA256 = "be105a14b3381c24da4eeb1e2e7e5199ad2cb395935f9060bb8f4679e600adf7"
+QUEBEC = ("quebec_nw78", "quebec_median", "quebec_se84")
+QUEBEC_LIFT = ("quebec_lift_pad", "quebec_lift_arms")
+
+
+def test_sand_creek_quebec_patches_as_measured():
+    """the three ground patches beside the Northfield Quebec arms and the two lift zones (round 2 item 2), measured by
+    tools/lidar_ground_patch.measure off the cached CO_DRCOG_2_2020 tiles; wall_49's measured record untouched"""
+    import hashlib
+    ter = _cfg(SC / "track.config.json")["terrain"]
+    ids = [p["id"] for p in ter["lidar_patches"]]
+    assert ids == ["wall_49", *QUEBEC, *QUEBEC_LIFT]                 # the lift zones last: after the patches beside
+    cand = _cfg(SC / "source" / "round_k" / "track.config.json")["terrain"]
+    assert ter["lidar_patches"][0] == cand["lidar_patches"][0]       # wall_49's own entry as round I declared it
+    assert ter["_lidar_patches_doc"].startswith(cand["_lidar_patches_doc"]) and "ROUND 2 (ledger 0098" in ter["_lidar_patches_doc"]
+    meas = _cfg(SC / ter["lidar_patches_file"])
+    assert list(meas["patches"]) == ids and meas["ept"].endswith("CO_DRCOG_2_2020/ept.json")
+    w = json.dumps(meas["patches"]["wall_49"], separators=(",", ":"))
+    assert hashlib.sha256(w.encode()).hexdigest() == WALL_49_SHA256
+    by = {p["id"]: p for p in ter["lidar_patches"]}
+    for pid in (*QUEBEC, *QUEBEC_LIFT):
+        p, L = by[pid], meas["patches"][pid]
+        assert L["polygon"] == p["polygon"] and L["cell_m"] == 1.0 and len(L["y"]) == L["nx"] * L["nz"]
+        assert L["filled"] <= 0.02 * L["read"], pid                  # a few nodes under no return, filled
+    for pid in QUEBEC:
+        p = by[pid]
+        assert "lift" not in p and set(p["hard_edges"]) <= set(range(len(p["polygon"])))
+        # a feathered patch's feather never moves the ground under a road or walk (the 0.5 m gap and the walk stay the seats')
+        assert (p.get("feather_spares_roads") == ["ROAD", "CURB", "1ROAD"]) == (p["feather_m"] > 0), pid
+    assert by["quebec_median"]["feather_m"] == 0.0 and len(by["quebec_median"]["hard_edges"]) == len(by["quebec_median"]["polygon"])
+    for pid in QUEBEC_LIFT:
+        p = by[pid]
+        assert p["feather_m"] == 0.0 and "hard_edges" not in p and "split_m" not in p
+        assert p["lift"] == {"clear_m": 0.16, "gap_m": 1.25, "road_prefixes": ["ROAD", "CURB", "1ROAD"]}
+    # the lift zones keep off both bridge decks the 2020 lidar reads as class 17: Quebec St over Sand Creek (the pad's
+    # S end, x 1765-1790, z -530..-510) and I-70 NE of the arms' merge (x >= 1860, z >= -415)
+    sys.path.insert(0, str(ROOT / "tools"))
+    import lidar_ground_patch as lgp
+    for pid in QUEBEC_LIFT:
+        poly = [tuple(q) for q in by[pid]["polygon"]]
+        for x, z in ((1775.0, -512.0), (1783.3, -521.1), (1790.0, -510.0), (1865.0, -390.0), (1880.0, -415.0)):
+            assert not lgp.point_in(poly, x, z), (pid, x, z)
+
+
 # ------------------------------------------------------------------ owned surfaces, opt-in
 def test_sand_creek_binds_the_owned_pairs_and_syncs_them():
     cfg, ship = _cfg(SC / "track.config.json"), _cfg(SC / "ship.json")
@@ -309,7 +385,7 @@ def test_sand_creek_binds_the_owned_pairs_and_syncs_them():
         assert Path(a).name in lic and Path(b).name in lic
     for f in (cfg["lm_intake"]["grid_reach"], cfg["lm_intake"]["flare_one_sided"]):
         assert f in ship["sync_in"]["optional"] and (SC / f).is_file()
-    assert cfg["scenery"]["streetlights"]["light_both_heads"] is True and cfg["version"] == "0.2.9"
+    assert cfg["scenery"]["streetlights"]["light_both_heads"] is True and cfg["version"] == "0.2.10"
 
 
 def test_the_0098_keys_are_opt_in():
@@ -327,6 +403,8 @@ def test_the_0098_keys_are_opt_in():
             assert "light_both_heads" not in sl, t
         assert "both_heads_by" not in sl, t                       # ledger 0098's path is Sand Creek's alone
         assert "split_strip_balanced" not in (cfg.get("route") or {}), t
+        for p in (cfg.get("terrain") or {}).get("lidar_patches") or []:                                     # round 2
+            assert "lift" not in p and "feather_spares_roads" not in p, (t, p.get("id"))
 
 
 def test_the_strip_split_is_balanced_only_where_asked():

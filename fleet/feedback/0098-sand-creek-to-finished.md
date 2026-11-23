@@ -535,6 +535,132 @@ re-spread (rows 4-8), its edge line meets the host 10.2 m (+1) / 3.9 m (-1) from
   - **Owed to Sand Creek round 2:** the two paths become one. Sand Creek moves onto lamp_heads (round 2 changes its LIGHTS
     mesh anyway) and both_heads_by goes.
 
+## PC, 2026-11-23: round 2 (0.2.10), the Mac's order
+
+Branch `claude/sc-finish-r2-20261123`, from main fcef3efe (PR 54, 0.2.9). The Mac's order, items 1-7, then the rest of
+round 2 (ledger 0079):
+
+1. **Quebec's 34.2 m flare off** (9663b80f): route.corner_flare_off gains the sandcreek_quebec corner; the intake re-lays
+   v1933..v1951 between its legs' 18.00 and 16.50 m (v1942 34.2 -> 17.24 m).
+2. **The deck edge hanging over the grass on the Northfield Quebec arms**: located and fixed (below).
+3. **SC-D56 back** (9663b80f): signs.json defaults.walk_built_only (opt-in).
+4. **The race kink rise located** (9663b80f): the 7 new kinks sit inside item 1's flare.
+5. **Both heads on lamp_heads** (9663b80f): both_heads_by gone; one path, Lake Murray's.
+6. **The 7 streets onto the lidar:**
+   - grid_secondary_8, grid_secondary_42 and grid_primary_71 joined at their true lon / lat (eac45b45);
+   - grid_primary_15, 11, 39 and 77 held;
+   - E 56th fully on the lidar (1725f2a1, the Mac).
+7. **The Northfield Quebec arms at their true lon / lat** (b798d89c, the G10): the file is committed but NOT wired (the
+   Mac's call, 2026-11-23). The arms are drawn in the grid frame, 4.6 m west of the true street. Round I's heights, item
+   2's patches and its lift caps all read the lidar at those drawn points: one frame. The true-street heights are
+   +0.095..+0.315 m (median +0.186) over round I's, so wiring them would stand the drawn roads 0.19 m over the ground
+   read beside and under them, and every edge hang on the arms would grow by that much. The file waits for the round
+   that moves the whole grid to the true frame, where the patches get re-read too.
+
+### Item 2: where the edge hangs, and why
+
+**The step** (a scratch draft at b798d89c, the chain's own commands through gap_mouths, read after each step at 15
+points):
+- seat_terrain leaves arm 78's north-west half under the road; no step before or after changes it.
+  - Ground minus road at s 0 (3 m past the pad row), 4.5 m left of the centre: −1.03 m before seat, −0.61 after.
+  - On the walk, 6 m left: −1.04 -> −0.70. Seated is −0.16.
+  - The same offset at s 3 seats: −0.82 -> −0.19.
+- Arm 84 seats with round 2's heights: its NW half reads −0.10..−0.19 m from seat on (0.2.9's cluster, up to 0.77 m, is
+  gone).
+
+**The cause** (a copy rebuilt to the weld, seat_terrain alone, its triangles read before and after):
+- After the weld, the ground at 78's NW half is the assembler's 10 m grid.
+- Seat halves it once, to 5 m. The triangle under (1806.07, −459.76) then has two corners pinned (under the road
+  24.767, under the walk 24.894) and a third at (1802.87, −456.59), 2.4 m past the walk, left at 23.547.
+- Past the pinned strip, seat only pulls the ground down; it lifts a dip only when it is over 2.5 m × (1 − t). So the
+  triangle stays tilted down under the walk's edge. The later steps cut it finer (0.45-0.65 m edges at the end of the
+  draft) and keep the tilt.
+- Beside the arms, the built grass is the port's 40 m 3DEP grid. It is 0.4-1.1 m under the lidar ground there. The lidar
+  ground is within −0.12..+0.07 m of the road top at every place the edge hangs (the Mac: within ±0.41 m 6-12 m out).
+
+**Where the draft's edge hangs over 0.30 m before the fix** (road top minus the lowest ground outside the road in a 1.25 m
+square around each edge cell; 0.25 m rasters of the draft's loop.blend; the draft is before prep, so this is not the gate's number):
+
+| m | cells | at | what |
+|---|---|---|---|
+| 0.90 | 22 | (1804.62, −458.38) | 78's NW walk at s 0; under the road there, the ground sags up to 0.78 m over 209 cells |
+| 0.77 | 53 | (1805.62, −471.38) | the median's nose at the pad (0.2.9's 0.935 / 1.07 m spot) |
+| 0.58 | 39 | (1797.88, −458.88) | the pad's NW corner, between Sand Creek Dr N and 78 |
+| 0.42 | 4 | (1803.88, −461.88) | the 78 row's NW corner |
+| 0.36 | 20 | (1812.62, −496.38) | the pad's SE edge |
+| 0.34 | 43 | (1792.62, −519.38) | the pad's S end |
+| 0.32 | 5 | (1834.12, −446.88) | the median's 84 side, 26 m up |
+
+### Item 2: the fix (all opt-in, Sand Creek only)
+
+**Three ground patches** (terrain.lidar_patches, after wall_49):
+- quebec_nw78: the wedge between Sand Creek Dr N and grid_primary_78, from the pad up to z −447. 41 points, 135 m²;
+  feather 2 m on that cut only.
+- quebec_median: the whole median between grid_primary_78 and grid_primary_84, from the nose to the merge. 176 points,
+  246 m²; every edge hard.
+- quebec_se84: the strip along the pad's SE edge, s −32..−12 along grid_primary_84. 12 points, 101 m²; feather 3 m
+  outward.
+- Each is traced off the plan rasters (a 0.2.9 gate OBJ over 1785..1895 × −505..−345, the round 2 draft's loop.blend over
+  1765..1850 × −530..−430). Each keeps at least 0.53 m off every road and walk cell, with no road cell inside, and is
+  hard on its road sides.
+- Measured by tools/lidar_ground_patch.measure itself, on an Ept stand-in that reads only the cached CO_DRCOG_2_2020
+  tiles 17_-5, 17_-6, 18_-4, 18_-5, 18_-6 and refuses a missing one: nothing fetched.
+- Nodes filled for having no returns: 2 / 3 / 0.
+- wall_49's measured record is byte-identical (sha256 be105a14…, pinned in the test).
+- **The median patch is the ground only.** Quebec's raised median (a later round 2 item) builds its curb and top on it
+  by its own step.
+
+**Two lift zones**, last in the list (quebec_lift_pad, quebec_lift_arms), for tools/ground_patch_blend.py's new opt-in
+`lift`:
+- The rule: a TERRAIN vertex under a road-class surface (ROAD, CURB, 1ROAD; the lowest sheet) rises to min(the lidar,
+  that sheet − 0.16 m). A vertex off the road within 1.25 m of one rises to min(the lidar, the road's height at its
+  nearest point − 0.16 m): the lip.
+- It never lowers anything, never lifts above the lidar or past the lip, cuts nothing, and moves nothing past 1.25 m.
+- The zones run s −45..80 along grid_primary_78. They keep off the two bridge decks the 2020 lidar reads as class 17:
+  - Quebec St over Sand Creek, at the pad's S end;
+  - I-70, NE of the arms' merge.
+- Nodes filled: 70 (the largest hole is 26 nodes on Sand Creek Dr N's walk) and 3.
+
+**feather_spares_roads** (opt-in, the two feathered patches): no patch's feather moves a vertex under a road or walk. The
+first test showed why: quebec_se84's end edges lowered the ground under the pad by up to 0.046 m, and quebec_nw78's cut
+lowered it under 78's walk by up to 0.123 m.
+
+**No gate and no threshold changed:** GATES-CHANGELOG is untouched. lm_pads' edge band is unchanged; the lift runs in
+ground_patch, after every cutting step.
+
+### Item 2: measured on the round 2 draft (ground_patch_blend on a copy, before / after, 0.25 m rasters over 1765..1880 × −530..−380)
+
+- **Under the road, sag over 0.30 m:** 360 cells (max 0.775) -> 0 (max 0.296).
+- **Edge hang over 0.30 m:** 238 cells (max 0.898) -> 80 (max 0.372), in 4 clusters:
+  - 0.372 m, 3 cells, at the 78 row's NW corner (1803.88, −461.88): the pad's own edge drops 0.2-0.3 m within 0.7 m (24.86
+    -> 24.57-24.65) while the lidar there is level at 24.75-24.76. The ground was lifted only to the lip of that lower edge
+    (24.48-24.50). **Owed with the pad's deck shape.**
+  - 0.339 m at the pad's S end: the deck held to the lap's S row (below). **Owed.**
+  - 0.368 m in the creek channel W of the pad: the lidar there is 5.5 m down. Real.
+  - 0.355 m NE of the merge, in the I-70 shadow: no class 2 there, outside the zones, unchanged.
+- **The seated ground against the lidar** (|after − lidar|, p50 / p95 / max; before in brackets):
+  - quebec_nw78: 0.007 / 0.043 / 0.288 (0.414 / 0.757 / 0.932);
+  - quebec_median: 0.013 / 0.118 / 0.296 (0.217 / 0.381 / 0.498);
+  - quebec_se84: 0.004 / 0.023 / 0.069 (0.138 / 0.291 / 0.328).
+- **The lifts:**
+  - quebec_lift_pad: 1,242 vertices under a road and 436 beside one, 81 of them capped by the lidar, largest 0.74 m.
+  - quebec_lift_arms: 1,490 and 61, 28 capped, largest 0.23 m.
+- **Elsewhere under the road** (outside the feather fault above): the re-cut triangles moved the ground by at most 4 mm.
+
+### Measured and owed (not round 2)
+
+- **The lap's height on the Quebec St bridge over Sand Creek** (the Mac's wording): the intake levels the deck flat; the
+  2020 lidar's class-17 returns give the real deck's slope.
+  - The pad's S row (24.115, flat) stands 0.26-0.47 m over the class-17 deck (23.65-23.86): +0.26..+0.32 at the E end,
+    +0.45 at the centre, +0.47 at the W end. The creek bed is 5.5 m below the W end (18.59).
+  - The lap at v1950 reads +0.38 over the class-2 ground.
+  - The ground on both sides of the pad's S edge is level (23.81-23.98) and the built grass already matches it
+    (−0.03..+0.06), so no patch is drawn there.
+  - Its own round after round 2: the lap's profile is what every pad and mouth near it follows.
+- **The pad's deck shape at the 78 row's NW corner:** the 0.372 m above.
+- **The true frame:** the whole grid (route_connectors' sphere frame) onto the true one; then item 7's file gets wired
+  and the Quebec patches get re-read.
+
 ## What needs Kevin, a download or the PC
 
 - **Kevin:**
@@ -551,6 +677,7 @@ re-spread (rows 4-8), its edge line meets the host 10.2 m (+1) / 3.9 m (-1) from
   without fetching). The G10's lidar round can take them with the 7 streets.
 - **The PC:**
   - Runbook 0098-1 (the rehearsal).
+  - Round 2: the 0.2.10 rehearsal (the section above), then the install on Kevin's standing word if it is green.
   - The pads session: sandcreek_quebec / dahlia_56th, the two one-sided flares inside their boxes (v769-787, v1924-1950),
     the N Ivy mutual T.
   - On an install: `fleet/ac-installed.json`'s Sand Creek row, 0.2.9.

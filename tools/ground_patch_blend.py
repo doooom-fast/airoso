@@ -19,6 +19,17 @@ Opt-in (ledger 0092, Milford; a patch without these is cut and seated exactly as
     prepped ground, a stand-in), cut the same few edges round after round and doubled duplicate faces each time
     (767,963 faces -> 2,348,881, 1,296,864 of them duplicates, for 146,000 new vertices).
 
+THE EDGE LIFT (opt-in per patch, "lift": {"clear_m", "gap_m", "road_prefixes"}; ledger 0098 round 2, Sand Creek's Quebec
+pad and arms): a lift patch moves ground UP only, never down, and never above the measured lidar ground. Inside its polygon,
+a TERRAIN vertex under a road-class surface (an object named with one of road_prefixes; the lowest sheet over it) rises to
+min(lidar, that sheet - clear_m); a vertex off the road within gap_m of one (in plan) rises to min(lidar, the road's height
+at its nearest point - clear_m): the lip. Nothing is cut, nothing past gap_m moves, and a vertex already at or over its
+target stays where it is. It is for the ground next to a built edge that the seats left under the real ground: beside a
+connector, seat_terrain pins only to route.seat_edge_m and past it only pulls ground down; outside a pad's outline lm_pads
+only lowers within its edge band. Run after the patches that seat the ground beside (a lift patch is listed after them).
+A patch may also name "feather_spares_roads": [prefix, ...] (opt-in, the same round): its feather then leaves every vertex
+under a road-class surface of those names where it is (a soft edge's feather that reaches a road stops at the road's edge).
+
 Self-check, exit 1 and loop.blend not saved: no TERRAIN; a patch with no lattice in the file (re-run the measuring tool);
 a polygon vertex the lattice does not cover; the measured file's polygon not the config's.
 
@@ -35,6 +46,7 @@ from pathlib import Path
 
 import bmesh
 import bpy
+from mathutils.bvhtree import BVHTree
 
 SPLIT_M = 1.5        # [invented] the longest TERRAIN edge left in a patch's box (the lattice is 1 m)
 
@@ -83,6 +95,94 @@ def weight_at(L, x, z):
     u, v = fx - i, fz - j
     return ((1 - u) * (1 - v) * w[j * L["nx"] + i] + u * (1 - v) * w[j * L["nx"] + i + 1]
             + (1 - u) * v * w[(j + 1) * L["nx"] + i] + u * v * w[(j + 1) * L["nx"] + i + 1])
+
+
+def tri_height(t, x, y):
+    """the height of the plane through triangle t ((x, y, z) x 3) at plan point (x, y); None for a degenerate triangle"""
+    (ax, ay, az), (bx, by, bz), (cx, cy, cz) = t
+    d = (by - cy) * (ax - cx) + (cx - bx) * (ay - cy)
+    if abs(d) < 1e-12:
+        return None
+    l1 = ((by - cy) * (x - cx) + (cx - bx) * (y - cy)) / d
+    l2 = ((cy - ay) * (x - cx) + (ax - cx) * (y - cy)) / d
+    return l1 * az + l2 * bz + (1.0 - l1 - l2) * cz
+
+
+def lift_to(z, ground, lip):
+    """the edge lift's rule: up to min(the lidar ground, the lip), never down; None = the vertex stays"""
+    if ground is None or lip is None:
+        return None
+    t = min(ground, lip)
+    return t if z < t - 1e-4 else None
+
+
+def road_sheets(prefixes, box):
+    """the road-class objects' world triangles touching box (x0, x1, y0, y1): (plan BVH at z 0, 3D BVH, triangles)"""
+    x0, x1, y0, y1 = box
+    tris = []
+    for ob in bpy.data.objects:
+        if ob.type != "MESH" or not ob.name.upper().startswith(prefixes):
+            continue
+        mw = ob.matrix_world
+        me = ob.data
+        me.calc_loop_triangles()
+        V = [mw @ v.co for v in me.vertices]
+        for lt in me.loop_triangles:
+            t = [V[i] for i in lt.vertices]
+            if max(q.x for q in t) < x0 or min(q.x for q in t) > x1 or max(q.y for q in t) < y0 or min(q.y for q in t) > y1:
+                continue
+            if abs((t[1].x - t[0].x) * (t[2].y - t[0].y) - (t[2].x - t[0].x) * (t[1].y - t[0].y)) < 2e-4:
+                continue                      # no plan area (a curb face, a skirt): it holds no height to lift to
+            tris.append(tuple((q.x, q.y, q.z) for q in t))
+    if not tris:
+        return None, None, tris
+    faces = [(3 * k, 3 * k + 1, 3 * k + 2) for k in range(len(tris))]
+    flat = BVHTree.FromPolygons([(q[0], q[1], 0.0) for t in tris for q in t], faces)
+    full = BVHTree.FromPolygons([q for t in tris for q in t], faces)
+    return flat, full, tris
+
+
+def edge_lift(bm, L, poly, cfg):
+    """the opt-in edge lift (see the docstring): returns (under-road lifted, beside lifted, capped by the lidar, largest)"""
+    clear, gap = float(cfg["clear_m"]), float(cfg["gap_m"])
+    prefixes = tuple(str(s).upper() for s in cfg["road_prefixes"])
+    xs, ys = [q[0] for q in poly], [q[1] for q in poly]
+    box = (min(xs) - gap, max(xs) + gap, min(ys) - gap, max(ys) + gap)
+    flat, full, tris = road_sheets(prefixes, box)
+    if not tris:
+        raise SystemExit(f"[ground-patch] FATAL: lift: no road-class triangle ({', '.join(prefixes)}) in the patch; not saved")
+    n_under = n_side = capped = 0
+    worst = 0.0
+    for v in bm.verts:
+        x, y = v.co.x, v.co.y
+        if not (box[0] <= x <= box[1] and box[2] <= y <= box[3]) or not point_in(poly, x, y):
+            continue
+        near = flat.find_nearest((x, y, 0.0), gap)
+        if near[0] is None:
+            continue
+        if near[3] < 1e-6:                    # under a road: its lowest sheet
+            lo, top = None, 1e4
+            for _ in range(8):
+                hit = full.ray_cast((x, y, top), (0.0, 0.0, -1.0))
+                if hit[0] is None:
+                    break
+                lo, top = hit[0].z, hit[0].z - 1e-4
+            lip = None if lo is None else lo - clear
+        else:                                 # beside one: the road's height at its nearest point
+            h = tri_height(tris[near[2]], near[0].x, near[0].y)
+            lip = None if h is None else h - clear
+        g = lattice_at(L, x, y)
+        z = lift_to(v.co.z, g, lip)
+        if z is None:
+            continue
+        capped += g < lip
+        worst = max(worst, z - v.co.z)
+        if near[3] < 1e-6:
+            n_under += 1
+        else:
+            n_side += 1
+        v.co.z = z
+    return n_under, n_side, capped, worst
 
 
 def bisect(bm, split, live):
@@ -150,6 +250,20 @@ def main():
         for q in poly:
             if lattice_at(L, q[0], q[1]) is None and not (L["x0"] <= q[0] <= L["x0"] + (L["nx"] - 1) * L["cell_m"]):
                 raise SystemExit(f"[ground-patch] FATAL: {p['id']}: the lattice does not cover {q}; not saved")
+        if p.get("lift") is not None:              # opt-in (ledger 0098 round 2): the edge lift, up only, to the lidar
+            if weighted or F > 0 or p.get("split_mode") or p.get("split_m") is not None:
+                raise SystemExit(f"[ground-patch] FATAL: {p['id']}: a lift patch cuts nothing and has no feather, weight or "
+                                 "split; not saved")
+            bm = bmesh.new()
+            bm.from_mesh(me)
+            nu, ns_, cap, worst = edge_lift(bm, L, poly, p["lift"])
+            bm.to_mesh(me)
+            bm.free()
+            me.update()
+            print(f"[ground-patch] {p['id']}: edge lift: {nu} vertices under a road and {ns_} beside one (within "
+                  f"{float(p['lift']['gap_m']):.2f} m) lifted, {cap} of them to the lidar (under the lip), largest lift "
+                  f"{worst:.2f} m; nothing lowered")
+            continue
         # 1. cut the box's faces down to SPLIT_M edges (Blender X = local x, Y = local z, Z = local y)
         bm = bmesh.new()
         bm.from_mesh(me)
@@ -176,6 +290,12 @@ def main():
                                              and any(bx0 <= v.co.x <= bx1 and bz0 <= v.co.y <= bz1 for v in f.verts)])
         # 2. seat the vertices
         moved, fe, worst = 0, 0, 0.0
+        spare = None                               # opt-in (ledger 0098 round 2): the feather leaves the roads alone
+        if p.get("feather_spares_roads") is not None:
+            spare, _full, _tris = road_sheets(tuple(str(s).upper() for s in p["feather_spares_roads"]), (bx0, bx1, bz0, bz1))
+            if not _tris:
+                spare = None                       # no road in the box: nothing to spare
+        spared = 0
         for v in bm.verts:
             x, z = v.co.x, v.co.y
             if not (bx0 <= x <= bx1 and bz0 <= z <= bz1):
@@ -192,6 +312,9 @@ def main():
                 d_soft = min(seg_dist(x, z, a, b) for a, b in soft)
                 if d_soft > d_all + 1e-6 or d_soft >= F:
                     continue
+                if spare is not None and spare.find_nearest((x, z, 0.0), 1e-3)[0] is not None:
+                    spared += 1
+                    continue
                 w = 1.0 - d_soft / F
                 fe += 1
             else:
@@ -206,7 +329,8 @@ def main():
         me.update()
         print(f"[ground-patch] {p['id']}: TERRAIN {n0} -> {len(me.vertices)} vertices (edges <= {split} m in the box"
               + (", where its weight is over 0" if weighted else "") + f"), {moved} seated on the lidar ground "
-              f"({fe} in the {F:.0f} m feather), largest move {worst:.2f} m")
+              f"({fe} in the {F:.0f} m feather), largest move {worst:.2f} m"
+              + (f"; {spared} under a road left by the feather" if spare is not None else ""))
     bpy.ops.wm.save_as_mainfile(filepath=str(proj / "loop.blend"))
     print(f"[ground-patch] {len(patches)} patch(es); saved loop.blend")
 

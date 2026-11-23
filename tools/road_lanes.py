@@ -112,7 +112,9 @@ route.median_registration's doc, so the southbound road is "reverse" and the nor
 written in this module and registered here, ``SPLIT_ZONE_READERS["college_split"] = read_college_split`` (a kind is
 looked up, never imported from the config), and Lake Murray's key moves the rows from ``exclude`` to
 ``split_zones``: [{"kind": "college_split", "from": 1130, "to": 1476, "source":
-"source/college_r2/college_split.data.json"}]. Until then the rows stay excluded. Not implemented here.
+"source/college_r2/college_split.data.json"}]. IMPLEMENTED (ledger 0099 round 3, item 3): ``read_college_split`` below,
+which mirrors the paint section expression for expression (``college_split_bounds``) and adds the two forks, where the
+divider base runs from the old line's centre to the yellow at the point where the roads part.
 
 NUMBERS. From the paint rule (read, not restated): lane_w 3.65, edge_inset 0.55, line_w 0.12, max_lanes_side 6, and
 ribbon's STUB_PAINT_STOP_M / STUB_BARRIER_HALF_BASE_M. From the assembler: CONNECTOR_SMOOTH (sigma 1.5 points, one
@@ -131,6 +133,7 @@ scripts/aerial/road_wear.DEFAULTS: track_m 1.60 (a car's track, 1.5-1.7 m) and c
 from __future__ import annotations
 
 import argparse
+import ast
 import importlib.util
 import inspect
 import json
@@ -163,12 +166,35 @@ def _load(name: str, path: Path):
 
 RB = _load("_road_lanes_v021_ribbon", V021 / "geometry" / "ribbon.py")
 SM = _load("_road_lanes_v021_smooth", V021 / "geometry" / "smooth.py")
-RW = _load("_road_lanes_road_wear", AIROSO / "scripts" / "aerial" / "road_wear.py")
+RW_PATH = AIROSO / "scripts" / "aerial" / "road_wear.py"
+
+
+class _RoadWear:
+    """scripts/aerial/road_wear.py, loaded when something of it is first asked for. That module needs numpy; this
+    tool needs only two of its DEFAULTS (``rw_defaults`` reads them off its source), so it runs on an interpreter
+    without numpy (the PC's, which runs the chain's plain python steps) and loads the module only for whoever calls
+    into it (the bake inside Blender, the tests' ``rl.RW.wear_at``)."""
+    _mod = None
+
+    def __getattr__(self, name):
+        if _RoadWear._mod is None:
+            _RoadWear._mod = _load("_road_lanes_road_wear", RW_PATH)
+        return getattr(_RoadWear._mod, name)
+
+
+RW = _RoadWear()
+
+
+def rw_defaults() -> dict:
+    """scripts/aerial/road_wear.DEFAULTS, read off the module's source (a literal dict): the same numbers, no import."""
+    tree = ast.parse(RW_PATH.read_text(encoding="utf-8"))
+    node = next(n for n in tree.body if isinstance(n, ast.Assign) and any(getattr(t, "id", None) == "DEFAULTS" for t in n.targets))
+    return ast.literal_eval(node.value)
 
 
 def car_width_m() -> float:
     """A car's width [measured]: twice scripts/aerial/road_wear.DEFAULTS wear.margin_m ("half a 1.9 m car")."""
-    return 2.0 * float(RW.DEFAULTS["wear"]["margin_m"])
+    return 2.0 * float(rw_defaults()["wear"]["margin_m"])
 
 
 # --- the paint rule ---------------------------------------------------------------------------------------------------
@@ -443,6 +469,100 @@ def _check_zone_lane(ln: dict, zone: dict) -> str | None:
     return None
 
 
+# --- College Ave's two one-way roads (ledger 0055 round 2; the reader of split zone "college_split") ---------------------
+
+def _smoothstep(t: float) -> float:
+    t = max(0.0, min(1.0, t))
+    return t * t * (3.0 - 2.0 * t)
+
+
+def college_split_bounds(S: dict, rule: dict, v: int) -> dict:
+    """{+1: (inner, outer), -1: (inner, outer)}: at mainline row v of the zone, each side's inner bound (where its lanes
+    start counting: the paint's own divider base) and its edge line, as DISTANCES from the old line on that side (+1 =
+    west = the southbound road, -1 = east = the northbound). The paint section of
+    source/college_r2/college_middle_blend.py, expression for expression:
+      * the two roads (rows NOSE..TAIL, ``rows.v``): the yellow stands edge_inset inside the road's median edge
+        (``offsets_m`` sb_east + edge_inset; nb_west - edge_inset) and the dividers count lane_w from it;
+      * the forks (rows A0..NOSE and TAIL..A1): the divider base runs from the old line's centre to the yellow at the
+        point where the roads part, eased by the same smoothstep (``fork_t(v) * (meet(v) +- edge_inset)``);
+      * the edge line stands edge_inset inside the built half width (``frame.half_w``) on both sides, everywhere.
+    A base on the far side of the old line is a negative distance (the south fork's west yellow ends 0.72 m east of
+    the old line, where the roads part at -1.27 m)."""
+    R, F = S["rows"], S["frame"]
+    a0, a1 = int(S["mainline"]["from_v"]), int(S["mainline"]["to_v"])
+    nose, tail = int(R["v"][0]), int(R["v"][-1])
+    ei = rule["edge_inset"]
+    off = R["offsets_m"]
+    k = v - nose
+    if nose <= v <= tail:
+        if int(R["v"][k]) != v:
+            raise SystemExit(f"[road_lanes] FATAL: college_split rows.v is not one row per station at v {v}")
+        west, east = float(off["sb_east"][k]) + ei, float(off["nb_west"][k]) - ei
+    else:
+        t = _smoothstep((v - a0) / (nose - a0)) if v < nose else _smoothstep((a1 - v) / (a1 - tail))
+        meet = float(off["sb_east"][0 if v < nose else tail - nose])
+        west, east = t * (meet + ei), t * (meet - ei)
+    outer = float(F["half_w"][v - int(F["from_v"])]) - ei
+    return {1: (west, outer), -1: (-east, outer)}
+
+
+def read_college_split(proj: Path, zone: dict, rule: dict) -> list[dict]:
+    """The lanes of College Ave's two one-way roads and their two forks (mainline rows ``from``..``to`` of the zone),
+    off ``source``: source/college_r2/college_split.data.json, the data the scene's rows were built to. Each side's
+    lanes count from its yellow outward by the paint rule's own division (``side_bounds``, the same clip), and pass the
+    same two tests as every other lane (``road_lanes``: the edge leftover at least min_edge_lane_m wide, a car fits).
+    The mainline runs north on College and + is west, so the southbound road's lanes are "reverse" and the northbound
+    road's "forward". A lane's height is its own road's surface at its offset (a row is tilted, west edge to east
+    edge); on a fork, the fork row's (west edge, line, east edge). Offsets stay offsets from the OLD line, as every
+    mainline lane's are."""
+    S = json.loads((proj / zone["source"]).read_text(encoding="utf-8"))
+    R, F = S["rows"], S["frame"]
+    a0, a1 = int(S["mainline"]["from_v"]), int(S["mainline"]["to_v"])
+    nose, tail = int(R["v"][0]), int(R["v"][-1])
+    if (a0, a1) != (int(zone["from"]), int(zone["to"])):
+        raise SystemExit(f"[road_lanes] FATAL: split zone college_split is rows {zone['from']}-{zone['to']} but "
+                         f"{zone['source']} holds rows {a0}-{a1}")
+    fv0 = int(F["from_v"])
+    fork_y = {int(v): [float(y) for y in ys] for v, ys in zip(R.get("fork_v") or [], R.get("fork_y") or [])}
+    off = R["offsets_m"]
+    fr, per = [], []
+    for v in range(a0, a1 + 1):
+        i = v - fv0
+        fr.append((float(F["x"][i]), float(F["y"][i]), float(F["z"][i]), float(F["nx"][i]), float(F["nz"][i])))
+        b = college_split_bounds(S, rule, v)
+        row = []
+        for side in (1, -1):
+            sp = lanes_between(side_bounds(b[side][0], b[side][1], rule), side)
+            row += [(side, k, lo, hi, k == len(sp)) for k, lo, hi in sp]
+        per.append(row)
+    spec = {"min_edge_lane_m": float(zone.get("min_edge_lane_m", DEFAULTS["min_edge_lane_m"]))}
+    stats = {"edge_strip_km": 0.0, "island_trimmed_km": 0.0, "no_car_fits_km": 0.0, "single_station_runs": 0}
+    lanes = road_lanes("mainline", "split:college_split", fr, False, per, [None] * len(fr), [False] * len(fr), spec, stats)
+
+    def height(v: int, o: float) -> float:
+        if nose <= v <= tail:
+            k = v - nose
+            w_, e_ = ("sb_west", "sb_east") if o >= float(off["sb_east"][k]) else ("nb_west", "nb_east")
+            ow, oe = float(off[w_][k]), float(off[e_][k])
+            t = 0.0 if abs(ow - oe) < 1e-9 else max(0.0, min(1.0, (ow - o) / (ow - oe)))
+            return float(R[w_][k][1]) + (float(R[e_][k][1]) - float(R[w_][k][1])) * t
+        if v in fork_y:
+            hw = float(F["half_w"][v - fv0])
+            yw, yl, ye = fork_y[v]
+            t = max(-1.0, min(1.0, o / hw)) if hw > 0 else 0.0
+            return yl + (yw - yl) * t if t >= 0 else yl + (ye - yl) * (-t)
+        return float(F["y"][v - fv0])
+
+    for ln in lanes:
+        ln["rows"] = [a0 + i for i in ln["rows"]]
+        ln["id"] = "mainline/college_split/" + ln["id"].split("/", 1)[1]
+        ln["points_xyz_m"] = [[p[0], round(height(v, o), 3), p[2]] for p, v, o in zip(ln["points_xyz_m"], ln["rows"], ln["offset_m"])]
+    return lanes
+
+
+SPLIT_ZONE_READERS["college_split"] = read_college_split
+
+
 # --- the build --------------------------------------------------------------------------------------------------------
 def build(proj: Path, cfg: dict, spec: dict) -> dict:
     data = proj / "data"
@@ -567,7 +687,7 @@ def build(proj: Path, cfg: dict, spec: dict) -> dict:
         "frame": "ENU local meters (X=east, Y=up, Z=north)",
         "rule": dict(rule, source="scripts-v021 geometry/ribbon.py lane_markings / connector_markings"),
         "min_edge_lane_m": float(spec["min_edge_lane_m"]), "car_width_m": car_width_m(), "rubber": float(spec["rubber"]),
-        "track_m": float(RW.DEFAULTS["wear"]["track_m"]),
+        "track_m": float(rw_defaults()["wear"]["track_m"]),
         "excluded": spec["exclude"], "split_zones": zones, "sources": sources,
         "summary": {"lanes": len(lanes), "km": {k: round(v, 2) for k, v in km.items()}, "by_group": by_group, **stats},
         "lanes": lanes,

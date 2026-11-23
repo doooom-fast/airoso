@@ -46,7 +46,12 @@
     "required": [
       "track.config.json",
       "pavement_exemptions.json"
-    ]
+    ],
+    "assets": [
+      "assets/textures/asphalt_dense_diffuse.jpg",
+      "assets/textures/asphalt_dense_normal.jpg"
+    ],
+    "_owned_textures_doc": "ledger 0101: the owned asphalt pair the 1ROAD override binds (texture_overrides), from airoso's tracked assets"
   },
   "sync_out": {
     "required": [

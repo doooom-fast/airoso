@@ -3,7 +3,7 @@
   "archetype": "race_circuit",
   "name": "Pikes Peak International Raceway",
   "slug": "pikes_peak_international_raceway",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "mirror_x": false,
   "loop": true,
   "default_width_m": 15.0,
@@ -5393,6 +5393,16 @@
     "PADAPRON": {
       "diffuse": "assets/textures/pad_asphalt_diffuse.jpg",
       "_doc": "the skid pad's sheet: airoso's pad asphalt (CC0), copied in by sync_in.assets (eng_pplm has none)"
+    },
+    "1KERB_SIDEWALK": {
+      "diffuse": "assets/textures/concrete_plain_diffuse.jpg",
+      "normal": "assets/textures/concrete_plain_normal.jpg",
+      "_doc": "ledger 0101 (Kevin 2026-11-22, asked \"The owned asphalt and concrete on the other tracks?\": \"On every track now\"): the edge strip (1KERB_sidewalk) wears the owned plain cast concrete (tools/make_owned_surfaces.py, CC0; a 4 m tile, no joints or tie holes) in place of pbr.TEXTURES' building_* (Hamburg's board-formed wall concrete, mined, personal-use only). Mean 0.51078 against building_diffuse's 0.51109, normal tilt p50 / p90 4.0 / 7.4 deg against 3.5 / 8.9 [measured, Mac]. On road wear's atlas the strip's detail is it / m0: 0.0 % over 1 at this track's last m0 0.76923, as building_* [measured, Mac]"
+    },
+    "1ROAD": {
+      "diffuse": "assets/textures/asphalt_dense_diffuse.jpg",
+      "normal": "assets/textures/asphalt_dense_normal.jpg",
+      "_doc": "ledger 0101 (Kevin 2026-11-22, asked \"The owned asphalt and concrete on the other tracks?\": \"On every track now\"), as ledger 0095 on Milford 0.1.13 and High Plains 0.1.8: the owned dense-graded asphalt (tools/make_owned_surfaces.py, CC0) as the road's 4 m detail and its normal, in place of the borrowed cracked tile (LA Canyons, personal-use only). Its mean colour and relief were measured off the borrowed tile (mean 0.38895 against 0.38795, normal tilt p50 / p90 13.2 / 24.0 deg against 12.9 / 23.5 [measured, Mac]), so road wear's m0 and calibration hold"
     }
   },
   "race": {
@@ -6012,7 +6022,8 @@
             "0.2.0",
             "0.2.1",
             "0.2.2",
-            "0.2.3"
+            "0.2.3",
+            "0.2.4"
           ],
           "undrivable_corners": [
             {
@@ -6028,7 +6039,7 @@
           "excursion_drops": [],
           "ask_after_driving": "Kevin asked for this note: after he has driven the infield layout, ask him how the hairpin drives (keep the exemption, widen it, or drop the infield layout). The exemption is for 0.2.0 only",
           "_doc": "tools/stage_force.py (gate step stage_force, last): --force-install may pass the red infield drive_test only where every red row is this hairpin, on the infield layout, for 0.2.0; any other red row (a soft top, a step rate, a corner anywhere else, another layout) refuses it (tools/ship_track.sh checks the verdict before a forced install)",
-          "_versions_doc": "0.2.1 (furniture pass 1, 2026-11-10) carries Kevin's force for the same hairpin at the same place, as the Lariat's Drive-1 force was carried to its LM port (ledger 0078 round 6): the furniture pass changes no road; the window, the layout and every other row's refusal are unchanged, and the ask_after_driving note still stands. 0.2.2 (road wear, 2026-11-10 overnight; the Mac: carry it \"the same way: same place, same window\") carries it the same way: the road wear moves no position (compare_ab: every mesh bit-identical), only the road's UVs and material. NOT installed forced on that: the PC installs nothing forced on a relayed word; Kevin's own yes for 0.2.2 is asked first. 0.2.3 (road wear tone only, runbook 0084-3, 2026-11-11): Kevin to the Mac, asked \"May Pikes Peak 0.2.3 use the hairpin exemption you gave 0.2.0?\": \"Carry it over\" (relayed, ledger 0084). The same place and window. The road wear changes only the road's UVs and material. The pad aprons carry main's pad-fold fix (84fefe1a): 8 triangles fewer each. With 0.2.1's pad tool every mesh's positions equal 0.2.1's (pc_023/pad_ab). NOT installed forced on the relayed word: the PC forces only on Kevin's yes typed on the PC. Kevin typed on the PC, 2026-11-11, asked \"Install Pikes Peak 0.2.3 forced past the infield hairpin?\": \"Yes, force it\". Installed with --force-install on that yes (runbook 0084-4 step 4), the road-wear gate being adf3828's."
+          "_versions_doc": "0.2.1 (furniture pass 1, 2026-11-10) carries Kevin's force for the same hairpin at the same place, as the Lariat's Drive-1 force was carried to its LM port (ledger 0078 round 6): the furniture pass changes no road; the window, the layout and every other row's refusal are unchanged, and the ask_after_driving note still stands. 0.2.2 (road wear, 2026-11-10 overnight; the Mac: carry it \"the same way: same place, same window\") carries it the same way: the road wear moves no position (compare_ab: every mesh bit-identical), only the road's UVs and material. NOT installed forced on that: the PC installs nothing forced on a relayed word; Kevin's own yes for 0.2.2 is asked first. 0.2.3 (road wear tone only, runbook 0084-3, 2026-11-11): Kevin to the Mac, asked \"May Pikes Peak 0.2.3 use the hairpin exemption you gave 0.2.0?\": \"Carry it over\" (relayed, ledger 0084). The same place and window. The road wear changes only the road's UVs and material. The pad aprons carry main's pad-fold fix (84fefe1a): 8 triangles fewer each. With 0.2.1's pad tool every mesh's positions equal 0.2.1's (pc_023/pad_ab). NOT installed forced on the relayed word: the PC forces only on Kevin's yes typed on the PC. Kevin typed on the PC, 2026-11-11, asked \"Install Pikes Peak 0.2.3 forced past the infield hairpin?\": \"Yes, force it\". Installed with --force-install on that yes (runbook 0084-4 step 4), the road-wear gate being adf3828's. 0.2.4 (ledger 0101, the owned asphalt and concrete, 2026-11-22) carries it the same way as 0.2.2, on the Mac's word: the same place and window; only the 1ROAD / 1KERB_SIDEWALK materials' textures change, no position or UV. NOT installed forced on that: Kevin's own \"Carry it over\" and his yes typed on the PC first."
         }
       }
     }
@@ -6060,6 +6071,10 @@
         "ai": "source/road_wear/fast_lane.oval.ai",
         "_doc": "a line Kevin records with CSP's AI recorder in this layout, copied here; absent = the minimum-curvature line inside the built edges [model]"
       }
-    ]
+    ],
+    "detail_highpass_m": {
+      "1ROAD": 0.5
+    },
+    "_detail_highpass_doc": "ledger 0101 (Kevin 2026-11-22, asked \"The owned asphalt and concrete on the other tracks?\": \"On every track now\"), as ledger 0095 on Milford 0.1.13 and High Plains 0.1.8: the road's detail diffuse loses what is coarser than 0.5 m (scripts/aerial/road_wear.detail_highpass) before the / m0; the normal is kept. Its far mips go flat and the macro (this track's NAIP 2023 tone; rubber 'none') alone carries the large scale. The 4 m repeat it removes was measured on Milford's and High Plains' renders, 20-50 / 50-100 / 100-200 m: 0.70 / 0.33 / 0.16 % (owned) -> 0.29 / 0.09-0.10 / 0.05-0.06 % (owned + 0.5 m) [measured there, not on this track]. The owned tile's std/mean 27.90 -> 27.87 % with the cut; over 1 after / m0 at this track's last m0 0.76923: 0.408 % (the cracked tile 1.27 %, as data/road_wear.json records) [measured, Mac]. 0.5 m [invented]. The edge strip (1KERB_SIDEWALK) keeps its detail unfiltered"
   }
 }

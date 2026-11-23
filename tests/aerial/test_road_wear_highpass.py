@@ -1,6 +1,8 @@
 """Ledger 0095 (Kevin 2026-11-19: "Yes, pilot the owned asphalt with the high-pass"): the road detail's high-pass
 (scripts/aerial/road_wear.detail_highpass / highpass_cuts, used by tools/road_wear_blend.py step 5b) and the pilot's
 bindings on Milford and High Plains (texture_overrides 1ROAD = the owned asphalt_dense pair, road_wear.detail_highpass_m).
+Ledger 0101 (Kevin 2026-11-22: "On every track now") gives the same pair and cut to the fleet's other road-wear tracks, and
+the pair alone to the Lariat and the freeway (no road_wear there); tests/aerial/test_owned_textures_fleet.py checks those.
 
 numpy only; the real tile's check needs Pillow and is skipped without it.
 """
@@ -18,7 +20,11 @@ from scripts.aerial import road_wear as rw
 
 ROOT = Path(__file__).resolve().parents[2]
 PILOT = {"milford-road-course-lm", "high-plains-lm"}
-PAIR = ["assets/textures/asphalt_dense_diffuse.jpg", "assets/textures/asphalt_dense_normal.jpg"]
+# ledger 0101: the fleet's other installed road-wear tracks take the pilot's pair and cut; the Lariat and the freeway bind
+# the pair with no road_wear, so no cut
+FLEET_CUT = {"aspen-lm", "del-mar-lm", "exotics-racing-lv-lm", "grand-junction-lm", "pikes-peak-lm", "pueblo-lm"}
+FLEET_NO_ROAD_WEAR = {"lookout-lariat-lm", "san-diego-freeway-lm"}
+PAIR =["assets/textures/asphalt_dense_diffuse.jpg", "assets/textures/asphalt_dense_normal.jpg"]
 
 
 def _wave(n: int, tile_m: float, wl_m: float) -> np.ndarray:
@@ -66,16 +72,17 @@ def test_cuts_are_opt_in_and_checked():
             rw.highpass_cuts(s)
 
 
-def test_only_the_pilot_tracks_opt_in_and_they_bind_the_owned_pair():
+def test_only_the_pilot_and_fleet_tracks_opt_in_and_they_bind_the_owned_pair():
     seen = set()
     for cfgp in sorted((ROOT / "tracks").glob("*/track.config.json")):
         cfg = json.loads(cfgp.read_text(encoding="utf-8"))
         slug = cfgp.parent.name
         ov = (cfg.get("texture_overrides") or {}).get("1ROAD") or {}
         hp = (cfg.get("road_wear") or {}).get("detail_highpass_m")
-        if slug not in PILOT:
+        if slug not in PILOT | FLEET_CUT:
             assert hp is None, slug                                       # every other track unchanged
-            assert "asphalt_dense" not in json.dumps(ov), slug
+            if slug not in FLEET_NO_ROAD_WEAR:                            # ledger 0101: the pair, no cut
+                assert "asphalt_dense" not in json.dumps(ov), slug
             continue
         seen.add(slug)
         assert hp == {"1ROAD": 0.5}, slug
@@ -84,7 +91,7 @@ def test_only_the_pilot_tracks_opt_in_and_they_bind_the_owned_pair():
         assert rw.highpass_cuts(rw.spec_from_config(cfg)) == {"1ROAD": 0.5}
         ship = json.loads((cfgp.parent / "ship.json").read_text(encoding="utf-8"))
         assert set(PAIR) <= set(ship["sync_in"]["assets"]), slug         # the PC's workshop gets the pair
-    assert seen == PILOT, seen                                            # sparse checkouts may lack other tracks, not these
+    assert seen == PILOT | FLEET_CUT, seen                                # sparse checkouts may lack other tracks, not these
 
 
 def test_the_owned_tile_keeps_its_close_look():

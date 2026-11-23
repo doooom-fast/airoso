@@ -4,7 +4,7 @@
   "name": "Aspen Motorsports Park",
   "_name_doc": "Kevin 2026-11-07: \"Get rid of Lm Version from names, nothing should be on any other engine now\" / \"LM is the airoso engine\". 0.1.4 (2026-11-09): no \"(LM engine)\" in the display name, and the slug and install_folder are the plain aspen_motorsports_park. The old-engine track (tracks/aspen) gave that slug up: its slug and folder are aspen_motorsports_park_v067 (S7, fleet.cli lint)",
   "slug": "aspen_motorsports_park",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "mirror_x": false,
   "loop": true,
   "default_width_m": 9.0,
@@ -152,6 +152,16 @@
     "1KERB": {
       "diffuse": "textures/kerb_redwhite.png",
       "_doc": "the kerb paint the aerial shows (red and white), a flat two-band stripe (this port's own file). Keyed 1KERB, the row the traced kerbs (1KERB_circuit_*) bind; not 1KERB_RACE (race furniture)"
+    },
+    "1KERB_SIDEWALK": {
+      "diffuse": "assets/textures/concrete_plain_diffuse.jpg",
+      "normal": "assets/textures/concrete_plain_normal.jpg",
+      "_doc": "ledger 0101 (Kevin 2026-11-22, asked \"The owned asphalt and concrete on the other tracks?\": \"On every track now\"): the edge strip (1KERB_sidewalk) wears the owned plain cast concrete (tools/make_owned_surfaces.py, CC0; a 4 m tile, no joints or tie holes) in place of pbr.TEXTURES' building_* (Hamburg's board-formed wall concrete, mined, personal-use only). Mean 0.51078 against building_diffuse's 0.51109, normal tilt p50 / p90 4.0 / 7.4 deg against 3.5 / 8.9 [measured, Mac]. On road wear's atlas the strip's detail is it / m0: 0.0 % over 1 at this track's last m0 0.76923, as building_* [measured, Mac]"
+    },
+    "1ROAD": {
+      "diffuse": "assets/textures/asphalt_dense_diffuse.jpg",
+      "normal": "assets/textures/asphalt_dense_normal.jpg",
+      "_doc": "ledger 0101 (Kevin 2026-11-22, asked \"The owned asphalt and concrete on the other tracks?\": \"On every track now\"), as ledger 0095 on Milford 0.1.13 and High Plains 0.1.8: the owned dense-graded asphalt (tools/make_owned_surfaces.py, CC0) as the road's 4 m detail and its normal, in place of the borrowed cracked tile (LA Canyons, personal-use only). Its mean colour and relief were measured off the borrowed tile (mean 0.38895 against 0.38795, normal tilt p50 / p90 13.2 / 24.0 deg against 12.9 / 23.5 [measured, Mac]), so road wear's m0 and calibration hold"
     }
   },
   "terrain": {
@@ -185,6 +195,10 @@
         "ai": "source/road_wear/fast_lane.full.ai",
         "_doc": "a line Kevin records with CSP's AI recorder in this layout, copied here; absent = the minimum-curvature line inside the built edges [model]"
       }
-    ]
+    ],
+    "detail_highpass_m": {
+      "1ROAD": 0.5
+    },
+    "_detail_highpass_doc": "ledger 0101 (Kevin 2026-11-22, asked \"The owned asphalt and concrete on the other tracks?\": \"On every track now\"), as ledger 0095 on Milford 0.1.13 and High Plains 0.1.8: the road's detail diffuse loses what is coarser than 0.5 m (scripts/aerial/road_wear.detail_highpass) before the / m0; the normal is kept. Its far mips go flat and the macro (this track's NAIP 2023 tone; rubber 'none') alone carries the large scale. The 4 m repeat it removes was measured on Milford's and High Plains' renders, 20-50 / 50-100 / 100-200 m: 0.70 / 0.33 / 0.16 % (owned) -> 0.29 / 0.09-0.10 / 0.05-0.06 % (owned + 0.5 m) [measured there, not on this track]. The owned tile's std/mean 27.90 -> 27.87 % with the cut; over 1 after / m0 at this track's last m0 0.76923: 0.408 % (the cracked tile 1.27 %, as data/road_wear.json records) [measured, Mac]. 0.5 m [invented]. The edge strip (1KERB_SIDEWALK) keeps its detail unfiltered"
   }
 }

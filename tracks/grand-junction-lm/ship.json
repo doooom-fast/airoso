@@ -50,7 +50,14 @@
       "data/heightfield.npy",
       "data/heightfield.meta.json",
       "source/road_wear/fast_lane.full.ai"
-    ]
+    ],
+    "assets": [
+      "assets/textures/asphalt_dense_diffuse.jpg",
+      "assets/textures/asphalt_dense_normal.jpg",
+      "assets/textures/concrete_plain_diffuse.jpg",
+      "assets/textures/concrete_plain_normal.jpg"
+    ],
+    "_owned_textures_doc": "ledger 0101: the owned asphalt pair the 1ROAD override binds and the owned concrete pair the 1KERB_SIDEWALK override binds (texture_overrides), from airoso's tracked assets"
   },
   "sync_out": {
     "required": [

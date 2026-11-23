@@ -3,7 +3,7 @@
   "archetype": "real_road",
   "name": "Lookout Mountain Lariat (LM engine)",
   "slug": "lookout_lariat_lm",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "_version_0_17_1_doc": "0.17.1 (2026-11-03, ledger 0048 'Drive 1 on the Mac'): gates.drive1.force_exemptions, Kevin's 'Yes, force it' for the real hairpins' corner rule and the open drops, for this build only; the chain's Drive-1 summary line names each gate's own exit. The ground and road geometry are 0.17.0's.",
   "_version_0_17_doc": "0.17.0 (2026-11-03, ledger 0048 'Drive 1 on the Mac'): A2's C12 / C13 arcs at the mesh (hairpin_fit.mesh_fit), no fold plateaus or pads on the fitted hairpins (road_profile.fold_plateaus / fold_pads false), no engine walls in the Drive-1 draft (road_edge.draft_walls false), and P3a's ground: the road-building cross-section by station with stacked legs held to their own leg (terrain.cross_section.build), on a 13.3 m medium grid refined to 1.11 m in the corridor (terrain_cell_m, corridor_refine_*). Built and gated on the Mac's engine draft only; not yet through the PC chain.",
   "_version_doc": "the LM-engine port's own version line (ledger 0078); the live track's is 0.17.x",
@@ -386,7 +386,8 @@
       },
       "force_exemptions": {
         "versions": [
-          "0.1.0"
+          "0.1.0",
+          "0.1.1"
         ],
         "approved": "Kevin 2026-11-03, asked 'Install the Lariat for Drive 1 at real hairpin widths, with open drops?': \"Yes, force it\"",
         "keys": {
@@ -409,7 +410,7 @@
           }
         },
         "_doc": "tools/drive1_gates.py STRICT force rule (fleet/GATES-CHANGELOG.md 2026-11-03): with this block declared, --force-install passes a red Drive-1 build only where every red reason is one of these two, and only for the build versions listed (a per-build exemption). Every other red row (severe steps included: the junction-mouth steps are engine artifacts, not forced) and every other July key, and obstruction / floating / soft-top, refuse the force.",
-        "_versions_doc": "ledger 0078 round 6: Kevin's Drive-1 force (\"Yes, force it\", 2026-11-03) carried to the LM-engine port for the same two rows only, versioned for the port's own 0.1.0; every other row must be green"
+        "_versions_doc": "ledger 0078 round 6: Kevin's Drive-1 force (\"Yes, force it\", 2026-11-03) carried to the LM-engine port for the same two rows only, versioned for the port's own 0.1.0; every other row must be green; 0.1.1 (ledger 0101, the owned asphalt, 2026-11-22) carries the same two rows on the Mac's word, as Pikes Peak 0.2.2's: only the 1ROAD material's textures change, no position or UV. NOT installed forced on that: Kevin's own yes first"
       }
     }
   },
@@ -1535,6 +1536,11 @@
       "diffuse": "assets/textures/gravel_road_diffuse.png",
       "normal": "assets/textures/gravel_road_normal.png",
       "_doc": "the 0.4 m verge is gravel, not the strip's stock concrete"
+    },
+    "1ROAD": {
+      "diffuse": "assets/textures/asphalt_dense_diffuse.jpg",
+      "normal": "assets/textures/asphalt_dense_normal.jpg",
+      "_doc": "ledger 0101 (Kevin 2026-11-22, asked \"The owned asphalt and concrete on the other tracks?\": \"On every track now\"), as ledger 0095 on Milford 0.1.13 and High Plains 0.1.8: the owned dense-graded asphalt (tools/make_owned_surfaces.py, CC0) as the road's diffuse and normal on the prep's 4 m planar grid, in place of the borrowed cracked tile (LA Canyons, personal-use only). Mean 0.38895 against 0.38795, normal tilt p50 / p90 13.2 / 24.0 deg against 12.9 / 23.5 [measured, Mac]. This track has no road_wear, so no macro carries the large scale and no detail high-pass applies (road_wear.detail_highpass_m is road wear's: scripts/aerial/road_wear.highpass_cuts, tools/road_wear_blend.py step 5b)"
     }
   },
   "_texture_overrides_doc": "D7 item 3 reversed: the July 1GRASS override (ambientCG Grass001, 'alpine grass instead of dry dirt', Kevin July) is gone; the real foothill slopes are tawny short grass July-October. Until a CC0 tawny foothill-grass ground texture exists (the GAP in dossier 8), 1GRASS falls back to the engine default ground_dry_diffuse (dry dirt/chaparral, mined from LA Canyons: Full package only; the public zip swaps it with tools/repack_kn5_textures.py). GrassFX blades take the ground texel's colour. July's LIGHTPOST/LAMPHEAD skins belonged to its street_lamp_new.obj; V3's lamps are Kevin's lamp_post.obj + lamp_lens.obj (dossier 8).",

@@ -4,7 +4,7 @@
   "ui_series": "doooom San Diego",
   "slug": "san_diego_freeway_lm",
   "install_folder": "san_diego_freeway_lm",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "author": "doooom",
   "year": 2026,
   "archetype": "real_road",
@@ -247,5 +247,22 @@
     "line_decks_lidar": "deck_profiles.lidar.json",
     "_line_decks_lidar_doc": "ledger 0080 2a round 3: the line rides the lidar class-17 deck (tools/network_deck_lidar.py) over each declared deck where its own edges were read, straight between readings, anchored on the levelled crest height at each span end; the levelled height only where no reading (ws13: the levelled Morena deck sat 1-2 m under the lidar, a 2.9 m step to WB beside it)",
     "_network_connectors_2b_doc": "ledger 0080 2b round 1: the I 5, SR 52 and SR 163 mainlines, both ways, phase '2b', each with its partner carriageway (the pair naip_carriageways reads a median between). tools/network_connectors.py resolves them as it does I 8 westbound (edge_ids when the resolver refuses ref + direction); what is built of each is what NAIP measured, never the draft's lane-count widths."
+  },
+  "texture_overrides": {
+    "1KERB_SIDEWALK": {
+      "diffuse": "assets/textures/concrete_plain_diffuse.jpg",
+      "normal": "assets/textures/concrete_plain_normal.jpg",
+      "_doc": "ledger 0101 (Kevin 2026-11-22, asked \"The owned asphalt and concrete on the other tracks?\": \"On every track now\"): the edge strip (1KERB_sidewalk) wears the owned plain cast concrete (tools/make_owned_surfaces.py, CC0; a 4 m tile, no joints or tie holes) in place of pbr.TEXTURES' building_* (Hamburg's board-formed wall concrete, mined, personal-use only). Mean 0.51078 against building_diffuse's 0.51109, normal tilt p50 / p90 4.0 / 7.4 deg against 3.5 / 8.9 [measured, Mac], on the prep's 4 m planar grid"
+    },
+    "1WALL_GUARD": {
+      "diffuse": "assets/textures/concrete_plain_diffuse.jpg",
+      "normal": "assets/textures/concrete_plain_normal.jpg",
+      "_doc": "ledger 0101 (Kevin 2026-11-22, asked \"The owned asphalt and concrete on the other tracks?\": \"On every track now\"): the deck's concrete rail (1WALL_guard, the parapet) wears the owned plain cast concrete (tools/make_owned_surfaces.py, CC0; a 4 m tile, no joints or tie holes) in place of pbr.TEXTURES' building_* (Hamburg's board-formed wall concrete, mined, personal-use only). Mean 0.51078 against building_diffuse's 0.51109, normal tilt p50 / p90 4.0 / 7.4 deg against 3.5 / 8.9 [measured, Mac], on the prep's 4 m planar grid"
+    },
+    "1ROAD": {
+      "diffuse": "assets/textures/asphalt_dense_diffuse.jpg",
+      "normal": "assets/textures/asphalt_dense_normal.jpg",
+      "_doc": "ledger 0101 (Kevin 2026-11-22, asked \"The owned asphalt and concrete on the other tracks?\": \"On every track now\"), as ledger 0095 on Milford 0.1.13 and High Plains 0.1.8: the owned dense-graded asphalt (tools/make_owned_surfaces.py, CC0) as the road's diffuse and normal on the prep's 4 m planar grid, in place of the borrowed cracked tile (LA Canyons, personal-use only). Mean 0.38895 against 0.38795, normal tilt p50 / p90 13.2 / 24.0 deg against 12.9 / 23.5 [measured, Mac]. This track has no road_wear, so no macro carries the large scale and no detail high-pass applies (road_wear.detail_highpass_m is road wear's: scripts/aerial/road_wear.highpass_cuts, tools/road_wear_blend.py step 5b)"
+    }
   }
 }

@@ -350,8 +350,8 @@ def test_the_check_refuses_an_opted_in_build_without_the_heads_file():
 def test_both_heads_is_lake_murrays_alone_and_wired_as_an_author_step():
     assert CFG["scenery"]["streetlights"]["light_both_heads"] is True
     au = SHIP["steps"]["author"]
-    # (ledger 0055 round 2: College's own step stands before it, on the road and the lamps as they ship)
-    assert au[:2] == ["college_split", "lamp_heads"] and au[-3:] == ["race_author", "signs", "race_verify"]   # the race steps keep their order
+    # (ledger 0055 round 2: College's own step and the medians' tops stand before it, on the scene as it ships)
+    assert au[:3] == ["college_split", "median_tops", "lamp_heads"] and au[-3:] == ["race_author", "signs", "race_verify"]   # the race steps keep their order
     assert "author_lamp_heads() {" in TEXT and "tools/author_lamp_heads_blend.py" in TEXT
     assert "data/lights.heads.json" in SHIP["sync_out"]["files"]
     for p in OTHER_CONFIGS:
@@ -430,6 +430,7 @@ def test_the_road_and_the_sidewalks_bind_the_owned_pairs():
             assert name in FINISH_FOUR, p
 
 
-def test_version_is_0_20_4():
-    """0.20.3 round 1; 0.20.4 round 1c (the walk's back grade, tests/tools/test_lake_murray_0099_walk_grade.py)"""
-    assert CFG["version"] == "0.20.4"
+def test_version_is_0_20_5():
+    """0.20.3 round 1; 0.20.4 round 1c (the walk's back grade, tests/tools/test_lake_murray_0099_walk_grade.py); 0.20.5
+    round 2 (College Avenue as two roads and the medians' grass tops, ledger 0055; the version the Mac named)"""
+    assert CFG["version"] == "0.20.5"

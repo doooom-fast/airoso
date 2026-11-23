@@ -5,7 +5,10 @@
 Reads the workshop's data/track.obj (the street layout's kn5 set as one OBJ: scripts/modkit/kn5_to_gate_obj),
 data/centerline.local.json and data/median_bands.json. For every row of every island (the mainline's
 island_w_by_vertex, each connector island's points) that is at least MIN_W wide, at the island's centre and at a
-quarter of its width to each side: the highest 1GRASS surface and the highest 1ROAD surface straight above / below.
+quarter of its width to each side (where the island tapers to its nose, its last three rows: half the BUILT deck's own
+half width, tools/author_median_blend.py's taper; 2026-11-23, before that a nose row's two side points stood outside
+the island as built): the highest grass surface and the highest 1ROAD surface straight above / below. Grass = 1GRASS,
+and the medians' own top object where a build has one (1LAWN_median: tools/author_median_tops_blend.py).
 
   grass over the road by OVER_M or more   -> the island's top is grass
   grass under the road, or no grass       -> the island shows the road's asphalt between its curbs
@@ -30,6 +33,9 @@ OVER_M = 0.05        # grass this far over the road is a grass top (the tool's s
 verts = []
 tris = {"1GRASS": [], "1ROAD": []}
 names = {"1GRASS": set(), "1ROAD": set()}
+GRASS_NAMES = ("1GRASS", "1LAWN_MEDIAN")
+NOSE_VERTS, NOSE_HALF, DECK_INSET = 3, 0.25, 0.22      # tools/author_median_blend.py
+END_IN = 0.3         # an island's end row is measured this far inside it, along its line (the row is the deck's own edge)
 kind = None
 with open(proj / "data" / "track.obj", "r", encoding="utf-8", errors="replace") as fh:
     for line in fh:
@@ -39,7 +45,7 @@ with open(proj / "data" / "track.obj", "r", encoding="utf-8", errors="replace") 
             verts.append((float(p[1]), float(p[2]), float(p[3])))
         elif c in ("o ", "g "):
             nm = line[2:].strip()
-            kind = next((k for k in tris if nm.upper().startswith(k)), None)
+            kind = "1GRASS" if nm.upper().startswith(GRASS_NAMES) else ("1ROAD" if nm.upper().startswith("1ROAD") else None)
             if kind:
                 names[kind].add(nm)
         elif c == "f " and kind:
@@ -111,8 +117,18 @@ for name, pts, iw, s in lines:
             L = math.hypot(tx, tz) or 1.0
             nx, nz = -tz / L, tx / L
             votes = []
-            for o in (0.0, iw[r] / 4.0, -iw[r] / 4.0):
-                x, z = pts[r][0] + nx * o, pts[r][2] + nz * o
+            half = iw[r] / 2.0
+            for si in (r - k, j - 1 - r):
+                if si < NOSE_VERTS:
+                    half = min(half, NOSE_HALF + (iw[r] / 2.0 - NOSE_HALF) * si / NOSE_VERTS)
+            q = min(iw[r] / 4.0, max(0.05, half - DECK_INSET) / 2.0)
+            sx = sz = 0.0                      # an island's first and last row is the deck's end edge: END_IN inside it
+            if j - k > 1 and r in (k, j - 1):
+                o_ = pts[k + 1] if r == k else pts[j - 2]
+                L_ = math.hypot(o_[0] - pts[r][0], o_[2] - pts[r][2]) or 1.0
+                sx, sz = (o_[0] - pts[r][0]) / L_ * END_IN, (o_[2] - pts[r][2]) / L_ * END_IN
+            for o in (0.0, q, -q):
+                x, z = pts[r][0] + sx + nx * o, pts[r][2] + sz + nz * o
                 yr = top("1ROAD", x, z)
                 if yr is None:
                     votes.append("no_slab")

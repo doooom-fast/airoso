@@ -596,6 +596,18 @@ author_college_split() {
   done
 }
 
+author_median_tops() {
+  # ledger 0055, "Known defect" (the Mac 2026-11-23: option (a); Lake Murray, opt-in route.median_tops): every raised median
+  # showed the road's asphalt between its curbs, because the median tool's grass top is part of TERRAIN and the prep (the
+  # engine's, not changed) sets every 1GRASS vertex that has pavement under it to the deck less 0.02 m. The top of every
+  # island is moved, face for face, out of TERRAIN into route.median_tops.object (1LAWN_...: in AC the name is the surface
+  # and picks the material; track.config.json lawn_as_grass gives the LAWN key GRASS's own values). After college_split
+  # (which rebuilds College's islands), before every step that reads the scene. Key absent = no-op, the blend not opened.
+  # Only a ship.json that names it
+  step "author: every median's grass top into its own object (tools/author_median_tops_blend.py: out of TERRAIN, which the prep pins under the road; ledger 0055; self-checked; not opted in = no-op)"
+  (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_median_tops_blend.py" -- "$PROJ" 2>&1 | grep "^\[median-tops\]\|FATAL\|Error\|Traceback" )
+}
+
 author_lamp_heads() {
   # ledger 0099 (Kevin 2026-11-22: "Yes, light both heads"; opt-in scenery.streetlights.light_both_heads): every two-arm lamp's
   # back head gets its lens (LIGHTS_back, each LIGHTS_0 lens turned about its own pole), so ext_config clusters a second CSP

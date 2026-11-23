@@ -27,6 +27,10 @@ What changes (and nothing else); every edit is idempotent, a second run changes 
   scenery.treefx.lidar_plants   the bank's own plants off the lidar (college_bank_plants.lidar_plants.json, the entry
                         college_plants_data.py writes; its list is source/college_r2/college_bank_plants.json).
 
+  route.median_tops, lawn_as_grass   (--medians; the medians, ledger 0055 "Known defect", option (a)) every island's grass
+                        top in its own object, 1LAWN_median (tools/author_median_tops_blend.py, the chain's author step
+                        median_tops), and the LAWN surface key written with GRASS's own values.
+
 Without --write: prints what would change. With --write: rewrites the config. A workshop's config is dumped plain and
 the two plant files are copied to <project>/source/college_r2/ (in the chain ship.json's sync_in brings them); airoso's
 own keeps its hand-compacted lines (the dump is put back into the file's own layout, or the write is refused)."""
@@ -118,6 +122,21 @@ tfx["median_spots"] = {
     "file": SPOTS_FILE,
 }
 tfx["lidar_plants"] = ENTRY
+if "--medians" in args:
+    cfg["route"]["median_tops"] = {
+        "_doc": "ledger 0055, 'Known defect of the current build' (the Mac 2026-11-23, option (a)): every raised median showed the "
+                "road's asphalt between its curbs, because its grass top was part of TERRAIN and the prep sets every 1GRASS vertex "
+                "with pavement under it to the deck less 0.02 m (2,486 of 2,486 island rows on 0.20.3). Opt-in key of the chain's "
+                "author step median_tops (tools/author_median_tops_blend.py): every island's top is moved, face for face, out of "
+                "TERRAIN into this object, which the prep does not pin. The name is the surface and the material: 1LAWN is the "
+                "engine table's other physical turf row (the same grass textures this track's ground wears); lawn_as_grass gives "
+                "its surface key GRASS's own values. tools/make_treefx.py seats the median plants on it. Absent = no-op.",
+        "object": "1LAWN_median",
+    }
+    cfg["lawn_as_grass"] = True
+    cfg["_lawn_as_grass_doc"] = ("ledger 0055 (the medians): scripts/ac/track_folder.py writes the LAWN surface block with the GRASS "
+                                 "block's own values, so a car on a median's grass top (1LAWN_median, this track's only LAWN mesh) "
+                                 "is on grass, exactly. Absent = LAWN as every other track has it.")
 
 
 def diff(a, b, path=""):

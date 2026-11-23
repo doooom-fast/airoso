@@ -56,6 +56,17 @@ def test_surface_materials_list_every_physical_tile_off_the_gate_obj():
         raise AssertionError("no gate OBJ must stop the TreeFX writer, not fall back to a guessed tile list")
 
 
+def test_the_medians_own_tops_join_the_seating_list_only_where_declared():
+    """Ledger 0055: route.median_tops.object names the medians' grass tops (their own object since the prep pins
+    1GRASS under the road); TreeFX seats on it too, so a median's plants keep their feet on the island. Not declared
+    (every other track) = the list as before, even where a 1LAWN tile exists"""
+    d = _project()
+    _gate_obj(d, ["1GRASS_1", "1LAWN_median", "1GRASS_0", "1ROAD_road", "1LAWN_3"])
+    assert mt.surface_materials(d) == "1GRASS_0_mat, 1GRASS_1_mat, 1ROAD_road_mat"
+    (d / "track.config.json").write_text(json.dumps({"slug": "tiny", "route": {"median_tops": {"object": "1LAWN_median"}}}))
+    assert mt.surface_materials(d) == "1GRASS_0_mat, 1GRASS_1_mat, 1LAWN_median_mat, 1ROAD_road_mat"
+
+
 def test_plan_is_what_build_writes():
     d = _project()
     p = mt.plan(d)

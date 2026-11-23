@@ -4,7 +4,7 @@
   "ui_series": "",
   "_ui_series_doc": "Engine track_folder prefixes the CM display name with ui_series (default 'K10 Colorado'); empty = use the track name as-is (SD names already carry the K10 - San Diego branding).",
   "slug": "san_diego_lake_murray",
-  "version": "0.20.4",
+  "version": "0.20.5",
   "author": "k10-san-diego",
   "year": 2026,
   "_about": "A single drivable LOOP around Lake Murray (Kevin's childhood neighborhood). This repo is the standalone, Blender-first home for the track: the loop is mapped from the REAL roads (OpenStreetMap) at REAL elevation (USGS 3DEP), imported into Blender, and shaped there interactively (Kevin designs, Claude operates) BEFORE any kn5 export. Start point = just the 5-road main loop; everything else is added deliberately, in Blender.",
@@ -190,6 +190,10 @@
         1130,
         1476
       ]
+    },
+    "median_tops": {
+      "_doc": "ledger 0055, 'Known defect of the current build' (the Mac 2026-11-23, option (a)): every raised median showed the road's asphalt between its curbs, because its grass top was part of TERRAIN and the prep sets every 1GRASS vertex with pavement under it to the deck less 0.02 m (2,486 of 2,486 island rows on 0.20.3). Opt-in key of the chain's author step median_tops (tools/author_median_tops_blend.py): every island's top is moved, face for face, out of TERRAIN into this object, which the prep does not pin. The name is the surface and the material: 1LAWN is the engine table's other physical turf row (the same grass textures this track's ground wears); lawn_as_grass gives its surface key GRASS's own values. tools/make_treefx.py seats the median plants on it. Absent = no-op.",
+      "object": "1LAWN_median"
     }
   },
   "loop": true,
@@ -1540,5 +1544,7 @@
     "surface": "gate_obj"
   },
   "install_folder": "san_diego_lake_murray_v4",
-  "_install_folder_doc": "The folder under content/tracks this track installs as. tools/ship_sd.sh spells it \"${SLUG}_v3\"; track_folder names it in the root README.txt; tests/tools/test_ship_sd_chain.py pins the two together."
+  "_install_folder_doc": "The folder under content/tracks this track installs as. tools/ship_sd.sh spells it \"${SLUG}_v3\"; track_folder names it in the root README.txt; tests/tools/test_ship_sd_chain.py pins the two together.",
+  "lawn_as_grass": true,
+  "_lawn_as_grass_doc": "ledger 0055 (the medians): scripts/ac/track_folder.py writes the LAWN surface block with the GRASS block's own values, so a car on a median's grass top (1LAWN_median, this track's only LAWN mesh) is on grass, exactly. Absent = LAWN as every other track has it."
 }

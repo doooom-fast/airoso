@@ -92,10 +92,29 @@ ribbon is swept there). Speedway is a stitched lap that drives through both pads
 (`race.laps`, `junction_pads`); Speedway Reverse stays on the mainline through both. The two rows of each pad are
 chosen where the read is clean; the numbers above are the read's, to be confirmed on the outline.
 
-Still to read before code: the pad declaration (`lm_pads.pads`, `source/pads/<id>.json`, `tools/draft_pad_outline.py`:
-this pad's outline comes from the NAIP / lidar read, not a lidar intensity edge), how `verify_pads.py` judges a pad
-whose third arm is a piece that exists only in the split, and how the race corridor zones a pad a lap drives
-straight through.
+What the pad tooling says (read 2026-11-23):
+
+- **`tools/lm_pads_blend.py` cannot be run as it is on Lake Murray** ("Lake Murray never runs it"): it is a draft step
+  for the circuit ports' edge-strip section, and Lake Murray's streets carry a curb-and-walk section in `CURB`. Lake
+  Murray's own pads (J2-J4) come from `tools/junction_pad.py` + `tools/author_junction_pad_blend.py`, which weld onto
+  connector ends and take no lap arm. So the new step builds the fork decks itself, with the same parts both tools
+  use: the assembler's row layout (`tools/mouth_weld.py` `mesh_layout` / `road_index`: left edge, centre, right
+  edge), `draft_pads`' deck fill and seam fade, `stub_geom`'s K-rail.
+- **A third arm is already a known shape** (`lm_pads.arms: "streets"`, ledger 0079): "each arm's end row joins the
+  deck exactly as a lap cut row does: spliced into the outline along its box edge, a seam (its vertices pinned), its
+  departure from the lidar faded in". The northbound piece's first and last rows are that arm.
+- **The step between the carriageways is grade, not seam** (the Mac's check). The deck's heights are the lidar's 1 m
+  ground, so it carries the real fall between the northbound and southbound sides (0.6 to 1.3 m at the two ends)
+  across the deck's width. Each arm's row is pinned at that arm's own heights, and since the design's heights are the
+  same lidar smoothed over 15 m, the deck's departure at a seam is centimetres, faded in over the seam's length.
+- **The gate takes them as pads.** `tools/verify_pads.py` reads `data/pads.built.json` and judges, on the built
+  OBJ: deck, curb and barriers present; single coverage; every arm's seam within 10 mm and each arm row's three
+  vertices matched within 1 mm; no ground over the deck; no curb over it; the node's height. The step records the two
+  forks there in `author_junction_pad_blend.py`'s schema (objects `1ROAD_pad_<id>`, `1KERB_sidewalk_pad<id>`; seams
+  per arm). No threshold moves.
+- **The race corridor already has a zone for it.** In `barrier_bands.py` every vertex outside a closure run is `box`
+  (or `whole` inside the one whole-street interval): an open intersection. The two forks are declared as boxes and
+  the closure runs stop at their rows.
 
 ## Keyed entries in `track.config.json` (round 1's base)
 
@@ -118,8 +137,18 @@ set in its real direction, as that tool already writes each direction as its own
 
 ## Open before code
 
-- The fork pads' declaration, outline and gate (above).
+- The exact rows of each fork (the south one between v1130 and v1172, the north one between v1444 and v1476),
+  chosen on the measured outline.
 - What the prep does with the piece beside the mainline (tiling of `ROAD`, the ground split within 16 m of a road).
 - The Speedway lane on a 10 m carriageway: full width with both curb strips, or something narrower.
 - Whether the bank needs a barrier along the northbound road's inner edge in Free Roam (in the race layouts the
   northbound piece's own curb strips seal it).
+
+## Order of work
+
+1. The data: the northbound piece's record and the mainline's moved vertices, widths and island widths, written to a
+   scratch workshop only; the stitched Speedway lap declared and `race_lap.stitch` run on it (no Blender).
+2. The scene, ribbons only: the mainline's rows moved, the piece's ribbon built, the old faces gone; self-checks.
+3. The two fork decks, their curbs and seams; `verify_pads` on the built OBJ of the scratch scene.
+4. Ground, curbs, walks, paint, lamps; then the race steps of the chain in the scratch workshop.
+5. A full rehearsal through the Mac's queue.

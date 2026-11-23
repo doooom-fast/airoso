@@ -498,6 +498,66 @@ if WRITE:
     conns = j["connectors"] if isinstance(j, dict) and "connectors" in j else j
     conns[:] = [c for c in conns if c.get("name") != PIECE] + [out["piece"]]
     p.write_text(json.dumps(j), encoding="utf-8")
+    # the east lamps: the scene step (college_ground_blend.py) raised every lamp part east of the built line by what the
+    # road's east edge rose at its place; the lamp data follows by the same rule, per lamp, or tools/check_lights_ini.py
+    # finds no light at a recorded lens
+    lp = data / "lights.local.json"
+    if lp.exists():
+        _p, LJ = load("lights.local.json")
+        keep(lp)
+        rise_row = {v: (edge_y["nb_east"][v] - (P0[v][1] + LIFT)) for v in ZONE}
+
+        def rise_at(x, z):
+            """(row, offset from the built line, the east edge's rise interpolated along the road) at a plan point"""
+            v = min(range(FRAME[0], FRAME[1] + 1), key=lambda q: (P0[q][0] - x) ** 2 + (P0[q][2] - z) ** 2)
+            nx, nz = frame(v)
+            dx, dz = x - P0[v][0], z - P0[v][2]
+            off, al = dx * nx + dz * nz, dx * nz - dz * nx
+            v2 = v + (1 if al >= 0 else -1)
+            seg = math.hypot(P0[v2][0] - P0[v][0], P0[v2][2] - P0[v][2]) or 1.0
+            t = min(1.0, abs(al) / seg)
+            return v, off, rise_row.get(v, 0.0) * (1.0 - t) + rise_row.get(v2, 0.0) * t
+
+        lens = LJ.get("provenance", {}).get("lens_xyz") or []
+        raised = []
+        for i, head in enumerate(LJ.get("lampheads") or []):
+            base = (LJ.get("lamp_bases_xz") or [])[i] if i < len(LJ.get("lamp_bases_xz") or []) else (head[0], head[2])
+            v, off, _r = rise_at(base[0], base[1])
+            if not A0 < v < A1 or off >= 0.0 or math.hypot(base[0] - P0[v][0], base[1] - P0[v][2]) > 40.0:
+                continue                           # only lamps whose foot stands east of the built line on the zone's rows
+            rec = {"lamp": i, "v": v, "base_offset_m": round(off, 2)}
+            r_head = rise_at(head[0], head[2])[2]
+            rec["head_y_was"], head[1] = head[1], round(head[1] + r_head, 4)
+            rec["head_y"] = head[1]
+            if i < len(lens):
+                r_lens = rise_at(lens[i][0], lens[i][2])[2]
+                rec["lens_y_was"], lens[i][1] = lens[i][1], round(lens[i][1] + r_lens, 4)
+                rec["lens_y"], rec["rise_m"] = lens[i][1], round(r_lens, 3)
+            for row in (LJ.get("seat_check") or {}).get("rows") or []:
+                if row.get("lamp") == i:
+                    r_base = rise_at(base[0], base[1])[2]
+                    for key in ("base_y", "ground_y", "foot_y"):
+                        if isinstance(row.get(key), (int, float)):
+                            row[key] = round(row[key] + r_base, 3)
+            raised.append(rec)
+        LJ["college_split"] = {"_doc": "the east lamps on College rose with the walk they stand on (ledger 0055 round 2; "
+                                       "source/college_r2/college_split_data.py): head, lens and the seat check's heights",
+                               "raised": raised}
+        lp.write_text(json.dumps(LJ), encoding="utf-8")
+        print(f"[lights] {len(raised)} east lamps raised in data/lights.local.json, by {min(r['rise_m'] for r in raised):.2f} to {max(r['rise_m'] for r in raised):.2f} m")
+    # the released ground: the zone that held the old cut now holds the whole split (the prep leaves released ground as
+    # the scene has it: the bank's top and the east shelf are authored, not feathered)
+    gp = data / "ground_release.json"
+    if gp.exists():
+        _p, GJ = load("ground_release.json")
+        keep(gp)
+        for z_ in GJ.get("zones") or []:
+            if z_.get("name") == "college_split_cut":
+                z_["s_m"] = [round(S1[A0], 1), round(S1[A1], 1)]
+                if "v" in z_:
+                    z_["v"] = [float(A0), float(A1)]
+                print(f"[release] zone college_split_cut -> s {z_['s_m']} (rows v{A0}..v{A1}), sides {z_.get('sides')}, reach {z_.get('reach_m')} m")
+        gp.write_text(json.dumps(GJ), encoding="utf-8")
     keep(cfg_path)
     c2 = json.loads(cfg_path.with_name(cfg_path.name + ".pre-split").read_text(encoding="utf-8"))
     c2.setdefault("race", {}).setdefault("laps", {})[LAP] = lap

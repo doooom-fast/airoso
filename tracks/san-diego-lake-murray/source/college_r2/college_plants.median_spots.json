@@ -1,0 +1,1069 @@
+{
+ "_doc": "ledger 0055 round 2 (the College split), tools/make_treefx.py scenery.treefx.median_spots: median_planting spots of data/scatter_positions.json by index. drop = not planted: the road under its island is gone and it would stand on pavement (every one of them is bare on the lidar, under 0.3 m). foot_y = planted where it is, its foot on the bank's top (the island it stood on is the bank now). Written by source/college_r2/college_plants_data.py.",
+ "drop": [
+  {
+   "index": 124,
+   "x": -1439.438,
+   "z": -450.763,
+   "station_m": 3342.6,
+   "v": 1116,
+   "where": "pavement beside a new island nose",
+   "why": "bare on the lidar (0.05 m); stands on pavement beside a new island nose since the split"
+  },
+  {
+   "index": 125,
+   "x": -1439.905,
+   "z": -444.596,
+   "station_m": 3348.7,
+   "v": 1118,
+   "where": "fork pavement",
+   "why": "bare on the lidar (0.07 m); stands on fork pavement since the split"
+  },
+  {
+   "index": 126,
+   "x": -1440.921,
+   "z": -438.377,
+   "station_m": 3354.9,
+   "v": 1120,
+   "where": "fork pavement",
+   "why": "bare on the lidar (0.05 m); stands on fork pavement since the split"
+  },
+  {
+   "index": 127,
+   "x": -1442.273,
+   "z": -432.025,
+   "station_m": 3361.2,
+   "v": 1122,
+   "where": "fork pavement",
+   "why": "bare on the lidar (0.06 m); stands on fork pavement since the split"
+  },
+  {
+   "index": 128,
+   "x": -1448.273,
+   "z": -427.518,
+   "station_m": 3367.6,
+   "v": 1124,
+   "where": "fork pavement",
+   "why": "bare on the lidar (0.06 m); stands on fork pavement since the split"
+  },
+  {
+   "index": 129,
+   "x": -1448.158,
+   "z": -420.638,
+   "station_m": 3373.8,
+   "v": 1126,
+   "where": "fork pavement",
+   "why": "bare on the lidar (0.08 m); stands on fork pavement since the split"
+  },
+  {
+   "index": 130,
+   "x": -1451.283,
+   "z": -415.314,
+   "station_m": 3380.0,
+   "v": 1128,
+   "where": "fork pavement",
+   "why": "bare on the lidar (0.06 m); stands on fork pavement since the split"
+  },
+  {
+   "index": 131,
+   "x": -1453.492,
+   "z": -409.599,
+   "station_m": 3386.0,
+   "v": 1130,
+   "where": "fork pavement",
+   "why": "bare on the lidar (0.05 m); stands on fork pavement since the split"
+  },
+  {
+   "index": 132,
+   "x": -1457.389,
+   "z": -404.707,
+   "station_m": 3392.2,
+   "v": 1132,
+   "where": "fork pavement",
+   "why": "bare on the lidar (0.04 m); stands on fork pavement since the split"
+  },
+  {
+   "index": 133,
+   "x": -1461.671,
+   "z": -400.049,
+   "station_m": 3398.3,
+   "v": 1134,
+   "where": "fork pavement",
+   "why": "bare on the lidar (0.06 m); stands on fork pavement since the split"
+  },
+  {
+   "index": 134,
+   "x": -1464.929,
+   "z": -394.84,
+   "station_m": 3404.5,
+   "v": 1136,
+   "where": "fork pavement",
+   "why": "bare on the lidar (0.07 m); stands on fork pavement since the split"
+  },
+  {
+   "index": 135,
+   "x": -1467.009,
+   "z": -388.853,
+   "station_m": 3410.7,
+   "v": 1138,
+   "where": "fork pavement",
+   "why": "bare on the lidar (0.1 m); stands on fork pavement since the split"
+  },
+  {
+   "index": 136,
+   "x": -1468.688,
+   "z": -382.515,
+   "station_m": 3416.9,
+   "v": 1140,
+   "where": "fork pavement",
+   "why": "bare on the lidar (0.18 m); stands on fork pavement since the split"
+  },
+  {
+   "index": 137,
+   "x": -1472.663,
+   "z": -377.816,
+   "station_m": 3423.0,
+   "v": 1142,
+   "where": "fork pavement",
+   "why": "bare on the lidar (0.17 m); stands on fork pavement since the split"
+  },
+  {
+   "index": 138,
+   "x": -1476.495,
+   "z": -373.141,
+   "station_m": 3429.0,
+   "v": 1144,
+   "where": "fork pavement",
+   "why": "bare on the lidar (0.14 m); stands on fork pavement since the split"
+  },
+  {
+   "index": 139,
+   "x": -1481.857,
+   "z": -369.587,
+   "station_m": 3435.0,
+   "v": 1146,
+   "where": "fork pavement",
+   "why": "bare on the lidar (0.06 m); stands on fork pavement since the split"
+  },
+  {
+   "index": 140,
+   "x": -1482.837,
+   "z": -362.944,
+   "station_m": 3441.0,
+   "v": 1148,
+   "where": "fork pavement",
+   "why": "bare on the lidar (0.07 m); stands on fork pavement since the split"
+  },
+  {
+   "index": 141,
+   "x": -1488.595,
+   "z": -359.672,
+   "station_m": 3447.0,
+   "v": 1150,
+   "where": "fork pavement",
+   "why": "bare on the lidar (0.16 m); stands on fork pavement since the split"
+  },
+  {
+   "index": 142,
+   "x": -1491.981,
+   "z": -354.726,
+   "station_m": 3453.0,
+   "v": 1152,
+   "where": "fork pavement",
+   "why": "bare on the lidar (0.17 m); stands on fork pavement since the split"
+  },
+  {
+   "index": 143,
+   "x": -1495.489,
+   "z": -349.867,
+   "station_m": 3459.0,
+   "v": 1154,
+   "where": "fork pavement",
+   "why": "bare on the lidar (0.18 m); stands on fork pavement since the split"
+  },
+  {
+   "index": 144,
+   "x": -1496.204,
+   "z": -343.03,
+   "station_m": 3465.0,
+   "v": 1156,
+   "where": "fork pavement",
+   "why": "bare on the lidar (0.05 m); stands on fork pavement since the split"
+  },
+  {
+   "index": 145,
+   "x": -1500.156,
+   "z": -338.481,
+   "station_m": 3471.0,
+   "v": 1158,
+   "where": "fork pavement",
+   "why": "bare on the lidar (0.04 m); stands on fork pavement since the split"
+  },
+  {
+   "index": 146,
+   "x": -1503.078,
+   "z": -333.202,
+   "station_m": 3477.0,
+   "v": 1160,
+   "where": "fork pavement",
+   "why": "bare on the lidar (0.06 m); stands on fork pavement since the split"
+  },
+  {
+   "index": 147,
+   "x": -1506.662,
+   "z": -328.388,
+   "station_m": 3483.0,
+   "v": 1162,
+   "where": "fork pavement",
+   "why": "bare on the lidar (0.04 m); stands on fork pavement since the split"
+  },
+  {
+   "index": 148,
+   "x": -1513.192,
+   "z": -325.642,
+   "station_m": 3489.0,
+   "v": 1164,
+   "where": "fork pavement",
+   "why": "bare on the lidar (0.04 m); stands on fork pavement since the split"
+  },
+  {
+   "index": 149,
+   "x": -1515.026,
+   "z": -319.566,
+   "station_m": 3495.0,
+   "v": 1166,
+   "where": "fork pavement",
+   "why": "bare on the lidar (0.04 m); stands on fork pavement since the split"
+  },
+  {
+   "index": 150,
+   "x": -1520.077,
+   "z": -315.761,
+   "station_m": 3501.0,
+   "v": 1168,
+   "where": "fork pavement",
+   "why": "bare on the lidar (0.05 m); stands on fork pavement since the split"
+  },
+  {
+   "index": 151,
+   "x": -1521.447,
+   "z": -309.38,
+   "station_m": 3507.1,
+   "v": 1170,
+   "where": "fork pavement",
+   "why": "bare on the lidar (0.06 m); stands on fork pavement since the split"
+  },
+  {
+   "index": 152,
+   "x": -1525.964,
+   "z": -305.223,
+   "station_m": 3513.1,
+   "v": 1172,
+   "where": "fork pavement",
+   "why": "bare on the lidar (0.05 m); stands on fork pavement since the split"
+  },
+  {
+   "index": 153,
+   "x": -1530.197,
+   "z": -300.873,
+   "station_m": 3519.0,
+   "v": 1174,
+   "where": "southbound pavement",
+   "why": "bare on the lidar (0.06 m); stands on southbound pavement since the split"
+  },
+  {
+   "index": 155,
+   "x": -1535.831,
+   "z": -290.215,
+   "station_m": 3531.0,
+   "v": 1178,
+   "where": "southbound pavement",
+   "why": "bare on the lidar (0.04 m); stands on southbound pavement since the split"
+  },
+  {
+   "index": 159,
+   "x": -1550.991,
+   "z": -271.56,
+   "station_m": 3555.0,
+   "v": 1186,
+   "where": "southbound pavement",
+   "why": "bare on the lidar (0.04 m); stands on southbound pavement since the split"
+  },
+  {
+   "index": 163,
+   "x": -1564.855,
+   "z": -252.005,
+   "station_m": 3578.9,
+   "v": 1194,
+   "where": "southbound pavement",
+   "why": "bare on the lidar (0.02 m); stands on southbound pavement since the split"
+  },
+  {
+   "index": 219,
+   "x": -1847.413,
+   "z": 392.263,
+   "station_m": 4290.2,
+   "v": 1432,
+   "where": "southbound pavement",
+   "why": "bare on the lidar (0.07 m); stands on southbound pavement since the split"
+  },
+  {
+   "index": 223,
+   "x": -1858.284,
+   "z": 413.643,
+   "station_m": 4314.2,
+   "v": 1440,
+   "where": "southbound pavement",
+   "why": "bare on the lidar (0.05 m); stands on southbound pavement since the split"
+  },
+  {
+   "index": 224,
+   "x": -1861.048,
+   "z": 418.965,
+   "station_m": 4320.2,
+   "v": 1442,
+   "where": "southbound pavement",
+   "why": "bare on the lidar (0.05 m); stands on southbound pavement since the split"
+  },
+  {
+   "index": 225,
+   "x": -1863.133,
+   "z": 424.671,
+   "station_m": 4326.2,
+   "v": 1444,
+   "where": "fork pavement",
+   "why": "bare on the lidar (0.17 m); stands on fork pavement since the split"
+  },
+  {
+   "index": 226,
+   "x": -1865.411,
+   "z": 430.267,
+   "station_m": 4332.1,
+   "v": 1446,
+   "where": "fork pavement",
+   "why": "bare on the lidar (0.1 m); stands on fork pavement since the split"
+  },
+  {
+   "index": 227,
+   "x": -1867.168,
+   "z": 436.16,
+   "station_m": 4338.1,
+   "v": 1448,
+   "where": "fork pavement",
+   "why": "bare on the lidar (0.08 m); stands on fork pavement since the split"
+  },
+  {
+   "index": 228,
+   "x": -1873.938,
+   "z": 439.2,
+   "station_m": 4344.1,
+   "v": 1450,
+   "where": "fork pavement",
+   "why": "bare on the lidar (0.05 m); stands on fork pavement since the split"
+  },
+  {
+   "index": 229,
+   "x": -1873.694,
+   "z": 446.251,
+   "station_m": 4350.1,
+   "v": 1452,
+   "where": "fork pavement",
+   "why": "bare on the lidar (0.05 m); stands on fork pavement since the split"
+  },
+  {
+   "index": 230,
+   "x": -1879.853,
+   "z": 449.659,
+   "station_m": 4356.2,
+   "v": 1454,
+   "where": "fork pavement",
+   "why": "bare on the lidar (0.08 m); stands on fork pavement since the split"
+  },
+  {
+   "index": 231,
+   "x": -1879.354,
+   "z": 456.979,
+   "station_m": 4362.2,
+   "v": 1456,
+   "where": "fork pavement",
+   "why": "bare on the lidar (0.07 m); stands on fork pavement since the split"
+  },
+  {
+   "index": 232,
+   "x": -1885.881,
+   "z": 460.155,
+   "station_m": 4368.3,
+   "v": 1458,
+   "where": "fork pavement",
+   "why": "bare on the lidar (0.07 m); stands on fork pavement since the split"
+  },
+  {
+   "index": 233,
+   "x": -1885.352,
+   "z": 467.625,
+   "station_m": 4374.4,
+   "v": 1460,
+   "where": "fork pavement",
+   "why": "bare on the lidar (0.11 m); stands on fork pavement since the split"
+  },
+  {
+   "index": 234,
+   "x": -1890.718,
+   "z": 471.383,
+   "station_m": 4380.4,
+   "v": 1462,
+   "where": "fork pavement",
+   "why": "bare on the lidar (0.07 m); stands on fork pavement since the split"
+  },
+  {
+   "index": 235,
+   "x": -1893.314,
+   "z": 476.849,
+   "station_m": 4386.4,
+   "v": 1464,
+   "where": "fork pavement",
+   "why": "bare on the lidar (0.04 m); stands on fork pavement since the split"
+  },
+  {
+   "index": 236,
+   "x": -1896.94,
+   "z": 481.645,
+   "station_m": 4392.4,
+   "v": 1466,
+   "where": "fork pavement",
+   "why": "bare on the lidar (0.07 m); stands on fork pavement since the split"
+  },
+  {
+   "index": 237,
+   "x": -1901.734,
+   "z": 485.698,
+   "station_m": 4398.4,
+   "v": 1468,
+   "where": "fork pavement",
+   "why": "bare on the lidar (0.04 m); stands on fork pavement since the split"
+  },
+  {
+   "index": 238,
+   "x": -1904.739,
+   "z": 490.887,
+   "station_m": 4404.4,
+   "v": 1470,
+   "where": "fork pavement",
+   "why": "bare on the lidar (0.04 m); stands on fork pavement since the split"
+  },
+  {
+   "index": 239,
+   "x": -1905.449,
+   "z": 497.532,
+   "station_m": 4410.4,
+   "v": 1472,
+   "where": "fork pavement",
+   "why": "bare on the lidar (0.16 m); stands on fork pavement since the split"
+  },
+  {
+   "index": 240,
+   "x": -1908.265,
+   "z": 502.841,
+   "station_m": 4416.4,
+   "v": 1474,
+   "where": "fork pavement",
+   "why": "bare on the lidar (0.14 m); stands on fork pavement since the split"
+  },
+  {
+   "index": 241,
+   "x": -1914.199,
+   "z": 506.176,
+   "station_m": 4422.4,
+   "v": 1476,
+   "where": "pavement beside a new island nose",
+   "why": "bare on the lidar (0.05 m); stands on pavement beside a new island nose since the split"
+  }
+ ],
+ "foot_y": [
+  {
+   "index": 154,
+   "x": -1531.045,
+   "z": -294.173,
+   "y": 58.388,
+   "station_m": 3525.0,
+   "v": 1176,
+   "why": "on the bank; its foot was at 57.79 on the old island"
+  },
+  {
+   "index": 156,
+   "x": -1537.751,
+   "z": -284.271,
+   "y": 57.733,
+   "station_m": 3537.0,
+   "v": 1180,
+   "why": "on the bank; its foot was at 57.03 on the old island"
+  },
+  {
+   "index": 157,
+   "x": -1541.982,
+   "z": -279.914,
+   "y": 57.231,
+   "station_m": 3543.0,
+   "v": 1182,
+   "why": "on the bank; its foot was at 56.63 on the old island"
+  },
+  {
+   "index": 158,
+   "x": -1546.408,
+   "z": -275.685,
+   "y": 56.638,
+   "station_m": 3549.0,
+   "v": 1184,
+   "why": "on the bank; its foot was at 56.23 on the old island"
+  },
+  {
+   "index": 160,
+   "x": -1553.69,
+   "z": -266.143,
+   "y": 55.703,
+   "station_m": 3561.0,
+   "v": 1188,
+   "why": "on the bank; its foot was at 55.48 on the old island"
+  },
+  {
+   "index": 161,
+   "x": -1554.913,
+   "z": -259.715,
+   "y": 56.195,
+   "station_m": 3566.9,
+   "v": 1190,
+   "why": "on the bank; its foot was at 55.14 on the old island"
+  },
+  {
+   "index": 162,
+   "x": -1559.598,
+   "z": -255.661,
+   "y": 55.403,
+   "station_m": 3572.9,
+   "v": 1192,
+   "why": "on the bank; its foot was at 54.84 on the old island"
+  },
+  {
+   "index": 164,
+   "x": -1564.142,
+   "z": -244.23,
+   "y": 55.815,
+   "station_m": 3584.9,
+   "v": 1196,
+   "why": "on the bank; its foot was at 54.38 on the old island"
+  },
+  {
+   "index": 165,
+   "x": -1571.24,
+   "z": -241.855,
+   "y": 54.363,
+   "station_m": 3590.9,
+   "v": 1198,
+   "why": "on the bank; its foot was at 54.22 on the old island"
+  },
+  {
+   "index": 166,
+   "x": -1573.518,
+   "z": -236.142,
+   "y": 54.687,
+   "station_m": 3596.9,
+   "v": 1200,
+   "why": "on the bank; its foot was at 54.11 on the old island"
+  },
+  {
+   "index": 167,
+   "x": -1575.915,
+   "z": -230.507,
+   "y": 54.98,
+   "station_m": 3602.9,
+   "v": 1202,
+   "why": "on the bank; its foot was at 54.05 on the old island"
+  },
+  {
+   "index": 168,
+   "x": -1578.694,
+   "z": -225.138,
+   "y": 55.17,
+   "station_m": 3608.9,
+   "v": 1204,
+   "why": "on the bank; its foot was at 54.03 on the old island"
+  },
+  {
+   "index": 169,
+   "x": -1583.636,
+   "z": -221.277,
+   "y": 54.71,
+   "station_m": 3614.9,
+   "v": 1206,
+   "why": "on the bank; its foot was at 54.05 on the old island"
+  },
+  {
+   "index": 170,
+   "x": -1585.778,
+   "z": -215.465,
+   "y": 55.201,
+   "station_m": 3620.9,
+   "v": 1208,
+   "why": "on the bank; its foot was at 54.10 on the old island"
+  },
+  {
+   "index": 171,
+   "x": -1589.773,
+   "z": -210.945,
+   "y": 55.14,
+   "station_m": 3626.9,
+   "v": 1210,
+   "why": "on the bank; its foot was at 54.18 on the old island"
+  },
+  {
+   "index": 172,
+   "x": -1592.633,
+   "z": -205.636,
+   "y": 55.522,
+   "station_m": 3632.9,
+   "v": 1212,
+   "why": "on the bank; its foot was at 54.27 on the old island"
+  },
+  {
+   "index": 173,
+   "x": -1598.897,
+   "z": -202.684,
+   "y": 54.582,
+   "station_m": 3638.9,
+   "v": 1214,
+   "why": "on the bank; its foot was at 54.38 on the old island"
+  },
+  {
+   "index": 174,
+   "x": -1600.4,
+   "z": -196.436,
+   "y": 55.566,
+   "station_m": 3644.9,
+   "v": 1216,
+   "why": "on the bank; its foot was at 54.50 on the old island"
+  },
+  {
+   "index": 175,
+   "x": -1605.574,
+   "z": -192.72,
+   "y": 54.965,
+   "station_m": 3650.9,
+   "v": 1218,
+   "why": "on the bank; its foot was at 54.62 on the old island"
+  },
+  {
+   "index": 176,
+   "x": -1609.327,
+   "z": -188.026,
+   "y": 54.991,
+   "station_m": 3656.8,
+   "v": 1220,
+   "why": "on the bank; its foot was at 54.74 on the old island"
+  },
+  {
+   "index": 177,
+   "x": -1612.858,
+   "z": -183.182,
+   "y": 55.145,
+   "station_m": 3662.8,
+   "v": 1222,
+   "why": "on the bank; its foot was at 54.87 on the old island"
+  },
+  {
+   "index": 178,
+   "x": -1613.908,
+   "z": -176.626,
+   "y": 56.671,
+   "station_m": 3668.8,
+   "v": 1224,
+   "why": "on the bank; its foot was at 54.99 on the old island"
+  },
+  {
+   "index": 179,
+   "x": -1618.924,
+   "z": -172.8,
+   "y": 56.067,
+   "station_m": 3674.8,
+   "v": 1226,
+   "why": "on the bank; its foot was at 55.11 on the old island"
+  },
+  {
+   "index": 180,
+   "x": -1623.0,
+   "z": -168.319,
+   "y": 55.949,
+   "station_m": 3680.9,
+   "v": 1228,
+   "why": "on the bank; its foot was at 55.24 on the old island"
+  },
+  {
+   "index": 181,
+   "x": -1626.197,
+   "z": -163.214,
+   "y": 56.32,
+   "station_m": 3686.9,
+   "v": 1230,
+   "why": "on the bank; its foot was at 55.36 on the old island"
+  },
+  {
+   "index": 182,
+   "x": -1629.79,
+   "z": -158.387,
+   "y": 56.438,
+   "station_m": 3692.9,
+   "v": 1232,
+   "why": "on the bank; its foot was at 55.48 on the old island"
+  },
+  {
+   "index": 183,
+   "x": -1631.733,
+   "z": -152.396,
+   "y": 57.553,
+   "station_m": 3698.9,
+   "v": 1234,
+   "why": "on the bank; its foot was at 55.59 on the old island"
+  },
+  {
+   "index": 184,
+   "x": -1632.831,
+   "z": -145.815,
+   "y": 59.202,
+   "station_m": 3704.9,
+   "v": 1236,
+   "why": "on the bank; its foot was at 55.71 on the old island"
+  },
+  {
+   "index": 185,
+   "x": -1636.839,
+   "z": -141.309,
+   "y": 59.033,
+   "station_m": 3710.9,
+   "v": 1238,
+   "why": "on the bank; its foot was at 55.83 on the old island"
+  },
+  {
+   "index": 186,
+   "x": -1642.023,
+   "z": -137.637,
+   "y": 58.116,
+   "station_m": 3716.9,
+   "v": 1240,
+   "why": "on the bank; its foot was at 55.95 on the old island"
+  },
+  {
+   "index": 187,
+   "x": -1643.481,
+   "z": -131.33,
+   "y": 59.528,
+   "station_m": 3722.9,
+   "v": 1242,
+   "why": "on the bank; its foot was at 56.06 on the old island"
+  },
+  {
+   "index": 188,
+   "x": -1650.349,
+   "z": -128.832,
+   "y": 57.54,
+   "station_m": 3728.9,
+   "v": 1244,
+   "why": "on the bank; its foot was at 56.17 on the old island"
+  },
+  {
+   "index": 189,
+   "x": -1650.112,
+   "z": -121.348,
+   "y": 60.008,
+   "station_m": 3734.9,
+   "v": 1246,
+   "why": "on the bank; its foot was at 56.28 on the old island"
+  },
+  {
+   "index": 190,
+   "x": -1656.858,
+   "z": -118.747,
+   "y": 58.044,
+   "station_m": 3740.9,
+   "v": 1248,
+   "why": "on the bank; its foot was at 56.39 on the old island"
+  },
+  {
+   "index": 191,
+   "x": -1661.035,
+   "z": -114.355,
+   "y": 57.672,
+   "station_m": 3746.9,
+   "v": 1250,
+   "why": "on the bank; its foot was at 56.50 on the old island"
+  },
+  {
+   "index": 192,
+   "x": -1662.759,
+   "z": -108.269,
+   "y": 58.848,
+   "station_m": 3752.9,
+   "v": 1252,
+   "why": "on the bank; its foot was at 56.60 on the old island"
+  },
+  {
+   "index": 193,
+   "x": -1787.988,
+   "z": 247.479,
+   "y": 40.318,
+   "station_m": 4132.9,
+   "v": 1380,
+   "why": "on the bank; its foot was at 38.97 on the old island"
+  },
+  {
+   "index": 194,
+   "x": -1791.687,
+   "z": 252.797,
+   "y": 39.373,
+   "station_m": 4138.9,
+   "v": 1382,
+   "why": "on the bank; its foot was at 38.83 on the old island"
+  },
+  {
+   "index": 195,
+   "x": -1792.338,
+   "z": 258.839,
+   "y": 39.504,
+   "station_m": 4144.9,
+   "v": 1384,
+   "why": "on the bank; its foot was at 38.69 on the old island"
+  },
+  {
+   "index": 196,
+   "x": -1790.873,
+   "z": 265.453,
+   "y": 40.331,
+   "station_m": 4151.0,
+   "v": 1386,
+   "why": "on the bank; its foot was at 38.57 on the old island"
+  },
+  {
+   "index": 197,
+   "x": -1796.299,
+   "z": 270.349,
+   "y": 38.989,
+   "station_m": 4157.1,
+   "v": 1388,
+   "why": "on the bank; its foot was at 38.46 on the old island"
+  },
+  {
+   "index": 198,
+   "x": -1793.927,
+   "z": 277.281,
+   "y": 40.077,
+   "station_m": 4163.2,
+   "v": 1390,
+   "why": "on the bank; its foot was at 38.36 on the old island"
+  },
+  {
+   "index": 199,
+   "x": -1799.499,
+   "z": 281.96,
+   "y": 38.792,
+   "station_m": 4169.2,
+   "v": 1392,
+   "why": "on the bank; its foot was at 38.26 on the old island"
+  },
+  {
+   "index": 200,
+   "x": -1797.13,
+   "z": 288.972,
+   "y": 39.784,
+   "station_m": 4175.2,
+   "v": 1394,
+   "why": "on the bank; its foot was at 38.16 on the old island"
+  },
+  {
+   "index": 201,
+   "x": -1801.067,
+   "z": 294.131,
+   "y": 39.046,
+   "station_m": 4181.3,
+   "v": 1396,
+   "why": "on the bank; its foot was at 38.06 on the old island"
+  },
+  {
+   "index": 202,
+   "x": -1802.964,
+   "z": 299.954,
+   "y": 38.902,
+   "station_m": 4187.4,
+   "v": 1398,
+   "why": "on the bank; its foot was at 37.96 on the old island"
+  },
+  {
+   "index": 203,
+   "x": -1805.926,
+   "z": 305.37,
+   "y": 38.516,
+   "station_m": 4193.5,
+   "v": 1400,
+   "why": "on the bank; its foot was at 37.85 on the old island"
+  },
+  {
+   "index": 204,
+   "x": -1809.431,
+   "z": 310.503,
+   "y": 38.014,
+   "station_m": 4199.6,
+   "v": 1402,
+   "why": "on the bank; its foot was at 37.73 on the old island"
+  },
+  {
+   "index": 205,
+   "x": -1811.428,
+   "z": 316.174,
+   "y": 37.895,
+   "station_m": 4205.6,
+   "v": 1404,
+   "why": "on the bank; its foot was at 37.60 on the old island"
+  },
+  {
+   "index": 206,
+   "x": -1813.07,
+   "z": 321.967,
+   "y": 37.867,
+   "station_m": 4211.6,
+   "v": 1406,
+   "why": "on the bank; its foot was at 37.46 on the old island"
+  },
+  {
+   "index": 207,
+   "x": -1812.266,
+   "z": 328.688,
+   "y": 38.444,
+   "station_m": 4217.6,
+   "v": 1408,
+   "why": "on the bank; its foot was at 37.31 on the old island"
+  },
+  {
+   "index": 208,
+   "x": -1818.265,
+   "z": 332.808,
+   "y": 37.394,
+   "station_m": 4223.6,
+   "v": 1410,
+   "why": "on the bank; its foot was at 37.14 on the old island"
+  },
+  {
+   "index": 209,
+   "x": -1817.722,
+   "z": 339.431,
+   "y": 37.903,
+   "station_m": 4229.5,
+   "v": 1412,
+   "why": "on the bank; its foot was at 36.96 on the old island"
+  },
+  {
+   "index": 210,
+   "x": -1820.387,
+   "z": 344.851,
+   "y": 37.66,
+   "station_m": 4235.6,
+   "v": 1414,
+   "why": "on the bank; its foot was at 36.77 on the old island"
+  },
+  {
+   "index": 211,
+   "x": -1824.795,
+   "z": 349.6,
+   "y": 36.997,
+   "station_m": 4241.6,
+   "v": 1416,
+   "why": "on the bank; its foot was at 36.56 on the old island"
+  },
+  {
+   "index": 212,
+   "x": -1823.345,
+   "z": 356.916,
+   "y": 37.76,
+   "station_m": 4247.8,
+   "v": 1418,
+   "why": "on the bank; its foot was at 36.34 on the old island"
+  },
+  {
+   "index": 213,
+   "x": -1828.325,
+   "z": 361.456,
+   "y": 36.958,
+   "station_m": 4254.0,
+   "v": 1420,
+   "why": "on the bank; its foot was at 36.09 on the old island"
+  },
+  {
+   "index": 214,
+   "x": -1832.899,
+   "z": 365.989,
+   "y": 36.228,
+   "station_m": 4260.1,
+   "v": 1422,
+   "why": "on the bank; its foot was at 35.84 on the old island"
+  },
+  {
+   "index": 215,
+   "x": -1831.466,
+   "z": 373.679,
+   "y": 37.037,
+   "station_m": 4266.2,
+   "v": 1424,
+   "why": "on the bank; its foot was at 35.56 on the old island"
+  },
+  {
+   "index": 216,
+   "x": -1835.875,
+   "z": 378.129,
+   "y": 36.305,
+   "station_m": 4272.2,
+   "v": 1426,
+   "why": "on the bank; its foot was at 35.27 on the old island"
+  },
+  {
+   "index": 217,
+   "x": -1839.437,
+   "z": 383.009,
+   "y": 35.778,
+   "station_m": 4278.2,
+   "v": 1428,
+   "why": "on the bank; its foot was at 34.97 on the old island"
+  },
+  {
+   "index": 218,
+   "x": -1840.733,
+   "z": 389.155,
+   "y": 35.848,
+   "station_m": 4284.2,
+   "v": 1430,
+   "why": "on the bank; its foot was at 34.65 on the old island"
+  },
+  {
+   "index": 220,
+   "x": -1847.942,
+   "z": 398.845,
+   "y": 34.711,
+   "station_m": 4296.2,
+   "v": 1434,
+   "why": "on the bank; its foot was at 33.97 on the old island"
+  },
+  {
+   "index": 221,
+   "x": -1850.211,
+   "z": 404.445,
+   "y": 34.407,
+   "station_m": 4302.2,
+   "v": 1436,
+   "why": "on the bank; its foot was at 33.62 on the old island"
+  },
+  {
+   "index": 222,
+   "x": -1852.608,
+   "z": 409.973,
+   "y": 34.016,
+   "station_m": 4308.2,
+   "v": 1438,
+   "why": "on the bank; its foot was at 33.25 on the old island"
+  }
+ ]
+}

@@ -555,6 +555,37 @@ def plan(project_dir, all_species=False, verbose=False):
     north = None
     cfg_p = proj / "track.config.json"
     tcfg = ((json.loads(cfg_p.read_text(encoding="utf-8")).get("scenery") or {}).get("treefx") or {}) if cfg_p.exists() else {}
+    # ledger 0055 round 2 (Lake Murray's College split, opt-in scenery.treefx.median_spots): single median_planting spots
+    # declared by their index in data/scatter_positions.json. "drop": the spot is not planted (the road under its island
+    # is gone: it would stand on pavement). "foot_y": the spot is planted where it is, its foot at this height (the
+    # ground under it moved). Neither file is rewritten, so every other spot keeps its index and with it its model, size
+    # and angle; data/scatter_positions.json and the measured heights file stay whole. Each entry carries the spot's own
+    # x / z: a list written for another draft of the spots is refused, never applied to whatever stands at that index.
+    # Absent (every other track) = nothing changes.
+    ms_cfg, ms_stats = tcfg.get("median_spots"), None
+    if ms_cfg:
+        mpos_ = pos.get("median_planting", [])
+        ms_stats = {"dropped": 0, "foot_moved": 0}
+        seen_ = set()
+        for kind_ in ("drop", "foot_y"):
+            for e_ in ms_cfg.get(kind_) or []:
+                i_ = int(e_["index"])
+                if not 0 <= i_ < len(mpos_):
+                    raise SystemExit(f"[treefx] scenery.treefx.median_spots.{kind_}: index {i_} but scatter_positions.json has "
+                                     f"{len(mpos_)} median_planting spots")
+                if abs(mpos_[i_]["x"] - float(e_["x"])) > 0.006 or abs(mpos_[i_]["z"] - float(e_["z"])) > 0.006:
+                    raise SystemExit(f"[treefx] scenery.treefx.median_spots.{kind_}: index {i_} is declared at ({e_['x']}, {e_['z']}) "
+                                     f"but median_planting[{i_}] is at ({mpos_[i_]['x']:.3f}, {mpos_[i_]['z']:.3f}): the list "
+                                     f"belongs to another draft of the spots")
+                if i_ in seen_:
+                    raise SystemExit(f"[treefx] scenery.treefx.median_spots: index {i_} is declared twice")
+                seen_.add(i_)
+                if kind_ == "drop":
+                    excluded.add(("median_planting", i_))
+                    ms_stats["dropped"] += 1
+                else:
+                    mpos_[i_]["y"] = float(e_["y"])
+                    ms_stats["foot_moved"] += 1
     if tcfg.get("veg_bins"):
         for f in (tcfg["veg_bins"], tcfg.get("pieces", "data/expansion.north.json")):
             if not (proj / f).exists():
@@ -957,7 +988,8 @@ def plan(project_dir, all_species=False, verbose=False):
               + " (of them on the loop's own zones: " + ", ".join(f"{k} {n}" for k, n in rejected_built_loop.items()) + ")")
     return {"lines": out, "entries": entries_out, "counts": counts, "used": used, "rejected": rejected,
             "rejected_built": rejected_built, "rejected_built_loop": rejected_built_loop, "north": north_stats,
-            "far_seat": far_seat_out, **({"median_measured": mm_stats} if mm_stats is not None else {})}
+            "far_seat": far_seat_out, **({"median_measured": mm_stats} if mm_stats is not None else {}),
+            **({"median_spots": ms_stats} if ms_stats is not None else {})}
 
 
 def build(project_dir):
@@ -995,6 +1027,8 @@ def build(project_dir):
         rep["planted_far_seat"] = p["far_seat"]
     if p.get("median_measured") is not None:   # scenery.treefx.median_measured, opt-in: absent = the report as before
         rep["median_measured"] = p["median_measured"]
+    if p.get("median_spots") is not None:     # scenery.treefx.median_spots, opt-in: absent = the report as before
+        rep["median_spots"] = p["median_spots"]
     (proj / "data" / "treefx.report.json").write_text(json.dumps(rep, indent=1), encoding="utf-8")
     g = treefx_gate(proj, p, tdir)
     print(f"[treefx] gate: {g['written']} written of {g['planned']} planned; models named in trees.txt "

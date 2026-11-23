@@ -449,3 +449,47 @@ def test_median_measured_refuses_a_stale_file_or_an_unread_model():
     (d / "track.config.json").write_text(json.dumps(cfg))
     with pytest.raises(SystemExit, match="Sage.bin"):
         mt.plan(d)
+
+
+def _with_median_spots(d, spots):
+    cfg = json.loads((d / "track.config.json").read_text())
+    cfg.setdefault("scenery", {}).setdefault("treefx", {})["median_spots"] = spots
+    (d / "track.config.json").write_text(json.dumps(cfg))
+    return d
+
+
+def test_median_spots_drop_and_foot_leave_every_other_spot_as_it_was():
+    """Ledger 0055 round 2 (the College split): a median spot that would stand on pavement is declared dropped, one whose
+    ground moved gets its foot height; scatter_positions.json and the measured heights file are not rewritten, so every
+    other spot keeps its index and with it its model, size, angle and line, byte for byte. Absent = nothing changes"""
+    hs, cs = [5.13, 0.07, 12.4, 2.2, None, 0.31], [3.2, None, None, 1.4, None, 0.9]
+    base = [ln for ln in mt.plan(_median_project(hs, cs))["lines"] if ln.startswith("tree: ")]
+    d = _median_project(hs, cs)
+    med = json.loads((d / "data" / "scatter_positions.json").read_text())["median_planting"]
+    before = (d / "data" / "scatter_positions.json").read_bytes(), (d / "source" / "vegetation" / "m.json").read_bytes()
+    _with_median_spots(d, {"drop": [{"index": 1, "x": med[1]["x"], "z": med[1]["z"], "why": "on pavement"},
+                                    {"index": 4, "x": med[4]["x"], "z": med[4]["z"], "why": "on pavement"}],
+                           "foot_y": [{"index": 2, "x": med[2]["x"], "z": med[2]["z"], "y": 3.5, "why": "on the bank"}]})
+    p = mt.plan(d)
+    lines = [ln for ln in p["lines"] if ln.startswith("tree: ")]
+    assert p["median_spots"] == {"dropped": 2, "foot_moved": 1} and len(lines) == 4
+    assert [lines[0], lines[2], lines[3]] == [base[0], base[3], base[5]]            # untouched spots: byte for byte
+    assert lines[1] == base[2].replace(", 0.10, ", ", 3.50, ")                      # the same plant, its foot moved
+    assert p["median_measured"] == {"measured": 4, "crown_measured": 3, "kept_rank_rule": 2}    # the heights file is whole
+    assert before == ((d / "data" / "scatter_positions.json").read_bytes(), (d / "source" / "vegetation" / "m.json").read_bytes())
+    mt.build(d)
+    assert json.loads((d / "data" / "treefx.report.json").read_text())["median_spots"] == {"dropped": 2, "foot_moved": 1}
+    assert "median_spots" not in mt.plan(_median_project(hs, cs))                   # not declared: the plan as before
+
+
+def test_median_spots_refuses_a_list_made_for_other_spots():
+    import pytest
+    d = _median_project([1.0, 2.0, 3.0], [None] * 3)
+    med = json.loads((d / "data" / "scatter_positions.json").read_text())["median_planting"]
+    with pytest.raises(SystemExit, match="another draft"):
+        mt.plan(_with_median_spots(d, {"drop": [{"index": 1, "x": med[1]["x"] + 0.5, "z": med[1]["z"]}]}))
+    with pytest.raises(SystemExit, match="index 7"):
+        mt.plan(_with_median_spots(d, {"drop": [{"index": 7, "x": 0.0, "z": 0.0}]}))
+    with pytest.raises(SystemExit, match="declared twice"):
+        mt.plan(_with_median_spots(d, {"drop": [{"index": 1, "x": med[1]["x"], "z": med[1]["z"]}],
+                                       "foot_y": [{"index": 1, "x": med[1]["x"], "z": med[1]["z"], "y": 1.0}]}))

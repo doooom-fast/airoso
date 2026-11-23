@@ -12,19 +12,19 @@ For every spot on rows CUT0-2..CUT1+2 of the built line, within the old island:
   measured (lidar >= min_h_m)  on the bank or an island: KEPT at its place and height, its foot put on the bank's top
                                on pavement: LISTED for the Mac (never moved or dropped here)
   not measured (bare lidar)    on pavement: DROPPED
-                               on the bank or an island: kept as it is today (its foot on the bank's top)
-Nothing new is planted: the bank's real planting is read from the lidar's plant tops, which are not on this machine.
+                               on the bank or an island: kept as on every other median (the Mac, 2026-11-23), its foot
+                               on the bank's top
+Nothing new is planted here: the bank's real planting comes from the lidar's plant tops (a G10 job).
 
-A dropped spot leaves both files, so they stay in step (tools/make_treefx.py pairs them by index and refuses a
-mismatch). Every spot that stays gets `_key` = its index before the drop, which make_treefx.emit_zone uses in place of
-the index, so no other median plant on the track changes its model, size or angle.
+NEITHER DATA FILE IS REWRITTEN (the Mac, 2026-11-23): the drops and the new foot heights are DECLARED, as
+track.config.json scenery.treefx.median_spots {"drop": [...], "foot_y": [...]}, each entry with the spot's index, its
+own x / z (tools/make_treefx.py refuses a list made for other spots), its station, where it stands and why. So every
+other median spot keeps its index and with it its model, size and angle.
 
-Without --write: the report only (college_plants.report.json beside this file). With --write: the project's
-data/scatter_positions.json and source/vegetation/median_heights.lidar.json are rewritten (each kept once as
-<name>.pre-split). A scratch workshop only."""
+Without --write: the report (college_plants.report.json) and the declaration (college_plants.median_spots.json) beside
+this file. With --write: the declaration also goes into the PROJECT's own track.config.json (a scratch workshop)."""
 import json
 import math
-import shutil
 import sys
 from pathlib import Path
 
@@ -148,26 +148,24 @@ rep = {
 (HERE / "college_plants.report.json").write_text(json.dumps(rep, indent=1), encoding="utf-8")
 print(json.dumps({k: v for k, v in rep.items() if k != "spots"}, indent=1))
 
+decl = {
+    "_doc": "ledger 0055 round 2 (the College split), tools/make_treefx.py scenery.treefx.median_spots: median_planting spots of "
+            "data/scatter_positions.json by index. drop = not planted: the road under its island is gone and it would stand on "
+            "pavement (every one of them is bare on the lidar, under %.1f m). foot_y = planted where it is, its foot on the bank's "
+            "top (the island it stood on is the bank now). Written by source/college_r2/college_plants_data.py." % MIN_H,
+    "drop": [{"index": r["index"], "x": r["x"], "z": r["z"], "station_m": r["station_m"], "v": r["v"], "where": r["where"],
+              "why": "bare on the lidar (%s m); stands on %s since the split" % (r["lidar_h_m"], r["where"])}
+             for r in rows if r["fate"] == "dropped"],
+    "foot_y": [{"index": r["index"], "x": r["x"], "z": r["z"], "y": r["y_new"], "station_m": r["station_m"], "v": r["v"],
+                "why": "on the bank; its foot was at %.2f on the old island" % r["y_old"]}
+               for r in rows if r["fate"] == "kept" and r["y_new"] is not None],
+}
+(HERE / "college_plants.median_spots.json").write_text(json.dumps(decl, indent=1), encoding="utf-8")
+print(f"declared: {len(decl['drop'])} drops, {len(decl['foot_y'])} foot heights -> college_plants.median_spots.json")
+
 if WRITE:
-    gone = {r["index"] for r in rows if r["fate"] == "dropped"}
-    new_y = {r["index"]: r["y_new"] for r in rows if r["fate"] == "kept" and r["y_new"] is not None}
-    out_s, out_h = [], []
-    for n, (e, h) in enumerate(zip(spots, heights)):
-        if n in gone:
-            continue
-        e2 = dict(e, _key=n)                       # its place before the drop: make_treefx keys model, size and angle on it
-        if n in new_y:
-            e2["y"] = new_y[n]
-        out_s.append(e2)
-        out_h.append(h)
-    for p in (sp_path, mh_path):
-        b = p.with_name(p.name + ".pre-split")
-        if not b.exists():
-            shutil.copy2(p, b)
-    SP2 = dict(SP, median_planting=out_s)
-    MH2 = dict(MH, spots=out_h)
-    if isinstance(MH2.get("summary"), dict):
-        MH2["summary"] = dict(MH2["summary"], _college_split=f"{len(gone)} bare spots on what is now pavement left both files (college_plants_data.py); the bins above are the file's own, before that")
-    sp_path.write_text(json.dumps(SP2), encoding="utf-8")
-    mh_path.write_text(json.dumps(MH2), encoding="utf-8")
-    print(f"[written] {proj}: {len(out_s)} median spots ({len(gone)} dropped, {len(new_y)} re-footed)")
+    cfg_path = proj / "track.config.json"
+    cfg = json.loads(cfg_path.read_text(encoding="utf-8"))
+    cfg.setdefault("scenery", {}).setdefault("treefx", {})["median_spots"] = decl
+    cfg_path.write_text(json.dumps(cfg, indent=2), encoding="utf-8")
+    print(f"[written] {cfg_path}: scenery.treefx.median_spots")

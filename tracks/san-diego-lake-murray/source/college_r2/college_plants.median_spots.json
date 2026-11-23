@@ -1,5 +1,5 @@
 {
- "_doc": "ledger 0055 round 2 (the College split), tools/make_treefx.py scenery.treefx.median_spots: median_planting spots of data/scatter_positions.json by index. drop = not planted: the road under its island is gone and it would stand on pavement (every one of them is bare on the lidar, under 0.3 m). foot_y = planted where it is, its foot on the bank's top (the island it stood on is the bank now). Written by source/college_r2/college_plants_data.py.",
+ "_doc": "ledger 0055 round 2 (the College split), tools/make_treefx.py scenery.treefx.median_spots: median_planting spots of data/scatter_positions.json by index. drop = not planted: either the road under its island is gone and it would stand on pavement (every one of those is bare on the lidar, under 0.3 m), or it is a bare spot on the bank, which is planted from the lidar's measured tops instead (scenery.treefx.lidar_plants), or it is a measured spot on the bank's curb ring whose own measured top is planted in its place. foot_y = planted where it is, its foot on the bank's top (the island it stood on is the bank now). Written by source/college_r2/college_plants_data.py.",
  "drop": [
   {
    "index": 124,
@@ -272,6 +272,15 @@
    "why": "bare on the lidar (0.06 m); stands on southbound pavement since the split"
   },
   {
+   "index": 154,
+   "x": -1531.045,
+   "z": -294.173,
+   "station_m": 3525.0,
+   "v": 1176,
+   "where": "the bank",
+   "why": "bare on the lidar (0.04 m); the bank planted from measured tops (ledger 0055)"
+  },
+  {
    "index": 155,
    "x": -1535.831,
    "z": -290.215,
@@ -279,6 +288,33 @@
    "v": 1178,
    "where": "southbound pavement",
    "why": "bare on the lidar (0.04 m); stands on southbound pavement since the split"
+  },
+  {
+   "index": 156,
+   "x": -1537.751,
+   "z": -284.271,
+   "station_m": 3537.0,
+   "v": 1180,
+   "where": "the bank",
+   "why": "bare on the lidar (0.01 m); the bank planted from measured tops (ledger 0055)"
+  },
+  {
+   "index": 157,
+   "x": -1541.982,
+   "z": -279.914,
+   "station_m": 3543.0,
+   "v": 1182,
+   "where": "the bank",
+   "why": "bare on the lidar (0.02 m); the bank planted from measured tops (ledger 0055)"
+  },
+  {
+   "index": 158,
+   "x": -1546.408,
+   "z": -275.685,
+   "station_m": 3549.0,
+   "v": 1184,
+   "where": "the bank",
+   "why": "bare on the lidar (0.03 m); the bank planted from measured tops (ledger 0055)"
   },
   {
    "index": 159,
@@ -290,6 +326,24 @@
    "why": "bare on the lidar (0.04 m); stands on southbound pavement since the split"
   },
   {
+   "index": 161,
+   "x": -1554.913,
+   "z": -259.715,
+   "station_m": 3566.9,
+   "v": 1190,
+   "where": "the bank",
+   "why": "bare on the lidar (0.16 m); the bank planted from measured tops (ledger 0055)"
+  },
+  {
+   "index": 162,
+   "x": -1559.598,
+   "z": -255.661,
+   "station_m": 3572.9,
+   "v": 1192,
+   "where": "the bank",
+   "why": "bare on the lidar (0.08 m); the bank planted from measured tops (ledger 0055)"
+  },
+  {
    "index": 163,
    "x": -1564.855,
    "z": -252.005,
@@ -299,6 +353,186 @@
    "why": "bare on the lidar (0.02 m); stands on southbound pavement since the split"
   },
   {
+   "index": 171,
+   "x": -1589.773,
+   "z": -210.945,
+   "station_m": 3626.9,
+   "v": 1210,
+   "where": "the bank",
+   "why": "bare on the lidar (0.1 m); the bank planted from measured tops (ledger 0055)"
+  },
+  {
+   "index": 172,
+   "x": -1592.633,
+   "z": -205.636,
+   "station_m": 3632.9,
+   "v": 1212,
+   "where": "the bank",
+   "why": "bare on the lidar (0.02 m); the bank planted from measured tops (ledger 0055)"
+  },
+  {
+   "index": 173,
+   "x": -1598.897,
+   "z": -202.684,
+   "station_m": 3638.9,
+   "v": 1214,
+   "where": "the bank",
+   "why": "bare on the lidar (0.09 m); the bank planted from measured tops (ledger 0055)"
+  },
+  {
+   "index": 179,
+   "x": -1618.924,
+   "z": -172.8,
+   "station_m": 3674.8,
+   "v": 1226,
+   "where": "the bank",
+   "why": "bare on the lidar (0.12 m); the bank planted from measured tops (ledger 0055)"
+  },
+  {
+   "index": 181,
+   "x": -1626.197,
+   "z": -163.214,
+   "station_m": 3686.9,
+   "v": 1230,
+   "where": "the bank",
+   "why": "bare on the lidar (0.04 m); the bank planted from measured tops (ledger 0055)"
+  },
+  {
+   "index": 182,
+   "x": -1629.79,
+   "z": -158.387,
+   "station_m": 3692.9,
+   "v": 1232,
+   "where": "the bank",
+   "why": "bare on the lidar (0.16 m); the bank planted from measured tops (ledger 0055)"
+  },
+  {
+   "index": 183,
+   "x": -1631.733,
+   "z": -152.396,
+   "station_m": 3698.9,
+   "v": 1234,
+   "where": "the bank",
+   "why": "bare on the lidar (-0.01 m); the bank planted from measured tops (ledger 0055)"
+  },
+  {
+   "index": 184,
+   "x": -1632.831,
+   "z": -145.815,
+   "station_m": 3704.9,
+   "v": 1236,
+   "where": "the bank",
+   "why": "bare on the lidar (0.06 m); the bank planted from measured tops (ledger 0055)"
+  },
+  {
+   "index": 185,
+   "x": -1636.839,
+   "z": -141.309,
+   "station_m": 3710.9,
+   "v": 1238,
+   "where": "the bank",
+   "why": "bare on the lidar (0.29 m); the bank planted from measured tops (ledger 0055)"
+  },
+  {
+   "index": 186,
+   "x": -1642.023,
+   "z": -137.637,
+   "station_m": 3716.9,
+   "v": 1240,
+   "where": "the bank",
+   "why": "bare on the lidar (0.16 m); the bank planted from measured tops (ledger 0055)"
+  },
+  {
+   "index": 187,
+   "x": -1643.481,
+   "z": -131.33,
+   "station_m": 3722.9,
+   "v": 1242,
+   "where": "the bank",
+   "why": "bare on the lidar (0.1 m); the bank planted from measured tops (ledger 0055)"
+  },
+  {
+   "index": 190,
+   "x": -1656.858,
+   "z": -118.747,
+   "station_m": 3740.9,
+   "v": 1248,
+   "where": "the bank",
+   "why": "bare on the lidar (0.1 m); the bank planted from measured tops (ledger 0055)"
+  },
+  {
+   "index": 193,
+   "x": -1787.988,
+   "z": 247.479,
+   "station_m": 4132.9,
+   "v": 1380,
+   "where": "the bank",
+   "why": "bare on the lidar (0.11 m); the bank planted from measured tops (ledger 0055)"
+  },
+  {
+   "index": 202,
+   "x": -1802.964,
+   "z": 299.954,
+   "station_m": 4187.4,
+   "v": 1398,
+   "where": "the bank",
+   "why": "bare on the lidar (0.08 m); the bank planted from measured tops (ledger 0055)"
+  },
+  {
+   "index": 203,
+   "x": -1805.926,
+   "z": 305.37,
+   "station_m": 4193.5,
+   "v": 1400,
+   "where": "the bank",
+   "why": "bare on the lidar (0.09 m); the bank planted from measured tops (ledger 0055)"
+  },
+  {
+   "index": 205,
+   "x": -1811.428,
+   "z": 316.174,
+   "station_m": 4205.6,
+   "v": 1404,
+   "where": "the bank",
+   "why": "bare on the lidar (0.05 m); the bank planted from measured tops (ledger 0055)"
+  },
+  {
+   "index": 208,
+   "x": -1818.265,
+   "z": 332.808,
+   "station_m": 4223.6,
+   "v": 1410,
+   "where": "the bank",
+   "why": "on the bank's curb ring, 0.13 m from the southbound road's inner edge (its trunk would reach into the race curb strip there: tools/verify_race.py G); the lidar's own top 266775, 1.44 m away on the bank's grass, is planted in its place"
+  },
+  {
+   "index": 214,
+   "x": -1832.899,
+   "z": 365.989,
+   "station_m": 4260.1,
+   "v": 1422,
+   "where": "the bank",
+   "why": "bare on the lidar (0.06 m); the bank planted from measured tops (ledger 0055)"
+  },
+  {
+   "index": 217,
+   "x": -1839.437,
+   "z": 383.009,
+   "station_m": 4278.2,
+   "v": 1428,
+   "where": "the bank",
+   "why": "bare on the lidar (0.08 m); the bank planted from measured tops (ledger 0055)"
+  },
+  {
+   "index": 218,
+   "x": -1840.733,
+   "z": 389.155,
+   "station_m": 4284.2,
+   "v": 1430,
+   "where": "the bank",
+   "why": "bare on the lidar (0.03 m); the bank planted from measured tops (ledger 0055)"
+  },
+  {
    "index": 219,
    "x": -1847.413,
    "z": 392.263,
@@ -306,6 +540,33 @@
    "v": 1432,
    "where": "southbound pavement",
    "why": "bare on the lidar (0.07 m); stands on southbound pavement since the split"
+  },
+  {
+   "index": 220,
+   "x": -1847.942,
+   "z": 398.845,
+   "station_m": 4296.2,
+   "v": 1434,
+   "where": "the bank",
+   "why": "bare on the lidar (0.18 m); the bank planted from measured tops (ledger 0055)"
+  },
+  {
+   "index": 221,
+   "x": -1850.211,
+   "z": 404.445,
+   "station_m": 4302.2,
+   "v": 1436,
+   "where": "the bank",
+   "why": "bare on the lidar (0.13 m); the bank planted from measured tops (ledger 0055)"
+  },
+  {
+   "index": 222,
+   "x": -1852.608,
+   "z": 409.973,
+   "station_m": 4308.2,
+   "v": 1438,
+   "where": "the bank",
+   "why": "bare on the lidar (0.14 m); the bank planted from measured tops (ledger 0055)"
   },
   {
    "index": 223,
@@ -481,42 +742,6 @@
  ],
  "foot_y": [
   {
-   "index": 154,
-   "x": -1531.045,
-   "z": -294.173,
-   "y": 58.388,
-   "station_m": 3525.0,
-   "v": 1176,
-   "why": "on the bank; its foot was at 57.79 on the old island"
-  },
-  {
-   "index": 156,
-   "x": -1537.751,
-   "z": -284.271,
-   "y": 57.733,
-   "station_m": 3537.0,
-   "v": 1180,
-   "why": "on the bank; its foot was at 57.03 on the old island"
-  },
-  {
-   "index": 157,
-   "x": -1541.982,
-   "z": -279.914,
-   "y": 57.231,
-   "station_m": 3543.0,
-   "v": 1182,
-   "why": "on the bank; its foot was at 56.63 on the old island"
-  },
-  {
-   "index": 158,
-   "x": -1546.408,
-   "z": -275.685,
-   "y": 56.638,
-   "station_m": 3549.0,
-   "v": 1184,
-   "why": "on the bank; its foot was at 56.23 on the old island"
-  },
-  {
    "index": 160,
    "x": -1553.69,
    "z": -266.143,
@@ -524,24 +749,6 @@
    "station_m": 3561.0,
    "v": 1188,
    "why": "on the bank; its foot was at 55.48 on the old island"
-  },
-  {
-   "index": 161,
-   "x": -1554.913,
-   "z": -259.715,
-   "y": 56.195,
-   "station_m": 3566.9,
-   "v": 1190,
-   "why": "on the bank; its foot was at 55.14 on the old island"
-  },
-  {
-   "index": 162,
-   "x": -1559.598,
-   "z": -255.661,
-   "y": 55.403,
-   "station_m": 3572.9,
-   "v": 1192,
-   "why": "on the bank; its foot was at 54.84 on the old island"
   },
   {
    "index": 164,
@@ -607,33 +814,6 @@
    "why": "on the bank; its foot was at 54.10 on the old island"
   },
   {
-   "index": 171,
-   "x": -1589.773,
-   "z": -210.945,
-   "y": 55.14,
-   "station_m": 3626.9,
-   "v": 1210,
-   "why": "on the bank; its foot was at 54.18 on the old island"
-  },
-  {
-   "index": 172,
-   "x": -1592.633,
-   "z": -205.636,
-   "y": 55.522,
-   "station_m": 3632.9,
-   "v": 1212,
-   "why": "on the bank; its foot was at 54.27 on the old island"
-  },
-  {
-   "index": 173,
-   "x": -1598.897,
-   "z": -202.684,
-   "y": 54.582,
-   "station_m": 3638.9,
-   "v": 1214,
-   "why": "on the bank; its foot was at 54.38 on the old island"
-  },
-  {
    "index": 174,
    "x": -1600.4,
    "z": -196.436,
@@ -679,15 +859,6 @@
    "why": "on the bank; its foot was at 54.99 on the old island"
   },
   {
-   "index": 179,
-   "x": -1618.924,
-   "z": -172.8,
-   "y": 56.067,
-   "station_m": 3674.8,
-   "v": 1226,
-   "why": "on the bank; its foot was at 55.11 on the old island"
-  },
-  {
    "index": 180,
    "x": -1623.0,
    "z": -168.319,
@@ -695,69 +866,6 @@
    "station_m": 3680.9,
    "v": 1228,
    "why": "on the bank; its foot was at 55.24 on the old island"
-  },
-  {
-   "index": 181,
-   "x": -1626.197,
-   "z": -163.214,
-   "y": 56.32,
-   "station_m": 3686.9,
-   "v": 1230,
-   "why": "on the bank; its foot was at 55.36 on the old island"
-  },
-  {
-   "index": 182,
-   "x": -1629.79,
-   "z": -158.387,
-   "y": 56.438,
-   "station_m": 3692.9,
-   "v": 1232,
-   "why": "on the bank; its foot was at 55.48 on the old island"
-  },
-  {
-   "index": 183,
-   "x": -1631.733,
-   "z": -152.396,
-   "y": 57.553,
-   "station_m": 3698.9,
-   "v": 1234,
-   "why": "on the bank; its foot was at 55.59 on the old island"
-  },
-  {
-   "index": 184,
-   "x": -1632.831,
-   "z": -145.815,
-   "y": 59.202,
-   "station_m": 3704.9,
-   "v": 1236,
-   "why": "on the bank; its foot was at 55.71 on the old island"
-  },
-  {
-   "index": 185,
-   "x": -1636.839,
-   "z": -141.309,
-   "y": 59.033,
-   "station_m": 3710.9,
-   "v": 1238,
-   "why": "on the bank; its foot was at 55.83 on the old island"
-  },
-  {
-   "index": 186,
-   "x": -1642.023,
-   "z": -137.637,
-   "y": 58.116,
-   "station_m": 3716.9,
-   "v": 1240,
-   "why": "on the bank; its foot was at 55.95 on the old island"
-  },
-  {
-   "index": 187,
-   "x": -1643.481,
-   "z": -131.33,
-   "y": 59.528,
-   "station_m": 3722.9,
-   "v": 1242,
-   "why": "on the bank; its foot was at 56.06 on the old island"
   },
   {
    "index": 188,
@@ -778,15 +886,6 @@
    "why": "on the bank; its foot was at 56.28 on the old island"
   },
   {
-   "index": 190,
-   "x": -1656.858,
-   "z": -118.747,
-   "y": 58.044,
-   "station_m": 3740.9,
-   "v": 1248,
-   "why": "on the bank; its foot was at 56.39 on the old island"
-  },
-  {
    "index": 191,
    "x": -1661.035,
    "z": -114.355,
@@ -803,15 +902,6 @@
    "station_m": 3752.9,
    "v": 1252,
    "why": "on the bank; its foot was at 56.60 on the old island"
-  },
-  {
-   "index": 193,
-   "x": -1787.988,
-   "z": 247.479,
-   "y": 40.318,
-   "station_m": 4132.9,
-   "v": 1380,
-   "why": "on the bank; its foot was at 38.97 on the old island"
   },
   {
    "index": 194,
@@ -886,24 +976,6 @@
    "why": "on the bank; its foot was at 38.06 on the old island"
   },
   {
-   "index": 202,
-   "x": -1802.964,
-   "z": 299.954,
-   "y": 38.902,
-   "station_m": 4187.4,
-   "v": 1398,
-   "why": "on the bank; its foot was at 37.96 on the old island"
-  },
-  {
-   "index": 203,
-   "x": -1805.926,
-   "z": 305.37,
-   "y": 38.516,
-   "station_m": 4193.5,
-   "v": 1400,
-   "why": "on the bank; its foot was at 37.85 on the old island"
-  },
-  {
    "index": 204,
    "x": -1809.431,
    "z": 310.503,
@@ -911,15 +983,6 @@
    "station_m": 4199.6,
    "v": 1402,
    "why": "on the bank; its foot was at 37.73 on the old island"
-  },
-  {
-   "index": 205,
-   "x": -1811.428,
-   "z": 316.174,
-   "y": 37.895,
-   "station_m": 4205.6,
-   "v": 1404,
-   "why": "on the bank; its foot was at 37.60 on the old island"
   },
   {
    "index": 206,
@@ -938,15 +1001,6 @@
    "station_m": 4217.6,
    "v": 1408,
    "why": "on the bank; its foot was at 37.31 on the old island"
-  },
-  {
-   "index": 208,
-   "x": -1818.265,
-   "z": 332.808,
-   "y": 37.394,
-   "station_m": 4223.6,
-   "v": 1410,
-   "why": "on the bank; its foot was at 37.14 on the old island"
   },
   {
    "index": 209,
@@ -994,15 +1048,6 @@
    "why": "on the bank; its foot was at 36.09 on the old island"
   },
   {
-   "index": 214,
-   "x": -1832.899,
-   "z": 365.989,
-   "y": 36.228,
-   "station_m": 4260.1,
-   "v": 1422,
-   "why": "on the bank; its foot was at 35.84 on the old island"
-  },
-  {
    "index": 215,
    "x": -1831.466,
    "z": 373.679,
@@ -1019,51 +1064,6 @@
    "station_m": 4272.2,
    "v": 1426,
    "why": "on the bank; its foot was at 35.27 on the old island"
-  },
-  {
-   "index": 217,
-   "x": -1839.437,
-   "z": 383.009,
-   "y": 35.778,
-   "station_m": 4278.2,
-   "v": 1428,
-   "why": "on the bank; its foot was at 34.97 on the old island"
-  },
-  {
-   "index": 218,
-   "x": -1840.733,
-   "z": 389.155,
-   "y": 35.848,
-   "station_m": 4284.2,
-   "v": 1430,
-   "why": "on the bank; its foot was at 34.65 on the old island"
-  },
-  {
-   "index": 220,
-   "x": -1847.942,
-   "z": 398.845,
-   "y": 34.711,
-   "station_m": 4296.2,
-   "v": 1434,
-   "why": "on the bank; its foot was at 33.97 on the old island"
-  },
-  {
-   "index": 221,
-   "x": -1850.211,
-   "z": 404.445,
-   "y": 34.407,
-   "station_m": 4302.2,
-   "v": 1436,
-   "why": "on the bank; its foot was at 33.62 on the old island"
-  },
-  {
-   "index": 222,
-   "x": -1852.608,
-   "z": 409.973,
-   "y": 34.016,
-   "station_m": 4308.2,
-   "v": 1438,
-   "why": "on the bank; its foot was at 33.25 on the old island"
   }
  ]
 }

@@ -1,0 +1,29 @@
+{
+ "_doc": "ledger 0055 round 2 (the College split), tools/make_treefx.py scenery.treefx.lidar_plants: the plants the 2024 lidar measured on the bank between College's two roads (source/college_r2/college_bank_tops.g10.json, the G10's job lm-college-bank-20261123), each where it stands at its own height and crown. The list is written by source/college_r2/college_plants_data.py, which leaves out a top that is no plant, one not on the bank's grass top as built, one within 2.0 m of a kept measured median spot (it IS that plant) and a tree the planner already stands within its crown radius. The lidar cannot tell species: a shrub takes the median's bush mix, a tree Lake Murray's `trees` mix.",
+ "file": "source/college_r2/college_bank_plants.json",
+ "split_h_m": 4.0,
+ "_split_doc": "[invented] the lm-shrub tool's own fallback (shrub_heights.py: `cut = split if split is not None else 4.0`). The 2024 lidar shows no shrub / tree valley at Lake Murray: the job's out_24tiles/lm_shrub.summary.json (md5 5d9e08b708e591e1b67c7ffe7fbbae41, written 2026-11-16; tops npz md5 e722d5daa98c540f05ded2f854a1ca92) has shrub_tree_split_m.antimode_natural = null: the natural tops' log10 histogram runs flat at 6,000-10,000 a bin from 1.5 to 8 m, peaking near 3.8 m, and the tool's antimode() wants a valley under 0.8 of both peaks. Every trees_over_split count in that summary uses 4.0, so the bank is split as the summary's strata are (read on the G10 by the Mac, 2026-11-23).",
+ "shrubs": "median_planting",
+ "trees": "trees",
+ "native_h_m": {
+  "Bush.bin": 20.660005569458,
+  "Gum.bin": 7.7401270866394,
+  "Oak3.bin": 8.67319393157959,
+  "PepperV1.bin": 10.4184999465942,
+  "Pine_Aleppo.bin": 16.2348957061768,
+  "Sage.bin": 1.5,
+  "SycamoreV1.bin": 11.7496347427368,
+  "SycamoreV2.bin": 8.19429302215576
+ },
+ "native_w_m": {
+  "Bush.bin": 34.3843803405762,
+  "Gum.bin": 4.36976194381714,
+  "Oak3.bin": 6.08927583694458,
+  "PepperV1.bin": 12.0682916641235,
+  "Pine_Aleppo.bin": 14.3988924026489,
+  "Sage.bin": 2.0,
+  "SycamoreV1.bin": 12.6715688705444,
+  "SycamoreV2.bin": 6.62018823623657
+ },
+ "_native_doc": "each model's tree.ini [BASIC] HEIGHT / WIDTH, read off the models in <project>/source/trees by source/college_r2/college_plants_data.py (tools/patch_median_measured.tree_ini) on the PC, 2026-11-23"
+}

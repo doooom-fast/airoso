@@ -144,5 +144,7 @@ argument naming the objects to show.
 - `college_ground_blend.py`: on a scene that carries step 3. Cuts the old ground fine under the split, pushes it under the bank, adds the east ground as a strip, raises the east lamps. Self-checked, idempotent.
 - `college_prep_look_blend.py <out obj> <stills dir> <tag>`: on a PREPPED scene (or, tag `raw`, one before the prep): an OBJ of ground, road and kerbs near College, and stills.
 - `college_prep_measure.py <obj> [--out json]`: no Blender; what the prep made of the ground. `college_prep_measure.scratch.json` and `college_split_prepped.jpg` are the scratch run's.
-- `college_plants_data.py <project> [--write]`: the median plants on the split's rows; `college_plants.report.json`.
+- `college_plants_data.py <project> [--write]`: the plants between the two roads. The median spots on the split's rows (`college_plants.median_spots.json`, the exclusion list and the new foot heights) and the bank's own plants off the lidar (`college_bank_plants.json`, the list `tools/make_treefx.py` reads; `college_bank_plants.lidar_plants.json`, its config entry). Report: `college_plants.report.json`.
+- `college_bank_tops.g10.json`, `college_bank_rail.g10.json`, `college_bank_g10.py`: the G10's job of 2026-11-23, the measured plant tops on the bank and the rail test along both inner edges (no rail), off the 2024 lidar.
+- `college_race_config.py <project> [--write]`: the race and zone declarations (Speedway on the lap `college`, no chicane, the corridor and closures through the forks).
 - `median_tops_check.py <workshop>`: grass or asphalt between every median's curbs on a built gate OBJ; `median_tops_0_20_3.json` is the 0.20.3 rehearsal's (ledger 0055, the known defect).

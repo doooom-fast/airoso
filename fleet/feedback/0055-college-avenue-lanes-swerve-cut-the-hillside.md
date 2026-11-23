@@ -310,11 +310,12 @@ merged into `claude/lm-finish-r2-20261122`. The College step runs first in the a
   minus lidar). Where the built height came from is not established (within 0.4 m of
   `data/centerline.elevation.json`'s smoothed 3DEP profile, but not that profile). Putting College on the lidar
   would move the west walk and the house lots: on the list for after College, not in this round.
-- **The no-route gate does not cover the forks yet.** `race_lap.stitch` does not list the other carriageway at a fork
-  as a mouth of the lap ("MAINLINE beyond v1130" and "MAINLINE before v1476" are skipped, "the branch is the lap": its
-  probe 10 m past the fork row still stands on the lap's own pavement). The closures and probes that seal the
-  southbound road at the nose and the tail for Speedway, and the northbound piece's two ends for Speedway Reverse, are
-  declared by hand in step 4. **Until they are, a green no-route gate says nothing about those four openings.**
+- **The no-route gate and the forks (CORRECTED 2026-11-23).** This note first said the no-route gate did not cover
+  the forks and that a green gate "says nothing about those four openings". That was wrong. `race_lap.stitch` does
+  skip the other carriageway as a mouth ("the branch is the lap"), but `tools/no_route.py` floods every cell within
+  half the road's width + 25 m of the lap's line and fails any reached cell outside the declared corridor, so an
+  unsealed fork is a leak it reports. Step 4 declared the corridor through each fork (the closure run to the point
+  where the roads part); no probe was added by hand.
 - **`college_edges.json`: `built_from_m` / `built_to_m` are not edges.** They are the built road's extent floored to
   the lidar's 0.5 m cells (they step by half a metre from station to station; a midline taken from them turns 5.9 deg
   between segments). The built outer edge is half the centreline's width (ROAD's own edge column). Stage A's decision
@@ -401,3 +402,38 @@ Numbers, the six prep runs and what each one showed are in `source/college_r2/ST
   (`college_plants.report.json`); written in step 4d.
 - **The barrier at the top of the bank cannot be told from the PC's data** (aerial 0.6 m a pixel, bare-ground lidar).
   It stays `[invented]` until the G10's lidar returns are read along the northbound road's inner edge.
+
+## Round 2, stage B steps 4d and 4e (the PC, 2026-11-23): the rail out, the bank planted from the lidar, the author phase green on scratch
+
+Scratch workshop only; nothing built into the chain, nothing installed. `source/college_r2/STEP-DESIGN.md`,
+"Step 4d and 4e done", has the tables.
+
+- **No rail on the bank.** The G10 read the 2024 lidar along both inner edges, rows v1176-1440
+  (`college_bank_rail.g10.json`): northbound 0 rail-like bins of 53, 0.43 returns a metre in the 0.5-1.2 m band (a
+  W-beam gives about 45 a bin); southbound, the control, 0 of 53. Step 3's invented beam and posts are gone. One
+  object is not identified: about 0.65 m tall, 0.6 to 1.0 m behind the northbound edge at v1186-1195. Nothing is
+  built there.
+- **The bank is planted from measured tops** (`college_bank_tops.g10.json`, 465 tops): 396 planted where they stand at
+  their own height and crown (263 trees, 133 shrubs); 42 are kept median spots (21 tops on 13 of Kevin's 14 tall
+  plants, 21 on 12 of the other 22 measured spots); 25 are not on the bank's grass top as built and are listed, not
+  moved (9 northbound pavement, 6 southbound, 10 curb ring); 2 are not plants; 0 duplicate a tree the planner
+  already places (it places none on the bank). Spot 191 (v1250, one of the 14) has no top within 2 m: the nearest
+  is 3.25 m off; it stays.
+- **Shrub or tree at 4.0 m, `[invented]`**: the lm-shrub tool's own fallback. The 2024 lidar shows no shrub/tree
+  valley at Lake Murray: `lm_shrub.summary.json` (md5 5d9e08b708e591e1b67c7ffe7fbbae41, 2026-11-16; tops npz md5
+  e722d5daa98c540f05ded2f854a1ca92) has `shrub_tree_split_m.antimode_natural` null. Species cannot be read off
+  lidar: shrubs take the median's bush mix, trees Lake Murray's `trees` mix.
+- **The exclusion list is 82 median spots**, declared, no measured file rewritten: 53 on pavement, the 28 bare spots
+  on the bank, and one measured spot (208, v1410, 7.0 m) that stands on the curb ring 0.13 m from the southbound
+  edge; `tools/verify_race.py` G refused it (trunk 0.03 m into the race curb strip) and its own measured top is
+  planted in its place.
+- **Engine changes, each opt-in and tested:** `tools/make_treefx.py` `scenery.treefx.lidar_plants` (a declared list
+  of measured plants; the split is the config's, no default); `scripts/geometry/race_lap.mainline_approach` with
+  `tools/place_signs.py` and `tools/verify_signs.py` (a layout on a lap that walks the mainline through a
+  per-layout corner gets its plate there: the Speedway on the College lap keeps M3 and M4, the north lap still gets
+  neither).
+- **Step 4e:** on the scratch workshop the College step and the chain's author phase all pass: `lamp_heads`,
+  `walk_grade`, `race_bands` (planned no-route PASS for all four race layouts), `race_planned_gate`,
+  `layout_dummies`, `race_author`, `signs` (29 posts, 4 layout plates, verify PASS), `race_verify` (OK on the
+  mainline and both laps). The prep, the export and the gates after them are the rehearsal's.
+

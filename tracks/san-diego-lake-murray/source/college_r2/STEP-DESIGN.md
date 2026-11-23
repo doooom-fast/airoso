@@ -228,11 +228,13 @@ zone's 3,386 m, or is keyed by vertex, so none of it shifts):
 
 Found for the next steps:
 
-1. **The forks' other road is not a mouth the lap knows.** Stitch skips both ("MAINLINE beyond v1130" and "MAINLINE
-   before v1476": "the branch is the lap"), because its probe 10 m past the fork row still stands on the lap's own
-   pavement. So the no-route gate will not ask on its own that the other carriageway is sealed: the southbound road
-   at the nose and the tail for Speedway, the northbound piece's two ends for Reverse. Those closures and their probes
-   have to be declared in step 4; until they are, a green no-route gate says nothing about them.
+1. **The forks' other road is not a mouth the lap knows, and it does not need to be.** Stitch skips both ("MAINLINE
+   beyond v1130" and "MAINLINE before v1476": "the branch is the lap"), because its probe 10 m past the fork row still
+   stands on the lap's own pavement. CORRECTED 2026-11-23: this note first said a green no-route gate "says nothing
+   about" the other carriageway. That was wrong. `tools/no_route.py` floods every cell within half the road's width
+   + 25 m of the lap's line and fails ANY reached cell outside the declared corridor, mouth or no mouth; the other
+   road at each fork lies inside that reach, so an unsealed fork is a leak the gate reports. What step 4 had to do was
+   declare the corridor there (the closure through each fork), not add probes by hand.
 2. **`college_edges.json`'s built edges are floored to 0.5 m.** Not to be used as the built edge anywhere.
 3. **Lake Murray 0.20.4 is the base now** (round 1c, `claude/lm-sidewalk-20261122` c8debb5f, ledger 0099; merged into
    this branch 2026-11-22, c6e1b599). It adds the author step `walk_grade` (`tools/author_walk_grade_blend.py`,
@@ -544,3 +546,85 @@ rail stays `[invented]`.
 Still open in step 4: 4d the data step (the plants written, `lights.local.json`, the released zone and the config:
 the chicane out, the corridor on the piece at its real width, the fork closures and probes), 4e the chain's author and
 race steps in the workshop.
+
+## Step 4d and 4e done: the data, the rail out, the bank's plants, the chain's author phase (2026-11-23)
+
+Scratch only (`D:/k10-scratch/lm_r2_college/ws5`: the branch's 0.20.4 config and data, the split written into it). Not
+in the chain yet, not built, not installed.
+
+**The race declaration** (`college_race_config.py`): Speedway (`race_cw`) on the lap `college`, Reverse on the
+mainline; the chicane gone; `race.corridor.whole` two stretches (`[4454, 777]` and the two roads `[1171, 1445]`,
+`tools/barrier_bands.py` taught to take several); the College closure run cut in two, `[777, 1171]` and
+`[1445, 1506]`, so the closure runs through each fork to the point where the roads part. `tools/barrier_bands.py`
+exits 0: plan radius at least 24.1 m (Reverse) and 22.4 m (Speedway); all four planned no-route fills pass with no
+leak and no door.
+
+**The rail is out.** The G10 read the 2024 lidar along both inner edges, rows v1176-1440
+(`college_bank_rail.g10.json`): the northbound edge has 0 rail-like bins of 53 and 336 returns in the 0.5-1.2 m band,
+0.43 a metre (a W-beam would give about 45 a bin); the southbound edge, the control, 0 of 53 and 0.68 a metre.
+No rail stands there, so step 3 authors none (`college_middle_blend.py`: GUARDRAIL 1,300 faces of the old island's
+beam removed, 0 added; the invented `RAIL_SET_M`, `POST_BURY_M`, `RAIL_ROWS_IN` are gone, and so is the invented
+shrub rule). One thing is not identified: a short flat object about 0.65 m tall, 0.6 to 1.0 m behind the northbound
+edge at v1186-1195 (the tops file's two `solid` tops, v1189 and v1190). Nothing is built there.
+
+**The bank's plants** (`college_plants_data.py`; lists in `college_plants.report.json`):
+
+| | count |
+|---|---|
+| Measured tops on the bank (`college_bank_tops.g10.json`) | 465 |
+| Planted, each at its own height and crown | **396**: 263 trees, 133 shrubs |
+| It is a kept median spot (within 2 m): one of Kevin's 14 tall | 21 tops, on 13 of the 14 spots |
+| It is a kept median spot: one of the other measured spots | 21 tops, on 12 of the 22 spots |
+| A tree the planner already stands within its crown radius | 0 (6,316 planner trees compared; none stands on the bank) |
+| Not on the bank's grass top as built: listed, not moved, not planted | 25: 9 on the northbound pavement, 6 on the southbound, 10 on the curb ring (15 of them trees) |
+| Not a plant (the job's own `solid` flag) | 2 (the object above) |
+
+- Shrub or tree is split at **4.0 m, `[invented]`**: the lm-shrub tool's own fallback. Its summary has no measured
+  split (`antimode_natural` null: the 2024 lidar shows no shrub/tree valley at Lake Murray); file and md5 are in the
+  config entry's `_split_doc`. The split lives in the config entry, not in `tools/make_treefx.py`.
+- A shrub takes the median's bush mix (78 Bush, 55 Sage), a tree Lake Murray's `trees` mix (78 pepper, 55 oak, 43 + 35
+  sycamore, 41 gum, 11 Aleppo pine): the lidar cannot tell species. Heights 0.26 to 34.7 m, median 10.2 m.
+- 11 kept median spots have no top within 2 m: one of Kevin's 14 (spot 191 at v1250, 16.4 m, nearest top 3.25 m) and
+  10 of the others. They stay as they are.
+- **The exclusion list is 82 spots** (`college_plants.median_spots.json`): the 53 on pavement, the 28 bare spots on
+  the bank (the Mac, once the bank had measured plants), and **one measured spot, 208 at v1410 (7.0 m)**. It stands
+  on the bank's curb ring, 0.13 m from the southbound road's inner edge, and `tools/verify_race.py` check G refused
+  it: its trunk reached 0.03 m into the race curb strip. Its own measured top (266775, 9.3 m, 1.44 m away on the
+  grass) is planted in its place. One of Kevin's tall plants would never be dropped this way: it would be listed.
+  36 kept bank spots get their foot on the bank's top.
+- How they are planted: `tools/make_treefx.py` `scenery.treefx.lidar_plants` (opt-in, tested): a declared list, each
+  plant at its own height and crown, its model and angle hashed on its own key, emitted after every other line.
+  No measured file is rewritten. The planner on the scratch workshop: 21,484 plants (was 21,117).
+
+**Step 4e, the chain's author phase on the scratch workshop, in the chain's order with the College step first:**
+
+| Step | Result |
+|---|---|
+| College: split, middle, ground | all three self-checks pass (41,072 coverage samples; 83,646 old vertices unmoved; 10 east lamps raised) |
+| `lamp_heads` | 323 back lenses |
+| `walk_grade` | CURB 17,272 lips, 15,606 raised; 1,301 held by released ground, 513 under furniture, 10 by the red plan |
+| `race_bands` | exit 0; planned no-route PASS for all four race layouts |
+| `race_planned_gate` | PASS, 0 leak cells, for `race_cw`, `race_acw`, `north_cw`, `north_acw` |
+| `layout_dummies` | 5 layout files |
+| `race_author` | mainline 28 objects, lap `college` and lap `north` authored; 0 inside-out spans |
+| `signs` + `tools/verify_signs.py` | 29 posts, 4 layout plates, PASS (after the fix below) |
+| `race_verify` | OK on the mainline, on lap `college` and on lap `north`; nearest plant to a race strip 0.074 m clear |
+
+**One red check on the way, fixed in the rule, not loosened.** With the Speedway on its own lap, the sign rule gave it
+no layout plate at the College/Navajo and Navajo/Jackson corners (M3, M4): a layout on a lap "never gets" a mainline
+corner's plate, a rule written for the north lap, which turns off before both. `tools/verify_signs.py` (l) failed for
+both corners. The College lap IS the mainline there, so the rule now asks the lap:
+`scripts/geometry/race_lap.mainline_approach` says a lap drives a mainline corner where it walks the mainline for 20
+vertices `[invented]` either side of the apex, one way. The College lap does at all five mainline corners; the north
+lap at neither M3 nor M4 (it leaves the mainline 3 and 2 vertices short of them), as before. `tools/place_signs.py`
+places by it and `tools/verify_signs.py` check (m) holds a lap layout to it. Tested.
+
+**Noted, not a failure:** the race author reports the built deck up to 0.294 m off the data height at the strip, at
+v1456-1459 (the north fork). The strips are seated on the built deck by ray, so they sit right; the data's edge
+height assumes a level row and the fork's rows are tilted.
+
+**Not covered by 4e:** everything after the author phase (the prep in the chain, the export, drive test, the built
+no-route, the kn5 checks). That is the rehearsal, through the Mac's queue. Before it: the College step wired into
+`ship.json` as the first author step, the data step before it, the config edits written into airoso's own
+`track.config.json`, `college_bank_plants.json` synced into the workshop, and the metre-keyed entries moved 1.9 m.
+

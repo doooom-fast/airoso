@@ -17,8 +17,10 @@ STEP-DESIGN.md, "Step 3, the plan", has the why. Run on a blend whose ROAD alrea
              nose from the point where the two roads meet up to the first ring, at both ends
              the EAST WALK's vertices on rows A0+1..A1-1 rise with the road's east edge (section unchanged)
   TERRAIN    the bank's grass top, one quad per segment between the two curb tops
-  GUARDRAIL  the tool's beam and posts at the top of the bank, RAIL_SET_M behind the northbound road's inner edge
-  SCRUB      shrubs on the bank, by the tool's rule
+  GUARDRAIL  nothing. No rail stands on the bank: the 2024 lidar shows none along the northbound road's inner edge
+             (college_bank_rail.g10.json: 0 of 53 bins rail-like, 0.43 returns per metre in the 0.5-1.2 m band where a
+             W-beam gives about 45 per bin) and none along the southbound's (the control)
+  SCRUB      nothing. The bank's plants are the lidar's measured tops, planted as TreeFX data (college_bank_plants.py)
   YLINE, MARKINGS   paint on the tilted forks (the built pattern, the double yellow opening into a gore at the point where
              the roads part) and on the two one-way roads (yellow inside the median edge, white inside the outer edge,
              dashed dividers every 3.65 m counted from the yellow; the built clip rule)
@@ -49,9 +51,6 @@ LIFT = 0.10
 # tools/author_median_blend.py's own numbers
 CURB_H, LIP_IN, DECK_INSET, NOSE_HALF, NOSE_VERTS, SHRUB_EVERY_M = 0.18, 0.15, 0.22, 0.25, 3, 3.2
 ISLAND_HALF = 3.5                  # the built island's half width on College (median_bands: 7.0 m)
-RAIL_SET_M = 0.45                  # [invented] the beam's centre stands this far behind the northbound road's inner edge
-POST_BURY_M = 0.35                 # [invented] a post runs this far under the curb top's height (the bank falls away there)
-RAIL_ROWS_IN = 4                   # [invented] the beam starts this many rows after the nose and ends as many before the tail
 # scripts-v021/geometry/ribbon.py lane_markings' own numbers
 LINE_W, EDGE_INSET, LANE_W, DASH_ON, DASH_GAP, MAX_LANES, PAINT_LIFT = 0.12, 0.55, 3.65, 3.0, 9.0, 6, 0.015
 STREET_OBJECTS = ("1KERB_sidewalk_streetonly_median", "1WALL_guard_streetonly_median")
@@ -338,44 +337,8 @@ st, off, al, h = classify(w)
 on_line = (st >= CUT0 - NOSE_VERTS + 1) & (np.abs(al) <= 0.3) & (np.abs(off) <= 0.3) & (h >= 0.2) & (h <= 1.15)
 bm = open_bm(rail)
 rep["removed_faces"]["GUARDRAIL"] = drop_faces(bm, on_line)
-n_new = 0
-beam = {}
-rail_rows = list(range(NOSE + RAIL_ROWS_IN, TAIL - RAIL_ROWS_IN + 1))
-for v in rail_rows:
-    k = K[v]
-    oc = OFF["nb_west"][k] + RAIL_SET_M
-    if oc + 0.12 > OFF["sb_east"][k] - LIP_IN:
-        die(f"v{v}: the bank is too narrow for the barrier")
-    yb = R["nb_west"][k][1] + CURB_H
-    ring = []
-    for o, dy in ((-0.12, 0.45), (-0.12, 0.75), (0.12, 0.75), (0.12, 0.45)):
-        x, y = plan(v, oc + o)
-        ring.append(bm.verts.new((x, y, yb + dy)))
-    beam[v] = ring
-for v in rail_rows[:-1]:
-    ra, rb = beam[v], beam[v + 1]
-    for p, q in ((0, 1), (1, 2), (2, 3), (3, 0)):
-        bm.faces.new((ra[p], ra[q], rb[q], rb[p]))
-        n_new += 1
-dist, posts = 0.0, 0
-for v in rail_rows:
-    dist += float(FS[v - FV0] - FS[v - 1 - FV0])
-    if dist < 8.0:
-        continue
-    dist = 0.0
-    k = K[v]
-    cx, cy = plan(v, OFF["nb_west"][k] + RAIL_SET_M)
-    yb = R["nb_west"][k][1] + CURB_H
-    box = []
-    for ox, oy in ((-0.06, -0.06), (0.06, -0.06), (0.06, 0.06), (-0.06, 0.06)):
-        box.append(bm.verts.new((cx + ox, cy + oy, yb - POST_BURY_M)))
-        box.append(bm.verts.new((cx + ox, cy + oy, yb + 0.45)))
-    for p, q in ((0, 2), (2, 4), (4, 6), (6, 0)):
-        bm.faces.new((box[p], box[q], box[q + 1], box[p + 1]))
-        n_new += 1
-    posts += 1
-rep["added_faces"]["GUARDRAIL"] = n_new
-rep["GUARDRAIL"] = {"beam_rows": [rail_rows[0], rail_rows[-1]], "posts": posts}
+rep["added_faces"]["GUARDRAIL"] = 0
+rep["GUARDRAIL"] = {"beam": "none: no rail on the 2024 lidar on either inner edge (college_bank_rail.g10.json)", "posts": 0}
 close_bm(bm, rail)
 
 # =========================================================================================================== SCRUB
@@ -388,38 +351,8 @@ else:
     bm = open_bm(scrub)
     gone = drop_faces(bm, on_isl)
     rep["removed_faces"]["SCRUB"] = gone
-    state = 24680
-
-
-    def rnd():
-        global state
-        state = (state * 1103515245 + 12345) & 0x7FFFFFFF
-        return state / 0x7FFFFFFF
-
-
-    dist, clumps, n_new = 0.0, 0, 0
-    for v in range(NOSE + 2, TAIL - 1):
-        dist += float(FS[v - FV0] - FS[v - 1 - FV0])
-        k = K[v]
-        oe, ow = OFF["nb_west"][k] + RAIL_SET_M + 0.9, OFF["sb_east"][k] - 0.8          # clear of the barrier and of the curb
-        if dist < SHRUB_EVERY_M or ow - oe < 0.6:
-            continue
-        dist = 0.0
-        o = oe + rnd() * (ow - oe)
-        hh, ww = 0.35 + rnd() * 0.35, 0.5 + rnd() * 0.4
-        # the bank's top there: linear between its two edges
-        t = (o - (OFF["nb_west"][k] + DECK_INSET)) / ((OFF["sb_east"][k] - DECK_INSET) - (OFF["nb_west"][k] + DECK_INSET))
-        y0 = (R["nb_west"][k][1] + CURB_H) * (1 - t) + (R["sb_east"][k][1] + CURB_H) * t
-        cx, cy = plan(v, o)
-        i = v - FV0
-        for dx, dy in ((FNZ[i], -FNX[i]), (FNX[i], FNZ[i])):                       # along the road, then across it
-            q = [bm.verts.new((cx - dx * ww, cy - dy * ww, y0)), bm.verts.new((cx + dx * ww, cy + dy * ww, y0)),
-                 bm.verts.new((cx + dx * ww, cy + dy * ww, y0 + hh)), bm.verts.new((cx - dx * ww, cy - dy * ww, y0 + hh))]
-            bm.faces.new(q)
-            n_new += 1
-        clumps += 1
-    rep["added_faces"]["SCRUB"] = n_new
-    rep["SCRUB"] = {"clumps_removed_from_the_old_island": gone // 2, "clumps_planted_on_the_bank": clumps}
+    rep["added_faces"]["SCRUB"] = 0
+    rep["SCRUB"] = {"clumps_removed_from_the_old_island": gone // 2, "clumps_planted_on_the_bank": 0}
     close_bm(bm, scrub)
 
 # ===================================================================================== the street-only median pieces

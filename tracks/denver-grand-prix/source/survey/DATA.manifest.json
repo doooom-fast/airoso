@@ -1,0 +1,1514 @@
+{
+ "data_dir": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix",
+ "fetched": "2026-11-23",
+ "files": [
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/drapp/2022/N1E190a.tif",
+   "url": "https://drapparchive.s3.amazonaws.com/2022/N1E190a.tif",
+   "bytes": 446185267,
+   "listing_bytes": 446185267,
+   "sha256": "affa5fcf39441877310a2717e4f963da93be00959d317ee4fd3c1c0feff1610e"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/drapp/2022/N1E190a.tfw",
+   "url": "https://drapparchive.s3.amazonaws.com/2022/N1E190a.tfw",
+   "bytes": 41,
+   "listing_bytes": 41,
+   "sha256": "b8d9bacd5453cd24895fa1c511e896375e93fd13c3d718f3549a9f6ea4c4c40b"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/drapp/2022/N1E190c.tif",
+   "url": "https://drapparchive.s3.amazonaws.com/2022/N1E190c.tif",
+   "bytes": 446185467,
+   "listing_bytes": 446185467,
+   "sha256": "0984100877f234bb0743588c373b6cb9e7e9c38925d01db31873fd40b30ce8f5"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/drapp/2022/N1E190c.tfw",
+   "url": "https://drapparchive.s3.amazonaws.com/2022/N1E190c.tfw",
+   "bytes": 41,
+   "listing_bytes": 41,
+   "sha256": "3b6dd564985cf2c717c824fa6c9fb687262c7095bc689435609151fab1782474"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/drapp/2022/N1E190d.tif",
+   "url": "https://drapparchive.s3.amazonaws.com/2022/N1E190d.tif",
+   "bytes": 446178937,
+   "listing_bytes": 446178937,
+   "sha256": "9b5b137ff9b613bc03f9e88d54418256a8031e1d2a6fc571a43d4673d3cff306"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/drapp/2022/N1E190d.tfw",
+   "url": "https://drapparchive.s3.amazonaws.com/2022/N1E190d.tfw",
+   "bytes": 41,
+   "listing_bytes": 41,
+   "sha256": "1e495993befba0f284ea3a188898a4458706326ed12525e3d22c5d6b2c9bd40e"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/drapp/2022/N1W199b.tif",
+   "url": "https://drapparchive.s3.amazonaws.com/2022/N1W199b.tif",
+   "bytes": 446183833,
+   "listing_bytes": 446183833,
+   "sha256": "08f69dd76a52d2f1f9c475053b22ab83c02ae73059579a590ae7ea2018de592f"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/drapp/2022/N1W199b.tfw",
+   "url": "https://drapparchive.s3.amazonaws.com/2022/N1W199b.tfw",
+   "bytes": 41,
+   "listing_bytes": 41,
+   "sha256": "f4955a09994b9cf9fa896b860a20f07c5842c51ed4b39d63c6f1092d5a3faffb"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/drapp/2022/N1W199d.tif",
+   "url": "https://drapparchive.s3.amazonaws.com/2022/N1W199d.tif",
+   "bytes": 446179675,
+   "listing_bytes": 446179675,
+   "sha256": "7f05bb9988f734c197841a4db363e89f3cf713588abe122553e432db0b9ab62d"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/drapp/2022/N1W199d.tfw",
+   "url": "https://drapparchive.s3.amazonaws.com/2022/N1W199d.tfw",
+   "bytes": 41,
+   "listing_bytes": 41,
+   "sha256": "c274ab9243ba42da3db3831d9651cccb1a18491b81018e913d8a567c888eff4d"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/drapp/2022/S1E100a.tif",
+   "url": "https://drapparchive.s3.amazonaws.com/2022/S1E100a.tif",
+   "bytes": 446180121,
+   "listing_bytes": 446180121,
+   "sha256": "64285cb093631463a78996507264985fcc2ccc02c7f9ad473c8bf80ef719680b"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/drapp/2022/S1E100a.tfw",
+   "url": "https://drapparchive.s3.amazonaws.com/2022/S1E100a.tfw",
+   "bytes": 41,
+   "listing_bytes": 41,
+   "sha256": "38fae0622e8069b4fe8433739588647604c875e4baacdd3227580fe06574c279"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/drapp/2022/S1E100b.tif",
+   "url": "https://drapparchive.s3.amazonaws.com/2022/S1E100b.tif",
+   "bytes": 446179433,
+   "listing_bytes": 446179433,
+   "sha256": "85fdaaf981ec844159413c2a54b24e32207cb78ee312e6003290419376ca820d"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/drapp/2022/S1E100b.tfw",
+   "url": "https://drapparchive.s3.amazonaws.com/2022/S1E100b.tfw",
+   "bytes": 41,
+   "listing_bytes": 41,
+   "sha256": "4b19db4ff12db07fe1e11fd0a43b86883be654c0cf15d446fa1a56d4325397f5"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/drapp/2022/S1W109b.tif",
+   "url": "https://drapparchive.s3.amazonaws.com/2022/S1W109b.tif",
+   "bytes": 446176419,
+   "listing_bytes": 446176419,
+   "sha256": "e55ba9d478b05d9a1a62c6df58faf79577f7c0393e13d169b103eaf25bceda81"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/drapp/2022/S1W109b.tfw",
+   "url": "https://drapparchive.s3.amazonaws.com/2022/S1W109b.tfw",
+   "bytes": 41,
+   "listing_bytes": 41,
+   "sha256": "c906927d5ef6048d4484ddfd95303af98b3249a0295a67aa028616a74a9c4396"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/drapp/2020/N1E190a.tif",
+   "url": "https://drapparchive.s3.amazonaws.com/2020/N1E190a.tif",
+   "bytes": 446203673,
+   "listing_bytes": 446203673,
+   "sha256": "4df07db257d04bf4680c15970e26fd54fa56d9031fa894e48d375f0463caabd5"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/drapp/2020/N1E190a.tfw",
+   "url": "https://drapparchive.s3.amazonaws.com/2020/N1E190a.tfw",
+   "bytes": 41,
+   "listing_bytes": 41,
+   "sha256": "b8d9bacd5453cd24895fa1c511e896375e93fd13c3d718f3549a9f6ea4c4c40b"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/drapp/2020/N1E190c.tif",
+   "url": "https://drapparchive.s3.amazonaws.com/2020/N1E190c.tif",
+   "bytes": 446201395,
+   "listing_bytes": 446201395,
+   "sha256": "31da6d1b9961f1639b286ce2cdbd006bbffbe2d95b7b91bed2ff51e6ae64e512"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/drapp/2020/N1E190c.tfw",
+   "url": "https://drapparchive.s3.amazonaws.com/2020/N1E190c.tfw",
+   "bytes": 41,
+   "listing_bytes": 41,
+   "sha256": "3b6dd564985cf2c717c824fa6c9fb687262c7095bc689435609151fab1782474"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/drapp/2020/N1E190d.tif",
+   "url": "https://drapparchive.s3.amazonaws.com/2020/N1E190d.tif",
+   "bytes": 446199251,
+   "listing_bytes": 446199251,
+   "sha256": "a8ce441a65dde378e4498a0a718a6f47915061b7d71cccaa345b2e732c245929"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/drapp/2020/N1E190d.tfw",
+   "url": "https://drapparchive.s3.amazonaws.com/2020/N1E190d.tfw",
+   "bytes": 41,
+   "listing_bytes": 41,
+   "sha256": "1e495993befba0f284ea3a188898a4458706326ed12525e3d22c5d6b2c9bd40e"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/drapp/2020/N1W199b.tif",
+   "url": "https://drapparchive.s3.amazonaws.com/2020/N1W199b.tif",
+   "bytes": 446202347,
+   "listing_bytes": 446202347,
+   "sha256": "a570d166479a8702d27521ae506eb6d454f0b20b973f62b6ab79d54be1ab8313"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/drapp/2020/N1W199b.tfw",
+   "url": "https://drapparchive.s3.amazonaws.com/2020/N1W199b.tfw",
+   "bytes": 41,
+   "listing_bytes": 41,
+   "sha256": "f4955a09994b9cf9fa896b860a20f07c5842c51ed4b39d63c6f1092d5a3faffb"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/drapp/2020/N1W199d.tif",
+   "url": "https://drapparchive.s3.amazonaws.com/2020/N1W199d.tif",
+   "bytes": 446199609,
+   "listing_bytes": 446199609,
+   "sha256": "302fefd77437697bd12e8acf9b449c68c920894ec2a761e1ab01d14b0899730f"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/drapp/2020/N1W199d.tfw",
+   "url": "https://drapparchive.s3.amazonaws.com/2020/N1W199d.tfw",
+   "bytes": 41,
+   "listing_bytes": 41,
+   "sha256": "c274ab9243ba42da3db3831d9651cccb1a18491b81018e913d8a567c888eff4d"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/drapp/2020/S1E100a.tif",
+   "url": "https://drapparchive.s3.amazonaws.com/2020/S1E100a.tif",
+   "bytes": 446199025,
+   "listing_bytes": 446199025,
+   "sha256": "a1b5929468f3d027deb7d519b5780be6a1032482883a871b23937cd2cdf0aeda"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/drapp/2020/S1E100a.tfw",
+   "url": "https://drapparchive.s3.amazonaws.com/2020/S1E100a.tfw",
+   "bytes": 41,
+   "listing_bytes": 41,
+   "sha256": "38fae0622e8069b4fe8433739588647604c875e4baacdd3227580fe06574c279"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/drapp/2020/S1E100b.tif",
+   "url": "https://drapparchive.s3.amazonaws.com/2020/S1E100b.tif",
+   "bytes": 446198969,
+   "listing_bytes": 446198969,
+   "sha256": "a64767f69cb998a19ff00260ac42ca698602592392d5fcd77bd72a1cc11c3d60"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/drapp/2020/S1E100b.tfw",
+   "url": "https://drapparchive.s3.amazonaws.com/2020/S1E100b.tfw",
+   "bytes": 41,
+   "listing_bytes": 41,
+   "sha256": "4b19db4ff12db07fe1e11fd0a43b86883be654c0cf15d446fa1a56d4325397f5"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/drapp/2020/S1W109b.tif",
+   "url": "https://drapparchive.s3.amazonaws.com/2020/S1W109b.tif",
+   "bytes": 446196739,
+   "listing_bytes": 446196739,
+   "sha256": "b6ffb46e5c3263064793f306512f5132633a6e9be5a5decb6702e913fe932f59"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/drapp/2020/S1W109b.tfw",
+   "url": "https://drapparchive.s3.amazonaws.com/2020/S1W109b.tfw",
+   "bytes": 41,
+   "listing_bytes": 41,
+   "sha256": "c906927d5ef6048d4484ddfd95303af98b3249a0295a67aa028616a74a9c4396"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/naip/co_m_3910417_nw_13_030_20230925_20240104_lap60m.json",
+   "url": "Microsoft Planetary Computer data API via tools/naip_crop.py",
+   "bytes": 356,
+   "sha256": "2184b0238215f90b516f00a91658c997f01036bc53cfac892dd8bdef68018206"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/naip/co_m_3910417_nw_13_030_20230925_20240104_lap60m.png",
+   "url": "Microsoft Planetary Computer data API via tools/naip_crop.py",
+   "bytes": 60786172,
+   "sha256": "81a09f728a3ee587e89e3ea24660fa41e3091c6294a0ddc88d787a47c58154ea"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/naip/co_m_3910524_ne_13_030_20230925_20240104_lap60m.json",
+   "url": "Microsoft Planetary Computer data API via tools/naip_crop.py",
+   "bytes": 356,
+   "sha256": "26fee6ae347050047c711187b9a4d08f3c3de8fa265dc1c53bfe54522a0fb5ed"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/naip/co_m_3910524_ne_13_030_20230925_20240104_lap60m.png",
+   "url": "Microsoft Planetary Computer data API via tools/naip_crop.py",
+   "bytes": 21984597,
+   "sha256": "f440e27d1e2df778e3db035b83266c1434be1b5bf70fb2c018a0e46e2e77a92e"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/0-0-0-0.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/0-0-0-0.laz",
+   "bytes": 133503,
+   "points_in_node": 9219,
+   "sha256": "ce2c9177c033f850e34d738b4596b7b3efb61d7adbc4b24695e50a039f6f459e"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/1-0-1-0.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/1-0-1-0.laz",
+   "bytes": 148969,
+   "points_in_node": 10567,
+   "sha256": "ab473e3ea00bc1d8e83f19f9a4b6cd04c8b5950ed01494d158f89bfd3ebb8dae"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/1-0-1-1.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/1-0-1-1.laz",
+   "bytes": 28774,
+   "points_in_node": 1784,
+   "sha256": "206a6f996e225ef0f539994d3cd3ef513536d6b2c61b92094db13edfcc7d9c28"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-399-530-506.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-399-530-506.laz",
+   "bytes": 128335,
+   "points_in_node": 23940,
+   "sha256": "3576bc2aead0312b03cb33df1437c81fc55c6c0d872932741ae97c7da4c1fde3"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-399-531-506.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-399-531-506.laz",
+   "bytes": 131446,
+   "points_in_node": 25042,
+   "sha256": "f71a4ddcd05ec699b2fa3a75e0985d20f9bc5a957b37f85ccf5100be44df92d6"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-400-528-506.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-400-528-506.laz",
+   "bytes": 118754,
+   "points_in_node": 22646,
+   "sha256": "da2785df061d64a3744cddee6c0c8095103ab33909b01de2410d0ca04a756c16"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-400-529-506.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-400-529-506.laz",
+   "bytes": 113443,
+   "points_in_node": 20793,
+   "sha256": "03e5eb40310139ab365d2faa2c56679d812a46efb4af85ac4da30716e2023588"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-400-530-506.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-400-530-506.laz",
+   "bytes": 126852,
+   "points_in_node": 25148,
+   "sha256": "4b6034b1c99c63d4f2c3574e2a48a6d81846475412563c7299b5d89e8c32a2cf"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-400-531-506.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-400-531-506.laz",
+   "bytes": 138098,
+   "points_in_node": 26491,
+   "sha256": "0819cbf8ebab6b361b6d7e1b03ad1e05096fe41c70506bb2f70c684dcfe12314"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-400-532-506.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-400-532-506.laz",
+   "bytes": 139942,
+   "points_in_node": 24603,
+   "sha256": "9d531a7b4938adf52cb2a457578c492cd8e0c1b1d1f5ad934fd99cfb6b21c35e"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-401-521-507.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-401-521-507.laz",
+   "bytes": 227126,
+   "points_in_node": 40076,
+   "sha256": "73b39d9cf1177fa1b7ee82e4870b2478f2d899635fc0299e0939791779d952b7"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-401-522-507.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-401-522-507.laz",
+   "bytes": 206995,
+   "points_in_node": 37628,
+   "sha256": "6e65099d9c694b72032f87cd20dc57d42dd73d1e4de67b0842c6cea44f7079ce"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-401-523-507.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-401-523-507.laz",
+   "bytes": 158169,
+   "points_in_node": 32939,
+   "sha256": "d07885db1b6fde158b080b325bf92f6d50f629b63f7964a74f7d3b3c66b56453"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-401-524-507.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-401-524-507.laz",
+   "bytes": 154459,
+   "points_in_node": 28340,
+   "sha256": "05334e0f9ff747a311fdde9b21735c1fe56c2f6ed42ef4dde6e9fdd52798648e"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-401-525-506.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-401-525-506.laz",
+   "bytes": 109825,
+   "points_in_node": 22759,
+   "sha256": "1e8664b830a65b69196d529520e33d15229ee9f17c56e67017d64ac050b459ca"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-401-526-506.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-401-526-506.laz",
+   "bytes": 115623,
+   "points_in_node": 23387,
+   "sha256": "9dcf8759fc836f1f3510645efeea2d4bd8590df4fbc47d0d5a9f86ea037faf93"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-401-527-507.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-401-527-507.laz",
+   "bytes": 105108,
+   "points_in_node": 18846,
+   "sha256": "aafc5a5f454dd418ea496c59aa4890dbed7c4350058efc0e8ff4ac6967c3293d"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-401-528-506.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-401-528-506.laz",
+   "bytes": 110268,
+   "points_in_node": 21220,
+   "sha256": "4521cfb6165bf9cda5c44119eecc71120c7a67686d101e0f00261046ceb0dee5"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-401-529-506.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-401-529-506.laz",
+   "bytes": 133467,
+   "points_in_node": 28537,
+   "sha256": "ccc6c9bd72182c0f268be324660914cd94332a66eb560c2e046ce43d8150f902"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-401-530-506.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-401-530-506.laz",
+   "bytes": 153241,
+   "points_in_node": 30509,
+   "sha256": "77ea0021d8ab1603aa5a64f9bfbbeae085f668b7911ee1e8cf2326e7e4b3904b"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-401-531-506.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-401-531-506.laz",
+   "bytes": 140568,
+   "points_in_node": 26014,
+   "sha256": "b8ebedcfd42d2ffa536a8bf024e5714d1e0af83b2f81db4b0173363eaba32fb4"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-401-532-507.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-401-532-507.laz",
+   "bytes": 124667,
+   "points_in_node": 21587,
+   "sha256": "9aa70591148dc7fc959bd9161e19e7f69a21161264230b22f852e1c7d745c88e"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-402-521-507.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-402-521-507.laz",
+   "bytes": 208344,
+   "points_in_node": 36899,
+   "sha256": "9010e11cc9faf9cdfc4e3a372b43f4a9c2e49cf9ea65790c85e92d7bc335931a"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-402-522-507.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-402-522-507.laz",
+   "bytes": 197351,
+   "points_in_node": 36488,
+   "sha256": "00ecb3e35643b490f2e8ad92c519dffa451dee92f3e7777f045073034af24b12"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-402-523-507.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-402-523-507.laz",
+   "bytes": 198457,
+   "points_in_node": 35963,
+   "sha256": "4b807ca54ab3b7157981f58c5068fb75f1f92bb5fa0a2cb713890e6f8fbb684b"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-402-524-506.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-402-524-506.laz",
+   "bytes": 99882,
+   "points_in_node": 20262,
+   "sha256": "41ae3d0c020e7505ef882cd50b4bc8a9df8ca8feed0a0b0a9cb60d9a9fe5a2de"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-402-525-506.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-402-525-506.laz",
+   "bytes": 143491,
+   "points_in_node": 27968,
+   "sha256": "e9d0b3149d1e6674490ab61eab0a9b5da23e22fdcf299802883eaee4574d8c57"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-402-526-506.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-402-526-506.laz",
+   "bytes": 156138,
+   "points_in_node": 29651,
+   "sha256": "a50dbd3d37be2244a88f5c398861290f75bcf52bcb094762a7d6fcf0c0a6d9a6"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-402-527-506.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-402-527-506.laz",
+   "bytes": 135486,
+   "points_in_node": 25620,
+   "sha256": "b8b23c1f80d37ef64fa4704886cc75cb9db84a7b51afd839d1a1506ebde2c79f"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-402-528-506.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-402-528-506.laz",
+   "bytes": 134257,
+   "points_in_node": 24916,
+   "sha256": "06a457e010208f394bca3415b7b56007cb4744fce147e75239d1bf518c18922f"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-402-529-506.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-402-529-506.laz",
+   "bytes": 117442,
+   "points_in_node": 21116,
+   "sha256": "027e34ab9c5804e9052bbf4976f5629ad5f4466c349d0ebf6a7d35baade6037e"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-402-530-506.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-402-530-506.laz",
+   "bytes": 105661,
+   "points_in_node": 19910,
+   "sha256": "bd9fd73bc98011684ca52f0e4849545318f742e89596f10cf7a110239ac1509b"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-402-531-507.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-402-531-507.laz",
+   "bytes": 120910,
+   "points_in_node": 21035,
+   "sha256": "7f30672e0f46307505e867bb7b512a58e6024976ce2118283b6345e039dcf2c7"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-402-532-506.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-402-532-506.laz",
+   "bytes": 106655,
+   "points_in_node": 18634,
+   "sha256": "991791b63b04035558eec3f69bc953fac4cf02c03af49fe7dd4fa5f4b01fcb08"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-402-532-507.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-402-532-507.laz",
+   "bytes": 100804,
+   "points_in_node": 16673,
+   "sha256": "d1800817fc3c858ecd649fd66a1b8778dc68308ba60ff463843d473172374060"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-403-521-507.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-403-521-507.laz",
+   "bytes": 175549,
+   "points_in_node": 32938,
+   "sha256": "dda9270c638ee2162715def78b88eeffdce09967a8154289a2e30d01721932e0"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-403-522-507.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-403-522-507.laz",
+   "bytes": 204388,
+   "points_in_node": 36544,
+   "sha256": "35ea1b32d98da54f610cb940e7930938915d7850154f2f5023afd7c5f484e1ef"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-403-523-507.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-403-523-507.laz",
+   "bytes": 169110,
+   "points_in_node": 30649,
+   "sha256": "e1f5e8e21c9507976dbcdbd78d76aeff4f04cb4a6703fb589bd9ba18f69fcb8f"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-403-524-507.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-403-524-507.laz",
+   "bytes": 126035,
+   "points_in_node": 22536,
+   "sha256": "3ac4b44f2e007759fced4e5dab021087b938be25959e2216aae4eefbadfa7bff"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-403-525-507.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-403-525-507.laz",
+   "bytes": 117582,
+   "points_in_node": 21148,
+   "sha256": "d991965271daaa6931fd463742dcabd43077e37849a8d65c599298d1796c7696"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-403-526-506.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-403-526-506.laz",
+   "bytes": 107991,
+   "points_in_node": 20298,
+   "sha256": "ad0b4ca32d398eadab979ac0734f478d5299bce655b89352d0fc19c17ba595ce"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-403-527-507.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-403-527-507.laz",
+   "bytes": 170784,
+   "points_in_node": 29444,
+   "sha256": "e510b5f63adb20f84ac62fd9add348696a8063b2f57e70299cfa8e4b5ee53b9b"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-403-529-507.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-403-529-507.laz",
+   "bytes": 149841,
+   "points_in_node": 23082,
+   "sha256": "d506edc520e4e95d26ad91953fa28a3857f004394eefb36a7200122ef7fe9683"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-403-530-507.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-403-530-507.laz",
+   "bytes": 153033,
+   "points_in_node": 24982,
+   "sha256": "922319ff6b80e93a8764b5caaeacf4c1813dff0a8f8539d69d171f45daef520d"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-403-531-507.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-403-531-507.laz",
+   "bytes": 133176,
+   "points_in_node": 22394,
+   "sha256": "c4a2fda9d42ed4383fb8e1f275a26cc3297ca09e9c9b543701e091bed6399f58"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-403-532-507.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-403-532-507.laz",
+   "bytes": 133308,
+   "points_in_node": 21498,
+   "sha256": "7c4f7a33a85cb7654adfbf8174ba7771be7c888dd8aa4f13d02433d91bfd333b"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-404-521-507.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-404-521-507.laz",
+   "bytes": 169289,
+   "points_in_node": 29381,
+   "sha256": "cfb2163e98aa7949f19a2fa8e26cc4add4a6f24c94aab4da7533d4aabb131cea"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-404-523-507.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-404-523-507.laz",
+   "bytes": 188671,
+   "points_in_node": 33705,
+   "sha256": "8b87249c1ff5168ebe4f133a685a37ec2fd36c4462af0ce6072baca96838617b"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-404-525-507.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-404-525-507.laz",
+   "bytes": 105033,
+   "points_in_node": 23838,
+   "sha256": "95b868f327e2ea7006ab16393564506f3db06b98f05bfb481c4a1b21dffa52a4"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-404-526-507.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-404-526-507.laz",
+   "bytes": 120330,
+   "points_in_node": 25096,
+   "sha256": "f2aaf164741eb8d8926320eecd4d82f2cbc90c165d232e1f8357ec5212277bce"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-404-527-507.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-404-527-507.laz",
+   "bytes": 129292,
+   "points_in_node": 21884,
+   "sha256": "a2353d2758ce05c057ac46eeae79173a51253acaaa38a346773848011969f120"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-404-528-507.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-404-528-507.laz",
+   "bytes": 202127,
+   "points_in_node": 33027,
+   "sha256": "f8a85581af8b6c55959816138f6ea5e5dbe24d35e56d6a6ddffbf2b904bdc7b9"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-404-529-507.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-404-529-507.laz",
+   "bytes": 159445,
+   "points_in_node": 25542,
+   "sha256": "7aa25362f9ccfe99440c00a98456f5afb70b2690e4430de1bc399de0331584c9"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-404-530-507.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-404-530-507.laz",
+   "bytes": 127456,
+   "points_in_node": 20316,
+   "sha256": "8a43a28f724417cc6269ba21f1e3d91a049e94b59b5063597619c31708b093bb"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-404-531-507.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-404-531-507.laz",
+   "bytes": 133299,
+   "points_in_node": 20777,
+   "sha256": "64cf7311c9c92f64ccfd989f7481ed4c1080594a8f3e7fa24cd3de8d5537c987"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-405-521-507.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-405-521-507.laz",
+   "bytes": 442722,
+   "points_in_node": 67114,
+   "sha256": "eb0938d11e89fc02608c17ce5c4d819da647aa76805b9af7deb6cc5a1dc55ed3"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-405-522-507.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-405-522-507.laz",
+   "bytes": 478233,
+   "points_in_node": 74908,
+   "sha256": "7130c9539de30d52228790b99c32c1fe23998d177c6f0eee867880b53433378f"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-405-523-507.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-405-523-507.laz",
+   "bytes": 418027,
+   "points_in_node": 66801,
+   "sha256": "3f8960608a02a1a6eb4114074397215c588c3540a31b22ce142372e6354108bf"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-405-524-507.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-405-524-507.laz",
+   "bytes": 379129,
+   "points_in_node": 59383,
+   "sha256": "9ba81446415487828c1b9740eaaecccb921cf08c4085283ce25b49053e86a3d1"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-405-525-507.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-405-525-507.laz",
+   "bytes": 206123,
+   "points_in_node": 34934,
+   "sha256": "0d9571529d0e99a75bb175a5baf117f6d70e4aad6965b9198790961336142c14"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-405-526-507.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-405-526-507.laz",
+   "bytes": 253183,
+   "points_in_node": 42651,
+   "sha256": "f292184900566e480aa87aab512c9e5b6e28e8cb058d22c5cd72e06d38c18020"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-405-527-507.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-405-527-507.laz",
+   "bytes": 429636,
+   "points_in_node": 63901,
+   "sha256": "a6dc38ca2c7220c81f45c65645561f0b348ad8badc406c3c8513b3d1a318faae"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-405-528-507.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-405-528-507.laz",
+   "bytes": 391634,
+   "points_in_node": 54220,
+   "sha256": "91a30a8a402dd9fd7f0eb394e589e0cd3a0a00cb77a2e7917f2be53bc91dcc57"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-405-529-507.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-405-529-507.laz",
+   "bytes": 427705,
+   "points_in_node": 65542,
+   "sha256": "2e35ea7470d5f9324691a002c10be2b324ead200a86f2e2bc2de9214eb3677df"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-405-530-507.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-405-530-507.laz",
+   "bytes": 457291,
+   "points_in_node": 70914,
+   "sha256": "b76830584bf49257ae9bf292860307a30b968a96768fe51d7bd98c9cf80e4a35"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-406-521-507.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-406-521-507.laz",
+   "bytes": 485568,
+   "points_in_node": 80898,
+   "sha256": "f8b584f7ed70a914302b177b7447c1cc687cfdad5e5e1c13d7152cd7bc38a36f"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-406-522-507.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-406-522-507.laz",
+   "bytes": 499732,
+   "points_in_node": 76488,
+   "sha256": "159001d2fc7c2699be2d39b26253381a32c57b5393bcfcf2331b9f43aadbf500"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-406-523-507.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-406-523-507.laz",
+   "bytes": 485222,
+   "points_in_node": 81817,
+   "sha256": "b9ee49464af7677b4a68b77ce6f7642c1ca4d51f55c2c56e95f884dffece3aa0"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-406-524-507.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-406-524-507.laz",
+   "bytes": 471107,
+   "points_in_node": 79704,
+   "sha256": "22cf843959e825b0924bfa6f63ff4cd8b74044783845e50db740824a504864fb"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-406-526-507.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-406-526-507.laz",
+   "bytes": 449009,
+   "points_in_node": 72526,
+   "sha256": "f1fe4e577865200f217a4773e60bbfa6feb1d70b66d74a45ea600c3fa08d5553"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-406-527-507.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-406-527-507.laz",
+   "bytes": 524079,
+   "points_in_node": 81802,
+   "sha256": "067b0fb92a088df6254d00b8d2733541a8b2536109377984a6edb8f1e56ab1cb"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-406-528-507.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-406-528-507.laz",
+   "bytes": 528966,
+   "points_in_node": 82747,
+   "sha256": "a354f5c95b17e3b789292f128d8d0b7b5fe1c720267c66b1c43fab91324bf56f"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-406-529-507.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-406-529-507.laz",
+   "bytes": 543278,
+   "points_in_node": 85542,
+   "sha256": "dc6c6f1d7619d94af8629162b6967494b7cbe7dd62f6f3e855d8621d2251654e"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-407-521-507.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-407-521-507.laz",
+   "bytes": 525227,
+   "points_in_node": 86551,
+   "sha256": "c00f48826487ad71311955cfc20bbe9bb1330afff70ca10a1613253d7ca9591f"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-407-522-507.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-407-522-507.laz",
+   "bytes": 447313,
+   "points_in_node": 72273,
+   "sha256": "f61c0be44053ea8268ba529c88812c6734e88076a3f11920eaf8ad4178987b1b"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-407-523-507.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-407-523-507.laz",
+   "bytes": 510176,
+   "points_in_node": 85207,
+   "sha256": "8964d6d940d29c25e22972986075a150895ecc0d9b17ddf8838b167647caf8a0"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-407-524-507.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-407-524-507.laz",
+   "bytes": 464397,
+   "points_in_node": 79890,
+   "sha256": "e282b14113f2c3858a38fb273e0ff5b8410f078600404036278a7bdad76ee2e2"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-407-527-507.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-407-527-507.laz",
+   "bytes": 543831,
+   "points_in_node": 85219,
+   "sha256": "91bc14343448173268c6be06c3a0f0754064a178de3cc2fc82ea53ae53f4581c"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-407-528-507.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-407-528-507.laz",
+   "bytes": 471590,
+   "points_in_node": 77356,
+   "sha256": "1693d5fe10473d44b9b7f4060abd45e7db9365a3afca3560b40371ceab5e4bd5"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-408-521-507.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-408-521-507.laz",
+   "bytes": 476643,
+   "points_in_node": 80274,
+   "sha256": "b99f277097a781003323375f7eee359773bdc8db64fb7ada4e6fad20b92ac3b7"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-408-522-507.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-408-522-507.laz",
+   "bytes": 431041,
+   "points_in_node": 66994,
+   "sha256": "8df61e42dc4c09f7d7c66e9ee4ccd9e9f8c2b80bd9e91f3bdcee6dbd831a0acf"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-408-523-507.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-408-523-507.laz",
+   "bytes": 511960,
+   "points_in_node": 83861,
+   "sha256": "9eb7b05458db85156a0ffb13a30699e4491d64151ba5b708bfa3478c7265ff27"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-408-524-507.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-408-524-507.laz",
+   "bytes": 443606,
+   "points_in_node": 79853,
+   "sha256": "c8fc3e93bbfe7713e43d96e2838588087aedd0aa6651081ea587b07441bca185"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-409-520-507.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-409-520-507.laz",
+   "bytes": 485285,
+   "points_in_node": 73061,
+   "sha256": "11ccdc55bf29490ca07a98356df84722c29f32ab5a17ddfab6874be0b0fa656c"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-409-521-507.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-409-521-507.laz",
+   "bytes": 513233,
+   "points_in_node": 81570,
+   "sha256": "3daf1a7fd5619c5f43b612339db6412582dfca6e2b147c28827686d06b566ac9"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-409-522-507.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-409-522-507.laz",
+   "bytes": 457310,
+   "points_in_node": 69905,
+   "sha256": "40ff5b947a7d5ea65660f318700b76f26168e898bc041402b1f16bb014d0f2f6"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-409-523-507.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-409-523-507.laz",
+   "bytes": 555252,
+   "points_in_node": 85861,
+   "sha256": "e1228b8fc40db61f3d38a8877b4299cfae02f3db98a092835a8b9e8e3f7a477e"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-409-524-507.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-409-524-507.laz",
+   "bytes": 522815,
+   "points_in_node": 81914,
+   "sha256": "b9e743b3c2888d19eb39acb4788ca757c2d7b3817ef4b2ed785253764aed4469"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-410-520-507.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-410-520-507.laz",
+   "bytes": 225815,
+   "points_in_node": 39470,
+   "sha256": "efac4c285a93d7b1e8a60a83f8aac1f23205bfc455376b2543bfbb192304afea"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-410-521-507.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-410-521-507.laz",
+   "bytes": 302933,
+   "points_in_node": 50042,
+   "sha256": "d9c738310088e1a6c5f96fef72bafa0f62bed0c6bee76271040cf4b8f2ed9bef"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-410-522-507.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-410-522-507.laz",
+   "bytes": 247029,
+   "points_in_node": 44525,
+   "sha256": "4fe7ee4999abf4965fb7137bc5647f86ff763301d461f04599f7654997716ea7"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-410-523-507.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-410-523-507.laz",
+   "bytes": 317155,
+   "points_in_node": 52950,
+   "sha256": "a906615ac409139d8c97277fe14c6f87d4a67f68a3ced92f03a056f802da41a0"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-410-524-507.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-410-524-507.laz",
+   "bytes": 247504,
+   "points_in_node": 42843,
+   "sha256": "8fe7ae0978da50229a8620c3dbdb7c5cdbe88779d4324861882804ca3e51dd23"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-411-520-507.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-411-520-507.laz",
+   "bytes": 223521,
+   "points_in_node": 40001,
+   "sha256": "272d341bf856d7a0448b4a485f458a73aee5c5b6d4735243167bc60f1ea2951f"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-411-521-507.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-411-521-507.laz",
+   "bytes": 257639,
+   "points_in_node": 44851,
+   "sha256": "40af8c5fab4e39139d09656b6fb1151abca4a3bad74fcf841a534f47c07be178"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-411-522-507.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-411-522-507.laz",
+   "bytes": 355445,
+   "points_in_node": 58406,
+   "sha256": "e92400b965a4b57b5e110b46e320d5d6ea5797334e84d6387f981115c897e373"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-411-523-507.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-411-523-507.laz",
+   "bytes": 279558,
+   "points_in_node": 49431,
+   "sha256": "704d9345572276c553683d046bd336fe3f6a9ade48fcc4e04a6d3b7df5acdb07"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-411-524-507.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-411-524-507.laz",
+   "bytes": 208925,
+   "points_in_node": 37332,
+   "sha256": "c87822da0150fcf6bb3e73a7e82eb474bb84eefd87e2e998ed9a456a443a47c7"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-412-521-507.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-412-521-507.laz",
+   "bytes": 232493,
+   "points_in_node": 42034,
+   "sha256": "52a5b551b148464f910f69ade879cf70a882c99c9d6e4a37bc9b8f802d7f37da"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-412-522-507.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-412-522-507.laz",
+   "bytes": 304024,
+   "points_in_node": 51571,
+   "sha256": "bb6ab00366182fe27df649d95c73d44584f57c6af32ba55bb1e61b232693afc8"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-412-523-507.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-412-523-507.laz",
+   "bytes": 257718,
+   "points_in_node": 46684,
+   "sha256": "850c8cdd80d71aa16c66c478c1f119c005da4848252ebb2b2ee0fef537afba67"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-412-524-507.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-412-524-507.laz",
+   "bytes": 196329,
+   "points_in_node": 36928,
+   "sha256": "e49243f8f241a539f4547d345804129ed8aff9becbee9179ebc45d9c677e2b8a"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-413-521-507.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-413-521-507.laz",
+   "bytes": 257523,
+   "points_in_node": 45798,
+   "sha256": "689755559507b9c47da11136bc2d9eed1010278ddae714f41418ea955eab696d"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-413-522-507.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-413-522-507.laz",
+   "bytes": 277266,
+   "points_in_node": 47866,
+   "sha256": "05cbc592119e4de75c0166e23c3f14954c8d61acf3ad14bf7fb5920370846cf7"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-413-523-507.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-413-523-507.laz",
+   "bytes": 272072,
+   "points_in_node": 48194,
+   "sha256": "9f4539dbf84da29cfc2cc3d1079b5d0cc883eebe0561d204649ec0bb82e276d4"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-413-524-507.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-413-524-507.laz",
+   "bytes": 260716,
+   "points_in_node": 46299,
+   "sha256": "81228f042657c3bf2022bfadb154f45abb9747d3978c6e82f36ab1380c285b5d"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-414-521-507.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-414-521-507.laz",
+   "bytes": 257108,
+   "points_in_node": 46681,
+   "sha256": "78e6bc2ebb24ec34bf643a1ebfe449586b66b2800b687bc18ae5f64f05a37b77"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-414-522-507.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-414-522-507.laz",
+   "bytes": 295480,
+   "points_in_node": 52157,
+   "sha256": "c8b6c7f1096288915726337ac5de3d69e726582e208a65e82bf4c642bd051ee3"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-414-523-507.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-414-523-507.laz",
+   "bytes": 240297,
+   "points_in_node": 45721,
+   "sha256": "847d089c84f5afe91c56725fbcc9c504e61cccece0d01374ae34f0821afd2e64"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-414-524-507.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-414-524-507.laz",
+   "bytes": 248349,
+   "points_in_node": 46552,
+   "sha256": "956b6081df792da65ff940f36b7eaaf5b8da0dc45c7fa0002931ab3db4e51b2a"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-415-521-507.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-415-521-507.laz",
+   "bytes": 315292,
+   "points_in_node": 54502,
+   "sha256": "56e80afef9b2ce7f428b2ce1489c31d95d27b69a8ce80d20a91af1d6a3672d1b"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-415-522-507.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-415-522-507.laz",
+   "bytes": 270184,
+   "points_in_node": 47446,
+   "sha256": "71592a4af133cbd985b88a427421ed916e1f89f8f5ca66730dc7f17c1fd5a49c"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-415-523-507.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-415-523-507.laz",
+   "bytes": 277880,
+   "points_in_node": 49123,
+   "sha256": "0658ca6b6ccc860f89ac28365dc7e038e67a91eb2f7788497275a1fb656e72c4"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/10-415-524-507.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/10-415-524-507.laz",
+   "bytes": 262445,
+   "points_in_node": 46706,
+   "sha256": "f753b9da7b4907a6aa181eaa44b99e81044f11142e30b463fe80d8e38cb8b39e"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/11-811-1057-1014.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/11-811-1057-1014.laz",
+   "bytes": 130464,
+   "points_in_node": 16611,
+   "sha256": "1f21fbb0eef81b5991875560d05ee09a6db0fabfe34203f528994bc547e50dfa"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/11-813-1044-1014.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/11-813-1044-1014.laz",
+   "bytes": 113744,
+   "points_in_node": 16388,
+   "sha256": "b55d15a029b829a9d98c672494d30a701269b4167db970c4633407c05d9d7e93"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/11-814-1044-1014.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/11-814-1044-1014.laz",
+   "bytes": 119495,
+   "points_in_node": 16729,
+   "sha256": "a174ff7465de9651701e8e3a460a5efcd3025aa42034ca898c3954168edae3cf"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/11-816-1044-1014.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/11-816-1044-1014.laz",
+   "bytes": 114160,
+   "points_in_node": 16497,
+   "sha256": "c1baa4e2e5a99d41498061d28925eabb2bad2f3f035cd5f7016a5fdd77e2cd3b"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/11-819-1044-1014.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/11-819-1044-1014.laz",
+   "bytes": 129135,
+   "points_in_node": 16962,
+   "sha256": "f3e5dc562b0a458eb17c901ff35dca68536005c4f45f66dcce3b75c3f30f9707"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/2-1-2-1.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/2-1-2-1.laz",
+   "bytes": 211949,
+   "points_in_node": 16009,
+   "sha256": "47780b559c904d427b28bd63867347feac1f6541b5a256c9fd571d8af94b3810"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/3-3-4-3.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/3-3-4-3.laz",
+   "bytes": 258665,
+   "points_in_node": 19934,
+   "sha256": "8ed4213d199f27ae66690880bc5610307115127eb4ca41af4da8762ea03df0ba"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/4-6-8-7.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/4-6-8-7.laz",
+   "bytes": 271016,
+   "points_in_node": 21383,
+   "sha256": "3c9484dfadd57dfbc1748950c4c9bf1199632c9f6b5fb1b728ed128165b3ad23"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/5-12-16-15.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/5-12-16-15.laz",
+   "bytes": 317004,
+   "points_in_node": 25584,
+   "sha256": "8ce62d1ae0ca7dfcaa1e9b7c666259e1ee795d267947ce5d9ffa9f985be36251"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/6-24-33-31.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/6-24-33-31.laz",
+   "bytes": 292414,
+   "points_in_node": 24505,
+   "sha256": "6955448b30b201415cbaf872d5bdb580ca2c2c652ba697158acb699da23f77c4"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/6-25-32-31.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/6-25-32-31.laz",
+   "bytes": 308512,
+   "points_in_node": 26551,
+   "sha256": "7297d0b4c8b8e3f975b13765d99a05c7a637c77aba2501d0d429b2c02b3cd9bb"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/6-25-33-31.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/6-25-33-31.laz",
+   "bytes": 353195,
+   "points_in_node": 30276,
+   "sha256": "71b710ecb08d06b7fad423dd6daabda44443c929e991233cd76c03ccd991149d"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/7-49-66-63.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/7-49-66-63.laz",
+   "bytes": 253962,
+   "points_in_node": 22768,
+   "sha256": "4be03e851d3a1c1ae467f722db7e926c2bea7e0f41305b9aeb81534a167fe6d1"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/7-50-65-63.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/7-50-65-63.laz",
+   "bytes": 308206,
+   "points_in_node": 28704,
+   "sha256": "809ba14c741221f3a0a2b7530cdf77568f3081c9c64d33358462427bad4df244"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/7-50-66-63.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/7-50-66-63.laz",
+   "bytes": 468401,
+   "points_in_node": 48112,
+   "sha256": "efaede0685dc58485fa5ac104905f03efff51b9e1042d64b6d8ec7c02b096bc6"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/7-51-65-63.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/7-51-65-63.laz",
+   "bytes": 495923,
+   "points_in_node": 56089,
+   "sha256": "41fa3655a3ca176565efc595a84877f46096b27ac002e70326aced479360216a"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/8-100-130-126.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/8-100-130-126.laz",
+   "bytes": 239340,
+   "points_in_node": 27121,
+   "sha256": "bdff182882a4b0c2c520409291284268e7bb1c4660157842331fe279ef630ea1"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/8-100-131-126.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/8-100-131-126.laz",
+   "bytes": 254348,
+   "points_in_node": 28565,
+   "sha256": "e1fd4cfb6319856238630095636cd0cee7e7d60e8cc34fb477055a957737a672"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/8-100-132-126.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/8-100-132-126.laz",
+   "bytes": 283398,
+   "points_in_node": 31361,
+   "sha256": "f8ec76ddac516078e7d5e7607cbdcd9ae84c0ce2772144878e48139099b90d76"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/8-100-133-126.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/8-100-133-126.laz",
+   "bytes": 322888,
+   "points_in_node": 36618,
+   "sha256": "d972a02e4ad1466e78ac0f2cc16c70d574943b35880eddfbc8f04cf829ac2bff"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/8-101-130-126.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/8-101-130-126.laz",
+   "bytes": 313879,
+   "points_in_node": 31181,
+   "sha256": "126c49bbd1a5c34a70d015e74cd8942d0d70e474c9bd561d8745471a229b2687"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/8-101-131-126.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/8-101-131-126.laz",
+   "bytes": 340852,
+   "points_in_node": 34979,
+   "sha256": "499ad55a3f5d0b334645c1287cf362b7bb274ce44fbd748e7a33814e03a5caba"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/8-101-132-126.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/8-101-132-126.laz",
+   "bytes": 418345,
+   "points_in_node": 43172,
+   "sha256": "e302bb857fbe535aa94b54481e603b185b8a866b21b30f8613b1bda70acdcc01"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/8-102-130-126.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/8-102-130-126.laz",
+   "bytes": 325542,
+   "points_in_node": 32811,
+   "sha256": "8e432653499a620727a4adf859a0342dea3f051cd3e392699eac7c5168b54715"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/8-102-131-126.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/8-102-131-126.laz",
+   "bytes": 377818,
+   "points_in_node": 38947,
+   "sha256": "6f2e50775cbe77b01f96689cafb37ac4dd8c77ab6e2fa19f124dede211e3dffd"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/8-103-130-126.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/8-103-130-126.laz",
+   "bytes": 297038,
+   "points_in_node": 33274,
+   "sha256": "7a0dfe0aeb0b6348b64998dbe7136a2ddeb8804ae9bc04f1ea5c3fbc30e57ff0"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/8-103-131-126.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/8-103-131-126.laz",
+   "bytes": 311642,
+   "points_in_node": 34982,
+   "sha256": "4f2dafdb8cf0235364aa250df0bacbb8802dd65f87ee3ff97b3c3e052fa20916"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/8-99-132-126.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/8-99-132-126.laz",
+   "bytes": 240060,
+   "points_in_node": 24954,
+   "sha256": "cdeb5e55b2f7a620d621d445a92ee5f1cf699654890341883d6e9690b59244b4"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/9-199-265-253.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/9-199-265-253.laz",
+   "bytes": 311398,
+   "points_in_node": 46277,
+   "sha256": "585a4c567aa65d92bbcea12442bb4e24e434c55f8fc879eae3328bda2ff21cba"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/9-200-260-253.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/9-200-260-253.laz",
+   "bytes": 223675,
+   "points_in_node": 31142,
+   "sha256": "415e9b6a557009c53214125835f0de6466af9c40d01b19b6c01cfbe11a50da01"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/9-200-261-253.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/9-200-261-253.laz",
+   "bytes": 188562,
+   "points_in_node": 27958,
+   "sha256": "2805996d352788e66f09fb6259fe29a0870ce93f854aa7720e3ca2dcf5cca3e7"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/9-200-262-253.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/9-200-262-253.laz",
+   "bytes": 460668,
+   "points_in_node": 77599,
+   "sha256": "df1e5e81816d302734350a4657eab4675b42b56e4e8cbcecdcabcd8dd7aca9bc"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/9-200-263-253.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/9-200-263-253.laz",
+   "bytes": 476647,
+   "points_in_node": 82917,
+   "sha256": "219801453b767aebe90e699451c841d53bc82b670053fd996b5461c8240f56e3"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/9-200-264-253.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/9-200-264-253.laz",
+   "bytes": 413711,
+   "points_in_node": 69646,
+   "sha256": "943e96143c287e0798b0315f780d350e8f6be000c748ff4756ccf151d209cc21"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/9-200-265-253.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/9-200-265-253.laz",
+   "bytes": 289239,
+   "points_in_node": 46895,
+   "sha256": "62d09925b0a0c4dae0a63d3428f44e33e436a457ceba9a138e20f7640b4aed02"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/9-200-266-253.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/9-200-266-253.laz",
+   "bytes": 483541,
+   "points_in_node": 80978,
+   "sha256": "9d171e24818e61a03874a1b3c9d71dcea1677d28522089cd9bcea40107500b69"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/9-201-260-253.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/9-201-260-253.laz",
+   "bytes": 378944,
+   "points_in_node": 60730,
+   "sha256": "bc1c1ac11ca8e83c9e08c9044adb0f56d8f68bf3a64421a69fdc33cdf55213c9"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/9-201-261-253.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/9-201-261-253.laz",
+   "bytes": 248807,
+   "points_in_node": 33476,
+   "sha256": "72afb48240c5891f3946306fd3bd959dce70a317588ea1ff43724765d5b49cc4"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/9-201-262-253.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/9-201-262-253.laz",
+   "bytes": 462501,
+   "points_in_node": 73606,
+   "sha256": "c3a31e00fbb0e9cdfeecca5595359d1e328db44cac00ce7e5e6575c201703052"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/9-201-263-253.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/9-201-263-253.laz",
+   "bytes": 381452,
+   "points_in_node": 55873,
+   "sha256": "c12ee48d885f7fba0be81b25254887a68ea4e13cdf7d7081f23f783f286cb12c"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/9-201-264-253.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/9-201-264-253.laz",
+   "bytes": 426378,
+   "points_in_node": 64622,
+   "sha256": "f093b443efa2b5591c29eb17411212e63bb8806aefc5cd7f580e8a8736562483"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/9-201-265-253.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/9-201-265-253.laz",
+   "bytes": 500032,
+   "points_in_node": 81806,
+   "sha256": "7b539378c9faee81c4668f40cdff1ebd7bd033320316ce1046ed9b4bcc9329eb"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/9-201-266-253.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/9-201-266-253.laz",
+   "bytes": 462466,
+   "points_in_node": 73321,
+   "sha256": "11ca3eb8148e6075294ca375d72de53f7c8017c995bc89a0594d8126f184f95d"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/9-202-260-253.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/9-202-260-253.laz",
+   "bytes": 351268,
+   "points_in_node": 42848,
+   "sha256": "0e4d94157df93f2a0f14085f3fe264611a8c4d63ec47a88bfd35930c7f9a25b7"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/9-202-261-253.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/9-202-261-253.laz",
+   "bytes": 411167,
+   "points_in_node": 61898,
+   "sha256": "af7c59b56911d3533f38b0fe51e06a9acecbdbcbf2ccd3648ad7a72060c41f51"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/9-202-262-253.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/9-202-262-253.laz",
+   "bytes": 316031,
+   "points_in_node": 51028,
+   "sha256": "fc80d82cbadc9b3cc7ecb80c7f05cd4ed75f2b31dd6b75f603d3d3e6cc2efb54"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/9-202-263-253.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/9-202-263-253.laz",
+   "bytes": 272226,
+   "points_in_node": 35087,
+   "sha256": "5d280b8a1b830980364b864f2e1a1792bc67c964c3f149d16680afad24e28782"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/9-202-264-253.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/9-202-264-253.laz",
+   "bytes": 338417,
+   "points_in_node": 40434,
+   "sha256": "5e29dc7185c0e4838bb26b7177b15b68299ea0308811efaa67f2587d6d85d620"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/9-202-265-253.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/9-202-265-253.laz",
+   "bytes": 420408,
+   "points_in_node": 58761,
+   "sha256": "9a6584750c8c4376d55336b4a6f0c23a77f075f1e5b7b8ba11f2b9d3046a6006"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/9-203-260-253.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/9-203-260-253.laz",
+   "bytes": 306645,
+   "points_in_node": 34283,
+   "sha256": "5b77d460c7ca70296ace25ba6f3dc6fb4b2da32b8ca27647112e95da620830be"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/9-203-261-253.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/9-203-261-253.laz",
+   "bytes": 298261,
+   "points_in_node": 33264,
+   "sha256": "3801be8795e0bc7f13e7d0ed7504515d0d10e0c1bf21fd19fa3dc2c2d8233a81"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/9-203-262-253.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/9-203-262-253.laz",
+   "bytes": 276397,
+   "points_in_node": 31077,
+   "sha256": "be7573488d476bc35d9d461013417a9f4ef4058480b6018f59d461f7310c6094"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/9-203-263-253.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/9-203-263-253.laz",
+   "bytes": 398374,
+   "points_in_node": 47005,
+   "sha256": "3ff1c293133401f00190b10b297ac63a075ec07fa60e29b581723cae85118607"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/9-203-264-253.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/9-203-264-253.laz",
+   "bytes": 358905,
+   "points_in_node": 42048,
+   "sha256": "d098b268d5911e83d13ce13061183f07b3cea16bfeaeb3e5ba416db4aa8443b4"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/9-204-260-253.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/9-204-260-253.laz",
+   "bytes": 281333,
+   "points_in_node": 30408,
+   "sha256": "6a4608f67a0cb75e30d6490b55c21dde612567b814e3c978d6764ae555066f0b"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/9-204-261-253.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/9-204-261-253.laz",
+   "bytes": 309621,
+   "points_in_node": 33578,
+   "sha256": "7da9d80d1f056c6adc72e705ee6ceba8401fd8fd06e311ca07c269b828e31941"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/9-204-262-253.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/9-204-262-253.laz",
+   "bytes": 296671,
+   "points_in_node": 32445,
+   "sha256": "5f68b2643d46e75811c3ca256248f0e4ed6c7d9df2cf1d575fa25423d0cb7094"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/9-205-260-253.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/9-205-260-253.laz",
+   "bytes": 251165,
+   "points_in_node": 30595,
+   "sha256": "d17f20ca315e7c77e3abc4586e1f3fdc537408fcbc2ded4d797a2c032a5d24a8"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/9-205-261-253.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/9-205-261-253.laz",
+   "bytes": 276505,
+   "points_in_node": 34702,
+   "sha256": "e09e99b048a50cfb355c23c4d33eac9024e16d42fc3f5b98b6cae83b3fc466a3"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/9-205-262-253.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/9-205-262-253.laz",
+   "bytes": 341155,
+   "points_in_node": 48411,
+   "sha256": "5aebc75ab683eb45eaeca0a7abdff3727385a7f0c9337e4a9ad3a320eea4157a"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/9-206-260-253.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/9-206-260-253.laz",
+   "bytes": 238495,
+   "points_in_node": 30902,
+   "sha256": "03295c62a92d6a0e34b68433135ce3773f8fda340cc52d1f7aa85952ca1bd687"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/9-206-261-253.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/9-206-261-253.laz",
+   "bytes": 260851,
+   "points_in_node": 33751,
+   "sha256": "e0a3ca48d275f0598f172f7747a33b8119748c96a4fc5b86b1e150a33270954d"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/9-206-262-253.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/9-206-262-253.laz",
+   "bytes": 236846,
+   "points_in_node": 30707,
+   "sha256": "e6ed8b7a10e394c748b4fb96cbe3f8437d2a3e9a2b8f6acb18394efdf3be356c"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/9-207-260-253.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/9-207-260-253.laz",
+   "bytes": 248075,
+   "points_in_node": 33042,
+   "sha256": "ec0646f77babb78a10de84d46305cc47e1517d363e3540493ceb974e6cc0840c"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/9-207-261-253.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/9-207-261-253.laz",
+   "bytes": 251258,
+   "points_in_node": 33791,
+   "sha256": "fd78a39a6ad27e812d6c405edef4ffefcc56d38c37e7d67d06e2b59efe436bcd"
+  },
+  {
+   "path": "/Volumes/Sundowning/Claude/airoso-data/denver-grand-prix/lidar/9-207-262-253.laz",
+   "url": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept-data/9-207-262-253.laz",
+   "bytes": 245222,
+   "points_in_node": 32734,
+   "sha256": "ca7c5ecc179788abc52319099429adc28d22aca47ef6d83b8f9c72e6c50c74b2"
+  }
+ ]
+}

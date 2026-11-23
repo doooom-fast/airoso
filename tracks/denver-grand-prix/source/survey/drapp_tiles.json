@@ -1,0 +1,581 @@
+{
+ "_doc": "DRCOG aerial archive tiles over the Denver Grand Prix lap, per flight year. download = the HTTP status of a ranged GET of one tile (206 = handed out, 403 = refused). Coordinates: Colorado State Plane Central, US ft (EPSG:2232, inferred). No imagery was downloaded. Written by drapp_tiles.py.",
+ "bucket": "https://drapparchive.s3.amazonaws.com/",
+ "read_utc": "2026-11-23T02:35:26Z",
+ "years": {
+  "2016/": {
+   "tiles_in_year": 9459,
+   "bytes_in_year": 3158947026510,
+   "uploaded": [
+    "2020-11-19T18:59:18.000Z",
+    "2020-11-21T05:19:40.000Z"
+   ],
+   "download": 206,
+   "pixel_ft": [
+    0.25,
+    0.5,
+    1.0
+   ],
+   "lap_m_covered": 6640,
+   "lap_bytes": 2677159572,
+   "lap_tiles": [
+    {
+     "tile": "N1E190c",
+     "url": "https://drapparchive.s3.amazonaws.com/2016/N1E190c.tif",
+     "bytes": 446194872,
+     "last_modified": "2020-11-20T23:37:18.000Z",
+     "pixel_ft": 0.25,
+     "state_plane_ft_x0_y0_x1_y1": [
+      3141392.0,
+      1695032.0,
+      3144032.0,
+      1697672.0
+     ],
+     "lon_lat_w_s_e_n": [
+      -104.997216,
+      39.740593,
+      -104.987776,
+      39.7478
+     ],
+     "lap_m_inside": 730
+    },
+    {
+     "tile": "N1W199b",
+     "url": "https://drapparchive.s3.amazonaws.com/2016/N1W199b.tif",
+     "bytes": 446196200,
+     "last_modified": "2020-11-21T01:03:54.000Z",
+     "pixel_ft": 0.25,
+     "state_plane_ft_x0_y0_x1_y1": [
+      3138752.0,
+      1697672.0,
+      3141392.0,
+      1700312.0
+     ],
+     "lon_lat_w_s_e_n": [
+      -105.006553,
+      39.74788,
+      -104.997112,
+      39.755087
+     ],
+     "lap_m_inside": 656
+    },
+    {
+     "tile": "N1W199d",
+     "url": "https://drapparchive.s3.amazonaws.com/2016/N1W199d.tif",
+     "bytes": 446192032,
+     "last_modified": "2020-11-21T01:04:08.000Z",
+     "pixel_ft": 0.25,
+     "state_plane_ft_x0_y0_x1_y1": [
+      3138752.0,
+      1695032.0,
+      3141392.0,
+      1697672.0
+     ],
+     "lon_lat_w_s_e_n": [
+      -105.006604,
+      39.740633,
+      -104.997164,
+      39.74784
+     ],
+     "lap_m_inside": 1508
+    },
+    {
+     "tile": "S1E100a",
+     "url": "https://drapparchive.s3.amazonaws.com/2016/S1E100a.tif",
+     "bytes": 446191976,
+     "last_modified": "2020-11-21T02:11:10.000Z",
+     "pixel_ft": 0.25,
+     "state_plane_ft_x0_y0_x1_y1": [
+      3141392.0,
+      1692392.0,
+      3144032.0,
+      1695032.0
+     ],
+     "lon_lat_w_s_e_n": [
+      -104.997268,
+      39.733346,
+      -104.987829,
+      39.740552
+     ],
+     "lap_m_inside": 1630
+    },
+    {
+     "tile": "S1E100b",
+     "url": "https://drapparchive.s3.amazonaws.com/2016/S1E100b.tif",
+     "bytes": 446193282,
+     "last_modified": "2020-11-21T02:11:17.000Z",
+     "pixel_ft": 0.25,
+     "state_plane_ft_x0_y0_x1_y1": [
+      3144032.0,
+      1692392.0,
+      3146672.0,
+      1695032.0
+     ],
+     "lon_lat_w_s_e_n": [
+      -104.987882,
+      39.733305,
+      -104.978441,
+      39.740511
+     ],
+     "lap_m_inside": 1124
+    },
+    {
+     "tile": "S1W109b",
+     "url": "https://drapparchive.s3.amazonaws.com/2016/S1W109b.tif",
+     "bytes": 446191210,
+     "last_modified": "2020-11-21T03:17:41.000Z",
+     "pixel_ft": 0.25,
+     "state_plane_ft_x0_y0_x1_y1": [
+      3138752.0,
+      1692392.0,
+      3141392.0,
+      1695032.0
+     ],
+     "lon_lat_w_s_e_n": [
+      -105.006655,
+      39.733385,
+      -104.997216,
+      39.740593
+     ],
+     "lap_m_inside": 992
+    }
+   ]
+  },
+  "2018/": {
+   "tiles_in_year": 9994,
+   "bytes_in_year": 3348843168471,
+   "uploaded": [
+    "2021-03-23T23:26:54.000Z",
+    "2021-03-24T07:23:24.000Z"
+   ],
+   "download": 206,
+   "pixel_ft": [
+    0.25,
+    0.5,
+    1.0
+   ],
+   "lap_m_covered": 6640,
+   "lap_bytes": 2677543111,
+   "lap_tiles": [
+    {
+     "tile": "N1E190c",
+     "url": "https://drapparchive.s3.amazonaws.com/2018/N1E190c.tif",
+     "bytes": 446317692,
+     "last_modified": "2021-03-24T02:25:28.000Z",
+     "pixel_ft": 0.25,
+     "state_plane_ft_x0_y0_x1_y1": [
+      3141392.0,
+      1695032.0,
+      3144032.0,
+      1697672.0
+     ],
+     "lon_lat_w_s_e_n": [
+      -104.997216,
+      39.740593,
+      -104.987776,
+      39.7478
+     ],
+     "lap_m_inside": 730
+    },
+    {
+     "tile": "N1W199b",
+     "url": "https://drapparchive.s3.amazonaws.com/2018/N1W199b.tif",
+     "bytes": 446202495,
+     "last_modified": "2021-03-24T02:01:15.000Z",
+     "pixel_ft": 0.25,
+     "state_plane_ft_x0_y0_x1_y1": [
+      3138752.0,
+      1697672.0,
+      3141392.0,
+      1700312.0
+     ],
+     "lon_lat_w_s_e_n": [
+      -105.006553,
+      39.74788,
+      -104.997112,
+      39.755087
+     ],
+     "lap_m_inside": 656
+    },
+    {
+     "tile": "N1W199d",
+     "url": "https://drapparchive.s3.amazonaws.com/2018/N1W199d.tif",
+     "bytes": 446312240,
+     "last_modified": "2021-03-24T02:02:19.000Z",
+     "pixel_ft": 0.25,
+     "state_plane_ft_x0_y0_x1_y1": [
+      3138752.0,
+      1695032.0,
+      3141392.0,
+      1697672.0
+     ],
+     "lon_lat_w_s_e_n": [
+      -105.006604,
+      39.740633,
+      -104.997164,
+      39.74784
+     ],
+     "lap_m_inside": 1508
+    },
+    {
+     "tile": "S1E100a",
+     "url": "https://drapparchive.s3.amazonaws.com/2018/S1E100a.tif",
+     "bytes": 446203825,
+     "last_modified": "2021-03-24T04:22:01.000Z",
+     "pixel_ft": 0.25,
+     "state_plane_ft_x0_y0_x1_y1": [
+      3141392.0,
+      1692392.0,
+      3144032.0,
+      1695032.0
+     ],
+     "lon_lat_w_s_e_n": [
+      -104.997268,
+      39.733346,
+      -104.987829,
+      39.740552
+     ],
+     "lap_m_inside": 1630
+    },
+    {
+     "tile": "S1E100b",
+     "url": "https://drapparchive.s3.amazonaws.com/2018/S1E100b.tif",
+     "bytes": 446197879,
+     "last_modified": "2021-03-24T02:51:15.000Z",
+     "pixel_ft": 0.25,
+     "state_plane_ft_x0_y0_x1_y1": [
+      3144032.0,
+      1692392.0,
+      3146672.0,
+      1695032.0
+     ],
+     "lon_lat_w_s_e_n": [
+      -104.987882,
+      39.733305,
+      -104.978441,
+      39.740511
+     ],
+     "lap_m_inside": 1124
+    },
+    {
+     "tile": "S1W109b",
+     "url": "https://drapparchive.s3.amazonaws.com/2018/S1W109b.tif",
+     "bytes": 446308980,
+     "last_modified": "2021-03-24T01:29:51.000Z",
+     "pixel_ft": 0.25,
+     "state_plane_ft_x0_y0_x1_y1": [
+      3138752.0,
+      1692392.0,
+      3141392.0,
+      1695032.0
+     ],
+     "lon_lat_w_s_e_n": [
+      -105.006655,
+      39.733385,
+      -104.997216,
+      39.740593
+     ],
+     "lap_m_inside": 992
+    }
+   ]
+  },
+  "2020/": {
+   "tiles_in_year": 10135,
+   "bytes_in_year": 3396825803022,
+   "uploaded": [
+    "2021-03-23T23:26:54.000Z",
+    "2021-03-24T07:23:26.000Z"
+   ],
+   "download": 206,
+   "pixel_ft": [
+    0.25,
+    0.5,
+    1.0
+   ],
+   "lap_m_covered": 6640,
+   "lap_bytes": 2677198084,
+   "lap_tiles": [
+    {
+     "tile": "N1E190c",
+     "url": "https://drapparchive.s3.amazonaws.com/2020/N1E190c.tif",
+     "bytes": 446201395,
+     "last_modified": "2021-03-24T00:39:29.000Z",
+     "pixel_ft": 0.25,
+     "state_plane_ft_x0_y0_x1_y1": [
+      3141392.0,
+      1695032.0,
+      3144032.0,
+      1697672.0
+     ],
+     "lon_lat_w_s_e_n": [
+      -104.997216,
+      39.740593,
+      -104.987776,
+      39.7478
+     ],
+     "lap_m_inside": 730
+    },
+    {
+     "tile": "N1W199b",
+     "url": "https://drapparchive.s3.amazonaws.com/2020/N1W199b.tif",
+     "bytes": 446202347,
+     "last_modified": "2021-03-24T04:22:51.000Z",
+     "pixel_ft": 0.25,
+     "state_plane_ft_x0_y0_x1_y1": [
+      3138752.0,
+      1697672.0,
+      3141392.0,
+      1700312.0
+     ],
+     "lon_lat_w_s_e_n": [
+      -105.006553,
+      39.74788,
+      -104.997112,
+      39.755087
+     ],
+     "lap_m_inside": 656
+    },
+    {
+     "tile": "N1W199d",
+     "url": "https://drapparchive.s3.amazonaws.com/2020/N1W199d.tif",
+     "bytes": 446199609,
+     "last_modified": "2021-03-24T04:50:17.000Z",
+     "pixel_ft": 0.25,
+     "state_plane_ft_x0_y0_x1_y1": [
+      3138752.0,
+      1695032.0,
+      3141392.0,
+      1697672.0
+     ],
+     "lon_lat_w_s_e_n": [
+      -105.006604,
+      39.740633,
+      -104.997164,
+      39.74784
+     ],
+     "lap_m_inside": 1508
+    },
+    {
+     "tile": "S1E100a",
+     "url": "https://drapparchive.s3.amazonaws.com/2020/S1E100a.tif",
+     "bytes": 446199025,
+     "last_modified": "2021-03-24T02:41:32.000Z",
+     "pixel_ft": 0.25,
+     "state_plane_ft_x0_y0_x1_y1": [
+      3141392.0,
+      1692392.0,
+      3144032.0,
+      1695032.0
+     ],
+     "lon_lat_w_s_e_n": [
+      -104.997268,
+      39.733346,
+      -104.987829,
+      39.740552
+     ],
+     "lap_m_inside": 1630
+    },
+    {
+     "tile": "S1E100b",
+     "url": "https://drapparchive.s3.amazonaws.com/2020/S1E100b.tif",
+     "bytes": 446198969,
+     "last_modified": "2021-03-24T07:09:31.000Z",
+     "pixel_ft": 0.25,
+     "state_plane_ft_x0_y0_x1_y1": [
+      3144032.0,
+      1692392.0,
+      3146672.0,
+      1695032.0
+     ],
+     "lon_lat_w_s_e_n": [
+      -104.987882,
+      39.733305,
+      -104.978441,
+      39.740511
+     ],
+     "lap_m_inside": 1124
+    },
+    {
+     "tile": "S1W109b",
+     "url": "https://drapparchive.s3.amazonaws.com/2020/S1W109b.tif",
+     "bytes": 446196739,
+     "last_modified": "2021-03-24T01:13:41.000Z",
+     "pixel_ft": 0.25,
+     "state_plane_ft_x0_y0_x1_y1": [
+      3138752.0,
+      1692392.0,
+      3141392.0,
+      1695032.0
+     ],
+     "lon_lat_w_s_e_n": [
+      -105.006655,
+      39.733385,
+      -104.997216,
+      39.740593
+     ],
+     "lap_m_inside": 992
+    }
+   ]
+  },
+  "2022/": {
+   "tiles_in_year": 10372,
+   "bytes_in_year": 3502334375850,
+   "uploaded": [
+    "2025-04-03T14:47:23.000Z",
+    "2025-04-03T22:26:14.000Z"
+   ],
+   "download": 206,
+   "pixel_ft": [
+    0.25,
+    0.5,
+    1.0
+   ],
+   "lap_m_covered": 6640,
+   "lap_bytes": 2677084948,
+   "lap_tiles": [
+    {
+     "tile": "N1E190c",
+     "url": "https://drapparchive.s3.amazonaws.com/2022/N1E190c.tif",
+     "bytes": 446185467,
+     "last_modified": "2025-04-03T18:10:58.000Z",
+     "pixel_ft": 0.25,
+     "state_plane_ft_x0_y0_x1_y1": [
+      3141392.0,
+      1695032.0,
+      3144032.0,
+      1697672.0
+     ],
+     "lon_lat_w_s_e_n": [
+      -104.997216,
+      39.740593,
+      -104.987776,
+      39.7478
+     ],
+     "lap_m_inside": 730
+    },
+    {
+     "tile": "N1W199b",
+     "url": "https://drapparchive.s3.amazonaws.com/2022/N1W199b.tif",
+     "bytes": 446183833,
+     "last_modified": "2025-04-03T18:46:50.000Z",
+     "pixel_ft": 0.25,
+     "state_plane_ft_x0_y0_x1_y1": [
+      3138752.0,
+      1697672.0,
+      3141392.0,
+      1700312.0
+     ],
+     "lon_lat_w_s_e_n": [
+      -105.006553,
+      39.74788,
+      -104.997112,
+      39.755087
+     ],
+     "lap_m_inside": 656
+    },
+    {
+     "tile": "N1W199d",
+     "url": "https://drapparchive.s3.amazonaws.com/2022/N1W199d.tif",
+     "bytes": 446179675,
+     "last_modified": "2025-04-03T18:46:56.000Z",
+     "pixel_ft": 0.25,
+     "state_plane_ft_x0_y0_x1_y1": [
+      3138752.0,
+      1695032.0,
+      3141392.0,
+      1697672.0
+     ],
+     "lon_lat_w_s_e_n": [
+      -105.006604,
+      39.740633,
+      -104.997164,
+      39.74784
+     ],
+     "lap_m_inside": 1508
+    },
+    {
+     "tile": "S1E100a",
+     "url": "https://drapparchive.s3.amazonaws.com/2022/S1E100a.tif",
+     "bytes": 446180121,
+     "last_modified": "2025-04-03T21:39:22.000Z",
+     "pixel_ft": 0.25,
+     "state_plane_ft_x0_y0_x1_y1": [
+      3141392.0,
+      1692392.0,
+      3144032.0,
+      1695032.0
+     ],
+     "lon_lat_w_s_e_n": [
+      -104.997268,
+      39.733346,
+      -104.987829,
+      39.740552
+     ],
+     "lap_m_inside": 1630
+    },
+    {
+     "tile": "S1E100b",
+     "url": "https://drapparchive.s3.amazonaws.com/2022/S1E100b.tif",
+     "bytes": 446179433,
+     "last_modified": "2025-04-03T21:39:25.000Z",
+     "pixel_ft": 0.25,
+     "state_plane_ft_x0_y0_x1_y1": [
+      3144032.0,
+      1692392.0,
+      3146672.0,
+      1695032.0
+     ],
+     "lon_lat_w_s_e_n": [
+      -104.987882,
+      39.733305,
+      -104.978441,
+      39.740511
+     ],
+     "lap_m_inside": 1124
+    },
+    {
+     "tile": "S1W109b",
+     "url": "https://drapparchive.s3.amazonaws.com/2022/S1W109b.tif",
+     "bytes": 446176419,
+     "last_modified": "2025-04-03T22:05:54.000Z",
+     "pixel_ft": 0.25,
+     "state_plane_ft_x0_y0_x1_y1": [
+      3138752.0,
+      1692392.0,
+      3141392.0,
+      1695032.0
+     ],
+     "lon_lat_w_s_e_n": [
+      -105.006655,
+      39.733385,
+      -104.997216,
+      39.740593
+     ],
+     "lap_m_inside": 992
+    }
+   ]
+  },
+  "2024/3inch/": {
+   "tiles_in_year": 5783,
+   "bytes_in_year": 2580205632926,
+   "uploaded": [
+    "2025-04-15T18:24:26.000Z",
+    "2025-05-11T02:40:28.000Z"
+   ],
+   "download": 403,
+   "world_files": "refused (403), or no S1 / N1 tile in this prefix: tile positions not read",
+   "lap_tiles": []
+  },
+  "2024/6inch/": {
+   "tiles_in_year": 1225,
+   "bytes_in_year": 546655794278,
+   "uploaded": [
+    "2025-04-10T23:18:29.000Z",
+    "2025-04-15T02:26:57.000Z"
+   ],
+   "download": 403,
+   "world_files": "refused (403), or no S1 / N1 tile in this prefix: tile positions not read",
+   "lap_tiles": []
+  }
+ }
+}

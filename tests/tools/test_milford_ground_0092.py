@@ -246,7 +246,7 @@ def test_grassfx_near_cells_pad_looks_and_fades(tmp_path):
     adj = json.loads((proj / "data" / "grassfx.aerial.json").read_text())["adjustments"]
     sizes = {s for a in adj for s in a["rect"]["size"]}
     assert all(abs(s / 6.0 - round(s / 6.0)) < 1e-6 for s in sizes) and any(abs(s / 12.0 - round(s / 12.0)) > 1e-6 for s in sizes)
-    assert len(adj) == 3952                    # ledger 0100 item 3, on the committed 0.1.13 line (0.1.13's 12 m + near: 2,067)
+    assert len(adj) == 3963    # the GM lap's pads (ledger 0102); 0.1.14's on the 0.1.13 line: 3,952 (0.1.13's 12 m + near: 2,067)
     assert all(a["rect"]["fade"] == (12.0 if a["map"] == "B" else 6.0) for a in adj)
     # the ride pad reads D (no blades) over most of its quad
     from scripts.geometry.projection import _meters_per_degree

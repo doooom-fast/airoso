@@ -1,7 +1,7 @@
 """Ledger 0100 item 4 (Kevin 2026-11-22, the tree collider reach: "Narrower", no number given): the trunk colliders
 re-selected with a reach DERIVED from Milford's measured barrier lines instead of 0.1.3's 30 m [invented].
 
-    python veg_trunks_reach.py <track dir> [--write]
+    python veg_trunks_reach.py <track dir> [--write [--line-doc TEXT]]
 
 No car's stopping distance off this road is measured (NAIP 2022 resolves no run-off traces). What IS measured is where
 the facility stands its own barriers: every W-beam and tyre wall of scenery.bespoke.rails is a line off NAIP 2022 (+-1 px),
@@ -153,8 +153,11 @@ def main():
     old = json.loads((track / "source" / "vegetation" / "trunks.json").read_text(encoding="utf-8"))
     print(f"[reach] trunks.json had {len(old['points'])} colliders")
     if "--write" in sys.argv:
+        # ledger 0102: --line-doc names the swept line the plan was made on (0.1.15: GM's loop, predicted by
+        # source/round2/predict_lines_0102.py); without it, round 1's wording
+        line_doc = sys.argv[sys.argv.index("--line-doc") + 1] if "--line-doc" in sys.argv else "0.1.13's swept line"
         out = {"_source": (f"ledger 0100 item 4 (source/vegetation/scripts/veg_trunks_reach.py): the planted trees within {reach:.0f} m of "
-                           f"the drivable surface (the lane edge of 0.1.13's swept line + the {STRIP_M} m edge strip, and every "
+                           f"the drivable surface (the lane edge of {line_doc} + the {STRIP_M} m edge strip, and every "
                            "scenery.bespoke.pads outline): [lon, lat, h_m, d_drivable_m]. The reach is DERIVED from measured lines, "
                            f"not a measured stopping distance: the widest median standoff of any W-beam or tyre wall off the lane "
                            f"edge ({widest} {st[widest][1]:.2f} m), rounded up. 0.1.3-0.1.13: 30 m [invented]"),

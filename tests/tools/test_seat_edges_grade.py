@@ -43,7 +43,8 @@ def test_a_closed_lap_skips_its_repeated_vertex():
 
 def test_the_blend_tool_is_opt_in_and_only_del_mars_port_names_the_key():
     text = (ROOT / "tools" / "seat_edges_blend.py").read_text(encoding="utf-8")
-    assert 'if not rel and grade_pct is None:' in text
+    # ledger 0102 added the third opt-in (route.seat_edges_section, Milford's GM bowl): still no key, no work
+    assert 'if not rel and grade_pct is None and sec_s is None:' in text
     assert 'print("[seat-edges] no route.crossfall_file: nothing banked, nothing to do")' in text
     for cfg in sorted((ROOT / "tracks").glob("*/track.config.json")):
         route = json.loads(cfg.read_text(encoding="utf-8")).get("route") or {}

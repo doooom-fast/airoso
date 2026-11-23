@@ -69,14 +69,14 @@
       "version": "0.1.12"
     },
     "milford_road_course": {
-      "branch": "claude/mf-finish-20261122",
+      "branch": "claude/mf-finish-r2-20261122",
       "engine": "lm-v4",
       "installed": "2026-11-23",
-      "note": "0.1.14 = 0.1.13 + T3's start moved 0.2 m (51 modules, 0 left out) + the start/finish on the painted line (s 4639.9; 20 grid, 20 pits, spawn forward) + grass at 6 m (3,952 patches) + tree colliders at 20 m (261) + the NW complex stood (set_in) + the run-off pads smooth-shaded within a 10 deg crease + 883 verge trees from NAIP (12,130 TreeFX) + concrete_plain on 1RUNOFF / 1KERB_SIDEWALK; ledger 0100 rounds 1 / 1b; kn5 53,213,752 B; install build = the PC rehearsal 1b (225/225 gate rows, kn5 equivalent); 0.1.13 parked in D:/k10-track-archive/2026-11-23_001936; Kevin: \"I always want newer builds\" / \"When they're done, install them\"",
+      "note": "0.1.15 = 0.1.14 on GM's 2.9 mi loop (lap 4,726 m; Kevin: \"Build the 2.9 mi loop\") + the banked inner turn's measured cross-section (s 870-1,030) and the ground under it cut by the road's folds (seat_edges_section, +5,969 TERRAIN verts; lane_poke 0 grass over the road on the lap) + the shoulder graded on the lidar (Kevin: \"Reshape the shoulder\") + drive_test's daylight probe hung from the road's own edge on the bank (opt-in daylight_edge_ref, 69 -> 0; Kevin: \"Yes\"); ledger 0102; kn5 51,527,489 B; install build = the PC rehearsal 3 (227/227 gate rows, kn5 equivalent, AI the same); 0.1.14 parked in D:/k10-track-archive/2026-11-23_120456; Kevin: \"I always want newer builds\" / \"When they're done, install them\"",
       "role": "current",
-      "sha": "7af6bed2",
+      "sha": "9dfb341d",
       "track": "milford-road-course-lm",
-      "version": "0.1.14"
+      "version": "0.1.15"
     },
     "san_diego_lake_murray_v4": {
       "branch": "claude/lm-finish-r2-20261122",

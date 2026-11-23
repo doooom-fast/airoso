@@ -518,6 +518,23 @@ re-spread (rows 4-8), its edge line meets the host 10.2 m (+1) / 3.9 m (-1) from
   - the road and the strips in daylight;
   - the two new pads (Dahlia / 56th, Sand Creek / Quebec, and the Quebec arms' edge above).
 
+**The merge with main (4a5c38e0), 2026-11-23:** four conflicts, each resolved so every track's output stays as built.
+- `fleet/GATES-CHANGELOG.md`: both sides kept, newest first.
+- `tools/lm_pads_blend.py`: main's High Plains membrane fill (ledger 0097 round 3) and this round's `ground_on_mesh` each
+  added a call that pins the ground under a pad. Now there is ONE call: the membrane's built deck, else ground_on_mesh's
+  lower of deck_z and the deck mesh, else deck_z. A pad naming both is refused.
+- `tests/aerial/test_road_wear_highpass.py`: Sand Creek's and Lake Murray's owned-road cases, unioned.
+- **Both heads lit, the same key twice.** `scenery.streetlights.light_both_heads` is this round's (author_lamps_blend.py
+  lights the back head in the lamps step) AND ledger 0099's (the author step lamp_heads). Lake Murray runs both steps, so a
+  plain merge would have doubled its back heads. The Mac's call: `scenery.streetlights.both_heads_by: "lamps"`, Sand Creek
+  only.
+  - With it, the lamps step lights both heads and check_lights_ini reads heads_lit, wanting no heads file. lamp_heads
+    refuses to run.
+  - Without it (Lake Murray), the lamps step lights one head as before 0098; lamp_heads and lights.heads.json do the back.
+  - GATES-CHANGELOG 2026-11-23 (PC); no threshold moved.
+  - **Owed to Sand Creek round 2:** the two paths become one. Sand Creek moves onto lamp_heads (round 2 changes its LIGHTS
+    mesh anyway) and both_heads_by goes.
+
 ## What needs Kevin, a download or the PC
 
 - **Kevin:**

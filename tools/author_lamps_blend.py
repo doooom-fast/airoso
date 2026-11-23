@@ -13,11 +13,13 @@ real lamp at every post, from the model `scenery.streetlights.model` names (one 
         flat LED lens (road-ward head)  -> LIGHTS_0     (pbr LIGHTS: the CSP night emissive; ext_config clusters
                                                          ONE [LIGHT_N] per lens, 0.15 m under it)
       `scenery.streetlights.arms` 2 (default: back-to-back heads, the configuration every 2026-10 lamp has) or 1.
-      `scenery.streetlights.light_both_heads` true (opt-in, arms 2 only; ledger 0098, Kevin 2026-11-22: "Yes, light both
-      heads"): the BACK head's lens too, the road-ward lens mirrored through the pole (the twin post's heads stand at
-      +-lens_centre_m[0]), so ext_config clusters TWO [LIGHT_N] per lamp; both lenses are recorded in provenance.lens_xyz
-      (road-ward lens first per lamp) with heads_lit 2, which tools/check_lights_ini.py matches one light per lens.
-      Absent = the road-ward lens only, byte-for-byte as before.
+      `scenery.streetlights.light_both_heads` true WITH `both_heads_by` "lamps" (opt-in, arms 2 only; ledger 0098, Kevin
+      2026-11-22: "Yes, light both heads"; Sand Creek): the BACK head's lens too, the road-ward lens mirrored through the
+      pole (the twin post's heads stand at +-lens_centre_m[0]), so ext_config clusters TWO [LIGHT_N] per lamp; both lenses
+      are recorded in provenance.lens_xyz (road-ward lens first per lamp) with heads_lit 2, which
+      tools/check_lights_ini.py matches one light per lens. light_both_heads WITHOUT both_heads_by (ledger 0099, Lake
+      Murray) is the author step lamp_heads' (tools/author_lamp_heads_blend.py, LIGHTS_back): this step lays the
+      road-ward lens only, as before 0098. Absent = the road-ward lens only, byte-for-byte as before.
       Faces carry the model's smoothing groups: smooth faces, every edge between two groups (or beside a flat
       face) marked sharp — round pole, crisp luminaire. The model's UVs are kept as the UVMap.
   "street_lamp_2026_10" (the default when the key is absent — other tracks, and the rollback)
@@ -205,9 +207,19 @@ def lamp_config(proj: Path) -> tuple[str, int]:
 
 
 def both_heads(proj: Path, model: str, arms: int) -> bool:
-    """scenery.streetlights.light_both_heads (opt-in, ledger 0098): the back head of a two-arm LED lamp lit too"""
+    """the back head of a two-arm LED lamp lit HERE: scenery.streetlights.light_both_heads true with both_heads_by "lamps"
+    (opt-in, ledger 0098, Sand Creek). light_both_heads alone (ledger 0099, Lake Murray) is the author step lamp_heads'
+    (tools/author_lamp_heads_blend.py): False here, the road-ward lens only, as before 0098, so the two never both light
+    the back head. The same key was written twice in two rounds (2026-11-22); round 2 of Sand Creek moves it onto
+    lamp_heads and both_heads_by goes"""
     cfg = json.loads((proj / "track.config.json").read_text(encoding="utf-8"))
-    on = bool(((cfg.get("scenery") or {}).get("streetlights") or {}).get("light_both_heads", False))
+    sl = (cfg.get("scenery") or {}).get("streetlights") or {}
+    by = sl.get("both_heads_by")
+    if by not in (None, "lamps"):
+        raise SystemExit(f"[lamps] scenery.streetlights.both_heads_by {by!r}: \"lamps\" or absent")
+    if by == "lamps" and sl.get("light_both_heads") is not True:
+        raise SystemExit("[lamps] scenery.streetlights.both_heads_by \"lamps\" needs light_both_heads true")
+    on = by == "lamps"
     if on and (model != LED or arms != 2):
         raise SystemExit(f"[lamps] scenery.streetlights.light_both_heads needs model {LED!r} with arms 2 "
                          f"(got {model!r}, arms {arms})")

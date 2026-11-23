@@ -25,12 +25,12 @@
   "signposts": {
    "objects": 24,
    "no_ground_pct": 0.0,
-   "median_m": -0.351,
-   "p95_m": -0.3,
+   "median_m": -0.363,
+   "p95_m": -0.301,
    "hovering": 0
   }
  },
- "lamp_heads": 393,
+ "lamp_heads": 781,
  "lamp_orphans": 0,
  "road_over_ground": {
   "over": 24,

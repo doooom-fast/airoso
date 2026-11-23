@@ -47,6 +47,10 @@ cap stays, and binds nowhere). For a listed connector the blend runs over the SH
 ... BLEND_CAP_MAX_M whose blended grade stays within route_connectors.MAX_GRADE (else the least steep, with a
 warning); its mouths.json record carries blend_m and blend_max_grade. Every other connector: BLEND_M, as before.
 
+AUTHORED LINE PAINT (opt-in by the record, ledger 0097 round 3): a record that carries ribbon.paint_markings line paint (one
+offset per point, no strokes) keeps it on every piece it is cut into, sliced with the piece's points (carries_paint). Every
+other record is cut exactly as before.
+
 Idempotent from data/connectors.local.json.pre-trim (written once per base). Run after divide,
 before build_loop_blend.
 
@@ -262,6 +266,7 @@ def _trim_against(conns, hosts, mouths, deltas=None, capped=(), no_reach=()):
     for c in conns:
         pts = [tuple(p) for p in c["points_xyz_m"]]
         w = list(c["widths_m"])
+        src = list(range(len(pts)))          # each point's index in the record (an inserted point: its neighbour's)
         # REACH THE HOST: a piece whose end stops short of a host's pavement (the route node sits
         # on the host's carriageway, but a divided trunk's centre is the carriageway midpoint, so
         # the end lands outside half-width) is extended to the host's centreline so the cut below
@@ -286,9 +291,11 @@ def _trim_against(conns, hosts, mouths, deltas=None, capped=(), no_reach=()):
                 if end == 0:
                     pts.insert(0, tgt)
                     w.insert(0, w[0])
+                    src.insert(0, src[0])
                 else:
                     pts.append(tgt)
                     w.append(w[-1])
+                    src.append(src[-1])
         m = len(pts)
         info = []
         inside = []
@@ -311,6 +318,7 @@ def _trim_against(conns, hosts, mouths, deltas=None, capped=(), no_reach=()):
                 j += 1
             piece = list(pts[i:j])
             pw = list(w[i:j])
+            ps = list(src[i:j])
             for (edge_idx, nbr) in ((i - 1, i), (j, j - 1)):
                 if 0 <= edge_idx < m and inside[edge_idx]:
                     at_start = edge_idx < i
@@ -361,9 +369,11 @@ def _trim_against(conns, hosts, mouths, deltas=None, capped=(), no_reach=()):
                     if at_start:
                         piece.insert(0, cut)
                         pw.insert(0, w[nbr])
+                        ps.insert(0, src[nbr])
                     else:
                         piece.append(cut)
                         pw.append(w[nbr])
+                        ps.append(src[nbr])
                     mouths.append({"connector": c["name"], "host": hname, "host_vertex": k_in, "side": side,
                                    "connector_width_m": float(w[nbr]), "cut_xyz": [round(v, 3) for v in cut],
                                    "host_seg": hseg, "host_t": round(ht, 4),
@@ -374,20 +384,38 @@ def _trim_against(conns, hosts, mouths, deltas=None, capped=(), no_reach=()):
             # a record's own min_piece_m (opt-in: a median crossing, route.street_junctions.median_crossings, is kept at
             # any length); absent = MIN_PIECE_M, as before
             if plen >= float(c.get("min_piece_m", MIN_PIECE_M)) and plen > 0.0 and len(piece) >= 2:
-                pieces.append((piece, pw))
+                pieces.append((piece, pw, ps))
             i = j
         if len(pieces) == 1 and not any(inside):
             out.append(c)
             continue
-        for q, (piece, pw) in enumerate(pieces):
+        for q, (piece, pw, ps) in enumerate(pieces):
             out.append({"name": f"{c['name']}#{q}", "kind": c.get("kind", "connector"),
                         "points_xyz_m": [[round(v, 3) for v in p] for p in piece], "widths_m": pw,
                         **({"stub": c["stub"]} if c.get("stub") else {}),
                         **({"expansion": c["expansion"]} if c.get("expansion") else {}),
-                        **({k_: c[k_] for k_ in ("min_piece_m", "crossing") if k_ in c})})
+                        **({k_: c[k_] for k_ in ("min_piece_m", "crossing") if k_ in c}),
+                        **({"paint": sliced_paint(c["paint"], ps)} if carries_paint(c) else {})})
         if any(inside):
             print(f"[trim] {c['name']}: {len(pieces)} piece(s), {sum(inside)} pt(s) inside a host dropped")
     return out
+
+
+def carries_paint(c) -> bool:
+    """(opt-in by the record, ledger 0097 round 3: High Plains' north loop) a connector that arrives at the trim with authored
+    LINE paint (scripts-v021 ribbon.paint_markings: {"lines": [{"off": [one offset per point], ...}]}, no "strokes") keeps it on
+    every piece, each line's offsets sliced with the piece's points (an inserted cut takes its neighbour's). Every other
+    record is as before: Lake Murray's authored pieces get their paint after the trim (tools/expansion_pieces.py decorate), and
+    a record with strokes (fractional point indices) loses its paint here, as it always did"""
+    pt = c.get("paint")
+    return (isinstance(pt, dict) and not pt.get("strokes") and isinstance(pt.get("lines"), list)
+            and all(isinstance(ln, dict) and len(ln.get("off") or []) == len(c["points_xyz_m"]) for ln in pt["lines"]))
+
+
+def sliced_paint(paint: dict, idx: list) -> dict:
+    """the record's line paint on a piece whose points are the record's points ``idx`` (carries_paint)"""
+    return {**{k: v for k, v in paint.items() if k != "lines"},
+            "lines": [{**ln, "off": [ln["off"][k] for k in idx]} for ln in paint["lines"]]}
 
 
 def resolve_pieces(mouths, pieces):
@@ -762,23 +790,28 @@ def cut_at_pads(conns, pads):
             while j < m and not ins[j]:
                 j += 1
             piece, pw, ends = list(pts[i:j]), list(w[i:j]), []
+            ps = list(range(i, j))            # each point's index in the record (a box crossing: its neighbour's)
             if i > 0:
                 cp, e, pd_ = crossing(i, i - 1)
                 piece.insert(0, cp)
                 pw.insert(0, w[i])
+                ps.insert(0, i)
                 ends.append(("start", cp, e, pd_))
             if j < m:
                 cp, e, pd_ = crossing(j - 1, j)
                 piece.append(cp)
                 pw.append(w[j - 1])
+                ps.append(j - 1)
                 ends.append(("end", cp, e, pd_))
             if _plan_len(piece) >= MIN_PIECE_M:
-                pieces.append((piece, pw, ends))
+                pieces.append((piece, pw, ends, ps))
             i = j
-        for q, (piece, pw, ends) in enumerate(pieces):
+        for q, (piece, pw, ends, ps) in enumerate(pieces):
             name = f"{c['name']}#{q}" if len(pieces) > 1 or any(ins) else c["name"]
             rec = {k: v for k, v in c.items() if k not in ("name", "points_xyz_m", "widths_m")}
             rec.update({"name": name, "points_xyz_m": [[round(v, 3) for v in p] for p in piece], "widths_m": pw})
+            if carries_paint(c):
+                rec["paint"] = sliced_paint(c["paint"], ps)     # its line paint cut with it (carries_paint, opt-in)
             out.append(rec)
             for end, cp, e, pd in ends:
                 box = [tuple(b) for b in pd["box"]]

@@ -102,6 +102,9 @@ def _ridge_diagonals(ob, quads):
 
 def _dev(mesh_block, ref):
     r = np.asarray(ref, dtype=np.float64)
+    if r.size == 0 and mesh_block.size == 0:
+        return 0.0          # an empty block on both sides (ledger 0097 round 3: a connector whose authored paint has no yellow
+        #                     line, on a track with no YLINE: np.asarray([]) is shape (0,), the mesh's empty slice (0, 3))
     if r.shape != mesh_block.shape:
         return float("inf")
     return float(np.max(np.abs(mesh_block - r))) if len(r) else 0.0

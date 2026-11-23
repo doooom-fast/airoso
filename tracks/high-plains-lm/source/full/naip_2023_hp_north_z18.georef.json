@@ -1,0 +1,17 @@
+{
+ "item": "co_m_3910317_ne_13_030_20230928_20240104",
+ "z": 18,
+ "x0": 55414,
+ "y0": 99488,
+ "w": 512,
+ "h": 512,
+ "m_per_px_equator": 0.5971642834779395,
+ "missing_tiles": 0,
+ "_doc": "ledger 0097 round 3: USDA NAIP 2023-09-28 (the same item as tracks/high-plains/source/naip_2023_hp_z18.png, public domain) as z18 web-mercator tiles x 55414-55415, y 99488-99489, directly above that photo's columns 1536-2047 (no seam): the top of the Full layout's north loop, which no photo on disk held before (measure_north.py reads it with the committed z18 as one mosaic)",
+ "lonlat_bbox": [
+  -103.900452,
+  39.738874,
+  -103.897705,
+  39.740986
+ ]
+}

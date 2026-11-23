@@ -530,8 +530,16 @@ def test_engine_rule_and_no_blend_yet_on_guard_runs():
     body = TEXT[_first("blend_builder_ready() {"):_first("if [ \"$DRAFT_ONLY\" = 0 ] && [ ! -f \"$PROJ/loop.blend\" ]")]
     assert 'underlay) [ -f "$AIROSO/scripts/blender/underlay.py" ] && return 0;;' in body
     sd = tmp / "sd_scratch"
+    # ledger 0099: SD's own spec seeds loop.blend into an empty workshop (sync_in.seed), so its guard run would sync in
+    # and start the author phase; the 'no blend yet' guard is exercised on a copy of the spec without the seed (a
+    # rehearsal). The seed path itself is probed in bash on the block's own text (tests/tools/test_lake_murray_0099.py)
+    no_seed = json.loads(SD_SPEC.read_text(encoding="utf-8"))
+    assert "loop.blend" in no_seed["sync_in"]["seed"]
+    del no_seed["sync_in"]["seed"]
+    ns = tmp / "ship.sd_no_seed.json"
+    ns.write_text(json.dumps(no_seed), encoding="utf-8")
     r = _run(["san-diego-lake-murray", "--skip-blend", "--dry-run"],
-             {"SHIP_SPEC": SD_SPEC.as_posix(), "SHIP_PROJ": sd.as_posix()})
+             {"SHIP_SPEC": ns.as_posix(), "SHIP_PROJ": sd.as_posix()})
     assert r.returncode == 0, (r.stdout[-600:], r.stderr[-400:])
     assert "engine (prep / export / spawn): C:/Users/Owner/Documents/GitHub/engine-july" in r.stdout
     assert "--skip-blend resumes from an authored loop.blend" in r.stdout and not sd.exists()
@@ -564,6 +572,12 @@ V4_EXTRAS = {
         "ledger 0065: v4's 7,600 blocks (ship_sd.sh stands them only under SD_BESPOKE=1, an echo there)",
     ("ship_export_street", "ship: export the STREET-ONLY kn5 (the centre line, a chicane's island; the non-race layouts alone)"):
         "ledger 0063: the street-only kn5",
+    ("author_lamp_heads", "author: the back head of every two-arm lamp lit (tools/author_lamp_heads_blend.py: LIGHTS_back, one lens per back head; ledger 0099; self-checked; not opted in = no-op)"):
+        "ledger 0099: Kevin 2026-11-22, \"Yes, light both heads\" (opt-in scenery.streetlights.light_both_heads)",
+    ("author_walk_grade", "author: the street walk's back grade no steeper than route.walk_back_grade (tools/author_walk_grade_blend.py: every lip raised, nothing else moves; ledger 0099; self-checked; not opted in = no-op)"):
+        "ledger 0099 round 1c: the 94 street drops that were the walk's own back grade (opt-in route.walk_back_grade)",
+    ("prep_prep", "ship: the walk's raised lips seated on the prepped ground (tools/author_walk_grade_blend.py --seat: none over the ground, none past the draft's grade; ledger 0099; self-checked)"):
+        "ledger 0099 round 1c: only where the config sets route.walk_back_grade (Lake Murray); the author step's raised lips on the prepped ground",
     ("gate_houses", "gate: the houses on the built road kn5 (tools/house_gate.py: ROOFTOP / BUILDING + FARBLOCK / 1WALL_TILTUP shells against scenery.bespoke.house_gate — hard)"):
         "ledger 0065: Kevin, \"don't lose those\"",
 }
@@ -627,7 +641,8 @@ def test_sd_spec_reproduces_ship_sd_step_sequence_after_the_dry_stop():
 def test_sd_spec_carries_ship_sds_sync_lists_and_names():
     s = spec_mod.load(SD_SPEC, "san-diego-lake-murray")
     # v4's workshop and name (ledger 0065); ship_sd.sh keeps the 0.19.x workshop and the V3 name
-    assert s["workshop"] == "D:/k10-scratch" and s["workshop_project"] == "lm_v4"
+    # ledger 0099: the line's own workshop is lm_line, filled from airoso (sync_in + seed); lm_v4 / lm_phase2 are kept records
+    assert s["workshop"] == "D:/k10-scratch" and s["workshop_project"] == "lm_line"
     assert 'WS="C:/Users/Owner/Documents/GitHub/k10-sd-v021"' in SD_TEXT and 'WS_PROJ="$WS/project"' in SD_TEXT
     assert s["require_race_layout"] is True
     assert s["street_ai_july"] == "D:/k10-track-archive/2026-10-11/san_diego_lake_murray/ai"

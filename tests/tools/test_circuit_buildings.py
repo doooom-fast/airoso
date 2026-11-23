@@ -249,7 +249,7 @@ def test_milford_wears_the_atlas_and_every_bound_file_exists():
             skins[b["key"]] = own if own in cf.SKINS or not (g.get("file") and g.get("skin")) else g["skin"]
     assert all(s in cf.SKINS for s in skins.values()), skins
     assert skins["pad_shed_north"] == "container_tan" and skins["pad_shed_south"] == "container_white"
-    assert len(skins) == 25
+    assert len(skins) == 26                                            # ledger 0100 item 5: mpg_nw_complex_0 stands again
 
 
 def test_milford_rooftop_units_stand_inside_their_roofs():

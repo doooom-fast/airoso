@@ -109,7 +109,9 @@ def _hp():
 def test_high_plains_pit_out_gore_reproduces_the_pc_stop_and_clips_past_the_paddock_sheet():
     """measured 2026-11-20 (Mac, this config): the paddock sheet is pad 0's quad; the gore's last outline corner lies 4.2 m
     outside it. Unclipped, the drape stops where the PC's rehearsal did; clipped, it paints 129.8 of the gore's 144.3 m of
-    line and leaves out 14.5 m at its tip: hatch stripes 0 and 1 (1.2, 2.5 m), 1.0 m of stripe 2 and 9.7 m of the outline"""
+    line and leaves out 14.5 m at its tip: hatch stripes 0 and 1 (1.2, 2.5 m), 1.0 m of stripe 2 and 9.7 m of the outline. 2026-11-23: 0.1.12's
+    install synced back the line the build drives (the measured edge re-fit, median 0.53 m off the Nov 3 intake line airoso
+    held): on it the drape stops at (435.15, -9.10) and paints 129.74 m, leaving 14.52 m"""
     cfg, local, quad = _hp()
     item = next(i for i in cfg["route"]["paint"] if i["id"] == "pit_out_gore")
     assert item["surface"] == ["PADAPRON"] and item["clip_to_surface"] is True
@@ -117,10 +119,10 @@ def test_high_plains_pit_out_gore_reproduces_the_pc_stop_and_clips_past_the_padd
     sheet = _sheet(quad, 0.0)
     with pytest.raises(ps.NoSurface) as e:
         ps.drape(lines, sheet, 0.5, 0.015)
-    assert (e.value.li, f"{e.value.x:.2f}", f"{e.value.z:.2f}") == (0, "435.20", "-9.11")
+    assert (e.value.li, f"{e.value.x:.2f}", f"{e.value.z:.2f}") == (0, "435.15", "-9.10")
     verts, faces, made, clipped = ps.drape(lines, sheet, 0.5, 0.015, clip=True)
     drawn = sum(m[1] for m in made)
-    assert faces and abs(clipped - 14.47) < 0.05 and abs(drawn - 129.80) < 0.05, (clipped, drawn)
+    assert faces and abs(clipped - 14.52) < 0.05 and abs(drawn - 129.74) < 0.05, (clipped, drawn)
 
 
 def test_only_the_pit_out_gore_clips():

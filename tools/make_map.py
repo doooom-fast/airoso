@@ -26,6 +26,11 @@ scope redraws ``ui/<layout>/outline.png`` (the Content Manager outline, the same
 the track_folder colours) so the outline and the minimap agree on what the layout drives; preview.png (the OSM
 map with the route) is track_folder's and untouched. Any other value of "map" is refused.
 
+A RACE LAP'S MAP (ledger 0097 round 3, opt-in): ``"map": "race_lap"`` on a layout that names a lap (layouts[].lap,
+scripts/geometry/race_lap.py) gets ITS lap (data/lap.<lap>.json, engine -> kn5: z mirrored), not the mainline: High Plains'
+Full layout leaves the West lap for the north loop. "lap" keeps its meaning (the mainline alone: Lake Murray's Speedways name
+a lap and say "lap"), so every other track's maps are as they were; "race_lap" on a layout with no lap is refused.
+
     python tools/make_map.py <project-dir> [--install <ac-track-dir>]
 """
 from __future__ import annotations
@@ -39,7 +44,7 @@ from PIL import Image, ImageDraw
 W = H = 900
 MARGIN = 28
 DRAW = 10
-SCOPES = ("network", "lap")
+SCOPES = ("network", "lap", "race_lap")
 OUTLINE_STROKE = (232, 236, 240, 255)      # scripts/ac/track_folder.py's ui/<id>/outline.png colour
 OUTLINE_WIDTH = 5
 
@@ -53,6 +58,8 @@ def layout_scopes(cfg):
         scope = str(lo.get("map") or "network").lower()
         if scope not in SCOPES:
             raise ValueError("layout %s: map = %r is not one of %s" % (lo.get("id"), lo.get("map"), "/".join(SCOPES)))
+        if scope == "race_lap" and not lo.get("lap"):
+            raise ValueError("layout %s: map = race_lap but it names no lap" % lo.get("id"))
         out[str(lo.get("id"))] = scope
     return out
 
@@ -117,7 +124,14 @@ def build(project_dir, install_dir=None):
     scopes = layout_scopes(cfg)
     main, conns = load_lines(proj)
     sets = {"network": [main] + conns, "lap": [main]}
-    drawn = {k: draw(v) for k, v in sets.items() if k == "network" or "lap" in scopes.values()}
+    # a race lap's own line (opt-in: map "race_lap" on a layout that names a lap; ledger 0097 round 3), as scope "lap:<lap>"
+    for lo in cfg.get("layouts") or []:
+        lap = lo.get("lap") if isinstance(lo, dict) else None
+        if lap and scopes.get(str(lo.get("id"))) == "race_lap":
+            rec = json.loads((proj / "data" / f"lap.{lap}.json").read_text(encoding="utf-8"))
+            sets[f"lap:{lap}"] = [[(q[0], -q[2]) for q in rec["points_xyz_m"]]]
+            scopes[str(lo.get("id"))] = f"lap:{lap}"
+    drawn = {k: draw(v) for k, v in sets.items() if k == "network" or k in scopes.values()}
     outlines = {k: draw(v, OUTLINE_STROKE, OUTLINE_WIDTH)[0] for k, v in sets.items() if k in drawn}
     roots = [proj / "build" / slug]
     if install_dir:

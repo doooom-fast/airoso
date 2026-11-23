@@ -1,11 +1,11 @@
 {
- "obj": "D:\\k10-scratch\\lm_v4_0201\\data\\track.obj",
- "lattice_nodes": 555668,
- "terrain_vertices": 564474,
+ "obj": "D:\\k10-scratch\\lm_line\\data\\track.obj",
+ "lattice_nodes": 555667,
+ "terrain_vertices": 563526,
  "near_m": 20.0,
  "thinned": {
-  "nodes_read_on_the_surface": 187039,
-  "line_vertices": 101249
+  "nodes_read_on_the_surface": 187501,
+  "line_vertices": 101432
  },
  "nyquist": {
   "rib_m": 2.0,
@@ -92,7 +92,7 @@
   ],
   "boxes": {},
   "coarse_cells_info": {
-   "20": 16427,
+   "20": 16426,
    "40": 18940
   },
   "straight_info": {

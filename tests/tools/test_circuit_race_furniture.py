@@ -53,7 +53,8 @@ def test_the_chain_runs_the_declared_start_only_where_the_config_declares_one():
     assert "author_paint_blend.py\" -- \"$PROJ\" --stage draft" in _fn("draft_paint")
     assert "author_paint_blend.py\" -- \"$PROJ\" --stage author" in _fn("author_paint")
     for t in sorted((ROOT / "tracks").glob("*/track.config.json")):
-        if t.parent.name != "high-plains-lm":
+        # ledger 0100 item 2: Milford declares its painted line as the start / finish (Kevin 2026-11-22)
+        if t.parent.name not in ("high-plains-lm", "milford-road-course-lm"):
             assert "race_start" not in json.loads(t.read_text(encoding="utf-8")), t.parent.name
 
 
@@ -61,7 +62,7 @@ def test_high_plains_ship_json_paints_twice_and_syncs_the_ports_own_files():
     spec = json.loads((HP / "ship.json").read_text(encoding="utf-8"))
     d, a = spec["steps"]["draft"], spec["steps"]["author"]
     assert d[-1] == "paint" and d.index("kerbs") < d.index("paint")
-    assert a == ["bespoke", "paint"]
+    assert a == ["race_laps", "bespoke", "paint"]              # ledger 0097 round 3: the Full lap first
     cfg = _cfg()
     files = [b["file"] for b in cfg["scenery"]["bespoke"]["blocks"]]
     assert files == ["source/bespoke/buildings.race.json", "source/bespoke/posts.race.json"]
@@ -79,9 +80,11 @@ def test_the_old_engine_track_and_lake_murray_keep_their_furniture():
         c = json.loads(sd.read_text(encoding="utf-8"))
         assert "race_start" not in c and not any(it.get("surface") for it in (c.get("route") or {}).get("paint") or [])
     mf = ROOT / "tracks" / "milford-road-course-lm" / "track.config.json"
-    if mf.exists():                                                     # Milford's S/F is Kevin's call (ledger 0093)
+    if mf.exists():                     # Milford's S/F was Kevin's call (ledger 0093); he made it (ledger 0100 item 2)
         c = json.loads(mf.read_text(encoding="utf-8"))
-        assert "race_start" not in c and not (c.get("route") or {}).get("paint")
+        assert set(c["race_start"]) >= {"line", "grid", "pits"} and "lonlat" in c["race_start"]["line"]
+        assert [it["id"] for it in c["route"]["paint"]] == ["sf_line"]
+        assert not any(it.get("surface") for it in c["route"]["paint"])  # on ROAD: the draft pass only
 
 
 def test_high_plains_paint_expands_onto_measured_places():
@@ -157,7 +160,8 @@ def test_pit_lane_sheet_meets_the_paddock_sheet_and_keeps_the_old_names():
     assert new["pit_wall_west"]["height_m"] == 1.03 and new["pit_paddock_west"]["height_m"] == 0.59
     assert new["pit_wall_nose"]["kind"] == "tyres"
     rows = [r for k, r in new.items() if k.startswith("paddock_row_")]
-    assert len(rows) == 15 and all(r["kind"] == "krail" and "height_m" not in r for r in rows)   # 0.81 m [invented]
+    assert len(rows) == 13 and all(r["kind"] == "krail" and "height_m" not in r for r in rows)   # 0.81 m [invented]
+    assert not {"paddock_row_3", "paddock_row_8"} & set(new)   # 2026-11-22: the kerb paint, not K-rails (ledger 0097 round 2)
     # the west pit wall ends where the lidar's begins, the paddock rail likewise
     by = {r["key"]: r for r in bes["rails"]}
     assert by["pit_wall_west"]["polyline_lonlat"][-1] == by["pit_wall_lidar"]["polyline_lonlat"][0]
@@ -172,7 +176,7 @@ def test_paddock_buildings_drop_the_duplicate_and_name_a_source_per_height():
     by = {r["key"]: r for r in rows}
     assert by["osm289314487"]["roof"] == "white"                          # bright on the 0.3 m crop, not dark
     for r in rows:
-        assert any(w in r["_h"] for w in ("shadow estimate", "official", "[invented]")), r["key"]
+        assert any(w in r["_h"] for w in ("shadow estimate", "official", "[invented]", "measured: the 2018 lidar")), r["key"]
         if r["form"] == "gable":
             assert r["ridge_h_m"] > r["wall_h_m"] >= 2.1, r["key"]
     posts = json.loads((HP / "source" / "bespoke" / "posts.race.json").read_text(encoding="utf-8"))

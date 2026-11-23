@@ -950,6 +950,8 @@ LIVE_0_2_9_KEYS = (("route", "grid", "reach"), ("route", "grid", "_reach_doc"), 
                    ("lm_intake", "_grid_reach_doc"), ("route", "flare_one_sided"), ("route", "_flare_one_sided_doc"),
                    ("lm_intake", "flare_one_sided"), ("lm_intake", "_flare_one_sided_doc"),
                    ("scenery", "streetlights", "light_both_heads"), ("scenery", "streetlights", "_light_both_heads_doc"),
+                   # the 0.2.9 merge with main (2026-11-23): ledger 0098's path told apart from 0099's, the same key
+                   ("scenery", "streetlights", "both_heads_by"), ("scenery", "streetlights", "_both_heads_by_doc"),
                    ("texture_overrides", "1ROAD"), ("texture_overrides", "1KERB_SIDEWALK"),
                    ("route", "split_strip_balanced"), ("route", "_split_strip_balanced_doc"))
 SHIP_0_2_9 = {"source/grid_reach.json", "source/flares_one_sided.lidar.json",

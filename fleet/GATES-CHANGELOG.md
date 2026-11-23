@@ -14,6 +14,50 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
+## 2026-11-23 (PC) — WIRING: check_lights_ini's two both-heads paths told apart, at the 0.2.9 merge with main (ledgers 0098 / 0099; opt-in; no threshold moved)
+
+The same key, `scenery.streetlights.light_both_heads`, was written twice in two rounds (the Mac, 2026-11-22). Ledger 0098 (Sand
+Creek) lights the back head in the draft's lamps step (`tools/author_lamps_blend.py`, `heads_lit` 2); ledger 0099 (Lake
+Murray) lights it in the author step lamp_heads (`tools/author_lamp_heads_blend.py`, `data/lights.heads.json`). Lake Murray's
+ship.json runs both steps, so after a plain merge its lamps step would have lit the back head as well: three lenses a lamp, or
+a refusal. The two are now told apart by one opt-in key, Sand Creek only:
+
+- `scenery.streetlights.both_heads_by: "lamps"` (with light_both_heads true): ledger 0098's path. The lamps step lays both
+  lenses; `check_lights_ini` counts the lamps times `heads_lit` and wants no heads file, and FAILS when `heads_lit` is not 2;
+  lamp_heads refuses to run.
+- light_both_heads alone: ledger 0099's path, as on main. The lamps step lays the road-ward lens only (as before 0098);
+  `check_lights_ini` wants `data/lights.heads.json` and counts its back lenses.
+- A record holding both (`heads_lit` 2 AND back lenses) is the back head lit twice: refused by the check itself.
+- Any other value of both_heads_by, or both_heads_by without light_both_heads: refused.
+
+The count rule (one [LIGHT_N] per recorded lens), POS_TOL_M 0.05 m, the no-duplicate / no-orphan rules and the look are the
+same on both paths. Sand Creek 0.2.9 (installed) and Lake Murray 0.20.4 were built by their own paths and are unchanged.
+Teeth: `tests/tools/test_sand_creek_0098.py` (`test_the_lamps_step_lights_the_back_head_only_by_both_heads_by`: Lake Murray's
+config as main has it lights ONE head in the lamps step; `test_the_check_reads_heads_lit_by_the_lamps_and_the_heads_file_otherwise`;
+`test_lamp_heads_refuses_the_lamps_path`), `tests/tools/test_lake_murray_0099.py`. Sand Creek's round 2 moves onto lamp_heads
+(its LIGHTS mesh changes anyway) and both_heads_by goes.
+
+## 2026-11-23 — WIRING: High Plains' merge judged by verify_mouth_corners (ledger 0097 round 4; opt-in; no threshold moved)
+
+No gate threshold, floor or bypass moved, and no gate's code changed. One wiring change, opt-in by High Plains' own config
+(`tests/tools/test_high_plains_round4.py` `test_version_and_no_other_track_declares_any_round4_key`):
+
+- `tracks/high-plains-lm`: `route.verify_mouth_corners: true` and the gate step `verify_mouth_corners` in its ship.json
+  (Sand Creek's gate of ledger 0086, its rows and limits as they are: CORNER LIP <= 0.05 m, TEETH <= 2.1 %, EDGE PAINT
+  <= 0.25 m, the R 9 turn drop reported) now judges the Full layout's merge, whose west bellmouth this round builds as a
+  measured corner return (`route.mouth_returns`). Its first run read EDGE PAINT 14.0 m: the West lap's edge line ran across
+  the opening, which NAIP 2023 0.3 m shows unpainted; `road_markings.gap_mouths` (ledger 0086's, opt-in) breaks it there,
+  and the gate reads 0.0 m.
+- Not gates, opt-in, recorded here because they shape what the gates see: `tools/mouth_returns_blend.py`
+  `route.mouth_returns_measured_only` (a corner without its own measured radius is skipped, not built at another corner's
+  median); `tools/author_kerbs_blend.py` a run's `"line"` (a kerb keyed to a connector's rows); `tools/author_bespoke_blend.py`
+  a row's `"atlas_shed"` with `tools/circuit_facades.py` `facade_walls(shed_tops=...)` (a shed on an atlas skin);
+  road wear's aerial is a new image (`source/road_wear/naip_2023_hp_mosaic.png`), which tools/road_wear_check.py reads exactly
+  as it read the crop (`road_wear.aerial`, one north-up lon/lat image and its box).
+
+Proven on High Plains 0.1.12 (Mac, Blender 4.2.9, an empty workshop): `[mouth-corners] ... lip 0.023 m, teeth 1/354, edge
+paint 0.0 m ... PASS`; verify_mouths PASS (mouth line 0.012 m, notch 0.003 m, approach 0.61 %/m, as 0.1.11).
+
 ## 2026-11-22 (Mac) — COUNT FOLLOWS THE AUTHORED LENSES: check_lights_ini with both lamp heads lit; the sampling numbers of Sand Creek 0.2.9 (ledger 0098; no threshold moved)
 
 No gate threshold, tolerance, floor or bypass moved. All opt-in, Sand Creek only (`tests/tools/test_sand_creek_0098.py`
@@ -32,6 +76,73 @@ No gate threshold, tolerance, floor or bypass moved. All opt-in, Sand Creek only
   - ⚠ `tools/flare_one_sided.py`: SEARCH_IN_M 1.5, SEARCH_OUT_M 1.5, FAR_PAST_M 3, MEDIAN_ROWS 5 [invented: sampling];
     STEP_M 0.08 = tools/naip_edge's (round J, [invented] there), BIN_M / ALONG_M = tools/lidar_curb_trace's, BASE_REACH_M
     25 m = ledger 0087's flare census.
+
+## 2026-11-22 — WIRING: a multi-layout circuit's spawn kn5s judged by race_start's own rows (ledger 0097 round 3; opt-in; no threshold moved)
+
+No gate threshold, floor or bypass moved. One wiring change, opt-in by `track.config.json race_start.layouts` (High Plains
+only; `tests/tools/test_high_plains_round3.py` `test_no_other_track_declares_any_round3_key`):
+
+- `scripts/ac/verify_kn5.py` `_verify_layouts`: a layout named in `race_start.layouts` has its nodes-only spawn kn5 judged by
+  `race_start_checks` (the single-layout circuit's rows of ledger 0093: HEADING_MIN_DEG, the ROAD row CAR_HALF_W_M +
+  LANE_MARGIN_M inside the road's width, LINE_TOL_M, LINE_AHEAD_MAX_M, the sectors in driving order, the declared set) on THAT
+  layout's own line (`data/centerline.local.json`, or the lap it names), plus the declared-set and on-road (PIT_ROAD_MAX_M /
+  PIT_DY_MAX_M) checks every spawn kn5 gets. In place of `_verify_spawn_kn5`'s (d) SIDE row ("right of travel", the street
+  rule) and its `start.line_vertex` LINE row, which a declared circuit grid on both sides of the line cannot meet and which
+  race_start_checks' ROAD and LINE rows replace exactly as they do for the single-layout circuit. Every other multi-layout
+  track (no `race_start.layouts`) is judged exactly as before; the single-layout circuit too.
+- Not gates, opt-in, recorded here because they shape what the gates see: `tools/circuit_dummies_blend.py` per-layout spawn
+  sets (`race_start.layouts`); `tools/lm_pads_blend.py` `lm_pads.deck.fill "membrane"` (the deck's paving off the lap's ribbon
+  is the discrete Laplace surface between the ribbon and the arm rows: MEMBRANE_TOL_M 1e-5 m, MEMBRANE_SOR 1.7 [invented:
+  solver settings, not a judgement]); `tools/trim_connectors.py` carries a record's line paint through its cuts;
+  `tools/weld_mouths_blend.py` `_dev` reads an empty marking block as matching (it read inf and stopped the weld);
+  `tools/make_map.py` `map "race_lap"`.
+
+Proven on High Plains 0.1.11 (Mac, Blender 4.2.9, an empty workshop): both layouts' spawn kn5s pass (`[race_start west]` /
+`[race_start full_course]`: 51 facing nodes, local +Z . travel min +1.00; 50 START / PIT cars inside the road, nearest edge
++2.27 m), verify_pads FORK and verify_mouths PASS. Teeth: `tests/tools/test_high_plains_round3.py`.
+
+## 2026-11-22 — WIRING (opt-in): check_lights_ini counts both heads of a two-arm lamp; a seeded workshop passes the "no blend yet" guard (ledger 0099; no threshold moved)
+
+No gate threshold, tolerance or bypass moved. Both opt-in, Lake Murray only (`tests/tools/test_lake_murray_0099.py`):
+
+- `tools/check_lights_ini.py` (the hard read-back of the written ext_config.ini): with `scenery.streetlights.light_both_heads`
+  true it reads `data/lights.heads.json` (tools/author_lamp_heads_blend.py's back lenses) and wants one `[LIGHT_N]` at
+  every front AND every back lens, each within the same `POS_TOL_M` 0.05 m, no duplicate, no orphan, the same look on
+  every block. Opted in with no heads file = FAIL. Not opted in = the one-per-lamp check as before (its tests pass
+  unchanged). On Lake Murray's record: 323 lamps, 646 lenses, the closest two 8.073 m apart against ext_config's 2 m link.
+- `tools/ship_track.sh`: a project with no loop.blend no longer stops at "no blend yet" when ship.json `sync_in.seed`
+  names `loop.blend` and airoso holds it (the seed copies it in before anything runs; a Git LFS pointer is refused,
+  exit 1). A spec without `seed` (every other track) stops exactly as before (the Lariat and SD guard runs in
+  `tests/tools/test_ship_track_chain.py`).
+
+## 2026-11-22 — Milford round 1 (ledger 0100): a set-in far block's roof judged by its downhill face; the trunk reach derived; no threshold moved, no bypass
+
+No gate threshold, floor or bypass moved; every key opt-in and named by Milford only (`tests/tools/test_milford_finish_0100.py`).
+
+- **The author's far-block roof rule, for a set-in row only** (`tools/author_bespoke_blend.py` `far_roof_refusal`): a far block
+  standing at its measured roof (`roof_z_m`, pass 3) is refused when its roof stands under half its wall over the HIGHEST built
+  ground under its rim (unchanged, the same message, byte for byte). A row that carries `set_in` (Del Mar's set-in form, ledger
+  0083 pass 4b, brought to far blocks) is judged by the same half-wall share over its LOWEST ground, its downhill face, as
+  `house_seat` judges a set-in deck by its deck (2026-11-07). Named by one row: Milford's `mpg_nw_complex_0` (roof 25.91 m;
+  its rim's lidar ground 19.79-26.43 m on the 5 m far ground: 6.12 m over its downhill ground, at grade at its south-east end).
+  Kevin 2026-11-22: "Stand it with the set-in form". FARBLOCKs are not judged by `house_seat` (BUILT = HOUSE, BUILDING).
+- Numbers the round adds or changes (none is a gate):
+
+| number | value | source |
+|---|---|---|
+| the trunk colliders' reach | 30 m -> **20 m** | **derived**: the widest median standoff of any W-beam or tyre wall off the lane edge (G4 19.07 m), rounded up (`source/vegetation/scripts/veg_trunks_reach.py`); not a measured stopping distance |
+| the edge strip counted as drivable | 1.84 m | **measured**: the 0.1.5 OBJ's 1KERB p99 per 250 m (ledger 0092) |
+| T3's traced start | moved 0.200 m off the lane | inside NAIP 2022's 0.5 m pixel; Kevin: "Move the start 0.2 m" |
+| the start / finish | the painted line's lon/lat | **measured** (NAIP 2022, +-0.7 m) |
+| the grid: first slot 7.4 m behind the line, 4.55 m stagger, 20 slots, which column is pole | | ⚠ [invented] (High Plains' measured grid borrowed; no marks on NAIP 2022) |
+| the grid's laterals | -2.25 / +3.00 m | **measured**: the middles of the painted line's two halves |
+| the grid's straight | within 2 deg of the line's heading | ⚠ [invented] tolerance (the 101.0 m it gives is measured on the line) |
+| the 20 pit boxes on the racing surface ahead of the line | | ⚠ [invented] (no pit lane at Milford) |
+| GrassFX cells | 12 m (+ 6 m within 30 m) -> 6 m everywhere | Kevin: "Use the 6 m cells" |
+| the verge trees' neighbours | within 30 m, at least 3 | ⚠ [invented]; their heights and crowns are the neighbours' measured ones (780 trees); 103 trees take the read's median [invented] |
+| the pads' shading normals | flat -> area-weighted vertex normals | `seat_pads_blend.py` opt-in `pads_shade`; positions, UVs and the self-check unchanged |
+| the pads' crease limit (round 1b) | a corner shared only among faces within **10 deg** | ⚠ [invented] (`seat_pads_blend.py` opt-in `pads_shade_crease_deg`, `pad_clip.crease_normals`): the PC's 0.1.14 pads, shared at every vertex, read up to 117 deg off a face |
+| `pads_kn5_check.py`'s bound (a check the PC runs, not a gate: no chain runs it) | every corner within the crease + **0.5 deg** | ⚠ [invented] tolerance: float32 on thin faces and the normal's encoding (0.1.13's flat pads read up to 1.71 deg on slivers) |
 
 ## 2026-11-18 — REPORTED, NOT GATED: kn5_ground_check splits the walls lens; Milford's ground beside the road, the numbers it adds (ledger 0092; no threshold moved)
 

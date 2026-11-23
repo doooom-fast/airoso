@@ -223,6 +223,97 @@ def test_both_heads_author_records_the_back_lens():
     assert abs(min(v[0] for v in hi) + max(v[0] for v in hi)) < 1e-6   # symmetric heads
 
 
+# both heads, two paths (2026-11-23, the 0.2.9 merge with main): the same key light_both_heads was written twice in two
+# rounds; scenery.streetlights.both_heads_by "lamps" (Sand Creek) keeps ledger 0098's path, absent keeps ledger 0099's
+def _author_lamps():
+    import importlib.util
+    import types
+    sys.modules.setdefault("bpy", types.ModuleType("bpy"))
+    spec = importlib.util.spec_from_file_location("author_lamps_0098", ROOT / "tools" / "author_lamps_blend.py")
+    m = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(m)
+    return m
+
+
+def _lamp_proj(tmp_path, cfg, lights=None):
+    (tmp_path / "data").mkdir(parents=True, exist_ok=True)
+    (tmp_path / "track.config.json").write_text(json.dumps(cfg), encoding="utf-8")
+    if lights is not None:
+        (tmp_path / "data" / "lights.local.json").write_text(json.dumps(lights), encoding="utf-8")
+    return tmp_path
+
+
+def test_the_lamps_step_lights_the_back_head_only_by_both_heads_by(tmp_path):
+    al = _author_lamps()
+    sc, lm = _cfg(SC / "track.config.json"), _cfg(ROOT / "tracks" / "san-diego-lake-murray" / "track.config.json")
+    assert sc["scenery"]["streetlights"]["both_heads_by"] == "lamps"
+    assert al.both_heads(_lamp_proj(tmp_path / "sc", sc), al.LED, 2) is True
+    # Lake Murray's config as main has it (light_both_heads, no both_heads_by): its draft lamps step lights ONE head, so
+    # lamps + lamp_heads give 0.20.4's two lights a lamp, not three
+    assert lm["scenery"]["streetlights"]["light_both_heads"] is True and "both_heads_by" not in lm["scenery"]["streetlights"]
+    assert al.both_heads(_lamp_proj(tmp_path / "lm", lm), al.LED, 2) is False
+    bad = json.loads(json.dumps(sc))
+    bad["scenery"]["streetlights"]["both_heads_by"] = "lamp_heads"
+    with pytest.raises(SystemExit, match="lamps"):
+        al.both_heads(_lamp_proj(tmp_path / "bad", bad), al.LED, 2)
+    lone = json.loads(json.dumps(sc))
+    del lone["scenery"]["streetlights"]["light_both_heads"]
+    with pytest.raises(SystemExit, match="needs light_both_heads"):
+        al.both_heads(_lamp_proj(tmp_path / "lone", lone), al.LED, 2)
+
+
+def _ini(lenses):
+    return "".join(f"[LIGHT_{i}]\nPOSITION = {l[0]:.2f}, {l[1] - 0.15:.2f}, {-l[2]:.2f}\n\n" for i, l in enumerate(lenses))
+
+
+def test_the_check_reads_heads_lit_by_the_lamps_and_the_heads_file_otherwise(tmp_path):
+    heads = [[0.0, 9.0, 0.0], [40.0, 9.0, 0.0]]
+    fronts, backs = [[4.0, 11.8, 0.0], [44.0, 11.8, 0.0]], [[-4.0, 11.8, 0.0], [36.0, 11.8, 0.0]]
+    both = [fronts[0], backs[0], fronts[1], backs[1]]
+    sc = _cfg(SC / "track.config.json")
+    sc["slug"] = "t"
+    del sc["lighting"]                                         # the look is not what this test judges
+    # ledger 0098's path: heads_lit 2, both lenses in lens_xyz, no heads file wanted
+    p = _lamp_proj(tmp_path / "a", sc, {"lampheads": heads, "provenance": {"lens_xyz": both, "heads_lit": 2}})
+    (p / "ext_config.ini").write_text(_ini(both), encoding="utf-8")
+    assert cli.both_heads_path(sc) == "lamps"
+    assert cli.main([str(p), "--ini", str(p / "ext_config.ini")]) == 0
+    # the same path with the author's record saying one head: refused
+    (p / "data" / "lights.local.json").write_text(json.dumps({"lampheads": heads, "provenance": {"lens_xyz": fronts}}),
+                                                 encoding="utf-8")
+    (p / "ext_config.ini").write_text(_ini(fronts), encoding="utf-8")
+    assert cli.main([str(p), "--ini", str(p / "ext_config.ini")]) == 1
+    # ledger 0099's path (light_both_heads alone): the heads file is wanted, and with it the back lenses count
+    lm = json.loads(json.dumps(sc))
+    del lm["scenery"]["streetlights"]["both_heads_by"]
+    assert cli.both_heads_path(lm) == "lamp_heads"
+    q = _lamp_proj(tmp_path / "b", lm, {"lampheads": heads, "provenance": {"lens_xyz": fronts}})
+    (q / "ext_config.ini").write_text(_ini(fronts + backs), encoding="utf-8")
+    assert cli.main([str(q), "--ini", str(q / "ext_config.ini")]) == 1           # no data/lights.heads.json
+    (q / "data" / "lights.heads.json").write_text(json.dumps({"back_lens_xyz": backs}), encoding="utf-8")
+    assert cli.main([str(q), "--ini", str(q / "ext_config.ini")]) == 0
+    # both records at once (heads_lit 2 AND a heads file) is the back head lit twice: refused by the check itself
+    r = cli.check({"lampheads": heads, "provenance": {"lens_xyz": both, "heads_lit": 2}}, cli.parse_lights(_ini(both + backs)),
+                  None, backs)
+    assert not r["ok"] and any("lit twice" in s for s in r["problems"])
+    # neither: one head a lamp, as before both
+    none = json.loads(json.dumps(lm))
+    del none["scenery"]["streetlights"]["light_both_heads"]
+    assert cli.both_heads_path(none) is None
+
+
+def test_lamp_heads_refuses_the_lamps_path(tmp_path):
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("author_lamp_heads_0098", ROOT / "tools" / "author_lamp_heads_blend.py")
+    m = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(m)
+    p = _lamp_proj(tmp_path, _cfg(SC / "track.config.json"))
+    with pytest.raises(SystemExit, match="twice"):
+        m.main([str(p)])
+    ship = _cfg(SC / "ship.json")
+    assert "lamp_heads" not in [n for ph in ship["steps"].values() if isinstance(ph, list) for n in ph]
+
+
 # ------------------------------------------------------------------ owned surfaces, opt-in
 def test_sand_creek_binds_the_owned_pairs_and_syncs_them():
     cfg, ship = _cfg(SC / "track.config.json"), _cfg(SC / "ship.json")
@@ -250,7 +341,10 @@ def test_the_0098_keys_are_opt_in():
         assert "flare_one_sided" not in (cfg.get("lm_intake") or {}), t
         assert "reach" not in ((cfg.get("route") or {}).get("grid") or {}), t
         assert "flare_one_sided" not in (cfg.get("route") or {}), t
-        assert "light_both_heads" not in ((cfg.get("scenery") or {}).get("streetlights") or {}), t
+        sl = (cfg.get("scenery") or {}).get("streetlights") or {}
+        if t != "san-diego-lake-murray":                          # ledger 0099: Lake Murray's own both heads (lamp_heads)
+            assert "light_both_heads" not in sl, t
+        assert "both_heads_by" not in sl, t                       # ledger 0098's path is Sand Creek's alone
         assert "split_strip_balanced" not in (cfg.get("route") or {}), t
 
 

@@ -1,5 +1,5 @@
 {
-  "_doc": "High Plains Raceway on Lake Murray v4's engine (ledger 0078): engine lm-v4, the intake from tracks/high-plains, Lake Murray's assembler and fold weld, finer ground on the banked stretches, the bespoke dressing, engine-july's prep / export, the gates + edge_report. Single layout: engine-july's prep lays the AC_* nodes in the road kn5.",
+  "_doc": "High Plains Raceway on Lake Murray v4's engine (ledger 0078): engine lm-v4, the intake from tracks/high-plains, Lake Murray's assembler and fold weld, finer ground on the banked stretches, the bespoke dressing, engine-july's prep / export, the gates + edge_report. 0.1.11 (ledger 0097 round 3): two layouts on one road kn5 (West, Full): the north loop is the port's own connector (cut at the fork pad's box edge and the West lap's edge, rebuilt; the fork a measured pad, lm_pads, judged by verify_pads; the merge a welded mouth, its host strip gapped, judged by verify_mouths), the Full lap stitched by the author step race_laps, each layout's AC_* nodes in its own spawn kn5 (tools/circuit_dummies_blend.py race_start.layouts -> data/dummies_<id>.json -> spawn_kn5).",
   "track": "high-plains-lm",
   "engine": "lm-v4",
   "workshop": "D:/k10-scratch",
@@ -10,14 +10,20 @@
     "draft": [
       "lm_intake",
       "build_loop_blend",
+      "trim_connectors",
+      "rebuild_loop_blend",
       "weld_mouths",
       "densify_ribbon",
       "seat_edges",
+      "lm_pads",
+      "mouth_returns",
       "strip_seam",
+      "gap_mouths",
       "kerbs",
       "paint"
     ],
     "author": [
+      "race_laps",
       "bespoke",
       "paint"
     ],
@@ -27,6 +33,7 @@
     ],
     "ship": [
       "export_road",
+      "spawn_kn5",
       "ai",
       "verify_kn5",
       "road_obj",
@@ -40,6 +47,9 @@
       "audit_street",
       "kn5_ground",
       "road_wear",
+      "verify_mouths",
+      "verify_mouth_corners",
+      "verify_pads",
       "house_seat",
       "edge_report"
     ]
@@ -47,9 +57,13 @@
   "sync_in": {
     "required": [
       "track.config.json",
-      "source/road_wear/naip_2023_030_hp.png",
+      "source/road_wear/naip_2023_hp_mosaic.png",
       "source/bespoke/buildings.race.json",
-      "source/bespoke/posts.race.json"
+      "source/bespoke/posts.race.json",
+      "source/edges/edge_evidence.json",
+      "source/edges/kerbs.lm.json",
+      "source/full/connectors.full.json",
+      "source/edges/mouth_radii.naip.json"
     ],
     "optional": [
       "data/heightfield.npy",
@@ -69,10 +83,18 @@
       "assets/textures/roof_dark_diffuse.jpg",
       "assets/textures/asphalt_dense_diffuse.jpg",
       "assets/textures/asphalt_dense_normal.jpg",
-      "assets/textures/tyre_wall_diffuse.png"
+      "assets/textures/tyre_wall_diffuse.png",
+      "assets/textures/concrete_plain_diffuse.jpg",
+      "assets/textures/concrete_plain_normal.jpg"
     ],
     "_facades_doc": "ledger 0094: the facade atlas, the rib roof normal and the canopies' metal skin (texture_overrides), from airoso's tracked assets",
-    "_road_pilot_doc": "ledger 0095: the owned asphalt pair the 1ROAD override binds (texture_overrides), from airoso's tracked assets"
+    "_road_pilot_doc": "ledger 0095: the owned asphalt pair the 1ROAD override binds (texture_overrides), from airoso's tracked assets",
+    "_round2_doc": "ledger 0097 round 2: the measured pavement edge (lm_intake.edge_retrace's evidence), the port's own kerbs file (route.kerbs_file: R s 2,673 re-traced) and the owned concrete pair the 1KERB_SIDEWALK override binds",
+    "_full_doc": "ledger 0097 round 3: the Full layout's north loop (lm_intake.connectors_file; source/full/make_connectors.py) and its fork pad (lm_pads; source/full/measure_pads.py -> source/pads/FORK.json)",
+    "globs": [
+      "source/pads/*.json"
+    ],
+    "_round4_doc": "ledger 0097 round 4: road wear's aerial is the mosaic (source/road_wear/make_aerial_mosaic.py: the 0.3 m crop carried north with the z18 photos over the north loop), in place of the crop alone; the merge's measured corner radii (route.mouth_radii_file); the draft's corner returns (mouth_returns, after lm_pads) and the gate that judges them (verify_mouth_corners)"
   },
   "sync_out": {
     "required": [
@@ -99,7 +121,16 @@
       "data/grassfx.aerial.json",
       "data/road_wear.json",
       "data/road_wear.line.{id}.json",
-      "data/road_wear_check.json"
+      "data/road_wear_check.json",
+      "data/connectors.local.json",
+      "data/mouths.json",
+      "data/lap.full.json",
+      "data/dummies_{id}.json",
+      "data/circuit_dummies.json",
+      "data/pads.built.json",
+      "data/verify_pads.json",
+      "data/pad_arms.json",
+      "data/verify_mouths.json"
     ],
     "map": [
       [

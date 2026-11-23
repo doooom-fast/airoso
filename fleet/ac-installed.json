@@ -90,14 +90,14 @@
       "note": "Lake Murray v4 + Mission Gorge Speedway (ship_sd.sh SD_BESPOKE=1); its ship.json ui_name_prefix still says the K10 candidate name, so a reinstall brings it back"
     },
     "sand_creek_raceway": {
-      "branch": "claude/sand-creek-edge-flush",
+      "branch": "claude/sc-finish-0209-20261122",
       "engine": "lm-v4",
-      "installed": "2026-11-09",
-      "note": "0.2.8 = 0.2.7 + the mainline's edge strip flush with the prep's contact band (route.edge.grass_clearance -0.08; the side streets keep 0.10 via connector_grass_clearance; ledger 0087 / 0079); TreeFX Oak3 / SycamoreV1-3 3,471 trees as 0.2.7; records + menu pictures on claude/sand-creek-edge-flush faa3a37",
+      "installed": "2026-11-23",
+      "note": "0.2.9 = 0.2.8 + ledger 0098 round 1 (the map-edge cut reached: E 56th Ave and its 13 mouths, Northfield Quebec walked onto the lap; the one-sided measured flares; both heads of the two-arm lamps lit, 342 lights; the owned asphalt and concrete) + the PC's pads (sandcreek_quebec and dahlia_56th unparked; ground_on_mesh for Quebec; SC-D56 skipped, 5 sign posts; ai.fillet_split); TreeFX Oak3 / SycamoreV1-3 3,472 trees; install build = the PC rehearsal 0209e (345 / 345 gate rows, road / race / street kn5 equivalent, tangents only); KNOWN DEFECT: the sandcreek_quebec deck edge hangs up to 0.935 m over the grass on the Northfield Quebec arms (round 2); 0.2.8 parked in D:/k10-track-archive/2026-11-23_074151; Kevin: \"I always want newer builds\" / \"When they're done, install them\"",
       "role": "current",
-      "sha": "981727d0",
+      "sha": "5a8e2c05",
       "track": "sand-creek-lm",
-      "version": "0.2.8"
+      "version": "0.2.9"
     }
   }
 }

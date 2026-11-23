@@ -16,19 +16,19 @@
    "hovering": 0
   },
   "signposts": {
-   "objects": 27,
+   "objects": 26,
    "no_ground_pct": 0.0,
-   "median_m": -0.461,
-   "p95_m": -0.353,
+   "median_m": -0.474,
+   "p95_m": -0.356,
    "hovering": 0
   }
  },
- "lamp_heads": 197,
+ "lamp_heads": 404,
  "lamp_orphans": 0,
  "road_over_ground": {
-  "over": 14,
-  "samples": 12956,
-  "p95_m": 0.021,
-  "max_m": 0.295
+  "over": 52,
+  "samples": 14158,
+  "p95_m": 0.022,
+  "max_m": 0.935
  }
 }

@@ -1,7 +1,7 @@
 ---
 id: 0098
 title: "Sand Creek to finished, round 1 (Mac): the map-edge cut reached, the one-sided flares measured, both lamp heads lit, the owned surfaces"
-status: built on the Mac (0.2.9, sc9b) — every gate green but verify_mouth_corners (one new mouth, grid_primary_71#0 at the lap, lip 0.199 m) and the TreeFX gate (its models are the PC's); NOT SHIP OK; not installed; Runbook 0098-1 for the PC
+status: 0.2.9 INSTALLED 2026-11-23 (PC: Runbook 0098-1 on the combined head 5a8e2c05, rehearsal 0209e SHIP OK, install build equal to it); known defect: the sandcreek_quebec deck edge hangs up to 0.935 m on the Northfield Quebec arms (round 2); not driven
 scope: tracks/sand-creek-lm; tools (opt-in keys only; every other track's outputs unchanged)
 layer: project + engine
 train: -
@@ -395,6 +395,128 @@ A rehearsal only, from an EMPTY workshop. Install nothing: the install is Kevin'
    python); the run's start and end times.
 6. **Owed to Kevin's drive (not the PC's call):** E 56th from Eudora to Roslyn, and its 13 mouths; Northfield Quebec at
    E 45th; the lamps at night (two lights a post); the road and the strips in daylight (the owned asphalt and concrete).
+
+## PC, 2026-11-23: Runbook 0098-1 run on the combined head; 0.2.9 rehearsed and installed
+
+The combined branch claude/sc-finish-0209-20261122 at **5a8e2c05**: the Mac's round 1, the PC's pads branch
+(claude/sc-finish-pc-20261122) and the four fixes its rehearsals needed (ledger 0079, "PC, 2026-11-23" sections):
+- the dahlia_56th config and box;
+- SC-D56 skipped both ways;
+- `ai.fillet_split`;
+- `ground_on_mesh` for sandcreek_quebec.
+
+ENG `D:/k10-scratch/eng_sclm_0209` (eng_sclm_a plus the four owned textures at the runbook's md5s); AIROSO_NUMPY_PY the
+lidar venv. The pads are UNPARKED here (the Mac's sc9b had sandcreek_quebec and dahlia_56th parked), so the rows that
+touch them differ from sc9b, as below.
+
+**The rehearsal of record:** empty workshop `D:/k10-scratch/sand_creek_lm_0209e_reh`, `--no-install`, 05:33:29-06:37:12,
+**SHIP OK**. Every row against the Mac's sc9b column:
+
+| gate | sc9b (Mac, pads parked) | **0209e (PC, 5a8e2c05)** |
+|---|---|---|
+| verify_kn5 / --inis | PASS / PASS | **PASS / PASS** |
+| lights_ini | PASS: 342 for 171, every lens | **PASS: 342 for 171, every lens, heads_lit 2** |
+| treefx | FAIL on the Mac only | **PASS: 3,472 of 3,472 written; Oak3 + SycamoreV1-3 present; 186 rejected in the corridor** |
+| drive_test street | PASS; severe 0, kinks 0.52 /km (13 re-measured, station 1.87) | **PASS; severe 0, kinks 0.62 /km (15 re-measured, station 2.18)** |
+| drive_test race | PASS; severe 22 (10 deferred), kinks 6.85 /km (39, station 10.89) | **PASS; severe 26 (10 deferred, judged), kinks 7.57 /km (47, station 12.45)** |
+| audit street / race | CLEAN / CLEAN | **CLEAN / CLEAN** |
+| no_route BUILT (race) | PASS, leak 0, 0 doors | **PASS, leak 0, 0 doors, 87.8 k m2** |
+| verify_fold_fans | PASS, walls worst -0.152 / -0.278 | **PASS, walls worst -0.152 / -0.278** |
+| kn5_ground_check race / street | PASS / PASS; 16 / 13,494, p95 0.021, max 0.23 | **PASS / PASS; 52 / 14,158 (0.4 %), p95 0.022, max 0.935** (the known defect below); 0 double sheets; 171 lamp posts; sign posts 28 race / 26 street; 0 hovering |
+| verify_pads | PASS x4 (seams 0.9-1.6 mm) | **PASS x6** (seams 0.9-2.7 mm; dahlia_56th 1.3 mm, node -0.015 m vs 3DEP; sandcreek_quebec 2.7 mm, -0.173 m) |
+| verify_mouths | PASS 128 | **PASS 125**: the pads' arms replace 3 mouths (grid_primary_35 at dahlia_56th; grid_primary_78 and grid_primary_84 at sandcreek_quebec) |
+| verify_mouth_corners | FAIL, 1 red (71#0 0.199); lip max 0.327; teeth 169 / 78,414 = 0.22 % | **PASS, 0 red**; lip median 0.02 / max 0.206; teeth 160 / 75,836 = 0.21 %; R9 median 0.012, p90 0.185. 78's 0.327 went with its mouth |
+| verify_race / verify_signs | OK / PASS 6 posts | **OK / PASS 5 posts** (SC-D56, ledger 0079) |
+| house_seat / houses | PASS 1.261 m / 2,182 | **PASS 1.261 m / 2,182** (floor 2,181) |
+| textures | 0 untextured (130 visible meshes) | **0 untextured** (154 visible meshes, 25 textures; asphalt_dense_* and concrete_plain_* embedded; no asphalt_cracked_* / building_*) |
+| road / race / closure / street kn5 | 121,802,258 / 10,196,549 / 9,789 / 7,259,818 B | **126,378,146 / 10,203,989 / 9,789 / 7,244,306 B** (md5 c843b909… / 1235b85d… / 5601f505… / a508e1b6…) |
+| connectors / mouths | 448724bb… / 45b2ef36… | **f3ea862d… / f8113e8a…**: the pads' 3 mouths; the same in all five PC rehearsals of this head series |
+
+The draft lines, against the runbook's:
+- **The same:**
+  - grid_reach: +843 / +7 / +4 pts.
+  - Flares: tertiary_5 0 rows; unclassified_81 11 rows, 1.13 / 0.565 m.
+  - Lamps: 171, both heads lit.
+- **Changed by the pads:**
+  - trim: 88 pieces, 125 cuts.
+  - returns: 224 at 114 mouths, radius measured 139, median 85, 25 skipped.
+  - split-strip: CURB 175,760 v into 44,908 / 41,233 / 43,726 / 45,077.
+
+**grid_primary_71#0 (start) -> MAINLINE:** mouth_returns did not build it. The step's line: "NOT built: fitted past the
+re-spread (rows 4-8), its edge line meets the host 10.2 m (+1) / 3.9 m (-1) from the street's own edge at the cut
+(> 1.0 m)". Its lip is 0.199 m, ALLOWED by its 0098 row, so **the allowance row stays**.
+
+**sc_disconnects on 0209e's OBJ** (236 places: 125 mouths, 51 ends, 60 OSM junctions):
+- NOT CONNECTED: 2, the south edge's pair, 7.5 / 7.4 m (as sc9b).
+- Dead ends: 40 (sc9b 37). The 3 more are the pad arms (35#0 end, 78 end, 84#0#0 start), which the finder reads as ends;
+  it knows mouths, not pad arms. The groups: on-clip junction 2, junction 11, on-clip continues 17, continues 10.
+- OSM junctions with no mouth: 60 (as sc9b).
+- Mouths with a hole > 0.2 m on a wheel line: 10 (sc9b 12). The I-70 bridge pair (2.95 / 2.0 m) is not in the list. By
+  inference those were the two Quebec mouths the pad replaces; not diffed.
+- Worst hole 12.0 m and E 45th / Northfield Quebec 7.15 m, both as sc9b.
+
+**The two readings on copies of 0209e**, one key deleted from each copy's config:
+- `drive_test.vertex_kinks` off: street PASS 2.18 /km (severe 0); race PASS 12.45 /km (severe 26).
+- `fold_fans.wall_frame` off: verify_fold_fans **FAIL**, race chord 3202-3207, the same 14 cells, worst -0.431 m at
+  (-1491.2, -282.8). On (as shipped): PASS.
+- The same pattern as section 4.
+
+**The race severe, 26 against sc9b's 22:** +10 / -6, all from the two pads' flares, not the AI change.
+- +10 at sandcreek_quebec: s 5810-5825, lateral -14.38 / -15.13, 0.060-0.082 m, the deck at the flared edge.
+- -6 gone at Dahlia: s 2321-2331, lateral -19.18, the old flare.
+- They are reported, not gated, and the Mac accepted them for 0.2.9.
+- They also show that Quebec's 34.2 m flare at v1937-1946 is not the real road: the deck climbs about 0.39 m to its
+  ribbon edge.
+
+**KNOWN DEFECT of 0.2.9: the sandcreek_quebec deck edge hangs over the grass on the Northfield Quebec arms.**
+- kn5_ground_check's road-over-ground max is 0.935 m, against 0.2.8's 0.295 m. The worst 8 samples sit on the pad's
+  built outline: 0.935 m at (1807.17, -472.69), then 0.304, 0.288 and 0.254 m.
+- sc_disconnects §5 reads the slab edge:
+  - grid_primary_78 (end) hangs 1.068 m at (1811.95, -474.32), 42.1 m of edge over 0.05 m;
+  - grid_primary_84#0#0 (start) hangs 1.033 m at (1811.99, -474.26), 29.7 m of edge.
+- **The gate passes on p95** (0.022 m, gate 0.1 m), so the chain stays green.
+- It predates `ground_on_mesh`: rehearsal 4's data, its pads built without the key and run on in a copy, read 0.934 m
+  over 50 samples.
+- Not yet located. The pad's build line reads deck_fill unfilled 146, smooth_moved max 0.88 m, seam residual max
+  0.728 m. One reading, NOT proven: the deck is drawn up to the arms' ribbons while the ground stays pinned to the
+  measured deck.
+
+**Round 2's first items** (the Mac, 2026-11-23, in this order; then the rest of round 2 as listed in ledger 0079):
+1. Quebec's 34.2 m flare off at v1937-1946, measured like Dahlia's.
+2. The deck-edge overhang on the Quebec arms. Locate it first: it may be the same flare, or the arms' edge pinned
+   above the bank. Fix it so no edge hangs over 0.30 m, with no threshold moved.
+3. The SC-D56 plate (ledger 0079): the mesh stage stands a post on falling ground with no built walk. Then SC-D56
+   comes back both ways, verify_signs (e, f) unchanged.
+4. The race kink rise, 6.85 -> 7.57 /km: locate it.
+
+**The install** (Kevin's standing word for a finished, green Sand Creek build: "When they're done, install them" /
+"I always want newer builds"):
+- 0.2.8's workshop was set aside as `D:/k10-scratch/sand_creek_lm.0.2.8`. The install build ran from a fresh EMPTY
+  `D:/k10-scratch/sand_creek_lm`, 06:39:05-07:41:51, at 5a8e2c05 with the same ENG. SHIP OK, no force.
+- The install step parked the installed 0.2.8 in `D:/k10-track-archive/2026-11-23_074151/`. Installed: "doooom
+  Colorado — Sand Creek Raceway" and "... Sand Creek Free Roam" 0.2.9, in the plain `sand_creek_raceway`.
+- **Against the rehearsal:**
+  - 345 / 345 gate rows identical.
+  - Road, `_race` and `_street` kn5 are kn5_equiv EQUIVALENT (tangents only, max 1.79e-07). The closure and both
+    spawn kn5s are byte-identical.
+  - connectors / mouths md5 are the same.
+  - The four TreeFX `.bin` in AC's `extension/trees/` are at their source md5s (24111ede / 0986f1ea / 7010d61f /
+    0ad53d67), and trees.txt is the rehearsal's (3,472 trees).
+  - Both layouts' AI lines are byte-identical.
+- **Menu pictures:**
+  - Race (s0, phase 0) and street (s1, phase 0.5) were rendered off the installed split scenes with 0.2.8's cameras
+    (`tools/menu_preview_blend.py`, exposure 0, no stand-ins). The camera and sun are the same as 0.2.8's sidecars.
+  - They were cut into `source/ui/<layout>/` and copied over the pack's `ui/<layout>/preview.png`. The pack's own are
+    in `D:/k10-track-archive/2026-11-23_074403_previews/`.
+- `fleet/ac-installed.json`'s Sand Creek row: 0.2.9, sha 5a8e2c05, with the known defect named.
+- The sync-back is with this note: 46 files under `tracks/sand-creek-lm` (data, ai, the synced-back loop.blend), no
+  deletions.
+- Not driven yet. Owed to Kevin's drive (Runbook 0098-1 step 6):
+  - E 56th from Eudora to Roslyn and its 13 mouths;
+  - Northfield Quebec at E 45th;
+  - the lamps at night;
+  - the road and the strips in daylight;
+  - the two new pads (Dahlia / 56th, Sand Creek / Quebec, and the Quebec arms' edge above).
 
 ## What needs Kevin, a download or the PC
 

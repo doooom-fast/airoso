@@ -5,14 +5,14 @@
  "race_furniture": true,
  "lane_offset": true,
  "frame": "kn5 frame (median dist to centerline.local: engine 50.0 m / kn5 0.0 m)",
- "points": 6416,
+ "points": 6419,
  "spacing_m": 1.5,
- "lap_m": 9623.8,
- "lap_s_est": 197.0,
- "offset_points": 732,
- "offset_max_m": 10.205,
+ "lap_m": 9628.8,
+ "lap_s_est": 198.2,
+ "offset_points": 735,
+ "offset_max_m": 6.434,
  "clearance": {
-  "points": 6416,
+  "points": 6419,
   "unmatched": 0,
   "divider_stations": 0,
   "right_side": 0,
@@ -21,8 +21,8 @@
   "divider_too_close": 0,
   "edge_too_close": 0,
   "min_divider_clear_m": null,
-  "min_edge_clear_m": 1.591363751236344,
-  "max_lat_m": 10.198925168865085,
+  "min_edge_clear_m": 1.5282885031137825,
+  "max_lat_m": 8.843987184452509,
   "right_side_frac": null,
   "ok": true
  },
@@ -34,14 +34,18 @@
   "fillets": [
    {
     "xz": [
-     -1490.36,
-     -310.37
+     -1490.55,
+     -310.14
     ],
     "radius_m": 12.6,
     "floor_m": 12.0,
     "lane": "comfort",
     "window_pts": 13,
-    "turn_deg": 55.5
+    "turn_deg": 54.2,
+    "split_from": [
+     3193,
+     3201
+    ]
    }
   ],
   "smoothing": [
@@ -72,7 +76,7 @@
    ],
    "source": "dummies_race.json AC_TIME_0 midpoint",
    "index": 0,
-   "grid_index": 6396,
+   "grid_index": 6399,
    "grid_behind_line_m": 30.0,
    "grid_off_line_m": 0.07
   },
@@ -123,7 +127,7 @@
     "hold_m": 117.0,
     "ramp_in_m": 40.5,
     "ramp_out_m": 93.0,
-    "stations_eased_off_the_edge": 41
+    "stations_eased_off_the_edge": 40
    },
    {
     "apex_vertex": 3195,
@@ -146,16 +150,17 @@
    {
     "apex_vertex": 140,
     "zone": "whole",
-    "turn_deg": -98.9,
+    "turn_deg": -99.0,
     "radius_m": 41.11,
     "lane": "comfort",
-    "radius_before_m": 11.49,
+    "radius_before_m": 11.47,
     "window_m": 91.5,
     "entry_m": 22.5,
     "exit_m": 15.0,
     "path_clear_min_m": 1.5,
     "points_on_arc": 31,
-    "min_speed_kmh": 91.4,
+    "line_radius_min_m": 41.04,
+    "min_speed_kmh": 91.3,
     "approach_min_speed_kmh": 54.3
    },
    {
@@ -164,12 +169,13 @@
     "turn_deg": -84.9,
     "radius_m": 14.52,
     "lane": "hard",
-    "radius_before_m": 5.52,
+    "radius_before_m": 5.54,
     "window_m": 99.0,
     "entry_m": 54.0,
     "exit_m": 9.0,
     "path_clear_min_m": 0.7,
-    "points_on_arc": 25,
+    "points_on_arc": 24,
+    "line_radius_min_m": 14.49,
     "min_speed_kmh": 54.3,
     "approach_min_speed_kmh": 54.3
    },
@@ -179,13 +185,14 @@
     "turn_deg": 95.5,
     "radius_m": 54.7,
     "lane": "comfort",
-    "radius_before_m": 10.67,
+    "radius_before_m": 10.71,
     "window_m": 105.0,
     "entry_m": 9.0,
     "exit_m": 22.5,
     "path_clear_min_m": 1.75,
     "points_on_arc": 46,
-    "min_speed_kmh": 78.9,
+    "line_radius_min_m": 54.69,
+    "min_speed_kmh": 79.0,
     "approach_min_speed_kmh": 54.3
    },
    {
@@ -194,63 +201,74 @@
     "turn_deg": 95.6,
     "radius_m": 33.49,
     "lane": "comfort",
-    "radius_before_m": 10.38,
+    "radius_before_m": 10.39,
     "window_m": 111.0,
     "entry_m": 42.0,
     "exit_m": 22.5,
     "path_clear_min_m": 1.5,
     "points_on_arc": 28,
+    "line_radius_min_m": 33.47,
     "min_speed_kmh": 82.5,
     "approach_min_speed_kmh": 82.5
    },
    {
     "apex_vertex": 779,
     "zone": "whole",
-    "turn_deg": -121.6,
-    "radius_m": 61.88,
+    "turn_deg": -115.2,
+    "radius_m": 57.64,
     "lane": "comfort",
-    "radius_before_m": 21.08,
-    "window_m": 151.5,
-    "entry_m": 54.0,
+    "radius_before_m": 20.9,
+    "window_m": 139.5,
+    "entry_m": 42.0,
     "exit_m": 31.5,
-    "path_clear_min_m": 1.74,
-    "points_on_arc": 32,
-    "min_speed_kmh": 112.2,
-    "approach_min_speed_kmh": 111.4
+    "path_clear_min_m": 1.52,
+    "points_on_arc": 36,
+    "line_radius_min_m": 57.63,
+    "min_speed_kmh": 108.3,
+    "approach_min_speed_kmh": 108.3
    },
    {
     "apex_vertex": 3195,
     "skipped": "no arc >= the floor fits the corridor",
     "radius_before_m": 8.71,
-    "points_on_arc": 23,
-    "min_speed_kmh": 50.6,
-    "approach_min_speed_kmh": 50.6
+    "points_on_arc": 22,
+    "line_radius_min_m": 12.78,
+    "min_speed_kmh": 50.5,
+    "approach_min_speed_kmh": 50.5
    },
    {
     "apex_vertex": 3205,
     "skipped": "no arc >= the floor fits the corridor",
     "radius_before_m": 10.54,
     "points_on_arc": 33,
-    "min_speed_kmh": 51.8,
-    "approach_min_speed_kmh": 50.6
+    "line_radius_min_m": 21.68,
+    "min_speed_kmh": 52.0,
+    "approach_min_speed_kmh": 50.5
    }
   ],
-  "min_radius_m": 12.57,
-  "min_radius_at": 825,
+  "min_radius_m": 12.56,
+  "min_radius_at": 822,
   "radius_below_floor": 0,
   "max_turn_deg": 6.8,
   "turns_over_limit": 0,
   "turns_over_limit_road_tight": 0,
-  "max_lateral_jump_m": 0.811,
+  "max_lateral_jump_m": 0.794,
   "backward_steps": 0,
   "self_crossings": 0,
   "corridor": {
    "points_in_open_box": 0,
-   "points_whole_street": 6416,
+   "points_whole_street": 6419,
    "points_in_closure_lane": 0
   },
-  "min_speed_kmh": 50.6,
-  "min_speed_at": 823
+  "min_speed_kmh": 50.5,
+  "min_speed_at": 820
+ },
+ "ai_0052": {
+  "opts": {
+   "fillet_split": true
+  },
+  "built": null,
+  "payload": null
  },
  "corridor": {
   "declaration": "barrier_bands.json corridors.race (token race)",
@@ -258,17 +276,17 @@
    "whole": 3217
   },
   "check": {
-   "points": 6416,
-   "probes": 38496,
+   "points": 6419,
+   "probes": 42611,
    "outside": 0,
    "too_close": 0,
-   "min_clear_m": 0.665,
-   "min_clear_at": 1236,
+   "min_clear_m": 0.656,
+   "min_clear_at": 1235,
    "min_clear_face": "y_lo (forward-right)",
    "island_hits": 0,
    "island_too_close": 0,
    "island_min_m": null,
-   "mouth_min_m": 2.268,
+   "mouth_min_m": 2.264,
    "mouth_hits": 0,
    "ok": true
   },
@@ -301,12 +319,12 @@
    {
     "apex_vertex": 3195,
     "zone": "whole",
-    "D_deg": 60.12
+    "D_deg": 60.08
    },
    {
     "apex_vertex": 3205,
     "zone": "whole",
-    "D_deg": -62.23
+    "D_deg": -62.27
    }
   ],
   "corners_on_the_floor_fillet": [],
@@ -317,9 +335,9 @@
     "extend"
    ]
   },
-  "min_radius_m": 12.57,
-  "min_speed_kmh": 50.6,
-  "wall_clear_min_m": 0.665,
+  "min_radius_m": 12.56,
+  "min_speed_kmh": 50.5,
+  "wall_clear_min_m": 0.656,
   "points_in_open_box": 0,
   "start_index": 0
  }

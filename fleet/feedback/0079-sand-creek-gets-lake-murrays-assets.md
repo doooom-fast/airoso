@@ -2712,3 +2712,7 @@ Each from an EMPTY workshop, --no-install, ENG `eng_sclm_0209`, on the combined 
   - No ai.layouts, so no gate OBJ / verify_ai_line step is added.
 - Test: tests/ac/test_ai_line_geometry.py::test_fillet_split_is_opt_in_and_fillets_a_merged_cluster_run_by_run, on
   tests/fixtures/sand_creek_0209_s48_fillet.json (the line and stations around the S, cut from 928f7bad).
+
+## PC, 2026-11-23: 0.2.9 rehearsed (0209e, SHIP OK) and installed
+
+On the combined head 5a8e2c05: the rehearsal of record, every row against the Mac's sc9b, the install, the race severe +10 / -6, the known Quebec deck-edge overhang and round 2's first items are in ledger 0098, "PC, 2026-11-23".

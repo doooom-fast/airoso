@@ -1,7 +1,7 @@
 {
  "file": "D:\\k10-scratch\\sand_creek_lm\\build\\sand_creek_raceway_street.kn5",
  "version": 5,
- "file_bytes": 6923402,
+ "file_bytes": 7244306,
  "textures": [
   {
    "name": "line_yellow.png",
@@ -69,30 +69,30 @@
  "meshes": [
   {
    "name": "YLINE_0",
-   "verts": 61452,
-   "tris": 20504,
+   "verts": 62064,
+   "tris": 20708,
    "matid": 0,
    "surface": null,
    "renderable": true,
-   "radius_m": 1247.4
+   "radius_m": 1276.3
   },
   {
    "name": "YLINE_1",
-   "verts": 58248,
-   "tris": 19424,
+   "verts": 62966,
+   "tris": 20992,
    "matid": 1,
    "surface": null,
    "renderable": true,
-   "radius_m": 1265.9
+   "radius_m": 1279.8
   },
   {
    "name": "YLINE_2",
-   "verts": 25349,
-   "tris": 25185,
+   "verts": 26865,
+   "tris": 26693,
    "matid": 2,
    "surface": null,
    "renderable": true,
-   "radius_m": 1260.3
+   "radius_m": 1277.7
   },
   {
    "name": "YLINE_paint_fork_95_median",
@@ -109,8 +109,8 @@
  ],
  "summary": {
   "meshes": 4,
-  "verts": 148289,
-  "tris": 66193,
+  "verts": 155135,
+  "tris": 69473,
   "textures": 1,
   "texture_bytes": 361,
   "materials": 4,
@@ -118,11 +118,12 @@
   "shaders_by_tris": {
    "ksPerPixel": {
     "meshes": 4,
-    "tris": 66193
+    "tris": 69473
    }
   },
   "near_vert_cap": [
-   "YLINE_0"
+   "YLINE_0",
+   "YLINE_1"
   ],
   "non_pot_textures": []
  }

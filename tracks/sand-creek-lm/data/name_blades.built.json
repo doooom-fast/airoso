@@ -97,25 +97,6 @@
    ]
   },
   {
-   "id": "nb8",
-   "k": 8,
-   "vertex": 779,
-   "side": "L",
-   "xz": [
-    -918.99,
-    1126.05
-   ],
-   "along_m": 7.75,
-   "slid_m": 0.0,
-   "ground_y": 7.137,
-   "edge_y": 7.334,
-   "blade_bottom_y": 9.468,
-   "names": [
-    "E 56th Ave",
-    "Dahlia St"
-   ]
-  },
-  {
    "id": "nb9",
    "k": 9,
    "vertex": 847,
@@ -154,38 +135,19 @@
    ]
   },
   {
-   "id": "nb11",
-   "k": 11,
-   "vertex": 1936,
-   "side": "L",
-   "xz": [
-    1806.54,
-    -473.73
-   ],
-   "along_m": 7.75,
-   "slid_m": 0.0,
-   "ground_y": 23.618,
-   "edge_y": 23.922,
-   "blade_bottom_y": 26.056,
-   "names": [
-    "N Northfield Quebec St",
-    "Sand Creek Dr S"
-   ]
-  },
-  {
    "id": "nb12",
    "k": 12,
    "vertex": 1942,
    "side": "L",
    "xz": [
-    1809.24,
-    -495.68
+    1809.22,
+    -501.43
    ],
-   "along_m": 7.75,
-   "slid_m": 0.0,
-   "ground_y": 23.853,
-   "edge_y": 23.989,
-   "blade_bottom_y": 26.123,
+   "along_m": 13.5,
+   "slid_m": 5.75,
+   "ground_y": 23.83,
+   "edge_y": 24.328,
+   "blade_bottom_y": 26.462,
    "names": [
     "N Northfield Quebec St",
     "Sand Creek Dr S"
@@ -264,6 +226,25 @@
    "blade_bottom_y": 33.942,
    "names": [
     "N Ivy St",
+    "E 45th Ave"
+   ]
+  },
+  {
+   "id": "nb17",
+   "k": 17,
+   "vertex": 2581,
+   "side": "L",
+   "xz": [
+    62.36,
+    -869.11
+   ],
+   "along_m": -5.0,
+   "slid_m": 0.0,
+   "ground_y": 27.976,
+   "edge_y": 28.046,
+   "blade_bottom_y": 30.18,
+   "names": [
+    "E 44th Ave",
     "E 45th Ave"
    ]
   },
@@ -437,6 +418,25 @@
     "N Colorado Blvd Frtg E",
     "E 48th Ave"
    ]
+  },
+  {
+   "id": "nb28",
+   "k": 28,
+   "vertex": 3202,
+   "side": "L",
+   "xz": [
+    -1497.79,
+    -317.98
+   ],
+   "along_m": -10.5,
+   "slid_m": 0.0,
+   "ground_y": 19.418,
+   "edge_y": 19.617,
+   "blade_bottom_y": 21.751,
+   "names": [
+    "N Colorado Blvd",
+    "E 48th Ave"
+   ]
   }
  ],
  "skipped": [
@@ -453,16 +453,16 @@
    "why": "no clear base within 6.0 m of the plan (on pavement)"
   },
   {
-   "id": "nb17",
+   "id": "nb8",
+   "why": "no clear base within 6.0 m of the plan (on pavement)"
+  },
+  {
+   "id": "nb11",
    "why": "no clear base within 6.0 m of the plan (on pavement)"
   },
   {
    "id": "nb20",
    "why": "no clear base within 6.0 m of the plan (within 1.0 m of pavement)"
-  },
-  {
-   "id": "nb28",
-   "why": "no clear base within 6.0 m of the plan (on pavement)"
   }
  ]
 }

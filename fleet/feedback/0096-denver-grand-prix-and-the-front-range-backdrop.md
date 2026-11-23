@@ -162,3 +162,8 @@ Files under `tracks/denver-grand-prix/`; the first dossier is [`DOSSIER.md`](../
 - **Refused to that session:** overpass-api.de, data.drcog.org, gis.drcog.org, the NAIP blob store, The National Map's product API.
 
 Owed now: Kevin's approval of the dossier; the far-clip test; then the survey itself (PLAN §4b) on a machine that keeps the tiles.
+
+## The dossier approved; the survey started (Kevin, 2026-11-23)
+
+"dossier approved, start the survey". `DOSSIER.md` is ticked. The survey of PLAN §4b (paint, streetlights, signal masts,
+then signs) is given to the cloud session that reaches the aerial archive and the lidar, lap corridor first.

@@ -295,4 +295,4 @@ the road under the Convention Center roof; whether lidar alone finds lamp posts 
 2022 flight; the sign inventory's source; the free-roam grid's street count; the Sand Creek viewshed for Pikes Peak.
 
 ---
-**Kevin's approval:** ☐ approved as-is · ☐ approved with the changes noted above — date: \_\_\_\_
+**Kevin's approval:** ☑ approved as-is · ☐ approved with the changes noted above — date: 2026-11-23 ("dossier approved, start the survey")

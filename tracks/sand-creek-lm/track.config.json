@@ -338,6 +338,16 @@
         "radius_m": 30.0,
         "why": "the pad's measured deck paves the crossroads (route.corner_flare_off's rule: a corner joins when its authored pad exists)",
         "_doc": "at = the lap's v780 (the pad's node) on this port's line. Round Q's scratch intake: v767-v787 re-laid 11.0 -> 23.5 m (the source's 42.3 m crest off); the PC re-ran tools/lm_engine_intake.corner_flares_off on data/centerline.local.json 2026-11-22: the same span, v770 42.3 -> 12.93, v780 -> 19.16, v786 27.67 -> 22.86"
+      },
+      {
+        "name": "Sand Creek Dr S -> N Quebec St (the sandcreek_quebec pad)",
+        "at": [
+          39.782055,
+          -104.901895
+        ],
+        "radius_m": 30.0,
+        "why": "the pad's measured deck paves the crossroads (route.corner_flare_off's rule: a corner joins when its authored pad exists)",
+        "_doc": "at = the lap's v1942 (the pad's node) on this port's line. Sand Creek round 2 item 1 (the Mac 2026-11-23: 'Quebec's 34.2 m flare off, measured like Dahlia's'). The PC ran tools/lm_engine_intake.corner_flares_off on 0.2.9's data/centerline.local.json (rehearsal 0209e): the flare v1933..v1951 (16.50..34.20 m) re-laid between its legs' 18.00 and 16.50 m, v1937 34.2 -> 17.66, v1942 -> 17.24, v1948 32.24 -> 16.75; the pad's cut rows v1931 / v1953 keep 18.00 / 16.50. In 0.2.9 the deck's outline was pinned at the flared ribbon edge (v1937, 0.39 m over the measured junction within 0.45 m), the race severe +10 at s 5810-5825 stood at that edge, and verify_pads P4 needed ground_on_mesh there"
       }
     ],
     "_corner_flare_off_doc": "scripts/gps/widths_from_osm.py: a declared node gets no corner flare (detect_turn_corners) and no junction flare within radius_m. The six route.fillet corners join this list when their authored junction pads exist (Kevin 2026-11-03: \"authored pad junctions\"; ledger 0070 \"Dressing\"): until then their flares stay, because without a pad the crossroads' outside corner would be unpaved.",
@@ -1225,9 +1235,7 @@
       "drop_on_road": true,
       "_drop_on_road_doc": "ledger 0079 round B: a draft post (the assembler's every-55 m rule) that a later road stands on is left out and recorded in lights.local.json dropped_on_road, never moved to an unmeasured spot (tools/author_lamps_blend.py)",
       "light_both_heads": true,
-      "_light_both_heads_doc": "ledger 0098 (Kevin 2026-11-22, asked \"Light the back head of two-arm lamps?\": \"Yes, light both heads\"): tools/author_lamps_blend.py lays the back head's lens too (the road-ward lens mirrored through the pole: the twin post's heads stand at +-4.04 m), so every lamp carries two CSP lights; tools/check_lights_ini.py matches one light per recorded lens (provenance.heads_lit 2). The light's look (lighting.streetlight) is unchanged",
-      "both_heads_by": "lamps",
-      "_both_heads_by_doc": "ledger 0098 / 0099 (2026-11-23, the Mac's call at the 0.2.9 merge with main): the same key light_both_heads was written twice in two rounds. \"lamps\" = ledger 0098's path, Sand Creek's: tools/author_lamps_blend.py (the draft lamps step) lays both lenses and records heads_lit 2, tools/check_lights_ini.py counts heads_lit and wants no data/lights.heads.json, tools/author_lamp_heads_blend.py refuses to run. Absent = ledger 0099's path (Lake Murray): the author step lamp_heads lights the back head. Installed 0.2.9 was built by this path. Round 2 of Sand Creek moves onto lamp_heads (its LIGHTS mesh changes anyway) and this key goes"
+      "_light_both_heads_doc": "ledger 0098 (Kevin 2026-11-22, asked \"Light the back head of two-arm lamps?\": \"Yes, light both heads\"): tools/author_lamps_blend.py lays the back head's lens too (the road-ward lens mirrored through the pole: the twin post's heads stand at +-4.04 m), so every lamp carries two CSP lights; tools/check_lights_ini.py matches one light per recorded lens (provenance.heads_lit 2). The light's look (lighting.streetlight) is unchanged ROUND 2 (2026-11-23, the Mac): the same key was written twice in two rounds (ledger 0098 here, ledger 0099 Lake Murray's author step lamp_heads); 0.2.9 told them apart with scenery.streetlights.both_heads_by \"lamps\". 0.2.10 moves Sand Creek onto lamp_heads (ship.json author, data/lights.heads.json synced back) and both_heads_by goes: tools/author_lamps_blend.py lays the road-ward lens only, tools/author_lamp_heads_blend.py lights the back head, tools/check_lights_ini.py counts lights.heads.json's back lenses, as on Lake Murray"
     },
     "signs": {
       "_doc": "Street-name blade signs at each major junction (from data/street_labels.json, same legs as the painted road decals). enabled=false drops them. flip_read/flip_up are one-bit fixes if the text reads mirrored or upside-down in-game (verify on the first Windows drive).",
@@ -1575,7 +1583,7 @@
     "heightfield": "port",
     "_heightfield_doc": "ledger 0079: the port's own 3DEP grid (data/heightfield.*, synced in): margin 470 m = 150 + 8 x 40 on the source's lattice (every one of the source grid's 5,400 samples is a sample of this one, 0.000 m apart), so the ground reaches the buildings within 450 m of the lap and the grid streets; fetched by scripts.elevation.heightfield.build_heightfield",
     "corner_flare_off": true,
-    "_corner_flare_off_doc": "ledger 0079 round Q (tools/lm_engine_intake.corner_flares_off) wired 2026-11-22 with dahlia_56th unparked (PC, claude/sc-finish-pc-20261122; the Mac: \"go ahead with lm_intake.corner_flare_off for Dahlia\"). sandcreek_quebec keeps its flare (v1937-1946, 34.2 m) for now. 2026-11-23 (PC): true = the switch; tools/lm_engine_intake.py runs corner_flares_off over route.corner_flare_off, the port's list, where the Dahlia corner now stands beside the slip's merge. 4b4ea1be had the corner in this key's place, so the switch was on and the corner never reached the list: the 0.2.9 rehearsal (903c3436) kept the source's 42.3 m crest and lm_pads refused dahlia_56th (the out-cut row v786 27.67 m wide, its north end 5 m past the measured bank top: 'the outline crosses itself through a seam row')",
+    "_corner_flare_off_doc": "ledger 0079 round Q (tools/lm_engine_intake.corner_flares_off) wired 2026-11-22 with dahlia_56th unparked (PC, claude/sc-finish-pc-20261122; the Mac: \"go ahead with lm_intake.corner_flare_off for Dahlia\"). sandcreek_quebec keeps its flare (v1937-1946, 34.2 m) for now. 2026-11-23 (PC): true = the switch; tools/lm_engine_intake.py runs corner_flares_off over route.corner_flare_off, the port's list, where the Dahlia corner now stands beside the slip's merge. 4b4ea1be had the corner in this key's place, so the switch was on and the corner never reached the list: the 0.2.9 rehearsal (903c3436) kept the source's 42.3 m crest and lm_pads refused dahlia_56th (the out-cut row v786 27.67 m wide, its north end 5 m past the measured bank top: 'the outline crosses itself through a seam row'). ROUND 2 (2026-11-23, the Mac's item 1): sandcreek_quebec's flare joins the list too (route.corner_flare_off 'Sand Creek Dr S -> N Quebec St', v1933..v1951 34.2 -> 18.00 / 16.50 m), measured as Dahlia's",
     "tree_models": true,
     "_tree_models_doc": "ledger 0079: the source's TreeFX models (tracks/sand-creek/source/trees/*.bin, personal use, on the PC only) into the project",
     "connector_profiles": "source/connector_profiles.lidar.round_i.json",

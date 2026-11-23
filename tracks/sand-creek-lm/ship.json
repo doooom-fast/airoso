@@ -27,6 +27,7 @@
       "split_strip"
     ],
     "author": [
+      "lamp_heads",
       "race_bands",
       "race_planned_gate",
       "layout_dummies",
@@ -125,6 +126,7 @@
       "data/bridge.spans.auto.json",
       "data/mouth_welds.json",
       "data/lights.local.json",
+      "data/lights.heads.json",
       "data/bespoke.report.json",
       "data/dummies_{id}.json",
       "data/drive_test.json",

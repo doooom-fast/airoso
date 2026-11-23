@@ -14,6 +14,17 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
+## 2026-11-23 (PC, Sand Creek round 2) — WIRING: check_lights_ini back to one both-heads path, Lake Murray's (ledgers 0098 / 0099; no threshold moved)
+
+The 0.2.9 merge's entry below told ledger 0098's path (Sand Creek's lamps step lighting the back head, `heads_lit` 2) from
+ledger 0099's (the author step lamp_heads, `data/lights.heads.json`) with `scenery.streetlights.both_heads_by "lamps"`, and owed
+the unification to Sand Creek's round 2. Done: Sand Creek 0.2.10 runs lamp_heads (ship.json author, first; lights.heads.json
+synced back) and both_heads_by is gone. `tools/check_lights_ini.py`, `tools/author_lamps_blend.py` and
+`tools/author_lamp_heads_blend.py` are main's 4a5c38e0 files again: light_both_heads true wants the heads file and counts its
+back lenses; heads_lit is read nowhere. The count rule, POS_TOL_M 0.05 m, the no-duplicate / no-orphan rules and the look are
+unchanged. Teeth: `tests/tools/test_sand_creek_0098.py::test_sand_creek_lights_both_heads_by_lamp_heads`,
+`tests/tools/test_lake_murray_0099.py`. Proof owed to the 0.2.10 rehearsal: 342 lights for 171 lamps through lamp_heads.
+
 ## 2026-11-23 (PC) — WIRING: check_lights_ini's two both-heads paths told apart, at the 0.2.9 merge with main (ledgers 0098 / 0099; opt-in; no threshold moved)
 
 The same key, `scenery.streetlights.light_both_heads`, was written twice in two rounds (the Mac, 2026-11-22). Ledger 0098 (Sand

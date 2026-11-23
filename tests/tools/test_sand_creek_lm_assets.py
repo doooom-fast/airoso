@@ -641,7 +641,7 @@ def test_round_l_pad_decks_opt_in():
     Murray's pads.built.json (outline_xz) and lm_pads' (outline_en) read the same way"""
     import place_signs as ps
     import expansion_lines as el
-    assert "pad_decks" not in ps.DEFAULTS and ps.OPT_IN_DEFAULTS == {"pad_decks": False}
+    assert "pad_decks" not in ps.DEFAULTS and ps.OPT_IN_DEFAULTS == {"pad_decks": False, "walk_built_only": False}
     for t in ("san-diego-lake-murray", "lookout-lariat", "lookout-lariat-lm"):
         p = ROOT / "tracks" / t / "signs.json"
         if p.exists():
@@ -905,7 +905,8 @@ def test_round_q_corner_flares_off_is_opt_in_and_only_narrows():
     sc = json.loads((SC / "track.config.json").read_text(encoding="utf-8"))
     assert sc["lm_intake"]["corner_flare_off"] is True
     assert [c["name"] for c in sc["route"]["corner_flare_off"]] == ["the 56th -> Sand Creek Dr slip's merge",
-                                                                     "Dahlia St -> E 56th Ave (the dahlia_56th pad)"]
+                                                                     "Dahlia St -> E 56th Ave (the dahlia_56th pad)",
+                                                                     "Sand Creek Dr S -> N Quebec St (the sandcreek_quebec pad)"]
     assert "dahlia_56th" in [p["id"] for p in sc["lm_pads"]["pads"]]
     rk = json.loads((SC / "source" / "round_k" / "track.config.json").read_text(encoding="utf-8"))
     assert "corner_flare_off" not in (rk.get("lm_intake") or {})
@@ -929,7 +930,13 @@ def test_sand_creek_corner_flares_off_reach_the_dahlia_crest():
     run = got[767:788]
     assert run[0] == 11.0 and run[-1] == 23.5 and all(a <= b for a, b in zip(run, run[1:]))
     assert 12.5 < got[770] < 13.5 and 22.5 < got[786] < 23.5
-    assert [k for k, (a, b) in enumerate(zip(got, src["widths_m"])) if a != b] == list(range(768, 787))
+    # Sand Creek round 2 item 1 (the Mac 2026-11-23): sandcreek_quebec's 34.2 m flare off, measured as Dahlia's: v1933..v1951
+    # re-laid between its legs' 18.0 and 16.5 m; the pad's cut rows v1931 / v1953 keep their widths
+    q = by["Sand Creek Dr S -> N Quebec St (the sandcreek_quebec pad)"]
+    assert q["vertex"] == 1942 and q["flare"] == [1933, 1951] and q["legs_m"] == [18.0, 16.5] and q["was_m"] == [16.5, 34.2]
+    assert got[1931] == src["widths_m"][1931] == 18.0 and got[1953] == src["widths_m"][1953] == 16.5
+    assert 17.5 < got[1937] < 17.8 and 17.1 < got[1942] < 17.4 and 16.6 < got[1948] < 16.9
+    assert [k for k, (a, b) in enumerate(zip(got, src["widths_m"])) if a != b] == list(range(768, 787)) + list(range(1934, 1951))
 
 
 def _drop(cfg, path):
@@ -950,13 +957,13 @@ LIVE_0_2_9_KEYS = (("route", "grid", "reach"), ("route", "grid", "_reach_doc"), 
                    ("lm_intake", "_grid_reach_doc"), ("route", "flare_one_sided"), ("route", "_flare_one_sided_doc"),
                    ("lm_intake", "flare_one_sided"), ("lm_intake", "_flare_one_sided_doc"),
                    ("scenery", "streetlights", "light_both_heads"), ("scenery", "streetlights", "_light_both_heads_doc"),
-                   # the 0.2.9 merge with main (2026-11-23): ledger 0098's path told apart from 0099's, the same key
-                   ("scenery", "streetlights", "both_heads_by"), ("scenery", "streetlights", "_both_heads_by_doc"),
                    ("texture_overrides", "1ROAD"), ("texture_overrides", "1KERB_SIDEWALK"),
                    ("route", "split_strip_balanced"), ("route", "_split_strip_balanced_doc"))
 SHIP_0_2_9 = {"source/grid_reach.json", "source/flares_one_sided.lidar.json",
               "assets/textures/asphalt_dense_diffuse.jpg", "assets/textures/asphalt_dense_normal.jpg",
               "assets/textures/concrete_plain_diffuse.jpg", "assets/textures/concrete_plain_normal.jpg", "split_strip"}
+# Sand Creek round 2 (0.2.10, the Mac 2026-11-23): both heads lit by Lake Murray's author step (ledger 0099)
+SHIP_0_2_10 = {"lamp_heads", "data/lights.heads.json"}
 
 # ledger 0086 (0.2.7): every key the live config adds to, or changes from, round_k's candidate
 LIVE_0_2_7_KEYS = (("name",), ("_name_doc",), ("slug",), ("version",), ("install_folder",), ("_install_folder_doc",),
@@ -987,9 +994,11 @@ def _finish_pc_pads(live, cand):
     for pl in live["lm_pads"]["plan"]:
         if pl["id"] == "dahlia_56th":
             assert pl.pop("cut_m") == [30.0, 17.0] and pl.pop("half_m") == 57.15 and pl.pop("_cut_m_doc")
-    # the port's route.corner_flare_off: the candidate's slip merge, then the Dahlia corner (2026-11-23)
+    # the port's route.corner_flare_off: the candidate's slip merge, then the Dahlia corner (2026-11-23), then Quebec's
+    # (Sand Creek round 2, 0.2.10)
     rc, kc = live["route"]["corner_flare_off"], cand["route"]["corner_flare_off"]
-    assert rc[:len(kc)] == kc and [c["name"] for c in rc[len(kc):]] == ["Dahlia St -> E 56th Ave (the dahlia_56th pad)"]
+    assert rc[:len(kc)] == kc and [c["name"] for c in rc[len(kc):]] == ["Dahlia St -> E 56th Ave (the dahlia_56th pad)",
+                                                                       "Sand Creek Dr S -> N Quebec St (the sandcreek_quebec pad)"]
     del rc[len(kc):]
 
 
@@ -1019,7 +1028,7 @@ def test_round_r_live_is_the_candidate():
     ship = json.loads((SC / "ship.json").read_text(encoding="utf-8"))
     ship_k = json.loads((SC / "source" / "round_k" / "ship.json").read_text(encoding="utf-8"))
     added = {"mouth_returns", "verify_mouth_corners", "source/mouth_radii.naip.json", "data/mouth_returns.json",
-             "data/verify_mouth_corners.json"} | SHIP_0_2_9
+             "data/verify_mouth_corners.json"} | SHIP_0_2_9 | SHIP_0_2_10
     ship["sync_in"]["_assets_doc"] = ship["sync_in"]["_assets_doc"].split("; ledger 0098:")[0]
     assert ship.keys() == ship_k.keys()
     for k, v in ship.items():

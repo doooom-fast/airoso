@@ -184,6 +184,65 @@ stated in degrees for the lap's extremes, for Kevin to accept or not.
 6. **An out-and-back on one street** in the race corridor (the Kalamath split).
 7. **Signals** as furniture in the hundreds.
 
+## 4b. Streetlights, signs and paint — surveyed, and the build depends on them
+
+Kevin, 2026-11-23: *"An addition I want for this track is streetlights and road signs that are as accurate as you
+can make them. Same with road paint, we do a terrible job currently. Currently track builds don't depend on this."*
+
+**What the chain does today** (read from the tools, not from memory):
+
+| | Today | Why it is not accurate |
+|---|---|---|
+| Streetlights | `tools/plan_streetlights.py`: a post every 55 m along the lap, alternating sides, one fixture (`led_cobra`) | a rule, not a survey: no real post stands where it is drawn |
+| Signs | W1-6 arrow plates at tight corners by rule (`tools/place_signs.py`), street-name blades; plates are flat colour, the arrow is geometry | no stop, one-way, speed, turn or guide sign exists; a sign face cannot carry artwork because the prep overwrites every mesh's UVs |
+| Paint | the assembler paints from the centreline: double yellow, edges and dividers by width. Measured paint only as hand-declared exceptions (`route.paint`) | lane count, stop bars, crosswalks, arrows and bike lanes are not read from anywhere |
+| Gates | lamps: one CSP light per lens. Signs: the arrow's own geometry. Paint: none | **nothing compares any of it with the street**, so a build is green with all of it wrong |
+
+**What is on this lap** (counted on the OSM extract, the lap's 101 ways): **55 signals**, **108 crossings** (54 zebra,
+43 signal-controlled), **5 rail crossings at grade**, 63 nodes where the lap meets another street, turn lanes tagged on 32
+ways, bike lanes on 33, bus lanes on 6. Limits 25–35 mph. Surface asphalt with 13 concrete ways. All of it tagged lit.
+
+**The rule: an inventory, then the build is held to it.**
+
+1. **One inventory file per class** under `source/survey/`: `lamps.json`, `signals.json`, `signs.json`, `paint.json`.
+   Every item has a position, a type, the source it was read from and a grade:
+   - `measured` — its position read off lidar or an aerial (about ±0.5 m);
+   - `detected` — found in street-level imagery, snapped to the kerb line (a few metres);
+   - `tagged` — OSM says it exists at this junction; stood where the standard (MUTCD) puts it;
+   - never `invented`. A stretch that was surveyed and has none says so (`"none": true`), so silence is not a pass.
+2. **The chain authors only from the inventory.** No post every 55 m, no paint by width.
+3. **Three new gates, on the built kn5 (L5), each fails the build:**
+   - *present*: every inventory item is built within its grade's tolerance, right type, facing the right way;
+   - *nothing extra*: nothing of that class is built that the inventory does not hold (L1);
+   - *covered*: every metre of the lap and every junction on it has an inventory record or a declared none.
+   The gate report states the share of each grade. That share is the honest answer to "how accurate".
+
+**Sources, best first. What is not confirmed says so.**
+
+| Class | Position | Type and face | Not confirmed |
+|---|---|---|---|
+| **Paint** | the aerial, read by the aerial engine (ledger 0088) that already measures edge lines at the sub-pixel boundary; lidar intensity as a second reading; OSM `lanes` / `turn:lanes` / `crossing:markings` to settle a count the picture leaves open | colour and pattern from the same picture; MUTCD dimensions for arrows, stop bars and crosswalk blocks | NAIP (0.3–0.6 m) shows crosswalks and stop bars but not a 10 cm lane line reliably. The region's 3-inch aerials (DRCOG's DRAPP) would; past years are said to be free from DRCOG's catalog, the current year is sold. **Which year we can get is P0's first check.** |
+| **Streetlights** | lidar (CO_DRCOG_2_2020): a pole is a thin vertical cluster, its height read directly; the aerial's shadow as the check | fixture class per street from street-level imagery; one owned model per class (downtown has more than one: cobra heads, pedestrian globes) | the lidar is 2020: a post moved since is caught only by newer imagery |
+| **Signals** | OSM's 55 nodes say which junctions; masts and arms from lidar and the aerial | mast-arm, pedestal and pedestrian heads as owned models | new furniture: none exists in the asset library |
+| **Signs** | hardest. OSM gives the junction and the rule (stop, one-way, limit), not the post. Street-level detections (Mapillary publishes sign positions by class) give candidates; each is checked against a frame | MUTCD artwork is public domain and already drawn procedurally for W1 (`tools/make_sign_textures.py`); extended to the regulatory and guide set | Mapillary needs an access key and its licence read before anything from it ships. Without it, signs are `tagged` grade at best, plus whatever your own captures show. |
+
+**Engine work this needs** (added to §4's list): 8. sign plates that keep their own UVs through the prep (it now
+overwrites them; the note is already in `make_sign_textures.py`), so a face can carry its artwork; 9. the lidar pole
+reader; 10. paint from an inventory in place of paint by width, on the junction pads as well as the ribbon; 11. the three gates.
+
+**Targets for the lap's corridor** (the free-roam grid gets the same tools at a lower bar): paint 100 % `measured`;
+streetlights and signal masts ≥ 95 % `measured`; every regulatory sign the lap's junctions require present, grade as the
+sources allow. The numbers are proposals [invented] until the first survey shows what the sources give.
+
+**Four questions. "Defaults" is a complete answer.**
+
+| # | Question | Default |
+|---|---|---|
+| **E1** | Are these gates hard for Denver only, or for every track from now on? | **Hard for Denver.** Offered to the others as an opt-in, and written into STANDARDS once Denver has proven them. Turning them on fleet-wide today would turn every installed track red. |
+| **E2** | Signals: modelled and dark, or lit and cycling? | **Modelled, lit steady at night, no cycle.** A cycle is animation work with no gate; say if you want it. |
+| **E3** | Street-level imagery for the signs and the fixture classes: a Mapillary key (you create it; I ask for it through the secure form, never in chat), your own captures, or both? | **Both, Mapillary first** if its licence allows shipping what is derived from it. |
+| **E4** | The race layout keeps the real paint, signs and lights, as a real street race does, with the start line and grid added? | **Yes.** |
+
 ## 5. Phases
 
 Each phase ends on its gates and a still or a drive; nothing claims a tier without its artifact
@@ -192,11 +251,11 @@ checks on `sonnet`, lookups on `haiku`.
 
 | Phase | What | Where | Ends on |
 |---|---|---|---|
-| **P0 — facts** | OSM extract of the box (lap + D4), the lap resolved to way ids, **D1 and D2 answered from the map**; lidar (CO_DRCOG_2_2020) and NAIP tiles listed; `DOSSIER.md` filled from the template; the AC far-clip test (§3) | Mac for the data (it reaches Overpass and USGS); PC for the far-clip drive | Kevin approves the dossier; the far-clip result |
+| **P0 — facts** | OSM extract of the box (lap + D4), the lap resolved to way ids, **D1 and D2 answered from the map** (done, §2); the survey sources of §4b checked (which aerial year, the lidar tiles, the street-level key) and the first inventory of the lap; lidar (CO_DRCOG_2_2020) and NAIP tiles listed; `DOSSIER.md` filled from the template; the AC far-clip test (§3) | Mac for the data (it reaches Overpass and USGS); PC for the far-clip drive | Kevin approves the dossier; the far-clip result |
 | **P1 — the backdrop, on Sand Creek first** (D7) | `tracks/_reference/front-range/`; the bake tool with curvature and the viewshed cull; `sand_creek_raceway_backdrop.kn5` in Sand Creek 0.2.9 | Mac builds, PC ships | the peak gate green; stills from Sand Creek's west-facing straights against a real photo; Kevin's drive |
-| **P2 — Drive 1: the lap's road and ground** | config, `ship.json` (lm-v4), the draft through the chain: centreline, widths, elevation, crossfall, decks, the roofed section declared; `race` layout drivable with plain barriers; the Denver bake of the backdrop | PC | drive_test, audit_mesh, verify_kn5, kn5_ground_check; Kevin drives the lap |
+| **P2 — Drive 1: the lap's road and ground** | config, `ship.json` (lm-v4), the draft through the chain: centreline, widths, elevation, crossfall, decks, the roofed section declared; **paint from the inventory** (§4b: paint is part of the road); `race` layout drivable with plain barriers; the Denver bake of the backdrop | PC | drive_test, audit_mesh, verify_kn5, kn5_ground_check; Kevin drives the lap |
 | **P3 — the race** | corridor, closures, kerbs, the Kalamath split, start line and grid, AI draft | PC | the race gates incl. no-route; Kevin races it |
-| **P4 — the city** | block massing from lidar for every face on the lap, then classes and skins; the landmarks one by one; the creek; trees; lamps, signals, signs | Mac authors, PC ships | `house_seat`, `houses`, textures; a still per landmark against its photo |
+| **P4 — the city** | block massing from lidar for every face on the lap, then classes and skins; the landmarks one by one; the creek; trees; **streetlights, signals and signs from the inventory, held by §4b's gates** | Mac authors, PC ships | `house_seat`, `houses`, textures; a still per landmark against its photo |
 | **P5 — free roam** | the D4 grid through the junction steps; one-ways as real | PC | verify_mouths, drive_test street; Kevin drives it |
 | **P6 — Lariat** | the same backdrop and skyline baked for the Lariat (its D6) | PC | its own gates |
 

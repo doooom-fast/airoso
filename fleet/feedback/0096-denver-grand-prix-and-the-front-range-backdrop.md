@@ -88,3 +88,14 @@ Routed on it (`source/lap_route.py`, `data/lap_ways.plan.json`; PLAN §2):
   his word owed.
 - **D7 is open:** Tracks:Mac reports Kevin told it "Mountains can be added to SC when Denver is done"; here he took
   the default (Sand Creek first). His word owed.
+
+## Streetlights, signs and paint (Kevin, 2026-11-23)
+
+"An addition I want for this track is streetlights and road signs that are as accurate as you can make them. Same with
+road paint, we do a terrible job currently. Currently track builds don't depend on this."
+
+Planned in PLAN §4b: a surveyed inventory per class (lamps, signals, signs, paint), every item graded measured /
+detected / tagged and never invented; the chain authors only from it; three new gates on the built kn5 (present,
+nothing extra, covered) that fail the build. Today the lamps are a post every 55 m by rule, the only signs are W1-6
+arrows and name blades, the paint is drawn from the centreline by width, and no gate compares any of it with the
+street. On the lap: 55 signals, 108 crossings, 5 rail crossings at grade. Four questions (E1–E4) are with Kevin.

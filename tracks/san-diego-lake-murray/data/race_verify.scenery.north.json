@@ -6,37 +6,37 @@
   "by_layout": {},
   "scenery_source": "trees: trees.txt (written); signs: data/signs.local.json",
   "scenery_items": {
-   "tree": 21424,
+   "tree": 21327,
    "sign": 29
   },
-  "scenery_beside": 670,
+  "scenery_beside": 573,
   "scenery_hits": 0,
   "scenery_min": {
    "north_cw": {
     "layout": "north_cw",
     "kind": "tree",
-    "id": "Bush.bin#3115",
-    "vertex": 1091,
-    "lat_m": -2.307,
+    "id": "Bush.bin#3151",
+    "vertex": 1309,
+    "lat_m": -2.457,
     "xz": [
-     -1949.54,
-     2395.04
+     -1593.3,
+     2941.69
     ],
     "against": "closure",
-    "margin_m": 0.661
+    "margin_m": 0.134
    },
    "north_acw": {
     "layout": "north_acw",
     "kind": "tree",
-    "id": "Bush.bin#3048",
-    "vertex": 957,
-    "lat_m": 0.67,
+    "id": "Bush.bin#2997",
+    "vertex": 857,
+    "lat_m": 2.62,
     "xz": [
-     -2290.0,
-     2204.66
+     -2587.62,
+     2174.06
     ],
     "against": "closure",
-    "margin_m": 0.67
+    "margin_m": 0.085
    }
   },
   "scenery_r_m": {

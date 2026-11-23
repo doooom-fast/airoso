@@ -1094,7 +1094,7 @@
   },
   "scenery_source": "trees: tools/make_treefx.py plan (every species); signs: data/signs.local.json",
   "scenery_items": {
-   "tree": 21171,
+   "tree": 21484,
    "sign": 29
   },
   "scenery_beside": 671,
@@ -1103,7 +1103,7 @@
    "north_cw": {
     "layout": "north_cw",
     "kind": "tree",
-    "id": "Bush.bin@median_planting#3209",
+    "id": "Bush.bin@median_planting#3127",
     "vertex": 1091,
     "lat_m": -2.307,
     "xz": [
@@ -1116,7 +1116,7 @@
    "north_acw": {
     "layout": "north_acw",
     "kind": "tree",
-    "id": "Bush.bin@median_planting#3142",
+    "id": "Bush.bin@median_planting#3060",
     "vertex": 957,
     "lat_m": 0.67,
     "xz": [

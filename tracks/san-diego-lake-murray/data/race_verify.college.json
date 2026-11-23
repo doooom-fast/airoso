@@ -1,0 +1,617 @@
+{
+ "ok": true,
+ "fails": [],
+ "warnings": [
+  "F: race_cw: author-time: minimum spawn clearance 0.48 m at AC_START_1 v289 (edge-strip face 5.68 m) (hard floor 0.30 m)",
+  "built deck vs data height, worst 0.238 m"
+ ],
+ "counts": {
+  "by_layout": {
+   "race_cw": {
+    "token": "cw",
+    "chicane_walls": 0,
+    "chicane_objects": 0,
+    "closure_objects": 7,
+    "closure_runs": 5,
+    "closure_rings": 3364,
+    "closure_off_curve_max_m": 0.007,
+    "pins": [
+     {
+      "object": "1WALL_race_close_cw_college_777_0",
+      "end": "start",
+      "vertex": 777,
+      "ring_vertex": 777,
+      "far_line_m": 0.001
+     },
+     {
+      "object": "1WALL_race_close_cw_college_777_0",
+      "end": "end",
+      "vertex": 1171,
+      "ring_vertex": 1171,
+      "far_line_m": 0.0
+     },
+     {
+      "object": "1WALL_race_close_cw_college_1445_0",
+      "end": "start",
+      "vertex": 1445,
+      "ring_vertex": 1445,
+      "far_line_m": 0.001
+     },
+     {
+      "object": "1WALL_race_close_cw_college_1445_0",
+      "end": "end",
+      "vertex": 1506,
+      "ring_vertex": 1506,
+      "far_line_m": 0.0
+     },
+     {
+      "object": "1WALL_race_close_cw_navajo_1521_0",
+      "end": "start",
+      "vertex": 1521,
+      "ring_vertex": 1521,
+      "far_line_m": 0.006
+     },
+     {
+      "object": "1WALL_race_close_cw_navajo_1521_0",
+      "end": "end",
+      "vertex": 2311,
+      "ring_vertex": 2311,
+      "far_line_m": 0.004
+     },
+     {
+      "object": "1WALL_race_close_cw_jackson_2328_0",
+      "end": "start",
+      "vertex": 2328,
+      "ring_vertex": 2328,
+      "far_line_m": 0.0
+     },
+     {
+      "object": "1WALL_race_close_cw_jackson_2328_1",
+      "end": "end",
+      "vertex": 3289,
+      "ring_vertex": 3289,
+      "far_line_m": 0.006
+     },
+     {
+      "object": "1WALL_race_close_cw_lakemurray_3304_0",
+      "end": "start",
+      "vertex": 3304,
+      "ring_vertex": 3304,
+      "far_line_m": 0.003
+     },
+     {
+      "object": "1WALL_race_close_cw_lakemurray_3304_1",
+      "end": "end",
+      "vertex": 4454,
+      "ring_vertex": 4454,
+      "far_line_m": 0.001
+     }
+    ]
+   }
+  },
+  "rings_total": 13661,
+  "interpolated": 0,
+  "objects": 32,
+  "kbar_objects": 0,
+  "edge_objects": 15,
+  "edge_declared_vertices": 4498,
+  "edge_missing": {
+   "L": 0,
+   "R": 30
+  },
+  "edge_missing_undeclared": {
+   "L": 0,
+   "R": 0
+  },
+  "edge_trimmed_declared": {
+   "L": 0,
+   "R": 41
+  },
+  "edge_corners_declared": 5,
+  "edge_corners": [
+   {
+    "side": "R",
+    "in_vertex": 763,
+    "out_vertex": 774,
+    "xz": [
+     -1976.734,
+     -1270.025
+    ],
+    "nearest_ring_m": 0.006
+   },
+   {
+    "side": "R",
+    "in_vertex": 1508,
+    "out_vertex": 1517,
+    "xz": [
+     -1961.397,
+     592.808
+    ],
+    "nearest_ring_m": 0.004
+   },
+   {
+    "side": "R",
+    "in_vertex": 2314,
+    "out_vertex": 2324,
+    "xz": [
+     50.035,
+     1710.941
+    ],
+    "nearest_ring_m": 0.005
+   },
+   {
+    "side": "R",
+    "in_vertex": 3292,
+    "out_vertex": 3300,
+    "xz": [
+     2602.469,
+     517.362
+    ],
+    "nearest_ring_m": 0.002
+   },
+   {
+    "side": "R",
+    "in_vertex": 4495,
+    "out_vertex": 5,
+    "xz": [
+     -2.915,
+     -1654.496
+    ],
+    "nearest_ring_m": 0.006
+   }
+  ],
+  "edge_fold_dropped": {
+   "L": 0,
+   "R": 41
+  },
+  "edge_gap_worst_m": 3.503,
+  "edge_rings": 9042,
+  "free_ends": 0,
+  "pins": 10,
+  "pin_gap_max_m": 0.0,
+  "bridge_seating": {
+   "hit": 269,
+   "near": 0,
+   "interpolated": 0
+  },
+  "kerb_objects": 10,
+  "corners": 5,
+  "kerbs_dropped": [],
+  "kerb_under_road": {
+   "1KERB_race_lapcollege_770_out": 0,
+   "1KERB_race_lapcollege_770_in": 0,
+   "1KERB_race_lapcollege_1514_out": 0,
+   "1KERB_race_lapcollege_1514_in": 0,
+   "1KERB_race_lapcollege_2319_out": 0,
+   "1KERB_race_lapcollege_2319_in": 0,
+   "1KERB_race_lapcollege_3296_out": 0,
+   "1KERB_race_lapcollege_3296_in": 0,
+   "1KERB_race_lapcollege_0_out": 0,
+   "1KERB_race_lapcollege_0_in": 0
+  },
+  "kerb_fold_dropped": 268,
+  "kerb_closure_clear_m": {
+   "1KERB_race_lapcollege_770_out": [
+    2.953,
+    "race_cw"
+   ],
+   "1KERB_race_lapcollege_770_in": [
+    null,
+    "race_cw"
+   ],
+   "1KERB_race_lapcollege_1514_out": [
+    3.009,
+    "race_cw"
+   ],
+   "1KERB_race_lapcollege_1514_in": [
+    null,
+    "race_cw"
+   ],
+   "1KERB_race_lapcollege_2319_out": [
+    2.482,
+    "race_cw"
+   ],
+   "1KERB_race_lapcollege_2319_in": [
+    null,
+    "race_cw"
+   ],
+   "1KERB_race_lapcollege_3296_out": [
+    2.753,
+    "race_cw"
+   ],
+   "1KERB_race_lapcollege_3296_in": [
+    null,
+    "race_cw"
+   ],
+   "1KERB_race_lapcollege_0_out": [
+    null,
+    "race_cw"
+   ],
+   "1KERB_race_lapcollege_0_in": [
+    null,
+    "race_cw"
+   ]
+  },
+  "kerb_clips": {
+   "1KERB_race_lapcollege_770_out": [
+    0,
+    0
+   ],
+   "1KERB_race_lapcollege_770_in": [
+    0,
+    0
+   ],
+   "1KERB_race_lapcollege_1514_out": [
+    0,
+    0
+   ],
+   "1KERB_race_lapcollege_1514_in": [
+    0,
+    0
+   ],
+   "1KERB_race_lapcollege_2319_out": [
+    0,
+    0
+   ],
+   "1KERB_race_lapcollege_2319_in": [
+    0,
+    0
+   ],
+   "1KERB_race_lapcollege_3296_out": [
+    0,
+    0
+   ],
+   "1KERB_race_lapcollege_3296_in": [
+    0,
+    0
+   ],
+   "1KERB_race_lapcollege_0_out": [
+    0,
+    0
+   ],
+   "1KERB_race_lapcollege_0_in": [
+    0,
+    0
+   ]
+  },
+  "mouths": [
+   {
+    "host_vertex": 1085,
+    "side": "L",
+    "strip_off_m": 0.005
+   },
+   {
+    "host_vertex": 1086,
+    "side": "R",
+    "strip_off_m": 0.004
+   },
+   {
+    "host_vertex": 1517,
+    "side": "L",
+    "strip_off_m": 0.006
+   },
+   {
+    "host_vertex": 2317,
+    "side": "L",
+    "strip_off_m": 0.006
+   },
+   {
+    "host_vertex": 4424,
+    "side": "R",
+    "strip_off_m": 0.005
+   }
+  ],
+  "other_deck_above": 0,
+  "inside_out_spans": 0,
+  "inside_out_by_object": {},
+  "inside_out_unmeasured": 0,
+  "chord_max_m": 0.0428,
+  "chord_worst": {
+   "chord_m": 0.0428,
+   "object": "1WALL_race_edge_lapcollege_L_alvarado_0_0",
+   "ring": 787,
+   "at_xz": [
+    -2000.55,
+    -1286.07
+   ]
+  },
+  "chord_fail_m": 0.15,
+  "chord_spans_measured": 12384,
+  "chord_spans_fold": 0,
+  "chord_spans_unmeasured": 0,
+  "chord_spans_over": 0,
+  "ring_spacing_max_m": 3.503,
+  "ring_spacing_max_measured_m": 3.503,
+  "spawn_margin_m": 0.3,
+  "spawn_min_clear_m": {
+   "race_cw": 0.48
+  },
+  "spawn_slots": {
+   "race_cw": [
+    {
+     "name": "AC_HOTLAP_START_0",
+     "vertex": 291,
+     "lat_m": -3.25,
+     "edge_face_m": 5.68,
+     "clear_edge_m": 1.48,
+     "clear_centre_m": null,
+     "lane_m": [
+      -5.68,
+      5.68
+     ],
+     "clear_lane_m": 1.48
+    },
+    {
+     "name": "AC_PIT_0",
+     "vertex": 274,
+     "lat_m": -3.25,
+     "edge_face_m": 5.68,
+     "clear_edge_m": 1.48,
+     "clear_centre_m": null,
+     "lane_m": [
+      -5.68,
+      5.68
+     ],
+     "clear_lane_m": 1.48
+    },
+    {
+     "name": "AC_PIT_1",
+     "vertex": 271,
+     "lat_m": -3.25,
+     "edge_face_m": 5.68,
+     "clear_edge_m": 1.48,
+     "clear_centre_m": null,
+     "lane_m": [
+      -5.68,
+      5.68
+     ],
+     "clear_lane_m": 1.48
+    },
+    {
+     "name": "AC_PIT_2",
+     "vertex": 269,
+     "lat_m": -3.25,
+     "edge_face_m": 5.68,
+     "clear_edge_m": 1.48,
+     "clear_centre_m": null,
+     "lane_m": [
+      -5.68,
+      5.68
+     ],
+     "clear_lane_m": 1.48
+    },
+    {
+     "name": "AC_PIT_3",
+     "vertex": 267,
+     "lat_m": -3.251,
+     "edge_face_m": 5.68,
+     "clear_edge_m": 1.479,
+     "clear_centre_m": null,
+     "lane_m": [
+      -5.68,
+      5.68
+     ],
+     "clear_lane_m": 1.479
+    },
+    {
+     "name": "AC_PIT_4",
+     "vertex": 264,
+     "lat_m": -3.25,
+     "edge_face_m": 5.68,
+     "clear_edge_m": 1.48,
+     "clear_centre_m": null,
+     "lane_m": [
+      -5.68,
+      5.68
+     ],
+     "clear_lane_m": 1.48
+    },
+    {
+     "name": "AC_PIT_5",
+     "vertex": 262,
+     "lat_m": -3.25,
+     "edge_face_m": 5.68,
+     "clear_edge_m": 1.48,
+     "clear_centre_m": null,
+     "lane_m": [
+      -5.68,
+      5.68
+     ],
+     "clear_lane_m": 1.48
+    },
+    {
+     "name": "AC_PIT_6",
+     "vertex": 260,
+     "lat_m": -3.25,
+     "edge_face_m": 5.68,
+     "clear_edge_m": 1.48,
+     "clear_centre_m": null,
+     "lane_m": [
+      -5.68,
+      5.68
+     ],
+     "clear_lane_m": 1.48
+    },
+    {
+     "name": "AC_PIT_7",
+     "vertex": 257,
+     "lat_m": -3.25,
+     "edge_face_m": 5.68,
+     "clear_edge_m": 1.48,
+     "clear_centre_m": null,
+     "lane_m": [
+      -5.68,
+      5.68
+     ],
+     "clear_lane_m": 1.48
+    },
+    {
+     "name": "AC_START_0",
+     "vertex": 291,
+     "lat_m": -3.25,
+     "edge_face_m": 5.68,
+     "clear_edge_m": 1.48,
+     "clear_centre_m": null,
+     "lane_m": [
+      -5.68,
+      5.68
+     ],
+     "clear_lane_m": 1.48
+    },
+    {
+     "name": "AC_START_1",
+     "vertex": 289,
+     "lat_m": -4.25,
+     "edge_face_m": 5.68,
+     "clear_edge_m": 0.48,
+     "clear_centre_m": null,
+     "lane_m": [
+      -5.68,
+      5.68
+     ],
+     "clear_lane_m": 0.48
+    },
+    {
+     "name": "AC_START_2",
+     "vertex": 287,
+     "lat_m": -2.249,
+     "edge_face_m": 5.68,
+     "clear_edge_m": 2.481,
+     "clear_centre_m": null,
+     "lane_m": [
+      -5.68,
+      5.68
+     ],
+     "clear_lane_m": 2.481
+    },
+    {
+     "name": "AC_START_3",
+     "vertex": 286,
+     "lat_m": -4.249,
+     "edge_face_m": 5.68,
+     "clear_edge_m": 0.481,
+     "clear_centre_m": null,
+     "lane_m": [
+      -5.68,
+      5.68
+     ],
+     "clear_lane_m": 0.481
+    },
+    {
+     "name": "AC_START_4",
+     "vertex": 284,
+     "lat_m": -2.25,
+     "edge_face_m": 5.68,
+     "clear_edge_m": 2.48,
+     "clear_centre_m": null,
+     "lane_m": [
+      -5.68,
+      5.68
+     ],
+     "clear_lane_m": 2.48
+    },
+    {
+     "name": "AC_START_5",
+     "vertex": 282,
+     "lat_m": -4.25,
+     "edge_face_m": 5.68,
+     "clear_edge_m": 0.48,
+     "clear_centre_m": null,
+     "lane_m": [
+      -5.68,
+      5.68
+     ],
+     "clear_lane_m": 0.48
+    },
+    {
+     "name": "AC_START_6",
+     "vertex": 280,
+     "lat_m": -2.25,
+     "edge_face_m": 5.68,
+     "clear_edge_m": 2.48,
+     "clear_centre_m": null,
+     "lane_m": [
+      -5.68,
+      5.68
+     ],
+     "clear_lane_m": 2.48
+    },
+    {
+     "name": "AC_START_7",
+     "vertex": 278,
+     "lat_m": -4.25,
+     "edge_face_m": 5.68,
+     "clear_edge_m": 0.48,
+     "clear_centre_m": null,
+     "lane_m": [
+      -5.68,
+      5.68
+     ],
+     "clear_lane_m": 0.48
+    }
+   ]
+  },
+  "lamps": 323,
+  "lamps_checked": 323,
+  "lamp_arm_m": 1.8,
+  "lamp_post_h_m": 10.668,
+  "lamp_model": "led_cobra",
+  "mast_r_m": 0.124,
+  "lamp_min_margin_m": 2.434,
+  "lamp_min": {
+   "lamp": 53,
+   "vertex": 1089,
+   "lat_m": 16.923,
+   "base_xz": [
+    -1447.2,
+    -531.8
+   ],
+   "against": "edge",
+   "margin_m": 2.434,
+   "fallback": false,
+   "closure": "closure_race_cw",
+   "closure_margin_m": 18.082
+  },
+  "lamps_inside": 0,
+  "lamp_min_vs_closure": {
+   "lamp": 173,
+   "vertex": 3286,
+   "lat_m": 13.05,
+   "base_xz": [
+    2601.54,
+    547.0
+   ],
+   "against": "edge",
+   "margin_m": 2.826,
+   "fallback": false,
+   "closure": "closure_race_cw",
+   "closure_margin_m": 4.227
+  },
+  "scenery_source": "trees: tools/make_treefx.py plan (every species); signs: data/signs.local.json",
+  "scenery_items": {
+   "tree": 21484,
+   "sign": 29
+  },
+  "scenery_beside": 368,
+  "scenery_hits": 0,
+  "scenery_min": {
+   "race_cw": {
+    "layout": "race_cw",
+    "kind": "tree",
+    "id": "SycamoreV1.bin@lidar_trees#21387",
+    "vertex": 1323,
+    "lat_m": 4.956,
+    "xz": [
+     -1742.95,
+     83.46
+    ],
+    "against": "curb strip",
+    "margin_m": 0.104
+   }
+  },
+  "scenery_r_m": {
+   "tree": 0.3,
+   "sign": 0.03
+  }
+ }
+}

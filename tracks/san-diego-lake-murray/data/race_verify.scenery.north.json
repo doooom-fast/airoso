@@ -6,7 +6,7 @@
   "by_layout": {},
   "scenery_source": "trees: trees.txt (written); signs: data/signs.local.json",
   "scenery_items": {
-   "tree": 21111,
+   "tree": 21424,
    "sign": 29
   },
   "scenery_beside": 670,
@@ -15,7 +15,7 @@
    "north_cw": {
     "layout": "north_cw",
     "kind": "tree",
-    "id": "Bush.bin#3197",
+    "id": "Bush.bin#3115",
     "vertex": 1091,
     "lat_m": -2.307,
     "xz": [
@@ -28,7 +28,7 @@
    "north_acw": {
     "layout": "north_acw",
     "kind": "tree",
-    "id": "Bush.bin#3130",
+    "id": "Bush.bin#3048",
     "vertex": 957,
     "lat_m": 0.67,
     "xz": [

@@ -269,6 +269,29 @@ def test_walk_built_only_reads_no_walk_off_a_pad_ground_band():
             assert "walk_built_only" not in (d.get("defaults") or {}), p
 
 
+# ------------------------------------------------------------------ street profiles (round 2)
+def test_round_2_profiles_are_round_i_plus_three_streets_at_their_true_lonlat():
+    """Sand Creek round 2 (2026-11-23): round I's seven held streets were re-read at each grid point's own lon / lat; the
+    three that now pass round I's unchanged 0.5 m neighbour-jump rule join (grid_secondary_8, grid_secondary_42,
+    grid_primary_71); grid_primary_15 (the viaduct) and the three still jumping stay on 3DEP; round I's 99 are as measured"""
+    cfg = _cfg(SC / "track.config.json")
+    assert cfg["lm_intake"]["connector_profiles"] == "source/connector_profiles.lidar.round_2.json"
+    r2 = _cfg(SC / "source" / "connector_profiles.lidar.round_2.json")
+    ri = _cfg(SC / "source" / "connector_profiles.lidar.round_i.json")
+    joined = {"grid_secondary_8", "grid_secondary_42", "grid_primary_71"}
+    assert set(r2["connectors"]) == set(ri["connectors"]) | joined
+    assert all(r2["connectors"][n] == ri["connectors"][n] for n in ri["connectors"])
+    assert not {"grid_primary_15", "grid_primary_11", "grid_secondary_39", "grid_unclassified_77"} & set(r2["connectors"])
+    assert r2["ept"] == ri["ept"] and r2["radius_m"] == ri["radius_m"] and r2["min_returns"] == ri["min_returns"]
+    src = {c["name"]: c for c in _cfg(ROOT / "tracks" / "sand-creek" / "data" / "connectors.local.json")["connectors"]}
+    for n in joined:
+        q, pts = r2["connectors"][n], src[n]["points_xyz_m"]
+        ys = q["y"]
+        assert max(abs(b - a) for a, b in zip(ys, ys[1:])) <= 0.5, n                       # round I's rule
+        assert len(ys) == len(pts) and all(abs(p[0] - a[0]) <= 0.01 and abs(p[2] - a[1]) <= 0.01 for p, a in zip(pts, q["xz"]))
+    assert "source/connector_profiles.lidar.round_2.json" in _cfg(SC / "ship.json")["sync_in"]["required"] +         _cfg(SC / "ship.json")["sync_in"].get("optional", [])
+
+
 # ------------------------------------------------------------------ owned surfaces, opt-in
 def test_sand_creek_binds_the_owned_pairs_and_syncs_them():
     cfg, ship = _cfg(SC / "track.config.json"), _cfg(SC / "ship.json")

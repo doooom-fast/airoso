@@ -963,7 +963,9 @@ SHIP_0_2_9 = {"source/grid_reach.json", "source/flares_one_sided.lidar.json",
               "assets/textures/asphalt_dense_diffuse.jpg", "assets/textures/asphalt_dense_normal.jpg",
               "assets/textures/concrete_plain_diffuse.jpg", "assets/textures/concrete_plain_normal.jpg", "split_strip"}
 # Sand Creek round 2 (0.2.10, the Mac 2026-11-23): both heads lit by Lake Murray's author step (ledger 0099)
-SHIP_0_2_10 = {"lamp_heads", "data/lights.heads.json"}
+SHIP_0_2_10 = {"lamp_heads", "data/lights.heads.json", "source/connector_profiles.lidar.round_2.json"}
+# Sand Creek round 2 (0.2.10): three of round I's held streets on the lidar at their true lon / lat (the round 2 profile file)
+LIVE_R2_KEYS = (("lm_intake", "connector_profiles"), ("lm_intake", "_connector_profiles_doc"))
 
 # ledger 0086 (0.2.7): every key the live config adds to, or changes from, round_k's candidate
 LIVE_0_2_7_KEYS = (("name",), ("_name_doc",), ("slug",), ("version",), ("install_folder",), ("_install_folder_doc",),
@@ -1019,7 +1021,8 @@ def test_round_r_live_is_the_candidate():
     va, vk = live["route"].pop("verify_mouths_allowed"), cand["route"].pop("verify_mouths_allowed")
     assert va[:len(vk)] == vk and [(r["piece"], r["end"]) for r in va[len(vk):]] == [("grid_tertiary_74#0", "start")]
     _finish_pc_pads(live, cand)
-    for k in LIVE_0_2_7_KEYS + LIVE_0_2_8_KEYS + LIVE_0_2_9_KEYS + LIVE_FINISH_PC_KEYS:
+    assert live["lm_intake"]["connector_profiles"] == "source/connector_profiles.lidar.round_2.json"
+    for k in LIVE_0_2_7_KEYS + LIVE_0_2_8_KEYS + LIVE_0_2_9_KEYS + LIVE_FINISH_PC_KEYS + LIVE_R2_KEYS:
         _drop(live, k)
         _drop(cand, k)
     for l in live["layouts"] + cand["layouts"]:

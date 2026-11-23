@@ -437,3 +437,24 @@ Scratch workshop only; nothing built into the chain, nothing installed. `source/
   `layout_dummies`, `race_author`, `signs` (29 posts, 4 layout plates, verify PASS), `race_verify` (OK on the
   mainline and both laps). The prep, the export and the gates after them are the rehearsal's.
 
+## The medians fixed on scratch, and College wired into the chain (the PC, 2026-11-23; version 0.20.5, not built)
+
+- **College is in the chain.** `tools/ship_track.sh` `author_college_split`, first in Lake Murray's author phase,
+  opt-in `route.college_split`: the data step held to the committed split, then the three scene steps. Airoso's own
+  config and road data carry the split. On a workshop seeded the way the chain seeds one from main 04e0a9b4 (the
+  0.20.4 blend) every author step passes, and a second run of the College commands leaves the blend and the data
+  byte for byte the same. `source/college_r2/STEP-DESIGN.md`, "Wired into the chain".
+- **The medians: releasing the ground cannot work.** The prep pins every 1GRASS vertex that has pavement above or
+  below it, released or not, and its anti-poke pass clamps the rest. The prep of record is not changed.
+- **The fix (the Mac's option (a)).** `tools/author_median_tops_blend.py`, author step `median_tops`, opt-in
+  `route.median_tops`: each island's grass top leaves TERRAIN for its own object, `1LAWN_median`, which the prep does
+  not take as ground. The name is the surface and the material in AC; `lawn_as_grass` writes the LAWN key with
+  GRASS's own values, so the grip is grass. TreeFX seats the median plants on it.
+- **Measured through the build's own prep on scratch:** one island first (Navajo v1540-1739: 200 of 200 rows
+  grass), then all: **2,123 of 2,127 island rows read grass** (0.20.3: 0 of 2,486). The top stands 0.141 to 0.228 m over the road after the prep on all 4,282 of its vertices (median 0.185), the same as before it: the prep does not move it, and no vertex is without road under it.
+- **Still asphalt: one island, 4 rows.** Mission Gorge v54-57 (9 m) has no grass top in the scene at all, so there
+  was nothing to move.
+- **Checks.** No check refuses grass over pavement for this object. `verify_kn5` check 6 and `audit_mesh` B read
+  1GRASS only and do not judge the top; `verify_kn5` face-up and `drive_test`'s soft-top-in-lane do
+  (`fleet/GATES-CHANGELOG.md`, 2026-11-23). The full chain's gates have not run on it: that is the rehearsal.
+

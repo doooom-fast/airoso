@@ -148,3 +148,4 @@ argument naming the objects to show.
 - `college_bank_tops.g10.json`, `college_bank_rail.g10.json`, `college_bank_g10.py`: the G10's job of 2026-11-23, the measured plant tops on the bank and the rail test along both inner edges (no rail), off the 2024 lidar.
 - `college_race_config.py <project> [--write]`: the race and zone declarations (Speedway on the lap `college`, no chicane, the corridor and closures through the forks).
 - `median_tops_check.py <workshop>`: grass or asphalt between every median's curbs on a built gate OBJ; `median_tops_0_20_3.json` is the 0.20.3 rehearsal's (ledger 0055, the known defect).
+- `median_tops_r2_scratch.json`, `median_tops.author.scratch.json`: the same measure and the author step's own record on the round 2 scratch scene after the build's prep (2,123 of 2,127 island rows grass), with `tools/author_median_tops_blend.py` (the medians' tops in their own object).

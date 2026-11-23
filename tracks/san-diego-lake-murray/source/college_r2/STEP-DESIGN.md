@@ -627,4 +627,116 @@ height assumes a level row and the fork's rows are tilted.
 no-route, the kn5 checks). That is the rehearsal, through the Mac's queue. Before it: the College step wired into
 `ship.json` as the first author step, the data step before it, the config edits written into airoso's own
 `track.config.json`, `college_bank_plants.json` synced into the workshop, and the metre-keyed entries moved 1.9 m.
+(Done the same day, next section. The metre-keyed entries turned out not to move: see there.)
+
+## Wired into the chain (2026-11-23, on main 04e0a9b4 = Lake Murray 0.20.4)
+
+**The step.** `tools/ship_track.sh` `author_college_split`, first in Lake Murray's author phase (`ship.json`), opt-in by
+`route.college_split`. It runs `college_split_data.py <project> --chain`, then `college_split_blend.py`,
+`college_middle_blend.py` and `college_ground_blend.py` on the project's `loop.blend`.
+
+**The data step's chain mode** differs from `--write` in three ways. What it computes from the project must BE the
+committed `college_split.data.json` (the scene scripts read that file), or it stops. It does not write the config: the
+project's `race.laps.college` must already be this lap. And a project whose data already carries the split is verified
+and left as it is, because the built line it would need is gone from it.
+
+**Config and data in the repo.** `college_race_config.py --repo --write` wrote every College edit into airoso's own
+`track.config.json` (and keeps the file's hand-compacted lines). The seven data files the data step writes are in
+`tracks/san-diego-lake-murray/data/` as the split has them, taken from a workshop seeded from the repo and split by
+the chain's own step. So a fresh workshop seeds split data and the 0.20.4 blend: the data step verifies, the three
+scene steps apply.
+
+**Proved on a workshop seeded the way the chain seeds one** (`D:/k10-scratch/lm_r2_college/ws6`: ship.json's
+required, optional, assets and 93 seed files from the merged repo, the 0.20.4 blend), the chain's own commands in the
+chain's order:
+
+| Step | Result on the 0.20.4 seed |
+|---|---|
+| `college_split`: data `--chain` | what it computed is the committed file; the seven data files written |
+| `college_split`: split, middle, ground | the same self-check numbers as on the 0.20.2 scene |
+| `lamp_heads` | 323 back lenses |
+| `walk_grade` | CURB 17,264 lips: 15,174 already at grade (0.20.4's), 272 raised |
+| `race_bands`, `race_planned_gate` | exit 0; planned no-route PASS for all four race layouts |
+| `layout_dummies`, `race_author` | 5 layout files; mainline, lap `college`, lap `north` authored |
+| `signs` + verify | 29 posts, 4 layout plates, PASS |
+| `race_verify` | OK on the mainline and both laps |
+| **the College commands a second time** | each says the scene already carries it; `loop.blend` and the seven data files are byte for byte the same |
+
+**The metre-keyed config entries do not move.** Step 1 listed `road_datum.decks[]` and `profiles[]` for a 1.9 m
+shift. They are stations on the PRE-MEDIAN raw centre line (`tools/deck_datum.py`, a draft step), which the split does
+not touch. What does move is in the data: the mainline is 1.929 m longer through the split, and the prep finds a
+released zone by its station, so the two mainline zones declared by vertex past the split (`lmb_i8_span`,
+`lmb_alvarado_creek`) get their stations re-read from their vertices (13,323.4 -> 13,325.4 m and so on). A zone keyed
+by station only that reached past the split's start would stop the data step; there is none.
+
+**Tests.** About 26 tests pinned numbers measured on the one-road College while reading the live config, and some
+the live data. `tests/sd_v0180.one_road_college` puts the declaration back as main 04e0a9b4 had it (the adapter
+returns main's config exactly); the spawn and swept-mouth tests read five data files frozen as 0.20.4 has them
+(`tests/fixtures/lake_murray_v0204`). The chain tests name the new lap and the new author order.
+
+## The medians: every island's grass top in its own object (2026-11-23; the Mac: option (a))
+
+**Releasing the ground cannot do it.** Read off the prep's own code (engine-july `scripts/ac/build_kn5_loop.py`,
+`_conform_and_reseat`): the pin comes first and has no exception, every 1GRASS vertex with pavement above or below is
+set to the deck less 0.02 m; the released check is only in the other branch (no pavement there); a zone's band starts
+at the pavement edge and runs outward; and the anti-poke pass clamps any grass over the lowest road or kerb sheet. So
+the one-island release test was not run: it would have reproduced today's result. The prep of record is not changed.
+
+**What is done instead.** `tools/author_median_tops_blend.py` (the chain's author step `median_tops`, second, after
+`college_split`; opt-in `route.median_tops`): every loose strip of TERRAIN that stands 0.185 m over a road surface on
+every vertex is a median's deck (the median tool's own, found by what it is). It is moved, face for face, into the
+object `1LAWN_median`, wound up. Nothing else in TERRAIN moves. A loose strip with no road under it (College's bank
+top) is ground and stays.
+
+**Why that name.** In AC a mesh's physical surface IS its name: the digits, then a surfaces.ini KEY. The same name
+picks the mesh's material row in the engine's table. The prep takes as ground any object named `1GRASS...`, so the
+top cannot keep the GRASS key. The engine's table has one other physical turf row, `1LAWN` (the same two grass
+textures Lake Murray's ground wears through its override); a new prefix would have no row and render black, and
+adding a row means changing the engine copy. So the top's own key is LAWN, and `lawn_as_grass: true` makes
+`scripts/ac/track_folder.py` write this track's LAWN block from the GRASS block's own values (friction 0.60,
+damping 0.1, dirt, the grass sound), so a car on an island is on grass, exactly. Lake Murray's road model has no
+other LAWN mesh.
+
+**What reads grass against pavement, read before building:**
+
+| Check | What it keys on | The top |
+|---|---|---|
+| the prep's pin and anti-poke | objects named `1GRASS...` | not touched: it is not ground to the prep |
+| the prep's face-up flip | `1ROAD`, `1GRASS`, `1KERB`, paint | not flipped: the tool winds the top up itself and checks it |
+| `scripts/ac/verify_kn5.py` check 6 (terrain poke), `audit_mesh` B | vertices of `1GRASS...` over a road or kerb | not judged: it is not 1GRASS |
+| `scripts/ac/verify_kn5.py` check 2 (face up) | `1ROAD / 1GRASS / 1KERB / 1RUNOFF / 1LAWN` | judged |
+| `scripts/geometry/drive_test.py` `soft_top_in_lane` | `1GRASS` or `1LAWN` on top under a wheel path | judged: a top in a driven lane fails |
+| the exporter's physical set, GrassFX's grass meshes | include `1LAWN` | physical; gets the 3D grass the ground gets |
+| TreeFX seating (`tools/make_treefx.py`) | `1GRASS...` and the road | the top's material is added where `route.median_tops` is declared |
+
+None refuses grass over pavement for this object; the two poke checks simply do not read it. That is recorded in
+`fleet/GATES-CHANGELOG.md`.
+
+**Measured on scratch** (`D:/k10-scratch/lm_r2_college/ws7`: the author phase's scene, the tool, then the build's own
+prep from the engine copy, then `median_tops_check.py` on the prepped ground, road and top; records
+`median_tops_r2_scratch.json`, `median_tops.author.scratch.json`):
+
+| | rows |
+|---|---|
+| 0.20.3 as built (`median_tops_0_20_3.json`): rows sampled / grass / asphalt | 2,486 / 0 / 2,486 |
+| One island first, Navajo v1540-1739: grass / asphalt on that island | 200 / 0 (every other island still asphalt) |
+| All islands, after the prep: rows sampled / grass / asphalt | 2,127 / **2,123** / 4 |
+
+- 2,127, not 2,486: College's 359 rows between v1117 and v1475 are the bank now, which has no slab under it and was
+  already grass.
+- The top stands 0.141 to 0.228 m over the road after the prep on all 4,282 of its vertices (median 0.185), the same as before it: the prep does not move it, and no vertex is without road under it.
+- **The 4 asphalt rows are one island that has no top in the scene at all**: Mission Gorge v54-57, 9 m, 1.7 m wide.
+  Nothing stands 0.185 m over the road between its rows, so there is nothing to move. It still shows the road
+  between its curbs. Giving it a top means authoring one; not done here.
+- Two rows (Princess View v204 and v210) have the top at two of their three points: the built island is narrower
+  than its band in the data on one side there. They read grass by the measure's own rule.
+- 14 strips, 4,282 vertices, 4,254 faces moved; before the prep the decks stand 0.142 to 0.228 m over the road's own
+  triangles (median 0.185; 7 vertices more than 0.03 off). A second run changes nothing: the blend is byte for byte
+  the same.
+- The measure itself changed in two places, both about the island's ends: a nose row's two side points are now taken
+  inside the island as built (the median tool tapers its last three rows), and an end row is measured 0.3 m inside
+  the island (the row itself is the deck's edge). On 0.20.3 every point of every row was asphalt, so its count stands.
+- The plants: every plant line of the plan is identical with and without `route.median_tops` (the key is read only
+  where the seating list is written), so the 14 and the 22 kept measured spots keep their heights; with the key the
+  seating list gains `1LAWN_median_mat`, so median plants stand on the island and not on the slab under it.
 

@@ -1,0 +1,1099 @@
+{
+ "_doc": "horizon.3dep13.json minus the plan-grade study. skyline: per site, over the bearings both files hold. peaks: against PLAN section 3 as printed. Written by compare.py.",
+ "skyline": {
+  "Denver GP start (Colfax/Sherman)": {
+   "bearings": 311,
+   "mean_diff_deg": 0.029,
+   "max_abs_diff_deg": 0.16,
+   "bearings_over_0.1_deg": 6,
+   "over_0.1_deg": [
+    {
+     "bearing": 201.5,
+     "diff_deg": 0.103,
+     "cell_km_3dep": 35.5,
+     "cell_km_plan": 35.4
+    },
+    {
+     "bearing": 226.0,
+     "diff_deg": 0.104,
+     "cell_km_3dep": 33.2,
+     "cell_km_plan": 33.2
+    },
+    {
+     "bearing": 231.5,
+     "diff_deg": 0.103,
+     "cell_km_3dep": 33.5,
+     "cell_km_plan": 33.5
+    },
+    {
+     "bearing": 244.0,
+     "diff_deg": 0.113,
+     "cell_km_3dep": 46.8,
+     "cell_km_plan": 46.8
+    },
+    {
+     "bearing": 264.0,
+     "diff_deg": 0.107,
+     "cell_km_3dep": 41.2,
+     "cell_km_plan": 44.5
+    },
+    {
+     "bearing": 272.5,
+     "diff_deg": 0.16,
+     "cell_km_3dep": 31.9,
+     "cell_km_plan": 32.0
+    }
+   ]
+  },
+  "Denver GP Speer/Colfax": {
+   "bearings": 311,
+   "mean_diff_deg": 0.022,
+   "max_abs_diff_deg": 0.126,
+   "bearings_over_0.1_deg": 7,
+   "over_0.1_deg": [
+    {
+     "bearing": 199.5,
+     "diff_deg": 0.111,
+     "cell_km_3dep": 35.1,
+     "cell_km_plan": 35.0
+    },
+    {
+     "bearing": 204.5,
+     "diff_deg": 0.126,
+     "cell_km_3dep": 30.3,
+     "cell_km_plan": 30.2
+    },
+    {
+     "bearing": 230.0,
+     "diff_deg": 0.105,
+     "cell_km_3dep": 32.5,
+     "cell_km_plan": 32.4
+    },
+    {
+     "bearing": 234.5,
+     "diff_deg": 0.115,
+     "cell_km_3dep": 40.1,
+     "cell_km_plan": 40.1
+    },
+    {
+     "bearing": 247.5,
+     "diff_deg": 0.115,
+     "cell_km_3dep": 20.3,
+     "cell_km_plan": 20.3
+    },
+    {
+     "bearing": 272.5,
+     "diff_deg": 0.112,
+     "cell_km_3dep": 30.6,
+     "cell_km_plan": 30.8
+    },
+    {
+     "bearing": 274.0,
+     "diff_deg": 0.114,
+     "cell_km_3dep": 24.0,
+     "cell_km_plan": 24.1
+    }
+   ]
+  },
+  "Sand Creek origin": {
+   "bearings": 311,
+   "mean_diff_deg": -0.162,
+   "max_abs_diff_deg": 0.797,
+   "bearings_over_0.1_deg": 88,
+   "over_0.1_deg": [
+    {
+     "bearing": 180.0,
+     "diff_deg": -0.616,
+     "cell_km_3dep": 0.3,
+     "cell_km_plan": 0.3
+    },
+    {
+     "bearing": 180.5,
+     "diff_deg": -0.626,
+     "cell_km_3dep": 0.3,
+     "cell_km_plan": 0.3
+    },
+    {
+     "bearing": 181.0,
+     "diff_deg": -0.629,
+     "cell_km_3dep": 0.3,
+     "cell_km_plan": 0.3
+    },
+    {
+     "bearing": 181.5,
+     "diff_deg": -0.63,
+     "cell_km_3dep": 0.3,
+     "cell_km_plan": 0.3
+    },
+    {
+     "bearing": 182.0,
+     "diff_deg": -0.632,
+     "cell_km_3dep": 0.3,
+     "cell_km_plan": 0.3
+    },
+    {
+     "bearing": 182.5,
+     "diff_deg": -0.644,
+     "cell_km_3dep": 0.3,
+     "cell_km_plan": 0.3
+    },
+    {
+     "bearing": 183.0,
+     "diff_deg": -0.657,
+     "cell_km_3dep": 0.3,
+     "cell_km_plan": 0.3
+    },
+    {
+     "bearing": 183.5,
+     "diff_deg": -0.669,
+     "cell_km_3dep": 0.3,
+     "cell_km_plan": 0.3
+    },
+    {
+     "bearing": 184.0,
+     "diff_deg": -0.675,
+     "cell_km_3dep": 0.3,
+     "cell_km_plan": 0.3
+    },
+    {
+     "bearing": 184.5,
+     "diff_deg": -0.682,
+     "cell_km_3dep": 0.3,
+     "cell_km_plan": 0.3
+    },
+    {
+     "bearing": 185.0,
+     "diff_deg": -0.687,
+     "cell_km_3dep": 0.3,
+     "cell_km_plan": 0.3
+    },
+    {
+     "bearing": 185.5,
+     "diff_deg": -0.691,
+     "cell_km_3dep": 0.3,
+     "cell_km_plan": 0.3
+    },
+    {
+     "bearing": 186.0,
+     "diff_deg": -0.696,
+     "cell_km_3dep": 0.3,
+     "cell_km_plan": 0.3
+    },
+    {
+     "bearing": 186.5,
+     "diff_deg": -0.702,
+     "cell_km_3dep": 0.3,
+     "cell_km_plan": 0.3
+    },
+    {
+     "bearing": 187.0,
+     "diff_deg": -0.709,
+     "cell_km_3dep": 0.3,
+     "cell_km_plan": 0.3
+    },
+    {
+     "bearing": 187.5,
+     "diff_deg": -0.717,
+     "cell_km_3dep": 0.3,
+     "cell_km_plan": 0.3
+    },
+    {
+     "bearing": 188.0,
+     "diff_deg": -0.729,
+     "cell_km_3dep": 0.3,
+     "cell_km_plan": 0.3
+    },
+    {
+     "bearing": 188.5,
+     "diff_deg": -0.74,
+     "cell_km_3dep": 0.3,
+     "cell_km_plan": 0.3
+    },
+    {
+     "bearing": 189.0,
+     "diff_deg": -0.756,
+     "cell_km_3dep": 0.3,
+     "cell_km_plan": 0.3
+    },
+    {
+     "bearing": 189.5,
+     "diff_deg": -0.776,
+     "cell_km_3dep": 0.3,
+     "cell_km_plan": 0.3
+    },
+    {
+     "bearing": 190.0,
+     "diff_deg": -0.787,
+     "cell_km_3dep": 0.3,
+     "cell_km_plan": 0.3
+    },
+    {
+     "bearing": 190.5,
+     "diff_deg": -0.791,
+     "cell_km_3dep": 0.3,
+     "cell_km_plan": 0.3
+    },
+    {
+     "bearing": 191.0,
+     "diff_deg": -0.794,
+     "cell_km_3dep": 0.3,
+     "cell_km_plan": 0.3
+    },
+    {
+     "bearing": 191.5,
+     "diff_deg": -0.796,
+     "cell_km_3dep": 0.3,
+     "cell_km_plan": 0.3
+    },
+    {
+     "bearing": 192.0,
+     "diff_deg": -0.797,
+     "cell_km_3dep": 0.3,
+     "cell_km_plan": 0.3
+    },
+    {
+     "bearing": 192.5,
+     "diff_deg": -0.797,
+     "cell_km_3dep": 0.3,
+     "cell_km_plan": 0.3
+    },
+    {
+     "bearing": 193.0,
+     "diff_deg": -0.792,
+     "cell_km_3dep": 0.3,
+     "cell_km_plan": 0.3
+    },
+    {
+     "bearing": 193.5,
+     "diff_deg": -0.787,
+     "cell_km_3dep": 0.3,
+     "cell_km_plan": 0.3
+    },
+    {
+     "bearing": 194.0,
+     "diff_deg": -0.782,
+     "cell_km_3dep": 0.3,
+     "cell_km_plan": 0.3
+    },
+    {
+     "bearing": 194.5,
+     "diff_deg": -0.777,
+     "cell_km_3dep": 0.3,
+     "cell_km_plan": 0.3
+    },
+    {
+     "bearing": 195.0,
+     "diff_deg": -0.771,
+     "cell_km_3dep": 0.3,
+     "cell_km_plan": 0.3
+    },
+    {
+     "bearing": 195.5,
+     "diff_deg": -0.765,
+     "cell_km_3dep": 0.3,
+     "cell_km_plan": 0.3
+    },
+    {
+     "bearing": 196.0,
+     "diff_deg": -0.759,
+     "cell_km_3dep": 0.3,
+     "cell_km_plan": 0.3
+    },
+    {
+     "bearing": 196.5,
+     "diff_deg": -0.756,
+     "cell_km_3dep": 0.3,
+     "cell_km_plan": 0.3
+    },
+    {
+     "bearing": 197.0,
+     "diff_deg": -0.753,
+     "cell_km_3dep": 0.3,
+     "cell_km_plan": 0.3
+    },
+    {
+     "bearing": 197.5,
+     "diff_deg": -0.752,
+     "cell_km_3dep": 0.3,
+     "cell_km_plan": 0.3
+    },
+    {
+     "bearing": 198.0,
+     "diff_deg": -0.752,
+     "cell_km_3dep": 0.3,
+     "cell_km_plan": 0.3
+    },
+    {
+     "bearing": 198.5,
+     "diff_deg": -0.752,
+     "cell_km_3dep": 0.3,
+     "cell_km_plan": 0.3
+    },
+    {
+     "bearing": 199.0,
+     "diff_deg": -0.754,
+     "cell_km_3dep": 0.3,
+     "cell_km_plan": 0.3
+    },
+    {
+     "bearing": 199.5,
+     "diff_deg": -0.758,
+     "cell_km_3dep": 0.3,
+     "cell_km_plan": 0.3
+    },
+    {
+     "bearing": 200.0,
+     "diff_deg": -0.762,
+     "cell_km_3dep": 0.3,
+     "cell_km_plan": 0.3
+    },
+    {
+     "bearing": 200.5,
+     "diff_deg": -0.767,
+     "cell_km_3dep": 0.3,
+     "cell_km_plan": 0.3
+    },
+    {
+     "bearing": 201.0,
+     "diff_deg": -0.771,
+     "cell_km_3dep": 0.3,
+     "cell_km_plan": 0.3
+    },
+    {
+     "bearing": 201.5,
+     "diff_deg": -0.776,
+     "cell_km_3dep": 0.3,
+     "cell_km_plan": 0.3
+    },
+    {
+     "bearing": 202.0,
+     "diff_deg": -0.781,
+     "cell_km_3dep": 0.3,
+     "cell_km_plan": 0.3
+    },
+    {
+     "bearing": 202.5,
+     "diff_deg": -0.781,
+     "cell_km_3dep": 0.3,
+     "cell_km_plan": 0.3
+    },
+    {
+     "bearing": 203.0,
+     "diff_deg": -0.776,
+     "cell_km_3dep": 0.3,
+     "cell_km_plan": 0.3
+    },
+    {
+     "bearing": 203.5,
+     "diff_deg": -0.77,
+     "cell_km_3dep": 0.3,
+     "cell_km_plan": 0.3
+    },
+    {
+     "bearing": 204.0,
+     "diff_deg": -0.761,
+     "cell_km_3dep": 0.3,
+     "cell_km_plan": 0.3
+    },
+    {
+     "bearing": 204.5,
+     "diff_deg": -0.751,
+     "cell_km_3dep": 0.3,
+     "cell_km_plan": 0.3
+    },
+    {
+     "bearing": 205.0,
+     "diff_deg": -0.739,
+     "cell_km_3dep": 0.3,
+     "cell_km_plan": 0.3
+    },
+    {
+     "bearing": 205.5,
+     "diff_deg": -0.728,
+     "cell_km_3dep": 0.3,
+     "cell_km_plan": 0.3
+    },
+    {
+     "bearing": 206.0,
+     "diff_deg": -0.709,
+     "cell_km_3dep": 0.3,
+     "cell_km_plan": 0.3
+    },
+    {
+     "bearing": 206.5,
+     "diff_deg": -0.688,
+     "cell_km_3dep": 0.3,
+     "cell_km_plan": 0.3
+    },
+    {
+     "bearing": 207.0,
+     "diff_deg": -0.669,
+     "cell_km_3dep": 0.3,
+     "cell_km_plan": 0.3
+    },
+    {
+     "bearing": 207.5,
+     "diff_deg": -0.653,
+     "cell_km_3dep": 0.3,
+     "cell_km_plan": 0.3
+    },
+    {
+     "bearing": 208.0,
+     "diff_deg": -0.639,
+     "cell_km_3dep": 0.3,
+     "cell_km_plan": 0.3
+    },
+    {
+     "bearing": 208.5,
+     "diff_deg": -0.627,
+     "cell_km_3dep": 0.3,
+     "cell_km_plan": 0.3
+    },
+    {
+     "bearing": 209.0,
+     "diff_deg": -0.616,
+     "cell_km_3dep": 0.3,
+     "cell_km_plan": 0.3
+    },
+    {
+     "bearing": 209.5,
+     "diff_deg": -0.622,
+     "cell_km_3dep": 0.3,
+     "cell_km_plan": 0.3
+    },
+    {
+     "bearing": 210.0,
+     "diff_deg": -0.628,
+     "cell_km_3dep": 0.3,
+     "cell_km_plan": 0.3
+    },
+    {
+     "bearing": 210.5,
+     "diff_deg": -0.633,
+     "cell_km_3dep": 0.3,
+     "cell_km_plan": 0.3
+    },
+    {
+     "bearing": 211.0,
+     "diff_deg": -0.586,
+     "cell_km_3dep": 62.5,
+     "cell_km_plan": 0.3
+    },
+    {
+     "bearing": 211.5,
+     "diff_deg": -0.535,
+     "cell_km_3dep": 62.3,
+     "cell_km_plan": 0.3
+    },
+    {
+     "bearing": 212.0,
+     "diff_deg": -0.572,
+     "cell_km_3dep": 36.9,
+     "cell_km_plan": 0.3
+    },
+    {
+     "bearing": 212.5,
+     "diff_deg": -0.549,
+     "cell_km_3dep": 42.0,
+     "cell_km_plan": 0.3
+    },
+    {
+     "bearing": 213.0,
+     "diff_deg": -0.526,
+     "cell_km_3dep": 38.1,
+     "cell_km_plan": 0.3
+    },
+    {
+     "bearing": 213.5,
+     "diff_deg": -0.398,
+     "cell_km_3dep": 68.2,
+     "cell_km_plan": 0.3
+    },
+    {
+     "bearing": 214.0,
+     "diff_deg": -0.334,
+     "cell_km_3dep": 68.4,
+     "cell_km_plan": 0.3
+    },
+    {
+     "bearing": 214.5,
+     "diff_deg": -0.363,
+     "cell_km_3dep": 68.4,
+     "cell_km_plan": 0.3
+    },
+    {
+     "bearing": 215.0,
+     "diff_deg": -0.39,
+     "cell_km_3dep": 68.6,
+     "cell_km_plan": 0.3
+    },
+    {
+     "bearing": 215.5,
+     "diff_deg": -0.397,
+     "cell_km_3dep": 68.6,
+     "cell_km_plan": 0.3
+    },
+    {
+     "bearing": 216.0,
+     "diff_deg": -0.384,
+     "cell_km_3dep": 69.0,
+     "cell_km_plan": 0.3
+    },
+    {
+     "bearing": 216.5,
+     "diff_deg": -0.431,
+     "cell_km_3dep": 43.0,
+     "cell_km_plan": 0.3
+    },
+    {
+     "bearing": 217.0,
+     "diff_deg": -0.4,
+     "cell_km_3dep": 78.2,
+     "cell_km_plan": 0.3
+    },
+    {
+     "bearing": 217.5,
+     "diff_deg": -0.346,
+     "cell_km_3dep": 70.1,
+     "cell_km_plan": 0.3
+    },
+    {
+     "bearing": 218.0,
+     "diff_deg": -0.318,
+     "cell_km_3dep": 42.7,
+     "cell_km_plan": 0.3
+    },
+    {
+     "bearing": 218.5,
+     "diff_deg": -0.284,
+     "cell_km_3dep": 42.8,
+     "cell_km_plan": 0.3
+    },
+    {
+     "bearing": 219.0,
+     "diff_deg": -0.281,
+     "cell_km_3dep": 70.2,
+     "cell_km_plan": 0.3
+    },
+    {
+     "bearing": 219.5,
+     "diff_deg": -0.179,
+     "cell_km_3dep": 70.0,
+     "cell_km_plan": 0.3
+    },
+    {
+     "bearing": 220.0,
+     "diff_deg": -0.179,
+     "cell_km_3dep": 70.7,
+     "cell_km_plan": 0.3
+    },
+    {
+     "bearing": 220.5,
+     "diff_deg": -0.23,
+     "cell_km_3dep": 40.3,
+     "cell_km_plan": 0.3
+    },
+    {
+     "bearing": 221.0,
+     "diff_deg": -0.219,
+     "cell_km_3dep": 46.0,
+     "cell_km_plan": 0.3
+    },
+    {
+     "bearing": 221.5,
+     "diff_deg": -0.217,
+     "cell_km_3dep": 45.4,
+     "cell_km_plan": 0.3
+    },
+    {
+     "bearing": 222.0,
+     "diff_deg": -0.185,
+     "cell_km_3dep": 45.4,
+     "cell_km_plan": 0.3
+    },
+    {
+     "bearing": 224.0,
+     "diff_deg": -0.173,
+     "cell_km_3dep": 40.3,
+     "cell_km_plan": 0.3
+    },
+    {
+     "bearing": 224.5,
+     "diff_deg": -0.127,
+     "cell_km_3dep": 40.2,
+     "cell_km_plan": 0.3
+    },
+    {
+     "bearing": 320.0,
+     "diff_deg": -0.145,
+     "cell_km_3dep": 99.1,
+     "cell_km_plan": 35.7
+    }
+   ]
+  }
+ },
+ "peaks": [
+  {
+   "peak": "Pikes Peak",
+   "site": "Denver GP start (Colfax/Sherman)",
+   "plan": {
+    "bearing": 182.9,
+    "km": 100.2,
+    "alt": 1.14,
+    "visible": true
+   },
+   "3dep": {
+    "bearing": 182.84,
+    "nominal_bearing": 182.92,
+    "km": 100.22,
+    "alt": 1.149,
+    "visible": true,
+    "clearance": 0.295
+   },
+   "alt_diff_deg": 0.009,
+   "visibility_changed": false,
+   "changed_over_0.1": false
+  },
+  {
+   "peak": "Pikes Peak",
+   "site": "Sand Creek origin",
+   "plan": {
+    "bearing": 185.7,
+    "km": 105.7,
+    "alt": null,
+    "visible": false
+   },
+   "3dep": {
+    "bearing": 185.64,
+    "nominal_bearing": 185.71,
+    "km": 105.76,
+    "alt": 1.054,
+    "visible": false,
+    "clearance": -0.24
+   },
+   "alt_diff_deg": null,
+   "visibility_changed": false,
+   "changed_over_0.1": false
+  },
+  {
+   "peak": "Mt Morrison",
+   "site": "Denver GP start (Colfax/Sherman)",
+   "plan": {
+    "bearing": 248.5,
+    "km": 21.5,
+    "alt": 1.93,
+    "visible": true
+   },
+   "3dep": {
+    "bearing": 248.62,
+    "nominal_bearing": 248.5,
+    "km": 21.55,
+    "alt": 2.032,
+    "visible": true,
+    "clearance": 0.825
+   },
+   "alt_diff_deg": 0.102,
+   "visibility_changed": false,
+   "changed_over_0.1": true
+  },
+  {
+   "peak": "Mt Morrison",
+   "site": "Sand Creek origin",
+   "plan": {
+    "bearing": 242.8,
+    "km": 28.5,
+    "alt": 1.46,
+    "visible": true
+   },
+   "3dep": {
+    "bearing": 242.92,
+    "nominal_bearing": 242.82,
+    "km": 28.55,
+    "alt": 1.515,
+    "visible": true,
+    "clearance": 0.575
+   },
+   "alt_diff_deg": 0.055,
+   "visibility_changed": false,
+   "changed_over_0.1": false
+  },
+  {
+   "peak": "Mt Blue Sky (Evans)",
+   "site": "Denver GP start (Colfax/Sherman)",
+   "plan": {
+    "bearing": 253.5,
+    "km": 58.8,
+    "alt": 2.38,
+    "visible": true
+   },
+   "3dep": {
+    "bearing": 253.54,
+    "nominal_bearing": 253.54,
+    "km": 58.84,
+    "alt": 2.436,
+    "visible": true,
+    "clearance": 0.527
+   },
+   "alt_diff_deg": 0.056,
+   "visibility_changed": false,
+   "changed_over_0.1": false
+  },
+  {
+   "peak": "Mt Blue Sky (Evans)",
+   "site": "Sand Creek origin",
+   "plan": {
+    "bearing": 250.6,
+    "km": 65.5,
+    "alt": 2.11,
+    "visible": true
+   },
+   "3dep": {
+    "bearing": 250.58,
+    "nominal_bearing": 250.58,
+    "km": 65.51,
+    "alt": 2.151,
+    "visible": true,
+    "clearance": 0.474
+   },
+   "alt_diff_deg": 0.041,
+   "visibility_changed": false,
+   "changed_over_0.1": false
+  },
+  {
+   "peak": "Green Mtn (Lakewood)",
+   "site": "Denver GP start (Colfax/Sherman)",
+   "plan": {
+    "bearing": 254.6,
+    "km": 17.2,
+    "alt": 1.46,
+    "visible": true
+   },
+   "3dep": {
+    "bearing": 255.27,
+    "nominal_bearing": 254.64,
+    "km": 17.03,
+    "alt": 1.563,
+    "visible": true,
+    "clearance": 0.69
+   },
+   "alt_diff_deg": 0.103,
+   "visibility_changed": false,
+   "changed_over_0.1": true
+  },
+  {
+   "peak": "Green Mtn (Lakewood)",
+   "site": "Sand Creek origin",
+   "plan": {
+    "bearing": 246.1,
+    "km": 24.0,
+    "alt": 1.06,
+    "visible": true
+   },
+   "3dep": {
+    "bearing": 246.53,
+    "nominal_bearing": 246.15,
+    "km": 23.78,
+    "alt": 1.108,
+    "visible": true,
+    "clearance": 0.382
+   },
+   "alt_diff_deg": 0.048,
+   "visibility_changed": false,
+   "changed_over_0.1": false
+  },
+  {
+   "peak": "Mestaaehehe Mtn",
+   "site": "Denver GP start (Colfax/Sherman)",
+   "plan": {
+    "bearing": 261.2,
+    "km": 44.0,
+    "alt": 2.25,
+    "visible": true
+   },
+   "3dep": {
+    "bearing": 261.28,
+    "nominal_bearing": 261.22,
+    "km": 43.95,
+    "alt": 2.299,
+    "visible": true,
+    "clearance": 0.456
+   },
+   "alt_diff_deg": 0.049,
+   "visibility_changed": false,
+   "changed_over_0.1": false
+  },
+  {
+   "peak": "Mestaaehehe Mtn",
+   "site": "Sand Creek origin",
+   "plan": {
+    "bearing": 256.4,
+    "km": 50.3,
+    "alt": 1.95,
+    "visible": true
+   },
+   "3dep": {
+    "bearing": 256.42,
+    "nominal_bearing": 256.38,
+    "km": 50.19,
+    "alt": 1.984,
+    "visible": true,
+    "clearance": 0.604
+   },
+   "alt_diff_deg": 0.034,
+   "visibility_changed": false,
+   "changed_over_0.1": false
+  },
+  {
+   "peak": "Lookout Mtn",
+   "site": "Denver GP start (Colfax/Sherman)",
+   "plan": {
+    "bearing": 267.8,
+    "km": 21.7,
+    "alt": 1.67,
+    "visible": true
+   },
+   "3dep": {
+    "bearing": 267.32,
+    "nominal_bearing": 267.76,
+    "km": 22.37,
+    "alt": 1.65,
+    "visible": true,
+    "clearance": 1.001
+   },
+   "alt_diff_deg": -0.02,
+   "visibility_changed": false,
+   "changed_over_0.1": false
+  },
+  {
+   "peak": "Lookout Mtn",
+   "site": "Sand Creek origin",
+   "plan": {
+    "bearing": 257.5,
+    "km": 27.7,
+    "alt": 1.32,
+    "visible": true
+   },
+   "3dep": {
+    "bearing": 257.41,
+    "nominal_bearing": 257.5,
+    "km": 28.37,
+    "alt": 1.288,
+    "visible": true,
+    "clearance": 0.692
+   },
+   "alt_diff_deg": -0.032,
+   "visibility_changed": false,
+   "changed_over_0.1": false
+  },
+  {
+   "peak": "North Table Mtn",
+   "site": "Denver GP start (Colfax/Sherman)",
+   "plan": {
+    "bearing": 284.3,
+    "km": 19.5,
+    "alt": 1.03,
+    "visible": true
+   },
+   "3dep": {
+    "bearing": 286.24,
+    "nominal_bearing": 284.26,
+    "km": 19.17,
+    "alt": 1.07,
+    "visible": true,
+    "clearance": 0.608
+   },
+   "alt_diff_deg": 0.04,
+   "visibility_changed": false,
+   "changed_over_0.1": false
+  },
+  {
+   "peak": "North Table Mtn",
+   "site": "Sand Creek origin",
+   "plan": {
+    "bearing": 269.2,
+    "km": 24.2,
+    "alt": 0.86,
+    "visible": true
+   },
+   "3dep": {
+    "bearing": 270.53,
+    "nominal_bearing": 269.18,
+    "km": 23.75,
+    "alt": 0.865,
+    "visible": true,
+    "clearance": 0.274
+   },
+   "alt_diff_deg": 0.005,
+   "visibility_changed": false,
+   "changed_over_0.1": false
+  },
+  {
+   "peak": "James Peak",
+   "site": "Denver GP start (Colfax/Sherman)",
+   "plan": {
+    "bearing": 281.9,
+    "km": 61.5,
+    "alt": 2.0,
+    "visible": true
+   },
+   "3dep": {
+    "bearing": 281.88,
+    "nominal_bearing": 281.92,
+    "km": 61.53,
+    "alt": 2.029,
+    "visible": true,
+    "clearance": 0.102
+   },
+   "alt_diff_deg": 0.029,
+   "visibility_changed": false,
+   "changed_over_0.1": false
+  },
+  {
+   "peak": "James Peak",
+   "site": "Sand Creek origin",
+   "plan": {
+    "bearing": 276.6,
+    "km": 65.9,
+    "alt": 1.85,
+    "visible": true
+   },
+   "3dep": {
+    "bearing": 276.58,
+    "nominal_bearing": 276.61,
+    "km": 65.99,
+    "alt": 1.871,
+    "visible": true,
+    "clearance": 0.066
+   },
+   "alt_diff_deg": 0.021,
+   "visibility_changed": false,
+   "changed_over_0.1": false
+  },
+  {
+   "peak": "South Arapaho Peak",
+   "site": "Denver GP start (Colfax/Sherman)",
+   "plan": {
+    "bearing": 299.3,
+    "km": 64.9,
+    "alt": 1.92,
+    "visible": true
+   },
+   "3dep": {
+    "bearing": 299.56,
+    "nominal_bearing": 299.28,
+    "km": 65.07,
+    "alt": 1.954,
+    "visible": true,
+    "clearance": 0.113
+   },
+   "alt_diff_deg": 0.034,
+   "visibility_changed": false,
+   "changed_over_0.1": false
+  },
+  {
+   "peak": "South Arapaho Peak",
+   "site": "Sand Creek origin",
+   "plan": {
+    "bearing": 293.3,
+    "km": 67.4,
+    "alt": 1.85,
+    "visible": true
+   },
+   "3dep": {
+    "bearing": 293.55,
+    "nominal_bearing": 293.27,
+    "km": 67.55,
+    "alt": 1.875,
+    "visible": true,
+    "clearance": 0.184
+   },
+   "alt_diff_deg": 0.025,
+   "visibility_changed": false,
+   "changed_over_0.1": false
+  },
+  {
+   "peak": "Bear Peak",
+   "site": "Denver GP start (Colfax/Sherman)",
+   "plan": {
+    "bearing": 312.9,
+    "km": 36.1,
+    "alt": 1.35,
+    "visible": true
+   },
+   "3dep": {
+    "bearing": 311.69,
+    "nominal_bearing": 312.88,
+    "km": 35.88,
+    "alt": 1.424,
+    "visible": true,
+    "clearance": 0.959
+   },
+   "alt_diff_deg": 0.074,
+   "visibility_changed": false,
+   "changed_over_0.1": false
+  },
+  {
+   "peak": "Bear Peak",
+   "site": "Sand Creek origin",
+   "plan": {
+    "bearing": 301.4,
+    "km": 37.2,
+    "alt": 1.34,
+    "visible": true
+   },
+   "3dep": {
+    "bearing": 300.24,
+    "nominal_bearing": 301.42,
+    "km": 37.19,
+    "alt": 1.386,
+    "visible": true,
+    "clearance": 1.009
+   },
+   "alt_diff_deg": 0.046,
+   "visibility_changed": false,
+   "changed_over_0.1": false
+  },
+  {
+   "peak": "Longs Peak",
+   "site": "Denver GP start (Colfax/Sherman)",
+   "plan": {
+    "bearing": 317.1,
+    "km": 78.5,
+    "alt": 1.65,
+    "visible": true
+   },
+   "3dep": {
+    "bearing": 317.06,
+    "nominal_bearing": 317.06,
+    "km": 78.45,
+    "alt": 1.692,
+    "visible": true,
+    "clearance": 0.458
+   },
+   "alt_diff_deg": 0.042,
+   "visibility_changed": false,
+   "changed_over_0.1": false
+  },
+  {
+   "peak": "Longs Peak",
+   "site": "Sand Creek origin",
+   "plan": {
+    "bearing": 311.7,
+    "km": 78.7,
+    "alt": 1.67,
+    "visible": true
+   },
+   "3dep": {
+    "bearing": 311.68,
+    "nominal_bearing": 311.68,
+    "km": 78.67,
+    "alt": 1.696,
+    "visible": true,
+    "clearance": 0.389
+   },
+   "alt_diff_deg": 0.026,
+   "visibility_changed": false,
+   "changed_over_0.1": false
+  }
+ ]
+}

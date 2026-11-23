@@ -320,3 +320,34 @@ def test_fillet_corners_takes_the_seam_cluster_first_and_does_not_index_past_a_s
             ("the seam corner at angle 0 (x ~ 76, z ~ 0) is filleted", [f["xz"] for f in fillets])
         for p, k in zip(out, st.associate(out)):
             assert lo[k] - 1e-6 <= st.lat(p[0], p[2], k) <= hi[k] + 1e-6
+
+
+
+def test_fillet_split_is_opt_in_and_fillets_a_merged_cluster_run_by_run():
+    """2026-11-23 (Sand Creek 0.2.9's rehearsal at 928f7bad stopped at the AI step: "radius under the floor 4" at the S
+    at 48th / Colorado, 0.2.8's line filleted there at R 12.6): a tight run (3193-3196) and a lone kink four points on
+    (3201) merge into one cluster that no single fillet window fits. Off (the default) nothing is filleted there, as
+    before, and the violations are left to bound_curvature; split=True (track.config.json ai.fillet_split) tries the
+    runs one by one and lays one R 12.6 comfort arc, inside the lane, that takes the kink with it"""
+    fx = json.loads((Path(__file__).resolve().parents[1] / "fixtures" / "sand_creek_0209_s48_fillet.json")
+                    .read_text(encoding="utf-8"))
+    ds = fx["ds"]
+    st = w._Stations(fx["base"], [tuple(t) for t in fx["tan"]], fx["lo"], fx["hi"], fx["rraw"], False, ds,
+                     lo_c=fx["lo_c"], hi_c=fx["hi_c"])
+
+    def under_floor(Q):
+        a = st.associate(Q)
+        return [i for i in range(1, len(Q) - 1)
+                if w._circumradius(Q[i - 1], Q[i], Q[i + 1]) < st.floor(a[i], st.lat(Q[i][0], Q[i][2], a[i])) * (1 + w.RADIUS_TOL)]
+
+    P = [list(p) for p in fx["P"]]
+    assert under_floor(P) == [28, 29, 30, 31, 36]                       # line points 3193-3196 and 3201
+    off, f_off = w.fillet_corners([list(p) for p in P], False, st, ds)
+    assert f_off == [] and off == P and under_floor(off) == under_floor(P)
+    on, f_on = w.fillet_corners([list(p) for p in P], False, st, ds, split=True)
+    assert [(f["radius_m"], f["lane"], f["split_from"]) for f in f_on] == [(12.6, "comfort", [28, 36])]
+    assert under_floor(on) == []
+    for p, k in zip(on, st.associate(on)):
+        assert st.lo_c[k] - 1e-6 <= st.lat(p[0], p[2], k) <= st.hi_c[k] + 1e-6
+    assert "fillet_split" in w.AI_OPT_KEYS
+    assert w.load_ai_opts({"ai": {"fillet_split": True, "_doc": "x"}}, "race") == {"fillet_split": True}

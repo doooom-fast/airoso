@@ -2666,3 +2666,49 @@ matches 0.2.8's loop.blend MAINLINE rows to 0.1 mm here). It passes colorado_50t
    sign / intake / mouth tests pass under the PC's venv.
 
 What the replica does not cover: the deck, seams, ground and barriers after the outline (the rehearsal reads those).
+
+
+## PC, 2026-11-23: rehearsals 2-4 of 0.2.9 — SC-D56 dropped (owed), the race AI line's merged fillet
+
+Each from an EMPTY workshop, --no-install, ENG `eng_sclm_0209`, on the combined head:
+- **2d26aabc** (01:52-02:12): every pad built — dahlia_56th seam residual max 0.43 m (1,597.0 m2), sandcreek_quebec
+  0.728 m (2,407.6 m2), 6 pads. Stopped at verify_signs l_named_corner: SC-D56 had no plate.
+- **313fadd3** (02:20-02:40): SC-D56's forward post pinned; stopped at verify_signs e_plate_height, f_post_sunk.
+- **928f7bad** (02:43-03:32): signs PASS (5 posts); stopped at the race AI step, "radius under the floor 4".
+
+**SC-D56 (Dahlia St -> E 56th Ave): 0.2.9 drops the forward arrow plate.**
+- The plate stood in 0.2.7 and 0.2.8: the auto corner (round Q's M-c5), while dahlia_56th was parked. verify_signs had
+  6 posts there (the Mac's sc9b table, m7d and sc9b); 0.2.9 has 5. The Mac accepted 5 for 0.2.9.
+- With the pad built, the T's top is Sand Creek's bank:
+  - place_signs' polyline stage stands the plate on the failed-turn ray 1.63 m (lateral_offset_m) past the built deck's
+    north edge, at (-913.928, 1133.297).
+  - The mesh stage then begins its march 1.50 m further out and stops 3.13 m from the deck, over the 3.0 m limit.
+    Why it starts there is NOT proven. The reading: the pad's ground band past the deck edge was taken for a walk.
+  - Pinned at the polyline spot (313fadd3), the built ground ray-casts 0.51 m under the road (6.92 vs 7.44). Past
+    GROUND_WARN_M 0.30 a post keeps a walk's analytic base, so it stood in the air.
+  - Every spot the rule allows (1.3-3.0 m out) is on the falling bank.
+- signs.json skips SC-D56 both ways, like SC-48S, with these numbers as its reason; the pin is out. In Free Roam the T
+  also turns left onto E 56th west (grid_primary_35).
+- **First on Sand Creek round 2's list:** the mesh stage stands a post on falling ground with no built walk — its base
+  on the ray-cast ground, the plate at the rule's height. Then SC-D56 comes back both ways, and verify_signs (e, f)
+  judges it unchanged. No threshold moves. A pin there comes out once the mesh stage's march is fixed.
+
+**The race AI line at the S at 48th / Colorado** (scripts/ac/write_ai_line.py, opt-in `ai.fillet_split`):
+- 928f7bad: "0 corners filleted, smoothing 475+325 iterations", min radius 10.0 m, 4 points 10.0-10.8 m under the 12 m
+  floor (line points 3193-3196 at (-1488.3, -312.0) .. (-1491.3, -308.6)). 0.2.8: one fillet R 12.6 m, min radius
+  12.57 m.
+- Today's writer on 0.2.8's data reproduces 0.2.8 byte for byte. Swapping 0.2.8's inputs in one at a time, only
+  barrier_bands.json's `corridors.race.lane_by_vertex` at v768-786 flips it: dahlia_56th's flare off narrows the race
+  lane there (+-20.33 -> +-7.80 m at v777), the line comes out 4 points shorter, and the S's stations fall differently.
+  Nothing at the S changed. The writer says "v3195 / v3205 no arc >= the floor fits the corridor" in both builds.
+- Before the fillets, the tight run 3193-3196 and a lone kink four points on (3201, R 11.0 m) merge into one cluster
+  (bad points within 6). No single window fits it: every window's arc path is None, K 3-39. bound_curvature then
+  leaves 4 under the floor.
+- `ai.fillet_split: true` (Sand Creek only): a merged cluster that fits no window is tried run by run (runs
+  FILLET_SPLIT_GAP_PTS 3 [invented] apart), the last first.
+  - On 928f7bad's data: one R 12.6 m comfort arc, min radius 12.56 m, 0 under the floor, no smoothing, as 0.2.8.
+  - Off (the default), the writer's output is byte-identical to before (0.2.8's data, all five files). The street
+    line's files are byte-identical with it on; only ai_draft.json gains the arcs' line_radius_min_m.
+  - No ai.layouts, so no gate OBJ / verify_ai_line step is added.
+- Test: tests/ac/test_ai_line_geometry.py::test_fillet_split_is_opt_in_and_fillets_a_merged_cluster_run_by_run, on
+  tests/fixtures/sand_creek_0209_s48_fillet.json (the line and stations around the S, cut from 928f7bad).

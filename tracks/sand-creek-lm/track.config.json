@@ -2503,5 +2503,9 @@
     "_doc": "ledger 0079 rounds N / P: verify_fold_fans surveys the weld's chord mends (Sand Creek's two road folds, v134-141 under colorado_50th and v3202-3206 under 48th_colorado, are both chords) with checks (1)-(5), (7) and (8); (7) reads each race-wall cell on no_route's own reference — the centre line or the deck the wall stands on, either frame (wall_frame local_deck; no_route since ledger 0054 step 2e / Sand Creek round M). A wider scope and a reference aligned with no_route, not a threshold change (fleet/GATES-CHANGELOG.md rounds N / P).",
     "chords": true,
     "wall_frame": "local_deck"
+  },
+  "ai": {
+    "fillet_split": true,
+    "_doc": "2026-11-23 (PC; scripts/ac/write_ai_line.py, opt-in): the Sand Creek 0.2.9 rehearsal at 928f7bad stopped at the race AI step, 'radius under the floor 4', at the S at 48th / Colorado. Before the fillets a tight run (line points 3193-3196) and a lone kink four points on (3201) merged into one cluster that no single fillet window fits (every window's arc path None), so the line went to bound_curvature, which left 4 points at 10.0-10.8 m under the 12 m floor. 0.2.8 filleted the same corner at R 12.6 m: dahlia_56th's flare off narrowed the race lane at v768-786 (barrier_bands corridors.race.lane_by_vertex), the line got 4 points shorter and the S's stations fell differently. fillet_split tries a merged cluster's runs (FILLET_SPLIT_GAP_PTS 3 [invented] apart) one by one when the merged one fits no window: one R 12.6 m comfort arc, min radius 12.56 m, 0 under the floor, no smoothing (as 0.2.8). No ai.layouts: the race layout gets no gate OBJ / verify_ai_line step it did not have; on this build's data the street line's files are byte-identical with it, only ai_draft.json gains the arcs' line_radius_min_m record"
   }
 }

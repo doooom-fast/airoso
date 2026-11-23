@@ -967,7 +967,8 @@ LIVE_0_2_7_KEYS = (("name",), ("_name_doc",), ("slug",), ("version",), ("install
 # 2026-11-22 (PC, claude/sc-finish-pc-20261122): sandcreek_quebec and dahlia_56th unparked, the Dahlia corner's flare off
 LIVE_FINISH_PC_KEYS = (("lm_intake", "corner_flare_off"), ("lm_intake", "_corner_flare_off_doc"),
                        ("lm_pads", "pads"), ("lm_pads", "parked"), ("lm_pads", "_parked_doc"),
-                       ("route", "mouth_returns_fit"), ("route", "_pads_0209_doc"))
+                       ("route", "mouth_returns_fit"), ("route", "_pads_0209_doc"),
+                       ("ai",))                      # 2026-11-23: ai.fillet_split (scripts/ac/write_ai_line.py)
 
 
 def _finish_pc_pads(live, cand):

@@ -409,3 +409,41 @@ side's cut up to the raised walk, the old island's fill in the forks), the east 
 the 120 median plants in `scatter_positions.json`, the config (the chicane, `route.median_registration`, the
 `college_split_cut` zone, the corridor on the piece at its real width, the fork closures and probes), then the data
 into a workshop and the chain's own steps.
+
+## Step 4, what is settled before code (2026-11-23)
+
+The Mac's rules for this step:
+
+- **Build without the chicane** (the board tells Kevin it goes with the split by default; he has not answered otherwise).
+- **Plants.** Kevin decided on 2026-11-22: "Keep all 33 at their lidar heights" (the 33 tall median plants). Which of
+  the 33 fall on rows v1114-1478 has to be checked. Any on the real bank stay at their measured place and height. Any
+  that would land on pavement are LISTED (id, station, which road) for the Mac to decide; they are not moved or dropped
+  here. The median bushes now on the fork's pavement are dropped. The bank is planted only from measured positions (the
+  lidar canopy or the aerial, the way the 33 were found), never from an invented spacing; if the bank's real planting
+  cannot be read, nothing new is planted and the report says so. The report gives the count dropped and the count
+  planted, and where each came from.
+- **The barrier.** Look at the lidar or the aerial: does the real bank have a rail at its top? If it has none, say so
+  in the ledger and take step 3's rail out. If it cannot be told, it stays `[invented]`.
+- **The paint** stays `[invented]` until the 10 cm aerial work replaces it.
+- **Queue.** When (e) is green, tell the Mac. Round 2 goes after Lake Murray 0.20.4 installs and merges; then merge
+  main at the commit the Mac names (no rebase) and take the next version after 0.20.4.
+
+What the prep does with ground (`scripts/ac/build_kn5_loop.py` `_conform_and_reseat`, read 2026-11-23):
+
+- Every grass vertex within reach of a road is given a LEG (the mainline, or a connector of
+  `data/connectors.local.json`) and a station, and seats only on its own leg's pavement within 40 m of its own station.
+  `college_nb` becomes a leg as soon as it is in the data.
+- Under its own leg's pavement a vertex is SET to the deck less 0.02 m (up or down). Past the edge the first 3 m are
+  held at the edge's height and the next 6 m blend back to the vertex's own height.
+- Then any grass vertex that stands over the lowest drivable sheet (road or kerb) at its place is pushed under it.
+- Terrain edges near a road are split to about 4.5 m first, so authored quads get more vertices, each treated as above.
+- The old island's grass top lies over the slab, so the prep pins it under the road: in the game the built island
+  shows asphalt between its curbs, with the bushes standing on it.
+- `data/ground_release.json` (the draft's released ground: 44 zones and a 2 m lattice of heights) is not read by the
+  prep at all.
+
+What that means for the bank, to be settled by looking, not by reading: step 3's authored bank top is grass, so the
+prep will hold its first 3 m beside whichever road each vertex is given to at that road's edge height and blend from
+there; the old ground under the bank and under the northbound road is treated the same way. The first thing to do in
+step 4 is therefore to run the prep on the scratch scene once (a scratch workshop, below-normal priority) and look at
+what the bank, the forks and the east side come out as. The ground is designed from that picture.

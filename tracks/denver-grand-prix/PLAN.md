@@ -1,8 +1,7 @@
 # Denver Grand Prix — build plan
 
 > **2026-11-23. A plan only: no geometry is built, no `track.config.json` exists yet, the track is not in the
-> registry.** Written in a cloud session that could not reach Overpass or USGS, so **the route below is Kevin's
-> list plus what is known of the streets, not yet read off OSM** — every unverified line says so. The mountain
+> registry.** The route in §2 **is read off OSM** (the Mac fetched the extract the same day); widths and grades are not yet. The mountain
 > numbers in §3 are measured (plan-grade DEM, `source/horizon/`). Ledger:
 > [0096](../../fleet/feedback/0096-denver-grand-prix-and-the-front-range-backdrop.md).
 >
@@ -18,7 +17,9 @@
 > Center (D1); the Kalamath hairpin at W 13th Ave with the street split by a K-rail (D2), still to be confirmed on the
 > map in P0; race as listed and free roam as the streets are (D3); the lap, everything inside it and one block outside
 > (D4); no pit lane for Drive 1 (D5); mountains at true distance and size from one shared source (D6); Sand Creek
-> 0.2.9 gets them first (D7); today's streets (D8). On the board it is a **new project** (Kevin, the same message).
+> 0.2.9 gets them first (D7); today's streets (D8).
+> **Two of these are open again:** D2, on what the map shows (§2 Finding 1); and D7, because Tracks:Mac reports Kevin
+> told it the same day "Mountains can be added to SC when Denver is done", which is the opposite order. Both wait on his word. On the board it is a **new project** (Kevin, the same message).
 
 **Eight questions. "Defaults" is a complete answer.** Ordered by what they hold up first.
 
@@ -44,32 +45,51 @@
 - **Start/finish:** the crosswalk across Colfax at Sherman St, the Capitol's west steps on the driver's left.
   **The car faces west.**
 
-## 2. The lap
+## 2. The lap — read off OSM (2026-11-23)
 
-Kevin's list, in order. "Known" is from general knowledge of the streets, **not from OSM**; P0 replaces this table
-with measured legs (length, width, lanes, one-way, median, grade).
+Source: `source/osm.json` (Overpass, OSM as of 2026-11-23T01:12Z, fetched on the Mac on Kevin's "Download now").
+Routed leg by leg on the named streets by `source/lap_route.py`; the way ids are in `data/lap_ways.plan.json`.
+Frame: metres east / north of the Colfax / Sherman crosswalk. Lengths are along OSM's lines, before any smoothing.
+Widths, kerbs, medians and grades are not read yet (the dossier, from NAIP and lidar).
 
-| # | Kevin's words | The road, as understood | To verify in P0 |
-|---|---|---|---|
-| Front straight | Colfax from Logan to the chicane around Civic Center Park | E Colfax west from Logan, past Sherman (S/F), Lincoln, Broadway, along the park's north edge. Falls about 20 m from Capitol Hill toward Speer. | median and bus-lane state (D8); width per block |
-| T1/2 | park chicane | Colfax bows north around the Voorhies Memorial at the park's north end (Bannock to about 15th St) | the real kerb lines: left-right as built, no invented chicane |
-| T2 | right onto Stout, curves under/through DPAC | from Colfax near Speer's east-bank carriageway, north-east on Stout under the Convention Center (D1). Light-rail tracks share the street. | where Stout actually leaves Colfax / Speer; the roof's extent and clear height; the rails |
-| T3 | left onto 15th St | north-west on 15th, Stout to Blake (about seven blocks) | |
-| T4 | left onto Blake | south-west on Blake | Blake's real direction (D3) |
-| T5 | Blake slight right over the river | Blake's bridge over **Cherry Creek** (the creek in its walled channel between Speer's two carriageways; the South Platte is 600 m further on) | bridge deck from lidar class 17; the bend |
-| T6 | left onto Speer | Speer's west-bank carriageway, south-east along the creek | |
-| T7 | right onto Kalamath | D2 | where Speer and Kalamath meet; at grade or not |
-| T8 | hairpin over Colfax back onto Kalamath the other way | D2 | the Colfax crossing: at grade, signals, rail |
-| T9 | right onto Speer | Speer south-east again | that this is the same carriageway as T6 |
-| T10 | left onto 14th | **W 14th Ave**, east past the Art Museum, the Library, the park's south edge and the Capitol's south side, climbing back up the hill (about 1.3 km) | not 14th *Street* (which the lap also crosses downtown) |
-| T11 | left onto Logan | north on Logan, two short blocks | |
-| T12 | left into Colfax | west onto the front straight | |
+| # | Kevin's words | The road on the map | Length | OSM lanes | Notes |
+|---|---|---|---|---|---|
+| Front straight | Colfax from Logan to the chicane | Colfax's westbound carriageway, Logan (x +218) past Sherman (S/F, x 0) to Speer's northbound side (x −1133) | 1,389 m (215 before the line, 1,174 after) | 2–4 | divided the whole way; the park bow is in this leg |
+| T2 | right onto Stout, curves under/through DPAC | **two rights:** right onto Speer northbound for 151 m, then right onto Stout. Stout does not touch Colfax; it starts on Speer. | 151 m + 578 m | 5, then 2 | **Stout is covered for 344 m** (OSM `tunnel=building_passage`, `covered=yes`, `maxheight=5`), x −1148 to −925, ending 27 m before 14th St. That is the Convention Center (D1 confirmed). |
+| T3 | left onto 15th St | 15th St north-west, Stout to Blake | 738 m | 2–4 | |
+| T4–T5 | left onto Blake, slight right over the river | Blake south-west, bending west after 14th St onto its **39 m bridge over Cherry Creek**, into Auraria Pkwy to Speer's southbound side | 302 m | 2–4 | here both of Speer's carriageways are west of the creek |
+| T6 | left onto Speer | Speer southbound, south-east to the Kalamath fork | 803 m | 4–5 | |
+| T7 | right onto Kalamath | Kalamath leaves Speer at y +201, **north of Colfax**, and runs due south across Colfax at grade (x −1305) | 388 m to W 14th Ave | 3–4 | no bridge at Colfax: "over" is across |
+| T8 | hairpin over Colfax back onto Kalamath the other way | **see the finding below** | 66 m + 189 m + 148 m | 3–5 | |
+| T9 | right onto Speer | a hard right at the Speer / Stout / Kalamath junction (x −1247, y +123) onto Speer southbound, across Colfax | 342 m to W 14th Ave | 4–6 | joins Speer 80 m south of where T7 left it: no shared pavement |
+| T10 | left onto 14th | W 14th Ave east: its 42 m bridge over Cherry Creek, the Parkway past the park, E 14th Ave past the Capitol | 1,365 m | 2–4 | |
+| T11–T12 | left onto Logan, left into Colfax | Logan north, then Colfax west to the line | 180 m, then the front straight | 2 | |
 
-- **Length:** roughly 6 km, an estimate from block counts. Measured in P0.
-- **Relief:** about 30 m. Plan-grade DEM: 1,617 m at Colfax / Sherman, 1,596 m at Speer / Colfax.
-- **Self-crossing:** none expected, but the Kalamath out-and-back shares one street, and the lap passes within
-  about 100 m of itself at Colfax / Speer / Stout on opposite banks of the creek. The race gate
-  "no route to the other side" (`tools/no_route.py`) decides it on the built walls.
+**Lap: 6,639 m** on OSM's lines (the plan's estimate was "roughly 6 km").
+
+**Finding 1, the hairpin (D2) — needs Kevin's word, because it differs from the default he accepted.** The map shows
+what "back onto Kalamath the other way" most likely is, and it needs no split street:
+
+- Kalamath (one-way south) and **Santa Fe Dr (one-way north)** are a pair. South of Colfax they converge: 66 m apart
+  at W 14th Ave, 20 m apart 125 m south of Colfax, 13 m apart 58 m south of it.
+- North of Colfax, Santa Fe's northbound lanes carry on as a road OSM also names **North Kalamath Street**, 148 m
+  north-east to the Speer / Stout junction. That is Kalamath "the other way", and the right onto Speer is at its end.
+- So the hairpin as the streets exist: **Kalamath south across Colfax, left on W 14th Ave (66 m), left onto Santa Fe
+  north, across Colfax, up the northbound Kalamath to Speer.** 180 m south of Colfax, all real pavement, nothing invented.
+- A tighter turn-back nearer Colfax, where the two are 13–20 m apart, exists only if the aerial shows pavement between
+  them. The dossier checks; if it is an island, building across it would be an invented road (L1).
+- **Recommended: the W 14th Ave version above, in place of the accepted default** (13th Ave with Kalamath split by a
+  K-rail, which the map shows is 358 m south of Colfax, not the "about 200 m" this plan said). The table and the
+  6,639 m use the recommended version.
+
+**Finding 2, direction (D3).** With that hairpin, **the whole lap runs with the real one-way direction of every
+street: 0 m against traffic.** The free roam and the race drive the same way round; D3 has nothing left to decide.
+
+**Finding 3, no self-crossing.** The lap uses Speer southbound twice, on two separate stretches (Blake to y +201,
+then y +123 to W 14th Ave), and crosses Colfax's two carriageways three times at junctions it does not otherwise
+use. It never shares or crosses its own pavement. `tools/no_route.py` still decides it on the built walls.
+
+**Relief:** about 30 m (plan-grade DEM: 1,617 m at Colfax / Sherman, 1,596 m at Speer / Colfax). Real grades in P0's elevation step.
 
 ## 3. The mountains — measured
 

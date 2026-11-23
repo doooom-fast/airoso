@@ -73,3 +73,18 @@ Tracks:Mac's reply, the same day:
 
 So P0's OSM fetch waits on Kevin, and Denver sits behind Lake Murray, Sand Creek and High Plains unless he says
 otherwise. P1 (the backdrop on Sand Creek) is Sand Creek work; whether it counts as "completing Sand Creek" is his call.
+
+## The route, read off OSM (2026-11-23)
+
+Tracks:Mac fetched the extract on Kevin's "Download now" (`tracks/denver-grand-prix/source/osm.json`, commit b7f35d8).
+Routed on it (`source/lap_route.py`, `data/lap_ways.plan.json`; PLAN §2):
+
+- **Lap 6,639 m.** Stout is covered for 344 m under the Convention Center (`tunnel=building_passage`, maxheight 5).
+  Stout starts on Speer, not Colfax: turn 2 is two rights with 151 m of Speer northbound between them.
+- **The hairpin:** Kalamath (south) and Santa Fe Dr (north) are a one-way pair that converges at Colfax, and the
+  northbound road north of Colfax is itself named Kalamath. Kalamath south, left on W 14th Ave (66 m), Santa Fe north,
+  the northbound Kalamath to Speer: all real pavement, and with it the whole lap runs with every street's real one-way
+  direction. This differs from the default Kevin accepted for D2 (13th Ave, a split street); recommended in its place,
+  his word owed.
+- **D7 is open:** Tracks:Mac reports Kevin told it "Mountains can be added to SC when Denver is done"; here he took
+  the default (Sand Creek first). His word owed.

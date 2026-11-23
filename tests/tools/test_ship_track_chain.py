@@ -576,6 +576,8 @@ V4_EXTRAS = {
         "ledger 0055 round 2: Kevin, \"realism+\": College Avenue as two roads (opt-in route.college_split)",
     ("author_median_tops", "author: every median's grass top into its own object (tools/author_median_tops_blend.py: out of TERRAIN, which the prep pins under the road; ledger 0055; self-checked; not opted in = no-op)"):
         "ledger 0055: every Lake Murray median showed asphalt between its curbs (opt-in route.median_tops)",
+    ("author_median_rebuild", "author: one median island re-authored from corrected data (tools/author_median_rebuild_blend.py: the old island found exactly or refused; ledger 0099 round 3; self-checked; not opted in = no-op)"):
+        "ledger 0099 round 3, item 1b: Mission Gorge Rd's island was built across a real crossing (opt-in route.median_rebuild)",
     ("author_lamp_heads", "author: the back head of every two-arm lamp lit (tools/author_lamp_heads_blend.py: LIGHTS_back, one lens per back head; ledger 0099; self-checked; not opted in = no-op)"):
         "ledger 0099: Kevin 2026-11-22, \"Yes, light both heads\" (opt-in scenery.streetlights.light_both_heads)",
     ("author_walk_grade", "author: the street walk's back grade no steeper than route.walk_back_grade (tools/author_walk_grade_blend.py: every lip raised, nothing else moves; ledger 0099; self-checked; not opted in = no-op)"):

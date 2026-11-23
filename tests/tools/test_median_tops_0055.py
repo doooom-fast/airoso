@@ -49,9 +49,9 @@ def test_the_deck_half_width_is_the_median_tools_own_taper():
     assert abs(MT.deck_half(w, 1, n) - (0.25 + (2.5 - 0.25) / 3 - 0.22)) < 1e-9
     assert abs(MT.deck_half(w, 2, n) - (0.25 + (2.5 - 0.25) * 2 / 3 - 0.22)) < 1e-9
     assert MT.deck_half(w, 3, n) == MT.deck_half(w, 10, n) and MT.deck_half(w, n - 3, n) == MT.deck_half(w, 2, n)
-    src = (ROOT / "tools" / "author_median_blend.py").read_text(encoding="utf-8")
+    src = (ROOT / "tools" / "median_island.py").read_text(encoding="utf-8")       # the rule, lifted out of the draft tool (0099 r3)
     for frag in ("half = NOSE_HALF + (half - NOSE_HALF) * si / NOSE_VERTS", "di = max(0.05, half - DECK_INSET)",
-                 "deckV += [P(-di, CURB_H + 0.005), P(di, CURB_H + 0.005)]"):
+                 "return curb, [P(-di, CURB_H + 0.005), P(di, CURB_H + 0.005)]"):
         assert frag in src, frag                                                     # the rule this file copies
     assert (MT.NOSE_VERTS, MT.NOSE_HALF_M, MT.DECK_INSET_M, MT.DECK_OVER_M) == (3, 0.25, 0.22, 0.185)
 
@@ -61,10 +61,14 @@ def test_lake_murrays_islands_are_read_off_its_own_data():
     got = [(s["line"], s["first"], s["last"]) for s in isl]
     # College's island is two short ones since the split (ledger 0055 round 2): the bank between the two roads is ground
     assert ("MAINLINE", 846, 1073) in got and ("MAINLINE", 1096, 1116) in got and ("MAINLINE", 1476, 1487) in got
-    assert ("MAINLINE", 1540, 1739) in got and ("north_mission_gorge", 63, 741) in got and len(got) == 14
+    # Mission Gorge's long island is two since ledger 0099 round 3, item 1b: no median across the Margerum Avenue /
+    # Mission Vista Drive crossing (source/expansion/mg_median/)
+    assert ("MAINLINE", 1540, 1739) in got and len(got) == 15
+    assert ("north_mission_gorge", 63, 354) in got and ("north_mission_gorge", 367, 741) in got
     # a run of the band under six rows is not an island: the median tool builds nothing for it (its _segments rule)
     assert [(s["line"], s["first"], s["last"]) for s in MT.islands(LM, short=True)] == [("north_mission_gorge", 54, 57)]
-    assert "if j - i >= 6:" in (ROOT / "tools" / "author_median_blend.py").read_text(encoding="utf-8") and MT.MIN_ISLAND_ROWS == 6
+    rule = (ROOT / "tools" / "median_island.py").read_text(encoding="utf-8")
+    assert "if j - i >= MIN_ISLAND_VERTS:" in rule and "MIN_ISLAND_VERTS = 6" in rule and MT.MIN_ISLAND_ROWS == 6
     assert not any(line == "MAINLINE" and first <= 1300 <= last for line, first, last in got)
     for s in isl:
         assert len(s["rows"]) == s["last"] - s["first"] + 1 and all(r[4] > 0 for r in s["rows"])
@@ -74,7 +78,8 @@ def test_lake_murrays_islands_are_read_off_its_own_data():
 
 def test_median_tops_is_lake_murrays_alone_and_the_second_author_step():
     au = SHIP["steps"]["author"]
-    assert au[:3] == ["college_split", "median_tops", "lamp_heads"]                  # after College's islands, before any reader
+    # after College's islands and the one island item 1b re-authors (ledger 0099 round 3), before any reader
+    assert au[:4] == ["college_split", "median_rebuild", "median_tops", "lamp_heads"]
     assert "author_median_tops() {" in SH and "tools/author_median_tops_blend.py" in SH
     assert "data/median_tops.json" in SHIP["sync_out"]["files"]
     assert CFG["lawn_as_grass"] is True and CFG["route"]["median_tops"]["object"] == "1LAWN_median"

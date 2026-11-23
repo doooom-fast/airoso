@@ -38,6 +38,7 @@
     ],
     "author": [
       "college_split",
+      "median_rebuild",
       "median_tops",
       "lamp_heads",
       "walk_grade",
@@ -124,6 +125,8 @@
       "source/bespoke/buildings.json",
       "source/vegetation/median_heights.lidar.json",
       "source/college_r2/college_plants.median_spots.json",
+      "source/expansion/mg_median/mg_median_correction.json",
+      "source/expansion/mg_median/mg_median.median_spots.json",
       "source/college_r2/college_bank_plants.json"
     ],
     "globs": [
@@ -344,7 +347,8 @@
       "data/lights.heads.json",
       "data/walk_grade.json",
       "data/walk_grade.seat.json",
-      "data/median_tops.json"
+      "data/median_tops.json",
+      "data/median_rebuild.json"
     ],
     "_files_lap_doc": "ledger 0054 Phase 2: each lap's line, declaration and reports, as tools/ship_sd.sh syncs them ({lap}: every lap a race layout names; none in this config, so nothing)",
     "map": [

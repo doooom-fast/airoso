@@ -69,6 +69,46 @@ def test_the_committed_intermediate_is_reproduced_offline_byte_for_byte_but_the_
             fmd.pop(k, None)
             md7_k = md7.pop(k)
             assert k == "correction" or md7_k
+    # ledger 0099 round 3, item 1b: Mission Gorge's MD13 was corrected at the source from NAIP by
+    # source/expansion/mg_median/fix_mg_median.py (no median across the Margerum Avenue / Mission Vista Drive crossing, a
+    # narrow strip beside each turn pocket). Its record holds every piece-C row it changed ([before, after]: type, width,
+    # offset). The author builds exactly the BEFORE rows and ONE island MD13; the committed file holds the AFTER rows, MD13
+    # ending at its nose and a new MD13b from the other, whose rings outside the corrected stretch are the author's own.
+    rec_p = TRACK / "source" / "expansion" / "mg_median" / "mg_median_correction.json"
+    if rec_p.exists():
+        rec = json.loads(rec_p.read_text(encoding="utf-8"))
+        by = {float(r["s"]): r for r in rec["rows"]}
+        wp, fp = (next(p for p in d["pieces"] if p["id"] == "C") for d in (want, fresh))
+        cols = wp["columns"]
+        it, iw, io = cols.index("median_type"), cols.index("median_w_m"), cols.index("median_off_m")
+        seen = 0
+        for wr, fr in zip(wp["stations"], fp["stations"]):
+            ch = by.get(float(wr[0]))
+            if ch is None:
+                continue
+            seen += 1
+            assert (fr[it], fr[iw], fr[io]) == (ch["median_type"][0], ch["median_w_m"][0], ch["median_off_m"][0]), (wr[0], fr[it], fr[iw], fr[io], ch)
+            assert (wr[it], wr[iw], wr[io]) == (ch["median_type"][1], ch["median_w_m"][1], ch["median_off_m"][1]), (wr[0], wr[it], wr[iw], wr[io], ch)
+            fr[it], fr[iw], fr[io] = wr[it], wr[iw], wr[io]
+        assert seen == len(by) == 93
+        f13 = next(m for m in fresh["medians"] if m["id"] == "MD13")
+        w13, w13b = (next(m for m in want["medians"] if m["id"] == i) for i in ("MD13", "MD13b"))
+        assert not [m for m in fresh["medians"] if m["id"] == "MD13b"]
+        assert {"s_from": f13["s_from"], "s_to": f13["s_to"], "points": len(f13["polygon_xz"])} == rec["ring_before"]
+        lo, hi = rec["fit"]["tapers_s"][0][0], rec["fit"]["tapers_s"][1][1]            # the corrected stretch, s 982.5-1212.5
+        n = len(f13["polygon_xz"]) // 2
+        f_left, f_right = f13["polygon_xz"][:n], f13["polygon_xz"][n:][::-1]
+        kept = 0
+        for m in (w13, w13b):
+            k0, nm = round((m["s_from"] - f13["s_from"]) / 2.5), len(m["polygon_xz"]) // 2
+            m_left, m_right = m["polygon_xz"][:nm], m["polygon_xz"][nm:][::-1]
+            for j in range(nm):
+                if not (lo <= m["s_from"] + 2.5 * j <= hi):
+                    assert m_left[j] == f_left[k0 + j] and m_right[j] == f_right[k0 + j], (m["id"], m["s_from"] + 2.5 * j)
+                    kept += 1
+        assert kept == 722                                                             # every ring station outside the stretch
+        i13 = fresh["medians"].index(f13)
+        fresh["medians"][i13:i13 + 1] = [w13, w13b]
     assert fresh == want
 
 

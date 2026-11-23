@@ -18,7 +18,7 @@ $r2 = "$Air\tracks\san-diego-lake-murray\source\college_r2"
 $slug = "san_diego_lake_murray"
 $pb = "$Ws\blender\$slug.blend"
 New-Item -ItemType Directory -Force $Log | Out-Null
-$order = @("college_data", "college_split", "college_middle", "college_ground", "median_tops", "lamp_heads", "walk_grade", "race_bands",
+$order = @("college_data", "college_split", "college_middle", "college_ground", "median_rebuild", "median_tops", "lamp_heads", "walk_grade", "race_bands",
            "race_planned_gate", "layout_dummies", "race_author", "signs", "race_verify",
            "prep", "thin", "freeway", "rock", "red", "walk_seat", "split", "export_road", "ground_check")
 $start = [array]::IndexOf($order, $From)
@@ -47,6 +47,7 @@ Step "college_data" "python" @("$r2\college_split_data.py", $Ws, "--chain") "^\[
 foreach ($s in @("split", "middle", "ground")) {
   Step "college_$s" $Blender @("--background", "$Ws\loop.blend", "--python-exit-code", "1", "--python", "$r2\college_${s}_blend.py") "^\[college_$s\]|FATAL|Error|Traceback" 3000 $Ws
 }
+Step "median_rebuild" $Blender @("--background", "--python-exit-code", "1", "--python", "$Air\tools\author_median_rebuild_blend.py", "--", $Ws, "--v021", "$Air\tracks\san-diego-lake-murray\scripts-v021") "^\[median-rebuild\]|FATAL|Error|Traceback" 700 $Ws
 Step "median_tops" $Blender @("--background", "--python-exit-code", "1", "--python", "$Air\tools\author_median_tops_blend.py", "--", $Ws) "^\[median-tops\]|FATAL|Error|Traceback" 500 $Ws
 Step "lamp_heads" $Blender @("--background", "--python-exit-code", "1", "--python", "$Air\tools\author_lamp_heads_blend.py", "--", $Ws) "^\[heads\]|FATAL|Error|Traceback" 400 $Ws
 Step "walk_grade" $Blender @("--background", "--python-exit-code", "1", "--python", "$Air\tools\author_walk_grade_blend.py", "--", $Ws) "^\[walk-grade\]|FATAL|Error|Traceback" 500 $Ws

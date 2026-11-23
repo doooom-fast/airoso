@@ -786,3 +786,138 @@ in a file this item touches.
 
 Nothing to decide. On the next drive: the paved median's colour (a muted salmon, matched to the 2022 photo), and that it
 sounds and rumbles like a sidewalk if driven on.
+
+## Round 3, item 1b (the PC, 2026-11-23): Mission Gorge's median no longer crosses a real intersection. Green on scratch, not rehearsed
+
+Item 1's aerial bins left four that read grey (MD13, s 1010-1210). Looked at on the mosaic, the grey is asphalt: the
+photo shows the Margerum Avenue / Mission Vista Drive crossing there, with marked crosswalks on all four legs and no
+median for about 33 m, and a narrow strip beside a left-turn pocket each side. The plan's median width on piece C is
+linear between eye readings 250 m apart (st 1000: 4.5 m, st 1250: 5.5 m), so MD13 was declared, and built, as one
+unbroken island 4.5-5.4 m wide straight across it. Both side streets are already built there as stubs (ledger 0054
+phase 5: `mission_vista_drive_5977531_L`, `margerum_avenue_135149732_R`), so nothing was wrong but the median. The Mac
+(2026-11-23): "A raised island across a signalised intersection is the kind of thing Kevin would see, so it joins THIS
+round as item 1b." Everything measured is in `source/expansion/mg_median/` (README.md).
+
+*Two things I first reported wrongly, both corrected with the Mac before any push.* (1) That the network had nothing at
+the crossing and owed two stubs: I had read only the plan's junction arms S1-S6 and not `data/stubs.plan.json`. (2)
+Strip widths of 1.75-2.5 m and 2.25 m with a 2 m offset: read off a threshold on blurred pixels, with no registration.
+The measurement below replaces them. "Signalised" is **[inferred]** from the crosswalks.
+
+### The measurement
+
+A 2 m strip is four pixels and the mosaic stores one colour sample per about 1 m, so a face is not read off a
+threshold. `faces_md.py` takes, per station, the **equivalent width** (the excess R - G over the asphalt's, summed
+across the island, over a full island's plateau: +24.0 against -1.0) and that excess's **centroid**. Checked where the
+island fills its band (37 stations): it reads the width 0.30 m short and the middle 0.49 m right of the declared band;
+both are added back. One station scatters p10..p90 -1.41..+1.23 m in width. Piece frame, + = left = north-west:
+
+| | measured | built from it |
+|---|---|---|
+| strip A, s 1010-1085 | 24 stations: 1.66 + 0.30 m wide, middle +0.18 against the band's +0.24, + 0.49 | **1.96 m wide, its middle 0.43 m left** of the line the full island's middle follows |
+| strip B, s 1120-1192.5 | 26 stations: 1.54 + 0.30 m wide, middle -2.24 against the band's -0.25, + 0.49 | **1.84 m wide, its middle 1.50 m right** (its right face within 0.1-0.2 m of the declared one; the left comes in 3.1 m, one lane) |
+| between the noses | 13 stations s 1087.5-1117.5, no terracotta | **no median**, noses at s 1085 and s 1120 |
+| tapers | s 982.5-1010 and s 1192.5-1212.5 | linear to the declared band; the second lies under tree shadow: its ends are measured, the line between is **[inferred]** |
+
+By count each strip's width holds to about +-0.15 m and its middle to about +-0.12 m; what the method does on a strip
+narrower than the photo resolves, beyond that, is not measured. The lidar's ground returns across the median would
+measure the faces directly; the lidar is on the G10 and was not read. **The centre line through the crossing: none**
+(source: the photo; the centre reads no yellower than the asphalt beside it, at most 5.5 levels over it).
+
+### What was built
+
+1. **The data** (`fix_mg_median.py` + `mg_median_correction.json`, the MD7 precedent; idempotent, a further run leaves
+   all four files byte-identical). Piece C's rows over s 982.5-1212.5 take the fit (91 change; 13 lose their median).
+   **MD13 now ends at s 1085; a new MD13b runs from s 1120**, so no other median's id moves (722 ring stations as they
+   were, 80 moved, 13 gone). `north_mission_gorge`'s island and paint are `tools/expansion_pieces.decorate`'s own output
+   for piece C alone (decorate reproduces Mission Gorge's committed record exactly, so nothing rides along): 77 points
+   change, 321-397; islands on points 8-48, 63-354 and 367-741. The two centre lines decorate's rule draws where a road
+   has no median are cleared at the ten points between the noses. Lane and bike lines run on, as past every stub mouth.
+2. **The island's rule, once** (`tools/median_island.py`). The draft tool `tools/author_median_blend.py` builds every
+   island at once and never runs again on this chain. Its ring, deck, beam and post rule was lifted, line for line, into
+   one module both it and the new step call. **The draft tool's output is byte-identical**: run against a stand-in bpy,
+   what it hands to Blender matches the checksums taken before the lift, on the 0.20.4 fixture (a872da96...) and on the
+   same fixture with a street-only span cutting an island (a3ec2944...); `tests/tools/test_median_island_rule.py`.
+3. **The scene** (`tools/author_median_rebuild_blend.py`, author step `median_rebuild`, opt-in `route.median_rebuild`,
+   between `college_split` and `median_tops`; `author_median_rebuild()` in `tools/ship_track.sh`). The Mac's rule: it
+   must refuse unless the island it removes is exactly rows 63-741 as the committed blend holds them. It does more than
+   count: from the record's data the rule gives every vertex the draft built, and each part must be in the scene as ONE
+   loose part of exactly that many vertices, every vertex within 2 mm (the weld's own tolerance) of where the rule puts
+   it. Then the old island goes and the corrected data's islands are built by the same rule, their changed paint by the
+   assembler's own function (`ribbon.connector_markings`, as `tools/weld_mouths_blend.py` rebuilds it). The scene is
+   stamped; a second run does nothing; a stamp of other data is fatal.
+4. **The plants** (`mg_plants_data.py` -> `mg_median.median_spots.json`; `tools/make_treefx.py` now reads
+   `median_spots.files` beside `file`). 39 spots stand on the changed stretch: 18 lie on the new deck and stay; **21
+   are dropped** (6 between the noses, 14 on pavement beside the island, 1 on a strip's curb ring); none is moved. Every
+   dropped spot is bare on the lidar (0.04-0.25 m, under its 0.3 m floor), and the script refuses to drop one the
+   lidar saw.
+5. **`median_tops` is unchanged.** The new decks go where the old one lay, so the tops step finds them in its own
+   object and moves them across; its "half moved" refusal never has to become a move. `route.median_tops.paver` lists
+   the three islands by their new rows.
+
+### The corridor (`tools/barrier_bands.py`, not changed)
+
+Nothing had to be declared. In a closure run the lane is sealed by the K-rail closure itself, one continuous strip, and
+it runs straight through the gap. On the corrected data: exit 0, every self-gate, all four planned no_routes PASS. The
+tool records the gap as one new opening, lap v1065-1076, and those 12 vertices go from zone "island" to "closure";
+boxes, closure runs and whole are identical; the five noses are unchanged and still valid (v718 and v1451 are still the
+first and last vertex of an authored island run). north_cw's closure moves on 77 vertices, at most 0.349 m (v1056);
+north_acw's on 166, at most 0.954 m (v1052), following the island's left face in.
+
+### Measured on a scratch workshop, through the chain's own commands
+
+`run_full.ps1` then `run_gates.ps1` (street, race_cw, north_cw), a workshop seeded as the chain seeds one, Blender 4.2
+below normal while the PC rehearsed. Pictures: `mg_median/crossing_before_after.png` (the photo, before, after).
+
+| | item 1 on scratch | item 1b on scratch |
+|---|---|---|
+| `median_rebuild` | not there | the old island found whole: curb 4,074 v (CURB), deck 1,358 (`1LAWN_median`), beam 2,692 + 224 posts (GUARDRAIL), 74 + 156 paint strips; built: curb 1,752 + 2,250, deck 584 + 750, beams 1,144 + 1,476, 218 posts, 75 + 130 strips; new deck 0.177-0.196 m over the road; the curb's base -0.029..-0.009 m against the road, the old island's own range |
+| `median_tops` | 2 tops across; paved 1,440 v; 2,123 rows | 3 tops across; 12 grass islands (2,842 v), 3 paved (1,416 v); 2,111 rows checked, 0 without a top |
+| signs / verify_race G | 29 posts; 21,484 plants | 29 posts, the same; 21,463 plants (the 21 dropped), 0 in a lane or a wall on all three laps |
+| the prep's conform | 79,062 / 203,540 / 53,792 | the same three numbers |
+| the thinning / the walk's seat | 540,045 vertices / 3,202 lips | 540,042 / 3,201 (below) |
+| kn5_ground_check, street / race_cw / north_cw | 0 cells; max +0.313; 43 of 10,900 | the same on all three |
+| street drive_test / audit | PASS 10 drops, 44 far / CLEAN, F 0 of 101,834 | PASS 10 drops, 44 far / CLEAN, F 0 of 101,693, K 0, I 0 |
+| race_cw drive_test / audit / no_route | PASS severe 7, fold 13, 0 drops / CLEAN / PASS | the same; F 0 of 109,497; leak 0, 138.2 k m2 |
+| north_cw drive_test / audit / no_route | PASS severe 5, fold 12, 0 drops, 34 far / CLEAN / PASS, 88.4 k m2 | PASS severe 5, fold 12, 0 drops, 34 far / CLEAN, F 0 of 107,923, K 0, W 0 / PASS, leak 0, 0 of 325 probes, 88.5 k m2 |
+| the built medians | 14 islands: 1,419 grass + 704 paved rows | 15 islands: 1,419 grass + **692 paved** (MD11 25, MD13 292, MD13b 375), 0 asphalt |
+
+- **Three ground vertices and one lip.** The thinning keeps 540,042 ground vertices (item 1: 540,045; 0.20.5:
+  540,064) and the walk's seat lowers 3,201 lips (3,202). The thinning reads its distances to the pavement's own
+  vertices, and the island's curb is pavement; I have not traced the one lip. Every gate reads as before.
+- **What stands on the paved islands:** still only their own barrier (`1WALL_guard`); where a vertex of it stands where
+  it did, it stands at the same height.
+- **Not run on scratch:** race_acw and north_acw, the whole of verify_kn5, the AI lines, TreeFX, the track folder.
+
+### For the rehearsal
+
+- As item 1: the engine copy must carry the snapshot's `scripts/ac/pbr.py`.
+- On the first build from the committed blend `median_rebuild` prints the old island as found and saves;
+  `median_tops` then prints `"from_one_top_object_to_the_other": 3`. A second run of either does nothing.
+- Against 0.20.5 the road kn5 should differ, beyond item 1's list, in `1KERB_sidewalk_*` (the island's curb),
+  `1WALL_guard`, MARKINGS and YLINE along Mission Gorge points 321-397, the trees (21 fewer), and the north layouts'
+  closures (`1WALL_race_close_ncw_*` / `_nacw_*` on Mission Gorge) and AI lines, which follow the corridor.
+
+### Tests
+
+`tests/tools/test_mg_median_0099.py` (11: the fit, the rows, MD13 / MD13b, decorate's island and paint, idempotence,
+the record giving back the committed island part for part, the old paint, the refusals, the plants, the wiring) and
+`tests/tools/test_median_island_rule.py` (8: the draft tool's output against its checksums, the rule on small cases).
+The step-order tests follow (`median_rebuild` second). `tests/tools/test_author_expansion.py` (the plan's generator
+reproduces the committed intermediate) learns this correction as it knows Princess View's: the generator builds the
+record's BEFORE rows and one island; the file holds the AFTER rows, MD13 and MD13b, and 722 ring stations outside the
+stretch that are the generator's own points. On the PC the full run read 1,699 pass with that one test still failing
+(it was not yet taught); it passes now, run with the files around it (140 pass). The other 11 failures and the 10
+files that do not load are the same set as before item 1b, all this machine's own (no numpy, the live engine-july).
+The full suite was not run again on the PC after that one test changed.
+
+### Shared files touched
+
+`tools/author_median_blend.py` (now builds from `tools/median_island.py`; output byte-identical), `tools/ship_track.sh`
+(one new author function), `tools/make_treefx.py` (`median_spots.files`), `source/college_r2/scratch/run_full.ps1`.
+`data/expansion.north.json`, `data/median_bands.json`, `data/connectors.local.json` (Mission Gorge's records only).
+
+### Needs Kevin
+
+Nothing to decide. On the next drive, Mission Gorge at Margerum Avenue: the median stops for the crossing and is a
+narrow strip beside the turn lanes, as on the photo. The paint inside the crossing is plain lane dashes with no
+crosswalks or stop lines (none are measured).

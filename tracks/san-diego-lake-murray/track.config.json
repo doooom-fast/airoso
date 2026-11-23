@@ -191,15 +191,22 @@
         1476
       ]
     },
+    "median_rebuild": {
+      "_doc": "ledger 0099 round 3, item 1b (the Mac 2026-11-23): Mission Gorge Rd's long median island was declared, and built, unbroken across the real Margerum Avenue / Mission Vista Drive crossing. source/expansion/mg_median/fix_mg_median.py corrected its data from the photo (no median between the two noses, a strip about 1.9 m wide beside each turn pocket). Lake Murray never runs its draft again, so this opt-in key of the chain's author step median_rebuild (tools/author_median_rebuild_blend.py) makes the scene say the same: the island of rows was_rows is found in the scene exactly as the record's data built it (or the step refuses), taken out, and the islands the corrected data holds on those rows are built by the island's own rule (tools/median_island.py), their changed paint by the assembler's own function. Runs before median_tops, which gives the new decks their object. Absent = no-op.",
+      "line": "north_mission_gorge",
+      "was_rows": [63, 741],
+      "record": "source/expansion/mg_median/mg_median_correction.json"
+    },
     "median_tops": {
       "_doc": "ledger 0055, 'Known defect of the current build' (the Mac 2026-11-23, option (a)): every raised median showed the road's asphalt between its curbs, because its grass top was part of TERRAIN and the prep sets every 1GRASS vertex with pavement under it to the deck less 0.02 m (2,486 of 2,486 island rows on 0.20.3). Opt-in key of the chain's author step median_tops (tools/author_median_tops_blend.py): every island's top is moved, face for face, out of TERRAIN into this object, which the prep does not pin. The name is the surface and the material: 1LAWN is the engine table's other physical turf row (the same grass textures this track's ground wears); lawn_as_grass gives its surface key GRASS's own values. tools/make_treefx.py seats the median plants on it. Absent = no-op.",
       "object": "1LAWN_median",
       "paver": {
-        "_doc": "ledger 0099 round 3, item 1 (the Mac 2026-11-23): Mission Gorge Rd's raised median is terracotta pavers, not grass (the plan's MD11 and MD13, type 'terracotta'). NAIP 2022 shows the salmon paving along MD13 (kept pixels R - G +13 to +27 in 50 m bins, no stretch planted end to end: source/expansion/mg_median/). The islands listed here, by line and first / last row as data/median_bands.json builds them, get a hard top in their own object (tools/author_median_tops_blend.py). The name's surface key is KERB, the surface every curb and sidewalk of the track has, so no value is invented: a car on it hears the kerb and feels its rumble (kerb_ff_effect), as on a sidewalk. Material row 1KERB_PAVER (scripts/ac/pbr.py), toned by texture_overrides. The plants keep their measured places and stand on the top (tools/make_treefx.py). MD11 (rows 8-48) is narrower than the photo's colour resolution: terracotta as the plan declares, its tone [inferred from MD13]. Known, and not changed by this item: the island of rows 63-741 runs across the real Margerum Avenue / Mission Vista Drive intersection (piece C s 1087-1120) and is about twice the real width beside its two turn pockets (item 1b of the same round).",
+        "_doc": "ledger 0099 round 3, item 1 (the Mac 2026-11-23): Mission Gorge Rd's raised median is terracotta pavers, not grass (the plan's MD11 and MD13, type 'terracotta'). NAIP 2022 shows the salmon paving along MD13 (kept pixels R - G +13 to +27 in 50 m bins, no stretch planted end to end: source/expansion/mg_median/). The islands listed here, by line and first / last row as data/median_bands.json builds them, get a hard top in their own object (tools/author_median_tops_blend.py). The name's surface key is KERB, the surface every curb and sidewalk of the track has, so no value is invented: a car on it hears the kerb and feels its rumble (kerb_ff_effect), as on a sidewalk. Material row 1KERB_PAVER (scripts/ac/pbr.py), toned by texture_overrides. The plants keep their measured places and stand on the top (tools/make_treefx.py). MD11 (rows 8-48) is narrower than the photo's colour resolution: terracotta as the plan declares, its tone [inferred from MD13]. Item 1b of the same round (source/expansion/mg_median/fix_mg_median.py, route.median_rebuild): the long island was declared, and built, unbroken across the real Margerum Avenue / Mission Vista Drive crossing; it is two islands now, rows 63-354 (MD13) and 367-741 (MD13b), with no median between their noses and a strip about 1.9 m wide beside each turn pocket.",
         "object": "1KERB_PAVER_median",
         "islands": [
           {"line": "north_mission_gorge", "rows": [8, 48], "plan": "MD11"},
-          {"line": "north_mission_gorge", "rows": [63, 741], "plan": "MD13"}
+          {"line": "north_mission_gorge", "rows": [63, 354], "plan": "MD13"},
+          {"line": "north_mission_gorge", "rows": [367, 741], "plan": "MD13b"}
         ]
       }
     }
@@ -1326,7 +1333,9 @@
       ],
       "median_spots": {
         "_doc": "ledger 0055 round 2 (the College split), tools/make_treefx.py: median_planting spots of data/scatter_positions.json by index, in a file. drop = not planted (on pavement since the split, or a bare spot on the bank, which is planted from the lidar's measured tops, or a measured spot on the bank's curb ring whose own top is planted in its place); foot_y = planted where it is, its foot on the bank's top. Written by source/college_r2/college_plants_data.py.",
-        "file": "source/college_r2/college_plants.median_spots.json"
+        "file": "source/college_r2/college_plants.median_spots.json",
+        "_files_doc": "ledger 0099 round 3, item 1b: further lists, each in a file of its own, read after `file` (tools/make_treefx.py). source/expansion/mg_median/mg_median.median_spots.json drops the 21 spots that stand on pavement or on a strip's curb ring since Mission Gorge Rd's island was corrected (every one bare on the lidar); written by source/expansion/mg_median/mg_plants_data.py.",
+        "files": ["source/expansion/mg_median/mg_median.median_spots.json"]
       },
       "lidar_plants": {
         "_doc": "ledger 0055 round 2 (the College split), tools/make_treefx.py scenery.treefx.lidar_plants: the plants the 2024 lidar measured on the bank between College's two roads (source/college_r2/college_bank_tops.g10.json, the G10's job lm-college-bank-20261123), each where it stands at its own height and crown. The list is written by source/college_r2/college_plants_data.py, which leaves out a top that is no plant, one not on the bank's grass top as built, one within 2.0 m of a kept measured median spot (it IS that plant) and a tree the planner already stands within its crown radius. The lidar cannot tell species: a shrub takes the median's bush mix, a tree Lake Murray's `trees` mix.",

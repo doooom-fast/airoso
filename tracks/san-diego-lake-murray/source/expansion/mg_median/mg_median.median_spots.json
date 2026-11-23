@@ -1,0 +1,348 @@
+{
+ "_doc": "ledger 0099 round 3, item 1b (Mission Gorge Rd's island corrected), tools/make_treefx.py scenery.treefx.median_spots: median_planting spots of data/scatter_positions.json by index. drop = not planted: the spot stands on pavement, or on a strip's curb ring, since the island was corrected (no median between the two noses, a narrow strip beside each turn pocket). Every one is bare on the lidar. No spot is moved; the spots kept stand on the new deck where they were. Written by source/expansion/mg_median/mg_plants_data.py.",
+ "line": "north_mission_gorge",
+ "points": [
+  321,
+  397
+ ],
+ "drop": [
+  {
+   "index": 891,
+   "x": -2062.905,
+   "z": 2299.394,
+   "point": 331,
+   "lateral_m": -0.77,
+   "half_m": 0.98,
+   "where": "the strip's curb ring",
+   "why": "bare on the lidar (0.19 m); stands on the strip's curb ring since the island was corrected"
+  },
+  {
+   "index": 893,
+   "x": -2054.441,
+   "z": 2308.06,
+   "point": 335,
+   "lateral_m": 0.98,
+   "half_m": 0.98,
+   "where": "pavement beside the island",
+   "why": "bare on the lidar (0.10 m); stands on pavement beside the island since the island was corrected"
+  },
+  {
+   "index": 894,
+   "x": -2048.045,
+   "z": 2309.562,
+   "point": 337,
+   "lateral_m": -1.71,
+   "half_m": 0.98,
+   "where": "pavement beside the island",
+   "why": "bare on the lidar (0.18 m); stands on pavement beside the island since the island was corrected"
+  },
+  {
+   "index": 896,
+   "x": -2038.414,
+   "z": 2316.698,
+   "point": 341,
+   "lateral_m": -1.89,
+   "half_m": 0.98,
+   "where": "pavement beside the island",
+   "why": "bare on the lidar (0.17 m); stands on pavement beside the island since the island was corrected"
+  },
+  {
+   "index": 899,
+   "x": -2024.313,
+   "z": 2327.853,
+   "point": 347,
+   "lateral_m": -1.59,
+   "half_m": 0.98,
+   "where": "pavement beside the island",
+   "why": "bare on the lidar (0.25 m); stands on pavement beside the island since the island was corrected"
+  },
+  {
+   "index": 902,
+   "x": -2011.395,
+   "z": 2340.43,
+   "point": 353,
+   "lateral_m": 0.53,
+   "half_m": 0.49,
+   "where": "pavement beside the island",
+   "why": "bare on the lidar (0.19 m); stands on pavement beside the island since the island was corrected"
+  },
+  {
+   "index": 903,
+   "x": -2006.591,
+   "z": 2343.799,
+   "point": 355,
+   "lateral_m": 0.76,
+   "half_m": 0.0,
+   "where": "no median: between the two noses",
+   "why": "bare on the lidar (0.14 m); stands on no median since the island was corrected"
+  },
+  {
+   "index": 904,
+   "x": -2002.324,
+   "z": 2347.967,
+   "point": 357,
+   "lateral_m": 1.24,
+   "half_m": 0.0,
+   "where": "no median: between the two noses",
+   "why": "bare on the lidar (0.07 m); stands on no median since the island was corrected"
+  },
+  {
+   "index": 905,
+   "x": -1996.502,
+   "z": 2350.192,
+   "point": 359,
+   "lateral_m": -0.79,
+   "half_m": 0.0,
+   "where": "no median: between the two noses",
+   "why": "bare on the lidar (0.05 m); stands on no median since the island was corrected"
+  },
+  {
+   "index": 906,
+   "x": -1992.612,
+   "z": 2354.662,
+   "point": 361,
+   "lateral_m": 0.09,
+   "half_m": 0.0,
+   "where": "no median: between the two noses",
+   "why": "bare on the lidar (0.09 m); stands on no median since the island was corrected"
+  },
+  {
+   "index": 907,
+   "x": -1988.225,
+   "z": 2358.678,
+   "point": 363,
+   "lateral_m": 0.25,
+   "half_m": 0.0,
+   "where": "no median: between the two noses",
+   "why": "bare on the lidar (0.06 m); stands on no median since the island was corrected"
+  },
+  {
+   "index": 908,
+   "x": -1983.779,
+   "z": 2362.618,
+   "point": 365,
+   "lateral_m": 0.22,
+   "half_m": 0.0,
+   "where": "no median: between the two noses",
+   "why": "bare on the lidar (0.04 m); stands on no median since the island was corrected"
+  },
+  {
+   "index": 909,
+   "x": -1980.441,
+   "z": 2367.354,
+   "point": 367,
+   "lateral_m": 2.86,
+   "half_m": 0.25,
+   "where": "pavement beside the island",
+   "why": "bare on the lidar (0.05 m); stands on pavement beside the island since the island was corrected"
+  },
+  {
+   "index": 910,
+   "x": -1975.564,
+   "z": 2370.365,
+   "point": 369,
+   "lateral_m": 1.62,
+   "half_m": 0.7,
+   "where": "pavement beside the island",
+   "why": "bare on the lidar (0.05 m); stands on pavement beside the island since the island was corrected"
+  },
+  {
+   "index": 911,
+   "x": -1971.447,
+   "z": 2374.577,
+   "point": 371,
+   "lateral_m": 1.55,
+   "half_m": 0.92,
+   "where": "pavement beside the island",
+   "why": "bare on the lidar (0.06 m); stands on pavement beside the island since the island was corrected"
+  },
+  {
+   "index": 912,
+   "x": -1968.168,
+   "z": 2379.719,
+   "point": 373,
+   "lateral_m": 2.71,
+   "half_m": 0.92,
+   "where": "pavement beside the island",
+   "why": "bare on the lidar (0.04 m); stands on pavement beside the island since the island was corrected"
+  },
+  {
+   "index": 913,
+   "x": -1963.732,
+   "z": 2383.767,
+   "point": 375,
+   "lateral_m": 2.28,
+   "half_m": 0.92,
+   "where": "pavement beside the island",
+   "why": "bare on the lidar (0.06 m); stands on pavement beside the island since the island was corrected"
+  },
+  {
+   "index": 914,
+   "x": -1960.145,
+   "z": 2388.621,
+   "point": 377,
+   "lateral_m": 3.02,
+   "half_m": 0.92,
+   "where": "pavement beside the island",
+   "why": "bare on the lidar (0.07 m); stands on pavement beside the island since the island was corrected"
+  },
+  {
+   "index": 915,
+   "x": -1955.074,
+   "z": 2392.066,
+   "point": 379,
+   "lateral_m": 1.72,
+   "half_m": 0.92,
+   "where": "pavement beside the island",
+   "why": "bare on the lidar (0.07 m); stands on pavement beside the island since the island was corrected"
+  },
+  {
+   "index": 918,
+   "x": -1943.604,
+   "z": 2405.446,
+   "point": 385,
+   "lateral_m": 2.02,
+   "half_m": 0.92,
+   "where": "pavement beside the island",
+   "why": "bare on the lidar (0.05 m); stands on pavement beside the island since the island was corrected"
+  },
+  {
+   "index": 922,
+   "x": -1929.208,
+   "z": 2424.617,
+   "point": 393,
+   "lateral_m": 2.47,
+   "half_m": 1.58,
+   "where": "pavement beside the island",
+   "why": "bare on the lidar (0.07 m); stands on pavement beside the island since the island was corrected"
+  }
+ ],
+ "kept_on_the_new_deck": [
+  {
+   "index": 886,
+   "point": 321,
+   "lateral_m": 0.22,
+   "deck_half_m": 1.94,
+   "lidar_h_m": 0.1
+  },
+  {
+   "index": 887,
+   "point": 323,
+   "lateral_m": -0.9,
+   "deck_half_m": 1.67,
+   "lidar_h_m": 0.03
+  },
+  {
+   "index": 888,
+   "point": 325,
+   "lateral_m": 0.4,
+   "deck_half_m": 1.4,
+   "lidar_h_m": 2.52
+  },
+  {
+   "index": 889,
+   "point": 327,
+   "lateral_m": 1.12,
+   "deck_half_m": 1.12,
+   "lidar_h_m": 0.28
+  },
+  {
+   "index": 890,
+   "point": 329,
+   "lateral_m": 0.49,
+   "deck_half_m": 0.84,
+   "lidar_h_m": 0.22
+  },
+  {
+   "index": 892,
+   "point": 333,
+   "lateral_m": 0.66,
+   "deck_half_m": 0.76,
+   "lidar_h_m": 0.19
+  },
+  {
+   "index": 895,
+   "point": 339,
+   "lateral_m": -0.1,
+   "deck_half_m": 0.76,
+   "lidar_h_m": 0.21
+  },
+  {
+   "index": 897,
+   "point": 343,
+   "lateral_m": 0.24,
+   "deck_half_m": 0.76,
+   "lidar_h_m": 0.11
+  },
+  {
+   "index": 898,
+   "point": 345,
+   "lateral_m": 0.15,
+   "deck_half_m": 0.76,
+   "lidar_h_m": 0.23
+  },
+  {
+   "index": 900,
+   "point": 349,
+   "lateral_m": 0.6,
+   "deck_half_m": 0.76,
+   "lidar_h_m": 0.14
+  },
+  {
+   "index": 901,
+   "point": 351,
+   "lateral_m": 0.69,
+   "deck_half_m": 0.76,
+   "lidar_h_m": 0.24
+  },
+  {
+   "index": 916,
+   "point": 381,
+   "lateral_m": -0.28,
+   "deck_half_m": 0.7,
+   "lidar_h_m": 0.18
+  },
+  {
+   "index": 917,
+   "point": 383,
+   "lateral_m": 0.49,
+   "deck_half_m": 0.7,
+   "lidar_h_m": 0.2
+  },
+  {
+   "index": 919,
+   "point": 387,
+   "lateral_m": -0.15,
+   "deck_half_m": 0.7,
+   "lidar_h_m": 0.17
+  },
+  {
+   "index": 920,
+   "point": 389,
+   "lateral_m": 0.65,
+   "deck_half_m": 0.7,
+   "lidar_h_m": 0.19
+  },
+  {
+   "index": 921,
+   "point": 391,
+   "lateral_m": 0.23,
+   "deck_half_m": 0.84,
+   "lidar_h_m": 0.15
+  },
+  {
+   "index": 923,
+   "point": 395,
+   "lateral_m": 1.29,
+   "deck_half_m": 1.89,
+   "lidar_h_m": 0.06
+  },
+  {
+   "index": 924,
+   "point": 397,
+   "lateral_m": -1.48,
+   "deck_half_m": 2.43,
+   "lidar_h_m": 0.07
+  }
+ ]
+}

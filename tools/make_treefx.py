@@ -574,14 +574,20 @@ def plan(project_dir, all_species=False, verbose=False):
     # ground under it moved). Neither file is rewritten, so every other spot keeps its index and with it its model, size
     # and angle; data/scatter_positions.json and the measured heights file stay whole. Each entry carries the spot's own
     # x / z: a list written for another draft of the spots is refused, never applied to whatever stands at that index.
-    # The two lists may stand in a file of their own: {"file": "<project-relative path>"}.
+    # The two lists may stand in a file of their own: {"file": "<project-relative path>"}, and further lists in files of
+    # theirs: {"files": ["<path>", ...]} (ledger 0099 round 3: Mission Gorge's corrected island beside College's split).
     # Absent (every other track) = nothing changes.
     ms_cfg, ms_stats = tcfg.get("median_spots"), None
-    if ms_cfg and ms_cfg.get("file"):               # the lists in a file of their own ({"drop": [...], "foot_y": [...]})
-        ms_file_ = proj / ms_cfg["file"]
-        if not ms_file_.exists():
-            raise SystemExit(f"[treefx] scenery.treefx.median_spots names {ms_cfg['file']}, which {proj} lacks (the ship chain syncs it in)")
-        ms_cfg = json.loads(ms_file_.read_text(encoding="utf-8"))
+    if ms_cfg and (ms_cfg.get("file") or ms_cfg.get("files")):   # the lists in files of their own ({"drop": [...], "foot_y": [...]})
+        ms_lists_ = {"drop": list(ms_cfg.get("drop") or []), "foot_y": list(ms_cfg.get("foot_y") or [])}
+        for ms_name_ in ([ms_cfg["file"]] if ms_cfg.get("file") else []) + list(ms_cfg.get("files") or []):
+            ms_file_ = proj / ms_name_
+            if not ms_file_.exists():
+                raise SystemExit(f"[treefx] scenery.treefx.median_spots names {ms_name_}, which {proj} lacks (the ship chain syncs it in)")
+            ms_one_ = json.loads(ms_file_.read_text(encoding="utf-8"))
+            for kind_ in ms_lists_:
+                ms_lists_[kind_] += list(ms_one_.get(kind_) or [])
+        ms_cfg = ms_lists_
     if ms_cfg:
         mpos_ = pos.get("median_planting", [])
         ms_stats = {"dropped": 0, "foot_moved": 0}

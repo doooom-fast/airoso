@@ -352,7 +352,7 @@ def test_both_heads_is_lake_murrays_alone_and_wired_as_an_author_step():
     assert CFG["scenery"]["streetlights"]["light_both_heads"] is True
     au = SHIP["steps"]["author"]
     # (ledger 0055 round 2: College's own step and the medians' tops stand before it, on the scene as it ships)
-    assert au[:3] == ["college_split", "median_tops", "lamp_heads"] and au[-3:] == ["race_author", "signs", "race_verify"]   # the race steps keep their order
+    assert au[:4] == ["college_split", "median_rebuild", "median_tops", "lamp_heads"] and au[-3:] == ["race_author", "signs", "race_verify"]   # the race steps keep their order
     assert "author_lamp_heads() {" in TEXT and "tools/author_lamp_heads_blend.py" in TEXT
     assert "data/lights.heads.json" in SHIP["sync_out"]["files"]
     for p in OTHER_CONFIGS:

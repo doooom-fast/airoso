@@ -14,6 +14,38 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
+## 2026-11-23 (PC) — WIRING: a new author step, median_rebuild, that refuses unless it finds the island exactly; no threshold moved (ledger 0099 round 3, item 1b; opt-in, Lake Murray)
+
+Mission Gorge Rd's long median island was built unbroken across the real Margerum Avenue / Mission Vista Drive crossing.
+Its data is corrected at the source; Lake Murray never runs its draft again, so `tools/author_median_rebuild_blend.py`
+(author step `median_rebuild`, opt-in `route.median_rebuild`, between `college_split` and `median_tops`) re-authors that
+one island in the scene. What it checks, all fatal with nothing saved:
+
+- **The island it removes must be exactly the one recorded** (the Mac, 2026-11-23). From the record's data the island's
+  own rule gives every vertex the draft built; each part (the curb ring, the deck, the beam, every post, every paint
+  strip the correction changes) must be in the scene as ONE loose part of exactly that many vertices, every vertex
+  within TOL_M of where the rule puts it. TOL_M 2e-3 is `tools/weld_mouths_blend.py`'s LAYOUT_TOL_M, the tolerance that
+  tool holds the same meshes to; not new.
+- **After the rebuild:** every object lost exactly the old vertices and gained exactly the new; each new part is in the
+  scene as the rule made it and no old one remains; every new deck vertex stands 0.185 +- 0.06 m over the road (the
+  tops step's own DECK_OVER_M / DECK_TOL_M, copied and held equal by a test); no new curb base stands off the pavement.
+- **A scene stamped with other data** is refused; a scene stamped with this data is left alone and not saved.
+
+`tools/author_median_blend.py` (the draft tool) now builds its islands from `tools/median_island.py`, the rule lifted out
+of it line for line so the two tools cannot disagree. Its output is held byte-identical by
+`tests/tools/test_median_island_rule.py` (checksums of what it hands to Blender, taken before the lift, with and
+without a street-only span). `tools/author_median_tops_blend.py` is not changed: every refusal and number of item 1's
+entry stands. `tools/barrier_bands.py` is not changed and nothing new is declared to it: a gap inside a closure run is
+sealed by the closure itself, and the tool's own self-gates and planned no_routes pass on the corrected data.
+`tools/make_treefx.py` reads `scenery.treefx.median_spots.files` beside `file` (the same checks per entry: the index,
+the spot's own place, no index twice).
+
+**Proven** on a scratch workshop through the chain's own commands (ledger 0099, "Round 3, item 1b"): the old island
+found whole (curb 4,074 vertices, deck 1,358, beam 2,692, 224 posts, 74 + 156 paint strips) and two islands built;
+`median_tops` then moves 3 tops across (2,111 rows, 0 without a top); `kn5_ground_check` 0 double-sheet cells and max
++0.313 on street, race_cw and north_cw; street `drive_test` PASS with 10 drops, audit CLEAN (K 0, I 0); race_cw and
+north_cw `drive_test`, audit and `no_route` PASS as before (north_cw: leak 0, 0 of 325 probes).
+
 ## 2026-11-23 (PC) — WIRING: the author step median_tops knows a paved top; new refusals, no threshold moved (ledger 0099 round 3, item 1; opt-in, Lake Murray)
 
 Mission Gorge Rd's two raised islands are terracotta pavers, not grass. `tools/author_median_tops_blend.py` (author step

@@ -117,10 +117,11 @@ def test_lake_murray_tones_the_row_with_its_own_pair_and_touches_no_other_kerb()
 
 # ---- the median step ------------------------------------------------------------------------------------------------
 
-def test_the_config_lists_mission_gorges_two_islands_as_paved():
+def test_the_config_lists_mission_gorges_islands_as_paved():
     sp = MT.spec(CFG)
     assert sp == {"object": "1LAWN_median",
-                  "paver": {"object": OBJECT, "islands": [("north_mission_gorge", 8, 48), ("north_mission_gorge", 63, 741)]}}
+                  "paver": {"object": OBJECT, "islands": [("north_mission_gorge", 8, 48), ("north_mission_gorge", 63, 354),
+                                                          ("north_mission_gorge", 367, 741)]}}   # three since item 1b
     isl = MT.islands(LM)
     paved = MT.surfaces(sp, isl)
     assert sorted((isl[i]["line"], isl[i]["first"], isl[i]["last"]) for i in paved) == sp["paver"]["islands"]
@@ -227,4 +228,4 @@ def test_the_toned_pair_is_on_the_measured_tone_and_holds_two_repeats_a_side():
 def test_version_and_the_round():
     assert CFG["version"] == "0.20.6"
     doc = CFG["route"]["median_tops"]["paver"]["_doc"]
-    assert "[inferred from MD13]" in doc and "item 1b" in doc                 # what is inferred, and what this item leaves
+    assert "[inferred from MD13]" in doc and "item 1b" in doc.lower()         # what is inferred, and what item 1b did after it

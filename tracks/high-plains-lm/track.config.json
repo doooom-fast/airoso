@@ -4,7 +4,7 @@
   "name": "High Plains Raceway",
   "_name_doc": "Kevin 2026-11-07: \"Get rid of Lm Version from names, nothing should be on any other engine now\" / \"LM is the airoso engine\". 0.1.5 (2026-11-09): no \"(LM engine)\" in the display name, and the slug and install_folder are the plain high_plains. The old-engine track (tracks/high-plains) gave that slug up: its slug and folder are high_plains_v072 (S7, fleet.cli lint)",
   "slug": "high_plains",
-  "version": "0.1.10",
+  "version": "0.1.11",
   "mirror_x": false,
   "loop": true,
   "default_width_m": 12.0,
@@ -2387,9 +2387,35 @@
   },
   "layouts": [
     {
-      "id": "full",
-      "ai": "ai/full",
-      "uses_connectors": []
+      "id": "west",
+      "name": "West",
+      "kind": "race",
+      "direction": "forward",
+      "race_furniture": false,
+      "ai": "ai/west",
+      "uses_connectors": [],
+      "run": "clockwise: the 2.0 mi West course (the front straight, T1-T3, the long back straight, Bikers Berm, Niagara, Dannys Lesson, High Plains Drifter, then right through the Prairie Corkscrew's short-course link onto the front straight)",
+      "ui_description": "High Plains Raceway, Deer Trail, Colorado: the 2.0-mile West course, clockwise, on its measured line, widths (NAIP 2023, 0.3 m), 3DEP heights and lidar camber. The AI line is a generated draft, not an in-game recording.",
+      "_doc": "ledger 0097 round 3: the track's one layout until 0.1.10 (id 'full', the West course all along: OSM's Full West way is its front straight), renamed: tools/layout_dummies.validate_layouts and scripts/ac/track_folder.ui_track_json reserve 'full' (it drops the layout's name from a multi-layout track's menu entry)",
+      "map": "lap",
+      "_map_doc": "tools/make_map.py map lap: the HUD map and the CM outline draw the West lap alone (the mainline), not the north loop it never drives"
+    },
+    {
+      "id": "full_course",
+      "name": "Full",
+      "kind": "race",
+      "direction": "forward",
+      "race_furniture": false,
+      "lap": "full",
+      "ai": "ai/full_course",
+      "uses_connectors": [
+        "full_north"
+      ],
+      "run": "clockwise: the 2.55 mi Full course (the West course to the end of High Plains Drifter, straight on up To Hell On A Bobsled, round the north hairpin, down Ladder To Heaven and left onto the Prairie Corkscrew)",
+      "ui_description": "High Plains Raceway, Deer Trail, Colorado: the 2.55-mile Full course, clockwise: the West course with the north loop (To Hell On A Bobsled, the hairpin, Ladder To Heaven) off OpenStreetMap, NAIP 2023 and 3DEP. The AI line is a generated draft, not an in-game recording.",
+      "_doc": "ledger 0097 round 3 (Kevin 2026-11-22: \"Yes, add the Full layout\"): race.laps.full stitched from the West lap and the north loop (lm_intake.connectors_file); one road kn5 for both layouts (L8), its own spawn kn5 from race_start.layouts",
+      "map": "race_lap",
+      "_map_doc": "tools/make_map.py map race_lap (ledger 0097 round 3, opt-in: a layout's own data/lap.<lap>.json): the Full lap alone, not the West course's Prairie Corkscrew link it never drives"
     }
   ],
   "lighting": {
@@ -2923,7 +2949,20 @@
         "_clip_doc": "ledger 0093 round 2 (the PC's first 0.1.8 rehearsal, 2026-11-20: '[paint] FATAL: pit_out_gore line 0: no PADAPRON under (435.20, -9.11)'): the traced hatch's tip (s 189-191, +16.7 m) lies past the paddock sheet's edge (its last outline corner 4.2 m outside the PADAPRON quad, the corner before it 0.75 m inside, measured on the Mac off this config), where the build has no paving; the paint is drawn only over the built PADAPRON and the length left out is printed. The pavement past the sheet (the pit exit's merge) is not built: not measured yet"
       }
     ],
-    "_paint_doc": "ledger 0093: tools/author_paint_blend.py. The items with no surface (the line, the grid marks) drape on the built ROAD in the draft (ship.json draft paint); the pit-lane items name surface PADAPRON and drape on the pit-lane / paddock sheets after the bespoke dressing (author paint). MARKINGS_paint_* / YLINE_paint_*: visual only, engine-july's line_white / line_yellow"
+    "_paint_doc": "ledger 0093: tools/author_paint_blend.py. The items with no surface (the line, the grid marks) drape on the built ROAD in the draft (ship.json draft paint); the pit-lane items name surface PADAPRON and drape on the pit-lane / paddock sheets after the bespoke dressing (author paint). MARKINGS_paint_* / YLINE_paint_*: visual only, engine-july's line_white / line_yellow",
+    "street_junctions": {
+      "pad_arms": true,
+      "join_turn_deg": 45.0,
+      "bend_turn_deg": 135.0,
+      "_doc": "ledger 0097 round 3: only pad_arms is wanted (tools/trim_connectors.py cut_at_pads: full_north cut at the FORK pad's box edge, data/pad_arms.json for lm_pads; its other end is cut at the West lap's edge, the merge's mouth); join_turn_deg / bend_turn_deg are Sand Creek's numbers (the street-junction passes have nothing to join on one connector)"
+    },
+    "trim_host_bank": true,
+    "_trim_host_bank_doc": "ledger 0097 round 3 (Pikes Peak's, ledger 0085): the north loop's merge cut lands on the West lap's cambered deck (centreline + lateral x tan(bank), data/crossfall.lm.json: the G10 lidar camber), not its centreline carried level",
+    "weld_exact_deck": [
+      "full_north"
+    ],
+    "weld_exact_deck_lines": true,
+    "_weld_exact_deck_doc": "ledger 0097 round 3 (Pikes Peak's, ledger 0085): the merge's weld and verify_mouths read the West lap's deck off its triangles where each sample stands (its lidar camber), not its centre carried level"
   },
   "race_start": {
     "_doc": "ledger 0093 (Kevin 2026-11-18: \"for milford and high plains, we need more race track focused furniture like starting line, gridlines\"): the line, grid, pits and sectors the AC nodes stand on, placed on the prepped scene by tools/circuit_dummies_blend.py (scripts/geometry/circuit_start.py) in place of engine-july's rule set (its grid on the straightest 260 m: the south straight, s 1080; one AC_START; every node yawed from pts[0] -> pts[1], kn5 heading -0.97 at its AC_START_0). Judged in the road kn5 by scripts/ac/verify_kn5 race_start_checks",
@@ -3051,7 +3090,12 @@
       },
       "_source": "[invented]: the pit lane is a visual sheet (PADAPRON), not a road, so the 25 pit boxes stand on the racing surface between the line and the real pit exit (s 20-129), staggered like the measured grid (its column laterals and its 4.55 m stagger); as many as the grid has slots so 25 cars can be entered. They move into the pit lane when it is a drivable surface (road-geometry work)"
     },
-    "_sectors_doc": "no sectors declared: AC_TIME_1 / AC_TIME_2 divide the lap in equal thirds from the line (engine-july's rule; HPR's own timing points are not known)"
+    "_sectors_doc": "no sectors declared: AC_TIME_1 / AC_TIME_2 divide the lap in equal thirds from the line (engine-july's rule; HPR's own timing points are not known)",
+    "layouts": [
+      "west",
+      "full_course"
+    ],
+    "_layouts_doc": "ledger 0097 round 3: both layouts start at the painted line on the front straight; tools/circuit_dummies_blend.py plans the declared line, grid and pits on each layout's own line (West: the lap; Full: race.laps.full) and writes data/dummies_<id>.json for its spawn kn5, the sectors each lap's thirds (scripts/geometry/circuit_start.py layouts)"
   },
   "terrain_cell_m": 1.5,
   "corridor_refine_factor": 6,
@@ -3168,7 +3212,9 @@
         "shift_precomp": true
       }
     ],
-    "_edge_retrace_doc": "ledger 0097 round 2 (Kevin 2026-11-22: \"Rebuild at the measured widths\"): the inherited constant 12.0 m (default_width_m, the source's widths) replaced along the whole lap by the pavement edge measured off NAIP 2023 at 0.3 m (source/edges/measure_widths.py -> edge_evidence.json: the outer side of the white edge lines, the asphalt's end, the kerbs' paint; every reading drawn over the straightened road in widths_strips_2023_030.jpg). tools/edge_retrace.py mode \"measured\" (opt-in): each side moves in OR out to its measured edge, the line by (left - right) / 2, the width left + right; rows the photo does not read (the mouths of the north course, the short-course link and the pit-in lane; outliers) are interpolated within gap_m 60 m. erode_m 3 / smooth_m 4 [invented]: against the readings p5 / p95 -0.23 / +0.41 m (left), -0.24 / +0.28 m (right) on the Mac's dry run; the tool's 10 / 8 left -0.47 / +0.80 m. Never onto the pit wall or paddock_row_5 (rails); shift_precomp so the assembler builds the measured move"
+    "_edge_retrace_doc": "ledger 0097 round 2 (Kevin 2026-11-22: \"Rebuild at the measured widths\"): the inherited constant 12.0 m (default_width_m, the source's widths) replaced along the whole lap by the pavement edge measured off NAIP 2023 at 0.3 m (source/edges/measure_widths.py -> edge_evidence.json: the outer side of the white edge lines, the asphalt's end, the kerbs' paint; every reading drawn over the straightened road in widths_strips_2023_030.jpg). tools/edge_retrace.py mode \"measured\" (opt-in): each side moves in OR out to its measured edge, the line by (left - right) / 2, the width left + right; rows the photo does not read (the mouths of the north course, the short-course link and the pit-in lane; outliers) are interpolated within gap_m 60 m. erode_m 3 / smooth_m 4 [invented]: against the readings p5 / p95 -0.23 / +0.41 m (left), -0.24 / +0.28 m (right) on the Mac's dry run; the tool's 10 / 8 left -0.47 / +0.80 m. Never onto the pit wall or paddock_row_5 (rails); shift_precomp so the assembler builds the measured move",
+    "connectors_file": "source/full/connectors.full.json",
+    "_connectors_file_doc": "ledger 0097 round 3: the Full layout's north loop, To Hell On A Bobsled + Ladder To Heaven, 1,001 m, as the port's own connector full_north (source/full/make_connectors.py from measure_north.py's north_loop.json): OSM's line (the 2026-10-28 snapshot) moved onto the pavement NAIP 2023 reads, its edges read where both show (810 m: the 0.3 m crop, the z18 0.46 m photo and, round 3, the z18 tiles over the hairpin) and CARRIED [invented] over 192 m (the fork's and merge's mouths and 165 m of verge with no edge line on one side: each edge interpolated between the nearest rows read on both sides), both edges through a 10 m mean and the centre line through a 4 m Gaussian [invented smoothing: OSM's 20-25 m node spacing], its heights 3DEP beside the line (corridor_3dep_north.json); painted with the mainline's edge lines. tools/trim_connectors.py cuts it at the FORK pad's box edge (lm_pads; route.street_junctions.pad_arms) and at the West lap's edge at the merge (46.1 deg), where tools/weld_mouths_blend.py welds the mouth"
   },
   "terrain": {
     "terrain_band_m": 22.0,
@@ -3197,7 +3243,7 @@
     },
     "lines": [
       {
-        "layout": "full",
+        "layout": "west",
         "ai": "source/road_wear/fast_lane.full.ai",
         "_doc": "a line Kevin records with CSP's AI recorder in this layout, copied here: the wear then follows where the car really ran. Absent (as for 0.1.7) = the minimum-curvature line inside the built edges [model]: the committed ai/full/fast_lane.ai is the generated centreline draft (ai/full/ai_draft.json: 'GENERATED DRAFT from the built centreline', offset_max 0.238 m), not a racing line"
       }
@@ -3211,5 +3257,343 @@
       "1ROAD": 0.5
     },
     "_detail_highpass_doc": "ledger 0095: the road's detail diffuse loses what is coarser than 0.5 m (scripts/aerial/road_wear.detail_highpass) before the / m0, so its far mips go flat and the NAIP macro alone carries the large scale; the normal is kept. The 4 m repeat on this track's renders (Mac 2026-11-18, 20-50 / 50-100 / 100-200 m): 3.32 / 2.16 / 1.11 % (the borrowed tile) -> 0.70 / 0.33 / 0.16 (owned) -> 0.29 / 0.10 / 0.06 (owned + 0.5 m) [measured]; the band it removes is 0.10 % of the tile's variance, so the close look is unchanged [measured]. 0.5 m [invented] (a 1 m cut gave about half the gain). The edge strip (1KERB_SIDEWALK) keeps its detail as it is (its repeat not measured)"
+  },
+  "_layouts_doc": "ledger 0097 round 3: two layouts on one road kn5 (fleet/LAWS.md L8). West is 0.1.10's single layout under a new id; Full drives the north loop between the fork (High Plains Drifter's end, OSM node 1454637759) and the merge (Prairie Corkscrew's vertex 7, node 1454637805). Each loads the road kn5 and its own nodes-only spawn kn5 (models_<id>.ini)",
+  "race": {
+    "laps": {
+      "full": {
+        "pieces": [
+          {
+            "line": "MAINLINE",
+            "from": 0,
+            "to": 900
+          },
+          {
+            "line": "full_north#0#0",
+            "from": 0,
+            "to": 478,
+            "via": [
+              [
+                -173.52,
+                65.72,
+                12.08
+              ],
+              [
+                -174.16,
+                67.63,
+                12.03
+              ],
+              [
+                -174.81,
+                69.54,
+                11.99
+              ],
+              [
+                -175.48,
+                71.44,
+                11.94
+              ],
+              [
+                -176.16,
+                73.33,
+                11.89
+              ],
+              [
+                -176.86,
+                75.23,
+                11.85
+              ],
+              [
+                -177.57,
+                77.11,
+                11.8
+              ],
+              [
+                -178.29,
+                79.0,
+                11.76
+              ],
+              [
+                -179.02,
+                80.88,
+                11.71
+              ],
+              [
+                -179.76,
+                82.76,
+                11.66
+              ],
+              [
+                -180.5,
+                84.63,
+                11.62
+              ],
+              [
+                -181.25,
+                86.5,
+                11.57
+              ],
+              [
+                -182.0,
+                88.38,
+                11.52
+              ],
+              [
+                -182.75,
+                90.25,
+                11.48
+              ],
+              [
+                -183.51,
+                92.12,
+                11.43
+              ],
+              [
+                -184.26,
+                93.99,
+                11.38
+              ],
+              [
+                -185.02,
+                95.86,
+                11.34
+              ],
+              [
+                -185.77,
+                97.74,
+                11.29
+              ],
+              [
+                -186.51,
+                99.61,
+                11.25
+              ],
+              [
+                -187.25,
+                101.49,
+                11.2
+              ],
+              [
+                -187.98,
+                103.37,
+                11.15
+              ],
+              [
+                -188.7,
+                105.25,
+                11.11
+              ],
+              [
+                -189.42,
+                107.14,
+                11.06
+              ],
+              [
+                -190.12,
+                109.03,
+                11.01
+              ],
+              [
+                -190.81,
+                110.91,
+                10.97
+              ],
+              [
+                -191.5,
+                112.78,
+                10.92
+              ],
+              [
+                -192.2,
+                114.66,
+                10.88
+              ],
+              [
+                -192.9,
+                116.53,
+                10.86
+              ]
+            ]
+          },
+          {
+            "line": "MAINLINE",
+            "from": 951,
+            "to": 1072,
+            "via": [
+              [
+                -90.6,
+                147.68,
+                11.3
+              ],
+              [
+                -89.36,
+                145.92,
+                11.31
+              ],
+              [
+                -87.95,
+                144.26,
+                11.31
+              ],
+              [
+                -86.4,
+                142.74,
+                11.32
+              ],
+              [
+                -84.72,
+                141.37,
+                11.32
+              ],
+              [
+                -82.92,
+                140.2,
+                11.33
+              ],
+              [
+                -81.02,
+                139.26,
+                11.33
+              ]
+            ]
+          }
+        ],
+        "_doc": "ledger 0097 round 3: the Full lap (scripts/geometry/race_lap.py, the author step race_laps -> data/lap.full.json): the West lap from its v0 (s 0, 12 m before the painted line) to v900 on High Plains Drifter, across the FORK pad, the north loop full_north#0#0 (the connector from the FORK pad's box edge) to its v478, through the welded merge mouth, then the West lap from v951 on the Prairie Corkscrew round to its last vertex",
+        "_via_doc": "[E, N, width] (race_lap via): FORK (across the pad) = one cubic (Hermite, tangent length = the chord) from West v900 on its own tangent onto the north loop's own line (north_loop.json) at its point 13, then that line to the box edge (48.4 m chord; the line's tightest radius 203.1 m, the north loop's own); MERGE (through the welded mouth) = one cubic from the connector's v478 onto West v951 on its own tangent (16.7 m chord; tightest radius 16.7 m: the widest cubic whose lane, 0.3 m in from each side, stays on the two ribbons and the T13 kerb, 1KERB_circuit_8). The cubics' shape is authored, not measured; the widths linear between the ends'"
+      }
+    }
+  },
+  "lm_pads": {
+    "_doc": "ledger 0097 round 3: the Full layout's FORK with the West lap as one measured pad (tools/lm_pads_blend.py, Pikes Peak's and Sand Creek's): a fast Y (High Plains Drifter runs straight on into To Hell On A Bobsled while the West course bends right; the two roads' outer edges are one line there, so no lateral line of the connector crosses the West lap's edge and the mitre weld cannot build it). The West lap cut at two of its own rows, one deck out to the outline source/full/measure_pads.py read off NAIP 2023 0.3 m (measure_widths' ground-ness: source/pads/FORK.json, FORK.png), the north loop welded in as an arm at the box edge (arms streets: route.street_junctions.pad_arms cuts it there). The MERGE is a welded mouth (46.1 deg, tools/weld_mouths_blend.py): its inside corner is the traced T13 kerb (1KERB_circuit_8, ledger 0081), which a pad's deck would carry and verify_pads P5 refuses (no curb over a pad's pavement); welded, the kerb stays on the West lap's edge, its west end re-traced onto the paint that wraps the corner (source/edges/retrace_kerb_2843.py, round 2's rule)",
+    "source": "source/pads",
+    "pads": [
+      {
+        "id": "FORK",
+        "node": 907,
+        "cuts": [
+          896,
+          922
+        ],
+        "half_m": 55.0,
+        "box": [
+          [
+            -157.26,
+            34.33
+          ],
+          [
+            -158.28,
+            48.64
+          ],
+          [
+            -161.59,
+            61.25
+          ],
+          [
+            -164.53,
+            72.31
+          ],
+          [
+            -165.85,
+            81.5
+          ],
+          [
+            -165.46,
+            87.71
+          ],
+          [
+            -162.19,
+            97.09
+          ],
+          [
+            -157.14,
+            107.06
+          ],
+          [
+            -151.19,
+            115.56
+          ],
+          [
+            -144.11,
+            122.61
+          ],
+          [
+            -137.97,
+            126.91
+          ],
+          [
+            -147.76,
+            143.48
+          ],
+          [
+            -169.81,
+            126.64
+          ],
+          [
+            -177.66,
+            128.04
+          ],
+          [
+            -185.51,
+            129.44
+          ],
+          [
+            -184.78,
+            121.63
+          ],
+          [
+            -202.44,
+            115.18
+          ],
+          [
+            -198.45,
+            103.99
+          ],
+          [
+            -194.2,
+            92.63
+          ],
+          [
+            -190.08,
+            81.36
+          ],
+          [
+            -182.5,
+            60.75
+          ],
+          [
+            -177.85,
+            47.12
+          ],
+          [
+            -176.1,
+            35.51
+          ]
+        ],
+        "arms": [
+          {
+            "connector": "full_north",
+            "cut": [
+              [
+                -184.78,
+                121.63
+              ],
+              [
+                -202.44,
+                115.18
+              ]
+            ]
+          }
+        ],
+        "_by": "the fork (OSM node 1454637759, West v907): in-cut v896 (s 2,682) before High Plains Drifter's flare, out-cut v922 (s 2,759) past the gore's tip; the arm across To Hell On A Bobsled 36 m up it (its v18); every other box vertex 4-6 m out on the prairie or the gore island [authored, by eye on NAIP 2023 0.3 m]"
+      }
+    ],
+    "arms": "streets",
+    "close_arms": false,
+    "_close_arms_doc": "no road the build does not complete meets the fork: every box edge the pavement crosses is the lap's or the arm's, so no K-rail",
+    "deck": {
+      "fill": "membrane",
+      "lane_lip": "route.edge"
+    },
+    "_deck_doc": "fill membrane (tools/lm_pads_blend.py, opt-in, ledger 0097 round 3): no lidar over either junction is on disk, so nothing measures the paving's height: the deck keeps the West lap's own ribbon surface (its 3DEP profile and lidar camber) and the arm's row exactly, and the paving between them (the fork's flare, the merge's bellmouth and inside corner, the arm's approach) is the smoothest surface that meets both [invented fill]. lane_lip route.edge: the lap's 0.3 m flat lip stays paved between the cuts (Sand Creek's)"
   }
 }

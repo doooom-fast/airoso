@@ -61,7 +61,7 @@ def test_high_plains_ship_json_paints_twice_and_syncs_the_ports_own_files():
     spec = json.loads((HP / "ship.json").read_text(encoding="utf-8"))
     d, a = spec["steps"]["draft"], spec["steps"]["author"]
     assert d[-1] == "paint" and d.index("kerbs") < d.index("paint")
-    assert a == ["bespoke", "paint"]
+    assert a == ["race_laps", "bespoke", "paint"]              # ledger 0097 round 3: the Full lap first
     cfg = _cfg()
     files = [b["file"] for b in cfg["scenery"]["bespoke"]["blocks"]]
     assert files == ["source/bespoke/buildings.race.json", "source/bespoke/posts.race.json"]

@@ -733,6 +733,40 @@
    ],
    "edge_lonlat": [
     [
+     -103.89844622,
+     39.73628602
+    ],
+    [
+     -103.89842461,
+     39.73626873
+    ],
+    [
+     -103.89840451,
+     39.73625542
+    ],
+    [
+     -103.89838052,
+     39.73625069
+    ],
+    [
+     -103.89835749,
+     39.73624604
+    ],
+    [
+     -103.89833638,
+     39.73623711
+    ],
+    [
+     -103.89831428,
+     39.7362323
+    ],
+    [
+     -103.89830296,
+     39.73623009
+    ]
+   ],
+   "edge_lonlat_was": [
+    [
      -103.89845231,
      39.73626354
     ],
@@ -764,7 +798,8 @@
      -103.89830139,
      39.73623489
     ]
-   ]
+   ],
+   "_retrace": "ledger 0097 round 3 (retrace_kerb_2843.py, round 2's rule): each edge point moved outward by its paint's centre less the band's (-0.10 m), where that is over 0.3 m (NAIP 2023 0.3 m); per point: v0 paint [1.3, 3.6] moved +2.55; v1 paint [0.0, 1.9] moved +1.05; v2 paint [-0.9, 1.1] moved +0.00; v3 paint [-1.3, 0.5] moved +0.00; v4 paint [-1.4, 0.6] moved +0.00; v5 paint [-1.5, 0.3] moved -0.50; v6 paint [-1.6, 0.3] moved -0.55; v7 paint [-1.4, 0.1] moved -0.55"
   },
   {
    "side": "left",
@@ -1782,5 +1817,5 @@
    "ends": "round 3: the yellow-only ends read by eye on 24 px/m end zooms of NAIP 2023 0.3 m (kerbs_stripe_ends_2023_030.jpg), where the yellow clearly separates from the dry grass; in_m / out_m stay the blue's (kerb_spans.py)"
   }
  ],
- "_doc_lm": "High Plains' port copy of tracks/high-plains/source/edges/kerbs.json (route.kerbs_file, synced in by ship.json): the same 20 runs, R s 2,673 re-traced onto its paint (retrace_stripe_2673.py; ledger 0097 round 2)"
+ "_doc_lm": "High Plains' port copy of tracks/high-plains/source/edges/kerbs.json (route.kerbs_file, synced in by ship.json): the same 20 runs, R s 2,673 re-traced onto its paint (retrace_stripe_2673.py; ledger 0097 round 2) and L s 2,843, the T13 kerb, by the same rule (retrace_kerb_2843.py; round 3)"
 }

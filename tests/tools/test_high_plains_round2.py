@@ -133,11 +133,12 @@ def test_kerbs_lm_is_the_source_but_for_the_r2673_stripe():
     assert "source/edges/kerbs.lm.json" in json.loads((HP / "ship.json").read_text(encoding="utf-8"))["sync_in"]["required"]
     assert len(src["kerbs"]) == len(lm["kerbs"]) == 20
     changed = [i for i, (a, b) in enumerate(zip(src["kerbs"], lm["kerbs"])) if a != b]
-    assert len(changed) == 1
-    a, b = src["kerbs"][changed[0]], lm["kerbs"][changed[0]]
-    assert (a["side"], a["s0"]) == ("right", 2673.0)
-    assert {k: v for k, v in a.items() if k != "edge_lonlat"} == {k: v for k, v in b.items()
-                                                                   if k not in ("edge_lonlat", "edge_lonlat_was", "_retrace")}
+    # round 3 re-traced the T13 kerb (L s 2,843) by the same rule (test_high_plains_round3.py); nothing else moved
+    assert sorted((src["kerbs"][i]["side"], src["kerbs"][i]["s0"]) for i in changed) == [("left", 2843.0), ("right", 2673.0)]
+    for i in changed:
+        a, b = src["kerbs"][i], lm["kerbs"][i]
+        assert {k: v for k, v in a.items() if k != "edge_lonlat"} == {k: v for k, v in b.items()
+                                                                       if k not in ("edge_lonlat", "edge_lonlat_was", "_retrace")}
     assert b["edge_lonlat_was"] == a["edge_lonlat"] and len(b["edge_lonlat"]) == len(a["edge_lonlat"])
     m_lon = 111412.84 * math.cos(math.radians(39.735))
     m_lat = 111132.954 - 559.822 * math.cos(math.radians(2 * 39.735))
@@ -193,7 +194,7 @@ def test_rows_3_and_8_are_removed_as_kerb_paint():
 
 def test_version_and_every_round2_key_is_high_plains_own():
     c = _cfg()
-    assert c["version"] == "0.1.10"
+    assert c["version"] in ("0.1.10", "0.1.11")              # round 3 (0.1.11) keeps every round-2 key
     for t, cfg in ((p.parent.name, json.loads(p.read_text(encoding="utf-8")))
                    for p in (ROOT / "tracks").glob("*/track.config.json")):
         if t == "high-plains-lm":
@@ -206,9 +207,10 @@ def test_version_and_every_round2_key_is_high_plains_own():
         assert "concrete_plain" not in ov, t
 
 
-def test_full_layouts_extra_pieces_are_measured_data_nothing_reads_yet():
+def test_full_layouts_extra_pieces_are_measured_data():
     """item 2's data half: Bobsled + Ladder from the fork to the merge, in the engine's connector shape; both ends on the West
-    lap's line; the widths measured where both sides read and CARRIED (marked) elsewhere; no config or ship.json names it"""
+    lap's line; the widths measured where both sides read and CARRIED (marked) elsewhere. Round 3 builds it (the carried rows
+    now take their edges between the nearest measured rows, and source/full/connectors.full.json is what the config reads)"""
     d = json.loads((HP / "source" / "full" / "north_loop.json").read_text(encoding="utf-8"))
     c, = d["connectors"]
     assert c["name"] == "full_north" and c["kind"] == "connector"
@@ -216,11 +218,10 @@ def test_full_layouts_extra_pieces_are_measured_data_nothing_reads_yet():
     assert 990.0 <= d["summary"]["length_m"] <= 1010.0                 # OSM: 568.3 + 432.8 m
     assert all(10.0 <= w <= 15.0 for w in c["widths_m"])
     assert {r["width"] for r in d["rows"]} == {"measured", "carried"}
-    carried = d["summary"]["carried_width_m"]
-    assert all(abs(r["width_m"] - carried) < 1e-6 for r in d["rows"] if r["width"] == "carried")
+    lo, hi = d["summary"]["width_measured_m"][0], d["summary"]["width_measured_m"][-1]
+    assert all(lo - 0.6 <= r["width_m"] <= hi + 0.6 for r in d["rows"] if r["width"] == "carried")
     lap = json.loads((HP / "data" / "gate_centerline.json").read_text(encoding="utf-8"))["points_xyz_m"]
     for end in (c["points_xyz_m"][0], c["points_xyz_m"][-1]):
         near = min(math.hypot(end[0] - p[0], end[2] - p[2]) for p in lap)
         assert near < 6.0, near                                         # the fork and the merge lie on the West lap
-    text = (HP / "track.config.json").read_text(encoding="utf-8") + (HP / "ship.json").read_text(encoding="utf-8")
-    assert "north_loop.json" not in text and len(_cfg()["layouts"]) == 1
+    assert _cfg()["lm_intake"]["connectors_file"] == "source/full/connectors.full.json"

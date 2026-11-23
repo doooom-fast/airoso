@@ -14,6 +14,30 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
+## 2026-11-22 — WIRING: a multi-layout circuit's spawn kn5s judged by race_start's own rows (ledger 0097 round 3; opt-in; no threshold moved)
+
+No gate threshold, floor or bypass moved. One wiring change, opt-in by `track.config.json race_start.layouts` (High Plains
+only; `tests/tools/test_high_plains_round3.py` `test_no_other_track_declares_any_round3_key`):
+
+- `scripts/ac/verify_kn5.py` `_verify_layouts`: a layout named in `race_start.layouts` has its nodes-only spawn kn5 judged by
+  `race_start_checks` (the single-layout circuit's rows of ledger 0093: HEADING_MIN_DEG, the ROAD row CAR_HALF_W_M +
+  LANE_MARGIN_M inside the road's width, LINE_TOL_M, LINE_AHEAD_MAX_M, the sectors in driving order, the declared set) on THAT
+  layout's own line (`data/centerline.local.json`, or the lap it names), plus the declared-set and on-road (PIT_ROAD_MAX_M /
+  PIT_DY_MAX_M) checks every spawn kn5 gets. In place of `_verify_spawn_kn5`'s (d) SIDE row ("right of travel", the street
+  rule) and its `start.line_vertex` LINE row, which a declared circuit grid on both sides of the line cannot meet and which
+  race_start_checks' ROAD and LINE rows replace exactly as they do for the single-layout circuit. Every other multi-layout
+  track (no `race_start.layouts`) is judged exactly as before; the single-layout circuit too.
+- Not gates, opt-in, recorded here because they shape what the gates see: `tools/circuit_dummies_blend.py` per-layout spawn
+  sets (`race_start.layouts`); `tools/lm_pads_blend.py` `lm_pads.deck.fill "membrane"` (the deck's paving off the lap's ribbon
+  is the discrete Laplace surface between the ribbon and the arm rows: MEMBRANE_TOL_M 1e-5 m, MEMBRANE_SOR 1.7 [invented:
+  solver settings, not a judgement]); `tools/trim_connectors.py` carries a record's line paint through its cuts;
+  `tools/weld_mouths_blend.py` `_dev` reads an empty marking block as matching (it read inf and stopped the weld);
+  `tools/make_map.py` `map "race_lap"`.
+
+Proven on High Plains 0.1.11 (Mac, Blender 4.2.9, an empty workshop): both layouts' spawn kn5s pass (`[race_start west]` /
+`[race_start full_course]`: 51 facing nodes, local +Z . travel min +1.00; 50 START / PIT cars inside the road, nearest edge
++2.27 m), verify_pads FORK and verify_mouths PASS. Teeth: `tests/tools/test_high_plains_round3.py`.
+
 ## 2026-11-18 — REPORTED, NOT GATED: kn5_ground_check splits the walls lens; Milford's ground beside the road, the numbers it adds (ledger 0092; no threshold moved)
 
 No gate threshold, floor or bypass moved. All opt-in, Milford only (`tests/tools/test_milford_ground_0092.py`

@@ -558,6 +558,8 @@ V4_EXTRAS = {
         "ledger 0082 'Far ground (0.1.11)': only where the config names terrain.far_ground.object (Milford); never on Lake Murray",
     ("prep_prep", "ship: road wear where tyres run + the road's tone off the aerial (tools/road_wear_blend.py; ledger 0084; self-checked)"):
         "ledger 0084: only where the track's config names road_wear (Milford 0.1.7, High Plains 0.1.7); never on Lake Murray",
+    ("prep_prep", "ship: a circuit's declared line, grid, pits and sectors on the prepped scene (tools/circuit_dummies_blend.py; ledger 0093; self-checked)"):
+        "ledger 0093: only where the track's config declares race_start (High Plains); never on Lake Murray",
     ("draft_bespoke", "author: the buildings pipeline's blocks in place of the assembler's boxes (tools/author_bespoke_blend.py: scenery.bespoke.blocks, self-checked)"):
         "ledger 0065: v4's 7,600 blocks (ship_sd.sh stands them only under SD_BESPOKE=1, an echo there)",
     ("ship_export_street", "ship: export the STREET-ONLY kn5 (the centre line, a chicane's island; the non-race layouts alone)"):

@@ -25,6 +25,9 @@ WHAT IT DOES, in order, on the scene engine-july's prep saved (blender/<slug>.bl
    rubber; the asphalt gets the tone alone and road_wear.kerbs is refused (rw.rubber_mode);
 5. the macro atlas baked tile by tile from the world (tone x (1 - wear), x m0), the detail textures (each surface's own
    stock diffuse / m0 and its stock normal), a flat normal — all PNG, power of two;
+5b. (opt-in road_wear.detail_highpass_m, ledger 0095: Milford 0.1.13, High Plains 0.1.8) the named surfaces' detail
+   diffuse loses what is coarser than the cut before the / m0 (rw.detail_highpass), so its far mips go flat and the
+   macro alone carries the large scale; the normal is kept as it is;
 6. every face's UVs rewritten into its cell's tile (detail on today's 4 m grid and phase: detailUVMultiplier);
 7. each surface's material rebuilt with those five images (packed, named as their files, so the add-on embeds exactly
    them) and data/road_wear.json written: the material rows engine-july's export_kn5_addon reads (shader
@@ -521,6 +524,11 @@ def main() -> int:
     overrides = pbr.load_overrides(proj)
     mats = {}
     detail_stats = {}
+    try:
+        cuts = rw.highpass_cuts(spec)
+    except ValueError as e:
+        print(f"[road_wear] FATAL: {e}")
+        return 1
     for key, obl in objs.items():
         res = pbr.resolve(obl[0].name, overrides)
         if res["diffuse"] is None or not Path(res["diffuse"]).exists():
@@ -531,6 +539,12 @@ def main() -> int:
             if s & (s - 1):
                 print(f"[road_wear] FATAL: {res['diffuse']} is not a power of two ({d.shape[1]} x {d.shape[0]})")
                 return 1
+        cut = cuts.get(key)
+        if cut:
+            sd0 = float(d.std() / d.mean())
+            d = rw.detail_highpass(d, float(spec["detail_tile_m"]), cut)
+            print(f"[road_wear] {key}: detail high-pass {cut} m on {Path(res['diffuse']).name}: std/mean "
+                  f"{100 * sd0:.2f} -> {100 * float(d.std() / d.mean()):.2f} %")
         dd = d / m0
         clip = float((dd > 1.0).mean())
         # JPEG, as the stock tile it is made from (0.1.7's first build wrote it as PNG: 9.6 MB for a 2.4 MB JPEG)
@@ -547,6 +561,8 @@ def main() -> int:
         nm = Path(res["normal"]) if res["normal"] is not None and Path(res["normal"]).exists() else files["flat_nm"]
         detail_stats[key] = {"from": str(Path(res["diffuse"]).name), "normal": nm.name, "clipped_pct": round(100 * clip, 3),
                              "size": [d.shape[1], d.shape[0]]}
+        if cut:
+            detail_stats[key]["highpass_m"] = cut
         mats[key] = {"diffuse": files["macro"], "normal": files["flat_nm"], "detail": fn, "detail_nm": nm}
 
     # 6. the UVs

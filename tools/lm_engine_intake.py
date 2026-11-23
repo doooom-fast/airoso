@@ -50,6 +50,17 @@ def _md5(p: Path) -> str:
     return hashlib.md5(p.read_bytes()).hexdigest()
 
 
+def _v021_smooth():
+    """the assembler's own smoothing module (tracks/san-diego-lake-murray/scripts-v021/geometry/smooth.py), loaded as the
+    edge_fit / edge_retrace / measured_surface blocks below load it"""
+    import importlib.util
+    sp_ = importlib.util.spec_from_file_location(
+        "_lm_smooth", AIROSO / "tracks" / "san-diego-lake-murray" / "scripts-v021" / "geometry" / "smooth.py")
+    mod = importlib.util.module_from_spec(sp_)
+    sp_.loader.exec_module(mod)
+    return mod
+
+
 def _read_npy(path: Path) -> list[list[float]]:
     """a 2-D little-endian float64 .npy (the heightfield; stdlib only, as the assembler's own reader)"""
     import ast
@@ -275,6 +286,62 @@ def corner_flares_off(pts, widths, origin, entries):
         print(f"[lm_intake] corner_flare_off {cfo.get('name')!r}: the flare v{i0}..v{i1} ({min(was):.2f}..{max(was):.2f} "
               f"m) re-laid between its legs' {w0:.2f} and {w1:.2f} m")
     return widths, rep
+
+
+def precomp_line(pts, closed, sm, *, sigma_pts, passes):
+    """lm_intake.line_precomp (ledger 0091): x, z <- 2 P - S(P), S = sm.smooth_centerline(sigma_pts, passes, horizontal
+    only: the assembler's own smoothing), so the assembler's S(2 P - S(P)) = P - (I - S)^2 P lands on P to second order.
+    Y and the point count kept; a closed line stays closed. Returns (points, report)."""
+    s_pts = sm.smooth_centerline(pts, sigma_pts=sigma_pts, passes=passes, sigma_y_pts=0.0)
+    lap0 = sum(math.hypot(b[0] - a[0], b[2] - a[2]) for a, b in zip(pts, pts[1:]))
+    new_pts = [(2.0 * p[0] - q[0], p[1], 2.0 * p[2] - q[2]) for p, q in zip(pts, s_pts)]
+    if closed:
+        new_pts[-1] = new_pts[0]
+    mv = sorted(math.hypot(a[0] - b[0], a[2] - b[2]) for a, b in zip(pts, new_pts))
+    rep = {"sigma_pts": sigma_pts, "passes": passes,
+           "moved_m": {"p50": round(mv[len(mv) // 2], 3), "p99": round(mv[int(0.99 * (len(mv) - 1))], 3),
+                       "max": round(mv[-1], 3)},
+           "lap_m": [round(lap0, 1), round(sum(math.hypot(b[0] - a[0], b[2] - a[2]) for a, b in zip(new_pts, new_pts[1:])), 1)]}
+    return new_pts, rep
+
+
+def smooth_widths(s_pts, widths, closed, sigma_m, held=()):
+    """lm_intake.width_smooth_m (ledger 0091): w <- w + (1 - k) (G(w) - w), G a Gaussian of sigma_m by arc length along
+    s_pts (the assembler's line; a closed lap wraps), k the largest tools/edge_retrace.py span_weight of the held records
+    [(spans, taper_m)] (a widen-mode retrace keeps the widths it was built on). Returns (widths, report)."""
+    import bisect as _bs
+    from tools import edge_retrace as _er3
+    if not 0.0 < sigma_m <= 50.0:
+        raise SystemExit(f"[lm_intake] lm_intake.width_smooth_m {sigma_m!r}: a sigma in m, 0 < sigma <= 50")
+    st3 = [0.0]
+    for a, b in zip(s_pts, s_pts[1:]):
+        st3.append(st3[-1] + math.hypot(b[0] - a[0], b[2] - a[2]))
+    m3 = len(s_pts) - 1 if closed else len(s_pts)
+    lap3 = st3[-1]
+    keep = [max([_er3.span_weight(st3[i], spans_, lap3, taper_) for spans_, taper_ in held] or [0.0]) for i in range(m3)]
+    reach3 = 4.0 * sigma_m
+    w_new = list(widths)
+    for i in range(m3):
+        if keep[i] >= 1.0:
+            continue
+        num = den = 0.0
+        for off in ((-lap3, 0.0, lap3) if closed else (0.0,)):
+            lo = _bs.bisect_left(st3, st3[i] + off - reach3, 0, m3)
+            hi = _bs.bisect_right(st3, st3[i] + off + reach3, 0, m3)
+            for j in range(lo, hi):
+                kw = math.exp(-0.5 * ((st3[j] - off - st3[i]) / sigma_m) ** 2)
+                num += kw * widths[j]
+                den += kw
+        w_new[i] = round(widths[i] + (1.0 - keep[i]) * (num / den - widths[i]), 3)
+    if closed:
+        w_new[-1] = w_new[0]
+    dw = sorted(abs(a - b) for a, b in zip(w_new, widths))
+    rep = {"sigma_m": sigma_m, "rows_held_by_widen_retrace": sum(1 for k in keep if k >= 1.0),
+           "rows_blended": sum(1 for k in keep if 0.0 < k < 1.0),
+           "changed_m": {"p50": round(dw[len(dw) // 2], 3), "p99": round(dw[int(0.99 * (len(dw) - 1))], 3),
+                         "max": round(dw[-1], 3)},
+           "width_m": [round(min(w_new), 2), round(max(w_new), 2)]}
+    return w_new, rep
 
 
 def intake(proj: Path, *, connectors: bool | None = None) -> dict:
@@ -931,6 +998,26 @@ def intake(proj: Path, *, connectors: bool | None = None) -> dict:
         resample_rep = {"spacing_m": step_r, "points_before": len(pts), "points_after": len(new_pts)}
         pts, widths = new_pts, new_w                  # dy (the heights the intake moved) stays the source points'
         print(f"[lm_intake] resampled every {step_r} m: {resample_rep['points_before']} -> {resample_rep['points_after']} points")
+    # THE LINE PRE-COMPENSATED FOR THE ASSEMBLER'S SMOOTHING (lm_intake.line_precomp true; ledger 0091, the Milford geometry
+    # audit's Gap 1 / Fix B, 2026-11-18; absent = the line as it is). The assembler's Gaussian (scripts-v021 geometry/
+    # smooth.py: count-preserving, no shrink correction) pulls a bend of radius R inward by about sigma^2 / 2R, and the
+    # widths are swept unchanged about the smoothed line, so both edges move in together: on the 27 % of Milford's lap
+    # where both edge sensors agree the built centre sat 0.36 m (p50) / 1.01 m (p90) off the measured centre, the intake's
+    # own line 0.22 / 0.64 m. Here x, z <- 2 P - S(P), S = the route's own smooth (route.smooth_*, horizontal only), so the
+    # assembler's S(2 P - S(P)) = P - (I - S)^2 P lands on the intake's line to second order. Y, the widths and the point
+    # count are kept. Every later step here (edge_fit, edge_retrace, measured_surface) smooths THIS line as before, so each
+    # still reads the line the assembler builds.
+    lp_cfg = li.get("line_precomp")
+    precomp_rep = None
+    if lp_cfg:
+        if lp_cfg is not True:
+            raise SystemExit(f"[lm_intake] lm_intake.line_precomp {lp_cfg!r}: true (or absent)")
+        route_ = cfg.get("route") or {}
+        pts, precomp_rep = precomp_line(pts, closed, _v021_smooth(), sigma_pts=float(route_.get("smooth_sigma_pts", 2.0)),
+                                        passes=int(route_.get("smooth_passes", 2)))
+        print(f"[lm_intake] line pre-compensated for the assembler's smoothing (sigma {precomp_rep['sigma_pts']} pts x "
+              f"{precomp_rep['passes']}): points moved p50 {precomp_rep['moved_m']['p50']} / max {precomp_rep['moved_m']['max']} m "
+              f"outward; lap {precomp_rep['lap_m'][0]} -> {precomp_rep['lap_m'][1]} m")
     # THE LANE EDGES RE-FITTED, OUTLIERS CUT (lm_intake.edge_fit {"evidence": <file in the PORT track>, "mode": "fit"|"judge",
     # "fit_half_m"?}; ledger 0087; absent = the widths as they are). The assembler sweeps the lane +-width/2 about its smoothed
     # line, so every notch in the width series is a notch in both built edges (Milford 0.1.2: the trace's 0.25 m scan steps
@@ -972,53 +1059,112 @@ def intake(proj: Path, *, connectors: bool | None = None) -> dict:
               f"data/edge_fit.json; widths {min(w_was):.2f}..{max(w_was):.2f} -> {min(widths):.2f}..{max(widths):.2f} m; "
               + "; ".join(f"{sd} edge to the evidence median {v['edge_to_evidence_m']['before']['median']} -> "
                           f"{v['edge_to_evidence_m']['after']['median']} m" for sd, v in edge_fit_rep["sides"].items()))
+    # THE WIDTHS' SHORT BREATHING SMOOTHED (lm_intake.width_smooth_m, a Gaussian's sigma in metres along the assembler's
+    # line; ledger 0091, the Milford geometry audit's Gap 3 / Fix C; absent = the widths as they are). The trace's width
+    # breathes at 20-80 m (10-21 cm RMS on Milford: its 0.25 m scan steps through a +-24 m running median, rescaled by
+    # heading; edge_fit's +-15 m LOESS takes out only what is shorter), and the ribbon is +-w/2 about the line, so both edges
+    # breathe with it. Here w <- G_sigma(w) (the closed lap wrapping), after edge_fit and before lm_intake.edge_retrace:
+    # a record in mode "agree" then re-traces its stretches to the measured edge wherever both sensors agree (and leaves
+    # these smoothed widths where they do not); a record in mode "widen" (0.1.12's front straight) keeps the widths it
+    # was built on: over its spans and its taper, by its own weight, nothing is smoothed.
+    wsm = li.get("width_smooth_m")
+    width_smooth_rep = None
+    if wsm:
+        sig_w = float(wsm)
+        route_ = cfg.get("route") or {}
+        s3 = _v021_smooth().smooth_centerline(pts, sigma_pts=float(route_.get("smooth_sigma_pts", 2.0)),
+                                              passes=int(route_.get("smooth_passes", 2)), sigma_y_pts=0.0)
+        er_ = li.get("edge_retrace") or []
+        held = [([[float(a), float(b)] for a, b in r_["spans"]], float(r_.get("taper_m", 60.0)))
+                for r_ in (er_ if isinstance(er_, list) else [er_]) if r_.get("mode", "widen") == "widen"]
+        widths, width_smooth_rep = smooth_widths(s3, widths, closed, sig_w, held)
+        print(f"[lm_intake] widths smoothed (Gaussian sigma {sig_w} m; {width_smooth_rep['rows_held_by_widen_retrace']} rows "
+              f"held for a widen retrace, {width_smooth_rep['rows_blended']} blended): changed p50 "
+              f"{width_smooth_rep['changed_m']['p50']} / p99 {width_smooth_rep['changed_m']['p99']} / max "
+              f"{width_smooth_rep['changed_m']['max']} m")
     # A STRETCH RE-TRACED TO THE MEASURED PAVEMENT EDGE, SHORT OF EVERY RAIL (lm_intake.edge_retrace {"evidence", "spans":
     # [[s0, s1]], "rails": [scenery.bespoke.rails keys], "src"?, "clear_m"?, "taper_m"?}; ledger 0087 Q1, Kevin 2026-11-17:
     # "Yes, widen Milford's front straight"; absent = nothing runs). tools/edge_retrace.py, on the line the assembler will
     # build: per side the measured edge (never in), never closer than clear_m to a rail's face; a side that moves alone moves
     # the line (by (left - right) / 2), the width is left + right. Every row is logged in data/edge_retrace.json.
+    # A LIST of such records (ledger 0091, opt-in) runs each in turn on the line the previous one left: Milford's front
+    # straight as 0.1.12 built it, then its tapered flares in mode "agree" (tools/edge_retrace.py: both sensors where they
+    # agree, in or out). Per record, all optional: "mode" ("widen" | "agree"), "smooth_m" / "erode_m" / "gap_m" (the
+    # tool's SMOOTH_M / ERODE_M / GAP_M), and "shift_precomp" true: the record's line shift D goes in as 2 D - S(D) (S the
+    # route's smooth; S is linear, S(D) = S(P + D) - S(P)), so the assembler builds the shift it measured rather than its
+    # smoothed copy (a one-sided move over 20-40 m otherwise lands ~30 % short and drags the other edge with it). One record
+    # (a dict, as 0.1.12) writes data/edge_retrace.json as before; a list writes {"runs": [...]} there.
     er_cfg = li.get("edge_retrace")
     edge_retrace_rep = None
     if er_cfg:
         from tools import edge_fit as _ef2
         from tools import edge_retrace as _er
-        rel_e = er_cfg["evidence"]
-        if rel_e.startswith(("/", "\\")) or ".." in Path(rel_e).parts:
-            raise SystemExit(f"[lm_intake] lm_intake.edge_retrace.evidence {rel_e!r} must be a plain path inside the port track")
-        evj = json.loads((proj / rel_e).read_text(encoding="utf-8"))
-        o_ev, o_ln = evj.get("origin") or {}, local["origin"]
-        if abs(o_ev.get("lon", 1e9) - o_ln["lon"]) > 1e-9 or abs(o_ev.get("lat", 1e9) - o_ln["lat"]) > 1e-9:
-            raise SystemExit(f"[lm_intake] edge_retrace: {rel_e} was measured about another origin ({o_ev}) than this line's")
+        er_list = er_cfg if isinstance(er_cfg, list) else [er_cfg]
+        er_fulls = []
         import importlib.util
         _sp = importlib.util.spec_from_file_location(
             "_lm_smooth", AIROSO / "tracks" / "san-diego-lake-murray" / "scripts-v021" / "geometry" / "smooth.py")
         _sm = importlib.util.module_from_spec(_sp)
         _sp.loader.exec_module(_sm)
         route_ = cfg.get("route") or {}
-        sm_pts = _sm.smooth_centerline(pts, sigma_pts=float(route_.get("smooth_sigma_pts", 2.0)),
-                                       passes=int(route_.get("smooth_passes", 2)), sigma_y_pts=0.0)
-        rails_ = _er.rails_in_frame(((cfg.get("scenery") or {}).get("bespoke") or {}).get("rails") or [],
-                                    list(er_cfg.get("rails") or []), local["origin"])
-        w_was = list(widths)
-        widths, shift_, er_full = _er.retrace(sm_pts, widths, closed, evj["points"],
-                                              [[float(a), float(b)] for a, b in er_cfg["spans"]], rails_,
-                                              src=str(er_cfg.get("src", "naip")),
-                                              clear_m=float(er_cfg.get("clear_m", 0.10)),
-                                              taper_m=float(er_cfg.get("taper_m", 60.0)))
-        m_ = len(sm_pts) - 1 if closed else len(sm_pts)
-        T_ = _ef2._normals(sm_pts[:m_], closed)
-        pts = [(p[0] - T_[i % m_][1] * shift_[i], p[1], p[2] + T_[i % m_][0] * shift_[i]) for i, p in enumerate(pts)]
-        if closed:
-            pts[-1] = pts[0]
-        er_full["evidence"] = rel_e
+        _sm_kw = dict(sigma_pts=float(route_.get("smooth_sigma_pts", 2.0)), passes=int(route_.get("smooth_passes", 2)),
+                      sigma_y_pts=0.0)
+        for er_one in er_list:
+            unknown = sorted(set(er_one) - {"evidence", "spans", "rails", "src", "clear_m", "taper_m", "mode", "smooth_m",
+                                            "erode_m", "gap_m", "shift_precomp"} - {k for k in er_one if k.startswith("_")})
+            if unknown:
+                raise SystemExit(f"[lm_intake] lm_intake.edge_retrace: unknown key(s) {unknown}")
+            rel_e = er_one["evidence"]
+            if rel_e.startswith(("/", "\\")) or ".." in Path(rel_e).parts:
+                raise SystemExit(f"[lm_intake] lm_intake.edge_retrace.evidence {rel_e!r} must be a plain path inside the port "
+                                 "track")
+            evj = json.loads((proj / rel_e).read_text(encoding="utf-8"))
+            o_ev, o_ln = evj.get("origin") or {}, local["origin"]
+            if abs(o_ev.get("lon", 1e9) - o_ln["lon"]) > 1e-9 or abs(o_ev.get("lat", 1e9) - o_ln["lat"]) > 1e-9:
+                raise SystemExit(f"[lm_intake] edge_retrace: {rel_e} was measured about another origin ({o_ev}) than this "
+                                 "line's")
+            sm_pts = _sm.smooth_centerline(pts, **_sm_kw)
+            rails_ = _er.rails_in_frame(((cfg.get("scenery") or {}).get("bespoke") or {}).get("rails") or [],
+                                        list(er_one.get("rails") or []), local["origin"])
+            w_was = list(widths)
+            spans_ = [[float(a), float(b)] for a, b in er_one["spans"]]
+            opt_kw = {k: float(er_one[k]) for k in ("smooth_m", "erode_m", "gap_m") if k in er_one}
+            if "mode" in er_one:
+                opt_kw["mode"] = str(er_one["mode"])
+            widths, shift_, er_full = _er.retrace(sm_pts, widths, closed, evj["points"], spans_, rails_,
+                                                  src=str(er_one.get("src", "naip")),
+                                                  clear_m=float(er_one.get("clear_m", 0.10)),
+                                                  taper_m=float(er_one.get("taper_m", 60.0)), **opt_kw)
+            m_ = len(sm_pts) - 1 if closed else len(sm_pts)
+            T_ = _ef2._normals(sm_pts[:m_], closed)
+            moved_ = [(p[0] - T_[i % m_][1] * shift_[i], p[1], p[2] + T_[i % m_][0] * shift_[i]) for i, p in enumerate(pts)]
+            if closed:
+                moved_[-1] = moved_[0]
+            if er_one.get("shift_precomp"):
+                # the assembler smooths P + D into S(P) + S(D); 2 D - S(D) in its place builds ~D
+                s_moved = _sm.smooth_centerline(moved_, **_sm_kw)
+                s_was = _sm.smooth_centerline(pts, **_sm_kw)
+                moved_ = [(q[0] + (q[0] - p[0]) - (sq[0] - sp[0]), q[1], q[2] + (q[2] - p[2]) - (sq[2] - sp[2]))
+                          for p, q, sp, sq in zip(pts, moved_, s_was, s_moved)]
+                if closed:
+                    moved_[-1] = moved_[0]
+                er_full["shift_precomp"] = True
+            pts = moved_
+            er_full["evidence"] = rel_e
+            er_fulls.append(er_full)
+            print(f"[lm_intake] edge retrace ({er_full['src']}{', ' + er_full['mode'] if 'mode' in er_full else ''}, spans "
+                  f"{er_one['spans']}, rails {list(er_one.get('rails') or [])}, clear {er_full['clear_m']} m"
+                  f"{', shift pre-compensated' if er_one.get('shift_precomp') else ''}): widths {min(w_was):.2f}.."
+                  f"{max(w_was):.2f} -> {min(widths):.2f}..{max(widths):.2f} m (change "
+                  f"{er_full['width_change_m']['min']:+.2f}..{er_full['width_change_m']['max']:+.2f} m), the line moved "
+                  f"{er_full['shift_m']['min']:+.2f}..{er_full['shift_m']['max']:+.2f} m; every row in data/edge_retrace.json")
         (proj / "data").mkdir(parents=True, exist_ok=True)
-        (proj / "data" / "edge_retrace.json").write_text(json.dumps(er_full), encoding="utf-8")
-        edge_retrace_rep = {k: v for k, v in er_full.items() if k != "rows"}
-        print(f"[lm_intake] edge retrace ({er_full['src']}, spans {er_cfg['spans']}, rails {list(er_cfg.get('rails') or [])}, "
-              f"clear {er_full['clear_m']} m): widths {min(w_was):.2f}..{max(w_was):.2f} -> {min(widths):.2f}.."
-              f"{max(widths):.2f} m (change {er_full['width_change_m']['min']:+.2f}..{er_full['width_change_m']['max']:+.2f} m), "
-              f"the line moved {er_full['shift_m']['min']:+.2f}..{er_full['shift_m']['max']:+.2f} m; every row in "
-              f"data/edge_retrace.json")
+        if isinstance(er_cfg, list):
+            (proj / "data" / "edge_retrace.json").write_text(json.dumps({"runs": er_fulls}), encoding="utf-8")
+            edge_retrace_rep = [{k: v for k, v in f_.items() if k != "rows"} for f_ in er_fulls]
+        else:
+            (proj / "data" / "edge_retrace.json").write_text(json.dumps(er_fulls[0]), encoding="utf-8")
+            edge_retrace_rep = {k: v for k, v in er_fulls[0].items() if k != "rows"}
     # THE ROAD'S HEIGHT AND BANK FROM THE MEASURED SURFACE (lm_intake.measured_surface {"file": <the product, a path inside
     # the PORT track>, "deck_m"}; fleet round 1, Kevin 2026-11-13: "Milford still seems wavy as driven"; absent = nothing
     # runs). tools/measured_surface.py: the line's Y at each point of the line the assembler will build = the measured
@@ -1381,8 +1527,10 @@ def intake(proj: Path, *, connectors: bool | None = None) -> dict:
            "width_taper": taper_rep, **({"pad_widths": pad_rep} if pad_rep else {}),
            **({"corner_flare_off": flare_rep} if flare_rep else {}), "resample": resample_rep, "edge_on_wall": wall_rep,
            **({"edge_on_bank": bank_rep} if bank_rep else {}), "corner_arcs": arcs_rep, "carried": carried,
+           **({"line_precomp": precomp_rep} if precomp_rep else {}),
            **({"edge_fit": edge_fit_rep} if edge_fit_rep else {}),
            **({"edge_retrace": edge_retrace_rep} if edge_retrace_rep else {}),
+           **({"width_smooth": width_smooth_rep} if width_smooth_rep else {}),
            **({"measured_surface": surface_rep} if surface_rep else {}),
            "grid_upsample": up,
            "md5": {"source_centerline": _md5(need[0]), "heightfield.npy": _md5(data / "heightfield.npy"),

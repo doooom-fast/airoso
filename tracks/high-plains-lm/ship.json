@@ -14,10 +14,12 @@
       "densify_ribbon",
       "seat_edges",
       "strip_seam",
-      "kerbs"
+      "kerbs",
+      "paint"
     ],
     "author": [
-      "bespoke"
+      "bespoke",
+      "paint"
     ],
     "prep": [
       "prep",
@@ -45,7 +47,9 @@
   "sync_in": {
     "required": [
       "track.config.json",
-      "source/road_wear/naip_2023_030_hp.png"
+      "source/road_wear/naip_2023_030_hp.png",
+      "source/bespoke/buildings.race.json",
+      "source/bespoke/posts.race.json"
     ],
     "optional": [
       "data/heightfield.npy",
@@ -53,7 +57,21 @@
       "textures/kerb_bluewhite.png",
       "textures/kerb_atlas_hp.png",
       "source/road_wear/fast_lane.full.ai"
-    ]
+    ],
+    "assets": [
+      "assets/textures/circuit_facade_diffuse.jpg",
+      "assets/textures/circuit_facade_normal.jpg",
+      "assets/textures/roof_rib_normal.jpg",
+      "assets/textures/metal_wall_diffuse.jpg",
+      "assets/textures/metal_wall_normal.jpg",
+      "assets/textures/roof_white_diffuse.jpg",
+      "assets/textures/roof_tan_diffuse.jpg",
+      "assets/textures/roof_dark_diffuse.jpg",
+      "assets/textures/asphalt_dense_diffuse.jpg",
+      "assets/textures/asphalt_dense_normal.jpg"
+    ],
+    "_facades_doc": "ledger 0094: the facade atlas, the rib roof normal and the canopies' metal skin (texture_overrides), from airoso's tracked assets",
+    "_road_pilot_doc": "ledger 0095: the owned asphalt pair the 1ROAD override binds (texture_overrides), from airoso's tracked assets"
   },
   "sync_out": {
     "required": [
@@ -93,5 +111,6 @@
     ]
   },
   "_vegetation_doc": "ledger 0089 (High Plains 0.1.6): grassfx_aerial before the track folder (the config's own GrassFX zones off NAIP 2023: the draws' long grass, B, which 0.1.5's PRAIRIECARD cards stood on, and the bright bare ground, C); no TreeFX: NAIP shows no shrub there",
-  "_road_wear_doc": "ledger 0084 'High Plains 0.1.7': the aerial (required: track.config.json road_wear.aerial) and a recorded line when one exists (optional) sync in; the bake runs as the last part of prep (tools/ship_track.sh prep_prep, opt-in on the config key), the race kerbs included (road_wear.kerbs); gate road_wear (tools/road_wear_check.py) reads the built road kn5"
+  "_road_wear_doc": "ledger 0084 'High Plains 0.1.7': the aerial (required: track.config.json road_wear.aerial) and a recorded line when one exists (optional) sync in; the bake runs as the last part of prep (tools/ship_track.sh prep_prep, opt-in on the config key), the race kerbs included (road_wear.kerbs); gate road_wear (tools/road_wear_check.py) reads the built road kn5",
+  "_race_furniture_doc": "ledger 0093: paint twice (the draft: the line and grid marks on ROAD; the author phase, after bespoke: the pit lane's lines and gores on its PADAPRON sheets); the declared start is a prep sub-step keyed on track.config.json race_start (tools/ship_track.sh prep_prep); the port's own buildings / posts files sync in"
 }

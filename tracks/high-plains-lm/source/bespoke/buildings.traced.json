@@ -1,0 +1,71 @@
+[
+ {
+  "key": "traced_white_w_of_osm289311820",
+  "geom": [
+   [
+    -103.8946809,
+    39.7355123
+   ],
+   [
+    -103.8945443,
+    39.7354912
+   ],
+   [
+    -103.894563,
+    39.735419
+   ],
+   [
+    -103.8946996,
+    39.73544
+   ]
+  ],
+  "building": "yes",
+  "_source": "traced off NAIP 2023 0.3 m (source/road_wear/naip_2023_030_hp.png): the roof flood-filled, its minimum-area rectangle"
+ },
+ {
+  "key": "traced_pit_entry_canopy",
+  "geom": [
+   [
+    -103.8949371,
+    39.7354294
+   ],
+   [
+    -103.8948643,
+    39.7353873
+   ],
+   [
+    -103.894929,
+    39.7353207
+   ],
+   [
+    -103.8950018,
+    39.7353629
+   ]
+  ],
+  "building": "yes",
+  "_source": "traced off NAIP 2023 0.3 m (source/road_wear/naip_2023_030_hp.png): the roof flood-filled, its minimum-area rectangle"
+ },
+ {
+  "key": "traced_container_row",
+  "geom": [
+   [
+    -103.8947791,
+    39.7363209
+   ],
+   [
+    -103.8947188,
+    39.7365403
+   ],
+   [
+    -103.8945796,
+    39.7365175
+   ],
+   [
+    -103.8946399,
+    39.7362981
+   ]
+  ],
+  "building": "yes",
+  "_source": "traced off NAIP 2023 0.3 m (source/road_wear/naip_2023_030_hp.png): the saturated-colour blob's axis, its ends and width read off the colour profile along it"
+ }
+]

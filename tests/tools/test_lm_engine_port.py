@@ -207,7 +207,7 @@ def test_the_intake_into_an_empty_workshop_leaves_every_file_the_chain_reads():
 
 
 def test_the_round_5_intake_options_report_what_they_did():
-    """Milford's width taper widens only and its rows are re-cut every 1.5 m; Pikes Peak's right edge sits on the lidar wall
+    """Milford's width taper widens only and its rows are re-cut every 0.75 m (ledger 0091; 1.5 m before); Pikes Peak's right edge sits on the lidar wall
     (ledger 0078 round 5). Each option is the declaring track's alone."""
     import shutil
     import lm_engine_intake as L
@@ -218,7 +218,7 @@ def test_the_round_5_intake_options_report_what_they_did():
             rep = L.intake(ws)
             if check == "mf":
                 assert rep["width_taper"]["points_widened"] > 0 and rep["width_taper"]["rate_m_per_m"] == 0.1
-                assert rep["resample"]["spacing_m"] == 1.5 and rep["resample"]["points_after"] > rep["resample"]["points_before"]
+                assert rep["resample"]["spacing_m"] == 0.75 and rep["resample"]["points_after"] > rep["resample"]["points_before"]
                 assert rep["edge_on_wall"] is None
             else:
                 e = rep["edge_on_wall"]

@@ -39,3 +39,25 @@ def clip(tri, cell):
 
 def area2(poly):
     return sum(poly[i][0] * poly[(i + 1) % len(poly)][1] - poly[(i + 1) % len(poly)][0] * poly[i][1] for i in range(len(poly)))
+
+
+FOLD_MAX_M = 0.01   # [invented] (ledger 0092 round 2) the most a rebuilt pad vertex is raised onto a fold of the ground
+
+
+def lift_over_folds(verts, top, lift, tol=1e-3, cap=FOLD_MAX_M):
+    """tools/seat_pads_blend.py's rebuilt pad vertices, raised where the prepped ground has a fold: two ground triangles
+    over one (x, y) at heights mm apart (Milford 0.1.13's apron_9: the pad vertex on one, the other 1.8 mm higher, so the
+    self-check read ground 58.2 mm under the pad, not 60). ``top(x, y, z)`` is the highest ground the self-check's own ray
+    finds there (None: none). A vertex is raised ONLY where that self-check would fail (ground more than ``tol`` over
+    z - lift), and only by up to ``cap``: the vertex then stands ``lift`` over the higher piece. A pad that passed before is
+    unchanged, vertex for vertex; ground more than ``cap`` over is left as it is, so the self-check still stops the build.
+    Returns (verts, raised, worst_raise_m)."""
+    out, raised, worst = [], 0, 0.0
+    for x, y, z in verts:
+        g = top(x, y, z)
+        if g is not None and g > z - lift + tol and g + lift - z <= cap:
+            worst = max(worst, g + lift - z)
+            z = g + lift
+            raised += 1
+        out.append((x, y, z))
+    return out, raised, worst

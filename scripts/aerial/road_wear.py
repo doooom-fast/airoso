@@ -77,6 +77,9 @@ DEFAULTS = {
     "lines": [],                    # [{"layout": id, "ai": "ai/<id>/fast_lane.ai", "reverse": false}] (empty: every layout)
     # "kerbs" (opt-in, no default here so a spec without it is unchanged): {"prefix", "levels"}, the race kerbs darkened
     # where the line rides them (KERB_DEFAULTS below; High Plains 0.1.7)
+    # "detail_highpass_m" (opt-in, no default here so a spec without it is unchanged): {surface prefix: cut in metres}, that
+    # surface's detail tile without what is coarser than the cut (detail_highpass below; ledger 0095, Milford 0.1.13 and
+    # High Plains 0.1.8)
 }
 
 
@@ -654,6 +657,56 @@ def detail_multiplier(plan: dict, spec: dict) -> float:
                          f"detail_tile_m {spec['detail_tile_m']} is not whole: the grain would land {m - math.floor(m):.3f} tile "
                          "off the prep's phase (choose a texel that makes it whole, e.g. 0.25 m at 4096 px -> 256)")
     return m
+
+
+# --- the detail's high-pass (opt-in road_wear.detail_highpass_m; ledger 0095) ---------------------------------------------
+# The detail tile repeats every detail_tile_m. Far down the road its mips average away the fine grain and what is left is
+# the tile's coarse variation, the same at every repeat: the streaks and rows Kevin sees ("when i see a lot of road a head,
+# the repeating is very obvious", 2026-11-18). Where a macro carries the road's large-scale tone (this bake), the detail
+# need not carry any: cut it below the cut's wavelength and the far mips go flat. Measured on Milford's and High Plains'
+# renders (Mac, 2026-11-18, ledger 0095): the 4 m lattice's contrast at 20-50 / 50-100 / 100-200 m, % of road brightness,
+# 0.70 / 0.33 / 0.16 on the owned asphalt_dense tile, 0.29 / 0.09 / 0.05 with a 0.5 m cut [measured]; the band removed is
+# 0.10 % of the tile's variance, so the close look is unchanged [measured]. The 0.5 m itself is [invented] (a 1 m cut gave
+# about half the gain).
+def detail_highpass(rgb: np.ndarray, tile_m: float, cut_m: float) -> np.ndarray:
+    """``rgb`` (h, w, c) spanning one ``tile_m`` square, without what is coarser than ``cut_m``: a periodic Gaussian
+    high-pass per channel, H = 1 - exp(-ln2 (f / fc)^2) with fc = 1 / cut_m (so H = 0.5 at the wavelength cut_m), the
+    mean (DC) kept. It works on the tile's own period, so the result still wraps. float32 out, unclipped."""
+    a = np.asarray(rgb, dtype=np.float64)
+    h, w = a.shape[:2]
+    fy = np.fft.fftfreq(h, d=float(tile_m) / h)[:, None]
+    fx = np.fft.rfftfreq(w, d=float(tile_m) / w)[None, :]
+    fc = 1.0 / float(cut_m)
+    H = 1.0 - np.exp(-math.log(2.0) * (fx * fx + fy * fy) / (fc * fc))
+    H[0, 0] = 1.0
+    out = np.empty(a.shape, dtype=np.float32)
+    for c in range(a.shape[2]):
+        out[..., c] = np.fft.irfft2(np.fft.rfft2(a[..., c]) * H, s=(h, w))
+    return out
+
+
+def highpass_cuts(spec: dict) -> dict[str, float]:
+    """{surface prefix (upper case): cut m} from the spec's ``detail_highpass_m``; {} when the spec names none (every track
+    but the ones that opt in: unchanged). Raises ValueError for a surface the spec does not bake or a cut outside
+    (0, detail_tile_m / 2]: a cut past half the tile would leave the tile's own fundamental in."""
+    raw = spec.get("detail_highpass_m")
+    if not raw:
+        return {}
+    if not isinstance(raw, dict):
+        raise ValueError(f"road_wear: detail_highpass_m must be {{surface: cut m}}, not {raw!r}")
+    out = {}
+    for k, v in raw.items():
+        if str(k).startswith("_"):
+            continue
+        key = str(k).upper()
+        if key not in spec["surfaces"]:
+            raise ValueError(f"road_wear: detail_highpass_m names {k!r}, not one of the surfaces {spec['surfaces']}")
+        cut = float(v)
+        if not 0.0 < cut <= 0.5 * float(spec["detail_tile_m"]):
+            raise ValueError(f"road_wear: detail_highpass_m {k}: {cut} m is outside (0, {0.5 * float(spec['detail_tile_m'])}]"
+                             " (half the detail tile)")
+        out[key] = cut
+    return out
 
 
 # --- the race kerbs (opt-in road_wear.kerbs; High Plains 0.1.7) ---------------------------------------------------------

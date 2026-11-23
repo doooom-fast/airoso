@@ -176,7 +176,12 @@ before the pads, the re-seat and the road wear (which follow it).
 - It self-checks its own rule (exit 1, the blend not saved) and writes `data/shoulder_grade.json`.
 - **The registration (new here).** The committed 1 m grid sits (-0.375, +0.938) m off the road's frame (the measured
   surface's registration). With the shift the grid meets the G10's paths to p50 1.9 / p90 7.3 cm; without it, 6.9 / 25.9 cm.
-  The shoulder takes `lidar_shift_m`. The ledger-0092 ground patch still reads the grid unshifted: not changed here.
+  On the Mac's call (fix it in round 2 where it changes ground the build relies on) it is now one opt-in key,
+  `terrain.lidar_shift_m`, read by the ledger-0092 ground patch (`tools/lidar_ground_patch.py`'s committed-grid path:
+  the lattice nodes stay the grid's own cell centres, moved into the frame) and by the shoulder. Across the corridor's
+  9-45 m band it moves the ground p50 0.05 / p90 0.14 / p99 0.29 m (2 % of cells over 0.25 m), the culvert's headwall up
+  to 2.2 m. culvert_4349_w's polygon, drawn on the unshifted lidar's headwall, moves by the same in the config. Still read
+  unshifted, not changed here: the far ground's own product (data/far_ground.lidar.npy) and the trees' crowns.
 - The ring's 1 m ground (the Mac's product c, 768,710 ground cells against 421,519) fills none of the corridor's empty cells
   inside the shoulder band (the 2017 flight returned no ground there). The committed grid stays, its holes filled from
   their neighbours.

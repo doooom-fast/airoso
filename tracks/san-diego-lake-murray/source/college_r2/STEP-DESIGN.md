@@ -38,9 +38,13 @@ corridor, the dummies, the signs and every gate read the split road.
 - The crossover goes: `race.chicanes` entry `college_split` (`out_leg [1253, 1289]`, `back_leg [1343, 1379]`) is
   removed with its streetonly median pieces.
 - **Mission Gorge Speedway** (`race.laps.north`) turns at College / Navajo with its box at v1452-1472 (apex 1463),
-  noses ending at v1452 and closure runs to v1452. The design zone's last 30 m (v1470-1480) reach into that box, and
-  J1's tilt sits there too. The zone's north end has to be settled against that box before any code: either it stops
-  short of v1452, or the box is re-declared on the split road.
+  noses ending at v1452 and closure runs to v1452. **Decided (the Mac, 2026-11-23): the split ends before that box.**
+  The island ends at v1444 and the blend into the built road finishes by v1452, where northbound is about 0.6 m over
+  southbound; the box is not re-declared. `college_design.py`'s zone (today v1130-1480, blended over its last 30 m)
+  is re-cut to end at v1452 when the step is written.
+- **J1's tilt** (Kevin: "Tilt it now"; measured 6.08 % falling toward bearing 277°, rms 0.13 m on the r 25 m plane) is
+  its own change on the box's vertices, in the same round, with that lap's corridor and closures re-checked after it.
+  A gate the tilt turns red is reported, never loosened.
 
 ## Keyed entries in `track.config.json` (round 1's base)
 

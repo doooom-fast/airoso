@@ -196,3 +196,17 @@ when the track's `ext_config.ini` sets `DISTANT_FIX = 1` and `DISABLE_FAR_PLANE_
 present at load; without it drawing stops between 19 and 25 km. **True distance (D6) stands; the pull-in is a fallback.**
 Under Pure the fog saturates by 15-20 km: past that only outline and fog colour read (PLAN 3a). Not tested: motion,
 frame rate, which key alone suffices. Kevin has not seen the working version.
+
+## The survey on the whole lap, unattended (Kevin, 2026-11-23)
+
+After the pilot's three questions: "I want the best versions of these that you can do with no more input from me tonight".
+Decided on his behalf, and given to the survey session to run without stopping:
+
+- **Paint:** the whole lap; a second flight year (2020, then 2018) to fill what vehicles hid; symbols typed where the
+  picture supports it; the thin-line width over-read corrected; split crosswalks joined; the lidar-intensity check on
+  every firm mark.
+- **Posts:** a better shadow reader, then **every candidate checked by eye** and the misses added by eye; a second
+  flight year as the independent reading; heights only where the sun's elevation derives cleanly.
+- **Colfax:** the 2022 state, per D8, with OSM's present bus-lane tags recorded beside it as changed and unsurveyed.
+- **Signs:** tagged per junction from OSM; nothing invented.
+- A refutation pass on a fresh sample per class before it is called done; Stout's covered 344 m declared unsurveyed.

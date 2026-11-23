@@ -16,9 +16,9 @@ Computes, from college_design.json (the measured section) and the centreline's o
       plus the measured rise of the northbound road over the built west edge
   the island: `median_bands.json` island_w_by_vertex = 0 for v1117..v1475 (the real road has none in the two forks,
       and through the split the bank is plain ground between two roads)
-  the SPEEDWAY LAP `race.laps.college`: MAINLINE 0..1130, college_nb, MAINLINE 1476..4497, with two DECLARED joins of
-      exactly one point per mainline station (v1131..1171 and v1445..1475), so the lap's vertex k IS the mainline's
-      vertex k and every vertex-keyed race declaration carries over unchanged
+  the SPEEDWAY LAP `race.laps.college`: MAINLINE 0..1130, college_nb 0..346, MAINLINE 1476..4497. The piece's record runs
+      the whole zone (its fork rows carry the Speedway's lane through the fork), so the three pieces meet end to end,
+      the lap's vertex k IS the mainline's vertex k, and every vertex-keyed race declaration carries over unchanged
   the metre-keyed entries of track.config.json after the split, each with its old and new station.
 
 Without --write it only reports and writes college_split.data.json beside this file. With --write it rewrites the
@@ -266,9 +266,24 @@ for v in range(A0 + 1, A1):
     main_pts[v] = at(v, main_off[v], main_y[v])
     P1[v] = main_pts[v]
 lap_zone = {v: P0[v] if v in (A0, A1) else at(v, lap_off[v], lap_y[v]) for v in ZONE}
-piece_off = [lap_off[v] for v in range(NOSE, TAIL + 1)]
+# The piece's RECORD runs the whole zone, v1130..v1476, forks included (one point per mainline station), so the lap
+# is three pieces that meet end to end and needs no declared join. A declared join takes its widths by straight
+# interpolation between its two ends, which put the Speedway's lane up to 1.2 m outside the pavement mid-fork; a
+# piece carries its own width per point. In a fork that width is twice (the lap's line - the built east edge): the
+# lane's right face is the built east curb, and its left face runs from the west curb at the outer row to the point
+# where the roads part: the diagonal that keeps the Speedway off the southbound road. The mainline's own fork rows
+# mirror it (width = twice (the built west edge - its line)): the Reverse's lane is sealed off the northbound road.
+piece_off = [lap_off[v] for v in range(NOSE, TAIL + 1)]            # the two roads' rows only (the report's numbers)
 piece_pts = [lap_zone[v] for v in range(NOSE, TAIL + 1)]
 piece_w = [nb_west[v] - east(v) for v in range(NOSE, TAIL + 1)]
+# ...and it STOPS one row short of the north outer row (v1475): where two piece ends coincide the lap keeps the earlier
+# piece's vertex, and at v1476 that must be the mainline's own, which carries the island that begins there (taken from
+# the piece, lap vertex 1476 read island 0 and the lap's island nose came out one row late). The 3 m step from v1475
+# to the mainline's v1476 is a plain join with no point of its own (join_spacing_m 4).
+REC = range(A0, A1)
+rec_pts = [lap_zone[v] for v in REC]
+rec_w = [(nb_west[v] - east(v)) if NOSE <= v <= TAIL else 2.0 * (lap_off[v] - east(v)) for v in REC]
+rec_w[0] = W0[A0]                                                   # its first point is the mainline's own row
 edge_dev = {"sb_inner_max_m": max(abs(sb_east[v] - D[v]["sb_inner"]["offset_m"]) for v in range(NOSE, TAIL + 1)),
             "nb_inner_max_m": max(abs(nb_west[v] - D[v]["nb_inner"]["offset_m"]) for v in range(NOSE, TAIL + 1))}
 TWO = range(NOSE, TAIL + 1)
@@ -284,15 +299,8 @@ height_rep = {"rows": "planar across: a line rides on the chord of its own road'
               "northbound_inner_edge_over_southbound_inner_edge_m": {"at_nose": round(step_in[0], 2), "max": round(max(step_in), 2),
                                                                      "at_tail": round(step_in[-1], 2)},
               "bank_slope_pct_max": round(max(100.0 * d / b for d, b in zip(step_in, bank_w) if b > 1.0), 1)}
-south = [(v, lap_zone[v]) for v in range(A0, NOSE + 1)]            # mainline v1130 -> the piece's first point
-north = [(v, lap_zone[v]) for v in range(TAIL, A1 + 1)]            # the piece's last point -> mainline v1476
-joins = [{"id": "college_south_fork", "from": ["MAINLINE", A0], "to": [PIECE, 0],
-          "points_xyz_m": [[round(c, 4) for c in p] for _v, p in south]},
-         {"id": "college_north_fork", "from": [PIECE, len(piece_pts) - 1], "to": ["MAINLINE", A1],
-          "points_xyz_m": [[round(c, 4) for c in p] for _v, p in north]}]
-lap = {"pieces": [{"line": "MAINLINE", "from": 0, "to": A0}, {"line": PIECE, "from": 0, "to": len(piece_pts) - 1},
-                  {"line": "MAINLINE", "from": A1, "to": m - 1}],
-       "joins": joins, "join_spacing_m": 3.0}
+lap = {"pieces": [{"line": "MAINLINE", "from": 0, "to": A0}, {"line": PIECE, "from": 0, "to": len(rec_pts) - 1},
+                  {"line": "MAINLINE", "from": A1, "to": m - 1}], "join_spacing_m": 4.0}
 
 
 # --- stations: old and new ----------------------------------------------------------------------------------------------
@@ -349,7 +357,7 @@ step_max = max(math.hypot(P1[v][0] - P1[v - 1][0], P1[v][2] - P1[v - 1][2]) for 
 step_min = min(math.hypot(P1[v][0] - P1[v - 1][0], P1[v][2] - P1[v - 1][2]) for v in range(A0, A1 + 1))
 kink = turn_deg(P1[A0 - 3:A1 + 4])
 kink_old = turn_deg(P0[A0 - 3:A1 + 4])
-lap_pts = P1[:A0 + 1] + [p for _v, p in south[1:-1]] + piece_pts + [p for _v, p in north[1:-1]] + P1[A1:m]
+lap_pts = P1[:A0] + rec_pts + P1[A1:m]
 lap_len = sum(math.hypot(b[0] - a[0], b[2] - a[2]) for a, b in zip(lap_pts, lap_pts[1:] + lap_pts[:1]))
 lap_seg = [math.hypot(b[0] - a[0], b[2] - a[2]) for a, b in zip(lap_pts[A0 - 1:A1 + 1], lap_pts[A0:A1 + 2])]
 report = {
@@ -376,18 +384,18 @@ report = {
               "over_mainline_m": {"max": round(max(piece_pts[k][1] - main_pts[NOSE + k][1] for k in range(len(piece_pts))), 2),
                                   "at_nose": round(piece_pts[0][1] - main_pts[NOSE][1], 2),
                                   "at_tail": round(piece_pts[-1][1] - main_pts[TAIL][1], 2)}},
-    "lap": {"id": LAP, "south_join_points": len(south) - 2, "north_join_points": len(north) - 2,
+    "lap": {"id": LAP, "pieces": "MAINLINE 0..%d, %s 0..%d, MAINLINE %d..%d; no declared join" % (A0, PIECE, len(rec_pts) - 1, A1, m - 1),
             "vertices": len(lap_pts), "mainline_vertices": m,
             "largest_turn_between_segments_deg": round(turn_deg(lap_pts[A0 - 3:A1 + 4]), 2),
             "segment_m": {"min": round(min(lap_seg), 2), "max": round(max(lap_seg), 2)},
             "length_m": round(lap_len, 1), "against_the_mainline_m": round(lap_len - S1[-1] - math.hypot(P1[0][0] - P1[m - 1][0], P1[0][2] - P1[m - 1][2]), 2),
-            "join_ends_off_their_piece_ends_m": [round(math.dist(south[0][1], P1[A0]), 4), round(math.dist(south[-1][1], piece_pts[0]), 4),
-                                                 round(math.dist(north[0][1], piece_pts[-1]), 4), round(math.dist(north[-1][1], P1[A1]), 4)]},
+            "piece_start_off_the_mainline_m": round(math.dist(rec_pts[0], P1[A0]), 4), "piece_end_to_mainline_v%d_m" % A1: round(math.dist(rec_pts[-1], P1[A1]), 3),
+            "fork_width_m": {"min": round(min(rec_w[:NOSE - A0] + rec_w[TAIL - A0 + 1:]), 2), "max": round(max(rec_w), 2)}},
     "island_w_zero": list(ISLAND_OFF), "station_keyed": shift,
 }
 out = {"what": "College split, the data (college_split_data.py)", "report": report, "lap": lap,
-       "piece": {"name": PIECE, "kind": "connector", "points_xyz_m": [[round(c, 4) for c in p] for p in piece_pts],
-                 "widths_m": [round(w, 3) for w in piece_w]},
+       "piece": {"name": PIECE, "kind": "connector", "points_xyz_m": [[round(c, 4) for c in q] for q in rec_pts],
+                 "widths_m": [round(w, 3) for w in rec_w]},
        "edges": {"_doc": "offsets from the OLD line per station of the two roads, + = west: what the scene rows are built to "
                          "(the mainline row = sb_west, its line, sb_east; the piece row = nb_west, its line, nb_east)",
                  "v": list(range(NOSE, TAIL + 1)),

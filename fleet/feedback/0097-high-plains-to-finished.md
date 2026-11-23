@@ -184,7 +184,9 @@ Their "blue sections" are the kerbs' paint, not barriers. `paddock_row_3` (s 260
 lies on the blue / yellow edge stripe R s 263-299 (its paint -6.05..-6.95 m); `paddock_row_8` (s 210-237, +4.87 m) on the
 blue / white kerb L s 212-239 (paint from +5.38 m). The photo shows no K-rail off the road beside either. Moving them onto
 "the nearest measured ground where their blue sections show" would stand barriers that are not there, so neither moved;
-each row's `_round2` says why, and the author still stands nothing over the road (0 of 12, 0 of 6).
+each row's `_round2` says why, and the author still stands nothing over the road (0 of 12, 0 of 6). The still
+`source/edges/rows_3_8_on_the_kerbs_2023_030.jpg` draws both rows (red) and the real paddock rows near them (green) over
+the photo: `paddock_row_5`, 11.6 m out at s 207-250, is the pit-exit lane's own K-rail and already stands.
 
 ### 4. The grey roof: a low shed of invented height
 
@@ -262,9 +264,10 @@ the AI line 2,137 -> 2,140 points, lap 98.9 -> 96.0 s (generated); the circuit d
   Heaven (289314483, 433 m): they leave the West lap at the fork (OSM node 1454637759, built s ~2,709) and rejoin it at node
   1454637805 (s ~2,831, Prarie Corkscrew's vertex 7); the Full layout skips the West's first 130 m of the Corkscrew. On disk
   for it (no download): the ten ways' OSM snapshot of 2026-10-28 and its 3DEP (heightfield to lat 39.74124, the north
-  section's corridor) from ledger 0059's full-course build, on the Mac (outside git). Not on disk: any photo north of lat
-  39.73887 (the north section's top ~110 m; the 0.3 m crop stops at 39.73681), so its widths there could only be carried
-  from the measured stretch below. What the build needs (Pikes Peak 0.2.0's road, ledger 0085): the north loop as a
+  section's corridor) from ledger 0059's full-course build, on the Mac (outside git). Photo coverage: the 0.3 m crop holds 127 m of
+  Bobsled's 568 m and 69 m of Ladder's 433 m; the committed z18 photo (0.46 m, `tracks/high-plains/source/
+  naip_2023_hp_z18.png`, to lat 39.73887) 376 m and 307 m; the top 318 m of the two are in no photo on disk, so widths there
+  could only be carried from the measured stretch below (or a crop fetched on Kevin's word). What the build needs (Pikes Peak 0.2.0's road, ledger 0085): the north loop as a
   connector with junction pads at a fast Y fork and a merge, the heightfield widened north (lm_intake.heightfield "port"),
   `race.laps` for the Full lap, per-layout AC nodes for `race_start` (today's circuit dummies are single-layout), a
   second AI line, road wear per layout, and every gate on both layouts.

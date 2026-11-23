@@ -1,7 +1,10 @@
 """Ledger 0100: Milford to finished, round 1 (Kevin's answers of 2026-11-22). Every number here is re-derived from the
-committed files: the 0.1.13 build's swept line (data/centerline.local.json, the PC's), the config, the vegetation files.
+committed files: the swept line (data/centerline.local.json), the config, the vegetation files. Ledger 0102 (round 2,
+0.1.15) moved the lap to GM's 2.9 mi loop: the swept line is now the GM lap's (source/round2/predict_lines_0102.py, until the
+0.1.15 build commits its own, the same bytes), so the numbers pinned on it are the GM lap's, 0.1.14's beside them.
 
-  1. T3's traced start 0.2 m off the lane: module 0 stands (the proxy reproduces the PC's own 0.214 m / 0.18 m over).
+  1. T3's traced start 0.2 m off the lane: in 0.1.15 T3 is off the lap with the 2022 loop (ledger 0102), so what stands is
+     the move as declared (0.1.14's polyline, restated) and its distance to the GM lane.
   2. The painted line as the start / finish: race_start on the measured lon/lat, the grid and pits as patterns, all forward.
   3. GrassFX at 6 m cells everywhere.
   4. The trunk colliders' reach derived from the barrier lines (20 m), trunks.json reproduced.
@@ -81,22 +84,22 @@ def _outside_lane(line, ring):
     return out
 
 
-def test_t3_module_0_stands_after_the_move_and_the_proxy_reproduces_the_pc():
+# 0.1.14's T3 polyline (ledger 0100 item 1: the traced start [-83.6662312, 42.5690387] moved 0.200 m off the 0.1.13 lane);
+# ledger 0102 takes T3 out of 0.1.15 with the 2022 loop it stood on, so the move is restated here, as 0.1.14 declared it
+T3_0114 = [[-83.666229668, 42.5690373], [-83.6662678, 42.5689045], [-83.6663106, 42.5687519]]
+
+
+def test_t3_left_the_lap_with_the_2022_loop_and_the_move_stands_as_declared():
     loc, cfg = _local(), _cfg()
+    assert "t3_s1000_apron_back" not in {r["key"] for r in cfg["scenery"]["bespoke"]["rails"]}
+    assert all("t3_s1000_apron_back" not in (e.get("rails") or []) for e in cfg["lm_intake"]["edge_retrace"])
     line = cs.Line(loc["points_xyz_m"], loc["widths_m"])
-    t3 = [r for r in cfg["scenery"]["bespoke"]["rails"] if r["key"] == "t3_s1000_apron_back"][0]
-    assert t3["stand_on"] == ["CURB", "1KERB"] and t3["seat"] == "surface" and t3["depth_m"] == 1.5
-    poly = [cs.lonlat_to_xz(loc["origin"], *p) for p in t3["polyline_lonlat"]]
+    poly = [cs.lonlat_to_xz(loc["origin"], *p) for p in T3_0114]
     old = [cs.lonlat_to_xz(loc["origin"], -83.6662312, 42.5690387)] + poly[1:]
     assert 0.1995 <= math.dist(old[0], poly[0]) <= 0.2005
-    m_old, m_new = _t3_modules(old), _t3_modules(poly)
-    assert len(m_old) == len(m_new) == 51
-    # the PC's 0.1.13 build (ledger 0091 rehearsals 2 / 3): module 0 0.18 m over the lane, module 1's corner 0.214 m off it
-    assert abs(min(_outside_lane(line, m_old[0])) + 0.184) < 0.002
-    assert abs(min(_outside_lane(line, m_old[1])) - 0.214) < 0.002
-    new0 = min(_outside_lane(line, m_new[0]))
-    assert 0.008 <= new0 <= 0.014                         # 0.011 m: module 0 off the lane, on the edge strip
-    assert all(min(_outside_lane(line, r)) > new0 for r in m_new[1:])
+    assert len(_t3_modules(poly)) == 51
+    # on the GM lap every module stands far off the lane (ledger 0102: 62.6-77.5 m off the GM lane edge)
+    assert min(min(_outside_lane(line, r)) for r in _t3_modules(poly)) > 60.0
 
 
 # --- 2. the start / finish ----------------------------------------------------------------------------------------------------
@@ -107,7 +110,7 @@ def test_race_start_on_the_painted_line_all_forward():
     assert rs["line"]["lonlat"] == list(PAINT_LONLAT)
     pl = cs.plan(rs, loc)
     assert pl["problems"] == []
-    assert abs(pl["line_station_m"] - 4639.86) < 0.05
+    assert abs(pl["line_station_m"] - 4465.28) < 0.05     # the GM lap (ledger 0102); 0.1.14's lap: s 4,639.86
     nodes = pl["nodes"]
     starts = sorted(n for n in nodes if n.startswith("AC_START_"))
     pits = sorted(n for n in nodes if n.startswith("AC_PIT_"))
@@ -163,11 +166,13 @@ def test_trunk_reach_is_derived_from_the_barrier_lines_and_trunks_json_reproduce
     res = vtr.plan(MF)
     st = res["standoffs"]
     assert set(st) == {"g1_nw_corner_outside", "g2_front_straight_east", "g3_front_straight_west", "g4_infield_esses",
-                       "t1_nw_hairpin_exit", "t2_esses_east_leg", "t3_s1000_apron_back"}      # no screen: site fences
+                       "t1_nw_hairpin_exit", "t2_esses_east_leg"}      # no screen: site fences; T3 off the lap (ledger 0102)
     assert max(st, key=lambda k: st[k][1]) == "g4_infield_esses" and abs(st["g4_infield_esses"][1] - 19.07) < 0.01
     assert res["reach_m"] == 20.0
     tr = json.loads((MF / "source" / "vegetation" / "trunks.json").read_text(encoding="utf-8"))
-    assert tr["reach_m"] == 20.0 and tr["points"] == res["trunks"] and len(tr["points"]) == 261   # 174 lidar + 87 verge (item 7)
+    # the GM lap (ledger 0102): 167 lidar + 84 verge; 0.1.14's file on 0.1.13's line: 261 (174 + 87)
+    assert tr["reach_m"] == 20.0 and tr["points"] == res["trunks"] and len(tr["points"]) == 251
+    assert "0.1.15's swept line" in tr["_source"]
     assert min(p[3] for p in tr["points"]) >= 3.0                          # none within the corridor margin
     veg_plan = (MF / "source" / "vegetation" / "scripts" / "veg_plan.py").read_text(encoding="utf-8")
     assert "COLLIDER_REACH_M = 20.0" in veg_plan
@@ -240,12 +245,13 @@ def test_naip_only_blobs_reproduce_the_inventory_and_the_verge_trees_reproduce()
     pts = json.loads((MF / "source" / "vegetation" / "trees.lm.json").read_text(encoding="utf-8"))["points"]
     lidar = [p for p in pts if len(p) < 7]
     verge = [p for p in pts if len(p) > 6]
-    assert len(lidar) == inv["planted"]["trees"] == 11247 and verge == res["points"] and len(verge) == 883
+    # the GM lap (ledger 0102): 884, one more clear of the drivable surface; 0.1.14's lap: 883
+    assert len(lidar) == inv["planted"]["trees"] == 11247 and verge == res["points"] and len(verge) == 884
     assert all(p[6] == "naip_verge" and p[2] == 1 and p[3] >= 5.0 and p[5] >= 1_000_000 for p in verge)
     assert len({p[5] for p in pts}) == len(pts)                            # every key its own
     rec = json.loads((MF / "source" / "vegetation" / "naip_verge.json").read_text(encoding="utf-8"))
     assert sum(1 for t in rec["trees"] if not t["measured"]) == 103 and rec["left_out"] == {
-        "within the corridor margin of the drivable surface": 29}
+        "within the corridor margin of the drivable surface": 28}                       # 0.1.14's lap: 29
     assert all(t["neighbours"] >= 3 for t in rec["trees"] if t["measured"])
 
 
@@ -266,10 +272,12 @@ def test_owned_concrete_on_milfords_concrete_surfaces():
 
 # --- 10. the version ------------------------------------------------------------------------------------------------------------
 
-def test_version_is_0_1_14_and_the_ledger_is_filed():
-    assert _cfg()["version"] == "0.1.14" and _cfg()["slug"] == "milford_road_course"
+def test_version_and_the_ledgers_are_filed():
+    # 0.1.14 was round 1 (this ledger); round 2 (ledger 0102) takes 0.1.15 on top of it
+    assert _cfg()["version"] == "0.1.15" and _cfg()["slug"] == "milford_road_course"
     led = (ROOT / "fleet" / "feedback" / "0100-milford-to-finished.md").read_text(encoding="utf-8")
     assert led.startswith("---\nid: 0100\n") and "Runbook 0100-1" in led and "62,055,573" in led
+    assert "0.1.14 (ledger 0100" in _cfg()["_version_doc"]
 
 
 # --- 6b. round 1b: the pads' crease limit (the PC's 0.1.14 rehearsal, 2af260a9) ------------------------------------------------

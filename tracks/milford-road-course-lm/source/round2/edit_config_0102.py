@@ -7,19 +7,81 @@
 2. The station-keyed entries re-read on the GM line, by position (an old station's point -> the nearest point of the GM
    intake line): before the splice unchanged, after it -174.6..-175.5 m; the agree span s 1,228-1,237 lay on the dropped
    2022 loop (13.7-16.1 m off the GM line) and goes.
-3. Off the lap with the 2022 loop: T3 (t3_s1000_apron_back, 62.6-77.5 m off the new lane edge), run-off pads R0998
-   (37.6-71.0 m off), L1175 and L0883 (now under the new lane, up to 5.4 / 6.6 m inside it; L0883 was the inner branch's
-   own concrete, drawn as a pad while it was not on the lap).
+3. Off the lap with the 2022 loop: T3 (t3_s1000_apron_back, 62.6-77.5 m off the new lane edge). The run-off pads are
+   re-outlined on the GM line by their own tool afterwards (source/runoff/scripts/runoff_pads.py --write: "re-run it after
+   the line or the widths move"), not edited here.
 4. The banked inner turn's measured cross-section (route.densify.section).
 5. The shoulder (Kevin 2026-11-22, calls page: "Reshape the shoulder"): terrain.shoulder_grade.
+
+    python -I tracks/milford-road-course-lm/source/round2/edit_config_0102.py --docs tracks/milford-road-course-lm/track.config.json
+
+--docs (after the re-plans; source/round2/apply_0102.sh runs every step in order): the numbers the GM lap's re-plans measured,
+written into the docs of the keys round 1 (0.1.14, ledger 0100) and round 2 both touch: race_start (the painted line's station,
+the grid and the pits on the GM lap's swept line, tools/circuit_dummies_blend.py's own plan), the pads, the trunk colliders,
+the verge trees.
 """
 import json
 import sys
 from pathlib import Path
 
-p = Path(sys.argv[1])
+ROOT = Path(__file__).resolve().parents[4]
+DOCS = "--docs" in sys.argv
+p = Path([a for a in sys.argv[1:] if not a.startswith("--")][0])
 raw = p.read_text(encoding="utf-8")
 d = json.loads(raw)
+
+
+def docs():
+    """ledger 0102 --docs: the GM lap's re-planned numbers into the docs of the keys rounds 1 and 2 both touch"""
+    sys.path.insert(0, str(ROOT))
+    from scripts.geometry import circuit_start as cs
+    mf = p.parent
+    loc = json.loads((mf / "data" / "centerline.local.json").read_text(encoding="utf-8"))
+    pl = cs.plan(d["race_start"], loc)
+    if pl["problems"]:
+        raise SystemExit(f"[0102] race_start on the GM lap: {pl['problems']}")
+    st = sorted(v["station_m"] for k, v in pl["nodes"].items() if k.startswith("AC_START_"))
+    pt = sorted(v["station_m"] for k, v in pl["nodes"].items() if k.startswith("AC_PIT_"))
+    d["race_start"]["_gm_loop_0102_doc"] = (
+        f"ledger 0102: the line, grid and pits are declared by the MEASURED paint (lon / lat) and patterns, so the build re-reads "
+        f"them on its own lap. On the GM lap's swept line (source/round2/predict_lines_0102.py; lap {pl['lap_m']:.2f} m) the "
+        f"painted line projects to s {pl['line_station_m']:.2f} (0.1.14: s 4,639.86 on 4,898.25 m), the grid's {len(st)} slots "
+        f"s {st[0]:.2f}-{st[-1]:.2f}, the pits' {len(pt)} s {pt[0]:.2f}-{pt[-1]:.2f}, AC_TIME_1 / _2 at s "
+        f"{pl['sectors_m'][0]:.2f} / {pl['sectors_m'][1]:.2f}: all on the front straight, the splice (s ~768-1,045) far off")
+    rec = json.loads((mf / "source" / "runoff" / "runoff_pads.json").read_text(encoding="utf-8"))
+    kept = [x["key"] for x in rec["blobs"] if x["kept"]]
+    keys = [q["key"] for q in d["scenery"]["bespoke"]["pads"]]
+    if keys != ["ride_pad"] + kept:
+        raise SystemExit("[0102] the config's pads are not runoff_pads.py's: run it with --write first")
+    d["scenery"]["bespoke"]["_pads_0102_doc"] = (
+        f"ledger 0102: the strip pads re-outlined on the GM intake line by source/runoff/scripts/runoff_pads.py --write (its "
+        f"own rule, unchanged: re-run after the line moves): {len(kept)} (0.1.14: 19). Keys name side + station, so the 12 "
+        f"after the splice carry the GM line's stations (L1530 -> L1355 ... L4775 -> L4601), each re-sampled on its 4 m rows "
+        f"from the lane edge + LIP_M; L0883 (the inner branch's concrete, now the lane), R0998 and L1175 (the 2022 loop) go; "
+        f"R0880 and R1008 are new: the 2022 loop's grey pavement beside the GM inner turn (NAIP blue / red 0.937 / 0.931, "
+        f"748 / 1,296 m2). pads_shade smooth and pads_shade_crease_deg 10 (ledger 0100) are this block's keys, so every pad, "
+        f"the new two included, keeps them")
+    tr = json.loads((mf / "source" / "vegetation" / "trunks.json").read_text(encoding="utf-8"))
+    tk = d["scenery"]["bespoke"]["trunks"]
+    tk["_gm_loop_0102_doc"] = (
+        f"ledger 0102: re-selected on the GM lap's swept line by veg_trunks_reach.py (unchanged rule): the reach stays "
+        f"{tr['reach_m']:.0f} m (g4_infield_esses' median standoff 19.07 m), {len(tr['points'])} colliders (0.1.14's file: 261 "
+        f"on 0.1.13's line)")
+    vv = json.loads((mf / "source" / "vegetation" / "naip_verge.json").read_text(encoding="utf-8"))
+    d["scenery"]["treefx"]["planted"]["_verge_0102_doc"] = (
+        f"ledger 0102: the verge trees re-planted on the GM lap's swept line by veg_naip_verge.py (unchanged rules): "
+        f"{len(vv['trees'])} (0.1.14: 883), left out {vv['left_out']}; keys are KEY0 + rank, so the trees after a new one take "
+        f"new keys (TreeFX's model and angle draw)")
+
+
+if DOCS:
+    if d.get("version") != "0.1.15":
+        raise SystemExit(f"--docs: expected 0.1.15, found {d.get('version')}")
+    docs()
+    out = json.dumps(d, indent=2, ensure_ascii=False) + ("\n" if raw.endswith("\n") else "")
+    p.write_text(out, encoding="utf-8", newline="\n")
+    print(f"[0102] {p}: the GM lap's numbers in the docs")
+    sys.exit(0)
 if d.get("version") != "0.1.14":
     raise SystemExit(f"expected round 1's 0.1.14, found {d.get('version')}")
 d["version"] = "0.1.15"
@@ -57,11 +119,9 @@ li["_edge_retrace_0102_doc"] = (
 # 3. off the lap
 b = d["scenery"]["bespoke"]
 b["rails"] = [r for r in b["rails"] if r["key"] != "t3_s1000_apron_back"]
-b["pads"] = [q for q in b["pads"] if q["key"] not in ("runoff_R0998", "runoff_L1175", "runoff_L0883")]
 b["_off_lap_0102_doc"] = (
-    "ledger 0102: off the lap with the 2022 loop: T3 (t3_s1000_apron_back, 62.6-77.5 m off the GM lane edge), run-off pads "
-    "R0998 (37.6-71.0 m off), L1175 and L0883 (under the new lane, up to 5.4 / 6.6 m inside it; L0883 was the inner "
-    "branch's concrete, drawn as a pad while it was off the lap)")
+    "ledger 0102: off the lap with the 2022 loop: T3 (t3_s1000_apron_back, 62.6-77.5 m off the GM lane edge; round 1's 0.2 m "
+    "move of its start, ledger 0100 item 1, goes with it)")
 
 # 4. the banked inner turn
 d["route"]["densify"]["section"] = {
@@ -106,4 +166,4 @@ d["terrain"]["shoulder_grade"] = {
 
 out = json.dumps(d, indent=2, ensure_ascii=False) + ("\n" if raw.endswith("\n") else "")
 p.write_text(out, encoding="utf-8", newline="\n")
-print(f"[0102] {p}: 0.1.14 -> 0.1.15; rails {len(b['rails'])}, pads {len(b['pads'])}")
+print(f"[0102] {p}: 0.1.14 -> 0.1.15; rails {len(b['rails'])} (the pads: runoff_pads.py --write next)")

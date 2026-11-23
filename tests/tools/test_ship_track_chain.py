@@ -556,6 +556,8 @@ V4_EXTRAS = {
         "ledger 0082 pass 3: only where the config says scenery.bespoke.reseat_on_prep true (Milford, High Plains); never on Lake Murray",
     ("prep_prep", "ship: the far ground's sunk skirt out of the prepped ground tiles (tools/far_ground_prep_blend.py; self-checked)"):
         "ledger 0082 'Far ground (0.1.11)': only where the config names terrain.far_ground.object (Milford); never on Lake Murray",
+    ("prep_prep", "ship: the road shoulder graded on the lidar ground (tools/shoulder_grade_blend.py; ledger 0102; self-checked)"):
+        "ledger 0102: only where the config names terrain.shoulder_grade (Milford 0.1.15); never on Lake Murray",
     ("prep_prep", "ship: road wear where tyres run + the road's tone off the aerial (tools/road_wear_blend.py; ledger 0084; self-checked)"):
         "ledger 0084: only where the track's config names road_wear (Milford 0.1.7, High Plains 0.1.7); never on Lake Murray",
     ("prep_prep", "ship: a circuit's declared line, grid, pits and sectors on the prepped scene (tools/circuit_dummies_blend.py; ledger 0093; self-checked)"):

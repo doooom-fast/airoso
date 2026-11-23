@@ -5,6 +5,9 @@
   2. tools/measured_surface.py section: what the fit's plane misses across a stretch, recovered on a synthetic curved bank.
   3. tools/densify_ribbon_blend.py's route.densify.section: the product's delta by lateral offset and the span weight.
   4. tools/shoulder_grade_blend.py: wired into ship_track.sh after the far ground's prep and before the pads, opt-in.
+  5. 0.1.15's config on round 1's 0.1.14 (source/round2/apply_0102.sh): GM's loop, the files an empty workshop needs, the
+     committed lines the build will write, and where rounds 1 and 2 meet: the start / finish re-read on the GM lap, the pads
+     re-outlined by their own tool (round 1's shading kept), the trees and colliders re-planned (round 1's tests).
 stdlib + numpy only: bpy / bmesh / mathutils are stubbed where a Blender tool is imported.
 """
 
@@ -12,7 +15,9 @@ from __future__ import annotations
 
 import importlib.util
 import json
+import hashlib
 import math
+import subprocess
 import sys
 import types
 from pathlib import Path
@@ -143,3 +148,68 @@ def test_shoulder_helpers():
     assert sg.poly_dist(sq, 5.0, 5.0) == 0.0
     assert sg.poly_dist(sq, 13.0, 5.0) == pytest.approx(3.0)
     assert sg.smoothstep(0.0) == 0.0 and sg.smoothstep(1.0) == 1.0 and sg.smoothstep(0.5) == pytest.approx(0.5)
+
+
+# ------------------------------------------------------------------------------------------------ 5. the config (0.1.15)
+def test_config_is_0_1_15_on_the_gm_loop_and_an_empty_workshop_gets_its_files():
+    c = _j(MF / "track.config.json")
+    li = c["lm_intake"]
+    assert c["version"] == "0.1.15" and c["_version_doc"].startswith("0.1.15 (ledger 0102")
+    assert li["source_data"] == "data_gm"
+    assert li["measured_surface"]["file"] == "source/surface/road_surface_gm.fit.json"
+    assert li["edge_fit"]["evidence"] == "source/edges/edge_evidence_gm.json"
+    assert all(e["evidence"] == "source/edges/edge_evidence_gm.json" for e in li["edge_retrace"])
+    assert li["edge_retrace"][0]["spans"] == [[4355.5, 150.0]]
+    assert len(li["edge_retrace"][1]["spans"]) == 7 and [1228.0, 1237.0] not in li["edge_retrace"][1]["spans"]
+    rails = {r["key"] for r in c["scenery"]["bespoke"]["rails"]}
+    assert "t3_s1000_apron_back" not in rails and set(li["edge_retrace"][1]["rails"]) == rails
+    sec = c["route"]["densify"]["section"]
+    assert sec["file"] == "source/surface/road_section_gm.json" and sec["spans"] == [[870.0, 1030.0]]
+    t = c["terrain"]
+    assert t["lidar_shift_m"] == [-0.375, 0.938]
+    sg = t["shoulder_grade"]
+    assert (sg["from_m"], sg["full_m"], sg["to_m"], sg["max_fill_m"]) == (2.0, 15.0, 20.0, 1.0)
+    assert sg["keep_patches"] == ["culvert_4349_w"] and "culvert_4349_w" in {q["id"] for q in t["lidar_patches"]}
+    ship = _j(MF / "ship.json")
+    for f in (li["measured_surface"]["file"], li["edge_fit"]["evidence"], sec["file"], sg["npz"]):
+        assert f in ship["sync_in"]["required"], f
+    assert {"data/densify_section.json", "data/shoulder_grade.json"} <= set(ship["sync_out"]["files"])
+
+
+def test_edit_config_takes_only_round_1s_0_1_14(tmp_path):
+    p = tmp_path / "c.json"
+    p.write_text(json.dumps({"version": "0.1.15"}), encoding="utf-8")
+    r = subprocess.run([sys.executable, "-I", str(MF / "source" / "round2" / "edit_config_0102.py"), str(p)],
+                       capture_output=True, text=True)
+    assert r.returncode != 0 and "0.1.14" in r.stdout + r.stderr
+
+
+def test_the_committed_lines_are_the_ones_the_build_will_write():
+    """data/centerline.raw.local.json + centerline.local.json = the intake (an empty workshop) and the draft's smoothing, byte
+    for byte (predict_lines_0102.py --check runs the intake): every plan below is made on the lap that will be built"""
+    r = subprocess.run([sys.executable, "-I", str(MF / "source" / "round2" / "predict_lines_0102.py"), "--check"], cwd=ROOT,
+                       capture_output=True, text=True)
+    assert r.returncode == 0, (r.stdout[-1500:], r.stderr[-1500:])
+
+
+def test_the_start_finish_is_re_read_on_the_gm_lap():
+    from scripts.geometry import circuit_start as cs
+    c, loc = _j(MF / "track.config.json"), _j(MF / "data" / "centerline.local.json")
+    pl = cs.plan(c["race_start"], loc)
+    assert pl["problems"] == []
+    assert abs(pl["lap_m"] - 4723.67) < 0.01 and abs(pl["line_station_m"] - 4465.28) < 0.01      # 0.1.14: 4,639.86 / 4,898.25
+    slots = [v["station_m"] for k, v in pl["nodes"].items() if k.startswith(("AC_START_", "AC_PIT_"))]
+    assert len(slots) == 40 and all(4300.0 < s < 4600.0 for s in slots)       # the front straight, far off the splice
+    assert "s 4465.28" in c["race_start"]["_gm_loop_0102_doc"]
+
+
+def test_the_pads_are_the_outliners_on_the_gm_line_and_keep_round_1s_shading():
+    b = _j(MF / "track.config.json")["scenery"]["bespoke"]
+    rec = _j(MF / "source" / "runoff" / "runoff_pads.json")
+    kept = [x for x in rec["blobs"] if x["kept"]]
+    assert [q["key"] for q in b["pads"]] == ["ride_pad"] + [x["key"] for x in kept] and len(kept) == 18
+    assert {"runoff_L0883", "runoff_R0998", "runoff_L1175"}.isdisjoint(q["key"] for q in b["pads"])
+    new = [x for x in kept if x["key"] in ("runoff_R0880", "runoff_R1008")]
+    assert len(new) == 2 and all(x["naip_b_over_r"] >= rec["params"]["PAVED_B_OVER_R"] and x["folds"] == 0 for x in new)
+    assert b["pads_shade"] == "smooth" and b["pads_shade_crease_deg"] == 10        # the block's keys: every pad, the new two
+    assert rec["line"]["md5"] == hashlib.md5((MF / "data" / "centerline.raw.local.json").read_bytes()).hexdigest()

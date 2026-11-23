@@ -19,6 +19,10 @@ The Mac gave both to the PC (session 37e02e50) on branch `claude/mf-finish-r2-20
 (ledger 0100: T3, the start / finish, grass, colliders, the NW building, the pads' shading, verge trees, concrete) is the
 Mac's, on `claude/mf-finish-20261122` (0.1.14). Round 2's config goes on top of it once it merges, as 0.1.15.
 
+Round 1 merged into main at b8d39f78 (PR 50; installed). This branch merged that main at a841d670 (a merge, not a rebase:
+no force-push) and takes 0.1.15 on top of it. Section 4 says what came in and how the three places both rounds touch were
+resolved.
+
 ## 1. GM's 2.9 mi loop
 
 ### What differs
@@ -101,7 +105,8 @@ Re-read by position: an old station's point on 0.1.13's intake line, then the ne
 | round 1's painted line (s 4,639.86 on 0.1.13) | 4,639.9 | 4,465.2 (0.22); race_start is lon/lat, so it carries |
 
 Everything else is by position (lon/lat or the local frame) and carries over: race_start, the grid and pits, route.paint,
-the rails, the pads, the edge evidence, the lidar patches, the trees.
+the rails, the edge evidence, the lidar patches. The plans round 1 made on the built line itself (the run-off pads, the
+verge trees, the trunk colliders) are re-made on the GM lap by their own tools: section 4.
 
 ### Off the lap with the 2022 loop
 
@@ -112,7 +117,8 @@ Distance to the GM lane edge, on round 1's config:
 - **Run-off pad R0998:** 37.6-71.0 m off.
 - **Run-off pads L1175 and L0883:** now under the new lane, up to 5.4 / 6.6 m inside it. L0883 was the inner branch's own
   concrete, drawn as a pad while the branch was off the lap.
-- Every other rail and pad keeps its distance (G4 10.0 m min, as before).
+- The three pads go, but not by hand: the pads' own outliner, re-run on the GM line, drops them (section 4.2).
+- Every other rail keeps its distance (G4 10.0 m min, as before).
 - The 2022 loop itself builds as ground, like the other unused pavement (route-notes L8).
 
 ## 2. The inner turn is a real banked turn
@@ -204,23 +210,125 @@ The dense sweep was re-run after each step:
 - With no cap, the fill over the culvert reached 6.6 m, so the cap stays (the Mac: "if it's a culvert or a real ditch,
   leaving the real drop is right").
 
+## 4. On top of round 1 (0.1.14)
+
+### What came in with the merge
+
+Main b8d39f78 brought round 1, ledger 0100, as installed:
+
+- the start / finish on the painted line (race_start, route.paint), the 20-car grid and 20 pits as patterns from it;
+- GrassFX at 6 m cells everywhere (0092's near band dropped);
+- the trunk colliders within 20 m of the drivable surface (derived from the barrier lines);
+- the 883 NAIP-only verge trees;
+- the pads shaded smooth with pads_shade_crease_deg 10;
+- T3's start moved 0.2 m, mpg_nw_complex_0 set in its slope, the owned concrete.
+
+The merge was clean (no conflicts).
+
+### One command for 0.1.15
+
+`source/round2/apply_0102.sh` takes round 1's 0.1.14 files to 0.1.15, every step in order, each by its own tool:
+
+1. `edit_config_0102.py`: the config edits (section 1-3 and above).
+2. `predict_lines_0102.py`: the GM lap's intake line and swept line into `data/`, as the build will write them: an empty
+   workshop with ship.json's sync_in, the intake, then the draft's own smoothing (route.smooth_*). On 0.1.14's config it
+   reproduces the committed 0.1.14 files **byte for byte** (raw md5 0923d812, swept 1244fc50). The build never reads them:
+   the intake deletes the raw snapshot and sync_in copies neither, so the rehearsal makes its own and brings them back.
+3. Round 1's plans on the swept line, re-made on the GM lap by their own tools, unchanged: `runoff_pads.py --write` (its doc:
+   "re-run it after the line or the widths move"), then `veg_naip_verge.py --write` and `veg_trunks_reach.py --write` (both
+   read the pads as drivable, so they come after them).
+4. `edit_config_0102.py --docs`: the numbers below into the config's docs.
+
+GM lap, swept: 6,304 points, 4,723.67 m (0.1.14: 6,537 points, 4,898.25 m).
+
+### 4.1 The start / finish
+
+race_start's line, route.paint's sf_line and the grid / pit patterns are declared by the **measured** paint (lon / lat), not
+by station. So tools/circuit_dummies_blend.py re-reads them on the build's own lap; no old number is carried. On the GM lap's
+swept line (scripts/geometry/circuit_start.plan, the build's own plan):
+
+| | 0.1.14 | 0.1.15 (GM) |
+|---|---|---|
+| the painted line | s 4,639.86 | s 4,465.28 |
+| grid (20) | s 4,546.0-4,632.5 | s 4,371.4-4,457.9 |
+| pits (20) | s 4,647.9-4,734.3 | s 4,473.3-4,559.7 |
+| AC_TIME_1 / _2 (thirds) | s 1,374.4 / 3,007.1 | s 1,316.2 / 2,890.7 |
+| plan problems | none | none |
+
+All on the front straight, 3.3 km from the splice (s ~768-1,045). The build's self-check (ROAD under every car's corners)
+reads it again in the rehearsal.
+
+### 4.2 The pads
+
+`runoff_pads.py` on the GM intake line keeps **18** strip pads (0.1.14: 19), plus the ride pad:
+
+- the 4 before the splice keep their keys (R0125, L0338, R0356, L0395);
+- the 12 after it are the same NAIP blobs, renamed by the GM line's stations (keys are side + station: L1530 -> L1355 ...
+  L4775 -> L4601) and re-sampled on their 4 m rows: outlines change 0.2-23 % (L4359 -> L4184: 305 -> 235 m2);
+- L0883, R0998 and L1175 go (as section 1 found by hand);
+- **R0880 and R1008 are new**: the 2022 loop's grey pavement beside the GM inner turn (748 / 1,296 m2, NAIP blue / red
+  0.937 / 0.931, 0 folds).
+
+pads_shade "smooth" and pads_shade_crease_deg 10 are keys of the scenery.bespoke block, so every pad, the new two included,
+keeps round 1's shading. Every pad starts at the strip's lip on the GM lane (min 1.76-1.90 m, as on 0.1.14).
+
+Why re-outline and not edit: with the old outlines, R0356's inner edge came 0.20 m closer to the GM lane (1.83 -> 1.63 m at
+s 426.5), onto the edge strip. Measured cause (the agree retrace, instrumented on both configs): the GM line reaches the
+retrace about 4 mm off 0.1.14's at s 395-440. That is enough to put an 8th lidar point inside the ±7.5 m window at s 427.8
+(the tool's MIN_POINTS 8). One more row measures (NAIP 10.59 / lidar 10.29 m, mean 10.44), and the Gaussian carries it to
+s 419.5. The right edge there moves out 0.1-0.4 m, toward both sensors (s 426: NAIP 11.64 / lidar 10.64; fit 9.45 -> 9.86).
+The retrace's own threshold, not an error. The re-outline follows it.
+
+### 4.3 The grass and the trees
+
+- **Grass:** tools/plan_grassfx_aerial.py runs in the build (ship_grassfx_aerial) on its own line and pads. With 0.1.14's
+  near band dropped, the 6 m cells read the class map whatever the lane; only the pad looks move. On the GM lap: 3,963
+  rectangles (0.1.14: 3,952).
+- **Colliders:** the reach rule re-run on the GM lap gives **20 m** again (g4_infield_esses' median standoff 19.07 m; T3, a
+  tyre wall, is gone but was never the widest). 251 colliders (167 lidar + 84 verge; 0.1.14's file on 0.1.13's line: 261).
+  On the intake line instead of the swept line the rule would have read 19 m (18.81): it has to be the swept line.
+- **Verge trees:** 884 (0.1.14: 883): one more clears the drivable surface's corridor margin; left out 28 (was 29). Keys are
+  KEY0 + rank, so 286 of the 884 take new keys (TreeFX's model and angle draw); 598 keep theirs.
+- **Lidar trees:** one within 4.41 m (margin + half a cell) of the GM drivable surface, the same one as on 0.1.14's lap; none
+  within 3 m. Nothing to clear.
+
+### 4.4 What an empty workshop needs
+
+The intake test caught it: ship.json's sync_in did not list round 2's files, so an empty-workshop build would have failed.
+Added: `source/edges/edge_evidence_gm.json`, `source/surface/road_surface_gm.fit.json`, `source/surface/road_section_gm.json`.
+sync_out now carries back `data/densify_section.json` and `data/shoulder_grade.json`.
+
 ## Tests
 
-`tests/tools/test_milford_round2_0102.py`: 6 tests, all PASS on the PC (4 under the system python, the 2 numpy ones under
-the lidar venv). They cover:
+`tests/tools/test_milford_round2_0102.py`: 11 tests, all PASS on the PC (the numpy ones under the lidar venv). They cover:
 
 - the GM loop's kept stations and its new piece;
 - section recovering a known curvature;
 - densify's Section delta / weight;
-- the shoulder's wiring order and helpers.
+- the shoulder's wiring order and helpers;
+- 0.1.15's config and the files an empty workshop gets;
+- the edit script refusing anything but 0.1.14;
+- the committed lines being the prediction (runs the intake);
+- the start / finish on the GM lap;
+- the pads as the outliner's, round 1's shading kept.
 
-To come with the config commit: round 1's two tests that name T3 (`test_milford_finish_0100.py`,
-`test_milford_furniture.py`) move to the round-2 config.
+Round 1's tests moved to the GM lap, the 0.1.14 numbers kept beside them:
+
+- `test_milford_finish_0100.py`: T3 off the lap, its move restated; the line at s 4,465.28; 251 colliders; 884 verge;
+  version 0.1.15;
+- `test_milford_furniture.py`: no rail opts into stand_on since T3 left;
+- `test_milford_line_edges.py`: the front span [4,355.5, 150]; 18 pads;
+- `test_milford_ground_0092.py`: 3,963 grass rectangles.
+
+`test_ship_track_chain.py`'s V4_EXTRAS now names the shoulder's step header. It had failed on this branch since ca6622a6
+(the hook commit); the full suite caught it.
+
+The full suite on this PC's system python: 11 failed + 8 collection errors, the same names as on main b8d39f78 (numpy /
+Pillow missing on that python); every Milford test that needs numpy passes under the lidar venv.
 
 ## Not done
 
-- **The config commit.** `source/round2/edit_config_0102.py` applies it to round 1's 0.1.14. On a local merge it reads
-  clean through the intake: the measured surface at all 6,304 points, off the read line p50 0.048 / max 1.171 m. It waits
-  for round 1's merge.
-- **The rehearsal** from an empty workshop: when the PC has the slot.
+- **The rehearsal** from an empty workshop: when the PC has the slot (Sand Creek 0.2.9 > Lake Murray 0.20.4 > High Plains
+  0.1.11 > this). Then check: data/centerline.*.json equal to the prediction, the dummies' self-check, the pads' shading
+  (round 1's pads_shade_check), the shoulder's and the section's records, every gate, the kn5 size.
 - **In game:** the GM loop's inner turn and its bank, the shoulder beside the banked corners, the culvert.

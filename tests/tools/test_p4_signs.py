@@ -385,3 +385,52 @@ def test_signs_step_runs_after_the_race_furniture_in_every_chain():
         assert sj[cid].get("per_layout") is True and not sj[cid].get("skip")
     for cid in ("J2", "J3", "J4"):
         assert sj[cid]["ribbon"] == "north" and sj[cid]["expect_arrow"] == "right"
+
+
+def test_a_layout_on_a_lap_that_walks_the_mainline_through_a_per_layout_corner_gets_its_plate():
+    """Ledger 0055 round 2 (Lake Murray's College split): the Speedway runs on its own lap, which is the mainline but
+    for one stretch. At a per_layout corner its lap walks the mainline through, it gets the same layout plate a
+    mainline layout gets, and check (m) holds it to that; a lap that leaves the mainline before the corner gets none"""
+    quiet = lambda *a: None
+    d, pts, corners = _proj_with_through_road(tempfile.mkdtemp())
+    n = len(pts) - 1
+    v1 = corners["M1"]["vertex"]
+    cfg_t = json.loads((d / "track.config.json").read_text())
+    base, _ = ps.place_all(d, dict(ps.DEFAULTS, include_connectors=False, both_directions_mainline=True), corners, log=quiet)
+    want = next(s for s in base["signs"] if s["id"] == "M1-fwd@race_cw")
+
+    def with_lap(pieces):
+        cfg = json.loads(json.dumps(cfg_t))
+        next(lo for lo in cfg["layouts"] if lo["id"] == "race_cw")["lap"] = "alt"
+        cfg["race"] = {"laps": {"alt": {"pieces": pieces}}}
+        (d / "track.config.json").write_text(json.dumps(cfg))
+        return ps.place_all(d, dict(ps.DEFAULTS, include_connectors=False, both_directions_mainline=True), corners, log=quiet)[0]
+
+    # the lap is the mainline but for a stretch on the far side of the loop: the corner is its own
+    far = (v1 + n // 2) % n
+    lo_, hi_ = (far - 30) % n, (far + 30) % n
+    out = with_lap([{"line": "MAINLINE", "from": hi_, "to": lo_}, {"line": "straight_on", "from": 0, "to": 44}])
+    got = next(s for s in out["signs"] if s["id"] == "M1-fwd@race_cw")
+    assert got["base_xz"] == want["base_xz"] and got["layout"] == "race_cw" and got["wall"]["token"] == "cw"
+    assert sorted(out["layout_plates"]) == sorted(base["layout_plates"])
+    on_laps = vs.lap_driven(d, corners)
+    assert on_laps == {"M1": {"fwd": ["race_cw"]}} and vs.driven_directions(d) == {"fwd": ["street"], "rev": ["race_acw"]}
+    mf, mrows = vs.layout_coverage(out, vs.driven_directions(d), corners, on_laps)
+    assert mf == [] and any(r.startswith("(m) layout race_cw") and "M1-fwd@race_cw" in r for r in mrows), (mf, mrows)
+    assert vs.named_coverage(out, vs.driven_directions(d), corners)[0] == []
+    # take the plate away: (l) says the named corner lost its forward plate, exactly as it does for a mainline layout;
+    # (m) judges the lap layout as it judges a mainline one: the shared rule skip covers it, a missing record does not
+    driven = vs.driven_directions(d)
+    lost = dict(out, signs=[s for s in out["signs"] if s["id"] != "M1-fwd@race_cw"])
+    assert any("M1" in f and "fwd" in f for f in vs.named_coverage(lost, driven, corners)[0])
+    mf2, rows2 = vs.layout_coverage(lost, driven, corners, on_laps)
+    assert mf2 == [] and any(r.startswith("(m) layout race_cw") and "M1 skipped" in r for r in rows2), (mf2, rows2)
+    bare = dict(lost, skipped=[s for s in lost["skipped"] if s["id"] != "M1-fwd"])
+    assert any("layout race_cw (fwd)" in f for f in vs.layout_coverage(bare, driven, corners, on_laps)[0])
+    assert not any("race_cw" in f for f in vs.layout_coverage(bare, driven, corners)[0])     # without on_laps: not judged, as before
+    # a lap that turns off the mainline just before the corner: no plate, no record, and (m) asks for none
+    out2 = with_lap([{"line": "MAINLINE", "from": (v1 + 5) % n, "to": (v1 - 5) % n}, {"line": "straight_on", "from": 0, "to": 44}])
+    assert not any(s["id"].endswith("@race_cw") for s in out2["signs"] + out2["skipped"])
+    assert vs.lap_driven(d, corners) == {}
+    (d / "track.config.json").write_text(json.dumps(cfg_t))
+

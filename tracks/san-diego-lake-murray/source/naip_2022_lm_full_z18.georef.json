@@ -1,0 +1,48 @@
+{
+ "item": "ca_m_3211716_sw_11_060_20220425",
+ "z": 18,
+ "x0": 45801,
+ "y0": 105749,
+ "w": 15872,
+ "h": 10496,
+ "m_per_px_equator": 0.5971642834779395,
+ "missing_tiles": 0,
+ "items": [
+  {
+   "id": "ca_m_3211716_sw_11_060_20220425",
+   "datetime": "2022-04-25T16:00:00Z",
+   "gsd": 0.6,
+   "tiles": 1110
+  },
+  {
+   "id": "ca_m_3211716_se_11_060_20220425",
+   "datetime": "2022-04-25T16:00:00Z",
+   "gsd": 0.6,
+   "tiles": 1184
+  },
+  {
+   "id": "ca_m_3211716_nw_11_060_20220425",
+   "datetime": "2022-04-25T16:00:00Z",
+   "gsd": 0.6,
+   "tiles": 120
+  },
+  {
+   "id": "ca_m_3211716_ne_11_060_20220425",
+   "datetime": "2022-04-25T16:00:00Z",
+   "gsd": 0.6,
+   "tiles": 128
+  }
+ ],
+ "box": [
+  -117.101,
+  32.77197825417559,
+  -117.0170118316261,
+  32.81838584221009
+ ],
+ "tiles": 2542,
+ "missing": [],
+ "partial_tiles": 0,
+ "partial": [],
+ "quality": 86,
+ "source": "USDA FSA NAIP (public domain) via the Microsoft Planetary Computer data API: item tiles, WebMercatorQuad @1x, bands 1,2,3"
+}

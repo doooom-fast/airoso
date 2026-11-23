@@ -99,3 +99,15 @@ detected / tagged and never invented; the chain authors only from it; three new 
 nothing extra, covered) that fail the build. Today the lamps are a post every 55 m by rule, the only signs are W1-6
 arrows and name blades, the paint is drawn from the centreline by width, and no gate compares any of it with the
 street. On the lap: 55 signals, 108 crossings, 5 rail crossings at grade. Four questions (E1–E4) are with Kevin.
+
+## Kevin's answers through Tracks:Mac (2026-11-23)
+
+Kevin to the cloud session: "You should have answers for those from the mac agent". As Tracks:Mac reported them, his words:
+
+- **The hairpin:** "Use the real one-way route" (his pick on the Mac's open-calls page, 01:47:43Z). Kalamath south, W 14th
+  Ave, Santa Fe north, the northbound Kalamath to Speer. The page did not name the dropped default (13th Ave, split street).
+- **D7:** "Mountains can be added to SC when Denver is done" (chat, to the Mac). The plan's phases are re-ordered: the
+  backdrop is built and driven on Denver first, Sand Creek's bake follows.
+- **Where Denver lives:** "New project for dgp"; on the page, "Its own bridge project: a dashboard and checks, files stay
+  in airoso". The bridge dashboard is `denver-grand-prix`.
+- **E1–E4** (PLAN §4b: the lamp, sign and paint gates) were never put to him on the Mac. Still owed.

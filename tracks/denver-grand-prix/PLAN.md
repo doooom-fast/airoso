@@ -18,8 +18,12 @@
 > map in P0; race as listed and free roam as the streets are (D3); the lap, everything inside it and one block outside
 > (D4); no pit lane for Drive 1 (D5); mountains at true distance and size from one shared source (D6); Sand Creek
 > 0.2.9 gets them first (D7); today's streets (D8).
-> **Two of these are open again:** D2, on what the map shows (§2 Finding 1); and D7, because Tracks:Mac reports Kevin
-> told it the same day "Mountains can be added to SC when Denver is done", which is the opposite order. Both wait on his word. On the board it is a **new project** (Kevin, the same message).
+> **Two changed the same day, both by Kevin's word given to Tracks:Mac and taken here on his say ("You should have
+> answers for those from the mac agent"):**
+> - **D2, the hairpin: "Use the real one-way route"** (his pick, 2026-11-23T01:47Z): Kalamath south across Colfax, left on
+>   W 14th Ave, Santa Fe Dr north, the northbound Kalamath to Speer (§2 Finding 1). The 13th Ave split street is dropped.
+> - **D7: "Mountains can be added to SC when Denver is done."** Sand Creek gets the backdrop after Denver, not first.
+> - **Where the files live: "Its own bridge project: a dashboard and checks, files stay in airoso."**
 
 **Eight questions. "Defaults" is a complete answer.** Ordered by what they hold up first.
 
@@ -67,7 +71,7 @@ Widths, kerbs, medians and grades are not read yet (the dossier, from NAIP and l
 
 **Lap: 6,639 m** on OSM's lines (the plan's estimate was "roughly 6 km").
 
-**Finding 1, the hairpin (D2) — needs Kevin's word, because it differs from the default he accepted.** The map shows
+**Finding 1, the hairpin (D2) — decided: Kevin, "Use the real one-way route".** The map shows
 what "back onto Kalamath the other way" most likely is, and it needs no split street:
 
 - Kalamath (one-way south) and **Santa Fe Dr (one-way north)** are a pair. South of Colfax they converge: 66 m apart
@@ -252,14 +256,13 @@ checks on `sonnet`, lookups on `haiku`.
 | Phase | What | Where | Ends on |
 |---|---|---|---|
 | **P0 — facts** | OSM extract of the box (lap + D4), the lap resolved to way ids, **D1 and D2 answered from the map** (done, §2); the survey sources of §4b checked (which aerial year, the lidar tiles, the street-level key) and the first inventory of the lap; lidar (CO_DRCOG_2_2020) and NAIP tiles listed; `DOSSIER.md` filled from the template; the AC far-clip test (§3) | Mac for the data (it reaches Overpass and USGS); PC for the far-clip drive | Kevin approves the dossier; the far-clip result |
-| **P1 — the backdrop, on Sand Creek first** (D7) | `tracks/_reference/front-range/`; the bake tool with curvature and the viewshed cull; `sand_creek_raceway_backdrop.kn5` in Sand Creek 0.2.9 | Mac builds, PC ships | the peak gate green; stills from Sand Creek's west-facing straights against a real photo; Kevin's drive |
-| **P2 — Drive 1: the lap's road and ground** | config, `ship.json` (lm-v4), the draft through the chain: centreline, widths, elevation, crossfall, decks, the roofed section declared; **paint from the inventory** (§4b: paint is part of the road); `race` layout drivable with plain barriers; the Denver bake of the backdrop | PC | drive_test, audit_mesh, verify_kn5, kn5_ground_check; Kevin drives the lap |
+| **P2 — Drive 1: the lap's road and ground** | config, `ship.json` (lm-v4), the draft through the chain: centreline, widths, elevation, crossfall, decks, `tracks/_reference/front-range/` and the bake tool with curvature and the viewshed cull; the roofed section declared; **paint from the inventory** (§4b: paint is part of the road); `race` layout drivable with plain barriers; the Denver bake of the backdrop | PC | drive_test, audit_mesh, verify_kn5, kn5_ground_check; Kevin drives the lap |
 | **P3 — the race** | corridor, closures, kerbs, the Kalamath split, start line and grid, AI draft | PC | the race gates incl. no-route; Kevin races it |
 | **P4 — the city** | block massing from lidar for every face on the lap, then classes and skins; the landmarks one by one; the creek; trees; **streetlights, signals and signs from the inventory, held by §4b's gates** | Mac authors, PC ships | `house_seat`, `houses`, textures; a still per landmark against its photo |
 | **P5 — free roam** | the D4 grid through the junction steps; one-ways as real | PC | verify_mouths, drive_test street; Kevin drives it |
-| **P6 — Lariat** | the same backdrop and skyline baked for the Lariat (its D6) | PC | its own gates |
+| **P6 — Sand Creek, then the Lariat** (D7 as Kevin changed it) | the same backdrop baked for Sand Creek (`sand_creek_raceway_backdrop.kn5`, a point release, nothing else touched), then the backdrop and skyline for the Lariat (its D6) | Mac builds, PC ships | the peak gate; stills from Sand Creek's west-facing straights against a real photo; Kevin's drive |
 
-P1 does not wait on P0's dossier approval, only on the far-clip result. P2 waits on the dossier.
+P2 waits on the dossier and on the far-clip result. The backdrop is first built and driven on Denver (P2); Sand Creek's bake follows Denver (P6).
 
 ## 6. Who does what
 

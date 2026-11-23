@@ -9,6 +9,11 @@ Creek. DEM: AWS Terrain Tiles (terrarium PNG, zoom 10, ~60 m cells): the only el
 """
 import os, sys, urllib.request
 
+_ROOT = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), *[os.pardir] * 4))
+if _ROOT not in sys.path:      # the repo root holds scripts.tls (the TLS rule: every fetch through https_context)
+    sys.path.insert(0, _ROOT)
+from scripts.tls import https_context  # noqa: E402
+
 
 def fetch():
     os.makedirs('dem', exist_ok=True)
@@ -17,7 +22,7 @@ def fetch():
             p = f'dem/10_{x}_{y}.png'
             if not os.path.exists(p):
                 url = f'https://s3.amazonaws.com/elevation-tiles-prod/terrarium/10/{x}/{y}.png'
-                open(p, 'wb').write(urllib.request.urlopen(url, timeout=60).read())
+                open(p, 'wb').write(urllib.request.urlopen(url, timeout=60, context=https_context()).read())
 
 
 if len(sys.argv) > 1 and sys.argv[1] == 'fetch':

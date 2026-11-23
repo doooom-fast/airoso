@@ -1,0 +1,816 @@
+{
+ "_doc": "ledger 0100: tools/seat_pads_blend.py's pads by pads_shade mode on one prepped scene, read as the kn5 writer keeps them (source/runoff/scripts/pads_shade_check.py)",
+ "blend": "prepped_base.blend",
+ "modes": {
+  "flat": {
+   "writer_verts": 247203,
+   "tris": 82410,
+   "bytes_vertices_44B": 10876932,
+   "seat_pads_log": [
+    "[seat-pads] PADAPRON_0 -> 1RUNOFF_apron_0: 5837 triangles on the ground, 3041 verts, ground over 0 / 3041",
+    "[seat-pads] PADAPRON_1 -> 1RUNOFF_apron_1: 2131 triangles on the ground, 1387 verts, ground over 0 / 1387",
+    "[seat-pads] PADAPRON_10 -> 1RUNOFF_apron_10: 5993 triangles on the ground, 3482 verts, ground over 0 / 3482",
+    "[seat-pads] PADAPRON_11 -> 1RUNOFF_apron_11: 4398 triangles on the ground, 2510 verts, ground over 0 / 2510",
+    "[seat-pads] PADAPRON_12 -> 1RUNOFF_apron_12: 5346 triangles on the ground, 3144 verts, ground over 0 / 3144",
+    "[seat-pads] PADAPRON_13 -> 1RUNOFF_apron_13: 3276 triangles on the ground, 1815 verts, ground over 0 / 1815",
+    "[seat-pads] PADAPRON_14 -> 1RUNOFF_apron_14: 512 triangles on the ground, 330 verts, ground over 0 / 330",
+    "[seat-pads] PADAPRON_15 -> 1RUNOFF_apron_15: 6216 triangles on the ground, 3465 verts, ground over 0 / 3465",
+    "[seat-pads] PADAPRON_16 -> 1RUNOFF_apron_16: 2804 triangles on the ground, 1539 verts, ground over 0 / 1539",
+    "[seat-pads] PADAPRON_17 -> 1RUNOFF_apron_17: 587 triangles on the ground, 350 verts, ground over 0 / 350",
+    "[seat-pads] PADAPRON_18 -> 1RUNOFF_apron_18: 2553 triangles on the ground, 1492 verts, ground over 0 / 1492",
+    "[seat-pads] PADAPRON_19 -> 1RUNOFF_apron_19: 1508 triangles on the ground, 1039 verts, ground over 0 / 1039",
+    "[seat-pads] PADAPRON_2 -> 1RUNOFF_apron_2: 631 triangles on the ground, 410 verts, ground over 0 / 410",
+    "[seat-pads] PADAPRON_3 -> 1RUNOFF_apron_3: 8253 triangles on the ground, 4860 verts, ground over 0 / 4860",
+    "[seat-pads] PADAPRON_4 -> 1RUNOFF_apron_4: 10969 triangles on the ground, 6464 verts, ground over 0 / 6464",
+    "[seat-pads] PADAPRON_5 -> 1RUNOFF_apron_5: 4948 triangles on the ground, 2744 verts, ground over 0 / 2744",
+    "[seat-pads] PADAPRON_6 -> 1RUNOFF_apron_6: 4338 triangles on the ground, 2433 verts, ground over 0 / 2433",
+    "[seat-pads] PADAPRON_7 -> 1RUNOFF_apron_7: 6401 triangles on the ground, 3635 verts, ground over 0 / 3635",
+    "[seat-pads] PADAPRON_8 -> 1RUNOFF_apron_8: 2138 triangles on the ground, 1418 verts, ground over 0 / 1418",
+    "[seat-pads] PADAPRON_9 -> 1RUNOFF_apron_9: 3571 triangles on the ground, 1993 verts, ground over 0 / 1993",
+    "[seat-pads] 20 pads laid on the prepped ground (966684 ground triangles read); saved"
+   ],
+   "pads": {
+    "1RUNOFF_apron_0": {
+     "tris": 5837,
+     "verts": 3041,
+     "writer_verts": 17511,
+     "deg_by_area": {
+      "50": 0.0,
+      "95": 0.021,
+      "99": 0.023
+     },
+     "max_deg_on_faces_over_10cm2": 0.09,
+     "area_share_over_2deg_pct": 0.0
+    },
+    "1RUNOFF_apron_1": {
+     "tris": 2131,
+     "verts": 1387,
+     "writer_verts": 6389,
+     "deg_by_area": {
+      "50": 0.0,
+      "95": 0.02,
+      "99": 0.024
+     },
+     "max_deg_on_faces_over_10cm2": 0.07,
+     "area_share_over_2deg_pct": 0.0
+    },
+    "1RUNOFF_apron_2": {
+     "tris": 631,
+     "verts": 410,
+     "writer_verts": 1893,
+     "deg_by_area": {
+      "50": 0.006,
+      "95": 0.022,
+      "99": 0.023
+     },
+     "max_deg_on_faces_over_10cm2": 0.03,
+     "area_share_over_2deg_pct": 0.0
+    },
+    "1RUNOFF_apron_3": {
+     "tris": 8253,
+     "verts": 4860,
+     "writer_verts": 24757,
+     "deg_by_area": {
+      "50": 0.004,
+      "95": 0.021,
+      "99": 0.024
+     },
+     "max_deg_on_faces_over_10cm2": 0.11,
+     "area_share_over_2deg_pct": 0.0
+    },
+    "1RUNOFF_apron_4": {
+     "tris": 10969,
+     "verts": 6464,
+     "writer_verts": 32904,
+     "deg_by_area": {
+      "50": 0.004,
+      "95": 0.021,
+      "99": 0.024
+     },
+     "max_deg_on_faces_over_10cm2": 0.72,
+     "area_share_over_2deg_pct": 0.0
+    },
+    "1RUNOFF_apron_5": {
+     "tris": 4948,
+     "verts": 2744,
+     "writer_verts": 14842,
+     "deg_by_area": {
+      "50": 0.0,
+      "95": 0.021,
+      "99": 0.024
+     },
+     "max_deg_on_faces_over_10cm2": 0.16,
+     "area_share_over_2deg_pct": 0.0
+    },
+    "1RUNOFF_apron_6": {
+     "tris": 4338,
+     "verts": 2433,
+     "writer_verts": 13014,
+     "deg_by_area": {
+      "50": 0.004,
+      "95": 0.021,
+      "99": 0.024
+     },
+     "max_deg_on_faces_over_10cm2": 0.35,
+     "area_share_over_2deg_pct": 0.0
+    },
+    "1RUNOFF_apron_7": {
+     "tris": 6401,
+     "verts": 3635,
+     "writer_verts": 19203,
+     "deg_by_area": {
+      "50": 0.0,
+      "95": 0.021,
+      "99": 0.024
+     },
+     "max_deg_on_faces_over_10cm2": 0.15,
+     "area_share_over_2deg_pct": 0.0
+    },
+    "1RUNOFF_apron_8": {
+     "tris": 2138,
+     "verts": 1418,
+     "writer_verts": 6414,
+     "deg_by_area": {
+      "50": 0.0,
+      "95": 0.02,
+      "99": 0.024
+     },
+     "max_deg_on_faces_over_10cm2": 0.08,
+     "area_share_over_2deg_pct": 0.0
+    },
+    "1RUNOFF_apron_9": {
+     "tris": 3571,
+     "verts": 1993,
+     "writer_verts": 10713,
+     "deg_by_area": {
+      "50": 0.004,
+      "95": 0.021,
+      "99": 0.024
+     },
+     "max_deg_on_faces_over_10cm2": 0.19,
+     "area_share_over_2deg_pct": 0.0
+    },
+    "1RUNOFF_apron_10": {
+     "tris": 5993,
+     "verts": 3482,
+     "writer_verts": 17979,
+     "deg_by_area": {
+      "50": 0.0,
+      "95": 0.021,
+      "99": 0.024
+     },
+     "max_deg_on_faces_over_10cm2": 1.71,
+     "area_share_over_2deg_pct": 0.0
+    },
+    "1RUNOFF_apron_11": {
+     "tris": 4398,
+     "verts": 2510,
+     "writer_verts": 13194,
+     "deg_by_area": {
+      "50": 0.003,
+      "95": 0.021,
+      "99": 0.024
+     },
+     "max_deg_on_faces_over_10cm2": 0.15,
+     "area_share_over_2deg_pct": 0.0
+    },
+    "1RUNOFF_apron_12": {
+     "tris": 5346,
+     "verts": 3144,
+     "writer_verts": 16034,
+     "deg_by_area": {
+      "50": 0.004,
+      "95": 0.021,
+      "99": 0.025
+     },
+     "max_deg_on_faces_over_10cm2": 0.21,
+     "area_share_over_2deg_pct": 0.0
+    },
+    "1RUNOFF_apron_13": {
+     "tris": 3276,
+     "verts": 1815,
+     "writer_verts": 9828,
+     "deg_by_area": {
+      "50": 0.003,
+      "95": 0.02,
+      "99": 0.023
+     },
+     "max_deg_on_faces_over_10cm2": 0.17,
+     "area_share_over_2deg_pct": 0.0
+    },
+    "1RUNOFF_apron_14": {
+     "tris": 512,
+     "verts": 330,
+     "writer_verts": 1536,
+     "deg_by_area": {
+      "50": 0.001,
+      "95": 0.02,
+      "99": 0.025
+     },
+     "max_deg_on_faces_over_10cm2": 0.05,
+     "area_share_over_2deg_pct": 0.0
+    },
+    "1RUNOFF_apron_15": {
+     "tris": 6216,
+     "verts": 3465,
+     "writer_verts": 18648,
+     "deg_by_area": {
+      "50": 0.005,
+      "95": 0.021,
+      "99": 0.024
+     },
+     "max_deg_on_faces_over_10cm2": 0.32,
+     "area_share_over_2deg_pct": 0.0
+    },
+    "1RUNOFF_apron_16": {
+     "tris": 2804,
+     "verts": 1539,
+     "writer_verts": 8400,
+     "deg_by_area": {
+      "50": 0.0,
+      "95": 0.021,
+      "99": 0.025
+     },
+     "max_deg_on_faces_over_10cm2": 0.68,
+     "area_share_over_2deg_pct": 0.0
+    },
+    "1RUNOFF_apron_17": {
+     "tris": 587,
+     "verts": 350,
+     "writer_verts": 1761,
+     "deg_by_area": {
+      "50": 0.002,
+      "95": 0.021,
+      "99": 0.025
+     },
+     "max_deg_on_faces_over_10cm2": 0.09,
+     "area_share_over_2deg_pct": 0.0
+    },
+    "1RUNOFF_apron_18": {
+     "tris": 2553,
+     "verts": 1492,
+     "writer_verts": 7659,
+     "deg_by_area": {
+      "50": 0.005,
+      "95": 0.021,
+      "99": 0.024
+     },
+     "max_deg_on_faces_over_10cm2": 0.2,
+     "area_share_over_2deg_pct": 0.0
+    },
+    "1RUNOFF_apron_19": {
+     "tris": 1508,
+     "verts": 1039,
+     "writer_verts": 4524,
+     "deg_by_area": {
+      "50": 0.003,
+      "95": 0.02,
+      "99": 0.024
+     },
+     "max_deg_on_faces_over_10cm2": 0.1,
+     "area_share_over_2deg_pct": 0.0
+    }
+   }
+  },
+  "smooth": {
+   "writer_verts": 47713,
+   "tris": 82410,
+   "bytes_vertices_44B": 2099372,
+   "seat_pads_log": [
+    "[seat-pads] PADAPRON_0 -> 1RUNOFF_apron_0: 5837 triangles on the ground, 3041 verts, ground over 0 / 3041, smooth (corners shared)",
+    "[seat-pads] PADAPRON_1 -> 1RUNOFF_apron_1: 2131 triangles on the ground, 1387 verts, ground over 0 / 1387, smooth (corners shared)",
+    "[seat-pads] PADAPRON_10 -> 1RUNOFF_apron_10: 5993 triangles on the ground, 3482 verts, ground over 0 / 3482, smooth (corners shared)",
+    "[seat-pads] PADAPRON_11 -> 1RUNOFF_apron_11: 4398 triangles on the ground, 2510 verts, ground over 0 / 2510, smooth (corners shared)",
+    "[seat-pads] PADAPRON_12 -> 1RUNOFF_apron_12: 5346 triangles on the ground, 3144 verts, ground over 0 / 3144, smooth (corners shared)",
+    "[seat-pads] PADAPRON_13 -> 1RUNOFF_apron_13: 3276 triangles on the ground, 1815 verts, ground over 0 / 1815, smooth (corners shared)",
+    "[seat-pads] PADAPRON_14 -> 1RUNOFF_apron_14: 512 triangles on the ground, 330 verts, ground over 0 / 330, smooth (corners shared)",
+    "[seat-pads] PADAPRON_15 -> 1RUNOFF_apron_15: 6216 triangles on the ground, 3465 verts, ground over 0 / 3465, smooth (corners shared)",
+    "[seat-pads] PADAPRON_16 -> 1RUNOFF_apron_16: 2804 triangles on the ground, 1539 verts, ground over 0 / 1539, smooth (corners shared)",
+    "[seat-pads] PADAPRON_17 -> 1RUNOFF_apron_17: 587 triangles on the ground, 350 verts, ground over 0 / 350, smooth (corners shared)",
+    "[seat-pads] PADAPRON_18 -> 1RUNOFF_apron_18: 2553 triangles on the ground, 1492 verts, ground over 0 / 1492, smooth (corners shared)",
+    "[seat-pads] PADAPRON_19 -> 1RUNOFF_apron_19: 1508 triangles on the ground, 1039 verts, ground over 0 / 1039, smooth (corners shared)",
+    "[seat-pads] PADAPRON_2 -> 1RUNOFF_apron_2: 631 triangles on the ground, 410 verts, ground over 0 / 410, smooth (corners shared)",
+    "[seat-pads] PADAPRON_3 -> 1RUNOFF_apron_3: 8253 triangles on the ground, 4860 verts, ground over 0 / 4860, smooth (corners shared)",
+    "[seat-pads] PADAPRON_4 -> 1RUNOFF_apron_4: 10969 triangles on the ground, 6464 verts, ground over 0 / 6464, smooth (corners shared)",
+    "[seat-pads] PADAPRON_5 -> 1RUNOFF_apron_5: 4948 triangles on the ground, 2744 verts, ground over 0 / 2744, smooth (corners shared)",
+    "[seat-pads] PADAPRON_6 -> 1RUNOFF_apron_6: 4338 triangles on the ground, 2433 verts, ground over 0 / 2433, smooth (corners shared)",
+    "[seat-pads] PADAPRON_7 -> 1RUNOFF_apron_7: 6401 triangles on the ground, 3635 verts, ground over 0 / 3635, smooth (corners shared)",
+    "[seat-pads] PADAPRON_8 -> 1RUNOFF_apron_8: 2138 triangles on the ground, 1418 verts, ground over 0 / 1418, smooth (corners shared)",
+    "[seat-pads] PADAPRON_9 -> 1RUNOFF_apron_9: 3571 triangles on the ground, 1993 verts, ground over 0 / 1993, smooth (corners shared)",
+    "[seat-pads] 20 pads laid on the prepped ground (966684 ground triangles read); saved"
+   ],
+   "pads": {
+    "1RUNOFF_apron_0": {
+     "tris": 5837,
+     "verts": 3041,
+     "writer_verts": 3041,
+     "deg_by_area": {
+      "50": 0.015,
+      "95": 0.276,
+      "99": 0.946
+     },
+     "max_deg_on_faces_over_10cm2": 3.25,
+     "area_share_over_2deg_pct": 0.0952
+    },
+    "1RUNOFF_apron_1": {
+     "tris": 2131,
+     "verts": 1387,
+     "writer_verts": 1387,
+     "deg_by_area": {
+      "50": 0.06,
+      "95": 0.387,
+      "99": 0.491
+     },
+     "max_deg_on_faces_over_10cm2": 0.73,
+     "area_share_over_2deg_pct": 0.0
+    },
+    "1RUNOFF_apron_2": {
+     "tris": 631,
+     "verts": 410,
+     "writer_verts": 410,
+     "deg_by_area": {
+      "50": 0.589,
+      "95": 2.005,
+      "99": 3.789
+     },
+     "max_deg_on_faces_over_10cm2": 5.63,
+     "area_share_over_2deg_pct": 5.0776
+    },
+    "1RUNOFF_apron_3": {
+     "tris": 8253,
+     "verts": 4860,
+     "writer_verts": 4863,
+     "deg_by_area": {
+      "50": 0.244,
+      "95": 1.523,
+      "99": 3.099
+     },
+     "max_deg_on_faces_over_10cm2": 7.52,
+     "area_share_over_2deg_pct": 2.9423
+    },
+    "1RUNOFF_apron_4": {
+     "tris": 10969,
+     "verts": 6464,
+     "writer_verts": 6486,
+     "deg_by_area": {
+      "50": 0.6,
+      "95": 6.851,
+      "99": 11.577
+     },
+     "max_deg_on_faces_over_10cm2": 73.35,
+     "area_share_over_2deg_pct": 19.8309
+    },
+    "1RUNOFF_apron_5": {
+     "tris": 4948,
+     "verts": 2744,
+     "writer_verts": 2751,
+     "deg_by_area": {
+      "50": 0.734,
+      "95": 4.313,
+      "99": 7.902
+     },
+     "max_deg_on_faces_over_10cm2": 26.14,
+     "area_share_over_2deg_pct": 21.2974
+    },
+    "1RUNOFF_apron_6": {
+     "tris": 4338,
+     "verts": 2433,
+     "writer_verts": 2444,
+     "deg_by_area": {
+      "50": 0.915,
+      "95": 4.121,
+      "99": 5.87
+     },
+     "max_deg_on_faces_over_10cm2": 25.01,
+     "area_share_over_2deg_pct": 19.4746
+    },
+    "1RUNOFF_apron_7": {
+     "tris": 6401,
+     "verts": 3635,
+     "writer_verts": 3650,
+     "deg_by_area": {
+      "50": 1.139,
+      "95": 6.52,
+      "99": 12.228
+     },
+     "max_deg_on_faces_over_10cm2": 37.49,
+     "area_share_over_2deg_pct": 32.5207
+    },
+    "1RUNOFF_apron_8": {
+     "tris": 2138,
+     "verts": 1418,
+     "writer_verts": 1421,
+     "deg_by_area": {
+      "50": 0.313,
+      "95": 1.625,
+      "99": 2.656
+     },
+     "max_deg_on_faces_over_10cm2": 17.43,
+     "area_share_over_2deg_pct": 3.2083
+    },
+    "1RUNOFF_apron_9": {
+     "tris": 3571,
+     "verts": 1993,
+     "writer_verts": 2012,
+     "deg_by_area": {
+      "50": 0.584,
+      "95": 2.868,
+      "99": 5.251
+     },
+     "max_deg_on_faces_over_10cm2": 75.71,
+     "area_share_over_2deg_pct": 11.3506
+    },
+    "1RUNOFF_apron_10": {
+     "tris": 5993,
+     "verts": 3482,
+     "writer_verts": 3490,
+     "deg_by_area": {
+      "50": 0.677,
+      "95": 4.712,
+      "99": 9.05
+     },
+     "max_deg_on_faces_over_10cm2": 78.71,
+     "area_share_over_2deg_pct": 19.9708
+    },
+    "1RUNOFF_apron_11": {
+     "tris": 4398,
+     "verts": 2510,
+     "writer_verts": 2517,
+     "deg_by_area": {
+      "50": 0.395,
+      "95": 2.16,
+      "99": 3.34
+     },
+     "max_deg_on_faces_over_10cm2": 12.44,
+     "area_share_over_2deg_pct": 6.3512
+    },
+    "1RUNOFF_apron_12": {
+     "tris": 5346,
+     "verts": 3144,
+     "writer_verts": 3162,
+     "deg_by_area": {
+      "50": 0.268,
+      "95": 1.479,
+      "99": 2.347
+     },
+     "max_deg_on_faces_over_10cm2": 50.92,
+     "area_share_over_2deg_pct": 1.7463
+    },
+    "1RUNOFF_apron_13": {
+     "tris": 3276,
+     "verts": 1815,
+     "writer_verts": 1824,
+     "deg_by_area": {
+      "50": 0.405,
+      "95": 2.444,
+      "99": 4.252
+     },
+     "max_deg_on_faces_over_10cm2": 7.3,
+     "area_share_over_2deg_pct": 8.5388
+    },
+    "1RUNOFF_apron_14": {
+     "tris": 512,
+     "verts": 330,
+     "writer_verts": 333,
+     "deg_by_area": {
+      "50": 0.47,
+      "95": 2.784,
+      "99": 4.43
+     },
+     "max_deg_on_faces_over_10cm2": 9.73,
+     "area_share_over_2deg_pct": 9.1493
+    },
+    "1RUNOFF_apron_15": {
+     "tris": 6216,
+     "verts": 3465,
+     "writer_verts": 3496,
+     "deg_by_area": {
+      "50": 0.385,
+      "95": 2.433,
+      "99": 4.12
+     },
+     "max_deg_on_faces_over_10cm2": 9.28,
+     "area_share_over_2deg_pct": 7.1779
+    },
+    "1RUNOFF_apron_16": {
+     "tris": 2804,
+     "verts": 1539,
+     "writer_verts": 1541,
+     "deg_by_area": {
+      "50": 1.166,
+      "95": 23.656,
+      "99": 63.728
+     },
+     "max_deg_on_faces_over_10cm2": 118.72,
+     "area_share_over_2deg_pct": 36.2766
+    },
+    "1RUNOFF_apron_17": {
+     "tris": 587,
+     "verts": 350,
+     "writer_verts": 354,
+     "deg_by_area": {
+      "50": 1.94,
+      "95": 30.771,
+      "99": 52.063
+     },
+     "max_deg_on_faces_over_10cm2": 79.58,
+     "area_share_over_2deg_pct": 48.8173
+    },
+    "1RUNOFF_apron_18": {
+     "tris": 2553,
+     "verts": 1492,
+     "writer_verts": 1492,
+     "deg_by_area": {
+      "50": 0.715,
+      "95": 3.881,
+      "99": 11.037
+     },
+     "max_deg_on_faces_over_10cm2": 18.5,
+     "area_share_over_2deg_pct": 16.0875
+    },
+    "1RUNOFF_apron_19": {
+     "tris": 1508,
+     "verts": 1039,
+     "writer_verts": 1039,
+     "deg_by_area": {
+      "50": 0.73,
+      "95": 5.814,
+      "99": 8.024
+     },
+     "max_deg_on_faces_over_10cm2": 50.73,
+     "area_share_over_2deg_pct": 24.9264
+    }
+   }
+  },
+  "crease10": {
+   "writer_verts": 51031,
+   "tris": 82410,
+   "bytes_vertices_44B": 2245364,
+   "seat_pads_log": [
+    "[seat-pads] PADAPRON_0 -> 1RUNOFF_apron_0: 5837 triangles on the ground, 3041 verts, ground over 0 / 3041, smooth (corners shared) within 10 deg",
+    "[seat-pads] PADAPRON_1 -> 1RUNOFF_apron_1: 2131 triangles on the ground, 1387 verts, ground over 0 / 1387, smooth (corners shared) within 10 deg",
+    "[seat-pads] PADAPRON_10 -> 1RUNOFF_apron_10: 5993 triangles on the ground, 3482 verts, ground over 0 / 3482, smooth (corners shared) within 10 deg",
+    "[seat-pads] PADAPRON_11 -> 1RUNOFF_apron_11: 4398 triangles on the ground, 2510 verts, ground over 0 / 2510, smooth (corners shared) within 10 deg",
+    "[seat-pads] PADAPRON_12 -> 1RUNOFF_apron_12: 5346 triangles on the ground, 3144 verts, ground over 0 / 3144, smooth (corners shared) within 10 deg",
+    "[seat-pads] PADAPRON_13 -> 1RUNOFF_apron_13: 3276 triangles on the ground, 1815 verts, ground over 0 / 1815, smooth (corners shared) within 10 deg",
+    "[seat-pads] PADAPRON_14 -> 1RUNOFF_apron_14: 512 triangles on the ground, 330 verts, ground over 0 / 330, smooth (corners shared) within 10 deg",
+    "[seat-pads] PADAPRON_15 -> 1RUNOFF_apron_15: 6216 triangles on the ground, 3465 verts, ground over 0 / 3465, smooth (corners shared) within 10 deg",
+    "[seat-pads] PADAPRON_16 -> 1RUNOFF_apron_16: 2804 triangles on the ground, 1539 verts, ground over 0 / 1539, smooth (corners shared) within 10 deg",
+    "[seat-pads] PADAPRON_17 -> 1RUNOFF_apron_17: 587 triangles on the ground, 350 verts, ground over 0 / 350, smooth (corners shared) within 10 deg",
+    "[seat-pads] PADAPRON_18 -> 1RUNOFF_apron_18: 2553 triangles on the ground, 1492 verts, ground over 0 / 1492, smooth (corners shared) within 10 deg",
+    "[seat-pads] PADAPRON_19 -> 1RUNOFF_apron_19: 1508 triangles on the ground, 1039 verts, ground over 0 / 1039, smooth (corners shared) within 10 deg",
+    "[seat-pads] PADAPRON_2 -> 1RUNOFF_apron_2: 631 triangles on the ground, 410 verts, ground over 0 / 410, smooth (corners shared) within 10 deg",
+    "[seat-pads] PADAPRON_3 -> 1RUNOFF_apron_3: 8253 triangles on the ground, 4860 verts, ground over 0 / 4860, smooth (corners shared) within 10 deg",
+    "[seat-pads] PADAPRON_4 -> 1RUNOFF_apron_4: 10969 triangles on the ground, 6464 verts, ground over 0 / 6464, smooth (corners shared) within 10 deg",
+    "[seat-pads] PADAPRON_5 -> 1RUNOFF_apron_5: 4948 triangles on the ground, 2744 verts, ground over 0 / 2744, smooth (corners shared) within 10 deg",
+    "[seat-pads] PADAPRON_6 -> 1RUNOFF_apron_6: 4338 triangles on the ground, 2433 verts, ground over 0 / 2433, smooth (corners shared) within 10 deg",
+    "[seat-pads] PADAPRON_7 -> 1RUNOFF_apron_7: 6401 triangles on the ground, 3635 verts, ground over 0 / 3635, smooth (corners shared) within 10 deg",
+    "[seat-pads] PADAPRON_8 -> 1RUNOFF_apron_8: 2138 triangles on the ground, 1418 verts, ground over 0 / 1418, smooth (corners shared) within 10 deg",
+    "[seat-pads] PADAPRON_9 -> 1RUNOFF_apron_9: 3571 triangles on the ground, 1993 verts, ground over 0 / 1993, smooth (corners shared) within 10 deg",
+    "[seat-pads] 20 pads laid on the prepped ground (966684 ground triangles read); saved"
+   ],
+   "pads": {
+    "1RUNOFF_apron_0": {
+     "tris": 5837,
+     "verts": 3041,
+     "writer_verts": 3047,
+     "deg_by_area": {
+      "50": 0.015,
+      "95": 0.276,
+      "99": 0.946
+     },
+     "max_deg_on_faces_over_10cm2": 3.25,
+     "area_share_over_2deg_pct": 0.0952
+    },
+    "1RUNOFF_apron_1": {
+     "tris": 2131,
+     "verts": 1387,
+     "writer_verts": 1393,
+     "deg_by_area": {
+      "50": 0.06,
+      "95": 0.386,
+      "99": 0.491
+     },
+     "max_deg_on_faces_over_10cm2": 0.73,
+     "area_share_over_2deg_pct": 0.0
+    },
+    "1RUNOFF_apron_2": {
+     "tris": 631,
+     "verts": 410,
+     "writer_verts": 410,
+     "deg_by_area": {
+      "50": 0.589,
+      "95": 2.005,
+      "99": 3.789
+     },
+     "max_deg_on_faces_over_10cm2": 5.63,
+     "area_share_over_2deg_pct": 5.0776
+    },
+    "1RUNOFF_apron_3": {
+     "tris": 8253,
+     "verts": 4860,
+     "writer_verts": 4884,
+     "deg_by_area": {
+      "50": 0.244,
+      "95": 1.522,
+      "99": 3.073
+     },
+     "max_deg_on_faces_over_10cm2": 7.47,
+     "area_share_over_2deg_pct": 2.9277
+    },
+    "1RUNOFF_apron_4": {
+     "tris": 10969,
+     "verts": 6464,
+     "writer_verts": 7723,
+     "deg_by_area": {
+      "50": 0.504,
+      "95": 3.619,
+      "99": 5.531
+     },
+     "max_deg_on_faces_over_10cm2": 9.67,
+     "area_share_over_2deg_pct": 13.2425
+    },
+    "1RUNOFF_apron_5": {
+     "tris": 4948,
+     "verts": 2744,
+     "writer_verts": 2849,
+     "deg_by_area": {
+      "50": 0.676,
+      "95": 3.644,
+      "99": 5.567
+     },
+     "max_deg_on_faces_over_10cm2": 9.39,
+     "area_share_over_2deg_pct": 18.1712
+    },
+    "1RUNOFF_apron_6": {
+     "tris": 4338,
+     "verts": 2433,
+     "writer_verts": 2643,
+     "deg_by_area": {
+      "50": 0.887,
+      "95": 3.719,
+      "99": 5.308
+     },
+     "max_deg_on_faces_over_10cm2": 9.44,
+     "area_share_over_2deg_pct": 18.2781
+    },
+    "1RUNOFF_apron_7": {
+     "tris": 6401,
+     "verts": 3635,
+     "writer_verts": 4129,
+     "deg_by_area": {
+      "50": 0.878,
+      "95": 4.17,
+      "99": 5.964
+     },
+     "max_deg_on_faces_over_10cm2": 9.34,
+     "area_share_over_2deg_pct": 23.6891
+    },
+    "1RUNOFF_apron_8": {
+     "tris": 2138,
+     "verts": 1418,
+     "writer_verts": 1445,
+     "deg_by_area": {
+      "50": 0.311,
+      "95": 1.619,
+      "99": 2.592
+     },
+     "max_deg_on_faces_over_10cm2": 4.86,
+     "area_share_over_2deg_pct": 3.0708
+    },
+    "1RUNOFF_apron_9": {
+     "tris": 3571,
+     "verts": 1993,
+     "writer_verts": 2083,
+     "deg_by_area": {
+      "50": 0.57,
+      "95": 2.665,
+      "99": 4.129
+     },
+     "max_deg_on_faces_over_10cm2": 9.28,
+     "area_share_over_2deg_pct": 10.5943
+    },
+    "1RUNOFF_apron_10": {
+     "tris": 5993,
+     "verts": 3482,
+     "writer_verts": 3753,
+     "deg_by_area": {
+      "50": 0.589,
+      "95": 3.094,
+      "99": 4.856
+     },
+     "max_deg_on_faces_over_10cm2": 9.6,
+     "area_share_over_2deg_pct": 14.4636
+    },
+    "1RUNOFF_apron_11": {
+     "tris": 4398,
+     "verts": 2510,
+     "writer_verts": 2533,
+     "deg_by_area": {
+      "50": 0.395,
+      "95": 2.157,
+      "99": 3.34
+     },
+     "max_deg_on_faces_over_10cm2": 6.59,
+     "area_share_over_2deg_pct": 6.3368
+    },
+    "1RUNOFF_apron_12": {
+     "tris": 5346,
+     "verts": 3144,
+     "writer_verts": 3211,
+     "deg_by_area": {
+      "50": 0.267,
+      "95": 1.444,
+      "99": 2.284
+     },
+     "max_deg_on_faces_over_10cm2": 7.68,
+     "area_share_over_2deg_pct": 1.5712
+    },
+    "1RUNOFF_apron_13": {
+     "tris": 3276,
+     "verts": 1815,
+     "writer_verts": 1835,
+     "deg_by_area": {
+      "50": 0.402,
+      "95": 2.442,
+      "99": 4.241
+     },
+     "max_deg_on_faces_over_10cm2": 7.1,
+     "area_share_over_2deg_pct": 8.4826
+    },
+    "1RUNOFF_apron_14": {
+     "tris": 512,
+     "verts": 330,
+     "writer_verts": 333,
+     "deg_by_area": {
+      "50": 0.47,
+      "95": 2.784,
+      "99": 4.43
+     },
+     "max_deg_on_faces_over_10cm2": 9.73,
+     "area_share_over_2deg_pct": 9.1493
+    },
+    "1RUNOFF_apron_15": {
+     "tris": 6216,
+     "verts": 3465,
+     "writer_verts": 3524,
+     "deg_by_area": {
+      "50": 0.381,
+      "95": 2.305,
+      "99": 3.888
+     },
+     "max_deg_on_faces_over_10cm2": 9.28,
+     "area_share_over_2deg_pct": 6.5871
+    },
+    "1RUNOFF_apron_16": {
+     "tris": 2804,
+     "verts": 1539,
+     "writer_verts": 2000,
+     "deg_by_area": {
+      "50": 0.657,
+      "95": 3.701,
+      "99": 5.149
+     },
+     "max_deg_on_faces_over_10cm2": 9.18,
+     "area_share_over_2deg_pct": 19.2409
+    },
+    "1RUNOFF_apron_17": {
+     "tris": 587,
+     "verts": 350,
+     "writer_verts": 530,
+     "deg_by_area": {
+      "50": 0.366,
+      "95": 3.965,
+      "99": 5.998
+     },
+     "max_deg_on_faces_over_10cm2": 9.83,
+     "area_share_over_2deg_pct": 19.6851
+    },
+    "1RUNOFF_apron_18": {
+     "tris": 2553,
+     "verts": 1492,
+     "writer_verts": 1593,
+     "deg_by_area": {
+      "50": 0.616,
+      "95": 2.513,
+      "99": 3.513
+     },
+     "max_deg_on_faces_over_10cm2": 8.94,
+     "area_share_over_2deg_pct": 10.6795
+    },
+    "1RUNOFF_apron_19": {
+     "tris": 1508,
+     "verts": 1039,
+     "writer_verts": 1113,
+     "deg_by_area": {
+      "50": 0.562,
+      "95": 3.758,
+      "99": 4.958
+     },
+     "max_deg_on_faces_over_10cm2": 9.47,
+     "area_share_over_2deg_pct": 15.985
+    }
+   }
+  }
+ }
+}

@@ -71,9 +71,9 @@
   {
    "key": "t3_s1000_apron_back",
    "kind": "tyres",
-   "modules": 50,
-   "left_out": 1,
-   "length_m": 32.5
+   "modules": 51,
+   "left_out": 0,
+   "length_m": 32.4
   },
   {
    "key": "f1_nw_screen_ne",
@@ -379,6 +379,27 @@
     "skin": "plant",
     "bays": 10,
     "openings": 8,
+    "gable_in_walls": false
+   }
+  },
+  {
+   "key": "mpg_nw_complex_0",
+   "skin": "TILTUP",
+   "roof": "WHITE",
+   "form": "flat",
+   "wall_h_m": 5.11,
+   "ground": [
+    19.84,
+    25.72
+   ],
+   "bottom": 19.69,
+   "eave": 25.91,
+   "off_terrain": true,
+   "collider": false,
+   "facade": {
+    "skin": "plant",
+    "bays": 22,
+    "openings": 12,
     "gable_in_walls": false
    }
   },
@@ -739,7 +760,7 @@
  ],
  "trunks": {
   "file": "source/vegetation/trunks.json",
-  "stood": 385,
+  "stood": 261,
   "radius_m": 0.3,
   "height_m": 3.0,
   "nearest_paved_m": 4.94

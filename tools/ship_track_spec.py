@@ -31,6 +31,11 @@ Schema (unknown keys are refused, so a typo is never silently ignored):
   relative to airoso's root and must lie under ``assets/``: each file is copied to the SAME relative path in the
   project, every one required (Lake Murray v4's house textures, ledger 0065: a config ``texture_overrides`` path
   ``assets/textures/<f>`` resolves to the engine's own file first and to the project's copy when the engine lacks it).
+  ``seed`` (opt-in, ledger 0099: Lake Murray's empty workshop) is relative to ``tracks/<track>/`` like ``required``: each
+  file is copied into the project ONLY when the project has no file there yet, so a fresh workshop gets airoso's
+  committed copy (the hand-authored ``loop.blend``, the draft's data the ``--skip-blend`` steps read) and a working
+  workshop's own file is never overwritten. Every seed must exist in airoso, and a Git LFS pointer is refused. A
+  ``loop.blend`` seed counts as a blend for the "no blend yet" guard. No ``seed`` key = no line, the chain as before.
 - ``sync_out``: ``{"required": [...], "files": [...], "map": [[from, to], ...], "dirs": [...], "remove": [...]}``
   paths relative to the workshop project copied back into ``tracks/<track>/`` after the gates (the real
   workshop only). ``{id}`` expands to every layout id, ``{race}`` to every race layout id, ``{lap}`` to every lap a
@@ -60,7 +65,7 @@ TEXT_RE = re.compile(r"^[^\t\r\n\x00-\x1f]{0,240}$")
 TOP = {"track", "workshop", "workshop_project", "require_race_layout", "ui_name_prefix", "street_ai_july",
        "audit_note", "engine", "steps", "sync_in", "sync_out"}
 ENGINES = ("airoso", "lm-v4")
-SYNC_IN = {"required", "optional", "globs", "dirs", "assets"}
+SYNC_IN = {"required", "optional", "globs", "dirs", "assets", "seed"}
 SYNC_OUT = {"required", "files", "map", "dirs", "remove"}
 
 
@@ -159,11 +164,12 @@ def load(path, track: str) -> dict:
                       "optional": [_rel(p, "sync_in.optional") for p in _list(si, "optional", "sync_in")],
                       "globs": [_rel(p, "sync_in.globs", glob=True) for p in _list(si, "globs", "sync_in")],
                       "dirs": [_rel(p, "sync_in.dirs") for p in _list(si, "dirs", "sync_in")],
-                      "assets": [_rel(p, "sync_in.assets") for p in _list(si, "assets", "sync_in")]}
+                      "assets": [_rel(p, "sync_in.assets") for p in _list(si, "assets", "sync_in")],
+                      "seed": [_rel(p, "sync_in.seed") for p in _list(si, "seed", "sync_in")]}
     for p in out["sync_in"]["assets"]:
         if not p.startswith("assets/"):
             raise SpecError(f"sync_in.assets: {p!r} is not under airoso's assets/")
-    for k in ("required", "optional", "dirs", "assets"):
+    for k in ("required", "optional", "dirs", "assets", "seed"):
         for p in out["sync_in"][k]:
             if "{" in p:
                 raise SpecError(f"sync_in.{k}: {p!r}: templates are for sync_out only")
@@ -190,7 +196,7 @@ def lines(spec: dict) -> list[str]:
         out.append(f"engine\t{spec['engine']}")      # only when declared: every older spec's lines are unchanged
     for ph in PHASES:
         out += [f"step.{ph}\t{n}" for n in spec["steps"][ph]]
-    for k in ("required", "optional", "globs", "dirs", "assets"):
+    for k in ("required", "optional", "globs", "dirs", "assets", "seed"):   # seed: only a spec that names it (0099)
         out += [f"in.{k}\t{p}" for p in spec["sync_in"][k]]
     for k in ("required", "files", "dirs", "remove"):
         out += [f"out.{k}\t{p}" for p in spec["sync_out"][k]]

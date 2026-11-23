@@ -1,0 +1,456 @@
+{
+ "file": "D:\\k10-scratch\\lm_line\\build\\san_diego_lake_murray_closure_north_cw.kn5",
+ "version": 5,
+ "file_bytes": 4700823,
+ "textures": [
+  {
+   "name": "concrete_barrier_diffuse.png",
+   "bytes": 2368008
+  },
+  {
+   "name": "concrete_barrier_normal.png",
+   "bytes": 63035
+  }
+ ],
+ "materials": [
+  {
+   "name": "1WALL_race_close_ncw_jackson_1477_0_mat",
+   "shader": "ksPerPixelMultiMap",
+   "props": {
+    "ksDiffuse": 0.4,
+    "ksAmbient": 0.4
+   },
+   "textures": [
+    [
+     "txDiffuse",
+     "concrete_barrier_diffuse.png"
+    ],
+    [
+     "txNormal",
+     "concrete_barrier_normal.png"
+    ]
+   ]
+  },
+  {
+   "name": "1WALL_race_close_ncw_missiongorge_717_0_mat",
+   "shader": "ksPerPixelMultiMap",
+   "props": {
+    "ksDiffuse": 0.4,
+    "ksAmbient": 0.4
+   },
+   "textures": [
+    [
+     "txDiffuse",
+     "concrete_barrier_diffuse.png"
+    ],
+    [
+     "txNormal",
+     "concrete_barrier_normal.png"
+    ]
+   ]
+  },
+  {
+   "name": "1WALL_race_close_ncw_navajo_2136_0_mat",
+   "shader": "ksPerPixelMultiMap",
+   "props": {
+    "ksDiffuse": 0.4,
+    "ksAmbient": 0.4
+   },
+   "textures": [
+    [
+     "txDiffuse",
+     "concrete_barrier_diffuse.png"
+    ],
+    [
+     "txNormal",
+     "concrete_barrier_normal.png"
+    ]
+   ]
+  },
+  {
+   "name": "1WALL_race_close_ncw_navajo_2616_0_mat",
+   "shader": "ksPerPixelMultiMap",
+   "props": {
+    "ksDiffuse": 0.4,
+    "ksAmbient": 0.4
+   },
+   "textures": [
+    [
+     "txDiffuse",
+     "concrete_barrier_diffuse.png"
+    ],
+    [
+     "txNormal",
+     "concrete_barrier_normal.png"
+    ]
+   ]
+  },
+  {
+   "name": "1WALL_race_close_ncw_nose_1452_0_mat",
+   "shader": "ksPerPixelMultiMap",
+   "props": {
+    "ksDiffuse": 0.4,
+    "ksAmbient": 0.4
+   },
+   "textures": [
+    [
+     "txDiffuse",
+     "concrete_barrier_diffuse.png"
+    ],
+    [
+     "txNormal",
+     "concrete_barrier_normal.png"
+    ]
+   ]
+  },
+  {
+   "name": "1WALL_race_close_ncw_nose_1477_0_mat",
+   "shader": "ksPerPixelMultiMap",
+   "props": {
+    "ksDiffuse": 0.4,
+    "ksAmbient": 0.4
+   },
+   "textures": [
+    [
+     "txDiffuse",
+     "concrete_barrier_diffuse.png"
+    ],
+    [
+     "txNormal",
+     "concrete_barrier_normal.png"
+    ]
+   ]
+  },
+  {
+   "name": "1WALL_race_close_ncw_nose_316_0_mat",
+   "shader": "ksPerPixelMultiMap",
+   "props": {
+    "ksDiffuse": 0.4,
+    "ksAmbient": 0.4
+   },
+   "textures": [
+    [
+     "txDiffuse",
+     "concrete_barrier_diffuse.png"
+    ],
+    [
+     "txNormal",
+     "concrete_barrier_normal.png"
+    ]
+   ]
+  },
+  {
+   "name": "1WALL_race_close_ncw_nose_717_0_mat",
+   "shader": "ksPerPixelMultiMap",
+   "props": {
+    "ksDiffuse": 0.4,
+    "ksAmbient": 0.4
+   },
+   "textures": [
+    [
+     "txDiffuse",
+     "concrete_barrier_diffuse.png"
+    ],
+    [
+     "txNormal",
+     "concrete_barrier_normal.png"
+    ]
+   ]
+  },
+  {
+   "name": "1WALL_race_close_ncw_nose_7_0_mat",
+   "shader": "ksPerPixelMultiMap",
+   "props": {
+    "ksDiffuse": 0.4,
+    "ksAmbient": 0.4
+   },
+   "textures": [
+    [
+     "txDiffuse",
+     "concrete_barrier_diffuse.png"
+    ],
+    [
+     "txNormal",
+     "concrete_barrier_normal.png"
+    ]
+   ]
+  },
+  {
+   "name": "1WALL_race_close_ncw_princessview_333_0_mat",
+   "shader": "ksPerPixelMultiMap",
+   "props": {
+    "ksDiffuse": 0.4,
+    "ksAmbient": 0.4
+   },
+   "textures": [
+    [
+     "txDiffuse",
+     "concrete_barrier_diffuse.png"
+    ],
+    [
+     "txNormal",
+     "concrete_barrier_normal.png"
+    ]
+   ]
+  },
+  {
+   "name": "1WALL_race_close_ncw_waring_7_0_mat",
+   "shader": "ksPerPixelMultiMap",
+   "props": {
+    "ksDiffuse": 0.4,
+    "ksAmbient": 0.4
+   },
+   "textures": [
+    [
+     "txDiffuse",
+     "concrete_barrier_diffuse.png"
+    ],
+    [
+     "txNormal",
+     "concrete_barrier_normal.png"
+    ]
+   ]
+  }
+ ],
+ "meshes": [
+  {
+   "name": "1WALL_race_close_ncw_jackson_1477_0",
+   "verts": 10356,
+   "tris": 12916,
+   "matid": 0,
+   "surface": "WALL",
+   "renderable": true,
+   "radius_m": 934.0,
+   "area_m2": 6461.1,
+   "edge_p10_m": 0.12,
+   "edge_med_m": 2.998,
+   "edge_p90_m": 3.045,
+   "grid_m": 1.0,
+   "bbox_m": [
+    1236.8,
+    117.9,
+    1395.7
+   ]
+  },
+  {
+   "name": "1WALL_race_close_ncw_missiongorge_717_0",
+   "verts": 11796,
+   "tris": 14716,
+   "matid": 1,
+   "surface": "WALL",
+   "renderable": true,
+   "radius_m": 1041.4,
+   "area_m2": 7369.8,
+   "edge_p10_m": 0.12,
+   "edge_med_m": 2.997,
+   "edge_p90_m": 3.046,
+   "grid_m": 1.001,
+   "bbox_m": [
+    1755.4,
+    81.6,
+    1118.8
+   ]
+  },
+  {
+   "name": "1WALL_race_close_ncw_navajo_2136_0",
+   "verts": 4676,
+   "tris": 5816,
+   "matid": 2,
+   "surface": "WALL",
+   "renderable": true,
+   "radius_m": 433.8,
+   "area_m2": 2932.8,
+   "edge_p10_m": 0.12,
+   "edge_med_m": 3.006,
+   "edge_p90_m": 3.073,
+   "grid_m": 1.004,
+   "bbox_m": [
+    779.1,
+    45.3,
+    379.1
+   ]
+  },
+  {
+   "name": "1WALL_race_close_ncw_navajo_2616_0",
+   "verts": 4996,
+   "tris": 6216,
+   "matid": 3,
+   "surface": "WALL",
+   "renderable": true,
+   "radius_m": 463.4,
+   "area_m2": 3118.4,
+   "edge_p10_m": 0.12,
+   "edge_med_m": 3.001,
+   "edge_p90_m": 3.052,
+   "grid_m": 1.002,
+   "bbox_m": [
+    673.3,
+    38.7,
+    636.5
+   ]
+  },
+  {
+   "name": "1WALL_race_close_ncw_nose_1452_0",
+   "verts": 276,
+   "tris": 316,
+   "matid": 4,
+   "surface": "WALL",
+   "renderable": true,
+   "radius_m": 7.2,
+   "area_m2": 48.7,
+   "edge_p10_m": 0.12,
+   "edge_med_m": 0.956,
+   "edge_p90_m": 1.005,
+   "grid_m": 0.555,
+   "bbox_m": [
+    5.0,
+    1.2,
+    13.9
+   ]
+  },
+  {
+   "name": "1WALL_race_close_ncw_nose_1477_0",
+   "verts": 324,
+   "tris": 376,
+   "matid": 5,
+   "surface": "WALL",
+   "renderable": true,
+   "radius_m": 9.0,
+   "area_m2": 60.6,
+   "edge_p10_m": 0.12,
+   "edge_med_m": 0.994,
+   "edge_p90_m": 1.041,
+   "grid_m": 0.568,
+   "bbox_m": [
+    12.5,
+    1.2,
+    13.7
+   ]
+  },
+  {
+   "name": "1WALL_race_close_ncw_nose_316_0",
+   "verts": 244,
+   "tris": 276,
+   "matid": 6,
+   "surface": "WALL",
+   "renderable": true,
+   "radius_m": 6.2,
+   "area_m2": 41.9,
+   "edge_p10_m": 0.12,
+   "edge_med_m": 0.946,
+   "edge_p90_m": 0.996,
+   "grid_m": 0.551,
+   "bbox_m": [
+    7.5,
+    1.2,
+    10.6
+   ]
+  },
+  {
+   "name": "1WALL_race_close_ncw_nose_717_0",
+   "verts": 324,
+   "tris": 376,
+   "matid": 7,
+   "surface": "WALL",
+   "renderable": true,
+   "radius_m": 8.9,
+   "area_m2": 60.2,
+   "edge_p10_m": 0.12,
+   "edge_med_m": 0.987,
+   "edge_p90_m": 1.035,
+   "grid_m": 0.566,
+   "bbox_m": [
+    7.8,
+    1.2,
+    16.5
+   ]
+  },
+  {
+   "name": "1WALL_race_close_ncw_nose_7_0",
+   "verts": 292,
+   "tris": 336,
+   "matid": 8,
+   "surface": "WALL",
+   "renderable": true,
+   "radius_m": 7.9,
+   "area_m2": 53.7,
+   "edge_p10_m": 0.12,
+   "edge_med_m": 0.989,
+   "edge_p90_m": 1.037,
+   "grid_m": 0.565,
+   "bbox_m": [
+    12.7,
+    1.2,
+    10.5
+   ]
+  },
+  {
+   "name": "1WALL_race_close_ncw_princessview_333_0",
+   "verts": 5764,
+   "tris": 7176,
+   "matid": 9,
+   "surface": "WALL",
+   "renderable": true,
+   "radius_m": 520.2,
+   "area_m2": 3580.3,
+   "edge_p10_m": 0.12,
+   "edge_med_m": 3.004,
+   "edge_p90_m": 3.051,
+   "grid_m": 0.999,
+   "bbox_m": [
+    264.6,
+    71.3,
+    1004.0
+   ]
+  },
+  {
+   "name": "1WALL_race_close_ncw_waring_7_0",
+   "verts": 4980,
+   "tris": 6196,
+   "matid": 10,
+   "surface": "WALL",
+   "renderable": true,
+   "radius_m": 428.5,
+   "area_m2": 3075.4,
+   "edge_p10_m": 0.12,
+   "edge_med_m": 2.985,
+   "edge_p90_m": 3.01,
+   "grid_m": 0.996,
+   "bbox_m": [
+    738.6,
+    20.8,
+    434.9
+   ]
+  }
+ ],
+ "nodes": [
+  "BlenderFile"
+ ],
+ "summary": {
+  "meshes": 11,
+  "verts": 44028,
+  "tris": 54716,
+  "textures": 2,
+  "texture_bytes": 2431043,
+  "materials": 11,
+  "surfaces": {
+   "WALL": {
+    "meshes": 11,
+    "verts": 44028,
+    "tris": 54716,
+    "area_m2": 26802.9,
+    "invisible": 0,
+    "edge_med_m": 2.936,
+    "grid_m": 0.987
+   }
+  },
+  "shaders_by_tris": {
+   "ksPerPixelMultiMap": {
+    "meshes": 11,
+    "tris": 54716
+   }
+  },
+  "near_vert_cap": [],
+  "non_pot_textures": []
+ }
+}

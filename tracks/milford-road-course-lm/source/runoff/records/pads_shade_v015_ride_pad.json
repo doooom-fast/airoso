@@ -1,0 +1,30 @@
+{
+ "_doc": "ledger 0100 item 6: tools/seat_pads_blend.py flat vs pads_shade smooth on one prepped scene (source/runoff/scripts/pads_shade_check.py)",
+ "blend": "milford_road_course.blend",
+ "pads": {
+  "1RUNOFF_apron_0": {
+   "tris": 5837,
+   "verts": 3041,
+   "writer_verts_flat": 17511,
+   "writer_verts_smooth": 3041,
+   "positions_identical": true,
+   "uvs_identical": true,
+   "normal_change_deg_by_corner": {
+    "50": 0.017,
+    "95": 0.475,
+    "99": 1.394
+   },
+   "normal_change_deg_by_area": {
+    "50": 0.015,
+    "95": 0.276,
+    "99": 0.946
+   },
+   "normal_change_deg_max_on_faces_over_10cm2": 3.25,
+   "area_share_over_2deg_pct": 0.0952,
+   "bytes_at_44B_per_writer_vertex": {
+    "flat": 770484,
+    "smooth": 133804
+   }
+  }
+ }
+}

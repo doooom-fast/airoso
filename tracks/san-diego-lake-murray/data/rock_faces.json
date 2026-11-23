@@ -13,17 +13,17 @@
  },
  "texture": {
   "key": "1GRASS_ROCK",
-  "diffuse": "D:\\k10-scratch\\lm_v4_0201\\textures\\sandstone_cut_diffuse.jpg",
-  "normal": "D:\\k10-scratch\\lm_v4_0201\\textures\\sandstone_cut_normal.jpg",
+  "diffuse": "D:\\k10-scratch\\lm_line\\textures\\sandstone_cut_diffuse.jpg",
+  "normal": "D:\\k10-scratch\\lm_line\\textures\\sandstone_cut_normal.jpg",
   "overridden": true
  },
  "bands": 16,
- "faces_in_bands": 153901,
- "steep_under_pavement_left_grass": 5208,
- "rock_raw": 13731,
+ "faces_in_bands": 153896,
+ "steep_under_pavement_left_grass": 5213,
+ "rock_raw": 13734,
  "boundary_smoothing": {
   "teeth_filled": 934,
-  "teeth_eroded": 1682,
+  "teeth_eroded": 1681,
   "passes": 4,
   "teeth_before_grass_rock": [
    380,
@@ -109,9 +109,9 @@
   "faces": 179,
   "components": 82
  },
- "patches_dropped": 3358,
+ "patches_dropped": 3359,
  "holes_filled": 0,
- "rock_faces": 9804,
+ "rock_faces": 9807,
  "rock_area_m2": 11935.7,
  "thin_triangles_in_bands_before_split": 1719,
  "meshes": [
@@ -124,8 +124,8 @@
   {
    "name": "1GRASS_ROCK_13",
    "from": "1GRASS_13",
-   "vertices": 825,
-   "faces": 1054
+   "vertices": 827,
+   "faces": 1057
   },
   {
    "name": "1GRASS_ROCK_14",
@@ -222,7 +222,7 @@
    "slope_max": 1.28
   },
   "auto_cut_D_right_25_1595": {
-   "faces": 4038,
+   "faces": 4041,
    "area_m2": 4181.2,
    "rise_max_m": 2.8,
    "slope_min": 0.34,

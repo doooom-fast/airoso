@@ -102,18 +102,18 @@
   ]
  ],
  "excursion_drops": 0,
- "excursion_far_ledges": 203,
+ "excursion_far_ledges": 61,
  "worst_excursions": [
   [
    13353.0,
    -10.0,
-   6.32,
+   6.39,
    false
   ],
   [
    13353.0,
    10.0,
-   6.05,
+   6.12,
    false
   ],
   [

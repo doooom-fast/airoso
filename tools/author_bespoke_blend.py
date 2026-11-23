@@ -741,6 +741,23 @@ def ring_points(ring, step=2.0):
     return pts, [q for q in grid if point_in_polygon(ring, q[0], q[1])]
 
 
+def far_roof_refusal(eave, lo, hi, wall_h, set_in=False):
+    """why a far block standing at its MEASURED roof (roof_z_m, ledger 0082 pass 3) is refused, or None.
+
+    As built since pass 3: a roof under half its wall over the HIGHEST ground under its rim (a roof the hill would swallow is a
+    mis-measure). Ledger 0100 item 5 (opt-in, a far row's "set_in"; Milford's mpg_nw_complex_0 only): Del Mar's set-in form
+    (ledger 0083 pass 4b) on a far block. A building cut into its slope has its uphill side in the hill by measurement, so the
+    same half-wall rule reads its DOWNHILL face, the LOWEST ground under its rim, as house_seat judges a set-in deck by its deck
+    and not its uphill ground (the half-wall share is unchanged). Its walls already run to the lowest ground (bottom = lo -
+    BOTTOM_UNDER_M); a far block is a FARBLOCK, which the prep's house seat never moves, so it needs no _SETIN object or lift.
+    A row without "set_in" is judged exactly as before."""
+    ref, which = (lo, "lowest") if set_in else (hi, "highest")
+    if eave - ref < 0.5 * wall_h:
+        return (f"its measured roof {eave:.2f} stands {eave - ref:.2f} m over the {which} ground under it (< half its {wall_h} m wall)"
+                + (" (set in its slope: judged by its downhill face)" if set_in else ""))
+    return None
+
+
 def block_opt(b, group, key):
     """a ledger-0094 detail key: the row's own, else its file group's; None when neither names it"""
     if key in b:
@@ -870,8 +887,8 @@ def blocks(col, spec, proj, to_xy, ground, near_ground, paved, walls, bad):
                 # rim. A far block over sloping or skirted ground seated at its lowest ground (below) sank its lap-side wall:
                 # Milford's west hall stood 13 m tall from a skirt 17 m under its high side, its roof 4.5 m under that ground
                 bottom, eave = lo - BOTTOM_UNDER_M, float(b["roof_z_m"])
-                if eave - hi < 0.5 * wall_h:
-                    why = f"its measured roof {eave:.2f} stands {eave - hi:.2f} m over the highest ground under it (< half its {wall_h} m wall)"
+                why = far_roof_refusal(eave, lo, hi, wall_h, bool(b.get("set_in")))
+                if why:
                     bad.append(f"block {key}: {why}")
                     continue
             elif off:

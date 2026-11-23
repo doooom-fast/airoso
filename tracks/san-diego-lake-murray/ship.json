@@ -2,7 +2,7 @@
   "_doc": "San Diego's chain as data for tools/ship_track.sh (V3-PLAN P1, Lariat plan). tools/ship_sd.sh stays the chain of record (not a shim); this file reproduces its step sequence, re-synced 2026-10-13 to ship_sd.sh after ledger 0046 and v0.18.0 (0052: the race gate OBJ extracted before the AI writer + verify_ai_line; 0050: verify_fold_fans after the race gates; 0046 integration fix round: deck_datum first, ground_release after the triangulation, the I-8 pavement inside prep_prep before the split; 2026-10-26 ledger 0054 P4: the rock faces inside prep_prep after the I-8 pavement, the building caches and the sandstone tile synced in) (tiered terrain: terrain_sample / terrain_resample around the trim, triangulate_terrain after the seat, slim_far_terrain retired, the road gate OBJ before the track folder, the 3DEP cache + I-8 corridor synced in and out); tests/tools/test_ship_track_chain.py diffs the step headers. The assembler runs from tracks/san-diego-lake-murray/scripts-v021 through V021_SHIM, as in ship_sd.sh. engine-july runs the prep / exporter / spawn builder for this track only (tools/ship_track.sh decides that from the track name; ENG=<dir> points it at a scratch copy, as in ship_sd.sh; no key here can). 2026-11-03, ledger 0065 (v4 is Lake Murray's line): this file is v4's chain of record (tools/ship_sd.sh stays the 0.19.x chain: v4 = its steps + the terrain thin, the red repairs, the street-only kn5, the bespoke blocks and the house gate); draft 'bespoke' stands the buildings pipeline's blocks where ship_sd.sh's SD_BESPOKE=1 rehearsal did, gate 'houses' holds the built road kn5 to v4's 7,600 blocks, sync_in.assets brings the house textures engine-july lacks, and every prep input that lived only in the workshop (red_repairs.plan.json, terrain.tiers.json.gz, terrain.refine.json.gz, bridges.cache.json) and the draft's caches now cross both ways.",
   "track": "san-diego-lake-murray",
   "workshop": "D:/k10-scratch",
-  "workshop_project": "lm_v4",
+  "workshop_project": "lm_line",
   "require_race_layout": true,
   "ui_name_prefix": "doooom San Diego",
   "street_ai_july": "D:/k10-track-archive/2026-10-11/san_diego_lake_murray/ai",
@@ -37,6 +37,8 @@
       "lamps"
     ],
     "author": [
+      "lamp_heads",
+      "walk_grade",
       "race_bands",
       "race_planned_gate",
       "layout_dummies",
@@ -75,7 +77,8 @@
       "race_gates",
       "fold_fans",
       "kn5_ground"
-    ]
+    ],
+    "_author_doc": "ledger 0099: lamp_heads (tools/author_lamp_heads_blend.py, opt-in scenery.streetlights.light_both_heads) first: it reads only the draft's LIGHTS_0 and data/lights.local.json, which no author step writes, and touches only LIGHTS_back, which none reads; first keeps the race steps' order (race_author, signs, race_verify last). Round 1c: walk_grade (tools/author_walk_grade_blend.py, opt-in route.walk_back_grade) second: it moves only the street walks' back-grade lips, which no other author step reads (the race edge strips stand on the road, edge_mode road; the signs on the walk's flat top), and before the race steps, so they author on the walk as it ships"
   },
   "sync_in": {
     "required": [
@@ -114,7 +117,8 @@
       "data/road_lanes.cache.json",
       "data/osm.expansion.json",
       "data/expansion.north.samples.json.gz",
-      "source/bespoke/buildings.json"
+      "source/bespoke/buildings.json",
+      "source/vegetation/median_heights.lidar.json"
     ],
     "globs": [
       "source/trees/*.bin"
@@ -129,11 +133,112 @@
       "assets/textures/shingle_roof_diffuse.jpg",
       "assets/textures/roof_white_diffuse.jpg",
       "assets/textures/roof_tan_diffuse.jpg",
-      "assets/textures/roof_dark_diffuse.jpg"
+      "assets/textures/roof_dark_diffuse.jpg",
+      "assets/textures/asphalt_dense_diffuse.jpg",
+      "assets/textures/asphalt_dense_normal.jpg",
+      "assets/textures/concrete_plain_diffuse.jpg",
+      "assets/textures/concrete_plain_normal.jpg"
     ],
     "_joins_doc": "ledger 0054 Phase 2: source/expansion/race.north.joins.json is race.laps.north's joins_file (scripts/geometry/race_lap.stitch reads it from the project); unused while no layout names the lap",
-    "_assets_doc": "ledger 0065: the house textures the pbr rows for the blocks name, which engine-july's assets/textures lacks; track.config.json texture_overrides points the same rows at these copies (same bytes as airoso's tracked files)",
-    "_optional_doc": "2026-11-03 (ledger 0065, the PC's coverage trace of v4): red_repairs.plan.json (tools/red_repairs.py, read by the prep's red repairs), terrain.tiers.json.gz (the thin step, rib_check, the assembler), terrain.refine.json.gz (the prep's RefineField, ground_release_blend) and bridges.cache.json (the prep's bridge spans, author_bridges, bridge_level) lived only in the workshop; scatter_positions.json (the draft's palm / tree / scrub / median-planting positions, read by make_treefx and the race_verify scenery gate: without it v4's 21,111 TreeFX trees are 17,728, the PC's 0.20.1 run) the same; network.cache.json, road_lanes.cache.json, osm.expansion.json, expansion.north.samples.json.gz are the draft's caches; source/bespoke/buildings.json is the planned blocks"
+    "_assets_doc": "ledger 0065: the house textures the pbr rows for the blocks name, which engine-july's assets/textures lacks; track.config.json texture_overrides points the same rows at these copies (same bytes as airoso's tracked files); ledger 0099 (Kevin 2026-11-22, owned asphalt and concrete: \"On every track now\"): the owned asphalt_dense and concrete_plain pairs (tools/make_owned_surfaces.py, CC0) that texture_overrides 1ROAD / 1KERB_SIDEWALK name, as High Plains and Milford carry them (ledger 0095)",
+    "_optional_doc": "2026-11-03 (ledger 0065, the PC's coverage trace of v4): red_repairs.plan.json (tools/red_repairs.py, read by the prep's red repairs), terrain.tiers.json.gz (the thin step, rib_check, the assembler), terrain.refine.json.gz (the prep's RefineField, ground_release_blend) and bridges.cache.json (the prep's bridge spans, author_bridges, bridge_level) lived only in the workshop; scatter_positions.json (the draft's palm / tree / scrub / median-planting positions, read by make_treefx and the race_verify scenery gate: without it v4's 21,111 TreeFX trees are 17,728, the PC's 0.20.1 run) the same; network.cache.json, road_lanes.cache.json, osm.expansion.json, expansion.north.samples.json.gz are the draft's caches; source/bespoke/buildings.json is the planned blocks",
+    "seed": [
+      "loop.blend",
+      "data/centerline.local.json",
+      "data/centerline.raw.local.json",
+      "data/median_bands.json",
+      "data/dummies.json",
+      "data/finished_centerline.json",
+      "data/gate_centerline.json",
+      "data/lights.local.json",
+      "data/lights_ini_check.json",
+      "data/connectors.local.json",
+      "data/mouths.json",
+      "data/mouth_welds.json",
+      "data/aprons.json",
+      "data/aprons.lamps.json",
+      "data/pads.plan.json",
+      "data/pads.built.json",
+      "data/pads.3dep.json",
+      "data/verify_pads.json",
+      "data/verify_mouths.json",
+      "data/verify_fold_fans.json",
+      "data/rib_check.json",
+      "data/house_seat_check.json",
+      "data/signs.local.json",
+      "data/signs_preview.svg",
+      "data/signs_measured.json",
+      "data/drive_test.json",
+      "data/drive_test.expansion.json",
+      "data/drive_lines.expansion.json",
+      "data/audit.json",
+      "data/stubs.plan.json",
+      "data/stubs.built.json",
+      "data/verify_stubs.json",
+      "data/stubs.3dep.json",
+      "data/barrier_bands.json",
+      "data/race_authored.json",
+      "data/race_verify.json",
+      "data/race_verify.scenery.json",
+      "data/race_kn5.json",
+      "data/treefx.report.json",
+      "data/terrain.tiers.report.json",
+      "data/rock_faces.json",
+      "data/bridges.authored.json",
+      "data/deck_datum.json",
+      "data/ground_release.json",
+      "data/ground_release.report.json",
+      "data/ground_release.auto_cuts.json",
+      "data/dummies_street.json",
+      "data/dummies_race_cw.json",
+      "data/dummies_race_acw.json",
+      "data/drive_test.street.json",
+      "data/drive_test.race_cw.json",
+      "data/drive_test.race_acw.json",
+      "data/kn5_ground_check.street.json",
+      "data/kn5_ground_check.race_cw.json",
+      "data/kn5_ground_check.race_acw.json",
+      "data/no_route.race_cw.json",
+      "data/no_route.race_acw.json",
+      "data/no_route.race_cw.planned.json",
+      "data/no_route.race_acw.planned.json",
+      "data/audit.race_cw.json",
+      "data/audit.race_acw.json",
+      "data/closure_race_cw.kn5.json",
+      "data/closure_race_acw.kn5.json",
+      "data/ai_verify.race_cw.json",
+      "data/ai_verify.race_acw.json",
+      "data/bridge.spans.auto.json",
+      "data/bespoke.report.json",
+      "data/house_gate.json",
+      "data/centerline.geojson",
+      "data/centerline.elevation.json",
+      "data/audit.north_acw.json",
+      "data/audit.north_cw.json",
+      "data/barrier_bands.north.json",
+      "data/closure_north_acw.kn5.json",
+      "data/closure_north_cw.kn5.json",
+      "data/drive_test.north_acw.json",
+      "data/drive_test.north_cw.json",
+      "data/dummies_north_acw.json",
+      "data/dummies_north_cw.json",
+      "data/kn5_ground_check.north_acw.json",
+      "data/kn5_ground_check.north_cw.json",
+      "data/lap.north.json",
+      "data/lights.heads.json",
+      "data/no_route.north_acw.json",
+      "data/no_route.north_acw.planned.json",
+      "data/no_route.north_cw.json",
+      "data/no_route.north_cw.planned.json",
+      "data/race_authored.north.json",
+      "data/race_north.kn5.json",
+      "data/race_verify.north.json",
+      "data/race_verify.scenery.north.json",
+      "data/walk_grade.json",
+      "data/walk_grade.seat.json"
+    ],
+    "_seed_doc": "ledger 0099 (Lake Murray from an EMPTY workshop; ledger 0090 'Open'): copied into the project only where it has no file yet, never over a workshop's own (tools/ship_track.sh). The rule: every sync_out file airoso holds that sync_in does not already bring, so a fresh workshop starts as the last synced-back one left it. loop.blend is the blend the last install synced back (0.20.4's, 2026-11-23: sha256 495a2198..., 189,120,404 B; 0.20.2's was 3f13b887..., 189,063,384 B; every author step on it is idempotent, ledger 0099; LFS: an un-pulled pointer is refused); the draft's data the --skip-blend steps read (connectors, mouths, pads, stubs, median bands, centrelines, ground release, deck datum, lights, bespoke report...) and the run's own records, which the run rewrites. data/centerline.geojson (scripts/ac/track_folder.py: the lap length) and data/centerline.elevation.json (scripts/geometry/drive_test.py: the replication rows) were read by the chain but crossed neither way; they are now in sync_out and seeded. The north laps' own records (lap.north.json, barrier_bands.north.json, dummies_north_*.json, ...) were absent until 0.20.4's install synced them back (0.20.2 was built in a scratch workshop that never did); with walk_grade.json, walk_grade.seat.json and lights.heads.json they are seeds now by the same rule (23 files, 2026-11-23); the author / ship / gate steps rewrite every one of them",
+    "_optional_median_doc": "ledger 0099: source/vegetation/median_heights.lidar.json is scenery.treefx.median_measured.file (2026-11-19, Kevin: 'B: lidar height each'); tools/make_treefx.py reads it from the project, and no list carried it, so every rebuild since that config change would stop at the TreeFX step"
   },
   "sync_out": {
     "required": [
@@ -219,7 +324,12 @@
       "data/race_authored.{lap}.json",
       "data/race_verify.{lap}.json",
       "data/race_verify.scenery.{lap}.json",
-      "data/race_{lap}.kn5.json"
+      "data/race_{lap}.kn5.json",
+      "data/centerline.geojson",
+      "data/centerline.elevation.json",
+      "data/lights.heads.json",
+      "data/walk_grade.json",
+      "data/walk_grade.seat.json"
     ],
     "_files_lap_doc": "ledger 0054 Phase 2: each lap's line, declaration and reports, as tools/ship_sd.sh syncs them ({lap}: every lap a race layout names; none in this config, so nothing)",
     "map": [
@@ -236,5 +346,6 @@
     "remove": [
       "data/audit.race.json"
     ]
-  }
+  },
+  "_workshop_doc": "ledger 0099: the chain's own workshop is lm_line, which the chain creates empty and fills from airoso (sync_in + seed). lm_v4 holds v4's own 0.20.1 blend and data and lm_phase2/project 0.20.2's scratch build: both are kept as records and neither is the line any more (a seed never overwrites, so a run on lm_v4 would have built from v4's blend)"
 }

@@ -140,6 +140,39 @@
     "_source": "source/furniture/pass4/tiers_p4.json (ledger 0082 pass 4): the small building west of the far-west hall (NAIP 2022 west strip: a light-roofed block); roof piece 0 at level 0. Footprint = the minimum-area rectangle of its roof cells (212 m2 of 2 m cells, fill 0.66; +-2 m), off 3DEP USGS_LPC_MI_31Co_Oakland_2016_LAS_2019, flown 2017-05-03; roof_z_m 47.56 m = its median roof elevation in the scene frame [measured]; wall 8.1 m over the lidar ground [measured]. NAIP 2022's strip west of the crop (download b, 2026-11-09) shows it standing (green excess 3.5, luminance 227.0, and by eye). Seen from 22 of 467 lap points. Skin [invented: no wall is seen from above]; past the built ground: a far block"
   },
   {
+    "key": "mpg_nw_complex_0",
+    "footprint_lonlat": [
+      [
+        -83.67137,
+        42.5738404
+      ],
+      [
+        -83.6705148,
+        42.5738826
+      ],
+      [
+        -83.6705305,
+        42.574057
+      ],
+      [
+        -83.6713858,
+        42.5740149
+      ]
+    ],
+    "wall_h_m": 5.11,
+    "skin": "tiltup",
+    "roof": "white",
+    "form": "flat",
+    "off_terrain": true,
+    "roof_z_m": 25.91,
+    "_source": "source/furniture/pass4/tiers_p4.json (ledger 0082 pass 4): the multi-level complex north-west of the employee lot (NAIP 2022 west strip: flat roofs at several levels); roof piece 0 at level 0. Footprint = the minimum-area rectangle of its roof cells (1036 m2 of 2 m cells, fill 0.76; +-2 m), off 3DEP USGS_LPC_MI_31Co_Oakland_2016_LAS_2019, flown 2017-05-03; roof_z_m 25.91 m = its median roof elevation in the scene frame [measured]; wall 5.11 m over the lidar ground [measured]. NAIP 2022's strip west of the crop (download b, 2026-11-09) shows it standing (green excess 3.5, luminance 203.0, and by eye). Seen from 12 of 467 lap points. Skin [invented: no wall is seen from above]; past the built ground: a far block",
+    "set_in": {
+      "ground_low_m": 19.79,
+      "ground_high_m": 26.43,
+      "_source": "ledger 0100 item 5 (Kevin 2026-11-22: \"Stand it with the set-in form\"): Del Mar's set-in form (ledger 0083 pass 4b) on a far block (tools/author_bespoke_blend.py far_roof_refusal): the roof stays at its measured roof_z_m 25.91 m, the walls run down to the lowest built ground under the rim, and the author's half-wall rule reads the downhill face. The lidar's far ground (data/far_ground.lidar.npy, 5 m cells, every rim cell measured) under the rim: 19.79 m (its north side 19.79-20.51 m, west 19.88-20.00) to 26.43 m (the cell at its south-east corner; the ledger 0082 read: 25.44-25.56 m 5-6 m east of the east wall), so the roof stands 6.12 m over its downhill ground (its wall 5.11 m over the median ground [measured]) and at grade at its south-east end, where it is cut into the slope. 0.1.11-0.1.13 dropped it (blocks_dropped.json)"
+    }
+  },
+  {
     "key": "mpg_nw_complex_1",
     "footprint_lonlat": [
       [

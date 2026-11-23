@@ -12,8 +12,11 @@ import json
 from pathlib import Path
 
 P4 = Path(__file__).resolve().parents[2] / "furniture" / "pass4"
-DROP = {"mpg_nw_complex_0": "set into its slope on the real ground (0.1.11): the lidar's ground 25.44-25.56 m 5-6 m east of its "
-                            "east wall, its roof 25.91 m; the author refuses a roof under half its wall over its rim's highest ground"}
+# ledger 0100 item 5: mpg_nw_complex_0 stands again, set into its slope (its row's "set_in", Del Mar's form on a far block), so
+# nothing is dropped any more. Was: {"mpg_nw_complex_0": "set into its slope on the real ground (0.1.11): the lidar's ground
+# 25.44-25.56 m 5-6 m east of its east wall, its roof 25.91 m; the author refuses a roof under half its wall over its rim's highest
+# ground"}
+DROP = {}
 blocks = json.loads((P4 / "blocks.json").read_text(encoding="utf-8"))
 dropped = json.loads((P4 / "blocks_dropped.json").read_text(encoding="utf-8"))
 tiers = json.loads((P4 / "tiers_p4.json").read_text(encoding="utf-8"))

@@ -167,3 +167,24 @@ Owed now: Kevin's approval of the dossier; the far-clip test; then the survey it
 
 "dossier approved, start the survey". `DOSSIER.md` is ticked. The survey of PLAN §4b (paint, streetlights, signal masts,
 then signs) is given to the cloud session that reaches the aerial archive and the lidar, lap corridor first.
+
+## The survey's pilot: Colfax, Logan to Lincoln (2026-11-23)
+
+Kevin, in the cloud session that ran it: "go" (to the pilot; the planning session relayed "dossier approved, start the
+survey"). Report: [`source/survey/pilot/PILOT.md`](../../tracks/denver-grand-prix/source/survey/pilot/PILOT.md), files and three stills beside it.
+
+- **Paint reads.** From the 2022 3-inch aerial through the aerial engine's frame and channels: 308 marks on 385 m, 125
+  graded measured (crosswalks, broken and solid lines, double yellow, stop bars), 183 detected (fragments, untyped
+  symbols). **Checked against the 2020 lidar's intensity (another sensor, another year): 98 of the 125 confirmed, 11
+  contradicted, 16 too few returns.** Aerial and lidar agree to 0.3 m with no scale error, which also tests the tiles'
+  inferred CRS. 14.4 % of the roadway was under vehicles and is absent from the file.
+- **Posts do not read from the lidar.** Seven of eight posts checked have no return above 2 m (4 returns per m²). PLAN
+  §4b assumed they would. A reader on the aerial's shadows finds 6 of the 10 posts at Colfax / Sherman (1 of 3 signal
+  masts) with 9 false candidates; no second source for posts exists; heights need the flight's date and hour.
+- **Signs:** tagged from OSM per junction only. Nothing from the air.
+- **Colfax has changed.** OSM today tags it two lanes each way with a designated bus lane; the 2022 aerial and NAIP
+  2023-09 both show the old layout. No free photograph shows the street as it is. Both recorded, nothing picked.
+
+Owed before the lap is run: a decision on posts (better reader plus an eye check, or by eye throughout), and on Colfax's
+present layout. Paint can run on the lap as it stands.
+

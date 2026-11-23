@@ -292,3 +292,212 @@ off the road beside either. Kevin's answer ("Move them off the road and stand th
 his later word to decide on my own and his rule "I just want real", the Mac removed both from the config rather than
 invent barriers (`scenery.bespoke._rows_3_8_doc` says why; their entries are in git history at 165ab3f9).
 `test_circuit_race_furniture` now expects 13 paddock rows; `test_high_plains_round2` checks they are gone.
+
+## Round 3 (0.1.11, Mac, 2026-11-22): the Full layout
+
+Kevin's answer on the calls page, "Yes, add the Full layout", built: High Plains is now two layouts on one road kn5
+(fleet/LAWS.md L8), **West** (the 2.0 mi course every build until now drove, its id `full` renamed `west`:
+tools/layout_dummies and scripts/ac/track_folder reserve `full`, which drops a layout's name from a multi-layout menu entry)
+and **Full** (`full_course`, 2.55 mi: the West course to the end of High Plains Drifter, straight on up To Hell On A Bobsled,
+round the north hairpin, down Ladder To Heaven and left onto the Prairie Corkscrew). Each loads the road kn5 and its own
+nodes-only spawn kn5 (`models_west.ini`, `models_full_course.ini`); Content Manager lists "doooom Colorado - High Plains
+Raceway — West" and "— Full". Built numbers are from Mac builds with Blender 4.2.9 from an EMPTY workshop (`SHIP_PROJ`
+scratch, `--no-install`, ENG = the engine-july snapshot + the branch's `assets/textures`), compared with a Mac build of 0.1.10
+(27ffccf3) made the same way.
+
+### 1. The north loop, measured to the top
+
+`source/full/north_loop.json` (round 2's `measure_north.py`) now reads three photos, all NAIP 2023-09-28 of the same item:
+the 0.3 m crop, the committed z18 photo (0.46 m, to lat 39.73887) and, new, the z18 tiles above it
+(`source/full/naip_2023_hp_north_z18.png`, x 55414-55415 / y 99488-99489, to lat 39.74099, public domain; the orchestrator's
+fetch), read with the committed z18 as one mosaic (the seams are clean). **The top 318 m is measured**: 160 rows off the north
+tiles, built widths p5 / p50 / p95 **10.71 / 11.47 / 12.68 m**; no row from s 376 to s 694 is carried. Over the whole loop,
+**810 m read on both sides** (widths p5 / p25 / p50 / p75 / p95 10.6 / 10.9 / 11.2 / 12.15 / 13.0 m), **192 m carried**
+[invented]: the fork's mouth (s 0-18, inside the FORK pad, dropped by the cut), the merge's mouth (s 988-1001) and 165 m of
+verge with an edge line on one side only (s 218-352, 716-736). Two changes to how the measurement becomes a line, both
+[invented] tuning:
+- a carried row takes each edge interpolated between the nearest rows read on both sides (held past the last), not round 2's
+  median width about OSM's centre: that jumped 1-2 m sideways at every measured / carried boundary, and the first Full build
+  read 36 severe steps there (lap s 2,885-3,375, 0.09-0.12 m); both edges then run through a 10 m mean;
+- the centre line runs through a 4 m Gaussian (each end padded straight on its own last 5 m, so the ends stay put: 0.15 /
+  0.05 m): OSM's nodes stand 20-25 m apart and turned up to 23 deg at a node on the hairpin; now at most 4.9 deg per 2 m.
+Heights are round 2's (3DEP beside the line, 1,514.1-1,536.0 m). `source/full/make_connectors.py` writes it as the port's
+own connector `full_north` (`connectors.full.json`, `lm_intake.connectors_file`), painted with the mainline's own edge lines
+(white, 0.55 m in, 0.12 m; no yellow centre line on a circuit).
+
+### 2. The heightfield, north
+
+`data/heightfield.npy` is now ledger 0059's full-course 3DEP grid (the same 40 m stage, west / east / south edges as the
+West-only grid, north to lat 39.74124: 40 x 25 samples, was 40 x 15), kept on the Mac outside git until now. Against the
+native 3DEP samples beside the north section (`corridor_3dep_north.json`, 7,375 samples) it reads -0.08 +- 0.35 m; the grid it
+replaces -0.21 +- 0.39 m over its part of them. It moves the West's far ground too (sd 0.77 m at the old nodes, a 40 m grid
+sampled on another lattice); the road's own heights are its profile's, not the grid's.
+
+### 3. The fork: a measured pad (a fast Y)
+
+High Plains Drifter runs straight on into To Hell On A Bobsled while the West course bends right, so the two roads' outer
+edges are one line: no lateral line of the connector crosses the West lap's edge and the mitre weld refused it (the first
+build: "a lateral line stops > 25.0 m short of the host edge"). NAIP shows the fork as one pavement (the flare, the gore's
+tip), so it is built as Pikes Peak's and Sand Creek's junctions are (`lm_pads`, tools/lm_pads_blend.py):
+- **the outline** (`source/full/measure_pads.py` -> `source/pads/FORK.json` + `FORK.png`): the 0.3 m crop's ground-ness
+  (measure_widths' rule) under the threshold midway between the West lane between the cuts (15.3) and the verge (46.9): 31.1;
+  closed / opened, small holes filled, both ribbons united in (10.2 m2 of the lap's, 1.8 m2 of the connector's), clipped to the
+  declared box [authored, by eye on NAIP] and split at the cuts: **1,406 m2**, 295 points;
+- **the cuts**: West v896 (s 2,682, before the flare) and v922 (s 2,759, past the gore's tip), the node v907; the north loop
+  is cut at the box edge 36 m up Bobsled (`route.street_junctions.pad_arms`) and welded in as the arm;
+- **the deck**: no lidar over the fork is on disk, so nothing measures the paving's height. New opt-in
+  `lm_pads.deck.fill "membrane"`: the deck keeps the West lap's own ribbon surface (its profile and lidar camber) and the arm's
+  row exactly, and the paving between them (the flare, the arm's approach) is the smoothest surface that meets both, the
+  discrete Laplace equation on the deck's own edges [invented fill]. Built: 1,336 vertices / 2,481 faces, 1,441.5 m2 (the
+  outline as built: the lap's edge and lip added); 777 vertices pinned on the ribbon, 9 on the seams, 550 free (89 sweeps;
+  they moved up to 0.23 m off the plain inverse-distance fill); seam max 1.2 mm; no K-rail (no road the build does not
+  complete meets it).
+
+### 4. The merge: a welded mouth, and the T13 kerb re-traced
+
+The merge is a 46.1 deg T (`tools/trim_connectors.py` cuts the north loop at the West lap's edge, landing on its cambered
+deck, `route.trim_host_bank`; `tools/weld_mouths_blend.py` welds it, reading the host deck off its triangles,
+`route.weld_exact_deck`; `gap_mouths` opens the West's edge strip across it). Its inside corner is the traced T13 kerb
+(ledger 0081's L s 2,843-2,856, 1KERB_circuit_8):
+- as a pad, verify_pads P5 refuses it (no curb over a pad's pavement: 18 kerb triangles; the kerb begins where Ladder's east
+  edge meets the Corkscrew, so no cut keeps it out);
+- welded, verify_mouths NOTCH refused it too at first: the run was laid at one in / out along the West lap's edge, and its west
+  end (with the engine's 4 m end ramp) stood 1.3-3.3 cm over the road along the mouth's last 1.25 m. On NAIP its paint wraps
+  round the corner. `source/edges/retrace_kerb_2843.py` re-traces it by round 2's own rule (retrace_stripe_2673.py: each edge
+  point moved across by the paint it stands on, MOVE_MIN_M 0.3): **v0 +2.55 m** (paint 1.3-3.6 m out), **v1 +1.05**, v2-v4
+  kept, v5-v7 -0.50 / -0.55 / -0.55 (paint further in). in / out, the ends and the other 19 runs unchanged. The kerb's west end
+  now follows the paint off the lane; 9 of its section reads find no ROAD under them (the corner's grass; a miss keeps the lane
+  edge's height, author_kerbs' rule).
+The bellmouth on the west side and the paved fillet behind the kerb are not built (the Full lane does not use the west corner;
+the east corner is the kerb): owed, `route.mouth_returns` at radii tools/mouth_radii.py reads off NAIP.
+
+### 5. The Full lap
+
+`race.laps.full` (scripts/geometry/race_lap.py, author step `race_laps` -> `data/lap.full.json`): the West lap v0-v900, across the
+FORK pad, the north loop `full_north#0#0` v0-v478, through the merge, the West lap v951 round to v1072. The two joins (`via`)
+are cubics on the pieces' own tangents [authored shape]: the fork's from West v900 onto the north loop's own line at its point
+13, then that line to the box edge (48.4 m chord; the lap's tightest radius there 203 m: the Full goes straight on); the
+merge's from the north loop's v478 onto West v951 (16.7 m chord, tightest radius 16.7 m: the widest cubic whose lane edges and
+outer wheel paths stay on the built road and the T13 kerb). **Lap 4,085.7 m** (OSM's Full course 4,092 m; published 2.55 mi
+= 4,104 m); the West lap 3,209.7 m as 0.1.10.
+
+### 6. Each layout's start, grid and pits
+
+New opt-in `race_start.layouts` (scripts/geometry/circuit_start.py, tools/circuit_dummies_blend.py): both layouts start at the
+painted line, so the declared line, the 25 measured grid slots and the 25 pits are planned on each layout's own line (West:
+the lap; Full: race.laps.full), every height read off the built road, the same self-checks, and written as
+`data/dummies_<id>.json` (tools/layout_dummies.py's schema) for each spawn kn5 (`spawn_kn5`); the road scene carries no AC_*
+node (verify_kn5 (a)). West: the line at s 12.2 of 3,209.7 m, sectors s 1,082 / 2,152 (as 0.1.10). Full: the line at s 12.2
+of 4,085.7 m, sectors s 1,374 / 2,736 (its thirds). verify_kn5 judges each spawn kn5 with race_start's own rows on its own
+line (fleet/GATES-CHANGELOG.md 2026-11-22: wiring, no threshold moved): both 51 facing nodes at local +Z . travel +1.00,
+50 START / PIT cars inside the road, nearest edge +2.27 m. Spawn kn5s 5,058 B each.
+
+### 7. The rest of the build
+
+- **AI lines** (generated drafts, write_ai_line): West 2,140 points over 3,210.7 m (est 96.0 s, as 0.1.10); Full 2,725 points
+  over 4,087.8 m (est 130.0 s).
+- **Maps**: West `map "lap"` (the mainline alone); Full new opt-in `map "race_lap"` (tools/make_map.py: its own
+  data/lap.full.json; "lap" keeps its meaning, which Lake Murray's Speedways use).
+- **Road wear**: the atlas re-planned (100 cells of 64 m + 8 m margin, 61 % of the 4,096 px atlas) for the West road, the
+  north loop and the FORK deck; tone r 0.8741 -> 0.8813 (2,848 samples). The north loop past the 0.3 m crop (about 800 of its
+  1,001 m) has no photo in the bake's aerial: its tone is the bake's own fill from the nearest photographed asphalt, flat
+  [invented by the fill rule]; owed: an aerial mosaic with the z18 photos.
+- **No kerbs** on the north loop (none traced; the photos show some at T10-T12: owed, ledger 0081's method), no TreeFX (NAIP
+  shows no shrub there); GrassFX as 0.1.10 (124 rectangles, 123 kept).
+
+### 8. Three roofs from the 2018 lidar (commit cfd626e9)
+
+The G10 job of round 2 item 5 ran (USGS 3DEP CO_Eastern_B3_2018, tools/lidar_roof_forms.py; heights over the lidar ground):
+- osm289311820: **flat 4.28 m**, no parapet (n 280, residual 0.16 m); was gable 3.2 / 3.9 off the 2023 shadow (3.9 +- 0.47):
+  they agree within the shadow's error;
+- osm289311821, the carport row: **a gable along the row, eave 2.62 / ridge 3.72 m** (n 729, 0.11 m); the posts carry the
+  soffit, 2.47 m (the eave less the 0.15 m ceiling plate [invented]), within 0.03 m of the official 8 ft (2.44 m) ceiling;
+- osm289311823: **a gable across the box, eave 2.48 / ridge 4.74 m** (n 324, 0.08 m); the 2023 shadow read a 2.51 +- 0.4 m
+  top: **they disagree by 2.2 m**, past the shadow's error (the fit took the eave's shadow, or the building changed between
+  2018 and 2023: the photo cannot say which);
+- traced_white_w_of_osm289311820: one plane, 2.92 m rising to 3.79 m NNE (n 118, 0.22 m; a gable fits 0.35 m). **Not
+  applied**: the group's facade skin (garage) stands no shed (author_bespoke_blend drops it: the first try left 21 blocks),
+  so the round-2 gable stands; the reading is in its row (`_lidar_2018`). The 2023 crop read a ridge along it; the 2018 lidar
+  reads one plane.
+The other 18 are not readable in the 2018 lidar and keep their values and markings: the container row (points up to 2.9 m
+over 26 % of the ring, no roof fitted), the grey roof (median -0.02 m: the 2018 lidar finds no roof where the 2023 photo
+shows one), the pit-entry canopy (nothing over 1.16 m in 2018), osm289311824 / 316523 / 314487 and the posts. house_seat: 22 buildings, 0 floating / sunken / buried, lowest roof 1.64 m (0.1.10: 1.639).
+
+### Gates, both layouts (Mac, empty workshop) against 0.1.10
+
+Built from a git archive of 11b836ea (the round's code and data commit) and from the working tree: the same verdicts and the
+same kn5 bytes.
+
+| | 0.1.10 (Mac) | 0.1.11 West | 0.1.11 Full |
+|---|---|---|---|
+| chain | SHIP OK | SHIP OK | (one run) |
+| drive_test: lap / ground on top / severe / bumps /km / slope kinks /km | 3,209.7 m / 0 / 0 / 0.0 / 1.87 | 3,209.7 m / 0 / 0 / 0.0 / 1.87 | 4,085.7 m / 0 / 0 / 0.0 / 5.63 |
+| drive_test: floating, undrivable corners, daylight, excursions, obstructed | 0 | 0 | 0 |
+| drive_test: vertex bumps (reported) | 0 | 0 | 6 |
+| kn5_ground_check | PASS | PASS | PASS (the same kn5 set) |
+| verify_kn5 / --inis | PASS (road kn5 nodes) / - | PASS (spawn kn5) / PASS | PASS (spawn kn5) / PASS |
+| audit_mesh | CLEAN | CLEAN (one OBJ) | |
+| road_wear_check | PASS (r 0.8741) | PASS (r 0.8813) | |
+| verify_pads FORK | - | PASS: coverage 0.0 m2, seam 1.2 mm, grass 0, curb 0, node 0.0 m vs 3DEP | |
+| verify_mouths (the merge) | - | PASS: mouth line 0.012 m, notch 0.003 m, approach 0.61 %/m | |
+| house_seat | PASS, 22 | PASS, 22 | |
+
+kn5 22,270,313 -> **25,086,070 B**; split main 72 -> 73 meshes (+ 1ROAD_pad_FORK), 99,419 -> 126,303 positions; AUDIT roads
+13,164 -> 25,881 v, grass 71,380 -> 90,077 v, walls 14,286 -> 14,200 v (the roofs' colliders), curbs 42,102 -> 58,302 v;
+kn5_ground walls 35 -> 36 objects,
+seat gap median -0.25 / p95 -0.17 m, hovering 0; road over ground 0 / 3,698 samples over 0.05 m (p95 +0.021, max +0.049 m);
+edge_report at 1 m past the lane: kerb 97.2 %, ground 1.9 % (the FORK's and the merge's mouths), lane 0.9 %.
+
+### Shared files touched (every change opt-in by a High Plains key; no other track's output changes)
+
+- `scripts/geometry/circuit_start.py`: `race_start.layouts`, `layout_ids`, `layout_line`, `spawn_set`.
+- `tools/circuit_dummies_blend.py`: the per-layout mode (`race_start.layouts`); the single-layout path refactored into
+  `place()` (the same checks, the same order).
+- `scripts/ac/verify_kn5.py`: `_verify_race_start_spawn` for a `race_start.layouts` track's spawn kn5s (fleet/GATES-CHANGELOG.md).
+- `tools/lm_pads_blend.py`: `lm_pads.deck.fill "membrane"` (`membrane_fill`).
+- `tools/trim_connectors.py`: a record's line paint carried through `_trim_against` and `cut_at_pads` (`carries_paint`,
+  `sliced_paint`; only a record that carries paint at the trim, which no other track's does).
+- `tools/weld_mouths_blend.py`: `_dev` reads an empty marking block as matching (it read inf and stopped the weld; no track
+  reached that line before).
+- `tools/make_map.py`: `map "race_lap"`.
+- `fleet/GATES-CHANGELOG.md` (the entry above). Tests: `tests/tools/test_high_plains_round3.py` (new),
+  `tests/tools/test_high_plains_round2.py` and `tests/tools/test_circuit_race_furniture.py` (round 3's state).
+- Not touched: assets/licenses.json, fleet/ac-installed.json.
+- The full suite on the Mac (airoso's venv): **1,737 passed** (round 2's head: 1,721; +16 in test_high_plains_round3.py).
+
+### Still to do (round 4)
+
+- The north loop's kerbs (T10-T12 show paint on NAIP), and the T13 kerb's curve onto Ladder's edge (traced along the West's
+  edge only).
+- The merge's bellmouth and the fillet behind the T13 kerb (`route.mouth_returns`, radii off NAIP).
+- Road wear's aerial over the north loop (a mosaic of the 0.3 m crop and the z18 photos).
+- The traced white building's measured shed (an atlas skin that stands a shed).
+- The 192 m of carried edges: a second read (the verge's one-side rows) or Kevin's word that they stand.
+- Kevin's drive of both layouts.
+
+### Runbook 0097-3 (PC): rehearse 0.1.11; a green rehearsal installs and merges (Kevin's standing word)
+
+1. EMPTY workshop, a worktree of `claude/hp-finish-r3-20261122` at the commit named in the Mac's message, ENG
+   `eng_hplm_0111` = `eng_hplm_0110` unchanged (this round adds no texture: every texture's md5 = the branch's
+   `assets/textures`), `AIROSO_NUMPY_PY` the lidar venv, `SHIP_PROJ` scratch, `--no-install`:
+   `SHIP_PROJ=<scratch> AIROSO=<worktree> ENG=D:/k10-scratch/eng_hplm_0111 bash tools/ship_track.sh high-plains-lm --no-install`.
+   If round 2 (0.1.10) has not been rehearsed or installed yet, rehearse it first (Runbook 0097-2): this round's numbers are
+   read against it.
+2. Read, against 0.1.10's PC rehearsal (or its install build):
+   - `layouts: west full_course`; `[lm_intake] connectors: the port's own (source/full/connectors.full.json, 1 pieces)`;
+   - `[trim] full_north: cut at pad FORK's box (19 pt(s) inside dropped ...)`, `mouth full_north#0#0 (end) -> MAINLINE ...
+     angle 46.1 deg`; `[weld] full_north#0#0 (end) ... after max 0.0000 m`;
+   - `[lm-pads] FORK: deck membrane {... 'free': 550 ...}`, 1,441.5 m2, seam residual 0.0;
+   - `[kerbs] 20 kerb runs, 579 m ... (ROAD read missed 9)`; `[lap] full: 1527 vertices, 4085.7 m`;
+   - `[circuit-dummies] west ... sectors at s 1082, 2152` and `full_course (lap full) ... sectors at s 1374, 2736`;
+     `[spawn_kn5] west / full_course: kn5=True size=5058 dummies=57`;
+   - every gate per layout: drive_test west (as 0.1.10: kinks 1.87 /km) and full_course (Mac: severe 0, kinks 5.63 /km,
+     6 vertex bumps reported); kn5_ground_check west and full_course; verify_kn5 (`[race_start west]` / `[race_start
+     full_course]` rows) and --inis; audit CLEAN; road_wear_check (Mac tone r 0.8813); verify_mouths PASS; verify_pads FORK
+     PASS; house_seat 22;
+   - the kn5's bytes (Mac: 25,086,070), the two spawn kn5s, `models_west.ini` / `models_full_course.ini`, `ui/west` and
+     `ui/full_course` (names "... — West" / "... — Full").
+3. Green: install as `high_plains` (0.1.10 parked as every install). The folder changes shape: one layout -> two
+   (`west`, `full_course`), so Content Manager files the West course under a new id (its old records stay under
+   `high_plains`); say so to Kevin with the install. Then the records and menu pictures (both layouts) to the branch (no
+   force); the Mac merges. Red: records only, no install.

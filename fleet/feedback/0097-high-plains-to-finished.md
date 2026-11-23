@@ -631,8 +631,9 @@ measured widths p5 / p50 / p95 10.6 / 11.2 / 12.95 m. The Full lap 4,085.7 -> 4,
 
 ### Gates, both layouts (Mac, empty workshop) against 0.1.11
 
-Built from a git archive of ccc4ee45 (the round's code and data commit) and from the working tree: the same verdicts; the road kn5
-EQUIVALENT (tools/kn5_equiv.py: tangents only, 20,124 values, max 1.79e-07), the spawn kn5s byte-identical.
+Built from a git archive of ccc4ee45 (the round's code and data commit), of 65442a3d (this ledger and the mosaic regenerated from
+the final north-loop line) and from the working tree: the same verdicts in every row; the road kn5s 26,463,672 B and EQUIVALENT
+(tools/kn5_equiv.py: tangents only, max 1.79e-07), the spawn kn5s byte-identical.
 
 | | 0.1.11 West | 0.1.11 Full | 0.1.12 West | 0.1.12 Full |
 |---|---|---|---|---|

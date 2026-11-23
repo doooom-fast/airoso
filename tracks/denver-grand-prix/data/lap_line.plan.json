@@ -1,0 +1,2665 @@
+{
+"_doc": "the lap as OSM nodes in driving order, from S/F (Colfax at Sherman) round to S/F; each node carries the leg and the way that reaches it. Written by source/lap_route.py from source/osm.json.",
+"nodes": [
+{
+"node": 14073675884,
+"lon": -104.9848631,
+"lat": 39.7401191,
+"leg": "Colfax WB to Speer NB",
+"way": 1550341229
+},
+{
+"node": 14073675885,
+"lon": -104.9850032,
+"lat": 39.7401177,
+"leg": "Colfax WB to Speer NB",
+"way": 1550341229
+},
+{
+"node": 1160471906,
+"lon": -104.9854956,
+"lat": 39.740119,
+"leg": "Colfax WB to Speer NB",
+"way": 1550341229
+},
+{
+"node": 3327944492,
+"lon": -104.9860145,
+"lat": 39.7401347,
+"leg": "Colfax WB to Speer NB",
+"way": 702462464
+},
+{
+"node": 176103304,
+"lon": -104.9861268,
+"lat": 39.7401379,
+"leg": "Colfax WB to Speer NB",
+"way": 702462464
+},
+{
+"node": 3327920436,
+"lon": -104.9862788,
+"lat": 39.7401407,
+"leg": "Colfax WB to Speer NB",
+"way": 130808957
+},
+{
+"node": 5710274426,
+"lon": -104.9866582,
+"lat": 39.7401426,
+"leg": "Colfax WB to Speer NB",
+"way": 130808957
+},
+{
+"node": 3287230906,
+"lon": -104.9872581,
+"lat": 39.740144,
+"leg": "Colfax WB to Speer NB",
+"way": 600545919
+},
+{
+"node": 176072933,
+"lon": -104.987401,
+"lat": 39.7401457,
+"leg": "Colfax WB to Speer NB",
+"way": 600545919
+},
+{
+"node": 3287239461,
+"lon": -104.9875547,
+"lat": 39.7401475,
+"leg": "Colfax WB to Speer NB",
+"way": 16985345
+},
+{
+"node": 1160471922,
+"lon": -104.9876769,
+"lat": 39.740149,
+"leg": "Colfax WB to Speer NB",
+"way": 16985345
+},
+{
+"node": 279636776,
+"lon": -104.9877597,
+"lat": 39.74015,
+"leg": "Colfax WB to Speer NB",
+"way": 16985345
+},
+{
+"node": 1160471892,
+"lon": -104.9878253,
+"lat": 39.7401552,
+"leg": "Colfax WB to Speer NB",
+"way": 16985345
+},
+{
+"node": 1160471915,
+"lon": -104.987885,
+"lat": 39.7401664,
+"leg": "Colfax WB to Speer NB",
+"way": 16985345
+},
+{
+"node": 672556018,
+"lon": -104.9879429,
+"lat": 39.7401817,
+"leg": "Colfax WB to Speer NB",
+"way": 16985345
+},
+{
+"node": 176069071,
+"lon": -104.9880111,
+"lat": 39.7402119,
+"leg": "Colfax WB to Speer NB",
+"way": 16985345
+},
+{
+"node": 1160471938,
+"lon": -104.9880785,
+"lat": 39.7402443,
+"leg": "Colfax WB to Speer NB",
+"way": 16985345
+},
+{
+"node": 3096774183,
+"lon": -104.988124,
+"lat": 39.7402717,
+"leg": "Colfax WB to Speer NB",
+"way": 16985345
+},
+{
+"node": 5935638586,
+"lon": -104.988233,
+"lat": 39.74035,
+"leg": "Colfax WB to Speer NB",
+"way": 645821543
+},
+{
+"node": 176095701,
+"lon": -104.9884893,
+"lat": 39.7405273,
+"leg": "Colfax WB to Speer NB",
+"way": 628677811
+},
+{
+"node": 1160431537,
+"lon": -104.9886032,
+"lat": 39.740586,
+"leg": "Colfax WB to Speer NB",
+"way": 628677813
+},
+{
+"node": 6145823773,
+"lon": -104.9886268,
+"lat": 39.7405959,
+"leg": "Colfax WB to Speer NB",
+"way": 628677813
+},
+{
+"node": 1160471905,
+"lon": -104.9886664,
+"lat": 39.7406125,
+"leg": "Colfax WB to Speer NB",
+"way": 628677813
+},
+{
+"node": 1160431533,
+"lon": -104.9887316,
+"lat": 39.740627,
+"leg": "Colfax WB to Speer NB",
+"way": 628677813
+},
+{
+"node": 1160431584,
+"lon": -104.9887948,
+"lat": 39.7406372,
+"leg": "Colfax WB to Speer NB",
+"way": 628677813
+},
+{
+"node": 5935638592,
+"lon": -104.9888126,
+"lat": 39.7406383,
+"leg": "Colfax WB to Speer NB",
+"way": 628677813
+},
+{
+"node": 1160431604,
+"lon": -104.9888698,
+"lat": 39.7406419,
+"leg": "Colfax WB to Speer NB",
+"way": 100394655
+},
+{
+"node": 3287833669,
+"lon": -104.9888846,
+"lat": 39.7406427,
+"leg": "Colfax WB to Speer NB",
+"way": 100394655
+},
+{
+"node": 1160431559,
+"lon": -104.9889475,
+"lat": 39.7406408,
+"leg": "Colfax WB to Speer NB",
+"way": 100394655
+},
+{
+"node": 1160431596,
+"lon": -104.9890258,
+"lat": 39.740634,
+"leg": "Colfax WB to Speer NB",
+"way": 100394655
+},
+{
+"node": 1160431594,
+"lon": -104.989111,
+"lat": 39.7406203,
+"leg": "Colfax WB to Speer NB",
+"way": 100394655
+},
+{
+"node": 1160431569,
+"lon": -104.989191,
+"lat": 39.7405972,
+"leg": "Colfax WB to Speer NB",
+"way": 100394655
+},
+{
+"node": 1160431566,
+"lon": -104.9892616,
+"lat": 39.7405709,
+"leg": "Colfax WB to Speer NB",
+"way": 100394655
+},
+{
+"node": 1160431614,
+"lon": -104.9893324,
+"lat": 39.7405365,
+"leg": "Colfax WB to Speer NB",
+"way": 100394655
+},
+{
+"node": 1160431603,
+"lon": -104.9893963,
+"lat": 39.7404981,
+"leg": "Colfax WB to Speer NB",
+"way": 100394655
+},
+{
+"node": 1160431568,
+"lon": -104.9894613,
+"lat": 39.7404476,
+"leg": "Colfax WB to Speer NB",
+"way": 100394655
+},
+{
+"node": 1160431556,
+"lon": -104.9895201,
+"lat": 39.7403969,
+"leg": "Colfax WB to Speer NB",
+"way": 100394655
+},
+{
+"node": 1160431552,
+"lon": -104.9896331,
+"lat": 39.7403006,
+"leg": "Colfax WB to Speer NB",
+"way": 100394655
+},
+{
+"node": 1160431535,
+"lon": -104.9897034,
+"lat": 39.7402458,
+"leg": "Colfax WB to Speer NB",
+"way": 100394655
+},
+{
+"node": 1160431570,
+"lon": -104.9897447,
+"lat": 39.7402177,
+"leg": "Colfax WB to Speer NB",
+"way": 100394655
+},
+{
+"node": 1160431599,
+"lon": -104.9897911,
+"lat": 39.7401929,
+"leg": "Colfax WB to Speer NB",
+"way": 100394655
+},
+{
+"node": 1160431564,
+"lon": -104.989836,
+"lat": 39.740172,
+"leg": "Colfax WB to Speer NB",
+"way": 100394655
+},
+{
+"node": 1160431555,
+"lon": -104.9898831,
+"lat": 39.7401545,
+"leg": "Colfax WB to Speer NB",
+"way": 100394655
+},
+{
+"node": 1160431523,
+"lon": -104.9899269,
+"lat": 39.740141,
+"leg": "Colfax WB to Speer NB",
+"way": 100394655
+},
+{
+"node": 1160431597,
+"lon": -104.9899601,
+"lat": 39.7401339,
+"leg": "Colfax WB to Speer NB",
+"way": 100394655
+},
+{
+"node": 1160431593,
+"lon": -104.9900011,
+"lat": 39.7401284,
+"leg": "Colfax WB to Speer NB",
+"way": 100394655
+},
+{
+"node": 1160431525,
+"lon": -104.9901316,
+"lat": 39.7401172,
+"leg": "Colfax WB to Speer NB",
+"way": 100394655
+},
+{
+"node": 4125126302,
+"lon": -104.990251,
+"lat": 39.740115,
+"leg": "Colfax WB to Speer NB",
+"way": 100394655
+},
+{
+"node": 4125126303,
+"lon": -104.990316,
+"lat": 39.7401151,
+"leg": "Colfax WB to Speer NB",
+"way": 100394655
+},
+{
+"node": 1160435647,
+"lon": -104.9904352,
+"lat": 39.7401173,
+"leg": "Colfax WB to Speer NB",
+"way": 100394655
+},
+{
+"node": 12522594016,
+"lon": -104.9905185,
+"lat": 39.740117,
+"leg": "Colfax WB to Speer NB",
+"way": 670422527
+},
+{
+"node": 3287712880,
+"lon": -104.9905809,
+"lat": 39.7401167,
+"leg": "Colfax WB to Speer NB",
+"way": 670422527
+},
+{
+"node": 3287740881,
+"lon": -104.9907989,
+"lat": 39.7401174,
+"leg": "Colfax WB to Speer NB",
+"way": 670422527
+},
+{
+"node": 3287777066,
+"lon": -104.9915263,
+"lat": 39.7401224,
+"leg": "Colfax WB to Speer NB",
+"way": 670422527
+},
+{
+"node": 1160438174,
+"lon": -104.9916422,
+"lat": 39.7401229,
+"leg": "Colfax WB to Speer NB",
+"way": 670422527
+},
+{
+"node": 3287761424,
+"lon": -104.991781,
+"lat": 39.7401237,
+"leg": "Colfax WB to Speer NB",
+"way": 427702697
+},
+{
+"node": 1160431528,
+"lon": -104.9923897,
+"lat": 39.7401271,
+"leg": "Colfax WB to Speer NB",
+"way": 427702697
+},
+{
+"node": 4268881490,
+"lon": -104.9924058,
+"lat": 39.7401277,
+"leg": "Colfax WB to Speer NB",
+"way": 427702697
+},
+{
+"node": 3287735550,
+"lon": -104.9929251,
+"lat": 39.740133,
+"leg": "Colfax WB to Speer NB",
+"way": 427702691
+},
+{
+"node": 2443906933,
+"lon": -104.9930387,
+"lat": 39.740134,
+"leg": "Colfax WB to Speer NB",
+"way": 427702691
+},
+{
+"node": 3287736520,
+"lon": -104.993178,
+"lat": 39.7401357,
+"leg": "Colfax WB to Speer NB",
+"way": 628677822
+},
+{
+"node": 1160441838,
+"lon": -104.9943819,
+"lat": 39.7401382,
+"leg": "Colfax WB to Speer NB",
+"way": 628677822
+},
+{
+"node": 3287462358,
+"lon": -104.9946636,
+"lat": 39.7401389,
+"leg": "Colfax WB to Speer NB",
+"way": 1053902828
+},
+{
+"node": 9685096107,
+"lon": -104.9947642,
+"lat": 39.7401392,
+"leg": "Colfax WB to Speer NB",
+"way": 1053902828
+},
+{
+"node": 1992256956,
+"lon": -104.995034,
+"lat": 39.7401399,
+"leg": "Colfax WB to Speer NB",
+"way": 628677821
+},
+{
+"node": 1160443953,
+"lon": -104.9952715,
+"lat": 39.7401412,
+"leg": "Colfax WB to Speer NB",
+"way": 628677821
+},
+{
+"node": 5985667345,
+"lon": -104.995303,
+"lat": 39.7401402,
+"leg": "Colfax WB to Speer NB",
+"way": 119006770
+},
+{
+"node": 3287721461,
+"lon": -104.9963944,
+"lat": 39.7401496,
+"leg": "Colfax WB to Speer NB",
+"way": 119006770
+},
+{
+"node": 1160446238,
+"lon": -104.9964874,
+"lat": 39.74015,
+"leg": "Colfax WB to Speer NB",
+"way": 119006770
+},
+{
+"node": 3287723167,
+"lon": -104.996574,
+"lat": 39.7401503,
+"leg": "Colfax WB to Speer NB",
+"way": 119006770
+},
+{
+"node": 9436799313,
+"lon": -104.9972407,
+"lat": 39.7401543,
+"leg": "Colfax WB to Speer NB",
+"way": 119006770
+},
+{
+"node": 3236246035,
+"lon": -104.9975394,
+"lat": 39.7401561,
+"leg": "Colfax WB to Speer NB",
+"way": 1023298583
+},
+{
+"node": 1160431612,
+"lon": -104.997949,
+"lat": 39.7401623,
+"leg": "Colfax WB to Speer NB",
+"way": 1023298583
+},
+{
+"node": 1160446242,
+"lon": -104.9981376,
+"lat": 39.7401689,
+"leg": "Colfax WB to Speer NB",
+"way": 306779271
+},
+{
+"node": 4498286969,
+"lon": -104.998211,
+"lat": 39.7402891,
+"leg": "Speer NB to Stout",
+"way": 933332973
+},
+{
+"node": 3101804724,
+"lon": -104.9982725,
+"lat": 39.7403955,
+"leg": "Speer NB to Stout",
+"way": 628622215
+},
+{
+"node": 5009369401,
+"lon": -104.9983343,
+"lat": 39.7405071,
+"leg": "Speer NB to Stout",
+"way": 628622215
+},
+{
+"node": 5934861524,
+"lon": -104.9984971,
+"lat": 39.7408038,
+"leg": "Speer NB to Stout",
+"way": 628622215
+},
+{
+"node": 3287030587,
+"lon": -104.998792,
+"lat": 39.7413342,
+"leg": "Speer NB to Stout",
+"way": 628622209
+},
+{
+"node": 176094984,
+"lon": -104.9988393,
+"lat": 39.7414203,
+"leg": "Speer NB to Stout",
+"way": 628622209
+},
+{
+"node": 1024419685,
+"lon": -104.998706,
+"lat": 39.7414557,
+"leg": "Stout to 15th St",
+"way": 37812132
+},
+{
+"node": 1024419687,
+"lon": -104.9986352,
+"lat": 39.7414965,
+"leg": "Stout to 15th St",
+"way": 37812132
+},
+{
+"node": 1024419689,
+"lon": -104.9985749,
+"lat": 39.7415346,
+"leg": "Stout to 15th St",
+"way": 37812132
+},
+{
+"node": 305551655,
+"lon": -104.9985051,
+"lat": 39.7415862,
+"leg": "Stout to 15th St",
+"way": 37812132
+},
+{
+"node": 4498307463,
+"lon": -104.9984976,
+"lat": 39.7415922,
+"leg": "Stout to 15th St",
+"way": 37812132
+},
+{
+"node": 1024419692,
+"lon": -104.99843,
+"lat": 39.741647,
+"leg": "Stout to 15th St",
+"way": 37812132
+},
+{
+"node": 1024419695,
+"lon": -104.9983482,
+"lat": 39.7417192,
+"leg": "Stout to 15th St",
+"way": 37812132
+},
+{
+"node": 176066364,
+"lon": -104.9983094,
+"lat": 39.7417592,
+"leg": "Stout to 15th St",
+"way": 37812132
+},
+{
+"node": 1024419707,
+"lon": -104.9982584,
+"lat": 39.7418193,
+"leg": "Stout to 15th St",
+"way": 453022192
+},
+{
+"node": 1024419709,
+"lon": -104.9982195,
+"lat": 39.7418739,
+"leg": "Stout to 15th St",
+"way": 453022192
+},
+{
+"node": 1024419712,
+"lon": -104.9981779,
+"lat": 39.7419409,
+"leg": "Stout to 15th St",
+"way": 453022192
+},
+{
+"node": 1024419714,
+"lon": -104.9981377,
+"lat": 39.7420193,
+"leg": "Stout to 15th St",
+"way": 453022192
+},
+{
+"node": 1024419718,
+"lon": -104.9980916,
+"lat": 39.7421109,
+"leg": "Stout to 15th St",
+"way": 453022192
+},
+{
+"node": 1024419722,
+"lon": -104.9980406,
+"lat": 39.7422305,
+"leg": "Stout to 15th St",
+"way": 453022192
+},
+{
+"node": 1024419730,
+"lon": -104.9979924,
+"lat": 39.7423687,
+"leg": "Stout to 15th St",
+"way": 453022192
+},
+{
+"node": 305551656,
+"lon": -104.9979602,
+"lat": 39.7424656,
+"leg": "Stout to 15th St",
+"way": 453022192
+},
+{
+"node": 1024419734,
+"lon": -104.9979092,
+"lat": 39.7425852,
+"leg": "Stout to 15th St",
+"way": 453022192
+},
+{
+"node": 1024419738,
+"lon": -104.9978636,
+"lat": 39.7426904,
+"leg": "Stout to 15th St",
+"way": 453022192
+},
+{
+"node": 1032628429,
+"lon": -104.9978153,
+"lat": 39.7427894,
+"leg": "Stout to 15th St",
+"way": 453022192
+},
+{
+"node": 1024419742,
+"lon": -104.997767,
+"lat": 39.7428719,
+"leg": "Stout to 15th St",
+"way": 453022192
+},
+{
+"node": 176109667,
+"lon": -104.997708,
+"lat": 39.7429503,
+"leg": "Stout to 15th St",
+"way": 453022192
+},
+{
+"node": 1024419747,
+"lon": -104.9976249,
+"lat": 39.7430389,
+"leg": "Stout to 15th St",
+"way": 453022192
+},
+{
+"node": 1032628445,
+"lon": -104.9974452,
+"lat": 39.7431792,
+"leg": "Stout to 15th St",
+"way": 453022192
+},
+{
+"node": 1032628447,
+"lon": -104.9973352,
+"lat": 39.7432679,
+"leg": "Stout to 15th St",
+"way": 453022192
+},
+{
+"node": 1024419751,
+"lon": -104.9972091,
+"lat": 39.7433545,
+"leg": "Stout to 15th St",
+"way": 453022192
+},
+{
+"node": 1024419756,
+"lon": -104.9970348,
+"lat": 39.7434349,
+"leg": "Stout to 15th St",
+"way": 453022192
+},
+{
+"node": 1024419760,
+"lon": -104.996898,
+"lat": 39.7434865,
+"leg": "Stout to 15th St",
+"way": 453022192
+},
+{
+"node": 176099142,
+"lon": -104.9967693,
+"lat": 39.7435236,
+"leg": "Stout to 15th St",
+"way": 453022192
+},
+{
+"node": 1024419765,
+"lon": -104.9966378,
+"lat": 39.7435566,
+"leg": "Stout to 15th St",
+"way": 453022192
+},
+{
+"node": 1024419767,
+"lon": -104.9964742,
+"lat": 39.7435917,
+"leg": "Stout to 15th St",
+"way": 453022192
+},
+{
+"node": 1024419781,
+"lon": -104.9962467,
+"lat": 39.7436445,
+"leg": "Stout to 15th St",
+"way": 453022192
+},
+{
+"node": 1024419785,
+"lon": -104.9959557,
+"lat": 39.7437208,
+"leg": "Stout to 15th St",
+"way": 453022192
+},
+{
+"node": 806253844,
+"lon": -104.9958377,
+"lat": 39.7437579,
+"leg": "Stout to 15th St",
+"way": 453022192
+},
+{
+"node": 806253847,
+"lon": -104.995761,
+"lat": 39.7437853,
+"leg": "Stout to 15th St",
+"way": 453022192
+},
+{
+"node": 5932488417,
+"lon": -104.9957018,
+"lat": 39.7438137,
+"leg": "Stout to 15th St",
+"way": 453022192
+},
+{
+"node": 3286975061,
+"lon": -104.9955595,
+"lat": 39.7439229,
+"leg": "Stout to 15th St",
+"way": 1051799389
+},
+{
+"node": 12483079567,
+"lon": -104.99552,
+"lat": 39.7439532,
+"leg": "Stout to 15th St",
+"way": 1051799389
+},
+{
+"node": 176086275,
+"lon": -104.995475,
+"lat": 39.7439878,
+"leg": "Stout to 15th St",
+"way": 1051799389
+},
+{
+"node": 7309384258,
+"lon": -104.9954664,
+"lat": 39.7439944,
+"leg": "Stout to 15th St",
+"way": 305577945
+},
+{
+"node": 3288816594,
+"lon": -104.9953787,
+"lat": 39.7440618,
+"leg": "Stout to 15th St",
+"way": 305577945
+},
+{
+"node": 3286973982,
+"lon": -104.9952347,
+"lat": 39.7441723,
+"leg": "Stout to 15th St",
+"way": 305577945
+},
+{
+"node": 3098864068,
+"lon": -104.994898,
+"lat": 39.7444308,
+"leg": "Stout to 15th St",
+"way": 305577945
+},
+{
+"node": 3098864064,
+"lon": -104.9948046,
+"lat": 39.7445025,
+"leg": "Stout to 15th St",
+"way": 305577945
+},
+{
+"node": 3098859272,
+"lon": -104.9946746,
+"lat": 39.7446023,
+"leg": "Stout to 15th St",
+"way": 305577945
+},
+{
+"node": 3098859274,
+"lon": -104.9945514,
+"lat": 39.7446969,
+"leg": "Stout to 15th St",
+"way": 305577945
+},
+{
+"node": 3098859276,
+"lon": -104.9944265,
+"lat": 39.7447928,
+"leg": "Stout to 15th St",
+"way": 305577945
+},
+{
+"node": 3287865431,
+"lon": -104.9943511,
+"lat": 39.7448528,
+"leg": "Stout to 15th St",
+"way": 305577945
+},
+{
+"node": 12483079538,
+"lon": -104.9943211,
+"lat": 39.7448737,
+"leg": "Stout to 15th St",
+"way": 305577945
+},
+{
+"node": 176113163,
+"lon": -104.9942609,
+"lat": 39.7449199,
+"leg": "Stout to 15th St",
+"way": 305577945
+},
+{
+"node": 724644286,
+"lon": -104.994305,
+"lat": 39.7449539,
+"leg": "15th St to Blake",
+"way": 628378945
+},
+{
+"node": 3287042966,
+"lon": -104.9943523,
+"lat": 39.7449921,
+"leg": "15th St to Blake",
+"way": 628378945
+},
+{
+"node": 3099860935,
+"lon": -104.9944346,
+"lat": 39.7450542,
+"leg": "15th St to Blake",
+"way": 628378945
+},
+{
+"node": 3117701874,
+"lon": -104.9947038,
+"lat": 39.7452625,
+"leg": "15th St to Blake",
+"way": 628378945
+},
+{
+"node": 3287024655,
+"lon": -104.9950538,
+"lat": 39.7455333,
+"leg": "15th St to Blake",
+"way": 628378944
+},
+{
+"node": 176112279,
+"lon": -104.9951313,
+"lat": 39.7455932,
+"leg": "15th St to Blake",
+"way": 628378944
+},
+{
+"node": 3287022983,
+"lon": -104.9952198,
+"lat": 39.7456617,
+"leg": "15th St to Blake",
+"way": 132261659
+},
+{
+"node": 1162794510,
+"lon": -104.9953511,
+"lat": 39.7457632,
+"leg": "15th St to Blake",
+"way": 132261659
+},
+{
+"node": 1162794521,
+"lon": -104.9955803,
+"lat": 39.7459405,
+"leg": "15th St to Blake",
+"way": 132261659
+},
+{
+"node": 3287022212,
+"lon": -104.9959332,
+"lat": 39.7462135,
+"leg": "15th St to Blake",
+"way": 795818886
+},
+{
+"node": 3114170041,
+"lon": -104.9960105,
+"lat": 39.7462733,
+"leg": "15th St to Blake",
+"way": 795818886
+},
+{
+"node": 3287020401,
+"lon": -104.9960828,
+"lat": 39.7463285,
+"leg": "15th St to Blake",
+"way": 628378942
+},
+{
+"node": 5932343521,
+"lon": -104.9962734,
+"lat": 39.7464739,
+"leg": "15th St to Blake",
+"way": 628378942
+},
+{
+"node": 3098473596,
+"lon": -104.9963398,
+"lat": 39.7465246,
+"leg": "15th St to Blake",
+"way": 130897978
+},
+{
+"node": 5935033927,
+"lon": -104.9966095,
+"lat": 39.7467183,
+"leg": "15th St to Blake",
+"way": 130897978
+},
+{
+"node": 3287004881,
+"lon": -104.9968042,
+"lat": 39.746864,
+"leg": "15th St to Blake",
+"way": 628634465
+},
+{
+"node": 176086584,
+"lon": -104.9968678,
+"lat": 39.7469139,
+"leg": "15th St to Blake",
+"way": 628634465
+},
+{
+"node": 12483479914,
+"lon": -104.9969217,
+"lat": 39.7469537,
+"leg": "15th St to Blake",
+"way": 628378943
+},
+{
+"node": 3287010627,
+"lon": -104.9969702,
+"lat": 39.7470056,
+"leg": "15th St to Blake",
+"way": 628378943
+},
+{
+"node": 3098745916,
+"lon": -104.9976889,
+"lat": 39.7475405,
+"leg": "15th St to Blake",
+"way": 628378943
+},
+{
+"node": 13547175837,
+"lon": -104.9977061,
+"lat": 39.7475542,
+"leg": "15th St to Blake",
+"way": 628378943
+},
+{
+"node": 176101775,
+"lon": -104.9977622,
+"lat": 39.7475986,
+"leg": "15th St to Blake",
+"way": 628378943
+},
+{
+"node": 3286982550,
+"lon": -104.9978671,
+"lat": 39.7476775,
+"leg": "15th St to Blake",
+"way": 130888010
+},
+{
+"node": 670127320,
+"lon": -104.9981903,
+"lat": 39.7479435,
+"leg": "15th St to Blake",
+"way": 130888010
+},
+{
+"node": 5935109895,
+"lon": -104.9982542,
+"lat": 39.7479933,
+"leg": "15th St to Blake",
+"way": 130888010
+},
+{
+"node": 3283847109,
+"lon": -104.9985371,
+"lat": 39.7482135,
+"leg": "15th St to Blake",
+"way": 628639108
+},
+{
+"node": 3114138908,
+"lon": -104.9986107,
+"lat": 39.7482708,
+"leg": "15th St to Blake",
+"way": 628639108
+},
+{
+"node": 3283852363,
+"lon": -104.9987104,
+"lat": 39.7483513,
+"leg": "15th St to Blake",
+"way": 106395269
+},
+{
+"node": 3095718438,
+"lon": -104.9990592,
+"lat": 39.748627,
+"leg": "15th St to Blake",
+"way": 106395269
+},
+{
+"node": 3286951038,
+"lon": -104.9994064,
+"lat": 39.7489026,
+"leg": "15th St to Blake",
+"way": 106395269
+},
+{
+"node": 176110270,
+"lon": -104.9994791,
+"lat": 39.7489609,
+"leg": "15th St to Blake",
+"way": 106395269
+},
+{
+"node": 3286942592,
+"lon": -104.9995663,
+"lat": 39.7490296,
+"leg": "15th St to Blake",
+"way": 130911257
+},
+{
+"node": 3331477607,
+"lon": -104.9996263,
+"lat": 39.749077,
+"leg": "15th St to Blake",
+"way": 130911257
+},
+{
+"node": 670127656,
+"lon": -104.9999112,
+"lat": 39.7493015,
+"leg": "15th St to Blake",
+"way": 130911257
+},
+{
+"node": 1154767197,
+"lon": -104.9999944,
+"lat": 39.7493678,
+"leg": "15th St to Blake",
+"way": 628636724
+},
+{
+"node": 3286722093,
+"lon": -105.0002723,
+"lat": 39.7495728,
+"leg": "15th St to Blake",
+"way": 99883921
+},
+{
+"node": 13612844546,
+"lon": -105.000324,
+"lat": 39.7496111,
+"leg": "15th St to Blake",
+"way": 99883921
+},
+{
+"node": 176091533,
+"lon": -105.0003498,
+"lat": 39.7496302,
+"leg": "15th St to Blake",
+"way": 99883921
+},
+{
+"node": 3286732978,
+"lon": -105.0004177,
+"lat": 39.7495777,
+"leg": "Blake to Speer SB",
+"way": 541284847
+},
+{
+"node": 3114163232,
+"lon": -105.0006176,
+"lat": 39.749423,
+"leg": "Blake to Speer SB",
+"way": 541284847
+},
+{
+"node": 14232426512,
+"lon": -105.0010601,
+"lat": 39.7490764,
+"leg": "Blake to Speer SB",
+"way": 99883930
+},
+{
+"node": 7454978844,
+"lon": -105.0011067,
+"lat": 39.7490399,
+"leg": "Blake to Speer SB",
+"way": 1563606689
+},
+{
+"node": 7454978840,
+"lon": -105.0011409,
+"lat": 39.7490131,
+"leg": "Blake to Speer SB",
+"way": 1563606689
+},
+{
+"node": 176086282,
+"lon": -105.001398,
+"lat": 39.7488118,
+"leg": "Blake to Speer SB",
+"way": 1563606689
+},
+{
+"node": 279955454,
+"lon": -105.0014296,
+"lat": 39.7487903,
+"leg": "Blake to Speer SB",
+"way": 1384814966
+},
+{
+"node": 4543400521,
+"lon": -105.0014687,
+"lat": 39.7487654,
+"leg": "Blake to Speer SB",
+"way": 25679931
+},
+{
+"node": 1024343959,
+"lon": -105.0014884,
+"lat": 39.7487561,
+"leg": "Blake to Speer SB",
+"way": 25679931
+},
+{
+"node": 6833163246,
+"lon": -105.0015259,
+"lat": 39.7487434,
+"leg": "Blake to Speer SB",
+"way": 461500433
+},
+{
+"node": 1024343962,
+"lon": -105.0015561,
+"lat": 39.7487363,
+"leg": "Blake to Speer SB",
+"way": 461500433
+},
+{
+"node": 1024343964,
+"lon": -105.0016017,
+"lat": 39.7487291,
+"leg": "Blake to Speer SB",
+"way": 461500433
+},
+{
+"node": 1024343965,
+"lon": -105.0016554,
+"lat": 39.7487209,
+"leg": "Blake to Speer SB",
+"way": 461500433
+},
+{
+"node": 1024343966,
+"lon": -105.0017238,
+"lat": 39.7487116,
+"leg": "Blake to Speer SB",
+"way": 461500433
+},
+{
+"node": 1024343967,
+"lon": -105.0018324,
+"lat": 39.7486961,
+"leg": "Blake to Speer SB",
+"way": 461500433
+},
+{
+"node": 5009453390,
+"lon": -105.0019281,
+"lat": 39.7486834,
+"leg": "Blake to Speer SB",
+"way": 461500433
+},
+{
+"node": 279955493,
+"lon": -105.0020128,
+"lat": 39.7486698,
+"leg": "Blake to Speer SB",
+"way": 512311518
+},
+{
+"node": 176085736,
+"lon": -105.0020958,
+"lat": 39.7486586,
+"leg": "Blake to Speer SB",
+"way": 628634516
+},
+{
+"node": 3326986413,
+"lon": -105.0021879,
+"lat": 39.7486455,
+"leg": "Blake to Speer SB",
+"way": 25679930
+},
+{
+"node": 807523479,
+"lon": -105.0029674,
+"lat": 39.7485414,
+"leg": "Blake to Speer SB",
+"way": 25679930
+},
+{
+"node": 807523462,
+"lon": -105.003117,
+"lat": 39.748509,
+"leg": "Blake to Speer SB",
+"way": 25679930
+},
+{
+"node": 279934061,
+"lon": -105.0033568,
+"lat": 39.7484399,
+"leg": "Blake to Speer SB",
+"way": 628634511
+},
+{
+"node": 6833163251,
+"lon": -105.0030468,
+"lat": 39.7480756,
+"leg": "Speer SB to Kalamath",
+"way": 628622164
+},
+{
+"node": 4773229523,
+"lon": -105.0027645,
+"lat": 39.7477438,
+"leg": "Speer SB to Kalamath",
+"way": 628622164
+},
+{
+"node": 176086937,
+"lon": -105.0026615,
+"lat": 39.7476216,
+"leg": "Speer SB to Kalamath",
+"way": 628622164
+},
+{
+"node": 1320978600,
+"lon": -105.0025693,
+"lat": 39.747533,
+"leg": "Speer SB to Kalamath",
+"way": 204336217
+},
+{
+"node": 1320978609,
+"lon": -105.0015006,
+"lat": 39.7464756,
+"leg": "Speer SB to Kalamath",
+"way": 204336217
+},
+{
+"node": 176099154,
+"lon": -105.001433,
+"lat": 39.7464083,
+"leg": "Speer SB to Kalamath",
+"way": 204336217
+},
+{
+"node": 1320978612,
+"lon": -105.0013775,
+"lat": 39.7463445,
+"leg": "Speer SB to Kalamath",
+"way": 628634529
+},
+{
+"node": 3274054542,
+"lon": -105.0011202,
+"lat": 39.7460152,
+"leg": "Speer SB to Kalamath",
+"way": 628634529
+},
+{
+"node": 14284336676,
+"lon": -105.0010497,
+"lat": 39.7459191,
+"leg": "Speer SB to Kalamath",
+"way": 628634529
+},
+{
+"node": 279817637,
+"lon": -105.0009729,
+"lat": 39.7458072,
+"leg": "Speer SB to Kalamath",
+"way": 628634529
+},
+{
+"node": 14284336677,
+"lon": -105.0009094,
+"lat": 39.7456953,
+"leg": "Speer SB to Kalamath",
+"way": 628622237
+},
+{
+"node": 14284336675,
+"lon": -105.0008521,
+"lat": 39.7455883,
+"leg": "Speer SB to Kalamath",
+"way": 628622237
+},
+{
+"node": 14284336674,
+"lon": -105.0008003,
+"lat": 39.7454787,
+"leg": "Speer SB to Kalamath",
+"way": 628622237
+},
+{
+"node": 176099152,
+"lon": -105.0007585,
+"lat": 39.74538,
+"leg": "Speer SB to Kalamath",
+"way": 628622237
+},
+{
+"node": 5934861525,
+"lon": -105.0007254,
+"lat": 39.7452556,
+"leg": "Speer SB to Kalamath",
+"way": 628622238
+},
+{
+"node": 13755616161,
+"lon": -105.0007187,
+"lat": 39.7452259,
+"leg": "Speer SB to Kalamath",
+"way": 16989043
+},
+{
+"node": 569758329,
+"lon": -105.0007096,
+"lat": 39.7451839,
+"leg": "Speer SB to Kalamath",
+"way": 16989043
+},
+{
+"node": 3283913468,
+"lon": -105.0006657,
+"lat": 39.7449819,
+"leg": "Speer SB to Kalamath",
+"way": 16989043
+},
+{
+"node": 569758304,
+"lon": -105.0005981,
+"lat": 39.744164,
+"leg": "Speer SB to Kalamath",
+"way": 16989043
+},
+{
+"node": 12133359685,
+"lon": -105.0005937,
+"lat": 39.7441063,
+"leg": "Speer SB to Kalamath",
+"way": 16989043
+},
+{
+"node": 672562134,
+"lon": -105.0005954,
+"lat": 39.7440639,
+"leg": "Speer SB to Kalamath",
+"way": 16989043
+},
+{
+"node": 8015271512,
+"lon": -105.0005656,
+"lat": 39.7437455,
+"leg": "Speer SB to Kalamath",
+"way": 16989043
+},
+{
+"node": 8015271495,
+"lon": -105.0005559,
+"lat": 39.7436885,
+"leg": "Speer SB to Kalamath",
+"way": 16989043
+},
+{
+"node": 8015271526,
+"lon": -105.0004254,
+"lat": 39.743187,
+"leg": "Speer SB to Kalamath",
+"way": 16989043
+},
+{
+"node": 8015270479,
+"lon": -105.0004104,
+"lat": 39.7431371,
+"leg": "Speer SB to Kalamath",
+"way": 16989043
+},
+{
+"node": 8015271508,
+"lon": -105.0003761,
+"lat": 39.7430378,
+"leg": "Speer SB to Kalamath",
+"way": 16989043
+},
+{
+"node": 8015270478,
+"lon": -105.0003527,
+"lat": 39.7429788,
+"leg": "Speer SB to Kalamath",
+"way": 16989043
+},
+{
+"node": 8015271488,
+"lon": -105.0003292,
+"lat": 39.7429243,
+"leg": "Speer SB to Kalamath",
+"way": 16989043
+},
+{
+"node": 176108120,
+"lon": -105.000125,
+"lat": 39.7424805,
+"leg": "Speer SB to Kalamath",
+"way": 16989043
+},
+{
+"node": 8901217766,
+"lon": -105.0000495,
+"lat": 39.7423249,
+"leg": "Speer SB to Kalamath",
+"way": 628622236
+},
+{
+"node": 1320978627,
+"lon": -104.9998975,
+"lat": 39.7420135,
+"leg": "Speer SB to Kalamath",
+"way": 962281032
+},
+{
+"node": 279898948,
+"lon": -104.9998498,
+"lat": 39.7419149,
+"leg": "Speer SB to Kalamath",
+"way": 962281032
+},
+{
+"node": 1024425717,
+"lon": -104.9998959,
+"lat": 39.7418719,
+"leg": "Kalamath S to W 14th Ave",
+"way": 130886776
+},
+{
+"node": 1024425720,
+"lon": -104.9999388,
+"lat": 39.7418265,
+"leg": "Kalamath S to W 14th Ave",
+"way": 130886776
+},
+{
+"node": 3283808266,
+"lon": -104.9999619,
+"lat": 39.7418031,
+"leg": "Kalamath S to W 14th Ave",
+"way": 130886776
+},
+{
+"node": 1024425722,
+"lon": -104.9999817,
+"lat": 39.741778,
+"leg": "Kalamath S to W 14th Ave",
+"way": 130886776
+},
+{
+"node": 1024425726,
+"lon": -105.0000179,
+"lat": 39.7417337,
+"leg": "Kalamath S to W 14th Ave",
+"way": 130886776
+},
+{
+"node": 1024425730,
+"lon": -105.0000428,
+"lat": 39.7416958,
+"leg": "Kalamath S to W 14th Ave",
+"way": 130886776
+},
+{
+"node": 279898947,
+"lon": -105.0000702,
+"lat": 39.741646,
+"leg": "Kalamath S to W 14th Ave",
+"way": 130886776
+},
+{
+"node": 1024425733,
+"lon": -105.000097,
+"lat": 39.7415821,
+"leg": "Kalamath S to W 14th Ave",
+"way": 130886776
+},
+{
+"node": 1024425735,
+"lon": -105.0001145,
+"lat": 39.7415264,
+"leg": "Kalamath S to W 14th Ave",
+"way": 130886776
+},
+{
+"node": 1024425736,
+"lon": -105.0001319,
+"lat": 39.7414552,
+"leg": "Kalamath S to W 14th Ave",
+"way": 130886776
+},
+{
+"node": 279898945,
+"lon": -105.0001426,
+"lat": 39.7413758,
+"leg": "Kalamath S to W 14th Ave",
+"way": 628622224
+},
+{
+"node": 1024425740,
+"lon": -105.000148,
+"lat": 39.7412799,
+"leg": "Kalamath S to W 14th Ave",
+"way": 628622224
+},
+{
+"node": 305504955,
+"lon": -105.000147,
+"lat": 39.7409808,
+"leg": "Kalamath S to W 14th Ave",
+"way": 628622224
+},
+{
+"node": 3283811469,
+"lon": -105.0001475,
+"lat": 39.7408683,
+"leg": "Kalamath S to W 14th Ave",
+"way": 628622224
+},
+{
+"node": 1040543463,
+"lon": -105.0001472,
+"lat": 39.7408111,
+"leg": "Kalamath S to W 14th Ave",
+"way": 628622224
+},
+{
+"node": 3459075899,
+"lon": -105.0001476,
+"lat": 39.7406886,
+"leg": "Kalamath S to W 14th Ave",
+"way": 628622224
+},
+{
+"node": 2393044726,
+"lon": -105.00015,
+"lat": 39.7403209,
+"leg": "Kalamath S to W 14th Ave",
+"way": 628622219
+},
+{
+"node": 176089697,
+"lon": -105.0001508,
+"lat": 39.7402153,
+"leg": "Kalamath S to W 14th Ave",
+"way": 628622219
+},
+{
+"node": 1024452690,
+"lon": -105.0001503,
+"lat": 39.7400188,
+"leg": "Kalamath S to W 14th Ave",
+"way": 628677830
+},
+{
+"node": 3285453782,
+"lon": -105.0001502,
+"lat": 39.7399489,
+"leg": "Kalamath S to W 14th Ave",
+"way": 131620808
+},
+{
+"node": 5935733831,
+"lon": -105.0001497,
+"lat": 39.7398004,
+"leg": "Kalamath S to W 14th Ave",
+"way": 131620808
+},
+{
+"node": 1106568524,
+"lon": -105.0001487,
+"lat": 39.7393918,
+"leg": "Kalamath S to W 14th Ave",
+"way": 628689595
+},
+{
+"node": 5935733832,
+"lon": -105.0001479,
+"lat": 39.7390847,
+"leg": "Kalamath S to W 14th Ave",
+"way": 628689593
+},
+{
+"node": 3517675377,
+"lon": -105.0001472,
+"lat": 39.7388243,
+"leg": "Kalamath S to W 14th Ave",
+"way": 628689599
+},
+{
+"node": 3505726914,
+"lon": -105.0001457,
+"lat": 39.7385379,
+"leg": "Kalamath S to W 14th Ave",
+"way": 628689599
+},
+{
+"node": 4574957440,
+"lon": -105.000146,
+"lat": 39.7384776,
+"leg": "Kalamath S to W 14th Ave",
+"way": 628689599
+},
+{
+"node": 3505726913,
+"lon": -105.0000367,
+"lat": 39.7384809,
+"leg": "W 14th Ave to Santa Fe",
+"way": 700604346
+},
+{
+"node": 3505735348,
+"lon": -104.9995293,
+"lat": 39.7384797,
+"leg": "W 14th Ave to Santa Fe",
+"way": 700604346
+},
+{
+"node": 176080253,
+"lon": -104.9993739,
+"lat": 39.7384802,
+"leg": "W 14th Ave to Santa Fe",
+"way": 700604346
+},
+{
+"node": 3505761131,
+"lon": -104.999471,
+"lat": 39.738556,
+"leg": "Santa Fe N to Colfax",
+"way": 628689591
+},
+{
+"node": 5935733830,
+"lon": -104.9995833,
+"lat": 39.7386424,
+"leg": "Santa Fe N to Colfax",
+"way": 628689591
+},
+{
+"node": 662709802,
+"lon": -104.999647,
+"lat": 39.7386916,
+"leg": "Santa Fe N to Colfax",
+"way": 131620810
+},
+{
+"node": 3506112285,
+"lon": -104.9997074,
+"lat": 39.7387411,
+"leg": "Santa Fe N to Colfax",
+"way": 131620810
+},
+{
+"node": 3506112284,
+"lon": -104.9997583,
+"lat": 39.7387875,
+"leg": "Santa Fe N to Colfax",
+"way": 131620810
+},
+{
+"node": 3506112286,
+"lon": -104.9998066,
+"lat": 39.7388401,
+"leg": "Santa Fe N to Colfax",
+"way": 131620810
+},
+{
+"node": 287885402,
+"lon": -104.9998536,
+"lat": 39.7388958,
+"leg": "Santa Fe N to Colfax",
+"way": 131620810
+},
+{
+"node": 3506112283,
+"lon": -104.9999112,
+"lat": 39.7389701,
+"leg": "Santa Fe N to Colfax",
+"way": 131620810
+},
+{
+"node": 3506112281,
+"lon": -104.9999461,
+"lat": 39.7390257,
+"leg": "Santa Fe N to Colfax",
+"way": 628689590
+},
+{
+"node": 3506112282,
+"lon": -104.9999716,
+"lat": 39.7390722,
+"leg": "Santa Fe N to Colfax",
+"way": 628689590
+},
+{
+"node": 3506112287,
+"lon": -104.9999903,
+"lat": 39.739132,
+"leg": "Santa Fe N to Colfax",
+"way": 628689590
+},
+{
+"node": 287885359,
+"lon": -104.9999962,
+"lat": 39.7391871,
+"leg": "Santa Fe N to Colfax",
+"way": 628689590
+},
+{
+"node": 3506161715,
+"lon": -104.9999947,
+"lat": 39.7393853,
+"leg": "Santa Fe N to Colfax",
+"way": 628689590
+},
+{
+"node": 3506108815,
+"lon": -104.9999917,
+"lat": 39.7395754,
+"leg": "Santa Fe N to Colfax",
+"way": 628689590
+},
+{
+"node": 3285454946,
+"lon": -104.9999734,
+"lat": 39.7399449,
+"leg": "Santa Fe N to Colfax",
+"way": 343784769
+},
+{
+"node": 1024452734,
+"lon": -104.9999703,
+"lat": 39.740019,
+"leg": "Santa Fe N to Colfax",
+"way": 343784769
+},
+{
+"node": 4574957858,
+"lon": -104.9999608,
+"lat": 39.7402147,
+"leg": "Kalamath NB branch to Speer SB",
+"way": 1183404166
+},
+{
+"node": 3506108814,
+"lon": -104.9999577,
+"lat": 39.7403188,
+"leg": "Kalamath NB branch to Speer SB",
+"way": 343784768
+},
+{
+"node": 1024414072,
+"lon": -104.9999535,
+"lat": 39.7404034,
+"leg": "Kalamath NB branch to Speer SB",
+"way": 343784768
+},
+{
+"node": 1024414074,
+"lon": -104.9999522,
+"lat": 39.7405529,
+"leg": "Kalamath NB branch to Speer SB",
+"way": 343784768
+},
+{
+"node": 1024414075,
+"lon": -104.9999508,
+"lat": 39.7406179,
+"leg": "Kalamath NB branch to Speer SB",
+"way": 343784768
+},
+{
+"node": 287885535,
+"lon": -104.9999455,
+"lat": 39.7406798,
+"leg": "Kalamath NB branch to Speer SB",
+"way": 343784768
+},
+{
+"node": 1024414076,
+"lon": -104.9999334,
+"lat": 39.7407344,
+"leg": "Kalamath NB branch to Speer SB",
+"way": 343784768
+},
+{
+"node": 1024414077,
+"lon": -104.999916,
+"lat": 39.7407901,
+"leg": "Kalamath NB branch to Speer SB",
+"way": 343784768
+},
+{
+"node": 1024414078,
+"lon": -104.9998945,
+"lat": 39.7408417,
+"leg": "Kalamath NB branch to Speer SB",
+"way": 343784768
+},
+{
+"node": 1024414080,
+"lon": -104.999861,
+"lat": 39.7408994,
+"leg": "Kalamath NB branch to Speer SB",
+"way": 343784768
+},
+{
+"node": 1024414086,
+"lon": -104.9998196,
+"lat": 39.7409536,
+"leg": "Kalamath NB branch to Speer SB",
+"way": 343784768
+},
+{
+"node": 1024414088,
+"lon": -104.9997805,
+"lat": 39.7410005,
+"leg": "Kalamath NB branch to Speer SB",
+"way": 343784768
+},
+{
+"node": 287885638,
+"lon": -104.9997376,
+"lat": 39.7410428,
+"leg": "Kalamath NB branch to Speer SB",
+"way": 343784768
+},
+{
+"node": 1024414093,
+"lon": -104.9996732,
+"lat": 39.7410922,
+"leg": "Kalamath NB branch to Speer SB",
+"way": 343784768
+},
+{
+"node": 1024414095,
+"lon": -104.999611,
+"lat": 39.7411332,
+"leg": "Kalamath NB branch to Speer SB",
+"way": 343784768
+},
+{
+"node": 176112894,
+"lon": -104.9994651,
+"lat": 39.7412073,
+"leg": "Kalamath NB branch to Speer SB",
+"way": 321937332
+},
+{
+"node": 1320978615,
+"lon": -104.999426,
+"lat": 39.7411352,
+"leg": "Speer SB to W 14th Ave",
+"way": 427699953
+},
+{
+"node": 4268863988,
+"lon": -104.9991898,
+"lat": 39.7407095,
+"leg": "Speer SB to W 14th Ave",
+"way": 427699953
+},
+{
+"node": 2393024378,
+"lon": -104.998957,
+"lat": 39.7402956,
+"leg": "Speer SB to W 14th Ave",
+"way": 427699952
+},
+{
+"node": 176092292,
+"lon": -104.9988963,
+"lat": 39.7401911,
+"leg": "Speer SB to W 14th Ave",
+"way": 427699952
+},
+{
+"node": 1024442600,
+"lon": -104.9987846,
+"lat": 39.740018,
+"leg": "Speer SB to W 14th Ave",
+"way": 427890846
+},
+{
+"node": 1044896090,
+"lon": -104.9987273,
+"lat": 39.7399339,
+"leg": "Speer SB to W 14th Ave",
+"way": 132706724
+},
+{
+"node": 3506166299,
+"lon": -104.9984041,
+"lat": 39.7394963,
+"leg": "Speer SB to W 14th Ave",
+"way": 132706724
+},
+{
+"node": 3506166295,
+"lon": -104.9983645,
+"lat": 39.7394435,
+"leg": "Speer SB to W 14th Ave",
+"way": 132706724
+},
+{
+"node": 3327135907,
+"lon": -104.9977106,
+"lat": 39.7385532,
+"leg": "Speer SB to W 14th Ave",
+"way": 132706724
+},
+{
+"node": 176080251,
+"lon": -104.9976451,
+"lat": 39.7384663,
+"leg": "Speer SB to W 14th Ave",
+"way": 132706724
+},
+{
+"node": 569758467,
+"lon": -104.9975364,
+"lat": 39.7384588,
+"leg": "14th Ave E to Logan",
+"way": 628677808
+},
+{
+"node": 9647797464,
+"lon": -104.9973319,
+"lat": 39.738459,
+"leg": "14th Ave E to Logan",
+"way": 44932761
+},
+{
+"node": 3327142204,
+"lon": -104.997254,
+"lat": 39.7384591,
+"leg": "14th Ave E to Logan",
+"way": 44932761
+},
+{
+"node": 6579319898,
+"lon": -104.9970716,
+"lat": 39.7384591,
+"leg": "14th Ave E to Logan",
+"way": 44932761
+},
+{
+"node": 569758461,
+"lon": -104.9970463,
+"lat": 39.7384591,
+"leg": "14th Ave E to Logan",
+"way": 44932761
+},
+{
+"node": 3327132727,
+"lon": -104.997015,
+"lat": 39.7384591,
+"leg": "14th Ave E to Logan",
+"way": 1181924025
+},
+{
+"node": 176080247,
+"lon": -104.9968967,
+"lat": 39.7384591,
+"leg": "14th Ave E to Logan",
+"way": 61135128
+},
+{
+"node": 3327313396,
+"lon": -104.9967832,
+"lat": 39.7384591,
+"leg": "14th Ave E to Logan",
+"way": 61135128
+},
+{
+"node": 176080245,
+"lon": -104.9964942,
+"lat": 39.7384591,
+"leg": "14th Ave E to Logan",
+"way": 61135128
+},
+{
+"node": 3327449452,
+"lon": -104.9963891,
+"lat": 39.7384591,
+"leg": "14th Ave E to Logan",
+"way": 61135128
+},
+{
+"node": 7530384326,
+"lon": -104.9960075,
+"lat": 39.738459,
+"leg": "14th Ave E to Logan",
+"way": 61135128
+},
+{
+"node": 7530384329,
+"lon": -104.9959706,
+"lat": 39.738459,
+"leg": "14th Ave E to Logan",
+"way": 61135128
+},
+{
+"node": 3236006778,
+"lon": -104.9959097,
+"lat": 39.738459,
+"leg": "14th Ave E to Logan",
+"way": 61135128
+},
+{
+"node": 4138587444,
+"lon": -104.995403,
+"lat": 39.738459,
+"leg": "14th Ave E to Logan",
+"way": 61135128
+},
+{
+"node": 176080243,
+"lon": -104.9952999,
+"lat": 39.738459,
+"leg": "14th Ave E to Logan",
+"way": 61135128
+},
+{
+"node": 3327472977,
+"lon": -104.995208,
+"lat": 39.738459,
+"leg": "14th Ave E to Logan",
+"way": 61135128
+},
+{
+"node": 3272400379,
+"lon": -104.9947154,
+"lat": 39.7384589,
+"leg": "14th Ave E to Logan",
+"way": 61135128
+},
+{
+"node": 3327510530,
+"lon": -104.9942191,
+"lat": 39.7384589,
+"leg": "14th Ave E to Logan",
+"way": 61135128
+},
+{
+"node": 176080241,
+"lon": -104.9941204,
+"lat": 39.7384589,
+"leg": "14th Ave E to Logan",
+"way": 61135128
+},
+{
+"node": 3327510533,
+"lon": -104.994022,
+"lat": 39.7384589,
+"leg": "14th Ave E to Logan",
+"way": 798188692
+},
+{
+"node": 3327511158,
+"lon": -104.993055,
+"lat": 39.7384588,
+"leg": "14th Ave E to Logan",
+"way": 798188692
+},
+{
+"node": 4940096571,
+"lon": -104.9929512,
+"lat": 39.7384588,
+"leg": "14th Ave E to Logan",
+"way": 798188692
+},
+{
+"node": 3327513371,
+"lon": -104.992842,
+"lat": 39.7384588,
+"leg": "14th Ave E to Logan",
+"way": 798188692
+},
+{
+"node": 3327512116,
+"lon": -104.991773,
+"lat": 39.7384587,
+"leg": "14th Ave E to Logan",
+"way": 798188692
+},
+{
+"node": 176080237,
+"lon": -104.991647,
+"lat": 39.7384593,
+"leg": "14th Ave E to Logan",
+"way": 798188692
+},
+{
+"node": 3327511890,
+"lon": -104.99155,
+"lat": 39.7384598,
+"leg": "14th Ave E to Logan",
+"way": 130911269
+},
+{
+"node": 13965787111,
+"lon": -104.9912244,
+"lat": 39.7384614,
+"leg": "14th Ave E to Logan",
+"way": 130911269
+},
+{
+"node": 3260495928,
+"lon": -104.990986,
+"lat": 39.7384625,
+"leg": "14th Ave E to Logan",
+"way": 130911269
+},
+{
+"node": 3327346683,
+"lon": -104.9903773,
+"lat": 39.7384654,
+"leg": "14th Ave E to Logan",
+"way": 130911269
+},
+{
+"node": 176080234,
+"lon": -104.9902907,
+"lat": 39.7384658,
+"leg": "14th Ave E to Logan",
+"way": 1178151878
+},
+{
+"node": 13513102345,
+"lon": -104.9902643,
+"lat": 39.7384616,
+"leg": "14th Ave E to Logan",
+"way": 1222114207
+},
+{
+"node": 11134035167,
+"lon": -104.990237,
+"lat": 39.7384572,
+"leg": "14th Ave E to Logan",
+"way": 1222114207
+},
+{
+"node": 3327351854,
+"lon": -104.9901571,
+"lat": 39.738443,
+"leg": "14th Ave E to Logan",
+"way": 1180027312
+},
+{
+"node": 3327351626,
+"lon": -104.9900877,
+"lat": 39.7384098,
+"leg": "14th Ave E to Logan",
+"way": 1102883776
+},
+{
+"node": 2863652549,
+"lon": -104.9900106,
+"lat": 39.7383546,
+"leg": "14th Ave E to Logan",
+"way": 1102883776
+},
+{
+"node": 412787931,
+"lon": -104.9899651,
+"lat": 39.73832,
+"leg": "14th Ave E to Logan",
+"way": 1102883776
+},
+{
+"node": 392697021,
+"lon": -104.9896327,
+"lat": 39.7380724,
+"leg": "14th Ave E to Logan",
+"way": 1102883776
+},
+{
+"node": 10092220978,
+"lon": -104.9896174,
+"lat": 39.738061,
+"leg": "14th Ave E to Logan",
+"way": 1102883776
+},
+{
+"node": 392697154,
+"lon": -104.9893924,
+"lat": 39.7378942,
+"leg": "14th Ave E to Logan",
+"way": 101312232
+},
+{
+"node": 2863652548,
+"lon": -104.9893043,
+"lat": 39.737839,
+"leg": "14th Ave E to Logan",
+"way": 101312232
+},
+{
+"node": 412787731,
+"lon": -104.9891807,
+"lat": 39.7377964,
+"leg": "14th Ave E to Logan",
+"way": 101312232
+},
+{
+"node": 2863652551,
+"lon": -104.9890836,
+"lat": 39.7377768,
+"leg": "14th Ave E to Logan",
+"way": 101312232
+},
+{
+"node": 4104203210,
+"lon": -104.9890164,
+"lat": 39.7377718,
+"leg": "14th Ave E to Logan",
+"way": 101312232
+},
+{
+"node": 4104203211,
+"lon": -104.9889476,
+"lat": 39.7377743,
+"leg": "14th Ave E to Logan",
+"way": 101312232
+},
+{
+"node": 2109585555,
+"lon": -104.9888546,
+"lat": 39.7377909,
+"leg": "14th Ave E to Logan",
+"way": 101312232
+},
+{
+"node": 4104203255,
+"lon": -104.9888024,
+"lat": 39.7378022,
+"leg": "14th Ave E to Logan",
+"way": 628677810
+},
+{
+"node": 4104203230,
+"lon": -104.9887189,
+"lat": 39.7378352,
+"leg": "14th Ave E to Logan",
+"way": 628677810
+},
+{
+"node": 4104203214,
+"lon": -104.9880607,
+"lat": 39.7383151,
+"leg": "14th Ave E to Logan",
+"way": 628677810
+},
+{
+"node": 5935638585,
+"lon": -104.9880316,
+"lat": 39.7383343,
+"leg": "14th Ave E to Logan",
+"way": 628677810
+},
+{
+"node": 4104203212,
+"lon": -104.9879899,
+"lat": 39.7383619,
+"leg": "14th Ave E to Logan",
+"way": 282445356
+},
+{
+"node": 2863652550,
+"lon": -104.987932,
+"lat": 39.7383929,
+"leg": "14th Ave E to Logan",
+"way": 282445356
+},
+{
+"node": 263921048,
+"lon": -104.9878196,
+"lat": 39.7384297,
+"leg": "14th Ave E to Logan",
+"way": 282445356
+},
+{
+"node": 412787929,
+"lon": -104.9876581,
+"lat": 39.7384524,
+"leg": "14th Ave E to Logan",
+"way": 282445356
+},
+{
+"node": 3327918405,
+"lon": -104.9875548,
+"lat": 39.7384575,
+"leg": "14th Ave E to Logan",
+"way": 282445356
+},
+{
+"node": 176072932,
+"lon": -104.9873961,
+"lat": 39.7384585,
+"leg": "14th Ave E to Logan",
+"way": 282445356
+},
+{
+"node": 3327916410,
+"lon": -104.9872655,
+"lat": 39.738459,
+"leg": "14th Ave E to Logan",
+"way": 628643749
+},
+{
+"node": 3327921865,
+"lon": -104.9862562,
+"lat": 39.7384551,
+"leg": "14th Ave E to Logan",
+"way": 628643749
+},
+{
+"node": 176098353,
+"lon": -104.9861306,
+"lat": 39.7384548,
+"leg": "14th Ave E to Logan",
+"way": 628643749
+},
+{
+"node": 3327968544,
+"lon": -104.9859964,
+"lat": 39.7384544,
+"leg": "14th Ave E to Logan",
+"way": 1024245346
+},
+{
+"node": 3406594742,
+"lon": -104.9855112,
+"lat": 39.738453,
+"leg": "14th Ave E to Logan",
+"way": 1024245346
+},
+{
+"node": 5935186394,
+"lon": -104.9853247,
+"lat": 39.7384524,
+"leg": "14th Ave E to Logan",
+"way": 1024245346
+},
+{
+"node": 3327973211,
+"lon": -104.985009,
+"lat": 39.7384512,
+"leg": "14th Ave E to Logan",
+"way": 628643748
+},
+{
+"node": 176070187,
+"lon": -104.984876,
+"lat": 39.7384511,
+"leg": "14th Ave E to Logan",
+"way": 628643748
+},
+{
+"node": 3327976970,
+"lon": -104.984732,
+"lat": 39.7384507,
+"leg": "14th Ave E to Logan",
+"way": 628643747
+},
+{
+"node": 3410414600,
+"lon": -104.984246,
+"lat": 39.7384492,
+"leg": "14th Ave E to Logan",
+"way": 628643747
+},
+{
+"node": 5935186393,
+"lon": -104.9839877,
+"lat": 39.7384485,
+"leg": "14th Ave E to Logan",
+"way": 628643747
+},
+{
+"node": 3327980323,
+"lon": -104.9837493,
+"lat": 39.7384478,
+"leg": "14th Ave E to Logan",
+"way": 628643746
+},
+{
+"node": 176072803,
+"lon": -104.9835976,
+"lat": 39.7384473,
+"leg": "14th Ave E to Logan",
+"way": 628643746
+},
+{
+"node": 3327980351,
+"lon": -104.9834659,
+"lat": 39.7384469,
+"leg": "14th Ave E to Logan",
+"way": 628643742
+},
+{
+"node": 3255893389,
+"lon": -104.9829518,
+"lat": 39.7384454,
+"leg": "14th Ave E to Logan",
+"way": 628643742
+},
+{
+"node": 5935186392,
+"lon": -104.9826868,
+"lat": 39.7384446,
+"leg": "14th Ave E to Logan",
+"way": 628643742
+},
+{
+"node": 3404136742,
+"lon": -104.9824485,
+"lat": 39.738444,
+"leg": "14th Ave E to Logan",
+"way": 628643741
+},
+{
+"node": 176097374,
+"lon": -104.9823323,
+"lat": 39.7384439,
+"leg": "14th Ave E to Logan",
+"way": 628643741
+},
+{
+"node": 3404147326,
+"lon": -104.9823321,
+"lat": 39.7385259,
+"leg": "Logan N to Colfax",
+"way": 330579569
+},
+{
+"node": 3412928988,
+"lon": -104.9823325,
+"lat": 39.738607,
+"leg": "Logan N to Colfax",
+"way": 330579569
+},
+{
+"node": 3412928990,
+"lon": -104.9823328,
+"lat": 39.7387709,
+"leg": "Logan N to Colfax",
+"way": 330579569
+},
+{
+"node": 3406352225,
+"lon": -104.9823365,
+"lat": 39.7392858,
+"leg": "Logan N to Colfax",
+"way": 330579569
+},
+{
+"node": 5486535391,
+"lon": -104.9823483,
+"lat": 39.7399234,
+"leg": "Logan N to Colfax",
+"way": 330579569
+},
+{
+"node": 176097376,
+"lon": -104.9823497,
+"lat": 39.7400052,
+"leg": "Logan N to Colfax",
+"way": 330579569
+},
+{
+"node": 14073675876,
+"lon": -104.9823489,
+"lat": 39.7400663,
+"leg": "Logan N to Colfax",
+"way": 1417020223
+},
+{
+"node": 14073675877,
+"lon": -104.9824558,
+"lat": 39.7400676,
+"leg": "Colfax W to S/F",
+"way": 1548629056
+},
+{
+"node": 14073675878,
+"lon": -104.9829614,
+"lat": 39.740074,
+"leg": "Colfax W to S/F",
+"way": 1548629056
+},
+{
+"node": 14073675879,
+"lon": -104.9834912,
+"lat": 39.7400836,
+"leg": "Colfax W to S/F",
+"way": 1548629056
+},
+{
+"node": 14073675880,
+"lon": -104.9835918,
+"lat": 39.7400967,
+"leg": "Colfax W to S/F",
+"way": 1548629056
+},
+{
+"node": 14073675881,
+"lon": -104.9837494,
+"lat": 39.740107,
+"leg": "Colfax W to S/F",
+"way": 1547338993
+},
+{
+"node": 14073675882,
+"lon": -104.9842367,
+"lat": 39.7401126,
+"leg": "Colfax W to S/F",
+"way": 1547338993
+},
+{
+"node": 14073675883,
+"lon": -104.9847359,
+"lat": 39.7401187,
+"leg": "Colfax W to S/F",
+"way": 1547338993
+},
+{
+"node": 14073675884,
+"lon": -104.9848631,
+"lat": 39.7401191,
+"leg": "Colfax W to S/F",
+"way": 1547338993
+}
+]
+}

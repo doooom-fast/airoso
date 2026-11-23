@@ -52,7 +52,7 @@ wp=[('S/F Colfax at Sherman',near(0,5,[EC]),None),
  ('Logan N to Colfax',near(310,0,[EC,'Logan Street']),{'Logan Street'}),
  ('Colfax W to S/F',None,{EC})]
 wp[-1]=(wp[-1][0],wp[0][1],wp[-1][2])
-tot=0; allids=[]
+tot=0; allids=[]; line=[]
 for (n0,a,_),(nm,b,allow) in zip(wp,wp[1:]):
     r=route(a,b,allow)
     if r is None: print(f'{nm:34s} NO ROUTE on {allow}  from {xy(a)} to {xy(b)}'); continue
@@ -63,5 +63,9 @@ for (n0,a,_),(nm,b,allow) in zip(wp,wp[1:]):
     lanes=sorted({s[1]['tags'].get('lanes','?') for s in r}); sp={k for s in r for k in ('bridge','tunnel','covered') if s[1]['tags'].get(k)}
     print(f"{nm:34s} {L:6.0f} m  against one-way {wr:5.0f} m  lanes {','.join(lanes):9s} {sorted(sp)}  ({xy(a)[0]:.0f},{xy(a)[1]:.0f})->({xy(b)[0]:.0f},{xy(b)[1]:.0f}) ways {len(ids)}")
     allids.append((nm,ids))
+    for s in r:   # the lap as nodes, in order, each with the way it is on (for the elevation profile and the dossier)
+        if not line: line.append({'node':s[0],'lon':N[s[0]][0],'lat':N[s[0]][1],'leg':nm,'way':s[1]['id']})
+        line.append({'node':s[4],'lon':N[s[4]][0],'lat':N[s[4]][1],'leg':nm,'way':s[1]['id']})
 print('TOTAL %.0f m'%tot)
 json.dump({'_doc':'lap legs as OSM way ids, routed on tracks/denver-grand-prix/source/osm.json (frame: metres east/north of -104.9849, 39.7401)','legs':[{'leg':n,'ways':i} for n,i in allids]},open('tracks/denver-grand-prix/data/lap_ways.plan.json','w'),indent=1)
+json.dump({'_doc':'the lap as OSM nodes in driving order, from S/F (Colfax at Sherman) round to S/F; each node carries the leg and the way that reaches it. Written by source/lap_route.py from source/osm.json.','nodes':line},open('tracks/denver-grand-prix/data/lap_line.plan.json','w'),indent=0)

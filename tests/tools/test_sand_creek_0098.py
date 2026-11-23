@@ -111,7 +111,10 @@ def test_sand_creek_reach_record_is_the_configs():
         assert r["max_neighbour_jump_m"] < 0.5                    # round I's own rule for a street's profile
     e56 = rec["reach"][0]
     assert abs(e56["points_xyz_m"][-1][0] - 1877.5) < 1e-6 and 2500 < e56["length_m"] < 2550
-    assert 0.4 < e56["lidar_share"] < 0.5                         # 377 of 843 points read off the lidar
+    # 2026-11-23 (source/grid_reach_e56.md): re-run with the 14 tiles of row z 1300-1400 that round 1 lacked; all 843
+    # points now read off the lidar (round 1: 377 of 843, lidar_share 0.447, the other 466 on 3DEP + offset)
+    assert e56["lidar_share"] == 1.0 and set(e56["height_source"]) == {"lidar"}
+    assert rec["tiles_missing"] == []
     assert rec["frame"]["kx"] == 1.0024949
 
 

@@ -181,7 +181,7 @@ P1 does not wait on P0's dossier approval, only on the far-clip result. P2 waits
 Seen 2026-11-23: the local sessions **Tracks:Mac** (waiting on an answer from Kevin about three tracks),
 **Milford**, and **Finish the road-wear menu pictures**. The status board is the bridge on the G10; this cloud
 session cannot reach it or the local machines, so it has asked Tracks:Mac to post this plan there and to run
-P0's OSM fetch (the message is quoted in ledger 0096).
+P0's OSM fetch (ledger 0096 "Coordination").
 
 - **This cloud session:** the plan, the ledger entry, the horizon study; next, the dossier once the OSM extract
   is on the branch.

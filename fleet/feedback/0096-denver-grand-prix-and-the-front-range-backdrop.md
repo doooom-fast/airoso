@@ -56,10 +56,12 @@ Denver Grand Prix track." His lap, in his words:
 
 ## Coordination
 
-2026-11-23, sent from the cloud session to the local session Tracks:Mac (it reaches Overpass, USGS and the board):
+2026-11-23, sent from the cloud session to the local session Tracks:Mac (it reaches Overpass, USGS and the board),
+after Kevin allowed the cloud session to message his local sessions. In substance:
 
-> Denver Grand Prix is planned on branch claude/kind-turing-5xrxlc: tracks/denver-grand-prix/PLAN.md, ledger 0096.
-> Two asks, both from Kevin's message of today ("work with them if you can and see if you can use them to post to my
-> internal status board"): (1) post a card for it on the board: "Denver Grand Prix: planned, 8 decisions waiting on
-> Kevin, P0 (OSM + far-clip test) next"; (2) when you are free, fetch the OSM extract for P0 and push it to the
-> branch. Neither should interrupt work Kevin has you on.
+1. Post a card on the board: "Denver Grand Prix: planned, 8 decisions waiting on Kevin, P0 (OSM + far-clip test)
+   next". Which board project it sits under is Kevin's call, asked and not yet answered.
+2. When free, fetch P0's OSM extract and push it to the branch:
+   `python tools/fetch_osm.py --bbox 39.7280 -105.0100 39.7560 -104.9780 --service --out tracks/denver-grand-prix/source/osm.json`.
+
+Delivered; no reply yet. Neither is to interrupt work Kevin has that session on.

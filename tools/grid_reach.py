@@ -25,8 +25,9 @@ plan position). So the clip is not moved; the pieces it cut are REACHED, additiv
   * THE FRAME. The grid's points are in grid_connectors' frame (tools/route_connectors._mpd, a sphere); the lidar tiles are
     in scripts.geometry.projection's (the ellipsoid; the lap's frame too). A grid point is read in the lidar at the SAME
     lon / lat (x * KX, z * KZ, recorded), so the heights are the street's own. [The 99 streets of
-    source/connector_profiles.lidar.round_i.json were read at the grid's x / z taken as lidar x / z: up to 4.7 m east /
-    2.0 m north of the street at the grid's corners; ledger 0098 measures what that moved.]
+    source/connector_profiles.lidar.round_i.json were read at the grid's x / z taken as lidar x / z: 0.25 % of x toward
+    the origin, 0.15 % of z away from it, so 4.7 m / 2.0 m off the street at the grid's east / north edge; ledger 0098
+    measures what that moved.]
 
 Writes the record lm_intake applies (lm_intake.grid_reach, tools/lm_engine_intake.apply_grid_reach): per reached end the
 existing end's plan position (checked there, 1 cm) and the height the joint was eased onto (from_y: if the piece's end

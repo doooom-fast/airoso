@@ -107,6 +107,52 @@ def test_the_chain_carries_the_lm_pads_step():
     assert "draft_cutfill() {" in src and "tools/cutfill_blend.py" in src
 
 
+def _bash():
+    import shutil
+    import subprocess
+    sh = shutil.which("bash")
+    if not sh:
+        return None
+    try:
+        ok = subprocess.run([sh, "-c", "echo ok"], capture_output=True, text=True, timeout=30).stdout.strip() == "ok"
+    except (OSError, subprocess.SubprocessError):
+        ok = False
+    return sh if ok else None
+
+
+def test_the_lm_pads_step_shows_a_refusal_on_failure():
+    """2026-11-23 (Sand Creek 0.2.9's rehearsal at 903c3436): the step's `2>&1 | grep "^\\[lm-pads\\]..."` hid draft_pads'
+    "[pads] the outline crosses itself through a seam row: measure again" (stderr, ahead of the buffered stdout), so the log
+    ended on the last [lm-pads] line with EXIT 1. ship_track.sh's bl_filtered keeps the filter on success and prints the
+    error output on a failure, Blender's start-up noise left out; the step's status is Blender's"""
+    import subprocess
+    sh = _bash()
+    if sh is None:
+        pytest.skip("no working bash")
+    src = (ROOT / "tools" / "ship_track.sh").read_text(encoding="utf-8").replace("\r\n", "\n")
+    assert 'bl_filtered "^\\[lm-pads\\]' in src.split("draft_lm_pads() {", 1)[1].split("\n}\n", 1)[0]
+    fn = "bl_filtered() {" + src.split("bl_filtered() {", 1)[1].split("\n}\n", 1)[0] + "\n}\n"
+    script = "set -euo pipefail\n" + fn + r"""
+refuse() {
+  echo "[lm-pads] colorado_50th: deck ok"; echo "Read prefs: /x/userpref.blend"; echo "noise on stdout"
+  echo "register_class(...):" >&2; echo "Warning: 'ACPanelMixamo' does not contain '_PT_' with prefix and suffix" >&2
+  echo "[pads] the outline crosses itself through a seam row: measure again" >&2
+  return 1
+}
+fine() { echo "[lm-pads] 6 pad(s) built"; echo "noise on stdout"; echo "chatter on stderr" >&2; return 0; }
+BL=refuse; ( bl_filtered "^\[lm-pads\]\|FATAL" --background ) && echo "RC 0" || echo "RC $?"
+echo "---"
+BL=fine; ( bl_filtered "^\[lm-pads\]\|FATAL" --background ) && echo "RC 0" || echo "RC $?"
+"""
+    out = subprocess.run([sh, "-s"], input=script, capture_output=True, text=True, timeout=60).stdout
+    bad, good = out.split("---\n")
+    assert "[lm-pads] colorado_50th: deck ok" in bad and "RC 1" in bad
+    assert "[step] FAILED (exit 1)" in bad and "[pads] the outline crosses itself through a seam row" in bad
+    assert "register_class" not in bad and "ACPanelMixamo" not in bad and "Read prefs" not in bad
+    assert "noise on stdout" not in bad
+    assert good.strip().splitlines() == ["[lm-pads] 6 pad(s) built", "RC 0"]
+
+
 def test_the_seam_offset_is_exact_on_the_row_linear_along_it_and_faded_in():
     c = {"p": (0.0, 0.0), "n": (0.0, 1.0)}                                  # a row along x, the pad on +y
     row = [(-4.0, 0.0, 10.10), (4.0, 0.0, 9.90)]

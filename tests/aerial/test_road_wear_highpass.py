@@ -18,6 +18,7 @@ from scripts.aerial import road_wear as rw
 
 ROOT = Path(__file__).resolve().parents[2]
 PILOT = {"milford-road-course-lm", "high-plains-lm"}
+OWNED_ROAD_ONLY = {"sand-creek-lm"}   # ledger 0098: the owned 1ROAD pair without a road_wear bake
 PAIR = ["assets/textures/asphalt_dense_diffuse.jpg", "assets/textures/asphalt_dense_normal.jpg"]
 
 
@@ -75,6 +76,14 @@ def test_only_the_pilot_tracks_opt_in_and_they_bind_the_owned_pair():
         hp = (cfg.get("road_wear") or {}).get("detail_highpass_m")
         if slug not in PILOT:
             assert hp is None, slug                                       # every other track unchanged
+            if slug in OWNED_ROAD_ONLY:
+                # ledger 0098 (Kevin 2026-11-22: "On every track now"): the owned pair bound with no road_wear bake (Sand
+                # Creek has none, so no high-pass), and synced in
+                assert [ov["diffuse"], ov["normal"]] == PAIR, slug
+                assert "road_wear" not in cfg, slug
+                ship = json.loads((cfgp.parent / "ship.json").read_text(encoding="utf-8"))
+                assert set(PAIR) <= set(ship["sync_in"]["assets"]), slug
+                continue
             assert "asphalt_dense" not in json.dumps(ov), slug
             continue
         seen.add(slug)

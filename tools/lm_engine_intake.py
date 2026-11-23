@@ -221,6 +221,97 @@ def apply_connector_profiles(proj: Path, prof_p: str) -> list:
     print(f"[lm_intake] connector heights off the lidar ({prof_p}): {', '.join(done)}")
     return done
 
+
+def apply_grid_reach(proj: Path, rel: str) -> list:
+    """ledger 0098 (opt-in lm_intake.grid_reach): the grid's map-edge cut reached. tools/grid_reach.py walked each named
+    piece end on along OSM's own way and measured the new points' heights; here they are added at that end of the piece in
+    <proj>/data/connectors.local.json, after the lidar profiles (whose points it leaves as they are). Every existing point
+    and name stays. The end must be where the record was walked from (1 cm), else the run stops."""
+    if str(rel).startswith(("/", "\\")) or ".." in Path(str(rel)).parts:
+        raise SystemExit(f"[lm_intake] lm_intake.grid_reach {rel!r} must be a plain path inside the project")
+    data = proj / "data"
+    recs = json.loads((proj / rel).read_text(encoding="utf-8"))["reach"]
+    cj = json.loads((data / "connectors.local.json").read_text(encoding="utf-8"))
+    by = {c["name"]: c for c in cj["connectors"]}
+    done = []
+    for r in recs:
+        c = by.get(r["piece"])
+        if c is None:
+            raise SystemExit(f"[lm_intake] {rel}: no such connector {r['piece']!r}")
+        pts, ws = c["points_xyz_m"], c["widths_m"]
+        e = pts[-1] if r["end"] == "end" else pts[0]
+        if abs(e[0] - r["from_xz"][0]) > 0.01 or abs(e[2] - r["from_xz"][1]) > 0.01:
+            raise SystemExit(f"[lm_intake] {rel}: {r['piece']} ({r['end']}) was walked from another end; re-run "
+                             "tools/grid_reach.py")
+        new = [[float(v) for v in q] for q in r["points_xyz_m"]]
+        nw = [float(w) for w in r["widths_m"]]
+        if len(nw) != len(new):
+            raise SystemExit(f"[lm_intake] {rel}: {r['piece']} has {len(new)} points and {len(nw)} widths")
+        dy = float(e[1]) - float(r.get("from_y", e[1]))
+        if abs(dy) > 1e-6:
+            # the piece's end height moved since the walk (a later profile): the joint follows it, faded over ease_m
+            ease, acc, prev = float(r.get("ease_m", 30.0)), 0.0, e
+            for q in new:
+                acc += math.hypot(q[0] - prev[0], q[2] - prev[2])
+                prev = q
+                u = max(0.0, min(1.0, 1.0 - acc / ease))
+                q[1] = round(q[1] + dy * u * u * (3.0 - 2.0 * u), 3)
+        if r["end"] == "end":
+            c["points_xyz_m"], c["widths_m"] = pts + new, ws + nw
+        else:
+            c["points_xyz_m"], c["widths_m"] = new[::-1] + pts, nw[::-1] + ws
+        done.append(f"{r['piece']} ({r['end']}) +{len(new)} pts, {r.get('length_m')} m")
+    (data / "connectors.local.json").write_text(json.dumps(cj), encoding="utf-8")
+    print(f"[lm_intake] the grid's map-edge cut reached ({rel}): {', '.join(done)}")
+    return done
+
+
+def apply_flare_one_sided(proj: Path, rel: str, pts, widths):
+    """ledger 0098 (opt-in lm_intake.flare_one_sided): a junction flare a street joins on one side only keeps its near
+    side and takes the far side's MEASURED edge (tools/flare_one_sided.py, the source lidar): per recorded row, width =
+    the near half (the source's) + the recorded far half, and the vertex moves the recorded move_m toward the street (its
+    left normal times street_side). The record names its own vertices and positions: refused on any other line."""
+    if str(rel).startswith(("/", "\\")) or ".." in Path(str(rel)).parts:
+        raise SystemExit(f"[lm_intake] lm_intake.flare_one_sided {rel!r} must be a plain path inside the project")
+    rec = json.loads((proj / rel).read_text(encoding="utf-8"))
+    pts = [list(p) for p in pts]
+    widths = list(widths)
+    n = len(pts)
+    moves, rep = {}, []
+    for f in rec["flares"]:
+        side = int(f["street_side"])
+        moved = 0
+        for r in f["rows"]:
+            k = int(r["k"])
+            if math.hypot(pts[k][0] - r["line_xz"][0], pts[k][2] - r["line_xz"][1]) > 0.01:
+                raise SystemExit(f"[lm_intake] {rel}: {f['id']} was measured on another line (v{k}); re-run "
+                                 "tools/flare_one_sided.py")
+            if abs(widths[k] / 2.0 - float(r["source_half_m"])) > 0.01:
+                raise SystemExit(f"[lm_intake] {rel}: {f['id']} v{k}: the line's half width {widths[k] / 2.0:.3f} m is not "
+                                 f"the measured record's {r['source_half_m']} m; re-run tools/flare_one_sided.py")
+            if float(r["move_m"]) > 0.0:
+                moves[k] = (side, float(r["move_m"]), float(r["width_m"]))
+                moved += 1
+        rep.append({"id": f["id"], "rows_moved": moved,
+                    "far_narrowed_m_max": f.get("far_narrowed_m_max"), "line_moved_m_max": round(max(
+                        [float(r["move_m"]) for r in f["rows"]] or [0.0]), 3)})
+    # every left normal from the line as it stands, before any vertex moves
+    nl = []
+    for k in range(n):
+        a, b = pts[max(k - 1, 0)], pts[min(k + 1, n - 1)]
+        tx, tz = b[0] - a[0], b[2] - a[2]
+        L = math.hypot(tx, tz) or 1.0
+        nl.append((-tz / L, tx / L))
+    for k, (side, mv, w) in moves.items():
+        pts[k][0] = round(pts[k][0] + side * nl[k][0] * mv, 4)
+        pts[k][2] = round(pts[k][2] + side * nl[k][1] * mv, 4)
+        widths[k] = w
+    print(f"[lm_intake] one-sided measured flares ({rel}): " + ", ".join(
+        f"{r['id']} {r['rows_moved']} row(s), far side in up to {r['far_narrowed_m_max']} m, line moved up to "
+        f"{r['line_moved_m_max']} m" for r in rep))
+    return pts, widths, rep
+
+
 def corner_flares_off(pts, widths, origin, entries):
     """THE DECLARED CORNERS' FLARES OFF (lm_intake.corner_flare_off; ledger 0079 round Q, Sand Creek). The source's widths
     stage (scripts.gps.widths_from_osm) sweeps a junction flare round a turn corner unless route.corner_flare_off declares
@@ -604,6 +695,11 @@ def intake(proj: Path, *, connectors: bool | None = None) -> dict:
     if li.get("corner_flare_off"):
         widths, flare_rep = corner_flares_off(pts, widths, local["origin"],
                                               (cfg.get("route") or {}).get("corner_flare_off") or [])
+    # ONE-SIDED MEASURED FLARES (lm_intake.flare_one_sided, a file of tools/flare_one_sided.py; ledger 0098; absent = the
+    # source's flares as traced): apply_flare_one_sided below
+    one_rep = None
+    if li.get("flare_one_sided"):
+        pts, widths, one_rep = apply_flare_one_sided(proj, str(li["flare_one_sided"]), pts, widths)
     # WIDTH STEPS TAPERED (lm_intake.width_taper, m of half-width per m along; absent = the widths as traced; ledger 0078
     # round 5). A traced width can jump in one station where the paved area takes in a gore or an apron (Milford s 2,604:
     # 12.2 -> 21.7 m in 3 m). The ribbon stays planar across such a row on any bank, but drive_test's wheel paths sit at
@@ -1317,6 +1413,9 @@ def intake(proj: Path, *, connectors: bool | None = None) -> dict:
             (data / ("connectors.local.json" + suf)).unlink(missing_ok=True)
         if li.get("connector_profiles"):
             apply_connector_profiles(proj, str(li["connector_profiles"]))
+        if li.get("grid_reach"):
+            # ledger 0098 (opt-in): the map-edge cut reached, after the profiles (tools/grid_reach.py); absent = as before
+            apply_grid_reach(proj, str(li["grid_reach"]))
         if li.get("connector_widths"):
             # ledger 0079 round H (opt-in lm_intake.connector_widths {street: m}): a street's width measured off NAIP where
             # OSM's is short (the config's doc carries the cross-sections); every point of the named street
@@ -1525,7 +1624,8 @@ def intake(proj: Path, *, connectors: bool | None = None) -> dict:
            "y_change_max_m": round(max((abs(d) for d in dy), default=0.0), 3),
            "connectors": bool(want_conn and conn.exists()), "bespoke_files": copied, "crossfall": cf_rep, "profile": prof_rep,
            "width_taper": taper_rep, **({"pad_widths": pad_rep} if pad_rep else {}),
-           **({"corner_flare_off": flare_rep} if flare_rep else {}), "resample": resample_rep, "edge_on_wall": wall_rep,
+           **({"corner_flare_off": flare_rep} if flare_rep else {}), **({"flare_one_sided": one_rep} if one_rep else {}),
+           "resample": resample_rep, "edge_on_wall": wall_rep,
            **({"edge_on_bank": bank_rep} if bank_rep else {}), "corner_arcs": arcs_rep, "carried": carried,
            **({"line_precomp": precomp_rep} if precomp_rep else {}),
            **({"edge_fit": edge_fit_rep} if edge_fit_rep else {}),

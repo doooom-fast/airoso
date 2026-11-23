@@ -556,7 +556,7 @@ def test_round_k_keys_are_opt_in():
         assert "signs_name_blades" not in cfg, t
     # round K's candidate (live since round R, 0.2.6: test_round_r_live_is_the_candidate)
     live = json.loads((SC / "track.config.json").read_text(encoding="utf-8"))
-    assert "race_rule" not in (live.get("kerb") or {}) and live["version"] == "0.2.8"
+    assert "race_rule" not in (live.get("kerb") or {}) and live["version"] == "0.2.9"
     sc = json.loads((SC / "source" / "round_k" / "track.config.json").read_text(encoding="utf-8"))
     assert sc["version"] == "0.2.6"
     assert sc["race"]["edge_fold_chord"] is True
@@ -915,6 +915,17 @@ def _drop(cfg, path):
 LIVE_0_2_8_KEYS = (("route", "edge", "grass_clearance"), ("route", "edge", "_grass_clearance_doc"),
                    ("route", "edge", "connector_grass_clearance"), ("route", "edge", "_connector_grass_clearance_doc"))
 
+# ledger 0098 (0.2.9, Kevin 2026-11-22): the map-edge cut reached, the one-sided measured flares, both lamp heads lit, the owned
+# asphalt and concrete
+LIVE_0_2_9_KEYS = (("route", "grid", "reach"), ("route", "grid", "_reach_doc"), ("lm_intake", "grid_reach"),
+                   ("lm_intake", "_grid_reach_doc"), ("route", "flare_one_sided"), ("route", "_flare_one_sided_doc"),
+                   ("lm_intake", "flare_one_sided"), ("lm_intake", "_flare_one_sided_doc"),
+                   ("scenery", "streetlights", "light_both_heads"), ("scenery", "streetlights", "_light_both_heads_doc"),
+                   ("texture_overrides", "1ROAD"), ("texture_overrides", "1KERB_SIDEWALK"))
+SHIP_0_2_9 = {"source/grid_reach.json", "source/flares_one_sided.lidar.json",
+              "assets/textures/asphalt_dense_diffuse.jpg", "assets/textures/asphalt_dense_normal.jpg",
+              "assets/textures/concrete_plain_diffuse.jpg", "assets/textures/concrete_plain_normal.jpg"}
+
 # ledger 0086 (0.2.7): every key the live config adds to, or changes from, round_k's candidate
 LIVE_0_2_7_KEYS = (("name",), ("_name_doc",), ("slug",), ("version",), ("install_folder",), ("_install_folder_doc",),
                    ("route", "mouth_returns"), ("route", "mouth_radii_file"),
@@ -932,7 +943,7 @@ def test_round_r_live_is_the_candidate():
     (race.corridor.whole_lap) and verify_kn5 runs both before (closure kn5) and after (--inis) the folder"""
     live = json.loads((SC / "track.config.json").read_text(encoding="utf-8"))
     cand = json.loads((SC / "source" / "round_k" / "track.config.json").read_text(encoding="utf-8"))
-    assert live["version"] == "0.2.8" and cand["version"] == "0.2.6"
+    assert live["version"] == "0.2.9" and cand["version"] == "0.2.6"   # 0.2.9: ledger 0098
     assert live["slug"] == live["install_folder"] == "sand_creek_raceway" and "LM" not in live["name"]
     assert [l["name"] for l in live["layouts"]] == ["Sand Creek Raceway", "Sand Creek Free Roam"]
     assert live["route"]["mouth_returns"] == ["grid_"] and live["route"]["verify_mouth_corners"] is True
@@ -940,7 +951,7 @@ def test_round_r_live_is_the_candidate():
     # verify_mouths_allowed: round_k's rows plus grid_tertiary_74's start (ledger 0086, 0.2.7)
     va, vk = live["route"].pop("verify_mouths_allowed"), cand["route"].pop("verify_mouths_allowed")
     assert va[:len(vk)] == vk and [(r["piece"], r["end"]) for r in va[len(vk):]] == [("grid_tertiary_74#0", "start")]
-    for k in LIVE_0_2_7_KEYS + LIVE_0_2_8_KEYS:
+    for k in LIVE_0_2_7_KEYS + LIVE_0_2_8_KEYS + LIVE_0_2_9_KEYS:
         _drop(live, k)
         _drop(cand, k)
     for l in live["layouts"] + cand["layouts"]:
@@ -949,7 +960,8 @@ def test_round_r_live_is_the_candidate():
     ship = json.loads((SC / "ship.json").read_text(encoding="utf-8"))
     ship_k = json.loads((SC / "source" / "round_k" / "ship.json").read_text(encoding="utf-8"))
     added = {"mouth_returns", "verify_mouth_corners", "source/mouth_radii.naip.json", "data/mouth_returns.json",
-             "data/verify_mouth_corners.json"}
+             "data/verify_mouth_corners.json"} | SHIP_0_2_9
+    ship["sync_in"]["_assets_doc"] = ship["sync_in"]["_assets_doc"].split("; ledger 0098:")[0]
     assert ship.keys() == ship_k.keys()
     for k, v in ship.items():
         if isinstance(v, dict):

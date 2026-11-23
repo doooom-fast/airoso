@@ -14,6 +14,25 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
+## 2026-11-22 (Mac) — COUNT FOLLOWS THE AUTHORED LENSES: check_lights_ini with both lamp heads lit; the sampling numbers of Sand Creek 0.2.9 (ledger 0098; no threshold moved)
+
+No gate threshold, tolerance, floor or bypass moved. All opt-in, Sand Creek only (`tests/tools/test_sand_creek_0098.py`
+`test_the_0098_keys_are_opt_in`):
+
+- `tools/check_lights_ini.py`: "the [LIGHT_N] count equals the lamp count" now reads "equals the lamp count times
+  `provenance.heads_lit`" (1 when absent, every track but Sand Creek). `tools/author_lamps_blend.py` records `heads_lit` 2
+  only with `scenery.streetlights.light_both_heads` (Kevin 2026-11-22: "Yes, light both heads"), when it lays the back
+  head's lens. Every other rule (one light per recorded lens, POS_TOL_M 0.05 m, no duplicate, no orphan, the same look on
+  every block) is unchanged and judges both lenses.
+- Numbers the change adds (none is a gate):
+  - ⚠ `tools/grid_reach.py` (the grid's map-edge cut reached): SNAP_M 1.5 m, TURN_MAX_DEG 60, VIA_NEAR_M 6 m, VIA_LOOK_M
+    150 m, MAX_WALK_M 4000 m [invented: walk geometry]; RESAMPLE_M 3 m = grid_connectors', EASE_M 30 m = trim's BLEND_M,
+    the lidar reading = tools/lidar_connector_profile's (RADIUS_M 1 m, MIN_RETURNS 3, its --surface rule, both
+    [invented] there); the stop x 1877.5 m = the grid's own east extent [measured on the grid].
+  - ⚠ `tools/flare_one_sided.py`: SEARCH_IN_M 1.5, SEARCH_OUT_M 1.5, FAR_PAST_M 3, MEDIAN_ROWS 5 [invented: sampling];
+    STEP_M 0.08 = tools/naip_edge's (round J, [invented] there), BIN_M / ALONG_M = tools/lidar_curb_trace's, BASE_REACH_M
+    25 m = ledger 0087's flare census.
+
 ## 2026-11-18 — REPORTED, NOT GATED: kn5_ground_check splits the walls lens; Milford's ground beside the road, the numbers it adds (ledger 0092; no threshold moved)
 
 No gate threshold, floor or bypass moved. All opt-in, Milford only (`tests/tools/test_milford_ground_0092.py`

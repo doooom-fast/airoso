@@ -55,17 +55,21 @@ def check(lights: dict, blocks: list[dict], streetlight_cfg: dict | None = None)
     """the verdict: {ok, n_lamps, n_lights, problems: [...], matched}"""
     heads = lights.get("lampheads") or []
     lenses = ((lights.get("provenance") or {}).get("lens_xyz")) or []
+    # ledger 0098 (opt-in at the author: scenery.streetlights.light_both_heads): a lamp may record two lit heads, and then
+    # every recorded lens is one light; absent = one per lamp, as before. No tolerance changes
+    per = int((lights.get("provenance") or {}).get("heads_lit", 1))
     problems: list[str] = []
     n_lamps, n_lights = len(heads), len(blocks)
-    if n_lights != n_lamps:
-        problems.append(f"{n_lights} [LIGHT_N] blocks for {n_lamps} lamps")
+    if n_lights != n_lamps * per:
+        problems.append(f"{n_lights} [LIGHT_N] blocks for {n_lamps} lamps" + (f" x {per} lit heads" if per != 1 else ""))
     nums = [b["n"] for b in blocks]
     if nums != list(range(len(nums))):
         problems.append("[LIGHT_N] numbering is not 0..n-1 in order")
     matched = 0
     if lenses:
-        if len(lenses) != n_lamps:
-            problems.append(f"provenance.lens_xyz has {len(lenses)} lenses for {n_lamps} lamps")
+        if len(lenses) != n_lamps * per:
+            problems.append(f"provenance.lens_xyz has {len(lenses)} lenses for {n_lamps} lamps"
+                            + (f" x {per} lit heads" if per != 1 else ""))
         # lens -> kn5: (x, y - drop, -z)
         want = [(float(l[0]), float(l[1]) - LIGHT_DROP_M, -float(l[2])) for l in lenses]
         cells: dict[tuple[int, int], list[int]] = {}
@@ -113,7 +117,8 @@ def check(lights: dict, blocks: list[dict], streetlight_cfg: dict | None = None)
                 problems.append(f"{k} differs between lights: {sorted(str(g) for g in got)[:4]}")
             elif v != "None" and next(iter(got)) != v:
                 problems.append(f"{k} = {next(iter(got))!r} on every light, the config says {v!r}")
-    return {"ok": not problems, "n_lamps": n_lamps, "n_lights": n_lights, "matched": matched, "problems": problems}
+    return {"ok": not problems, "n_lamps": n_lamps, "n_lights": n_lights, "matched": matched, "problems": problems,
+            **({"heads_lit": per} if per != 1 else {})}
 
 
 def main(argv=None) -> int:

@@ -210,3 +210,69 @@ Decided on his behalf, and given to the survey session to run without stopping:
 - **Colfax:** the 2022 state, per D8, with OSM's present bus-lane tags recorded beside it as changed and unsurveyed.
 - **Signs:** tagged per junction from OSM; nothing invented.
 - A refutation pass on a fresh sample per class before it is called done; Stout's covered 344 m declared unsurveyed.
+
+## The engine work for the first draft (Mac, 2026-11-23): PLAN §4 item 1 and §4b items 8, 10, 11
+
+Branch `claude/dgp-engine-20261123`, one of the four prep sessions Kevin asked for. No Denver geometry or config, no
+survey, no asset, nothing run on the PC. Manuals: `docs/INVENTORY.md`, `docs/COVERED-ROAD.md`. Gate record:
+`fleet/GATES-CHANGELOG.md` 2026-11-23 (Mac). Every tolerance is [invented].
+
+**What exists now**
+
+| Piece | Where | Opt-in by |
+|---|---|---|
+| Sign plates keep their UVs (item 8) | `SIGNFACE` in the prep's planar-UV and weld skip lists, both preps | the mesh's name |
+| Paint from an inventory, nothing by width, on the ribbon and the pads (item 10) | `tools/inventory.py`, `tools/author_paint_inventory_blend.py` (author step `paint_inventory`), `drop_bywidth_paint` in both preps | `inventory.paint.file` |
+| Present / nothing extra / covered, per class, with the grade shares (item 11) | `tools/inventory_gate.py` (gate step `inventory`) | `inventory.<class>.gate: true` |
+| A road under a roof (§4 item 1) | `scripts/geometry/covered_spans.py`, read by `drive_test` and `kn5_ground_check` | `capture.covered_spans` |
+
+**A finding that changes where the work lands.** Denver is an `lm-v4` track, so the prep that will run for it is the
+engine-july copy (`tracks/san-diego-lake-murray/engine-july-snapshot`), not airoso's `scripts/ac/build_kn5_loop.py`.
+Both carry the two prep changes. The snapshot's copy was edited here and its manifest and `PENDING-MIRROR.md5` updated
+by hand to the state `tools/snapshot_engine_july.py` would write (that tool needs the PC's Blender add-on folder). **The
+real engine-july on the PC does not have the change:** until it is mirrored (`cp`, md5 `07d23c05…`, refresh), a Denver
+run must point `ENG=` at the snapshot.
+
+**Proven on this Mac**
+
+- Tests: 46 new (`tests/tools/test_inventory_gates.py` 28, `tests/geometry/test_covered_spans.py` 14,
+  `tests/ac/test_sign_face_uv.py` 4), the pilot's `paint.json`, `poles.json` and `signs.json` as fixtures; every gate
+  verdict read from a kn5 file. The suite's 39 failures on this machine are the same 39 before and after (Windows paths,
+  bash 3.2, LFS files not smudged).
+- A track with no inventory and no covered span is untouched. The prep: Blender 5.1.2, main `bcef7339`'s prep against
+  this branch's on one scene, both engines, every output object digested; all identical but the `SIGNFACE` plate, whose
+  UVs were a line (u 1.5 to 1.69, v 30.0 on all four corners) and are now the authored 0 to 1. The gates: main's
+  `drive_test`, `audit_mesh` and `kn5_ground_check` against this branch's on nine synthetic tracks; printed output,
+  returned values and report files identical.
+- The paint step in real Blender: the pilot's inventory on a 395 m ribbon with one junction pad. It removed the
+  by-width `MARKINGS` and `YLINE`, kept the declared grid, and painted 88 of the 125 measured items (white 606 m, yellow
+  159 m of stripe) on both road meshes, 15 mm over them, read back at 0.00 mm. The other 37 had no road under them: my
+  test road is narrower than Colfax. Carried through the prep and a stand-in export, the paint gate then failed
+  *present* on 51 items (37 unpainted, 14 partly) and passed *nothing extra*: what it should say of a road built
+  narrower than the survey.
+
+**What only a chain run on the PC can prove**
+
+1. The Windows exporter: that `SIGNFACE` UVs survive into the kn5, and which way a plate's face is wound there (the
+   signs gate reads facing from the winding; tied here to `verify_kn5`'s up-face rule on a test kn5 only).
+2. The gates on a real kn5 set, per layout, and their run time on a 6.6 km lap (0.6 s on the 385 m pilot).
+3. That no installed track's gate results move: no cached build of any track is on this Mac. A `--dry-run` rehearsal
+   of one installed track on this branch against its last run.
+4. Blender 4.2: the scene runs above were on 5.1.2, the only Blender here.
+5. The covered span on the real Convention Center, and anything about how it looks or drives.
+
+**Owed, found on the way**
+
+- `pbr.TEXTURES` rows and the alpha test for each `SIGNFACE_<CODE>`, both engines: without one a plate is black (L7).
+- Lamps, signals and signs are gated against the inventory and still authored by rule (`plan_streetlights.py` every
+  55 m, `place_signs.py`). On Denver the lamps gate will read every one of those as extra until they are authored from
+  the inventory.
+- **`drive_test` does not see a column in the lane** when the column's mesh has vertices only at the road and at the
+  roof (its obstruction scan reads vertices 0.25 to 1.8 m up). True today on every track; it matters under the
+  Convention Center. Not changed here: it would move existing results.
+- With race and street layouts both, `split_exports_blend.py` sends every `YLINE*` to the street-only kn5. For E4 (the
+  race keeps the real paint) Denver's config needs `road_markings.center_yellow: false`.
+- 55 of the pilot's 308 paint items are untyped symbols and cannot be built as read; 128 more are `detected`. With
+  `build_grades: ["measured"]` the lap's paint would be 40.6 % of what the survey found.
+- The pilot's `signs.json` holds junction records with no positions: the signs gates have nothing to compare until a
+  survey gives posts.

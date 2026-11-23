@@ -245,6 +245,32 @@ def check(project_dir: str | Path, extra_kn5=(), stats: dict | None = None) -> d
             fails.append(f"{b}: {100*frac:.1f}% of sampled kn5 verts have no OBJ counterpart "
                          f"(worst {worst:.2f} m)")
 
+    # DECLARED COVERED SPANS (Denver Grand Prix PLAN 4 item 1, ledger 0096; opt-in: capture.covered_spans): the
+    # bridge exemption the other way up. Every kn5-internal check below looks for what is under something: ground
+    # under the deck, a foot under a post, a mast under a lamp head. Inside a declared span, what stands min_clear_m
+    # or more above the road is the roof's (its top, a light hung from its soffit) and is not read by them; what
+    # rises from the road is read as before. The fidelity half above has already run on every vertex. A track that
+    # declares no covered span builds no zone, and nothing below changes for it.
+    _cov = None
+    _cov_cfg = (cfg.get("capture") or {}).get("covered_spans")
+    if _cov_cfg:
+        from scripts.geometry import covered_spans as _covered
+        _fcp0 = project_dir / "data" / "finished_centerline.json"
+        if not _fcp0.exists():
+            fails.append("capture.covered_spans is declared but data/finished_centerline.json does not exist "
+                         "(the spans are stations along it)")
+        else:
+            _fc0 = json.loads(_fcp0.read_text())
+            _p0 = _fc0["points_xyz_m"] if isinstance(_fc0, dict) else _fc0
+            _w0 = (_fc0.get("widths_m") if isinstance(_fc0, dict) else None) or [7.0] * len(_p0)
+            _cy0, _sy0 = math.cos(yaw), math.sin(yaw)     # centreline -> kn5 frame, as the bridge spans below
+            _cov = _covered.zones_for(cfg, [(q[0] * _cy0 - q[2] * _sy0, q[1], q[0] * _sy0 + q[2] * _cy0) for q in _p0], _w0)
+    if _cov is not None:
+        kn5 = defaultdict(list, {b9: [q for q in pts9 if not _cov.point_overhead(*q)] for b9, pts9 in kn5.items()})
+        ghost = defaultdict(list, {b9: [q for q in pts9 if not _cov.point_overhead(*q, count=False)]
+                                   for b9, pts9 in ghost.items()})
+        kn5_road = kn5.get("1ROAD_MAIN", []) + kn5.get("1ROAD", [])
+
     # DOUBLE-SHEET TERRAIN: a healthy terrain is a single-valued heightfield (plus the border
     # skirt). Two grass surfaces >12 m apart in the same 2 m XZ cell = corruption (the phantom-clamp
     # class: summit nodes stamped with plains heights -> 570 m vertical curtains, "rainbow road").
@@ -316,6 +342,8 @@ def check(project_dir: str | Path, extra_kn5=(), stats: dict | None = None) -> d
         if _up9.startswith(("1ROAD", "1GRASS", "1KERB", "HWYSTRUCT")):
             for _t in range(0, len(_mi) - 2, 3):
                 _a, _b, _c = _mp[_mi[_t]], _mp[_mi[_t + 1]], _mp[_mi[_t + 2]]
+                if _cov is not None and _cov.tri_overhead(_a, _b, _c):
+                    continue        # the declared roof's own top: not ground, not a deck to stand on
                 _key9 = (int((_a[0] + _b[0] + _c[0]) / 3 // 8), int((_a[2] + _b[2] + _c[2]) / 3 // 8))
                 tri_sup[_key9].append((_a, _b, _c))
                 if _up9.startswith("HWYSTRUCT"):
@@ -323,6 +351,8 @@ def check(project_dir: str | Path, extra_kn5=(), stats: dict | None = None) -> d
                 tri_h[_key9].append((_a, _b, _c))
                 (tri_pav if _up9.startswith("1ROAD") else tri_grs)[_key9].append((_a, _b, _c))
             for _p in _mp:          # vertex index of the support surfaces (4 m bins) — see foot_sup
+                if _cov is not None and _cov.point_overhead(*_p, count=False):
+                    continue
                 sup_v[(int(_p[0] // 4.0), int(_p[2] // 4.0))].append(_p)
 
     # SUPPORT surfaces for the ROAD-OVER-GROUND gate (separate pass so it stays independent of the
@@ -338,11 +368,15 @@ def check(project_dir: str | Path, extra_kn5=(), stats: dict | None = None) -> d
         if _up9.startswith("1RUNOFF"):
             for _t in range(0, len(_mi) - 2, 3):
                 _a, _b, _c = _mp[_mi[_t]], _mp[_mi[_t + 1]], _mp[_mi[_t + 2]]
+                if _cov is not None and _cov.tri_overhead(_a, _b, _c):
+                    continue
                 _key9 = (int((_a[0] + _b[0] + _c[0]) / 3 // 8), int((_a[2] + _b[2] + _c[2]) / 3 // 8))
                 tri_grs[_key9].append((_a, _b, _c))
         elif _up9.startswith("HWYSTRUCT"):
             for _t in range(0, len(_mi) - 2, 3):
                 _a, _b, _c = _mp[_mi[_t]], _mp[_mi[_t + 1]], _mp[_mi[_t + 2]]
+                if _cov is not None and _cov.tri_overhead(_a, _b, _c):
+                    continue
                 _xs9 = (_a[0], _b[0], _c[0]); _zs9 = (_a[2], _b[2], _c[2])
                 for _ci9 in range(int(min(_xs9) // 8), int(max(_xs9) // 8) + 1):
                     for _cj9 in range(int(min(_zs9) // 8), int(max(_zs9) // 8) + 1):
@@ -733,6 +767,11 @@ def check(project_dir: str | Path, extra_kn5=(), stats: dict | None = None) -> d
         fails.append(f"road floating over ground: p95 gap {_p95:.3f} m > {ROAD_GAP_P95_M} m "
                      f"({100*frac:.1f}% of samples over {ROAD_GAP_M} m)")
 
+    if _cov is not None:
+        stats["covered_spans"] = _cov.report()
+        for _cr in stats["covered_spans"]:
+            print(f"  covered span {_cr['name']!r} ({_cr['from_m']:.0f}-{_cr['to_m']:.0f} m): {_cr['overhead_set_aside']} "
+                  f"vertices / triangles over the road set aside (min clear {_cr['min_clear_m']} m)")
     print(f"  => {'FAIL: ' + '; '.join(fails) if fails else 'PASS — kn5 matches the audited OBJs'}")
     return {"fail": bool(fails), "reasons": fails, **stats}
 

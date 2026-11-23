@@ -287,3 +287,32 @@ Files: `tracks/san-diego-lake-murray/source/college_r2/` (README there has the n
 - **Next:** stage B, on a scratch copy of `lm_phase2/project`: both carriageways, the bank and island, the two
   transitions, J1 tilted to its measured 6.08 % toward Waring as one change, then every consumer listed under "Bounded
   proof" step 5; stage C, a full rehearsal through the Mac's queue. No gate threshold changes.
+
+## Round 2, stage B step 1 (the PC, 2026-11-22): the split as road data; nothing in the build yet
+
+The design is in `tracks/san-diego-lake-murray/source/college_r2/STEP-DESIGN.md` (option B of `CONSUMERS.md`: two
+roads, each with its own line; the two ends are fork pads). The base is Lake Murray 0.20.4 (round 1c, ledger 0099),
+merged into `claude/lm-finish-r2-20261122`. The College step runs first in the author phase (college, `lamp_heads`,
+`walk_grade`, the race steps), so `walk_grade` grades the rebuilt walks like any other street's.
+
+- **Step 1, the data** (`college_split_data.py` -> `college_split.data.json`, `college_split.png`; no Blender), written
+  only into a scratch copy of the project. The mainline is the southbound road (345 vertices moved, v1131-1475, numbers
+  kept, up to 10.67 m west, 9.99 to 15.34 m wide); the northbound road is the piece `college_nb` (273 points, 8.36 to
+  13.8 m wide, up to 5.81 m over the southbound road); the bank between them is 0.35 m at the nose, up to 12.18 m, 0.30 m
+  at the tail. The lap `college` (mainline, the piece, mainline, two declared joins) stitches with the mainline's own
+  4,498 vertex numbers; Mission Gorge Speedway's lap is unchanged. Largest turn between 3 m segments 1.53 deg (the
+  built line: 1.08); largest grade step between segments 0.79 points (built: 0.57).
+- **The no-route gate does not cover the forks yet.** `race_lap.stitch` does not list the other carriageway at a fork
+  as a mouth of the lap ("MAINLINE beyond v1130" and "MAINLINE before v1476" are skipped, "the branch is the lap": its
+  probe 10 m past the fork row still stands on the lap's own pavement). The closures and probes that seal the
+  southbound road at the nose and the tail for Speedway, and the northbound piece's two ends for Speedway Reverse, are
+  declared by hand in step 4. **Until they are, a green no-route gate says nothing about those four openings.**
+- **`college_edges.json`: `built_from_m` / `built_to_m` are not edges.** They are the built road's extent floored to
+  the lidar's 0.5 m cells (they step by half a metre from station to station; a midline taken from them turns 5.9 deg
+  between segments). The built outer edge is half the centreline's width (ROAD's own edge column). Stage A's decision
+  to keep the built outer edges stands; nothing may read those two fields as the edge.
+- **The Speedway lane on the northbound road follows the real road** (the Mac, 2026-11-22): the corridor is narrowed
+  to the measured carriageway on that piece (8.36 m at its narrowest, against the 11.36 m it asks for elsewhere); the
+  road is not widened to fit the corridor, and a gate that cannot pass on the real width is reported, not loosened.
+- **The race on College:** built as decided above (each direction on its own carriageway); Kevin's answer on the board
+  wins if it differs.

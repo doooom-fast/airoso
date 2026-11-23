@@ -328,6 +328,16 @@
         "radius_m": 30.0,
         "why": "merge",
         "_doc": "Ledger 0070 D (2026-11-03): the slip (OSM primary_link 628649529, one lane, 5.5 m) leaves E 56th and merges into Sand Creek Dr at 26 deg; a merge has no crossing pavement, so no flare stands for one. 0.34.0 swept a 23 m junction flare here (E 56th x Sand Creek Dr, two distinct arterials) that fell to 7.8 m in 6 m at 2,546-2,552 m, under the start of ledger 0066's measured camber (2,540 m): 8 severe steps. With it off the slip keeps its own 5.5 m and ramps to Sand Creek Dr's 11 m over 2,550-2,580 m; the camber span keeps its 2,540 start. at = the lap's v846 on 0.34.0's line."
+      },
+      {
+        "name": "Dahlia St -> E 56th Ave (the dahlia_56th pad)",
+        "at": [
+          39.796478,
+          -104.933283
+        ],
+        "radius_m": 30.0,
+        "why": "the pad's measured deck paves the crossroads (route.corner_flare_off's rule: a corner joins when its authored pad exists)",
+        "_doc": "at = the lap's v780 (the pad's node) on this port's line. Round Q's scratch intake: v767-v787 re-laid 11.0 -> 23.5 m (the source's 42.3 m crest off); the PC re-ran tools/lm_engine_intake.corner_flares_off on data/centerline.local.json 2026-11-22: the same span, v770 42.3 -> 12.93, v780 -> 19.16, v786 27.67 -> 22.86"
       }
     ],
     "_corner_flare_off_doc": "scripts/gps/widths_from_osm.py: a declared node gets no corner flare (detect_turn_corners) and no junction flare within radius_m. The six route.fillet corners join this list when their authored junction pads exist (Kevin 2026-11-03: \"authored pad junctions\"; ledger 0070 \"Dressing\"): until then their flares stay, because without a pad the crossroads' outside corner would be unpaved.",
@@ -1497,19 +1507,8 @@
     "_doc": "tools/lm_engine_intake.py: the source track's projected line + widths + 3DEP grid, capture.bridges decks levelled and the road_profile grade net (Y only), into data/. connectors false: the pilot is the lap alone; the free roam's 106 grid streets need the LM chain's junction tools (route/trim connectors, weld_mouths, gap_mouths), owed (ledger 0078).",
     "heightfield": "port",
     "_heightfield_doc": "ledger 0079: the port's own 3DEP grid (data/heightfield.*, synced in): margin 470 m = 150 + 8 x 40 on the source's lattice (every one of the source grid's 5,400 samples is a sample of this one, 0.000 m apart), so the ground reaches the buildings within 450 m of the lap and the grid streets; fetched by scripts.elevation.heightfield.build_heightfield",
-    "corner_flare_off": [
-      {
-        "name": "Dahlia St -> E 56th Ave (the dahlia_56th pad)",
-        "at": [
-          39.796478,
-          -104.933283
-        ],
-        "radius_m": 30.0,
-        "why": "the pad's measured deck paves the crossroads (route.corner_flare_off's rule: a corner joins when its authored pad exists)",
-        "_doc": "at = the lap's v780 (the pad's node) on this port's line. Round Q's scratch intake: v767-v787 re-laid 11.0 -> 23.5 m (the source's 42.3 m crest off); the PC re-ran tools/lm_engine_intake.corner_flares_off on data/centerline.local.json 2026-11-22: the same span, v770 42.3 -> 12.93, v780 -> 19.16, v786 27.67 -> 22.86"
-      }
-    ],
-    "_corner_flare_off_doc": "ledger 0079 round Q (tools/lm_engine_intake.corner_flares_off) wired 2026-11-22 with dahlia_56th unparked (PC, claude/sc-finish-pc-20261122; the Mac: \"go ahead with lm_intake.corner_flare_off for Dahlia\"). sandcreek_quebec keeps its flare (v1937-1946, 34.2 m) for now",
+    "corner_flare_off": true,
+    "_corner_flare_off_doc": "ledger 0079 round Q (tools/lm_engine_intake.corner_flares_off) wired 2026-11-22 with dahlia_56th unparked (PC, claude/sc-finish-pc-20261122; the Mac: \"go ahead with lm_intake.corner_flare_off for Dahlia\"). sandcreek_quebec keeps its flare (v1937-1946, 34.2 m) for now. 2026-11-23 (PC): true = the switch; tools/lm_engine_intake.py runs corner_flares_off over route.corner_flare_off, the port's list, where the Dahlia corner now stands beside the slip's merge. 4b4ea1be had the corner in this key's place, so the switch was on and the corner never reached the list: the 0.2.9 rehearsal (903c3436) kept the source's 42.3 m crest and lm_pads refused dahlia_56th (the out-cut row v786 27.67 m wide, its north end 5 m past the measured bank top: 'the outline crosses itself through a seam row')",
     "tree_models": true,
     "_tree_models_doc": "ledger 0079: the source's TreeFX models (tracks/sand-creek/source/trees/*.bin, personal use, on the PC only) into the project",
     "connector_profiles": "source/connector_profiles.lidar.round_i.json",
@@ -2188,8 +2187,16 @@
             1112.66
           ],
           [
-            -887.75,
-            1127.86
+            -891.99,
+            1135.6
+          ],
+          [
+            -895.02,
+            1133.45
+          ],
+          [
+            -897.22,
+            1131.64
           ],
           [
             -900.0,
@@ -2228,7 +2235,7 @@
         "_by": "tools/pad_boxes.py from lm_pads.plan dahlia_56th: node v780 nearest [-909.8, 1119.8], cuts 30 m of arc before and 17 m after, box reach 30.6 m (half width 9.6 + curb return 15 + 6.0) [rule, invented pads], 1 street arm(s)",
         "deck_floor_m": 0.75,
         "_deck_floor_doc": "2026-11-22 (PC, claude/sc-finish-pc-20261122; tools/draft_pad_outline.py, opt-in per pad): class-2 points more than 0.75 m under the nearest lap vertex's height are left out of the deck's planes. A wet creek bank reads as dark as asphalt, so the road-intensity planes took the bank: dahlia_56th's old deck read 0.24 m (the 56th bridge's creek bed; round Q's 6.833 m seam residual and its 63 unfilled nodes), sandcreek_quebec's (round C) up to 5.97 m under the lap beside the Sand Creek bridge (v1946-1953, 3-17 m off the line). 0.75 m [invented, between the measured bounds]: the four built pads' decks stand at most 0.55 m under the lap (colorado_50th 0.55, 48th_colorado 0.47, 50th_dahlia 0.24, 50th_ash 0.21; lap minus deck inside each outline), the banks 1-6 m. With it: dahlia_56th 0.51 m max, sandcreek_quebec 0.78 m max (14,549 / 6,900 points left out)",
-        "_box_doc": "2026-11-22 (PC): tools/pad_boxes.py's box for cut_m [30, 17] (lm_pads.plan), its north side replaced by 56th's measured bank top, (-930.63, 1125.66) -> (-912.0, 1132.25) -> (-900.0, 1132.75) -> (-887.75, 1127.86) on the out-cut line: the last point every metre of x where the class-2 ground stands within 0.30 m [invented] of the road's own height (the median of N 1110-1120) before it falls to Sand Creek (scratchpad scq, the cached dahlia_56th.lidar.npz, nothing fetched). The rule's north-east corner (-893.29, 1137.97) stood 5-6 m over the bank, whose dark points the outline took as asphalt",
+        "_box_doc": "2026-11-22 (PC): tools/pad_boxes.py's box for cut_m [30, 17] (lm_pads.plan), its north side replaced by 56th's measured bank top, (-930.63, 1125.66) -> (-912.0, 1132.25) -> (-900.0, 1132.75) -> (-887.75, 1127.86) on the out-cut line: the last point every metre of x where the class-2 ground stands within 0.30 m [invented] of the road's own height (the median of N 1110-1120) before it falls to Sand Creek (scratchpad scq, the cached dahlia_56th.lidar.npz, nothing fetched). The rule's north-east corner (-893.29, 1137.97) stood 5-6 m over the bank, whose dark points the outline took as asphalt. 2026-11-23 (PC, after the 0.2.9 rehearsal at 903c3436): that north-east corner (-887.75, 1127.86) stood on the out-cut line INSIDE the lap's own row v786 (the unflared ribbon 22.863 m wide; its north end + route.edge's 0.3 m lip 8.83 m further along the line). The measurement unions the lap's ribbon into the outline (never clipped by a box), so the outline's run along the cut broke at that corner (a 0.22 m notch) and lm_pads' splice left the run's second half lying on the row: 'the outline crosses itself through a seam row'. Now the corner is the row's north end + the lip, (-891.99, 1135.6) on the cut line; the north side follows the lipped ribbon edge (v785's end (-895.02, 1133.45)) to where it meets the bank top (-897.22, 1131.64), then the bank top as before. No new number; nothing fetched. Re-measured: outline 1,596 m2 (was 1,593), the ribbon's 149.6 m2 the same, lap minus deck p50 -0.007 / max 0.442 m over v769-786 (was -0.007 / 0.439; the two decks differ by 0.011 m at most, the grid shifted with the outline's box)",
         "_unparked": "2026-11-22 (PC, the Mac's job; Kevin's calls-1122 go): ledger 0079 round Q's cause, measured: the lap runs on the ground to v784-v787 (lap minus lidar within 0.04 m from v760) and onto the 56th bridge over Sand Creek from v788 (no class-2 within 2 m; the auto bridge span [2324.4, 2478.0]). The old out-cut v791 (s 2358.9) stood on the bridge, so the deck there read the creek bed 6-7 m down. Now: cut_m [30, 17] -> cuts [769, 786] (v786 = the last row on the ground, 17.2 m past the node), the flare off (lm_intake.corner_flare_off, round Q's fix), the box's north side on the bank top, deck_floor_m 0.75. Re-measured on the PC's cache: outline 1,593 m2 (was 3,098), the lap's ribbon 149.6 m2 of it (was 1,405.9)"
       },
       {

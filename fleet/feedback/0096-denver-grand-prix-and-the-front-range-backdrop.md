@@ -110,4 +110,7 @@ Kevin to the cloud session: "You should have answers for those from the mac agen
   backdrop is built and driven on Denver first, Sand Creek's bake follows.
 - **Where Denver lives:** "New project for dgp"; on the page, "Its own bridge project: a dashboard and checks, files stay
   in airoso". The bridge dashboard is `denver-grand-prix`.
-- **E1–E4** (PLAN §4b: the lamp, sign and paint gates) were never put to him on the Mac. Still owed.
+- **E1–E4** (PLAN §4b: the lamp, sign and paint gates) were never put to him on the Mac.
+
+Kevin, directly in the cloud session, the same day: "Defaults for e1-4" · "New hairpin is good" · "Sc mountains after
+Denver". **Every decision in the plan is now answered.** Owed: the dossier, the far-clip test, the survey sources of §4b.

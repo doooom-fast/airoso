@@ -23,6 +23,7 @@
 > - **D2, the hairpin: "Use the real one-way route"** (his pick, 2026-11-23T01:47Z): Kalamath south across Colfax, left on
 >   W 14th Ave, Santa Fe Dr north, the northbound Kalamath to Speer (§2 Finding 1). The 13th Ave split street is dropped.
 > - **D7: "Mountains can be added to SC when Denver is done."** Sand Creek gets the backdrop after Denver, not first.
+> - Confirmed by Kevin directly in the cloud session afterwards: "New hairpin is good" · "Sc mountains after Denver".
 > - **Where the files live: "Its own bridge project: a dashboard and checks, files stay in airoso."**
 
 **Eight questions. "Defaults" is a complete answer.** Ordered by what they hold up first.
@@ -237,6 +238,10 @@ reader; 10. paint from an inventory in place of paint by width, on the junction 
 **Targets for the lap's corridor** (the free-roam grid gets the same tools at a lower bar): paint 100 % `measured`;
 streetlights and signal masts ≥ 95 % `measured`; every regulatory sign the lap's junctions require present, grade as the
 sources allow. The numbers are proposals [invented] until the first survey shows what the sources give.
+
+> **DECIDED 2026-11-23 (Kevin): "Defaults for e1-4".** Hard gates for Denver, opt-in elsewhere until proven (E1);
+> signals modelled, lit steady at night, no cycle (E2); Mapillary first if its licence allows, and his own captures
+> (E3); the race layout keeps the real paint, signs and lights, with the start line and grid added (E4).
 
 **Four questions. "Defaults" is a complete answer.**
 

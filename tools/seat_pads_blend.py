@@ -14,6 +14,12 @@ Self-check, exit 1 and the blend not saved: a pad that keeps no ground triangle,
 Ledger 0092 round 2: a rebuilt vertex the self-check would fail because a fold of the ground (a second triangle mm over
 the piece it was cut from) stands over it is first raised onto the higher piece, by at most pad_clip.FOLD_MAX_M (10 mm);
 more than that is real ground through the pad, and the self-check stops the build as before.
+Ledger 0100 item 6 (opt-in, scenery.bespoke.pads_shade "smooth"; Milford only): the rebuilt pad is shaded smooth, so the kn5
+writer shares each vertex's corners (scripts/ac's vendored exporter keeps one vertex per position + loop normal + UV +
+tangent: flat-shaded, every triangle carries its own three, 3.0 writer vertices a triangle on Milford 0.1.13's 20 aprons).
+The vertices, faces, heights, UVs and the self-check are the flat build's exactly; only the shading normals change, from
+each ground piece's own plane to the AREA-weighted mean of the pieces meeting at a vertex (pad_clip.area_normals, set as
+custom normals; the 1GRASS ground under the pads is smooth-shaded already). Absent = flat, as before.
 
     blender --background --python-exit-code 1 --python tools/seat_pads_blend.py -- <prepped.blend> --project <proj>
 """
@@ -47,6 +53,10 @@ def main():
         print("[seat-pads] no scenery.bespoke.pads_seat: nothing to do")
         return
     surface = bes.get("pads_surface")
+    smooth = bes.get("pads_shade") == "smooth"           # ledger 0100 item 6 (opt-in): shared corners
+    if bes.get("pads_shade") not in (None, "flat", "smooth"):
+        print(f"[seat-pads] FATAL: scenery.bespoke.pads_shade {bes.get('pads_shade')!r} (flat | smooth)")
+        sys.exit(1)
     bpy.ops.wm.open_mainfile(filepath=str(blend))
     pads = [o for o in bpy.data.objects if o.type == "MESH" and o.name.startswith("PADAPRON_")]
     grounds = [o for o in bpy.data.objects if o.type == "MESH" and o.name.upper().startswith("1GRASS")]
@@ -103,7 +113,7 @@ def main():
             bad.append(f"{ob.name}: no ground triangle in its footprint")
             continue
         me = bpy.data.meshes.new(ob.data.name + "_seated")
-        me.from_pydata(verts, [], faces, shade_flat=True)
+        me.from_pydata(verts, [], faces, shade_flat=not smooth)
         # the cell cuts split one ground plane into many pieces: merge each plane's pieces back (coplanar only, so no
         # vertex moves and no height changes), then triangulate
         bm = bmesh.new()
@@ -113,6 +123,8 @@ def main():
         bmesh.ops.triangulate(bm, faces=bm.faces[:])
         bm.to_mesh(me)
         bm.free()
+        if smooth:                                       # ledger 0100 item 6: every face smooth, no sharp edge
+            me.polygons.foreach_set("use_smooth", [True] * len(me.polygons))
         verts = [tuple(v.co) for v in me.vertices]
         # ledger 0092 round 2: a vertex over a fold of the prepped ground (a second ground triangle mm over the piece it was
         # cut from, at no shared vertex) is raised onto the higher piece, by up to pad_clip.FOLD_MAX_M; only a vertex the
@@ -133,6 +145,14 @@ def main():
         for m in ob.data.materials:
             me.materials.append(m)
         me.validate(); me.update()
+        if smooth:
+            # ledger 0100 item 6: every vertex's normal the AREA-weighted mean of its faces' (pad_clip.area_normals), set as the
+            # custom normal of all its corners: one normal per vertex, so the writer shares its corners, and a clipping sliver
+            # cannot tip it (Blender's angle weighting did, up to 75 deg, on 0.1.5's ride pad)
+            if hasattr(me, "use_auto_smooth"):            # Blender < 4.1 reads custom normals only under auto smooth
+                me.use_auto_smooth = True
+            me.normals_split_custom_set_from_vertices(pc.area_normals(verts, [tuple(p.vertices) for p in me.polygons]))
+            me.update()
         old = ob.data
         ob.data = me
         bpy.data.meshes.remove(old)
@@ -150,9 +170,10 @@ def main():
         if len(verts) >= 65535:
             bad.append(f"{ob.name}: {len(verts)} verts, over AC's 65,535 per mesh")
         report.append({"pad": name0, "name": ob.name, "tris": len(me.polygons), "verts": len(verts), "ground_over": over,
-                       **({"fold_raised": raised, "fold_worst_m": round(worst, 4)} if raised else {})})
+                       **({"fold_raised": raised, "fold_worst_m": round(worst, 4)} if raised else {}),
+                       **({"shade": "smooth"} if smooth else {})})
         print(f"[seat-pads] {name0} -> {ob.name}: {len(me.polygons)} triangles on the ground, {len(verts)} verts, ground over 0 / "
-              f"{len(verts)}" if not over else f"[seat-pads] {ob.name}: ground over {over}")
+              f"{len(verts)}" + (", smooth (corners shared)" if smooth else "") if not over else f"[seat-pads] {ob.name}: ground over {over}")
     (proj / "data" / "seat_pads.json").write_text(json.dumps({"lift_m": PAD_LIFT_M, "surface": surface,
                                                                "pads": report}, indent=1), encoding="utf-8")
     if bad:

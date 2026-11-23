@@ -61,3 +61,29 @@ def lift_over_folds(verts, top, lift, tol=1e-3, cap=FOLD_MAX_M):
             raised += 1
         out.append((x, y, z))
     return out, raised, worst
+
+
+def area_normals(verts, faces):
+    """(ledger 0100 item 6, opt-in pads_shade "smooth") one unit normal per vertex: the AREA-weighted mean of the normals of
+    the faces meeting there (sum of each face's cross product, which is twice its area along its normal). Blender's own
+    smooth normals weight by corner ANGLE, so a clipping sliver (a ground fold's 1-2 mm2 triangle standing 60-90 deg) with a
+    near-180 deg corner tipped its vertex 47-75 deg on Milford 0.1.5's ride pad; by area it weighs nothing. A vertex no face
+    reaches (none in a rebuilt pad) gets straight up. faces: vertex-index tuples, counter-clockwise from above."""
+    acc = [[0.0, 0.0, 0.0] for _ in verts]
+    for f in faces:
+        p0 = verts[f[0]]
+        for k in range(1, len(f) - 1):
+            p1, p2 = verts[f[k]], verts[f[k + 1]]
+            ux, uy, uz = p1[0] - p0[0], p1[1] - p0[1], p1[2] - p0[2]
+            vx, vy, vz = p2[0] - p0[0], p2[1] - p0[1], p2[2] - p0[2]
+            cx, cy, cz = uy * vz - uz * vy, uz * vx - ux * vz, ux * vy - uy * vx
+            for i in (f[0], f[k], f[k + 1]):
+                a = acc[i]
+                a[0] += cx
+                a[1] += cy
+                a[2] += cz
+    out = []
+    for a in acc:
+        n = (a[0] * a[0] + a[1] * a[1] + a[2] * a[2]) ** 0.5
+        out.append((0.0, 0.0, 1.0) if n == 0 else (a[0] / n, a[1] / n, a[2] / n))
+    return out

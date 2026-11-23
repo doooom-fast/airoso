@@ -126,7 +126,16 @@ def test_milford_rails_are_the_inventory_lines():
             assert "[measured]" in r["_source"]
             continue
         gid = r["key"].split("_")[0]
-        assert r["polyline_lonlat"] == lines[gid], r["key"]
+        if r["key"] == "t3_s1000_apron_back":
+            # ledger 0100 item 1 (Kevin: "Move the start 0.2 m"): T3's traced start moved 0.200 m off the lane, inside
+            # NAIP 2022's 0.5 m pixel; every other point is the inventory's
+            assert r["polyline_lonlat"][1:] == lines[gid][1:], r["key"]
+            (a0, b0), (a1, b1) = r["polyline_lonlat"][0], lines[gid][0]
+            m_lat = 111132.954 - 559.822 * math.cos(2 * math.radians(b1))
+            m_lon = 111412.84 * math.cos(math.radians(b1)) - 93.5 * math.cos(3 * math.radians(b1))
+            assert 0.195 <= math.hypot((a0 - a1) * m_lon, (b0 - b1) * m_lat) <= 0.205, r["key"]
+        else:
+            assert r["polyline_lonlat"] == lines[gid], r["key"]
         assert "[invented" in r["_source"]            # the heights say they are not measured
         assert "LIDAR (ledger 0082 pass 2)" in r["_source"]   # ... and why the 2017 lidar could not measure them
 

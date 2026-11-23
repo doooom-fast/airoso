@@ -307,3 +307,54 @@ Order of work from here (replaces 3 to 5 above):
 4. Ground (the bank, the east side cut, the old island's fill), lamps; then the data into the workshop and the chain's
    race steps, with the fork closures and probes declared.
 5. A full rehearsal through the Mac's queue.
+
+## Step 3, the plan (read 2026-11-23, before code)
+
+What stands on the old middle, and who made it (`tools/author_median_blend.py`, ledger 0037 / 0055):
+
+| Thing | Where it lives | Shape |
+|---|---|---|
+| Island curb | joined into `CURB` | a ring of six vertices per station about the line: base at +-3.50 (0.02 under the road), top at +-3.46 and +-3.35 (0.18 over it); four bands of quads between rings; a nose tapers over 3 stations to a half width of 0.25 m and is capped |
+| Island top | joined into `TERRAIN` (grass) | two vertices per station at +-3.28, 0.185 over the road; one quad per segment |
+| Barrier | joined into `GUARDRAIL` | a box beam 0.24 m wide from 0.45 to 0.75 m over the curb top on the line, posts every 8 m or so; only on islands of 120 m or more, and not within 3 stations of an end |
+| Shrubs | joined into `SCRUB` | two crossed quads per clump, one clump every 3.2 m or more, on the top |
+| Street-only pieces | `1KERB_sidewalk_streetonly_median`, `1WALL_guard_streetonly_median` | the same curb and beam over v1253-1379, where the race layouts cross (the chicane `college_split`) |
+| Paint | `MARKINGS`, `YLINE` | loose quads per segment: double yellow at +-0.09, white edge lines 0.55 m inside each edge, dashed white dividers every 3.65 m from the line (3 m on, 9 m off, by station), 0.015 over the road |
+| Walks | `CURB` | four vertices per station per side: lane edge, curb top (0.08 out, 0.14 up), walk back (1.8 m), lip (1.2 m further, 0.10 under the line). Not addressable by index on College (the strip's numbering is shifted by the mouth welds): by position |
+| Lamps | `LIGHTPOST_3`, `LIGHTPOST_4`, `LIGHTS_0` | posts stand in the two walk strips, none on the median; their arms reach over the road |
+
+So on the old median stood: the barrier, the shrubs and the street-only pieces. No lamp post. Signs are re-authored by
+the chain every run (the `signs` step) from the road's data.
+
+Step 3a, the old middle out (everything by position in the built line's frame):
+
+- `CURB`: the island's faces on the segments between rows v1116 and v1476; the two islands that stay (to v1116, from
+  v1476) get the tool's own nose: their last three rows taper to a half width of 0.25 m and are capped.
+- `TERRAIN`: the island top's faces on the same segments (and the three tapered rows' top vertices follow the taper).
+- `GUARDRAIL`: the College island's beam and posts from row v1114 on (the island that stays to the south keeps its beam
+  up to three rows before its new end); all of it north of v1475 (the island left there is 24 m, under the 120 m rule).
+- `SCRUB`: every clump on the old island between v1114 and v1478.
+- the two street-only objects, whole (their span is the chicane's, which goes).
+- `YLINE` and `MARKINGS`: every quad with both ends on rows v1130..v1476.
+
+Step 3b, the new middle and the east side:
+
+- **The bank's island** into `CURB`, rows v1173..v1443: the same six-vertex ring, its west side on the southbound
+  road's inner edge and its east side on the northbound road's (each side at its own road's height); at v1172 and
+  v1444, where the two roads meet in a point, a fan of five faces from that point up to the first ring (a pointed nose
+  that rises from the road). **The bank's top** into `TERRAIN`: one quad per segment between the two curb tops.
+- **The east walk** in `CURB`: its vertices on rows v1131..v1475 rise with the road's east edge (the same amount as
+  ROAD's east vertex of that row); its section does not change, so `walk_grade` finds its lips. The west walk is not
+  touched.
+- **The barrier** into `GUARDRAIL`: the tool's beam and posts, standing at the top of the bank just behind the
+  northbound road's inner curb, rows v1176..v1440. A car that leaves the northbound road toward the bank meets it; the
+  southbound road's inner edge has rising ground behind its curb and needs none.
+- **Shrubs** into `SCRUB`, on the bank, by the tool's own rule (one clump every 3.2 m or more).
+- **Paint**: the forks keep the built pattern on the tilted surface, the double yellow bending to the point where the
+  roads part. Each road of the split is one-way: a solid yellow line 0.55 m inside its median edge, a solid white one
+  0.55 m inside its outer edge, dashed white dividers every 3.65 m counted from the yellow, none closer than 2.4 m to
+  the white edge line [invented: lanes are not measured yet; the 10 cm aerial work replaces this].
+
+Left for step 4: the ground under and beside all this (the old ground inside the bank's footprint, the east side's cut
+up to the raised walk, the fill of the old island in the forks), the east lamps and `data/lights.local.json`, then the
+data into a workshop and the chain's own steps.

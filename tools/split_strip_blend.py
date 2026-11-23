@@ -8,6 +8,12 @@ at most PIECE_VERTS vertices, named with the AC name the prep would give it (1KE
 leaves an AC name as it is, pbr binds the 1KERB_SIDEWALK row, the physics stay KERB). Nothing moves. A strip under the
 cap is left alone (the prep does what it always did). Opt-in: a track lists the draft step `split_strip` last.
 
+BALANCED (opt-in track.config.json `route.split_strip_balanced` true; ledger 0098, Sand Creek 0.2.9): a strip that also
+carries the side streets' strips has no single row layout, so its faces are tiled by recursive MEDIAN bisection of their
+centres along the group's longer horizontal extent (the prep's own balanced_face_tiles rule for the terrain) until every
+piece holds at most PIECE_VERTS vertices; the same names, the same checks. Sand Creek 0.2.9's strip (E 56th's 2.5 km and
+13 new mouths' returns) left one of the prep's equal-width bands at 67,258 vertices, and the prep refused it.
+
     blender --background --python-exit-code 1 --python tools/split_strip_blend.py -- <project-dir>
 """
 from __future__ import annotations
@@ -46,6 +52,9 @@ def main():
     if n <= CAP:
         print(f"[split-strip] CURB has {n} vertices (<= {CAP}): left to the prep")
         return
+    cfg = json.loads((proj / "track.config.json").read_text(encoding="utf-8"))
+    if (cfg.get("route") or {}).get("split_strip_balanced") is True:
+        return balanced(ob, n)
     if conns:
         raise SystemExit("[split-strip] FATAL: connectors in CURB (the row layout below is the mainline's alone)")
     if n != lay["_curb_total"]:
@@ -87,4 +96,64 @@ def main():
     bpy.ops.wm.save_as_mainfile(filepath=str(proj / "loop.blend"))
 
 
+def balanced_groups(centres, face_verts, cap):
+    """face-index groups, each touching at most ``cap`` unique vertices: recursive median bisection of the face centres
+    along the group's longer horizontal extent (ties by the other axis, then the index). Pure python"""
+    out = []
+
+    def nverts(fs):
+        return len({v for f in fs for v in face_verts[f]})
+
+    def rec(fs):
+        if len(fs) < 2 or nverts(fs) <= cap:
+            out.append(fs)
+            return
+        xs = [centres[f][0] for f in fs]
+        zs = [centres[f][1] for f in fs]
+        ax = 0 if (max(xs) - min(xs)) >= (max(zs) - min(zs)) else 1
+        o = sorted(fs, key=lambda f: (centres[f][ax], centres[f][1 - ax], f))
+        h = len(o) // 2
+        rec(o[:h])
+        rec(o[h:])
+    rec(list(range(len(face_verts))))
+    return out
+
+
+def balanced(ob, n):
+    me = ob.data
+    groups = balanced_groups([(p.center[0], p.center[1]) for p in me.polygons], [tuple(p.vertices) for p in me.polygons],
+                             PIECE_VERTS)
+    gid = [0] * len(me.polygons)
+    for k, g in enumerate(groups):
+        for f in g:
+            gid[f] = k
+    pieces = []
+    for k in range(len(groups)):
+        bm = bmesh.new(); bm.from_mesh(me)
+        bm.faces.ensure_lookup_table()
+        kill = [f for f in bm.faces if gid[f.index] != k]
+        bmesh.ops.delete(bm, geom=kill, context="FACES")
+        loose = [v for v in bm.verts if not v.link_faces]
+        bmesh.ops.delete(bm, geom=loose, context="VERTS")
+        nm = bpy.data.meshes.new(f"{NAME}{k}")
+        bm.to_mesh(nm); bm.free()
+        for m in me.materials:
+            nm.materials.append(m)
+        o2 = bpy.data.objects.new(f"{NAME}{k}", nm)
+        for c in ob.users_collection:
+            c.objects.link(o2)
+        o2.matrix_world = ob.matrix_world.copy()
+        pieces.append((o2.name, len(nm.vertices), len(nm.polygons)))
+    if any(v > CAP for _, v, _ in pieces):
+        raise SystemExit(f"[split-strip] FATAL: a piece over the cap: {pieces}; loop.blend not saved")
+    if sum(f for *_, f in pieces) != len(me.polygons):
+        raise SystemExit("[split-strip] FATAL: the pieces do not hold every strip face once; loop.blend not saved")
+    nf = len(me.polygons)
+    bpy.data.objects.remove(ob, do_unlink=True)
+    print(f"[split-strip] CURB ({n} vertices, {nf} faces, side streets' strips with it) tiled by median bisection into "
+          f"{len(pieces)} pieces: " + ", ".join(f"{nm} ({v} v)" for nm, v, _ in pieces) + "; saved loop.blend")
+    bpy.ops.wm.save_as_mainfile(filepath=str(PROJ / "loop.blend"))
+
+
+PROJ = Path(sys.argv[sys.argv.index("--") + 1]) if "--" in sys.argv else None
 main()

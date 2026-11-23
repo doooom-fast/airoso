@@ -23,7 +23,8 @@
       "islands",
       "paint",
       "ground_patch",
-      "lamps"
+      "lamps",
+      "split_strip"
     ],
     "author": [
       "race_bands",

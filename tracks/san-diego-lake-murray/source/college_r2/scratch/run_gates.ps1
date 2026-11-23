@@ -1,7 +1,9 @@
-# After run_full.ps1 (the road kn5 is exported): the chain's street gates and the Speedway's (race_cw, on the lap `college`:
-# the layout that drives College's northbound road), by tools/ship_track.sh's own commands. A gate's exit code is printed,
-# never a reason to stop: every gate is read. One Blender at a time, below normal. Not run here: race_acw and the north
-# layouts' gates, the whole of verify_kn5, the AI lines, TreeFX, the track folder: those are the rehearsal's.
+# After run_full.ps1 (the road kn5 is exported): the chain's street gates, the Speedway's (race_cw, on the lap `college`:
+# the layout that drives College's northbound road) and the north lap's (north_cw, on the lap `north`: Waring, Princess
+# View, Mission Gorge and Jackson north, with Mission Gorge's median as its closed side; added 2026-11-23 for ledger 0099
+# round 3), by tools/ship_track.sh's own commands. A gate's exit code is printed, never a reason to stop: every gate is
+# read. One Blender at a time, below normal. Not run here: race_acw and north_acw, the whole of verify_kn5, the AI
+# lines, TreeFX, the track folder: those are the rehearsal's.
 #   powershell -File run_gates.ps1 -Ws <workshop> -Eng <an engine-july copy> [-From <step>] [-To <step>] [-Log <dir>]
 param([Parameter(Mandatory = $true)][string]$Ws, [Parameter(Mandatory = $true)][string]$Eng, [string]$From = "export_street", [string]$To = "",
       [string]$Air = "", [string]$Log = "", [string]$Blender = "C:\Program Files\Blender Foundation\Blender 4.2\blender.exe")
@@ -10,7 +12,8 @@ if (-not $Log) { $Log = "$Ws\_scratch_log" }
 $slug = "san_diego_lake_murray"
 New-Item -ItemType Directory -Force $Log | Out-Null
 $order = @("export_street", "road_obj", "ground_check_street", "drive_street", "audit_street",
-           "export_race_college", "export_closure_race_cw", "obj_race_cw", "drive_race_cw", "audit_race_cw", "no_route_race_cw", "ground_check_race_cw")
+           "export_race_college", "export_closure_race_cw", "obj_race_cw", "drive_race_cw", "audit_race_cw", "no_route_race_cw", "ground_check_race_cw",
+           "export_race_north", "export_closure_north_cw", "obj_north_cw", "drive_north_cw", "audit_north_cw", "no_route_north_cw", "ground_check_north_cw")
 $start = [array]::IndexOf($order, $From)
 $stop = if ($To) { [array]::IndexOf($order, $To) } else { $order.Count - 1 }
 if ($start -lt 0 -or $stop -lt 0) { "no such step; the steps: $($order -join ', ')"; exit 2 }
@@ -49,4 +52,11 @@ Gate "drive_race_cw" "python" @("-m", "scripts.geometry.drive_test", $Ws, "--lay
 Gate "audit_race_cw" "python" @("-m", "scripts.geometry.audit_mesh", $Ws, "--layout", "race_cw") 18 $Air
 Gate "no_route_race_cw" "python" @("tools/no_route.py", $Ws, "--layout", "race_cw") 12 $Air
 Gate "ground_check_race_cw" "python" @("-m", "scripts.ac.kn5_ground_check", $Ws, "--kn5", "$Ws\build\${slug}_race_college.kn5", "--kn5", "$Ws\build\${slug}_closure_race_cw.kn5", "--json", "$Ws\data\kn5_ground_check.race_cw.json") 14 $Air
+Export "export_race_north" "loop_race_north.blend" "${slug}_race_north.kn5"
+Export "export_closure_north_cw" "loop_closure_north_cw.blend" "${slug}_closure_north_cw.kn5"
+Gate "obj_north_cw" "python" @("-m", "scripts.modkit.kn5_to_gate_obj", $Ws, "--kn5", "$Ws\build\$slug.kn5", "--kn5", "$Ws\build\${slug}_race_north.kn5", "--kn5", "$Ws\build\${slug}_closure_north_cw.kn5", "--out", "$Ws\data\track.north_cw.obj") 3 $Air
+Gate "drive_north_cw" "python" @("-m", "scripts.geometry.drive_test", $Ws, "--layout", "north_cw") 40 $Air
+Gate "audit_north_cw" "python" @("-m", "scripts.geometry.audit_mesh", $Ws, "--layout", "north_cw") 18 $Air
+Gate "no_route_north_cw" "python" @("tools/no_route.py", $Ws, "--layout", "north_cw") 12 $Air
+Gate "ground_check_north_cw" "python" @("-m", "scripts.ac.kn5_ground_check", $Ws, "--kn5", "$Ws\build\${slug}_race_north.kn5", "--kn5", "$Ws\build\${slug}_closure_north_cw.kn5", "--json", "$Ws\data\kn5_ground_check.north_cw.json") 14 $Air
 "DONE"

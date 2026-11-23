@@ -1,7 +1,7 @@
 {
  "file": "D:\\k10-scratch\\lm_line\\build\\san_diego_lake_murray_closure_north_acw.kn5",
  "version": 5,
- "file_bytes": 4697549,
+ "file_bytes": 4695901,
  "textures": [
   {
    "name": "concrete_barrier_diffuse.png",
@@ -240,13 +240,13 @@
    "surface": "WALL",
    "renderable": true,
    "radius_m": 1041.5,
-   "area_m2": 7375.8,
+   "area_m2": 7374.1,
    "edge_p10_m": 0.12,
    "edge_med_m": 2.997,
-   "edge_p90_m": 3.064,
+   "edge_p90_m": 3.061,
    "grid_m": 1.001,
    "bbox_m": [
-    1755.5,
+    1755.4,
     81.6,
     1119.3
    ]
@@ -291,21 +291,21 @@
   },
   {
    "name": "1WALL_race_close_nacw_nose_1452_0",
-   "verts": 340,
-   "tris": 396,
+   "verts": 324,
+   "tris": 376,
    "matid": 4,
    "surface": "WALL",
    "renderable": true,
-   "radius_m": 9.2,
-   "area_m2": 62.1,
+   "radius_m": 8.9,
+   "area_m2": 60.0,
    "edge_p10_m": 0.12,
-   "edge_med_m": 0.965,
-   "edge_p90_m": 1.014,
-   "grid_m": 0.56,
+   "edge_med_m": 0.983,
+   "edge_p90_m": 1.031,
+   "grid_m": 0.565,
    "bbox_m": [
-    6.2,
+    6.0,
     1.2,
-    17.7
+    17.1
    ]
   },
   {
@@ -348,21 +348,21 @@
   },
   {
    "name": "1WALL_race_close_nacw_nose_717_0",
-   "verts": 308,
-   "tris": 356,
+   "verts": 292,
+   "tris": 336,
    "matid": 7,
    "surface": "WALL",
    "renderable": true,
-   "radius_m": 8.3,
-   "area_m2": 56.1,
+   "radius_m": 7.9,
+   "area_m2": 53.7,
    "edge_p10_m": 0.12,
-   "edge_med_m": 0.972,
-   "edge_p90_m": 1.021,
-   "grid_m": 0.561,
+   "edge_med_m": 0.988,
+   "edge_p90_m": 1.036,
+   "grid_m": 0.565,
    "bbox_m": [
-    7.3,
+    7.0,
     1.2,
-    15.4
+    14.7
    ]
   },
   {
@@ -428,26 +428,26 @@
  ],
  "summary": {
   "meshes": 11,
-  "verts": 43964,
-  "tris": 54636,
+  "verts": 43932,
+  "tris": 54596,
   "textures": 2,
   "texture_bytes": 2431043,
   "materials": 11,
   "surfaces": {
    "WALL": {
     "meshes": 11,
-    "verts": 43964,
-    "tris": 54636,
-    "area_m2": 26760.9,
+    "verts": 43932,
+    "tris": 54596,
+    "area_m2": 26754.7,
     "invisible": 0,
-    "edge_med_m": 2.935,
+    "edge_med_m": 2.937,
     "grid_m": 0.987
    }
   },
   "shaders_by_tris": {
    "ksPerPixelMultiMap": {
     "meshes": 11,
-    "tris": 54636
+    "tris": 54596
    }
   },
   "near_vert_cap": [],

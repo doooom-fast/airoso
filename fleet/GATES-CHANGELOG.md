@@ -14,6 +14,106 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
+## 2026-11-23 (PC) — WIRING: scenery.treefx.median_spots gets a third list, "move"; one new refusal, no threshold moved (ledger 0099 round 3, item 2; opt-in, Lake Murray)
+
+Mission Gorge's island was corrected to the lidar's faces, so six median spots the lidar saw a real plant at no longer
+stand on its deck. The Mac (2026-11-23): "a real plant the lidar saw is never dropped because the island moved under
+it." `tools/make_treefx.py` reads a `move` list beside `drop` and `foot_y` (in the config or in the lists' own files):
+the spot is planted at `to_x` / `to_z` with everything else it has. What it checks, as for the other two lists: the
+index exists, the entry's own x / z are the spot's (a list made for another draft is refused), no index is declared
+twice across the three lists. One new refusal: a move over MEDIAN_SPOT_MOVE_MAX_M = 5.0 m **[invented]** (a plant top
+within 2 m of the spot, carried by the largest shift an island was given, 2.93 m) is "another plant's place, not this
+one's". The move is applied after the measured heights are read, so that file's own check of every spot's place still
+holds and the spot keeps its own lidar height.
+
+What this does to gates: verify_race G (no trunk in a lane or a wall) reads the same plan, so it judges the plant where
+it is planted. That gate is how the need showed: on the scratch chain one such spot, left where it stood, read 0.015 m
+inside the anticlockwise north lap's closure, and the run stopped there (red, not forced). Absent (every other track)
+= nothing changes; the report gains `"moved"` only where the list is used. Teeth: tests/tools/test_make_treefx_plan.py
+(`test_median_spots_move_plants_the_spot_at_its_new_place_with_everything_else_it_has`), tests/tools/test_mg_median_0099.py
+(every moved spot has a plant on the lidar and lands with its trunk on the deck).
+
+## 2026-11-23 (PC) — WIRING: median_rebuild takes several old islands, each found exactly or refused; no threshold moved (ledger 0099 round 3, item 2; opt-in, Lake Murray)
+
+Item 2 corrects the J3 end of the same median, where two built islands change (MD11, rows 8-48, and MD13, rows 63-741).
+`route.median_rebuild.was_rows` is one pair, as item 1b wrote it, or a list of pairs. What changed in the step's checks:
+
+- **Each island named is held to item 1b's rule on its own**: its curb ring and its deck must each be in the scene as
+  ONE loose part of exactly the rule's vertices, every vertex within TOL_M; the refusal names the island by its rows.
+- **New refusals, all fatal with nothing saved:** the pairs overlap or run backwards; the record's data holds a built
+  island between the first and the last row given that is not named ("name every built island the step re-authors": an
+  island left out is not skipped over); the old decks lie in two different objects (the new decks have one home).
+- **The stamp's checksum covers the list of pairs**, so a scene stamped from one pair is "a stamp of other data" to a
+  run given two, and refused.
+- TOL_M, DECK_OVER_M / DECK_TOL_M and every after-check are as item 1b left them. No tolerance moved.
+
+Proven on the committed blend (a scratch workshop, the lidar's data): both old islands found whole (curb 246 and 4,074
+vertices, deck 82 and 1,358, beams 140 and 2,692, 235 posts, 693 + 1,480 paint strips), three built (rows 8-53, 67-354,
+365-741), the new decks 0.173-0.202 m over the road. Teeth: tests/tools/test_mg_median_0099.py
+(`test_the_step_takes_every_island_named_and_refuses_one_left_out`: one pair still reads, the list is put in the line's
+order, five malformed lists are refused, and the record's data holds exactly the two islands named between rows 8 and
+741).
+
+## 2026-11-23 (PC) — WIRING: a new author step, median_rebuild, that refuses unless it finds the island exactly; no threshold moved (ledger 0099 round 3, item 1b; opt-in, Lake Murray)
+
+Mission Gorge Rd's long median island was built unbroken across the real Margerum Avenue / Mission Vista Drive crossing.
+Its data is corrected at the source; Lake Murray never runs its draft again, so `tools/author_median_rebuild_blend.py`
+(author step `median_rebuild`, opt-in `route.median_rebuild`, between `college_split` and `median_tops`) re-authors that
+one island in the scene. What it checks, all fatal with nothing saved:
+
+- **The island it removes must be exactly the one recorded** (the Mac, 2026-11-23). From the record's data the island's
+  own rule gives every vertex the draft built; each part (the curb ring, the deck, the beam, every post, every paint
+  strip the correction changes) must be in the scene as ONE loose part of exactly that many vertices, every vertex
+  within TOL_M of where the rule puts it. TOL_M 2e-3 is `tools/weld_mouths_blend.py`'s LAYOUT_TOL_M, the tolerance that
+  tool holds the same meshes to; not new.
+- **After the rebuild:** every object lost exactly the old vertices and gained exactly the new; each new part is in the
+  scene as the rule made it and no old one remains; every new deck vertex stands 0.185 +- 0.06 m over the road (the
+  tops step's own DECK_OVER_M / DECK_TOL_M, copied and held equal by a test); no new curb base stands off the pavement.
+- **A scene stamped with other data** is refused; a scene stamped with this data is left alone and not saved.
+
+`tools/author_median_blend.py` (the draft tool) now builds its islands from `tools/median_island.py`, the rule lifted out
+of it line for line so the two tools cannot disagree. Its output is held byte-identical by
+`tests/tools/test_median_island_rule.py` (checksums of what it hands to Blender, taken before the lift, with and
+without a street-only span). `tools/author_median_tops_blend.py` is not changed: every refusal and number of item 1's
+entry stands. `tools/barrier_bands.py` is not changed and nothing new is declared to it: a gap inside a closure run is
+sealed by the closure itself, and the tool's own self-gates and planned no_routes pass on the corrected data.
+`tools/make_treefx.py` reads `scenery.treefx.median_spots.files` beside `file` (the same checks per entry: the index,
+the spot's own place, no index twice).
+
+**Proven** on a scratch workshop through the chain's own commands (ledger 0099, "Round 3, item 1b"): the old island
+found whole (curb 4,074 vertices, deck 1,358, beam 2,692, 224 posts, 74 + 156 paint strips) and two islands built;
+`median_tops` then moves 3 tops across (2,111 rows, 0 without a top); `kn5_ground_check` 0 double-sheet cells and max
++0.313 on street, race_cw and north_cw; street `drive_test` PASS with 10 drops, audit CLEAN (K 0, I 0); race_cw and
+north_cw `drive_test`, audit and `no_route` PASS as before (north_cw: leak 0, 0 of 325 probes).
+
+## 2026-11-23 (PC) — WIRING: the author step median_tops knows a paved top; new refusals, no threshold moved (ledger 0099 round 3, item 1; opt-in, Lake Murray)
+
+Mission Gorge Rd's two raised islands are terracotta pavers, not grass. `tools/author_median_tops_blend.py` (author step
+`median_tops`, opt-in `route.median_tops`) reads a new sub-key, `paver` (`object`, and `islands` by line and first / last
+row), and gives the listed islands' tops their own object, `1KERB_PAVER_median`. What changed in what the step checks:
+
+- **New refusals, each fatal with nothing saved:** a paved object not named `1KERB_PAVER...`; a listed island that
+  `data/median_bands.json` does not build row for row; a listed island with no top in the scene; a top that is moved and
+  no longer stands as a deck where it is; deck strips still in TERRAIN beside an object the step already made.
+- **Unchanged, every number:** DECK_OVER_M 0.185, DECK_TOL_M 0.06 (the same test a moved top must pass, whichever object
+  it leaves), MIN_ROW_W_M 1.2, and the row rule (a top under two of a row's three points). The row check reads both
+  objects' tops together.
+- **It converges, and says which way:** tops still in TERRAIN move out; a top in one object but declared for the other
+  moves across (a scene built before its island was declared paved); a scene already right is left alone and not saved.
+
+No gate reads the new name on its own terms, and none was touched. To every gate it is kerb, as the island's own curb
+ring already is: `audit_mesh` F / K / I count its vertices as curb and exempt them on a declared island by position
+(`median_zone`, the band + 0.6 m), `drive_test` and `verify_kn5` count it drivable and not soft, `kn5_ground_check`
+reads the surface under the road and the top stands over it. `source/college_r2/median_tops_check.py` (a measure, not a
+gate) counts paved rows apart from grass rows. `scripts/ac/pbr.py` gains the material row `1KERB_PAVER`, not a gate;
+`tests/tools/test_terracotta_median_0099.py` holds that no other mesh name of any track is bound differently by it.
+
+**Proven** on a scratch workshop through the chain's own commands (ledger 0099, "Round 3, item 1"): the step moved 2 tops
+across (12 grass islands, 2 paved; 2,123 rows, 0 without a top); `kn5_ground_check` 0 double-sheet cells and max +0.313
+on street, race_cw and north_cw, as 0.20.5; street `drive_test` PASS with 10 drops and its audit CLEAN (F 0 of 101,834
+curb verts, 4,308 more than 0.20.5: the paved top's 1,436 faces; K 0, I 0); race_cw and north_cw `drive_test`, audit and
+`no_route` as 0.20.5's. The scratch runner `source/college_r2/scratch/run_gates.ps1` gates `north_cw` as well now.
+
 ## 2026-11-23 — MEASUREMENT CHANGE (opt-in): drive_test's daylight probe hung from the road's own edge height on a banked turn (ledger 0102 section 6, Milford only; no threshold moved, no bypass)
 
 It moves where the probe looks, not its limit: the same 5 m window, the same limit (0 gaps), the same probe point 0.8 m
@@ -43,6 +143,7 @@ install that rests on it.
 - Synthetic: `tests/geometry/test_drive_test.py::test_daylight_edge_ref_hangs_the_probe_from_the_banked_edge_ledger_0102`
   (an 8 m road on a 70 % bank: one gap a station without the key, none with it; every other gated reading equal; a flat
   road's report equal but for the new field).
+
 
 ## 2026-11-23 (PC) — WIRING: check_lights_ini's two both-heads paths told apart, at the 0.2.9 merge with main (ledgers 0098 / 0099; opt-in; no threshold moved)
 

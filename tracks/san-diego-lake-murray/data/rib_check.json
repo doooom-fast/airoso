@@ -1,11 +1,11 @@
 {
  "obj": "D:\\k10-scratch\\lm_line\\data\\track.obj",
  "lattice_nodes": 557746,
- "terrain_vertices": 566611,
+ "terrain_vertices": 566604,
  "near_m": 20.0,
  "thinned": {
-  "nodes_read_on_the_surface": 189828,
-  "line_vertices": 108710
+  "nodes_read_on_the_surface": 189827,
+  "line_vertices": 108711
  },
  "nyquist": {
   "rib_m": 2.0,

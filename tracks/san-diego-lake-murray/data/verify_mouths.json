@@ -1784,7 +1784,7 @@
     ]
    },
    "host_lane": {
-    "samples": 825,
+    "samples": 766,
     "road_kerb_above": 0,
     "grass_at_or_above": 0,
     "max_above_m": 0.0,
@@ -1875,7 +1875,7 @@
     ]
    },
    "host_lane": {
-    "samples": 792,
+    "samples": 983,
     "road_kerb_above": 0,
     "grass_at_or_above": 0,
     "max_above_m": 0.0,
@@ -1966,7 +1966,7 @@
     ]
    },
    "host_lane": {
-    "samples": 768,
+    "samples": 877,
     "road_kerb_above": 0,
     "grass_at_or_above": 0,
     "max_above_m": 0.0,
@@ -2057,7 +2057,7 @@
     ]
    },
    "host_lane": {
-    "samples": 957,
+    "samples": 890,
     "road_kerb_above": 0,
     "grass_at_or_above": 0,
     "max_above_m": 0.0,
@@ -2148,7 +2148,7 @@
     ]
    },
    "host_lane": {
-    "samples": 891,
+    "samples": 825,
     "road_kerb_above": 0,
     "grass_at_or_above": 0,
     "max_above_m": 0.0,
@@ -2239,7 +2239,7 @@
     ]
    },
    "host_lane": {
-    "samples": 825,
+    "samples": 979,
     "road_kerb_above": 0,
     "grass_at_or_above": 0,
     "max_above_m": 0.0,
@@ -2330,11 +2330,11 @@
     ]
    },
    "host_lane": {
-    "samples": 684,
+    "samples": 651,
     "road_kerb_above": 0,
     "grass_at_or_above": 0,
     "max_above_m": 0.0,
-    "max_grass_m": -0.019,
+    "max_grass_m": -0.02,
     "worst": []
    },
    "notch": {

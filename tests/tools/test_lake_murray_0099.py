@@ -65,7 +65,7 @@ def _is_lfs_pointer(p: Path) -> bool:
 def test_spec_takes_a_seed_list_and_emits_it_only_when_named():
     s = SPEC.load(LM / "ship.json", "san-diego-lake-murray")
     seeds = [ln.split("\t", 1)[1] for ln in SPEC.lines(s) if ln.startswith("in.seed\t")]
-    assert seeds == s["sync_in"]["seed"] and seeds[0] == "loop.blend" and len(seeds) == 100
+    assert seeds == s["sync_in"]["seed"] and seeds[0] == "loop.blend" and len(seeds) == 101
     # no other spec names a seed: their key<TAB>value lines carry no in.seed line (the chain as before)
     for p in OTHER_SPECS:
         o = SPEC.load(p, json.loads(p.read_text(encoding="utf-8"))["track"])
@@ -352,7 +352,7 @@ def test_both_heads_is_lake_murrays_alone_and_wired_as_an_author_step():
     assert CFG["scenery"]["streetlights"]["light_both_heads"] is True
     au = SHIP["steps"]["author"]
     # (ledger 0055 round 2: College's own step and the medians' tops stand before it, on the scene as it ships)
-    assert au[:3] == ["college_split", "median_tops", "lamp_heads"] and au[-3:] == ["race_author", "signs", "race_verify"]   # the race steps keep their order
+    assert au[:4] == ["college_split", "median_rebuild", "median_tops", "lamp_heads"] and au[-3:] == ["race_author", "signs", "race_verify"]   # the race steps keep their order
     assert "author_lamp_heads() {" in TEXT and "tools/author_lamp_heads_blend.py" in TEXT
     assert "data/lights.heads.json" in SHIP["sync_out"]["files"]
     for p in OTHER_CONFIGS:
@@ -437,7 +437,8 @@ def test_the_road_and_the_sidewalks_bind_the_owned_pairs():
             assert name in FINISH_FOUR, p
 
 
-def test_version_is_0_20_5():
+def test_version_is_0_20_6():
     """0.20.3 round 1; 0.20.4 round 1c (the walk's back grade, tests/tools/test_lake_murray_0099_walk_grade.py); 0.20.5
-    round 2 (College Avenue as two roads and the medians' grass tops, ledger 0055; the version the Mac named)"""
-    assert CFG["version"] == "0.20.5"
+    round 2 (College Avenue as two roads and the medians' grass tops, ledger 0055; the version the Mac named); 0.20.6
+    round 3 (the Mac 2026-11-23: Mission Gorge's terracotta median first, tests/tools/test_terracotta_median_0099.py)"""
+    assert CFG["version"] == "0.20.6"

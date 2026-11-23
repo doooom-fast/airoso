@@ -5,14 +5,14 @@
  "race_furniture": true,
  "lane_offset": true,
  "frame": "engine frame (the lap line data/lap.north.json, ledger 0054)",
- "points": 5821,
+ "points": 5820,
  "spacing_m": 1.5,
- "lap_m": 8732.0,
- "lap_s_est": 204.3,
+ "lap_m": 8730.6,
+ "lap_s_est": 204.5,
  "offset_points": 5507,
- "offset_max_m": 13.361,
+ "offset_max_m": 13.146,
  "clearance": {
-  "points": 5821,
+  "points": 5820,
   "unmatched": 0,
   "divider_stations": 0,
   "right_side": 0,
@@ -21,8 +21,8 @@
   "divider_too_close": 0,
   "edge_too_close": 0,
   "min_divider_clear_m": null,
-  "min_edge_clear_m": 1.7519057527645838,
-  "max_lat_m": 13.360711115234878,
+  "min_edge_clear_m": 1.744332943433566,
+  "max_lat_m": 13.146450663325322,
   "right_side_frac": null,
   "ok": true
  },
@@ -60,7 +60,7 @@
    ],
    "source": "dummies_north_acw.json AC_TIME_0 midpoint",
    "index": 0,
-   "grid_index": 5801,
+   "grid_index": 5800,
    "grid_behind_line_m": 30.0,
    "grid_off_line_m": 3.24
   },
@@ -68,7 +68,7 @@
    "mu_m": 25.0,
    "sweeps": 217,
    "omega": 1.887,
-   "last_change_m": 9.820186582132351e-06,
+   "last_change_m": 9.47157627839701e-06,
    "max_lateral_slope": 0.1773,
    "stations_at_lane_limit": 1
   },
@@ -94,7 +94,7 @@
     "side": "outside-right",
     "hold_m": 97.5,
     "ramp_in_m": 42.0,
-    "ramp_out_m": 84.0,
+    "ramp_out_m": 85.5,
     "stations_eased_off_the_edge": 0
    },
    {
@@ -118,10 +118,10 @@
    {
     "apex_vertex": 326,
     "zone": "box",
-    "turn_deg": 84.1,
-    "radius_m": 47.14,
+    "turn_deg": 84.0,
+    "radius_m": 47.11,
     "lane": "comfort",
-    "radius_before_m": 18.52,
+    "radius_before_m": 18.99,
     "window_m": 87.0,
     "entry_m": 15.0,
     "exit_m": 15.0,
@@ -133,32 +133,32 @@
    {
     "apex_vertex": 705,
     "zone": "box",
-    "turn_deg": 79.6,
-    "radius_m": 116.58,
+    "turn_deg": 79.3,
+    "radius_m": 118.87,
     "lane": "comfort",
-    "radius_before_m": 22.02,
+    "radius_before_m": 21.03,
     "window_m": 189.0,
     "entry_m": 82.5,
     "exit_m": 42.0,
-    "path_clear_min_m": 1.51,
+    "path_clear_min_m": 1.5,
     "points_on_arc": 25,
-    "min_speed_kmh": 154.0,
-    "approach_min_speed_kmh": 145.6
+    "min_speed_kmh": 155.5,
+    "approach_min_speed_kmh": 144.6
    },
    {
     "apex_vertex": 1463,
     "zone": "box",
-    "turn_deg": 59.1,
-    "radius_m": 97.66,
+    "turn_deg": 63.4,
+    "radius_m": 101.15,
     "lane": "comfort",
-    "radius_before_m": 13.02,
-    "window_m": 156.0,
-    "entry_m": 22.5,
-    "exit_m": 82.5,
+    "radius_before_m": 13.71,
+    "window_m": 136.5,
+    "entry_m": 31.5,
+    "exit_m": 54.0,
     "path_clear_min_m": 1.5,
     "points_on_arc": 26,
-    "min_speed_kmh": 104.1,
-    "approach_min_speed_kmh": 74.2
+    "min_speed_kmh": 104.0,
+    "approach_min_speed_kmh": 81.3
    },
    {
     "apex_vertex": 2130,
@@ -166,7 +166,7 @@
     "turn_deg": 105.9,
     "radius_m": 66.13,
     "lane": "comfort",
-    "radius_before_m": 5.81,
+    "radius_before_m": 5.26,
     "window_m": 273.0,
     "entry_m": 54.0,
     "exit_m": 162.0,
@@ -191,21 +191,21 @@
     "approach_min_speed_kmh": 132.4
    }
   ],
-  "min_radius_m": 24.09,
+  "min_radius_m": 29.51,
   "min_radius_at": 2016,
   "radius_below_floor": 0,
-  "max_turn_deg": 3.6,
+  "max_turn_deg": 2.9,
   "turns_over_limit": 0,
   "turns_over_limit_road_tight": 0,
   "max_lateral_jump_m": 1.071,
   "backward_steps": 0,
   "self_crossings": 0,
   "corridor": {
-   "points_in_open_box": 150,
-   "points_whole_street": 406,
-   "points_in_closure_lane": 5265
+   "points_in_open_box": 149,
+   "points_whole_street": 404,
+   "points_in_closure_lane": 5267
   },
-  "min_speed_kmh": 70.0,
+  "min_speed_kmh": 77.5,
   "min_speed_at": 2014
  },
  "corridor": {
@@ -213,17 +213,17 @@
   "zones": {
    "box": 95,
    "pin": 12,
-   "island": 1446,
-   "closure": 1194,
+   "island": 1437,
+   "closure": 1203,
    "whole": 189
   },
   "check": {
-   "points": 5821,
-   "probes": 35473,
+   "points": 5820,
+   "probes": 35524,
    "outside": 0,
    "too_close": 0,
-   "min_clear_m": 1.495,
-   "min_clear_at": 5014,
+   "min_clear_m": 1.494,
+   "min_clear_at": 5013,
    "min_clear_face": "y_lo (forward-right)",
    "island_hits": 0,
    "island_too_close": 0,
@@ -267,10 +267,10 @@
     "loop"
    ]
   },
-  "min_radius_m": 24.09,
-  "min_speed_kmh": 70.0,
-  "wall_clear_min_m": 1.495,
-  "points_in_open_box": 150,
+  "min_radius_m": 29.51,
+  "min_speed_kmh": 77.5,
+  "wall_clear_min_m": 1.494,
+  "points_in_open_box": 149,
   "start_index": 0
  }
 }

@@ -1,0 +1,419 @@
+{
+ "what": "built medians: grass, pavers or asphalt between the curbs (median_tops_check.py)",
+ "workshop": "<the scratch workshop of item 2 (the lidar build)>",
+ "params": {
+  "MIN_W": 1.2,
+  "OVER_M": 0.05,
+  "_doc": "[invented]"
+ },
+ "totals_rows": {
+  "grass": 1419,
+  "paver": 691,
+  "asphalt": 0,
+  "no_slab": 0,
+  "nose": 22,
+  "short_run": 4
+ },
+ "islands": [
+  {
+   "line": "MAINLINE",
+   "road": "College Avenue",
+   "island": true,
+   "rows": [
+    846,
+    1073
+   ],
+   "station_m": [
+    2525.8,
+    3209.7
+   ],
+   "length_m": 683.9,
+   "width_m": [
+    3.4,
+    7.0
+   ],
+   "grass": 228,
+   "paver": 0,
+   "asphalt": 0,
+   "no_slab": 0,
+   "nose": 0,
+   "short_run": 0,
+   "grass_under_the_road_m_median": null
+  },
+  {
+   "line": "MAINLINE",
+   "road": "College Avenue",
+   "island": true,
+   "rows": [
+    1096,
+    1116
+   ],
+   "station_m": [
+    3280.9,
+    3342.6
+   ],
+   "length_m": 61.7,
+   "width_m": [
+    5.32,
+    7.0
+   ],
+   "grass": 21,
+   "paver": 0,
+   "asphalt": 0,
+   "no_slab": 0,
+   "nose": 0,
+   "short_run": 0,
+   "grass_under_the_road_m_median": null
+  },
+  {
+   "line": "MAINLINE",
+   "road": "College Avenue",
+   "island": true,
+   "rows": [
+    1476,
+    1487
+   ],
+   "station_m": [
+    4424.3,
+    4457.3
+   ],
+   "length_m": 33.0,
+   "width_m": [
+    7.0,
+    7.0
+   ],
+   "grass": 12,
+   "paver": 0,
+   "asphalt": 0,
+   "no_slab": 0,
+   "nose": 0,
+   "short_run": 0,
+   "grass_under_the_road_m_median": null
+  },
+  {
+   "line": "MAINLINE",
+   "road": "Navajo Road",
+   "island": true,
+   "rows": [
+    1540,
+    1739
+   ],
+   "station_m": [
+    4612.0,
+    5210.3
+   ],
+   "length_m": 598.3,
+   "width_m": [
+    2.66,
+    6.92
+   ],
+   "grass": 200,
+   "paver": 0,
+   "asphalt": 0,
+   "no_slab": 0,
+   "nose": 0,
+   "short_run": 0,
+   "grass_under_the_road_m_median": null
+  },
+  {
+   "line": "MAINLINE",
+   "road": "Navajo Road",
+   "island": true,
+   "rows": [
+    2183,
+    2297
+   ],
+   "station_m": [
+    6544.5,
+    6886.7
+   ],
+   "length_m": 342.1,
+   "width_m": [
+    1.5,
+    5.93
+   ],
+   "grass": 115,
+   "paver": 0,
+   "asphalt": 0,
+   "no_slab": 0,
+   "nose": 0,
+   "short_run": 0,
+   "grass_under_the_road_m_median": null
+  },
+  {
+   "line": "del_cerro_blvd",
+   "road": null,
+   "island": true,
+   "rows": [
+    5,
+    215
+   ],
+   "station_m": [
+    15.4,
+    647.6
+   ],
+   "length_m": 632.2,
+   "width_m": [
+    3.72,
+    5.35
+   ],
+   "grass": 211,
+   "paver": 0,
+   "asphalt": 0,
+   "no_slab": 0,
+   "nose": 0,
+   "short_run": 0,
+   "grass_under_the_road_m_median": null
+  },
+  {
+   "line": "del_cerro_blvd",
+   "road": null,
+   "island": true,
+   "rows": [
+    240,
+    308
+   ],
+   "station_m": [
+    721.2,
+    924.0
+   ],
+   "length_m": 202.8,
+   "width_m": [
+    3.81,
+    5.02
+   ],
+   "grass": 69,
+   "paver": 0,
+   "asphalt": 0,
+   "no_slab": 0,
+   "nose": 0,
+   "short_run": 0,
+   "grass_under_the_road_m_median": null
+  },
+  {
+   "line": "del_cerro_blvd",
+   "road": null,
+   "island": true,
+   "rows": [
+    320,
+    473
+   ],
+   "station_m": [
+    958.5,
+    1419.3
+   ],
+   "length_m": 460.8,
+   "width_m": [
+    4.7,
+    6.0
+   ],
+   "grass": 154,
+   "paver": 0,
+   "asphalt": 0,
+   "no_slab": 0,
+   "nose": 0,
+   "short_run": 0,
+   "grass_under_the_road_m_median": null
+  },
+  {
+   "line": "north_J1_waring",
+   "road": null,
+   "island": true,
+   "rows": [
+    8,
+    315
+   ],
+   "station_m": [
+    21.7,
+    931.4
+   ],
+   "length_m": 909.8,
+   "width_m": [
+    1.5,
+    5.99
+   ],
+   "grass": 308,
+   "paver": 0,
+   "asphalt": 0,
+   "no_slab": 0,
+   "nose": 0,
+   "short_run": 0,
+   "grass_under_the_road_m_median": null
+  },
+  {
+   "line": "north_princess_view",
+   "road": null,
+   "island": true,
+   "rows": [
+    129,
+    173
+   ],
+   "station_m": [
+    386.6,
+    518.6
+   ],
+   "length_m": 132.0,
+   "width_m": [
+    1.0,
+    5.7
+   ],
+   "grass": 43,
+   "paver": 0,
+   "asphalt": 0,
+   "no_slab": 0,
+   "nose": 2,
+   "short_run": 0,
+   "grass_under_the_road_m_median": null
+  },
+  {
+   "line": "north_princess_view",
+   "road": null,
+   "island": true,
+   "rows": [
+    200,
+    228
+   ],
+   "station_m": [
+    600.5,
+    684.7
+   ],
+   "length_m": 84.2,
+   "width_m": [
+    1.77,
+    5.36
+   ],
+   "grass": 29,
+   "paver": 0,
+   "asphalt": 0,
+   "no_slab": 0,
+   "nose": 0,
+   "short_run": 0,
+   "grass_under_the_road_m_median": -0.02
+  },
+  {
+   "line": "north_mission_gorge",
+   "road": null,
+   "island": true,
+   "rows": [
+    8,
+    53
+   ],
+   "station_m": [
+    24.6,
+    160.4
+   ],
+   "length_m": 135.8,
+   "width_m": [
+    0.79,
+    1.8
+   ],
+   "grass": 0,
+   "paver": 40,
+   "asphalt": 0,
+   "no_slab": 0,
+   "nose": 6,
+   "short_run": 0,
+   "grass_under_the_road_m_median": null
+  },
+  {
+   "line": "north_mission_gorge",
+   "road": null,
+   "island": false,
+   "rows": [
+    58,
+    61
+   ],
+   "station_m": [
+    176.0,
+    185.1
+   ],
+   "length_m": 9.1,
+   "width_m": [
+    1.65,
+    3.59
+   ],
+   "grass": 0,
+   "paver": 0,
+   "asphalt": 0,
+   "no_slab": 0,
+   "nose": 0,
+   "short_run": 4,
+   "grass_under_the_road_m_median": null
+  },
+  {
+   "line": "north_mission_gorge",
+   "road": null,
+   "island": true,
+   "rows": [
+    67,
+    354
+   ],
+   "station_m": [
+    203.4,
+    1059.8
+   ],
+   "length_m": 856.4,
+   "width_m": [
+    1.01,
+    4.85
+   ],
+   "grass": 0,
+   "paver": 279,
+   "asphalt": 0,
+   "no_slab": 0,
+   "nose": 9,
+   "short_run": 0,
+   "grass_under_the_road_m_median": null
+  },
+  {
+   "line": "north_mission_gorge",
+   "road": null,
+   "island": true,
+   "rows": [
+    365,
+    741
+   ],
+   "station_m": [
+    1094.0,
+    2224.7
+   ],
+   "length_m": 1130.7,
+   "width_m": [
+    1.08,
+    5.6
+   ],
+   "grass": 0,
+   "paver": 372,
+   "asphalt": 0,
+   "no_slab": 0,
+   "nose": 5,
+   "short_run": 0,
+   "grass_under_the_road_m_median": null
+  },
+  {
+   "line": "north_J5_jackson_north",
+   "road": null,
+   "island": true,
+   "rows": [
+    621,
+    649
+   ],
+   "station_m": [
+    1857.2,
+    1939.3
+   ],
+   "length_m": 82.1,
+   "width_m": [
+    1.43,
+    6.1
+   ],
+   "grass": 29,
+   "paver": 0,
+   "asphalt": 0,
+   "no_slab": 0,
+   "nose": 0,
+   "short_run": 0,
+   "grass_under_the_road_m_median": null
+  }
+ ]
+}

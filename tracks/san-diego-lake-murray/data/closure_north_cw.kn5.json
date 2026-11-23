@@ -1,7 +1,7 @@
 {
  "file": "D:\\k10-scratch\\lm_line\\build\\san_diego_lake_murray_closure_north_cw.kn5",
  "version": 5,
- "file_bytes": 4700823,
+ "file_bytes": 4701647,
  "textures": [
   {
    "name": "concrete_barrier_diffuse.png",
@@ -240,15 +240,15 @@
    "surface": "WALL",
    "renderable": true,
    "radius_m": 1041.4,
-   "area_m2": 7369.8,
+   "area_m2": 7370.3,
    "edge_p10_m": 0.12,
    "edge_med_m": 2.997,
-   "edge_p90_m": 3.046,
+   "edge_p90_m": 3.047,
    "grid_m": 1.001,
    "bbox_m": [
-    1755.4,
+    1755.1,
     81.6,
-    1118.8
+    1119.4
    ]
   },
   {
@@ -296,16 +296,16 @@
    "matid": 4,
    "surface": "WALL",
    "renderable": true,
-   "radius_m": 7.2,
-   "area_m2": 48.7,
+   "radius_m": 7.4,
+   "area_m2": 50.2,
    "edge_p10_m": 0.12,
-   "edge_med_m": 0.956,
-   "edge_p90_m": 1.005,
-   "grid_m": 0.555,
+   "edge_med_m": 0.984,
+   "edge_p90_m": 1.033,
+   "grid_m": 0.564,
    "bbox_m": [
-    5.0,
+    5.1,
     1.2,
-    13.9
+    14.3
    ]
   },
   {
@@ -348,21 +348,21 @@
   },
   {
    "name": "1WALL_race_close_ncw_nose_717_0",
-   "verts": 324,
-   "tris": 376,
+   "verts": 340,
+   "tris": 396,
    "matid": 7,
    "surface": "WALL",
    "renderable": true,
-   "radius_m": 8.9,
-   "area_m2": 60.2,
+   "radius_m": 9.4,
+   "area_m2": 63.6,
    "edge_p10_m": 0.12,
-   "edge_med_m": 0.987,
-   "edge_p90_m": 1.035,
-   "grid_m": 0.566,
+   "edge_med_m": 0.989,
+   "edge_p90_m": 1.036,
+   "grid_m": 0.567,
    "bbox_m": [
-    7.8,
+    8.2,
     1.2,
-    16.5
+    17.4
    ]
   },
   {
@@ -428,17 +428,17 @@
  ],
  "summary": {
   "meshes": 11,
-  "verts": 44028,
-  "tris": 54716,
+  "verts": 44044,
+  "tris": 54736,
   "textures": 2,
   "texture_bytes": 2431043,
   "materials": 11,
   "surfaces": {
    "WALL": {
     "meshes": 11,
-    "verts": 44028,
-    "tris": 54716,
-    "area_m2": 26802.9,
+    "verts": 44044,
+    "tris": 54736,
+    "area_m2": 26808.3,
     "invisible": 0,
     "edge_med_m": 2.936,
     "grid_m": 0.987
@@ -447,7 +447,7 @@
   "shaders_by_tris": {
    "ksPerPixelMultiMap": {
     "meshes": 11,
-    "tris": 54716
+    "tris": 54736
    }
   },
   "near_vert_cap": [],

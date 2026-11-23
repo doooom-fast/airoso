@@ -13918,8 +13918,8 @@
     "pushed_m": 1.34,
     "slid_m": 0.0,
     "lateral_step_m": 0.0,
-    "gate_margin_m": 2.56,
-    "gate_margin_gated_m": 2.56,
+    "gate_margin_m": 2.59,
+    "gate_margin_gated_m": 2.59,
     "gate_ribbons": "MAINLINE+expansion_fwd+expansion_rev",
     "mouth_m": 19.1,
     "spawn_m": 305.9,
@@ -13965,12 +13965,12 @@
       3182.14
      ],
      [
-      -1254.17,
-      3182.89
+      -1249.6,
+      3169.34
      ],
      [
-      -1252.22,
-      3183.54
+      -1247.7,
+      3169.98
      ],
      [
       -1250.29,
@@ -14091,12 +14091,12 @@
       3183.85
      ],
      [
-      -1254.71,
-      3184.5
+      -1250.01,
+      3170.57
      ],
      [
-      -1252.22,
-      3183.54
+      -1248.08,
+      3171.11
      ],
      [
       -1250.82,
@@ -18502,6 +18502,7 @@
  "blender": {
   "blend": "D:\\k10-scratch\\lm_line\\loop.blend",
   "ground_objects": [
+   "1KERB_PAVER_median",
    "1KERB_sidewalk_apAP1",
    "1KERB_sidewalk_padJ2",
    "1KERB_sidewalk_padJ3",

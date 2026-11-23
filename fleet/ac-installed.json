@@ -79,16 +79,16 @@
       "version": "0.1.15"
     },
     "san_diego_lake_murray_v4": {
-      "branch": "claude/lm-finish-r2-20261122",
+      "branch": "claude/lm-finish-r3-20261123",
       "engine": "lm-v4",
       "installed": "2026-11-23",
-      "note": "0.20.5 = 0.20.4 + College as two roads with grass-topped medians (1LAWN_median) and the split's ground in one sheet (c6352faf, ledger 0055 round 2): kn5_ground_check 0 double-sheet cells on all 5 layouts, deck-vs-mountain max +0.313; street drive_test 10 drops; every gate green, no force; built in the chain's own empty workshop lm_line (0.20.4's kept as D:/k10-scratch/lm_line.0.20.4); install build = the PC rehearsal 2 (rehearse_0205b: every kn5 equivalent but the main one, whose 1LAWN_median and ROOFTOP_SHINGLE_0 hold the same points in another order; AI identical); 0.20.4 parked in D:/k10-track-archive/2026-11-23_100800; menu pictures: 0.20.4's put back in as a stopgap (backups in D:/k10-track-archive/2026-11-23_101500_lm0205_pictures_stopgap) until 0.20.5's are drawn; records on claude/lm-0205-install-20261123; Kevin: \"I always want newer builds\"",
+      "note": "0.20.6 = 0.20.5 + Mission Gorge's raised median rebuilt from the lidar (three islands, rows [[8, 53], [67, 354], [365, 741]], no longer across the Margerum crossing, its J3 end where it stands) with a terracotta paver top (1KERB_PAVER_median, ledger 0099 round 3 items 1 / 1b / 2; ce61480c); ENG eng_0206 = eng_repro + the engine snapshot's pbr.py (e414f407, the 1KERB_PAVER row); every gate green, no force; built in the chain's own empty workshop lm_line (0.20.5's kept as D:/k10-scratch/lm_line.0.20.5); install build = the PC rehearsal (rehearse_0206: every kn5 equivalent, AI identical); 0.20.5 parked in D:/k10-track-archive/2026-11-23_152915; menu pictures = 0.20.5's (the 0.20.6 renders at the same cameras match them within 1/255; old outlines in D:/k10-track-archive/2026-11-23_153500_lm0206_pictures); records on claude/lm-0206-install-20261123 (loop.blend not committed: the LFS budget; 0.20.6's kept in D:/k10-track-archive/2026-11-23_lm0206_synced_back_blend); Kevin: \"I always want newer builds\"",
       "old_name_prefix": "K10 - San Diego CANDIDATE v4 keep-roads",
       "role": "current",
-      "sha": "c6352faf",
+      "sha": "ce61480c",
       "track": "san-diego-lake-murray",
       "ui_name_prefix": "doooom San Diego",
-      "version": "0.20.5"
+      "version": "0.20.6"
     },
     "sand_creek_raceway": {
       "branch": "claude/sc-finish-0209-20261122",

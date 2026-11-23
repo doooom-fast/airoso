@@ -501,6 +501,40 @@ def test_median_spots_drop_and_foot_leave_every_other_spot_as_it_was():
         mt.plan(_with_median_spots(d, {"file": "source/nowhere.json"}))
 
 
+def test_median_spots_move_plants_the_spot_at_its_new_place_with_everything_else_it_has():
+    """Ledger 0099 round 3, item 2 (the Mac 2026-11-23: "a real plant the lidar saw is never dropped because the island
+    moved under it"): a spot is planted at to_x / to_z, with its model, size, angle and the height and crown the lidar
+    measured at its OWN place. Opt-in; the count is reported only where the list is used"""
+    hs, cs = [5.13, 0.07, 12.4, 2.2, None, 0.31], [3.2, None, None, 1.4, None, 0.9]
+    base = [ln for ln in mt.plan(_median_project(hs, cs))["lines"] if ln.startswith("tree: ")]
+    d = _median_project(hs, cs)
+    med = json.loads((d / "data" / "scatter_positions.json").read_text())["median_planting"]
+    before = (d / "data" / "scatter_positions.json").read_bytes(), (d / "source" / "vegetation" / "m.json").read_bytes()
+    to = (round(med[2]["x"] + 0.4, 2), round(med[2]["z"] - 0.3, 2))
+    _with_median_spots(d, {"drop": [{"index": 1, "x": med[1]["x"], "z": med[1]["z"]}],
+                           "move": [{"index": 2, "x": med[2]["x"], "z": med[2]["z"], "to_x": to[0], "to_z": to[1], "rule": "(2)"}]})
+    p = mt.plan(d)
+    lines = [ln for ln in p["lines"] if ln.startswith("tree: ")]
+    assert p["median_spots"] == {"dropped": 1, "foot_moved": 0, "moved": 1} and len(lines) == 5
+    assert [lines[0], lines[2], lines[3], lines[4]] == [base[0], base[3], base[4], base[5]]      # untouched spots: byte for byte
+    was, now = base[2], lines[1]
+    assert was.split("; pos=")[0] == now.split("; pos=")[0] and was.split("; angle")[1] == now.split("; angle")[1]   # model, angle, size, width
+    x, _y, mz = (float(v) for v in now.split("pos=")[1].split(";")[0].split(","))
+    assert (x, -mz) == to                                                                        # trees.txt carries x, y, -z
+    assert p["median_measured"] == {"measured": 4, "crown_measured": 3, "kept_rank_rule": 2}    # the heights file's own check held
+    assert before == ((d / "data" / "scatter_positions.json").read_bytes(), (d / "source" / "vegetation" / "m.json").read_bytes())
+    import pytest
+    with pytest.raises(SystemExit, match="another plant's place"):
+        mt.plan(_with_median_spots(d, {"move": [{"index": 2, "x": med[2]["x"], "z": med[2]["z"], "to_x": med[2]["x"] + mt.MEDIAN_SPOT_MOVE_MAX_M + 0.1,
+                                                 "to_z": med[2]["z"]}]}))
+    with pytest.raises(SystemExit, match="declared twice"):
+        mt.plan(_with_median_spots(d, {"drop": [{"index": 2, "x": med[2]["x"], "z": med[2]["z"]}],
+                                       "move": [{"index": 2, "x": med[2]["x"], "z": med[2]["z"], "to_x": to[0], "to_z": to[1]}]}))
+    with pytest.raises(SystemExit, match="another draft"):
+        mt.plan(_with_median_spots(d, {"move": [{"index": 2, "x": med[2]["x"] + 0.5, "z": med[2]["z"], "to_x": to[0], "to_z": to[1]}]}))
+    assert mt.MEDIAN_SPOT_MOVE_MAX_M == 5.0
+
+
 def test_median_spots_refuses_a_list_made_for_other_spots():
     import pytest
     d = _median_project([1.0, 2.0, 3.0], [None] * 3)

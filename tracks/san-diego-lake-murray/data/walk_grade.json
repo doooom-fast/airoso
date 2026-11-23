@@ -3,17 +3,17 @@
  "max_slope": 0.2,
  "objects": {
   "CURB": {
-   "vertices": 86690,
+   "vertices": 86636,
    "lips": 17264,
-   "raised": 272,
-   "already_at_grade": 15174,
+   "raised": 0,
+   "already_at_grade": 15445,
    "held_release_ground": 1296,
    "held_furniture": 513,
    "held_pavement": 0,
    "held_red_plan": 10,
    "rise_m": {
-    "p50": 0.1,
-    "max": 0.1
+    "p50": null,
+    "max": null
    },
    "before": {
     "fall_m": {
@@ -7689,7 +7689,7 @@
     [
      -1416.513,
      3072.939,
-     -6.292,
+     -6.283,
      -6.253
     ],
     [

@@ -2,10 +2,10 @@
  "input": "D:\\k10-scratch\\lm_line\\blender\\san_diego_lake_murray.blend",
  "outputs": {
   "loop_main.blend": {
-   "objects": 128,
-   "meshes": 128,
-   "positions": 1035872,
-   "max_positions": 62405,
+   "objects": 129,
+   "meshes": 129,
+   "positions": 1035805,
+   "max_positions": 62338,
    "materials": [
     "1GRASS_0_mat",
     "1GRASS_10_mat",
@@ -30,6 +30,7 @@
     "1GRASS_ROCK_5_mat",
     "1GRASS_ROCK_6_mat",
     "1GRASS_ROCK_7_mat",
+    "1KERB_PAVER_median_mat",
     "1KERB_sidewalk_0_mat",
     "1KERB_sidewalk_1_mat",
     "1KERB_sidewalk_apAP1_mat",
@@ -165,6 +166,7 @@
     "1GRASS_ROCK_5",
     "1GRASS_ROCK_6",
     "1GRASS_ROCK_7",
+    "1KERB_PAVER_median",
     "1KERB_sidewalk_0",
     "1KERB_sidewalk_1",
     "1KERB_sidewalk_apAP1",
@@ -637,7 +639,7 @@
   "loop_closure_north_cw.blend": {
    "objects": 11,
    "meshes": 11,
-   "positions": 27380,
+   "positions": 27390,
    "max_positions": 7360,
    "materials": [
     "1WALL_race_close_ncw_jackson_1477_0_mat",
@@ -698,7 +700,7 @@
   "loop_closure_north_acw.blend": {
    "objects": 11,
    "meshes": 11,
-   "positions": 27340,
+   "positions": 27320,
    "max_positions": 7360,
    "materials": [
     "1WALL_race_close_nacw_jackson_1477_0_mat",
@@ -759,8 +761,8 @@
   "loop_street.blend": {
    "objects": 2,
    "meshes": 2,
-   "positions": 38579,
-   "max_positions": 26262,
+   "positions": 38459,
+   "max_positions": 26142,
    "materials": [
     "YLINE_0_mat",
     "YLINE_1_mat"
@@ -1094,10 +1096,10 @@
   "north_acw": "nacw"
  },
  "input_census": {
-  "objects": 238,
-  "meshes": 238,
-  "positions": 1450299,
-  "max_positions": 62405,
+  "objects": 239,
+  "meshes": 239,
+  "positions": 1450102,
+  "max_positions": 62338,
   "materials": [
    "1GRASS_0_mat",
    "1GRASS_10_mat",
@@ -1122,6 +1124,7 @@
    "1GRASS_ROCK_5_mat",
    "1GRASS_ROCK_6_mat",
    "1GRASS_ROCK_7_mat",
+   "1KERB_PAVER_median_mat",
    "1KERB_race_0_in_mat",
    "1KERB_race_0_out_mat",
    "1KERB_race_3296_in_mat",
@@ -1520,6 +1523,7 @@
    "1GRASS_ROCK_5",
    "1GRASS_ROCK_6",
    "1GRASS_ROCK_7",
+   "1KERB_PAVER_median",
    "1KERB_race_0_in",
    "1KERB_race_0_out",
    "1KERB_race_3296_in",

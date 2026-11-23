@@ -614,6 +614,18 @@ author_college_split() {
   done
 }
 
+author_median_rebuild() {
+  # ledger 0099 round 3, item 1b (the Mac 2026-11-23; Lake Murray, opt-in route.median_rebuild): Mission Gorge Rd's long median
+  # island was built unbroken across the real Margerum Avenue / Mission Vista Drive crossing. Its data is corrected at the
+  # source (source/expansion/mg_median/fix_mg_median.py); the draft that builds islands never runs again on this chain, so
+  # this step re-authors that ONE island in the scene: the old one is found exactly as the record's data built it (or the
+  # step refuses), taken out, and the corrected data's islands are built by the island's own rule (tools/median_island.py,
+  # the rule the draft tool builds with) and the assembler's own paint function. After college_split, before median_tops
+  # (which gives the new decks their object). Key absent = no-op, the blend not opened. Only a ship.json that names it
+  step "author: one median island re-authored from corrected data (tools/author_median_rebuild_blend.py: the old island found exactly or refused; ledger 0099 round 3; self-checked; not opted in = no-op)"
+  (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_median_rebuild_blend.py" -- "$PROJ" --v021 "$V021" 2>&1 | grep "^\[median-rebuild\]\|FATAL\|Error\|Traceback" )
+}
+
 author_median_tops() {
   # ledger 0055, "Known defect" (the Mac 2026-11-23: option (a); Lake Murray, opt-in route.median_tops): every raised median
   # showed the road's asphalt between its curbs, because the median tool's grass top is part of TERRAIN and the prep (the

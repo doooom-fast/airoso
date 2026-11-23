@@ -1,4 +1,5 @@
-"""Do the built medians show grass or asphalt between their curbs? Measured on a BUILT gate OBJ (read-only).
+"""Do the built medians show their top (grass, or pavers) or asphalt between their curbs? Measured on a BUILT gate OBJ
+(read-only).
 
     <python with numpy> median_tops_check.py <workshop project dir> [--out <json>]
 
@@ -8,8 +9,10 @@ island_w_by_vertex, each connector island's points) that is at least MIN_W wide,
 quarter of its width to each side (where the island tapers to its nose, its last three rows: half the BUILT deck's own
 half width, tools/author_median_blend.py's taper; 2026-11-23, before that a nose row's two side points stood outside
 the island as built): the highest grass surface and the highest 1ROAD surface straight above / below. Grass = 1GRASS,
-and the medians' own top object where a build has one (1LAWN_median: tools/author_median_tops_blend.py).
+and the medians' own top object where a build has one (1LAWN_median: tools/author_median_tops_blend.py). Pavers = the
+paved tops' object (1KERB_PAVER...: the same tool, ledger 0099 round 3), read first.
 
+  pavers over the road by OVER_M or more  -> the island's top is paved
   grass over the road by OVER_M or more   -> the island's top is grass
   grass under the road, or no grass       -> the island shows the road's asphalt between its curbs
   no road under the point                 -> no slab under the island there (not this defect)
@@ -31,9 +34,10 @@ OVER_M = 0.05        # grass this far over the road is a grass top (the tool's s
 
 # --- the OBJ: every vertex, the triangles of 1GRASS* and 1ROAD* ------------------------------------------------------------
 verts = []
-tris = {"1GRASS": [], "1ROAD": []}
-names = {"1GRASS": set(), "1ROAD": set()}
+tris = {"1GRASS": [], "1ROAD": [], "1PAVER": []}
+names = {"1GRASS": set(), "1ROAD": set(), "1PAVER": set()}
 GRASS_NAMES = ("1GRASS", "1LAWN_MEDIAN")
+PAVER_NAMES = ("1KERB_PAVER",)   # scripts/ac/pbr.py: the paved tops' own row
 NOSE_VERTS, NOSE_HALF, DECK_INSET = 3, 0.25, 0.22      # tools/author_median_blend.py
 END_IN = 0.3         # an island's end row is measured this far inside it, along its line (the row is the deck's own edge)
 MIN_ISLAND_ROWS = 6  # tools/author_median_blend.py _segments: a run of the band under six rows is not built as an island (no
@@ -48,7 +52,9 @@ with open(proj / "data" / "track.obj", "r", encoding="utf-8", errors="replace") 
             verts.append((float(p[1]), float(p[2]), float(p[3])))
         elif c in ("o ", "g "):
             nm = line[2:].strip()
-            kind = "1GRASS" if nm.upper().startswith(GRASS_NAMES) else ("1ROAD" if nm.upper().startswith("1ROAD") else None)
+            up = nm.upper()
+            kind = "1GRASS" if up.startswith(GRASS_NAMES) else ("1ROAD" if up.startswith("1ROAD") else
+                                                                 ("1PAVER" if up.startswith(PAVER_NAMES) else None))
             if kind:
                 names[kind].add(nm)
         elif c == "f " and kind:
@@ -56,8 +62,9 @@ with open(proj / "data" / "track.obj", "r", encoding="utf-8", errors="replace") 
             for k in range(1, len(ids) - 1):
                 tris[kind].append((ids[0], ids[k], ids[k + 1]))
 V = np.array(verts)
-T = {k: np.array(v, dtype=np.int64) for k, v in tris.items()}
-print(f"[tops] {len(V)} vertices; 1GRASS {len(T['1GRASS'])} triangles in {len(names['1GRASS'])} objects; 1ROAD {len(T['1ROAD'])} in {len(names['1ROAD'])}")
+T = {k: np.array(v, dtype=np.int64).reshape(-1, 3) for k, v in tris.items()}
+print(f"[tops] {len(V)} vertices; 1GRASS {len(T['1GRASS'])} triangles in {len(names['1GRASS'])} objects; 1ROAD {len(T['1ROAD'])} in {len(names['1ROAD'])}; "
+      f"paved tops {len(T['1PAVER'])} in {sorted(names['1PAVER'])}")
 BOX = {}
 for k, t in T.items():
     x, z = V[t][:, :, 0], V[t][:, :, 2]
@@ -109,7 +116,7 @@ for name, pts, iw, s in lines:
         j = k
         while j < m and iw[j] > 0:
             j += 1
-        rows = {"grass": 0, "asphalt": 0, "no_slab": 0, "nose": 0, "short_run": 0}
+        rows = {"grass": 0, "paver": 0, "asphalt": 0, "no_slab": 0, "nose": 0, "short_run": 0}
         diffs = []
         is_island = j - k >= MIN_ISLAND_ROWS
         if not is_island:
@@ -140,7 +147,10 @@ for name, pts, iw, s in lines:
                     votes.append("no_slab")
                     continue
                 yg = top("1GRASS", x, z)
-                if yg is not None and yg - yr >= OVER_M:
+                yp = top("1PAVER", x, z)
+                if yp is not None and yp - yr >= OVER_M:
+                    votes.append("paver")
+                elif yg is not None and yg - yr >= OVER_M:
                     votes.append("grass")
                 else:
                     votes.append("asphalt")
@@ -155,9 +165,9 @@ for name, pts, iw, s in lines:
         out.append(rec)
         print("[tops] " + json.dumps(rec))
         k = j
-tot = {key: sum(r[key] for r in out) for key in ("grass", "asphalt", "no_slab", "nose", "short_run")}
+tot = {key: sum(r[key] for r in out) for key in ("grass", "paver", "asphalt", "no_slab", "nose", "short_run")}
 print(f"[tops] {sum(1 for r in out if r['island'])} islands, {sum(1 for r in out if not r['island'])} band runs too short to be one; rows: {tot}")
 if OUT:
-    OUT.write_text(json.dumps({"what": "built medians: grass or asphalt between the curbs (median_tops_check.py)", "workshop": str(proj),
+    OUT.write_text(json.dumps({"what": "built medians: grass, pavers or asphalt between the curbs (median_tops_check.py)", "workshop": str(proj),
                                "params": {"MIN_W": MIN_W, "OVER_M": OVER_M, "_doc": "[invented]"},
                                "totals_rows": tot, "islands": out}, indent=1), encoding="utf-8")

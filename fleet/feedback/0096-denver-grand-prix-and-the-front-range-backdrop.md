@@ -297,4 +297,8 @@ Mesh minus study, degrees:
 - The seam between the backdrop's near edge (2 km) and the track's own ground: no track ground exists yet.
 - Haze, fog and the material (PLAN 3a); colour by elevation; the towers; Sand Creek's and the Lariat's bakes; the kn5
   export and the `models_*.ini` listing; `DISTANT_FIX` on real terrain; motion.
-- The full test suite on this Mac ran in a venv outside git with the project's declared dependencies (result in the PR).
+- **The full suite on this Mac** (`tests/run_tests.py`, a venv outside git with the project's declared dependencies):
+  1,829 passed, 38 failed. The same 38 fail on `main` at bcef7339 with the same venv (11 files: `test_ac_tidy`,
+  `test_bench_pad`, `test_draft_pads`, `test_fwlm_terrain`, `test_high_plains_round3`, `test_milford_ground_0092`,
+  `test_milford_line_edges`, `test_milford_round2_0102`, `test_sand_creek_0098`, `test_ship_fleet`,
+  `test_ship_track_chain`). None is the backdrop's; why they fail on the Mac was not looked into.

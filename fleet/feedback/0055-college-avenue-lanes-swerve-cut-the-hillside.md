@@ -262,3 +262,28 @@ bridge-rail panels at ±6.90 m, which drive_test's guard probe could not see (a 
 probe now credits a 1WALL the car's path crosses (GATES-CHANGELOG v0.18.1 fix round): street excursions **96** on r3,
 **96** on v0.18.0's own mesh under the same probe (98 / 100 under the old one). College is untouched by this round.
 Centreline, widths and `median_bands.json` are byte-identical to r2, and both Speedway chicanes are as verified.
+
+## Round 2, stage A (the PC, 2026-11-22): measured, designed, a proof scene; no geometry in the build yet
+
+Files: `tracks/san-diego-lake-murray/source/college_r2/` (README there has the numbers and how to rerun).
+
+- **Measured** (USGS CA_SanDiegoCo_D24 2024 lidar, class 2, read by the G10; NAIP 2022 for the pavement): the road is
+  split level from about v1180 to v1440. Northbound over southbound: 1.3 / 2.2 / 3.1 / 5.4 / 5.8 / 5.3 / 5.5 / 5.1 /
+  1.2 / 1.9 / 1.0 / 0 m at v1180 / 1200 / 1220 / 1240 / 1260 / 1280 / 1320 / 1340 / 1400 / 1420 / 1440 / 1460. Each
+  carriageway is about 10 m of pavement; the planted bank between them is median 10.5 m wide. The build is one slab at
+  the southbound grade, its northbound half up to 6.1 m below the real carriageway. The built outer edges sit a median
+  0.5 m (east) and 2.0 m (west) from the measured ones.
+- **Designed** (`college_design.json`): four control points across the road at every vertex v1130-1480; v1297-1300
+  bridged under the trees; northbound over southbound up to 6.17 m; long grade 9.5 % northbound, 9.3 % southbound (as
+  built 8.7 %); the ends meet the built road within 5 cm. Authoring keeps the built outer edges and rebuilds the middle
+  and the northbound height.
+- **The race on College:** each direction on its own carriageway: Speedway on the upper northbound road, Speedway
+  Reverse on the lower southbound one. The Mac decided it from the race corridor's standing rule, "an Alvarado-wide
+  lane on your own side of every road" (ledger 0049 section 9, the layouts' description; cited in ledger 0054 for the
+  median noses). Those are the layout description's words, not a sentence Kevin typed; he was asked on the PC the same
+  evening and had not answered. This replaces the crossover (`race.chicanes` entry `college_split`), which goes when
+  the split is built.
+- **Proof scene** (`college_proof.jpg`): before and after from three cameras. A shape study, not a game mesh.
+- **Next:** stage B, on a scratch copy of `lm_phase2/project`: both carriageways, the bank and island, the two
+  transitions, J1 tilted to its measured 6.08 % toward Waring as one change, then every consumer listed under "Bounded
+  proof" step 5; stage C, a full rehearsal through the Mac's queue. No gate threshold changes.

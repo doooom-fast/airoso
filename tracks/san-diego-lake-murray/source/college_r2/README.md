@@ -72,15 +72,27 @@ middle and the northbound height, so walks, houses and ground outside the road s
 
 ## Stages
 
-- **A (here, no build):** measured sections, edges, the design, and a standalone proof scene with before / after stills.
+- **A (here, no build): done.** Measured sections, edges, the design, and the standalone proof scene with before / after stills.
 - **B:** author the split into a scratch copy of `lm_phase2/project` (never the build session's workshops): both
   carriageways, the bank and the island, the two transitions, J1's tilt as one change; then every consumer the ledger
   lists (ground seating, paint, curbs, lamps, barriers, the race layouts' corridor on College, AI lines).
 - **C:** a full `ship_track` rehearsal through the Mac's queue; installs only as Kevin's standing word allows.
 
-Open, Kevin's call [not decided]: what the race does on College now that the crossover is gone. The real road suggests
-each direction on its own carriageway: Speedway (clockwise, northbound here) on the upper northbound road, Speedway
-Reverse on the lower southbound road.
+**The race on College: each direction on its own carriageway** (the Mac, 2026-11-22, from the race corridor's standing
+rule). Speedway (clockwise, northbound here) runs the upper northbound road; Speedway Reverse runs the lower southbound
+road. The rule is the race layouts' own description (ledger 0049 section 9: "an Alvarado-wide lane on your own side of
+every road"), which ledger 0054 cites for the median noses ("The median noses: decided (the K-rail at the nose, "your
+own side of every road")"). Those words are the layout description Kevin's layouts were built to, not a sentence he
+typed. He was also asked on the PC the same evening (own road each way, or both on the lower road) and had not
+answered when this was written; his answer wins.
+
+## The proof scene (`college_proof_blend.py`, `college_proof_sheet.py` -> `college_proof.jpg`)
+
+Before = the gate OBJ of 0.20.2. After = the design's two carriageways on the lidar's 1 m ground inside a 40 m
+corridor, the build outside it. Three cameras, the same in both: northbound at v1215, southbound at v1410, and from
+the south-west 85 m up. The 1 m grid agrees with the design on the line (median +0.012 m where there is no island).
+A shape study only: no paint, lamps, trees, curbs or closed seams; the stills and the .blend stay in
+`D:/k10-scratch/lm_r2_college/proof`.
 
 ## Next (ledger 0055, "Bounded proof" steps 3 to 7)
 

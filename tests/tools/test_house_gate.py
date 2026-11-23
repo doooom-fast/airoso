@@ -240,8 +240,10 @@ def test_the_house_textures_reach_the_exporter_from_airosos_assets():
             want.add(rel)
     assert next((k for k in pbr.TEXTURES if "FARBLOCK_STUCCO_0".startswith(k)), None) is None
     assert "FARBLOCK_STUCCO" not in cfg["texture_overrides"]
-    assert set(ship["sync_in"]["assets"]) == want and len(want) == 10
-    for rel in want:
+    # ledger 0099: the owned asphalt / concrete pairs texture_overrides 1ROAD / 1KERB_SIDEWALK name ride beside the houses'
+    owned = {f"assets/textures/{n}_{s}.jpg" for n in ("asphalt_dense", "concrete_plain") for s in ("diffuse", "normal")}
+    assert set(ship["sync_in"]["assets"]) == want | owned and len(want) == 10 and not want & owned
+    for rel in want | owned:
         assert (ROOT / rel).is_file() and rel not in ref       # engine-july has none of them: the project's copy is the one used
         tracked = subprocess.run(["git", "ls-files", "--error-unmatch", rel], cwd=ROOT, capture_output=True)
         assert tracked.returncode == 0, rel
@@ -264,7 +266,7 @@ def test_spec_takes_assets_only_under_assets():
     spec.loader.exec_module(m)
     s = m.load(LM / "ship.json", "san-diego-lake-murray")
     assert all(p.startswith("assets/textures/") for p in s["sync_in"]["assets"])
-    assert sum(1 for ln in m.lines(s) if ln.startswith("in.assets\t")) == 10
+    assert sum(1 for ln in m.lines(s) if ln.startswith("in.assets\t")) == 14     # the 10 house textures + 0099's 4 owned
     with tempfile.TemporaryDirectory() as tmp:
         d = json.loads((LM / "ship.json").read_text(encoding="utf-8"))
         d["sync_in"]["assets"] = ["tracks/x.jpg"]

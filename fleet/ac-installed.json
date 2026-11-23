@@ -79,15 +79,16 @@
       "version": "0.1.14"
     },
     "san_diego_lake_murray_v4": {
-      "track": "san-diego-lake-murray",
+      "branch": "claude/lm-sidewalk-20261122",
       "engine": "lm-v4",
-      "role": "current",
-      "version": "0.20.2",
-      "branch": "claude/lm-phase2-0202",
-      "installed": "2026-11-04",
-      "ui_name_prefix": "doooom San Diego",
+      "installed": "2026-11-23",
+      "note": "0.20.4 = 0.20.2 + both heads of the two-arm lamps lit (646 lights) + kerb rumble (KERB FF_EFFECT 1, sidewalks included) + the owned asphalt on 1ROAD and concrete_plain on 1KERB_SIDEWALK + the walk's back grade <= 0.20 (walk_grade, then seated: the street drive_test's 96 inherited drops -> 8, PASS with no force); ledger 0099 rounds 1 / 1c; the first Lake Murray built from the chain's own empty workshop (lm_line, sync_in.seed); install build = the PC rehearsal 0099-2 (1048/1048 gate rows, every kn5 equivalent); 0.20.2 parked in D:/k10-track-archive/2026-11-23_015157; Kevin: \"I always want newer builds\" / \"When they're done, install them\"",
       "old_name_prefix": "K10 - San Diego CANDIDATE v4 keep-roads",
-      "note": "Lake Murray v4 + Mission Gorge Speedway (ship_sd.sh SD_BESPOKE=1); its ship.json ui_name_prefix still says the K10 candidate name, so a reinstall brings it back"
+      "role": "current",
+      "sha": "c8debb5f",
+      "track": "san-diego-lake-murray",
+      "ui_name_prefix": "doooom San Diego",
+      "version": "0.20.4"
     },
     "sand_creek_raceway": {
       "branch": "claude/sand-creek-edge-flush",

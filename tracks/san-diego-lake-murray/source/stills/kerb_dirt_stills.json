@@ -1,0 +1,124 @@
+{
+ "_doc": "Stills of Lake Murray's race kerbs as built (0.20.2's loop.blend), from the driver's eye, for Kevin's look at how dirty\nthey are (ledger 0053 Q2 / 0099; Kevin 2026-11-22: \"Show me stills first\"). BLENDER STAND-INS, not Assetto Corsa: CSP's\nshading, the kn5's ksPerPixelMultiMap and the game's tone map differ.",
+ "blend_version": "0.20.2",
+ "meshes_bound": 187,
+ "eye_m": 1.1,
+ "fov_deg": 60.0,
+ "sun": {
+  "azimuth_deg": 228.0,
+  "elevation_deg": 22.0,
+  "as": "San Diego, 7 Nov, 15:30 PST"
+ },
+ "samples": 128,
+ "blender": "5.1.2",
+ "stills": [
+  {
+   "still": "kerb_dirt_770_out_entry",
+   "kerb": "1KERB_race_770_out",
+   "what": "College hairpin (770) outside kerb, race_cw entry; heaviest rubber -59.1 to -49.8 m from the apex",
+   "camera_vertex": 746,
+   "look_vertex": 753,
+   "lateral_from_kerb_m": 3.0,
+   "eye_m": [
+    -1943.73,
+    -1251.68,
+    9.48
+   ],
+   "look_m": [
+    -1947.95,
+    -1273.05,
+    9.31
+   ],
+   "kerb_length_m": 119.9,
+   "m_by_level": [
+    86.2,
+    10.1,
+    8.8,
+    14.8
+   ],
+   "heavy_spans_m_from_apex": [
+    [
+     -59.1,
+     -49.8
+    ],
+    [
+     11.7,
+     15.9
+    ]
+   ],
+   "png": "kerb_dirt_770_out_entry.png"
+  },
+  {
+   "still": "kerb_dirt_770_out_close",
+   "kerb": "1KERB_race_770_out",
+   "what": "College hairpin (770) outside kerb, close on the heaviest rubber (-59.1 to -49.8 m from the apex)",
+   "camera_vertex": 749,
+   "look_vertex": 751,
+   "lateral_from_kerb_m": 1.5,
+   "eye_m": [
+    -1944.75,
+    -1260.85,
+    9.86
+   ],
+   "look_m": [
+    -1945.29,
+    -1267.16,
+    9.03
+   ],
+   "kerb_length_m": 119.9,
+   "m_by_level": [
+    86.2,
+    10.1,
+    8.8,
+    14.8
+   ],
+   "heavy_spans_m_from_apex": [
+    [
+     -59.1,
+     -49.8
+    ],
+    [
+     11.7,
+     15.9
+    ]
+   ],
+   "png": "kerb_dirt_770_out_close.png"
+  },
+  {
+   "still": "kerb_dirt_3296_out",
+   "kerb": "1KERB_race_3296_out",
+   "what": "Jackson / Lake Murray Blvd (3296) outside kerb, race_cw entry; heaviest rubber -16.1 to -11.3 m from the apex",
+   "camera_vertex": 3288,
+   "look_vertex": 3293,
+   "lateral_from_kerb_m": 3.0,
+   "eye_m": [
+    2606.0,
+    535.08,
+    93.0
+   ],
+   "look_m": [
+    2615.53,
+    531.6,
+    91.92
+   ],
+   "kerb_length_m": 51.4,
+   "m_by_level": [
+    28.0,
+    8.0,
+    5.8,
+    9.6
+   ],
+   "heavy_spans_m_from_apex": [
+    [
+     -16.1,
+     -11.3
+    ],
+    [
+     13.6,
+     17.7
+    ]
+   ],
+   "png": "kerb_dirt_3296_out.png"
+  }
+ ]
+}

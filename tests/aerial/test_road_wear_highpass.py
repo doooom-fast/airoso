@@ -75,6 +75,13 @@ def test_only_the_pilot_tracks_opt_in_and_they_bind_the_owned_pair():
         hp = (cfg.get("road_wear") or {}).get("detail_highpass_m")
         if slug not in PILOT:
             assert hp is None, slug                                       # every other track unchanged
+            if slug == "san-diego-lake-murray":
+                # ledger 0099 (Kevin 2026-11-22, owned asphalt "On every track now"): Lake Murray binds the pair with no
+                # road_wear key, so no high-pass; its ship.json brings the pair (tests/tools/test_lake_murray_0099.py)
+                assert "road_wear" not in cfg and [ov["diffuse"], ov["normal"]] == PAIR, slug
+                ship = json.loads((cfgp.parent / "ship.json").read_text(encoding="utf-8"))
+                assert set(PAIR) <= set(ship["sync_in"]["assets"]), slug
+                continue
             assert "asphalt_dense" not in json.dumps(ov), slug
             continue
         seen.add(slug)

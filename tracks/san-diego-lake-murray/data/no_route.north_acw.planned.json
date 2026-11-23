@@ -1,0 +1,41 @@
+{
+ "layout": "north_acw",
+ "mode": "planned",
+ "obj": null,
+ "declaration": "v2 corridors.north_acw",
+ "bands_version": 2,
+ "params": {
+  "cell_m": 0.25,
+  "tile_m": 64.0,
+  "domain_pad_m": 25.0,
+  "probe_r_m": 0.5,
+  "tol_m": 0.75,
+  "wall_span_m": [
+   0.2,
+   0.9
+  ],
+  "deck": "centreline y + 0.10",
+  "barrier_half_m": 0.335
+ },
+ "seed": "lane centre at the grid vertex v2546",
+ "domain_m2": 649381,
+ "reached_m2": 91688,
+ "allowed_m2": 91688,
+ "leak_cells": 0,
+ "leak_m2": 0,
+ "escaped": false,
+ "wall_cells": 391190,
+ "wall_tris_in_band": 0,
+ "door_clusters": 0,
+ "doors": [],
+ "doors_by_class": {},
+ "forbidden_probes": 325,
+ "forbidden_reached": [],
+ "lap_vertices": 2936,
+ "blocked": [],
+ "spawns_checked": 0,
+ "spawns_unreached": [],
+ "fail": false,
+ "fails": [],
+ "seconds": 3.1
+}

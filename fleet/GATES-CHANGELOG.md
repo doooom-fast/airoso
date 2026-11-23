@@ -14,6 +14,20 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
+## 2026-11-22 — WIRING (opt-in): check_lights_ini counts both heads of a two-arm lamp; a seeded workshop passes the "no blend yet" guard (ledger 0099; no threshold moved)
+
+No gate threshold, tolerance or bypass moved. Both opt-in, Lake Murray only (`tests/tools/test_lake_murray_0099.py`):
+
+- `tools/check_lights_ini.py` (the hard read-back of the written ext_config.ini): with `scenery.streetlights.light_both_heads`
+  true it reads `data/lights.heads.json` (tools/author_lamp_heads_blend.py's back lenses) and wants one `[LIGHT_N]` at
+  every front AND every back lens, each within the same `POS_TOL_M` 0.05 m, no duplicate, no orphan, the same look on
+  every block. Opted in with no heads file = FAIL. Not opted in = the one-per-lamp check as before (its tests pass
+  unchanged). On Lake Murray's record: 323 lamps, 646 lenses, the closest two 8.073 m apart against ext_config's 2 m link.
+- `tools/ship_track.sh`: a project with no loop.blend no longer stops at "no blend yet" when ship.json `sync_in.seed`
+  names `loop.blend` and airoso holds it (the seed copies it in before anything runs; a Git LFS pointer is refused,
+  exit 1). A spec without `seed` (every other track) stops exactly as before (the Lariat and SD guard runs in
+  `tests/tools/test_ship_track_chain.py`).
+
 ## 2026-11-22 — Milford round 1 (ledger 0100): a set-in far block's roof judged by its downhill face; the trunk reach derived; no threshold moved, no bypass
 
 No gate threshold, floor or bypass moved; every key opt-in and named by Milford only (`tests/tools/test_milford_finish_0100.py`).

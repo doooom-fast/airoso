@@ -9,6 +9,10 @@ coincident pairs from that clustering (ledger 0043 / 0056's duplicate class); th
     its light — no duplicate, no orphan, no light off a lens;
   * every light keeps the approved look (ledger 0043 / 0056): COLOR, SPOT, RANGE, RANGE_GRADIENT_OFFSET,
     SPECULAR_MULT as track.config.json lighting.streetlight writes them — the same on every block.
+BOTH HEADS (ledger 0099, opt-in: scenery.streetlights.light_both_heads true): tools/author_lamp_heads_blend.py gave every
+two-arm lamp a back lens (data/lights.heads.json back_lens_xyz, local frame, lens_xyz's order), so the file must hold one
+light at every front AND every back lens: 2 per lamp. The key set and the heads file missing is a FAIL; the key absent =
+exactly the one-per-lamp check above.
 Pure python; exit 1 with the first problems named.
 
     PYTHONUTF8=1 python tools/check_lights_ini.py <project-dir> [--ini <ext_config.ini>] [--json <out>]
@@ -51,21 +55,28 @@ def parse_lights(text: str) -> list[dict]:
     return out
 
 
-def check(lights: dict, blocks: list[dict], streetlight_cfg: dict | None = None) -> dict:
-    """the verdict: {ok, n_lamps, n_lights, problems: [...], matched}"""
+def check(lights: dict, blocks: list[dict], streetlight_cfg: dict | None = None, back_lenses: list | None = None) -> dict:
+    """the verdict: {ok, n_lamps, n_lights, problems: [...], matched}; ``back_lenses`` (ledger 0099, both heads lit): the
+    back heads' lenses, lens_xyz's order — every lamp then wants two lights, one at each of its lenses"""
     heads = lights.get("lampheads") or []
     lenses = ((lights.get("provenance") or {}).get("lens_xyz")) or []
     problems: list[str] = []
     n_lamps, n_lights = len(heads), len(blocks)
-    if n_lights != n_lamps:
-        problems.append(f"{n_lights} [LIGHT_N] blocks for {n_lamps} lamps")
+    if back_lenses is not None:
+        if len(back_lenses) != n_lamps:
+            problems.append(f"data/lights.heads.json has {len(back_lenses)} back lenses for {n_lamps} lamps")
+        lenses = list(lenses) + list(back_lenses)
+    n_want = n_lamps + (len(back_lenses) if back_lenses is not None else 0)
+    if n_lights != n_want:
+        problems.append(f"{n_lights} [LIGHT_N] blocks for {n_lamps} lamps" + ("" if back_lenses is None else
+                        f" with both heads lit ({n_want} lenses)"))
     nums = [b["n"] for b in blocks]
     if nums != list(range(len(nums))):
         problems.append("[LIGHT_N] numbering is not 0..n-1 in order")
     matched = 0
     if lenses:
-        if len(lenses) != n_lamps:
-            problems.append(f"provenance.lens_xyz has {len(lenses)} lenses for {n_lamps} lamps")
+        if len(lenses) != n_want:
+            problems.append(f"provenance.lens_xyz has {len(lenses) - (n_want - n_lamps)} lenses for {n_lamps} lamps")
         # lens -> kn5: (x, y - drop, -z)
         want = [(float(l[0]), float(l[1]) - LIGHT_DROP_M, -float(l[2])) for l in lenses]
         cells: dict[tuple[int, int], list[int]] = {}
@@ -97,7 +108,8 @@ def check(lights: dict, blocks: list[dict], streetlight_cfg: dict | None = None)
                     matched += 1
         missing = [i for i in range(len(want)) if i not in taken]
         if missing:
-            problems.append(f"{len(missing)} lamps have no light at their lens, e.g. {missing[:6]}")
+            problems.append(f"{len(missing)} lamps have no light at their lens, e.g. {missing[:6]}" if back_lenses is None
+                            else f"{len(missing)} lenses have no light, e.g. {missing[:6]} (index >= {n_lamps} = a back head)")
     else:
         problems.append("lights.local.json has no provenance.lens_xyz (the legacy lamp model records no lens): count only")
         problems = [p for p in problems if not p.startswith("lights.local.json has no")] if n_lights == n_lamps else problems
@@ -113,7 +125,11 @@ def check(lights: dict, blocks: list[dict], streetlight_cfg: dict | None = None)
                 problems.append(f"{k} differs between lights: {sorted(str(g) for g in got)[:4]}")
             elif v != "None" and next(iter(got)) != v:
                 problems.append(f"{k} = {next(iter(got))!r} on every light, the config says {v!r}")
-    return {"ok": not problems, "n_lamps": n_lamps, "n_lights": n_lights, "matched": matched, "problems": problems}
+    out = {"ok": not problems, "n_lamps": n_lamps, "n_lights": n_lights, "matched": matched, "problems": problems}
+    if back_lenses is not None:
+        out["both_heads"] = True
+        out["n_lenses"] = n_want
+    return out
 
 
 def main(argv=None) -> int:
@@ -143,11 +159,20 @@ def main(argv=None) -> int:
         print(f"[lights-ini] FAIL: no {ini}")
         return 1
     blocks = parse_lights(ini.read_text(encoding="utf-8", errors="replace"))
-    r = check(lights, blocks, (cfg.get("lighting") or {}).get("streetlight"))
+    back = None
+    if ((cfg.get("scenery") or {}).get("streetlights") or {}).get("light_both_heads") is True:
+        hp = proj / "data" / "lights.heads.json"
+        if not hp.exists():
+            print("[lights-ini] FAIL: scenery.streetlights.light_both_heads is set but there is no data/lights.heads.json "
+                  "(tools/author_lamp_heads_blend.py, the author step lamp_heads, writes it)")
+            return 1
+        back = json.loads(hp.read_text(encoding="utf-8")).get("back_lens_xyz") or []
+    r = check(lights, blocks, (cfg.get("lighting") or {}).get("streetlight"), back)
     r["ini"] = str(ini)
     if a.json:
         Path(a.json).write_text(json.dumps(r, indent=1), encoding="utf-8")
-    print(f"[lights-ini] {r['n_lights']} [LIGHT_N] for {r['n_lamps']} lamps, {r['matched']} at their lens: "
+    print(f"[lights-ini] {r['n_lights']} [LIGHT_N] for {r['n_lamps']} lamps"
+          + (f" (both heads: {r['n_lenses']} lenses)" if back is not None else "") + f", {r['matched']} at their lens: "
           f"{'PASS' if r['ok'] else 'FAIL'}" + ("" if r["ok"] else " — " + "; ".join(r["problems"][:8])))
     return 0 if r["ok"] else 1
 

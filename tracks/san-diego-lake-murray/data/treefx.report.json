@@ -134,5 +134,10 @@
    "D": 1576,
    "B": 1123
   }
+ },
+ "median_measured": {
+  "measured": 252,
+  "crown_measured": 201,
+  "kept_rank_rule": 850
  }
 }

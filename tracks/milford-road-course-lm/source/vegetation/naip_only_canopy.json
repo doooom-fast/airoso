@@ -1,0 +1,9 @@
+{
+ "_doc": "ledger 0100 item 7 (source/vegetation/scripts/veg_naip_verge.py --from-npz): the NAIP 2022 canopy the 2017 lidar does not hold (veg_crowns.py new_c, blobs of at least 20 m2: inventory.json flags.naip_new_since_2017), one pixel per cell, row 0 = NORTH; cell (row r, col i) has its centre at e = e0 + (i + 0.5) cell, n = n0 + (rows - r - 0.5) cell, local metres about data/centerline.local.json's origin",
+ "e0": -1400.0,
+ "n0": -1400.0,
+ "cell_m": 2.0,
+ "rows": 1400,
+ "cols": 1400,
+ "cells": 11075
+}

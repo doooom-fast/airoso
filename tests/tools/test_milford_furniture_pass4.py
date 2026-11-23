@@ -41,5 +41,10 @@ def test_every_drop_is_listed_with_its_reason():
     drops = json.loads((P4 / "blocks_dropped.json").read_text())
     # 0.1.11 (ledger 0082 'Far ground (0.1.11)'): one more, refused by the author on the real ground (far_ground/scripts/drop_set_in.py)
     assert all(d["why"] in ("small or empty", "a planted tree within 1 m", "set into its slope") for d in drops)
-    assert [d["key"] for d in drops if d["why"] == "set into its slope"] == ["mpg_nw_complex_0"]
-    assert len(drops) + len(json.loads((P4 / "blocks.json").read_text())) == len(json.loads((P4 / "tiers_p4.json").read_text()))
+    # ledger 0100 item 5 (Kevin: "Stand it with the set-in form"): mpg_nw_complex_0 is back in blocks.json, set into its slope
+    assert [d["key"] for d in drops if d["why"] == "set into its slope"] == []
+    blocks = json.loads((P4 / "blocks.json").read_text())
+    nw0 = [b for b in blocks if b["key"] == "mpg_nw_complex_0"]
+    assert len(nw0) == 1 and nw0[0]["set_in"] and nw0[0]["off_terrain"] and nw0[0]["roof_z_m"] == 25.91
+    assert [b["key"] for b in blocks if b.get("set_in")] == ["mpg_nw_complex_0"]
+    assert len(drops) + len(blocks) == len(json.loads((P4 / "tiers_p4.json").read_text()))

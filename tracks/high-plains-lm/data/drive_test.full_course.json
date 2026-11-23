@@ -1,0 +1,174 @@
+{
+ "lap_m": 4085.3,
+ "layout": "full_course",
+ "direction": "forward",
+ "kind": "race",
+ "race_furniture": false,
+ "obj": "track.obj",
+ "lane": "full width / island",
+ "barrier_stations": 0,
+ "barrier_missing": 0,
+ "barrier_missing_runs": [],
+ "soft_top_in_lane": 0,
+ "off_pavement_stations": 0,
+ "severe_steps": 0,
+ "severe_per_km": 0.0,
+ "steps_per_km": 0.0,
+ "kinks_per_km": 8.57,
+ "obstruction_stations": 0,
+ "daylight_gaps": 0,
+ "replication_vs_measured": null,
+ "undrivable_corners": 0,
+ "floating_furniture": 0,
+ "apron_steps": 0,
+ "fold_bumps": 0,
+ "vertex_bumps": 14,
+ "vertex_bumps_worst": [
+  [
+   3339.0,
+   -3.47,
+   0.038,
+   0.0219
+  ],
+  [
+   3341.0,
+   -3.42,
+   0.035,
+   0.019
+  ],
+  [
+   3340.0,
+   -3.42,
+   0.034,
+   0.0177
+  ],
+  [
+   3338.0,
+   -3.47,
+   0.034,
+   0.0172
+  ],
+  [
+   3342.0,
+   -3.37,
+   0.027,
+   0.0151
+  ],
+  [
+   3343.0,
+   -3.37,
+   0.026,
+   0.0142
+  ],
+  [
+   3721.0,
+   3.04,
+   0.026,
+   0.0066
+  ],
+  [
+   3713.0,
+   3.02,
+   0.025,
+   0.0045
+  ],
+  [
+   3718.0,
+   -3.03,
+   0.032,
+   0.0027
+  ],
+  [
+   3715.0,
+   -3.03,
+   0.027,
+   0.0025
+  ],
+  [
+   3718.0,
+   3.03,
+   0.028,
+   0.0023
+  ],
+  [
+   3719.0,
+   -3.03,
+   0.027,
+   0.0013
+  ]
+ ],
+ "excursion_drops": 0,
+ "excursion_far_ledges": 0,
+ "worst_excursions": [],
+ "worst_gated_excursions": [],
+ "obstruction_by_mesh": {},
+ "worst": {
+  "soft_top": [],
+  "severe_steps": [],
+  "severe_all": [],
+  "kinks": [
+   [
+    1702.0,
+    5.11,
+    4.58
+   ],
+   [
+    3712.0,
+    4.52,
+    4.56
+   ],
+   [
+    3719.0,
+    4.53,
+    4.46
+   ],
+   [
+    3718.0,
+    -4.53,
+    4.42
+   ],
+   [
+    3718.0,
+    4.53,
+    4.37
+   ],
+   [
+    1700.0,
+    5.1,
+    4.27
+   ],
+   [
+    2930.0,
+    4.94,
+    4.15
+   ],
+   [
+    630.0,
+    -4.93,
+    4.0
+   ],
+   [
+    3716.0,
+    4.53,
+    3.98
+   ],
+   [
+    3719.0,
+    -4.53,
+    3.95
+   ],
+   [
+    2931.0,
+    4.83,
+    3.89
+   ],
+   [
+    3339.0,
+    -3.47,
+    3.79
+   ]
+  ],
+  "obstructions": []
+ },
+ "fail": false
+}

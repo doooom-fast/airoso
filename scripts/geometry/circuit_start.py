@@ -17,8 +17,16 @@ tools/circuit_dummies_blend.py on the PREPPED scene (the prep's own set removed 
     "pits":    {"slots_lonlat": [...]} | {"pattern": {...}},        AC_PIT_0..m-1 (the same two forms)
     "sectors": {"stations_m": [s1, s2]},                            optional: AC_TIME_1 / AC_TIME_2; absent = the lap in
                                                                     equal thirds from the line (engine-july's rule)
-    "road_prefixes": ["1ROAD"]                                      optional: the prepped meshes a car must stand on
+    "road_prefixes": ["1ROAD"],                                     optional: the prepped meshes a car must stand on
+    "layouts": ["<id>", ...]                                        optional (ledger 0097 round 3): a MULTI-layout
+                                                                    circuit whose layouts all start at this line
   }
+  layouts: every layouts[] id, once. Each layout's set is planned on ITS OWN line (data/centerline.local.json, or the
+            lap it names: data/lap.<lap>.json, scripts/geometry/race_lap.py) with the same line, grid and pits (they must
+            stand on that line's road) and its own sectors (equal thirds of ITS lap unless race_start.sectors names
+            stations, which then apply to a single-layout circuit only), and written as data/dummies_<id>.json for the
+            layout's nodes-only spawn kn5 (tools/layout_dummies.py's schema) instead of empties in the road scene.
+            Absent = the single-layout circuit, exactly as before (a multi-layout config without it is refused)
   pattern = {"first_m": d0, "step_m": d, "lateral_m": [l0, l1, ...], "slots": n}: slot k at the line's station + d0 +
             k * d (signed, + = ahead of the line in driving order), lateral l[k % len(l)] (+ = left of travel)
 
@@ -255,6 +263,75 @@ def plan(race_start: dict, local: dict) -> dict:
                             f"AC_TIME_{k - 1} ({prev:.0f} m)")
         prev = a
     return {"nodes": nodes, "line_station_m": s_line, "sectors_m": sec, "lap_m": line.lap, "problems": problems}
+
+
+def layout_ids(race_start: dict, layouts: list) -> tuple[list[str] | None, list[str]]:
+    """race_start.layouts (opt-in, ledger 0097 round 3): (the layout ids, problems). None = not declared (the single-layout
+    circuit). Declared, it must name every layouts[] id exactly once, and no layout may be a reverse one (the declared grid
+    faces the line's own travel)"""
+    want = race_start.get("layouts")
+    if want is None:
+        return None, []
+    ids = [str(lo.get("id")) for lo in layouts if isinstance(lo, dict)]
+    probs = []
+    if not isinstance(want, list) or sorted(map(str, want)) != sorted(ids) or len(set(map(str, want))) != len(want):
+        probs.append(f"race_start.layouts {want!r} must name every layouts[] id once ({ids})")
+    for lo in layouts:
+        if isinstance(lo, dict) and str(lo.get("direction", "forward")) != "forward":
+            probs.append(f"race_start.layouts: layout {lo.get('id')} runs {lo.get('direction')}; the declared grid faces the "
+                         f"line's own travel (forward layouts only)")
+    if (race_start.get("sectors") or {}).get("stations_m") is not None and len(ids) > 1:
+        probs.append("race_start.sectors.stations_m are one lap's stations: a multi-layout circuit takes each lap's thirds")
+    return [str(v) for v in want] if isinstance(want, list) else [], probs
+
+
+def layout_line(local: dict, lap: dict | None) -> dict:
+    """the line a layout's start is planned on: data/centerline.local.json, or the lap's own points and widths
+    (data/lap.<lap>.json) in that file's origin"""
+    if lap is None:
+        return local
+    return {"points_xyz_m": lap["points_xyz_m"], "widths_m": lap["widths_m"], "origin": local["origin"]}
+
+
+def spawn_set(pl: dict, line_rec: dict, ys: dict, layout_id: str, lap_id: str | None) -> dict:
+    """data/dummies_<id>.json for a race_start layout (tools/layout_dummies.py's schema, which scripts/ac/build_spawn_kn5.py,
+    scripts/ac/track_folder.py, scripts/ac/write_ai_line.py and scripts/ac/verify_kn5.py read): {name: [x, y, z]} in the engine
+    frame plus underscore metadata; ``pl`` = plan() on ``line_rec``; ``ys`` = each node's height (the Blender step reads the
+    built road)"""
+    line = Line(line_rec["points_xyz_m"], line_rec["widths_m"])
+    n = len(line.pts) - 1 if line.closed else len(line.pts)
+
+    def vertex(s):
+        """the line's nearest vertex to station s (round the seam on a loop)"""
+        def gap(k):
+            d = abs(line.st[k] - s) % line.lap if line.closed else abs(line.st[k] - s)
+            return min(d, line.lap - d) if line.closed else d
+        return min(range(n), key=gap)
+    out, yaw, vert, stat, right = {}, {}, {}, {}, {}
+    for name in sorted(pl["nodes"]):
+        v = pl["nodes"][name]
+        out[name] = [round(v["x"], 3), round(ys[name], 3), round(v["z"], 3)]
+        vert[name] = vertex(v["station_m"])
+        stat[name] = round(v["station_m"], 2)
+        right[name] = round(-v["lateral_m"], 3)
+        if name.startswith(FACING):
+            yaw[name] = round(v["yaw_deg"], 3)
+    s0 = pl["line_station_m"]
+    pole = pl["nodes"].get("AC_START_0")
+    meta = {"_layout": layout_id, "_direction": "forward", "_kind": "race",
+            "_frame": "engine x=E, y=up, z=N (centerline.local.json); Blender = (x, z, y); kn5 z = -z",
+            "_doc": "underscore keys are metadata — consumers (build_spawn_kn5, track_folder, write_ai_line, verify_kn5) must "
+                    "skip every key starting with '_'. Written by tools/circuit_dummies_blend.py from track.config.json "
+                    "race_start (scripts/geometry/circuit_start.py; ledger 0097 round 3), not tools/layout_dummies.py",
+            "_race_start": True,
+            "_line": {"vertex": vertex(s0), "station_m": round(s0, 2), "width_m": round(line.width(s0), 3),
+                      "pole_vertex": vert.get("AC_START_0"),
+                      "pole_behind_line_m": round(line.ahead(pole["station_m"], s0), 2) if pole else None,
+                      "sectors_m": [round(v, 2) for v in pl["sectors_m"]], "lap_m": round(line.lap, 2)},
+            "_yaw_deg": yaw, "_vertex": vert, "_station_m": stat, "_right_of_travel_m": right}
+    if lap_id:
+        meta["_lap"] = lap_id
+    return {**out, **meta}
 
 
 def car_corners(node: dict) -> list[tuple[float, float]]:

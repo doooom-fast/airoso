@@ -100,13 +100,6 @@
    "length_m": 64.6
   },
   {
-   "key": "paddock_row_3",
-   "kind": "krail",
-   "modules": 0,
-   "left_out": 12,
-   "length_m": 37.5
-  },
-  {
    "key": "paddock_row_4",
    "kind": "krail",
    "modules": 11,
@@ -133,13 +126,6 @@
    "modules": 7,
    "left_out": 0,
    "length_m": 21.2
-  },
-  {
-   "key": "paddock_row_8",
-   "kind": "krail",
-   "modules": 0,
-   "left_out": 6,
-   "length_m": 20.6
   },
   {
    "key": "paddock_row_9",
@@ -189,35 +175,35 @@
    "key": "osm289311820",
    "skin": "METAL",
    "roof": "WHITE",
-   "form": "gable ridge 3.9 m, eaves out 0.30 m with a fascia",
-   "wall_h_m": 3.2,
+   "form": "flat",
+   "wall_h_m": 4.28,
    "ground": [
-    9.31,
-    9.58
+    9.22,
+    9.54
    ],
-   "bottom": 9.05,
-   "eave": 12.25,
+   "bottom": 9.0,
+   "eave": 13.28,
    "off_terrain": false,
    "collider": true,
    "facade": {
     "skin": "garage",
     "bays": 12,
     "openings": 7,
-    "gable_in_walls": true
+    "gable_in_walls": false
    }
   },
   {
    "key": "osm289311821",
    "skin": "METAL",
    "roof": "METAL",
-   "form": "posts (38), ceiling 2.40 m, plate 0.15 m, gable ridge 3.00 m",
-   "wall_h_m": 2.4,
+   "form": "posts (38), ceiling 2.47 m, plate 0.15 m, gable ridge 3.72 m",
+   "wall_h_m": 2.47,
    "ground": [
-    9.66,
-    9.88
+    9.75,
+    9.92
    ],
-   "bottom": 9.35,
-   "eave": 11.75,
+   "bottom": 9.45,
+   "eave": 11.92,
    "off_terrain": false,
    "collider": 38
   },
@@ -225,14 +211,14 @@
    "key": "osm289311823",
    "skin": "METAL",
    "roof": "WHITE",
-   "form": "gable ridge 2.5 m, eaves out 0.30 m with a fascia",
-   "wall_h_m": 2.1,
+   "form": "gable ridge 4.7 m across, eaves out 0.30 m with a fascia",
+   "wall_h_m": 2.48,
    "ground": [
-    9.63,
-    9.85
+    9.52,
+    9.8
    ],
-   "bottom": 9.34,
-   "eave": 11.44,
+   "bottom": 9.27,
+   "eave": 11.75,
    "off_terrain": false,
    "collider": true,
    "facade": {
@@ -249,11 +235,11 @@
    "form": "gable ridge 2.5 m, eaves out 0.30 m with a fascia",
    "wall_h_m": 2.1,
    "ground": [
-    9.19,
-    9.35
+    9.22,
+    9.37
    ],
-   "bottom": 8.87,
-   "eave": 10.97,
+   "bottom": 8.89,
+   "eave": 10.99,
    "off_terrain": false,
    "collider": false,
    "facade": {
@@ -270,11 +256,11 @@
    "form": "gable ridge 2.5 m, eaves out 0.30 m with a fascia",
    "wall_h_m": 2.1,
    "ground": [
-    0.05,
-    0.06
+    -0.13,
+    0.0
    ],
-   "bottom": -0.35,
-   "eave": 1.75,
+   "bottom": -0.45,
+   "eave": 1.65,
    "off_terrain": false,
    "collider": true,
    "facade": {
@@ -291,11 +277,11 @@
    "form": "gable ridge 3.1 m, eaves out 0.30 m with a fascia",
    "wall_h_m": 2.1,
    "ground": [
-    9.15,
-    9.29
+    9.14,
+    9.27
    ],
-   "bottom": 8.82,
-   "eave": 10.92,
+   "bottom": 8.8,
+   "eave": 10.9,
    "off_terrain": false,
    "collider": false,
    "facade": {
@@ -309,21 +295,22 @@
    "key": "traced_white_w_of_osm289311820",
    "skin": "METAL",
    "roof": "WHITE",
-   "form": "gable ridge 3.9 m, eaves out 0.30 m with a fascia",
-   "wall_h_m": 3.2,
+   "form": "shed 2.9..3.8 m",
+   "wall_h_m": 2.92,
    "ground": [
-    9.12,
-    9.36
+    9.04,
+    9.31
    ],
-   "bottom": 8.83,
-   "eave": 12.03,
+   "bottom": 8.76,
+   "eave": 11.68,
    "off_terrain": false,
    "collider": true,
    "facade": {
     "skin": "garage",
     "bays": 10,
     "openings": 6,
-    "gable_in_walls": true
+    "gable_in_walls": false,
+    "shed_faces": 10
    }
   },
   {
@@ -333,11 +320,11 @@
    "form": "posts (8), slab 0.3 m",
    "wall_h_m": 3.1,
    "ground": [
-    9.17,
-    9.4
+    9.11,
+    9.36
    ],
-   "bottom": 8.89,
-   "eave": 11.99,
+   "bottom": 8.85,
+   "eave": 11.95,
    "off_terrain": false,
    "collider": 8
   },
@@ -348,11 +335,11 @@
    "form": "flat",
    "wall_h_m": 2.6,
    "ground": [
-    8.68,
+    8.82,
     9.08
    ],
-   "bottom": 8.49,
-   "eave": 11.09,
+   "bottom": 8.56,
+   "eave": 11.16,
    "off_terrain": false,
    "collider": false,
    "facade": {
@@ -363,13 +350,34 @@
    }
   },
   {
+   "key": "traced_grey_roof_e_of_containers",
+   "skin": "METAL",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 2.6,
+   "ground": [
+    9.07,
+    9.28
+   ],
+   "bottom": 8.77,
+   "eave": 11.37,
+   "off_terrain": false,
+   "collider": false,
+   "facade": {
+    "skin": "garage",
+    "bays": 18,
+    "openings": 10,
+    "gable_in_walls": false
+   }
+  },
+  {
    "key": "post0",
    "skin": "METAL",
    "roof": "WHITE",
    "form": "flat",
    "wall_h_m": 2.8,
    "ground": [
-    10.07,
+    10.06,
     10.07
    ],
    "bottom": 9.67,
@@ -390,7 +398,7 @@
    "form": "flat",
    "wall_h_m": 2.8,
    "ground": [
-    10.4,
+    10.39,
     10.4
    ],
    "bottom": 10.0,
@@ -411,11 +419,11 @@
    "form": "flat",
    "wall_h_m": 2.8,
    "ground": [
-    9.36,
-    9.44
+    9.35,
+    9.43
    ],
-   "bottom": 9.0,
-   "eave": 11.8,
+   "bottom": 8.99,
+   "eave": 11.79,
    "off_terrain": false,
    "collider": true,
    "facade": {
@@ -432,11 +440,11 @@
    "form": "flat",
    "wall_h_m": 2.8,
    "ground": [
-    14.62,
-    14.77
+    14.67,
+    14.75
    ],
-   "bottom": 14.3,
-   "eave": 17.1,
+   "bottom": 14.31,
+   "eave": 17.11,
    "off_terrain": false,
    "collider": true,
    "facade": {
@@ -454,7 +462,7 @@
    "wall_h_m": 2.8,
    "ground": [
     10.94,
-    11.12
+    11.13
    ],
    "bottom": 10.63,
    "eave": 13.43,
@@ -474,11 +482,11 @@
    "form": "flat",
    "wall_h_m": 2.8,
    "ground": [
-    9.67,
-    9.89
+    9.35,
+    9.54
    ],
-   "bottom": 9.38,
-   "eave": 12.18,
+   "bottom": 9.05,
+   "eave": 11.85,
    "off_terrain": false,
    "collider": true,
    "facade": {
@@ -495,11 +503,11 @@
    "form": "flat",
    "wall_h_m": 2.8,
    "ground": [
-    6.47,
-    6.82
+    7.93,
+    8.07
    ],
-   "bottom": 6.24,
-   "eave": 9.04,
+   "bottom": 7.61,
+   "eave": 10.41,
    "off_terrain": false,
    "collider": true,
    "facade": {
@@ -516,11 +524,11 @@
    "form": "flat",
    "wall_h_m": 2.8,
    "ground": [
-    8.9,
-    9.07
+    8.89,
+    9.06
    ],
-   "bottom": 8.58,
-   "eave": 11.38,
+   "bottom": 8.57,
+   "eave": 11.37,
    "off_terrain": false,
    "collider": true,
    "facade": {
@@ -537,11 +545,11 @@
    "form": "flat",
    "wall_h_m": 2.8,
    "ground": [
-    11.14,
-    11.55
+    11.2,
+    11.64
    ],
-   "bottom": 10.95,
-   "eave": 13.75,
+   "bottom": 11.01,
+   "eave": 13.81,
    "off_terrain": false,
    "collider": true,
    "facade": {
@@ -558,11 +566,11 @@
    "form": "flat",
    "wall_h_m": 2.8,
    "ground": [
-    -0.42,
-    -0.28
+    0.25,
+    0.5
    ],
-   "bottom": -0.75,
-   "eave": 2.05,
+   "bottom": -0.01,
+   "eave": 2.79,
    "off_terrain": false,
    "collider": false,
    "facade": {
@@ -579,11 +587,11 @@
    "form": "flat",
    "wall_h_m": 2.8,
    "ground": [
-    -3.39,
-    -3.19
+    -5.98,
+    -5.47
    ],
-   "bottom": -3.68,
-   "eave": -0.88,
+   "bottom": -6.13,
+   "eave": -3.33,
    "off_terrain": false,
    "collider": false,
    "facade": {
@@ -600,8 +608,8 @@
    "form": "flat",
    "wall_h_m": 2.8,
    "ground": [
-    12.46,
-    13.02
+    12.48,
+    13.0
    ],
    "bottom": 12.34,
    "eave": 15.14,
@@ -670,6 +678,11 @@
    "key": "post9_pad",
    "cells": 4,
    "left_out": 0
+  },
+  {
+   "key": "pit_exit",
+   "cells": 56,
+   "left_out": 1
   }
  ]
 }

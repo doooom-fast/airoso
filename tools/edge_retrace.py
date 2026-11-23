@@ -34,6 +34,12 @@ one-sided gore or junction mouth on BOTH sides, so the far edge runs 1.3-2.0 m o
             is eroded on its own (the tightest within +-erode_m) and binds the change before the smoothing
 Rows that do not agree keep today's edge (gaps up to gap_m between agreeing rows are interpolated). The rail clamp, the
 taper and the smoothing are the widen mode's. mode "widen" (the default) is exactly 0.1.12's.
+
+mode "measured" (opt-in, ledger 0097 round 2, High Plains; Kevin 2026-11-22: "Rebuild at the measured widths"): mode
+"agree"'s in-or-out machinery (points owned from AGREE_INNER_FRAC x today's half width out, the Gaussian capped +-MED_CAP_M of
+the row's own median, the erosion toward zero, the rails' limit eroded and binding the change) on ONE sensor, src: a track
+measured by one photo and no lidar edge (High Plains: the 0.3 m NAIP 2023's painted edge lines and kerbs, its
+source/edges/measure_widths.py). Rows src does not read keep today's edge (gaps up to gap_m interpolated), as in agree.
 """
 from __future__ import annotations
 
@@ -63,7 +69,7 @@ GAP_M = 40.0           # [invented] a row with no reading takes the line between
 AGREE_SOURCES = ("naip", "lidar")   # mode "agree": the two sensors of source/edges/edge_evidence.json
 AGREE_INNER_FRAC = 0.3  # [invented, as tools/edge_smoothness.py INNER_FRAC: nearer the line than 0.3 x the half width is an
 #                         island or a median, not the lane edge] mode "agree": a point is owned from here out
-MODES = ("widen", "agree")
+MODES = ("widen", "agree", "measured")
 
 
 def _stations(P):
@@ -96,12 +102,14 @@ def retrace(pts, widths, closed, evidence, spans, rails, *, src="naip", clear_m=
             taper_m=60.0, mode="widen", smooth_m=SMOOTH_M, erode_m=ERODE_M, gap_m=GAP_M, agree_m=_ef.AGREE_M):
     """pts: the smoothed line [(x, y, z)] (closed: last == first); widths: per point; evidence: [[E, N, src, contrast]];
     spans: [[s0, s1]] stations on this line; rails: [{"key", "xz": [(x, z), ...]}] in the line's frame.
-    mode "widen" (0.1.12's: src's edge, never in) or "agree" (both sensors where they agree, in or out; module doc);
+    mode "widen" (0.1.12's: src's edge, never in), "agree" (both sensors where they agree, in or out) or "measured" (src's
+    edge, in or out; module doc);
     smooth_m / erode_m / gap_m: the final Gaussian, the erosion's half window and the longest gap interpolated.
     Returns (new widths, per-point lateral shift of the line (+ = left), report)."""
     if mode not in MODES:
         raise SystemExit(f"[edge_retrace] mode {mode!r}: one of {list(MODES)}")
     agree = mode == "agree"
+    both_ways = mode in ("agree", "measured")       # the edge goes in OR out (agree's machinery); widen never moves in
     n = len(pts)
     m = n - 1 if closed else n
     P = pts[:m]
@@ -153,7 +161,7 @@ def retrace(pts, widths, closed, evidence, spans, rails, *, src="naip", clear_m=
         if abs(v) > ALONG_M:
             continue
         side = "left" if u > 0 else "right"
-        lo_in = AGREE_INNER_FRAC * hw[i] if agree else hw[i] - SEARCH_IN_M
+        lo_in = AGREE_INNER_FRAC * hw[i] if both_ways else hw[i] - SEARCH_IN_M
         if not (lo_in <= abs(u) <= hw[i] + SEARCH_OUT_M):
             continue
         pts_by[side].setdefault(s_, []).append((i, abs(u)))
@@ -204,7 +212,7 @@ def retrace(pts, widths, closed, evidence, spans, rails, *, src="naip", clear_m=
     # the measured edge per side: the robust LOESS through the chosen sensor's points
     rep = {"src": src, "clear_m": clear_m, "taper_m": taper_m, "fit_half_m": half, "spans": spans, "rails": rail_rep,
            "sides": {}, "rows": []}
-    if agree or smooth_m != SMOOTH_M or erode_m != ERODE_M or gap_m != GAP_M:
+    if both_ways or smooth_m != SMOOTH_M or erode_m != ERODE_M or gap_m != GAP_M:
         rep.update({"mode": mode, "smooth_m": smooth_m, "erode_m": erode_m, "gap_m": gap_m})
         if agree:
             rep.update({"src": "+".join(AGREE_SOURCES), "agree_m": agree_m})
@@ -262,7 +270,7 @@ def retrace(pts, widths, closed, evidence, spans, rails, *, src="naip", clear_m=
                 f[i] = num / den
                 if i in med:                      # never past the row's own median + MED_CAP_M: the Gaussian spills
                     f[i] = min(f[i], med[i] + MED_CAP_M)   # across a real narrowing (s 4,690: 9.6 -> 6.9 m in 10 m)
-                    if agree:                     # and, moving in as well as out, never short of it by more
+                    if both_ways:                 # and, moving in as well as out, never short of it by more
                         f[i] = max(f[i], med[i] - MED_CAP_M)
         # gaps: linear between the nearest rows with a value, within GAP_M either side
         have = sorted(f, key=lambda i: st[i])
@@ -281,9 +289,9 @@ def retrace(pts, widths, closed, evidence, spans, rails, *, src="naip", clear_m=
         tgt = list(hw)
         for i in region:
             w_ = span_weight(st[i], spans, lap, taper_m)
-            want = f.get(i, hw[i]) if agree else max(hw[i], f.get(i, hw[i]))
+            want = f.get(i, hw[i]) if both_ways else max(hw[i], f.get(i, hw[i]))
             tgt[i] = hw[i] + w_ * (want - hw[i])
-            if lim[side][i] is not None and not agree:   # a rail binds everywhere in the region, the taper included
+            if lim[side][i] is not None and not both_ways:   # a rail binds everywhere in the region, the taper included
                 tgt[i] = min(tgt[i], lim[side][i])
         # THE CHANGE, ERODED THEN SMOOTHED (an opening): each row's change is first the least change within +-ERODE_M, then
         # a Gaussian (SMOOTH_M) of that. A Gaussian alone spills a plateau's widening past its end (0.1.12 c2: +1.7 m of
@@ -292,7 +300,7 @@ def retrace(pts, widths, closed, evidence, spans, rails, *, src="naip", clear_m=
         chg = {}
         for i in region:
             win = window(i, erode_m)
-            if agree:
+            if both_ways:
                 # toward zero: the least widening, or the least narrowing, within +-erode_m (both in the window: none);
                 # then the rails' headroom, the tightest within +-erode_m, binds it (a rail inside today's edge pulls in)
                 pos, neg, room = None, None, None

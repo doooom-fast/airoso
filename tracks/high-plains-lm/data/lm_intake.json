@@ -1,22 +1,21 @@
 {
  "source_track": "high-plains",
  "points": 1074,
- "lap_m": 3222.8,
+ "lap_m": 3228.5,
  "closed": true,
  "widths_m": [
-  12.0,
-  12.0,
-  12.0
+  10.05,
+  11.78,
+  14.3
  ],
  "bridges_levelled": [],
  "line_decks_lidar": null,
  "max_grade_pct": null,
- "measured_max_grade_pct": 8.7,
+ "measured_max_grade_pct": 8.71,
  "y_changed_points": 0,
  "y_change_max_m": 0.0,
- "connectors": false,
+ "connectors": true,
  "bespoke_files": [
-  "source/edges/kerbs.json",
   "textures/prairie_diffuse.jpg",
   "textures/prairie_normal.jpg"
  ],
@@ -37,10 +36,114 @@
  "carried": [
   "source/naip_2023_hp.jpg"
  ],
+ "edge_retrace": [
+  {
+   "src": "naip",
+   "clear_m": 0.1,
+   "taper_m": 60.0,
+   "fit_half_m": 15.0,
+   "spans": [
+    [
+     0.0,
+     3205.0
+    ]
+   ],
+   "rails": [
+    {
+     "key": "pit_wall_lidar",
+     "side": "left",
+     "rows": 50,
+     "s_m": [
+      0.0,
+      147.3
+     ],
+     "face_off_line_m": [
+      9.74,
+      10.11
+     ]
+    },
+    {
+     "key": "pit_wall_naip_rest",
+     "side": "left",
+     "rows": 13,
+     "s_m": [
+      156.4,
+      192.4
+     ],
+     "face_off_line_m": [
+      10.79,
+      11.66
+     ]
+    },
+    {
+     "key": "pit_wall_west",
+     "side": "left",
+     "rows": 21,
+     "s_m": [
+      3144.5,
+      0.0
+     ],
+     "face_off_line_m": [
+      9.42,
+      16.45
+     ]
+    },
+    {
+     "key": "paddock_row_5",
+     "side": "left",
+     "rows": 13,
+     "s_m": [
+      210.3,
+      245.5
+     ],
+     "face_off_line_m": [
+      11.88,
+      15.19
+     ]
+    }
+   ],
+   "sides": {
+    "left": {
+     "rows_measured": 753,
+     "points": 1690,
+     "rows_clamped_after_smoothing": 0,
+     "other_sensors": {},
+     "moved_m": {
+      "min": -2.408,
+      "max": 1.445
+     }
+    },
+    "right": {
+     "rows_measured": 903,
+     "points": 1919,
+     "rows_clamped_after_smoothing": 0,
+     "other_sensors": {},
+     "moved_m": {
+      "min": -1.982,
+      "max": 2.438
+     }
+    }
+   },
+   "mode": "measured",
+   "smooth_m": 4.0,
+   "erode_m": 3.0,
+   "gap_m": 60.0,
+   "width_change_m": {
+    "min": -1.95,
+    "max": 2.3
+   },
+   "shift_m": {
+    "min": -2.024,
+    "max": 1.245
+   },
+   "shift_precomp": true,
+   "evidence": "source/edges/edge_evidence.json"
+  }
+ ],
  "grid_upsample": 2,
  "md5": {
   "source_centerline": "c61a046a44c373a75d755ccbc436b029",
-  "heightfield.npy": "b355a847214d3f0424cdcbe0e5411ea8",
-  "centerline.local.json": "f4c12a9e93c85d69b2f1b1696f255aca"
+  "heightfield.npy": "00e82632a8df11e2e1a24033f81b24ef",
+  "centerline.local.json": "b3ed229ecd0967c3e2b8abb86cb5d0b2"
  }
 }

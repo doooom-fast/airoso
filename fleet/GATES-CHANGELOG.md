@@ -14,6 +14,51 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
+## 2026-11-23 — WIRING: High Plains' merge judged by verify_mouth_corners (ledger 0097 round 4; opt-in; no threshold moved)
+
+No gate threshold, floor or bypass moved, and no gate's code changed. One wiring change, opt-in by High Plains' own config
+(`tests/tools/test_high_plains_round4.py` `test_version_and_no_other_track_declares_any_round4_key`):
+
+- `tracks/high-plains-lm`: `route.verify_mouth_corners: true` and the gate step `verify_mouth_corners` in its ship.json
+  (Sand Creek's gate of ledger 0086, its rows and limits as they are: CORNER LIP <= 0.05 m, TEETH <= 2.1 %, EDGE PAINT
+  <= 0.25 m, the R 9 turn drop reported) now judges the Full layout's merge, whose west bellmouth this round builds as a
+  measured corner return (`route.mouth_returns`). Its first run read EDGE PAINT 14.0 m: the West lap's edge line ran across
+  the opening, which NAIP 2023 0.3 m shows unpainted; `road_markings.gap_mouths` (ledger 0086's, opt-in) breaks it there,
+  and the gate reads 0.0 m.
+- Not gates, opt-in, recorded here because they shape what the gates see: `tools/mouth_returns_blend.py`
+  `route.mouth_returns_measured_only` (a corner without its own measured radius is skipped, not built at another corner's
+  median); `tools/author_kerbs_blend.py` a run's `"line"` (a kerb keyed to a connector's rows); `tools/author_bespoke_blend.py`
+  a row's `"atlas_shed"` with `tools/circuit_facades.py` `facade_walls(shed_tops=...)` (a shed on an atlas skin);
+  road wear's aerial is a new image (`source/road_wear/naip_2023_hp_mosaic.png`), which tools/road_wear_check.py reads exactly
+  as it read the crop (`road_wear.aerial`, one north-up lon/lat image and its box).
+
+Proven on High Plains 0.1.12 (Mac, Blender 4.2.9, an empty workshop): `[mouth-corners] ... lip 0.023 m, teeth 1/354, edge
+paint 0.0 m ... PASS`; verify_mouths PASS (mouth line 0.012 m, notch 0.003 m, approach 0.61 %/m, as 0.1.11).
+
+## 2026-11-22 — WIRING: a multi-layout circuit's spawn kn5s judged by race_start's own rows (ledger 0097 round 3; opt-in; no threshold moved)
+
+No gate threshold, floor or bypass moved. One wiring change, opt-in by `track.config.json race_start.layouts` (High Plains
+only; `tests/tools/test_high_plains_round3.py` `test_no_other_track_declares_any_round3_key`):
+
+- `scripts/ac/verify_kn5.py` `_verify_layouts`: a layout named in `race_start.layouts` has its nodes-only spawn kn5 judged by
+  `race_start_checks` (the single-layout circuit's rows of ledger 0093: HEADING_MIN_DEG, the ROAD row CAR_HALF_W_M +
+  LANE_MARGIN_M inside the road's width, LINE_TOL_M, LINE_AHEAD_MAX_M, the sectors in driving order, the declared set) on THAT
+  layout's own line (`data/centerline.local.json`, or the lap it names), plus the declared-set and on-road (PIT_ROAD_MAX_M /
+  PIT_DY_MAX_M) checks every spawn kn5 gets. In place of `_verify_spawn_kn5`'s (d) SIDE row ("right of travel", the street
+  rule) and its `start.line_vertex` LINE row, which a declared circuit grid on both sides of the line cannot meet and which
+  race_start_checks' ROAD and LINE rows replace exactly as they do for the single-layout circuit. Every other multi-layout
+  track (no `race_start.layouts`) is judged exactly as before; the single-layout circuit too.
+- Not gates, opt-in, recorded here because they shape what the gates see: `tools/circuit_dummies_blend.py` per-layout spawn
+  sets (`race_start.layouts`); `tools/lm_pads_blend.py` `lm_pads.deck.fill "membrane"` (the deck's paving off the lap's ribbon
+  is the discrete Laplace surface between the ribbon and the arm rows: MEMBRANE_TOL_M 1e-5 m, MEMBRANE_SOR 1.7 [invented:
+  solver settings, not a judgement]); `tools/trim_connectors.py` carries a record's line paint through its cuts;
+  `tools/weld_mouths_blend.py` `_dev` reads an empty marking block as matching (it read inf and stopped the weld);
+  `tools/make_map.py` `map "race_lap"`.
+
+Proven on High Plains 0.1.11 (Mac, Blender 4.2.9, an empty workshop): both layouts' spawn kn5s pass (`[race_start west]` /
+`[race_start full_course]`: 51 facing nodes, local +Z . travel min +1.00; 50 START / PIT cars inside the road, nearest edge
++2.27 m), verify_pads FORK and verify_mouths PASS. Teeth: `tests/tools/test_high_plains_round3.py`.
+
 ## 2026-11-22 — WIRING (opt-in): check_lights_ini counts both heads of a two-arm lamp; a seeded workshop passes the "no blend yet" guard (ledger 0099; no threshold moved)
 
 No gate threshold, tolerance or bypass moved. Both opt-in, Lake Murray only (`tests/tools/test_lake_murray_0099.py`):

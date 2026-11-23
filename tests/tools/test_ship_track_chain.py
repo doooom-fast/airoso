@@ -574,6 +574,10 @@ V4_EXTRAS = {
         "ledger 0063: the street-only kn5",
     ("author_lamp_heads", "author: the back head of every two-arm lamp lit (tools/author_lamp_heads_blend.py: LIGHTS_back, one lens per back head; ledger 0099; self-checked; not opted in = no-op)"):
         "ledger 0099: Kevin 2026-11-22, \"Yes, light both heads\" (opt-in scenery.streetlights.light_both_heads)",
+    ("author_walk_grade", "author: the street walk's back grade no steeper than route.walk_back_grade (tools/author_walk_grade_blend.py: every lip raised, nothing else moves; ledger 0099; self-checked; not opted in = no-op)"):
+        "ledger 0099 round 1c: the 94 street drops that were the walk's own back grade (opt-in route.walk_back_grade)",
+    ("prep_prep", "ship: the walk's raised lips seated on the prepped ground (tools/author_walk_grade_blend.py --seat: none over the ground, none past the draft's grade; ledger 0099; self-checked)"):
+        "ledger 0099 round 1c: only where the config sets route.walk_back_grade (Lake Murray); the author step's raised lips on the prepped ground",
     ("gate_houses", "gate: the houses on the built road kn5 (tools/house_gate.py: ROOFTOP / BUILDING + FARBLOCK / 1WALL_TILTUP shells against scenery.bespoke.house_gate — hard)"):
         "ledger 0065: Kevin, \"don't lose those\"",
 }

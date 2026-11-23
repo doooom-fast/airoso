@@ -418,5 +418,6 @@ def test_the_road_and_the_sidewalks_bind_the_owned_pairs():
         assert ("asphalt_dense" in t) == (p.parent.name in ("high-plains-lm", "milford-road-course-lm")), p
 
 
-def test_version_is_0_20_3():
-    assert CFG["version"] == "0.20.3"
+def test_version_is_0_20_4():
+    """0.20.3 round 1; 0.20.4 round 1c (the walk's back grade, tests/tools/test_lake_murray_0099_walk_grade.py)"""
+    assert CFG["version"] == "0.20.4"

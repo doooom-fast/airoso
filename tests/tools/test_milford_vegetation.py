@@ -146,9 +146,12 @@ def test_milford_planted_files_keep_their_rules():
     assert all(p[3] < 45.0 for p in trees)
     keys = {(p[0], p[1]) for p in trees}
     assert all((t[0], t[1]) in keys for t in trunks)               # a collider only where a tree is planted
-    assert all(t[3] <= 30.0 for t in trunks)
+    # ledger 0100 item 4 (Kevin: "Narrower"): trunks.json is source/vegetation/scripts/veg_trunks_reach.py's now, 20 m derived
+    # from the barrier lines (tests/tools/test_milford_finish_0100.py re-derives it); inventory.json keeps veg_plan's 30 m record
+    reach = json.loads((MF / "source" / "vegetation" / "trunks.json").read_text(encoding="utf-8"))["reach_m"]
+    assert reach == 20.0 and all(t[3] <= reach for t in trunks)
     inv = json.loads((MF / "source" / "vegetation" / "inventory.json").read_text(encoding="utf-8"))
-    assert inv["planted"]["trees"] == len(trees) and inv["planted"]["trunk_colliders"] == len(trunks)
+    assert inv["planted"]["trees"] == len(trees) - sum(1 for p in trees if len(p) > 6 and p[6] == "naip_verge")
     ship = json.loads((MF / "ship.json").read_text(encoding="utf-8"))
     st = ship["steps"]["ship"]
     assert st.index("grassfx_aerial") < st.index("track_folder") < st.index("treefx")
@@ -180,6 +183,6 @@ def test_crown_fix_lists_every_case():
     assert len(fix["cases"]) == s["before"]["width_under_0.25"] + s["before"]["width_over_2"]
     assert s["after"]["width_under_0.25"] == 0 and s["after"]["width_over_2"] == 0
     trees = json.loads((MF / "source" / "vegetation" / "trees.lm.json").read_text(encoding="utf-8"))["points"]
-    keys = [p[5] for p in trees]
+    keys = [p[5] for p in trees if not (len(p) > 6 and p[6] == "naip_verge")]   # ledger 0100 item 7's verge trees aside
     assert len(set(keys)) == len(keys) == s["after"]["planted"]
     assert not set(fix["removed_keys"]) & set(keys)

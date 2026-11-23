@@ -53,7 +53,8 @@ def test_the_chain_runs_the_declared_start_only_where_the_config_declares_one():
     assert "author_paint_blend.py\" -- \"$PROJ\" --stage draft" in _fn("draft_paint")
     assert "author_paint_blend.py\" -- \"$PROJ\" --stage author" in _fn("author_paint")
     for t in sorted((ROOT / "tracks").glob("*/track.config.json")):
-        if t.parent.name != "high-plains-lm":
+        # ledger 0100 item 2: Milford declares its painted line as the start / finish (Kevin 2026-11-22)
+        if t.parent.name not in ("high-plains-lm", "milford-road-course-lm"):
             assert "race_start" not in json.loads(t.read_text(encoding="utf-8")), t.parent.name
 
 
@@ -79,9 +80,11 @@ def test_the_old_engine_track_and_lake_murray_keep_their_furniture():
         c = json.loads(sd.read_text(encoding="utf-8"))
         assert "race_start" not in c and not any(it.get("surface") for it in (c.get("route") or {}).get("paint") or [])
     mf = ROOT / "tracks" / "milford-road-course-lm" / "track.config.json"
-    if mf.exists():                                                     # Milford's S/F is Kevin's call (ledger 0093)
+    if mf.exists():                     # Milford's S/F was Kevin's call (ledger 0093); he made it (ledger 0100 item 2)
         c = json.loads(mf.read_text(encoding="utf-8"))
-        assert "race_start" not in c and not (c.get("route") or {}).get("paint")
+        assert set(c["race_start"]) >= {"line", "grid", "pits"} and "lonlat" in c["race_start"]["line"]
+        assert [it["id"] for it in c["route"]["paint"]] == ["sf_line"]
+        assert not any(it.get("surface") for it in c["route"]["paint"])  # on ROAD: the draft pass only
 
 
 def test_high_plains_paint_expands_onto_measured_places():

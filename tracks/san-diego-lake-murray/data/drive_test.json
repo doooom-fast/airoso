@@ -2,11 +2,11 @@
  "multi_layout": true,
  "_doc": "per-layout drive tests (ledger 0047): every layouts[] id is driven on the kn5 set it loads; the full report of each is data/drive_test.<id>.json. fail = any layout fails; a layout not yet run has fail null.",
  "ran": [
-  "race_acw"
+  "north_acw"
  ],
  "layouts": {
   "street": {
-   "fail": true,
+   "fail": false,
    "direction": "forward",
    "kind": "street",
    "race_furniture": false,
@@ -19,7 +19,7 @@
    "barrier_stations": 0,
    "floating_furniture": 0,
    "daylight_gaps": 0,
-   "excursion_drops": 96,
+   "excursion_drops": 8,
    "undrivable_corners": 0,
    "severe_steps": 0,
    "severe_per_km": 0.0,
@@ -70,8 +70,52 @@
    "steps_per_km": 0.37,
    "kinks_per_km": 6.09,
    "file": "drive_test.race_acw.json"
+  },
+  "north_cw": {
+   "fail": false,
+   "direction": "forward",
+   "kind": "race",
+   "race_furniture": true,
+   "obj": "track.north_cw.obj",
+   "lane": "barrier_bands.north.json corridors.north_cw",
+   "lap_m": 8739.6,
+   "soft_top_in_lane": 0,
+   "obstruction_stations": 0,
+   "barrier_missing": 0,
+   "barrier_stations": 25397,
+   "floating_furniture": 0,
+   "daylight_gaps": 0,
+   "excursion_drops": 0,
+   "undrivable_corners": 0,
+   "severe_steps": 5,
+   "severe_per_km": 0.57,
+   "steps_per_km": 0.92,
+   "kinks_per_km": 27.46,
+   "file": "drive_test.north_cw.json"
+  },
+  "north_acw": {
+   "fail": false,
+   "direction": "reverse",
+   "kind": "race",
+   "race_furniture": true,
+   "obj": "track.north_acw.obj",
+   "lane": "barrier_bands.north.json corridors.north_acw",
+   "lap_m": 8739.6,
+   "soft_top_in_lane": 0,
+   "obstruction_stations": 0,
+   "barrier_missing": 0,
+   "barrier_stations": 25397,
+   "floating_furniture": 0,
+   "daylight_gaps": 0,
+   "excursion_drops": 0,
+   "undrivable_corners": 0,
+   "severe_steps": 12,
+   "severe_per_km": 1.37,
+   "steps_per_km": 0.46,
+   "kinks_per_km": 31.58,
+   "file": "drive_test.north_acw.json"
   }
  },
- "fail": true,
+ "fail": false,
  "not_run": []
 }

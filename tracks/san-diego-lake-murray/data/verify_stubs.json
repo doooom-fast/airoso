@@ -300,7 +300,7 @@
    },
    "S5": {
     "vertices": 800,
-    "max_float_m": -0.02,
+    "max_float_m": -0.0112,
     "max_sink_m": 0.0387,
     "no_surface": 0
    },
@@ -495,8 +495,8 @@
    },
    "S5": {
     "vertices": 770,
-    "max_float_m": -0.02,
-    "max_sink_m": 0.058,
+    "max_float_m": -0.0056,
+    "max_sink_m": 0.055,
     "no_surface": 0
    },
    "S6": {
@@ -820,7 +820,7 @@
    },
    "S5": {
     "vertices": 780,
-    "max_float_m": -0.02,
+    "max_float_m": -0.014,
     "max_sink_m": 0.0672,
     "no_surface": 0
    },
@@ -1145,7 +1145,7 @@
    },
    "S5": {
     "vertices": 750,
-    "max_float_m": -0.0199,
+    "max_float_m": -0.016,
     "max_sink_m": 0.0639,
     "no_surface": 0
    },
@@ -1665,7 +1665,7 @@
    },
    "S5": {
     "vertices": 770,
-    "max_float_m": -0.02,
+    "max_float_m": -0.0088,
     "max_sink_m": 0.1191,
     "no_surface": 0
    },

@@ -1,0 +1,822 @@
+{
+ "file": "D:\\k10-scratch\\lm_line\\build\\san_diego_lake_murray_race_north.kn5",
+ "version": 5,
+ "file_bytes": 9184531,
+ "textures": [
+  {
+   "name": "kerb_race_worn_diffuse.jpg",
+   "bytes": 567921
+  },
+  {
+   "name": "kerb_race_worn_normal.jpg",
+   "bytes": 980349
+  },
+  {
+   "name": "concrete_barrier_diffuse.png",
+   "bytes": 2368008
+  },
+  {
+   "name": "concrete_barrier_normal.png",
+   "bytes": 63035
+  }
+ ],
+ "materials": [
+  {
+   "name": "1KERB_race_lapnorth_1463_in_mat",
+   "shader": "ksPerPixelMultiMap",
+   "props": {
+    "ksAmbient": 0.4,
+    "ksDiffuse": 0.4,
+    "ksSpecular": 0.1,
+    "ksSpecularEXP": 20.0
+   },
+   "textures": [
+    [
+     "txDiffuse",
+     "kerb_race_worn_diffuse.jpg"
+    ],
+    [
+     "txNormal",
+     "kerb_race_worn_normal.jpg"
+    ]
+   ]
+  },
+  {
+   "name": "1KERB_race_lapnorth_1463_out_mat",
+   "shader": "ksPerPixelMultiMap",
+   "props": {
+    "ksAmbient": 0.4,
+    "ksDiffuse": 0.4,
+    "ksSpecular": 0.1,
+    "ksSpecularEXP": 20.0
+   },
+   "textures": [
+    [
+     "txDiffuse",
+     "kerb_race_worn_diffuse.jpg"
+    ],
+    [
+     "txNormal",
+     "kerb_race_worn_normal.jpg"
+    ]
+   ]
+  },
+  {
+   "name": "1KERB_race_lapnorth_2130_out_mat",
+   "shader": "ksPerPixelMultiMap",
+   "props": {
+    "ksAmbient": 0.4,
+    "ksDiffuse": 0.4,
+    "ksSpecular": 0.1,
+    "ksSpecularEXP": 20.0
+   },
+   "textures": [
+    [
+     "txDiffuse",
+     "kerb_race_worn_diffuse.jpg"
+    ],
+    [
+     "txNormal",
+     "kerb_race_worn_normal.jpg"
+    ]
+   ]
+  },
+  {
+   "name": "1KERB_race_lapnorth_2932_out_mat",
+   "shader": "ksPerPixelMultiMap",
+   "props": {
+    "ksAmbient": 0.4,
+    "ksDiffuse": 0.4,
+    "ksSpecular": 0.1,
+    "ksSpecularEXP": 20.0
+   },
+   "textures": [
+    [
+     "txDiffuse",
+     "kerb_race_worn_diffuse.jpg"
+    ],
+    [
+     "txNormal",
+     "kerb_race_worn_normal.jpg"
+    ]
+   ]
+  },
+  {
+   "name": "1KERB_race_lapnorth_326_in_mat",
+   "shader": "ksPerPixelMultiMap",
+   "props": {
+    "ksAmbient": 0.4,
+    "ksDiffuse": 0.4,
+    "ksSpecular": 0.1,
+    "ksSpecularEXP": 20.0
+   },
+   "textures": [
+    [
+     "txDiffuse",
+     "kerb_race_worn_diffuse.jpg"
+    ],
+    [
+     "txNormal",
+     "kerb_race_worn_normal.jpg"
+    ]
+   ]
+  },
+  {
+   "name": "1KERB_race_lapnorth_326_out_mat",
+   "shader": "ksPerPixelMultiMap",
+   "props": {
+    "ksAmbient": 0.4,
+    "ksDiffuse": 0.4,
+    "ksSpecular": 0.1,
+    "ksSpecularEXP": 20.0
+   },
+   "textures": [
+    [
+     "txDiffuse",
+     "kerb_race_worn_diffuse.jpg"
+    ],
+    [
+     "txNormal",
+     "kerb_race_worn_normal.jpg"
+    ]
+   ]
+  },
+  {
+   "name": "1KERB_race_lapnorth_705_in_mat",
+   "shader": "ksPerPixelMultiMap",
+   "props": {
+    "ksAmbient": 0.4,
+    "ksDiffuse": 0.4,
+    "ksSpecular": 0.1,
+    "ksSpecularEXP": 20.0
+   },
+   "textures": [
+    [
+     "txDiffuse",
+     "kerb_race_worn_diffuse.jpg"
+    ],
+    [
+     "txNormal",
+     "kerb_race_worn_normal.jpg"
+    ]
+   ]
+  },
+  {
+   "name": "1KERB_race_lapnorth_705_out_mat",
+   "shader": "ksPerPixelMultiMap",
+   "props": {
+    "ksAmbient": 0.4,
+    "ksDiffuse": 0.4,
+    "ksSpecular": 0.1,
+    "ksSpecularEXP": 20.0
+   },
+   "textures": [
+    [
+     "txDiffuse",
+     "kerb_race_worn_diffuse.jpg"
+    ],
+    [
+     "txNormal",
+     "kerb_race_worn_normal.jpg"
+    ]
+   ]
+  },
+  {
+   "name": "1WALL_race_edge_lapnorth_L_jackson_1463_0_mat",
+   "shader": "ksPerPixelMultiMap",
+   "props": {
+    "ksDiffuse": 0.4,
+    "ksAmbient": 0.4
+   },
+   "textures": [
+    [
+     "txDiffuse",
+     "concrete_barrier_diffuse.png"
+    ],
+    [
+     "txNormal",
+     "concrete_barrier_normal.png"
+    ]
+   ]
+  },
+  {
+   "name": "1WALL_race_edge_lapnorth_L_missiongorge_705_0_mat",
+   "shader": "ksPerPixelMultiMap",
+   "props": {
+    "ksDiffuse": 0.4,
+    "ksAmbient": 0.4
+   },
+   "textures": [
+    [
+     "txDiffuse",
+     "concrete_barrier_diffuse.png"
+    ],
+    [
+     "txNormal",
+     "concrete_barrier_normal.png"
+    ]
+   ]
+  },
+  {
+   "name": "1WALL_race_edge_lapnorth_L_navajo_2130_0_mat",
+   "shader": "ksPerPixelMultiMap",
+   "props": {
+    "ksDiffuse": 0.4,
+    "ksAmbient": 0.4
+   },
+   "textures": [
+    [
+     "txDiffuse",
+     "concrete_barrier_diffuse.png"
+    ],
+    [
+     "txNormal",
+     "concrete_barrier_normal.png"
+    ]
+   ]
+  },
+  {
+   "name": "1WALL_race_edge_lapnorth_L_navajo_2130_1_mat",
+   "shader": "ksPerPixelMultiMap",
+   "props": {
+    "ksDiffuse": 0.4,
+    "ksAmbient": 0.4
+   },
+   "textures": [
+    [
+     "txDiffuse",
+     "concrete_barrier_diffuse.png"
+    ],
+    [
+     "txNormal",
+     "concrete_barrier_normal.png"
+    ]
+   ]
+  },
+  {
+   "name": "1WALL_race_edge_lapnorth_L_princessview_326_0_mat",
+   "shader": "ksPerPixelMultiMap",
+   "props": {
+    "ksDiffuse": 0.4,
+    "ksAmbient": 0.4
+   },
+   "textures": [
+    [
+     "txDiffuse",
+     "concrete_barrier_diffuse.png"
+    ],
+    [
+     "txNormal",
+     "concrete_barrier_normal.png"
+    ]
+   ]
+  },
+  {
+   "name": "1WALL_race_edge_lapnorth_L_waring_0_0_mat",
+   "shader": "ksPerPixelMultiMap",
+   "props": {
+    "ksDiffuse": 0.4,
+    "ksAmbient": 0.4
+   },
+   "textures": [
+    [
+     "txDiffuse",
+     "concrete_barrier_diffuse.png"
+    ],
+    [
+     "txNormal",
+     "concrete_barrier_normal.png"
+    ]
+   ]
+  },
+  {
+   "name": "1WALL_race_edge_lapnorth_L_waringj1_2932_0_mat",
+   "shader": "ksPerPixelMultiMap",
+   "props": {
+    "ksDiffuse": 0.4,
+    "ksAmbient": 0.4
+   },
+   "textures": [
+    [
+     "txDiffuse",
+     "concrete_barrier_diffuse.png"
+    ],
+    [
+     "txNormal",
+     "concrete_barrier_normal.png"
+    ]
+   ]
+  },
+  {
+   "name": "1WALL_race_edge_lapnorth_R_jackson_1463_0_mat",
+   "shader": "ksPerPixelMultiMap",
+   "props": {
+    "ksDiffuse": 0.4,
+    "ksAmbient": 0.4
+   },
+   "textures": [
+    [
+     "txDiffuse",
+     "concrete_barrier_diffuse.png"
+    ],
+    [
+     "txNormal",
+     "concrete_barrier_normal.png"
+    ]
+   ]
+  },
+  {
+   "name": "1WALL_race_edge_lapnorth_R_missiongorge_705_0_mat",
+   "shader": "ksPerPixelMultiMap",
+   "props": {
+    "ksDiffuse": 0.4,
+    "ksAmbient": 0.4
+   },
+   "textures": [
+    [
+     "txDiffuse",
+     "concrete_barrier_diffuse.png"
+    ],
+    [
+     "txNormal",
+     "concrete_barrier_normal.png"
+    ]
+   ]
+  },
+  {
+   "name": "1WALL_race_edge_lapnorth_R_navajo_2135_0_mat",
+   "shader": "ksPerPixelMultiMap",
+   "props": {
+    "ksDiffuse": 0.4,
+    "ksAmbient": 0.4
+   },
+   "textures": [
+    [
+     "txDiffuse",
+     "concrete_barrier_diffuse.png"
+    ],
+    [
+     "txNormal",
+     "concrete_barrier_normal.png"
+    ]
+   ]
+  },
+  {
+   "name": "1WALL_race_edge_lapnorth_R_princessview_326_0_mat",
+   "shader": "ksPerPixelMultiMap",
+   "props": {
+    "ksDiffuse": 0.4,
+    "ksAmbient": 0.4
+   },
+   "textures": [
+    [
+     "txDiffuse",
+     "concrete_barrier_diffuse.png"
+    ],
+    [
+     "txNormal",
+     "concrete_barrier_normal.png"
+    ]
+   ]
+  },
+  {
+   "name": "1WALL_race_edge_lapnorth_R_waring_0_0_mat",
+   "shader": "ksPerPixelMultiMap",
+   "props": {
+    "ksDiffuse": 0.4,
+    "ksAmbient": 0.4
+   },
+   "textures": [
+    [
+     "txDiffuse",
+     "concrete_barrier_diffuse.png"
+    ],
+    [
+     "txNormal",
+     "concrete_barrier_normal.png"
+    ]
+   ]
+  }
+ ],
+ "meshes": [
+  {
+   "name": "1KERB_race_lapnorth_1463_in",
+   "verts": 244,
+   "tris": 222,
+   "matid": 0,
+   "surface": "KERB",
+   "renderable": true,
+   "radius_m": 2.8,
+   "area_m2": 5.3,
+   "edge_p10_m": 0.05,
+   "edge_med_m": 0.135,
+   "edge_p90_m": 0.9,
+   "grid_m": 0.218,
+   "bbox_m": [
+    5.1,
+    0.1,
+    2.2
+   ]
+  },
+  {
+   "name": "1KERB_race_lapnorth_1463_out",
+   "verts": 1100,
+   "tris": 1062,
+   "matid": 1,
+   "surface": "KERB",
+   "renderable": true,
+   "radius_m": 30.8,
+   "area_m2": 71.4,
+   "edge_p10_m": 0.05,
+   "edge_med_m": 0.35,
+   "edge_p90_m": 0.916,
+   "grid_m": 0.367,
+   "bbox_m": [
+    55.8,
+    0.2,
+    27.5
+   ]
+  },
+  {
+   "name": "1KERB_race_lapnorth_2130_out",
+   "verts": 756,
+   "tris": 726,
+   "matid": 2,
+   "surface": "KERB",
+   "renderable": true,
+   "radius_m": 23.6,
+   "area_m2": 57.1,
+   "edge_p10_m": 0.05,
+   "edge_med_m": 0.308,
+   "edge_p90_m": 0.907,
+   "grid_m": 0.397,
+   "bbox_m": [
+    13.7,
+    0.5,
+    45.5
+   ]
+  },
+  {
+   "name": "1KERB_race_lapnorth_2932_out",
+   "verts": 822,
+   "tris": 780,
+   "matid": 3,
+   "surface": "KERB",
+   "renderable": true,
+   "radius_m": 26.0,
+   "area_m2": 61.8,
+   "edge_p10_m": 0.05,
+   "edge_med_m": 0.302,
+   "edge_p90_m": 0.921,
+   "grid_m": 0.398,
+   "bbox_m": [
+    45.1,
+    1.1,
+    27.1
+   ]
+  },
+  {
+   "name": "1KERB_race_lapnorth_326_in",
+   "verts": 654,
+   "tris": 624,
+   "matid": 4,
+   "surface": "KERB",
+   "renderable": true,
+   "radius_m": 7.6,
+   "area_m2": 17.0,
+   "edge_p10_m": 0.05,
+   "edge_med_m": 0.131,
+   "edge_p90_m": 0.9,
+   "grid_m": 0.233,
+   "bbox_m": [
+    14.6,
+    0.6,
+    5.1
+   ]
+  },
+  {
+   "name": "1KERB_race_lapnorth_326_out",
+   "verts": 710,
+   "tris": 684,
+   "matid": 5,
+   "surface": "KERB",
+   "renderable": true,
+   "radius_m": 23.0,
+   "area_m2": 52.5,
+   "edge_p10_m": 0.05,
+   "edge_med_m": 0.473,
+   "edge_p90_m": 0.949,
+   "grid_m": 0.392,
+   "bbox_m": [
+    43.8,
+    0.7,
+    15.6
+   ]
+  },
+  {
+   "name": "1KERB_race_lapnorth_705_in",
+   "verts": 762,
+   "tris": 732,
+   "matid": 6,
+   "surface": "KERB",
+   "renderable": true,
+   "radius_m": 7.9,
+   "area_m2": 17.9,
+   "edge_p10_m": 0.05,
+   "edge_med_m": 0.14,
+   "edge_p90_m": 0.9,
+   "grid_m": 0.221,
+   "bbox_m": [
+    7.3,
+    0.2,
+    14.5
+   ]
+  },
+  {
+   "name": "1KERB_race_lapnorth_705_out",
+   "verts": 1182,
+   "tris": 1140,
+   "matid": 7,
+   "surface": "KERB",
+   "renderable": true,
+   "radius_m": 34.9,
+   "area_m2": 82.1,
+   "edge_p10_m": 0.05,
+   "edge_med_m": 0.415,
+   "edge_p90_m": 0.944,
+   "grid_m": 0.38,
+   "bbox_m": [
+    38.9,
+    0.8,
+    58.5
+   ]
+  },
+  {
+   "name": "1WALL_race_edge_lapnorth_L_jackson_1463_0",
+   "verts": 10880,
+   "tris": 13580,
+   "matid": 8,
+   "surface": "WALL",
+   "renderable": true,
+   "radius_m": 968.3,
+   "area_m2": 6672.1,
+   "edge_p10_m": 0.12,
+   "edge_med_m": 2.991,
+   "edge_p90_m": 3.064,
+   "grid_m": 0.991,
+   "bbox_m": [
+    1263.9,
+    118.6,
+    1462.9
+   ]
+  },
+  {
+   "name": "1WALL_race_edge_lapnorth_L_missiongorge_705_0",
+   "verts": 12368,
+   "tris": 15440,
+   "matid": 9,
+   "surface": "WALL",
+   "renderable": true,
+   "radius_m": 1077.5,
+   "area_m2": 7632.8,
+   "edge_p10_m": 0.12,
+   "edge_med_m": 2.992,
+   "edge_p90_m": 3.076,
+   "grid_m": 0.994,
+   "bbox_m": [
+    1826.7,
+    82.2,
+    1141.4
+   ]
+  },
+  {
+   "name": "1WALL_race_edge_lapnorth_L_navajo_2130_0",
+   "verts": 6512,
+   "tris": 8120,
+   "matid": 10,
+   "surface": "WALL",
+   "renderable": true,
+   "radius_m": 590.8,
+   "area_m2": 4098.0,
+   "edge_p10_m": 0.12,
+   "edge_med_m": 3.005,
+   "edge_p90_m": 3.088,
+   "grid_m": 1.005,
+   "bbox_m": [
+    1110.9,
+    47.7,
+    401.7
+   ]
+  },
+  {
+   "name": "1WALL_race_edge_lapnorth_L_navajo_2130_1",
+   "verts": 6512,
+   "tris": 8120,
+   "matid": 11,
+   "surface": "WALL",
+   "renderable": true,
+   "radius_m": 597.0,
+   "area_m2": 4079.2,
+   "edge_p10_m": 0.12,
+   "edge_med_m": 3.0,
+   "edge_p90_m": 3.078,
+   "grid_m": 1.002,
+   "bbox_m": [
+    931.8,
+    44.2,
+    745.9
+   ]
+  },
+  {
+   "name": "1WALL_race_edge_lapnorth_L_princessview_326_0",
+   "verts": 6256,
+   "tris": 7800,
+   "matid": 12,
+   "surface": "WALL",
+   "renderable": true,
+   "radius_m": 551.7,
+   "area_m2": 3820.4,
+   "edge_p10_m": 0.12,
+   "edge_med_m": 2.997,
+   "edge_p90_m": 3.097,
+   "grid_m": 0.99,
+   "bbox_m": [
+    292.3,
+    71.7,
+    1061.8
+   ]
+  },
+  {
+   "name": "1WALL_race_edge_lapnorth_L_waring_0_0",
+   "verts": 5360,
+   "tris": 6680,
+   "matid": 13,
+   "surface": "WALL",
+   "renderable": true,
+   "radius_m": 442.0,
+   "area_m2": 3177.2,
+   "edge_p10_m": 0.12,
+   "edge_med_m": 2.835,
+   "edge_p90_m": 3.01,
+   "grid_m": 0.975,
+   "bbox_m": [
+    764.3,
+    22.5,
+    444.6
+   ]
+  },
+  {
+   "name": "1WALL_race_edge_lapnorth_L_waringj1_2932_0",
+   "verts": 96,
+   "tris": 100,
+   "matid": 14,
+   "surface": "WALL",
+   "renderable": true,
+   "radius_m": 6.3,
+   "area_m2": 41.4,
+   "edge_p10_m": 0.12,
+   "edge_med_m": 1.807,
+   "edge_p90_m": 2.94,
+   "grid_m": 0.91,
+   "bbox_m": [
+    8.4,
+    1.2,
+    10.0
+   ]
+  },
+  {
+   "name": "1WALL_race_edge_lapnorth_R_jackson_1463_0",
+   "verts": 10730,
+   "tris": 13380,
+   "matid": 15,
+   "surface": "WALL",
+   "renderable": true,
+   "radius_m": 954.0,
+   "area_m2": 6592.3,
+   "edge_p10_m": 0.12,
+   "edge_med_m": 2.99,
+   "edge_p90_m": 3.057,
+   "grid_m": 0.993,
+   "bbox_m": [
+    1247.2,
+    118.3,
+    1439.4
+   ]
+  },
+  {
+   "name": "1WALL_race_edge_lapnorth_R_missiongorge_705_0",
+   "verts": 12144,
+   "tris": 15160,
+   "matid": 16,
+   "surface": "WALL",
+   "renderable": true,
+   "radius_m": 1061.5,
+   "area_m2": 7510.4,
+   "edge_p10_m": 0.12,
+   "edge_med_m": 2.992,
+   "edge_p90_m": 3.05,
+   "grid_m": 0.995,
+   "bbox_m": [
+    1794.4,
+    82.0,
+    1132.6
+   ]
+  },
+  {
+   "name": "1WALL_race_edge_lapnorth_R_navajo_2135_0",
+   "verts": 12732,
+   "tris": 15880,
+   "matid": 17,
+   "surface": "WALL",
+   "renderable": true,
+   "radius_m": 1144.2,
+   "area_m2": 7965.5,
+   "edge_p10_m": 0.12,
+   "edge_med_m": 3.0,
+   "edge_p90_m": 3.073,
+   "grid_m": 1.002,
+   "bbox_m": [
+    2003.2,
+    85.4,
+    1104.4
+   ]
+  },
+  {
+   "name": "1WALL_race_edge_lapnorth_R_princessview_326_0",
+   "verts": 6096,
+   "tris": 7600,
+   "matid": 18,
+   "surface": "WALL",
+   "renderable": true,
+   "radius_m": 530.5,
+   "area_m2": 3663.1,
+   "edge_p10_m": 0.12,
+   "edge_med_m": 2.971,
+   "edge_p90_m": 3.074,
+   "grid_m": 0.982,
+   "bbox_m": [
+    277.0,
+    71.4,
+    1022.0
+   ]
+  },
+  {
+   "name": "1WALL_race_edge_lapnorth_R_waring_0_0",
+   "verts": 5232,
+   "tris": 6520,
+   "matid": 19,
+   "surface": "WALL",
+   "renderable": true,
+   "radius_m": 448.0,
+   "area_m2": 3219.9,
+   "edge_p10_m": 0.12,
+   "edge_med_m": 2.992,
+   "edge_p90_m": 3.088,
+   "grid_m": 0.994,
+   "bbox_m": [
+    774.7,
+    22.6,
+    450.8
+   ]
+  }
+ ],
+ "nodes": [
+  "BlenderFile"
+ ],
+ "summary": {
+  "meshes": 20,
+  "verts": 101148,
+  "tris": 124350,
+  "textures": 4,
+  "texture_bytes": 3979313,
+  "materials": 20,
+  "surfaces": {
+   "KERB": {
+    "meshes": 8,
+    "verts": 6230,
+    "tris": 5970,
+    "area_m2": 365.1,
+    "invisible": 0,
+    "edge_med_m": 0.308,
+    "grid_m": 0.343
+   },
+   "WALL": {
+    "meshes": 12,
+    "verts": 94918,
+    "tris": 118380,
+    "area_m2": 58472.3,
+    "invisible": 0,
+    "edge_med_m": 2.983,
+    "grid_m": 0.994
+   }
+  },
+  "shaders_by_tris": {
+   "ksPerPixelMultiMap": {
+    "meshes": 20,
+    "tris": 124350
+   }
+  },
+  "near_vert_cap": [],
+  "non_pot_textures": []
+ }
+}

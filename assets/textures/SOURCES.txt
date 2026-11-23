@@ -46,9 +46,9 @@ Building set — mined from Hamburg by 4r (nhh_detail.kn5) via scripts/modkit/ex
 
 asphalt_dense_diffuse.jpg / _normal.jpg      generated (tools/make_owned_surfaces.py, seed 84): weathered dense-graded asphalt, 4 m tile,
                                              2048 px; mean colour and relief measured off asphalt_cracked_* (which it would replace), stone
-                                             sizes from the AASHTO M 323 12.5 mm control points. Ours, CC0. Not bound yet (Kevin's call).
+                                             sizes from the AASHTO M 323 12.5 mm control points. Ours, CC0. Bound per track as 1ROAD (ledgers 0095, 0101).
 concrete_plain_diffuse.jpg / _normal.jpg     generated (same tool, seed 85): plain cast concrete, 4 m tile, no joints or tie holes; mean
-                                             measured off building_* (the Hamburg concrete it would replace). Ours, CC0. Not bound yet.
+                                             measured off building_* (the Hamburg concrete it would replace). Ours, CC0. Bound per track (ledger 0101).
 concrete_aged_diffuse.jpg / _normal.jpg      generated (same tool, seed 86): the same concrete weathered; mean measured off warehouse_*.
                                              Ours, CC0. Not bound yet.
 

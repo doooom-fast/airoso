@@ -583,6 +583,15 @@ author_lamp_heads() {
   (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_lamp_heads_blend.py" -- "$PROJ" 2>&1 | grep "^\[heads\]\|FATAL\|Error\|Traceback" )
 }
 
+author_walk_grade() {
+  # ledger 0099 round 1c (the street drops; opt-in route.walk_back_grade): the draft's walk falls 0.34 m over its 1.2 m back
+  # grade, which drive_test's excursion sweep reads as a 0.142 m drop every 0.5 m (94 of Lake Murray's 96 street drops);
+  # every back-grade lip is raised to the declared max_slope, nothing else moves. Key absent = no-op, the blend not saved.
+  # Only a ship.json that names it
+  step "author: the street walk's back grade no steeper than route.walk_back_grade (tools/author_walk_grade_blend.py: every lip raised, nothing else moves; ledger 0099; self-checked; not opted in = no-op)"
+  (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_walk_grade_blend.py" -- "$PROJ" 2>&1 | grep "^\[walk-grade\]\|FATAL\|Error\|Traceback" )
+}
+
 author_draft_pads() {
   step "author: engine-draft junction pads -> AUTH_pads (tools/author_draft_pads_blend.py: the lap cut at each pad's two rows, one deck to the measured outline in source/pads/<id>.json, the ground under it; self-checked; none declared = no-op)"
   (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_draft_pads_blend.py" -- "$PROJ" 2>&1 | grep "^\[pads\]\|Error\|Traceback" )
@@ -674,6 +683,16 @@ prep_prep() {
   if [ -f "$PROJ/data/red_repairs.plan.json" ]; then
     step "ship: red repairs (tools/red_repairs_blend.py: the named kerb faces, the named ground slivers; self-checked)"
     "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/red_repairs_blend.py" -- "$PROJ/blender/$SLUG.blend" --project "$PROJ" 2>&1 | grep "^\[red\]\|Error\|Traceback"
+  fi
+  # ledger 0099 round 1c (opt-in route.walk_back_grade, as the author step walk_grade): the ground is final only here, so a
+  # raised walk lip standing over the prepped ground (a fill, where the prep's feather falls away 3 m out) is lowered onto
+  # it, never past the draft's own back grade, never raised. After the red repairs (they match kerb vertices by place); no
+  # key = no header, nothing runs. Part of prep (steps.prep stays prep, split); exit 1 = the blend not saved
+  rm -f "$PROJ/data/walk_grade.seat.json"
+  if [ "$(pyq "import json,sys; print(bool((json.load(open(sys.argv[1],encoding='utf-8')).get('route') or {}).get('walk_back_grade')))" "$PROJ/track.config.json" | tr -d '\r')" = "True" ]; then
+    step "ship: the walk's raised lips seated on the prepped ground (tools/author_walk_grade_blend.py --seat: none over the ground, none past the draft's grade; ledger 0099; self-checked)"
+    "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_walk_grade_blend.py" -- "$PROJ/blender/$SLUG.blend" --project "$PROJ" --seat 2>&1 | grep "^\[walk-grade\]\|FATAL\|Error\|Traceback"
+    [ "${PIPESTATUS[0]}" = 0 ] || { echo "author_walk_grade_blend --seat failed"; exit 1; }
   fi
   # ledger 0081 round 2: bespoke pads re-laid on the PREPPED ground's own triangles (Nevada's apron sat under the ground the
   # prep re-seated); only a config that sets scenery.bespoke.pads_seat "ground", no header otherwise (Lake Murray's chain is

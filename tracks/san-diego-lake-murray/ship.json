@@ -38,6 +38,7 @@
     ],
     "author": [
       "lamp_heads",
+      "walk_grade",
       "race_bands",
       "race_planned_gate",
       "layout_dummies",
@@ -77,7 +78,7 @@
       "fold_fans",
       "kn5_ground"
     ],
-    "_author_doc": "ledger 0099: lamp_heads (tools/author_lamp_heads_blend.py, opt-in scenery.streetlights.light_both_heads) first: it reads only the draft's LIGHTS_0 and data/lights.local.json, which no author step writes, and touches only LIGHTS_back, which none reads; first keeps the race steps' order (race_author, signs, race_verify last)"
+    "_author_doc": "ledger 0099: lamp_heads (tools/author_lamp_heads_blend.py, opt-in scenery.streetlights.light_both_heads) first: it reads only the draft's LIGHTS_0 and data/lights.local.json, which no author step writes, and touches only LIGHTS_back, which none reads; first keeps the race steps' order (race_author, signs, race_verify last). Round 1c: walk_grade (tools/author_walk_grade_blend.py, opt-in route.walk_back_grade) second: it moves only the street walks' back-grade lips, which no other author step reads (the race edge strips stand on the road, edge_mode road; the signs on the walk's flat top), and before the race steps, so they author on the walk as it ships"
   },
   "sync_in": {
     "required": [
@@ -303,7 +304,9 @@
       "data/race_{lap}.kn5.json",
       "data/centerline.geojson",
       "data/centerline.elevation.json",
-      "data/lights.heads.json"
+      "data/lights.heads.json",
+      "data/walk_grade.json",
+      "data/walk_grade.seat.json"
     ],
     "_files_lap_doc": "ledger 0054 Phase 2: each lap's line, declaration and reports, as tools/ship_sd.sh syncs them ({lap}: every lap a race layout names; none in this config, so nothing)",
     "map": [

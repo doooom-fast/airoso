@@ -2,7 +2,7 @@
 id: 0099
 title: Lake Murray toward finished, round 1 (0.20.3): it rebuilds from an empty workshop, both lamp heads lit, the kerb rumble on, the owned asphalt and concrete; kerb stills and the species check for Kevin
 status: open
-scope: tracks/san-diego-lake-murray (0.20.2 -> 0.20.3); tools/ship_track.sh + tools/ship_track_spec.py (sync_in.seed, opt-in); tools/author_lamp_heads_blend.py (new, opt-in); tools/check_lights_ini.py (both-heads count, opt-in)
+scope: tracks/san-diego-lake-murray (0.20.2 -> 0.20.3); tools/ship_track.sh + tools/ship_track_spec.py (sync_in.seed, opt-in); tools/author_lamp_heads_blend.py (new, opt-in); tools/check_lights_ini.py (both-heads count, opt-in); round 1c (0.20.3 -> 0.20.4): tools/author_walk_grade_blend.py (new, opt-in route.walk_back_grade: author step walk_grade + its --seat prep sub-step)
 layer: project + tools
 train: -
 ---
@@ -408,3 +408,202 @@ PalmV2 a9eb1ee3, PalmV3 3c3ea2b3, PepperV1 109f17bc, Pine_Aleppo 7e058b11, Sage 
 
 Not installed: the street drive_test still refuses (as 0.20.2), and the runbook keeps the install for Kevin after the
 stills and his look at the lights.
+
+## Round 1c (Mac, 2026-11-22): the street drops — 0.20.4
+
+Kevin: "let's complete lake murray"; the sidewalk re-author is on his list (the board's n-lm-sidewalk: the 96 street drops
+0.20.2 was forced past, Nov 4). Branch `claude/lm-sidewalk-20261122` from round 1's head 3b03aead, plus the PC's run A
+record above (f19e106c, cherry-picked so this section follows it). Nothing installed. Every number below was measured on the
+Mac on 2026-11-22 unless marked [invented].
+
+### What an "edge drop" is (scripts/geometry/drive_test.py, unchanged)
+
+The excursion sweep: at a station every ~150 m of the gate centreline (90 on Free Roam's 13.47 km), both sides, the
+highest built surface is read every 0.5 m from the lane edge - 0.5 m out to the lane edge + 9 m. A fall of more than 0.12 m
+between two samples (a tall curb, the most a car survives at speed) is a drop; it GATES when it lies within 4 m of the
+last pavement / kerb sample, outside a flare, with no 1WALL between the pavement and it. The lap rule allows
+int(lap_m / 1000) = 13 on Free Roam. Neither the 0.12 m, the 4 m band nor the 13 was touched.
+
+### Where the 96 are, and what makes each one
+
+Read on a Mac stand-in of the 0.20.3 build (below), whose `data/drive_test.street.json` equals the PC's run A / 0090
+proof report key for key (96 gated, 107 far ledges, soft top 0, severe 0, kinks 2.67 / km). Every drop with its station,
+offset, height and the surfaces it falls from and onto: `tracks/san-diego-lake-murray/source/walk_grade/street_drops_0_20_3.json`.
+
+| Cause | Drops | Stations (s m) | Where | Fall per 0.5 m |
+|---|---|---|---|---|
+| The walk's back grade, both samples on it (1KERB_sidewalk -> 1KERB_sidewalk) | 66 | 41 stations: 2.3, 302.6 ... 12900.8 (both sides: 30 left, 36 right) | 2.4-3.0 m past the lane edge | 0.137-0.142 m |
+| The walk's back grade onto the grass the prep pins under its lip (1KERB_sidewalk -> 1GRASS) | 28 | 21 stations: 150.0 ... 12751.0 (17 left, 11 right) | 2.5 m past the lane edge | 0.126-0.141 m |
+| Ground: a 1 m slot between Alvarado and College's south approach, 3.9 m above it (released 3DEP earth at 3.2 m between Alvarado's bank and College's walk) | 1 | 2100.3, right, 13.0 m off the centre line | 6.5 m past the lane edge | 1.52 m |
+| Ground: the feather of the prep's pin falling to a fill | 1 | 2402.7, left, 15.0 m | 6.5 m past | 0.20 m |
+
+**The walk (94 of the 96).** The draft's curb + walk (scripts-v021 `geometry/ribbon.curb_sidewalk`, Lake Murray's
+EDGE_DEFAULTS, no `route.edge`): from the lane edge (0.10 m over the centre line) a 0.08 m batter up 0.14 m, the walk flat for
+1.8 m, then a back grade 1.2 m wide down to 0.10 m UNDER the centre line, so the strip's outer lip sits under the grass. It
+falls 0.34 m over 1.2 m: 28.3 %, 0.142 m per 0.5 m sample. Measured on the committed `loop.blend`'s CURB: 17,272 such lips,
+15,711 of them falling 0.34 m to the centimetre (98 % over a 1.20-1.21 m run). The prep (engine-july `build_kn5_loop`) then pins the ground within
+3 m of a pavement vertex to the deck - 0.02 m and clamps it under the lowest drivable sheet, so beside the walk the ground
+lies at about the lane edge and the grade runs down into it. The sweep reads two samples on the grade as 0.142 m, or one on
+the grade and the next on the grass just over its lower half as 0.126-0.141 m. A real sidewalk's back meets the ground (the
+yard, the parkway); the 0.34 m / 1.2 m grade is the draft's way of tucking its edge under the grass [invented in the draft].
+It is not a kerb or a ditch Free Roam should keep.
+
+**The two ground drops are not the walk.** They are reported here, not hidden, and stay in the count:
+- s 2100.3 right: the loop passes back beside itself here (College's south approach, s 2410-2545, about 3.8 m above
+  Alvarado, 13.5 m to the right). Alvarado's bank rises 3.5 m, then the ground drops 1.52 m into a 1 m slot of released 3DEP
+  earth (zone `college_approach_foot`, about 3.2 m) before College's walk. The real earth between the two roads is the
+  embankment [inferred]; the slot is the release zone's earth showing between two strips pinned to their roads. A ground fix for a later
+  round (it is the release zone's, not the walk's).
+- s 2402.7 left: 6 m past the lane edge the ground falls 0.20 m per 0.5 m (40 %): the prep's feather from the pinned verge
+  toward the natural ground of a fill. The real ground falls faster there (3DEP 1 m samples: about 2.5 m under the road 5.5 m
+  past the edge, 6.1 m under it 11 m past, on the local datum read off the centre line). A real fill slope; kept.
+
+### The fix (opt-in `route.walk_back_grade`; Lake Murray only)
+
+`tools/author_walk_grade_blend.py`, two halves:
+
+1. **Author step `walk_grade`** (`steps.author`, second, after `lamp_heads` and before the race steps), on the workshop's
+   `loop.blend`: every back-grade lip of the named walks is raised so that no edge from it up to the walk's back edge is
+   steeper than `max_slope` 0.20 [invented: 0.10 m per 0.5 m sample, under the gate's 0.12 with 0.02 to spare]. Nothing else
+   moves: the curb, the walk top, the strip's plan footprint, every other object. At 0.20 the grade falls 0.24 m over its
+   1.2 m and the lip lies at the centre line's own height (0.10 m under the lane edge, 0.08 m under the ground the prep pins).
+   Objects: the draft's CURB and the four walks with the same grade (`1KERB_sidewalk_padJ2` / `J3` / `J4`, `_apAP1`); the
+   street-only median has no back grade. Held where the draft put it:
+   - a lip in a ground-release zone (`data/ground_release.json`, the 3DEP earth the prep leaves unpinned): at most 0.03 m
+     [invented] under that earth;
+   - a lip of a face furniture stands on (any 1WALL* / GUARDRAIL vertex over it: a stub's K-rail laid back of walk to back of
+     walk, a pad's barrier, a rail). The first Mac try raised those too and verify_stubs failed 16 stubs on S5 (a K-rail base
+     0.154-0.254 m into the stub, limit 0.15); held, every stub and pad barrier reads as 0.20.3's;
+   - a lip with pavement 1 m over or under it (none on Lake Murray); a lip the red repairs plan names (10: the prep deletes
+     those faces by place).
+   On the seeded `loop.blend`: CURB 17,272 lips, 15,351 raised (p50 0.10 m, max 0.195 m), 910 already at the grade, 1,571
+   held by released ground, 513 under furniture, 10 by the red plan; pads J2 / J3 / J4 156 / 193 / 200 raised (12 under
+   their barriers each); apron AP1 30 raised (the Mac build had 31: one lip rose under 0.1 mm before the float32
+   tolerance). Fall p50 0.34 -> 0.24 m. A second run raises none. Writes `data/walk_grade.json`.
+2. **Prep sub-step `--seat`** (in `prep_prep`, after the red repairs), on the prepped scene: the ground is only final there.
+   Where the prep's feather falls away 3 m out (a fill), the ground it leaves under a raised lip can lie below it and the
+   walk's outer edge would stand in the air: the author step alone left 645 lips more than 0.05 m over the ground against
+   0.20.3's 497. The seat lowers every 1KERB_sidewalk* lip standing over 0.03 m under the 1GRASS ground beneath it onto that
+   height, never past the draft's own grade (0.34 over 1.2), never up. Mac: 3,280 lips lowered (p50 0.01-0.03 m, max
+   0.24 m), 294 of them to the draft's grade; lips more than 0.05 m over the ground 343 (0.20.3: 497), more than 0.03 m 413 (624). Writes
+   `data/walk_grade.seat.json`.
+
+Both: absent key = no header, nothing runs, no blend saved, a stale report removed (every other track). Self-checked (exit
+1, blend not saved): only lips move; the author half only up and never steeper than max_slope where it raised one; the seat
+only down and never past the draft's grade. Idempotent (a second run finds the same lips at the grade and moves nothing).
+
+### Proof on the Mac (Blender 5.1.2, not 4.2)
+
+The Mac cannot export a kn5 (Blender 4.2 and the installed AC add-on). So the stand-in: round 1's seeded workshop (the
+author phase already run), the prep under engine-july-snapshot + `assets/textures`, then the prep's sub-steps as the chain
+runs them (thin, the I-8 no-op, rock faces, red repairs, and here the seat), the split, and the gate OBJs written straight
+from the split blends' meshes in the engine frame (`source/walk_grade/blend_to_gate_obj.py`: scene (E, N, up) -> engine (E,
+up, N), the frame red_repairs_blend uses) in the kn5 sets each layout loads. The gates then ran from airoso exactly as the
+chain runs them.
+- **The stand-in reproduces the PC.** On 0.20.3 as seeded: the street report equals the PC's key for key; rock 9,805 faces /
+  11,935.7 m2 in 8 meshes and verify_pads seams 1.2 / 0.7 / 2.4 mm as ledger 0054's rehearsals, rib_check 69 jogs (v0.19.0's
+  69), verify_mouths 32 and verify_stubs 26 + 29 PASS.
+- **The street drive_test: 96 -> 8 gated drops, PASS (limit 13), no force.** Every drop after:
+  `source/walk_grade/street_drops_0_20_4_mac.json`.
+
+  | After | Drops | Stations |
+  |---|---|---|
+  | The walk at the draft's grade over the released 3DEP earth of `alvarado_creek_bank` (the real ground behind the walk lies low) | 3 | 1650.2 L, 1800.4 L, 1950.6 L (0.142 m) |
+  | The walk lowered by the seat onto a fill | 3 | 602.0 R (0.127), 2402.7 R (0.142, the draft's grade), 5550.8 L (0.120) |
+  | Ground (above, unchanged) | 2 | 2100.3 R (1.52 m), 2402.7 L (0.20 m) |
+
+- **Every other row as 0.20.3's.**
+
+  | Gate (Mac stand-in) | 0.20.3 | 0.20.4 |
+  |---|---|---|
+  | street drive_test: soft top / severe / kinks per km / daylight / obstructed / floating | 0 / 0 / 2.67 / 0 / 0 / 0 | the same |
+  | street drive_test: excursion drops (gated) / far ledges (reported) | 96 / 107 FAIL | 8 / 53 PASS |
+  | drive_test --line expansion fwd / rev (line gate) | PASS 40 drops / PASS 38 | PASS 13 / PASS 18 |
+  | audit street (K / I / F / B ...) | CLEAN | CLEAN (F_skirt_off_terrain 1,563 -> 1,564, reported) |
+  | race_cw / race_acw / north_cw / north_acw drive_test | PASS, 0 drops (far ledges 203 / 231 / 124 / 119) | PASS, 0 (61 / 100 / 34 / 37) |
+  | the four race audits / no_route | CLEAN / PASS (leak 0, 0/439 probes) | the same |
+  | verify_mouths / verify_stubs / verify_pads | 32 PASS / 26 + 29 PASS / J2-J4 PASS, barriers 1.077-1.086 m | the same, barriers the same |
+  | rib_check / house_seat / fold fans | 69 jogs PASS / PASS / PASS 3 x 5 | the same |
+
+- **What else moved in the scene** (mesh by mesh, the two gate OBJs): the walks' lips; the ground tiles (the prep's
+  anti-poke holds the grass under the raised grade less deeply, so the thinning keeps 540,852 of 983,289 vertices against
+  541,825 of 983,287); 1GRASS_ROCK 9,805 -> 9,807 faces; 9 building meshes by 0.2-5.9 mm (the prep's re-seat rides the ground's
+  delta). The road, the markings, the lamps and their lenses, the walls, the race furniture: no vertex moved.
+- **Not run on the Mac:** the kn5 export and everything that reads a kn5 (kn5_ground_check, house_gate, textures, the
+  track folder, ext_config / check_lights_ini, TreeFX, the AI), Blender 4.2. Runbook 0099-2 is the PC's.
+
+### Version
+
+`track.config.json` `version` 0.20.3 -> **0.20.4**. Nothing installed; `fleet/ac-installed.json` unchanged.
+
+## Runbook 0099-2 (PC): rehearse 0.20.4 from an EMPTY workshop. NO install.
+
+The branch is `claude/lm-sidewalk-20261122` (pushed by the Mac). Nothing in `content/tracks`, `lm_v4`, `lm_phase2/project`,
+`lm_line` or run A's `rehearse_0099_1` is touched. No `--force-install`.
+
+0. **The checkout.** A fresh worktree of the branch head (AIROSO=<worktree>), `git lfs pull --include
+   tracks/san-diego-lake-murray/loop.blend`; sha256 3f13b887446e6fe921faeec0672201d9d8846e538347bc8248ff5b453999a082
+   (189,063,384 B, unchanged: the fix runs on the workshop's copy).
+1. **The TreeFX models**, as run A: the 16 `*.bin` from `D:/k10-scratch/lm_phase2/project/source/trees/` into
+   `<worktree>/tracks/san-diego-lake-murray/source/trees/` (gitignored; never `git add`). Their md5s as run A's.
+2. **The engine:** a fresh copy of `D:/k10-scratch/eng_repro` at `D:/k10-scratch/eng_0099_2` (diff -rq clean against it).
+3. **The run.** `D:/k10-scratch/rehearse_0099_2` must not exist.
+   ```
+   SHIP_PROJ=D:/k10-scratch/rehearse_0099_2 AIROSO=<worktree> ENG=D:/k10-scratch/eng_0099_2 \
+     bash tools/ship_track.sh san-diego-lake-murray --no-install --skip-blend 2>&1 | tee D:/k10-scratch/rehearse_0099_2.log
+   ```
+   Expected:
+   - seeds: `seeds: 70 copied from airoso, 0 kept as the workshop had them (0 of those differ from airoso's)`;
+   - the new author header `author: the street walk's back grade no steeper than route.walk_back_grade ...` and
+     `[walk-grade] CURB: 17272 lips, 15351 raised ... held 1571 by the released ground + 513 under furniture + 0 by pavement
+     + 10 by the red plan` (pads 156 / 193 / 200 raised, AP1 30; the Mac's numbers, Blender 5.1.2);
+   - the new prep header `ship: the walk's raised lips seated on the prepped ground ...`, after `red repairs`, about 3,280
+     lips lowered (the Mac's; the PC's prep may differ by a few);
+   - **the street drive_test PASS: `off-road excursion drops>20cm : 8`** (limit 13; the Mac's eight at the stations above);
+   - `GATES: street drive_test exit 0, street audit exit 0, race drive_test exit 0, race audit exit 0, race no_route exit 0,
+     kn5_ground_check exit 0`; race layouts red: none; then the scratch-copy line (`never installed`), no force anywhere.
+4. **Report**, against run A (3b03aead, `rehearse_0099_1`):
+   - every step header and exit, the GATES line, the minutes;
+   - `data/drive_test.street.json`: the drops (8 expected) and every other key against run A's (expected equal but
+     `excursion_drops`, `excursion_far_ledges`, `fail`); `drive_test --line expansion` fwd / rev (Mac: 13 / 18, line gate
+     PASS); the race and north drive_tests (0 drops; far ledges fewer);
+   - `data/walk_grade.json` and `data/walk_grade.seat.json` (counts as above);
+   - **kn5:** `tools/kn5_equiv.py` against run A's kn5s. Expected: race, race_north, the four closures, the street-only kn5 and
+     the five spawns EQUIVALENT; the road kn5 not equivalent only in 1KERB_sidewalk_* (the lips), the 1GRASS_* tiles and
+     1GRASS_ROCK_* (the ground the prep left under the raised grades), and a few BUILDING_* by millimetres (the re-seat);
+     LIGHTPOST_*, LIGHTS_0 / LIGHTS_back, 1ROAD_*, MARKINGS, YLINE, every 1WALL equivalent. Name any other mesh;
+   - kn5_ground_check per layout (the lamp, sign and ground-sheet readings as run A's); check_lights_ini 646 / 646;
+     house_seat and house_gate PASS;
+   - `trees.txt` against run A's: the count (21,111 written) and how many lines differ (some plant heights near the walks may
+     move with the ground [not measured on the Mac]);
+   - AI lines byte-identical to run A's; every `ui_track.json` reads 0.20.4.
+5. **Write it back** as a section of this ledger on a branch off `claude/lm-sidewalk-20261122`, and push that branch. No
+   merge, no install: an install is Kevin's word (0.20.3's stills and lights questions stand).
+
+## Tests (Mac, round 1c)
+
+- New: `tests/tools/test_lake_murray_0099_walk_grade.py`, 16 tests: lips found as exactly the strip's outer row on strips the
+  draft's own sweep builds (straight, a 40 m arc, a 12 % grade, rows 1.2 m apart up 15 %); the draft's grade read as 0.126-
+  0.142 m drops by drive_test's own TriField and the re-authored one read as none; only lips move, only up, to the slope; the
+  lip at the centre line; a second run moves nothing; the pavement, released-ground, furniture and red-plan holds; the seat
+  (onto the ground, never past the draft's grade, a second seat moves nothing); the release zones are the file's; the opt-in
+  is Lake Murray's alone; the chain wiring (author step second, the seat after the red repairs, sync_out); not opted in = no
+  blend opened, a stale report removed; drive_test's 0.12 m line and lap rule untouched.
+- Changed: `tests/tools/test_lake_murray_0099.py` (the version is 0.20.4), `tests/tools/test_ship_track_chain.py` (V4_EXTRAS
+  gains the two new headers).
+- The full suite on this branch: **1,742 passed, 0 failed** (8 min 24 s; round 1 had 1,726).
+
+## Shared files touched (round 1c)
+
+`tools/author_walk_grade_blend.py` (new, opt-in); `tools/ship_track.sh` (the author step and the prep sub-step, both
+opt-in); tests: `tests/tools/test_lake_murray_0099_walk_grade.py` (new), `tests/tools/test_ship_track_chain.py`,
+`tests/tools/test_lake_murray_0099.py`. No gate, threshold or other track's config or ship.json changed (so no
+GATES-CHANGELOG entry). Lake Murray's own: track.config.json (`route.walk_back_grade`, version), ship.json (`walk_grade`,
+sync_out + the two reports), README.md, source/walk_grade/ (the two drop lists and the stand-in OBJ writer).
+
+## Needs Kevin (round 1c)
+
+- **The install of 0.20.4**, after runbook 0099-2 (it replaces 0.20.3's ask: the same build plus the walk; no force needed
+  if the PC reads the street drive_test as the Mac did).
+- **The slot at s 2100** between Alvarado and College's south approach (1.52 m, the release zone's earth): a ground fix in a
+  later round, or keep it as the counted drop it is now.

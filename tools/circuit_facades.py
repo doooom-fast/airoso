@@ -273,12 +273,16 @@ def wall_levels(bottom, door_z, top, module_m, plain_h, grime_m=0.0):
     return zs, bands
 
 
-def facade_walls(ring, skin, bottom, door_z, top, toward, grime_m=0.0, gable=None, parapet_m=0.0, cap_w=0.25):
+def facade_walls(ring, skin, bottom, door_z, top, toward, grime_m=0.0, gable=None, parapet_m=0.0, cap_w=0.25,
+                 shed_tops=None):
     """Pure: the walls of one block in the atlas. ``ring`` counter-clockwise (x, y); ``toward`` a unit vector to the lap.
     ``gable`` = (ridge_z, (ux, uy)): the ridge's axis; the edges across it carry the gable ends up to the roof line (their
     roof line peaks at the edge's middle, as tools/author_bespoke_blend.py pitched_roof's box). ``parapet_m``: the walls carry
     on that far over ``top``, with a cap ``cap_w`` wide and the inner face back down to ``top`` (the flat_parapet form).
-    Returns (verts, faces, uvs, info): every face shares its corners, the base ring first, in ring order."""
+    ``shed_tops`` (ledger 0097 round 4, opt-in): the roof plane's height at each ring vertex (a shed: one measured plane);
+    the modules stop at ``top`` (the plane's lowest corner) and every bay carries on in the skin's plain cell up to the plane,
+    a quad (a triangle where one side is at ``top``) whose top edge lies on it (a plane is straight along a wall), as the
+    gable ends do. Returns (verts, faces, uvs, info): every face shares its corners, the base ring first, in ring order."""
     sk = SKINS[skin]
     plain = sk["plain"]
     module_m = sk["module_m"]
@@ -373,6 +377,37 @@ def facade_walls(ring, skin, bottom, door_z, top, toward, grime_m=0.0, gable=Non
             uvs.append(tuple(uv))
             n_gable += 1
         info["gable_faces"] = n_gable
+    if shed_tops is not None:
+        # every column's height on the plane: linear along its own edge between the edge's two ring-vertex heights
+        col_top = []
+        for c in range(C):
+            e, k = col_edge[c]
+            t = k / len(cells[e])
+            col_top.append(shed_tops[e] + (shed_tops[(e + 1) % n_e] - shed_tops[e]) * t)
+        span = max(plain_h, max(col_top) - top)
+        raised = {}
+
+        def svid(c):
+            if col_top[c] <= top + 0.01:
+                return top_row + c
+            if c not in raised:
+                raised[c] = len(verts)
+                verts.append((cols[c][0], cols[c][1], col_top[c]))
+            return raised[c]
+        n_shed = 0
+        for c in range(C):
+            c1 = (c + 1) % C
+            poly = [top_row + c, top_row + c1]
+            for i_ in (svid(c1), svid(c)):
+                if i_ not in poly:
+                    poly.append(i_)
+            if len(poly) < 3:
+                continue
+            faces.append(tuple(poly))
+            uvs.append(tuple(atlas_uv(plain, 0.0 if i_ in (top_row + c, raised.get(c)) else 1.0, (verts[i_][2] - top) / span)
+                             for i_ in poly))
+            n_shed += 1
+        info["shed_faces"] = n_shed
     if parapet_m:
         cx, cy = sum(p[0] for p in ring) / n_e, sum(p[1] for p in ring) / n_e
         inset = []

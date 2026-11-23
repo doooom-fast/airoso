@@ -48,6 +48,50 @@ BOBSLED, LADDER = 132189631, 289314483
 
 NORTH_Z18 = "naip_2023_hp_north_z18"     # round 3: the tiles above the committed z18 photo (beside this file)
 
+# round 4 (ledger 0097 round 4, item 5): the SECOND READ of the rows round 3 carried. Each stretch below is a run of rows where
+# the step reader left one side unread after its running median (the verge there greys into the prairie over metres, so no
+# 1 m step reaches C_MIN / OUT_MIN). What edges the pavement there was checked BY EYE on straightened strips of the photos
+# (ledger 0081's method: eye-checked spans, then a reader measures within them), and is read station by station:
+#   "line"  the painted white edge line: the FIRST luminance ridge (a local maximum over +-0.3 m of the 0.3 m running mean of
+#           (R + G + B) / 3) standing LINE_MIN over the darkest asphalt in the 1 m inside it, within the band; the edge is
+#           that ridge + the photo's own measured line-to-edge offset (the median of the step reader's edge less the ridge
+#           LINE_TO_EDGE_SEARCH_M inside it, over the rows both read on that photo)
+#   "kerb"  a raised kerb's paint (the north loop's kerbs, kerbs.lm.json): the outer end of the first paint run within the
+#           band (measure_widths.kerb_edge, the lap's own kerb rule: the kerb is the paved surface's edge)
+# A second-read row joins the first read's rows through the same outlier filter and running median; a row the first read
+# already holds keeps its value. The bands [lo, hi] (metres off OSM's line) are read by eye on those strips.
+# (side, s0, s1, kind, lo, hi, what the strips show)
+SECOND_READ = (
+    ("left", 216.0, 240.0, "line", 4.8, 6.6, "the white edge line, clear, after the T10 kerb's end (L s 216); a grey-green verge 1-3 m wide beyond it"),
+    ("left", 240.0, 300.0, "line", 3.8, 5.6, "the white edge line, faint, the verge beyond it greying into the prairie"),
+    ("right", 301.0, 306.5, "line", 5.8, 7.2, "the white edge line before the kerb R s 307"),
+    ("right", 306.5, 335.0, "kerb", 6.2, 9.4, "the kerb R s 307-335 (blue / white blocks): its paint's outer end"),
+    ("right", 335.0, 354.0, "line", 6.6, 8.2, "the white edge line past the kerb"),
+    ("left", 714.0, 733.0, "line", 4.8, 6.4, "the white edge line before the kerb L s 733 (a dark band just outside it)"),
+    ("left", 733.0, 739.0, "kerb", 5.0, 8.6, "the kerb L s 733-761: its paint's outer end"),
+    ("right", 933.0, 941.0, "line", 3.8, 5.0, "the white edge line where the read passes from the z18 photo to the 0.3 m crop"),
+)
+NOT_READ = (
+    ("right", 0.0, 20.0, "the fork's mouth: the West lap's pavement runs on (inside the FORK pad's measured outline; the cut drops these rows)"),
+    ("right", 986.0, 1001.0, "the merge's mouth: the West lap's pavement runs on (the bellmouth; the weld meets the West lap there)"),
+    ("left", 996.0, 1001.0, "the merge's mouth: the T13 kerb turns onto the West lap's edge"),
+)
+LINE_MIN = 10.0                 # [invented] the edge line's prominence over the asphalt inside it (8-bit)
+LINE_TO_EDGE_SEARCH_M = 1.0     # [invented] ... and the ridge sought this far inside a first-read edge to measure the offset
+
+
+def ridges(lum, offs):
+    """the luminance ridges of one cross profile: [(offset, prominence)], innermost first (round 4's edge-line reader)"""
+    sm = np.convolve(lum, np.ones(3) / 3.0, mode="same")
+    w, k = int(round(0.3 / mw.STEP)), int(round(1.0 / mw.STEP))
+    out = []
+    for j in range(k, len(sm) - w):
+        if sm[j] >= sm[j - w:j + w + 1].max():
+            p = float(sm[j] - sm[j - k:j].min())
+            if p >= LINE_MIN:
+                out.append((float(offs[j]), p))
+    return out
+
 
 def z18_reader(repo):
     """the committed z18 photo and, when present, the north tiles above it, as ONE z18 mosaic (both are whole web-mercator
@@ -109,17 +153,19 @@ def measure(repo: Path):
     z18, z18_north = z18_reader(repo)
     lat_s = origin["lat"] + z / mlat
     offs = np.arange(mw.START_M, mw.MAX_M + 1e-9, mw.STEP)
-    side_e = {}
+    side_e, second_e = {}, {}
     for side, sg in (("left", 1), ("right", -1)):
         nx, nz = -tz * sg, tx * sg
         X = x[:, None] + nx[:, None] * offs[None, :]; Z = z[:, None] + nz[:, None] * offs[None, :]
         Vc = crop.rgb(X, Z)
         Vz = z18(origin["lon"] + X / mlon, origin["lat"] + Z / mlat)
         E = np.full(len(s), np.nan); src = [""] * len(s)
+        prof = [None] * len(s); pname = [""] * len(s)
         for i in range(len(s)):
             for V, name, lim in ((Vc, "naip_030", meta["corners"][1]), (Vz, "naip_z18", z18_north)):
                 if lat_s[i] > lim - 10.0 / mlat or not np.isfinite(V[i]).all():
                     continue
+                prof[i], pname[i] = V[i], name                 # the photo this row is read on (round 4: the second read's)
                 e, _c = mw.first_rise(mw.groundness(V[i]), offs)
                 if e is not None:
                     E[i] = e; src[i] = name + ("_north" if name == "naip_z18" and lat_s[i] > Z18_SOUTH_N else "")
@@ -134,7 +180,48 @@ def measure(repo: Path):
         h = int(round(MED_M / 2 / READ_STEP_M))
         Em = np.array([np.nanmedian(E[max(0, i - h):i + h + 1]) if np.isfinite(E[max(0, i - h):i + h + 1]).sum() >= 5
                        else np.nan for i in range(n)])
+        # round 4: the second read (SECOND_READ above) of the rows the first read left unread after its median
+        off_e = {}
+        for nm in ("naip_030", "naip_z18"):
+            d = []
+            for i in range(n):
+                if np.isfinite(E[i]) and pname[i] == nm:
+                    rr = [o for o, _p in ridges(prof[i].mean(axis=1), offs) if E[i] - LINE_TO_EDGE_SEARCH_M <= o <= E[i]]
+                    if rr:
+                        d.append(E[i] - rr[-1])
+            off_e[nm] = (float(np.median(d)) if d else None, len(d))
+        E2 = np.full(n, np.nan); how2 = [""] * n
+        for sd, a, b, kind, lo, hi, _why in SECOND_READ:
+            if sd != side:
+                continue
+            for i in range(n):
+                if not (a <= s[i] <= b) or np.isfinite(Em[i]) or prof[i] is None:
+                    continue
+                if kind == "kerb":
+                    e = mw.kerb_edge(mw.paint_mask(prof[i], False), offs, lo, hi)
+                else:
+                    rr = [o for o, _p in ridges(prof[i].mean(axis=1), offs) if lo <= o <= hi]
+                    e = rr[0] + off_e[pname[i]][0] if rr and off_e[pname[i]][0] is not None else None
+                if e is not None:
+                    E2[i] = e; how2[i] = kind
+        Ec = np.where(np.isfinite(E), E, E2)
+        keep2 = np.zeros(n, bool)
+        for i in range(n):
+            if np.isfinite(Ec[i]):
+                v = Ec[max(0, i - 6):i + 7]; v = v[np.isfinite(v)]
+                keep2[i] = len(v) >= mw.MIN_NEAR and abs(Ec[i] - np.median(v)) <= TOL_M
+        Ec[~keep2] = np.nan
+        Em2 = np.array([np.nanmedian(Ec[max(0, i - h):i + h + 1]) if np.isfinite(Ec[max(0, i - h):i + h + 1]).sum() >= 5
+                        else np.nan for i in range(n)])
+        second = ~np.isfinite(Em) & np.isfinite(Em2)
+        Em = np.where(np.isfinite(Em), Em, Em2)                 # a first-read row keeps its value
+        for i in np.nonzero(second)[0]:
+            src[i] = (src[i] or pname[i]) + "_second_read"
         side_e[side] = (E, Em, src)
+        second_e[side] = {"rows": int(second.sum()), "readings": int(np.isfinite(E2).sum()),
+                          "kept": int((np.isfinite(E2) & keep2 & ~np.isfinite(E)).sum()),
+                          "line_to_edge_m": {k_: (None if v_[0] is None else round(v_[0], 2), v_[1]) for k_, v_ in off_e.items()},
+                          "second": second}
     EL, ER = side_e["left"][1], side_e["right"][1]
     both = np.isfinite(EL) & np.isfinite(ER)
     carried_w = float(np.median((EL + ER)[both]))
@@ -188,9 +275,10 @@ def measure(repo: Path):
     out_i = np.arange(0, len(s), int(round(STEP_M / READ_STEP_M)))
     if out_i[-1] != len(s) - 1:
         out_i = np.r_[out_i, len(s) - 1]
+    sec2 = both & (second_e["left"]["second"] | second_e["right"]["second"])
     rows = [{"s": round(float(s[i]), 1), "left_m": None if not np.isfinite(EL[i]) else round(float(EL[i]), 2),
              "right_m": None if not np.isfinite(ER[i]) else round(float(ER[i]), 2), "width_m": round(float(W[i]), 2),
-             "width": "measured" if both[i] else "carried",
+             "width": ("measured_second_read" if sec2[i] else "measured") if both[i] else "carried",
              "photo": side_e["left"][2][i] or side_e["right"][2][i] or None} for i in out_i]
     conn = {"name": "full_north", "kind": "connector",
             "points_xyz_m": [[round(float(cx[i]), 3), round(float(Ys[i]), 3), round(float(cz[i]), 3)] for i in out_i],
@@ -205,7 +293,12 @@ def measure(repo: Path):
             "width_measured_m": [round(float(v), 2) for v in np.percentile(meas, [5, 25, 50, 75, 95])],
             "centre_shift_m": [round(float(SH.min()), 2), round(float(SH.max()), 2)],
             "width_built_m": [round(float(v), 2) for v in np.percentile(W, [5, 25, 50, 75, 95])],
-            "height_m": [round(float(Ys.min() + origin["elev_m"]), 1), round(float(Ys.max() + origin["elev_m"]), 1)]}
+            "height_m": [round(float(Ys.min() + origin["elev_m"]), 1), round(float(Ys.max() + origin["elev_m"]), 1)],
+            "second_read": {"_doc": "ledger 0097 round 4 (SECOND_READ): rows the first read left unread on one side, read again "
+                                    "(the edge line or a kerb's paint, in eye-checked bands); measured_m counts them",
+                            "measured_m": int(sec2.sum() * READ_STEP_M),
+                            "per_side": {sd: {k_: v_ for k_, v_ in second_e[sd].items() if k_ != "second"} for sd in second_e},
+                            "not_read": [{"side": a, "s": [b, c], "why": d} for a, b, c, d in NOT_READ]}}
     return conn, rows, summ
 
 

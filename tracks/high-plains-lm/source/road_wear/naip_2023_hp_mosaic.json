@@ -1,0 +1,52 @@
+{
+ "_doc": "ledger 0097 round 4 (make_aerial_mosaic.py): road_wear.aerial over both layouts, the 0.3 m crop (naip_2023_030_hp.png, its pixels unchanged in the bottom rows) carried north on its own lattice, the rows above it from the z18 photos of the same NAIP item (0.46 m, bilinear, registered) within CORRIDOR_M of the north loop; black elsewhere",
+ "item": "co_m_3910317_ne_13_030_20230928_20240104",
+ "datetime": "2023-09-28T16:00:00Z",
+ "corners": [
+  -103.90532207890708,
+  39.740245569583585,
+  -103.88959002688462,
+  39.73355853151761
+ ],
+ "w": 4495,
+ "h": 2475,
+ "m_per_px": [
+  0.3,
+  0.3
+ ],
+ "crop_rows": [
+  1273,
+  2475
+ ],
+ "z18_px_filled": 700633,
+ "registration": {
+  "box_lonlat": [
+   -103.901,
+   39.7357,
+   -103.8975,
+   39.7368
+  ],
+  "z18_shift_m": [
+   0.0,
+   0.0
+  ],
+  "ncc_at_0": 0.8948,
+  "ncc_best": 0.8948,
+  "lum_ratio_z18_over_crop": 0.999,
+  "applied": "shift only"
+ },
+ "params": {
+  "MARGIN_M": 40.0,
+  "CORRIDOR_M": 40.0,
+  "REG_BOX_LONLAT": [
+   -103.901,
+   39.7357,
+   -103.8975,
+   39.7368
+  ],
+  "REACH_M": 2.0,
+  "COARSE_M": 0.5,
+  "FINE_M": 0.1
+ },
+ "source": "USDA NAIP 2023-09-28 (public domain): the Planetary Computer 0.3 m crop and its z18 web-mercator tiles"
+}

@@ -37,7 +37,7 @@ def _configs():
 # --- the config -------------------------------------------------------------------------------------------------------
 def test_two_layouts_on_one_road_the_west_renamed_the_full_on_its_lap():
     c = _cfg()
-    assert c["version"] == "0.1.11"
+    assert c["version"] in ("0.1.11", "0.1.12")               # round 4 (0.1.12) keeps both layouts
     w, f = c["layouts"]
     assert (w["id"], w["name"], w.get("lap"), w["ai"]) == ("west", "West", None, "ai/west")
     assert (f["id"], f["name"], f["lap"], f["ai"]) == ("full_course", "Full", "full", "ai/full_course")
@@ -153,8 +153,8 @@ def test_three_paddock_roofs_take_the_2018_lidar_forms_the_shed_is_owed():
     assert (c["form"], c["wall_h_m"], c["ridge_h_m"], c["ridge_axis"]) == ("gable", 2.48, 4.74, "short")
     for r in (a, b, c):
         assert r["_h"].startswith("measured: the 2018 lidar") and r["_h_2023"]
-    d = rows["traced_white_w_of_osm289311820"]                       # the lidar's shed: the atlas skin cannot stand it
-    assert d["form"] == "gable" and "NOT applied" in d["_lidar_2018"] and "2.92" in d["_lidar_2018"]
+    d = rows["traced_white_w_of_osm289311820"]                       # the lidar's shed: built since round 4 (atlas_shed)
+    assert d["form"] == "shed" and d["atlas_shed"] is True and "round 4" in d["_lidar_2018"] and "gable" in d["_form_2023"]
     for k in ("traced_container_row", "traced_grey_roof_e_of_containers", "traced_pit_entry_canopy", "osm289311824"):
         assert not rows[k]["_h"].startswith("measured:")             # the 2018 lidar cannot read them: kept as they were
 

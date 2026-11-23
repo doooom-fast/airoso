@@ -14,6 +14,27 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
+## 2026-11-23 — WIRING: High Plains' merge judged by verify_mouth_corners (ledger 0097 round 4; opt-in; no threshold moved)
+
+No gate threshold, floor or bypass moved, and no gate's code changed. One wiring change, opt-in by High Plains' own config
+(`tests/tools/test_high_plains_round4.py` `test_version_and_no_other_track_declares_any_round4_key`):
+
+- `tracks/high-plains-lm`: `route.verify_mouth_corners: true` and the gate step `verify_mouth_corners` in its ship.json
+  (Sand Creek's gate of ledger 0086, its rows and limits as they are: CORNER LIP <= 0.05 m, TEETH <= 2.1 %, EDGE PAINT
+  <= 0.25 m, the R 9 turn drop reported) now judges the Full layout's merge, whose west bellmouth this round builds as a
+  measured corner return (`route.mouth_returns`). Its first run read EDGE PAINT 14.0 m: the West lap's edge line ran across
+  the opening, which NAIP 2023 0.3 m shows unpainted; `road_markings.gap_mouths` (ledger 0086's, opt-in) breaks it there,
+  and the gate reads 0.0 m.
+- Not gates, opt-in, recorded here because they shape what the gates see: `tools/mouth_returns_blend.py`
+  `route.mouth_returns_measured_only` (a corner without its own measured radius is skipped, not built at another corner's
+  median); `tools/author_kerbs_blend.py` a run's `"line"` (a kerb keyed to a connector's rows); `tools/author_bespoke_blend.py`
+  a row's `"atlas_shed"` with `tools/circuit_facades.py` `facade_walls(shed_tops=...)` (a shed on an atlas skin);
+  road wear's aerial is a new image (`source/road_wear/naip_2023_hp_mosaic.png`), which tools/road_wear_check.py reads exactly
+  as it read the crop (`road_wear.aerial`, one north-up lon/lat image and its box).
+
+Proven on High Plains 0.1.12 (Mac, Blender 4.2.9, an empty workshop): `[mouth-corners] ... lip 0.023 m, teeth 1/354, edge
+paint 0.0 m ... PASS`; verify_mouths PASS (mouth line 0.012 m, notch 0.003 m, approach 0.61 %/m, as 0.1.11).
+
 ## 2026-11-22 — WIRING: a multi-layout circuit's spawn kn5s judged by race_start's own rows (ledger 0097 round 3; opt-in; no threshold moved)
 
 No gate threshold, floor or bypass moved. One wiring change, opt-in by `track.config.json race_start.layouts` (High Plains

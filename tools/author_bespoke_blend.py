@@ -888,7 +888,10 @@ def blocks(col, spec, proj, to_xy, ground, near_ground, paved, walls, bad):
                 floor = float(set_in["ground_navd88"]) - ELEV0
                 bottom, eave = min(floor, lo) - PREP_FOOT_M, floor + wall_h
             n = len(ring)
-            if atlas and (form in ("shed", "posts") or set_in):
+            # ledger 0097 round 4 (opt-in, a row's "atlas_shed": High Plains' traced white building): a shed on an atlas skin,
+            # its walls to the measured plane (facades.facade_walls shed_tops); absent = refused, as before
+            atlas_shed = bool(atlas and form == "shed" and b.get("atlas_shed") and not set_in)
+            if atlas and ((form == "shed" and not atlas_shed) or form == "posts" or set_in):
                 (dropped if auto else bad).append(f"block {key}: skin {skin_name} stands the forms flat, flat_parapet, hip and gable, "
                                                   f"not {'set_in' if set_in else form}")
                 continue
@@ -986,9 +989,18 @@ def blocks(col, spec, proj, to_xy, ground, near_ground, paved, walls, bad):
                     gable = (max(eave + 0.3, bottom + float(b.get("ridge_h_m", wall_h + 1.0))), obb_w["u"])
                     gable_walls = True
                 grime = block_opt(b, group, "base_grime_m")
+                shed_tops, wall_top = None, eave
+                if atlas_shed:
+                    # ledger 0097 round 4 (opt-in): the legacy shed's plane (below), the walls' modules to its lowest corner
+                    pl = b["plane"]
+                    rx, ry = to_xy(pl["ref_lonlat"])
+                    base_z = eave - wall_h
+                    tops = [max(base_z + 0.3, base_z + float(pl["h_m"]) + float(pl["gx"]) * (x - rx) + float(pl["gy"]) * (y - ry))
+                            for x, y in ring]
+                    shed_tops, wall_top = tops, min(tops)
                 vw, fw, uw, facade_info = facades.facade_walls(
-                    ring, skin_name, bottom, door_z, eave, toward_lap(ring, lap[::2]), grime_m=float(grime or 0.0), gable=gable,
-                    parapet_m=par_m if form == "flat_parapet" else 0.0)
+                    ring, skin_name, bottom, door_z, wall_top, toward_lap(ring, lap[::2]), grime_m=float(grime or 0.0), gable=gable,
+                    parapet_m=par_m if form == "flat_parapet" else 0.0, shed_tops=shed_tops)
                 batch.room(len(vw))
                 batch.add(vw, fw, uw)
             else:
@@ -1144,6 +1156,8 @@ def blocks(col, spec, proj, to_xy, ground, near_ground, paved, walls, bad):
             if atlas:
                 rows[-1]["facade"] = {"skin": skin_name, "bays": facade_info["bays"], "openings": facade_info["openings"],
                                       "gable_in_walls": gable_walls}
+                if "shed_faces" in facade_info:                    # ledger 0097 round 4 (opt-in atlas_shed)
+                    rows[-1]["facade"]["shed_faces"] = facade_info["shed_faces"]
             if n_units:
                 rows[-1]["rooftop_units"] = n_units
             if set_in:

@@ -4,7 +4,7 @@
   "name": "High Plains Raceway",
   "_name_doc": "Kevin 2026-11-07: \"Get rid of Lm Version from names, nothing should be on any other engine now\" / \"LM is the airoso engine\". 0.1.5 (2026-11-09): no \"(LM engine)\" in the display name, and the slug and install_folder are the plain high_plains. The old-engine track (tracks/high-plains) gave that slug up: its slug and folder are high_plains_v072 (S7, fleet.cli lint)",
   "slug": "high_plains",
-  "version": "0.1.11",
+  "version": "0.1.12",
   "mirror_x": false,
   "loop": true,
   "default_width_m": 12.0,
@@ -2494,7 +2494,7 @@
     },
     "crossfall_file": "data/crossfall.lm.json",
     "kerbs_file": "source/edges/kerbs.lm.json",
-    "_kerbs_doc": "the racing kerbs traced off the aerial (ledgers 0078, 0081): since 0.1.10 the port's own copy, source/edges/kerbs.lm.json (synced in by ship.json; tracks/high-plains/source/edges/kerbs.json, its source, untouched): the same 20 runs with R s 2,673's first five edge points moved 0.4-2.3 m out onto the paint they stand on (ledger 0097 round 2, source/edges/retrace_stripe_2673.py; ledger 0081's owed item). Built by tools/author_kerbs_blend.py at the measured offsets (kerb.placement)",
+    "_kerbs_doc": "the racing kerbs traced off the aerial (ledgers 0078, 0081): since 0.1.10 the port's own copy, source/edges/kerbs.lm.json (synced in by ship.json; tracks/high-plains/source/edges/kerbs.json, its source, untouched): the same 20 runs with R s 2,673's first five edge points moved 0.4-2.3 m out onto the paint they stand on (ledger 0097 round 2, source/edges/retrace_stripe_2673.py; ledger 0081's owed item). Built by tools/author_kerbs_blend.py at the measured offsets (kerb.placement). Ledger 0097 round 4: six more runs on the Full layout's north loop (\"line\": \"full_north#0#0\", keyed to that connector's rows by tools/author_kerbs_blend.py, opt-in): the blue / white kerbs NAIP 2023 shows there (R s 57-98, L s 170-216, R s 308-335, R s 546-638, L s 733-761 on the north loop's own s, and T13's piece on Ladder's edge, L s 983-990, which ends where the West's T13 run begins), measured by ledger 0081's block reader (source/edges/trace_north_kerbs.py, tools/kerb_offsets.py --follow 1 on road wear's mosaic); its two blue / yellow stripes (L s 372-401, L s 648-682) are NOT built: not measurable on the z18 photo",
     "paint": [
       {
         "id": "sf_line",
@@ -2962,7 +2962,18 @@
       "full_north"
     ],
     "weld_exact_deck_lines": true,
-    "_weld_exact_deck_doc": "ledger 0097 round 3 (Pikes Peak's, ledger 0085): the merge's weld and verify_mouths read the West lap's deck off its triangles where each sample stands (its lidar camber), not its centre carried level"
+    "_weld_exact_deck_doc": "ledger 0097 round 3 (Pikes Peak's, ledger 0085): the merge's weld and verify_mouths read the West lap's deck off its triangles where each sample stands (its lidar camber), not its centre carried level",
+    "mouth_returns": [
+      "full_north"
+    ],
+    "mouth_radii_file": "source/edges/mouth_radii.naip.json",
+    "mouth_returns_measured_only": true,
+    "verify_mouth_corners": true,
+    "_mouth_returns_doc": "ledger 0097 round 4 (item 2): the merge's bellmouth as a measured corner return (Sand Creek's, ledger 0086: tools/mouth_returns_blend.py, a circular return tangent to the West lap's and Ladder's pavement edges, the corner paved, the ground pinned; verify_mouth_corners judges it). The radii are read off NAIP 2023 (z18, 0.46 m) by tools/mouth_radii.py (source/edges/measure_merge_radii.py on an empty-workshop build of this branch -> source/edges/mouth_radii.naip.json): the WEST corner (the bellmouth, a 64.72 deg wedge) R 14.0 m (contrast 29.2, prominence 1.91); the EAST corner (behind the T13 kerb, 120.08 deg) NOT measured: fit at the grid's end (20.0 m) (the kerb's paint wraps it wider than the reader's 20 m grid). mouth_returns_measured_only (opt-in): the east corner is not built at the west's radius, so the fillet behind the T13 kerb stays owed"
+  },
+  "road_markings": {
+    "gap_mouths": true,
+    "_gap_mouths_doc": "ledger 0097 round 4 (tools/gap_mouths_blend.py gap_paint, Sand Creek's, ledger 0086): the West lap's white edge line broken across the merge's opening, as NAIP 2023 0.3 m shows it (no edge line along the West's left edge across Ladder's mouth, L s 2,812-2,852), widened to the bellmouth return's tangent point; verify_mouth_corners' EDGE PAINT row judges it. High Plains' only mouth"
   },
   "race_start": {
     "_doc": "ledger 0093 (Kevin 2026-11-18: \"for milford and high plains, we need more race track focused furniture like starting line, gridlines\"): the line, grid, pits and sectors the AC nodes stand on, placed on the prepped scene by tools/circuit_dummies_blend.py (scripts/geometry/circuit_start.py) in place of engine-july's rule set (its grid on the straightest 260 m: the south straight, s 1080; one AC_START; every node yawed from pts[0] -> pts[1], kn5 heading -0.97 at its AC_START_0). Judged in the road kn5 by scripts/ac/verify_kn5 race_start_checks",
@@ -3214,7 +3225,7 @@
     ],
     "_edge_retrace_doc": "ledger 0097 round 2 (Kevin 2026-11-22: \"Rebuild at the measured widths\"): the inherited constant 12.0 m (default_width_m, the source's widths) replaced along the whole lap by the pavement edge measured off NAIP 2023 at 0.3 m (source/edges/measure_widths.py -> edge_evidence.json: the outer side of the white edge lines, the asphalt's end, the kerbs' paint; every reading drawn over the straightened road in widths_strips_2023_030.jpg). tools/edge_retrace.py mode \"measured\" (opt-in): each side moves in OR out to its measured edge, the line by (left - right) / 2, the width left + right; rows the photo does not read (the mouths of the north course, the short-course link and the pit-in lane; outliers) are interpolated within gap_m 60 m. erode_m 3 / smooth_m 4 [invented]: against the readings p5 / p95 -0.23 / +0.41 m (left), -0.24 / +0.28 m (right) on the Mac's dry run; the tool's 10 / 8 left -0.47 / +0.80 m. Never onto the pit wall or paddock_row_5 (rails); shift_precomp so the assembler builds the measured move",
     "connectors_file": "source/full/connectors.full.json",
-    "_connectors_file_doc": "ledger 0097 round 3: the Full layout's north loop, To Hell On A Bobsled + Ladder To Heaven, 1,001 m, as the port's own connector full_north (source/full/make_connectors.py from measure_north.py's north_loop.json): OSM's line (the 2026-10-28 snapshot) moved onto the pavement NAIP 2023 reads, its edges read where both show (810 m: the 0.3 m crop, the z18 0.46 m photo and, round 3, the z18 tiles over the hairpin) and CARRIED [invented] over 192 m (the fork's and merge's mouths and 165 m of verge with no edge line on one side: each edge interpolated between the nearest rows read on both sides), both edges through a 10 m mean and the centre line through a 4 m Gaussian [invented smoothing: OSM's 20-25 m node spacing], its heights 3DEP beside the line (corridor_3dep_north.json); painted with the mainline's edge lines. tools/trim_connectors.py cuts it at the FORK pad's box edge (lm_pads; route.street_junctions.pad_arms) and at the West lap's edge at the merge (46.1 deg), where tools/weld_mouths_blend.py welds the mouth"
+    "_connectors_file_doc": "ledger 0097 round 3: the Full layout's north loop, To Hell On A Bobsled + Ladder To Heaven, 1,001 m, as the port's own connector full_north (source/full/make_connectors.py from measure_north.py's north_loop.json): OSM's line (the 2026-10-28 snapshot) moved onto the pavement NAIP 2023 reads, its edges read where both show (810 m: the 0.3 m crop, the z18 0.46 m photo and, round 3, the z18 tiles over the hairpin) and CARRIED [invented] over 192 m (the fork's and merge's mouths and 165 m of verge with no edge line on one side: each edge interpolated between the nearest rows read on both sides), both edges through a 10 m mean and the centre line through a 4 m Gaussian [invented smoothing: OSM's 20-25 m node spacing], its heights 3DEP beside the line (corridor_3dep_north.json); painted with the mainline's edge lines. tools/trim_connectors.py cuts it at the FORK pad's box edge (lm_pads; route.street_junctions.pad_arms) and at the West lap's edge at the merge (46.1 deg), where tools/weld_mouths_blend.py welds the mouth. Ledger 0097 round 4: the carried rows read a second time (measure_north.py SECOND_READ: the white edge line, or a north-loop kerb's paint, station by station in bands checked by eye on straightened strips): 150 m more measured (line-to-edge offset measured on the rows both reads hold: 0.3 m left, 0.4 m right); 42 m still carried [invented]: the fork's mouth (R s 0-20, inside the FORK pad), the merge's mouth (R s 986-1001, L s 998-1001: the West lap's pavement runs on) and L s 254-260 (no second reading survived the outlier filter)"
   },
   "terrain": {
     "terrain_band_m": 22.0,
@@ -3232,14 +3243,14 @@
     "rubber": "photo",
     "_rubber_doc": "Kevin 2026-11-10: \"Use the photo's rubber\" (ledger 0084 'High Plains 0.1.7: the photo's rubber'). NAIP 2023 at 0.3 m resolves it: lit asphalt within 0.5 m of the model line reads 0.915 of the lit median, the same distance from its mirror across the centreline 1.075 (source/road_wear/mac_read/naip_read.log). So the asphalt gets NO drawn band, the photo's tone carries the rubber; the bake measures the photo's darkening across the line against its mirror (scripts/aerial/road_wear.photo_rubber) and the kerbs take that measured profile through their 16 levels instead of the drawn model (amplitude 0.22, spread 0.70 m, base 0.35: unused here). The min-curvature line stays only to measure that and to say which kerb faces it clips. The default for the other 0.3 m circuits (Pueblo, Aspen, Grand Junction, Pikes Peak) when they get road wear; Milford (0.5 m, <= 1 % seen) keeps the drawn band",
     "aerial": {
-      "image": "source/road_wear/naip_2023_030_hp.png",
+      "image": "source/road_wear/naip_2023_hp_mosaic.png",
       "bbox_lonlat": [
         -103.90532207890708,
         39.73355853151761,
         -103.88959002688462,
-        39.73680613545915
+        39.740245569583585
       ],
-      "_doc": "USDA NAIP 2023-09-28, co_m_3910317_ne_13_030_20230928_20240104 (public domain), the 0.3 m crop ledger 0081 measured the kerbs off (tools/naip_crop.py, /Volumes/Drive/codex/kerb_work/img/high-plains_2023_030.png, md5 4da61327; its record naip_2023_030_hp.json beside it): 4495 x 1202 px, 0.300 x 0.300 m, corners [W, N, E, S] exact (EPSG:4326 crop). It covers the whole lap: 0 of 3,205 centreline stations +-10 m fall outside it or on a black pixel"
+      "_doc": "ledger 0097 round 4 (item 3): both layouts' aerial, source/road_wear/make_aerial_mosaic.py -> naip_2023_hp_mosaic.png (4495 x 2475 px, its record naip_2023_hp_mosaic.json): the 0.3 m crop below (its pixels unchanged, the same lattice carried north by whole rows) and, above it, the z18 photos of the same NAIP item (0.46 m: tracks/high-plains/source/naip_2023_hp_z18.png and source/full/naip_2023_hp_north_z18.png, public domain) within 40 m [invented extent] of the north loop, bilinear, registered against the crop where both hold a pixel: shift [0.0, 0.0] m (NCC 0.8948), luminance ratio 0.999 (not applied). Round 3's bake had no photo over about 800 of the north loop's 1,001 m and filled its tone flat from the nearest photographed asphalt. Was (0.1.7-0.1.11): USDA NAIP 2023-09-28, co_m_3910317_ne_13_030_20230928_20240104 (public domain), the 0.3 m crop ledger 0081 measured the kerbs off (tools/naip_crop.py, md5 4da61327; its record naip_2023_030_hp.json beside it): 4495 x 1202 px, 0.300 x 0.300 m, corners [W, N, E, S] exact (EPSG:4326 crop). It covers the whole lap: 0 of 3,205 centreline stations +-10 m fall outside it or on a black pixel"
     },
     "lines": [
       {
@@ -3595,5 +3606,6 @@
       "lane_lip": "route.edge"
     },
     "_deck_doc": "fill membrane (tools/lm_pads_blend.py, opt-in, ledger 0097 round 3): no lidar over either junction is on disk, so nothing measures the paving's height: the deck keeps the West lap's own ribbon surface (its 3DEP profile and lidar camber) and the arm's row exactly, and the paving between them (the fork's flare, the merge's bellmouth and inside corner, the arm's approach) is the smoothest surface that meets both [invented fill]. lane_lip route.edge: the lap's 0.3 m flat lip stays paved between the cuts (Sand Creek's)"
-  }
+  },
+  "_doc_round4": "0.1.12 (ledger 0097 round 4): the north loop's kerbs measured and built on its own rows; its carried edges read a second time (150 m more measured); road wear's aerial a mosaic of the 0.3 m crop and the z18 photos over the north loop; the merge's west bellmouth a measured corner return (R 14.0 m off NAIP), the West's edge line broken across its opening; the traced white building a shed on the 2018 lidar's one plane (atlas_shed)"
 }

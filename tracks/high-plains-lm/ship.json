@@ -16,6 +16,7 @@
       "densify_ribbon",
       "seat_edges",
       "lm_pads",
+      "mouth_returns",
       "strip_seam",
       "gap_mouths",
       "kerbs",
@@ -47,6 +48,7 @@
       "kn5_ground",
       "road_wear",
       "verify_mouths",
+      "verify_mouth_corners",
       "verify_pads",
       "house_seat",
       "edge_report"
@@ -55,12 +57,13 @@
   "sync_in": {
     "required": [
       "track.config.json",
-      "source/road_wear/naip_2023_030_hp.png",
+      "source/road_wear/naip_2023_hp_mosaic.png",
       "source/bespoke/buildings.race.json",
       "source/bespoke/posts.race.json",
       "source/edges/edge_evidence.json",
       "source/edges/kerbs.lm.json",
-      "source/full/connectors.full.json"
+      "source/full/connectors.full.json",
+      "source/edges/mouth_radii.naip.json"
     ],
     "optional": [
       "data/heightfield.npy",
@@ -90,7 +93,8 @@
     "_full_doc": "ledger 0097 round 3: the Full layout's north loop (lm_intake.connectors_file; source/full/make_connectors.py) and its fork pad (lm_pads; source/full/measure_pads.py -> source/pads/FORK.json)",
     "globs": [
       "source/pads/*.json"
-    ]
+    ],
+    "_round4_doc": "ledger 0097 round 4: road wear's aerial is the mosaic (source/road_wear/make_aerial_mosaic.py: the 0.3 m crop carried north with the z18 photos over the north loop), in place of the crop alone; the merge's measured corner radii (route.mouth_radii_file); the draft's corner returns (mouth_returns, after lm_pads) and the gate that judges them (verify_mouth_corners)"
   },
   "sync_out": {
     "required": [

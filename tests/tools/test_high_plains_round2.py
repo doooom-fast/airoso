@@ -127,6 +127,8 @@ def test_high_plains_reads_its_measured_edge_through_mode_measured():
 def test_kerbs_lm_is_the_source_but_for_the_r2673_stripe():
     src = json.loads((ROOT / "tracks" / "high-plains" / "source" / "edges" / "kerbs.json").read_text(encoding="utf-8"))
     lm = json.loads((HP / "source" / "edges" / "kerbs.lm.json").read_text(encoding="utf-8"))
+    # round 4 appended the north loop's runs ("line": full_north#0#0, test_high_plains_round4.py); the lap's 20 come first
+    lm = dict(lm, kerbs=[k for k in lm["kerbs"] if not k.get("line")])
     c = _cfg()
     assert c["route"]["kerbs_file"] == "source/edges/kerbs.lm.json"
     assert not (ROOT / "tracks" / "high-plains" / "source" / "edges" / "kerbs.lm.json").exists()   # the port's own (synced in)
@@ -194,7 +196,7 @@ def test_rows_3_and_8_are_removed_as_kerb_paint():
 
 def test_version_and_every_round2_key_is_high_plains_own():
     c = _cfg()
-    assert c["version"] in ("0.1.10", "0.1.11")              # round 3 (0.1.11) keeps every round-2 key
+    assert c["version"] in ("0.1.10", "0.1.11", "0.1.12")    # rounds 3 and 4 (0.1.11, 0.1.12) keep every round-2 key
     for t, cfg in ((p.parent.name, json.loads(p.read_text(encoding="utf-8")))
                    for p in (ROOT / "tracks").glob("*/track.config.json")):
         if t == "high-plains-lm":
@@ -217,7 +219,8 @@ def test_full_layouts_extra_pieces_are_measured_data():
     assert len(c["points_xyz_m"]) == len(c["widths_m"]) == d["summary"]["points"]
     assert 990.0 <= d["summary"]["length_m"] <= 1010.0                 # OSM: 568.3 + 432.8 m
     assert all(10.0 <= w <= 15.0 for w in c["widths_m"])
-    assert {r["width"] for r in d["rows"]} == {"measured", "carried"}
+    # round 4 (test_high_plains_round4.py) read the carried verge rows a second time: "measured_second_read"
+    assert {r["width"] for r in d["rows"]} == {"measured", "measured_second_read", "carried"}
     lo, hi = d["summary"]["width_measured_m"][0], d["summary"]["width_measured_m"][-1]
     assert all(lo - 0.6 <= r["width_m"] <= hi + 0.6 for r in d["rows"] if r["width"] == "carried")
     lap = json.loads((HP / "data" / "gate_centerline.json").read_text(encoding="utf-8"))["points_xyz_m"]

@@ -183,6 +183,6 @@ def test_crown_fix_lists_every_case():
     assert len(fix["cases"]) == s["before"]["width_under_0.25"] + s["before"]["width_over_2"]
     assert s["after"]["width_under_0.25"] == 0 and s["after"]["width_over_2"] == 0
     trees = json.loads((MF / "source" / "vegetation" / "trees.lm.json").read_text(encoding="utf-8"))["points"]
-    keys = [p[5] for p in trees]
+    keys = [p[5] for p in trees if not (len(p) > 6 and p[6] == "naip_verge")]   # ledger 0100 item 7's verge trees aside
     assert len(set(keys)) == len(keys) == s["after"]["planted"]
     assert not set(fix["removed_keys"]) & set(keys)

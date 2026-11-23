@@ -97,9 +97,6 @@ def test_t3_module_0_stands_after_the_move_and_the_proxy_reproduces_the_pc():
     new0 = min(_outside_lane(line, m_new[0]))
     assert 0.008 <= new0 <= 0.014                         # 0.011 m: module 0 off the lane, on the edge strip
     assert all(min(_outside_lane(line, r)) > new0 for r in m_new[1:])
-    # drive_test's obstruction disc reaches w/2 - 0.1 m from the centre: the module stays outside it
-    s0, _la = line.project(*m_new[0][0])
-    assert min(_outside_lane(line, m_new[0])) > -0.1
 
 
 # --- 2. the start / finish ----------------------------------------------------------------------------------------------------
@@ -170,7 +167,7 @@ def test_trunk_reach_is_derived_from_the_barrier_lines_and_trunks_json_reproduce
     assert max(st, key=lambda k: st[k][1]) == "g4_infield_esses" and abs(st["g4_infield_esses"][1] - 19.07) < 0.01
     assert res["reach_m"] == 20.0
     tr = json.loads((MF / "source" / "vegetation" / "trunks.json").read_text(encoding="utf-8"))
-    assert tr["reach_m"] == 20.0 and tr["points"] == res["trunks"] and len(tr["points"]) == 174
+    assert tr["reach_m"] == 20.0 and tr["points"] == res["trunks"] and len(tr["points"]) == 261   # 174 lidar + 87 verge (item 7)
     assert min(p[3] for p in tr["points"]) >= 3.0                          # none within the corridor margin
     veg_plan = (MF / "source" / "vegetation" / "scripts" / "veg_plan.py").read_text(encoding="utf-8")
     assert "COLLIDER_REACH_M = 20.0" in veg_plan
@@ -221,3 +218,32 @@ def test_pads_shade_is_opt_in_and_milford_only():
              if '"pads_shade"' in t.read_text(encoding="utf-8")]
     assert named == ["milford-road-course-lm"]
     assert _cfg()["scenery"]["bespoke"]["pads_shade"] == "smooth"
+
+
+# --- 7. the verge trees from the photo -----------------------------------------------------------------------------------------
+
+def test_naip_only_blobs_reproduce_the_inventory_and_the_verge_trees_reproduce():
+    pytest.importorskip("scipy")
+    vnv = _load(MF / "source" / "vegetation" / "scripts" / "veg_naip_verge.py", "veg_naip_verge_0100")
+    import numpy as np
+    from scipy import ndimage as ndi
+    g, lab, n = vnv.read_blobs(MF)
+    assert n == 428 and g["cells"] == 11075 and g["cell_m"] == 2.0
+    area = ndi.sum(np.ones_like(lab), lab, range(1, n + 1)) * 4.0
+    com = ndi.center_of_mass(lab > 0, lab, range(1, n + 1))
+    rows = [{"e": round(float(g["e0"] + (ci + .5) * 2.0), 1), "n": round(float(g["n0"] + (cj + .5) * 2.0), 1), "area_m2": float(a)}
+            for (cj, ci), a in zip(com, area)]
+    inv = json.loads((MF / "source" / "vegetation" / "inventory.json").read_text(encoding="utf-8"))
+    assert sorted(map(lambda r: (r["e"], r["n"], r["area_m2"]), rows)) == sorted(
+        (r["e"], r["n"], r["area_m2"]) for r in inv["flags"]["naip_new_since_2017"])
+    res = vnv.plan(MF)
+    pts = json.loads((MF / "source" / "vegetation" / "trees.lm.json").read_text(encoding="utf-8"))["points"]
+    lidar = [p for p in pts if len(p) < 7]
+    verge = [p for p in pts if len(p) > 6]
+    assert len(lidar) == inv["planted"]["trees"] == 11247 and verge == res["points"] and len(verge) == 883
+    assert all(p[6] == "naip_verge" and p[2] == 1 and p[3] >= 5.0 and p[5] >= 1_000_000 for p in verge)
+    assert len({p[5] for p in pts}) == len(pts)                            # every key its own
+    rec = json.loads((MF / "source" / "vegetation" / "naip_verge.json").read_text(encoding="utf-8"))
+    assert sum(1 for t in rec["trees"] if not t["measured"]) == 103 and rec["left_out"] == {
+        "within the corridor margin of the drivable surface": 29}
+    assert all(t["neighbours"] >= 3 for t in rec["trees"] if t["measured"])

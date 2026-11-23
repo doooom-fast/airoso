@@ -3,35 +3,35 @@
  "faces_out": 928,
  "tiles": {
   "1GRASS_0": {
-   "faces": 182,
-   "verts_out": 92
-  },
-  "1GRASS_1": {
-   "faces": 54,
-   "verts_out": 29
-  },
-  "1GRASS_2": {
-   "faces": 174,
+   "faces": 177,
    "verts_out": 89
   },
+  "1GRASS_1": {
+   "faces": 70,
+   "verts_out": 36
+  },
+  "1GRASS_2": {
+   "faces": 170,
+   "verts_out": 88
+  },
   "1GRASS_3": {
-   "faces": 86,
-   "verts_out": 44
+   "faces": 83,
+   "verts_out": 43
   },
   "1GRASS_4": {
    "faces": 46,
    "verts_out": 24
   },
   "1GRASS_5": {
-   "faces": 164,
+   "faces": 163,
    "verts_out": 83
   },
   "1GRASS_6": {
-   "faces": 50,
-   "verts_out": 35
+   "faces": 49,
+   "verts_out": 26
   },
   "1GRASS_7": {
-   "faces": 172,
+   "faces": 170,
    "verts_out": 94
   }
  }

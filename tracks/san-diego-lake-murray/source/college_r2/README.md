@@ -39,10 +39,12 @@ y = NAVD88 - 100.8.
   close to the real outer pavement edges; what is wrong is the northbound half's height and the middle, where the
   build paves the bank. [read by eye off the picture]
 - **Per station** (`college_edges.json`, `college_edges.png`; v1200-1420, 221 stations with all four edges): northbound
-  pavement median 10.0 m wide, southbound 10.0 m, the middle (bank and planting) median 10.5 m
-  and up to 17.0 m (v1300); northbound over southbound up to 6.19 m (v1259).
-  The island runs from v1104 to v1507 with gaps where the read fails. The real outer edges sit a median
-  0.5 m (east) and 2.0 m (west) from the built slab's edges.
+  pavement median 10.0 m wide, southbound 10.0 m; the middle (bank and planting) median 10.5 m,
+  p90 12.0 m; northbound over southbound up to 6.19 m. The main island reads from v1172 to v1444;
+  shorter reads at v1104-1116, v1476-1507.
+  The real outer edges sit a median 0.5 m (east) and 2.0 m (west) from the built slab's edges. Single stations misread
+  under trees (the middle reads up to 17.0 m at v1297); the 9-station median does not remove every one, so the edges are
+  an input to check against the picture, not yet a centreline.
 - At v880 the built road is 7 m above the class-2 ground: a bridge deck, as built.
 - `[invented]` in the reading: a bench = at least 6 m of measured ground with cross slope under 8 % (taken over 1.5 m).
 

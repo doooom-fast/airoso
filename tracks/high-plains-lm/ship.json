@@ -49,7 +49,9 @@
       "track.config.json",
       "source/road_wear/naip_2023_030_hp.png",
       "source/bespoke/buildings.race.json",
-      "source/bespoke/posts.race.json"
+      "source/bespoke/posts.race.json",
+      "source/edges/edge_evidence.json",
+      "source/edges/kerbs.lm.json"
     ],
     "optional": [
       "data/heightfield.npy",
@@ -69,10 +71,13 @@
       "assets/textures/roof_dark_diffuse.jpg",
       "assets/textures/asphalt_dense_diffuse.jpg",
       "assets/textures/asphalt_dense_normal.jpg",
-      "assets/textures/tyre_wall_diffuse.png"
+      "assets/textures/tyre_wall_diffuse.png",
+      "assets/textures/concrete_plain_diffuse.jpg",
+      "assets/textures/concrete_plain_normal.jpg"
     ],
     "_facades_doc": "ledger 0094: the facade atlas, the rib roof normal and the canopies' metal skin (texture_overrides), from airoso's tracked assets",
-    "_road_pilot_doc": "ledger 0095: the owned asphalt pair the 1ROAD override binds (texture_overrides), from airoso's tracked assets"
+    "_road_pilot_doc": "ledger 0095: the owned asphalt pair the 1ROAD override binds (texture_overrides), from airoso's tracked assets",
+    "_round2_doc": "ledger 0097 round 2: the measured pavement edge (lm_intake.edge_retrace's evidence), the port's own kerbs file (route.kerbs_file: R s 2,673 re-traced) and the owned concrete pair the 1KERB_SIDEWALK override binds"
   },
   "sync_out": {
     "required": [

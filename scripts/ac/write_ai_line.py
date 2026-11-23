@@ -171,6 +171,7 @@ TURN_MAX_DEG = 10.0         # no step turns more than this, except where the roa
 RADIUS_FLOOR_M = 12.0       # the line's radius floor is min(the road's centreline radius there, this)
 RADIUS_TOL = 0.02           # fillets + the first smoothing pass treat a radius under (1 + this) x floor as a violation
 RADIUS_TOL_FINAL = 0.0      # ... the pass on the resampled line, under the floor itself
+FILLET_SPLIT_GAP_PTS = 3    # [invented] ai.fillet_split: tight points this far apart (or more) are separate runs
 FILLET_MARGIN = 0.05        # a fillet's radius is >= (1 + this) x the floor (never re-flagged), <= (1 + this) x 12 m
 CORNER_R_M = 20.0           # a divided-lane line on the inside of a corner tighter than this ...
 CORNER_FRAC = 0.35          # ... and deeper than this fraction of its radius takes it from the lane's outside
@@ -835,7 +836,8 @@ def _fillet_path(Ps, Pe, din, dout, R: float, h: float):
     return out
 
 
-def fillet_corners(P, closed: bool, st: _Stations, ds: float, tol: float = RADIUS_TOL) -> tuple[list, list[dict]]:
+def fillet_corners(P, closed: bool, st: _Stations, ds: float, tol: float = RADIUS_TOL,
+                   split: bool = False) -> tuple[list, list[dict]]:
     """Round every corner tighter than its floor with a circular FILLET, inside the lane.
 
     A violation cluster (radius through three consecutive points under (1 + tol) x the floor) is
@@ -845,7 +847,9 @@ def fillet_corners(P, closed: bool, st: _Stations, ds: float, tol: float = RADIU
     inside its station's lane corridor; the window grows until one fits (<= FOLD_SEARCH_PTS either side).
     This is what the trimmed corner of a swallowtail needs: the Laplacian flow alone cuts a 90 deg corner
     to ~R deep (a fillet: 0.41 R), into the inside curb before the radius reaches its floor. A cluster
-    no window/radius fits is left to bound_curvature (and the self-check). Returns (points, fillets)."""
+    no window/radius fits is left to bound_curvature (and the self-check) — unless ``split`` (track.config.json
+    ai.fillet_split, opt-in): then a cluster merged from separate tight runs is tried again run by run first
+    (FILLET SPLIT below). Returns (points, fillets)."""
     n = len(P)
     fillets: list[dict] = []
     if n < 12:
@@ -885,7 +889,11 @@ def fillet_corners(P, closed: bool, st: _Stations, ds: float, tol: float = RADIU
         order = list(reversed(clusters))
         if closed and clusters and clusters[0][0] < 0:
             order = [clusters[0]] + order[:-1]
-        for c0, c1 in order:
+        bad_set = set(bad)
+        from_split = {}                                   # ai.fillet_split: run -> the merged cluster it came from
+        work = [tuple(c) for c in order]
+        while work:
+            c0, c1 = work.pop(0)
             if closed and done and c0 < 0:
                 continue                                  # (unreachable with the order above; the guard that was missing)
             need = max(floor_at(wrap(i), assoc[wrap(i)]) for i in range(c0, c1 + 1)) * (1.0 + tol)
@@ -934,6 +942,21 @@ def fillet_corners(P, closed: bool, st: _Stations, ds: float, tol: float = RADIU
                 if best is not None:
                     break
             if best is None:
+                # FILLET SPLIT (opt-in, track.config.json ai.fillet_split; 2026-11-23, Sand Creek 0.2.9): a cluster
+                # merged from separate tight runs (bad points FILLET_SPLIT_GAP_PTS or more apart, joined because
+                # they lie within 6) that no single window fits is tried again run by run, the last one first, as
+                # clusters are. Off (the default) = left to bound_curvature, as before
+                if split and c0 >= 0:
+                    runs = []
+                    for i in range(c0, c1 + 1):
+                        if i in bad_set:
+                            if runs and i - runs[-1][1] < FILLET_SPLIT_GAP_PTS:
+                                runs[-1][1] = i
+                            else:
+                                runs.append([i, i])
+                    if len(runs) > 1:
+                        work[0:0] = [tuple(r) for r in reversed(runs)]
+                        from_split.update({tuple(r): [c0, c1] for r in runs})
                 continue
             s, e, path, R, lane = best
             ys = [P[wrap(s)][1] + (P[wrap(e)][1] - P[wrap(s)][1]) * (j + 1) / (len(path) + 1) for j in range(len(path))]
@@ -942,7 +965,8 @@ def fillet_corners(P, closed: bool, st: _Stations, ds: float, tol: float = RADIU
                             "radius_m": round(R, 2), "floor_m": round(need / (1.0 + tol), 2), "lane": lane,
                             "window_pts": e - s, "turn_deg": round(math.degrees(_signed_turn(
                                 _unit_xz(P[wrap(s)][0] - P[wrap(s - 2)][0], P[wrap(s)][2] - P[wrap(s - 2)][2]),
-                                _unit_xz(P[wrap(e + 2)][0] - P[wrap(e)][0], P[wrap(e + 2)][2] - P[wrap(e)][2]))), 1)})
+                                _unit_xz(P[wrap(e + 2)][0] - P[wrap(e)][0], P[wrap(e + 2)][2] - P[wrap(e)][2]))), 1),
+                            **({"split_from": from_split[(c0, c1)]} if (c0, c1) in from_split else {})})
             done += 1
             if closed and (s < 0 or e >= n):
                 # the window straddles the seam: rotate it to the front, splice, and re-measure (every
@@ -2210,7 +2234,7 @@ def build_line(pts, widths, *, closed: bool, spacing: float, lat_g: float, decel
                     arc["radius_v0171_rule_m"] = r1[arc["apex_vertex"]]
                     arc["keep_floor_m"] = round(FAIR_BOX_KEEP * r1[arc["apex_vertex"]], 2)
         P, _, _ = _resample(P, [0.0] * len(P), ds0, closed)
-        P, geo["fillets"] = fillet_corners(P, closed, st, ds0)
+        P, geo["fillets"] = fillet_corners(P, closed, st, ds0, split=bool(opts.get("fillet_split")))
         P, _, _ = _resample(P, [0.0] * len(P), ds0, closed)
         P, rep = bound_curvature(P, closed, st)
         geo["smoothing"].append(rep)
@@ -2226,7 +2250,7 @@ def build_line(pts, widths, *, closed: bool, spacing: float, lat_g: float, decel
         first = (P[0][0], P[0][2])
         P, geo["folds"] = trim_loops(P, tan_xz, closed, ds0)
         P, _, _ = _resample(P, [0.0] * len(P), ds0, closed)
-        P, geo["fillets"] = fillet_corners(P, closed, st, ds0)
+        P, geo["fillets"] = fillet_corners(P, closed, st, ds0, split=bool(opts.get("fillet_split")))
         P, _, _ = _resample(P, [0.0] * len(P), ds0, closed)
         P, rep = bound_curvature(P, closed, st)
         geo["smoothing"].append(rep)
@@ -2733,7 +2757,8 @@ def _channel(path: Path, key: str, n: int, label: str) -> list[float] | None:
     return [float(v) for v in vals[:n]]
 
 
-AI_OPT_KEYS = {"layouts", "payload", "wall_clear_m", "fair", "fair_w", "fair_alpha", "fair_u_max_m", "surface", "verify"}
+AI_OPT_KEYS = {"layouts", "payload", "wall_clear_m", "fair", "fair_w", "fair_alpha", "fair_u_max_m", "surface", "verify",
+               "fillet_split"}
 
 
 # LAPS (ledger 0054): with --layout naming a race layout that names a lap (layouts[].lap), the line is drafted on
@@ -2744,7 +2769,8 @@ def load_ai_opts(cfg: dict, layout_id: str | None) -> dict | None:
     limited to ``ai.layouts`` when that is given. None — no block, or this layout not listed — writes today's
     line byte for byte. ``payload: "kunos"`` (the payload fields AC's own lines carry), ``wall_clear_m`` (the
     corridor line's comfort clearance), ``fair`` (+ ``fair_w``), ``surface: "gate_obj"`` (seat on / clamp at the
-    layout's BUILT gate OBJ, data/track.<layout>.obj), ``verify`` (tools/verify_ai_line.py's thresholds)."""
+    layout's BUILT gate OBJ, data/track.<layout>.obj), ``verify`` (tools/verify_ai_line.py's thresholds),
+    ``fillet_split`` (fillet_corners: a merged cluster no window fits, tried run by run; 2026-11-23)."""
     block = cfg.get("ai")
     if not block:
         return None

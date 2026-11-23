@@ -374,3 +374,78 @@ def test_built_surface_guard_judges_the_spot_as_written():
     assert [(e["x"], e["y"], e["z"]) for e in p["entries"]] == [(140.0, 0.12, 30.0)]
     assert p["rejected_built"]["building"] == 1
     assert any(ln.startswith("tree: ") and "pos=140.00, 0.12, -30.00" in ln for ln in p["lines"])
+
+
+def test_bush_bin_is_drawn_at_bush3_height_not_its_20_m_tree_ini():
+    """Kevin 2026-11-13 after driving Lake Murray: "bushes are too big". Bush.bin's tree.ini says HEIGHT 20.66 m, so its
+    rank-rule size takes RANK_SIZE_FIX (Bush3's height at the same size) and is written to 3 decimals; others unchanged"""
+    p = mt.plan(_north_project(), all_species=True)
+
+    def size_of(line):
+        return line.rsplit("size = ", 1)[1].split(";")[0]
+
+    bush = [ln for ln in p["lines"] if ln.startswith("tree: Bush.bin;")]
+    assert bush
+    for ln in bush:
+        s = size_of(ln)
+        assert len(s.split(".")[1]) == 3, ln
+        assert float(s) <= mt.RANK_SIZE_FIX["Bush.bin"] * 1.0 + 0.0005, ln
+        assert 20.66 * float(s) <= 2.1, ln          # drawn height, m
+    rest = [ln for ln in p["lines"] if ln.startswith("tree: ") and not ln.startswith("tree: Bush.bin;")]
+    assert rest and all(len(size_of(ln).split(".")[1]) == 2 for ln in rest)
+
+
+def _median_project(spots_h, crowns, config=True, n_spots=None):
+    """a tiny project whose islands carry len(spots_h) median_planting spots (the zone is unguarded: it stands on the
+    pavement under its island by design); median_heights.lidar.json holds each spot's lidar height and crown"""
+    d = _project(bins=("Bush.bin", "Sage.bin"))
+    med = [{"x": 10.0 + 7.0 * i, "y": 0.1, "z": 0.5 * (-1) ** i} for i in range(len(spots_h))]
+    (d / "data" / "scatter_positions.json").write_text(json.dumps({"palms": [], "trees": [], "scrub": [],
+                                                                   "median_planting": med}))
+    spots = [[e["x"], e["z"], h, c] for e, h, c in zip(med, spots_h, crowns)][: n_spots or len(med)]
+    (d / "source" / "vegetation").mkdir(parents=True)
+    (d / "source" / "vegetation" / "m.json").write_text(json.dumps({"min_h_m": 0.3, "crown_over_h_fallback": 0.648,
+                                                                    "spots": spots}))
+    if config:
+        (d / "track.config.json").write_text(json.dumps({"slug": "tiny", "scenery": {"treefx": {"median_measured": {
+            "file": "source/vegetation/m.json",
+            "native_h_m": {"Bush.bin": 20.660005569458, "Sage.bin": 3.0},
+            "native_w_m": {"Bush.bin": 34.3843803405762, "Sage.bin": 2.5}}}}}), encoding="utf-8")
+    return d
+
+
+def test_median_measured_draws_each_spot_at_its_lidar_height_and_crown():
+    """Kevin 2026-11-18, Lake Murray: "we've reduced lake murrays center bushes far too much" -> "B: lidar height each".
+    A spot the lidar sees a plant at is drawn at that height and crown, absolute; under 0.3 m it keeps the rank rule"""
+    hs, cs = [5.13, 0.07, 12.4, 2.2, None, 0.31], [3.2, None, None, 1.4, None, 0.9]
+    p = mt.plan(_median_project(hs, cs))
+    base = mt.plan(_median_project(hs, cs, config=False))
+    lines = [ln for ln in p["lines"] if ln.startswith("tree: ")]
+    old = [ln for ln in base["lines"] if ln.startswith("tree: ")]
+    assert len(lines) == len(old) == 6 and p["median_measured"] == {"measured": 4, "crown_measured": 3, "kept_rank_rule": 2}
+    native = {"Bush.bin": (20.660005569458, 34.3843803405762), "Sage.bin": (3.0, 2.5)}
+    for ln, was, h, c in zip(lines, old, hs, cs):
+        model = ln.split(";")[0][len("tree: "):]
+        H, W = native[model]
+        if h is None or h < 0.3:
+            assert ln == was                          # kept byte for byte (Bush.bin still takes RANK_SIZE_FIX)
+            continue
+        size = float(ln.rsplit("size = ", 1)[1].split(";")[0])
+        width = float(ln.rsplit("width = ", 1)[1])
+        assert len(ln.rsplit("size = ", 1)[1].split(";")[0].split(".")[1]) == 3
+        assert abs(size * H - h) <= 0.0005 * H + 1e-9, ln     # drawn height = the lidar's, to the written precision
+        crown = c if c is not None else h * 0.648
+        assert abs(width * W * size - crown) <= 0.005 * W * size + 1e-9, ln
+        assert ln.split("; size = ")[0] == was.split("; size = ")[0]   # same model, position and angle
+
+
+def test_median_measured_refuses_a_stale_file_or_an_unread_model():
+    import pytest
+    with pytest.raises(SystemExit, match="re-measure"):
+        mt.plan(_median_project([1.0, 2.0, 3.0], [None] * 3, n_spots=2))
+    d = _median_project([1.0, 2.0], [None, None])
+    cfg = json.loads((d / "track.config.json").read_text())
+    del cfg["scenery"]["treefx"]["median_measured"]["native_h_m"]["Sage.bin"]
+    (d / "track.config.json").write_text(json.dumps(cfg))
+    with pytest.raises(SystemExit, match="Sage.bin"):
+        mt.plan(d)

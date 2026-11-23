@@ -29,7 +29,7 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 LINE = "full_north#0#0"
 # side:s0-s1:colour[:eye] on the north loop's own s (connectors.full.json, from the fork's OSM node), checked by eye
-SPANS = ("R:58-97:blue_white",                 # T10's apex kerb (0.3 m crop)
+SPANS = ("R:58-97:blue_white",                 # Bobsled's first kerb (0.3 m crop)
          "L:169.8-216.3:blue_white:eye",       # the reader ran 2.7 m past the last block (an edge line goes on)
          "R:307.5-334.8:blue_white:eye",       # the reader began 1.3 m before the first block
          "R:545.7-637.8:blue_white:eye",       # the north hairpin's apex kerb; the reader began 2.3 m late

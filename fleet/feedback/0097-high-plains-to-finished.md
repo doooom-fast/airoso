@@ -501,3 +501,217 @@ edge_report at 1 m past the lane: kerb 97.2 %, ground 1.9 % (the FORK's and the 
    (`west`, `full_course`), so Content Manager files the West course under a new id (its old records stay under
    `high_plains`); say so to Kevin with the install. Then the records and menu pictures (both layouts) to the branch (no
    force); the Mac merges. Red: records only, no install.
+
+## Round 4 (0.1.12, Mac, 2026-11-23): the north loop's kerbs, its edges read again, its aerial, the merge's bellmouth, the white building's shed
+
+The five items of "Still to do (round 4)" above, every number read off NAIP 2023-09-28 (the item
+co_m_3910317_ne_13_030_20230928_20240104: the 0.3 m crop and its z18 web tiles, 0.46 m here, public domain) or the 2018 lidar
+unless it says [invented]. Built numbers are from Mac builds with Blender 4.2.9 from an EMPTY workshop (`SHIP_PROJ` scratch,
+`--no-install`, ENG = the engine-july snapshot + the branch's `assets/textures`), against a Mac build of 0.1.11 (a25b69c9)
+made the same way (its kn5 25,086,070 B, the round-3 build's to the byte). No download: every source was on disk.
+
+### 1. The north loop's kerbs, measured and built
+
+**Found** by ledger 0081's method on the north loop's own line (`source/full/connectors.full.json`): a colour scan of each
+lane-edge band (`tools/kerb_spans.paint_class`, blue present) over road wear's new mosaic (item 3) and straightened strips of the
+whole loop; every span then checked by eye on zooms at 30 px/m with 1 m ticks. Eight runs of edge paint show: six blue / white
+kerbs and two blue / yellow stripes.
+
+**Measured** (`source/edges/trace_north_kerbs.py`): `tools/kerb_offsets.py`, ledger 0081 round 3's block reader (the light / dark
+blocks along the edge, colour not used; calibrated against High Plains' 20 colour-measured runs: raised blue / white kerbs inside
+its 0.4 m bar at 0.3 m and at 0.6 m), `--follow 1` (the loop's line is the pavement's measured centre, not the kerb: each band's middle
+drifts 0.3-0.7 m along a run). On the z18 photo the kerbs' blue is faded, so kerb_spans' colour read is the weaker one; it is kept
+beside each run (`colour_read`) and lands within 0.31 m of the block reader's in / out on every run. Ends: the reader's, except
+where the end zooms showed it more than 1 m off the blocks (`:eye`). s is the north loop's own (from the fork's OSM node):
+
+| run (north-loop s) | photo | in_m .. out_m (block reader) | colour read | block amp | stations | built |
+|---|---|---|---|---|---|---|
+| R 56.8-98.2 (Bobsled's first) | 0.3 m | -1.83 .. -0.19 | -1.90 .. -0.40 | 33.3 | 40/40 | 39.9 m |
+| L 169.8-216.3 (eye end) | z18 | -1.96 .. -0.27 | -1.90 .. -0.55 | 24.5 | 47/47 | 45.4 m |
+| R 307.5-334.8 (eye start) | z18 | -1.57 .. +0.06 | -1.75 .. -0.25 | 25.7 | 28/28 | 24.2 m |
+| R 545.7-637.8 (the north hairpin; eye start) | z18 north | -1.92 .. -0.13 | -1.75 .. -0.25 | 28.0 | 93/93 | 80.8 m (its inside edge) |
+| L 732.8-761.0 | z18 | -2.34 .. -0.48 | -2.20 .. -0.70 | 31.7 | 27/27 | 27.5 m |
+| L 982.8-990.3 (T13 on Ladder's edge) | 0.3 m | -0.73 .. +1.15 | -0.70 .. +0.95 | 33.5 | 8/9 | 6.5 m |
+
+**T13's curve onto Ladder's edge.** Round 3 re-traced the West's T13 run (L s 2,843-2,856) onto the corner's paint, so its first
+two edge points already stand on the curve. The north loop's piece ends where that run begins: at the north-loop s whose left
+lane edge lies nearest the West run's first edge point, s 990.3 (`trace_north_kerbs.t13_end`), so the two pieces meet. The
+first build ran it to the line's end (s 995.8): the two pieces overlapped over about 4 m of the corner (road_wear_check
+kerb_levels: 2 triangles matched to the other piece's face) and its last section stood 0.125-0.14 m over the West lap's deck
+(audit K: 4). Both cleared with the end at s 990.3. Each piece keeps the engine's 4 m end ramp [invented, the config's] at the
+corner where the paint is one.
+
+**Not built: the two blue / yellow stripes** (L s 372-401, L s 648-682). Flat stripes fail the block reader's bar (ledger 0081
+round 3: 0.48 / 0.67 m at 0.3 m), and on the z18 photo their blue does not read as blue (kerb_spans: no paint in L s 372-401, 4
+of 35 stations in L s 648-682). Nothing measures them on the photos in reach.
+
+**Built**: each run names its line, `"line": "full_north#0#0"` (the north loop as the chain's trim leaves it), keyed to that
+connector's rows by `tools/author_kerbs_blend.py` (new opt-in) and laid exactly as the lap's 20 are (kerb.placement "measured",
+the config's 0.08 m height and 4 m end ramps, both [invented] as before). `[kerbs] 26 kerb runs, 803 m` (was 20, 579 m). The five
+along the loop lie inside the built lane edge, where their paint is (kerbs.built.json: in -2.25..-1.72, out -0.39..-0.09 m off
+the ribbon's edge); T13's piece crosses Ladder's edge at the corner (-0.62..+1.26 m). Stills:
+`source/edges/kerbs_north_blocks_strips.jpg` (each run straightened, the followed band over its blocks).
+
+### 2. The merge: the west bellmouth measured and built; the corner behind the T13 kerb not measured
+
+**Measured** (`source/edges/measure_merge_radii.py` -> `source/edges/mouth_radii.naip.json`, still `mouth_radii_merge.jpg`):
+`tools/mouth_radii.py` (ledger 0086, Sand Creek's) on the built corner frames of an empty-workshop build of this branch, NAIP 2023
+as z18 tiles (0.46 m, its own reader):
+- **the west corner (the bellmouth, a 64.7 deg wedge): R 14.0 m**, contrast 29.2 (bar 12), prominence 1.91 (bar 1.4), both legs'
+  edges found (host +0.2 m, street -0.8 m off the built edges). Checked by eye on a top-down overlay of the built road on the
+  0.3 m crop: the built return's strip lies along the grass boundary that sweeps from Ladder's west edge to the lap's north edge;
+- **the east corner (behind the T13 kerb, 120.1 deg): NOT measured**: the best arc runs to the 20 m grid's end (the kerb's paint
+  wraps the corner wider than the reader looks). The same reading on 0.1.11's frames and on 0.1.12's: identical.
+
+**Built**: `route.mouth_returns ["full_north"]` (tools/mouth_returns_blend.py, after lm_pads): the west corner a circular return at
+R 14.0 m tangent to the West lap's and Ladder's pavement edges (built frame 78.6 deg, tangent 17.1 m, arc 24.8 m: 87 return
+stations of the track's own edge profile, 83 corner-pavement triangles, 11 of Ladder's edge-strip rows replaced; 6,366
+ground edges halved round it, 0 ground vertices pinned: the prep seats that ground). New opt-in `route.mouth_returns_measured_only`: a corner without its own measured radius is NOT
+built at another corner's median (the tool's default), so the fillet behind the T13 kerb stays owed. The West lap's white edge
+line ran across the opening; NAIP 0.3 m shows no line there, so `road_markings.gap_mouths` (ledger 0086's) breaks it (24 paint
+faces). `verify_mouth_corners` (Sand Creek's gate, its limits as they are) now judges the merge: **lip 0.023 m (<= 0.05), teeth
+1 / 354 = 0.28 % (<= 2.1 %), edge paint 0.0 m, R 9 turn drop 0.091 m (reported)**. Its first run read edge paint 14.0 m: the
+line across the opening (GATES-CHANGELOG 2026-11-23).
+
+### 3. Road wear's aerial over the north loop
+
+`source/road_wear/make_aerial_mosaic.py` -> `naip_2023_hp_mosaic.png` (4,495 x 2,475 px, 12.0 MB; record `.json` beside it):
+the 0.3 m crop's own lattice (its W, E, S and pixel) carried north by whole rows to the loop's top + 40 m [invented extent],
+the crop's 1,202 rows copied unchanged into the bottom, the rows above it from the z18 photos (the committed
+`tracks/high-plains/source/naip_2023_hp_z18.png` and round 3's north tiles, the same item) bilinear within 40 m [invented
+extent] of the north loop (700,301 px), black elsewhere (no road reads there). **Registered** against the crop where both hold a
+pixel (the fork and the merge): the best shift 0.0 / 0.0 m (normalised correlation 0.895, the same at 0), luminance ratio 0.999
+(not applied). `road_wear.aerial` reads it (ship.json syncs it in place of the crop); the bake and its gate read it exactly as
+they read the crop.
+
+Built: the north loop's tone is the photo's, not the fill's; the bake's measured registration moves (-1.25, +1.00) -> (-0.75,
++1.00) m (it is one shift over both layouts' road now); road_wear_check tone **r 0.8813 -> 0.8831** over 2,848 -> 4,358 samples;
+the macro atlas 2,336,697 -> 3,184,897 B; photo_rubber (West line) depth 0.1338 -> 0.1295; every road_wear_check row PASS.
+
+### 4. The traced white building's measured shed
+
+`traced_white_w_of_osm289311820` is now **form "shed" on the 2018 lidar's one plane** (its `_lidar_2018` reading,
+hp_roof_forms.json): 3.35 m at its centroid, rising 0.0285 m per m east and 0.0864 m per m north, **2.92 m at its lowest corner
+to 3.79 m at its highest (NNE)** (n 118, residual 0.216 m; a gable fits 0.35 m). The group's garage skin could not stand a shed
+(round 3); new opt-in `"atlas_shed"` (tools/author_bespoke_blend.py) with `tools/circuit_facades.py facade_walls(shed_tops=...)`:
+the skin's modules to the plane's lowest corner, every bay carried on in the plain cell up to the plane (10 bays, 10 faces), the
+roof the ring on the plane. `[bespoke] ... shed 2.9..3.8 m`; house_seat 22, 0 floating / sunken / buried, lowest roof 1.64 m. The
+2023 crop's ridge (round 2's gable 3.2 / 3.9 m, `_form_2023`) and the 2018 lidar's plane disagree on the form; the lidar is the
+height's measurement, and the two agree on the heights within the shadow's error.
+
+### 5. The carried edges, read again
+
+Round 3 carried 192 m: the step reader (ground-ness rising 12 over 1 m to a ground level of 30) left one side unread where the
+verge greys into the prairie over metres. **The second read** (`measure_north.py` SECOND_READ): what edges the pavement in each
+carried stretch was checked by eye on straightened strips (the white edge line, or a north-loop kerb's paint where the kerb is
+the paved edge), then read station by station inside an eye-set band [lo, hi]:
+- "line": the first luminance ridge standing LINE_MIN 10 [invented] over the darkest asphalt in the metre inside it; the edge is
+  the ridge + the photo's own **measured** line-to-edge offset (the median of the step reader's edge less the ridge within 1 m
+  [invented] inside it, over the rows both hold: **0.3 m left (156 / 407 rows on the 0.3 m / z18 photo), 0.4 m right (66 / 477)**);
+- "kerb": the lap's own kerb rule (measure_widths.kerb_edge: the outer end of the first paint run in the band).
+Second-read rows go through the first read's outlier filter and running median; a row the first read holds keeps its value.
+
+| stretch (north-loop s) | read | rows read / in it | built width change |
+|---|---|---|---|
+| L 216-240 | the edge line, clear, after the L s 170-216 kerb | 12 / 13 | -1.73 .. -0.58 m |
+| L 240-300 | the edge line, faint | 26 / 31 | -1.45 .. +0.37 m |
+| R 301-306.5 | the edge line before the kerb | 2 / 3 | +0.65 .. +1.36 m |
+| R 306.5-335 | the kerb R s 308-335's paint (outside the edge line) | 14 / 14 | +1.39 .. +2.16 m |
+| R 335-354 | the edge line past the kerb | 9 / 10 | +0.07 .. +1.14 m |
+| L 714-733 | the edge line before the kerb L s 733 | 9 / 10 | -1.75 .. -0.05 m |
+| L 733-739 | the kerb L s 733-761's paint | 2 / 3 | -1.52 .. -0.94 m |
+| R 933-941 | the edge line where the read passes from z18 to the crop | 1 / 4 | -0.03 m |
+
+**150 m more measured; 960 m measured, 42 m still carried [invented]**: the fork's mouth (R s 0-19, inside the FORK pad's measured
+outline: the cut drops those rows), the merge's mouth (R s 988-1001, L s 998-1001: the West lap's pavement runs on; the weld meets
+it there) and **L s 254-260** (the faint line gave readings, none survived the outlier filter). The interpolation round 3 carried
+was off by up to 2.2 m: it ran each edge between a white line and a kerb's outer side as if they were one edge. Built widths
+p5 / p50 / p95 10.66 / 11.18 / 12.81 m (round 3: 10.63 / 11.23 / 12.84); the line moved up to 0.83 m (s 208-360, 712-748);
+measured widths p5 / p50 / p95 10.6 / 11.2 / 12.95 m. The Full lap 4,085.7 -> 4,085.3 m.
+
+### Gates, both layouts (Mac, empty workshop) against 0.1.11
+
+Built from a git archive of ccc4ee45 (the round's code and data commit) and from the working tree: the same verdicts; the road kn5
+EQUIVALENT (tools/kn5_equiv.py: tangents only, 20,124 values, max 1.79e-07), the spawn kn5s byte-identical.
+
+| | 0.1.11 West | 0.1.11 Full | 0.1.12 West | 0.1.12 Full |
+|---|---|---|---|---|
+| chain | SHIP OK | (one run) | SHIP OK | (one run) |
+| drive_test: lap / ground on top / severe / bumps /km | 3,209.7 m / 0 / 0 / 0.0 | 4,085.7 m / 0 / 0 / 0.0 | 3,209.7 m / 0 / 0 / 0.0 | 4,085.3 m / 0 / 0 / 0.0 |
+| drive_test: slope kinks /km (reported) | 1.87 | 5.63 | 1.87 | **8.57** |
+| drive_test: vertex bumps (reported) | 0 | 6 | 0 | **14** |
+| drive_test: floating, undrivable, daylight, excursions, obstructed | 0 | 0 | 0 | 0 |
+| kn5_ground_check | PASS | PASS | PASS | PASS |
+| verify_kn5 / --inis | PASS / PASS | PASS / PASS | PASS / PASS | PASS / PASS |
+| audit_mesh | CLEAN | | CLEAN | |
+| road_wear_check | PASS (r 0.8813) | | PASS (r 0.8831) | |
+| verify_pads FORK | PASS (coverage 0.0 m2, seam 1.2 mm) | | the same | |
+| verify_mouths (the merge) | PASS (0.012 / 0.003 m, 0.61 %/m) | | the same | |
+| verify_mouth_corners (the merge) | - (not run) | | **PASS** (lip 0.023 m, teeth 0.28 %, paint 0.0 m) | |
+| house_seat | PASS, 22 | | PASS, 22 | |
+
+The Full's 12 more slope kinks (23 -> 35; the worst still 4.58 %/m, 0.1.11's, on the West's L s 1,681 kerb) and 8 more vertex
+bumps (2.5-6 cm across a vertex hop, under 2.5 cm on the path's own travel) are the new north-loop kerbs' ends: each kerb lies 0.1-2.3 m inside the lane edge where its paint is, so the 1.25 m wheel path
+rides onto it over the 4 m end ramp [invented], as the West's 1.87 /km are all on its kerbs. Neither is gated; no severe step.
+The West layout's drive_test is unchanged to the digit.
+
+kn5 25,086,070 -> **26,463,672 B**; split main 73 -> 79 meshes (+6 kerbs), 126,303 -> 133,633 positions; AUDIT roads 25,881 ->
+26,130 v (the corner pavement), grass 90,077 -> 96,589 v (the ground round the return), curbs 58,302 -> 61,866 v, walls 14,200
+v; kn5_ground road over ground 0 / 3,733 samples over 0.05 m (p95 +0.021 m), walls 36 objects, seat gap median -0.25 / p95
+-0.17 m; edge_report at 1 m past the lane: kerb 97.0 %, ground 1.9 %, lane 1.1 % (0.1.11: 97.2 / 1.9 / 0.9). AI lines: West
+2,140 points, 3,210.7 m, est 96.0 s (the same); Full 2,725 points over 4,087.5 m, est 130.5 s (was 4,087.8 m, 130.0 s). Spawn
+kn5s 5,058 B each, as 0.1.11.
+
+### [invented] numbers this round adds
+
+- the mosaic's 40 m margin and 40 m corridor (extent only: the bake reads at most ~13 m off a road);
+- the second read's LINE_MIN 10 and LINE_TO_EDGE_SEARCH_M 1.0 (reader tuning; the line-to-edge offset itself is measured);
+- the 42 m still carried;
+- the north-loop kerbs carry the config's kerb height 0.08 m and 4 m end ramps (both [invented] since ledger 0081).
+The bands of the second read and the kerbs' spans are read by eye on the photos (ledger 0081's method), not tuned.
+
+### Shared files touched (every change opt-in by a High Plains key; no other track's output changes)
+
+- `tools/author_kerbs_blend.py`: a run's `"line"` (a kerb keyed to a connector's rows; a FATAL names a line the build lacks).
+- `tools/author_bespoke_blend.py`: a row's `"atlas_shed"` (an atlas-skinned shed; without it refused as before).
+- `tools/circuit_facades.py`: `facade_walls(shed_tops=...)` (absent = byte-identical walls).
+- `tools/mouth_returns_blend.py`: `route.mouth_returns_measured_only`.
+- `fleet/GATES-CHANGELOG.md` (2026-11-23: verify_mouth_corners wired onto High Plains, no threshold moved).
+- Tests: `tests/tools/test_high_plains_round4.py` (new, 10); `tests/tools/test_high_plains_round2.py` and
+  `tests/tools/test_high_plains_round3.py` (the version, the kerbs file's lap runs, the width kinds, the white building's form).
+- Not touched: assets/licenses.json, fleet/ac-installed.json, assets/textures (no texture added).
+- The full suite on the Mac (airoso's venv): **1,747 passed** (round 3's head: 1,737; +10 in test_high_plains_round4.py).
+
+### Still to do (round 5)
+
+- The fillet behind the T13 kerb (the merge's east corner): its radius is past mouth_radii's 20 m grid; a wider grid or another
+  reading of the kerb's own arc would measure it.
+- The north loop's two blue / yellow stripes (L s 372-401, 648-682): no reader measures a faded flat stripe on z18.
+- L s 254-260 of the north loop (6 m still carried).
+- Kevin's drive of both layouts.
+
+### Runbook 0097-4 (PC): rehearse 0.1.12; a green rehearsal installs and merges (Kevin's standing word)
+
+1. EMPTY workshop, a worktree of `claude/hp-finish-r4-20261123` at the commit named in the Mac's message, ENG
+   `eng_hplm_0112` = `eng_hplm_0111` unchanged (this round adds no texture: every texture's md5 = the branch's
+   `assets/textures`), `AIROSO_NUMPY_PY` the lidar venv, `SHIP_PROJ` scratch, `--no-install`:
+   `SHIP_PROJ=<scratch> AIROSO=<worktree> ENG=D:/k10-scratch/eng_hplm_0112 bash tools/ship_track.sh high-plains-lm --no-install`.
+   The branch carries round 3 (0.1.11) under it: if Runbook 0097-3 has not run on the PC, this one rehearses both rounds at once;
+   read it against 0.1.10's PC build then, and say so.
+2. Read, against 0.1.11's PC rehearsal (or its install build; Mac numbers in brackets):
+   - sync: `source/road_wear/naip_2023_hp_mosaic.png` (12,031,563 B) and `source/edges/mouth_radii.naip.json` synced in;
+   - `[returns] full_north#0#0|end|+1 -> MAINLINE: NOT built: its radius was not measured ...` and `[returns] 1 corner return(s)
+     at 1 mouth(s) (radius measured 1, a median 0); 1 skipped; 87 return stations, 83 corner pavement tris`;
+   - `[gap-mouths] ... the host's edge line broken at 1 mouth(s) (24 paint faces inside the openings deleted)`;
+   - `[kerbs] 26 kerb runs, 803 m ... (ROAD read missed 9)`; `[lap] full: 1527 vertices, 4085.3 m`;
+   - `[bespoke] ... 10 buildings stood, 0 dropped`; data/bespoke.report.json traced_white_w_of_osm289311820 `form "shed 2.9..3.8 m"`,
+     `facade.shed_faces 10`;
+   - `[road_wear] aerial registered to the built road: shift (-0.75, +1.00) m`; macro atlas 3,184,897 B;
+   - every gate per layout: drive_test west (as 0.1.11: kinks 1.87 /km) and full_course (severe 0; kinks about 8.57 /km and 14
+     vertex bumps, reported); kn5_ground_check west and full_course; verify_kn5 and --inis; audit CLEAN (K 0); road_wear_check
+     PASS (tone r 0.8831); verify_mouths PASS; **verify_mouth_corners PASS** (new for High Plains: lip 0.023 m, teeth 0.28 %,
+     edge paint 0.0 m); verify_pads FORK PASS; house_seat 22;
+   - the road kn5's bytes (Mac: 26,463,672), the two spawn kn5s (5,058 B each).
+3. Green: install as `high_plains` (0.1.11, or whatever stands, parked as every install); if 0.1.11 was never installed the
+   folder changes shape here (one layout -> `west`, `full_course`; Runbook 0097-3 step 3), say so to Kevin. Then the records and
+   menu pictures (both layouts) to the branch (no force); the Mac merges. Red: records only, no install.

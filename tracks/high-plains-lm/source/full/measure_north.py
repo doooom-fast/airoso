@@ -62,7 +62,7 @@ NORTH_Z18 = "naip_2023_hp_north_z18"     # round 3: the tiles above the committe
 # already holds keeps its value. The bands [lo, hi] (metres off OSM's line) are read by eye on those strips.
 # (side, s0, s1, kind, lo, hi, what the strips show)
 SECOND_READ = (
-    ("left", 216.0, 240.0, "line", 4.8, 6.6, "the white edge line, clear, after the T10 kerb's end (L s 216); a grey-green verge 1-3 m wide beyond it"),
+    ("left", 216.0, 240.0, "line", 4.8, 6.6, "the white edge line, clear, after the kerb L s 170-216's end; a grey-green verge 1-3 m wide beyond it"),
     ("left", 240.0, 300.0, "line", 3.8, 5.6, "the white edge line, faint, the verge beyond it greying into the prairie"),
     ("right", 301.0, 306.5, "line", 5.8, 7.2, "the white edge line before the kerb R s 307"),
     ("right", 306.5, 335.0, "kerb", 6.2, 9.4, "the kerb R s 307-335 (blue / white blocks): its paint's outer end"),

@@ -426,8 +426,53 @@ Proven with the old (a05c4924) and the new drive_test on finished workshops (scr
 | Milford 0.1.14 (`milford_lm`) | byte-identical (230089e7), 0 gaps | 0 gaps in 9,798 probes, all read off the edge, 0 fell back; no other field moves |
 | Milford 0.1.15 (`milford_0115b_reh`) | byte-identical (b1698c84), 69 gaps | **0 gaps** in 9,448 probes, all read off the edge, 0 fell back; only `daylight_gaps` and `fail` move: the street drive_test **passes** |
 
-Install waits for Kevin's word on the key (the Mac is asking him, with before and after: his Nov 22 "Show me before and
-after first").
+The Mac's suite on 9dfb341d: 1,741 passed, 0 failed.
+
+### Kevin's word on the key
+
+Kevin, 2026-11-23 about 09:15 MST, typed to the Mac (relayed verbatim), in answer to "Should Milford's gap probe on the
+banked turn measure from the road's edge? Yes: it installs once rehearsal 3 is green / Show me stills first":
+
+| Call | Answer |
+|---|---|
+| Milford: the gap probe on the banked turn from the road's edge? | Yes |
+
+So `drive_test.daylight_edge_ref` stands, and 0.1.15 installs on his standing word ("When they're done, install them")
+once rehearsal 3 is green and the install build matches it.
+
+## 7. The third rehearsal (green) and the install
+
+### Rehearsal 3
+
+The PC rehearsed 9dfb341d from an empty workshop on 2026-11-23, 10:09-11:06 (`D:/k10-scratch/milford_0115c_reh`,
+`--no-install`, ENG eng_mflm_0114, AIROSO_NUMPY_PY = the lidar venv). **SHIP OK**, every gate green:
+
+- street drive_test PASS: daylight gaps **0**, `daylight_edge_ref` 9,448 probes read off the edge, 0 fell back; ground on
+  top 0;
+- lane_poke: 0 over the road on s 922-975 (11,855 points) and on the lap (257,791 points), 14 within 5 mm under;
+- the seat-edges section line the second rehearsal's (23,164 faces read, +5,969 TERRAIN verts, 0 over 2 cm);
+- street audit CLEAN; race drive_test / audit / no_route; verify_kn5 and --inis; kn5_ground_check PASS; textures; road
+  wear; houses; edge smoothness;
+- the road kn5 51,527,489 B, `kn5_equiv` EQUIVALENT to the second rehearsal's (tangents only, max 1.79e-07);
+- the lines byte for byte the committed prediction.
+
+### The install
+
+Empty-workshop install build at 9dfb341d, 11:08-12:04 (`D:/k10-scratch/milford_lm`; the 0.1.14 workshop kept as
+`milford_lm.0.1.14`): **installed** as `milford_road_course`, "doooom Michigan — Milford Road Course (unofficial)" 0.1.15,
+lap 4,726 m. 0.1.14 parked in `D:/k10-track-archive/2026-11-23_120456/`.
+
+- = rehearsal 3 (scratchpad `cmp_proof.sh`): 227 / 227 gate rows the same; 41 / 43 build files the same md5, the two kn5
+  copies EQUIVALENT (tangents only, max 9.52e-07); the AI lines the same; the data json differ only in paths.
+- In AC: the kn5 the build's (md5 d4cba7b2); TreeFX 12,131 trees, Oak3.bin + SycamoreV2.bin, `[TREES]` in ext_config.ini.
+- The menu picture: s3 of 6 (the same station count, light, exposure -0.5 and stand-in trees as 0.1.14's), now on the GM
+  lap (point 3152, facing the way the cars drive); looked at, cut into `source/ui`, copied into AC. The build's
+  placeholder in `D:/k10-track-archive/2026-11-23_120646_previews/`.
+- `fleet/ac-installed.json`: milford_road_course 0.1.15 at 9dfb341d (`tools/ac_tidy.py record`); the tidy scan plans no
+  move.
+- The sync-back deleted nothing; it added `data/densify_section.json` and `data/shoulder_grade.json` (round 2's new
+  steps' records).
+- origin/main (366a5a4c) merged into the branch before the records (719fd99c, a merge; GATES-CHANGELOG both sides kept).
 
 ## Tests
 
@@ -471,9 +516,4 @@ Pillow missing on that python); every Milford test that needs numpy passes under
 
 ## Not done
 
-- **The third rehearsal** from an empty workshop, on section 6's head, when the PC queue reaches it, still 0.1.15. Then
-  check: the street drive_test's daylight gaps 0 with `daylight_edge_ref` 0 fell back; lane_poke as the second rehearsal
-  (0 over on s 922-975 and the lap); every gate; the kn5 expected at the second rehearsal's 51,527,489 B [inferred: nothing in
-  section 6 touches a build step].
-- **Install** only after Kevin's word on the key (the Mac is asking him).
-- **In game:** the GM loop's inner turn and its bank, the shoulder beside the banked corners, the culvert.
+- **In game:** not driven yet: the GM loop's inner turn and its bank, the shoulder beside the banked corners, the culvert.

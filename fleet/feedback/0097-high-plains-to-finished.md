@@ -106,3 +106,18 @@ gate green. Compared with 0.1.8's install build (`D:/k10-scratch/high_plains_lm`
   `tyre_wall_diffuse.png` (0.1.8: `tecpro_diffuse.png`), `high_plains.ini` `RES_0_TEXTURE=tyre_wall_diffuse.png`, and
   `build/texture/` holds `tyre_wall_diffuse.png` in place of `tecpro_diffuse.png`.
 - Version 0.1.9 in `ui_track.json`. Not installed: Kevin's word first.
+
+## Installed (PC, 2026-11-22): High Plains 0.1.9 as high_plains
+
+Kevin's standing word on the PC ("Yes and I always want newer builds", 2026-11-09) and his Nov 22 word to the Mac about
+the finish builds ("When they're done, install them").
+
+- Built from an EMPTY workshop (`D:/k10-scratch/high_plains_lm`, 0.1.8's kept as `high_plains_lm.0.1.8`) at 9810abc7
+  (= 564c3152 + this ledger), ENG `eng_hplm_0109`, `AIROSO_NUMPY_PY` the lidar venv; 19:44-19:47 SHIP OK, every gate
+  green; 0.1.8 parked in `D:/k10-track-archive/2026-11-22_194738/`.
+- The same as the rehearsal above: 180 / 180 gate rows; kn5 22,161,329 B, EQUIVALENT (tangents only: 31,044 values, max
+  1.79e-07); AI lines the same; data JSON differs in paths only; road-wear atlases md5 the same (the macro fb88cea1, as
+  0.1.8's). AC's folder equals the build but for `ui_track.json`'s name dash (as every install).
+- Menu picture: s0 of 6 at -0.3 EV, the camera of 0.1.8's to the centimetre; no collider shows in it. The old picture is in
+  `D:/k10-track-archive/2026-11-22_194834_previews/`.
+- fleet/ac-installed.json: high_plains 0.1.9 (sha 564c3152). Not driven.

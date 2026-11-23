@@ -463,3 +463,27 @@ Scratch workshop only; nothing built into the chain, nothing installed. `source/
   1GRASS only and do not judge the top; `verify_kn5` face-up and `drive_test`'s soft-top-in-lane do
   (`fleet/GATES-CHANGELOG.md`, 2026-11-23). The full chain's gates have not run on it: that is the rehearsal.
 
+## 0.20.5's first rehearsal red at kn5_ground_check; the split's ground fixed on scratch (the PC, 2026-11-23; not built)
+
+- **The rehearsal** (b844ad07, `D:/k10-scratch/rehearse_0205`): every gate green but `kn5_ground_check`, on all five
+  layouts: "terrain has 202 double-sheet cells" (0.20.4: 0), and "deck-vs-mountain max +5.181" (0.20.4: +0.255,
+  reported only). Not installed; nothing forced.
+- **Cause, mine.** The strip of ground the College step adds east of the northbound road (the east shelf) ran every
+  row on to 19.5 m, at the lower of the falling fill and 0.30 m under the old ground: under the cut it lay up to
+  19.4 m down inside the hill, a second sheet of ground. The notes said "0.3 m under it"; the code did not do that.
+  The 5.18 m was old ground left at the old slab's height just outside the raised road's edges, under the walk, the
+  curb and the bank's top: hidden walls, read by the check at the road's own edge vertices.
+- **Why it reached a rehearsal.** My scratch pass ran the prep and the medians' measure, never `kn5_ground_check`.
+- **The fix** (`source/college_r2/college_ground_blend.py`, `college_shelf.py`; no gate, threshold or prep changed):
+  the shelf ends where it goes under the old ground; old ground wholly under the bank's top or the open shelf is
+  taken out of TERRAIN (32,342 faces); what is left at a seam sits just under the surface over it; the ground
+  under the split's own roads is set where the prep will pin it; the step refuses to save a scene in which a 2 m
+  cell near the split holds ground heights more than 12 m apart that it did not before (the gate's lens and number).
+- **Measured on scratch through the chain's own commands** (author phase, prep and its sub-steps, split, road
+  export, `kn5_ground_check`; then street and race_cw `drive_test`, `audit_mesh`, `no_route`): double-sheet cells
+  **0** (202); deck-vs-mountain max +0.313 (+5.181; 0.20.4 +0.255); street `drive_test` PASS: 10 drops, 44 far ledges, severe 0;
+  street audit CLEAN; race_cw `drive_test` PASS: severe 7, 0 drops, 142 far ledges; race_cw audit CLEAN; `no_route` PASS: leak 0, reached 138.2 k m2.
+  `source/college_r2/STEP-DESIGN.md`, "0.20.5's first rehearsal", has the table and what is left.
+- **Kept**: `source/college_r2/scratch/` (the scratch run and `ground_look.py`, which lists the places behind the
+  check's numbers). Every College change goes through that run before it is pushed (the Mac, 2026-11-23).
+

@@ -498,12 +498,16 @@ What the faults were, and the rule each one left in the scripts:
    where it is dense. The strip runs along rows v1130-1476 from the built east edge: at the edge's road height less
    0.02 m for 3.5 m, then falling 1 in 2 until it is under the old ground (4.5 to 8.5 m out, on all 347 rows), then
    0.3 m under it. Where the hill is higher the old ground shows (the cut); where it is lower the strip is a fill.
+   (CORRECTED 2026-11-23, "0.20.5's first rehearsal" below: the code did not hold it 0.3 m under the old ground. It
+   ran every row on to 19.5 m at the lower of the falling fill and that, up to 19.4 m down inside the hill.)
 3. **The old ground under the split is cut to 1.5 m edges first**, under the whole footprint (both roads, the bank, the
    forks): 47,628 edges in 13 rounds. Under the one slab it was a few triangles 10 to 70 m across; the prep pins them
    at their own corners only, and puts its own vertices on their long edges inside the released bank at the old slab's
    height.
 4. **Old ground inside the bank is pushed 0.10 m under the lower of the two inner edges** (3,589 of 10,371 vertices,
    up to 0.47 m). The southbound road's inner edge lies up to 0.5 m under the old slab.
+   (CHANGED 2026-11-23, "0.20.5's first rehearsal" below: beside each road it is now SET just under that road's inner
+   edge, and what lies wholly under the bank's top is taken out.)
 5. **A vertex is told apart by a tag on the mesh, never by a Python reference.** `bmesh.ops.subdivide_edges` leaves
    every earlier reference invalid; after its first round the bank's top was no longer protected. The same weakness
    was in step 3's "no other vertex moved" check, which could not fail; it now compares 83,646 surviving vertices by an
@@ -748,4 +752,97 @@ prep from the engine copy, then `median_tops_check.py` on the prepped ground, ro
 - The plants: every plant line of the plan is identical with and without `route.median_tops` (the key is read only
   where the seating list is written), so the 14 and the 22 kept measured spots keep their heights; with the key the
   seating list gains `1LAWN_median_mat`, so median plants stand on the island and not on the slab under it.
+
+## 0.20.5's first rehearsal: red at kn5_ground_check; the split's ground made one sheet (2026-11-23)
+
+**The red.** Lake Murray 0.20.5 (b844ad07) was rehearsed on the PC (`D:/k10-scratch/rehearse_0205`). Every gate passed
+but `kn5_ground_check`, on all five layouts: "terrain has 202 double-sheet cells" (ground heights more than 12 m apart
+in one 2 m cell of plan; the gate fails over 20; 0.20.4 read 0), the worst 19.4 m. The same check read
+"deck-vs-mountain max +5.181" (0.20.4: +0.255; reported, not gated: the gate is the p95, +0.022). Not installed.
+
+**Cause of the red: the east shelf ran on inside the hill.** `college_ground_blend.py` gave every row all 21 columns,
+out to 19.5 m past the east edge, and past the column where the shelf went under the old ground its height was
+`min(the falling fill, the old ground less 0.30)`. This file said "then 0.3 m under it" (step 4a to 4c, point 2); the
+code did not do that. East of College the hill climbs (the cut) while the fill falls 1 in 2, so the outer columns lay
+up to 19.4 m down inside the hill: a second sheet of ground under the first. All 202 cells lie along those columns
+(every cell listed with the check's own reader, `scratch/ground_look.py`: its lowest and its highest vertex both
+ground, no road within 5 m; record `ground_look.0_20_5_rehearsal.json`).
+
+**Cause of the 5.18 m: old ground left as walls under the higher road's edges.** 37 of the check's 58 road samples
+over 0.05 m were at the split, every one on a road's own edge vertex: the northbound road's inner edge (13, to
+5.18 m), its east edge (9, to 4.49 m), the southbound road's inner edge (15, to 0.66 m). At an edge vertex the check's
+triangle test misses the surface that meets the edge (the shelf, the curb) and reads the old ground under it: a
+triangle from ground the prep pins under the road down to old ground left at the old slab's height just outside it.
+(The prep pins ground under 1ROAD only, not under a walk or a curb, and leaves released ground beside the road
+alone.) Hidden under the walk, the curb and the bank's top: not a hover, and nothing a driver could see; but it was a
+second sheet too.
+
+**Why the scratch pass did not see it.** It ran the prep and measured the medians. It never ran the chain's
+`kn5_ground_check`, nor the prep's sub-steps after `build_kn5_loop`. It does now (below). The Mac's rule from here:
+every College change goes through that run before it is pushed.
+
+**The fix, all in `college_ground_blend.py`** (no gate, no threshold, no line of the prep changed):
+
+1. **The shelf ends where it goes under the old ground** (`college_shelf.py`, pure, tested): past the column where a
+   row goes under, it lies 0.30 m under the old ground and no deeper; a row ends at the furthest such column of
+   itself and the rows either side of it, so every face between two rows reaches both rows' own columns and nothing
+   runs on inside the hill. 2,717 vertices and 2,354 faces where it had 7,287 and 6,920; rows end
+   4.5 to 8.5 m past the edge; at most 1.81 m under the old ground (the one column where it
+   goes under, at the fill's own height where the hill steps up past it).
+2. **Old ground that lies wholly under one of the step's own surfaces is taken out of TERRAIN**: 15,668 faces
+   under the bank's top, 16,674 under the shelf where it is in the open, 13,879 vertices. A face goes
+   when its three corners lie 0.10 m or more under the surface and its edges' middles and its own middle are under
+   it too. For that the old ground is cut to 1.5 m edges under the shelf as well as under the roads and the bank
+   (54,755 edges; 47,628 before).
+3. **What is left of it at a seam sits just under the surface over it.** Under the shelf: 0.05 m under it
+   (2,628 vertices, raised by up to 5.87 m). Beside the higher road: 0.10 m under that road's inner edge,
+   or under the bank's top where that is lower (2,410 vertices, raised 0.79 to 6.97 m). Beside the
+   lower road: 0.10 m under its inner edge, up or down (2,331 vertices, -0.47 to +1.53 m; before, only
+   down). Between the two it is pushed down as before. Nine vertices at the shelf's two ends keep an uncut edge
+   and stay as they were (0.11 to 0.19 m under the shelf).
+4. **The ground under the split's own roads is set where the prep will pin it**: the road's surface less 0.02 m
+   (34,952 vertices, by up to 7.05 m). Found on the second scratch run. The prep splits every ground edge
+   near the road that is longer than 4.5 m in space BEFORE it pins. An edge from old ground still at the old slab's
+   height under the road to a seam vertex raised beside it stood on end, was split, and its middle, where it fell
+   outside the road, stayed half-way down: the road's east edge read 1.16 m and 1.07 m over the ground on rows v1306
+   and v1320. With the ground under the roads already in place there is no such edge.
+5. **The step checks itself with the gate's lens and number.** No 2 m cell of ground near the split may hold heights
+   more than 12 m apart that it did not before (0 before, 0 after); exit 1 and nothing
+   saved otherwise.
+
+**The scratch run** (`scratch/make_ws.py`, `scratch/run_full.ps1`, `scratch/run_gates.ps1`: a workshop seeded as the
+chain seeds one, then the chain's own commands in its order): the author phase; `build_kn5_loop`, `thin_terrain`,
+`freeway_i8` (not enabled), `rock_faces`, `red_repairs`, the walk's `--seat`; the split; `export_road`;
+`kn5_ground_check`; then the street set and the Speedway's (race_cw, lap college: the layout on the northbound
+road): kn5s, gate OBJs, `drive_test`, `audit_mesh`, `no_route`. The control first: the medians test's unfixed scene,
+taken through the split, the export and the check, reproduces the red (the same four worst cells, 19.4 m, max
++5.181; 555 cells there, that scene not being thinned).
+
+| | 0.20.4's rehearsal | 0.20.5's rehearsal (b844ad07) | fixed, on scratch |
+|---|---|---|---|
+| double-sheet cells (gate: over 20 fails) | 0 | **202** | **0** |
+| deck-vs-mountain max (reported) | +0.255 | +5.181 | +0.313 |
+| road samples over 0.05 m | 24 of 10,785 | 58 of 10,900 | 43 of 10,900 |
+| of those at the split | | 37, to 5.18 m | 22, to 0.094 m |
+| road-over-ground p95 (gate 0.1 m) | +0.022 | +0.022 | +0.022 |
+| terrain pokes, verify_kn5 check 6 alone (gate: over 20) | | 3 | 3 |
+| street `drive_test` | PASS | PASS: 11 drops, 44 far ledges, severe 0 | PASS: 10 drops, 44 far ledges, severe 0 |
+| street `audit_mesh` | CLEAN | CLEAN | CLEAN |
+| race_cw `drive_test` | | PASS: severe 7, 0 drops, 144 far ledges | PASS: severe 7, 0 drops, 142 far ledges |
+| race_cw `audit_mesh` | | CLEAN | CLEAN |
+| race_cw `no_route`, built | | PASS: leak 0, reached 138.2 k m2 | PASS: leak 0, reached 138.2 k m2 |
+| ground vertices in the road kn5 | | 444,336 | 443,435 |
+
+- **What is left of the road-over-ground reading.** The worst, +0.313 m, is not at College: kn5 (-558.42, 881.61), a junction of the north network, and 0.20.4's own road kn5 holds the same three triangles there (ground 41.783, walk 41.813, road 42.126). The check takes every seventh road vertex and College's new road moved which ones it takes; 0.20.4's worst (+0.255) is the road vertex 3 m from this one. At the split 22 samples are over 0.05 m, the largest 0.094 m, every one on a road's own edge vertex (the northbound road's east edge 3, to 0.060 m; its inner edge 7, to 0.094 m; the southbound road's inner edge 12, to 0.088 m): the ground at a seam stands 0.05 to 0.10 m under the surface over it (point 3), where the prep holds ground 0.02 m under a road.
+- **The one street drop that went** (11 to 10): station 4050.3, 6.5 m east of the line, 0.45 m, a gated one. It was
+  on the bank just past the southbound road's inner curb, where the old ground lay 0.47 m under that road's edge; it
+  is 0.10 m under it now (point 3).
+- **Two of the Speedway's far ledges went** (144 to 142): (4051.1, +5.0, 5.05 m) and (4202.9, +5.0, 1.09 m), both off
+  the northbound road's inner edge: the wall of old ground under that curb.
+- The prep's sub-steps read as in the rehearsal: `thin_terrain` 1,021,079 to 540,064 vertices (the rehearsal 1,032,547 to 540,949);
+  `rock_faces` 9,805 faces (9,804); `red_repairs` 396 ground vertices at 2 places, worst 0.172 m (the same);
+  the walk's seat 3,202 lips lowered (3,203). The author phase reads as before: `walk_grade` 272 lips raised and
+  15,174 at grade, 29 sign posts and 4 layout plates, `verify_race` OK on the mainline and both laps.
+- **Not run on scratch**: race_acw's and the north layouts' gates, the whole of `verify_kn5`, the AI lines, TreeFX,
+  the track folder. Those are the rehearsal's.
 

@@ -213,3 +213,76 @@ def test_the_pads_are_the_outliners_on_the_gm_line_and_keep_round_1s_shading():
     assert len(new) == 2 and all(x["naip_b_over_r"] >= rec["params"]["PAVED_B_OVER_R"] and x["folds"] == 0 for x in new)
     assert b["pads_shade"] == "smooth" and b["pads_shade_crease_deg"] == 10        # the block's keys: every pad, the new two
     assert rec["line"]["md5"] == hashlib.md5((MF / "data" / "centerline.raw.local.json").read_bytes()).hexdigest()
+
+
+# ------------------------------------------- 6. the first rehearsal's red (milford_0115_reh, 2026-11-23): the two fixes
+def test_nearest_station_finishes_the_ring_search():
+    """measured_surface.Product._nearest stopped after ring 1 (6 m cells) once ring 0 / 1 held ANY station; a point more
+    than a cell off the line could then take a farther one. Synthetic: the line along x, a point 7 m off it at x = 0.5,
+    in a ring-1 cell that holds only a station 9 m back; its own station (x = 0) sits in ring 2"""
+    import measured_surface as ms
+    xs = [-9.0, 0.0, 1.5, 3.0]
+    prod = {"s": [x + 9.0 for x in xs], "x": xs, "z": [-1.0] * 4, "nx": [0.0] * 4, "nz": [1.0] * 4, "c": [0.0] * 4,
+            "b": [0.0] * 4, "lap_m": 1000.0}
+    P = ms.Product(prod)
+    P.grid = {(-2, 0): [0], (0, -1): [1, 2, 3]}           # station 0 in ring 1 of the point's cell (-1, 1); the rest in ring 2
+    assert P._nearest(-0.5, 6.0) == 1
+
+
+def test_section_points_on_the_inside_of_the_gm_turn_take_their_own_station():
+    """the red's cause 1: at s 970-976, u >= +7.0 took product station s 966.0 (4-10 m back), the plane under it fell
+    0.3-0.5 m and the section's delta stepped +0.27..+0.47 m from u +6.5 to +7.0 (the raw read and the 1 m grid: no step).
+    Fixed, every such point takes a station within 1.5 m of its own, and the committed section has no such step"""
+    import measured_surface as ms
+    P = ms.Product(_j(MF / "source" / "surface" / "road_surface_gm.fit.json"))
+    sec = _j(MF / "source" / "surface" / "road_section_gm.json")
+    U = sec["offsets_m"]
+    i65, i70 = U.index(6.5), U.index(7.0)
+    seen = 0
+    for i, s in enumerate(sec["s"]):
+        if not 966.0 <= s <= 980.0:
+            continue
+        x, z, nx, nz = sec["x"][i], sec["z"][i], sec["nx"][i], sec["nz"][i]
+        for u in (7.0, 7.5, 8.0, 9.0, 9.5):
+            k = P._nearest(x + nx * u, z + nz * u)
+            assert abs(P.s[k] - s) <= 1.5, (s, u, P.s[k])
+            seen += 1
+        assert sec["delta"][i][i70] - sec["delta"][i][i65] < 0.08, (s, sec["delta"][i][i65], sec["delta"][i][i70])
+    assert seen >= 40
+
+
+def test_seat_edges_section_rule():
+    """the red's cause 2: tools/seat_edges_section.py, the rule tools/seat_edges_blend.py's opt-in route.seat_edges_section
+    cuts by: the face's chord over the road, and cuts that bring a fold's excess (linear in the leg) under 1 cm"""
+    import seat_edges_section as ses
+    assert ses.stretch({}, 10.0) is None
+    with pytest.raises(SystemExit):
+        ses.stretch({"seat_edges_section": True}, 10.0)
+    r = {"seat_edges_section": True, "densify": {"section": {"spans": [[870.0, 1030.0]], "taper_m": 15.0}}}
+    assert ses.stretch(r, 10.0) == (845.0, 1055.0)
+    assert ses.stations([[0, 0, 0], [3, 0, 4], [6, 0, 8], [9, 0, 12]], 4.0, 11.0) == [1, 2]
+    g = ses.bary()
+    assert len(g) == 15 and all(abs(sum(w) - 1.0) < 1e-12 for w in g)
+    # a fold under a 1 m face: the road flat to x = 0.5, then rising 20 %; the corners at x 0, 1, 0 (road 0, 0.1, 0)
+    road = lambda x: 0.2 * max(0.0, x - 0.5)
+    corners = [(0.0, 0.0), (1.0, 0.0), (0.0, 1.0)]
+    samples = [(w0, w1, w2, road(w0 * corners[0][0] + w1 * corners[1][0] + w2 * corners[2][0])) for w0, w1, w2 in g]
+    e = ses.fold_excess([road(c[0]) for c in corners], samples)
+    assert e == pytest.approx(0.05)                        # at x = 0.5 the chord stands 0.1 x 0.5 = 5 cm over the fold
+    assert ses.cuts_for(e) == 4 and ses.cuts_for(0.009) == 0 and ses.cuts_for(1.0) == ses.MAX_CUTS
+    assert ses.FOLD_TOL_M == 0.01 and ses.CLEAR_M == 0.02
+
+
+def test_seat_edges_section_is_opt_in_only_milford_names_it_and_its_config_reproduces():
+    text = (ROOT / "tools" / "seat_edges_blend.py").read_text(encoding="utf-8")
+    assert "ses.stretch(cfg.get(\"route\") or {}, PAD_M)" in text and "def section_pass" in text
+    for cfgp in sorted((ROOT / "tracks").glob("*/track.config.json")):
+        route = _j(cfgp).get("route") or {}
+        if cfgp.parent.name == "milford-road-course-lm":
+            assert route["seat_edges_section"] is True and route["densify"]["section"]["spans"]
+        else:
+            assert "seat_edges_section" not in route, cfgp
+    # the round-2 edit script writes the key, so the one-command flow from 0.1.14 keeps it
+    src = (MF / "source" / "round2" / "edit_config_0102.py").read_text(encoding="utf-8")
+    assert 'd["route"]["seat_edges_section"] = True' in src
+    assert _j(MF / "track.config.json")["route"]["_seat_edges_section_doc"] in src.replace('"\n    "', "")

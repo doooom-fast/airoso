@@ -4290,7 +4290,9 @@
           }
         ]
       }
-    ]
+    ],
+    "seat_edges_section": true,
+    "_seat_edges_section_doc": "ledger 0102: the first rehearsal of 0.1.15 (milford_0115_reh, 2026-11-23) read the grass OVER the lane on the bowl: every TERRAIN vertex under it at the deck - 0.020 (the prep's pin), but a grass face is flat and the road folds at each of densify's ~1 m columns (s 953: -47 / -41 / -22 / -7 % at u -2.9 / -1.9 / -0.9), so 0.85 m faces across 16-19 % folds stood up to 2.1 cm over it (61 points, s 925-962). tools/seat_edges_blend.py (tools/seat_edges_section.py) cuts every face under the road on the section's stretch by the road's own fold under it to <= 1 cm of chord (seat_edges' CHORD rule, half the prep's 2 cm clearance); nothing moves; self-checked"
   },
   "terrain_cell_m": 1.25,
   "terrain_vertex_budget": 1500000,

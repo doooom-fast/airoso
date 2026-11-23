@@ -14,6 +14,10 @@ side): a flat road gains nothing and keeps its vertex count. No vertex moves (su
 splits); the prep's pin and shelf then place the new vertices. A track without route.crossfall_file is left untouched.
 Opt-in route.seat_edges_grade_pct (ledger 0083, Del Mar): the line's points steeper than that grade are seated too, as a
 bank of atan(grade) would be (tools/seat_edges_grade.py); absent = as before.
+Opt-in route.seat_edges_section (ledger 0102, Milford's GM turn, a measured bowl: route.densify.section): every face UNDER
+the road on the section's stretch is cut by the road's own fold under it, so no grass chord stands over a column line
+(tools/seat_edges_section.py: the rule); self-checked, exit 1 and loop.blend not saved when a face still would; absent =
+as before.
 
     blender --background --python-exit-code 1 --python tools/seat_edges_blend.py -- <project-dir>
 """
@@ -37,13 +41,117 @@ SKIRT_M = 60.0       # a face with an edge longer than this is the terrain skirt
 MAX_CUTS = 16        # [invented] cuts per edge at most (a 10 m cell -> 0.6 m)
 
 
+def _road_bvh():
+    """ROAD + CURB as one BVH, world frame (Blender XY = the line's X, Z)"""
+    from mathutils.bvhtree import BVHTree
+    verts, polys = [], []
+    for name in ("ROAD", "CURB"):
+        o = bpy.data.objects.get(name)
+        if o is None or o.type != "MESH":
+            continue
+        mw, base = o.matrix_world, len(verts)
+        verts.extend(mw @ v.co for v in o.data.vertices)
+        polys.extend([base + k for k in p.vertices] for p in o.data.polygons)
+    if not polys:
+        raise SystemExit("[seat-edges] route.seat_edges_section: no ROAD / CURB mesh in loop.blend")
+    return BVHTree.FromPolygons(verts, polys)
+
+
+def section_pass(bm, P, W, sec_s, ses):
+    """route.seat_edges_section (ledger 0102; the rule: tools/seat_edges_section.py): every TERRAIN face under the road on
+    the section's stretch cut by the road's own fold under it; then every such face read again, exit 1 (loop.blend not
+    saved) when one would still stand over the road once the prep pins its corners at the deck - CLEAR_M"""
+    from mathutils import Vector, kdtree
+    idx = ses.stations(P, sec_s[0], sec_s[1])
+    if not idx:
+        raise SystemExit(f"[seat-edges] route.seat_edges_section: no line point on s {sec_s[0]:.1f}-{sec_s[1]:.1f}")
+    kd = kdtree.KDTree(len(idx))
+    for k, i in enumerate(idx):
+        kd.insert((P[i][0], P[i][2], 0.0), k)
+    kd.balance()
+    reach = max(W[i] for i in idx) / 2.0 + 2.0
+    x0 = min(P[i][0] for i in idx) - reach; x1 = max(P[i][0] for i in idx) + reach
+    y0 = min(P[i][2] for i in idx) - reach; y1 = max(P[i][2] for i in idx) + reach
+    bvh = _road_bvh()
+    down = Vector((0.0, 0.0, -1.0))
+    inner = [w for w in ses.bary() if max(w) < 1.0 - 1e-9]       # the corners are read once, as corner_road
+
+    def road_at(x, y, zref):
+        hit = bvh.ray_cast(Vector((x, y, zref + 30.0)), down, 80.0)
+        return None if hit[0] is None else hit[0].z
+
+    def excess(f):
+        """the face's fold excess over the road, or None when any read misses the road (a face across the lane edge: the
+        bank pass's shelf rule owns it)"""
+        vs = [v.co for v in f.verts]
+        if len(vs) != 3:
+            return None
+        c = (vs[0] + vs[1] + vs[2]) / 3.0
+        if not (x0 <= c.x <= x1 and y0 <= c.y <= y1):
+            return None
+        _co, k, d = kd.find((c.x, c.y, 0.0))
+        i = idx[k]
+        if d > W[i] / 2.0 + 2.0:
+            return None
+        zref = P[i][1]
+        corner = []
+        for v in vs:
+            h = road_at(v.x, v.y, zref)
+            if h is None:
+                return None
+            corner.append(h)
+        samples = []
+        for w0, w1, w2 in inner:
+            p = vs[0] * w0 + vs[1] * w1 + vs[2] * w2
+            h = road_at(p.x, p.y, zref)
+            if h is None:
+                return None
+            samples.append((w0, w1, w2, h))
+        return ses.fold_excess(corner, samples)
+
+    n0 = len(bm.verts)
+    groups, read, worst0 = {}, 0, 0.0
+    for f in bm.faces:
+        e = excess(f)
+        if e is None:
+            continue
+        read += 1
+        worst0 = max(worst0, e)
+        cuts = ses.cuts_for(e)
+        if cuts:
+            groups.setdefault(cuts, []).append(f)
+    n_split = 0
+    for cuts in sorted(groups, reverse=True):          # the finest first, as the bank pass
+        fs = [f for f in groups[cuts] if f.is_valid]
+        edges = list({e for f in fs for e in f.edges if e.is_valid})
+        if edges:
+            bmesh.ops.subdivide_edges(bm, edges=edges, cuts=cuts, use_grid_fill=True)
+            n_split += len(edges)
+    bmesh.ops.triangulate(bm, faces=[f for f in bm.faces if len(f.verts) > 3])
+    after = [e for e in (excess(f) for f in bm.faces) if e is not None]
+    over_tol = sum(1 for e in after if e > ses.FOLD_TOL_M)
+    over = sum(1 for e in after if e > ses.CLEAR_M)
+    worst1 = max(after) if after else 0.0
+    print(f"[seat-edges] section s {sec_s[0]:.1f}-{sec_s[1]:.1f} (route.seat_edges_section): {read} faces under the road "
+          f"read, fold excess max {worst0:.4f} m; cut " + (", ".join(f"{c} cuts x {len(g)}" for c, g in sorted(groups.items()))
+                                                         or "none") +
+          f"; {n_split} edges split, TERRAIN {n0} -> {len(bm.verts)} verts; after: {len(after)} faces, excess max "
+          f"{worst1:.4f} m, {over_tol} over {ses.FOLD_TOL_M} m, {over} over the {ses.CLEAR_M} m clearance")
+    if over:
+        raise SystemExit(f"[seat-edges] FATAL: {over} faces under the road would still stand over it after the prep's pin "
+                         f"(excess max {worst1:.4f} m > {ses.CLEAR_M} m); loop.blend not saved")
+
+
 def main():
     argv = sys.argv[sys.argv.index("--") + 1:]
     proj = Path(argv[0])
     cfg = json.loads((proj / "track.config.json").read_text(encoding="utf-8"))
     rel = (cfg.get("route") or {}).get("crossfall_file")
     grade_pct = (cfg.get("route") or {}).get("seat_edges_grade_pct")     # opt-in (ledger 0083); absent = as before
-    if not rel and grade_pct is None:
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    import seat_edges_section as ses
+    sec_s = ses.stretch(cfg.get("route") or {}, PAD_M)                    # opt-in (ledger 0102); absent = None
+    if not rel and grade_pct is None and sec_s is None:
         print("[seat-edges] no route.crossfall_file: nothing banked, nothing to do")
         return
     loc = json.loads((proj / "data" / "centerline.local.json").read_text(encoding="utf-8"))
@@ -92,7 +200,7 @@ def main():
             rows.append(((P[j][0] + lx * h, P[j][2] + lz * h), (P[j][0] - lx * h, P[j][2] - lz * h)))
         segs.append((rows[0][0], rows[1][0]))
         segs.append((rows[0][1], rows[1][1]))
-    if not segs:
+    if not segs and sec_s is None:
         print("[seat-edges] crossfall file names no banked point on the line")
         return
     B = 4.0
@@ -152,6 +260,8 @@ def main():
         n_split += len(edges)
     bmesh.ops.triangulate(bm, faces=[f for f in bm.faces if len(f.verts) > 3])
     print(f"[seat-edges] faces cut by bank: " + ", ".join(f"{c} cuts x {len(g)}" for c, g in sorted(groups.items())))
+    if sec_s is not None:
+        section_pass(bm, P, W, sec_s, ses)
     bm.to_mesh(ob.data); bm.free(); ob.data.update()
     print(f"[seat-edges] {len(near)} banked line stations, {len(segs)} lane-edge segments: {n_split} terrain edges split "
           f"(<= {MAX_EDGE_M} m within {BAND_M} m of an edge), TERRAIN {n0} -> {len(ob.data.vertices)} verts")

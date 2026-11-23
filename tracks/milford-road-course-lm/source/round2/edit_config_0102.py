@@ -10,7 +10,8 @@
 3. Off the lap with the 2022 loop: T3 (t3_s1000_apron_back, 62.6-77.5 m off the new lane edge). The run-off pads are
    re-outlined on the GM line by their own tool afterwards (source/runoff/scripts/runoff_pads.py --write: "re-run it after
    the line or the widths move"), not edited here.
-4. The banked inner turn's measured cross-section (route.densify.section).
+4. The banked inner turn's measured cross-section (route.densify.section), and the ground under it cut by the road's folds
+   (route.seat_edges_section).
 5. The shoulder (Kevin 2026-11-22, calls page: "Reshape the shoulder"): terrain.shoulder_grade.
 
     python -I tracks/milford-road-course-lm/source/round2/edit_config_0102.py --docs tracks/milford-road-course-lm/track.config.json
@@ -131,6 +132,16 @@ d["route"]["densify"]["section"] = {
              "all on pavement in the 2025 ortho: s 920 +3.50 m at u = -8, 45-55 % at the outer edge, the inside 10-15 %); "
              "the fit's plane misses it by over 1 m at both edges. The rows over the spans (the section product's own s, "
              "the GM line) take its measured profile: columns every col_m [invented], taper_m [invented]")}
+# 4b. the ground under that bowl (0.1.15's first rehearsal, milford_0115_reh: drive_test's soft_top at s 947; 61 lane points
+#     of grass up to 2.1 cm over the road on s 925-962, faces across the columns' folds)
+d["route"]["seat_edges_section"] = True
+d["route"]["_seat_edges_section_doc"] = (
+    "ledger 0102: the first rehearsal of 0.1.15 (milford_0115_reh, 2026-11-23) read the grass OVER the lane on the bowl: "
+    "every TERRAIN vertex under it at the deck - 0.020 (the prep's pin), but a grass face is flat and the road folds at each "
+    "of densify's ~1 m columns (s 953: -47 / -41 / -22 / -7 % at u -2.9 / -1.9 / -0.9), so 0.85 m faces across 16-19 % folds "
+    "stood up to 2.1 cm over it (61 points, s 925-962). tools/seat_edges_blend.py (tools/seat_edges_section.py) cuts every "
+    "face under the road on the section's stretch by the road's own fold under it to <= 1 cm of chord (seat_edges' CHORD "
+    "rule, half the prep's 2 cm clearance); nothing moves; self-checked")
 
 # 5a. the committed 1 m grid's registration to the road's frame (the measured surface's: frame = lidar + shift), read by
 #     tools/lidar_ground_patch.py and tools/shoulder_grade_blend.py; the culvert's patch polygon was drawn on the

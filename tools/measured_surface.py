@@ -193,7 +193,12 @@ class Product:
                         d = (self.x[i] - x) ** 2 + (self.z[i] - z) ** 2
                         if best is None or d < best:
                             best, bi = d, i
-            if bi is not None and r >= 1:
+            # ledger 0102: stop only when no station in ring r + 1 or further can be nearer (every one there is at least
+            # r cells away, the point sitting anywhere in its own cell). Stopping after ring 1 whenever ring 0/1 held any
+            # station gave a point more than a cell off the line a farther station: on the inside of Milford's GM turn
+            # section() put u >= +7.0 at s 970-976 on station s 966.0, and its delta jumped +0.27..+0.47 m across 0.5 m.
+            # The intake's points are within ~1 m of the product's line and stop at ring 1 exactly as before.
+            if bi is not None and best <= (r * self.cell) ** 2:
                 break
         return bi
 

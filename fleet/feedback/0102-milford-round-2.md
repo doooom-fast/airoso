@@ -138,7 +138,7 @@ The fix, opt-in on that stretch only:
 - `tools/measured_surface.py section` turns the G10's wide read (board asset 6e9c423785a22056cc77cafdd691cdb8, md5
   976fa8d1: s 850-1,050, 39 paths every 0.5 m, -9.5..+9.5 m) into `source/surface/road_section_gm.json`.
   - Per station and offset: the read's height, low-passed along by fit()'s raised cosine, minus the fit's plane.
-  - That misfit: p50 0.091 / p95 1.167 / max 2.714 m.
+  - That misfit: p50 0.091 / p95 1.157 / max 2.714 m (p95 1.167 before section 5's lookup fix).
   - Against a stand-in off the committed 1 m grid (shifted by the same registration): inside ±7.5 m, p50 7 mm / p90 2 cm /
     max 6.8 cm apart.
 - `tools/densify_ribbon_blend.py` `route.densify.section` (spans [[870, 1030]] of the product's s, col_m 1.0, taper_m 15,
@@ -298,9 +298,78 @@ The intake test caught it: ship.json's sync_in did not list round 2's files, so 
 Added: `source/edges/edge_evidence_gm.json`, `source/surface/road_surface_gm.fit.json`, `source/surface/road_section_gm.json`.
 sync_out now carries back `data/densify_section.json` and `data/shoulder_grade.json`.
 
+## 5. The first rehearsal (red) and its two fixes
+
+The PC rehearsed b61ebc05 from an empty workshop on 2026-11-23, 03:45-04:41 (`D:/k10-scratch/milford_0115_reh`, `--no-install`,
+ENG eng_mflm_0114, AIROSO_NUMPY_PY = the lidar venv). It was **red on one gate**: the street drive_test read 1 "ground on top
+mid-lane" (s 947.0, u -0.75, 1GRASS_1). Nothing was installed.
+
+Everything else was green:
+
+- race drive_test / audit / no_route; audit CLEAN;
+- kn5_ground_check PASS (road over ground p95 +0.021 m);
+- textures (25 embedded, 0 missing); road wear PASS (tone r 0.963); houses PASS; edge_smoothness PASS;
+- the start / finish at s 4,465.3 (kn5 heading +1.000); the pads' seat 0 ground-over; the road kn5 51,192,541 B
+  (0.1.14: 53,213,752);
+- data/centerline.raw.local.json and centerline.local.json byte for byte the committed prediction.
+
+### Measured on the built road
+
+Off the gate OBJ (`source/round2/lane_poke_0102.py`, read-only: the highest ROAD / KERB and grass face every 0.25 m along
+and across the lane):
+
+- 86 points on s 922-975 have grass over the road, up to +3.1 cm. The rest of the lap has none; the installed 0.1.14 has 4
+  on its whole lap, max 2.6 mm.
+- Every grass vertex under the lane sits at the deck -0.0200 m (the prep's pin worked). The faces stand over the road where
+  the road folds inside them (0.85 m faces).
+
+Two causes:
+
+1. **A lookup bug** (25 points, max +3.1 cm, the inner edge, s 922-975). `measured_surface.Product._nearest` stopped after
+   ring 1 of its 6 m cells whenever ring 0 / 1 held any station, so a point more than a cell off the line could take a
+   farther station.
+   - On the inside of the turn, section() put u >= +7.0 at s 970-976 on station s 966.0 (4-10 m back). The plane under it
+     fell 0.3-0.5 m, so the delta stepped +0.27..+0.47 m from u +6.5 to +7.0.
+   - The raw read has no step (paths +6.5 / +7.0 at s 974: 23.65 / 23.57 m), nor has the committed 1 m grid.
+   - Built: at s 974 the lane fell -14.2 % then climbed +31.8 % in its inner 0.9 m. That is a 25 cm ramp the wheel paths
+     never swept (drive_test clamps them at 6.0 m).
+2. **The bowl's real folds** (61 points, max +2.1 cm, s 925-962, u -2.0..+1.9). Densify's ~1 m columns fold the lane
+   (s 953: -47 / -41 / -22 / -7 % at u -2.9 / -1.9 / -0.9). A 0.85 m grass chord across a 16-19 % fold stands ~4 cm over
+   it: 2 cm past the prep's clearance. Drive_test's hit is one of these.
+
+### Fix 1: the lookup
+
+- `_nearest` stops only when no farther ring can hold a nearer station (best <= (r x cell)^2).
+- No other consumer changes: of the intake's queries, 0 of 6,304 (GM product, GM swept line) and 0 of 6,537 (round 1's
+  product, 0.1.14's line) take another station; the farthest is 1.33 / 1.51 m off.
+- `predict_lines_0102.py --check` on this tree: the committed lines ARE the prediction. On 0.1.14's tree (b8d39f78, the
+  new file copied in): 0.1.14's lines (0923d812 / 1244fc50) ARE the prediction.
+- section(): 481 of 15,600 points take another station. Most move one 1.5 m station (s 850-976, |u| >= 6.5); the big ones
+  are at s 970-976.
+- `road_section_gm.json` regenerated (md5 6cad591d -> 642763ad): 156 of 5,226 cells moved, max 0.413 m (s 976.0, u +7.0);
+  on s 922-975, 62 of 1,404, max 0.311 m (s 974.5, u +7.0). The u +6.5 -> +7.0 step at s 966-980 now reads 0.047-0.070 m,
+  as its neighbours do (it read up to 0.469).
+
+### Fix 2: the ground under the bowl
+
+- Opt-in `route.seat_edges_section` (Milford only) in `tools/seat_edges_blend.py`; the rule is `tools/seat_edges_section.py`.
+- Every TERRAIN face under the road on the section's stretch (its spans, + taper_m and PAD_M: s 845-1,055) is read on a
+  15-point barycentric grid against ROAD + CURB.
+- Its fold excess is the most its chord, laid through the road's height at its corners (where the prep will pin them),
+  stands over the road. A face over 1 cm (seat_edges' CHORD rule, half the prep's 2 cm clearance) is cut by
+  ceil(excess / 1 cm). Nothing moves: the prep pins the new vertices.
+- Self-checked: every such face is read again, exit 1 and loop.blend not saved if one would still stand over the clearance.
+- Tried on a scratch copy of the red rehearsal's loop.blend (`D:/k10-scratch/mf_0115_seat_test`, 69 s; its road still had
+  the old section):
+  - 85,670 faces read, fold excess max 3.87 cm;
+  - 1,379 cut (1 / 2 / 3 cuts x 1,156 / 197 / 26), +4,263 TERRAIN vertices;
+  - after: max 1.48 cm, 199 faces over 1 cm, 0 over the 2 cm clearance.
+- The 2 cm clearance is unchanged. `edit_config_0102.py` writes the key (step 4b), so the one-command flow from 0.1.14
+  reproduces the committed config.
+
 ## Tests
 
-`tests/tools/test_milford_round2_0102.py`: 11 tests, all PASS on the PC (the numpy ones under the lidar venv). They cover:
+`tests/tools/test_milford_round2_0102.py`: 15 tests, all PASS on the PC (the numpy ones under the lidar venv). They cover:
 
 - the GM loop's kept stations and its new piece;
 - section recovering a known curvature;
@@ -310,7 +379,11 @@ sync_out now carries back `data/densify_section.json` and `data/shoulder_grade.j
 - the edit script refusing anything but 0.1.14;
 - the committed lines being the prediction (runs the intake);
 - the start / finish on the GM lap;
-- the pads as the outliner's, round 1's shading kept.
+- the pads as the outliner's, round 1's shading kept;
+- section 5: the ring search finishing (synthetic), the s 970-976 points taking their own station with no step in the
+  committed section, the fold rule, and the key opt-in (Milford only, written by the edit script).
+
+`test_seat_edges_grade.py` pins the tool's early return; it now names the third opt-in (`sec_s is None`).
 
 Round 1's tests moved to the GM lap, the 0.1.14 numbers kept beside them:
 
@@ -328,7 +401,7 @@ Pillow missing on that python); every Milford test that needs numpy passes under
 
 ## Not done
 
-- **The rehearsal** from an empty workshop: when the PC has the slot (Sand Creek 0.2.9 > Lake Murray 0.20.4 > High Plains
-  0.1.11 > this). Then check: data/centerline.*.json equal to the prediction, the dummies' self-check, the pads' shading
-  (round 1's pads_shade_check), the shoulder's and the section's records, every gate, the kn5 size.
+- **The second rehearsal** from an empty workshop, on the fixes' head, when the PC has the slot. Then check: lane_poke reads
+  0 grass over the road on s 922-975 and the rest of the lap is as 0.1.14 (4 points, max 2.6 mm) or better; the
+  seat-edges section line (vertices); every gate; the kn5 size against 51,192,541 B.
 - **In game:** the GM loop's inner turn and its bank, the shoulder beside the banked corners, the culvert.

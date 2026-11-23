@@ -268,6 +268,11 @@ def test_walk_built_only_reads_no_walk_off_a_pad_ground_band():
         d = _cfg(p)
         if p.parent.name == "sand-creek-lm":
             assert d["defaults"]["walk_built_only"] is True and "skip" not in d["corners"]["SC-D56"]
+            # fwd only (the Mac, 2026-11-23, after rehearsal 0210's FAIL SC-D56-rev c_built_edge_clearance): rev is
+            # skipped by its own sub-object, merged by place_signs.effective_override; fwd carries no skip
+            ov = d["corners"]["SC-D56"]
+            assert ps.effective_override(ov, True)["skip"] is True and "grid_primary_35" in ov["rev"]["reason"]
+            assert not ps.effective_override(ov, False).get("skip") and "fwd" not in ov
         else:
             assert "walk_built_only" not in (d.get("defaults") or {}), p
 

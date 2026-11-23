@@ -543,7 +543,21 @@ round 2 (ledger 0079):
 1. **Quebec's 34.2 m flare off** (9663b80f): route.corner_flare_off gains the sandcreek_quebec corner; the intake re-lays
    v1933..v1951 between its legs' 18.00 and 16.50 m (v1942 34.2 -> 17.24 m).
 2. **The deck edge hanging over the grass on the Northfield Quebec arms**: located and fixed (below).
-3. **SC-D56 back** (9663b80f): signs.json defaults.walk_built_only (opt-in).
+3. **SC-D56 back, fwd only** (9663b80f; rev skipped after rehearsal 0210, the Mac's call): signs.json
+   defaults.walk_built_only (opt-in) brings the fwd plate back.
+   - Rehearsal 0210 (6769e802) stopped at verify_signs: FAIL SC-D56-rev c_built_edge_clearance. The scan's mesh
+     clearance read 1.619 m (MAINLINE's 1.3-3.0), but the record's outside-edge polyline, the lap's own edge, which the
+     dahlia_56th pad replaced there, read 11.12 m away. SC-D56-fwd passed every check (clear 1.644 / polyline 1.963 m;
+     plate bottom 9.0548 = ground 6.9248 + 2.13; post base 6.6248 = ground - 0.30).
+   - rev's cause, as round Q recorded it (build rq1): reversed, the lap comes west on E 56th and turns left onto Dahlia;
+     straight on runs across the pad's deck into E 56th west (grid_primary_35, a through street the sign field does not
+     hold), and the failed-turn rule stands the plate off that street.
+   - `corners.SC-D56.rev = {"skip": true, "reason": ...}`, the per-approach sub-object place_signs.effective_override
+     merges; no tool change. As SC-48S rev: no race layout drives rev, and in Free Roam a left arrow there would point
+     away from a road a driver may take.
+   - Posts: 0.2.8 had 6 (its M-c5-fwd is this corner's fwd plate under its old id), 0.2.9 had 5, 0.2.10 has 6, on 0.2.8's
+     corners.
+   - **Owed:** SC-D56 rev, until the sign field holds grid_primary_35 or the polyline check reads the pad's outline.
 4. **The race kink rise located** (9663b80f): the 7 new kinks sit inside item 1's flare.
 5. **Both heads on lamp_heads** (9663b80f): both_heads_by gone; one path, Lake Murray's.
 6. **The 7 streets onto the lidar:**

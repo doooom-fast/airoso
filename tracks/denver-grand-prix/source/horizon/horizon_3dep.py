@@ -8,8 +8,15 @@ plan-grade file's farthest skyline cell in that arc is 102 km).
 
     python3 horizon_3dep.py tiles <dir>     # prints the seven tile URLs to fetch into <dir> (about 2.8 GB; NOT in git)
     python3 horizon_3dep.py <dir>           # reads <dir>/USGS_13_*.tif, writes horizon.3dep13.json beside this file
+    python3 horizon_3dep.py <dir> --wgs84   # the same on the WGS84 ellipsoid, writes horizon.3dep13.wgs84.json
 
 Needs numpy and rasterio (reading only). No network in the study itself.
+
+--wgs84 (2026-11-23, ledger 0096): the first run took bearings and distances on a sphere of radius 6,371 km from
+geodetic latitudes, which is off from the true azimuth by up to 0.12 degrees at this latitude (Longs Peak 317.06 where
+the geodesic says 316.95) and from the true distance by up to 0.25 %. That is more than the backdrop's peak gate allows
+(0.1 degrees), so the gate's reference is the --wgs84 file: geodesics by pyproj's Geod (needs pyproj). The spherical
+file is kept as it was; DOSSIER section 6's table was printed from it.
 """
 import ast, json, math, os, sys
 import numpy as np
@@ -17,6 +24,11 @@ import numpy as np
 HERE = os.path.dirname(os.path.abspath(__file__))
 TILES = ['n39w105', 'n39w106', 'n40w105', 'n40w106', 'n40w107', 'n41w106', 'n41w107']     # named by their NW corner
 URL = 'https://rockyweb.usgs.gov/vdelivery/Datasets/Staged/Elevation/13/TIFF/current/{t}/USGS_13_{t}.tif'
+WGS84 = '--wgs84' in sys.argv
+if WGS84:
+    sys.argv.remove('--wgs84')
+    from pyproj import Geod
+    GEOD = Geod(ellps='WGS84')
 R = 6371000.0; K = 0.13; EYE = 1.2; DMAX_M = 112000.0; B0, B1, STEP = 180.0, 335.0, 0.5
 
 if len(sys.argv) > 2 and sys.argv[1] == 'tiles':
@@ -63,6 +75,9 @@ class Dem:
 
 
 def dest(lon, lat, brg, d):
+    if WGS84:
+        d = np.asarray(d, float); lo2, la2, _ = GEOD.fwd(np.full(d.shape, lon), np.full(d.shape, lat), np.full(d.shape, brg), d)
+        return np.asarray(lo2), np.asarray(la2)
     b = math.radians(brg); la = math.radians(lat); lo = math.radians(lon); a = d / R
     la2 = np.arcsin(math.sin(la) * np.cos(a) + math.cos(la) * np.sin(a) * math.cos(b))
     lo2 = lo + np.arctan2(math.sin(b) * np.sin(a) * math.cos(la), np.cos(a) - math.sin(la) * np.sin(la2))
@@ -70,6 +85,9 @@ def dest(lon, lat, brg, d):
 
 
 def bearing_dist(lon, lat, lon2, lat2):
+    if WGS84:
+        az, _, s = GEOD.inv(lon, lat, lon2, lat2)
+        return az % 360, s
     la = math.radians(lat); la2 = math.radians(lat2); dl = math.radians(lon2 - lon)
     y = math.sin(dl) * math.cos(la2); x = math.cos(la) * math.sin(la2) - math.sin(la) * math.cos(la2) * math.cos(dl)
     a = math.sin((la2 - la) / 2) ** 2 + math.cos(la) * math.cos(la2) * math.sin(dl / 2) ** 2
@@ -93,8 +111,13 @@ def main(d):
                    'the skyline-forming cell, its elevation_m], and every named peak from every site (bearing and distance to the DEM summit inside the box; blocked_below = the highest ground on that bearing up to 2.5 km short of it, with where it is; beyond_2km repeats that ignoring ground nearer than 2 km, so a bank beside the site does not decide a peak). Eye %.1f m over the DEM ground; '
                    'curvature with refraction k=%.2f; rays to %.0f km. DEM: USGS 3DEP 1/3 arc-second (about 10 m cells, bare earth, '
                    'NAVD88), the staged 1 x 1 degree tiles listed under "dem". Script: horizon_3dep.py beside this file. The plan-grade '
-                   'study it replaces: horizon.plan-grade.json.' % (STEP, B0, B1, EYE, K, DMAX_M / 1000),
+                   'study it replaces: horizon.plan-grade.json.' % (STEP, B0, B1, EYE, K, DMAX_M / 1000)
+                   + (' GEODESY: bearings and distances are geodesics on the WGS84 ellipsoid (pyproj Geod); the curvature drop still '
+                      'uses R = 6,371 km. horizon.3dep13.json is the same study on a sphere.' if WGS84 else
+                      ' GEODESY: bearings and distances on a sphere of R = 6,371 km from geodetic latitudes; see horizon.3dep13.wgs84.json.'),
            'dem': dem.meta, 'sites': {}, 'peaks': {}, 'site_ground_m': {}}
+    if WGS84:                                                    # what the backdrop's peak gate needs to look in the same box
+        res['summit_box_half_deg'] = [0.008, 0.006]; res['site_lon_lat'] = {s: list(v) for s, v in SITES.items()}
     for s, (lo, la) in SITES.items():
         g = float(dem.elev(lo, la)[0]); h0 = g + EYE; res['site_ground_m'][s] = round(g, 2)
         sky = []
@@ -120,7 +143,7 @@ def main(d):
             far = Dn >= 2000.0; kf = int(np.nanargmax(np.where(far, an, -90.0)))            # the same, ignoring ground nearer than 2 km
             pk[name] = {'bearing_deg': round(b, 2), 'distance_km': round(dd / 1000, 2), 'summit_dem_m': round(top, 1),
                         'summit_lon_lat': [round(slo, 5), round(sla, 5)], 'altitude_deg': round(ap, 3),
-                        'nominal_bearing_deg': round(bearing_dist(lo, la, plo, pla)[0], 2),
+                        'nominal_bearing_deg': round(bearing_dist(lo, la, plo, pla)[0], 2), **({'nominal_lon_lat': [plo, pla]} if WGS84 else {}),
                         'blocked_below_deg': round(bl, 3), 'visible': ap > bl, 'clearance_deg': round(ap - bl, 3),
                         'blocker': {'distance_km': round(float(Dn[kb]) / 1000, 2), 'elevation_m': round(float(en[kb]), 1),
                                     'lon_lat': [round(float(blo[0]), 5), round(float(bla[0]), 5)]},
@@ -137,7 +160,7 @@ def main(d):
                       f"blocked-below {v['blocked_below_deg']:5.2f}  {'VISIBLE' if v['visible'] else 'hidden'} ({v['clearance_deg']:+.2f})  "
                       f"highest ground in front: {v['blocker']['elevation_m']:.0f} m at {v['blocker']['distance_km']:.1f} km"
                       + ('' if v['blocker']['distance_km'] >= 2 else f"; beyond 2 km: {v['beyond_2km']['blocked_below_deg']:.2f} ({v['beyond_2km']['clearance_deg']:+.2f}) at {v['beyond_2km']['blocker_distance_km']:.1f} km"))
-    json.dump(res, open(os.path.join(HERE, 'horizon.3dep13.json'), 'w'), separators=(',', ':'))
+    json.dump(res, open(os.path.join(HERE, 'horizon.3dep13.wgs84.json' if WGS84 else 'horizon.3dep13.json'), 'w'), separators=(',', ':'))
 
 
 if __name__ == '__main__':

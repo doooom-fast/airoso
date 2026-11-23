@@ -1,0 +1,35 @@
+{
+ "_doc": "The shared Front Range backdrop: one bake recipe for every track that sees these mountains (PLAN section 3 of tracks/denver-grand-prix, ledger 0096). tools/backdrop_bake.py reads params (every key and its default is in that file's DEFAULTS) and one entry of tracks; tools/backdrop_peak_gate.py reads the same entry's gate block. A track may override any param under its own \"params\". README.md beside this file says how a track is added.",
+ "source": "USGS 3DEP 1/3 arc-second, seven staged 1 x 1 degree tiles; provenance.json beside this file",
+ "params": {
+  "arc_deg": [180.0, 335.0],
+  "near_m": 2000.0,
+  "far_m": 112000.0,
+  "pixel_rad": 0.001,
+  "min_cell_m": 20.0,
+  "radial_factor": 2.0,
+  "refraction_k": 0.13,
+  "viewshed_eye_m": 12.0,
+  "viewshed_margin_deg": 0.1,
+  "viewshed_margin_cells": 2,
+  "viewpoint_spacing_m": 100.0,
+  "blocker_min_m": 2000.0,
+  "max_verts_per_object": 60000,
+  "mesh_prefix": "BACKDROP_FR",
+  "uv_tile_m": 1000.0
+ },
+ "tracks": {
+  "denver-grand-prix": {
+   "slug": "denver_grand_prix",
+   "origin_lon_lat": [-104.9853, 39.7401],
+   "origin_elev_m": 1604.59,
+   "origin_note": "PROVISIONAL: the start line (Colfax at Sherman), the horizon study's site. Denver has no track.config.json yet; when it gets its origin, write that origin and its elevation here and bake again.",
+   "road_line": "tracks/denver-grand-prix/data/lap_line.plan.json",
+   "gate": {
+    "horizon": "tracks/denver-grand-prix/source/horizon/horizon.3dep13.wgs84.json",
+    "site": "Denver GP start (Colfax/Sherman)",
+    "start_line_lon_lat": [-104.9853, 39.7401]
+   }
+  }
+ }
+}

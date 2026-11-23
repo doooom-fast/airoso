@@ -350,7 +350,8 @@ def test_the_check_refuses_an_opted_in_build_without_the_heads_file():
 def test_both_heads_is_lake_murrays_alone_and_wired_as_an_author_step():
     assert CFG["scenery"]["streetlights"]["light_both_heads"] is True
     au = SHIP["steps"]["author"]
-    assert au[0] == "lamp_heads" and au[-3:] == ["race_author", "signs", "race_verify"]   # the race steps keep their order
+    # (ledger 0055 round 2: College's own step stands before it, on the road and the lamps as they ship)
+    assert au[:2] == ["college_split", "lamp_heads"] and au[-3:] == ["race_author", "signs", "race_verify"]   # the race steps keep their order
     assert "author_lamp_heads() {" in TEXT and "tools/author_lamp_heads_blend.py" in TEXT
     assert "data/lights.heads.json" in SHIP["sync_out"]["files"]
     for p in OTHER_CONFIGS:

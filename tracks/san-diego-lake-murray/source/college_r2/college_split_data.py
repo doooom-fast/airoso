@@ -585,7 +585,8 @@ if WRITE:
             rec["head_y"] = head[1]
             if i < len(lens):
                 r_lens = rise_at(lens[i][0], lens[i][2])[2]
-                rec["lens_y_was"], lens[i][1] = lens[i][1], round(lens[i][1] + r_lens, 4)
+                rec["lens_y_was"], lens[i][1] = lens[i][1], round(lens[i][1] + r_lens, 3)      # the file's own precision: tools/
+                # author_lamp_heads_blend.py puts the back lens at the front lens's height, to the millimetre
                 rec["lens_y"], rec["rise_m"] = lens[i][1], round(r_lens, 3)
             for row in (LJ.get("seat_check") or {}).get("rows") or []:
                 if row.get("lamp") == i:

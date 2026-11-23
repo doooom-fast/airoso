@@ -268,7 +268,8 @@ def test_lake_murray_opts_in_and_no_other_track_does():
 
 def test_walk_grade_is_an_author_step_before_the_race_steps_and_lake_murrays_alone():
     au = SHIP["steps"]["author"]
-    assert au[:2] == ["lamp_heads", "walk_grade"] and au[-3:] == ["race_author", "signs", "race_verify"]
+    # (ledger 0055 round 2: college_split first, so the walks it rebuilds are graded here with every other)
+    assert au[:3] == ["college_split", "lamp_heads", "walk_grade"] and au[-3:] == ["race_author", "signs", "race_verify"]
     assert "author_walk_grade() {" in SH and "tools/author_walk_grade_blend.py" in SH
     assert "data/walk_grade.json" in SHIP["sync_out"]["files"] and "data/walk_grade.seat.json" in SHIP["sync_out"]["files"]
     seat = SH[SH.index("prep_prep() {"):SH.index("prep_split() {")]

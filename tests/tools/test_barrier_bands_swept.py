@@ -32,6 +32,9 @@ sys.path.insert(0, str(ROOT / "tools"))
 import barrier_bands as bb  # noqa: E402
 
 TRACK = ROOT / "tracks" / "san-diego-lake-murray"
+sys.path.insert(0, str(ROOT / "tests"))
+import sd_v0180  # noqa: E402
+DATA = sd_v0180.DATA_0204      # the track data these tests pin: Lake Murray 0.20.4's, frozen (tests/sd_v0180.py)
 KERB_DROPS = [{"apex": 1514, "kind": "outside", "drop": True, "why": "test: inside the W1 opening"},
               {"apex": 2319, "kind": "outside", "drop": True, "why": "test: inside the W5 opening"}]
 
@@ -50,13 +53,13 @@ def _project(full: bool = False) -> Path:
     d = Path(tempfile.mkdtemp())
     (d / "data").mkdir()
     for f in ("centerline.local.json", "median_bands.json", "bridge.spans.auto.json"):
-        shutil.copyfile(TRACK / "data" / f, d / "data" / f)
-    base = json.loads((TRACK / "data" / "connectors.local.json.pre-trim").read_text(encoding="utf-8"))
-    local = json.loads((TRACK / "data" / "centerline.local.json").read_text(encoding="utf-8"))
+        shutil.copyfile(DATA / f, d / "data" / f)
+    base = json.loads((DATA / "connectors.local.json.pre-trim").read_text(encoding="utf-8"))
+    local = json.loads((DATA / "centerline.local.json").read_text(encoding="utf-8"))
     with contextlib.redirect_stdout(io.StringIO()):
-        stubs = rc._authored_take("north", TRACK / "data" / "expansion.north.json", ["W1", "W5"], local)
+        stubs = rc._authored_take("north", DATA / "expansion.north.json", ["W1", "W5"], local)
     if full:
-        doc = json.loads((TRACK / "data" / "expansion.north.json").read_text(encoding="utf-8"))
+        doc = json.loads((DATA / "expansion.north.json").read_text(encoding="utf-8"))
         cf = next(w for w in doc["welds"] if w["id"] == "W1")["connector_full"]
         y = rc._despike_smooth_cap([q[1] for q in cf["points_xyz_m"]], rc.RESAMPLE_M)
         stubs[0] = {"name": cf["name"], "kind": "connector", "widths_m": list(cf["widths_m"]),
@@ -65,6 +68,7 @@ def _project(full: bool = False) -> Path:
     (d / "data" / "connectors.local.json").write_text(json.dumps(base), encoding="utf-8")
     cfg = json.loads((TRACK / ".p1-rehearsal.bak" / "track.config.json").read_text(encoding="utf-8")) \
         if (TRACK / ".p1-rehearsal.bak").exists() else json.loads((TRACK / "track.config.json").read_text(encoding="utf-8"))
+    sd_v0180.one_road_college(cfg)     # ledger 0055 round 2: the numbers pinned here are the one-road College's
     # (ledger 0054 P3: the config now declares route.aprons for good; these tests judge the stubs without the apron —
     # its record is a build artefact — and the apron test below declares it itself)
     cfg.get("route", {}).pop("aprons", None)

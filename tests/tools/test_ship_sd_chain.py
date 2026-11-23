@@ -601,7 +601,8 @@ def test_lap_groups_are_wired_and_inert_without_a_lap_ledger_0054():
     assert _first('if [ "$HAS_MAIN" = 1 ]; then\nstep "ship: export the COMMON race-furniture kn5') < \
         _first('--blend "$PROJ/blender/split/loop_race_$lap.blend"') < _first("for lid in $RACE_IDS; do\n  # the owner token")
     # the pyq programs, run on the real Lake Murray config: since 0.20.2 (ledger 0054 Phase 2) the north lap drives
-    # north_cw / north_acw from its own kn5 and bands, and the mainline still drives the Speedways
+    # north_cw / north_acw from its own kn5 and bands; since 0.20.5 (ledger 0055 round 2) the Speedway drives the lap
+    # `college` (College's northbound road) from its own, and the mainline still drives the Speedway Reverse
     import json
     import subprocess
     import sys as _sys
@@ -612,9 +613,9 @@ def test_lap_groups_are_wired_and_inert_without_a_lap_ledger_0054():
             "print(lo['id'], d['slug']+('_race.kn5' if not lap else '_race_%s.kn5'%lap), L.bands_file(lap))")
     out = subprocess.run([_sys.executable, "-c", code, str(cfgp)], cwd=ROOT, capture_output=True, text=True, check=True)
     lines = out.stdout.strip().splitlines()
-    assert lines[0].split() == ["north", "|", "1"], lines
+    assert lines[0].split() == ["college", "north", "|", "1"], lines
     slug = json.loads(cfgp.read_text(encoding="utf-8"))["slug"]
-    assert lines[1:] == [f"race_cw {slug}_race.kn5 barrier_bands.json", f"race_acw {slug}_race.kn5 barrier_bands.json",
+    assert lines[1:] == [f"race_cw {slug}_race_college.kn5 barrier_bands.college.json", f"race_acw {slug}_race.kn5 barrier_bands.json",
                          f"north_cw {slug}_race_north.kn5 barrier_bands.north.json",
                          f"north_acw {slug}_race_north.kn5 barrier_bands.north.json"]
 

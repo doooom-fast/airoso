@@ -330,3 +330,10 @@ merged into `claude/lm-finish-r2-20261122`. The College step runs first in the a
   and every one on the bank under none; a second run changes nothing. The forks turned out to need no pads: with the
   built outer edges kept, the built rows already pave them (tilt eased in, a fan of six faces where the two roads begin).
   The island begins and ends in a point. Walks, the old island, paint, lamps and ground are the next steps.
+
+- **Step 3, the middle** (`college_middle_blend.py`, scratch scene only): the old island, its grass top, its barrier, the
+  street-only pieces and the paint are out between rows v1116 and v1476; in their place the bank's island and grass top,
+  a barrier at the top of the bank, the east walk raised with the northbound road (up to 5.55 m) and new paint on the
+  forks and the two one-way roads. Faces per object and the checks are in `STEP-DESIGN.md`, "Step 3 done". No lamp or
+  sign stood on the old median. **120 median bushes (TreeFX, `data/scatter_positions.json`) still stand on rows
+  v1114-1478, 30 of them on what is now the fork's pavement**: the data step has to drop them and plant the bank.

@@ -131,3 +131,10 @@ The two roads as lap data, no Blender: the mainline moved onto the southbound ro
 `blender --background <loop.blend> --python-exit-code 1 --python college_split_blend.py -- [--save-as <copy>]` edits ROAD
 from `college_split.data.json` and checks itself (no save on a failure). Scratch scene only so far; `STEP-DESIGN.md`,
 "Step 2 done", has the result and what changed in the plan (the forks are plain road, not pads).
+
+## The middle (step 3, `college_middle_blend.py` -> `college_split_step3.jpg`)
+
+Run on a scene that carries step 2: `blender --background <loop.blend> --python-exit-code 1 --python college_middle_blend.py -- [--save-as <copy>]`.
+Takes the old island, its top, barrier, street-only pieces and paint out and builds the bank, the barrier, the raised
+east walk and the paint. `STEP-DESIGN.md`, "Step 3 done", has the numbers. `college_split_stills_blend.py` takes a third
+argument naming the objects to show.

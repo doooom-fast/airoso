@@ -358,3 +358,54 @@ Step 3b, the new middle and the east side:
 Left for step 4: the ground under and beside all this (the old ground inside the bank's footprint, the east side's cut
 up to the raised walk, the fill of the old island in the forks), the east lamps and `data/lights.local.json`, then the
 data into a workshop and the chain's own steps.
+
+## Step 3 done: the middle (2026-11-23)
+
+`college_middle_blend.py`, run on step 2's scene and saved as a copy
+(`D:/k10-scratch/lm_r2_college/step2/loop.middle.blend`; the seed copy untouched, md5 ef4d0ca3). Stills with road,
+curbs and walks, rail and paint shown, before and after: `college_split_step3.jpg`.
+
+Faces out and in, per object:
+
+| Object | Faces removed | Faces added | What |
+|---|---|---|---|
+| `CURB` | 940 | 1,094 | out: the old island's curb between rows v1116 and v1476 (936 band faces and the 4 cap faces at the chicane's two cuts). In: 271 rings of the bank's island (1,080 faces), a pointed nose of 5 faces at each end, the 4 cap faces of the two islands that stay |
+| `TERRAIN` | 360 | 270 | out: the old island's grass top, one quad per segment. In: the bank's top |
+| `GUARDRAIL` | 1,300 | 1,408 | out: the College island's beam and posts from row v1114 on. In: the beam on rows v1176-1440 (1,056 faces) and 88 posts |
+| `1KERB_sidewalk_streetonly_median` | 504 | 0 | the object is gone (its span was the chicane's) |
+| `1WALL_guard_streetonly_median` | 672 | 0 | the same |
+| `YLINE` | 1,384 | 1,384 | repainted on rows v1130-1476 |
+| `MARKINGS` | 2,556 | 2,186 | repainted on the same rows |
+
+The step's own checks (exit 1 and no save on a failure): in `CURB` no vertex moved but the 1,380 of the east walk (4 a
+row on rows v1131-1475; they rise 0.001 to 5.551 m with the road's east edge) and the 36 of the six tapered rows; no
+`CURB` vertex stands on either road's pavement along the two roads; none of the old island is left between rows v1116
+and v1476; every paint vertex in the zone stands 0.015 m over its own road (none over the bank; no divider had to be
+left out). A second run on its own output changes nothing.
+
+What stood on the old median, and where it went:
+
+- **No lamp**: the posts of `LIGHTPOST_3` / `_4` stand in the two walk strips; only their arms reach over the road.
+  (The east ones still stand at the old height: step 4.)
+- **No sign**: the nearest signed corner is J1, apex v1514, outside the zone.
+- **The barrier**: out with the island; a new one stands at the top of the bank, 0.45 m behind the northbound road's
+  inner edge.
+- **Plants: yes, as data.** This scene has no `SCRUB` object; the median's plants are TreeFX bushes from
+  `data/scatter_positions.json` `median_planting`. **120 of them stand on rows v1114-1478**: 30 in the south fork (on
+  what is now pavement), 72 along the two roads, 18 in the north fork and beyond. Nothing in the scene moves them: the
+  data step has to drop those 120 and plant the bank instead. Until then a build would put bushes on the fork's
+  pavement. That is in step 4's list.
+- **The islands that stay** (to v1116 in the south; v1476-1487 in the north) end in the median tool's own nose now:
+  three rows tapering to 0.5 m and a cap. The north one is 12 rows long.
+
+Choices made here, each `[invented]` until something measured replaces it: the barrier's place (0.45 m behind the
+inner edge, posts 0.35 m into the bank, beam four rows in from each end); the paint on the two one-way roads (yellow
+0.55 m inside the median edge, white 0.55 m inside the outer edge, dashed dividers every 3.65 m from the yellow, the
+built clip rule; the double yellow of each fork opens into a gore that meets the two yellows where the roads part).
+The lanes are not measured: the 10 cm aerial work replaces this paint.
+
+Step 4 from here: the ground (the old ground inside the bank's footprint and under the northbound road, the east
+side's cut up to the raised walk, the old island's fill in the forks), the east lamps and `data/lights.local.json`,
+the 120 median plants in `scatter_positions.json`, the config (the chicane, `route.median_registration`, the
+`college_split_cut` zone, the corridor on the piece at its real width, the fork closures and probes), then the data
+into a workshop and the chain's own steps.

@@ -34,6 +34,7 @@ HERE = Path(__file__).resolve().parent
 LIFT = 0.10                       # the road rides this far over the centreline's y (tools/race_furniture.py LIFT)
 A0, NOSE, TAIL, A1 = 1130, 1172, 1444, 1476
 ISLAND_OFF = (1117, 1475)         # island width 0 on the mainline, inclusive
+FRAME = (1090, 1500)              # the built line's frame is written for these vertices (the zone and its surroundings)
 PIECE = "college_nb"
 LAP = "college"
 
@@ -371,6 +372,17 @@ out = {"what": "College split, the data (college_split_data.py)", "report": repo
                 "fork_y": [[round(edge_y["sb_west"][v], 4), round(centre_y[v], 4), round(edge_y["nb_east"][v], 4)]
                            for v in ZONE if not NOSE <= v <= TAIL and v not in (A0, A1)]},
        "built_line_y": [round(P0[v][1], 4) for v in ZONE],
+       "frame": {"_doc": "the BUILT line around the zone, per centreline vertex: its point (engine x, y, z), its left normal "
+                         "(nx, nz: + = west on College), half the built width and the station. Scene vertices are told apart "
+                         "by station and offset in THIS frame (the built objects were swept in it).",
+                 "from_v": FRAME[0], "to_v": FRAME[1],
+                 "x": [round(P0[v][0], 4) for v in range(FRAME[0], FRAME[1] + 1)],
+                 "y": [round(P0[v][1], 4) for v in range(FRAME[0], FRAME[1] + 1)],
+                 "z": [round(P0[v][2], 4) for v in range(FRAME[0], FRAME[1] + 1)],
+                 "nx": [round(frame(v)[0], 6) for v in range(FRAME[0], FRAME[1] + 1)],
+                 "nz": [round(frame(v)[1], 6) for v in range(FRAME[0], FRAME[1] + 1)],
+                 "half_w": [round(0.5 * W0[v], 4) for v in range(FRAME[0], FRAME[1] + 1)],
+                 "s_m": [round(S0[v], 3) for v in range(FRAME[0], FRAME[1] + 1)]},
        "lap_zone": {"_doc": "the Speedway lap through the zone, one point per mainline station (south join, the piece, north join)",
                     "from_v": A0, "to_v": A1, "offset_m": [round(lap_off[v], 3) for v in ZONE],
                     "points_xyz_m": [[round(c, 4) for c in lap_zone[v]] for v in ZONE]},

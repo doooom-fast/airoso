@@ -1,6 +1,6 @@
 """Stills of the College split's RIBBONS (step 2): ROAD and TERRAIN only, three cameras, Workbench.
 
-    blender --background <a loop.blend> --python college_split_stills_blend.py -- <out dir> <tag>
+    blender --background <a loop.blend> --python college_split_stills_blend.py -- <out dir> <tag> [object,object,...]
 
 Run it on the scene before the step (tag "before") and after it (tag "after"): the cameras are the same in both,
 placed from college_split.data.json. Everything but ROAD and TERRAIN is hidden: the walks, the old island, the paint,
@@ -33,12 +33,16 @@ def mid(v):
 
 
 scene = bpy.context.scene
+COLOURS = {"ROAD": (0.16, 0.16, 0.17, 1.0), "TERRAIN": (0.36, 0.47, 0.27, 1.0), "CURB": (0.62, 0.61, 0.58, 1.0),
+           "GUARDRAIL": (0.80, 0.80, 0.84, 1.0), "MARKINGS": (0.92, 0.92, 0.90, 1.0), "YLINE": (0.86, 0.68, 0.10, 1.0),
+           "1KERB_sidewalk_streetonly_median": (0.62, 0.61, 0.58, 1.0), "1WALL_guard_streetonly_median": (0.80, 0.80, 0.84, 1.0)}
+SHOW = argv[2].split(",") if len(argv) > 2 else ["ROAD", "TERRAIN"]          # a third argument names the objects to show
 for ob in scene.objects:
-    keep = ob.name in ("ROAD", "TERRAIN")
+    keep = ob.name in SHOW
     ob.hide_render = not keep
     ob.hide_viewport = not keep
-bpy.data.objects["ROAD"].color = (0.16, 0.16, 0.17, 1.0)
-bpy.data.objects["TERRAIN"].color = (0.36, 0.47, 0.27, 1.0)
+    if keep and ob.name in COLOURS:
+        ob.color = COLOURS[ob.name]
 scene.render.engine = "BLENDER_WORKBENCH"
 sh = scene.display.shading
 sh.light = "STUDIO"

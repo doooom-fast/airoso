@@ -32,6 +32,14 @@ TEXTURES = {
     # kerbs carry their own per-face-corner UVs (race_furniture.kerb_atlas_face_uvs: the column by
     # wear, v along the kerb's real length), kept by the prep's planar_uv skip.
     "1KERB_RACE": ("kerb_race_worn_diffuse.jpg", "kerb_race_worn_normal.jpg", 0.55, (0.62, 0.10, 0.08, 1), 0.0, False),
+    # 1KERB_PAVER BEFORE 1KERB (ledger 0099 round 3, Lake Murray): a raised median's PAVED top (Mission Gorge Rd's
+    # terracotta; tools/author_median_tops_blend.py). The name keeps the 1KERB prefix on purpose: its surfaces.ini key is
+    # KERB, the hard row every street curb and sidewalk already has, so no physical value is invented for it. Its OWN
+    # row, so it never falls through to the red racing kerb below, and a track's override keyed "1KERB" or
+    # "1KERB_SIDEWALK" cannot reach it (overrides bind by the matched key). Stock skin: ambientCG PavingStones135 (CC0,
+    # assets/textures/terracotta_paver.md), untinted; a track matches the tone to its own aerial with its own override.
+    # The fallback colour is the diffuse's own mean (166.0 / 123.7 / 107.8 of 255); the roughness is [invented] (Blender only).
+    "1KERB_PAVER": ("terracotta_paver_diffuse.jpg", "terracotta_paver_normal.jpg", 0.80, (0.65, 0.49, 0.42, 1), 0.0, False),
     "1KERB":   ("kerb_diffuse.png",    None,                 0.55, (0.62, 0.10, 0.08, 1), 0.0, False),
     "CURB":    ("building_diffuse.jpg", "building_normal.jpg", 0.70, (0.64, 0.64, 0.66, 1), 0.0, False),   # concrete street curb (fallback if a loop mesh keeps this name)
     "SIDEWALK": ("building_diffuse.jpg", "building_normal.jpg", 0.75, (0.68, 0.68, 0.66, 1), 0.0, False),  # concrete sidewalk slab

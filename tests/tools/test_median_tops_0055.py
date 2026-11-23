@@ -29,7 +29,8 @@ SH = (ROOT / "tools" / "ship_track.sh").read_text(encoding="utf-8")
 
 def test_the_key_names_the_object_and_the_name_must_be_a_lawn_name():
     assert MT.spec({}) is None and MT.spec({"route": {}}) is None                    # not opted in: nothing to do
-    assert MT.spec(CFG) == {"object": "1LAWN_median"}
+    assert MT.spec(CFG)["object"] == "1LAWN_median"      # + "paver" since 0.20.6: tests/tools/test_terracotta_median_0099.py
+    assert MT.spec({"route": {"median_tops": {"object": "1LAWN_median"}}}) == {"object": "1LAWN_median"}
     for bad in ("1GRASS_median", "MEDIAN_TOP", "1KERB_median", ""):
         try:
             MT.spec({"route": {"median_tops": {"object": bad}}})

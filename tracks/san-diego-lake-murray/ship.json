@@ -106,6 +106,8 @@
       "textures/chaparral_far_diffuse.jpg",
       "textures/sandstone_cut_diffuse.jpg",
       "textures/sandstone_cut_normal.jpg",
+      "textures/terracotta_median_diffuse.jpg",
+      "textures/terracotta_median_normal.jpg",
       "source/expansion/pipeline__osm_lamps_signals.json",
       "source/expansion/aerial__veg_bins.json",
       "source/expansion/p3-proofs/measure_p3.json",

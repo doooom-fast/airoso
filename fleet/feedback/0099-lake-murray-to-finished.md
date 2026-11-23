@@ -650,3 +650,139 @@ from what the install synced back or what main brought, none from the build:
   now", scoped to those four on 2026-11-22) and refuses them everywhere else.
 - The 14 older diagnostic plots the sync-back dropped (`race_plots/*/nose_1258|1374.png`, `signs_plots/sign_M*.png`,
   drawn before 0.20.2) are restored unchanged (4dcb76cf): nothing is deleted.
+
+## Round 3, item 1 (the PC, 2026-11-23): Mission Gorge's median wears terracotta pavers. 0.20.6, green on scratch, not rehearsed
+
+Round 3 as the Mac set it on 2026-11-23, after 0.20.5 installed (no force) and merged as main 366a5a4c: branch
+`claude/lm-finish-r3-20261123` from that commit, version **0.20.6**. Its order: **1** terracotta on Mission Gorge's raised
+median; **1b** that island's band over piece C s 990-1210 (a real intersection, below); **2** MD12, only on measured rows;
+**3** road wear; **4** Jackson north's paint over rows 496-579; **5** the J1 tilt; then Phase 3. This section is item 1.
+The side branch merged for it: `claude/lm-terracotta-tex-20261123` (4e4cab53, the CC0 paver and its measured tone).
+
+**What 0.20.5 ships there.** Grass. All 14 islands' tops went into `1LAWN_median` (ledger 0055, the medians). The plan
+(`data/expansion.north.json`) declares Mission Gorge's two built islands, MD11 and MD13, as `terracotta`.
+
+**What the photo shows** (`source/expansion/mg_median/`, its README holds every number): on NAIP 2022, MD13's kept pixels
+read terracotta (R - G +13 to +27) in every 50 m bin over s 260-1010 and s 1210-2245, and no bin is planted end to end
+(highest canopy share 0.27). MD11 is narrower than the photo's colour resolution and reads near-grey: it is built
+terracotta as the plan declares, and its tone is **[inferred from MD13]**, not measured. So both islands are paved over
+their whole built length: no grass stretch, no concrete stretch. The plants keep their measured places.
+
+### What was built
+
+1. **The surface is the name.** `scripts/ac/track_folder.py` writes only ROAD / KERB / RUNOFF / GRASS / LAWN (+ WALL).
+   The hard row is KERB, the one every `1KERB_sidewalk` already has (friction 0.92, valid track, `kerb.wav`, and
+   FF_EFFECT 1 on Lake Murray). The paved tops' object is `1KERB_PAVER_median`: no physical value is invented.
+   **To know:** a car that drives onto the terracotta hears the kerb and feels its rumble in the wheel, exactly as on a
+   sidewalk today. Accepted by the Mac as written.
+2. **The material row.** `scripts/ac/pbr.py` binds a mesh by the first matching prefix, so `1KERB_...` would have worn the
+   red racing kerb. One new row, `1KERB_PAVER`, stands above `1KERB` (stock skin: the untinted CC0 pair). It went into
+   the engine of record the way the earlier rows did: the same file in airoso and in
+   `engine-july-snapshot/scripts/ac/pbr.py`, refreshed by `tools/snapshot_engine_july.py` from a scratch engine copy that
+   matched the snapshot file for file before the change. `MANIFEST.md5` and `PENDING-MIRROR.md5` carry the new md5
+   (e414f407...; the live engine-july still holds 56c3307f...). The same refresh dropped two rows from `REFERENCED.md5`,
+   `guardrail_diffuse.png` and `guardrail_normal.png`: the table's later `GUARDRAIL` row names `wbeam_rail_diffuse.png`
+   since the bespoke-assets work (82f653c4), so no row reads those two any more. That staleness was there before this change; the tool's own
+   `--check` already called it drift.
+   **No other mesh name is bound differently:** `tests/tools/test_terracotta_median_0099.py` resolves every mesh name the
+   repo writes (the table's keys, and each `1...` name in the tools, the engine scripts, every track's config, ship.json
+   and assembler: 514 names) against the overrides of all 31 tracks, with and without the row, and they are identical; no
+   other track's config or ship.json names the row.
+3. **The tone and the scale.** `textures/make_terracotta_median.py` (PIL only) writes
+   `textures/terracotta_median_diffuse.jpg` / `_normal.jpg`, bound by `texture_overrides["1KERB_PAVER"]` and carried into
+   the workshop by `ship.json sync_in.optional`. It does two things. Each channel of the diffuse is multiplied by one
+   gain (0.888 / 1.028 / 1.067, the method of `tools/make_owned_surfaces.py _match_mean`), so the file's mean is the
+   mean the photo shows on MD13: target 147.9 / 127.8 / 115.6, the file measures **147.85 / 127.86 / 115.52**. And the
+   image holds 2 x 2 repeats of the paver, because the prep lays every 1KERB mesh on its 4.0 m top-down grid and its
+   list of meshes left alone is in the prep, which is not touched: one repeat is **2.0 m** on the ground, 5 % over the
+   asset's own "ca. 1.9 m". To the eye the toned paver is a muted, greyer salmon, not brick red: that is what the 2022
+   photo shows, and it is Kevin's to judge on a drive.
+4. **The step.** `tools/author_median_tops_blend.py` reads `route.median_tops.paver` (`object`, and `islands` by line and
+   first / last row, exactly as `data/median_bands.json` builds them) and gives those islands' tops their own object. It
+   converges: a top still in TERRAIN is moved out; a top already in one object but declared for the other is moved
+   across (the committed blend is 0.20.5's, whose 14 tops are all in `1LAWN_median`); a scene already right is not
+   saved. New refusals, all fatal and nothing saved: a paved object not named `1KERB_PAVER...`; a listed island that is
+   not built row for row, or has no top in the scene; a top that moves and is no longer a deck (the same 0.185 +- 0.06 m
+   over the road); deck strips still in TERRAIN beside the tops' objects. No number of the step changed.
+5. **Who else reads the top.** `tools/make_treefx.py` adds the paved object to the materials TreeFX seats a plant on.
+   GrassFX takes only 1GRASS / 1LAWN meshes, so no blade grows on the pavers, with no change. The measure
+   `source/college_r2/median_tops_check.py` counts paved rows apart from grass rows.
+
+### Measured on a scratch workshop, through the chain's own commands
+
+`source/college_r2/scratch/run_full.ps1` then `run_gates.ps1` on a workshop seeded as the chain seeds one, Blender 4.2 at
+below-normal priority while the PC rehearsed Milford. `run_gates.ps1` now gates `north_cw` too (the north lap runs along
+Mission Gorge with this median as its closed side). 0.20.5's column is its rehearsal 2 (c6352faf), unless marked.
+
+| | 0.20.5 | item 1 on scratch |
+|---|---|---|
+| the median step | 14 tops in `1LAWN_median`, 4,282 vertices / 4,254 faces | 2 tops moved across: 12 islands in `1LAWN_median` (2,842 / 2,818), 2 in `1KERB_PAVER_median` (1,440 / 1,436); 2,123 rows checked, 0 without a top |
+| the prep's conform | 79,062 edges split, 203,540 pinned, 53,792 feathered | the same three numbers |
+| the thinning | 1,021,079 -> 540,064 vertices | 1,021,079 -> **540,045** (19 fewer, below) |
+| the walk's seat | 3,202 lips | 3,202 |
+| kn5_ground_check, street / race_cw / north_cw | 0 double-sheet cells; max +0.313; 43 of 10,900 over 0.05 m | the same on all three |
+| street drive_test | PASS, 10 drops, 44 far | PASS, 10 drops, 44 far, severe 0 |
+| street audit | CLEAN; F 0 of 97,526 curb verts | CLEAN; F 0 of 101,834 (+4,308: the paved top's 1,436 faces x 3); K 0, I 0 |
+| race_cw drive_test | PASS, severe 7, 0 drops, 142 far | the same |
+| race_cw audit / no_route | CLEAN, F 0 of 105,330 / PASS, leak 0, 138.2 k m2 | CLEAN, F 0 of 109,638, K 0, W 0 / PASS, leak 0, 138.2 k m2 |
+| north_cw drive_test | PASS, severe 5, fold severe 12, 0 drops, 34 far | the same |
+| north_cw audit / no_route | CLEAN, F 0 of 103,756 / PASS | CLEAN, F 0 of 108,064, K 0, W 0 / PASS, leak 0, 0 of 325 probes, 88.4 k m2 |
+| the built medians (`median_tops_check.py` on the gate OBJ) | 2,123 rows grass, 0 asphalt | 1,419 grass + **704 paved** (MD11 25, MD13 679), 0 asphalt |
+
+- **Nothing that stands on the two islands moved.** The prep seats props on 1GRASS / 1ROAD / 1KERB, and a paved top is
+  1KERB where a grass top was 1LAWN, so anything standing there could have risen 0.185 m. Measured
+  (`mg_median/props_on_islands.py`, the two road kn5s over the islands' bands + 0.6 m): the only mesh in the bands that is
+  not ground, road, kerb or paint is `1WALL_guard`, 2,356 plan positions, every one at the same height. No lamp and no
+  sign stands on them.
+- **The 19 ground vertices.** The thinning reads its distances to the pavement's own vertices (1ROAD / 1KERB), and the
+  paved top's 1,440 are pavement now. The ground differs in three tiles only (1GRASS_6, _7, _13: 104 positions only
+  before, 85 only after), every one within 18.1 m of the paved island. The thinning's own self-check passed, and the
+  ground check reads the same.
+- **Not run on scratch:** race_acw and north_acw, the whole of verify_kn5, the AI lines, TreeFX, the track folder. The
+  plant seat is held by a unit test; the rehearsal's `ext_config.ini` should list `1KERB_PAVER_median_mat` in
+  SURFACE_MATERIALS.
+
+### For the rehearsal
+
+- The engine copy must carry the snapshot's `scripts/ac/pbr.py` (md5 e414f407..., CRLF read as LF): the row is not in
+  `eng_repro` or the live engine-july. The textures need nothing: `sync_in.optional` brings the toned pair and the
+  override resolves against the project.
+- On the first build from the committed blend the median step prints `"from_one_top_object_to_the_other": 2` and saves;
+  a second run prints "every top already lies in its own object" and saves nothing.
+- Against 0.20.5 the road kn5 should differ in: `1LAWN_median` (smaller), the new `1KERB_PAVER_median` with its material
+  and two textures, and 1GRASS_6 / _7 / _13 (the 19 vertices). Everything else equivalent.
+
+### Known, and left for item 1b
+
+The grey stretch of MD13 (s 1010-1210 reads R - G +3.5 to +10.7) is not grey paving. The photo shows a real crossing
+there, Mission Gorge Rd with Margerum Avenue and Mission Vista Drive: no median for about 33 m (s 1087-1120), and a strip
+about 2 m wide beside the turn pockets either side, where the plan's band is 4.6-5.3 m. The plan's width is linear
+between eye readings 250 m apart and knows none of it, so the built island runs unbroken across the crossing. Both side
+streets are already built as stubs there (ledger 0054 phase 5: `mission_vista_drive_5977531_L`,
+`margerum_avenue_135149732_R`), so nothing but the median is wrong. Item 1 paves the island as built; item 1b re-reads its
+band from the photo and re-declares the north lap's noses. Whether the crossing is signalised is **[inferred]** from its
+crosswalks.
+
+*Corrected before any push:* my first report to the Mac said the network had nothing at the crossing and owed two stubs.
+I had read only the plan's junction arms (S1-S6), not `data/stubs.plan.json`. The north lap's no_route output on the
+scratch run named the stub walls along Mission Gorge, and the plan file holds both.
+
+### Tests
+
+`tests/tools/test_terracotta_median_0099.py` (11 tests): the row and its order; no other mesh name bound differently on
+any track; Lake Murray's override; the islands listed and what the step refuses; the lines the step leans on in the
+prep's snapshot; the KERB row; GrassFX; the plant seat; the toned pair (tone within 0.5 of the target, 2 x 2 repeats);
+the version. `test_median_tops_0055.py` and `test_lake_murray_0099.py` follow (the spec's new key, version 0.20.6). On the
+PC: 1,681 pass; 11 fail and 10 files do not load, all this machine's own (no numpy, the live engine-july's exporter), none
+in a file this item touches.
+
+### Shared files touched
+
+`scripts/ac/pbr.py` and its snapshot copy with `MANIFEST.md5` / `PENDING-MIRROR.md5` / `REFERENCED.md5`;
+`tools/author_median_tops_blend.py`; `tools/make_treefx.py`; `assets/licenses.json`;
+`source/college_r2/scratch/run_gates.ps1` (north_cw) and `source/college_r2/median_tops_check.py`.
+
+### Needs Kevin
+
+Nothing to decide. On the next drive: the paved median's colour (a muted salmon, matched to the 2022 photo), and that it
+sounds and rumbles like a sidewalk if driven on.

@@ -4,7 +4,7 @@
   "ui_series": "",
   "_ui_series_doc": "Engine track_folder prefixes the CM display name with ui_series (default 'K10 Colorado'); empty = use the track name as-is (SD names already carry the K10 - San Diego branding).",
   "slug": "san_diego_lake_murray",
-  "version": "0.20.5",
+  "version": "0.20.6",
   "author": "k10-san-diego",
   "year": 2026,
   "_about": "A single drivable LOOP around Lake Murray (Kevin's childhood neighborhood). This repo is the standalone, Blender-first home for the track: the loop is mapped from the REAL roads (OpenStreetMap) at REAL elevation (USGS 3DEP), imported into Blender, and shaped there interactively (Kevin designs, Claude operates) BEFORE any kn5 export. Start point = just the 5-road main loop; everything else is added deliberately, in Blender.",
@@ -193,7 +193,15 @@
     },
     "median_tops": {
       "_doc": "ledger 0055, 'Known defect of the current build' (the Mac 2026-11-23, option (a)): every raised median showed the road's asphalt between its curbs, because its grass top was part of TERRAIN and the prep sets every 1GRASS vertex with pavement under it to the deck less 0.02 m (2,486 of 2,486 island rows on 0.20.3). Opt-in key of the chain's author step median_tops (tools/author_median_tops_blend.py): every island's top is moved, face for face, out of TERRAIN into this object, which the prep does not pin. The name is the surface and the material: 1LAWN is the engine table's other physical turf row (the same grass textures this track's ground wears); lawn_as_grass gives its surface key GRASS's own values. tools/make_treefx.py seats the median plants on it. Absent = no-op.",
-      "object": "1LAWN_median"
+      "object": "1LAWN_median",
+      "paver": {
+        "_doc": "ledger 0099 round 3, item 1 (the Mac 2026-11-23): Mission Gorge Rd's raised median is terracotta pavers, not grass (the plan's MD11 and MD13, type 'terracotta'). NAIP 2022 shows the salmon paving along MD13 (kept pixels R - G +13 to +27 in 50 m bins, no stretch planted end to end: source/expansion/mg_median/). The islands listed here, by line and first / last row as data/median_bands.json builds them, get a hard top in their own object (tools/author_median_tops_blend.py). The name's surface key is KERB, the surface every curb and sidewalk of the track has, so no value is invented: a car on it hears the kerb and feels its rumble (kerb_ff_effect), as on a sidewalk. Material row 1KERB_PAVER (scripts/ac/pbr.py), toned by texture_overrides. The plants keep their measured places and stand on the top (tools/make_treefx.py). MD11 (rows 8-48) is narrower than the photo's colour resolution: terracotta as the plan declares, its tone [inferred from MD13]. Known, and not changed by this item: the island of rows 63-741 runs across the real Margerum Avenue / Mission Vista Drive intersection (piece C s 1087-1120) and is about twice the real width beside its two turn pockets (item 1b of the same round).",
+        "object": "1KERB_PAVER_median",
+        "islands": [
+          {"line": "north_mission_gorge", "rows": [8, 48], "plan": "MD11"},
+          {"line": "north_mission_gorge", "rows": [63, 741], "plan": "MD13"}
+        ]
+      }
     }
   },
   "loop": true,
@@ -220,6 +228,11 @@
       "diffuse": "assets/textures/concrete_plain_diffuse.jpg",
       "normal": "assets/textures/concrete_plain_normal.jpg",
       "_doc": "ledger 0099 (owned concrete, \"On every track now\"): the street curb + sidewalk (CURB -> 1KERB_sidewalk in the prep, every 1KERB_sidewalk_pad / _ap / _streetonly) binds the owned plain cast concrete (tools/make_owned_surfaces.py, seed 85, CC0; MEANT FOR 1KERB_SIDEWALK) in place of pbr's building_* (Hamburg board-formed wall concrete, mined, personal use). 4 m tile; mean measured off building_diffuse (0.5286 / 0.5156 / 0.4891). Synced in by ship.json sync_in.assets. The race kerbs (1KERB_RACE, owned) are untouched."
+    },
+    "1KERB_PAVER": {
+      "diffuse": "textures/terracotta_median_diffuse.jpg",
+      "normal": "textures/terracotta_median_normal.jpg",
+      "_doc": "ledger 0099 round 3, item 1: the paved median tops (1KERB_PAVER_median, Mission Gorge Rd) wear the CC0 paver (ambientCG PavingStones135, assets/textures/terracotta_paver_*) toned to MD13's mean on NAIP 2022 (147.9 / 127.8 / 115.6, 8-bit sRGB; the file measures 147.85 / 127.86 / 115.52) and laid 2 x 2 per image, so one repeat is 2.0 m on the prep's 4 m grid (the asset: ca. 1.9 m). textures/make_terracotta_median.py writes and checks the pair; ship.json sync_in.optional carries it into the workshop and pbr.load_overrides resolves it against the project."
     },
     "1GRASS": {
       "diffuse": "assets/textures/grass_diffuse.jpg",

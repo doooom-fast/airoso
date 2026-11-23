@@ -65,12 +65,14 @@ def surface_materials(project_dir) -> str:
     """the materials TreeFX seats a plant on: every physical ground tile and the road. Ledger 0055 (opt-in,
     track.config.json route.median_tops.object): the medians' own grass tops too (tools/author_median_tops_blend.py
     moves them out of the ground into that object), or a median's plants would stand on the slab under their island,
-    0.185 m down inside its top. Key absent = the list as before."""
+    0.185 m down inside its top. Ledger 0099 round 3: the paved tops' object (route.median_tops.paver.object) the same
+    way, so the plants of a terracotta island stand on its pavers. Key absent = the list as before."""
     obj = Path(project_dir) / "data" / "track.obj"
     cfg_p = Path(project_dir) / "track.config.json"
-    tops = ""
+    tops = ()
     if cfg_p.exists():
-        tops = str(((json.loads(cfg_p.read_text(encoding="utf-8")).get("route") or {}).get("median_tops") or {}).get("object") or "")
+        mt = (json.loads(cfg_p.read_text(encoding="utf-8")).get("route") or {}).get("median_tops") or {}
+        tops = tuple(str(n).upper() for n in (mt.get("object"), (mt.get("paver") or {}).get("object")) if n)
     if not obj.exists():
         raise SystemExit(f"[treefx] {obj} missing — the SURFACE_MATERIALS tile names come from the built road kn5's "
                          f"gate OBJ (python -m scripts.modkit.kn5_to_gate_obj <project>)")
@@ -79,7 +81,7 @@ def surface_materials(project_dir) -> str:
         for ln in f:
             if ln.startswith("usemtl ") and ln[7:].strip().upper().startswith("1GRASS"):
                 mats.add(ln[7:].strip())
-            elif tops and ln.startswith("usemtl ") and ln[7:].strip().upper().startswith(tops.upper()):
+            elif tops and ln.startswith("usemtl ") and ln[7:].strip().upper().startswith(tops):
                 mats.add(ln[7:].strip())
     if not mats:
         raise SystemExit(f"[treefx] {obj} holds no 1GRASS material — nothing for the trees to stand on")

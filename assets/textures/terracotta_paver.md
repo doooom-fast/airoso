@@ -3,7 +3,7 @@
 `terracotta_paver_diffuse.jpg` and `terracotta_paver_normal.jpg` are ambientCG **PavingStones135**
 (https://ambientcg.com/view?id=PavingStones135). The licence is CC0 1.0, read on the asset page and on
 https://docs.ambientcg.com/license/ on 2026-11-23. They fill the dossier's "Terracotta median top" GAP row
-(`tracks/san-diego-lake-murray/DOSSIER-EXPANSION-NORTH.md`, "Textures and gaps"). No track binds them yet.
+(`tracks/san-diego-lake-murray/DOSSIER-EXPANSION-NORTH.md`, "Textures and gaps"). Bound since Lake Murray 0.20.6 (ledger 0099 round 3): they are the stock skin of the pbr row `1KERB_PAVER`, and the track wears its own toned 2 x 2 copy (`tracks/san-diego-lake-murray/textures/make_terracotta_median.py`); these two files stay untinted.
 
 - **The files.** They come from `PavingStones135_2K-JPG.zip` (34,342,706 B, md5 `49ce717a09805e8aa7e9ece098212037`),
   downloaded 2026-11-23. `_Color.jpg` became the diffuse (md5 `d51ef0ecbf182a1733e337c80546d66b`) and `_NormalGL.jpg`

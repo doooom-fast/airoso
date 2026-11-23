@@ -1,0 +1,146 @@
+{
+ "_doc": "osm_near.py: the OSM highway ways within 70 m of the middle of MD13's declared band at s 1103",
+ "extract": {
+  "file": "data/osm.expansion.json",
+  "osm_base": "2026-10-14T10:13:39Z",
+  "source": "https://maps.mail.ru/osm/tools/overpass/api/interpreter"
+ },
+ "point": {
+  "island": "MD13",
+  "s": 1103.0,
+  "local_x_m": -1993.8,
+  "local_z_m": 2353.5,
+  "lat": 32.809578,
+  "lon": -117.067948
+ },
+ "ways": [
+  {
+   "way": 135149732,
+   "distance_m": 2.3,
+   "nearer_end_m": 7.8,
+   "nearer_end_node": 1484501863,
+   "length_m": 2015,
+   "leaves_on_bearing_deg": 142,
+   "tags": {
+    "highway": "tertiary",
+    "name": "Margerum Avenue",
+    "lanes": "2",
+    "surface": "asphalt"
+   }
+  },
+  {
+   "way": 436413312,
+   "distance_m": 7.5,
+   "nearer_end_m": 7.8,
+   "nearer_end_node": 1484501786,
+   "length_m": 859,
+   "leaves_on_bearing_deg": 46,
+   "tags": {
+    "highway": "primary",
+    "name": "Mission Gorge Road",
+    "lanes": "3",
+    "oneway": "yes",
+    "surface": "asphalt",
+    "maxspeed": "55 mph"
+   }
+  },
+  {
+   "way": 436413320,
+   "distance_m": 7.5,
+   "nearer_end_m": 7.8,
+   "nearer_end_node": 1484501863,
+   "length_m": 83,
+   "leaves_on_bearing_deg": 44,
+   "tags": {
+    "highway": "primary",
+    "name": "Mission Gorge Road",
+    "lanes": "4",
+    "oneway": "yes",
+    "surface": "asphalt",
+    "maxspeed": "55 mph"
+   }
+  },
+  {
+   "way": 5977531,
+   "distance_m": 7.8,
+   "nearer_end_m": 7.8,
+   "nearer_end_node": 1484501863,
+   "length_m": 878,
+   "leaves_on_bearing_deg": 311,
+   "tags": {
+    "highway": "residential",
+    "name": "Mission Vista Drive",
+    "surface": "asphalt"
+   }
+  },
+  {
+   "way": 436413314,
+   "distance_m": 7.8,
+   "nearer_end_m": 7.8,
+   "nearer_end_node": 1484501863,
+   "length_m": 539,
+   "leaves_on_bearing_deg": 232,
+   "tags": {
+    "highway": "primary",
+    "name": "Mission Gorge Road",
+    "lanes": "2",
+    "oneway": "yes",
+    "surface": "asphalt",
+    "maxspeed": "55 mph"
+   }
+  },
+  {
+   "way": 436413315,
+   "distance_m": 7.8,
+   "nearer_end_m": 7.8,
+   "nearer_end_node": 1484501786,
+   "length_m": 89,
+   "leaves_on_bearing_deg": 232,
+   "tags": {
+    "highway": "primary",
+    "name": "Mission Gorge Road",
+    "lanes": "4",
+    "oneway": "yes",
+    "surface": "asphalt",
+    "maxspeed": "55 mph"
+   }
+  },
+  {
+   "way": 576889923,
+   "distance_m": 49.9,
+   "nearer_end_m": 49.9,
+   "nearer_end_node": 5531917401,
+   "length_m": 84,
+   "leaves_on_bearing_deg": 344,
+   "tags": {
+    "highway": "service",
+    "access": "private"
+   }
+  },
+  {
+   "way": 318915679,
+   "distance_m": 65.7,
+   "nearer_end_m": 65.8,
+   "nearer_end_node": 49411021,
+   "length_m": 348,
+   "leaves_on_bearing_deg": 60,
+   "tags": {
+    "highway": "service",
+    "access": "private"
+   }
+  },
+  {
+   "way": 318915860,
+   "distance_m": 69.7,
+   "nearer_end_m": 69.7,
+   "nearer_end_node": 3253182605,
+   "length_m": 348,
+   "leaves_on_bearing_deg": 208,
+   "tags": {
+    "highway": "service",
+    "access": "private"
+   }
+  }
+ ],
+ "tagged_nodes": []
+}

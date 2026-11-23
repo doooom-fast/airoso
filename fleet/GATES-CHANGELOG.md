@@ -14,6 +14,34 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
+## 2026-11-23 (PC) — WIRING: the author step median_tops knows a paved top; new refusals, no threshold moved (ledger 0099 round 3, item 1; opt-in, Lake Murray)
+
+Mission Gorge Rd's two raised islands are terracotta pavers, not grass. `tools/author_median_tops_blend.py` (author step
+`median_tops`, opt-in `route.median_tops`) reads a new sub-key, `paver` (`object`, and `islands` by line and first / last
+row), and gives the listed islands' tops their own object, `1KERB_PAVER_median`. What changed in what the step checks:
+
+- **New refusals, each fatal with nothing saved:** a paved object not named `1KERB_PAVER...`; a listed island that
+  `data/median_bands.json` does not build row for row; a listed island with no top in the scene; a top that is moved and
+  no longer stands as a deck where it is; deck strips still in TERRAIN beside an object the step already made.
+- **Unchanged, every number:** DECK_OVER_M 0.185, DECK_TOL_M 0.06 (the same test a moved top must pass, whichever object
+  it leaves), MIN_ROW_W_M 1.2, and the row rule (a top under two of a row's three points). The row check reads both
+  objects' tops together.
+- **It converges, and says which way:** tops still in TERRAIN move out; a top in one object but declared for the other
+  moves across (a scene built before its island was declared paved); a scene already right is left alone and not saved.
+
+No gate reads the new name on its own terms, and none was touched. To every gate it is kerb, as the island's own curb
+ring already is: `audit_mesh` F / K / I count its vertices as curb and exempt them on a declared island by position
+(`median_zone`, the band + 0.6 m), `drive_test` and `verify_kn5` count it drivable and not soft, `kn5_ground_check`
+reads the surface under the road and the top stands over it. `source/college_r2/median_tops_check.py` (a measure, not a
+gate) counts paved rows apart from grass rows. `scripts/ac/pbr.py` gains the material row `1KERB_PAVER`, not a gate;
+`tests/tools/test_terracotta_median_0099.py` holds that no other mesh name of any track is bound differently by it.
+
+**Proven** on a scratch workshop through the chain's own commands (ledger 0099, "Round 3, item 1"): the step moved 2 tops
+across (12 grass islands, 2 paved; 2,123 rows, 0 without a top); `kn5_ground_check` 0 double-sheet cells and max +0.313
+on street, race_cw and north_cw, as 0.20.5; street `drive_test` PASS with 10 drops and its audit CLEAN (F 0 of 101,834
+curb verts, 4,308 more than 0.20.5: the paved top's 1,436 faces; K 0, I 0); race_cw and north_cw `drive_test`, audit and
+`no_route` as 0.20.5's. The scratch runner `source/college_r2/scratch/run_gates.ps1` gates `north_cw` as well now.
+
 ## 2026-11-23 (PC) — WIRING: check_lights_ini's two both-heads paths told apart, at the 0.2.9 merge with main (ledgers 0098 / 0099; opt-in; no threshold moved)
 
 The same key, `scenery.streetlights.light_both_heads`, was written twice in two rounds (the Mac, 2026-11-22). Ledger 0098 (Sand

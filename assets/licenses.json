@@ -272,6 +272,17 @@
    "license": "CC0-1.0",
    "url": "",
    "_note": "Not bound by any pbr.TEXTURES row yet: swapping asphalt_cracked / building / warehouse for these changes every track's look on its next build, which is Kevin's call (2026-11-16). The asphalt pair is bound per track as 1ROAD on Milford and High Plains (texture_overrides, ledger 0095; Kevin 2026-11-19: 'Yes, pilot the owned asphalt with the high-pass'). concrete_plain is bound on Milford's 1RUNOFF and 1KERB_SIDEWALK (ledger 0100; Kevin 2026-11-22: 'On every track now')."
+  },
+  {
+   "name": "PavingStones135",
+   "files": [
+    "terracotta_paver_diffuse.jpg",
+    "terracotta_paver_normal.jpg"
+   ],
+   "source": "ambientCG",
+   "license": "CC0-1.0",
+   "url": "https://ambientcg.com/view?id=PavingStones135",
+   "_note": "Red-brown interlocking pavers for Mission Gorge Rd's terracotta median top (DOSSIER-EXPANSION-NORTH 'Textures and gaps'). Downloaded 2026-11-23 as https://ambientcg.com/get?file=PavingStones135_2K-JPG.zip (34,342,706 B, md5 49ce717a09805e8aa7e9ece098212037); PavingStones135_2K-JPG_Color.jpg and _NormalGL.jpg copied byte for byte (md5 d51ef0ecbf182a1733e337c80546d66b / e1ecba2fbe1103523a7fa636a42b286e), 2048 x 2048 as served, no resize, no tint; the normal is OpenGL, as every map here. Licence read the same day on the asset page and https://docs.ambientcg.com/license/ (CC0 1.0 Universal). The tone it should be matched to is measured off NAIP 2022 in assets/textures/terracotta_paver.md. Not bound by any pbr.TEXTURES row or track."
   }
  ],
  "stock_audio_note": "Surface scrub/rumble (data/surfaces.ini WAV=) references the player's own stock Assetto Corsa sounds (content/sfx). No audio is bundled or redistributed."

@@ -275,7 +275,7 @@ Reference imagery: the NAIP sheets `aerial/overlays/02–06_*.png`. A Street Vie
 |---|---|---|---|---|
 | Road, curbs, sidewalk, paint | the loop's materials (installed v0.17.1) | none | all four roads and the pads | — |
 | Planted median island | the loop's College/Navajo median set | none | Waring | — |
-| Terracotta median top | none owned | CC0 concrete texture tinted red (ambientCG), 1024 px power of two | Mission Gorge | GAP: CC0 texture, no purchase |
+| Terracotta median top | `assets/textures/terracotta_paver_diffuse.jpg` / `_normal.jpg`: ambientCG PavingStones135, CC0, 2048 px, as downloaded 2026-11-23 | no tint baked in. The tone to match is measured off NAIP 2022 over MD13 in `assets/textures/terracotta_paver.md` (mean RGB 147.9 / 127.8 / 115.6, ratio to the texture 0.891 / 1.033 / 1.072) | Mission Gorge (not bound yet) | — |
 | Sodium lamp | LIGHTPOST (0043), 4,045 points each | a decimated variant only if the road kn5 passes 145 MB | lit stretches (D4) | — |
 | Signs | W1-6 arrow and speed-limit plates (`make_sign_textures`) | none | J2–J4; M3/M4 in the race files | — |
 | Trees | TreeFX: Gum, SycamoreV1/V2, Oak3, Sage, Yucca, Bush, Bush3, Agave, Pine_Aleppo, PepperV1 | none | §6 zones | flowering shrubs: GAP, owned by 0040 |

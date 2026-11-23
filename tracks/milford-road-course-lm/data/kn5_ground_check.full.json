@@ -8,17 +8,35 @@
  "double_sheet_cells": 0,
  "seating": {
   "walls": {
-   "objects": 332,
+   "objects": 324,
    "no_ground_pct": 0.0,
-   "median_m": -0.48,
-   "p95_m": -0.188,
+   "median_m": -0.619,
+   "p95_m": -0.267,
    "hovering": 0
+  }
+ },
+ "seating_info": {
+  "walls_trunk": {
+   "objects": 312,
+   "no_ground_pct": 0.0,
+   "median_m": -0.601,
+   "p95_m": -0.267,
+   "hovering": 0,
+   "gated": false
+  },
+  "walls_rest": {
+   "objects": 12,
+   "no_ground_pct": 0.0,
+   "median_m": -1.389,
+   "p95_m": -0.151,
+   "hovering": 0,
+   "gated": false
   }
  },
  "road_over_ground": {
   "over": 0,
-  "samples": 2457,
-  "p95_m": 0.021,
-  "max_m": 0.027
+  "samples": 3755,
+  "p95_m": 0.02,
+  "max_m": 0.025
  }
 }

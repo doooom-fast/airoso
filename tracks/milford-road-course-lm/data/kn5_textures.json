@@ -2,11 +2,11 @@
  "kn5s": [
   {
    "kn5": "D:\\k10-scratch\\milford_lm\\build\\milford_road_course.kn5",
-   "bytes": 42337727,
+   "bytes": 62055573,
    "version": 5,
-   "textures_embedded": 21,
-   "materials": 34,
-   "maps": 57,
+   "textures_embedded": 25,
+   "materials": 54,
+   "maps": 80,
    "missing_textures": [],
    "missing": [],
    "empty": [],

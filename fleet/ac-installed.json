@@ -106,14 +106,14 @@
       "installed": "2026-11-04"
     },
     "milford_road_course": {
-      "branch": "claude/milford-round1",
+      "branch": "claude/road-owned-pilot-20261119",
       "engine": "lm-v4",
-      "installed": "2026-11-17",
-      "note": "0.1.12 = fleet round 1: the front straight re-traced to the measured paving (16 m -> 16.4-19.5 m, G2/G3 whole, 0 m over the lane) + the lanes' height and bank from the G10's lidar surface (waviness 3-6 cm -> 1-1.4 cm); 0.1.11's far ground, road wear and furniture kept; TreeFX 11,247 trees; records + menu picture on claude/milford-round1 7488829b; 0.1.11 parked in D:/k10-track-archive/2026-11-17_214954",
+      "installed": "2026-11-22",
+      "note": "0.1.13 = 0.1.12 + the line and edges re-fit (ledger 0091: road 0.36/1.01 -> 0.23/0.65 m off the measured centre, flares fixed, kinks 28 -> 9; tyre wall T3) + the ground beside the road and the paved run-off as pads (0092) + building skins (0094) + the owned asphalt with the 0.5 m high-pass (0095); kn5 62,055,573 B (flat-shaded run-off pads +11.4 MB, flagged); install build = the PC rehearsal (221/221 gate rows, kn5 equivalent); the Nov 20 install run died at a power-off, rebuilt Nov 22 from an empty workshop; records + menu picture be6cbbdd; 0.1.12 parked in D:/k10-track-archive/2026-11-22_181727; Kevin 2026-11-20: \"Yes, install both\", 2026-11-22: \"Keep it running\"",
       "role": "current",
-      "sha": "b86a7bd5",
+      "sha": "9ac81398",
       "track": "milford-road-course-lm",
-      "version": "0.1.12"
+      "version": "0.1.13"
     },
     "pikes_peak_international_raceway": {
       "branch": "claude/pikes-peak-road-wear",

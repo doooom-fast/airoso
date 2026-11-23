@@ -1,17 +1,17 @@
 {
  "source_track": "milford-road-course",
- "points": 3269,
- "lap_m": 4901.8,
+ "points": 6537,
+ "lap_m": 4927.9,
  "closed": true,
  "widths_m": [
-  8.96,
-  13.57,
-  21.74
+  9.46,
+  13.51,
+  21.62
  ],
  "bridges_levelled": [],
  "line_decks_lidar": null,
  "max_grade_pct": null,
- "measured_max_grade_pct": 14.86,
+ "measured_max_grade_pct": 14.84,
  "y_changed_points": 0,
  "y_change_max_m": 0.0,
  "connectors": false,
@@ -20,8 +20,8 @@
   "textures/turf_normal.jpg"
  ],
  "crossfall": {
-  "stations": 3268,
-  "max_pct": 18.31,
+  "stations": 6536,
+  "max_pct": 18.33,
   "source": "source/surface/road_surface.fit.json"
  },
  "profile": {
@@ -36,53 +36,66 @@
   "max_widening_m": 8.89
  },
  "resample": {
-  "spacing_m": 1.5,
+  "spacing_m": 0.75,
   "points_before": 1635,
-  "points_after": 3269
+  "points_after": 6537
  },
  "edge_on_wall": null,
  "corner_arcs": null,
  "carried": [],
+ "line_precomp": {
+  "sigma_pts": 10.0,
+  "passes": 2,
+  "moved_m": {
+   "p50": 0.201,
+   "p99": 1.82,
+   "max": 3.231
+  },
+  "lap_m": [
+   4901.8,
+   4927.4
+  ]
+ },
  "edge_fit": {
   "mode": "judge",
-  "rows": 3268,
+  "rows": 6536,
   "fit_half_m": 15.0,
   "w_trace": 0.15,
   "min_support": 12,
   "evidence_points": 16476,
-  "evidence_unowned": 0,
+  "evidence_unowned": 2,
   "sides": {
    "left": {
     "sigma_m": 0.05,
-    "evidence_owned": 8158,
+    "evidence_owned": 8156,
     "evidence_sparse_dropped": 0,
     "rows_evidence_trusted": 0,
     "rows_evidence_not_trusted": {},
     "verdicts": {
-     "trace_spike": 1,
+     "trace_spike": 0,
      "trace_sustained_contra": 0,
      "evidence_outlier": 0,
      "kept_spike_supported": 0,
      "kept_sustained_supported": 0,
-     "kept_sustained_unsupported": 0,
+     "kept_sustained_unsupported": 1,
      "kept_sustained_no_evidence": 0
     },
     "edge_to_evidence_m": {
      "before": {
-      "median": 0.733,
-      "mean": 0.927,
-      "p90": 2.033
+      "median": 0.66,
+      "mean": 0.872,
+      "p90": 2.008
      },
      "after": {
-      "median": 0.73,
-      "mean": 0.927,
-      "p90": 2.035
+      "median": 0.66,
+      "mean": 0.872,
+      "p90": 2.005
      }
     },
     "edge_moved_m": {
-     "min": -0.133,
+     "min": -0.134,
      "median": 0.0,
-     "max": 0.199
+     "max": 0.172
     }
    },
    "right": {
@@ -95,27 +108,27 @@
      "trace_spike": 0,
      "trace_sustained_contra": 0,
      "evidence_outlier": 0,
-     "kept_spike_supported": 1,
-     "kept_sustained_supported": 0,
+     "kept_spike_supported": 0,
+     "kept_sustained_supported": 1,
      "kept_sustained_unsupported": 0,
      "kept_sustained_no_evidence": 0
     },
     "edge_to_evidence_m": {
      "before": {
-      "median": 0.72,
-      "mean": 0.92,
-      "p90": 2.002
+      "median": 0.653,
+      "mean": 0.874,
+      "p90": 1.97
      },
      "after": {
-      "median": 0.72,
-      "mean": 0.92,
-      "p90": 1.999
+      "median": 0.651,
+      "mean": 0.874,
+      "p90": 1.974
      }
     },
     "edge_moved_m": {
-     "min": -0.133,
+     "min": -0.134,
      "median": 0.0,
-     "max": 0.139
+     "max": 0.172
     }
    }
   },
@@ -129,108 +142,315 @@
     21.74
    ]
   },
-  "rejections_logged": 4,
+  "rejections_logged": 6,
   "evidence": "source/edges/edge_evidence.json",
-  "rejected": 2
+  "rejected": 0
  },
- "edge_retrace": {
-  "src": "naip",
-  "clear_m": 0.2,
-  "taper_m": 60.0,
-  "fit_half_m": 15.0,
-  "spans": [
-   [
-    4530.0,
-    150.0
-   ]
-  ],
-  "rails": [
-   {
-    "key": "g2_front_straight_east",
-    "side": "right",
-    "rows": 375,
-    "s_m": [
-     4485.0,
-     159.0
-    ],
-    "face_off_line_m": [
-     6.93,
-     10.27
+ "edge_retrace": [
+  {
+   "src": "naip",
+   "clear_m": 0.2,
+   "taper_m": 60.0,
+   "fit_half_m": 15.0,
+   "spans": [
+    [
+     4530.0,
+     150.0
     ]
-   },
-   {
-    "key": "g3_front_straight_west",
-    "side": "left",
-    "rows": 131,
-    "s_m": [
-     4517.9,
-     4712.9
-    ],
-    "face_off_line_m": [
-     7.93,
-     11.27
-    ]
-   }
-  ],
-  "sides": {
-   "left": {
-    "rows_measured": 399,
-    "points": 576,
-    "rows_clamped_after_smoothing": 5,
-    "other_sensors": {
-     "lidar": 528
+   ],
+   "rails": [
+    {
+     "key": "g2_front_straight_east",
+     "side": "right",
+     "rows": 748,
+     "s_m": [
+      4496.6,
+      159.0
+     ],
+     "face_off_line_m": [
+      6.83,
+      10.37
+     ]
     },
-    "moved_m": {
-     "min": -0.271,
-     "max": 2.064
+    {
+     "key": "g3_front_straight_west",
+     "side": "left",
+     "rows": 262,
+     "s_m": [
+      4528.9,
+      4724.6
+     ],
+     "face_off_line_m": [
+      7.82,
+      11.31
+     ]
+    }
+   ],
+   "sides": {
+    "left": {
+     "rows_measured": 825,
+     "points": 600,
+     "rows_clamped_after_smoothing": 13,
+     "other_sensors": {
+      "lidar": 530
+     },
+     "moved_m": {
+      "min": -0.385,
+      "max": 1.78
+     }
+    },
+    "right": {
+     "rows_measured": 979,
+     "points": 709,
+     "rows_clamped_after_smoothing": 48,
+     "other_sensors": {
+      "lidar": 621
+     },
+     "moved_m": {
+      "min": -0.628,
+      "max": 1.569
+     }
     }
    },
-   "right": {
-    "rows_measured": 476,
-    "points": 688,
-    "rows_clamped_after_smoothing": 15,
-    "other_sensors": {
-     "lidar": 590
+   "mode": "widen",
+   "smooth_m": 12.0,
+   "erode_m": 12.0,
+   "gap_m": 40.0,
+   "width_change_m": {
+    "min": -0.34,
+    "max": 3.35
+   },
+   "shift_m": {
+    "min": -0.465,
+    "max": 1.111
+   },
+   "shift_precomp": true,
+   "evidence": "source/edges/edge_evidence.json"
+  },
+  {
+   "src": "naip+lidar",
+   "clear_m": 0.2,
+   "taper_m": 60.0,
+   "fit_half_m": 15.0,
+   "spans": [
+    [
+     431.0,
+     459.0
+    ],
+    [
+     1228.0,
+     1237.0
+    ],
+    [
+     2556.0,
+     2600.0
+    ],
+    [
+     2638.0,
+     2675.0
+    ],
+    [
+     3468.0,
+     3496.0
+    ],
+    [
+     3909.0,
+     3919.0
+    ],
+    [
+     4113.0,
+     4144.0
+    ],
+    [
+     4224.0,
+     4249.0
+    ]
+   ],
+   "rails": [
+    {
+     "key": "g1_nw_corner_outside",
+     "side": "left",
+     "rows": 52,
+     "s_m": [
+      300.1,
+      338.4
+     ],
+     "face_off_line_m": [
+      13.55,
+      20.97
+     ]
     },
-    "moved_m": {
-     "min": -0.683,
-     "max": 1.681
+    {
+     "key": "g2_front_straight_east",
+     "rows": 0
+    },
+    {
+     "key": "g3_front_straight_west",
+     "rows": 0
+    },
+    {
+     "key": "g4_infield_esses",
+     "side": "left",
+     "rows": 86,
+     "s_m": [
+      522.9,
+      590.4
+     ],
+     "face_off_line_m": [
+      16.55,
+      24.28
+     ]
+    },
+    {
+     "key": "t1_nw_hairpin_exit",
+     "side": "left",
+     "rows": 32,
+     "s_m": [
+      463.0,
+      486.1
+     ],
+     "face_off_line_m": [
+      19.97,
+      24.71
+     ]
+    },
+    {
+     "key": "t2_esses_east_leg",
+     "side": "left",
+     "rows": 6,
+     "s_m": [
+      1306.0,
+      1337.5
+     ],
+     "face_off_line_m": [
+      21.22,
+      25.57
+     ]
+    },
+    {
+     "key": "t3_s1000_apron_back",
+     "rows": 0
+    },
+    {
+     "key": "f1_nw_screen_ne",
+     "side": "left",
+     "rows": 42,
+     "s_m": [
+      319.6,
+      351.9
+     ],
+     "face_off_line_m": [
+      20.76,
+      22.61
+     ]
+    },
+    {
+     "key": "f1_nw_screen_step",
+     "side": "left",
+     "rows": 22,
+     "s_m": [
+      301.6,
+      319.6
+     ],
+     "face_off_line_m": [
+      21.14,
+      24.13
+     ]
+    },
+    {
+     "key": "f1_nw_screen_sw",
+     "side": "left",
+     "rows": 2,
+     "s_m": [
+      300.8,
+      301.6
+     ],
+     "face_off_line_m": [
+      24.13,
+      24.35
+     ]
+    },
+    {
+     "key": "f1_nw_screen_ne_end",
+     "rows": 0
     }
-   }
+   ],
+   "sides": {
+    "left": {
+     "rows_measured": 908,
+     "points": 2995,
+     "rows_clamped_after_smoothing": 0,
+     "other_sensors": {},
+     "moved_m": {
+      "min": -0.866,
+      "max": 1.087
+     }
+    },
+    "right": {
+     "rows_measured": 903,
+     "points": 2824,
+     "rows_clamped_after_smoothing": 0,
+     "other_sensors": {},
+     "moved_m": {
+      "min": -1.731,
+      "max": 1.926
+     }
+    }
+   },
+   "mode": "agree",
+   "smooth_m": 8.0,
+   "erode_m": 2.5,
+   "gap_m": 40.0,
+   "agree_m": 0.6,
+   "width_change_m": {
+    "min": -1.78,
+    "max": 1.66
+   },
+   "shift_m": {
+    "min": -1.099,
+    "max": 0.97
+   },
+   "shift_precomp": true,
+   "evidence": "source/edges/edge_evidence.json"
+  }
+ ],
+ "width_smooth": {
+  "sigma_m": 10.0,
+  "rows_held_by_widen_retrace": 691,
+  "rows_blended": 160,
+  "changed_m": {
+   "p50": 0.044,
+   "p99": 0.551,
+   "max": 0.655
   },
-  "width_change_m": {
-   "min": -0.35,
-   "max": 3.74
-  },
-  "shift_m": {
-   "min": -0.441,
-   "max": 1.146
-  },
-  "evidence": "source/edges/edge_evidence.json"
+  "width_m": [
+   9.19,
+   21.62
+  ]
  },
  "measured_surface": {
   "file": "source/surface/road_surface.fit.json",
   "deck_m": 0.1,
-  "points": 3269,
+  "points": 6537,
   "lateral_off_measured_line_m": {
-   "p50": 0.0,
-   "max": 1.119
+   "p50": 0.176,
+   "max": 1.359
   },
-  "bank_max_pct": 18.31,
+  "bank_max_pct": 18.33,
   "product_input": {
    "file": "milford_road_surface.lidar.g10.json",
    "md5": "6368404dbe83dde54f2d8c8a8940a4a4"
   },
   "line_y_moved_m": {
-   "p50": 0.017,
-   "p99": 0.122,
-   "max": 0.204
+   "p50": 0.018,
+   "p99": 0.12,
+   "max": 0.235
   }
  },
  "grid_upsample": 2,
  "md5": {
   "source_centerline": "f46d2f9b3e3ab4641e6ea2d1ac6a6bcd",
   "heightfield.npy": "5f86445a8846bc11a512dae247ac4fbf",
-  "centerline.local.json": "69add48ce4fbdd5ee74635a528e0dcee"
+  "centerline.local.json": "0923d8123590ca5003f9076033e6fd63"
  }
 }

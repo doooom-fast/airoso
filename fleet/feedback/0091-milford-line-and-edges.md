@@ -414,3 +414,21 @@ against the Mac's `2656 / 2090`. Both steps take their keep-out off the assemble
 numbers came from the Mac's dry run in Blender 5.1. The intake's line, which every measured station sits on, is
 byte-identical (0923d812). [inference: the Mac has no copy of the PC's swept line to diff, so this explains the
 difference but does not measure it.] The counts are stable on the PC, and no gate reads them.
+
+## Installed (PC, 2026-11-22): Milford 0.1.13 as milford_road_course
+
+Kevin, 2026-11-20 on the PC: "Yes, install both"; 2026-11-22, after the restart was put to him: "Keep it running".
+
+- The Nov 20 16:24 install run (empty workshop at 9ac81398) died in strip_seam when the PC was powered off at 17:19.
+  AC kept 0.1.12 untouched; the half-built workshop is kept as `D:/k10-scratch/milford_lm.0.1.13-stopped`.
+- Rebuilt Nov 22 17:17 from an empty workshop with the same settings (ENG eng_mflm_0113, AIROSO_NUMPY_PY = the lidar
+  venv, no --no-install), the worktree's Milford inputs checked equal to 9ac81398. SHIP OK 18:17, every gate green;
+  0.1.12 parked in `D:/k10-track-archive/2026-11-22_181727/`.
+- Against rehearsal 3 (milford_0113_reh, 8aed08ff + its resume): 221 / 221 gate rows the same; kn5 62,055,573 B,
+  EQUIVALENT (tangents only: 235,907 values, max 1.79e-07); AI lines the same; data JSON differs in paths only;
+  road_wear_macro.png md5 the same (6b53e782). Trees in AC: Oak3.bin, SycamoreV2.bin, trees.txt (as 0.1.12).
+- Menu picture: s3 of 6 at -0.5 EV, the trees.lm.json stand-ins, the same corner as 0.1.12 (the line is now 6,537
+  points, so s3 = point 3268; eye 0.4 m from the old one). The old picture is backed up in
+  `D:/k10-track-archive/2026-11-22_181925_previews/`.
+- Records + picture be6cbbdd, fleet/ac-installed.json in the next commit, on claude/road-owned-pilot-20261119 (on main
+  3e16a16a). Not driven.

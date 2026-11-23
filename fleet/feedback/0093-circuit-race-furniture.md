@@ -348,3 +348,10 @@ no `pads_seat`, so the seat-pads step does not run, and T3 is Milford's), so thi
   0.47 m (124 of its 136 vertices over 1 cm), and `KRAILBW_16` by up to 0.086 m. Every other new rail moved under 1 cm.
   The author ground and the prepped ground differ by that much at the pit wall's west end. drive_test reads 0 floating.
 - **Not done:** the drive and the 25-car start in game (Kevin's). Stills: the front straight in 0095 below.
+
+## Installed (PC, 2026-11-20): High Plains 0.1.8 as high_plains
+
+Kevin, 2026-11-20 16:19 on the PC: "Yes, install both". Built from an empty workshop at 9ac81398 (ENG eng_hplm_0108);
+installed 16:24, 0.1.7 parked in `D:/k10-track-archive/2026-11-20_162433/`. The same as rehearsal 2: 180 / 180 gate
+rows, kn5 22,156,060 B equivalent; menu picture in. Records 581b5d1e (in main via PR 45), fleet/ac-installed.json
+b7ec3f7c. Not driven. (Written by the PC on 2026-11-22 with Milford's install.)

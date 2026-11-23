@@ -2388,7 +2388,7 @@
   "layouts": [
     {
       "id": "west",
-      "name": "West",
+      "name": "High Plains Raceway — West",
       "kind": "race",
       "direction": "forward",
       "race_furniture": false,
@@ -2402,7 +2402,7 @@
     },
     {
       "id": "full_course",
-      "name": "Full",
+      "name": "High Plains Raceway — Full",
       "kind": "race",
       "direction": "forward",
       "race_furniture": false,

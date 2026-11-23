@@ -747,3 +747,10 @@ once, read against the installed 0.1.9 and the Mac's numbers. **0.1.10 and 0.1.1
   `source/ui/west/` and `source/ui/full_course/`. The old ones in `D:/k10-track-archive/2026-11-23_034419_previews/`.
 - fleet/ac-installed.json: high_plains 0.1.12 (sha 4a055e11; origin/main merged first, its GATES-CHANGELOG conflict resolved
   by keeping both sides). Not driven.
+
+### The Mac's merge of 0.1.12's records (2026-11-23): the layout names
+
+The layouts' `name` is now "High Plains Raceway — West" / "High Plains Raceway — Full" (was "West" / "Full"), as the
+PC asked: ship_track writes `<ui_name_prefix> — <layout name>`, so the next install writes "doooom Colorado — High Plains
+Raceway — West" / "— Full", the names the PC set by hand in AC tonight. `tests/tools/test_high_plains_round3.py` follows.
+The menu name only; no build output changes.

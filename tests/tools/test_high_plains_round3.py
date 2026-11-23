@@ -39,8 +39,8 @@ def test_two_layouts_on_one_road_the_west_renamed_the_full_on_its_lap():
     c = _cfg()
     assert c["version"] in ("0.1.11", "0.1.12")               # round 4 (0.1.12) keeps both layouts
     w, f = c["layouts"]
-    assert (w["id"], w["name"], w.get("lap"), w["ai"]) == ("west", "West", None, "ai/west")
-    assert (f["id"], f["name"], f["lap"], f["ai"]) == ("full_course", "Full", "full", "ai/full_course")
+    assert (w["id"], w["name"], w.get("lap"), w["ai"]) == ("west", "High Plains Raceway — West", None, "ai/west")
+    assert (f["id"], f["name"], f["lap"], f["ai"]) == ("full_course", "High Plains Raceway — Full", "full", "ai/full_course")
     assert all(lo["kind"] == "race" and lo["race_furniture"] is False for lo in (w, f))
     assert (w["map"], f["map"]) == ("lap", "race_lap")
     assert "full" not in [lo["id"] for lo in c["layouts"]]       # track_folder drops a 'full' layout's name from the menu

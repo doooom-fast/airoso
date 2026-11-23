@@ -53,7 +53,7 @@ corridor, the dummies, the signs and every gate read the split road.
   keeping it on a road that is not real, and says no replacement race feature was chosen. Each direction on its own
   carriageway, 6 m apart in height, is the proposal; Kevin has been asked and has not answered.
 
-## The two ends: forks as measured pads (read 2026-11-23; the approach to build)
+## The two ends: forks as measured pads (read 2026-11-23; SUPERSEDED by "Step 2 done" below: the forks are plain road)
 
 Through the split the mainline is the southbound carriageway; outside it the mainline is the whole road with the
 island on its line (the College run of `median_bands.json`, v825-1509). Between the two meanings the line moves
@@ -185,26 +185,26 @@ The numbers (`college_split.data.json` `report`):
 
 | | Built line | Mainline (southbound road) | Lap `college` (joins + `college_nb`) |
 |---|---|---|---|
-| Largest turn between segments | 1.08 deg | 1.53 deg | 1.39 deg |
+| Largest turn between segments | 1.08 deg | 1.53 deg | 1.38 deg |
 | Steepest grade down / up | -8.16 / +8.76 % | -8.03 / +8.77 % | -8.79 / +8.77 % |
 | Largest grade step between segments | 0.57 points | 0.65 | 0.75 |
 | Segment length | 3.0 m | 2.94 to 3.11 m | 2.72 to 3.28 m |
-| Width through the two roads | 25 to 32.5 m (whole road) | 9.99 to 15.34 m | 8.36 to 13.8 m |
+| Width through the two roads | 25 to 32.5 m (whole road) | 9.99 to 15.34 m | 8.36 to 14.1 m |
 
 - The mainline moves up to 10.67 m west; its length grows by 1.93 m (13,471.3 to 13,473.2 m to the last vertex).
-- The northbound road rides up to 5.81 m over the southbound one, line to line; 0.58 m where the island begins, 0.57 m
-  where it ends. Across the bank, inner edge to inner edge: 0.18 m at the nose, up to 6.11 m, 0.20 m at the tail; the
-  bank's slope is up to 52 %.
-- The bank between them: 0.35 m at the nose, up to 12.18 m, 0.30 m at the tail.
+- The northbound road rides up to 5.81 m over the southbound one, line to line; 0.57 m where the island begins, 0.56 m
+  where it ends (the road is banked there). Across the bank, inner edge to inner edge: nothing at the nose and the
+  tail (one point, see step 2), up to 6.11 m; the bank's slope is up to 52 %.
+- The bank between them: no width at the nose and the tail (the two roads meet in a point), up to 12.18 m.
 - After smoothing the inner edges stand up to 0.38 m (southbound) and 0.73 m (northbound) off the measured edges.
 - Heights. A row is tilted, not flat: west edge, line + 0.10, east edge, each at its own height (`edges` in the data
   file). The built west edge keeps its height, so every height here stands off the lidar by what that edge does
   (-0.54 to +0.83 m, smooth along the road). The mainline's line moves -0.25 to +0.23 m from its built height (the
-  southbound crossfall, -4.8 to +3.3 %, rising east positive); the northbound crossfall is -4.4 to +3.2 %.
+  southbound crossfall, -4.8 to +3.3 %, rising east positive); the northbound crossfall is -4.4 to +4.3 %.
 
 The lap. `race_lap.stitch(proj, cfg, "college")` on the scratch project: 4,498 lap vertices, the mainline's own count;
 both declared joins accepted (their ends 0.000 m off the piece ends; 41 and 31 points, 127.3 m and 96.7 m); every lap
-vertex taken from the mainline has the mainline's number, and the piece is lap v1172-1444; lap length 13,472.9 m.
+vertex taken from the mainline has the mainline's number, and the piece is lap v1172-1444; lap length 13,472.8 m.
 Mission Gorge Speedway's lap (`north`) stitched again on the same data is identical to its `data/lap.north.json`
 (0.0 m, same widths, same islands).
 
@@ -238,3 +238,65 @@ Found for the next steps:
    the east walk's lip is held to.
 4. **The Speedway lane on the northbound road** is 8.36 m at its narrowest against the 11.36 m the corridor asks for
    elsewhere: still open (above).
+
+## Step 2 done: the scene's ribbons (2026-11-22)
+
+`college_split_blend.py` edits the object ROAD of the open blend from `college_split.data.json`. Run on the scratch
+scene and saved as a copy, `D:/k10-scratch/lm_r2_college/step2/loop.split.blend`; the seed copy is untouched (md5
+ef4d0ca3 before and after). `college_split_stills_blend.py` renders ROAD and TERRAIN only from five cameras, before
+and after: `college_split_step2.jpg`.
+
+Read first, read-only:
+
+- ROAD's mainline block is three vertices per centreline vertex for all 4,498 of them (3v = west edge, 3v+1 = line,
+  3v+2 = east edge), flat at the line + 0.10, four triangles per segment, UV = (offset from the line / 4, station / 4).
+- **No side street joins College inside the zone**: no face of the zone uses a vertex outside the mainline block and no
+  edge vertex stands off its drafted place (ROAD's 32 welded mouths are all elsewhere).
+- The prep (`scripts/ac/build_kn5_loop.py`) reads ROAD as plain triangles; nothing there counts on vertex numbers.
+- What else stands in the zone's footprint: CURB (both walks and the old island), the street-only median pieces
+  (v1253-1379), GUARDRAIL and YLINE on the line, MARKINGS, LIGHTPOST_3 / _4 and LIGHTS_0, TERRAIN (1,444 vertices under
+  the old island up to 0.29 m over the line; 4,277 in the east strip), and the race walls the chain re-authors.
+
+What the step does:
+
+- **Two roads, v1172-1444.** The mainline's row becomes the southbound road: the west vertex is not touched, the line
+  vertex goes to the new line, the east vertex to the island's west side. Its four faces per segment stay, so no old
+  slab is left under the northbound road. The northbound road is a new ribbon of three vertices per station appended to
+  ROAD (817 vertices, 1,088 faces), its east vertex where ROAD's east vertex stood, raised.
+- **Rows are tilted, not flat**: each vertex has its own height (step 1's datum: the built west edge).
+- **UVs keep the built convention everywhere** (u = offset from the BUILT line / 4, v = the built row's own), so the
+  asphalt runs unbroken across the forks and both roads.
+
+Result (the step's own checks; exit 1 and no save on any failure): 26,944 -> 27,761 vertices, 35,209 -> 36,301 faces
+(8 removed, 1,100 added); 690 vertices moved and no other, the west edge column included; no face of the zone
+degenerate or turned over, the steepest lies 7 % off level; **coverage: 41,072 plan samples, 31,486 on pavement each
+under exactly one face of ROAD, 9,586 on the bank under none.** A second run on its own output changes nothing.
+
+**The forks are not pads (this changes the plan above).** The fork-pad plan cut the mainline at two rows, deleted the
+faces between them and laid a measured deck with its own records and gate. Reading the scene showed that is not
+needed: with the built outer edges kept, the fork's pavement outline IS the built road's, and the built rows already
+pave it. So in a fork (v1131-1171, v1445-1475) the three vertices of each row keep their place and take the tilt
+easing in from the flat outer row, and between the last fork row and the first row of the two roads the four old
+faces are replaced by a fan of six from the fork row's centre vertex. One ribbon in the fork, nothing deleted but
+those eight faces, no deck, no `pads.built.json` record, no `verify_pads` involvement: the forks are plain road, judged
+by the street gates (drive test, street audit, ground check). The lines through a fork (the mainline's and the lap's)
+are references that drift inside that pavement. What a pad would have given the race (a probe on the road the lap
+turns away from) is met by the declared closures and probes of step 4 either way.
+
+**The island begins and ends in a point.** The design tapered the island to 0.35 m / 0.30 m at the nose and tail rows
+with an 0.18 m step between the roads: in the mesh that is a 0.35 m sliver of pavement at 52 %. The bank's width and the
+step across it now run to zero at those two rows, so the two roads share one vertex there (0.11 m and 0.12 m of step
+one row in).
+
+Seen in the stills, for the later steps: the old island's ground stands up to 0.3 m over the line inside its old
+footprint, so it shows through the fork's pavement (the prep pins ground under pavement; to be confirmed when the
+chain runs); the northbound road rides over ground that still sits at the slab's height.
+
+Order of work from here (replaces 3 to 5 above):
+
+3. The old middle goes and the new one is built: CURB's island faces on v1117-1475, the street-only median, GUARDRAIL,
+   YLINE and MARKINGS on College; then the two roads' inner curbs along the bank, the east walk at the northbound road's
+   height (the draft's section, so `walk_grade` finds its lips), paint on both roads.
+4. Ground (the bank, the east side cut, the old island's fill), lamps; then the data into the workshop and the chain's
+   race steps, with the fork closures and probes declared.
+5. A full rehearsal through the Mac's queue.

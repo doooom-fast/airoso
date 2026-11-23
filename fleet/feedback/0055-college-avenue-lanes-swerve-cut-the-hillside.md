@@ -291,15 +291,15 @@ Files: `tracks/san-diego-lake-murray/source/college_r2/` (README there has the n
 ## Round 2, stage B step 1 (the PC, 2026-11-22): the split as road data; nothing in the build yet
 
 The design is in `tracks/san-diego-lake-murray/source/college_r2/STEP-DESIGN.md` (option B of `CONSUMERS.md`: two
-roads, each with its own line; the two ends are fork pads). The base is Lake Murray 0.20.4 (round 1c, ledger 0099),
+roads, each with its own line; the two ends are plain road, not pads: step 2 below). The base is Lake Murray 0.20.4 (round 1c, ledger 0099),
 merged into `claude/lm-finish-r2-20261122`. The College step runs first in the author phase (college, `lamp_heads`,
 `walk_grade`, the race steps), so `walk_grade` grades the rebuilt walks like any other street's.
 
 - **Step 1, the data** (`college_split_data.py` -> `college_split.data.json`, `college_split.png`; no Blender), written
   only into a scratch copy of the project. The mainline is the southbound road (345 vertices moved, v1131-1475, numbers
   kept, up to 10.67 m west, 9.99 to 15.34 m wide); the northbound road is the piece `college_nb` (273 points, 8.36 to
-  13.8 m wide, up to 5.81 m over the southbound road); the bank between them is 0.35 m at the nose, up to 12.18 m, 0.30 m
-  at the tail. The lap `college` (mainline, the piece, mainline, two declared joins) stitches with the mainline's own
+  14.1 m wide, up to 5.81 m over the southbound road); the bank between them has no width at the nose and the tail
+  (the two roads meet in a point there) and is up to 12.18 m wide. The lap `college` (mainline, the piece, mainline, two declared joins) stitches with the mainline's own
   4,498 vertex numbers; Mission Gorge Speedway's lap is unchanged. Largest turn between 3 m segments 1.53 deg (the
   built line: 1.08); largest grade step between segments 0.65 points (built: 0.57). Heights: the built west edge
   keeps its place and its height (stage A: the west walk, the house lots and the ground behind them stay put), and
@@ -319,3 +319,9 @@ merged into `claude/lm-finish-r2-20261122`. The College step runs first in the a
   road is not widened to fit the corridor, and a gate that cannot pass on the real width is reported, not loosened.
 - **The race on College:** built as decided above (each direction on its own carriageway); Kevin's answer on the board
   wins if it differs.
+
+- **Step 2, the ribbons** (`college_split_blend.py`, on the scratch scene only): the mainline rows become the southbound
+  road, the northbound road is a new ribbon in ROAD; 41,072 plan samples, every one on pavement under exactly one face
+  and every one on the bank under none; a second run changes nothing. The forks turned out to need no pads: with the
+  built outer edges kept, the built rows already pave them (tilt eased in, a fan of six faces where the two roads begin).
+  The island begins and ends in a point. Walks, the old island, paint, lamps and ground are the next steps.

@@ -125,3 +125,9 @@ connected pavement through College / Navajo / Waring in both directions on the b
 The two roads as lap data, no Blender: the mainline moved onto the southbound road, the northbound road as the piece
 `college_nb`, the Speedway lap `college` with its two declared joins. `python college_split_data.py <project> [--write]`;
 `python college_split_plot.py` draws the picture. The numbers and what was learned are in `STEP-DESIGN.md`, "Step 1 done".
+
+## The ribbons in the scene (step 2, `college_split_blend.py`, `college_split_stills_blend.py` -> `college_split_step2.jpg`)
+
+`blender --background <loop.blend> --python-exit-code 1 --python college_split_blend.py -- [--save-as <copy>]` edits ROAD
+from `college_split.data.json` and checks itself (no save on a failure). Scratch scene only so far; `STEP-DESIGN.md`,
+"Step 2 done", has the result and what changed in the plan (the forks are plain road, not pads).

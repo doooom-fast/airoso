@@ -187,14 +187,17 @@ for v in range(A0 + 1, A1):                     # nothing outside the zone is wr
 
 # --- the northbound piece and the Speedway lap's two joins -------------------------------------------------------------------
 # The piece's EAST edge is the built east edge as it stands; its WEST edge is the mainline's east edge less the bank's
-# width, and the bank's width (measured, never negative) is relaxed with its two ends held: so the roads cannot
-# overlap, and at the nose and the tail the bank is exactly as wide as it was measured.
+# width, and the bank's width (measured, never negative) is relaxed with its two ends held at ZERO: so the roads cannot
+# overlap, and at the nose and the tail they meet in one point (the island begins and ends with no width). The design
+# tapered the island over three stations to 0.35 m / 0.30 m at those rows [invented]; a 0.35 m strip with an 0.18 m
+# step between two carriageways is a 52 % sliver of pavement in the fork, so the taper runs to nothing instead.
 # The lap through the zone is ONE line: the south join (one point per mainline station), the piece, the north join. Its
 # sideways offset is the piece's midline between the nose and the tail and the same cubic as the mainline's fork line
 # outside them; its heights are one relaxed departure from the built line over the whole zone.
 raw_b = [D[v]["sb_inner"]["offset_m"] - D[v]["nb_inner"]["offset_m"] for v in range(NOSE, TAIL + 1)]
 if min(raw_b) < -1e-9:
     raise SystemExit(f"college_design.json: the two inner edges cross (bank {min(raw_b):.3f} m)")
+raw_b[0] = raw_b[-1] = 0.0
 bank_w = relax(raw_b)
 nb_west = {v: sb_east[v] - bank_w[k] for k, v in enumerate(range(NOSE, TAIL + 1))}
 lap_off = {v: 0.5 * (nb_west[v] + east(v)) for v in range(NOSE, TAIL + 1)}
@@ -207,6 +210,14 @@ sb_east_z = {v: sb_east[v] if NOSE <= v <= TAIL else 2.0 * main_off[v] - west(v)
 nb_west_z = {v: nb_west[v] if NOSE <= v <= TAIL else 2.0 * lap_off[v] - east(v) for v in ZONE}
 edge_y = {"sb_west": heights({v: west(v) for v in ZONE}), "sb_east": heights(sb_east_z),
           "nb_west": heights(nb_west_z), "nb_east": heights({v: east(v) for v in ZONE})}
+# across the bank: the northbound inner edge stands over the southbound one by the relaxed measured step, which is zero
+# at the nose and the tail (the same point there), so the two roads meet with no step
+rise_in = relax([tilt(v, nb_west[v]) - tilt(v, sb_east[v]) for v in range(NOSE, TAIL + 1)])
+if abs(rise_in[0]) > 1e-9 or abs(rise_in[-1]) > 1e-9:
+    raise SystemExit("the two inner edges do not meet at the nose / the tail")
+for k, v in enumerate(range(NOSE, TAIL + 1)):
+    edge_y["nb_west"][v] = edge_y["sb_east"][v] + rise_in[k]
+centre_y = heights({v: 0.0 for v in ZONE})          # the built line's own column: the fork rows' centre vertex
 if max(abs(edge_y["sb_west"][v] - (P0[v][1] + LIFT)) for v in ZONE) > 1e-9:
     raise SystemExit("the built west edge moved in height")
 lap_zone = {v: P0[v] if v in (A0, A1) else at(v, lap_off[v], lap_y[v]) for v in ZONE}
@@ -342,6 +353,23 @@ out = {"what": "College split, the data (college_split_data.py)", "report": repo
                  "sb_east_y": [round(edge_y["sb_east"][v], 4) for v in range(NOSE, TAIL + 1)],
                  "nb_west_y": [round(edge_y["nb_west"][v], 4) for v in range(NOSE, TAIL + 1)],
                  "nb_east_y": [round(edge_y["nb_east"][v], 4) for v in range(NOSE, TAIL + 1)]},
+       "rows": {"_doc": "the SCENE's rows, engine xyz (x east, y up = the SURFACE, z north). Two roads, v = NOSE..TAIL: the mainline's "
+                        "row is sb_west (ROAD's own west vertex, unmoved), sb_line, sb_east; the piece's row is nb_west, nb_line, nb_east "
+                        "(nb_east = where ROAD's east vertex stood, raised). Forks, v = A0+1..NOSE-1 and TAIL+1..A1-1: ROAD's three "
+                        "vertices keep their place and take fork_y (west, centre, east): the tilt easing in from the flat outer row.",
+                "v": list(TWO),
+                "sb_west": [[round(c, 4) for c in at(v, west(v), edge_y["sb_west"][v])] for v in TWO],
+                "sb_line": [[round(c, 4) for c in at(v, main_off[v], main_y[v] + LIFT)] for v in TWO],
+                "sb_east": [[round(c, 4) for c in at(v, sb_east[v], edge_y["sb_east"][v])] for v in TWO],
+                "nb_west": [[round(c, 4) for c in at(v, nb_west[v], edge_y["nb_west"][v])] for v in TWO],
+                "nb_line": [[round(c, 4) for c in at(v, lap_off[v], lap_y[v] + LIFT)] for v in TWO],
+                "nb_east": [[round(c, 4) for c in at(v, east(v), edge_y["nb_east"][v])] for v in TWO],
+                "offsets_m": {"sb_west": [round(west(v), 4) for v in TWO], "sb_line": [round(main_off[v], 4) for v in TWO],
+                              "sb_east": [round(sb_east[v], 4) for v in TWO], "nb_west": [round(nb_west[v], 4) for v in TWO],
+                              "nb_line": [round(lap_off[v], 4) for v in TWO], "nb_east": [round(east(v), 4) for v in TWO]},
+                "fork_v": [v for v in ZONE if not NOSE <= v <= TAIL and v not in (A0, A1)],
+                "fork_y": [[round(edge_y["sb_west"][v], 4), round(centre_y[v], 4), round(edge_y["nb_east"][v], 4)]
+                           for v in ZONE if not NOSE <= v <= TAIL and v not in (A0, A1)]},
        "built_line_y": [round(P0[v][1], 4) for v in ZONE],
        "lap_zone": {"_doc": "the Speedway lap through the zone, one point per mainline station (south join, the piece, north join)",
                     "from_v": A0, "to_v": A1, "offset_m": [round(lap_off[v], 3) for v in ZONE],

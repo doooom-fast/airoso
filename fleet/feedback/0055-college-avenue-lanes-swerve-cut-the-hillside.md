@@ -512,3 +512,11 @@ Scratch workshop only; nothing built into the chain, nothing installed. `source/
   `tests/tools/test_lake_murray_0099.py`); committed as the sync-back, as 0.20.4's was. The next empty workshop seeds it.
 - Records on `claude/lm-0205-install-20261123` (sync-back 3a789d9c, main fcef3efe merged d60d786b); nothing pushed onto
   `claude/lm-finish-r2-20261122`. Kevin's standing word on the PC: "Yes and I always want newer builds".
+
+### The Mac's merge of 0.20.5's records (2026-11-23)
+
+Two of ledger 0099's own tests, as after 0.20.4: the install synced back what the College round made.
+- `sync_in.seed` 93 -> 100: the College lap's records airoso now holds (barrier_bands.college, lap.college,
+  median_tops, race_authored.college, race_college.kn5, race_verify.college, race_verify.scenery.college).
+- The committed `loop.blend` is now 0.20.5's synced-back blend, 204,545,652 B, sha256 bc7f772e57500efc...; the next
+  empty workshop seeds it. Every author step on it is idempotent (College's second pass byte for byte, above).

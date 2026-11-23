@@ -1,0 +1,22 @@
+{
+ "mouths": [
+  {
+   "connector": "full_north#0",
+   "host": "MAINLINE",
+   "host_vertex": 947,
+   "side": 1,
+   "connector_width_m": 11.3,
+   "cut_xyz": [
+    -89.915,
+    8.156,
+    146.577
+   ],
+   "host_seg": 946,
+   "host_t": 0.9088,
+   "angle_deg": 46.15,
+   "host_grade": -0.04958,
+   "piece": "full_north#0#0",
+   "end": "end"
+  }
+ ]
+}

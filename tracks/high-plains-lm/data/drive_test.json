@@ -2,17 +2,17 @@
  "multi_layout": true,
  "_doc": "per-layout drive tests (ledger 0047): every layouts[] id is driven on the kn5 set it loads; the full report of each is data/drive_test.<id>.json. fail = any layout fails; a layout not yet run has fail null.",
  "ran": [
-  "full"
+  "full_course"
  ],
  "layouts": {
-  "full": {
+  "west": {
    "fail": false,
    "direction": "forward",
-   "kind": "street",
+   "kind": "race",
    "race_furniture": false,
    "obj": "track.obj",
    "lane": "full width / island",
-   "lap_m": 3204.7,
+   "lap_m": 3209.7,
    "soft_top_in_lane": 0,
    "obstruction_stations": 0,
    "barrier_missing": 0,
@@ -24,8 +24,30 @@
    "severe_steps": 0,
    "severe_per_km": 0.0,
    "steps_per_km": 0.0,
-   "kinks_per_km": 0.62,
-   "file": "drive_test.full.json"
+   "kinks_per_km": 1.87,
+   "file": "drive_test.west.json"
+  },
+  "full_course": {
+   "fail": false,
+   "direction": "forward",
+   "kind": "race",
+   "race_furniture": false,
+   "obj": "track.obj",
+   "lane": "full width / island",
+   "lap_m": 4085.3,
+   "soft_top_in_lane": 0,
+   "obstruction_stations": 0,
+   "barrier_missing": 0,
+   "barrier_stations": 0,
+   "floating_furniture": 0,
+   "daylight_gaps": 0,
+   "excursion_drops": 0,
+   "undrivable_corners": 0,
+   "severe_steps": 0,
+   "severe_per_km": 0.0,
+   "steps_per_km": 0.0,
+   "kinks_per_km": 8.57,
+   "file": "drive_test.full_course.json"
   }
  },
  "fail": false,

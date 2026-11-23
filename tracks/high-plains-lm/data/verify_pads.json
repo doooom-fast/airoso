@@ -1,0 +1,21 @@
+{
+ "_doc": "tools/verify_pads.py (ledger 0054 P3): the junction pads on the BUILT road",
+ "pads": [
+  {
+   "id": "FORK",
+   "raster_points": 5768,
+   "multi_coverage_m2": 0.0,
+   "grass_on_deck": 0,
+   "grass_at_xz": [],
+   "seam_max_gap_m": 0.00121,
+   "seam_near_misses": 0,
+   "curb_over_pavement": 0,
+   "barriers": [],
+   "node_deck_minus_3dep_m": 0.0,
+   "node_z_3dep_m": 1535.96,
+   "fails": [],
+   "fail": false
+  }
+ ],
+ "fail": false
+}

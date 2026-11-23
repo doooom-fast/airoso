@@ -22,23 +22,24 @@
    "pass": true,
    "materials": [
     "1KERB_sidewalk_mat",
+    "1ROAD_pad_FORK_mat",
     "1ROAD_road_mat"
    ],
    "problems": []
   },
   "density": {
    "pass": true,
-   "triangles": 17328,
+   "triangles": 27464,
    "off": 0,
-   "worst_scale_err": 0.000602,
-   "worst_shear": 0.000632,
+   "worst_scale_err": 0.000612,
+   "worst_shear": 0.000622,
    "texel_m": 0.25,
    "atlas_px": 4096,
-   "jacobian_judged": 15273,
+   "jacobian_judged": 23576,
    "jacobian_off": 0,
-   "edge_judged": 2055,
+   "edge_judged": 3888,
    "edge_off": 0,
-   "worst_edge_err": 0.000674,
+   "worst_edge_err": 0.000811,
    "v_sign": -1.0,
    "edge_offenders": [],
    "unjudged": 0,
@@ -46,7 +47,7 @@
   },
   "no_repeat": {
    "pass": true,
-   "texels_claimed": 24729,
+   "texels_claimed": 39154,
    "claimed_twice": 0
   },
   "detail_phase": {
@@ -56,34 +57,34 @@
   },
   "tone": {
    "pass": true,
-   "pearson_r": 0.8587,
-   "samples": 1663,
+   "pearson_r": 0.8831,
+   "samples": 4358,
    "v_convention": "-v",
    "r_by_convention": {
-    "v": 0.1283,
-    "-v": 0.8587,
-    "1-v": -0.0
+    "v": 0.0134,
+    "-v": 0.8831,
+    "1-v": 0
    }
   },
   "photo_rubber": {
    "pass": true,
    "lines": [
     {
-     "layout": "full",
+     "layout": "west",
      "pass": true,
-     "declared_depth": 0.14139,
-     "shipped_depth": 0.14095,
-     "declared_centroid_m": -0.1116,
-     "shipped_centroid_m": -0.1129,
-     "stations": 1174,
-     "samples": 16232,
-     "declared_samples": 16255,
+     "declared_depth": 0.1295,
+     "shipped_depth": 0.12953,
+     "declared_centroid_m": 0.0624,
+     "shipped_centroid_m": 0.0625,
+     "stations": 1031,
+     "samples": 15483,
+     "declared_samples": 15483,
      "mask": {
-      "road_cells": 615222,
-      "median_lum": 0.42085,
+      "road_cells": 788362,
+      "median_lum": 0.42489,
       "grow_cells": 2,
       "interior_cells": 6,
-      "shadow_or_paint_cells": 31983
+      "shadow_or_paint_cells": 42083
      }
     }
    ],
@@ -91,43 +92,43 @@
   },
   "kerb_materials": {
    "pass": true,
-   "materials": 20,
+   "materials": 26,
    "problems": []
   },
   "kerb_paint": {
    "pass": true,
    "levels": 16,
-   "step": 0.01051,
+   "step": 0.00928,
    "problems": []
   },
   "kerb_levels": {
    "pass": true,
-   "triangles": 1146,
+   "triangles": 1926,
    "corners_in_two_levels": 0,
    "outside_every_declared_face": 0,
    "level_not_its_face": 0,
-   "faces": 573,
+   "faces": 963,
    "faces_off_the_line_rubber": 0,
-   "worst_level_err": 0.4989,
-   "faces_darkened": 326,
-   "darkest_face": 0.15765,
+   "worst_level_err": 0.5014,
+   "faces_darkened": 303,
+   "darkest_face": 0.13908,
    "per_level": [
-    247,
-    20,
+    660,
+    16,
+    26,
+    26,
+    28,
+    17,
+    11,
+    11,
     12,
-    14,
-    21,
-    15,
-    14,
-    15,
-    8,
+    16,
     22,
-    28,
-    72,
-    31,
-    28,
-    13,
-    13
+    14,
+    11,
+    16,
+    54,
+    23
    ]
   }
  }

@@ -487,3 +487,28 @@ Scratch workshop only; nothing built into the chain, nothing installed. `source/
 - **Kept**: `source/college_r2/scratch/` (the scratch run and `ground_look.py`, which lists the places behind the
   check's numbers). Every College change goes through that run before it is pushed (the Mac, 2026-11-23).
 
+
+## 0.20.5 rehearsal 2 green and the install, no force (the PC, 2026-11-23)
+
+- **Rehearsal 2** (c6352faf, empty workshop `D:/k10-scratch/rehearse_0205b`, ENG a fresh copy of eng_repro, `--no-install
+  --skip-blend`, 08:50-09:27): SHIP OK, every gate exit 0. `kn5_ground_check` on all five layouts: double-sheet cells **0**
+  (rehearsal 1: 202), deck-vs-mountain max **+0.313** (+5.181), the north junction 0.20.4 has too. Street `drive_test`
+  off-road drops 10 (rehearsal 1: 11). The line gates pass both ways; drive_test's own lap rule reads its excursions as
+  before (fwd 17, rev 21: reported, as on 0.20.4).
+- **Against rehearsal 1** (b844ad07): the gate rows differ only in the College ground's numbers and what the ground carries.
+  The race, closure and street kn5 are EQUIVALENT (tangents only); the 20 AI files are identical. In the main kn5 the
+  terrain tiles, rock and a few seated things moved: buildings re-seated by 6 mm at most, 6 sidewalk lip vertices by
+  3.6 cm at most; `1LAWN_median` holds the same points in another order.
+- **The install** (09:30-10:08, the chain's own empty workshop `D:/k10-scratch/lm_line`; 0.20.4's moved to
+  `D:/k10-scratch/lm_line.0.20.4`, kept): SHIP OK, all five layouts 0.20.5 as `san_diego_lake_murray_v4`, 0.20.4 parked in
+  `D:/k10-track-archive/2026-11-23_100800/`. = rehearsal 2: 1,135/1,135 gate rows (the workshop's name aside); every kn5
+  equivalent but the main one, whose `1LAWN_median` and `ROOFTOP_SHINGLE_0` hold the same points in another order
+  (ROOFTOP_SHINGLE_0 27,729 -> 27,728 vertices by the exporter's merge, as between the two rehearsals); AI identical. The
+  14 kn5 in AC are byte-identical to the build; the trees came along (14 .bin, the same list as 0.20.4).
+- **Menu pictures.** The install brought the track outline as its picture (the branch's `source/ui` holds none of 0.20.4's):
+  0.20.4's five pictures are put back in AC as a stopgap (the outlines kept in
+  `D:/k10-track-archive/2026-11-23_101500_lm0205_pictures_stopgap`, PREVIEWS.tsv there). 0.20.5's are drawn in a later PC slot.
+- **The blend.** The install synced back `loop.blend` at 204,545,652 B, sha256 bc7f772e... (0.20.4's pinned 495a2198...,
+  `tests/tools/test_lake_murray_0099.py`); committed as the sync-back, as 0.20.4's was. The next empty workshop seeds it.
+- Records on `claude/lm-0205-install-20261123` (sync-back 3a789d9c, main fcef3efe merged d60d786b); nothing pushed onto
+  `claude/lm-finish-r2-20261122`. Kevin's standing word on the PC: "Yes and I always want newer builds".

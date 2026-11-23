@@ -1,0 +1,1035 @@
+{
+ "reader": "panel reader batch 7 (model, by eye)",
+ "panels": {
+  "P119": {
+   "candidates": {
+    "1465": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1466": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1467": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1468": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1469": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1470": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1471": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1472": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1473": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1474": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1475": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1476": {
+     "class": "not_a_post",
+     "note": "parking-lot kerb edge beside a tree, no stroke"
+    },
+    "1477": {
+     "class": "not_a_post",
+     "note": "bench/steps by building, in shadow 2022"
+    },
+    "1478": {
+     "class": "not_a_post",
+     "note": "bench/steps by building, in shadow 2022"
+    },
+    "1479": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1480": {
+     "class": "not_a_post",
+     "note": "tree shadow on tree lawn"
+    }
+   },
+   "added": [
+    {
+     "E": -29.0,
+     "N": -191.5,
+     "class": "lamp",
+     "note": "south kerb of 14th; foot inside building shadow in 2022 but shadow emerges north with head, 2020 NW stroke from same foot"
+    },
+    {
+     "E": -49.0,
+     "N": -169.5,
+     "class": "lamp",
+     "note": "Capitol-grounds globe lamp, white dot + short shadow with blob, off-street"
+    },
+    {
+     "E": -33.5,
+     "N": -156.5,
+     "class": "lamp",
+     "note": "Capitol-grounds globe lamp, off-street"
+    },
+    {
+     "E": -20.0,
+     "N": -169.5,
+     "class": "lamp",
+     "note": "Capitol-grounds globe lamp, off-street"
+    },
+    {
+     "E": -3.5,
+     "N": -192.0,
+     "class": "signal_post",
+     "note": "tall corner pole: side-mounted signal heads, short luminaire arm at top, no arm over the roadway; SW corner 14th/Grant; same post as added in P120"
+    }
+   ],
+   "note": "every ring here is a tree or furniture; NE corner pole at about E -5.5 N -176.5 is candidate 1481 of P120. Bollard rows along the Capitol parking lot ignored."
+  },
+  "P120": {
+   "candidates": {
+    "1481": {
+     "class": "signal_post",
+     "note": "tall corner pole: side-mounted signal heads, short luminaire arm at top, no arm over the roadway"
+    },
+    "1482": {
+     "class": "cannot_tell",
+     "note": "kerb of grass strip, no stroke seen in either year"
+    },
+    "1483": {
+     "class": "signal_mast",
+     "note": "arm reaches west ~7 m along north kerb, heads for northbound Grant; luminaire arm too"
+    },
+    "1484": {
+     "class": "signal_mast",
+     "note": "arm reaches north over 14th Ave"
+    },
+    "1485": {
+     "class": "not_a_post",
+     "note": "yellow hatch paint in parking lot"
+    },
+    "1486": {
+     "class": "not_a_post",
+     "note": "parked car edge 2022, bare pavement 2020"
+    },
+    "1487": {
+     "class": "lamp",
+     "note": "globe lamp, Capitol grounds"
+    },
+    "1488": {
+     "class": "not_a_post",
+     "note": "tree shadow in tree lawn"
+    },
+    "1489": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1490": {
+     "class": "not_a_post",
+     "note": "tree"
+    }
+   },
+   "added": [
+    {
+     "E": -3.5,
+     "N": -192.0,
+     "class": "signal_post",
+     "note": "tall corner pole: side-mounted signal heads, short luminaire arm at top, no arm over the roadway; SW corner 14th/Grant; same post as added in P119"
+    }
+   ],
+   "note": "long white bars north of the plaza (two, diagonal and N-S) read as parking gate arms, not posts; bollard row ignored. Grey-ringed globe lamps and the tall lamp at the east edge belong to neighbours."
+  },
+  "P121": {
+   "candidates": {
+    "1491": {
+     "class": "lamp",
+     "note": "globe lamp"
+    },
+    "1492": {
+     "class": "lamp",
+     "note": "tall post, dark round head, 5.6 m shadow 2022"
+    },
+    "1493": {
+     "class": "lamp",
+     "note": "globe lamp"
+    },
+    "1494": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1495": {
+     "class": "not_a_post",
+     "note": "roof corner"
+    },
+    "1496": {
+     "class": "not_a_post",
+     "note": "branch shadow on road at kerb"
+    },
+    "1497": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1498": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1499": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1500": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1501": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1502": {
+     "class": "not_a_post",
+     "note": "on roof"
+    },
+    "1503": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1504": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1505": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1506": {
+     "class": "not_a_post",
+     "note": "branch shadow on road"
+    },
+    "1507": {
+     "class": "not_a_post",
+     "note": "evergreen edge"
+    },
+    "1508": {
+     "class": "not_a_post",
+     "note": "tree shadow"
+    },
+    "1509": {
+     "class": "not_a_post",
+     "note": "planter corner; 2022 in shadow"
+    }
+   },
+   "added": [
+    {
+     "E": 62.5,
+     "N": -170.0,
+     "class": "lamp",
+     "note": "globe lamp in the Capitol-grounds row (17 m spacing), off-street"
+    },
+    {
+     "E": 79.5,
+     "N": -170.0,
+     "class": "lamp",
+     "note": "globe lamp in the Capitol-grounds row, off-street"
+    },
+    {
+     "E": 74.0,
+     "N": -194.0,
+     "class": "lamp",
+     "note": "south kerb of 14th, white globe/head visible in building shadow 2022, shadow emerges north with round head; 2020 NW stroke with head"
+    },
+    {
+     "E": 60.5,
+     "N": -197.0,
+     "class": "post_unknown",
+     "note": "tall thin pole at alley mouth south of 14th: 4.7 m stroke N in 2022, 6 m NW in 2020, no head seen"
+    }
+   ],
+   "note": "row of short strokes on the south sidewalk west end = bollards, ignored"
+  },
+  "P122": {
+   "candidates": {
+    "1510": {
+     "class": "not_a_post",
+     "note": "building edge"
+    },
+    "1511": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1512": {
+     "class": "lamp",
+     "note": "globe lamp"
+    },
+    "1513": {
+     "class": "signal_post",
+     "note": "tall corner pole: side-mounted signal heads, short luminaire arm at top, no arm over the roadway"
+    },
+    "1514": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1515": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1516": {
+     "class": "not_a_post",
+     "note": "tree; the SW-corner signal mast foot is ~3 m NW of this ring (added)"
+    },
+    "1517": {
+     "class": "not_a_post",
+     "note": "lane paint/kerb"
+    },
+    "1518": {
+     "class": "not_a_post",
+     "note": "road at crosswalk corner"
+    },
+    "1519": {
+     "class": "not_a_post",
+     "note": "road at crosswalk end"
+    },
+    "1520": {
+     "class": "not_a_post",
+     "note": "planter bed with rocks"
+    },
+    "1521": {
+     "class": "signal_post",
+     "note": "tall corner pole: side-mounted signal heads, short luminaire arm at top, no arm over the roadway (luminaire arm points west)"
+    },
+    "1522": {
+     "class": "signal_mast",
+     "note": "arm reaches north over 14th Ave"
+    },
+    "1523": {
+     "class": "not_a_post",
+     "note": "roof/wall edge"
+    },
+    "1524": {
+     "class": "not_a_post",
+     "note": "roof"
+    },
+    "1525": {
+     "class": "not_a_post",
+     "note": "tree"
+    }
+   },
+   "added": [
+    {
+     "E": 102.0,
+     "N": -198.0,
+     "class": "signal_mast",
+     "note": "SW corner 14th/Sherman: arm reaches east ~12 m over Sherman south leg (two heads), luminaire arm; foot under tree crown, +-1 m"
+    },
+    {
+     "E": 120.5,
+     "N": -202.0,
+     "class": "sign_or_small_post",
+     "note": "east kerb of Sherman south of 14th, 1.5 m stroke both years"
+    }
+   ],
+   "note": "2020 mosaic seam along Sherman: shadows west of it fall NW, east of it NE"
+  },
+  "P123": {
+   "candidates": {
+    "1526": {
+     "class": "not_a_post",
+     "note": "roof"
+    },
+    "1527": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1528": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1529": {
+     "class": "cannot_tell",
+     "note": "alley in deep shadow both years"
+    },
+    "1530": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1531": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1532": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1533": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1534": {
+     "class": "not_a_post",
+     "note": "branch shadow on road"
+    },
+    "1535": {
+     "class": "not_a_post",
+     "note": "tree; duplicate ring of same trunk as 1533"
+    }
+   },
+   "added": [
+    {
+     "E": 166.5,
+     "N": -192.0,
+     "class": "utility_pole",
+     "note": "alley mouth south side of 14th: cross-arm shadows both years, equipment at top, wires leave east and south"
+    },
+    {
+     "E": 171.0,
+     "N": -206.5,
+     "class": "utility_pole",
+     "note": "alley pole south of 14th, cross-arms + insulators/transformers, off-street"
+    }
+   ],
+   "note": ""
+  },
+  "P124": {
+   "candidates": {
+    "1536": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1537": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1538": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1539": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1540": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1541": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1542": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1543": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1544": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1545": {
+     "class": "not_a_post",
+     "note": "shrub in planter"
+    },
+    "1546": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1547": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1548": {
+     "class": "not_a_post",
+     "note": "parking-lot paint corner"
+    },
+    "1549": {
+     "class": "post_unknown",
+     "note": "3 m thin stroke N in 2022 with small plate at top; 2020 light dot at foot; parking-lot sign or small light"
+    },
+    "1550": {
+     "class": "signal_post",
+     "note": "tall corner pole: side-mounted signal heads, short luminaire arm at top, no arm over the roadway"
+    },
+    "1551": {
+     "class": "not_a_post",
+     "note": "road beside parked car"
+    },
+    "1552": {
+     "class": "not_a_post",
+     "note": "shrub/tree at SE corner"
+    },
+    "1553": {
+     "class": "not_a_post",
+     "note": "bare tree crown; the SE signal mast foot is 3.5 m west (added)"
+    },
+    "1554": {
+     "class": "not_a_post",
+     "note": "shrub/tree at SE corner"
+    },
+    "1555": {
+     "class": "not_a_post",
+     "note": "white flat streak, same in both years"
+    },
+    "1556": {
+     "class": "signal_mast",
+     "note": "arm reaches west ~9.5 m over Logan; luminaire arm"
+    },
+    "1557": {
+     "class": "not_a_post",
+     "note": "road at crosswalk"
+    },
+    "1558": {
+     "class": "not_a_post",
+     "note": "bush by building"
+    }
+   },
+   "added": [
+    {
+     "E": 231.5,
+     "N": -192.5,
+     "class": "signal_mast",
+     "note": "SE corner 14th/Logan: arm reaches north over 14th Ave, heads on it; round luminaire head"
+    },
+    {
+     "E": 208.5,
+     "N": -192.5,
+     "class": "utility_pole",
+     "note": "SW corner 14th/Logan: thick tall pole (9 m stroke 2022), the kerb-line wires from the alley pole end here"
+    },
+    {
+     "E": 210.5,
+     "N": -192.5,
+     "class": "lamp",
+     "note": "2 m east of the pole above: 10 m stroke N with round head in 2022, round head in 2020; may be a luminaire carried on that pole rather than a separate post"
+    }
+   ],
+   "note": "another tall pole shadow at the east edge about E 237 N -193 (2022 only), not added. East of Sherman the 2020 shadows fall NE, not NW."
+  },
+  "P125": {
+   "candidates": {
+    "1559": {
+     "class": "not_a_post",
+     "note": "evergreen shrub"
+    },
+    "1560": {
+     "class": "not_a_post",
+     "note": "roof"
+    },
+    "1561": {
+     "class": "not_a_post",
+     "note": "roof edge"
+    },
+    "1562": {
+     "class": "post_unknown",
+     "note": "low confidence: at building corner on parking lot, 2020 shows a ~3 m stroke NE with small head; 2022 shadow falls on the wall"
+    },
+    "1563": {
+     "class": "not_a_post",
+     "note": "tree"
+    }
+   },
+   "added": [],
+   "note": "no street lamp seen on either side of Logan in this block"
+  },
+  "P126": {
+   "candidates": {
+    "1564": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1565": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1566": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1567": {
+     "class": "lamp",
+     "note": "cobra head: 5.7 m stroke N with hooked arm 2022, NE stroke with head 2020"
+    },
+    "1568": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1569": {
+     "class": "not_a_post",
+     "note": "rooftop patio"
+    },
+    "1570": {
+     "class": "not_a_post",
+     "note": "kerb line"
+    },
+    "1571": {
+     "class": "not_a_post",
+     "note": "roof"
+    },
+    "1572": {
+     "class": "not_a_post",
+     "note": "parking meter (short stroke)"
+    },
+    "1573": {
+     "class": "not_a_post",
+     "note": "parked car edge"
+    },
+    "1574": {
+     "class": "not_a_post",
+     "note": "car edge / wheel stop"
+    }
+   },
+   "added": [
+    {
+     "E": 193.5,
+     "N": -97.5,
+     "class": "lamp",
+     "note": "parking-lot light west of Logan, arm + head, off-street"
+    },
+    {
+     "E": 205.5,
+     "N": -95.5,
+     "class": "sign_or_small_post",
+     "note": "parking lot, white base, 2 m stroke both years, off-street"
+    },
+    {
+     "E": 209.5,
+     "N": -97.0,
+     "class": "sign_or_small_post",
+     "note": "sign board at parking-lot entrance, 3.4 m stroke 2022, board-shaped shadow 2020"
+    }
+   ],
+   "note": "regular short strokes along the east kerb are parking meters"
+  },
+  "P127": {
+   "candidates": {
+    "1575": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1576": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1577": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1578": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1579": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1580": {
+     "class": "not_a_post",
+     "note": "vehicle 2020, shadow 2022"
+    },
+    "1581": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1582": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1583": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1584": {
+     "class": "lamp",
+     "note": "cobra head, arm over Logan"
+    },
+    "1585": {
+     "class": "not_a_post",
+     "note": "parking lot by wall, no stroke"
+    },
+    "1586": {
+     "class": "not_a_post",
+     "note": "building corner/stairs"
+    },
+    "1587": {
+     "class": "not_a_post",
+     "note": "gravel roof edge"
+    },
+    "1588": {
+     "class": "not_a_post",
+     "note": "roof edge"
+    },
+    "1589": {
+     "class": "not_a_post",
+     "note": "roof edge"
+    },
+    "1590": {
+     "class": "not_a_post",
+     "note": "roof edge"
+    },
+    "1591": {
+     "class": "not_a_post",
+     "note": "parked car edge / parking meter"
+    },
+    "1592": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1593": {
+     "class": "not_a_post",
+     "note": "parked car edge"
+    },
+    "1594": {
+     "class": "not_a_post",
+     "note": "sidewalk south of tree pit, no stroke"
+    },
+    "1595": {
+     "class": "not_a_post",
+     "note": "roof unit"
+    },
+    "1596": {
+     "class": "not_a_post",
+     "note": "roof unit"
+    },
+    "1597": {
+     "class": "not_a_post",
+     "note": "roof unit"
+    },
+    "1598": {
+     "class": "not_a_post",
+     "note": "building wall"
+    },
+    "1599": {
+     "class": "cannot_tell",
+     "note": "thin 2.5 m stroke in 2022 whose foot would be ~2.5 m south of the ring; 2020 unclear"
+    }
+   },
+   "added": [],
+   "note": "east kerb short strokes every ~6 m are parking meters"
+  },
+  "P128": {
+   "candidates": {
+    "1600": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1601": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1602": {
+     "class": "not_a_post",
+     "note": "tree, beside a cabinet"
+    },
+    "1603": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1604": {
+     "class": "lamp",
+     "note": "SW corner Colfax/Logan: 7 m stroke with 3.5 m luminaire arm east; boxes on pole suggest side-mounted signal heads; ring was orange (tree) but it is a pole"
+    },
+    "1605": {
+     "class": "not_a_post",
+     "note": "car"
+    },
+    "1606": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1607": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1608": {
+     "class": "not_a_post",
+     "note": "car/tree"
+    },
+    "1609": {
+     "class": "signal_mast",
+     "note": "arm reaches west ~7 m over Logan north leg"
+    },
+    "1610": {
+     "class": "not_a_post",
+     "note": "roof"
+    }
+   },
+   "added": [
+    {
+     "E": 211.5,
+     "N": 2.5,
+     "class": "signal_mast",
+     "note": "NW corner Colfax/Logan: arm reaches south over Colfax westbound lanes, heads on it"
+    },
+    {
+     "E": 229.0,
+     "N": -19.5,
+     "class": "signal_mast",
+     "note": "SE corner Colfax/Logan: arm reaches north over Colfax eastbound lanes; foot +-1 m"
+    },
+    {
+     "E": 230.5,
+     "N": 7.0,
+     "class": "post_unknown",
+     "note": "short post with round head on the cathedral corner (2.5 m stroke 2022), maybe a pedestrian lamp; 2020 less clear"
+    }
+   ],
+   "note": "median delineator stubs on Colfax ignored"
+  },
+  "P129": {
+   "candidates": {
+    "1611": {
+     "class": "utility_pole",
+     "note": "alley pole with transformer bank"
+    }
+   },
+   "added": [
+    {
+     "E": 177.5,
+     "N": -18.0,
+     "class": "lamp",
+     "note": "south kerb of Colfax; foot in building shadow 2022 but 6.9 m shadow with head emerges north; 2020 stroke with head"
+    },
+    {
+     "E": 161.0,
+     "N": 1.5,
+     "class": "sign_or_small_post",
+     "note": "north sidewalk of Colfax: dark round base, 1.7 m stroke 2022 / 2.3 m 2020; kind uncertain (could be a sapling in a grate)"
+    },
+    {
+     "E": 149.5,
+     "N": 1.0,
+     "class": "sign_or_small_post",
+     "note": "north sidewalk of Colfax: dark round base, 2.3 m stroke 2022 / 3 m 2020; kind uncertain"
+    }
+   ],
+   "note": "a third similar object at about E 180.5 N 2 has a stroke under 1.5 m, not added"
+  },
+  "P130": {
+   "candidates": {
+    "1612": {
+     "class": "signal_post",
+     "note": "tall corner pole: side-mounted signal heads, short luminaire arm at top, no arm over the roadway"
+    },
+    "1613": {
+     "class": "lamp",
+     "note": "pedestrian-scale: 3 m stroke with round head in both years"
+    },
+    "1614": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1615": {
+     "class": "not_a_post",
+     "note": "road at crosswalk"
+    },
+    "1616": {
+     "class": "not_a_post",
+     "note": "ring sits on the mast arm ~2 m east of the foot; SW-corner mast added by eye"
+    },
+    "1617": {
+     "class": "not_a_post",
+     "note": "tree lawn, no stroke"
+    },
+    "1618": {
+     "class": "not_a_post",
+     "note": "building edge"
+    },
+    "1619": {
+     "class": "not_a_post",
+     "note": "building corner"
+    },
+    "1620": {
+     "class": "lamp",
+     "note": "pedestrian-scale: 2.3 m stroke with round head 2022; 2020 lost in tree shadow"
+    }
+   },
+   "added": [
+    {
+     "E": 103.5,
+     "N": 7.5,
+     "class": "signal_mast",
+     "note": "NW corner Colfax/Sherman: arm reaches south over Colfax, heads on it"
+    },
+    {
+     "E": 124.0,
+     "N": -19.0,
+     "class": "signal_mast",
+     "note": "SE corner Colfax/Sherman: arm reaches north over Colfax, heads on it"
+    },
+    {
+     "E": 103.5,
+     "N": -18.5,
+     "class": "signal_mast",
+     "note": "SW corner Colfax/Sherman: arm reaches east ~11 m over Sherman, luminaire arm; ring 1616 is on the arm"
+    },
+    {
+     "E": 120.5,
+     "N": 15.5,
+     "class": "sign_or_small_post",
+     "note": "east sidewalk of Sherman north of Colfax, sign plate shadow both years"
+    },
+    {
+     "E": 130.0,
+     "N": 1.5,
+     "class": "sign_or_small_post",
+     "note": "north sidewalk of Colfax, dark round base, ~2.2 m stroke both years; kind uncertain"
+    },
+    {
+     "E": 96.5,
+     "N": 5.5,
+     "class": "sign_or_small_post",
+     "note": "north sidewalk of Colfax west of Sherman, 1.5 m / 2 m strokes with small head; same post as added in P131"
+    }
+   ],
+   "note": "2020 seam along Sherman (NW shadows west, NE east). A 2.7 m stroke with round head at about E 102.5 N 11.5 (2022 only) not added."
+  },
+  "P131": {
+   "candidates": {
+    "1621": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1622": {
+     "class": "not_a_post",
+     "note": "building courtyard"
+    },
+    "1623": {
+     "class": "not_a_post",
+     "note": "vehicle"
+    },
+    "1624": {
+     "class": "not_a_post",
+     "note": "vehicle"
+    },
+    "1625": {
+     "class": "lamp",
+     "note": "7 m stroke with round head both years"
+    },
+    "1626": {
+     "class": "lamp",
+     "note": "globe lamp (white dot, short shadow); ring was orange but it is a lamp"
+    },
+    "1627": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1628": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1629": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1630": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1631": {
+     "class": "lamp",
+     "note": "globe lamp"
+    },
+    "1632": {
+     "class": "not_a_post",
+     "note": "building edge"
+    },
+    "1633": {
+     "class": "not_a_post",
+     "note": "building corner"
+    },
+    "1634": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1635": {
+     "class": "not_a_post",
+     "note": "roof edge"
+    }
+   },
+   "added": [
+    {
+     "E": 46.0,
+     "N": -23.5,
+     "class": "lamp",
+     "note": "globe lamp in the Capitol north-lawn row; same lamp as added in P132"
+    },
+    {
+     "E": 96.5,
+     "N": 5.5,
+     "class": "sign_or_small_post",
+     "note": "north sidewalk of Colfax, 1.5 m / 2 m strokes with small head; same post as added in P130"
+    },
+    {
+     "E": 93.0,
+     "N": -16.0,
+     "class": "sign_or_small_post",
+     "note": "south kerb of Colfax, 1.9 m stroke 2022, plate shadow 2020 (feet agree to ~1 m)"
+    }
+   ],
+   "note": "short post at about E 46.5 N 5.5 is candidate 1636 of P132. Possible sign at about E 74.5 N 6 (years disagree by 1.3 m) not added. Median delineators ignored."
+  },
+  "P132": {
+   "candidates": {
+    "1636": {
+     "class": "sign_or_small_post",
+     "note": "2.7 m thin stroke with round blob, both years"
+    },
+    "1637": {
+     "class": "lamp",
+     "note": "tall: 7.5 m stroke 2022; 2020 shadow shows attachments (banners or twin head)"
+    },
+    "1638": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1639": {
+     "class": "not_a_post",
+     "note": "tree"
+    }
+   },
+   "added": [
+    {
+     "E": 25.0,
+     "N": -23.5,
+     "class": "lamp",
+     "note": "globe lamp, Capitol north lawn"
+    },
+    {
+     "E": 46.0,
+     "N": -23.5,
+     "class": "lamp",
+     "note": "globe lamp, Capitol north lawn; same lamp as added in P131"
+    },
+    {
+     "E": 16.0,
+     "N": -16.0,
+     "class": "signal_mast",
+     "note": "south side of Colfax at Grant: arm reaches north over Colfax, heads on it; cabinet beside foot"
+    },
+    {
+     "E": 14.0,
+     "N": 6.0,
+     "class": "signal_post",
+     "note": "NW corner Colfax/Grant: 2020 shows a 3 m stroke with two boxy heads; 2022 foot confused with tree shadow, lower confidence"
+    }
+   ],
+   "note": "arm shadows entering from the west edge belong to a mast outside the panel; parking gate arms and bollards at SW ignored"
+  }
+ }
+}

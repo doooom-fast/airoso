@@ -1,0 +1,21 @@
+{
+ "_doc": "Paint, refutation round 1 (2026-11-23). Overlays of the first lap-wide assembly on boxes not used for tuning, read by eye; counts are by eye and approximate (a fragment is hard to count exactly). 20 boxes were drawn (refute.py r1: junctions at s 515, 1327, 1910, 2640, 2945, 3940, 4200, 4880, 5510, 6250; mid-block at s 150, 800, 1260, 2100, 2720, 3500, 3850, 4300, 5200, 5950); 4 were read before the causes were plain and the rest were not counted. The inventory was then rebuilt, so these numbers describe the state BEFORE the fixes below.",
+ "boxes_read": [
+  {"box": "j515 Colfax / 14th St", "measured": 23, "measured_false": 4, "detected": 35, "detected_false": 20, "missed": 6,
+   "what": "false: paving bands and a planter edge on the Civic Center plaza read as bars and a line (the look-window reached past the kerb); crosswalk bars of one row left as lone bars; older-year fragments on kerbs"},
+  {"box": "m2100 15th St, in a tower's shadow in 2022", "measured": 36, "measured_false": 5, "detected": 117, "detected_false": 70, "missed": 5,
+   "what": "false: marks on a low roof / deck beside the street (inside the 16 m look-window, lidar ground within 1.5 m); many small marks that exist only under the 2022 shadow gain; older-year fragments"},
+  {"box": "j3940 Kalamath / Colfax", "measured": 25, "measured_false": 1, "detected": 34, "detected_false": 12, "missed": 3,
+   "what": "crosswalks, stop bars and the dotted turn guides read; false: island kerbs as short lines"},
+  {"box": "m3500 Speer southbound, a mid-block crossing", "measured": 14, "measured_false": 1, "detected": 31, "detected_false": 12, "missed": 6,
+   "what": "false: the gutter pan along the kerb read as a long bar; a mark on the lawn; misses: lane dashes partly under vehicles' shadows"}
+ ],
+ "totals": {"measured": 98, "measured_false": 11, "precision_measured": 0.89, "detected": 217, "detected_false": 114, "precision_detected": 0.47, "missed": 20,
+            "recall_of_real_marks": 0.90},
+ "causes_and_fixes": [
+  "the look-window was a flat 16 m about every OSM line: now lanes x 3.5 m / 2 + 4.5 m per way (never over 16 m), with 18 m discs at junction nodes (paint_read.window)",
+  "a mark needed lidar ground within 1.5 m: now 0.75 m (roofs and decks beside the street)",
+  "a lone bar / stop bar / line that the 2020 lidar contradicts while the 2020 picture shows it is graded detected (gutter pans, slab edges)",
+  "an untyped small mark read only under the 2022 shadow gain is dropped; a short older-year bar with nothing in 2022 is treated as a fragment (kept only if both older years show it and 2022 is hidden there)"
+ ]
+}

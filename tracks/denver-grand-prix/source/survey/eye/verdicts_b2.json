@@ -1,0 +1,1047 @@
+{
+ "reader": "panel reader batch 2 (claude-fable-5-2, by eye)",
+ "panels": {
+  "P034": {
+   "candidates": {
+    "383": {
+     "class": "signal_post",
+     "note": "tall pole, 2022 shadow N ~7 m with head boxes; 2020 shadow falls on the building; no arm clearly seen"
+    },
+    "387": {
+     "class": "signal_post",
+     "note": "combination pole: head boxes on both years' shadows and a hooked luminaire arm at the top; no arm over the road seen"
+    },
+    "388": {
+     "class": "signal_mast",
+     "note": "2022: arm with heads reaches NW over the road; 2020 in building shadow"
+    },
+    "389": {
+     "class": "cannot_tell",
+     "note": "ring not found (candidate lies outside the panel image)"
+    },
+    "390": {
+     "class": "cannot_tell",
+     "note": "ring not found (candidate lies outside the panel image)"
+    },
+    "391": {
+     "class": "signal_post",
+     "note": "two strokes from one foot, boxy head part-way up both"
+    },
+    "392": {
+     "class": "signal_post",
+     "note": "two strokes from one foot; head box on the 2022 shadow only, kind less sure"
+    },
+    "393": {
+     "class": "signal_mast",
+     "note": "arm with heads reaches SW over the road, arm and displaced shadow both visible in both years"
+    },
+    "394": {
+     "class": "not_a_post",
+     "note": "building corner / parapet"
+    }
+   },
+   "added": [],
+   "note": "three more poles carry grey rings (neighbour panel) at the SW and S corners; not added"
+  },
+  "P035": {
+   "candidates": {
+    "395": {
+     "class": "not_a_post",
+     "note": "roof parapet corner"
+    },
+    "396": {
+     "class": "not_a_post",
+     "note": "rooftop plant"
+    },
+    "397": {
+     "class": "post_unknown",
+     "note": "2022 only: thin 4 m stroke north from a dot at the kerb, no head seen; 2020 in building shadow"
+    },
+    "398": {
+     "class": "not_a_post",
+     "note": "bike-lane paint / delineator line, no stroke"
+    },
+    "399": {
+     "class": "cannot_tell",
+     "note": "ring not found (candidate lies outside the panel image)"
+    }
+   },
+   "added": [
+    {
+     "E": -850.7,
+     "N": 571.1,
+     "class": "lamp",
+     "note": "2020: 6 m stroke NW with hooked head and a diamond sign; 2022 foot in building shadow, stroke and sunlit head emerge north of it; foot +-1 m"
+    }
+   ],
+   "note": "SW half in building shadow in 2022, NE sidewalk in shadow in 2020"
+  },
+  "P036": {
+   "candidates": {
+    "400": {
+     "class": "not_a_post",
+     "note": "lane arrow paint"
+    },
+    "401": {
+     "class": "not_a_post",
+     "note": "ONLY lane marking"
+    }
+   },
+   "added": [
+    {
+     "E": -890.1,
+     "N": 610.2,
+     "class": "signal_mast",
+     "note": "W corner, 2020 only (2022 deep shadow): pole shadow NW with diamond sign, arm NE over 15th with displaced shadow, second thin arm SE"
+    },
+    {
+     "E": -878.0,
+     "N": 624.3,
+     "class": "signal_post",
+     "note": "N corner, 2020: stroke NW 6.6 m with head box and hooked luminaire arm; 2022 in shadow"
+    },
+    {
+     "E": -881.6,
+     "N": 597.0,
+     "class": "lamp",
+     "note": "S corner, 2020: stroke NW with hooked luminaire arm; 2022 in shadow"
+    },
+    {
+     "E": -863.2,
+     "N": 608.2,
+     "class": "signal_post",
+     "note": "E corner, 2022 only: stroke N 6 m with head boxes, short arm line NW at top (maybe a mast); 2020 in building shadow"
+    },
+    {
+     "E": -864.3,
+     "N": 635.0,
+     "class": "lamp",
+     "note": "2022: stroke N with hooked cobra arm; 2020: stroke NW from same foot"
+    },
+    {
+     "E": -901.7,
+     "N": 622.4,
+     "class": "lamp",
+     "note": "2020 only: stroke NW with hooked head and two diamond signs; 2022 deep shadow; foot +-1 m"
+    }
+   ],
+   "note": "most of the junction is in tower shadow in 2022; both rings are road paint"
+  },
+  "P037": {
+   "candidates": {
+    "402": {
+     "class": "not_a_post",
+     "note": "parked vehicle in lot; 2022 in shadow"
+    },
+    "403": {
+     "class": "not_a_post",
+     "note": "parked vehicle edge; 2022 in shadow"
+    },
+    "404": {
+     "class": "not_a_post",
+     "note": "roof edge"
+    },
+    "405": {
+     "class": "not_a_post",
+     "note": "rooftop billboard frame"
+    },
+    "406": {
+     "class": "not_a_post",
+     "note": "rooftop plant"
+    }
+   },
+   "added": [
+    {
+     "E": -903.0,
+     "N": 647.0,
+     "class": "lamp",
+     "note": "2020: stroke NW with hooked head and two diamond signs; 2022 road in shadow but sunlit lamp head shows; foot +-1 m"
+    },
+    {
+     "E": -901.5,
+     "N": 622.8,
+     "class": "lamp",
+     "note": "2020 only: stroke NW with hooked head and diamond signs; foot +-1.5 m"
+    },
+    {
+     "E": -926.8,
+     "N": 670.4,
+     "class": "lamp",
+     "note": "2020: stroke NW with head boxes; 2022 sunlit head dot in shadow at same place"
+    }
+   ],
+   "note": "street in deep shadow in 2022; the many short dark ticks along the bike lane in 2020 are lane delineators, not counted"
+  },
+  "P038": {
+   "candidates": {
+    "407": {
+     "class": "signal_post",
+     "note": "2022 stroke N 6.5 m with hooked luminaire arm; 2020 stroke NW; the long arm over the cross street seems to belong to the N-corner mast"
+    },
+    "408": {
+     "class": "signal_post",
+     "note": "2022 stroke N with head boxes and hooked luminaire arm; 2020 stroke NW; combination pole"
+    },
+    "409": {
+     "class": "not_a_post",
+     "note": "planter rim beside a bare tree; 2020 in shadow"
+    },
+    "410": {
+     "class": "not_a_post",
+     "note": "planter / bin by a bike rack; the mast pole is 3 m SW of it"
+    }
+   },
+   "added": [
+    {
+     "E": -949.2,
+     "N": 698.8,
+     "class": "signal_mast",
+     "note": "N corner: two arms (SW over 15th, SE over the cross street) with heads, pole stroke N in 2022 and NW in 2020; foot +-1 m"
+    },
+    {
+     "E": -971.3,
+     "N": 675.1,
+     "class": "lamp",
+     "note": "2022 only: 6 m stroke N with a crossbar (banner arms); 2020 in building shadow"
+    },
+    {
+     "E": -943.6,
+     "N": 703.2,
+     "class": "lamp",
+     "note": "2022: 6 m stroke N with crossbar; 2020 stroke NW"
+    },
+    {
+     "E": -933.1,
+     "N": 692.9,
+     "class": "lamp",
+     "note": "stroke with crossbar in both years; foot +-1 m"
+    },
+    {
+     "E": -952.4,
+     "N": 702.0,
+     "class": "signal_post",
+     "note": "2022: bright base dot, 3 m stroke N with boxy head; 2020 partly in shadow; less sure"
+    },
+    {
+     "E": -926.2,
+     "N": 670.3,
+     "class": "lamp",
+     "note": "2020: stroke NW with hooked head; 2022 in shadow, sunlit head dot only"
+    }
+   ],
+   "note": "junction centre and S half in tower shadow in 2022; S corner is a construction site in 2020, not read"
+  },
+  "P039": {
+   "candidates": {
+    "411": {
+     "class": "not_a_post",
+     "note": "parking-deck ramp wall; the thin stroke SW of it has the same direction in both years (gate arm / rail), not a shadow"
+    },
+    "412": {
+     "class": "not_a_post",
+     "note": "rooftop in 2020, deep shadow in 2022"
+    },
+    "413": {
+     "class": "cannot_tell",
+     "note": "ring not found (candidate lies outside the panel image)"
+    }
+   },
+   "added": [
+    {
+     "E": -978.5,
+     "N": 724.6,
+     "class": "lamp",
+     "note": "clear: stroke N in 2022, NW with hooked head in 2020, sunlit luminaire arm over the road in both"
+    },
+    {
+     "E": -982.6,
+     "N": 700.5,
+     "class": "lamp",
+     "note": "2022: stroke N with hooked arm emerging from building shadow; 2020 luminaire arm visible; foot in shadow, +-1.5 m"
+    }
+   ],
+   "note": "W third in tower shadow in 2022"
+  },
+  "P040": {
+   "candidates": {
+    "414": {
+     "class": "not_a_post",
+     "note": "rooftop in 2020, deep shadow in 2022"
+    },
+    "416": {
+     "class": "not_a_post",
+     "note": "rooftop in 2020, deep shadow in 2022"
+    },
+    "417": {
+     "class": "not_a_post",
+     "note": "rooftop in 2020, deep shadow in 2022"
+    },
+    "418": {
+     "class": "not_a_post",
+     "note": "rooftop in 2020, deep shadow in 2022"
+    },
+    "419": {
+     "class": "not_a_post",
+     "note": "rooftop in 2020, deep shadow in 2022"
+    },
+    "421": {
+     "class": "not_a_post",
+     "note": "rooftop in 2020, deep shadow in 2022"
+    },
+    "422": {
+     "class": "not_a_post",
+     "note": "rooftop in 2020, deep shadow in 2022"
+    },
+    "423": {
+     "class": "not_a_post",
+     "note": "rooftop in 2020, deep shadow in 2022"
+    },
+    "415": {
+     "class": "cannot_tell",
+     "note": "ring not found (candidate lies outside the panel image)"
+    },
+    "420": {
+     "class": "not_a_post",
+     "note": "building corner"
+    },
+    "424": {
+     "class": "not_a_post",
+     "note": "median stripe paint; 2022 in shadow"
+    },
+    "425": {
+     "class": "not_a_post",
+     "note": "lane paint"
+    },
+    "426": {
+     "class": "not_a_post",
+     "note": "lane paint"
+    }
+   },
+   "added": [
+    {
+     "E": -1042.3,
+     "N": 759.2,
+     "class": "signal_mast",
+     "note": "W corner: thick pole stroke N with heads in 2022, NW in 2020; arms NE and SE with heads"
+    },
+    {
+     "E": -1025.6,
+     "N": 742.5,
+     "class": "signal_post",
+     "note": "S corner, 2020 only: pole with stroke NW and head box, in line with the SW crosswalk arm; 2022 in shadow"
+    },
+    {
+     "E": -1010.5,
+     "N": 760.2,
+     "class": "lamp",
+     "note": "E corner, 2020: long thin stroke NW ending in a blob; 2022 in dappled shadow; may also carry signal heads"
+    },
+    {
+     "E": -1000.0,
+     "N": 746.0,
+     "class": "lamp",
+     "note": "2020: stroke NW with hooked head; 2022 in shadow, sunlit head only"
+    }
+   ],
+   "note": "almost all in tower shadow in 2022. The N-corner signal mast is added under P041 (it shows in both panels)"
+  },
+  "P041": {
+   "candidates": {
+    "427": {
+     "class": "not_a_post",
+     "note": "small box (cabinet) beside the ring in 2020, no stroke; 2022 in shadow"
+    },
+    "428": {
+     "class": "lamp",
+     "note": "2020: 6.6 m stroke NW ending in a round head; 2022 stroke N running onto the building edge"
+    }
+   },
+   "added": [
+    {
+     "E": -1027.7,
+     "N": 774.5,
+     "class": "signal_mast",
+     "note": "N corner of the junction: pole stroke with heads and hooked luminaire in both years, arm SW over 15th with displaced shadow"
+    },
+    {
+     "E": -1027.0,
+     "N": 782.8,
+     "class": "post_unknown",
+     "note": "plaza: 4 m thin stroke N from a round base in 2022, stroke NW in 2020; pedestrian light or sign"
+    }
+   ],
+   "note": "W-corner signal mast is added under P040 (it shows in both panels). W half in tower shadow in 2022"
+  },
+  "P042": {
+   "candidates": {
+    "429": {
+     "class": "not_a_post",
+     "note": "ring sits on bike-box paint part-way along the shadow of a pole whose foot is about 4.5 m to the SE (added)"
+    }
+   },
+   "added": [
+    {
+     "E": -1099.2,
+     "N": 817.5,
+     "class": "post_unknown",
+     "note": "corner pole, 2020 only: stroke NW from a foot at the red kerb; probably a signal pole"
+    },
+    {
+     "E": -1073.6,
+     "N": 819.6,
+     "class": "lamp",
+     "note": "2020 only: thin 8 m stroke NW ending in a box, sign box at the foot"
+    },
+    {
+     "E": -1075.0,
+     "N": 813.2,
+     "class": "sign_or_small_post",
+     "note": "2020 only: diamond sign shadow 2.3 m at the head of the red-striped median"
+    }
+   ],
+   "note": "whole panel in deep tower shadow in 2022: nothing can be confirmed in a second year"
+  },
+  "P043": {
+   "candidates": {
+    "430": {
+     "class": "not_a_post",
+     "note": "rooftop in 2020, deep shadow in 2022"
+    },
+    "431": {
+     "class": "not_a_post",
+     "note": "rooftop in 2020, deep shadow in 2022"
+    },
+    "432": {
+     "class": "not_a_post",
+     "note": "rooftop in 2020, deep shadow in 2022"
+    },
+    "433": {
+     "class": "not_a_post",
+     "note": "rooftop in 2020, deep shadow in 2022"
+    },
+    "434": {
+     "class": "not_a_post",
+     "note": "roof edge"
+    },
+    "435": {
+     "class": "not_a_post",
+     "note": "roof edge"
+    },
+    "436": {
+     "class": "not_a_post",
+     "note": "building corner"
+    },
+    "437": {
+     "class": "not_a_post",
+     "note": "building corner"
+    },
+    "438": {
+     "class": "lamp",
+     "note": "pedestrian lamp: round base, 2.4 m stroke N with blob in 2022, pole seen leaning NE in 2020; one of a row of three"
+    },
+    "439": {
+     "class": "not_a_post",
+     "note": "ring sits on the leaning top of the next lamp in the row; its foot is 2.8 m SW (added)"
+    }
+   },
+   "added": [
+    {
+     "E": -1128.9,
+     "N": 873.7,
+     "class": "lamp",
+     "note": "pedestrian lamp, foot of the post ring 439 points at: round base, stroke N in 2022, pole leaning NE in 2020"
+    },
+    {
+     "E": -1121.4,
+     "N": 866.3,
+     "class": "lamp",
+     "note": "third pedestrian lamp of the row: round base, stroke N in 2022, leaning pole in 2020"
+    },
+    {
+     "E": -1101.0,
+     "N": 848.8,
+     "class": "signal_mast",
+     "note": "E corner, 2020 only (2022 deep shadow): long arms SW and SE with heads; foot +-2 m"
+    }
+   ],
+   "note": "E half in deep tower shadow in 2022. S corner has signal hardware in 2020 that I could not place"
+  },
+  "P044": {
+   "candidates": {
+    "440": {
+     "class": "not_a_post",
+     "note": "tree grate / paint ticks, no stroke"
+    },
+    "441": {
+     "class": "not_a_post",
+     "note": "ornate building corner"
+    },
+    "442": {
+     "class": "lamp",
+     "note": "pedestrian lamp: round base, short stroke N with globe in 2022, leaning pole in 2020"
+    },
+    "443": {
+     "class": "lamp",
+     "note": "pedestrian lamp: round base, short stroke N with globe in 2022, leaning pole in 2020"
+    },
+    "444": {
+     "class": "lamp",
+     "note": "plaza lamp: stroke N with head in 2022, leaning pole with blob in 2020, same signature as 447"
+    },
+    "445": {
+     "class": "not_a_post",
+     "note": "tree in planter"
+    },
+    "446": {
+     "class": "lamp",
+     "note": "kerb streetlight: 5.7 m stroke N with hooked arm in 2022; arm with sunlit head over the road in 2020"
+    },
+    "447": {
+     "class": "lamp",
+     "note": "plaza lamp: stroke N with globe in 2022, leaning pole with blob in 2020"
+    },
+    "448": {
+     "class": "not_a_post",
+     "note": "planter corner, no stroke"
+    },
+    "449": {
+     "class": "not_a_post",
+     "note": "ring on the shadow tip beside a planter tree; a post stands 2.5 m S of it (added)"
+    }
+   },
+   "added": [
+    {
+     "E": -1153.6,
+     "N": 898.7,
+     "class": "post_unknown",
+     "note": "3 m stroke N in 2022 and a thick leaning stroke NE in 2020 from one foot at the kerb by the planter"
+    },
+    {
+     "E": -1160.3,
+     "N": 906.7,
+     "class": "signal_post",
+     "note": "corner pole: 5.7 m stroke N with head boxes in 2022, sunlit luminaire arm SW in both years"
+    },
+    {
+     "E": -1136.0,
+     "N": 905.0,
+     "class": "lamp",
+     "note": "plaza lamp among planters, same signature as 447"
+    },
+    {
+     "E": -1141.2,
+     "N": 910.4,
+     "class": "lamp",
+     "note": "plaza lamp, same signature as 447"
+    },
+    {
+     "E": -1128.9,
+     "N": 874.0,
+     "class": "lamp",
+     "note": "pedestrian lamp continuing the 443-442 row"
+    },
+    {
+     "E": -1125.6,
+     "N": 871.0,
+     "class": "lamp",
+     "note": "pedestrian lamp continuing the row, at the panel edge"
+    }
+   ],
+   "note": "SW sidewalk in building shadow in 2022"
+  },
+  "P045": {
+   "candidates": {
+    "450": {
+     "class": "cannot_tell",
+     "note": "ring not found (candidate lies outside the panel image)"
+    },
+    "452": {
+     "class": "cannot_tell",
+     "note": "ring not found (candidate lies outside the panel image)"
+    },
+    "451": {
+     "class": "post_unknown",
+     "note": "ring clipped at the E edge: 2022 stroke N 5 m with crossbars from beside a planter; 2020 hidden in bare-tree shadow"
+    },
+    "453": {
+     "class": "lamp",
+     "note": "pedestrian lamp: 2.5 m stroke N with hooked head in 2022; 2020 weak"
+    },
+    "454": {
+     "class": "not_a_post",
+     "note": "white box (cabinet / news box) in 2020, bin in 2022"
+    },
+    "455": {
+     "class": "cannot_tell",
+     "note": "2020 short stroke with blob; 2022 hidden by a parked car, bare tree beside"
+    },
+    "456": {
+     "class": "signal_mast",
+     "note": "arm with heads reaches SW over the road in both years, displaced shadow in 2022"
+    },
+    "457": {
+     "class": "lamp",
+     "note": "2022: 3 m stroke N with head; 2020 short stroke; pedestrian lamp"
+    },
+    "458": {
+     "class": "not_a_post",
+     "note": "tree trunk, bare crown around it"
+    },
+    "459": {
+     "class": "not_a_post",
+     "note": "bare tree crown"
+    },
+    "460": {
+     "class": "not_a_post",
+     "note": "rooftop plant"
+    },
+    "462": {
+     "class": "not_a_post",
+     "note": "rooftop plant"
+    },
+    "461": {
+     "class": "lamp",
+     "note": "streetlight among the trees: 7 m straight stroke N with hook in 2022 and NW with hooked head in 2020, both from this foot"
+    },
+    "463": {
+     "class": "lamp",
+     "note": "2022 stroke N with hooked head; 2020 arm over the road"
+    },
+    "464": {
+     "class": "not_a_post",
+     "note": "ring on the 2020 head shadow of lamp 461, beside a bare tree"
+    }
+   },
+   "added": [
+    {
+     "E": -1190.2,
+     "N": 903.4,
+     "class": "signal_mast",
+     "note": "S/W corner: thick pole stroke with heads, thin arm NE over the road from the same foot in both years"
+    },
+    {
+     "E": -1160.4,
+     "N": 907.1,
+     "class": "signal_post",
+     "note": "E corner: 2022 stroke N 7 m with head boxes; 2020 line through the same foot"
+    },
+    {
+     "E": -1179.8,
+     "N": 893.6,
+     "class": "signal_post",
+     "note": "S corner, 2020 only: 6 m stroke NW with head boxes; 2022 in building shadow; foot +-1 m"
+    },
+    {
+     "E": -1194.8,
+     "N": 897.4,
+     "class": "lamp",
+     "note": "plaza, 2022: 6.7 m stroke N with crossbars; 2020 cluttered"
+    },
+    {
+     "E": -1201.5,
+     "N": 944.9,
+     "class": "lamp",
+     "note": "2022 stroke N from a round base at the top edge; 2020 arm"
+    }
+   ],
+   "note": "450 and 452 lie below the panel's bottom edge and are not drawn"
+  },
+  "P046": {
+   "candidates": {
+    "465": {
+     "class": "lamp",
+     "note": "pedestrian lamp: round base, 3.3 m stroke N with hooked head in 2022, short stroke in 2020"
+    },
+    "466": {
+     "class": "not_a_post",
+     "note": "parked car in a lot; 2020 in building shadow"
+    },
+    "467": {
+     "class": "not_a_post",
+     "note": "parked car in a lot; 2020 in building shadow"
+    },
+    "468": {
+     "class": "not_a_post",
+     "note": "fence corner of the sports court"
+    },
+    "469": {
+     "class": "not_a_post",
+     "note": "bare tree"
+    },
+    "470": {
+     "class": "not_a_post",
+     "note": "bare tree trunk; a streetlight stands 3 m NW of it (added)"
+    },
+    "471": {
+     "class": "lamp",
+     "note": "base with thin luminaire arm SW over the road in both years, shadow stroke N with head in 2022"
+    },
+    "472": {
+     "class": "cannot_tell",
+     "note": "short marks only, in the tree strip"
+    },
+    "473": {
+     "class": "not_a_post",
+     "note": "bare tree trunk"
+    },
+    "474": {
+     "class": "not_a_post",
+     "note": "tree trunk at the building-shadow edge"
+    },
+    "475": {
+     "class": "not_a_post",
+     "note": "rooftop plant"
+    },
+    "478": {
+     "class": "not_a_post",
+     "note": "rooftop plant"
+    },
+    "476": {
+     "class": "not_a_post",
+     "note": "bare tree trunk"
+    },
+    "477": {
+     "class": "lamp",
+     "note": "streetlight: 2020 straight 7 m stroke NW ending in a hooked head lands on this foot; 2022 stroke N runs up over the parked van"
+    },
+    "479": {
+     "class": "not_a_post",
+     "note": "ring on the 2020 shadow of lamp 477, bare tree beside"
+    },
+    "480": {
+     "class": "lamp",
+     "note": "2022 5 m stroke N with head; 2020 arm over the road"
+    },
+    "481": {
+     "class": "not_a_post",
+     "note": "railing / bare tree at the shadow edge"
+    }
+   },
+   "added": [
+    {
+     "E": -1224.8,
+     "N": 945.2,
+     "class": "lamp",
+     "note": "2022: stroke N with hooked cobra head rising out of the building shadow; 2020 hidden by a truck; foot +-1 m"
+    },
+    {
+     "E": -1214.3,
+     "N": 933.3,
+     "class": "lamp",
+     "note": "2022: 5 m stroke N with head among the bare trees; 2020 not separable from tree shadow"
+    }
+   ],
+   "note": "SW sidewalk is a row of bare trees with streetlights between them: the rings mostly sit on trunks or on lamp-head shadows"
+  },
+  "P047": {
+   "candidates": {
+    "482": {
+     "class": "post_unknown",
+     "note": "2022: stroke N rises out of the building shadow above this foot; 2020 stroke NW among bare branches; one of a kerb row"
+    },
+    "483": {
+     "class": "signal_post",
+     "note": "S corner pole: 7.7 m stroke N with head boxes and hooked luminaire arm in 2022; stroke NW with box in 2020"
+    },
+    "484": {
+     "class": "signal_mast",
+     "note": "E corner: arm with heads reaches NW over the road (arm and displaced shadow in both years), luminaire on top"
+    },
+    "485": {
+     "class": "not_a_post",
+     "note": "bare tree trunk by a construction sign"
+    },
+    "486": {
+     "class": "signal_post",
+     "note": "W corner pole: stroke N with head boxes and hooked luminaire in 2022, stroke NW with boxes in 2020; no long arm seen"
+    },
+    "487": {
+     "class": "not_a_post",
+     "note": "tree strip; 2022 deep shadow"
+    },
+    "490": {
+     "class": "not_a_post",
+     "note": "ring on the hooked head shadow of a streetlight (2020); foot is further SE (added)"
+    },
+    "491": {
+     "class": "not_a_post",
+     "note": "tree strip; 2022 deep shadow"
+    },
+    "488": {
+     "class": "lamp",
+     "note": "not a tree: clean straight 5 m stroke N in 2022, luminaire arm SW over the road in 2020; a bare tree stands beside it"
+    },
+    "489": {
+     "class": "not_a_post",
+     "note": "parked vehicle in the lot"
+    }
+   },
+   "added": [
+    {
+     "E": -1252.5,
+     "N": 995.6,
+     "class": "signal_mast",
+     "note": "N corner: arm with heads reaches SW over the road, thin arm and thick displaced shadow in both years"
+    },
+    {
+     "E": -1268.4,
+     "N": 988.1,
+     "class": "lamp",
+     "note": "2020 only: straight stroke NW ending in a hooked head; 2022 deep building shadow; foot +-1.5 m along the kerb line"
+    },
+    {
+     "E": -1235.0,
+     "N": 1009.9,
+     "class": "lamp",
+     "note": "2022: 5.7 m stroke N with hooked head; 2020 arm line through the same foot"
+    },
+    {
+     "E": -1274.4,
+     "N": 969.5,
+     "class": "post_unknown",
+     "note": "short post: 2.7 m stroke N with blob in 2022, stroke NW in 2020, one foot; pedestrian lamp or sign"
+    }
+   ],
+   "note": "streets run at 45 deg, so in 2020 the shadows of posts standing in one kerb row fall along one line and overlap"
+  },
+  "P048": {
+   "candidates": {
+    "492": {
+     "class": "lamp",
+     "note": "2022: 5.3 m stroke N with head; 2020 luminaire arm through the same foot"
+    },
+    "493": {
+     "class": "not_a_post",
+     "note": "2022 deep shadow; in 2020 the ring lies on the straight NW shadow (hooked head) of a streetlight whose foot is further SE, probably the next panel's candidate"
+    },
+    "494": {
+     "class": "not_a_post",
+     "note": "sidewalk by the wall, bare-tree shadow only"
+    },
+    "495": {
+     "class": "not_a_post",
+     "note": "building wall corner"
+    },
+    "496": {
+     "class": "not_a_post",
+     "note": "bare tree trunk"
+    },
+    "497": {
+     "class": "not_a_post",
+     "note": "duplicate of 496 (same bare tree)"
+    },
+    "498": {
+     "class": "not_a_post",
+     "note": "rooftop"
+    },
+    "499": {
+     "class": "lamp",
+     "note": "streetlight beside a bare tree: straight 7 m stroke N with head in 2022, arm in 2020"
+    },
+    "500": {
+     "class": "not_a_post",
+     "note": "tree pit / grate; 2022 in shadow"
+    },
+    "501": {
+     "class": "not_a_post",
+     "note": "planter corner, no stroke; a pedestrian lamp stands 2 m NW (added)"
+    },
+    "502": {
+     "class": "lamp",
+     "note": "2022: 5.5 m stroke N with head boxes (banner); 2020 stroke NW"
+    },
+    "503": {
+     "class": "lamp",
+     "note": "tall cobra streetlight with banner: stroke N with hook in 2022, NW with hooked head in 2020"
+    }
+   },
+   "added": [
+    {
+     "E": -1287.8,
+     "N": 1029.7,
+     "class": "lamp",
+     "note": "pedestrian lamp by the bus stop: base and 3.2 m stroke N with head in 2022, short stroke of another direction from the same foot in 2020"
+    }
+   ],
+   "note": "S half in building shadow in 2022"
+  },
+  "P049": {
+   "candidates": {
+    "504": {
+     "class": "not_a_post",
+     "note": "bare tree in pit"
+    },
+    "505": {
+     "class": "not_a_post",
+     "note": "bare tree in pit; a pedestrian lamp stands 3 m SE (added)"
+    },
+    "506": {
+     "class": "post_unknown",
+     "note": "on the triangular island: 3.2 m stroke N with a flag-shaped head in 2022, stroke with box in 2020; sign or signal pedestal"
+    },
+    "507": {
+     "class": "not_a_post",
+     "note": "ring by a cabinet / on the far end of the 2020 stroke; the signal pole's foot is 4 m SW (added)"
+    },
+    "508": {
+     "class": "not_a_post",
+     "note": "parking-lot fence / bollard"
+    },
+    "509": {
+     "class": "lamp",
+     "note": "2022: 4.8 m stroke N with crossbar; 2020 stroke NW with blobs"
+    },
+    "510": {
+     "class": "signal_mast",
+     "note": "arm with heads and end luminaire reaches SW over the road, arm and displaced shadow in both years"
+    },
+    "511": {
+     "class": "not_a_post",
+     "note": "spot on the kerb ramp, no stroke"
+    },
+    "512": {
+     "class": "signal_post",
+     "note": "bright base, 2.3 m stroke N with boxy head in 2022, stroke in 2020; pedestal by the crosswalk"
+    },
+    "513": {
+     "class": "signal_post",
+     "note": "pedestal on the island nose: stroke N with boxy heads in 2022, NW with boxes in 2020"
+    },
+    "514": {
+     "class": "not_a_post",
+     "note": "bare tree trunk"
+    },
+    "515": {
+     "class": "signal_mast",
+     "note": "arm with heads reaches SE over the road (arm and displaced shadow), tall pole with hooked luminaire"
+    },
+    "516": {
+     "class": "signal_post",
+     "note": "tall pole at the kerb of the curve: 10 m stroke N in 2022, stroke NW with head boxes in 2020; no arm identified"
+    }
+   },
+   "added": [
+    {
+     "E": -1304.6,
+     "N": 1046.5,
+     "class": "lamp",
+     "note": "pedestrian lamp: 2 m stroke N with blob in 2022, short stroke with blob in 2020"
+    },
+    {
+     "E": -1314.7,
+     "N": 1057.3,
+     "class": "signal_post",
+     "note": "E corner pole: stroke N with head boxes in 2022, thick stroke from the same foot in 2020"
+    },
+    {
+     "E": -1318.8,
+     "N": 1031.0,
+     "class": "signal_post",
+     "note": "on the curve kerb: 5.5 m stroke N with heads in 2022, stroke NW with heads in 2020"
+    }
+   ],
+   "note": "one more streetlight near the NE edge of the panel could not be placed to better than 2 m; not added"
+  },
+  "P050": {
+   "candidates": {
+    "517": {
+     "class": "not_a_post",
+     "note": "bare tree"
+    },
+    "519": {
+     "class": "not_a_post",
+     "note": "bare tree in pit"
+    },
+    "522": {
+     "class": "not_a_post",
+     "note": "bare tree in pit"
+    },
+    "529": {
+     "class": "not_a_post",
+     "note": "bare tree in pit"
+    },
+    "531": {
+     "class": "not_a_post",
+     "note": "bare tree in pit"
+    },
+    "537": {
+     "class": "not_a_post",
+     "note": "bare tree in pit"
+    },
+    "518": {
+     "class": "lamp",
+     "note": "pedestrian lamp: round base, 3 m stroke N with globe in 2022, stroke NW with blob in 2020"
+    },
+    "523": {
+     "class": "lamp",
+     "note": "stroke N in 2022 (thin, 5 m), stroke NW with blob in 2020; same row and spacing as 518 and 535"
+    },
+    "535": {
+     "class": "lamp",
+     "note": "pedestrian lamp: stroke N with globe in 2022, stroke NW with blob in 2020"
+    },
+    "520": {
+     "class": "not_a_post",
+     "note": "rooftop patio (furniture, umbrellas, parapet)"
+    },
+    "521": {
+     "class": "not_a_post",
+     "note": "rooftop patio (furniture, umbrellas, parapet)"
+    },
+    "525": {
+     "class": "not_a_post",
+     "note": "rooftop patio (furniture, umbrellas, parapet)"
+    },
+    "528": {
+     "class": "not_a_post",
+     "note": "rooftop patio (furniture, umbrellas, parapet)"
+    },
+    "530": {
+     "class": "not_a_post",
+     "note": "rooftop patio (furniture, umbrellas, parapet)"
+    },
+    "532": {
+     "class": "not_a_post",
+     "note": "rooftop patio (furniture, umbrellas, parapet)"
+    },
+    "533": {
+     "class": "not_a_post",
+     "note": "rooftop patio (furniture, umbrellas, parapet)"
+    },
+    "534": {
+     "class": "not_a_post",
+     "note": "rooftop patio (furniture, umbrellas, parapet)"
+    },
+    "536": {
+     "class": "not_a_post",
+     "note": "rooftop patio (furniture, umbrellas, parapet)"
+    },
+    "524": {
+     "class": "not_a_post",
+     "note": "bare tree branches at the shadow edge"
+    },
+    "526": {
+     "class": "not_a_post",
+     "note": "bare tree / planter"
+    },
+    "527": {
+     "class": "not_a_post",
+     "note": "building corner under a bare tree"
+    },
+    "538": {
+     "class": "cannot_tell",
+     "note": "ring not found (candidate lies outside the panel image)"
+    }
+   },
+   "added": [
+    {
+     "E": -1344.4,
+     "N": 1025.0,
+     "class": "lamp",
+     "note": "2022 only: 5.7 m stroke N with crossbar head from a foot by the railing; 2020 in building shadow"
+    }
+   ],
+   "note": "NW sidewalk alternates bare trees in pits with pedestrian lamps every 11.6 m; most rings there are the trees"
+  }
+ }
+}

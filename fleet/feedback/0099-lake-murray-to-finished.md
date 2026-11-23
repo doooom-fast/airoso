@@ -366,3 +366,45 @@ track.config.json, ship.json, README.md, source/stills/ (the three stills and th
 - **The install of 0.20.3**, after runbook 0099-1 (both heads mean twice the CSP lights; frame cost [not measured]).
 - **Downloads for round 2** (Notes for the PC): fresh OSM, 3DEP and buildings for Phase 3; NAIP 2022 se / nw / ne for the
   road wear (≈ 69 MB [estimate]).
+
+## PC run A (2026-11-22, 3b03aead): Lake Murray 0.20.3 from an EMPTY workshop, as expected; not installed
+
+Runbook 0099-1 step 0-3: worktree `D:/k10-worktrees/lm-finish` at 3b03aead; `loop.blend` sha256 3f13b887...a082
+(189,063,384 B) after `git lfs pull`; the 16 TreeFX models copied from `lm_phase2/project/source/trees/` (gitignored, not
+added): Agave a77e318f, Bush e150b090, Bush2 877abeb5, Bush3 e9299a59, Gum c00ef5dc, Oak3 24111ede, PalmV1 5545bb15,
+PalmV2 a9eb1ee3, PalmV3 3c3ea2b3, PepperV1 109f17bc, Pine_Aleppo 7e058b11, Sage 37a69c1f, SycamoreV1 0986f1ea, SycamoreV2
+7010d61f, SycamoreV3 0ad53d67, Yucca ef643461. ENG `D:/k10-scratch/eng_0099` = a copy of `eng_repro` (diff -rq clean).
+`SHIP_PROJ=D:/k10-scratch/rehearse_0099_1`, `--no-install --skip-blend`, 21:44-22:19 (35 min). Run B not run.
+
+- **Seeds:** `seeds: 70 copied from airoso, 0 kept as the workshop had them (0 of those differ from airoso's)`.
+- **GATES:** `street drive_test exit 1, street audit exit 0, race drive_test exit 0, race audit exit 0, race no_route exit
+  0, kn5_ground_check exit 0`; race layouts red: none; **NOT INSTALLED** on the street drive_test's 96 inherited drops
+  (`off-road excursion drops>20cm : 96`), as 0.20.2's run.
+- **kn5 against the installed 0.20.2** (`san_diego_lake_murray_v4`), kn5_equiv:
+  - the four closures, race and race_north: EQUIVALENT (tangents only); the five spawn kn5s byte-identical;
+  - the road kn5 107,371,829 -> 109,292,738 B: `1 mesh(es) not equivalent` = `LIGHTS_back` (new: 1,836 vertices / 646
+    triangles in the kn5, i.e. 323 quads; `LIGHTS_back_mat` new). Every other mesh equivalent. A material-by-material read:
+    only texture bindings change, on 1ROAD_road / pad_J2 / pad_J3 / pad_J4 / mouthfill_0 / mouthfill_1 / apron_AP1
+    (asphalt_cracked -> asphalt_dense, diffuse + normal) and 1KERB_sidewalk_0 / _1 / apAP1 / padJ2 / padJ3 / padJ4
+    (building_* -> concrete_plain). Textures out: asphalt_cracked_*; in: asphalt_dense_*, concrete_plain_*; building_* stays
+    (BRIDGESTRUCT).
+  - **the street kn5 differs too** (the runbook expected it equivalent): 3,867,123 -> 4,500,236 B, 0 meshes not
+    equivalent; `1KERB_sidewalk_streetonly_median_mat` now binds concrete_plain (it is a 1KERB_SIDEWALK stage); textures in:
+    concrete_plain_*. Textures only.
+- **Lights:** ext_config.ini 646 `[LIGHT_N]` (0.20.2: 323); `lights_ini_check.json` ok, n_lamps 323, n_lights 646, matched
+  646, n_lenses 646, both_heads true; `lights.heads.json` closest_lenses_m 8.073; kn5_ground_check `lamp integrity: 781
+  heads, orphaned 0` on each of the 5 layouts (the proof read 393 heads).
+- **surfaces.ini:** `[SURFACE_1] KEY=KERB` `FF_EFFECT=1`; ROAD, RUNOFF, GRASS, LAWN, WALL `FF_EFFECT=0`.
+- **trees.txt:** 21,159 lines as the installed (aa0cfae0 -> df2c722f); 1,015 lines differ, every one a `Bush.bin` size off by
+  0.001 (the third decimal; at most 4.2 % of a 0.024-sized bush); models, positions and angles identical, so Nov 13's bush
+  fix and Nov 19's medians hold. `[treefx] 21111 written of 21111 planned`; `treefx.report.json` total 21,111,
+  median_measured {measured 252, crown_measured 201, kept_rank_rule 850}.
+- **AI lines:** all 10 (5 layouts x fast / pit) byte-identical to the installed.
+- **ui_track.json:** 0.20.3 on all 5 layouts.
+- **Gate rows against the 0090 proof (`proof_lm`):** 1,035 / 1,033; every difference is this round's: the seeds and
+  `[heads]` lines, the workshop name in `[bands]`, split main 128 -> 129 meshes, the kn5 vertex offsets (+1,836 v / +646 tri
+  for LIGHTS_back), `[street-kn5]` textures (+concrete_plain), `[lights-ini] 646 ... PASS` (was 323), and the author-time
+  `[verify-race]` plan count 21,171 (the proof 21,111; the written count after TreeFX is 21,111 in both).
+
+Not installed: the street drive_test still refuses (as 0.20.2), and the runbook keeps the install for Kevin after the
+stills and his look at the lights.

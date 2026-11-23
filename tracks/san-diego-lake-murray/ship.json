@@ -37,6 +37,7 @@
       "lamps"
     ],
     "author": [
+      "college_split",
       "lamp_heads",
       "walk_grade",
       "race_bands",
@@ -78,7 +79,7 @@
       "fold_fans",
       "kn5_ground"
     ],
-    "_author_doc": "ledger 0099: lamp_heads (tools/author_lamp_heads_blend.py, opt-in scenery.streetlights.light_both_heads) first: it reads only the draft's LIGHTS_0 and data/lights.local.json, which no author step writes, and touches only LIGHTS_back, which none reads; first keeps the race steps' order (race_author, signs, race_verify last). Round 1c: walk_grade (tools/author_walk_grade_blend.py, opt-in route.walk_back_grade) second: it moves only the street walks' back-grade lips, which no other author step reads (the race edge strips stand on the road, edge_mode road; the signs on the walk's flat top), and before the race steps, so they author on the walk as it ships"
+    "_author_doc": "ledger 0055 round 2: college_split first (tracks/san-diego-lake-murray/source/college_r2, opt-in route.college_split): it rebuilds College Avenue's road, walks, island and ground between rows v1130 and v1476 and writes the lines the race steps count along, so every other author step works on the roads as they ship. ledger 0099: lamp_heads (tools/author_lamp_heads_blend.py, opt-in scenery.streetlights.light_both_heads) first: it reads only the draft's LIGHTS_0 and data/lights.local.json, which no author step writes, and touches only LIGHTS_back, which none reads; first keeps the race steps' order (race_author, signs, race_verify last). Round 1c: walk_grade (tools/author_walk_grade_blend.py, opt-in route.walk_back_grade) second: it moves only the street walks' back-grade lips, which no other author step reads (the race edge strips stand on the road, edge_mode road; the signs on the walk's flat top), and before the race steps, so they author on the walk as it ships"
   },
   "sync_in": {
     "required": [
@@ -118,7 +119,9 @@
       "data/osm.expansion.json",
       "data/expansion.north.samples.json.gz",
       "source/bespoke/buildings.json",
-      "source/vegetation/median_heights.lidar.json"
+      "source/vegetation/median_heights.lidar.json",
+      "source/college_r2/college_plants.median_spots.json",
+      "source/college_r2/college_bank_plants.json"
     ],
     "globs": [
       "source/trees/*.bin"
@@ -215,7 +218,8 @@
       "data/centerline.elevation.json"
     ],
     "_seed_doc": "ledger 0099 (Lake Murray from an EMPTY workshop; ledger 0090 'Open'): copied into the project only where it has no file yet, never over a workshop's own (tools/ship_track.sh). The rule: every sync_out file airoso holds that sync_in does not already bring, so a fresh workshop starts as the last synced-back one left it. loop.blend is the hand-authored blend that built 0.20.2 (sha256 3f13b887..., LFS: an un-pulled pointer is refused); the draft's data the --skip-blend steps read (connectors, mouths, pads, stubs, median bands, centrelines, ground release, deck datum, lights, bespoke report...) and the run's own records, which the run rewrites. data/centerline.geojson (scripts/ac/track_folder.py: the lap length) and data/centerline.elevation.json (scripts/geometry/drive_test.py: the replication rows) were read by the chain but crossed neither way; they are now in sync_out and seeded. The north laps' own records (lap.north.json, barrier_bands.north.json, dummies_north_*.json, ...) are absent: 0.20.2 was built in a scratch workshop that never synced back, and the author / ship / gate steps write every one of them",
-    "_optional_median_doc": "ledger 0099: source/vegetation/median_heights.lidar.json is scenery.treefx.median_measured.file (2026-11-19, Kevin: 'B: lidar height each'); tools/make_treefx.py reads it from the project, and no list carried it, so every rebuild since that config change would stop at the TreeFX step"
+    "_optional_median_doc": "ledger 0099: source/vegetation/median_heights.lidar.json is scenery.treefx.median_measured.file (2026-11-19, Kevin: 'B: lidar height each'); tools/make_treefx.py reads it from the project, and no list carried it, so every rebuild since that config change would stop at the TreeFX step",
+    "_optional_college_doc": "ledger 0055 round 2: the two lists tools/make_treefx.py reads from the project for the College bank (scenery.treefx.median_spots.file, scenery.treefx.lidar_plants.file), written by source/college_r2/college_plants_data.py"
   },
   "sync_out": {
     "required": [

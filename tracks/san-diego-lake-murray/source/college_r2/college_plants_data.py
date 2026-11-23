@@ -30,8 +30,9 @@ Two layers, both TreeFX data (nothing here is in the scene):
    lidar cannot tell species. Declared as scenery.treefx.lidar_plants (tools/make_treefx.py), the list in
    college_bank_plants.json beside this file.
 
-Without --write: the reports and the two declarations beside this file. With --write: the declarations also go into the
-PROJECT's own track.config.json and the plant list into <project>/source/college_r2/ (a scratch workshop)."""
+Without --write: the report, the two lists and the lidar_plants config entry beside this file. With --write the two
+lists are also copied to <project>/source/college_r2/ (a scratch workshop; in the chain ship.json's sync_in brings them).
+The config's own keys are written by college_race_config.py."""
 import json
 import math
 import shutil
@@ -381,14 +382,10 @@ print(f"declared: {len(decl['drop'])} drops, {len(decl['foot_y'])} foot heights 
       f"{len(plants)} plants -> college_bank_plants.json")
 
 if WRITE:
-    if missing:
-        raise SystemExit(f"--write: no tree.ini in {models_dir} for {missing}: the lidar_plants entry needs every model's size")
-    cfg = json.loads(cfg_path.read_text(encoding="utf-8"))
-    tfx = cfg.setdefault("scenery", {}).setdefault("treefx", {})
-    tfx["median_spots"] = decl
-    tfx["lidar_plants"] = entry
-    cfg_path.write_text(json.dumps(cfg, indent=2), encoding="utf-8")
-    dst = proj / PLANTS_FILE
-    dst.parent.mkdir(parents=True, exist_ok=True)
-    shutil.copy2(HERE / "college_bank_plants.json", dst)
-    print(f"[written] {cfg_path}: scenery.treefx.median_spots, scenery.treefx.lidar_plants; {dst}")
+    # the two lists go beside the project's other sources, where the planner reads them; the config's own keys
+    # (scenery.treefx.median_spots / lidar_plants) are college_race_config.py's to write
+    for name in ("college_plants.median_spots.json", "college_bank_plants.json"):
+        dst = proj / "source" / "college_r2" / name
+        dst.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(HERE / name, dst)
+        print(f"[written] {dst}")

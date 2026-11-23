@@ -1,6 +1,6 @@
 """College split, order of work step 1: THE DATA (no Blender, no scene). STEP-DESIGN.md has the why.
 
-    python college_split_data.py <project dir> [--write]
+    python college_split_data.py <project dir> [--write | --chain]
 
 Computes, from college_design.json (the measured section) and the centreline's own widths (the built outer edges):
 
@@ -39,7 +39,44 @@ PIECE = "college_nb"
 LAP = "college"
 
 proj = Path(sys.argv[1])
-WRITE = "--write" in sys.argv[2:]
+CHAIN = "--chain" in sys.argv[2:]
+WRITE = "--write" in sys.argv[2:] or CHAIN
+
+# --chain (tools/ship_track.sh author step college_split): the chain's own run. It writes the project's data as --write
+# does, with three differences. (1) Nothing is written beside this file: the scene scripts read the COMMITTED
+# college_split.data.json, so what this run computes from the project must BE that file, or it stops (the file was made
+# from another draft of the project's data). (2) The project's track.config.json is not written: its race.laps.college
+# must already be the lap computed here (airoso's own config declares it). (3) A project whose data already carries the
+# split (a workshop seeded from data a College build synced back) is verified and left as it is: the built line is
+# gone from it, and splitting a split road would be nonsense.
+if CHAIN:
+    _data = proj / "data"
+    _committed = json.loads((HERE / "college_split.data.json").read_text(encoding="utf-8"))
+    _ml = _committed["mainline"]
+    _now = json.loads((_data / "centerline.local.json").read_text(encoding="utf-8"))["points_xyz_m"]
+    _same = all(math.dist(_now[_ml["from_v"] + k], q) < 2e-4 for k, q in enumerate(_ml["points_xyz_m"]))
+    if _same and not (_data / "centerline.local.json.pre-split").exists():
+        bad = []
+        _conn = json.loads((_data / "connectors.local.json").read_text(encoding="utf-8"))
+        _conn = _conn["connectors"] if isinstance(_conn, dict) and "connectors" in _conn else _conn
+        _pc = [c for c in _conn if c.get("name") == _committed["piece"]["name"]]
+        if len(_pc) != 1 or _pc[0].get("points_xyz_m") != _committed["piece"]["points_xyz_m"]:
+            bad.append("data/connectors.local.json does not carry the piece %s as committed" % _committed["piece"]["name"])
+        _mb = json.loads((_data / "median_bands.json").read_text(encoding="utf-8"))
+        if any(_mb["island_w_by_vertex"][v] for v in range(1117, 1476)):
+            bad.append("data/median_bands.json still has an island on rows v1117-1475")
+        _lp = _data / "lights.local.json"
+        if _lp.exists() and "college_split" not in json.loads(_lp.read_text(encoding="utf-8")):
+            bad.append("data/lights.local.json has no college_split record (the east lamps are not raised)")
+        _gp = _data / "ground_release.json"
+        if _gp.exists():
+            _z = [z for z in json.loads(_gp.read_text(encoding="utf-8")).get("zones") or [] if z.get("name") == "college_split_cut"]
+            if _z and [round(float(q)) for q in _z[0].get("v") or []] != [_ml["from_v"], _ml["to_v"]]:
+                bad.append("data/ground_release.json: zone college_split_cut is not on rows v%d..v%d" % (_ml["from_v"], _ml["to_v"]))
+        if bad:
+            raise SystemExit("[college] the centre line already carries the split but the rest of the data does not: " + "; ".join(bad))
+        print("[college] the project's data already carries the split (seeded from a College build): verified, nothing written")
+        raise SystemExit(0)
 D = {r["v"]: r for r in json.loads((HERE / "college_design.json").read_text(encoding="utf-8"))["stations"]}
 data = proj / "data"
 src_cl = data / ("centerline.local.json.pre-split" if (data / "centerline.local.json.pre-split").exists() else "centerline.local.json")
@@ -440,7 +477,15 @@ out = {"what": "College split, the data (college_split_data.py)", "report": repo
                     "points_xyz_m": [[round(c, 4) for c in lap_zone[v]] for v in ZONE]},
        "mainline": {"from_v": A0, "to_v": A1, "points_xyz_m": [[round(c, 4) for c in P1[v]] for v in range(A0, A1 + 1)],
                     "widths_m": [round(W1[v], 3) for v in range(A0, A1 + 1)], "offset_m": [round(main_off[v], 3) for v in range(A0, A1 + 1)]}}
-(HERE / "college_split.data.json").write_text(json.dumps(out, indent=1), encoding="utf-8")
+if CHAIN:
+    _mine = json.loads(json.dumps(out))
+    if _mine != _committed:
+        _keys = [k for k in sorted(set(_mine) | set(_committed)) if _mine.get(k) != _committed.get(k)]
+        raise SystemExit("[college] this project's data does not give the committed college_split.data.json (they differ in "
+                         "%s): the scene scripts read the committed file, so it must be remade on this data "
+                         "(python college_split_data.py <project>) and committed before the chain can apply it" % _keys)
+else:
+    (HERE / "college_split.data.json").write_text(json.dumps(out, indent=1), encoding="utf-8")
 # the datum's offset from the lidar, station by station (the Mac, 2026-11-23): the heights here are NOT measured heights
 datum = {"what": "College split: how far the height datum (the BUILT west pavement edge, kept in place and height) stands off the "
                  "lidar, per centreline vertex. Every height the split builds carries this offset; only the SHAPE across the "
@@ -459,8 +504,9 @@ datum = {"what": "College split: how far the height datum (the BUILT west paveme
 dd = [r[4] for r in datum["rows"]]
 datum["summary"] = {"min_m": min(dd), "max_m": max(dd), "median_m": sorted(dd)[len(dd) // 2],
                     "at_the_two_outer_rows_m": [dd[0], dd[-1]]}
-(HERE / "college_datum_offset.json").write_text(json.dumps(datum, indent=1), encoding="utf-8")
-print(json.dumps(report, indent=1))
+if not CHAIN:
+    (HERE / "college_datum_offset.json").write_text(json.dumps(datum, indent=1), encoding="utf-8")
+    print(json.dumps(report, indent=1))
 
 if WRITE:
     def keep(p):
@@ -565,9 +611,25 @@ if WRITE:
                 if "v" in z_:
                     z_["v"] = [float(A0), float(A1)]
                 print(f"[release] zone college_split_cut -> s {z_['s_m']} (rows v{A0}..v{A1}), sides {z_.get('sides')}, reach {z_.get('reach_m')} m")
+            elif not z_.get("line") and z_.get("v") and min(z_["v"]) >= A1:
+                # a mainline zone declared by vertex past the split: the road there has not moved, but its stations
+                # have (the mainline is %.3f m longer through the split), and the prep finds a zone by station
+                old_s = list(z_["s_m"])
+                z_["s_m"] = [round(S1[int(q)] + (q - int(q)) * (S1[min(int(q) + 1, len(S1) - 1)] - S1[int(q)]), 3) for q in z_["v"]]
+                print(f"[release] zone {z_['name']} (rows v{z_['v'][0]:.1f}..v{z_['v'][1]:.1f}) -> s {z_['s_m']} (was {old_s})")
+            elif not z_.get("line") and not z_.get("v") and max(z_["s_m"]) > S0[A0]:
+                raise SystemExit(f"[release] zone {z_['name']} is keyed by station only and reaches past the split's start "
+                                 f"({S0[A0]:.1f} m): declare it by vertex (terrain.ground_release.zones[].v)")
         gp.write_text(json.dumps(GJ), encoding="utf-8")
-    keep(cfg_path)
-    c2 = json.loads(cfg_path.with_name(cfg_path.name + ".pre-split").read_text(encoding="utf-8"))
-    c2.setdefault("race", {}).setdefault("laps", {})[LAP] = lap
-    cfg_path.write_text(json.dumps(c2, indent=2), encoding="utf-8")
+    if CHAIN:
+        have = ((cfg.get("race") or {}).get("laps") or {}).get(LAP) or {}
+        diff = [k for k in lap if have.get(k) != lap[k]]
+        if diff:
+            raise SystemExit(f"[college] track.config.json race.laps.{LAP} is not the lap of this data (differs in {diff}): "
+                             f"airoso's own config declares it; the chain does not write the config")
+    else:
+        keep(cfg_path)
+        c2 = json.loads(cfg_path.with_name(cfg_path.name + ".pre-split").read_text(encoding="utf-8"))
+        c2.setdefault("race", {}).setdefault("laps", {})[LAP] = lap
+        cfg_path.write_text(json.dumps(c2, indent=2), encoding="utf-8")
     print("[written]", proj)

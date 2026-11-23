@@ -480,6 +480,14 @@ def test_median_spots_drop_and_foot_leave_every_other_spot_as_it_was():
     mt.build(d)
     assert json.loads((d / "data" / "treefx.report.json").read_text())["median_spots"] == {"dropped": 2, "foot_moved": 1}
     assert "median_spots" not in mt.plan(_median_project(hs, cs))                   # not declared: the plan as before
+    # the same lists in a file of their own: the same plan, line for line; a file that is not there is an error
+    spots = json.loads((d / "track.config.json").read_text())["scenery"]["treefx"]["median_spots"]
+    (d / "source" / "spots.json").write_text(json.dumps(spots))
+    by_file = mt.plan(_with_median_spots(d, {"file": "source/spots.json"}))
+    assert by_file["lines"] == p["lines"] and by_file["median_spots"] == p["median_spots"]
+    import pytest
+    with pytest.raises(SystemExit, match="nowhere.json"):
+        mt.plan(_with_median_spots(d, {"file": "source/nowhere.json"}))
 
 
 def test_median_spots_refuses_a_list_made_for_other_spots():

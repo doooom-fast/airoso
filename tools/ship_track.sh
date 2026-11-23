@@ -575,6 +575,27 @@ author_race_verify() {
   (cd "$AIROSO" && python tools/plot_race_furniture.py "$PROJ" | tail -3)   # data/race_plots/*.png
 }
 
+author_college_split() {
+  # ledger 0055 round 2 (Kevin: "realism+"; Lake Murray, opt-in route.college_split): College Avenue between rows v1130 and
+  # v1476 as two roads. The track's own step (tracks/<track>/source/college_r2). The data first: college_split_data.py
+  # --chain puts the mainline on the southbound road, makes the northbound road a connector, takes the island off those
+  # rows, raises the east lamps and widens the released zone; what it computes from the project must BE the committed
+  # college_split.data.json (the scene scripts read that file), and a project whose data already carries the split (seeded
+  # from a College build) is verified and left as it is. Then three edits of loop.blend, each self-checked (exit 1 = not
+  # saved) and a no-op on a scene that already carries it: the two ribbons, the middle (the old island out; the bank's
+  # island and grass top, the east walk, the paint in), the ground and the east lamps. FIRST in the author phase:
+  # walk_grade and the race steps author on the roads as they ship. Key absent = no-op, nothing read. Only a ship.json
+  # that names it
+  step "author: College Avenue as two roads (source/college_r2: the data held to the committed split, then the ribbons, the middle and the ground into loop.blend; ledger 0055 round 2; self-checked; not opted in = no-op)"
+  local on s r2="$SRC/source/college_r2"
+  on=$(pyq "import json,sys; print(1 if (json.load(open(sys.argv[1],encoding='utf-8')).get('route') or {}).get('college_split') else 0)" "$PROJ/track.config.json" | tr -d '\r')
+  [ "$on" = 1 ] || { echo "  (route.college_split not declared: nothing to do)"; return 0; }
+  (cd "$AIROSO" && python "$r2/college_split_data.py" "$PROJ" --chain)
+  for s in split middle ground; do
+    (cd "$WS" && "$BL" --background "$PROJ/loop.blend" --python-exit-code 1 --python "$r2/college_${s}_blend.py" 2>&1 | grep "^\[college_${s}\]\|FATAL\|Error\|Traceback" )
+  done
+}
+
 author_lamp_heads() {
   # ledger 0099 (Kevin 2026-11-22: "Yes, light both heads"; opt-in scenery.streetlights.light_both_heads): every two-arm lamp's
   # back head gets its lens (LIGHTS_back, each LIGHTS_0 lens turned about its own pole), so ext_config clusters a second CSP

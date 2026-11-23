@@ -183,6 +183,13 @@
       "_doc": "ledger 0099 round 1c (Kevin 2026-11-22: \"let's complete lake murray\"; the sidewalk re-author, the 96 street drops 0.20.2 was forced past). tools/author_walk_grade_blend.py (author step walk_grade): the draft's walk falls 0.34 m over its 1.2 m back grade (28 %, 0.142 m per 0.5 m; drive_test reads a fall over 0.12 m between 0.5 m samples as a drop), 94 of the 96. Every back-grade lip is raised so no edge up to the walk's back edge is steeper than max_slope; nothing else moves, the strip's plan footprint is the draft's. Held where the draft put it: a lip over released ground (data/ground_release.json; at most 0.03 m under that 3DEP earth), under furniture (a stub's K-rail, a rail), under pavement, or named by the red plan. On the prepped scene (prep sub-step, author_walk_grade_blend.py --seat) a raised lip that stands over the ground the prep left (a fill) is lowered onto it, never past the draft's grade. max_slope 0.20 [invented]: 0.10 m per 0.5 m sample, under the gate's 0.12 with 0.02 to spare, and the lip at the centre line's height, still 0.08 m under the ground the prep pins at the lane edge (build_kn5_loop GROUND_CLEAR 0.02). objects: the draft's CURB and the four authored walks that carry the same 1.2 m / 0.34 m grade (the J2-J4 pads, apron AP1); the street-only median has none.",
       "max_slope": 0.2,
       "objects": ["CURB", "1KERB_sidewalk_padJ2", "1KERB_sidewalk_padJ3", "1KERB_sidewalk_padJ4", "1KERB_sidewalk_apAP1"]
+    },
+    "college_split": {
+      "_doc": "ledger 0055 round 2 (Kevin: 'realism+'): College Avenue between rows v1130 and v1476 is two roads, the mainline on the southbound one and the northbound one a connector (college_nb), with a planted bank between them. Opt-in key of the chain's author step college_split (tools/ship_track.sh, first in the author phase): tracks/san-diego-lake-murray/source/college_r2/college_split_data.py --chain writes the project's data, then college_split_blend.py, college_middle_blend.py and college_ground_blend.py edit loop.blend, each self-checked and a no-op on a scene that already carries it. Absent = the step does nothing.",
+      "rows": [
+        1130,
+        1476
+      ]
     }
   },
   "loop": true,
@@ -316,7 +323,8 @@
       },
       "run": "clockwise, one-way: Alvarado westbound, College northbound, Navajo eastbound, Jackson south, Lake Murray Blvd southwest — your own side of every road (an Alvarado-wide lane), the whole street on Alvarado and the I-8 bridge, the full intersection open at the five corners",
       "ui_description": "Lake Murray Speedway (clockwise, the normal direction): the same 13.5 km of real Lake Murray roads as a one-way race track, run clockwise — Alvarado westbound, College northbound, Navajo eastbound, Jackson south, Lake Murray Blvd southwest — on an Alvarado-wide lane on your own side of every road: concrete barriers along your curb and a second line closing off the opposite lanes (along the medians where there is one); the whole street on Alvarado and the I-8 bridge; the full intersection open at the five corners; side streets sealed; red/white kerbs at the corners. The AI line is a generated draft, not an in-game recording.",
-      "ai": "ai/race_cw"
+      "ai": "ai/race_cw",
+      "lap": "college"
     },
     {
       "id": "race_acw",
@@ -395,8 +403,14 @@
       "clear_width_source": "alvarado",
       "island_mode": "pavement",
       "whole": [
-        4454,
-        777
+        [
+          4454,
+          777
+        ],
+        [
+          1171,
+          1445
+        ]
       ],
       "boxes": [
         {
@@ -419,6 +433,10 @@
       "closure_runs": [
         [
           777,
+          1171
+        ],
+        [
+          1445,
           1506
         ],
         [
@@ -499,25 +517,6 @@
     },
     "grid_slots": 8,
     "pit_slots": 8,
-    "chicanes": [
-      {
-        "name": "college_split",
-        "out_leg": [
-          1253,
-          1289
-        ],
-        "back_leg": [
-          1343,
-          1379
-        ],
-        "layouts": [
-          "race_cw",
-          "race_acw"
-        ],
-        "street_only_island": true,
-        "why": "Ledger 0055 (Kevin, seat, 2026-10-14: 'for the racetrack versions, I do like the chicane that kind of goes from one side of the road across to the other and back'). v0.18.0's crossing was the ROAD jogging ~12 m sideways off the northbound carriageway onto the southbound one and back (tools/median_envelope.py's trust test, reading OSM through its own sphere projection, split College's divided run at v1280-1352); with the road where it really runs, the Speedways keep the crossing as race geometry on it (scripts/geometry/race_chicane.py, tools/barrier_bands.py: the closure sweeps into the far curb strip while a race-side wall sweeps in parallel from the race-side strip, ~108 m legs (36 vertices) centred on the v0.18.0 jogs (v1262-1280 / v1352-1370): 26 vertices stood at 1:2.85-3.0 against race.corridor.steepest_pin_rate 1:3, and 30 with race_chicane.EASE 0.2 bunched the AI line's turn-in under verify_ai_line's car scale; at 36 / EASE 0.35 the walls run 1:3.2-3.5, the lane held ~160 m on the far carriageway between the legs). Each Speedway crosses in its own direction: Speedway (race_cw, northbound) over to the southbound carriageway and back, Speedway Reverse (race_acw) the mirror. The median island from v1253 to v1379 stands in Lake Murray Free Roam only (<slug>_street.kn5): a race layout's road there is the bare slab the island stands on."
-      }
-    ],
     "laps": {
       "north": {
         "pieces": [
@@ -706,6 +705,106 @@
             }
           ]
         }
+      },
+      "college": {
+        "pieces": [
+          {
+            "line": "MAINLINE",
+            "from": 0,
+            "to": 1130
+          },
+          {
+            "line": "college_nb",
+            "from": 0,
+            "to": 345
+          },
+          {
+            "line": "MAINLINE",
+            "from": 1476,
+            "to": 4497
+          }
+        ],
+        "join_spacing_m": 4.0,
+        "_doc": "ledger 0055 round 2: the Speedway's own lap, the mainline with the northbound road of College's split (college_nb) in place of rows 1130..1476. Vertex k of this lap is the mainline's vertex k.",
+        "corridor": {
+          "_doc": "Spec §9.1 (scratchpad corridor/spec.md, ledger 0049). whole = I-8 deck -> v0 -> Alvarado -> hairpin box (v4454 .. v777); boxes = the place_signs corner PC-2..PT+2 at the three interior corners (the seam and hairpin lie inside whole); closure_runs PINNED (College, Navajo, Jackson, Lake Murray Blvd); rates are 1:x lateral per metre of travel. clear_width_source alvarado = re-measured median(w - 2 x 0.82) over v25-723, fails beyond 0.02 m of clear_width_m. Tune only after Kevin's drive (spec §17).",
+          "clear_width_m": 11.36,
+          "clear_width_source": "alvarado",
+          "island_mode": "pavement",
+          "whole": [
+            [
+              4454,
+              777
+            ],
+            [
+              1171,
+              1445
+            ]
+          ],
+          "boxes": [
+            {
+              "apex": 1514,
+              "i": 1506,
+              "j": 1521
+            },
+            {
+              "apex": 2319,
+              "i": 2311,
+              "j": 2328
+            },
+            {
+              "apex": 3296,
+              "i": 3289,
+              "j": 3304
+            }
+          ],
+          "_boxes_apex_doc": "Ledger 0055 round 2: the Jackson / Lake Murray Blvd apex reads v3296 (was v3297). The corner is unchanged (every centreline vertex from v1510 on is byte-identical); College's registration shortens the lap 0.45 m, which shifts place_signs' 1 m detector stations downstream and moves the max-curvature station from v3297 to v3296, 2.1 m apart on the R 10.8 m arc. barrier_bands self-gate 1 requires the declared apex to BE a detected one; the box v3289-3304 still holds PC v3291 .. PT v3302.",
+          "closure_runs": [
+            [
+              777,
+              1171
+            ],
+            [
+              1445,
+              1506
+            ],
+            [
+              1521,
+              2311
+            ],
+            [
+              2328,
+              3289
+            ],
+            [
+              3304,
+              4454
+            ]
+          ],
+          "rate_toward_race_side": 12,
+          "rate_away": 6,
+          "pin_zone_m": 120,
+          "pin_rate_min": 6,
+          "pin_rate": {
+            "4454": 10
+          },
+          "steepest_pin_rate": 3,
+          "base_open_m": 60,
+          "base_sigma_m": 20,
+          "island_env_m": 30,
+          "attract_m": 40,
+          "smooth_sigma_m": 4,
+          "clear_floor_m": 10.86,
+          "clear_hard_min_m": 6.5,
+          "pocket_min_m": 2.0
+        },
+        "roads": [
+          "Alvarado Road",
+          "College Avenue",
+          "Navajo Road",
+          "Jackson Drive",
+          "Lake Murray Boulevard"
+        ]
       }
     }
   },
@@ -897,8 +996,8 @@
           "name": "college_split_cut",
           "kind": "bank",
           "v": [
-            1197.643,
-            1468.542
+            1130.0,
+            1476.0
           ],
           "sides": [
             "right"
@@ -1207,7 +1306,40 @@
           "zone": "north_median_trees",
           "why": "A2: Waring's planted raised median has trees at st 250-550"
         }
-      ]
+      ],
+      "median_spots": {
+        "_doc": "ledger 0055 round 2 (the College split), tools/make_treefx.py: median_planting spots of data/scatter_positions.json by index, in a file. drop = not planted (on pavement since the split, or a bare spot on the bank, which is planted from the lidar's measured tops, or a measured spot on the bank's curb ring whose own top is planted in its place); foot_y = planted where it is, its foot on the bank's top. Written by source/college_r2/college_plants_data.py.",
+        "file": "source/college_r2/college_plants.median_spots.json"
+      },
+      "lidar_plants": {
+        "_doc": "ledger 0055 round 2 (the College split), tools/make_treefx.py scenery.treefx.lidar_plants: the plants the 2024 lidar measured on the bank between College's two roads (source/college_r2/college_bank_tops.g10.json, the G10's job lm-college-bank-20261123), each where it stands at its own height and crown. The list is written by source/college_r2/college_plants_data.py, which leaves out a top that is no plant, one not on the bank's grass top as built, one within 2.0 m of a kept measured median spot (it IS that plant) and a tree the planner already stands within its crown radius. The lidar cannot tell species: a shrub takes the median's bush mix, a tree Lake Murray's `trees` mix.",
+        "file": "source/college_r2/college_bank_plants.json",
+        "split_h_m": 4.0,
+        "_split_doc": "[invented] the lm-shrub tool's own fallback (shrub_heights.py: `cut = split if split is not None else 4.0`). The 2024 lidar shows no shrub / tree valley at Lake Murray: the job's out_24tiles/lm_shrub.summary.json (md5 5d9e08b708e591e1b67c7ffe7fbbae41, written 2026-11-16; tops npz md5 e722d5daa98c540f05ded2f854a1ca92) has shrub_tree_split_m.antimode_natural = null: the natural tops' log10 histogram runs flat at 6,000-10,000 a bin from 1.5 to 8 m, peaking near 3.8 m, and the tool's antimode() wants a valley under 0.8 of both peaks. Every trees_over_split count in that summary uses 4.0, so the bank is split as the summary's strata are (read on the G10 by the Mac, 2026-11-23).",
+        "shrubs": "median_planting",
+        "trees": "trees",
+        "native_h_m": {
+          "Bush.bin": 20.660005569458,
+          "Gum.bin": 7.7401270866394,
+          "Oak3.bin": 8.67319393157959,
+          "PepperV1.bin": 10.4184999465942,
+          "Pine_Aleppo.bin": 16.2348957061768,
+          "Sage.bin": 1.5,
+          "SycamoreV1.bin": 11.7496347427368,
+          "SycamoreV2.bin": 8.19429302215576
+        },
+        "native_w_m": {
+          "Bush.bin": 34.3843803405762,
+          "Gum.bin": 4.36976194381714,
+          "Oak3.bin": 6.08927583694458,
+          "PepperV1.bin": 12.0682916641235,
+          "Pine_Aleppo.bin": 14.3988924026489,
+          "Sage.bin": 2.0,
+          "SycamoreV1.bin": 12.6715688705444,
+          "SycamoreV2.bin": 6.62018823623657
+        },
+        "_native_doc": "each model's tree.ini [BASIC] HEIGHT / WIDTH, read off the models in <project>/source/trees by source/college_r2/college_plants_data.py (tools/patch_median_measured.tree_ini) on the PC, 2026-11-23"
+      }
     },
     "freeway": {
       "_doc": "OFF (Kevin's call, v0.18.0, ledger 0046 'Kevin's decisions'): 0046 decided 'terrain only, NO I-8 pavement ribbon' (Kevin, on the Lariat: extra highways 'look like wavy ribbons'); asked again with a still of the drawn freeway, the stated default stands — OUT for v0.18.0. enabled: false = tools/freeway_i8.py writes no data/freeway_i8.json (and removes a stale one), tools/author_freeway_blend.py never runs, so the I-8 cut is the 3DEP-shaped terrain cut: no slab bed, no batter cut/fill, no held-verge batter. The tool, its tests and its 3DEP cache stay; flipping this to true is the whole switch. History: ledger 0046 v0.18.0 integration fix round (the view lens, twice: from the College Ave and Lake Murray Blvd decks the I-8 cut read as 'a shallow grassy valley ... no freeway'). 0046 left the freeway itself out as Kevin's call (E4: 'a visual-only I-8 pavement ribbon along the floor so more of the corridor reads as a freeway'); this is that ribbon. tools/freeway_i8.py plans both carriageways from the OSM ways the corridor was cut from (data/corridor.i8.json provenance: lanes per way from the OSM lanes tag, 4-6 here; OSM bridge ways left out), tools/author_freeway_blend.py drapes them on the FINAL ground of the prepped scene lift_m above it (no z-fight with the grass, nothing to drive on: no digit prefix, no physics, no gate reads it) with dashed lane lines, edge lines (yellow on the median side) and a concrete median barrier wherever the carriageways run within barrier_gap_max_m. Within the 1ROAD extent the pavement (HIGHWAY_I8_NEAR) and its lines (MARKINGS_I8) are GrassFX occluders so no grass grows through them; beyond it (HIGHWAY_I8_FAR, no lines) it is plain scenery. tools/make_treefx.py keeps every tree off it. lane_m 3.66 (12 ft, the US interstate lane); the shoulders, the lift, the dash and the step are [invented] (GATES-CHANGELOG 0046 v0.18.0 integration).",

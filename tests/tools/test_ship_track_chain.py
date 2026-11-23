@@ -572,6 +572,8 @@ V4_EXTRAS = {
         "ledger 0065: v4's 7,600 blocks (ship_sd.sh stands them only under SD_BESPOKE=1, an echo there)",
     ("ship_export_street", "ship: export the STREET-ONLY kn5 (the centre line, a chicane's island; the non-race layouts alone)"):
         "ledger 0063: the street-only kn5",
+    ("author_college_split", "author: College Avenue as two roads (source/college_r2: the data held to the committed split, then the ribbons, the middle and the ground into loop.blend; ledger 0055 round 2; self-checked; not opted in = no-op)"):
+        "ledger 0055 round 2: Kevin, \"realism+\": College Avenue as two roads (opt-in route.college_split)",
     ("author_lamp_heads", "author: the back head of every two-arm lamp lit (tools/author_lamp_heads_blend.py: LIGHTS_back, one lens per back head; ledger 0099; self-checked; not opted in = no-op)"):
         "ledger 0099: Kevin 2026-11-22, \"Yes, light both heads\" (opt-in scenery.streetlights.light_both_heads)",
     ("author_walk_grade", "author: the street walk's back grade no steeper than route.walk_back_grade (tools/author_walk_grade_blend.py: every lip raised, nothing else moves; ledger 0099; self-checked; not opted in = no-op)"):

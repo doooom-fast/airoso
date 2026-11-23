@@ -301,7 +301,10 @@ merged into `claude/lm-finish-r2-20261122`. The College step runs first in the a
   13.8 m wide, up to 5.81 m over the southbound road); the bank between them is 0.35 m at the nose, up to 12.18 m, 0.30 m
   at the tail. The lap `college` (mainline, the piece, mainline, two declared joins) stitches with the mainline's own
   4,498 vertex numbers; Mission Gorge Speedway's lap is unchanged. Largest turn between 3 m segments 1.53 deg (the
-  built line: 1.08); largest grade step between segments 0.79 points (built: 0.57).
+  built line: 1.08); largest grade step between segments 0.65 points (built: 0.57). Heights: the built west edge
+  keeps its place and its height (stage A: the west walk, the house lots and the ground behind them stay put), and
+  the lidar gives the shape laid onto it: each road's crossfall (within about 5 %) and the northbound road's rise.
+  So absolute heights stand off the lidar by what the built west edge does (-0.54 to +0.83 m).
 - **The no-route gate does not cover the forks yet.** `race_lap.stitch` does not list the other carriageway at a fork
   as a mouth of the lap ("MAINLINE beyond v1130" and "MAINLINE before v1476" are skipped, "the branch is the lap": its
   probe 10 m past the fork row still stands on the lap's own pavement). The closures and probes that seal the

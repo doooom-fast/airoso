@@ -9,9 +9,11 @@ Computes, from college_design.json (the measured section) and the centreline's o
       south fork  v1130..v1172   the east edge runs from the built east edge (v1130, the whole road) to the island's
                                  nose; inside a fork the line is a reference only (the fork deck paves it)
       north fork  v1444..v1476   the same, from the island's tail out to the built east edge
-      line = the midline of [east edge, west edge], width = west - east, height = the measured surface there less LIFT
+      line = the midline of [east edge, west edge], width = west - east; height = the built road's, plus the measured
+      crossfall from the built west edge (which keeps its place and height) to the line
   the NORTHBOUND PIECE `college_nb` (a connectors.local.json record), one point per mainline station v1172..v1444:
-      east edge = the built east edge, west edge = the island's east side; midline, width, measured height less LIFT
+      east edge = the built east edge, west edge = the island's east side; midline, width; height = the built road's
+      plus the measured rise of the northbound road over the built west edge
   the island: `median_bands.json` island_w_by_vertex = 0 for v1117..v1475 (the real road has none in the two forks,
       and through the split the bank is plain ground between two roads)
   the SPEEDWAY LAP `race.laps.college`: MAINLINE 0..1130, college_nb, MAINLINE 1476..4497, with two DECLARED joins of
@@ -149,17 +151,29 @@ blend_t = {v: 1.0 if NOSE <= v <= TAIL else smooth((v - A0) / (NOSE - A0)) if v 
            for v in ZONE}
 
 
+def tilt(v, off):
+    """the measured cross-section at (v, off) RELATIVE to its own height at the built west edge, eased in over the forks"""
+    return blend_t[v] * (surface(v, off) - surface(v, west(v)))
+
+
 def heights(off):
-    """a line's height per station of the zone: the BUILT line's height plus the relaxed departure of the measured
-    surface (less LIFT) from it, the departure eased in over the forks and zero on the two outer rows. The departure is
-    smoothed, never the road: sampled raw, the measured section puts 2 cm of noise on every station (grade steps of 2
-    points between segments, against the built line's 0.6), and smoothing heights themselves would shave the crest."""
-    dep = [blend_t[v] * (surface(v, off[v]) - LIFT - P0[v][1]) for v in ZONE]
+    """SURFACE heights per station of the zone along a column `off` (v -> offset): the built road's height (the built
+    line + LIFT: the built rows are flat across) plus the relaxed tilt there.
+
+    The datum is the BUILT WEST EDGE: it keeps its place and its height, so the west walk, the house lots and the
+    ground behind them stay put (stage A's decision). What is taken from the lidar is the SHAPE across the road: each
+    carriageway's crossfall and the northbound road's rise over the southbound one. Absolute heights are therefore off
+    the lidar by what the built west edge is off it (report: datum_shift_m), smoothly along the road.
+
+    The tilt is smoothed, never the road: sampled raw, the measured section puts 2 cm of noise on every station (grade
+    steps of 2 points between segments against the built line's 0.6), and smoothing heights themselves would shave
+    the crest."""
+    dep = [tilt(v, off[v]) for v in ZONE]
     dep[0] = dep[-1] = 0.0
-    return {v: P0[v][1] + d for v, d in zip(ZONE, relax(dep))}
+    return {v: P0[v][1] + LIFT + d for v, d in zip(ZONE, relax(dep))}
 
 
-main_y = heights(main_off)
+main_y = {v: y - LIFT for v, y in heights(main_off).items()}        # a line rides LIFT under its surface
 main_pts, main_w = {}, {}
 for v in ZONE:
     if v in (A0, A1):                            # the two outer rows are the untouched road
@@ -186,15 +200,34 @@ nb_west = {v: sb_east[v] - bank_w[k] for k, v in enumerate(range(NOSE, TAIL + 1)
 lap_off = {v: 0.5 * (nb_west[v] + east(v)) for v in range(NOSE, TAIL + 1)}
 lap_off.update(fork_offsets(A0, NOSE, lap_off[NOSE], lap_off[NOSE + 1] - lap_off[NOSE]))
 lap_off.update(fork_offsets(A1, TAIL, lap_off[TAIL], lap_off[TAIL - 1] - lap_off[TAIL]))
-lap_y = heights(lap_off)
+lap_y = {v: y - LIFT for v, y in heights(lap_off).items()}
+# the four edges' surface heights. In a fork an inner edge is notional (the mirror of the outer edge about the line), so
+# each series runs the whole zone and is relaxed as one; the rows of the two roads take its NOSE..TAIL part.
+sb_east_z = {v: sb_east[v] if NOSE <= v <= TAIL else 2.0 * main_off[v] - west(v) for v in ZONE}
+nb_west_z = {v: nb_west[v] if NOSE <= v <= TAIL else 2.0 * lap_off[v] - east(v) for v in ZONE}
+edge_y = {"sb_west": heights({v: west(v) for v in ZONE}), "sb_east": heights(sb_east_z),
+          "nb_west": heights(nb_west_z), "nb_east": heights({v: east(v) for v in ZONE})}
+if max(abs(edge_y["sb_west"][v] - (P0[v][1] + LIFT)) for v in ZONE) > 1e-9:
+    raise SystemExit("the built west edge moved in height")
 lap_zone = {v: P0[v] if v in (A0, A1) else at(v, lap_off[v], lap_y[v]) for v in ZONE}
 piece_off = [lap_off[v] for v in range(NOSE, TAIL + 1)]
 piece_pts = [lap_zone[v] for v in range(NOSE, TAIL + 1)]
 piece_w = [nb_west[v] - east(v) for v in range(NOSE, TAIL + 1)]
 edge_dev = {"sb_inner_max_m": max(abs(sb_east[v] - D[v]["sb_inner"]["offset_m"]) for v in range(NOSE, TAIL + 1)),
             "nb_inner_max_m": max(abs(nb_west[v] - D[v]["nb_inner"]["offset_m"]) for v in range(NOSE, TAIL + 1))}
-height_dev = {"mainline_max_m": max(abs(main_y[v] - (surface(v, main_off[v]) - LIFT)) for v in range(NOSE, TAIL + 1)),
-              "piece_max_m": max(abs(lap_y[v] - (surface(v, lap_off[v]) - LIFT)) for v in range(NOSE, TAIL + 1))}
+TWO = range(NOSE, TAIL + 1)
+shift = [P0[v][1] + LIFT - surface(v, west(v)) for v in TWO]
+xf_sb = [100.0 * (edge_y["sb_east"][v] - edge_y["sb_west"][v]) / (west(v) - sb_east[v]) for v in TWO]      # + = rises to the east
+xf_nb = [100.0 * (edge_y["nb_east"][v] - edge_y["nb_west"][v]) / (nb_west[v] - east(v)) for v in TWO]
+step_in = [edge_y["nb_west"][v] - edge_y["sb_east"][v] for v in TWO]                                       # across the bank
+height_rep = {"datum": "the built west edge: its place and height are kept; the measured shape across the road is laid onto it",
+              "datum_shift_m": {"_doc": "built west edge minus the lidar there: how far every height here stands off the lidar",
+                                "min": round(min(shift), 2), "max": round(max(shift), 2)},
+              "crossfall_pct_rising_east": {"southbound": [round(min(xf_sb), 2), round(max(xf_sb), 2)],
+                                            "northbound": [round(min(xf_nb), 2), round(max(xf_nb), 2)]},
+              "northbound_inner_edge_over_southbound_inner_edge_m": {"at_nose": round(step_in[0], 2), "max": round(max(step_in), 2),
+                                                                     "at_tail": round(step_in[-1], 2)},
+              "bank_slope_pct_max": round(max(100.0 * d / b for d, b in zip(step_in, bank_w) if b > 1.0), 1)}
 south = [(v, lap_zone[v]) for v in range(A0, NOSE + 1)]            # mainline v1130 -> the piece's first point
 north = [(v, lap_zone[v]) for v in range(TAIL, A1 + 1)]            # the piece's last point -> mainline v1476
 joins = [{"id": "college_south_fork", "from": ["MAINLINE", A0], "to": [PIECE, 0],
@@ -268,7 +301,7 @@ report = {
     "smoothing": {"passes_121": SMOOTH_PASSES, "what": "the two inner edges and the bank's width; the outer edges are the built ones, unmoved",
                   "inner_edge_off_the_measured_edge_max_m": {k: round(x, 2) for k, x in edge_dev.items()},
                   "built_road_middle_off_the_line_at_outer_rows_m": [round(0.5 * (west(A0) + east(A0)), 3), round(0.5 * (west(A1) + east(A1)), 3)]},
-    "heights": {"line_off_the_measured_surface_max_m": {k: round(x, 3) for k, x in height_dev.items()},
+    "heights": {**height_rep,
                 "grade_pct_min_max_and_largest_step_between_segments": {
                     "built_line": grade(P0[A0 - 3:A1 + 4]), "mainline": grade(P1[A0 - 3:A1 + 4]),
                     "lap": grade(lap_pts[A0 - 3:A1 + 4])}},
@@ -303,7 +336,12 @@ out = {"what": "College split, the data (college_split_data.py)", "report": repo
                          "(the mainline row = sb_west, its line, sb_east; the piece row = nb_west, its line, nb_east)",
                  "v": list(range(NOSE, TAIL + 1)),
                  "sb_west_m": [round(west(v), 3) for v in range(NOSE, TAIL + 1)], "sb_east_m": [round(sb_east[v], 3) for v in range(NOSE, TAIL + 1)],
-                 "nb_west_m": [round(nb_west[v], 3) for v in range(NOSE, TAIL + 1)], "nb_east_m": [round(east(v), 3) for v in range(NOSE, TAIL + 1)]},
+                 "nb_west_m": [round(nb_west[v], 3) for v in range(NOSE, TAIL + 1)], "nb_east_m": [round(east(v), 3) for v in range(NOSE, TAIL + 1)],
+                 "_doc_y": "SURFACE heights of the same four edges (a row is west edge, line + LIFT, east edge: tilted, not flat)",
+                 "sb_west_y": [round(edge_y["sb_west"][v], 4) for v in range(NOSE, TAIL + 1)],
+                 "sb_east_y": [round(edge_y["sb_east"][v], 4) for v in range(NOSE, TAIL + 1)],
+                 "nb_west_y": [round(edge_y["nb_west"][v], 4) for v in range(NOSE, TAIL + 1)],
+                 "nb_east_y": [round(edge_y["nb_east"][v], 4) for v in range(NOSE, TAIL + 1)]},
        "built_line_y": [round(P0[v][1], 4) for v in ZONE],
        "lap_zone": {"_doc": "the Speedway lap through the zone, one point per mainline station (south join, the piece, north join)",
                     "from_v": A0, "to_v": A1, "offset_m": [round(lap_off[v], 3) for v in ZONE],

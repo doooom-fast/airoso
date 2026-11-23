@@ -176,7 +176,8 @@ How the lines are made. Each rule is there because the simpler one measured wron
 | Relax the midline itself | the inner edge moves by twice the correction: the two roads overlap 0.24 m at the nose | relax the EDGES; the northbound inner edge = the southbound one less the bank's width, and the bank's width is relaxed with its ends held, so it is never negative |
 | Built outer edges from `college_edges.json` | 5.9 deg: `built_from_m` / `built_to_m` are floored to the lidar's 0.5 m cells | built outer edge = half the centreline's width (ROAD's own edge column) |
 | Fork line = midline of the built edges | 3.3 deg at v1171: the built road's own edge has a 6 deg corner there | in a fork the line is a cubic that meets both ends in place and in direction; it takes nothing from the built edges |
-| Heights sampled raw from the measured section | grade steps of 2.1 points between segments (the built line: 0.57) | height = the built line's height + the relaxed departure of the measured surface from it (the departure is smoothed, never the road) |
+| Heights sampled raw from the measured section | grade steps of 2.1 points between segments (the built line: 0.57) | height = the built road's height + the relaxed measured tilt (the tilt is smoothed, never the road) |
+| Heights = the measured surface itself | the southbound road leaves its built height by up to 0.8 m, so the west walk and the house lots behind it would have to move (stage A: they stay put) | the datum is the BUILT WEST EDGE, which keeps its place and its height; the lidar gives the shape across the road: each road's crossfall and the northbound road's rise |
 
 `SMOOTH_PASSES = 24` (about +-10 m along the road) is `[invented]`.
 
@@ -185,16 +186,21 @@ The numbers (`college_split.data.json` `report`):
 | | Built line | Mainline (southbound road) | Lap `college` (joins + `college_nb`) |
 |---|---|---|---|
 | Largest turn between segments | 1.08 deg | 1.53 deg | 1.39 deg |
-| Steepest grade down / up | -8.16 / +8.76 % | -8.56 / +8.76 % | -9.12 / +8.76 % |
-| Largest grade step between segments | 0.57 points | 0.79 | 0.83 |
+| Steepest grade down / up | -8.16 / +8.76 % | -8.03 / +8.77 % | -8.79 / +8.77 % |
+| Largest grade step between segments | 0.57 points | 0.65 | 0.75 |
 | Segment length | 3.0 m | 2.94 to 3.11 m | 2.72 to 3.28 m |
 | Width through the two roads | 25 to 32.5 m (whole road) | 9.99 to 15.34 m | 8.36 to 13.8 m |
 
 - The mainline moves up to 10.67 m west; its length grows by 1.93 m (13,471.3 to 13,473.2 m to the last vertex).
-- The northbound road rides up to 5.81 m over the southbound one; 0.58 m where the island begins, 0.57 m where it ends.
+- The northbound road rides up to 5.81 m over the southbound one, line to line; 0.58 m where the island begins, 0.57 m
+  where it ends. Across the bank, inner edge to inner edge: 0.18 m at the nose, up to 6.11 m, 0.20 m at the tail; the
+  bank's slope is up to 52 %.
 - The bank between them: 0.35 m at the nose, up to 12.18 m, 0.30 m at the tail.
-- After smoothing the inner edges stand up to 0.38 m (southbound) and 0.73 m (northbound) off the measured edges, and
-  the line heights up to 0.074 m and 0.095 m off the measured surface.
+- After smoothing the inner edges stand up to 0.38 m (southbound) and 0.73 m (northbound) off the measured edges.
+- Heights. A row is tilted, not flat: west edge, line + 0.10, east edge, each at its own height (`edges` in the data
+  file). The built west edge keeps its height, so every height here stands off the lidar by what that edge does
+  (-0.54 to +0.83 m, smooth along the road). The mainline's line moves -0.25 to +0.23 m from its built height (the
+  southbound crossfall, -4.8 to +3.3 %, rising east positive); the northbound crossfall is -4.4 to +3.2 %.
 
 The lap. `race_lap.stitch(proj, cfg, "college")` on the scratch project: 4,498 lap vertices, the mainline's own count;
 both declared joins accepted (their ends 0.000 m off the piece ends; 41 and 31 points, 127.3 m and 96.7 m); every lap

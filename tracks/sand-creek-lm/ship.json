@@ -83,7 +83,9 @@
       "source/mouth_radii.naip.json",
       "source/name_blades.json",
       "textures/name_blades.png",
-      "signs.json"
+      "signs.json",
+      "source/grid_reach.json",
+      "source/flares_one_sided.lidar.json"
     ],
     "_optional_doc": "ledger 0079: the port's own inputs (tools/lm_engine_intake.py uses a port file the source track lacks): its wider 3DEP grid (lm_intake.heightfield port), the buildings pipeline's blocks and the crowns read off NAIP",
     "assets": [
@@ -98,9 +100,13 @@
       "assets/textures/shingle_roof_diffuse.jpg",
       "assets/textures/roof_white_diffuse.jpg",
       "assets/textures/roof_tan_diffuse.jpg",
-      "assets/textures/roof_dark_diffuse.jpg"
+      "assets/textures/roof_dark_diffuse.jpg",
+      "assets/textures/asphalt_dense_diffuse.jpg",
+      "assets/textures/asphalt_dense_normal.jpg",
+      "assets/textures/concrete_plain_diffuse.jpg",
+      "assets/textures/concrete_plain_normal.jpg"
     ],
-    "_assets_doc": "ledger 0079, as Lake Murray's (ledger 0065): the textures the blocks' pbr rows name, copied into the workshop and named by track.config.json texture_overrides, so the kn5 embeds them whatever the ENG copy holds",
+    "_assets_doc": "ledger 0079, as Lake Murray's (ledger 0065): the textures the blocks' pbr rows name, copied into the workshop and named by track.config.json texture_overrides, so the kn5 embeds them whatever the ENG copy holds; ledger 0098: the owned asphalt (1ROAD) and plain concrete (1KERB_SIDEWALK) pairs, as ledger 0095 names High Plains' and Milford's",
     "globs": [
       "source/pads/*.json"
     ]

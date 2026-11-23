@@ -1,0 +1,924 @@
+{
+ "_doc": "tools/flare_one_sided.py (ledger 0098): per declared flare, per lap vertex, the far side's kerb off the source lidar (class 2, the step map's first rise >= 0.08 m); applied by tools/lm_engine_intake.py (lm_intake.flare_one_sided)",
+ "line": "tracks/sand-creek/data/centerline.local.json",
+ "line_xz_check": [
+  [
+   -1510.88,
+   -257.47
+  ],
+  [
+   1312.63,
+   341.09
+  ]
+ ],
+ "tiles_missing": [
+  [
+   17,
+   -5
+  ]
+ ],
+ "flares": [
+  {
+   "id": "sand_creek_dr_s_tertiary_5",
+   "v": [
+    1895,
+    1922
+   ],
+   "street": "grid_tertiary_5",
+   "street_side": -1,
+   "far_narrowed_m_max": 0.0,
+   "far_narrowed_rows": 0,
+   "kinds": {
+    "curb": 0,
+    "drop": 2
+   },
+   "street_end_from_line_m": 10.1,
+   "street_end_vertex": 1902,
+   "rows": [
+    {
+     "k": 1895,
+     "source_half_m": 7.25,
+     "base_half_m": 7.25,
+     "kerb_raw_m": null,
+     "kind": null,
+     "returns": 67,
+     "far_kerb_m": null,
+     "far_half_m": 7.25,
+     "width_m": 14.5,
+     "move_m": 0.0,
+     "line_xz": [
+      1758.43,
+      -351.1
+     ]
+    },
+    {
+     "k": 1896,
+     "source_half_m": 7.25,
+     "base_half_m": 7.25,
+     "kerb_raw_m": null,
+     "kind": null,
+     "returns": 66,
+     "far_kerb_m": null,
+     "far_half_m": 7.25,
+     "width_m": 14.5,
+     "move_m": 0.0,
+     "line_xz": [
+      1759.09,
+      -354.02
+     ]
+    },
+    {
+     "k": 1897,
+     "source_half_m": 8.45,
+     "base_half_m": 7.25,
+     "kerb_raw_m": null,
+     "kind": null,
+     "returns": 59,
+     "far_kerb_m": null,
+     "far_half_m": 8.45,
+     "width_m": 16.9,
+     "move_m": 0.0,
+     "line_xz": [
+      1759.74,
+      -356.95
+     ]
+    },
+    {
+     "k": 1898,
+     "source_half_m": 9.875,
+     "base_half_m": 7.25,
+     "kerb_raw_m": null,
+     "kind": null,
+     "returns": 76,
+     "far_kerb_m": null,
+     "far_half_m": 9.875,
+     "width_m": 19.75,
+     "move_m": 0.0,
+     "line_xz": [
+      1760.4,
+      -359.87
+     ]
+    },
+    {
+     "k": 1899,
+     "source_half_m": 10.5,
+     "base_half_m": 7.25,
+     "kerb_raw_m": null,
+     "kind": null,
+     "returns": 69,
+     "far_kerb_m": null,
+     "far_half_m": 10.5,
+     "width_m": 21.0,
+     "move_m": 0.0,
+     "line_xz": [
+      1761.06,
+      -362.79
+     ]
+    },
+    {
+     "k": 1900,
+     "source_half_m": 10.5,
+     "base_half_m": 7.25,
+     "kerb_raw_m": null,
+     "kind": null,
+     "returns": 81,
+     "far_kerb_m": null,
+     "far_half_m": 10.5,
+     "width_m": 21.0,
+     "move_m": 0.0,
+     "line_xz": [
+      1761.73,
+      -365.71
+     ]
+    },
+    {
+     "k": 1901,
+     "source_half_m": 10.5,
+     "base_half_m": 7.25,
+     "kerb_raw_m": 11.62,
+     "kind": "drop",
+     "returns": 93,
+     "far_kerb_m": 11.62,
+     "far_half_m": 10.5,
+     "width_m": 21.0,
+     "move_m": 0.0,
+     "line_xz": [
+      1762.4,
+      -368.63
+     ]
+    },
+    {
+     "k": 1902,
+     "source_half_m": 10.5,
+     "base_half_m": 7.25,
+     "kerb_raw_m": null,
+     "kind": null,
+     "returns": 71,
+     "far_kerb_m": null,
+     "far_half_m": 10.5,
+     "width_m": 21.0,
+     "move_m": 0.0,
+     "line_xz": [
+      1763.08,
+      -371.55
+     ]
+    },
+    {
+     "k": 1903,
+     "source_half_m": 10.5,
+     "base_half_m": 7.25,
+     "kerb_raw_m": null,
+     "kind": null,
+     "returns": 69,
+     "far_kerb_m": null,
+     "far_half_m": 10.5,
+     "width_m": 21.0,
+     "move_m": 0.0,
+     "line_xz": [
+      1763.77,
+      -374.47
+     ]
+    },
+    {
+     "k": 1904,
+     "source_half_m": 10.5,
+     "base_half_m": 7.25,
+     "kerb_raw_m": null,
+     "kind": null,
+     "returns": 69,
+     "far_kerb_m": null,
+     "far_half_m": 10.5,
+     "width_m": 21.0,
+     "move_m": 0.0,
+     "line_xz": [
+      1764.46,
+      -377.38
+     ]
+    },
+    {
+     "k": 1905,
+     "source_half_m": 10.5,
+     "base_half_m": 8.45,
+     "kerb_raw_m": null,
+     "kind": null,
+     "returns": 76,
+     "far_kerb_m": null,
+     "far_half_m": 10.5,
+     "width_m": 21.0,
+     "move_m": 0.0,
+     "line_xz": [
+      1765.16,
+      -380.3
+     ]
+    },
+    {
+     "k": 1906,
+     "source_half_m": 10.195,
+     "base_half_m": 8.415,
+     "kerb_raw_m": null,
+     "kind": null,
+     "returns": 62,
+     "far_kerb_m": null,
+     "far_half_m": 10.195,
+     "width_m": 20.39,
+     "move_m": 0.0,
+     "line_xz": [
+      1765.86,
+      -383.21
+     ]
+    },
+    {
+     "k": 1907,
+     "source_half_m": 9.555,
+     "base_half_m": 8.22,
+     "kerb_raw_m": 10.62,
+     "kind": "drop",
+     "returns": 79,
+     "far_kerb_m": 10.62,
+     "far_half_m": 9.555,
+     "width_m": 19.11,
+     "move_m": 0.0,
+     "line_xz": [
+      1766.57,
+      -386.12
+     ]
+    },
+    {
+     "k": 1908,
+     "source_half_m": 9.0,
+     "base_half_m": 8.03,
+     "kerb_raw_m": null,
+     "kind": null,
+     "returns": 64,
+     "far_kerb_m": null,
+     "far_half_m": 9.0,
+     "width_m": 18.0,
+     "move_m": 0.0,
+     "line_xz": [
+      1767.28,
+      -389.03
+     ]
+    },
+    {
+     "k": 1909,
+     "source_half_m": 9.0,
+     "base_half_m": 7.835,
+     "kerb_raw_m": null,
+     "kind": null,
+     "returns": 61,
+     "far_kerb_m": null,
+     "far_half_m": 9.0,
+     "width_m": 18.0,
+     "move_m": 0.0,
+     "line_xz": [
+      1767.99,
+      -391.94
+     ]
+    },
+    {
+     "k": 1910,
+     "source_half_m": 9.0,
+     "base_half_m": 7.64,
+     "kerb_raw_m": null,
+     "kind": null,
+     "returns": 71,
+     "far_kerb_m": null,
+     "far_half_m": 9.0,
+     "width_m": 18.0,
+     "move_m": 0.0,
+     "line_xz": [
+      1768.7,
+      -394.85
+     ]
+    },
+    {
+     "k": 1911,
+     "source_half_m": 9.0,
+     "base_half_m": 7.445,
+     "kerb_raw_m": null,
+     "kind": null,
+     "returns": 70,
+     "far_kerb_m": null,
+     "far_half_m": 9.0,
+     "width_m": 18.0,
+     "move_m": 0.0,
+     "line_xz": [
+      1769.41,
+      -397.76
+     ]
+    },
+    {
+     "k": 1912,
+     "source_half_m": 8.805,
+     "base_half_m": 7.25,
+     "kerb_raw_m": null,
+     "kind": null,
+     "returns": 70,
+     "far_kerb_m": null,
+     "far_half_m": 8.805,
+     "width_m": 17.61,
+     "move_m": 0.0,
+     "line_xz": [
+      1770.12,
+      -400.67
+     ]
+    },
+    {
+     "k": 1913,
+     "source_half_m": 8.61,
+     "base_half_m": 7.25,
+     "kerb_raw_m": null,
+     "kind": null,
+     "returns": 0,
+     "far_kerb_m": null,
+     "far_half_m": 8.61,
+     "width_m": 17.22,
+     "move_m": 0.0,
+     "line_xz": [
+      1770.83,
+      -403.59
+     ]
+    },
+    {
+     "k": 1914,
+     "source_half_m": 8.415,
+     "base_half_m": 7.25,
+     "kerb_raw_m": null,
+     "kind": null,
+     "returns": 0,
+     "far_kerb_m": null,
+     "far_half_m": 8.415,
+     "width_m": 16.83,
+     "move_m": 0.0,
+     "line_xz": [
+      1771.54,
+      -406.5
+     ]
+    },
+    {
+     "k": 1915,
+     "source_half_m": 8.22,
+     "base_half_m": 7.25,
+     "kerb_raw_m": null,
+     "kind": null,
+     "returns": 0,
+     "far_kerb_m": null,
+     "far_half_m": 8.22,
+     "width_m": 16.44,
+     "move_m": 0.0,
+     "line_xz": [
+      1772.25,
+      -409.41
+     ]
+    },
+    {
+     "k": 1916,
+     "source_half_m": 8.03,
+     "base_half_m": 7.25,
+     "kerb_raw_m": null,
+     "kind": null,
+     "returns": 0,
+     "far_kerb_m": null,
+     "far_half_m": 8.03,
+     "width_m": 16.06,
+     "move_m": 0.0,
+     "line_xz": [
+      1772.96,
+      -412.32
+     ]
+    },
+    {
+     "k": 1917,
+     "source_half_m": 7.835,
+     "base_half_m": 7.25,
+     "kerb_raw_m": null,
+     "kind": null,
+     "returns": 0,
+     "far_kerb_m": null,
+     "far_half_m": 7.835,
+     "width_m": 15.67,
+     "move_m": 0.0,
+     "line_xz": [
+      1773.67,
+      -415.23
+     ]
+    },
+    {
+     "k": 1918,
+     "source_half_m": 7.64,
+     "base_half_m": 7.25,
+     "kerb_raw_m": null,
+     "kind": null,
+     "returns": 0,
+     "far_kerb_m": null,
+     "far_half_m": 7.64,
+     "width_m": 15.28,
+     "move_m": 0.0,
+     "line_xz": [
+      1774.38,
+      -418.14
+     ]
+    },
+    {
+     "k": 1919,
+     "source_half_m": 7.445,
+     "base_half_m": 7.25,
+     "kerb_raw_m": null,
+     "kind": null,
+     "returns": 0,
+     "far_kerb_m": null,
+     "far_half_m": 7.445,
+     "width_m": 14.89,
+     "move_m": 0.0,
+     "line_xz": [
+      1775.09,
+      -421.05
+     ]
+    },
+    {
+     "k": 1920,
+     "source_half_m": 7.25,
+     "base_half_m": 7.25,
+     "kerb_raw_m": null,
+     "kind": null,
+     "returns": 0,
+     "far_kerb_m": null,
+     "far_half_m": 7.25,
+     "width_m": 14.5,
+     "move_m": 0.0,
+     "line_xz": [
+      1775.8,
+      -423.96
+     ]
+    },
+    {
+     "k": 1921,
+     "source_half_m": 7.25,
+     "base_half_m": 7.25,
+     "kerb_raw_m": null,
+     "kind": null,
+     "returns": 0,
+     "far_kerb_m": null,
+     "far_half_m": 7.25,
+     "width_m": 14.5,
+     "move_m": 0.0,
+     "line_xz": [
+      1776.5,
+      -426.87
+     ]
+    },
+    {
+     "k": 1922,
+     "source_half_m": 7.445,
+     "base_half_m": 7.25,
+     "kerb_raw_m": null,
+     "kind": null,
+     "returns": 0,
+     "far_kerb_m": null,
+     "far_half_m": 7.445,
+     "width_m": 14.89,
+     "move_m": 0.0,
+     "line_xz": [
+      1777.21,
+      -429.79
+     ]
+    }
+   ],
+   "measured_rows": 2,
+   "rows_total": 28,
+   "source_far_bulge_max_m": 3.25,
+   "far_kerb_minus_base_m": [
+    2.4,
+    4.37
+   ],
+   "why": "ledger 0087 section 7 Q2 / 0098: the lap's flare 14.5 -> 21.0 m at grid_tertiary_5's mouth (v1902, Sand Creek Dr S): a street joins one side, the far kerb bulged 3.25 m with no street there"
+  },
+  {
+   "id": "e45th_n_dr_unclassified_81",
+   "v": [
+    2652,
+    2676
+   ],
+   "street": "grid_unclassified_81",
+   "street_side": -1,
+   "far_narrowed_m_max": 1.13,
+   "far_narrowed_rows": 11,
+   "kinds": {
+    "curb": 12,
+    "drop": 1
+   },
+   "street_end_from_line_m": 5.7,
+   "street_end_vertex": 2656,
+   "rows": [
+    {
+     "k": 2652,
+     "source_half_m": 6.0,
+     "base_half_m": 6.0,
+     "kerb_raw_m": 5.12,
+     "kind": "curb",
+     "returns": 61,
+     "far_kerb_m": 5.12,
+     "far_half_m": 6.0,
+     "width_m": 12.0,
+     "move_m": 0.0,
+     "line_xz": [
+      -151.07,
+      -818.94
+     ]
+    },
+    {
+     "k": 2653,
+     "source_half_m": 6.0,
+     "base_half_m": 6.0,
+     "kerb_raw_m": 4.62,
+     "kind": "curb",
+     "returns": 73,
+     "far_kerb_m": 5.12,
+     "far_half_m": 6.0,
+     "width_m": 12.0,
+     "move_m": 0.0,
+     "line_xz": [
+      -153.98,
+      -818.19
+     ]
+    },
+    {
+     "k": 2654,
+     "source_half_m": 6.0,
+     "base_half_m": 6.0,
+     "kerb_raw_m": 5.12,
+     "kind": "curb",
+     "returns": 59,
+     "far_kerb_m": 4.62,
+     "far_half_m": 6.0,
+     "width_m": 12.0,
+     "move_m": 0.0,
+     "line_xz": [
+      -156.89,
+      -817.44
+     ]
+    },
+    {
+     "k": 2655,
+     "source_half_m": 6.0,
+     "base_half_m": 6.0,
+     "kerb_raw_m": 4.62,
+     "kind": "curb",
+     "returns": 62,
+     "far_kerb_m": 4.62,
+     "far_half_m": 6.0,
+     "width_m": 12.0,
+     "move_m": 0.0,
+     "line_xz": [
+      -159.8,
+      -816.68
+     ]
+    },
+    {
+     "k": 2656,
+     "source_half_m": 6.0,
+     "base_half_m": 6.0,
+     "kerb_raw_m": 4.62,
+     "kind": "curb",
+     "returns": 77,
+     "far_kerb_m": 4.62,
+     "far_half_m": 6.0,
+     "width_m": 12.0,
+     "move_m": 0.0,
+     "line_xz": [
+      -162.71,
+      -815.91
+     ]
+    },
+    {
+     "k": 2657,
+     "source_half_m": 6.0,
+     "base_half_m": 5.75,
+     "kerb_raw_m": 4.38,
+     "kind": "curb",
+     "returns": 68,
+     "far_kerb_m": 4.62,
+     "far_half_m": 5.75,
+     "width_m": 11.75,
+     "move_m": 0.125,
+     "line_xz": [
+      -165.61,
+      -815.14
+     ]
+    },
+    {
+     "k": 2658,
+     "source_half_m": 6.0,
+     "base_half_m": 5.5,
+     "kerb_raw_m": 5.38,
+     "kind": "drop",
+     "returns": 76,
+     "far_kerb_m": 5.38,
+     "far_half_m": 5.5,
+     "width_m": 11.5,
+     "move_m": 0.25,
+     "line_xz": [
+      -168.52,
+      -814.36
+     ]
+    },
+    {
+     "k": 2659,
+     "source_half_m": 6.0,
+     "base_half_m": 5.25,
+     "kerb_raw_m": 5.88,
+     "kind": "curb",
+     "returns": 67,
+     "far_kerb_m": 5.88,
+     "far_half_m": 5.88,
+     "width_m": 11.88,
+     "move_m": 0.06,
+     "line_xz": [
+      -171.42,
+      -813.58
+     ]
+    },
+    {
+     "k": 2660,
+     "source_half_m": 6.0,
+     "base_half_m": 5.0,
+     "kerb_raw_m": null,
+     "kind": null,
+     "returns": 54,
+     "far_kerb_m": null,
+     "far_half_m": 5.88,
+     "width_m": 11.88,
+     "move_m": 0.06,
+     "line_xz": [
+      -174.32,
+      -812.79
+     ]
+    },
+    {
+     "k": 2661,
+     "source_half_m": 6.0,
+     "base_half_m": 4.75,
+     "kerb_raw_m": 5.88,
+     "kind": "curb",
+     "returns": 58,
+     "far_kerb_m": 5.88,
+     "far_half_m": 5.88,
+     "width_m": 11.88,
+     "move_m": 0.06,
+     "line_xz": [
+      -177.22,
+      -812.0
+     ]
+    },
+    {
+     "k": 2662,
+     "source_half_m": 6.0,
+     "base_half_m": 4.5,
+     "kerb_raw_m": 5.88,
+     "kind": "curb",
+     "returns": 53,
+     "far_kerb_m": 5.88,
+     "far_half_m": 5.88,
+     "width_m": 11.88,
+     "move_m": 0.06,
+     "line_xz": [
+      -180.12,
+      -811.2
+     ]
+    },
+    {
+     "k": 2663,
+     "source_half_m": 6.0,
+     "base_half_m": 4.25,
+     "kerb_raw_m": null,
+     "kind": null,
+     "returns": 74,
+     "far_kerb_m": null,
+     "far_half_m": 5.46,
+     "width_m": 11.46,
+     "move_m": 0.27,
+     "line_xz": [
+      -183.01,
+      -810.4
+     ]
+    },
+    {
+     "k": 2664,
+     "source_half_m": 6.0,
+     "base_half_m": 4.0,
+     "kerb_raw_m": null,
+     "kind": null,
+     "returns": 71,
+     "far_kerb_m": null,
+     "far_half_m": 5.04,
+     "width_m": 11.04,
+     "move_m": 0.48,
+     "line_xz": [
+      -185.91,
+      -809.6
+     ]
+    },
+    {
+     "k": 2665,
+     "source_half_m": 5.75,
+     "base_half_m": 3.75,
+     "kerb_raw_m": 5.38,
+     "kind": "curb",
+     "returns": 63,
+     "far_kerb_m": 4.62,
+     "far_half_m": 4.62,
+     "width_m": 10.37,
+     "move_m": 0.565,
+     "line_xz": [
+      -188.81,
+      -808.8
+     ]
+    },
+    {
+     "k": 2666,
+     "source_half_m": 5.5,
+     "base_half_m": 3.75,
+     "kerb_raw_m": 4.12,
+     "kind": "curb",
+     "returns": 70,
+     "far_kerb_m": 4.62,
+     "far_half_m": 4.62,
+     "width_m": 10.12,
+     "move_m": 0.44,
+     "line_xz": [
+      -191.71,
+      -807.99
+     ]
+    },
+    {
+     "k": 2667,
+     "source_half_m": 5.25,
+     "base_half_m": 3.75,
+     "kerb_raw_m": 4.62,
+     "kind": "curb",
+     "returns": 60,
+     "far_kerb_m": 4.62,
+     "far_half_m": 4.62,
+     "width_m": 9.87,
+     "move_m": 0.315,
+     "line_xz": [
+      -194.59,
+      -807.15
+     ]
+    },
+    {
+     "k": 2668,
+     "source_half_m": 5.0,
+     "base_half_m": 3.75,
+     "kerb_raw_m": null,
+     "kind": null,
+     "returns": 50,
+     "far_kerb_m": null,
+     "far_half_m": 5.0,
+     "width_m": 10.0,
+     "move_m": 0.0,
+     "line_xz": [
+      -197.45,
+      -806.21
+     ]
+    },
+    {
+     "k": 2669,
+     "source_half_m": 4.75,
+     "base_half_m": 3.75,
+     "kerb_raw_m": null,
+     "kind": null,
+     "returns": 32,
+     "far_kerb_m": null,
+     "far_half_m": 4.75,
+     "width_m": 9.5,
+     "move_m": 0.0,
+     "line_xz": [
+      -200.27,
+      -805.18
+     ]
+    },
+    {
+     "k": 2670,
+     "source_half_m": 4.5,
+     "base_half_m": 3.75,
+     "kerb_raw_m": null,
+     "kind": null,
+     "returns": 34,
+     "far_kerb_m": null,
+     "far_half_m": 4.5,
+     "width_m": 9.0,
+     "move_m": 0.0,
+     "line_xz": [
+      -203.06,
+      -804.06
+     ]
+    },
+    {
+     "k": 2671,
+     "source_half_m": 4.25,
+     "base_half_m": 3.75,
+     "kerb_raw_m": null,
+     "kind": null,
+     "returns": 21,
+     "far_kerb_m": null,
+     "far_half_m": 4.25,
+     "width_m": 8.5,
+     "move_m": 0.0,
+     "line_xz": [
+      -205.81,
+      -802.85
+     ]
+    },
+    {
+     "k": 2672,
+     "source_half_m": 4.0,
+     "base_half_m": 3.75,
+     "kerb_raw_m": null,
+     "kind": null,
+     "returns": 24,
+     "far_kerb_m": null,
+     "far_half_m": 4.0,
+     "width_m": 8.0,
+     "move_m": 0.0,
+     "line_xz": [
+      -208.52,
+      -801.55
+     ]
+    },
+    {
+     "k": 2673,
+     "source_half_m": 3.75,
+     "base_half_m": 3.75,
+     "kerb_raw_m": null,
+     "kind": null,
+     "returns": 29,
+     "far_kerb_m": null,
+     "far_half_m": 3.75,
+     "width_m": 7.5,
+     "move_m": 0.0,
+     "line_xz": [
+      -211.22,
+      -800.23
+     ]
+    },
+    {
+     "k": 2674,
+     "source_half_m": 3.75,
+     "base_half_m": 3.75,
+     "kerb_raw_m": null,
+     "kind": null,
+     "returns": 49,
+     "far_kerb_m": null,
+     "far_half_m": 3.75,
+     "width_m": 7.5,
+     "move_m": 0.0,
+     "line_xz": [
+      -213.92,
+      -798.92
+     ]
+    },
+    {
+     "k": 2675,
+     "source_half_m": 3.75,
+     "base_half_m": 3.75,
+     "kerb_raw_m": null,
+     "kind": null,
+     "returns": 64,
+     "far_kerb_m": null,
+     "far_half_m": 3.75,
+     "width_m": 7.5,
+     "move_m": 0.0,
+     "line_xz": [
+      -216.64,
+      -797.63
+     ]
+    },
+    {
+     "k": 2676,
+     "source_half_m": 3.75,
+     "base_half_m": 3.75,
+     "kerb_raw_m": null,
+     "kind": null,
+     "returns": 50,
+     "far_kerb_m": null,
+     "far_half_m": 3.75,
+     "width_m": 7.5,
+     "move_m": 0.0,
+     "line_xz": [
+      -219.36,
+      -796.37
+     ]
+    }
+   ],
+   "measured_rows": 13,
+   "rows_total": 25,
+   "source_far_bulge_max_m": 2.0,
+   "far_kerb_minus_base_m": [
+    -1.38,
+    1.38
+   ],
+   "why": "ledger 0087 section 7 Q2 / 0098: the lap's width bump at grid_unclassified_81's mouth (v2656, E 45th North Dr / N Grape St): 12.0 m held across the class step to 7.5 m, the far side 0.75 m out at its peak"
+  }
+ ]
+}

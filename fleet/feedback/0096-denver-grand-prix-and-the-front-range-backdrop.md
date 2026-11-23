@@ -210,3 +210,87 @@ Decided on his behalf, and given to the survey session to run without stopping:
 - **Colfax:** the 2022 state, per D8, with OSM's present bus-lane tags recorded beside it as changed and unsurveyed.
 - **Signs:** tagged per junction from OSM; nothing invented.
 - A refutation pass on a fresh sample per class before it is called done; Stout's covered 344 m declared unsurveyed.
+
+## The shared backdrop: source, bake and gate built; Denver baked (Mac, 2026-11-23)
+
+Branch `claude/dgp-backdrop-20261123`. PLAN 3 and 3a. **Nothing here has been seen in the game**: no kn5, no install, no drive.
+
+**Built**
+
+- **The source:** the seven 3DEP 1/3 arc-second tiles, 2,790,192,468 bytes, at
+  `/Volumes/Sundowning/Claude/airoso-data/front-range/dem/` (outside git; the volume has 4.9 TB free). Byte counts equal the
+  horizon study's, so these are the files it measured. URLs, sha256s and server dates: `tracks/_reference/front-range/provenance.json`.
+- **`tracks/_reference/front-range/`:** `README.md` (how a track references it), `provenance.json`, `bake.config.json`,
+  `ext_config.backdrop.ini` (`[SHADER_REPLACEMENT_BACKDROP_FR] MESHES = BACKDROP_FR_?`, `DISTANT_FIX = 1`,
+  `DISABLE_FAR_PLANE_CLIPPING = 1`; a fragment, installed nowhere).
+- **`tools/backdrop_bake.py`:** a polar lattice about the track origin, true geodesic bearing and distance (WGS84), curvature
+  with refraction 0.13 baked from the origin, 0.001 rad cells (60 m at 60 km, never under 20 m, twice that along the line
+  of sight), bearing 180 to 335, 2 to 112 km, culled to the union viewshed of the road line, real normals, objects
+  `BACKDROP_FR_nnn`. Output: an OBJ.
+- **`tools/backdrop_peak_gate.py`** and `tests/tools/test_backdrop_bake.py` (15 tests). `fleet/GATES-CHANGELOG.md` has the entry.
+
+**The Denver bake** (`tracks/denver-grand-prix/data/backdrop.bake.json`; the OBJ, 180 MB, is at
+`…/airoso-data/front-range/bakes/denver-grand-prix/`, sha256 `bff69609…`)
+
+- **1,765,565 triangles, 913,893 vertices, 83 objects.** Before the viewshed the lattice is 5,347,350 triangles: a third is kept.
+- By distance: 2 to 10 km 136 k, 10 to 20 km 282 k, 20 to 40 km 956 k, 40 to 70 km 324 k, 70 to 112 km 67 k.
+- Extent: 2.0 to 108.7 km from the origin; x −78.5 to 0 km, z −108.7 to +90.8 km; ground 1,556 to 4,345 m; mesh y −199 to +2,503 m.
+- Viewshed: 58 viewpoints along the 6,646 m lap, eye 12 m. 8,433 vertices moved onto a DEM summit.
+- **Origin: provisional.** The start line (−104.9853, 39.7401), ground 1,604.59 m. Denver has no `track.config.json`; when it
+  has an origin, bake again.
+
+**The gate on that mesh: PASS** (`tracks/denver-grand-prix/data/backdrop.peak_gate.json`). From the start line, eye 1.2 m.
+Mesh minus study, degrees:
+
+| Peak | Bearing | Altitude | |
+|---|---|---|---|
+| Pikes Peak | +0.004 | 0.000 | |
+| Devils Head | 0.000 | 0.000 | |
+| Mt Morrison | +0.005 | +0.001 | |
+| Mt Blue Sky (Evans) | +0.007 | +0.001 | |
+| Green Mtn (Lakewood) | 0.000 | +0.001 | |
+| Bergen Peak | 0.000 | −0.010 | |
+| Mestaaehehe Mtn | +0.003 | 0.000 | |
+| Lookout Mtn | 0.000 | −0.004 | the mesh's highest vertex in the box is 0.26° from the study's; the top spans both |
+| South Table Mtn | 0.000 | 0.000 | mesa |
+| James Peak | −0.004 | 0.000 | |
+| North Table Mtn | 0.000 | 0.000 | mesa |
+| Thorodin Mtn | −0.007 | 0.000 | |
+| South Arapaho Peak | −0.006 | 0.000 | |
+| Mt Audubon | 0.000 | +0.001 | |
+| South Boulder Peak | −0.001 | +0.001 | |
+| Bear Peak | +0.009 | −0.026 | see below |
+| Green Mtn (Boulder) | +0.007 | 0.000 | |
+| Longs Peak | −0.006 | 0.000 | |
+| Mt Meeker | +0.084 | +0.012 | see below; the nearest to the limit |
+
+- 19 visible peaks, all within 0.1°. Hidden in the study, not gated: Grays and Torreys are not in the mesh (dropped by the
+  viewshed); Mt Rosalie, Mt Bierstadt and Chief Mtn are in it (the margin, or seen from elsewhere on the lap) and read within 0.08°.
+- **Skyline, reported, not gated:** 311 bearings, none over 0.1°, mean −0.003°, worst −0.024° (at 299.0°).
+
+**Found on the way**
+
+1. **The study's bearings were spherical.** `horizon_3dep.py` took bearings on a sphere from geodetic latitudes: up to 0.12°
+   from the true azimuth here (Longs Peak 317.06° where the geodesic says 316.95°), 7 of the start line's 24 peaks by more
+   than 0.1°. Altitudes move by 0.007° at most; no visibility changes. The bake uses the ellipsoid, so the gate's
+   reference is a re-run: `horizon_3dep.py --wgs84` → `source/horizon/horizon.3dep13.wgs84.json` (pyproj; no code shared
+   with the bake). `horizon.3dep13.json` is untouched. **Owed: DOSSIER section 6's table and PLAN section 3's were
+   printed from the spherical file; their bearings are up to 0.1° off. Not edited here.**
+2. **Three of the study's "summits" are the edge of its search box, not a summit:** Bear Peak's is South Boulder Peak's slope
+   (2,586 m; the real Bear Peak, 2,579 m, is 1.19° north in the same box), Mt Meeker's is Longs Peak's, Lookout Mtn's a
+   slope rising out of the box. The nominal coordinates in `horizon_study.py` want correcting. The gate passes them
+   through its flat-top rule (`FLAT_DEG`, invented, in the changelog).
+3. **A plain 60 m lattice reads sharp summits low** (Mt Blue Sky 19 m, 0.02°) and a neighbouring bump can then outrank the
+   summit. Hence the kept summits; each is the DEM's own point.
+
+**Not verified, not done**
+
+- The game: nothing drawn, no frame rate. 1.77 M triangles is this recipe's count, not a budget anyone agreed (the Lariat
+  plan's backdrop is 100 to 140 k). Triangles go with 1 / `pixel_rad`²; `radial_factor` and `near_m` are the other knobs.
+- The viewshed is from bare earth along the lap at 12 m, not from buildings: it keeps far more than a driver downtown
+  sees, by design. It has not been checked against a second, independent viewshed. The skyline check from the start line
+  is the only evidence that nothing visible was dropped; from Speer / Colfax and the rest of the lap it is unchecked.
+- The seam between the backdrop's near edge (2 km) and the track's own ground: no track ground exists yet.
+- Haze, fog and the material (PLAN 3a); colour by elevation; the towers; Sand Creek's and the Lariat's bakes; the kn5
+  export and the `models_*.ini` listing; `DISTANT_FIX` on real terrain; motion.
+- The full test suite on this Mac ran in a venv outside git with the project's declared dependencies (result in the PR).

@@ -1,0 +1,100 @@
+{
+ "params": {
+  "arc_deg": [
+   180.0,
+   335.0
+  ],
+  "near_m": 2000.0,
+  "far_m": 112000.0,
+  "pixel_rad": 0.001,
+  "min_cell_m": 20.0,
+  "radial_factor": 2.0,
+  "refraction_k": 0.13,
+  "viewshed_eye_m": 12.0,
+  "viewshed_margin_deg": 0.1,
+  "viewshed_margin_cells": 2,
+  "viewpoint_spacing_m": 100.0,
+  "blocker_min_m": 2000.0,
+  "max_verts_per_object": 60000,
+  "mesh_prefix": "BACKDROP_FR",
+  "uv_tile_m": 1000.0,
+  "keep_summits": true,
+  "summit_sample_m": 8.0
+ },
+ "origin_lon_lat": [
+  -104.9853,
+  39.7401
+ ],
+ "origin_elev_m": 1604.59,
+ "frame": "x east, y up, z north, metres; origin at origin_lon_lat, y = 0 at origin_elev_m; vertex at true geodesic azimuth and distance from the origin (WGS84); y = elevation - origin_elev_m - d^2 (1 - k) / (2 * 6371000)",
+ "lattice": {
+  "rings": 1183,
+  "finest_columns": 2720,
+  "finest_step_rad": 0.0009945810075702981,
+  "bands": [
+   0,
+   1,
+   2,
+   3,
+   4
+  ],
+  "vertices": 2676303,
+  "nodata_vertices": 0
+ },
+ "viewshed": {
+  "viewpoints": 58,
+  "road_length_m": 6646.4,
+  "seen_vertices": 702933
+ },
+ "vertices": 913893,
+ "triangles": 1765565,
+ "objects": 83,
+ "summits_kept": 8433,
+ "max_object_vertices": 60000,
+ "extent": {
+  "x_m": [
+   -78471.6,
+   0.0
+  ],
+  "y_m": [
+   -198.8,
+   2503.1
+  ],
+  "z_m": [
+   -108711.0,
+   90751.4
+  ],
+  "distance_km": [
+   2.0,
+   108.71
+  ],
+  "bearing_deg": [
+   180.0,
+   335.0
+  ],
+  "elevation_m": [
+   1555.7,
+   4345.1
+  ]
+ },
+ "cell_m": {
+  "min": 19.9,
+  "max": 108.1,
+  "at_60km": 59.7
+ },
+ "track": "denver-grand-prix",
+ "obj": "denver_grand_prix_backdrop.obj",
+ "obj_sha256": "bff696098ea1650e19387de183ea0362e29babebe3802c78735effac0683c98f",
+ "obj_bytes": 179853094,
+ "road_line": "tracks/denver-grand-prix/data/lap_line.plan.json",
+ "dem_tiles": {
+  "USGS_13_n40w107.tif": 426135718,
+  "USGS_13_n41w107.tif": 392148654,
+  "USGS_13_n40w106.tif": 413508849,
+  "USGS_13_n41w106.tif": 409771361,
+  "USGS_13_n39w106.tif": 408466962,
+  "USGS_13_n40w105.tif": 374609383,
+  "USGS_13_n39w105.tif": 365551541
+ },
+ "config": "tracks/_reference/front-range/bake.config.json"
+}

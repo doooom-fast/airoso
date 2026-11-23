@@ -14,6 +14,36 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
+## 2026-11-23 — NEW GATE: backdrop_peak_gate, the far backdrop's peaks from the start line (ledger 0096; not wired into any build)
+
+`tools/backdrop_peak_gate.py`, on the OBJ `tools/backdrop_bake.py` writes (the shared Front Range backdrop,
+`tracks/_reference/front-range/`). It reads the built mesh and a horizon study; it never opens the DEM (L5).
+
+- **What it judges:** for every named peak the study calls visible from the track's start line, the mesh's summit (the
+  vertex of highest real elevation in the study's own summit box) must stand within **0.1 degrees** of the study's
+  altitude above the horizontal, eye 1.2 m over the start line, and the study's bearing must be within **0.1 degrees** of
+  the mesh's top. A visible peak missing from the mesh fails. An object named with a digit prefix fails. Exit 1.
+- **Where 0.1 degrees comes from:** `tracks/denver-grand-prix/PLAN.md` section 3b ("bearing and height within 0.1 degrees
+  from the start line"), the plan Kevin approved. Not calibrated against a bake.
+- **The box** is the study's: +-0.008 degrees of longitude, +-0.006 of latitude about the peak's nominal coordinate, read
+  from the study file. A first version looked within 700 m of the study's summit instead and misread seven peaks: that
+  is different ground (Bergen Peak has ground 11 m higher than the study's "summit" 360 m from it, outside the box).
+- **⚠ The top (`FLAT_DEG` = 0.01 degrees, invented):** the mesh's top is every vertex in the box standing within 0.01
+  degrees of the summit as seen from the eye, and the bearing test is against that span. On a sharp peak it is one
+  point. On a mesa, or where the study's box cuts a slope (Lookout Mtn, Bear Peak, Mt Meeker: the study's "summit" is the
+  box's edge, not a summit), no single bearing exists to 0.1 degrees. A tenth of the tolerance; not measured.
+- **Reported, never gated:** peaks the study calls hidden (the bake may drop them), and the mesh's skyline against the
+  study's by bearing.
+- **Its reference is `horizon.3dep13.wgs84.json`, not `horizon.3dep13.json`.** The first study took bearings on a sphere,
+  up to 0.12 degrees from the true azimuth at Denver's latitude: more than this gate's tolerance (seven of the start
+  line's 24 peaks differ by more than 0.1 degrees between the two files; no altitude by more than 0.007).
+  The study and the bake do not share geodesy code (pyproj in the study, Vincenty in the bake).
+- **What it does not prove:** PLAN 3b rows 2 to 6 (layering, haze, shading, surface, weather), or anything in the game.
+- **Teeth:** `tests/tools/test_backdrop_bake.py`: passes on a bake of an analytic surface; fails the same mesh turned
+  0.3 degrees, with the curvature drop removed, stretched 10 % tall, with the visible summit cut out, and with a
+  digit-prefixed name.
+- **Not wired:** no build calls it. Denver has no build yet.
+
 ## 2026-11-23 — MEASUREMENT CHANGE (opt-in): drive_test's daylight probe hung from the road's own edge height on a banked turn (ledger 0102 section 6, Milford only; no threshold moved, no bypass)
 
 It moves where the probe looks, not its limit: the same 5 m window, the same limit (0 gaps), the same probe point 0.8 m

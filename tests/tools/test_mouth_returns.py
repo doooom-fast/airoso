@@ -121,7 +121,8 @@ def test_sand_creek_opts_in_and_ships_its_radii():
 
 def test_skip_list_names_its_why():
     """route.mouth_returns_skip (ledger 0086, 0.2.7): the named mouths get no returns; a row without a why is refused;
-    Sand Creek names exactly the two owed mouths whose returns turned verify_mouths red on m7a"""
+    Sand Creek named the two owed mouths whose returns turned verify_mouths red on m7a; at 0.2.9 grid_primary_78's lap end
+    is a sandcreek_quebec pad arm, not a mouth, and its row went with it (903c3436), so E 56th's grid_primary_80#0 is left"""
     assert mr.skip_list({}) == {}
     assert mr.skip_list({"route": {"mouth_returns_skip": [{"piece": "a#0", "end": "end", "why": "w"}]}}) == \
         {("a#0", "end"): "w"}
@@ -131,4 +132,20 @@ def test_skip_list_names_its_why():
     except ValueError:
         pass
     cfg = json.loads((ROOT / "tracks" / "sand-creek-lm" / "track.config.json").read_text(encoding="utf-8"))
-    assert set(mr.skip_list(cfg)) == {("grid_primary_78#0", "end"), ("grid_primary_80#0", "end")}
+    assert set(mr.skip_list(cfg)) == {("grid_primary_80#0", "end")}
+
+
+def test_fit_past_respread_is_opt_in_and_checked():
+    """2026-11-22 (ledger 0086 owed item 3): route.mouth_returns_fit {"past_respread": true}; absent = as before"""
+    assert mr.fit_past_respread({}) is False and mr.fit_past_respread({"route": {}}) is False
+    assert mr.fit_past_respread({"route": {"mouth_returns_fit": {"past_respread": True, "_doc": "x"}}}) is True
+    assert mr.fit_past_respread({"route": {"mouth_returns_fit": {"past_respread": False}}}) is False
+    for bad in (True, {"past_respread": 1}, {"past_respread": True, "k_max": 2}, []):
+        try:
+            mr.fit_past_respread({"route": {"mouth_returns_fit": bad}})
+        except SystemExit:
+            continue
+        raise AssertionError(bad)
+    lm = json.loads((ROOT / "tracks" / "san-diego-lake-murray" / "track.config.json").read_text(encoding="utf-8"))
+    assert "mouth_returns_fit" not in (lm.get("route") or {})
+    assert 0.0 < mr.FIT_PAST_K_MAX_M <= 1.0

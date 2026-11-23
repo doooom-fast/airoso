@@ -356,7 +356,13 @@ def test_both_heads_is_lake_murrays_alone_and_wired_as_an_author_step():
     assert "data/lights.heads.json" in SHIP["sync_out"]["files"]
     for p in OTHER_CONFIGS:
         sl = ((json.loads(p.read_text(encoding="utf-8")).get("scenery") or {}).get("streetlights") or {})
+        if p.parent.name == "sand-creek-lm":
+            # ledger 0098's path (the same key, written twice in two rounds): Sand Creek's draft lamps step lights both
+            # heads itself, told apart by both_heads_by "lamps"; lamp_heads refuses it (and its ship.json names none)
+            assert sl["light_both_heads"] is True and sl["both_heads_by"] == "lamps", p
+            continue
         assert "light_both_heads" not in sl, p
+    assert "both_heads_by" not in CFG["scenery"]["streetlights"]       # Lake Murray: lamp_heads lights the back head
     for p in OTHER_SPECS:
         steps = json.loads(p.read_text(encoding="utf-8"))["steps"]
         assert "lamp_heads" not in [n for ph in steps.values() if isinstance(ph, list) for n in ph], p

@@ -556,7 +556,7 @@ def test_round_k_keys_are_opt_in():
         assert "signs_name_blades" not in cfg, t
     # round K's candidate (live since round R, 0.2.6: test_round_r_live_is_the_candidate)
     live = json.loads((SC / "track.config.json").read_text(encoding="utf-8"))
-    assert "race_rule" not in (live.get("kerb") or {}) and live["version"] == "0.2.8"
+    assert "race_rule" not in (live.get("kerb") or {}) and live["version"] == "0.2.9"
     sc = json.loads((SC / "source" / "round_k" / "track.config.json").read_text(encoding="utf-8"))
     assert sc["version"] == "0.2.6"
     assert sc["race"]["edge_fold_chord"] is True
@@ -879,7 +879,7 @@ def test_round_q_corner_flares_off_is_opt_in_and_only_narrows():
     """ledger 0079 round Q (tools/lm_engine_intake.corner_flares_off): a declared corner's flare (a crest that falls to a
     level leg on both sides) is re-laid by station between the two legs' widths; a slip's ramp up to a wider road (no
     fall on its far side within the radius) is left alone; Lake Murray never runs the intake and the Lariat's port does
-    not name the key, nor (yet) Sand Creek's"""
+    not name the key; Sand Creek names the dahlia_56th corner (2026-11-22)"""
     import lm_engine_intake as li
     from scripts.geometry.projection import _meters_per_degree
     origin = {"lat": 39.78, "lon": -104.92, "elev_m": 1500.0}
@@ -898,9 +898,38 @@ def test_round_q_corner_flares_off_is_opt_in_and_only_narrows():
     assert "lm_intake" not in lm
     lar = json.loads((ROOT / "tracks" / "lookout-lariat-lm" / "track.config.json").read_text(encoding="utf-8"))
     assert "corner_flare_off" not in (lar.get("lm_intake") or {})
-    # round Q's build rq1 (dahlia_56th unparked with the flare off) went red: the candidate does not name the key yet
-    for cfgp in (SC / "track.config.json", SC / "source" / "round_k" / "track.config.json"):
-        assert "corner_flare_off" not in (json.loads(cfgp.read_text(encoding="utf-8")).get("lm_intake") or {})
+    # round Q's build rq1 went red with the out-cut on the 56th bridge; 2026-11-22 dahlia_56th is unparked with its out-cut
+    # on the last ground row. lm_intake.corner_flare_off is the SWITCH; the corners are route.corner_flare_off's, the
+    # port's list (2026-11-23: the corner had been put in the switch's place, so the 0.2.9 rehearsal built the 42.3 m crest).
+    # The round K candidate names none
+    sc = json.loads((SC / "track.config.json").read_text(encoding="utf-8"))
+    assert sc["lm_intake"]["corner_flare_off"] is True
+    assert [c["name"] for c in sc["route"]["corner_flare_off"]] == ["the 56th -> Sand Creek Dr slip's merge",
+                                                                     "Dahlia St -> E 56th Ave (the dahlia_56th pad)"]
+    assert "dahlia_56th" in [p["id"] for p in sc["lm_pads"]["pads"]]
+    rk = json.loads((SC / "source" / "round_k" / "track.config.json").read_text(encoding="utf-8"))
+    assert "corner_flare_off" not in (rk.get("lm_intake") or {})
+
+
+def test_sand_creek_corner_flares_off_reach_the_dahlia_crest():
+    """2026-11-23 (the 0.2.9 rehearsal at 903c3436 kept the source's 42.3 m crest; lm_pads then refused dahlia_56th): the
+    live config's list, run through the intake's own function on the source line it copies, re-lays the Dahlia corner's
+    flare v767..v787 between its legs' 11.0 and 23.5 m and leaves the slip's merge as the source has it"""
+    import lm_engine_intake as li
+    sc = json.loads((SC / "track.config.json").read_text(encoding="utf-8"))
+    src = json.loads((ROOT / "tracks" / "sand-creek" / "data" / "centerline.local.json").read_text(encoding="utf-8"))
+    assert sc["lm_intake"]["corner_flare_off"] is True
+    pts = [tuple(p) for p in src["points_xyz_m"]]
+    got, rep = li.corner_flares_off(pts, src["widths_m"], src["origin"], sc["route"]["corner_flare_off"])
+    by = {r["name"]: r for r in rep}
+    assert by["the 56th -> Sand Creek Dr slip's merge"]["flare"] is None
+    d = by["Dahlia St -> E 56th Ave (the dahlia_56th pad)"]
+    assert d["vertex"] == 780 and d["flare"] == [767, 787] and d["legs_m"] == [11.0, 23.5] and d["was_m"] == [11.0, 42.3]
+    # the port re-lays by its own line's stations (0.2.9's intake: v770 12.93, v786 22.863); the source's differ by cm
+    run = got[767:788]
+    assert run[0] == 11.0 and run[-1] == 23.5 and all(a <= b for a, b in zip(run, run[1:]))
+    assert 12.5 < got[770] < 13.5 and 22.5 < got[786] < 23.5
+    assert [k for k, (a, b) in enumerate(zip(got, src["widths_m"])) if a != b] == list(range(768, 787))
 
 
 def _drop(cfg, path):
@@ -915,6 +944,20 @@ def _drop(cfg, path):
 LIVE_0_2_8_KEYS = (("route", "edge", "grass_clearance"), ("route", "edge", "_grass_clearance_doc"),
                    ("route", "edge", "connector_grass_clearance"), ("route", "edge", "_connector_grass_clearance_doc"))
 
+# ledger 0098 (0.2.9, Kevin 2026-11-22): the map-edge cut reached, the one-sided measured flares, both lamp heads lit, the owned
+# asphalt and concrete
+LIVE_0_2_9_KEYS = (("route", "grid", "reach"), ("route", "grid", "_reach_doc"), ("lm_intake", "grid_reach"),
+                   ("lm_intake", "_grid_reach_doc"), ("route", "flare_one_sided"), ("route", "_flare_one_sided_doc"),
+                   ("lm_intake", "flare_one_sided"), ("lm_intake", "_flare_one_sided_doc"),
+                   ("scenery", "streetlights", "light_both_heads"), ("scenery", "streetlights", "_light_both_heads_doc"),
+                   # the 0.2.9 merge with main (2026-11-23): ledger 0098's path told apart from 0099's, the same key
+                   ("scenery", "streetlights", "both_heads_by"), ("scenery", "streetlights", "_both_heads_by_doc"),
+                   ("texture_overrides", "1ROAD"), ("texture_overrides", "1KERB_SIDEWALK"),
+                   ("route", "split_strip_balanced"), ("route", "_split_strip_balanced_doc"))
+SHIP_0_2_9 = {"source/grid_reach.json", "source/flares_one_sided.lidar.json",
+              "assets/textures/asphalt_dense_diffuse.jpg", "assets/textures/asphalt_dense_normal.jpg",
+              "assets/textures/concrete_plain_diffuse.jpg", "assets/textures/concrete_plain_normal.jpg", "split_strip"}
+
 # ledger 0086 (0.2.7): every key the live config adds to, or changes from, round_k's candidate
 LIVE_0_2_7_KEYS = (("name",), ("_name_doc",), ("slug",), ("version",), ("install_folder",), ("_install_folder_doc",),
                    ("route", "mouth_returns"), ("route", "mouth_radii_file"),
@@ -922,6 +965,32 @@ LIVE_0_2_7_KEYS = (("name",), ("_name_doc",), ("slug",), ("version",), ("install
                    ("route", "mouth_returns_skip"), ("route", "verify_mouth_corners_allowed"),
                    ("road_markings", "gap_mouths"), ("road_markings", "_gap_mouths_doc"),
                    ("strip_seam", "connectors"), ("strip_seam", "_connectors_doc"))
+
+# 2026-11-22 (PC, claude/sc-finish-pc-20261122): sandcreek_quebec and dahlia_56th unparked, the Dahlia corner's flare off
+LIVE_FINISH_PC_KEYS = (("lm_intake", "corner_flare_off"), ("lm_intake", "_corner_flare_off_doc"),
+                       ("lm_pads", "pads"), ("lm_pads", "parked"), ("lm_pads", "_parked_doc"),
+                       ("route", "mouth_returns_fit"), ("route", "_pads_0209_doc"),
+                       ("ai",))                      # 2026-11-23: ai.fillet_split (scripts/ac/write_ai_line.py)
+
+
+def _finish_pc_pads(live, cand):
+    """the live pads are the candidate's four plus its two parked ones, unparked; the plan's dahlia_56th gains cut_m / half_m"""
+    lp, cp, ck = live["lm_pads"]["pads"], cand["lm_pads"]["pads"], cand["lm_pads"]["parked"]
+    assert lp[:len(cp)] == cp and live["lm_pads"]["parked"] == []
+    assert sorted(p["id"] for p in lp[len(cp):]) == sorted(p["id"] for p in ck)
+    assert all(p.get("_unparked") and p.get("deck_floor_m") == 0.75 for p in lp[len(cp):])
+    assert [p["id"] for p in lp if p.get("ground_on_mesh")] == ["sandcreek_quebec"]      # 2026-11-23, the P4 grass
+    q = next(p for p in lp if p["id"] == "sandcreek_quebec")
+    qk = next(p for p in ck if p["id"] == "sandcreek_quebec")
+    assert {k: v for k, v in q.items() if k not in ("_unparked", "deck_floor_m", "_deck_floor_doc",
+                                                                 "ground_on_mesh", "_ground_on_mesh_doc")} ==         {k: v for k, v in qk.items() if k != "_parked_why"}          # round C's declaration, as measured
+    for pl in live["lm_pads"]["plan"]:
+        if pl["id"] == "dahlia_56th":
+            assert pl.pop("cut_m") == [30.0, 17.0] and pl.pop("half_m") == 57.15 and pl.pop("_cut_m_doc")
+    # the port's route.corner_flare_off: the candidate's slip merge, then the Dahlia corner (2026-11-23)
+    rc, kc = live["route"]["corner_flare_off"], cand["route"]["corner_flare_off"]
+    assert rc[:len(kc)] == kc and [c["name"] for c in rc[len(kc):]] == ["Dahlia St -> E 56th Ave (the dahlia_56th pad)"]
+    del rc[len(kc):]
 
 
 def test_round_r_live_is_the_candidate():
@@ -932,7 +1001,7 @@ def test_round_r_live_is_the_candidate():
     (race.corridor.whole_lap) and verify_kn5 runs both before (closure kn5) and after (--inis) the folder"""
     live = json.loads((SC / "track.config.json").read_text(encoding="utf-8"))
     cand = json.loads((SC / "source" / "round_k" / "track.config.json").read_text(encoding="utf-8"))
-    assert live["version"] == "0.2.8" and cand["version"] == "0.2.6"
+    assert live["version"] == "0.2.9" and cand["version"] == "0.2.6"   # 0.2.9: ledger 0098
     assert live["slug"] == live["install_folder"] == "sand_creek_raceway" and "LM" not in live["name"]
     assert [l["name"] for l in live["layouts"]] == ["Sand Creek Raceway", "Sand Creek Free Roam"]
     assert live["route"]["mouth_returns"] == ["grid_"] and live["route"]["verify_mouth_corners"] is True
@@ -940,7 +1009,8 @@ def test_round_r_live_is_the_candidate():
     # verify_mouths_allowed: round_k's rows plus grid_tertiary_74's start (ledger 0086, 0.2.7)
     va, vk = live["route"].pop("verify_mouths_allowed"), cand["route"].pop("verify_mouths_allowed")
     assert va[:len(vk)] == vk and [(r["piece"], r["end"]) for r in va[len(vk):]] == [("grid_tertiary_74#0", "start")]
-    for k in LIVE_0_2_7_KEYS + LIVE_0_2_8_KEYS:
+    _finish_pc_pads(live, cand)
+    for k in LIVE_0_2_7_KEYS + LIVE_0_2_8_KEYS + LIVE_0_2_9_KEYS + LIVE_FINISH_PC_KEYS:
         _drop(live, k)
         _drop(cand, k)
     for l in live["layouts"] + cand["layouts"]:
@@ -949,7 +1019,8 @@ def test_round_r_live_is_the_candidate():
     ship = json.loads((SC / "ship.json").read_text(encoding="utf-8"))
     ship_k = json.loads((SC / "source" / "round_k" / "ship.json").read_text(encoding="utf-8"))
     added = {"mouth_returns", "verify_mouth_corners", "source/mouth_radii.naip.json", "data/mouth_returns.json",
-             "data/verify_mouth_corners.json"}
+             "data/verify_mouth_corners.json"} | SHIP_0_2_9
+    ship["sync_in"]["_assets_doc"] = ship["sync_in"]["_assets_doc"].split("; ledger 0098:")[0]
     assert ship.keys() == ship_k.keys()
     for k, v in ship.items():
         if isinstance(v, dict):

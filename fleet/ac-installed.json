@@ -59,14 +59,14 @@
       "version": "0.1.6"
     },
     "high_plains": {
-      "branch": "claude/hp-finish-20261122",
+      "branch": "claude/hp-finish-r4-20261123",
       "engine": "lm-v4",
-      "installed": "2026-11-22",
-      "note": "0.1.9 = 0.1.8 + colliders on the posts and paddock buildings within the 60 m reach (collider_tri_m 14.5: post0-4, 6-9, 12 and osm289311820/289311823/289314487 + the traced white shed; walls 22 -> 35 objects) + Milford's tyre skin on the Tec-Pro row + GrassFX at 15 m (123 rectangles, 1,339 / 1,986 card spots); ledger 0097; kn5 22,161,329 B; install build = the PC rehearsal (180/180 gate rows, kn5 equivalent); 0.1.8 parked in D:/k10-track-archive/2026-11-22_194738; Kevin: \"I always want newer builds\" / \"When they're done, install them\" (2026-11-22)",
+      "installed": "2026-11-23",
+      "note": "0.1.12 = 0.1.9 + rounds 2-4 (ledger 0097): the road at its measured widths (p50 11.48 m), the R s 2,673 kerb stripe on its paint, the grey roof as a low shed, the pit-exit paving, concrete_plain on the edge strip, K-rail rows 3 / 8 removed (kerb paint), the FULL layout (full_course, 4,085.3 m) beside West, the north loop's kerbs, the merge's west bellmouth (R 14.0 m), the north loop's NAIP 2023 road photo, the white building's shed; 0.1.10 / 0.1.11 never installed on their own; two layouts now (west, full_course): Content Manager files West under a new layout id; the install named the layouts 'doooom Colorado — West' / '— Full' (the config's layout names), renamed by hand in AC to '... — High Plains Raceway — West' / '— Full' (originals in D:/k10-track-archive/2026-11-23_034323_hp_names); kn5 26,463,938 B; install build = the PC rehearsal (251/251 gate rows, kn5 equivalent); 0.1.9 parked in D:/k10-track-archive/2026-11-23_034232; Kevin: \"I always want newer builds\" / \"When they're done, install them\"",
       "role": "current",
-      "sha": "564c3152",
+      "sha": "4a055e11",
       "track": "high-plains-lm",
-      "version": "0.1.9"
+      "version": "0.1.12"
     },
     "milford_road_course": {
       "branch": "claude/mf-finish-20261122",
@@ -91,14 +91,14 @@
       "version": "0.20.4"
     },
     "sand_creek_raceway": {
-      "branch": "claude/sand-creek-edge-flush",
+      "branch": "claude/sc-finish-0209-20261122",
       "engine": "lm-v4",
-      "installed": "2026-11-09",
-      "note": "0.2.8 = 0.2.7 + the mainline's edge strip flush with the prep's contact band (route.edge.grass_clearance -0.08; the side streets keep 0.10 via connector_grass_clearance; ledger 0087 / 0079); TreeFX Oak3 / SycamoreV1-3 3,471 trees as 0.2.7; records + menu pictures on claude/sand-creek-edge-flush faa3a37",
+      "installed": "2026-11-23",
+      "note": "0.2.9 = 0.2.8 + ledger 0098 round 1 (the map-edge cut reached: E 56th Ave and its 13 mouths, Northfield Quebec walked onto the lap; the one-sided measured flares; both heads of the two-arm lamps lit, 342 lights; the owned asphalt and concrete) + the PC's pads (sandcreek_quebec and dahlia_56th unparked; ground_on_mesh for Quebec; SC-D56 skipped, 5 sign posts; ai.fillet_split); TreeFX Oak3 / SycamoreV1-3 3,472 trees; install build = the PC rehearsal 0209e (345 / 345 gate rows, road / race / street kn5 equivalent, tangents only); KNOWN DEFECT: the sandcreek_quebec deck edge hangs up to 0.935 m over the grass on the Northfield Quebec arms (round 2); 0.2.8 parked in D:/k10-track-archive/2026-11-23_074151; Kevin: \"I always want newer builds\" / \"When they're done, install them\"",
       "role": "current",
-      "sha": "981727d0",
+      "sha": "5a8e2c05",
       "track": "sand-creek-lm",
-      "version": "0.2.8"
+      "version": "0.2.9"
     }
   }
 }

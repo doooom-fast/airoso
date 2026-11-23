@@ -11,7 +11,8 @@ Per mouth whose piece starts with a declared prefix, per corner (the street's tw
   1. K: the street's road edge line (fitted on its rows EDGE_FIT_FROM_M-EDGE_FIT_TO_M out, past the weld's re-spread)
      meets the host's road edge (its ROAD rows on the mouth side). a: along the host's edge away from the street.
   2. R: the corner's measured radius (route.mouth_radii_file, tools/mouth_radii.py), else the median of the measured
-     ones on the same host, else of all (logged as such). tH = R / tan(phi / 2), iterated on the host edge's own
+     ones on the same host, else of all (logged as such); with route.mouth_returns_measured_only (opt-in, ledger 0097
+     round 4) a corner without its own measured radius is skipped and listed instead. tH = R / tan(phi / 2), iterated on the host edge's own
      curve; A* the point tH along the host edge from K; A the host's curb row just past A* (it keeps its faces).
   3. THE RETURN STRIP -> CURB (appended): A (the host row, exact) -> A* (A's profile, at A*) -> the arc tangent to the
      host edge at A* and the street edge at B -> J (the street's first curb row past B, exact); the track's own edge
@@ -80,6 +81,7 @@ def main():
     data = proj / "data"
     cfg = json.loads((proj / "track.config.json").read_text(encoding="utf-8"))
     prefixes, radii_rel = mr.config(cfg)
+    fit_past = mr.fit_past_respread(cfg)
     outp = proj / mr.RETURNS_FILE
     if not prefixes:
         if outp.exists():
@@ -129,6 +131,7 @@ def main():
     hrows_cache = {}
 
     skip_named = mr.skip_list(cfg)
+    measured_only = bool((cfg.get("route") or {}).get("mouth_returns_measured_only"))
     for mo in mouths:
         if not mr.selected(mo, prefixes):
             continue
@@ -178,6 +181,12 @@ def main():
                     raise Skip("the street is shorter than its edge fit")
                 j1 = max(j1, jw)
                 j2 = max(r for r, a in enumerate(arcs) if a <= max(arcs[j1] + 1e-6, mr.EDGE_FIT_TO_M))
+                past = False
+                if j2 - j1 < mr.EDGE_FIT_ROWS and fit_past:
+                    # route.mouth_returns_fit past_respread (mouth_returns.fit_past_respread): the window past the re-spread
+                    j2p = max(r for r, a in enumerate(arcs) if a <= arcs[j1] + mr.EDGE_FIT_TO_M - mr.EDGE_FIT_FROM_M)
+                    if j2p - j1 >= mr.EDGE_FIT_ROWS:
+                        j2, past = j2p, True
                 if j2 - j1 < mr.EDGE_FIT_ROWS:
                     raise Skip(f"only {j2 - j1} rows to fit the street's edge on")
                 E1, E2 = rows[j1][lane], rows[j2][lane]
@@ -199,12 +208,23 @@ def main():
                         Kq, Kt = qq, hit[3]
                 if Kp is None:
                     raise Skip("its road edge line never meets the host edge")
+                if past:
+                    e0 = rows[0][lane]
+                    miss = math.hypot(Kp[0] - e0[0], Kp[2] - e0[2])
+                    if miss > mr.FIT_PAST_K_MAX_M:
+                        raise Skip(f"fitted past the re-spread (rows {j1}-{j2}), its edge line meets the host {miss:.1f} m "
+                                   f"from the street's own edge at the cut (> {mr.FIT_PAST_K_MAX_M} m)")
+                    print(f"[returns] {key}: fitted past the re-spread (rows {j1}-{j2}), K {miss:.2f} m from the cut's edge")
                 lat = sg.unit2(rows[j1][lane][0] - rows[j1][1][0], rows[j1][lane][2] - rows[j1][1][2])
                 a0, a1 = hedge[Kq], hedge[(Kq + 1) % mh]
                 dirn = 1 if (a1[0] - a0[0]) * lat[0] + (a1[2] - a0[2]) * lat[1] > 0 else -1
                 R, src = mr.radius_for(radii, key, host)
                 if R is None:
                     raise Skip("no radius (none measured)")
+                if measured_only and src != "measured":
+                    # route.mouth_returns_measured_only (opt-in, ledger 0097 round 4; High Plains' merge): a corner the
+                    # imagery did not settle is not built at another corner's median
+                    raise Skip(f"its radius was not measured ({src}): route.mouth_returns_measured_only")
                 # tH so that the circle tangent at A* (chord K -> A*) has radius R, on the host edge's own curve
                 cphi = max(-1.0, min(1.0, dirn * ((a1[0] - a0[0]) * bdir[0] + (a1[2] - a0[2]) * bdir[1])
                                      / max(1e-9, math.hypot(a1[0] - a0[0], a1[2] - a0[2]))))

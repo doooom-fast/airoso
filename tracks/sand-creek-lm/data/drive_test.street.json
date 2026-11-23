@@ -14,7 +14,7 @@
  "severe_steps": 0,
  "severe_per_km": 0.0,
  "steps_per_km": 0.31,
- "kinks_per_km": 0.52,
+ "kinks_per_km": 0.62,
  "obstruction_stations": 0,
  "daylight_gaps": 0,
  "replication_vs_measured": null,
@@ -60,6 +60,11 @@
     584.0,
     -4.08,
     3.28
+   ],
+   [
+    5839.0,
+    -6.0,
+    3.26
    ],
    [
     1194.0,
@@ -113,46 +118,52 @@
     2.53
    ],
    [
+    5833.0,
+    -6.0,
+    3.01,
+    2.85
+   ],
+   [
+    5833.0,
+    -6.0,
+    3.01,
+    2.85
+   ],
+   [
     9575.0,
     6.0,
-    3.28,
-    0.25
+    3.53,
+    0.58
    ],
    [
-    9576.0,
+    9575.0,
     6.0,
-    3.49,
-    1.04
-   ],
-   [
-    9576.0,
-    6.0,
-    3.8,
-    0.62
+    3.76,
+    1.94
    ],
    [
     9577.0,
     6.0,
-    4.48,
-    2.52
+    4.49,
+    2.22
    ],
    [
     9577.0,
     6.0,
-    4.48,
-    2.52
+    4.49,
+    2.22
    ],
    [
     9578.0,
     6.0,
-    3.89,
-    1.39
+    3.86,
+    1.02
    ],
    [
     9578.0,
     6.0,
-    3.89,
-    1.39
+    3.86,
+    1.02
    ]
   ],
   "dense_hops": []
@@ -161,8 +172,8 @@
  "fold_severe_judge": "tools/verify_fold_fans.py (real wheel paths, hard)",
  "fold_severe_at": [],
  "fold_severe_unjudged": [],
- "vertex_kinks": 14,
- "kinks_per_km_station": 1.97,
+ "vertex_kinks": 15,
+ "kinks_per_km_station": 2.18,
  "dense_hops": 0,
  "fail": false
 }

@@ -1,0 +1,27 @@
+{
+ "_doc": "tools/trim_connectors.py route.street_junctions.pad_arms (ledger 0079 0.2.3): every street end cut at a built pad's box edge; tools/lm_pads_blend.py (lm_pads.arms streets) welds its end row into the deck",
+ "arms": [
+  {
+   "pad": "FORK",
+   "connector": "full_north",
+   "cut_xyz": [
+    -193.601,
+    10.673,
+    118.408
+   ],
+   "box_edge": [
+    [
+     -184.78,
+     121.63
+    ],
+    [
+     -202.44,
+     115.18
+    ]
+   ],
+   "declared_arm": "full_north",
+   "piece": "full_north#0#0",
+   "end": "start"
+  }
+ ]
+}

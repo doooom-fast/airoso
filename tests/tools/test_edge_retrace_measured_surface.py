@@ -124,10 +124,12 @@ def test_apply_refuses_a_point_off_the_measured_band():
 
 
 def test_both_are_opt_in():
-    """only Milford's port names lm_intake.edge_retrace / measured_surface; it takes no camber survey beside it"""
+    """only Milford's port names lm_intake.measured_surface (it takes no camber survey beside it); edge_retrace is Milford's
+    and, since ledger 0097 round 2, High Plains' (mode "measured", its only record)"""
     cfgs = {p.parent.name: json.loads(p.read_text(encoding="utf-8")) for p in (ROOT / "tracks").glob("*/track.config.json")}
     names = lambda key: sorted(t for t, c in cfgs.items() if (c.get("lm_intake") or {}).get(key))
-    assert names("edge_retrace") == ["milford-road-course-lm"]
+    assert names("edge_retrace") == ["high-plains-lm", "milford-road-course-lm"]
+    assert [r.get("mode") for r in cfgs["high-plains-lm"]["lm_intake"]["edge_retrace"]] == ["measured"]
     assert names("measured_surface") == ["milford-road-course-lm"]
     mf = cfgs["milford-road-course-lm"]
     assert not mf["lm_intake"].get("crossfall")

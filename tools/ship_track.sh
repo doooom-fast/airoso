@@ -128,6 +128,24 @@ if [ -n "${SHIP_SPEC:-}" ]; then REHEARSAL=1; else REHEARSAL=0; fi
 ENGINE=""
 
 step() { echo; echo "=================== $1"; }
+# bl_filtered <grep BRE> <blender args...>: a Blender step's output filtered to its own lines (as `2>&1 | grep` did), and
+# on a failure its error output too, which a prefix filter can hide (2026-11-23: the lm_pads step's filter hid draft_pads'
+# "[pads] the outline crosses itself through a seam row", so Sand Creek 0.2.9's rehearsal log ended on the last [lm-pads]
+# line with EXIT 1 and no cause). stderr is kept apart: a SystemExit's message goes there unbuffered, ahead of the
+# buffered stdout, so a tail of the merged output missed it. Blender's own start-up noise is left out. Returns Blender's status
+bl_filtered() {
+  local pat="$1"; shift
+  local out err rc=0
+  out="$(mktemp)"; err="$(mktemp)"
+  "$BL" "$@" > "$out" 2> "$err" || rc=$?
+  cat "$out" "$err" | grep "$pat" || true
+  if [ "$rc" -ne 0 ]; then
+    echo "[step] FAILED (exit $rc); its error output:"
+    grep -v "^Read prefs\|^Read blend\|^register_class\|^Warning: '.*' does not contain\|^Blender \|^$" "$err" | tail -12 || true
+  fi
+  rm -f "$out" "$err"
+  return "$rc"
+}
 pyq() { (cd "$AIROSO" && python -c "$@"); }
 # a python that imports every module named, for the plain-python steps that need numpy (ledger 0092: tools/lidar_ground_patch.py
 # --npz, numpy; tools/plan_grassfx_aerial.py's refined path, numpy + PIL; the PC's system python has no numpy, and Milford
@@ -387,7 +405,7 @@ draft_cutfill() {
 }
 draft_lm_pads() {
   step "author: the lap's junction pads, the mainline arm (tools/lm_pads_blend.py: the lap cut at two rows, the measured deck, K-rails across the roads not taken; ledger 0078; self-checked; none declared = no-op)"
-  (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/lm_pads_blend.py" -- "$PROJ" 2>&1 | grep "^\[lm-pads\]\|FATAL\|Error\|Traceback" )
+  (cd "$WS" && bl_filtered "^\[lm-pads\]\|FATAL\|Error\|Traceback" --background --python-exit-code 1 --python "$AIROSO/tools/lm_pads_blend.py" -- "$PROJ" )
 }
 draft_split_strip() {
   step "author: a long lap's edge strip cut along the line under AC's vertex cap (tools/split_strip_blend.py; ledger 0078; under the cap = no-op)"

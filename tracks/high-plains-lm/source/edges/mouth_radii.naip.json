@@ -1,0 +1,97 @@
+{
+ "_doc": "Measure every side-street mouth corner's curb-return RADIUS on NAIP 2023 (ledger 0086 fix, Sand Creek 0.2.7). Inputs: naip_2023_hp_z18.png (NAIP 2023, the 0.3 m scene at z18, 0.46 m px), the workshop's mouths / connectors / centre line; tools/mouth_radii.py.",
+ "naip_item": "co_m_3910317_ne_13_030_20230928_20240104",
+ "params": {
+  "BAND_MIN": 16.0,
+  "BAND_K": 2.5,
+  "EDGE_U": [
+   12.0,
+   30.0
+  ],
+  "EDGE_OFF": [
+   -3.0,
+   8.0
+  ],
+  "R_GRID": [
+   0.5,
+   20.0,
+   0.25
+  ],
+  "ARC_MID": 0.7,
+  "CONTRAST_M": 0.7,
+  "CONTRAST_MIN": 12.0,
+  "PROM_MIN": 1.4
+ },
+ "summary": {
+  "corners": 2,
+  "measured": 1,
+  "median_m": 14.0,
+  "p10_p90_m": [
+   14.0,
+   14.0
+  ]
+ },
+ "corners": {
+  "full_north#0#0|end|+1": {
+   "phi_deg": 120.08,
+   "K": [
+    -85.12,
+    145.94
+   ],
+   "road_gray": [
+    94.9,
+    36.4
+   ],
+   "edge_host": {
+    "offset_m": -0.4,
+    "contrast": 31.9,
+    "prominence": 3.13
+   },
+   "edge_street": {
+    "offset_m": -1.5,
+    "contrast": 20.1,
+    "prominence": 2.58
+   },
+   "radius_m": 20.0,
+   "contrast": 86.1,
+   "prominence": 9.43,
+   "Kreal": [
+    -86.66,
+    145.92
+   ],
+   "measured": false,
+   "why": "fit at the grid's end (20.0 m)",
+   "host": "MAINLINE"
+  },
+  "full_north#0#0|end|-1": {
+   "phi_deg": 64.72,
+   "K": [
+    -97.46,
+    148.3
+   ],
+   "road_gray": [
+    120.1,
+    56.2
+   ],
+   "edge_host": {
+    "offset_m": 0.2,
+    "contrast": 24.3,
+    "prominence": 1.55
+   },
+   "edge_street": {
+    "offset_m": -0.8,
+    "contrast": 33.6,
+    "prominence": 1.7
+   },
+   "radius_m": 14.0,
+   "contrast": 29.2,
+   "prominence": 1.91,
+   "Kreal": [
+    -96.66,
+    148.37
+   ],
+   "measured": true,
+   "host": "MAINLINE"
+  }
+ }
+}

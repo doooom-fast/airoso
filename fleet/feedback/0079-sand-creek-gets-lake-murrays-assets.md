@@ -2582,3 +2582,137 @@ Earlier list, kept for the record:
   - The install step parked 0.2.7 in `D:/k10-track-archive/2026-11-09_140029/` (MOVES.tsv + README).
   - Menu pictures: the same cameras (race s0, street s1 phase 0.5); the pack's own are in `2026-11-09_140058_previews`.
 - Not driven.
+
+
+## PC, 2026-11-22: sandcreek_quebec and dahlia_56th unparked (claude/sc-finish-pc-20261122; NOT rehearsed yet)
+
+Kevin's calls-1122 (row finish-sc): "the Quebec pad: on the PC, no download". The Mac's job: the pad, and dahlia_56th's red
+seam (round Q item 3). Everything from the PC's caches (`D:/k10-scratch/sand_creek_lm_a_reh/source/pads/*.lidar.npz`);
+nothing fetched.
+
+**Both pads sit on auto bridge spans** (data/bridge.spans.auto.json [2324.4, 2478.0] and [5789.0, 5953.7]).
+- **dahlia_56th:**
+  - Lap minus lidar ground is within 0.04 m from v760 to v784. From v788 on there is no class-2 return within 2 m: the 56th
+    bridge over Sand Creek, whose bed lies 5-7 m down.
+  - Round Q's out-cut v791 (s 2358.9) stood on the bridge, so the deck there read the creek bed. That is the 6.833 m seam
+    residual and the 63 unfilled nodes; the old deck reads down to 0.24 m.
+  - The intensity treats a wet bank as asphalt (road 153 / verge 1504, the bank 0-300).
+- **sandcreek_quebec:**
+  - The junction is on real ground. The lap's straight bridge ramp stands +0.05 to +0.41 m over it at v1937-1952.
+  - Round C's deck read 5.97 m under the lap beside the Sand Creek bridge (v1946-1953, 3-17 m off the line).
+  - Its intensity is NOT empty: road 0, verge 728, threshold 364. On a 1.5 m mean the pavement, the island and Quebec's
+    median read plainly.
+  - draft_pad_outline on the cache reproduces round C's outline exactly (2,390 m2, 682 m2 of it the lap's 34.2 m flare).
+
+**What 803c6cb7 / 4b4ea1be build (opt-in keys only):**
+1. tools/pad_boxes.py: `cut_m` [in_m, out_m]. dahlia_56th's plan is [30, 17], so the cuts are [769, 786]; v786 is the last
+   row on the ground, 17.2 m past the node. half_m stays 57.15, the cache's window.
+2. tools/draft_pad_outline.py: `deck_floor_m` per pad. Class-2 points more than that under the nearest lap vertex are left
+   out of the deck's planes.
+   - Lap minus deck inside each outline, max: colorado_50th 0.55, 48th_colorado 0.47, 50th_dahlia 0.24, 50th_ash 0.21.
+     The banks sit 1-6 m.
+   - 0.75 m [invented, between those bounds].
+3. dahlia_56th:
+   - lm_intake.corner_flare_off (round Q's key) on the Dahlia corner: v767-v787 re-laid 11.0 -> 23.5 m (v770 42.3 -> 12.93).
+   - The box's north side replaced by 56th's measured bank top: the last point every metre where class-2 stands within
+     0.30 m [invented] of the road's own height before falling to the creek. The rule's corner stood 5-6 m out over the bank.
+   - Re-measured: outline 1,593 m2 (was 3,098), the lap's ribbon 149.6 m2 of it (was 1,405.9); lap minus deck max 0.51 m.
+4. sandcreek_quebec: round C's declaration and outline, deck_floor_m 0.75; lap minus deck max 0.78 m (was 5.97). The lap's
+   flare there stays, as on the four built pads.
+5. signs.json SC-D56 rev skip: rq1's M-c5-rev c_built_edge_clearance on E 56th west. Handled as SC-48S rev: no race layout
+   drives rev.
+
+Tests: 134 sign / pad / name-blade / flare tests pass under the PC's numpy venv. Under system Python the 5 that need numpy
+fail, as on main.
+
+**Rehearsal:** queued third on the PC, as ONE 0.2.9 build with the Mac's claude/sc-finish-20261122 (the Mac merges both into
+claude/sc-finish-0209-20261122). Results go here.
+
+
+## PC, 2026-11-23: the 0.2.9 rehearsal's red step (lm_pads refused dahlia_56th), the two causes, fixed
+
+The rehearsal (runbook 0098-1, the combined head 903c3436, empty workshop `D:/k10-scratch/sand_creek_lm_0209_reh`,
+--no-install) stopped at 00:35, 14 min in, at the author step lm_pads: `[pads] the outline crosses itself through a seam
+row: measure again` on dahlia_56th (the step's grep hides that line; the pads before it built as on 0.2.8).
+
+Found without Blender: a pure-python replica of lm_pads_blend's rows + outline-as-built (scratchpad `scq/pads_replica.py`,
+its functions exec'd with bpy stubbed; the lap rows rebuilt as point +- width/2 on the central-difference normal, which
+matches 0.2.8's loop.blend MAINLINE rows to 0.1 mm here). It passes colorado_50th (the same 2 short arms the build names),
+50th_ash and 50th_dahlia (ring 1,301.3 m2, the build's deck area) and refuses dahlia_56th in splice_rows, as the build did.
+
+1. **The flare stayed on.** `lm_intake.corner_flare_off` is the intake's SWITCH: tools/lm_engine_intake.py runs
+   corner_flares_off over `route.corner_flare_off`, the port's list. 4b4ea1be put the Dahlia corner in the switch's place,
+   so the switch was on and the corner never reached the list (the log names the slip alone). The lap kept the source's
+   42.3 m crest: v786's row 27.67 m wide, its north end 5.8 m past the measured bank top.
+   - Fixed: the corner moved into `route.corner_flare_off` after the slip's merge; `lm_intake.corner_flare_off: true`.
+     The intake's own function on the build's line: v767..v787 re-laid 11.0 -> 23.5 m (v770 12.93, v786 22.863), the slip
+     "no flare", 19 widths changed.
+2. **The box cut the lap's own row.** With the flare off the replica still refused: the box's north-east corner
+   (-887.75, 1127.86) stood on the out-cut line INSIDE row v786 (its north end + route.edge's 0.3 m lip is 8.83 m further
+   along the line). The measurement unions the lap's ribbon into the outline (never clipped by a box), so the outline's
+   run along the cut broke at that corner (a 0.22 m notch: one point 0.222 m past the line, the next 0.255 m inside);
+   splice_rows replaced the longer half with the row and left the other half lying on it.
+   - Fixed: the corner is the row's north end + the lip, (-891.99, 1135.6) on the cut line; the north side follows the
+     lipped ribbon edge (v785's end (-895.02, 1133.45)) to where it meets the bank top (-897.22, 1131.64), then the bank
+     top as before. No new number.
+   - Re-measured with tools/draft_pad_outline.py on the PC's cache (every fetch refused): outline 1,596 m2 (was 1,593),
+     the ribbon's 149.6 m2 the same, 14,549 points under the deck floor the same. Lap minus deck over v769-786 (11 points
+     across each row): p50 -0.007 / max 0.442 m (was -0.007 / 0.439); the two decks differ by 0.011 m at most.
+   - The replica on the fixed line and the new outline: splice, ribbon_edges and arm_edges pass, 0 lane samples off the
+     deck, ring 1,597.0 m2. sandcreek_quebec passes too (2,409.1 m2, 0 lane samples off).
+3. Tests: `test_round_q` reads the switch and the port's list; new `test_sand_creek_corner_flares_off_reach_the_dahlia_crest`
+   runs the live list through corner_flares_off on tracks/sand-creek's line (the crest found, re-laid 11.0 -> 23.5, the
+   slip untouched); `_finish_pc_pads` takes the Dahlia corner off the live list before the round-R comparison. 162 pad /
+   sign / intake / mouth tests pass under the PC's venv.
+
+What the replica does not cover: the deck, seams, ground and barriers after the outline (the rehearsal reads those).
+
+
+## PC, 2026-11-23: rehearsals 2-4 of 0.2.9 — SC-D56 dropped (owed), the race AI line's merged fillet
+
+Each from an EMPTY workshop, --no-install, ENG `eng_sclm_0209`, on the combined head:
+- **2d26aabc** (01:52-02:12): every pad built — dahlia_56th seam residual max 0.43 m (1,597.0 m2), sandcreek_quebec
+  0.728 m (2,407.6 m2), 6 pads. Stopped at verify_signs l_named_corner: SC-D56 had no plate.
+- **313fadd3** (02:20-02:40): SC-D56's forward post pinned; stopped at verify_signs e_plate_height, f_post_sunk.
+- **928f7bad** (02:43-03:32): signs PASS (5 posts); stopped at the race AI step, "radius under the floor 4".
+
+**SC-D56 (Dahlia St -> E 56th Ave): 0.2.9 drops the forward arrow plate.**
+- The plate stood in 0.2.7 and 0.2.8: the auto corner (round Q's M-c5), while dahlia_56th was parked. verify_signs had
+  6 posts there (the Mac's sc9b table, m7d and sc9b); 0.2.9 has 5. The Mac accepted 5 for 0.2.9.
+- With the pad built, the T's top is Sand Creek's bank:
+  - place_signs' polyline stage stands the plate on the failed-turn ray 1.63 m (lateral_offset_m) past the built deck's
+    north edge, at (-913.928, 1133.297).
+  - The mesh stage then begins its march 1.50 m further out and stops 3.13 m from the deck, over the 3.0 m limit.
+    Why it starts there is NOT proven. The reading: the pad's ground band past the deck edge was taken for a walk.
+  - Pinned at the polyline spot (313fadd3), the built ground ray-casts 0.51 m under the road (6.92 vs 7.44). Past
+    GROUND_WARN_M 0.30 a post keeps a walk's analytic base, so it stood in the air.
+  - Every spot the rule allows (1.3-3.0 m out) is on the falling bank.
+- signs.json skips SC-D56 both ways, like SC-48S, with these numbers as its reason; the pin is out. In Free Roam the T
+  also turns left onto E 56th west (grid_primary_35).
+- **First on Sand Creek round 2's list:** the mesh stage stands a post on falling ground with no built walk — its base
+  on the ray-cast ground, the plate at the rule's height. Then SC-D56 comes back both ways, and verify_signs (e, f)
+  judges it unchanged. No threshold moves. A pin there comes out once the mesh stage's march is fixed.
+
+**The race AI line at the S at 48th / Colorado** (scripts/ac/write_ai_line.py, opt-in `ai.fillet_split`):
+- 928f7bad: "0 corners filleted, smoothing 475+325 iterations", min radius 10.0 m, 4 points 10.0-10.8 m under the 12 m
+  floor (line points 3193-3196 at (-1488.3, -312.0) .. (-1491.3, -308.6)). 0.2.8: one fillet R 12.6 m, min radius
+  12.57 m.
+- Today's writer on 0.2.8's data reproduces 0.2.8 byte for byte. Swapping 0.2.8's inputs in one at a time, only
+  barrier_bands.json's `corridors.race.lane_by_vertex` at v768-786 flips it: dahlia_56th's flare off narrows the race
+  lane there (+-20.33 -> +-7.80 m at v777), the line comes out 4 points shorter, and the S's stations fall differently.
+  Nothing at the S changed. The writer says "v3195 / v3205 no arc >= the floor fits the corridor" in both builds.
+- Before the fillets, the tight run 3193-3196 and a lone kink four points on (3201, R 11.0 m) merge into one cluster
+  (bad points within 6). No single window fits it: every window's arc path is None, K 3-39. bound_curvature then
+  leaves 4 under the floor.
+- `ai.fillet_split: true` (Sand Creek only): a merged cluster that fits no window is tried run by run (runs
+  FILLET_SPLIT_GAP_PTS 3 [invented] apart), the last first.
+  - On 928f7bad's data: one R 12.6 m comfort arc, min radius 12.56 m, 0 under the floor, no smoothing, as 0.2.8.
+  - Off (the default), the writer's output is byte-identical to before (0.2.8's data, all five files). The street
+    line's files are byte-identical with it on; only ai_draft.json gains the arcs' line_radius_min_m.
+  - No ai.layouts, so no gate OBJ / verify_ai_line step is added.
+- Test: tests/ac/test_ai_line_geometry.py::test_fillet_split_is_opt_in_and_fillets_a_merged_cluster_run_by_run, on
+  tests/fixtures/sand_creek_0209_s48_fillet.json (the line and stations around the S, cut from 928f7bad).
+
+## PC, 2026-11-23: 0.2.9 rehearsed (0209e, SHIP OK) and installed
+
+On the combined head 5a8e2c05: the rehearsal of record, every row against the Mac's sc9b, the install, the race severe +10 / -6, the known Quebec deck-edge overhang and round 2's first items are in ledger 0098, "PC, 2026-11-23".

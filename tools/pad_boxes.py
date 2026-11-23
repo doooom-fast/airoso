@@ -4,14 +4,18 @@ lap's two cut rows and the junction box, for tools/draft_pad_outline.py (the mea
 
     node   the lap vertex nearest the plan's node_xz (local E, N on the project's data/centerline.local.json)
     cuts   the lap vertices CUT_M of arc either side of the node (rule 4: a straight transverse cut 5-30 m from the junction
-           centre, past the crossing pavement edge) [CUT_M invented within that rule]
-    box    a star polygon round the node: each lap cut's two ends (the lane's half width + BOX_PAD_M out) and, for every grid
+           centre, past the crossing pavement edge) [CUT_M invented within that rule]. A plan's cut_m may be a pair
+           [in_m, out_m] (opt-in, ledger 0079 / 2026-11-22, dahlia_56th): the in cut in_m before the node and the out cut
+           out_m after it, for a junction whose lap arm runs onto a bridge (the cut stops on the last ground row; a
+           measured deck on a bridge reads the creek bed under it). A number = both, as before
+    box   a star polygon round the node: each lap cut's two ends (the lane's half width + BOX_PAD_M out) and, for every grid
            street with a point within ARM_NEAR_M of the node, the two points BOX_PAD_M past its edges where it crosses
            the circle of radius reach_m round the node (reach_m = the lap's half width at the node + the corner's curb
            return + ARM_PAST_M) [the pads invented]; ordered by angle round the node
     arms   those streets, with the circle crossing as the arm's cut (the author's business; recorded for it)
 
-The plan is track.config.json lm_pads.plan: [{"id", "node_xz": [E, N], "curb_return_m", "cut_m"?, "half_m"?}]. --write puts
+The plan is track.config.json lm_pads.plan: [{"id", "node_xz": [E, N], "curb_return_m", "cut_m"? (a number or [in_m, out_m]),
+"half_m"?}]. --write puts
 the declarations into lm_pads.pads (keeping lm_pads.source), each with its provenance; without it, prints them.
 
     python tools/pad_boxes.py <project-or-track> [--write]
@@ -29,6 +33,20 @@ CUT_M = 30.0        # [invented, within rule 4's 5-30 m] arc from the node to ea
 BOX_PAD_M = 3.0     # [invented] the box this far past a lane's edge
 ARM_NEAR_M = 30.0   # [invented] a street with a point this close to the node is one of its arms
 ARM_PAST_M = 6.0    # [invented] the arm cut this far past the curb return
+
+
+def cut_pair(v, pid="?"):
+    """a plan's cut_m: a number (both cuts, as before) or [in_m, out_m] -> (in_m, out_m), each > 0"""
+    if isinstance(v, (int, float)) and not isinstance(v, bool):
+        a = b = float(v)
+    elif isinstance(v, (list, tuple)) and len(v) == 2 and all(isinstance(x, (int, float)) and not isinstance(x, bool)
+                                                              for x in v):
+        a, b = float(v[0]), float(v[1])
+    else:
+        raise SystemExit(f"[pad-boxes] {pid}: cut_m {v!r}: a number or [in_m, out_m]")
+    if a <= 0 or b <= 0:
+        raise SystemExit(f"[pad-boxes] {pid}: cut_m {v!r}: each cut > 0 m")
+    return a, b
 
 
 def build(proj: Path):
@@ -49,12 +67,14 @@ def build(proj: Path):
     for p in plan:
         nx, nz = p["node_xz"]
         node = min(range(len(P)), key=lambda i: math.hypot(P[i][0] - nx, P[i][1] - nz))
-        cut = float(p.get("cut_m", CUT_M))
-        k0 = max(i for i in range(node + 1) if arc[node] - arc[i] >= cut) if arc[node] >= cut else 0
+        cut_in, cut_out = cut_pair(p.get("cut_m", CUT_M), p["id"])
+        k0 = max(i for i in range(node + 1) if arc[node] - arc[i] >= cut_in) if arc[node] >= cut_in else 0
         # the lap seam (L13): a cut never wraps past the last unique vertex; a pad over the seam is cut short there and says so
-        k1 = min((i for i in range(node, len(P) - 1) if arc[i] - arc[node] >= cut), default=len(P) - 2)
-        if arc[k1] - arc[node] < cut:
-            print(f"[pad-boxes] {p['id']}: the out cut stops at the lap seam, {arc[k1] - arc[node]:.0f} m past the node (not {cut:.0f})")
+        k1 = min((i for i in range(node, len(P) - 1) if arc[i] - arc[node] >= cut_out), default=len(P) - 2)
+        if arc[k1] - arc[node] < cut_out:
+            print(f"[pad-boxes] {p['id']}: the out cut stops at the lap seam, {arc[k1] - arc[node]:.0f} m past the node (not {cut_out:.0f})")
+        cut_txt = (f"{cut_in:.0f} m of arc either side" if cut_in == cut_out
+                   else f"{cut_in:g} m of arc before and {cut_out:g} m after")
         c0, c1 = P[node]
         hw = W[node] / 2.0
         reach = hw + float(p.get("curb_return_m", 0.0)) + ARM_PAST_M
@@ -99,11 +119,11 @@ def build(proj: Path):
                     break                             # one cut for a street that only reaches the circle
         box.sort(key=lambda q: math.atan2(q[1] - c1, q[0] - c0))
         out.append({"id": p["id"], "node": node, "cuts": [k0, k1], "box": [[round(x, 2), round(z, 2)] for x, z in box],
-                    "arms": arms, "half_m": float(p.get("half_m", max(45.0, reach + 15.0, cut + 15.0))),
+                    "arms": arms, "half_m": float(p.get("half_m", max(45.0, reach + 15.0, max(cut_in, cut_out) + 15.0))),
                     "source": {"kind": "lidar_ept", "ept": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept.json"},
                     "edge": "shoulder",
-                    "_by": f"tools/pad_boxes.py from lm_pads.plan {p['id']}: node v{node} nearest {p['node_xz']}, cuts {cut:.0f} m of "
-                           f"arc either side, box reach {reach:.1f} m (half width {hw:.1f} + curb return {p.get('curb_return_m', 0)} + "
+                    "_by": f"tools/pad_boxes.py from lm_pads.plan {p['id']}: node v{node} nearest {p['node_xz']}, cuts {cut_txt}, "
+                           f"box reach {reach:.1f} m (half width {hw:.1f} + curb return {p.get('curb_return_m', 0)} + "
                            f"{ARM_PAST_M}) [rule, invented pads], {len(arms)} street arm(s)"})
     return cfg, out
 

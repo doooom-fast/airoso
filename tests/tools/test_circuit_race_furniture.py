@@ -62,7 +62,7 @@ def test_high_plains_ship_json_paints_twice_and_syncs_the_ports_own_files():
     spec = json.loads((HP / "ship.json").read_text(encoding="utf-8"))
     d, a = spec["steps"]["draft"], spec["steps"]["author"]
     assert d[-1] == "paint" and d.index("kerbs") < d.index("paint")
-    assert a == ["bespoke", "paint"]
+    assert a == ["race_laps", "bespoke", "paint"]              # ledger 0097 round 3: the Full lap first
     cfg = _cfg()
     files = [b["file"] for b in cfg["scenery"]["bespoke"]["blocks"]]
     assert files == ["source/bespoke/buildings.race.json", "source/bespoke/posts.race.json"]
@@ -160,7 +160,8 @@ def test_pit_lane_sheet_meets_the_paddock_sheet_and_keeps_the_old_names():
     assert new["pit_wall_west"]["height_m"] == 1.03 and new["pit_paddock_west"]["height_m"] == 0.59
     assert new["pit_wall_nose"]["kind"] == "tyres"
     rows = [r for k, r in new.items() if k.startswith("paddock_row_")]
-    assert len(rows) == 15 and all(r["kind"] == "krail" and "height_m" not in r for r in rows)   # 0.81 m [invented]
+    assert len(rows) == 13 and all(r["kind"] == "krail" and "height_m" not in r for r in rows)   # 0.81 m [invented]
+    assert not {"paddock_row_3", "paddock_row_8"} & set(new)   # 2026-11-22: the kerb paint, not K-rails (ledger 0097 round 2)
     # the west pit wall ends where the lidar's begins, the paddock rail likewise
     by = {r["key"]: r for r in bes["rails"]}
     assert by["pit_wall_west"]["polyline_lonlat"][-1] == by["pit_wall_lidar"]["polyline_lonlat"][0]
@@ -175,7 +176,7 @@ def test_paddock_buildings_drop_the_duplicate_and_name_a_source_per_height():
     by = {r["key"]: r for r in rows}
     assert by["osm289314487"]["roof"] == "white"                          # bright on the 0.3 m crop, not dark
     for r in rows:
-        assert any(w in r["_h"] for w in ("shadow estimate", "official", "[invented]")), r["key"]
+        assert any(w in r["_h"] for w in ("shadow estimate", "official", "[invented]", "measured: the 2018 lidar")), r["key"]
         if r["form"] == "gable":
             assert r["ridge_h_m"] > r["wall_h_m"] >= 2.1, r["key"]
     posts = json.loads((HP / "source" / "bespoke" / "posts.race.json").read_text(encoding="utf-8"))

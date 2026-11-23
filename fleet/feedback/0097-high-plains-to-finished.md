@@ -754,3 +754,10 @@ The layouts' `name` is now "High Plains Raceway — West" / "High Plains Raceway
 PC asked: ship_track writes `<ui_name_prefix> — <layout name>`, so the next install writes "doooom Colorado — High Plains
 Raceway — West" / "— Full", the names the PC set by hand in AC tonight. `tests/tools/test_high_plains_round3.py` follows.
 The menu name only; no build output changes.
+
+The full suite on the records head then failed two tests, from the sync-back and main, not the build:
+- `test_paint_drape` pinned the pit-out gore's stop on the line airoso held since Nov 3 (the intake's, before the measured
+  edge re-fit). 0.1.12's install synced back the line the build drives (median 0.53 m off it, widths 12.0 -> 12.49 m), so
+  the stop is now (435.15, -9.10) and the drape paints 129.74 m, leaving 14.52 m. The test follows.
+- `test_version_and_every_round2_key_is_high_plains_own` refused the owned concrete on every other track's
+  1KERB_SIDEWALK; Milford binds it since 0.1.14. It now allows the four finish tracks only.

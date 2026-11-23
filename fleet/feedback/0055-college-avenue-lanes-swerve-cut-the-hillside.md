@@ -337,3 +337,43 @@ merged into `claude/lm-finish-r2-20261122`. The College step runs first in the a
   forks and the two one-way roads. Faces per object and the checks are in `STEP-DESIGN.md`, "Step 3 done". No lamp or
   sign stood on the old median. **120 median bushes (TreeFX, `data/scatter_positions.json`) still stand on rows
   v1114-1478, 30 of them on what is now the fork's pavement**: the data step has to drop them and plant the bank.
+
+## Known defect of the current build: every median shows asphalt between its curbs (measured 2026-11-23)
+
+Found while reading the prep for round 2. It is in the build already (0.20.2, 0.20.3; 0.20.4 does not change it) and is
+not something round 2 introduces.
+
+- **What.** No Lake Murray median has a grass top in the game. Between an island's two curb strips the visible surface
+  is the road's own asphalt; the bushes stand on it.
+- **Why.** The median tool (`tools/author_median_blend.py`) joins each island's grass top into `TERRAIN`, 0.185 m over
+  the slab the island stands on. The prep Lake Murray runs (engine-july `scripts/ac/build_kn5_loop.py`,
+  `_conform_and_reseat`, "pin + feather") sets every ground vertex that has pavement straight above or below it to the
+  deck less 0.02 m. The whole island stands on pavement, so its whole top goes 0.02 m under the road. The tool's own
+  header says so for the street-only span ("the prep pins it under the road"); it holds for every island.
+- **Measured** on the 0.20.3 rehearsal's own output, read-only: `D:/k10-scratch/rehearse_0099_1/data/track.obj` (the
+  street layout's kn5 set as one OBJ), with `source/college_r2/median_tops_check.py` ->
+  `source/college_r2/median_tops_0_20_3.json`. At the centre and the two quarter points of every island row at least
+  1.2 m wide: the highest 1GRASS surface against the highest 1ROAD surface straight above or below.
+  **14 islands, 7,464 m; 2,486 rows sampled; 2,486 with the grass 0.02 m under the road; 0 with grass over it.** (18
+  more rows are nose tapers under 1.2 m wide and were not sampled.)
+
+| Line | Rows | Stations (m) | Length (m) | Width (m) | Rows sampled | Grass under the road | Grass over it |
+|---|---|---|---|---|---|---|---|
+| mainline, College Avenue | v846-1073 | 2526-3210 | 684 | 3.4-7.0 | 228 | 228 | 0 |
+| mainline, College Avenue | v1096-1487 | 3281-4455 | 1174 | 4.39-7.0 | 392 | 392 | 0 |
+| mainline, Navajo Road | v1540-1739 | 4610-5208 | 598 | 2.66-6.92 | 200 | 200 | 0 |
+| mainline, Navajo Road | v2183-2297 | 6543-6885 | 342 | 1.5-5.93 | 115 | 115 | 0 |
+| del_cerro_blvd | v5-215 | 15-648 | 632 | 3.72-5.35 | 211 | 211 | 0 |
+| del_cerro_blvd | v240-308 | 721-924 | 203 | 3.81-5.02 | 69 | 69 | 0 |
+| del_cerro_blvd | v320-473 | 958-1419 | 461 | 4.7-6.0 | 154 | 154 | 0 |
+| north_J1_waring | v8-315 | 22-931 | 910 | 1.5-5.99 | 308 | 308 | 0 |
+| north_princess_view | v129-173 | 387-519 | 132 | 1.0-5.7 | 43 | 43 | 0 |
+| north_princess_view | v200-228 | 600-685 | 84 | 1.77-5.36 | 29 | 29 | 0 |
+| north_mission_gorge | v8-48 | 24-145 | 120 | 0.62-1.61 | 25 | 25 | 0 |
+| north_mission_gorge | v54-57 | 163-172 | 9 | 1.71-1.76 | 4 | 4 | 0 |
+| north_mission_gorge | v63-741 | 190-2222 | 2032 | 1.5-7.98 | 679 | 679 | 0 |
+| north_J5_jackson_north | v621-649 | 1857-1939 | 82 | 1.43-6.1 | 29 | 29 | 0 |
+- **Round 2 and College.** The split replaces College's island between rows v1116 and v1476 by a bank that has no slab
+  under it; its top is released ground, which the prep pins only under pavement, so it stays grass (checked on the
+  scratch scene's prep run, below). The two College islands that stay (to v1116; v1476-1487) and every other median
+  are NOT touched in this round. Whether the rest joins round 2 or goes after is the Mac's call.

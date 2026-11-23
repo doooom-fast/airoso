@@ -24,12 +24,19 @@ apply only where the bake's own record declares the key; every other track's row
 
 | Row | Before | With the key |
 |---|---|---|
-| tone, with `road_wear.tone.smooth_m` | Pearson r of the shipped atlas against the photo's luminance AT each sample (a road triangle's centroid), the sample kept when its own luminance is lit asphalt; r >= tone_r_min 0.60 | the bake keeps nothing of the photo smaller than smooth_m, so the photo at a point is no longer what the macro is declared to follow. The row compares the atlas with THE PHOTO SMOOTHED THE SAME WAY, by the gate's own reading: the median of the photo's lit-asphalt ratio over the built road within +- smooth_m of the sample, on a 1 m lattice (shadow: dark AND blue; paint: bright; the ratio clipped; all three the bake's own rules and numbers), where at least SMOOTH_MIN_SHARE 0.375 of the lattice reads lit asphalt. A sample whose own point is in shadow is kept (the reading is round it). The same r >= tone_r_min 0.60 |
+| tone, with `road_wear.tone.smooth_m` | Pearson r of the shipped atlas against the photo's luminance AT each sample (a road triangle's centroid), the sample kept when its own luminance is lit asphalt; r >= tone_r_min 0.60 | the bake keeps nothing of the photo smaller than smooth_m, so the photo at a point is no longer what the macro is declared to follow. The row compares the atlas with THE PHOTO SMOOTHED THE SAME WAY, by the gate's own reading: the median of the photo's lit-asphalt ratio over the built road within +- smooth_m of the sample, on a 1 m lattice (shadow: dark AND blue; paint: bright; both grown as the bake grows them, ceil(photo pixel / texel) texels, 1.0 m or two photo pixels on Lake Murray; the ratio over the bake's declared lit median and clipped; all the bake's own rules and numbers), where at least SMOOTH_MIN_SHARE 0.375 of the lattice reads lit asphalt (`smoothed_photo`). A sample whose own point is in shadow is kept (the reading is round it). The same r >= tone_r_min 0.60 |
 | lane_rubber and tone, with `road_wear.lanes.ends` | the gate's reading of the declared lanes: uniform rubber on every lane, to its last point and round it | `make_lane_darkness` reads each lane as declared: its rubber share per point, drawn straight along a segment; a welded tail's bridge point as one more point; nothing past an open lane's first and last point. lane_rubber therefore judges the shipped atlas against the lanes with their fades. Thresholds as they were (line_offset_max_m 0.15, depth 0.5-1.5) |
 
 The gate does not restate the bake's nodes: the bake takes the median on nodes every smooth_m / 2 and draws the field
 straight between them; the gate takes its own median about each sample. They agree where the tone is smooth and differ a
 little at a patch's edge, which is what an independent reading is for.
+
+*Measured before the bake (2026-11-23, Lake Murray, six 192 m squares of the built road: Del Cerro's crossing, Mission
+Gorge Rd, Princess View at Fontaine, mainline rows 400 / 2500 / 3600):* `smoothed_photo` itself, run on the PC's
+interpreter against `smooth_tone` on the same photo, reads r 0.964 over 1,770 samples (per square 0.830-0.992; mean
+absolute difference 0.007-0.039). Without the growth, the first form of this row, it read 0.911, one square at 0.600:
+a shadow's edge is a mixed pixel that meets neither rule, the bake leaves it out and the gate did not. About 0.3 s per
+300 samples, so some 8 s on the row's 6,000.
 
 **[invented]**, all the bake's own and logged with it: smooth_m 8.0 m and the minimum lit share 0.375 (Lake Murray's
 config and scripts/aerial/road_wear.SMOOTH_MIN_LIT_SHARE; restated in the gate as SMOOTH_MIN_SHARE).
@@ -39,8 +46,9 @@ two flat fields has no correlation to find; it would FAIL (r near 0), not pass. 
 small that it changes nothing; then the row is today's. The row reports `smooth` (the window, the lattice, the minimum
 and how many samples had too little lit asphalt) and `samples` on every run. Teeth:
 tests/tools/test_road_wear_lanes_0099.py (the gate's reading of a share and of a square end against the formula; two
-welded lanes read as one line; the smoothed form is taken only with the key and uses the bake's own rules; no threshold
-moved), tests/aerial/test_road_wear_smooth_0099.py (numpy: a car, a crosswalk and a row of parked cars go and a patch of
+welded lanes read as one line; `smoothed_photo` drops a car, keeps a patch, leaves out a place that sees too little
+road, and grows a shadow as the bake does, a test that fails with the growth taken out; the smoothed form is taken only
+with the key; no threshold moved), tests/aerial/test_road_wear_smooth_0099.py (numpy: a car, a crosswalk and a row of parked cars go and a patch of
 older asphalt stays; the banded sampling is the whole-grid call bit for bit; a square end lays nothing past it).
 
 ## 2026-11-23 (PC) — WIRING: the road-wear bake takes a smoothed tone and lane ends (ledger 0099 round 3, item 3; both opt-in, no gate threshold touched)

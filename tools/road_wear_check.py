@@ -37,8 +37,9 @@ read again from the track's own image (track.config.json road_wear.aerial).
     (road_wear.tone.smooth_m, ledger 0099 round 3: the bake keeps nothing of the photo's tone smaller than smooth_m, a
     street's photo having cars, crosswalks and shadow edges on it. The tone row then compares the atlas with THE PHOTO
     SMOOTHED THE SAME WAY, by the gate's own reading: at each sample, the median of the photo's lit-asphalt ratio over
-    the built road within +- smooth_m (a 1 m lattice; shadow and paint by the bake's own rules, the ratio clipped as the
-    bake clips it), where at least SMOOTH_MIN_SHARE of the lattice reads lit asphalt. The same tone_r_min.)
+    the built road within +- smooth_m (a 1 m lattice; shadow and paint by the bake's own rules and grown as the bake
+    grows them, ceil(photo pixel / texel) texels; the ratio over the bake's declared lit median, clipped as the bake
+    clips it), where at least SMOOTH_MIN_SHARE of the lattice reads lit asphalt. The same tone_r_min.)
     (road_wear.lanes.ends, ledger 0099 round 3: a lane's rubber follows its declared share along its length, a welded
     tail runs on to its bridge point, and nothing is laid past a lane's end; make_lane_darkness reads all three, so
     lane_rubber judges the shipped atlas against the lanes as declared, fades included.)
@@ -552,6 +553,75 @@ def lane_rubber_row(lanes: list, uv_lum, lane_dark, step: int = 10) -> dict:
             "declared_profile": {round(k * 0.25, 2): round(h[k], 4) for k in sorted(h)}}
 
 
+def smoothed_photo(places: list, on_road, pixel_of, lum_px, size: tuple, tone: dict, med: float, ref_lit: float,
+                   smooth_m: float, px_m: float, tex: float) -> tuple[list, dict]:
+    """The tone row's photo under road_wear.tone.smooth_m (module docstring), by the gate's own reading: at each place
+    (x, y, u, v, left), the median of the photo's lit-asphalt ratio over the built road within +- smooth_m, on a 1 m
+    lattice. A lattice point is lit asphalt when no photo pixel within the bake's grow distance is shadow (darker than
+    shadow_lum x med AND bluer than shadow_blue) or paint (brighter than paint_lum x med): scripts/aerial/road_wear
+    tone_field grows both masks by ceil(px_m / tex) texels, here round(that / px_m) photo pixels. The ratio is over
+    ``ref_lit`` (the bake's declared lit median) and clipped as the bake clips it. A place with fewer than
+    SMOOTH_MIN_SHARE of its lattice on lit asphalt is left out and counted.
+
+    on_road(x, y) -> bool; pixel_of(x, y) -> (i, j) or None off the photo; lum_px(i, j) -> (luminance 0..1, blue / red);
+    size = (photo width, height). Returns (samples [(photo, u, v, left)], record)."""
+    aw, ah = size
+    lo, hi = tone["clip"]
+    kk = int(round(smooth_m))
+    need = int(math.ceil(SMOOTH_MIN_SHARE * (2 * kk + 1) ** 2))
+    grow_m = math.ceil(px_m / tex - 1e-9) * tex
+    gp = max(1, int(round(grow_m / px_m)))
+    bad_at = bytearray(aw * ah)                          # 0 unread, 1 lit, 2 shadow or paint
+    grown_at = bytearray(aw * ah)                        # 0 unread, 1 clear, 2 a bad pixel within gp
+
+    def bad_px(i, j):
+        k_ = j * aw + i
+        got = bad_at[k_]
+        if not got:
+            L_, B_ = lum_px(i, j)
+            got = 2 if ((L_ < tone["shadow_lum"] * med and B_ > tone["shadow_blue"]) or L_ > tone["paint_lum"] * med) else 1
+            bad_at[k_] = got
+        return got == 2
+
+    def grown_px(i, j):
+        k_ = j * aw + i
+        got = grown_at[k_]
+        if not got:
+            got = 1
+            for jj in range(max(0, j - gp), min(ah, j + gp + 1)):
+                for ii in range(max(0, i - gp), min(aw, i + gp + 1)):
+                    if bad_px(ii, jj):
+                        got = 2
+                        break
+                if got == 2:
+                    break
+            grown_at[k_] = got
+        return got == 2
+
+    samples = []
+    thin = 0
+    for (x, y, u_, v_, left) in places:
+        vals = []
+        for dj in range(-kk, kk + 1):
+            for di in range(-kk, kk + 1):
+                xx, yy = x + di, y + dj
+                if not on_road(xx, yy):
+                    continue
+                px = pixel_of(xx, yy)
+                if px is None or grown_px(*px):
+                    continue
+                vals.append(min(hi, max(lo, lum_px(*px)[0] / ref_lit)))
+        if len(vals) < need:
+            thin += 1
+            continue
+        vals.sort()
+        nv = len(vals)
+        samples.append((0.5 * (vals[(nv - 1) // 2] + vals[nv // 2]), u_, v_, left))
+    return samples, {"smooth_m": smooth_m, "window_m": 2.0 * kk, "lattice_m": 1.0, "min_points": need, "grow_px": gp,
+                     "grow_m": round(grow_m, 3), "ratio_reference_lum": round(ref_lit, 5),
+                     "samples_with_too_little_lit_asphalt": thin}
+
+
 def _ulp32(x: float) -> float:
     """The spacing of float32 values at |x| (the kn5 stores positions and UVs as float32)."""
     x = abs(x)
@@ -1031,33 +1101,24 @@ def main(argv=None) -> int:
             lo, hi = spec["tone"]["clip"]
             if smooth_m:
                 # the photo smoothed as declared, by the gate's own reading: the median of the lit-asphalt ratio over the
-                # built road within +- smooth_m of the sample, on a 1 m lattice
-                tn = spec["tone"]
-                kk = int(round(smooth_m))
-                need = int(math.ceil(SMOOTH_MIN_SHARE * (2 * kk + 1) ** 2))
-                samples = []
-                thin = 0
-                for (x, y, u_, v_, left) in places:
-                    vals = []
-                    for dj in range(-kk, kk + 1):
-                        for di in range(-kk, kk + 1):
-                            xx, yy = x + di, y + dj
-                            if uv_at(xx, yy) is None:
-                                continue
-                            a2 = aerial_lum(xx, yy)
-                            if a2 is None:
-                                continue
-                            if (a2[0] < tn["shadow_lum"] * med and a2[1] > tn["shadow_blue"]) or a2[0] > tn["paint_lum"] * med:
-                                continue
-                            vals.append(min(hi, max(lo, a2[0] / med)))
-                    if len(vals) < need:
-                        thin += 1
-                        continue
-                    vals.sort()
-                    nv = len(vals)
-                    samples.append((0.5 * (vals[(nv - 1) // 2] + vals[nv // 2]), u_, v_, left))
-                smooth_rec = {"smooth_m": smooth_m, "window_m": 2.0 * kk, "lattice_m": 1.0, "min_points": need,
-                              "samples_with_too_little_lit_asphalt": thin}
+                # built road within +- smooth_m of the sample, on a 1 m lattice. A lattice point is lit asphalt when no photo
+                # pixel within the bake's grow distance is shadow or paint (tone_field grows both masks by ceil(px / texel)
+                # texels: 1.0 m on Lake Murray, two photo pixels). The thresholds read against the samples' median (the
+                # bake's against the whole road's), the ratio against the bake's declared lit median, its own reference
+                px_m = max((Eb - Wb) * m_lon / aw, (Nb - Sb) * m_lat / ah)
+                ref_lit = float((decl["stats"].get("aerial") or {}).get("lit_median_lum") or med)
+
+                def pixel_of(xx, yy):
+                    lon = o["lon"] + (xx + reg["dx_m"]) / m_lon; lat = o["lat"] + (yy + reg["dy_m"]) / m_lat
+                    u = (lon - Wb) / (Eb - Wb) * aw; v = (Nb - lat) / (Nb - Sb) * ah
+                    return (int(u), int(v)) if (0 <= u < aw and 0 <= v < ah) else None
+
+                def lum_px(i, j):
+                    r_, g_, b_ = apx[i, j]
+                    return (0.2126 * r_ + 0.7152 * g_ + 0.0722 * b_) / 255.0, b_ / max(1, r_)
+
+                samples, smooth_rec = smoothed_photo(places, lambda xx, yy: uv_at(xx, yy) is not None, pixel_of, lum_px,
+                                                     (aw, ah), spec["tone"], med, ref_lit, smooth_m, px_m, tex)
             else:
                 samples = [s_ for s_ in samples if max(0.8, lo) * med <= s_[0] <= hi * med]
 

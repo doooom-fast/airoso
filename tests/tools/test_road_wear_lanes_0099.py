@@ -213,16 +213,61 @@ def test_the_gate_reads_a_lanes_share_and_lays_nothing_past_a_square_end():
     assert RC.lane_rubber_row([(pts, False, [1.0] * 11, True)], lambda x, y: None, one)["pass"] is False
 
 
-def test_the_tone_row_reads_the_photo_smoothed_only_where_the_bake_smoothed_it():
-    src = (ROOT / "tools" / "road_wear_check.py").read_text(encoding="utf-8")
+def _photo(w, h, lum=0.5, br=0.9):
+    return [[(lum, br) for _j in range(h)] for _i in range(w)]
+
+
+def test_the_gates_smoothed_photo_drops_a_car_keeps_a_patch_and_grows_shadow_as_the_bake_does():
+    tone = {"shadow_lum": 0.72, "shadow_blue": 1.06, "paint_lum": 1.45, "clip": [0.70, 1.30]}
+    W, H = 200, 120                                       # a photo of 0.5 m pixels over x 0..100, y 0..60 (row 0 at the top)
+    ph = _photo(W, H)
+    for i in range(100, 200):                             # x >= 50 m: an older patch, 0.85 of the lit asphalt
+        for j in range(H):
+            ph[i][j] = (0.425, 0.9)
+    for i in range(40, 50):                               # a car at x 20-25, y 29-31: dark, not blue
+        for j in range(58, 62):
+            ph[i][j] = (0.20, 0.9)
+    pixel_of = lambda x, y: (int(x / 0.5), int((60.0 - y) / 0.5)) if (0 <= x < 100 and 0 < y <= 60) else None   # noqa: E731
+    lum_px = lambda i, j: ph[i][j]                         # noqa: E731
+    road = lambda x, y: 10.0 <= y < 50.0                   # noqa: E731
+    run = lambda places, **kw: RC.smoothed_photo(places, road, pixel_of, lum_px, (W, H), tone, 0.5, 0.5,   # noqa: E731
+                                                 kw.get("smooth_m", 8.0), 0.5, 0.5)
+    got, rec = run([(22.5, 30.0, 0.1, 0.2, 1.0), (75.0, 30.0, 0.3, 0.4, 0.9), (35.0, 30.0, 0, 0, 1.0)])
+    assert [g[1:] for g in got] == [(0.1, 0.2, 1.0), (0.3, 0.4, 0.9), (0, 0, 1.0)]
+    assert got[0][0] == 1.0 and abs(got[1][0] - 0.85) < 1e-12 and got[2][0] == 1.0      # the car is gone; the patch is kept
+    assert (rec["window_m"], rec["lattice_m"], rec["min_points"], rec["grow_px"], rec["grow_m"]) == (16.0, 1.0, 109, 1, 0.5)
     assert RC.SMOOTH_MIN_SHARE == 0.375 and RC.GATE["tone_r_min"] == 0.60
+    # a place too near the road's edge to see enough road is left out and counted
+    got, rec = run([(22.5, 11.0, 0, 0, 1.0), (22.5, 4.0, 0, 0, 1.0)])
+    assert len(got) == 1 and rec["samples_with_too_little_lit_asphalt"] == 1
+    # shadow: dark AND blue; it and the bake's grow distance round it are not lit asphalt. Half the window in shadow and
+    # the rest at 1.0: the median is 1.0 (a shadow is not read as dark asphalt)
+    for i in range(0, 45):
+        for j in range(H):
+            ph[i][j] = (0.20, 1.40)
+    got, _ = run([(22.5, 30.0, 0, 0, 1.0)])
+    assert got[0][0] == 1.0
+    # grown: a pixel next to a shadow is out too (a shadow's edge is a mixed pixel, darker but not blue enough). West of
+    # x 32 every other pixel is shadow and the ones between are such edges, at 0.72 of the reference; the lattice (1 m,
+    # two pixels) lands on the edges only. Without the growth 9 of the window's 17 columns read 0.72 and the median
+    # would be 0.72; grown, they are out and the lit asphalt east of x 32 is what is read
+    ph = _photo(W, H)
+    for i in range(0, 64):
+        for j in range(H):
+            ph[i][j] = (0.20, 1.40) if i % 2 else (0.36, 0.9)
+    lum_px = lambda i, j: ph[i][j]                         # noqa: E731
+    got, rec = RC.smoothed_photo([(31.0, 30.0, 0, 0, 1.0)], road, pixel_of, lum_px, (W, H), tone, 0.5, 0.5, 8.0, 0.5, 0.5)
+    assert rec["grow_px"] == 1 and len(got) == 1 and got[0][0] == 1.0
+    vals_ungrown = sorted([0.72] * 9 * 17 + [1.0] * 8 * 17)
+    assert vals_ungrown[len(vals_ungrown) // 2] == 0.72                                   # what no growth would have read
+    # the bake's grow distance in pixels: ceil(px / texel) texels, over the pixel (Lake Murray: 0.503 m pixels, 0.5 m texels)
+    _, rec = RC.smoothed_photo([], road, pixel_of, lum_px, (W, H), tone, 0.5, 0.5, 8.0, 0.503, 0.5)
+    assert (rec["grow_m"], rec["grow_px"]) == (1.0, 2)
+    # without the key the tone row is as it was
+    src = (ROOT / "tools" / "road_wear_check.py").read_text(encoding="utf-8")
     assert 'smooth_m = float(spec["tone"].get("smooth_m") or 0.0)' in src
-    # without the key the samples are filtered as they always were
     assert "samples = [s_ for s_ in samples if max(0.8, lo) * med <= s_[0] <= hi * med]" in src
     assert '"photo": "smoothed as declared: the median lit-asphalt ratio within +- smooth_m of each sample"' in src
-    # the gate's lit asphalt is the bake's rule: a shadow is dark AND blue, paint is bright; the ratio clipped as the bake clips
-    assert 'if (a2[0] < tn["shadow_lum"] * med and a2[1] > tn["shadow_blue"]) or a2[0] > tn["paint_lum"] * med:' in src
-    assert "vals.append(min(hi, max(lo, a2[0] / med)))" in src
     bake = (ROOT / "scripts" / "aerial" / "road_wear.py").read_text(encoding="utf-8")
     assert "SMOOTH_MIN_LIT_SHARE = 0.375" in bake and 'if spec_tone.get("smooth_m"):' in bake
     assert '"smooth_m":' not in bake.split('    "tone": {')[1].split("    },")[0]                    # no default: opt-in

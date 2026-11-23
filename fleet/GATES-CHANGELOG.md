@@ -14,6 +14,37 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
+## 2026-11-23 — BEHAVIOUR (opt-in by data): verify_signs (m) holds a race layout on a lap to its plate at a per-layout corner its lap drives (ledger 0055 round 2; no threshold moved)
+
+No threshold, tolerance or bypass moved. The entry is late by one commit: the change is in d3e8ee23, already pushed
+when the entry was asked for (no history rewrite on a pushed branch).
+
+- **What was wrong.** Lake Murray's Speedway (`race_cw`) now runs on its own lap, `college` (the mainline with the
+  northbound road of College's split in place of rows v1130-1476). `tools/place_signs.py` gave no layout plate to a
+  layout on a lap, a rule written for the north lap, which turns off the mainline before both per-layout corners.
+  So the Speedway lost its arrows at College/Navajo (M3) and Navajo/Jackson (M4), and `tools/verify_signs.py` check
+  (l) failed for both on the scratch workshop: "MAINLINE corner M3 (named in signs.json) has no plate for fwd".
+- **The rule now.** `scripts/geometry/race_lap.mainline_approach`: a layout on a lap drives a mainline corner where
+  its lap walks the mainline for `MAINLINE_CORNER_REACH` vertices either side of the apex, all one way (a piece
+  walked backwards turns the approach round). The reach is 20 vertices, `[invented]`: the approach the sign rule
+  reads its tangent from and the bend itself. `tools/place_signs.py` places a per-layout corner's layout plate by it.
+- **What check (m) now checks.** Beside the layouts on the mainline (`driven_directions`, unchanged), it judges
+  every race layout on a lap at each per-layout corner of signs.json that its lap drives (`verify_signs.lap_driven`),
+  by the same test as a mainline layout: a plate that layout loads (shared, or its own), or a skip record whose
+  reasons are the rule's own. Before, a layout on a lap was not judged at all. Checks (k) and (l) are unchanged.
+- **The north lap reads as before.** Its mainline piece is v1517-2317; M3 (v1514) and M4 (v2319) stand 3 and 2
+  vertices outside it, so `north_cw` / `north_acw` drive neither, get no plate and are not judged at them: the
+  0.20.2 fault ("M3-fwd@north_cw in north_cw's lane") stays fixed.
+- **Other tracks.** No other track has a per-layout corner in its signs.json, and without one `lap_driven` is
+  empty: check (m) is as it was.
+- **Proof.** `tests/tools/test_race_lap.py::test_a_lap_drives_a_mainline_corner_only_where_it_walks_the_mainline_through_it`
+  (the College lap at all five mainline corners, the north lap at neither, the split's own rows, a piece walked both
+  ways, an open line) and `tests/tools/test_p4_signs.py::test_a_layout_on_a_lap_that_walks_the_mainline_through_a_per_layout_corner_gets_its_plate`
+  (the plate is the one a mainline layout gets; taking it away fails (l); (m) fails the lap layout by name when it has
+  neither plate nor record, and does not judge it without `lap_driven`; a lap that turns off before the corner gets
+  no plate and no record). On the scratch workshop (`D:/k10-scratch/lm_r2_college/ws5`): 29 posts, 4 layout plates
+  (M3-fwd@race_cw, M4-fwd@race_cw, M4-rev@race_acw, M3-rev@race_acw), PASS.
+
 ## 2026-11-22 — WIRING (opt-in): check_lights_ini counts both heads of a two-arm lamp; a seeded workshop passes the "no blend yet" guard (ledger 0099; no threshold moved)
 
 No gate threshold, tolerance or bypass moved. Both opt-in, Lake Murray only (`tests/tools/test_lake_murray_0099.py`):

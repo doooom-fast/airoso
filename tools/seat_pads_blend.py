@@ -11,6 +11,9 @@ Opt-in, config scenery.bespoke.pads_seat "ground" (tools/ship_track.sh runs this
 no bespoke pads). scenery.bespoke.pads_surface "1RUNOFF" (opt-in) also names each pad 1RUNOFF_apron_<k>: the RUNOFF
 physics surfaces.ini already carries (paved, off-track), the same skin (texture_overrides["1RUNOFF"]).
 Self-check, exit 1 and the blend not saved: a pad that keeps no ground triangle, or ground left over a rebuilt pad.
+Ledger 0092 round 2: a rebuilt vertex the self-check would fail because a fold of the ground (a second triangle mm over
+the piece it was cut from) stands over it is first raised onto the higher piece, by at most pad_clip.FOLD_MAX_M (10 mm);
+more than that is real ground through the pad, and the self-check stops the build as before.
 
     blender --background --python-exit-code 1 --python tools/seat_pads_blend.py -- <prepped.blend> --project <proj>
 """
@@ -111,6 +114,17 @@ def main():
         bm.to_mesh(me)
         bm.free()
         verts = [tuple(v.co) for v in me.vertices]
+        # ledger 0092 round 2: a vertex over a fold of the prepped ground (a second ground triangle mm over the piece it was
+        # cut from, at no shared vertex) is raised onto the higher piece, by up to pad_clip.FOLD_MAX_M; only a vertex the
+        # self-check below would fail moves, so every pad that passed before is unchanged
+        def ground_top(x, y, z):
+            hit = gb.ray_cast(Vector((x, y, z + 0.5)), Vector((0.0, 0.0, -1.0)), 1.0)
+            return None if hit[0] is None else float(hit[0].z)
+        verts, raised, worst = pc.lift_over_folds(verts, ground_top, PAD_LIFT_M)
+        if raised:
+            for v, (x, y, z) in zip(me.vertices, verts):
+                v.co.z = z
+            print(f"[seat-pads] {ob.name}: {raised} vertex(es) raised onto a fold of the ground, at most {worst * 1000:.1f} mm")
         layer = me.uv_layers.new(name="UVMap")
         for poly in me.polygons:
             for li in poly.loop_indices:
@@ -135,7 +149,8 @@ def main():
             bad.append(f"{ob.name}: ground over {over} of its vertices")
         if len(verts) >= 65535:
             bad.append(f"{ob.name}: {len(verts)} verts, over AC's 65,535 per mesh")
-        report.append({"pad": name0, "name": ob.name, "tris": len(me.polygons), "verts": len(verts), "ground_over": over})
+        report.append({"pad": name0, "name": ob.name, "tris": len(me.polygons), "verts": len(verts), "ground_over": over,
+                       **({"fold_raised": raised, "fold_worst_m": round(worst, 4)} if raised else {})})
         print(f"[seat-pads] {name0} -> {ob.name}: {len(me.polygons)} triangles on the ground, {len(verts)} verts, ground over 0 / "
               f"{len(verts)}" if not over else f"[seat-pads] {ob.name}: ground over {over}")
     (proj / "data" / "seat_pads.json").write_text(json.dumps({"lift_m": PAD_LIFT_M, "surface": surface,

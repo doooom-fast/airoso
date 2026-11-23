@@ -737,8 +737,10 @@ def test_round_n_fold_chords_are_opt_in():
 
 def test_round_n_paint_is_opt_in():
     """ledger 0079 round N: route.paint (tools/author_paint_blend.py, draft step paint) is named only by Sand Creek's
-    candidate: Lake Murray, the Lariat, the circuits and the live 0.2.5 config name none (the step is then a no-op)"""
-    for t in ("san-diego-lake-murray", "lookout-lariat", "lookout-lariat-lm", "high-plains-lm", "aspen-lm", "pueblo-lm"):   # Sand Creek 0.2.6 is live since round R (test_round_r_live_is_the_candidate)
+    candidate: Lake Murray, the Lariat, the circuits and the live 0.2.5 config name none (the step is then a no-op).
+    High Plains left this list at the 2026-11-22 integration: ledger 0093 opts it in (its grid and pit-lane paint, installed
+    in 0.1.8; tests/tools/test_circuit_race_furniture.py and test_paint_drape.py pin what it names)"""
+    for t in ("san-diego-lake-murray", "lookout-lariat", "lookout-lariat-lm", "aspen-lm", "pueblo-lm"):   # Sand Creek 0.2.6 is live since round R (test_round_r_live_is_the_candidate)
         p = ROOT / "tracks" / t / "track.config.json"
         if p.exists():
             assert "paint" not in (json.loads(p.read_text(encoding="utf-8")).get("route") or {}), t

@@ -1,0 +1,545 @@
+{
+ "obj": "/Volumes/Sundowning/codex/mf_work/v015/b1/data/track.obj",
+ "full_m": 35.0,
+ "zero_m": 45.0,
+ "inner": [
+  null,
+  null
+ ],
+ "lidar_filled": 55398,
+ "ground_verts_moved": 143521,
+ "largest_move_m": 8.13,
+ "by_zone": {
+  "pinned": 155870,
+  "shelf": 109675,
+  "feather": 104091,
+  "beyond": 39442
+ },
+ "drops_gated": 5,
+ "far_ledges": 53,
+ "in_band_guarded": 0,
+ "drops": [
+  {
+   "s": 1.5,
+   "off": -15.5,
+   "drop": 0.123,
+   "gated": false,
+   "in_band": false,
+   "guarded": false,
+   "past_edge": 6.5
+  },
+  {
+   "s": 301.4,
+   "off": -15.5,
+   "drop": 0.124,
+   "gated": false,
+   "in_band": false,
+   "guarded": false,
+   "past_edge": 5.5
+  },
+  {
+   "s": 301.4,
+   "off": -16.0,
+   "drop": 0.138,
+   "gated": false,
+   "in_band": false,
+   "guarded": false,
+   "past_edge": 6.0
+  },
+  {
+   "s": 301.4,
+   "off": -16.5,
+   "drop": 0.137,
+   "gated": false,
+   "in_band": false,
+   "guarded": false,
+   "past_edge": 6.5
+  },
+  {
+   "s": 301.4,
+   "off": -17.0,
+   "drop": 0.133,
+   "gated": false,
+   "in_band": false,
+   "guarded": false,
+   "past_edge": 7.0
+  },
+  {
+   "s": 900.7,
+   "off": 10.5,
+   "drop": 0.144,
+   "gated": true,
+   "in_band": true,
+   "guarded": false,
+   "past_edge": 4.0
+  },
+  {
+   "s": 900.7,
+   "off": 11.0,
+   "drop": 0.18,
+   "gated": false,
+   "in_band": false,
+   "guarded": false,
+   "past_edge": 4.5
+  },
+  {
+   "s": 900.7,
+   "off": 11.5,
+   "drop": 0.214,
+   "gated": false,
+   "in_band": false,
+   "guarded": false,
+   "past_edge": 5.0
+  },
+  {
+   "s": 900.7,
+   "off": 12.0,
+   "drop": 0.236,
+   "gated": false,
+   "in_band": false,
+   "guarded": false,
+   "past_edge": 5.5
+  },
+  {
+   "s": 900.7,
+   "off": 12.5,
+   "drop": 0.21,
+   "gated": false,
+   "in_band": false,
+   "guarded": false,
+   "past_edge": 6.0
+  },
+  {
+   "s": 900.7,
+   "off": 13.0,
+   "drop": 0.212,
+   "gated": false,
+   "in_band": false,
+   "guarded": false,
+   "past_edge": 6.5
+  },
+  {
+   "s": 900.7,
+   "off": 13.5,
+   "drop": 0.255,
+   "gated": false,
+   "in_band": false,
+   "guarded": false,
+   "past_edge": 7.0
+  },
+  {
+   "s": 900.7,
+   "off": 14.0,
+   "drop": 0.21,
+   "gated": false,
+   "in_band": false,
+   "guarded": false,
+   "past_edge": 7.5
+  },
+  {
+   "s": 900.7,
+   "off": 14.5,
+   "drop": 0.141,
+   "gated": false,
+   "in_band": false,
+   "guarded": false,
+   "past_edge": 8.0
+  },
+  {
+   "s": 1050.3,
+   "off": -10.5,
+   "drop": 0.147,
+   "gated": true,
+   "in_band": true,
+   "guarded": false,
+   "past_edge": 3.5
+  },
+  {
+   "s": 1050.3,
+   "off": -11.0,
+   "drop": 0.18,
+   "gated": true,
+   "in_band": true,
+   "guarded": false,
+   "past_edge": 4.0
+  },
+  {
+   "s": 1050.3,
+   "off": -11.5,
+   "drop": 0.224,
+   "gated": false,
+   "in_band": false,
+   "guarded": false,
+   "past_edge": 4.5
+  },
+  {
+   "s": 1050.3,
+   "off": -12.0,
+   "drop": 0.264,
+   "gated": false,
+   "in_band": false,
+   "guarded": false,
+   "past_edge": 5.0
+  },
+  {
+   "s": 1050.3,
+   "off": -12.5,
+   "drop": 0.276,
+   "gated": false,
+   "in_band": false,
+   "guarded": false,
+   "past_edge": 5.5
+  },
+  {
+   "s": 1050.3,
+   "off": -13.0,
+   "drop": 0.278,
+   "gated": false,
+   "in_band": false,
+   "guarded": false,
+   "past_edge": 6.0
+  },
+  {
+   "s": 1050.3,
+   "off": -13.5,
+   "drop": 0.258,
+   "gated": false,
+   "in_band": false,
+   "guarded": false,
+   "past_edge": 6.5
+  },
+  {
+   "s": 1050.3,
+   "off": -14.0,
+   "drop": 0.235,
+   "gated": false,
+   "in_band": false,
+   "guarded": false,
+   "past_edge": 7.0
+  },
+  {
+   "s": 1050.3,
+   "off": -14.5,
+   "drop": 0.212,
+   "gated": false,
+   "in_band": false,
+   "guarded": false,
+   "past_edge": 7.5
+  },
+  {
+   "s": 1201.3,
+   "off": -10.5,
+   "drop": 0.122,
+   "gated": true,
+   "in_band": true,
+   "guarded": false,
+   "past_edge": 3.5
+  },
+  {
+   "s": 1201.3,
+   "off": -11.0,
+   "drop": 0.174,
+   "gated": true,
+   "in_band": true,
+   "guarded": false,
+   "past_edge": 4.0
+  },
+  {
+   "s": 1201.3,
+   "off": -11.5,
+   "drop": 0.219,
+   "gated": false,
+   "in_band": false,
+   "guarded": false,
+   "past_edge": 4.5
+  },
+  {
+   "s": 1201.3,
+   "off": -12.0,
+   "drop": 0.243,
+   "gated": false,
+   "in_band": false,
+   "guarded": false,
+   "past_edge": 5.0
+  },
+  {
+   "s": 1201.3,
+   "off": -12.5,
+   "drop": 0.24,
+   "gated": false,
+   "in_band": false,
+   "guarded": false,
+   "past_edge": 5.5
+  },
+  {
+   "s": 1201.3,
+   "off": -13.0,
+   "drop": 0.243,
+   "gated": false,
+   "in_band": false,
+   "guarded": false,
+   "past_edge": 6.0
+  },
+  {
+   "s": 1201.3,
+   "off": -13.5,
+   "drop": 0.243,
+   "gated": false,
+   "in_band": false,
+   "guarded": false,
+   "past_edge": 6.5
+  },
+  {
+   "s": 1201.3,
+   "off": -14.0,
+   "drop": 0.243,
+   "gated": false,
+   "in_band": false,
+   "guarded": false,
+   "past_edge": 7.0
+  },
+  {
+   "s": 1201.3,
+   "off": -14.5,
+   "drop": 0.239,
+   "gated": false,
+   "in_band": false,
+   "guarded": false,
+   "past_edge": 7.5
+  },
+  {
+   "s": 1650.9,
+   "off": 12.5,
+   "drop": 0.123,
+   "gated": false,
+   "in_band": false,
+   "guarded": false,
+   "past_edge": 6.0
+  },
+  {
+   "s": 1650.9,
+   "off": 13.0,
+   "drop": 0.126,
+   "gated": false,
+   "in_band": false,
+   "guarded": false,
+   "past_edge": 6.5
+  },
+  {
+   "s": 2700.5,
+   "off": 15.0,
+   "drop": 0.136,
+   "gated": false,
+   "in_band": false,
+   "guarded": false,
+   "past_edge": 7.5
+  },
+  {
+   "s": 2700.5,
+   "off": -13.0,
+   "drop": 0.123,
+   "gated": false,
+   "in_band": false,
+   "guarded": false,
+   "past_edge": 5.5
+  },
+  {
+   "s": 3000.3,
+   "off": 14.5,
+   "drop": 0.126,
+   "gated": false,
+   "in_band": false,
+   "guarded": false,
+   "past_edge": 6.5
+  },
+  {
+   "s": 3000.3,
+   "off": 15.0,
+   "drop": 0.161,
+   "gated": false,
+   "in_band": false,
+   "guarded": false,
+   "past_edge": 7.0
+  },
+  {
+   "s": 3000.3,
+   "off": 15.5,
+   "drop": 0.221,
+   "gated": false,
+   "in_band": false,
+   "guarded": false,
+   "past_edge": 7.5
+  },
+  {
+   "s": 3000.3,
+   "off": 16.0,
+   "drop": 0.236,
+   "gated": false,
+   "in_band": false,
+   "guarded": false,
+   "past_edge": 8.0
+  },
+  {
+   "s": 3000.3,
+   "off": -14.0,
+   "drop": 0.146,
+   "gated": false,
+   "in_band": false,
+   "guarded": false,
+   "past_edge": 6.0
+  },
+  {
+   "s": 3000.3,
+   "off": -14.5,
+   "drop": 0.135,
+   "gated": false,
+   "in_band": false,
+   "guarded": false,
+   "past_edge": 6.5
+  },
+  {
+   "s": 3000.3,
+   "off": -15.0,
+   "drop": 0.128,
+   "gated": false,
+   "in_band": false,
+   "guarded": false,
+   "past_edge": 7.0
+  },
+  {
+   "s": 3150.3,
+   "off": -13.0,
+   "drop": 0.121,
+   "gated": false,
+   "in_band": false,
+   "guarded": false,
+   "past_edge": 4.5
+  },
+  {
+   "s": 3150.3,
+   "off": -13.5,
+   "drop": 0.143,
+   "gated": false,
+   "in_band": false,
+   "guarded": false,
+   "past_edge": 5.0
+  },
+  {
+   "s": 3150.3,
+   "off": -14.0,
+   "drop": 0.124,
+   "gated": false,
+   "in_band": false,
+   "guarded": false,
+   "past_edge": 5.5
+  },
+  {
+   "s": 3751.4,
+   "off": -13.5,
+   "drop": 0.126,
+   "gated": false,
+   "in_band": false,
+   "guarded": false,
+   "past_edge": 7.0
+  },
+  {
+   "s": 3751.4,
+   "off": -14.0,
+   "drop": 0.134,
+   "gated": false,
+   "in_band": false,
+   "guarded": false,
+   "past_edge": 7.5
+  },
+  {
+   "s": 4050.8,
+   "off": -14.5,
+   "drop": 0.158,
+   "gated": false,
+   "in_band": false,
+   "guarded": false,
+   "past_edge": 5.0
+  },
+  {
+   "s": 4050.8,
+   "off": -15.0,
+   "drop": 0.175,
+   "gated": false,
+   "in_band": false,
+   "guarded": false,
+   "past_edge": 5.5
+  },
+  {
+   "s": 4050.8,
+   "off": -15.5,
+   "drop": 0.179,
+   "gated": false,
+   "in_band": false,
+   "guarded": false,
+   "past_edge": 6.0
+  },
+  {
+   "s": 4050.8,
+   "off": -16.0,
+   "drop": 0.176,
+   "gated": false,
+   "in_band": false,
+   "guarded": false,
+   "past_edge": 6.5
+  },
+  {
+   "s": 4050.8,
+   "off": -16.5,
+   "drop": 0.152,
+   "gated": false,
+   "in_band": false,
+   "guarded": false,
+   "past_edge": 7.0
+  },
+  {
+   "s": 4050.8,
+   "off": -17.0,
+   "drop": 0.121,
+   "gated": false,
+   "in_band": false,
+   "guarded": false,
+   "past_edge": 7.5
+  },
+  {
+   "s": 4200.5,
+   "off": 12.0,
+   "drop": 0.134,
+   "gated": false,
+   "in_band": false,
+   "guarded": false,
+   "past_edge": 5.5
+  },
+  {
+   "s": 4200.5,
+   "off": 12.5,
+   "drop": 0.129,
+   "gated": false,
+   "in_band": false,
+   "guarded": false,
+   "past_edge": 6.0
+  },
+  {
+   "s": 4350.3,
+   "off": 13.5,
+   "drop": 0.135,
+   "gated": false,
+   "in_band": false,
+   "guarded": false,
+   "past_edge": 5.0
+  },
+  {
+   "s": 4350.3,
+   "off": 14.0,
+   "drop": 0.154,
+   "gated": false,
+   "in_band": false,
+   "guarded": false,
+   "past_edge": 5.5
+  }
+ ]
+}

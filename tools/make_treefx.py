@@ -116,14 +116,21 @@ ZONES = {
     "planted_cottonwood": [("SycamoreV1.bin", 0.8, 1.1, 3), ("SycamoreV2.bin", 0.8, 1.1, 2), ("SycamoreV3.bin", 0.8, 1.1, 2)],
     "planted_neighbourhood": [("Oak3.bin", 0.6, 0.9, 3), ("SycamoreV2.bin", 0.6, 0.9, 1)],
     # Nevada Nights' scrub clumps off NAIP 2019 + 2022 at their lidar heights (ledger 0089): there is no creosote model;
-    # Lake Murray's Bush3 stands in, sized by planted.native_h_m. Bush.bin is out until its drawn height is settled: its
-    # tree.ini HEIGHT reads 20.66 m, ten times Bush3's, while Lake Murray draws it as a 1-2 m shrub (Nevada 0.1.5)
+    # Lake Murray's Bush3 stands in, sized by planted.native_h_m. Bush.bin's tree.ini HEIGHT reads 20.66 m (WIDTH 34.38),
+    # ten times Bush3's: see RANK_SIZE_FIX below
     "planted_desert_scrub": [("Bush3.bin", 0.6, 1.0, 1)],
     # Waring's planted median: small median trees (A2, st 250-550). The islands' LOW planting is not here: the
     # assembler (author_median_blend) already plants every raised island, north pieces included, and exports it as
     # scatter_positions.json median_planting (v0.19.0 shipped it)
     "north_median_trees": [("PepperV1.bin", 0.45, 0.65, 2), ("Oak3.bin", 0.40, 0.55, 1)],
 }
+# The mixes' size ranges above assume a model about Bush3's height at size 1 for the bushes. TreeFX draws a tree at its
+# tree.ini HEIGHT x size, and Bush.bin's tree.ini says HEIGHT 20.66 m / WIDTH 34.38 m (its own track, Algarve, plants it
+# at size 0.10-0.25). Ranked at 0.6-1.0 it stood 12-21 m tall in Lake Murray 0.20.2 (Kevin 2026-11-13 after driving:
+# "Lm, bushes are too big"). A model named here has its RANK-rule size multiplied by the factor, which makes it the
+# height Bush3 has at the same size (1.4 m at 0.7), and is written to 3 decimals. A measured size
+# (planted.native_h_m) is absolute and takes no factor
+RANK_SIZE_FIX = {"Bush.bin": 2.02436637878418 / 20.660005569458}
 NORTH_ZONE_ORDER = ("north_suburb_trees", "north_suburb_bushes", "north_canyon_trees", "north_scrub",
                     "north_riparian_trees", "north_street_trees", "north_gum_belt", "north_median_trees")
 NORTH_IDX_BASE = 500000            # emit_zone index bases continue past the loop's four fill zones (100000..400000)
@@ -620,6 +627,39 @@ def plan(project_dir, all_species=False, verbose=False):
     # (native width * size)`: TreeFX's width-only multiplier, so a tree keeps its MEASURED crown at its measured height (a
     # uniform size alone scales the crown with the height). A model it does not name gets no width
     native_w = {k: float(v) for k, v in ((tcfg.get("planted") or {}).get("native_w_m") or {}).items() if not k.startswith("_")}
+    # Kevin 2026-11-18 (Lake Murray, opt-in scenery.treefx.median_measured): "we've reduced lake murrays center bushes far
+    # too much" -> "B: lidar height each". The file holds the real plant height (and crown) at every median_planting spot,
+    # in scatter_positions.json's order; a spot the lidar sees a plant at (h_m >= min_h_m) is drawn at that height and
+    # crown, absolute (no RANK_SIZE_FIX); a spot under min_h_m keeps the rank rule. Every model of the median mix needs
+    # its tree.ini HEIGHT / WIDTH in median_measured.native_h_m / native_w_m. Absent (every other track) = nothing changes
+    mm_cfg = tcfg.get("median_measured")
+    mm_h, mm_w, mm_stats = {}, {}, None
+    if mm_cfg:
+        mm_h = {k: float(v) for k, v in (mm_cfg.get("native_h_m") or {}).items() if not k.startswith("_")}
+        mm_w = {k: float(v) for k, v in (mm_cfg.get("native_w_m") or {}).items() if not k.startswith("_")}
+        mix = sorted({s[0] for s in ZONES["median_planting"] if s[0] in available})
+        lacking = [m for m in mix if m not in mm_h or m not in mm_w]
+        if lacking:
+            raise SystemExit(f"[treefx] scenery.treefx.median_measured: no native_h_m / native_w_m for {lacking}: read "
+                             f"each model's tree.ini [BASIC] HEIGHT / WIDTH into the config first")
+        md = json.loads((proj / mm_cfg["file"]).read_text(encoding="utf-8"))
+        spots, mpos = md["spots"], pos.get("median_planting", [])
+        if len(spots) != len(mpos):
+            raise SystemExit(f"[treefx] {mm_cfg['file']}: {len(spots)} spots but scatter_positions.json has "
+                             f"{len(mpos)} median_planting spots: re-measure it on this draft")
+        ratio = float(md["crown_over_h_fallback"])
+        mm_stats = {"measured": 0, "crown_measured": 0, "kept_rank_rule": 0}
+        for i, (e, (x, z, h, crown)) in enumerate(zip(mpos, spots)):
+            if abs(e["x"] - x) > 0.006 or abs(e["z"] - z) > 0.006:
+                raise SystemExit(f"[treefx] {mm_cfg['file']}: spot {i} is at ({x}, {z}) but median_planting[{i}] is at "
+                                 f"({e['x']:.3f}, {e['z']:.3f}): re-measure it on this draft")
+            if h is not None and h >= float(md["min_h_m"]):
+                e["_mh"] = float(h)
+                e["_mw"] = float(crown) if crown is not None else float(h) * ratio
+                mm_stats["measured"] += 1
+                mm_stats["crown_measured"] += crown is not None
+            else:
+                mm_stats["kept_rank_rule"] += 1
 
     def emit_zone(zone_key, entries, idx_base=0, guard=True):
         species = [s for s in ZONES[zone_key] if s[0] in available]
@@ -654,11 +694,19 @@ def plan(project_dir, all_species=False, verbose=False):
             hk = idx_base + e["_key"] if "_key" in e else i   # a planted point's own key (opt-in, above), else its place
             s = _pick(species, hk)
             size = s[1] + (s[2] - s[1]) * e.get("_size01", _hash(hk, 2))
-            if "_h" in e and s[0] in native_h:   # ledger 0082 (opt-in planted.native_h_m): the measured height, absolute
+            mm_here = zone_key == "median_planting" and "_mh" in e
+            if mm_here:                          # scenery.treefx.median_measured (above): the spot's lidar height, absolute
+                size = e["_mh"] / mm_h[s[0]]
+            elif "_h" in e and s[0] in native_h:   # ledger 0082 (opt-in planted.native_h_m): the measured height, absolute
                 size = e["_h"] / native_h[s[0]]
+            elif s[0] in RANK_SIZE_FIX:          # a model far taller than its mix assumes (Bush.bin, above)
+                size *= RANK_SIZE_FIX[s[0]]
             angle = int(360 * _hash(hk, 3))
-            line = f"tree: {s[0]}; pos={e['x']:.2f}, {e['y']:.2f}, {-e['z']:.2f}; angle = {angle}; size = {size:.2f}"
-            if "_w" in e and s[0] in native_w:   # ledger 0082 (opt-in planted.native_w_m): the measured crown, absolute
+            size_txt = f"{size:.3f}" if (s[0] in RANK_SIZE_FIX or mm_here) else f"{size:.2f}"
+            line = f"tree: {s[0]}; pos={e['x']:.2f}, {e['y']:.2f}, {-e['z']:.2f}; angle = {angle}; size = {size_txt}"
+            if mm_here:                          # the spot's crown at its height: TreeFX's width-only multiplier
+                line += f"; width = {e['_mw'] / (mm_w[s[0]] * float(size_txt)):.2f}"
+            elif "_w" in e and s[0] in native_w:   # ledger 0082 (opt-in planted.native_w_m): the measured crown, absolute
                 line += f"; width = {e['_w'] / (native_w[s[0]] * round(size, 2)):.2f}"
             out.append(line)
             entries_out.append({"zone": zone_key, "model": s[0], "x": e["x"], "y": e["y"], "z": e["z"]})
@@ -909,7 +957,7 @@ def plan(project_dir, all_species=False, verbose=False):
               + " (of them on the loop's own zones: " + ", ".join(f"{k} {n}" for k, n in rejected_built_loop.items()) + ")")
     return {"lines": out, "entries": entries_out, "counts": counts, "used": used, "rejected": rejected,
             "rejected_built": rejected_built, "rejected_built_loop": rejected_built_loop, "north": north_stats,
-            "far_seat": far_seat_out}
+            "far_seat": far_seat_out, **({"median_measured": mm_stats} if mm_stats is not None else {})}
 
 
 def build(project_dir):
@@ -945,6 +993,8 @@ def build(project_dir):
            "surface_materials": surface_materials(proj), "north": p["north"]}
     if p.get("far_seat") is not None:      # ledger 0082 'Far ground (0.1.11)', opt-in: absent = the report as before
         rep["planted_far_seat"] = p["far_seat"]
+    if p.get("median_measured") is not None:   # scenery.treefx.median_measured, opt-in: absent = the report as before
+        rep["median_measured"] = p["median_measured"]
     (proj / "data" / "treefx.report.json").write_text(json.dumps(rep, indent=1), encoding="utf-8")
     g = treefx_gate(proj, p, tdir)
     print(f"[treefx] gate: {g['written']} written of {g['planned']} planned; models named in trees.txt "

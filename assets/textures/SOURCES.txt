@@ -44,6 +44,14 @@ Building set — mined from Hamburg by 4r (nhh_detail.kn5) via scripts/modkit/ex
   brick_diffuse.jpg / brick_normal.jpg         material 'brickwall'       (TCom_Wall_BrickPlain1 — building variety)
   stucco_diffuse.jpg / stucco_normal.jpg       material 'redstucco'       (TCom_Wall_Stucco28 — building variety)
 
+asphalt_dense_diffuse.jpg / _normal.jpg      generated (tools/make_owned_surfaces.py, seed 84): weathered dense-graded asphalt, 4 m tile,
+                                             2048 px; mean colour and relief measured off asphalt_cracked_* (which it would replace), stone
+                                             sizes from the AASHTO M 323 12.5 mm control points. Ours, CC0. Not bound yet (Kevin's call).
+concrete_plain_diffuse.jpg / _normal.jpg     generated (same tool, seed 85): plain cast concrete, 4 m tile, no joints or tie holes; mean
+                                             measured off building_* (the Hamburg concrete it would replace). Ours, CC0. Not bound yet.
+concrete_aged_diffuse.jpg / _normal.jpg      generated (same tool, seed 86): the same concrete weathered; mean measured off warehouse_*.
+                                             Ours, CC0. Not bound yet.
+
 gravel_road_diffuse.png + gravel_road_normal.png — graded high-desert dirt/gravel county road,
   GENERATED procedurally by scripts/assets/make_gravel.py (deterministic, seed 20260724). Ours,
   CC0 — unlike the mined textures above this one is safe to redistribute, which is the point: it

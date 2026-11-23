@@ -1116,6 +1116,8 @@
       "bin_m": 250,
       "cap_scale": 1.0,
       "_cap_scale_doc": "the north's caps = the loop's density (its caps over its own planted area) x the north's planted area x this. At 1.0 (2026-10-26 rehearsal) the aerial bins imply 8,528 trees and the cap keeps 1,489 (the loop's 7.3 trees/ha), so Jackson's woodland and the river belt stand at the loop's suburban rate, 3-6x Waring's; bushes 3,816 implied, 3,722 cap. Kevin's lever after Drive 2: 5.7 lets the north carry what the aerial shows.",
+      "median_measured": {"file": "source/vegetation/median_heights.lidar.json", "native_h_m": {"Bush.bin": 20.660005569458, "Sage.bin": 1.5}, "native_w_m": {"Bush.bin": 34.3843803405762, "Sage.bin": 2.0}},
+      "_median_measured_doc": "Kevin 2026-11-18: \"B: lidar height each\" (the median bushes). Read by tools/make_treefx.py: each median_planting spot the lidar sees a plant at is drawn at that height and crown. native_h_m / native_w_m = each model's tree.ini [BASIC] HEIGHT / WIDTH, read off the installed Bush.bin and Sage.bin by tools/patch_median_measured.py on the PC 2026-11-19 (its report: Bush 20.660005569458 / 34.3843803405762, Sage 1.5 / 2.0); the same patch was applied to the installed trees.txt that day (252 of 21,159 lines).",
       "zones": [
         {
           "piece": "A",

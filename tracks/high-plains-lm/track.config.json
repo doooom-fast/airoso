@@ -4,7 +4,7 @@
   "name": "High Plains Raceway",
   "_name_doc": "Kevin 2026-11-07: \"Get rid of Lm Version from names, nothing should be on any other engine now\" / \"LM is the airoso engine\". 0.1.5 (2026-11-09): no \"(LM engine)\" in the display name, and the slug and install_folder are the plain high_plains. The old-engine track (tracks/high-plains) gave that slug up: its slug and folder are high_plains_v072 (S7, fleet.cli lint)",
   "slug": "high_plains",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "mirror_x": false,
   "loop": true,
   "default_width_m": 12.0,
@@ -58,13 +58,21 @@
     "bespoke": {
       "blocks": [
         {
-          "file": "source/bespoke/buildings.json",
-          "auto": true
+          "file": "source/bespoke/buildings.race.json",
+          "auto": true,
+          "skin": "garage",
+          "eave_overhang_m": 0.3,
+          "fascia_m": 0.2,
+          "base_grime_m": 0.5,
+          "_facade_doc": "ledger 0094 (opt-in): every walled shed in the facade atlas's garage skin (roll-up doors facing the lap), a 0.3 m eave and rake overhang with a 0.2 m fascia, a 0.5 m grime band, all [invented] (no photograph of the paddock's walls); the container stack's row names its own container_row skin; the carport row and the pit-entry canopy stand open on posts (form posts, their own rows)"
         },
         {
-          "file": "source/bespoke/posts.json",
+          "file": "source/bespoke/posts.race.json",
           "auto": true,
-          "collider_tri_m": 14.0
+          "collider_tri_m": 14.0,
+          "skin": "post",
+          "base_grime_m": 0.4,
+          "_facade_doc": "ledger 0094 (opt-in): the marshal posts in the facade atlas's post skin (windows facing the lap, the door behind), a 0.4 m grime band, all [invented]"
         }
       ],
       "pads": [
@@ -89,6 +97,518 @@
             ]
           ],
           "_source": "the paddock's paved and graded ground off NAIP 2023, read by eye to about 5 m: one sheet, the lots and lanes not told apart"
+        },
+        {
+          "key": "pitlane",
+          "strip_lonlat": {
+            "inner": [
+              [
+                -103.8950439,
+                39.73523494
+              ],
+              [
+                -103.89499943,
+                39.73522295
+              ],
+              [
+                -103.89495439,
+                39.73521338
+              ],
+              [
+                -103.89490914,
+                39.73520427
+              ],
+              [
+                -103.89486346,
+                39.73519693
+              ],
+              [
+                -103.89481801,
+                39.7351887
+              ],
+              [
+                -103.8947732,
+                39.73517829
+              ],
+              [
+                -103.89472711,
+                39.73517226
+              ],
+              [
+                -103.89468148,
+                39.73516492
+              ],
+              [
+                -103.89463576,
+                39.73515758
+              ],
+              [
+                -103.89458972,
+                39.73515157
+              ],
+              [
+                -103.89455912,
+                39.73514784
+              ],
+              [
+                -103.89451339,
+                39.7351405
+              ],
+              [
+                -103.89446447,
+                39.73514534
+              ],
+              [
+                -103.89441656,
+                39.7351461
+              ],
+              [
+                -103.89437087,
+                39.73513877
+              ],
+              [
+                -103.89432524,
+                39.73513144
+              ],
+              [
+                -103.89427951,
+                39.73512409
+              ],
+              [
+                -103.89423382,
+                39.73511675
+              ],
+              [
+                -103.89418819,
+                39.73510942
+              ],
+              [
+                -103.89414246,
+                39.73510207
+              ],
+              [
+                -103.89409677,
+                39.73509474
+              ],
+              [
+                -103.89405113,
+                39.73508741
+              ],
+              [
+                -103.8940054,
+                39.73508006
+              ],
+              [
+                -103.89395972,
+                39.73507272
+              ],
+              [
+                -103.89391408,
+                39.73506539
+              ],
+              [
+                -103.89386835,
+                39.73505804
+              ],
+              [
+                -103.89382267,
+                39.73505071
+              ],
+              [
+                -103.89377702,
+                39.73504337
+              ],
+              [
+                -103.8937313,
+                39.73503603
+              ],
+              [
+                -103.89368562,
+                39.73502869
+              ],
+              [
+                -103.89363997,
+                39.73502136
+              ],
+              [
+                -103.89359425,
+                39.73501401
+              ],
+              [
+                -103.89354857,
+                39.73500668
+              ],
+              [
+                -103.89350293,
+                39.73499934
+              ],
+              [
+                -103.8934572,
+                39.734992
+              ],
+              [
+                -103.89341152,
+                39.73498466
+              ],
+              [
+                -103.89336588,
+                39.73497733
+              ]
+            ],
+            "outer": [
+              [
+                -103.89501612,
+                39.73533811
+              ],
+              [
+                -103.89497035,
+                39.73533076
+              ],
+              [
+                -103.89492476,
+                39.73532343
+              ],
+              [
+                -103.89487899,
+                39.73531608
+              ],
+              [
+                -103.8948333,
+                39.73530873
+              ],
+              [
+                -103.89478762,
+                39.73530139
+              ],
+              [
+                -103.89473728,
+                39.7353117
+              ],
+              [
+                -103.89469148,
+                39.73530434
+              ],
+              [
+                -103.89464591,
+                39.73529702
+              ],
+              [
+                -103.89460013,
+                39.73528967
+              ],
+              [
+                -103.89455445,
+                39.73528233
+              ],
+              [
+                -103.89452421,
+                39.73527747
+              ],
+              [
+                -103.89447844,
+                39.73527012
+              ],
+              [
+                -103.89443285,
+                39.73526279
+              ],
+              [
+                -103.89438707,
+                39.73525544
+              ],
+              [
+                -103.89434139,
+                39.7352481
+              ],
+              [
+                -103.8942958,
+                39.73524078
+              ],
+              [
+                -103.89425002,
+                39.73523342
+              ],
+              [
+                -103.89420434,
+                39.73522609
+              ],
+              [
+                -103.89415874,
+                39.73521877
+              ],
+              [
+                -103.89411297,
+                39.73521141
+              ],
+              [
+                -103.89406728,
+                39.73520407
+              ],
+              [
+                -103.89402169,
+                39.73519675
+              ],
+              [
+                -103.89397592,
+                39.73518939
+              ],
+              [
+                -103.89393023,
+                39.73518206
+              ],
+              [
+                -103.89388615,
+                39.73516912
+              ],
+              [
+                -103.89384259,
+                39.73515359
+              ],
+              [
+                -103.8937991,
+                39.73513809
+              ],
+              [
+                -103.89375568,
+                39.73512262
+              ],
+              [
+                -103.89371214,
+                39.7351071
+              ],
+              [
+                -103.89366865,
+                39.7350916
+              ],
+              [
+                -103.89362522,
+                39.73507612
+              ],
+              [
+                -103.89358169,
+                39.73506061
+              ],
+              [
+                -103.8935382,
+                39.73504511
+              ],
+              [
+                -103.89349478,
+                39.73502963
+              ],
+              [
+                -103.89345124,
+                39.73501412
+              ],
+              [
+                -103.89340775,
+                39.73499862
+              ],
+              [
+                -103.89336432,
+                39.73498314
+              ]
+            ]
+          },
+          "_source": "the pit lane's paved surface, s 3162 -> 104, the furniture audit 2026-11-18 (NAIP 2023-09-28, co_m_3910317_ne_13_030_20230928, 0.3 m: source/road_wear/naip_2023_030_hp.png): inside edge 0.45 m past the pit wall's traced line (and past the white line and its shadow at +12 m from s 10), outside edge 0.3 m inside the paddock K-rail (+23 m over the pit-in gore), ending 0.5 m onto the paddock sheet where its edge crosses the lane (the same asphalt texels: no seam for a paint ray to miss). Visual only, as the paddock sheet"
+        },
+        {
+          "key": "post0_pad",
+          "quad_lonlat": [
+            [
+              -103.89236457,
+              39.73448069
+            ],
+            [
+              -103.89226923,
+              39.73448069
+            ],
+            [
+              -103.89226923,
+              39.73455431
+            ],
+            [
+              -103.89236457,
+              39.73455431
+            ]
+          ],
+          "_source": "the dark pad post0 stands on, NAIP 2023 0.3 m: 66.8 m2 of dark pixels within 7.5 m (a 8.2 m square centred on the post, edges N-S / E-W [invented]; the material [invented]: the PADAPRON asphalt sheet)"
+        },
+        {
+          "key": "post1_pad",
+          "quad_lonlat": [
+            [
+              -103.88996503,
+              39.73456033
+            ],
+            [
+              -103.88987497,
+              39.73456033
+            ],
+            [
+              -103.88987497,
+              39.73462987
+            ],
+            [
+              -103.88996503,
+              39.73462987
+            ]
+          ],
+          "_source": "the dark pad post1 stands on, NAIP 2023 0.3 m: 59.6 m2 of dark pixels within 7.5 m (a 7.7 m square centred on the post, edges N-S / E-W [invented]; the material [invented]: the PADAPRON asphalt sheet)"
+        },
+        {
+          "key": "post2_pad",
+          "quad_lonlat": [
+            [
+              -103.89806429,
+              39.73384692
+            ],
+            [
+              -103.89797031,
+              39.73384692
+            ],
+            [
+              -103.89797031,
+              39.73391948
+            ],
+            [
+              -103.89806429,
+              39.73391948
+            ]
+          ],
+          "_source": "the dark pad post2 stands on, NAIP 2023 0.3 m: 64.9 m2 of dark pixels within 7.5 m (a 8.1 m square centred on the post, edges N-S / E-W [invented]; the material [invented]: the PADAPRON asphalt sheet)"
+        },
+        {
+          "key": "post3_pad",
+          "quad_lonlat": [
+            [
+              -103.90026411,
+              39.73389308
+            ],
+            [
+              -103.90016849,
+              39.73389308
+            ],
+            [
+              -103.90016849,
+              39.73396692
+            ],
+            [
+              -103.90026411,
+              39.73396692
+            ]
+          ],
+          "_source": "the dark pad post3 stands on, NAIP 2023 0.3 m: 67.2 m2 of dark pixels within 7.5 m (a 8.2 m square centred on the post, edges N-S / E-W [invented]; the material [invented]: the PADAPRON asphalt sheet)"
+        },
+        {
+          "key": "post4_pad",
+          "quad_lonlat": [
+            [
+              -103.90115563,
+              39.73574579
+            ],
+            [
+              -103.90106157,
+              39.73574579
+            ],
+            [
+              -103.90106157,
+              39.73581841
+            ],
+            [
+              -103.90115563,
+              39.73581841
+            ]
+          ],
+          "_source": "the dark pad post4 stands on, NAIP 2023 0.3 m: 65.0 m2 of dark pixels within 7.5 m (a 8.1 m square centred on the post, edges N-S / E-W [invented]; the material [invented]: the PADAPRON asphalt sheet)"
+        },
+        {
+          "key": "post6_pad",
+          "quad_lonlat": [
+            [
+              -103.89968546,
+              39.73634307
+            ],
+            [
+              -103.89958954,
+              39.73634307
+            ],
+            [
+              -103.89958954,
+              39.73641713
+            ],
+            [
+              -103.89968546,
+              39.73641713
+            ]
+          ],
+          "_source": "the dark pad post6 stands on, NAIP 2023 0.3 m: 67.6 m2 of dark pixels within 7.5 m (a 8.2 m square centred on the post, edges N-S / E-W [invented]; the material [invented]: the PADAPRON asphalt sheet)"
+        },
+        {
+          "key": "post7_pad",
+          "quad_lonlat": [
+            [
+              -103.89839332,
+              39.73655708
+            ],
+            [
+              -103.89829948,
+              39.73655708
+            ],
+            [
+              -103.89829948,
+              39.73662952
+            ],
+            [
+              -103.89839332,
+              39.73662952
+            ]
+          ],
+          "_source": "the dark pad post7 stands on, NAIP 2023 0.3 m: 64.7 m2 of dark pixels within 7.5 m (a 8.0 m square centred on the post, edges N-S / E-W [invented]; the material [invented]: the PADAPRON asphalt sheet)"
+        },
+        {
+          "key": "post8_pad",
+          "quad_lonlat": [
+            [
+              -103.89880938,
+              39.73605235
+            ],
+            [
+              -103.89871962,
+              39.73605235
+            ],
+            [
+              -103.89871962,
+              39.73612165
+            ],
+            [
+              -103.89880938,
+              39.73612165
+            ]
+          ],
+          "_source": "the dark pad post8 stands on, NAIP 2023 0.3 m: 59.2 m2 of dark pixels within 7.5 m (a 7.7 m square centred on the post, edges N-S / E-W [invented]; the material [invented]: the PADAPRON asphalt sheet)"
+        },
+        {
+          "key": "post9_pad",
+          "quad_lonlat": [
+            [
+              -103.8997084,
+              39.73521939
+            ],
+            [
+              -103.8995962,
+              39.73521939
+            ],
+            [
+              -103.8995962,
+              39.73530601
+            ],
+            [
+              -103.8997084,
+              39.73530601
+            ]
+          ],
+          "_source": "the dark pad post9 stands on, NAIP 2023 0.3 m: 92.5 m2 of dark pixels within 7.5 m (a 9.6 m square centred on the post, edges N-S / E-W [invented]; the material [invented]: the PADAPRON asphalt sheet)"
         }
       ],
       "_cards_doc": "0.1.6 (ledger 0089; Kevin 2026-11-08: \"We want all treefx as a rule\"): 0.1.5's 1,898 PRAIRIECARD cards (data/bespoke.report.json: 1,986 planned, 88 within 3 m of pavement) are gone from the kn5 and no TreeFX replaces them. They stood on source/bespoke/shrubs.json, a 7 m grid over the pixels NAIP 2023 shows darker green (the draws and swales), with rabbitbrush / yucca / bunchgrass / snakeweed and their heights [invented]. NAIP 2023 at 0.3 m (co_m_3910317_ne_13_030_20230928) shows those draws as continuous green swale grass with no shrub crown in them, and nothing on the uplands it can tell from ant mounds, ruts and posts: the cards were grass. Their replacement is the GrassFX zone this config already reads off the same pixels (grassfx_zones class B, 'the greener draws taller and full'), which the LM port had not run: ship.json grassfx_aerial. Plants under NAIP's resolution are owed to a lidar read (ledger 0089)",
@@ -976,6 +1496,393 @@
             ]
           ],
           "_source": "measured off the 2018 lidar (CO_Eastern_B3_2018; tools/lidar_wall.py --search 25, the non-ground returns over their own ground, tracks/high-plains/source/lidar/wall-survey/wall_left.json): a linear structure at s 1743-1848, 21.0-24.3 m past the left lane edge (5-station median), top 1.13 m (90th percentile of its returns). The blue / white K-rail NAIP shows there (source/edges/rails_zoom.jpg); the module is the K-rail section at the measured height"
+        },
+        {
+          "key": "pit_wall_west",
+          "kind": "krail",
+          "auto": true,
+          "height_m": 1.03,
+          "polyline_lonlat": [
+            [
+              -103.89523578,
+              39.73531884
+            ],
+            [
+              -103.89517312,
+              39.73528606
+            ],
+            [
+              -103.89514113,
+              39.7352719
+            ],
+            [
+              -103.89510905,
+              39.73525847
+            ],
+            [
+              -103.89507653,
+              39.73524634
+            ],
+            [
+              -103.89504497,
+              39.73523097
+            ],
+            [
+              -103.89501174,
+              39.73522149
+            ],
+            [
+              -103.89497802,
+              39.73521396
+            ],
+            [
+              -103.89494415,
+              39.73520714
+            ],
+            [
+              -103.89491021,
+              39.7352003
+            ],
+            [
+              -103.89487595,
+              39.7351948
+            ],
+            [
+              -103.89484169,
+              39.73518929
+            ],
+            [
+              -103.89480778,
+              39.73518246
+            ],
+            [
+              -103.89477427,
+              39.73517432
+            ],
+            [
+              -103.89473961,
+              39.73517013
+            ],
+            [
+              -103.89470534,
+              39.73516462
+            ],
+            [
+              -103.89467112,
+              39.73515912
+            ],
+            [
+              -103.89463683,
+              39.73515361
+            ],
+            [
+              -103.89460224,
+              39.73514944
+            ],
+            [
+              -103.89456794,
+              39.73514393
+            ],
+            [
+              -103.89456011,
+              39.73514284
+            ]
+          ],
+          "_source": "the pit wall from its west nose (s 3144, +17.1 m) to where pit_wall_lidar begins (s 0), the white / blue run's centre every 3-6 m, the furniture audit 2026-11-18 (NAIP 2023-09-28, co_m_3910317_ne_13_030_20230928, 0.3 m: source/road_wear/naip_2023_030_hp.png); height the lidar's for the same wall (pit_wall_lidar)"
+        },
+        {
+          "key": "pit_paddock_west",
+          "kind": "krail",
+          "auto": true,
+          "height_m": 0.59,
+          "polyline_lonlat": [
+            [
+              -103.89475298,
+              39.73531974
+            ],
+            [
+              -103.8947131,
+              39.7353126
+            ],
+            [
+              -103.89467882,
+              39.73530709
+            ],
+            [
+              -103.89460996,
+              39.73529741
+            ],
+            [
+              -103.89457577,
+              39.73529192
+            ],
+            [
+              -103.89454179,
+              39.73528508
+            ],
+            [
+              -103.89452155,
+              39.73528402
+            ]
+          ],
+          "_source": "the paddock-side K-rail from the pit-in gore (s 3184.5, +25.6 m) to where pit_paddock_lidar begins, the furniture audit 2026-11-18 (NAIP 2023-09-28, co_m_3910317_ne_13_030_20230928, 0.3 m: source/road_wear/naip_2023_030_hp.png); height the lidar's for the same rail (pit_paddock_lidar)"
+        },
+        {
+          "key": "pit_wall_nose",
+          "kind": "tyres",
+          "auto": true,
+          "depth_m": 2.4,
+          "polyline_lonlat": [
+            [
+              -103.89526819,
+              39.73533438
+            ],
+            [
+              -103.89523921,
+              39.73531922
+            ]
+          ],
+          "_source": "the barrels / tyres at the pit wall's west nose: a dark blob 4.8 x 3.0 m centred at s 3142.3, +17.6 m, the furniture audit 2026-11-18 (NAIP 2023-09-28, co_m_3910317_ne_13_030_20230928, 0.3 m: source/road_wear/naip_2023_030_hp.png); a 3.0 m run of tyre columns 2.4 m deep along the wall's line [invented module: the tyres kind's 0.62 m columns, 1.0 m tall]"
+        },
+        {
+          "key": "paddock_row_0",
+          "kind": "krail",
+          "auto": true,
+          "polyline_lonlat": [
+            [
+              -103.89441516,
+              39.73648472
+            ],
+            [
+              -103.89295952,
+              39.73624701
+            ]
+          ],
+          "_source": "a paddock K-rail row: 21 blue sections on a straight line (127.5 m with half a section past each end), the furniture audit 2026-11-18 (NAIP 2023-09-28, co_m_3910317_ne_13_030_20230928, 0.3 m: source/road_wear/naip_2023_030_hp.png) (the audit's 163 blue sections, fitted row by row and checked on the photo by eye); height 0.81 m, the kind's [invented]"
+        },
+        {
+          "key": "paddock_row_1",
+          "kind": "krail",
+          "auto": true,
+          "polyline_lonlat": [
+            [
+              -103.8927706,
+              39.73656046
+            ],
+            [
+              -103.8941698,
+              39.73678538
+            ]
+          ],
+          "_source": "a paddock K-rail row: 20 blue sections on a straight line (122.5 m with half a section past each end), the furniture audit 2026-11-18 (NAIP 2023-09-28, co_m_3910317_ne_13_030_20230928, 0.3 m: source/road_wear/naip_2023_030_hp.png) (the audit's 163 blue sections, fitted row by row and checked on the photo by eye); height 0.81 m, the kind's [invented]"
+        },
+        {
+          "key": "paddock_row_2",
+          "kind": "krail",
+          "auto": true,
+          "polyline_lonlat": [
+            [
+              -103.89495266,
+              39.73623608
+            ],
+            [
+              -103.89510023,
+              39.7356654
+            ]
+          ],
+          "_source": "a paddock K-rail row: 11 blue sections on a straight line (64.6 m with half a section past each end), the furniture audit 2026-11-18 (NAIP 2023-09-28, co_m_3910317_ne_13_030_20230928, 0.3 m: source/road_wear/naip_2023_030_hp.png) (the audit's 163 blue sections, fitted row by row and checked on the photo by eye); height 0.81 m, the kind's [invented]"
+        },
+        {
+          "key": "paddock_row_3",
+          "kind": "krail",
+          "auto": true,
+          "polyline_lonlat": [
+            [
+              -103.89143995,
+              39.73522572
+            ],
+            [
+              -103.89165659,
+              39.73493258
+            ]
+          ],
+          "_source": "a paddock K-rail row: 8 blue sections on a straight line (37.5 m with half a section past each end), the furniture audit 2026-11-18 (NAIP 2023-09-28, co_m_3910317_ne_13_030_20230928, 0.3 m: source/road_wear/naip_2023_030_hp.png) (the audit's 163 blue sections, fitted row by row and checked on the photo by eye); height 0.81 m, the kind's [invented]"
+        },
+        {
+          "key": "paddock_row_4",
+          "kind": "krail",
+          "auto": true,
+          "polyline_lonlat": [
+            [
+              -103.89265344,
+              39.73647506
+            ],
+            [
+              -103.89273768,
+              39.73617594
+            ]
+          ],
+          "_source": "a paddock K-rail row: 6 blue sections on a straight line (34.0 m with half a section past each end), the furniture audit 2026-11-18 (NAIP 2023-09-28, co_m_3910317_ne_13_030_20230928, 0.3 m: source/road_wear/naip_2023_030_hp.png) (the audit's 163 blue sections, fitted row by row and checked on the photo by eye); height 0.81 m, the kind's [invented]"
+        },
+        {
+          "key": "paddock_row_5",
+          "kind": "krail",
+          "auto": true,
+          "polyline_lonlat": [
+            [
+              -103.8919468,
+              39.73491068
+            ],
+            [
+              -103.89220088,
+              39.73479975
+            ]
+          ],
+          "_source": "a paddock K-rail row: 4 blue sections on a straight line (25.0 m with half a section past each end), the furniture audit 2026-11-18 (NAIP 2023-09-28, co_m_3910317_ne_13_030_20230928, 0.3 m: source/road_wear/naip_2023_030_hp.png) (the audit's 163 blue sections, fitted row by row and checked on the photo by eye); height 0.81 m, the kind's [invented]"
+        },
+        {
+          "key": "paddock_row_6",
+          "kind": "krail",
+          "auto": true,
+          "polyline_lonlat": [
+            [
+              -103.89236382,
+              39.73649285
+            ],
+            [
+              -103.89260987,
+              39.73653617
+            ]
+          ],
+          "_source": "a paddock K-rail row: 4 blue sections on a straight line (21.6 m with half a section past each end), the furniture audit 2026-11-18 (NAIP 2023-09-28, co_m_3910317_ne_13_030_20230928, 0.3 m: source/road_wear/naip_2023_030_hp.png) (the audit's 163 blue sections, fitted row by row and checked on the photo by eye); height 0.81 m, the kind's [invented]"
+        },
+        {
+          "key": "paddock_row_7",
+          "kind": "krail",
+          "auto": true,
+          "polyline_lonlat": [
+            [
+              -103.89300381,
+              39.73603665
+            ],
+            [
+              -103.89295106,
+              39.7362232
+            ]
+          ],
+          "_source": "a paddock K-rail row: 4 blue sections on a straight line (21.2 m with half a section past each end), the furniture audit 2026-11-18 (NAIP 2023-09-28, co_m_3910317_ne_13_030_20230928, 0.3 m: source/road_wear/naip_2023_030_hp.png) (the audit's 163 blue sections, fitted row by row and checked on the photo by eye); height 0.81 m, the kind's [invented]"
+        },
+        {
+          "key": "paddock_row_8",
+          "kind": "krail",
+          "auto": true,
+          "polyline_lonlat": [
+            [
+              -103.89194417,
+              39.7348119
+            ],
+            [
+              -103.89216553,
+              39.73474018
+            ]
+          ],
+          "_source": "a paddock K-rail row: 7 blue sections on a straight line (20.6 m with half a section past each end), the furniture audit 2026-11-18 (NAIP 2023-09-28, co_m_3910317_ne_13_030_20230928, 0.3 m: source/road_wear/naip_2023_030_hp.png) (the audit's 163 blue sections, fitted row by row and checked on the photo by eye); height 0.81 m, the kind's [invented]"
+        },
+        {
+          "key": "paddock_row_9",
+          "kind": "krail",
+          "auto": true,
+          "polyline_lonlat": [
+            [
+              -103.89467028,
+              39.73618917
+            ],
+            [
+              -103.89490681,
+              39.73622044
+            ]
+          ],
+          "_source": "a paddock K-rail row: 4 blue sections on a straight line (20.6 m with half a section past each end), the furniture audit 2026-11-18 (NAIP 2023-09-28, co_m_3910317_ne_13_030_20230928, 0.3 m: source/road_wear/naip_2023_030_hp.png) (the audit's 163 blue sections, fitted row by row and checked on the photo by eye); height 0.81 m, the kind's [invented]"
+        },
+        {
+          "key": "paddock_row_10",
+          "kind": "krail",
+          "auto": true,
+          "polyline_lonlat": [
+            [
+              -103.89475266,
+              39.7353204
+            ],
+            [
+              -103.89455962,
+              39.73528964
+            ]
+          ],
+          "_source": "a paddock K-rail row: 4 blue sections on a straight line (16.9 m with half a section past each end), the furniture audit 2026-11-18 (NAIP 2023-09-28, co_m_3910317_ne_13_030_20230928, 0.3 m: source/road_wear/naip_2023_030_hp.png) (the audit's 163 blue sections, fitted row by row and checked on the photo by eye); height 0.81 m, the kind's [invented]"
+        },
+        {
+          "key": "paddock_row_11",
+          "kind": "krail",
+          "auto": true,
+          "polyline_lonlat": [
+            [
+              -103.89410897,
+              39.73639609
+            ],
+            [
+              -103.89414072,
+              39.7362599
+            ]
+          ],
+          "_source": "a paddock K-rail row: 3 blue sections on a straight line (15.4 m with half a section past each end), the furniture audit 2026-11-18 (NAIP 2023-09-28, co_m_3910317_ne_13_030_20230928, 0.3 m: source/road_wear/naip_2023_030_hp.png) (the audit's 163 blue sections, fitted row by row and checked on the photo by eye); height 0.81 m, the kind's [invented]"
+        },
+        {
+          "key": "paddock_row_12",
+          "kind": "krail",
+          "auto": true,
+          "polyline_lonlat": [
+            [
+              -103.89490368,
+              39.73562123
+            ],
+            [
+              -103.89507858,
+              39.73564983
+            ]
+          ],
+          "_source": "a paddock K-rail row: 3 blue sections on a straight line (15.3 m with half a section past each end), the furniture audit 2026-11-18 (NAIP 2023-09-28, co_m_3910317_ne_13_030_20230928, 0.3 m: source/road_wear/naip_2023_030_hp.png) (the audit's 163 blue sections, fitted row by row and checked on the photo by eye); height 0.81 m, the kind's [invented]"
+        },
+        {
+          "key": "paddock_row_13",
+          "kind": "krail",
+          "auto": true,
+          "polyline_lonlat": [
+            [
+              -103.8926858,
+              39.73612889
+            ],
+            [
+              -103.89251133,
+              39.7361034
+            ]
+          ],
+          "_source": "a paddock K-rail row: 3 blue sections on a straight line (15.2 m with half a section past each end), the furniture audit 2026-11-18 (NAIP 2023-09-28, co_m_3910317_ne_13_030_20230928, 0.3 m: source/road_wear/naip_2023_030_hp.png) (the audit's 163 blue sections, fitted row by row and checked on the photo by eye); height 0.81 m, the kind's [invented]"
+        },
+        {
+          "key": "paddock_row_14",
+          "kind": "krail",
+          "auto": true,
+          "polyline_lonlat": [
+            [
+              -103.89483078,
+              39.73670217
+            ],
+            [
+              -103.89479767,
+              39.73681108
+            ]
+          ],
+          "_source": "a paddock K-rail row: 3 blue sections on a straight line (12.4 m with half a section past each end), the furniture audit 2026-11-18 (NAIP 2023-09-28, co_m_3910317_ne_13_030_20230928, 0.3 m: source/road_wear/naip_2023_030_hp.png) (the audit's 163 blue sections, fitted row by row and checked on the photo by eye); height 0.81 m, the kind's [invented]"
         }
       ],
       "grassfx_zones": {
@@ -1023,7 +1930,9 @@
       },
       "_guardrail_dropped": "the live track's W-beam rail follows airoso's draft guard lips (1WALL_PARA), which the v021 assembler does not lay; not ported (ledger 0078)",
       "reseat_on_prep": true,
-      "reseat_prefixes": ["1WALL_KRAIL"],
+      "reseat_prefixes": [
+        "1WALL_KRAIL"
+      ],
       "_reseat_doc": "PC 2026-11-10 (ledger 0084 runbook 0084-2 step 3; 0089's seat check): the K-rails moved with the ground the prep moved under them. On 0.1.6 pit_wall_lidar (1WALL_KRAILBW_4, 147.9 m, declared 1.03 m [measured]) showed 0.69 / 0.74 / 0.90 m (p5 / p50 / p95) over the built ground, 0.29 m buried at p50: it stands 3.7-4.1 m past the lane edge, inside the prep's 3 m contact band + 6 m feather, Milford G1's mechanism. pit_wall_naip_rest showed 0.71 of 0.81, pit_paddock_lidar 0.54 of 0.59",
       "names": {
         "ground": [
@@ -1053,7 +1962,9 @@
         "_doc": "the assembler's names at the author stage (Lake Murray's)"
       },
       "prep_seats": true,
-      "_rails_doc": "ledger 0078 round 5: the K-rails the 2018 lidar sees are placed and sized by it (*_lidar, height_m measured); the NAIP traces are kept only where the lidar does not see a rail (infield_t: not in the 2018 flight; it may postdate it). No W-beam rail or chain-link fence is built: the lidar shows no linear structure on the outside within 25 m (45 m on the right) and NAIP cannot resolve one"
+      "_rails_doc": "ledger 0078 round 5: the K-rails the 2018 lidar sees are placed and sized by it (*_lidar, height_m measured); the NAIP traces are kept only where the lidar does not see a rail (infield_t: not in the 2018 flight; it may postdate it). No W-beam rail or chain-link fence is built: the lidar shows no linear structure on the outside within 25 m (45 m on the right) and NAIP cannot resolve one",
+      "_blocks_doc": "ledger 0093: the port's own files (synced in by ship.json; tracks/high-plains keeps its own): buildings.race.json = OSM's six paddock footprints less osm289317403 (the same 17 m2 roof as post1), heights from the NAIP 2023 0.3 m shadow fit (sun 146.9 / 42.9 deg, +-0.4 m: estimates for the lidar to settle) or the official carport ceiling, roof colours read on the 0.3 m crop (osm289314487 is white), plus three structures OSM lacks, traced (a white building, the pit-entry canopy, the container row); posts.race.json = the twelve marshal posts, re-centred on their white roofs where the crop shows one",
+      "_paddock_rails_doc": "ledger 0093: paddock_row_0..14 are 15 of the paddock's K-rail rows (570 m, 105 of the audit's 163 blue sections; the rest are trailers, tarps and rows of fewer than three sections). The paddock's north edge (lat > 39.73681) is past the 0.3 m crop: what stands there is not read"
     },
     "draft_lamps": false,
     "_draft_lamps_doc": "a circuit has no streetlight down its edge every 55 m: the v021 assembler's draft posts are off (ledger 0078)"
@@ -1141,7 +2052,590 @@
     },
     "crossfall_file": "data/crossfall.lm.json",
     "kerbs_file": "source/edges/kerbs.json",
-    "_kerbs_doc": "the racing kerbs traced off the aerial (tracks/high-plains/source/edges/kerbs.json: imagery, method, the eye check); built by tools/author_kerbs_blend.py outside the lane edge, the config's kerb profile"
+    "_kerbs_doc": "the racing kerbs traced off the aerial (tracks/high-plains/source/edges/kerbs.json: imagery, method, the eye check); built by tools/author_kerbs_blend.py outside the lane edge, the config's kerb profile",
+    "paint": [
+      {
+        "id": "sf_line",
+        "_source": "the start / finish band, a 1.35-1.8 m wide white band across the full width at s 12.15, the furniture audit 2026-11-18 (NAIP 2023-09-28, co_m_3910317_ne_13_030_20230928, 0.3 m: source/road_wear/naip_2023_030_hp.png): painted 1.5 m wide across the built road (lateral -5.85..+5.85); plain white [invented]: a chequer is not resolved at 0.3 m",
+        "lines": [
+          {
+            "pts_lonlat": [
+              [
+                -103.8944587,
+                39.73498314
+              ],
+              [
+                -103.89443092,
+                39.73508631
+              ]
+            ],
+            "color": "white",
+            "w": 1.5
+          }
+        ]
+      },
+      {
+        "id": "grid_marks",
+        "_source": "the 50 grid marks (two per slot) where they were measured, the furniture audit 2026-11-18 (NAIP 2023-09-28, co_m_3910317_ne_13_030_20230928, 0.3 m: source/road_wear/naip_2023_030_hp.png); each a 0.3 m square [invented: the marks are sub-pixel on the photo]",
+        "lines": [
+          {
+            "dots_lonlat": [
+              [
+                -103.89578485,
+                39.73520935
+              ],
+              [
+                -103.89577785,
+                39.73523637
+              ],
+              [
+                -103.89567985,
+                39.73519314
+              ],
+              [
+                -103.8956746,
+                39.73522286
+              ],
+              [
+                -103.89558011,
+                39.73517423
+              ],
+              [
+                -103.89556786,
+                39.73520395
+              ],
+              [
+                -103.89547336,
+                39.73515802
+              ],
+              [
+                -103.89546811,
+                39.73519044
+              ],
+              [
+                -103.89536836,
+                39.73514451
+              ],
+              [
+                -103.89536486,
+                39.73517423
+              ],
+              [
+                -103.89526687,
+                39.73512559
+              ],
+              [
+                -103.89525637,
+                39.73515532
+              ],
+              [
+                -103.89516187,
+                39.73510938
+              ],
+              [
+                -103.89515137,
+                39.7351391
+              ],
+              [
+                -103.89506037,
+                39.73509047
+              ],
+              [
+                -103.89504987,
+                39.73512019
+              ],
+              [
+                -103.89495537,
+                39.73507561
+              ],
+              [
+                -103.89494662,
+                39.73510398
+              ],
+              [
+                -103.89485039,
+                39.73506076
+              ],
+              [
+                -103.89484338,
+                39.73509047
+              ],
+              [
+                -103.8947489,
+                39.73504185
+              ],
+              [
+                -103.89473838,
+                39.73507156
+              ],
+              [
+                -103.89464387,
+                39.73502562
+              ],
+              [
+                -103.89463338,
+                39.73505534
+              ],
+              [
+                -103.8945389,
+                39.73500942
+              ],
+              [
+                -103.89453189,
+                39.73503914
+              ],
+              [
+                -103.8957236,
+                39.73524718
+              ],
+              [
+                -103.89571484,
+                39.7352742
+              ],
+              [
+                -103.89561686,
+                39.73522826
+              ],
+              [
+                -103.89561162,
+                39.73525799
+              ],
+              [
+                -103.89551711,
+                39.73521206
+              ],
+              [
+                -103.89550484,
+                39.73524177
+              ],
+              [
+                -103.89541036,
+                39.73519584
+              ],
+              [
+                -103.89540338,
+                39.73522556
+              ],
+              [
+                -103.89530886,
+                39.73517963
+              ],
+              [
+                -103.89529835,
+                39.73520665
+              ],
+              [
+                -103.89520387,
+                39.73516342
+              ],
+              [
+                -103.89518987,
+                39.73519314
+              ],
+              [
+                -103.89509887,
+                39.73514721
+              ],
+              [
+                -103.89508837,
+                39.73517693
+              ],
+              [
+                -103.89499387,
+                39.735131
+              ],
+              [
+                -103.89498337,
+                39.73516072
+              ],
+              [
+                -103.89489238,
+                39.73511479
+              ],
+              [
+                -103.89488188,
+                39.73514451
+              ],
+              [
+                -103.89478738,
+                39.73509587
+              ],
+              [
+                -103.89478039,
+                39.7351256
+              ],
+              [
+                -103.89468238,
+                39.73507966
+              ],
+              [
+                -103.89467188,
+                39.73511209
+              ],
+              [
+                -103.89457738,
+                39.73506345
+              ],
+              [
+                -103.89456689,
+                39.73509452
+              ]
+            ],
+            "color": "white",
+            "size_m": 0.3
+          }
+        ]
+      },
+      {
+        "id": "pit_lane_line",
+        "surface": [
+          "PADAPRON"
+        ],
+        "_source": "the pit lane's yellow line from the pit-in gore (s 3185) to past the end line (s 165), 4-5 m off the paddock K-rail, its centre read every 5 m (3-point median), the furniture audit 2026-11-18 (NAIP 2023-09-28, co_m_3910317_ne_13_030_20230928, 0.3 m: source/road_wear/naip_2023_030_hp.png); 0.3 m wide [the photo's bright run is 0.3-0.5 m; the exact width invented]. On the pit-lane and paddock PADAPRON sheets (visual only)",
+        "lines": [
+          {
+            "pts_lonlat": [
+              [
+                -103.89475915,
+                39.7352747
+              ],
+              [
+                -103.89464444,
+                39.73525823
+              ],
+              [
+                -103.89453065,
+                39.7352403
+              ],
+              [
+                -103.89441636,
+                39.73522196
+              ],
+              [
+                -103.89430198,
+                39.73520454
+              ],
+              [
+                -103.89418808,
+                39.73518502
+              ],
+              [
+                -103.89407346,
+                39.73516793
+              ],
+              [
+                -103.89395933,
+                39.7351496
+              ],
+              [
+                -103.89384468,
+                39.73513286
+              ],
+              [
+                -103.89373035,
+                39.73511466
+              ],
+              [
+                -103.89361628,
+                39.73509605
+              ],
+              [
+                -103.89350189,
+                39.73507845
+              ],
+              [
+                -103.89338742,
+                39.73506075
+              ],
+              [
+                -103.89327333,
+                39.7350423
+              ],
+              [
+                -103.89315878,
+                39.7350252
+              ],
+              [
+                -103.89304411,
+                39.73500824
+              ],
+              [
+                -103.89292998,
+                39.73498991
+              ],
+              [
+                -103.89281559,
+                39.73497195
+              ],
+              [
+                -103.89270138,
+                39.73495361
+              ],
+              [
+                -103.89264427,
+                39.73494468
+              ]
+            ],
+            "color": "yellow",
+            "w": 0.3
+          }
+        ]
+      },
+      {
+        "id": "pit_lane_end",
+        "surface": [
+          "PADAPRON"
+        ],
+        "_source": "the white line across the pit lane at s 152.2-152.6 (lateral +13.0..+24.6), the furniture audit 2026-11-18 (NAIP 2023-09-28, co_m_3910317_ne_13_030_20230928, 0.3 m: source/road_wear/naip_2023_030_hp.png); 0.45 m wide (two pixels of the photo)",
+        "lines": [
+          {
+            "pts_lonlat": [
+              [
+                -103.89281443,
+                39.73489243
+              ],
+              [
+                -103.89278289,
+                39.73499408
+              ]
+            ],
+            "color": "white",
+            "w": 0.45
+          }
+        ]
+      },
+      {
+        "id": "pit_in_gore",
+        "surface": [
+          "PADAPRON"
+        ],
+        "_source": "the pit-in gore's yellow hatch at s 3165-3180, +16..+22 m: its outline the hull of the paint pixels, the furniture audit 2026-11-18 (NAIP 2023-09-28, co_m_3910317_ne_13_030_20230928, 0.3 m: source/road_wear/naip_2023_030_hp.png); stripes 0.4 m wide every 1.0 m at -40 deg to the lap, read off the photo (drawn over it to check; +-10 deg / +-0.2 m)",
+        "lines": [
+          {
+            "hatch": {
+              "polygon_lonlat": [
+                [
+                  -103.89497282,
+                  39.73529068
+                ],
+                [
+                  -103.89485687,
+                  39.73524997
+                ],
+                [
+                  -103.89482432,
+                  39.73524475
+                ],
+                [
+                  -103.89482257,
+                  39.73525132
+                ],
+                [
+                  -103.89489642,
+                  39.73530879
+                ],
+                [
+                  -103.89495439,
+                  39.73531941
+                ],
+                [
+                  -103.89499254,
+                  39.73530347
+                ]
+              ],
+              "spacing_m": 1.0,
+              "angle_deg": -40.0,
+              "outline": true
+            },
+            "color": "yellow",
+            "w": 0.4
+          }
+        ]
+      },
+      {
+        "id": "pit_out_gore",
+        "surface": [
+          "PADAPRON"
+        ],
+        "_source": "the pit-out gore's yellow hatch at s 162-191, +16.7..+26 m: its outline traced by eye on the 0.3 m crop, the furniture audit 2026-11-18 (NAIP 2023-09-28, co_m_3910317_ne_13_030_20230928, 0.3 m: source/road_wear/naip_2023_030_hp.png); stripes 0.4 m wide every 1.5 m square to the lap, read off the photo (about 16 along its 23 m base; drawn over it to check)",
+        "lines": [
+          {
+            "hatch": {
+              "polygon_lonlat": [
+                [
+                  -103.89269211,
+                  39.73490765
+                ],
+                [
+                  -103.89262794,
+                  39.73491665
+                ],
+                [
+                  -103.89256961,
+                  39.73493106
+                ],
+                [
+                  -103.89252294,
+                  39.73494457
+                ],
+                [
+                  -103.89247861,
+                  39.73495808
+                ],
+                [
+                  -103.89244711,
+                  39.73493557
+                ],
+                [
+                  -103.89240861,
+                  39.73489504
+                ],
+                [
+                  -103.89237128,
+                  39.73485721
+                ]
+              ],
+              "spacing_m": 1.5,
+              "angle_deg": 90.0,
+              "outline": true
+            },
+            "color": "yellow",
+            "w": 0.4
+          }
+        ],
+        "clip_to_surface": true,
+        "_clip_doc": "ledger 0093 round 2 (the PC's first 0.1.8 rehearsal, 2026-11-20: '[paint] FATAL: pit_out_gore line 0: no PADAPRON under (435.20, -9.11)'): the traced hatch's tip (s 189-191, +16.7 m) lies past the paddock sheet's edge (its last outline corner 4.2 m outside the PADAPRON quad, the corner before it 0.75 m inside, measured on the Mac off this config), where the build has no paving; the paint is drawn only over the built PADAPRON and the length left out is printed. The pavement past the sheet (the pit exit's merge) is not built: not measured yet"
+      }
+    ],
+    "_paint_doc": "ledger 0093: tools/author_paint_blend.py. The items with no surface (the line, the grid marks) drape on the built ROAD in the draft (ship.json draft paint); the pit-lane items name surface PADAPRON and drape on the pit-lane / paddock sheets after the bespoke dressing (author paint). MARKINGS_paint_* / YLINE_paint_*: visual only, engine-july's line_white / line_yellow"
+  },
+  "race_start": {
+    "_doc": "ledger 0093 (Kevin 2026-11-18: \"for milford and high plains, we need more race track focused furniture like starting line, gridlines\"): the line, grid, pits and sectors the AC nodes stand on, placed on the prepped scene by tools/circuit_dummies_blend.py (scripts/geometry/circuit_start.py) in place of engine-july's rule set (its grid on the straightest 260 m: the south straight, s 1080; one AC_START; every node yawed from pts[0] -> pts[1], kn5 heading -0.97 at its AC_START_0). Judged in the road kn5 by scripts/ac/verify_kn5 race_start_checks",
+    "line": {
+      "lonlat": [
+        -103.89444481,
+        39.73503473
+      ],
+      "_source": "the painted start / finish band's centre, s 12.15 +-0.3 on data/centerline.local.json (its half-max extent s 11.50-12.85 on every fifth of the width), the furniture audit 2026-11-18 (NAIP 2023-09-28, co_m_3910317_ne_13_030_20230928, 0.3 m: source/road_wear/naip_2023_030_hp.png); the official facts agree: the starter stand on the pit wall just past halfway along the 1,200 ft front straight (sources audit section 3)"
+    },
+    "grid": {
+      "slots_lonlat": [
+        [
+          -103.8945354,
+          39.73502428
+        ],
+        [
+          -103.89457214,
+          39.73507899
+        ],
+        [
+          -103.89463863,
+          39.73504048
+        ],
+        [
+          -103.89467713,
+          39.73509587
+        ],
+        [
+          -103.89474364,
+          39.73505671
+        ],
+        [
+          -103.89478388,
+          39.73511073
+        ],
+        [
+          -103.89484688,
+          39.73507561
+        ],
+        [
+          -103.89488713,
+          39.73512965
+        ],
+        [
+          -103.894951,
+          39.7350898
+        ],
+        [
+          -103.89498862,
+          39.73514586
+        ],
+        [
+          -103.89505512,
+          39.73510533
+        ],
+        [
+          -103.89509361,
+          39.73516207
+        ],
+        [
+          -103.89515662,
+          39.73512424
+        ],
+        [
+          -103.89519688,
+          39.73517828
+        ],
+        [
+          -103.89526162,
+          39.73514046
+        ],
+        [
+          -103.89530361,
+          39.73519314
+        ],
+        [
+          -103.89536661,
+          39.73515937
+        ],
+        [
+          -103.89540687,
+          39.7352107
+        ],
+        [
+          -103.89547073,
+          39.73517423
+        ],
+        [
+          -103.89551097,
+          39.73522691
+        ],
+        [
+          -103.89557398,
+          39.73518909
+        ],
+        [
+          -103.89561424,
+          39.73524312
+        ],
+        [
+          -103.89567723,
+          39.735208
+        ],
+        [
+          -103.89571922,
+          39.73526069
+        ],
+        [
+          -103.89578135,
+          39.73522286
+        ]
+      ],
+      "_source": "25 slots, each car's centre between its pair of painted marks 3.1-3.4 m apart, the furniture audit 2026-11-18 (NAIP 2023-09-28, co_m_3910317_ne_13_030_20230928, 0.3 m: source/road_wear/naip_2023_030_hp.png) (the audit's work/hp_front_marks.json, clustered into the four mark rows): the right column (lateral -2.77 m mean) first, 7.4 m behind the line, the left (+2.42 m) 4.3-4.6 m behind each right slot, both every 8.95-9.24 m. Pole on the right column because its first slot is the forward one; which column is pole on the day, and that a mark pair marks the car's centre rather than its nose, [invented]"
+    },
+    "pits": {
+      "pattern": {
+        "first_m": 8.0,
+        "step_m": 4.55,
+        "lateral_m": [
+          -2.77,
+          2.42
+        ],
+        "slots": 25
+      },
+      "_source": "[invented]: the pit lane is a visual sheet (PADAPRON), not a road, so the 25 pit boxes stand on the racing surface between the line and the real pit exit (s 20-129), staggered like the measured grid (its column laterals and its 4.55 m stagger); as many as the grid has slots so 25 cars can be entered. They move into the pit lane when it is a drivable surface (road-geometry work)"
+    },
+    "_sectors_doc": "no sectors declared: AC_TIME_1 / AC_TIME_2 divide the lap in equal thirds from the line (engine-july's rule; HPR's own timing points are not known)"
   },
   "terrain_cell_m": 1.5,
   "corridor_refine_factor": 6,
@@ -1177,6 +2671,41 @@
     "1KERB": {
       "diffuse": "textures/kerb_atlas_hp.png",
       "_doc": "the kerb paint the aerial shows: blue / white kerbs and blue / yellow edge stripes (ledger 0081), an atlas of two flat two-band stripes (this port's own file). Keyed 1KERB, the row the traced kerbs (1KERB_circuit_*, tools/author_kerbs_blend.py) bind; not 1KERB_RACE, which the split routes to the race kn5 as race furniture"
+    },
+    "BUILDING_METAL": {
+      "diffuse": "assets/textures/circuit_facade_diffuse.jpg",
+      "normal": "assets/textures/circuit_facade_normal.jpg",
+      "_doc": "ledger 0094 (opt-in): the facade atlas (tools/make_bespoke_assets.py third batch, tools/circuit_facades.py cells; CC0); every block on this row wears an atlas skin"
+    },
+    "FARBLOCK_METAL": {
+      "diffuse": "assets/textures/circuit_facade_diffuse.jpg",
+      "normal": "assets/textures/circuit_facade_normal.jpg",
+      "_doc": "ledger 0094 (opt-in): the facade atlas (tools/make_bespoke_assets.py third batch, tools/circuit_facades.py cells; CC0); every block on this row wears an atlas skin"
+    },
+    "BUILDING_SIDING": {
+      "diffuse": "assets/textures/metal_wall_diffuse.jpg",
+      "normal": "assets/textures/metal_wall_normal.jpg",
+      "_doc": "ledger 0094: the open canopies on posts (BUILDING_SIDING_CANOPY_<k>) keep their ribbed metal: BUILDING_METAL is the facade atlas here, and engine-july's frozen pbr table binds by row, so the canopies ride this house row (unused on a circuit; its UVs kept and its islands seated by engine-july's prep, as BUILDING_METAL's) with the metal skin, as the tyre walls ride 1WALL_TECPRO (ledger 0082)"
+    },
+    "ROOFTOP_WHITE": {
+      "diffuse": "assets/textures/roof_white_diffuse.jpg",
+      "normal": "assets/textures/roof_rib_normal.jpg",
+      "_doc": "ledger 0094 (opt-in): the class's own diffuse (unchanged) with ribbed metal roofing as its normal, so the row renders ksPerPixelMultiMap on this track only"
+    },
+    "ROOFTOP_TAN": {
+      "diffuse": "assets/textures/roof_tan_diffuse.jpg",
+      "normal": "assets/textures/roof_rib_normal.jpg",
+      "_doc": "ledger 0094 (opt-in): the class's own diffuse (unchanged) with ribbed metal roofing as its normal, so the row renders ksPerPixelMultiMap on this track only"
+    },
+    "ROOFTOP_DARK": {
+      "diffuse": "assets/textures/roof_dark_diffuse.jpg",
+      "normal": "assets/textures/roof_rib_normal.jpg",
+      "_doc": "ledger 0094 (opt-in): the class's own diffuse (unchanged) with ribbed metal roofing as its normal, so the row renders ksPerPixelMultiMap on this track only"
+    },
+    "1ROAD": {
+      "diffuse": "assets/textures/asphalt_dense_diffuse.jpg",
+      "normal": "assets/textures/asphalt_dense_normal.jpg",
+      "_doc": "ledger 0095 (Kevin 2026-11-19: \"Yes, pilot the owned asphalt with the high-pass\"): the owned dense-graded asphalt (tools/make_owned_surfaces.py, CC0) as the road's 4 m detail and its normal, in place of the borrowed cracked tile (LA Canyons, personal-use only). Its mean colour and relief were measured off the borrowed tile, so road wear's m0 and calibration hold. A pilot on Milford and High Plains only: every other track keeps pbr.TEXTURES' borrowed pair until Kevin swaps it fleet-wide"
     }
   },
   "lm_intake": {
@@ -1227,6 +2756,10 @@
       "prefix": "1KERB_CIRCUIT_",
       "levels": 16,
       "_doc": "ledger 0081's 20 traced kerb runs (tools/author_kerbs_blend.py, 1KERB_circuit_<k>: blue / white kerbs and blue / yellow paint stripes, kerb_atlas_hp.png): 18 of them lie partly over the lane (data/kerbs.built.json in_vs_ribbon_edge_m < 0) at their measured offsets, where the line's tyres run. Each face takes the photo's measured darkening at its centroid's signed offset from the line (rubber 'photo'), to one of 16 copies of its own paint (copy k = paint x (1 - k x the measured peak / 15)), its u moved into that copy (v, the stripes, untouched); the material row is the exporter's own (ksPerPixel, no VAR) with txDiffuse -> the levelled paint. 16 levels [invented]: a 1.5 % step"
-    }
+    },
+    "detail_highpass_m": {
+      "1ROAD": 0.5
+    },
+    "_detail_highpass_doc": "ledger 0095: the road's detail diffuse loses what is coarser than 0.5 m (scripts/aerial/road_wear.detail_highpass) before the / m0, so its far mips go flat and the NAIP macro alone carries the large scale; the normal is kept. The 4 m repeat on this track's renders (Mac 2026-11-18, 20-50 / 50-100 / 100-200 m): 3.32 / 2.16 / 1.11 % (the borrowed tile) -> 0.70 / 0.33 / 0.16 (owned) -> 0.29 / 0.10 / 0.06 (owned + 0.5 m) [measured]; the band it removes is 0.10 % of the tile's variance, so the close look is unchanged [measured]. 0.5 m [invented] (a 1 m cut gave about half the gain). The edge strip (1KERB_SIDEWALK) keeps its detail as it is (its repeat not measured)"
   }
 }

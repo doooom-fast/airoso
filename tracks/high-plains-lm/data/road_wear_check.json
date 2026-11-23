@@ -13,7 +13,8 @@
   "photo_depth_tol": 0.02,
   "photo_centroid_tol_m": 0.15,
   "photo_min_depth": 0.03,
-  "kerb_level_tol": 0.55
+  "kerb_level_tol": 0.55,
+  "f32_ulps": 1.0
  },
  "kn5": "high_plains.kn5",
  "rows": {
@@ -30,9 +31,18 @@
    "triangles": 17328,
    "off": 0,
    "worst_scale_err": 0.000602,
-   "worst_shear": 0.000676,
+   "worst_shear": 0.000632,
    "texel_m": 0.25,
-   "atlas_px": 4096
+   "atlas_px": 4096,
+   "jacobian_judged": 15273,
+   "jacobian_off": 0,
+   "edge_judged": 2055,
+   "edge_off": 0,
+   "worst_edge_err": 0.000674,
+   "v_sign": -1.0,
+   "edge_offenders": [],
+   "unjudged": 0,
+   "unjudged_list": []
   },
   "no_repeat": {
    "pass": true,
@@ -62,11 +72,19 @@
      "layout": "full",
      "pass": true,
      "declared_depth": 0.14139,
-     "shipped_depth": 0.14143,
+     "shipped_depth": 0.14095,
      "declared_centroid_m": -0.1116,
-     "shipped_centroid_m": -0.1061,
+     "shipped_centroid_m": -0.1129,
      "stations": 1174,
-     "samples": 18066
+     "samples": 16232,
+     "declared_samples": 16255,
+     "mask": {
+      "road_cells": 615222,
+      "median_lum": 0.42085,
+      "grow_cells": 2,
+      "interior_cells": 6,
+      "shadow_or_paint_cells": 31983
+     }
     }
    ],
    "drawn_band": "none (road_wear.rubber photo)"

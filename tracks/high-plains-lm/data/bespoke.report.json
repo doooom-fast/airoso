@@ -56,6 +56,132 @@
    "modules": 34,
    "left_out": 0,
    "length_m": 102.7
+  },
+  {
+   "key": "pit_wall_west",
+   "kind": "krail",
+   "modules": 17,
+   "left_out": 0,
+   "length_m": 61.8
+  },
+  {
+   "key": "pit_paddock_west",
+   "kind": "krail",
+   "modules": 4,
+   "left_out": 0,
+   "length_m": 20.3
+  },
+  {
+   "key": "pit_wall_nose",
+   "kind": "tyres",
+   "modules": 4,
+   "left_out": 0,
+   "length_m": 3.0
+  },
+  {
+   "key": "paddock_row_0",
+   "kind": "krail",
+   "modules": 42,
+   "left_out": 0,
+   "length_m": 127.5
+  },
+  {
+   "key": "paddock_row_1",
+   "kind": "krail",
+   "modules": 40,
+   "left_out": 0,
+   "length_m": 122.5
+  },
+  {
+   "key": "paddock_row_2",
+   "kind": "krail",
+   "modules": 21,
+   "left_out": 0,
+   "length_m": 64.6
+  },
+  {
+   "key": "paddock_row_3",
+   "kind": "krail",
+   "modules": 0,
+   "left_out": 12,
+   "length_m": 37.5
+  },
+  {
+   "key": "paddock_row_4",
+   "kind": "krail",
+   "modules": 11,
+   "left_out": 0,
+   "length_m": 34.0
+  },
+  {
+   "key": "paddock_row_5",
+   "kind": "krail",
+   "modules": 8,
+   "left_out": 0,
+   "length_m": 25.0
+  },
+  {
+   "key": "paddock_row_6",
+   "kind": "krail",
+   "modules": 7,
+   "left_out": 0,
+   "length_m": 21.6
+  },
+  {
+   "key": "paddock_row_7",
+   "kind": "krail",
+   "modules": 7,
+   "left_out": 0,
+   "length_m": 21.2
+  },
+  {
+   "key": "paddock_row_8",
+   "kind": "krail",
+   "modules": 0,
+   "left_out": 6,
+   "length_m": 20.6
+  },
+  {
+   "key": "paddock_row_9",
+   "kind": "krail",
+   "modules": 6,
+   "left_out": 0,
+   "length_m": 20.6
+  },
+  {
+   "key": "paddock_row_10",
+   "kind": "krail",
+   "modules": 5,
+   "left_out": 0,
+   "length_m": 16.9
+  },
+  {
+   "key": "paddock_row_11",
+   "kind": "krail",
+   "modules": 5,
+   "left_out": 0,
+   "length_m": 15.4
+  },
+  {
+   "key": "paddock_row_12",
+   "kind": "krail",
+   "modules": 5,
+   "left_out": 0,
+   "length_m": 15.3
+  },
+  {
+   "key": "paddock_row_13",
+   "kind": "krail",
+   "modules": 5,
+   "left_out": 0,
+   "length_m": 15.2
+  },
+  {
+   "key": "paddock_row_14",
+   "kind": "krail",
+   "modules": 4,
+   "left_out": 0,
+   "length_m": 12.4
   }
  ],
  "blocks": [
@@ -63,37 +189,43 @@
    "key": "osm289311820",
    "skin": "METAL",
    "roof": "WHITE",
-   "form": "gable ridge 3.1 m",
-   "wall_h_m": 2.1,
+   "form": "gable ridge 3.9 m, eaves out 0.30 m with a fascia",
+   "wall_h_m": 3.2,
    "ground": [
     9.31,
     9.58
    ],
    "bottom": 9.05,
-   "eave": 11.15,
+   "eave": 12.25,
    "off_terrain": false,
-   "collider": false
+   "collider": false,
+   "facade": {
+    "skin": "garage",
+    "bays": 12,
+    "openings": 7,
+    "gable_in_walls": true
+   }
   },
   {
    "key": "osm289311821",
    "skin": "METAL",
-   "roof": "WHITE",
-   "form": "gable ridge 3.9 m",
-   "wall_h_m": 2.1,
+   "roof": "METAL",
+   "form": "posts (38), ceiling 2.40 m, plate 0.15 m, gable ridge 3.00 m",
+   "wall_h_m": 2.4,
    "ground": [
     9.66,
     9.88
    ],
    "bottom": 9.35,
-   "eave": 11.45,
+   "eave": 11.75,
    "off_terrain": false,
-   "collider": false
+   "collider": 38
   },
   {
    "key": "osm289311823",
    "skin": "METAL",
    "roof": "WHITE",
-   "form": "gable ridge 3.5 m",
+   "form": "gable ridge 2.5 m, eaves out 0.30 m with a fascia",
    "wall_h_m": 2.1,
    "ground": [
     9.63,
@@ -102,43 +234,61 @@
    "bottom": 9.34,
    "eave": 11.44,
    "off_terrain": false,
-   "collider": false
+   "collider": false,
+   "facade": {
+    "skin": "garage",
+    "bays": 16,
+    "openings": 7,
+    "gable_in_walls": true
+   }
   },
   {
    "key": "osm289311824",
    "skin": "METAL",
    "roof": "WHITE",
-   "form": "gable ridge 2.8 m",
-   "wall_h_m": 2.2,
+   "form": "gable ridge 2.5 m, eaves out 0.30 m with a fascia",
+   "wall_h_m": 2.1,
    "ground": [
     9.19,
     9.35
    ],
    "bottom": 8.87,
-   "eave": 11.07,
+   "eave": 10.97,
    "off_terrain": false,
-   "collider": false
+   "collider": false,
+   "facade": {
+    "skin": "garage",
+    "bays": 6,
+    "openings": 5,
+    "gable_in_walls": true
+   }
   },
   {
    "key": "osm289314487",
    "skin": "METAL",
-   "roof": "DARK",
-   "form": "gable ridge 2.8 m",
-   "wall_h_m": 2.4,
+   "roof": "WHITE",
+   "form": "gable ridge 2.5 m, eaves out 0.30 m with a fascia",
+   "wall_h_m": 2.1,
    "ground": [
     0.05,
     0.06
    ],
    "bottom": -0.35,
-   "eave": 2.05,
+   "eave": 1.75,
    "off_terrain": false,
-   "collider": false
+   "collider": false,
+   "facade": {
+    "skin": "garage",
+    "bays": 6,
+    "openings": 5,
+    "gable_in_walls": true
+   }
   },
   {
    "key": "osm289316523",
    "skin": "METAL",
    "roof": "TAN",
-   "form": "gable ridge 3.1 m",
+   "form": "gable ridge 3.1 m, eaves out 0.30 m with a fascia",
    "wall_h_m": 2.1,
    "ground": [
     9.15,
@@ -147,22 +297,70 @@
    "bottom": 8.82,
    "eave": 10.92,
    "off_terrain": false,
-   "collider": false
+   "collider": false,
+   "facade": {
+    "skin": "garage",
+    "bays": 13,
+    "openings": 7,
+    "gable_in_walls": false
+   }
   },
   {
-   "key": "osm289317403",
+   "key": "traced_white_w_of_osm289311820",
    "skin": "METAL",
-   "roof": "DARK",
-   "form": "gable ridge 2.8 m",
-   "wall_h_m": 2.1,
+   "roof": "WHITE",
+   "form": "gable ridge 3.9 m, eaves out 0.30 m with a fascia",
+   "wall_h_m": 3.2,
    "ground": [
-    10.4,
-    10.41
+    9.12,
+    9.36
    ],
-   "bottom": 10.0,
-   "eave": 12.1,
+   "bottom": 8.83,
+   "eave": 12.03,
    "off_terrain": false,
-   "collider": false
+   "collider": false,
+   "facade": {
+    "skin": "garage",
+    "bays": 10,
+    "openings": 6,
+    "gable_in_walls": true
+   }
+  },
+  {
+   "key": "traced_pit_entry_canopy",
+   "skin": "METAL",
+   "roof": "METAL",
+   "form": "posts (8), slab 0.3 m",
+   "wall_h_m": 3.1,
+   "ground": [
+    9.17,
+    9.4
+   ],
+   "bottom": 8.89,
+   "eave": 11.99,
+   "off_terrain": false,
+   "collider": 8
+  },
+  {
+   "key": "traced_container_row",
+   "skin": "METAL",
+   "roof": "TAN",
+   "form": "flat",
+   "wall_h_m": 2.6,
+   "ground": [
+    8.68,
+    9.08
+   ],
+   "bottom": 8.49,
+   "eave": 11.09,
+   "off_terrain": false,
+   "collider": false,
+   "facade": {
+    "skin": "container_row",
+    "bays": 28,
+    "openings": 25,
+    "gable_in_walls": false
+   }
   },
   {
    "key": "post0",
@@ -171,13 +369,19 @@
    "form": "flat",
    "wall_h_m": 2.8,
    "ground": [
-    10.06,
+    10.07,
     10.07
    ],
-   "bottom": 9.66,
-   "eave": 12.46,
+   "bottom": 9.67,
+   "eave": 12.47,
    "off_terrain": false,
-   "collider": false
+   "collider": false,
+   "facade": {
+    "skin": "post",
+    "bays": 4,
+    "openings": 4,
+    "gable_in_walls": false
+   }
   },
   {
    "key": "post1",
@@ -192,7 +396,13 @@
    "bottom": 10.0,
    "eave": 12.8,
    "off_terrain": false,
-   "collider": false
+   "collider": false,
+   "facade": {
+    "skin": "post",
+    "bays": 4,
+    "openings": 4,
+    "gable_in_walls": false
+   }
   },
   {
    "key": "post2",
@@ -201,13 +411,19 @@
    "form": "flat",
    "wall_h_m": 2.8,
    "ground": [
-    9.44,
-    9.53
+    9.36,
+    9.44
    ],
-   "bottom": 9.09,
-   "eave": 11.89,
+   "bottom": 9.0,
+   "eave": 11.8,
    "off_terrain": false,
-   "collider": false
+   "collider": false,
+   "facade": {
+    "skin": "post",
+    "bays": 4,
+    "openings": 4,
+    "gable_in_walls": false
+   }
   },
   {
    "key": "post3",
@@ -216,13 +432,19 @@
    "form": "flat",
    "wall_h_m": 2.8,
    "ground": [
-    14.61,
-    14.76
+    14.62,
+    14.77
    ],
-   "bottom": 14.29,
-   "eave": 17.09,
+   "bottom": 14.3,
+   "eave": 17.1,
    "off_terrain": false,
-   "collider": true
+   "collider": true,
+   "facade": {
+    "skin": "post",
+    "bays": 4,
+    "openings": 4,
+    "gable_in_walls": false
+   }
   },
   {
    "key": "post4",
@@ -231,13 +453,19 @@
    "form": "flat",
    "wall_h_m": 2.8,
    "ground": [
-    10.86,
-    11.05
+    10.94,
+    11.12
    ],
-   "bottom": 10.55,
-   "eave": 13.35,
+   "bottom": 10.63,
+   "eave": 13.43,
    "off_terrain": false,
-   "collider": false
+   "collider": false,
+   "facade": {
+    "skin": "post",
+    "bays": 4,
+    "openings": 4,
+    "gable_in_walls": false
+   }
   },
   {
    "key": "post6",
@@ -246,13 +474,19 @@
    "form": "flat",
    "wall_h_m": 2.8,
    "ground": [
-    9.63,
-    9.85
+    9.67,
+    9.89
    ],
-   "bottom": 9.34,
-   "eave": 12.14,
+   "bottom": 9.38,
+   "eave": 12.18,
    "off_terrain": false,
-   "collider": false
+   "collider": false,
+   "facade": {
+    "skin": "post",
+    "bays": 4,
+    "openings": 4,
+    "gable_in_walls": false
+   }
   },
   {
    "key": "post7",
@@ -267,7 +501,13 @@
    "bottom": 6.24,
    "eave": 9.04,
    "off_terrain": false,
-   "collider": false
+   "collider": false,
+   "facade": {
+    "skin": "post",
+    "bays": 4,
+    "openings": 4,
+    "gable_in_walls": false
+   }
   },
   {
    "key": "post8",
@@ -276,13 +516,19 @@
    "form": "flat",
    "wall_h_m": 2.8,
    "ground": [
-    9.06,
-    9.22
+    8.9,
+    9.07
    ],
-   "bottom": 8.74,
-   "eave": 11.54,
+   "bottom": 8.58,
+   "eave": 11.38,
    "off_terrain": false,
-   "collider": true
+   "collider": false,
+   "facade": {
+    "skin": "post",
+    "bays": 4,
+    "openings": 4,
+    "gable_in_walls": false
+   }
   },
   {
    "key": "post9",
@@ -291,13 +537,19 @@
    "form": "flat",
    "wall_h_m": 2.8,
    "ground": [
-    11.3,
-    11.71
+    11.14,
+    11.55
    ],
-   "bottom": 11.1,
-   "eave": 13.9,
+   "bottom": 10.95,
+   "eave": 13.75,
    "off_terrain": false,
-   "collider": false
+   "collider": false,
+   "facade": {
+    "skin": "post",
+    "bays": 4,
+    "openings": 4,
+    "gable_in_walls": false
+   }
   },
   {
    "key": "post10",
@@ -312,7 +564,13 @@
    "bottom": -0.75,
    "eave": 2.05,
    "off_terrain": false,
-   "collider": false
+   "collider": false,
+   "facade": {
+    "skin": "post",
+    "bays": 4,
+    "openings": 4,
+    "gable_in_walls": false
+   }
   },
   {
    "key": "post11",
@@ -327,7 +585,13 @@
    "bottom": -3.68,
    "eave": -0.88,
    "off_terrain": false,
-   "collider": false
+   "collider": false,
+   "facade": {
+    "skin": "post",
+    "bays": 4,
+    "openings": 4,
+    "gable_in_walls": false
+   }
   },
   {
    "key": "post12",
@@ -342,7 +606,13 @@
    "bottom": 12.34,
    "eave": 15.14,
    "off_terrain": false,
-   "collider": false
+   "collider": false,
+   "facade": {
+    "skin": "post",
+    "bays": 4,
+    "openings": 4,
+    "gable_in_walls": false
+   }
   }
  ],
  "pads": [
@@ -350,6 +620,56 @@
    "key": "paddock",
    "cells": 4522,
    "left_out": 38
+  },
+  {
+   "key": "pitlane",
+   "cells": 90,
+   "left_out": 0
+  },
+  {
+   "key": "post0_pad",
+   "cells": 4,
+   "left_out": 0
+  },
+  {
+   "key": "post1_pad",
+   "cells": 1,
+   "left_out": 0
+  },
+  {
+   "key": "post2_pad",
+   "cells": 4,
+   "left_out": 0
+  },
+  {
+   "key": "post3_pad",
+   "cells": 4,
+   "left_out": 0
+  },
+  {
+   "key": "post4_pad",
+   "cells": 4,
+   "left_out": 0
+  },
+  {
+   "key": "post6_pad",
+   "cells": 4,
+   "left_out": 0
+  },
+  {
+   "key": "post7_pad",
+   "cells": 4,
+   "left_out": 0
+  },
+  {
+   "key": "post8_pad",
+   "cells": 1,
+   "left_out": 0
+  },
+  {
+   "key": "post9_pad",
+   "cells": 4,
+   "left_out": 0
   }
  ]
 }

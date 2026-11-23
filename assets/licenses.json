@@ -243,6 +243,35 @@
    "license": "CC0-1.0",
    "url": "",
    "_note": "Replaces the stock ground_dry_diffuse.jpg (LA Canyons bytes) on Nevada Nights. Ours outright, safe in both the CC0 and the full package."
+  },
+  {
+   "name": "Bespoke dressing, third batch (generated): the circuit facade atlas (ribbed metal, tilt-up, containers, a rooftop unit, grime), membrane and ribbed-metal roof normals, a clearspan tent's fabric",
+   "files": [
+    "circuit_facade_diffuse.jpg",
+    "circuit_facade_normal.jpg",
+    "roof_membrane_normal.jpg",
+    "roof_rib_normal.jpg",
+    "fabric_tent_diffuse.jpg",
+    "fabric_tent_normal.jpg"
+   ],
+   "source": "self-made: tools/make_bespoke_assets.py's third batch (seeded, numpy + Pillow; --check and tests/tools/test_bespoke_assets.py pin the pixels; the cell table is tools/circuit_facades.py). No photograph, third-party mesh or third-party pixel; the white and tan containers' colours are two roof colours read off USDA NAIP 2022 (public domain)",
+   "license": "CC0-1.0",
+   "url": ""
+  },
+  {
+   "name": "Dense-graded asphalt, plain concrete and aged concrete (generated): owned replacements for the borrowed road and concrete",
+   "files": [
+    "asphalt_dense_diffuse.jpg",
+    "asphalt_dense_normal.jpg",
+    "concrete_plain_diffuse.jpg",
+    "concrete_plain_normal.jpg",
+    "concrete_aged_diffuse.jpg",
+    "concrete_aged_normal.jpg"
+   ],
+   "source": "airoso tools/make_owned_surfaces.py (generated from seeded noise and polygons, Pillow only, seeds 84 / 85 / 86; no photograph or third-party pixel). Mean colours and relief strength are measured off the borrowed files they would replace; aggregate sizes follow the AASHTO M 323 12.5 mm control points",
+   "license": "CC0-1.0",
+   "url": "",
+   "_note": "Not bound by any pbr.TEXTURES row yet: swapping asphalt_cracked / building / warehouse for these changes every track's look on its next build, which is Kevin's call (2026-11-16). The asphalt pair is bound per track as 1ROAD on Milford and High Plains (texture_overrides, ledger 0095; Kevin 2026-11-19: 'Yes, pilot the owned asphalt with the high-pass')."
   }
  ],
  "stock_audio_note": "Surface scrub/rumble (data/surfaces.ini WAV=) references the player's own stock Assetto Corsa sounds (content/sfx). No audio is bundled or redistributed."

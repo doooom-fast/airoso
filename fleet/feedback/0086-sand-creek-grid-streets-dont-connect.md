@@ -305,3 +305,37 @@ Output: `tracks/sand-creek-lm/data/mouth_survey.json` (md5 b12007ab) and `D:/k10
 The same numbers as the Mac's build. R9 is not compared: the survey's `turn_r9_drop_m` (median 0.033, p90 ~0.21) is a
 different measure from verify_mouth_corners' R9 turn drop (0.013 / 0.193). The 21 allowed corners (owed item 3) are
 still the ones over 0.05; nothing new.
+
+## Disconnected roads located (Mac + G10, 2026-11-13; Kevin's drive of 0.2.8)
+
+Kevin, 2026-11-13, after driving 0.2.8: "San creek has many disconnected roads but drives well otherwise". To the Mac
+the same day: "start farming out work to the g10 in accordance with what the pc will need next".
+
+`tools/sc_disconnects.py` (new; a report, not a gate; nothing wired to it; no threshold changed) walks every mouth,
+every piece end that is not a mouth, and every OSM junction inside the grid, on the gate OBJ. The gates above
+(verify_mouths, verify_mouth_corners, mouth_survey) walk `data/mouths.json` only, so ends and unwelded junctions were
+never looked at. Numpy only, for the PC's Python: `label8` and `nearest_pair` stand in for scipy.ndimage.label and
+distance_transform_edt. On 400 random grids the labels equal scipy's, and the gap distances and cells equal the EDT's in
+all 1,665 gaps (96 ties name a different, equally near partner cell; the gap is the same). On m7d's OBJ the numpy
+output equals the scipy version's field for field.
+
+Ran on m7d (0.2.7's gate OBJ, 124,670,856 B; 0.2.8 changed only the main road's edge strip): Mac 30 s / 1.30 GB, G10
+95-98 s / 0.95 GB, identical. 233 places:
+
+| | places | worst / notes |
+|---|---|---|
+| not connected (separate drivable sheets) | 6 | N Northfield Quebec (grid_primary_71/73), a 160 m piece: 12.95 and 8.6 m short of the main road at E 45th; Quebec's two north ends 6.9-7.0 m apart |
+| dead ends where OSM has a junction or the road going on | 52 | 13 named streets stop 2.5-10 m short of E 56th Ave on the grid's clip box; Colorado Blvd at US 6-85 twice; E 49th |
+| OSM junctions with no mouth | 57 | some with a named cross street never built |
+| steps inside 12 m of a place | | 0.265 m worst (N Holly / E 45th, kerb); 0.22-0.24 m at the pad joins on Colorado |
+| slab edge over grass | | 0.328 m (known, Northfield Quebec / Sand Creek Dr S); 0.282 m new: grid_unclassified_9#0#1 end |
+| holes on the wheel lines | | 12 m at the E 45th / Northfield Quebec junctions; 4.9-5.1 m at N Ivy / E 50th |
+
+Cause of the largest group (checked against the code by the PC, 2026-11-13): `tools/grid_connectors.py:180-183` clips
+the grid 60 m inside the source heightfield's north edge (lat 39.798823, local z 1313.9), but the port's ground reaches
+39.801706. grid_connectors runs at `ship_track.sh:197` and reads `data/heightfield.meta.json` before lm_engine_intake
+(`:277`) brings in the port grid. The fix is in the PC's fleet round 1.
+
+```
+python -I tools/sc_disconnects.py --project tracks/sand-creek-lm --obj <workshop>/data/track.obj --osm tracks/sand-creek/data/osm.widths.cache.json --out <dir>
+```

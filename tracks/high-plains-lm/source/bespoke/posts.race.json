@@ -1,0 +1,302 @@
+[
+ {
+  "key": "post0",
+  "wall_h_m": 2.8,
+  "skin": "metal",
+  "roof": "white",
+  "footprint_lonlat": [
+   [
+    -103.8923373,
+    39.7345018
+   ],
+   [
+    -103.8922965,
+    39.7345018
+   ],
+   [
+    -103.8922965,
+    39.7345332
+   ],
+   [
+    -103.8923373,
+    39.7345332
+   ]
+  ],
+  "_h": "re-centred 5.1 m onto its white roof's centroid on NAIP 2023 0.3 m (18.7 m2 of roof; furniture audit 2026-11-18 work/hp_shadow_fit.json); 3.5 m square and 2.8 m tall [invented]: a corner-worker shelter (the shadow reads a 3.07 m top +-0.43 m, fit score 0.64)"
+ },
+ {
+  "key": "post1",
+  "wall_h_m": 2.8,
+  "skin": "metal",
+  "roof": "white",
+  "footprint_lonlat": [
+   [
+    -103.8899404,
+    39.7345794
+   ],
+   [
+    -103.8898996,
+    39.7345794
+   ],
+   [
+    -103.8898996,
+    39.7346108
+   ],
+   [
+    -103.8899404,
+    39.7346108
+   ]
+  ],
+  "_h": "re-centred 0.9 m onto its white roof's centroid on NAIP 2023 0.3 m (17.0 m2 of roof; furniture audit 2026-11-18 work/hp_shadow_fit.json); 3.5 m square and 2.8 m tall [invented]: a corner-worker shelter (the shadow reads a 2.51 m top +-0.4 m, fit score 0.76)"
+ },
+ {
+  "key": "post2",
+  "wall_h_m": 2.8,
+  "skin": "metal",
+  "roof": "white",
+  "footprint_lonlat": [
+   [
+    -103.8980377,
+    39.7338675
+   ],
+   [
+    -103.8979969,
+    39.7338675
+   ],
+   [
+    -103.8979969,
+    39.7338989
+   ],
+   [
+    -103.8980377,
+    39.7338989
+   ]
+  ],
+  "_h": "re-centred 5.1 m onto its white roof's centroid on NAIP 2023 0.3 m (17.9 m2 of roof; furniture audit 2026-11-18 work/hp_shadow_fit.json); 3.5 m square and 2.8 m tall [invented]: a corner-worker shelter (the shadow reads a 2.23 m top +-0.39 m, fit score 0.56)"
+ },
+ {
+  "key": "post3",
+  "wall_h_m": 2.8,
+  "skin": "metal",
+  "roof": "white",
+  "footprint_lonlat": [
+   [
+    -103.9002367,
+    39.7339143
+   ],
+   [
+    -103.9001959,
+    39.7339143
+   ],
+   [
+    -103.9001959,
+    39.7339457
+   ],
+   [
+    -103.9002367,
+    39.7339457
+   ]
+  ],
+  "_h": "re-centred 0.4 m onto its white roof's centroid on NAIP 2023 0.3 m (13.3 m2 of roof; furniture audit 2026-11-18 work/hp_shadow_fit.json); 3.5 m square and 2.8 m tall [invented]: a corner-worker shelter (the shadow reads a 2.23 m top +-0.39 m, fit score 0.52)"
+ },
+ {
+  "key": "post4",
+  "wall_h_m": 2.8,
+  "skin": "metal",
+  "roof": "white",
+  "footprint_lonlat": [
+   [
+    -103.901129,
+    39.7357664
+   ],
+   [
+    -103.9010882,
+    39.7357664
+   ],
+   [
+    -103.9010882,
+    39.7357978
+   ],
+   [
+    -103.901129,
+    39.7357978
+   ]
+  ],
+  "_h": "re-centred 2.1 m onto its white roof's centroid on NAIP 2023 0.3 m (13.0 m2 of roof; furniture audit 2026-11-18 work/hp_shadow_fit.json); 3.5 m square and 2.8 m tall [invented]: a corner-worker shelter (the shadow reads a 3.07 m top +-0.43 m, fit score 0.72)"
+ },
+ {
+  "key": "post6",
+  "wall_h_m": 2.8,
+  "skin": "metal",
+  "roof": "white",
+  "footprint_lonlat": [
+   [
+    -103.8996579,
+    39.7363644
+   ],
+   [
+    -103.8996171,
+    39.7363644
+   ],
+   [
+    -103.8996171,
+    39.7363958
+   ],
+   [
+    -103.8996579,
+    39.7363958
+   ]
+  ],
+  "_h": "re-centred 2.6 m onto its white roof's centroid on NAIP 2023 0.3 m (17.7 m2 of roof; furniture audit 2026-11-18 work/hp_shadow_fit.json); 3.5 m square and 2.8 m tall [invented]: a corner-worker shelter (the shadow reads a 2.23 m top +-0.39 m, fit score 0.61)"
+ },
+ {
+  "key": "post7",
+  "wall_h_m": 2.8,
+  "skin": "metal",
+  "roof": "white",
+  "footprint_lonlat": [
+   [
+    -103.8983668,
+    39.7365776
+   ],
+   [
+    -103.898326,
+    39.7365776
+   ],
+   [
+    -103.898326,
+    39.736609
+   ],
+   [
+    -103.8983668,
+    39.736609
+   ]
+  ],
+  "_h": "position off NAIP 2023 as before (no white roof on the crop); 3.5 m square and 2.8 m tall [invented]: a corner-worker shelter"
+ },
+ {
+  "key": "post8",
+  "wall_h_m": 2.8,
+  "skin": "metal",
+  "roof": "white",
+  "footprint_lonlat": [
+   [
+    -103.8987849,
+    39.7360713
+   ],
+   [
+    -103.8987441,
+    39.7360713
+   ],
+   [
+    -103.8987441,
+    39.7361027
+   ],
+   [
+    -103.8987849,
+    39.7361027
+   ]
+  ],
+  "_h": "re-centred 3.8 m onto its white roof's centroid on NAIP 2023 0.3 m (14.4 m2 of roof; furniture audit 2026-11-18 work/hp_shadow_fit.json); 3.5 m square and 2.8 m tall [invented]: a corner-worker shelter (the shadow reads a 2.51 m top +-0.4 m, fit score 0.76)"
+ },
+ {
+  "key": "post9",
+  "wall_h_m": 2.8,
+  "skin": "metal",
+  "roof": "white",
+  "footprint_lonlat": [
+   [
+    -103.8996727,
+    39.735247
+   ],
+   [
+    -103.8996319,
+    39.735247
+   ],
+   [
+    -103.8996319,
+    39.7352784
+   ],
+   [
+    -103.8996727,
+    39.7352784
+   ]
+  ],
+  "_h": "re-centred 1.4 m onto its white roof's centroid on NAIP 2023 0.3 m (16.4 m2 of roof; furniture audit 2026-11-18 work/hp_shadow_fit.json); 3.5 m square and 2.8 m tall [invented]: a corner-worker shelter (the shadow reads a 1.95 m top +-0.38 m, fit score 0.38)"
+ },
+ {
+  "key": "post10",
+  "wall_h_m": 2.8,
+  "skin": "metal",
+  "roof": "white",
+  "footprint_lonlat": [
+   [
+    -103.8988859,
+    39.7385925
+   ],
+   [
+    -103.8988451,
+    39.7385925
+   ],
+   [
+    -103.8988451,
+    39.7386239
+   ],
+   [
+    -103.8988859,
+    39.7386239
+   ]
+  ],
+  "_h": "position off NAIP 2023 as before (off the 0.3 m crop); 3.5 m square and 2.8 m tall [invented]: a corner-worker shelter"
+ },
+ {
+  "key": "post11",
+  "wall_h_m": 2.8,
+  "skin": "metal",
+  "roof": "white",
+  "footprint_lonlat": [
+   [
+    -103.8999612,
+    39.7383359
+   ],
+   [
+    -103.8999204,
+    39.7383359
+   ],
+   [
+    -103.8999204,
+    39.7383673
+   ],
+   [
+    -103.8999612,
+    39.7383673
+   ]
+  ],
+  "_h": "position off NAIP 2023 as before (off the 0.3 m crop); 3.5 m square and 2.8 m tall [invented]: a corner-worker shelter"
+ },
+ {
+  "key": "post12",
+  "wall_h_m": 2.8,
+  "skin": "metal",
+  "roof": "white",
+  "footprint_lonlat": [
+   [
+    -103.9017657,
+    39.7349809
+   ],
+   [
+    -103.9017249,
+    39.7349809
+   ],
+   [
+    -103.9017249,
+    39.7350123
+   ],
+   [
+    -103.9017657,
+    39.7350123
+   ]
+  ],
+  "_h": "position off NAIP 2023 as before (its bright patch is unclear (a 0.84 m top, fit score 0.47)); 3.5 m square and 2.8 m tall [invented]: a corner-worker shelter"
+ }
+]

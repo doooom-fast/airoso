@@ -20,6 +20,20 @@ its own smoothing, as tools/edge_fit.py), inside each declared span:
             then clamped to the rail limit again
 The lane is +-width/2 about the line, so a side that moves alone moves the line: the line shifts (left - right)/2 along
 its left normal and the width is left + right. Pure Python (the intake is stdlib only).
+
+mode "agree" (opt-in, ledger 0091, the Milford geometry audit's Gap 2 / Fix A, 2026-11-18: lm_intake.width_taper widens a
+one-sided gore or junction mouth on BOTH sides, so the far edge runs 1.3-2.0 m out into grass at s 435-455, 2,545-2,560,
+3,905-3,915 and the service-road mouths at s 4,117 / 4,228). The same machinery, three things changed:
+  measured  BOTH sensors per row (NAIP and the lidar, each the median of its points within +-MED_HALF_M, MIN_POINTS each);
+            a row measures only where the two agree within agree_m (edge_fit.AGREE_M, ledger 0087's fit-mode rule), and
+            then reads their mean. The points are owned from AGREE_INNER_FRAC x today's half width out (a tapered flare's
+            real edge sits up to ~4.4 m inside today's: the evidence itself was searched +-3.5 m of the trace's edge)
+  in or out the edge goes to the measured edge, in OR out (the Gaussian's cap is +-MED_CAP_M of the row's own reading)
+  erosion   toward zero: a widening is eroded as before (the least widening within +-erode_m), a narrowing likewise (the
+            least narrowing), and a window holding both is no change; so neither spills past its evidence. The rails' limit
+            is eroded on its own (the tightest within +-erode_m) and binds the change before the smoothing
+Rows that do not agree keep today's edge (gaps up to gap_m between agreeing rows are interpolated). The rail clamp, the
+taper and the smoothing are the widen mode's. mode "widen" (the default) is exactly 0.1.12's.
 """
 from __future__ import annotations
 
@@ -46,6 +60,10 @@ MED_HALF_M = 7.5       # [invented] the measured edge: the median of the points 
 MED_SMOOTH_M = 5.0     # [invented] then a Gaussian of 5 m over the rows that measured
 MED_CAP_M = 0.3       # [invented] the smoothed edge stays within 0.3 m of the row's own median
 GAP_M = 40.0           # [invented] a row with no reading takes the line between measured rows up to 40 m either side
+AGREE_SOURCES = ("naip", "lidar")   # mode "agree": the two sensors of source/edges/edge_evidence.json
+AGREE_INNER_FRAC = 0.3  # [invented, as tools/edge_smoothness.py INNER_FRAC: nearer the line than 0.3 x the half width is an
+#                         island or a median, not the lane edge] mode "agree": a point is owned from here out
+MODES = ("widen", "agree")
 
 
 def _stations(P):
@@ -68,11 +86,22 @@ def _dist_out(s, a, b, lap):
     return min(da, db)
 
 
+def span_weight(s, spans, lap, taper_m):
+    """the retrace's own weight at station s: 1 inside a span, a raised cosine to 0 over taper_m outside it"""
+    d = min(_dist_out(s, a, b, lap) for a, b in spans)
+    return 1.0 if d <= 0 else (0.5 + 0.5 * math.cos(math.pi * d / taper_m) if d < taper_m else 0.0)
+
+
 def retrace(pts, widths, closed, evidence, spans, rails, *, src="naip", clear_m=0.10, half=_ef.FIT_HALF_M,
-            taper_m=60.0):
+            taper_m=60.0, mode="widen", smooth_m=SMOOTH_M, erode_m=ERODE_M, gap_m=GAP_M, agree_m=_ef.AGREE_M):
     """pts: the smoothed line [(x, y, z)] (closed: last == first); widths: per point; evidence: [[E, N, src, contrast]];
     spans: [[s0, s1]] stations on this line; rails: [{"key", "xz": [(x, z), ...]}] in the line's frame.
+    mode "widen" (0.1.12's: src's edge, never in) or "agree" (both sensors where they agree, in or out; module doc);
+    smooth_m / erode_m / gap_m: the final Gaussian, the erosion's half window and the longest gap interpolated.
     Returns (new widths, per-point lateral shift of the line (+ = left), report)."""
+    if mode not in MODES:
+        raise SystemExit(f"[edge_retrace] mode {mode!r}: one of {list(MODES)}")
+    agree = mode == "agree"
     n = len(pts)
     m = n - 1 if closed else n
     P = pts[:m]
@@ -80,13 +109,24 @@ def retrace(pts, widths, closed, evidence, spans, rails, *, src="naip", clear_m=
     lap = (st[-1] + math.hypot(P[0][0] - P[-1][0], P[0][2] - P[-1][2])) if closed else st[-1]
     T = _ef._normals(P, closed)
     hw = [w / 2.0 for w in widths[:m]]
-    reach = taper_m + RAIL_REACH_M + ERODE_M + 3 * SMOOTH_M + 5.0   # every change fades to 0 inside the region
+    reach = taper_m + RAIL_REACH_M + erode_m + 3 * smooth_m + 5.0   # every change fades to 0 inside the region
     region = [i for i in range(m) if any(_dist_out(st[i], a, b, lap) <= reach for a, b in spans)]
     rset = set(region)
     cell = 8.0
     grid: dict = {}
     for i in region:
         grid.setdefault((int(P[i][0] // cell), int(P[i][2] // cell)), []).append(i)
+    # the region's rows within a station window, in ascending index order (the order a full pass over the region visits
+    # them, so every windowed sum below is the full pass's, bit for bit); the caller keeps its own exact distance test
+    rs_ = [st[i] for i in region]
+
+    def window(i, h):
+        out_ = []
+        for off in ((-lap, 0.0, lap) if closed else (0.0,)):
+            lo = bisect.bisect_left(rs_, st[i] + off - h - 1e-6)
+            hi = bisect.bisect_right(rs_, st[i] + off + h + 1e-6)
+            out_.extend(region[lo:hi])
+        return sorted(set(out_))
 
     def own(x, z):
         bx, bz = int(x // cell), int(z // cell)
@@ -113,7 +153,8 @@ def retrace(pts, widths, closed, evidence, spans, rails, *, src="naip", clear_m=
         if abs(v) > ALONG_M:
             continue
         side = "left" if u > 0 else "right"
-        if not (hw[i] - SEARCH_IN_M <= abs(u) <= hw[i] + SEARCH_OUT_M):
+        lo_in = AGREE_INNER_FRAC * hw[i] if agree else hw[i] - SEARCH_IN_M
+        if not (lo_in <= abs(u) <= hw[i] + SEARCH_OUT_M):
             continue
         pts_by[side].setdefault(s_, []).append((i, abs(u)))
     # the rails' faces, per side: row -> the nearest face offset; each rail's row run for the flare past its ends
@@ -163,35 +204,54 @@ def retrace(pts, widths, closed, evidence, spans, rails, *, src="naip", clear_m=
     # the measured edge per side: the robust LOESS through the chosen sensor's points
     rep = {"src": src, "clear_m": clear_m, "taper_m": taper_m, "fit_half_m": half, "spans": spans, "rails": rail_rep,
            "sides": {}, "rows": []}
+    if agree or smooth_m != SMOOTH_M or erode_m != ERODE_M or gap_m != GAP_M:
+        rep.update({"mode": mode, "smooth_m": smooth_m, "erode_m": erode_m, "gap_m": gap_m})
+        if agree:
+            rep.update({"src": "+".join(AGREE_SOURCES), "agree_m": agree_m})
     new_half = {}
     measured = {}
     for side in ("left", "right"):
-        pts_s = pts_by[side].get(src, [])
+
+        def _row_medians(pts_s):
+            """per row the median of the points owned by rows within +-MED_HALF_M (at least MIN_POINTS of them)"""
+            by_row: dict = {}
+            for i, u in pts_s:
+                by_row.setdefault(i, []).append(u)
+            own_rows = sorted(by_row, key=lambda i: st[i])
+            S_ = [st[i] for i in own_rows]
+            med_ = {}
+            for i in region:
+                vals = []
+                for s0 in (st[i] - lap, st[i], st[i] + lap) if closed else (st[i],):
+                    lo = bisect.bisect_left(S_, s0 - MED_HALF_M)
+                    hi = bisect.bisect_right(S_, s0 + MED_HALF_M)
+                    for q in range(lo, hi):
+                        vals.extend(by_row[own_rows[q]])
+                if len(vals) >= MIN_POINTS:
+                    vals.sort()
+                    med_[i] = vals[len(vals) // 2]
+            return med_
         # THE MEASURED EDGE: per row the median of the sensor's points owned by rows within +-MED_HALF_M (a median, not a
         # fit: near the S/F NAIP reads a second population ~1.7 m inside the edge, 30 % of the points, and a robust
         # quadratic flips between the two), then a normalised Gaussian (MED_SMOOTH_M) over the rows that measured, and
         # rows with no reading interpolated between the nearest measured rows within GAP_M (else today's edge stays)
-        by_row: dict = {}
-        for i, u in pts_s:
-            by_row.setdefault(i, []).append(u)
-        own_rows = sorted(by_row, key=lambda i: st[i])
-        S_ = [st[i] for i in own_rows]
-        med = {}
-        for i in region:
-            vals = []
-            for s0 in (st[i] - lap, st[i], st[i] + lap) if closed else (st[i],):
-                lo = bisect.bisect_left(S_, s0 - MED_HALF_M)
-                hi = bisect.bisect_right(S_, s0 + MED_HALF_M)
-                for q in range(lo, hi):
-                    vals.extend(by_row[own_rows[q]])
-            if len(vals) >= MIN_POINTS:
-                vals.sort()
-                med[i] = vals[len(vals) // 2]
+        if agree:
+            # mode "agree": a row measures where BOTH sensors read it and agree within agree_m: their mean
+            pts_s = [q for s_ in AGREE_SOURCES for q in pts_by[side].get(s_, [])]
+            m_a, m_b = (_row_medians(pts_by[side].get(s_, [])) for s_ in AGREE_SOURCES)
+            med = {i: (m_a[i] + m_b[i]) / 2.0 for i in region if i in m_a and i in m_b
+                   and abs(m_a[i] - m_b[i]) <= agree_m}
+        else:
+            pts_s = pts_by[side].get(src, [])
+            med = _row_medians(pts_s)
         f = {}
         sg_r = MED_SMOOTH_M
         for i in region:
             num = den = 0.0
-            for j, v in med.items():
+            for j in window(i, 3 * sg_r):
+                if j not in med:
+                    continue
+                v = med[j]
                 d = abs(st[j] - st[i])
                 d = min(d, lap - d) if closed else d
                 if d <= 3 * sg_r:
@@ -202,6 +262,8 @@ def retrace(pts, widths, closed, evidence, spans, rails, *, src="naip", clear_m=
                 f[i] = num / den
                 if i in med:                      # never past the row's own median + MED_CAP_M: the Gaussian spills
                     f[i] = min(f[i], med[i] + MED_CAP_M)   # across a real narrowing (s 4,690: 9.6 -> 6.9 m in 10 m)
+                    if agree:                     # and, moving in as well as out, never short of it by more
+                        f[i] = max(f[i], med[i] - MED_CAP_M)
         # gaps: linear between the nearest rows with a value, within GAP_M either side
         have = sorted(f, key=lambda i: st[i])
         hs = [st[i] for i in have]
@@ -213,16 +275,15 @@ def retrace(pts, widths, closed, evidence, spans, rails, *, src="naip", clear_m=
             if a_ is None or b_ is None:
                 continue
             da, db = st[i] - st[a_], st[b_] - st[i]
-            if da <= GAP_M and db <= GAP_M and da + db > 0:
+            if da <= gap_m and db <= gap_m and da + db > 0:
                 f[i] = f[a_] + (f[b_] - f[a_]) * da / (da + db)
         measured[side] = f
         tgt = list(hw)
         for i in region:
-            d = min(_dist_out(st[i], a, b, lap) for a, b in spans)
-            w_ = 1.0 if d <= 0 else (0.5 + 0.5 * math.cos(math.pi * d / taper_m) if d < taper_m else 0.0)
-            want = max(hw[i], f.get(i, hw[i]))
+            w_ = span_weight(st[i], spans, lap, taper_m)
+            want = f.get(i, hw[i]) if agree else max(hw[i], f.get(i, hw[i]))
             tgt[i] = hw[i] + w_ * (want - hw[i])
-            if lim[side][i] is not None:              # a rail binds everywhere in the region, the taper included
+            if lim[side][i] is not None and not agree:   # a rail binds everywhere in the region, the taper included
                 tgt[i] = min(tgt[i], lim[side][i])
         # THE CHANGE, ERODED THEN SMOOTHED (an opening): each row's change is first the least change within +-ERODE_M, then
         # a Gaussian (SMOOTH_M) of that. A Gaussian alone spills a plateau's widening past its end (0.1.12 c2: +1.7 m of
@@ -230,22 +291,42 @@ def retrace(pts, widths, closed, evidence, spans, rails, *, src="naip", clear_m=
         # target (to the Gaussian's tails). Then the rail limit again (a safety: rows it binds are counted)
         chg = {}
         for i in region:
+            win = window(i, erode_m)
+            if agree:
+                # toward zero: the least widening, or the least narrowing, within +-erode_m (both in the window: none);
+                # then the rails' headroom, the tightest within +-erode_m, binds it (a rail inside today's edge pulls in)
+                pos, neg, room = None, None, None
+                for j in win:
+                    d = abs(st[j] - st[i])
+                    d = min(d, lap - d) if closed else d
+                    if d <= erode_m:
+                        c_ = tgt[j] - hw[j]
+                        pos = max(c_, 0.0) if pos is None else min(pos, max(c_, 0.0))
+                        neg = min(c_, 0.0) if neg is None else max(neg, min(c_, 0.0))
+                        if lim[side][j] is not None:
+                            r_ = lim[side][j] - hw[j]
+                            room = r_ if room is None else min(room, r_)
+                lo_ = pos + neg
+                if room is not None:
+                    lo_ = min(lo_, room)
+                chg[i] = lo_
+                continue
             lo_ = tgt[i] - hw[i]
-            for j in region:
+            for j in win:
                 d = abs(st[j] - st[i])
                 d = min(d, lap - d) if closed else d
-                if d <= ERODE_M and tgt[j] - hw[j] < lo_:
+                if d <= erode_m and tgt[j] - hw[j] < lo_:
                     lo_ = tgt[j] - hw[j]
             chg[i] = lo_
         out = list(tgt)
         clamped = 0
         for i in region:
             num = den = 0.0
-            for j in region:
+            for j in window(i, 3 * smooth_m):
                 d = abs(st[j] - st[i])
                 d = min(d, lap - d) if closed else d
-                if d <= 3 * SMOOTH_M:
-                    kw = math.exp(-0.5 * (d / SMOOTH_M) ** 2)
+                if d <= 3 * smooth_m:
+                    kw = math.exp(-0.5 * (d / smooth_m) ** 2)
                     num += kw * chg[j]                 # the CHANGE is smoothed (0 at the region's ends), not the edge:
                     den += kw                          # today's own shape stays, and nothing steps where the region ends
             out[i] = hw[i] + num / den
@@ -255,7 +336,8 @@ def retrace(pts, widths, closed, evidence, spans, rails, *, src="naip", clear_m=
         new_half[side] = out
         moved = [out[i] - hw[i] for i in region]
         rep["sides"][side] = {"rows_measured": len(med), "points": len(pts_s), "rows_clamped_after_smoothing": clamped,
-                              "other_sensors": {k: len(v) for k, v in pts_by[side].items() if k != src},
+                              "other_sensors": {k: len(v) for k, v in pts_by[side].items()
+                                                if k != src and not (agree and k in AGREE_SOURCES)},
                               "moved_m": {"min": round(min(moved), 3), "max": round(max(moved), 3)}}
     shift = [0.0] * n
     new_w = list(widths)

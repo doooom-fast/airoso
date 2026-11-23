@@ -121,7 +121,8 @@ def test_sand_creek_opts_in_and_ships_its_radii():
 
 def test_skip_list_names_its_why():
     """route.mouth_returns_skip (ledger 0086, 0.2.7): the named mouths get no returns; a row without a why is refused;
-    Sand Creek names exactly the two owed mouths whose returns turned verify_mouths red on m7a"""
+    Sand Creek named the two owed mouths whose returns turned verify_mouths red on m7a; at 0.2.9 grid_primary_78's lap end
+    is a sandcreek_quebec pad arm, not a mouth, and its row went with it (903c3436), so E 56th's grid_primary_80#0 is left"""
     assert mr.skip_list({}) == {}
     assert mr.skip_list({"route": {"mouth_returns_skip": [{"piece": "a#0", "end": "end", "why": "w"}]}}) == \
         {("a#0", "end"): "w"}
@@ -131,7 +132,7 @@ def test_skip_list_names_its_why():
     except ValueError:
         pass
     cfg = json.loads((ROOT / "tracks" / "sand-creek-lm" / "track.config.json").read_text(encoding="utf-8"))
-    assert set(mr.skip_list(cfg)) == {("grid_primary_78#0", "end"), ("grid_primary_80#0", "end")}
+    assert set(mr.skip_list(cfg)) == {("grid_primary_80#0", "end")}
 
 
 def test_fit_past_respread_is_opt_in_and_checked():

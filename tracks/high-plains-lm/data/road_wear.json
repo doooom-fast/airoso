@@ -22,7 +22,7 @@
     [
      "txNormalDetail",
      "building_normal.jpg",
-     "D:\\k10-worktrees\\hp-rw\\assets\\textures\\building_normal.jpg"
+     "D:\\k10-worktrees\\road-pilot\\assets\\textures\\building_normal.jpg"
     ]
    ],
    "props": {
@@ -53,8 +53,8 @@
     ],
     [
      "txNormalDetail",
-     "asphalt_cracked_normal.jpg",
-     "D:\\k10-worktrees\\hp-rw\\assets\\textures\\asphalt_cracked_normal.jpg"
+     "asphalt_dense_normal.jpg",
+     "D:\\k10-worktrees\\road-pilot\\assets\\textures\\asphalt_dense_normal.jpg"
     ]
    ],
    "props": {
@@ -561,6 +561,9 @@
    "prefix": "1KERB_CIRCUIT_",
    "levels": 16,
    "_doc": "ledger 0081's 20 traced kerb runs (tools/author_kerbs_blend.py, 1KERB_circuit_<k>: blue / white kerbs and blue / yellow paint stripes, kerb_atlas_hp.png): 18 of them lie partly over the lane (data/kerbs.built.json in_vs_ribbon_edge_m < 0) at their measured offsets, where the line's tyres run. Each face takes the photo's measured darkening at its centroid's signed offset from the line (rubber 'photo'), to one of 16 copies of its own paint (copy k = paint x (1 - k x the measured peak / 15)), its u moved into that copy (v, the stripes, untouched); the material row is the exporter's own (ksPerPixel, no VAR) with txDiffuse -> the levelled paint. 16 levels [invented]: a 1.5 % step"
+  },
+  "detail_highpass_m": {
+   "1ROAD": 0.5
   }
  },
  "stats": {
@@ -610,13 +613,14 @@
    ]
   },
   "1ROAD": {
-   "from": "asphalt_cracked_diffuse.jpg",
-   "normal": "asphalt_cracked_normal.jpg",
-   "clipped_pct": 1.27,
+   "from": "asphalt_dense_diffuse.jpg",
+   "normal": "asphalt_dense_normal.jpg",
+   "clipped_pct": 0.408,
    "size": [
     2048,
     2048
-   ]
+   ],
+   "highpass_m": 0.5
   }
  },
  "deepest_rubber": 0.0,

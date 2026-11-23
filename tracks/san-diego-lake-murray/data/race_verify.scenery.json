@@ -6,37 +6,24 @@
   "by_layout": {},
   "scenery_source": "trees: trees.txt (written); signs: data/signs.local.json",
   "scenery_items": {
-   "tree": 21111,
+   "tree": 21424,
    "sign": 29
   },
-  "scenery_beside": 395,
+  "scenery_beside": 390,
   "scenery_hits": 0,
   "scenery_min": {
-   "race_cw": {
-    "layout": "race_cw",
-    "kind": "tree",
-    "id": "Bush.bin#2445",
-    "vertex": 1196,
-    "lat_m": -2.696,
-    "xz": [
-     -1564.14,
-     -244.23
-    ],
-    "against": "closure",
-    "margin_m": 0.654
-   },
    "race_acw": {
     "layout": "race_acw",
     "kind": "tree",
-    "id": "Sage.bin#2386",
-    "vertex": 1054,
-    "lat_m": 2.694,
+    "id": "Gum.bin#21408",
+    "vertex": 1409,
+    "lat_m": -6.261,
     "xz": [
-     -1463.38,
-     -635.14
+     -1817.64,
+     331.51
     ],
-    "against": "closure",
-    "margin_m": 0.656
+    "against": "curb strip",
+    "margin_m": 0.074
    }
   },
   "scenery_r_m": {

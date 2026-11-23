@@ -262,3 +262,261 @@ bridge-rail panels at ±6.90 m, which drive_test's guard probe could not see (a 
 probe now credits a 1WALL the car's path crosses (GATES-CHANGELOG v0.18.1 fix round): street excursions **96** on r3,
 **96** on v0.18.0's own mesh under the same probe (98 / 100 under the old one). College is untouched by this round.
 Centreline, widths and `median_bands.json` are byte-identical to r2, and both Speedway chicanes are as verified.
+
+## Round 2, stage A (the PC, 2026-11-22): measured, designed, a proof scene; no geometry in the build yet
+
+Files: `tracks/san-diego-lake-murray/source/college_r2/` (README there has the numbers and how to rerun).
+
+- **Measured** (USGS CA_SanDiegoCo_D24 2024 lidar, class 2, read by the G10; NAIP 2022 for the pavement): the road is
+  split level from about v1180 to v1440. Northbound over southbound: 1.3 / 2.2 / 3.1 / 5.4 / 5.8 / 5.3 / 5.5 / 5.1 /
+  1.2 / 1.9 / 1.0 / 0 m at v1180 / 1200 / 1220 / 1240 / 1260 / 1280 / 1320 / 1340 / 1400 / 1420 / 1440 / 1460. Each
+  carriageway is about 10 m of pavement; the planted bank between them is median 10.5 m wide. The build is one slab at
+  the southbound grade, its northbound half up to 6.1 m below the real carriageway. The built outer edges sit a median
+  0.5 m (east) and 2.0 m (west) from the measured ones.
+- **Designed** (`college_design.json`): four control points across the road at every vertex v1130-1480; v1297-1300
+  bridged under the trees; northbound over southbound up to 6.17 m; long grade 9.5 % northbound, 9.3 % southbound (as
+  built 8.7 %); the ends meet the built road within 5 cm. Authoring keeps the built outer edges and rebuilds the middle
+  and the northbound height.
+- **The race on College:** each direction on its own carriageway: Speedway on the upper northbound road, Speedway
+  Reverse on the lower southbound one. The Mac decided it from the race corridor's standing rule, "an Alvarado-wide
+  lane on your own side of every road" (ledger 0049 section 9, the layouts' description; cited in ledger 0054 for the
+  median noses). Those are the layout description's words, not a sentence Kevin typed; he was asked on the PC the same
+  evening and had not answered. This replaces the crossover (`race.chicanes` entry `college_split`), which goes when
+  the split is built.
+- **Proof scene** (`college_proof.jpg`): before and after from three cameras. A shape study, not a game mesh.
+- **Next:** stage B, on a scratch copy of `lm_phase2/project`: both carriageways, the bank and island, the two
+  transitions, J1 tilted to its measured 6.08 % toward Waring as one change, then every consumer listed under "Bounded
+  proof" step 5; stage C, a full rehearsal through the Mac's queue. No gate threshold changes.
+
+## Round 2, stage B step 1 (the PC, 2026-11-22): the split as road data; nothing in the build yet
+
+The design is in `tracks/san-diego-lake-murray/source/college_r2/STEP-DESIGN.md` (option B of `CONSUMERS.md`: two
+roads, each with its own line; the two ends are plain road, not pads: step 2 below). The base is Lake Murray 0.20.4 (round 1c, ledger 0099),
+merged into `claude/lm-finish-r2-20261122`. The College step runs first in the author phase (college, `lamp_heads`,
+`walk_grade`, the race steps), so `walk_grade` grades the rebuilt walks like any other street's.
+
+- **Step 1, the data** (`college_split_data.py` -> `college_split.data.json`, `college_split.png`; no Blender), written
+  only into a scratch copy of the project. The mainline is the southbound road (345 vertices moved, v1131-1475, numbers
+  kept, up to 10.67 m west, 9.99 to 15.34 m wide); the northbound road is the piece `college_nb` (273 points, 8.36 to
+  14.1 m wide, up to 5.81 m over the southbound road); the bank between them has no width at the nose and the tail
+  (the two roads meet in a point there) and is up to 12.18 m wide. The lap `college` (mainline, the piece, mainline, two declared joins) stitches with the mainline's own
+  4,498 vertex numbers; Mission Gorge Speedway's lap is unchanged. Largest turn between 3 m segments 1.53 deg (the
+  built line: 1.08); largest grade step between segments 0.65 points (built: 0.57). Heights: the built west edge
+  keeps its place and its height (stage A: the west walk, the house lots and the ground behind them stay put), and
+  the lidar gives the shape laid onto it: each road's crossfall (within about 5 %) and the northbound road's rise.
+  So absolute heights stand off the lidar by what the built west edge does (-0.54 to +0.83 m): **they are the built
+  edge's heights, not measured ones; only the crossfall and the northbound rise are measured.** The offset is
+  recorded per vertex in `source/college_r2/college_datum_offset.json` (v, station, built edge, lidar there, built
+  minus lidar). Where the built height came from is not established (within 0.4 m of
+  `data/centerline.elevation.json`'s smoothed 3DEP profile, but not that profile). Putting College on the lidar
+  would move the west walk and the house lots: on the list for after College, not in this round.
+- **The no-route gate and the forks (CORRECTED 2026-11-23).** This note first said the no-route gate did not cover
+  the forks and that a green gate "says nothing about those four openings". That was wrong. `race_lap.stitch` does
+  skip the other carriageway as a mouth ("the branch is the lap"), but `tools/no_route.py` floods every cell within
+  half the road's width + 25 m of the lap's line and fails any reached cell outside the declared corridor, so an
+  unsealed fork is a leak it reports. Step 4 declared the corridor through each fork (the closure run to the point
+  where the roads part); no probe was added by hand.
+- **`college_edges.json`: `built_from_m` / `built_to_m` are not edges.** They are the built road's extent floored to
+  the lidar's 0.5 m cells (they step by half a metre from station to station; a midline taken from them turns 5.9 deg
+  between segments). The built outer edge is half the centreline's width (ROAD's own edge column). Stage A's decision
+  to keep the built outer edges stands; nothing may read those two fields as the edge.
+- **The Speedway lane on the northbound road follows the real road** (the Mac, 2026-11-22): the corridor is narrowed
+  to the measured carriageway on that piece (8.36 m at its narrowest, against the 11.36 m it asks for elsewhere); the
+  road is not widened to fit the corridor, and a gate that cannot pass on the real width is reported, not loosened.
+- **The race on College:** built as decided above (each direction on its own carriageway); Kevin's answer on the board
+  wins if it differs.
+
+- **Step 2, the ribbons** (`college_split_blend.py`, on the scratch scene only): the mainline rows become the southbound
+  road, the northbound road is a new ribbon in ROAD; 41,072 plan samples, every one on pavement under exactly one face
+  and every one on the bank under none; a second run changes nothing. The forks turned out to need no pads: with the
+  built outer edges kept, the built rows already pave them (tilt eased in, a fan of six faces where the two roads begin).
+  The island begins and ends in a point. Walks, the old island, paint, lamps and ground are the next steps.
+
+- **Step 3, the middle** (`college_middle_blend.py`, scratch scene only): the old island, its grass top, its barrier, the
+  street-only pieces and the paint are out between rows v1116 and v1476; in their place the bank's island and grass top,
+  a barrier at the top of the bank, the east walk raised with the northbound road (up to 5.55 m) and new paint on the
+  forks and the two one-way roads. Faces per object and the checks are in `STEP-DESIGN.md`, "Step 3 done". No lamp or
+  sign stood on the old median. **120 median bushes (TreeFX, `data/scatter_positions.json`) still stand on rows
+  v1114-1478, 30 of them on what is now the fork's pavement**: the data step has to drop them and plant the bank.
+
+## Known defect of the current build: every median shows asphalt between its curbs (measured 2026-11-23)
+
+Found while reading the prep for round 2. It is in the build already (0.20.2, 0.20.3; 0.20.4 does not change it) and is
+not something round 2 introduces.
+
+- **What.** No Lake Murray median has a grass top in the game. Between an island's two curb strips the visible surface
+  is the road's own asphalt; the bushes stand on it.
+- **Why.** The median tool (`tools/author_median_blend.py`) joins each island's grass top into `TERRAIN`, 0.185 m over
+  the slab the island stands on. The prep Lake Murray runs (engine-july `scripts/ac/build_kn5_loop.py`,
+  `_conform_and_reseat`, "pin + feather") sets every ground vertex that has pavement straight above or below it to the
+  deck less 0.02 m. The whole island stands on pavement, so its whole top goes 0.02 m under the road. The tool's own
+  header says so for the street-only span ("the prep pins it under the road"); it holds for every island.
+- **Measured** on the 0.20.3 rehearsal's own output, read-only: `D:/k10-scratch/rehearse_0099_1/data/track.obj` (the
+  street layout's kn5 set as one OBJ), with `source/college_r2/median_tops_check.py` ->
+  `source/college_r2/median_tops_0_20_3.json`. At the centre and the two quarter points of every island row at least
+  1.2 m wide: the highest 1GRASS surface against the highest 1ROAD surface straight above or below.
+  **14 islands, 7,464 m; 2,486 rows sampled; 2,486 with the grass 0.02 m under the road; 0 with grass over it.** (18
+  more rows are nose tapers under 1.2 m wide and were not sampled.)
+
+| Line | Rows | Stations (m) | Length (m) | Width (m) | Rows sampled | Grass under the road | Grass over it |
+|---|---|---|---|---|---|---|---|
+| mainline, College Avenue | v846-1073 | 2526-3210 | 684 | 3.4-7.0 | 228 | 228 | 0 |
+| mainline, College Avenue | v1096-1487 | 3281-4455 | 1174 | 4.39-7.0 | 392 | 392 | 0 |
+| mainline, Navajo Road | v1540-1739 | 4610-5208 | 598 | 2.66-6.92 | 200 | 200 | 0 |
+| mainline, Navajo Road | v2183-2297 | 6543-6885 | 342 | 1.5-5.93 | 115 | 115 | 0 |
+| del_cerro_blvd | v5-215 | 15-648 | 632 | 3.72-5.35 | 211 | 211 | 0 |
+| del_cerro_blvd | v240-308 | 721-924 | 203 | 3.81-5.02 | 69 | 69 | 0 |
+| del_cerro_blvd | v320-473 | 958-1419 | 461 | 4.7-6.0 | 154 | 154 | 0 |
+| north_J1_waring | v8-315 | 22-931 | 910 | 1.5-5.99 | 308 | 308 | 0 |
+| north_princess_view | v129-173 | 387-519 | 132 | 1.0-5.7 | 43 | 43 | 0 |
+| north_princess_view | v200-228 | 600-685 | 84 | 1.77-5.36 | 29 | 29 | 0 |
+| north_mission_gorge | v8-48 | 24-145 | 120 | 0.62-1.61 | 25 | 25 | 0 |
+| north_mission_gorge | v54-57 | 163-172 | 9 | 1.71-1.76 | 4 | 4 | 0 |
+| north_mission_gorge | v63-741 | 190-2222 | 2032 | 1.5-7.98 | 679 | 679 | 0 |
+| north_J5_jackson_north | v621-649 | 1857-1939 | 82 | 1.43-6.1 | 29 | 29 | 0 |
+- **Round 2 and College.** The split replaces College's island between rows v1116 and v1476 by a bank that has no slab
+  under it; its top is released ground, which the prep pins only under pavement, so it stays grass (checked on the
+  scratch scene's prep run, below). The two College islands that stay (to v1116; v1476-1487) and every other median
+  are NOT touched in this round. Whether the rest joins round 2 or goes after is the Mac's call.
+
+## Round 2, stage B steps 4a to 4c (the PC, 2026-11-23): the prep run on the scratch scene; the ground; the plants
+
+Numbers, the six prep runs and what each one showed are in `source/college_r2/STEP-DESIGN.md`, "Step 4a to 4c done".
+
+- **The prep Lake Murray runs is engine-july's** (`ENG`, a copy of `D:/k10-scratch/eng_repro`), not airoso's
+  `scripts/ac/build_kn5_loop.py`; my first notes on it were read off the wrong file and are corrected there. It pins
+  ground under pavement at the ground's own vertices, leaves released ground (`data/ground_release.json`) as the
+  scene has it, and cuts long ground edges before it pins.
+- **On the scratch scene the split comes out of the prep clean** (run 6): no ground within 5 mm of either road's
+  surface or the forks' at 5,218 samples; the bank's grass top exactly as authored at 1,335 samples, so **College's
+  bank is grass, not asphalt**; behind the raised east walk the ground stands 0.02 m under the road's edge on all 170
+  rows sampled and the walk's lip is under it on every one.
+- That took fixes in the scripts, each from a measured fault: rows planar across; the east ground as a strip of its
+  own; the old ground under the split cut to 1.5 m edges and pushed under the lower inner edge inside the bank;
+  vertices told apart by a tag on the mesh, not by a Python reference (step 3's "no other vertex moved" check could
+  not fail before; it now compares 83,646 vertices).
+- **The median plants** on rows v1114-1478: 120 spots; 53 dropped (all bare on the lidar: 44 on the forks' pavement, 7
+  on the southbound pavement, 2 beside a new island nose); 67 kept (38 with a lidar height, 29 bare), their feet put
+  on the bank's top. Kevin's 33 tall plants ("Keep all 33 at their lidar heights"): 14 are on these rows, all 14 on
+  the bank, none on pavement. Nothing new is planted: the lidar's plant tops are on the G10. Report only so far
+  (`college_plants.report.json`); written in step 4d.
+- **The barrier at the top of the bank cannot be told from the PC's data** (aerial 0.6 m a pixel, bare-ground lidar).
+  It stays `[invented]` until the G10's lidar returns are read along the northbound road's inner edge.
+
+## Round 2, stage B steps 4d and 4e (the PC, 2026-11-23): the rail out, the bank planted from the lidar, the author phase green on scratch
+
+Scratch workshop only; nothing built into the chain, nothing installed. `source/college_r2/STEP-DESIGN.md`,
+"Step 4d and 4e done", has the tables.
+
+- **No rail on the bank.** The G10 read the 2024 lidar along both inner edges, rows v1176-1440
+  (`college_bank_rail.g10.json`): northbound 0 rail-like bins of 53, 0.43 returns a metre in the 0.5-1.2 m band (a
+  W-beam gives about 45 a bin); southbound, the control, 0 of 53. Step 3's invented beam and posts are gone. One
+  object is not identified: about 0.65 m tall, 0.6 to 1.0 m behind the northbound edge at v1186-1195. Nothing is
+  built there.
+- **The bank is planted from measured tops** (`college_bank_tops.g10.json`, 465 tops): 396 planted where they stand at
+  their own height and crown (263 trees, 133 shrubs); 42 are kept median spots (21 tops on 13 of Kevin's 14 tall
+  plants, 21 on 12 of the other 22 measured spots); 25 are not on the bank's grass top as built and are listed, not
+  moved (9 northbound pavement, 6 southbound, 10 curb ring); 2 are not plants; 0 duplicate a tree the planner
+  already places (it places none on the bank). Spot 191 (v1250, one of the 14) has no top within 2 m: the nearest
+  is 3.25 m off; it stays.
+- **Shrub or tree at 4.0 m, `[invented]`**: the lm-shrub tool's own fallback. The 2024 lidar shows no shrub/tree
+  valley at Lake Murray: `lm_shrub.summary.json` (md5 5d9e08b708e591e1b67c7ffe7fbbae41, 2026-11-16; tops npz md5
+  e722d5daa98c540f05ded2f854a1ca92) has `shrub_tree_split_m.antimode_natural` null. Species cannot be read off
+  lidar: shrubs take the median's bush mix, trees Lake Murray's `trees` mix.
+- **The exclusion list is 82 median spots**, declared, no measured file rewritten: 53 on pavement, the 28 bare spots
+  on the bank, and one measured spot (208, v1410, 7.0 m) that stands on the curb ring 0.13 m from the southbound
+  edge; `tools/verify_race.py` G refused it (trunk 0.03 m into the race curb strip) and its own measured top is
+  planted in its place.
+- **Engine changes, each opt-in and tested:** `tools/make_treefx.py` `scenery.treefx.lidar_plants` (a declared list
+  of measured plants; the split is the config's, no default); `scripts/geometry/race_lap.mainline_approach` with
+  `tools/place_signs.py` and `tools/verify_signs.py` (a layout on a lap that walks the mainline through a
+  per-layout corner gets its plate there: the Speedway on the College lap keeps M3 and M4, the north lap still gets
+  neither).
+- **Step 4e:** on the scratch workshop the College step and the chain's author phase all pass: `lamp_heads`,
+  `walk_grade`, `race_bands` (planned no-route PASS for all four race layouts), `race_planned_gate`,
+  `layout_dummies`, `race_author`, `signs` (29 posts, 4 layout plates, verify PASS), `race_verify` (OK on the
+  mainline and both laps). The prep, the export and the gates after them are the rehearsal's.
+
+## The medians fixed on scratch, and College wired into the chain (the PC, 2026-11-23; version 0.20.5, not built)
+
+- **College is in the chain.** `tools/ship_track.sh` `author_college_split`, first in Lake Murray's author phase,
+  opt-in `route.college_split`: the data step held to the committed split, then the three scene steps. Airoso's own
+  config and road data carry the split. On a workshop seeded the way the chain seeds one from main 04e0a9b4 (the
+  0.20.4 blend) every author step passes, and a second run of the College commands leaves the blend and the data
+  byte for byte the same. `source/college_r2/STEP-DESIGN.md`, "Wired into the chain".
+- **The medians: releasing the ground cannot work.** The prep pins every 1GRASS vertex that has pavement above or
+  below it, released or not, and its anti-poke pass clamps the rest. The prep of record is not changed.
+- **The fix (the Mac's option (a)).** `tools/author_median_tops_blend.py`, author step `median_tops`, opt-in
+  `route.median_tops`: each island's grass top leaves TERRAIN for its own object, `1LAWN_median`, which the prep does
+  not take as ground. The name is the surface and the material in AC; `lawn_as_grass` writes the LAWN key with
+  GRASS's own values, so the grip is grass. TreeFX seats the median plants on it.
+- **Measured through the build's own prep on scratch:** one island first (Navajo v1540-1739: 200 of 200 rows
+  grass), then all 14: **2,123 of 2,123 island rows read grass** (0.20.3: 0 of 2,486). The top stands 0.141 to 0.228 m over the road after the prep on all 4,282 of its vertices (median 0.185), the same as before it: the prep does not move it, and no vertex is without road under it.
+- **Mission Gorge v54-57 is not an island (corrected the same day).** First reported as "one island, 4 rows, still
+  asphalt". The median tool builds an island only from a run of 6 rows or more, so it built nothing there: no curb
+  ring, only the two yellow lines. Nothing is authored; a raised island there (the plan's MD12, 12.5 m) would be new
+  geometry, owed if wanted. The measure and the step's report now count a run under 6 rows apart.
+- **Mission Gorge's raised median is declared terracotta in the plan.** The median tool authors every island's top
+  as grass and the pipeline has no terracotta surface, so its 2.15 km now read grass where 0.20.4 showed asphalt.
+  Not decided here.
+- **Checks.** No check refuses grass over pavement for this object. `verify_kn5` check 6 and `audit_mesh` B read
+  1GRASS only and do not judge the top; `verify_kn5` face-up and `drive_test`'s soft-top-in-lane do
+  (`fleet/GATES-CHANGELOG.md`, 2026-11-23). The full chain's gates have not run on it: that is the rehearsal.
+
+## 0.20.5's first rehearsal red at kn5_ground_check; the split's ground fixed on scratch (the PC, 2026-11-23; not built)
+
+- **The rehearsal** (b844ad07, `D:/k10-scratch/rehearse_0205`): every gate green but `kn5_ground_check`, on all five
+  layouts: "terrain has 202 double-sheet cells" (0.20.4: 0), and "deck-vs-mountain max +5.181" (0.20.4: +0.255,
+  reported only). Not installed; nothing forced.
+- **Cause, mine.** The strip of ground the College step adds east of the northbound road (the east shelf) ran every
+  row on to 19.5 m, at the lower of the falling fill and 0.30 m under the old ground: under the cut it lay up to
+  19.4 m down inside the hill, a second sheet of ground. The notes said "0.3 m under it"; the code did not do that.
+  The 5.18 m was old ground left at the old slab's height just outside the raised road's edges, under the walk, the
+  curb and the bank's top: hidden walls, read by the check at the road's own edge vertices.
+- **Why it reached a rehearsal.** My scratch pass ran the prep and the medians' measure, never `kn5_ground_check`.
+- **The fix** (`source/college_r2/college_ground_blend.py`, `college_shelf.py`; no gate, threshold or prep changed):
+  the shelf ends where it goes under the old ground; old ground wholly under the bank's top or the open shelf is
+  taken out of TERRAIN (32,342 faces); what is left at a seam sits just under the surface over it; the ground
+  under the split's own roads is set where the prep will pin it; the step refuses to save a scene in which a 2 m
+  cell near the split holds ground heights more than 12 m apart that it did not before (the gate's lens and number).
+- **Measured on scratch through the chain's own commands** (author phase, prep and its sub-steps, split, road
+  export, `kn5_ground_check`; then street and race_cw `drive_test`, `audit_mesh`, `no_route`): double-sheet cells
+  **0** (202); deck-vs-mountain max +0.313 (+5.181; 0.20.4 +0.255); street `drive_test` PASS: 10 drops, 44 far ledges, severe 0;
+  street audit CLEAN; race_cw `drive_test` PASS: severe 7, 0 drops, 142 far ledges; race_cw audit CLEAN; `no_route` PASS: leak 0, reached 138.2 k m2.
+  `source/college_r2/STEP-DESIGN.md`, "0.20.5's first rehearsal", has the table and what is left.
+- **Kept**: `source/college_r2/scratch/` (the scratch run and `ground_look.py`, which lists the places behind the
+  check's numbers). Every College change goes through that run before it is pushed (the Mac, 2026-11-23).
+
+
+## 0.20.5 rehearsal 2 green and the install, no force (the PC, 2026-11-23)
+
+- **Rehearsal 2** (c6352faf, empty workshop `D:/k10-scratch/rehearse_0205b`, ENG a fresh copy of eng_repro, `--no-install
+  --skip-blend`, 08:50-09:27): SHIP OK, every gate exit 0. `kn5_ground_check` on all five layouts: double-sheet cells **0**
+  (rehearsal 1: 202), deck-vs-mountain max **+0.313** (+5.181), the north junction 0.20.4 has too. Street `drive_test`
+  off-road drops 10 (rehearsal 1: 11). The line gates pass both ways; drive_test's own lap rule reads its excursions as
+  before (fwd 17, rev 21: reported, as on 0.20.4).
+- **Against rehearsal 1** (b844ad07): the gate rows differ only in the College ground's numbers and what the ground carries.
+  The race, closure and street kn5 are EQUIVALENT (tangents only); the 20 AI files are identical. In the main kn5 the
+  terrain tiles, rock and a few seated things moved: buildings re-seated by 6 mm at most, 6 sidewalk lip vertices by
+  3.6 cm at most; `1LAWN_median` holds the same points in another order.
+- **The install** (09:30-10:08, the chain's own empty workshop `D:/k10-scratch/lm_line`; 0.20.4's moved to
+  `D:/k10-scratch/lm_line.0.20.4`, kept): SHIP OK, all five layouts 0.20.5 as `san_diego_lake_murray_v4`, 0.20.4 parked in
+  `D:/k10-track-archive/2026-11-23_100800/`. = rehearsal 2: 1,135/1,135 gate rows (the workshop's name aside); every kn5
+  equivalent but the main one, whose `1LAWN_median` and `ROOFTOP_SHINGLE_0` hold the same points in another order
+  (ROOFTOP_SHINGLE_0 27,729 -> 27,728 vertices by the exporter's merge, as between the two rehearsals); AI identical. The
+  14 kn5 in AC are byte-identical to the build; the trees came along (14 .bin, the same list as 0.20.4).
+- **Menu pictures.** The install brought the track outline as its picture (the branch's `source/ui` holds none of 0.20.4's):
+  0.20.4's five pictures are put back in AC as a stopgap (the outlines kept in
+  `D:/k10-track-archive/2026-11-23_101500_lm0205_pictures_stopgap`, PREVIEWS.tsv there). 0.20.5's are drawn in a later PC slot.
+- **The blend.** The install synced back `loop.blend` at 204,545,652 B, sha256 bc7f772e... (0.20.4's pinned 495a2198...,
+  `tests/tools/test_lake_murray_0099.py`); committed as the sync-back, as 0.20.4's was. The next empty workshop seeds it.
+- Records on `claude/lm-0205-install-20261123` (sync-back 3a789d9c, main fcef3efe merged d60d786b); nothing pushed onto
+  `claude/lm-finish-r2-20261122`. Kevin's standing word on the PC: "Yes and I always want newer builds".
+
+### The Mac's merge of 0.20.5's records (2026-11-23)
+
+Two of ledger 0099's own tests, as after 0.20.4: the install synced back what the College round made.
+- `sync_in.seed` 93 -> 100: the College lap's records airoso now holds (barrier_bands.college, lap.college,
+  median_tops, race_authored.college, race_college.kn5, race_verify.college, race_verify.scenery.college).
+- The committed `loop.blend` is now 0.20.5's synced-back blend, 204,545,652 B, sha256 bc7f772e57500efc...; the next
+  empty workshop seeds it. Every author step on it is idempotent (College's second pass byte for byte, above).

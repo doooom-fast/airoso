@@ -1,0 +1,194 @@
+{
+ "_doc": "tools/author_median_tops_blend.py (ledger 0055): the medians' grass tops moved out of TERRAIN into their own object, which the prep does not pin under the road",
+ "object": "1LAWN_median",
+ "only": null,
+ "islands": [
+  {
+   "line": "MAINLINE",
+   "rows": [
+    846,
+    1073
+   ],
+   "strips": 1,
+   "vertices": 456,
+   "faces": 454
+  },
+  {
+   "line": "MAINLINE",
+   "rows": [
+    1096,
+    1116
+   ],
+   "strips": 1,
+   "vertices": 42,
+   "faces": 40
+  },
+  {
+   "line": "MAINLINE",
+   "rows": [
+    1476,
+    1487
+   ],
+   "strips": 1,
+   "vertices": 24,
+   "faces": 22
+  },
+  {
+   "line": "MAINLINE",
+   "rows": [
+    1540,
+    1739
+   ],
+   "strips": 1,
+   "vertices": 400,
+   "faces": 398
+  },
+  {
+   "line": "MAINLINE",
+   "rows": [
+    2183,
+    2297
+   ],
+   "strips": 1,
+   "vertices": 230,
+   "faces": 228
+  },
+  {
+   "line": "del_cerro_blvd",
+   "rows": [
+    5,
+    215
+   ],
+   "strips": 1,
+   "vertices": 422,
+   "faces": 420
+  },
+  {
+   "line": "del_cerro_blvd",
+   "rows": [
+    240,
+    308
+   ],
+   "strips": 1,
+   "vertices": 138,
+   "faces": 136
+  },
+  {
+   "line": "del_cerro_blvd",
+   "rows": [
+    320,
+    473
+   ],
+   "strips": 1,
+   "vertices": 308,
+   "faces": 306
+  },
+  {
+   "line": "north_J1_waring",
+   "rows": [
+    8,
+    315
+   ],
+   "strips": 1,
+   "vertices": 616,
+   "faces": 614
+  },
+  {
+   "line": "north_princess_view",
+   "rows": [
+    129,
+    173
+   ],
+   "strips": 1,
+   "vertices": 90,
+   "faces": 88
+  },
+  {
+   "line": "north_princess_view",
+   "rows": [
+    200,
+    228
+   ],
+   "strips": 1,
+   "vertices": 58,
+   "faces": 56
+  },
+  {
+   "line": "north_mission_gorge",
+   "rows": [
+    8,
+    48
+   ],
+   "strips": 1,
+   "vertices": 82,
+   "faces": 80
+  },
+  {
+   "line": "north_mission_gorge",
+   "rows": [
+    63,
+    741
+   ],
+   "strips": 1,
+   "vertices": 1358,
+   "faces": 1356
+  },
+  {
+   "line": "north_J5_jackson_north",
+   "rows": [
+    621,
+    649
+   ],
+   "strips": 1,
+   "vertices": 58,
+   "faces": 56
+  }
+ ],
+ "strips": 14,
+ "vertices": 4282,
+ "faces": 4254,
+ "deck_over_the_road_m": {
+  "min": 0.1415,
+  "max": 0.2283
+ },
+ "rows_checked": 2123,
+ "rows_with_no_top": 0,
+ "rows_with_the_top_at_two_of_three_points": [
+  {
+   "line": "north_princess_view",
+   "row": 204,
+   "no_top_at_offset_m": -1.14,
+   "band_w_m": 5.0
+  },
+  {
+   "line": "north_princess_view",
+   "row": 210,
+   "no_top_at_offset_m": -1.11,
+   "band_w_m": 4.89
+  }
+ ],
+ "_rows_two_of_three_doc": "the built island is narrower than its band in data/median_bands.json on one side there; the row still reads grass by the measure's own rule (two of three points)",
+ "islands_with_no_deck_in_the_scene": [],
+ "_no_deck_doc": "the scene holds no grass top for these islands (nothing stands 0.185 m over the road between their rows), so there is nothing to move: they show the road between their curbs, as before",
+ "band_runs_too_short_to_be_islands": [
+  {
+   "line": "north_mission_gorge",
+   "rows": [
+    54,
+    57
+   ]
+  }
+ ],
+ "_short_runs_doc": "runs of the median band under 6 rows: tools/author_median_blend.py builds no island for them (no curb, no top), so they are no part of this step",
+ "terrain": {
+  "vertices": [
+   675413,
+   671131
+  ],
+  "faces": [
+   1323069,
+   1318815
+  ]
+ },
+ "loose_strips_left_in_terrain_with_no_road_under_them": "left as ground (College's bank top)"
+}

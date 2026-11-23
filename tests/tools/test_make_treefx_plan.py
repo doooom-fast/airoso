@@ -56,6 +56,17 @@ def test_surface_materials_list_every_physical_tile_off_the_gate_obj():
         raise AssertionError("no gate OBJ must stop the TreeFX writer, not fall back to a guessed tile list")
 
 
+def test_the_medians_own_tops_join_the_seating_list_only_where_declared():
+    """Ledger 0055: route.median_tops.object names the medians' grass tops (their own object since the prep pins
+    1GRASS under the road); TreeFX seats on it too, so a median's plants keep their feet on the island. Not declared
+    (every other track) = the list as before, even where a 1LAWN tile exists"""
+    d = _project()
+    _gate_obj(d, ["1GRASS_1", "1LAWN_median", "1GRASS_0", "1ROAD_road", "1LAWN_3"])
+    assert mt.surface_materials(d) == "1GRASS_0_mat, 1GRASS_1_mat, 1ROAD_road_mat"
+    (d / "track.config.json").write_text(json.dumps({"slug": "tiny", "route": {"median_tops": {"object": "1LAWN_median"}}}))
+    assert mt.surface_materials(d) == "1GRASS_0_mat, 1GRASS_1_mat, 1LAWN_median_mat, 1ROAD_road_mat"
+
+
 def test_plan_is_what_build_writes():
     d = _project()
     p = mt.plan(d)
@@ -449,3 +460,137 @@ def test_median_measured_refuses_a_stale_file_or_an_unread_model():
     (d / "track.config.json").write_text(json.dumps(cfg))
     with pytest.raises(SystemExit, match="Sage.bin"):
         mt.plan(d)
+
+
+def _with_median_spots(d, spots):
+    cfg = json.loads((d / "track.config.json").read_text())
+    cfg.setdefault("scenery", {}).setdefault("treefx", {})["median_spots"] = spots
+    (d / "track.config.json").write_text(json.dumps(cfg))
+    return d
+
+
+def test_median_spots_drop_and_foot_leave_every_other_spot_as_it_was():
+    """Ledger 0055 round 2 (the College split): a median spot that would stand on pavement is declared dropped, one whose
+    ground moved gets its foot height; scatter_positions.json and the measured heights file are not rewritten, so every
+    other spot keeps its index and with it its model, size, angle and line, byte for byte. Absent = nothing changes"""
+    hs, cs = [5.13, 0.07, 12.4, 2.2, None, 0.31], [3.2, None, None, 1.4, None, 0.9]
+    base = [ln for ln in mt.plan(_median_project(hs, cs))["lines"] if ln.startswith("tree: ")]
+    d = _median_project(hs, cs)
+    med = json.loads((d / "data" / "scatter_positions.json").read_text())["median_planting"]
+    before = (d / "data" / "scatter_positions.json").read_bytes(), (d / "source" / "vegetation" / "m.json").read_bytes()
+    _with_median_spots(d, {"drop": [{"index": 1, "x": med[1]["x"], "z": med[1]["z"], "why": "on pavement"},
+                                    {"index": 4, "x": med[4]["x"], "z": med[4]["z"], "why": "on pavement"}],
+                           "foot_y": [{"index": 2, "x": med[2]["x"], "z": med[2]["z"], "y": 3.5, "why": "on the bank"}]})
+    p = mt.plan(d)
+    lines = [ln for ln in p["lines"] if ln.startswith("tree: ")]
+    assert p["median_spots"] == {"dropped": 2, "foot_moved": 1} and len(lines) == 4
+    assert [lines[0], lines[2], lines[3]] == [base[0], base[3], base[5]]            # untouched spots: byte for byte
+    assert lines[1] == base[2].replace(", 0.10, ", ", 3.50, ")                      # the same plant, its foot moved
+    assert p["median_measured"] == {"measured": 4, "crown_measured": 3, "kept_rank_rule": 2}    # the heights file is whole
+    assert before == ((d / "data" / "scatter_positions.json").read_bytes(), (d / "source" / "vegetation" / "m.json").read_bytes())
+    mt.build(d)
+    assert json.loads((d / "data" / "treefx.report.json").read_text())["median_spots"] == {"dropped": 2, "foot_moved": 1}
+    assert "median_spots" not in mt.plan(_median_project(hs, cs))                   # not declared: the plan as before
+    # the same lists in a file of their own: the same plan, line for line; a file that is not there is an error
+    spots = json.loads((d / "track.config.json").read_text())["scenery"]["treefx"]["median_spots"]
+    (d / "source" / "spots.json").write_text(json.dumps(spots))
+    by_file = mt.plan(_with_median_spots(d, {"file": "source/spots.json"}))
+    assert by_file["lines"] == p["lines"] and by_file["median_spots"] == p["median_spots"]
+    import pytest
+    with pytest.raises(SystemExit, match="nowhere.json"):
+        mt.plan(_with_median_spots(d, {"file": "source/nowhere.json"}))
+
+
+def test_median_spots_refuses_a_list_made_for_other_spots():
+    import pytest
+    d = _median_project([1.0, 2.0, 3.0], [None] * 3)
+    med = json.loads((d / "data" / "scatter_positions.json").read_text())["median_planting"]
+    with pytest.raises(SystemExit, match="another draft"):
+        mt.plan(_with_median_spots(d, {"drop": [{"index": 1, "x": med[1]["x"] + 0.5, "z": med[1]["z"]}]}))
+    with pytest.raises(SystemExit, match="index 7"):
+        mt.plan(_with_median_spots(d, {"drop": [{"index": 7, "x": 0.0, "z": 0.0}]}))
+    with pytest.raises(SystemExit, match="declared twice"):
+        mt.plan(_with_median_spots(d, {"drop": [{"index": 1, "x": med[1]["x"], "z": med[1]["z"]}],
+                                       "foot_y": [{"index": 1, "x": med[1]["x"], "z": med[1]["z"], "y": 1.0}]}))
+
+
+_LP_NATIVE = {"Bush.bin": (20.660005569458, 34.3843803405762), "Sage.bin": (1.5, 2.0), "Gum.bin": (24.0, 11.0),
+              "Oak3.bin": (9.5, 12.0)}
+
+
+def _with_lidar_plants(d, plants, **over):
+    """the median project plus a declared list of lidar plants (scenery.treefx.lidar_plants)"""
+    (d / "source" / "bank.json").write_text(json.dumps({"plants": plants}))
+    cfg = json.loads((d / "track.config.json").read_text())
+    entry = {"file": "source/bank.json", "split_h_m": 4.0, "shrubs": "median_planting", "trees": "trees",
+             "native_h_m": {m: hw[0] for m, hw in _LP_NATIVE.items()}, "native_w_m": {m: hw[1] for m, hw in _LP_NATIVE.items()}}
+    entry.update(over)
+    cfg.setdefault("scenery", {}).setdefault("treefx", {})["lidar_plants"] = {k: v for k, v in entry.items() if v is not None}
+    (d / "track.config.json").write_text(json.dumps(cfg))
+    return d
+
+
+def _lp_project():
+    d = _median_project([5.13, 0.07, 2.2], [3.2, None, 1.4])
+    for b in ("Gum.bin", "Oak3.bin"):
+        (d / "source" / "trees" / b).write_bytes(b"bin")
+    return d
+
+
+_LP_PLANTS = [{"key": 568625, "x": 31.0, "z": 0.4, "y": 1.2, "h_m": 0.41, "crown_m": 2.66},
+              {"key": 244530, "x": 44.0, "z": -1.1, "y": 1.5, "h_m": 5.81, "crown_m": 3.64},
+              {"key": 572323, "x": 52.5, "z": 2.0, "y": 2.0, "h_m": 20.44, "crown_m": 6.1},
+              {"key": 100001, "x": 61.0, "z": 0.0, "y": 2.2, "h_m": 3.99, "crown_m": 1.1}]
+
+
+def test_lidar_plants_stand_at_their_own_height_and_crown_split_into_shrubs_and_trees():
+    """Ledger 0055 round 2 (the College bank): a declared list of plants the lidar measured. Each is drawn where it
+    stands at its own height and crown; under the config's split it takes the shrub mix, at or over it the tree mix;
+    its lines come last, so every other line is where it was; unguarded, as a median's plants are. Absent = as before"""
+    base = mt.plan(_lp_project())
+    d = _with_lidar_plants(_lp_project(), _LP_PLANTS)
+    p = mt.plan(d)
+    assert p["lines"][:len(base["lines"])] == base["lines"]                   # nothing above moved
+    assert p["lidar_plants"] == {"split_h_m": 4.0, "lidar_shrubs": 2, "lidar_shrubs_listed": 2, "lidar_trees": 2,
+                                 "lidar_trees_listed": 2}
+    assert p["counts"]["lidar_shrubs"] == 2 and p["counts"]["lidar_trees"] == 2
+    new = [ln for ln in p["lines"][len(base["lines"]):] if ln.startswith("tree: ")]
+    by_pos = {(q["x"], q["z"]): q for q in _LP_PLANTS}
+    shrub_models, tree_models = {s[0] for s in mt.ZONES["median_planting"]}, {s[0] for s in mt.ZONES["trees"]}
+    for ln in new:
+        model = ln.split(";")[0][len("tree: "):]
+        x, y, z = (float(c) for c in ln.split("pos=")[1].split(";")[0].split(","))
+        q = by_pos[(x, -z)]                                                   # trees.txt carries x, y, -z; on the road or not
+        assert y == q["y"]
+        assert model in (shrub_models if q["h_m"] < 4.0 else tree_models), ln
+        H, W = _LP_NATIVE[model]
+        size = float(ln.rsplit("size = ", 1)[1].split(";")[0])
+        width = float(ln.rsplit("width = ", 1)[1])
+        assert abs(size * H - q["h_m"]) <= 0.0005 * H + 1e-9, ln              # the lidar's height, to the written precision
+        assert abs(width * W * size - q["crown_m"]) <= 0.005 * W * size + 1e-9, ln
+    assert len(new) == 4
+    # a plant leaves the list: every other plant keeps its model, angle and line (the hash is on its key, not its place)
+    fewer = mt.plan(_with_lidar_plants(_lp_project(), _LP_PLANTS[1:]))
+    assert [ln for ln in fewer["lines"][len(base["lines"]):] if ln.startswith("tree: ")] == [ln for ln in new if "pos=31.00" not in ln]
+    mt.build(d)
+    assert json.loads((d / "data" / "treefx.report.json").read_text())["lidar_plants"]["lidar_trees"] == 2
+    assert "lidar_plants" not in base and "lidar_trees" not in base["counts"]   # not declared: the plan as before
+
+
+def test_lidar_plants_refuse_a_missing_split_an_unread_model_or_a_bad_list():
+    import pytest
+    with pytest.raises(SystemExit, match="split_h_m"):
+        mt.plan(_with_lidar_plants(_lp_project(), _LP_PLANTS, split_h_m=None))
+    with pytest.raises(SystemExit, match="no species mix"):
+        mt.plan(_with_lidar_plants(_lp_project(), _LP_PLANTS, trees="pines"))
+    with pytest.raises(SystemExit, match="Gum.bin"):
+        mt.plan(_with_lidar_plants(_lp_project(), _LP_PLANTS, native_h_m={m: hw[0] for m, hw in _LP_NATIVE.items() if m != "Gum.bin"}))
+    with pytest.raises(SystemExit, match="stands twice"):
+        mt.plan(_with_lidar_plants(_lp_project(), _LP_PLANTS + [dict(_LP_PLANTS[0], x=70.0)]))
+    with pytest.raises(SystemExit, match="'crown_m'"):
+        mt.plan(_with_lidar_plants(_lp_project(), [dict(_LP_PLANTS[0], crown_m=None)]))
+    d = _with_lidar_plants(_lp_project(), _LP_PLANTS)
+    (d / "source" / "bank.json").unlink()
+    with pytest.raises(SystemExit, match="bank.json"):
+        mt.plan(d)
+

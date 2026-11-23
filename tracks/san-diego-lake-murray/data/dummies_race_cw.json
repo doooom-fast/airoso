@@ -179,10 +179,10 @@
  "_station_m": {
   "AC_TIME_0_L": 896.51,
   "AC_TIME_0_R": 896.51,
-  "AC_TIME_1_L": 5400.61,
-  "AC_TIME_1_R": 5400.61,
-  "AC_TIME_2_L": 9913.65,
-  "AC_TIME_2_R": 9913.65,
+  "AC_TIME_1_L": 5399.91,
+  "AC_TIME_1_R": 5399.91,
+  "AC_TIME_2_L": 9912.94,
+  "AC_TIME_2_R": 9912.94,
   "AC_START_0": 869.46,
   "AC_HOTLAP_START_0": 869.46,
   "AC_START_1": 863.96,
@@ -225,5 +225,6 @@
   "AC_PIT_5": 3.25,
   "AC_PIT_6": 3.25,
   "AC_PIT_7": 3.25
- }
+ },
+ "_lap": "college"
 }

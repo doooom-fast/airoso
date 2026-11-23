@@ -25,7 +25,9 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "tools"))
+sys.path.insert(0, str(ROOT / "tests"))
 import layout_dummies as ld  # noqa: E402
+import sd_v0180  # noqa: E402  (the pinned Lake Murray 0.20.4 data + College as one road: the numbers here are that road's)
 
 SD = ROOT / "tracks" / "san-diego-lake-murray"
 
@@ -33,14 +35,14 @@ SD = ROOT / "tracks" / "san-diego-lake-murray"
 def _project() -> Path:
     d = Path(tempfile.mkdtemp())
     (d / "data").mkdir()
-    cfg = json.loads((SD / "track.config.json").read_text(encoding="utf-8"))
+    cfg = sd_v0180.one_road_college(json.loads((SD / "track.config.json").read_text(encoding="utf-8")))
     # the mainline's three layouts: a layout on another lap (ledger 0054 Phase 2's north_*) reads data/lap.<id>.json,
     # a build record the repo does not carry
     cfg["layouts"] = [lo for lo in cfg["layouts"] if not lo.get("lap")]
     (d / "track.config.json").write_text(json.dumps(cfg), encoding="utf-8")
     shutil.copyfile(SD / "start_positions.json", d / "start_positions.json")
     for f in ("centerline.local.json", "median_bands.json"):
-        shutil.copyfile(SD / "data" / f, d / "data" / f)
+        shutil.copyfile(sd_v0180.DATA_0204 / f, d / "data" / f)
     return d
 
 

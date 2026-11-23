@@ -65,7 +65,7 @@ def _is_lfs_pointer(p: Path) -> bool:
 def test_spec_takes_a_seed_list_and_emits_it_only_when_named():
     s = SPEC.load(LM / "ship.json", "san-diego-lake-murray")
     seeds = [ln.split("\t", 1)[1] for ln in SPEC.lines(s) if ln.startswith("in.seed\t")]
-    assert seeds == s["sync_in"]["seed"] and seeds[0] == "loop.blend" and len(seeds) == 93
+    assert seeds == s["sync_in"]["seed"] and seeds[0] == "loop.blend" and len(seeds) == 100
     # no other spec names a seed: their key<TAB>value lines carry no in.seed line (the chain as before)
     for p in OTHER_SPECS:
         o = SPEC.load(p, json.loads(p.read_text(encoding="utf-8"))["track"])
@@ -103,19 +103,20 @@ def test_the_round_trip_is_closed_every_synced_back_file_airoso_holds_comes_back
 
 
 def test_the_committed_blend_is_the_one_the_last_install_synced_back():
-    """0.20.4's install (2026-11-23) synced its authored blend back; the next empty workshop seeds it. 0.20.2's was
+    """0.20.5's install (2026-11-23, after 0.20.4's 495a2198..., 189,120,404 B) synced its authored blend back; the next
+    empty workshop seeds it. 0.20.2's was
     189,063,384 B, sha256 3f13b887... Every author step on it is idempotent (ledger 0099), so a seed of an authored blend
     builds the same"""
     p = LM / "loop.blend"
     if _is_lfs_pointer(p):
         print("  (loop.blend is an LFS pointer on this checkout — the bytes check skipped; the chain refuses a pointer)")
         return
-    assert p.stat().st_size == 189_120_404
+    assert p.stat().st_size == 204_545_652
     h = hashlib.sha256()
     with open(p, "rb") as f:
         for chunk in iter(lambda: f.read(1 << 20), b""):
             h.update(chunk)
-    assert h.hexdigest() == "495a2198067c35626608df2c225903ce8e80d37b9b310b155ed096d13c98de65"
+    assert h.hexdigest() == "bc7f772e57500efc34153ccb915bedea1ed3d2acd6750f0c6125c27df4a54b74"
 
 
 def _config_files(o, path=""):
@@ -350,7 +351,8 @@ def test_the_check_refuses_an_opted_in_build_without_the_heads_file():
 def test_both_heads_is_lake_murrays_alone_and_wired_as_an_author_step():
     assert CFG["scenery"]["streetlights"]["light_both_heads"] is True
     au = SHIP["steps"]["author"]
-    assert au[0] == "lamp_heads" and au[-3:] == ["race_author", "signs", "race_verify"]   # the race steps keep their order
+    # (ledger 0055 round 2: College's own step and the medians' tops stand before it, on the scene as it ships)
+    assert au[:3] == ["college_split", "median_tops", "lamp_heads"] and au[-3:] == ["race_author", "signs", "race_verify"]   # the race steps keep their order
     assert "author_lamp_heads() {" in TEXT and "tools/author_lamp_heads_blend.py" in TEXT
     assert "data/lights.heads.json" in SHIP["sync_out"]["files"]
     for p in OTHER_CONFIGS:
@@ -435,6 +437,7 @@ def test_the_road_and_the_sidewalks_bind_the_owned_pairs():
             assert name in FINISH_FOUR, p
 
 
-def test_version_is_0_20_4():
-    """0.20.3 round 1; 0.20.4 round 1c (the walk's back grade, tests/tools/test_lake_murray_0099_walk_grade.py)"""
-    assert CFG["version"] == "0.20.4"
+def test_version_is_0_20_5():
+    """0.20.3 round 1; 0.20.4 round 1c (the walk's back grade, tests/tools/test_lake_murray_0099_walk_grade.py); 0.20.5
+    round 2 (College Avenue as two roads and the medians' grass tops, ledger 0055; the version the Mac named)"""
+    assert CFG["version"] == "0.20.5"

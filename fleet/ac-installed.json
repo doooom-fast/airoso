@@ -79,16 +79,16 @@
       "version": "0.1.14"
     },
     "san_diego_lake_murray_v4": {
-      "branch": "claude/lm-sidewalk-20261122",
+      "branch": "claude/lm-finish-r2-20261122",
       "engine": "lm-v4",
       "installed": "2026-11-23",
-      "note": "0.20.4 = 0.20.2 + both heads of the two-arm lamps lit (646 lights) + kerb rumble (KERB FF_EFFECT 1, sidewalks included) + the owned asphalt on 1ROAD and concrete_plain on 1KERB_SIDEWALK + the walk's back grade <= 0.20 (walk_grade, then seated: the street drive_test's 96 inherited drops -> 8, PASS with no force); ledger 0099 rounds 1 / 1c; the first Lake Murray built from the chain's own empty workshop (lm_line, sync_in.seed); install build = the PC rehearsal 0099-2 (1048/1048 gate rows, every kn5 equivalent); 0.20.2 parked in D:/k10-track-archive/2026-11-23_015157; Kevin: \"I always want newer builds\" / \"When they're done, install them\"",
+      "note": "0.20.5 = 0.20.4 + College as two roads with grass-topped medians (1LAWN_median) and the split's ground in one sheet (c6352faf, ledger 0055 round 2): kn5_ground_check 0 double-sheet cells on all 5 layouts, deck-vs-mountain max +0.313; street drive_test 10 drops; every gate green, no force; built in the chain's own empty workshop lm_line (0.20.4's kept as D:/k10-scratch/lm_line.0.20.4); install build = the PC rehearsal 2 (rehearse_0205b: every kn5 equivalent but the main one, whose 1LAWN_median and ROOFTOP_SHINGLE_0 hold the same points in another order; AI identical); 0.20.4 parked in D:/k10-track-archive/2026-11-23_100800; menu pictures: 0.20.4's put back in as a stopgap (backups in D:/k10-track-archive/2026-11-23_101500_lm0205_pictures_stopgap) until 0.20.5's are drawn; records on claude/lm-0205-install-20261123; Kevin: \"I always want newer builds\"",
       "old_name_prefix": "K10 - San Diego CANDIDATE v4 keep-roads",
       "role": "current",
-      "sha": "c8debb5f",
+      "sha": "c6352faf",
       "track": "san-diego-lake-murray",
       "ui_name_prefix": "doooom San Diego",
-      "version": "0.20.4"
+      "version": "0.20.5"
     },
     "sand_creek_raceway": {
       "branch": "claude/sc-finish-0209-20261122",

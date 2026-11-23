@@ -1,0 +1,187 @@
+{
+ "what": "College after the prep (college_prep_measure.py)",
+ "obj": "D:\\k10-scratch\\lm_r2_college\\ws4\\college_prepped.obj",
+ "report": {
+  "bank_top_minus_authored_m": {
+   "n": 1335,
+   "min": -0.0,
+   "median": 0.0,
+   "max": 0.0,
+   "no_ground_at": 0,
+   "within_2cm": 1335,
+   "largest": [
+    [
+     1346,
+     -1.38,
+     -0.0
+    ],
+    [
+     1323,
+     -0.93,
+     -0.0
+    ],
+    [
+     1323,
+     -3.21,
+     -0.0
+    ],
+    [
+     1280,
+     -0.55,
+     -0.0
+    ],
+    [
+     1341,
+     -1.27,
+     -0.0
+    ],
+    [
+     1275,
+     -2.5,
+     -0.0
+    ]
+   ]
+  },
+  "ground_minus_southbound_road_m": {
+   "n": 2439,
+   "min": -0.612,
+   "median": -0.02,
+   "max": -0.016,
+   "ground_within_5mm_or_over": 0,
+   "over_by_more_than_1cm": 0,
+   "largest": [],
+   "no_road_at": 0
+  },
+  "ground_minus_northbound_road_m": {
+   "n": 2439,
+   "min": -3.434,
+   "median": -0.02,
+   "max": -0.018,
+   "ground_within_5mm_or_over": 0,
+   "over_by_more_than_1cm": 0,
+   "largest": [],
+   "no_road_at": 0
+  },
+  "fork_ground_minus_pavement_m": {
+   "n": 340,
+   "min": -0.022,
+   "median": -0.02,
+   "max": -0.019,
+   "ground_within_5mm_or_over": 0,
+   "first": []
+  },
+  "east_ground_minus_road_edge_m_by_distance_past_the_edge": {
+   "0.5": {
+    "n": 170,
+    "min": -0.02,
+    "median": -0.02,
+    "max": -0.019
+   },
+   "1.5": {
+    "n": 170,
+    "min": -0.02,
+    "median": -0.02,
+    "max": -0.02
+   },
+   "2.5": {
+    "n": 170,
+    "min": -0.02,
+    "median": -0.02,
+    "max": -0.02
+   },
+   "3.3": {
+    "n": 170,
+    "min": -0.02,
+    "median": -0.02,
+    "max": -0.02
+   },
+   "4.5": {
+    "n": 170,
+    "min": -0.52,
+    "median": -0.52,
+    "max": 0.964
+   },
+   "6.0": {
+    "n": 170,
+    "min": -1.37,
+    "median": -1.217,
+    "max": 2.438
+   },
+   "8.0": {
+    "n": 170,
+    "min": -2.143,
+    "median": 0.111,
+    "max": 3.284
+   },
+   "12.0": {
+    "n": 170,
+    "min": -2.147,
+    "median": 3.706,
+    "max": 5.925
+   }
+  },
+  "east_walk_lip_over_the_ground_beside_it_m": {
+   "n": 170,
+   "min": -0.157,
+   "median": -0.157,
+   "max": -0.157,
+   "over_0p10": 0,
+   "largest": [
+    [
+     1142,
+     -0.157
+    ],
+    [
+     1252,
+     -0.157
+    ],
+    [
+     1438,
+     -0.157
+    ],
+    [
+     1238,
+     -0.157
+    ],
+    [
+     1396,
+     -0.157
+    ],
+    [
+     1300,
+     -0.157
+    ]
+   ]
+  },
+  "islands_that_stay_grass_minus_road_m": {
+   "south, to v1116": {
+    "n": 16,
+    "min": -0.02,
+    "median": -0.02,
+    "max": -0.018,
+    "rows_with_grass_over_the_road": 0
+   },
+   "north, v1476-1487": {
+    "n": 6,
+    "min": -0.02,
+    "median": -0.019,
+    "max": -0.019,
+    "rows_with_grass_over_the_road": 0
+   }
+  },
+  "bank_curb_top_over_its_road_edge_m": {
+   "southbound_side": {
+    "n": 89,
+    "min": 0.18,
+    "median": 0.18,
+    "max": 0.18
+   },
+   "northbound_side": {
+    "n": 89,
+    "min": 0.18,
+    "median": 0.18,
+    "max": 0.18
+   }
+  }
+ }
+}

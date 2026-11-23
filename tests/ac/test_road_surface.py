@@ -56,6 +56,29 @@ def test_unknown_road_surface_is_an_error_not_a_silent_tarmac():
         raise AssertionError("an unknown road_surface must fail the build")
 
 
+def _block(ini: str, key: str) -> dict:
+    for block in ini.split("\n\n"):
+        kv = dict(ln.split("=", 1) for ln in block.splitlines() if "=" in ln)
+        if kv.get("KEY") == key:
+            return kv
+    raise AssertionError(f"no {key} surface block")
+
+
+def test_lawn_as_grass_gives_the_lawn_key_the_grass_blocks_own_values_and_nothing_else_moves():
+    """Ledger 0055 (Lake Murray's medians): an island's grass top is a 1LAWN mesh (it cannot be named 1GRASS: the prep
+    pins every 1GRASS vertex under the road it stands on). Opted in, the LAWN key carries GRASS's values exactly, so a
+    car on an island is on grass; every other block is as it was; not opted in, the file is byte-identical"""
+    plain = track_folder.surfaces_ini(kerb_ff_effect=1, wall=True)
+    on = track_folder.surfaces_ini(kerb_ff_effect=1, wall=True, lawn_as_grass=True)
+    assert track_folder.surfaces_ini(kerb_ff_effect=1, wall=True, lawn_as_grass=False) == plain
+    grass, lawn, was = _block(on, "GRASS"), _block(on, "LAWN"), _block(plain, "LAWN")
+    assert {k: v for k, v in lawn.items() if k != "KEY"} == {k: v for k, v in grass.items() if k != "KEY"}
+    assert lawn["FRICTION"] == "0.6" and lawn["DAMPING"] == "0.1" and was["FRICTION"] == "0.65"     # it did move
+    rest = lambda s: [b.split("\n", 1)[1] for b in s.split("\n\n") if "KEY=LAWN\n" not in b + "\n"]
+    assert rest(on) == rest(plain)
+    assert on.count("[SURFACE_") == plain.count("[SURFACE_")
+
+
 def _proj(root, cfg):
     proj = Path(root)
     (proj / "track.config.json").write_text(json.dumps(cfg))

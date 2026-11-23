@@ -1,7 +1,7 @@
 {
  "file": "D:\\k10-scratch\\lm_line\\build\\san_diego_lake_murray_closure_race_acw.kn5",
  "version": 5,
- "file_bytes": 5505921,
+ "file_bytes": 5218764,
  "textures": [
   {
    "name": "concrete_barrier_diffuse.png",
@@ -26,25 +26,7 @@
  ],
  "materials": [
   {
-   "name": "1WALL_race_close_acw_college_1253_0_mat",
-   "shader": "ksPerPixelMultiMap",
-   "props": {
-    "ksDiffuse": 0.4,
-    "ksAmbient": 0.4
-   },
-   "textures": [
-    [
-     "txDiffuse",
-     "concrete_barrier_diffuse.png"
-    ],
-    [
-     "txNormal",
-     "concrete_barrier_normal.png"
-    ]
-   ]
-  },
-  {
-   "name": "1WALL_race_close_acw_college_1343_0_mat",
+   "name": "1WALL_race_close_acw_college_1445_0_mat",
    "shader": "ksPerPixelMultiMap",
    "props": {
     "ksDiffuse": 0.4,
@@ -216,67 +198,48 @@
  ],
  "meshes": [
   {
-   "name": "1WALL_race_close_acw_college_1253_0",
-   "verts": 2052,
-   "tris": 2536,
+   "name": "1WALL_race_close_acw_college_1445_0",
+   "verts": 1012,
+   "tris": 1236,
    "matid": 0,
    "surface": "WALL",
    "renderable": true,
-   "radius_m": 188.9,
-   "area_m2": 1265.1,
+   "radius_m": 92.4,
+   "area_m2": 619.8,
    "edge_p10_m": 0.12,
-   "edge_med_m": 2.96,
-   "edge_p90_m": 3.12,
-   "grid_m": 0.999,
+   "edge_med_m": 3.008,
+   "edge_p90_m": 3.111,
+   "grid_m": 1.001,
    "bbox_m": [
-    126.3,
-    19.2,
-    355.8
-   ]
-  },
-  {
-   "name": "1WALL_race_close_acw_college_1343_0",
-   "verts": 2644,
-   "tris": 3276,
-   "matid": 1,
-   "surface": "WALL",
-   "renderable": true,
-   "radius_m": 245.3,
-   "area_m2": 1646.4,
-   "edge_p10_m": 0.12,
-   "edge_med_m": 3.0,
-   "edge_p90_m": 3.091,
-   "grid_m": 1.003,
-   "bbox_m": [
-    210.7,
-    21.1,
-    443.0
+    94.1,
+    8.8,
+    159.4
    ]
   },
   {
    "name": "1WALL_race_close_acw_college_777_0",
-   "verts": 8228,
-   "tris": 10256,
-   "matid": 2,
+   "verts": 6340,
+   "tris": 7896,
+   "matid": 1,
    "surface": "WALL",
    "renderable": true,
-   "radius_m": 684.5,
-   "area_m2": 5151.8,
+   "radius_m": 550.1,
+   "area_m2": 3975.3,
    "edge_p10_m": 0.12,
-   "edge_med_m": 2.996,
-   "edge_p90_m": 3.076,
-   "grid_m": 1.002,
+   "edge_med_m": 2.995,
+   "edge_p90_m": 3.083,
+   "grid_m": 1.003,
    "bbox_m": [
     543.7,
-    54.4,
-    1256.0
+    54.7,
+    955.8
    ]
   },
   {
    "name": "1WALL_race_close_acw_jackson_2328_0",
    "verts": 7722,
    "tris": 9628,
-   "matid": 3,
+   "matid": 2,
    "surface": "WALL",
    "renderable": true,
    "radius_m": 695.4,
@@ -295,7 +258,7 @@
    "name": "1WALL_race_close_acw_jackson_2328_1",
    "verts": 7706,
    "tris": 9608,
-   "matid": 4,
+   "matid": 3,
    "surface": "WALL",
    "renderable": true,
    "radius_m": 711.5,
@@ -314,7 +277,7 @@
    "name": "1WALL_race_close_acw_lakemurray_3304_0",
    "verts": 9226,
    "tris": 11508,
-   "matid": 5,
+   "matid": 4,
    "surface": "WALL",
    "renderable": true,
    "radius_m": 839.5,
@@ -333,7 +296,7 @@
    "name": "1WALL_race_close_acw_lakemurray_3304_1",
    "verts": 9226,
    "tris": 11508,
-   "matid": 6,
+   "matid": 5,
    "surface": "WALL",
    "renderable": true,
    "radius_m": 810.5,
@@ -352,7 +315,7 @@
    "name": "1WALL_race_close_acw_navajo_1521_0",
    "verts": 12676,
    "tris": 15816,
-   "matid": 7,
+   "matid": 6,
    "surface": "WALL",
    "renderable": true,
    "radius_m": 1141.5,
@@ -371,7 +334,7 @@
    "name": "SIGNARROW_acw_0",
    "verts": 74,
    "tris": 26,
-   "matid": 8,
+   "matid": 7,
    "surface": null,
    "renderable": true,
    "radius_m": 1172.5
@@ -380,7 +343,7 @@
    "name": "SIGNPLATE_acw_0",
    "verts": 24,
    "tris": 8,
-   "matid": 9,
+   "matid": 8,
    "surface": null,
    "renderable": true,
    "radius_m": 1172.5
@@ -389,7 +352,7 @@
    "name": "SIGNPOST_acw_0",
    "verts": 82,
    "tris": 28,
-   "matid": 10,
+   "matid": 9,
    "surface": null,
    "renderable": true,
    "radius_m": 1172.6
@@ -399,27 +362,27 @@
   "BlenderFile"
  ],
  "summary": {
-  "meshes": 11,
-  "verts": 59660,
-  "tris": 74198,
+  "meshes": 10,
+  "verts": 54088,
+  "tris": 67262,
   "textures": 5,
   "texture_bytes": 2431499,
-  "materials": 11,
+  "materials": 10,
   "surfaces": {
    "WALL": {
-    "meshes": 8,
-    "verts": 59480,
-    "tris": 74136,
-    "area_m2": 37216.8,
+    "meshes": 7,
+    "verts": 53908,
+    "tris": 67200,
+    "area_m2": 33748.6,
     "invisible": 0,
-    "edge_med_m": 2.998,
+    "edge_med_m": 2.999,
     "grid_m": 1.002
    }
   },
   "shaders_by_tris": {
    "ksPerPixelMultiMap": {
-    "meshes": 8,
-    "tris": 74136
+    "meshes": 7,
+    "tris": 67200
    },
    "ksPerPixel": {
     "meshes": 3,

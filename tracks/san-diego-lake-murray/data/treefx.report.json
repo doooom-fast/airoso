@@ -1,39 +1,41 @@
 {
  "_doc": "tools/make_treefx.py: what trees.txt holds (counts per zone and per species; the north network per piece per species, its planted area, the loop's density and the area-scaled caps \u2014 ledger 0054 P4 / A9)",
- "total": 21111,
+ "total": 21424,
  "per_zone": {
   "palms": 890,
   "trees": 408,
   "scrub": 983,
-  "median_planting": 1102,
+  "median_planting": 1020,
   "fill_yard_trees": 1660,
-  "fill_yard_bushes": 1569,
+  "fill_yard_bushes": 1567,
   "fill_slope_trees": 1770,
-  "fill_slope_bushes": 7322,
+  "fill_slope_bushes": 7325,
   "north_suburb_trees": 88,
   "north_suburb_bushes": 834,
   "north_canyon_trees": 1212,
-  "north_scrub": 3000,
+  "north_scrub": 2998,
   "north_riparian_trees": 105,
   "north_street_trees": 69,
   "north_gum_belt": 73,
-  "north_median_trees": 26
+  "north_median_trees": 26,
+  "lidar_shrubs": 133,
+  "lidar_trees": 263
  },
  "per_species": {
-  "Agave.bin": 1120,
-  "Bush.bin": 3904,
+  "Agave.bin": 1122,
+  "Bush.bin": 3937,
   "Bush3.bin": 1898,
-  "Gum.bin": 1419,
-  "Oak3.bin": 1361,
+  "Gum.bin": 1460,
+  "Oak3.bin": 1416,
   "PalmV1.bin": 709,
   "PalmV2.bin": 274,
   "PalmV3.bin": 102,
-  "PepperV1.bin": 680,
-  "Pine_Aleppo.bin": 1171,
-  "Sage.bin": 5708,
-  "SycamoreV1.bin": 496,
-  "SycamoreV2.bin": 89,
-  "Yucca.bin": 2180
+  "PepperV1.bin": 758,
+  "Pine_Aleppo.bin": 1182,
+  "Sage.bin": 5724,
+  "SycamoreV1.bin": 531,
+  "SycamoreV2.bin": 132,
+  "Yucca.bin": 2179
  },
  "rejected_in_corridor": 19,
  "rejected_on_built_surface": {
@@ -48,17 +50,17 @@
   "walk": 2,
   "building": 33
  },
- "surface_materials": "1GRASS_0_mat, 1GRASS_1_mat, 1GRASS_2_mat, 1GRASS_3_mat, 1GRASS_4_mat, 1GRASS_5_mat, 1GRASS_6_mat, 1GRASS_7_mat, 1GRASS_8_mat, 1GRASS_9_mat, 1GRASS_10_mat, 1GRASS_11_mat, 1GRASS_12_mat, 1GRASS_13_mat, 1GRASS_14_mat, 1GRASS_15_mat, 1GRASS_ROCK_2_mat, 1GRASS_ROCK_4_mat, 1GRASS_ROCK_5_mat, 1GRASS_ROCK_6_mat, 1GRASS_ROCK_7_mat, 1GRASS_ROCK_12_mat, 1GRASS_ROCK_13_mat, 1GRASS_ROCK_14_mat, 1ROAD_road_mat",
+ "surface_materials": "1GRASS_0_mat, 1GRASS_1_mat, 1GRASS_2_mat, 1GRASS_3_mat, 1GRASS_4_mat, 1GRASS_5_mat, 1GRASS_6_mat, 1GRASS_7_mat, 1GRASS_8_mat, 1GRASS_9_mat, 1GRASS_10_mat, 1GRASS_11_mat, 1GRASS_12_mat, 1GRASS_13_mat, 1GRASS_14_mat, 1GRASS_15_mat, 1GRASS_ROCK_4_mat, 1GRASS_ROCK_5_mat, 1GRASS_ROCK_6_mat, 1GRASS_ROCK_7_mat, 1GRASS_ROCK_12_mat, 1GRASS_ROCK_13_mat, 1GRASS_ROCK_14_mat, 1LAWN_median_mat, 1ROAD_road_mat",
  "north": {
-  "area_loop_m2": 4717900,
+  "area_loop_m2": 4720500,
   "area_north_m2": 2019500,
   "loop_density_per_ha": {
-   "trees": 7.287,
-   "bushes": 18.877
+   "trees": 7.283,
+   "bushes": 18.869
   },
   "caps": {
-   "trees": 1498,
-   "bushes": 3852
+   "trees": 1497,
+   "bushes": 3850
   },
   "aerial_implied": {
    "trees": 8900,
@@ -66,7 +68,7 @@
   },
   "kept": {
    "trees": 1550,
-   "bushes": 3856
+   "bushes": 3854
   },
   "drops": {
    "pad": 55,
@@ -92,14 +94,14 @@
     "Bush.bin": 33
    },
    "C": {
-    "Bush.bin": 293,
-    "Bush3.bin": 182,
+    "Bush.bin": 291,
+    "Bush3.bin": 178,
     "Sage.bin": 509,
     "Oak3.bin": 245,
     "Gum.bin": 95,
     "Pine_Aleppo.bin": 143,
-    "Yucca.bin": 218,
-    "Agave.bin": 123,
+    "Yucca.bin": 222,
+    "Agave.bin": 125,
     "SycamoreV2.bin": 24,
     "SycamoreV1.bin": 66,
     "PalmV1.bin": 17,
@@ -109,21 +111,21 @@
     "Oak3.bin": 297,
     "Pine_Aleppo.bin": 189,
     "Gum.bin": 158,
-    "Bush.bin": 196,
+    "Bush.bin": 194,
     "Sage.bin": 394,
     "Agave.bin": 75,
-    "Bush3.bin": 85,
-    "Yucca.bin": 182
+    "Bush3.bin": 87,
+    "Yucca.bin": 180
    },
    "B": {
     "Pine_Aleppo.bin": 69,
     "Oak3.bin": 90,
     "Gum.bin": 40,
-    "Sage.bin": 367,
-    "Yucca.bin": 174,
-    "Agave.bin": 93,
-    "Bush.bin": 183,
-    "Bush3.bin": 107
+    "Sage.bin": 366,
+    "Bush3.bin": 110,
+    "Yucca.bin": 172,
+    "Bush.bin": 185,
+    "Agave.bin": 91
    }
   },
   "cap_scale": 1.0,
@@ -131,7 +133,7 @@
    "A": 691,
    "ring": 76,
    "C": 1941,
-   "D": 1576,
+   "D": 1574,
    "B": 1123
   }
  },
@@ -139,5 +141,16 @@
   "measured": 252,
   "crown_measured": 201,
   "kept_rank_rule": 850
+ },
+ "median_spots": {
+  "dropped": 82,
+  "foot_moved": 36
+ },
+ "lidar_plants": {
+  "split_h_m": 4.0,
+  "lidar_shrubs": 133,
+  "lidar_shrubs_listed": 133,
+  "lidar_trees": 263,
+  "lidar_trees_listed": 263
  }
 }

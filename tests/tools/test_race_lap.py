@@ -516,3 +516,33 @@ def test_a_bare_race_layout_may_drive_a_lap_and_a_street_layout_still_may_not():
     probs = race_lap.validate(cfg)
     assert not any(p.startswith("layout rc:") for p in probs), probs
     assert any(p.startswith("layout free:") and "neither a race layout" in p for p in probs), probs
+
+
+def test_a_lap_drives_a_mainline_corner_only_where_it_walks_the_mainline_through_it():
+    """Ledger 0055 round 2 (Lake Murray's College lap): scripts/geometry/race_lap.mainline_approach. The lap that is the
+    mainline everywhere but on one stretch drives the mainline's corners outside it, by its layout's own direction; a
+    lap that turns off before a corner does not; a piece walked backwards turns the approach round"""
+    from scripts.geometry import race_lap as rl
+    n = 4498
+    college = {"race": {"laps": {"college": {"pieces": [{"line": "MAINLINE", "from": 0, "to": 1130},
+                                                        {"line": "college_nb", "from": 0, "to": 345},
+                                                        {"line": "MAINLINE", "from": 1476, "to": 4497}]},
+                                 "north": {"pieces": [{"line": "north_J1_waring#0", "from": 0, "to": 317},
+                                                      {"line": "MAINLINE", "from": 2317, "to": 1517, "reverse": True}]}}}}
+    for apex in (0, 770, 1514, 2319, 3296):                      # the mainline's five corners, the lap seam included
+        assert rl.mainline_approach(college, "college", "fwd", apex, n) == "fwd", apex
+        assert rl.mainline_approach(college, "college", "reverse", apex, n) == "rev", apex
+    for apex in (1131, 1300, 1476, 1476 + rl.MAINLINE_CORNER_REACH - 1, 1130 - rl.MAINLINE_CORNER_REACH + 1):
+        assert rl.mainline_approach(college, "college", "fwd", apex, n) is None, apex     # on the split, or too near its ends
+    assert rl.mainline_approach(college, "college", "fwd", 1476 + rl.MAINLINE_CORNER_REACH, n) == "fwd"
+    for apex in (1514, 2319):                                    # the north lap turns off 3 and 2 vertices short of them
+        assert rl.mainline_approach(college, "north", "fwd", apex, n) is None, apex
+        assert rl.mainline_approach(college, "north", "rev", apex, n) is None, apex
+    assert rl.mainline_approach(college, "north", "fwd", 1900, n) == "rev"     # Navajo, walked backwards by the lap
+    assert rl.mainline_approach(college, "north", "rev", 1900, n) == "fwd"
+    both = {"race": {"laps": {"x": {"pieces": [{"line": "MAINLINE", "from": 0, "to": 100},
+                                               {"line": "MAINLINE", "from": 100, "to": 0, "reverse": True}]}}}}
+    assert rl.mainline_approach(both, "x", "fwd", 50, 400) is None             # walked both ways: neither approach
+    open_line = {"race": {"laps": {"o": {"pieces": [{"line": "MAINLINE", "from": 0, "to": 60}]}}}}
+    assert rl.mainline_approach(open_line, "o", "fwd", 5, 61, closed=False) == "fwd"   # an open line ends; nothing past it to walk
+

@@ -58,6 +58,62 @@ No gate threshold, floor or bypass moved, and no gate's code changed. One wiring
 Proven on High Plains 0.1.12 (Mac, Blender 4.2.9, an empty workshop): `[mouth-corners] ... lip 0.023 m, teeth 1/354, edge
 paint 0.0 m ... PASS`; verify_mouths PASS (mouth line 0.012 m, notch 0.003 m, approach 0.61 %/m, as 0.1.11).
 
+## 2026-11-23 — COVERAGE (opt-in by data): Lake Murray's median tops are 1LAWN_median, outside the two 1GRASS poke checks (ledger 0055; no threshold moved, no check edited)
+
+No gate's code, threshold or tolerance changed. What changed is which object two checks read.
+
+- **Before.** Each raised median's grass top was part of TERRAIN (1GRASS). The prep pinned it 0.02 m under the slab
+  it stands on, so it was never over the road and `scripts/ac/verify_kn5.py` check 6 (terrain poke) and
+  `scripts/geometry/audit_mesh.py` B had nothing to flag there. In the game every median showed asphalt (2,486 of
+  2,486 island rows on 0.20.3).
+- **Now** (opt-in `route.median_tops`, `tools/author_median_tops_blend.py`): the top is its own object,
+  `1LAWN_median`, 0.185 m over the slab between the island's curbs. Both poke checks key on the name prefix `1GRASS`
+  and do not judge it. Had it stayed 1GRASS at that height it would be 4,282 pokes (0.185 m is over
+  `POKE_ABOVE_M` 0.15): the checks are not loosened to let it through, the object is not in the set they read, and
+  that is the point to know when reading a green poke count.
+- **What does judge it.** `verify_kn5` check 2 (every drivable surface faces up) lists `1LAWN`.
+  `scripts/geometry/drive_test.py` `soft_top_in_lane` lists `1LAWN`: a top under a wheel path of a driven lane fails,
+  as ground through the road does. The author step's own checks: every moved vertex stands 0.185 m (+- 0.06,
+  measured 0.142 to 0.228) over a road surface, every island row has the top under at least two of its three
+  measured points, every face is wound up.
+- **Why not another way.** The prep sets every 1GRASS vertex with pavement above or below it to the deck less
+  0.02 m, released ground included, and the prep of record is not changed. An island stands on pavement.
+- **Proof.** On the scratch scene through the build's own prep: 2,123 of 2,123 island rows read grass on all 14
+  islands (`tracks/san-diego-lake-murray/source/college_r2/median_tops_r2_scratch.json`); a 4-row run of the band on
+  Mission Gorge is not an island (the median tool builds none under 6 rows) and is counted apart. The gates of the
+  full chain have not run on it yet (Lake Murray 0.20.5's rehearsal).
+
+## 2026-11-23 — BEHAVIOUR (opt-in by data): verify_signs (m) holds a race layout on a lap to its plate at a per-layout corner its lap drives (ledger 0055 round 2; no threshold moved)
+
+No threshold, tolerance or bypass moved. The entry is late by one commit: the change is in d3e8ee23, already pushed
+when the entry was asked for (no history rewrite on a pushed branch).
+
+- **What was wrong.** Lake Murray's Speedway (`race_cw`) now runs on its own lap, `college` (the mainline with the
+  northbound road of College's split in place of rows v1130-1476). `tools/place_signs.py` gave no layout plate to a
+  layout on a lap, a rule written for the north lap, which turns off the mainline before both per-layout corners.
+  So the Speedway lost its arrows at College/Navajo (M3) and Navajo/Jackson (M4), and `tools/verify_signs.py` check
+  (l) failed for both on the scratch workshop: "MAINLINE corner M3 (named in signs.json) has no plate for fwd".
+- **The rule now.** `scripts/geometry/race_lap.mainline_approach`: a layout on a lap drives a mainline corner where
+  its lap walks the mainline for `MAINLINE_CORNER_REACH` vertices either side of the apex, all one way (a piece
+  walked backwards turns the approach round). The reach is 20 vertices, `[invented]`: the approach the sign rule
+  reads its tangent from and the bend itself. `tools/place_signs.py` places a per-layout corner's layout plate by it.
+- **What check (m) now checks.** Beside the layouts on the mainline (`driven_directions`, unchanged), it judges
+  every race layout on a lap at each per-layout corner of signs.json that its lap drives (`verify_signs.lap_driven`),
+  by the same test as a mainline layout: a plate that layout loads (shared, or its own), or a skip record whose
+  reasons are the rule's own. Before, a layout on a lap was not judged at all. Checks (k) and (l) are unchanged.
+- **The north lap reads as before.** Its mainline piece is v1517-2317; M3 (v1514) and M4 (v2319) stand 3 and 2
+  vertices outside it, so `north_cw` / `north_acw` drive neither, get no plate and are not judged at them: the
+  0.20.2 fault ("M3-fwd@north_cw in north_cw's lane") stays fixed.
+- **Other tracks.** No other track has a per-layout corner in its signs.json, and without one `lap_driven` is
+  empty: check (m) is as it was.
+- **Proof.** `tests/tools/test_race_lap.py::test_a_lap_drives_a_mainline_corner_only_where_it_walks_the_mainline_through_it`
+  (the College lap at all five mainline corners, the north lap at neither, the split's own rows, a piece walked both
+  ways, an open line) and `tests/tools/test_p4_signs.py::test_a_layout_on_a_lap_that_walks_the_mainline_through_a_per_layout_corner_gets_its_plate`
+  (the plate is the one a mainline layout gets; taking it away fails (l); (m) fails the lap layout by name when it has
+  neither plate nor record, and does not judge it without `lap_driven`; a lap that turns off before the corner gets
+  no plate and no record). On the scratch workshop (`D:/k10-scratch/lm_r2_college/ws5`): 29 posts, 4 layout plates
+  (M3-fwd@race_cw, M4-fwd@race_cw, M4-rev@race_acw, M3-rev@race_acw), PASS.
+
 ## 2026-11-22 (Mac) — COUNT FOLLOWS THE AUTHORED LENSES: check_lights_ini with both lamp heads lit; the sampling numbers of Sand Creek 0.2.9 (ledger 0098; no threshold moved)
 
 No gate threshold, tolerance, floor or bypass moved. All opt-in, Sand Creek only (`tests/tools/test_sand_creek_0098.py`

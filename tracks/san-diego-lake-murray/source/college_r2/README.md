@@ -53,6 +53,35 @@ y = NAVD88 - 100.8.
 The crossroads plane off the same lidar (r 25 m): 6.08 % falling to bearing 277°, toward Waring, rms 0.13 m (the G10's
 read; `j1_waring.lidar.g10.json`). Kevin: "Tilt it now", as one change with the College work.
 
+## The design (stage A, `college_design.py` -> `college_design.json`, `college_design.png`)
+
+Four control points across the road at every vertex v1130-1480: southbound outer and inner, northbound inner and
+outer; the inner two are the island's edges where it exists (v1172-1444) and one crown point elsewhere. Edges are the
+measured ones with misreads dropped and bridged (v1297-1300 under the trees are bridged, as the Mac asked; the flags
+are in the file), then averaged over about 33 m; heights are the lidar's, averaged over about 15 m; the last 30 m at
+each end blend into the road as built (design minus built at the zone ends: under 5 cm).
+
+Checks: northbound over southbound up to 6.17 m (v1255); steepest long grade northbound 9.5 %, southbound 9.3 %
+(as built 8.7 %); crossfall within about 5 %; the bank's slope median 45 %, up to 53 %; northbound pavement median
+10.1 m, southbound 9.9 m, the island up to 12.4 m wide.
+
+Bridged edge points of 351 stations: southbound outer 110 (trees and shadow on the west side), southbound inner 21,
+northbound inner 49, northbound outer 54. The outer edges wander by a metre or so with the read; **the plan for
+authoring is to keep the built outer edges** (0.5 m east and 2.0 m west of the measured ones, median) and rebuild the
+middle and the northbound height, so walks, houses and ground outside the road stay put.
+
+## Stages
+
+- **A (here, no build):** measured sections, edges, the design, and a standalone proof scene with before / after stills.
+- **B:** author the split into a scratch copy of `lm_phase2/project` (never the build session's workshops): both
+  carriageways, the bank and the island, the two transitions, J1's tilt as one change; then every consumer the ledger
+  lists (ground seating, paint, curbs, lamps, barriers, the race layouts' corridor on College, AI lines).
+- **C:** a full `ship_track` rehearsal through the Mac's queue; installs only as Kevin's standing word allows.
+
+Open, Kevin's call [not decided]: what the race does on College now that the crossover is gone. The real road suggests
+each direction on its own carriageway: Speedway (clockwise, northbound here) on the upper northbound road, Speedway
+Reverse on the lower southbound road.
+
 ## Next (ledger 0055, "Bounded proof" steps 3 to 7)
 
 Author both carriageways, the bank and both transitions together as one connected system, on a scratch copy; prove

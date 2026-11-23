@@ -198,7 +198,7 @@
    "bottom": 9.05,
    "eave": 12.25,
    "off_terrain": false,
-   "collider": false,
+   "collider": true,
    "facade": {
     "skin": "garage",
     "bays": 12,
@@ -234,7 +234,7 @@
    "bottom": 9.34,
    "eave": 11.44,
    "off_terrain": false,
-   "collider": false,
+   "collider": true,
    "facade": {
     "skin": "garage",
     "bays": 16,
@@ -276,7 +276,7 @@
    "bottom": -0.35,
    "eave": 1.75,
    "off_terrain": false,
-   "collider": false,
+   "collider": true,
    "facade": {
     "skin": "garage",
     "bays": 6,
@@ -318,7 +318,7 @@
    "bottom": 8.83,
    "eave": 12.03,
    "off_terrain": false,
-   "collider": false,
+   "collider": true,
    "facade": {
     "skin": "garage",
     "bays": 10,
@@ -375,7 +375,7 @@
    "bottom": 9.67,
    "eave": 12.47,
    "off_terrain": false,
-   "collider": false,
+   "collider": true,
    "facade": {
     "skin": "post",
     "bays": 4,
@@ -396,7 +396,7 @@
    "bottom": 10.0,
    "eave": 12.8,
    "off_terrain": false,
-   "collider": false,
+   "collider": true,
    "facade": {
     "skin": "post",
     "bays": 4,
@@ -417,7 +417,7 @@
    "bottom": 9.0,
    "eave": 11.8,
    "off_terrain": false,
-   "collider": false,
+   "collider": true,
    "facade": {
     "skin": "post",
     "bays": 4,
@@ -459,7 +459,7 @@
    "bottom": 10.63,
    "eave": 13.43,
    "off_terrain": false,
-   "collider": false,
+   "collider": true,
    "facade": {
     "skin": "post",
     "bays": 4,
@@ -480,7 +480,7 @@
    "bottom": 9.38,
    "eave": 12.18,
    "off_terrain": false,
-   "collider": false,
+   "collider": true,
    "facade": {
     "skin": "post",
     "bays": 4,
@@ -501,7 +501,7 @@
    "bottom": 6.24,
    "eave": 9.04,
    "off_terrain": false,
-   "collider": false,
+   "collider": true,
    "facade": {
     "skin": "post",
     "bays": 4,
@@ -522,7 +522,7 @@
    "bottom": 8.58,
    "eave": 11.38,
    "off_terrain": false,
-   "collider": false,
+   "collider": true,
    "facade": {
     "skin": "post",
     "bays": 4,
@@ -543,7 +543,7 @@
    "bottom": 10.95,
    "eave": 13.75,
    "off_terrain": false,
-   "collider": false,
+   "collider": true,
    "facade": {
     "skin": "post",
     "bays": 4,
@@ -606,7 +606,7 @@
    "bottom": 12.34,
    "eave": 15.14,
    "off_terrain": false,
-   "collider": false,
+   "collider": true,
    "facade": {
     "skin": "post",
     "bays": 4,

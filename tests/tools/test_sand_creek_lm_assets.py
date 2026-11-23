@@ -921,10 +921,11 @@ LIVE_0_2_9_KEYS = (("route", "grid", "reach"), ("route", "grid", "_reach_doc"), 
                    ("lm_intake", "_grid_reach_doc"), ("route", "flare_one_sided"), ("route", "_flare_one_sided_doc"),
                    ("lm_intake", "flare_one_sided"), ("lm_intake", "_flare_one_sided_doc"),
                    ("scenery", "streetlights", "light_both_heads"), ("scenery", "streetlights", "_light_both_heads_doc"),
-                   ("texture_overrides", "1ROAD"), ("texture_overrides", "1KERB_SIDEWALK"))
+                   ("texture_overrides", "1ROAD"), ("texture_overrides", "1KERB_SIDEWALK"),
+                   ("route", "split_strip_balanced"), ("route", "_split_strip_balanced_doc"))
 SHIP_0_2_9 = {"source/grid_reach.json", "source/flares_one_sided.lidar.json",
               "assets/textures/asphalt_dense_diffuse.jpg", "assets/textures/asphalt_dense_normal.jpg",
-              "assets/textures/concrete_plain_diffuse.jpg", "assets/textures/concrete_plain_normal.jpg"}
+              "assets/textures/concrete_plain_diffuse.jpg", "assets/textures/concrete_plain_normal.jpg", "split_strip"}
 
 # ledger 0086 (0.2.7): every key the live config adds to, or changes from, round_k's candidate
 LIVE_0_2_7_KEYS = (("name",), ("_name_doc",), ("slug",), ("version",), ("install_folder",), ("_install_folder_doc",),

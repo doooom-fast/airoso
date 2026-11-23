@@ -248,3 +248,23 @@ def test_the_0098_keys_are_opt_in():
         assert "reach" not in ((cfg.get("route") or {}).get("grid") or {}), t
         assert "flare_one_sided" not in (cfg.get("route") or {}), t
         assert "light_both_heads" not in ((cfg.get("scenery") or {}).get("streetlights") or {}), t
+        assert "split_strip_balanced" not in (cfg.get("route") or {}), t
+
+
+def test_the_strip_split_is_balanced_only_where_asked():
+    s = (ROOT / "tools" / "split_strip_blend.py").read_text(encoding="utf-8")
+    assert '(cfg.get("route") or {}).get("split_strip_balanced") is True' in s and "def balanced_groups(" in s
+    # the median-bisection rule, run here on a grid of quads: every group under the cap, every face once
+    src = s[s.index("def balanced_groups("):s.index("def balanced(ob, n):")]
+    ns = {}
+    exec(src, ns)
+    faces, centres, vid = [], [], {}
+    for i in range(60):
+        for j in range(20):
+            q = [vid.setdefault((i + a, j + b), len(vid)) for a, b in ((0, 0), (1, 0), (1, 1), (0, 1))]
+            faces.append(tuple(q)); centres.append((i + 0.5, j + 0.5))
+    groups = ns["balanced_groups"](centres, faces, 400)
+    assert sorted(f for g in groups for f in g) == list(range(len(faces)))
+    assert all(len({v for f in g for v in faces[f]}) <= 400 for g in groups) and len(groups) >= 4
+    cfg, ship = _cfg(SC / "track.config.json"), _cfg(SC / "ship.json")
+    assert cfg["route"]["split_strip_balanced"] is True and ship["steps"]["draft"][-1] == "split_strip"

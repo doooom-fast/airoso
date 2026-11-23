@@ -76,3 +76,33 @@ Version 0.1.8 -> 0.1.9.
 - Pit-exit merge paving (ledger 0093), the kerb stripe at R s 2,673-2,681 (ledger 0081).
 - Downloads: the track map, the paddock map, the lidar for posts 10/11 (sources named when fetched).
 - The owned concrete (the asphalt is in since 0.1.8).
+
+## PC rehearsal (2026-11-22, 564c3152): High Plains 0.1.9 green, not installed
+
+Runbook 0097-1 as written: an EMPTY workshop (`D:/k10-scratch/high_plains_lm_0109_reh`), worktree
+`D:/k10-worktrees/hp-finish` on `claude/hp-finish-20261122` 564c3152, ENG `eng_hplm_0109` (= `eng_hplm_0108` +
+`tyre_wall_diffuse.png` md5 c7f4764d + the branch's `SOURCES.txt`; the other 103 textures md5 = the branch's),
+`AIROSO_NUMPY_PY` the lidar venv, `SHIP_PROJ` scratch, `--no-install`. 19:32-19:35: **SHIP OK**, no force, no FATAL, every
+gate green. Compared with 0.1.8's install build (`D:/k10-scratch/high_plains_lm`, Nov 20).
+
+- **Colliders** (`data/bespoke.report.json`), exactly as expected:
+  - true: post0, post1, post2, post3 (already true in 0.1.8), post4, post6, post7, post8, post9, post12, osm289311820,
+    osm289311823, osm289314487, traced_white_w_of_osm289311820; the canopies keep 38 (osm289311821) and 8
+    (traced_pit_entry_canopy) post colliders.
+  - false: post10, post11, osm289311824, osm289316523, traced_container_row.
+  - So 13 more collider objects: walls 22 -> 35 objects, 13,844 -> 14,264 wall vertices, split main 99,945 -> 100,105 positions.
+- **drive_test:** floating furniture 0, walls floating over ground 0 (worst +0.0 m), severe steps 0, bumps 0.0 /km,
+  vertex bumps 2, slope kinks 0.62 /km: all as 0.1.8.
+- **house_seat:** 21 buildings seated, 1 foundation down a slope (0.02 m); floating 0, sunken 0, buried 0, lowest roof
+  1.639 m: as 0.1.8. **kn5_ground_check** walls: seat gap median -0.235 -> -0.239 m, p95 -0.168 -> -0.150 m, hovering 0.
+- **Gate rows:** 180 / 180; four differ, all from the changes above: the split positions, the grassfx line, AUDIT walls
+  13,844v -> 14,264v and the walls seating row (22 -> 35 objects). AI lines the same.
+- **GrassFX:** `105 x 39 cells of 15 m; cells per look {'B': 414, 'C': 7}; 123 rectangles, 123 kept` (0.1.8: 53 x 20 of
+  30 m, 32 kept). B 31 -> 118 rectangles (6.84 -> 9.31 ha), C 1 -> 5. Of 0.1.5's 1,986 card spots (its
+  `source/bespoke/shrubs.json`, lon/lat into the track frame, kn5 z = -N): **1,339 inside a B box, 1,716 within the fade**
+  (0.1.8: 906 / 1,186), ledger 0089's numbers exactly. `ext_config.ini` 6,635 -> 15,067 B.
+- **kn5:** 22,156,060 -> 22,161,329 B (+5,269), kn5_equiv DIFFERENT from materials on, as expected. High Plains writes no
+  `data/kn5_textures.json` (0.1.8 did not either), so read in the kn5 and the build instead: the kn5 names
+  `tyre_wall_diffuse.png` (0.1.8: `tecpro_diffuse.png`), `high_plains.ini` `RES_0_TEXTURE=tyre_wall_diffuse.png`, and
+  `build/texture/` holds `tyre_wall_diffuse.png` in place of `tecpro_diffuse.png`.
+- Version 0.1.9 in `ui_track.json`. Not installed: Kevin's word first.

@@ -1,0 +1,133 @@
+{
+ "pass": true,
+ "gate": {
+  "density_tol": 0.005,
+  "shear_tol": 0.005,
+  "repeat_m": 0.75,
+  "phase_tol": 0.002,
+  "tone_r_min": 0.6,
+  "line_offset_max_m": 0.15,
+  "depth_min_frac": 0.5,
+  "depth_max_frac": 1.5,
+  "kerb_paint_tol": 1,
+  "photo_depth_tol": 0.02,
+  "photo_centroid_tol_m": 0.15,
+  "photo_min_depth": 0.03,
+  "kerb_level_tol": 0.55,
+  "f32_ulps": 1.0
+ },
+ "kn5": "san_diego_lake_murray.kn5",
+ "rows": {
+  "materials": {
+   "pass": true,
+   "materials": [
+    "1ROAD_apron_AP1_mat",
+    "1ROAD_mouthfill_0_mat",
+    "1ROAD_mouthfill_1_mat",
+    "1ROAD_pad_J2_mat",
+    "1ROAD_pad_J3_mat",
+    "1ROAD_pad_J4_mat",
+    "1ROAD_road_mat"
+   ],
+   "problems": []
+  },
+  "density": {
+   "pass": true,
+   "triangles": 52946,
+   "off": 0,
+   "worst_scale_err": 0.000385,
+   "worst_shear": 0.000429,
+   "texel_m": 0.5,
+   "atlas_px": 8192,
+   "jacobian_judged": 51302,
+   "jacobian_off": 0,
+   "edge_judged": 1644,
+   "edge_off": 0,
+   "worst_edge_err": 0.001103,
+   "v_sign": -1.0,
+   "edge_offenders": [],
+   "unjudged": 0,
+   "unjudged_list": []
+  },
+  "no_repeat": {
+   "pass": true,
+   "texels_claimed": 92211,
+   "claimed_twice": 0
+  },
+  "detail_phase": {
+   "pass": true,
+   "worst_tiles": 3e-05,
+   "detail_uv_multiplier": 1024.0
+  },
+  "tone": {
+   "pass": true,
+   "pearson_r": 0.9593,
+   "samples": 5282,
+   "v_convention": "-v",
+   "r_by_convention": {
+    "v": -0.1646,
+    "-v": 0.9593,
+    "1-v": -0.3096
+   },
+   "form": "lanes: each sample's atlas luminance over what the declared lanes leave of it",
+   "photo": "smoothed as declared: the median lit-asphalt ratio within +- smooth_m of each sample",
+   "smooth": {
+    "smooth_m": 8.0,
+    "window_m": 16.0,
+    "lattice_m": 1.0,
+    "min_points": 109,
+    "grow_px": 2,
+    "grow_m": 1.0,
+    "ratio_reference_lum": 0.4302,
+    "samples_with_too_little_lit_asphalt": 1083
+   },
+   "samples_left_out_on_flat_tone_stretches": 254,
+   "flat_tone_stretches": 4
+  },
+  "lane_rubber": {
+   "pass": true,
+   "stations": 3339,
+   "centroid_m": 0.011,
+   "declared_centroid_m": 0.009,
+   "depth_on_wheel_paths": 0.1154,
+   "declared_depth": 0.1218,
+   "profile": {
+    "-1.75": -0.0047,
+    "-1.5": 0.0335,
+    "-1.25": 0.0853,
+    "-1.0": 0.1307,
+    "-0.75": 0.1465,
+    "-0.5": 0.1291,
+    "-0.25": 0.0995,
+    "0.0": 0.0856,
+    "0.25": 0.0999,
+    "0.5": 0.1293,
+    "0.75": 0.146,
+    "1.0": 0.1305,
+    "1.25": 0.0868,
+    "1.5": 0.037,
+    "1.75": 0.0047
+   },
+   "declared_profile": {
+    "-1.75": -0.0043,
+    "-1.5": 0.0353,
+    "-1.25": 0.092,
+    "-1.0": 0.1409,
+    "-0.75": 0.1569,
+    "-0.5": 0.1362,
+    "-0.25": 0.1013,
+    "0.0": 0.0847,
+    "0.25": 0.1013,
+    "0.5": 0.1361,
+    "0.75": 0.157,
+    "1.0": 0.1409,
+    "1.25": 0.0928,
+    "1.5": 0.0383,
+    "1.75": 0.0043
+   },
+   "lanes": 219,
+   "declared_amplitude": 0.22,
+   "lanes_file": "data/road_wear.lanes.json"
+  }
+ }
+}

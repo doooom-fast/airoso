@@ -1,0 +1,58 @@
+{
+ "_doc": "tools/author_median_rebuild_blend.py --paint-only (ledger 0099 round 3, item 4): one connector's paint re-laid in the scene from corrected data, the old strips found exactly, by the assembler's own paint function",
+ "line": "north_J5_jackson_north#0",
+ "record": "source/expansion/jackson_paint/jackson_median_correction.json",
+ "signature": "1b96c0ecbe112d3d",
+ "found": {
+  "MARKINGS": {
+   "strips_to_take_out": 296,
+   "found": 296,
+   "strips_to_lay": 152
+  },
+  "YLINE": {
+   "strips_to_take_out": 292,
+   "found": 292,
+   "strips_to_lay": 389
+  }
+ },
+ "objects": {
+  "MARKINGS": {
+   "vertices_out": 1184,
+   "faces_out": 592,
+   "vertices_in": 608,
+   "faces_in": 304,
+   "vertices": [
+    100904,
+    100328
+   ],
+   "faces": [
+    50452,
+    50164
+   ]
+  },
+  "YLINE": {
+   "vertices_out": 1168,
+   "faces_out": 584,
+   "vertices_in": 1556,
+   "faces_in": 778,
+   "vertices": [
+    71232,
+    71620
+   ],
+   "faces": [
+    35616,
+    35810
+   ]
+  }
+ },
+ "strips": {
+  "old": {
+   "MARKINGS": 2826,
+   "YLINE": 2056
+  },
+  "new": {
+   "MARKINGS": 2682,
+   "YLINE": 2153
+  }
+ }
+}

@@ -1,0 +1,526 @@
+{
+ "_doc": "tone_piece.py: the built carriageway's photo samples that do not read as asphalt, per bin of station",
+ "piece": "C",
+ "bin_m": 50.0,
+ "params": {
+  "STEP": 0.5,
+  "EDGE_M": 0.75,
+  "GREY_SPREAD": 18,
+  "SHADOW_LUM": 0.72,
+  "SHADOW_BLUE": 1.06,
+  "CLIP": [
+   0.7,
+   1.3
+  ],
+  "_doc": "GREY_SPREAD and EDGE_M [invented]; the rest are the bake's"
+ },
+ "lit_asphalt_median_luminance": 106.0,
+ "bins": [
+  {
+   "s": [
+    0.0,
+    47.5
+   ],
+   "samples": 612,
+   "shadow_share": 0.026,
+   "off_share_of_lit": 0.086,
+   "off_left": 0.019,
+   "off_right": 0.15
+  },
+  {
+   "s": [
+    50.0,
+    97.5
+   ],
+   "samples": 1141,
+   "shadow_share": 0.004,
+   "off_share_of_lit": 0.059,
+   "off_left": 0.026,
+   "off_right": 0.098
+  },
+  {
+   "s": [
+    100.0,
+    147.5
+   ],
+   "samples": 1103,
+   "shadow_share": 0.0,
+   "off_share_of_lit": 0.02,
+   "off_left": 0.014,
+   "off_right": 0.025
+  },
+  {
+   "s": [
+    150.0,
+    197.5
+   ],
+   "samples": 1070,
+   "shadow_share": 0.002,
+   "off_share_of_lit": 0.012,
+   "off_left": 0.019,
+   "off_right": 0.007
+  },
+  {
+   "s": [
+    200.0,
+    247.5
+   ],
+   "samples": 1027,
+   "shadow_share": 0.0,
+   "off_share_of_lit": 0.013,
+   "off_left": 0.017,
+   "off_right": 0.008
+  },
+  {
+   "s": [
+    250.0,
+    297.5
+   ],
+   "samples": 978,
+   "shadow_share": 0.0,
+   "off_share_of_lit": 0.045,
+   "off_left": 0.043,
+   "off_right": 0.047
+  },
+  {
+   "s": [
+    300.0,
+    347.5
+   ],
+   "samples": 858,
+   "shadow_share": 0.003,
+   "off_share_of_lit": 0.077,
+   "off_left": 0.121,
+   "off_right": 0.039
+  },
+  {
+   "s": [
+    350.0,
+    397.5
+   ],
+   "samples": 858,
+   "shadow_share": 0.0,
+   "off_share_of_lit": 0.003,
+   "off_left": 0.005,
+   "off_right": 0.002
+  },
+  {
+   "s": [
+    400.0,
+    447.5
+   ],
+   "samples": 869,
+   "shadow_share": 0.036,
+   "off_share_of_lit": 0.012,
+   "off_left": 0.019,
+   "off_right": 0.004
+  },
+  {
+   "s": [
+    450.0,
+    497.5
+   ],
+   "samples": 854,
+   "shadow_share": 0.069,
+   "off_share_of_lit": 0.021,
+   "off_left": 0.041,
+   "off_right": 0.002
+  },
+  {
+   "s": [
+    500.0,
+    547.5
+   ],
+   "samples": 841,
+   "shadow_share": 0.0,
+   "off_share_of_lit": 0.012,
+   "off_left": 0.015,
+   "off_right": 0.009
+  },
+  {
+   "s": [
+    550.0,
+    597.5
+   ],
+   "samples": 857,
+   "shadow_share": 0.007,
+   "off_share_of_lit": 0.031,
+   "off_left": 0.04,
+   "off_right": 0.021
+  },
+  {
+   "s": [
+    600.0,
+    647.5
+   ],
+   "samples": 846,
+   "shadow_share": 0.043,
+   "off_share_of_lit": 0.233,
+   "off_left": 0.358,
+   "off_right": 0.088
+  },
+  {
+   "s": [
+    650.0,
+    697.5
+   ],
+   "samples": 854,
+   "shadow_share": 0.0,
+   "off_share_of_lit": 0.09,
+   "off_left": 0.067,
+   "off_right": 0.114
+  },
+  {
+   "s": [
+    700.0,
+    747.5
+   ],
+   "samples": 866,
+   "shadow_share": 0.0,
+   "off_share_of_lit": 0.081,
+   "off_left": 0.009,
+   "off_right": 0.151
+  },
+  {
+   "s": [
+    750.0,
+    797.5
+   ],
+   "samples": 867,
+   "shadow_share": 0.001,
+   "off_share_of_lit": 0.085,
+   "off_left": 0.005,
+   "off_right": 0.145
+  },
+  {
+   "s": [
+    800.0,
+    847.5
+   ],
+   "samples": 868,
+   "shadow_share": 0.051,
+   "off_share_of_lit": 0.074,
+   "off_left": 0.019,
+   "off_right": 0.109
+  },
+  {
+   "s": [
+    850.0,
+    897.5
+   ],
+   "samples": 869,
+   "shadow_share": 0.099,
+   "off_share_of_lit": 0.086,
+   "off_left": 0.04,
+   "off_right": 0.108
+  },
+  {
+   "s": [
+    900.0,
+    947.5
+   ],
+   "samples": 854,
+   "shadow_share": 0.095,
+   "off_share_of_lit": 0.066,
+   "off_left": 0.014,
+   "off_right": 0.095
+  },
+  {
+   "s": [
+    950.0,
+    997.5
+   ],
+   "samples": 856,
+   "shadow_share": 0.164,
+   "off_share_of_lit": 0.082,
+   "off_left": 0.042,
+   "off_right": 0.089
+  },
+  {
+   "s": [
+    1000.0,
+    1047.5
+   ],
+   "samples": 973,
+   "shadow_share": 0.209,
+   "off_share_of_lit": 0.091,
+   "off_left": 0.03,
+   "off_right": 0.101
+  },
+  {
+   "s": [
+    1050.0,
+    1097.5
+   ],
+   "samples": 1038,
+   "shadow_share": 0.064,
+   "off_share_of_lit": 0.098,
+   "off_left": 0.039,
+   "off_right": 0.13
+  },
+  {
+   "s": [
+    1100.0,
+    1147.5
+   ],
+   "samples": 1083,
+   "shadow_share": 0.03,
+   "off_share_of_lit": 0.033,
+   "off_left": 0.03,
+   "off_right": 0.036
+  },
+  {
+   "s": [
+    1150.0,
+    1197.5
+   ],
+   "samples": 1093,
+   "shadow_share": 0.075,
+   "off_share_of_lit": 0.019,
+   "off_left": 0.017,
+   "off_right": 0.018
+  },
+  {
+   "s": [
+    1200.0,
+    1247.5
+   ],
+   "samples": 1043,
+   "shadow_share": 0.124,
+   "off_share_of_lit": 0.102,
+   "off_left": 0.079,
+   "off_right": 0.099
+  },
+  {
+   "s": [
+    1250.0,
+    1297.5
+   ],
+   "samples": 1004,
+   "shadow_share": 0.075,
+   "off_share_of_lit": 0.225,
+   "off_left": 0.215,
+   "off_right": 0.202
+  },
+  {
+   "s": [
+    1300.0,
+    1347.5
+   ],
+   "samples": 993,
+   "shadow_share": 0.012,
+   "off_share_of_lit": 0.252,
+   "off_left": 0.277,
+   "off_right": 0.223
+  },
+  {
+   "s": [
+    1350.0,
+    1397.5
+   ],
+   "samples": 974,
+   "shadow_share": 0.0,
+   "off_share_of_lit": 0.249,
+   "off_left": 0.282,
+   "off_right": 0.219
+  },
+  {
+   "s": [
+    1400.0,
+    1447.5
+   ],
+   "samples": 967,
+   "shadow_share": 0.018,
+   "off_share_of_lit": 0.169,
+   "off_left": 0.144,
+   "off_right": 0.19
+  },
+  {
+   "s": [
+    1450.0,
+    1497.5
+   ],
+   "samples": 963,
+   "shadow_share": 0.156,
+   "off_share_of_lit": 0.156,
+   "off_left": 0.126,
+   "off_right": 0.138
+  },
+  {
+   "s": [
+    1500.0,
+    1547.5
+   ],
+   "samples": 946,
+   "shadow_share": 0.279,
+   "off_share_of_lit": 0.169,
+   "off_left": 0.134,
+   "off_right": 0.108
+  },
+  {
+   "s": [
+    1550.0,
+    1597.5
+   ],
+   "samples": 947,
+   "shadow_share": 0.297,
+   "off_share_of_lit": 0.221,
+   "off_left": 0.166,
+   "off_right": 0.143
+  },
+  {
+   "s": [
+    1600.0,
+    1647.5
+   ],
+   "samples": 936,
+   "shadow_share": 0.192,
+   "off_share_of_lit": 0.208,
+   "off_left": 0.166,
+   "off_right": 0.17
+  },
+  {
+   "s": [
+    1650.0,
+    1697.5
+   ],
+   "samples": 911,
+   "shadow_share": 0.102,
+   "off_share_of_lit": 0.252,
+   "off_left": 0.212,
+   "off_right": 0.241
+  },
+  {
+   "s": [
+    1700.0,
+    1747.5
+   ],
+   "samples": 910,
+   "shadow_share": 0.222,
+   "off_share_of_lit": 0.223,
+   "off_left": 0.168,
+   "off_right": 0.179
+  },
+  {
+   "s": [
+    1750.0,
+    1797.5
+   ],
+   "samples": 908,
+   "shadow_share": 0.003,
+   "off_share_of_lit": 0.208,
+   "off_left": 0.193,
+   "off_right": 0.223
+  },
+  {
+   "s": [
+    1800.0,
+    1847.5
+   ],
+   "samples": 911,
+   "shadow_share": 0.015,
+   "off_share_of_lit": 0.197,
+   "off_left": 0.185,
+   "off_right": 0.204
+  },
+  {
+   "s": [
+    1850.0,
+    1897.5
+   ],
+   "samples": 923,
+   "shadow_share": 0.222,
+   "off_share_of_lit": 0.242,
+   "off_left": 0.224,
+   "off_right": 0.153
+  },
+  {
+   "s": [
+    1900.0,
+    1947.5
+   ],
+   "samples": 940,
+   "shadow_share": 0.038,
+   "off_share_of_lit": 0.139,
+   "off_left": 0.083,
+   "off_right": 0.183
+  },
+  {
+   "s": [
+    1950.0,
+    1997.5
+   ],
+   "samples": 923,
+   "shadow_share": 0.0,
+   "off_share_of_lit": 0.146,
+   "off_left": 0.105,
+   "off_right": 0.191
+  },
+  {
+   "s": [
+    2000.0,
+    2047.5
+   ],
+   "samples": 928,
+   "shadow_share": 0.002,
+   "off_share_of_lit": 0.073,
+   "off_left": 0.091,
+   "off_right": 0.046
+  },
+  {
+   "s": [
+    2050.0,
+    2097.5
+   ],
+   "samples": 935,
+   "shadow_share": 0.051,
+   "off_share_of_lit": 0.238,
+   "off_left": 0.368,
+   "off_right": 0.021
+  },
+  {
+   "s": [
+    2100.0,
+    2147.5
+   ],
+   "samples": 921,
+   "shadow_share": 0.062,
+   "off_share_of_lit": 0.14,
+   "off_left": 0.206,
+   "off_right": 0.053
+  },
+  {
+   "s": [
+    2150.0,
+    2197.5
+   ],
+   "samples": 978,
+   "shadow_share": 0.004,
+   "off_share_of_lit": 0.086,
+   "off_left": 0.124,
+   "off_right": 0.051
+  },
+  {
+   "s": [
+    2200.0,
+    2247.5
+   ],
+   "samples": 1036,
+   "shadow_share": 0.002,
+   "off_share_of_lit": 0.125,
+   "off_left": 0.161,
+   "off_right": 0.096
+  },
+  {
+   "s": [
+    2250.0,
+    2297.5
+   ],
+   "samples": 104,
+   "shadow_share": 0.0,
+   "off_share_of_lit": 0.106,
+   "off_left": 0.091,
+   "off_right": 0.117
+  }
+ ]
+}

@@ -116,6 +116,33 @@ def test_the_committed_intermediate_is_reproduced_offline_byte_for_byte_but_the_
             fresh["medians"][i] = next(m for m in want["medians"] if m["id"] == mid)
         i13 = next(k for k, m in enumerate(fresh["medians"]) if m["id"] == "MD13")
         fresh["medians"].insert(i13 + 1, next(m for m in want["medians"] if m["id"] == "MD13b"))
+    # ledger 0099 round 3, item 4 (Lake Murray 0.20.8): piece D's painted median and its measured edge lines are corrected at
+    # the source (source/expansion/jackson_paint/fix_jackson_median.py); the author reproduces the rows as they were, the
+    # record holds them before and after, and the four opt-in edge columns are the correction's (null on every other row)
+    jrec_p = ROOT / "tracks" / "san-diego-lake-murray" / "source" / "expansion" / "jackson_paint" / "jackson_median_correction.json"
+    if jrec_p.exists():
+        jrec = json.loads(jrec_p.read_text(encoding="utf-8"))
+        jby = {float(r["s"]): r for r in jrec["rows"]}
+        wp, fp = (next(p for p in d["pieces"] if p["id"] == "D") for d in (want, fresh))
+        extra = [c for c in wp["columns"] if c not in fp["columns"]]
+        assert extra == ["edge_fwd_m", "outer_fwd_m", "edge_rev_m", "outer_rev_m"], extra
+        fp["columns"] = fp["columns"] + extra
+        for fr in fp["stations"]:
+            fr.extend([None] * len(extra))
+        cols = wp["columns"]
+        seen = 0
+        for wr, fr in zip(wp["stations"], fp["stations"]):
+            ch = jby.get(float(wr[0]))
+            if ch is None:
+                assert wr == fr, wr[0]                                                  # a row the correction does not touch
+                continue
+            seen += 1
+            for k, v in ch["before"].items():
+                assert fr[cols.index(k)] == v, (wr[0], k, fr[cols.index(k)], v)
+            for k, v in ch["after"].items():
+                assert wr[cols.index(k)] == v, (wr[0], k, wr[cols.index(k)], v)
+            fr[:] = list(wr)
+        assert seen == len(jby) == 115
     assert fresh == want
 
 

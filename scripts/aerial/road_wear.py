@@ -59,6 +59,8 @@ DEFAULTS = {
         "fill_m": 3.0,              # [invented] the lit-asphalt neighbourhood a shadow / paint texel is filled from
         "clip": [0.70, 1.30],       # [invented] the tone ratio kept (outliers are cars, cones, debris)
         "headroom_pct": 99.5,       # [invented] the tone percentile that maps to 1.0 (m0)
+        # "smooth_m" (opt-in, no default here so a spec without it is unchanged): the smallest thing the photo's tone
+        # keeps, in metres (smooth_tone below; ledger 0099 round 3, Lake Murray 0.20.7: a street's photo has cars on it)
     },
     "wear": {
         "amplitude": 0.22,          # [invented] the rubber's darkening at the line's peak. The aerial cannot set it: on Milford's
@@ -250,8 +252,15 @@ def tone_field(aerial: Aerial, grid: Grid, road: np.ndarray, spec_tone: dict, re
     """float32 [ny, nx]: the aerial's luminance over the lit-asphalt median, on the grid; shadow and paint texels filled
     from the lit asphalt within fill_m, everything off the road filled outward from the road (the edge strip, the
     margins). Returns (tone, stats)."""
-    X, Y = grid.centres(0, 0, grid.nx, grid.ny)
-    rgb = aerial.sample(X, Y)
+    # sampled in bands of rows: each texel's value is its own arithmetic, so the result is the whole-grid call's bit for
+    # bit, without that call's index and corner arrays for every texel at once (Lake Murray, 11584 x 10048 texels: a
+    # 19.7 GB peak measured on the whole-grid call, 2026-11-23)
+    rgb = np.empty((grid.ny, grid.nx, 3), dtype=np.float32)
+    for j0 in range(0, grid.ny, TONE_BAND_ROWS):
+        nj = min(TONE_BAND_ROWS, grid.ny - j0)
+        X, Y = grid.centres(0, j0, grid.nx, nj)
+        rgb[j0:j0 + nj] = aerial.sample(X, Y)
+    del X, Y
     lum = luminance(rgb)
     valid = road & np.isfinite(lum)
     ref = float(np.median(lum[valid]))
@@ -281,13 +290,105 @@ def tone_field(aerial: Aerial, grid: Grid, road: np.ndarray, spec_tone: dict, re
         f = box_mean(out, np.isfinite(out), k)
         out = np.where(np.isfinite(out), out, f)
     out = np.where(np.isfinite(out), out, 1.0).astype(np.float32)
+    smooth = None
+    if spec_tone.get("smooth_m"):
+        out, smooth = smooth_tone(t, lit, grid.res, float(spec_tone["smooth_m"]))
     stats = {"lit_median_lum": round(ref, 4), "road_cells": int(valid.sum()),
              "shadow_pct": round(100.0 * shadow.sum() / max(1, valid.sum()), 2),
              "paint_pct": round(100.0 * paint.sum() / max(1, valid.sum()), 2),
              "tone_p01_p50_p99": [round(float(v), 4) for v in np.percentile(out[road], [1, 50, 99])],
              "aerial_px_m": [round(aerial.px_m[0], 3), round(aerial.px_m[1], 3)]}
+    if smooth is not None:
+        stats["smooth"] = smooth
     if return_lit:
         return out, stats, lit
+    return out, stats
+
+
+# --- the tone without what is smaller than a patch of asphalt (opt-in tone.smooth_m) ---------------------------------
+# Lake Murray 0.20.7 (ledger 0099 round 3, item 3). A circuit's photo is empty asphalt; a street's is not. Baked as read,
+# Lake Murray's tone printed the photo's cars (dark blobs in the lanes; the clip keeps anything down to 0.70), its
+# crosswalks, stop bars and lane paint (the paint rule catches the bright core of a line, not the grey round it), and
+# the ragged edges of tree shadows onto the road, none of them where the built road has a car, a line or a tree. Del
+# Mar 0.2.6 was held for the first of these. What the photo honestly says at street scale is which stretch of asphalt
+# is older or newer than the next: patches as wide as the road and tens of metres long.
+#
+# smooth_m is the smallest thing kept. The tone at a node is the MEDIAN of the lit-asphalt ratio over the road's lit
+# texels in a square window 2 x smooth_m wide about it; a median drops whatever fills less than half its window, so a
+# thing must be smooth_m across, over the whole width the window sees, to survive. Nodes stand every smooth_m / 2 and
+# the field between them is drawn straight (bilinear), so the result has no step and no texel-scale detail at all.
+# Lake Murray's 8 m [invented]: over a car's length (4.5-5 m) and a crosswalk with its stop bar (3-4 m), so neither can
+# be half of a 16 m window; whole-width patches of asphalt are kept from 8 m up. A node needs SMOOTH_MIN_LIT_SHARE of
+# its window on lit asphalt, or it is filled from the nodes round it, as the edge strip and the margins are.
+SMOOTH_MIN_LIT_SHARE = 0.375  # [invented] three eighths. A node standing on a wide road's edge reads half its window; one
+                              # a node spacing outside the edge reads a quarter, and that quarter is the gutter, the
+                              # parked cars and the kerbside shadow (a 2 m row of parked cars is half of it). Between
+                              # the two; at Lake Murray's 16 m window it is 96 m2, so one car (about 10 m2) is never
+                              # half of what a node reads
+TONE_BAND_ROWS = 256         # the photo is sampled this many grid rows at a time (memory only; the values are the same)
+
+
+def smooth_tone(t: np.ndarray, lit: np.ndarray, res: float, smooth_m: float) -> tuple[np.ndarray, dict]:
+    """float32 [ny, nx]: the tone ratio ``t`` without what is smaller than ``smooth_m`` (the note above). ``lit`` marks
+    the texels that are lit asphalt on the built road; everything else is filled from them. Returns (field, stats)."""
+    ny, nx = t.shape
+    ns = max(1, int(round(0.5 * smooth_m / res)))            # node spacing, texels
+    hw = 2 * ns                                              # the window's half width, texels (window = 2 x smooth_m)
+    na = nx // ns + 2; nb = ny // ns + 2                     # nodes at texel edges 0, ns, 2 ns, ... past the far edge
+    jj, ii = np.nonzero(lit)
+    vals = t[jj, ii].astype(np.float32)
+    # texel i (centre i + 0.5) lies in the windows of the 2 hw / ns nodes a with |i + 0.5 - a ns| < hw
+    a0 = (ii - hw) // ns + 1; b0 = (jj - hw) // ns + 1
+    k = 2 * hw // ns
+    med = np.full(nb * na, np.nan, dtype=np.float64)
+    cnt = np.zeros(nb * na, dtype=np.int64)
+    step = max(1, 2_000_000 // (k * k))                      # texels per pass: about 2 M (node, value) pairs at a time
+    keys_all = []; vals_all = []
+    for s0 in range(0, len(vals), step):
+        a = a0[s0:s0 + step, None, None] + np.arange(k)[None, None, :]
+        b = b0[s0:s0 + step, None, None] + np.arange(k)[None, :, None]
+        a, b = np.broadcast_arrays(a, b)
+        ok = (a >= 0) & (a < na) & (b >= 0) & (b < nb)
+        keys_all.append((b * na + a)[ok].astype(np.int64))
+        vals_all.append(np.broadcast_to(vals[s0:s0 + step, None, None], a.shape)[ok])
+    if keys_all:
+        keys = np.concatenate(keys_all); vv = np.concatenate(vals_all)
+        del keys_all, vals_all
+        o = np.lexsort((vv, keys))
+        keys = keys[o]; vv = vv[o]
+        first = np.flatnonzero(np.r_[True, keys[1:] != keys[:-1]])
+        n = np.diff(np.r_[first, len(keys)])
+        node = keys[first]
+        m = 0.5 * (vv[first + (n - 1) // 2].astype(np.float64) + vv[first + n // 2])       # np.median's own rule
+        need = int(math.ceil(SMOOTH_MIN_LIT_SHARE * (2 * hw) ** 2))
+        good = n >= need
+        med[node[good]] = m[good]
+        cnt[node] = n
+        del keys, vv, o
+    N = med.reshape(nb, na)
+    measured = int(np.isfinite(N).sum())
+    r = 1
+    for _ in range(14):                                      # outward from the measured nodes until every node has a value
+        if np.isfinite(N).all():
+            break
+        f = box_mean(N, np.isfinite(N), r)
+        N = np.where(np.isfinite(N), N, f)
+        r *= 2
+    N = np.where(np.isfinite(N), N, 1.0)
+    out = np.empty((ny, nx), dtype=np.float32)
+    ax = (np.arange(nx) + 0.5) / ns
+    ia = np.clip(np.floor(ax).astype(np.int64), 0, na - 2); fa = (ax - ia)[None, :]
+    for j0 in range(0, ny, 512):
+        ay = (np.arange(j0, min(ny, j0 + 512)) + 0.5) / ns
+        ib = np.clip(np.floor(ay).astype(np.int64), 0, nb - 2); fb = (ay - ib)[:, None]
+        lo = N[ib][:, ia] * (1 - fa) + N[ib][:, ia + 1] * fa
+        hi = N[ib + 1][:, ia] * (1 - fa) + N[ib + 1][:, ia + 1] * fa
+        out[j0:j0 + len(ay)] = (lo * (1 - fb) + hi * fb).astype(np.float32)
+    stats = {"smooth_m": float(smooth_m), "window_m": round(2 * hw * res, 3), "node_m": round(ns * res, 3),
+             "min_lit_share": SMOOTH_MIN_LIT_SHARE, "min_lit_m2": round(SMOOTH_MIN_LIT_SHARE * (2 * hw * res) ** 2, 2),
+             "nodes": [int(na), int(nb)], "nodes_measured": measured,
+             "nodes_with_lit_asphalt": int(np.count_nonzero(cnt)),
+             "nodes_under_min_lit": int(np.count_nonzero(cnt)) - measured}
     return out, stats
 
 
@@ -448,7 +549,11 @@ def tyre_profile(u: np.ndarray, track_m: float, spread_m: float) -> np.ndarray:
 
 def wear_at(X: np.ndarray, Y: np.ndarray, Z: float | None, line: dict, w: dict, reach: float) -> np.ndarray:
     """Rubber darkening 0..amplitude at world points (X, Y) (same shape) from one line {P (N x 3: x, y, height), I}:
-    nearest line segment within reach; a segment more than layer_m off the cell's height band is never near (L4)."""
+    nearest line segment within reach; a segment more than layer_m off the cell's height band is never near (L4).
+    An open line's ends are round: a point past an end is as far from the line as from its end point, which draws the
+    two tyre tracks round the end as a horseshoe. A line with ``"butt_ends": True`` (tools/road_lanes.bake_lines: a
+    lane that stops at a junction, ledger 0099 round 3) lays nothing past its first and last point instead (the plane
+    through its last point belongs to whatever starts there: two lines welded end to end never both lay rubber)."""
     P = line["P"]; I = line["I"]
     pts = np.stack([X.ravel(), Y.ravel()], axis=1)
     cx, cy = pts.mean(axis=0)
@@ -462,22 +567,33 @@ def wear_at(X: np.ndarray, Y: np.ndarray, Z: float | None, line: dict, w: dict, 
         near &= np.abs(P[:len(A), 2] - Z) < line.get("layer_m", 10.0)
     if not near.any():
         return np.zeros(X.shape, dtype=np.float32)
+    butt = bool(line.get("butt_ends")) and not line["closed"]
+    if butt:                                            # which kept segments are the line's first and last
+        seg = np.flatnonzero(near)
+        is_first = seg == 0; is_last = seg == len(near) - 1
     A = A[near]; B = B[near]; IA = IA[near]; IB = IB[near]
     AB = B - A
     L2 = np.maximum(np.sum(AB * AB, axis=1), 1e-12)
     best_d = np.full(len(pts), np.inf); best_i = np.zeros(len(pts))
+    past = np.zeros(len(pts), dtype=bool)
     for s0 in range(0, len(A), 64):                     # chunked: points x segments
         a = A[s0:s0 + 64]; ab = AB[s0:s0 + 64]; l2 = L2[s0:s0 + 64]
         rel = pts[:, None, :] - a[None, :, :]
-        tt = np.clip(np.sum(rel * ab[None], axis=2) / l2[None], 0.0, 1.0)
+        t_raw = np.sum(rel * ab[None], axis=2) / l2[None]
+        tt = np.clip(t_raw, 0.0, 1.0)
         d = np.linalg.norm(rel - tt[..., None] * ab[None], axis=2)
         k = np.argmin(d, axis=1)
         dk = d[np.arange(len(pts)), k]
         better = dk < best_d
+        if butt:
+            tk = t_raw[np.arange(len(pts)), k]
+            pk = (is_first[s0:s0 + 64][k] & (tk < 0.0)) | (is_last[s0:s0 + 64][k] & (tk >= 1.0))
+            past = np.where(better, pk, past)
         ik = IA[s0:s0 + 64][k] * (1 - tt[np.arange(len(pts)), k]) + IB[s0:s0 + 64][k] * tt[np.arange(len(pts)), k]
         best_d = np.where(better, dk, best_d); best_i = np.where(better, ik, best_i)
     D = w["amplitude"] * best_i * tyre_profile(best_d, w["track_m"], w["spread_m"])
     D[best_d > reach] = 0.0
+    D[past] = 0.0
     return D.reshape(X.shape).astype(np.float32)
 
 
@@ -621,6 +737,49 @@ def plan_atlas(centroids: np.ndarray, heights: np.ndarray, overhang_m: float, sp
     if best is None:
         raise ValueError(f"road_wear: no atlas <= {spec['max_atlas_px']} px holds the road at {tex} m/texel")
     return best[1]
+
+
+# --- a flat tone on named stretches (opt-in road_wear.tone.flat; ledger 0099 round 3, item 3) ----------------------------
+FLAT_SKIRT_M = 2.0     # [invented] the flat tone reaches this far past the stretch's paved edge (the atlas's bilinear
+#                        footprint and its mips read a little past the road)
+FLAT_EASE_M = 25.0     # [invented] a stretch's flat tone eases in and out over this length at its two ends
+
+
+def flat_alpha(X: np.ndarray, Y: np.ndarray, P: np.ndarray, half: np.ndarray, ease_m: float) -> np.ndarray:
+    """How much of the flat tone a world point takes, 0..1 (same shape as X): 1 on the carriageway of the polyline P
+    (N x 2: x, y) whose half widths are ``half`` (N), eased straight to 0 over ``ease_m`` at the polyline's two ends, 0
+    off it. A point belongs to its nearest segment and is on the carriageway when it lies within the half width there
+    (drawn straight along the segment). Why: Lake Murray's Mission Gorge Rd is built 1.6-3.0 m off the real road over
+    some stretches (its edges were read by eye), so the photo's tone at the built road's place is partly the real
+    verge and the real median there; those stretches take the lit-asphalt tone (ratio 1.0) instead."""
+    P = np.asarray(P, dtype=np.float64); half = np.asarray(half, dtype=np.float64)
+    pts = np.stack([np.asarray(X, dtype=np.float64).ravel(), np.asarray(Y, dtype=np.float64).ravel()], axis=1)
+    A = P[:-1]; AB = P[1:] - A
+    L = np.sqrt(np.sum(AB * AB, axis=1)); L2 = np.maximum(L * L, 1e-12)
+    S0 = np.concatenate([[0.0], np.cumsum(L)[:-1]]); total = float(L.sum())
+    out = np.zeros(len(pts), dtype=np.float32)
+    reach = float(half.max())
+    lo = P.min(axis=0) - reach; hi = P.max(axis=0) + reach
+    cand = np.nonzero((pts[:, 0] >= lo[0]) & (pts[:, 0] <= hi[0]) & (pts[:, 1] >= lo[1]) & (pts[:, 1] <= hi[1]))[0]
+    for c0 in range(0, len(cand), 20000):                  # chunked both ways: points x segments
+        idx = cand[c0:c0 + 20000]
+        q = pts[idx]
+        best_d = np.full(len(q), np.inf); best_s = np.zeros(len(q)); best_h = np.zeros(len(q))
+        r = np.arange(len(q))
+        for s0 in range(0, len(A), 64):
+            a = A[s0:s0 + 64]; ab = AB[s0:s0 + 64]; l2 = L2[s0:s0 + 64]
+            rel = q[:, None, :] - a[None, :, :]
+            t = np.clip(np.sum(rel * ab[None], axis=2) / l2[None], 0.0, 1.0)
+            d = np.sqrt(np.sum((rel - t[..., None] * ab[None]) ** 2, axis=2))
+            j = np.argmin(d, axis=1)
+            dj = d[r, j]; tj = t[r, j]; k = s0 + j
+            better = dj < best_d
+            best_d = np.where(better, dj, best_d)
+            best_s = np.where(better, S0[k] + tj * L[k], best_s)
+            best_h = np.where(better, half[k] + tj * (half[k + 1] - half[k]), best_h)
+        ease = np.clip(np.minimum(best_s, total - best_s) / ease_m, 0.0, 1.0) if ease_m > 0 else np.ones(len(q))
+        out[idx] = np.where(best_d <= best_h, ease, 0.0)
+    return out.reshape(np.shape(X))
 
 
 def cell_keys(centroids: np.ndarray, heights: np.ndarray, plan: dict, spec: dict) -> list[tuple[int, int, int]]:

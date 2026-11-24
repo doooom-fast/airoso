@@ -23,6 +23,18 @@ WHAT IT DOES, in order, on the scene engine-july's prep saved (blender/<slug>.bl
 4c. (opt-in road_wear.rubber "none", Kevin 2026-11-10 "Tone only, no rubber"; Pueblo, Aspen, Grand Junction, Pikes Peak:
    their photos show no rubber) as 4b, measured and recorded the same way, but the gate does not ask the photo to show
    rubber; the asphalt gets the tone alone and road_wear.kerbs is refused (rw.rubber_mode);
+3b. (opt-in road_wear.tone.flat, ledger 0099 round 3: Lake Murray's Mission Gorge Rd) named stretches of a connector take
+   the lit-asphalt tone (ratio 1.0) instead of the photo's, eased at their ends (rw.flat_alpha): where the road is built
+   off the real one, the photo's tone at the built road's place is not the road's;
+4d. (opt-in road_wear.lanes, ledger 0084's owed "lanes" source: a street) the lines are the lanes: tools/road_lanes.py
+   writes data/road_wear.lanes.json and its bake_lines() are the lines, uniform rubber, both directions; no racing line is
+   made unless road_wear.lines names one. Drawn mode only. With road_wear.lanes.ends (opt-in, LANE ENDS there) a lane's
+   rubber follows its share along its length (faded to nothing at an end that is an end, whole across a weld to the lane
+   it runs into) and nothing is laid past a lane's end (rw.wear_at "butt_ends");
+3c. (opt-in road_wear.tone.smooth_m, ledger 0099 round 3: Lake Murray 0.20.7) the tone keeps nothing smaller than
+   smooth_m (rw.smooth_tone: the median of the lit asphalt in a window 2 x smooth_m wide, on nodes, drawn straight
+   between them): a street's photo has cars, crosswalks and shadow edges on it, and the built road has none of them
+   there. Applied inside the tone field, so the flat stretches of 3b are laid over the smoothed tone;
 5. the macro atlas baked tile by tile from the world (tone x (1 - wear), x m0), the detail textures (each surface's own
    stock diffuse / m0 and its stock normal), a flat normal — all PNG, power of two;
 5b. (opt-in road_wear.detail_highpass_m, ledger 0095: Milford 0.1.13, High Plains 0.1.8) the named surfaces' detail
@@ -74,6 +86,56 @@ def _args():
     proj = Path(a[a.index("--project") + 1]).resolve() if "--project" in a else blend.parents[1]
     eng = Path(a[a.index("--eng") + 1]).resolve() if "--eng" in a else None
     return blend, proj, eng
+
+
+def _road_lanes():
+    """tools/road_lanes.py, loaded by path (road_wear.lanes: the lanes are the lines)."""
+    spec = importlib.util.spec_from_file_location("road_lanes", AIROSO / "tools" / "road_lanes.py")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+def _flat_tone(proj: Path, flats, grid, tone, road):
+    """road_wear.tone.flat: [{"road": <connector>, "from": row, "to": row, "ease_m": ...}] -> the tone field's texels on
+    those rows' carriageway set to the lit-asphalt ratio 1.0, eased at the stretch's ends (in place); the record of each
+    stretch, or None when the key is absent. A connector's rows are its points in data/connectors.local.json."""
+    if not flats:
+        return None
+    conns = {}
+    for c in json.loads((proj / "data" / "connectors.local.json").read_text(encoding="utf-8")).get("connectors", []):
+        conns.setdefault(str(c["name"]).split("#")[0], []).append(c)
+    out = []
+    for f in flats:
+        name = str(f.get("road", ""))
+        got = conns.get(name.split("#")[0]) or []
+        if len(got) != 1:
+            raise SystemExit(f"[road_wear] FATAL: road_wear.tone.flat names {name!r}: {len(got)} connectors of that name")
+        c = got[0]
+        a, b = int(f["from"]), int(f["to"])
+        n = len(c["points_xyz_m"])
+        if not (0 <= a < b < n):
+            raise SystemExit(f"[road_wear] FATAL: road_wear.tone.flat {name!r} rows {a}-{b}: the connector has rows 0-{n - 1}")
+        ease = float(f.get("ease_m", rw.FLAT_EASE_M))
+        P = np.array([[p[0], p[2]] for p in c["points_xyz_m"][a:b + 1]], dtype=np.float64)      # Blender x = east, y = north
+        half = np.array([0.5 * float(w_) for w_ in c["widths_m"][a:b + 1]]) + rw.FLAT_SKIRT_M
+        reach = float(half.max())
+        i0, j0 = grid.index(P[:, 0].min() - reach, P[:, 1].min() - reach)
+        i1, j1 = grid.index(P[:, 0].max() + reach, P[:, 1].max() + reach)
+        i0, j0 = max(0, int(i0)), max(0, int(j0))
+        i1, j1 = min(grid.nx - 1, int(i1)), min(grid.ny - 1, int(j1))
+        if i1 < i0 or j1 < j0:
+            raise SystemExit(f"[road_wear] FATAL: road_wear.tone.flat {name!r} rows {a}-{b} lie outside the bake's grid")
+        X, Y = grid.centres(i0, j0, i1 - i0 + 1, j1 - j0 + 1)
+        al = rw.flat_alpha(X, Y, P, half, ease)
+        sub = tone[j0:j1 + 1, i0:i1 + 1]
+        sub[...] = (1.0 + (sub - 1.0) * (1.0 - al)).astype(sub.dtype)
+        seg = np.sqrt(np.sum(np.diff(P, axis=0) ** 2, axis=1))
+        out.append({"road": name, "from": a, "to": b, "ease_m": ease, "skirt_m": rw.FLAT_SKIRT_M, "length_m": round(float(seg.sum()), 1),
+                    "texels": int(np.count_nonzero(al > 0)), "road_texels": int(np.count_nonzero((al > 0) & road[j0:j1 + 1, i0:i1 + 1])),
+                    "line_xy": np.round(P, 3).tolist(), "half_m": np.round(half, 3).tolist(),
+                    **({"why": f["why"]} if f.get("why") else {})})
+    return out
 
 
 def _engine_prep(eng: Path | None):
@@ -402,7 +464,10 @@ def main() -> int:
     print(f"[road_wear] grid {grid.nx} x {grid.ny} at {tex} m; the built {surfaces[0]} covers {road.sum() * tex * tex:.0f} m2 "
           f"({time.time() - t0:.0f} s)")
     aer_spec = spec.get("aerial")
-    stats = {"plan": plan, "furthest_vertex_m": round(over, 3)}
+    # "cells": the used cells (east index, north index, height layer) in slot order (rw.tile_slots): cell k's tile is at
+    # column k % tiles_per_row, row k // tiles_per_row, counted from the atlas's bottom row, so a place can be found in
+    # the atlas without the mesh (a look at the bake, tile by tile)
+    stats = {"plan": plan, "furthest_vertex_m": round(over, 3), "cells": [list(k) for k in allkeys]}
     # road_wear.rubber (opt-in, Kevin 2026-11-10 "Use the photo's rubber"): "photo" = the aerial carries the rubber, no
     # drawn band on the asphalt; "none" (Kevin 2026-11-10 "Tone only, no rubber") = the same asphalt, the photo not asked
     # to show rubber, no kerb levels; absent / "drawn" = Milford's drawn band, unchanged
@@ -419,12 +484,26 @@ def main() -> int:
         aer.dx, aer.dy = reg["dx_m"], reg["dy_m"]
         tone, tstats, lit = rw.tone_field(aer, grid, road, spec["tone"], return_lit=True)
         stats["aerial"] = {"image": aer_spec["image"], "registration": reg, **tstats}
+        if tstats.get("smooth"):                 # road_wear.tone.smooth_m (opt-in; scripts/aerial/road_wear.smooth_tone)
+            sm = tstats["smooth"]
+            print(f"[road_wear] tone smoothed: nothing under {sm['smooth_m']} m kept (the median of the lit asphalt in a "
+                  f"{sm['window_m']} m window, nodes every {sm['node_m']} m): {sm['nodes_measured']} nodes measured, "
+                  f"{sm['nodes_under_min_lit']} with under {sm['min_lit_m2']} m2 of lit asphalt in the window filled from their neighbours")
+        flat_rec = _flat_tone(proj, spec["tone"].get("flat"), grid, tone, road)
+        if flat_rec is not None:
+            stats["flat_tone"] = flat_rec
+            print(f"[road_wear] flat tone on {len(flat_rec)} stretch(es), {sum(f['length_m'] for f in flat_rec):.0f} m: "
+                  f"{sum(f['road_texels'] for f in flat_rec)} road texels take the lit-asphalt tone "
+                  f"({[(f['road'], f['from'], f['to']) for f in flat_rec]})")
         print(f"[road_wear] aerial registered to the built road: shift ({reg['dx_m']:+.2f}, {reg['dy_m']:+.2f}) m, contrast "
               f"{reg['contrast_at_0']:+.4f} -> {reg['contrast_best']:+.4f}; shadow {tstats['shadow_pct']} %, paint "
               f"{tstats['paint_pct']} % of the road; tone p01/p50/p99 {tstats['tone_p01_p50_p99']}")
     else:
         tone = np.ones((grid.ny, grid.nx), dtype=np.float32)
         stats["aerial"] = None
+        if spec["tone"].get("flat"):
+            print("[road_wear] FATAL: road_wear.tone.flat without road_wear.aerial: there is no photo tone to flatten")
+            return 1
     m0 = 1.0 / float(np.percentile(tone[road], spec["tone"]["headroom_pct"]))
     m0 = min(1.0, m0)
 
@@ -453,7 +532,30 @@ def main() -> int:
             ok2[ok] = usable[j[ok], i[ok]]
             out[ok2] = tone[j[ok2], i[ok2]]
             return out
-    line_specs = spec.get("lines") or [{"layout": L.get("id", "main")} for L in (cfg.get("layouts") or [{"id": "main"}])]
+    lanes_rec = None
+    lane_spec = spec.get("lanes")
+    lanes_on = isinstance(lane_spec, dict) and bool(lane_spec.get("enabled", True))
+    if lanes_on:
+        if mode != "drawn":
+            print(f"[road_wear] FATAL: road_wear.lanes draws the lanes' wheel paths; road_wear.rubber {mode!r} draws nothing")
+            return 1
+        rl = _road_lanes()
+        doc = rl.run(proj)
+        if doc is None:
+            print("[road_wear] FATAL: road_wear.lanes is named but tools/road_lanes.py wrote no lanes")
+            return 1
+        lane_lines = rl.bake_lines(doc, spec["layer_m"])
+        lines += lane_lines
+        lanes_rec = {"file": f"data/{rl.OUT_NAME}", "lines": len(lane_lines), "km": doc["summary"]["km"], "rubber": doc["rubber"],
+                     "by_group": doc["summary"]["by_group"]}
+        print(f"[road_wear] lanes: {len(lane_lines)} lane lines ({doc['summary']['km']['forward']} km forward, "
+              f"{doc['summary']['km']['reverse']} km reverse), uniform rubber {doc['rubber']} -> {rl.OUT_NAME}")
+        if doc.get("ends"):                      # road_wear.lanes.ends (opt-in; tools/road_lanes.py LANE ENDS)
+            lanes_rec["ends"] = doc["ends"]
+            print(f"[road_wear] lane ends: {doc['ends']['welds']} welded, {doc['ends']['ends_faded']} faded over "
+                  f"{doc['ends']['fade_m']} m and cut square; rubber on {doc['ends']['rubber_km']} of {doc['ends']['lane_km']} km of lane")
+    # with lanes the lines are the lanes: a racing line is made only when road_wear.lines names one
+    line_specs = spec.get("lines") or ([] if lanes_on else [{"layout": L.get("id", "main")} for L in (cfg.get("layouts") or [{"id": "main"}])])
     for ls in line_specs:
         ai = proj / ls["ai"] if ls.get("ai") else None
         if ai is not None and ai.exists():
@@ -681,6 +783,7 @@ def main() -> int:
         "materials": rows, "spec": spec, "stats": stats, "m0": round(m0, 5), "detail_uv_multiplier": mult,
         "detail": detail_stats, "deepest_rubber": round(dmax, 4), "centre": cinfo,
         "lines": [{k: v for k, v in ln.items() if k not in ("P", "I")} for ln in lines],
+        **({"lanes": lanes_rec} if lanes_rec is not None else {}),
         "writer_vertices": caps, "positions_md5": before, "macro_png_bytes": nbytes,
         "textures": {k: Path(v).name for k, v in files.items()},
         **({"kerbs": kerb_rec} if kerb_rec is not None else {}),

@@ -1179,3 +1179,455 @@ lanes drop from 3 to 2 on one side in five short stretches where the road as bui
   are restored.
 - Records on `claude/lm-0206-install-20261123` (sync-back ed2dc7df without the blend, seed 85bb98d7, origin/main 9c1cb999 merged 61fce49d). Kevin's standing word on
   the PC: "Yes and I always want newer builds".
+
+## Round 3, item 3 (the PC, 2026-11-23): road wear on Lake Murray, on its lanes, at 0.50 m, the photo's tone smoothed. 0.20.7. Green on scratch (the bake and every gate), not rehearsed
+
+Kevin, 2026-11-22: "Full road wear at 10 cm". Lake Murray had no road wear: one asphalt picture on a 4 m grid, the same
+everywhere (ledger 0084's complaint). This item wires the bake of 0084 on Lake Murray. Four things were not wiring:
+the resolution Kevin asked for does not fit; a street's wear lines are its lanes and nothing built them into the bake;
+part of Mission Gorge Rd is built off the real road, so the photo's tone there is not the road's; and a street's photo
+has cars, crosswalks and shadows on it, which the first trial bake printed onto the road.
+
+### The resolution: 10 cm was offered on a wrong estimate. Kevin: "50 cm now"
+
+0084 offered Kevin 10 cm on Lake Murray as one 8192 x 8192 texture, 89 MB. That was the road's area over a texel's:
+perfect packing. The bake packs square world cells with a margin as wide as the worst face's reach, and Lake Murray's
+ribbon has few columns across a 30 m road: a face reaches up to 11.21 m from its centroid (52,946 faces, 502,157 m2
+of `1ROAD`, measured on the built road). The planner's own rule replayed on that:
+
+| texel | cells | atlases of 8192 | about, as BC7 with mips |
+|---|---|---|---|
+| 0.50 m | 690 of 64 m, 16 m margin | **1** | 89 MB |
+| 0.25 m | 690 of 64 m, 12 m margin | 2 | 178 MB |
+| 0.125 m | 719 of 60 m | 5 | 445 MB |
+| 10 cm (205 / 2048 m) | 1,008 of 44 m | 7 | 623 MB |
+
+The bake holds one atlas, so anything under 0.50 m also needs a multi-atlas bake. And a texel of 205 / 2048 m, which
+makes the atlas's detail multiplier whole, does not make a tile's pitch whole (it would need an 820 m tile), so the
+grain would step at every cell.
+
+Kevin was shown the table and chose, 2026-11-23: **"50 cm now"**. At 0.50 m: 8192 x 0.5 / 4 = 1024, whole; a tile's
+pitch (64 + 32) / 0.5 = 192 px, whole. What the macro carries is the photo's tone and the lanes' wear; the asphalt's
+grain is the detail texture, at its own resolution whatever the macro's texel. 25 cm stays open as its own item:
+per-face margins would fit it in one atlas, or a multi-atlas bake in two.
+
+### The lanes (`tools/road_lanes.py`, the Mac's; `road_wear.lanes`)
+
+The Mac's call, 2026-11-23: **lanes only**. The road kn5 is shared by Free Roam and the four race layouts, so there is
+one bake, and a racing line would cross the street lanes in Free Roam (0084: "Streets use lanes, not a racing line").
+
+- The tool gives one line per lane, both directions, from the paint's own rule: 217 lines on Lake Murray, 47.5 km
+  forward and 49.5 km reverse (mainline 90, the north network 36, connectors 27, stubs 52, College 12).
+- **College Ave** (rows 1130-1476, two one-way roads and their forks since round 2) had no reader. `read_college_split`
+  mirrors the paint section of `college_middle_blend.py` expression for expression: each road's lanes count from its
+  yellow, and on the forks the base runs from the old line's centre to the yellow where the roads part. 12 lanes; at
+  row 1130 they are the mainline's own (3 + 3 at +-1.825, 5.475, 9.125 m); a lane keeps to its own road's height.
+- **`college_nb` is left out** (`lanes.exclude`, rows 0-345): the Speedway lap's line along College's northbound road
+  is a plain connector record, which the tool read as a two-way road on top of the split zone's lanes (below).
+- The tool no longer needs numpy to load, so it runs on the PC's interpreter.
+- In the bake (`tools/road_wear_blend.py`, opt-in): where the config names lanes, the lines are the lanes and no racing
+  line is made. `wear.spread_m` 0.55 [invented, road_wear's own first value]: two tyre stripes with a lighter middle, a
+  lane's look. The amplitude stays 0.22 [invented]. Kevin's drive judges both.
+
+### The tone where the road is misplaced (`road_wear.tone.flat`)
+
+The bake registers the photo to the built road with one shift and reads the tone at each texel's world place. Item 2
+found Mission Gorge Rd built 1.6-3.0 m north-west of the real road over s 1250-2000. Measured per 50 m of piece C
+(`source/road_wear/tone_piece.py` -> `tone_piece_C.json`; across the built carriageway, the share of lit photo samples
+that do not read as asphalt: grey within 18 levels [invented], inside the bake's own clip):
+
+- where the plan's edges are right (s 100-600, s 1100-1200): 0.00-0.08, median 0.02;
+- s 650-1100 and s 1200-1250: 0.08-0.10;
+- s 1250-2000: 0.14-0.25 on both sides of the island; also s 600-650 (0.23), s 2050-2150 (0.24, 0.14), s 2200-2250 (0.12).
+
+The Mac's rule: a flat lit-asphalt tone on the bins over 0.12 [invented: above every well-placed bin and the 0.08-0.10
+group]. That is 19 bins, 950 m of piece C's 2,228: connector rows 193-209, 410-659, 677-710 and 727-743 of
+`north_mission_gorge`, eased over 25 m at their ends, the lanes drawn there as everywhere. **Owed with the road-edge
+round**: the list goes when the road stands where the real one does.
+
+### The first trial bake, its look, and what I got wrong
+
+One bake on a copy of the 0.20.6 scratch scene, before any rehearsal (the Mac: "Measure and report the bake's time on
+the scratch run before the slot"): 10 min 50 s at below-normal priority, exit 0, and a **19.7 GB** peak of memory for a
+few seconds (the photo sampled over the whole 11584 x 10048 grid in one call). Tiles cut out of the baked atlas showed
+the lanes' wear where it belongs, and three things that do not belong on the road:
+
+1. the photo's cars, as dark blobs in the lanes (the tone's clip keeps anything down to 0.70);
+2. the photo's crosswalks, stop bars and lane paint, as light bars and streaks beside our own paint (the paint rule
+   catches a line's bright core, 6.5 % of the road, not the grey round it), and bright streaks along the real median;
+3. the ragged edges of tree shadows along the edges.
+
+Del Mar 0.2.6 was held for the first of these. The Mac's decision, 2026-11-23: **the tone smoothed so nothing under
+about 8 m survives, the broad patches of older and newer asphalt kept**; as baked prints traffic, and no photo tone at
+all throws away what was measured. Kevin was sent the tiles and told of the decision.
+
+**What I got wrong.** I also reported that "where two roads cross, both roads' lane stripes run through the box and make
+a grid". Measured afterwards on the lanes themselves, that is not what was there:
+
+- what read as a grid in the junction tile was the through road's own lanes running through the box, beside the side
+  road's lanes ending at its edge with round ends;
+- the deepest rubber, which I had put down to such crossings, was College's northbound road drawn twice. `college_nb`,
+  the Speedway lap's line along it (round 2), is a plain connector record, so the lanes tool read it as a two-way road with a centre yellow and laid 8 lanes (12 lane
+  records, 2.7 km of lane line) over the split zone's own lanes for that 1.0 km of road: its wheel paths drawn twice,
+  half of them against the traffic. The bake's "deepest rubber 39.4 %" was two lanes multiplied (1 - 0.78 x 0.78). My
+  config's mistake; the key now leaves `college_nb` out (233 lane lines become 221, 47.4 km forward and 49.4 km
+  reverse);
+- no lane enters a junction pad (the pieces stop at its edge), and a side road's lanes stop at the through road's edge;
+- lanes of two different roads cross at two places only, 6.4 and 3.5 m long.
+
+What the measurement did find at every lane's end: the bake rounds an open line's end, which draws the two wheel paths
+round it as a horseshoe, and College's lanes had a 3 m hole at both ends of the split (the mainline's lanes stop at row
+1129, the reader's start at row 1130).
+
+### The tone, smoothed (`road_wear.tone.smooth_m` 8.0; `scripts/aerial/road_wear.smooth_tone`)
+
+The tone at a node is the median of the lit-asphalt ratio over the road's lit texels in a square window 16 m wide; nodes
+stand every 4 m and the field between them is drawn straight. A median drops whatever fills less than half its window,
+so a thing must be 8 m across, over the width the window sees, to survive. **8 m [invented]**: over a car's length
+(4.5-5 m) and a crosswalk with its stop bar (3-4 m), so neither can be half of a 16 m window; whole-width patches of
+asphalt are kept from 8 m up. A node needs three eighths of its window on lit asphalt [invented: a node standing on the
+road's edge reads half its window; one a node spacing outside it reads a quarter, and that quarter is the gutter, the
+parked cars and the kerbside shadow], or it is filled from the nodes round it. The flat stretches above are laid over
+the smoothed tone. The photo is now sampled in bands of 256 rows, the same values bit for bit.
+
+### The lanes' ends (`road_wear.lanes.ends`, fade_m 8.0; tools/road_lanes.py LANE ENDS)
+
+- **Welded**: a lane that goes on in another record is one lane: College's 12 joints (2.98-3.11 m apart, 0.00-0.08 m
+  to the side). The rule [invented numbers, between the welds measured, two authored lanes that dropped out for two
+  stations included (9.0 m; 0.11 and 0.23 m), and the nearest thing that is not a weld, a neighbouring lane 3.2 m to
+  the side]: the head no more than 10 m ahead of the tail, 0.5 m to the side, 15 degrees apart. Those two authored
+  lanes are read as painted since DASH GAPS (below) and run on, so 12 welds remain.
+- **Faded**: every other open end, 406 of them. The rubber rises from nothing at the end to whole over 8 m [invented:
+  two car lengths, where a driver leaves the lane's wheel paths for the turn; and over twice the wear band's 3.0 m
+  reach, so the end reads as a fade]. A 15 m stub's lanes peak at 0.96 of the rubber.
+- **Square**: nothing is laid past a lane's first or last point (`wear_at` "butt_ends"), so two welded lanes meet in a
+  plane and no horseshoe is drawn. A line that does not ask keeps its round ends (Pikes Peak's open racing line).
+- Rubber is laid on 95.4 of the 97.0 km of lane.
+
+At a junction this gives ledger 0084's "Junction boxes and pads get the tone only" where the data has a pad or a mouth:
+the lanes ease out over 8 m before it. A through road's own lanes run on through the box, as the wheel paths of a real
+arterial do past a side street. Blanking the through road across each of the 32 mouths was not done: it would cut a
+light patch across the arterial at every side street.
+
+### The look, again
+
+No separate trial: the scratch chain's own bake (below) was stopped after for the look, then the chain went on. Tiles
+cut from both atlases (the same geometry, positions md5 1438f859..., so the same 690 cells in the same places), four
+places side by side in `_from_claude/lm_0207_road_wear_before_after.png` (sent to Kevin): a crossing with crosswalks and
+cars (Del Cerro Blvd at the mainline), College's joint at rows 1129 / 1130, a north junction with the photo's paint, a
+bend with a side street. No car, crosswalk, stop bar or paint ghost is left in any of them; College's joint is seamless
+(the first trial: a 3 m hole and horseshoes); the north pad carries the tone only, the lanes easing out before it.
+
+Left as it is, the Mac's call 2026-11-23 ("the short stripe pairs match the road's own paint in the boxes, and stubs
+carry real traffic"): across Del Cerro's crossing the median stops for rows 1074-1095, so an inner lane exists only
+across the box (65 m) and the 29 m flare holds an outer lane for 15 m, both short faded stripe pairs; Del Cerro Blvd's
+own flare shows a comb of short lanes at its mouth; a 15 m stub reads as two short dashes.
+
+
+### The gate (`tools/road_wear_check.py`; no threshold moved; GATES-CHANGELOG, four entries and a row)
+
+- **tone**, with lanes: each sample's atlas luminance divided by what the declared lanes leave of it before comparing
+  with the photo (lanes leave no asphalt "off the line"); samples on declared flat-tone stretches left out, counted.
+  With `tone.smooth_m`: compared with the photo smoothed the same way, by the gate's own reading (`smoothed_photo`: the
+  median of the lit-asphalt ratio within +- 8 m of each sample on a 1 m lattice, shadow and paint grown as the bake
+  grows them). Checked before any bake, that exact function against the bake's `smooth_tone` on six 192 m squares of
+  the built road: r 0.964 over 1,770 samples (per square 0.830-0.992). Its first form, without the growth, read 0.911
+  with one square at 0.600: a shadow's edge is a mixed pixel that meets neither rule; the bake leaves it out.
+- **lane_rubber** stands in for rubber: across every tenth point of every lane, the shipped darkening against the
+  gate's own reading of the declared lanes, centroid within 0.15 m and depth within 0.5-1.5 of declared. With
+  `lanes.ends` the gate's reading follows each lane's share, its bridge and its square ends.
+- tone_r_min 0.60 and the three rubber thresholds are as they were.
+
+### Measured on a scratch workshop, through the chain's own commands
+
+A fresh workshop (`make_ws.py` from the branch: 0.20.5's committed blend, re-authored by the chain; 0.20.7's config; the
+mosaic itself, not its pointer), `run_full.ps1` then `run_gates.ps1`, engine copy `eng_r3` (the snapshot's
+`export_kn5_addon.py`, git md5 83b231e8), one Blender at a time at below-normal priority, 2026-11-23 18:19-18:51. The
+chain was stopped after its own bake for the look (one bake, not a trial and a chain), then went on.
+
+- **The bake** (18:29:22-18:39:46, 622 s, exit 0; peak memory 15.1 GB): 52,946 faces on 7 `1ROAD_*` objects; one atlas
+  of 8192 at 0.50 m, 690 cells of 64 m + 16 m margin, 37.9 % used; the built road 501,471 m2; registration
+  (-1.25, -1.75) m; shadow 20.2 %, paint 6.5 % of the road; the tone smoothed, 27,904 nodes measured and 31,722 filled
+  (under 96 m2 of lit asphalt in their window, most of them off the road); tone p01 / p50 / p99 0.769 / 0.987 / 1.160
+  (as read: 0.70 / 0.985 / 1.30); flat tone on the 4 stretches, 945 m; 221 lane lines, 14 welded, 410 ends faded;
+  m0 0.841; positions unchanged (md5 1438f859..., the first trial's too, so the two atlases lay out alike).
+- **road_wear_check** on the built road kn5: PASS. materials; density (52,946 triangles, 0 off, worst scale error
+  0.0004); no_repeat (92,211 texels claimed, 0 twice); detail_phase (worst 3e-5 tiles); tone r 0.959 over 5,282
+  samples against the photo smoothed as declared; lane_rubber over 3,332 lane stations, the shipped darkening's centroid
+  0.011 m against the declared 0.009 m, its depth on the wheel paths 0.115 against 0.122.
+- The chain's own gates, all as before: ground_check PASS; drive tests street / race_cw / north_cw PASS; audits street /
+  race_cw / north_cw CLEAN; no_route race_cw and north_cw PASS; ground checks race_cw and north_cw PASS.
+- Every other Blender of the chain stayed at 3.2 GB or under (prep 3.2, thin 1.9, export 1.1).
+
+**The deepest rubber, found (the Mac: before the push, because last time 39.4 % was a doubled lane).** 38.8 % at two
+places of about 6 m, Princess View row 207 and Jackson north row 617, and not two real lanes: the authored dashed
+divider between lanes 1 and 2 is missing there for two rows. Princess View's half carriageway is about 5.8-5.9 m between
+the yellow and the edge line, at the authored paint's limit for two lanes, so the divider flickers off for a row or a
+few. Read as painted, lane 1 took the whole half (5.7-5.9 m wide, its centre 1.8 m further out) and lane 2 stopped;
+LANE ENDS then welded lane 2 across the same rows, so both lanes' wheel paths lay over one space. Elsewhere the same
+flicker gave lane 1 a 1.8 m jog. **`lanes.dash_gap_rows` 8** (tools/road_lanes.py DASH GAPS, opt-in): a dashed white
+divider's gap of at most 8 rows (24 m), painted on both sides in the same line, is read as painted; solids and yellows
+never. 8 [invented]: of the 21 bounded gaps in the pieces' dashed dividers, 11 are 1-8 rows and the other 10 13 rows or
+longer, none at a side street's mouth (the nearest 15-307 m away). 11 gaps, 53 rows filled; 217 lane lines; 12 welds,
+College's alone. The deepest overlap left is the Del Cerro loop's tight turn, its two real lanes' wheel paths at 33 %.
+
+**The bake again, with the dash gaps filled** (from the workshop's own pre-bake blend; bake, export, road_wear_check):
+2026-11-23 20:16-20:28, the PC alone. The bake 636 s, exit 0, peak memory 15.1 GB; 217 lane lines, 11 dash gaps (53
+rows) read as painted, 12 welds, 406 ends faded, rubber on 95.4 of 97.0 km of lane; deepest rubber 35.7 % (was 38.8);
+positions unchanged (the same md5). road_wear_check on the re-exported road kn5: PASS, every row as above (tone r 0.959
+over 5,282 samples; lane_rubber over 3,334 stations, centroid 0.011 m against 0.009 m, depth 0.115 against 0.122);
+ground_check PASS. The chain's other gates were not run again: the fix changes the lanes the bake reads and nothing in
+the scene.
+
+Where the 35.7 % is: the Del Cerro loop's tight turn (about (-550, -883)), its two real lanes, one each way, whose
+inner wheel paths meet at the apex (41 texels over 0.30 on a 0.25 m scan; a point scan of the wheel paths alone had
+read 33 %). One more thing the scan found, not in this atlas: where a weld's two segments meet at a slight angle
+(College's joints, 1.6 degrees at most), the plane past each end leaves a sliver on the inside of the angle, about
+2 cm wide at a wheel path, that both records count; a 0.25 m scan point at the row 1476 joint read 0.387 there. No
+texel centre of this bake falls in it (the bake's own deepest is the loop's), and the rehearsal bakes the same geometry
+on the same grid. **Owed, on the board**: draw a welded chain as one line in `bake_lines` and the gate's reading, so the
+sliver cannot be hit by a later bake.
+
+### A number from 0.20.6's rehearsal, looked at here: north_cw's AI lap estimate, 205.3 -> 212.7 s
+
+Not the road, and not a pinch. Read off the two rehearsals' `ai/north_cw` files (0.20.5 and 0.20.6), nothing changed:
+
+- The corner the estimate names (kn5 -1194, -3152) is J4, Mission Gorge into Jackson. Its arc is the same: 43.2 m in
+  0.20.5, 41.3 m in 0.20.6, on chords of +-6 m.
+- The reported minimum radius (23.3 -> 15.68 m) is a 12 m wiggle at that corner's exit, where the lane funnels from the
+  open box (14-17 m) to Jackson's 4.9 m closure lane and the line runs 0.5 m off the left bound. 0.20.5 has it too: it
+  turns -3.7 and -3.6 degrees on two neighbouring 1.5 m steps there, 0.20.6 -5.5 on one; the total is -13.8 against
+  -14.7 degrees.
+- `write_ai_line`'s own speed model, replayed on both lines, gives 206.8 against 214.0 s with its three-point radius,
+  and the difference goes with longer chords: +0.5 s at +-3 m, +0.2 s at +-6 m, 0.0 s at +-12 m. Off Mission Gorge the
+  two lines are the same line to 1 cm, yet the three-point profile runs 13-15 km/h slower there in 0.20.6: the lap is
+  0.3 m longer, so it has 5,802 points against 5,801 and every sample falls elsewhere on the same small kinks.
+- On Mission Gorge the race lane is 2.4-2.9 m wider where the rule set the island north-west (item 2) and 0.34-1.42 m
+  narrower over the last 240 m before J4; the right side did not move.
+
+For the board, neither this item's: the lap estimate's three-point radius is not comparable between builds to better
+than several seconds; and the exit wiggle at J4 itself.
+
+### For the rehearsal
+
+- **Run it alone.** The bake's memory peaks at **15.1 GB** (measured twice on the scratch workshop; 19.7 GB before the photo was sampled in bands; the rest is the tone field's full-grid box filters in float64). Every other Blender of the chain stays at 3.2 GB or under.
+- **The engine copy** must carry the snapshot's `scripts/ac/export_kn5_addon.py` (git md5 83b231e8, the road-wear rows)
+  beside its `pbr.py`: eng_0206 plus that one file. The build session made it as `D:/k10-scratch/eng_0207` (2026-11-23);
+  compared file by file with the scratch chain's `eng_r3`, its two scripts are the same text (eng_r3's are CRLF), and
+  eng_r3's six extra textures (guardrail, pine, poplar, street lamp) are used by nothing in 0.20.7.
+- **The worktree must hold the mosaic, not its LFS pointer** (`git lfs pull`): `source/naip_2022_lm_full_z18.jpg`,
+  42,705,339 bytes, sha256 1764a80b... A pointer makes the bake stop at the image.
+- New in the log: `[road_lanes]   dash gaps: 11 gap(s) ...`, `[road_lanes]   ends: 12 welded ...`, `[road_wear] lanes:
+  217 lane lines ...`, `[road_wear] lane ends: ...`, `[road_wear] tone smoothed: ...`, `[road_wear] flat tone on 4 stretch(es), ...`, and the gate's rows
+  `tone` (with `smooth` and `samples_left_out_on_flat_tone_stretches`) and `lane_rubber`.
+
+### Tests
+
+All on the PC (2026-11-23), the ten files round the change, with `--continue-on-collection-errors` (this PC has no
+numpy for pytest): 89 passed. The numpy tests by hand with Blender's Python (`jf/run_np_tests.py`), 7 passed. The Mac's
+suite must run these with numpy:
+
+- `tests/tools/test_road_lanes_ends_0099.py` (6): welds and fades on a made-up street; what is not the same lane is not
+  welded (ahead, aside, behind, another deck, turning away, running the other way); the key opt-in and checked; Lake
+  Murray names the ends and leaves college_nb out; DASH GAPS fills a dashed divider's short gap and nothing else (a
+  solid line, a yellow, a gap too long, an open end), and filled, two lanes stay two; the key and Lake Murray's 8.
+- `tests/tools/test_road_wear_lanes_0099.py` (8): the gate's reading of the lanes, a flat stretch, lane_rubber passing
+  the bake it is given and failing three wrong ones, no threshold moved, the bake's wiring, Lake Murray's key; a lane's
+  share and square end in the gate's reading, two welded lanes as one line; `smoothed_photo` drops a car, keeps a
+  patch, leaves out a place that sees too little road, and grows a shadow as the bake does (fails with the growth taken
+  out, checked).
+- `tests/tools/test_road_lanes_college.py` (4): College's reader.
+- `tests/aerial/test_road_wear_smooth_0099.py` (5, numpy): a car, a crosswalk and a row of parked cars go and a patch of
+  older asphalt stays; something as big as the scale is kept; the banded sampling is the whole-grid call bit for bit;
+  a square end lays nothing past it and two welded lines are one; bake_lines hands the bake the share, the bridge and
+  square ends.
+- `tests/aerial/test_road_wear_flat_0099.py` (2, numpy): the flat tone's weight.
+- `tests/tools/test_road_lanes.py` (numpy; not run here): untouched by this change except that its unknown-key message
+  now also names `dash_gap_rows` and `ends` (its test matches "unknown key").
+- Pins moved earlier in this item: `test_lake_murray_0099.py` (`test_version_is_0_20_7`), `test_terracotta_median_0099.py`,
+  `test_ship_track_chain.py`, `tests/aerial/test_road_wear_highpass.py`.
+
+### Shared files touched
+
+`tools/road_wear_blend.py`, `tools/road_wear_check.py`, `scripts/aerial/road_wear.py` (all opt-in additions; a track
+that names none of the keys bakes and gates as before: a line that does not ask for square ends keeps its round ones,
+and the photo's banded sampling gives the same values bit for bit; the bake's record also lists the atlas's cells in
+slot order), `tools/road_lanes.py` (College's reader; LANE ENDS; DASH GAPS; loads without numpy).
+`fleet/GATES-CHANGELOG.md`.
+
+### Needs Kevin
+
+On the next drive: the lanes carry tyre wear, two darker stripes a lane, fading out over 8 m before a junction or a side
+road; and the road's colour varies in broad patches as the aerial's asphalt does, with nothing smaller than about 8 m
+(no cars, no crosswalks). Four invented numbers to judge by eye: how dark the stripes are (0.22), how soft (0.55 m), how
+long the fade (8 m), how fine the patches (8 m). At 50 cm the stripes are soft by nature; say if you want the 25 cm
+item. On Mission Gorge east of the Margerum crossing the tone is plain for about 750 m, because the road there is not
+where the real one is.
+
+## Round 3, item 4 (the PC, 2026-11-23/24): Jackson Dr north's painted median where the lidar and the photo put it. 0.20.8. Green on scratch, not rehearsed
+
+The Mac's first scratch run of the lanes tool (4c0849ef, on the 0.20.4 data) found Jackson Dr north's FORWARD
+carriageway with no lane over connector rows 496-579 and 234-239 of `north_J5_jackson_north#0`: 0.84-1.90 m between
+its paint lines. 0.20.8 carries 0.20.7 (item 3, road wear, never rehearsed on its own: the Mac 2026-11-24, to save
+the PC two hours).
+
+### What was wrong: a failed aerial read, not the paint rule and not the width
+
+Piece D (Jackson Dr north, J4 -> J5; its connector runs the other way) takes its median from its own columns
+(`median_type` / `median_w_m` / `median_off_m`), an automatic aerial read ("aerial read"). Over piece s 242.5-492.5
+(rows 579-496) the real road has ONE LANE EACH WAY and a HATCHED painted median about 5-7 m wide (the straightened
+aerial, D's frame: about u +2.5..-3.75 at s 300-400). The read caught the band's LEFT edge and called it the median
+(off 2.4-4.1 m, width 0-2.9 m), so the band's room went to the reverse lane and the forward lane was painted out. The
+piece's own paint note says otherwise ("~1.6 m LEFT of the road's middle"). Under the trees at s 1240-1300 (rows
+234-239 among them) the read made a painted median 4.6-6.2 m wide where the lidar reads one centre line.
+
+### The measurement (source/expansion/jackson_paint/; piece D's frame, + = left of J4 -> J5)
+
+- **The G10's lidar intensity** (D24 2024, last returns; `jackson_intensity_D_full.lidar.g10.json`, 138 stations,
+  every 2.5 m over s 225-505 and 1240-1300; `jackson_intensity_s1245-1295.lidar.g10.json`): each painted line's u and
+  `along_share` (about 1 a solid line, 0.25-0.5 a dash). The band's LEFT edge reads all along (+1.3..+3.9); its RIGHT
+  edge only at s 245-299 (-3.7..-2.9). A second look with a +-6 m window (`jackson_right_edge.lidar.g10.json`) adds
+  s 300-312.5 (-2.7..-2.1, contrast 1.13-1.56); past that the strongest returns are the forward edge line itself:
+  the band's right edge is worn there or smeared. Under the trees: a centre line at u -0.05.
+- **The photo** (`photo_line.py` -> `jackson_right_edge.photo.json`): the aerial's mean brightness across the road
+  shows a line in u -5.0..-2.5 at 91 of 113 stations. Where it and the lidar both read the band's right edge (23
+  stations) photo minus lidar = median -0.61 m, spread -1.64..+0.31: the photo's error is about +-1 m. My automatic
+  attempts to edge the band in the photo itself (along-road deviation; a run round the strongest 8-16 m repeat) were
+  too noisy to use (a band at 45 of 113 stations; 9 of 28 maxima in the verge) and are not in the build.
+- **The real curbs** (`jackson_curbs_D.lidar.g10.json`, the G10, Mission Gorge's method): the BUILT road is 2.3-3.6 m
+  right of the real one over s 225-472.5 (real minus built middle per 25 m: +3.06, +2.79, +2.42, +2.29, +2.40, +3.57,
+  +3.64), about 1.1-1.5 m at s 1240-1262.5; same width within about 0.2 m overall but +-2 m per bin. The right face reads
+  at 123 of 133 stations, the left at 64.
+
+### The rule (the Mac, 2026-11-23/24; `fix_jackson_median.py`)
+
+- **s 270-492.5, a hatched band** (type `hatched`: decorate's own diagonal strokes where it is 1 m or wider):
+  - left edge: the lidar's strongest line with along_share >= 0.5 in u +0.8..+3.95 (71 rows; 13 interpolated within
+    15 m; 6 at the stretch's ends the nearest);
+  - right edge: the lidar's (10 rows), its second look (6), the J4 pocket's line at u -0.36 (s 475-485, 5 rows), the
+    photo's line aligned by the median -0.61 m (49 rows, "+-1 m": THE FORWARD LANE'S WIDTH THERE IS 3-4 m WITHIN THAT
+    ERROR), else the left edge less the nearest measured band width, [inferred] (20 rows);
+  - every line carried into the built road's frame by ITS OWN FACE'S curb shift (per 25 m bin, straight between
+    centres; each face called on its own readings): each lane keeps its real distance from its own curb and the band
+    takes the width difference. The left face is [inferred] across its uncalled bin at s 325-347.5 (20 rows);
+  - one lane each way. Band width 1.2-7.2 m (median 5.0).
+- **s 1240-1300, a centre line** (type `line`) at the lidar's line, carried by the road middle's shift (24 rows
+  measured, 1 interpolated).
+- **s 225-267.5 held as they were, OWED WITH J4.** The lidar's right-hand line at u -3.3..-3.9 is continuous
+  (along_share 0.5-0.92 at 14 of 16 stations: solid, the band's edge or a turn lane's); the line at -5.7..-6.3 shows at
+  6 of 16 (0.42-0.67: broken, dashed). Either reading leaves about 2.2 m, under LANE_MIN_M: a turn pocket beginning or
+  a bike lane going dashed before the junction. The aerial or a closer look at J4's approach settles it. Rows 579-563
+  (s 242.5-267.5) therefore still have no forward lane.
+
+### The edge lines: measured, not 1.8 / 0.9 (tools/expansion_pieces.py)
+
+With the band placed, every authored forward lane still came out 0.3-0.6 m narrower than the real one: decorate puts
+piece D's lane edge 2.7 m inside each curb (a bike line BIKE_LINE_M 1.80 and a buffer line BUFFER_M 0.90 further in,
+both [invented]), and the real forward side has ONE line 2.3-2.5 m inside its curb over s 270-412. Opt-in columns
+`edge_fwd_m` / `outer_fwd_m` / `edge_rev_m` / `outer_rev_m` (the lane's edge line, and a bike lane's line further out,
+as distances from that side's curb; `Piece.num_opt`) now carry the lidar's lines, as distances from each REAL curb
+(curb-relative: no carrying): forward edge 71 rows measured, 22 interpolated, 15 default, no forward bike line read;
+reverse 50 / 34 / 24, a bike line at 8. The reverse lane's edge is the innermost line with along_share >= 0.75
+[invented]: at s 292.5 a solid +8.01 (0.92), not a weak +3.71 (0.58) 2.5 m from the band ("a 2.44 m lane inside a 7 m
+side would be the made-up thing", the Mac). Every line between the band and the edge taken that is not taken is
+recorded as unexplained: 41 rows (a weak line at +3.6..+3.7 recurs over s 292-305). Every other piece, and every row
+of D without the columns, keeps 1.8 / 0.9.
+
+**Rows under LANE_MIN_M, written as measured, not nudged** (the Mac): s 337.5 (forward 2.87 m), 352.5 (2.84), 397.5
+(2.89), 455 (2.82), 457.5 (2.84). Every other band row holds a lane each side: forward 2.82-4.70 m (median 3.37),
+reverse 4.15-6.97 (5.62).
+
+### Only piece D changes (the Mac's firm condition)
+
+Item 2's cleared centre lines on Mission Gorge and round 2's Princess View median live only in the committed records,
+not in decorate's output. `fix_jackson_median.py` writes nothing until every check has passed: the committed
+`expansion.north.json` round-trips through its own writer byte for byte, and every other piece's record (A, B, C), the
+file's head and all 34 other connectors come out byte for byte (`others_sha256` in the record; a test fails if one
+changes); decorate on the old data and on the new must give the other connectors the same paint and the same islands.
+Jackson's own committed paint was decorate's own on the committed data, so nothing of its own is lost. Its paint: 14
+lines, 51 hatch strokes (was 8).
+
+**What I got wrong on the way:** my first data run's check refused correctly (decorate's other connectors are not their
+committed records), but the script had already written `expansion.north.json`; I restored it from git and moved every
+write after the checks. A test then caught the weak +3.71 line not recorded (on the 2.5 m limit, and the record dropped
+the field).
+
+### The scene: the paint-only mode of the median-rebuild step
+
+Lake Murray's chain builds from the committed blend, and decorate's paint reaches MARKINGS / YLINE only in the draft.
+`tools/author_median_rebuild_blend.py --paint-only` (opt-in `route.paint_rebuild {line, record}`) re-lays ONE
+connector's paint: every strip the record's `paint_before` lays and the new paint does not is found as one loose part
+of exactly its four vertices (TOL_M 2 mm) by the assembler's own `connector_markings`, or it refuses and saves nothing;
+the new strips go in by the same function; stamped `paint_rebuild`, idempotent; `data/paint_rebuild.json`. It runs as
+a second pass inside the median-rebuild author step (ship.json's author list unchanged); the island path's code is
+untouched.
+
+### Measured on a scratch workshop, through the chain's own commands
+
+ws15 (`make_ws.py` from 66c5a8cb: the committed 0.20.5 blend re-authored; the mosaic; the 16 TreeFX bins), engine copy
+eng_r3, one Blender at a time at below-normal priority, 2026-11-24 12:13-12:45 (the PC alone):
+- median_rebuild: Mission Gorge's islands as in 0.20.6/0.20.7; **paint-only: north_J5_jackson_north#0, MARKINGS 296
+  old strips found of 296, 152 laid; YLINE 292 of 292, 389 laid** (MARKINGS 100,904 -> 100,328 vertices, YLINE
+  71,232 -> 71,620); saved.
+- prep 244 s; the road-wear bake 657 s (peak 15.1 GB); export 40 s; ground_check PASS; road_wear_check PASS (tone r
+  0.959 over 5,282 samples, lane_rubber 0.011 m against 0.009 m, depth 0.115 against 0.122).
+- The gates: drive tests street / race_cw / north_cw PASS; audits street / race_cw / north_cw CLEAN; no_route race_cw
+  and north_cw PASS; ground checks PASS. Every other Blender 3.2 GB or under.
+
+### Owed
+
+- **s 225-267.5** (rows 579-563): no forward lane, with J4's approach (above).
+- **The road-edge round, with Mission Gorge's**: piece D's built road is 2.3-3.6 m right of the real one; the G10 is
+  measuring every north piece's outer curbs for it (claude/lm-north-curbs-lidar-20261124).
+- The five rows 0.02-0.08 m under LANE_MIN_M (above).
+- On the board, from item 3: draw a welded chain as one line in `bake_lines` and the gate's reading (the weld-angle
+  sliver).
+
+### For the rehearsal
+
+- ENG eng_0207 (the snapshot's exporter with the road-wear rows; the paint-only mode is in airoso's tools).
+- The worktree must hold the mosaic and the TreeFX bins (source/trees/*.bin, never committed).
+- New in the log: `[median-rebuild] paint-only, north_J5_jackson_north#0: {...}` and its `saved`.
+- The road-wear bake peaks at 15.1 GB: run it alone.
+
+### Tests
+
+`tests/tools/test_jackson_median_0099.py` (8): no other piece or connector changes; piece D holds the record; s
+225-267.5 held; the five short rows listed, every other band row holding; the reverse edge the solid line (s 292.5's
+weak line recorded); decorate's measured edge lines and its unchanged default; `Piece.num_opt`; the paint-only key, the
+strips out / in, the checksum, the chain's two calls in order. `test_author_expansion` holds piece D's recorded rows
+and the four columns as it holds item 2's piece C. Version pins to 0.20.8. The Mac's suite on 66c5a8cb: 1,952, none
+failing.
+
+### Shared files touched
+
+`tools/expansion_pieces.py` (the opt-in edge columns), `tools/author_median_rebuild_blend.py` (the paint-only mode),
+`tools/ship_track.sh` (its second call), `fleet/GATES-CHANGELOG.md` (two entries).
+
+### Needs Kevin
+
+On the drive: Jackson Dr north of Mission Gorge Rd (about 220 m, from 40 m past J4) now has its forward lane, a
+hatched yellow median between the two directions, and its edge lines where the real ones are; under the trees further
+north, one centre line. The first 40 m north of J4 still has the old paint (owed with J4).
+
+## Round 3, items 3 + 4: 0.20.8 rehearsed green and INSTALLED, no force (the PC, 2026-11-24)
+
+- **What:** 0dbf7869 (= Playbox's chain-green 66c5a8cb + main d31cb9a8 + this ledger's item 4) carries 0.20.7's road wear at 50 cm
+  and Jackson Dr north's painted median; 0.20.7 was not rehearsed on its own (the Mac). The Mac's suite 1,952 green.
+- **Rehearsal** (empty workshop `D:/k10-scratch/rehearse_0208`, ENG `eng_0207` = eng_repro + the snapshot's `pbr.py` (e414f407)
+  and `export_kn5_addon.py` (83b231e8, road_wear), seed = the committed 0.20.5 blend re-authored, `--no-install --skip-blend`,
+  14:15-15:04, alone for the 15.1 GB bake): SHIP OK, every gate exit 0. `[median-rebuild] paint-only, north_J5_jackson_north#0`:
+  MARKINGS 296/296 found, 152 laid; YLINE 292/292 found; saved. `[road_wear]` 219 lane lines, rubber on 95.57 of 97.18 km of lane,
+  13 lane ends welded, 408 faded. road_wear_check PASS: tone r 0.9593 (5,282 samples), lane_rubber centroid 0.011 m (declared
+  0.009), no_repeat 0 claimed twice, density 0 off. kn5_ground_check 0 double sheets on all five layouts, deck +0.313.
+- **The install** (15:04-15:52, the chain's own empty workshop `D:/k10-scratch/lm_line`; 0.20.6's kept as `lm_line.0.20.6`): SHIP OK,
+  all five layouts 0.20.8, 0.20.6 parked in `D:/k10-track-archive/2026-11-24_155245/`. = the rehearsal: 1,153/1,153 gate rows (the
+  workshop's name aside), every kn5 EQUIVALENT, AI identical; the 14 kn5 in AC byte-identical to the build; trees came along (14 .bin).
+  Installed md5s: b1ea0f47 san_diego_lake_murray.kn5; eabd83b9 san_diego_lake_murray_race.kn5; c17b045c san_diego_lake_murray_race_college.kn5; aeea764e san_diego_lake_murray_race_north.kn5; f8fc266a san_diego_lake_murray_street.kn5; 
+- **Menu pictures** re-rendered from the installed build at 0.20.2's cameras (race_cw on the College lap's scene): the road wear changes
+  16-28 % of each picture's pixels (north_cw 4 %); looked at before copying; old ones in `D:/k10-track-archive/2026-11-24_160000_lm0208_pictures`.
+- **The blend: kept on the PC, not committed** (the LFS budget): 204,489,464 B, sha256 208f4ec9..., in
+  `D:/k10-track-archive/2026-11-24_lm0208_synced_back_blend/` (README). The committed blend stays 0.20.5's bc7f772e, which this build
+  seeded and re-authored. New seeds: paint_rebuild.json, road_wear.json, road_wear.lanes.json, road_wear_check.json (101 -> 105).
+  The 33 older plots the sync-back dropped are restored.
+- Records on `claude/lm-0208-install-20261124` (origin/main 423ace6e merged). Kevin's standing word: "Yes and I always want newer builds".

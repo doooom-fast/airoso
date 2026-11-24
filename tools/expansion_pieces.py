@@ -63,6 +63,11 @@ DOUBLE_HALF_M = 0.09        # ribbon.lane_markings: the double yellow's two line
 MEDIAN_EDGE_M = 0.30        # [invented] a yellow edge line this far off a raised median's face
 BIKE_LINE_M = 1.80          # [invented] a bike lane's solid white line this far from the curb (lane + gutter pan)
 BUFFER_M = 0.90             # [invented] Jackson's buffered bike lane: the buffer's second line this far further in
+# Opt-in per-station edge columns (piece D, ledger 0099 round 3 item 4: measured off the lidar where the piece's rows carry
+# them; every other row and piece keeps BIKE_LINE_M / BUFFER_M): edge_fwd_m / edge_rev_m, the lane's edge line this far
+# from its curb (fwd = right of J-order travel, rev = left); outer_fwd_m / outer_rev_m, a second line further out (the
+# bike lane's), or none where the road has one line
+EDGE_COLS = {-1: ("edge_fwd_m", "outer_fwd_m"), 1: ("edge_rev_m", "outer_rev_m")}
 PARKING_LINE_M = 2.40       # [invented] Princess View's parking lane line this far from the curb (8 ft)
 PAIR_IN_M = 0.24            # [invented] a painted median face's double yellow: lines at the face - 0.06 and - 0.30
 PLAIN_DOUBLE_UNDER_M = 1.0  # [invented] a painted median narrower than this is painted as one double yellow
@@ -111,6 +116,14 @@ class Piece:
     def near(self, s, key):
         lo, hi, t = self._seg(s)
         return self.rows[lo if t < 0.5 else hi][key]
+
+    def num_opt(self, s, key):
+        """num, or None where the piece has no such column or either neighbouring row holds none (an opt-in column)"""
+        lo, hi, t = self._seg(s)
+        a, b = self.rows[lo].get(key), self.rows[hi].get(key)
+        if a is None or b is None:
+            return None
+        return float(a) + (float(b) - float(a)) * t
 
     def point(self, s):
         lo, hi, t = self._seg(s)
@@ -319,9 +332,17 @@ def layout(pc, s, island_runs):
             edge = curb - side * PARKING_LINE_M
             out.append((f"park_{tag}", edge, "white", False))
         else:
-            out.append((f"bike_{tag}", curb - side * BIKE_LINE_M, "white", False))
-            edge = curb - side * (BIKE_LINE_M + BUFFER_M)
-            out.append((f"buf_{tag}", edge, "white", False))
+            e_m = pc.num_opt(s, EDGE_COLS[side][0])
+            if e_m is None:                       # the default: a buffered bike lane, two lines
+                out.append((f"bike_{tag}", curb - side * BIKE_LINE_M, "white", False))
+                edge = curb - side * (BIKE_LINE_M + BUFFER_M)
+                out.append((f"buf_{tag}", edge, "white", False))
+            else:                                 # measured: the lane's edge line, and a bike lane's line where there is one
+                o_m = pc.num_opt(s, EDGE_COLS[side][1])
+                if o_m is not None:
+                    out.append((f"bike_{tag}", curb - side * o_m, "white", False))
+                edge = curb - side * e_m
+                out.append((f"buf_{tag}", edge, "white", False))
         width = (edge - inn) * side
         n = _lanes(pid, s, side)
         while n > 1 and width / n < LANE_MIN_M:

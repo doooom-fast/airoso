@@ -1,0 +1,1561 @@
+{
+ "_doc": "Jackson Dr north (Lake Murray piece D): the road's two outer edges per station off the USGS 2024 lidar (jackson_curbs_g10.py; the method is its docstring). u = metres off D's line, + = left of D's travel along increasing s (J4 -> J5). left / right: verdict face / none / unclear; type curb, edge (rise) or edge (drop); face_u_m, unc_m (half the interval between the neighbouring points the face lies between), step_m (outer - road at the face; negative for a drop). built = D's own row (left_m, right_m; middle = their mean). real_middle_m = the mean of the two faces; real_minus_built_middle_m its difference. Settings marked [invented] in the script are the method's choices.",
+ "status": "measured",
+ "tool": "jackson_curbs_g10.py (G10 job lm-jackson-curbs-20261123)",
+ "date": "2026-11-23",
+ "source": {
+  "project": "USGS_LPC_CA_SanDiegoCo_D24",
+  "epsg": 6340,
+  "flown": "2024-11 (lm-shrub tiles.json)",
+  "tiles_read": [
+   {
+    "file": "USGS_LPC_CA_SanDiegoCo_D24_11SMS494630.laz",
+    "bytes": 92107138,
+    "points": 18664926,
+    "md5": "2eb50a9f5136da3662e5da12159caa3f",
+    "kept": 190155,
+    "kept_by_class": {
+     "1": 155902,
+     "2": 34244,
+     "18": 6,
+     "7": 3
+    },
+    "seconds": 10.5
+   },
+   {
+    "file": "USGS_LPC_CA_SanDiegoCo_D24_11SMS495630.laz",
+    "bytes": 84422369,
+    "points": 17198031,
+    "md5": "091da79679ada8a5513277a2adcc4adb",
+    "kept": 44699,
+    "kept_by_class": {
+     "1": 35115,
+     "2": 9581,
+     "7": 3
+    },
+    "seconds": 9.3
+   }
+  ]
+ },
+ "inputs_md5": {
+  "tools/expansion_pieces.py": "0d93dfeca2feb610efe65c16284743d7",
+  "tracks/san-diego-lake-murray/data/expansion.north.json": "e3be10794ea9110bcff7926507014348",
+  "tracks/san-diego-lake-murray/data/centerline.local.json": "fd92c71796c1e900ef02594f3e9cc713",
+  "lm-shrub tool shrub_heights.py": "47daa67011b51d016e32b90d1c02fd31"
+ },
+ "frame": {
+  "piece": "D jackson_north (tools/expansion_pieces.Piece.frame)",
+  "origin": {
+   "lon": -117.04666413020487,
+   "lat": 32.78835571285328,
+   "elev_m": 100.8
+  },
+  "projection": "shrub_heights.Track.to_local: pyproj EPSG 6340 -> 4326 ('Inverse of UTM zone 11N + NAD83(2011) to WGS 84 (1) (with axis order normalized for visualization)', stated accuracy 2.0 m), then the WGS84 metres-per-degree series at the origin",
+  "checks": {
+   "travel_bearing_deg": {
+    "min": 105.7,
+    "max": 140.2,
+    "what": "D's tangent along increasing s, degrees from north"
+   },
+   "left_normal_is_left": true,
+   "projection_round_trip_max_m": 0.0,
+   "road_at_line_minus_y3dep_m": {
+    "what": "the lidar road within 0.5 m of D's line (last returns, OUT_Q percentile, grade out) minus D's y_3dep, engine y",
+    "median": -0.055,
+    "n": 133
+   }
+  }
+ },
+ "settings": {
+  "RANGES": [
+   [
+    225.0,
+    492.5
+   ],
+   [
+    1240.0,
+    1300.0
+   ]
+  ],
+  "BIN_SUM_M": 25.0,
+  "HALF_ALONG": 1.25,
+  "HALF_ACROSS": 18.0,
+  "OUTER_FROM": 4.0,
+  "BIN": 0.1,
+  "W": 0.6,
+  "MIN_BINS": 3,
+  "OUT_Q": 20,
+  "CURB_DET": 0.05,
+  "DROP_DET": 0.1,
+  "NONE_MAX": 0.05,
+  "CURB_LO": 0.05,
+  "CURB_HI": 0.35,
+  "GUARD": 0.15,
+  "ROAD_M": 2.0,
+  "WALK_M": 1.2,
+  "FACE_WIN": 0.5,
+  "N_WIN": 150,
+  "N_WALK_BINS": 4,
+  "TREND_M": 1.2,
+  "TREND_MIN": 6,
+  "INT_M": 1.0,
+  "ROAD_TOL": 0.6,
+  "CONT_M": 1.0,
+  "MIN_BOTH": 5,
+  "MAX_IQR": 1.0
+ },
+ "summary": {
+  "stations": 133,
+  "stations_with_both_faces": 78,
+  "left_types": {
+   "unclear": 47,
+   "curb": 64,
+   "edge (drop)": 21,
+   "edge (rise)": 1
+  },
+  "right_types": {
+   "curb": 123,
+   "unclear": 10
+  },
+  "per_range": {
+   "s225_492.5": {
+    "real_minus_built_middle_m": {
+     "median": 2.629,
+     "min": -0.235,
+     "max": 4.067,
+     "iqr": 1.023,
+     "n": 65
+    },
+    "real_minus_built_width_m": {
+     "median": -0.144,
+     "min": -7.412,
+     "max": 2.613,
+     "iqr": 2.455,
+     "n": 65
+    },
+    "left_minus_built_m": {
+     "median": 2.54,
+     "min": -3.576,
+     "max": 5.226,
+     "iqr": 1.954,
+     "n": 72
+    },
+    "right_minus_built_m": {
+     "median": 2.534,
+     "min": 1.617,
+     "max": 3.842,
+     "iqr": 0.538,
+     "n": 100
+    }
+   },
+   "s1240_1300": {
+    "real_minus_built_middle_m": {
+     "median": 0.548,
+     "min": -1.366,
+     "max": 1.59,
+     "iqr": 1.515,
+     "n": 13
+    },
+    "real_minus_built_width_m": {
+     "median": -1.26,
+     "min": -5.022,
+     "max": 0.412,
+     "iqr": 3.224,
+     "n": 13
+    },
+    "left_minus_built_m": {
+     "median": 0.254,
+     "min": -3.66,
+     "max": 1.796,
+     "iqr": 2.826,
+     "n": 14
+    },
+    "right_minus_built_m": {
+     "median": 1.229,
+     "min": 0.907,
+     "max": 1.475,
+     "iqr": 0.266,
+     "n": 23
+    }
+   }
+  },
+  "per_25m": [
+   {
+    "s": [
+     225.0,
+     247.5
+    ],
+    "stations": 10,
+    "stations_with_both_faces": 5,
+    "real_minus_built_middle_m": {
+     "median": 3.058,
+     "min": 0.13,
+     "max": 3.145,
+     "iqr": 0.042,
+     "n": 5
+    },
+    "real_minus_built_middle_m_curbs_both_sides": {
+     "median": 3.058,
+     "min": 0.13,
+     "max": 3.145,
+     "iqr": 0.042,
+     "n": 5
+    },
+    "real_middle_m": {
+     "median": 1.318,
+     "min": -1.38,
+     "max": 1.42,
+     "iqr": 0.027,
+     "n": 5
+    },
+    "built_middle_m": {
+     "median": -1.663,
+     "min": -1.75,
+     "max": -1.465,
+     "iqr": 0.166,
+     "n": 10
+    },
+    "real_minus_built_width_m": {
+     "median": -1.025,
+     "min": -7.412,
+     "max": -0.968,
+     "iqr": 0.228,
+     "n": 5
+    },
+    "left_minus_built_m": {
+     "median": 2.493,
+     "min": -3.576,
+     "max": 2.593,
+     "iqr": 1.1,
+     "n": 8
+    },
+    "right_minus_built_m": {
+     "median": 3.663,
+     "min": 3.542,
+     "max": 3.842,
+     "iqr": 0.253,
+     "n": 6
+    },
+    "left_types": {
+     "unclear": 2,
+     "curb": 7,
+     "edge (drop)": 1
+    },
+    "right_types": {
+     "curb": 6,
+     "unclear": 4
+    },
+    "call": "ok"
+   },
+   {
+    "s": [
+     250.0,
+     272.5
+    ],
+    "stations": 10,
+    "stations_with_both_faces": 9,
+    "real_minus_built_middle_m": {
+     "median": 2.791,
+     "min": 2.597,
+     "max": 3.013,
+     "iqr": 0.192,
+     "n": 9
+    },
+    "real_minus_built_middle_m_curbs_both_sides": {
+     "median": 2.791,
+     "min": 2.597,
+     "max": 3.013,
+     "iqr": 0.192,
+     "n": 9
+    },
+    "real_middle_m": {
+     "median": 1.106,
+     "min": 0.927,
+     "max": 1.288,
+     "iqr": 0.157,
+     "n": 9
+    },
+    "built_middle_m": {
+     "median": -1.69,
+     "min": -1.725,
+     "max": -1.655,
+     "iqr": 0.038,
+     "n": 10
+    },
+    "real_minus_built_width_m": {
+     "median": -0.771,
+     "min": -1.029,
+     "max": -0.503,
+     "iqr": 0.166,
+     "n": 9
+    },
+    "left_minus_built_m": {
+     "median": 2.427,
+     "min": 2.23,
+     "max": 2.501,
+     "iqr": 0.154,
+     "n": 9
+    },
+    "right_minus_built_m": {
+     "median": 3.186,
+     "min": 2.913,
+     "max": 3.528,
+     "iqr": 0.309,
+     "n": 10
+    },
+    "left_types": {
+     "curb": 9,
+     "unclear": 1
+    },
+    "right_types": {
+     "curb": 10
+    },
+    "call": "ok"
+   },
+   {
+    "s": [
+     275.0,
+     297.5
+    ],
+    "stations": 10,
+    "stations_with_both_faces": 7,
+    "real_minus_built_middle_m": {
+     "median": 2.419,
+     "min": 2.226,
+     "max": 2.503,
+     "iqr": 0.136,
+     "n": 7
+    },
+    "real_minus_built_middle_m_curbs_both_sides": {
+     "median": 2.419,
+     "min": 2.226,
+     "max": 2.503,
+     "iqr": 0.136,
+     "n": 7
+    },
+    "real_middle_m": {
+     "median": 0.809,
+     "min": 0.646,
+     "max": 0.873,
+     "iqr": 0.113,
+     "n": 7
+    },
+    "built_middle_m": {
+     "median": -1.613,
+     "min": -1.645,
+     "max": -1.58,
+     "iqr": 0.032,
+     "n": 10
+    },
+    "real_minus_built_width_m": {
+     "median": -0.325,
+     "min": -0.602,
+     "max": -0.144,
+     "iqr": 0.082,
+     "n": 7
+    },
+    "left_minus_built_m": {
+     "median": 2.212,
+     "min": 2.122,
+     "max": 2.311,
+     "iqr": 0.077,
+     "n": 7
+    },
+    "right_minus_built_m": {
+     "median": 2.604,
+     "min": 2.298,
+     "max": 2.873,
+     "iqr": 0.268,
+     "n": 10
+    },
+    "left_types": {
+     "unclear": 3,
+     "curb": 7
+    },
+    "right_types": {
+     "curb": 10
+    },
+    "call": "ok"
+   },
+   {
+    "s": [
+     300.0,
+     322.5
+    ],
+    "stations": 10,
+    "stations_with_both_faces": 8,
+    "real_minus_built_middle_m": {
+     "median": 2.287,
+     "min": 1.122,
+     "max": 2.682,
+     "iqr": 0.444,
+     "n": 8
+    },
+    "real_minus_built_middle_m_curbs_both_sides": {
+     "median": 2.412,
+     "min": 2.175,
+     "max": 2.682,
+     "iqr": 0.288,
+     "n": 6
+    },
+    "real_middle_m": {
+     "median": 0.735,
+     "min": -0.383,
+     "max": 1.157,
+     "iqr": 0.459,
+     "n": 8
+    },
+    "built_middle_m": {
+     "median": -1.538,
+     "min": -1.57,
+     "max": -1.505,
+     "iqr": 0.032,
+     "n": 10
+    },
+    "real_minus_built_width_m": {
+     "median": -0.138,
+     "min": -3.387,
+     "max": 0.169,
+     "iqr": 0.736,
+     "n": 8
+    },
+    "left_minus_built_m": {
+     "median": 2.215,
+     "min": -0.571,
+     "max": 2.694,
+     "iqr": 0.861,
+     "n": 8
+    },
+    "right_minus_built_m": {
+     "median": 2.471,
+     "min": 2.269,
+     "max": 2.816,
+     "iqr": 0.407,
+     "n": 10
+    },
+    "left_types": {
+     "unclear": 2,
+     "curb": 6,
+     "edge (drop)": 2
+    },
+    "right_types": {
+     "curb": 10
+    },
+    "call": "ok"
+   },
+   {
+    "s": [
+     325.0,
+     347.5
+    ],
+    "stations": 10,
+    "stations_with_both_faces": 3,
+    "real_minus_built_middle_m": {
+     "median": 0.973,
+     "min": 0.831,
+     "max": 1.569,
+     "iqr": 0.369,
+     "n": 3
+    },
+    "real_minus_built_middle_m_curbs_both_sides": null,
+    "real_middle_m": {
+     "median": -0.472,
+     "min": -0.599,
+     "max": 0.079,
+     "iqr": 0.339,
+     "n": 3
+    },
+    "built_middle_m": {
+     "median": -1.462,
+     "min": -1.495,
+     "max": -1.43,
+     "iqr": 0.032,
+     "n": 10
+    },
+    "real_minus_built_width_m": {
+     "median": -2.167,
+     "min": -2.356,
+     "max": -2.097,
+     "iqr": 0.13,
+     "n": 3
+    },
+    "left_minus_built_m": {
+     "median": -0.111,
+     "min": -0.217,
+     "max": 0.391,
+     "iqr": 0.304,
+     "n": 3
+    },
+    "right_minus_built_m": {
+     "median": 2.421,
+     "min": 1.88,
+     "max": 2.783,
+     "iqr": 0.568,
+     "n": 10
+    },
+    "left_types": {
+     "unclear": 7,
+     "edge (drop)": 3
+    },
+    "right_types": {
+     "curb": 10
+    },
+    "call": "can't call: 3 stations with both faces (wants 5)"
+   },
+   {
+    "s": [
+     350.0,
+     372.5
+    ],
+    "stations": 10,
+    "stations_with_both_faces": 6,
+    "real_minus_built_middle_m": {
+     "median": 1.29,
+     "min": -0.235,
+     "max": 2.567,
+     "iqr": 1.651,
+     "n": 6
+    },
+    "real_minus_built_middle_m_curbs_both_sides": {
+     "median": 2.226,
+     "min": 2.005,
+     "max": 2.567,
+     "iqr": 0.281,
+     "n": 3
+    },
+    "real_middle_m": {
+     "median": -0.12,
+     "min": -1.595,
+     "max": 1.197,
+     "iqr": 1.675,
+     "n": 6
+    },
+    "built_middle_m": {
+     "median": -1.387,
+     "min": -1.42,
+     "max": -1.355,
+     "iqr": 0.032,
+     "n": 10
+    },
+    "real_minus_built_width_m": {
+     "median": -0.735,
+     "min": -4.924,
+     "max": 0.759,
+     "iqr": 2.956,
+     "n": 6
+    },
+    "left_minus_built_m": {
+     "median": 2.312,
+     "min": -2.697,
+     "max": 2.947,
+     "iqr": 3.225,
+     "n": 7
+    },
+    "right_minus_built_m": {
+     "median": 1.911,
+     "min": 1.617,
+     "max": 2.272,
+     "iqr": 0.49,
+     "n": 9
+    },
+    "left_types": {
+     "edge (drop)": 3,
+     "curb": 4,
+     "unclear": 3
+    },
+    "right_types": {
+     "curb": 9,
+     "unclear": 1
+    },
+    "call": "can't call: the stations disagree (IQR 1.65 m over 1.0)"
+   },
+   {
+    "s": [
+     375.0,
+     397.5
+    ],
+    "stations": 10,
+    "stations_with_both_faces": 7,
+    "real_minus_built_middle_m": {
+     "median": 2.396,
+     "min": 0.036,
+     "max": 2.687,
+     "iqr": 0.882,
+     "n": 7
+    },
+    "real_minus_built_middle_m_curbs_both_sides": {
+     "median": 2.53,
+     "min": 2.253,
+     "max": 2.687,
+     "iqr": 0.233,
+     "n": 5
+    },
+    "real_middle_m": {
+     "median": 1.101,
+     "min": -1.309,
+     "max": 1.362,
+     "iqr": 0.877,
+     "n": 7
+    },
+    "built_middle_m": {
+     "median": -1.312,
+     "min": -1.345,
+     "max": -1.28,
+     "iqr": 0.033,
+     "n": 10
+    },
+    "real_minus_built_width_m": {
+     "median": 1.027,
+     "min": -4.42,
+     "max": 1.269,
+     "iqr": 1.649,
+     "n": 7
+    },
+    "left_minus_built_m": {
+     "median": 3.031,
+     "min": -2.174,
+     "max": 3.24,
+     "iqr": 1.633,
+     "n": 7
+    },
+    "right_minus_built_m": {
+     "median": 2.056,
+     "min": 1.634,
+     "max": 2.267,
+     "iqr": 0.35,
+     "n": 10
+    },
+    "left_types": {
+     "edge (drop)": 2,
+     "unclear": 3,
+     "curb": 5
+    },
+    "right_types": {
+     "curb": 10
+    },
+    "call": "ok"
+   },
+   {
+    "s": [
+     400.0,
+     422.5
+    ],
+    "stations": 10,
+    "stations_with_both_faces": 4,
+    "real_minus_built_middle_m": {
+     "median": 2.885,
+     "min": 2.362,
+     "max": 3.429,
+     "iqr": 0.772,
+     "n": 4
+    },
+    "real_minus_built_middle_m_curbs_both_sides": {
+     "median": 2.885,
+     "min": 2.362,
+     "max": 3.429,
+     "iqr": 0.772,
+     "n": 4
+    },
+    "real_middle_m": {
+     "median": 1.645,
+     "min": 1.092,
+     "max": 2.219,
+     "iqr": 0.81,
+     "n": 4
+    },
+    "built_middle_m": {
+     "median": -1.238,
+     "min": -1.27,
+     "max": -1.205,
+     "iqr": 0.032,
+     "n": 10
+    },
+    "real_minus_built_width_m": {
+     "median": 1.303,
+     "min": 1.297,
+     "max": 1.487,
+     "iqr": 0.051,
+     "n": 4
+    },
+    "left_minus_built_m": {
+     "median": 3.495,
+     "min": 3.01,
+     "max": 4.173,
+     "iqr": 0.671,
+     "n": 5
+    },
+    "right_minus_built_m": {
+     "median": 2.387,
+     "min": 1.713,
+     "max": 2.858,
+     "iqr": 0.727,
+     "n": 9
+    },
+    "left_types": {
+     "curb": 5,
+     "unclear": 5
+    },
+    "right_types": {
+     "curb": 9,
+     "unclear": 1
+    },
+    "call": "can't call: 4 stations with both faces (wants 5)"
+   },
+   {
+    "s": [
+     425.0,
+     447.5
+    ],
+    "stations": 10,
+    "stations_with_both_faces": 5,
+    "real_minus_built_middle_m": {
+     "median": 3.57,
+     "min": 3.306,
+     "max": 3.61,
+     "iqr": 0.051,
+     "n": 5
+    },
+    "real_minus_built_middle_m_curbs_both_sides": {
+     "median": 3.551,
+     "min": 3.306,
+     "max": 3.584,
+     "iqr": 0.097,
+     "n": 4
+    },
+    "real_middle_m": {
+     "median": 2.39,
+     "min": 2.171,
+     "max": 2.45,
+     "iqr": 0.066,
+     "n": 5
+    },
+    "built_middle_m": {
+     "median": -1.163,
+     "min": -1.195,
+     "max": -1.13,
+     "iqr": 0.032,
+     "n": 10
+    },
+    "real_minus_built_width_m": {
+     "median": 1.727,
+     "min": 1.605,
+     "max": 2.034,
+     "iqr": 0.027,
+     "n": 5
+    },
+    "left_minus_built_m": {
+     "median": 4.425,
+     "min": 4.169,
+     "max": 4.627,
+     "iqr": 0.117,
+     "n": 5
+    },
+    "right_minus_built_m": {
+     "median": 2.654,
+     "min": 2.358,
+     "max": 2.763,
+     "iqr": 0.263,
+     "n": 10
+    },
+    "left_types": {
+     "unclear": 5,
+     "curb": 4,
+     "edge (drop)": 1
+    },
+    "right_types": {
+     "curb": 10
+    },
+    "call": "ok"
+   },
+   {
+    "s": [
+     450.0,
+     472.5
+    ],
+    "stations": 10,
+    "stations_with_both_faces": 8,
+    "real_minus_built_middle_m": {
+     "median": 3.641,
+     "min": 3.276,
+     "max": 4.039,
+     "iqr": 0.591,
+     "n": 8
+    },
+    "real_minus_built_middle_m_curbs_both_sides": {
+     "median": 3.533,
+     "min": 3.276,
+     "max": 4.033,
+     "iqr": 0.49,
+     "n": 7
+    },
+    "real_middle_m": {
+     "median": 2.561,
+     "min": 2.171,
+     "max": 2.979,
+     "iqr": 0.628,
+     "n": 8
+    },
+    "built_middle_m": {
+     "median": -1.087,
+     "min": -1.12,
+     "max": -1.055,
+     "iqr": 0.032,
+     "n": 10
+    },
+    "real_minus_built_width_m": {
+     "median": 2.077,
+     "min": 1.922,
+     "max": 2.346,
+     "iqr": 0.365,
+     "n": 8
+    },
+    "left_minus_built_m": {
+     "median": 4.679,
+     "min": 4.237,
+     "max": 5.212,
+     "iqr": 0.776,
+     "n": 8
+    },
+    "right_minus_built_m": {
+     "median": 2.477,
+     "min": 2.315,
+     "max": 2.887,
+     "iqr": 0.385,
+     "n": 10
+    },
+    "left_types": {
+     "unclear": 2,
+     "curb": 7,
+     "edge (drop)": 1
+    },
+    "right_types": {
+     "curb": 10
+    },
+    "call": "ok"
+   },
+   {
+    "s": [
+     475.0,
+     492.5
+    ],
+    "stations": 8,
+    "stations_with_both_faces": 3,
+    "real_minus_built_middle_m": {
+     "median": 3.956,
+     "min": 3.856,
+     "max": 4.067,
+     "iqr": 0.106,
+     "n": 3
+    },
+    "real_minus_built_middle_m_curbs_both_sides": {
+     "median": 3.906,
+     "min": 3.856,
+     "max": 3.956,
+     "iqr": 0.05,
+     "n": 2
+    },
+    "real_middle_m": {
+     "median": 2.931,
+     "min": 2.841,
+     "max": 3.027,
+     "iqr": 0.093,
+     "n": 3
+    },
+    "built_middle_m": {
+     "median": -1.02,
+     "min": -1.045,
+     "max": -0.995,
+     "iqr": 0.025,
+     "n": 8
+    },
+    "real_minus_built_width_m": {
+     "median": 2.452,
+     "min": 2.318,
+     "max": 2.613,
+     "iqr": 0.147,
+     "n": 3
+    },
+    "left_minus_built_m": {
+     "median": 5.163,
+     "min": 4.976,
+     "max": 5.226,
+     "iqr": 0.102,
+     "n": 5
+    },
+    "right_minus_built_m": {
+     "median": 2.808,
+     "min": 2.494,
+     "max": 2.928,
+     "iqr": 0.308,
+     "n": 6
+    },
+    "left_types": {
+     "unclear": 3,
+     "edge (rise)": 1,
+     "curb": 4
+    },
+    "right_types": {
+     "curb": 6,
+     "unclear": 2
+    },
+    "call": "can't call: 3 stations with both faces (wants 5)"
+   },
+   {
+    "s": [
+     1240.0,
+     1262.5
+    ],
+    "stations": 10,
+    "stations_with_both_faces": 6,
+    "real_minus_built_middle_m": {
+     "median": 1.108,
+     "min": 0.355,
+     "max": 1.59,
+     "iqr": 0.927,
+     "n": 6
+    },
+    "real_minus_built_middle_m_curbs_both_sides": {
+     "median": 1.546,
+     "min": 1.466,
+     "max": 1.59,
+     "iqr": 0.062,
+     "n": 3
+    },
+    "real_middle_m": {
+     "median": 0.188,
+     "min": -0.585,
+     "max": 0.75,
+     "iqr": 1.005,
+     "n": 6
+    },
+    "built_middle_m": {
+     "median": -0.905,
+     "min": -0.995,
+     "max": -0.79,
+     "iqr": 0.115,
+     "n": 10
+    },
+    "real_minus_built_width_m": {
+     "median": -0.097,
+     "min": -1.747,
+     "max": 0.412,
+     "iqr": 1.346,
+     "n": 6
+    },
+    "left_minus_built_m": {
+     "median": 1.264,
+     "min": -0.518,
+     "max": 1.796,
+     "iqr": 1.38,
+     "n": 7
+    },
+    "right_minus_built_m": {
+     "median": 1.229,
+     "min": 0.91,
+     "max": 1.402,
+     "iqr": 0.256,
+     "n": 9
+    },
+    "left_types": {
+     "curb": 4,
+     "unclear": 3,
+     "edge (drop)": 3
+    },
+    "right_types": {
+     "unclear": 1,
+     "curb": 9
+    },
+    "call": "ok"
+   },
+   {
+    "s": [
+     1265.0,
+     1287.5
+    ],
+    "stations": 10,
+    "stations_with_both_faces": 4,
+    "real_minus_built_middle_m": {
+     "median": 0.562,
+     "min": -1.149,
+     "max": 1.344,
+     "iqr": 1.723,
+     "n": 4
+    },
+    "real_minus_built_middle_m_curbs_both_sides": {
+     "median": 1.32,
+     "min": 1.295,
+     "max": 1.344,
+     "iqr": 0.024,
+     "n": 2
+    },
+    "real_middle_m": {
+     "median": -0.053,
+     "min": -1.839,
+     "max": 0.774,
+     "iqr": 1.79,
+     "n": 4
+    },
+    "built_middle_m": {
+     "median": -0.655,
+     "min": -0.77,
+     "max": -0.54,
+     "iqr": 0.115,
+     "n": 10
+    },
+    "real_minus_built_width_m": {
+     "median": -1.533,
+     "min": -5.022,
+     "max": 0.191,
+     "iqr": 3.649,
+     "n": 4
+    },
+    "left_minus_built_m": {
+     "median": -0.204,
+     "min": -3.66,
+     "max": 1.439,
+     "iqr": 3.547,
+     "n": 4
+    },
+    "right_minus_built_m": {
+     "median": 1.28,
+     "min": 1.153,
+     "max": 1.475,
+     "iqr": 0.149,
+     "n": 9
+    },
+    "left_types": {
+     "unclear": 6,
+     "edge (drop)": 2,
+     "curb": 2
+    },
+    "right_types": {
+     "curb": 9,
+     "unclear": 1
+    },
+    "call": "can't call: 4 stations with both faces (wants 5)"
+   },
+   {
+    "s": [
+     1290.0,
+     1300.0
+    ],
+    "stations": 5,
+    "stations_with_both_faces": 3,
+    "real_minus_built_middle_m": {
+     "median": -0.834,
+     "min": -1.366,
+     "max": 0.318,
+     "iqr": 0.842,
+     "n": 3
+    },
+    "real_minus_built_middle_m_curbs_both_sides": null,
+    "real_middle_m": {
+     "median": -1.304,
+     "min": -1.806,
+     "max": -0.202,
+     "iqr": 0.802,
+     "n": 3
+    },
+    "built_middle_m": {
+     "median": -0.47,
+     "min": -0.52,
+     "max": -0.42,
+     "iqr": 0.05,
+     "n": 5
+    },
+    "real_minus_built_width_m": {
+     "median": -3.752,
+     "min": -4.547,
+     "max": -1.372,
+     "iqr": 1.587,
+     "n": 3
+    },
+    "left_minus_built_m": {
+     "median": -2.71,
+     "min": -3.64,
+     "max": -0.368,
+     "iqr": 1.636,
+     "n": 3
+    },
+    "right_minus_built_m": {
+     "median": 1.042,
+     "min": 0.907,
+     "max": 1.12,
+     "iqr": 0.065,
+     "n": 5
+    },
+    "left_types": {
+     "edge (drop)": 3,
+     "unclear": 2
+    },
+    "right_types": {
+     "curb": 5
+    },
+    "call": "can't call: 3 stations with both faces (wants 5)"
+   }
+  ],
+  "cant_call": {
+   "stations_without_both_faces": [
+    [
+     225.0,
+     225.0
+    ],
+    [
+     230.0,
+     237.5
+    ],
+    [
+     255.0,
+     255.0
+    ],
+    [
+     275.0,
+     277.5
+    ],
+    [
+     295.0,
+     295.0
+    ],
+    [
+     300.0,
+     300.0
+    ],
+    [
+     320.0,
+     320.0
+    ],
+    [
+     325.0,
+     325.0
+    ],
+    [
+     330.0,
+     340.0
+    ],
+    [
+     345.0,
+     345.0
+    ],
+    [
+     357.5,
+     357.5
+    ],
+    [
+     362.5,
+     365.0
+    ],
+    [
+     372.5,
+     372.5
+    ],
+    [
+     377.5,
+     377.5
+    ],
+    [
+     390.0,
+     390.0
+    ],
+    [
+     397.5,
+     397.5
+    ],
+    [
+     402.5,
+     402.5
+    ],
+    [
+     407.5,
+     412.5
+    ],
+    [
+     417.5,
+     417.5
+    ],
+    [
+     422.5,
+     425.0
+    ],
+    [
+     435.0,
+     435.0
+    ],
+    [
+     440.0,
+     442.5
+    ],
+    [
+     447.5,
+     450.0
+    ],
+    [
+     460.0,
+     460.0
+    ],
+    [
+     475.0,
+     475.0
+    ],
+    [
+     480.0,
+     480.0
+    ],
+    [
+     487.5,
+     492.5
+    ],
+    [
+     1240.0,
+     1242.5
+    ],
+    [
+     1250.0,
+     1250.0
+    ],
+    [
+     1262.5,
+     1270.0
+    ],
+    [
+     1275.0,
+     1275.0
+    ],
+    [
+     1280.0,
+     1280.0
+    ],
+    [
+     1287.5,
+     1287.5
+    ],
+    [
+     1292.5,
+     1292.5
+    ],
+    [
+     1300.0,
+     1300.0
+    ]
+   ],
+   "left_side": [
+    [
+     225.0,
+     225.0
+    ],
+    [
+     232.5,
+     232.5
+    ],
+    [
+     255.0,
+     255.0
+    ],
+    [
+     275.0,
+     277.5
+    ],
+    [
+     295.0,
+     295.0
+    ],
+    [
+     300.0,
+     300.0
+    ],
+    [
+     320.0,
+     320.0
+    ],
+    [
+     325.0,
+     325.0
+    ],
+    [
+     330.0,
+     340.0
+    ],
+    [
+     345.0,
+     345.0
+    ],
+    [
+     357.5,
+     357.5
+    ],
+    [
+     365.0,
+     365.0
+    ],
+    [
+     372.5,
+     372.5
+    ],
+    [
+     377.5,
+     377.5
+    ],
+    [
+     390.0,
+     390.0
+    ],
+    [
+     397.5,
+     397.5
+    ],
+    [
+     402.5,
+     402.5
+    ],
+    [
+     410.0,
+     412.5
+    ],
+    [
+     417.5,
+     417.5
+    ],
+    [
+     422.5,
+     425.0
+    ],
+    [
+     435.0,
+     435.0
+    ],
+    [
+     440.0,
+     442.5
+    ],
+    [
+     447.5,
+     450.0
+    ],
+    [
+     460.0,
+     460.0
+    ],
+    [
+     475.0,
+     475.0
+    ],
+    [
+     480.0,
+     480.0
+    ],
+    [
+     487.5,
+     487.5
+    ],
+    [
+     1242.5,
+     1242.5
+    ],
+    [
+     1250.0,
+     1250.0
+    ],
+    [
+     1262.5,
+     1270.0
+    ],
+    [
+     1275.0,
+     1275.0
+    ],
+    [
+     1280.0,
+     1280.0
+    ],
+    [
+     1287.5,
+     1287.5
+    ],
+    [
+     1292.5,
+     1292.5
+    ],
+    [
+     1300.0,
+     1300.0
+    ]
+   ],
+   "right_side": [
+    [
+     230.0,
+     237.5
+    ],
+    [
+     362.5,
+     362.5
+    ],
+    [
+     407.5,
+     407.5
+    ],
+    [
+     490.0,
+     492.5
+    ],
+    [
+     1240.0,
+     1240.0
+    ],
+    [
+     1280.0,
+     1280.0
+    ]
+   ]
+  },
+  "curb_step_m": {
+   "left": {
+    "median": 0.084,
+    "min": 0.05,
+    "max": 0.196,
+    "iqr": 0.034,
+    "n": 64
+   },
+   "right": {
+    "median": 0.127,
+    "min": 0.055,
+    "max": 0.262,
+    "iqr": 0.03,
+    "n": 123
+   }
+  }
+ },
+ "stations": [
+  {"s":225.0,"left":{"n_window":560,"detector_m":1.572,"face_u_m":8.767,"unc_m":0.025,"step_m":3.746,"outer_bins":11,"face_points":14,"face_wrong_side":0,"outer_slope":1.1853,"road_slope":2.6994,"road_side_over_road_near_line_m":4.084,"intensity_inside":39497.0,"intensity_outside":40178.0,"verdict":"unclear","type":null,"reason":"the road side stands +4.08 m off the road near the line (canopy)"},"right":{"n_window":563,"detector_m":0.137,"face_u_m":-8.208,"unc_m":0.021,"step_m":0.127,"outer_bins":10,"face_points":39,"face_wrong_side":2,"outer_slope":0.0183,"road_slope":-0.0223,"road_side_over_road_near_line_m":0.02,"intensity_inside":42345.0,"intensity_outside":54998.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":9.12,"right_m":-12.05,"middle_m":-1.465,"width_m":21.17},"counts":{"returns":1619,"last_returns":1408,"class_2":291},"grade":{"along":0.0217,"from":"class 2"},"right_minus_built_m":3.842,"road_at_line_minus_y3dep_m":-0.085},
+  {"s":227.5,"left":{"n_window":647,"detector_m":0.053,"face_u_m":5.444,"unc_m":0.059,"step_m":0.056,"outer_bins":9,"face_points":21,"face_wrong_side":6,"outer_slope":-0.1134,"road_slope":-0.0811,"road_side_over_road_near_line_m":-0.063,"intensity_inside":24852.0,"intensity_outside":21979.0,"verdict":"face","type":"curb","reason":""},"right":{"n_window":553,"detector_m":0.143,"face_u_m":-8.204,"unc_m":0.005,"step_m":0.098,"outer_bins":10,"face_points":52,"face_wrong_side":3,"outer_slope":0.0517,"road_slope":-0.0166,"road_side_over_road_near_line_m":0.024,"intensity_inside":47614.0,"intensity_outside":56536.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":9.02,"right_m":-12.04,"middle_m":-1.51,"width_m":21.06},"counts":{"returns":1663,"last_returns":1492,"class_2":269},"grade":{"along":0.0212,"from":"class 2"},"left_minus_built_m":-3.576,"right_minus_built_m":3.836,"real_middle_m":-1.38,"real_width_m":13.648,"real_minus_built_middle_m":0.13,"real_minus_built_width_m":-7.412,"road_at_line_minus_y3dep_m":-0.086},
+  {"s":230.0,"left":{"n_window":670,"detector_m":-2.496,"face_u_m":8.068,"unc_m":0.025,"step_m":-2.565,"outer_bins":11,"face_points":24,"face_wrong_side":0,"outer_slope":7.8454,"road_slope":-0.0667,"road_side_over_road_near_line_m":-0.205,"intensity_inside":29792.0,"intensity_outside":43580.0,"verdict":"face","type":"edge (drop)","reason":"the ground falls away past the asphalt"},"right":{"n_window":547,"detector_m":0.081,"face_u_m":-7.413,"unc_m":0.025,"step_m":-0.057,"outer_bins":10,"face_points":38,"face_wrong_side":9,"outer_slope":0.0469,"road_slope":0.0033,"road_side_over_road_near_line_m":0.057,"intensity_inside":35489.0,"intensity_outside":48924.0,"verdict":"unclear","type":null,"reason":"step -0.057 m (rise) out of bounds"},"built":{"left_m":8.93,"right_m":-12.04,"middle_m":-1.555,"width_m":20.97},"counts":{"returns":1748,"last_returns":1497,"class_2":265},"grade":{"along":0.0368,"from":"class 2"},"left_minus_built_m":-0.862,"road_at_line_minus_y3dep_m":-0.118},
+  {"s":232.5,"left":{"n_window":495,"detector_m":0.057,"face_u_m":5.47,"unc_m":0.025,"step_m":-0.071,"outer_bins":11,"face_points":28,"face_wrong_side":7,"outer_slope":-0.0,"road_slope":-0.0346,"road_side_over_road_near_line_m":-0.02,"intensity_inside":22483.0,"intensity_outside":24046.0,"verdict":"unclear","type":null,"reason":"step -0.071 m (rise) out of bounds"},"right":{"n_window":551,"detector_m":0.104,"face_u_m":-7.403,"unc_m":0.025,"step_m":-0.05,"outer_bins":10,"face_points":29,"face_wrong_side":8,"outer_slope":0.0163,"road_slope":0.0101,"road_side_over_road_near_line_m":0.053,"intensity_inside":35237.0,"intensity_outside":50486.0,"verdict":"unclear","type":null,"reason":"step -0.050 m (rise) out of bounds"},"built":{"left_m":8.83,"right_m":-12.03,"middle_m":-1.6,"width_m":20.86},"counts":{"returns":1505,"last_returns":1330,"class_2":297},"grade":{"along":0.021,"from":"class 2"},"road_at_line_minus_y3dep_m":-0.039},
+  {"s":235.0,"left":{"n_window":468,"detector_m":0.137,"face_u_m":10.958,"unc_m":0.032,"step_m":0.074,"outer_bins":10,"face_points":27,"face_wrong_side":8,"outer_slope":-0.0098,"road_slope":-0.0939,"road_side_over_road_near_line_m":-0.391,"intensity_inside":38413.0,"intensity_outside":52780.0,"verdict":"face","type":"curb","reason":""},"right":{"n_window":537,"detector_m":0.119,"face_u_m":-7.475,"unc_m":0.025,"step_m":-0.075,"outer_bins":11,"face_points":37,"face_wrong_side":6,"outer_slope":0.0519,"road_slope":0.0044,"road_side_over_road_near_line_m":0.033,"intensity_inside":35338.0,"intensity_outside":50663.0,"verdict":"unclear","type":null,"reason":"step -0.075 m (rise) out of bounds"},"built":{"left_m":8.74,"right_m":-12.02,"middle_m":-1.64,"width_m":20.76},"counts":{"returns":1400,"last_returns":1306,"class_2":297},"grade":{"along":0.0274,"from":"class 2"},"left_minus_built_m":2.218,"road_at_line_minus_y3dep_m":-0.052},
+  {"s":237.5,"left":{"n_window":512,"detector_m":0.103,"face_u_m":11.094,"unc_m":0.007,"step_m":0.077,"outer_bins":11,"face_points":35,"face_wrong_side":7,"outer_slope":0.0402,"road_slope":-0.0836,"road_side_over_road_near_line_m":-0.377,"intensity_inside":39270.0,"intensity_outside":53260.0,"verdict":"face","type":"curb","reason":""},"right":{"n_window":546,"detector_m":0.08,"face_u_m":-7.174,"unc_m":0.025,"step_m":-0.027,"outer_bins":10,"face_points":32,"face_wrong_side":12,"outer_slope":-0.0242,"road_slope":-0.0004,"road_side_over_road_near_line_m":0.027,"intensity_inside":34204.0,"intensity_outside":43504.0,"verdict":"unclear","type":null,"reason":"step -0.027 m (rise) out of bounds"},"built":{"left_m":8.64,"right_m":-12.01,"middle_m":-1.685,"width_m":20.65},"counts":{"returns":1499,"last_returns":1349,"class_2":270},"grade":{"along":0.037,"from":"class 2"},"left_minus_built_m":2.454,"road_at_line_minus_y3dep_m":-0.068},
+  {"s":240.0,"left":{"n_window":540,"detector_m":0.151,"face_u_m":11.089,"unc_m":0.002,"step_m":0.088,"outer_bins":11,"face_points":37,"face_wrong_side":3,"outer_slope":0.0393,"road_slope":-0.0831,"road_side_over_road_near_line_m":-0.369,"intensity_inside":44714.0,"intensity_outside":52932.0,"verdict":"face","type":"curb","reason":""},"right":{"n_window":546,"detector_m":0.11,"face_u_m":-8.25,"unc_m":0.011,"step_m":0.069,"outer_bins":10,"face_points":40,"face_wrong_side":4,"outer_slope":0.1123,"road_slope":-0.0284,"road_side_over_road_near_line_m":-0.033,"intensity_inside":45572.0,"intensity_outside":53536.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":8.55,"right_m":-12.0,"middle_m":-1.725,"width_m":20.55},"counts":{"returns":1491,"last_returns":1391,"class_2":312},"grade":{"along":0.036,"from":"class 2"},"left_minus_built_m":2.539,"right_minus_built_m":3.75,"real_middle_m":1.42,"real_width_m":19.339,"real_minus_built_middle_m":3.145,"real_minus_built_width_m":-1.211,"road_at_line_minus_y3dep_m":-0.061},
+  {"s":242.5,"left":{"n_window":535,"detector_m":0.144,"face_u_m":11.083,"unc_m":0.058,"step_m":0.09,"outer_bins":11,"face_points":36,"face_wrong_side":3,"outer_slope":0.0556,"road_slope":-0.087,"road_side_over_road_near_line_m":-0.348,"intensity_inside":41186.0,"intensity_outside":53133.0,"verdict":"face","type":"curb","reason":""},"right":{"n_window":552,"detector_m":0.139,"face_u_m":-8.414,"unc_m":0.005,"step_m":0.13,"outer_bins":10,"face_points":37,"face_wrong_side":1,"outer_slope":0.0306,"road_slope":-0.0375,"road_side_over_road_near_line_m":-0.045,"intensity_inside":47361.0,"intensity_outside":53234.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":8.49,"right_m":-11.99,"middle_m":-1.75,"width_m":20.48},"counts":{"returns":1412,"last_returns":1385,"class_2":336},"grade":{"along":0.042,"from":"class 2"},"left_minus_built_m":2.593,"right_minus_built_m":3.576,"real_middle_m":1.335,"real_width_m":19.497,"real_minus_built_middle_m":3.085,"real_minus_built_width_m":-0.983,"road_at_line_minus_y3dep_m":-0.071},
+  {"s":245.0,"left":{"n_window":545,"detector_m":0.164,"face_u_m":11.054,"unc_m":0.005,"step_m":0.098,"outer_bins":11,"face_points":38,"face_wrong_side":3,"outer_slope":0.0499,"road_slope":-0.0884,"road_side_over_road_near_line_m":-0.346,"intensity_inside":46580.0,"intensity_outside":52856.0,"verdict":"face","type":"curb","reason":""},"right":{"n_window":549,"detector_m":0.162,"face_u_m":-8.418,"unc_m":0.043,"step_m":0.122,"outer_bins":9,"face_points":43,"face_wrong_side":3,"outer_slope":0.0465,"road_slope":-0.0413,"road_side_over_road_near_line_m":-0.058,"intensity_inside":45773.0,"intensity_outside":54091.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":8.48,"right_m":-11.96,"middle_m":-1.74,"width_m":20.44},"counts":{"returns":1429,"last_returns":1390,"class_2":327},"grade":{"along":0.0428,"from":"class 2"},"left_minus_built_m":2.574,"right_minus_built_m":3.542,"real_middle_m":1.318,"real_width_m":19.472,"real_minus_built_middle_m":3.058,"real_minus_built_width_m":-0.968,"road_at_line_minus_y3dep_m":-0.077},
+  {"s":247.5,"left":{"n_window":565,"detector_m":0.121,"face_u_m":11.001,"unc_m":0.016,"step_m":0.059,"outer_bins":10,"face_points":42,"face_wrong_side":6,"outer_slope":0.0561,"road_slope":-0.0734,"road_side_over_road_near_line_m":-0.306,"intensity_inside":41488.0,"intensity_outside":53436.0,"verdict":"face","type":"curb","reason":""},"right":{"n_window":541,"detector_m":0.152,"face_u_m":-8.384,"unc_m":0.044,"step_m":0.112,"outer_bins":10,"face_points":39,"face_wrong_side":1,"outer_slope":0.0425,"road_slope":-0.0272,"road_side_over_road_near_line_m":-0.038,"intensity_inside":43303.0,"intensity_outside":55931.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":8.47,"right_m":-11.94,"middle_m":-1.735,"width_m":20.41},"counts":{"returns":1498,"last_returns":1406,"class_2":323},"grade":{"along":0.0503,"from":"class 2"},"left_minus_built_m":2.531,"right_minus_built_m":3.556,"real_middle_m":1.308,"real_width_m":19.385,"real_minus_built_middle_m":3.043,"real_minus_built_width_m":-1.025,"road_at_line_minus_y3dep_m":-0.029},
+  {"s":250.0,"left":{"n_window":544,"detector_m":0.15,"face_u_m":10.959,"unc_m":0.053,"step_m":0.125,"outer_bins":11,"face_points":37,"face_wrong_side":2,"outer_slope":0.0289,"road_slope":-0.0898,"road_side_over_road_near_line_m":-0.312,"intensity_inside":43353.0,"intensity_outside":52100.0,"verdict":"face","type":"curb","reason":""},"right":{"n_window":547,"detector_m":0.168,"face_u_m":-8.382,"unc_m":0.011,"step_m":0.133,"outer_bins":11,"face_points":39,"face_wrong_side":1,"outer_slope":0.0395,"road_slope":-0.0456,"road_side_over_road_near_line_m":-0.069,"intensity_inside":43101.0,"intensity_outside":55603.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":8.46,"right_m":-11.91,"middle_m":-1.725,"width_m":20.37},"counts":{"returns":1467,"last_returns":1405,"class_2":290},"grade":{"along":0.042,"from":"class 2"},"left_minus_built_m":2.499,"right_minus_built_m":3.528,"real_middle_m":1.288,"real_width_m":19.341,"real_minus_built_middle_m":3.013,"real_minus_built_width_m":-1.029,"road_at_line_minus_y3dep_m":-0.078},
+  {"s":252.5,"left":{"n_window":550,"detector_m":0.121,"face_u_m":10.951,"unc_m":0.012,"step_m":0.096,"outer_bins":11,"face_points":38,"face_wrong_side":4,"outer_slope":0.0513,"road_slope":-0.0914,"road_side_over_road_near_line_m":-0.277,"intensity_inside":42294.0,"intensity_outside":54469.0,"verdict":"face","type":"curb","reason":""},"right":{"n_window":554,"detector_m":0.153,"face_u_m":-8.409,"unc_m":0.061,"step_m":0.132,"outer_bins":10,"face_points":34,"face_wrong_side":2,"outer_slope":0.032,"road_slope":-0.0504,"road_side_over_road_near_line_m":-0.091,"intensity_inside":42496.0,"intensity_outside":53914.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":8.45,"right_m":-11.89,"middle_m":-1.72,"width_m":20.34},"counts":{"returns":1459,"last_returns":1412,"class_2":290},"grade":{"along":0.034,"from":"class 2"},"left_minus_built_m":2.501,"right_minus_built_m":3.481,"real_middle_m":1.271,"real_width_m":19.36,"real_minus_built_middle_m":2.991,"real_minus_built_width_m":-0.98,"road_at_line_minus_y3dep_m":-0.055},
+  {"s":255.0,"left":{"n_window":556,"detector_m":0.127,"face_u_m":10.119,"unc_m":0.025,"step_m":-0.084,"outer_bins":10,"face_points":46,"face_wrong_side":11,"outer_slope":0.1069,"road_slope":-0.0682,"road_side_over_road_near_line_m":-0.205,"intensity_inside":35312.0,"intensity_outside":50966.0,"verdict":"unclear","type":null,"reason":"step -0.084 m (rise) out of bounds"},"right":{"n_window":545,"detector_m":0.145,"face_u_m":-8.503,"unc_m":0.01,"step_m":0.135,"outer_bins":10,"face_points":47,"face_wrong_side":1,"outer_slope":0.0353,"road_slope":-0.0475,"road_side_over_road_near_line_m":-0.096,"intensity_inside":49100.0,"intensity_outside":52881.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":8.44,"right_m":-11.86,"middle_m":-1.71,"width_m":20.3},"counts":{"returns":1454,"last_returns":1396,"class_2":281},"grade":{"along":0.0324,"from":"class 2"},"right_minus_built_m":3.357,"road_at_line_minus_y3dep_m":-0.048},
+  {"s":257.5,"left":{"n_window":550,"detector_m":0.151,"face_u_m":10.857,"unc_m":0.039,"step_m":0.1,"outer_bins":11,"face_points":43,"face_wrong_side":6,"outer_slope":0.0323,"road_slope":-0.0746,"road_side_over_road_near_line_m":-0.233,"intensity_inside":44009.0,"intensity_outside":53562.0,"verdict":"face","type":"curb","reason":""},"right":{"n_window":543,"detector_m":0.168,"face_u_m":-8.553,"unc_m":0.05,"step_m":0.144,"outer_bins":11,"face_points":38,"face_wrong_side":2,"outer_slope":0.0262,"road_slope":-0.0538,"road_side_over_road_near_line_m":-0.105,"intensity_inside":44110.0,"intensity_outside":51974.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":8.43,"right_m":-11.84,"middle_m":-1.705,"width_m":20.27},"counts":{"returns":1435,"last_returns":1410,"class_2":302},"grade":{"along":0.0326,"from":"class 2"},"left_minus_built_m":2.427,"right_minus_built_m":3.287,"real_middle_m":1.152,"real_width_m":19.41,"real_minus_built_middle_m":2.857,"real_minus_built_width_m":-0.86,"road_at_line_minus_y3dep_m":-0.024},
+  {"s":260.0,"left":{"n_window":549,"detector_m":0.143,"face_u_m":10.893,"unc_m":0.002,"step_m":0.09,"outer_bins":11,"face_points":40,"face_wrong_side":4,"outer_slope":0.0575,"road_slope":-0.0685,"road_side_over_road_near_line_m":-0.225,"intensity_inside":45496.0,"intensity_outside":53486.0,"verdict":"face","type":"curb","reason":""},"right":{"n_window":562,"detector_m":0.137,"face_u_m":-8.566,"unc_m":0.025,"step_m":0.123,"outer_bins":11,"face_points":39,"face_wrong_side":1,"outer_slope":0.0315,"road_slope":-0.0563,"road_side_over_road_near_line_m":-0.117,"intensity_inside":44160.0,"intensity_outside":55301.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":8.42,"right_m":-11.81,"middle_m":-1.695,"width_m":20.23},"counts":{"returns":1493,"last_returns":1416,"class_2":316},"grade":{"along":0.0446,"from":"class 2"},"left_minus_built_m":2.473,"right_minus_built_m":3.244,"real_middle_m":1.163,"real_width_m":19.459,"real_minus_built_middle_m":2.858,"real_minus_built_width_m":-0.771,"road_at_line_minus_y3dep_m":-0.026},
+  {"s":262.5,"left":{"n_window":530,"detector_m":0.128,"face_u_m":10.876,"unc_m":0.055,"step_m":0.092,"outer_bins":10,"face_points":34,"face_wrong_side":7,"outer_slope":0.0774,"road_slope":-0.0801,"road_side_over_road_near_line_m":-0.231,"intensity_inside":48596.0,"intensity_outside":53486.0,"verdict":"face","type":"curb","reason":""},"right":{"n_window":558,"detector_m":0.182,"face_u_m":-8.663,"unc_m":0.077,"step_m":0.169,"outer_bins":11,"face_points":33,"face_wrong_side":2,"outer_slope":0.015,"road_slope":-0.0644,"road_side_over_road_near_line_m":-0.154,"intensity_inside":44891.0,"intensity_outside":58326.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":8.42,"right_m":-11.79,"middle_m":-1.685,"width_m":20.21},"counts":{"returns":1456,"last_returns":1395,"class_2":331},"grade":{"along":0.0421,"from":"class 2"},"left_minus_built_m":2.456,"right_minus_built_m":3.127,"real_middle_m":1.106,"real_width_m":19.539,"real_minus_built_middle_m":2.791,"real_minus_built_width_m":-0.671,"road_at_line_minus_y3dep_m":-0.046},
+  {"s":265.0,"left":{"n_window":564,"detector_m":0.133,"face_u_m":10.68,"unc_m":0.084,"step_m":0.065,"outer_bins":11,"face_points":38,"face_wrong_side":8,"outer_slope":0.085,"road_slope":-0.0681,"road_side_over_road_near_line_m":-0.193,"intensity_inside":41034.0,"intensity_outside":53940.0,"verdict":"face","type":"curb","reason":""},"right":{"n_window":542,"detector_m":0.16,"face_u_m":-8.675,"unc_m":0.064,"step_m":0.152,"outer_bins":10,"face_points":39,"face_wrong_side":2,"outer_slope":0.0171,"road_slope":-0.0601,"road_side_over_road_near_line_m":-0.146,"intensity_inside":49958.0,"intensity_outside":55402.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":8.41,"right_m":-11.76,"middle_m":-1.675,"width_m":20.17},"counts":{"returns":1492,"last_returns":1395,"class_2":326},"grade":{"along":0.0441,"from":"class 2"},"left_minus_built_m":2.27,"right_minus_built_m":3.085,"real_middle_m":1.002,"real_width_m":19.355,"real_minus_built_middle_m":2.677,"real_minus_built_width_m":-0.815,"road_at_line_minus_y3dep_m":-0.039},
+  {"s":267.5,"left":{"n_window":548,"detector_m":0.154,"face_u_m":10.63,"unc_m":0.03,"step_m":0.055,"outer_bins":10,"face_points":38,"face_wrong_side":12,"outer_slope":0.1026,"road_slope":-0.0602,"road_side_over_road_near_line_m":-0.182,"intensity_inside":41287.0,"intensity_outside":53335.0,"verdict":"face","type":"curb","reason":""},"right":{"n_window":533,"detector_m":0.144,"face_u_m":-8.777,"unc_m":0.012,"step_m":0.142,"outer_bins":11,"face_points":40,"face_wrong_side":0,"outer_slope":0.0354,"road_slope":-0.0572,"road_side_over_road_near_line_m":-0.159,"intensity_inside":47916.0,"intensity_outside":55124.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":8.4,"right_m":-11.74,"middle_m":-1.67,"width_m":20.14},"counts":{"returns":1474,"last_returns":1387,"class_2":258},"grade":{"along":0.032,"from":"class 2"},"left_minus_built_m":2.23,"right_minus_built_m":2.963,"real_middle_m":0.927,"real_width_m":19.407,"real_minus_built_middle_m":2.597,"real_minus_built_width_m":-0.733,"road_at_line_minus_y3dep_m":-0.072},
+  {"s":270.0,"left":{"n_window":548,"detector_m":0.137,"face_u_m":10.709,"unc_m":0.013,"step_m":0.123,"outer_bins":10,"face_points":41,"face_wrong_side":5,"outer_slope":0.0322,"road_slope":-0.0726,"road_side_over_road_near_line_m":-0.177,"intensity_inside":49554.0,"intensity_outside":53083.0,"verdict":"face","type":"curb","reason":""},"right":{"n_window":550,"detector_m":0.165,"face_u_m":-8.697,"unc_m":0.034,"step_m":0.123,"outer_bins":11,"face_points":36,"face_wrong_side":1,"outer_slope":0.0428,"road_slope":-0.0689,"road_side_over_road_near_line_m":-0.161,"intensity_inside":42093.0,"intensity_outside":52604.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":8.39,"right_m":-11.71,"middle_m":-1.66,"width_m":20.1},"counts":{"returns":1488,"last_returns":1407,"class_2":264},"grade":{"along":0.0307,"from":"class 2"},"left_minus_built_m":2.319,"right_minus_built_m":3.013,"real_middle_m":1.006,"real_width_m":19.406,"real_minus_built_middle_m":2.666,"real_minus_built_width_m":-0.694,"road_at_line_minus_y3dep_m":-0.007},
+  {"s":272.5,"left":{"n_window":543,"detector_m":0.172,"face_u_m":10.79,"unc_m":0.006,"step_m":0.144,"outer_bins":11,"face_points":43,"face_wrong_side":2,"outer_slope":0.0522,"road_slope":-0.0828,"road_side_over_road_near_line_m":-0.187,"intensity_inside":48974.0,"intensity_outside":53460.0,"verdict":"face","type":"curb","reason":""},"right":{"n_window":574,"detector_m":0.162,"face_u_m":-8.777,"unc_m":0.023,"step_m":0.151,"outer_bins":11,"face_points":46,"face_wrong_side":2,"outer_slope":0.0323,"road_slope":-0.0687,"road_side_over_road_near_line_m":-0.182,"intensity_inside":45546.0,"intensity_outside":53133.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":8.38,"right_m":-11.69,"middle_m":-1.655,"width_m":20.07},"counts":{"returns":1449,"last_returns":1419,"class_2":330},"grade":{"along":0.0393,"from":"class 2"},"left_minus_built_m":2.41,"right_minus_built_m":2.913,"real_middle_m":1.006,"real_width_m":19.567,"real_minus_built_middle_m":2.661,"real_minus_built_width_m":-0.503,"road_at_line_minus_y3dep_m":-0.021},
+  {"s":275.0,"left":{"n_window":553,"detector_m":0.119,"face_u_m":10.592,"unc_m":0.096,"step_m":0.049,"outer_bins":11,"face_points":33,"face_wrong_side":8,"outer_slope":0.0832,"road_slope":-0.0501,"road_side_over_road_near_line_m":-0.118,"intensity_inside":41841.0,"intensity_outside":53133.0,"verdict":"unclear","type":null,"reason":"step +0.049 m (rise) out of bounds"},"right":{"n_window":578,"detector_m":0.163,"face_u_m":-8.793,"unc_m":0.001,"step_m":0.139,"outer_bins":11,"face_points":39,"face_wrong_side":1,"outer_slope":0.0317,"road_slope":-0.0617,"road_side_over_road_near_line_m":-0.198,"intensity_inside":45319.0,"intensity_outside":52680.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":8.37,"right_m":-11.66,"middle_m":-1.645,"width_m":20.03},"counts":{"returns":1427,"last_returns":1426,"class_2":363},"grade":{"along":0.0281,"from":"class 2"},"right_minus_built_m":2.867,"road_at_line_minus_y3dep_m":-0.055},
+  {"s":277.5,"left":{"n_window":537,"detector_m":0.132,"face_u_m":10.469,"unc_m":0.009,"step_m":0.022,"outer_bins":11,"face_points":34,"face_wrong_side":6,"outer_slope":0.0995,"road_slope":-0.0499,"road_side_over_road_near_line_m":-0.088,"intensity_inside":41791.0,"intensity_outside":54292.0,"verdict":"unclear","type":null,"reason":"step +0.022 m (rise) out of bounds"},"right":{"n_window":561,"detector_m":0.145,"face_u_m":-8.767,"unc_m":0.026,"step_m":0.105,"outer_bins":11,"face_points":45,"face_wrong_side":1,"outer_slope":0.0741,"road_slope":-0.0675,"road_side_over_road_near_line_m":-0.213,"intensity_inside":41060.0,"intensity_outside":53663.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":8.36,"right_m":-11.64,"middle_m":-1.64,"width_m":20.0},"counts":{"returns":1403,"last_returns":1403,"class_2":323},"grade":{"along":0.039,"from":"class 2"},"right_minus_built_m":2.873,"road_at_line_minus_y3dep_m":-0.018},
+  {"s":280.0,"left":{"n_window":542,"detector_m":0.132,"face_u_m":10.552,"unc_m":0.018,"step_m":0.09,"outer_bins":11,"face_points":34,"face_wrong_side":1,"outer_slope":0.0502,"road_slope":-0.0522,"road_side_over_road_near_line_m":-0.088,"intensity_inside":44261.0,"intensity_outside":54797.0,"verdict":"face","type":"curb","reason":""},"right":{"n_window":563,"detector_m":0.163,"face_u_m":-8.806,"unc_m":0.058,"step_m":0.13,"outer_bins":10,"face_points":40,"face_wrong_side":1,"outer_slope":0.0476,"road_slope":-0.0713,"road_side_over_road_near_line_m":-0.224,"intensity_inside":40530.0,"intensity_outside":53562.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":8.35,"right_m":-11.61,"middle_m":-1.63,"width_m":19.96},"counts":{"returns":1411,"last_returns":1411,"class_2":306},"grade":{"along":0.0343,"from":"class 2"},"left_minus_built_m":2.202,"right_minus_built_m":2.804,"real_middle_m":0.873,"real_width_m":19.358,"real_minus_built_middle_m":2.503,"real_minus_built_width_m":-0.602,"road_at_line_minus_y3dep_m":-0.058},
+  {"s":282.5,"left":{"n_window":544,"detector_m":0.142,"face_u_m":10.593,"unc_m":0.002,"step_m":0.103,"outer_bins":11,"face_points":38,"face_wrong_side":1,"outer_slope":0.0545,"road_slope":-0.0516,"road_side_over_road_near_line_m":-0.078,"intensity_inside":49454.0,"intensity_outside":54923.0,"verdict":"face","type":"curb","reason":""},"right":{"n_window":571,"detector_m":0.172,"face_u_m":-8.935,"unc_m":0.012,"step_m":0.153,"outer_bins":10,"face_points":40,"face_wrong_side":0,"outer_slope":0.0198,"road_slope":-0.0757,"road_side_over_road_near_line_m":-0.23,"intensity_inside":45496.0,"intensity_outside":53360.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":8.34,"right_m":-11.59,"middle_m":-1.625,"width_m":19.93},"counts":{"returns":1432,"last_returns":1414,"class_2":309},"grade":{"along":0.0384,"from":"class 2"},"left_minus_built_m":2.253,"right_minus_built_m":2.655,"real_middle_m":0.829,"real_width_m":19.528,"real_minus_built_middle_m":2.454,"real_minus_built_width_m":-0.402,"road_at_line_minus_y3dep_m":-0.037},
+  {"s":285.0,"left":{"n_window":546,"detector_m":0.109,"face_u_m":10.641,"unc_m":0.0,"step_m":0.081,"outer_bins":10,"face_points":36,"face_wrong_side":3,"outer_slope":0.0573,"road_slope":-0.0407,"road_side_over_road_near_line_m":-0.056,"intensity_inside":47815.0,"intensity_outside":53990.0,"verdict":"face","type":"curb","reason":""},"right":{"n_window":573,"detector_m":0.156,"face_u_m":-8.932,"unc_m":0.019,"step_m":0.128,"outer_bins":10,"face_points":41,"face_wrong_side":0,"outer_slope":0.0232,"road_slope":-0.0592,"road_side_over_road_near_line_m":-0.208,"intensity_inside":47866.0,"intensity_outside":53637.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":8.33,"right_m":-11.56,"middle_m":-1.615,"width_m":19.89},"counts":{"returns":1498,"last_returns":1433,"class_2":297},"grade":{"along":0.0231,"from":"class 2"},"left_minus_built_m":2.311,"right_minus_built_m":2.628,"real_middle_m":0.854,"real_width_m":19.573,"real_minus_built_middle_m":2.469,"real_minus_built_width_m":-0.317,"road_at_line_minus_y3dep_m":-0.046},
+  {"s":287.5,"left":{"n_window":541,"detector_m":0.109,"face_u_m":10.576,"unc_m":0.002,"step_m":0.083,"outer_bins":11,"face_points":33,"face_wrong_side":6,"outer_slope":0.0528,"road_slope":-0.0366,"road_side_over_road_near_line_m":-0.044,"intensity_inside":46983.0,"intensity_outside":55099.0,"verdict":"face","type":"curb","reason":""},"right":{"n_window":568,"detector_m":0.175,"face_u_m":-8.959,"unc_m":0.02,"step_m":0.145,"outer_bins":11,"face_points":46,"face_wrong_side":3,"outer_slope":0.051,"road_slope":-0.0852,"road_side_over_road_near_line_m":-0.24,"intensity_inside":44664.0,"intensity_outside":53385.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":8.32,"right_m":-11.54,"middle_m":-1.61,"width_m":19.86},"counts":{"returns":1522,"last_returns":1432,"class_2":289},"grade":{"along":0.0287,"from":"class 2"},"left_minus_built_m":2.256,"right_minus_built_m":2.581,"real_middle_m":0.809,"real_width_m":19.535,"real_minus_built_middle_m":2.419,"real_minus_built_width_m":-0.325,"road_at_line_minus_y3dep_m":-0.046},
+  {"s":290.0,"left":{"n_window":537,"detector_m":0.136,"face_u_m":10.432,"unc_m":0.062,"step_m":0.085,"outer_bins":10,"face_points":37,"face_wrong_side":3,"outer_slope":0.048,"road_slope":-0.0432,"road_side_over_road_near_line_m":-0.036,"intensity_inside":47487.0,"intensity_outside":54192.0,"verdict":"face","type":"curb","reason":""},"right":{"n_window":574,"detector_m":0.153,"face_u_m":-9.032,"unc_m":0.005,"step_m":0.13,"outer_bins":10,"face_points":44,"face_wrong_side":3,"outer_slope":0.0399,"road_slope":-0.0689,"road_side_over_road_near_line_m":-0.247,"intensity_inside":43933.0,"intensity_outside":53032.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":8.31,"right_m":-11.51,"middle_m":-1.6,"width_m":19.82},"counts":{"returns":1443,"last_returns":1440,"class_2":293},"grade":{"along":0.0208,"from":"class 2"},"left_minus_built_m":2.122,"right_minus_built_m":2.478,"real_middle_m":0.7,"real_width_m":19.464,"real_minus_built_middle_m":2.3,"real_minus_built_width_m":-0.356,"road_at_line_minus_y3dep_m":-0.033},
+  {"s":292.5,"left":{"n_window":524,"detector_m":0.134,"face_u_m":10.512,"unc_m":0.016,"step_m":0.101,"outer_bins":10,"face_points":37,"face_wrong_side":4,"outer_slope":0.0167,"road_slope":-0.0384,"road_side_over_road_near_line_m":0.01,"intensity_inside":49529.0,"intensity_outside":54141.0,"verdict":"face","type":"curb","reason":""},"right":{"n_window":561,"detector_m":0.151,"face_u_m":-9.0,"unc_m":0.045,"step_m":0.121,"outer_bins":10,"face_points":42,"face_wrong_side":1,"outer_slope":0.054,"road_slope":-0.0775,"road_side_over_road_near_line_m":-0.262,"intensity_inside":42294.0,"intensity_outside":55301.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":8.3,"right_m":-11.49,"middle_m":-1.595,"width_m":19.79},"counts":{"returns":1413,"last_returns":1410,"class_2":336},"grade":{"along":0.0201,"from":"class 2"},"left_minus_built_m":2.212,"right_minus_built_m":2.49,"real_middle_m":0.756,"real_width_m":19.512,"real_minus_built_middle_m":2.351,"real_minus_built_width_m":-0.278,"road_at_line_minus_y3dep_m":-0.04},
+  {"s":295.0,"left":{"n_window":531,"detector_m":0.062,"face_u_m":5.894,"unc_m":0.251,"step_m":-0.026,"outer_bins":11,"face_points":35,"face_wrong_side":12,"outer_slope":0.0917,"road_slope":0.0119,"road_side_over_road_near_line_m":0.012,"intensity_inside":25357.0,"intensity_outside":24828.0,"verdict":"unclear","type":null,"reason":"step -0.026 m (rise) out of bounds"},"right":{"n_window":563,"detector_m":0.166,"face_u_m":-8.933,"unc_m":0.03,"step_m":0.083,"outer_bins":10,"face_points":39,"face_wrong_side":1,"outer_slope":0.0883,"road_slope":-0.0833,"road_side_over_road_near_line_m":-0.266,"intensity_inside":41236.0,"intensity_outside":55906.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":8.29,"right_m":-11.46,"middle_m":-1.585,"width_m":19.75},"counts":{"returns":1419,"last_returns":1419,"class_2":321},"grade":{"along":0.0178,"from":"class 2"},"right_minus_built_m":2.527,"road_at_line_minus_y3dep_m":-0.019},
+  {"s":297.5,"left":{"n_window":547,"detector_m":0.114,"face_u_m":10.434,"unc_m":0.006,"step_m":0.099,"outer_bins":10,"face_points":34,"face_wrong_side":0,"outer_slope":0.0191,"road_slope":-0.0271,"road_side_over_road_near_line_m":0.034,"intensity_inside":47336.0,"intensity_outside":53738.0,"verdict":"face","type":"curb","reason":""},"right":{"n_window":564,"detector_m":0.172,"face_u_m":-9.142,"unc_m":0.024,"step_m":0.158,"outer_bins":10,"face_points":38,"face_wrong_side":0,"outer_slope":0.0526,"road_slope":-0.1062,"road_side_over_road_near_line_m":-0.326,"intensity_inside":43202.0,"intensity_outside":55402.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":8.28,"right_m":-11.44,"middle_m":-1.58,"width_m":19.72},"counts":{"returns":1396,"last_returns":1396,"class_2":303},"grade":{"along":0.0262,"from":"class 2"},"left_minus_built_m":2.154,"right_minus_built_m":2.298,"real_middle_m":0.646,"real_width_m":19.576,"real_minus_built_middle_m":2.226,"real_minus_built_width_m":-0.144,"road_at_line_minus_y3dep_m":-0.031},
+  {"s":300.0,"left":{"n_window":528,"detector_m":0.127,"face_u_m":9.92,"unc_m":0.181,"step_m":-0.028,"outer_bins":10,"face_points":40,"face_wrong_side":11,"outer_slope":0.1248,"road_slope":-0.0267,"road_side_over_road_near_line_m":0.041,"intensity_inside":38464.0,"intensity_outside":53133.0,"verdict":"unclear","type":null,"reason":"step -0.028 m (rise) out of bounds"},"right":{"n_window":551,"detector_m":0.182,"face_u_m":-9.141,"unc_m":0.023,"step_m":0.175,"outer_bins":10,"face_points":34,"face_wrong_side":1,"outer_slope":0.0179,"road_slope":-0.0998,"road_side_over_road_near_line_m":-0.324,"intensity_inside":40883.0,"intensity_outside":55074.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":8.27,"right_m":-11.41,"middle_m":-1.57,"width_m":19.68},"counts":{"returns":1396,"last_returns":1391,"class_2":296},"grade":{"along":0.0226,"from":"class 2"},"right_minus_built_m":2.269,"road_at_line_minus_y3dep_m":-0.033},
+  {"s":302.5,"left":{"n_window":573,"detector_m":0.124,"face_u_m":10.34,"unc_m":0.019,"step_m":0.057,"outer_bins":10,"face_points":48,"face_wrong_side":11,"outer_slope":0.0803,"road_slope":-0.04,"road_side_over_road_near_line_m":0.018,"intensity_inside":43303.0,"intensity_outside":52528.0,"verdict":"face","type":"curb","reason":""},"right":{"n_window":558,"detector_m":0.182,"face_u_m":-9.12,"unc_m":0.018,"step_m":0.149,"outer_bins":10,"face_points":40,"face_wrong_side":0,"outer_slope":0.0191,"road_slope":-0.0821,"road_side_over_road_near_line_m":-0.3,"intensity_inside":45974.0,"intensity_outside":54948.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":8.26,"right_m":-11.39,"middle_m":-1.565,"width_m":19.65},"counts":{"returns":1603,"last_returns":1451,"class_2":315},"grade":{"along":0.022,"from":"class 2"},"left_minus_built_m":2.08,"right_minus_built_m":2.27,"real_middle_m":0.61,"real_width_m":19.46,"real_minus_built_middle_m":2.175,"real_minus_built_width_m":-0.19,"road_at_line_minus_y3dep_m":-0.036},
+  {"s":305.0,"left":{"n_window":610,"detector_m":0.132,"face_u_m":10.363,"unc_m":0.03,"step_m":0.075,"outer_bins":11,"face_points":32,"face_wrong_side":5,"outer_slope":0.0815,"road_slope":-0.0466,"road_side_over_road_near_line_m":0.009,"intensity_inside":42547.0,"intensity_outside":53032.0,"verdict":"face","type":"curb","reason":""},"right":{"n_window":566,"detector_m":0.175,"face_u_m":-9.043,"unc_m":0.024,"step_m":0.129,"outer_bins":10,"face_points":45,"face_wrong_side":1,"outer_slope":0.059,"road_slope":-0.0925,"road_side_over_road_near_line_m":-0.326,"intensity_inside":43252.0,"intensity_outside":53209.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":8.25,"right_m":-11.36,"middle_m":-1.555,"width_m":19.61},"counts":{"returns":1678,"last_returns":1507,"class_2":297},"grade":{"along":0.0189,"from":"class 2"},"left_minus_built_m":2.113,"right_minus_built_m":2.317,"real_middle_m":0.66,"real_width_m":19.406,"real_minus_built_middle_m":2.215,"real_minus_built_width_m":-0.204,"road_at_line_minus_y3dep_m":-0.045},
+  {"s":307.5,"left":{"n_window":497,"detector_m":0.129,"face_u_m":10.557,"unc_m":0.002,"step_m":0.085,"outer_bins":10,"face_points":36,"face_wrong_side":3,"outer_slope":0.0714,"road_slope":-0.0511,"road_side_over_road_near_line_m":0.017,"intensity_inside":42194.0,"intensity_outside":53158.0,"verdict":"face","type":"curb","reason":""},"right":{"n_window":579,"detector_m":0.162,"face_u_m":-8.938,"unc_m":0.06,"step_m":0.136,"outer_bins":10,"face_points":42,"face_wrong_side":2,"outer_slope":0.0533,"road_slope":-0.0986,"road_side_over_road_near_line_m":-0.324,"intensity_inside":43202.0,"intensity_outside":53562.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":8.24,"right_m":-11.34,"middle_m":-1.55,"width_m":19.58},"counts":{"returns":1513,"last_returns":1387,"class_2":313},"grade":{"along":0.037,"from":"class 2"},"left_minus_built_m":2.317,"right_minus_built_m":2.402,"real_middle_m":0.809,"real_width_m":19.495,"real_minus_built_middle_m":2.359,"real_minus_built_width_m":-0.085,"road_at_line_minus_y3dep_m":-0.036},
+  {"s":310.0,"left":{"n_window":503,"detector_m":0.131,"face_u_m":10.78,"unc_m":0.007,"step_m":0.105,"outer_bins":10,"face_points":22,"face_wrong_side":1,"outer_slope":0.0346,"road_slope":-0.0333,"road_side_over_road_near_line_m":0.061,"intensity_inside":48899.0,"intensity_outside":52629.0,"verdict":"face","type":"curb","reason":""},"right":{"n_window":555,"detector_m":0.169,"face_u_m":-8.929,"unc_m":0.011,"step_m":0.139,"outer_bins":10,"face_points":40,"face_wrong_side":1,"outer_slope":0.0468,"road_slope":-0.0916,"road_side_over_road_near_line_m":-0.334,"intensity_inside":43782.0,"intensity_outside":55301.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":8.23,"right_m":-11.31,"middle_m":-1.54,"width_m":19.54},"counts":{"returns":1382,"last_returns":1381,"class_2":316},"grade":{"along":0.0285,"from":"class 2"},"left_minus_built_m":2.55,"right_minus_built_m":2.381,"real_middle_m":0.925,"real_width_m":19.709,"real_minus_built_middle_m":2.465,"real_minus_built_width_m":0.169,"road_at_line_minus_y3dep_m":0.001},
+  {"s":312.5,"left":{"n_window":484,"detector_m":0.142,"face_u_m":10.808,"unc_m":0.058,"step_m":0.098,"outer_bins":10,"face_points":29,"face_wrong_side":2,"outer_slope":0.0494,"road_slope":-0.0434,"road_side_over_road_near_line_m":0.06,"intensity_inside":45269.0,"intensity_outside":53209.0,"verdict":"face","type":"curb","reason":""},"right":{"n_window":556,"detector_m":0.184,"face_u_m":-8.749,"unc_m":0.017,"step_m":0.14,"outer_bins":10,"face_points":38,"face_wrong_side":1,"outer_slope":0.0356,"road_slope":-0.1117,"road_side_over_road_near_line_m":-0.345,"intensity_inside":43908.0,"intensity_outside":53890.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":8.22,"right_m":-11.29,"middle_m":-1.535,"width_m":19.51},"counts":{"returns":1367,"last_returns":1367,"class_2":329},"grade":{"along":0.0314,"from":"class 2"},"left_minus_built_m":2.588,"right_minus_built_m":2.541,"real_middle_m":1.029,"real_width_m":19.557,"real_minus_built_middle_m":2.564,"real_minus_built_width_m":0.047,"road_at_line_minus_y3dep_m":-0.051},
+  {"s":315.0,"left":{"n_window":558,"detector_m":0.117,"face_u_m":10.904,"unc_m":0.05,"step_m":0.089,"outer_bins":10,"face_points":30,"face_wrong_side":2,"outer_slope":0.0474,"road_slope":-0.0318,"road_side_over_road_near_line_m":0.069,"intensity_inside":41639.0,"intensity_outside":53436.0,"verdict":"face","type":"curb","reason":""},"right":{"n_window":567,"detector_m":0.157,"face_u_m":-8.591,"unc_m":0.02,"step_m":0.129,"outer_bins":11,"face_points":41,"face_wrong_side":2,"outer_slope":0.0403,"road_slope":-0.1145,"road_side_over_road_near_line_m":-0.354,"intensity_inside":40530.0,"intensity_outside":55855.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":8.21,"right_m":-11.26,"middle_m":-1.525,"width_m":19.47},"counts":{"returns":1576,"last_returns":1453,"class_2":299},"grade":{"along":0.0348,"from":"class 2"},"left_minus_built_m":2.694,"right_minus_built_m":2.669,"real_middle_m":1.157,"real_width_m":19.495,"real_minus_built_middle_m":2.682,"real_minus_built_width_m":0.025,"road_at_line_minus_y3dep_m":-0.005},
+  {"s":317.5,"left":{"n_window":702,"detector_m":-1.995,"face_u_m":8.755,"unc_m":0.025,"step_m":-0.454,"outer_bins":11,"face_points":23,"face_wrong_side":0,"outer_slope":1.2484,"road_slope":0.0103,"road_side_over_road_near_line_m":0.14,"intensity_inside":40178.0,"intensity_outside":38413.0,"verdict":"face","type":"edge (drop)","reason":"the ground falls away past the asphalt"},"right":{"n_window":587,"detector_m":0.161,"face_u_m":-8.476,"unc_m":0.004,"step_m":0.123,"outer_bins":11,"face_points":40,"face_wrong_side":3,"outer_slope":0.0576,"road_slope":-0.1228,"road_side_over_road_near_line_m":-0.363,"intensity_inside":39068.0,"intensity_outside":54570.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":8.2,"right_m":-11.24,"middle_m":-1.52,"width_m":19.44},"counts":{"returns":1857,"last_returns":1597,"class_2":292},"grade":{"along":0.0411,"from":"class 2"},"left_minus_built_m":0.555,"right_minus_built_m":2.764,"real_middle_m":0.139,"real_width_m":17.231,"real_minus_built_middle_m":1.659,"real_minus_built_width_m":-2.209,"road_at_line_minus_y3dep_m":-0.041},
+  {"s":320.0,"left":{"n_window":632,"detector_m":-11.657,"face_u_m":9.727,"unc_m":0.075,"step_m":0.206,"outer_bins":10,"face_points":21,"face_wrong_side":0,"outer_slope":6.5005,"road_slope":0.0223,"road_side_over_road_near_line_m":0.165,"intensity_inside":35490.0,"intensity_outside":35842.0,"verdict":"unclear","type":null,"reason":"step +0.206 m (drop) out of bounds"},"right":{"n_window":580,"detector_m":0.178,"face_u_m":-8.42,"unc_m":0.034,"step_m":0.116,"outer_bins":10,"face_points":48,"face_wrong_side":8,"outer_slope":0.0739,"road_slope":-0.1208,"road_side_over_road_near_line_m":-0.377,"intensity_inside":41564.0,"intensity_outside":53764.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":8.19,"right_m":-11.21,"middle_m":-1.51,"width_m":19.4},"counts":{"returns":1723,"last_returns":1500,"class_2":306},"grade":{"along":0.0369,"from":"class 2"},"right_minus_built_m":2.79,"road_at_line_minus_y3dep_m":-0.063},
+  {"s":322.5,"left":{"n_window":663,"detector_m":-1.598,"face_u_m":7.609,"unc_m":0.025,"step_m":-8.268,"outer_bins":10,"face_points":26,"face_wrong_side":0,"outer_slope":18.5184,"road_slope":0.0507,"road_side_over_road_near_line_m":0.143,"intensity_inside":24399.0,"intensity_outside":41639.0,"verdict":"face","type":"edge (drop)","reason":"the ground falls away past the asphalt","note":"the first candidate (7.40 m) gave no face: step -1.462 m (rise) out of bounds"},"right":{"n_window":574,"detector_m":0.161,"face_u_m":-8.374,"unc_m":0.018,"step_m":0.098,"outer_bins":11,"face_points":34,"face_wrong_side":8,"outer_slope":0.1084,"road_slope":-0.1322,"road_side_over_road_near_line_m":-0.39,"intensity_inside":39472.0,"intensity_outside":54772.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":8.18,"right_m":-11.19,"middle_m":-1.505,"width_m":19.37},"counts":{"returns":1809,"last_returns":1533,"class_2":287},"grade":{"along":0.0368,"from":"class 2"},"left_minus_built_m":-0.571,"right_minus_built_m":2.816,"real_middle_m":-0.383,"real_width_m":15.983,"real_minus_built_middle_m":1.122,"real_minus_built_width_m":-3.387,"road_at_line_minus_y3dep_m":-0.023},
+  {"s":325.0,"left":{"n_window":604,"detector_m":5.269,"face_u_m":8.567,"unc_m":0.025,"step_m":0.814,"outer_bins":11,"face_points":23,"face_wrong_side":0,"outer_slope":-5.7605,"road_slope":2.709,"road_side_over_road_near_line_m":4.739,"intensity_inside":41841.0,"intensity_outside":36548.0,"verdict":"unclear","type":null,"reason":"the road side stands +4.74 m off the road near the line (canopy)"},"right":{"n_window":566,"detector_m":0.181,"face_u_m":-8.384,"unc_m":0.019,"step_m":0.113,"outer_bins":11,"face_points":39,"face_wrong_side":4,"outer_slope":0.0976,"road_slope":-0.1262,"road_side_over_road_near_line_m":-0.386,"intensity_inside":39245.0,"intensity_outside":53158.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":8.17,"right_m":-11.16,"middle_m":-1.495,"width_m":19.33},"counts":{"returns":1785,"last_returns":1469,"class_2":299},"grade":{"along":0.0439,"from":"class 2"},"right_minus_built_m":2.776,"road_at_line_minus_y3dep_m":0.008},
+  {"s":327.5,"left":{"n_window":619,"detector_m":-11.519,"face_u_m":8.551,"unc_m":0.025,"step_m":-0.425,"outer_bins":11,"face_points":29,"face_wrong_side":0,"outer_slope":4.2779,"road_slope":0.0411,"road_side_over_road_near_line_m":0.193,"intensity_inside":42093.0,"intensity_outside":38287.0,"verdict":"face","type":"edge (drop)","reason":"the ground falls away past the asphalt"},"right":{"n_window":587,"detector_m":0.165,"face_u_m":-8.393,"unc_m":0.053,"step_m":0.115,"outer_bins":11,"face_points":43,"face_wrong_side":2,"outer_slope":0.0749,"road_slope":-0.1209,"road_side_over_road_near_line_m":-0.379,"intensity_inside":40076.0,"intensity_outside":54192.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":8.16,"right_m":-11.14,"middle_m":-1.49,"width_m":19.3},"counts":{"returns":1808,"last_returns":1504,"class_2":324},"grade":{"along":0.0438,"from":"class 2"},"left_minus_built_m":0.391,"right_minus_built_m":2.747,"real_middle_m":0.079,"real_width_m":16.944,"real_minus_built_middle_m":1.569,"real_minus_built_width_m":-2.356,"road_at_line_minus_y3dep_m":-0.057},
+  {"s":330.0,"left":{"n_window":528,"detector_m":-9.698,"face_u_m":9.391,"unc_m":0.025,"step_m":0.007,"outer_bins":11,"face_points":23,"face_wrong_side":0,"outer_slope":-0.0242,"road_slope":0.0101,"road_side_over_road_near_line_m":0.186,"intensity_inside":37102.0,"intensity_outside":34078.0,"verdict":"unclear","type":null,"reason":"step +0.007 m (drop) out of bounds"},"right":{"n_window":585,"detector_m":0.167,"face_u_m":-8.327,"unc_m":0.113,"step_m":0.092,"outer_bins":10,"face_points":41,"face_wrong_side":7,"outer_slope":0.0894,"road_slope":-0.1231,"road_side_over_road_near_line_m":-0.358,"intensity_inside":38615.0,"intensity_outside":51772.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":8.15,"right_m":-11.11,"middle_m":-1.48,"width_m":19.26},"counts":{"returns":1565,"last_returns":1392,"class_2":317},"grade":{"along":0.0365,"from":"class 2"},"right_minus_built_m":2.783,"road_at_line_minus_y3dep_m":0.015},
+  {"s":332.5,"left":{"n_window":444,"detector_m":0.05,"face_u_m":6.975,"unc_m":0.067,"step_m":0.02,"outer_bins":11,"face_points":35,"face_wrong_side":13,"outer_slope":0.0285,"road_slope":0.055,"road_side_over_road_near_line_m":0.123,"intensity_inside":21424.0,"intensity_outside":33775.0,"verdict":"unclear","type":null,"reason":"step +0.020 m (rise) out of bounds"},"right":{"n_window":572,"detector_m":0.168,"face_u_m":-8.55,"unc_m":0.034,"step_m":0.139,"outer_bins":10,"face_points":37,"face_wrong_side":2,"outer_slope":0.0658,"road_slope":-0.1237,"road_side_over_road_near_line_m":-0.404,"intensity_inside":40732.0,"intensity_outside":52327.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":8.14,"right_m":-11.09,"middle_m":-1.475,"width_m":19.23},"counts":{"returns":1379,"last_returns":1302,"class_2":302},"grade":{"along":0.0328,"from":"class 2"},"right_minus_built_m":2.54,"road_at_line_minus_y3dep_m":0.006},
+  {"s":335.0,"left":{"n_window":520,"detector_m":0.058,"face_u_m":5.592,"unc_m":0.025,"step_m":0.034,"outer_bins":11,"face_points":35,"face_wrong_side":7,"outer_slope":0.0205,"road_slope":0.0406,"road_side_over_road_near_line_m":0.031,"intensity_inside":22508.0,"intensity_outside":22306.0,"verdict":"unclear","type":null,"reason":"step +0.034 m (rise) out of bounds"},"right":{"n_window":559,"detector_m":0.197,"face_u_m":-8.568,"unc_m":0.018,"step_m":0.142,"outer_bins":11,"face_points":45,"face_wrong_side":4,"outer_slope":0.0685,"road_slope":-0.1364,"road_side_over_road_near_line_m":-0.452,"intensity_inside":37657.0,"intensity_outside":52226.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":8.13,"right_m":-11.06,"middle_m":-1.465,"width_m":19.19},"counts":{"returns":1705,"last_returns":1395,"class_2":293},"grade":{"along":0.0424,"from":"class 2"},"right_minus_built_m":2.492,"road_at_line_minus_y3dep_m":-0.052},
+  {"s":337.5,"left":{"n_window":533,"detector_m":0.126,"face_u_m":10.804,"unc_m":0.003,"step_m":0.033,"outer_bins":10,"face_points":40,"face_wrong_side":11,"outer_slope":0.0692,"road_slope":-0.0186,"road_side_over_road_near_line_m":0.164,"intensity_inside":41791.0,"intensity_outside":53184.0,"verdict":"unclear","type":null,"reason":"step +0.033 m (rise) out of bounds"},"right":{"n_window":617,"detector_m":0.176,"face_u_m":-8.689,"unc_m":0.022,"step_m":0.169,"outer_bins":10,"face_points":35,"face_wrong_side":3,"outer_slope":0.046,"road_slope":-0.14,"road_side_over_road_near_line_m":-0.456,"intensity_inside":37254.0,"intensity_outside":50966.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":8.12,"right_m":-11.04,"middle_m":-1.46,"width_m":19.16},"counts":{"returns":2083,"last_returns":1470,"class_2":302},"grade":{"along":0.0332,"from":"class 2"},"right_minus_built_m":2.351,"road_at_line_minus_y3dep_m":-0.028},
+  {"s":340.0,"left":{"n_window":566,"detector_m":0.099,"face_u_m":10.728,"unc_m":0.051,"step_m":0.029,"outer_bins":10,"face_points":37,"face_wrong_side":8,"outer_slope":0.0838,"road_slope":-0.0141,"road_side_over_road_near_line_m":0.181,"intensity_inside":41388.0,"intensity_outside":50990.0,"verdict":"unclear","type":null,"reason":"step +0.029 m (rise) out of bounds"},"right":{"n_window":600,"detector_m":0.155,"face_u_m":-8.67,"unc_m":0.001,"step_m":0.099,"outer_bins":11,"face_points":42,"face_wrong_side":7,"outer_slope":0.0619,"road_slope":-0.1279,"road_side_over_road_near_line_m":-0.45,"intensity_inside":34582.0,"intensity_outside":50058.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":8.11,"right_m":-11.01,"middle_m":-1.45,"width_m":19.12},"counts":{"returns":2204,"last_returns":1484,"class_2":259},"grade":{"along":0.0384,"from":"class 2"},"right_minus_built_m":2.34,"road_at_line_minus_y3dep_m":-0.025},
+  {"s":342.5,"left":{"n_window":575,"detector_m":-6.916,"face_u_m":7.989,"unc_m":0.025,"step_m":-0.982,"outer_bins":11,"face_points":33,"face_wrong_side":0,"outer_slope":3.9007,"road_slope":0.0569,"road_side_over_road_near_line_m":0.21,"intensity_inside":33372.0,"intensity_outside":37758.0,"verdict":"face","type":"edge (drop)","reason":"the ground falls away past the asphalt"},"right":{"n_window":574,"detector_m":0.161,"face_u_m":-8.934,"unc_m":0.086,"step_m":0.142,"outer_bins":10,"face_points":40,"face_wrong_side":3,"outer_slope":0.0393,"road_slope":-0.1331,"road_side_over_road_near_line_m":-0.485,"intensity_inside":39572.0,"intensity_outside":47790.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":8.1,"right_m":-10.99,"middle_m":-1.445,"width_m":19.09},"counts":{"returns":2250,"last_returns":1488,"class_2":266},"grade":{"along":0.0399,"from":"class 2"},"left_minus_built_m":-0.111,"right_minus_built_m":2.056,"real_middle_m":-0.472,"real_width_m":16.923,"real_minus_built_middle_m":0.973,"real_minus_built_width_m":-2.167,"road_at_line_minus_y3dep_m":-0.084},
+  {"s":345.0,"left":{"n_window":591,"detector_m":-6.018,"face_u_m":8.194,"unc_m":0.025,"step_m":0.239,"outer_bins":11,"face_points":32,"face_wrong_side":0,"outer_slope":2.6381,"road_slope":0.05,"road_side_over_road_near_line_m":0.231,"intensity_inside":35943.0,"intensity_outside":33901.0,"verdict":"unclear","type":null,"reason":"step +0.239 m (drop) out of bounds"},"right":{"n_window":582,"detector_m":0.181,"face_u_m":-8.98,"unc_m":0.007,"step_m":0.141,"outer_bins":11,"face_points":49,"face_wrong_side":4,"outer_slope":0.0421,"road_slope":-0.1417,"road_side_over_road_near_line_m":-0.495,"intensity_inside":43152.0,"intensity_outside":51772.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":8.09,"right_m":-10.96,"middle_m":-1.435,"width_m":19.05},"counts":{"returns":2251,"last_returns":1482,"class_2":284},"grade":{"along":0.0328,"from":"class 2"},"right_minus_built_m":1.98,"road_at_line_minus_y3dep_m":-0.062},
+  {"s":347.5,"left":{"n_window":625,"detector_m":-2.697,"face_u_m":7.863,"unc_m":0.025,"step_m":-0.135,"outer_bins":11,"face_points":35,"face_wrong_side":0,"outer_slope":3.1956,"road_slope":0.0716,"road_side_over_road_near_line_m":0.229,"intensity_inside":32187.0,"intensity_outside":31885.0,"verdict":"face","type":"edge (drop)","reason":"the ground falls away past the asphalt"},"right":{"n_window":599,"detector_m":0.16,"face_u_m":-9.06,"unc_m":0.001,"step_m":0.111,"outer_bins":11,"face_points":33,"face_wrong_side":1,"outer_slope":0.0738,"road_slope":-0.1326,"road_side_over_road_near_line_m":-0.504,"intensity_inside":36170.0,"intensity_outside":52276.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":8.08,"right_m":-10.94,"middle_m":-1.43,"width_m":19.02},"counts":{"returns":2280,"last_returns":1528,"class_2":248},"grade":{"along":0.0346,"from":"class 2"},"left_minus_built_m":-0.217,"right_minus_built_m":1.88,"real_middle_m":-0.599,"real_width_m":16.923,"real_minus_built_middle_m":0.831,"real_minus_built_width_m":-2.097,"road_at_line_minus_y3dep_m":-0.02},
+  {"s":350.0,"left":{"n_window":568,"detector_m":-1.276,"face_u_m":7.366,"unc_m":0.025,"step_m":-0.269,"outer_bins":11,"face_points":31,"face_wrong_side":0,"outer_slope":1.1238,"road_slope":0.0685,"road_side_over_road_near_line_m":0.183,"intensity_inside":31053.0,"intensity_outside":25306.0,"verdict":"face","type":"edge (drop)","reason":"the ground falls away past the asphalt"},"right":{"n_window":542,"detector_m":0.173,"face_u_m":-9.201,"unc_m":0.052,"step_m":0.125,"outer_bins":10,"face_points":42,"face_wrong_side":4,"outer_slope":0.0719,"road_slope":-0.1397,"road_side_over_road_near_line_m":-0.546,"intensity_inside":37960.0,"intensity_outside":52074.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":8.07,"right_m":-10.91,"middle_m":-1.42,"width_m":18.98},"counts":{"returns":1967,"last_returns":1425,"class_2":299},"grade":{"along":0.0293,"from":"class 2"},"left_minus_built_m":-0.704,"right_minus_built_m":1.709,"real_middle_m":-0.918,"real_width_m":16.567,"real_minus_built_middle_m":0.502,"real_minus_built_width_m":-2.413,"road_at_line_minus_y3dep_m":-0.059},
+  {"s":352.5,"left":{"n_window":560,"detector_m":-0.484,"face_u_m":7.593,"unc_m":0.025,"step_m":-0.124,"outer_bins":11,"face_points":28,"face_wrong_side":0,"outer_slope":0.3803,"road_slope":0.0619,"road_side_over_road_near_line_m":0.19,"intensity_inside":35036.0,"intensity_outside":35792.0,"verdict":"face","type":"edge (drop)","reason":"the ground falls away past the asphalt"},"right":{"n_window":564,"detector_m":0.174,"face_u_m":-9.273,"unc_m":0.014,"step_m":0.137,"outer_bins":11,"face_points":38,"face_wrong_side":3,"outer_slope":0.0435,"road_slope":-0.1312,"road_side_over_road_near_line_m":-0.538,"intensity_inside":36346.0,"intensity_outside":51066.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":8.06,"right_m":-10.89,"middle_m":-1.415,"width_m":18.95},"counts":{"returns":1867,"last_returns":1444,"class_2":297},"grade":{"along":0.0288,"from":"class 2"},"left_minus_built_m":-0.467,"right_minus_built_m":1.617,"real_middle_m":-0.84,"real_width_m":16.866,"real_minus_built_middle_m":0.575,"real_minus_built_width_m":-2.084,"road_at_line_minus_y3dep_m":-0.053},
+  {"s":355.0,"left":{"n_window":603,"detector_m":0.107,"face_u_m":10.362,"unc_m":0.101,"step_m":0.068,"outer_bins":10,"face_points":36,"face_wrong_side":4,"outer_slope":0.0404,"road_slope":-0.0186,"road_side_over_road_near_line_m":0.184,"intensity_inside":42396.0,"intensity_outside":53410.0,"verdict":"face","type":"curb","reason":""},"right":{"n_window":580,"detector_m":0.162,"face_u_m":-9.162,"unc_m":0.016,"step_m":0.144,"outer_bins":11,"face_points":43,"face_wrong_side":1,"outer_slope":0.0331,"road_slope":-0.1412,"road_side_over_road_near_line_m":-0.555,"intensity_inside":34405.0,"intensity_outside":49705.0,"verdict":"face","type":"curb","reason":"","note":"the first candidate (-8.90 m) gave no face: step -0.097 m (rise) out of bounds"},"built":{"left_m":8.05,"right_m":-10.86,"middle_m":-1.405,"width_m":18.91},"counts":{"returns":2113,"last_returns":1512,"class_2":249},"grade":{"along":0.0289,"from":"class 2"},"left_minus_built_m":2.312,"right_minus_built_m":1.698,"real_middle_m":0.6,"real_width_m":19.524,"real_minus_built_middle_m":2.005,"real_minus_built_width_m":0.614,"road_at_line_minus_y3dep_m":-0.043},
+  {"s":357.5,"left":{"n_window":583,"detector_m":0.1,"face_u_m":9.533,"unc_m":0.025,"step_m":-0.04,"outer_bins":10,"face_points":38,"face_wrong_side":5,"outer_slope":0.0166,"road_slope":0.0127,"road_side_over_road_near_line_m":0.241,"intensity_inside":37354.0,"intensity_outside":39472.0,"verdict":"unclear","type":null,"reason":"step -0.040 m (rise) out of bounds"},"right":{"n_window":613,"detector_m":0.183,"face_u_m":-9.184,"unc_m":0.031,"step_m":0.146,"outer_bins":11,"face_points":40,"face_wrong_side":3,"outer_slope":0.0631,"road_slope":-0.1404,"road_side_over_road_near_line_m":-0.559,"intensity_inside":36170.0,"intensity_outside":49453.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":8.04,"right_m":-10.84,"middle_m":-1.4,"width_m":18.88},"counts":{"returns":2051,"last_returns":1514,"class_2":216},"grade":{"along":0.0299,"from":"class 2"},"right_minus_built_m":1.656,"road_at_line_minus_y3dep_m":-0.03},
+  {"s":360.0,"left":{"n_window":538,"detector_m":0.158,"face_u_m":10.57,"unc_m":0.025,"step_m":0.15,"outer_bins":11,"face_points":16,"face_wrong_side":2,"outer_slope":0.4278,"road_slope":-0.0091,"road_side_over_road_near_line_m":0.201,"intensity_inside":41690.0,"intensity_outside":43126.0,"verdict":"face","type":"curb","reason":""},"right":{"n_window":638,"detector_m":0.17,"face_u_m":-8.899,"unc_m":0.024,"step_m":0.113,"outer_bins":11,"face_points":35,"face_wrong_side":6,"outer_slope":0.0599,"road_slope":-0.1384,"road_side_over_road_near_line_m":-0.516,"intensity_inside":36069.0,"intensity_outside":47840.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":8.03,"right_m":-10.81,"middle_m":-1.39,"width_m":18.84},"counts":{"returns":2128,"last_returns":1500,"class_2":221},"grade":{"along":0.033,"from":"class 2"},"left_minus_built_m":2.54,"right_minus_built_m":1.911,"real_middle_m":0.836,"real_width_m":19.469,"real_minus_built_middle_m":2.226,"real_minus_built_width_m":0.629,"road_at_line_minus_y3dep_m":0.026},
+  {"s":362.5,"left":{"n_window":542,"detector_m":0.125,"face_u_m":10.759,"unc_m":0.038,"step_m":0.083,"outer_bins":11,"face_points":31,"face_wrong_side":1,"outer_slope":0.0356,"road_slope":-0.0192,"road_side_over_road_near_line_m":0.21,"intensity_inside":42849.0,"intensity_outside":49453.0,"verdict":"face","type":"curb","reason":""},"right":{"n_window":674,"detector_m":0.162,"face_u_m":-7.901,"unc_m":0.025,"step_m":-0.108,"outer_bins":10,"face_points":40,"face_wrong_side":5,"outer_slope":0.0432,"road_slope":-0.1244,"road_side_over_road_near_line_m":-0.374,"intensity_inside":32364.0,"intensity_outside":38438.0,"verdict":"unclear","type":null,"reason":"step -0.108 m (rise) out of bounds"},"built":{"left_m":8.02,"right_m":-10.79,"middle_m":-1.385,"width_m":18.81},"counts":{"returns":2139,"last_returns":1537,"class_2":237},"grade":{"along":0.0319,"from":"class 2"},"left_minus_built_m":2.739,"road_at_line_minus_y3dep_m":-0.059},
+  {"s":365.0,"left":{"n_window":509,"detector_m":0.133,"face_u_m":10.773,"unc_m":0.025,"step_m":-0.01,"outer_bins":11,"face_points":31,"face_wrong_side":9,"outer_slope":0.1036,"road_slope":-0.005,"road_side_over_road_near_line_m":0.237,"intensity_inside":38741.0,"intensity_outside":48521.0,"verdict":"unclear","type":null,"reason":"step -0.010 m (rise) out of bounds"},"right":{"n_window":552,"detector_m":0.177,"face_u_m":-8.648,"unc_m":0.07,"step_m":0.132,"outer_bins":10,"face_points":39,"face_wrong_side":5,"outer_slope":0.0521,"road_slope":-0.142,"road_side_over_road_near_line_m":-0.502,"intensity_inside":38186.0,"intensity_outside":50260.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":8.01,"right_m":-10.76,"middle_m":-1.375,"width_m":18.77},"counts":{"returns":1826,"last_returns":1384,"class_2":237},"grade":{"along":0.0222,"from":"class 2"},"right_minus_built_m":2.112,"road_at_line_minus_y3dep_m":-0.084},
+  {"s":367.5,"left":{"n_window":541,"detector_m":0.098,"face_u_m":10.947,"unc_m":0.034,"step_m":0.054,"outer_bins":9,"face_points":37,"face_wrong_side":4,"outer_slope":0.0492,"road_slope":-0.0242,"road_side_over_road_near_line_m":0.204,"intensity_inside":43908.0,"intensity_outside":51924.0,"verdict":"face","type":"curb","reason":""},"right":{"n_window":584,"detector_m":0.19,"face_u_m":-8.552,"unc_m":0.068,"step_m":0.119,"outer_bins":11,"face_points":39,"face_wrong_side":6,"outer_slope":0.0653,"road_slope":-0.1504,"road_side_over_road_near_line_m":-0.487,"intensity_inside":40026.0,"intensity_outside":50336.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":8.0,"right_m":-10.74,"middle_m":-1.37,"width_m":18.74},"counts":{"returns":1652,"last_returns":1448,"class_2":246},"grade":{"along":0.0296,"from":"class 2"},"left_minus_built_m":2.947,"right_minus_built_m":2.188,"real_middle_m":1.197,"real_width_m":19.499,"real_minus_built_middle_m":2.567,"real_minus_built_width_m":0.759,"road_at_line_minus_y3dep_m":-0.054},
+  {"s":370.0,"left":{"n_window":584,"detector_m":-1.278,"face_u_m":5.293,"unc_m":0.025,"step_m":-0.341,"outer_bins":11,"face_points":37,"face_wrong_side":0,"outer_slope":0.9135,"road_slope":0.0645,"road_side_over_road_near_line_m":0.031,"intensity_inside":28760.0,"intensity_outside":22584.0,"verdict":"face","type":"edge (drop)","reason":"the ground falls away past the asphalt"},"right":{"n_window":604,"detector_m":0.168,"face_u_m":-8.483,"unc_m":0.031,"step_m":0.097,"outer_bins":11,"face_points":49,"face_wrong_side":1,"outer_slope":0.0757,"road_slope":-0.1362,"road_side_over_road_near_line_m":-0.462,"intensity_inside":43454.0,"intensity_outside":50411.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":7.99,"right_m":-10.71,"middle_m":-1.36,"width_m":18.7},"counts":{"returns":1735,"last_returns":1504,"class_2":268},"grade":{"along":0.0363,"from":"class 2"},"left_minus_built_m":-2.697,"right_minus_built_m":2.227,"real_middle_m":-1.595,"real_width_m":13.776,"real_minus_built_middle_m":-0.235,"real_minus_built_width_m":-4.924,"road_at_line_minus_y3dep_m":0.0},
+  {"s":372.5,"left":{"n_window":600,"detector_m":-1.124,"face_u_m":5.379,"unc_m":0.039,"step_m":0.883,"outer_bins":11,"face_points":33,"face_wrong_side":1,"outer_slope":-0.2795,"road_slope":0.0666,"road_side_over_road_near_line_m":0.055,"intensity_inside":24449.0,"intensity_outside":25508.0,"verdict":"unclear","type":null,"reason":"step +0.883 m (drop) out of bounds"},"right":{"n_window":580,"detector_m":0.181,"face_u_m":-8.418,"unc_m":0.005,"step_m":0.142,"outer_bins":10,"face_points":41,"face_wrong_side":6,"outer_slope":0.0525,"road_slope":-0.1517,"road_side_over_road_near_line_m":-0.478,"intensity_inside":39926.0,"intensity_outside":51016.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":7.98,"right_m":-10.69,"middle_m":-1.355,"width_m":18.67},"counts":{"returns":1872,"last_returns":1494,"class_2":245},"grade":{"along":0.0253,"from":"class 2"},"right_minus_built_m":2.272,"road_at_line_minus_y3dep_m":-0.019},
+  {"s":375.0,"left":{"n_window":669,"detector_m":-3.763,"face_u_m":5.796,"unc_m":0.025,"step_m":-0.398,"outer_bins":11,"face_points":27,"face_wrong_side":0,"outer_slope":2.3225,"road_slope":0.0405,"road_side_over_road_near_line_m":0.045,"intensity_inside":19130.0,"intensity_outside":22483.0,"verdict":"face","type":"edge (drop)","reason":"the ground falls away past the asphalt","note":"the first candidate (5.70 m) gave no face: step -0.024 m (rise) out of bounds"},"right":{"n_window":581,"detector_m":0.153,"face_u_m":-8.414,"unc_m":0.019,"step_m":0.139,"outer_bins":10,"face_points":38,"face_wrong_side":3,"outer_slope":0.0387,"road_slope":-0.1402,"road_side_over_road_near_line_m":-0.464,"intensity_inside":43001.0,"intensity_outside":50462.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":7.97,"right_m":-10.66,"middle_m":-1.345,"width_m":18.63},"counts":{"returns":2021,"last_returns":1569,"class_2":252},"grade":{"along":0.0301,"from":"class 2"},"left_minus_built_m":-2.174,"right_minus_built_m":2.246,"real_middle_m":-1.309,"real_width_m":14.21,"real_minus_built_middle_m":0.036,"real_minus_built_width_m":-4.42,"road_at_line_minus_y3dep_m":-0.023},
+  {"s":377.5,"left":{"n_window":599,"detector_m":-5.253,"face_u_m":7.787,"unc_m":0.025,"step_m":2.761,"outer_bins":11,"face_points":24,"face_wrong_side":0,"outer_slope":-1.1648,"road_slope":0.0736,"road_side_over_road_near_line_m":0.214,"intensity_inside":24046.0,"intensity_outside":34960.0,"verdict":"unclear","type":null,"reason":"step +2.761 m (drop) out of bounds"},"right":{"n_window":594,"detector_m":0.173,"face_u_m":-8.373,"unc_m":0.016,"step_m":0.118,"outer_bins":11,"face_points":41,"face_wrong_side":2,"outer_slope":0.0516,"road_slope":-0.1328,"road_side_over_road_near_line_m":-0.438,"intensity_inside":46731.0,"intensity_outside":51419.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":7.96,"right_m":-10.64,"middle_m":-1.34,"width_m":18.6},"counts":{"returns":1848,"last_returns":1504,"class_2":274},"grade":{"along":0.0371,"from":"class 2"},"right_minus_built_m":2.267,"road_at_line_minus_y3dep_m":-0.046},
+  {"s":380.0,"left":{"n_window":564,"detector_m":-1.265,"face_u_m":8.087,"unc_m":0.025,"step_m":-0.266,"outer_bins":11,"face_points":33,"face_wrong_side":0,"outer_slope":0.8197,"road_slope":0.0805,"road_side_over_road_near_line_m":0.232,"intensity_inside":31910.0,"intensity_outside":37203.0,"verdict":"face","type":"edge (drop)","reason":"the ground falls away past the asphalt"},"right":{"n_window":584,"detector_m":0.171,"face_u_m":-8.465,"unc_m":0.005,"step_m":0.138,"outer_bins":11,"face_points":41,"face_wrong_side":2,"outer_slope":0.0172,"road_slope":-0.1117,"road_side_over_road_near_line_m":-0.427,"intensity_inside":48143.0,"intensity_outside":52074.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":7.95,"right_m":-10.61,"middle_m":-1.33,"width_m":18.56},"counts":{"returns":1639,"last_returns":1450,"class_2":234},"grade":{"along":0.0382,"from":"class 2"},"left_minus_built_m":0.137,"right_minus_built_m":2.145,"real_middle_m":-0.189,"real_width_m":16.552,"real_minus_built_middle_m":1.141,"real_minus_built_width_m":-2.008,"road_at_line_minus_y3dep_m":-0.051},
+  {"s":382.5,"left":{"n_window":546,"detector_m":0.112,"face_u_m":11.18,"unc_m":0.039,"step_m":0.086,"outer_bins":11,"face_points":41,"face_wrong_side":3,"outer_slope":0.0473,"road_slope":-0.0199,"road_side_over_road_near_line_m":0.237,"intensity_inside":40631.0,"intensity_outside":52024.0,"verdict":"face","type":"curb","reason":""},"right":{"n_window":582,"detector_m":0.169,"face_u_m":-8.456,"unc_m":0.019,"step_m":0.123,"outer_bins":11,"face_points":40,"face_wrong_side":2,"outer_slope":0.019,"road_slope":-0.1141,"road_side_over_road_near_line_m":-0.426,"intensity_inside":50209.0,"intensity_outside":50764.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":7.94,"right_m":-10.59,"middle_m":-1.325,"width_m":18.53},"counts":{"returns":1566,"last_returns":1452,"class_2":282},"grade":{"along":0.0291,"from":"class 2"},"left_minus_built_m":3.24,"right_minus_built_m":2.134,"real_middle_m":1.362,"real_width_m":19.636,"real_minus_built_middle_m":2.687,"real_minus_built_width_m":1.106,"road_at_line_minus_y3dep_m":-0.061},
+  {"s":385.0,"left":{"n_window":554,"detector_m":0.12,"face_u_m":11.018,"unc_m":0.013,"step_m":0.051,"outer_bins":10,"face_points":38,"face_wrong_side":5,"outer_slope":0.0725,"road_slope":-0.0294,"road_side_over_road_near_line_m":0.218,"intensity_inside":41085.0,"intensity_outside":52831.0,"verdict":"face","type":"curb","reason":""},"right":{"n_window":567,"detector_m":0.153,"face_u_m":-8.39,"unc_m":0.062,"step_m":0.074,"outer_bins":11,"face_points":36,"face_wrong_side":7,"outer_slope":0.088,"road_slope":-0.1361,"road_side_over_road_near_line_m":-0.438,"intensity_inside":42774.0,"intensity_outside":51294.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":7.93,"right_m":-10.56,"middle_m":-1.315,"width_m":18.49},"counts":{"returns":1494,"last_returns":1456,"class_2":215},"grade":{"along":0.0348,"from":"class 2"},"left_minus_built_m":3.088,"right_minus_built_m":2.17,"real_middle_m":1.314,"real_width_m":19.408,"real_minus_built_middle_m":2.629,"real_minus_built_width_m":0.918,"road_at_line_minus_y3dep_m":-0.061},
+  {"s":387.5,"left":{"n_window":550,"detector_m":0.122,"face_u_m":11.001,"unc_m":0.083,"step_m":0.066,"outer_bins":10,"face_points":38,"face_wrong_side":3,"outer_slope":0.0402,"road_slope":-0.0222,"road_side_over_road_near_line_m":0.202,"intensity_inside":45596.0,"intensity_outside":53284.0,"verdict":"face","type":"curb","reason":""},"right":{"n_window":562,"detector_m":0.187,"face_u_m":-8.561,"unc_m":0.03,"step_m":0.127,"outer_bins":11,"face_points":40,"face_wrong_side":2,"outer_slope":0.046,"road_slope":-0.137,"road_side_over_road_near_line_m":-0.441,"intensity_inside":43001.0,"intensity_outside":50184.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":7.92,"right_m":-10.54,"middle_m":-1.31,"width_m":18.46},"counts":{"returns":1489,"last_returns":1448,"class_2":224},"grade":{"along":0.0297,"from":"class 2"},"left_minus_built_m":3.081,"right_minus_built_m":1.979,"real_middle_m":1.22,"real_width_m":19.562,"real_minus_built_middle_m":2.53,"real_minus_built_width_m":1.102,"road_at_line_minus_y3dep_m":-0.035},
+  {"s":390.0,"left":{"n_window":559,"detector_m":0.103,"face_u_m":10.739,"unc_m":0.11,"step_m":0.0,"outer_bins":9,"face_points":45,"face_wrong_side":15,"outer_slope":0.0613,"road_slope":-0.0119,"road_side_over_road_near_line_m":0.2,"intensity_inside":40631.0,"intensity_outside":52276.0,"verdict":"unclear","type":null,"reason":"step +0.000 m (rise) out of bounds"},"right":{"n_window":580,"detector_m":0.147,"face_u_m":-8.54,"unc_m":0.017,"step_m":0.076,"outer_bins":10,"face_points":42,"face_wrong_side":4,"outer_slope":0.0912,"road_slope":-0.1416,"road_side_over_road_near_line_m":-0.444,"intensity_inside":38488.0,"intensity_outside":51419.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":7.91,"right_m":-10.51,"middle_m":-1.3,"width_m":18.42},"counts":{"returns":1522,"last_returns":1462,"class_2":238},"grade":{"along":0.0296,"from":"class 2"},"right_minus_built_m":1.97,"road_at_line_minus_y3dep_m":-0.025},
+  {"s":392.5,"left":{"n_window":572,"detector_m":0.114,"face_u_m":10.931,"unc_m":0.088,"step_m":0.082,"outer_bins":10,"face_points":45,"face_wrong_side":2,"outer_slope":0.019,"road_slope":-0.0272,"road_side_over_road_near_line_m":0.169,"intensity_inside":49176.0,"intensity_outside":53637.0,"verdict":"face","type":"curb","reason":""},"right":{"n_window":584,"detector_m":0.165,"face_u_m":-8.728,"unc_m":0.04,"step_m":0.124,"outer_bins":10,"face_points":39,"face_wrong_side":1,"outer_slope":0.0511,"road_slope":-0.1424,"road_side_over_road_near_line_m":-0.457,"intensity_inside":41287.0,"intensity_outside":50336.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":7.9,"right_m":-10.49,"middle_m":-1.295,"width_m":18.39},"counts":{"returns":1521,"last_returns":1473,"class_2":275},"grade":{"along":0.0382,"from":"class 2"},"left_minus_built_m":3.031,"right_minus_built_m":1.762,"real_middle_m":1.101,"real_width_m":19.659,"real_minus_built_middle_m":2.396,"real_minus_built_width_m":1.269,"road_at_line_minus_y3dep_m":-0.036},
+  {"s":395.0,"left":{"n_window":582,"detector_m":0.122,"face_u_m":10.656,"unc_m":0.021,"step_m":0.051,"outer_bins":11,"face_points":39,"face_wrong_side":4,"outer_slope":0.0243,"road_slope":-0.0243,"road_side_over_road_near_line_m":0.178,"intensity_inside":42144.0,"intensity_outside":53259.0,"verdict":"face","type":"curb","reason":""},"right":{"n_window":587,"detector_m":0.176,"face_u_m":-8.721,"unc_m":0.002,"step_m":0.13,"outer_bins":10,"face_points":46,"face_wrong_side":6,"outer_slope":0.0341,"road_slope":-0.1419,"road_side_over_road_near_line_m":-0.474,"intensity_inside":41640.0,"intensity_outside":50915.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":7.89,"right_m":-10.46,"middle_m":-1.285,"width_m":18.35},"counts":{"returns":1517,"last_returns":1487,"class_2":226},"grade":{"along":0.0305,"from":"class 2"},"left_minus_built_m":2.766,"right_minus_built_m":1.739,"real_middle_m":0.968,"real_width_m":19.377,"real_minus_built_middle_m":2.253,"real_minus_built_width_m":1.027,"road_at_line_minus_y3dep_m":-0.112},
+  {"s":397.5,"left":{"n_window":575,"detector_m":0.104,"face_u_m":10.64,"unc_m":0.013,"step_m":0.044,"outer_bins":10,"face_points":35,"face_wrong_side":5,"outer_slope":0.0422,"road_slope":-0.0223,"road_side_over_road_near_line_m":0.182,"intensity_inside":40202.0,"intensity_outside":54091.0,"verdict":"unclear","type":null,"reason":"step +0.044 m (rise) out of bounds"},"right":{"n_window":552,"detector_m":0.189,"face_u_m":-8.806,"unc_m":0.053,"step_m":0.133,"outer_bins":10,"face_points":34,"face_wrong_side":3,"outer_slope":0.0532,"road_slope":-0.1579,"road_side_over_road_near_line_m":-0.509,"intensity_inside":39296.0,"intensity_outside":50688.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":7.88,"right_m":-10.44,"middle_m":-1.28,"width_m":18.32},"counts":{"returns":1476,"last_returns":1449,"class_2":232},"grade":{"along":0.028,"from":"class 2"},"right_minus_built_m":1.634,"road_at_line_minus_y3dep_m":-0.07},
+  {"s":400.0,"left":{"n_window":567,"detector_m":0.095,"face_u_m":10.88,"unc_m":0.032,"step_m":0.077,"outer_bins":11,"face_points":46,"face_wrong_side":1,"outer_slope":0.0182,"road_slope":-0.0181,"road_side_over_road_near_line_m":0.203,"intensity_inside":48496.0,"intensity_outside":53537.0,"verdict":"face","type":"curb","reason":""},"right":{"n_window":568,"detector_m":0.16,"face_u_m":-8.697,"unc_m":0.002,"step_m":0.059,"outer_bins":11,"face_points":41,"face_wrong_side":7,"outer_slope":0.0863,"road_slope":-0.1299,"road_side_over_road_near_line_m":-0.466,"intensity_inside":42648.0,"intensity_outside":50714.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":7.87,"right_m":-10.41,"middle_m":-1.27,"width_m":18.28},"counts":{"returns":1561,"last_returns":1461,"class_2":261},"grade":{"along":0.0319,"from":"class 2"},"left_minus_built_m":3.01,"right_minus_built_m":1.713,"real_middle_m":1.092,"real_width_m":19.577,"real_minus_built_middle_m":2.362,"real_minus_built_width_m":1.297,"road_at_line_minus_y3dep_m":-0.112},
+  {"s":402.5,"left":{"n_window":631,"detector_m":0.086,"face_u_m":10.833,"unc_m":0.003,"step_m":0.042,"outer_bins":10,"face_points":40,"face_wrong_side":7,"outer_slope":0.0255,"road_slope":-0.0123,"road_side_over_road_near_line_m":0.242,"intensity_inside":42295.0,"intensity_outside":53688.0,"verdict":"unclear","type":null,"reason":"step +0.042 m (rise) out of bounds"},"right":{"n_window":565,"detector_m":0.18,"face_u_m":-8.561,"unc_m":0.044,"step_m":0.072,"outer_bins":11,"face_points":35,"face_wrong_side":3,"outer_slope":0.0935,"road_slope":-0.1581,"road_side_over_road_near_line_m":-0.496,"intensity_inside":41186.0,"intensity_outside":51696.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":7.86,"right_m":-10.39,"middle_m":-1.265,"width_m":18.25},"counts":{"returns":1608,"last_returns":1504,"class_2":234},"grade":{"along":0.0332,"from":"class 2"},"right_minus_built_m":1.829,"road_at_line_minus_y3dep_m":-0.078},
+  {"s":405.0,"left":{"n_window":565,"detector_m":0.121,"face_u_m":11.051,"unc_m":0.045,"step_m":0.094,"outer_bins":11,"face_points":47,"face_wrong_side":8,"outer_slope":0.0049,"road_slope":-0.0311,"road_side_over_road_near_line_m":0.213,"intensity_inside":42194.0,"intensity_outside":52831.0,"verdict":"face","type":"curb","reason":""},"right":{"n_window":560,"detector_m":0.169,"face_u_m":-8.464,"unc_m":0.038,"step_m":0.098,"outer_bins":10,"face_points":38,"face_wrong_side":5,"outer_slope":0.0814,"road_slope":-0.1456,"road_side_over_road_near_line_m":-0.497,"intensity_inside":41085.0,"intensity_outside":51066.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":7.85,"right_m":-10.36,"middle_m":-1.255,"width_m":18.21},"counts":{"returns":1583,"last_returns":1434,"class_2":260},"grade":{"along":0.0243,"from":"class 2"},"left_minus_built_m":3.201,"right_minus_built_m":1.896,"real_middle_m":1.293,"real_width_m":19.515,"real_minus_built_middle_m":2.548,"real_minus_built_width_m":1.305,"road_at_line_minus_y3dep_m":-0.104},
+  {"s":407.5,"left":{"n_window":558,"detector_m":0.109,"face_u_m":11.335,"unc_m":0.022,"step_m":0.074,"outer_bins":9,"face_points":36,"face_wrong_side":2,"outer_slope":0.0158,"road_slope":-0.0206,"road_side_over_road_near_line_m":0.255,"intensity_inside":47865.0,"intensity_outside":53082.0,"verdict":"face","type":"curb","reason":""},"right":{"n_window":566,"detector_m":0.161,"face_u_m":-7.826,"unc_m":0.025,"step_m":-0.081,"outer_bins":10,"face_points":37,"face_wrong_side":8,"outer_slope":0.1581,"road_slope":-0.1446,"road_side_over_road_near_line_m":-0.387,"intensity_inside":35237.0,"intensity_outside":51772.0,"verdict":"unclear","type":null,"reason":"step -0.081 m (rise) out of bounds"},"built":{"left_m":7.84,"right_m":-10.34,"middle_m":-1.25,"width_m":18.18},"counts":{"returns":1473,"last_returns":1420,"class_2":346},"grade":{"along":0.0348,"from":"class 2"},"left_minus_built_m":3.495,"road_at_line_minus_y3dep_m":-0.068},
+  {"s":410.0,"left":{"n_window":561,"detector_m":0.106,"face_u_m":10.487,"unc_m":0.025,"step_m":-0.025,"outer_bins":9,"face_points":39,"face_wrong_side":13,"outer_slope":0.0049,"road_slope":0.0101,"road_side_over_road_near_line_m":0.295,"intensity_inside":33170.0,"intensity_outside":39522.0,"verdict":"unclear","type":null,"reason":"step -0.025 m (rise) out of bounds"},"right":{"n_window":555,"detector_m":0.175,"face_u_m":-8.179,"unc_m":0.066,"step_m":0.17,"outer_bins":11,"face_points":38,"face_wrong_side":3,"outer_slope":0.0249,"road_slope":-0.1455,"road_side_over_road_near_line_m":-0.474,"intensity_inside":44362.0,"intensity_outside":51621.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":7.83,"right_m":-10.31,"middle_m":-1.24,"width_m":18.14},"counts":{"returns":1533,"last_returns":1432,"class_2":267},"grade":{"along":0.0285,"from":"class 2"},"right_minus_built_m":2.131,"road_at_line_minus_y3dep_m":-0.021},
+  {"s":412.5,"left":{"n_window":561,"detector_m":0.132,"face_u_m":10.525,"unc_m":0.025,"step_m":-0.054,"outer_bins":10,"face_points":39,"face_wrong_side":13,"outer_slope":-0.0053,"road_slope":0.0275,"road_side_over_road_near_line_m":0.316,"intensity_inside":32666.0,"intensity_outside":35993.0,"verdict":"unclear","type":null,"reason":"step -0.054 m (rise) out of bounds"},"right":{"n_window":565,"detector_m":0.162,"face_u_m":-7.903,"unc_m":0.041,"step_m":0.121,"outer_bins":8,"face_points":39,"face_wrong_side":8,"outer_slope":0.0489,"road_slope":-0.1409,"road_side_over_road_near_line_m":-0.433,"intensity_inside":43101.0,"intensity_outside":53083.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":7.82,"right_m":-10.29,"middle_m":-1.235,"width_m":18.11},"counts":{"returns":1578,"last_returns":1439,"class_2":256},"grade":{"along":0.0254,"from":"class 2"},"right_minus_built_m":2.387,"road_at_line_minus_y3dep_m":-0.045},
+  {"s":415.0,"left":{"n_window":516,"detector_m":0.088,"face_u_m":11.682,"unc_m":0.016,"step_m":0.057,"outer_bins":11,"face_points":34,"face_wrong_side":4,"outer_slope":0.0071,"road_slope":-0.0053,"road_side_over_road_near_line_m":0.298,"intensity_inside":38564.0,"intensity_outside":50966.0,"verdict":"face","type":"curb","reason":""},"right":{"n_window":583,"detector_m":0.084,"face_u_m":-7.689,"unc_m":0.009,"step_m":0.109,"outer_bins":11,"face_points":41,"face_wrong_side":8,"outer_slope":0.089,"road_slope":-0.1568,"road_side_over_road_near_line_m":-0.423,"intensity_inside":40782.0,"intensity_outside":52478.0,"verdict":"face","type":"curb","reason":"","note":"the first candidate (-7.40 m) gave no face: step -0.089 m (rise) out of bounds"},"built":{"left_m":7.81,"right_m":-10.26,"middle_m":-1.225,"width_m":18.07},"counts":{"returns":1614,"last_returns":1401,"class_2":258},"grade":{"along":0.0309,"from":"class 2"},"left_minus_built_m":3.872,"right_minus_built_m":2.571,"real_middle_m":1.997,"real_width_m":19.371,"real_minus_built_middle_m":3.222,"real_minus_built_width_m":1.301,"road_at_line_minus_y3dep_m":-0.045},
+  {"s":417.5,"left":{"n_window":552,"detector_m":0.051,"face_u_m":6.175,"unc_m":0.025,"step_m":-0.042,"outer_bins":10,"face_points":38,"face_wrong_side":12,"outer_slope":0.1071,"road_slope":0.085,"road_side_over_road_near_line_m":0.105,"intensity_inside":23768.0,"intensity_outside":23945.0,"verdict":"unclear","type":null,"reason":"step -0.042 m (rise) out of bounds"},"right":{"n_window":549,"detector_m":0.141,"face_u_m":-7.617,"unc_m":0.073,"step_m":0.124,"outer_bins":10,"face_points":42,"face_wrong_side":5,"outer_slope":0.0479,"road_slope":-0.1448,"road_side_over_road_near_line_m":-0.404,"intensity_inside":38211.0,"intensity_outside":52780.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":7.8,"right_m":-10.24,"middle_m":-1.22,"width_m":18.04},"counts":{"returns":1538,"last_returns":1405,"class_2":282},"grade":{"along":0.0296,"from":"class 2"},"right_minus_built_m":2.623,"road_at_line_minus_y3dep_m":-0.07},
+  {"s":420.0,"left":{"n_window":559,"detector_m":0.116,"face_u_m":11.963,"unc_m":0.006,"step_m":0.096,"outer_bins":11,"face_points":34,"face_wrong_side":1,"outer_slope":-0.033,"road_slope":-0.0249,"road_side_over_road_near_line_m":0.292,"intensity_inside":47866.0,"intensity_outside":52982.0,"verdict":"face","type":"curb","reason":""},"right":{"n_window":562,"detector_m":0.139,"face_u_m":-7.524,"unc_m":0.001,"step_m":0.105,"outer_bins":8,"face_points":39,"face_wrong_side":7,"outer_slope":0.0654,"road_slope":-0.1502,"road_side_over_road_near_line_m":-0.391,"intensity_inside":40934.0,"intensity_outside":53284.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":7.79,"right_m":-10.21,"middle_m":-1.21,"width_m":18.0},"counts":{"returns":1546,"last_returns":1430,"class_2":273},"grade":{"along":0.0415,"from":"class 2"},"left_minus_built_m":4.173,"right_minus_built_m":2.686,"real_middle_m":2.219,"real_width_m":19.487,"real_minus_built_middle_m":3.429,"real_minus_built_width_m":1.487,"road_at_line_minus_y3dep_m":-0.062},
+  {"s":422.5,"left":{"n_window":536,"detector_m":0.085,"face_u_m":11.983,"unc_m":0.069,"step_m":0.049,"outer_bins":9,"face_points":37,"face_wrong_side":4,"outer_slope":0.0309,"road_slope":-0.0258,"road_side_over_road_near_line_m":0.29,"intensity_inside":45672.0,"intensity_outside":51470.0,"verdict":"unclear","type":null,"reason":"step +0.049 m (rise) out of bounds"},"right":{"n_window":549,"detector_m":0.164,"face_u_m":-7.332,"unc_m":0.107,"step_m":0.057,"outer_bins":10,"face_points":33,"face_wrong_side":5,"outer_slope":0.094,"road_slope":-0.1361,"road_side_over_road_near_line_m":-0.34,"intensity_inside":37002.0,"intensity_outside":53334.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":7.78,"right_m":-10.19,"middle_m":-1.205,"width_m":17.97},"counts":{"returns":1510,"last_returns":1395,"class_2":239},"grade":{"along":0.0339,"from":"class 2"},"right_minus_built_m":2.858,"road_at_line_minus_y3dep_m":-0.058},
+  {"s":425.0,"left":{"n_window":546,"detector_m":0.113,"face_u_m":11.079,"unc_m":0.025,"step_m":-0.046,"outer_bins":11,"face_points":40,"face_wrong_side":12,"outer_slope":-0.0079,"road_slope":-0.0016,"road_side_over_road_near_line_m":0.339,"intensity_inside":33069.0,"intensity_outside":47184.0,"verdict":"unclear","type":null,"reason":"step -0.046 m (rise) out of bounds"},"right":{"n_window":534,"detector_m":0.179,"face_u_m":-7.397,"unc_m":0.007,"step_m":0.127,"outer_bins":11,"face_points":40,"face_wrong_side":1,"outer_slope":0.0556,"road_slope":-0.1408,"road_side_over_road_near_line_m":-0.376,"intensity_inside":41639.0,"intensity_outside":53688.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":7.77,"right_m":-10.16,"middle_m":-1.195,"width_m":17.93},"counts":{"returns":1463,"last_returns":1377,"class_2":249},"grade":{"along":0.0342,"from":"class 2"},"right_minus_built_m":2.763,"road_at_line_minus_y3dep_m":-0.085},
+  {"s":427.5,"left":{"n_window":528,"detector_m":0.14,"face_u_m":12.095,"unc_m":0.016,"step_m":0.058,"outer_bins":11,"face_points":39,"face_wrong_side":8,"outer_slope":0.0291,"road_slope":-0.0468,"road_side_over_road_near_line_m":0.292,"intensity_inside":46655.0,"intensity_outside":50613.0,"verdict":"face","type":"curb","reason":""},"right":{"n_window":546,"detector_m":0.2,"face_u_m":-7.41,"unc_m":0.015,"step_m":0.131,"outer_bins":10,"face_points":36,"face_wrong_side":4,"outer_slope":0.0513,"road_slope":-0.1449,"road_side_over_road_near_line_m":-0.363,"intensity_inside":41589.0,"intensity_outside":54595.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":7.76,"right_m":-10.14,"middle_m":-1.19,"width_m":17.9},"counts":{"returns":1471,"last_returns":1379,"class_2":233},"grade":{"along":0.0321,"from":"class 2"},"left_minus_built_m":4.335,"right_minus_built_m":2.73,"real_middle_m":2.343,"real_width_m":19.505,"real_minus_built_middle_m":3.533,"real_minus_built_width_m":1.605,"road_at_line_minus_y3dep_m":-0.082},
+  {"s":430.0,"left":{"n_window":523,"detector_m":0.12,"face_u_m":12.175,"unc_m":0.001,"step_m":0.069,"outer_bins":11,"face_points":34,"face_wrong_side":0,"outer_slope":-0.0035,"road_slope":-0.0405,"road_side_over_road_near_line_m":0.307,"intensity_inside":47008.0,"intensity_outside":51999.0,"verdict":"face","type":"curb","reason":""},"right":{"n_window":533,"detector_m":0.17,"face_u_m":-7.395,"unc_m":0.003,"step_m":0.111,"outer_bins":11,"face_points":36,"face_wrong_side":4,"outer_slope":0.076,"road_slope":-0.148,"road_side_over_road_near_line_m":-0.361,"intensity_inside":40127.0,"intensity_outside":53662.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":7.75,"right_m":-10.11,"middle_m":-1.18,"width_m":17.86},"counts":{"returns":1430,"last_returns":1351,"class_2":258},"grade":{"along":0.0308,"from":"class 2"},"left_minus_built_m":4.425,"right_minus_built_m":2.715,"real_middle_m":2.39,"real_width_m":19.57,"real_minus_built_middle_m":3.57,"real_minus_built_width_m":1.71,"road_at_line_minus_y3dep_m":-0.073},
+  {"s":432.5,"left":{"n_window":526,"detector_m":0.128,"face_u_m":12.192,"unc_m":0.016,"step_m":0.096,"outer_bins":11,"face_points":38,"face_wrong_side":5,"outer_slope":0.0034,"road_slope":-0.055,"road_side_over_road_near_line_m":0.265,"intensity_inside":47890.0,"intensity_outside":53234.0,"verdict":"face","type":"curb","reason":""},"right":{"n_window":559,"detector_m":0.203,"face_u_m":-7.375,"unc_m":0.015,"step_m":0.123,"outer_bins":10,"face_points":38,"face_wrong_side":7,"outer_slope":0.0589,"road_slope":-0.1618,"road_side_over_road_near_line_m":-0.365,"intensity_inside":39321.0,"intensity_outside":54544.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":7.74,"right_m":-10.09,"middle_m":-1.175,"width_m":17.83},"counts":{"returns":1397,"last_returns":1374,"class_2":299},"grade":{"along":0.0327,"from":"class 2"},"left_minus_built_m":4.452,"right_minus_built_m":2.715,"real_middle_m":2.409,"real_width_m":19.567,"real_minus_built_middle_m":3.584,"real_minus_built_width_m":1.737,"road_at_line_minus_y3dep_m":-0.098},
+  {"s":435.0,"left":{"n_window":561,"detector_m":0.107,"face_u_m":11.978,"unc_m":0.012,"step_m":0.046,"outer_bins":10,"face_points":36,"face_wrong_side":5,"outer_slope":0.0322,"road_slope":-0.0279,"road_side_over_road_near_line_m":0.298,"intensity_inside":40329.0,"intensity_outside":51924.0,"verdict":"unclear","type":null,"reason":"step +0.046 m (rise) out of bounds"},"right":{"n_window":544,"detector_m":0.153,"face_u_m":-7.304,"unc_m":0.036,"step_m":0.092,"outer_bins":10,"face_points":40,"face_wrong_side":10,"outer_slope":0.0895,"road_slope":-0.1566,"road_side_over_road_near_line_m":-0.362,"intensity_inside":38816.0,"intensity_outside":54444.0,"verdict":"face","type":"curb","reason":"","note":"the first candidate (-6.80 m) gave no face: step -0.049 m (rise) out of bounds"},"built":{"left_m":7.73,"right_m":-10.06,"middle_m":-1.165,"width_m":17.79},"counts":{"returns":1505,"last_returns":1405,"class_2":293},"grade":{"along":0.0291,"from":"class 2"},"right_minus_built_m":2.756,"road_at_line_minus_y3dep_m":-0.005},
+  {"s":437.5,"left":{"n_window":548,"detector_m":-0.23,"face_u_m":12.347,"unc_m":0.054,"step_m":-1.031,"outer_bins":9,"face_points":19,"face_wrong_side":0,"outer_slope":4.1922,"road_slope":0.0843,"road_side_over_road_near_line_m":0.441,"intensity_inside":42496.0,"intensity_outside":33220.0,"verdict":"face","type":"edge (drop)","reason":"the ground falls away past the asphalt","note":"the first candidate (11.80 m) gave no face: step -0.196 m (rise) out of bounds"},"right":{"n_window":542,"detector_m":0.169,"face_u_m":-7.447,"unc_m":0.004,"step_m":0.118,"outer_bins":10,"face_points":38,"face_wrong_side":2,"outer_slope":0.0428,"road_slope":-0.1324,"road_side_over_road_near_line_m":-0.338,"intensity_inside":39321.0,"intensity_outside":53688.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":7.72,"right_m":-10.04,"middle_m":-1.16,"width_m":17.76},"counts":{"returns":1531,"last_returns":1388,"class_2":225},"grade":{"along":0.0272,"from":"class 2"},"left_minus_built_m":4.627,"right_minus_built_m":2.593,"real_middle_m":2.45,"real_width_m":19.794,"real_minus_built_middle_m":3.61,"real_minus_built_width_m":2.034,"road_at_line_minus_y3dep_m":-0.055},
+  {"s":440.0,"left":{"n_window":519,"detector_m":0.898,"face_u_m":12.182,"unc_m":0.025,"step_m":-0.401,"outer_bins":11,"face_points":25,"face_wrong_side":11,"outer_slope":3.5246,"road_slope":-0.0329,"road_side_over_road_near_line_m":0.285,"intensity_inside":39421.0,"intensity_outside":42169.0,"verdict":"unclear","type":null,"reason":"step -0.401 m (rise) out of bounds"},"right":{"n_window":547,"detector_m":0.18,"face_u_m":-7.652,"unc_m":0.033,"step_m":0.163,"outer_bins":11,"face_points":34,"face_wrong_side":1,"outer_slope":0.0369,"road_slope":-0.1386,"road_side_over_road_near_line_m":-0.374,"intensity_inside":47034.0,"intensity_outside":55200.0,"verdict":"face","type":"curb","reason":"","note":"the first candidate (-7.20 m) gave no face: step -0.129 m (rise) out of bounds"},"built":{"left_m":7.71,"right_m":-10.01,"middle_m":-1.15,"width_m":17.72},"counts":{"returns":1506,"last_returns":1371,"class_2":221},"grade":{"along":0.0304,"from":"class 2"},"right_minus_built_m":2.358,"road_at_line_minus_y3dep_m":-0.033},
+  {"s":442.5,"left":{"n_window":508,"detector_m":0.078,"face_u_m":11.819,"unc_m":0.059,"step_m":0.012,"outer_bins":9,"face_points":39,"face_wrong_side":9,"outer_slope":0.0486,"road_slope":-0.0231,"road_side_over_road_near_line_m":0.276,"intensity_inside":40127.0,"intensity_outside":53259.0,"verdict":"unclear","type":null,"reason":"step +0.012 m (rise) out of bounds"},"right":{"n_window":538,"detector_m":0.216,"face_u_m":-7.462,"unc_m":0.002,"step_m":0.127,"outer_bins":10,"face_points":41,"face_wrong_side":1,"outer_slope":0.0586,"road_slope":-0.1613,"road_side_over_road_near_line_m":-0.382,"intensity_inside":41438.0,"intensity_outside":54948.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":7.7,"right_m":-9.99,"middle_m":-1.145,"width_m":17.69},"counts":{"returns":1503,"last_returns":1347,"class_2":269},"grade":{"along":0.0276,"from":"class 2"},"right_minus_built_m":2.528,"road_at_line_minus_y3dep_m":-0.04},
+  {"s":445.0,"left":{"n_window":527,"detector_m":0.087,"face_u_m":11.859,"unc_m":0.001,"step_m":0.058,"outer_bins":10,"face_points":34,"face_wrong_side":3,"outer_slope":-0.0019,"road_slope":-0.0341,"road_side_over_road_near_line_m":0.277,"intensity_inside":44966.0,"intensity_outside":54595.0,"verdict":"face","type":"curb","reason":""},"right":{"n_window":547,"detector_m":0.177,"face_u_m":-7.518,"unc_m":0.053,"step_m":0.119,"outer_bins":10,"face_points":38,"face_wrong_side":5,"outer_slope":0.069,"road_slope":-0.1504,"road_side_over_road_near_line_m":-0.386,"intensity_inside":39421.0,"intensity_outside":53839.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":7.69,"right_m":-9.96,"middle_m":-1.135,"width_m":17.65},"counts":{"returns":1393,"last_returns":1369,"class_2":310},"grade":{"along":0.0261,"from":"class 2"},"left_minus_built_m":4.169,"right_minus_built_m":2.442,"real_middle_m":2.171,"real_width_m":19.377,"real_minus_built_middle_m":3.306,"real_minus_built_width_m":1.727,"road_at_line_minus_y3dep_m":-0.074},
+  {"s":447.5,"left":{"n_window":546,"detector_m":0.052,"face_u_m":5.321,"unc_m":0.146,"step_m":-0.044,"outer_bins":10,"face_points":36,"face_wrong_side":10,"outer_slope":0.1142,"road_slope":0.0969,"road_side_over_road_near_line_m":0.047,"intensity_inside":36548.0,"intensity_outside":24096.0,"verdict":"unclear","type":null,"reason":"step -0.044 m (rise) out of bounds"},"right":{"n_window":554,"detector_m":0.17,"face_u_m":-7.553,"unc_m":0.0,"step_m":0.131,"outer_bins":11,"face_points":38,"face_wrong_side":3,"outer_slope":0.0682,"road_slope":-0.1516,"road_side_over_road_near_line_m":-0.376,"intensity_inside":40127.0,"intensity_outside":53058.0,"verdict":"face","type":"curb","reason":"","note":"the first candidate (-7.20 m) gave no face: step -0.117 m (rise) out of bounds"},"built":{"left_m":7.68,"right_m":-9.94,"middle_m":-1.13,"width_m":17.62},"counts":{"returns":1492,"last_returns":1386,"class_2":285},"grade":{"along":0.0319,"from":"class 2"},"right_minus_built_m":2.387,"road_at_line_minus_y3dep_m":-0.118},
+  {"s":450.0,"left":{"n_window":504,"detector_m":0.051,"face_u_m":7.44,"unc_m":0.025,"step_m":-0.026,"outer_bins":9,"face_points":37,"face_wrong_side":9,"outer_slope":0.0864,"road_slope":0.0778,"road_side_over_road_near_line_m":0.194,"intensity_inside":23239.0,"intensity_outside":25810.0,"verdict":"unclear","type":null,"reason":"step -0.026 m (rise) out of bounds"},"right":{"n_window":540,"detector_m":0.173,"face_u_m":-7.525,"unc_m":0.001,"step_m":0.128,"outer_bins":10,"face_points":40,"face_wrong_side":4,"outer_slope":0.0699,"road_slope":-0.1538,"road_side_over_road_near_line_m":-0.397,"intensity_inside":39522.0,"intensity_outside":52478.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":7.67,"right_m":-9.91,"middle_m":-1.12,"width_m":17.58},"counts":{"returns":1522,"last_returns":1352,"class_2":304},"grade":{"along":0.0275,"from":"class 2"},"right_minus_built_m":2.385,"road_at_line_minus_y3dep_m":-0.125},
+  {"s":452.5,"left":{"n_window":501,"detector_m":0.085,"face_u_m":11.938,"unc_m":0.007,"step_m":0.066,"outer_bins":10,"face_points":30,"face_wrong_side":0,"outer_slope":0.0152,"road_slope":-0.0083,"road_side_over_road_near_line_m":0.285,"intensity_inside":46126.0,"intensity_outside":53688.0,"verdict":"face","type":"curb","reason":""},"right":{"n_window":553,"detector_m":0.202,"face_u_m":-7.535,"unc_m":0.025,"step_m":0.125,"outer_bins":10,"face_points":39,"face_wrong_side":1,"outer_slope":0.0705,"road_slope":-0.1529,"road_side_over_road_near_line_m":-0.378,"intensity_inside":41034.0,"intensity_outside":53335.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":7.66,"right_m":-9.89,"middle_m":-1.115,"width_m":17.55},"counts":{"returns":1448,"last_returns":1346,"class_2":286},"grade":{"along":0.0363,"from":"class 2"},"left_minus_built_m":4.278,"right_minus_built_m":2.355,"real_middle_m":2.202,"real_width_m":19.473,"real_minus_built_middle_m":3.317,"real_minus_built_width_m":1.923,"road_at_line_minus_y3dep_m":-0.038},
+  {"s":455.0,"left":{"n_window":524,"detector_m":0.115,"face_u_m":11.887,"unc_m":0.026,"step_m":0.06,"outer_bins":11,"face_points":44,"face_wrong_side":6,"outer_slope":0.0391,"road_slope":-0.0172,"road_side_over_road_near_line_m":0.259,"intensity_inside":45698.0,"intensity_outside":53940.0,"verdict":"face","type":"curb","reason":""},"right":{"n_window":524,"detector_m":0.2,"face_u_m":-7.545,"unc_m":0.049,"step_m":0.146,"outer_bins":10,"face_points":36,"face_wrong_side":3,"outer_slope":0.0566,"road_slope":-0.161,"road_side_over_road_near_line_m":-0.408,"intensity_inside":41438.0,"intensity_outside":53259.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":7.65,"right_m":-9.86,"middle_m":-1.105,"width_m":17.51},"counts":{"returns":1374,"last_returns":1343,"class_2":281},"grade":{"along":0.0261,"from":"class 2"},"left_minus_built_m":4.237,"right_minus_built_m":2.315,"real_middle_m":2.171,"real_width_m":19.432,"real_minus_built_middle_m":3.276,"real_minus_built_width_m":1.922,"road_at_line_minus_y3dep_m":-0.044},
+  {"s":457.5,"left":{"n_window":523,"detector_m":0.119,"face_u_m":11.99,"unc_m":0.026,"step_m":0.054,"outer_bins":11,"face_points":37,"face_wrong_side":4,"outer_slope":0.0392,"road_slope":-0.0197,"road_side_over_road_near_line_m":0.293,"intensity_inside":44286.0,"intensity_outside":53789.0,"verdict":"face","type":"curb","reason":""},"right":{"n_window":541,"detector_m":0.177,"face_u_m":-7.421,"unc_m":0.029,"step_m":0.134,"outer_bins":10,"face_points":35,"face_wrong_side":4,"outer_slope":0.0702,"road_slope":-0.1595,"road_side_over_road_near_line_m":-0.401,"intensity_inside":40026.0,"intensity_outside":54041.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":7.64,"right_m":-9.84,"middle_m":-1.1,"width_m":17.48},"counts":{"returns":1366,"last_returns":1346,"class_2":324},"grade":{"along":0.034,"from":"class 2"},"left_minus_built_m":4.35,"right_minus_built_m":2.419,"real_middle_m":2.284,"real_width_m":19.411,"real_minus_built_middle_m":3.384,"real_minus_built_width_m":1.931,"road_at_line_minus_y3dep_m":-0.102},
+  {"s":460.0,"left":{"n_window":502,"detector_m":0.101,"face_u_m":12.11,"unc_m":0.101,"step_m":0.043,"outer_bins":9,"face_points":32,"face_wrong_side":3,"outer_slope":0.0402,"road_slope":-0.0121,"road_side_over_road_near_line_m":0.329,"intensity_inside":42043.0,"intensity_outside":53284.0,"verdict":"unclear","type":null,"reason":"step +0.043 m (rise) out of bounds"},"right":{"n_window":551,"detector_m":0.101,"face_u_m":-7.295,"unc_m":0.064,"step_m":0.103,"outer_bins":11,"face_points":36,"face_wrong_side":1,"outer_slope":0.1033,"road_slope":-0.1715,"road_side_over_road_near_line_m":-0.384,"intensity_inside":38388.0,"intensity_outside":52175.0,"verdict":"face","type":"curb","reason":"","note":"the first candidate (-7.00 m) gave no face: step -0.112 m (rise) out of bounds"},"built":{"left_m":7.63,"right_m":-9.81,"middle_m":-1.09,"width_m":17.44},"counts":{"returns":1394,"last_returns":1356,"class_2":321},"grade":{"along":0.0341,"from":"class 2"},"right_minus_built_m":2.515,"road_at_line_minus_y3dep_m":-0.066},
+  {"s":462.5,"left":{"n_window":516,"detector_m":0.139,"face_u_m":12.246,"unc_m":0.058,"step_m":0.072,"outer_bins":10,"face_points":37,"face_wrong_side":1,"outer_slope":0.0386,"road_slope":-0.0227,"road_side_over_road_near_line_m":0.314,"intensity_inside":45596.0,"intensity_outside":54142.0,"verdict":"face","type":"curb","reason":""},"right":{"n_window":546,"detector_m":0.152,"face_u_m":-7.351,"unc_m":0.047,"step_m":0.149,"outer_bins":11,"face_points":38,"face_wrong_side":3,"outer_slope":0.0302,"road_slope":-0.136,"road_side_over_road_near_line_m":-0.344,"intensity_inside":47361.0,"intensity_outside":54444.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":7.62,"right_m":-9.79,"middle_m":-1.085,"width_m":17.41},"counts":{"returns":1396,"last_returns":1360,"class_2":293},"grade":{"along":0.0262,"from":"class 2"},"left_minus_built_m":4.626,"right_minus_built_m":2.439,"real_middle_m":2.448,"real_width_m":19.597,"real_minus_built_middle_m":3.533,"real_minus_built_width_m":2.187,"road_at_line_minus_y3dep_m":-0.067},
+  {"s":465.0,"left":{"n_window":534,"detector_m":0.152,"face_u_m":12.342,"unc_m":0.037,"step_m":0.089,"outer_bins":10,"face_points":30,"face_wrong_side":2,"outer_slope":-0.0019,"road_slope":-0.0277,"road_side_over_road_near_line_m":0.274,"intensity_inside":40883.0,"intensity_outside":53688.0,"verdict":"face","type":"curb","reason":""},"right":{"n_window":552,"detector_m":0.171,"face_u_m":-6.995,"unc_m":0.009,"step_m":0.071,"outer_bins":11,"face_points":35,"face_wrong_side":4,"outer_slope":0.1115,"road_slope":-0.1691,"road_side_over_road_near_line_m":-0.353,"intensity_inside":41589.0,"intensity_outside":55301.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":7.61,"right_m":-9.76,"middle_m":-1.075,"width_m":17.37},"counts":{"returns":1529,"last_returns":1367,"class_2":238},"grade":{"along":0.0286,"from":"class 2"},"left_minus_built_m":4.732,"right_minus_built_m":2.765,"real_middle_m":2.674,"real_width_m":19.337,"real_minus_built_middle_m":3.749,"real_minus_built_width_m":1.967,"road_at_line_minus_y3dep_m":-0.07},
+  {"s":467.5,"left":{"n_window":519,"detector_m":0.137,"face_u_m":12.684,"unc_m":0.025,"step_m":0.196,"outer_bins":10,"face_points":17,"face_wrong_side":2,"outer_slope":0.0515,"road_slope":-0.0377,"road_side_over_road_near_line_m":0.274,"intensity_inside":40077.0,"intensity_outside":49327.0,"verdict":"face","type":"curb","reason":""},"right":{"n_window":533,"detector_m":0.198,"face_u_m":-6.957,"unc_m":0.054,"step_m":0.102,"outer_bins":11,"face_points":36,"face_wrong_side":3,"outer_slope":0.0538,"road_slope":-0.1465,"road_side_over_road_near_line_m":-0.309,"intensity_inside":49302.0,"intensity_outside":54091.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":7.6,"right_m":-9.74,"middle_m":-1.07,"width_m":17.34},"counts":{"returns":1553,"last_returns":1345,"class_2":229},"grade":{"along":0.0245,"from":"class 2"},"left_minus_built_m":5.084,"right_minus_built_m":2.783,"real_middle_m":2.863,"real_width_m":19.641,"real_minus_built_middle_m":3.933,"real_minus_built_width_m":2.301,"road_at_line_minus_y3dep_m":-0.037},
+  {"s":470.0,"left":{"n_window":493,"detector_m":-2.32,"face_u_m":12.802,"unc_m":0.025,"step_m":-1.632,"outer_bins":10,"face_points":17,"face_wrong_side":0,"outer_slope":4.1626,"road_slope":-0.0492,"road_side_over_road_near_line_m":0.252,"intensity_inside":39724.0,"intensity_outside":45723.0,"verdict":"face","type":"edge (drop)","reason":"the ground falls away past the asphalt","note":"the first candidate (12.40 m) gave no face: step -0.065 m (rise) out of bounds"},"right":{"n_window":546,"detector_m":0.173,"face_u_m":-6.844,"unc_m":0.03,"step_m":0.103,"outer_bins":10,"face_points":38,"face_wrong_side":7,"outer_slope":0.0727,"road_slope":-0.142,"road_side_over_road_near_line_m":-0.311,"intensity_inside":45370.0,"intensity_outside":55150.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":7.59,"right_m":-9.71,"middle_m":-1.06,"width_m":17.3},"counts":{"returns":1531,"last_returns":1326,"class_2":277},"grade":{"along":0.031,"from":"class 2"},"left_minus_built_m":5.212,"right_minus_built_m":2.866,"real_middle_m":2.979,"real_width_m":19.646,"real_minus_built_middle_m":4.039,"real_minus_built_width_m":2.346,"road_at_line_minus_y3dep_m":-0.061},
+  {"s":472.5,"left":{"n_window":463,"detector_m":0.131,"face_u_m":12.759,"unc_m":0.026,"step_m":0.089,"outer_bins":9,"face_points":26,"face_wrong_side":3,"outer_slope":0.037,"road_slope":-0.0461,"road_side_over_road_near_line_m":0.264,"intensity_inside":42294.0,"intensity_outside":48848.0,"verdict":"face","type":"curb","reason":""},"right":{"n_window":560,"detector_m":0.197,"face_u_m":-6.803,"unc_m":0.044,"step_m":0.163,"outer_bins":10,"face_points":35,"face_wrong_side":4,"outer_slope":0.0329,"road_slope":-0.1622,"road_side_over_road_near_line_m":-0.343,"intensity_inside":43858.0,"intensity_outside":53713.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":7.58,"right_m":-9.69,"middle_m":-1.055,"width_m":17.27},"counts":{"returns":1493,"last_returns":1327,"class_2":270},"grade":{"along":0.0296,"from":"class 2"},"left_minus_built_m":5.179,"right_minus_built_m":2.887,"real_middle_m":2.978,"real_width_m":19.562,"real_minus_built_middle_m":4.033,"real_minus_built_width_m":2.292,"road_at_line_minus_y3dep_m":-0.098},
+  {"s":475.0,"left":{"n_window":546,"detector_m":0.145,"face_u_m":11.567,"unc_m":0.025,"step_m":-0.859,"outer_bins":10,"face_points":29,"face_wrong_side":6,"outer_slope":1.9256,"road_slope":0.0246,"road_side_over_road_near_line_m":0.379,"intensity_inside":31708.0,"intensity_outside":37884.0,"verdict":"unclear","type":null,"reason":"step -0.859 m (rise) out of bounds"},"right":{"n_window":557,"detector_m":0.085,"face_u_m":-6.732,"unc_m":0.039,"step_m":0.11,"outer_bins":10,"face_points":36,"face_wrong_side":2,"outer_slope":0.0741,"road_slope":-0.1619,"road_side_over_road_near_line_m":-0.316,"intensity_inside":41262.0,"intensity_outside":52856.0,"verdict":"face","type":"curb","reason":"","note":"the first candidate (-6.30 m) gave no face: step -0.134 m (rise) out of bounds"},"built":{"left_m":7.57,"right_m":-9.66,"middle_m":-1.045,"width_m":17.23},"counts":{"returns":1603,"last_returns":1401,"class_2":307},"grade":{"along":0.0288,"from":"class 2"},"right_minus_built_m":2.928,"road_at_line_minus_y3dep_m":-0.071},
+  {"s":477.5,"left":{"n_window":515,"detector_m":0.1,"face_u_m":12.786,"unc_m":0.011,"step_m":2.49,"outer_bins":11,"face_points":36,"face_wrong_side":2,"outer_slope":-2.3816,"road_slope":-0.028,"road_side_over_road_near_line_m":0.295,"intensity_inside":43706.0,"intensity_outside":52125.0,"verdict":"face","type":"edge (rise)","reason":"a wall, bank or hedge where the asphalt ends"},"right":{"n_window":547,"detector_m":0.175,"face_u_m":-6.732,"unc_m":0.027,"step_m":0.146,"outer_bins":10,"face_points":35,"face_wrong_side":1,"outer_slope":0.0275,"road_slope":-0.1565,"road_side_over_road_near_line_m":-0.296,"intensity_inside":41463.0,"intensity_outside":53536.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":7.56,"right_m":-9.64,"middle_m":-1.04,"width_m":17.2},"counts":{"returns":1461,"last_returns":1351,"class_2":325},"grade":{"along":0.034,"from":"class 2"},"left_minus_built_m":5.226,"right_minus_built_m":2.908,"real_middle_m":3.027,"real_width_m":19.518,"real_minus_built_middle_m":4.067,"real_minus_built_width_m":2.318,"road_at_line_minus_y3dep_m":-0.084},
+  {"s":480.0,"left":{"n_window":471,"detector_m":0.082,"face_u_m":7.134,"unc_m":0.025,"step_m":-0.01,"outer_bins":9,"face_points":35,"face_wrong_side":4,"outer_slope":0.0391,"road_slope":0.0873,"road_side_over_road_near_line_m":0.179,"intensity_inside":22912.0,"intensity_outside":22534.0,"verdict":"unclear","type":null,"reason":"step -0.010 m (rise) out of bounds"},"right":{"n_window":528,"detector_m":0.199,"face_u_m":-6.724,"unc_m":0.017,"step_m":0.1,"outer_bins":10,"face_points":36,"face_wrong_side":4,"outer_slope":0.0834,"road_slope":-0.1494,"road_side_over_road_near_line_m":-0.29,"intensity_inside":40530.0,"intensity_outside":54368.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":7.55,"right_m":-9.61,"middle_m":-1.03,"width_m":17.16},"counts":{"returns":1331,"last_returns":1306,"class_2":280},"grade":{"along":0.0303,"from":"class 2"},"right_minus_built_m":2.886,"road_at_line_minus_y3dep_m":-0.046},
+  {"s":482.5,"left":{"n_window":495,"detector_m":0.085,"face_u_m":12.722,"unc_m":0.001,"step_m":0.064,"outer_bins":9,"face_points":33,"face_wrong_side":1,"outer_slope":0.0435,"road_slope":-0.0232,"road_side_over_road_near_line_m":0.285,"intensity_inside":41614.0,"intensity_outside":54091.0,"verdict":"face","type":"curb","reason":""},"right":{"n_window":549,"detector_m":0.221,"face_u_m":-6.86,"unc_m":0.016,"step_m":0.166,"outer_bins":11,"face_points":38,"face_wrong_side":1,"outer_slope":0.0517,"road_slope":-0.1671,"road_side_over_road_near_line_m":-0.328,"intensity_inside":42597.0,"intensity_outside":52982.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":7.54,"right_m":-9.59,"middle_m":-1.025,"width_m":17.13},"counts":{"returns":1381,"last_returns":1332,"class_2":282},"grade":{"along":0.0211,"from":"class 2"},"left_minus_built_m":5.182,"right_minus_built_m":2.73,"real_middle_m":2.931,"real_width_m":19.582,"real_minus_built_middle_m":3.956,"real_minus_built_width_m":2.452,"road_at_line_minus_y3dep_m":-0.081},
+  {"s":485.0,"left":{"n_window":520,"detector_m":0.096,"face_u_m":12.693,"unc_m":0.013,"step_m":0.05,"outer_bins":11,"face_points":33,"face_wrong_side":3,"outer_slope":0.0402,"road_slope":-0.0166,"road_side_over_road_near_line_m":0.291,"intensity_inside":43630.0,"intensity_outside":53537.0,"verdict":"face","type":"curb","reason":""},"right":{"n_window":529,"detector_m":0.337,"face_u_m":-7.01,"unc_m":0.032,"step_m":0.262,"outer_bins":10,"face_points":34,"face_wrong_side":2,"outer_slope":0.0334,"road_slope":-0.1958,"road_side_over_road_near_line_m":-0.392,"intensity_inside":42093.0,"intensity_outside":47058.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":7.53,"right_m":-9.56,"middle_m":-1.015,"width_m":17.09},"counts":{"returns":1396,"last_returns":1351,"class_2":285},"grade":{"along":0.0212,"from":"class 2"},"left_minus_built_m":5.163,"right_minus_built_m":2.55,"real_middle_m":2.841,"real_width_m":19.703,"real_minus_built_middle_m":3.856,"real_minus_built_width_m":2.613,"road_at_line_minus_y3dep_m":-0.122},
+  {"s":487.5,"left":{"n_window":509,"detector_m":0.125,"face_u_m":12.55,"unc_m":0.108,"step_m":0.024,"outer_bins":11,"face_points":36,"face_wrong_side":8,"outer_slope":0.0808,"road_slope":-0.0144,"road_side_over_road_near_line_m":0.269,"intensity_inside":40102.0,"intensity_outside":52478.0,"verdict":"unclear","type":null,"reason":"step +0.024 m (rise) out of bounds"},"right":{"n_window":530,"detector_m":0.241,"face_u_m":-7.046,"unc_m":0.034,"step_m":0.24,"outer_bins":10,"face_points":38,"face_wrong_side":1,"outer_slope":-0.0098,"road_slope":-0.1542,"road_side_over_road_near_line_m":-0.318,"intensity_inside":44866.0,"intensity_outside":51722.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":7.52,"right_m":-9.54,"middle_m":-1.01,"width_m":17.06},"counts":{"returns":1369,"last_returns":1327,"class_2":260},"grade":{"along":0.0233,"from":"class 2"},"right_minus_built_m":2.494,"road_at_line_minus_y3dep_m":-0.042},
+  {"s":490.0,"left":{"n_window":484,"detector_m":0.114,"face_u_m":12.59,"unc_m":0.011,"step_m":0.058,"outer_bins":8,"face_points":35,"face_wrong_side":4,"outer_slope":0.0526,"road_slope":-0.0244,"road_side_over_road_near_line_m":0.269,"intensity_inside":43858.0,"intensity_outside":53209.0,"verdict":"face","type":"curb","reason":""},"right":{"n_window":523,"detector_m":0.147,"face_u_m":-6.189,"unc_m":0.025,"step_m":-0.031,"outer_bins":11,"face_points":35,"face_wrong_side":4,"outer_slope":-0.0521,"road_slope":-0.1284,"road_side_over_road_near_line_m":-0.19,"intensity_inside":32162.0,"intensity_outside":46983.0,"verdict":"unclear","type":null,"reason":"step -0.031 m (rise) out of bounds"},"built":{"left_m":7.51,"right_m":-9.51,"middle_m":-1.0,"width_m":17.02},"counts":{"returns":1387,"last_returns":1307,"class_2":281},"grade":{"along":0.0231,"from":"class 2"},"left_minus_built_m":5.08,"road_at_line_minus_y3dep_m":-0.072},
+  {"s":492.5,"left":{"n_window":520,"detector_m":0.113,"face_u_m":12.496,"unc_m":0.004,"step_m":0.064,"outer_bins":10,"face_points":39,"face_wrong_side":5,"outer_slope":0.0557,"road_slope":-0.0288,"road_side_over_road_near_line_m":0.239,"intensity_inside":41942.0,"intensity_outside":53688.0,"verdict":"face","type":"curb","reason":""},"right":{"n_window":498,"detector_m":0.715,"face_u_m":-14.04,"unc_m":0.025,"step_m":-0.433,"outer_bins":10,"face_points":12,"face_wrong_side":0,"outer_slope":0.6717,"road_slope":0.3235,"road_side_over_road_near_line_m":0.854,"intensity_inside":55250.0,"intensity_outside":55503.0,"verdict":"unclear","type":null,"reason":"the road side stands +0.85 m off the road near the line (canopy)"},"built":{"left_m":7.52,"right_m":-9.51,"middle_m":-0.995,"width_m":17.03},"counts":{"returns":1327,"last_returns":1310,"class_2":310},"grade":{"along":0.0194,"from":"class 2"},"left_minus_built_m":4.976,"road_at_line_minus_y3dep_m":-0.043},
+  {"s":1240.0,"left":{"n_window":413,"detector_m":0.173,"face_u_m":10.524,"unc_m":0.003,"step_m":0.123,"outer_bins":9,"face_points":22,"face_wrong_side":0,"outer_slope":0.068,"road_slope":-0.0626,"road_side_over_road_near_line_m":-0.211,"intensity_inside":37052.0,"intensity_outside":27575.0,"verdict":"face","type":"curb","reason":""},"right":{"n_window":358,"detector_m":0.053,"face_u_m":-6.455,"unc_m":0.089,"step_m":0.03,"outer_bins":10,"face_points":29,"face_wrong_side":9,"outer_slope":-0.0038,"road_slope":0.0206,"road_side_over_road_near_line_m":0.04,"intensity_inside":27474.0,"intensity_outside":41488.0,"verdict":"unclear","type":null,"reason":"step +0.030 m (rise) out of bounds"},"built":{"left_m":9.26,"right_m":-11.25,"middle_m":-0.995,"width_m":20.51},"counts":{"returns":1276,"last_returns":983,"class_2":267},"grade":{"along":0.0504,"from":"class 2"},"left_minus_built_m":1.264,"road_at_line_minus_y3dep_m":-0.056},
+  {"s":1242.5,"left":{"n_window":368,"detector_m":0.188,"face_u_m":9.364,"unc_m":0.025,"step_m":-0.021,"outer_bins":10,"face_points":22,"face_wrong_side":9,"outer_slope":-0.0415,"road_slope":-0.0495,"road_side_over_road_near_line_m":-0.142,"intensity_inside":32238.0,"intensity_outside":38590.0,"verdict":"unclear","type":null,"reason":"step -0.021 m (rise) out of bounds"},"right":{"n_window":358,"detector_m":0.159,"face_u_m":-10.154,"unc_m":0.038,"step_m":0.099,"outer_bins":11,"face_points":30,"face_wrong_side":3,"outer_slope":0.0682,"road_slope":0.0003,"road_side_over_road_near_line_m":0.096,"intensity_inside":48092.0,"intensity_outside":52604.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":9.26,"right_m":-11.24,"middle_m":-0.99,"width_m":20.5},"counts":{"returns":1160,"last_returns":928,"class_2":298},"grade":{"along":0.0528,"from":"class 2"},"right_minus_built_m":1.086,"road_at_line_minus_y3dep_m":-0.096},
+  {"s":1245.0,"left":{"n_window":326,"detector_m":-8.892,"face_u_m":9.87,"unc_m":0.025,"step_m":-1.454,"outer_bins":10,"face_points":17,"face_wrong_side":0,"outer_slope":6.1822,"road_slope":-0.0333,"road_side_over_road_near_line_m":-0.163,"intensity_inside":34330.0,"intensity_outside":41841.0,"verdict":"face","type":"edge (drop)","reason":"the ground falls away past the asphalt","note":"the first candidate (10.10 m) gave no face: step -0.585 m (rise) out of bounds"},"right":{"n_window":376,"detector_m":0.124,"face_u_m":-10.31,"unc_m":0.016,"step_m":0.128,"outer_bins":10,"face_points":24,"face_wrong_side":1,"outer_slope":0.0288,"road_slope":0.0196,"road_side_over_road_near_line_m":0.102,"intensity_inside":50436.0,"intensity_outside":52528.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":9.28,"right_m":-11.22,"middle_m":-0.97,"width_m":20.5},"counts":{"returns":1133,"last_returns":906,"class_2":265},"grade":{"along":0.0488,"from":"class 2"},"left_minus_built_m":0.59,"right_minus_built_m":0.91,"real_middle_m":-0.22,"real_width_m":20.18,"real_minus_built_middle_m":0.75,"real_minus_built_width_m":-0.32,"road_at_line_minus_y3dep_m":-0.117},
+  {"s":1247.5,"left":{"n_window":415,"detector_m":-8.265,"face_u_m":8.792,"unc_m":0.025,"step_m":-6.845,"outer_bins":10,"face_points":17,"face_wrong_side":0,"outer_slope":15.8443,"road_slope":-0.02,"road_side_over_road_near_line_m":-0.085,"intensity_inside":39170.0,"intensity_outside":37758.0,"verdict":"face","type":"edge (drop)","reason":"the ground falls away past the asphalt"},"right":{"n_window":361,"detector_m":0.163,"face_u_m":-9.961,"unc_m":0.021,"step_m":0.118,"outer_bins":11,"face_points":25,"face_wrong_side":1,"outer_slope":0.0897,"road_slope":-0.0215,"road_side_over_road_near_line_m":0.051,"intensity_inside":45319.0,"intensity_outside":52528.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":9.31,"right_m":-11.19,"middle_m":-0.94,"width_m":20.5},"counts":{"returns":1230,"last_returns":985,"class_2":255},"grade":{"along":0.0587,"from":"class 2"},"left_minus_built_m":-0.518,"right_minus_built_m":1.229,"real_middle_m":-0.585,"real_width_m":18.753,"real_minus_built_middle_m":0.355,"real_minus_built_width_m":-1.747,"road_at_line_minus_y3dep_m":-0.039},
+  {"s":1250.0,"left":{"n_window":411,"detector_m":-2.372,"face_u_m":8.351,"unc_m":0.025,"step_m":0.257,"outer_bins":9,"face_points":14,"face_wrong_side":0,"outer_slope":1.7573,"road_slope":-0.0153,"road_side_over_road_near_line_m":-0.077,"intensity_inside":31305.0,"intensity_outside":39446.0,"verdict":"unclear","type":null,"reason":"step +0.257 m (drop) out of bounds"},"right":{"n_window":339,"detector_m":0.135,"face_u_m":-10.073,"unc_m":0.039,"step_m":0.114,"outer_bins":11,"face_points":27,"face_wrong_side":2,"outer_slope":0.0675,"road_slope":-0.0027,"road_side_over_road_near_line_m":0.058,"intensity_inside":48848.0,"intensity_outside":50562.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":9.33,"right_m":-11.17,"middle_m":-0.92,"width_m":20.5},"counts":{"returns":1308,"last_returns":968,"class_2":258},"grade":{"along":0.0467,"from":"class 2"},"right_minus_built_m":1.097,"road_at_line_minus_y3dep_m":-0.07},
+  {"s":1252.5,"left":{"n_window":365,"detector_m":-1.459,"face_u_m":9.278,"unc_m":0.025,"step_m":-0.331,"outer_bins":11,"face_points":28,"face_wrong_side":0,"outer_slope":0.869,"road_slope":-0.0292,"road_side_over_road_near_line_m":-0.105,"intensity_inside":37506.0,"intensity_outside":32641.0,"verdict":"face","type":"edge (drop)","reason":"the ground falls away past the asphalt"},"right":{"n_window":353,"detector_m":0.135,"face_u_m":-9.962,"unc_m":0.058,"step_m":0.119,"outer_bins":11,"face_points":19,"face_wrong_side":1,"outer_slope":0.0609,"road_slope":-0.0024,"road_side_over_road_near_line_m":0.036,"intensity_inside":45950.0,"intensity_outside":52402.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":9.36,"right_m":-11.14,"middle_m":-0.89,"width_m":20.5},"counts":{"returns":1206,"last_returns":923,"class_2":257},"grade":{"along":0.0525,"from":"class 2"},"left_minus_built_m":-0.082,"right_minus_built_m":1.178,"real_middle_m":-0.342,"real_width_m":19.24,"real_minus_built_middle_m":0.548,"real_minus_built_width_m":-1.26,"road_at_line_minus_y3dep_m":-0.084},
+  {"s":1255.0,"left":{"n_window":346,"detector_m":0.17,"face_u_m":10.909,"unc_m":0.095,"step_m":0.121,"outer_bins":10,"face_points":26,"face_wrong_side":2,"outer_slope":0.0261,"road_slope":-0.068,"road_side_over_road_near_line_m":-0.227,"intensity_inside":47286.0,"intensity_outside":48949.0,"verdict":"face","type":"curb","reason":""},"right":{"n_window":358,"detector_m":0.148,"face_u_m":-9.718,"unc_m":0.022,"step_m":0.128,"outer_bins":9,"face_points":26,"face_wrong_side":2,"outer_slope":0.0414,"road_slope":-0.0028,"road_side_over_road_near_line_m":0.034,"intensity_inside":49000.0,"intensity_outside":52578.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":9.38,"right_m":-11.12,"middle_m":-0.87,"width_m":20.5},"counts":{"returns":994,"last_returns":908,"class_2":250},"grade":{"along":0.0517,"from":"class 2"},"left_minus_built_m":1.529,"right_minus_built_m":1.402,"real_middle_m":0.596,"real_width_m":20.627,"real_minus_built_middle_m":1.466,"real_minus_built_width_m":0.127,"road_at_line_minus_y3dep_m":-0.045},
+  {"s":1257.5,"left":{"n_window":344,"detector_m":0.146,"face_u_m":11.206,"unc_m":0.045,"step_m":0.144,"outer_bins":10,"face_points":22,"face_wrong_side":1,"outer_slope":0.0073,"road_slope":-0.0491,"road_side_over_road_near_line_m":-0.211,"intensity_inside":49151.0,"intensity_outside":48243.0,"verdict":"face","type":"curb","reason":""},"right":{"n_window":363,"detector_m":0.152,"face_u_m":-9.706,"unc_m":0.017,"step_m":0.135,"outer_bins":10,"face_points":25,"face_wrong_side":1,"outer_slope":0.0476,"road_slope":-0.0162,"road_side_over_road_near_line_m":-0.003,"intensity_inside":42849.0,"intensity_outside":51722.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":9.41,"right_m":-11.09,"middle_m":-0.84,"width_m":20.5},"counts":{"returns":963,"last_returns":918,"class_2":287},"grade":{"along":0.0548,"from":"class 2"},"left_minus_built_m":1.796,"right_minus_built_m":1.384,"real_middle_m":0.75,"real_width_m":20.912,"real_minus_built_middle_m":1.59,"real_minus_built_width_m":0.412,"road_at_line_minus_y3dep_m":-0.071},
+  {"s":1260.0,"left":{"n_window":342,"detector_m":0.202,"face_u_m":11.169,"unc_m":0.032,"step_m":0.188,"outer_bins":10,"face_points":21,"face_wrong_side":1,"outer_slope":-0.0178,"road_slope":-0.0765,"road_side_over_road_near_line_m":-0.229,"intensity_inside":47739.0,"intensity_outside":45344.0,"verdict":"face","type":"curb","reason":""},"right":{"n_window":353,"detector_m":0.175,"face_u_m":-9.717,"unc_m":0.003,"step_m":0.127,"outer_bins":9,"face_points":25,"face_wrong_side":0,"outer_slope":0.0499,"road_slope":-0.0209,"road_side_over_road_near_line_m":-0.004,"intensity_inside":45546.0,"intensity_outside":50814.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":9.43,"right_m":-11.07,"middle_m":-0.82,"width_m":20.5},"counts":{"returns":1032,"last_returns":898,"class_2":266},"grade":{"along":0.0634,"from":"class 2"},"left_minus_built_m":1.739,"right_minus_built_m":1.353,"real_middle_m":0.726,"real_width_m":20.886,"real_minus_built_middle_m":1.546,"real_minus_built_width_m":0.386,"road_at_line_minus_y3dep_m":-0.054},
+  {"s":1262.5,"left":{"n_window":366,"detector_m":-8.573,"face_u_m":9.185,"unc_m":0.025,"step_m":-0.036,"outer_bins":10,"face_points":23,"face_wrong_side":0,"outer_slope":-0.0027,"road_slope":-0.0374,"road_side_over_road_near_line_m":-0.102,"intensity_inside":29944.0,"intensity_outside":25760.0,"verdict":"unclear","type":null,"reason":"step -0.036 m (drop) out of bounds"},"right":{"n_window":358,"detector_m":0.159,"face_u_m":-9.705,"unc_m":0.13,"step_m":0.126,"outer_bins":10,"face_points":28,"face_wrong_side":3,"outer_slope":0.0566,"road_slope":-0.0236,"road_side_over_road_near_line_m":-0.025,"intensity_inside":46932.0,"intensity_outside":52226.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":9.46,"right_m":-11.04,"middle_m":-0.79,"width_m":20.5},"counts":{"returns":1245,"last_returns":929,"class_2":282},"grade":{"along":0.0586,"from":"class 2"},"right_minus_built_m":1.335,"road_at_line_minus_y3dep_m":-0.082},
+  {"s":1265.0,"left":{"n_window":401,"detector_m":3.956,"face_u_m":7.976,"unc_m":0.025,"step_m":-5.342,"outer_bins":11,"face_points":16,"face_wrong_side":0,"outer_slope":-0.4885,"road_slope":6.1212,"road_side_over_road_near_line_m":9.428,"intensity_inside":25709.0,"intensity_outside":31230.0,"verdict":"unclear","type":null,"reason":"the road side stands +9.43 m off the road near the line (canopy)"},"right":{"n_window":361,"detector_m":0.13,"face_u_m":-9.6,"unc_m":0.022,"step_m":0.08,"outer_bins":11,"face_points":24,"face_wrong_side":3,"outer_slope":0.1013,"road_slope":-0.0214,"road_side_over_road_near_line_m":-0.015,"intensity_inside":43051.0,"intensity_outside":53184.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":9.48,"right_m":-11.02,"middle_m":-0.77,"width_m":20.5},"counts":{"returns":1369,"last_returns":949,"class_2":242},"grade":{"along":0.0604,"from":"class 2"},"right_minus_built_m":1.42,"road_at_line_minus_y3dep_m":-0.055},
+  {"s":1267.5,"left":{"n_window":426,"detector_m":-6.354,"face_u_m":5.619,"unc_m":0.164,"step_m":-5.392,"outer_bins":9,"face_points":18,"face_wrong_side":4,"outer_slope":5.0258,"road_slope":2.5651,"road_side_over_road_near_line_m":3.266,"intensity_inside":27398.0,"intensity_outside":20567.0,"verdict":"unclear","type":null,"reason":"the road side stands +3.27 m off the road near the line (canopy)"},"right":{"n_window":350,"detector_m":0.139,"face_u_m":-9.515,"unc_m":0.011,"step_m":0.066,"outer_bins":10,"face_points":30,"face_wrong_side":3,"outer_slope":0.1152,"road_slope":-0.0176,"road_side_over_road_near_line_m":-0.018,"intensity_inside":44614.0,"intensity_outside":52226.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":9.51,"right_m":-10.99,"middle_m":-0.74,"width_m":20.5},"counts":{"returns":1379,"last_returns":972,"class_2":247},"grade":{"along":0.046,"from":"class 2"},"right_minus_built_m":1.475,"road_at_line_minus_y3dep_m":-0.076},
+  {"s":1270.0,"left":{"n_window":390,"detector_m":2.406,"face_u_m":4.209,"unc_m":0.025,"step_m":-3.053,"outer_bins":10,"face_points":23,"face_wrong_side":10,"outer_slope":6.5824,"road_slope":0.0,"road_side_over_road_near_line_m":-0.011,"intensity_inside":27020.0,"intensity_outside":37178.0,"verdict":"unclear","type":null,"reason":"step -3.053 m (rise) out of bounds"},"right":{"n_window":358,"detector_m":0.151,"face_u_m":-9.741,"unc_m":0.067,"step_m":0.138,"outer_bins":10,"face_points":24,"face_wrong_side":1,"outer_slope":0.0459,"road_slope":-0.0181,"road_side_over_road_near_line_m":-0.035,"intensity_inside":48899.0,"intensity_outside":52024.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":9.53,"right_m":-10.97,"middle_m":-0.72,"width_m":20.5},"counts":{"returns":1493,"last_returns":950,"class_2":249},"grade":{"along":0.0535,"from":"class 2"},"right_minus_built_m":1.229,"road_at_line_minus_y3dep_m":-0.093},
+  {"s":1272.5,"left":{"n_window":422,"detector_m":-4.265,"face_u_m":5.9,"unc_m":null,"step_m":-0.666,"outer_bins":11,"face_points":null,"face_wrong_side":null,"outer_slope":3.767,"road_slope":-1.1617,"road_side_over_road_near_line_m":-0.437,"intensity_inside":18198.0,"intensity_outside":19307.0,"verdict":"face","type":"edge (drop)","reason":"the ground falls away past the asphalt","note":"the first candidate (5.20 m) gave no face: the road side stands +14.36 m off the road near the line (canopy)"},"right":{"n_window":361,"detector_m":0.136,"face_u_m":-9.578,"unc_m":0.047,"step_m":0.073,"outer_bins":11,"face_points":27,"face_wrong_side":4,"outer_slope":0.0906,"road_slope":-0.0186,"road_side_over_road_near_line_m":-0.006,"intensity_inside":44311.0,"intensity_outside":53082.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":9.56,"right_m":-10.94,"middle_m":-0.69,"width_m":20.5},"counts":{"returns":1562,"last_returns":995,"class_2":250},"grade":{"along":0.05,"from":"class 2"},"left_minus_built_m":-3.66,"right_minus_built_m":1.362,"real_middle_m":-1.839,"real_width_m":15.478,"real_minus_built_middle_m":-1.149,"real_minus_built_width_m":-5.022,"road_at_line_minus_y3dep_m":-0.093},
+  {"s":1275.0,"left":{"n_window":351,"detector_m":-1.537,"face_u_m":4.206,"unc_m":0.025,"step_m":0.561,"outer_bins":10,"face_points":21,"face_wrong_side":0,"outer_slope":0.0559,"road_slope":0.0,"road_side_over_road_near_line_m":-0.002,"intensity_inside":25861.0,"intensity_outside":31053.0,"verdict":"unclear","type":null,"reason":"step +0.561 m (drop) out of bounds"},"right":{"n_window":335,"detector_m":0.121,"face_u_m":-9.763,"unc_m":0.017,"step_m":0.116,"outer_bins":11,"face_points":28,"face_wrong_side":0,"outer_slope":0.0415,"road_slope":-0.0114,"road_side_over_road_near_line_m":-0.021,"intensity_inside":47286.0,"intensity_outside":53032.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":9.58,"right_m":-10.92,"middle_m":-0.67,"width_m":20.5},"counts":{"returns":1345,"last_returns":897,"class_2":249},"grade":{"along":0.0485,"from":"class 2"},"right_minus_built_m":1.157,"road_at_line_minus_y3dep_m":-0.104},
+  {"s":1277.5,"left":{"n_window":373,"detector_m":-5.771,"face_u_m":7.891,"unc_m":0.025,"step_m":-0.426,"outer_bins":11,"face_points":25,"face_wrong_side":0,"outer_slope":1.0226,"road_slope":-0.0345,"road_side_over_road_near_line_m":-0.08,"intensity_inside":19156.0,"intensity_outside":26314.0,"verdict":"face","type":"edge (drop)","reason":"the ground falls away past the asphalt"},"right":{"n_window":353,"detector_m":0.111,"face_u_m":-9.512,"unc_m":0.02,"step_m":0.055,"outer_bins":10,"face_points":19,"face_wrong_side":1,"outer_slope":0.1163,"road_slope":-0.0265,"road_side_over_road_near_line_m":-0.032,"intensity_inside":43076.0,"intensity_outside":52150.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":9.61,"right_m":-10.89,"middle_m":-0.64,"width_m":20.5},"counts":{"returns":1337,"last_returns":938,"class_2":289},"grade":{"along":0.0565,"from":"class 2"},"left_minus_built_m":-1.719,"right_minus_built_m":1.378,"real_middle_m":-0.811,"real_width_m":17.403,"real_minus_built_middle_m":-0.171,"real_minus_built_width_m":-3.097,"road_at_line_minus_y3dep_m":-0.076},
+  {"s":1280.0,"left":{"n_window":372,"detector_m":3.095,"face_u_m":9.413,"unc_m":0.025,"step_m":1.282,"outer_bins":10,"face_points":20,"face_wrong_side":0,"outer_slope":-5.0547,"road_slope":1.4707,"road_side_over_road_near_line_m":3.114,"intensity_inside":29843.0,"intensity_outside":27952.0,"verdict":"unclear","type":null,"reason":"the road side stands +3.11 m off the road near the line (canopy)"},"right":{"n_window":351,"detector_m":0.134,"face_u_m":-9.354,"unc_m":0.257,"step_m":0.003,"outer_bins":9,"face_points":28,"face_wrong_side":8,"outer_slope":0.1606,"road_slope":-0.025,"road_side_over_road_near_line_m":-0.045,"intensity_inside":40379.0,"intensity_outside":51772.0,"verdict":"unclear","type":null,"reason":"step +0.003 m (rise) out of bounds"},"built":{"left_m":9.63,"right_m":-10.87,"middle_m":-0.62,"width_m":20.5},"counts":{"returns":1305,"last_returns":928,"class_2":282},"grade":{"along":0.0523,"from":"class 2"},"road_at_line_minus_y3dep_m":-0.07},
+  {"s":1282.5,"left":{"n_window":383,"detector_m":0.157,"face_u_m":10.971,"unc_m":0.025,"step_m":0.052,"outer_bins":9,"face_points":14,"face_wrong_side":2,"outer_slope":0.1111,"road_slope":-0.0545,"road_side_over_road_near_line_m":-0.207,"intensity_inside":39875.0,"intensity_outside":42597.0,"verdict":"face","type":"curb","reason":""},"right":{"n_window":353,"detector_m":0.138,"face_u_m":-9.56,"unc_m":0.043,"step_m":0.105,"outer_bins":11,"face_points":25,"face_wrong_side":2,"outer_slope":0.051,"road_slope":-0.0259,"road_side_over_road_near_line_m":-0.052,"intensity_inside":42975.0,"intensity_outside":52075.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":9.66,"right_m":-10.84,"middle_m":-0.59,"width_m":20.5},"counts":{"returns":1222,"last_returns":945,"class_2":302},"grade":{"along":0.0542,"from":"class 2"},"left_minus_built_m":1.311,"right_minus_built_m":1.28,"real_middle_m":0.705,"real_width_m":20.531,"real_minus_built_middle_m":1.295,"real_minus_built_width_m":0.031,"road_at_line_minus_y3dep_m":-0.073},
+  {"s":1285.0,"left":{"n_window":361,"detector_m":0.142,"face_u_m":11.119,"unc_m":0.008,"step_m":0.128,"outer_bins":9,"face_points":29,"face_wrong_side":2,"outer_slope":0.0426,"road_slope":-0.0692,"road_side_over_road_near_line_m":-0.229,"intensity_inside":43429.0,"intensity_outside":41866.0,"verdict":"face","type":"curb","reason":""},"right":{"n_window":368,"detector_m":0.169,"face_u_m":-9.572,"unc_m":0.04,"step_m":0.108,"outer_bins":11,"face_points":26,"face_wrong_side":2,"outer_slope":0.0878,"road_slope":-0.0417,"road_side_over_road_near_line_m":-0.084,"intensity_inside":44110.0,"intensity_outside":52075.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":9.68,"right_m":-10.82,"middle_m":-0.57,"width_m":20.5},"counts":{"returns":1148,"last_returns":934,"class_2":268},"grade":{"along":0.0552,"from":"class 2"},"left_minus_built_m":1.439,"right_minus_built_m":1.248,"real_middle_m":0.774,"real_width_m":20.691,"real_minus_built_middle_m":1.344,"real_minus_built_width_m":0.191,"road_at_line_minus_y3dep_m":-0.1},
+  {"s":1287.5,"left":{"n_window":389,"detector_m":-6.319,"face_u_m":9.769,"unc_m":0.025,"step_m":2.029,"outer_bins":11,"face_points":18,"face_wrong_side":0,"outer_slope":-0.0914,"road_slope":-0.0374,"road_side_over_road_near_line_m":-0.105,"intensity_inside":32212.0,"intensity_outside":34708.0,"verdict":"unclear","type":null,"reason":"step +2.029 m (drop) out of bounds"},"right":{"n_window":363,"detector_m":0.209,"face_u_m":-9.637,"unc_m":0.002,"step_m":0.149,"outer_bins":9,"face_points":28,"face_wrong_side":1,"outer_slope":0.0593,"road_slope":-0.0561,"road_side_over_road_near_line_m":-0.137,"intensity_inside":45218.0,"intensity_outside":51823.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":9.71,"right_m":-10.79,"middle_m":-0.54,"width_m":20.5},"counts":{"returns":1261,"last_returns":966,"class_2":249},"grade":{"along":0.049,"from":"class 2"},"right_minus_built_m":1.153,"road_at_line_minus_y3dep_m":-0.058},
+  {"s":1290.0,"left":{"n_window":416,"detector_m":-2.01,"face_u_m":9.362,"unc_m":0.025,"step_m":-2.614,"outer_bins":10,"face_points":17,"face_wrong_side":0,"outer_slope":6.2113,"road_slope":-0.0255,"road_side_over_road_near_line_m":-0.075,"intensity_inside":33901.0,"intensity_outside":33372.0,"verdict":"face","type":"edge (drop)","reason":"the ground falls away past the asphalt"},"right":{"n_window":374,"detector_m":0.233,"face_u_m":-9.766,"unc_m":0.097,"step_m":0.192,"outer_bins":11,"face_points":25,"face_wrong_side":0,"outer_slope":0.0375,"road_slope":-0.0648,"road_side_over_road_near_line_m":-0.163,"intensity_inside":49000.0,"intensity_outside":51116.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":9.73,"right_m":-10.77,"middle_m":-0.52,"width_m":20.5},"counts":{"returns":1300,"last_returns":992,"class_2":247},"grade":{"along":0.0484,"from":"class 2"},"left_minus_built_m":-0.368,"right_minus_built_m":1.004,"real_middle_m":-0.202,"real_width_m":19.128,"real_minus_built_middle_m":0.318,"real_minus_built_width_m":-1.372,"road_at_line_minus_y3dep_m":-0.114},
+  {"s":1292.5,"left":{"n_window":401,"detector_m":0.05,"face_u_m":5.058,"unc_m":0.512,"step_m":-0.059,"outer_bins":10,"face_points":28,"face_wrong_side":14,"outer_slope":0.0125,"road_slope":0.0507,"road_side_over_road_near_line_m":0.041,"intensity_inside":42093.0,"intensity_outside":22660.0,"verdict":"unclear","type":null,"reason":"step -0.059 m (rise) out of bounds"},"right":{"n_window":390,"detector_m":0.21,"face_u_m":-9.671,"unc_m":0.042,"step_m":0.155,"outer_bins":10,"face_points":28,"face_wrong_side":1,"outer_slope":0.0482,"road_slope":-0.0628,"road_side_over_road_near_line_m":-0.163,"intensity_inside":46781.0,"intensity_outside":50990.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":9.76,"right_m":-10.74,"middle_m":-0.49,"width_m":20.5},"counts":{"returns":1262,"last_returns":999,"class_2":256},"grade":{"along":0.0509,"from":"class 2"},"right_minus_built_m":1.069,"road_at_line_minus_y3dep_m":-0.135},
+  {"s":1295.0,"left":{"n_window":353,"detector_m":-5.999,"face_u_m":7.07,"unc_m":0.025,"step_m":-1.589,"outer_bins":11,"face_points":20,"face_wrong_side":0,"outer_slope":3.9557,"road_slope":-0.0042,"road_side_over_road_near_line_m":-0.024,"intensity_inside":18752.0,"intensity_outside":21979.0,"verdict":"face","type":"edge (drop)","reason":"the ground falls away past the asphalt"},"right":{"n_window":381,"detector_m":0.241,"face_u_m":-9.678,"unc_m":0.107,"step_m":0.149,"outer_bins":10,"face_points":29,"face_wrong_side":1,"outer_slope":0.0643,"road_slope":-0.0652,"road_side_over_road_near_line_m":-0.163,"intensity_inside":45924.0,"intensity_outside":51368.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":9.78,"right_m":-10.72,"middle_m":-0.47,"width_m":20.5},"counts":{"returns":1214,"last_returns":966,"class_2":252},"grade":{"along":0.052,"from":"class 2"},"left_minus_built_m":-2.71,"right_minus_built_m":1.042,"real_middle_m":-1.304,"real_width_m":16.748,"real_minus_built_middle_m":-0.834,"real_minus_built_width_m":-3.752,"road_at_line_minus_y3dep_m":-0.054},
+  {"s":1297.5,"left":{"n_window":443,"detector_m":-4.324,"face_u_m":6.17,"unc_m":0.025,"step_m":-4.863,"outer_bins":11,"face_points":24,"face_wrong_side":0,"outer_slope":11.3992,"road_slope":-0.0098,"road_side_over_road_near_line_m":-0.003,"intensity_inside":22937.0,"intensity_outside":23844.0,"verdict":"face","type":"edge (drop)","reason":"the ground falls away past the asphalt"},"right":{"n_window":386,"detector_m":0.148,"face_u_m":-9.783,"unc_m":0.012,"step_m":0.169,"outer_bins":11,"face_points":19,"face_wrong_side":0,"outer_slope":0.0153,"road_slope":-0.0491,"road_side_over_road_near_line_m":-0.128,"intensity_inside":44765.0,"intensity_outside":50991.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":9.81,"right_m":-10.69,"middle_m":-0.44,"width_m":20.5},"counts":{"returns":1532,"last_returns":1057,"class_2":261},"grade":{"along":0.0465,"from":"class 2"},"left_minus_built_m":-3.64,"right_minus_built_m":0.907,"real_middle_m":-1.806,"real_width_m":15.953,"real_minus_built_middle_m":-1.366,"real_minus_built_width_m":-4.547,"road_at_line_minus_y3dep_m":-0.063},
+  {"s":1300.0,"left":{"n_window":373,"detector_m":1.194,"face_u_m":8.889,"unc_m":0.025,"step_m":-1.196,"outer_bins":11,"face_points":11,"face_wrong_side":0,"outer_slope":1.3681,"road_slope":1.8712,"road_side_over_road_near_line_m":3.274,"intensity_inside":37707.0,"intensity_outside":34078.0,"verdict":"unclear","type":null,"reason":"the road side stands +3.27 m off the road near the line (canopy)"},"right":{"n_window":377,"detector_m":0.136,"face_u_m":-9.55,"unc_m":0.022,"step_m":0.102,"outer_bins":11,"face_points":30,"face_wrong_side":0,"outer_slope":0.0618,"road_slope":-0.0437,"road_side_over_road_near_line_m":-0.138,"intensity_inside":43076.0,"intensity_outside":52932.0,"verdict":"face","type":"curb","reason":""},"built":{"left_m":9.83,"right_m":-10.67,"middle_m":-0.42,"width_m":20.5},"counts":{"returns":1304,"last_returns":975,"class_2":262},"grade":{"along":0.0533,"from":"class 2"},"right_minus_built_m":1.12,"road_at_line_minus_y3dep_m":-0.094}
+ ]
+}

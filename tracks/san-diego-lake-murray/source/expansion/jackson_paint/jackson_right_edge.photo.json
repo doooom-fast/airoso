@@ -1,0 +1,592 @@
+{
+ "_doc": "Jackson Dr north (piece D): the hatched median's RIGHT edge off the aerial, aligned to the lidar (ledger 0099 round 3,\nitem 4). Read-only; pure python + PIL. See photo_line.py for the method; every window is [invented].",
+ "aerial": "source/naip_2022_lm_full_z18.jpg",
+ "registration": {
+  "dx_m": -1.25,
+  "dy_m": -1.75,
+  "contrast_at_0": -0.0357,
+  "contrast_best": -0.0389
+ },
+ "window_m": 6.0,
+ "u_peak": [
+  -5.0,
+  -2.5
+ ],
+ "lidar_right_window": [
+  -4.2,
+  -2.8
+ ],
+ "photo_minus_lidar": {
+  "stations": 23,
+  "median_m": -0.61,
+  "min_m": -1.64,
+  "max_m": 0.315
+ },
+ "rows": [
+  {
+   "s": 225.0,
+   "photo_u": -3.625,
+   "lidar_u": null
+  },
+  {
+   "s": 227.5,
+   "photo_u": -3.625,
+   "lidar_u": null
+  },
+  {
+   "s": 230.0,
+   "photo_u": -3.625,
+   "lidar_u": -3.94
+  },
+  {
+   "s": 232.5,
+   "photo_u": -3.625,
+   "lidar_u": -3.83
+  },
+  {
+   "s": 235.0,
+   "photo_u": -3.625,
+   "lidar_u": null
+  },
+  {
+   "s": 237.5,
+   "photo_u": -3.625,
+   "lidar_u": -3.81
+  },
+  {
+   "s": 240.0,
+   "photo_u": -3.625,
+   "lidar_u": null
+  },
+  {
+   "s": 242.5,
+   "photo_u": -3.625,
+   "lidar_u": -3.69
+  },
+  {
+   "s": 245.0,
+   "photo_u": -3.625,
+   "lidar_u": -3.66
+  },
+  {
+   "s": 247.5,
+   "photo_u": -3.75,
+   "lidar_u": -3.64
+  },
+  {
+   "s": 250.0,
+   "photo_u": -3.75,
+   "lidar_u": -3.61
+  },
+  {
+   "s": 252.5,
+   "photo_u": -3.875,
+   "lidar_u": -3.59
+  },
+  {
+   "s": 255.0,
+   "photo_u": -3.875,
+   "lidar_u": -3.56
+  },
+  {
+   "s": 257.5,
+   "photo_u": -3.875,
+   "lidar_u": -3.54
+  },
+  {
+   "s": 260.0,
+   "photo_u": -4.0,
+   "lidar_u": null
+  },
+  {
+   "s": 262.5,
+   "photo_u": -4.0,
+   "lidar_u": -3.39
+  },
+  {
+   "s": 265.0,
+   "photo_u": -4.0,
+   "lidar_u": -3.46
+  },
+  {
+   "s": 267.5,
+   "photo_u": -4.125,
+   "lidar_u": -3.44
+  },
+  {
+   "s": 270.0,
+   "photo_u": -4.125,
+   "lidar_u": -3.31
+  },
+  {
+   "s": 272.5,
+   "photo_u": -4.125,
+   "lidar_u": -3.29
+  },
+  {
+   "s": 275.0,
+   "photo_u": -4.25,
+   "lidar_u": -3.26
+  },
+  {
+   "s": 277.5,
+   "photo_u": -4.25,
+   "lidar_u": -3.24
+  },
+  {
+   "s": 280.0,
+   "photo_u": -4.25,
+   "lidar_u": -3.11
+  },
+  {
+   "s": 282.5,
+   "photo_u": -4.25,
+   "lidar_u": -3.09
+  },
+  {
+   "s": 285.0,
+   "photo_u": -4.375,
+   "lidar_u": null
+  },
+  {
+   "s": 287.5,
+   "photo_u": -4.375,
+   "lidar_u": -3.14
+  },
+  {
+   "s": 290.0,
+   "photo_u": -4.5,
+   "lidar_u": -2.91
+  },
+  {
+   "s": 292.5,
+   "photo_u": -4.5,
+   "lidar_u": -2.89
+  },
+  {
+   "s": 295.0,
+   "photo_u": -4.5,
+   "lidar_u": -2.86
+  },
+  {
+   "s": 297.5,
+   "photo_u": -4.375,
+   "lidar_u": null
+  },
+  {
+   "s": 300.0,
+   "photo_u": -4.5,
+   "lidar_u": null
+  },
+  {
+   "s": 302.5,
+   "photo_u": -4.375,
+   "lidar_u": null
+  },
+  {
+   "s": 305.0,
+   "photo_u": -4.375,
+   "lidar_u": null
+  },
+  {
+   "s": 307.5,
+   "photo_u": -4.25,
+   "lidar_u": null
+  },
+  {
+   "s": 310.0,
+   "photo_u": -4.125,
+   "lidar_u": null
+  },
+  {
+   "s": 312.5,
+   "photo_u": -4.0,
+   "lidar_u": null
+  },
+  {
+   "s": 315.0,
+   "photo_u": -3.875,
+   "lidar_u": null
+  },
+  {
+   "s": 317.5,
+   "photo_u": -3.75,
+   "lidar_u": null
+  },
+  {
+   "s": 320.0,
+   "photo_u": -3.75,
+   "lidar_u": null
+  },
+  {
+   "s": 322.5,
+   "photo_u": -3.75,
+   "lidar_u": null
+  },
+  {
+   "s": 325.0,
+   "photo_u": -3.5,
+   "lidar_u": null
+  },
+  {
+   "s": 327.5,
+   "photo_u": -3.5,
+   "lidar_u": null
+  },
+  {
+   "s": 330.0,
+   "photo_u": -3.625,
+   "lidar_u": null
+  },
+  {
+   "s": 332.5,
+   "photo_u": -3.625,
+   "lidar_u": null
+  },
+  {
+   "s": 335.0,
+   "photo_u": -3.75,
+   "lidar_u": null
+  },
+  {
+   "s": 337.5,
+   "photo_u": -3.875,
+   "lidar_u": null
+  },
+  {
+   "s": 340.0,
+   "photo_u": -3.875,
+   "lidar_u": null
+  },
+  {
+   "s": 342.5,
+   "photo_u": -4.0,
+   "lidar_u": null
+  },
+  {
+   "s": 345.0,
+   "photo_u": -4.125,
+   "lidar_u": null
+  },
+  {
+   "s": 347.5,
+   "photo_u": -4.125,
+   "lidar_u": null
+  },
+  {
+   "s": 350.0,
+   "photo_u": -4.125,
+   "lidar_u": null
+  },
+  {
+   "s": 352.5,
+   "photo_u": -4.125,
+   "lidar_u": null
+  },
+  {
+   "s": 355.0,
+   "photo_u": -4.125,
+   "lidar_u": null
+  },
+  {
+   "s": 357.5,
+   "photo_u": -4.125,
+   "lidar_u": null
+  },
+  {
+   "s": 360.0,
+   "photo_u": -3.875,
+   "lidar_u": null
+  },
+  {
+   "s": 362.5,
+   "photo_u": -3.75,
+   "lidar_u": null
+  },
+  {
+   "s": 365.0,
+   "photo_u": -3.625,
+   "lidar_u": null
+  },
+  {
+   "s": 367.5,
+   "photo_u": -3.5,
+   "lidar_u": null
+  },
+  {
+   "s": 370.0,
+   "photo_u": -3.5,
+   "lidar_u": null
+  },
+  {
+   "s": 372.5,
+   "photo_u": -3.375,
+   "lidar_u": null
+  },
+  {
+   "s": 375.0,
+   "photo_u": -3.375,
+   "lidar_u": null
+  },
+  {
+   "s": 377.5,
+   "photo_u": -3.25,
+   "lidar_u": null
+  },
+  {
+   "s": 380.0,
+   "photo_u": -3.25,
+   "lidar_u": null
+  },
+  {
+   "s": 382.5,
+   "photo_u": -3.375,
+   "lidar_u": null
+  },
+  {
+   "s": 385.0,
+   "photo_u": -3.375,
+   "lidar_u": null
+  },
+  {
+   "s": 387.5,
+   "photo_u": -3.375,
+   "lidar_u": null
+  },
+  {
+   "s": 390.0,
+   "photo_u": -3.625,
+   "lidar_u": null
+  },
+  {
+   "s": 392.5,
+   "photo_u": -3.625,
+   "lidar_u": null
+  },
+  {
+   "s": 395.0,
+   "photo_u": -3.625,
+   "lidar_u": null
+  },
+  {
+   "s": 397.5,
+   "photo_u": -3.625,
+   "lidar_u": null
+  },
+  {
+   "s": 400.0,
+   "photo_u": -3.5,
+   "lidar_u": null
+  },
+  {
+   "s": 402.5,
+   "photo_u": -3.375,
+   "lidar_u": null
+  },
+  {
+   "s": 405.0,
+   "photo_u": -3.25,
+   "lidar_u": null
+  },
+  {
+   "s": 407.5,
+   "photo_u": -3.125,
+   "lidar_u": null
+  },
+  {
+   "s": 410.0,
+   "photo_u": -3.0,
+   "lidar_u": null
+  },
+  {
+   "s": 412.5,
+   "photo_u": -2.875,
+   "lidar_u": null
+  },
+  {
+   "s": 415.0,
+   "photo_u": -2.75,
+   "lidar_u": null
+  },
+  {
+   "s": 417.5,
+   "photo_u": -2.625,
+   "lidar_u": null
+  },
+  {
+   "s": 420.0,
+   "photo_u": -2.5,
+   "lidar_u": null
+  },
+  {
+   "s": 422.5,
+   "photo_u": -2.5,
+   "lidar_u": null
+  },
+  {
+   "s": 425.0,
+   "photo_u": -2.5,
+   "lidar_u": null
+  },
+  {
+   "s": 427.5,
+   "photo_u": null,
+   "lidar_u": null
+  },
+  {
+   "s": 430.0,
+   "photo_u": null,
+   "lidar_u": null
+  },
+  {
+   "s": 432.5,
+   "photo_u": null,
+   "lidar_u": null
+  },
+  {
+   "s": 435.0,
+   "photo_u": null,
+   "lidar_u": null
+  },
+  {
+   "s": 437.5,
+   "photo_u": null,
+   "lidar_u": null
+  },
+  {
+   "s": 440.0,
+   "photo_u": null,
+   "lidar_u": null
+  },
+  {
+   "s": 442.5,
+   "photo_u": null,
+   "lidar_u": null
+  },
+  {
+   "s": 445.0,
+   "photo_u": -2.5,
+   "lidar_u": null
+  },
+  {
+   "s": 447.5,
+   "photo_u": -2.5,
+   "lidar_u": null
+  },
+  {
+   "s": 450.0,
+   "photo_u": -2.5,
+   "lidar_u": null
+  },
+  {
+   "s": 452.5,
+   "photo_u": -2.5,
+   "lidar_u": null
+  },
+  {
+   "s": 455.0,
+   "photo_u": null,
+   "lidar_u": null
+  },
+  {
+   "s": 457.5,
+   "photo_u": null,
+   "lidar_u": null
+  },
+  {
+   "s": 460.0,
+   "photo_u": null,
+   "lidar_u": null
+  },
+  {
+   "s": 462.5,
+   "photo_u": null,
+   "lidar_u": null
+  },
+  {
+   "s": 465.0,
+   "photo_u": null,
+   "lidar_u": null
+  },
+  {
+   "s": 467.5,
+   "photo_u": null,
+   "lidar_u": null
+  },
+  {
+   "s": 470.0,
+   "photo_u": null,
+   "lidar_u": null
+  },
+  {
+   "s": 472.5,
+   "photo_u": null,
+   "lidar_u": null
+  },
+  {
+   "s": 475.0,
+   "photo_u": null,
+   "lidar_u": null
+  },
+  {
+   "s": 477.5,
+   "photo_u": null,
+   "lidar_u": null
+  },
+  {
+   "s": 480.0,
+   "photo_u": null,
+   "lidar_u": null
+  },
+  {
+   "s": 482.5,
+   "photo_u": null,
+   "lidar_u": null
+  },
+  {
+   "s": 485.0,
+   "photo_u": null,
+   "lidar_u": null
+  },
+  {
+   "s": 487.5,
+   "photo_u": null,
+   "lidar_u": null
+  },
+  {
+   "s": 490.0,
+   "photo_u": null,
+   "lidar_u": null
+  },
+  {
+   "s": 492.5,
+   "photo_u": -4.875,
+   "lidar_u": null
+  },
+  {
+   "s": 495.0,
+   "photo_u": -4.75,
+   "lidar_u": null
+  },
+  {
+   "s": 497.5,
+   "photo_u": -4.875,
+   "lidar_u": null
+  },
+  {
+   "s": 500.0,
+   "photo_u": -4.875,
+   "lidar_u": null
+  },
+  {
+   "s": 502.5,
+   "photo_u": -4.875,
+   "lidar_u": null
+  },
+  {
+   "s": 505.0,
+   "photo_u": -5.0,
+   "lidar_u": null
+  }
+ ]
+}

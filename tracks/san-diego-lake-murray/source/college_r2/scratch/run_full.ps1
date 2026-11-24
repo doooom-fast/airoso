@@ -20,7 +20,7 @@ $pb = "$Ws\blender\$slug.blend"
 New-Item -ItemType Directory -Force $Log | Out-Null
 $order = @("college_data", "college_split", "college_middle", "college_ground", "median_rebuild", "median_tops", "lamp_heads", "walk_grade", "race_bands",
            "race_planned_gate", "layout_dummies", "race_author", "signs", "race_verify",
-           "prep", "thin", "freeway", "rock", "red", "walk_seat", "split", "export_road", "ground_check")
+           "prep", "thin", "freeway", "rock", "red", "walk_seat", "road_wear", "split", "export_road", "ground_check", "road_wear_check")
 $start = [array]::IndexOf($order, $From)
 $stop = if ($To) { [array]::IndexOf($order, $To) } else { $order.Count - 1 }
 if ($start -lt 0 -or $stop -lt 0) { "no such step; the steps: $($order -join ', ')"; exit 2 }
@@ -48,6 +48,8 @@ foreach ($s in @("split", "middle", "ground")) {
   Step "college_$s" $Blender @("--background", "$Ws\loop.blend", "--python-exit-code", "1", "--python", "$r2\college_${s}_blend.py") "^\[college_$s\]|FATAL|Error|Traceback" 3000 $Ws
 }
 Step "median_rebuild" $Blender @("--background", "--python-exit-code", "1", "--python", "$Air\tools\author_median_rebuild_blend.py", "--", $Ws, "--v021", "$Air\tracks\san-diego-lake-murray\scripts-v021") "^\[median-rebuild\]|FATAL|Error|Traceback" 700 $Ws
+# the same step's paint-only pass (route.paint_rebuild: Jackson Dr north's painted median, ledger 0099 round 3 item 4)
+if (Want "median_rebuild") { $rc = Run-Low $Blender @("--background", "--python-exit-code", "1", "--python", "$Air\tools\author_median_rebuild_blend.py", "--", $Ws, "--paint-only", "--v021", "$Air\tracks\san-diego-lake-murray\scripts-v021") "paint_rebuild" $Ws; $rc[0]; Get-Content "$Log\paint_rebuild.out.txt" | Select-String "^\[median-rebuild\]|FATAL|Error|Traceback" | ForEach-Object { $_.Line.Substring(0, [Math]::Min(700, $_.Line.Length)) } }
 Step "median_tops" $Blender @("--background", "--python-exit-code", "1", "--python", "$Air\tools\author_median_tops_blend.py", "--", $Ws) "^\[median-tops\]|FATAL|Error|Traceback" 500 $Ws
 Step "lamp_heads" $Blender @("--background", "--python-exit-code", "1", "--python", "$Air\tools\author_lamp_heads_blend.py", "--", $Ws) "^\[heads\]|FATAL|Error|Traceback" 400 $Ws
 Step "walk_grade" $Blender @("--background", "--python-exit-code", "1", "--python", "$Air\tools\author_walk_grade_blend.py", "--", $Ws) "^\[walk-grade\]|FATAL|Error|Traceback" 500 $Ws
@@ -92,6 +94,12 @@ if (Test-Path "$Ws\data\red_repairs.plan.json") {
   Step "red" $Blender @("--background", "--python-exit-code", "1", "--python", "$Air\tools\red_repairs_blend.py", "--", $pb, "--project", $Ws) "^\[red\]|Error|Traceback" 330 $Ws
 }
 Step "walk_seat" $Blender @("--background", "--python-exit-code", "1", "--python", "$Air\tools\author_walk_grade_blend.py", "--", $pb, "--project", $Ws, "--seat") "^\[walk-grade\] --seat:|FATAL|Error|Traceback" 330 $Ws
+# the road-wear bake, last in prep (tools/ship_track.sh prep_prep; opt-in on the config's road_wear key). Its time is printed:
+# the step line's seconds are the bake's
+if ((Want "road_wear") -and ((Get-Content "$Ws\track.config.json" -Raw | ConvertFrom-Json).road_wear)) {
+  Remove-Item "$Ws\data\road_wear.json" -ErrorAction SilentlyContinue
+  Step "road_wear" $Blender @("--background", "--python-exit-code", "1", "--python", "$Air\tools\road_wear_blend.py", "--", $pb, "--project", $Ws, "--eng", $Eng) "^\[road_wear\]|^\[road_lanes\] \d|FATAL|Error|Traceback" 400 $Ws
+}
 # ------------------------------------------------------------------------------------ split, road kn5, ground check
 Step "split" $Blender @("--background", "--python-exit-code", "1", "--python", "$Air\tools\split_exports_blend.py", "--", $pb, "--project", $Ws, "--out-dir", "$Ws\blender\split") "^\[split\] main|Error|Traceback" 260 $Ws
 Step "export_road" $Blender @("--background", "--python-exit-code", "1", "--python", "$Eng\scripts\ac\export_kn5_addon.py", "--", $Ws, "--blend", "$Ws\blender\split\loop_main.blend") "KN5 EXISTS|Error|Traceback" 260 $Ws
@@ -99,5 +107,10 @@ if (Want "ground_check") {
   $rc = Run-Low "python" @("-m", "scripts.ac.kn5_ground_check", $Ws, "--json", "$Ws\data\kn5_ground_check.scratch.json") "ground_check" $Air
   $rc[0]; Get-Content "$Log\ground_check.out.txt" | ForEach-Object { $_.Substring(0, [Math]::Min(200, $_.Length)) }
   Get-Content "$Log\ground_check.err.txt" -Tail 5
+}
+if ((Want "road_wear_check") -and (Test-Path "$Ws\data\road_wear.json")) {
+  $rc = Run-Low "python" @("tools/road_wear_check.py", $Ws, "--kn5", "$Ws\build\$slug.kn5", "--json", "$Ws\data\road_wear_check.json") "road_wear_check" $Air
+  $rc[0]; Get-Content "$Log\road_wear_check.out.txt" | ForEach-Object { $_.Substring(0, [Math]::Min(420, $_.Length)) }
+  Get-Content "$Log\road_wear_check.err.txt" -Tail 5
 }
 "DONE"

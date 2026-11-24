@@ -4,7 +4,7 @@
   "ui_series": "",
   "_ui_series_doc": "Engine track_folder prefixes the CM display name with ui_series (default 'K10 Colorado'); empty = use the track name as-is (SD names already carry the K10 - San Diego branding).",
   "slug": "san_diego_lake_murray",
-  "version": "0.20.6",
+  "version": "0.20.8",
   "author": "k10-san-diego",
   "year": 2026,
   "_about": "A single drivable LOOP around Lake Murray (Kevin's childhood neighborhood). This repo is the standalone, Blender-first home for the track: the loop is mapped from the REAL roads (OpenStreetMap) at REAL elevation (USGS 3DEP), imported into Blender, and shaped there interactively (Kevin designs, Claude operates) BEFORE any kn5 export. Start point = just the 5-road main loop; everything else is added deliberately, in Blender.",
@@ -196,6 +196,11 @@
       "line": "north_mission_gorge",
       "was_rows": [[8, 48], [63, 741]],
       "record": "source/expansion/mg_median/mg_median_correction.json"
+    },
+    "paint_rebuild": {
+      "_doc": "ledger 0099 round 3, item 4 (the Mac 2026-11-23): Jackson Dr north's painted median was an aerial read that had caught one edge of a hatched band (source/expansion/jackson_paint/: the lidar, the photo, fix_jackson_median.py, its record). The draft that lays a piece's paint never runs again on this chain, so tools/author_median_rebuild_blend.py --paint-only re-lays this ONE connector's paint in the scene: every old strip found exactly by the assembler's own paint function on the record's paint_before, or the step refuses",
+      "line": "north_J5_jackson_north#0",
+      "record": "source/expansion/jackson_paint/jackson_median_correction.json"
     },
     "median_tops": {
       "_doc": "ledger 0055, 'Known defect of the current build' (the Mac 2026-11-23, option (a)): every raised median showed the road's asphalt between its curbs, because its grass top was part of TERRAIN and the prep sets every 1GRASS vertex with pavement under it to the deck less 0.02 m (2,486 of 2,486 island rows on 0.20.3). Opt-in key of the chain's author step median_tops (tools/author_median_tops_blend.py): every island's top is moved, face for face, out of TERRAIN into this object, which the prep does not pin. The name is the surface and the material: 1LAWN is the engine table's other physical turf row (the same grass textures this track's ground wears); lawn_as_grass gives its surface key GRASS's own values. tools/make_treefx.py seats the median plants on it. Absent = no-op.",
@@ -1246,6 +1251,85 @@
     ],
     "assembler_smooth": "tracks/san-diego-lake-murray/scripts-v021/geometry/smooth.py",
     "_assembler_smooth_doc": "the assembler of record's smoothing module, read by tools/deck_datum.py's fold-fan fit to predict the centreline build_loop_blend will build (plan smoothing + per-window sigma_y): the fit judges the ribbon the build will carry, not the pre-median line (ledger 0057 fix round)"
+  },
+  "road_wear": {
+    "_doc": "ledger 0099 round 3, item 3 (0.20.7): road wear on Lake Murray (ledger 0084: tools/road_wear_blend.py in prep, the hard gate tools/road_wear_check.py on the built road kn5). A street: the wear lines are the LANES (lanes, below), not a racing line, one bake for all five layouts (the Mac 2026-11-23: 'lanes only'; a racing line would cross the street lanes in Free Roam). The road's tone is the aerial's (aerial), flat where the road is built off the real one (tone.flat). Everything not named here is scripts/aerial/road_wear.DEFAULTS.",
+    "surfaces": [
+      "1ROAD"
+    ],
+    "_surfaces_doc": "the road alone. Lake Murray's 1KERB_sidewalk is a real sidewalk beside the road, not Milford's asphalt edge strip, so it keeps its own concrete.",
+    "texel_m": 0.5,
+    "_texel_doc": "KEVIN 2026-11-23: '50 cm now'. His 'Full road wear at 10 cm' (2026-11-22) was offered as one texture of 89 MB; that was a perfect-packing estimate. Replayed on the built road (52,946 faces, 502,157 m2; a face reaches 11.21 m from its centroid, so the planner's margin is 12-16 m): 0.50 m = 1 atlas of 8192, 0.25 m = 2, 0.125 m = 5, 10 cm = 7 (about 623 MB), and the bake holds one. At 0.50 m: 8192 x 0.5 / 4 = 1024, whole (the detail's phase); a tile's pitch (64 + 32) / 0.5 = 192 px, whole. The macro carries the photo's tone (the photo is 0.50 m a pixel) and the lanes' wear; the asphalt's grain is the detail texture, at its own resolution. 25 cm stays open as its own item (per-face margins, or a multi-atlas bake).",
+    "aerial": {
+      "image": "source/naip_2022_lm_full_z18.jpg",
+      "bbox_lonlat": [
+        -117.101898193,
+        32.77110995,
+        -117.01675415,
+        32.818440774
+      ],
+      "_doc": "USDA NAIP 2022-04-25 (public domain), the whole-box z18 mosaic (source/naip_2022_lm_full_z18.md; Git LFS, sha256 1764a80b...). bbox = its 62 x 41 tiles from x 45801, y 105749 (its georef). The mosaic is Web Mercator and the bake reads an image as linear in latitude: over its 5,260 m north to south that is off by at most 0.35 m, at mid-height [measured on the georef], under one photo pixel and under the texel; the bake's own registration shift takes up what is common."
+    },
+    "lanes": {
+      "split_zones": [
+        {
+          "kind": "college_split",
+          "from": 1130,
+          "to": 1476,
+          "source": "source/college_r2/college_split.data.json"
+        }
+      ],
+      "exclude": [
+        {
+          "road": "college_nb",
+          "from": 0,
+          "to": 345,
+          "why": "the Speedway lap's line along College's NORTHBOUND road (ledger 0055 round 2; race.laps.college), a plain connector record, so the paint rule read it as a two-way road with a centre yellow: 8 lanes (12 lane records, 2.7 km of lane line) laid over the split zone's own lanes for that 1.0 km of road, so its wheel paths were drawn twice and half of them against the traffic (the first trial bake's deepest rubber, 39.4 %, was two lanes' stripes multiplied). The split zone's reader supplies that road's lanes"
+        }
+      ],
+      "ends": {
+        "fade_m": 8.0
+      },
+      "dash_gap_rows": 8,
+      "_dash_gap_doc": "tools/road_lanes.py DASH GAPS (opt-in). Princess View's half carriageway is about 5.8-5.9 m between the yellow and the edge line, at the limit for two authored lanes, so its dashed divider flickers off for a row or a few; read as painted, lane 1 jogged 1.8 m outward there and, where lane 2 was welded across the gap, both lanes' wheel paths lay over the same space (the deepest rubber of the bake, 38.8 %, at Princess View row 207 and Jackson north row 617). A dashed divider's gap of at most 8 rows (24 m) between two painted rows is read as painted. 8 [invented]: the measured break (11 gaps of 1-8 rows, the rest 13 rows and longer, none at a side street) and two cycles of a 3 m dash and 9 m gap",
+      "_ends_doc": "tools/road_lanes.py LANE ENDS (opt-in). A lane that goes on in another record is welded to it (College's 12 joints at rows 1129 / 1130 and 1476 / 1477, 3 m apart; two authored lanes that drop out for two stations); every other open end fades over fade_m and is cut square, so no wheel path is drawn round a lane's end. fade_m 8.0 [invented]: two car lengths, where a driver leaves the lane's wheel paths for the turn, and over twice the wear band's 3.0 m reach, so the end reads as a fade. At a junction (the Mac 2026-11-23, ledger 0084 'Junction boxes and pads get the tone only'): no lane enters a pad and a side road's lanes stop at the through road's edge [measured], so pads and mouths carry the tone only, reached over the fade; a through road's own lanes run on through the box. Kevin's drive judges the length",
+      "_doc": "tools/road_lanes.py (ledger 0084's 'lanes' source): one line per lane, both directions, from the paint's own rule; the bake runs it and writes data/road_wear.lanes.json. College Ave's two one-way roads and their forks (rows 1130-1476) are read by read_college_split off the data the scene's rows were built to. Defaults: every connector, min_edge_lane_m 2.9 [invented], rubber 1.0 [invented]. 221 lane lines, 47.4 km forward and 49.4 km reverse once college_nb is left out (2026-11-23; the first trial bake had 233 with it)."
+    },
+    "wear": {
+      "spread_m": 0.55,
+      "_spread_doc": "[invented, road_wear's own first value] 0.55 leaves 'two tyre stripes with a lighter middle, a lane's look' (scripts/aerial/road_wear.DEFAULTS' note; the circuit default 0.70 merges them into one band). amplitude stays the default 0.22 [invented]: Kevin's drive judges both."
+    },
+    "tone": {
+      "smooth_m": 8.0,
+      "_smooth_doc": "the Mac 2026-11-23, after the first trial bake's look: 'the tone smoothed so nothing under ~8 m survives (cars, paint bars, shadow edges), with the broad old/new-asphalt patches kept'. Baked as read, the photo's tone printed its cars (dark blobs in the lanes), its crosswalks, stop bars and lane paint, and tree-shadow edges onto the road (Del Mar 0.2.6 was held for the first). scripts/aerial/road_wear.smooth_tone: the median of the lit asphalt in a 16 m window, on nodes every 4 m, drawn straight between them. 8.0 [invented]: over a car's length (4.5-5 m) and a crosswalk with its stop bar (3-4 m), so neither can be half of a 16 m window; whole-width patches of asphalt are kept from 8 m up. The gate's tone row reads the photo the same way (tools/road_wear_check.py, GATES-CHANGELOG 2026-11-23). Kevin's drive judges the look",
+      "flat": [
+        {
+          "road": "north_mission_gorge",
+          "from": 193,
+          "to": 209,
+          "why": "piece C s 600-650: 0.233 of the built road's lit photo samples do not read as asphalt"
+        },
+        {
+          "road": "north_mission_gorge",
+          "from": 410,
+          "to": 659,
+          "why": "piece C s 1250-2000 (15 bins): 0.139-0.252; the outer curbs put the road 1.6-3.0 m north-west of the real one here"
+        },
+        {
+          "road": "north_mission_gorge",
+          "from": 677,
+          "to": 710,
+          "why": "piece C s 2050-2150: 0.238 and 0.140"
+        },
+        {
+          "road": "north_mission_gorge",
+          "from": 727,
+          "to": 743,
+          "why": "piece C s 2200-2250: 0.125"
+        }
+      ],
+      "_flat_doc": "the Mac's rule, 2026-11-23: where Mission Gorge Rd is built off the real road, the photo's tone at the built road's place is partly the real verge and the real median's terracotta, so those stretches take the lit-asphalt tone (ratio 1.0), eased over 25 m at their ends; the lanes are drawn there as everywhere. Measured per 50 m of piece C (source/road_wear/tone_piece.py -> tone_piece_C.json): where the plan's edges are right the share that does not read as asphalt is 0.00-0.08 (median 0.02); the rows here are the 19 bins over 0.12 [invented], 950 m of 2,228. Rows are the connector's points (about 3 m apart). OWED with the road-edge round: the list goes when the road stands where the real one does."
+    }
   },
   "scenery": {
     "treefx": {

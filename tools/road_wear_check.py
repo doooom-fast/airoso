@@ -24,6 +24,28 @@ read again from the track's own image (track.config.json road_wear.aerial).
     rubber       the mean cross-line profile of the shipped atlas at the line's high-rubber stations is darkest on the
                  declared line: its darkening centroid within line_offset_max_m of it, its depth within
                  [depth_min_frac, depth_max_frac] of the declared amplitude x rubber x tyre profile
+    (road_wear.lanes, ledger 0099 round 3: a street's lines are its lanes, data/road_wear.lanes.json; Lake Murray. The
+    lanes cover the whole road, so there is no asphalt "off the line" and no single line to stand on:)
+    tone         as above, but every sample's atlas luminance is first divided by what the declared lanes leave of it
+                 (1 - the gate's own reading of their rubber there), so the row compares the photo with the macro's
+                 TONE; the same tone_r_min
+    lane_rubber  in place of rubber when no racing line is declared: across each lane (its centre +- 1.75 m, every tenth
+                 point), the shipped atlas's darkening against the section's two outer samples, set against the gate's
+                 own reading of the declared lanes at the same points: the mean shipped profile's centroid within
+                 line_offset_max_m of the declared profile's, its depth over the wheel paths (|u| <= 1.25 m) within
+                 [depth_min_frac, depth_max_frac] of the declared one. The same three thresholds as rubber
+    (road_wear.tone.smooth_m, ledger 0099 round 3: the bake keeps nothing of the photo's tone smaller than smooth_m, a
+    street's photo having cars, crosswalks and shadow edges on it. The tone row then compares the atlas with THE PHOTO
+    SMOOTHED THE SAME WAY, by the gate's own reading: at each sample, the median of the photo's lit-asphalt ratio over
+    the built road within +- smooth_m (a 1 m lattice; shadow and paint by the bake's own rules and grown as the bake
+    grows them, ceil(photo pixel / texel) texels; the ratio over the bake's declared lit median, clipped as the bake
+    clips it), where at least SMOOTH_MIN_SHARE of the lattice reads lit asphalt. The same tone_r_min.)
+    (road_wear.lanes.ends, ledger 0099 round 3: a lane's rubber follows its declared share along its length, a welded
+    tail runs on to its bridge point, and nothing is laid past a lane's end; make_lane_darkness reads all three, so
+    lane_rubber judges the shipped atlas against the lanes as declared, fades included.)
+    (road_wear.tone.flat, ledger 0099 round 3: named stretches take the lit-asphalt tone, not the photo's, because the
+    road there is built off the real one. The tone row leaves samples on those stretches out and says how many: the
+    macro is declared NOT to follow the photograph there. Every other row judges them as any road.)
     (road_wear.rubber "photo", Kevin 2026-11-10 "Use the photo's rubber"; High Plains 0.1.7: no band is drawn, so the
     rubber row above is not run, and in its place:)
     photo_rubber per line: the shipped atlas's darkening across the declared line against its mirror across the declared
@@ -93,6 +115,9 @@ GATE = {
                                  # writer's matrix_world @ co once more (half a step); first-order propagation
 }
 SLOTS = ("txDiffuse", "txNormal", "txDetail", "txNormalDetail")
+# road_wear.tone.smooth_m: the gate's window median needs this share of its lattice points on lit asphalt
+# (scripts/aerial/road_wear.SMOOTH_MIN_LIT_SHARE, restated) [invented, the bake's number]
+SMOOTH_MIN_SHARE = 0.375
 
 
 def materials_with_props(path: Path) -> list[dict]:
@@ -403,6 +428,198 @@ def make_darkness(line_pts: list, closed: bool, w: dict, layer: float, amp: floa
         return 1.0 - keep
 
     return darkness
+
+
+def make_lane_darkness(lanes: list, w: dict, amp: float):
+    """The gate's own reading of the declared LANES' rubber (road_wear.lanes; scripts/aerial/road_wear.wear_at restated
+    without numpy, as make_darkness): lanes = [(points [(x, y, ...)], closed)], every lane a line of uniform rubber;
+    darkness(x, y) = 1 - prod over the lanes within reach of (1 - amp x tyre_profile(distance to the lane)).
+    road_wear.lanes.ends: a lane may be (points, closed, share, butt): ``share`` its rubber share per point, drawn
+    straight along a segment as wear_at draws it, and ``butt`` true where nothing is laid past an open lane's two ends."""
+    reach = 0.5 * w["track_m"] + 4 * w["spread_m"]
+    segs = {}
+    for li, lane in enumerate(lanes):
+        pts, closed = lane[0], lane[1]
+        share = lane[2] if len(lane) > 2 and lane[2] is not None else None
+        butt = bool(lane[3]) if len(lane) > 3 else False
+        n = len(pts)
+        m = n if closed else n - 1
+        for i in range(m):
+            a_, b_ = pts[i], pts[(i + 1) % n]
+            sa, sb = (share[i], share[(i + 1) % n]) if share is not None else (1.0, 1.0)
+            segs.setdefault((int(a_[0] // 8), int(a_[1] // 8)), []).append(
+                (li, a_, b_, sa, sb, butt and not closed and i == 0, butt and not closed and i == m - 1))
+
+    def darkness(x, y):
+        best = {}
+        for ci in range(int(x // 8) - 1, int(x // 8) + 2):
+            for cj in range(int(y // 8) - 1, int(y // 8) + 2):
+                for (li, a_, b_, sa, sb, first, last) in segs.get((ci, cj), ()):
+                    ex, ey = b_[0] - a_[0], b_[1] - a_[1]
+                    l2 = max(ex * ex + ey * ey, 1e-12)
+                    t_raw = ((x - a_[0]) * ex + (y - a_[1]) * ey) / l2
+                    t = min(1.0, max(0.0, t_raw))
+                    d = math.hypot(x - a_[0] - t * ex, y - a_[1] - t * ey)
+                    if d < best.get(li, (1e18,))[0]:
+                        past = (first and t_raw < 0.0) or (last and t_raw >= 1.0)
+                        best[li] = (d, 0.0 if past else sa * (1.0 - t) + sb * t)
+        keep = 1.0
+        for d, sh in best.values():
+            if d <= reach:
+                keep *= 1.0 - amp * sh * tyre_profile(d, w["track_m"], w["spread_m"])
+        return 1.0 - keep
+
+    return darkness
+
+
+def make_flat_test(flats: list):
+    """in_flat(x, y): the point lies on a declared flat-tone stretch (data/road_wear.json stats.flat_tone: each stretch's
+    line and half widths, the skirt included), eased ends and all."""
+    segs = {}
+    for f in flats or []:
+        P, H = f["line_xy"], f["half_m"]
+        for i in range(len(P) - 1):
+            h = max(H[i], H[i + 1])
+            x0, x1 = min(P[i][0], P[i + 1][0]) - h, max(P[i][0], P[i + 1][0]) + h
+            y0, y1 = min(P[i][1], P[i + 1][1]) - h, max(P[i][1], P[i + 1][1]) + h
+            for ci in range(int(x0 // 16), int(x1 // 16) + 1):
+                for cj in range(int(y0 // 16), int(y1 // 16) + 1):
+                    segs.setdefault((ci, cj), []).append((P[i], P[i + 1], H[i], H[i + 1]))
+
+    def in_flat(x, y):
+        for a_, b_, ha, hb in segs.get((int(x // 16), int(y // 16)), ()):
+            ex, ey = b_[0] - a_[0], b_[1] - a_[1]
+            l2 = max(ex * ex + ey * ey, 1e-12)
+            t = min(1.0, max(0.0, ((x - a_[0]) * ex + (y - a_[1]) * ey) / l2))
+            if math.hypot(x - a_[0] - t * ex, y - a_[1] - t * ey) <= ha + t * (hb - ha):
+                return True
+        return False
+
+    return in_flat
+
+
+def lane_rubber_row(lanes: list, uv_lum, lane_dark, step: int = 10) -> dict:
+    """The lane_rubber row (module docstring). lanes = [(points, closed)]; uv_lum(x, y) -> the shipped atlas's luminance
+    there, or None off the road; lane_dark(x, y) -> the declared lanes' darkness there."""
+    K = 7                                            # +- 1.75 m at 0.25 m: inside a 3.65 m lane, its two wheel paths in it
+    gs = {k: 0.0 for k in range(-K, K + 1)}
+    hs = {k: 0.0 for k in range(-K, K + 1)}
+    nst = 0
+    for lane in lanes:
+        pts, closed = lane[0], lane[1]
+        n = len(pts)
+        for i in range(step // 2, n, step):
+            a_ = pts[(i - 1) % n] if (closed or i > 0) else pts[i]
+            b_ = pts[(i + 1) % n] if (closed or i < n - 1) else pts[i]
+            tx_, ty_ = b_[0] - a_[0], b_[1] - a_[1]
+            tl = math.hypot(tx_, ty_)
+            if tl < 1e-9:
+                continue
+            nx, ny = -ty_ / tl, tx_ / tl
+            row_s, row_d = {}, {}
+            for k in range(-K, K + 1):
+                x, y = pts[i][0] + nx * k * 0.25, pts[i][1] + ny * k * 0.25
+                v = uv_lum(x, y)
+                if v is None:
+                    break
+                row_s[k] = v
+                row_d[k] = 1.0 - lane_dark(x, y)
+            else:
+                ref_s = 0.5 * (row_s[-K] + row_s[K])
+                ref_d = 0.5 * (row_d[-K] + row_d[K])
+                if ref_s <= 0 or ref_d <= 0:
+                    continue
+                for k in row_s:
+                    gs[k] += 1.0 - row_s[k] / ref_s
+                    hs[k] += 1.0 - row_d[k] / ref_d
+                nst += 1
+    if nst < 10:
+        return {"pass": False, "stations": nst, "note": "too few full lane cross-sections on the built road"}
+    g = {k: v / nst for k, v in gs.items()}
+    h = {k: v / nst for k, v in hs.items()}
+
+    def centroid(m):
+        tot = sum(max(0.0, v) for v in m.values())
+        return sum(k * 0.25 * max(0.0, v) for k, v in m.items()) / tot if tot > 0 else float("nan")
+
+    ks = [k for k in g if abs(k) <= 5]               # |u| <= 1.25 m: the two wheel paths (track 1.6 m)
+    depth, want = sum(g[k] for k in ks) / len(ks), sum(h[k] for k in ks) / len(ks)
+    c_s, c_d = centroid(g), centroid(h)
+    ok = (want > 0 and c_s == c_s and c_d == c_d and abs(c_s - c_d) <= GATE["line_offset_max_m"]
+          and GATE["depth_min_frac"] * want <= depth <= GATE["depth_max_frac"] * want)
+    return {"pass": bool(ok), "stations": nst, "centroid_m": round(c_s, 3), "declared_centroid_m": round(c_d, 3),
+            "depth_on_wheel_paths": round(depth, 4), "declared_depth": round(want, 4),
+            "profile": {round(k * 0.25, 2): round(g[k], 4) for k in sorted(g)},
+            "declared_profile": {round(k * 0.25, 2): round(h[k], 4) for k in sorted(h)}}
+
+
+def smoothed_photo(places: list, on_road, pixel_of, lum_px, size: tuple, tone: dict, med: float, ref_lit: float,
+                   smooth_m: float, px_m: float, tex: float) -> tuple[list, dict]:
+    """The tone row's photo under road_wear.tone.smooth_m (module docstring), by the gate's own reading: at each place
+    (x, y, u, v, left), the median of the photo's lit-asphalt ratio over the built road within +- smooth_m, on a 1 m
+    lattice. A lattice point is lit asphalt when no photo pixel within the bake's grow distance is shadow (darker than
+    shadow_lum x med AND bluer than shadow_blue) or paint (brighter than paint_lum x med): scripts/aerial/road_wear
+    tone_field grows both masks by ceil(px_m / tex) texels, here round(that / px_m) photo pixels. The ratio is over
+    ``ref_lit`` (the bake's declared lit median) and clipped as the bake clips it. A place with fewer than
+    SMOOTH_MIN_SHARE of its lattice on lit asphalt is left out and counted.
+
+    on_road(x, y) -> bool; pixel_of(x, y) -> (i, j) or None off the photo; lum_px(i, j) -> (luminance 0..1, blue / red);
+    size = (photo width, height). Returns (samples [(photo, u, v, left)], record)."""
+    aw, ah = size
+    lo, hi = tone["clip"]
+    kk = int(round(smooth_m))
+    need = int(math.ceil(SMOOTH_MIN_SHARE * (2 * kk + 1) ** 2))
+    grow_m = math.ceil(px_m / tex - 1e-9) * tex
+    gp = max(1, int(round(grow_m / px_m)))
+    bad_at = bytearray(aw * ah)                          # 0 unread, 1 lit, 2 shadow or paint
+    grown_at = bytearray(aw * ah)                        # 0 unread, 1 clear, 2 a bad pixel within gp
+
+    def bad_px(i, j):
+        k_ = j * aw + i
+        got = bad_at[k_]
+        if not got:
+            L_, B_ = lum_px(i, j)
+            got = 2 if ((L_ < tone["shadow_lum"] * med and B_ > tone["shadow_blue"]) or L_ > tone["paint_lum"] * med) else 1
+            bad_at[k_] = got
+        return got == 2
+
+    def grown_px(i, j):
+        k_ = j * aw + i
+        got = grown_at[k_]
+        if not got:
+            got = 1
+            for jj in range(max(0, j - gp), min(ah, j + gp + 1)):
+                for ii in range(max(0, i - gp), min(aw, i + gp + 1)):
+                    if bad_px(ii, jj):
+                        got = 2
+                        break
+                if got == 2:
+                    break
+            grown_at[k_] = got
+        return got == 2
+
+    samples = []
+    thin = 0
+    for (x, y, u_, v_, left) in places:
+        vals = []
+        for dj in range(-kk, kk + 1):
+            for di in range(-kk, kk + 1):
+                xx, yy = x + di, y + dj
+                if not on_road(xx, yy):
+                    continue
+                px = pixel_of(xx, yy)
+                if px is None or grown_px(*px):
+                    continue
+                vals.append(min(hi, max(lo, lum_px(*px)[0] / ref_lit)))
+        if len(vals) < need:
+            thin += 1
+            continue
+        vals.sort()
+        nv = len(vals)
+        samples.append((0.5 * (vals[(nv - 1) // 2] + vals[nv // 2]), u_, v_, left))
+    return samples, {"smooth_m": smooth_m, "window_m": 2.0 * kk, "lattice_m": 1.0, "min_points": need, "grow_px": gp,
+                     "grow_m": round(grow_m, 3), "ratio_reference_lum": round(ref_lit, 5),
+                     "samples_with_too_little_lit_asphalt": thin}
 
 
 def _ulp32(x: float) -> float:
@@ -807,6 +1024,26 @@ def main(argv=None) -> int:
         for q in pts:
             ch.setdefault((int(q[0] // 8), int(q[1] // 8)), []).append(q)
 
+    # road_wear.lanes (the bake's record): the lanes are the lines; road_wear.tone.flat: the stretches the photo's tone is
+    # declared not to carry
+    lanes_decl = decl.get("lanes")
+    lane_lines, lane_dark = [], None
+    if lanes_decl:
+        ldoc = json.loads((proj / lanes_decl["file"]).read_text(encoding="utf-8"))
+        lane_ends = bool(ldoc.get("ends"))           # road_wear.lanes.ends: share per point, a welded tail's bridge, square ends
+        for ln in ldoc["lanes"]:
+            lp = [(q[0], q[2]) for q in ln["points_xyz_m"]]
+            if not lane_ends:
+                lane_lines.append((lp, bool(ln["closed"])))
+                continue
+            sh = [float(v) for v in (ln.get("rubber_share") or [1.0] * len(lp))]
+            if ln.get("bridge_to_xyz_m"):
+                lp.append((ln["bridge_to_xyz_m"][0], ln["bridge_to_xyz_m"][2])); sh.append(sh[-1])
+            lane_lines.append((lp, bool(ln["closed"]), sh, True))
+        lane_dark = make_lane_darkness(lane_lines, w, amp * float(ldoc["rubber"]))
+    flats = (decl.get("stats") or {}).get("flat_tone") or []
+    in_flat = make_flat_test(flats)
+
     def near_line(x, y):
         best = 1e18
         for i in range(int(x // 8) - 1, int(x // 8) + 2):
@@ -835,20 +1072,55 @@ def main(argv=None) -> int:
         rt = sorted(road_tris)
         step = max(1, len(rt) // 6000)
         samples = []
+        on_flat = 0
+        smooth_m = float(spec["tone"].get("smooth_m") or 0.0)     # road_wear.tone.smooth_m (module docstring)
+        places = []
         for ti in rt[::step]:
             (P0, P1, P2), (U0, U1, U2) = tris[ti]
             x = (P0[0] + P1[0] + P2[0]) / 3; y = (P0[1] + P1[1] + P2[1]) / 3
-            if near_line(x, y) < reach + 0.5:
+            if flats and in_flat(x, y):              # road_wear.tone.flat: the macro is declared not to follow the photo here
+                on_flat += 1
+                continue
+            if line_pts and near_line(x, y) < reach + 0.5:
                 continue
             al = aerial_lum(x, y)
             if al is None or al[1] > spec["tone"]["shadow_blue"]:
+                if smooth_m and al is not None:      # the smoothed form reads round the point: a shadow on it is no reason to leave
+                    left = (1.0 - lane_dark(x, y)) if lane_dark is not None else 1.0
+                    places.append((x, y, (U0[0] + U1[0] + U2[0]) / 3, (U0[1] + U1[1] + U2[1]) / 3, max(1e-6, left)))
                 continue
-            samples.append((al[0], (U0[0] + U1[0] + U2[0]) / 3, (U0[1] + U1[1] + U2[1]) / 3))
+            # road_wear.lanes: what the declared lanes leave of the tone at this point (1 with no lanes)
+            left = (1.0 - lane_dark(x, y)) if lane_dark is not None else 1.0
+            samples.append((al[0], (U0[0] + U1[0] + U2[0]) / 3, (U0[1] + U1[1] + U2[1]) / 3, max(1e-6, left)))
+            if smooth_m:
+                places.append((x, y) + samples[-1][1:])
         # the lit asphalt only: a shadow's edge and anything the bake clipped or filled is not the photo by design
+        smooth_rec = None
         if samples:
             med = sorted(s_[0] for s_ in samples)[len(samples) // 2]
             lo, hi = spec["tone"]["clip"]
-            samples = [s_ for s_ in samples if max(0.8, lo) * med <= s_[0] <= hi * med]
+            if smooth_m:
+                # the photo smoothed as declared, by the gate's own reading: the median of the lit-asphalt ratio over the
+                # built road within +- smooth_m of the sample, on a 1 m lattice. A lattice point is lit asphalt when no photo
+                # pixel within the bake's grow distance is shadow or paint (tone_field grows both masks by ceil(px / texel)
+                # texels: 1.0 m on Lake Murray, two photo pixels). The thresholds read against the samples' median (the
+                # bake's against the whole road's), the ratio against the bake's declared lit median, its own reference
+                px_m = max((Eb - Wb) * m_lon / aw, (Nb - Sb) * m_lat / ah)
+                ref_lit = float((decl["stats"].get("aerial") or {}).get("lit_median_lum") or med)
+
+                def pixel_of(xx, yy):
+                    lon = o["lon"] + (xx + reg["dx_m"]) / m_lon; lat = o["lat"] + (yy + reg["dy_m"]) / m_lat
+                    u = (lon - Wb) / (Eb - Wb) * aw; v = (Nb - lat) / (Nb - Sb) * ah
+                    return (int(u), int(v)) if (0 <= u < aw and 0 <= v < ah) else None
+
+                def lum_px(i, j):
+                    r_, g_, b_ = apx[i, j]
+                    return (0.2126 * r_ + 0.7152 * g_ + 0.0722 * b_) / 255.0, b_ / max(1, r_)
+
+                samples, smooth_rec = smoothed_photo(places, lambda xx, yy: uv_at(xx, yy) is not None, pixel_of, lum_px,
+                                                     (aw, ah), spec["tone"], med, ref_lit, smooth_m, px_m, tex)
+            else:
+                samples = [s_ for s_ in samples if max(0.8, lo) * med <= s_[0] <= hi * med]
 
         def pearson(pairs):
             n = len(pairs)
@@ -858,12 +1130,17 @@ def main(argv=None) -> int:
             sxy = sum((q[0] - mx) * (q[1] - my) for q in pairs)
             sx = math.sqrt(sum((q[0] - mx) ** 2 for q in pairs)); sy = math.sqrt(sum((q[1] - my) ** 2 for q in pairs))
             return sxy / max(1e-12, sx * sy)
-        tone_r = {f: pearson([(s_[0], atlas_lum(s_[1], s_[2], f)) for s_ in samples]) for f in VB}
+        tone_r = {f: pearson([(s_[0], atlas_lum(s_[1], s_[2], f) / s_[3]) for s_ in samples]) for f in VB}
         flip = max(tone_r, key=lambda k: tone_r[k] if tone_r[k] is not None else -2)
         r_best = tone_r[flip]
         rows["tone"] = {"pass": r_best is not None and r_best >= GATE["tone_r_min"], "pearson_r": round(r_best or 0, 4),
                         "samples": len(samples), "v_convention": flip,
-                        "r_by_convention": {k: round(v or 0, 4) for k, v in tone_r.items()}}
+                        "r_by_convention": {k: round(v or 0, 4) for k, v in tone_r.items()},
+                        **({"form": "lanes: each sample's atlas luminance over what the declared lanes leave of it"}
+                           if lane_dark is not None else {}),
+                        **({"photo": "smoothed as declared: the median lit-asphalt ratio within +- smooth_m of each sample",
+                            "smooth": smooth_rec} if smooth_rec is not None else {}),
+                        **({"samples_left_out_on_flat_tone_stretches": on_flat, "flat_tone_stretches": len(flats)} if flats else {})}
     else:
         flip = "-v"
         rows["tone"] = {"pass": True, "note": "no aerial declared: tone = 1 (nothing to follow)"}
@@ -914,6 +1191,16 @@ def main(argv=None) -> int:
                           "profile": {round(k * 0.25, 2): round(mean[k], 4) for k in sorted(mean)}}
     else:
         rows["rubber"] = {"pass": False, "stations": nst, "note": "too few full cross-sections on the built road"}
+    if lane_dark is not None:
+        # road_wear.lanes: the lanes are judged by lane_rubber; the racing-line row stands only when a line is declared too
+        if not line_pts:
+            rows.pop("rubber", None)
+
+        def uv_lum(x, y):
+            uv = uv_at(x, y)
+            return None if uv is None else atlas_lum(uv[0], uv[1], flip)
+        rows["lane_rubber"] = dict(lane_rubber_row(lane_lines, uv_lum, lane_dark), lanes=len(lane_lines),
+                                   declared_amplitude=amp, lanes_file=lanes_decl["file"])
     mode = spec.get("rubber", "drawn")
     if mode in ("photo", "none"):
         # no drawn band is declared: the drawn rubber row does not judge this build (it would demand one)

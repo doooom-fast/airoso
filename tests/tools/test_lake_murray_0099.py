@@ -65,7 +65,7 @@ def _is_lfs_pointer(p: Path) -> bool:
 def test_spec_takes_a_seed_list_and_emits_it_only_when_named():
     s = SPEC.load(LM / "ship.json", "san-diego-lake-murray")
     seeds = [ln.split("\t", 1)[1] for ln in SPEC.lines(s) if ln.startswith("in.seed\t")]
-    assert seeds == s["sync_in"]["seed"] and seeds[0] == "loop.blend" and len(seeds) == 101
+    assert seeds == s["sync_in"]["seed"] and seeds[0] == "loop.blend" and len(seeds) == 105
     # no other spec names a seed: their key<TAB>value lines carry no in.seed line (the chain as before)
     for p in OTHER_SPECS:
         o = SPEC.load(p, json.loads(p.read_text(encoding="utf-8"))["track"])
@@ -414,7 +414,9 @@ def test_the_road_and_the_sidewalks_bind_the_owned_pairs():
     for f, (md5, size) in MD5.items():
         b = (ROOT / "assets" / "textures" / f).read_bytes()
         assert len(b) == size and hashlib.md5(b).hexdigest() == md5, f
-    assert "road_wear" not in CFG                     # no road wear on Lake Murray: no detail_highpass_m
+    # road wear since 0.20.7 (ledger 0099 round 3, item 3; tests/tools/test_road_wear_lanes_0099.py), still no
+    # detail_highpass_m: the detail is the owned pair as it is
+    assert "detail_highpass_m" not in CFG["road_wear"]
     ov = pbr.load_overrides(LM)
     for name, want in (("1ROAD_road", "asphalt_dense"), ("1ROAD_pad_J2", "asphalt_dense"),
                        ("1ROAD_mouthfill_0", "asphalt_dense"), ("1KERB_sidewalk", "concrete_plain"),
@@ -440,8 +442,10 @@ def test_the_road_and_the_sidewalks_bind_the_owned_pairs():
             assert name in FINISH_FOUR, p
 
 
-def test_version_is_0_20_6():
+def test_version_is_0_20_8():
     """0.20.3 round 1; 0.20.4 round 1c (the walk's back grade, tests/tools/test_lake_murray_0099_walk_grade.py); 0.20.5
     round 2 (College Avenue as two roads and the medians' grass tops, ledger 0055; the version the Mac named); 0.20.6
-    round 3 (the Mac 2026-11-23: Mission Gorge's terracotta median first, tests/tools/test_terracotta_median_0099.py)"""
-    assert CFG["version"] == "0.20.6"
+    round 3 (the Mac 2026-11-23: Mission Gorge's terracotta median first, tests/tools/test_terracotta_median_0099.py);
+    0.20.7 round 3's item 3, road wear (the Mac 2026-11-23: "0.20.7, after 0.20.6's rehearsal result")"""
+    # 0.20.8: round 3's item 4, Jackson Dr north's painted median from the lidar (the Mac 2026-11-23: "as 0.20.8, after 0.20.7")
+    assert CFG["version"] == "0.20.8"

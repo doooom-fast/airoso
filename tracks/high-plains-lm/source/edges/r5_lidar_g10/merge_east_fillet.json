@@ -1,0 +1,2925 @@
+{
+ "_doc": "ledger 0097 round 5, owed item 1: the paved fillet behind the T13 kerb, the merge's EAST corner (round 4's full_north#0#0|end|+1: tools/mouth_radii.py's best NAIP arc ran to its 20 m grid's end). Read off the 2018 lidar's INTENSITY: asphalt returns ~700-1,300, the grass and the kerb's paint 4,500-9,000 (one flight line). The outline is the asphalt's edge read by rays every 1 deg from the fitted circle's centre (grass -> asphalt); the kerb's white blocks are the brightest returns just behind it.",
+ "source": {
+  "lidar": "USGS 3DEP CO_Eastern_B3_2018 lidar (public domain), its EPT: https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_Eastern_B3_2018/ept.json",
+  "returns": "every class but noise (7, 18); one flight line over all five spots: [1141]",
+  "returns_per_m2": {
+   "fork": 1.98,
+   "merge": 2.05,
+   "l254": 1.91,
+   "stripe372": 1.91,
+   "stripe648": 2.15
+  },
+  "frame": "the track frame: E, N metres about data/centerline.local.json's origin, lon / lat through scripts.geometry.projection._meters_per_degree (round 4's mapping); 3857 -> lon / lat by pyproj",
+  "lines": "the West lap as built (data/centerline.local.json + widths); the north loop's own line (source/full/connectors.full.json + widths: 'own s', the s of round 4's kerbs and stripes); OSM's line as measure_north.py builds it ('row s', north_loop.json's rows, whose left_m / right_m are metres off it)",
+  "script": "hp_r5_lidar.py beside this file (plan / fetch / extract / measure)"
+ },
+ "params": {
+  "W_M": 1.2,
+  "ALONG_M": 1.5,
+  "GRID_M": 0.05,
+  "SCORE_MIN": 1.6,
+  "N_MIN": 3,
+  "T_SENS": [
+   0.8,
+   1.25
+  ],
+  "HALF_ARC_M": 0.75,
+  "ARC_MID": 0.7,
+  "R_GRID": [
+   5.0,
+   60.0,
+   0.25
+  ],
+  "STRIPE_MIN_M": 0.5,
+  "TAPER_MIN_M": 0.2,
+  "SPOT_PAD_M": 22.0,
+  "_doc": "every one [invented] reader tuning; the returns are the measurement"
+ },
+ "measured": {
+  "asphalt_edge_radius_m": 23.0,
+  "asphalt_edge_radius_how": "the circle tangent to both legs' lidar edges (each a straight fit) that best fits the outline's middle ARC_MID (tools/mouth_radii.py's model, R every 0.25 m from 5 to 60 m)",
+  "fit": {
+   "median_dev_m": 0.128,
+   "points": 51,
+   "prominence": 20.44,
+   "at_grid_end": false,
+   "arc_m": 29.09,
+   "centre": {
+    "E": -68.62,
+    "N": 164.93,
+    "lonlat": [
+     -103.89826252,
+     39.73642685
+    ]
+   },
+   "tangent_on_west_lap_edge": {
+    "E": -74.11,
+    "N": 142.59,
+    "lonlat": [
+     -103.89832658,
+     39.73622569
+    ]
+   },
+   "tangent_on_ladder_edge": {
+    "E": -91.57,
+    "N": 163.43,
+    "lonlat": [
+     -103.89853025,
+     39.73641338
+    ]
+   },
+   "score_by_R": [
+    [
+     7.0,
+     3.872
+    ],
+    [
+     8.0,
+     3.531
+    ],
+    [
+     9.0,
+     3.263
+    ],
+    [
+     10.0,
+     2.961
+    ],
+    [
+     11.0,
+     2.708
+    ],
+    [
+     12.0,
+     2.477
+    ],
+    [
+     13.0,
+     2.26
+    ],
+    [
+     14.0,
+     2.063
+    ],
+    [
+     15.0,
+     1.818
+    ],
+    [
+     16.0,
+     1.585
+    ],
+    [
+     17.0,
+     1.371
+    ],
+    [
+     18.0,
+     1.151
+    ],
+    [
+     19.0,
+     0.929
+    ],
+    [
+     20.0,
+     0.718
+    ],
+    [
+     21.0,
+     0.518
+    ],
+    [
+     22.0,
+     0.304
+    ],
+    [
+     23.0,
+     0.128
+    ],
+    [
+     24.0,
+     0.192
+    ],
+    [
+     25.0,
+     0.307
+    ],
+    [
+     26.0,
+     0.491
+    ],
+    [
+     27.0,
+     0.635
+    ],
+    [
+     28.0,
+     0.753
+    ],
+    [
+     29.0,
+     0.943
+    ],
+    [
+     30.0,
+     1.15
+    ],
+    [
+     31.0,
+     1.34
+    ],
+    [
+     32.0,
+     1.539
+    ],
+    [
+     33.0,
+     1.703
+    ],
+    [
+     34.0,
+     1.857
+    ],
+    [
+     35.0,
+     1.992
+    ],
+    [
+     36.0,
+     2.174
+    ],
+    [
+     37.0,
+     2.36
+    ],
+    [
+     38.0,
+     2.532
+    ],
+    [
+     39.0,
+     2.722
+    ],
+    [
+     40.0,
+     2.739
+    ],
+    [
+     41.0,
+     2.903
+    ],
+    [
+     42.0,
+     3.099
+    ],
+    [
+     43.0,
+     3.27
+    ],
+    [
+     44.0,
+     3.446
+    ],
+    [
+     45.0,
+     3.584
+    ],
+    [
+     46.0,
+     3.687
+    ],
+    [
+     47.0,
+     3.866
+    ],
+    [
+     48.0,
+     4.08
+    ],
+    [
+     49.0,
+     4.296
+    ],
+    [
+     50.0,
+     4.512
+    ],
+    [
+     51.0,
+     4.729
+    ],
+    [
+     52.0,
+     4.948
+    ],
+    [
+     53.0,
+     5.167
+    ],
+    [
+     54.0,
+     5.387
+    ],
+    [
+     55.0,
+     5.608
+    ],
+    [
+     56.0,
+     5.83
+    ],
+    [
+     57.0,
+     6.052
+    ],
+    [
+     58.0,
+     6.275
+    ],
+    [
+     59.0,
+     6.499
+    ],
+    [
+     60.0,
+     6.723
+    ]
+   ]
+  },
+  "free_circle": {
+   "centre": [
+    -69.5,
+    164.02
+   ],
+   "R_m": 21.37,
+   "rms_m": 0.174,
+   "points": 71,
+   "_doc": "no tangency imposed: the outline's points between the tangent points"
+  },
+  "leg_windows": {
+   "_doc": "the same fit with each leg read over other distances from the built K: the radius's sensitivity to where the legs are taken (the corner eases in and out)",
+   "rows": [
+    {
+     "west_lap_leg_m_from_K": [
+      10.0,
+      26.0
+     ],
+     "ladder_leg_m_from_K": [
+      14.0,
+      28.0
+     ],
+     "R_m": 21.25,
+     "median_dev_m": 0.075,
+     "phi_deg": 113.09,
+     "free_R_m": 19.97,
+     "free_rms_m": 0.126
+    },
+    {
+     "west_lap_leg_m_from_K": [
+      14.0,
+      32.0
+     ],
+     "ladder_leg_m_from_K": [
+      18.0,
+      32.0
+     ],
+     "R_m": 23.0,
+     "median_dev_m": 0.128,
+     "phi_deg": 107.54,
+     "free_R_m": 21.36,
+     "free_rms_m": 0.177
+    },
+    {
+     "west_lap_leg_m_from_K": [
+      18.0,
+      36.0
+     ],
+     "ladder_leg_m_from_K": [
+      22.0,
+      36.0
+     ],
+     "R_m": 22.25,
+     "median_dev_m": 0.1,
+     "phi_deg": 109.35,
+     "free_R_m": 20.5,
+     "free_rms_m": 0.126
+    },
+    {
+     "west_lap_leg_m_from_K": [
+      12.0,
+      40.0
+     ],
+     "ladder_leg_m_from_K": [
+      16.0,
+      40.0
+     ],
+     "R_m": 22.25,
+     "median_dev_m": 0.1,
+     "phi_deg": 110.42,
+     "free_R_m": 20.31,
+     "free_rms_m": 0.142
+    }
+   ],
+   "R_min_max_m": [
+    21.25,
+    23.0
+   ]
+  },
+  "radius_along_the_outline": {
+   "_doc": "a circle through every 10 m of the outline, every 2 m along it from Ladder's edge round to the West lap's (+ = the corner's own sense; huge or - = straight or turning back)",
+   "rows": [
+    {
+     "along_m": 5.0,
+     "E": -91.59,
+     "N": 166.77,
+     "R_m": 2379.8,
+     "rms_m": 0.031
+    },
+    {
+     "along_m": 7.0,
+     "E": -91.52,
+     "N": 164.78,
+     "R_m": 24.0,
+     "rms_m": 0.111
+    },
+    {
+     "along_m": 9.0,
+     "E": -91.31,
+     "N": 162.85,
+     "R_m": 24.0,
+     "rms_m": 0.119
+    },
+    {
+     "along_m": 11.0,
+     "E": -90.6,
+     "N": 161.05,
+     "R_m": 222.6,
+     "rms_m": 0.126
+    },
+    {
+     "along_m": 13.0,
+     "E": -90.18,
+     "N": 159.16,
+     "R_m": 49.5,
+     "rms_m": 0.153
+    },
+    {
+     "along_m": 15.0,
+     "E": -89.84,
+     "N": 157.29,
+     "R_m": 24.4,
+     "rms_m": 0.116
+    },
+    {
+     "along_m": 17.0,
+     "E": -88.95,
+     "N": 155.51,
+     "R_m": 32.0,
+     "rms_m": 0.116
+    },
+    {
+     "along_m": 19.0,
+     "E": -88.26,
+     "N": 153.82,
+     "R_m": 25.6,
+     "rms_m": 0.109
+    },
+    {
+     "along_m": 21.0,
+     "E": -87.35,
+     "N": 152.08,
+     "R_m": 20.0,
+     "rms_m": 0.098
+    },
+    {
+     "along_m": 23.0,
+     "E": -86.12,
+     "N": 150.57,
+     "R_m": 19.1,
+     "rms_m": 0.077
+    },
+    {
+     "along_m": 25.0,
+     "E": -84.86,
+     "N": 149.07,
+     "R_m": 25.6,
+     "rms_m": 0.058
+    },
+    {
+     "along_m": 27.0,
+     "E": -83.46,
+     "N": 147.68,
+     "R_m": 13.8,
+     "rms_m": 0.102
+    },
+    {
+     "along_m": 29.0,
+     "E": -81.96,
+     "N": 146.39,
+     "R_m": 15.4,
+     "rms_m": 0.117
+    },
+    {
+     "along_m": 31.0,
+     "E": -80.21,
+     "N": 145.59,
+     "R_m": 18.7,
+     "rms_m": 0.122
+    },
+    {
+     "along_m": 33.0,
+     "E": -78.6,
+     "N": 144.61,
+     "R_m": 49.6,
+     "rms_m": 0.124
+    },
+    {
+     "along_m": 35.0,
+     "E": -76.68,
+     "N": 144.17,
+     "R_m": 43.3,
+     "rms_m": 0.123
+    },
+    {
+     "along_m": 37.0,
+     "E": -74.97,
+     "N": 143.31,
+     "R_m": 33.3,
+     "rms_m": 0.095
+    },
+    {
+     "along_m": 39.0,
+     "E": -73.09,
+     "N": 142.76,
+     "R_m": 40.4,
+     "rms_m": 0.097
+    },
+    {
+     "along_m": 41.0,
+     "E": -71.12,
+     "N": 142.42,
+     "R_m": -108.3,
+     "rms_m": 0.094
+    }
+   ],
+   "tightest_m": 13.8
+  },
+  "legs": {
+   "leg1": {
+    "line": "west",
+    "side": "left",
+    "stations": 19,
+    "s": [
+     2850.546177191249,
+     2868.546177191249
+    ],
+    "o_past_built_edge_median_m": -0.2,
+    "straight_fit_rms_m": 0.034,
+    "T": 1689
+   },
+   "leg2": {
+    "line": "north",
+    "side": "left",
+    "stations": 14,
+    "s": [
+     959.0,
+     972.0
+    ],
+    "o_past_built_edge_median_m": -0.77,
+    "straight_fit_rms_m": 0.077,
+    "T": 2730
+   }
+  },
+  "Kreal": [
+   -90.48,
+   146.62
+  ],
+  "phi_deg": 107.54,
+  "threshold_T": 2148,
+  "kerb_white_blocks": {
+   "_doc": "returns brighter than T_hi (the grass's own p99, 4-8 m behind the edge) by depth behind the asphalt's edge along the arc: the kerb's white blocks. The kerb is the paved surface's edge (round 2's rule), so the paved outline is the asphalt outline moved this far into the grass",
+   "T_hi": 6906,
+   "returns_over_T_hi": 23,
+   "depth_p50_p90_max_m": [
+    0.88,
+    1.38,
+    2.38
+   ],
+   "bins": [
+    {
+     "depth_m": [
+      -0.5,
+      -0.25
+     ],
+     "returns": 12,
+     "over_T_hi": 0,
+     "median_I": 1656
+    },
+    {
+     "depth_m": [
+      -0.25,
+      0.0
+     ],
+     "returns": 17,
+     "over_T_hi": 0,
+     "median_I": 2784
+    },
+    {
+     "depth_m": [
+      0.0,
+      0.25
+     ],
+     "returns": 20,
+     "over_T_hi": 2,
+     "median_I": 4352
+    },
+    {
+     "depth_m": [
+      0.25,
+      0.5
+     ],
+     "returns": 13,
+     "over_T_hi": 2,
+     "median_I": 4864
+    },
+    {
+     "depth_m": [
+      0.5,
+      0.75
+     ],
+     "returns": 16,
+     "over_T_hi": 3,
+     "median_I": 5624
+    },
+    {
+     "depth_m": [
+      0.75,
+      1.0
+     ],
+     "returns": 12,
+     "over_T_hi": 7,
+     "median_I": 7256
+    },
+    {
+     "depth_m": [
+      1.0,
+      1.25
+     ],
+     "returns": 19,
+     "over_T_hi": 4,
+     "median_I": 5984
+    },
+    {
+     "depth_m": [
+      1.25,
+      1.5
+     ],
+     "returns": 9,
+     "over_T_hi": 3,
+     "median_I": 5792
+    },
+    {
+     "depth_m": [
+      1.5,
+      1.75
+     ],
+     "returns": 17,
+     "over_T_hi": 1,
+     "median_I": 5568
+    },
+    {
+     "depth_m": [
+      1.75,
+      2.0
+     ],
+     "returns": 10,
+     "over_T_hi": 0,
+     "median_I": 5680
+    },
+    {
+     "depth_m": [
+      2.0,
+      2.25
+     ],
+     "returns": 16,
+     "over_T_hi": 0,
+     "median_I": 5544
+    },
+    {
+     "depth_m": [
+      2.25,
+      2.5
+     ],
+     "returns": 17,
+     "over_T_hi": 1,
+     "median_I": 5296
+    },
+    {
+     "depth_m": [
+      2.5,
+      2.75
+     ],
+     "returns": 11,
+     "over_T_hi": 0,
+     "median_I": 5536
+    },
+    {
+     "depth_m": [
+      2.75,
+      3.0
+     ],
+     "returns": 12,
+     "over_T_hi": 0,
+     "median_I": 5536
+    },
+    {
+     "depth_m": [
+      3.0,
+      3.25
+     ],
+     "returns": 16,
+     "over_T_hi": 0,
+     "median_I": 5376
+    },
+    {
+     "depth_m": [
+      3.25,
+      3.5
+     ],
+     "returns": 8,
+     "over_T_hi": 0,
+     "median_I": 5600
+    },
+    {
+     "depth_m": [
+      3.5,
+      3.75
+     ],
+     "returns": 20,
+     "over_T_hi": 0,
+     "median_I": 5480
+    },
+    {
+     "depth_m": [
+      3.75,
+      4.0
+     ],
+     "returns": 9,
+     "over_T_hi": 0,
+     "median_I": 5232
+    }
+   ]
+  },
+  "paved_outline": {
+   "offset_behind_asphalt_edge_m": 1.38,
+   "radius_m": 21.62,
+   "_doc": "DERIVED from the two measurements above: the asphalt edge's circle less the white blocks' p90 depth (a concentric arc; the kerb's NAIP widths, kerbs.lm.json T13 runs: 1.88 / 2.10 m)"
+  }
+ },
+ "outline": [
+  {
+   "theta_deg": 163.7,
+   "r_m": 24.27,
+   "E": -91.92,
+   "N": 171.73,
+   "lonlat": [
+    -103.8985343,
+    39.7364881
+   ],
+   "arc_fraction": 1.276,
+   "score": 2.0,
+   "gap_m": 0.55,
+   "returns_in_out": [
+    4,
+    4
+   ],
+   "t_sens_m": 0.0,
+   "kept": true
+  },
+  {
+   "theta_deg": 164.7,
+   "r_m": 24.05,
+   "E": -91.82,
+   "N": 171.26,
+   "lonlat": [
+    -103.89853316,
+    39.7364839
+   ],
+   "arc_fraction": 1.262,
+   "score": 2.0,
+   "gap_m": 0.6,
+   "returns_in_out": [
+    4,
+    5
+   ],
+   "t_sens_m": 0.0,
+   "kept": true
+  },
+  {
+   "theta_deg": 165.7,
+   "r_m": 23.95,
+   "E": -91.83,
+   "N": 170.83,
+   "lonlat": [
+    -103.89853328,
+    39.73648002
+   ],
+   "arc_fraction": 1.248,
+   "score": 2.0,
+   "gap_m": 0.4,
+   "returns_in_out": [
+    5,
+    5
+   ],
+   "t_sens_m": 0.0,
+   "kept": true
+  },
+  {
+   "theta_deg": 166.7,
+   "r_m": 23.82,
+   "E": -91.81,
+   "N": 170.4,
+   "lonlat": [
+    -103.89853297,
+    39.7364761
+   ],
+   "arc_fraction": 1.235,
+   "score": 2.0,
+   "gap_m": 0.55,
+   "returns_in_out": [
+    4,
+    4
+   ],
+   "t_sens_m": 0.0,
+   "kept": true
+  },
+  {
+   "theta_deg": 167.7,
+   "r_m": 23.67,
+   "E": -91.75,
+   "N": 169.96,
+   "lonlat": [
+    -103.89853233,
+    39.73647216
+   ],
+   "arc_fraction": 1.221,
+   "score": 2.0,
+   "gap_m": 0.55,
+   "returns_in_out": [
+    4,
+    4
+   ],
+   "t_sens_m": 0.0,
+   "kept": true
+  },
+  {
+   "theta_deg": 168.7,
+   "r_m": 23.65,
+   "E": -91.82,
+   "N": 169.55,
+   "lonlat": [
+    -103.89853308,
+    39.73646848
+   ],
+   "arc_fraction": 1.207,
+   "score": 2.0,
+   "gap_m": 0.5,
+   "returns_in_out": [
+    4,
+    4
+   ],
+   "t_sens_m": 0.0,
+   "kept": true
+  },
+  {
+   "theta_deg": 169.7,
+   "r_m": 23.5,
+   "E": -91.75,
+   "N": 169.12,
+   "lonlat": [
+    -103.89853226,
+    39.73646459
+   ],
+   "arc_fraction": 1.193,
+   "score": 2.0,
+   "gap_m": 0.6,
+   "returns_in_out": [
+    4,
+    5
+   ],
+   "t_sens_m": 0.0,
+   "kept": true
+  },
+  {
+   "theta_deg": 170.7,
+   "r_m": 23.37,
+   "E": -91.69,
+   "N": 168.69,
+   "lonlat": [
+    -103.89853158,
+    39.73646076
+   ],
+   "arc_fraction": 1.179,
+   "score": 2.0,
+   "gap_m": 0.55,
+   "returns_in_out": [
+    6,
+    4
+   ],
+   "t_sens_m": 0.0,
+   "kept": true
+  },
+  {
+   "theta_deg": 171.7,
+   "r_m": 23.35,
+   "E": -91.73,
+   "N": 168.29,
+   "lonlat": [
+    -103.89853207,
+    39.7364571
+   ],
+   "arc_fraction": 1.166,
+   "score": 2.0,
+   "gap_m": 0.6,
+   "returns_in_out": [
+    4,
+    5
+   ],
+   "t_sens_m": 0.0,
+   "kept": true
+  },
+  {
+   "theta_deg": 172.7,
+   "r_m": 23.25,
+   "E": -91.69,
+   "N": 167.87,
+   "lonlat": [
+    -103.89853156,
+    39.73645335
+   ],
+   "arc_fraction": 1.152,
+   "score": 2.0,
+   "gap_m": 0.6,
+   "returns_in_out": [
+    4,
+    5
+   ],
+   "t_sens_m": 0.0,
+   "kept": true
+  },
+  {
+   "theta_deg": 173.7,
+   "r_m": 23.2,
+   "E": -91.68,
+   "N": 167.46,
+   "lonlat": [
+    -103.89853154,
+    39.73644967
+   ],
+   "arc_fraction": 1.138,
+   "score": 2.0,
+   "gap_m": 0.5,
+   "returns_in_out": [
+    4,
+    4
+   ],
+   "t_sens_m": 0.0,
+   "kept": true
+  },
+  {
+   "theta_deg": 174.7,
+   "r_m": 23.12,
+   "E": -91.64,
+   "N": 167.05,
+   "lonlat": [
+    -103.89853108,
+    39.73644598
+   ],
+   "arc_fraction": 1.124,
+   "score": 2.0,
+   "gap_m": 0.55,
+   "returns_in_out": [
+    4,
+    4
+   ],
+   "t_sens_m": 0.0,
+   "kept": true
+  },
+  {
+   "theta_deg": 175.7,
+   "r_m": 23.0,
+   "E": -91.56,
+   "N": 166.64,
+   "lonlat": [
+    -103.89853008,
+    39.73644228
+   ],
+   "arc_fraction": 1.11,
+   "score": 2.0,
+   "gap_m": 0.6,
+   "returns_in_out": [
+    6,
+    4
+   ],
+   "t_sens_m": 0.0,
+   "kept": true
+  },
+  {
+   "theta_deg": 176.7,
+   "r_m": 23.02,
+   "E": -91.6,
+   "N": 166.24,
+   "lonlat": [
+    -103.89853062,
+    39.73643868
+   ],
+   "arc_fraction": 1.097,
+   "score": 2.0,
+   "gap_m": 0.55,
+   "returns_in_out": [
+    4,
+    4
+   ],
+   "t_sens_m": 0.0,
+   "kept": true
+  },
+  {
+   "theta_deg": 177.7,
+   "r_m": 22.97,
+   "E": -91.57,
+   "N": 165.84,
+   "lonlat": [
+    -103.89853026,
+    39.73643505
+   ],
+   "arc_fraction": 1.083,
+   "score": 2.0,
+   "gap_m": 0.55,
+   "returns_in_out": [
+    4,
+    4
+   ],
+   "t_sens_m": 0.0,
+   "kept": true
+  },
+  {
+   "theta_deg": 178.7,
+   "r_m": 22.97,
+   "E": -91.59,
+   "N": 165.44,
+   "lonlat": [
+    -103.89853041,
+    39.73643144
+   ],
+   "arc_fraction": 1.069,
+   "score": 2.0,
+   "gap_m": 0.55,
+   "returns_in_out": [
+    4,
+    4
+   ],
+   "t_sens_m": 0.0,
+   "kept": true
+  },
+  {
+   "theta_deg": 179.7,
+   "r_m": 22.9,
+   "E": -91.52,
+   "N": 165.04,
+   "lonlat": [
+    -103.89852965,
+    39.73642783
+   ],
+   "arc_fraction": 1.055,
+   "score": 2.0,
+   "gap_m": 0.5,
+   "returns_in_out": [
+    4,
+    4
+   ],
+   "t_sens_m": 0.0,
+   "kept": true
+  },
+  {
+   "theta_deg": 180.7,
+   "r_m": 22.9,
+   "E": -91.52,
+   "N": 164.64,
+   "lonlat": [
+    -103.89852963,
+    39.73642423
+   ],
+   "arc_fraction": 1.041,
+   "score": 2.0,
+   "gap_m": 0.5,
+   "returns_in_out": [
+    4,
+    4
+   ],
+   "t_sens_m": 0.0,
+   "kept": true
+  },
+  {
+   "theta_deg": 181.7,
+   "r_m": 22.92,
+   "E": -91.53,
+   "N": 164.24,
+   "lonlat": [
+    -103.89852977,
+    39.73642062
+   ],
+   "arc_fraction": 1.028,
+   "score": 2.0,
+   "gap_m": 0.55,
+   "returns_in_out": [
+    4,
+    5
+   ],
+   "t_sens_m": 0.0,
+   "kept": true
+  },
+  {
+   "theta_deg": 182.7,
+   "r_m": 22.8,
+   "E": -91.4,
+   "N": 163.84,
+   "lonlat": [
+    -103.89852819,
+    39.73641707
+   ],
+   "arc_fraction": 1.014,
+   "score": 2.0,
+   "gap_m": 0.7,
+   "returns_in_out": [
+    5,
+    5
+   ],
+   "t_sens_m": 0.0,
+   "kept": true
+  },
+  {
+   "theta_deg": 183.7,
+   "r_m": 22.87,
+   "E": -91.44,
+   "N": 163.44,
+   "lonlat": [
+    -103.89852874,
+    39.73641345
+   ],
+   "arc_fraction": 1.0,
+   "score": 2.0,
+   "gap_m": 0.45,
+   "returns_in_out": [
+    4,
+    4
+   ],
+   "t_sens_m": 0.47,
+   "kept": true
+  },
+  {
+   "theta_deg": 184.7,
+   "r_m": 22.9,
+   "E": -91.44,
+   "N": 163.04,
+   "lonlat": [
+    -103.89852875,
+    39.73640985
+   ],
+   "arc_fraction": 0.986,
+   "score": 2.0,
+   "gap_m": 0.5,
+   "returns_in_out": [
+    4,
+    4
+   ],
+   "t_sens_m": 0.5,
+   "kept": true
+  },
+  {
+   "theta_deg": 185.7,
+   "r_m": 22.87,
+   "E": -91.38,
+   "N": 162.65,
+   "lonlat": [
+    -103.89852797,
+    39.73640629
+   ],
+   "arc_fraction": 0.972,
+   "score": 1.75,
+   "gap_m": 0.45,
+   "returns_in_out": [
+    4,
+    4
+   ],
+   "t_sens_m": 0.65,
+   "kept": false
+  },
+  {
+   "theta_deg": 186.7,
+   "r_m": 22.9,
+   "E": -91.36,
+   "N": 162.24,
+   "lonlat": [
+    -103.89852782,
+    39.73640268
+   ],
+   "arc_fraction": 0.959,
+   "score": 1.75,
+   "gap_m": 0.5,
+   "returns_in_out": [
+    4,
+    4
+   ],
+   "t_sens_m": 0.65,
+   "kept": false
+  },
+  {
+   "theta_deg": 187.7,
+   "r_m": 22.25,
+   "E": -90.67,
+   "N": 161.94,
+   "lonlat": [
+    -103.89851972,
+    39.7363999
+   ],
+   "arc_fraction": 0.945,
+   "score": 2.0,
+   "gap_m": 0.3,
+   "returns_in_out": [
+    4,
+    4
+   ],
+   "t_sens_m": 0.2,
+   "kept": true
+  },
+  {
+   "theta_deg": 188.7,
+   "r_m": 22.27,
+   "E": -90.63,
+   "N": 161.55,
+   "lonlat": [
+    -103.8985193,
+    39.73639641
+   ],
+   "arc_fraction": 0.931,
+   "score": 2.0,
+   "gap_m": 0.25,
+   "returns_in_out": [
+    4,
+    5
+   ],
+   "t_sens_m": 0.18,
+   "kept": true
+  },
+  {
+   "theta_deg": 189.7,
+   "r_m": 22.3,
+   "E": -90.6,
+   "N": 161.16,
+   "lonlat": [
+    -103.89851892,
+    39.73639291
+   ],
+   "arc_fraction": 0.917,
+   "score": 2.0,
+   "gap_m": 0.3,
+   "returns_in_out": [
+    5,
+    4
+   ],
+   "t_sens_m": 0.0,
+   "kept": true
+  },
+  {
+   "theta_deg": 190.7,
+   "r_m": 22.37,
+   "E": -90.6,
+   "N": 160.76,
+   "lonlat": [
+    -103.89851891,
+    39.73638934
+   ],
+   "arc_fraction": 0.903,
+   "score": 2.0,
+   "gap_m": 0.35,
+   "returns_in_out": [
+    4,
+    4
+   ],
+   "t_sens_m": 0.0,
+   "kept": true
+  },
+  {
+   "theta_deg": 191.7,
+   "r_m": 22.42,
+   "E": -90.57,
+   "N": 160.37,
+   "lonlat": [
+    -103.8985186,
+    39.7363858
+   ],
+   "arc_fraction": 0.89,
+   "score": 2.0,
+   "gap_m": 0.25,
+   "returns_in_out": [
+    4,
+    4
+   ],
+   "t_sens_m": 0.0,
+   "kept": true
+  },
+  {
+   "theta_deg": 192.7,
+   "r_m": 22.5,
+   "E": -90.57,
+   "N": 159.97,
+   "lonlat": [
+    -103.89851854,
+    39.7363822
+   ],
+   "arc_fraction": 0.876,
+   "score": 2.0,
+   "gap_m": 0.3,
+   "returns_in_out": [
+    4,
+    4
+   ],
+   "t_sens_m": 0.25,
+   "kept": true
+  },
+  {
+   "theta_deg": 193.7,
+   "r_m": 22.37,
+   "E": -90.35,
+   "N": 159.62,
+   "lonlat": [
+    -103.89851602,
+    39.73637903
+   ],
+   "arc_fraction": 0.862,
+   "score": 2.0,
+   "gap_m": 0.05,
+   "returns_in_out": [
+    3,
+    4
+   ],
+   "t_sens_m": 0.18,
+   "kept": true
+  },
+  {
+   "theta_deg": 194.7,
+   "r_m": 22.37,
+   "E": -90.26,
+   "N": 159.24,
+   "lonlat": [
+    -103.8985149,
+    39.73637563
+   ],
+   "arc_fraction": 0.848,
+   "score": 2.0,
+   "gap_m": 0.05,
+   "returns_in_out": [
+    3,
+    4
+   ],
+   "t_sens_m": 0.32,
+   "kept": true
+  },
+  {
+   "theta_deg": 195.7,
+   "r_m": 22.17,
+   "E": -89.96,
+   "N": 158.92,
+   "lonlat": [
+    -103.89851146,
+    39.73637272
+   ],
+   "arc_fraction": 0.834,
+   "score": 2.0,
+   "gap_m": 0.45,
+   "returns_in_out": [
+    4,
+    6
+   ],
+   "t_sens_m": 0.35,
+   "kept": true
+  },
+  {
+   "theta_deg": 196.7,
+   "r_m": 22.17,
+   "E": -89.85,
+   "N": 158.55,
+   "lonlat": [
+    -103.89851019,
+    39.73636937
+   ],
+   "arc_fraction": 0.821,
+   "score": 2.0,
+   "gap_m": 0.45,
+   "returns_in_out": [
+    4,
+    4
+   ],
+   "t_sens_m": 0.35,
+   "kept": true
+  },
+  {
+   "theta_deg": 197.7,
+   "r_m": 22.37,
+   "E": -89.93,
+   "N": 158.12,
+   "lonlat": [
+    -103.89851108,
+    39.7363655
+   ],
+   "arc_fraction": 0.807,
+   "score": 2.0,
+   "gap_m": 0.45,
+   "returns_in_out": [
+    5,
+    6
+   ],
+   "t_sens_m": 0.0,
+   "kept": true
+  },
+  {
+   "theta_deg": 198.7,
+   "r_m": 22.37,
+   "E": -89.81,
+   "N": 157.75,
+   "lonlat": [
+    -103.89850966,
+    39.73636216
+   ],
+   "arc_fraction": 0.793,
+   "score": 2.0,
+   "gap_m": 0.45,
+   "returns_in_out": [
+    4,
+    4
+   ],
+   "t_sens_m": 0.0,
+   "kept": true
+  },
+  {
+   "theta_deg": 199.7,
+   "r_m": 22.55,
+   "E": -89.85,
+   "N": 157.32,
+   "lonlat": [
+    -103.89851013,
+    39.73635829
+   ],
+   "arc_fraction": 0.779,
+   "score": 2.0,
+   "gap_m": 0.4,
+   "returns_in_out": [
+    4,
+    4
+   ],
+   "t_sens_m": 0.33,
+   "kept": true
+  },
+  {
+   "theta_deg": 200.7,
+   "r_m": 22.55,
+   "E": -89.71,
+   "N": 156.95,
+   "lonlat": [
+    -103.89850854,
+    39.73635496
+   ],
+   "arc_fraction": 0.765,
+   "score": 2.0,
+   "gap_m": 0.4,
+   "returns_in_out": [
+    5,
+    4
+   ],
+   "t_sens_m": 0.33,
+   "kept": true
+  },
+  {
+   "theta_deg": 201.7,
+   "r_m": 22.45,
+   "E": -89.48,
+   "N": 156.62,
+   "lonlat": [
+    -103.8985058,
+    39.73635199
+   ],
+   "arc_fraction": 0.752,
+   "score": 2.0,
+   "gap_m": 0.2,
+   "returns_in_out": [
+    4,
+    3
+   ],
+   "t_sens_m": 0.35,
+   "kept": true
+  },
+  {
+   "theta_deg": 202.7,
+   "r_m": 22.45,
+   "E": -89.33,
+   "N": 156.25,
+   "lonlat": [
+    -103.89850407,
+    39.73634873
+   ],
+   "arc_fraction": 0.738,
+   "score": 2.0,
+   "gap_m": 0.2,
+   "returns_in_out": [
+    5,
+    3
+   ],
+   "t_sens_m": 0.28,
+   "kept": true
+  },
+  {
+   "theta_deg": 203.7,
+   "r_m": 22.42,
+   "E": -89.15,
+   "N": 155.91,
+   "lonlat": [
+    -103.89850195,
+    39.73634559
+   ],
+   "arc_fraction": 0.724,
+   "score": 2.0,
+   "gap_m": 0.25,
+   "returns_in_out": [
+    4,
+    3
+   ],
+   "t_sens_m": 0.28,
+   "kept": true
+  },
+  {
+   "theta_deg": 204.7,
+   "r_m": 22.4,
+   "E": -88.97,
+   "N": 155.56,
+   "lonlat": [
+    -103.89849986,
+    39.73634245
+   ],
+   "arc_fraction": 0.71,
+   "score": 2.0,
+   "gap_m": 0.2,
+   "returns_in_out": [
+    5,
+    3
+   ],
+   "t_sens_m": 0.3,
+   "kept": true
+  },
+  {
+   "theta_deg": 205.7,
+   "r_m": 22.4,
+   "E": -88.8,
+   "N": 155.2,
+   "lonlat": [
+    -103.89849792,
+    39.73633927
+   ],
+   "arc_fraction": 0.696,
+   "score": 2.0,
+   "gap_m": 0.2,
+   "returns_in_out": [
+    4,
+    3
+   ],
+   "t_sens_m": 0.27,
+   "kept": true
+  },
+  {
+   "theta_deg": 206.7,
+   "r_m": 22.15,
+   "E": -88.41,
+   "N": 154.97,
+   "lonlat": [
+    -103.8984933,
+    39.73633712
+   ],
+   "arc_fraction": 0.683,
+   "score": 2.0,
+   "gap_m": 0.5,
+   "returns_in_out": [
+    4,
+    3
+   ],
+   "t_sens_m": 0.45,
+   "kept": true
+  },
+  {
+   "theta_deg": 207.7,
+   "r_m": 22.27,
+   "E": -88.34,
+   "N": 154.57,
+   "lonlat": [
+    -103.89849247,
+    39.73633352
+   ],
+   "arc_fraction": 0.669,
+   "score": 2.0,
+   "gap_m": 0.45,
+   "returns_in_out": [
+    4,
+    4
+   ],
+   "t_sens_m": 0.4,
+   "kept": true
+  },
+  {
+   "theta_deg": 208.7,
+   "r_m": 22.57,
+   "E": -88.41,
+   "N": 154.08,
+   "lonlat": [
+    -103.8984934,
+    39.73632914
+   ],
+   "arc_fraction": 0.655,
+   "score": 2.0,
+   "gap_m": 0.45,
+   "returns_in_out": [
+    4,
+    4
+   ],
+   "t_sens_m": 0.0,
+   "kept": true
+  },
+  {
+   "theta_deg": 209.7,
+   "r_m": 22.57,
+   "E": -88.22,
+   "N": 153.74,
+   "lonlat": [
+    -103.89849115,
+    39.73632604
+   ],
+   "arc_fraction": 0.641,
+   "score": 2.0,
+   "gap_m": 0.45,
+   "returns_in_out": [
+    4,
+    4
+   ],
+   "t_sens_m": 0.0,
+   "kept": true
+  },
+  {
+   "theta_deg": 210.7,
+   "r_m": 22.5,
+   "E": -87.96,
+   "N": 153.43,
+   "lonlat": [
+    -103.89848814,
+    39.7363233
+   ],
+   "arc_fraction": 0.627,
+   "score": 2.0,
+   "gap_m": 0.3,
+   "returns_in_out": [
+    4,
+    4
+   ],
+   "t_sens_m": 0.42,
+   "kept": true
+  },
+  {
+   "theta_deg": 211.7,
+   "r_m": 22.65,
+   "E": -87.89,
+   "N": 153.02,
+   "lonlat": [
+    -103.89848725,
+    39.73631957
+   ],
+   "arc_fraction": 0.614,
+   "score": 2.0,
+   "gap_m": 0.0,
+   "returns_in_out": [
+    3,
+    3
+   ],
+   "t_sens_m": 0.42,
+   "kept": true
+  },
+  {
+   "theta_deg": 212.7,
+   "r_m": 22.62,
+   "E": -87.65,
+   "N": 152.7,
+   "lonlat": [
+    -103.8984845,
+    39.7363167
+   ],
+   "arc_fraction": 0.6,
+   "score": 2.0,
+   "gap_m": 0.05,
+   "returns_in_out": [
+    4,
+    4
+   ],
+   "t_sens_m": 0.25,
+   "kept": true
+  },
+  {
+   "theta_deg": 213.7,
+   "r_m": 22.62,
+   "E": -87.44,
+   "N": 152.37,
+   "lonlat": [
+    -103.89848197,
+    39.73631373
+   ],
+   "arc_fraction": 0.586,
+   "score": 2.0,
+   "gap_m": 0.05,
+   "returns_in_out": [
+    4,
+    3
+   ],
+   "t_sens_m": 0.35,
+   "kept": true
+  },
+  {
+   "theta_deg": 214.7,
+   "r_m": 22.75,
+   "E": -87.32,
+   "N": 151.97,
+   "lonlat": [
+    -103.89848063,
+    39.73631012
+   ],
+   "arc_fraction": 0.572,
+   "score": 2.0,
+   "gap_m": 0.3,
+   "returns_in_out": [
+    3,
+    3
+   ],
+   "t_sens_m": 0.38,
+   "kept": true
+  },
+  {
+   "theta_deg": 215.7,
+   "r_m": 22.75,
+   "E": -87.09,
+   "N": 151.64,
+   "lonlat": [
+    -103.89847796,
+    39.7363072
+   ],
+   "arc_fraction": 0.558,
+   "score": 2.0,
+   "gap_m": 0.3,
+   "returns_in_out": [
+    4,
+    4
+   ],
+   "t_sens_m": 0.3,
+   "kept": true
+  },
+  {
+   "theta_deg": 216.7,
+   "r_m": 22.6,
+   "E": -86.74,
+   "N": 151.41,
+   "lonlat": [
+    -103.89847382,
+    39.73630512
+   ],
+   "arc_fraction": 0.545,
+   "score": 2.0,
+   "gap_m": 0.5,
+   "returns_in_out": [
+    4,
+    3
+   ],
+   "t_sens_m": 0.0,
+   "kept": true
+  },
+  {
+   "theta_deg": 217.7,
+   "r_m": 22.52,
+   "E": -86.43,
+   "N": 151.15,
+   "lonlat": [
+    -103.8984703,
+    39.73630273
+   ],
+   "arc_fraction": 0.531,
+   "score": 2.0,
+   "gap_m": 0.35,
+   "returns_in_out": [
+    3,
+    4
+   ],
+   "t_sens_m": 0.3,
+   "kept": true
+  },
+  {
+   "theta_deg": 218.7,
+   "r_m": 22.62,
+   "E": -86.27,
+   "N": 150.78,
+   "lonlat": [
+    -103.89846837,
+    39.73629939
+   ],
+   "arc_fraction": 0.517,
+   "score": 2.0,
+   "gap_m": 0.15,
+   "returns_in_out": [
+    4,
+    5
+   ],
+   "t_sens_m": 0.3,
+   "kept": true
+  },
+  {
+   "theta_deg": 219.7,
+   "r_m": 22.65,
+   "E": -86.04,
+   "N": 150.45,
+   "lonlat": [
+    -103.89846573,
+    39.73629646
+   ],
+   "arc_fraction": 0.503,
+   "score": 2.0,
+   "gap_m": 0.1,
+   "returns_in_out": [
+    3,
+    4
+   ],
+   "t_sens_m": 0.37,
+   "kept": true
+  },
+  {
+   "theta_deg": 220.7,
+   "r_m": 22.62,
+   "E": -85.76,
+   "N": 150.17,
+   "lonlat": [
+    -103.89846248,
+    39.73629392
+   ],
+   "arc_fraction": 0.489,
+   "score": 2.0,
+   "gap_m": 0.15,
+   "returns_in_out": [
+    5,
+    5
+   ],
+   "t_sens_m": 0.23,
+   "kept": true
+  },
+  {
+   "theta_deg": 221.7,
+   "r_m": 22.75,
+   "E": -85.6,
+   "N": 149.79,
+   "lonlat": [
+    -103.89846058,
+    39.73629047
+   ],
+   "arc_fraction": 0.476,
+   "score": 2.0,
+   "gap_m": 0.4,
+   "returns_in_out": [
+    4,
+    5
+   ],
+   "t_sens_m": 0.0,
+   "kept": true
+  },
+  {
+   "theta_deg": 222.7,
+   "r_m": 22.65,
+   "E": -85.26,
+   "N": 149.56,
+   "lonlat": [
+    -103.89845661,
+    39.73628843
+   ],
+   "arc_fraction": 0.462,
+   "score": 2.0,
+   "gap_m": 0.4,
+   "returns_in_out": [
+    4,
+    4
+   ],
+   "t_sens_m": 0.0,
+   "kept": true
+  },
+  {
+   "theta_deg": 223.7,
+   "r_m": 22.7,
+   "E": -85.03,
+   "N": 149.24,
+   "lonlat": [
+    -103.89845387,
+    39.73628552
+   ],
+   "arc_fraction": 0.448,
+   "score": 2.0,
+   "gap_m": 0.3,
+   "returns_in_out": [
+    4,
+    5
+   ],
+   "t_sens_m": 0.23,
+   "kept": true
+  },
+  {
+   "theta_deg": 224.7,
+   "r_m": 22.7,
+   "E": -84.75,
+   "N": 148.95,
+   "lonlat": [
+    -103.89845065,
+    39.73628297
+   ],
+   "arc_fraction": 0.434,
+   "score": 2.0,
+   "gap_m": 0.3,
+   "returns_in_out": [
+    5,
+    4
+   ],
+   "t_sens_m": 0.23,
+   "kept": true
+  },
+  {
+   "theta_deg": 225.7,
+   "r_m": 22.7,
+   "E": -84.47,
+   "N": 148.67,
+   "lonlat": [
+    -103.89844737,
+    39.73628045
+   ],
+   "arc_fraction": 0.42,
+   "score": 2.0,
+   "gap_m": 0.3,
+   "returns_in_out": [
+    5,
+    3
+   ],
+   "t_sens_m": 0.38,
+   "kept": true
+  },
+  {
+   "theta_deg": 226.7,
+   "r_m": 22.82,
+   "E": -84.26,
+   "N": 148.31,
+   "lonlat": [
+    -103.89844499,
+    39.7362772
+   ],
+   "arc_fraction": 0.407,
+   "score": 2.0,
+   "gap_m": 0.35,
+   "returns_in_out": [
+    4,
+    5
+   ],
+   "t_sens_m": 0.5,
+   "kept": true
+  },
+  {
+   "theta_deg": 227.7,
+   "r_m": 22.82,
+   "E": -83.97,
+   "N": 148.04,
+   "lonlat": [
+    -103.89844158,
+    39.73627476
+   ],
+   "arc_fraction": 0.393,
+   "score": 2.0,
+   "gap_m": 0.35,
+   "returns_in_out": [
+    4,
+    4
+   ],
+   "t_sens_m": 0.35,
+   "kept": true
+  },
+  {
+   "theta_deg": 228.7,
+   "r_m": 22.75,
+   "E": -83.63,
+   "N": 147.83,
+   "lonlat": [
+    -103.89843758,
+    39.73627285
+   ],
+   "arc_fraction": 0.379,
+   "score": 2.0,
+   "gap_m": 0.2,
+   "returns_in_out": [
+    4,
+    3
+   ],
+   "t_sens_m": 0.28,
+   "kept": true
+  },
+  {
+   "theta_deg": 229.7,
+   "r_m": 22.75,
+   "E": -83.33,
+   "N": 147.57,
+   "lonlat": [
+    -103.89843407,
+    39.73627051
+   ],
+   "arc_fraction": 0.365,
+   "score": 2.0,
+   "gap_m": 0.2,
+   "returns_in_out": [
+    4,
+    4
+   ],
+   "t_sens_m": 0.28,
+   "kept": true
+  },
+  {
+   "theta_deg": 230.7,
+   "r_m": 22.7,
+   "E": -82.99,
+   "N": 147.35,
+   "lonlat": [
+    -103.89843014,
+    39.73626857
+   ],
+   "arc_fraction": 0.351,
+   "score": 2.0,
+   "gap_m": 0.3,
+   "returns_in_out": [
+    4,
+    4
+   ],
+   "t_sens_m": 0.3,
+   "kept": true
+  },
+  {
+   "theta_deg": 231.7,
+   "r_m": 22.7,
+   "E": -82.68,
+   "N": 147.11,
+   "lonlat": [
+    -103.89842653,
+    39.73626634
+   ],
+   "arc_fraction": 0.338,
+   "score": 2.0,
+   "gap_m": 0.3,
+   "returns_in_out": [
+    4,
+    3
+   ],
+   "t_sens_m": 0.27,
+   "kept": true
+  },
+  {
+   "theta_deg": 232.7,
+   "r_m": 22.82,
+   "E": -82.44,
+   "N": 146.77,
+   "lonlat": [
+    -103.89842373,
+    39.73626329
+   ],
+   "arc_fraction": 0.324,
+   "score": 2.0,
+   "gap_m": 0.45,
+   "returns_in_out": [
+    4,
+    4
+   ],
+   "t_sens_m": 0.27,
+   "kept": true
+  },
+  {
+   "theta_deg": 233.7,
+   "r_m": 22.82,
+   "E": -82.12,
+   "N": 146.53,
+   "lonlat": [
+    -103.89842001,
+    39.73626114
+   ],
+   "arc_fraction": 0.31,
+   "score": 2.0,
+   "gap_m": 0.45,
+   "returns_in_out": [
+    4,
+    4
+   ],
+   "t_sens_m": 0.27,
+   "kept": true
+  },
+  {
+   "theta_deg": 234.7,
+   "r_m": 22.85,
+   "E": -81.82,
+   "N": 146.27,
+   "lonlat": [
+    -103.89841644,
+    39.73625883
+   ],
+   "arc_fraction": 0.296,
+   "score": 2.0,
+   "gap_m": 0.4,
+   "returns_in_out": [
+    4,
+    4
+   ],
+   "t_sens_m": 0.33,
+   "kept": true
+  },
+  {
+   "theta_deg": 235.7,
+   "r_m": 22.87,
+   "E": -81.5,
+   "N": 146.03,
+   "lonlat": [
+    -103.89841275,
+    39.73625663
+   ],
+   "arc_fraction": 0.282,
+   "score": 2.0,
+   "gap_m": 0.45,
+   "returns_in_out": [
+    4,
+    4
+   ],
+   "t_sens_m": 0.0,
+   "kept": true
+  },
+  {
+   "theta_deg": 236.7,
+   "r_m": 22.87,
+   "E": -81.17,
+   "N": 145.81,
+   "lonlat": [
+    -103.89840888,
+    39.73625463
+   ],
+   "arc_fraction": 0.269,
+   "score": 2.0,
+   "gap_m": 0.45,
+   "returns_in_out": [
+    4,
+    4
+   ],
+   "t_sens_m": 0.0,
+   "kept": true
+  },
+  {
+   "theta_deg": 237.7,
+   "r_m": 22.87,
+   "E": -80.83,
+   "N": 145.59,
+   "lonlat": [
+    -103.89840496,
+    39.73625269
+   ],
+   "arc_fraction": 0.255,
+   "score": 2.0,
+   "gap_m": 0.45,
+   "returns_in_out": [
+    4,
+    4
+   ],
+   "t_sens_m": 0.0,
+   "kept": true
+  },
+  {
+   "theta_deg": 238.7,
+   "r_m": 22.65,
+   "E": -80.38,
+   "N": 145.57,
+   "lonlat": [
+    -103.89839967,
+    39.73625249
+   ],
+   "arc_fraction": 0.241,
+   "score": 2.0,
+   "gap_m": 0.1,
+   "returns_in_out": [
+    5,
+    4
+   ],
+   "t_sens_m": 0.27,
+   "kept": true
+  },
+  {
+   "theta_deg": 239.7,
+   "r_m": 22.35,
+   "E": -79.89,
+   "N": 145.63,
+   "lonlat": [
+    -103.89839395,
+    39.736253
+   ],
+   "arc_fraction": 0.227,
+   "score": 2.0,
+   "gap_m": 0.4,
+   "returns_in_out": [
+    4,
+    4
+   ],
+   "t_sens_m": 0.2,
+   "kept": true
+  },
+  {
+   "theta_deg": 240.7,
+   "r_m": 22.35,
+   "E": -79.55,
+   "N": 145.43,
+   "lonlat": [
+    -103.89839,
+    39.73625125
+   ],
+   "arc_fraction": 0.213,
+   "score": 2.0,
+   "gap_m": 0.4,
+   "returns_in_out": [
+    4,
+    3
+   ],
+   "t_sens_m": 0.2,
+   "kept": true
+  },
+  {
+   "theta_deg": 241.7,
+   "r_m": 22.45,
+   "E": -79.26,
+   "N": 145.16,
+   "lonlat": [
+    -103.89838656,
+    39.73624877
+   ],
+   "arc_fraction": 0.2,
+   "score": 2.0,
+   "gap_m": 0.2,
+   "returns_in_out": [
+    4,
+    3
+   ],
+   "t_sens_m": 0.37,
+   "kept": true
+  },
+  {
+   "theta_deg": 242.7,
+   "r_m": 22.45,
+   "E": -78.91,
+   "N": 144.97,
+   "lonlat": [
+    -103.89838252,
+    39.73624713
+   ],
+   "arc_fraction": 0.186,
+   "score": 2.0,
+   "gap_m": 0.2,
+   "returns_in_out": [
+    4,
+    3
+   ],
+   "t_sens_m": 0.4,
+   "kept": true
+  },
+  {
+   "theta_deg": 243.7,
+   "r_m": 22.65,
+   "E": -78.65,
+   "N": 144.62,
+   "lonlat": [
+    -103.89837947,
+    39.73624392
+   ],
+   "arc_fraction": 0.172,
+   "score": 2.0,
+   "gap_m": 0.5,
+   "returns_in_out": [
+    4,
+    4
+   ],
+   "t_sens_m": 0.4,
+   "kept": true
+  },
+  {
+   "theta_deg": 244.7,
+   "r_m": 22.57,
+   "E": -78.26,
+   "N": 144.52,
+   "lonlat": [
+    -103.89837492,
+    39.73624302
+   ],
+   "arc_fraction": 0.158,
+   "score": 2.0,
+   "gap_m": 0.35,
+   "returns_in_out": [
+    3,
+    4
+   ],
+   "t_sens_m": 0.32,
+   "kept": true
+  },
+  {
+   "theta_deg": 245.7,
+   "r_m": 22.5,
+   "E": -77.87,
+   "N": 144.42,
+   "lonlat": [
+    -103.89837041,
+    39.73624211
+   ],
+   "arc_fraction": 0.144,
+   "score": 2.0,
+   "gap_m": 0.5,
+   "returns_in_out": [
+    4,
+    4
+   ],
+   "t_sens_m": 0.0,
+   "kept": true
+  },
+  {
+   "theta_deg": 246.7,
+   "r_m": 22.5,
+   "E": -77.51,
+   "N": 144.26,
+   "lonlat": [
+    -103.89836622,
+    39.73624069
+   ],
+   "arc_fraction": 0.131,
+   "score": 2.0,
+   "gap_m": 0.5,
+   "returns_in_out": [
+    4,
+    4
+   ],
+   "t_sens_m": 0.0,
+   "kept": true
+  },
+  {
+   "theta_deg": 247.7,
+   "r_m": 22.3,
+   "E": -77.07,
+   "N": 144.29,
+   "lonlat": [
+    -103.89836111,
+    39.73624098
+   ],
+   "arc_fraction": 0.117,
+   "score": 2.0,
+   "gap_m": 0.2,
+   "returns_in_out": [
+    4,
+    3
+   ],
+   "t_sens_m": 0.0,
+   "kept": true
+  },
+  {
+   "theta_deg": 248.7,
+   "r_m": 22.27,
+   "E": -76.7,
+   "N": 144.18,
+   "lonlat": [
+    -103.89835677,
+    39.73623994
+   ],
+   "arc_fraction": 0.103,
+   "score": 2.0,
+   "gap_m": 0.25,
+   "returns_in_out": [
+    4,
+    4
+   ],
+   "t_sens_m": 0.0,
+   "kept": true
+  },
+  {
+   "theta_deg": 249.7,
+   "r_m": 22.37,
+   "E": -76.37,
+   "N": 143.94,
+   "lonlat": [
+    -103.89835293,
+    39.73623785
+   ],
+   "arc_fraction": 0.089,
+   "score": 2.0,
+   "gap_m": 0.05,
+   "returns_in_out": [
+    4,
+    3
+   ],
+   "t_sens_m": 0.0,
+   "kept": true
+  },
+  {
+   "theta_deg": 250.7,
+   "r_m": 22.37,
+   "E": -76.01,
+   "N": 143.81,
+   "lonlat": [
+    -103.89834864,
+    39.73623666
+   ],
+   "arc_fraction": 0.075,
+   "score": 2.0,
+   "gap_m": 0.05,
+   "returns_in_out": [
+    3,
+    3
+   ],
+   "t_sens_m": 0.0,
+   "kept": true
+  },
+  {
+   "theta_deg": 251.7,
+   "r_m": 22.62,
+   "E": -75.71,
+   "N": 143.45,
+   "lonlat": [
+    -103.89834525,
+    39.73623339
+   ],
+   "arc_fraction": 0.062,
+   "score": 2.0,
+   "gap_m": 0.45,
+   "returns_in_out": [
+    4,
+    4
+   ],
+   "t_sens_m": 0.0,
+   "kept": true
+  },
+  {
+   "theta_deg": 252.7,
+   "r_m": 22.62,
+   "E": -75.34,
+   "N": 143.33,
+   "lonlat": [
+    -103.89834086,
+    39.73623231
+   ],
+   "arc_fraction": 0.048,
+   "score": 2.0,
+   "gap_m": 0.45,
+   "returns_in_out": [
+    4,
+    3
+   ],
+   "t_sens_m": 0.0,
+   "kept": true
+  },
+  {
+   "theta_deg": 253.7,
+   "r_m": 22.52,
+   "E": -74.93,
+   "N": 143.31,
+   "lonlat": [
+    -103.89833612,
+    39.73623214
+   ],
+   "arc_fraction": 0.034,
+   "score": 2.0,
+   "gap_m": 0.25,
+   "returns_in_out": [
+    4,
+    4
+   ],
+   "t_sens_m": 0.0,
+   "kept": true
+  },
+  {
+   "theta_deg": 254.7,
+   "r_m": 22.42,
+   "E": -74.53,
+   "N": 143.3,
+   "lonlat": [
+    -103.8983314,
+    39.73623205
+   ],
+   "arc_fraction": 0.02,
+   "score": 2.0,
+   "gap_m": 0.45,
+   "returns_in_out": [
+    3,
+    4
+   ],
+   "t_sens_m": 0.0,
+   "kept": true
+  },
+  {
+   "theta_deg": 255.7,
+   "r_m": 22.42,
+   "E": -74.15,
+   "N": 143.2,
+   "lonlat": [
+    -103.89832699,
+    39.73623115
+   ],
+   "arc_fraction": 0.006,
+   "score": 2.0,
+   "gap_m": 0.45,
+   "returns_in_out": [
+    4,
+    4
+   ],
+   "t_sens_m": 0.0,
+   "kept": true
+  },
+  {
+   "theta_deg": 256.7,
+   "r_m": 22.55,
+   "E": -73.8,
+   "N": 142.98,
+   "lonlat": [
+    -103.89832291,
+    39.73622917
+   ],
+   "arc_fraction": -0.007,
+   "score": 2.0,
+   "gap_m": 0.2,
+   "returns_in_out": [
+    4,
+    4
+   ],
+   "t_sens_m": 0.25,
+   "kept": true
+  },
+  {
+   "theta_deg": 257.7,
+   "r_m": 22.65,
+   "E": -73.44,
+   "N": 142.8,
+   "lonlat": [
+    -103.89831868,
+    39.73622751
+   ],
+   "arc_fraction": -0.021,
+   "score": 2.0,
+   "gap_m": 0.4,
+   "returns_in_out": [
+    4,
+    6
+   ],
+   "t_sens_m": 0.35,
+   "kept": true
+  },
+  {
+   "theta_deg": 258.7,
+   "r_m": 22.67,
+   "E": -73.05,
+   "N": 142.7,
+   "lonlat": [
+    -103.89831421,
+    39.73622661
+   ],
+   "arc_fraction": -0.035,
+   "score": 2.0,
+   "gap_m": 0.45,
+   "returns_in_out": [
+    5,
+    4
+   ],
+   "t_sens_m": 0.6,
+   "kept": false
+  },
+  {
+   "theta_deg": 259.7,
+   "r_m": 22.82,
+   "E": -72.69,
+   "N": 142.47,
+   "lonlat": [
+    -103.89830998,
+    39.73622461
+   ],
+   "arc_fraction": -0.049,
+   "score": 2.0,
+   "gap_m": 0.45,
+   "returns_in_out": [
+    4,
+    5
+   ],
+   "t_sens_m": 0.57,
+   "kept": false
+  },
+  {
+   "theta_deg": 260.7,
+   "r_m": 22.57,
+   "E": -72.26,
+   "N": 142.65,
+   "lonlat": [
+    -103.89830494,
+    39.73622622
+   ],
+   "arc_fraction": -0.063,
+   "score": 2.0,
+   "gap_m": 0.25,
+   "returns_in_out": [
+    5,
+    4
+   ],
+   "t_sens_m": 0.33,
+   "kept": true
+  },
+  {
+   "theta_deg": 261.7,
+   "r_m": 22.57,
+   "E": -71.87,
+   "N": 142.59,
+   "lonlat": [
+    -103.89830039,
+    39.73622568
+   ],
+   "arc_fraction": -0.076,
+   "score": 2.0,
+   "gap_m": 0.25,
+   "returns_in_out": [
+    4,
+    3
+   ],
+   "t_sens_m": 0.35,
+   "kept": true
+  },
+  {
+   "theta_deg": 262.7,
+   "r_m": 22.57,
+   "E": -71.48,
+   "N": 142.54,
+   "lonlat": [
+    -103.89829584,
+    39.7362252
+   ],
+   "arc_fraction": -0.09,
+   "score": 2.0,
+   "gap_m": 0.25,
+   "returns_in_out": [
+    3,
+    4
+   ],
+   "t_sens_m": 0.35,
+   "kept": true
+  },
+  {
+   "theta_deg": 263.7,
+   "r_m": 22.65,
+   "E": -71.1,
+   "N": 142.41,
+   "lonlat": [
+    -103.89829138,
+    39.73622407
+   ],
+   "arc_fraction": -0.104,
+   "score": 2.0,
+   "gap_m": 0.4,
+   "returns_in_out": [
+    5,
+    4
+   ],
+   "t_sens_m": 0.0,
+   "kept": true
+  },
+  {
+   "theta_deg": 264.7,
+   "r_m": 22.77,
+   "E": -70.71,
+   "N": 142.25,
+   "lonlat": [
+    -103.89828692,
+    39.73622263
+   ],
+   "arc_fraction": -0.118,
+   "score": 2.0,
+   "gap_m": 0.15,
+   "returns_in_out": [
+    5,
+    4
+   ],
+   "t_sens_m": 0.0,
+   "kept": true
+  },
+  {
+   "theta_deg": 265.7,
+   "r_m": 22.77,
+   "E": -70.32,
+   "N": 142.22,
+   "lonlat": [
+    -103.8982823,
+    39.73622234
+   ],
+   "arc_fraction": -0.132,
+   "score": 2.0,
+   "gap_m": 0.15,
+   "returns_in_out": [
+    3,
+    3
+   ],
+   "t_sens_m": 0.0,
+   "kept": true
+  },
+  {
+   "theta_deg": 266.7,
+   "r_m": 22.77,
+   "E": -69.92,
+   "N": 142.2,
+   "lonlat": [
+    -103.89827768,
+    39.7362221
+   ],
+   "arc_fraction": -0.145,
+   "score": 2.0,
+   "gap_m": 0.15,
+   "returns_in_out": [
+    5,
+    4
+   ],
+   "t_sens_m": 0.0,
+   "kept": true
+  },
+  {
+   "theta_deg": 267.7,
+   "r_m": 23.02,
+   "E": -69.53,
+   "N": 141.93,
+   "lonlat": [
+    -103.89827316,
+    39.73621968
+   ],
+   "arc_fraction": -0.159,
+   "score": 2.0,
+   "gap_m": 0.25,
+   "returns_in_out": [
+    5,
+    5
+   ],
+   "t_sens_m": 0.25,
+   "kept": true
+  },
+  {
+   "theta_deg": 268.7,
+   "r_m": 23.02,
+   "E": -69.13,
+   "N": 141.91,
+   "lonlat": [
+    -103.89826848,
+    39.73621957
+   ],
+   "arc_fraction": -0.173,
+   "score": 2.0,
+   "gap_m": 0.25,
+   "returns_in_out": [
+    3,
+    3
+   ],
+   "t_sens_m": 0.35,
+   "kept": true
+  },
+  {
+   "theta_deg": 269.7,
+   "r_m": 23.15,
+   "E": -68.73,
+   "N": 141.78,
+   "lonlat": [
+    -103.8982638,
+    39.73621835
+   ],
+   "arc_fraction": -0.187,
+   "score": 1.83,
+   "gap_m": 0.0,
+   "returns_in_out": [
+    6,
+    5
+   ],
+   "t_sens_m": 0.37,
+   "kept": true
+  },
+  {
+   "theta_deg": 270.7,
+   "r_m": 23.52,
+   "E": -68.32,
+   "N": 141.41,
+   "lonlat": [
+    -103.89825903,
+    39.73621503
+   ],
+   "arc_fraction": -0.201,
+   "score": 2.0,
+   "gap_m": 0.05,
+   "returns_in_out": [
+    5,
+    5
+   ],
+   "t_sens_m": 0.22,
+   "kept": true
+  },
+  {
+   "theta_deg": 271.7,
+   "r_m": 23.65,
+   "E": -67.91,
+   "N": 141.29,
+   "lonlat": [
+    -103.8982542,
+    39.73621394
+   ],
+   "arc_fraction": -0.215,
+   "score": 2.0,
+   "gap_m": 0.3,
+   "returns_in_out": [
+    3,
+    3
+   ],
+   "t_sens_m": 0.35,
+   "kept": true
+  },
+  {
+   "theta_deg": 272.7,
+   "r_m": 23.65,
+   "E": -67.5,
+   "N": 141.3,
+   "lonlat": [
+    -103.89824938,
+    39.73621408
+   ],
+   "arc_fraction": -0.228,
+   "score": 2.0,
+   "gap_m": 0.3,
+   "returns_in_out": [
+    5,
+    5
+   ],
+   "t_sens_m": 0.2,
+   "kept": true
+  },
+  {
+   "theta_deg": 273.7,
+   "r_m": 23.62,
+   "E": -67.09,
+   "N": 141.36,
+   "lonlat": [
+    -103.8982446,
+    39.73621456
+   ],
+   "arc_fraction": -0.242,
+   "score": 2.0,
+   "gap_m": 0.35,
+   "returns_in_out": [
+    3,
+    4
+   ],
+   "t_sens_m": 0.0,
+   "kept": true
+  },
+  {
+   "theta_deg": 274.7,
+   "r_m": 23.72,
+   "E": -66.67,
+   "N": 141.29,
+   "lonlat": [
+    -103.89823971,
+    39.73621394
+   ],
+   "arc_fraction": -0.256,
+   "score": 2.0,
+   "gap_m": 0.35,
+   "returns_in_out": [
+    4,
+    4
+   ],
+   "t_sens_m": 0.35,
+   "kept": true
+  },
+  {
+   "theta_deg": 275.7,
+   "r_m": 23.72,
+   "E": -66.25,
+   "N": 141.33,
+   "lonlat": [
+    -103.8982349,
+    39.73621428
+   ],
+   "arc_fraction": -0.27,
+   "score": 2.0,
+   "gap_m": 0.35,
+   "returns_in_out": [
+    4,
+    4
+   ],
+   "t_sens_m": 0.35,
+   "kept": true
+  }
+ ],
+ "against": {
+  "round4_naip": {
+   "radius_m": 20.0,
+   "measured": false,
+   "why": "fit at the grid's end (20.0 m)",
+   "_doc": "source/edges/mouth_radii.naip.json: the arc wanted more than the grid held"
+  },
+  "mouth_radii_built_frame_with_the_lidar": {
+   "K": [
+    -85.12,
+    145.94
+   ],
+   "phi_deg": 120.08,
+   "legs": {
+    "host": {
+     "offset_m": -0.5,
+     "stations": 19,
+     "p10_p90_m": [
+      -0.55,
+      -0.32
+     ]
+    },
+    "street": {
+     "offset_m": 1.55,
+     "stations": 19,
+     "p10_p90_m": [
+      0.05,
+      4.09
+     ]
+    }
+   },
+   "Kreal": [
+    -83.23,
+    144.95
+   ],
+   "T": 1998,
+   "summary": {
+    "R_m": 9.25,
+    "median_dev_m": 0.287,
+    "points": 41,
+    "prominence": 11.89,
+    "at_grid_end": false,
+    "arc_m": 9.67
+   },
+   "_doc": "the same lidar returns in tools/mouth_radii.py's BUILT frame (the install build's corner: K, a, b, phi 120.1 deg): its street line is the built Ladder edge 6-18 m from the cut, which the real edge leaves as it sweeps round (leg offsets spread p10-p90 shown), so no circle tangent to it fits the outline well (median dev above): read for the record, not the answer"
+  },
+  "naip_2023": "by eye on the 0.3 m crop (scratch overlay, not committed): the outline lies along the inner side of the blue / white T13 kerb round the whole corner, the kerb behind it, grass behind the kerb"
+ },
+ "registration": {
+  "shift_E_N_m": [
+   -0.24,
+   -0.04
+  ],
+  "_doc": "the lidar against the 2023 photo (carried_edges.json registration): subtract it to put a point in the photo's frame"
+ }
+}

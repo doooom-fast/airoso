@@ -624,6 +624,9 @@ author_median_rebuild() {
   # (which gives the new decks their object). Key absent = no-op, the blend not opened. Only a ship.json that names it
   step "author: one median island re-authored from corrected data (tools/author_median_rebuild_blend.py: the old island found exactly or refused; ledger 0099 round 3; self-checked; not opted in = no-op)"
   (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_median_rebuild_blend.py" -- "$PROJ" --v021 "$V021" 2>&1 | grep "^\[median-rebuild\]\|FATAL\|Error\|Traceback" )
+  # ledger 0099 round 3, item 4 (opt-in route.paint_rebuild): one connector's paint re-laid from corrected data (Lake Murray's
+  # Jackson Dr north, a painted median: no island to rebuild); the old strips found exactly or refused. Key absent = no-op
+  (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_median_rebuild_blend.py" -- "$PROJ" --paint-only --v021 "$V021" 2>&1 | grep "^\[median-rebuild\]\|FATAL\|Error\|Traceback" )
 }
 
 author_median_tops() {

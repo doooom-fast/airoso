@@ -124,3 +124,54 @@ def test_num_opt_is_none_where_the_column_or_a_neighbour_is():
     assert abs(pc.num_opt(1.25, "edge_fwd_m") - 2.5) < 1e-12
     assert pc.num_opt(3.75, "edge_fwd_m") is None                  # a neighbour holds none: the default applies there
     assert pc.num_opt(1.25, "outer_fwd_m") is None                 # no such column
+
+
+# --- the paint-only scene step (tools/author_median_rebuild_blend.py --paint-only) --------------------------------------
+RB = _load("author_median_rebuild_paint_0099", ROOT / "tools" / "author_median_rebuild_blend.py")
+
+
+def test_the_paint_only_key_is_opt_in_and_checked():
+    assert RB.paint_spec({}) is None and RB.paint_spec({"route": {}}) is None
+    assert RB.paint_spec({"route": {"paint_rebuild": {"line": "L#0", "record": "r.json", "_doc": "x"}}}) == {"line": "L#0", "record": "r.json"}
+    for bad in ({"line": "L#0"}, {"record": "r.json"}, {"line": "", "record": "r.json"}):
+        try:
+            RB.paint_spec({"route": {"paint_rebuild": bad}})
+        except SystemExit:
+            pass
+        else:
+            raise AssertionError(bad)
+
+
+def test_the_strips_taken_out_and_laid_are_the_difference_and_a_shared_strip_stays():
+    a = [(0.0, 0.0, 0.0), (1.0, 0.0, 0.0), (0.0, 1.0, 0.0), (1.0, 1.0, 0.0)]
+    b = [(5.0, 0.0, 0.0), (6.0, 0.0, 0.0), (5.0, 1.0, 0.0), (6.0, 1.0, 0.0)]
+    c = [(9.0, 0.0, 0.0), (9.5, 0.0, 0.0), (9.0, 1.0, 0.0), (9.5, 1.0, 0.0)]
+    near_a = [(x + 2e-5, y, z) for x, y, z in a]                       # the same strip to the key's 0.1 mm
+    out, inn = RB.paint_change({"MARKINGS": [a, b], "YLINE": []}, {"MARKINGS": [near_a, c], "YLINE": [b]})
+    assert out == {"MARKINGS": [b], "YLINE": []} and inn == {"MARKINGS": [c], "YLINE": [b]}
+    s1 = RB.paint_signature("L#0", {"MARKINGS": [a, c], "YLINE": []})
+    assert s1 == RB.paint_signature("L#0", {"MARKINGS": [c, a], "YLINE": []}) and len(s1) == 16      # order does not matter
+    assert s1 != RB.paint_signature("L#0", {"MARKINGS": [a], "YLINE": []}) and s1 != RB.paint_signature("M#0", {"MARKINGS": [a, c], "YLINE": []})
+
+
+def test_lake_murray_names_jacksons_paint_and_the_chain_runs_it():
+    cfg = json.loads((LM / "track.config.json").read_text(encoding="utf-8"))
+    pp = RB.paint_spec(cfg)
+    assert pp == {"line": "north_J5_jackson_north#0", "record": "source/expansion/jackson_paint/jackson_median_correction.json"}
+    assert RB.spec(cfg)["line"] == "north_mission_gorge"                # the island path's key is as it was
+    assert cfg["version"] == "0.20.8"
+    conns = json.loads((LM / "data" / "connectors.local.json").read_text(encoding="utf-8"))["connectors"]
+    conn = next(c for c in conns if c["name"] == pp["line"])
+    before = REC["paint_before"]
+    assert before["lines"] and "strokes" in before and before != conn["paint"]       # the step has something to change
+    assert len(before["strokes"]) == 8 and len(conn["paint"]["strokes"]) == 51
+    ship = json.loads((LM / "ship.json").read_text(encoding="utf-8"))
+    assert pp["record"] in ship["sync_in"]["optional"] or pp["record"] in json.dumps(ship["sync_in"])
+    assert "data/paint_rebuild.json" in ship["sync_out"]["files"]
+    sh = (ROOT / "tools" / "ship_track.sh").read_text(encoding="utf-8")
+    body = sh.split("author_median_rebuild() {")[1].split("\n}\n")[0]
+    i_island = body.index('author_median_rebuild_blend.py" -- "$PROJ" --v021')
+    i_paint = body.index('author_median_rebuild_blend.py" -- "$PROJ" --paint-only --v021')
+    assert i_island < i_paint                                          # the paint pass after the island path, in the same step
+    ps = (LM / "source" / "college_r2" / "scratch" / "run_full.ps1").read_text(encoding="utf-8")
+    assert '"--paint-only"' in ps and ps.index('Step "median_rebuild"') < ps.index('"--paint-only"')

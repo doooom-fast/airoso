@@ -14,6 +14,47 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
+## 2026-11-23 (PC) — WIRING: the median-rebuild author step gains a paint-only mode that refuses unless it finds a connector's old paint exactly; no threshold moved (ledger 0099 round 3, item 4; opt-in, Lake Murray)
+
+Lake Murray's chain builds from the committed, authored blend, so a corrected painted median (Jackson Dr north,
+piece D) changes nothing that ships by its data alone: decorate's paint reaches MARKINGS / YLINE only in the draft.
+`tools/author_median_rebuild_blend.py --paint-only` (opt-in `route.paint_rebuild {line, record}`; key absent = no-op,
+the blend not opened) re-lays ONE connector's paint in the scene. Its island path is not touched.
+
+| What | Before | After |
+|---|---|---|
+| the paint of a connector whose correction changes no island | stays as the draft laid it | every strip the record's `paint_before` lays and the new paint does not is found in MARKINGS / YLINE as ONE loose part of exactly its four vertices, each within TOL_M (2 mm) of where the assembler's own `connector_markings` puts it; any strip missing: fatal, nothing saved. Those come out; the new paint's strips the old did not lay go in by the same function |
+| self-checks | - | each object lost exactly the old strips' vertices and faces and gained exactly the new; every new strip found in the scene, no old one; a vertex claimed by two old strips is fatal |
+| idempotence | - | the scene is stamped (`paint_rebuild`: the line and a checksum of the paint laid); the same stamp = nothing to do, nothing saved; another = fatal |
+
+`tools/ship_track.sh` runs it in the median-rebuild author step, after the island path (so `ship.json`'s author list
+and its pinned order are unchanged); `run_full.ps1` likewise. Writes `data/paint_rebuild.json` (in sync_out).
+
+What could go vacuous, and what holds it: a record whose `paint_before` equals the new paint would change nothing and
+pass; the test pins that Jackson's record differs (8 hatch strokes before, 51 after). Teeth:
+tests/tools/test_jackson_median_0099.py (the key opt-in and checked; the strips out / in are the difference and a
+shared strip stays; the checksum ignores order; Lake Murray's key and the chain's two calls in order).
+
+## 2026-11-23 (PC) — WIRING: decorate's piece-D edge lines take opt-in measured columns; the defaults unchanged (ledger 0099 round 3, item 4; opt-in, Lake Murray)
+
+| What | Before | After |
+|---|---|---|
+| piece D's lane edge on each side (tools/expansion_pieces.py layout) | a bike lane line BIKE_LINE_M 1.80 and a buffer line BIKE_LINE_M + BUFFER_M 2.70 inside the curb, both **[invented]** | where piece D's row carries `edge_fwd_m` / `edge_rev_m` (the lane's edge line, that far from its curb) and optionally `outer_fwd_m` / `outer_rev_m` (a bike lane's line further out): those, measured; null or no column = the default as before (`Piece.num_opt`) |
+
+LANE_MIN_M (2.9 m [invented]) is not moved: it still drops a lane line that would leave a lane narrower. Every other
+piece and every other row of D keeps 1.80 / 0.90.
+
+*The measurement that sets it:* the G10's lidar intensity (D24 2024 last returns) reads Jackson Dr north's forward
+edge line 2.3-2.5 m inside the real curb, ONE line over s 270-412 (a bike lane's line, no buffer): with the default
+2.7 m every authored forward lane came out 0.3-0.6 m narrower than the real one (3.2-4.0 m). Over s 270-492.5 the
+columns are the lidar's lines as distances from each real curb (jackson_curbs_D.lidar.g10.json): forward 71 rows
+measured, 22 interpolated, 15 default; reverse 50 / 34 / 24 (the reverse edge is the innermost line with along_share >=
+0.75 [invented]; weaker lines inside it are recorded as unexplained, never taken). Five rows remain 0.01-0.08 m under
+LANE_MIN_M; they are written as measured and listed in the record, not nudged.
+
+Teeth: tests/tools/test_jackson_median_0099.py (the measured lines and the default without them; num_opt is none where
+the column or a neighbour is; no other piece's or connector's record changes, byte for byte).
+
 ## 2026-11-23 (PC) — WIRING: road_wear_check's tone row reads the photo smoothed where the bake smoothed it, and its lane reading follows the lanes' ends; no threshold moved (ledger 0099 round 3, item 3, after the first trial bake's look; opt-in, Lake Murray)
 
 The first trial bake of Lake Murray's road wear was looked at before any rehearsal. Two things were wrong with the look,

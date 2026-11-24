@@ -136,7 +136,7 @@ def test_lake_murrays_road_wear_is_lanes_at_half_a_metre_with_the_flat_tone_on_t
     cfg = json.loads((lm / "track.config.json").read_text(encoding="utf-8"))
     ship = json.loads((lm / "ship.json").read_text(encoding="utf-8"))
     rw = cfg["road_wear"]
-    assert cfg["version"] == "0.20.7" and rw["surfaces"] == ["1ROAD"] and "lines" not in rw and "rubber" not in rw   # lanes only, drawn
+    assert cfg["version"] in ("0.20.7", "0.20.8") and rw["surfaces"] == ["1ROAD"] and "lines" not in rw and "rubber" not in rw   # lanes only, drawn
     # Kevin 2026-11-23: "50 cm now". One 8192 atlas: the detail's phase and a tile's pitch are both whole
     assert rw["texel_m"] == 0.5 and "50 cm now" in rw["_texel_doc"]
     assert (8192 * rw["texel_m"] / 4.0) == 1024.0 and ((64 + 2 * 16) / rw["texel_m"]) == 192.0

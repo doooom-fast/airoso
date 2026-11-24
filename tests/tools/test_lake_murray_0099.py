@@ -439,9 +439,10 @@ def test_the_road_and_the_sidewalks_bind_the_owned_pairs():
             assert name in FINISH_FOUR, p
 
 
-def test_version_is_0_20_7():
+def test_version_is_0_20_8():
     """0.20.3 round 1; 0.20.4 round 1c (the walk's back grade, tests/tools/test_lake_murray_0099_walk_grade.py); 0.20.5
     round 2 (College Avenue as two roads and the medians' grass tops, ledger 0055; the version the Mac named); 0.20.6
     round 3 (the Mac 2026-11-23: Mission Gorge's terracotta median first, tests/tools/test_terracotta_median_0099.py);
     0.20.7 round 3's item 3, road wear (the Mac 2026-11-23: "0.20.7, after 0.20.6's rehearsal result")"""
-    assert CFG["version"] == "0.20.7"
+    # 0.20.8: round 3's item 4, Jackson Dr north's painted median from the lidar (the Mac 2026-11-23: "as 0.20.8, after 0.20.7")
+    assert CFG["version"] == "0.20.8"

@@ -127,6 +127,7 @@
       "source/vegetation/median_heights.lidar.json",
       "source/college_r2/college_plants.median_spots.json",
       "source/expansion/mg_median/mg_median_correction.json",
+      "source/expansion/jackson_paint/jackson_median_correction.json",
       "source/expansion/mg_median/mg_median.median_spots.json",
       "source/college_r2/college_bank_plants.json",
       "source/college_r2/college_split.data.json",
@@ -354,6 +355,7 @@
       "data/walk_grade.seat.json",
       "data/median_tops.json",
       "data/median_rebuild.json",
+      "data/paint_rebuild.json",
       "data/road_wear.json",
       "data/road_wear.lanes.json",
       "data/road_wear_check.json"

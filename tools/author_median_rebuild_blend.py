@@ -34,6 +34,19 @@ last] or a list of such pairs (every built island of the line the correction tou
 Writes data/median_rebuild.json and stamps the scene (property `median_rebuild`: the line, the rows, a checksum of the
 data built from). Idempotent: a scene carrying that stamp is left alone and not saved; a stamp of other data is fatal.
 
+PAINT-ONLY MODE (--paint-only; ledger 0099 round 3, item 4, Lake Murray 0.20.8: Jackson Dr north's painted median).
+Opt-in, track.config.json route.paint_rebuild {"line": <a connector of data/connectors.local.json, by its full name>,
+"record": <the correction's record, project-relative, holding "paint_before": the connector's whole paint as it stood,
+lines and strokes>}; key absent = no-op, the blend not opened. A correction that changes a connector's paint and no
+island (a painted median) has nothing for the island path to do, and decorate's paint reaches the scene only in the
+draft. So: every strip the old paint lays and the new does not is found in MARKINGS / YLINE as ONE loose part of
+exactly its four vertices, each within TOL_M of where the assembler's own function (connector_markings, as paint_quads)
+puts it, or the step refuses and saves nothing; those are taken out and the new paint's strips that the old did not lay
+are laid by the same function. Self-checks: each object lost exactly the old strips and gained exactly the new; every
+new strip is in the scene and no old one is. Writes data/paint_rebuild.json and stamps the scene (property
+`paint_rebuild`: the line, a checksum of the paint built); a scene stamped with this paint is left alone and not saved,
+one stamped with other paint is fatal. tools/ship_track.sh runs it in the same author step as the island path, after it.
+
 The assembler's package (tracks/<track>/scripts-v021) is registered as `scripts` from --v021 unless the caller has
 already done so (tools/ship_track.sh's V021_SHIM)."""
 from __future__ import annotations
@@ -156,7 +169,205 @@ def signature(sp, pts, iw, quads):
     return h.hexdigest()[:16]
 
 
+def paint_spec(cfg):
+    s = (cfg.get("route") or {}).get("paint_rebuild")
+    if not s:
+        return None
+    if not s.get("line") or not s.get("record"):
+        die(f"route.paint_rebuild {s!r} is not {{line, record}}")
+    return {"line": str(s["line"]), "record": str(s["record"])}
+
+
+def quad_key(q):
+    return tuple(round(c, 4) for v in q for c in v)
+
+
+def paint_change(q_old, q_new):
+    """(the strips to take out, the strips to lay): per object, the old strips the new paint does not lay, and the new
+    strips the old did not (a strip both lay stays where it is)"""
+    k_old = {n: {quad_key(q) for q in qs} for n, qs in q_old.items()}
+    k_new = {n: {quad_key(q) for q in qs} for n, qs in q_new.items()}
+    return ({n: [q for q in q_old[n] if quad_key(q) not in k_new[n]] for n in q_old},
+            {n: [q for q in q_new[n] if quad_key(q) not in k_old[n]] for n in q_new})
+
+
+def paint_signature(line, quads):
+    h = hashlib.sha256()
+    h.update(json.dumps([line, {n: sorted(quad_key(q) for q in qs) for n, qs in sorted(quads.items())}]).encode("utf-8"))
+    return h.hexdigest()[:16]
+
+
+def main_paint_only(argv):
+    import bmesh
+    import bpy
+    from mathutils import Vector, kdtree
+    proj = Path(argv[0])
+    opt = {k: argv[argv.index(k) + 1] for k in ("--blend", "--save-as", "--v021") if k in argv}
+    cfg = json.loads((proj / "track.config.json").read_text(encoding="utf-8"))
+    pp = paint_spec(cfg)
+    if pp is None:
+        print(TAG + "route.paint_rebuild not declared: nothing to do, the blend not opened")
+        return
+    try:
+        from scripts.geometry import ribbon as wr, smooth as ws
+        wr.connector_markings
+    except (ImportError, AttributeError):
+        if "--v021" not in opt:
+            die("the assembler's package is not registered as `scripts` and no --v021 <scripts-v021> was given")
+        import importlib.util as u
+        v021 = Path(opt["--v021"])
+        s_ = u.spec_from_file_location("scripts", str(v021 / "__init__.py"), submodule_search_locations=[str(v021)])
+        m_ = u.module_from_spec(s_)
+        sys.modules["scripts"] = m_
+        s_.loader.exec_module(m_)
+        from scripts.geometry import ribbon as wr, smooth as ws
+    data = proj / "data"
+    record = json.loads((proj / pp["record"]).read_text(encoding="utf-8"))
+    if not isinstance(record.get("paint_before"), dict) or "lines" not in record["paint_before"]:
+        die(f"{pp['record']} holds no paint_before (the connector's whole paint as it stood)")
+    conn = next((c for c in json.loads((data / "connectors.local.json").read_text(encoding="utf-8"))["connectors"]
+                 if c["name"] == pp["line"]), None)
+    if conn is None or not conn.get("paint"):
+        die(f"data/connectors.local.json holds no painted connector {pp['line']}")
+    q_old, q_new = paint_quads(wr, ws, conn, record["paint_before"]), paint_quads(wr, ws, conn, conn["paint"])
+    p_out, p_in = paint_change(q_old, q_new)
+    sig = paint_signature(pp["line"], q_new)
+    blend = Path(opt.get("--blend") or proj / "loop.blend")
+    bpy.ops.wm.open_mainfile(filepath=str(blend))
+    scene = bpy.context.scene
+    stamp = scene.get("paint_rebuild")
+    if stamp:
+        st = json.loads(stamp)
+        if st.get("signature") == sig and st.get("line") == pp["line"]:
+            print(TAG + f"the scene already carries {pp['line']}'s paint as this data lays it ({sig}): nothing to do, nothing saved")
+            return
+        die(f"the scene carries a paint_rebuild stamp of other paint ({st}); this paint is {sig}")
+
+    class Mesh:
+        """one object's mesh: its vertices in the world, its loose parts, a KD tree (the island path's, for strips)"""
+        def __init__(self, name):
+            self.ob = bpy.data.objects.get(name)
+            if self.ob is None or self.ob.type != "MESH":
+                die(f"no {name} mesh in the scene")
+            me = self.ob.data
+            self.mw = self.ob.matrix_world
+            self.co = [self.mw @ v.co for v in me.vertices]
+            parent = list(range(len(self.co)))
+
+            def find(x):
+                while parent[x] != x:
+                    parent[x] = parent[parent[x]]
+                    x = parent[x]
+                return x
+            for pl in me.polygons:
+                vs = list(pl.vertices)
+                for k in vs[1:]:
+                    ra, rb = find(vs[0]), find(k)
+                    if ra != rb:
+                        parent[rb] = ra
+            self.root = [find(i) for i in range(len(self.co))]
+            self.size = {}
+            for r in self.root:
+                self.size[r] = self.size.get(r, 0) + 1
+            self.kd = kdtree.KDTree(len(self.co))
+            for i, c in enumerate(self.co):
+                self.kd.insert(c, i)
+            self.kd.balance()
+            self.n0 = (len(me.vertices), len(me.polygons))
+
+        def part(self, verts):
+            """the indices of the ONE loose part that is exactly these four vertices (any order), or None"""
+            want = [Vector(v) for v in verts]
+            cands = {self.root[i] for (_c, i, _d) in self.kd.find_range(want[0], TOL_M)}
+            for r in sorted(cands):
+                if self.size[r] != len(want):
+                    continue
+                used = set()
+                for w in want:
+                    hit = [i for (_c, i, _d) in self.kd.find_range(w, TOL_M) if self.root[i] == r and i not in used]
+                    if not hit:
+                        break
+                    used.add(hit[0])
+                if len(used) == len(want):
+                    return sorted(used)
+            return None
+
+    M = {n: Mesh(n) for n in ("MARKINGS", "YLINE")}
+    out_idx, miss, found = {n: [] for n in M}, [], {}
+    for name in M:
+        n_ok = 0
+        for q in p_out[name]:
+            idx = M[name].part(q)
+            if idx is None:
+                miss.append(f"{name} holds no strip of exactly its four vertices at {[round(c, 2) for c in q[0]]}")
+            else:
+                out_idx[name] += idx
+                n_ok += 1
+        found[name] = {"strips_to_take_out": len(p_out[name]), "found": n_ok, "strips_to_lay": len(p_in[name])}
+        if len(set(out_idx[name])) != len(out_idx[name]):
+            die(f"{name}: a vertex was claimed by two old strips")
+    print(TAG + f"paint-only, {pp['line']}: {json.dumps(found)}")
+    if miss:
+        die(f"the scene does not hold {pp['line']}'s old paint exactly as the record lays it ({len(miss)} strips): " + "; ".join(miss[:6]))
+    added = {}
+    for name, m in M.items():
+        if not out_idx[name] and not p_in[name]:
+            continue
+        me = m.ob.data
+        bm = bmesh.new()
+        bm.from_mesh(me)
+        bm.verts.ensure_lookup_table()
+        gone = [bm.verts[i] for i in out_idx[name]]
+        ref = next((f for v in gone for f in v.link_faces), None) or (bm.faces[0] if len(bm.faces) else None)
+        mat, smooth = (ref.material_index, ref.smooth) if ref is not None else (0, False)
+        n_f_gone = len({f for v in gone for f in v.link_faces})
+        bmesh.ops.delete(bm, geom=gone, context="VERTS")
+        inv = m.mw.inverted()
+        nv = nf = 0
+        for q in p_in[name]:
+            vs = [bm.verts.new(inv @ Vector(c)) for c in q]
+            nv += 4
+            for f in ((0, 1, 3), (0, 3, 2)):
+                face = bm.faces.new([vs[k] for k in f])
+                face.material_index, face.smooth = mat, smooth
+                nf += 1
+        bm.to_mesh(me)
+        bm.free()
+        me.update()
+        if (len(me.vertices), len(me.polygons)) != (m.n0[0] - len(out_idx[name]) + nv, m.n0[1] - n_f_gone + nf):
+            die(f"{name}: {len(me.vertices)} vertices / {len(me.polygons)} faces after the change, expected "
+                f"{m.n0[0] - len(out_idx[name]) + nv} / {m.n0[1] - n_f_gone + nf}")
+        added[name] = {"vertices_out": len(out_idx[name]), "faces_out": n_f_gone, "vertices_in": nv, "faces_in": nf,
+                       "vertices": [m.n0[0], len(me.vertices)], "faces": [m.n0[1], len(me.polygons)]}
+    after = {n: Mesh(n) for n in added}
+    for name in added:
+        for q in p_in[name]:
+            if after[name].part(q) is None:
+                die(f"{name}: a new paint strip is not in the scene")
+        for q in p_out[name]:
+            if after[name].part(q) is not None:
+                die(f"{name}: an old paint strip is still in the scene")
+    rep = {"_doc": "tools/author_median_rebuild_blend.py --paint-only (ledger 0099 round 3, item 4): one connector's paint re-laid "
+                   "in the scene from corrected data, the old strips found exactly, by the assembler's own paint function",
+           "line": pp["line"], "record": pp["record"], "signature": sig, "found": found, "objects": added,
+           "strips": {"old": {n: len(q_old[n]) for n in q_old}, "new": {n: len(q_new[n]) for n in q_new}}}
+    scene["paint_rebuild"] = json.dumps({"line": pp["line"], "signature": sig})
+    (data / "paint_rebuild.json").write_text(json.dumps(rep, indent=1), encoding="utf-8")
+    print(TAG + json.dumps({k: v for k, v in rep.items() if k != "_doc"}))
+    if "--save-as" in opt:
+        bpy.ops.wm.save_as_mainfile(filepath=opt["--save-as"], copy=True)
+        print(TAG + f"saved a copy: {opt['--save-as']}")
+    else:
+        bpy.ops.wm.save_as_mainfile(filepath=str(blend))
+        print(TAG + f"saved {blend}")
+
+
 def main():
+    if "--paint-only" in sys.argv:
+        argv = [a for a in sys.argv[sys.argv.index("--") + 1:] if a != "--paint-only"] if "--" in sys.argv else []
+        if not argv:
+            die("usage: ... -- <project> --paint-only --v021 <scripts-v021> [--blend <loop.blend>] [--save-as <copy>]")
+        return main_paint_only(argv)
     import bmesh
     import bpy
     from mathutils import Vector, kdtree

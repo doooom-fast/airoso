@@ -4,7 +4,7 @@
   "ui_series": "",
   "_ui_series_doc": "Engine track_folder prefixes the CM display name with ui_series (default 'K10 Colorado'); empty = use the track name as-is (SD names already carry the K10 - San Diego branding).",
   "slug": "san_diego_lake_murray",
-  "version": "0.20.7",
+  "version": "0.20.8",
   "author": "k10-san-diego",
   "year": 2026,
   "_about": "A single drivable LOOP around Lake Murray (Kevin's childhood neighborhood). This repo is the standalone, Blender-first home for the track: the loop is mapped from the REAL roads (OpenStreetMap) at REAL elevation (USGS 3DEP), imported into Blender, and shaped there interactively (Kevin designs, Claude operates) BEFORE any kn5 export. Start point = just the 5-road main loop; everything else is added deliberately, in Blender.",
@@ -196,6 +196,11 @@
       "line": "north_mission_gorge",
       "was_rows": [[8, 48], [63, 741]],
       "record": "source/expansion/mg_median/mg_median_correction.json"
+    },
+    "paint_rebuild": {
+      "_doc": "ledger 0099 round 3, item 4 (the Mac 2026-11-23): Jackson Dr north's painted median was an aerial read that had caught one edge of a hatched band (source/expansion/jackson_paint/: the lidar, the photo, fix_jackson_median.py, its record). The draft that lays a piece's paint never runs again on this chain, so tools/author_median_rebuild_blend.py --paint-only re-lays this ONE connector's paint in the scene: every old strip found exactly by the assembler's own paint function on the record's paint_before, or the step refuses",
+      "line": "north_J5_jackson_north#0",
+      "record": "source/expansion/jackson_paint/jackson_median_correction.json"
     },
     "median_tops": {
       "_doc": "ledger 0055, 'Known defect of the current build' (the Mac 2026-11-23, option (a)): every raised median showed the road's asphalt between its curbs, because its grass top was part of TERRAIN and the prep sets every 1GRASS vertex with pavement under it to the deck less 0.02 m (2,486 of 2,486 island rows on 0.20.3). Opt-in key of the chain's author step median_tops (tools/author_median_tops_blend.py): every island's top is moved, face for face, out of TERRAIN into this object, which the prep does not pin. The name is the surface and the material: 1LAWN is the engine table's other physical turf row (the same grass textures this track's ground wears); lawn_as_grass gives its surface key GRASS's own values. tools/make_treefx.py seats the median plants on it. Absent = no-op.",

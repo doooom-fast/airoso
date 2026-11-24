@@ -48,6 +48,8 @@ foreach ($s in @("split", "middle", "ground")) {
   Step "college_$s" $Blender @("--background", "$Ws\loop.blend", "--python-exit-code", "1", "--python", "$r2\college_${s}_blend.py") "^\[college_$s\]|FATAL|Error|Traceback" 3000 $Ws
 }
 Step "median_rebuild" $Blender @("--background", "--python-exit-code", "1", "--python", "$Air\tools\author_median_rebuild_blend.py", "--", $Ws, "--v021", "$Air\tracks\san-diego-lake-murray\scripts-v021") "^\[median-rebuild\]|FATAL|Error|Traceback" 700 $Ws
+# the same step's paint-only pass (route.paint_rebuild: Jackson Dr north's painted median, ledger 0099 round 3 item 4)
+if (Want "median_rebuild") { $rc = Run-Low $Blender @("--background", "--python-exit-code", "1", "--python", "$Air\tools\author_median_rebuild_blend.py", "--", $Ws, "--paint-only", "--v021", "$Air\tracks\san-diego-lake-murray\scripts-v021") "paint_rebuild" $Ws; $rc[0]; Get-Content "$Log\paint_rebuild.out.txt" | Select-String "^\[median-rebuild\]|FATAL|Error|Traceback" | ForEach-Object { $_.Line.Substring(0, [Math]::Min(700, $_.Line.Length)) } }
 Step "median_tops" $Blender @("--background", "--python-exit-code", "1", "--python", "$Air\tools\author_median_tops_blend.py", "--", $Ws) "^\[median-tops\]|FATAL|Error|Traceback" 500 $Ws
 Step "lamp_heads" $Blender @("--background", "--python-exit-code", "1", "--python", "$Air\tools\author_lamp_heads_blend.py", "--", $Ws) "^\[heads\]|FATAL|Error|Traceback" 400 $Ws
 Step "walk_grade" $Blender @("--background", "--python-exit-code", "1", "--python", "$Air\tools\author_walk_grade_blend.py", "--", $Ws) "^\[walk-grade\]|FATAL|Error|Traceback" 500 $Ws

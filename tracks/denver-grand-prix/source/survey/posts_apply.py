@@ -127,6 +127,10 @@ def main(cache):
     posts.sort(key=lambda p: p['s_m'])
     for k, p in enumerate(posts):
         p['id'] = ('g' if p['class'] in SIGNAL else 'l') + f'{k:04d}'; p['height_m'] = None
+    for p in posts:                                   # a signal post that also carries a lamp (the definition: SURVEY.md, posts)
+        if p['class'] == 'signal_post':
+            txt = ' '.join(str(v) for v in (p['eye'].get('note'), p['eye'].get('reclass_why'))).lower(); sh = max([float(v) for v in p.get('shadow_m', {}).values()] or [0])
+            p['carries_lamp'] = bool(any(w in txt for w in ('luminaire', 'lamp', 'light', 'cobra')) or sh >= 5.0)
     PE = np.array([p['_en'] for p in posts]) if posts else np.zeros((0, 2))
     # the reader against the eye
     is_post = lambda cls: cls in KEEP
@@ -179,7 +183,7 @@ def main(cache):
             per_node.append({'osm_node': n, 'junction': j['junction'], 'signal_masts_found_at_its_junction': j['signal_masts_found'], 'signal_posts_found_at_its_junction': j['signal_posts_found']})
     orphan = [p['id'] for p in posts if p['class'] in SIGNAL and not any(p['id'] in j['ids'] for j in J)]
     json.dump({'_doc': 'Signal masts and signal posts on the lap corridor, and the count at every junction OSM tags as signalled (PLAN 4b). signal_mast: a pole with an arm over the roadway '
-                       '(signal heads hang from it); signal_post: a short post or pedestal by the kerb carrying signal or pedestrian heads. Classes are the eye\'s, off the aerial. Heads, their '
+                       '(signal heads hang from it); signal_post: any pole or pedestal carrying signal or pedestrian heads with no arm over the road, tall or short; carries_lamp is true where it also carries a light (its eye note names one, or its shadow is 5 m or longer). Classes are the eye\'s, off the aerial. Heads, their '
                        'number and their faces are not read. See SURVEY.md.', **common,
                'counts': {'signal_masts': sum(1 for p in sigs if p['class'] == 'signal_mast'), 'signal_posts': sum(1 for p in sigs if p['class'] == 'signal_post'),
                           'osm_signal_nodes_on_the_lap': len(per_node), 'junctions_osm_tags_signalled': sum(1 for j in J if j['osm_tags_a_signal']),

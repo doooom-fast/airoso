@@ -51,3 +51,10 @@ panel (ids under 10000). Give every numbered ring a class as before; a ring on a
 is `not_a_post` with note `duplicate of an accepted post`. Then add, as before, any post with neither a ring nor a green
 square: this is the recall check on the first pass. If a green square sits on something that is NOT a post, say so in
 the panel note with its E, N (it will be reviewed). Output: `verdicts_r2_<batch>.json`, same format.
+
+## Class definition, settled after posts refutation round 2
+
+Readers disagreed on tall corner poles that carry a light and pedestrian or signal heads but no arm over the road (one
+called them lamps, others signal posts). Settled: **any pole or pedestal carrying signal or pedestrian heads with no arm
+over the road is `signal_post`**, tall or short; `signals.json` marks `carries_lamp` where it also carries a light. A
+`signal_mast` has an arm reaching over the roadway. A `lamp` carries no heads.

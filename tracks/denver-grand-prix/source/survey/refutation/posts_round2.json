@@ -1,0 +1,356 @@
+{
+ "reader": "claude-opus-5-5 refuter, round 2",
+ "_doc": "Every box read by eye in both years at 2.6-8x crops with my own metre ticks computed from box_en (15.16 px/m); a post counted only with its signature (a stroke from one foot in both years, or one year plus a head where the other is in shadow); feet located to ~0.5 m; strokes under ~1.5 m in 2022 treated as meters/bollards; a tall pole whose shadow ends in a lamp head and that carries only ped heads is called lamp, a pole with an arm of signal heads over the road is a mast.",
+ "boxes": [
+  {
+   "box": "j738 Tremont Place / West Colfax Avenue",
+   "inventory_posts": 9,
+   "correct": 5,
+   "false": [],
+   "duplicate": [
+    "l0105"
+   ],
+   "misplaced": [
+    {
+     "id": "l0106",
+     "m": 1.8,
+     "note": "the sign (plate seen in both years) stands at about (-681.7,11.6); nothing at the square in 2022"
+    }
+   ],
+   "wrong_class": [
+    {
+     "id": "g0107",
+     "is": "lamp",
+     "note": "tall pole whose 2022 shadow runs 6-8 m north and ends in a cobra/lamp head (2020 shadow agrees); the signal heads on it are pedestrian heads, no signal arm over the road"
+    },
+    {
+     "id": "g0108",
+     "is": "signal_post",
+     "note": "short pedestal (2020 shadow ~3 m) with a crossbar of ped heads; the arm over Colfax at N -14 belongs to g0109"
+    }
+   ],
+   "missed": [
+    {
+     "E": -675.5,
+     "N": -4.6,
+     "class": "sign_or_small_post",
+     "note": "sign on the median nose: 2022 thin stroke to N -2.3, 2020 plate shadow at (-676.9,-3.2)"
+    }
+   ],
+   "unjudgeable": "l0105 sits 2.1 m from g0104's foot with no stroke of its own (the 2020 NW shadow and the arm both leave g0104's foot): counted duplicate. A 2020-only stroke at (-716.2,-1..4) on the median beside the kiosk could not be confirmed in 2022."
+  },
+  {
+   "box": "j1758 14th Street / Stout Street",
+   "inventory_posts": 15,
+   "correct": 14,
+   "false": [
+    "l0191"
+   ],
+   "duplicate": [],
+   "misplaced": [],
+   "wrong_class": [],
+   "missed": [
+    {
+     "E": -900.1,
+     "N": 412.8,
+     "class": "lamp",
+     "note": "medium confidence: three sunlit globes visible in 2022 inside the building shadow; its 2022 shadow would end in the T-shaped head that l0192's square sits next to (-901,416.5)"
+    }
+   ],
+   "unjudgeable": "l0191 lies on l0186's 2022 shadow stroke; 2020 shows only a cabinet shadow there. SW quarter in building shadow in 2022; l0193 judged on 2020 only."
+  },
+  {
+   "box": "j2011 15th Street / Champa Street",
+   "inventory_posts": 9,
+   "correct": 8,
+   "false": [
+    "l0221"
+   ],
+   "duplicate": [],
+   "misplaced": [],
+   "wrong_class": [],
+   "missed": [],
+   "unjudgeable": "West two thirds in deep building shadow in 2022: l0224, l0228, g0226, g0227 judged on 2020 alone. l0221: only a ~1.4 m stroke with a round head (meter-like) beside the square, no plate. Same posts as m1980 for l0219-l0223, g0222."
+  },
+  {
+   "box": "j2539 15th Street / Market Street",
+   "inventory_posts": 10,
+   "correct": 8,
+   "false": [],
+   "duplicate": [],
+   "misplaced": [],
+   "wrong_class": [
+    {
+     "id": "g0285",
+     "is": "lamp",
+     "note": "tall pole whose 2022 shadow runs 6-8 m north and ends in a cobra/lamp head (2020 shadow agrees); the signal heads on it are pedestrian heads, no signal arm over the road"
+    },
+    {
+     "id": "g0290",
+     "is": "lamp",
+     "note": "tall pole whose 2022 shadow runs 6-8 m north and ends in a cobra/lamp head (2020 shadow agrees); the signal heads on it are pedestrian heads, no signal arm over the road"
+    }
+   ],
+   "missed": [],
+   "unjudgeable": "l0289 has only ~1.2 m of 2022 shadow (meter-length) but a plate in 2020; kept. A lamp whose 2020 head falls at (-1238.8,961.5) has its foot on the south edge (~N 958.9), not counted."
+  },
+  {
+   "box": "j3055 Auraria Parkway / North Speer Boulevard",
+   "inventory_posts": 8,
+   "correct": 7,
+   "false": [],
+   "duplicate": [],
+   "misplaced": [],
+   "wrong_class": [
+    {
+     "id": "g0365",
+     "is": "lamp",
+     "note": "tall pole whose 2022 shadow runs 6-8 m north and ends in a cobra/lamp head (2020 shadow agrees); the signal heads on it are pedestrian heads, no signal arm over the road"
+    }
+   ],
+   "missed": [
+    {
+     "E": -1497.8,
+     "N": 830.9,
+     "class": "sign_or_small_post",
+     "note": "east edge: 2022 stroke ~3 m north, 2020 NW stroke with plate at (-1499,832)"
+    }
+   ],
+   "unjudgeable": "l0367 is a second pole on the island carrying its own arm over the road (likely signal_mast); post_unknown left as correct."
+  },
+  {
+   "box": "j3501 Arapahoe Street / North Speer Boulevard",
+   "inventory_posts": 7,
+   "correct": 6,
+   "false": [],
+   "duplicate": [],
+   "misplaced": [],
+   "wrong_class": [
+    {
+     "id": "g0418",
+     "is": "lamp",
+     "note": "the arm over the road ends in a white luminaire (2022) and the 2020 arm shadow ends in a lamp head; only ped heads on the pole"
+    }
+   ],
+   "missed": [],
+   "unjudgeable": ""
+  },
+  {
+   "box": "j4138 North Kalamath Street / West 14th Avenue",
+   "inventory_posts": 8,
+   "correct": 6,
+   "false": [],
+   "duplicate": [
+    "l0475"
+   ],
+   "misplaced": [
+    {
+     "id": "g0473",
+     "m": 6.3,
+     "note": "the mast foot is at about (-1318.6,-176.3) (2022 shadow runs north from there past the square; arm reaches south over 14th Ave, seen in both years); nothing stands at the square in the sidewalk"
+    }
+   ],
+   "wrong_class": [],
+   "missed": [],
+   "unjudgeable": "l0475 is on that mast's foot (0.7 m) and is the second square on it. l0480 is a real tall pole (lamp-like) but its foot may sit ~1.5 m south of the square under the tree; kept."
+  },
+  {
+   "box": "j4664 North Speer Boulevard / West Colfax Avenue",
+   "inventory_posts": 6,
+   "correct": 5,
+   "false": [],
+   "duplicate": [],
+   "misplaced": [
+    {
+     "id": "g0518",
+     "m": 1.6,
+     "note": "2022 pole shadow leaves (-1194.6,22.6), 1.6 m east of the square"
+    }
+   ],
+   "wrong_class": [],
+   "missed": [],
+   "unjudgeable": "g0518 on the north edge; the shadow runs out of the box."
+  },
+  {
+   "box": "j5186 Elati Street / West 14th Avenue",
+   "inventory_posts": 15,
+   "correct": 13,
+   "false": [
+    "l0579",
+    "l0571"
+   ],
+   "duplicate": [],
+   "misplaced": [],
+   "wrong_class": [],
+   "missed": [],
+   "unjudgeable": "l0579 sits on the 2022 shadow of g0581's arm (horizontal dark band at N -170); l0571: nothing in either year. l0572 has a ~1.6 m stroke with a small head (could be a meter); l0570/l0573/l0574 are short parking-lot sign posts, weakly visible."
+  },
+  {
+   "box": "j6537 East Colfax Avenue / Grant Street",
+   "inventory_posts": 12,
+   "correct": 11,
+   "false": [],
+   "duplicate": [],
+   "misplaced": [],
+   "wrong_class": [
+    {
+     "id": "g0728",
+     "is": "lamp",
+     "note": "tall pole whose 2022 shadow runs 6-8 m north and ends in a cobra/lamp head (2020 shadow agrees); the signal heads on it are pedestrian heads, no signal arm over the road"
+    }
+   ],
+   "missed": [
+    {
+     "E": 91.8,
+     "N": -5.4,
+     "class": "sign_or_small_post",
+     "note": "short median sign: 2022 ~1.3 m stroke with white base, 2020 plate shadow at (91.4,-4.6); borderline length"
+    }
+   ],
+   "unjudgeable": "l0733 is short (~1 m in 2022) beside the bike rack; kept. Many delineators on the median ignored."
+  },
+  {
+   "box": "m330 Colfax WB to Speer NB mid-block",
+   "inventory_posts": 8,
+   "correct": 8,
+   "false": [],
+   "duplicate": [],
+   "misplaced": [],
+   "wrong_class": [],
+   "missed": [],
+   "unjudgeable": "A twin-globe object on the median island near (-330.6,52.7) (same in both years) may be a double lamp or a bench between planters; not counted. l0050 judged on 2022 (2020 in building shadow)."
+  },
+  {
+   "box": "m880 Colfax WB to Speer NB mid-block",
+   "inventory_posts": 5,
+   "correct": 4,
+   "false": [
+    "l0129"
+   ],
+   "duplicate": [],
+   "misplaced": [],
+   "wrong_class": [],
+   "missed": [],
+   "unjudgeable": "l0129 lies on l0128's long 2020 shadow; the white-topped object at (-861.2,17.4) has under 1 m of shadow. l0127 judged on 2020 (2022 building shadow)."
+  },
+  {
+   "box": "m1290 Speer NB to Stout mid-block",
+   "inventory_posts": 5,
+   "correct": 3,
+   "false": [
+    "l0171"
+   ],
+   "duplicate": [],
+   "misplaced": [],
+   "wrong_class": [
+    {
+     "id": "l0173",
+     "is": "signal_post",
+     "note": "corner pole with signal heads along its 2022 and 2020 shadows, no lamp head"
+    }
+   ],
+   "missed": [],
+   "unjudgeable": "l0171: no 2022 stroke at the square on light grass; the 2020 stroke near it comes from a foot north of the box."
+  },
+  {
+   "box": "m1980 15th St to Blake mid-block",
+   "inventory_posts": 6,
+   "correct": 5,
+   "false": [
+    "l0221"
+   ],
+   "duplicate": [],
+   "misplaced": [],
+   "wrong_class": [],
+   "missed": [],
+   "unjudgeable": "l0221 as in j2011 (meter-like). 2020 north half in building shadow."
+  },
+  {
+   "box": "m2600 15th St to Blake mid-block",
+   "inventory_posts": 6,
+   "correct": 6,
+   "false": [],
+   "duplicate": [],
+   "misplaced": [],
+   "wrong_class": [],
+   "missed": [],
+   "unjudgeable": "2020 shadow of l0297 runs north-east here."
+  },
+  {
+   "box": "m2860 Blake to Speer SB mid-block",
+   "inventory_posts": 12,
+   "correct": 12,
+   "false": [],
+   "duplicate": [],
+   "misplaced": [],
+   "wrong_class": [],
+   "missed": [],
+   "unjudgeable": "l0340 (lamp) and l0341 (sign) are two posts 1.3 m apart, both seen in both years."
+  },
+  {
+   "box": "m3420 Speer SB to Kalamath mid-block",
+   "inventory_posts": 2,
+   "correct": 2,
+   "false": [],
+   "duplicate": [],
+   "misplaced": [],
+   "wrong_class": [],
+   "missed": [],
+   "unjudgeable": "A lamp whose head shadow falls at (-1354.3,500) has its foot south of the box."
+  },
+  {
+   "box": "m4100 Kalamath S to W 14th Ave mid-block",
+   "inventory_posts": 2,
+   "correct": 2,
+   "false": [],
+   "duplicate": [],
+   "misplaced": [],
+   "wrong_class": [],
+   "missed": [],
+   "unjudgeable": "l0472 is a tall plain pole (no crossarms seen); utility_pole kept."
+  },
+  {
+   "box": "m4760 Speer SB to W 14th Ave mid-block",
+   "inventory_posts": 1,
+   "correct": 1,
+   "false": [],
+   "duplicate": [],
+   "misplaced": [],
+   "wrong_class": [],
+   "missed": [],
+   "unjudgeable": ""
+  },
+  {
+   "box": "m5900 14th Ave E to Logan mid-block",
+   "inventory_posts": 6,
+   "correct": 4,
+   "false": [
+    "l0662"
+   ],
+   "duplicate": [],
+   "misplaced": [],
+   "wrong_class": [
+    {
+     "id": "g0664",
+     "is": "lamp",
+     "note": "tall pole whose 2022 shadow runs 6-8 m north and ends in a cobra/lamp head (2020 shadow agrees); the signal heads on it are pedestrian heads, no signal arm over the road"
+    }
+   ],
+   "missed": [],
+   "unjudgeable": "l0662: only a ~1 m stub next to a hydrant-like object. l0665 has ~1.1 m in 2022 / 1.8 m in 2020; kept as sign."
+  }
+ ],
+ "totals": {
+  "inventory_posts": 152,
+  "correct": 130,
+  "false": 8,
+  "duplicate": 2,
+  "misplaced": 3,
+  "wrong_class": 9,
+  "missed": 4,
+  "precision": 0.934,
+  "precision_strict": 0.855,
+  "recall": 0.973,
+  "_note": "j2011 and m1980 share five posts (l0219, l0220, l0221, l0223, g0222; l0221 false in both), so these are counted twice; counted once: 147 inventory, 126 correct, 7 false. Recall counts misplaced and wrong_class posts as found; the missed count includes one medium-confidence lamp (j1758)."
+ }
+}

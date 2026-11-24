@@ -70,6 +70,51 @@
    "E": -1299.3,
    "N": -196.7,
    "why": "on the tip of a sign plate's 2020 shadow; the foot was added (SG34)"
+  },
+  {
+   "E": -929.07,
+   "N": 443.09,
+   "why": "on l0186's 2022 shadow (posts refutation round 2)"
+  },
+  {
+   "E": -861.6,
+   "N": 606.2,
+   "why": "a stub under 1.5 m of shadow (a meter) (posts refutation round 2)"
+  },
+  {
+   "E": -785.1,
+   "N": -169.9,
+   "why": "on the shadow of g0581's arm (posts refutation round 2)"
+  },
+  {
+   "E": -805.0,
+   "N": -195.72,
+   "why": "nothing at the square in either year (posts refutation round 2)"
+  },
+  {
+   "E": -862.0,
+   "N": 16.5,
+   "why": "on l0128's 2020 shadow (posts refutation round 2)"
+  },
+  {
+   "E": -1180.7,
+   "N": 134.97,
+   "why": "nothing at the square in either year (posts refutation round 2)"
+  },
+  {
+   "E": -119.0,
+   "N": -191.2,
+   "why": "a stub under 1.5 m of shadow (a meter) (posts refutation round 2)"
+  },
+  {
+   "E": -1319.76,
+   "N": -169.91,
+   "why": "a second square 6.3 m north of the Kalamath / 14th mast, which l0475 marks at its foot (posts refutation round 2)"
+  },
+  {
+   "E": -678.4,
+   "N": -16.0,
+   "why": "a second square 2.1 m from g0104's mast (posts refutation round 2)"
   }
  ],
  "move": [
@@ -141,6 +186,24 @@
    "N": -174.77,
    "to": "post_unknown",
    "why": "its 2022 shadow is about 6.5 m: too tall for a sign post (refutation round 1)"
+  },
+  {
+   "E": -1318.5,
+   "N": -177.0,
+   "to": "signal_mast",
+   "why": "the Kalamath / 14th mast at its foot (posts refutation round 2)"
+  },
+  {
+   "E": -699.07,
+   "N": -19.61,
+   "to": "signal_post",
+   "why": "a short signal post, no arm over the road (posts refutation round 2)"
+  },
+  {
+   "E": -1198.83,
+   "N": 131.48,
+   "to": "signal_post",
+   "why": "carries signal heads (posts refutation round 2)"
   }
  ]
 }

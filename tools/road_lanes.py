@@ -20,7 +20,8 @@ OPT-IN. track.config.json ``road_wear.lanes`` (no track names it yet). Absent, `
                                    # source rows (inclusive) with no lanes; "road": "mainline" (default) or a connector name
         "split_zones": [{"kind": "...", "from": 1130, "to": 1476, "source": "..."}],
                                    # mainline rows whose lanes another reader supplies (SPLIT ZONES)
-        "ends": {"fade_m": 8.0}    # opt-in, no default (LANE ENDS): a lane's wear at its two ends
+        "ends": {"fade_m": 8.0},   # opt-in, no default (LANE ENDS): a lane's wear at its two ends
+        "dash_gap_rows": 8         # opt-in, no default (DASH GAPS): a dashed divider's short gaps read as painted
     }}
 
 Lake Murray, for the session that turns it on: College Ave's mainline rows v1130-1476 are being rebuilt as two one-way
@@ -152,6 +153,20 @@ run stops for two different reasons. Measured on Lake Murray (221 lanes, 219 of 
   join_side_m 0.5 and join_angle_deg 15 (between the measured welds, 0.23 m and 3 degrees at most, and the nearest
   thing that is not one, a neighbouring lane 3.2 m to the side).
 
+DASH GAPS (opt-in ``dash_gap_rows``; ledger 0099 round 3, item 3, found by the first bake's deepest rubber). An
+authored piece paints a dashed divider only where the half carriageway holds two lanes of tools/expansion_pieces.py's
+LANE_MIN_M. On Princess View the space between the yellow and the edge line is about 5.8-5.9 m, at that limit, so the
+divider flickers off for a row or a few as the median's line wanders by a few centimetres: offsets either side of a gap
+within 0.0-0.9 m of each other [measured]. Read as painted, lane 1 takes the whole half for those rows (5.7-5.9 m wide,
+its centre 1.8 m further out) and lane 2 stops and starts: a jog in lane 1's wheel paths, and where LANE ENDS welded lane
+2 across the gap, both lanes' wheel paths over the same space (the bake's deepest rubber, 38.8 %, at Princess View row
+207 and Jackson north row 617). With the key, a dashed white line's gap of at most ``dash_gap_rows`` rows, painted on
+both sides in the same line record, is read as painted there, its offset drawn straight between the two painted rows.
+A longer gap is the divider ending and is read as it is. Solid lines and yellows are never filled. Measured on Lake
+Murray's pieces (2026-11-23): 21 dashed-divider gaps bounded on both sides; 11 of them 1-8 rows (3-24 m), the rest 13
+rows (39 m) and longer; none at a side street's mouth (the nearest 15-307 m away). 8 [invented]: the measured break, and
+two cycles of a 3 m dash and 9 m gap, a gap a driver still reads as one divider. The doc records what was filled.
+
 NUMBERS. From the paint rule (read, not restated): lane_w 3.65, edge_inset 0.55, line_w 0.12, max_lanes_side 6, and
 ribbon's STUB_PAINT_STOP_M / STUB_BARRIER_HALF_BASE_M. From the assembler: CONNECTOR_SMOOTH (sigma 1.5 points, one
 pass, height sigma 1.0: build_loop_blend's own call, pinned by a test). Measured, read from
@@ -190,6 +205,7 @@ DEFAULTS = {
     "exclude": [],
     "split_zones": [],
     # "ends" (opt-in, no default here so a spec without it is unchanged): LANE ENDS in the docstring
+    # "dash_gap_rows" (opt-in, no default here): DASH GAPS in the docstring
 }
 ENDS_DEFAULTS = {
     "fade_m": 8.0,              # [invented] LANE ENDS
@@ -454,6 +470,38 @@ def road_lanes(name: str, group: str, fr, closed: bool, per_station, islands, ex
     return out
 
 
+def fill_dash_gaps(lines: list[dict], max_rows: int) -> tuple[list[dict], list[dict]]:
+    """DASH GAPS (module docstring): the authored paint lines with every dashed white line's gap of at most ``max_rows``
+    rows, painted on both sides in the same line, filled straight between the two painted rows. Returns (the lines, a
+    shallow copy where filled; the record of each filled gap {line, from, to, rows, off_before, off_after})."""
+    out, rec = [], []
+    for k, ln in enumerate(lines):
+        if ln.get("color", "white") != "white" or not ln.get("dash"):
+            out.append(ln)
+            continue
+        off = list(ln["off"])
+        n = len(off)
+        i = 0
+        changed = False
+        while i < n:
+            if off[i] is not None:
+                i += 1
+                continue
+            j = i
+            while j + 1 < n and off[j + 1] is None:
+                j += 1
+            if i > 0 and j < n - 1 and off[i - 1] is not None and off[j + 1] is not None and j - i + 1 <= max_rows:
+                a, b = float(off[i - 1]), float(off[j + 1])
+                for r in range(i, j + 1):
+                    t = (r - i + 1) / (j - i + 2)
+                    off[r] = round(a + (b - a) * t, 4)
+                rec.append({"line": k, "from": i, "to": j, "rows": j - i + 1, "off_before": a, "off_after": b})
+                changed = True
+            i = j + 1
+        out.append(dict(ln, off=off) if changed else ln)
+    return out, rec
+
+
 def lane_ends(lanes: list[dict], e: dict) -> dict:
     """LANE ENDS (module docstring), in place: welds a tail to the head it runs into (``bridge_to_xyz_m``, ``joined``)
     and gives every lane its ``rubber_share``. Returns the summary."""
@@ -565,9 +613,16 @@ def spec_from_config(cfg: dict) -> dict | None:
         return None
     out = {k: (list(v) if isinstance(v, list) else v) for k, v in DEFAULTS.items()}
     out.update({k: v for k, v in ln.items() if not str(k).startswith("_") and k != "enabled"})
-    unknown = sorted(set(out) - set(DEFAULTS) - {"ends"})
+    unknown = sorted(set(out) - set(DEFAULTS) - {"ends", "dash_gap_rows"})
     if unknown:
-        raise SystemExit(f"[road_lanes] FATAL: road_wear.lanes.{unknown[0]}: unknown key (known: {sorted(DEFAULTS) + ['ends']})")
+        raise SystemExit(f"[road_lanes] FATAL: road_wear.lanes.{unknown[0]}: unknown key (known: "
+                         f"{sorted(DEFAULTS) + ['dash_gap_rows', 'ends']})")
+    if "dash_gap_rows" in out:
+        g = out["dash_gap_rows"]
+        if g is None or g is False:
+            del out["dash_gap_rows"]
+        elif isinstance(g, bool) or not isinstance(g, int) or g < 1:
+            raise SystemExit("[road_lanes] FATAL: road_wear.lanes.dash_gap_rows: a whole number of rows, at least 1")
     if "ends" in out:
         e = out["ends"]
         if e is None or e is False:
@@ -721,6 +776,7 @@ def build(proj: Path, cfg: dict, spec: dict) -> dict:
         excl_by_road.setdefault("mainline", []).append((int(z["from"]), int(z["to"])))
     lanes: list[dict] = []
     sources = {}
+    dash_filled: list[dict] = []
 
     # the mainline
     local = json.loads((data / "centerline.local.json").read_text(encoding="utf-8"))
@@ -771,6 +827,10 @@ def build(proj: Path, cfg: dict, spec: dict) -> dict:
             cl = False                                   # paint_markings: an open frame always
             fr = frames(cpts, cl)
             lines = c["paint"].get("lines") or []
+            if spec.get("dash_gap_rows"):                # DASH GAPS (opt-in)
+                lines, filled = fill_dash_gaps(lines, int(spec["dash_gap_rows"]))
+                if filled:
+                    dash_filled.append({"connector": name, "gaps": filled})
             per = []
             for i in range(len(fr)):
                 here = [(float(ln["off"][i]), ln.get("color", "white"), bool(ln.get("dash")))
@@ -816,6 +876,10 @@ def build(proj: Path, cfg: dict, spec: dict) -> dict:
     ends = lane_ends(lanes, spec["ends"]) if spec.get("ends") else None
     return {
         **({"ends": ends} if ends is not None else {}),
+        **({"dash_gaps": {"max_rows": int(spec["dash_gap_rows"]), "filled": dash_filled,
+                          "gaps": sum(len(f["gaps"]) for f in dash_filled),
+                          "rows": sum(g["rows"] for f in dash_filled for g in f["gaps"])}}
+           if spec.get("dash_gap_rows") else {}),
         "what": "lane centres for road wear on streets (ledger 0084's 'lanes' source): one line per lane, both "
                 "directions, the lanes the paint rule paints; tools/road_lanes.py",
         "ledger": ["0084", "0099"],
@@ -876,6 +940,10 @@ def run(proj: Path, out: Path | None = None) -> dict | None:
           f"{s['island_trimmed_km']} km trimmed by an island -> {out}")
     for g, v in sorted(s["by_group"].items()):
         print(f"[road_lanes]   {g}: {v['lanes']} lanes, {v['km_forward']} km forward, {v['km_reverse']} km reverse")
+    if doc.get("dash_gaps"):
+        g = doc["dash_gaps"]
+        print(f"[road_lanes]   dash gaps: {g['gaps']} gap(s) of at most {g['max_rows']} rows in authored dashed dividers read as "
+              f"painted ({g['rows']} rows)")
     if doc.get("ends"):
         e = doc["ends"]
         print(f"[road_lanes]   ends: {e['welds']} welded to the lane they run into (gap <= {e['weld_gap_m_max']} m, "

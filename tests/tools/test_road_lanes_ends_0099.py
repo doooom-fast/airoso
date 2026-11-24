@@ -136,3 +136,46 @@ def test_lake_murray_names_the_ends_and_leaves_the_speedways_line_out():
     assert cfg["race"]["laps"]["college"]
     zone = cfg["road_wear"]["lanes"]["split_zones"][0]
     assert (zone["kind"], zone["from"], zone["to"]) == ("college_split", 1130, 1476)
+
+
+# --- DASH GAPS (found by the bake's deepest rubber, 2026-11-23) -------------------------------------------------------
+def test_a_dashed_dividers_short_gap_is_read_as_painted_and_nothing_else_is_filled():
+    N = None
+    lines = [
+        {"color": "white", "dash": True, "off": [-6.0, -6.1, N, N, -6.4, -6.4, N, N, N, -6.0, N]},     # gaps of 2, 3; open end
+        {"color": "white", "dash": False, "off": [-9.6, N, -9.6, -9.6, -9.6, -9.6, -9.6, -9.6, -9.6, -9.6, -9.6]},
+        {"color": "yellow", "dash": False, "off": [-3.7, N, -3.7, -3.7, -3.7, -3.7, -3.7, -3.7, -3.7, -3.7, -3.7]},
+        {"color": "white", "dash": True, "off": [N, N, 5.0, 5.0, N, N, N, N, N, 5.0, 5.0]},             # a gap of 5
+    ]
+    got, rec = RL.fill_dash_gaps(lines, 3)
+    assert got[0]["off"][:10] == [-6.0, -6.1, -6.2, -6.3, -6.4, -6.4, -6.3, -6.2, -6.1, -6.0] and got[0]["off"][10] is None
+    assert got[1] is lines[1] and got[2] is lines[2]                      # a solid line and a yellow: never filled
+    assert got[3] is lines[3]                                              # 5 rows is longer than 3: the divider ends there
+    assert lines[0]["off"][2] is None                                      # the input is not changed
+    assert rec == [{"line": 0, "from": 2, "to": 3, "rows": 2, "off_before": -6.1, "off_after": -6.4},
+                   {"line": 0, "from": 6, "to": 8, "rows": 3, "off_before": -6.4, "off_after": -6.0}]
+    got5, rec5 = RL.fill_dash_gaps(lines, 5)
+    assert got5[3]["off"] == [N, N, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0] and len(rec5) == 3
+    # read as painted, the gap makes lane 1 the whole half and lane 2 vanish; filled, the two lanes stay where they are
+    here = lambda offs: [(o, c, d) for o, c, d in offs if o is not None]                     # noqa: E731
+    gap_row = [(lines[2]["off"][2], "yellow", False), (lines[0]["off"][2], "white", True), (lines[1]["off"][2], "white", False)]
+    filled_row = [(lines[2]["off"][2], "yellow", False), (got[0]["off"][2], "white", True), (lines[1]["off"][2], "white", False)]
+    assert len(RL.authored_lanes(here(gap_row))) == 1 and len(RL.authored_lanes(here(filled_row))) == 2
+
+
+def test_dash_gap_rows_is_opt_in_checked_and_lake_murray_names_8():
+    cfg = lambda lanes: {"road_wear": {"lanes": lanes}}                                     # noqa: E731
+    assert "dash_gap_rows" not in RL.spec_from_config(cfg({})) and "dash_gap_rows" not in RL.DEFAULTS
+    assert RL.spec_from_config(cfg({"dash_gap_rows": 8}))["dash_gap_rows"] == 8
+    assert "dash_gap_rows" not in RL.spec_from_config(cfg({"dash_gap_rows": False}))
+    for bad in (0, -1, 2.5, True, "8"):
+        try:
+            RL.spec_from_config(cfg({"dash_gap_rows": bad}))
+        except SystemExit as e:
+            assert "dash_gap_rows" in str(e)
+        else:
+            raise AssertionError(bad)
+    src = (ROOT / "tools" / "road_lanes.py").read_text(encoding="utf-8")
+    assert "if spec.get(\"dash_gap_rows\"):" in src                    # only the authored pieces, only with the key
+    lm = json.loads((LM / "track.config.json").read_text(encoding="utf-8"))
+    assert lm["road_wear"]["lanes"]["dash_gap_rows"] == 8 and "[invented]" in lm["road_wear"]["lanes"]["_dash_gap_doc"]

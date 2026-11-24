@@ -1,0 +1,124 @@
+{
+ "reader": "second-pass panel reader batch 4 (by eye)",
+ "panels": {
+  "R130": {
+   "candidates": {
+    "10288": {
+     "class": "not_a_post",
+     "note": "building edge; 2020 stroke here is the tip of the green-squared corner post's shadow"
+    },
+    "10289": {
+     "class": "not_a_post",
+     "note": "in the roadway at the kerb return; 2020 line is a mast arm seen over the road"
+    },
+    "10290": {
+     "class": "not_a_post",
+     "note": "sits past the head of a 2022 lamp shadow, not at a foot"
+    },
+    "10291": {
+     "class": "lamp",
+     "note": "2022 stroke with a head blob leaves this foot, parallel to but separate from the green mast's shadow; 2020 NW shadow falls into building shade; moderate confidence"
+    }
+   },
+   "added": [],
+   "note": "box shadow at about E122,N-21.5 is a utility cabinet, not a post"
+  },
+  "R131": {
+   "candidates": {
+    "10292": {
+     "class": "not_a_post",
+     "note": "alley edge / building corner"
+    },
+    "10293": {
+     "class": "not_a_post",
+     "note": "tree trunk and crown"
+    }
+   },
+   "added": [],
+   "note": "objects at E52,N-16 (2022) are people by a parked truck; black blob at E90,N7 is a trash can"
+  },
+  "R132": {
+   "candidates": {
+    "10294": {
+     "class": "not_a_post",
+     "note": "fence corner of the planting bed; 2022 stroke is the fence line"
+    }
+   },
+   "added": [],
+   "note": "two dark blobs in the tree lawn at about E32.8,N-17.8 and E37.6,N-18.8 (2022) could be lamp heads but no foot is visible under the trees; not added"
+  },
+  "RX017": {
+   "candidates": {
+    "131": {
+     "class": "lamp",
+     "note": "2022 stroke north with head, 2020 long NW stroke; no green square on it"
+    },
+    "132": {
+     "class": "not_a_post",
+     "note": "2.2 m from 131: the same lamp as 2020 registers it (2020 shadow leaves this point); 2022 shows nothing here"
+    },
+    "133": {
+     "class": "not_a_post",
+     "note": "grate / manhole in the plaza"
+    }
+   },
+   "added": [
+    {
+     "E": -394.1,
+     "N": -14.5,
+     "class": "lamp",
+     "note": "globe lamp at the SW corner of the lawn, bright globe with stroke N (2022) and NW (2020)"
+    }
+   ],
+   "note": "dark fat strokes on the lawn at about E-394,N-6 are columnar trees; short stroke at E-424,N-15.5 (2022 only) not added"
+  },
+  "RX018": {
+   "candidates": {
+    "335": {
+     "class": "not_a_post",
+     "note": "shrubs on the creek bank"
+    },
+    "339": {
+     "class": "not_a_post",
+     "note": "rail trench wall / railing"
+    }
+   },
+   "added": [],
+   "note": ""
+  },
+  "RX019": {
+   "candidates": {
+    "338": {
+     "class": "signal_post",
+     "note": "light-rail crossing signal: crossbuck X and lamp heads on the shadow in both years; no green square"
+    }
+   },
+   "added": [
+    {
+     "E": -1219.0,
+     "N": 165.5,
+     "class": "post_unknown",
+     "note": "pole at the north face of the kiosk beside the rail trench; narrow stroke N (2022) and long NW (2020)"
+    }
+   ],
+   "note": "stroke at E-1213.7,N159 on the track area is about 1 m long (bollard), not added"
+  },
+  "RX020": {
+   "candidates": {
+    "349": {
+     "class": "not_a_post",
+     "note": "community garden, tree / clutter"
+    }
+   },
+   "added": [
+    {
+     "E": -1199.8,
+     "N": 184.2,
+     "class": "lamp",
+     "note": "ornamental two-head lamp by the path west of the greenhouse; shadow N (2022) and NW (2020)"
+    }
+   ],
+   "note": ""
+  }
+ }
+}

@@ -1,0 +1,157 @@
+{
+ "reader": "second-pass panel reader batch 1 (by eye)",
+ "panels": {
+  "RX005": {
+   "candidates": {
+    "10057": {
+     "class": "not_a_post",
+     "note": "roof clutter on building"
+    },
+    "399": {
+     "class": "not_a_post",
+     "note": "roof clutter on building"
+    }
+   },
+   "added": [
+    {
+     "E": -890.9,
+     "N": 583.6,
+     "class": "lamp",
+     "note": "sidewalk lamp SW of the building; 2020 long NW shadow with head, 2022 short shadow in shade"
+    }
+   ],
+   "note": "green square at about -880.5,595.6 in 2022 shadow; 2020 shows a stroke to it, kept"
+  },
+  "R037": {
+   "candidates": {
+    "10062": {
+     "class": "not_a_post",
+     "note": "parking deck surface, no stroke either year"
+    },
+    "10061": {
+     "class": "not_a_post",
+     "note": "parked car / lot edge"
+    }
+   },
+   "added": [],
+   "note": "2022 bright streaks over the road around -906,638 are reflections, not posts"
+  },
+  "RX006": {
+   "candidates": {
+    "10063": {
+     "class": "not_a_post",
+     "note": "roof clutter"
+    }
+   },
+   "added": [],
+   "note": ""
+  },
+  "R038": {
+   "candidates": {
+    "10064": {
+     "class": "cannot_tell",
+     "note": "deep building shadow both years, 2020 construction clutter"
+    }
+   },
+   "added": [],
+   "note": "south corner of the intersection is under construction in 2020 and in shadow in 2022; nothing readable there"
+  },
+  "R039": {
+   "candidates": {
+    "10065": {
+     "class": "cannot_tell",
+     "note": "2022 deep building shadow; 2020 the leaning tower's roof (round rooftop structure) covers the spot"
+    },
+    "10066": {
+     "class": "cannot_tell",
+     "note": "2022 deep building shadow; 2020 rooftop clutter of the leaning building covers the spot"
+    }
+   },
+   "added": [
+    {
+     "E": -968.7,
+     "N": 736.2,
+     "class": "post_unknown",
+     "note": "parking-lot pole at the NW corner of the north brick kiosk; 2022 N stroke, 2020 NW stroke, feet differ ~2 m; off the street"
+    }
+   ],
+   "note": "brick kiosks in the lot carry small green lamp heads at their corners (roof-mounted, not counted)"
+  },
+  "R040": {
+   "candidates": {
+    "10070": {
+     "class": "not_a_post",
+     "note": "on the long mast-arm shadow of the accepted mast at the south corner (2020) / the arm itself (2022)"
+    },
+    "10068": {
+     "class": "not_a_post",
+     "note": "white lane-line dashes, same in both years"
+    },
+    "10069": {
+     "class": "not_a_post",
+     "note": "in the travel lane; 2020 a cyclist/vehicle"
+    },
+    "10067": {
+     "class": "cannot_tell",
+     "note": "building shadow both years"
+    }
+   },
+   "added": [
+    {
+     "E": -1043.9,
+     "N": 752.0,
+     "class": "sign_or_small_post",
+     "note": "west sidewalk by the bike lane, ~2 m N shadow 2022, NW stroke 2020"
+    },
+    {
+     "E": -1040.4,
+     "N": 730.4,
+     "class": "lamp",
+     "note": "SW sidewalk beside parked cars; 2022 ~7 m N shadow with head"
+    }
+   ],
+   "note": ""
+  },
+  "RX007": {
+   "candidates": {
+    "10071": {
+     "class": "not_a_post",
+     "note": "bare street tree in the tree row (crown visible 2020)"
+    }
+   },
+   "added": [
+    {
+     "E": -992.1,
+     "N": 778.4,
+     "class": "signal_mast",
+     "note": "east side of the street at the lot edge; 2022 ~11 m N shadow with signal-head boxes, 2020 NW arm shadow with heads"
+    },
+    {
+     "E": -988.4,
+     "N": 785.3,
+     "class": "lamp",
+     "note": "at the panel's east edge, 2020 NW shadow with arm and head; 2022 stroke falls outside the panel"
+    }
+   ],
+   "note": ""
+  },
+  "R041": {
+   "candidates": {
+    "10072": {
+     "class": "not_a_post",
+     "note": "duplicate of an accepted post (mast at the SE corner)"
+    },
+    "10073": {
+     "class": "not_a_post",
+     "note": "tree in the plaza planter"
+    },
+    "10074": {
+     "class": "not_a_post",
+     "note": "bare street tree, branchy shadow in 2020; 2022 building shadow"
+    }
+   },
+   "added": [],
+   "note": ""
+  }
+ }
+}

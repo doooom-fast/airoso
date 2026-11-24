@@ -1,0 +1,176 @@
+{
+ "reader": "second-pass panel reader batch 0 (by eye)",
+ "panels": {
+  "R000": {
+   "candidates": {
+    "10000": {
+     "class": "not_a_post",
+     "note": "on lane line / stop bar paint, no stroke"
+    },
+    "10001": {
+     "class": "not_a_post",
+     "note": "bare tree"
+    },
+    "10295": {
+     "class": "not_a_post",
+     "note": "tree crown"
+    },
+    "10296": {
+     "class": "not_a_post",
+     "note": "tree branches"
+    },
+    "10297": {
+     "class": "not_a_post",
+     "note": "tree branches"
+    },
+    "10298": {
+     "class": "not_a_post",
+     "note": "tree trunk at corner, accepted post 3 m SE"
+    }
+   },
+   "added": [],
+   "note": "bottom edge: parking-lot gate arms and ticket posts (short shadows), not counted; dark blobs on north sidewalk are people/bins"
+  },
+  "R001": {
+   "candidates": {
+    "10002": {
+     "class": "not_a_post",
+     "note": "roof clutter"
+    },
+    "10003": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "10004": {
+     "class": "not_a_post",
+     "note": "tree branches beside accepted lamp"
+    },
+    "10005": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "10006": {
+     "class": "not_a_post",
+     "note": "parking stripe/curb corner"
+    }
+   },
+   "added": [],
+   "note": ""
+  },
+  "R002": {
+   "candidates": {
+    "10007": {
+     "class": "not_a_post",
+     "note": "fence line; the real lamp foot is ~3 m N, added"
+    },
+    "10008": {
+     "class": "lamp",
+     "note": "foot ~1.5 m N of ring, globe lamp at lot corner"
+    },
+    "10009": {
+     "class": "not_a_post",
+     "note": "end of mast arm seen over the crosswalk"
+    },
+    "10010": {
+     "class": "not_a_post",
+     "note": "planter end, no stroke"
+    },
+    "10011": {
+     "class": "not_a_post",
+     "note": "2020 'stroke' is the planter's west edge (head = object at planter top, seen in R003); 2022 shows nothing"
+    }
+   },
+   "added": [
+    {
+     "E": -84.0,
+     "N": 18.3,
+     "class": "lamp",
+     "note": "globe lamp in lot planter, strokes in both years"
+    }
+   ],
+   "note": ""
+  },
+  "R003": {
+   "candidates": {
+    "10012": {
+     "class": "not_a_post",
+     "note": "edge of lot pavement, nothing in either year"
+    },
+    "10013": {
+     "class": "not_a_post",
+     "note": "edge of lot pavement / planter, nothing in 2022"
+    }
+   },
+   "added": [],
+   "note": "dark items on NE corner sidewalk in 2022 are pedestrians/bins"
+  },
+  "R004": {
+   "candidates": {
+    "10014": {
+     "class": "not_a_post",
+     "note": "on the mast arm / mast lean over the crosswalk; mast foot is the accepted square ~7 m S"
+    }
+   },
+   "added": [
+    {
+     "E": -195.4,
+     "N": 10.2,
+     "class": "sign_or_small_post",
+     "note": "thin post by hydrant, short N stroke 2022, NW stroke with plate 2020"
+    }
+   ],
+   "note": ""
+  },
+  "RX000": {
+   "candidates": {
+    "10015": {
+     "class": "not_a_post",
+     "note": "tree branches"
+    },
+    "10016": {
+     "class": "not_a_post",
+     "note": "tree branches over curb"
+    },
+    "10018": {
+     "class": "not_a_post",
+     "note": "tree trunk"
+    },
+    "62": {
+     "class": "not_a_post",
+     "note": "tree trunk; a globe lamp stands ~3.5 m NW (added)"
+    },
+    "64": {
+     "class": "not_a_post",
+     "note": "tree trunk"
+    }
+   },
+   "added": [
+    {
+     "E": -278.1,
+     "N": -3.3,
+     "class": "lamp",
+     "note": "globe lamp under trees, bright globe + N stroke 2022; 2020 under tree shadow"
+    },
+    {
+     "E": -282.3,
+     "N": -15.0,
+     "class": "lamp",
+     "note": "twin-globe lamp at N edge of sidewalk, 2022 stroke; 2020 under trees"
+    },
+    {
+     "E": -292.0,
+     "N": -20.3,
+     "class": "lamp",
+     "note": "globe lamp at S edge of sidewalk, 2022 stroke; 2020 faint globe"
+    },
+    {
+     "E": -252.2,
+     "N": -39.2,
+     "class": "lamp",
+     "note": "park-path globe lamp, ~29 m off the street; both years clear"
+    }
+   ],
+   "note": "park is heavily tree-covered; possible further globe at E -264.1 N -14.9 (bright dot 2022, no stroke seen) not added"
+  }
+ }
+}

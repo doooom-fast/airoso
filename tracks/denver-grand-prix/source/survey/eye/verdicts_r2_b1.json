@@ -152,6 +152,62 @@
    },
    "added": [],
    "note": ""
+  },
+  "R042": {
+   "candidates": {
+    "10075": {
+     "class": "not_a_post",
+     "note": "round planter / tree pit on the NE sidewalk (2020); 2022 building shadow"
+    }
+   },
+   "added": [],
+   "note": "green square at about -1074.9,813.6 sits on a lane-separator sign (diamond plate shadow in 2020): kept as a small sign post"
+  },
+  "R043": {
+   "candidates": {
+    "10081": {
+     "class": "not_a_post",
+     "note": "rooftop clutter"
+    },
+    "10082": {
+     "class": "not_a_post",
+     "note": "rooftop clutter"
+    },
+    "10083": {
+     "class": "not_a_post",
+     "note": "rooftop clutter"
+    },
+    "10084": {
+     "class": "not_a_post",
+     "note": "rooftop clutter"
+    },
+    "10085": {
+     "class": "not_a_post",
+     "note": "rooftop clutter"
+    },
+    "10077": {
+     "class": "not_a_post",
+     "note": "bare street tree"
+    },
+    "10076": {
+     "class": "not_a_post",
+     "note": "building-corner clutter, 2022 shadow"
+    },
+    "10078": {
+     "class": "not_a_post",
+     "note": "duplicate of an accepted post (corner mast ~1.7 m SW)"
+    },
+    "10079": {
+     "class": "not_a_post",
+     "note": "building corner; a short ~1.7 m stroke 1.5 m to the SE in 2022 only"
+    },
+    "10080": {
+     "class": "not_a_post",
+     "note": "roof edge / rooftop equipment"
+    }
+   },
+   "added": [],
+   "note": "most of the panel is in tower shadow in 2022; 2020 SE corner of the intersection unreadable"
   }
  }
 }

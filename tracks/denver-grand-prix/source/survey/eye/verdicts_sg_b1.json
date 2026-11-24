@@ -1,0 +1,164 @@
+{
+ "reader": "sign-post pass, junctions batch 1 (by eye)",
+ "panels": {
+  "SG14": {
+   "candidates": {},
+   "added": [
+    {
+     "E": -861.6,
+     "N": 606.2,
+     "class": "sign_or_small_post",
+     "note": "2022: thin ~2.2 m stroke north ending in a plate shadow, SE of the 15th/Champa east-corner mast; 2020 in building shadow"
+    },
+    {
+     "E": -878.8,
+     "N": 594.3,
+     "class": "lamp",
+     "note": "2020: white pedestrian lamp pole leaning NE in parallax with globe head, foot at the south corner by the crosswalk; 2022 in building shadow"
+    },
+    {
+     "E": -869.4,
+     "N": 593.1,
+     "class": "post_unknown",
+     "note": "2022: dark pole image ~3 m leaning NE from the building-shadow edge into the bike lane; 2020 shows only a white plate there; review"
+    }
+   ],
+   "note": "West half dark in 2022 (tower shadow); masts all have squares. A long 2020 lamp shadow enters at the south edge near E -894.5 but its foot is south of the panel (neighbour). Thin vertical strokes in the parking/bike lane are delineators, not counted."
+  },
+  "SG15": {
+   "candidates": {},
+   "added": [],
+   "note": "Nothing added. All four corner masts and the lamps have squares (west-corner square sits on a utility cabinet ~1.2 m from the mast foot at about -966.3, 680.4; within tolerance). South half in tower shadow 2022; 2020 shows a construction zone on the south corner (equipment, cones), nothing post-like that can be confirmed. A 2020 lamp arm near E -930.5, N 675 has its foot at/over the east edge in shadow; not added."
+  },
+  "SG16": {
+   "candidates": {},
+   "added": [
+    {
+     "E": -1043.3,
+     "N": 763.0,
+     "class": "sign_or_small_post",
+     "note": "west corner sidewalk: 2022 thin ~1.5 m stroke north ending in a small plate; 2020 short NW stroke from the same foot; ~4 m NE of the corner mast square"
+    }
+   ],
+   "note": "Centre and east in tower shadow 2022. Two lamp shadows enter the panel from outside (SW corner near E -1040, N 733 and east edge near E -1002, N 749): their feet lie outside this panel, not added. Masts all have squares."
+  },
+  "SG17": {
+   "candidates": {},
+   "added": [
+    {
+     "E": -1117.0,
+     "N": 836.0,
+     "class": "signal_mast",
+     "note": "west corner of 15th/Lawrence: 2020 shows the grey arm reaching NE over the crosswalk from a foot by the building, and the pole+arm+head shadow cast NW over the low building; 2022 shows the arm faintly in the tower shadow. No square at this corner (the corner squares are only N and S)"
+    }
+   ],
+   "note": "2022 entirely in tower shadow; read from 2020 only. East corner in building shadow both years. Dark marks in the 2020 roadway are traffic cones (construction), not counted. North-corner arms all trace back to the N square."
+  },
+  "SG18": {
+   "candidates": {},
+   "added": [
+    {
+     "E": -1158.8,
+     "N": 904.3,
+     "class": "sign_or_small_post",
+     "note": "east corner by the bus stop: 2022 thin ~1.3 m stroke north ending in a plate (~1.8 m total); 2020 the same stroke with plate (here 2020 shadows fall NE, matching the mast's); ~2.5 m SE of the east-corner square"
+    }
+   ],
+   "note": "Well lit both years except the south corner (tower shadow). All corner masts and the lamps carry squares. West-corner plaza has many people, tables and a railing; nothing post-like without a square. Orange construction gear with a sign board north of the east lamp not counted. In this panel the 2020 shadows fall NE, not NW."
+  },
+  "SG19": {
+   "candidates": {},
+   "added": [
+    {
+     "E": -1266.3,
+     "N": 977.7,
+     "class": "sign_or_small_post",
+     "note": "west corner sidewalk by the building: 2022 thin ~1.5 m stroke north ending in a plate; 2020 NW stroke with plate from the same foot"
+    },
+    {
+     "E": -1226.2,
+     "N": 996.9,
+     "class": "lamp",
+     "note": "east sidewalk at the kerb, 0.5 m inside the panel's east edge: 2020 ~3 m NW shadow ending in a round globe head; 2022 shows a pole image with a white globe nearby (parked cars obscure the foot)"
+    }
+   ],
+   "note": "Well lit except the north-west and south building shadows. Green square at E -1268.4, N 988.0 looks NOT on a post: in 2022 it is in building shadow, in 2020 it sits on the NW shadow of the west-corner lamp (foot at the square near -1265.5, 983.0) among tree-row shadows. Short ~1 m strokes along the NW kerb of 15th (e.g. -1259.7, 1000.4) are parking meters, not counted."
+  },
+  "SG20": {
+   "candidates": {},
+   "added": [],
+   "note": "Nothing added. Curved stretch of 15th south of Market, not a junction proper; south-west in building shadow 2022. Lamps on the SW kerb and the bus-stop post and the lamp inside the bare tree all have squares. A 2020 lamp head near the bottom edge (about E -1287, N 1006) has its foot outside the panel."
+  },
+  "SG21": {
+   "candidates": {},
+   "added": [
+    {
+     "E": -1326.2,
+     "N": 1074.9,
+     "class": "sign_or_small_post",
+     "note": "north corner, at the end of the parking-lot railing by the accessible stall: 2022 thin stroke north ~2 m; 2020 NW stroke ending in a large plate shadow (accessible-parking sign); ~4 m NW of the north-corner square"
+    },
+    {
+     "E": -1343.5,
+     "N": 1062.8,
+     "class": "lamp",
+     "note": "west sidewalk of 15th: 2020 ~2.4 m NW shadow with a round globe head and a base blob; 2022 foot in building shadow but a lit white globe shows at the same spot (short pedestrian globe lamp)"
+    }
+   ],
+   "note": "Well lit except the west building shadow (2022) and the east block (2022). Two long pole shadows (both years) enter from the south edge near E -1330 and -1333 in the curved Blake/15th median; their feet lie south of this panel (SG22 covers them). Short ~1 m strokes along the SE kerb of 15th are parking meters, not counted. A small dark object at the east tip of the triangular island (about -1315.7, 1045.3) has too short a shadow to call."
+  },
+  "SG22": {
+   "candidates": {},
+   "added": [],
+   "note": "Nothing added. The two long median pole shadows that enter SG21 from the south both start at the square at about -1330.4, 1031.6 (mast + lamp on one foot, the pole itself also visible as a light grey line). NW sidewalk lamps, the corner masts and the south lamp all have squares; south-east block in building shadow."
+  },
+  "SG23": {
+   "candidates": {},
+   "added": [
+    {
+     "E": -1398.8,
+     "N": 963.9,
+     "class": "sign_or_small_post",
+     "note": "parking-lot entrance east of 14th/Blake: posts of a large info/parking board; 2022 thin stroke north under the board's plate shadow, 2020 the board shadow NW from the same feet (two-post board, foot given for the east post)"
+    },
+    {
+     "E": -1400.6,
+     "N": 959.7,
+     "class": "lamp",
+     "note": "lot edge by the pay station, ~3 m east of the kerb lamp square at -1404.0, 959.8: 2022 ~5 m thin stroke NNE; 2020 ~6 m NW stroke ending in a head; feet agree within 0.6 m"
+    },
+    {
+     "E": -1395.0,
+     "N": 945.7,
+     "class": "lamp",
+     "note": "lot edge between parked cars, ~4.6 m east of the kerb lamp square: 2022 long stroke north from the foot; 2020 long NW shadow ending in an arm and head; feet agree"
+    }
+   ],
+   "note": "Well lit. The kerb lamps and corner posts along 14th and Blake all have squares; the gap is the parking lot east of the curve (two lamps and a board). Short strokes under the east-sidewalk trees and the pink cart near -1401, 971 not counted."
+  },
+  "SG24": {
+   "candidates": {},
+   "added": [
+    {
+     "E": -1452.4,
+     "N": 941.4,
+     "class": "lamp",
+     "note": "east corner, in the grass east of the sidewalk: pedestrian globe lamp; 2022 ~2.6 m stroke north ending in a round head, 2020 NW stroke with the same head; feet agree within 0.2 m"
+    },
+    {
+     "E": -1452.8,
+     "N": 943.4,
+     "class": "sign_or_small_post",
+     "note": "east corner at the bridge-rail end: plate-shaped shadow in both years (2022 narrow wedge north ~1.7 m, 2020 rectangular plate NW) from one foot; likely a large sign plate on a short post; review"
+    },
+    {
+     "E": -1474.0,
+     "N": 942.1,
+     "class": "sign_or_small_post",
+     "note": "south corner at the crosswalk end: pedestrian push-button post; white cap in 2022, small box-headed shadow in 2020; shadow short (~0.6 m) so it may be below the size cut; ~4 m east of the corner mast square"
+    }
+   ],
+   "note": "Open, well-lit junction. All four corner masts and the sidewalk lamps carry squares. Square at E -1454.6, N 940.5 sits in a bare tree / shrub bed, not on a post; the post it likely stands for is the globe lamp added 2.2 m NE of it."
+  }
+ }
+}

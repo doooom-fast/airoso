@@ -64,8 +64,13 @@ Thumbs.db
 tracks/*/build/
 
 # V3 tracks/ layout: per-track source-of-truth data IS committed (cached elevation is
-# expensive to re-derive; authored blends are the hand-edit surface, never regenerable)
+# expensive to re-derive)
 !tracks/*/data/*.npy
 !tracks/*/data/*.tif
 !tracks/*/data/*.json
-!tracks/*/loop.blend
+# Scene files (Kevin 2026-11-24, "Keep only build starts" / "Yes, remove record-only scene files"): only a scene file a
+# build starts from is committed. Today that is Lake Murray's (ship.json sync_in.seed). Every other track drafts its
+# loop.blend from scratch, so its synced-back blend is a record: it is kept in the PC's track archive with its md5,
+# never in git. The earlier versions stay in git history. A track that comes to seed from its blend is named here.
+tracks/*/loop.blend
+!tracks/san-diego-lake-murray/loop.blend

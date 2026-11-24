@@ -362,10 +362,10 @@ def test_sand_creek_quebec_patches_as_measured():
         # a feathered patch's feather never moves the ground under a road or walk (the 0.5 m gap and the walk stay the seats')
         assert (p.get("feather_spares_roads") == ["ROAD", "CURB", "1ROAD"]) == (p["feather_m"] > 0), pid
     assert by["quebec_median"]["feather_m"] == 0.0 and len(by["quebec_median"]["hard_edges"]) == len(by["quebec_median"]["polygon"])
-    for pid in QUEBEC_LIFT:
+    for pid, gap in zip(QUEBEC_LIFT, (2.0, 1.25)):       # 0.2.11: the pad's gap 1.25 -> 2.0 (the median nose's T)
         p = by[pid]
         assert p["feather_m"] == 0.0 and "hard_edges" not in p and "split_m" not in p
-        assert p["lift"] == {"clear_m": 0.16, "gap_m": 1.25, "road_prefixes": ["ROAD", "CURB", "1ROAD"]}
+        assert p["lift"] == {"clear_m": 0.16, "gap_m": gap, "road_prefixes": ["ROAD", "CURB", "1ROAD"]}
     # the lift zones keep off both bridge decks the 2020 lidar reads as class 17: Quebec St over Sand Creek (the pad's
     # S end, x 1765-1790, z -530..-510) and I-70 NE of the arms' merge (x >= 1860, z >= -415)
     sys.path.insert(0, str(ROOT / "tools"))
@@ -374,6 +374,17 @@ def test_sand_creek_quebec_patches_as_measured():
         poly = [tuple(q) for q in by[pid]["polygon"]]
         for x, z in ((1775.0, -512.0), (1783.3, -521.1), (1790.0, -510.0), (1865.0, -390.0), (1880.0, -415.0)):
             assert not lgp.point_in(poly, x, z), (pid, x, z)
+
+
+def test_nb12_stands_where_0_2_9_stood_it():
+    """0.2.11 (the Mac, after 0.2.10 skipped nb12): its setback is hand-set to 0.2.9's built spot (1809.22, -501.43), 13.5 m
+    along and 19.2 m left of v1942, now that the lap there is 17.25 m wide (the flare off); every other post keeps the
+    generator's 2.1 m"""
+    nb = _cfg(SC / "source" / "name_blades.json")
+    posts = {p["id"]: p for p in nb["posts"]}
+    assert posts["nb12"]["setback_m"] == 10.58 and posts["nb12"]["vertex"] == 1942 and posts["nb12"]["along_m"] == 7.75
+    assert all(p["setback_m"] == nb["setback_m"] == 2.1 for k, p in posts.items() if k != "nb12")
+    assert "HAND-SET" in nb["_doc"] and "nb12" in nb["_doc"]
 
 
 # ------------------------------------------------------------------ owned surfaces, opt-in
@@ -390,7 +401,7 @@ def test_sand_creek_binds_the_owned_pairs_and_syncs_them():
         assert Path(a).name in lic and Path(b).name in lic
     for f in (cfg["lm_intake"]["grid_reach"], cfg["lm_intake"]["flare_one_sided"]):
         assert f in ship["sync_in"]["optional"] and (SC / f).is_file()
-    assert cfg["scenery"]["streetlights"]["light_both_heads"] is True and cfg["version"] == "0.2.10"
+    assert cfg["scenery"]["streetlights"]["light_both_heads"] is True and cfg["version"] == "0.2.11"
 
 
 def test_the_0098_keys_are_opt_in():

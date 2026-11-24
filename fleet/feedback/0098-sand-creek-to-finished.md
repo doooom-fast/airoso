@@ -750,6 +750,24 @@ ground_patch, after every cutting step.
    and 17 only); to be read off the aerial or the full lidar. If it is on the real corner, give it a placement off the deck
    by the lamps' own rule; if not, leave it dropped and say so.
 
+## PC, 2026-11-23: 0.2.11, the three owed by 0.2.10 (the Mac's small round)
+
+1. **The median-nose dimple:** quebec_lift_pad's `lift.gap_m` 1.25 -> 2.0. It is still capped by min(lidar, lip), never
+   lowers anything, and is still in the pad zone only (quebec_lift_arms keeps 1.25 m). The T-shaped notch is up to about
+   2.5 m wide, so at 1.25 m its middle was out of reach: (1806.20, −473.62) stayed at 24.26 against the lip's 24.37.
+   Target: no sc_disconnects §5 edge over 0.30.
+2. **Name blade nb12:** `source/name_blades.json` nb12 setback_m 2.1 -> 10.58, hand-set and documented in the file's
+   `_doc`. The generator keeps one setback for every post, so a regeneration must keep this one. 10.58 = 0.2.9's built spot
+   (1809.22, −501.43), 13.5 m along and 19.2 m left of v1942, less 0.2.10's half-width there (8.625 m). To be checked in
+   the build, not taken as built.
+3. **Lamp post 105: left dropped.** Its draft base (1775.16, −498.21) falls in the vegetation by Sand Creek on NAIP 2023
+   (co_m_3910409_se_13_030_20230925, z18, about 0.46 m/px), about 4-6 m west of the real pavement edge.
+   - No pole shows there. The poles that do show at the corner are the traffic-signal mast arms.
+   - Sand Creek's lamps are the generator's spacing (build_loop_blend: "175 streetlights placed"), not surveyed posts.
+   - The cached lidar holds classes 2 and 17 only, so it can't show a pole.
+   - So by the Mac's rule ("if not, leave it dropped and say so") it stays dropped; 170 lamps. The aerial can't rule out a
+     slim pole at that resolution.
+
 ## What needs Kevin, a download or the PC
 
 - **Kevin:**

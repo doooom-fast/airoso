@@ -1,15 +1,84 @@
 {
- "_doc": "Corrections to accepted posts, made by eye after the second pass's readers flagged them (each checked on a 14 m crop of 2022 beside 2020, 2026-11-24). remove: the post nearest E,N within 0.8 m is dropped. move: it is moved to the new E,N (position_from says so). flag: a note on its position. Not acted on: R118's 'three squares for two poles' (the 2022 picture shows three shadows: a short post and two tall poles) and R108's 'parking meters?' (2.0-2.3 m shadows against 1.1-1.3 m for the meters beside them).",
+ "_doc": "Corrections to accepted posts, made by eye after the second pass's readers flagged them (each checked on a 14 m crop of 2022 beside 2020, 2026-11-24). remove: the post nearest E,N within 0.8 m is dropped. move: it is moved to the new E,N (position_from says so). flag: a note on its position. Not acted on: R118's 'three squares for two poles' (the 2022 picture shows three shadows: a short post and two tall poles) and R108's 'parking meters?' (2.0-2.3 m shadows against 1.1-1.3 m for the meters beside them). reclass: the post's class is changed. The posts refutation's findings (refutation/posts_round1.json) are applied here and in eye/verdicts_refute_r1.json (its misses).",
  "remove": [
-  {"E": -1269.9, "N": -129.1, "why": "the end of a bus shelter, not a post (R083; its lamp is the second pass's 10147 about 2.5 m west)"},
-  {"E": -1342.7, "N": 576.0, "why": "a bike-lane stencil on the bridge path; no post in 2020 (R064)"}
+  {
+   "E": -1269.9,
+   "N": -129.1,
+   "why": "the end of a bus shelter, not a post (R083; its lamp is the second pass's 10147 about 2.5 m west)"
+  },
+  {
+   "E": -1342.7,
+   "N": 576.0,
+   "why": "a bike-lane stencil on the bridge path; no post in 2020 (R064)"
+  },
+  {
+   "E": -869.72,
+   "N": -188.93,
+   "why": "meter / bollard height, about 1.0 m of 2022 shadow (posts refutation round 1, m5100, l0517)"
+  },
+  {
+   "E": -896.79,
+   "N": -161.97,
+   "why": "only faint 1 m strokes in a planting strip (posts refutation round 1, m5100, l0510)"
+  }
  ],
  "move": [
-  {"E": -1298.2, "N": -188.8, "to_E": -1298.4, "to_N": -190.8, "why": "the square sat on its own 2022 shadow, 2 m north of the pole's foot (RX032)"}
+  {
+   "E": -1298.2,
+   "N": -188.8,
+   "to_E": -1298.4,
+   "to_N": -190.8,
+   "why": "the square sat on its own 2022 shadow, 2 m north of the pole's foot (RX032)"
+  },
+  {
+   "E": -568.04,
+   "N": -17.7,
+   "to_E": -568.04,
+   "to_N": -19.7,
+   "why": "the mast's foot is about 2 m south of where it was placed (posts refutation round 1, g0092)"
+  }
  ],
  "flag": [
-  {"E": -1464.7, "N": 746.5, "note": "the 2022 and 2020 feet disagree by about 2 m here (R060); position about +-2 m"},
-  {"E": -1458.6, "N": 739.2, "note": "the 2022 and 2020 feet disagree by about 2 m here (R060); position about +-2 m"},
-  {"E": -1366.5, "N": 633.8, "note": "matches the 2020 foot; the 2022 foot is about 2.7 m east (R063); position about +-2.7 m"}
+  {
+   "E": -1464.7,
+   "N": 746.5,
+   "note": "the 2022 and 2020 feet disagree by about 2 m here (R060); position about +-2 m"
+  },
+  {
+   "E": -1458.6,
+   "N": 739.2,
+   "note": "the 2022 and 2020 feet disagree by about 2 m here (R060); position about +-2 m"
+  },
+  {
+   "E": -1366.5,
+   "N": 633.8,
+   "note": "matches the 2020 foot; the 2022 foot is about 2.7 m east (R063); position about +-2.7 m"
+  }
+ ],
+ "reclass": [
+  {
+   "E": -1026.06,
+   "N": 742.43,
+   "to": "signal_mast",
+   "why": "2020 shows its arm reaching north-west over 15th St (refutation round 1)"
+  },
+  {
+   "E": -1400.92,
+   "N": 696.61,
+   "to": "signal_post",
+   "why": "no arm over the road: a tall pole with side-mounted heads and a light (refutation round 1)"
+  },
+  {
+   "E": -588.88,
+   "N": -19.73,
+   "to": "lamp",
+   "why": "a tall pole with a cobra-head arm, no signal heads seen (refutation round 1)"
+  },
+  {
+   "E": -1263.78,
+   "N": -174.77,
+   "to": "post_unknown",
+   "why": "its 2022 shadow is about 6.5 m: too tall for a sign post (refutation round 1)"
+  }
  ]
 }

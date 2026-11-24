@@ -115,6 +115,10 @@ def main(cache):
             if k is not None:
                 p = posts[k]; p['_en'] = [r['to_E'], r['to_N']]; lo, la = lapgeo.lonlat(r['to_E'], r['to_N'])
                 p['lonlat'] = [round(float(lo), 7), round(float(la), 7)]; p['grade'] = 'detected'; p['position_from'] = 'moved by eye to the foot: ' + r['why']; corr['moved'] += 1
+        for r in cj.get('reclass', []):
+            k = near(r['E'], r['N'])
+            if k is not None:
+                posts[k]['eye']['reclassed_from'] = posts[k]['class']; posts[k]['eye']['reclass_why'] = r['why']; posts[k]['class'] = r['to']; corr['reclassed'] = corr.get('reclassed', 0) + 1
         for r in cj.get('flag', []):
             k = near(r['E'], r['N'])
             if k is not None:

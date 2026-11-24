@@ -1,6 +1,6 @@
 {
  "_doc": "Streetlights and every other post on the lap corridor that is not a signal (PLAN 4b). Each was seen by eye on a panel; the class is the eye's. What a post carries beyond what the eye could name (fixture type, sign faces) is not read. See SURVEY.md.",
- "written_utc": "2026-11-24T19:43:47Z",
+ "written_utc": "2026-11-24T20:01:01Z",
  "frame": {
   "origin_lonlat": [
    -104.9849,
@@ -11,7 +11,7 @@
  "sources": {
   "aerials": "DRCOG 3-inch, 2022 / 2020 / 2018 (drapparchive.s3.amazonaws.com), by HTTP range",
   "reader": "posts_tile.py + posts_lap.py",
-  "eye": "panels of 2022 beside 2020; verdict files: verdicts_b0.json, verdicts_b1.json, verdicts_b2.json, verdicts_b3.json, verdicts_b4.json, verdicts_b5.json, verdicts_b6.json, verdicts_b7.json, verdicts_r2_b0.json, verdicts_r2_b1.json, verdicts_r2_b2.json, verdicts_r2_b3.json, verdicts_r2_b4.json"
+  "eye": "panels of 2022 beside 2020; verdict files: verdicts_b0.json, verdicts_b1.json, verdicts_b2.json, verdicts_b3.json, verdicts_b4.json, verdicts_b5.json, verdicts_b6.json, verdicts_b7.json, verdicts_r2_b0.json, verdicts_r2_b1.json, verdicts_r2_b2.json, verdicts_r2_b3.json, verdicts_r2_b4.json, verdicts_refute_r1.json"
  },
  "reader": {
   "first_pass": {
@@ -146,18 +146,19 @@
     }
    },
    "corrections_by_eye_after_the_second_pass": {
-    "removed": 2,
-    "moved": 1,
-    "flagged": 2
+    "removed": 4,
+    "moved": 2,
+    "flagged": 2,
+    "reclassed": 4
    },
    "added_by_eye": {
-    "placed_on_a_shadow_foot": 203,
-    "placed_by_eye_only": 66,
+    "placed_on_a_shadow_foot": 208,
+    "placed_by_eye_only": 68,
     "duplicates_of_a_candidate_dropped": 30,
-    "outside_the_corridor_dropped": 86
+    "outside_the_corridor_dropped": 87
    },
    "reader_precision_against_the_eye": 0.226,
-   "reader_recall_against_the_eye": 0.614
+   "reader_recall_against_the_eye": 0.607
   }
  },
  "heights": "not written: see SURVEY.md (the sun's elevation was not derived cleanly per flight line); shadow_m per year is kept so a height follows once it is",
@@ -172,37 +173,37 @@
   }
  ],
  "counts": {
-  "posts": 507,
+  "posts": 513,
   "by_class": {
-   "lamp": 317,
-   "sign_or_small_post": 118,
-   "post_unknown": 53,
+   "lamp": 320,
+   "sign_or_small_post": 120,
+   "post_unknown": 54,
    "utility_pole": 19
   },
   "by_leg": {
-   "Colfax WB to Speer NB": 113,
+   "Colfax WB to Speer NB": 116,
    "Speer NB to Stout": 10,
    "Stout to 15th St": 28,
-   "15th St to Blake": 57,
+   "15th St to Blake": 58,
    "Blake to Speer SB": 31,
-   "Speer SB to Kalamath": 60,
-   "Kalamath S to W 14th Ave": 21,
+   "Speer SB to Kalamath": 61,
+   "Kalamath S to W 14th Ave": 22,
    "W 14th Ave to Santa Fe": 6,
-   "Santa Fe N to Colfax": 7,
+   "Santa Fe N to Colfax": 8,
    "Kalamath NB branch to Speer SB": 13,
    "Speer SB to W 14th Ave": 13,
-   "14th Ave E to Logan": 119,
+   "14th Ave E to Logan": 118,
    "Logan N to Colfax": 10,
    "Colfax W to S/F": 19
   }
  },
  "grade_shares": {
-  "measured": 0.884,
-  "detected": 0.116,
-  "confirmed_by_a_second_flight_year": 0.629
+  "measured": 0.881,
+  "detected": 0.119,
+  "confirmed_by_a_second_flight_year": 0.626
  },
  "position_check": {
-  "posts_with_two_or_more_years": 423,
+  "posts_with_two_or_more_years": 422,
   "spread_m_p50_p84_p95": [
    0.45,
    0.78,
@@ -319,8 +320,8 @@
    "s_m": 624.0,
    "leg": "Colfax WB to Speer NB",
    "read_by_eye": true,
-   "lamps_and_other_posts": 3,
-   "signal_masts_and_posts": 4
+   "lamps_and_other_posts": 4,
+   "signal_masts_and_posts": 3
   },
   {
    "panel": "P014",
@@ -391,7 +392,7 @@
    "s_m": 1056.0,
    "leg": "Colfax WB to Speer NB",
    "read_by_eye": true,
-   "lamps_and_other_posts": 3,
+   "lamps_and_other_posts": 5,
    "signal_masts_and_posts": 1
   },
   {
@@ -399,7 +400,7 @@
    "s_m": 1104.0,
    "leg": "Colfax WB to Speer NB",
    "read_by_eye": true,
-   "lamps_and_other_posts": 2,
+   "lamps_and_other_posts": 3,
    "signal_masts_and_posts": 0
   },
   {
@@ -535,7 +536,7 @@
    "s_m": 2208.0,
    "leg": "15th St to Blake",
    "read_by_eye": true,
-   "lamps_and_other_posts": 3,
+   "lamps_and_other_posts": 4,
    "signal_masts_and_posts": 3
   },
   {
@@ -703,7 +704,7 @@
    "s_m": 3216.0,
    "leg": "Speer SB to Kalamath",
    "read_by_eye": true,
-   "lamps_and_other_posts": 6,
+   "lamps_and_other_posts": 7,
    "signal_masts_and_posts": 7
   },
   {
@@ -823,7 +824,7 @@
    "s_m": 3936.0,
    "leg": "Kalamath S to W 14th Ave",
    "read_by_eye": true,
-   "lamps_and_other_posts": 4,
+   "lamps_and_other_posts": 5,
    "signal_masts_and_posts": 2
   },
   {
@@ -839,7 +840,7 @@
    "s_m": 4032.0,
    "leg": "Kalamath S to W 14th Ave",
    "read_by_eye": true,
-   "lamps_and_other_posts": 4,
+   "lamps_and_other_posts": 5,
    "signal_masts_and_posts": 0
   },
   {
@@ -887,7 +888,7 @@
    "s_m": 4320.0,
    "leg": "Santa Fe N to Colfax",
    "read_by_eye": true,
-   "lamps_and_other_posts": 3,
+   "lamps_and_other_posts": 4,
    "signal_masts_and_posts": 0
   },
   {
@@ -903,7 +904,7 @@
    "s_m": 4416.0,
    "leg": "Kalamath NB branch to Speer SB",
    "read_by_eye": true,
-   "lamps_and_other_posts": 5,
+   "lamps_and_other_posts": 6,
    "signal_masts_and_posts": 2
   },
   {
@@ -1015,7 +1016,7 @@
    "s_m": 5088.0,
    "leg": "14th Ave E to Logan",
    "read_by_eye": true,
-   "lamps_and_other_posts": 12,
+   "lamps_and_other_posts": 10,
    "signal_masts_and_posts": 0
   },
   {
@@ -1071,7 +1072,7 @@
    "s_m": 5424.0,
    "leg": "14th Ave E to Logan",
    "read_by_eye": true,
-   "lamps_and_other_posts": 1,
+   "lamps_and_other_posts": 2,
    "signal_masts_and_posts": 2
   },
   {
@@ -4429,6 +4430,110 @@
    "height_m": null
   },
   {
+   "class": "lamp",
+   "lonlat": [
+    -104.9917701,
+    39.7399223
+   ],
+   "grade": "measured",
+   "position_from": "the foot of its shadow (the sun-ward end of the stroke)",
+   "years": [
+    2022,
+    2020,
+    2018
+   ],
+   "confirmed_by_second_year": true,
+   "spread_m": 0.85,
+   "reader_verdict": "tree?",
+   "eye": {
+    "verdict": "signal_post",
+    "panel": "P013",
+    "note": "SW corner; tall pole with heads on the shadow and a short luminaire arm east; no long arm seen",
+    "reclassed_from": "signal_post",
+    "reclass_why": "a tall pole with a cobra-head arm, no signal heads seen (refutation round 1)"
+   },
+   "in_building_shadow": {
+    "2022": false,
+    "2020": false,
+    "2018": false
+   },
+   "shadow_m": {
+    "2022": 6.57,
+    "2020": 8.31,
+    "2018": 9.07
+   },
+   "arms": {
+    "2022": [
+     {
+      "join_along_shadow_m": 6.1,
+      "length_m": 1.88,
+      "bearing_deg": 252.36,
+      "width_m": 0.39
+     },
+     {
+      "join_along_shadow_m": 5.99,
+      "length_m": 1.85,
+      "bearing_deg": 259.35,
+      "width_m": 0.48
+     },
+     {
+      "join_along_shadow_m": 5.81,
+      "length_m": 1.84,
+      "bearing_deg": 270.84,
+      "width_m": 0.74
+     },
+     {
+      "join_along_shadow_m": 5.63,
+      "length_m": 1.93,
+      "bearing_deg": 280.89,
+      "width_m": 0.47
+     },
+     {
+      "join_along_shadow_m": 5.54,
+      "length_m": 1.95,
+      "bearing_deg": 286.94,
+      "width_m": 0.41
+     }
+    ],
+    "2020": [
+     {
+      "join_along_shadow_m": 1.39,
+      "length_m": 4.5,
+      "bearing_deg": 177.87,
+      "width_m": 0.12
+     },
+     {
+      "join_along_shadow_m": 7.98,
+      "length_m": 2.44,
+      "bearing_deg": 90.08,
+      "width_m": 0.15
+     },
+     {
+      "join_along_shadow_m": 5.64,
+      "length_m": 4.42,
+      "bearing_deg": 269.57,
+      "width_m": 0.13
+     },
+     {
+      "join_along_shadow_m": 4.91,
+      "length_m": 3.12,
+      "bearing_deg": 270.05,
+      "width_m": 0.15
+     }
+    ]
+   },
+   "lamp_head_bright_at_foot": {
+    "2022": 24,
+    "2020": 52
+   },
+   "candidate": 173,
+   "s_m": 629.0,
+   "off_lap_m": 22.4,
+   "leg": "Colfax WB to Speer NB",
+   "id": "l0093",
+   "height_m": null
+  },
+  {
    "class": "post_unknown",
    "lonlat": [
     -104.9918833,
@@ -5964,6 +6069,35 @@
    "height_m": null
   },
   {
+   "class": "sign_or_small_post",
+   "lonlat": [
+    -104.996753,
+    39.740227
+   ],
+   "grade": "detected",
+   "position_from": "by eye off the panel's 5 m ticks (about +-1.5 m)",
+   "years": [],
+   "confirmed_by_second_year": false,
+   "spread_m": null,
+   "reader_verdict": "missed by the reader",
+   "eye": {
+    "verdict": "sign_or_small_post",
+    "panel": "REF1",
+    "note": "missed by the inventory, found in posts refutation round 1 (m1080 Colfax WB to Speer NB mid-block): 2022 1.7 m stroke N with round head, 2020 NW stroke; round head - could be a tall meter, borderline",
+    "read_at_en": [
+     -1016.0,
+     14.1
+    ]
+   },
+   "shadow_m": {},
+   "arms": {},
+   "s_m": 1056.0,
+   "off_lap_m": 8.4,
+   "leg": "Colfax WB to Speer NB",
+   "id": "l0143",
+   "height_m": null
+  },
+  {
    "class": "lamp",
    "lonlat": [
     -104.9969784,
@@ -6025,7 +6159,36 @@
    "s_m": 1076.0,
    "off_lap_m": 10.4,
    "leg": "Colfax WB to Speer NB",
-   "id": "l0143",
+   "id": "l0144",
+   "height_m": null
+  },
+  {
+   "class": "sign_or_small_post",
+   "lonlat": [
+    -104.9970482,
+    39.7402279
+   ],
+   "grade": "detected",
+   "position_from": "by eye off the panel's 5 m ticks (about +-1.5 m)",
+   "years": [],
+   "confirmed_by_second_year": false,
+   "spread_m": null,
+   "reader_verdict": "missed by the reader",
+   "eye": {
+    "verdict": "sign_or_small_post",
+    "panel": "REF1",
+    "note": "missed by the inventory, found in posts refutation round 1 (m1080 Colfax WB to Speer NB mid-block): on the sidewalk: 2022 2 m stroke N, 2020 NW stroke ending in a rectangular plate shadow",
+    "read_at_en": [
+     -1041.3,
+     14.2
+    ]
+   },
+   "shadow_m": {},
+   "arms": {},
+   "s_m": 1082.0,
+   "off_lap_m": 8.3,
+   "leg": "Colfax WB to Speer NB",
+   "id": "l0145",
    "height_m": null
   },
   {
@@ -6089,7 +6252,7 @@
    "s_m": 1117.0,
    "off_lap_m": 22.4,
    "leg": "Colfax WB to Speer NB",
-   "id": "l0144",
+   "id": "l0146",
    "height_m": null
   },
   {
@@ -6122,7 +6285,7 @@
    "s_m": 1135.0,
    "off_lap_m": 24.2,
    "leg": "Colfax WB to Speer NB",
-   "id": "l0145",
+   "id": "l0147",
    "height_m": null
   },
   {
@@ -6163,7 +6326,7 @@
    "s_m": 1142.0,
    "off_lap_m": 7.7,
    "leg": "Colfax WB to Speer NB",
-   "id": "l0146",
+   "id": "l0148",
    "height_m": null
   },
   {
@@ -6198,7 +6361,7 @@
    "s_m": 1170.0,
    "off_lap_m": 28.2,
    "leg": "Colfax WB to Speer NB",
-   "id": "l0149",
+   "id": "l0151",
    "height_m": null
   },
   {
@@ -6227,7 +6390,7 @@
    "s_m": 1198.0,
    "off_lap_m": 16.8,
    "leg": "Speer NB to Stout",
-   "id": "l0151",
+   "id": "l0153",
    "height_m": null
   },
   {
@@ -6270,7 +6433,7 @@
    "s_m": 1217.0,
    "off_lap_m": 11.4,
    "leg": "Speer NB to Stout",
-   "id": "l0152",
+   "id": "l0154",
    "height_m": null
   },
   {
@@ -6323,7 +6486,7 @@
    "s_m": 1237.0,
    "off_lap_m": 9.0,
    "leg": "Speer NB to Stout",
-   "id": "l0153",
+   "id": "l0155",
    "height_m": null
   },
   {
@@ -6356,7 +6519,7 @@
    "s_m": 1247.0,
    "off_lap_m": 8.2,
    "leg": "Speer NB to Stout",
-   "id": "l0154",
+   "id": "l0156",
    "height_m": null
   },
   {
@@ -6397,7 +6560,7 @@
    "s_m": 1251.0,
    "off_lap_m": 11.6,
    "leg": "Speer NB to Stout",
-   "id": "l0155",
+   "id": "l0157",
    "height_m": null
   },
   {
@@ -6453,7 +6616,7 @@
    "s_m": 1260.0,
    "off_lap_m": 7.6,
    "leg": "Speer NB to Stout",
-   "id": "l0156",
+   "id": "l0158",
    "height_m": null
   },
   {
@@ -6497,7 +6660,7 @@
    "s_m": 1283.0,
    "off_lap_m": 11.5,
    "leg": "Speer NB to Stout",
-   "id": "l0157",
+   "id": "l0159",
    "height_m": null
   },
   {
@@ -6530,7 +6693,7 @@
    "s_m": 1285.0,
    "off_lap_m": 8.4,
    "leg": "Speer NB to Stout",
-   "id": "l0158",
+   "id": "l0160",
    "height_m": null
   },
   {
@@ -6563,7 +6726,7 @@
    "s_m": 1310.0,
    "off_lap_m": 8.4,
    "leg": "Speer NB to Stout",
-   "id": "l0159",
+   "id": "l0161",
    "height_m": null
   },
   {
@@ -6619,7 +6782,7 @@
    "s_m": 1314.0,
    "off_lap_m": 9.6,
    "leg": "Speer NB to Stout",
-   "id": "l0160",
+   "id": "l0162",
    "height_m": null
   },
   {
@@ -6731,7 +6894,7 @@
    "s_m": 1347.0,
    "off_lap_m": 10.9,
    "leg": "Stout to 15th St",
-   "id": "l0165",
+   "id": "l0167",
    "height_m": null
   },
   {
@@ -6764,7 +6927,7 @@
    "s_m": 1349.0,
    "off_lap_m": 5.9,
    "leg": "Stout to 15th St",
-   "id": "l0166",
+   "id": "l0168",
    "height_m": null
   },
   {
@@ -6870,7 +7033,7 @@
    "s_m": 1365.0,
    "off_lap_m": 6.9,
    "leg": "Stout to 15th St",
-   "id": "l0167",
+   "id": "l0169",
    "height_m": null
   },
   {
@@ -6920,7 +7083,7 @@
    "s_m": 1380.0,
    "off_lap_m": 16.9,
    "leg": "Stout to 15th St",
-   "id": "l0168",
+   "id": "l0170",
    "height_m": null
   },
   {
@@ -6955,7 +7118,7 @@
    "s_m": 1584.0,
    "off_lap_m": 18.9,
    "leg": "Stout to 15th St",
-   "id": "l0169",
+   "id": "l0171",
    "height_m": null
   },
   {
@@ -6996,7 +7159,7 @@
    "s_m": 1607.0,
    "off_lap_m": 23.9,
    "leg": "Stout to 15th St",
-   "id": "l0170",
+   "id": "l0172",
    "height_m": null
   },
   {
@@ -7037,7 +7200,7 @@
    "s_m": 1747.0,
    "off_lap_m": 20.6,
    "leg": "Stout to 15th St",
-   "id": "l0172",
+   "id": "l0174",
    "height_m": null
   },
   {
@@ -7078,7 +7241,7 @@
    "s_m": 1747.0,
    "off_lap_m": 10.7,
    "leg": "Stout to 15th St",
-   "id": "l0173",
+   "id": "l0175",
    "height_m": null
   },
   {
@@ -7164,7 +7327,7 @@
    "s_m": 1748.0,
    "off_lap_m": 8.9,
    "leg": "Stout to 15th St",
-   "id": "l0174",
+   "id": "l0176",
    "height_m": null
   },
   {
@@ -7205,7 +7368,7 @@
    "s_m": 1750.0,
    "off_lap_m": 21.8,
    "leg": "Stout to 15th St",
-   "id": "l0176",
+   "id": "l0178",
    "height_m": null
   },
   {
@@ -7238,7 +7401,7 @@
    "s_m": 1750.0,
    "off_lap_m": 16.2,
    "leg": "Stout to 15th St",
-   "id": "l0177",
+   "id": "l0179",
    "height_m": null
   },
   {
@@ -7271,7 +7434,7 @@
    "s_m": 1750.0,
    "off_lap_m": 24.1,
    "leg": "Stout to 15th St",
-   "id": "l0178",
+   "id": "l0180",
    "height_m": null
   },
   {
@@ -7304,7 +7467,7 @@
    "s_m": 1751.0,
    "off_lap_m": 26.5,
    "leg": "Stout to 15th St",
-   "id": "l0179",
+   "id": "l0181",
    "height_m": null
   },
   {
@@ -7339,7 +7502,7 @@
    "s_m": 1766.0,
    "off_lap_m": 26.2,
    "leg": "Stout to 15th St",
-   "id": "l0181",
+   "id": "l0183",
    "height_m": null
   },
   {
@@ -7374,7 +7537,7 @@
    "s_m": 1771.0,
    "off_lap_m": 8.1,
    "leg": "Stout to 15th St",
-   "id": "l0182",
+   "id": "l0184",
    "height_m": null
   },
   {
@@ -7444,7 +7607,7 @@
    "s_m": 1774.0,
    "off_lap_m": 11.8,
    "leg": "Stout to 15th St",
-   "id": "l0184",
+   "id": "l0186",
    "height_m": null
   },
   {
@@ -7485,7 +7648,7 @@
    "s_m": 1776.0,
    "off_lap_m": 7.4,
    "leg": "Stout to 15th St",
-   "id": "l0185",
+   "id": "l0187",
    "height_m": null
   },
   {
@@ -7518,7 +7681,7 @@
    "s_m": 1780.0,
    "off_lap_m": 28.6,
    "leg": "Stout to 15th St",
-   "id": "l0186",
+   "id": "l0188",
    "height_m": null
   },
   {
@@ -7551,7 +7714,7 @@
    "s_m": 1792.0,
    "off_lap_m": 27.3,
    "leg": "Stout to 15th St",
-   "id": "l0187",
+   "id": "l0189",
    "height_m": null
   },
   {
@@ -7586,7 +7749,7 @@
    "s_m": 1794.0,
    "off_lap_m": 11.4,
    "leg": "Stout to 15th St",
-   "id": "l0188",
+   "id": "l0190",
    "height_m": null
   },
   {
@@ -7619,7 +7782,7 @@
    "s_m": 1806.0,
    "off_lap_m": 10.8,
    "leg": "Stout to 15th St",
-   "id": "l0189",
+   "id": "l0191",
    "height_m": null
   },
   {
@@ -7648,7 +7811,7 @@
    "s_m": 1831.0,
    "off_lap_m": 14.0,
    "leg": "Stout to 15th St",
-   "id": "l0190",
+   "id": "l0192",
    "height_m": null
   },
   {
@@ -7686,7 +7849,7 @@
    "s_m": 1862.0,
    "off_lap_m": 19.0,
    "leg": "Stout to 15th St",
-   "id": "l0191",
+   "id": "l0193",
    "height_m": null
   },
   {
@@ -7719,7 +7882,7 @@
    "s_m": 1877.0,
    "off_lap_m": 15.7,
    "leg": "Stout to 15th St",
-   "id": "l0192",
+   "id": "l0194",
    "height_m": null
   },
   {
@@ -7748,7 +7911,7 @@
    "s_m": 1878.0,
    "off_lap_m": 25.6,
    "leg": "Stout to 15th St",
-   "id": "l0193",
+   "id": "l0195",
    "height_m": null
   },
   {
@@ -7792,7 +7955,7 @@
    "s_m": 1888.0,
    "off_lap_m": 8.4,
    "leg": "Stout to 15th St",
-   "id": "l0194",
+   "id": "l0196",
    "height_m": null
   },
   {
@@ -7833,7 +7996,7 @@
    "s_m": 1889.0,
    "off_lap_m": 7.4,
    "leg": "Stout to 15th St",
-   "id": "l0195",
+   "id": "l0197",
    "height_m": null
   },
   {
@@ -7868,7 +8031,7 @@
    "s_m": 1892.0,
    "off_lap_m": 12.6,
    "leg": "Stout to 15th St",
-   "id": "l0197",
+   "id": "l0199",
    "height_m": null
   },
   {
@@ -7901,7 +8064,7 @@
    "s_m": 1929.0,
    "off_lap_m": 8.7,
    "leg": "15th St to Blake",
-   "id": "l0203",
+   "id": "l0205",
    "height_m": null
   },
   {
@@ -7936,7 +8099,7 @@
    "s_m": 1964.0,
    "off_lap_m": 8.8,
    "leg": "15th St to Blake",
-   "id": "l0204",
+   "id": "l0206",
    "height_m": null
   },
   {
@@ -7977,7 +8140,7 @@
    "s_m": 1984.0,
    "off_lap_m": 7.9,
    "leg": "15th St to Blake",
-   "id": "l0205",
+   "id": "l0207",
    "height_m": null
   },
   {
@@ -8010,7 +8173,7 @@
    "s_m": 2004.0,
    "off_lap_m": 12.2,
    "leg": "15th St to Blake",
-   "id": "l0207",
+   "id": "l0209",
    "height_m": null
   },
   {
@@ -8047,7 +8210,7 @@
    "s_m": 2019.0,
    "off_lap_m": 26.9,
    "leg": "15th St to Blake",
-   "id": "l0208",
+   "id": "l0210",
    "height_m": null
   },
   {
@@ -8080,7 +8243,7 @@
    "s_m": 2037.0,
    "off_lap_m": 9.0,
    "leg": "15th St to Blake",
-   "id": "l0211",
+   "id": "l0213",
    "height_m": null
   },
   {
@@ -8113,7 +8276,7 @@
    "s_m": 2055.0,
    "off_lap_m": 7.9,
    "leg": "15th St to Blake",
-   "id": "l0212",
+   "id": "l0214",
    "height_m": null
   },
   {
@@ -8146,7 +8309,7 @@
    "s_m": 2088.0,
    "off_lap_m": 7.7,
    "leg": "15th St to Blake",
-   "id": "l0213",
+   "id": "l0215",
    "height_m": null
   },
   {
@@ -8179,7 +8342,7 @@
    "s_m": 2109.0,
    "off_lap_m": 18.9,
    "leg": "15th St to Blake",
-   "id": "l0215",
+   "id": "l0217",
    "height_m": null
   },
   {
@@ -8212,7 +8375,7 @@
    "s_m": 2123.0,
    "off_lap_m": 18.8,
    "leg": "15th St to Blake",
-   "id": "l0216",
+   "id": "l0218",
    "height_m": null
   },
   {
@@ -8245,7 +8408,7 @@
    "s_m": 2124.0,
    "off_lap_m": 20.9,
    "leg": "15th St to Blake",
-   "id": "l0218",
+   "id": "l0220",
    "height_m": null
   },
   {
@@ -8274,7 +8437,7 @@
    "s_m": 2149.0,
    "off_lap_m": 10.5,
    "leg": "15th St to Blake",
-   "id": "l0221",
+   "id": "l0223",
    "height_m": null
   },
   {
@@ -8307,7 +8470,7 @@
    "s_m": 2163.0,
    "off_lap_m": 9.6,
    "leg": "15th St to Blake",
-   "id": "l0222",
+   "id": "l0224",
    "height_m": null
   },
   {
@@ -8340,7 +8503,7 @@
    "s_m": 2165.0,
    "off_lap_m": 24.2,
    "leg": "15th St to Blake",
-   "id": "l0223",
+   "id": "l0225",
    "height_m": null
   },
   {
@@ -8373,7 +8536,7 @@
    "s_m": 2194.0,
    "off_lap_m": 10.6,
    "leg": "15th St to Blake",
-   "id": "l0224",
+   "id": "l0226",
    "height_m": null
   },
   {
@@ -8402,7 +8565,42 @@
    "s_m": 2211.0,
    "off_lap_m": 13.5,
    "leg": "15th St to Blake",
-   "id": "l0226",
+   "id": "l0228",
+   "height_m": null
+  },
+  {
+   "class": "lamp",
+   "lonlat": [
+    -104.9970402,
+    39.7466831
+   ],
+   "grade": "measured",
+   "position_from": "found by eye; placed at the foot of the nearest shadow stroke within 2.0 m",
+   "years": [
+    2022,
+    2020
+   ],
+   "confirmed_by_second_year": true,
+   "spread_m": null,
+   "reader_verdict": "missed by the reader",
+   "eye": {
+    "verdict": "lamp",
+    "panel": "REF1",
+    "note": "missed by the inventory, found in posts refutation round 1 (j2220 15th Street / Arapahoe Street): cobra-head lamp at the south edge (behind a parked car in 2022); 2022 shadow N to a head at (-1041.3,737.6), 2020 shadow NW; foot is within ~0.5 m of the box edge",
+    "read_at_en": [
+     -1040.5,
+     732.0
+    ]
+   },
+   "shadow_m": {
+    "2022": 2.29,
+    "2020": 2.99
+   },
+   "arms": {},
+   "s_m": 2212.0,
+   "off_lap_m": 28.5,
+   "leg": "15th St to Blake",
+   "id": "l0229",
    "height_m": null
   },
   {
@@ -8431,7 +8629,7 @@
    "s_m": 2227.0,
    "off_lap_m": 16.1,
    "leg": "15th St to Blake",
-   "id": "l0227",
+   "id": "l0230",
    "height_m": null
   },
   {
@@ -8464,7 +8662,7 @@
    "s_m": 2239.0,
    "off_lap_m": 17.0,
    "leg": "15th St to Blake",
-   "id": "l0230",
+   "id": "l0233",
    "height_m": null
   },
   {
@@ -8526,7 +8724,7 @@
    "s_m": 2265.0,
    "off_lap_m": 10.7,
    "leg": "15th St to Blake",
-   "id": "l0231",
+   "id": "l0234",
    "height_m": null
   },
   {
@@ -8559,7 +8757,7 @@
    "s_m": 2294.0,
    "off_lap_m": 5.0,
    "leg": "15th St to Blake",
-   "id": "l0232",
+   "id": "l0235",
    "height_m": null
   },
   {
@@ -8592,7 +8790,7 @@
    "s_m": 2298.0,
    "off_lap_m": 10.6,
    "leg": "15th St to Blake",
-   "id": "l0233",
+   "id": "l0236",
    "height_m": null
   },
   {
@@ -8621,7 +8819,7 @@
    "s_m": 2315.0,
    "off_lap_m": 8.3,
    "leg": "15th St to Blake",
-   "id": "l0234",
+   "id": "l0237",
    "height_m": null
   },
   {
@@ -8654,7 +8852,7 @@
    "s_m": 2366.0,
    "off_lap_m": 10.7,
    "leg": "15th St to Blake",
-   "id": "l0236",
+   "id": "l0239",
    "height_m": null
   },
   {
@@ -8704,7 +8902,7 @@
    "s_m": 2371.0,
    "off_lap_m": 10.1,
    "leg": "15th St to Blake",
-   "id": "l0237",
+   "id": "l0240",
    "height_m": null
   },
   {
@@ -8737,7 +8935,7 @@
    "s_m": 2376.0,
    "off_lap_m": 9.9,
    "leg": "15th St to Blake",
-   "id": "l0238",
+   "id": "l0241",
    "height_m": null
   },
   {
@@ -8787,7 +8985,7 @@
    "s_m": 2385.0,
    "off_lap_m": 9.9,
    "leg": "15th St to Blake",
-   "id": "l0239",
+   "id": "l0242",
    "height_m": null
   },
   {
@@ -8828,7 +9026,7 @@
    "s_m": 2389.0,
    "off_lap_m": 9.7,
    "leg": "15th St to Blake",
-   "id": "l0240",
+   "id": "l0243",
    "height_m": null
   },
   {
@@ -8871,7 +9069,7 @@
    "s_m": 2402.0,
    "off_lap_m": 18.2,
    "leg": "15th St to Blake",
-   "id": "l0241",
+   "id": "l0244",
    "height_m": null
   },
   {
@@ -8906,7 +9104,7 @@
    "s_m": 2403.0,
    "off_lap_m": 27.3,
    "leg": "15th St to Blake",
-   "id": "l0242",
+   "id": "l0245",
    "height_m": null
   },
   {
@@ -8982,7 +9180,7 @@
    "s_m": 2404.0,
    "off_lap_m": 9.5,
    "leg": "15th St to Blake",
-   "id": "l0243",
+   "id": "l0246",
    "height_m": null
   },
   {
@@ -9023,7 +9221,7 @@
    "s_m": 2410.0,
    "off_lap_m": 18.0,
    "leg": "15th St to Blake",
-   "id": "l0244",
+   "id": "l0247",
    "height_m": null
   },
   {
@@ -9058,7 +9256,7 @@
    "s_m": 2410.0,
    "off_lap_m": 25.9,
    "leg": "15th St to Blake",
-   "id": "l0245",
+   "id": "l0248",
    "height_m": null
   },
   {
@@ -9091,7 +9289,7 @@
    "s_m": 2411.0,
    "off_lap_m": 9.5,
    "leg": "15th St to Blake",
-   "id": "l0246",
+   "id": "l0249",
    "height_m": null
   },
   {
@@ -9134,7 +9332,7 @@
    "s_m": 2426.0,
    "off_lap_m": 17.4,
    "leg": "15th St to Blake",
-   "id": "l0249",
+   "id": "l0252",
    "height_m": null
   },
   {
@@ -9169,7 +9367,7 @@
    "s_m": 2438.0,
    "off_lap_m": 21.1,
    "leg": "15th St to Blake",
-   "id": "l0250",
+   "id": "l0253",
    "height_m": null
   },
   {
@@ -9210,7 +9408,7 @@
    "s_m": 2443.0,
    "off_lap_m": 16.9,
    "leg": "15th St to Blake",
-   "id": "l0252",
+   "id": "l0255",
    "height_m": null
   },
   {
@@ -9268,7 +9466,7 @@
    "s_m": 2449.0,
    "off_lap_m": 8.6,
    "leg": "15th St to Blake",
-   "id": "l0254",
+   "id": "l0257",
    "height_m": null
   },
   {
@@ -9312,7 +9510,7 @@
    "s_m": 2462.0,
    "off_lap_m": 9.4,
    "leg": "15th St to Blake",
-   "id": "l0255",
+   "id": "l0258",
    "height_m": null
   },
   {
@@ -9353,7 +9551,7 @@
    "s_m": 2465.0,
    "off_lap_m": 8.5,
    "leg": "15th St to Blake",
-   "id": "l0256",
+   "id": "l0259",
    "height_m": null
   },
   {
@@ -9386,7 +9584,7 @@
    "s_m": 2476.0,
    "off_lap_m": 10.9,
    "leg": "15th St to Blake",
-   "id": "l0257",
+   "id": "l0260",
    "height_m": null
   },
   {
@@ -9427,7 +9625,7 @@
    "s_m": 2477.0,
    "off_lap_m": 7.9,
    "leg": "15th St to Blake",
-   "id": "l0258",
+   "id": "l0261",
    "height_m": null
   },
   {
@@ -9471,7 +9669,7 @@
    "s_m": 2493.0,
    "off_lap_m": 6.4,
    "leg": "15th St to Blake",
-   "id": "l0259",
+   "id": "l0262",
    "height_m": null
   },
   {
@@ -9504,7 +9702,7 @@
    "s_m": 2494.0,
    "off_lap_m": 9.0,
    "leg": "15th St to Blake",
-   "id": "l0260",
+   "id": "l0263",
    "height_m": null
   },
   {
@@ -9545,7 +9743,7 @@
    "s_m": 2508.0,
    "off_lap_m": 10.8,
    "leg": "15th St to Blake",
-   "id": "l0261",
+   "id": "l0264",
    "height_m": null
   },
   {
@@ -9632,7 +9830,7 @@
    "s_m": 2515.0,
    "off_lap_m": 5.9,
    "leg": "15th St to Blake",
-   "id": "l0262",
+   "id": "l0265",
    "height_m": null
   },
   {
@@ -9682,7 +9880,7 @@
    "s_m": 2522.0,
    "off_lap_m": 10.5,
    "leg": "15th St to Blake",
-   "id": "l0263",
+   "id": "l0266",
    "height_m": null
   },
   {
@@ -9715,7 +9913,7 @@
    "s_m": 2546.0,
    "off_lap_m": 27.7,
    "leg": "15th St to Blake",
-   "id": "l0266",
+   "id": "l0269",
    "height_m": null
   },
   {
@@ -9744,7 +9942,7 @@
    "s_m": 2555.0,
    "off_lap_m": 10.4,
    "leg": "15th St to Blake",
-   "id": "l0269",
+   "id": "l0272",
    "height_m": null
   },
   {
@@ -9826,7 +10024,7 @@
    "s_m": 2560.0,
    "off_lap_m": 5.0,
    "leg": "15th St to Blake",
-   "id": "l0270",
+   "id": "l0273",
    "height_m": null
   },
   {
@@ -9896,7 +10094,7 @@
    "s_m": 2571.0,
    "off_lap_m": 4.9,
    "leg": "15th St to Blake",
-   "id": "l0271",
+   "id": "l0274",
    "height_m": null
   },
   {
@@ -9946,7 +10144,7 @@
    "s_m": 2586.0,
    "off_lap_m": 4.5,
    "leg": "15th St to Blake",
-   "id": "l0272",
+   "id": "l0275",
    "height_m": null
   },
   {
@@ -9996,7 +10194,7 @@
    "s_m": 2598.0,
    "off_lap_m": 11.6,
    "leg": "15th St to Blake",
-   "id": "l0273",
+   "id": "l0276",
    "height_m": null
   },
   {
@@ -10029,7 +10227,7 @@
    "s_m": 2598.0,
    "off_lap_m": 4.2,
    "leg": "15th St to Blake",
-   "id": "l0274",
+   "id": "l0277",
    "height_m": null
   },
   {
@@ -10105,7 +10303,7 @@
    "s_m": 2611.0,
    "off_lap_m": 11.8,
    "leg": "15th St to Blake",
-   "id": "l0275",
+   "id": "l0278",
    "height_m": null
   },
   {
@@ -10140,7 +10338,7 @@
    "s_m": 2621.0,
    "off_lap_m": 5.1,
    "leg": "15th St to Blake",
-   "id": "l0276",
+   "id": "l0279",
    "height_m": null
   },
   {
@@ -10204,7 +10402,7 @@
    "s_m": 2633.0,
    "off_lap_m": 4.1,
    "leg": "15th St to Blake",
-   "id": "l0278",
+   "id": "l0281",
    "height_m": null
   },
   {
@@ -10275,7 +10473,7 @@
    "s_m": 2644.0,
    "off_lap_m": 22.3,
    "leg": "15th St to Blake",
-   "id": "l0280",
+   "id": "l0283",
    "height_m": null
   },
   {
@@ -10319,7 +10517,7 @@
    "s_m": 2674.0,
    "off_lap_m": 8.3,
    "leg": "Blake to Speer SB",
-   "id": "l0286",
+   "id": "l0289",
    "height_m": null
   },
   {
@@ -10352,7 +10550,7 @@
    "s_m": 2681.0,
    "off_lap_m": 9.0,
    "leg": "Blake to Speer SB",
-   "id": "l0287",
+   "id": "l0290",
    "height_m": null
   },
   {
@@ -10396,7 +10594,7 @@
    "s_m": 2690.0,
    "off_lap_m": 8.4,
    "leg": "Blake to Speer SB",
-   "id": "l0288",
+   "id": "l0291",
    "height_m": null
   },
   {
@@ -10449,7 +10647,7 @@
    "s_m": 2707.0,
    "off_lap_m": 8.5,
    "leg": "Blake to Speer SB",
-   "id": "l0289",
+   "id": "l0292",
    "height_m": null
   },
   {
@@ -10493,7 +10691,7 @@
    "s_m": 2718.0,
    "off_lap_m": 8.4,
    "leg": "Blake to Speer SB",
-   "id": "l0290",
+   "id": "l0293",
    "height_m": null
   },
   {
@@ -10536,7 +10734,7 @@
    "s_m": 2724.0,
    "off_lap_m": 8.5,
    "leg": "Blake to Speer SB",
-   "id": "l0291",
+   "id": "l0294",
    "height_m": null
   },
   {
@@ -10573,7 +10771,7 @@
    "s_m": 2748.0,
    "off_lap_m": 28.3,
    "leg": "Blake to Speer SB",
-   "id": "l0292",
+   "id": "l0295",
    "height_m": null
   },
   {
@@ -10640,7 +10838,7 @@
    "s_m": 2757.0,
    "off_lap_m": 8.3,
    "leg": "Blake to Speer SB",
-   "id": "l0293",
+   "id": "l0296",
    "height_m": null
   },
   {
@@ -10698,7 +10896,7 @@
    "s_m": 2759.0,
    "off_lap_m": 8.3,
    "leg": "Blake to Speer SB",
-   "id": "l0294",
+   "id": "l0297",
    "height_m": null
   },
   {
@@ -10757,7 +10955,7 @@
    "s_m": 2767.0,
    "off_lap_m": 10.0,
    "leg": "Blake to Speer SB",
-   "id": "l0295",
+   "id": "l0298",
    "height_m": null
   },
   {
@@ -10810,7 +11008,7 @@
    "s_m": 2770.0,
    "off_lap_m": 8.4,
    "leg": "Blake to Speer SB",
-   "id": "l0296",
+   "id": "l0299",
    "height_m": null
   },
   {
@@ -10869,7 +11067,7 @@
    "s_m": 2770.0,
    "off_lap_m": 12.6,
    "leg": "Blake to Speer SB",
-   "id": "l0297",
+   "id": "l0300",
    "height_m": null
   },
   {
@@ -10919,7 +11117,7 @@
    "s_m": 2774.0,
    "off_lap_m": 24.5,
    "leg": "Blake to Speer SB",
-   "id": "l0298",
+   "id": "l0301",
    "height_m": null
   },
   {
@@ -10963,7 +11161,7 @@
    "s_m": 2780.0,
    "off_lap_m": 22.8,
    "leg": "Blake to Speer SB",
-   "id": "l0299",
+   "id": "l0302",
    "height_m": null
   },
   {
@@ -11038,7 +11236,7 @@
    "s_m": 2783.0,
    "off_lap_m": 7.4,
    "leg": "Blake to Speer SB",
-   "id": "l0300",
+   "id": "l0303",
    "height_m": null
   },
   {
@@ -11071,7 +11269,7 @@
    "s_m": 2818.0,
    "off_lap_m": 13.5,
    "leg": "Blake to Speer SB",
-   "id": "l0301",
+   "id": "l0304",
    "height_m": null
   },
   {
@@ -11156,7 +11354,7 @@
    "s_m": 2847.0,
    "off_lap_m": 7.9,
    "leg": "Blake to Speer SB",
-   "id": "l0305",
+   "id": "l0308",
    "height_m": null
   },
   {
@@ -11235,7 +11433,7 @@
    "s_m": 2854.0,
    "off_lap_m": 14.3,
    "leg": "Blake to Speer SB",
-   "id": "l0307",
+   "id": "l0310",
    "height_m": null
   },
   {
@@ -11276,7 +11474,7 @@
    "s_m": 2857.0,
    "off_lap_m": 9.8,
    "leg": "Blake to Speer SB",
-   "id": "l0308",
+   "id": "l0311",
    "height_m": null
   },
   {
@@ -11320,7 +11518,7 @@
    "s_m": 2859.0,
    "off_lap_m": 8.6,
    "leg": "Blake to Speer SB",
-   "id": "l0309",
+   "id": "l0312",
    "height_m": null
   },
   {
@@ -11399,7 +11597,7 @@
    "s_m": 2866.0,
    "off_lap_m": 7.7,
    "leg": "Blake to Speer SB",
-   "id": "l0310",
+   "id": "l0313",
    "height_m": null
   },
   {
@@ -11434,7 +11632,7 @@
    "s_m": 2871.0,
    "off_lap_m": 7.3,
    "leg": "Blake to Speer SB",
-   "id": "l0311",
+   "id": "l0314",
    "height_m": null
   },
   {
@@ -11487,7 +11685,7 @@
    "s_m": 2876.0,
    "off_lap_m": 8.6,
    "leg": "Blake to Speer SB",
-   "id": "l0312",
+   "id": "l0315",
    "height_m": null
   },
   {
@@ -11554,7 +11752,7 @@
    "s_m": 2877.0,
    "off_lap_m": 8.8,
    "leg": "Blake to Speer SB",
-   "id": "l0313",
+   "id": "l0316",
    "height_m": null
   },
   {
@@ -11619,7 +11817,7 @@
    "s_m": 2884.0,
    "off_lap_m": 8.6,
    "leg": "Blake to Speer SB",
-   "id": "l0314",
+   "id": "l0317",
    "height_m": null
   },
   {
@@ -11692,7 +11890,7 @@
    "s_m": 2884.0,
    "off_lap_m": 7.8,
    "leg": "Blake to Speer SB",
-   "id": "l0315",
+   "id": "l0318",
    "height_m": null
   },
   {
@@ -11733,7 +11931,7 @@
    "s_m": 2893.0,
    "off_lap_m": 8.4,
    "leg": "Blake to Speer SB",
-   "id": "l0316",
+   "id": "l0319",
    "height_m": null
   },
   {
@@ -11806,7 +12004,7 @@
    "s_m": 2902.0,
    "off_lap_m": 8.0,
    "leg": "Blake to Speer SB",
-   "id": "l0317",
+   "id": "l0320",
    "height_m": null
   },
   {
@@ -11859,7 +12057,7 @@
    "s_m": 2905.0,
    "off_lap_m": 20.0,
    "leg": "Blake to Speer SB",
-   "id": "l0318",
+   "id": "l0321",
    "height_m": null
   },
   {
@@ -11909,7 +12107,7 @@
    "s_m": 2910.0,
    "off_lap_m": 7.6,
    "leg": "Blake to Speer SB",
-   "id": "l0320",
+   "id": "l0323",
    "height_m": null
   },
   {
@@ -11942,7 +12140,7 @@
    "s_m": 2911.0,
    "off_lap_m": 15.0,
    "leg": "Blake to Speer SB",
-   "id": "l0321",
+   "id": "l0324",
    "height_m": null
   },
   {
@@ -11975,7 +12173,7 @@
    "s_m": 2957.0,
    "off_lap_m": 14.3,
    "leg": "Speer SB to Kalamath",
-   "id": "l0328",
+   "id": "l0331",
    "height_m": null
   },
   {
@@ -12062,7 +12260,7 @@
    "s_m": 2985.0,
    "off_lap_m": 5.4,
    "leg": "Speer SB to Kalamath",
-   "id": "l0330",
+   "id": "l0333",
    "height_m": null
   },
   {
@@ -12106,7 +12304,7 @@
    "s_m": 2995.0,
    "off_lap_m": 12.4,
    "leg": "Speer SB to Kalamath",
-   "id": "l0331",
+   "id": "l0334",
    "height_m": null
   },
   {
@@ -12150,7 +12348,7 @@
    "s_m": 3012.0,
    "off_lap_m": 4.7,
    "leg": "Speer SB to Kalamath",
-   "id": "l0332",
+   "id": "l0335",
    "height_m": null
   },
   {
@@ -12191,7 +12389,7 @@
    "s_m": 3014.0,
    "off_lap_m": 12.2,
    "leg": "Speer SB to Kalamath",
-   "id": "l0333",
+   "id": "l0336",
    "height_m": null
   },
   {
@@ -12244,7 +12442,7 @@
    "s_m": 3025.0,
    "off_lap_m": 10.7,
    "leg": "Speer SB to Kalamath",
-   "id": "l0334",
+   "id": "l0337",
    "height_m": null
   },
   {
@@ -12309,7 +12507,7 @@
    "s_m": 3029.0,
    "off_lap_m": 6.1,
    "leg": "Speer SB to Kalamath",
-   "id": "l0335",
+   "id": "l0338",
    "height_m": null
   },
   {
@@ -12368,7 +12566,7 @@
    "s_m": 3072.0,
    "off_lap_m": 8.7,
    "leg": "Speer SB to Kalamath",
-   "id": "l0341",
+   "id": "l0344",
    "height_m": null
   },
   {
@@ -12397,7 +12595,7 @@
    "s_m": 3072.0,
    "off_lap_m": 15.4,
    "leg": "Speer SB to Kalamath",
-   "id": "l0342",
+   "id": "l0345",
    "height_m": null
   },
   {
@@ -12464,7 +12662,7 @@
    "s_m": 3086.0,
    "off_lap_m": 21.7,
    "leg": "Speer SB to Kalamath",
-   "id": "l0343",
+   "id": "l0346",
    "height_m": null
   },
   {
@@ -12505,7 +12703,7 @@
    "s_m": 3090.0,
    "off_lap_m": 8.6,
    "leg": "Speer SB to Kalamath",
-   "id": "l0344",
+   "id": "l0347",
    "height_m": null
   },
   {
@@ -12549,7 +12747,7 @@
    "s_m": 3108.0,
    "off_lap_m": 8.6,
    "leg": "Speer SB to Kalamath",
-   "id": "l0345",
+   "id": "l0348",
    "height_m": null
   },
   {
@@ -12593,7 +12791,7 @@
    "s_m": 3117.0,
    "off_lap_m": 8.4,
    "leg": "Speer SB to Kalamath",
-   "id": "l0346",
+   "id": "l0349",
    "height_m": null
   },
   {
@@ -12634,7 +12832,7 @@
    "s_m": 3126.0,
    "off_lap_m": 8.5,
    "leg": "Speer SB to Kalamath",
-   "id": "l0347",
+   "id": "l0350",
    "height_m": null
   },
   {
@@ -12678,7 +12876,7 @@
    "s_m": 3145.0,
    "off_lap_m": 8.4,
    "leg": "Speer SB to Kalamath",
-   "id": "l0348",
+   "id": "l0351",
    "height_m": null
   },
   {
@@ -12712,7 +12910,7 @@
    "off_lap_m": 9.1,
    "leg": "Speer SB to Kalamath",
    "position_note": "the 2022 and 2020 feet disagree by about 2 m here (R060); position about +-2 m",
-   "id": "l0349",
+   "id": "l0352",
    "height_m": null
   },
   {
@@ -12745,7 +12943,7 @@
    "s_m": 3169.0,
    "off_lap_m": 8.8,
    "leg": "Speer SB to Kalamath",
-   "id": "l0350",
+   "id": "l0353",
    "height_m": null
   },
   {
@@ -12786,7 +12984,7 @@
    "s_m": 3182.0,
    "off_lap_m": 8.1,
    "leg": "Speer SB to Kalamath",
-   "id": "l0351",
+   "id": "l0354",
    "height_m": null
   },
   {
@@ -12836,7 +13034,7 @@
    "s_m": 3200.0,
    "off_lap_m": 8.0,
    "leg": "Speer SB to Kalamath",
-   "id": "l0352",
+   "id": "l0355",
    "height_m": null
   },
   {
@@ -12918,7 +13116,7 @@
    "s_m": 3221.0,
    "off_lap_m": 21.1,
    "leg": "Speer SB to Kalamath",
-   "id": "l0357",
+   "id": "l0360",
    "height_m": null
   },
   {
@@ -12961,7 +13159,7 @@
    "s_m": 3222.0,
    "off_lap_m": 24.9,
    "leg": "Speer SB to Kalamath",
-   "id": "l0358",
+   "id": "l0361",
    "height_m": null
   },
   {
@@ -12994,7 +13192,7 @@
    "s_m": 3234.0,
    "off_lap_m": 15.2,
    "leg": "Speer SB to Kalamath",
-   "id": "l0359",
+   "id": "l0362",
    "height_m": null
   },
   {
@@ -13067,7 +13265,7 @@
    "s_m": 3235.0,
    "off_lap_m": 23.9,
    "leg": "Speer SB to Kalamath",
-   "id": "l0360",
+   "id": "l0363",
    "height_m": null
   },
   {
@@ -13140,7 +13338,42 @@
    "s_m": 3235.0,
    "off_lap_m": 19.7,
    "leg": "Speer SB to Kalamath",
-   "id": "l0361",
+   "id": "l0364",
+   "height_m": null
+  },
+  {
+   "class": "sign_or_small_post",
+   "lonlat": [
+    -105.0015492,
+    39.7462247
+   ],
+   "grade": "measured",
+   "position_from": "found by eye; placed at the foot of the nearest shadow stroke within 2.0 m",
+   "years": [
+    2020,
+    2018
+   ],
+   "confirmed_by_second_year": true,
+   "spread_m": null,
+   "reader_verdict": "missed by the reader",
+   "eye": {
+    "verdict": "sign_or_small_post",
+    "panel": "REF1",
+    "note": "missed by the inventory, found in posts refutation round 1 (j3226 Larimer Street / North Speer Boulevard): sign in the grass triangle SW: 2022 ~1.7 m stroke N with head, 2020 NW stroke to a blob",
+    "read_at_en": [
+     -1427.0,
+     680.3
+    ]
+   },
+   "shadow_m": {
+    "2020": 2.59,
+    "2018": 2.21
+   },
+   "arms": {},
+   "s_m": 3238.0,
+   "off_lap_m": 19.5,
+   "leg": "Speer SB to Kalamath",
+   "id": "l0366",
    "height_m": null
   },
   {
@@ -13336,7 +13569,7 @@
    "s_m": 3260.0,
    "off_lap_m": 12.3,
    "leg": "Speer SB to Kalamath",
-   "id": "l0365",
+   "id": "l0369",
    "height_m": null
   },
   {
@@ -13517,7 +13750,7 @@
    "s_m": 3274.0,
    "off_lap_m": 10.9,
    "leg": "Speer SB to Kalamath",
-   "id": "l0366",
+   "id": "l0370",
    "height_m": null
   },
   {
@@ -13593,7 +13826,7 @@
    "s_m": 3276.0,
    "off_lap_m": 13.8,
    "leg": "Speer SB to Kalamath",
-   "id": "l0367",
+   "id": "l0371",
    "height_m": null
   },
   {
@@ -13666,7 +13899,7 @@
    "s_m": 3286.0,
    "off_lap_m": 8.9,
    "leg": "Speer SB to Kalamath",
-   "id": "l0368",
+   "id": "l0372",
    "height_m": null
   },
   {
@@ -13707,7 +13940,7 @@
    "s_m": 3300.0,
    "off_lap_m": 11.7,
    "leg": "Speer SB to Kalamath",
-   "id": "l0369",
+   "id": "l0373",
    "height_m": null
   },
   {
@@ -13741,7 +13974,7 @@
    "off_lap_m": 10.4,
    "leg": "Speer SB to Kalamath",
    "position_note": "matches the 2020 foot; the 2022 foot is about 2.7 m east (R063); position about +-2.7 m",
-   "id": "l0370",
+   "id": "l0374",
    "height_m": null
   },
   {
@@ -13782,7 +14015,7 @@
    "s_m": 3312.0,
    "off_lap_m": 16.0,
    "leg": "Speer SB to Kalamath",
-   "id": "l0371",
+   "id": "l0375",
    "height_m": null
   },
   {
@@ -13815,7 +14048,7 @@
    "s_m": 3332.0,
    "off_lap_m": 10.7,
    "leg": "Speer SB to Kalamath",
-   "id": "l0372",
+   "id": "l0376",
    "height_m": null
   },
   {
@@ -13848,7 +14081,7 @@
    "s_m": 3336.0,
    "off_lap_m": 9.3,
    "leg": "Speer SB to Kalamath",
-   "id": "l0373",
+   "id": "l0377",
    "height_m": null
   },
   {
@@ -13881,7 +14114,7 @@
    "s_m": 3346.0,
    "off_lap_m": 17.2,
    "leg": "Speer SB to Kalamath",
-   "id": "l0374",
+   "id": "l0378",
    "height_m": null
   },
   {
@@ -13925,7 +14158,7 @@
    "s_m": 3366.0,
    "off_lap_m": 17.1,
    "leg": "Speer SB to Kalamath",
-   "id": "l0377",
+   "id": "l0381",
    "height_m": null
   },
   {
@@ -13960,7 +14193,7 @@
    "s_m": 3368.0,
    "off_lap_m": 23.6,
    "leg": "Speer SB to Kalamath",
-   "id": "l0378",
+   "id": "l0382",
    "height_m": null
   },
   {
@@ -14003,7 +14236,7 @@
    "s_m": 3374.0,
    "off_lap_m": 14.2,
    "leg": "Speer SB to Kalamath",
-   "id": "l0379",
+   "id": "l0383",
    "height_m": null
   },
   {
@@ -14047,7 +14280,7 @@
    "s_m": 3377.0,
    "off_lap_m": 20.7,
    "leg": "Speer SB to Kalamath",
-   "id": "l0380",
+   "id": "l0384",
    "height_m": null
   },
   {
@@ -14126,7 +14359,7 @@
    "s_m": 3407.0,
    "off_lap_m": 10.7,
    "leg": "Speer SB to Kalamath",
-   "id": "l0383",
+   "id": "l0387",
    "height_m": null
   },
   {
@@ -14217,7 +14450,7 @@
    "s_m": 3444.0,
    "off_lap_m": 10.2,
    "leg": "Speer SB to Kalamath",
-   "id": "l0384",
+   "id": "l0388",
    "height_m": null
   },
   {
@@ -14282,7 +14515,7 @@
    "s_m": 3448.0,
    "off_lap_m": 8.5,
    "leg": "Speer SB to Kalamath",
-   "id": "l0385",
+   "id": "l0389",
    "height_m": null
   },
   {
@@ -14332,7 +14565,7 @@
    "s_m": 3510.0,
    "off_lap_m": 18.7,
    "leg": "Speer SB to Kalamath",
-   "id": "l0388",
+   "id": "l0392",
    "height_m": null
   },
   {
@@ -14361,7 +14594,7 @@
    "s_m": 3517.0,
    "off_lap_m": 16.8,
    "leg": "Speer SB to Kalamath",
-   "id": "l0390",
+   "id": "l0394",
    "height_m": null
   },
   {
@@ -14390,7 +14623,7 @@
    "s_m": 3526.0,
    "off_lap_m": 26.0,
    "leg": "Speer SB to Kalamath",
-   "id": "l0392",
+   "id": "l0396",
    "height_m": null
   },
   {
@@ -14475,7 +14708,7 @@
    "s_m": 3544.0,
    "off_lap_m": 9.0,
    "leg": "Speer SB to Kalamath",
-   "id": "l0393",
+   "id": "l0397",
    "height_m": null
   },
   {
@@ -14548,7 +14781,7 @@
    "s_m": 3550.0,
    "off_lap_m": 7.1,
    "leg": "Speer SB to Kalamath",
-   "id": "l0394",
+   "id": "l0398",
    "height_m": null
   },
   {
@@ -14592,7 +14825,7 @@
    "s_m": 3551.0,
    "off_lap_m": 21.9,
    "leg": "Speer SB to Kalamath",
-   "id": "l0395",
+   "id": "l0399",
    "height_m": null
   },
   {
@@ -14665,7 +14898,7 @@
    "s_m": 3560.0,
    "off_lap_m": 9.8,
    "leg": "Speer SB to Kalamath",
-   "id": "l0396",
+   "id": "l0400",
    "height_m": null
   },
   {
@@ -14715,7 +14948,7 @@
    "s_m": 3586.0,
    "off_lap_m": 6.6,
    "leg": "Speer SB to Kalamath",
-   "id": "l0397",
+   "id": "l0401",
    "height_m": null
   },
   {
@@ -14797,7 +15030,7 @@
    "s_m": 3608.0,
    "off_lap_m": 8.7,
    "leg": "Speer SB to Kalamath",
-   "id": "l0398",
+   "id": "l0402",
    "height_m": null
   },
   {
@@ -14856,7 +15089,7 @@
    "s_m": 3639.0,
    "off_lap_m": 7.5,
    "leg": "Speer SB to Kalamath",
-   "id": "l0399",
+   "id": "l0403",
    "height_m": null
   },
   {
@@ -14906,7 +15139,7 @@
    "s_m": 3661.0,
    "off_lap_m": 9.6,
    "leg": "Speer SB to Kalamath",
-   "id": "l0400",
+   "id": "l0404",
    "height_m": null
   },
   {
@@ -14943,7 +15176,7 @@
    "s_m": 3682.0,
    "off_lap_m": 26.7,
    "leg": "Speer SB to Kalamath",
-   "id": "l0401",
+   "id": "l0405",
    "height_m": null
   },
   {
@@ -14996,7 +15229,7 @@
    "s_m": 3684.0,
    "off_lap_m": 7.6,
    "leg": "Speer SB to Kalamath",
-   "id": "l0402",
+   "id": "l0406",
    "height_m": null
   },
   {
@@ -15029,7 +15262,7 @@
    "s_m": 3689.0,
    "off_lap_m": 20.0,
    "leg": "Speer SB to Kalamath",
-   "id": "l0403",
+   "id": "l0407",
    "height_m": null
   },
   {
@@ -15070,7 +15303,7 @@
    "s_m": 3694.0,
    "off_lap_m": 24.4,
    "leg": "Speer SB to Kalamath",
-   "id": "l0404",
+   "id": "l0408",
    "height_m": null
   },
   {
@@ -15111,7 +15344,7 @@
    "s_m": 3697.0,
    "off_lap_m": 16.6,
    "leg": "Speer SB to Kalamath",
-   "id": "l0405",
+   "id": "l0409",
    "height_m": null
   },
   {
@@ -15161,7 +15394,7 @@
    "s_m": 3706.0,
    "off_lap_m": 13.3,
    "leg": "Speer SB to Kalamath",
-   "id": "l0406",
+   "id": "l0410",
    "height_m": null
   },
   {
@@ -15202,7 +15435,7 @@
    "s_m": 3729.0,
    "off_lap_m": 11.9,
    "leg": "Speer SB to Kalamath",
-   "id": "l0407",
+   "id": "l0411",
    "height_m": null
   },
   {
@@ -15267,7 +15500,7 @@
    "s_m": 3733.0,
    "off_lap_m": 7.5,
    "leg": "Speer SB to Kalamath",
-   "id": "l0408",
+   "id": "l0412",
    "height_m": null
   },
   {
@@ -15311,7 +15544,7 @@
    "s_m": 3784.0,
    "off_lap_m": 22.6,
    "leg": "Kalamath S to W 14th Ave",
-   "id": "l0412",
+   "id": "l0416",
    "height_m": null
   },
   {
@@ -15376,7 +15609,7 @@
    "s_m": 3806.0,
    "off_lap_m": 11.7,
    "leg": "Kalamath S to W 14th Ave",
-   "id": "l0413",
+   "id": "l0417",
    "height_m": null
   },
   {
@@ -15405,7 +15638,7 @@
    "s_m": 3813.0,
    "off_lap_m": 6.3,
    "leg": "Kalamath S to W 14th Ave",
-   "id": "l0414",
+   "id": "l0418",
    "height_m": null
   },
   {
@@ -15455,7 +15688,7 @@
    "s_m": 3832.0,
    "off_lap_m": 7.4,
    "leg": "Kalamath S to W 14th Ave",
-   "id": "l0415",
+   "id": "l0419",
    "height_m": null
   },
   {
@@ -15511,7 +15744,7 @@
    "s_m": 3843.0,
    "off_lap_m": 7.2,
    "leg": "Kalamath S to W 14th Ave",
-   "id": "l0416",
+   "id": "l0420",
    "height_m": null
   },
   {
@@ -15658,7 +15891,7 @@
    "s_m": 3866.0,
    "off_lap_m": 9.2,
    "leg": "Kalamath S to W 14th Ave",
-   "id": "l0417",
+   "id": "l0421",
    "height_m": null
   },
   {
@@ -15717,7 +15950,7 @@
    "s_m": 3883.0,
    "off_lap_m": 9.0,
    "leg": "Kalamath S to W 14th Ave",
-   "id": "l0419",
+   "id": "l0423",
    "height_m": null
   },
   {
@@ -15758,7 +15991,7 @@
    "s_m": 3884.0,
    "off_lap_m": 16.9,
    "leg": "Kalamath S to W 14th Ave",
-   "id": "l0421",
+   "id": "l0425",
    "height_m": null
   },
   {
@@ -15899,7 +16132,7 @@
    "s_m": 3886.0,
    "off_lap_m": 11.6,
    "leg": "Kalamath S to W 14th Ave",
-   "id": "l0422",
+   "id": "l0426",
    "height_m": null
   },
   {
@@ -15943,7 +16176,7 @@
    "s_m": 3893.0,
    "off_lap_m": 10.6,
    "leg": "Kalamath S to W 14th Ave",
-   "id": "l0423",
+   "id": "l0427",
    "height_m": null
   },
   {
@@ -16007,7 +16240,7 @@
    "s_m": 3913.0,
    "off_lap_m": 11.5,
    "leg": "Kalamath S to W 14th Ave",
-   "id": "l0424",
+   "id": "l0428",
    "height_m": null
   },
   {
@@ -16040,7 +16273,40 @@
    "s_m": 3931.0,
    "off_lap_m": 6.5,
    "leg": "Kalamath S to W 14th Ave",
-   "id": "l0425",
+   "id": "l0429",
+   "height_m": null
+  },
+  {
+   "class": "sign_or_small_post",
+   "lonlat": [
+    -105.0002878,
+    39.7402786
+   ],
+   "grade": "measured",
+   "position_from": "found by eye; placed at the foot of the nearest shadow stroke within 2.0 m",
+   "years": [
+    2018
+   ],
+   "confirmed_by_second_year": false,
+   "spread_m": null,
+   "reader_verdict": "missed by the reader",
+   "eye": {
+    "verdict": "sign_or_small_post",
+    "panel": "REF1",
+    "note": "missed by the inventory, found in posts refutation round 1 (j3945 North Kalamath Street / North Santa Fe Drive / West Colfax Avenue): sign in the NW corner island 2.5 m west of g0426: 2022 2.4 m stroke N ending in a triangular plate, 2020 thin NW stroke",
+    "read_at_en": [
+     -1319.0,
+     19.1
+    ]
+   },
+   "shadow_m": {
+    "2018": 2.21
+   },
+   "arms": {},
+   "s_m": 3938.0,
+   "off_lap_m": 11.8,
+   "leg": "Kalamath S to W 14th Ave",
+   "id": "l0430",
    "height_m": null
   },
   {
@@ -16075,7 +16341,7 @@
    "s_m": 3982.0,
    "off_lap_m": 13.9,
    "leg": "Kalamath S to W 14th Ave",
-   "id": "l0429",
+   "id": "l0434",
    "height_m": null
   },
   {
@@ -16119,7 +16385,7 @@
    "s_m": 3996.0,
    "off_lap_m": 6.0,
    "leg": "Kalamath S to W 14th Ave",
-   "id": "l0430",
+   "id": "l0435",
    "height_m": null
   },
   {
@@ -16198,7 +16464,7 @@
    "s_m": 4024.0,
    "off_lap_m": 10.9,
    "leg": "Kalamath S to W 14th Ave",
-   "id": "l0431",
+   "id": "l0436",
    "height_m": null
   },
   {
@@ -16273,7 +16539,7 @@
    "s_m": 4031.0,
    "off_lap_m": 20.8,
    "leg": "Kalamath S to W 14th Ave",
-   "id": "l0432",
+   "id": "l0437",
    "height_m": null
   },
   {
@@ -16306,7 +16572,7 @@
    "s_m": 4050.0,
    "off_lap_m": 4.5,
    "leg": "Kalamath S to W 14th Ave",
-   "id": "l0433",
+   "id": "l0438",
    "height_m": null
   },
   {
@@ -16379,7 +16645,7 @@
    "s_m": 4073.0,
    "off_lap_m": 7.8,
    "leg": "Kalamath S to W 14th Ave",
-   "id": "l0434",
+   "id": "l0439",
    "height_m": null
   },
   {
@@ -16432,7 +16698,7 @@
    "s_m": 4101.0,
    "off_lap_m": 9.4,
    "leg": "Kalamath S to W 14th Ave",
-   "id": "l0435",
+   "id": "l0440",
    "height_m": null
   },
   {
@@ -16473,7 +16739,7 @@
    "s_m": 4108.0,
    "off_lap_m": 13.1,
    "leg": "Kalamath S to W 14th Ave",
-   "id": "l0436",
+   "id": "l0441",
    "height_m": null
   },
   {
@@ -16506,7 +16772,7 @@
    "s_m": 4133.0,
    "off_lap_m": 11.8,
    "leg": "Kalamath S to W 14th Ave",
-   "id": "l0438",
+   "id": "l0443",
    "height_m": null
   },
   {
@@ -16535,7 +16801,7 @@
    "s_m": 4145.0,
    "off_lap_m": 17.1,
    "leg": "W 14th Ave to Santa Fe",
-   "id": "l0440",
+   "id": "l0445",
    "height_m": null
   },
   {
@@ -16572,7 +16838,7 @@
    "s_m": 4148.0,
    "off_lap_m": 10.0,
    "leg": "W 14th Ave to Santa Fe",
-   "id": "l0442",
+   "id": "l0447",
    "height_m": null
   },
   {
@@ -16605,7 +16871,7 @@
    "s_m": 4152.0,
    "off_lap_m": 6.0,
    "leg": "W 14th Ave to Santa Fe",
-   "id": "l0443",
+   "id": "l0448",
    "height_m": null
   },
   {
@@ -16646,11 +16912,11 @@
    "s_m": 4179.0,
    "off_lap_m": 4.7,
    "leg": "W 14th Ave to Santa Fe",
-   "id": "l0444",
+   "id": "l0449",
    "height_m": null
   },
   {
-   "class": "sign_or_small_post",
+   "class": "post_unknown",
    "lonlat": [
     -104.9996437,
     39.7385259
@@ -16668,7 +16934,9 @@
    "eye": {
     "verdict": "sign_or_small_post",
     "panel": "P081",
-    "note": "short headed stroke in 2022; 2020 not clear"
+    "note": "short headed stroke in 2022; 2020 not clear",
+    "reclassed_from": "sign_or_small_post",
+    "reclass_why": "its 2022 shadow is about 6.5 m: too tall for a sign post (refutation round 1)"
    },
    "in_building_shadow": {
     "2022": false,
@@ -16690,7 +16958,7 @@
    "s_m": 4181.0,
    "off_lap_m": 5.1,
    "leg": "W 14th Ave to Santa Fe",
-   "id": "l0445",
+   "id": "l0450",
    "height_m": null
   },
   {
@@ -16740,7 +17008,7 @@
    "s_m": 4200.0,
    "off_lap_m": 12.0,
    "leg": "W 14th Ave to Santa Fe",
-   "id": "l0446",
+   "id": "l0451",
    "height_m": null
   },
   {
@@ -16769,7 +17037,7 @@
    "s_m": 4204.0,
    "off_lap_m": 14.5,
    "leg": "Santa Fe N to Colfax",
-   "id": "l0448",
+   "id": "l0453",
    "height_m": null
   },
   {
@@ -16802,7 +17070,7 @@
    "s_m": 4209.0,
    "off_lap_m": 8.0,
    "leg": "Santa Fe N to Colfax",
-   "id": "l0449",
+   "id": "l0454",
    "height_m": null
   },
   {
@@ -16852,7 +17120,7 @@
    "s_m": 4244.0,
    "off_lap_m": 8.0,
    "leg": "Santa Fe N to Colfax",
-   "id": "l0450",
+   "id": "l0455",
    "height_m": null
   },
   {
@@ -16902,7 +17170,7 @@
    "s_m": 4265.0,
    "off_lap_m": 10.3,
    "leg": "Santa Fe N to Colfax",
-   "id": "l0451",
+   "id": "l0456",
    "height_m": null
   },
   {
@@ -16969,7 +17237,40 @@
    "s_m": 4309.0,
    "off_lap_m": 13.6,
    "leg": "Santa Fe N to Colfax",
-   "id": "l0452",
+   "id": "l0457",
+   "height_m": null
+  },
+  {
+   "class": "lamp",
+   "lonlat": [
+    -104.9998119,
+    39.7394797
+   ],
+   "grade": "measured",
+   "position_from": "found by eye; placed at the foot of the nearest shadow stroke within 2.0 m",
+   "years": [
+    2022
+   ],
+   "confirmed_by_second_year": false,
+   "spread_m": null,
+   "reader_verdict": "missed by the reader",
+   "eye": {
+    "verdict": "lamp",
+    "panel": "REF1",
+    "note": "missed by the inventory, found in posts refutation round 1 (m4330 Santa Fe N to Colfax mid-block): planting strip east sidewalk: 2022 ~7 m shadow N to a head, 2020 NW shadow to a head; two white junction boxes at the foot",
+    "read_at_en": [
+     -1278.5,
+     -68.5
+    ]
+   },
+   "shadow_m": {
+    "2022": 3.44
+   },
+   "arms": {},
+   "s_m": 4334.0,
+   "off_lap_m": 15.5,
+   "leg": "Santa Fe N to Colfax",
+   "id": "l0458",
    "height_m": null
   },
   {
@@ -17022,7 +17323,7 @@
    "s_m": 4358.0,
    "off_lap_m": 12.8,
    "leg": "Santa Fe N to Colfax",
-   "id": "l0453",
+   "id": "l0459",
    "height_m": null
   },
   {
@@ -17075,7 +17376,7 @@
    "s_m": 4359.0,
    "off_lap_m": 14.8,
    "leg": "Santa Fe N to Colfax",
-   "id": "l0454",
+   "id": "l0460",
    "height_m": null
   },
   {
@@ -17104,7 +17405,7 @@
    "s_m": 4404.0,
    "off_lap_m": 7.4,
    "leg": "Kalamath NB branch to Speer SB",
-   "id": "l0456",
+   "id": "l0462",
    "height_m": null
   },
   {
@@ -17137,7 +17438,7 @@
    "s_m": 4404.0,
    "off_lap_m": 18.5,
    "leg": "Kalamath NB branch to Speer SB",
-   "id": "l0457",
+   "id": "l0463",
    "height_m": null
   },
   {
@@ -17166,7 +17467,7 @@
    "s_m": 4423.0,
    "off_lap_m": 7.7,
    "leg": "Kalamath NB branch to Speer SB",
-   "id": "l0458",
+   "id": "l0464",
    "height_m": null
   },
   {
@@ -17195,7 +17496,7 @@
    "s_m": 4423.0,
    "off_lap_m": 21.1,
    "leg": "Kalamath NB branch to Speer SB",
-   "id": "l0459",
+   "id": "l0465",
    "height_m": null
   },
   {
@@ -17254,7 +17555,7 @@
    "s_m": 4464.0,
    "off_lap_m": 10.8,
    "leg": "Kalamath NB branch to Speer SB",
-   "id": "l0461",
+   "id": "l0467",
    "height_m": null
   },
   {
@@ -17283,7 +17584,7 @@
    "s_m": 4478.0,
    "off_lap_m": 7.1,
    "leg": "Kalamath NB branch to Speer SB",
-   "id": "l0462",
+   "id": "l0468",
    "height_m": null
   },
   {
@@ -17333,7 +17634,7 @@
    "s_m": 4486.0,
    "off_lap_m": 8.0,
    "leg": "Kalamath NB branch to Speer SB",
-   "id": "l0463",
+   "id": "l0469",
    "height_m": null
   },
   {
@@ -17389,7 +17690,7 @@
    "s_m": 4503.0,
    "off_lap_m": 8.6,
    "leg": "Kalamath NB branch to Speer SB",
-   "id": "l0464",
+   "id": "l0470",
    "height_m": null
   },
   {
@@ -17504,7 +17805,7 @@
    "s_m": 4508.0,
    "off_lap_m": 11.1,
    "leg": "Kalamath NB branch to Speer SB",
-   "id": "l0465",
+   "id": "l0471",
    "height_m": null
   },
   {
@@ -17533,7 +17834,7 @@
    "s_m": 4523.0,
    "off_lap_m": 6.4,
    "leg": "Kalamath NB branch to Speer SB",
-   "id": "l0466",
+   "id": "l0472",
    "height_m": null
   },
   {
@@ -17586,7 +17887,7 @@
    "s_m": 4528.0,
    "off_lap_m": 19.2,
    "leg": "Kalamath NB branch to Speer SB",
-   "id": "l0467",
+   "id": "l0473",
    "height_m": null
   },
   {
@@ -17823,7 +18124,7 @@
    "s_m": 4530.0,
    "off_lap_m": 9.3,
    "leg": "Kalamath NB branch to Speer SB",
-   "id": "l0468",
+   "id": "l0474",
    "height_m": null
   },
   {
@@ -17858,7 +18159,7 @@
    "s_m": 4532.0,
    "off_lap_m": 26.1,
    "leg": "Kalamath NB branch to Speer SB",
-   "id": "l0469",
+   "id": "l0475",
    "height_m": null
   },
   {
@@ -17902,7 +18203,7 @@
    "s_m": 4578.0,
    "off_lap_m": 12.0,
    "leg": "Speer SB to W 14th Ave",
-   "id": "l0473",
+   "id": "l0479",
    "height_m": null
   },
   {
@@ -17946,7 +18247,7 @@
    "s_m": 4605.0,
    "off_lap_m": 12.0,
    "leg": "Speer SB to W 14th Ave",
-   "id": "l0474",
+   "id": "l0480",
    "height_m": null
   },
   {
@@ -17999,7 +18300,7 @@
    "s_m": 4634.0,
    "off_lap_m": 9.5,
    "leg": "Speer SB to W 14th Ave",
-   "id": "l0475",
+   "id": "l0481",
    "height_m": null
   },
   {
@@ -18049,7 +18350,7 @@
    "s_m": 4668.0,
    "off_lap_m": 9.3,
    "leg": "Speer SB to W 14th Ave",
-   "id": "l0478",
+   "id": "l0484",
    "height_m": null
   },
   {
@@ -18082,7 +18383,7 @@
    "s_m": 4678.0,
    "off_lap_m": 14.7,
    "leg": "Speer SB to W 14th Ave",
-   "id": "l0479",
+   "id": "l0485",
    "height_m": null
   },
   {
@@ -18111,7 +18412,7 @@
    "s_m": 4685.0,
    "off_lap_m": 20.6,
    "leg": "Speer SB to W 14th Ave",
-   "id": "l0480",
+   "id": "l0486",
    "height_m": null
   },
   {
@@ -18144,7 +18445,7 @@
    "s_m": 4706.0,
    "off_lap_m": 12.2,
    "leg": "Speer SB to W 14th Ave",
-   "id": "l0483",
+   "id": "l0489",
    "height_m": null
   },
   {
@@ -18211,7 +18512,7 @@
    "s_m": 4724.0,
    "off_lap_m": 6.7,
    "leg": "Speer SB to W 14th Ave",
-   "id": "l0484",
+   "id": "l0490",
    "height_m": null
   },
   {
@@ -18244,7 +18545,7 @@
    "s_m": 4776.0,
    "off_lap_m": 9.7,
    "leg": "Speer SB to W 14th Ave",
-   "id": "l0485",
+   "id": "l0491",
    "height_m": null
   },
   {
@@ -18277,7 +18578,7 @@
    "s_m": 4794.0,
    "off_lap_m": 14.9,
    "leg": "Speer SB to W 14th Ave",
-   "id": "l0486",
+   "id": "l0492",
    "height_m": null
   },
   {
@@ -18338,7 +18639,7 @@
    "s_m": 4805.0,
    "off_lap_m": 6.7,
    "leg": "Speer SB to W 14th Ave",
-   "id": "l0487",
+   "id": "l0493",
    "height_m": null
   },
   {
@@ -18396,7 +18697,7 @@
    "s_m": 4824.0,
    "off_lap_m": 15.0,
    "leg": "Speer SB to W 14th Ave",
-   "id": "l0488",
+   "id": "l0494",
    "height_m": null
   },
   {
@@ -18463,7 +18764,7 @@
    "s_m": 4840.0,
    "off_lap_m": 9.6,
    "leg": "Speer SB to W 14th Ave",
-   "id": "l0489",
+   "id": "l0495",
    "height_m": null
   },
   {
@@ -18496,7 +18797,7 @@
    "s_m": 4943.0,
    "off_lap_m": 27.0,
    "leg": "14th Ave E to Logan",
-   "id": "l0496",
+   "id": "l0502",
    "height_m": null
   },
   {
@@ -18537,7 +18838,7 @@
    "s_m": 4977.0,
    "off_lap_m": 20.0,
    "leg": "14th Ave E to Logan",
-   "id": "l0500",
+   "id": "l0506",
    "height_m": null
   },
   {
@@ -18570,7 +18871,7 @@
    "s_m": 4990.0,
    "off_lap_m": 23.6,
    "leg": "14th Ave E to Logan",
-   "id": "l0501",
+   "id": "l0507",
    "height_m": null
   },
   {
@@ -18626,7 +18927,7 @@
    "s_m": 4993.0,
    "off_lap_m": 8.9,
    "leg": "14th Ave E to Logan",
-   "id": "l0502",
+   "id": "l0508",
    "height_m": null
   },
   {
@@ -18655,7 +18956,7 @@
    "s_m": 5015.0,
    "off_lap_m": 6.9,
    "leg": "14th Ave E to Logan",
-   "id": "l0504",
+   "id": "l0510",
    "height_m": null
   },
   {
@@ -18767,7 +19068,7 @@
    "s_m": 5036.0,
    "off_lap_m": 12.7,
    "leg": "14th Ave E to Logan",
-   "id": "l0505",
+   "id": "l0511",
    "height_m": null
   },
   {
@@ -18849,7 +19150,7 @@
    "s_m": 5057.0,
    "off_lap_m": 5.7,
    "leg": "14th Ave E to Logan",
-   "id": "l0506",
+   "id": "l0512",
    "height_m": null
   },
   {
@@ -18878,7 +19179,7 @@
    "s_m": 5057.0,
    "off_lap_m": 6.9,
    "leg": "14th Ave E to Logan",
-   "id": "l0507",
+   "id": "l0513",
    "height_m": null
   },
   {
@@ -18907,7 +19208,7 @@
    "s_m": 5062.0,
    "off_lap_m": 5.9,
    "leg": "14th Ave E to Logan",
-   "id": "l0508",
+   "id": "l0514",
    "height_m": null
   },
   {
@@ -18940,57 +19241,7 @@
    "s_m": 5075.0,
    "off_lap_m": 6.0,
    "leg": "14th Ave E to Logan",
-   "id": "l0509",
-   "height_m": null
-  },
-  {
-   "class": "sign_or_small_post",
-   "lonlat": [
-    -104.9953622,
-    39.7386412
-   ],
-   "grade": "measured",
-   "position_from": "the foot of its shadow (the sun-ward end of the stroke)",
-   "years": [
-    2020,
-    2018
-   ],
-   "confirmed_by_second_year": true,
-   "spread_m": 0.51,
-   "reader_verdict": "post",
-   "eye": {
-    "verdict": "sign_or_small_post",
-    "panel": "P100",
-    "note": "short: about 1.5 m stroke in both years, on the west verge"
-   },
-   "in_building_shadow": {
-    "2022": false,
-    "2020": false,
-    "2018": false
-   },
-   "shadow_m": {
-    "2020": 3.18,
-    "2018": 2.06
-   },
-   "arms": {
-    "2020": [
-     {
-      "join_along_shadow_m": 1.64,
-      "length_m": 1.91,
-      "bearing_deg": 29.44,
-      "width_m": 0.13
-     }
-    ]
-   },
-   "lamp_head_bright_at_foot": {
-    "2020": 99,
-    "2018": 27
-   },
-   "candidate": 1179,
-   "s_m": 5079.0,
-   "off_lap_m": 20.2,
-   "leg": "14th Ave E to Logan",
-   "id": "l0510",
+   "id": "l0515",
    "height_m": null
   },
   {
@@ -19023,7 +19274,7 @@
    "s_m": 5079.0,
    "off_lap_m": 12.6,
    "leg": "14th Ave E to Logan",
-   "id": "l0511",
+   "id": "l0516",
    "height_m": null
   },
   {
@@ -19056,7 +19307,7 @@
    "s_m": 5090.0,
    "off_lap_m": 12.1,
    "leg": "14th Ave E to Logan",
-   "id": "l0512",
+   "id": "l0517",
    "height_m": null
   },
   {
@@ -19089,7 +19340,7 @@
    "s_m": 5090.0,
    "off_lap_m": 18.9,
    "leg": "14th Ave E to Logan",
-   "id": "l0513",
+   "id": "l0518",
    "height_m": null
   },
   {
@@ -19148,7 +19399,7 @@
    "s_m": 5091.0,
    "off_lap_m": 19.6,
    "leg": "14th Ave E to Logan",
-   "id": "l0514",
+   "id": "l0519",
    "height_m": null
   },
   {
@@ -19192,7 +19443,7 @@
    "s_m": 5099.0,
    "off_lap_m": 7.4,
    "leg": "14th Ave E to Logan",
-   "id": "l0515",
+   "id": "l0520",
    "height_m": null
   },
   {
@@ -19225,40 +19476,7 @@
    "s_m": 5100.0,
    "off_lap_m": 5.9,
    "leg": "14th Ave E to Logan",
-   "id": "l0516",
-   "height_m": null
-  },
-  {
-   "class": "sign_or_small_post",
-   "lonlat": [
-    -104.9950464,
-    39.7383984
-   ],
-   "grade": "measured",
-   "position_from": "found by eye; placed at the foot of the nearest shadow stroke within 2.0 m",
-   "years": [
-    2018
-   ],
-   "confirmed_by_second_year": false,
-   "spread_m": null,
-   "reader_verdict": "missed by the reader",
-   "eye": {
-    "verdict": "sign_or_small_post",
-    "panel": "P100",
-    "note": "south kerb; short stroke with head, both years",
-    "read_at_en": [
-     -869.6,
-     -189.0
-    ]
-   },
-   "shadow_m": {
-    "2018": 2.29
-   },
-   "arms": {},
-   "s_m": 5106.0,
-   "off_lap_m": 6.7,
-   "leg": "14th Ave E to Logan",
-   "id": "l0517",
+   "id": "l0521",
    "height_m": null
   },
   {
@@ -19311,7 +19529,7 @@
    "s_m": 5110.0,
    "off_lap_m": 5.7,
    "leg": "14th Ave E to Logan",
-   "id": "l0518",
+   "id": "l0522",
    "height_m": null
   },
   {
@@ -19344,7 +19562,7 @@
    "s_m": 5114.0,
    "off_lap_m": 7.0,
    "leg": "14th Ave E to Logan",
-   "id": "l0519",
+   "id": "l0523",
    "height_m": null
   },
   {
@@ -19388,7 +19606,7 @@
    "s_m": 5130.0,
    "off_lap_m": 7.2,
    "leg": "14th Ave E to Logan",
-   "id": "l0520",
+   "id": "l0524",
    "height_m": null
   },
   {
@@ -19417,7 +19635,7 @@
    "s_m": 5132.0,
    "off_lap_m": 7.0,
    "leg": "14th Ave E to Logan",
-   "id": "l0521",
+   "id": "l0525",
    "height_m": null
   },
   {
@@ -19450,7 +19668,7 @@
    "s_m": 5138.0,
    "off_lap_m": 26.2,
    "leg": "14th Ave E to Logan",
-   "id": "l0522",
+   "id": "l0526",
    "height_m": null
   },
   {
@@ -19483,7 +19701,7 @@
    "s_m": 5140.0,
    "off_lap_m": 6.1,
    "leg": "14th Ave E to Logan",
-   "id": "l0523",
+   "id": "l0527",
    "height_m": null
   },
   {
@@ -19536,7 +19754,7 @@
    "s_m": 5148.0,
    "off_lap_m": 5.8,
    "leg": "14th Ave E to Logan",
-   "id": "l0524",
+   "id": "l0528",
    "height_m": null
   },
   {
@@ -19571,7 +19789,7 @@
    "s_m": 5156.0,
    "off_lap_m": 25.2,
    "leg": "14th Ave E to Logan",
-   "id": "l0525",
+   "id": "l0529",
    "height_m": null
   },
   {
@@ -19604,7 +19822,7 @@
    "s_m": 5158.0,
    "off_lap_m": 6.7,
    "leg": "14th Ave E to Logan",
-   "id": "l0526",
+   "id": "l0530",
    "height_m": null
   },
   {
@@ -19648,7 +19866,7 @@
    "s_m": 5161.0,
    "off_lap_m": 6.9,
    "leg": "14th Ave E to Logan",
-   "id": "l0527",
+   "id": "l0531",
    "height_m": null
   },
   {
@@ -19689,7 +19907,7 @@
    "s_m": 5172.0,
    "off_lap_m": 6.5,
    "leg": "14th Ave E to Logan",
-   "id": "l0528",
+   "id": "l0532",
    "height_m": null
   },
   {
@@ -19730,7 +19948,7 @@
    "s_m": 5175.0,
    "off_lap_m": 13.4,
    "leg": "14th Ave E to Logan",
-   "id": "l0529",
+   "id": "l0533",
    "height_m": null
   },
   {
@@ -19771,7 +19989,7 @@
    "s_m": 5182.0,
    "off_lap_m": 18.2,
    "leg": "14th Ave E to Logan",
-   "id": "l0532",
+   "id": "l0536",
    "height_m": null
   },
   {
@@ -19824,7 +20042,7 @@
    "s_m": 5191.0,
    "off_lap_m": 18.1,
    "leg": "14th Ave E to Logan",
-   "id": "l0533",
+   "id": "l0537",
    "height_m": null
   },
   {
@@ -19868,7 +20086,7 @@
    "s_m": 5204.0,
    "off_lap_m": 17.7,
    "leg": "14th Ave E to Logan",
-   "id": "l0536",
+   "id": "l0540",
    "height_m": null
   },
   {
@@ -19921,7 +20139,7 @@
    "s_m": 5204.0,
    "off_lap_m": 6.8,
    "leg": "14th Ave E to Logan",
-   "id": "l0537",
+   "id": "l0541",
    "height_m": null
   },
   {
@@ -19971,7 +20189,7 @@
    "s_m": 5214.0,
    "off_lap_m": 5.8,
    "leg": "14th Ave E to Logan",
-   "id": "l0538",
+   "id": "l0542",
    "height_m": null
   },
   {
@@ -20015,7 +20233,7 @@
    "s_m": 5235.0,
    "off_lap_m": 6.4,
    "leg": "14th Ave E to Logan",
-   "id": "l0539",
+   "id": "l0543",
    "height_m": null
   },
   {
@@ -20074,7 +20292,7 @@
    "s_m": 5256.0,
    "off_lap_m": 5.6,
    "leg": "14th Ave E to Logan",
-   "id": "l0540",
+   "id": "l0544",
    "height_m": null
   },
   {
@@ -20118,7 +20336,7 @@
    "s_m": 5266.0,
    "off_lap_m": 6.5,
    "leg": "14th Ave E to Logan",
-   "id": "l0541",
+   "id": "l0545",
    "height_m": null
   },
   {
@@ -20159,7 +20377,7 @@
    "s_m": 5279.0,
    "off_lap_m": 23.0,
    "leg": "14th Ave E to Logan",
-   "id": "l0542",
+   "id": "l0546",
    "height_m": null
   },
   {
@@ -20200,7 +20418,7 @@
    "s_m": 5280.0,
    "off_lap_m": 15.1,
    "leg": "14th Ave E to Logan",
-   "id": "l0544",
+   "id": "l0548",
    "height_m": null
   },
   {
@@ -20233,7 +20451,7 @@
    "s_m": 5303.0,
    "off_lap_m": 12.6,
    "leg": "14th Ave E to Logan",
-   "id": "l0548",
+   "id": "l0552",
    "height_m": null
   },
   {
@@ -20298,7 +20516,7 @@
    "s_m": 5331.0,
    "off_lap_m": 5.5,
    "leg": "14th Ave E to Logan",
-   "id": "l0549",
+   "id": "l0553",
    "height_m": null
   },
   {
@@ -20327,7 +20545,40 @@
    "s_m": 5365.0,
    "off_lap_m": 8.3,
    "leg": "14th Ave E to Logan",
-   "id": "l0550",
+   "id": "l0554",
+   "height_m": null
+  },
+  {
+   "class": "sign_or_small_post",
+   "lonlat": [
+    -104.9915357,
+    39.7383572
+   ],
+   "grade": "measured",
+   "position_from": "found by eye; placed at the foot of the nearest shadow stroke within 2.0 m",
+   "years": [
+    2022
+   ],
+   "confirmed_by_second_year": false,
+   "spread_m": null,
+   "reader_verdict": "missed by the reader",
+   "eye": {
+    "verdict": "sign_or_small_post",
+    "panel": "REF1",
+    "note": "missed by the inventory, found in posts refutation round 1 (j5398 Cherokee Street / West 14th Avenue): SE corner, 2.7 m SW of g0554: 2022 2.4 m stroke N with a flag plate; 2020 in building shadow (a hook visible)",
+    "read_at_en": [
+     -568.8,
+     -194.1
+    ]
+   },
+   "shadow_m": {
+    "2022": 1.75
+   },
+   "arms": {},
+   "s_m": 5407.0,
+   "off_lap_m": 11.4,
+   "leg": "14th Ave E to Logan",
+   "id": "l0558",
    "height_m": null
   },
   {
@@ -20385,7 +20636,7 @@
    "s_m": 5436.0,
    "off_lap_m": 6.4,
    "leg": "14th Ave E to Logan",
-   "id": "l0555",
+   "id": "l0560",
    "height_m": null
   },
   {
@@ -20414,7 +20665,7 @@
    "s_m": 5456.0,
    "off_lap_m": 6.9,
    "leg": "14th Ave E to Logan",
-   "id": "l0556",
+   "id": "l0561",
    "height_m": null
   },
   {
@@ -20455,7 +20706,7 @@
    "s_m": 5470.0,
    "off_lap_m": 9.5,
    "leg": "14th Ave E to Logan",
-   "id": "l0557",
+   "id": "l0562",
    "height_m": null
   },
   {
@@ -20484,7 +20735,7 @@
    "s_m": 5470.0,
    "off_lap_m": 6.8,
    "leg": "14th Ave E to Logan",
-   "id": "l0558",
+   "id": "l0563",
    "height_m": null
   },
   {
@@ -20522,7 +20773,7 @@
    "s_m": 5481.0,
    "off_lap_m": 10.2,
    "leg": "14th Ave E to Logan",
-   "id": "l0559",
+   "id": "l0564",
    "height_m": null
   },
   {
@@ -20551,7 +20802,7 @@
    "s_m": 5482.0,
    "off_lap_m": 6.7,
    "leg": "14th Ave E to Logan",
-   "id": "l0560",
+   "id": "l0565",
    "height_m": null
   },
   {
@@ -20592,7 +20843,7 @@
    "s_m": 5489.0,
    "off_lap_m": 6.3,
    "leg": "14th Ave E to Logan",
-   "id": "l0561",
+   "id": "l0566",
    "height_m": null
   },
   {
@@ -20625,7 +20876,7 @@
    "s_m": 5495.0,
    "off_lap_m": 6.2,
    "leg": "14th Ave E to Logan",
-   "id": "l0562",
+   "id": "l0567",
    "height_m": null
   },
   {
@@ -20654,7 +20905,7 @@
    "s_m": 5511.0,
    "off_lap_m": 11.2,
    "leg": "14th Ave E to Logan",
-   "id": "l0565",
+   "id": "l0570",
    "height_m": null
   },
   {
@@ -20683,7 +20934,7 @@
    "s_m": 5519.0,
    "off_lap_m": 18.9,
    "leg": "14th Ave E to Logan",
-   "id": "l0566",
+   "id": "l0571",
    "height_m": null
   },
   {
@@ -20718,7 +20969,7 @@
    "s_m": 5525.0,
    "off_lap_m": 25.0,
    "leg": "14th Ave E to Logan",
-   "id": "l0568",
+   "id": "l0573",
    "height_m": null
   },
   {
@@ -20759,7 +21010,7 @@
    "s_m": 5533.0,
    "off_lap_m": 23.9,
    "leg": "14th Ave E to Logan",
-   "id": "l0571",
+   "id": "l0576",
    "height_m": null
   },
   {
@@ -20821,7 +21072,7 @@
    "s_m": 5544.0,
    "off_lap_m": 8.3,
    "leg": "14th Ave E to Logan",
-   "id": "l0572",
+   "id": "l0577",
    "height_m": null
   },
   {
@@ -20862,7 +21113,7 @@
    "s_m": 5565.0,
    "off_lap_m": 7.7,
    "leg": "14th Ave E to Logan",
-   "id": "l0573",
+   "id": "l0578",
    "height_m": null
   },
   {
@@ -20895,7 +21146,7 @@
    "s_m": 5565.0,
    "off_lap_m": 6.6,
    "leg": "14th Ave E to Logan",
-   "id": "l0574",
+   "id": "l0579",
    "height_m": null
   },
   {
@@ -20928,7 +21179,7 @@
    "s_m": 5587.0,
    "off_lap_m": 7.3,
    "leg": "14th Ave E to Logan",
-   "id": "l0575",
+   "id": "l0580",
    "height_m": null
   },
   {
@@ -20978,7 +21229,7 @@
    "s_m": 5607.0,
    "off_lap_m": 9.5,
    "leg": "14th Ave E to Logan",
-   "id": "l0576",
+   "id": "l0581",
    "height_m": null
   },
   {
@@ -21019,7 +21270,7 @@
    "s_m": 5610.0,
    "off_lap_m": 6.0,
    "leg": "14th Ave E to Logan",
-   "id": "l0577",
+   "id": "l0582",
    "height_m": null
   },
   {
@@ -21060,7 +21311,7 @@
    "s_m": 5616.0,
    "off_lap_m": 8.8,
    "leg": "14th Ave E to Logan",
-   "id": "l0578",
+   "id": "l0583",
    "height_m": null
   },
   {
@@ -21101,7 +21352,7 @@
    "s_m": 5619.0,
    "off_lap_m": 23.2,
    "leg": "14th Ave E to Logan",
-   "id": "l0579",
+   "id": "l0584",
    "height_m": null
   },
   {
@@ -21130,7 +21381,7 @@
    "s_m": 5625.0,
    "off_lap_m": 8.6,
    "leg": "14th Ave E to Logan",
-   "id": "l0580",
+   "id": "l0585",
    "height_m": null
   },
   {
@@ -21174,7 +21425,7 @@
    "s_m": 5633.0,
    "off_lap_m": 7.8,
    "leg": "14th Ave E to Logan",
-   "id": "l0581",
+   "id": "l0586",
    "height_m": null
   },
   {
@@ -21207,7 +21458,7 @@
    "s_m": 5637.0,
    "off_lap_m": 17.1,
    "leg": "14th Ave E to Logan",
-   "id": "l0582",
+   "id": "l0587",
    "height_m": null
   },
   {
@@ -21354,7 +21605,7 @@
    "s_m": 5645.0,
    "off_lap_m": 7.4,
    "leg": "14th Ave E to Logan",
-   "id": "l0583",
+   "id": "l0588",
    "height_m": null
   },
   {
@@ -21387,7 +21638,7 @@
    "s_m": 5651.0,
    "off_lap_m": 23.6,
    "leg": "14th Ave E to Logan",
-   "id": "l0584",
+   "id": "l0589",
    "height_m": null
   },
   {
@@ -21443,7 +21694,7 @@
    "s_m": 5657.0,
    "off_lap_m": 16.3,
    "leg": "14th Ave E to Logan",
-   "id": "l0586",
+   "id": "l0591",
    "height_m": null
   },
   {
@@ -21478,7 +21729,7 @@
    "s_m": 5657.0,
    "off_lap_m": 25.4,
    "leg": "14th Ave E to Logan",
-   "id": "l0587",
+   "id": "l0592",
    "height_m": null
   },
   {
@@ -21536,7 +21787,7 @@
    "s_m": 5666.0,
    "off_lap_m": 8.3,
    "leg": "14th Ave E to Logan",
-   "id": "l0588",
+   "id": "l0593",
    "height_m": null
   },
   {
@@ -21569,7 +21820,7 @@
    "s_m": 5666.0,
    "off_lap_m": 14.4,
    "leg": "14th Ave E to Logan",
-   "id": "l0589",
+   "id": "l0594",
    "height_m": null
   },
   {
@@ -21610,7 +21861,7 @@
    "s_m": 5669.0,
    "off_lap_m": 18.7,
    "leg": "14th Ave E to Logan",
-   "id": "l0590",
+   "id": "l0595",
    "height_m": null
   },
   {
@@ -21654,7 +21905,7 @@
    "s_m": 5674.0,
    "off_lap_m": 7.5,
    "leg": "14th Ave E to Logan",
-   "id": "l0591",
+   "id": "l0596",
    "height_m": null
   },
   {
@@ -21687,7 +21938,7 @@
    "s_m": 5680.0,
    "off_lap_m": 13.0,
    "leg": "14th Ave E to Logan",
-   "id": "l0592",
+   "id": "l0597",
    "height_m": null
   },
   {
@@ -21748,7 +21999,7 @@
    "s_m": 5683.0,
    "off_lap_m": 8.8,
    "leg": "14th Ave E to Logan",
-   "id": "l0593",
+   "id": "l0598",
    "height_m": null
   },
   {
@@ -21801,7 +22052,7 @@
    "s_m": 5705.0,
    "off_lap_m": 6.6,
    "leg": "14th Ave E to Logan",
-   "id": "l0594",
+   "id": "l0599",
    "height_m": null
   },
   {
@@ -21842,7 +22093,7 @@
    "s_m": 5712.0,
    "off_lap_m": 8.9,
    "leg": "14th Ave E to Logan",
-   "id": "l0595",
+   "id": "l0600",
    "height_m": null
   },
   {
@@ -21895,7 +22146,7 @@
    "s_m": 5731.0,
    "off_lap_m": 7.0,
    "leg": "14th Ave E to Logan",
-   "id": "l0596",
+   "id": "l0601",
    "height_m": null
   },
   {
@@ -21974,7 +22225,7 @@
    "s_m": 5737.0,
    "off_lap_m": 8.3,
    "leg": "14th Ave E to Logan",
-   "id": "l0597",
+   "id": "l0602",
    "height_m": null
   },
   {
@@ -22018,7 +22269,7 @@
    "s_m": 5759.0,
    "off_lap_m": 7.5,
    "leg": "14th Ave E to Logan",
-   "id": "l0598",
+   "id": "l0603",
    "height_m": null
   },
   {
@@ -22053,7 +22304,7 @@
    "s_m": 5762.0,
    "off_lap_m": 25.9,
    "leg": "14th Ave E to Logan",
-   "id": "l0599",
+   "id": "l0604",
    "height_m": null
   },
   {
@@ -22094,7 +22345,7 @@
    "s_m": 5765.0,
    "off_lap_m": 8.1,
    "leg": "14th Ave E to Logan",
-   "id": "l0600",
+   "id": "l0605",
    "height_m": null
   },
   {
@@ -22127,7 +22378,7 @@
    "s_m": 5772.0,
    "off_lap_m": 15.2,
    "leg": "14th Ave E to Logan",
-   "id": "l0601",
+   "id": "l0606",
    "height_m": null
   },
   {
@@ -22180,7 +22431,7 @@
    "s_m": 5782.0,
    "off_lap_m": 7.6,
    "leg": "14th Ave E to Logan",
-   "id": "l0602",
+   "id": "l0607",
    "height_m": null
   },
   {
@@ -22221,7 +22472,7 @@
    "s_m": 5829.0,
    "off_lap_m": 20.3,
    "leg": "14th Ave E to Logan",
-   "id": "l0606",
+   "id": "l0611",
    "height_m": null
   },
   {
@@ -22288,7 +22539,7 @@
    "s_m": 5859.0,
    "off_lap_m": 8.7,
    "leg": "14th Ave E to Logan",
-   "id": "l0608",
+   "id": "l0613",
    "height_m": null
   },
   {
@@ -22341,7 +22592,7 @@
    "s_m": 5888.0,
    "off_lap_m": 5.2,
    "leg": "14th Ave E to Logan",
-   "id": "l0609",
+   "id": "l0614",
    "height_m": null
   },
   {
@@ -22382,7 +22633,7 @@
    "s_m": 5908.0,
    "off_lap_m": 14.6,
    "leg": "14th Ave E to Logan",
-   "id": "l0610",
+   "id": "l0615",
    "height_m": null
   },
   {
@@ -22411,7 +22662,7 @@
    "s_m": 5912.0,
    "off_lap_m": 8.6,
    "leg": "14th Ave E to Logan",
-   "id": "l0611",
+   "id": "l0616",
    "height_m": null
   },
   {
@@ -22444,7 +22695,7 @@
    "s_m": 5916.0,
    "off_lap_m": 17.4,
    "leg": "14th Ave E to Logan",
-   "id": "l0614",
+   "id": "l0619",
    "height_m": null
   },
   {
@@ -22473,7 +22724,7 @@
    "s_m": 5937.0,
    "off_lap_m": 15.7,
    "leg": "14th Ave E to Logan",
-   "id": "l0616",
+   "id": "l0621",
    "height_m": null
   },
   {
@@ -22514,7 +22765,7 @@
    "s_m": 5952.0,
    "off_lap_m": 13.5,
    "leg": "14th Ave E to Logan",
-   "id": "l0618",
+   "id": "l0623",
    "height_m": null
   },
   {
@@ -22558,7 +22809,7 @@
    "s_m": 5966.0,
    "off_lap_m": 5.1,
    "leg": "14th Ave E to Logan",
-   "id": "l0619",
+   "id": "l0624",
    "height_m": null
   },
   {
@@ -22599,7 +22850,7 @@
    "s_m": 5967.0,
    "off_lap_m": 5.2,
    "leg": "14th Ave E to Logan",
-   "id": "l0620",
+   "id": "l0625",
    "height_m": null
   },
   {
@@ -22632,7 +22883,7 @@
    "s_m": 5967.0,
    "off_lap_m": 13.6,
    "leg": "14th Ave E to Logan",
-   "id": "l0621",
+   "id": "l0626",
    "height_m": null
   },
   {
@@ -22673,7 +22924,7 @@
    "s_m": 5968.0,
    "off_lap_m": 5.4,
    "leg": "14th Ave E to Logan",
-   "id": "l0622",
+   "id": "l0627",
    "height_m": null
   },
   {
@@ -22706,7 +22957,7 @@
    "s_m": 5981.0,
    "off_lap_m": 13.4,
    "leg": "14th Ave E to Logan",
-   "id": "l0623",
+   "id": "l0628",
    "height_m": null
   },
   {
@@ -22739,7 +22990,7 @@
    "s_m": 5997.0,
    "off_lap_m": 26.2,
    "leg": "14th Ave E to Logan",
-   "id": "l0624",
+   "id": "l0629",
    "height_m": null
   },
   {
@@ -22774,7 +23025,7 @@
    "s_m": 5998.0,
    "off_lap_m": 13.7,
    "leg": "14th Ave E to Logan",
-   "id": "l0625",
+   "id": "l0630",
    "height_m": null
   },
   {
@@ -22807,7 +23058,7 @@
    "s_m": 6001.0,
    "off_lap_m": 8.9,
    "leg": "14th Ave E to Logan",
-   "id": "l0626",
+   "id": "l0631",
    "height_m": null
   },
   {
@@ -22840,7 +23091,7 @@
    "s_m": 6011.0,
    "off_lap_m": 14.4,
    "leg": "14th Ave E to Logan",
-   "id": "l0627",
+   "id": "l0632",
    "height_m": null
   },
   {
@@ -22869,7 +23120,7 @@
    "s_m": 6026.0,
    "off_lap_m": 16.8,
    "leg": "14th Ave E to Logan",
-   "id": "l0629",
+   "id": "l0634",
    "height_m": null
   },
   {
@@ -22902,7 +23153,7 @@
    "s_m": 6047.0,
    "off_lap_m": 15.0,
    "leg": "14th Ave E to Logan",
-   "id": "l0633",
+   "id": "l0638",
    "height_m": null
   },
   {
@@ -22943,7 +23194,7 @@
    "s_m": 6060.0,
    "off_lap_m": 13.4,
    "leg": "14th Ave E to Logan",
-   "id": "l0634",
+   "id": "l0639",
    "height_m": null
   },
   {
@@ -23008,7 +23259,7 @@
    "s_m": 6074.0,
    "off_lap_m": 21.9,
    "leg": "14th Ave E to Logan",
-   "id": "l0635",
+   "id": "l0640",
    "height_m": null
   },
   {
@@ -23061,7 +23312,7 @@
    "s_m": 6074.0,
    "off_lap_m": 5.6,
    "leg": "14th Ave E to Logan",
-   "id": "l0636",
+   "id": "l0641",
    "height_m": null
   },
   {
@@ -23105,7 +23356,7 @@
    "s_m": 6076.0,
    "off_lap_m": 13.3,
    "leg": "14th Ave E to Logan",
-   "id": "l0637",
+   "id": "l0642",
    "height_m": null
   },
   {
@@ -23138,7 +23389,7 @@
    "s_m": 6091.0,
    "off_lap_m": 15.4,
    "leg": "14th Ave E to Logan",
-   "id": "l0638",
+   "id": "l0643",
    "height_m": null
   },
   {
@@ -23171,7 +23422,7 @@
    "s_m": 6093.0,
    "off_lap_m": 13.2,
    "leg": "14th Ave E to Logan",
-   "id": "l0639",
+   "id": "l0644",
    "height_m": null
   },
   {
@@ -23200,7 +23451,7 @@
    "s_m": 6105.0,
    "off_lap_m": 10.7,
    "leg": "14th Ave E to Logan",
-   "id": "l0640",
+   "id": "l0645",
    "height_m": null
   },
   {
@@ -23229,7 +23480,7 @@
    "s_m": 6110.0,
    "off_lap_m": 13.4,
    "leg": "14th Ave E to Logan",
-   "id": "l0641",
+   "id": "l0646",
    "height_m": null
   },
   {
@@ -23270,7 +23521,7 @@
    "s_m": 6127.0,
    "off_lap_m": 13.6,
    "leg": "14th Ave E to Logan",
-   "id": "l0642",
+   "id": "l0647",
    "height_m": null
   },
   {
@@ -23303,7 +23554,7 @@
    "s_m": 6151.0,
    "off_lap_m": 18.7,
    "leg": "14th Ave E to Logan",
-   "id": "l0645",
+   "id": "l0650",
    "height_m": null
   },
   {
@@ -23338,7 +23589,7 @@
    "s_m": 6197.0,
    "off_lap_m": 8.2,
    "leg": "14th Ave E to Logan",
-   "id": "l0648",
+   "id": "l0653",
    "height_m": null
   },
   {
@@ -23371,7 +23622,7 @@
    "s_m": 6202.0,
    "off_lap_m": 22.7,
    "leg": "14th Ave E to Logan",
-   "id": "l0649",
+   "id": "l0654",
    "height_m": null
   },
   {
@@ -23412,7 +23663,7 @@
    "s_m": 6237.0,
    "off_lap_m": 22.5,
    "leg": "14th Ave E to Logan",
-   "id": "l0650",
+   "id": "l0655",
    "height_m": null
   },
   {
@@ -23441,7 +23692,7 @@
    "s_m": 6239.0,
    "off_lap_m": 8.6,
    "leg": "14th Ave E to Logan",
-   "id": "l0651",
+   "id": "l0656",
    "height_m": null
   },
   {
@@ -23474,7 +23725,7 @@
    "s_m": 6241.0,
    "off_lap_m": 8.3,
    "leg": "14th Ave E to Logan",
-   "id": "l0652",
+   "id": "l0657",
    "height_m": null
   },
   {
@@ -23503,7 +23754,7 @@
    "s_m": 6251.0,
    "off_lap_m": 19.9,
    "leg": "Logan N to Colfax",
-   "id": "l0655",
+   "id": "l0660",
    "height_m": null
   },
   {
@@ -23538,7 +23789,7 @@
    "s_m": 6251.0,
    "off_lap_m": 17.9,
    "leg": "Logan N to Colfax",
-   "id": "l0656",
+   "id": "l0661",
    "height_m": null
   },
   {
@@ -23571,7 +23822,7 @@
    "s_m": 6279.0,
    "off_lap_m": 5.9,
    "leg": "Logan N to Colfax",
-   "id": "l0658",
+   "id": "l0663",
    "height_m": null
   },
   {
@@ -23639,7 +23890,7 @@
    "s_m": 6292.0,
    "off_lap_m": 22.0,
    "leg": "Logan N to Colfax",
-   "id": "l0659",
+   "id": "l0664",
    "height_m": null
   },
   {
@@ -23680,7 +23931,7 @@
    "s_m": 6319.0,
    "off_lap_m": 5.0,
    "leg": "Logan N to Colfax",
-   "id": "l0660",
+   "id": "l0665",
    "height_m": null
   },
   {
@@ -23713,7 +23964,7 @@
    "s_m": 6337.0,
    "off_lap_m": 26.7,
    "leg": "Logan N to Colfax",
-   "id": "l0661",
+   "id": "l0666",
    "height_m": null
   },
   {
@@ -23746,7 +23997,7 @@
    "s_m": 6338.0,
    "off_lap_m": 10.4,
    "leg": "Logan N to Colfax",
-   "id": "l0662",
+   "id": "l0667",
    "height_m": null
   },
   {
@@ -23775,7 +24026,7 @@
    "s_m": 6339.0,
    "off_lap_m": 14.3,
    "leg": "Logan N to Colfax",
-   "id": "l0663",
+   "id": "l0668",
    "height_m": null
   },
   {
@@ -23816,7 +24067,7 @@
    "s_m": 6380.0,
    "off_lap_m": 6.6,
    "leg": "Logan N to Colfax",
-   "id": "l0664",
+   "id": "l0669",
    "height_m": null
   },
   {
@@ -23890,7 +24141,7 @@
    "s_m": 6414.0,
    "off_lap_m": 7.0,
    "leg": "Logan N to Colfax",
-   "id": "l0665",
+   "id": "l0670",
    "height_m": null
   },
   {
@@ -23923,7 +24174,7 @@
    "s_m": 6431.0,
    "off_lap_m": 15.6,
    "leg": "Colfax W to S/F",
-   "id": "l0668",
+   "id": "l0673",
    "height_m": null
   },
   {
@@ -23956,7 +24207,7 @@
    "s_m": 6472.0,
    "off_lap_m": 13.2,
    "leg": "Colfax W to S/F",
-   "id": "l0670",
+   "id": "l0675",
    "height_m": null
   },
   {
@@ -24062,7 +24313,7 @@
    "s_m": 6481.0,
    "off_lap_m": 14.8,
    "leg": "Colfax W to S/F",
-   "id": "l0671",
+   "id": "l0676",
    "height_m": null
   },
   {
@@ -24095,7 +24346,7 @@
    "s_m": 6489.0,
    "off_lap_m": 4.1,
    "leg": "Colfax W to S/F",
-   "id": "l0672",
+   "id": "l0677",
    "height_m": null
   },
   {
@@ -24128,7 +24379,7 @@
    "s_m": 6500.0,
    "off_lap_m": 4.0,
    "leg": "Colfax W to S/F",
-   "id": "l0673",
+   "id": "l0678",
    "height_m": null
   },
   {
@@ -24161,7 +24412,7 @@
    "s_m": 6520.0,
    "off_lap_m": 3.5,
    "leg": "Colfax W to S/F",
-   "id": "l0674",
+   "id": "l0679",
    "height_m": null
   },
   {
@@ -24202,7 +24453,7 @@
    "s_m": 6531.0,
    "off_lap_m": 12.9,
    "leg": "Colfax W to S/F",
-   "id": "l0677",
+   "id": "l0682",
    "height_m": null
   },
   {
@@ -24231,7 +24482,7 @@
    "s_m": 6532.0,
    "off_lap_m": 17.0,
    "leg": "Colfax W to S/F",
-   "id": "l0678",
+   "id": "l0683",
    "height_m": null
   },
   {
@@ -24293,7 +24544,7 @@
    "s_m": 6548.0,
    "off_lap_m": 10.8,
    "leg": "Colfax W to S/F",
-   "id": "l0681",
+   "id": "l0686",
    "height_m": null
   },
   {
@@ -24334,7 +24585,7 @@
    "s_m": 6553.0,
    "off_lap_m": 24.6,
    "leg": "Colfax W to S/F",
-   "id": "l0682",
+   "id": "l0687",
    "height_m": null
   },
   {
@@ -24363,7 +24614,7 @@
    "s_m": 6553.0,
    "off_lap_m": 4.7,
    "leg": "Colfax W to S/F",
-   "id": "l0683",
+   "id": "l0688",
    "height_m": null
   },
   {
@@ -24392,7 +24643,7 @@
    "s_m": 6556.0,
    "off_lap_m": 16.9,
    "leg": "Colfax W to S/F",
-   "id": "l0684",
+   "id": "l0689",
    "height_m": null
   },
   {
@@ -24468,7 +24719,7 @@
    "s_m": 6578.0,
    "off_lap_m": 16.7,
    "leg": "Colfax W to S/F",
-   "id": "l0685",
+   "id": "l0690",
    "height_m": null
   },
   {
@@ -24512,7 +24763,7 @@
    "s_m": 6579.0,
    "off_lap_m": 24.8,
    "leg": "Colfax W to S/F",
-   "id": "l0686",
+   "id": "l0691",
    "height_m": null
   },
   {
@@ -24562,7 +24813,7 @@
    "s_m": 6591.0,
    "off_lap_m": 24.8,
    "leg": "Colfax W to S/F",
-   "id": "l0687",
+   "id": "l0692",
    "height_m": null
   },
   {
@@ -24603,7 +24854,7 @@
    "s_m": 6603.0,
    "off_lap_m": 4.1,
    "leg": "Colfax W to S/F",
-   "id": "l0688",
+   "id": "l0693",
    "height_m": null
   },
   {
@@ -24638,7 +24889,7 @@
    "s_m": 6603.0,
    "off_lap_m": 24.9,
    "leg": "Colfax W to S/F",
-   "id": "l0689",
+   "id": "l0694",
    "height_m": null
   },
   {
@@ -24747,7 +24998,7 @@
    "s_m": 6606.0,
    "off_lap_m": 3.9,
    "leg": "Colfax W to S/F",
-   "id": "l0690",
+   "id": "l0695",
    "height_m": null
   },
   {
@@ -24784,7 +25035,7 @@
    "s_m": 6624.0,
    "off_lap_m": 25.1,
    "leg": "Colfax W to S/F",
-   "id": "l0691",
+   "id": "l0696",
    "height_m": null
   }
  ]

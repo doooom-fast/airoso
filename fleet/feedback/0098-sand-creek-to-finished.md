@@ -752,10 +752,20 @@ ground_patch, after every cutting step.
 
 ## PC, 2026-11-23: 0.2.11, the three owed by 0.2.10 (the Mac's small round)
 
-1. **The median-nose dimple:** quebec_lift_pad's `lift.gap_m` 1.25 -> 2.0. It is still capped by min(lidar, lip), never
-   lowers anything, and is still in the pad zone only (quebec_lift_arms keeps 1.25 m). The T-shaped notch is up to about
-   2.5 m wide, so at 1.25 m its middle was out of reach: (1806.20, −473.62) stayed at 24.26 against the lip's 24.37.
-   Target: no sc_disconnects §5 edge over 0.30.
+1. **The median-nose dimple:** a fix in the edge lift (tools/ground_patch_blend.py), not the gap.
+   - The dimple's triangle has a corner at (1806.03, −473.62) at 24.02. That's a TERRAIN vertex exactly on the
+     sandcreek_quebec outline (one of the pad's own ring vertices).
+   - The lift counted it as under a road, since its plan distance to the deck was 0. But the downward ray slipped past the
+     deck's edge and found no sheet, so it got no lip and stayed down.
+   - Now a vertex on a sheet's very edge takes the nearest sheet's height there (tri_height at the nearest point),
+     still capped by min(lidar, lip).
+   - 28 more vertices lift under the pad (1,242 -> 1,270). The nose cell (1806.20, −473.62) goes 24.26 -> 24.37 (the lip),
+     and under-road sag max 0.296 -> 0.282. The patches' seated heights and the four 0.30 clusters are unchanged, and
+     nothing under a road moves down.
+   - The first try, quebec_lift_pad gap_m 1.25 -> 2.0 (953b43ab), changed nothing at the nose (the cell stayed 24.26;
+     31 more vertices beside a road, 0 edge-hang cells fewer). It's back at 1.25.
+   - Target: no sc_disconnects §5 edge over 0.30. The 78 row's NW corner (0.372 m on the draft rasters) is the pad's own
+     edge shape and stays owed.
 2. **Name blade nb12:** `source/name_blades.json` nb12 setback_m 2.1 -> 10.58, hand-set and documented in the file's
    `_doc`. The generator keeps one setback for every post, so a regeneration must keep this one. 10.58 = 0.2.9's built spot
    (1809.22, −501.43), 13.5 m along and 19.2 m left of v1942, less 0.2.10's half-width there (8.625 m). To be checked in

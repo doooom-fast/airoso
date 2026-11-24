@@ -329,6 +329,8 @@ def test_the_edge_lift_goes_up_to_the_lidar_or_the_lip_and_never_down():
     # a lift patch cuts nothing and carries no feather, weight or split; every other patch takes the old path
     assert 'if p.get("lift") is not None:' in src and "a lift patch cuts nothing and has no feather, weight or" in src
     assert 'if p.get("feather_spares_roads") is not None:' in src and "spare.find_nearest((x, z, 0.0), 1e-3)" in src
+    # 0.2.11: a vertex on a sheet's very edge (a pad outline vertex) takes the nearest sheet's height when the ray slips past
+    assert "lo = tri_height(tris[near[2]], near[0].x, near[0].y)" in src
     assert "for _ in range(0 if p.get(\"split_mode\") == \"bisect\" else 12):" in src
 
 
@@ -362,10 +364,10 @@ def test_sand_creek_quebec_patches_as_measured():
         # a feathered patch's feather never moves the ground under a road or walk (the 0.5 m gap and the walk stay the seats')
         assert (p.get("feather_spares_roads") == ["ROAD", "CURB", "1ROAD"]) == (p["feather_m"] > 0), pid
     assert by["quebec_median"]["feather_m"] == 0.0 and len(by["quebec_median"]["hard_edges"]) == len(by["quebec_median"]["polygon"])
-    for pid, gap in zip(QUEBEC_LIFT, (2.0, 1.25)):       # 0.2.11: the pad's gap 1.25 -> 2.0 (the median nose's T)
+    for pid in QUEBEC_LIFT:                                # 0.2.11 tried the pad at 2.0 m: no change measured, not kept
         p = by[pid]
         assert p["feather_m"] == 0.0 and "hard_edges" not in p and "split_m" not in p
-        assert p["lift"] == {"clear_m": 0.16, "gap_m": gap, "road_prefixes": ["ROAD", "CURB", "1ROAD"]}
+        assert p["lift"] == {"clear_m": 0.16, "gap_m": 1.25, "road_prefixes": ["ROAD", "CURB", "1ROAD"]}
     # the lift zones keep off both bridge decks the 2020 lidar reads as class 17: Quebec St over Sand Creek (the pad's
     # S end, x 1765-1790, z -530..-510) and I-70 NE of the arms' merge (x >= 1860, z >= -415)
     sys.path.insert(0, str(ROOT / "tools"))

@@ -167,6 +167,8 @@ def edge_lift(bm, L, poly, cfg):
                 if hit[0] is None:
                     break
                 lo, top = hit[0].z, hit[0].z - 1e-4
+            if lo is None:                    # on the sheet's very edge (a pad outline vertex): the ray slips past it,
+                lo = tri_height(tris[near[2]], near[0].x, near[0].y)   # so its height there (0.2.11's median nose)
             lip = None if lo is None else lo - clear
         else:                                 # beside one: the road's height at its nearest point
             h = tri_height(tris[near[2]], near[0].x, near[0].y)

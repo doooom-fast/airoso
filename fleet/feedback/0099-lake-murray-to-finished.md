@@ -1463,3 +1463,149 @@ road; and the road's colour varies in broad patches as the aerial's asphalt does
 long the fade (8 m), how fine the patches (8 m). At 50 cm the stripes are soft by nature; say if you want the 25 cm
 item. On Mission Gorge east of the Margerum crossing the tone is plain for about 750 m, because the road there is not
 where the real one is.
+
+## Round 3, item 4 (the PC, 2026-11-23/24): Jackson Dr north's painted median where the lidar and the photo put it. 0.20.8. Green on scratch, not rehearsed
+
+The Mac's first scratch run of the lanes tool (4c0849ef, on the 0.20.4 data) found Jackson Dr north's FORWARD
+carriageway with no lane over connector rows 496-579 and 234-239 of `north_J5_jackson_north#0`: 0.84-1.90 m between
+its paint lines. 0.20.8 carries 0.20.7 (item 3, road wear, never rehearsed on its own: the Mac 2026-11-24, to save
+the PC two hours).
+
+### What was wrong: a failed aerial read, not the paint rule and not the width
+
+Piece D (Jackson Dr north, J4 -> J5; its connector runs the other way) takes its median from its own columns
+(`median_type` / `median_w_m` / `median_off_m`), an automatic aerial read ("aerial read"). Over piece s 242.5-492.5
+(rows 579-496) the real road has ONE LANE EACH WAY and a HATCHED painted median about 5-7 m wide (the straightened
+aerial, D's frame: about u +2.5..-3.75 at s 300-400). The read caught the band's LEFT edge and called it the median
+(off 2.4-4.1 m, width 0-2.9 m), so the band's room went to the reverse lane and the forward lane was painted out. The
+piece's own paint note says otherwise ("~1.6 m LEFT of the road's middle"). Under the trees at s 1240-1300 (rows
+234-239 among them) the read made a painted median 4.6-6.2 m wide where the lidar reads one centre line.
+
+### The measurement (source/expansion/jackson_paint/; piece D's frame, + = left of J4 -> J5)
+
+- **The G10's lidar intensity** (D24 2024, last returns; `jackson_intensity_D_full.lidar.g10.json`, 138 stations,
+  every 2.5 m over s 225-505 and 1240-1300; `jackson_intensity_s1245-1295.lidar.g10.json`): each painted line's u and
+  `along_share` (about 1 a solid line, 0.25-0.5 a dash). The band's LEFT edge reads all along (+1.3..+3.9); its RIGHT
+  edge only at s 245-299 (-3.7..-2.9). A second look with a +-6 m window (`jackson_right_edge.lidar.g10.json`) adds
+  s 300-312.5 (-2.7..-2.1, contrast 1.13-1.56); past that the strongest returns are the forward edge line itself:
+  the band's right edge is worn there or smeared. Under the trees: a centre line at u -0.05.
+- **The photo** (`photo_line.py` -> `jackson_right_edge.photo.json`): the aerial's mean brightness across the road
+  shows a line in u -5.0..-2.5 at 91 of 113 stations. Where it and the lidar both read the band's right edge (23
+  stations) photo minus lidar = median -0.61 m, spread -1.64..+0.31: the photo's error is about +-1 m. My automatic
+  attempts to edge the band in the photo itself (along-road deviation; a run round the strongest 8-16 m repeat) were
+  too noisy to use (a band at 45 of 113 stations; 9 of 28 maxima in the verge) and are not in the build.
+- **The real curbs** (`jackson_curbs_D.lidar.g10.json`, the G10, Mission Gorge's method): the BUILT road is 2.3-3.6 m
+  right of the real one over s 225-472.5 (real minus built middle per 25 m: +3.06, +2.79, +2.42, +2.29, +2.40, +3.57,
+  +3.64), about 1.1-1.5 m at s 1240-1262.5; same width within about 0.2 m overall but +-2 m per bin. The right face reads
+  at 123 of 133 stations, the left at 64.
+
+### The rule (the Mac, 2026-11-23/24; `fix_jackson_median.py`)
+
+- **s 270-492.5, a hatched band** (type `hatched`: decorate's own diagonal strokes where it is 1 m or wider):
+  - left edge: the lidar's strongest line with along_share >= 0.5 in u +0.8..+3.95 (71 rows; 13 interpolated within
+    15 m; 6 at the stretch's ends the nearest);
+  - right edge: the lidar's (10 rows), its second look (6), the J4 pocket's line at u -0.36 (s 475-485, 5 rows), the
+    photo's line aligned by the median -0.61 m (49 rows, "+-1 m": THE FORWARD LANE'S WIDTH THERE IS 3-4 m WITHIN THAT
+    ERROR), else the left edge less the nearest measured band width, [inferred] (20 rows);
+  - every line carried into the built road's frame by ITS OWN FACE'S curb shift (per 25 m bin, straight between
+    centres; each face called on its own readings): each lane keeps its real distance from its own curb and the band
+    takes the width difference. The left face is [inferred] across its uncalled bin at s 325-347.5 (20 rows);
+  - one lane each way. Band width 1.2-7.2 m (median 5.0).
+- **s 1240-1300, a centre line** (type `line`) at the lidar's line, carried by the road middle's shift (24 rows
+  measured, 1 interpolated).
+- **s 225-267.5 held as they were, OWED WITH J4.** The lidar's right-hand line at u -3.3..-3.9 is continuous
+  (along_share 0.5-0.92 at 14 of 16 stations: solid, the band's edge or a turn lane's); the line at -5.7..-6.3 shows at
+  6 of 16 (0.42-0.67: broken, dashed). Either reading leaves about 2.2 m, under LANE_MIN_M: a turn pocket beginning or
+  a bike lane going dashed before the junction. The aerial or a closer look at J4's approach settles it. Rows 579-563
+  (s 242.5-267.5) therefore still have no forward lane.
+
+### The edge lines: measured, not 1.8 / 0.9 (tools/expansion_pieces.py)
+
+With the band placed, every authored forward lane still came out 0.3-0.6 m narrower than the real one: decorate puts
+piece D's lane edge 2.7 m inside each curb (a bike line BIKE_LINE_M 1.80 and a buffer line BUFFER_M 0.90 further in,
+both [invented]), and the real forward side has ONE line 2.3-2.5 m inside its curb over s 270-412. Opt-in columns
+`edge_fwd_m` / `outer_fwd_m` / `edge_rev_m` / `outer_rev_m` (the lane's edge line, and a bike lane's line further out,
+as distances from that side's curb; `Piece.num_opt`) now carry the lidar's lines, as distances from each REAL curb
+(curb-relative: no carrying): forward edge 71 rows measured, 22 interpolated, 15 default, no forward bike line read;
+reverse 50 / 34 / 24, a bike line at 8. The reverse lane's edge is the innermost line with along_share >= 0.75
+[invented]: at s 292.5 a solid +8.01 (0.92), not a weak +3.71 (0.58) 2.5 m from the band ("a 2.44 m lane inside a 7 m
+side would be the made-up thing", the Mac). Every line between the band and the edge taken that is not taken is
+recorded as unexplained: 41 rows (a weak line at +3.6..+3.7 recurs over s 292-305). Every other piece, and every row
+of D without the columns, keeps 1.8 / 0.9.
+
+**Rows under LANE_MIN_M, written as measured, not nudged** (the Mac): s 337.5 (forward 2.87 m), 352.5 (2.84), 397.5
+(2.89), 455 (2.82), 457.5 (2.84). Every other band row holds a lane each side: forward 2.82-4.70 m (median 3.37),
+reverse 4.15-6.97 (5.62).
+
+### Only piece D changes (the Mac's firm condition)
+
+Item 2's cleared centre lines on Mission Gorge and round 2's Princess View median live only in the committed records,
+not in decorate's output. `fix_jackson_median.py` writes nothing until every check has passed: the committed
+`expansion.north.json` round-trips through its own writer byte for byte, and every other piece's record (A, B, C), the
+file's head and all 34 other connectors come out byte for byte (`others_sha256` in the record; a test fails if one
+changes); decorate on the old data and on the new must give the other connectors the same paint and the same islands.
+Jackson's own committed paint was decorate's own on the committed data, so nothing of its own is lost. Its paint: 14
+lines, 51 hatch strokes (was 8).
+
+**What I got wrong on the way:** my first data run's check refused correctly (decorate's other connectors are not their
+committed records), but the script had already written `expansion.north.json`; I restored it from git and moved every
+write after the checks. A test then caught the weak +3.71 line not recorded (on the 2.5 m limit, and the record dropped
+the field).
+
+### The scene: the paint-only mode of the median-rebuild step
+
+Lake Murray's chain builds from the committed blend, and decorate's paint reaches MARKINGS / YLINE only in the draft.
+`tools/author_median_rebuild_blend.py --paint-only` (opt-in `route.paint_rebuild {line, record}`) re-lays ONE
+connector's paint: every strip the record's `paint_before` lays and the new paint does not is found as one loose part
+of exactly its four vertices (TOL_M 2 mm) by the assembler's own `connector_markings`, or it refuses and saves nothing;
+the new strips go in by the same function; stamped `paint_rebuild`, idempotent; `data/paint_rebuild.json`. It runs as
+a second pass inside the median-rebuild author step (ship.json's author list unchanged); the island path's code is
+untouched.
+
+### Measured on a scratch workshop, through the chain's own commands
+
+ws15 (`make_ws.py` from 66c5a8cb: the committed 0.20.5 blend re-authored; the mosaic; the 16 TreeFX bins), engine copy
+eng_r3, one Blender at a time at below-normal priority, 2026-11-24 12:13-12:45 (the PC alone):
+- median_rebuild: Mission Gorge's islands as in 0.20.6/0.20.7; **paint-only: north_J5_jackson_north#0, MARKINGS 296
+  old strips found of 296, 152 laid; YLINE 292 of 292, 389 laid** (MARKINGS 100,904 -> 100,328 vertices, YLINE
+  71,232 -> 71,620); saved.
+- prep 244 s; the road-wear bake 657 s (peak 15.1 GB); export 40 s; ground_check PASS; road_wear_check PASS (tone r
+  0.959 over 5,282 samples, lane_rubber 0.011 m against 0.009 m, depth 0.115 against 0.122).
+- The gates: drive tests street / race_cw / north_cw PASS; audits street / race_cw / north_cw CLEAN; no_route race_cw
+  and north_cw PASS; ground checks PASS. Every other Blender 3.2 GB or under.
+
+### Owed
+
+- **s 225-267.5** (rows 579-563): no forward lane, with J4's approach (above).
+- **The road-edge round, with Mission Gorge's**: piece D's built road is 2.3-3.6 m right of the real one; the G10 is
+  measuring every north piece's outer curbs for it (claude/lm-north-curbs-lidar-20261124).
+- The five rows 0.02-0.08 m under LANE_MIN_M (above).
+- On the board, from item 3: draw a welded chain as one line in `bake_lines` and the gate's reading (the weld-angle
+  sliver).
+
+### For the rehearsal
+
+- ENG eng_0207 (the snapshot's exporter with the road-wear rows; the paint-only mode is in airoso's tools).
+- The worktree must hold the mosaic and the TreeFX bins (source/trees/*.bin, never committed).
+- New in the log: `[median-rebuild] paint-only, north_J5_jackson_north#0: {...}` and its `saved`.
+- The road-wear bake peaks at 15.1 GB: run it alone.
+
+### Tests
+
+`tests/tools/test_jackson_median_0099.py` (8): no other piece or connector changes; piece D holds the record; s
+225-267.5 held; the five short rows listed, every other band row holding; the reverse edge the solid line (s 292.5's
+weak line recorded); decorate's measured edge lines and its unchanged default; `Piece.num_opt`; the paint-only key, the
+strips out / in, the checksum, the chain's two calls in order. `test_author_expansion` holds piece D's recorded rows
+and the four columns as it holds item 2's piece C. Version pins to 0.20.8. The Mac's suite on 66c5a8cb: 1,952, none
+failing.
+
+### Shared files touched
+
+`tools/expansion_pieces.py` (the opt-in edge columns), `tools/author_median_rebuild_blend.py` (the paint-only mode),
+`tools/ship_track.sh` (its second call), `fleet/GATES-CHANGELOG.md` (two entries).
+
+### Needs Kevin
+
+On the drive: Jackson Dr north of Mission Gorge Rd (about 220 m, from 40 m past J4) now has its forward lane, a
+hatched yellow median between the two directions, and its edge lines where the real ones are; under the trees further
+north, one centre line. The first 40 m north of J4 still has the old paint (owed with J4).

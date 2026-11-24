@@ -95,3 +95,126 @@ Nothing pole-like stands on the east side (u < 0) out to 48 m.
 python -I colorado_poles_g10.py fetch   --repo <airoso checkout> --dl <new dir> --mirror <EPT copy dir> [--plan plan.json]
 python -I colorado_poles_g10.py measure --repo <airoso checkout> --dl <same dir> --mirror <EPT copy dir> --out colorado_poles.lidar.json
 ```
+
+## Second source: the DRAPP 2022 orthophoto (3 inch), read by eye
+
+**Why a second source.** The 2020 lidar shows no pole in the window, but airborne lidar can miss thin shafts, and it
+cannot show poles put up after 2020. This section reads a 2022 orthophoto of the same stretch.
+
+| file | what |
+|---|---|
+| `colorado_ortho_g10.py` | `fetch` reads the crop, `chips` / `crop` draw views to read, `poles` turns the readings into the JSON |
+| `colorado_ortho_picks.json` | the readings: each pole's base, shadow tip, arm and head, in crop pixels, with what agreed |
+| `colorado_poles.ortho.json` | the result: poles, lamp verdicts, Q01-Q06, the shadow bearing |
+
+### The photo
+
+- **What it is.** The Denver Regional Aerial Photography Project's 2022 orthophoto (DRCOG). It has 4 bands (R, G, B,
+  near infrared), 0.25 ft (7.62 cm) pixels, and is in NAD83(2011) / Colorado Central ftUS (EPSG:6428, read from each
+  GeoTIFF).
+- **Why this year.** It is the newest free year. DRCOG sells the current DRAPP (2024) and gives older years away.
+- **Where it is.** It sits on the State of Colorado's public bucket, read anonymously:
+  - `https://colorado-public-imagery.s3.us-west-2.amazonaws.com/DRAPP/DRAPP2022/N1E162d.tif`, S3 ETag (the whole
+    tile's md5) `683065829fe062f90c462ce84c10a354`;
+  - `https://colorado-public-imagery.s3.us-west-2.amazonaws.com/DRAPP/DRAPP2022/N1E163c.tif`, ETag
+    `39ce5ed1406dc597b14312a63f3fef84`.
+- **Licence.** The bucket's AWS Open Data listing gives CC0. DRCOG's own metadata (Jefferson County's DRAPP2022
+  service) gives CC BY 3.0. Either way, the crop is not in git, as asked.
+- **Date.** 2022. The flight date is not in the tiles: their TIFF DateTime, 2023-01-03, is the processing date, and the
+  files were posted 2025-09-10. The sun stood in the south-east, so it was a morning flight: every shadow runs
+  north-west, median bearing 312.4°.
+- **The crop.** It covers the lap's s -20..435 and u -50..+50. It is every 2nd row of the tiles, so pixels are 7.62 cm
+  across and 15.24 cm along.
+  - File: `crop.npz`, 3242 x 1347 x 4, md5 `6e92fc8e333560afd1b5e526f1a30ad2`. The viewing PNG is md5
+    `0bb30eda3720a5f3221da9b5a16e49da`.
+  - Read: 17,649,560 bytes in 6,522 HTTP range requests. That is more than "a few MB": the tiles are uncompressed, so
+    a crop costs every pixel it holds. Skipping every other row halved it while keeping 15.24 cm.
+
+### How it was read
+
+- **The rule.** A pole counts as READ only when a head or arm and its shadow line agree on its base.
+- **The shadow.** The base is where the pole's shadow starts. That is also where the pole's own image starts: a short
+  dark stroke leaning east, which is the photo's relief displacement.
+- **The arm.** It is read either off its shadow, which branches from the pole shadow at the arm's height (the arm moved
+  along the sun's ray), or off the arm and head themselves, seen over the road from the base.
+- **Precision.** Every pick was read at 2-3x zoom, to about ±2 pixels (±0.15 m across, ±0.3 m along).
+- **Frames.** NAD83(2011) is taken as WGS 84, PROJ's own null step, as the lap's frame does. The read poles stand
+  symmetrically 0.3-1.8 m behind both curbs, so no lateral offset shows between the photo and the lidar curbs.
+
+### The poles
+
+The table gives each pole's s and u in the lap's Colorado frame (+u = west). The curbs are the measured ones: near
+carriageway's curb u -5.25, median +5.75..+10, far curb about +21. An arm's length is read off its shadow.
+
+| id | status | s | u | where | arm | shadow m | lon, lat |
+|---|---|---|---|---|---|---|---|
+| a | read | 7.7 | +21.53 | west, 0.53 m behind the far curb | 2.8 m, toward the road | 8.42 | -104.9406815, 39.7841966 |
+| b | read | 37.3 | -7.09 | east, 1.84 m behind the near curb | 4.5 m, toward the road | 10.14 | -104.9403432, 39.7844599 |
+| c | not read | 37.4 | +21.79 | west, 0.79 m behind the far curb | none seen | 9.81 | -104.9406803, 39.7844643 |
+| z1 | not read | 53.8 | -15.14 | east, 9.89 m behind the near curb | none seen | 12.79 | -104.9402468, 39.7846077 |
+| w2 | read | 69.3 | +21.61 | west, 0.61 m behind the far curb | seen itself, toward the road | 7.71 | -104.9406735, 39.7847511 |
+| g | read | 105.4 | -5.22 | east, at the near curb | 5.5 m, toward the road | 7.22 | -104.9403552, 39.7850735 |
+| f | read | 134.5 | +21.64 | west, 0.64 m behind the far curb | 2.9 m, toward the road | 7.77 | -104.9406662, 39.7853372 |
+| i | read | 166.3 | -5.03 | east, at the near curb | 4.4 m, toward the road | 7.56 | -104.9403543, 39.7856226 |
+| h | read | 195.5 | +21.32 | west, 0.32 m behind the far curb | 3.1 m, toward the road | 9.03 | -104.9406618, 39.7858862 |
+| k | read | 226.5 | -6.75 | east, 1.50 m behind the near curb | 4.1 m, toward the road | 8.16 | -104.9403305, 39.7861633 |
+| j | read | 256.7 | +21.63 | west, 0.63 m behind the far curb | 2.8 m, toward the road | 8.49 | -104.9406574, 39.7864380 |
+| m | not read | 284.6 | +8.50 | median | none seen | 9.49 | -104.9405042, 39.7866871 |
+| n | read | 341.8 | +7.26 | median, 1.51 m from its east face | twin: 3.5 m west, 3.1 m east | 9.62 | -104.9404912, 39.7872031 |
+| p | read | 395.4 | +19.92 | west, at the far curb (corner island) | 2.8 m, toward the road | 11.42 | -104.9406323, 39.7876938 |
+| o | read | 396.8 | -6.56 | east, 1.31 m behind the near curb (E 50th corner) | 3.6 m, toward the road | 8.55 | -104.9403227, 39.7876951 |
+
+- **The pattern.** The read lights are cobra heads. They stand about every 60 m on each side, just behind the curb:
+  - the west side at u +21.3..+21.6;
+  - the east side at u -5.0..-7.1;
+  - one twin-arm light in the median.
+- **North of E 50th.** Two more lights, `nw` and `ne`, stand past the lap's turn. Their s and u are read against the
+  lap's E 50th leg, so they are in the JSON only.
+- **Not read.** Three poles have no head or arm seen:
+  - c, on the west side at s 37, opposite b;
+  - z1, 10 m behind the east curb, with a longer shadow;
+  - m, in the median 20 m north of the railway crossing.
+- **No overhead line.** No wire crosses or follows Colorado in the crop.
+
+### The six lamps 0.2.11 built here, against the read poles
+
+| lamp | s | u | nearest read pole | distance | verdict |
+|---|---|---|---|---|---|
+| 0 | 57.5 | +11.05 | w2 (s 69.3, u +21.61) | 15.82 m | no read pole within 15 m |
+| 1 | 111.4 | -11.05 | g (s 105.4, u -5.22) | 8.39 m | g at 8.4 m |
+| 2 | 165.4 | +11.05 | i (s 166.3, u -5.03) | 16.10 m | no read pole within 15 m |
+| 3 | 222.3 | -11.05 | k (s 226.5, u -6.75) | 6.00 m | k at 6.0 m |
+| 4 | 276.2 | +11.05 | j (s 256.7, u +21.63) | 22.02 m | no read pole within 15 m |
+| 5 | 330.1 | -11.05 | n (s 341.8, u +7.26) | 21.72 m | no read pole within 15 m |
+
+The west lamps (u +11.05) stand in the real far carriageway: every real west pole is about 10 m further west, at
++21.5. The east lamps stand 5.8 m behind the near curb, where the real east poles stand 0-1.8 m behind it.
+
+### Q01-Q06 (the lidar's elevated objects west of the window)
+
+None of them is a light:
+
+| id | what the photo shows |
+|---|---|
+| Q01 | a pole sign: one pole, its 4 m panel at the top |
+| Q02 | no pole: the lot's west building (roof edge, awning) |
+| Q03 | a billboard on two posts |
+| Q04 | a large sign or billboard panel |
+| Q05 | a pole sign beside the railway |
+| Q06 | a pole sign at the lot's corner |
+
+The lidar's 13.7 m "tree" at s 85, u +43 is a large billboard.
+
+### The 2023 NAIP shadow at lamp 2 (s 166)
+
+It is cast by streetlight i: a cobra head at the near (east) curb, s 166.3, u -5.03.
+- Its pole shadow crosses the lap's carriageway north-west.
+- Its 4.4 m arm's shadow ends at u +4.0, 1.7 m short of the median's east face.
+- Built lamp 2 stands across the median from it (u +11.05), 16.1 m away.
+
+### Not settled
+
+- This is the 2022 photo. Changes since then are not in it.
+- A pole is read only by eye. The readings are in `colorado_ortho_picks.json`, so they can be re-checked.
+- c, z1 and m may be lights whose arm does not show. They are not counted.
+- The railway crossing near s 266-273 holds its gates and median signal, not light poles.

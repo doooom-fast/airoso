@@ -1,0 +1,925 @@
+{
+ "_doc": "Colorado Blvd's light poles read by eye on the DRAPP 2022 3-inch orthophoto crop (colorado_ortho_g10.py fetch / chips / crop), every pole-like shadow over the crop (lap s -20..435, u -50..+50). Pixels are crop pixels (column: 0.25 ft east; row: 0.5 ft south, every 2nd row of the tiles). The sun stood in the south-east (morning): every shadow runs north-west from its base. A pole is READ only when a head or arm and its shadow line agree on its base: base_px = where the pole's shadow starts and the pole's own image (a short dark stroke leaning east: the photo's relief displacement) starts; shadow_tip_px = the pole shadow's far end (the arm junction where an arm shadow branches); head_shadow_px = the arm shadow's end (the luminaire); head_image_px where the arm and head are seen themselves. Each pick was read at 2-3x zoom; +-2 px.",
+ "photo": {
+  "source": "https://colorado-public-imagery.s3.us-west-2.amazonaws.com/DRAPP/DRAPP2022/",
+  "crs": "EPSG:6428",
+  "crop_box_cut_with": "EPSG:2232",
+  "pixel_ft": [
+   0.25,
+   -0.5
+  ],
+  "tiles": {
+   "N1E162d": {
+    "key": "DRAPP/DRAPP2022/N1E162d.tif",
+    "etag": "683065829fe062f90c462ce84c10a354",
+    "datetime": "2023:01:03 08:42:35",
+    "last_modified": "Wed, 10 Sep 2025 17:38:12 GMT",
+    "projected_crs": 6428
+   },
+   "N1E163c": {
+    "key": "DRAPP/DRAPP2022/N1E163c.tif",
+    "etag": "39ce5ed1406dc597b14312a63f3fef84",
+    "datetime": "2023:01:03 08:43:02",
+    "last_modified": "Wed, 10 Sep 2025 17:38:19 GMT",
+    "projected_crs": 6428
+   }
+  },
+  "crop_shape": [
+   3242,
+   1347,
+   4
+  ],
+  "crop_bytes_read": 17649560,
+  "crop_requests": 6522,
+  "crop_md5": {
+   "crop.npz": "6e92fc8e333560afd1b5e526f1a30ad2",
+   "crop_rgb.png": "0bb30eda3720a5f3221da9b5a16e49da"
+  }
+ },
+ "shadow_azimuth_deg_median": 312.4,
+ "curbs_u": {
+  "near_right_curb": -5.25,
+  "median": [
+   5.75,
+   10.0
+  ],
+  "far_curb": 21.0
+ },
+ "poles": [
+  {
+   "id": "a",
+   "read": true,
+   "s": 7.7,
+   "u": 21.53,
+   "base_xz": [
+    -1532.31,
+    -250.07
+   ],
+   "base_lonlat": [
+    -104.9406815,
+    39.7841966
+   ],
+   "base_px": [
+    387,
+    3031
+   ],
+   "evidence": {
+    "head_or_arm": "arm shadow from the pole shadow's tip toward the road; the arm and head themselves over the road from the base",
+    "shadow": "pole shadow",
+    "note": null
+   },
+   "shadow": {
+    "length_m": 8.42,
+    "azimuth_deg": 312.4
+   },
+   "arms": [
+    {
+     "length_m": 2.84,
+     "bearing_deg": 84.2,
+     "points": "-u (east)",
+     "toward_road": true,
+     "from": "its shadow (the arm's shadow is the arm moved along the sun's ray)"
+    }
+   ],
+   "side": "west",
+   "from_curb": "0.53 m behind the far curb (about u +21)"
+  },
+  {
+   "id": "b",
+   "read": true,
+   "s": 37.3,
+   "u": -7.09,
+   "base_xz": [
+    -1503.33,
+    -220.84
+   ],
+   "base_lonlat": [
+    -104.9403432,
+    39.7844599
+   ],
+   "base_px": [
+    765,
+    2838
+   ],
+   "evidence": {
+    "head_or_arm": "arm shadow branching off the pole shadow toward the road, head shadow at its end",
+    "shadow": "pole shadow (the pole runs on past the arm)",
+    "note": null
+   },
+   "shadow": {
+    "length_m": 10.14,
+    "azimuth_deg": 312.9
+   },
+   "arms": [
+    {
+     "length_m": 4.48,
+     "bearing_deg": 280.1,
+     "points": "+u (west)",
+     "toward_road": true,
+     "from": "its shadow (the arm's shadow is the arm moved along the sun's ray)"
+    }
+   ],
+   "side": "east",
+   "from_curb": "1.84 m behind the near carriageway's curb (u -5.25)"
+  },
+  {
+   "id": "c",
+   "read": false,
+   "s": 37.4,
+   "u": 21.79,
+   "base_xz": [
+    -1532.2,
+    -220.35
+   ],
+   "base_lonlat": [
+    -104.9406803,
+    39.7844643
+   ],
+   "base_px": [
+    386,
+    2836
+   ],
+   "evidence": {
+    "head_or_arm": null,
+    "shadow": "pole shadow",
+    "note": "pole shadow and the pole's own image only; no arm shadow at the tip, a faint line over the road east of the base may be an arm: not read"
+   },
+   "shadow": {
+    "length_m": 9.81,
+    "azimuth_deg": 313.5
+   },
+   "arms": [],
+   "side": "west",
+   "from_curb": "0.79 m behind the far curb (about u +21)"
+  },
+  {
+   "id": "z1",
+   "read": false,
+   "s": 53.8,
+   "u": -15.14,
+   "base_xz": [
+    -1495.07,
+    -204.43
+   ],
+   "base_lonlat": [
+    -104.9402468,
+    39.7846077
+   ],
+   "base_px": [
+    872,
+    2730
+   ],
+   "evidence": {
+    "head_or_arm": null,
+    "shadow": "pole shadow",
+    "note": "a pole 10 m behind the curb with a 12.9 m shadow and no arm shadow on the road at its tip: not read"
+   },
+   "shadow": {
+    "length_m": 12.79,
+    "azimuth_deg": 312.2
+   },
+   "arms": [],
+   "side": "east",
+   "from_curb": "9.89 m behind the near carriageway's curb (u -5.25)"
+  },
+  {
+   "id": "w2",
+   "read": true,
+   "s": 69.3,
+   "u": 21.61,
+   "base_xz": [
+    -1531.63,
+    -188.51
+   ],
+   "base_lonlat": [
+    -104.9406735,
+    39.7847511
+   ],
+   "base_px": [
+    391,
+    2627
+   ],
+   "evidence": {
+    "head_or_arm": "the arm and head themselves, from the base east-south-east over the road",
+    "shadow": "pole shadow",
+    "note": "a bus-stop shelter stands beside it (its shadow hides the arm's)"
+   },
+   "shadow": {
+    "length_m": 7.71,
+    "azimuth_deg": 312.6
+   },
+   "arms": [],
+   "side": "west",
+   "from_curb": "0.61 m behind the far curb (about u +21)"
+  },
+  {
+   "id": "g",
+   "read": true,
+   "s": 105.4,
+   "u": -5.22,
+   "base_xz": [
+    -1504.36,
+    -152.71
+   ],
+   "base_lonlat": [
+    -104.9403552,
+    39.7850735
+   ],
+   "base_px": [
+    746,
+    2391
+   ],
+   "evidence": {
+    "head_or_arm": "arm shadow from the tip toward the road (its head on a parked car)",
+    "shadow": "pole shadow",
+    "note": null
+   },
+   "shadow": {
+    "length_m": 7.22,
+    "azimuth_deg": 314.5
+   },
+   "arms": [
+    {
+     "length_m": 5.54,
+     "bearing_deg": 278.3,
+     "points": "+u (west)",
+     "toward_road": true,
+     "from": "its shadow (the arm's shadow is the arm moved along the sun's ray)"
+    }
+   ],
+   "side": "east",
+   "from_curb": "at the near carriageway's curb (0.03 m inside it: the reading's tolerance)"
+  },
+  {
+   "id": "f",
+   "read": true,
+   "s": 134.5,
+   "u": 21.64,
+   "base_xz": [
+    -1531.0,
+    -123.43
+   ],
+   "base_lonlat": [
+    -104.9406662,
+    39.7853372
+   ],
+   "base_px": [
+    394,
+    2200
+   ],
+   "evidence": {
+    "head_or_arm": "arm shadow from the tip toward the road",
+    "shadow": "pole shadow",
+    "note": null
+   },
+   "shadow": {
+    "length_m": 7.77,
+    "azimuth_deg": 312.2
+   },
+   "arms": [
+    {
+     "length_m": 2.91,
+     "bearing_deg": 84.3,
+     "points": "-u (east)",
+     "toward_road": true,
+     "from": "its shadow (the arm's shadow is the arm moved along the sun's ray)"
+    }
+   ],
+   "side": "west",
+   "from_curb": "0.64 m behind the far curb (about u +21)"
+  },
+  {
+   "id": "i",
+   "read": true,
+   "s": 166.3,
+   "u": -5.03,
+   "base_xz": [
+    -1504.29,
+    -91.75
+   ],
+   "base_lonlat": [
+    -104.9403543,
+    39.7856226
+   ],
+   "base_px": [
+    742,
+    1991
+   ],
+   "evidence": {
+    "head_or_arm": "arm shadow toward the road, ending in the near carriageway short of the median",
+    "shadow": "pole shadow across the near carriageway",
+    "note": null
+   },
+   "shadow": {
+    "length_m": 7.56,
+    "azimuth_deg": 312.1
+   },
+   "arms": [
+    {
+     "length_m": 4.36,
+     "bearing_deg": 282.4,
+     "points": "+u (west)",
+     "toward_road": true,
+     "from": "its shadow (the arm's shadow is the arm moved along the sun's ray)"
+    }
+   ],
+   "side": "east",
+   "from_curb": "at the near carriageway's curb (0.22 m inside it: the reading's tolerance)"
+  },
+  {
+   "id": "h",
+   "read": true,
+   "s": 195.5,
+   "u": 21.32,
+   "base_xz": [
+    -1530.62,
+    -62.48
+   ],
+   "base_lonlat": [
+    -104.9406618,
+    39.7858862
+   ],
+   "base_px": [
+    394,
+    1800
+   ],
+   "evidence": {
+    "head_or_arm": "arm shadow at the tip; the arm and head themselves over the road from the base",
+    "shadow": "pole shadow",
+    "note": null
+   },
+   "shadow": {
+    "length_m": 9.03,
+    "azimuth_deg": 310.2
+   },
+   "arms": [
+    {
+     "length_m": 3.14,
+     "bearing_deg": 67.5,
+     "points": "-u (east)",
+     "toward_road": true,
+     "from": "its shadow (the arm's shadow is the arm moved along the sun's ray)"
+    }
+   ],
+   "side": "west",
+   "from_curb": "0.32 m behind the far curb (about u +21)"
+  },
+  {
+   "id": "k",
+   "read": true,
+   "s": 226.5,
+   "u": -6.75,
+   "base_xz": [
+    -1502.24,
+    -31.71
+   ],
+   "base_lonlat": [
+    -104.9403305,
+    39.7861633
+   ],
+   "base_px": [
+    764,
+    1597
+   ],
+   "evidence": {
+    "head_or_arm": "arm shadow toward the road",
+    "shadow": "pole shadow",
+    "note": null
+   },
+   "shadow": {
+    "length_m": 8.16,
+    "azimuth_deg": 311.2
+   },
+   "arms": [
+    {
+     "length_m": 4.14,
+     "bearing_deg": 283.1,
+     "points": "+u (west)",
+     "toward_road": true,
+     "from": "its shadow (the arm's shadow is the arm moved along the sun's ray)"
+    }
+   ],
+   "side": "east",
+   "from_curb": "1.50 m behind the near carriageway's curb (u -5.25)"
+  },
+  {
+   "id": "j",
+   "read": true,
+   "s": 256.7,
+   "u": 21.63,
+   "base_xz": [
+    -1530.25,
+    -1.21
+   ],
+   "base_lonlat": [
+    -104.9406574,
+    39.786438
+   ],
+   "base_px": [
+    394,
+    1398
+   ],
+   "evidence": {
+    "head_or_arm": "arm shadow at the tip; the arm and head themselves over the road from the base",
+    "shadow": "pole shadow",
+    "note": null
+   },
+   "shadow": {
+    "length_m": 8.49,
+    "azimuth_deg": 310.6
+   },
+   "arms": [
+    {
+     "length_m": 2.78,
+     "bearing_deg": 99.8,
+     "points": "-u (east)",
+     "toward_road": true,
+     "from": "its shadow (the arm's shadow is the arm moved along the sun's ray)"
+    }
+   ],
+   "side": "west",
+   "from_curb": "0.63 m behind the far curb (about u +21)"
+  },
+  {
+   "id": "m",
+   "read": false,
+   "s": 284.6,
+   "u": 8.5,
+   "base_xz": [
+    -1517.12,
+    26.44
+   ],
+   "base_lonlat": [
+    -104.9405042,
+    39.7866871
+   ],
+   "base_px": [
+    564,
+    1216
+   ],
+   "evidence": {
+    "head_or_arm": null,
+    "shadow": "pole shadow",
+    "note": "a pole in the median, 20 m north of the railway crossing, its own image leaning north-east; no arm shadow at the tip: not read"
+   },
+   "shadow": {
+    "length_m": 9.49,
+    "azimuth_deg": 312.8
+   },
+   "arms": [],
+   "side": "median",
+   "from_curb": "2.75 m from its east face, 1.50 m from its west face"
+  },
+  {
+   "id": "n",
+   "read": true,
+   "s": 341.8,
+   "u": 7.26,
+   "base_xz": [
+    -1516.01,
+    83.74
+   ],
+   "base_lonlat": [
+    -104.9404912,
+    39.7872031
+   ],
+   "base_px": [
+    574,
+    840
+   ],
+   "evidence": {
+    "head_or_arm": "two arm shadows from one junction, one toward each carriageway (a twin-arm median light)",
+    "shadow": "pole shadow",
+    "note": null
+   },
+   "shadow": {
+    "length_m": 9.62,
+    "azimuth_deg": 310.9
+   },
+   "arms": [
+    {
+     "length_m": 3.55,
+     "bearing_deg": 301.3,
+     "points": "+u (west)",
+     "toward_road": null,
+     "from": "its shadow (the arm's shadow is the arm moved along the sun's ray)"
+    },
+    {
+     "length_m": 3.14,
+     "bearing_deg": 129.4,
+     "points": "-u (east)",
+     "toward_road": null,
+     "from": "its shadow (the arm's shadow is the arm moved along the sun's ray)"
+    }
+   ],
+   "side": "median",
+   "from_curb": "1.51 m from its east face, 2.74 m from its west face"
+  },
+  {
+   "id": "p",
+   "read": true,
+   "s": 395.4,
+   "u": 19.92,
+   "base_xz": [
+    -1528.09,
+    138.22
+   ],
+   "base_lonlat": [
+    -104.9406323,
+    39.7876938
+   ],
+   "base_px": [
+    411,
+    483
+   ],
+   "evidence": {
+    "head_or_arm": "arm shadow from the tip toward the road",
+    "shadow": "pole shadow",
+    "note": "on the island between the west curb and the parking aisle"
+   },
+   "shadow": {
+    "length_m": 11.42,
+    "azimuth_deg": 310.2
+   },
+   "arms": [
+    {
+     "length_m": 2.81,
+     "bearing_deg": 102.9,
+     "points": "-u (east)",
+     "toward_road": true,
+     "from": "its shadow (the arm's shadow is the arm moved along the sun's ray)"
+    }
+   ],
+   "side": "west",
+   "from_curb": "at the far curb (1.08 m inside its u +21: the reading's tolerance)"
+  },
+  {
+   "id": "o",
+   "read": true,
+   "s": 396.8,
+   "u": -6.56,
+   "base_xz": [
+    -1501.57,
+    138.36
+   ],
+   "base_lonlat": [
+    -104.9403227,
+    39.7876951
+   ],
+   "base_px": [
+    759,
+    481
+   ],
+   "evidence": {
+    "head_or_arm": "arm shadow toward the road",
+    "shadow": "pole shadow",
+    "note": "on the E 50th corner's curb return"
+   },
+   "shadow": {
+    "length_m": 8.55,
+    "azimuth_deg": 323.7
+   },
+   "arms": [
+    {
+     "length_m": 3.61,
+     "bearing_deg": 277.6,
+     "points": "+u (west)",
+     "toward_road": true,
+     "from": "its shadow (the arm's shadow is the arm moved along the sun's ray)"
+    }
+   ],
+   "side": "east",
+   "from_curb": "1.31 m behind the near carriageway's curb (u -5.25)"
+  },
+  {
+   "id": "nw",
+   "read": true,
+   "s": 420.4,
+   "u": 50.59,
+   "base_xz": [
+    -1528.16,
+    200.71
+   ],
+   "base_lonlat": [
+    -104.9406331,
+    39.7882566
+   ],
+   "base_px": [
+    405,
+    73
+   ],
+   "evidence": {
+    "head_or_arm": "arm shadow toward the road",
+    "shadow": "pole shadow",
+    "note": "north of E 50th"
+   },
+   "shadow": {
+    "length_m": 11.6,
+    "azimuth_deg": 312.4
+   },
+   "arms": [
+    {
+     "length_m": 2.91,
+     "bearing_deg": 84.3,
+     "points": "-u (east)",
+     "toward_road": true,
+     "from": "its shadow (the arm's shadow is the arm moved along the sun's ray)"
+    }
+   ],
+   "side": "west",
+   "from_curb": "29.59 m behind the far curb (about u +21)"
+  },
+  {
+   "id": "ne",
+   "read": true,
+   "s": 424.9,
+   "u": 32.26,
+   "base_xz": [
+    -1499.72,
+    192.3
+   ],
+   "base_lonlat": [
+    -104.940301,
+    39.7881809
+   ],
+   "base_px": [
+    779,
+    127
+   ],
+   "evidence": {
+    "head_or_arm": "arm shadow toward the road",
+    "shadow": "pole shadow",
+    "note": "north of E 50th"
+   },
+   "shadow": {
+    "length_m": 8.19,
+    "azimuth_deg": 321.8
+   },
+   "arms": [
+    {
+     "length_m": 3.99,
+     "bearing_deg": 276.9,
+     "points": "+u (west)",
+     "toward_road": false,
+     "from": "its shadow (the arm's shadow is the arm moved along the sun's ray)"
+    }
+   ],
+   "side": "west",
+   "from_curb": "11.26 m behind the far curb (about u +21)"
+  }
+ ],
+ "lamps": [
+  {
+   "lamp": 0,
+   "base_xz": [
+    -1521.213,
+    -200.414
+   ],
+   "s": 57.5,
+   "u": 11.05,
+   "nearest_read_pole": "w2",
+   "pole_s": 69.3,
+   "pole_u": 21.61,
+   "distance_m": 15.82,
+   "verdict": "no read pole within 15 m"
+  },
+  {
+   "lamp": 1,
+   "base_xz": [
+    -1498.468,
+    -146.741
+   ],
+   "s": 111.4,
+   "u": -11.05,
+   "nearest_read_pole": "g",
+   "pole_s": 105.4,
+   "pole_u": -5.22,
+   "distance_m": 8.39,
+   "verdict": "g at 8.4 m"
+  },
+  {
+   "lamp": 2,
+   "base_xz": [
+    -1520.359,
+    -92.731
+   ],
+   "s": 165.4,
+   "u": 11.05,
+   "nearest_read_pole": "i",
+   "pole_s": 166.3,
+   "pole_u": -5.03,
+   "distance_m": 16.1,
+   "verdict": "no read pole within 15 m"
+  },
+  {
+   "lamp": 3,
+   "base_xz": [
+    -1498.002,
+    -35.964
+   ],
+   "s": 222.3,
+   "u": -11.05,
+   "nearest_read_pole": "k",
+   "pole_s": 226.5,
+   "pole_u": -6.75,
+   "distance_m": 6.0,
+   "verdict": "k at 6.0 m"
+  },
+  {
+   "lamp": 4,
+   "base_xz": [
+    -1519.635,
+    18.084
+   ],
+   "s": 276.2,
+   "u": 11.05,
+   "nearest_read_pole": "j",
+   "pole_s": 256.7,
+   "pole_u": 21.63,
+   "distance_m": 22.02,
+   "verdict": "no read pole within 15 m"
+  },
+  {
+   "lamp": 5,
+   "base_xz": [
+    -1497.722,
+    72.025
+   ],
+   "s": 330.1,
+   "u": -11.05,
+   "nearest_read_pole": "n",
+   "pole_s": 341.8,
+   "pole_u": 7.26,
+   "distance_m": 21.72,
+   "verdict": "no read pole within 15 m"
+  }
+ ],
+ "other_objects": [
+  {
+   "id": "Q01",
+   "px": [
+    158,
+    2738
+   ],
+   "what": "a pole sign: one pole, a sign panel about 4 m wide at its top (the panel's shadow is the rectangle at the pole shadow's end); the lidar's Q01 is the panel",
+   "s": 52.3,
+   "u": 39.26,
+   "xz": [
+    -1549.48,
+    -205.31
+   ],
+   "lonlat": [
+    -104.940882,
+    39.7845997
+   ]
+  },
+  {
+   "id": "Q02",
+   "px": [
+    129,
+    2099
+   ],
+   "what": "no pole: the lot's west building (roof edge, an awning) beside parked cars; the lidar's Q02 is the building",
+   "s": 150.1,
+   "u": 41.79,
+   "xz": [
+    -1551.1,
+    -107.92
+   ],
+   "lonlat": [
+    -104.9409008,
+    39.7854769
+   ]
+  },
+  {
+   "id": "Q03",
+   "px": [
+    140,
+    1562
+   ],
+   "what": "a billboard on two posts (its panel seen from above, its shadow north-west of it)",
+   "s": 231.4,
+   "u": 40.85,
+   "xz": [
+    -1549.75,
+    -26.09
+   ],
+   "lonlat": [
+    -104.9408851,
+    39.7862139
+   ]
+  },
+  {
+   "id": "Q04",
+   "px": [
+    126,
+    1467
+   ],
+   "what": "a large sign or billboard panel (seen from above, its shadow north-west of it)",
+   "s": 246.0,
+   "u": 42.03,
+   "xz": [
+    -1550.73,
+    -11.6
+   ],
+   "lonlat": [
+    -104.9408966,
+    39.7863444
+   ]
+  },
+  {
+   "id": "Q05",
+   "px": [
+    180,
+    1279
+   ],
+   "what": "a pole sign beside the railway (panel shadow halfway along the pole shadow, the panel seen from above)",
+   "s": 275.2,
+   "u": 37.86,
+   "xz": [
+    -1546.44,
+    17.02
+   ],
+   "lonlat": [
+    -104.9408465,
+    39.7866022
+   ]
+  },
+  {
+   "id": "Q06",
+   "px": [
+    230,
+    981
+   ],
+   "what": "a pole sign at the lot's corner (panel seen from above, panel and pole shadows north-west)",
+   "s": 320.5,
+   "u": 33.58,
+   "xz": [
+    -1542.35,
+    62.41
+   ],
+   "lonlat": [
+    -104.9407987,
+    39.787011
+   ]
+  },
+  {
+   "id": "billboard_s88",
+   "px": [
+    80,
+    2500
+   ],
+   "what": "a large billboard at the crop's west edge (the lidar's 13.7 m 'tree' at s 85, u +43)",
+   "s": 88.5,
+   "u": 45.43,
+   "xz": [
+    -1555.2,
+    -169.01
+   ],
+   "lonlat": [
+    -104.9409488,
+    39.7849267
+   ]
+  },
+  {
+   "id": "rr_gate_west",
+   "px": [
+    395,
+    1290
+   ],
+   "what": "the railway crossing's west gate mast, its arm's shadow lying across the far carriageway",
+   "s": 273.4,
+   "u": 21.49,
+   "xz": [
+    -1530.07,
+    15.25
+   ],
+   "lonlat": [
+    -104.9406553,
+    39.7865862
+   ]
+  },
+  {
+   "id": "rr_median",
+   "px": [
+    578,
+    1335
+   ],
+   "what": "the railway crossing's median signal / cabinet",
+   "s": 266.4,
+   "u": 7.59,
+   "xz": [
+    -1516.17,
+    8.3
+   ],
+   "lonlat": [
+    -104.940493,
+    39.7865237
+   ]
+  }
+ ],
+ "notes": [
+  "Shadows run north-west (the median bearing is in shadow_azimuth_deg_median): the 2022 flight was in the morning. The 2023 NAIP frame the Sand Creek session read may have had a different sun.",
+  "No overhead line crosses or follows Colorado in the crop: no wire shadow, no line pole."
+ ]
+}

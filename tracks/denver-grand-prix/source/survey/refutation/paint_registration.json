@@ -1,0 +1,713 @@
+{
+ "_doc": "The measured paint items (crosswalk bars, lines, stop bars) are drawn as a mask on a STEP_M grid in the survey's frame; the lidar's ground returns (class 2) in the same tile are moved over it in STEP_M steps up to MAX_M each way, and at each shift the mean log-intensity of the returns that land on paint is taken. Paint returns more of the laser than asphalt, so the shift where that mean peaks is where the lidar puts the paint. The lidar is another sensor flown two years earlier (2020-05-27) and registered on its own, so the peak shift is the aerial's position error against it (plus paint moved between the two dates, which is rare and local). A tile is reported only with at least MIN_RETURNS on paint at the peak and a peak at least MIN_CONTRAST over the zero-shift mean of the whole search window's median.",
+ "thresholds_invented": {
+  "STEP_M": 0.15,
+  "MAX_M": 1.2,
+  "MIN_RETURNS": 200,
+  "MIN_CONTRAST": 0.3,
+  "LINE_HALF_W_M": 0.08,
+  "BAR_HALF_W_M": 0.25
+ },
+ "tiles_tried": 53,
+ "tiles_reported": 33,
+ "offset_m_p50_p84_p95": [
+  0.21,
+  0.34,
+  0.34
+ ],
+ "mean_aerial_minus_lidar_m": [
+  0.06,
+  0.03
+ ],
+ "tiles": [
+  {
+   "tile": "x-009y-002",
+   "measured_paint_items": 88,
+   "returns_on_paint_at_peak": 334,
+   "peak_minus_median_dlog": 0.85,
+   "aerial_minus_lidar_m": [
+    -0.3,
+    0.0
+   ],
+   "offset_m": 0.3,
+   "reported": true,
+   "at_the_edge_of_the_search": false
+  },
+  {
+   "tile": "x-008y-002",
+   "measured_paint_items": 49,
+   "returns_on_paint_at_peak": 168,
+   "peak_minus_median_dlog": 0.69,
+   "aerial_minus_lidar_m": [
+    0.45,
+    0.3
+   ],
+   "offset_m": 0.54,
+   "reported": false,
+   "at_the_edge_of_the_search": false
+  },
+  {
+   "tile": "x-007y-002",
+   "measured_paint_items": 73,
+   "returns_on_paint_at_peak": 309,
+   "peak_minus_median_dlog": 1.05,
+   "aerial_minus_lidar_m": [
+    0.0,
+    0.0
+   ],
+   "offset_m": 0.0,
+   "reported": true,
+   "at_the_edge_of_the_search": false
+  },
+  {
+   "tile": "x-006y-002",
+   "measured_paint_items": 59,
+   "returns_on_paint_at_peak": 362,
+   "peak_minus_median_dlog": 1.26,
+   "aerial_minus_lidar_m": [
+    -0.15,
+    -0.15
+   ],
+   "offset_m": 0.21,
+   "reported": true,
+   "at_the_edge_of_the_search": false
+  },
+  {
+   "tile": "x-005y-002",
+   "measured_paint_items": 52,
+   "returns_on_paint_at_peak": 280,
+   "peak_minus_median_dlog": 1.21,
+   "aerial_minus_lidar_m": [
+    0.15,
+    0.0
+   ],
+   "offset_m": 0.15,
+   "reported": true,
+   "at_the_edge_of_the_search": false
+  },
+  {
+   "tile": "x-004y-002",
+   "measured_paint_items": 67,
+   "returns_on_paint_at_peak": 313,
+   "peak_minus_median_dlog": 0.81,
+   "aerial_minus_lidar_m": [
+    0.3,
+    0.0
+   ],
+   "offset_m": 0.3,
+   "reported": true,
+   "at_the_edge_of_the_search": false
+  },
+  {
+   "tile": "x-003y-002",
+   "measured_paint_items": 30,
+   "returns_on_paint_at_peak": 113,
+   "peak_minus_median_dlog": 0.84,
+   "aerial_minus_lidar_m": [
+    -0.3,
+    0.15
+   ],
+   "offset_m": 0.34,
+   "reported": false,
+   "at_the_edge_of_the_search": false
+  },
+  {
+   "tile": "x-002y-002",
+   "measured_paint_items": 78,
+   "returns_on_paint_at_peak": 332,
+   "peak_minus_median_dlog": 1.41,
+   "aerial_minus_lidar_m": [
+    0.15,
+    0.15
+   ],
+   "offset_m": 0.21,
+   "reported": true,
+   "at_the_edge_of_the_search": false
+  },
+  {
+   "tile": "x-001y-002",
+   "measured_paint_items": 71,
+   "returns_on_paint_at_peak": 241,
+   "peak_minus_median_dlog": 2.12,
+   "aerial_minus_lidar_m": [
+    0.0,
+    0.15
+   ],
+   "offset_m": 0.15,
+   "reported": true,
+   "at_the_edge_of_the_search": false
+  },
+  {
+   "tile": "x+000y-002",
+   "measured_paint_items": 85,
+   "returns_on_paint_at_peak": 313,
+   "peak_minus_median_dlog": 1.86,
+   "aerial_minus_lidar_m": [
+    0.15,
+    0.15
+   ],
+   "offset_m": 0.21,
+   "reported": true,
+   "at_the_edge_of_the_search": false
+  },
+  {
+   "tile": "x+001y-002",
+   "measured_paint_items": 37,
+   "returns_on_paint_at_peak": 105,
+   "peak_minus_median_dlog": 1.83,
+   "aerial_minus_lidar_m": [
+    0.0,
+    0.0
+   ],
+   "offset_m": 0.0,
+   "reported": false,
+   "at_the_edge_of_the_search": false
+  },
+  {
+   "tile": "x-009y-001",
+   "measured_paint_items": 145,
+   "returns_on_paint_at_peak": 408,
+   "peak_minus_median_dlog": 1.85,
+   "aerial_minus_lidar_m": [
+    0.15,
+    0.0
+   ],
+   "offset_m": 0.15,
+   "reported": true,
+   "at_the_edge_of_the_search": false
+  },
+  {
+   "tile": "x-008y-001",
+   "measured_paint_items": 35,
+   "returns_on_paint_at_peak": 172,
+   "peak_minus_median_dlog": 0.77,
+   "aerial_minus_lidar_m": [
+    0.45,
+    0.0
+   ],
+   "offset_m": 0.45,
+   "reported": false,
+   "at_the_edge_of_the_search": false
+  },
+  {
+   "tile": "x-007y-001",
+   "measured_paint_items": 84,
+   "returns_on_paint_at_peak": 404,
+   "peak_minus_median_dlog": 1.8,
+   "aerial_minus_lidar_m": [
+    -0.15,
+    -0.15
+   ],
+   "offset_m": 0.21,
+   "reported": true,
+   "at_the_edge_of_the_search": false
+  },
+  {
+   "tile": "x-006y-001",
+   "measured_paint_items": 92,
+   "returns_on_paint_at_peak": 419,
+   "peak_minus_median_dlog": 2.32,
+   "aerial_minus_lidar_m": [
+    -0.15,
+    0.0
+   ],
+   "offset_m": 0.15,
+   "reported": true,
+   "at_the_edge_of_the_search": false
+  },
+  {
+   "tile": "x-005y-001",
+   "measured_paint_items": 96,
+   "returns_on_paint_at_peak": 450,
+   "peak_minus_median_dlog": 2.14,
+   "aerial_minus_lidar_m": [
+    0.15,
+    0.0
+   ],
+   "offset_m": 0.15,
+   "reported": true,
+   "at_the_edge_of_the_search": false
+  },
+  {
+   "tile": "x-004y-001",
+   "measured_paint_items": 119,
+   "returns_on_paint_at_peak": 534,
+   "peak_minus_median_dlog": 1.5,
+   "aerial_minus_lidar_m": [
+    0.0,
+    0.3
+   ],
+   "offset_m": 0.3,
+   "reported": true,
+   "at_the_edge_of_the_search": false
+  },
+  {
+   "tile": "x-003y-001",
+   "measured_paint_items": 16,
+   "returns_on_paint_at_peak": 69,
+   "peak_minus_median_dlog": 1.37,
+   "aerial_minus_lidar_m": [
+    0.0,
+    0.3
+   ],
+   "offset_m": 0.3,
+   "reported": false,
+   "at_the_edge_of_the_search": false
+  },
+  {
+   "tile": "x-002y-001",
+   "measured_paint_items": 74,
+   "returns_on_paint_at_peak": 273,
+   "peak_minus_median_dlog": 2.03,
+   "aerial_minus_lidar_m": [
+    0.15,
+    0.15
+   ],
+   "offset_m": 0.21,
+   "reported": true,
+   "at_the_edge_of_the_search": false
+  },
+  {
+   "tile": "x-001y-001",
+   "measured_paint_items": 140,
+   "returns_on_paint_at_peak": 477,
+   "peak_minus_median_dlog": 1.75,
+   "aerial_minus_lidar_m": [
+    0.0,
+    0.15
+   ],
+   "offset_m": 0.15,
+   "reported": true,
+   "at_the_edge_of_the_search": false
+  },
+  {
+   "tile": "x+000y-001",
+   "measured_paint_items": 121,
+   "returns_on_paint_at_peak": 407,
+   "peak_minus_median_dlog": 1.42,
+   "aerial_minus_lidar_m": [
+    0.15,
+    0.15
+   ],
+   "offset_m": 0.21,
+   "reported": true,
+   "at_the_edge_of_the_search": false
+  },
+  {
+   "tile": "x+001y-001",
+   "measured_paint_items": 59,
+   "returns_on_paint_at_peak": 216,
+   "peak_minus_median_dlog": 1.73,
+   "aerial_minus_lidar_m": [
+    0.15,
+    0.15
+   ],
+   "offset_m": 0.21,
+   "reported": true,
+   "at_the_edge_of_the_search": false
+  },
+  {
+   "tile": "x-009y+000",
+   "measured_paint_items": 328,
+   "returns_on_paint_at_peak": 819,
+   "peak_minus_median_dlog": 1.78,
+   "aerial_minus_lidar_m": [
+    0.15,
+    0.0
+   ],
+   "offset_m": 0.15,
+   "reported": true,
+   "at_the_edge_of_the_search": false
+  },
+  {
+   "tile": "x-008y+000",
+   "measured_paint_items": 93,
+   "returns_on_paint_at_peak": 328,
+   "peak_minus_median_dlog": 1.39,
+   "aerial_minus_lidar_m": [
+    0.15,
+    -0.15
+   ],
+   "offset_m": 0.21,
+   "reported": true,
+   "at_the_edge_of_the_search": false
+  },
+  {
+   "tile": "x-007y+000",
+   "measured_paint_items": 69,
+   "returns_on_paint_at_peak": 336,
+   "peak_minus_median_dlog": 1.79,
+   "aerial_minus_lidar_m": [
+    0.3,
+    -0.15
+   ],
+   "offset_m": 0.34,
+   "reported": true,
+   "at_the_edge_of_the_search": false
+  },
+  {
+   "tile": "x-006y+000",
+   "measured_paint_items": 79,
+   "returns_on_paint_at_peak": 457,
+   "peak_minus_median_dlog": 1.91,
+   "aerial_minus_lidar_m": [
+    -0.3,
+    -0.15
+   ],
+   "offset_m": 0.34,
+   "reported": true,
+   "at_the_edge_of_the_search": false
+  },
+  {
+   "tile": "x-005y+000",
+   "measured_paint_items": 83,
+   "returns_on_paint_at_peak": 414,
+   "peak_minus_median_dlog": 2.21,
+   "aerial_minus_lidar_m": [
+    0.15,
+    0.0
+   ],
+   "offset_m": 0.15,
+   "reported": true,
+   "at_the_edge_of_the_search": false
+  },
+  {
+   "tile": "x-004y+000",
+   "measured_paint_items": 93,
+   "returns_on_paint_at_peak": 407,
+   "peak_minus_median_dlog": 1.55,
+   "aerial_minus_lidar_m": [
+    0.15,
+    0.3
+   ],
+   "offset_m": 0.34,
+   "reported": true,
+   "at_the_edge_of_the_search": false
+  },
+  {
+   "tile": "x-003y+000",
+   "measured_paint_items": 63,
+   "returns_on_paint_at_peak": 276,
+   "peak_minus_median_dlog": 1.65,
+   "aerial_minus_lidar_m": [
+    -0.15,
+    0.15
+   ],
+   "offset_m": 0.21,
+   "reported": true,
+   "at_the_edge_of_the_search": false
+  },
+  {
+   "tile": "x-002y+000",
+   "measured_paint_items": 86,
+   "returns_on_paint_at_peak": 286,
+   "peak_minus_median_dlog": 1.99,
+   "aerial_minus_lidar_m": [
+    0.15,
+    0.15
+   ],
+   "offset_m": 0.21,
+   "reported": true,
+   "at_the_edge_of_the_search": false
+  },
+  {
+   "tile": "x-001y+000",
+   "measured_paint_items": 110,
+   "returns_on_paint_at_peak": 433,
+   "peak_minus_median_dlog": 1.8,
+   "aerial_minus_lidar_m": [
+    0.15,
+    0.0
+   ],
+   "offset_m": 0.15,
+   "reported": true,
+   "at_the_edge_of_the_search": false
+  },
+  {
+   "tile": "x+000y+000",
+   "measured_paint_items": 95,
+   "returns_on_paint_at_peak": 343,
+   "peak_minus_median_dlog": 1.49,
+   "aerial_minus_lidar_m": [
+    0.15,
+    0.3
+   ],
+   "offset_m": 0.34,
+   "reported": true,
+   "at_the_edge_of_the_search": false
+  },
+  {
+   "tile": "x+001y+000",
+   "measured_paint_items": 35,
+   "returns_on_paint_at_peak": 141,
+   "peak_minus_median_dlog": 1.95,
+   "aerial_minus_lidar_m": [
+    0.15,
+    0.15
+   ],
+   "offset_m": 0.21,
+   "reported": false,
+   "at_the_edge_of_the_search": false
+  },
+  {
+   "tile": "x-009y+001",
+   "measured_paint_items": 145,
+   "returns_on_paint_at_peak": 447,
+   "peak_minus_median_dlog": 1.82,
+   "aerial_minus_lidar_m": [
+    0.3,
+    -0.15
+   ],
+   "offset_m": 0.34,
+   "reported": true,
+   "at_the_edge_of_the_search": false
+  },
+  {
+   "tile": "x-008y+001",
+   "measured_paint_items": 43,
+   "returns_on_paint_at_peak": 106,
+   "peak_minus_median_dlog": 1.37,
+   "aerial_minus_lidar_m": [
+    0.3,
+    -0.15
+   ],
+   "offset_m": 0.34,
+   "reported": false,
+   "at_the_edge_of_the_search": false
+  },
+  {
+   "tile": "x-010y+002",
+   "measured_paint_items": 49,
+   "returns_on_paint_at_peak": 92,
+   "peak_minus_median_dlog": 1.58,
+   "aerial_minus_lidar_m": [
+    0.3,
+    0.15
+   ],
+   "offset_m": 0.34,
+   "reported": false,
+   "at_the_edge_of_the_search": false
+  },
+  {
+   "tile": "x-009y+002",
+   "measured_paint_items": 74,
+   "returns_on_paint_at_peak": 165,
+   "peak_minus_median_dlog": 2.04,
+   "aerial_minus_lidar_m": [
+    0.3,
+    0.15
+   ],
+   "offset_m": 0.34,
+   "reported": false,
+   "at_the_edge_of_the_search": false
+  },
+  {
+   "tile": "x-010y+003",
+   "measured_paint_items": 107,
+   "returns_on_paint_at_peak": 234,
+   "peak_minus_median_dlog": 2.24,
+   "aerial_minus_lidar_m": [
+    0.15,
+    -0.15
+   ],
+   "offset_m": 0.21,
+   "reported": true,
+   "at_the_edge_of_the_search": false
+  },
+  {
+   "tile": "x-009y+003",
+   "measured_paint_items": 103,
+   "returns_on_paint_at_peak": 225,
+   "peak_minus_median_dlog": 2.14,
+   "aerial_minus_lidar_m": [
+    0.15,
+    -0.15
+   ],
+   "offset_m": 0.21,
+   "reported": true,
+   "at_the_edge_of_the_search": false
+  },
+  {
+   "tile": "x-006y+003",
+   "measured_paint_items": 49,
+   "returns_on_paint_at_peak": 229,
+   "peak_minus_median_dlog": 0.52,
+   "aerial_minus_lidar_m": [
+    -0.3,
+    0.15
+   ],
+   "offset_m": 0.34,
+   "reported": true,
+   "at_the_edge_of_the_search": false
+  },
+  {
+   "tile": "x-010y+004",
+   "measured_paint_items": 33,
+   "returns_on_paint_at_peak": 114,
+   "peak_minus_median_dlog": 2.61,
+   "aerial_minus_lidar_m": [
+    -0.15,
+    0.3
+   ],
+   "offset_m": 0.34,
+   "reported": false,
+   "at_the_edge_of_the_search": false
+  },
+  {
+   "tile": "x-009y+004",
+   "measured_paint_items": 7,
+   "returns_on_paint_at_peak": 46,
+   "peak_minus_median_dlog": 1.76,
+   "aerial_minus_lidar_m": [
+    0.0,
+    -0.15
+   ],
+   "offset_m": 0.15,
+   "reported": false,
+   "at_the_edge_of_the_search": false
+  },
+  {
+   "tile": "x-007y+004",
+   "measured_paint_items": 81,
+   "returns_on_paint_at_peak": 344,
+   "peak_minus_median_dlog": 0.44,
+   "aerial_minus_lidar_m": [
+    0.15,
+    0.0
+   ],
+   "offset_m": 0.15,
+   "reported": true,
+   "at_the_edge_of_the_search": false
+  },
+  {
+   "tile": "x-006y+004",
+   "measured_paint_items": 22,
+   "returns_on_paint_at_peak": 117,
+   "peak_minus_median_dlog": 0.55,
+   "aerial_minus_lidar_m": [
+    0.15,
+    0.0
+   ],
+   "offset_m": 0.15,
+   "reported": false,
+   "at_the_edge_of_the_search": false
+  },
+  {
+   "tile": "x-011y+005",
+   "measured_paint_items": 9,
+   "returns_on_paint_at_peak": 35,
+   "peak_minus_median_dlog": 0.7,
+   "aerial_minus_lidar_m": [
+    0.0,
+    -0.15
+   ],
+   "offset_m": 0.15,
+   "reported": false,
+   "at_the_edge_of_the_search": false
+  },
+  {
+   "tile": "x-010y+005",
+   "measured_paint_items": 10,
+   "returns_on_paint_at_peak": 34,
+   "peak_minus_median_dlog": 0.68,
+   "aerial_minus_lidar_m": [
+    0.0,
+    -0.15
+   ],
+   "offset_m": 0.15,
+   "reported": false,
+   "at_the_edge_of_the_search": false
+  },
+  {
+   "tile": "x-008y+005",
+   "measured_paint_items": 55,
+   "returns_on_paint_at_peak": 173,
+   "peak_minus_median_dlog": 0.72,
+   "aerial_minus_lidar_m": [
+    0.15,
+    -0.15
+   ],
+   "offset_m": 0.21,
+   "reported": false,
+   "at_the_edge_of_the_search": false
+  },
+  {
+   "tile": "x-007y+005",
+   "measured_paint_items": 33,
+   "returns_on_paint_at_peak": 126,
+   "peak_minus_median_dlog": 0.67,
+   "aerial_minus_lidar_m": [
+    0.15,
+    0.15
+   ],
+   "offset_m": 0.21,
+   "reported": false,
+   "at_the_edge_of_the_search": false
+  },
+  {
+   "tile": "x-011y+006",
+   "measured_paint_items": 49,
+   "returns_on_paint_at_peak": 156,
+   "peak_minus_median_dlog": 0.73,
+   "aerial_minus_lidar_m": [
+    0.0,
+    -0.15
+   ],
+   "offset_m": 0.15,
+   "reported": false,
+   "at_the_edge_of_the_search": false
+  },
+  {
+   "tile": "x-010y+006",
+   "measured_paint_items": 54,
+   "returns_on_paint_at_peak": 222,
+   "peak_minus_median_dlog": 1.07,
+   "aerial_minus_lidar_m": [
+    0.0,
+    -0.15
+   ],
+   "offset_m": 0.15,
+   "reported": true,
+   "at_the_edge_of_the_search": false
+  },
+  {
+   "tile": "x-009y+006",
+   "measured_paint_items": 38,
+   "returns_on_paint_at_peak": 103,
+   "peak_minus_median_dlog": 0.86,
+   "aerial_minus_lidar_m": [
+    -0.15,
+    0.0
+   ],
+   "offset_m": 0.15,
+   "reported": false,
+   "at_the_edge_of_the_search": false
+  },
+  {
+   "tile": "x-008y+006",
+   "measured_paint_items": 11,
+   "returns_on_paint_at_peak": 55,
+   "peak_minus_median_dlog": 0.95,
+   "aerial_minus_lidar_m": [
+    0.15,
+    -0.15
+   ],
+   "offset_m": 0.21,
+   "reported": false,
+   "at_the_edge_of_the_search": false
+  },
+  {
+   "tile": "x-009y+007",
+   "measured_paint_items": 5,
+   "returns_on_paint_at_peak": 30,
+   "peak_minus_median_dlog": 0.27,
+   "aerial_minus_lidar_m": [
+    -0.9,
+    0.3
+   ],
+   "offset_m": 0.95,
+   "reported": false,
+   "at_the_edge_of_the_search": false
+  }
+ ]
+}

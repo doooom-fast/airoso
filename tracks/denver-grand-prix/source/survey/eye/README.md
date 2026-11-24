@@ -40,3 +40,14 @@ with its class. In deep building shadow nothing can be seen: do not guess there.
 
 Be strict: a ring is a post only if you can see the post's signature (two strokes from one foot, or one clear
 stroke with a head where the other year is shadowed). Count nothing as a post because it has a ring.
+
+## Second pass (panels `Rnnn` / `RXnnn`)
+
+The post reader was run again with the sun's bearing taken, per tile and year, from the posts the first pass confirmed
+(2020 holds flight lines of different hours: its shadows fall north-west in most of the lap and north in some of it).
+The second-pass panels look like the first, with one addition: **every post already accepted is a small green square**.
+Numbered rings are only the NEW candidates (ids 10000 and up) and first-pass rings that a reader could not find on its
+panel (ids under 10000). Give every numbered ring a class as before; a ring on a post that already has a green square
+is `not_a_post` with note `duplicate of an accepted post`. Then add, as before, any post with neither a ring nor a green
+square: this is the recall check on the first pass. If a green square sits on something that is NOT a post, say so in
+the panel note with its E, N (it will be reviewed). Output: `verdicts_r2_<batch>.json`, same format.

@@ -40,6 +40,9 @@ def load_verdicts():
 
 def main(cache):
     cands = json.load(open(os.path.join(cache, 'posts_candidates_panels.json')))['candidates']; meta = json.load(open(os.path.join(cache, 'posts_candidates.json')))['meta']
+    r2 = os.path.join(cache, 'posts_candidates_r2.json')
+    if os.path.exists(r2):
+        d2 = json.load(open(r2)); cands = cands + d2['candidates']; meta = {'first_pass': meta, 'second_pass_with_the_sun_bearing_from_confirmed_posts': {**d2['meta'], 'new_candidates': len(d2['candidates'])}}
     panels = json.load(open(os.path.join(cache, 'panels.json'))); V, added, panels_read, vfiles = load_verdicts(); L = lapgeo.lap()
     # every stroke of every year, for placing what the eye added
     SB = []; SY = []; SL = []
@@ -85,6 +88,18 @@ def main(cache):
         posts.append({'class': a['class'], 'lonlat': [round(float(lo), 7), round(float(la), 7)], '_en': [float(pos[0]), float(pos[1])], 'grade': grade, 'position_from': frm, 'years': yrs,
                       'confirmed_by_second_year': len(yrs) >= 2, 'spread_m': None, 'reader_verdict': 'missed by the reader', 'eye': {'verdict': a['class'], 'panel': a['panel'], 'note': a.get('note'), 'read_at_en': [float(a['E']), float(a['N'])]},
                       'shadow_m': sm, 'arms': {}, 's_m': round(float(L['s'][k]), 1), 'off_lap_m': round(float(np.hypot(L['E'][k] - pos[0], L['N'][k] - pos[1])), 1), 'leg': L['legs'][int(L['leg'][k])]})
+    for p in posts:                                   # which years' strokes start at this foot, on the strokes as last read
+        if 'candidate' in p:
+            grp = st.query_ball_point(np.array(p['_en']), pl.Q['JOIN_M'])
+            yrs = sorted({int(SY[i]) for i in grp} | set(p['years']), reverse=True)
+            if len(yrs) > len(p['years']):
+                p['years'] = yrs; p['confirmed_by_second_year'] = len(yrs) >= 2
+                for y in yrs:
+                    if str(y) not in p['shadow_m']:
+                        p['shadow_m'][str(y)] = round(max(SL[i] for i in grp if SY[i] == y), 2)
+                if p['spread_m'] is None and len(yrs) >= 2:
+                    b_ = [np.mean([SB[i] for i in grp if SY[i] == y], 0) for y in yrs if any(SY[i] == y for i in grp)] + [np.array(p['_en'])]
+                    p['spread_m'] = round(float(max(np.hypot(*(u - v)) for u in b_ for v in b_)), 2)
     posts.sort(key=lambda p: p['s_m'])
     for k, p in enumerate(posts):
         p['id'] = ('g' if p['class'] in SIGNAL else 'l') + f'{k:04d}'; p['height_m'] = None

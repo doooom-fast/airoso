@@ -34,7 +34,7 @@ from scripts.aerial.engine.ortho import Ortho  # noqa: E402
 YEARS = (2022, 2020, 2018)
 PRIOR = {2022: 358.0, 2020: 312.0, 2018: 0.0}            # compass bearing base -> tip of a post's shadow, by eye
 P = {'HAT_M': 1.6, 'DARK_MIN': 16.0, 'DARK_REL': 0.28, 'BG_MIN': 55.0, 'LINE_M': 1.1, 'POST_L_MIN': 1.8, 'POST_W_MAX': 0.75, 'ARM_L_MIN': 1.8, 'ARM_W_MAX': 0.9, 'ARM_JOIN': 1.0,
-     'SUN_WIN_DEG': 14.0, 'SUN_KNOWN_MIN': 3, 'SUN_MIN_VOTE_M': 20.0, 'FOOT_R': 0.6, 'TIP_R': 2.2, 'ROAD_IN_M': 0.6, 'SHADOW_PAD_M': 0.4}
+     'SUN_WIN_DEG': 14.0, 'SUN_KNOWN_MIN': 3, 'SUN_KNOWN_GOOD': 4, 'SUN_PLAUSIBLE_DEG': 20.0, 'SUN_MIN_VOTE_M': 20.0, 'FOOT_R': 0.6, 'TIP_R': 2.2, 'ROAD_IN_M': 0.6, 'SHADOW_PAD_M': 0.4}
 
 
 def unpack(z, k):
@@ -177,17 +177,22 @@ if __name__ == '__main__':
     if known is not None:
         with mp.Pool(3) as pool:
             cal = dict(pool.map(calib, [(t, cache, inside(t)) for t in ids]))
-        # a tile with too few known posts takes the bearing of the nearest tile that has one, in that year
+        # a calibration is kept only with SUN_KNOWN_GOOD votes and within SUN_PLAUSIBLE_DEG of a bearing seen by eye for that
+        # year (2022 and 2018 north; 2020 north-west or north: two flight lines); a tile without one takes the nearest kept
+        # tile's bearing in that year (its own when kept: distance 0)
+        PLAUS = {2022: (0.0,), 2018: (0.0,), 2020: (305.0, 0.0)}
+        def good(y, c):
+            return c is not None and c[0] is not None and c[1] >= P['SUN_KNOWN_GOOD'] and min(abs((c[0] - p + 180) % 360 - 180) for p in PLAUS[y]) <= P['SUN_PLAUSIBLE_DEG']
         fb = {}
         for t in ids:
             fb[t] = {}
             for y in YEARS:
-                have = [(math.hypot(T[t]['cell'][0] - T[u]['cell'][0], T[t]['cell'][1] - T[u]['cell'][1]), cal[u][y][0]) for u in ids if y in cal[u] and cal[u][y][0] is not None]
+                have = [(math.hypot(T[t]['cell'][0] - T[u]['cell'][0], T[t]['cell'][1] - T[u]['cell'][1]), cal[u][y][0]) for u in ids if good(y, cal[u].get(y))]
                 if have:
                     fb[t][y] = min(have)[1]
-        json.dump({'_doc': 'shadow bearing (compass, foot -> tip) per work tile and flight year from the first pass\'s eye-confirmed posts: [bearing or null, posts voting]', 'tiles': {t: {str(y): v for y, v in c.items()} for t, c in cal.items()}},
+        json.dump({'_doc': 'shadow bearing (compass, foot -> tip) per work tile and flight year from the first pass\'s eye-confirmed posts: [bearing or null, posts voting]; used = the bearing the second pass read with (vetted, or the nearest vetted tile\'s)', 'tiles': {t: {str(y): v for y, v in c.items()} for t, c in cal.items()}, 'used': {t: {str(y): v for y, v in f.items()} for t, f in fb.items()}},
                   open(os.path.join(cache, 'posts_sun.json'), 'w'), indent=1)
-        jobs = [(t, cache, inside(t), fb[t]) for t in ids]
+        jobs = [(t, cache, [], fb[t]) for t in ids]          # [] known: run() takes the vetted bearing, not its own vote
     with mp.Pool(3) as pool:
         for r in pool.imap_unordered(one, jobs):
             print(r, flush=True)

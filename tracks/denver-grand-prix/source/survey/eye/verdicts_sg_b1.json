@@ -159,6 +159,54 @@
     }
    ],
    "note": "Open, well-lit junction. All four corner masts and the sidewalk lamps carry squares. Square at E -1454.6, N 940.5 sits in a bare tree / shrub bed, not on a post; the post it likely stands for is the globe lamp added 2.2 m NE of it."
+  },
+  "SG25": {
+   "candidates": {},
+   "added": [
+    {
+     "E": -1583.8,
+     "N": 908.9,
+     "class": "lamp",
+     "note": "south corner, in the planted strip east of the sidewalk: 2022 bright globe head at the foot and a ~3.5 m stroke north; 2020 in tree shadow (not confirmed there); ~3.7 m east of the square at -1587.7, 908.7"
+    }
+   ],
+   "note": "Open junction, well lit. All masts and signal posts have squares. Square at E -1587.7, N 908.7 sits among bare-tree branches with no post signature in either year (likely meant for the globe lamp added 3.7 m east). East corner: a street-name post (cross-shaped plate shadow both years) stands at about -1550.8, 945.6, only ~1.0 m from the lamp square at -1551.5, 944.9, so it is within tolerance and not added; review if the two should be separate. A 2020 T-headed stroke in the west parking lane near -1592.7, 943.6 is hidden by a truck in 2022 (possibly a person), not added. A 2020 lamp shadow entering at the east edge near N 934 has its foot outside the panel."
+  },
+  "SG26": {
+   "candidates": {},
+   "added": [
+    {
+     "E": -1544.2,
+     "N": 823.3,
+     "class": "lamp",
+     "note": "west edge, south kerb of Auraria Pkwy in the grass strip: globe lamp; 2022 ~3.3 m stroke north ending in a round head, 2020 NW stroke from the same foot; feet agree within 0.2 m"
+    },
+    {
+     "E": -1520.0,
+     "N": 848.6,
+     "class": "post_unknown",
+     "note": "north corner, ~3.5 m SE of the corner mast square: 2022 a clear second vertical pole shadow (~6 m north) from a foot by the curb ramp with signal heads at its base; 2020 a node on the arm shadows there; may be a second mast carrying the SE arms over Speer; review"
+    }
+   ],
+   "note": "Big junction, well lit. Squares that look NOT on a post: E -1523.1, N 850.5 (on the tactile strip at the north corner; empty pavement in 2022, on a mast shadow in 2020) and E -1499.7, N 831.2 (east corner sidewalk, empty in both years). Small dark specks in the east grass (about -1499.4, 822.5) have sub-metre shadows, not counted."
+  },
+  "SG27": {
+   "candidates": {},
+   "added": [
+    {
+     "E": -1396.3,
+     "N": 721.4,
+     "class": "sign_or_small_post",
+     "note": "NE sidewalk of Speer at the panel's north edge: flag-shaped sign like the two squared ones to its SW; 2022 ~1.8 m stroke north ending in a pennant plate, 2020 NW stroke with the plate; feet agree; ~4.5 m NE of the nearest square"
+    },
+    {
+     "E": -1418.8,
+     "N": 717.7,
+     "class": "sign_or_small_post",
+     "note": "north corner in the grass behind the kerb: 2020 NW stroke ending in a rectangular plate; 2022 a thin stroke north from the same foot overlapping a small bare tree's shadow"
+    }
+   ],
+   "note": "Well lit. Masts, lamps and the squared flag signs all check out. East corner: the square at -1399.7, 701.6 lies 1.4 m from the foot of the flag sign it stands for (foot about -1398.5, 700.9; the square sits on the sign's 2020 shadow) - within tolerance, not added. A thick dark board/monolith at the south-west (about -1432.8, 677) is a structure, not a post."
   }
  }
 }

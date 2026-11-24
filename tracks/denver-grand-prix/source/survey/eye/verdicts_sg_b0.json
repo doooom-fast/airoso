@@ -104,6 +104,70 @@
     }
    ],
    "note": "Main miss is the SE signal mast (no square). Parking meters at (-900.1,24.5) (T-head) and (-905.9,-16.8) not added. 2020-only thin stroke at about (-892.3,-13.8) not confirmed in 2022, not added. SE quarter in building shadow in 2020."
+  },
+  "SG09": {
+   "candidates": {},
+   "added": [
+    {
+     "E": -1002.9,
+     "N": 24.1,
+     "class": "sign_or_small_post",
+     "note": "nose of the parking-lot island NW: 2022 thin 2 m north stroke; 2020 NW stroke with a head to (-1003.4,25.5)"
+    },
+    {
+     "E": -999.0,
+     "N": 21.2,
+     "class": "sign_or_small_post",
+     "note": "NW sidewalk W of the bike lane: 2022 thin 2.1 m north stroke from ~(-999.2,21.5); 2020 a foot dot at (-998.8,20.4) with a short stroke and a 1.9 m wide plate shadow running west at N 21.6. Foot position +-0.6 m"
+    },
+    {
+     "E": -980.5,
+     "N": 11.1,
+     "class": "sign_or_small_post",
+     "note": "NE corner sidewalk: 2022 thin north stroke from here up to the square at (-980.7,12.9); 2020 NW stroke to (-981.3,12.3). The square sits ~1.8 m north on the 2022 shadow end: likely the same post, merge rather than double"
+    }
+   ],
+   "note": "Square (-980.7,12.9) appears to be on the shadow tip of the post whose foot is at (-980.5,11.1). Short items at (-984.3,27.0) and (-1011.5,14.5) are meter/bollard height, not added. All masts squared."
+  },
+  "SG10": {
+   "candidates": {},
+   "added": [
+    {
+     "E": -1147.5,
+     "N": 1.2,
+     "class": "sign_or_small_post",
+     "note": "east nose of the west median island: 2022 thin 2.4 m north stroke; 2020 NW stroke ending in a plate shadow at (-1149.1,2.6)"
+    }
+   ],
+   "note": "Both corner masts squared. A lamp at the south edge (2022 pole shadow along E -1130.6 from N -12.4 to the panel edge, arm to (-1128.6,-12.0)) has its foot at or just below the panel's south edge (~-1130.6,-16.5): not added, check the neighbouring panel. A SE mast's arm/heads enter at the east edge (E -1112.5, N -3..-7) with the foot outside the panel."
+  },
+  "SG11": {
+   "candidates": {},
+   "added": [
+    {
+     "E": -1214.4,
+     "N": 154.2,
+     "class": "sign_or_small_post",
+     "note": "NW corner by the station kiosk: 2022 thin 2.2 m north stroke with a small head at (-1214.4,156.4); 2020 falls in the kiosk's shadow"
+    },
+    {
+     "E": -1206.1,
+     "N": 123.9,
+     "class": "sign_or_small_post",
+     "note": "SW grass strip by the sidewalk: 2022 plate shadow at (-1206.0,124.7) on a short stroke; 2020 plate shadow NW at (-1207.3,124.3) under tree shadow"
+    }
+   ],
+   "note": "Also a sign at (-1197.5,132.1) (plate shadows both years) sits 1.35 m from the lamp square (-1198.7,131.5) - not added by the 1.5 m rule, but the square belongs to the lamp, so the sign is likely unrecorded. Short strokes on the rail platform at (-1213.7,159.3) and (-1194.5,167.6) are ~1 m (bollard height), not added. Square (-1210.2,153.0) is a rail-crossing crossbuck/signal post."
+  },
+  "SG12": {
+   "candidates": {},
+   "added": [],
+   "note": "Nothing added. Dense junction (light-rail crossing): all lamps, masts and catenary poles found have squares. Thin dark lines across the NW quarter (e.g. (-919,437.5-440), (-908.3,441.5-443)) are overhead catenary wire shadows, not posts. The pyramid-topped column at (-888.5,425) is a large ad/info pillar, not a post. Short element at the bike-lane island nose (-893.5,415.3) is bollard/delineator height. SW quarter under building shadow in 2022, NE under building shadow in 2020."
+  },
+  "SG13": {
+   "candidates": {},
+   "added": [],
+   "note": "Nothing added. All lamps and masts inside the panel have squares. A cobra-head luminaire at (-779.3,521.1) in 2022 hangs from an arm whose pole is east of the panel edge (not added; check the neighbouring panel). Round dark objects at (-817.2,538.3) both years are trash cans; dark blob at (-814.3,549.4) both years with no stroke is a hydrant; round planters on the SE plaza are not posts."
   }
  }
 }

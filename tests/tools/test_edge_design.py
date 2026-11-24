@@ -137,9 +137,12 @@ def test_milford_names_it_its_script_writes_it_and_its_committed_line_carries_it
 def test_edge_bulges_reports_a_line(tmp_path=None):
     tmp = Path(tmp_path) if tmp_path else Path(tempfile.mkdtemp())
     pts = _line()
-    w = [11.0 + _bump(t, 1500, 1620, 1.2) + _bump(t, 3000, 3100, 0.8) for t in range(len(pts))]
+    w = [11.0 + _bump(t, 1500, 1620, 1.2) + _bump(t, 3000, 3100, 0.8) + _bump(t, 4000, 4100, 0.9) for t in range(len(pts))]
     (tmp / "source").mkdir(parents=True, exist_ok=True)
-    (tmp / "source" / "ev.json").write_text(json.dumps({"points": _evidence(pts, lambda t: 11.0 + _bump(t, 3000, 3100, 0.8))}))
+    # nobody measured s 3,900-4,200: its 0.9 m swell is listed apart, kept
+    ev = [q for q in _evidence(pts, lambda t: 11.0 + _bump(t, 3000, 3100, 0.8))
+          if not 3900 <= (math.atan2(q[1], q[0]) % (2 * math.pi)) / (2 * math.pi) * len(pts) <= 4200]
+    (tmp / "source" / "ev.json").write_text(json.dumps({"points": ev}))
     (tmp / "track.config.json").write_text(json.dumps({"loop": True, "edge_bulges": {"evidence": "source/ev.json"}}))
     (tmp / "line.json").write_text(json.dumps({"points_xyz_m": [list(p) for p in pts], "widths_m": w}))
     r = subprocess.run([sys.executable, str(ROOT / "tools" / "edge_bulges.py"), str(tmp), "--line", str(tmp / "line.json"),
@@ -148,4 +151,6 @@ def test_edge_bulges_reports_a_line(tmp_path=None):
         return                                                  # the report needs numpy; the PC's system python has none
     assert r.returncode == 0, r.stderr
     rep = json.loads((tmp / "rep.json").read_text())
-    assert rep["series"]["width"]["count"] == {"ours": 1, "real": 1, "unmeasured": 0}
+    assert rep["series"]["width"]["count"] == {"ours": 1, "real": 1, "unmeasured": 1}
+    um = [u for u in rep["unmeasured_kept"] if u["series"] == "width"]
+    assert len(um) == 1 and 3990 <= um[0]["peak_s"] <= 4110 and abs(um[0]["amp_m"] - 0.9) < 0.05

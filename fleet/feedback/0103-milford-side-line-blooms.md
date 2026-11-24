@@ -135,8 +135,14 @@ normals) or a line + widths; per side and on the width; the edge curvature's 2-3
 
 ### Milford, measured
 
-On 0.1.15's built `track.obj` (`--workshop`): width bulges the measured edge does not carry 16 (3.39 / km, max 2.58 m),
-real 15, unmeasured 5; left edge 14 / right 9 (per side the line's own off-centre reading counts too).
+On 0.1.15's built `track.obj` (`--workshop`, the bowl and the retraced stretches counted apart, as Milford's config has
+it): width bulges the measured edge does not carry 11 (2.33 / km, max 1.59 m), real 4; left edge 9 / right 5 (per side
+the line's own off-centre reading counts too). Counting the retraced stretches in: 16, real 15, unmeasured 5.
+
+Unmeasured, kept (the Mac, 2026-11-24: "A gore or a junction flare the evidence never reached isn't a bulge we can call
+ours"; `edge_bulges.py`'s "unmeasured_kept" list, for a look in the car), all five on the width and all inside retraced
+stretches: s 0-20 (+0.65 m over 21 m), s 231-429 (+4.74 m, 199 m), s 2,388-2,512 (+9.41 m, 125 m: the gore),
+s 3,230-3,287 (+1.46 m, 58 m), s 4,620-4,723 (+2.44 m, 104 m).
 
 At intake (`data/width_design.json`), the width before the retrace:
 
@@ -189,7 +195,7 @@ main's d31cb9a8 byte for byte):
 
 ## Tests
 
-- `tests/tools/test_edge_design.py` (7): the layout takes out swells and pinches and keeps steps and tapers; the design
+- `tests/tools/test_edge_design.py` (7, the report's "unmeasured, kept" list included): the layout takes out swells and pinches and keeps steps and tapers; the design
   takes out only what the measured edge does not carry, keeps a real one, touches nothing else to the bit, never a held
   span; an unmeasured bulge is kept and reported; the lidar edges judge where they cover; width_design is opt-in, runs
   after width_hold and before the retrace, Milford only; Milford's config, script, ship.json and committed line;
@@ -204,7 +210,8 @@ main's d31cb9a8 byte for byte):
 ## Not done
 
 - The scratch chain on the PC (from an empty workshop, `--no-install`) when the queue reaches Milford; then
-  `tools/edge_bulges.py --workshop` on its `track.obj` (before: 16 width bulges of ours on 0.1.15's), every gate, the kn5
-  against 0.1.15's 51,527,489 B.
+  `tools/edge_bulges.py --workshop` on its `track.obj` (before: 11 width bulges of ours on 0.1.15's, the retraced
+  stretches counted apart), every gate, the kn5 against 0.1.15's 51,527,489 B. A green chain installs and merges (the
+  Mac).
 - `tools/edge_bulges.py` on Lake Murray, Sand Creek and High Plains (the Mac).
 - Install on Kevin's standing word once green and matching; then his drive of the two curves.

@@ -15,6 +15,8 @@ The track's track.config.json "edge_bulges" block (all optional): "evidence" (po
 "lidar_edges" (an edges_curves.py read: stations {s, left.u_m, right.u_m}), both paths in the track dir; "skip" [[s0, s1]]
 (stretches the report counts apart, e.g. a banked bowl built from its own section); the spans and tapers of every
 lm_intake.edge_retrace record count apart as well (the retrace re-traces them to the measured edge).
+The report lists the excursions nobody measured apart ("unmeasured_kept": side, s, size): they are kept, not called ours
+(a gore or junction flare the evidence never reached), for a look in the car.
 The PNG (PIL): the lap in rows of 400 m, each side's e(s) across with the offset exaggerated, the measured 5 m medians,
 the bulges shaded (red = ours, green = real, grey = unmeasured).
 """
@@ -223,6 +225,13 @@ def run(track: Path, workshop: Path | None, line: Path | None):
         wob[name] = {"wobble_2_30m_1pkm_p50_p90_max": [round(float(np.percentile(per, q)), 3) for q in (50, 90, 100)],
                      "flip_m_per_km": round(float(flips.sum() * DS / km), 2)}
     rep["curvature"] = wob
+    # the excursions nobody measured, KEPT (the Mac, ledger 0103: a gore or a junction flare the evidence never reached is
+    # not a bulge we can call ours): their own list, side / s / size, for a look in the car
+    rep["unmeasured_kept"] = [
+        {"series": name, "s": r["s"], "peak_s": r["peak_s"], "amp_m": r["amp_m"], "len_m": r["len_m"], "dir": r["dir"],
+         "measured_in": r.get("measured_in"), "measured_out": r.get("measured_out"), "in_a_skipped_stretch": r["skipped"]}
+        for name, (_sr, _yr, rows) in keep.items() for r in rows
+        if r["verdict"] == "unmeasured" and r["kind"] == "bulge"]
     return rep, keep, meas
 
 
@@ -286,6 +295,10 @@ def main(argv=None):
         print(f"[edge_bulges] {rep['track']} {name}: bulges ours {v['count']['ours']} ({v['per_km']['ours']}/km, max "
               f"{v['ours_amp_m_max']} m, {v['ours_len_m_total']} m long), real {v['count']['real']}, unmeasured "
               f"{v['count']['unmeasured']}")
+    for u in rep["unmeasured_kept"]:
+        print(f"[edge_bulges] {rep['track']} unmeasured, kept: {u['series']} s {u['s'][0]:.0f}-{u['s'][1]:.0f} {u['dir']} "
+              f"{u['amp_m']} m over {u['len_m']} m (measured {u['measured_in']} in / {u['measured_out']} out)"
+              + ("; in a skipped / retraced stretch" if u["in_a_skipped_stretch"] else ""))
     for name, v in rep["curvature"].items():
         print(f"[edge_bulges] {rep['track']} {name} edge curvature wobble 2-30 m (1/km per 100 m) p50/p90/max "
               f"{v['wobble_2_30m_1pkm_p50_p90_max']}, flips {v['flip_m_per_km']} m/km")

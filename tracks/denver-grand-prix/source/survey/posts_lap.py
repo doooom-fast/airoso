@@ -28,7 +28,7 @@ HERE = os.path.dirname(os.path.abspath(__file__)); sys.path.insert(0, HERE)
 import lapgeo  # noqa: E402
 
 Q = {'POST_CORRIDOR_M': 25.0, 'JOIN_M': 0.9, 'TREE_TIP_M2': 2.5, 'CROWD_R_M': 2.0, 'CROWD_N': 3, 'SHADOW_MIN_M': 1.2, 'PANEL_STEP_M': 48.0, 'PANEL_M': 58.0,
-     'EYE_SNAP_M': 2.0, 'R2_OLD_M': 1.0, 'R2_POST_M': 1.6, 'EYE_DEDUPE_M': 1.6, 'SIGNAL_JUNCTION_R_M': 32.0}
+     'EYE_SNAP_M': 1.0, 'R2_OLD_M': 1.0, 'R2_POST_M': 1.6, 'EYE_DEDUPE_M': 1.6, 'SIGNAL_JUNCTION_R_M': 32.0}
 YEARS = (2022, 2020, 2018)
 CLASSES = ['lamp', 'signal_mast', 'signal_post', 'sign_or_small_post', 'utility_pole', 'post_unknown', 'not_a_post', 'cannot_tell']
 

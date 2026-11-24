@@ -105,7 +105,7 @@ def main(cache):
         cj = json.load(open(cf))
         def near(E, N):
             d = [math.hypot(p['_en'][0] - E, p['_en'][1] - N) for p in posts]; k = int(np.argmin(d)) if d else -1
-            return k if k >= 0 and d[k] <= 0.8 else None
+            return k if k >= 0 and d[k] <= 1.5 else None
         for r in cj.get('remove', []):
             k = near(r['E'], r['N'])
             if k is not None:

@@ -329,6 +329,8 @@ def test_the_edge_lift_goes_up_to_the_lidar_or_the_lip_and_never_down():
     # a lift patch cuts nothing and carries no feather, weight or split; every other patch takes the old path
     assert 'if p.get("lift") is not None:' in src and "a lift patch cuts nothing and has no feather, weight or" in src
     assert 'if p.get("feather_spares_roads") is not None:' in src and "spare.find_nearest((x, z, 0.0), 1e-3)" in src
+    # 0.2.11: a vertex on a sheet's very edge (a pad outline vertex) takes the nearest sheet's height when the ray slips past
+    assert "lo = tri_height(tris[near[2]], near[0].x, near[0].y)" in src
     assert "for _ in range(0 if p.get(\"split_mode\") == \"bisect\" else 12):" in src
 
 
@@ -362,7 +364,7 @@ def test_sand_creek_quebec_patches_as_measured():
         # a feathered patch's feather never moves the ground under a road or walk (the 0.5 m gap and the walk stay the seats')
         assert (p.get("feather_spares_roads") == ["ROAD", "CURB", "1ROAD"]) == (p["feather_m"] > 0), pid
     assert by["quebec_median"]["feather_m"] == 0.0 and len(by["quebec_median"]["hard_edges"]) == len(by["quebec_median"]["polygon"])
-    for pid in QUEBEC_LIFT:
+    for pid in QUEBEC_LIFT:                                # 0.2.11 tried the pad at 2.0 m: no change measured, not kept
         p = by[pid]
         assert p["feather_m"] == 0.0 and "hard_edges" not in p and "split_m" not in p
         assert p["lift"] == {"clear_m": 0.16, "gap_m": 1.25, "road_prefixes": ["ROAD", "CURB", "1ROAD"]}
@@ -374,6 +376,17 @@ def test_sand_creek_quebec_patches_as_measured():
         poly = [tuple(q) for q in by[pid]["polygon"]]
         for x, z in ((1775.0, -512.0), (1783.3, -521.1), (1790.0, -510.0), (1865.0, -390.0), (1880.0, -415.0)):
             assert not lgp.point_in(poly, x, z), (pid, x, z)
+
+
+def test_nb12_stands_where_0_2_9_stood_it():
+    """0.2.11 (the Mac, after 0.2.10 skipped nb12): its setback is hand-set to 0.2.9's built spot (1809.22, -501.43), 13.5 m
+    along and 19.2 m left of v1942, now that the lap there is 17.25 m wide (the flare off); every other post keeps the
+    generator's 2.1 m"""
+    nb = _cfg(SC / "source" / "name_blades.json")
+    posts = {p["id"]: p for p in nb["posts"]}
+    assert posts["nb12"]["setback_m"] == 10.58 and posts["nb12"]["vertex"] == 1942 and posts["nb12"]["along_m"] == 7.75
+    assert all(p["setback_m"] == nb["setback_m"] == 2.1 for k, p in posts.items() if k != "nb12")
+    assert "HAND-SET" in nb["_doc"] and "nb12" in nb["_doc"]
 
 
 # ------------------------------------------------------------------ owned surfaces, opt-in
@@ -390,7 +403,7 @@ def test_sand_creek_binds_the_owned_pairs_and_syncs_them():
         assert Path(a).name in lic and Path(b).name in lic
     for f in (cfg["lm_intake"]["grid_reach"], cfg["lm_intake"]["flare_one_sided"]):
         assert f in ship["sync_in"]["optional"] and (SC / f).is_file()
-    assert cfg["scenery"]["streetlights"]["light_both_heads"] is True and cfg["version"] == "0.2.10"
+    assert cfg["scenery"]["streetlights"]["light_both_heads"] is True and cfg["version"] == "0.2.11"
 
 
 def test_the_0098_keys_are_opt_in():

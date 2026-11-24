@@ -1,7 +1,7 @@
 ---
 id: 0098
 title: "Sand Creek to finished, round 1 (Mac): the map-edge cut reached, the one-sided flares measured, both lamp heads lit, the owned surfaces"
-status: 0.2.10 INSTALLED 2026-11-23 (PC: round 2 at 1b3f9cef, rehearsal 0210c SHIP OK, install build equal to it; the Quebec arms' edge 0.935 -> 0.288 m on kn5_ground_check; the synced-back loop.blend kept out of git, LFS budget); owed to 0.2.11: the median-nose dimple (sc_disconnects 0.465 m), name blade nb12, lamp post 105; not driven. (0.2.9 INSTALLED earlier the same day, 5a8e2c05.)
+status: 0.2.11 INSTALLED 2026-11-24 (PC: 727b3578, rehearsal 0211 SHIP OK, install build equal to it, rerun after the 11-23 power-off; the Quebec arms' slab edge 1.068 -> 0.181 m on sc_disconnects, none over 0.30; kn5_ground_check 0.935 -> 0.288 m; nb12 back; lamp 105 left dropped; loop.blend a record only, not in git); next: 0.2.12 the Sand Creek bridge, 0.2.13 Colorado, then Quebec; not driven. (0.2.10 INSTALLED 2026-11-23, 1b3f9cef; 0.2.9 the same day, 5a8e2c05.)
 scope: tracks/sand-creek-lm; tools (opt-in keys only; every other track's outputs unchanged)
 layer: project + engine
 train: -
@@ -728,9 +728,12 @@ ground_patch, after every cutting step.
   repository exceeded its LFS budget", until Kevin raises it).
   - It is kept in `D:/k10-track-archive/2026-11-23_201558_sand_creek_0210_loop_blend/` (md5 d2569a44895b2af505d65c022903d90d,
     212,651,076 B; the installed workshop's is the same).
-  - The worktree copy was restored to HEAD. The repo's `tracks/sand-creek-lm/loop.blend` stays 0.2.9's (fb5969ae).
-  - Sand Creek drafts its blend from scratch (ship.json sync_in names no loop.blend and no seed), so no build reads it.
-  - Commit it when the budget allows.
+  - The worktree copy was restored to HEAD. Sand Creek drafts its blend from scratch (ship.json sync_in names no
+    loop.blend and no seed), so no build reads it.
+  - **Superseded 2026-11-24.** Kevin, "Keep only builds apart" and "Yes, remove record-only scene files": record-only
+    blends are out of git for good (main d31cb9a8, fleet/SCENE-FILES.md). The 0.2.9 copy (fb5969ae) left the tree with
+    them; it's still in history, a stale record, never a build input. 0.2.10's blend is never committed: it stays in the
+    archive above.
 - The rest of the sync-back is in this commit: 43 files under `tracks/sand-creek-lm` (data, ai, the pictures, and
   `data/lights.heads.json` new), no deletions.
 - `fleet/ac-installed.json`'s Sand Creek row: 0.2.10, sha 1b3f9cef.
@@ -750,6 +753,84 @@ ground_patch, after every cutting step.
    and 17 only); to be read off the aerial or the full lidar. If it is on the real corner, give it a placement off the deck
    by the lamps' own rule; if not, leave it dropped and say so.
 
+## PC, 2026-11-23: 0.2.11, the three owed by 0.2.10 (the Mac's small round)
+
+1. **The median-nose dimple:** a fix in the edge lift (tools/ground_patch_blend.py), not the gap.
+   - The dimple's triangle has a corner at (1806.03, −473.62) at 24.02. That's a TERRAIN vertex exactly on the
+     sandcreek_quebec outline (one of the pad's own ring vertices).
+   - The lift counted it as under a road, since its plan distance to the deck was 0. But the downward ray slipped past the
+     deck's edge and found no sheet, so it got no lip and stayed down.
+   - Now a vertex on a sheet's very edge takes the nearest sheet's height there (tri_height at the nearest point),
+     still capped by min(lidar, lip).
+   - 28 more vertices lift under the pad (1,242 -> 1,270). The nose cell (1806.20, −473.62) goes 24.26 -> 24.37 (the lip),
+     and under-road sag max 0.296 -> 0.282. The patches' seated heights and the four 0.30 clusters are unchanged, and
+     nothing under a road moves down.
+   - The first try, quebec_lift_pad gap_m 1.25 -> 2.0 (953b43ab), changed nothing at the nose (the cell stayed 24.26;
+     31 more vertices beside a road, 0 edge-hang cells fewer). It's back at 1.25.
+   - Target: no sc_disconnects §5 edge over 0.30. The 78 row's NW corner (0.372 m on the draft rasters) is the pad's own
+     edge shape and stays owed.
+2. **Name blade nb12:** `source/name_blades.json` nb12 setback_m 2.1 -> 10.58, hand-set and documented in the file's
+   `_doc`. The generator keeps one setback for every post, so a regeneration must keep this one. 10.58 = 0.2.9's built spot
+   (1809.22, −501.43), 13.5 m along and 19.2 m left of v1942, less 0.2.10's half-width there (8.625 m). To be checked in
+   the build, not taken as built.
+3. **Lamp post 105: left dropped.** Its draft base (1775.16, −498.21) falls in the vegetation by Sand Creek on NAIP 2023
+   (co_m_3910409_se_13_030_20230925, z18, about 0.46 m/px), about 4-6 m west of the real pavement edge.
+   - No pole shows there. The poles that do show at the corner are the traffic-signal mast arms.
+   - Sand Creek's lamps are the generator's spacing (build_loop_blend: "175 streetlights placed"), not surveyed posts.
+   - The cached lidar holds classes 2 and 17 only, so it can't show a pole.
+   - So by the Mac's rule ("if not, leave it dropped and say so") it stays dropped; 170 lamps. The aerial can't rule out a
+     slim pole at that resolution.
+
+### 0.2.11: rehearsed and installed (PC, 2026-11-23 / 24)
+
+- **The patch test caught a bug in the lift.**
+  - 953b43ab's gap_m 2.0 changed nothing at the nose: the cell (1806.20, −473.62) stayed at 24.26.
+  - The cause was a TERRAIN vertex on the sandcreek_quebec outline, (1806.03, −473.62) at 24.02. The lift skipped it
+    because its ray slipped past the deck's edge.
+  - Fixed in 727b3578: on a sheet's very edge the lift takes the nearest sheet's height. gap_m went back to 1.25.
+- **Rehearsal 0211** (727b3578, empty workshop, --no-install, 20:50-22:07): SHIP OK.
+  - Against 0210c, 9 gate lines differ, all expected: name blades 22 -> 23 posts (nb12 at (1809.22, −501.43), 0.2.9's
+    spot, the same 5.75 m slide; ground there 23.83 -> 24.007), the main kn5 148 -> 151 meshes (nb12's post and two
+    blades), and terrain tiles 2 vertices lower.
+  - kn5_ground_check: unchanged at 0.288 m and 38 / 14,158.
+- **sc_disconnects on 0211's OBJ:** §5 grid_primary_78 (end) 0.465 -> **0.181 m**, grid_primary_84#0#0 (start) 0.233 ->
+  **0.161 m**. **No §5 edge over 0.30 m** anywhere; every group count as 0210c (2 / 40 / 60 / 43 / 49 / 196 / 16).
+- **The install.**
+  - The first run (2026-11-23 22:10) died in the author step seat_terrain when the PC was powered off at 22:18. AC kept
+    0.2.10, nothing was parked, and its half-built workshop is kept as `D:/k10-scratch/sand_creek_lm.0.2.11_halfbuilt_20261123`.
+  - The rerun (2026-11-24 12:45-14:14, empty workshop, 727b3578, no force) was SHIP OK. The install step parked 0.2.10 in
+    `D:/k10-track-archive/2026-11-24_141430/`.
+- **Against 0211:**
+  - 491 / 491 gate rows identical;
+  - road / race / street kn5 equivalent (tangents only);
+  - closure and spawns byte-identical;
+  - connectors / mouths md5 equal;
+  - TreeFX bins at their source md5s; trees.txt and both AI lines identical;
+  - ui_track 0.2.11.
+- **Menu pictures:** byte-identical to 0.2.10's (the cameras don't see Quebec), copied in; the pack's own in
+  `D:/k10-track-archive/2026-11-24_141459_previews/`.
+- **loop.blend:** a record only, not in git (Kevin: "Keep only builds apart"). Kept in
+  `D:/k10-track-archive/2026-11-24_141521_sand_creek_0211_loop_blend/` (md5 8e828f5ef97b4aa39714907a7ad5d80a,
+  212,666,892 B).
+- Merged with origin/main d31cb9a8 first (1e535132), no conflict. The record-only blends left the tree with it.
+- Not driven.
+
+**Next (the Mac, 2026-11-24), off the G10's measurements** (claude/sc-roads-lidar-20261124 @ 10f75a0e,
+`source/roads_lidar_g10/`):
+1. **0.2.12, the bridge:** lower the lap about 0.34 m over s 5841-5936 to the class-17 deck, easing over the approaches
+   (+0.24 N / +0.34 S). Re-check the pads and mouths near it.
+2. **0.2.13, Colorado at its real width.** The lap becomes the near carriageway (11 m, u −5.25..+5.75); the median is a
+   raised island beside it; the far carriageway is its own side piece.
+   - The race corridor runs curb to curb on that carriageway, with no wall along the median. **On s 143-353 the race lap
+     narrows from the built 16.5 m to the real 11 m.**
+   - Lamps 0 / 2 / 4 go where a real pole is read, else they're dropped.
+   - The measured table and the list of what moves: `D:/k10-scratch/sc_colorado/COLORADO_WIDTH.md`, which goes into the
+     repo with that round.
+3. **One Quebec round:** the north arms at their real width (16.5-17 m each, against 9.5 m drawn) with their median, and
+   the planted island south of the bridge (NAIP 2023, v2005-2055) beside the lap's west carriageway. The round 2 patches
+   get re-traced with the arms.
+4. The 0086 leftovers, sized after 1-2.
+
 ## What needs Kevin, a download or the PC
 
 - **Kevin:**
@@ -759,17 +840,16 @@ ground_patch, after every cutting step.
     `lm_intake.grid_reach` to take it out.
   - Road wear on Sand Creek, if the owned asphalt should get its high-pass (`road_wear.detail_highpass_m` is a road_wear
     key).
-  - His drive of 0.2.9 (Runbook 0098-1's last step); now 0.2.10, with the Northfield Quebec arms at the sandcreek_quebec pad.
-  - The LFS budget on doooom-fast/airoso ("This repository exceeded its LFS budget"): 0.2.10's loop.blend waits on it.
+  - His drive of 0.2.9 (Runbook 0098-1's last step); now 0.2.11, with the Northfield Quebec arms at the sandcreek_quebec pad.
 - **A download (none made):** the lidar under E 56th's 466 3DEP points: the 14 EPT tiles of row z 1300-1400 listed in
   `source/grid_reach.json` `tiles_missing` (USGS CO_DRCOG_2_2020 EPT,
   `https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept.json`, 100 m tiles + 5 m; sizes not known
   without fetching). The G10's lidar round can take them with the 7 streets.
 - **The PC:**
   - Runbook 0098-1 (the rehearsal).
-  - 0.2.11, its own small round (the Mac): the median-nose dimple, nb12, lamp post 105 (section "0.2.10: rehearsed and
-    installed").
-  - When Kevin raises the LFS budget: commit 0.2.10's archived loop.blend (md5 d2569a44).
+  - 0.2.12 (the bridge), then 0.2.13 (Colorado), then one Quebec round (section "0.2.11: rehearsed and installed").
+  - Sand Creek's ship.json still lists loop.blend in sync_out.required. It comes out the next time ship.json is touched
+    (the Mac); .gitignore already keeps it out of git.
   - The pads session: sandcreek_quebec / dahlia_56th, the two one-sided flares inside their boxes (v769-787, v1924-1950),
     the N Ivy mutual T.
   - On an install: `fleet/ac-installed.json`'s Sand Creek row, 0.2.9.

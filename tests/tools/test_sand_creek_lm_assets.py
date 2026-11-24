@@ -556,7 +556,7 @@ def test_round_k_keys_are_opt_in():
         assert "signs_name_blades" not in cfg, t
     # round K's candidate (live since round R, 0.2.6: test_round_r_live_is_the_candidate)
     live = json.loads((SC / "track.config.json").read_text(encoding="utf-8"))
-    assert "race_rule" not in (live.get("kerb") or {}) and live["version"] == "0.2.10"
+    assert "race_rule" not in (live.get("kerb") or {}) and live["version"] == "0.2.11"
     sc = json.loads((SC / "source" / "round_k" / "track.config.json").read_text(encoding="utf-8"))
     assert sc["version"] == "0.2.6"
     assert sc["race"]["edge_fold_chord"] is True
@@ -1015,7 +1015,7 @@ def test_round_r_live_is_the_candidate():
     (race.corridor.whole_lap) and verify_kn5 runs both before (closure kn5) and after (--inis) the folder"""
     live = json.loads((SC / "track.config.json").read_text(encoding="utf-8"))
     cand = json.loads((SC / "source" / "round_k" / "track.config.json").read_text(encoding="utf-8"))
-    assert live["version"] == "0.2.10" and cand["version"] == "0.2.6"   # 0.2.9: ledger 0098; 0.2.10: its round 2
+    assert live["version"] == "0.2.11" and cand["version"] == "0.2.6"   # 0.2.9: ledger 0098; 0.2.10: its round 2; 0.2.11
     assert live["slug"] == live["install_folder"] == "sand_creek_raceway" and "LM" not in live["name"]
     assert [l["name"] for l in live["layouts"]] == ["Sand Creek Raceway", "Sand Creek Free Roam"]
     assert live["route"]["mouth_returns"] == ["grid_"] and live["route"]["verify_mouth_corners"] is True

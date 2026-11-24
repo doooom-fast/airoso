@@ -389,6 +389,33 @@ def test_nb12_stands_where_0_2_9_stood_it():
     assert "HAND-SET" in nb["_doc"] and "nb12" in nb["_doc"]
 
 
+# ------------------------------------------------------------------ the Quebec St bridge (0.2.12)
+def test_the_quebec_bridge_rides_its_measured_deck():
+    """0.2.12 (the Mac, 2026-11-24): the lap over Sand Creek on Quebec St was levelled flat 0.29-0.39 m over the deck the
+    2020 lidar classes 17. lm_intake.deck_profiles names that bridge alone; its profile_m (28 points every 5 m, the G10's
+    centre-line readings, keyed by position to the intake's own line) is ridden via evidence.apply_deck_profiles; E 56th's
+    profile_m stays unnamed, so its deck stays as levelled"""
+    sys.path.insert(0, str(ROOT))
+    from scripts.capture import evidence
+    cfg = _cfg(SC / "track.config.json")
+    assert cfg["lm_intake"]["deck_profiles"] == ["quebec_over_sand_creek"]
+    by = {b["name"]: b for b in cfg["capture"]["bridges"]}
+    q = by["quebec_over_sand_creek"]
+    assert (q["center_m"], q["len_m"], q["profile_ramp_m"]) == (5887, 128, 20) and len(q["profile_m"]) == 28
+    assert q["profile_m"][0] == [33.9, 1595.979] and q["profile_m"][-1] == [168.9, 1596.624]
+    assert all(b[0] - a[0] == pytest.approx(5.0) for a, b in zip(q["profile_m"], q["profile_m"][1:]))
+    assert "profile_m" in by["e56th_over_sand_creek"] and "e56th_over_sand_creek" not in cfg["lm_intake"]["deck_profiles"]
+    # the rule, on a straight stand-in: inside the profile the line takes it, outside it eases back over the ramp
+    line = [(float(s), 2.0, 0.0) for s in range(0, 201)]
+    prof = [{"name": "q", "start_m": 50.0, "profile": [(80.0, 1001.5), (120.0, 1001.5)], "ramp_m": 20.0}]
+    out = evidence.apply_deck_profiles(line, prof, origin_elev_m=1000.0)
+    assert out[100][1] == pytest.approx(1.5) and out[59][1] == pytest.approx(2.0) and out[141][1] == pytest.approx(2.0)
+    assert 1.5 < out[70][1] < 2.0 and all(p[0] == q_[0] and p[2] == q_[2] for p, q_ in zip(line, out))
+    src = (ROOT / "tools" / "lm_engine_intake.py").read_text(encoding="utf-8")
+    assert 'profs = [p for p in evidence.deck_profiles(cfg) if p["name"] in names]' in src
+    assert "lm_intake.deck_profiles: no capture.bridges profile_m in this port's config for" in src
+
+
 # ------------------------------------------------------------------ owned surfaces, opt-in
 def test_sand_creek_binds_the_owned_pairs_and_syncs_them():
     cfg, ship = _cfg(SC / "track.config.json"), _cfg(SC / "ship.json")
@@ -403,7 +430,7 @@ def test_sand_creek_binds_the_owned_pairs_and_syncs_them():
         assert Path(a).name in lic and Path(b).name in lic
     for f in (cfg["lm_intake"]["grid_reach"], cfg["lm_intake"]["flare_one_sided"]):
         assert f in ship["sync_in"]["optional"] and (SC / f).is_file()
-    assert cfg["scenery"]["streetlights"]["light_both_heads"] is True and cfg["version"] == "0.2.11"
+    assert cfg["scenery"]["streetlights"]["light_both_heads"] is True and cfg["version"] == "0.2.12"
 
 
 def test_the_0098_keys_are_opt_in():
@@ -421,6 +448,7 @@ def test_the_0098_keys_are_opt_in():
             assert "light_both_heads" not in sl, t
         assert "both_heads_by" not in sl, t                       # ledger 0098's path is Sand Creek's alone
         assert "split_strip_balanced" not in (cfg.get("route") or {}), t
+        assert "deck_profiles" not in (cfg.get("lm_intake") or {}), t                                   # 0.2.12
         for p in (cfg.get("terrain") or {}).get("lidar_patches") or []:                                     # round 2
             assert "lift" not in p and "feather_spares_roads" not in p, (t, p.get("id"))
 

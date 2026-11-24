@@ -831,6 +831,33 @@ ground_patch, after every cutting step.
    get re-traced with the arms.
 4. The 0086 leftovers, sized after 1-2.
 
+## PC, 2026-11-24: 0.2.12, the lap on the Quebec St bridge over Sand Creek (the Mac's bridge round)
+
+**What was wrong.** The intake levels every declared deck as one straight grade between its bank crests (capture.bridges,
+evidence.level_bridge_decks). On quebec_over_sand_creek that put the lap 0.29-0.39 m over the deck that the 2020 lidar
+classes 17: median +0.34 on the centre line, +0.33 / +0.36 on the wheel paths. The G10 measured it on
+claude/sc-roads-lidar-20261124 @ 10f75a0e, `source/roads_lidar_g10/quebec_bridge_deck.lidar.json`.
+
+**The change (opt-in, Sand Creek alone, no gate or threshold):**
+- **The tool:** `lm_intake.deck_profiles` names the declared decks whose measured `capture.bridges[].profile_m` (this
+  port's config) the line rides. tools/lm_engine_intake.py runs `evidence.apply_deck_profiles` after the levelling: the
+  profile inside its stations, a raised-cosine hand-back over profile_ramp_m outside, Y only. A named bridge with no
+  profile is refused.
+  - The port's intake didn't apply profile_m before, so E 56th's measured profile_m has been unused on the LM engine. It
+    stays unnamed, and its deck stays as levelled.
+- **quebec_over_sand_creek profile_m:** 28 points, every 5 m. Each is the median of the centre line's readings within
+  ±2 m: class 17 on the deck (s 5841-5936 on the G10's line), class 2 on the south approach to s 5976. profile_ramp_m 20.
+- **Keyed by position.** The G10's s_lap is the built line's, which later draft steps re-station. Each reading's plan
+  point was matched to the intake's own line (within 0.075 m), where the stations run a constant 15.92 m further. So the
+  profile is d 33.9 .. 168.9 from the bridge's start (5823).
+
+**On the intake's line** (a scratch `--draft-only` against the same code with the key removed):
+- Only 58 heights change (v1945-2002); plan and widths are unchanged.
+- The deck comes down 0.30-0.39 m: v1951 −0.392, v1960 −0.336, v1982 −0.386. The ramps hand back by v1944 and v2006.
+- The sandcreek_quebec pad's S cut row (v1953, 6 m onto the deck) goes 24.015 -> 23.668. Its seam to the pad's
+  class-2 deck (seam residual 0.728 m in 0.2.11, faded over 30.5 m on that row) is for the rehearsal to read.
+- No mouth joins the lap over v1925-2010.
+
 ## What needs Kevin, a download or the PC
 
 - **Kevin:**

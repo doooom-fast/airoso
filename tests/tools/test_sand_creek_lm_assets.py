@@ -556,7 +556,7 @@ def test_round_k_keys_are_opt_in():
         assert "signs_name_blades" not in cfg, t
     # round K's candidate (live since round R, 0.2.6: test_round_r_live_is_the_candidate)
     live = json.loads((SC / "track.config.json").read_text(encoding="utf-8"))
-    assert "race_rule" not in (live.get("kerb") or {}) and live["version"] == "0.2.11"
+    assert "race_rule" not in (live.get("kerb") or {}) and live["version"] == "0.2.12"
     sc = json.loads((SC / "source" / "round_k" / "track.config.json").read_text(encoding="utf-8"))
     assert sc["version"] == "0.2.6"
     assert sc["race"]["edge_fold_chord"] is True
@@ -969,6 +969,10 @@ LIVE_R2_KEYS = (("lm_intake", "connector_profiles"), ("lm_intake", "_connector_p
                 # round 2 item 2: the Quebec arm patches and lift zones after wall_49 (wall_49 itself checked unchanged in
                 # tests/tools/test_sand_creek_0098.py::test_sand_creek_quebec_patches_as_measured)
                 ("terrain", "lidar_patches"), ("terrain", "_lidar_patches_doc"))
+# 0.2.12 (ledger 0098, the bridge): the measured deck the line rides, named here; its profile on the bridge itself is
+# stripped from the live config below (every other bridge key still compared with the candidate)
+LIVE_0212_KEYS = (("lm_intake", "deck_profiles"), ("lm_intake", "_deck_profiles_doc"))
+QUEBEC_BRIDGE_PROFILE_KEYS = ("profile_m", "profile_ramp_m", "_profile_doc")
 
 # ledger 0086 (0.2.7): every key the live config adds to, or changes from, round_k's candidate
 LIVE_0_2_7_KEYS = (("name",), ("_name_doc",), ("slug",), ("version",), ("install_folder",), ("_install_folder_doc",),
@@ -1015,7 +1019,7 @@ def test_round_r_live_is_the_candidate():
     (race.corridor.whole_lap) and verify_kn5 runs both before (closure kn5) and after (--inis) the folder"""
     live = json.loads((SC / "track.config.json").read_text(encoding="utf-8"))
     cand = json.loads((SC / "source" / "round_k" / "track.config.json").read_text(encoding="utf-8"))
-    assert live["version"] == "0.2.11" and cand["version"] == "0.2.6"   # 0.2.9: ledger 0098; 0.2.10: its round 2; 0.2.11
+    assert live["version"] == "0.2.12" and cand["version"] == "0.2.6"   # 0.2.9: ledger 0098; 0.2.10: its round 2; 0.2.12
     assert live["slug"] == live["install_folder"] == "sand_creek_raceway" and "LM" not in live["name"]
     assert [l["name"] for l in live["layouts"]] == ["Sand Creek Raceway", "Sand Creek Free Roam"]
     assert live["route"]["mouth_returns"] == ["grid_"] and live["route"]["verify_mouth_corners"] is True
@@ -1025,9 +1029,13 @@ def test_round_r_live_is_the_candidate():
     assert va[:len(vk)] == vk and [(r["piece"], r["end"]) for r in va[len(vk):]] == [("grid_tertiary_74#0", "start")]
     _finish_pc_pads(live, cand)
     assert live["lm_intake"]["connector_profiles"] == "source/connector_profiles.lidar.round_2.json"
-    for k in LIVE_0_2_7_KEYS + LIVE_0_2_8_KEYS + LIVE_0_2_9_KEYS + LIVE_FINISH_PC_KEYS + LIVE_R2_KEYS:
+    for k in LIVE_0_2_7_KEYS + LIVE_0_2_8_KEYS + LIVE_0_2_9_KEYS + LIVE_FINISH_PC_KEYS + LIVE_R2_KEYS + LIVE_0212_KEYS:
         _drop(live, k)
         _drop(cand, k)
+    for b in live["capture"]["bridges"]:
+        if b["name"] == "quebec_over_sand_creek":
+            for k in QUEBEC_BRIDGE_PROFILE_KEYS:
+                b.pop(k)
     for l in live["layouts"] + cand["layouts"]:
         l.pop("name", None)
     assert live == cand

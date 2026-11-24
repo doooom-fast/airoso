@@ -3,7 +3,7 @@
   "name": "Sand Creek Raceway",
   "_name_doc": "0.2.7 (Kevin 2026-11-07: \"Get rid of Lm Version from names, nothing should be on any other engine now\" / \"LM is the airoso engine\"): the plain name, slug and AC folder; the old-engine sand_creek_raceway and the sand_creek_raceway_lm installs leave AC when the PC installs this (Kevin: \"We want to delete old copies from ac when installing new ones\"). The repo directory stays tracks/sand-creek-lm until directories are renamed in one pass.",
   "slug": "sand_creek_raceway",
-  "version": "0.2.11",
+  "version": "0.2.12",
   "mirror_x": false,
   "osm_road_widths": true,
   "_osm_road_widths_doc": "Real street circuit — after the project stage, scripts.gps.widths_from_osm map-matches each centerline vertex to its OSM way and sets curb-to-curb widths from lanes (arterials ~2x a side street) + writes intersection pads at the real junctions. Racetracks (defined widths) leave this off.",
@@ -157,6 +157,122 @@
         "name": "quebec_over_sand_creek",
         "center_m": 5887,
         "len_m": 128,
+        "profile_m": [
+          [
+            33.9,
+            1595.979
+          ],
+          [
+            38.9,
+            1596.044
+          ],
+          [
+            43.9,
+            1596.072
+          ],
+          [
+            48.9,
+            1596.102
+          ],
+          [
+            53.9,
+            1596.116
+          ],
+          [
+            58.9,
+            1596.139
+          ],
+          [
+            63.9,
+            1596.154
+          ],
+          [
+            68.9,
+            1596.181
+          ],
+          [
+            73.9,
+            1596.202
+          ],
+          [
+            78.9,
+            1596.223
+          ],
+          [
+            83.9,
+            1596.245
+          ],
+          [
+            88.9,
+            1596.251
+          ],
+          [
+            93.9,
+            1596.282
+          ],
+          [
+            98.9,
+            1596.287
+          ],
+          [
+            103.9,
+            1596.31
+          ],
+          [
+            108.9,
+            1596.323
+          ],
+          [
+            113.9,
+            1596.35
+          ],
+          [
+            118.9,
+            1596.348
+          ],
+          [
+            123.9,
+            1596.35
+          ],
+          [
+            128.9,
+            1596.376
+          ],
+          [
+            133.9,
+            1596.387
+          ],
+          [
+            138.9,
+            1596.433
+          ],
+          [
+            143.9,
+            1596.477
+          ],
+          [
+            148.9,
+            1596.493
+          ],
+          [
+            153.9,
+            1596.555
+          ],
+          [
+            158.9,
+            1596.592
+          ],
+          [
+            163.9,
+            1596.596
+          ],
+          [
+            168.9,
+            1596.624
+          ]
+        ],
+        "profile_ramp_m": 20,
+        "_profile_doc": "0.2.12 (ledger 0098, PC 2026-11-24; the Mac's bridge round): the deck the 2020 source lidar classes as bridge deck (class 17) under the lap's centre line, s 5841-5936 on the port's line (G10, claude/sc-roads-lidar-20261124 @ 10f75a0e, source/roads_lidar_g10/quebec_bridge_deck.lidar.json), and its south approach over class-2 ground to s 5976: every 5 m the median of the centre line's readings within +-2 m, [metres from the bridge's start (center_m - len_m / 2 = 5823) on THIS intake's line, absolute height = y + origin elev_m 1572.38]. Keyed by position: each reading's plan point matched to the intake's line (within 0.075 m), whose stations run 15.92 m past the G10's s_lap (the built line the G10 read is re-stationed by later draft steps), so the deck's s 5841-5936 is 5857-5952 here. The intake levelled the deck flat crest to crest at 0.29-0.39 m over it (median +0.34; wheel paths +0.33 / +0.36). Applied only where lm_intake.deck_profiles names this bridge (evidence.apply_deck_profiles); profile_ramp_m 20 eases each end back to the levelled road (the north ramp lies inside the sandcreek_quebec pad, whose S cut row v1953 sits 6 m onto the deck).",
         "_rekey_doc": "0.33.0 (ledger 0073): was 5950 / 130 on the old draft line; both ends re-keyed by position (draft-line stations, as level_bridge_decks reads them). The OSM bridge way 44769365 runs 5,854-5,956 on the new line."
       },
       {
@@ -1587,6 +1703,10 @@
     "tree_models": true,
     "_tree_models_doc": "ledger 0079: the source's TreeFX models (tracks/sand-creek/source/trees/*.bin, personal use, on the PC only) into the project",
     "connector_profiles": "source/connector_profiles.lidar.round_2.json",
+    "deck_profiles": [
+      "quebec_over_sand_creek"
+    ],
+    "_deck_profiles_doc": "0.2.12 (ledger 0098; opt-in, Sand Creek alone): the line rides these declared decks' MEASURED profiles (this port's capture.bridges[].profile_m; tools/lm_engine_intake.py, after the levelling). Quebec St over Sand Creek: lowered 0.29-0.39 m onto the class-17 deck. E 56th's profile_m is NOT named: its deck stays as levelled.",
     "_connector_profiles_doc": "ledger 0079 round H (Kevin: \"I just want real\"): these streets take their heights from the lidar (tools/lidar_connector_profile.py: the road surface, ground + bridge deck returns, median within 1 m [invented radius] of each source point), not the 3DEP grid, which cannot hold a bridge or an embankment: grid_tertiary_5 crosses Sand Creek on a 60 m bridge (class 17 at 22.2 m; the grid dropped it 5 m into the creek bed: its lap mouth read 3.9 %/m), grid_primary_84 / grid_primary_78 climb onto the interstate bridge (class 17 at 29.3 m; the grid held them up to 4.25 m low: 8.6 %/m at their own mouth), grid_unclassified_67 (lidar - 3DEP -0.03..+0.43 m) Round J (ledger 0079): the round I file is wired: 99 streets on the lidar (--surface; round H's four read the same); held on 3DEP: round I's 6 whose profiles jump > 0.5 m [invented] between neighbouring points, and grid_primary_15, a viaduct deck the build has no street-bridge path for (its embankment buried two houses' ground; the file's _doc names them and why). Sand Creek round 2 (2026-11-23): source/connector_profiles.lidar.round_2.json = round I's 99 streets + three of round I's held seven re-read at their true lon / lat that now pass its 0.5 m jump rule (grid_secondary_8, grid_secondary_42, grid_primary_71); the file's _doc has the numbers",
     "connector_widths": {
       "grid_unclassified_13": 10.0

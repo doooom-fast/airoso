@@ -683,6 +683,25 @@ def intake(proj: Path, *, connectors: bool | None = None) -> dict:
         print(f"[lm_intake] line decks from the lidar: {deck_lidar_rep['points_read']} points read, "
               f"{deck_lidar_rep['points_between']} between readings, {deck_lidar_rep['points_levelled']} levelled (no "
               f"reading); measured minus levelled median {deck_lidar_rep['measured_minus_levelled_median_m']} m")
+    # ledger 0098 0.2.12 (opt-in, Sand Creek): lm_intake.deck_profiles names declared decks whose MEASURED profile
+    # (this port's own capture.bridges[].profile_m, metres from the deck's start and absolute heights) the line then
+    # rides: scripts.capture.evidence.apply_deck_profiles, the profile inside its stations and a raised-cosine hand-back
+    # over profile_ramp_m outside, Y only. A name without a profile is refused. Absent = every deck as levelled.
+    deck_prof_rep = None
+    if li.get("deck_profiles"):
+        names = [str(n) for n in li["deck_profiles"]]
+        profs = [p for p in evidence.deck_profiles(cfg) if p["name"] in names]
+        missing = sorted(set(names) - {p["name"] for p in profs})
+        if missing:
+            raise SystemExit(f"lm_intake.deck_profiles: no capture.bridges profile_m in this port's config for {missing}")
+        before = [p[1] for p in pts]
+        pts = evidence.apply_deck_profiles(pts, profs, origin_elev_m=float(local["origin"]["elev_m"]))
+        moved = [b - p[1] for b, p in zip(before, pts) if abs(b - p[1]) > 1e-6]
+        deck_prof_rep = {"names": names, "points_moved": len(moved),
+                         "lowered_max_m": round(max(moved), 3) if moved else 0.0,
+                         "raised_max_m": round(max(0.0, -min(moved)), 3) if moved else 0.0}
+        print(f"[lm_intake] measured deck profiles {names}: {len(moved)} heights moved, lowered up to "
+              f"{deck_prof_rep['lowered_max_m']} m, raised up to {deck_prof_rep['raised_max_m']} m")
     mg = li.get("max_grade_pct")
     max_grade = None if mg is None else float(mg) / 100.0
     if max_grade is not None:
@@ -1628,6 +1647,7 @@ def intake(proj: Path, *, connectors: bool | None = None) -> dict:
            "resample": resample_rep, "edge_on_wall": wall_rep,
            **({"edge_on_bank": bank_rep} if bank_rep else {}), "corner_arcs": arcs_rep, "carried": carried,
            **({"line_precomp": precomp_rep} if precomp_rep else {}),
+           **({"deck_profiles": deck_prof_rep} if deck_prof_rep else {}),
            **({"edge_fit": edge_fit_rep} if edge_fit_rep else {}),
            **({"edge_retrace": edge_retrace_rep} if edge_retrace_rep else {}),
            **({"width_smooth": width_smooth_rep} if width_smooth_rep else {}),

@@ -100,6 +100,26 @@ def main(cache):
                 if p['spread_m'] is None and len(yrs) >= 2:
                     b_ = [np.mean([SB[i] for i in grp if SY[i] == y], 0) for y in yrs if any(SY[i] == y for i in grp)] + [np.array(p['_en'])]
                     p['spread_m'] = round(float(max(np.hypot(*(u - v)) for u in b_ for v in b_)), 2)
+    cf = os.path.join(HERE, 'eye', 'corrections.json'); corr = {'removed': 0, 'moved': 0, 'flagged': 0}
+    if os.path.exists(cf):
+        cj = json.load(open(cf))
+        def near(E, N):
+            d = [math.hypot(p['_en'][0] - E, p['_en'][1] - N) for p in posts]; k = int(np.argmin(d)) if d else -1
+            return k if k >= 0 and d[k] <= 0.8 else None
+        for r in cj.get('remove', []):
+            k = near(r['E'], r['N'])
+            if k is not None:
+                posts.pop(k); corr['removed'] += 1
+        for r in cj.get('move', []):
+            k = near(r['E'], r['N'])
+            if k is not None:
+                p = posts[k]; p['_en'] = [r['to_E'], r['to_N']]; lo, la = lapgeo.lonlat(r['to_E'], r['to_N'])
+                p['lonlat'] = [round(float(lo), 7), round(float(la), 7)]; p['grade'] = 'detected'; p['position_from'] = 'moved by eye to the foot: ' + r['why']; corr['moved'] += 1
+        for r in cj.get('flag', []):
+            k = near(r['E'], r['N'])
+            if k is not None:
+                posts[k]['position_note'] = r['note']; corr['flagged'] += 1
+    rd_corr = corr
     posts.sort(key=lambda p: p['s_m'])
     for k, p in enumerate(posts):
         p['id'] = ('g' if p['class'] in SIGNAL else 'l') + f'{k:04d}'; p['height_m'] = None
@@ -111,7 +131,7 @@ def main(cache):
           'eye_cannot_tell': sum(n for (rv, cls), n in tally.items() if cls == 'cannot_tell'),
           'by_reader_verdict': {rv: {'post': sum(n for (r2, cls), n in tally.items() if r2 == rv and is_post(cls)), 'not_a_post': sum(n for (r2, cls), n in tally.items() if r2 == rv and cls == 'not_a_post'),
                                      'cannot_tell': sum(n for (r2, cls), n in tally.items() if r2 == rv and cls == 'cannot_tell')} for rv in ('post', 'tree?', 'one-year')},
-          'added_by_eye': {'placed_on_a_shadow_foot': int(n_snap), 'placed_by_eye_only': int(n_eye), 'duplicates_of_a_candidate_dropped': n_dup, 'outside_the_corridor_dropped': n_out}}
+          'corrections_by_eye_after_the_second_pass': rd_corr, 'added_by_eye': {'placed_on_a_shadow_foot': int(n_snap), 'placed_by_eye_only': int(n_eye), 'duplicates_of_a_candidate_dropped': n_dup, 'outside_the_corridor_dropped': n_out}}
     tp = rd['eye_says_post']; rd['reader_precision_against_the_eye'] = round(tp / max(tp + rd['eye_says_not_a_post'], 1), 3); rd['reader_recall_against_the_eye'] = round(tp / max(tp + n_snap + n_eye, 1), 3)
     common = {'written_utc': time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime()), 'frame': {'origin_lonlat': list(lapgeo.ORIGIN), 'corridor_half_width_m': pl.Q['POST_CORRIDOR_M']},
               'sources': {'aerials': 'DRCOG 3-inch, 2022 / 2020 / 2018 (drapparchive.s3.amazonaws.com), by HTTP range', 'reader': 'posts_tile.py + posts_lap.py', 'eye': 'panels of 2022 beside 2020; verdict files: ' + ', '.join(vfiles)},
@@ -142,11 +162,11 @@ def main(cache):
         E = float(np.mean([r['E'] for r in g])); N = float(np.mean([r['N'] for r in g])); nodes = [r['node'] for r in g if r['signal_tag']]
         near = [p for p in posts if p['class'] in SIGNAL and math.hypot(p['_en'][0] - E, p['_en'][1] - N) <= pl.Q['SIGNAL_JUNCTION_R_M']]
         lo, la = lapgeo.lonlat(E, N); s_ = sorted(r['s'] for r in g)
-        under = lapgeo.COVERED_S[0] <= s_[0] <= lapgeo.COVERED_S[1]
+        under = lapgeo.COVERED_S[0] <= s_[0] <= lapgeo.COVERED_S[1]; off = float(lapgeo.where([E], [N])[1][0])
         J.append({'junction': ' / '.join(sorted({n for r in g for n in r['lap_street']}) + sorted({n for r in g for n in r['cross'] if n not in r['lap_street']})), 's_m': [round(v, 1) for v in s_],
                   'centre_lonlat': [round(float(lo), 7), round(float(la), 7)], 'osm_signal_nodes': nodes, 'osm_tags_a_signal': bool(nodes),
                   'signal_masts_found': sum(1 for p in near if p['class'] == 'signal_mast'), 'signal_posts_found': sum(1 for p in near if p['class'] == 'signal_post'), 'ids': [p['id'] for p in near],
-                  **({'finding': 'no mast or signal post found within %d m' % pl.Q['SIGNAL_JUNCTION_R_M'] + (' (under or beside the Convention Center roof: unsurveyed)' if under else '')} if nodes and not near else {}),
+                  'off_lap_m': round(off, 1), **({'finding': ('outside the surveyed corridor: the OSM way carrying this node runs %.0f m past the lap; not surveyed, nothing claimed' % off) if off > lapgeo.CORRIDOR_M else ('no mast or signal post found within %d m' % pl.Q['SIGNAL_JUNCTION_R_M'] + (' (under or beside the Convention Center roof: unsurveyed)' if under else ''))} if nodes and not near else {}),
                   **({'finding': 'masts found where OSM tags no signal'} if near and not nodes else {})})
     J.sort(key=lambda j: j['s_m'][0])
     per_node = []
@@ -159,8 +179,8 @@ def main(cache):
                        'number and their faces are not read. See SURVEY.md.', **common,
                'counts': {'signal_masts': sum(1 for p in sigs if p['class'] == 'signal_mast'), 'signal_posts': sum(1 for p in sigs if p['class'] == 'signal_post'),
                           'osm_signal_nodes_on_the_lap': len(per_node), 'junctions_osm_tags_signalled': sum(1 for j in J if j['osm_tags_a_signal']),
-                          'signalled_junctions_with_no_mast_or_post_found': sum(1 for j in J if j['osm_tags_a_signal'] and not j['ids']),
-                          'masts_per_signalled_junction': dict(collections.Counter(j['signal_masts_found'] for j in J if j['osm_tags_a_signal'])), 'signal_posts_not_at_a_tagged_junction': orphan},
+                          'signalled_junctions_on_the_lap': sum(1 for j in J if j['osm_tags_a_signal'] and j['off_lap_m'] <= lapgeo.CORRIDOR_M), 'signalled_junctions_off_the_lap_not_surveyed': sum(1 for j in J if j['osm_tags_a_signal'] and j['off_lap_m'] > lapgeo.CORRIDOR_M), 'signalled_junctions_on_the_lap_with_no_mast_or_post_found': sum(1 for j in J if j['osm_tags_a_signal'] and not j['ids'] and j['off_lap_m'] <= lapgeo.CORRIDOR_M),
+                          'masts_per_signalled_junction_on_the_lap': dict(collections.Counter(j['signal_masts_found'] for j in J if j['osm_tags_a_signal'] and j['off_lap_m'] <= lapgeo.CORRIDOR_M)), 'signal_posts_not_at_a_tagged_junction': orphan},
                'grade_shares': shares(sigs), 'position_check': acc, 'junctions': J, 'osm_signal_nodes': per_node, 'posts': sigs}, open(os.path.join(HERE, 'signals.json'), 'w'), indent=1)
     print('lamps', len(lamps), 'signals', len(sigs), rd, acc)
 

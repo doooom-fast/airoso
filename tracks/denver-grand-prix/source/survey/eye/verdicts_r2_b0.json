@@ -484,6 +484,69 @@
     }
    ],
    "note": "SE quadrant: 2020 tower lean covers the sidewalk"
+  },
+  "R034": {
+   "candidates": {
+    "10052": {
+     "class": "not_a_post",
+     "note": "duplicate of an accepted post: ring on the 2022 shadow head of the lamp 3 m S, and on the planter tree"
+    }
+   },
+   "added": [],
+   "note": "dark items on the NW sidewalk are pedestrians; W half in tower shadow 2022"
+  },
+  "RX004": {
+   "candidates": {
+    "10053": {
+     "class": "not_a_post",
+     "note": "rooftop HVAC units"
+    }
+   },
+   "added": [
+    {
+     "E": -824.3,
+     "N": 546.4,
+     "class": "lamp",
+     "note": "pedestrian lamp at curb of NE sidewalk: 2020 globe foot + long NW stroke with head; 2022 in tower shadow (also falls in R034)"
+    }
+   ],
+   "note": "2022 street N of the building in tower shadow"
+  },
+  "R035": {
+   "candidates": {
+    "10054": {
+     "class": "not_a_post",
+     "note": "rooftop equipment"
+    },
+    "10055": {
+     "class": "not_a_post",
+     "note": "2022 building shadow; 2020 bare sidewalk by the building, nothing at the ring"
+    }
+   },
+   "added": [],
+   "note": "short dark strokes along the SW curb in 2022 are parking meters; 2020 sign-plate shadow at about E -859 N 580 not confirmed in 2022, not added"
+  },
+  "R036": {
+   "candidates": {
+    "10056": {
+     "class": "not_a_post",
+     "note": "2022 building shadow; 2020 a railing along the building, no post"
+    },
+    "10058": {
+     "class": "not_a_post",
+     "note": "parking meters / curb items, no post stroke"
+    },
+    "10059": {
+     "class": "not_a_post",
+     "note": "flagpole on the rooftop (flag at its foot), not a street post"
+    },
+    "10060": {
+     "class": "not_a_post",
+     "note": "parked-car edge in the lot"
+    }
+   },
+   "added": [],
+   "note": "W half in tower shadow 2022; green squares there judged from 2020 only"
   }
  }
 }

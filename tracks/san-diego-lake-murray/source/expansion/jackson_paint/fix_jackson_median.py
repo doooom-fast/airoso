@@ -92,6 +92,19 @@ UNCALLED = [(325.0, 372.5), (400.0, 422.5), (475.0, 492.5), (1265.0, 1300.0)]   
 STRETCH_BINS_FROM = (225.0, 1240.0)   # the G10's bins start at each stretch's first station
 
 
+def others_sha256(ep_doc, cdoc) -> dict:
+    """sha256 (16) of every OTHER piece's record and every other connector's record, as the file's own writer prints
+    them: piece D's correction must leave them byte for byte (the Mac: their committed records hold later corrections of
+    their own, item 2's cleared centre lines and round 2's Princess View median, that decorate does not make)"""
+    import hashlib
+
+    def h(o):
+        return hashlib.sha256(json.dumps(o, indent=1, ensure_ascii=False).encode("utf-8")).hexdigest()[:16]
+    return {"pieces": {p["id"]: h(p) for p in ep_doc["pieces"] if p["id"] != PIECE},
+            "rest_of_expansion": h({k: v for k, v in ep_doc.items() if k != "pieces"}),
+            "connectors": {c["name"]: h(c) for c in cdoc["connectors"] if c["name"].split("#")[0] != LINE}}
+
+
 def key(s):
     return round(float(s), 2)
 
@@ -241,9 +254,13 @@ def measure(rows_by_s: dict) -> dict:
         cand = sorted((l["u"], l.get("along_share", 0)) for l in lid.get(s, []) if left[s] is not None
                       and l["u"] >= left[s] + REV_FROM_BAND_M and l["u"] <= real_L - 0.3 and l.get("along_share", 0) >= ALONG_MIN)
         rv = [u for u, a in cand if a >= SOLID_MIN]
-        weak_rev[s] = [[round(u, 2), round(a, 2)] for u, a in cand if a < SOLID_MIN and (not rv or u < rv[0])]
         rv += [u for u, a in cand if a < SOLID_MIN and rv and u > rv[0]]      # a bike line outside may be weaker
         rv = sorted(set(rv))
+        # every line between the band and the edge taken that is not taken (weaker than SOLID_MIN, or nearer the band than
+        # REV_FROM_BAND_M): recorded as unexplained, never taken
+        stop = rv[0] if rv else real_L
+        weak_rev[s] = [[round(l["u"], 2), round(l.get("along_share", 0), 2)] for l in sorted(lid.get(s, []), key=lambda l: l["u"])
+                       if left[s] is not None and left[s] + 0.3 < l["u"] < stop - 1e-6 and l.get("along_share", 0) >= ALONG_MIN]
         erv[s] = round(real_L - rv[0], 3) if rv else None
         orv[s] = round(real_L - rv[1], 3) if len(rv) > 1 and rv[1] - rv[0] <= OUTER_MAX_M else None
     efs = {t: "lidar" for t in efw if efw[t] is not None}
@@ -338,7 +355,8 @@ def main(argv=None) -> int:
         for c, v in after.items():
             row[ix[c]] = v
         changed.append({"s": s, "before": before, "after": after,
-                        **{k: g[k] for k in ("edges_u_lidar", "shift_lr_m", "shift_m", "room_fwd_rev_m", "edge_cols", "edge_src")
+                        **{k: g[k] for k in ("edges_u_lidar", "shift_lr_m", "shift_m", "room_fwd_rev_m", "edge_cols", "edge_src",
+                                     "unexplained_weak_lines_rev")
                            if k in g}})
     nb = sum(1 for c in changed if c["after"]["median_type"] == "hatched")
     short = got.get("_short") or []
@@ -385,6 +403,12 @@ def main(argv=None) -> int:
     conn = next(c for c in cdoc["connectors"] if c["name"].split("#")[0] == LINE)
     co_ = next(c for c in c_old["connectors"] if c["name"].split("#")[0] == LINE)
     conn_t = next(c for c in cdoc_t["connectors"] if c["name"].split("#")[0] == LINE)
+    old_text = ep_path.read_text(encoding="utf-8")
+    if json.dumps(json.loads(old_text), indent=1, ensure_ascii=False) + "\n" != old_text.replace("\r\n", "\n"):
+        raise SystemExit("[jackson] the committed expansion.north.json does not round-trip through its own writer: other "
+                         "pieces' bytes could change; refused")
+    if others_sha256(json.loads(old_text), cdoc) != others_sha256(json.loads(new_text), cdoc):
+        raise SystemExit("[jackson] another piece's record (or the file's own head) would change; refused")
     if rec0 is None and conn.get("paint") != co_.get("paint"):
         raise SystemExit(f"[jackson] {conn['name']}'s committed paint is not decorate's own on the committed data: a later "
                          f"correction of its own would be lost; refused")
@@ -393,6 +417,9 @@ def main(argv=None) -> int:
     conn["paint"] = conn_t["paint"]
     cp.write_text(json.dumps(cdoc), encoding="utf-8")
     out = {"_doc": __doc__.split("\n\n")[0], "line": conn["name"], "piece": PIECE, "connectors": len(names), "held": HELD,
+           "_others_doc": "sha256 (16) of every other piece's and connector's record as written: unchanged by this correction "
+                          "(tests/tools/test_jackson_median_0099.py holds them)",
+           "others_sha256": others_sha256(doc, cdoc),
            "short_rows": [{"s": s_, "room_fwd_rev_m": list(r_)} for s_, r_ in short],
            "photo_minus_lidar": json.loads((HERE / "jackson_right_edge.photo.json").read_text(encoding="utf-8"))["photo_minus_lidar"],
            "rows": changed, "sources": srcs,

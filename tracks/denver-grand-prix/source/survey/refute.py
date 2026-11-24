@@ -25,7 +25,7 @@ if __name__ == '__main__':
             else:
                 k = int(s); c = (float(L['E'][k]), float(L['N'][k])); name = L['legs'][int(L['leg'][k])] + ' mid-block'
             box = (c[0] - BOX_M / 2, c[1] - BOX_M / 2, c[0] + BOX_M / 2, c[1] + BOX_M / 2)
-            v = po.draw(cache, items, box, zoom=1.75, grid=5); f = f'{rnd}_{len(boxes):02d}_{kind}{int(s)}.jpg'; v.save(os.path.join(out, f), quality=86)
+            v = po.draw(cache, items, box, zoom=1.4, grid=5); f = f'{rnd}_{len(boxes):02d}_{kind}{int(s)}.jpg'; v.save(os.path.join(out, f), quality=86)
             inn = [it for it in items if cs[it['id']] and box[0] <= cs[it['id']][0] <= box[2] and box[1] <= cs[it['id']][1] <= box[3]]
             boxes.append({'k': len(boxes), 'file': f, 'kind': kind, 's_m': s, 'where': name, 'box_en': [round(b, 1) for b in box],
                           'items': dict(collections.Counter(f"{it['class']}{'/' + it.get('type', '') if it['class'] == 'symbol' else ''} {it['grade']}" for it in inn)), 'n_measured': sum(1 for it in inn if it['grade'] == 'measured'), 'n_detected': sum(1 for it in inn if it['grade'] == 'detected')})

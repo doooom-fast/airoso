@@ -28,6 +28,7 @@ shapes (symbols.py). Steps, each counted in the output:
             any mark seen only in older years). A mark absent from a later year's visible pavement is flagged. A lone bar, stop
             bar or line that the 2020 lidar contradicts while the 2020 picture shows it is graded detected (the kerb's gutter
             pan reads as a bar; the laser tells concrete from paint).
+  smooth    a solid line whose centre line leaves its own cubic fit by WANDER_RMS_M (rms) or WANDER_MAX_M is graded detected;
   lidar     per item: confirmed / contradicted / unreadable from the tile stage's intensity check (2020-05-27, another sensor).
 """
 import collections, json, math, os, pickle, sys, time
@@ -38,7 +39,7 @@ HERE = os.path.dirname(os.path.abspath(__file__)); sys.path.insert(0, HERE)
 import lapgeo  # noqa: E402
 
 G = {'JOIN_GAP_M': 1.0, 'JOIN_DEG': 6.0, 'JOIN_LAT_M': 0.25, 'OVERLAP_M': 0.3, 'CW_DEG': 12.0, 'CW_GAP_MAX': 3.0, 'CW_MIN_BARS': 3, 'CW_JOIN_MAX_MISSING': 4,
-     'CW_JOIN_FRAC': 0.3, 'DASH_DEG': 8.0, 'DASH_GAP': (0.5, 14.0), 'STOP_L_MIN': 2.0, 'TRANSVERSE_DEG': 30.0, 'FIRM_DASH_M': 1.5, 'SHORT_BAR_M': 1.5}
+     'CW_JOIN_FRAC': 0.3, 'DASH_DEG': 8.0, 'DASH_GAP': (0.5, 14.0), 'STOP_L_MIN': 2.0, 'TRANSVERSE_DEG': 30.0, 'FIRM_DASH_M': 1.5, 'SHORT_BAR_M': 1.5, 'WANDER_RMS_M': 0.12, 'WANDER_MAX_M': 0.35}
 STD_LINE_IN = (4, 6, 8, 12); STD_BAR_IN = (12, 18, 24)
 
 
@@ -362,6 +363,11 @@ def build(cache):
             cl = m['cl'] if len(m['cl']) <= 40 else m['cl'][np.unique(np.round(np.linspace(0, len(m['cl']) - 1, max(40, int(m['L'] / 2)))).astype(int))]
             it = {'class': 'line', 'pattern': ('double solid' if m['double'] else 'solid') if solid else 'single dash or fragment', 'colour': m['colour'], 'length_m': round(m['L'], 1),
                   'bearing_deg': round(m['bearing'], 1), 'role': r, **widths([m], STD_LINE_IN), 'line_lonlat': ll(cl), **o, '_firm': solid, '_c': m['c']}
+            if solid and len(m['cl']) >= 6:                 # paint is straight or smoothly curved: a cubic must follow it
+                q = m['cl'] - m['cl'].mean(0); t = q @ m['ax']; u = q @ np.array([-m['ax'][1], m['ax'][0]])
+                res = u - np.polyval(np.polyfit(t, u, 3), t); it['wander_rms_m'] = round(float(np.sqrt(np.mean(res ** 2))), 3)
+                if it['wander_rms_m'] > G['WANDER_RMS_M'] or float(np.abs(res).max()) > G['WANDER_MAX_M']:
+                    it['_firm'] = False; it['not_smooth'] = True
             if m['double']:
                 it['width_note'] = 'a double line: width_m is the fitted box over both lines and the gap, not one line'; it.pop('width_standard_in', None); it.pop('width_standard_m', None)
             items.append(it)
@@ -388,6 +394,8 @@ def grade(it):
         for y in (2020, 2018):
             if see[y] == 'absent':
                 flags.append(f'absent in {y} (pavement visible, no paint): painted since')
+    if it.pop('not_smooth', False):
+        flags.append('wanders off any smooth curve (a seam, a kerb, a shadow\'s stepped edge is likely): graded detected')
     n = len(it['years_seen'])
     firm = it.pop('_firm')
     if firm and it['class'] in ('bar', 'stop_bar', 'line') and it.get('lidar') == 'contradicted' and see[2020].startswith('seen'):

@@ -95,6 +95,11 @@ def type_blobs(blobs, st):
             e = by_exemplar(b, sb, EX)
             if e:
                 r = e; by = 'correlation with an exemplar named by eye'
+        if r and r[0] == 'arrow_through':                  # a straight arrow's heading from its own axis (it may lie across the nearest street: a parking aisle)
+            x, y = uv(b, 90.0)[1] * -1.0, uv(b, 0.0)[0]        # east, north about the centroid
+            q = np.stack([uv(b, 90.0)[0], uv(b, 0.0)[0]], 1); w_, v_ = np.linalg.eigh(np.cov(q.T)); ax = v_[:, 1]; t = q @ ax; lat = q @ v_[:, 0]
+            lo, hi = t < np.percentile(t, 33), t > np.percentile(t, 67); head = 1.0 if np.ptp(lat[hi]) > np.ptp(lat[lo]) else -1.0
+            r = (r[0], float(math.degrees(math.atan2(head * ax[0], head * ax[1])) % 360.0), r[2])
         if r:
             if r[0].startswith('arrow'):
                 r[2]['with_osm_oneway'] = (abs((r[1] - sb + 180) % 360 - 180) < 90) if w['tags'].get('oneway') == 'yes' else None

@@ -53,6 +53,9 @@
       "track.config.json",
       "source/edges/edge_evidence.json",
       "source/surface/road_surface.fit.json",
+      "source/edges/edge_evidence_gm.json",
+      "source/surface/road_surface_gm.fit.json",
+      "source/surface/road_section_gm.json",
       "source/road_wear/naip_2022_mrc.jpg",
       "source/furniture/pass3/blocks.json",
       "source/furniture/pass4/blocks.json",
@@ -98,7 +101,8 @@
     "_vegetation_doc": "ledger 0082 vegetation pass: the planted crowns, the trunk colliders and the grass class map (committed); the TreeFX models (source/trees/*.bin: Lake Murray's Oak3.bin and SycamoreV2.bin, personal use, gitignored) the PC copies into tracks/milford-road-course-lm/source/trees/ before the chain (runbook 0082-3)",
     "_ground_doc": "ledger 0092: the 2017 lidar's 1 m grid of the lane edge + 45 m (ledger 0082 pass 2) the draft step ground_patch reads (tools/lidar_ground_patch.py --npz, then tools/ground_patch_blend.py); the run-off pads' concrete skin (texture_overrides 1RUNOFF, Nevada's building_*)",
     "_facades_doc": "ledger 0094: the facade atlas, the roof membrane normal, the tent fabric (texture_overrides) and the traced rooftop units",
-    "_road_pilot_doc": "ledger 0095: the owned asphalt pair the 1ROAD override binds (texture_overrides), from airoso's tracked assets"
+    "_road_pilot_doc": "ledger 0095: the owned asphalt pair the 1ROAD override binds (texture_overrides), from airoso's tracked assets",
+    "_round2_doc": "ledger 0102 (Milford round 2): GM's loop reads its own edge evidence, measured surface and the banked turn's cross-section (lm_intake.edge_fit / edge_retrace evidence, lm_intake.measured_surface.file, route.densify.section.file); the 0.1.14 files stay committed and listed, unread by 0.1.15; sync_out carries back the two self-checked records 0.1.15 adds (data/densify_section.json, data/shoulder_grade.json)"
   },
   "sync_out": {
     "required": [
@@ -133,7 +137,9 @@
       "data/road_wear_check.json",
       "data/reseat_bespoke.json",
       "data/far_ground.report.json",
-      "data/far_ground.prep.json"
+      "data/far_ground.prep.json",
+      "data/densify_section.json",
+      "data/shoulder_grade.json"
     ],
     "map": [
       [

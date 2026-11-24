@@ -564,6 +564,8 @@ V4_EXTRAS = {
         "ledger 0082 pass 3: only where the config says scenery.bespoke.reseat_on_prep true (Milford, High Plains); never on Lake Murray",
     ("prep_prep", "ship: the far ground's sunk skirt out of the prepped ground tiles (tools/far_ground_prep_blend.py; self-checked)"):
         "ledger 0082 'Far ground (0.1.11)': only where the config names terrain.far_ground.object (Milford); never on Lake Murray",
+    ("prep_prep", "ship: the road shoulder graded on the lidar ground (tools/shoulder_grade_blend.py; ledger 0102; self-checked)"):
+        "ledger 0102: only where the config names terrain.shoulder_grade (Milford 0.1.15); never on Lake Murray",
     ("prep_prep", "ship: road wear where tyres run + the road's tone off the aerial (tools/road_wear_blend.py; ledger 0084; self-checked)"):
         "ledger 0084: only where the track's config names road_wear (Milford 0.1.7, High Plains 0.1.7); never on Lake Murray",
     ("prep_prep", "ship: a circuit's declared line, grid, pits and sectors on the prepped scene (tools/circuit_dummies_blend.py; ledger 0093; self-checked)"):
@@ -572,6 +574,12 @@ V4_EXTRAS = {
         "ledger 0065: v4's 7,600 blocks (ship_sd.sh stands them only under SD_BESPOKE=1, an echo there)",
     ("ship_export_street", "ship: export the STREET-ONLY kn5 (the centre line, a chicane's island; the non-race layouts alone)"):
         "ledger 0063: the street-only kn5",
+    ("author_college_split", "author: College Avenue as two roads (source/college_r2: the data held to the committed split, then the ribbons, the middle and the ground into loop.blend; ledger 0055 round 2; self-checked; not opted in = no-op)"):
+        "ledger 0055 round 2: Kevin, \"realism+\": College Avenue as two roads (opt-in route.college_split)",
+    ("author_median_tops", "author: every median's grass top into its own object (tools/author_median_tops_blend.py: out of TERRAIN, which the prep pins under the road; ledger 0055; self-checked; not opted in = no-op)"):
+        "ledger 0055: every Lake Murray median showed asphalt between its curbs (opt-in route.median_tops)",
+    ("author_median_rebuild", "author: one median island re-authored from corrected data (tools/author_median_rebuild_blend.py: the old island found exactly or refused; ledger 0099 round 3; self-checked; not opted in = no-op)"):
+        "ledger 0099 round 3, item 1b: Mission Gorge Rd's island was built across a real crossing (opt-in route.median_rebuild)",
     ("author_lamp_heads", "author: the back head of every two-arm lamp lit (tools/author_lamp_heads_blend.py: LIGHTS_back, one lens per back head; ledger 0099; self-checked; not opted in = no-op)"):
         "ledger 0099: Kevin 2026-11-22, \"Yes, light both heads\" (opt-in scenery.streetlights.light_both_heads)",
     ("author_walk_grade", "author: the street walk's back grade no steeper than route.walk_back_grade (tools/author_walk_grade_blend.py: every lip raised, nothing else moves; ledger 0099; self-checked; not opted in = no-op)"):

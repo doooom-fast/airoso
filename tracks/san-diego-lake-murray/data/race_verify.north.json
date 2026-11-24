@@ -14,7 +14,7 @@
     "chicane_objects": 0,
     "nose_walls": 5,
     "nose_objects": 5,
-    "nose_off_line_max_m": 0.007,
+    "nose_off_line_max_m": 0.006,
     "nose_pins": [
      {
       "object": "1WALL_race_close_nacw_nose_7_0",
@@ -32,7 +32,7 @@
       "object": "1WALL_race_close_nacw_nose_717_0",
       "vertex": 717,
       "far_line_m": 0.003,
-      "closure_face_m": 0.004
+      "closure_face_m": 0.001
      },
      {
       "object": "1WALL_race_close_nacw_nose_1452_0",
@@ -99,14 +99,14 @@
       "end": "start",
       "vertex": 717,
       "ring_vertex": 717,
-      "nose_line_m": 0.0
+      "nose_line_m": 0.002
      },
      {
       "object": "1WALL_race_close_nacw_missiongorge_717_0",
       "end": "end",
       "vertex": 1452,
       "ring_vertex": 1452,
-      "nose_line_m": 0.002
+      "nose_line_m": 0.003
      },
      {
       "object": "1WALL_race_close_nacw_princessview_333_0",
@@ -144,7 +144,7 @@
     "chicane_objects": 0,
     "nose_walls": 5,
     "nose_objects": 5,
-    "nose_off_line_max_m": 0.006,
+    "nose_off_line_max_m": 0.007,
     "nose_pins": [
      {
       "object": "1WALL_race_close_ncw_nose_7_0",
@@ -215,7 +215,7 @@
       "end": "start",
       "vertex": 717,
       "ring_vertex": 717,
-      "nose_line_m": 0.003
+      "nose_line_m": 0.002
      },
      {
       "object": "1WALL_race_close_ncw_missiongorge_717_0",
@@ -269,7 +269,7 @@
     ]
    }
   },
-  "rings_total": 12406,
+  "rings_total": 12405,
   "interpolated": 0,
   "objects": 42,
   "kbar_objects": 0,
@@ -1075,7 +1075,7 @@
    "margin_m": 0.773,
    "fallback": false,
    "closure": "closure_north_acw",
-   "closure_margin_m": 11.347
+   "closure_margin_m": 12.537
   },
   "lamps_inside": 0,
   "lamp_min_vs_closure": {
@@ -1094,37 +1094,37 @@
   },
   "scenery_source": "trees: tools/make_treefx.py plan (every species); signs: data/signs.local.json",
   "scenery_items": {
-   "tree": 21171,
+   "tree": 21387,
    "sign": 29
   },
-  "scenery_beside": 671,
+  "scenery_beside": 574,
   "scenery_hits": 0,
   "scenery_min": {
    "north_cw": {
     "layout": "north_cw",
     "kind": "tree",
-    "id": "Bush.bin@median_planting#3209",
-    "vertex": 1091,
-    "lat_m": -2.307,
+    "id": "Bush.bin@median_planting#3163",
+    "vertex": 1309,
+    "lat_m": -2.457,
     "xz": [
-     -1949.54,
-     2395.04
+     -1593.3,
+     2941.69
     ],
     "against": "closure",
-    "margin_m": 0.661
+    "margin_m": 0.134
    },
    "north_acw": {
     "layout": "north_acw",
     "kind": "tree",
-    "id": "Bush.bin@median_planting#3142",
-    "vertex": 957,
-    "lat_m": 0.67,
+    "id": "Bush.bin@median_planting#3009",
+    "vertex": 857,
+    "lat_m": 2.62,
     "xz": [
-     -2290.0,
-     2204.66
+     -2587.62,
+     2174.06
     ],
     "against": "closure",
-    "margin_m": 0.67
+    "margin_m": 0.085
    }
   },
   "scenery_r_m": {

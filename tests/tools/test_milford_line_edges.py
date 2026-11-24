@@ -260,7 +260,8 @@ def test_milford_config_keeps_the_smoothing_in_metres():
     # route.smooth_sigma_pts x lm_intake.resample_m: 7.5 m, the audit's modelled sigma 5 pts at 1.5 m
     assert abs(float(route["smooth_sigma_pts"]) * float(li["resample_m"]) - 7.5) < 1e-9
     front, flares = li["edge_retrace"]
-    assert front.get("mode", "widen") == "widen" and front["spans"] == [[4530.0, 150.0]]
+    # the GM line (ledger 0102: 0.1.14's 4,530 re-read by position on it)
+    assert front.get("mode", "widen") == "widen" and front["spans"] == [[4355.5, 150.0]]
     assert flares["mode"] == "agree" and float(flares.get("taper_m", 60.0)) == 60.0
     assert "smooth_m" not in flares                       # the agree record keeps the tool's 8 m smoothing
 
@@ -324,5 +325,6 @@ def test_the_run_off_pads_are_outlined_off_this_line():
     rec = json.loads((ROOT / "tracks" / MF / "source" / "runoff" / "runoff_pads.json").read_text(encoding="utf-8"))
     kept = [b for b in rec["blobs"] if b["kept"]]
     assert rec["line"]["frame"].startswith("the intake's data/centerline.local.json through the route's own smoothing")
-    assert len(kept) == 19 and rec["left_out"] == 5 and all(b["folds"] == 0 for b in kept)
+    # GM's loop (ledger 0102): 18 off its line (0.1.14's lap: 19)
+    assert len(kept) == 18 and rec["left_out"] == 5 and all(b["folds"] == 0 for b in kept)
     assert sum(b.get("rows_dropped", 0) for b in rec["blobs"]) <= 2

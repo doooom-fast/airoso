@@ -161,14 +161,14 @@ def test_tyre_skin_is_generated():
     assert mean < 60                                 # black rubber, as NAIP reads it
 
 
-def test_t3_may_stand_on_the_edge_strip_never_on_the_lane():
-    """ledger 0091 round 2: T3's first modules touch the edge strip since 0091 moved the lane edge toward it; it stands on
-    the strip (stand_on, seat surface, as Pikes Peak's wall, ledger 0085), the lane stays refused; no other Milford rail opts in"""
+def test_no_milford_rail_stands_on_the_lane_and_none_opts_in_since_t3_left():
+    """ledger 0091 round 2: T3's first modules touched the edge strip, so T3 alone stood on it (stand_on, seat surface, as
+    Pikes Peak's wall, ledger 0085), the lane refused. Ledger 0102 (0.1.15, GM's loop): T3 is off the lap with the 2022 loop,
+    so no Milford rail opts in now, and none may name the lane"""
     cfg = json.loads((ROOT / "tracks" / "milford-road-course-lm" / "track.config.json").read_text(encoding="utf-8"))
     names = cfg["scenery"]["bespoke"]["names"]
     rails = {r["key"]: r for r in cfg["scenery"]["bespoke"]["rails"]}
-    t3 = rails["t3_s1000_apron_back"]
-    assert t3["stand_on"] == ["CURB", "1KERB"] and t3["seat"] == "surface"
-    assert not {s.upper() for s in t3["stand_on"]} & {"ROAD", "1ROAD"}                 # never the lane
-    assert set(t3["stand_on"]) <= set(names["paved"]) and "CURB" in names["track_edge"]
-    assert [k for k, r in rails.items() if "stand_on" in r or "seat" in r] == ["t3_s1000_apron_back"]
+    assert "t3_s1000_apron_back" not in rails
+    assert "CURB" in names["track_edge"] and "CURB" in names["paved"]
+    assert [k for k, r in rails.items() if "stand_on" in r or "seat" in r] == []
+    assert not any({s.upper() for s in r.get("stand_on") or []} & {"ROAD", "1ROAD"} for r in rails.values())

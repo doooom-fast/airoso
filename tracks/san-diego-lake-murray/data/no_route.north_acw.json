@@ -19,14 +19,14 @@
  },
  "seed": "AC_START_0",
  "domain_m2": 649381,
- "reached_m2": 91715,
- "allowed_m2": 91715,
+ "reached_m2": 91657,
+ "allowed_m2": 91657,
  "leak_cells": 0,
  "leak_m2": 0,
  "escaped": false,
- "wall_cells": 407996,
- "wall_tris_in_band": 146950,
- "local_deck_cells": 3847,
+ "wall_cells": 407898,
+ "wall_tris_in_band": 146790,
+ "local_deck_cells": 3848,
  "local_deck_walls": [
   {
    "object": "1WALL_STUB_galewood_street_5984405_L",
@@ -253,6 +253,34 @@
    ]
   },
   {
+   "object": "1WALL_guard",
+   "cells": 1,
+   "deck_minus_line_m": [
+    0.001,
+    0.003
+   ],
+   "base_m": 0.486,
+   "top_m": 1.071,
+   "vertices": [
+    1056,
+    1057
+   ]
+  },
+  {
+   "object": "1WALL_race_close_nacw_missiongorge_717_0",
+   "cells": 1,
+   "deck_minus_line_m": [
+    0.002,
+    0.003
+   ],
+   "base_m": -0.0,
+   "top_m": 0.4,
+   "vertices": [
+    1056,
+    1056
+   ]
+  },
+  {
    "object": "1WALL_STUB_mission_montana_drive_5988290_L",
    "cells": 67,
    "deck_minus_line_m": [
@@ -424,7 +452,7 @@
  "door_clusters": 0,
  "doors": [],
  "doors_by_class": {},
- "forbidden_probes": 325,
+ "forbidden_probes": 326,
  "forbidden_reached": [],
  "lap_vertices": 2936,
  "blocked": [],
@@ -432,5 +460,5 @@
  "spawns_unreached": [],
  "fail": false,
  "fails": [],
- "seconds": 45.4
+ "seconds": 44.2
 }

@@ -70,7 +70,8 @@ ROAD_SURFACES: dict = {
 }
 
 
-def surfaces_ini(*, wall: bool = False, road_surface: str = "tarmac", kerb_ff_effect: int = 0) -> str:
+def surfaces_ini(*, wall: bool = False, road_surface: str = "tarmac", kerb_ff_effect: int = 0,
+                 lawn_as_grass: bool = False) -> str:
     """data/surfaces.ini — physical surfaces keyed to the 1ROAD/1KERB/1RUNOFF/1GRASS mesh prefixes.
     WAV= names a STOCK AC sound resolved from the player's own content/sfx (FMOD GUIDs.txt) — NOTHING
     is bundled or redistributed. ROAD is intentionally silent on tarmac (tyre-roll covers it); KERB
@@ -83,7 +84,12 @@ def surfaces_ini(*, wall: bool = False, road_surface: str = "tarmac", kerb_ff_ef
     FF_EFFECT=<n> on the KERB block ONLY — 1 is the Kunos convention (measured: Vallelunga, Silverstone,
     Laguna Seca, Brands Hatch, Red Bull Ring, Barcelona, Imola, Mugello) and puts the kerb in the wheel.
     KEY=KERB also covers every street curb/sidewalk (1KERB_sidewalk), so they get it too. Default 0:
-    the output is byte-identical to before for every track that does not opt in."""
+    the output is byte-identical to before for every track that does not opt in.
+    ``lawn_as_grass`` (ledger 0055, opt-in per track via track.config.json ``lawn_as_grass``) writes the LAWN block
+    with the GRASS block's own values, every one of them, taken from that block here so the two cannot drift apart.
+    For a track whose only 1LAWN meshes are its medians' grass tops (tools/author_median_tops_blend.py: the top cannot
+    keep the name 1GRASS, the prep pins every 1GRASS vertex under the road it stands on): a car on an island is on
+    grass, exactly. Default False: byte-identical."""
     if road_surface not in ROAD_SURFACES:
         raise ValueError(f"unknown road_surface {road_surface!r} "
                          f"(expected one of {', '.join(sorted(ROAD_SURFACES))})")
@@ -108,6 +114,9 @@ def surfaces_ini(*, wall: bool = False, road_surface: str = "tarmac", kerb_ff_ef
         ("LAWN",   dict(FRICTION=0.65, DAMPING=0.09, IS_VALID_TRACK=0, DIRT_ADDITIVE=1, IS_PITLANE=0),
                    "grass.wav", 1.0),
     ]
+    if lawn_as_grass:
+        grass = next(b for b in blocks if b[0] == "GRASS")
+        blocks = [("LAWN", dict(grass[1]), grass[2], grass[3]) if b[0] == "LAWN" else b for b in blocks]
     if wall:
         # WALL = the physical freeway barrier (1WALL_* meshes) on network tracks. A vertical collision
         # surface, not driven on, so it never counts as valid track — it just bounces the car back
@@ -663,7 +672,8 @@ def generate(project_dir: str | Path, kn5_name: str | None = None, *, strict_kn5
     out = project_dir / "build" / cfg.slug
     (out / "data").mkdir(parents=True, exist_ok=True)
     (out / "data" / "surfaces.ini").write_text(
-        surfaces_ini(wall=wall_surface, road_surface=road_surface, kerb_ff_effect=kerb_ff), encoding="utf-8")
+        surfaces_ini(wall=wall_surface, road_surface=road_surface, kerb_ff_effect=kerb_ff,
+                     lawn_as_grass=bool(cfg.raw.get("lawn_as_grass"))), encoding="utf-8")
 
     params, geom = _map_params(xz)
     (out / "data" / "map.ini").write_text(map_ini(params), encoding="utf-8")
@@ -764,7 +774,8 @@ def generate(project_dir: str | Path, kn5_name: str | None = None, *, strict_kn5
             _lroot = out / layout
             (_lroot / "data").mkdir(parents=True, exist_ok=True)
             (_lroot / "data" / "surfaces.ini").write_text(
-                surfaces_ini(wall=wall_surface, road_surface=road_surface, kerb_ff_effect=kerb_ff), encoding="utf-8")
+                surfaces_ini(wall=wall_surface, road_surface=road_surface, kerb_ff_effect=kerb_ff,
+                     lawn_as_grass=bool(cfg.raw.get("lawn_as_grass"))), encoding="utf-8")
             (_lroot / "data" / "map.ini").write_text(map_ini(params), encoding="utf-8")
             _draw_track_png(xz, geom, _lroot / "map.png", stroke=(255, 255, 255, 255),
                             width=params["DRAWING_SIZE"], flip_y=False, multi=multi)

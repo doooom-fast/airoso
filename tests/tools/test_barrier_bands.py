@@ -344,3 +344,33 @@ def test_a_v1_config_without_a_corridor_is_refused():
         assert "race.corridor" in str(e)
     else:
         raise AssertionError("a config without race.corridor was declared")
+
+
+def test_whole_may_be_several_intervals_and_one_interval_cut_in_two_declares_the_same():
+    """Ledger 0055 round 2 (the College split): race.corridor.whole may be several vertex intervals, for a stretch of
+    whole street that is no corner's box. Proved on this data by cutting the one interval in two where it stands: every
+    zone, closure, lane, pin and probe is the same, and the declaration still passes its self-gates and the planned fill"""
+    _d, one = _sd()
+
+    def cut(cfg):
+        cfg["race"]["corridor"]["whole"] = [[4454, 100], [101, 777]]
+
+    two = bb.build(_project(cut))
+    assert two["fails"] == [], two["fails"]
+    assert two["zones"]["whole"] == [[4454, 100], [101, 777]] and one["zones"]["whole"] == [4454, 777]
+    for key in ("boxes", "closure_runs", "openings"):
+        assert two["zones"][key] == one["zones"][key], key
+    for lid in ("race_cw", "race_acw"):
+        a, b = one["corridors"][lid], two["corridors"][lid]
+        for key in ("zone_by_vertex", "closure_y_by_vertex", "lane_by_vertex", "pins"):
+            assert a[key] == b[key], (lid, key)
+        assert a["no_route"]["forbidden_probes"] == b["no_route"]["forbidden_probes"]
+        assert b["no_route"]["planned"]["fail"] is False and b["no_route"]["planned"]["leak_m2"] == 0
+
+
+def test_a_box_inside_a_second_whole_interval_fails():
+    def edit(cfg):
+        cfg["race"]["corridor"]["whole"] = [[4454, 777], [1500, 1530]]          # the second one swallows the box at v1514
+
+    fails = bb.build(_project(edit))["fails"]
+    assert any("overlaps the whole-street zone" in f for f in fails), fails

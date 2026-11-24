@@ -69,13 +69,6 @@
    "length_m": 53.2
   },
   {
-   "key": "t3_s1000_apron_back",
-   "kind": "tyres",
-   "modules": 51,
-   "left_out": 0,
-   "length_m": 32.4
-  },
-  {
    "key": "f1_nw_screen_ne",
    "kind": "screen",
    "modules": 29,
@@ -683,84 +676,79 @@
    "left_out": 0
   },
   {
-   "key": "runoff_L0883",
-   "cells": 63,
+   "key": "runoff_R0880",
+   "cells": 38,
    "left_out": 0
   },
   {
-   "key": "runoff_R0998",
-   "cells": 21,
+   "key": "runoff_R1008",
+   "cells": 75,
    "left_out": 0
   },
   {
-   "key": "runoff_L1175",
-   "cells": 140,
+   "key": "runoff_L1355",
+   "cells": 13,
    "left_out": 0
   },
   {
-   "key": "runoff_L1530",
-   "cells": 14,
+   "key": "runoff_L2333",
+   "cells": 31,
    "left_out": 0
   },
   {
-   "key": "runoff_L2508",
-   "cells": 29,
+   "key": "runoff_L2414",
+   "cells": 101,
    "left_out": 0
   },
   {
-   "key": "runoff_L2588",
-   "cells": 103,
+   "key": "runoff_R3064",
+   "cells": 109,
    "left_out": 0
   },
   {
-   "key": "runoff_R3239",
-   "cells": 107,
+   "key": "runoff_R3196",
+   "cells": 74,
    "left_out": 0
   },
   {
-   "key": "runoff_R3370",
-   "cells": 79,
+   "key": "runoff_R3279",
+   "cells": 41,
    "left_out": 0
   },
   {
-   "key": "runoff_R3453",
-   "cells": 43,
-   "left_out": 0
-  },
-  {
-   "key": "runoff_L3510",
-   "cells": 22,
-   "left_out": 0
-  },
-  {
-   "key": "runoff_R3883",
-   "cells": 80,
-   "left_out": 0
-  },
-  {
-   "key": "runoff_L4359",
+   "key": "runoff_L3336",
    "cells": 32,
    "left_out": 0
   },
   {
-   "key": "runoff_R4375",
-   "cells": 24,
+   "key": "runoff_R3708",
+   "cells": 74,
    "left_out": 0
   },
   {
-   "key": "runoff_L4512",
+   "key": "runoff_L4184",
+   "cells": 19,
+   "left_out": 0
+  },
+  {
+   "key": "runoff_R4200",
+   "cells": 25,
+   "left_out": 0
+  },
+  {
+   "key": "runoff_L4338",
    "cells": 30,
    "left_out": 0
   },
   {
-   "key": "runoff_L4775",
-   "cells": 20,
+   "key": "runoff_L4601",
+   "cells": 21,
    "left_out": 0
   }
  ],
  "trunks": {
   "file": "source/vegetation/trunks.json",
-  "stood": 261,
+  "stood": 251,
   "radius_m": 0.3,
   "height_m": 3.0,
   "nearest_paved_m": 4.94

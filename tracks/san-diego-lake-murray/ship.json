@@ -37,6 +37,9 @@
       "lamps"
     ],
     "author": [
+      "college_split",
+      "median_rebuild",
+      "median_tops",
       "lamp_heads",
       "walk_grade",
       "race_bands",
@@ -78,7 +81,7 @@
       "fold_fans",
       "kn5_ground"
     ],
-    "_author_doc": "ledger 0099: lamp_heads (tools/author_lamp_heads_blend.py, opt-in scenery.streetlights.light_both_heads) first: it reads only the draft's LIGHTS_0 and data/lights.local.json, which no author step writes, and touches only LIGHTS_back, which none reads; first keeps the race steps' order (race_author, signs, race_verify last). Round 1c: walk_grade (tools/author_walk_grade_blend.py, opt-in route.walk_back_grade) second: it moves only the street walks' back-grade lips, which no other author step reads (the race edge strips stand on the road, edge_mode road; the signs on the walk's flat top), and before the race steps, so they author on the walk as it ships"
+    "_author_doc": "ledger 0055 (the medians): median_tops second (tools/author_median_tops_blend.py, opt-in route.median_tops): it moves every island's grass top out of TERRAIN into its own object, after college_split has rebuilt College's islands and before any step reads the scene. ledger 0055 round 2: college_split first (tracks/san-diego-lake-murray/source/college_r2, opt-in route.college_split): it rebuilds College Avenue's road, walks, island and ground between rows v1130 and v1476 and writes the lines the race steps count along, so every other author step works on the roads as they ship. ledger 0099: lamp_heads (tools/author_lamp_heads_blend.py, opt-in scenery.streetlights.light_both_heads) first: it reads only the draft's LIGHTS_0 and data/lights.local.json, which no author step writes, and touches only LIGHTS_back, which none reads; first keeps the race steps' order (race_author, signs, race_verify last). Round 1c: walk_grade (tools/author_walk_grade_blend.py, opt-in route.walk_back_grade) second: it moves only the street walks' back-grade lips, which no other author step reads (the race edge strips stand on the road, edge_mode road; the signs on the walk's flat top), and before the race steps, so they author on the walk as it ships"
   },
   "sync_in": {
     "required": [
@@ -104,6 +107,8 @@
       "textures/chaparral_far_diffuse.jpg",
       "textures/sandstone_cut_diffuse.jpg",
       "textures/sandstone_cut_normal.jpg",
+      "textures/terracotta_median_diffuse.jpg",
+      "textures/terracotta_median_normal.jpg",
       "source/expansion/pipeline__osm_lamps_signals.json",
       "source/expansion/aerial__veg_bins.json",
       "source/expansion/p3-proofs/measure_p3.json",
@@ -118,7 +123,11 @@
       "data/osm.expansion.json",
       "data/expansion.north.samples.json.gz",
       "source/bespoke/buildings.json",
-      "source/vegetation/median_heights.lidar.json"
+      "source/vegetation/median_heights.lidar.json",
+      "source/college_r2/college_plants.median_spots.json",
+      "source/expansion/mg_median/mg_median_correction.json",
+      "source/expansion/mg_median/mg_median.median_spots.json",
+      "source/college_r2/college_bank_plants.json"
     ],
     "globs": [
       "source/trees/*.bin"
@@ -235,10 +244,19 @@
       "data/race_verify.north.json",
       "data/race_verify.scenery.north.json",
       "data/walk_grade.json",
-      "data/walk_grade.seat.json"
+      "data/walk_grade.seat.json",
+      "data/barrier_bands.college.json",
+      "data/lap.college.json",
+      "data/median_tops.json",
+      "data/race_authored.college.json",
+      "data/race_college.kn5.json",
+      "data/race_verify.college.json",
+      "data/race_verify.scenery.college.json",
+      "data/median_rebuild.json"
     ],
-    "_seed_doc": "ledger 0099 (Lake Murray from an EMPTY workshop; ledger 0090 'Open'): copied into the project only where it has no file yet, never over a workshop's own (tools/ship_track.sh). The rule: every sync_out file airoso holds that sync_in does not already bring, so a fresh workshop starts as the last synced-back one left it. loop.blend is the blend the last install synced back (0.20.4's, 2026-11-23: sha256 495a2198..., 189,120,404 B; 0.20.2's was 3f13b887..., 189,063,384 B; every author step on it is idempotent, ledger 0099; LFS: an un-pulled pointer is refused); the draft's data the --skip-blend steps read (connectors, mouths, pads, stubs, median bands, centrelines, ground release, deck datum, lights, bespoke report...) and the run's own records, which the run rewrites. data/centerline.geojson (scripts/ac/track_folder.py: the lap length) and data/centerline.elevation.json (scripts/geometry/drive_test.py: the replication rows) were read by the chain but crossed neither way; they are now in sync_out and seeded. The north laps' own records (lap.north.json, barrier_bands.north.json, dummies_north_*.json, ...) were absent until 0.20.4's install synced them back (0.20.2 was built in a scratch workshop that never did); with walk_grade.json, walk_grade.seat.json and lights.heads.json they are seeds now by the same rule (23 files, 2026-11-23); the author / ship / gate steps rewrite every one of them",
-    "_optional_median_doc": "ledger 0099: source/vegetation/median_heights.lidar.json is scenery.treefx.median_measured.file (2026-11-19, Kevin: 'B: lidar height each'); tools/make_treefx.py reads it from the project, and no list carried it, so every rebuild since that config change would stop at the TreeFX step"
+    "_seed_doc": "ledger 0099 (Lake Murray from an EMPTY workshop; ledger 0090 'Open'): copied into the project only where it has no file yet, never over a workshop's own (tools/ship_track.sh). The rule: every sync_out file airoso holds that sync_in does not already bring, so a fresh workshop starts as the last synced-back one left it. loop.blend is the blend the last install synced back (0.20.5's, 2026-11-23: sha256 bc7f772e..., 204,545,652 B; 0.20.6's own, bd5b407c..., 204,498,836 B, is kept on the PC and not committed, the repository being over its LFS budget: the next empty workshop seeds 0.20.5's and re-authors, ledger 0099 round 3; 0.20.4's was 495a2198..., 189,120,404 B; 0.20.2's 3f13b887..., 189,063,384 B; every author step on it is idempotent, ledger 0099; LFS: an un-pulled pointer is refused); the draft's data the --skip-blend steps read (connectors, mouths, pads, stubs, median bands, centrelines, ground release, deck datum, lights, bespoke report...) and the run's own records, which the run rewrites. data/centerline.geojson (scripts/ac/track_folder.py: the lap length) and data/centerline.elevation.json (scripts/geometry/drive_test.py: the replication rows) were read by the chain but crossed neither way; they are now in sync_out and seeded. The north laps' own records (lap.north.json, barrier_bands.north.json, dummies_north_*.json, ...) were absent until 0.20.4's install synced them back (0.20.2 was built in a scratch workshop that never did); with walk_grade.json, walk_grade.seat.json and lights.heads.json they are seeds now by the same rule (23 files, 2026-11-23; 0.20.5's install added the College lap's 7 records the same way); the author / ship / gate steps rewrite every one of them",
+    "_optional_median_doc": "ledger 0099: source/vegetation/median_heights.lidar.json is scenery.treefx.median_measured.file (2026-11-19, Kevin: 'B: lidar height each'); tools/make_treefx.py reads it from the project, and no list carried it, so every rebuild since that config change would stop at the TreeFX step",
+    "_optional_college_doc": "ledger 0055 round 2: the two lists tools/make_treefx.py reads from the project for the College bank (scenery.treefx.median_spots.file, scenery.treefx.lidar_plants.file), written by source/college_r2/college_plants_data.py"
   },
   "sync_out": {
     "required": [
@@ -329,7 +347,9 @@
       "data/centerline.elevation.json",
       "data/lights.heads.json",
       "data/walk_grade.json",
-      "data/walk_grade.seat.json"
+      "data/walk_grade.seat.json",
+      "data/median_tops.json",
+      "data/median_rebuild.json"
     ],
     "_files_lap_doc": "ledger 0054 Phase 2: each lap's line, declaration and reports, as tools/ship_sd.sh syncs them ({lap}: every lap a race layout names; none in this config, so nothing)",
     "map": [

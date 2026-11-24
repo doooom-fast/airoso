@@ -37,25 +37,29 @@ from pathlib import Path
 
 import bpy
 
-LIFT = 0.10          # road ribbon rides +0.10 above the local y (build_loop_blend's lift)
-CURB_H = 0.18
-LIP_IN = 0.15        # curb top inward batter
-DECK_INSET = 0.22
-NOSE_HALF = 0.25     # island end tapers to this half-width
-NOSE_VERTS = 3
 SHRUB_EVERY_M = 3.2
-BARRIER_MIN_M = 120.0
+
+
+def _load(name, rel):
+    import importlib.util
+    spec = importlib.util.spec_from_file_location(name, Path(__file__).resolve().parents[1] / rel)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+# the island's own shape (its ring, deck, beam and posts, and the numbers they stand on) is ONE rule, tools/median_island.py,
+# shared with tools/author_median_rebuild_blend.py since ledger 0099 round 3: this file lays the islands out, the rule
+# shapes them. tests/tools/test_median_island_rule.py holds this tool's output to the checksums taken before the lift.
+_MI = _load("_median_island_med", "tools/median_island.py")
+LIFT, CURB_H, LIP_IN, DECK_INSET = _MI.LIFT, _MI.CURB_H, _MI.LIP_IN, _MI.DECK_INSET
+NOSE_HALF, NOSE_VERTS, BARRIER_MIN_M = _MI.NOSE_HALF, _MI.NOSE_VERTS, _MI.BARRIER_MIN_M
 STREET_CURB_OBJECT = "1KERB_sidewalk_streetonly_median"   # the street-only island's curb (same surface + texture key)
 STREET_RAIL_OBJECT = "1WALL_guard_streetonly_median"      # ...and its centre barrier
 
 
 def _race_chicane():
-    import importlib.util
-    spec = importlib.util.spec_from_file_location(
-        "_race_chicane_med", Path(__file__).resolve().parents[1] / "scripts" / "geometry" / "race_chicane.py")
-    mod = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(mod)
-    return mod
+    return _load("_race_chicane_med", "scripts/geometry/race_chicane.py")
 
 
 _RC = _race_chicane()
@@ -66,31 +70,9 @@ def pieces(i, j, spans):
     return _RC.island_pieces(i, j, spans)
 
 
-def B(p):
-    """local (x, y_up, z_north) -> blender (x, z_north, y_up)"""
-    return (p[0], p[2], p[1])
-
-
-def _tangent(pts, k):
-    a, b = pts[max(0, k - 1)], pts[min(len(pts) - 1, k + 1)]
-    dx, dz = b[0] - a[0], b[2] - a[2]
-    d = math.hypot(dx, dz) or 1.0
-    return dx / d, dz / d
-
-
-def _segments(island_w):
-    segs, i, n = [], 0, len(island_w)
-    while i < n:
-        if island_w[i] <= 0:
-            i += 1
-            continue
-        j = i
-        while j < n and island_w[j] > 0:
-            j += 1
-        if j - i >= 6:
-            segs.append((i, j))
-        i = j
-    return segs
+B = _MI.B
+_tangent = _MI.tangent
+_segments = _MI.segments
 
 
 def _mk(name, verts, faces):
@@ -158,34 +140,17 @@ def main():
     for (_name, pts, iw, i, j) in segs:
         deck_start = len(deckV)
         ks = list(range(i, j))
-        seg_len = sum(math.hypot(pts[k + 1][0] - pts[k][0], pts[k + 1][2] - pts[k][2])
-                      for k in ks[:-1])
+        seg_len = _MI.seg_length(pts, i, j)
         total_len += seg_len
-        # per-station rings
+        # per-station rings (tools/median_island.py: the curb ring's six vertices and the deck's two, nose-tapered)
         rings = []
-        for si, k in enumerate(ks):
-            half = iw[k] / 2.0
-            # nose taper at both ends
-            if si < NOSE_VERTS:
-                half = NOSE_HALF + (half - NOSE_HALF) * si / NOSE_VERTS
-            if (len(ks) - 1 - si) < NOSE_VERTS:
-                half = NOSE_HALF + (half - NOSE_HALF) * (len(ks) - 1 - si) / NOSE_VERTS
-            tx, tz = _tangent(pts, k)
-            lx, lz = -tz, tx
-            cx, cy, cz = pts[k][0], pts[k][1] + LIFT, pts[k][2]
-
-            def P(off, dy):
-                return B((cx + lx * off, cy + dy, cz + lz * off))
-
-            # ring: Lbase LtopO LtopI RtopI RtopO Rbase
-            rings.append([P(-half, -0.02), P(-half + 0.04, CURB_H), P(-half + LIP_IN, CURB_H),
-                          P(half - LIP_IN, CURB_H), P(half - 0.04, CURB_H), P(half, -0.02)])
-            di = max(0.05, half - DECK_INSET)
-            deckV += [P(-di, CURB_H + 0.005), P(di, CURB_H + 0.005)]
+        for k in ks:
+            curb_ring, deck_pair = _MI.ring(pts, iw, i, j, k)
+            rings.append(curb_ring)
+            deckV += deck_pair
         # faces between rings (bands: 0-1 sideL, 1-2 lipL, 3-4 lipR, 4-5 sideR; deck separate)
         for si in range(len(ks) - 1):
-            d = deck_start + si * 2
-            deckF.append((d, d + 1, d + 3, d + 2))
+            deckF.append(_MI.deck_face(deck_start + si * 2))
         # the curb, piece by piece (one piece unless a street-only span cuts the segment): each piece's own rings,
         # the cut ring in both pieces; end caps at the segment's real ends, and on a ROAD piece at a cut (the island
         # end a race layout meets) — a street piece is never capped at a cut (it closes onto the road piece's ring)
@@ -198,18 +163,11 @@ def main():
             if street:
                 n_street_rings += b_k - a_k + 1
             for si in range(b_k - a_k):
-                a = base + si * 6
-                b = a + 6
-                for (p, q) in ((0, 1), (1, 2), (3, 4), (4, 5)):
-                    F.append((a + p, a + q, b + q, b + p))
+                F += _MI.curb_span_faces(base + si * 6)
             if a_k == i or not street:
-                a = base
-                F.append((a + 0, a + 1, a + 2, a + 3))
-                F.append((a + 0, a + 3, a + 4, a + 5))
+                F += _MI.curb_start_cap(base)
             if b_k == j - 1 or not street:
-                z = base + (b_k - a_k) * 6
-                F.append((z + 3, z + 2, z + 1, z + 0))
-                F.append((z + 5, z + 4, z + 3, z + 0))
+                F += _MI.curb_end_cap(base + (b_k - a_k) * 6)
 
         # shrubs/planting: cross-quads along the deck — placed within the NOSE-TAPERED half-width,
         # not the data width (the first build put 16 bushes on the pavement beside the noses:
@@ -218,11 +176,7 @@ def main():
         for si in range(1, len(ks) - 1):
             k = ks[si]
             dist += math.hypot(pts[k][0] - pts[k - 1][0], pts[k][2] - pts[k - 1][2])
-            half_here = iw[k] / 2.0
-            if si < NOSE_VERTS:
-                half_here = NOSE_HALF + (half_here - NOSE_HALF) * si / NOSE_VERTS
-            if (len(ks) - 1 - si) < NOSE_VERTS:
-                half_here = NOSE_HALF + (half_here - NOSE_HALF) * (len(ks) - 1 - si) / NOSE_VERTS
+            half_here = _MI.half_width(iw, i, j, k)
             if dist < SHRUB_EVERY_M or half_here < 1.1:
                 continue
             dist = 0.0
@@ -244,38 +198,22 @@ def main():
 
         # barrier on long segments: center box beam + posts
         if seg_len >= BARRIER_MIN_M:
-            bks = ks[NOSE_VERTS:len(ks) - NOSE_VERTS]
+            bks = _MI.beam_points(i, j)
             # the beam piece by piece like the curb (a street-only piece shares its cut ring with the road piece)
             for a_k, b_k, street in pieces(bks[0], bks[-1] + 1, spans_here) if bks else []:
                 V, F = (srV, srF) if street else (railV, railF)
                 beam_start = len(V)
                 for k in range(a_k, b_k + 1):
-                    tx, tz = _tangent(pts, k)
-                    lx, lz = -tz, tx
-                    cx, cz = pts[k][0], pts[k][2]
-                    yb = pts[k][1] + LIFT + CURB_H
-                    for off, dy in ((-0.12, 0.45), (-0.12, 0.75), (0.12, 0.75), (0.12, 0.45)):
-                        V.append(B((cx + lx * off, yb + dy, cz + lz * off)))
+                    V += _MI.beam_ring(pts, k)
                 for si in range(b_k - a_k):
-                    a = beam_start + si * 4
-                    b = a + 4
-                    for (p, q) in ((0, 1), (1, 2), (2, 3), (3, 0)):
-                        F.append((a + p, a + q, b + q, b + p))
+                    F += _MI.beam_span_faces(beam_start + si * 4)
             # posts every ~8 m
-            dist = 0.0
-            for k in bks:
-                dist += math.hypot(pts[k][0] - pts[k - 1][0], pts[k][2] - pts[k - 1][2])
-                if dist < 8.0:
-                    continue
-                dist = 0.0
+            for k in _MI.post_points(pts, bks):
                 V, F = (srV, srF) if in_street(_name, k) else (railV, railF)
-                cx, cz, yb = pts[k][0], pts[k][2], pts[k][1] + LIFT + CURB_H
                 s = len(V)
-                for (ox, oz) in ((-0.06, -0.06), (0.06, -0.06), (0.06, 0.06), (-0.06, 0.06)):
-                    V.append(B((cx + ox, yb, cz + oz)))
-                    V.append(B((cx + ox, yb + 0.45, cz + oz)))
-                for (p, q) in ((0, 2), (2, 4), (4, 6), (6, 0)):
-                    F.append((s + p, s + q, s + q + 1, s + p + 1))
+                pv, pf = _MI.post(pts, k)
+                V += pv
+                F += [tuple(s + q for q in f) for f in pf]
 
     print(f"[median-blend] {len(segs)} island segment(s), {total_len:.0f} m total; "
           f"curb {len(curbV)}v, deck {len(deckV)}v, rail {len(railV)}v, shrubs {len(shrubV)}v")

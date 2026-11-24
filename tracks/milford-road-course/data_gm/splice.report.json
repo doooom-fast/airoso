@@ -1,0 +1,47 @@
+{
+ "_doc": "GM's 2.9 mi loop (ledger 0102, Milford round 2; Kevin 2026-11-22 on the calls page: \"Build the 2.9 mi loop\"): the\ncommitted line with the 2022 hairpin loop (OSM 1030539760, first mapped 2022-02-11) replaced by OSM 72577413's own inner\nturn (2010), written as a second data folder of this track (data_gm/, read by the port through lm_intake.source_data).",
+ "splice": {
+  "fix_a": 337,
+  "fix_b": 518,
+  "geojson_a": 278,
+  "geojson_b": 428,
+  "dropped_points": 149,
+  "dropped_m": 449.9,
+  "new_points": 91,
+  "new_m": 276.5,
+  "join_blend_m": 30.0,
+  "smooth_passes": 4
+ },
+ "lap_m": {
+  "was": 4900.7,
+  "now": 4726.0
+ },
+ "widths_new_m": {
+  "min": 10.8,
+  "p50": 15.0,
+  "max": 16.0,
+  "ortho_valid_median": 15.0
+ },
+ "z_raw_new": {
+  "min": 337.42,
+  "max": 345.7,
+  "nearest_sample_max_m": 4.2,
+  "control_kept_vs_corridor_m": {
+   "p50": 0.016,
+   "max": 0.104
+  }
+ },
+ "controls": {
+  "profile_dev_m": 0.0067,
+  "projection_dev_m": 0.0067
+ },
+ "stats": {
+  "min_m": 316.3,
+  "max_m": 355.7,
+  "range_m": 39.5,
+  "total_climb_m": 71.2,
+  "max_grade_pct": 16.1,
+  "mean_grade_pct": 3.02,
+  "lap_m": 4726.0
+ }
+}

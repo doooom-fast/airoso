@@ -1,0 +1,34 @@
+{
+ "ok": true,
+ "fails": [],
+ "warnings": [],
+ "counts": {
+  "by_layout": {},
+  "scenery_source": "trees: trees.txt (written); signs: data/signs.local.json",
+  "scenery_items": {
+   "tree": 21327,
+   "sign": 29
+  },
+  "scenery_beside": 367,
+  "scenery_hits": 0,
+  "scenery_min": {
+   "race_cw": {
+    "layout": "race_cw",
+    "kind": "tree",
+    "id": "SycamoreV1.bin#21230",
+    "vertex": 1323,
+    "lat_m": 4.956,
+    "xz": [
+     -1742.95,
+     83.46
+    ],
+    "against": "curb strip",
+    "margin_m": 0.104
+   }
+  },
+  "scenery_r_m": {
+   "tree": 0.3,
+   "sign": 0.03
+  }
+ }
+}

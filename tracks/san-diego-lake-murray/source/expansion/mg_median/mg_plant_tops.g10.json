@@ -1,0 +1,247 @@
+{
+ "_doc": "the lm-shrub plant tops within 2 m of the median spots that the corrected island's deck no longer reaches (ledger 0099 round 3, item 2). Read by the Mac, 2026-11-23, off the G10's lm_shrub.tops.npz (the 24-tile run; x / z are the engine frame the spots are in), posted as the board's asset 77bedbf6ac4dc9acf30448b13199cf00 (mg_plant_tops.json). nearest_plant_top = the nearest top that is a plant (not a solid); null = none within 2 m. Read by mg_plants_data.py (rule 3). The spot's own height stays the one in source/vegetation/median_heights.lidar.json",
+ "radius_m": 2.0,
+ "spots": [
+  {
+   "spot": 846,
+   "x": -2307.025,
+   "z": 2200.681,
+   "spot_h": 3.16,
+   "spot_crown": 2.26,
+   "tops_within_2m": 1,
+   "nearest_plant_top": {
+    "top": 400457,
+    "x": -2306.108,
+    "z": 2202.443,
+    "d_m": 1.986,
+    "h": 3.6,
+    "crown_d": 2.26,
+    "plant": true,
+    "solid": false,
+    "median": true
+   },
+   "height_match": null,
+   "all": [
+    {
+     "top": 400457,
+     "x": -2306.108,
+     "z": 2202.443,
+     "d_m": 1.986,
+     "h": 3.6,
+     "crown_d": 2.26,
+     "plant": true,
+     "solid": false,
+     "median": true
+    }
+   ]
+  },
+  {
+   "spot": 852,
+   "x": -2272.412,
+   "z": 2207.367,
+   "spot_h": 5.46,
+   "spot_crown": 3.97,
+   "tops_within_2m": 4,
+   "nearest_plant_top": {
+    "top": 400701,
+    "x": -2272.59,
+    "z": 2206.467,
+    "d_m": 0.918,
+    "h": 5.29,
+    "crown_d": 3.97,
+    "plant": true,
+    "solid": false,
+    "median": true
+   },
+   "height_match": null,
+   "all": [
+    {
+     "top": 400701,
+     "x": -2272.59,
+     "z": 2206.467,
+     "d_m": 0.918,
+     "h": 5.29,
+     "crown_d": 3.97,
+     "plant": true,
+     "solid": false,
+     "median": true
+    },
+    {
+     "top": 400800,
+     "x": -2271.59,
+     "z": 2207.968,
+     "d_m": 1.018,
+     "h": 5.52,
+     "crown_d": 3.79,
+     "plant": true,
+     "solid": false,
+     "median": true
+    },
+    {
+     "top": 400868,
+     "x": -2272.592,
+     "z": 2208.968,
+     "d_m": 1.611,
+     "h": 4.85,
+     "crown_d": 2.44,
+     "plant": true,
+     "solid": false,
+     "median": true
+    },
+    {
+     "top": 400835,
+     "x": -2273.592,
+     "z": 2208.467,
+     "d_m": 1.613,
+     "h": 5.07,
+     "crown_d": 3.04,
+     "plant": true,
+     "solid": false,
+     "median": true
+    }
+   ]
+  },
+  {
+   "spot": 857,
+   "x": -2243.942,
+   "z": 2213.873,
+   "spot_h": 3.19,
+   "spot_crown": 3.24,
+   "tops_within_2m": 1,
+   "nearest_plant_top": {
+    "top": 401191,
+    "x": -2244.077,
+    "z": 2213.489,
+    "d_m": 0.407,
+    "h": 3.19,
+    "crown_d": 3.24,
+    "plant": true,
+    "solid": false,
+    "median": true
+   },
+   "height_match": {
+    "top": 401191,
+    "x": -2244.077,
+    "z": 2213.489,
+    "d_m": 0.407,
+    "h": 3.19,
+    "crown_d": 3.24,
+    "plant": true,
+    "solid": false,
+    "median": true
+   },
+   "all": [
+    {
+     "top": 401191,
+     "x": -2244.077,
+     "z": 2213.489,
+     "d_m": 0.407,
+     "h": 3.19,
+     "crown_d": 3.24,
+     "plant": true,
+     "solid": false,
+     "median": true
+    }
+   ]
+  },
+  {
+   "spot": 862,
+   "x": -2215.545,
+   "z": 2223.138,
+   "spot_h": 0.68,
+   "spot_crown": null,
+   "tops_within_2m": 1,
+   "nearest_plant_top": null,
+   "height_match": null,
+   "all": [
+    {
+     "top": 401916,
+     "x": -2217.066,
+     "z": 2222.51,
+     "d_m": 1.646,
+     "h": 0.91,
+     "crown_d": 2.13,
+     "plant": false,
+     "solid": true,
+     "median": true
+    }
+   ]
+  },
+  {
+   "spot": 871,
+   "x": -2165.383,
+   "z": 2242.268,
+   "spot_h": 4.52,
+   "spot_crown": 4.32,
+   "tops_within_2m": 3,
+   "nearest_plant_top": {
+    "top": 403275,
+    "x": -2165.046,
+    "z": 2241.052,
+    "d_m": 1.262,
+    "h": 4.53,
+    "crown_d": 4.32,
+    "plant": true,
+    "solid": false,
+    "median": true
+   },
+   "height_match": {
+    "top": 403275,
+    "x": -2165.046,
+    "z": 2241.052,
+    "d_m": 1.262,
+    "h": 4.53,
+    "crown_d": 4.32,
+    "plant": true,
+    "solid": false,
+    "median": true
+   },
+   "all": [
+    {
+     "top": 403275,
+     "x": -2165.046,
+     "z": 2241.052,
+     "d_m": 1.262,
+     "h": 4.53,
+     "crown_d": 4.32,
+     "plant": true,
+     "solid": false,
+     "median": true
+    },
+    {
+     "top": 403430,
+     "x": -2166.048,
+     "z": 2243.552,
+     "d_m": 1.446,
+     "h": 4.1,
+     "crown_d": 2.99,
+     "plant": true,
+     "solid": false,
+     "median": true
+    },
+    {
+     "top": 403342,
+     "x": -2167.048,
+     "z": 2242.051,
+     "d_m": 1.679,
+     "h": 3.67,
+     "crown_d": 2.99,
+     "plant": true,
+     "solid": false,
+     "median": true
+    }
+   ]
+  },
+  {
+   "spot": 888,
+   "x": -2077.364,
+   "z": 2289.903,
+   "spot_h": 2.52,
+   "spot_crown": null,
+   "tops_within_2m": 0,
+   "nearest_plant_top": null,
+   "height_match": null,
+   "all": []
+  }
+ ]
+}

@@ -651,6 +651,7 @@ class Context:
             cfg_t = json.loads((self.proj / "track.config.json").read_text(encoding="utf-8"))
         except Exception:
             cfg_t = {}
+        self.cfg_t = cfg_t
         self.layouts = [{"id": str(lo.get("id")), "direction": "rev" if str(lo.get("direction") or "forward").lower() == "reverse" else "fwd",
                          "race": bool(lo.get("race_furniture")), "token": str(lo.get("closure_token") or "").lower(),
                          # a layout on its own lap (ledger 0054) carries its lap; a mainline layout's record is as before
@@ -689,11 +690,27 @@ class Context:
                 if p not in self.spawn_pts:
                     self.spawn_pts.append(p)
 
-    def race_layouts(self, direction):
-        """the race layouts that drive `direction` ('fwd' / 'rev') ON THE MAINLINE: a per_layout corner is a MAINLINE
-        corner, so a layout on its own lap (layouts[].lap, ledger 0054) never gets its plate — the 0.20.2 run stood
-        M3-fwd@north_cw in north_cw's lane at lap v0, race_cw's J1 spot"""
-        return [lo for lo in self.layouts if lo["race"] and lo["direction"] == direction and lo.get("lap") is None]
+    def race_layouts(self, direction, apex_vertex=None):
+        """the race layouts that drive `direction` ('fwd' / 'rev') ON THE MAINLINE at a corner: a per_layout corner is a
+        MAINLINE corner. A layout on the mainline drives every one. A layout on its own lap (layouts[].lap, ledger 0054)
+        drives it only where its lap walks the mainline through the corner (scripts/geometry/race_lap.mainline_approach,
+        apex_vertex = the corner's mainline vertex; ledger 0055 round 2: the Speedway on Lake Murray's College lap). A
+        lap that turns off before the corner never gets its plate — the 0.20.2 run stood M3-fwd@north_cw in north_cw's
+        lane at lap v0, race_cw's J1 spot"""
+        out = []
+        for lo in self.layouts:
+            if not lo["race"]:
+                continue
+            if lo.get("lap") is None:
+                if lo["direction"] == direction:
+                    out.append(lo)
+            elif apex_vertex is not None:
+                sys.path.insert(0, str(AIROSO)) if str(AIROSO) not in sys.path else None
+                from scripts.geometry import race_lap
+                if race_lap.mainline_approach(self.cfg_t, lo["lap"], lo["direction"], int(apex_vertex), len(self.mainline.raw),
+                                              self.mainline.closed) == direction:
+                    out.append(lo)
+        return out
 
     def layout_behind_lip_m(self, cfg):
         """how far past the MAINLINE lip a layout plate stands: the sealing curb strip's centre (edge_centre_from_lip_m,
@@ -1406,7 +1423,7 @@ def place_all(proj, cfg=None, corners_cfg=None, signs_path=None, log=print, merg
             # a per_layout MAINLINE corner (module doc "layout"): every race layout that drives this approach and
             # got no shared plate gets its own plate behind its sealing wall — or a skip record of its own
             if ov.get("per_layout") and rb.name == "MAINLINE" and not ov.get("skip") and not placed_shared:
-                for lo in ctx.race_layouts(direction):
+                for lo in ctx.race_layouts(direction, base["apex_vertex"]):
                     lid_dir = cid_dir + LAYOUT_SEP + lo["id"]
                     lbase = dict(base, id=lid_dir, layout=lo["id"])
                     if rule_reasons:

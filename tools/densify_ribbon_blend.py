@@ -42,6 +42,72 @@ import mouth_weld as mw  # noqa: E402
 
 CREASE_TOL_M = 0.005   # [invented] a quarter of the prep's 0.02 m ground clearance: a column's crease under it cannot lift grass over the lane
 MAX_COLS = 8           # [invented] the most columns a half-width is cut into (Nevada's T2 needs ~4 at 7.7 m half-width)
+SECTION_MAX_COLS = 16  # [invented] the most columns route.densify.section forces on a half-width
+
+
+class Section:
+    """route.densify.section (opt-in; ledger 0102, Milford round 2: a real banked turn whose cross-section is not a plane):
+    the product of tools/measured_surface.py section, delta = what the fit product's plane (the intake's c + u b, the
+    assembler's planar row) misses, per station and lateral offset (+ = left of travel). On the declared spans (the
+    product's own s) every row is cut into columns about col_m apart and each of its vertices, and every vertex of the
+    named objects over it (the CURB strip, MARKINGS), moves up by delta at its offset, by full weight inside the spans and
+    a smoothstep to nothing over taper_m outside them."""
+
+    def __init__(self, proj, cfg):
+        self.d = json.loads((proj / cfg["file"]).read_text(encoding="utf-8"))
+        self.offs = [float(o) for o in self.d["offsets_m"]]
+        self.spans = [(float(a), float(b)) for a, b in cfg["spans"]]
+        self.taper = float(cfg.get("taper_m", 15.0))
+        self.col_m = float(cfg.get("col_m", 1.0))
+        self.objects = list(cfg.get("objects", ["CURB", "MARKINGS", "YLINE"]))
+        self.reach = float(cfg.get("reach_m", 3.0))       # how far past its offsets a vertex still takes the last delta
+        self.n = len(self.d["s"])
+        self.grid = {}
+        for i in range(self.n):
+            self.grid.setdefault((int(self.d["x"][i] // 6), int(self.d["z"][i] // 6)), []).append(i)
+
+    def nearest(self, x, y):
+        bx, by = int(x // 6), int(y // 6)
+        best, bi = None, None
+        for dx in (-1, 0, 1):
+            for dy in (-1, 0, 1):
+                for i in self.grid.get((bx + dx, by + dy), ()):
+                    d = (self.d["x"][i] - x) ** 2 + (self.d["z"][i] - y) ** 2
+                    if best is None or d < best:
+                        best, bi = d, i
+        return bi
+
+    def weight(self, s):
+        w = 0.0
+        for a, b in self.spans:
+            if a <= s <= b:
+                return 1.0
+            g = (a - s) if s < a else (s - b)
+            if g < self.taper:
+                t = 1.0 - g / self.taper
+                w = max(w, t * t * (3 - 2 * t))
+        return w
+
+    def at(self, x, y):
+        """(station, weight) of the station nearest to a row's centre, or (None, 0) off the product"""
+        i = self.nearest(x, y)
+        if i is None:
+            return None, 0.0
+        return i, self.weight(self.d["s"][i])
+
+    def delta(self, i, u):
+        row = self.d["delta"][i]
+        pts = [(o, v) for o, v in zip(self.offs, row) if v is not None]
+        if len(pts) < 2:
+            return 0.0
+        if u <= pts[0][0]:
+            return pts[0][1] if pts[0][0] - u <= self.reach else 0.0
+        if u >= pts[-1][0]:
+            return pts[-1][1] if u - pts[-1][0] <= self.reach else 0.0
+        for (o0, v0), (o1, v1) in zip(pts, pts[1:]):
+            if o0 <= u <= o1:
+                return v0 + (v1 - v0) * (u - o0) / (o1 - o0)
+        return 0.0
 
 
 def main():
@@ -58,6 +124,7 @@ def main():
     if measure not in ("crease", "warp"):
         raise SystemExit(f"[densify] FATAL: route.densify.measure {measure!r}: crease or warp")
     max_cols = int(dcfg.get("max_cols", MAX_COLS))
+    sec = Section(proj, dcfg["section"]) if dcfg.get("section") else None
     rows, closed = lay["MAINLINE"]["rows"], lay["MAINLINE"]["closed"]
     bpy.ops.wm.open_mainfile(filepath=str(proj / "loop.blend"))
     ob = bpy.data.objects.get("ROAD")
@@ -89,6 +156,19 @@ def main():
             g = crease(r, s, h)
             worst = max(worst, g)
             need[(r, h)] = min(max_cols, max(1, math.ceil(g / CREASE_TOL_M - 1e-9)))
+    # route.densify.section: the rows over the product's spans (by their centre's nearest station) and their columns
+    sec_row = {}
+    if sec is not None:
+        for r in range(rows):
+            c = BV[vi(r, 1)].co
+            i, w = sec.at(c.x, c.y)
+            if i is not None and w > 0.0:
+                sec_row[r] = (i, w)
+        for r, s in pairs:
+            if r in sec_row or s in sec_row:
+                for h in (0, 1):
+                    half = max((BV[vi(q, halves[h][0])].co - BV[vi(q, halves[h][1])].co).length for q in (r, s))
+                    need[(r, h)] = max(need[(r, h)], min(SECTION_MAX_COLS, max(1, math.ceil(half / sec.col_m))))
     # a row edge takes the larger need of the two quads that share it
     k_edge = {}
     for (r, h), k in need.items():
@@ -144,12 +224,67 @@ def main():
     for tri in add:
         f = bm.faces.new(tri)
         f.material_index = mat
+    # route.densify.section: every vertex of a section row (its two half lines) up by delta at its lateral offset
+    sec_rep = None
+    row_frames = []
+    if sec_row:
+        moved, dmax = 0, 0.0
+        for r, (i, w) in sorted(sec_row.items()):
+            c = BV[vi(r, 1)].co.copy()
+            a_, b_ = BV[vi((r - 1) % rows if closed else max(r - 1, 0), 1)].co, BV[vi((r + 1) % rows if closed else min(r + 1, rows - 1), 1)].co
+            tx, ty = b_.x - a_.x, b_.y - a_.y
+            L_ = math.hypot(tx, ty) or 1.0
+            nx_, ny_ = -ty / L_, tx / L_                    # the left normal in plan (Blender x east, y north)
+            row_frames.append((c, nx_, ny_, i, w, tx / L_, ty / L_))
+            seen = set()
+            for h in (0, 1):
+                line = edge_pts.get((r, h)) or [BV[vi(r, halves[h][0])], BV[vi(r, halves[h][1])]]
+                for v in line:
+                    if v in seen:
+                        continue
+                    seen.add(v)
+                    u = (v.co.x - c.x) * nx_ + (v.co.y - c.y) * ny_
+                    dz = w * sec.delta(i, u)
+                    v.co.z += dz
+                    moved += 1
+                    dmax = max(dmax, abs(dz))
+        sec_rep = {"rows": len(sec_row), "road_vertices": moved, "largest_m": round(dmax, 3)}
     bm.normal_update()
     n_new = sum(len(v) - 2 for v in edge_pts.values())
     bm.to_mesh(ob.data); bm.free(); ob.data.update()
+    if row_frames:
+        # the objects laid over the road (the strip, the paint): each vertex by its nearest section row's frame
+        from mathutils.kdtree import KDTree
+        kd = KDTree(len(row_frames))
+        for k, (c, *_r) in enumerate(row_frames):
+            kd.insert((c.x, c.y, 0.0), k)
+        kd.balance()
+        for name in sec.objects:
+            o2 = bpy.data.objects.get(name)
+            if o2 is None or o2.type != "MESH":
+                continue
+            n2 = 0
+            for v in o2.data.vertices:
+                co, k, dist = kd.find((v.co.x, v.co.y, 0.0))
+                if k is None or dist > 15.0:
+                    continue
+                c, nx_, ny_, i, w, tx_, ty_ = row_frames[k]
+                if abs((v.co.x - c.x) * tx_ + (v.co.y - c.y) * ty_) > 2.0:
+                    continue                                # another part of the lap passing near, not over this row
+                u = (v.co.x - c.x) * nx_ + (v.co.y - c.y) * ny_
+                dz = w * sec.delta(i, u)
+                if dz:
+                    v.co.z += dz
+                    n2 += 1
+            o2.data.update()
+            sec_rep[name + "_vertices"] = n2
+        print(f"[densify] section ({dcfg['section']['file']}): {sec_rep}")
     print(f"[densify] {len(todo)} mainline half-quads re-cut (worst {measure} {worst * 1000:.1f} mm; columns up to "
           f"{max(k_edge.values())}, {n_new} new row vertices, {len(add)} triangles for {len(kill)}); saved loop.blend")
+    if sec_rep is not None:
+        (data / "densify_section.json").write_text(json.dumps(sec_rep, indent=1), encoding="utf-8")
     bpy.ops.wm.save_as_mainfile(filepath=str(proj / "loop.blend"))
 
 
-main()
+if __name__ == "__main__":      # blender --python runs it as __main__; the tests import Section
+    main()

@@ -1,0 +1,2725 @@
+{
+ "_doc": "ledger 0099 round 3, item 1b (Mission Gorge Rd's island corrected), tools/make_treefx.py scenery.treefx.median_spots: median_planting spots of data/scatter_positions.json by index. drop = not planted: the spot stands on pavement, or on a strip's curb ring, since the island was corrected (no median between the two noses, a narrow strip beside each turn pocket). Every one is bare on the lidar. No spot is moved; the spots kept stand on the new deck where they were. Written by source/expansion/mg_median/mg_plants_data.py.",
+ "line": "north_mission_gorge",
+ "points_runs": [
+  [
+   8,
+   61
+  ],
+  [
+   63,
+   741
+  ]
+ ],
+ "drop": [
+  {
+   "index": 793,
+   "x": -2623.219,
+   "z": 2168.737,
+   "point": 135,
+   "lateral_m": 2.03,
+   "half_m": 2.23,
+   "where": "the strip's curb ring",
+   "why": "bare on the lidar (0.07 m); stands on the strip's curb ring since the island was corrected"
+  },
+  {
+   "index": 811,
+   "x": -2515.934,
+   "z": 2183.133,
+   "point": 171,
+   "lateral_m": 2.09,
+   "half_m": 2.2,
+   "where": "the strip's curb ring",
+   "why": "bare on the lidar (0.08 m); stands on the strip's curb ring since the island was corrected"
+  },
+  {
+   "index": 824,
+   "x": -2438.326,
+   "z": 2190.07,
+   "point": 197,
+   "lateral_m": 1.76,
+   "half_m": 1.97,
+   "where": "the strip's curb ring",
+   "why": "bare on the lidar (0.08 m); stands on the strip's curb ring since the island was corrected"
+  },
+  {
+   "index": 837,
+   "x": -2360.396,
+   "z": 2194.239,
+   "point": 223,
+   "lateral_m": -1.52,
+   "half_m": 1.7,
+   "where": "the strip's curb ring",
+   "why": "bare on the lidar (0.03 m); stands on the strip's curb ring since the island was corrected"
+  },
+  {
+   "index": 847,
+   "x": -2301.01,
+   "z": 2200.788,
+   "point": 243,
+   "lateral_m": -2.76,
+   "half_m": 1.61,
+   "where": "pavement beside the island",
+   "why": "bare on the lidar (0.10 m); stands on pavement beside the island since the island was corrected"
+  },
+  {
+   "index": 848,
+   "x": -2295.349,
+   "z": 2202.693,
+   "point": 245,
+   "lateral_m": -1.8,
+   "half_m": 1.75,
+   "where": "pavement beside the island",
+   "why": "bare on the lidar (0.03 m); stands on pavement beside the island since the island was corrected"
+  },
+  {
+   "index": 850,
+   "x": -2283.885,
+   "z": 2203.763,
+   "point": 249,
+   "lateral_m": -2.94,
+   "half_m": 1.74,
+   "where": "pavement beside the island",
+   "why": "bare on the lidar (0.09 m); stands on pavement beside the island since the island was corrected"
+  },
+  {
+   "index": 851,
+   "x": -2278.175,
+   "z": 2205.665,
+   "point": 251,
+   "lateral_m": -2.23,
+   "half_m": 1.7,
+   "where": "pavement beside the island",
+   "why": "bare on the lidar (0.07 m); stands on pavement beside the island since the island was corrected"
+  },
+  {
+   "index": 853,
+   "x": -2266.309,
+   "z": 2207.511,
+   "point": 255,
+   "lateral_m": -3.01,
+   "half_m": 1.67,
+   "where": "pavement beside the island",
+   "why": "bare on the lidar (0.08 m); stands on pavement beside the island since the island was corrected"
+  },
+  {
+   "index": 854,
+   "x": -2260.649,
+   "z": 2209.677,
+   "point": 257,
+   "lateral_m": -2.15,
+   "half_m": 1.71,
+   "where": "pavement beside the island",
+   "why": "bare on the lidar (0.16 m); stands on pavement beside the island since the island was corrected"
+  },
+  {
+   "index": 855,
+   "x": -2254.643,
+   "z": 2210.031,
+   "point": 259,
+   "lateral_m": -3.27,
+   "half_m": 1.71,
+   "where": "pavement beside the island",
+   "why": "bare on the lidar (0.14 m); stands on pavement beside the island since the island was corrected"
+  },
+  {
+   "index": 856,
+   "x": -2249.581,
+   "z": 2213.125,
+   "point": 261,
+   "lateral_m": -1.53,
+   "half_m": 1.68,
+   "where": "the strip's curb ring",
+   "why": "bare on the lidar (0.13 m); stands on the strip's curb ring since the island was corrected"
+  },
+  {
+   "index": 859,
+   "x": -2232.476,
+   "z": 2217.18,
+   "point": 267,
+   "lateral_m": -2.27,
+   "half_m": 1.67,
+   "where": "pavement beside the island",
+   "why": "bare on the lidar (0.07 m); stands on pavement beside the island since the island was corrected"
+  },
+  {
+   "index": 860,
+   "x": -2226.606,
+   "z": 2218.536,
+   "point": 269,
+   "lateral_m": -2.64,
+   "half_m": 1.68,
+   "where": "pavement beside the island",
+   "why": "bare on the lidar (0.12 m); stands on pavement beside the island since the island was corrected"
+  },
+  {
+   "index": 865,
+   "x": -2198.643,
+   "z": 2228.593,
+   "point": 279,
+   "lateral_m": -1.92,
+   "half_m": 1.69,
+   "where": "pavement beside the island",
+   "why": "bare on the lidar (0.04 m); stands on pavement beside the island since the island was corrected"
+  },
+  {
+   "index": 873,
+   "x": -2154.023,
+   "z": 2245.679,
+   "point": 295,
+   "lateral_m": -2.71,
+   "half_m": 1.75,
+   "where": "pavement beside the island",
+   "why": "bare on the lidar (0.09 m); stands on pavement beside the island since the island was corrected"
+  },
+  {
+   "index": 874,
+   "x": -2148.996,
+   "z": 2248.018,
+   "point": 297,
+   "lateral_m": -2.63,
+   "half_m": 1.75,
+   "where": "pavement beside the island",
+   "why": "bare on the lidar (0.06 m); stands on pavement beside the island since the island was corrected"
+  },
+  {
+   "index": 887,
+   "x": -2081.48,
+   "z": 2285.837,
+   "point": 323,
+   "lateral_m": -2.27,
+   "half_m": 1.35,
+   "where": "pavement beside the island",
+   "why": "bare on the lidar (0.03 m); stands on pavement beside the island since the island was corrected"
+  },
+  {
+   "index": 889,
+   "x": -2073.381,
+   "z": 2293.638,
+   "point": 327,
+   "lateral_m": -0.72,
+   "half_m": 0.8,
+   "where": "the strip's curb ring",
+   "why": "bare on the lidar (0.28 m); stands on the strip's curb ring since the island was corrected"
+  },
+  {
+   "index": 890,
+   "x": -2068.407,
+   "z": 2296.735,
+   "point": 329,
+   "lateral_m": -1.07,
+   "half_m": 0.59,
+   "where": "pavement beside the island",
+   "why": "bare on the lidar (0.22 m); stands on pavement beside the island since the island was corrected"
+  },
+  {
+   "index": 891,
+   "x": -2062.905,
+   "z": 2299.394,
+   "point": 331,
+   "lateral_m": -2.03,
+   "half_m": 0.56,
+   "where": "pavement beside the island",
+   "why": "bare on the lidar (0.19 m); stands on pavement beside the island since the island was corrected"
+  },
+  {
+   "index": 894,
+   "x": -2048.045,
+   "z": 2309.562,
+   "point": 337,
+   "lateral_m": -2.3,
+   "half_m": 0.62,
+   "where": "pavement beside the island",
+   "why": "bare on the lidar (0.18 m); stands on pavement beside the island since the island was corrected"
+  },
+  {
+   "index": 895,
+   "x": -2044.265,
+   "z": 2314.485,
+   "point": 339,
+   "lateral_m": -0.6,
+   "half_m": 0.62,
+   "where": "the strip's curb ring",
+   "why": "bare on the lidar (0.21 m); stands on the strip's curb ring since the island was corrected"
+  },
+  {
+   "index": 896,
+   "x": -2038.414,
+   "z": 2316.698,
+   "point": 341,
+   "lateral_m": -2.41,
+   "half_m": 0.63,
+   "where": "pavement beside the island",
+   "why": "bare on the lidar (0.17 m); stands on pavement beside the island since the island was corrected"
+  },
+  {
+   "index": 897,
+   "x": -2034.944,
+   "z": 2322.031,
+   "point": 343,
+   "lateral_m": -0.42,
+   "half_m": 0.6,
+   "where": "the strip's curb ring",
+   "why": "bare on the lidar (0.11 m); stands on the strip's curb ring since the island was corrected"
+  },
+  {
+   "index": 898,
+   "x": -2030.132,
+   "z": 2325.599,
+   "point": 345,
+   "lateral_m": -0.62,
+   "half_m": 0.64,
+   "where": "the strip's curb ring",
+   "why": "bare on the lidar (0.23 m); stands on the strip's curb ring since the island was corrected"
+  },
+  {
+   "index": 899,
+   "x": -2024.313,
+   "z": 2327.853,
+   "point": 347,
+   "lateral_m": -2.59,
+   "half_m": 0.62,
+   "where": "pavement beside the island",
+   "why": "bare on the lidar (0.25 m); stands on pavement beside the island since the island was corrected"
+  },
+  {
+   "index": 900,
+   "x": -2020.888,
+   "z": 2333.236,
+   "point": 349,
+   "lateral_m": -0.62,
+   "half_m": 0.67,
+   "where": "the strip's curb ring",
+   "why": "bare on the lidar (0.14 m); stands on the strip's curb ring since the island was corrected"
+  },
+  {
+   "index": 901,
+   "x": -2016.188,
+   "z": 2336.947,
+   "point": 351,
+   "lateral_m": -0.89,
+   "half_m": 0.69,
+   "where": "pavement beside the island",
+   "why": "bare on the lidar (0.24 m); stands on pavement beside the island since the island was corrected"
+  },
+  {
+   "index": 902,
+   "x": -2011.395,
+   "z": 2340.43,
+   "point": 353,
+   "lateral_m": -1.34,
+   "half_m": 0.36,
+   "where": "pavement beside the island",
+   "why": "bare on the lidar (0.19 m); stands on pavement beside the island since the island was corrected"
+  },
+  {
+   "index": 903,
+   "x": -2006.591,
+   "z": 2343.799,
+   "point": 355,
+   "lateral_m": 0.7,
+   "half_m": 0.0,
+   "where": "no median: between the two noses",
+   "why": "bare on the lidar (0.14 m); stands on no median since the island was corrected"
+  },
+  {
+   "index": 904,
+   "x": -2002.324,
+   "z": 2347.967,
+   "point": 357,
+   "lateral_m": 1.24,
+   "half_m": 0.0,
+   "where": "no median: between the two noses",
+   "why": "bare on the lidar (0.07 m); stands on no median since the island was corrected"
+  },
+  {
+   "index": 905,
+   "x": -1996.502,
+   "z": 2350.192,
+   "point": 359,
+   "lateral_m": -0.79,
+   "half_m": 0.0,
+   "where": "no median: between the two noses",
+   "why": "bare on the lidar (0.05 m); stands on no median since the island was corrected"
+  },
+  {
+   "index": 906,
+   "x": -1992.612,
+   "z": 2354.662,
+   "point": 361,
+   "lateral_m": 0.09,
+   "half_m": 0.0,
+   "where": "no median: between the two noses",
+   "why": "bare on the lidar (0.09 m); stands on no median since the island was corrected"
+  },
+  {
+   "index": 907,
+   "x": -1988.225,
+   "z": 2358.678,
+   "point": 363,
+   "lateral_m": 0.25,
+   "half_m": 0.0,
+   "where": "no median: between the two noses",
+   "why": "bare on the lidar (0.06 m); stands on no median since the island was corrected"
+  },
+  {
+   "index": 908,
+   "x": -1983.779,
+   "z": 2362.618,
+   "point": 365,
+   "lateral_m": 2.2,
+   "half_m": 0.25,
+   "where": "pavement beside the island",
+   "why": "bare on the lidar (0.04 m); stands on pavement beside the island since the island was corrected"
+  },
+  {
+   "index": 909,
+   "x": -1980.441,
+   "z": 2367.354,
+   "point": 367,
+   "lateral_m": 3.42,
+   "half_m": 0.51,
+   "where": "pavement beside the island",
+   "why": "bare on the lidar (0.05 m); stands on pavement beside the island since the island was corrected"
+  },
+  {
+   "index": 910,
+   "x": -1975.564,
+   "z": 2370.365,
+   "point": 369,
+   "lateral_m": 2.12,
+   "half_m": 0.63,
+   "where": "pavement beside the island",
+   "why": "bare on the lidar (0.05 m); stands on pavement beside the island since the island was corrected"
+  },
+  {
+   "index": 911,
+   "x": -1971.447,
+   "z": 2374.577,
+   "point": 371,
+   "lateral_m": 2.18,
+   "half_m": 0.65,
+   "where": "pavement beside the island",
+   "why": "bare on the lidar (0.06 m); stands on pavement beside the island since the island was corrected"
+  },
+  {
+   "index": 912,
+   "x": -1968.168,
+   "z": 2379.719,
+   "point": 373,
+   "lateral_m": 3.39,
+   "half_m": 0.65,
+   "where": "pavement beside the island",
+   "why": "bare on the lidar (0.04 m); stands on pavement beside the island since the island was corrected"
+  },
+  {
+   "index": 913,
+   "x": -1963.732,
+   "z": 2383.767,
+   "point": 375,
+   "lateral_m": 2.96,
+   "half_m": 0.63,
+   "where": "pavement beside the island",
+   "why": "bare on the lidar (0.06 m); stands on pavement beside the island since the island was corrected"
+  },
+  {
+   "index": 914,
+   "x": -1960.145,
+   "z": 2388.621,
+   "point": 377,
+   "lateral_m": 3.65,
+   "half_m": 0.65,
+   "where": "pavement beside the island",
+   "why": "bare on the lidar (0.07 m); stands on pavement beside the island since the island was corrected"
+  },
+  {
+   "index": 915,
+   "x": -1955.074,
+   "z": 2392.066,
+   "point": 379,
+   "lateral_m": 2.23,
+   "half_m": 0.7,
+   "where": "pavement beside the island",
+   "why": "bare on the lidar (0.07 m); stands on pavement beside the island since the island was corrected"
+  },
+  {
+   "index": 917,
+   "x": -1946.201,
+   "z": 2399.932,
+   "point": 383,
+   "lateral_m": 0.85,
+   "half_m": 0.68,
+   "where": "pavement beside the island",
+   "why": "bare on the lidar (0.20 m); stands on pavement beside the island since the island was corrected"
+  },
+  {
+   "index": 918,
+   "x": -1943.604,
+   "z": 2405.446,
+   "point": 385,
+   "lateral_m": 2.41,
+   "half_m": 0.68,
+   "where": "pavement beside the island",
+   "why": "bare on the lidar (0.05 m); stands on pavement beside the island since the island was corrected"
+  },
+  {
+   "index": 920,
+   "x": -1934.951,
+   "z": 2413.834,
+   "point": 389,
+   "lateral_m": 0.88,
+   "half_m": 0.69,
+   "where": "pavement beside the island",
+   "why": "bare on the lidar (0.19 m); stands on pavement beside the island since the island was corrected"
+  },
+  {
+   "index": 922,
+   "x": -1929.208,
+   "z": 2424.617,
+   "point": 393,
+   "lateral_m": 2.35,
+   "half_m": 0.77,
+   "where": "pavement beside the island",
+   "why": "bare on the lidar (0.07 m); stands on pavement beside the island since the island was corrected"
+  },
+  {
+   "index": 924,
+   "x": -1919.639,
+   "z": 2431.771,
+   "point": 397,
+   "lateral_m": -2.33,
+   "half_m": 1.41,
+   "where": "pavement beside the island",
+   "why": "bare on the lidar (0.07 m); stands on pavement beside the island since the island was corrected"
+  },
+  {
+   "index": 926,
+   "x": -1913.09,
+   "z": 2441.111,
+   "point": 401,
+   "lateral_m": -3.37,
+   "half_m": 2.15,
+   "where": "pavement beside the island",
+   "why": "bare on the lidar (0.07 m); stands on pavement beside the island since the island was corrected"
+  },
+  {
+   "index": 935,
+   "x": -1884.799,
+   "z": 2487.188,
+   "point": 419,
+   "lateral_m": -3.2,
+   "half_m": 2.4,
+   "where": "pavement beside the island",
+   "why": "bare on the lidar (0.04 m); stands on pavement beside the island since the island was corrected"
+  },
+  {
+   "index": 936,
+   "x": -1881.542,
+   "z": 2492.22,
+   "point": 421,
+   "lateral_m": -3.34,
+   "half_m": 2.46,
+   "where": "pavement beside the island",
+   "why": "bare on the lidar (0.10 m); stands on pavement beside the island since the island was corrected"
+  },
+  {
+   "index": 942,
+   "x": -1862.433,
+   "z": 2522.681,
+   "point": 433,
+   "lateral_m": -3.54,
+   "half_m": 2.52,
+   "where": "pavement beside the island",
+   "why": "bare on the lidar (0.05 m); stands on pavement beside the island since the island was corrected"
+  },
+  {
+   "index": 946,
+   "x": -1850.59,
+   "z": 2543.542,
+   "point": 441,
+   "lateral_m": -2.6,
+   "half_m": 2.48,
+   "where": "pavement beside the island",
+   "why": "bare on the lidar (0.04 m); stands on pavement beside the island since the island was corrected"
+  },
+  {
+   "index": 948,
+   "x": -1844.026,
+   "z": 2553.575,
+   "point": 445,
+   "lateral_m": -2.92,
+   "half_m": 2.54,
+   "where": "pavement beside the island",
+   "why": "bare on the lidar (0.05 m); stands on pavement beside the island since the island was corrected"
+  },
+  {
+   "index": 949,
+   "x": -1840.588,
+   "z": 2558.495,
+   "point": 447,
+   "lateral_m": -3.25,
+   "half_m": 2.52,
+   "where": "pavement beside the island",
+   "why": "bare on the lidar (0.05 m); stands on pavement beside the island since the island was corrected"
+  },
+  {
+   "index": 967,
+   "x": -1782.907,
+   "z": 2649.742,
+   "point": 483,
+   "lateral_m": -3.24,
+   "half_m": 2.42,
+   "where": "pavement beside the island",
+   "why": "bare on the lidar (0.03 m); stands on pavement beside the island since the island was corrected"
+  },
+  {
+   "index": 969,
+   "x": -1776.819,
+   "z": 2659.944,
+   "point": 487,
+   "lateral_m": -3.07,
+   "half_m": 2.42,
+   "where": "pavement beside the island",
+   "why": "bare on the lidar (0.03 m); stands on pavement beside the island since the island was corrected"
+  },
+  {
+   "index": 975,
+   "x": -1758.196,
+   "z": 2690.672,
+   "point": 499,
+   "lateral_m": -2.8,
+   "half_m": 2.4,
+   "where": "pavement beside the island",
+   "why": "bare on the lidar (0.04 m); stands on pavement beside the island since the island was corrected"
+  },
+  {
+   "index": 977,
+   "x": -1752.282,
+   "z": 2701.104,
+   "point": 503,
+   "lateral_m": -2.37,
+   "half_m": 2.41,
+   "where": "the strip's curb ring",
+   "why": "bare on the lidar (0.05 m); stands on the strip's curb ring since the island was corrected"
+  },
+  {
+   "index": 981,
+   "x": -1739.214,
+   "z": 2721.322,
+   "point": 511,
+   "lateral_m": -2.89,
+   "half_m": 2.42,
+   "where": "pavement beside the island",
+   "why": "bare on the lidar (0.03 m); stands on pavement beside the island since the island was corrected"
+  },
+  {
+   "index": 982,
+   "x": -1736.448,
+   "z": 2726.661,
+   "point": 513,
+   "lateral_m": -2.45,
+   "half_m": 2.44,
+   "where": "pavement beside the island",
+   "why": "bare on the lidar (0.03 m); stands on pavement beside the island since the island was corrected"
+  },
+  {
+   "index": 986,
+   "x": -1723.571,
+   "z": 2746.881,
+   "point": 521,
+   "lateral_m": -2.86,
+   "half_m": 2.38,
+   "where": "pavement beside the island",
+   "why": "bare on the lidar (0.04 m); stands on pavement beside the island since the island was corrected"
+  },
+  {
+   "index": 991,
+   "x": -1707.235,
+   "z": 2771.923,
+   "point": 531,
+   "lateral_m": -3.71,
+   "half_m": 2.39,
+   "where": "pavement beside the island",
+   "why": "bare on the lidar (0.11 m); stands on pavement beside the island since the island was corrected"
+  },
+  {
+   "index": 993,
+   "x": -1701.649,
+   "z": 2782.537,
+   "point": 535,
+   "lateral_m": -2.92,
+   "half_m": 2.36,
+   "where": "pavement beside the island",
+   "why": "bare on the lidar (0.04 m); stands on pavement beside the island since the island was corrected"
+  },
+  {
+   "index": 994,
+   "x": -1698.371,
+   "z": 2787.559,
+   "point": 537,
+   "lateral_m": -3.09,
+   "half_m": 2.36,
+   "where": "pavement beside the island",
+   "why": "bare on the lidar (0.02 m); stands on pavement beside the island since the island was corrected"
+  },
+  {
+   "index": 1002,
+   "x": -1673.724,
+   "z": 2828.896,
+   "point": 553,
+   "lateral_m": -2.36,
+   "half_m": 2.33,
+   "where": "pavement beside the island",
+   "why": "bare on the lidar (0.07 m); stands on pavement beside the island since the island was corrected"
+  },
+  {
+   "index": 1006,
+   "x": -1659.944,
+   "z": 2848.534,
+   "point": 561,
+   "lateral_m": -3.54,
+   "half_m": 2.44,
+   "where": "pavement beside the island",
+   "why": "bare on the lidar (0.05 m); stands on pavement beside the island since the island was corrected"
+  },
+  {
+   "index": 1010,
+   "x": -1646.511,
+   "z": 2868.445,
+   "point": 569,
+   "lateral_m": -3.75,
+   "half_m": 2.42,
+   "where": "pavement beside the island",
+   "why": "bare on the lidar (0.04 m); stands on pavement beside the island since the island was corrected"
+  },
+  {
+   "index": 1014,
+   "x": -1632.73,
+   "z": 2888.252,
+   "point": 577,
+   "lateral_m": -3.89,
+   "half_m": 2.43,
+   "where": "pavement beside the island",
+   "why": "bare on the lidar (0.07 m); stands on pavement beside the island since the island was corrected"
+  },
+  {
+   "index": 1015,
+   "x": -1630.536,
+   "z": 2894.046,
+   "point": 579,
+   "lateral_m": -2.25,
+   "half_m": 2.44,
+   "where": "the strip's curb ring",
+   "why": "bare on the lidar (0.06 m); stands on the strip's curb ring since the island was corrected"
+  },
+  {
+   "index": 1017,
+   "x": -1622.644,
+   "z": 2903.151,
+   "point": 583,
+   "lateral_m": -3.22,
+   "half_m": 2.46,
+   "where": "pavement beside the island",
+   "why": "bare on the lidar (0.04 m); stands on pavement beside the island since the island was corrected"
+  },
+  {
+   "index": 1020,
+   "x": -1612.101,
+   "z": 2918.351,
+   "point": 589,
+   "lateral_m": -2.4,
+   "half_m": 2.46,
+   "where": "the strip's curb ring",
+   "why": "bare on the lidar (0.06 m); stands on the strip's curb ring since the island was corrected"
+  },
+  {
+   "index": 1022,
+   "x": -1604.065,
+   "z": 2927.249,
+   "point": 593,
+   "lateral_m": -3.11,
+   "half_m": 2.44,
+   "where": "pavement beside the island",
+   "why": "bare on the lidar (0.05 m); stands on pavement beside the island since the island was corrected"
+  },
+  {
+   "index": 1029,
+   "x": -1576.669,
+   "z": 2959.468,
+   "point": 607,
+   "lateral_m": -2.87,
+   "half_m": 2.43,
+   "where": "pavement beside the island",
+   "why": "bare on the lidar (0.05 m); stands on pavement beside the island since the island was corrected"
+  },
+  {
+   "index": 1031,
+   "x": -1568.542,
+   "z": 2968.492,
+   "point": 611,
+   "lateral_m": -2.62,
+   "half_m": 2.42,
+   "where": "pavement beside the island",
+   "why": "bare on the lidar (0.06 m); stands on pavement beside the island since the island was corrected"
+  },
+  {
+   "index": 1034,
+   "x": -1555.648,
+   "z": 2981.027,
+   "point": 617,
+   "lateral_m": -3.14,
+   "half_m": 2.4,
+   "where": "pavement beside the island",
+   "why": "bare on the lidar (0.07 m); stands on pavement beside the island since the island was corrected"
+  },
+  {
+   "index": 1036,
+   "x": -1547.252,
+   "z": 2989.583,
+   "point": 621,
+   "lateral_m": -2.97,
+   "half_m": 2.41,
+   "where": "pavement beside the island",
+   "why": "bare on the lidar (0.06 m); stands on pavement beside the island since the island was corrected"
+  },
+  {
+   "index": 1037,
+   "x": -1542.802,
+   "z": 2993.67,
+   "point": 623,
+   "lateral_m": -3.2,
+   "half_m": 2.44,
+   "where": "pavement beside the island",
+   "why": "bare on the lidar (0.06 m); stands on pavement beside the island since the island was corrected"
+  },
+  {
+   "index": 1041,
+   "x": -1524.182,
+   "z": 3009.438,
+   "point": 631,
+   "lateral_m": -4.37,
+   "half_m": 2.45,
+   "where": "pavement beside the island",
+   "why": "bare on the lidar (0.07 m); stands on pavement beside the island since the island was corrected"
+  },
+  {
+   "index": 1050,
+   "x": -1482.975,
+   "z": 3044.461,
+   "point": 649,
+   "lateral_m": -4.22,
+   "half_m": 2.68,
+   "where": "pavement beside the island",
+   "why": "bare on the lidar (0.06 m); stands on pavement beside the island since the island was corrected"
+  },
+  {
+   "index": 1064,
+   "x": -1422.782,
+   "z": 3090.696,
+   "point": 674,
+   "lateral_m": 2.54,
+   "half_m": 2.48,
+   "where": "pavement beside the island",
+   "why": "bare on the lidar (0.09 m); stands on pavement beside the island since the island was corrected"
+  },
+  {
+   "index": 1066,
+   "x": -1412.838,
+   "z": 3097.442,
+   "point": 678,
+   "lateral_m": 3.54,
+   "half_m": 2.36,
+   "where": "pavement beside the island",
+   "why": "bare on the lidar (0.02 m); stands on pavement beside the island since the island was corrected"
+  },
+  {
+   "index": 1067,
+   "x": -1406.86,
+   "z": 3099.084,
+   "point": 680,
+   "lateral_m": 2.19,
+   "half_m": 2.33,
+   "where": "the strip's curb ring",
+   "why": "bare on the lidar (0.06 m); stands on the strip's curb ring since the island was corrected"
+  },
+  {
+   "index": 1069,
+   "x": -1396.372,
+   "z": 3104.898,
+   "point": 684,
+   "lateral_m": 2.43,
+   "half_m": 2.21,
+   "where": "pavement beside the island",
+   "why": "bare on the lidar (0.05 m); stands on pavement beside the island since the island was corrected"
+  },
+  {
+   "index": 1070,
+   "x": -1391.549,
+   "z": 3108.528,
+   "point": 686,
+   "lateral_m": 3.1,
+   "half_m": 2.16,
+   "where": "pavement beside the island",
+   "why": "bare on the lidar (0.12 m); stands on pavement beside the island since the island was corrected"
+  },
+  {
+   "index": 1071,
+   "x": -1386.267,
+   "z": 3111.367,
+   "point": 688,
+   "lateral_m": 2.81,
+   "half_m": 2.17,
+   "where": "pavement beside the island",
+   "why": "bare on the lidar (0.05 m); stands on pavement beside the island since the island was corrected"
+  },
+  {
+   "index": 1073,
+   "x": -1376.062,
+   "z": 3118.032,
+   "point": 692,
+   "lateral_m": 3.33,
+   "half_m": 2.13,
+   "where": "pavement beside the island",
+   "why": "bare on the lidar (0.06 m); stands on pavement beside the island since the island was corrected"
+  },
+  {
+   "index": 1079,
+   "x": -1343.486,
+   "z": 3134.29,
+   "point": 704,
+   "lateral_m": 2.06,
+   "half_m": 2.15,
+   "where": "the strip's curb ring",
+   "why": "bare on the lidar (0.08 m); stands on the strip's curb ring since the island was corrected"
+  },
+  {
+   "index": 1084,
+   "x": -1316.15,
+   "z": 3146.763,
+   "point": 714,
+   "lateral_m": 1.91,
+   "half_m": 1.65,
+   "where": "pavement beside the island",
+   "why": "bare on the lidar (0.12 m); stands on pavement beside the island since the island was corrected"
+  },
+  {
+   "index": 1085,
+   "x": -1310.456,
+   "z": 3149.719,
+   "point": 716,
+   "lateral_m": 1.96,
+   "half_m": 1.28,
+   "where": "pavement beside the island",
+   "why": "bare on the lidar (0.06 m); stands on pavement beside the island since the island was corrected"
+  },
+  {
+   "index": 1086,
+   "x": -1307.239,
+   "z": 3150.551,
+   "point": 717,
+   "lateral_m": 1.26,
+   "half_m": 1.1,
+   "where": "pavement beside the island",
+   "why": "bare on the lidar (0.11 m); stands on pavement beside the island since the island was corrected"
+  },
+  {
+   "index": 1087,
+   "x": -1301.434,
+   "z": 3152.917,
+   "point": 719,
+   "lateral_m": 0.97,
+   "half_m": 0.75,
+   "where": "pavement beside the island",
+   "why": "bare on the lidar (0.16 m); stands on pavement beside the island since the island was corrected"
+  },
+  {
+   "index": 1088,
+   "x": -1295.96,
+   "z": 3155.458,
+   "point": 721,
+   "lateral_m": 1.4,
+   "half_m": 0.69,
+   "where": "pavement beside the island",
+   "why": "bare on the lidar (0.16 m); stands on pavement beside the island since the island was corrected"
+  },
+  {
+   "index": 1089,
+   "x": -1290.307,
+   "z": 3157.464,
+   "point": 723,
+   "lateral_m": 1.21,
+   "half_m": 0.68,
+   "where": "pavement beside the island",
+   "why": "bare on the lidar (0.19 m); stands on pavement beside the island since the island was corrected"
+  },
+  {
+   "index": 1090,
+   "x": -1284.604,
+   "z": 3159.355,
+   "point": 725,
+   "lateral_m": 1.05,
+   "half_m": 0.61,
+   "where": "pavement beside the island",
+   "why": "bare on the lidar (0.15 m); stands on pavement beside the island since the island was corrected"
+  },
+  {
+   "index": 1091,
+   "x": -1278.804,
+   "z": 3161.21,
+   "point": 727,
+   "lateral_m": 0.85,
+   "half_m": 0.62,
+   "where": "pavement beside the island",
+   "why": "bare on the lidar (0.12 m); stands on pavement beside the island since the island was corrected"
+  },
+  {
+   "index": 1092,
+   "x": -1273.015,
+   "z": 3163.21,
+   "point": 729,
+   "lateral_m": 0.84,
+   "half_m": 0.66,
+   "where": "pavement beside the island",
+   "why": "bare on the lidar (0.18 m); stands on pavement beside the island since the island was corrected"
+  }
+ ],
+ "kept_on_the_new_deck": [
+  {
+   "index": 764,
+   "point": 77,
+   "lateral_m": 0.39,
+   "deck_half_m": 0.48,
+   "lidar_h_m": 0.14
+  },
+  {
+   "index": 765,
+   "point": 79,
+   "lateral_m": 0.05,
+   "deck_half_m": 0.44,
+   "lidar_h_m": 0.14
+  },
+  {
+   "index": 766,
+   "point": 81,
+   "lateral_m": 0.34,
+   "deck_half_m": 0.4,
+   "lidar_h_m": 0.13
+  },
+  {
+   "index": 767,
+   "point": 83,
+   "lateral_m": -0.02,
+   "deck_half_m": 0.41,
+   "lidar_h_m": 0.14
+  },
+  {
+   "index": 768,
+   "point": 85,
+   "lateral_m": 0.22,
+   "deck_half_m": 0.46,
+   "lidar_h_m": 0.15
+  },
+  {
+   "index": 769,
+   "point": 87,
+   "lateral_m": 0.27,
+   "deck_half_m": 0.49,
+   "lidar_h_m": 0.04
+  },
+  {
+   "index": 770,
+   "point": 89,
+   "lateral_m": 0.14,
+   "deck_half_m": 0.65,
+   "lidar_h_m": 0.06
+  },
+  {
+   "index": 771,
+   "point": 91,
+   "lateral_m": 0.52,
+   "deck_half_m": 1.14,
+   "lidar_h_m": 0.07
+  },
+  {
+   "index": 772,
+   "point": 93,
+   "lateral_m": -0.28,
+   "deck_half_m": 1.68,
+   "lidar_h_m": 0.05
+  },
+  {
+   "index": 773,
+   "point": 95,
+   "lateral_m": -0.31,
+   "deck_half_m": 2.06,
+   "lidar_h_m": 2.34
+  },
+  {
+   "index": 774,
+   "point": 97,
+   "lateral_m": -0.17,
+   "deck_half_m": 2.21,
+   "lidar_h_m": 0.03
+  },
+  {
+   "index": 775,
+   "point": 99,
+   "lateral_m": -1.47,
+   "deck_half_m": 2.14,
+   "lidar_h_m": 0.1
+  },
+  {
+   "index": 776,
+   "point": 101,
+   "lateral_m": -1.16,
+   "deck_half_m": 2.17,
+   "lidar_h_m": 0.03
+  },
+  {
+   "index": 777,
+   "point": 103,
+   "lateral_m": -1.63,
+   "deck_half_m": 2.16,
+   "lidar_h_m": 0.01
+  },
+  {
+   "index": 778,
+   "point": 105,
+   "lateral_m": -1.59,
+   "deck_half_m": 2.11,
+   "lidar_h_m": 0.07
+  },
+  {
+   "index": 779,
+   "point": 107,
+   "lateral_m": -0.94,
+   "deck_half_m": 2.15,
+   "lidar_h_m": 0.04
+  },
+  {
+   "index": 780,
+   "point": 109,
+   "lateral_m": -0.92,
+   "deck_half_m": 2.15,
+   "lidar_h_m": 0.04
+  },
+  {
+   "index": 781,
+   "point": 111,
+   "lateral_m": -2.06,
+   "deck_half_m": 2.15,
+   "lidar_h_m": 0.09
+  },
+  {
+   "index": 782,
+   "point": 113,
+   "lateral_m": -0.93,
+   "deck_half_m": 2.13,
+   "lidar_h_m": 0.03
+  },
+  {
+   "index": 783,
+   "point": 115,
+   "lateral_m": -0.3,
+   "deck_half_m": 2.09,
+   "lidar_h_m": 0.02
+  },
+  {
+   "index": 784,
+   "point": 117,
+   "lateral_m": -1.45,
+   "deck_half_m": 2.04,
+   "lidar_h_m": 0.11
+  },
+  {
+   "index": 785,
+   "point": 119,
+   "lateral_m": -0.35,
+   "deck_half_m": 2.07,
+   "lidar_h_m": 0.04
+  },
+  {
+   "index": 786,
+   "point": 121,
+   "lateral_m": -0.64,
+   "deck_half_m": 2.02,
+   "lidar_h_m": 0.02
+  },
+  {
+   "index": 787,
+   "point": 123,
+   "lateral_m": -0.3,
+   "deck_half_m": 1.9,
+   "lidar_h_m": 0.0
+  },
+  {
+   "index": 788,
+   "point": 125,
+   "lateral_m": 0.27,
+   "deck_half_m": 2.07,
+   "lidar_h_m": 0.04
+  },
+  {
+   "index": 789,
+   "point": 127,
+   "lateral_m": -0.99,
+   "deck_half_m": 1.98,
+   "lidar_h_m": 0.04
+  },
+  {
+   "index": 790,
+   "point": 129,
+   "lateral_m": -0.07,
+   "deck_half_m": 1.91,
+   "lidar_h_m": 0.05
+  },
+  {
+   "index": 791,
+   "point": 131,
+   "lateral_m": 0.94,
+   "deck_half_m": 1.86,
+   "lidar_h_m": 5.42
+  },
+  {
+   "index": 792,
+   "point": 133,
+   "lateral_m": 0.17,
+   "deck_half_m": 1.99,
+   "lidar_h_m": 0.04
+  },
+  {
+   "index": 794,
+   "point": 137,
+   "lateral_m": -0.74,
+   "deck_half_m": 2.02,
+   "lidar_h_m": 0.03
+  },
+  {
+   "index": 795,
+   "point": 139,
+   "lateral_m": 1.16,
+   "deck_half_m": 1.69,
+   "lidar_h_m": 5.41
+  },
+  {
+   "index": 796,
+   "point": 141,
+   "lateral_m": 0.98,
+   "deck_half_m": 1.96,
+   "lidar_h_m": 0.02
+  },
+  {
+   "index": 797,
+   "point": 143,
+   "lateral_m": 1.5,
+   "deck_half_m": 1.99,
+   "lidar_h_m": 0.03
+  },
+  {
+   "index": 798,
+   "point": 145,
+   "lateral_m": 0.46,
+   "deck_half_m": 1.94,
+   "lidar_h_m": 0.02
+  },
+  {
+   "index": 799,
+   "point": 147,
+   "lateral_m": 1.91,
+   "deck_half_m": 1.93,
+   "lidar_h_m": 0.1
+  },
+  {
+   "index": 800,
+   "point": 149,
+   "lateral_m": -0.48,
+   "deck_half_m": 1.91,
+   "lidar_h_m": 3.38
+  },
+  {
+   "index": 801,
+   "point": 151,
+   "lateral_m": -1.08,
+   "deck_half_m": 1.96,
+   "lidar_h_m": 0.05
+  },
+  {
+   "index": 802,
+   "point": 153,
+   "lateral_m": 1.7,
+   "deck_half_m": 1.95,
+   "lidar_h_m": 0.06
+  },
+  {
+   "index": 803,
+   "point": 155,
+   "lateral_m": -0.61,
+   "deck_half_m": 1.93,
+   "lidar_h_m": 0.09
+  },
+  {
+   "index": 804,
+   "point": 157,
+   "lateral_m": 0.81,
+   "deck_half_m": 1.92,
+   "lidar_h_m": 0.29
+  },
+  {
+   "index": 805,
+   "point": 159,
+   "lateral_m": -0.99,
+   "deck_half_m": 1.95,
+   "lidar_h_m": 0.08
+  },
+  {
+   "index": 806,
+   "point": 161,
+   "lateral_m": 1.18,
+   "deck_half_m": 1.94,
+   "lidar_h_m": 0.06
+  },
+  {
+   "index": 807,
+   "point": 163,
+   "lateral_m": -0.65,
+   "deck_half_m": 1.99,
+   "lidar_h_m": 0.07
+  },
+  {
+   "index": 808,
+   "point": 165,
+   "lateral_m": -0.7,
+   "deck_half_m": 1.94,
+   "lidar_h_m": 0.09
+  },
+  {
+   "index": 809,
+   "point": 167,
+   "lateral_m": 1.42,
+   "deck_half_m": 1.95,
+   "lidar_h_m": 0.04
+  },
+  {
+   "index": 810,
+   "point": 169,
+   "lateral_m": -0.82,
+   "deck_half_m": 1.97,
+   "lidar_h_m": 0.06
+  },
+  {
+   "index": 812,
+   "point": 173,
+   "lateral_m": 0.42,
+   "deck_half_m": 1.97,
+   "lidar_h_m": 0.05
+  },
+  {
+   "index": 813,
+   "point": 175,
+   "lateral_m": 1.84,
+   "deck_half_m": 1.93,
+   "lidar_h_m": 0.06
+  },
+  {
+   "index": 814,
+   "point": 177,
+   "lateral_m": 0.48,
+   "deck_half_m": 1.95,
+   "lidar_h_m": 0.05
+  },
+  {
+   "index": 815,
+   "point": 179,
+   "lateral_m": 1.12,
+   "deck_half_m": 1.95,
+   "lidar_h_m": 0.08
+  },
+  {
+   "index": 816,
+   "point": 181,
+   "lateral_m": 1.7,
+   "deck_half_m": 1.91,
+   "lidar_h_m": 0.13
+  },
+  {
+   "index": 817,
+   "point": 183,
+   "lateral_m": 0.63,
+   "deck_half_m": 1.61,
+   "lidar_h_m": 3.49
+  },
+  {
+   "index": 818,
+   "point": 185,
+   "lateral_m": -0.48,
+   "deck_half_m": 1.84,
+   "lidar_h_m": 0.04
+  },
+  {
+   "index": 819,
+   "point": 187,
+   "lateral_m": -0.44,
+   "deck_half_m": 1.85,
+   "lidar_h_m": 0.03
+  },
+  {
+   "index": 820,
+   "point": 189,
+   "lateral_m": -1.02,
+   "deck_half_m": 1.83,
+   "lidar_h_m": 0.06
+  },
+  {
+   "index": 821,
+   "point": 191,
+   "lateral_m": 1.16,
+   "deck_half_m": 1.8,
+   "lidar_h_m": 0.07
+  },
+  {
+   "index": 822,
+   "point": 193,
+   "lateral_m": 1.19,
+   "deck_half_m": 1.7,
+   "lidar_h_m": 0.13
+  },
+  {
+   "index": 823,
+   "point": 195,
+   "lateral_m": 0.76,
+   "deck_half_m": 1.72,
+   "lidar_h_m": 0.13
+  },
+  {
+   "index": 825,
+   "point": 199,
+   "lateral_m": -0.53,
+   "deck_half_m": 1.71,
+   "lidar_h_m": 0.05
+  },
+  {
+   "index": 826,
+   "point": 201,
+   "lateral_m": -1.13,
+   "deck_half_m": 1.76,
+   "lidar_h_m": 0.05
+  },
+  {
+   "index": 827,
+   "point": 203,
+   "lateral_m": 0.25,
+   "deck_half_m": 1.69,
+   "lidar_h_m": 0.06
+  },
+  {
+   "index": 828,
+   "point": 205,
+   "lateral_m": -1.05,
+   "deck_half_m": 1.67,
+   "lidar_h_m": 0.61
+  },
+  {
+   "index": 829,
+   "point": 207,
+   "lateral_m": -0.5,
+   "deck_half_m": 1.68,
+   "lidar_h_m": 0.12
+  },
+  {
+   "index": 830,
+   "point": 209,
+   "lateral_m": 0.62,
+   "deck_half_m": 1.67,
+   "lidar_h_m": 0.11
+  },
+  {
+   "index": 831,
+   "point": 211,
+   "lateral_m": 1.36,
+   "deck_half_m": 1.67,
+   "lidar_h_m": 0.07
+  },
+  {
+   "index": 832,
+   "point": 213,
+   "lateral_m": 0.27,
+   "deck_half_m": 1.63,
+   "lidar_h_m": 0.08
+  },
+  {
+   "index": 833,
+   "point": 215,
+   "lateral_m": -1.21,
+   "deck_half_m": 1.62,
+   "lidar_h_m": 0.06
+  },
+  {
+   "index": 834,
+   "point": 217,
+   "lateral_m": 1.14,
+   "deck_half_m": 1.56,
+   "lidar_h_m": 0.05
+  },
+  {
+   "index": 835,
+   "point": 219,
+   "lateral_m": 0.23,
+   "deck_half_m": 1.54,
+   "lidar_h_m": 0.1
+  },
+  {
+   "index": 836,
+   "point": 221,
+   "lateral_m": 1.03,
+   "deck_half_m": 1.54,
+   "lidar_h_m": 0.05
+  },
+  {
+   "index": 838,
+   "point": 225,
+   "lateral_m": 0.38,
+   "deck_half_m": 1.36,
+   "lidar_h_m": 4.6
+  },
+  {
+   "index": 839,
+   "point": 227,
+   "lateral_m": 0.28,
+   "deck_half_m": 1.44,
+   "lidar_h_m": 0.12
+  },
+  {
+   "index": 840,
+   "point": 229,
+   "lateral_m": 0.74,
+   "deck_half_m": 1.49,
+   "lidar_h_m": 0.06
+  },
+  {
+   "index": 841,
+   "point": 231,
+   "lateral_m": -0.16,
+   "deck_half_m": 1.49,
+   "lidar_h_m": 0.07
+  },
+  {
+   "index": 842,
+   "point": 233,
+   "lateral_m": -0.72,
+   "deck_half_m": 1.44,
+   "lidar_h_m": 0.1
+  },
+  {
+   "index": 843,
+   "point": 235,
+   "lateral_m": -0.33,
+   "deck_half_m": 1.45,
+   "lidar_h_m": 3.19
+  },
+  {
+   "index": 844,
+   "point": 237,
+   "lateral_m": -0.72,
+   "deck_half_m": 1.47,
+   "lidar_h_m": 0.08
+  },
+  {
+   "index": 845,
+   "point": 239,
+   "lateral_m": 0.08,
+   "deck_half_m": 1.53,
+   "lidar_h_m": 0.1
+  },
+  {
+   "index": 849,
+   "point": 247,
+   "lateral_m": -0.85,
+   "deck_half_m": 1.5,
+   "lidar_h_m": 0.11
+  },
+  {
+   "index": 858,
+   "point": 265,
+   "lateral_m": -0.88,
+   "deck_half_m": 1.45,
+   "lidar_h_m": 0.1
+  },
+  {
+   "index": 861,
+   "point": 271,
+   "lateral_m": -1.32,
+   "deck_half_m": 1.47,
+   "lidar_h_m": 0.12
+  },
+  {
+   "index": 863,
+   "point": 275,
+   "lateral_m": -0.35,
+   "deck_half_m": 1.45,
+   "lidar_h_m": 0.07
+  },
+  {
+   "index": 864,
+   "point": 277,
+   "lateral_m": -1.23,
+   "deck_half_m": 1.39,
+   "lidar_h_m": 0.1
+  },
+  {
+   "index": 866,
+   "point": 281,
+   "lateral_m": 0.26,
+   "deck_half_m": 1.4,
+   "lidar_h_m": 0.12
+  },
+  {
+   "index": 867,
+   "point": 283,
+   "lateral_m": -0.76,
+   "deck_half_m": 1.39,
+   "lidar_h_m": 0.08
+  },
+  {
+   "index": 868,
+   "point": 285,
+   "lateral_m": -0.42,
+   "deck_half_m": 1.39,
+   "lidar_h_m": 0.09
+  },
+  {
+   "index": 869,
+   "point": 287,
+   "lateral_m": -0.34,
+   "deck_half_m": 1.44,
+   "lidar_h_m": 0.11
+  },
+  {
+   "index": 870,
+   "point": 289,
+   "lateral_m": -0.32,
+   "deck_half_m": 1.32,
+   "lidar_h_m": 0.07
+  },
+  {
+   "index": 872,
+   "point": 293,
+   "lateral_m": -1.33,
+   "deck_half_m": 1.48,
+   "lidar_h_m": 0.03
+  },
+  {
+   "index": 875,
+   "point": 299,
+   "lateral_m": -1.21,
+   "deck_half_m": 1.6,
+   "lidar_h_m": 0.04
+  },
+  {
+   "index": 876,
+   "point": 301,
+   "lateral_m": -0.53,
+   "deck_half_m": 1.62,
+   "lidar_h_m": 0.15
+  },
+  {
+   "index": 877,
+   "point": 303,
+   "lateral_m": -1.03,
+   "deck_half_m": 1.65,
+   "lidar_h_m": 0.05
+  },
+  {
+   "index": 878,
+   "point": 305,
+   "lateral_m": 0.5,
+   "deck_half_m": 1.7,
+   "lidar_h_m": 0.13
+  },
+  {
+   "index": 879,
+   "point": 307,
+   "lateral_m": -1.14,
+   "deck_half_m": 1.69,
+   "lidar_h_m": 0.05
+  },
+  {
+   "index": 880,
+   "point": 309,
+   "lateral_m": 0.21,
+   "deck_half_m": 1.6,
+   "lidar_h_m": 3.87
+  },
+  {
+   "index": 881,
+   "point": 311,
+   "lateral_m": 0.83,
+   "deck_half_m": 1.72,
+   "lidar_h_m": 0.07
+  },
+  {
+   "index": 882,
+   "point": 313,
+   "lateral_m": -0.08,
+   "deck_half_m": 1.84,
+   "lidar_h_m": 0.13
+  },
+  {
+   "index": 883,
+   "point": 315,
+   "lateral_m": -0.22,
+   "deck_half_m": 1.91,
+   "lidar_h_m": 0.06
+  },
+  {
+   "index": 884,
+   "point": 317,
+   "lateral_m": 0.1,
+   "deck_half_m": 1.76,
+   "lidar_h_m": 0.12
+  },
+  {
+   "index": 885,
+   "point": 319,
+   "lateral_m": -1.1,
+   "deck_half_m": 1.71,
+   "lidar_h_m": 3.75
+  },
+  {
+   "index": 886,
+   "point": 321,
+   "lateral_m": -0.76,
+   "deck_half_m": 1.5,
+   "lidar_h_m": 0.1
+  },
+  {
+   "index": 892,
+   "point": 333,
+   "lateral_m": -0.29,
+   "deck_half_m": 0.36,
+   "lidar_h_m": 0.19
+  },
+  {
+   "index": 893,
+   "point": 335,
+   "lateral_m": 0.3,
+   "deck_half_m": 0.4,
+   "lidar_h_m": 0.1
+  },
+  {
+   "index": 916,
+   "point": 381,
+   "lateral_m": 0.13,
+   "deck_half_m": 0.45,
+   "lidar_h_m": 0.18
+  },
+  {
+   "index": 919,
+   "point": 387,
+   "lateral_m": 0.19,
+   "deck_half_m": 0.48,
+   "lidar_h_m": 0.17
+  },
+  {
+   "index": 921,
+   "point": 391,
+   "lateral_m": 0.2,
+   "deck_half_m": 0.52,
+   "lidar_h_m": 0.15
+  },
+  {
+   "index": 923,
+   "point": 395,
+   "lateral_m": 0.52,
+   "deck_half_m": 0.68,
+   "lidar_h_m": 0.06
+  },
+  {
+   "index": 925,
+   "point": 399,
+   "lateral_m": 0.02,
+   "deck_half_m": 1.55,
+   "lidar_h_m": 0.07
+  },
+  {
+   "index": 927,
+   "point": 403,
+   "lateral_m": -0.89,
+   "deck_half_m": 2.23,
+   "lidar_h_m": 0.04
+  },
+  {
+   "index": 928,
+   "point": 405,
+   "lateral_m": -0.45,
+   "deck_half_m": 2.22,
+   "lidar_h_m": 0.03
+  },
+  {
+   "index": 929,
+   "point": 407,
+   "lateral_m": 0.04,
+   "deck_half_m": 2.15,
+   "lidar_h_m": 0.05
+  },
+  {
+   "index": 930,
+   "point": 409,
+   "lateral_m": 0.17,
+   "deck_half_m": 2.21,
+   "lidar_h_m": 0.09
+  },
+  {
+   "index": 931,
+   "point": 411,
+   "lateral_m": -0.1,
+   "deck_half_m": 2.23,
+   "lidar_h_m": 0.09
+  },
+  {
+   "index": 932,
+   "point": 413,
+   "lateral_m": -1.47,
+   "deck_half_m": 2.2,
+   "lidar_h_m": 0.05
+  },
+  {
+   "index": 933,
+   "point": 415,
+   "lateral_m": -2.08,
+   "deck_half_m": 2.21,
+   "lidar_h_m": 0.06
+  },
+  {
+   "index": 934,
+   "point": 417,
+   "lateral_m": -0.02,
+   "deck_half_m": 2.19,
+   "lidar_h_m": 0.06
+  },
+  {
+   "index": 937,
+   "point": 423,
+   "lateral_m": -0.84,
+   "deck_half_m": 2.21,
+   "lidar_h_m": 0.06
+  },
+  {
+   "index": 938,
+   "point": 425,
+   "lateral_m": -1.79,
+   "deck_half_m": 2.22,
+   "lidar_h_m": 0.05
+  },
+  {
+   "index": 939,
+   "point": 427,
+   "lateral_m": -2.26,
+   "deck_half_m": 2.3,
+   "lidar_h_m": 0.05
+  },
+  {
+   "index": 940,
+   "point": 429,
+   "lateral_m": -1.83,
+   "deck_half_m": 2.24,
+   "lidar_h_m": 0.03
+  },
+  {
+   "index": 941,
+   "point": 431,
+   "lateral_m": -0.15,
+   "deck_half_m": 2.25,
+   "lidar_h_m": 0.1
+  },
+  {
+   "index": 943,
+   "point": 435,
+   "lateral_m": -0.59,
+   "deck_half_m": 2.23,
+   "lidar_h_m": 0.06
+  },
+  {
+   "index": 944,
+   "point": 437,
+   "lateral_m": -0.48,
+   "deck_half_m": 2.22,
+   "lidar_h_m": 0.05
+  },
+  {
+   "index": 945,
+   "point": 439,
+   "lateral_m": -1.28,
+   "deck_half_m": 2.26,
+   "lidar_h_m": 0.11
+  },
+  {
+   "index": 947,
+   "point": 443,
+   "lateral_m": -1.89,
+   "deck_half_m": 2.26,
+   "lidar_h_m": 0.03
+  },
+  {
+   "index": 950,
+   "point": 449,
+   "lateral_m": -1.21,
+   "deck_half_m": 2.31,
+   "lidar_h_m": 0.03
+  },
+  {
+   "index": 951,
+   "point": 451,
+   "lateral_m": -2.2,
+   "deck_half_m": 2.31,
+   "lidar_h_m": 0.04
+  },
+  {
+   "index": 952,
+   "point": 453,
+   "lateral_m": -0.5,
+   "deck_half_m": 2.31,
+   "lidar_h_m": 0.03
+  },
+  {
+   "index": 953,
+   "point": 455,
+   "lateral_m": -1.42,
+   "deck_half_m": 2.34,
+   "lidar_h_m": 0.07
+  },
+  {
+   "index": 954,
+   "point": 457,
+   "lateral_m": -2.1,
+   "deck_half_m": 2.32,
+   "lidar_h_m": 0.05
+  },
+  {
+   "index": 955,
+   "point": 459,
+   "lateral_m": -1.96,
+   "deck_half_m": 2.32,
+   "lidar_h_m": 0.05
+  },
+  {
+   "index": 956,
+   "point": 461,
+   "lateral_m": -1.56,
+   "deck_half_m": 2.32,
+   "lidar_h_m": 0.04
+  },
+  {
+   "index": 957,
+   "point": 463,
+   "lateral_m": -0.74,
+   "deck_half_m": 2.3,
+   "lidar_h_m": 0.05
+  },
+  {
+   "index": 958,
+   "point": 465,
+   "lateral_m": -0.84,
+   "deck_half_m": 2.26,
+   "lidar_h_m": 0.07
+  },
+  {
+   "index": 959,
+   "point": 467,
+   "lateral_m": 0.14,
+   "deck_half_m": 2.21,
+   "lidar_h_m": 0.11
+  },
+  {
+   "index": 960,
+   "point": 469,
+   "lateral_m": -1.45,
+   "deck_half_m": 2.18,
+   "lidar_h_m": 0.03
+  },
+  {
+   "index": 961,
+   "point": 471,
+   "lateral_m": -1.76,
+   "deck_half_m": 2.2,
+   "lidar_h_m": 0.02
+  },
+  {
+   "index": 962,
+   "point": 473,
+   "lateral_m": -0.81,
+   "deck_half_m": 2.24,
+   "lidar_h_m": 0.03
+  },
+  {
+   "index": 963,
+   "point": 475,
+   "lateral_m": -0.24,
+   "deck_half_m": 2.22,
+   "lidar_h_m": 0.04
+  },
+  {
+   "index": 964,
+   "point": 477,
+   "lateral_m": -1.67,
+   "deck_half_m": 2.19,
+   "lidar_h_m": 0.03
+  },
+  {
+   "index": 965,
+   "point": 479,
+   "lateral_m": -2.05,
+   "deck_half_m": 2.2,
+   "lidar_h_m": 0.04
+  },
+  {
+   "index": 966,
+   "point": 481,
+   "lateral_m": -1.83,
+   "deck_half_m": 2.18,
+   "lidar_h_m": 0.04
+  },
+  {
+   "index": 968,
+   "point": 485,
+   "lateral_m": -0.03,
+   "deck_half_m": 2.21,
+   "lidar_h_m": 0.11
+  },
+  {
+   "index": 970,
+   "point": 489,
+   "lateral_m": -1.23,
+   "deck_half_m": 2.16,
+   "lidar_h_m": 0.06
+  },
+  {
+   "index": 971,
+   "point": 491,
+   "lateral_m": -0.9,
+   "deck_half_m": 2.2,
+   "lidar_h_m": 0.02
+  },
+  {
+   "index": 972,
+   "point": 493,
+   "lateral_m": -0.79,
+   "deck_half_m": 2.22,
+   "lidar_h_m": 0.07
+  },
+  {
+   "index": 973,
+   "point": 495,
+   "lateral_m": -1.8,
+   "deck_half_m": 2.23,
+   "lidar_h_m": 0.05
+  },
+  {
+   "index": 974,
+   "point": 497,
+   "lateral_m": -0.77,
+   "deck_half_m": 2.16,
+   "lidar_h_m": 0.06
+  },
+  {
+   "index": 976,
+   "point": 501,
+   "lateral_m": -0.96,
+   "deck_half_m": 2.18,
+   "lidar_h_m": 0.03
+  },
+  {
+   "index": 978,
+   "point": 505,
+   "lateral_m": 0.46,
+   "deck_half_m": 2.19,
+   "lidar_h_m": 0.05
+  },
+  {
+   "index": 979,
+   "point": 507,
+   "lateral_m": 0.45,
+   "deck_half_m": 2.17,
+   "lidar_h_m": 0.08
+  },
+  {
+   "index": 980,
+   "point": 509,
+   "lateral_m": -1.65,
+   "deck_half_m": 2.19,
+   "lidar_h_m": 0.05
+  },
+  {
+   "index": 983,
+   "point": 515,
+   "lateral_m": 0.66,
+   "deck_half_m": 2.17,
+   "lidar_h_m": 0.05
+  },
+  {
+   "index": 984,
+   "point": 517,
+   "lateral_m": -1.34,
+   "deck_half_m": 2.17,
+   "lidar_h_m": 0.04
+  },
+  {
+   "index": 985,
+   "point": 519,
+   "lateral_m": -0.76,
+   "deck_half_m": 2.14,
+   "lidar_h_m": 0.06
+  },
+  {
+   "index": 987,
+   "point": 523,
+   "lateral_m": -0.5,
+   "deck_half_m": 2.17,
+   "lidar_h_m": 0.06
+  },
+  {
+   "index": 988,
+   "point": 525,
+   "lateral_m": -0.46,
+   "deck_half_m": 2.14,
+   "lidar_h_m": 0.12
+  },
+  {
+   "index": 989,
+   "point": 527,
+   "lateral_m": -0.71,
+   "deck_half_m": 2.14,
+   "lidar_h_m": 0.09
+  },
+  {
+   "index": 990,
+   "point": 529,
+   "lateral_m": -0.19,
+   "deck_half_m": 2.13,
+   "lidar_h_m": 0.05
+  },
+  {
+   "index": 992,
+   "point": 533,
+   "lateral_m": -0.78,
+   "deck_half_m": 2.15,
+   "lidar_h_m": 0.08
+  },
+  {
+   "index": 995,
+   "point": 539,
+   "lateral_m": -0.41,
+   "deck_half_m": 2.15,
+   "lidar_h_m": 0.13
+  },
+  {
+   "index": 996,
+   "point": 541,
+   "lateral_m": -0.5,
+   "deck_half_m": 2.14,
+   "lidar_h_m": 0.06
+  },
+  {
+   "index": 997,
+   "point": 543,
+   "lateral_m": -1.6,
+   "deck_half_m": 2.13,
+   "lidar_h_m": 0.07
+  },
+  {
+   "index": 998,
+   "point": 545,
+   "lateral_m": 0.04,
+   "deck_half_m": 2.16,
+   "lidar_h_m": 0.03
+  },
+  {
+   "index": 999,
+   "point": 547,
+   "lateral_m": -1.91,
+   "deck_half_m": 2.15,
+   "lidar_h_m": 0.06
+  },
+  {
+   "index": 1000,
+   "point": 549,
+   "lateral_m": -0.27,
+   "deck_half_m": 2.16,
+   "lidar_h_m": 0.08
+  },
+  {
+   "index": 1001,
+   "point": 551,
+   "lateral_m": -0.19,
+   "deck_half_m": 2.12,
+   "lidar_h_m": 0.12
+  },
+  {
+   "index": 1003,
+   "point": 555,
+   "lateral_m": -1.22,
+   "deck_half_m": 2.11,
+   "lidar_h_m": 0.09
+  },
+  {
+   "index": 1004,
+   "point": 557,
+   "lateral_m": -0.79,
+   "deck_half_m": 2.19,
+   "lidar_h_m": 0.08
+  },
+  {
+   "index": 1005,
+   "point": 559,
+   "lateral_m": -0.57,
+   "deck_half_m": 2.17,
+   "lidar_h_m": 0.07
+  },
+  {
+   "index": 1007,
+   "point": 563,
+   "lateral_m": 0.3,
+   "deck_half_m": 2.19,
+   "lidar_h_m": 0.05
+  },
+  {
+   "index": 1008,
+   "point": 565,
+   "lateral_m": -2.04,
+   "deck_half_m": 2.18,
+   "lidar_h_m": 0.05
+  },
+  {
+   "index": 1009,
+   "point": 567,
+   "lateral_m": -0.24,
+   "deck_half_m": 2.2,
+   "lidar_h_m": 0.09
+  },
+  {
+   "index": 1011,
+   "point": 571,
+   "lateral_m": -1.0,
+   "deck_half_m": 2.21,
+   "lidar_h_m": 0.04
+  },
+  {
+   "index": 1012,
+   "point": 573,
+   "lateral_m": -1.05,
+   "deck_half_m": 2.23,
+   "lidar_h_m": 0.07
+  },
+  {
+   "index": 1013,
+   "point": 575,
+   "lateral_m": -1.86,
+   "deck_half_m": 2.21,
+   "lidar_h_m": 0.05
+  },
+  {
+   "index": 1016,
+   "point": 581,
+   "lateral_m": 0.81,
+   "deck_half_m": 2.18,
+   "lidar_h_m": 0.07
+  },
+  {
+   "index": 1018,
+   "point": 585,
+   "lateral_m": -1.93,
+   "deck_half_m": 2.22,
+   "lidar_h_m": 0.04
+  },
+  {
+   "index": 1019,
+   "point": 587,
+   "lateral_m": -0.08,
+   "deck_half_m": 2.23,
+   "lidar_h_m": 0.09
+  },
+  {
+   "index": 1021,
+   "point": 591,
+   "lateral_m": 0.37,
+   "deck_half_m": 2.2,
+   "lidar_h_m": 0.04
+  },
+  {
+   "index": 1023,
+   "point": 595,
+   "lateral_m": -0.73,
+   "deck_half_m": 2.22,
+   "lidar_h_m": 0.07
+  },
+  {
+   "index": 1024,
+   "point": 597,
+   "lateral_m": 0.22,
+   "deck_half_m": 2.22,
+   "lidar_h_m": 0.06
+  },
+  {
+   "index": 1025,
+   "point": 599,
+   "lateral_m": -2.16,
+   "deck_half_m": 2.22,
+   "lidar_h_m": 0.03
+  },
+  {
+   "index": 1026,
+   "point": 601,
+   "lateral_m": -1.36,
+   "deck_half_m": 2.2,
+   "lidar_h_m": 0.06
+  },
+  {
+   "index": 1027,
+   "point": 603,
+   "lateral_m": -0.21,
+   "deck_half_m": 2.16,
+   "lidar_h_m": 0.11
+  },
+  {
+   "index": 1028,
+   "point": 605,
+   "lateral_m": 0.21,
+   "deck_half_m": 2.19,
+   "lidar_h_m": 0.11
+  },
+  {
+   "index": 1030,
+   "point": 609,
+   "lateral_m": -1.34,
+   "deck_half_m": 2.17,
+   "lidar_h_m": 0.05
+  },
+  {
+   "index": 1032,
+   "point": 613,
+   "lateral_m": -0.32,
+   "deck_half_m": 2.24,
+   "lidar_h_m": 0.05
+  },
+  {
+   "index": 1033,
+   "point": 615,
+   "lateral_m": -0.7,
+   "deck_half_m": 2.18,
+   "lidar_h_m": 0.04
+  },
+  {
+   "index": 1035,
+   "point": 619,
+   "lateral_m": -1.16,
+   "deck_half_m": 2.2,
+   "lidar_h_m": 0.04
+  },
+  {
+   "index": 1038,
+   "point": 625,
+   "lateral_m": -1.18,
+   "deck_half_m": 2.23,
+   "lidar_h_m": 0.03
+  },
+  {
+   "index": 1039,
+   "point": 627,
+   "lateral_m": 1.18,
+   "deck_half_m": 2.21,
+   "lidar_h_m": 0.05
+  },
+  {
+   "index": 1040,
+   "point": 629,
+   "lateral_m": -1.27,
+   "deck_half_m": 2.22,
+   "lidar_h_m": 0.06
+  },
+  {
+   "index": 1042,
+   "point": 633,
+   "lateral_m": -0.66,
+   "deck_half_m": 2.16,
+   "lidar_h_m": 0.07
+  },
+  {
+   "index": 1043,
+   "point": 635,
+   "lateral_m": -0.05,
+   "deck_half_m": 2.16,
+   "lidar_h_m": 0.07
+  },
+  {
+   "index": 1044,
+   "point": 637,
+   "lateral_m": -2.14,
+   "deck_half_m": 2.18,
+   "lidar_h_m": 0.05
+  },
+  {
+   "index": 1045,
+   "point": 639,
+   "lateral_m": -1.14,
+   "deck_half_m": 2.24,
+   "lidar_h_m": 0.04
+  },
+  {
+   "index": 1046,
+   "point": 641,
+   "lateral_m": -0.1,
+   "deck_half_m": 2.27,
+   "lidar_h_m": 0.09
+  },
+  {
+   "index": 1047,
+   "point": 643,
+   "lateral_m": 0.74,
+   "deck_half_m": 2.31,
+   "lidar_h_m": 0.07
+  },
+  {
+   "index": 1048,
+   "point": 645,
+   "lateral_m": 0.16,
+   "deck_half_m": 2.36,
+   "lidar_h_m": 0.07
+  },
+  {
+   "index": 1049,
+   "point": 647,
+   "lateral_m": 0.31,
+   "deck_half_m": 2.42,
+   "lidar_h_m": 0.09
+  },
+  {
+   "index": 1051,
+   "point": 651,
+   "lateral_m": -1.9,
+   "deck_half_m": 2.49,
+   "lidar_h_m": 0.05
+  },
+  {
+   "index": 1052,
+   "point": 653,
+   "lateral_m": -1.93,
+   "deck_half_m": 2.47,
+   "lidar_h_m": 0.05
+  },
+  {
+   "index": 1053,
+   "point": 655,
+   "lateral_m": -0.43,
+   "deck_half_m": 2.58,
+   "lidar_h_m": 0.04
+  },
+  {
+   "index": 1054,
+   "point": 657,
+   "lateral_m": 0.6,
+   "deck_half_m": 2.54,
+   "lidar_h_m": 0.1
+  },
+  {
+   "index": 1055,
+   "point": 659,
+   "lateral_m": -0.08,
+   "deck_half_m": 2.53,
+   "lidar_h_m": 0.03
+  },
+  {
+   "index": 1056,
+   "point": 661,
+   "lateral_m": -1.87,
+   "deck_half_m": 2.4,
+   "lidar_h_m": 0.05
+  },
+  {
+   "index": 1057,
+   "point": 662,
+   "lateral_m": -0.27,
+   "deck_half_m": 2.46,
+   "lidar_h_m": 0.05
+  },
+  {
+   "index": 1058,
+   "point": 663,
+   "lateral_m": -1.2,
+   "deck_half_m": 2.49,
+   "lidar_h_m": 0.05
+  },
+  {
+   "index": 1059,
+   "point": 664,
+   "lateral_m": -1.03,
+   "deck_half_m": 2.54,
+   "lidar_h_m": 0.07
+  },
+  {
+   "index": 1060,
+   "point": 666,
+   "lateral_m": -0.68,
+   "deck_half_m": 2.45,
+   "lidar_h_m": 0.04
+  },
+  {
+   "index": 1061,
+   "point": 668,
+   "lateral_m": 1.32,
+   "deck_half_m": 2.4,
+   "lidar_h_m": 0.07
+  },
+  {
+   "index": 1062,
+   "point": 670,
+   "lateral_m": -1.05,
+   "deck_half_m": 2.36,
+   "lidar_h_m": 0.04
+  },
+  {
+   "index": 1063,
+   "point": 672,
+   "lateral_m": 1.56,
+   "deck_half_m": 2.32,
+   "lidar_h_m": 0.05
+  },
+  {
+   "index": 1065,
+   "point": 676,
+   "lateral_m": 1.77,
+   "deck_half_m": 2.16,
+   "lidar_h_m": 0.06
+  },
+  {
+   "index": 1068,
+   "point": 682,
+   "lateral_m": 1.65,
+   "deck_half_m": 2.03,
+   "lidar_h_m": 0.05
+  },
+  {
+   "index": 1072,
+   "point": 690,
+   "lateral_m": 0.44,
+   "deck_half_m": 1.92,
+   "lidar_h_m": 0.03
+  },
+  {
+   "index": 1074,
+   "point": 694,
+   "lateral_m": 0.64,
+   "deck_half_m": 1.91,
+   "lidar_h_m": 0.06
+  },
+  {
+   "index": 1075,
+   "point": 696,
+   "lateral_m": 0.15,
+   "deck_half_m": 1.89,
+   "lidar_h_m": 0.03
+  },
+  {
+   "index": 1076,
+   "point": 698,
+   "lateral_m": 1.59,
+   "deck_half_m": 1.98,
+   "lidar_h_m": 0.03
+  },
+  {
+   "index": 1077,
+   "point": 700,
+   "lateral_m": 0.33,
+   "deck_half_m": 1.91,
+   "lidar_h_m": 0.0
+  },
+  {
+   "index": 1078,
+   "point": 702,
+   "lateral_m": 0.34,
+   "deck_half_m": 1.94,
+   "lidar_h_m": 0.04
+  },
+  {
+   "index": 1080,
+   "point": 706,
+   "lateral_m": 0.43,
+   "deck_half_m": 1.92,
+   "lidar_h_m": 0.05
+  },
+  {
+   "index": 1081,
+   "point": 708,
+   "lateral_m": 1.33,
+   "deck_half_m": 1.92,
+   "lidar_h_m": 0.07
+  },
+  {
+   "index": 1082,
+   "point": 710,
+   "lateral_m": 0.89,
+   "deck_half_m": 1.87,
+   "lidar_h_m": 0.11
+  },
+  {
+   "index": 1083,
+   "point": 712,
+   "lateral_m": 1.45,
+   "deck_half_m": 1.71,
+   "lidar_h_m": 0.1
+  }
+ ],
+ "move": [
+  {
+   "index": 846,
+   "x": -2307.025,
+   "z": 2200.681,
+   "point": 241,
+   "lateral_m": -1.95,
+   "deck_half_m": 1.46,
+   "half_m": 1.68,
+   "where": "pavement beside the island",
+   "lidar_h_m": 3.16,
+   "lidar_crown_m": 2.26,
+   "off_the_deck_by_m": 0.48,
+   "top": {
+    "index": 400457,
+    "x": -2306.108,
+    "z": 2202.443,
+    "from_the_spot_m": 1.99,
+    "h_m": 3.6,
+    "crown_m": 2.26,
+    "carried_across_m": 1.94,
+    "on_the_deck": false
+   },
+   "to_x": -2307.164,
+   "to_z": 2201.45,
+   "rule": "(2) straight across onto the deck [inferred position]",
+   "moved_m": 0.78,
+   "why": "the lidar saw a plant 3.16 m tall at this spot; the corrected island's deck ends 0.48 m short of it"
+  },
+  {
+   "index": 852,
+   "x": -2272.412,
+   "z": 2207.367,
+   "point": 253,
+   "lateral_m": -1.82,
+   "deck_half_m": 1.3,
+   "half_m": 1.52,
+   "where": "pavement beside the island",
+   "lidar_h_m": 5.46,
+   "lidar_crown_m": 3.97,
+   "off_the_deck_by_m": 0.52,
+   "top": {
+    "index": 400701,
+    "x": -2272.59,
+    "z": 2206.467,
+    "from_the_spot_m": 0.92,
+    "h_m": 5.29,
+    "crown_m": 3.97,
+    "carried_across_m": 1.89,
+    "on_the_deck": true
+   },
+   "to_x": -2272.986,
+   "to_z": 2208.31,
+   "rule": "(3) the lm-shrub top's own place (measured), carried across with its island",
+   "moved_m": 1.1,
+   "why": "the lidar saw a plant 5.46 m tall at this spot; the corrected island's deck ends 0.52 m short of it"
+  },
+  {
+   "index": 857,
+   "x": -2243.942,
+   "z": 2213.873,
+   "point": 263,
+   "lateral_m": -2.31,
+   "deck_half_m": 1.39,
+   "half_m": 1.61,
+   "where": "pavement beside the island",
+   "lidar_h_m": 3.19,
+   "lidar_crown_m": 3.24,
+   "off_the_deck_by_m": 0.92,
+   "top": {
+    "index": 401191,
+    "x": -2244.077,
+    "z": 2213.489,
+    "from_the_spot_m": 0.41,
+    "h_m": 3.19,
+    "crown_m": 3.24,
+    "carried_across_m": 1.84,
+    "on_the_deck": true
+   },
+   "to_x": -2244.641,
+   "to_z": 2215.236,
+   "rule": "(3) the lm-shrub top's own place (measured), carried across with its island",
+   "moved_m": 1.53,
+   "why": "the lidar saw a plant 3.19 m tall at this spot; the corrected island's deck ends 0.92 m short of it"
+  },
+  {
+   "index": 862,
+   "x": -2215.545,
+   "z": 2223.138,
+   "point": 273,
+   "lateral_m": -1.58,
+   "deck_half_m": 1.44,
+   "half_m": 1.66,
+   "where": "the strip's curb ring",
+   "lidar_h_m": 0.68,
+   "lidar_crown_m": null,
+   "off_the_deck_by_m": 0.14,
+   "top": null,
+   "to_x": -2215.68,
+   "to_z": 2223.556,
+   "rule": "(2) straight across onto the deck [inferred position]",
+   "moved_m": 0.44,
+   "why": "the lidar saw a plant 0.68 m tall at this spot; the corrected island's deck ends 0.14 m short of it"
+  },
+  {
+   "index": 871,
+   "x": -2165.383,
+   "z": 2242.268,
+   "point": 291,
+   "lateral_m": -1.31,
+   "deck_half_m": 1.26,
+   "half_m": 1.48,
+   "where": "the strip's curb ring",
+   "lidar_h_m": 4.52,
+   "lidar_crown_m": 4.32,
+   "off_the_deck_by_m": 0.06,
+   "top": {
+    "index": 403275,
+    "x": -2165.046,
+    "z": 2241.052,
+    "from_the_spot_m": 1.26,
+    "h_m": 4.53,
+    "crown_m": 4.32,
+    "carried_across_m": 1.69,
+    "on_the_deck": true
+   },
+   "to_x": -2165.643,
+   "to_z": 2242.628,
+   "rule": "(3) the lm-shrub top's own place (measured), carried across with its island",
+   "moved_m": 0.44,
+   "why": "the lidar saw a plant 4.52 m tall at this spot; the corrected island's deck ends 0.06 m short of it"
+  },
+  {
+   "index": 888,
+   "x": -2077.364,
+   "z": 2289.903,
+   "point": 325,
+   "lateral_m": -1.42,
+   "deck_half_m": 0.88,
+   "half_m": 1.1,
+   "where": "pavement beside the island",
+   "lidar_h_m": 2.52,
+   "lidar_crown_m": null,
+   "off_the_deck_by_m": 0.55,
+   "top": null,
+   "to_x": -2077.868,
+   "to_z": 2290.586,
+   "rule": "(2) straight across onto the deck [inferred position]",
+   "moved_m": 0.85,
+   "why": "the lidar saw a plant 2.52 m tall at this spot; the corrected island's deck ends 0.55 m short of it"
+  }
+ ],
+ "_move_doc": "spots the lidar saw a plant at that the corrected island's deck no longer reaches (the spot is the draft's, drawn on the declared island; the real plant stands on the real one). Never dropped (the Mac, 2026-11-23). Rule (3): the G10's lm-shrub top within 2 m, where it is on the deck: its own place. Rule (2): straight across onto the deck, 0.3 m inside its edge: an inferred position",
+ "tall_plants_moved": [],
+ "tops_file": "mg_plant_tops.g10.json"
+}

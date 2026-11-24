@@ -1,0 +1,32 @@
+{
+ "_doc": "props_on_islands.py: meshes with vertices inside the paved islands' bands (+0.6 m), before and after",
+ "before": "<the scratch workshop of item 1>/build/san_diego_lake_murray.kn5",
+ "after": "<the scratch workshop of item 2 (the lidar build)>/build/san_diego_lake_murray.kn5",
+ "islands": [
+  [
+   "north_mission_gorge",
+   8,
+   53
+  ],
+  [
+   "north_mission_gorge",
+   67,
+   354
+  ],
+  [
+   "north_mission_gorge",
+   365,
+   741
+  ]
+ ],
+ "rows": 711,
+ "meshes": [
+  {
+   "mesh": "1WALL_guard",
+   "plan_positions_before": 2108,
+   "after": 2306,
+   "matched": 0,
+   "dy_m": null
+  }
+ ]
+}

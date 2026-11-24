@@ -109,6 +109,56 @@ def lap_ids(cfg: dict) -> list[str]:
     return sorted({lap_of(lo) for lo in (cfg.get("layouts") or []) if isinstance(lo, dict) and lap_of(lo)})
 
 
+MAINLINE_CORNER_REACH = 20   # [invented] vertices each side of a corner's apex the lap must walk on the mainline for the
+#                              corner to be the lap's own: the approach the sign rule reads its tangent from (12 stations
+#                              before the hard turn starts) and the bend itself. Lake Murray's two per-layout corners stand
+#                              38 vertices from the College lap's nearest piece end (v1514 / v1476), and 3 and 2 vertices
+#                              OUTSIDE the north lap's mainline piece (v1517-2317), which turns off before them
+
+
+def mainline_approach(cfg: dict, lap_id: str, direction: str, apex_vertex: int, n: int, closed: bool = True,
+                      reach: int = MAINLINE_CORNER_REACH) -> str | None:
+    """'fwd' / 'rev': the MAINLINE approach by which a layout on lap `lap_id` drives the mainline corner whose apex is
+    mainline vertex `apex_vertex`, or None when the lap does not drive it as a mainline corner. direction = the
+    layout's own ('fwd' / 'forward', 'rev' / 'reverse'); n = the mainline's vertex count (closure duplicate dropped).
+
+    It drives it only where the lap WALKS the mainline through the corner: every vertex from `reach` before the apex
+    to `reach` after it belongs to the lap's MAINLINE pieces, all walked the same way. A piece walked backwards turns
+    the approach round. (Ledger 0055 round 2: Lake Murray's College lap is the mainline everywhere but on the split, so
+    the Speedway on it keeps its plates at the College/Navajo and Navajo/Jackson corners; the north lap leaves the
+    mainline at both, and still gets none: ledger 0054 Phase 2.)"""
+    walk: dict[int, int] = {}
+    for piece in spec(cfg, lap_id).get("pieces") or []:
+        if not isinstance(piece, dict) or piece.get("line") != MAINLINE:
+            continue
+        a, b = int(piece["from"]), int(piece["to"])
+        step = (-1 if piece.get("reverse") else 1) if closed else (1 if b >= a else -1)
+        k, count = a, 0
+        while True:
+            walk[k] = step if walk.get(k, step) == step else 0        # 0: walked both ways
+            if k == b:
+                break
+            k = (k + step) % n if closed else k + step
+            count += 1
+            if count > n:
+                raise SystemExit(f"[lap] lap {lap_id}: MAINLINE piece v{a}->v{b} never reaches its end")
+    steps = set()
+    for dv in range(-int(reach), int(reach) + 1):
+        k = apex_vertex + dv
+        if closed:
+            k %= n
+        elif not 0 <= k < n:
+            continue
+        steps.add(walk.get(k))
+    if len(steps) != 1:
+        return None
+    step = steps.pop()
+    if not step:
+        return None
+    forward = str(direction).lower() in ("fwd", "forward")
+    return ("fwd" if step > 0 else "rev") if forward else ("rev" if step > 0 else "fwd")
+
+
 def furnished_lap_ids(cfg: dict) -> list[str]:
     """every lap a FURNISHED race layout names (layouts[].race_furniture), sorted: the laps that carry a common
     race set (curb strips + kerbs, <slug>_race_<lap>.kn5). A lap only bare race layouts drive (Pikes Peak's road

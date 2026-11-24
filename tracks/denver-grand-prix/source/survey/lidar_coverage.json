@@ -1,0 +1,603 @@
+{
+ "_doc": "CO_DRCOG_2_2020 lidar within 15 m of the Denver Grand Prix lap on OSM's lines: every return of every EPT node that touches the corridor. Densities are per true square metre. Heights are over the 3DEP bare-earth value at the nearest lap sample. Written by lidar_coverage.py.",
+ "ept": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept.json",
+ "ept_points_total": 39372539042,
+ "read_utc": "2026-11-23T02:20:59Z",
+ "nodes": 141,
+ "node_bytes": 39907100,
+ "returns_in_nodes": 5890087,
+ "returns_in_corridor": 776396,
+ "corridor_m2": 194828,
+ "returns_per_m2": 4.0,
+ "first_returns_per_m2": 3.3,
+ "ground_class2_per_m2": 2.02,
+ "classes": {
+  "1": 376938,
+  "2": 393572,
+  "7": 2343,
+  "17": 3348,
+  "18": 152,
+  "20": 43
+ },
+ "flight_dates_utc": [
+  "2020-05-27"
+ ],
+ "intensity_percentiles_1_50_99": [
+  0,
+  127,
+  4164
+ ],
+ "ground_intensity_percentiles_1_50_99": [
+  0,
+  380,
+  4070
+ ],
+ "lap_m_with_under_2_returns_per_m2": [
+  [
+   1408.0,
+   1424.0
+  ],
+  [
+   2154.0,
+   2198.0
+  ],
+  [
+   2240.0,
+   2288.0
+  ],
+  [
+   2310.0,
+   2328.0
+  ]
+ ],
+ "lap_m_with_no_ground_or_deck_return_in_10_m": [
+  [
+   1402.0,
+   1706.0
+  ]
+ ],
+ "legs": [
+  {
+   "s": [
+    0.0,
+    1172.0
+   ],
+   "what": "Colfax WB to Speer NB",
+   "corridor_m2": 35091,
+   "returns_per_m2": 4.7,
+   "ground_class2_per_m2": 2.43,
+   "bridge_deck_class17_per_m2": 0.0,
+   "classes": {
+    "1": 78267,
+    "2": 85101,
+    "7": 386,
+    "18": 10
+   },
+   "height_over_3dep_m_percentiles_5_50_95": [
+    -0.2,
+    0.0,
+    10.6
+   ],
+   "ground_class2_height_over_3dep_m_5_50_95": [
+    -0.2,
+    0.0,
+    0.2
+   ],
+   "bridge_deck_class17_height_over_3dep_m_5_50_95": null
+  },
+  {
+   "s": [
+    1174.0,
+    1324.0
+   ],
+   "what": "Speer NB to Stout",
+   "corridor_m2": 4557,
+   "returns_per_m2": 3.3,
+   "ground_class2_per_m2": 1.93,
+   "bridge_deck_class17_per_m2": 0.02,
+   "classes": {
+    "1": 6124,
+    "2": 8778,
+    "7": 40,
+    "17": 78,
+    "18": 5
+   },
+   "height_over_3dep_m_percentiles_5_50_95": [
+    -0.2,
+    0.0,
+    10.1
+   ],
+   "ground_class2_height_over_3dep_m_5_50_95": [
+    -0.3,
+    -0.0,
+    0.2
+   ],
+   "bridge_deck_class17_height_over_3dep_m_5_50_95": [
+    -0.0,
+    0.1,
+    0.3
+   ]
+  },
+  {
+   "s": [
+    1326.0,
+    1902.0
+   ],
+   "what": "Stout to 15th St",
+   "corridor_m2": 17229,
+   "returns_per_m2": 3.7,
+   "ground_class2_per_m2": 1.06,
+   "bridge_deck_class17_per_m2": 0.0,
+   "classes": {
+    "1": 44504,
+    "2": 18333,
+    "7": 329,
+    "18": 2
+   },
+   "height_over_3dep_m_percentiles_5_50_95": [
+    -0.0,
+    12.4,
+    36.5
+   ],
+   "ground_class2_height_over_3dep_m_5_50_95": [
+    -0.1,
+    0.0,
+    0.4
+   ],
+   "bridge_deck_class17_height_over_3dep_m_5_50_95": null
+  },
+  {
+   "s": [
+    1904.0,
+    2640.0
+   ],
+   "what": "15th St to Blake",
+   "corridor_m2": 22063,
+   "returns_per_m2": 3.9,
+   "ground_class2_per_m2": 1.85,
+   "bridge_deck_class17_per_m2": 0.0,
+   "classes": {
+    "1": 44351,
+    "2": 40735,
+    "7": 276,
+    "18": 25
+   },
+   "height_over_3dep_m_percentiles_5_50_95": [
+    -0.2,
+    0.0,
+    38.1
+   ],
+   "ground_class2_height_over_3dep_m_5_50_95": [
+    -0.2,
+    -0.0,
+    0.2
+   ],
+   "bridge_deck_class17_height_over_3dep_m_5_50_95": null
+  },
+  {
+   "s": [
+    2642.0,
+    2942.0
+   ],
+   "what": "Blake to Speer SB",
+   "corridor_m2": 9042,
+   "returns_per_m2": 3.1,
+   "ground_class2_per_m2": 1.66,
+   "bridge_deck_class17_per_m2": 0.18,
+   "classes": {
+    "1": 11088,
+    "2": 14989,
+    "7": 82,
+    "17": 1608,
+    "18": 14,
+    "20": 21
+   },
+   "height_over_3dep_m_percentiles_5_50_95": [
+    -0.1,
+    0.1,
+    10.1
+   ],
+   "ground_class2_height_over_3dep_m_5_50_95": [
+    -0.2,
+    0.0,
+    0.3
+   ],
+   "bridge_deck_class17_height_over_3dep_m_5_50_95": [
+    1.3,
+    4.3,
+    5.2
+   ]
+  },
+  {
+   "s": [
+    2944.0,
+    3744.0
+   ],
+   "what": "Speer SB to Kalamath",
+   "corridor_m2": 23937,
+   "returns_per_m2": 3.0,
+   "ground_class2_per_m2": 2.03,
+   "bridge_deck_class17_per_m2": 0.01,
+   "classes": {
+    "1": 22531,
+    "2": 48678,
+    "7": 199,
+    "17": 153,
+    "18": 23,
+    "20": 4
+   },
+   "height_over_3dep_m_percentiles_5_50_95": [
+    -0.5,
+    0.0,
+    6.8
+   ],
+   "ground_class2_height_over_3dep_m_5_50_95": [
+    -0.7,
+    -0.0,
+    0.4
+   ],
+   "bridge_deck_class17_height_over_3dep_m_5_50_95": [
+    -0.1,
+    -0.0,
+    0.2
+   ]
+  },
+  {
+   "s": [
+    3746.0,
+    4132.0
+   ],
+   "what": "Kalamath S to W 14th Ave",
+   "corridor_m2": 9941,
+   "returns_per_m2": 2.8,
+   "ground_class2_per_m2": 2.02,
+   "bridge_deck_class17_per_m2": 0.0,
+   "classes": {
+    "1": 8192,
+    "2": 20052,
+    "7": 34,
+    "18": 2
+   },
+   "height_over_3dep_m_percentiles_5_50_95": [
+    -0.2,
+    0.0,
+    5.8
+   ],
+   "ground_class2_height_over_3dep_m_5_50_95": [
+    -0.2,
+    -0.0,
+    0.4
+   ],
+   "bridge_deck_class17_height_over_3dep_m_5_50_95": null
+  },
+  {
+   "s": [
+    4134.0,
+    4198.0
+   ],
+   "what": "W 14th Ave to Santa Fe",
+   "corridor_m2": 1739,
+   "returns_per_m2": 3.2,
+   "ground_class2_per_m2": 1.87,
+   "bridge_deck_class17_per_m2": 0.0,
+   "classes": {
+    "1": 2308,
+    "2": 3245,
+    "7": 17
+   },
+   "height_over_3dep_m_percentiles_5_50_95": [
+    -0.2,
+    0.1,
+    6.7
+   ],
+   "ground_class2_height_over_3dep_m_5_50_95": [
+    -0.2,
+    -0.0,
+    0.4
+   ],
+   "bridge_deck_class17_height_over_3dep_m_5_50_95": null
+  },
+  {
+   "s": [
+    4200.0,
+    4388.0
+   ],
+   "what": "Santa Fe N to Colfax",
+   "corridor_m2": 4651,
+   "returns_per_m2": 2.9,
+   "ground_class2_per_m2": 2.01,
+   "bridge_deck_class17_per_m2": 0.0,
+   "classes": {
+    "1": 4141,
+    "2": 9339,
+    "7": 24
+   },
+   "height_over_3dep_m_percentiles_5_50_95": [
+    -0.2,
+    0.0,
+    8.6
+   ],
+   "ground_class2_height_over_3dep_m_5_50_95": [
+    -0.2,
+    -0.0,
+    0.4
+   ],
+   "bridge_deck_class17_height_over_3dep_m_5_50_95": null
+  },
+  {
+   "s": [
+    4390.0,
+    4536.0
+   ],
+   "what": "Kalamath NB branch to Speer SB",
+   "corridor_m2": 3806,
+   "returns_per_m2": 2.8,
+   "ground_class2_per_m2": 2.07,
+   "bridge_deck_class17_per_m2": 0.0,
+   "classes": {
+    "1": 2763,
+    "2": 7889,
+    "7": 11
+   },
+   "height_over_3dep_m_percentiles_5_50_95": [
+    -0.2,
+    -0.0,
+    5.4
+   ],
+   "ground_class2_height_over_3dep_m_5_50_95": [
+    -0.2,
+    -0.0,
+    0.3
+   ],
+   "bridge_deck_class17_height_over_3dep_m_5_50_95": null
+  },
+  {
+   "s": [
+    4538.0,
+    4878.0
+   ],
+   "what": "Speer SB to W 14th Ave",
+   "corridor_m2": 10165,
+   "returns_per_m2": 3.3,
+   "ground_class2_per_m2": 1.89,
+   "bridge_deck_class17_per_m2": 0.0,
+   "classes": {
+    "1": 13820,
+    "2": 19225,
+    "7": 67,
+    "17": 45,
+    "18": 31
+   },
+   "height_over_3dep_m_percentiles_5_50_95": [
+    -0.8,
+    -0.0,
+    9.0
+   ],
+   "ground_class2_height_over_3dep_m_5_50_95": [
+    -0.7,
+    -0.0,
+    0.2
+   ],
+   "bridge_deck_class17_height_over_3dep_m_5_50_95": [
+    0.5,
+    0.5,
+    0.7
+   ]
+  },
+  {
+   "s": [
+    4880.0,
+    6242.0
+   ],
+   "what": "14th Ave E to Logan",
+   "corridor_m2": 40753,
+   "returns_per_m2": 5.3,
+   "ground_class2_per_m2": 2.32,
+   "bridge_deck_class17_per_m2": 0.04,
+   "classes": {
+    "1": 117846,
+    "2": 94518,
+    "7": 782,
+    "17": 1464,
+    "18": 39,
+    "20": 18
+   },
+   "height_over_3dep_m_percentiles_5_50_95": [
+    -0.2,
+    0.1,
+    11.5
+   ],
+   "ground_class2_height_over_3dep_m_5_50_95": [
+    -0.2,
+    -0.0,
+    0.3
+   ],
+   "bridge_deck_class17_height_over_3dep_m_5_50_95": [
+    0.1,
+    3.5,
+    4.1
+   ]
+  },
+  {
+   "s": [
+    6244.0,
+    6422.0
+   ],
+   "what": "Logan N to Colfax",
+   "corridor_m2": 5352,
+   "returns_per_m2": 4.0,
+   "ground_class2_per_m2": 2.09,
+   "bridge_deck_class17_per_m2": 0.0,
+   "classes": {
+    "1": 10100,
+    "2": 11178,
+    "7": 43,
+    "18": 1
+   },
+   "height_over_3dep_m_percentiles_5_50_95": [
+    -0.1,
+    0.1,
+    15.1
+   ],
+   "ground_class2_height_over_3dep_m_5_50_95": [
+    -0.2,
+    0.0,
+    0.2
+   ],
+   "bridge_deck_class17_height_over_3dep_m_5_50_95": null
+  },
+  {
+   "s": [
+    6424.0,
+    6638.0
+   ],
+   "what": "Colfax W to S/F",
+   "corridor_m2": 6502,
+   "returns_per_m2": 3.5,
+   "ground_class2_per_m2": 1.77,
+   "bridge_deck_class17_per_m2": 0.0,
+   "classes": {
+    "1": 10903,
+    "2": 11512,
+    "7": 53
+   },
+   "height_over_3dep_m_percentiles_5_50_95": [
+    -0.2,
+    0.1,
+    16.6
+   ],
+   "ground_class2_height_over_3dep_m_5_50_95": [
+    -0.2,
+    -0.0,
+    0.1
+   ],
+   "bridge_deck_class17_height_over_3dep_m_5_50_95": null
+  }
+ ],
+ "spots": [
+  {
+   "s": [
+    2784,
+    2814
+   ],
+   "what": "Blake St bridge over Cherry Creek (OSM way 461500433)",
+   "corridor_m2": 958,
+   "returns_per_m2": 2.7,
+   "ground_class2_per_m2": 0.56,
+   "bridge_deck_class17_per_m2": 1.41,
+   "classes": {
+    "1": 662,
+    "2": 535,
+    "7": 14,
+    "17": 1353,
+    "18": 10,
+    "20": 13
+   },
+   "height_over_3dep_m_percentiles_5_50_95": [
+    -0.3,
+    4.0,
+    5.5
+   ],
+   "ground_class2_height_over_3dep_m_5_50_95": [
+    -2.7,
+    0.3,
+    3.9
+   ],
+   "bridge_deck_class17_height_over_3dep_m_5_50_95": [
+    3.7,
+    4.4,
+    5.2
+   ]
+  },
+  {
+   "s": [
+    4888,
+    4930
+   ],
+   "what": "W 14th Ave bridge over Cherry Creek (OSM way 44932761)",
+   "corridor_m2": 1332,
+   "returns_per_m2": 2.6,
+   "ground_class2_per_m2": 0.84,
+   "bridge_deck_class17_per_m2": 1.1,
+   "classes": {
+    "1": 868,
+    "2": 1113,
+    "7": 8,
+    "17": 1464,
+    "18": 19,
+    "20": 18
+   },
+   "height_over_3dep_m_percentiles_5_50_95": [
+    -1.8,
+    1.9,
+    4.1
+   ],
+   "ground_class2_height_over_3dep_m_5_50_95": [
+    -3.2,
+    0.0,
+    3.1
+   ],
+   "bridge_deck_class17_height_over_3dep_m_5_50_95": [
+    0.1,
+    3.5,
+    4.1
+   ]
+  },
+  {
+   "s": [
+    1390,
+    1734
+   ],
+   "what": "Stout St under the Convention Center (OSM building_passage ways)",
+   "corridor_m2": 10367,
+   "returns_per_m2": 2.8,
+   "ground_class2_per_m2": 0.12,
+   "bridge_deck_class17_per_m2": 0.0,
+   "classes": {
+    "1": 27542,
+    "2": 1258,
+    "7": 225,
+    "18": 2
+   },
+   "height_over_3dep_m_percentiles_5_50_95": [
+    0.4,
+    22.1,
+    33.6
+   ],
+   "ground_class2_height_over_3dep_m_5_50_95": [
+    -0.6,
+    0.1,
+    0.5
+   ],
+   "bridge_deck_class17_height_over_3dep_m_5_50_95": null
+  },
+  {
+   "s": [
+    2284,
+    2316
+   ],
+   "what": "15th St: the 5 m hole in 3DEP bare earth short of Lawrence St",
+   "corridor_m2": 1025,
+   "returns_per_m2": 2.0,
+   "ground_class2_per_m2": 0.8,
+   "bridge_deck_class17_per_m2": 0.0,
+   "classes": {
+    "1": 1224,
+    "2": 815,
+    "7": 7,
+    "18": 16
+   },
+   "height_over_3dep_m_percentiles_5_50_95": [
+    -1.4,
+    4.8,
+    151.6
+   ],
+   "ground_class2_height_over_3dep_m_5_50_95": [
+    -1.7,
+    2.9,
+    5.1
+   ],
+   "bridge_deck_class17_height_over_3dep_m_5_50_95": null
+  }
+ ]
+}

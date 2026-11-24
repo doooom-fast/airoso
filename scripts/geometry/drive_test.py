@@ -129,6 +129,15 @@ over KINK_PCT is re-measured on the path's own travel exactly as a vertex bump i
 over the mean of the two metres' plan travel, as %/m); one under KINK_PCT is filed under ``vertex_kinks`` (reported, not
 counted in kinks_per_km), one still over it counts, and a metre under VERTEX_MIN_TRAVEL_M keeps its station reading. A
 measurement change, not a threshold change: KINK_PCT judges both. Without the key the report is byte-identical.
+
+DAYLIGHT EDGE REF (opt-in, ledger 0102: track.config.json ``drive_test.daylight_edge_ref = true``; Milford only). The
+daylight probe, 0.8 m past each pavement edge, looks for a surface from 7.5 m under to 2.5 m over the CENTRE deck. On a
+measured banked turn the edge itself stands over that window: Milford's GM loop at s 912-980 (ledger 0102 section 2, the
+1 m lidar grid +3.50 m at u -8) built its left edge 2.59-3.68 m over the centre deck, so the kerb and grass beside it
+(0.03 m under to 0.30 m over the edge) read as 69 gaps. With the key the same window (5 m, limit 0) hangs from the
+road's own height at that edge, the highest 1ROAD face DAYLIGHT_EDGE_INSET_M inside it (_road_top_at); a station with no
+road there keeps the centre deck, and the report counts both (``daylight_edge_ref``). It moves where the probe looks, not
+its limit. Without the key the report is byte-identical.
 """
 
 from __future__ import annotations
@@ -166,6 +175,8 @@ DENSE_HOP_M = 1.5            # [invented] ledger 0079 round M (opt-in drive_test
 DENSE_DS_M = 0.25            # [invented] ledger 0079 round M: the dense re-sample spacing along the wheel path's own arc
 VERTEX_MIN_TRAVEL_M = 0.05   # [invented] v0.18.1 VERTEX BUMPS: a metre whose wheel path covers less plan than this is not
 #                              re-measured (its grade would be a facet's noise); the bump counts as read
+DAYLIGHT_EDGE_INSET_M = 0.15  # [invented] ledger 0102 (opt-in drive_test.daylight_edge_ref): the edge's road height is read
+#                              this far inside the lane edge, on the 1ROAD face rather than its seam with the kerb
 
 
 def _advance(prev, px_pz, c):
@@ -776,6 +787,10 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None, line: dict
     # VERTEX KINKS (opt-in, ledger 0079 round P: drive_test.vertex_kinks = true; Lake Murray sets none): a kink is
     # re-measured on the wheel path's own travel, as a vertex bump is (module doc)
     _vertex_kinks = bool((cfg.get("drive_test") or {}).get("vertex_kinks"))
+    # DAYLIGHT EDGE REF (opt-in, ledger 0102: drive_test.daylight_edge_ref = true; Milford only): the daylight probe's
+    # window hangs from the road's own height at that edge (_road_top_at, DAYLIGHT_EDGE_INSET_M inside it), not from
+    # the centre deck (module doc)
+    _daylight_edge_ref = bool((cfg.get("drive_test") or {}).get("daylight_edge_ref"))
 
     def _in_flat_zone(px, pz):
         return any((px - a) ** 2 + (pz - b) ** 2 < d * d for a, b, c, d in _fzones)
@@ -799,7 +814,26 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None, line: dict
             if w0 >= -1e-6 and w1 >= -1e-6 and 1.0 - w0 - w1 >= -1e-6:
                 return True
         return False
-    _has_ends = (not bool(cfg.get("loop", True))) or line is not None
+
+    def _road_top_at(x, z):
+        """The highest 1ROAD surface directly under (x,z), or None: _pavement_at's one-cell scan, returning the height
+        (DAYLIGHT EDGE REF only)."""
+        best = None
+        for i in surface.cells.get((int(x // CELL), int(z // CELL)), ()):
+            ax, ay, az, bx, by, bz, cx, cy, cz, name = surface.tris[i]
+            if not name.upper().startswith("1ROAD"):
+                continue
+            d = (bz - cz) * (ax - cx) + (cx - bx) * (az - cz)
+            if abs(d) < 1e-12:
+                continue
+            w0 = ((bz - cz) * (x - cx) + (cx - bx) * (z - cz)) / d
+            w1 = ((cz - az) * (x - cx) + (ax - cx) * (z - cz)) / d
+            if w0 >= -1e-6 and w1 >= -1e-6 and 1.0 - w0 - w1 >= -1e-6:
+                y = w0 * ay + w1 * by + (1.0 - w0 - w1) * cy
+                if best is None or y > best:
+                    best = y
+        return best
+    _has_ends =(not bool(cfg.get("loop", True))) or line is not None
     _lap_end = sum(math.dist((pts[i][0], pts[i][2]), (pts[i + 1][0], pts[i + 1][2]))
                    for i in range(len(pts) - 1))
     # MEDIAN ISLAND (0037). On a divided road the centreline IS the raised island — sweeping the
@@ -1141,7 +1175,17 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None, line: dict
         if deck_c is not None:
             for side in (-1.0, 1.0):
                 off = side * (w / 2 + 0.8)
-                gy_probe, _own = surface.top_at(x + nx * off, z + nz * off, deck_c - 2.5, 5.0)
+                y_ref = deck_c
+                if _daylight_edge_ref:
+                    # (opt-in) the same window off the road's own height at this edge; no road there: the centre deck
+                    u_edge = side * (w / 2 - DAYLIGHT_EDGE_INSET_M)
+                    y_edge = _road_top_at(x + nx * u_edge, z + nz * u_edge)
+                    if y_edge is None:
+                        problems.setdefault("daylight_centre_fallback", []).append((round(s, 1), round(off, 2)))
+                    else:
+                        y_ref = y_edge
+                        problems["daylight_edge_read"] = problems.get("daylight_edge_read", 0) + 1
+                gy_probe, _own = surface.top_at(x + nx * off, z + nz * off, y_ref - 2.5, 5.0)
                 if gy_probe is None:
                     problems["daylight_gaps"].append((round(s, 1), round(off, 2)))
         # corridor obstruction scan at this station (uses centre deck height)
@@ -1611,6 +1655,13 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None, line: dict
     if _kink_max is not None:
         report["kinks_per_km_max"] = float(_kink_max)
         fail = fail or report["kinks_per_km"] > float(_kink_max)
+    # DAYLIGHT EDGE REF (opt-in, ledger 0102): only a track naming the key carries how its probes were hung, so every
+    # track without it writes today's file byte for byte
+    if _daylight_edge_ref:
+        report["daylight_edge_ref"] = {"inset_m": DAYLIGHT_EDGE_INSET_M,
+                                       "edge_read": problems.get("daylight_edge_read", 0),
+                                       "centre_fallback": len(problems.get("daylight_centre_fallback", [])),
+                                       "centre_fallback_first": problems.get("daylight_centre_fallback", [])[:20]}
     report["fail"] = fail
     # NETWORK REFERENCE LINE (opt-in: data/network.reference.json, written by scripts.geometry.network_reference). On a
     # road network this gate walks ONE declared mainline; every other built edge is unjudged by it, and says so here

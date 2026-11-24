@@ -593,6 +593,51 @@ author_race_verify() {
   (cd "$AIROSO" && python tools/plot_race_furniture.py "$PROJ" | tail -3)   # data/race_plots/*.png
 }
 
+author_college_split() {
+  # ledger 0055 round 2 (Kevin: "realism+"; Lake Murray, opt-in route.college_split): College Avenue between rows v1130 and
+  # v1476 as two roads. The track's own step (tracks/<track>/source/college_r2). The data first: college_split_data.py
+  # --chain puts the mainline on the southbound road, makes the northbound road a connector, takes the island off those
+  # rows, raises the east lamps and widens the released zone; what it computes from the project must BE the committed
+  # college_split.data.json (the scene scripts read that file), and a project whose data already carries the split (seeded
+  # from a College build) is verified and left as it is. Then three edits of loop.blend, each self-checked (exit 1 = not
+  # saved) and a no-op on a scene that already carries it: the two ribbons, the middle (the old island out; the bank's
+  # island and grass top, the east walk, the paint in), the ground and the east lamps. FIRST in the author phase:
+  # walk_grade and the race steps author on the roads as they ship. Key absent = no-op, nothing read. Only a ship.json
+  # that names it
+  step "author: College Avenue as two roads (source/college_r2: the data held to the committed split, then the ribbons, the middle and the ground into loop.blend; ledger 0055 round 2; self-checked; not opted in = no-op)"
+  local on s r2="$SRC/source/college_r2"
+  on=$(pyq "import json,sys; print(1 if (json.load(open(sys.argv[1],encoding='utf-8')).get('route') or {}).get('college_split') else 0)" "$PROJ/track.config.json" | tr -d '\r')
+  [ "$on" = 1 ] || { echo "  (route.college_split not declared: nothing to do)"; return 0; }
+  (cd "$AIROSO" && python "$r2/college_split_data.py" "$PROJ" --chain)
+  for s in split middle ground; do
+    (cd "$WS" && "$BL" --background "$PROJ/loop.blend" --python-exit-code 1 --python "$r2/college_${s}_blend.py" 2>&1 | grep "^\[college_${s}\]\|FATAL\|Error\|Traceback" )
+  done
+}
+
+author_median_rebuild() {
+  # ledger 0099 round 3, item 1b (the Mac 2026-11-23; Lake Murray, opt-in route.median_rebuild): Mission Gorge Rd's long median
+  # island was built unbroken across the real Margerum Avenue / Mission Vista Drive crossing. Its data is corrected at the
+  # source (source/expansion/mg_median/fix_mg_median.py); the draft that builds islands never runs again on this chain, so
+  # this step re-authors that ONE island in the scene: the old one is found exactly as the record's data built it (or the
+  # step refuses), taken out, and the corrected data's islands are built by the island's own rule (tools/median_island.py,
+  # the rule the draft tool builds with) and the assembler's own paint function. After college_split, before median_tops
+  # (which gives the new decks their object). Key absent = no-op, the blend not opened. Only a ship.json that names it
+  step "author: one median island re-authored from corrected data (tools/author_median_rebuild_blend.py: the old island found exactly or refused; ledger 0099 round 3; self-checked; not opted in = no-op)"
+  (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_median_rebuild_blend.py" -- "$PROJ" --v021 "$V021" 2>&1 | grep "^\[median-rebuild\]\|FATAL\|Error\|Traceback" )
+}
+
+author_median_tops() {
+  # ledger 0055, "Known defect" (the Mac 2026-11-23: option (a); Lake Murray, opt-in route.median_tops): every raised median
+  # showed the road's asphalt between its curbs, because the median tool's grass top is part of TERRAIN and the prep (the
+  # engine's, not changed) sets every 1GRASS vertex that has pavement under it to the deck less 0.02 m. The top of every
+  # island is moved, face for face, out of TERRAIN into route.median_tops.object (1LAWN_...: in AC the name is the surface
+  # and picks the material; track.config.json lawn_as_grass gives the LAWN key GRASS's own values). After college_split
+  # (which rebuilds College's islands), before every step that reads the scene. Key absent = no-op, the blend not opened.
+  # Only a ship.json that names it
+  step "author: every median's grass top into its own object (tools/author_median_tops_blend.py: out of TERRAIN, which the prep pins under the road; ledger 0055; self-checked; not opted in = no-op)"
+  (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_median_tops_blend.py" -- "$PROJ" 2>&1 | grep "^\[median-tops\]\|FATAL\|Error\|Traceback" )
+}
+
 author_lamp_heads() {
   # ledger 0099 (Kevin 2026-11-22: "Yes, light both heads"; opt-in scenery.streetlights.light_both_heads): every two-arm lamp's
   # back head gets its lens (LIGHTS_back, each LIGHTS_0 lens turned about its own pole), so ext_config clusters a second CSP
@@ -645,6 +690,16 @@ prep_prep() {
   if [ "$(pyq "import json,sys; print(bool(((json.load(open(sys.argv[1],encoding='utf-8')).get('terrain') or {}).get('far_ground') or {}).get('object')))" "$PROJ/track.config.json" | tr -d '\r')" = "True" ]; then
     step "ship: the far ground's sunk skirt out of the prepped ground tiles (tools/far_ground_prep_blend.py; self-checked)"
     "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/far_ground_prep_blend.py" -- "$PROJ/blender/$SLUG.blend" --project "$PROJ" 2>&1 | grep "^\[far-ground-prep\]\|FATAL\|Error\|Traceback"
+  fi
+  # ledger 0102 (Milford round 2; Kevin 2026-11-22 "Reshape the shoulder"): the ground between the prep's shelf and the
+  # corridor patch's full weight graded outward on the lidar (no trench, no fall faster than fall_max) on the prepped scene,
+  # before the pads, the re-seat and the road wear, which follow it. Opt-in: terrain.shoulder_grade; none = no header,
+  # nothing runs (Lake Murray's chain is tools/ship_sd.sh, untouched); exit 1 = the blend not saved
+  rm -f "$PROJ/data/shoulder_grade.json"
+  if [ "$(pyq "import json,sys; print(bool((json.load(open(sys.argv[1],encoding='utf-8')).get('terrain') or {}).get('shoulder_grade')))" "$PROJ/track.config.json" | tr -d '\r')" = "True" ]; then
+    step "ship: the road shoulder graded on the lidar ground (tools/shoulder_grade_blend.py; ledger 0102; self-checked)"
+    "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/shoulder_grade_blend.py" -- "$PROJ/blender/$SLUG.blend" --project "$PROJ" 2>&1 | grep "^\[shoulder\]\|FATAL\|Error\|Traceback"
+    [ "${PIPESTATUS[0]}" = 0 ] || { echo "shoulder_grade_blend failed"; exit 1; }
   fi
   # ledger 0046 v0.18.0 integration fix round: the I-8's own pavement on the PREPPED scene's final ground (scenery.freeway;
   # off = no data/freeway_i8.json = nothing runs). Part of prep: the split follows it (steps.prep stays prep, split)

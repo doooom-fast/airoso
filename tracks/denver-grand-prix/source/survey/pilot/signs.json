@@ -1,0 +1,104 @@
+{
+ "_doc": "Signs on the pilot stretch: only what OSM implies per junction (grade tagged, no post position, no face). Candidate posts are in poles.json (a sign post and a lamp post are not told apart from the air).",
+ "junctions": [
+  {
+   "junction": "Colfax / Lincoln",
+   "grade": "tagged",
+   "position": "none claimed beyond the junction",
+   "control": "traffic signals (OSM highway=traffic_signals on both Colfax carriageways)",
+   "implied_by_osm": {
+    "cross_street_oneway": [
+     "yes"
+    ],
+    "cross_street_maxspeed": [
+     "20 mph",
+     "30 mph"
+    ],
+    "cross_street_turn_lanes": [
+     "left|left;through|none|none|none",
+     "left|left;through|none|none|right",
+     "left|left;through|||",
+     "left||||",
+     "none|none|none|right",
+     "not tagged",
+     "|||",
+     "|||right",
+     "||||right"
+    ],
+    "colfax_maxspeed": "30 mph",
+    "colfax_bus_lanes": "designated|yes (OSM today; NOT in the 2022 or 2023 imagery: see PILOT.md)"
+   },
+   "faces": "not read: no source from the air. Street-level imagery (Mapillary, E3) or Kevin's captures would give the posts and the faces."
+  },
+  {
+   "junction": "Colfax / Sherman",
+   "grade": "tagged",
+   "position": "none claimed beyond the junction",
+   "control": "traffic signals (OSM highway=traffic_signals on both Colfax carriageways)",
+   "implied_by_osm": {
+    "cross_street_oneway": [
+     "no",
+     "not tagged"
+    ],
+    "cross_street_maxspeed": [
+     "25 mph",
+     "not tagged"
+    ],
+    "cross_street_turn_lanes": [
+     "not tagged"
+    ],
+    "colfax_maxspeed": "30 mph",
+    "colfax_bus_lanes": "designated|yes (OSM today; NOT in the 2022 or 2023 imagery: see PILOT.md)"
+   },
+   "faces": "not read: no source from the air. Street-level imagery (Mapillary, E3) or Kevin's captures would give the posts and the faces."
+  },
+  {
+   "junction": "Colfax / Grant",
+   "grade": "tagged",
+   "position": "none claimed beyond the junction",
+   "control": "traffic signals (OSM highway=traffic_signals on both Colfax carriageways)",
+   "implied_by_osm": {
+    "cross_street_oneway": [
+     "no",
+     "not tagged",
+     "yes"
+    ],
+    "cross_street_maxspeed": [
+     "30 mph",
+     "not tagged"
+    ],
+    "cross_street_turn_lanes": [
+     "left|left;through|none|none",
+     "left|||",
+     "not tagged",
+     "through;left|through|through;right",
+     "through|through|through;right"
+    ],
+    "colfax_maxspeed": "30 mph",
+    "colfax_bus_lanes": "designated|yes (OSM today; NOT in the 2022 or 2023 imagery: see PILOT.md)"
+   },
+   "faces": "not read: no source from the air. Street-level imagery (Mapillary, E3) or Kevin's captures would give the posts and the faces."
+  },
+  {
+   "junction": "Colfax / Logan",
+   "grade": "tagged",
+   "position": "none claimed beyond the junction",
+   "control": "traffic signals (OSM highway=traffic_signals on both Colfax carriageways)",
+   "implied_by_osm": {
+    "cross_street_oneway": [
+     "no",
+     "yes"
+    ],
+    "cross_street_maxspeed": [
+     "not tagged"
+    ],
+    "cross_street_turn_lanes": [
+     "not tagged"
+    ],
+    "colfax_maxspeed": "30 mph",
+    "colfax_bus_lanes": "designated|yes (OSM today; NOT in the 2022 or 2023 imagery: see PILOT.md)"
+   },
+   "faces": "not read: no source from the air. Street-level imagery (Mapillary, E3) or Kevin's captures would give the posts and the faces."
+  }
+ ]
+}

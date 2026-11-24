@@ -62,7 +62,17 @@ ROAD_SURFACE_MATERIAL = "1ROAD_road_mat"
 
 
 def surface_materials(project_dir) -> str:
+    """the materials TreeFX seats a plant on: every physical ground tile and the road. Ledger 0055 (opt-in,
+    track.config.json route.median_tops.object): the medians' own grass tops too (tools/author_median_tops_blend.py
+    moves them out of the ground into that object), or a median's plants would stand on the slab under their island,
+    0.185 m down inside its top. Ledger 0099 round 3: the paved tops' object (route.median_tops.paver.object) the same
+    way, so the plants of a terracotta island stand on its pavers. Key absent = the list as before."""
     obj = Path(project_dir) / "data" / "track.obj"
+    cfg_p = Path(project_dir) / "track.config.json"
+    tops = ()
+    if cfg_p.exists():
+        mt = (json.loads(cfg_p.read_text(encoding="utf-8")).get("route") or {}).get("median_tops") or {}
+        tops = tuple(str(n).upper() for n in (mt.get("object"), (mt.get("paver") or {}).get("object")) if n)
     if not obj.exists():
         raise SystemExit(f"[treefx] {obj} missing — the SURFACE_MATERIALS tile names come from the built road kn5's "
                          f"gate OBJ (python -m scripts.modkit.kn5_to_gate_obj <project>)")
@@ -70,6 +80,8 @@ def surface_materials(project_dir) -> str:
     with open(obj, encoding="utf-8", errors="replace") as f:
         for ln in f:
             if ln.startswith("usemtl ") and ln[7:].strip().upper().startswith("1GRASS"):
+                mats.add(ln[7:].strip())
+            elif tops and ln.startswith("usemtl ") and ln[7:].strip().upper().startswith(tops):
                 mats.add(ln[7:].strip())
     if not mats:
         raise SystemExit(f"[treefx] {obj} holds no 1GRASS material — nothing for the trees to stand on")
@@ -134,6 +146,7 @@ RANK_SIZE_FIX = {"Bush.bin": 2.02436637878418 / 20.660005569458}
 NORTH_ZONE_ORDER = ("north_suburb_trees", "north_suburb_bushes", "north_canyon_trees", "north_scrub",
                     "north_riparian_trees", "north_street_trees", "north_gum_belt", "north_median_trees")
 NORTH_IDX_BASE = 500000            # emit_zone index bases continue past the loop's four fill zones (100000..400000)
+LIDAR_IDX_BASE = 2_000_000         # scenery.treefx.lidar_plants: its two zones hash from here (shrubs) and + 1,000,000 (trees)
 NORTH_CELL_BASE = 50_000_000       # hash keys of the ADDED cells: the grown grid's own cell index, far above the loop's keys
 NORTH_BIN_M = 250.0                # the aerial lens's vegetation bins: one per 250 m of each piece, per side
 NORTH_TREE_PER_CANOPY = 2.5        # [invented] p(tree per 10 m sub-cell) = this x the bin's canopy share: one ~50 m2 crown per
@@ -160,6 +173,8 @@ FILL_BANDS = [   # (off_min, off_max, tree zone, p_tree, bush zone, p_bush) per 
 FILL_STEP_M = 10.0
 LAKE_DROP_M = 8.0
 APRON_PLANT_CLEAR_M = 1.0   # [invented] ledger 0054 P1 fix round: no plant within this of a corner apron's outline
+MEDIAN_SPOT_MOVE_MAX_M = 5.0  # [invented] ledger 0099 round 3: a median spot is moved at most this far (median_spots.move:
+#                               a plant top within 2 m of it, carried by the largest shift an island was given, 2.93 m)
 BUILT_BUILDING_CLEAR_M = 1.0   # [invented] ledger 0054 P4 integration fix round: no plant inside a built HOUSE / BUILDING
                                # footprint or within this of its walls (the apron rule's own margin; a bush against a wall
                                # is a hedge, a trunk inside the wall is a tree through the roof)
@@ -555,6 +570,65 @@ def plan(project_dir, all_species=False, verbose=False):
     north = None
     cfg_p = proj / "track.config.json"
     tcfg = ((json.loads(cfg_p.read_text(encoding="utf-8")).get("scenery") or {}).get("treefx") or {}) if cfg_p.exists() else {}
+    # ledger 0055 round 2 (Lake Murray's College split, opt-in scenery.treefx.median_spots): single median_planting spots
+    # declared by their index in data/scatter_positions.json. "drop": the spot is not planted (the road under its island
+    # is gone: it would stand on pavement). "foot_y": the spot is planted where it is, its foot at this height (the
+    # ground under it moved). Neither file is rewritten, so every other spot keeps its index and with it its model, size
+    # and angle; data/scatter_positions.json and the measured heights file stay whole. Each entry carries the spot's own
+    # x / z: a list written for another draft of the spots is refused, never applied to whatever stands at that index.
+    # The two lists may stand in a file of their own: {"file": "<project-relative path>"}, and further lists in files of
+    # theirs: {"files": ["<path>", ...]} (ledger 0099 round 3: Mission Gorge's corrected island beside College's split).
+    # "move" (ledger 0099 round 3, item 2; the Mac 2026-11-23: "a real plant the lidar saw is never dropped because the
+    # island moved under it"): the spot is planted at to_x / to_z instead, with everything else it has (its model, size,
+    # angle, and the height and crown the lidar measured at its own place). The spots are the draft's, drawn on the
+    # island as the plan declared it; where the island was corrected, the plant goes with it. The move is applied after
+    # the measured heights are read, so that file's own check of every spot's place still holds.
+    # Absent (every other track) = nothing changes.
+    ms_cfg, ms_stats, ms_moves_ = tcfg.get("median_spots"), None, {}
+    if ms_cfg and (ms_cfg.get("file") or ms_cfg.get("files")):   # the lists in files of their own ({"drop": [...], "foot_y": [...]})
+        ms_lists_ = {"drop": list(ms_cfg.get("drop") or []), "foot_y": list(ms_cfg.get("foot_y") or []),
+                     "move": list(ms_cfg.get("move") or [])}
+        for ms_name_ in ([ms_cfg["file"]] if ms_cfg.get("file") else []) + list(ms_cfg.get("files") or []):
+            ms_file_ = proj / ms_name_
+            if not ms_file_.exists():
+                raise SystemExit(f"[treefx] scenery.treefx.median_spots names {ms_name_}, which {proj} lacks (the ship chain syncs it in)")
+            ms_one_ = json.loads(ms_file_.read_text(encoding="utf-8"))
+            for kind_ in ms_lists_:
+                ms_lists_[kind_] += list(ms_one_.get(kind_) or [])
+        ms_cfg = ms_lists_
+    if ms_cfg:
+        mpos_ = pos.get("median_planting", [])
+        ms_stats = {"dropped": 0, "foot_moved": 0}
+        if ms_cfg.get("move"):                       # the count is reported only where the list is used
+            ms_stats["moved"] = 0
+        seen_ = set()
+        for kind_ in ("drop", "foot_y", "move"):
+            for e_ in ms_cfg.get(kind_) or []:
+                i_ = int(e_["index"])
+                if not 0 <= i_ < len(mpos_):
+                    raise SystemExit(f"[treefx] scenery.treefx.median_spots.{kind_}: index {i_} but scatter_positions.json has "
+                                     f"{len(mpos_)} median_planting spots")
+                if abs(mpos_[i_]["x"] - float(e_["x"])) > 0.006 or abs(mpos_[i_]["z"] - float(e_["z"])) > 0.006:
+                    raise SystemExit(f"[treefx] scenery.treefx.median_spots.{kind_}: index {i_} is declared at ({e_['x']}, {e_['z']}) "
+                                     f"but median_planting[{i_}] is at ({mpos_[i_]['x']:.3f}, {mpos_[i_]['z']:.3f}): the list "
+                                     f"belongs to another draft of the spots")
+                if i_ in seen_:
+                    raise SystemExit(f"[treefx] scenery.treefx.median_spots: index {i_} is declared twice")
+                seen_.add(i_)
+                if kind_ == "drop":
+                    excluded.add(("median_planting", i_))
+                    ms_stats["dropped"] += 1
+                elif kind_ == "move":
+                    to_ = (float(e_["to_x"]), float(e_["to_z"]))
+                    if math.hypot(to_[0] - mpos_[i_]["x"], to_[1] - mpos_[i_]["z"]) > MEDIAN_SPOT_MOVE_MAX_M:
+                        raise SystemExit(f"[treefx] scenery.treefx.median_spots.move: index {i_} would go "
+                                         f"{math.hypot(to_[0] - mpos_[i_]['x'], to_[1] - mpos_[i_]['z']):.2f} m, over "
+                                         f"{MEDIAN_SPOT_MOVE_MAX_M} m: that is another plant's place, not this one's")
+                    ms_moves_[i_] = to_
+                    ms_stats["moved"] += 1
+                else:
+                    mpos_[i_]["y"] = float(e_["y"])
+                    ms_stats["foot_moved"] += 1
     if tcfg.get("veg_bins"):
         for f in (tcfg["veg_bins"], tcfg.get("pieces", "data/expansion.north.json")):
             if not (proj / f).exists():
@@ -660,9 +734,14 @@ def plan(project_dir, all_species=False, verbose=False):
                 mm_stats["crown_measured"] += crown is not None
             else:
                 mm_stats["kept_rank_rule"] += 1
+    for i_, to_ in ms_moves_.items():                # scenery.treefx.median_spots.move (above): the plant goes with its island
+        pos["median_planting"][i_]["x"], pos["median_planting"][i_]["z"] = to_
 
-    def emit_zone(zone_key, entries, idx_base=0, guard=True):
-        species = [s for s in ZONES[zone_key] if s[0] in available]
+    def emit_zone(zone_key, entries, idx_base=0, guard=True, mix=None, natives=None):
+        # mix / natives (scenery.treefx.lidar_plants, below): the zone takes another zone's species mix, and every entry
+        # is drawn at its own measured height and crown by these {model: tree.ini HEIGHT}, {model: WIDTH}
+        species = [s for s in ZONES[mix or zone_key] if s[0] in available]
+        nat_h, nat_w = natives if natives is not None else (mm_h, mm_w)
         if not entries or not species:
             return 0
         out.append(f"configure: seed = {20261008 + len(zone_key)}")
@@ -694,9 +773,10 @@ def plan(project_dir, all_species=False, verbose=False):
             hk = idx_base + e["_key"] if "_key" in e else i   # a planted point's own key (opt-in, above), else its place
             s = _pick(species, hk)
             size = s[1] + (s[2] - s[1]) * e.get("_size01", _hash(hk, 2))
-            mm_here = zone_key == "median_planting" and "_mh" in e
+            # (a model with no native size is reached only by plan(all_species=True), which plans positions: the rank rule)
+            mm_here = "_mh" in e and (zone_key == "median_planting" or (natives is not None and s[0] in nat_h))
             if mm_here:                          # scenery.treefx.median_measured (above): the spot's lidar height, absolute
-                size = e["_mh"] / mm_h[s[0]]
+                size = e["_mh"] / nat_h[s[0]]
             elif "_h" in e and s[0] in native_h:   # ledger 0082 (opt-in planted.native_h_m): the measured height, absolute
                 size = e["_h"] / native_h[s[0]]
             elif s[0] in RANK_SIZE_FIX:          # a model far taller than its mix assumes (Bush.bin, above)
@@ -705,7 +785,7 @@ def plan(project_dir, all_species=False, verbose=False):
             size_txt = f"{size:.3f}" if (s[0] in RANK_SIZE_FIX or mm_here) else f"{size:.2f}"
             line = f"tree: {s[0]}; pos={e['x']:.2f}, {e['y']:.2f}, {-e['z']:.2f}; angle = {angle}; size = {size_txt}"
             if mm_here:                          # the spot's crown at its height: TreeFX's width-only multiplier
-                line += f"; width = {e['_mw'] / (mm_w[s[0]] * float(size_txt)):.2f}"
+                line += f"; width = {e['_mw'] / (nat_w[s[0]] * float(size_txt)):.2f}"
             elif "_w" in e and s[0] in native_w:   # ledger 0082 (opt-in planted.native_w_m): the measured crown, absolute
                 line += f"; width = {e['_w'] / (native_w[s[0]] * round(size, 2)):.2f}"
             out.append(line)
@@ -952,12 +1032,62 @@ def plan(project_dir, all_species=False, verbose=False):
                 for pc in sorted(north_stats["per_piece"]):
                     print(f"[treefx]   piece {pc}: {north_stats['per_piece_total'][pc]} -> "
                           + ", ".join(f"{m} {n}" for m, n in sorted(north_stats["per_piece"][pc].items())))
+    # ledger 0055 round 2 (Lake Murray's College bank, opt-in scenery.treefx.lidar_plants): a declared list of plants the
+    # lidar measured, each drawn where it stands at its own height and crown, absolute, as median_measured draws a median
+    # spot. file: {"plants": [{"key", "x", "z", "y", "h_m", "crown_m"}]} in the engine frame. A plant under split_h_m is
+    # a shrub and takes the species mix `shrubs` names, one at or over it is a tree and takes the mix `trees` names (both
+    # ZONES keys). The split is the config's own, with its _doc: there is no default here. key = the plant's own number:
+    # its model and angle hash on it, so a list that gains or loses a plant leaves every other plant as it was. Every
+    # model of the two mixes needs its tree.ini HEIGHT / WIDTH in native_h_m / native_w_m. Not guarded, as a median's
+    # plants are not: a bank between two carriageways lies inside both roads' guard for much of its width, and the
+    # list's author answers for where each plant stands. Emitted last: every line above is where it was. Absent (every
+    # other track) = nothing changes
+    lp_cfg, lp_stats = tcfg.get("lidar_plants"), None
+    if lp_cfg:
+        lacking_ = [k_ for k_ in ("file", "split_h_m", "shrubs", "trees") if lp_cfg.get(k_) is None]
+        if lacking_:
+            raise SystemExit(f"[treefx] scenery.treefx.lidar_plants: {lacking_} not declared (the split has no default: it is "
+                             f"the config's, with its _doc)")
+        for k_ in ("shrubs", "trees"):
+            if lp_cfg[k_] not in ZONES:
+                raise SystemExit(f"[treefx] scenery.treefx.lidar_plants.{k_}: {lp_cfg[k_]!r} is no species mix (ZONES)")
+        lp_file = proj / lp_cfg["file"]
+        if not lp_file.exists():
+            raise SystemExit(f"[treefx] scenery.treefx.lidar_plants names {lp_cfg['file']}, which {proj} lacks (the ship chain syncs it in)")
+        lp_h = {k: float(v) for k, v in (lp_cfg.get("native_h_m") or {}).items() if not k.startswith("_")}
+        lp_w = {k: float(v) for k, v in (lp_cfg.get("native_w_m") or {}).items() if not k.startswith("_")}
+        on_disk_ = {p_.name for p_ in src.glob("*.bin")}      # the models really here (all_species plans positions only)
+        mix_ = sorted({s[0] for k_ in ("shrubs", "trees") for s in ZONES[lp_cfg[k_]] if s[0] in on_disk_})
+        lacking_ = [m for m in mix_ if m not in lp_h or m not in lp_w]
+        if lacking_:
+            raise SystemExit(f"[treefx] scenery.treefx.lidar_plants: no native_h_m / native_w_m for {lacking_}: read each "
+                             f"model's tree.ini [BASIC] HEIGHT / WIDTH into the config first")
+        split_ = float(lp_cfg["split_h_m"])
+        groups_, seen_ = {"lidar_shrubs": [], "lidar_trees": []}, set()
+        for n_, q in enumerate(json.loads(lp_file.read_text(encoding="utf-8"))["plants"]):
+            for k_ in ("key", "x", "z", "y", "h_m", "crown_m"):
+                if not isinstance(q.get(k_), (int, float)) or isinstance(q.get(k_), bool):
+                    raise SystemExit(f"[treefx] {lp_cfg['file']}: plant {n_} has no number for {k_!r}")
+            if q["h_m"] <= 0.0 or q["crown_m"] <= 0.0:
+                raise SystemExit(f"[treefx] {lp_cfg['file']}: plant {n_} (key {q['key']}) has height {q['h_m']} m, crown {q['crown_m']} m")
+            if int(q["key"]) in seen_:
+                raise SystemExit(f"[treefx] {lp_cfg['file']}: key {q['key']} stands twice")
+            seen_.add(int(q["key"]))
+            groups_["lidar_shrubs" if q["h_m"] < split_ else "lidar_trees"].append(
+                {"x": float(q["x"]), "y": float(q["y"]), "z": float(q["z"]), "_mh": float(q["h_m"]), "_mw": float(q["crown_m"]),
+                 "_key": int(q["key"])})
+        lp_stats = {"split_h_m": split_}
+        for (zone_, entries_), base_, mix_key in zip(groups_.items(), (LIDAR_IDX_BASE, LIDAR_IDX_BASE + 1_000_000), ("shrubs", "trees")):
+            lp_stats[zone_] = emit_zone(zone_, entries_, idx_base=base_, guard=False, mix=lp_cfg[mix_key], natives=(lp_h, lp_w))
+            lp_stats[zone_ + "_listed"] = len(entries_)
     if verbose and built is not None:
         print(f"[treefx] built-surface guard: dropped " + ", ".join(f"{k} {n}" for k, n in rejected_built.items())
               + " (of them on the loop's own zones: " + ", ".join(f"{k} {n}" for k, n in rejected_built_loop.items()) + ")")
     return {"lines": out, "entries": entries_out, "counts": counts, "used": used, "rejected": rejected,
             "rejected_built": rejected_built, "rejected_built_loop": rejected_built_loop, "north": north_stats,
-            "far_seat": far_seat_out, **({"median_measured": mm_stats} if mm_stats is not None else {})}
+            "far_seat": far_seat_out, **({"median_measured": mm_stats} if mm_stats is not None else {}),
+            **({"median_spots": ms_stats} if ms_stats is not None else {}),
+            **({"lidar_plants": lp_stats} if lp_stats is not None else {})}
 
 
 def build(project_dir):
@@ -995,6 +1125,10 @@ def build(project_dir):
         rep["planted_far_seat"] = p["far_seat"]
     if p.get("median_measured") is not None:   # scenery.treefx.median_measured, opt-in: absent = the report as before
         rep["median_measured"] = p["median_measured"]
+    if p.get("median_spots") is not None:     # scenery.treefx.median_spots, opt-in: absent = the report as before
+        rep["median_spots"] = p["median_spots"]
+    if p.get("lidar_plants") is not None:     # scenery.treefx.lidar_plants, opt-in: absent = the report as before
+        rep["lidar_plants"] = p["lidar_plants"]
     (proj / "data" / "treefx.report.json").write_text(json.dumps(rep, indent=1), encoding="utf-8")
     g = treefx_gate(proj, p, tdir)
     print(f"[treefx] gate: {g['written']} written of {g['planned']} planned; models named in trees.txt "

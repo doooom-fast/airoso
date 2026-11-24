@@ -10,11 +10,11 @@
   "ROAD"
  ],
  "ground_objects": [
+  "1KERB_PAVER_median",
   "1KERB_sidewalk_apAP1",
   "1KERB_sidewalk_padJ2",
   "1KERB_sidewalk_padJ3",
   "1KERB_sidewalk_padJ4",
-  "1KERB_sidewalk_streetonly_median",
   "CURB",
   "TERRAIN"
  ],
@@ -25,6 +25,16 @@
   "1KERB_race_3296_out",
   "1KERB_race_770_in",
   "1KERB_race_770_out",
+  "1KERB_race_lapcollege_0_in",
+  "1KERB_race_lapcollege_0_out",
+  "1KERB_race_lapcollege_1514_in",
+  "1KERB_race_lapcollege_1514_out",
+  "1KERB_race_lapcollege_2319_in",
+  "1KERB_race_lapcollege_2319_out",
+  "1KERB_race_lapcollege_3296_in",
+  "1KERB_race_lapcollege_3296_out",
+  "1KERB_race_lapcollege_770_in",
+  "1KERB_race_lapcollege_770_out",
   "1KERB_race_lapnorth_1463_in",
   "1KERB_race_lapnorth_1463_out",
   "1KERB_race_lapnorth_2130_out",
@@ -33,16 +43,14 @@
   "1KERB_race_lapnorth_326_out",
   "1KERB_race_lapnorth_705_in",
   "1KERB_race_lapnorth_705_out",
-  "1WALL_race_close_acw_college_1253_0",
-  "1WALL_race_close_acw_college_1343_0",
+  "1WALL_race_close_acw_college_1445_0",
   "1WALL_race_close_acw_college_777_0",
   "1WALL_race_close_acw_jackson_2328_0",
   "1WALL_race_close_acw_jackson_2328_1",
   "1WALL_race_close_acw_lakemurray_3304_0",
   "1WALL_race_close_acw_lakemurray_3304_1",
   "1WALL_race_close_acw_navajo_1521_0",
-  "1WALL_race_close_cw_college_1253_0",
-  "1WALL_race_close_cw_college_1343_0",
+  "1WALL_race_close_cw_college_1445_0",
   "1WALL_race_close_cw_college_777_0",
   "1WALL_race_close_cw_jackson_2328_0",
   "1WALL_race_close_cw_jackson_2328_1",
@@ -79,6 +87,21 @@
   "1WALL_race_edge_L_lakemurray_3296_1",
   "1WALL_race_edge_L_navajo_1514_0",
   "1WALL_race_edge_L_navajo_1514_1",
+  "1WALL_race_edge_lapcollege_L_alvarado_0_0",
+  "1WALL_race_edge_lapcollege_L_college_770_0",
+  "1WALL_race_edge_lapcollege_L_jackson_2319_0",
+  "1WALL_race_edge_lapcollege_L_jackson_2319_1",
+  "1WALL_race_edge_lapcollege_L_lakemurray_3296_0",
+  "1WALL_race_edge_lapcollege_L_lakemurray_3296_1",
+  "1WALL_race_edge_lapcollege_L_navajo_1514_0",
+  "1WALL_race_edge_lapcollege_L_navajo_1514_1",
+  "1WALL_race_edge_lapcollege_R_alvarado_5_0",
+  "1WALL_race_edge_lapcollege_R_college_774_0",
+  "1WALL_race_edge_lapcollege_R_jackson_2324_0",
+  "1WALL_race_edge_lapcollege_R_jackson_2324_1",
+  "1WALL_race_edge_lapcollege_R_lakemurray_3300_0",
+  "1WALL_race_edge_lapcollege_R_lakemurray_3300_1",
+  "1WALL_race_edge_lapcollege_R_navajo_1517_0",
   "1WALL_race_edge_lapnorth_L_jackson_1463_0",
   "1WALL_race_edge_lapnorth_L_missiongorge_705_0",
   "1WALL_race_edge_lapnorth_L_navajo_2130_0",
@@ -101,21 +124,21 @@
  ],
  "walls": {
   "RACE": 15,
-  "acw": 8,
-  "all": 100,
-  "cw": 8,
+  "acw": 7,
+  "all": 112,
+  "cw": 7,
   "nacw": 11,
   "ncw": 11
  },
  "scan": "5-degree polar, 0.25 m steps, bisected; ROAD top vs CURB/SIDEWALK/TERRAIN top; ground = top hit at the base (SIGN* excluded); plate normals = Mesh.polygons[].normal of the vertical SIGNPLATE faces within 1.2 m of the post; plate bottom = lowest SIGNPLATE vertex 0.5-0.75 m off the post axis; post base = lowest SIGNPOST vertex within 0.1 m of it; walk_behind_m = the ground profile from the base toward the nearest pavement (> 0 behind the walk, < 0 on it); wall_m = the nearest 1WALL* face 0.6 m up the post; a layout plate: layout_wall_m = the nearest face of the walls its layout loads (RACE + RACE_CLOSE_<TOKEN>), on_wall = a wall top over the deck at the base, ground_y = the highest of ROAD / ground under it",
  "signs": {
   "M1-fwd": {
-   "clear_m": 1.824,
+   "clear_m": 1.84,
    "bearing_deg": 85,
    "on_road": false,
-   "ground_y": 24.6311,
+   "ground_y": 24.6313,
    "walk_behind_m": -0.25,
-   "wall_m": 2.067,
+   "wall_m": 2.082,
    "plate_normals_xz": [
     [
      0.44279,
@@ -123,8 +146,8 @@
     ]
    ],
    "n_plate_faces": 4,
-   "plate_bottom_y": 26.7611,
-   "post_base_y": 24.3311
+   "plate_bottom_y": 26.7613,
+   "post_base_y": 24.3313
   },
   "M2-fwd": {
    "clear_m": 1.823,
@@ -164,55 +187,55 @@
    "clear_m": 0.0,
    "bearing_deg": 0,
    "on_road": true,
-   "ground_y": 24.3364,
-   "walk_behind_m": -1.05,
-   "wall_m": 1.63,
+   "ground_y": 24.3357,
+   "walk_behind_m": -1.1,
+   "wall_m": 1.646,
    "plate_normals_xz": [
     [
-     0.64003,
-     -0.76835
+     0.63948,
+     -0.76881
     ]
    ],
    "n_plate_faces": 4,
-   "plate_bottom_y": 26.4664,
-   "post_base_y": 24.0364,
+   "plate_bottom_y": 26.4657,
+   "post_base_y": 24.0357,
    "layout_token": "cw",
-   "layout_walls": 8,
-   "layout_wall_m": 1.665,
+   "layout_walls": 7,
+   "layout_wall_m": 1.681,
    "on_wall": false
   },
   "M4-fwd@race_cw": {
-   "clear_m": 1.534,
-   "bearing_deg": 230,
+   "clear_m": 1.504,
+   "bearing_deg": 225,
    "on_road": false,
-   "ground_y": 109.2178,
+   "ground_y": 109.2253,
    "walk_behind_m": 0.25,
-   "wall_m": 1.758,
+   "wall_m": 1.733,
    "plate_normals_xz": [
     [
-     -0.75142,
-     -0.65982
+     -0.75154,
+     -0.65969
     ]
    ],
    "n_plate_faces": 4,
-   "plate_bottom_y": 111.3478,
-   "post_base_y": 108.9178,
+   "plate_bottom_y": 111.3553,
+   "post_base_y": 108.9253,
    "layout_token": "cw",
-   "layout_walls": 8,
-   "layout_wall_m": 1.758,
+   "layout_walls": 7,
+   "layout_wall_m": 1.733,
    "on_wall": false
   },
   "M5-fwd": {
-   "clear_m": 1.801,
+   "clear_m": 1.825,
    "bearing_deg": 160,
    "on_road": false,
    "ground_y": 92.0789,
-   "walk_behind_m": -0.3,
-   "wall_m": 2.057,
+   "walk_behind_m": -0.25,
+   "wall_m": 2.079,
    "plate_normals_xz": [
     [
-     -0.80872,
-     0.5882
+     -0.80867,
+     0.58826
     ]
    ],
    "n_plate_faces": 4,
@@ -253,7 +276,7 @@
    "plate_bottom_y": 111.2452,
    "post_base_y": 108.8152,
    "layout_token": "acw",
-   "layout_walls": 8,
+   "layout_walls": 7,
    "layout_wall_m": 1.624,
    "on_wall": false
   },
@@ -274,43 +297,43 @@
    "plate_bottom_y": 26.6439,
    "post_base_y": 24.2139,
    "layout_token": "acw",
-   "layout_walls": 8,
+   "layout_walls": 7,
    "layout_wall_m": 1.615,
    "on_wall": false
   },
   "M2-rev": {
-   "clear_m": 1.774,
+   "clear_m": 1.785,
    "bearing_deg": 35,
    "on_road": false,
-   "ground_y": 10.6123,
+   "ground_y": 10.6125,
    "walk_behind_m": -0.3,
-   "wall_m": 1.936,
+   "wall_m": 1.946,
    "plate_normals_xz": [
     [
-     0.3693,
-     0.92931
+     0.36889,
+     0.92947
     ]
    ],
    "n_plate_faces": 4,
-   "plate_bottom_y": 12.7423,
-   "post_base_y": 10.3123
+   "plate_bottom_y": 12.7425,
+   "post_base_y": 10.3125
   },
   "M1-rev": {
-   "clear_m": 1.785,
+   "clear_m": 1.779,
    "bearing_deg": 95,
    "on_road": false,
-   "ground_y": 24.623,
+   "ground_y": 24.6228,
    "walk_behind_m": -0.3,
-   "wall_m": 2.025,
+   "wall_m": 2.019,
    "plate_normals_xz": [
     [
-     -0.87098,
-     0.49131
+     -0.8714,
+     0.49057
     ]
    ],
    "n_plate_faces": 4,
-   "plate_bottom_y": 26.753,
-   "post_base_y": 24.323
+   "plate_bottom_y": 26.7528,
+   "post_base_y": 24.3228
   },
   "MED-1-fwd": {
    "clear_m": 1.619,

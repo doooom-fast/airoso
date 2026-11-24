@@ -131,10 +131,14 @@ def spot_boxes(repo: Path):
 
 # ---------------------------------------------------------------------------------------------------- plan / fetch / read
 def _get(url, method="GET"):
+    # the repo's TLS rule (scripts/tls.py, tests/net/test_https_everywhere.py): one verifying context for every fetch. Added
+    # on the Mac when the directory was brought into the repo (ledger 0097 round 5); the G10's own run had urllib's default
+    sys.path.insert(0, str(Path(__file__).resolve().parents[5]))
+    from scripts.tls import https_context
     for k in range(5):
         try:
             req = urllib.request.Request(url, headers=UA, method=method)
-            with urllib.request.urlopen(req, timeout=120) as r:
+            with urllib.request.urlopen(req, timeout=120, context=https_context()) as r:
                 return r.read() if method == "GET" else int(r.headers.get("Content-Length", 0))
         except Exception:                       # noqa: BLE001 (backoff on any transport error, then give up)
             if k == 4:

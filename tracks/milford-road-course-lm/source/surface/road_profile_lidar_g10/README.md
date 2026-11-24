@@ -131,3 +131,46 @@ python -I road_profile_lidar.py built --profile profile.json --fit source/surfac
 ```
 
 Wall time on the G10: 5 + 10 + 53 + 2 s, peak RSS 151 MB, at nice 19 / idle IO.
+
+## The real asphalt edges on six stretches (`edges_curves.py`, `milford_edges_curves.lidar.g10.json`)
+
+Asked after the PC builder found width swells ("blooms", Kevin) on s 1,114-1,270 and 1,557-1,857 that its NAIP-mask
+edges do not support, and the pavement's centre 0.3-0.8 m inside the line on the tight curves. Same line, stations and
+registration as above. All six stretches lie in strip 253 alone.
+
+- **Edge.** Per station and side, the class-2 returns within 3.5 m of the built lane edge (never nearer the line than
+  1 m), each placed on the line exactly (its nearest point of a 0.1 m resampling, so a tight curve does not skew it).
+  The edge is source/edges/measure_edges.py's lidar rule: the two-level intensity step, dark asphalt inside and bright
+  verge outside, 1 m along, kept at contrast >= 3,000 (its measured threshold). Here the contrast is strong: p50
+  13,000-28,000, t p50 4-11. A height break (two lines, a 3 cm step [invented]) is fitted too, but it lands 1.5-3 m
+  (IQR) either side of the intensity step (ditches, cut slopes), so it is reported and never used. 437-597 stations per
+  stretch read both edges (750-1,015: 437 of 530).
+- **Width** (left - right) does not depend on the registration. **Centre** ((left + right) / 2) does: the build's
+  lidar shift (-0.375, +0.938) and ledger 0087's edge registration of the lidar to NAIP, the frame the line was traced
+  in (-0.119, +0.329), are 0.66 m apart. Both are given. Also, the lidar's intensity step reads 0.26 m per side inside
+  NAIP's edge on average (ledger 0087), so about 0.5 m of any built - lidar width may be the sensor.
+- **Steady or swelling.** A straight line is fitted through the real width. "Steady" unless 3 or more 5 m bins in a
+  row sit more than 2 x their own noise off it on the same side [invented].
+
+| s | turn, R median | real width (line fit start -> end; bin resid RMS / bin noise) | built width | built - real median (bin max) | centre toward inside: build reg / NAIP-frame reg |
+|---|---|---|---|---|---|
+| 1,114-1,270 | right, 92 m | steady, 10.39 -> 10.76 m (0.28 / 0.27) | 10.59-12.18 | +0.63 (+1.65) | -0.78 / -0.23 (outside) |
+| 1,557-1,857 | left, 93 m | steady, 10.57 -> 10.69 m (0.26 / 0.24) | 10.74-12.17 | +0.76 (+1.96) | +0.37 / -0.05 |
+| 580-660 | left, 81 m | steady, 10.46 -> 10.96 m (0.25 / 0.22) | 11.38-11.82 | +0.96 (+1.35) | -0.94 / -0.33 (outside) |
+| 750-1,015 | left, 86 m (min 19) | not steady: 10.4-12.3 m on s 750-835, then 14-17.8 m on s 840-1,015 (the inner banked turn) | 11.82-16.00 | +0.33 (+2.35; -1.2 to -1.8 on s 875-940, the 16 m cap) | -0.47 / -0.48; on s 905-965 (R < 50 m) -0.42 / -0.94 |
+| 1,275-1,335 | right, 96 m (min 28) | steady by the rule, 11.55 -> 10.00 m (0.70 / 0.32) | 10.41-12.19 | +0.69 (+2.36) | on s 1,295-1,316 (R < 50 m) +1.35 / +1.72 |
+| 1,625-1,695 | left, 91 m | steady, 10.24 -> 10.73 m (0.17 / 0.21) | 11.64-12.17 | +1.58 (+1.91) | +0.60 / +0.01 |
+
+So the real width holds steady through both bloom stretches, and the build is the wider one: 0.6-0.8 m in the median,
+up to 1.6-2.0 m in places, past the 0.5 m the two sensors differ by. The centre is no single "inside" offset. Under the
+build's registration, 1,557-1,857, 1,625-1,695 and 1,295-1,316 sit inside (0.4-1.4 m) while 1,114-1,270, 580-660 and
+the banked turn sit outside (0.4-0.9 m). In NAIP's frame the sweepers' offsets shrink to 0.0-0.3 m. The lidar cannot
+settle a centre offset under ~0.6 m until the registration is settled. On s 945-965 the banked turn's outer (right)
+edge has weak contrast (1,300-4,800), and s 1,325-1,335 also reads weak (3,900-8,900): low confidence there.
+
+```
+python -I edges_curves.py read --line data/centerline.local.json --lidar RING_DIR --lidar MF_LIDAR_DIR --out edge_points.npz
+python -I edges_curves.py edges --line data/centerline.local.json --points edge_points.npz --out milford_edges_curves.lidar.g10.json
+```
+
+G10: 3 + 18 s. edges_curves.py imports road_profile_lidar.py from beside it.

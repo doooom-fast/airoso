@@ -144,6 +144,19 @@ install that rests on it.
   (an 8 m road on a 70 % bank: one gap a station without the key, none with it; every other gated reading equal; a flat
   road's report equal but for the new field).
 
+## 2026-11-23 (PC, Sand Creek round 2) — WIRING: check_lights_ini back to one both-heads path, Lake Murray's (ledgers 0098 / 0099; no threshold moved)
+
+The 0.2.9 merge's entry below told ledger 0098's path (Sand Creek's lamps step lighting the back head, `heads_lit` 2) from
+ledger 0099's (the author step lamp_heads, `data/lights.heads.json`) with `scenery.streetlights.both_heads_by "lamps"`, and owed
+the unification to Sand Creek's round 2. Done: Sand Creek 0.2.10 runs lamp_heads (ship.json author, first; lights.heads.json
+synced back) and both_heads_by is gone. `tools/check_lights_ini.py`, `tools/author_lamps_blend.py` and
+`tools/author_lamp_heads_blend.py` are main's 4a5c38e0 files again: light_both_heads true wants the heads file and counts its
+back lenses; heads_lit is read nowhere. The count rule, POS_TOL_M 0.05 m, the no-duplicate / no-orphan rules and the look are
+unchanged. Teeth: `tests/tools/test_sand_creek_0098.py::test_sand_creek_lights_both_heads_by_lamp_heads`,
+`tests/tools/test_lake_murray_0099.py`. Proof owed to the 0.2.10 rehearsal: 342 lights for 171 lamps through lamp_heads.
+Proven (2026-11-23, rehearsal 0210c and the 0.2.10 install, 1b3f9cef): `[heads] 170 back lenses -> LIGHTS_back (170 lamps,
+340 lenses)`, `[lights-ini] 340 [LIGHT_N] for 170 lamps (both heads: 340 lenses), 340 at their lens: PASS`. 170, not 171: the
+lamps step's own drop_on_road leaves out draft post 105, which round 2's Quebec flare-off puts on the sandcreek_quebec deck.
 
 ## 2026-11-23 (PC) — WIRING: check_lights_ini's two both-heads paths told apart, at the 0.2.9 merge with main (ledgers 0098 / 0099; opt-in; no threshold moved)
 

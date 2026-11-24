@@ -7,7 +7,7 @@
  "red_mouths": 0,
  "teeth": {
   "samples": 75836,
-  "grass_over_strip": 160,
+  "grass_over_strip": 159,
   "share": 0.0021,
   "pass": true
  },
@@ -16,7 +16,7 @@
   "max_m": 0.206
  },
  "turn_r9_drop": {
-  "median_m": 0.012,
+  "median_m": 0.013,
   "p90_m": 0.185,
   "max_m": 0.296,
   "gated": false
@@ -935,12 +935,12 @@
     "samples": 651,
     "grass_over_strip": 3,
     "share": 0.005,
-    "max_m": 0.031
+    "max_m": 0.034
    },
    "edge_paint_m": 0.25,
    "turn_r9_drop_m": {
     "lo": null,
-    "hi": 0.219
+    "hi": 0.223
    },
    "conn_edges": {
     "lo": {
@@ -990,8 +990,8 @@
    },
    "teeth": {
     "samples": 594,
-    "grass_over_strip": 23,
-    "share": 0.039,
+    "grass_over_strip": 22,
+    "share": 0.037,
     "max_m": 0.099
    },
    "edge_paint_m": 0.0,
@@ -1457,7 +1457,7 @@
     "lo": {
      "lip_m": 0.023,
      "lip_at": [
-      0.2,
+      0.1,
       0.15,
       "GRASS"
      ],
@@ -1473,19 +1473,19 @@
     "samples": 494,
     "grass_over_strip": 7,
     "share": 0.014,
-    "max_m": 0.039
+    "max_m": 0.04
    },
    "edge_paint_m": 0.0,
    "turn_r9_drop_m": {
-    "lo": 0.032,
-    "hi": 0.003
+    "lo": 0.013,
+    "hi": 0.008
    },
    "conn_edges": {
     "hi": {
-     "lip_m": 0.008,
+     "lip_m": 0.01,
      "lip_at": [
-      8.0,
-      0.05,
+      0.2,
+      0.15,
       "ROAD"
      ],
      "bare_m": 0.0
@@ -1517,7 +1517,7 @@
      "bare_m": 1.7
     },
     "hi": {
-     "lip_m": 0.141,
+     "lip_m": 0.134,
      "lip_at": [
       1.4,
       0.15,
@@ -1579,12 +1579,12 @@
     "samples": 768,
     "grass_over_strip": 2,
     "share": 0.003,
-    "max_m": 0.075
+    "max_m": 0.073
    },
    "edge_paint_m": 0.0,
    "turn_r9_drop_m": {
-    "lo": 0.213,
-    "hi": 0.218
+    "lo": 0.222,
+    "hi": 0.227
    },
    "conn_edges": {
     "lo": {
@@ -1597,7 +1597,7 @@
      "bare_m": 0.0
     },
     "hi": {
-     "lip_m": 0.018,
+     "lip_m": 0.016,
      "lip_at": [
       1.5,
       0.15,
@@ -1742,12 +1742,12 @@
    },
    "edge_paint_m": 0.0,
    "turn_r9_drop_m": {
-    "lo": 0.022,
+    "lo": 0.016,
     "hi": 0.0
    },
    "conn_edges": {
     "hi": {
-     "lip_m": 0.004,
+     "lip_m": 0.005,
      "lip_at": [
       0.0,
       0.15,
@@ -2365,7 +2365,7 @@
    "mouth": "grid_tertiary_68#0#0(end)->grid_primary_11#0#0",
    "pass": true,
    "allowed": false,
-   "corner_lip_m": 0.013,
+   "corner_lip_m": 0.001,
    "corners": {
     "lo": {
      "lip_m": 0.0,
@@ -2373,10 +2373,10 @@
      "bare_m": 0.0
     },
     "hi": {
-     "lip_m": 0.013,
+     "lip_m": 0.001,
      "lip_at": [
-      5.7,
-      0.05,
+      0.2,
+      0.15,
       "ROAD"
      ],
      "bare_m": 0.0
@@ -2391,11 +2391,11 @@
    "edge_paint_m": 0.0,
    "turn_r9_drop_m": {
     "lo": null,
-    "hi": 0.042
+    "hi": 0.036
    },
    "conn_edges": {
     "lo": {
-     "lip_m": 0.004,
+     "lip_m": 0.003,
      "lip_at": [
       8.0,
       0.15,
@@ -2419,16 +2419,16 @@
     "lo": {
      "lip_m": 0.02,
      "lip_at": [
-      2.8,
+      4.5,
       0.05,
       "GRASS"
      ],
      "bare_m": 0.0
     },
     "hi": {
-     "lip_m": 0.002,
+     "lip_m": 0.001,
      "lip_at": [
-      5.5,
+      0.0,
       0.15,
       "ROAD"
      ],
@@ -2443,12 +2443,12 @@
    },
    "edge_paint_m": 0.0,
    "turn_r9_drop_m": {
-    "lo": 0.012,
-    "hi": 0.039
+    "lo": 0.017,
+    "hi": 0.033
    },
    "conn_edges": {
     "lo": {
-     "lip_m": 0.025,
+     "lip_m": 0.024,
      "lip_at": [
       1.2,
       0.15,
@@ -2458,11 +2458,7 @@
     },
     "hi": {
      "lip_m": 0.0,
-     "lip_at": [
-      2.7,
-      0.05,
-      "ROAD"
-     ],
+     "lip_at": null,
      "bare_m": 0.0
     }
    }
@@ -2540,9 +2536,9 @@
      "bare_m": 0.0
     },
     "hi": {
-     "lip_m": 0.005,
+     "lip_m": 0.019,
      "lip_at": [
-      2.4,
+      5.4,
       0.05,
       "ROAD"
      ],
@@ -2558,11 +2554,11 @@
    "edge_paint_m": 0.0,
    "turn_r9_drop_m": {
     "lo": null,
-    "hi": 0.003
+    "hi": 0.02
    },
    "conn_edges": {
     "lo": {
-     "lip_m": 0.026,
+     "lip_m": 0.029,
      "lip_at": [
       0.5,
       0.15,
@@ -2571,10 +2567,10 @@
      "bare_m": 0.0
     },
     "hi": {
-     "lip_m": 0.004,
+     "lip_m": 0.0,
      "lip_at": [
       3.1,
-      0.15,
+      0.05,
       "ROAD"
      ],
      "bare_m": 0.0
@@ -2583,63 +2579,6 @@
   },
   {
    "mouth": "grid_unclassified_90#0(end)->grid_primary_11#0#0",
-   "pass": true,
-   "allowed": false,
-   "corner_lip_m": 0.021,
-   "corners": {
-    "lo": {
-     "lip_m": 0.021,
-     "lip_at": [
-      0.0,
-      0.15,
-      "GRASS"
-     ],
-     "bare_m": 0.0
-    },
-    "hi": {
-     "lip_m": 0.003,
-     "lip_at": [
-      1.7,
-      0.05,
-      "ROAD"
-     ],
-     "bare_m": 0.0
-    }
-   },
-   "teeth": {
-    "samples": 653,
-    "grass_over_strip": 0,
-    "share": 0.0,
-    "max_m": 0.0
-   },
-   "edge_paint_m": 0.0,
-   "turn_r9_drop_m": {
-    "lo": null,
-    "hi": 0.001
-   },
-   "conn_edges": {
-    "lo": {
-     "lip_m": 0.022,
-     "lip_at": [
-      6.2,
-      0.05,
-      "GRASS"
-     ],
-     "bare_m": 0.0
-    },
-    "hi": {
-     "lip_m": 0.004,
-     "lip_at": [
-      0.4,
-      0.15,
-      "ROAD"
-     ],
-     "bare_m": 0.0
-    }
-   }
-  },
-  {
-   "mouth": "grid_unclassified_100#0(end)->grid_primary_11#0#0",
    "pass": true,
    "allowed": false,
    "corner_lip_m": 0.02,
@@ -2660,19 +2599,72 @@
     }
    },
    "teeth": {
-    "samples": 696,
-    "grass_over_strip": 3,
-    "share": 0.004,
-    "max_m": 0.02
+    "samples": 653,
+    "grass_over_strip": 0,
+    "share": 0.0,
+    "max_m": 0.0
    },
    "edge_paint_m": 0.0,
    "turn_r9_drop_m": {
     "lo": null,
-    "hi": 0.004
+    "hi": 0.015
    },
    "conn_edges": {
     "lo": {
-     "lip_m": 0.022,
+     "lip_m": 0.02,
+     "lip_at": [
+      4.7,
+      0.05,
+      "GRASS"
+     ],
+     "bare_m": 0.0
+    },
+    "hi": {
+     "lip_m": 0.004,
+     "lip_at": [
+      1.0,
+      0.15,
+      "ROAD"
+     ],
+     "bare_m": 0.0
+    }
+   }
+  },
+  {
+   "mouth": "grid_unclassified_100#0(end)->grid_primary_11#0#0",
+   "pass": true,
+   "allowed": false,
+   "corner_lip_m": 0.021,
+   "corners": {
+    "lo": {
+     "lip_m": 0.021,
+     "lip_at": [
+      0.4,
+      0.15,
+      "GRASS"
+     ],
+     "bare_m": 0.0
+    },
+    "hi": {
+     "lip_m": 0.0,
+     "lip_at": null,
+     "bare_m": 0.0
+    }
+   },
+   "teeth": {
+    "samples": 696,
+    "grass_over_strip": 3,
+    "share": 0.004,
+    "max_m": 0.019
+   },
+   "edge_paint_m": 0.0,
+   "turn_r9_drop_m": {
+    "lo": null,
+    "hi": 0.006
+   },
+   "conn_edges": {
+    "lo": {
+     "lip_m": 0.021,
      "lip_at": [
       6.3,
       0.05,
@@ -2683,9 +2675,9 @@
     "hi": {
      "lip_m": 0.004,
      "lip_at": [
-      5.5,
+      0.6,
       0.15,
-      "KERB"
+      "ROAD"
      ],
      "bare_m": 0.0
     }

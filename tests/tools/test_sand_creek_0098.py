@@ -111,7 +111,10 @@ def test_sand_creek_reach_record_is_the_configs():
         assert r["max_neighbour_jump_m"] < 0.5                    # round I's own rule for a street's profile
     e56 = rec["reach"][0]
     assert abs(e56["points_xyz_m"][-1][0] - 1877.5) < 1e-6 and 2500 < e56["length_m"] < 2550
-    assert 0.4 < e56["lidar_share"] < 0.5                         # 377 of 843 points read off the lidar
+    # 2026-11-23 (source/grid_reach_e56.md): re-run with the 14 tiles of row z 1300-1400 that round 1 lacked; all 843
+    # points now read off the lidar (round 1: 377 of 843, lidar_share 0.447, the other 466 on 3DEP + offset)
+    assert e56["lidar_share"] == 1.0 and set(e56["height_source"]) == {"lidar"}
+    assert rec["tiles_missing"] == []
     assert rec["frame"]["kx"] == 1.0024949
 
 
@@ -200,118 +203,177 @@ def test_sand_creek_flares_as_measured():
 
 
 # ------------------------------------------------------------------ lamps
-def test_two_lit_heads_are_one_light_per_lens():
-    heads = [[0.0, 9.0, 0.0], [40.0, 9.0, 0.0]]
-    lenses = [[4.0, 11.8, 0.0], [-4.0, 11.8, 0.0], [44.0, 11.8, 0.0], [36.0, 11.8, 0.0]]
-    blocks = [{"n": i, "keys": {}, "pos": (l[0], round(l[1] - 0.15, 2), -l[2])} for i, l in enumerate(lenses)]
-    ok = cli.check({"lampheads": heads, "provenance": {"lens_xyz": lenses, "heads_lit": 2}}, blocks)
-    assert ok["ok"] and ok["matched"] == 4 and ok["heads_lit"] == 2
-    bad = cli.check({"lampheads": heads, "provenance": {"lens_xyz": lenses, "heads_lit": 2}}, blocks[:2])
-    assert not bad["ok"]
-    one = cli.check({"lampheads": heads, "provenance": {"lens_xyz": lenses[::2]}}, blocks[::2])
-    assert "heads_lit" not in one                               # absent = one per lamp, as before
+def test_sand_creek_lights_both_heads_by_lamp_heads():
+    """round 2 (0.2.10, the Mac 2026-11-23): the two both-heads paths are one. Sand Creek runs Lake Murray's author step
+    lamp_heads (ledger 0099); 0.2.9's discriminator scenery.streetlights.both_heads_by and the lamps step's own back
+    lens (heads_lit) are gone, so author_lamps_blend / check_lights_ini / author_lamp_heads_blend are main's again"""
+    sl = _cfg(SC / "track.config.json")["scenery"]["streetlights"]
+    assert sl["light_both_heads"] is True and "both_heads_by" not in sl
+    assert sl["model"] == "led_cobra" and int(sl.get("arms", 2)) == 2          # lamp_heads' twin-arm rule
+    ship = _cfg(SC / "ship.json")
+    assert ship["steps"]["author"][0] == "lamp_heads"                          # before anything reads the lamps
+    assert "data/lights.heads.json" in ship["sync_out"]["files"]
+    al = (ROOT / "tools" / "author_lamps_blend.py").read_text(encoding="utf-8")
+    assert "heads_lit" not in al and "both_heads" not in al
+    assert not hasattr(cli, "both_heads_path")
+    assert "both_heads_by" not in (ROOT / "tools" / "author_lamp_heads_blend.py").read_text(encoding="utf-8")
 
 
-def test_both_heads_author_records_the_back_lens():
-    s = (ROOT / "tools" / "author_lamps_blend.py").read_text(encoding="utf-8")
-    assert "def both_heads(" in s and '"heads_lit": 2' in s and "place((-v[0], v[1], v[2]))" in s
+def test_the_twin_post_is_symmetric_so_the_turned_lens_is_the_back_heads():
     spec = _cfg(ROOT / "assets" / "models" / "streetlight_led.json")
-    assert spec["lens_centre_m"][0] == 4.0376                   # the mirrored lens: the twin post's other arm, at -x
+    assert spec["lens_centre_m"][0] == 4.0376
     tw = [tuple(map(float, l.split()[1:4])) for l in open(ROOT / "assets" / "models" / "streetlight_led_post_twin.obj")
           if l.startswith("v ")]
     hi = [v for v in tw if v[1] > 11.0]
     assert abs(min(v[0] for v in hi) + max(v[0] for v in hi)) < 1e-6   # symmetric heads
 
 
-# both heads, two paths (2026-11-23, the 0.2.9 merge with main): the same key light_both_heads was written twice in two
-# rounds; scenery.streetlights.both_heads_by "lamps" (Sand Creek) keeps ledger 0098's path, absent keeps ledger 0099's
-def _author_lamps():
-    import importlib.util
+# ------------------------------------------------------------------ signs (round 2)
+def _mesh_curb_crossing():
+    """tools/author_signs_blend.mesh_curb_crossing's own source, run on stand-in surfaces (the module imports bpy)"""
     import types
-    sys.modules.setdefault("bpy", types.ModuleType("bpy"))
-    spec = importlib.util.spec_from_file_location("author_lamps_0098", ROOT / "tools" / "author_lamps_blend.py")
-    m = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(m)
-    return m
+    import place_signs as ps
+    src = (ROOT / "tools" / "author_signs_blend.py").read_text(encoding="utf-8")
+    i0 = src.index("def mesh_curb_crossing(")
+    sm = types.SimpleNamespace(top_hit=lambda b, x, z: None if b is None else b(x, z),
+                               on_road=lambda road, ground, x, z: road(x, z) is not None)
+    ns = {"sm": sm, "ps": ps, "math": math}
+    exec(src[i0:src.index(chr(10) + "def ", i0 + 10)], ns)
+    return ns["mesh_curb_crossing"]
 
 
-def _lamp_proj(tmp_path, cfg, lights=None):
-    (tmp_path / "data").mkdir(parents=True, exist_ok=True)
-    (tmp_path / "track.config.json").write_text(json.dumps(cfg), encoding="utf-8")
-    if lights is not None:
-        (tmp_path / "data" / "lights.local.json").write_text(json.dumps(lights), encoding="utf-8")
-    return tmp_path
+def test_walk_built_only_reads_no_walk_off_a_pad_ground_band():
+    """Sand Creek round 2 item 3 (2026-11-23): past a pad's deck edge the pad's ground band is flat terrain (deck - 0.04 m;
+    0.2.9's SC-D56-fwd ray: 6.924-6.937 m for 3.25 m) and the walk read off `ground` (TERRAIN included) took it for a
+    3.6 m walk. With signs.json defaults.walk_built_only the walk is read off the built walk meshes alone: no walk there,
+    so the march starts lateral_offset_m past the edge and the post's base is the ray-cast terrain (round L's rule)"""
+    import place_signs as ps
+    mcc = _mesh_curb_crossing()
+    road = lambda x, z: 1.0 if x < 10.0 else None                          # the deck, to s 10 along +x
+    terrain = lambda x, z: 0.96 if x < 13.5 else 0.96 - 0.2 * (x - 13.5)    # the band, then the bank falls
+    old = mcc(road, terrain, (0.0, 0.0), (1.0, 0.0), 1.8, 10.0)
+    assert old["s_C"] == 10.0 and 3.4 < old["walk_run_m"] < 3.9 and old["s_S"] > old["s_C"] + 3.0   # the misread
+    new = mcc(road, terrain, (0.0, 0.0), (1.0, 0.0), 1.8, 10.0, walk=None) == old                      # absent: as before
+    assert new
+    none = mcc(road, terrain, (0.0, 0.0), (1.0, 0.0), 1.8, 10.0, walk=lambda x, z: None)
+    assert none["s_C"] == 10.0 and "s_S" not in none                     # no built walk: no s_S (no modelled walk)
+    strip = lambda x, z: 1.05 if 10.0 <= x < 12.4 else None             # a built 2.4 m strip still reads as the walk
+    kept = mcc(road, lambda x, z: strip(x, z) or terrain(x, z), (0.0, 0.0), (1.0, 0.0), 1.8, 10.0, walk=strip)
+    assert 2.3 < kept["walk_run_m"] < 2.5 and kept["s_S"] is not None
+    # opt-in, Sand Creek alone; a non-bool is refused; SC-D56 is a live corner again
+    assert ps.OPT_IN_DEFAULTS["walk_built_only"] is False and "walk_built_only" not in ps.DEFAULTS
+    with pytest.raises(ps.SignsConfigError):
+        ps.validate_overrides({"walk_built_only": "yes"}, {})
+    for p in sorted((ROOT / "tracks").glob("*/signs.json")):
+        d = _cfg(p)
+        if p.parent.name == "sand-creek-lm":
+            assert d["defaults"]["walk_built_only"] is True and "skip" not in d["corners"]["SC-D56"]
+            # fwd only (the Mac, 2026-11-23, after rehearsal 0210's FAIL SC-D56-rev c_built_edge_clearance): rev is
+            # skipped by its own sub-object, merged by place_signs.effective_override; fwd carries no skip
+            ov = d["corners"]["SC-D56"]
+            assert ps.effective_override(ov, True)["skip"] is True and "grid_primary_35" in ov["rev"]["reason"]
+            assert not ps.effective_override(ov, False).get("skip") and "fwd" not in ov
+        else:
+            assert "walk_built_only" not in (d.get("defaults") or {}), p
 
 
-def test_the_lamps_step_lights_the_back_head_only_by_both_heads_by(tmp_path):
-    al = _author_lamps()
-    sc, lm = _cfg(SC / "track.config.json"), _cfg(ROOT / "tracks" / "san-diego-lake-murray" / "track.config.json")
-    assert sc["scenery"]["streetlights"]["both_heads_by"] == "lamps"
-    assert al.both_heads(_lamp_proj(tmp_path / "sc", sc), al.LED, 2) is True
-    # Lake Murray's config as main has it (light_both_heads, no both_heads_by): its draft lamps step lights ONE head, so
-    # lamps + lamp_heads give 0.20.4's two lights a lamp, not three
-    assert lm["scenery"]["streetlights"]["light_both_heads"] is True and "both_heads_by" not in lm["scenery"]["streetlights"]
-    assert al.both_heads(_lamp_proj(tmp_path / "lm", lm), al.LED, 2) is False
-    bad = json.loads(json.dumps(sc))
-    bad["scenery"]["streetlights"]["both_heads_by"] = "lamp_heads"
-    with pytest.raises(SystemExit, match="lamps"):
-        al.both_heads(_lamp_proj(tmp_path / "bad", bad), al.LED, 2)
-    lone = json.loads(json.dumps(sc))
-    del lone["scenery"]["streetlights"]["light_both_heads"]
-    with pytest.raises(SystemExit, match="needs light_both_heads"):
-        al.both_heads(_lamp_proj(tmp_path / "lone", lone), al.LED, 2)
+# ------------------------------------------------------------------ street profiles (round 2)
+def test_round_2_profiles_are_round_i_plus_three_streets_at_their_true_lonlat():
+    """Sand Creek round 2 (2026-11-23): round I's seven held streets were re-read at each grid point's own lon / lat; the
+    three that now pass round I's unchanged 0.5 m neighbour-jump rule join (grid_secondary_8, grid_secondary_42,
+    grid_primary_71); grid_primary_15 (the viaduct) and the three still jumping stay on 3DEP; round I's 99 are as measured"""
+    cfg = _cfg(SC / "track.config.json")
+    assert cfg["lm_intake"]["connector_profiles"] == "source/connector_profiles.lidar.round_2.json"
+    r2 = _cfg(SC / "source" / "connector_profiles.lidar.round_2.json")
+    ri = _cfg(SC / "source" / "connector_profiles.lidar.round_i.json")
+    joined = {"grid_secondary_8", "grid_secondary_42", "grid_primary_71"}
+    assert set(r2["connectors"]) == set(ri["connectors"]) | joined
+    assert all(r2["connectors"][n] == ri["connectors"][n] for n in ri["connectors"])
+    assert not {"grid_primary_15", "grid_primary_11", "grid_secondary_39", "grid_unclassified_77"} & set(r2["connectors"])
+    assert r2["ept"] == ri["ept"] and r2["radius_m"] == ri["radius_m"] and r2["min_returns"] == ri["min_returns"]
+    src = {c["name"]: c for c in _cfg(ROOT / "tracks" / "sand-creek" / "data" / "connectors.local.json")["connectors"]}
+    for n in joined:
+        q, pts = r2["connectors"][n], src[n]["points_xyz_m"]
+        ys = q["y"]
+        assert max(abs(b - a) for a, b in zip(ys, ys[1:])) <= 0.5, n                       # round I's rule
+        assert len(ys) == len(pts) and all(abs(p[0] - a[0]) <= 0.01 and abs(p[2] - a[1]) <= 0.01 for p, a in zip(pts, q["xz"]))
+    assert "source/connector_profiles.lidar.round_2.json" in _cfg(SC / "ship.json")["sync_in"]["required"] +         _cfg(SC / "ship.json")["sync_in"].get("optional", [])
 
 
-def _ini(lenses):
-    return "".join(f"[LIGHT_{i}]\nPOSITION = {l[0]:.2f}, {l[1] - 0.15:.2f}, {-l[2]:.2f}\n\n" for i, l in enumerate(lenses))
+# ------------------------------------------------------------------ the ground beside the Quebec arms (round 2 item 2)
+def _gp_funcs(names):
+    """tools/ground_patch_blend.py's pure helpers, compiled on their own (the module imports bpy and runs main())"""
+    import ast
+    path = ROOT / "tools" / "ground_patch_blend.py"
+    tree = ast.parse(path.read_text(encoding="utf-8"))
+    mod = ast.Module(body=[n for n in tree.body if isinstance(n, ast.FunctionDef) and n.name in names], type_ignores=[])
+    ns = {"math": math}
+    exec(compile(mod, str(path), "exec"), ns)
+    return ns
 
 
-def test_the_check_reads_heads_lit_by_the_lamps_and_the_heads_file_otherwise(tmp_path):
-    heads = [[0.0, 9.0, 0.0], [40.0, 9.0, 0.0]]
-    fronts, backs = [[4.0, 11.8, 0.0], [44.0, 11.8, 0.0]], [[-4.0, 11.8, 0.0], [36.0, 11.8, 0.0]]
-    both = [fronts[0], backs[0], fronts[1], backs[1]]
-    sc = _cfg(SC / "track.config.json")
-    sc["slug"] = "t"
-    del sc["lighting"]                                         # the look is not what this test judges
-    # ledger 0098's path: heads_lit 2, both lenses in lens_xyz, no heads file wanted
-    p = _lamp_proj(tmp_path / "a", sc, {"lampheads": heads, "provenance": {"lens_xyz": both, "heads_lit": 2}})
-    (p / "ext_config.ini").write_text(_ini(both), encoding="utf-8")
-    assert cli.both_heads_path(sc) == "lamps"
-    assert cli.main([str(p), "--ini", str(p / "ext_config.ini")]) == 0
-    # the same path with the author's record saying one head: refused
-    (p / "data" / "lights.local.json").write_text(json.dumps({"lampheads": heads, "provenance": {"lens_xyz": fronts}}),
-                                                 encoding="utf-8")
-    (p / "ext_config.ini").write_text(_ini(fronts), encoding="utf-8")
-    assert cli.main([str(p), "--ini", str(p / "ext_config.ini")]) == 1
-    # ledger 0099's path (light_both_heads alone): the heads file is wanted, and with it the back lenses count
-    lm = json.loads(json.dumps(sc))
-    del lm["scenery"]["streetlights"]["both_heads_by"]
-    assert cli.both_heads_path(lm) == "lamp_heads"
-    q = _lamp_proj(tmp_path / "b", lm, {"lampheads": heads, "provenance": {"lens_xyz": fronts}})
-    (q / "ext_config.ini").write_text(_ini(fronts + backs), encoding="utf-8")
-    assert cli.main([str(q), "--ini", str(q / "ext_config.ini")]) == 1           # no data/lights.heads.json
-    (q / "data" / "lights.heads.json").write_text(json.dumps({"back_lens_xyz": backs}), encoding="utf-8")
-    assert cli.main([str(q), "--ini", str(q / "ext_config.ini")]) == 0
-    # both records at once (heads_lit 2 AND a heads file) is the back head lit twice: refused by the check itself
-    r = cli.check({"lampheads": heads, "provenance": {"lens_xyz": both, "heads_lit": 2}}, cli.parse_lights(_ini(both + backs)),
-                  None, backs)
-    assert not r["ok"] and any("lit twice" in s for s in r["problems"])
-    # neither: one head a lamp, as before both
-    none = json.loads(json.dumps(lm))
-    del none["scenery"]["streetlights"]["light_both_heads"]
-    assert cli.both_heads_path(none) is None
+def test_the_edge_lift_goes_up_to_the_lidar_or_the_lip_and_never_down():
+    """ledger 0098 round 2 item 2: a lift patch raises a vertex to min(the measured lidar ground, the lip) and nothing else"""
+    ns = _gp_funcs({"lift_to", "tri_height"})
+    lift = ns["lift_to"]
+    assert lift(24.0, 24.9, 24.7) == 24.7           # the lip (deck - clear) caps it: never past the lip
+    assert lift(24.0, 24.5, 24.7) == 24.5           # the lidar caps it: never above the real ground
+    assert lift(24.8, 24.9, 24.7) is None           # already over its target: it stays (nothing is lowered)
+    assert lift(24.69995, 24.9, 24.7) is None       # within 0.1 mm: no move
+    assert lift(24.0, None, 24.7) is None and lift(24.0, 24.9, None) is None
+    th = ns["tri_height"]
+    t = ((0.0, 0.0, 1.0), (2.0, 0.0, 3.0), (0.0, 2.0, 1.0))  # z = 1 + x
+    assert th(t, 0.5, 0.5) == pytest.approx(1.5) and th(t, 1.0, 0.25) == pytest.approx(2.0)
+    assert th(((0.0, 0.0, 1.0), (1.0, 1.0, 2.0), (2.0, 2.0, 3.0)), 0.5, 0.5) is None     # no plan area
+    src = (ROOT / "tools" / "ground_patch_blend.py").read_text(encoding="utf-8")
+    # a lift patch cuts nothing and carries no feather, weight or split; every other patch takes the old path
+    assert 'if p.get("lift") is not None:' in src and "a lift patch cuts nothing and has no feather, weight or" in src
+    assert 'if p.get("feather_spares_roads") is not None:' in src and "spare.find_nearest((x, z, 0.0), 1e-3)" in src
+    assert "for _ in range(0 if p.get(\"split_mode\") == \"bisect\" else 12):" in src
 
 
-def test_lamp_heads_refuses_the_lamps_path(tmp_path):
-    import importlib.util
-    spec = importlib.util.spec_from_file_location("author_lamp_heads_0098", ROOT / "tools" / "author_lamp_heads_blend.py")
-    m = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(m)
-    p = _lamp_proj(tmp_path, _cfg(SC / "track.config.json"))
-    with pytest.raises(SystemExit, match="twice"):
-        m.main([str(p)])
-    ship = _cfg(SC / "ship.json")
-    assert "lamp_heads" not in [n for ph in ship["steps"].values() if isinstance(ph, list) for n in ph]
+WALL_49_SHA256 = "be105a14b3381c24da4eeb1e2e7e5199ad2cb395935f9060bb8f4679e600adf7"
+QUEBEC = ("quebec_nw78", "quebec_median", "quebec_se84")
+QUEBEC_LIFT = ("quebec_lift_pad", "quebec_lift_arms")
+
+
+def test_sand_creek_quebec_patches_as_measured():
+    """the three ground patches beside the Northfield Quebec arms and the two lift zones (round 2 item 2), measured by
+    tools/lidar_ground_patch.measure off the cached CO_DRCOG_2_2020 tiles; wall_49's measured record untouched"""
+    import hashlib
+    ter = _cfg(SC / "track.config.json")["terrain"]
+    ids = [p["id"] for p in ter["lidar_patches"]]
+    assert ids == ["wall_49", *QUEBEC, *QUEBEC_LIFT]                 # the lift zones last: after the patches beside
+    cand = _cfg(SC / "source" / "round_k" / "track.config.json")["terrain"]
+    assert ter["lidar_patches"][0] == cand["lidar_patches"][0]       # wall_49's own entry as round I declared it
+    assert ter["_lidar_patches_doc"].startswith(cand["_lidar_patches_doc"]) and "ROUND 2 (ledger 0098" in ter["_lidar_patches_doc"]
+    meas = _cfg(SC / ter["lidar_patches_file"])
+    assert list(meas["patches"]) == ids and meas["ept"].endswith("CO_DRCOG_2_2020/ept.json")
+    w = json.dumps(meas["patches"]["wall_49"], separators=(",", ":"))
+    assert hashlib.sha256(w.encode()).hexdigest() == WALL_49_SHA256
+    by = {p["id"]: p for p in ter["lidar_patches"]}
+    for pid in (*QUEBEC, *QUEBEC_LIFT):
+        p, L = by[pid], meas["patches"][pid]
+        assert L["polygon"] == p["polygon"] and L["cell_m"] == 1.0 and len(L["y"]) == L["nx"] * L["nz"]
+        assert L["filled"] <= 0.02 * L["read"], pid                  # a few nodes under no return, filled
+    for pid in QUEBEC:
+        p = by[pid]
+        assert "lift" not in p and set(p["hard_edges"]) <= set(range(len(p["polygon"])))
+        # a feathered patch's feather never moves the ground under a road or walk (the 0.5 m gap and the walk stay the seats')
+        assert (p.get("feather_spares_roads") == ["ROAD", "CURB", "1ROAD"]) == (p["feather_m"] > 0), pid
+    assert by["quebec_median"]["feather_m"] == 0.0 and len(by["quebec_median"]["hard_edges"]) == len(by["quebec_median"]["polygon"])
+    for pid in QUEBEC_LIFT:
+        p = by[pid]
+        assert p["feather_m"] == 0.0 and "hard_edges" not in p and "split_m" not in p
+        assert p["lift"] == {"clear_m": 0.16, "gap_m": 1.25, "road_prefixes": ["ROAD", "CURB", "1ROAD"]}
+    # the lift zones keep off both bridge decks the 2020 lidar reads as class 17: Quebec St over Sand Creek (the pad's
+    # S end, x 1765-1790, z -530..-510) and I-70 NE of the arms' merge (x >= 1860, z >= -415)
+    sys.path.insert(0, str(ROOT / "tools"))
+    import lidar_ground_patch as lgp
+    for pid in QUEBEC_LIFT:
+        poly = [tuple(q) for q in by[pid]["polygon"]]
+        for x, z in ((1775.0, -512.0), (1783.3, -521.1), (1790.0, -510.0), (1865.0, -390.0), (1880.0, -415.0)):
+            assert not lgp.point_in(poly, x, z), (pid, x, z)
 
 
 # ------------------------------------------------------------------ owned surfaces, opt-in
@@ -328,7 +390,7 @@ def test_sand_creek_binds_the_owned_pairs_and_syncs_them():
         assert Path(a).name in lic and Path(b).name in lic
     for f in (cfg["lm_intake"]["grid_reach"], cfg["lm_intake"]["flare_one_sided"]):
         assert f in ship["sync_in"]["optional"] and (SC / f).is_file()
-    assert cfg["scenery"]["streetlights"]["light_both_heads"] is True and cfg["version"] == "0.2.9"
+    assert cfg["scenery"]["streetlights"]["light_both_heads"] is True and cfg["version"] == "0.2.10"
 
 
 def test_the_0098_keys_are_opt_in():
@@ -346,6 +408,8 @@ def test_the_0098_keys_are_opt_in():
             assert "light_both_heads" not in sl, t
         assert "both_heads_by" not in sl, t                       # ledger 0098's path is Sand Creek's alone
         assert "split_strip_balanced" not in (cfg.get("route") or {}), t
+        for p in (cfg.get("terrain") or {}).get("lidar_patches") or []:                                     # round 2
+            assert "lift" not in p and "feather_spares_roads" not in p, (t, p.get("id"))
 
 
 def test_the_strip_split_is_balanced_only_where_asked():

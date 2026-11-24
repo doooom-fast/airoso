@@ -204,13 +204,6 @@ def main(argv=None) -> int:
     proj = Path(argv[0])
     cfg = json.loads((proj / "track.config.json").read_text(encoding="utf-8"))
     out = proj / "data" / REPORT
-    if ((cfg.get("scenery") or {}).get("streetlights") or {}).get("both_heads_by") == "lamps":
-        # ledger 0098's path (Sand Creek): the draft's lamps step lit both heads itself (heads_lit 2); this step would light
-        # the back head a second time. The same key was written twice in two rounds (2026-11-22); round 2 of Sand Creek
-        # moves it onto this step and both_heads_by goes
-        raise SystemExit("[heads] scenery.streetlights.both_heads_by \"lamps\": tools/author_lamps_blend.py lit both heads "
-                         "already; lamp_heads would light the back head twice (take lamp_heads out of ship.json, or drop "
-                         "both_heads_by)")
     if not wanted(cfg):
         if out.exists():
             out.unlink()

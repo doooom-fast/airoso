@@ -135,25 +135,6 @@
    ]
   },
   {
-   "id": "nb12",
-   "k": 12,
-   "vertex": 1942,
-   "side": "L",
-   "xz": [
-    1809.22,
-    -501.43
-   ],
-   "along_m": 13.5,
-   "slid_m": 5.75,
-   "ground_y": 23.83,
-   "edge_y": 24.328,
-   "blade_bottom_y": 26.462,
-   "names": [
-    "N Northfield Quebec St",
-    "Sand Creek Dr S"
-   ]
-  },
-  {
    "id": "nb13",
    "k": 13,
    "vertex": 2318,
@@ -458,6 +439,10 @@
   },
   {
    "id": "nb11",
+   "why": "no clear base within 6.0 m of the plan (on pavement)"
+  },
+  {
+   "id": "nb12",
    "why": "no clear base within 6.0 m of the plan (on pavement)"
   },
   {

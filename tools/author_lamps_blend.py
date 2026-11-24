@@ -13,13 +13,6 @@ real lamp at every post, from the model `scenery.streetlights.model` names (one 
         flat LED lens (road-ward head)  -> LIGHTS_0     (pbr LIGHTS: the CSP night emissive; ext_config clusters
                                                          ONE [LIGHT_N] per lens, 0.15 m under it)
       `scenery.streetlights.arms` 2 (default: back-to-back heads, the configuration every 2026-10 lamp has) or 1.
-      `scenery.streetlights.light_both_heads` true WITH `both_heads_by` "lamps" (opt-in, arms 2 only; ledger 0098, Kevin
-      2026-11-22: "Yes, light both heads"; Sand Creek): the BACK head's lens too, the road-ward lens mirrored through the
-      pole (the twin post's heads stand at +-lens_centre_m[0]), so ext_config clusters TWO [LIGHT_N] per lamp; both lenses
-      are recorded in provenance.lens_xyz (road-ward lens first per lamp) with heads_lit 2, which
-      tools/check_lights_ini.py matches one light per lens. light_both_heads WITHOUT both_heads_by (ledger 0099, Lake
-      Murray) is the author step lamp_heads' (tools/author_lamp_heads_blend.py, LIGHTS_back): this step lays the
-      road-ward lens only, as before 0098. Absent = the road-ward lens only, byte-for-byte as before.
       Faces carry the model's smoothing groups: smooth faces, every edge between two groups (or beside a flat
       face) marked sharp — round pole, crisp luminaire. The model's UVs are kept as the UVMap.
   "street_lamp_2026_10" (the default when the key is absent — other tracks, and the rollback)
@@ -206,26 +199,6 @@ def lamp_config(proj: Path) -> tuple[str, int]:
     return model, arms
 
 
-def both_heads(proj: Path, model: str, arms: int) -> bool:
-    """the back head of a two-arm LED lamp lit HERE: scenery.streetlights.light_both_heads true with both_heads_by "lamps"
-    (opt-in, ledger 0098, Sand Creek). light_both_heads alone (ledger 0099, Lake Murray) is the author step lamp_heads'
-    (tools/author_lamp_heads_blend.py): False here, the road-ward lens only, as before 0098, so the two never both light
-    the back head. The same key was written twice in two rounds (2026-11-22); round 2 of Sand Creek moves it onto
-    lamp_heads and both_heads_by goes"""
-    cfg = json.loads((proj / "track.config.json").read_text(encoding="utf-8"))
-    sl = (cfg.get("scenery") or {}).get("streetlights") or {}
-    by = sl.get("both_heads_by")
-    if by not in (None, "lamps"):
-        raise SystemExit(f"[lamps] scenery.streetlights.both_heads_by {by!r}: \"lamps\" or absent")
-    if by == "lamps" and sl.get("light_both_heads") is not True:
-        raise SystemExit("[lamps] scenery.streetlights.both_heads_by \"lamps\" needs light_both_heads true")
-    on = by == "lamps"
-    if on and (model != LED or arms != 2):
-        raise SystemExit(f"[lamps] scenery.streetlights.light_both_heads needs model {LED!r} with arms 2 "
-                         f"(got {model!r}, arms {arms})")
-    return on
-
-
 def led_spec() -> dict:
     return json.loads((MODELS / "streetlight_led.json").read_text(encoding="utf-8"))
 
@@ -332,7 +305,7 @@ def author_legacy(heads, base_of):
     return n, batches, f"model {len(post_v)}v + lens {len(lens_v)}v each, fixture h {fixture[1] * scale:.2f} m", None
 
 
-def author_led(heads, base_of, arms, both=False):
+def author_led(heads, base_of, arms):
     spec = led_spec()
     post_v, post_f = load_obj_full(MODELS / spec["files"]["post_twin" if arms == 2 else "post_single"])
     lens_v, lens_f = load_obj_full(MODELS / spec["files"]["lens"])
@@ -357,13 +330,6 @@ def author_led(heads, base_of, arms, both=False):
         lensV += [place(v) for v in lens_v]
         lensF += rev(lens_f, off)
         lenses.append([round(bx + rx * lx + tx * lz, 3), round(yd + ly, 3), round(bz + rz * lx + tz * lz, 3)])
-        if both:
-            # the back head (ledger 0098): the same lens mirrored through the pole's plane across the road-ward axis
-            # (x -> -x, the twin post's other arm); a mirror flips the winding once more, so these faces are not reversed
-            off = len(lensV)
-            lensV += [place((-v[0], v[1], v[2])) for v in lens_v]
-            lensF += [([off + i for i in ix], list(uv), g) for ix, uv, g in lens_f]
-            lenses.append([round(bx - rx * lx + tx * lz, 3), round(yd + ly, 3), round(bz - rz * lx + tz * lz, 3)])
         n += 1
     if cur_v:
         posts.append((cur_v, cur_f))
@@ -383,11 +349,8 @@ def author_led(heads, base_of, arms, both=False):
                              f"ext_config [LIGHT_N] POSITION = lens centroid - {LIGHT_DROP_M} m y, so each light moves by "
                              "the same offset",
         "lens_xyz": lenses,
-        **({"heads_lit": 2, "heads_lit_doc": "ledger 0098 scenery.streetlights.light_both_heads: two lenses per lamp in "
-                                            "lens_xyz (road-ward, then back), one [LIGHT_N] each"} if both else {}),
     }
-    note = (f"model {len(post_v)}v ({arms} arm{'s' if arms == 2 else ''}) + lens {len(lens_v)}v "
-            f"{'x 2 (both heads lit) ' if both else ''}each, lens "
+    note = (f"model {len(post_v)}v ({arms} arm{'s' if arms == 2 else ''}) + lens {len(lens_v)}v each, lens "
             f"{spec['mounting_height_m']:.2f} m over the road datum, {spec['lens_centre_m'][0]:.2f} m road-ward of the pole")
     return n, batches, note, prov
 
@@ -785,17 +748,7 @@ def main():
     lights["lamp_bases_xz"] = [[round(b[0], 3), round(b[1], 3)] for b in (base_of(i, h)[:2] for i, h in enumerate(heads))]
 
     if model == LED:
-        both = both_heads(proj, model, arms)
-        n, batches, note, prov = author_led(heads, base_of, arms, both=both)
-        if both:
-            # one [LIGHT_N] per lens: no two LENSES (both heads of every lamp) closer than LENS_APART_M
-            import streetlight_relocate as SR
-            lz = prov["lens_xyz"]
-            close = SR.heads_too_close(lz, LENS_APART_M)
-            if close:
-                raise SystemExit("[lamps] light_both_heads: lenses " + "; ".join(
-                    f"{i} and {j} stand {d:.2f} m apart" for i, j, d in close[:8]) + f" (< {LENS_APART_M} m): ext_config "
-                    "would cluster them into one light (loop.blend not saved)")
+        n, batches, note, prov = author_led(heads, base_of, arms)
     else:
         n, batches, note, prov = author_legacy(heads, base_of)
     if prov is not None:

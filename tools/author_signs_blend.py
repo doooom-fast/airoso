@@ -132,12 +132,16 @@ def ensure_collection(name):
     return col
 
 
-def mesh_curb_crossing(road, ground, A, t, walk_w, s_hint, step=0.05, s_max=90.0):
+def mesh_curb_crossing(road, ground, A, t, walk_w, s_hint, step=0.05, s_max=90.0, walk=None):
     """the failed-to-turn ray against the BUILT mesh: C = where the top surface stops being ROAD
     (the curb face), B = where the raised walk's top starts to drop (its back edge), S_est = the
     walk fraction 1 - setback/(curb_face + walk_w) between them, i.e. 0.25 m inside the back of
     the walk — the FIRST CANDIDATE for the post (the march in main() then makes it clear the
-    built pavement in every direction). None when the ray never leaves built pavement."""
+    built pavement in every direction). None when the ray never leaves built pavement.
+    ``walk`` (signs.json defaults.walk_built_only, opt-in): the BVH the walk is read off — the built walk meshes
+    alone; absent = ``ground`` (CURB + SIDEWALK + TERRAIN), as before. With it a ray that leaves the road onto
+    terrain finds no walk (no s_S): the march starts lateral_offset_m past the built edge (no modelled walk)."""
+    wb = ground if walk is None else walk
     s = max(0.0, s_hint - 8.0)
     while s <= s_max and sm.on_road(road, ground, A[0] + t[0] * s, A[1] + t[1] * s):
         s += step
@@ -147,7 +151,7 @@ def mesh_curb_crossing(road, ground, A, t, walk_w, s_hint, step=0.05, s_max=90.0
     out = {"s_C": round(s_c, 2), "C": (A[0] + t[0] * s_c, A[1] + t[1] * s_c)}
     # the curb top: the first sample within 0.6 m of the road edge at the walk height (the sample
     # right at the edge can land in the gutter at terrain height, under the curb face)
-    tops = [(s_c + k * step, sm.top_hit(ground, A[0] + t[0] * (s_c + k * step), A[1] + t[1] * (s_c + k * step))) for k in range(0, 13)]
+    tops = [(s_c + k * step, sm.top_hit(wb, A[0] + t[0] * (s_c + k * step), A[1] + t[1] * (s_c + k * step))) for k in range(0, 13)]
     vals = [v for _, v in tops if v is not None]
     if not vals:
         return out
@@ -156,7 +160,7 @@ def mesh_curb_crossing(road, ground, A, t, walk_w, s_hint, step=0.05, s_max=90.0
     run_max = (ps.CURB_FACE_W + walk_w) * 4.0          # a ray nearly parallel to the curb is not a crossing
     s_b = s_top
     while s_b - s_c <= run_max:
-        g = sm.top_hit(ground, A[0] + t[0] * s_b, A[1] + t[1] * s_b)
+        g = sm.top_hit(wb, A[0] + t[0] * s_b, A[1] + t[1] * s_b)
         if g is None or g < h_walk - 0.04:
             break
         s_b += step
@@ -206,9 +210,10 @@ def built_edges(road, ground, rb, st0, side, half=30, step=2, reach=22.0, d_step
     return edge, back
 
 
-def mesh_place(s, ctx, cfg, road, ground, walls=None):
+def mesh_place(s, ctx, cfg, road, ground, walls=None, walk=None):
     """re-place one plate's post on the built mesh (see module doc); mutates the record and
-    returns the fatal reasons (empty = placed). walls = the 1WALL* BVH every post keeps WALL_CLEAR_M from."""
+    returns the fatal reasons (empty = placed). walls = the 1WALL* BVH every post keeps WALL_CLEAR_M from; walk = the
+    built walk meshes' BVH (signs.json defaults.walk_built_only; None = the walk read off ``ground``, as before)."""
     x0, z0 = s["base_xz"]
     s["base_xz_polyline"] = [x0, z0]
     t = (-s["face_dir_xz"][0], -s["face_dir_xz"][1])
@@ -240,7 +245,7 @@ def mesh_place(s, ctx, cfg, road, ground, walls=None):
         s["base_source"] = "signs.json base_xz (pinned; measured, not marched)"
         slid = chk["slid_polyline_m"]
     else:
-        m = mesh_curb_crossing(road, ground, A, t, walk_w, s["ray"]["len_m"])
+        m = mesh_curb_crossing(road, ground, A, t, walk_w, s["ray"]["len_m"], walk=walk)
         if m is None:
             s["base_source"] = "polyline (ray never leaves BUILT pavement within 90 m)"
             return ["ray never leaves the built pavement within 90 m (through leg / junction on the mesh)"]
@@ -529,6 +534,12 @@ def main():
     race_excluded = list(sm.load_bvhs.last_race)     # ledger 0051: race furniture is never the signs' ground
     walls = sm.load_wall_bvhs()                      # ledger 0054 P4: every 1WALL* (clearance) + each race token's walls
     wall_names = dict(sm.load_wall_bvhs.names)
+    # signs.json defaults.walk_built_only (opt-in, Sand Creek round 2): the walk read off the built walk meshes alone
+    walk, walk_names = None, []
+    if cfg.get("walk_built_only"):
+        walk_names = [n for n in ground_names if not n.upper().startswith(("TERRAIN", "1GRASS", "GRASS"))]
+        walk = sm.bvh_of([t_ for n in walk_names for t_ in sm.world_tris(bpy.data.objects[n])])
+        print("[signs] walk_built_only: the walk read off %s" % ("+".join(walk_names) or "nothing (no built walk)"))
     tokens = {lo["id"]: lo["token"] for lo in ctx.layouts if lo["race"]}
     print("[signs] ground %s; road %s; race furniture left out of both: %d object%s; walls %d (race tokens %s)"
           % ("+".join(ground_names) or "nothing", "+".join(road_names) or "nothing", len(race_excluded), "" if len(race_excluded) == 1 else "s",
@@ -541,7 +552,7 @@ def main():
             tok = tokens.get(s["layout"], "")
             reasons = mesh_place_layout(s, ctx, cfg, road, ground, walls.get("all"), walls.get(tok))
         else:
-            reasons = mesh_place(s, ctx, cfg, road, ground, walls.get("all"))
+            reasons = mesh_place(s, ctx, cfg, road, ground, walls.get("all"), walk=walk)
         if reasons:
             out["skipped"].append({"id": s["id"], "ribbon": s["ribbon"] + ("(rev)" if s["direction"] == "rev" else ""),
                                    **({"layout": s["layout"]} if s.get("layout") else {}),

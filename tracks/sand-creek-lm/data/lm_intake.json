@@ -5,8 +5,8 @@
  "closed": true,
  "widths_m": [
   5.5,
-  11.99,
-  34.2
+  11.92,
+  32.9
  ],
  "bridges_levelled": [
   [
@@ -56,6 +56,22 @@
     11.0,
     42.3
    ]
+  },
+  {
+   "name": "Sand Creek Dr S -> N Quebec St (the sandcreek_quebec pad)",
+   "vertex": 1942,
+   "flare": [
+    1933,
+    1951
+   ],
+   "legs_m": [
+    18.0,
+    16.5
+   ],
+   "was_m": [
+    16.5,
+    34.2
+   ]
   }
  ],
  "flare_one_sided": [
@@ -80,6 +96,6 @@
  "md5": {
   "source_centerline": "0bbfe1453bd32b4ae2cd637da3931e08",
   "heightfield.npy": "6e143be117c1ba26be8ce1f724f2610d",
-  "centerline.local.json": "3b83e86a706b5fe9e0651dad45368217"
+  "centerline.local.json": "700dbcf4d73740462ea3932d3235511d"
  }
 }

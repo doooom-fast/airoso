@@ -19,7 +19,7 @@
   "in_blobs_left_out": 2592
  },
  "line": {
-  "md5": "18a2bdf565c59a7f7083f0e5c1d2f24e",
+  "md5": "6486aadbcbea208b8a36985edcb00602",
   "frame": "the intake's data/centerline.local.json through the route's own smoothing (the assembler's line), +- widths_m / 2"
  },
  "kept": 18,

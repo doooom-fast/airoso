@@ -154,7 +154,9 @@ def test_shoulder_helpers():
 def test_config_is_0_1_15_on_the_gm_loop_and_an_empty_workshop_gets_its_files():
     c = _j(MF / "track.config.json")
     li = c["lm_intake"]
-    assert c["version"] == "0.1.15" and c["_version_doc"].startswith("0.1.15 (ledger 0102")
+    # round 3 (ledger 0103) takes 0.1.16 on top of this round's 0.1.15 and keeps its version doc after its own
+    assert c["version"] == "0.1.16" and c["_version_doc"].startswith("0.1.16 (ledger 0103")
+    assert "0.1.15 (ledger 0102" in c["_version_doc"]
     assert li["source_data"] == "data_gm"
     assert li["measured_surface"]["file"] == "source/surface/road_surface_gm.fit.json"
     assert li["edge_fit"]["evidence"] == "source/edges/edge_evidence_gm.json"

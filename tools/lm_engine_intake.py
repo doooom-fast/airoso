@@ -1178,6 +1178,47 @@ def intake(proj: Path, *, connectors: bool | None = None) -> dict:
               f"held for a widen retrace, {width_smooth_rep['rows_blended']} blended): changed p50 "
               f"{width_smooth_rep['changed_m']['p50']} / p99 {width_smooth_rep['changed_m']['p99']} / max "
               f"{width_smooth_rep['changed_m']['max']} m")
+    # THE TRACE'S WIDTH HELD STRAIGHT ACROSS A DECLARED SPAN (lm_intake.width_hold {"spans": [[s0, s1]], "evidence": <file in
+    # the PORT track>, "blend_m"?}; ledger 0103, Kevin 2026-11-24: "Long smooth curves get weird blooms" / "Look at the side
+    # lines"; absent = nothing runs). The ribbon is +-w/2 about the line, so a swell in the width series blooms both side
+    # lines together; on a declared span the width is the robust straight fit through the MEASURED width (the evidence's
+    # two sides, 5 m bins), blended over blend_m (tools/width_hold.py), after edge_fit and width_smooth and before
+    # edge_retrace, on the line width_smooth reads.
+    # Self-checked per span against the measured edge: a span the hold fits worse than the trace is refused. The line is not
+    # moved. Every span is logged in data/width_hold.json.
+    wh_cfg = li.get("width_hold")
+    width_hold_rep = None
+    if wh_cfg:
+        from tools import width_hold as _wh
+        unknown = sorted(set(wh_cfg) - {"spans", "evidence", "blend_m"} - {k for k in wh_cfg if k.startswith("_")})
+        if unknown:
+            raise SystemExit(f"[lm_intake] lm_intake.width_hold: unknown key(s) {unknown}")
+        rel_e = wh_cfg["evidence"]
+        if rel_e.startswith(("/", "\\")) or ".." in Path(rel_e).parts:
+            raise SystemExit(f"[lm_intake] lm_intake.width_hold.evidence {rel_e!r} must be a plain path inside the port track")
+        evj = json.loads((proj / rel_e).read_text(encoding="utf-8"))
+        o_ev, o_ln = evj.get("origin") or {}, local["origin"]
+        if abs(o_ev.get("lon", 1e9) - o_ln["lon"]) > 1e-9 or abs(o_ev.get("lat", 1e9) - o_ln["lat"]) > 1e-9:
+            raise SystemExit(f"[lm_intake] width_hold: {rel_e} was measured about another origin ({o_ev}) than this line's")
+        blend_ = float(wh_cfg.get("blend_m", 15.0))
+        if not 0.0 < blend_ <= 60.0:
+            raise SystemExit(f"[lm_intake] lm_intake.width_hold.blend_m {blend_!r}: 0 < blend <= 60 m")
+        route_ = cfg.get("route") or {}
+        s_wh = _v021_smooth().smooth_centerline(pts, sigma_pts=float(route_.get("smooth_sigma_pts", 2.0)),
+                                                passes=int(route_.get("smooth_passes", 2)), sigma_y_pts=0.0)
+        spans_ = [[float(a), float(b)] for a, b in wh_cfg["spans"]]
+        widths, width_hold_rep = _wh.hold(s_wh, widths, closed, spans_, blend_, evj["points"])
+        width_hold_rep["evidence"] = rel_e
+        (proj / "data").mkdir(parents=True, exist_ok=True)
+        (proj / "data" / "width_hold.json").write_text(json.dumps(width_hold_rep, indent=1), encoding="utf-8")
+        print("[lm_intake] width held: " + "; ".join(
+            f"s {sp['s'][0]:.0f}-{sp['s'][1]:.0f} {sp['width_before_m'][0]:.2f}..{sp['width_before_m'][1]:.2f} -> "
+            f"{sp['width_after_m'][0]:.2f}..{sp['width_after_m'][1]:.2f} m (edges moved p50 {sp['edge_moved_m']['p50']} / max "
+            f"{sp['edge_moved_m']['max']} m; built - measured width median / RMS about it "
+            f"{sp['built_minus_measured_width_m']['before']['median']} / {sp['built_minus_measured_width_m']['before']['rms_about_it']}"
+            f" -> {sp['built_minus_measured_width_m']['after']['median']} / {sp['built_minus_measured_width_m']['after']['rms_about_it']}"
+            f" m over {sp['measured_bins']} of {sp['span_bins']} bins)"
+            for sp in width_hold_rep["spans"]))
     # A STRETCH RE-TRACED TO THE MEASURED PAVEMENT EDGE, SHORT OF EVERY RAIL (lm_intake.edge_retrace {"evidence", "spans":
     # [[s0, s1]], "rails": [scenery.bespoke.rails keys], "src"?, "clear_m"?, "taper_m"?}; ledger 0087 Q1, Kevin 2026-11-17:
     # "Yes, widen Milford's front straight"; absent = nothing runs). tools/edge_retrace.py, on the line the assembler will
@@ -1631,6 +1672,7 @@ def intake(proj: Path, *, connectors: bool | None = None) -> dict:
            **({"edge_fit": edge_fit_rep} if edge_fit_rep else {}),
            **({"edge_retrace": edge_retrace_rep} if edge_retrace_rep else {}),
            **({"width_smooth": width_smooth_rep} if width_smooth_rep else {}),
+           **({"width_hold": width_hold_rep} if width_hold_rep else {}),
            **({"measured_surface": surface_rep} if surface_rep else {}),
            "grid_upsample": up,
            "md5": {"source_centerline": _md5(need[0]), "heightfield.npy": _md5(data / "heightfield.npy"),

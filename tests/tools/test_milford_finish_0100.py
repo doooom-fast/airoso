@@ -172,7 +172,8 @@ def test_trunk_reach_is_derived_from_the_barrier_lines_and_trunks_json_reproduce
     tr = json.loads((MF / "source" / "vegetation" / "trunks.json").read_text(encoding="utf-8"))
     # the GM lap (ledger 0102): 167 lidar + 84 verge; 0.1.14's file on 0.1.13's line: 261 (174 + 87)
     assert tr["reach_m"] == 20.0 and tr["points"] == res["trunks"] and len(tr["points"]) == 251
-    assert "0.1.15's swept line" in tr["_source"]
+    # ledger 0103 (0.1.16) re-ran it on the swept line with the width held on two curves: 4 distances moved 0.1 m, same 251
+    assert "0.1.16's swept line" in tr["_source"]
     assert min(p[3] for p in tr["points"]) >= 3.0                          # none within the corridor margin
     veg_plan = (MF / "source" / "vegetation" / "scripts" / "veg_plan.py").read_text(encoding="utf-8")
     assert "COLLIDER_REACH_M = 20.0" in veg_plan
@@ -273,8 +274,8 @@ def test_owned_concrete_on_milfords_concrete_surfaces():
 # --- 10. the version ------------------------------------------------------------------------------------------------------------
 
 def test_version_and_the_ledgers_are_filed():
-    # 0.1.14 was round 1 (this ledger); round 2 (ledger 0102) takes 0.1.15 on top of it
-    assert _cfg()["version"] == "0.1.15" and _cfg()["slug"] == "milford_road_course"
+    # 0.1.14 was round 1 (this ledger); round 2 (ledger 0102) took 0.1.15 on top of it, round 3 (ledger 0103) 0.1.16
+    assert _cfg()["version"] == "0.1.16" and _cfg()["slug"] == "milford_road_course"
     led = (ROOT / "fleet" / "feedback" / "0100-milford-to-finished.md").read_text(encoding="utf-8")
     assert led.startswith("---\nid: 0100\n") and "Runbook 0100-1" in led and "62,055,573" in led
     assert "0.1.14 (ledger 0100" in _cfg()["_version_doc"]

@@ -79,16 +79,16 @@
       "version": "0.1.15"
     },
     "san_diego_lake_murray_v4": {
-      "branch": "claude/lm-finish-r3-20261123",
+      "branch": "claude/lm-0208-jackson-paint-20261123",
       "engine": "lm-v4",
-      "installed": "2026-11-23",
-      "note": "0.20.6 = 0.20.5 + Mission Gorge's raised median rebuilt from the lidar (three islands, rows [[8, 53], [67, 354], [365, 741]], no longer across the Margerum crossing, its J3 end where it stands) with a terracotta paver top (1KERB_PAVER_median, ledger 0099 round 3 items 1 / 1b / 2; ce61480c); ENG eng_0206 = eng_repro + the engine snapshot's pbr.py (e414f407, the 1KERB_PAVER row); every gate green, no force; built in the chain's own empty workshop lm_line (0.20.5's kept as D:/k10-scratch/lm_line.0.20.5); install build = the PC rehearsal (rehearse_0206: every kn5 equivalent, AI identical); 0.20.5 parked in D:/k10-track-archive/2026-11-23_152915; menu pictures = 0.20.5's (the 0.20.6 renders at the same cameras match them within 1/255; old outlines in D:/k10-track-archive/2026-11-23_153500_lm0206_pictures); records on claude/lm-0206-install-20261123 (loop.blend not committed: the LFS budget; 0.20.6's kept in D:/k10-track-archive/2026-11-23_lm0206_synced_back_blend); Kevin: \"I always want newer builds\"",
+      "installed": "2026-11-24",
+      "note": "0.20.8 = 0.20.6 + road wear at 50 cm on the lanes (0.20.7's, Kevin's pick: tone off the 2022 aerial, smoothed 8 m, lane ends faded, dash gaps) + Jackson Dr north's painted median (paint-only median_rebuild: 296 + 292 old strips found, new laid); 0dbf7869 (ledger 0099 round 3 items 3 and 4); ENG eng_0207 = eng_repro + the engine snapshot's pbr.py (e414f407) and export_kn5_addon.py (83b231e8, road_wear); every gate green, no force; road_wear_check PASS (tone r 0.959); built in the chain's own empty workshop lm_line (0.20.6's kept as D:/k10-scratch/lm_line.0.20.6); install = the PC rehearsal (rehearse_0208: every kn5 equivalent, AI identical); 0.20.6 parked in D:/k10-track-archive/2026-11-24_155245; menu pictures re-rendered at 0.20.2's cameras (old in D:/k10-track-archive/2026-11-24_160000_lm0208_pictures); loop.blend not committed (LFS budget): kept in D:/k10-track-archive/2026-11-24_lm0208_synced_back_blend; records on claude/lm-0208-install-20261124; Kevin: \"I always want newer builds\"",
       "old_name_prefix": "K10 - San Diego CANDIDATE v4 keep-roads",
       "role": "current",
-      "sha": "ce61480c",
+      "sha": "0dbf7869",
       "track": "san-diego-lake-murray",
       "ui_name_prefix": "doooom San Diego",
-      "version": "0.20.6"
+      "version": "0.20.8"
     },
     "sand_creek_raceway": {
       "branch": "claude/sc-finish-r2-20261123",

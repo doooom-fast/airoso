@@ -1609,3 +1609,25 @@ failing.
 On the drive: Jackson Dr north of Mission Gorge Rd (about 220 m, from 40 m past J4) now has its forward lane, a
 hatched yellow median between the two directions, and its edge lines where the real ones are; under the trees further
 north, one centre line. The first 40 m north of J4 still has the old paint (owed with J4).
+
+## Round 3, items 3 + 4: 0.20.8 rehearsed green and INSTALLED, no force (the PC, 2026-11-24)
+
+- **What:** 0dbf7869 (= Playbox's chain-green 66c5a8cb + main d31cb9a8 + this ledger's item 4) carries 0.20.7's road wear at 50 cm
+  and Jackson Dr north's painted median; 0.20.7 was not rehearsed on its own (the Mac). The Mac's suite 1,952 green.
+- **Rehearsal** (empty workshop `D:/k10-scratch/rehearse_0208`, ENG `eng_0207` = eng_repro + the snapshot's `pbr.py` (e414f407)
+  and `export_kn5_addon.py` (83b231e8, road_wear), seed = the committed 0.20.5 blend re-authored, `--no-install --skip-blend`,
+  14:15-15:04, alone for the 15.1 GB bake): SHIP OK, every gate exit 0. `[median-rebuild] paint-only, north_J5_jackson_north#0`:
+  MARKINGS 296/296 found, 152 laid; YLINE 292/292 found; saved. `[road_wear]` 219 lane lines, rubber on 95.57 of 97.18 km of lane,
+  13 lane ends welded, 408 faded. road_wear_check PASS: tone r 0.9593 (5,282 samples), lane_rubber centroid 0.011 m (declared
+  0.009), no_repeat 0 claimed twice, density 0 off. kn5_ground_check 0 double sheets on all five layouts, deck +0.313.
+- **The install** (15:04-15:52, the chain's own empty workshop `D:/k10-scratch/lm_line`; 0.20.6's kept as `lm_line.0.20.6`): SHIP OK,
+  all five layouts 0.20.8, 0.20.6 parked in `D:/k10-track-archive/2026-11-24_155245/`. = the rehearsal: 1,153/1,153 gate rows (the
+  workshop's name aside), every kn5 EQUIVALENT, AI identical; the 14 kn5 in AC byte-identical to the build; trees came along (14 .bin).
+  Installed md5s: b1ea0f47 san_diego_lake_murray.kn5; eabd83b9 san_diego_lake_murray_race.kn5; c17b045c san_diego_lake_murray_race_college.kn5; aeea764e san_diego_lake_murray_race_north.kn5; f8fc266a san_diego_lake_murray_street.kn5; 
+- **Menu pictures** re-rendered from the installed build at 0.20.2's cameras (race_cw on the College lap's scene): the road wear changes
+  16-28 % of each picture's pixels (north_cw 4 %); looked at before copying; old ones in `D:/k10-track-archive/2026-11-24_160000_lm0208_pictures`.
+- **The blend: kept on the PC, not committed** (the LFS budget): 204,489,464 B, sha256 208f4ec9..., in
+  `D:/k10-track-archive/2026-11-24_lm0208_synced_back_blend/` (README). The committed blend stays 0.20.5's bc7f772e, which this build
+  seeded and re-authored. New seeds: paint_rebuild.json, road_wear.json, road_wear.lanes.json, road_wear_check.json (101 -> 105).
+  The 33 older plots the sync-back dropped are restored.
+- Records on `claude/lm-0208-install-20261124` (origin/main 423ace6e merged). Kevin's standing word: "Yes and I always want newer builds".

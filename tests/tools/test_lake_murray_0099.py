@@ -65,7 +65,7 @@ def _is_lfs_pointer(p: Path) -> bool:
 def test_spec_takes_a_seed_list_and_emits_it_only_when_named():
     s = SPEC.load(LM / "ship.json", "san-diego-lake-murray")
     seeds = [ln.split("\t", 1)[1] for ln in SPEC.lines(s) if ln.startswith("in.seed\t")]
-    assert seeds == s["sync_in"]["seed"] and seeds[0] == "loop.blend" and len(seeds) == 101
+    assert seeds == s["sync_in"]["seed"] and seeds[0] == "loop.blend" and len(seeds) == 105
     # no other spec names a seed: their key<TAB>value lines carry no in.seed line (the chain as before)
     for p in OTHER_SPECS:
         o = SPEC.load(p, json.loads(p.read_text(encoding="utf-8"))["track"])

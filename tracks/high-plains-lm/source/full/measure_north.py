@@ -79,6 +79,33 @@ NOT_READ = (
 LINE_MIN = 10.0                 # [invented] the edge line's prominence over the asphalt inside it (8-bit)
 LINE_TO_EDGE_SEARCH_M = 1.0     # [invented] ... and the ridge sought this far inside a first-read edge to measure the offset
 
+# round 5 (ledger 0097 round 5, item 3): what the photos left unread, read off the 2018 lidar's intensity (the G10's
+# ../edges/r5_lidar_g10/: hp_r5_lidar.py -> carried_edges.json; asphalt returns ~700-1,300, grass and paint 3,000-9,000).
+LIDAR_FILE = HERE.parent / "edges" / "r5_lidar_g10" / "carried_edges.json"
+# (side, s0, s1, block in carried_edges.json, value): rows no photo read take the lidar's reading, which joins the photos' rows
+# through the same outlier filter and running median (a row a photo reads keeps its value). The value is the lidar's asphalt
+# edge in NAIP's definition (off_osm_naip_def_m: less the registration's c, the readers' difference at a white edge line,
+# and its shift, the 2018 lidar against the 2023 photo; fitted on 168 rows, residual p50 0.00 m)
+LIDAR_READ = (
+    ("left", 253.0, 261.0, "l254_260", "off_osm_naip_def_m"),
+)
+# (side, s0, s1, why): NO EDGE of the north loop's own (round 5: the lidar). The pavement runs on past the line's lane edge, so
+# these rows are not carried: the ribbon's edge there is construction under other paving (the FORK pad's measured outline,
+# which the cut leaves in place of these rows; the merge's west corner return), held as round 3's rule holds it
+NO_EDGE = (
+    ("right", 0.0, 19.0, "the fork: one pavement with the West lap's; the gore's grass begins at its apex, own s 19.5 "
+                         "(carried_edges.json fork_r0_19.gore_nose); the cut at the FORK pad's box edge drops these rows"),
+    ("right", 988.0, 1001.0, "the merge: the West lap's pavement runs on; the real edge on this side is the merge's west "
+                             "corner (carried_edges.json merge.rows, merge.west_corner), built as its corner return"),
+)
+# (side, s0, s1, block): rows whose edge is a corner's outline, kept on the rows as a record (lidar_left_m) and NOT read into
+# the ribbon: past the trim's cut the street there is the corner return's (route.mouth_returns), the east corner's built at
+# the lidar's tangent fit (merge_east_fillet.json). Their value is the photo's frame (the registration's shift only: no edge
+# line there, the asphalt meets the T13 kerb's paint)
+LIDAR_OUTLINE = (
+    ("left", 996.0, 1001.0, "merge", "off_osm_shift_only_m"),
+)
+
 
 def ridges(lum, offs):
     """the luminance ridges of one cross profile: [(offset, prominence)], innermost first (round 4's edge-line reader)"""
@@ -154,6 +181,8 @@ def measure(repo: Path):
     lat_s = origin["lat"] + z / mlat
     offs = np.arange(mw.START_M, mw.MAX_M + 1e-9, mw.STEP)
     side_e, second_e = {}, {}
+    lidar = json.loads(LIDAR_FILE.read_text(encoding="utf-8")) if LIDAR_FILE.exists() else {}    # round 5
+    lidar_e = {}
     for side, sg in (("left", 1), ("right", -1)):
         nx, nz = -tz * sg, tx * sg
         X = x[:, None] + nx[:, None] * offs[None, :]; Z = z[:, None] + nz[:, None] * offs[None, :]
@@ -217,6 +246,24 @@ def measure(repo: Path):
         Em = np.where(np.isfinite(Em), Em, Em2)                 # a first-read row keeps its value
         for i in np.nonzero(second)[0]:
             src[i] = (src[i] or pname[i]) + "_second_read"
+        # round 5: the lidar's rows (LIDAR_READ) where no photo read survived. Each lidar read gathers the returns within the
+        # G10 reader's own ALONG_M (1.5 m) either side of its row (carried_edges.json params), so a 1 m station takes the mean
+        # of the kept lidar rows whose window holds it; the G10's "kept" (score and threshold-sensitivity) is its filter
+        along = float((lidar.get("params") or {}).get("ALONG_M", 0.0))
+        rows_read, stations = [], 0
+        for sd, a, b, blk, key in LIDAR_READ:
+            if sd != side:
+                continue
+            lr = [(float(r["row_s"]), float(r[key])) for r in lidar[blk]["rows"]
+                  if r.get("side", sd) == sd and a <= r["row_s"] <= b and r.get("kept")]
+            rows_read += [rs for rs, _v in lr]
+            for i in range(n):
+                if a <= s[i] <= b and not np.isfinite(Em[i]):
+                    v = [val for rs, val in lr if abs(rs - s[i]) <= along + 1e-9]
+                    if v:
+                        Em[i] = float(np.mean(v)); src[i] = "lidar_2018"; stations += 1
+        if rows_read:
+            lidar_e[side] = {"rows_read": rows_read, "stations_m": int(stations * READ_STEP_M), "along_m": along}
         side_e[side] = (E, Em, src)
         second_e[side] = {"rows": int(second.sum()), "readings": int(np.isfinite(E2).sum()),
                           "kept": int((np.isfinite(E2) & keep2 & ~np.isfinite(E)).sum()),
@@ -276,10 +323,41 @@ def measure(repo: Path):
     if out_i[-1] != len(s) - 1:
         out_i = np.r_[out_i, len(s) - 1]
     sec2 = both & (second_e["left"]["second"] | second_e["right"]["second"])
-    rows = [{"s": round(float(s[i]), 1), "left_m": None if not np.isfinite(EL[i]) else round(float(EL[i]), 2),
+    # round 5: a row with an edge from the lidar is "measured_lidar"; a row whose unread side has NO EDGE (NO_EDGE) is "no_edge"
+    lid = np.array([side_e["left"][2][i] == "lidar_2018" or side_e["right"][2][i] == "lidar_2018" for i in range(len(s))])
+    ne = {sd: np.zeros(len(s), bool) for sd in ("left", "right")}
+    for sd, a, b, _why in NO_EDGE:
+        ne[sd] |= (s >= a) & (s <= b)
+    oln = {sd: np.zeros(len(s), bool) for sd in ("left", "right")}
+    for sd, a, b, _blk, _key in LIDAR_OUTLINE:
+        oln[sd] |= (s >= a) & (s <= b)
+    no_edge = (~both & (np.isfinite(EL) | ne["left"] | oln["left"]) & (np.isfinite(ER) | ne["right"] | oln["right"])
+               & (ne["left"] | ne["right"]))
+    outl = {}
+    for sd, a, b, blk, key in LIDAR_OUTLINE:
+        for r in (lidar.get(blk) or {}).get("rows", []):
+            if r.get("side", sd) == sd and a <= r["row_s"] <= b and r.get("kept"):
+                outl[(sd, int(round(r["row_s"] / READ_STEP_M)))] = round(float(r[key]), 2)
+
+    def kind(i):
+        if both[i]:
+            return "measured_lidar" if lid[i] else ("measured_second_read" if sec2[i] else "measured")
+        return "no_edge" if no_edge[i] else "carried"
+
+    def row(i):
+        r = {"s": round(float(s[i]), 1), "left_m": None if not np.isfinite(EL[i]) else round(float(EL[i]), 2),
              "right_m": None if not np.isfinite(ER[i]) else round(float(ER[i]), 2), "width_m": round(float(W[i]), 2),
-             "width": ("measured_second_read" if sec2[i] else "measured") if both[i] else "carried",
-             "photo": side_e["left"][2][i] or side_e["right"][2][i] or None} for i in out_i]
+             "width": kind(i), "photo": side_e["left"][2][i] or side_e["right"][2][i] or None}
+        if no_edge[i]:
+            r["no_edge"] = [sd for sd in ("left", "right") if ne[sd][i] and not np.isfinite((EL, ER)[sd == "right"][i])]
+            ol = [sd for sd in ("left", "right") if oln[sd][i] and not np.isfinite((EL, ER)[sd == "right"][i])]
+            if ol:
+                r["outline"] = ol
+        for sd in ("left", "right"):
+            if (sd, i) in outl:
+                r[f"lidar_{sd}_m"] = outl[(sd, i)]
+        return r
+    rows = [row(i) for i in out_i]
     conn = {"name": "full_north", "kind": "connector",
             "points_xyz_m": [[round(float(cx[i]), 3), round(float(Ys[i]), 3), round(float(cz[i]), 3)] for i in out_i],
             "widths_m": [round(float(W[i]), 3) for i in out_i], "joined": [],
@@ -289,7 +367,8 @@ def measure(repo: Path):
                        f"{EDGE_SMOOTH_M:.0f} m mean; heights 3DEP (corridor_3dep_north.json), {SMOOTH_M:.0f} m mean (measure_north.py)")}
     meas = (EL + ER)[both]
     summ = {"length_m": round(float(s[-1]), 1), "points": len(out_i), "carried_width_m": round(carried_w, 2),
-            "measured_m": int(both.sum() * READ_STEP_M), "carried_m": int((~both).sum() * READ_STEP_M),
+            "measured_m": int(both.sum() * READ_STEP_M), "carried_m": int((~both & ~no_edge).sum() * READ_STEP_M),
+            "no_edge_m": int(no_edge.sum() * READ_STEP_M),
             "width_measured_m": [round(float(v), 2) for v in np.percentile(meas, [5, 25, 50, 75, 95])],
             "centre_shift_m": [round(float(SH.min()), 2), round(float(SH.max()), 2)],
             "width_built_m": [round(float(v), 2) for v in np.percentile(W, [5, 25, 50, 75, 95])],
@@ -298,7 +377,14 @@ def measure(repo: Path):
                                     "(the edge line or a kerb's paint, in eye-checked bands); measured_m counts them",
                             "measured_m": int(sec2.sum() * READ_STEP_M),
                             "per_side": {sd: {k_: v_ for k_, v_ in second_e[sd].items() if k_ != "second"} for sd in second_e},
-                            "not_read": [{"side": a, "s": [b, c], "why": d} for a, b, c, d in NOT_READ]}}
+                            "not_read": [{"side": a, "s": [b, c], "why": d} for a, b, c, d in NOT_READ]},
+            "lidar_2018": {"_doc": "ledger 0097 round 5 (LIDAR_READ, NO_EDGE, LIDAR_OUTLINE): the 2018 lidar's intensity "
+                                   "(../edges/r5_lidar_g10/carried_edges.json) where no photo read the edge; measured_m counts "
+                                   "the rows it makes both-read, no_edge_m the rows with no edge of the line's own",
+                           "measured_m": int((both & lid).sum() * READ_STEP_M), "per_side": lidar_e,
+                           "no_edge": [{"side": a, "s": [b, c], "why": d} for a, b, c, d in NO_EDGE],
+                           "outline_rows": [{"side": sd, "row_s": i * READ_STEP_M, "off_osm_m": v}
+                                            for (sd, i), v in sorted(outl.items())]}}
     return conn, rows, summ
 
 

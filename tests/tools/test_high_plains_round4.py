@@ -45,7 +45,7 @@ def _mpd(lat0):
 
 # --- opt-in ------------------------------------------------------------------------------------------------------------
 def test_version_and_no_other_track_declares_any_round4_key():
-    assert _cfg()["version"] == "0.1.12"
+    assert _cfg()["version"] in ("0.1.12", "0.1.13")        # round 5 (0.1.13) keeps every round-4 key
     for p in sorted((ROOT / "tracks").glob("*/track.config.json")):
         t = p.parent.name
         if t == "high-plains-lm":
@@ -142,7 +142,8 @@ def test_facade_walls_carry_every_bay_up_to_the_plane():
 # --- item 1: the north loop's kerbs -----------------------------------------------------------------------------------
 def test_the_north_loops_kerbs_are_measured_runs_on_its_own_rows():
     K = _kerbs()
-    lap, north = [k for k in K if not k.get("line")], [k for k in K if k.get("line")]
+    # round 5 adds the north loop's two flat stripes ("profile": "paint", test_high_plains_round5.py) after these six
+    lap, north = [k for k in K if not k.get("line")], [k for k in K if k.get("line") and k["profile"] == "kerb"]
     assert len(lap) == 20 and len(north) == 6 and K[:20] == lap      # the lap's 20 first, unchanged in order
     assert all(k["line"] == LINE and k["colour"] == "blue_white" and k["profile"] == "kerb" for k in north)
     for k in north:
@@ -177,19 +178,20 @@ def test_the_carried_rows_are_read_again_and_what_is_left_is_the_mouths():
     import measure_north as mn
     nl = json.loads((FULL / "north_loop.json").read_text(encoding="utf-8"))
     sm = nl["summary"]
-    assert sm["second_read"]["measured_m"] == 150 and sm["carried_m"] == 42 and sm["measured_m"] == 960
+    # round 5 (test_high_plains_round5.py) read the 42 m left carried here off the 2018 lidar: 8 m measured, 34 m no edge
+    assert sm["second_read"]["measured_m"] == 150 and sm["carried_m"] == 0 and sm["measured_m"] == 960 + 8
     for side, d in sm["second_read"]["per_side"].items():
         for photo, (off, n) in d["line_to_edge_m"].items():
             assert 0.2 <= off <= 0.5 and n >= 50, (side, photo)
     second = [r for r in nl["rows"] if r["width"] == "measured_second_read"]
     assert second and all(any(a <= r["s"] <= b for _sd, a, b, *_ in mn.SECOND_READ) for r in second)
-    carried = [r["s"] for r in nl["rows"] if r["width"] == "carried"]
     mouths = [(a, b) for _sd, a, b, _w in mn.NOT_READ]
-    left = [s for s in carried if not any(a <= s <= b for a, b in mouths)]
-    assert left and all(254.0 <= s <= 260.0 for s in left)           # the one stretch no second reading survived
+    lidar = [r["s"] for r in nl["rows"] if r["width"] == "measured_lidar"]
+    assert lidar and all(254.0 <= s <= 260.0 for s in lidar)         # the one stretch no second reading survived (round 5)
+    assert all(any(a <= r["s"] <= b for a, b in mouths) for r in nl["rows"] if r["width"] == "no_edge")
     lo, hi = sm["width_measured_m"][0], sm["width_measured_m"][-1]
     assert all(lo - 0.6 <= r["width_m"] <= hi + 0.6 for r in nl["rows"])
-    assert {r["width"] for r in nl["rows"]} == {"measured", "measured_second_read", "carried"}
+    assert {r["width"] for r in nl["rows"]} == {"measured", "measured_second_read", "measured_lidar", "no_edge"}
 
 
 # --- item 2: the merge ------------------------------------------------------------------------------------------------
@@ -198,7 +200,9 @@ def test_the_merges_bellmouth_is_a_measured_return_and_the_kerb_corner_is_not_in
     r = c["route"]
     assert r["mouth_returns"] == ["full_north"] and r["mouth_returns_measured_only"] is True
     assert r["verify_mouth_corners"] is True and c["road_markings"]["gap_mouths"] is True
-    radii = json.loads((HP / r["mouth_radii_file"]).read_text(encoding="utf-8"))["corners"]
+    # round 5 builds both corners at the 2018 lidar's radii (mouth_radii.r5.json, test_high_plains_round5.py); round 4's NAIP
+    # reading is kept as its record
+    radii = json.loads((EDGES / "mouth_radii.naip.json").read_text(encoding="utf-8"))["corners"]
     west, east = radii[f"{LINE}|end|-1"], radii[f"{LINE}|end|+1"]
     assert west["measured"] is True and west["radius_m"] == 14.0 and west["contrast"] >= 12.0 and west["prominence"] >= 1.4
     assert east["measured"] is False and "grid's end" in east["why"]

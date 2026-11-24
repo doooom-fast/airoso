@@ -37,7 +37,7 @@ def _configs():
 # --- the config -------------------------------------------------------------------------------------------------------
 def test_two_layouts_on_one_road_the_west_renamed_the_full_on_its_lap():
     c = _cfg()
-    assert c["version"] in ("0.1.11", "0.1.12")               # round 4 (0.1.12) keeps both layouts
+    assert c["version"] in ("0.1.11", "0.1.12", "0.1.13")     # rounds 4 and 5 (0.1.12, 0.1.13) keep both layouts
     w, f = c["layouts"]
     assert (w["id"], w["name"], w.get("lap"), w["ai"]) == ("west", "High Plains Raceway — West", None, "ai/west")
     assert (f["id"], f["name"], f["lap"], f["ai"]) == ("full_course", "High Plains Raceway — Full", "full", "ai/full_course")

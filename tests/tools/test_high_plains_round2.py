@@ -196,7 +196,7 @@ def test_rows_3_and_8_are_removed_as_kerb_paint():
 
 def test_version_and_every_round2_key_is_high_plains_own():
     c = _cfg()
-    assert c["version"] in ("0.1.10", "0.1.11", "0.1.12")    # rounds 3 and 4 (0.1.11, 0.1.12) keep every round-2 key
+    assert c["version"] in ("0.1.10", "0.1.11", "0.1.12", "0.1.13")    # rounds 3-5 (0.1.11-0.1.13) keep every round-2 key
     for t, cfg in ((p.parent.name, json.loads(p.read_text(encoding="utf-8")))
                    for p in (ROOT / "tracks").glob("*/track.config.json")):
         if t == "high-plains-lm":
@@ -220,8 +220,9 @@ def test_full_layouts_extra_pieces_are_measured_data():
     assert len(c["points_xyz_m"]) == len(c["widths_m"]) == d["summary"]["points"]
     assert 990.0 <= d["summary"]["length_m"] <= 1010.0                 # OSM: 568.3 + 432.8 m
     assert all(10.0 <= w <= 15.0 for w in c["widths_m"])
-    # round 4 (test_high_plains_round4.py) read the carried verge rows a second time: "measured_second_read"
-    assert {r["width"] for r in d["rows"]} == {"measured", "measured_second_read", "carried"}
+    # round 4 (test_high_plains_round4.py) read the carried verge rows a second time: "measured_second_read"; round 5
+    # (test_high_plains_round5.py) read the rest off the 2018 lidar ("measured_lidar") or found no edge there ("no_edge")
+    assert {r["width"] for r in d["rows"]} == {"measured", "measured_second_read", "measured_lidar", "no_edge"}
     lo, hi = d["summary"]["width_measured_m"][0], d["summary"]["width_measured_m"][-1]
     assert all(lo - 0.6 <= r["width_m"] <= hi + 0.6 for r in d["rows"] if r["width"] == "carried")
     lap = json.loads((HP / "data" / "gate_centerline.json").read_text(encoding="utf-8"))["points_xyz_m"]

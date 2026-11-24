@@ -4,14 +4,15 @@
 "length_m": 1001.0,
 "points": 502,
 "carried_width_m": 11.2,
-"measured_m": 960,
-"carried_m": 42,
+"measured_m": 968,
+"carried_m": 0,
+"no_edge_m": 34,
 "width_measured_m": [
 10.6,
 10.9,
 11.2,
 12.1,
-12.95
+12.93
 ],
 "centre_shift_m": [
 -2.6,
@@ -87,6 +88,62 @@
 1001.0
 ],
 "why": "the merge's mouth: the T13 kerb turns onto the West lap's edge"
+}
+]
+},
+"lidar_2018": {
+"_doc": "ledger 0097 round 5 (LIDAR_READ, NO_EDGE, LIDAR_OUTLINE): the 2018 lidar's intensity (../edges/r5_lidar_g10/carried_edges.json) where no photo read the edge; measured_m counts the rows it makes both-read, no_edge_m the rows with no edge of the line's own",
+"measured_m": 8,
+"per_side": {
+"left": {
+"rows_read": [
+254.0,
+256.0,
+258.0,
+260.0
+],
+"stations_m": 8,
+"along_m": 1.5
+}
+},
+"no_edge": [
+{
+"side": "right",
+"s": [
+0.0,
+19.0
+],
+"why": "the fork: one pavement with the West lap's; the gore's grass begins at its apex, own s 19.5 (carried_edges.json fork_r0_19.gore_nose); the cut at the FORK pad's box edge drops these rows"
+},
+{
+"side": "right",
+"s": [
+988.0,
+1001.0
+],
+"why": "the merge: the West lap's pavement runs on; the real edge on this side is the merge's west corner (carried_edges.json merge.rows, merge.west_corner), built as its corner return"
+}
+],
+"outline_rows": [
+{
+"side": "left",
+"row_s": 996.0,
+"off_osm_m": 5.51
+},
+{
+"side": "left",
+"row_s": 998.0,
+"off_osm_m": 5.65
+},
+{
+"side": "left",
+"row_s": 1000.0,
+"off_osm_m": 6.37
+},
+{
+"side": "left",
+"row_s": 1001.0,
+"off_osm_m": 6.77
 }
 ]
 }
@@ -702,82 +759,82 @@
 316.15
 ],
 [
--217.565,
+-217.564,
 -2.178,
 317.963
 ],
 [
--218.413,
+-218.411,
 -2.302,
-319.775
+319.776
 ],
 [
--219.263,
+-219.258,
 -2.426,
-321.586
+321.588
 ],
 [
--220.114,
+-220.105,
 -2.548,
-323.396
+323.401
 ],
 [
--220.969,
+-220.954,
 -2.671,
-325.205
+325.213
 ],
 [
--221.826,
+-221.803,
 -2.794,
-327.013
+327.024
 ],
 [
--222.684,
+-222.656,
 -2.916,
-328.82
+328.834
 ],
 [
--223.545,
+-223.513,
 -3.034,
-330.625
+330.642
 ],
 [
--224.407,
+-224.375,
 -3.148,
-332.431
+332.447
 ],
 [
--225.27,
+-225.241,
 -3.261,
-334.235
+334.25
 ],
 [
--226.134,
+-226.11,
 -3.375,
-336.039
+336.051
 ],
 [
--226.997,
+-226.98,
 -3.49,
-337.844
+337.852
 ],
 [
--227.858,
+-227.847,
 -3.605,
-339.65
+339.655
 ],
 [
--228.716,
+-228.711,
 -3.722,
-341.457
+341.459
 ],
 [
--229.572,
+-229.57,
 -3.84,
-343.265
+343.266
 ],
 [
--230.425,
+-230.424,
 -3.957,
 345.074
 ],
@@ -2733,15 +2790,15 @@
 10.836,
 10.936,
 11.032,
-11.115,
-11.158,
-11.17,
-11.164,
-11.155,
-11.146,
-11.12,
-11.102,
-11.078,
+11.082,
+11.112,
+11.119,
+11.105,
+11.095,
+11.107,
+11.1,
+11.091,
+11.075,
 11.059,
 11.009,
 11.0,
@@ -3243,15 +3300,15 @@
 4.868,
 4.918,
 4.966,
-5.008,
-5.029,
-5.035,
-5.032,
-5.027,
-5.023,
+4.991,
+5.006,
 5.01,
-5.001,
-4.989,
+5.003,
+4.998,
+5.003,
+5.0,
+4.995,
+4.987,
 4.979,
 4.955,
 4.95,
@@ -3751,15 +3808,15 @@
 -4.868,
 -4.918,
 -4.966,
--5.008,
--5.029,
--5.035,
--5.032,
--5.027,
--5.023,
+-4.991,
+-5.006,
 -5.01,
--5.001,
--4.989,
+-5.003,
+-4.998,
+-5.003,
+-5.0,
+-4.995,
+-4.987,
 -4.979,
 -4.955,
 -4.95,
@@ -4134,16 +4191,16 @@
 },
 "source": "OSM To Hell On A Bobsled (132189631) node 1454637759 -> 1454637958 + Ladder To Heaven (289314483) -> 1454637805 (osm_full_course.json); edges NAIP 2023 (0.3 m crop / z18 0.46 m) where read on both sides, else carried between the nearest rows that are, both run through a 10 m mean; heights 3DEP (corridor_3dep_north.json), 9 m mean (measure_north.py); paint: the mainline's edge lines (make_connectors.py)",
 "width_kind": [
-"carried",
-"carried",
-"carried",
-"carried",
-"carried",
-"carried",
-"carried",
-"carried",
-"carried",
-"carried",
+"no_edge",
+"no_edge",
+"no_edge",
+"no_edge",
+"no_edge",
+"no_edge",
+"no_edge",
+"no_edge",
+"no_edge",
+"no_edge",
 "measured",
 "measured",
 "measured",
@@ -4261,10 +4318,10 @@
 "measured_second_read",
 "measured_second_read",
 "measured_second_read",
-"carried",
-"carried",
-"carried",
-"carried",
+"measured_lidar",
+"measured_lidar",
+"measured_lidar",
+"measured_lidar",
 "measured_second_read",
 "measured_second_read",
 "measured_second_read",
@@ -4628,14 +4685,14 @@
 "measured",
 "measured",
 "measured",
-"carried",
-"carried",
-"carried",
-"carried",
-"carried",
-"carried",
-"carried",
-"carried"
+"no_edge",
+"no_edge",
+"no_edge",
+"no_edge",
+"no_edge",
+"no_edge",
+"no_edge",
+"no_edge"
 ]
 }
 ]

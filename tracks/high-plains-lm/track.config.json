@@ -4,7 +4,7 @@
   "name": "High Plains Raceway",
   "_name_doc": "Kevin 2026-11-07: \"Get rid of Lm Version from names, nothing should be on any other engine now\" / \"LM is the airoso engine\". 0.1.5 (2026-11-09): no \"(LM engine)\" in the display name, and the slug and install_folder are the plain high_plains. The old-engine track (tracks/high-plains) gave that slug up: its slug and folder are high_plains_v072 (S7, fleet.cli lint)",
   "slug": "high_plains",
-  "version": "0.1.12",
+  "version": "0.1.13",
   "mirror_x": false,
   "loop": true,
   "default_width_m": 12.0,
@@ -2966,14 +2966,21 @@
     "mouth_returns": [
       "full_north"
     ],
-    "mouth_radii_file": "source/edges/mouth_radii.naip.json",
+    "mouth_radii_file": "source/edges/mouth_radii.r5.json",
     "mouth_returns_measured_only": true,
     "verify_mouth_corners": true,
-    "_mouth_returns_doc": "ledger 0097 round 4 (item 2): the merge's bellmouth as a measured corner return (Sand Creek's, ledger 0086: tools/mouth_returns_blend.py, a circular return tangent to the West lap's and Ladder's pavement edges, the corner paved, the ground pinned; verify_mouth_corners judges it). The radii are read off NAIP 2023 (z18, 0.46 m) by tools/mouth_radii.py (source/edges/measure_merge_radii.py on an empty-workshop build of this branch -> source/edges/mouth_radii.naip.json): the WEST corner (the bellmouth, a 64.72 deg wedge) R 14.0 m (contrast 29.2, prominence 1.91); the EAST corner (behind the T13 kerb, 120.08 deg) NOT measured: fit at the grid's end (20.0 m) (the kerb's paint wraps it wider than the reader's 20 m grid). mouth_returns_measured_only (opt-in): the east corner is not built at the west's radius, so the fillet behind the T13 kerb stays owed"
+    "_mouth_returns_doc": "ledger 0097 round 4 (item 2): the merge's bellmouth as a measured corner return (Sand Creek's, ledger 0086: tools/mouth_returns_blend.py, a circular return tangent to the West lap's and Ladder's pavement edges, the corner paved, the ground pinned; verify_mouth_corners judges it). Round 5 (ledger 0097 round 5, items 1 and 4): BOTH corners at radii read off the 2018 lidar's intensity (source/edges/mouth_radii.r5.json from r5_lidar_g10/, the G10's hp_r5_lidar.py: the asphalt's edge traced round each corner every 1 deg, tools/mouth_radii.py's tangent-circle model): the EAST corner (the fillet behind the T13 kerb, owed since round 3) R 23.0 m (median deviation 0.13 m over 51 points; 21.25-23.0 m over other leg windows; the corner eases in, tightest 13.8 m mid-arc); its traced outline is not built as such because the return is a circular arc tangent to both built edges (stub_geom.return_stations) and takes no outline. The WEST corner R 6.75 m (5.0-7.25 m over other leg windows), replacing round 4's NAIP 14.0 m: on NAIP 2023 0.3 m the asphalt ends 0.47 m inside the 6.75 m arc and 4.20 m inside the 14.0 m one (p50 over 23 rays; source/edges/check_west_corner_r5.py -> west_corner_r5.json); the 14.0 m arc bounds a tan apron the photo reads as ground. mouth_returns_measured_only (opt-in, round 4) stays: both corners are measured now. mouth_radii.naip.json is kept as round 4's record"
+  },
+  "strip_seam": {
+    "scope": "local",
+    "connectors": true,
+    "_doc": "ledger 0097 round 5: Sand Creek's opt-ins (ledger 0086; tools/strip_seam_blend.py), no new code: the ground seamed along the north loop's two edge strips and every corner return's lip as the lap's strip is seamed (connectors, which needs the local scope: the same pokes and cuts a chunk of seam points at a time). The east corner's new return stood grass 1-11 mm over its strip on 14 of verify_mouth_corners' samples without it (teeth 3.55 % against the gate's 2.1 %): no ground triangle may span a return's lip"
   },
   "road_markings": {
     "gap_mouths": true,
-    "_gap_mouths_doc": "ledger 0097 round 4 (tools/gap_mouths_blend.py gap_paint, Sand Creek's, ledger 0086): the West lap's white edge line broken across the merge's opening, as NAIP 2023 0.3 m shows it (no edge line along the West's left edge across Ladder's mouth, L s 2,812-2,852), widened to the bellmouth return's tangent point; verify_mouth_corners' EDGE PAINT row judges it. High Plains' only mouth"
+    "_gap_mouths_doc": "ledger 0097 round 4 (tools/gap_mouths_blend.py gap_paint, Sand Creek's, ledger 0086): the West lap's white edge line broken across the merge's opening, as NAIP 2023 0.3 m shows it (no edge line along the West's left edge across Ladder's mouth, L s 2,812-2,852), widened to the bellmouth return's tangent point; verify_mouth_corners' EDGE PAINT row judges it. High Plains' only mouth",
+    "gap_mouths_street_lines": true,
+    "_gap_mouths_street_lines_doc": "ledger 0097 round 5 (opt-in, tools/gap_mouths_blend.py gap_street_paint): the north loop's own white edge lines end at each built corner return's tangent point on Ladder (data/mouth_returns.json B), not at the cut: NAIP 2023 0.3 m shows Ladder's edge lines ending where the asphalt starts to turn, within ~3 m of the lidar's tangent points on both corners; the rows between (north_loop.json R 988-1001 'no_edge', L 996-1001 the east corner's outline) carry no edge of their own"
   },
   "race_start": {
     "_doc": "ledger 0093 (Kevin 2026-11-18: \"for milford and high plains, we need more race track focused furniture like starting line, gridlines\"): the line, grid, pits and sectors the AC nodes stand on, placed on the prepped scene by tools/circuit_dummies_blend.py (scripts/geometry/circuit_start.py) in place of engine-july's rule set (its grid on the straightest 260 m: the south straight, s 1080; one AC_START; every node yawed from pts[0] -> pts[1], kn5 heading -0.97 at its AC_START_0). Judged in the road kn5 by scripts/ac/verify_kn5 race_start_checks",
@@ -3607,5 +3614,6 @@
     },
     "_deck_doc": "fill membrane (tools/lm_pads_blend.py, opt-in, ledger 0097 round 3): no lidar over either junction is on disk, so nothing measures the paving's height: the deck keeps the West lap's own ribbon surface (its 3DEP profile and lidar camber) and the arm's row exactly, and the paving between them (the fork's flare, the merge's bellmouth and inside corner, the arm's approach) is the smoothest surface that meets both [invented fill]. lane_lip route.edge: the lap's 0.3 m flat lip stays paved between the cuts (Sand Creek's)"
   },
-  "_doc_round4": "0.1.12 (ledger 0097 round 4): the north loop's kerbs measured and built on its own rows; its carried edges read a second time (150 m more measured); road wear's aerial a mosaic of the 0.3 m crop and the z18 photos over the north loop; the merge's west bellmouth a measured corner return (R 14.0 m off NAIP), the West's edge line broken across its opening; the traced white building a shed on the 2018 lidar's one plane (atlas_shed)"
+  "_doc_round4": "0.1.12 (ledger 0097 round 4): the north loop's kerbs measured and built on its own rows; its carried edges read a second time (150 m more measured); road wear's aerial a mosaic of the 0.3 m crop and the z18 photos over the north loop; the merge's west bellmouth a measured corner return (R 14.0 m off NAIP), the West's edge line broken across its opening; the traced white building a shed on the 2018 lidar's one plane (atlas_shed)",
+  "_doc_round5": "0.1.13 (ledger 0097 round 5): what NAIP left owed, read off the 2018 lidar's intensity (the G10, source/edges/r5_lidar_g10/): the merge's east fillet behind the T13 kerb built (R 23.0 m) and its west corner rebuilt at the lidar's R 6.75 m (the 2023 photo agrees; round 4's NAIP 14.0 m read a tan apron); the north loop's two blue / yellow stripes built (inner side the lidar's, outer side the built edge [invented], ends the 2023 photo's where readable); L s 254-260 seated on the lidar; the fork's R 0-19 and the merge's R 988-1001 no edge (one pavement), the street's edge lines ended at the corner returns"
 }

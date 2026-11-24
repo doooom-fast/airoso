@@ -63,7 +63,7 @@
       "source/edges/edge_evidence.json",
       "source/edges/kerbs.lm.json",
       "source/full/connectors.full.json",
-      "source/edges/mouth_radii.naip.json"
+      "source/edges/mouth_radii.r5.json"
     ],
     "optional": [
       "data/heightfield.npy",

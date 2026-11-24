@@ -16,9 +16,10 @@
   built    each run names its line, "line": "full_north#0#0" (the north loop as the chain's trim leaves it; opt-in in
            tools/author_kerbs_blend.py), and is laid as the lap's 20 are (kerb.placement "measured", the config's
            kerb.height_m 0.08 [invented] and end_ramp_m 4.0 [invented])
-NOT measured, so not built: the two blue / yellow edge stripes the strips show (L s 372-401, L s 648-682): flat stripes fail
+NOT measured here: the two blue / yellow edge stripes the strips show (L s 372-401, L s 648-682): flat stripes fail
 the block reader's bar (ledger 0081 round 3), and on the z18 photo their blue does not read as blue (kerb_spans: no paint in
-L s 372-401, 4 of 35 stations in L s 648-682).
+L s 372-401, 4 of 35 stations in L s 648-682). Round 5 measures them off the 2018 lidar (north_stripes_r5.py: the two runs
+with "profile": "paint" on this line); a run of this script keeps them.
 """
 import json
 import shutil
@@ -94,6 +95,8 @@ def main(repo: Path):
                       "--imagery", "mosaic", "--out", str(cout)])
             c = json.loads(cout.read_text(encoding="utf-8"))["kerbs"][0]
             colour[(sd, rng)] = {"in_m": c["in_m"], "out_m": c["out_m"], "stations": c["stations_measured"]}
+    K["kerbs"] = [r for r in K["kerbs"] if r.get("line") != LINE or r.get("profile") == "paint"]   # round 5's stripes stay
+    stripes = [r for r in K["kerbs"] if r.get("line") == LINE]
     K["kerbs"] = [r for r in K["kerbs"] if r.get("line") != LINE]
     for spec, r in zip(spans, runs):
         sd, rng = spec.split(":")[:2]
@@ -103,6 +106,7 @@ def main(repo: Path):
              "_source": ("ledger 0097 round 4: the north loop's own s (source/full/connectors.full.json), measured by "
                          "trace_north_kerbs.py (tools/kerb_offsets.py --follow 1 on road wear's mosaic)")}
         K["kerbs"].append(r)
+    K["kerbs"] += stripes                                          # after the kerbs, as north_stripes_r5.py writes them
     K["_doc_north"] = ("ledger 0097 round 4: runs with \"line\": \"full_north#0#0\" are the Full layout's north loop's kerbs "
                        "(trace_north_kerbs.py), keyed to that connector's rows by tools/author_kerbs_blend.py (opt-in)")
     (HERE / "kerbs.lm.json").write_text(json.dumps(K, indent=1, ensure_ascii=False), encoding="utf-8")

@@ -1,0 +1,56 @@
+{
+ "_doc": "ledger 0097 round 5 (items 1 and 4): the merge's two corner radii for route.mouth_returns (tools/mouth_returns_blend.py: a circular return tangent to the West lap's and Ladder's built pavement edges), both read off the 2018 lidar's intensity by the G10 (r5_lidar_g10/: hp_r5_lidar.py, the asphalt's edge round each corner every 1 deg; tools/mouth_radii.py's model: the circle tangent to both legs' lidar edges that best fits the outline's middle 70 %, R every 0.25 m). Round 4's NAIP reading (mouth_radii.naip.json) is kept beside it, superseded for both corners: the east corner ran to its 20 m grid's end there; the west corner's 14.0 m arc lies on a tan apron, not on the asphalt (check_west_corner_r5.py -> west_corner_r5.json)",
+ "source": "USGS 3DEP CO_Eastern_B3_2018 lidar (public domain), one flight line (1141), ~2 returns per m2: r5_lidar_g10/",
+ "corners": {
+  "full_north#0#0|end|+1": {
+   "_what": "the EAST corner, behind the T13 kerb (the fillet round 4 left owed)",
+   "radius_m": 23.0,
+   "measured": true,
+   "host": "MAINLINE",
+   "src": "lidar_2018",
+   "how": "the circle tangent to both legs' lidar edges (each a straight fit) that best fits the outline's middle ARC_MID (tools/mouth_radii.py's model, R every 0.25 m from 5 to 60 m)",
+   "median_dev_m": 0.128,
+   "points": 51,
+   "at_grid_end": false,
+   "arc_m": 29.09,
+   "phi_deg": 107.54,
+   "leg_windows_R_m": [
+    21.25,
+    23.0
+   ],
+   "free_circle_R_m": 21.37,
+   "tightest_along_m": 13.8,
+   "outline": "r5_lidar_g10/merge_east_fillet.json outline (113 rays every 1 deg). NOT built as such: route.mouth_returns builds a circular arc tangent to both built edges (stub_geom.return_stations) and takes no outline, so the tangent fit is used",
+   "naip_2023": {
+    "radius_m": 20.0,
+    "measured": false,
+    "why": "fit at the grid's end (20.0 m)"
+   }
+  },
+  "full_north#0#0|end|-1": {
+   "_what": "the WEST corner, the bellmouth round 4 built at NAIP's 14.0 m",
+   "radius_m": 6.75,
+   "measured": true,
+   "host": "MAINLINE",
+   "src": "lidar_2018",
+   "how": "the circle tangent to both legs' lidar edges (each a straight fit) that best fits the outline's middle ARC_MID (tools/mouth_radii.py's model, R every 0.25 m from 5 to 60 m)",
+   "median_dev_m": 0.17,
+   "points": 63,
+   "at_grid_end": false,
+   "arc_m": 10.66,
+   "phi_deg": 89.54,
+   "leg_windows_R_m": [
+    5.0,
+    6.75,
+    7.25
+   ],
+   "free_circle_R_m": 10.4,
+   "second_source": "NAIP 2023-09-28 0.3 m (the 2023 aerial; round 4's mosaic holds its pixels unchanged here): on 23 rays from the lidar's corner point across the wedge the photo's asphalt ends (groundness over the midpoint of the lane's and the prairie's medians, measure_pads' rule) 0.27-1.07 m inside the lidar's 6.75 m arc (p50 0.47 m) and 3.5-5.6 m inside the 14.0 m one (p50 4.20 m); between the two arcs the photo reads ground, not asphalt (groundness p50 33.3 against the lane's 13.0 and the prairie's 41.5): check_west_corner_r5.py -> west_corner_r5.json",
+   "naip_2023": {
+    "radius_m": 14.0,
+    "measured": true,
+    "what_it_read": "the tan apron's edge against the prairie, not the asphalt's"
+   }
+  }
+ }
+}

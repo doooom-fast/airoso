@@ -163,6 +163,9 @@ def main():
     bm.free()
     me.update()
     n_paint = gap_paint(proj, cfg, mouths, blocks, ret_paint) if (cfg.get("road_markings") or {}).get("gap_mouths") else None
+    if (cfg.get("road_markings") or {}).get("gap_mouths_street_lines") and ret_paint:
+        n_street = gap_street_paint(proj, ret_paint)
+        n_paint = n_street if n_paint is None else f"{n_paint}; {n_street}"
     bpy.ops.wm.save_mainfile(filepath=str(proj / "loop.blend"))
     print(f"[gap-mouths] deleted {len(doomed)} host curb/sidewalk faces across {len(mouths)} mouths"
           + (f"; {n_orph} street strip vertices the corner returns orphaned deleted" if orphans else "")
@@ -290,6 +293,100 @@ def gap_paint(proj, cfg, mouths, blocks, ret_paint):
     bm.free()
     ob.data.update()
     return f"the host's edge line broken at {n_mouth} mouth(s) ({n_del} paint faces inside the openings deleted)"
+
+
+def gap_street_paint(proj, ret_paint):
+    """road_markings.gap_mouths_street_lines (opt-in, ledger 0097 round 5; High Plains' merge): the STREET's own white edge
+    line ends at each built corner return's tangent point on the street (data/mouth_returns.json B), so it does not run on
+    across the corner's paving to the cut. NAIP 2023 0.3 m shows Ladder's edge lines ending where the asphalt starts to turn
+    (within ~3 m of the lidar's tangent points on both of the merge's corners). Per built corner: the MARKINGS faces in the
+    street's edge band on that corner's side (PAINT_BAND_M past the street's lane edge) whose long side runs with the street,
+    between the cut and B along the street, are cut exactly at B (bmesh bisect_plane, those faces only) and the pieces on the
+    cut's side deleted. The host's line (gap_paint) and the street's other line are untouched."""
+    ob = bpy.data.objects.get("MARKINGS")
+    if ob is None:
+        return "no MARKINGS object: no street line gapped"
+    conns = {c["name"]: c for c in json.loads((proj / "data" / "connectors.local.json").read_text(encoding="utf-8"))["connectors"]}
+    bm = bmesh.new()
+    bm.from_mesh(ob.data)
+    n_del = n_corner = 0
+    for (piece, end), m_ in sorted(ret_paint.items()):
+        c = conns.get(piece)
+        if c is None:
+            continue
+        pts = [tuple(p) for p in c["points_xyz_m"]]
+        wd = [float(w) for w in c["widths_m"]]
+        arc = mr.host_arcs(pts, len(pts), False)
+        total = arc[len(pts) - 1]
+
+        n_ = len(pts)
+        segs = list(range(max(0, n_ - 41), n_ - 1)) if end == "end" else list(range(0, min(40, n_ - 1)))
+        cut = pts[-1] if end == "end" else pts[0]
+
+        def frame(x, z, _p=pts, _w=wd, _a=arc, _t=total, _e=end, _s=segs):
+            pr = mr.project_polyline(_p, False, x, z, _s)
+            if pr is None:
+                return None
+            _d, q, t = pr
+            a, b = _p[q], _p[q + 1]
+            L = math.hypot(b[0] - a[0], b[2] - a[2]) or 1.0
+            tx, tz = (b[0] - a[0]) / L, (b[2] - a[2]) / L
+            lat = -tz * (x - a[0] - tx * L * t) + tx * (z - a[2] - tz * L * t)      # + = left of the street's travel
+            s_ = _a[q] + (_a[q + 1] - _a[q]) * t
+            w = _w[q] * (1 - t) + _w[q + 1] * t
+            return (_t - s_) if _e == "end" else s_, lat, w, (tx, tz)
+        for cr in m_.get("corners", []):
+            e = int(cr["e"])
+            fb = frame(cr["B"][0], cr["B"][1])
+            if fb is None:
+                continue
+            sB = fb[0]
+
+            reach = sB + 12.0
+
+            def cand(_reach=reach, _cut=cut):
+                out = []
+                for f in bm.faces:
+                    if not f.is_valid:
+                        continue
+                    ce = f.calc_center_median()
+                    if abs(ce.x - _cut[0]) > _reach or abs(ce.y - _cut[2]) > _reach:
+                        continue
+                    fr = frame(ce.x, ce.y)
+                    if fr is None or not (-1.0 <= fr[0] <= sB + 4.0):
+                        continue
+                    b_ = e * fr[1] - fr[2] / 2.0
+                    if not (PAINT_BAND_M[0] <= b_ <= PAINT_BAND_M[1]):
+                        continue
+                    ed = max(f.edges, key=lambda e_: e_.calc_length())
+                    d = ed.verts[1].co - ed.verts[0].co
+                    L = math.hypot(d.x, d.y) or 1.0
+                    if abs(d.x / L * fr[3][0] + d.y / L * fr[3][1]) < PAINT_PARALLEL:
+                        continue
+                    out.append((f, fr))
+                return out
+            got = cand()
+            if not got:
+                continue
+            f0, fr0 = min(got, key=lambda g: abs(g[1][0] - sB))
+            ce = f0.calc_center_median()
+            tx, tz = fr0[3]
+            sgn = -1.0 if end == "end" else 1.0            # arc from the cut runs against the street's travel at its end
+            co = ce.copy()
+            co.x += tx * sgn * (sB - fr0[0])
+            co.y += tz * sgn * (sB - fr0[0])
+            geom = [g for f_, _ in got if f_.is_valid for g in list(f_.verts) + list(f_.edges) + [f_]]
+            geom = list(dict.fromkeys(geom))
+            bmesh.ops.bisect_plane(bm, geom=geom, plane_co=co, plane_no=(tx, tz, 0.0), dist=1e-5)
+            doomed = [f for f, fr in cand() if fr[0] < sB - 1e-3]
+            if doomed:
+                bmesh.ops.delete(bm, geom=doomed, context="FACES")
+                n_del += len(doomed)
+                n_corner += 1
+    bm.to_mesh(ob.data)
+    bm.free()
+    ob.data.update()
+    return f"the street's edge line ended at {n_corner} corner return(s)' tangent point ({n_del} paint faces deleted)"
 
 
 main()

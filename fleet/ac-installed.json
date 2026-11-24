@@ -93,12 +93,12 @@
     "sand_creek_raceway": {
       "branch": "claude/sc-finish-r2-20261123",
       "engine": "lm-v4",
-      "installed": "2026-11-23",
-      "note": "0.2.10 = 0.2.9 + ledger 0098 round 2: the Northfield Quebec arms' ground on the lidar (three terrain.lidar_patches beside the arms + two opt-in lift zones under and beside the roads, never above the lidar or the lip; kn5_ground_check deck-vs-mountain 0.935 -> 0.288 m; sc_disconnects slab hang grid_primary_78 1.068 -> 0.465, grid_primary_84 1.033 -> 0.233); Quebec's 34.2 m flare off; SC-D56 back fwd only (6 sign posts, rev skipped); both lamp heads through lamp_heads (170 lamps, 340 lights); three held streets and E 56th on the lidar; TreeFX Oak3 / SycamoreV1-3 3,472 trees; install build = the PC rehearsal 0210c (492 / 492 gate rows, one timing figure apart; road / race / street kn5 equivalent, tangents only; closure and spawns byte-identical); OWED to 0.2.11: the median-nose dimple (the 0.465 m), name blade nb12 at Quebec, lamp post 105; the synced-back loop.blend NOT in git (LFS budget), kept in D:/k10-track-archive/2026-11-23_201558_sand_creek_0210_loop_blend (md5 d2569a44); 0.2.9 parked in D:/k10-track-archive/2026-11-23_201432; Kevin: \"I always want newer builds\" / \"When they're done, install them\"",
+      "installed": "2026-11-24",
+      "note": "0.2.11 = 0.2.10 + its three owed: the median-nose dimple (a pad-outline vertex the edge lift skipped, fixed in tools/ground_patch_blend.py; sc_disconnects slab hang grid_primary_78 0.465 -> 0.181 m, grid_primary_84 0.233 -> 0.161, no section-5 edge over 0.30 m; kn5_ground_check deck-vs-mountain 0.288 m), name blade nb12 back at 0.2.9's spot (23 blades), lamp post 105 left dropped (NAIP 2023: no pole there; 170 lamps); install build = the PC rehearsal 0211 (491 / 491 gate rows; road / race / street kn5 equivalent, tangents only; closure and spawns byte-identical); the install rerun of 2026-11-24 after the 11-23 power-off (the half-built workshop kept as D:/k10-scratch/sand_creek_lm.0.2.11_halfbuilt_20261123); loop.blend a record only, not in git (Kevin: \"Keep only builds apart\"), kept in D:/k10-track-archive/2026-11-24_141521_sand_creek_0211_loop_blend (md5 8e828f5e); 0.2.10 parked in D:/k10-track-archive/2026-11-24_141430; Kevin: \"I always want newer builds\" / \"When they're done, install them\"",
       "role": "current",
-      "sha": "1b3f9cef",
+      "sha": "727b3578",
       "track": "sand-creek-lm",
-      "version": "0.2.10"
+      "version": "0.2.11"
     }
   }
 }

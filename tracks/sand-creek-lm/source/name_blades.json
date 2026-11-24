@@ -1,5 +1,5 @@
 {
- "_doc": "MUTCD D3-1 street-name blades at Sand Creek's lap junctions (tools/name_blades.py; ledger 0079 round K). Names: OpenStreetMap `name`, abbreviated per MUTCD 1A.15; sizes MUTCD 2009 2D.43 / Table 2D-1; the corner, margins, border, length step, font and set-back AUTHORED (GATES-CHANGELOG 2026-11-05).",
+ "_doc": "MUTCD D3-1 street-name blades at Sand Creek's lap junctions (tools/name_blades.py; ledger 0079 round K). Names: OpenStreetMap `name`, abbreviated per MUTCD 1A.15; sizes MUTCD 2009 2D.43 / Table 2D-1; the corner, margins, border, length step, font and set-back AUTHORED (GATES-CHANGELOG 2026-11-05). HAND-SET (ledger 0098, Sand Creek 0.2.11): nb12's setback_m 10.58, not the generator's 2.1. Round 2 took Quebec's flare off, so the lap at v1942 is 17.25 m wide, not 34.2, and every spot of nb12's 6 m slide stood on the sandcreek_quebec deck (0.2.10 skipped it). 10.58 = 0.2.9's built spot (1809.22, -501.43), 13.5 m along and 19.2 m left of v1942, less the half-width 8.625. Keep it on a regeneration.",
  "mutcd": {
   "blade_h_in": 12.0,
   "cap_in": 6.0,
@@ -547,7 +547,7 @@
    "vertex": 1942,
    "side": "L",
    "along_m": 7.75,
-   "setback_m": 2.1,
+   "setback_m": 10.58,
    "lap_name": "Sand Creek Dr S",
    "cross_name": "N Northfield Quebec St",
    "osm_lap": "Sand Creek Drive South",

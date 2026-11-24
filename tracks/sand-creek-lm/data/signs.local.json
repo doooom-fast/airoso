@@ -15,7 +15,8 @@
   "plant_clear_m": 2.5,
   "kappa_window_m": 12,
   "hysteresis_stations": 6,
-  "pad_decks": true
+  "pad_decks": true,
+  "walk_built_only": true
  },
  "signs": [
   {
@@ -698,7 +699,7 @@
     -1354.631,
     152.796
    ],
-   "base_source": "mesh (no modelled walk (run 7.55) start, marched 0.00 m along the ray, slid 0.00 m along the curb)",
+   "base_source": "mesh (no modelled walk (run None) start, marched 0.00 m along the ray, slid 0.00 m along the curb)",
    "built": {
     "outside_edge_xz": [
      [
@@ -1141,15 +1142,13 @@
      65.99
     ],
     "len_mesh_m": 28.75,
-    "back_of_walk_m": 29.05,
-    "walk_run_m": 0.3,
-    "s_S_walk_m": 29.01,
-    "s_S_mesh_m": 30.36,
-    "marched_m": 1.35,
-    "beyond_walk": true
+    "no_walk": true,
+    "s_S_mesh_m": 30.38,
+    "marched_m": 0.0,
+    "beyond_walk": false
    },
    "base_xz": [
-    -747.466,
+    -747.446,
     66.023
    ],
    "curb_dir_xz": [
@@ -1160,7 +1159,7 @@
    "y_base": {
     "analytic": 22.321,
     "raycast": 22.0,
-    "source": "raycast (terrain behind the walk, -0.32 m vs the walk's analytic height)",
+    "source": "raycast (no modelled walk, -0.32 m vs a walk's analytic height)",
     "value": 22.0,
     "road_hit": null,
     "pushed_on_road_m": 0.0
@@ -1182,28 +1181,28 @@
    "om1_3": true,
    "checks": {
     "outside_cross": 15.7,
-    "edge_clear_m": 1.64,
-    "lamp_m": 29.12,
+    "edge_clear_m": 1.66,
+    "lamp_m": 29.14,
     "plant_m": Infinity,
     "plant_zone": "-",
     "pushed_m": 1.6,
     "slid_m": 0.0,
     "lateral_step_m": 0.0,
-    "gate_margin_m": 9.14,
-    "gate_margin_gated_m": 9.14,
+    "gate_margin_m": 9.16,
+    "gate_margin_gated_m": 9.16,
     "gate_ribbons": "all",
     "mouth_m": 14.7,
     "spawn_m": 680.9,
     "spawn": "AC_TIME_1_R@race",
     "warnings": [
-     "post stands 1.31 m behind the back of the modelled walk (marched for the built clearance/disc); ground = terrain ray-cast"
+     "no modelled curb+walk found along the ray; marched from the built curb face"
     ],
     "slid_polyline_m": 0.0,
-    "mesh_clear_m": 1.64,
+    "mesh_clear_m": 1.66,
     "mesh_clear_bearing_deg": 175,
-    "mesh_shift_m": 0.01,
-    "walk_behind_m": 1.31,
-    "wall_m": 10.5
+    "mesh_shift_m": 0.03,
+    "walk_behind_m": -0.25,
+    "wall_m": 10.52
    },
    "old_rule": {
     "rev1_xz": [
@@ -1225,10 +1224,10 @@
     66.021
    ],
    "base_xz_mesh": [
-    -747.466,
+    -747.446,
     66.023
    ],
-   "base_source": "mesh (walk fraction start, marched 1.35 m along the ray, slid 0.00 m along the curb)",
+   "base_source": "mesh (no modelled walk (run None) start, marched 0.00 m along the ray, slid 0.00 m along the curb)",
    "built": {
     "outside_edge_xz": [
      [
@@ -1485,12 +1484,12 @@
    },
    "blender": {
     "base_xyz_engine": [
-     -747.466,
+     -747.446,
      22.0,
      66.023
     ],
     "base_xyz_blender": [
-     -747.466,
+     -747.446,
      66.023,
      22.0
     ],
@@ -1502,82 +1501,82 @@
      {
       "front_xyz": [
        [
-        -747.5077,
-        24.1298,
+        -747.4877,
+        24.1302,
         66.6318
        ],
        [
-        -747.4843,
-        24.1298,
+        -747.4643,
+        24.1302,
         65.413
        ],
        [
-        -747.4843,
-        24.7398,
+        -747.4643,
+        24.7402,
         65.413
        ],
        [
-        -747.5077,
-        24.7398,
+        -747.4877,
+        24.7402,
         66.6318
        ]
       ],
       "back_xyz": [
        [
-        -747.5047,
-        24.1298,
+        -747.4847,
+        24.1302,
         66.6319
        ],
        [
-        -747.4813,
-        24.1298,
+        -747.4613,
+        24.1302,
         65.4131
        ],
        [
-        -747.4813,
-        24.7398,
+        -747.4613,
+        24.7402,
         65.4131
        ],
        [
-        -747.5047,
-        24.7398,
+        -747.4847,
+        24.7402,
         66.6319
        ]
       ],
       "arrow_xyz": [
        [
-        -747.5095,
-        24.4346,
+        -747.4895,
+        24.435,
         66.5175
        ],
        [
-        -747.5026,
-        24.6632,
+        -747.4826,
+        24.6636,
         66.1595
        ],
        [
-        -747.5029,
-        24.5191,
+        -747.4829,
+        24.5196,
         66.1747
        ],
        [
-        -747.4905,
-        24.5191,
+        -747.4705,
+        24.5196,
         65.5271
        ],
        [
-        -747.4905,
-        24.35,
+        -747.4705,
+        24.3505,
         65.5271
        ],
        [
-        -747.5029,
-        24.35,
+        -747.4829,
+        24.3505,
         66.1747
        ],
        [
-        -747.5026,
-        24.206,
+        -747.4826,
+        24.2064,
         66.1595
        ]
       ]
@@ -1586,27 +1585,555 @@
     "post": {
      "post_base_xyz": [
       [
-       -747.4405,
-       21.6998,
+       -747.4205,
+       21.7002,
        65.9985
       ],
       [
-       -747.4905,
-       21.6998,
+       -747.4705,
+       21.7002,
        65.9975
       ],
       [
-       -747.4915,
-       21.6998,
+       -747.4715,
+       21.7002,
        66.0475
       ],
       [
-       -747.4415,
-       21.6998,
+       -747.4215,
+       21.7002,
        66.0485
       ]
      ],
-     "post_top_y": 24.7898
+     "post_top_y": 24.7902
+    },
+    "meshes": {
+     "SIGNPLATE": "SIGNPLATE_0",
+     "SIGNARROW": "SIGNARROW_0",
+     "SIGNPOST": "SIGNPOST_0"
+    }
+   }
+  },
+  {
+   "id": "SC-D56-fwd",
+   "kind": "W1-6R",
+   "plate": "W1-6",
+   "layout": null,
+   "ribbon": "MAINLINE",
+   "direction": "fwd",
+   "corner": {
+    "apex_vertex": 779,
+    "apex_station_m": 2325,
+    "PC": 2303,
+    "PT": 2346,
+    "arc_m": 43,
+    "R_apex_m": 22.8,
+    "D_deg": -81.4,
+    "turn": "right",
+    "apex_xz": [
+     -899.24,
+     1111.98
+    ],
+    "second_arrow": false,
+    "R_at_PC_m": 62.4
+   },
+   "approach": {
+    "t_xz": [
+     -0.3919,
+     0.92
+    ],
+    "bearing_deg": 336.9,
+    "pca_vs_chord_deg": -3.28,
+    "w_app_m": 11.0,
+    "w_at_apex_m": 18.74,
+    "island_m": 0.0,
+    "lane_off_m": 2.75
+   },
+   "ray": {
+    "A_xz": [
+     -896.15,
+     1091.56
+    ],
+    "len_m": 43.75,
+    "C_xz": [
+     -913.29,
+     1131.81
+    ],
+    "exit_ribbon": "pad dahlia_56th",
+    "hw_at_exit_m": 0.0,
+    "sC_station": 2332,
+    "sC_rel_PC_m": 29,
+    "sC_rel_apex_m": 7,
+    "s_S_m": 45.37,
+    "C_mesh_xz": [
+     -913.3,
+     1131.81
+    ],
+    "len_mesh_m": 43.75,
+    "no_walk": true,
+    "s_S_mesh_m": 45.38,
+    "marched_m": 0.0,
+    "beyond_walk": false
+   },
+   "base_xz": [
+    -913.934,
+    1133.31
+   ],
+   "curb_dir_xz": [
+    0.6316,
+    0.7753
+   ],
+   "y_road_at_sC": 7.199,
+   "y_base": {
+    "analytic": 7.439,
+    "raycast": 6.925,
+    "source": "raycast (no modelled walk, -0.51 m vs a walk's analytic height)",
+    "value": 6.925,
+    "road_hit": null,
+    "pushed_on_road_m": 0.0
+   },
+   "face_dir_xz": [
+    0.3919,
+    -0.92
+   ],
+   "face_bearing_deg": 156.9,
+   "yaw_deg": -66.93,
+   "right_xz": [
+    0.92,
+    0.3919
+   ],
+   "arrow": "right",
+   "expect_arrow": null,
+   "lateral_offset_m": 1.63,
+   "height_m": 2.13,
+   "om1_3": true,
+   "checks": {
+    "outside_cross": 22.41,
+    "edge_clear_m": 1.64,
+    "lamp_m": 40.25,
+    "plant_m": Infinity,
+    "plant_zone": "-",
+    "pushed_m": 1.62,
+    "slid_m": 0.0,
+    "lateral_step_m": 0.0,
+    "gate_margin_m": 16.88,
+    "gate_margin_gated_m": 16.88,
+    "gate_ribbons": "all",
+    "mouth_m": 22.9,
+    "spawn_m": 414.3,
+    "spawn": "AC_TIME_1_L@race",
+    "warnings": [
+     "no modelled curb+walk found along the ray; marched from the built curb face"
+    ],
+    "slid_polyline_m": 0.0,
+    "mesh_clear_m": 1.64,
+    "mesh_clear_bearing_deg": 290,
+    "mesh_shift_m": 0.01,
+    "walk_behind_m": -0.25,
+    "wall_m": 13.82
+   },
+   "old_rule": {
+    "rev1_xz": [
+     -875.3,
+     1041.79
+    ],
+    "rev1": "k10-colorado 5b38b59: advance diamond ~52 m BEFORE the bend, outside, w/2+2.2",
+    "rev2_xz": [
+     -887.95,
+     1107.44
+    ],
+    "rev2": "k10-colorado e2334c9: at the apex, side flipped (= INSIDE on SD), flare w/2+2.8"
+   },
+   "overrides_applied": [],
+   "exclude_plant": null,
+   "where": "Dahlia St -> E 56th Ave (the dahlia_56th pad, unparked 2026-11-22)",
+   "base_xz_polyline": [
+    -913.928,
+    1133.297
+   ],
+   "base_xz_mesh": [
+    -913.934,
+    1133.31
+   ],
+   "base_source": "mesh (no modelled walk (run None) start, marched 0.00 m along the ray, slid 0.00 m along the curb)",
+   "built": {
+    "outside_edge_xz": [
+     [
+      -906.56,
+      1086.66
+     ],
+     [
+      -907.29,
+      1088.81
+     ],
+     [
+      -907.66,
+      1091.14
+     ],
+     [
+      -908.71,
+      1093.27
+     ],
+     [
+      -910.5,
+      1095.41
+     ],
+     [
+      -911.59,
+      1097.95
+     ],
+     [
+      -914.91,
+      1100.43
+     ],
+     [
+      -920.29,
+      1103.37
+     ],
+     [
+      -922.7,
+      1107.27
+     ],
+     [
+      -922.16,
+      1111.07
+     ],
+     [
+      -921.41,
+      1114.53
+     ],
+     [
+      -920.25,
+      1118.43
+     ],
+     [
+      -918.64,
+      1122.26
+     ],
+     [
+      -916.96,
+      1125.49
+     ],
+     [
+      -914.94,
+      1128.75
+     ],
+     [
+      -912.49,
+      1131.98
+     ],
+     [
+      -907.62,
+      1132.43
+     ],
+     [
+      -903.44,
+      1132.56
+     ],
+     [
+      -899.45,
+      1132.65
+     ],
+     [
+      -896.0,
+      1132.64
+     ],
+     [
+      -894.03,
+      1134.14
+     ],
+     [
+      -891.78,
+      1135.34
+     ],
+     [
+      -889.7,
+      1136.63
+     ],
+     [
+      -887.73,
+      1137.7
+     ],
+     [
+      -885.71,
+      1138.64
+     ],
+     [
+      -883.74,
+      1139.5
+     ],
+     [
+      -881.85,
+      1140.31
+     ],
+     [
+      -879.99,
+      1141.11
+     ],
+     [
+      -878.18,
+      1141.88
+     ],
+     [
+      -876.38,
+      1142.66
+     ],
+     [
+      -874.62,
+      1143.43
+     ]
+    ],
+    "back_of_walk_xz": [
+     [
+      -906.75,
+      1086.59
+     ],
+     [
+      -911.1,
+      1087.6
+     ],
+     [
+      -911.52,
+      1090.09
+     ],
+     [
+      -909.01,
+      1093.2
+     ],
+     [
+      -910.7,
+      1095.38
+     ],
+     [
+      -915.56,
+      1097.49
+     ],
+     [
+      -918.8,
+      1100.22
+     ],
+     [
+      -921.09,
+      1103.37
+     ],
+     [
+      -925.29,
+      1107.51
+     ],
+     [
+      -924.43,
+      1111.48
+     ],
+     [
+      -923.64,
+      1115.09
+     ],
+     [
+      -923.45,
+      1119.57
+     ],
+     [
+      -920.9,
+      1123.32
+     ],
+     [
+      -918.35,
+      1126.29
+     ],
+     [
+      -917.08,
+      1130.21
+     ],
+     [
+      -915.48,
+      1134.48
+     ],
+     [
+      -907.77,
+      1132.57
+     ],
+     [
+      -903.58,
+      1132.71
+     ],
+     [
+      -899.88,
+      1133.2
+     ],
+     [
+      -898.23,
+      1135.96
+     ],
+     [
+      -894.13,
+      1134.31
+     ],
+     [
+      -892.64,
+      1136.92
+     ],
+     [
+      -890.5,
+      1138.24
+     ],
+     [
+      -888.51,
+      1139.32
+     ],
+     [
+      -886.45,
+      1140.28
+     ],
+     [
+      -884.45,
+      1141.15
+     ],
+     [
+      -882.56,
+      1141.97
+     ],
+     [
+      -880.7,
+      1142.76
+     ],
+     [
+      -878.89,
+      1143.54
+     ],
+     [
+      -877.1,
+      1144.31
+     ],
+     [
+      -875.35,
+      1145.07
+     ]
+    ]
+   },
+   "blender": {
+    "base_xyz_engine": [
+     -913.934,
+     6.925,
+     1133.31
+    ],
+    "base_xyz_blender": [
+     -913.934,
+     1133.31,
+     6.925
+    ],
+    "plate_bottom_y": 9.055,
+    "plate_top_y": 9.665,
+    "post_base_y": 6.625,
+    "post_top_y": 9.715,
+    "plates": [
+     {
+      "front_xyz": [
+       [
+        -914.483,
+        9.0548,
+        1133.0435
+       ],
+       [
+        -913.3615,
+        9.0548,
+        1133.5213
+       ],
+       [
+        -913.3615,
+        9.6648,
+        1133.5213
+       ],
+       [
+        -914.483,
+        9.6648,
+        1133.0435
+       ]
+      ],
+      "back_xyz": [
+       [
+        -914.4842,
+        9.0548,
+        1133.0463
+       ],
+       [
+        -913.3627,
+        9.0548,
+        1133.524
+       ],
+       [
+        -913.3627,
+        9.6648,
+        1133.524
+       ],
+       [
+        -914.4842,
+        9.6648,
+        1133.0463
+       ]
+      ],
+      "arrow_xyz": [
+       [
+        -913.465,
+        9.3596,
+        1133.4728
+       ],
+       [
+        -913.7945,
+        9.5882,
+        1133.3325
+       ],
+       [
+        -913.7805,
+        9.4442,
+        1133.3384
+       ],
+       [
+        -914.3764,
+        9.4442,
+        1133.0846
+       ],
+       [
+        -914.3764,
+        9.275,
+        1133.0846
+       ],
+       [
+        -913.7805,
+        9.275,
+        1133.3384
+       ],
+       [
+        -913.7945,
+        9.131,
+        1133.3325
+       ]
+      ]
+     }
+    ],
+    "post": {
+     "post_base_xyz": [
+      [
+       -913.9208,
+       6.6248,
+       1133.3428
+      ],
+      [
+       -913.9012,
+       6.6248,
+       1133.2968
+      ],
+      [
+       -913.9472,
+       6.6248,
+       1133.2772
+      ],
+      [
+       -913.9668,
+       6.6248,
+       1133.3232
+      ]
+     ],
+     "post_top_y": 9.7148
     },
     "meshes": {
      "SIGNPLATE": "SIGNPLATE_0",
@@ -2722,22 +3249,6 @@
    ]
   },
   {
-   "id": "SC-D56-fwd",
-   "ribbon": "MAINLINE",
-   "apex_vertex": 779,
-   "apex_station_m": 2325,
-   "R_apex_m": 22.8,
-   "D_deg": -81.4,
-   "arc_m": 43,
-   "apex_xz": [
-    -899.2,
-    1112.0
-   ],
-   "reasons": [
-    "signs.json skip: both approaches (2026-11-23, PC). fwd (the T's top is Sand Creek's bank): place_signs' polyline stage stands the plate on the failed-turn ray 1.63 m (lateral_offset_m) past the built dahlia_56th deck's north edge, at (-913.928, 1133.297), where the built ground ray-casts 0.51 m under the road's height (6.92 vs 7.44); past GROUND_WARN_M 0.30 the post keeps a walk's analytic base and stands in the air (rehearsal 313fadd3, the spot pinned: verify_signs e_plate_height, f_post_sunk). Unpinned, the mesh stage's march stops 3.13 m from the deck, over the 3.0 m limit (rehearsal 2d26aabc); why its march starts 1.50 m further out is NOT proven (the reading: the pad's ground band past the deck edge taken for a walk). Every spot the rule allows is on the falling bank. In Free Roam the T also turns left onto E 56th west (grid_primary_35), a road the right arrow would point away from. Owed: the mesh stage's march and a post with no built walk under it on falling ground; when that lands, the corner comes back (fwd, the polyline spot above). rev: ledger 0079 round Q build rq1 (dahlia_56th unparked with lm_intake.corner_flare_off, as now): verify_signs FAILED M-c5-rev c_built_edge_clearance, the W1-6L plate at (-941.8, 1107.5). Reversed, the lap comes west on E 56th and turns left onto Dahlia; straight on runs across the pad's measured deck into E 56th west (grid_primary_35, a through street the sign field does not hold: include_connectors false), and the failed-turn rule stood the plate on that street's pavement. As SC-48S rev: no race layout drives rev, and in Free Roam the arrow would point away from a road a driver may take"
-   ]
-  },
-  {
    "id": "M-c6-fwd",
    "ribbon": "MAINLINE",
    "apex_vertex": 853,
@@ -2933,7 +3444,7 @@
     1112.0
    ],
    "reasons": [
-    "signs.json skip: both approaches (2026-11-23, PC). fwd (the T's top is Sand Creek's bank): place_signs' polyline stage stands the plate on the failed-turn ray 1.63 m (lateral_offset_m) past the built dahlia_56th deck's north edge, at (-913.928, 1133.297), where the built ground ray-casts 0.51 m under the road's height (6.92 vs 7.44); past GROUND_WARN_M 0.30 the post keeps a walk's analytic base and stands in the air (rehearsal 313fadd3, the spot pinned: verify_signs e_plate_height, f_post_sunk). Unpinned, the mesh stage's march stops 3.13 m from the deck, over the 3.0 m limit (rehearsal 2d26aabc); why its march starts 1.50 m further out is NOT proven (the reading: the pad's ground band past the deck edge taken for a walk). Every spot the rule allows is on the falling bank. In Free Roam the T also turns left onto E 56th west (grid_primary_35), a road the right arrow would point away from. Owed: the mesh stage's march and a post with no built walk under it on falling ground; when that lands, the corner comes back (fwd, the polyline spot above). rev: ledger 0079 round Q build rq1 (dahlia_56th unparked with lm_intake.corner_flare_off, as now): verify_signs FAILED M-c5-rev c_built_edge_clearance, the W1-6L plate at (-941.8, 1107.5). Reversed, the lap comes west on E 56th and turns left onto Dahlia; straight on runs across the pad's measured deck into E 56th west (grid_primary_35, a through street the sign field does not hold: include_connectors false), and the failed-turn rule stood the plate on that street's pavement. As SC-48S rev: no race layout drives rev, and in Free Roam the arrow would point away from a road a driver may take"
+    "signs.json skip: rev (ledger 0079 round Q build rq1; again rehearsal 0210, 2026-11-23): reversed, the lap comes west on E 56th and turns left onto Dahlia; straight on runs across the dahlia_56th pad's measured deck into E 56th west (grid_primary_35, a through street the sign field does not hold: include_connectors false), and the failed-turn rule stands the plate off that street: verify_signs c_built_edge_clearance (the scan's 1.619 m, but the lap's outside-edge polyline, which the pad replaced here, 11.12 m away). As SC-48S rev: no race layout drives rev, and in Free Roam a left arrow there would point away from a road a driver may take. Owed until the sign field holds grid_primary_35 or the polyline check reads the pad's outline."
    ]
   },
   {
@@ -3038,9 +3549,9 @@
   "SC-48C-fwd@race"
  ],
  "counts": {
-  "placed": 5,
-  "plates": 5,
-  "skipped": 19,
+  "placed": 6,
+  "plates": 6,
+  "skipped": 18,
   "layout_plates": 2
  },
  "blender": {
@@ -3125,14 +3636,14 @@
    ]
   },
   "vertices": {
-   "SIGNPLATE": 40,
-   "SIGNARROW": 115,
-   "SIGNPOST": 140
+   "SIGNPLATE": 48,
+   "SIGNARROW": 138,
+   "SIGNPOST": 168
   },
   "faces": {
-   "SIGNPLATE": 20,
-   "SIGNARROW": 65,
-   "SIGNPOST": 70
+   "SIGNPLATE": 24,
+   "SIGNARROW": 78,
+   "SIGNPOST": 84
   },
   "normal_mismatches": 0,
   "ground_warnings": 0,

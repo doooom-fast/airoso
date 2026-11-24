@@ -1015,7 +1015,7 @@
    "side": 1,
    "host_vertex": 8,
    "angle_deg": 88.58,
-   "host_grade": -0.00167,
+   "host_grade": -0.02901,
    "rows_respread": 2,
    "rows_touched": 14,
    "markings_moved": 232,
@@ -1033,14 +1033,14 @@
     "curb-1+3": 0.454
    },
    "end_dy_m": [
-    0.013,
-    0.033,
-    0.081
+    -0.135,
+    -0.024,
+    0.052
    ],
    "end_vs_host_before_m": [
-    -0.013,
-    -0.033,
-    -0.081
+    0.135,
+    0.024,
+    -0.052
    ],
    "end_vs_host_after_max_m": 0.0,
    "above_host_after": [],
@@ -1110,14 +1110,14 @@
     "curb-1+3": 0.484
    },
    "end_dy_m": [
-    0.01,
-    0.004,
-    0.007
+    0.016,
+    0.012,
+    0.03
    ],
    "end_vs_host_before_m": [
-    -0.01,
-    -0.004,
-    -0.007
+    -0.016,
+    -0.012,
+    -0.03
    ],
    "end_vs_host_after_max_m": 0.0,
    "above_host_after": [],
@@ -1208,7 +1208,7 @@
    "side": 1,
    "host_vertex": 294,
    "angle_deg": 88.67,
-   "host_grade": -0.009,
+   "host_grade": -0.016,
    "rows_respread": 2,
    "rows_touched": 10,
    "markings_moved": 152,
@@ -1226,14 +1226,14 @@
     "curb-1+3": 0.472
    },
    "end_dy_m": [
-    -0.04,
-    -0.001,
-    0.036
+    -0.038,
+    0.004,
+    0.044
    ],
    "end_vs_host_before_m": [
-    0.04,
-    0.001,
-    -0.036
+    0.038,
+    -0.004,
+    -0.044
    ],
    "end_vs_host_after_max_m": 0.0,
    "above_host_after": [],
@@ -1677,7 +1677,7 @@
    "side": -1,
    "host_vertex": 258,
    "angle_deg": 84.26,
-   "host_grade": 0.00633,
+   "host_grade": 0.01033,
    "rows_respread": 3,
    "rows_touched": 11,
    "markings_moved": 188,
@@ -1695,13 +1695,13 @@
     "curb-1+3": 1.301
    },
    "end_dy_m": [
-    -0.044,
-    0.003,
-    0.055
+    -0.042,
+    0.001,
+    0.038
    ],
    "end_vs_host_before_m": [
-    -0.003,
-    -0.055
+    -0.001,
+    -0.038
    ],
    "end_vs_host_after_max_m": 0.0,
    "above_host_after": [],
@@ -1715,7 +1715,7 @@
    "side": 1,
    "host_vertex": 258,
    "angle_deg": 79.95,
-   "host_grade": 0.0048,
+   "host_grade": 0.00436,
    "rows_respread": 3,
    "rows_touched": 11,
    "markings_moved": 200,
@@ -1733,14 +1733,14 @@
     "curb-1+3": -0.083
    },
    "end_dy_m": [
-    -0.051,
-    -0.001,
-    0.049
+    -0.047,
+    -0.0,
+    0.038
    ],
    "end_vs_host_before_m": [
-    0.05,
-    0.001,
-    -0.049
+    0.046,
+    0.0,
+    -0.038
    ],
    "end_vs_host_after_max_m": 0.0,
    "above_host_after": [],
@@ -1792,7 +1792,7 @@
    "side": -1,
    "host_vertex": 396,
    "angle_deg": 84.77,
-   "host_grade": 0.00967,
+   "host_grade": 0.00467,
    "rows_respread": 3,
    "rows_touched": 11,
    "markings_moved": 168,
@@ -1810,13 +1810,13 @@
     "curb-1+3": 1.189
    },
    "end_dy_m": [
-    -0.056,
-    -0.014,
-    0.005
+    -0.034,
+    0.032,
+    0.099
    ],
    "end_vs_host_before_m": [
-    0.014,
-    -0.005
+    -0.032,
+    -0.098
    ],
    "end_vs_host_after_max_m": 0.0,
    "above_host_after": [],
@@ -1830,7 +1830,7 @@
    "side": -1,
    "host_vertex": 430,
    "angle_deg": 81.16,
-   "host_grade": 0.00067,
+   "host_grade": 0.005,
    "rows_respread": 3,
    "rows_touched": 11,
    "markings_moved": 168,
@@ -1848,13 +1848,13 @@
     "curb-1+3": 1.273
    },
    "end_dy_m": [
-    -0.024,
-    -0.015,
-    -0.034
+    0.001,
+    -0.006,
+    -0.025
    ],
    "end_vs_host_before_m": [
-    0.015,
-    0.034
+    0.006,
+    0.024
    ],
    "end_vs_host_after_max_m": 0.0,
    "above_host_after": [],
@@ -1868,7 +1868,7 @@
    "side": -1,
    "host_vertex": 465,
    "angle_deg": 82.88,
-   "host_grade": -0.00533,
+   "host_grade": -0.02433,
    "rows_respread": 3,
    "rows_touched": 12,
    "markings_moved": 184,
@@ -1886,13 +1886,13 @@
     "curb-1+3": 1.304
    },
    "end_dy_m": [
-    0.006,
-    -0.008,
-    -0.034
+    0.064,
+    0.025,
+    -0.01
    ],
    "end_vs_host_before_m": [
-    0.008,
-    0.033
+    -0.025,
+    0.009
    ],
    "end_vs_host_after_max_m": 0.0,
    "above_host_after": [],
@@ -5578,6 +5578,6 @@
    "paint_verts_moved": 0
   }
  },
- "ridge_diagonals_turned": 1234,
+ "ridge_diagonals_turned": 1241,
  "island_points_moved": 0
 }

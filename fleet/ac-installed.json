@@ -91,14 +91,14 @@
       "version": "0.20.6"
     },
     "sand_creek_raceway": {
-      "branch": "claude/sc-finish-0209-20261122",
+      "branch": "claude/sc-finish-r2-20261123",
       "engine": "lm-v4",
       "installed": "2026-11-23",
-      "note": "0.2.9 = 0.2.8 + ledger 0098 round 1 (the map-edge cut reached: E 56th Ave and its 13 mouths, Northfield Quebec walked onto the lap; the one-sided measured flares; both heads of the two-arm lamps lit, 342 lights; the owned asphalt and concrete) + the PC's pads (sandcreek_quebec and dahlia_56th unparked; ground_on_mesh for Quebec; SC-D56 skipped, 5 sign posts; ai.fillet_split); TreeFX Oak3 / SycamoreV1-3 3,472 trees; install build = the PC rehearsal 0209e (345 / 345 gate rows, road / race / street kn5 equivalent, tangents only); KNOWN DEFECT: the sandcreek_quebec deck edge hangs up to 0.935 m over the grass on the Northfield Quebec arms (round 2); 0.2.8 parked in D:/k10-track-archive/2026-11-23_074151; Kevin: \"I always want newer builds\" / \"When they're done, install them\"",
+      "note": "0.2.10 = 0.2.9 + ledger 0098 round 2: the Northfield Quebec arms' ground on the lidar (three terrain.lidar_patches beside the arms + two opt-in lift zones under and beside the roads, never above the lidar or the lip; kn5_ground_check deck-vs-mountain 0.935 -> 0.288 m; sc_disconnects slab hang grid_primary_78 1.068 -> 0.465, grid_primary_84 1.033 -> 0.233); Quebec's 34.2 m flare off; SC-D56 back fwd only (6 sign posts, rev skipped); both lamp heads through lamp_heads (170 lamps, 340 lights); three held streets and E 56th on the lidar; TreeFX Oak3 / SycamoreV1-3 3,472 trees; install build = the PC rehearsal 0210c (492 / 492 gate rows, one timing figure apart; road / race / street kn5 equivalent, tangents only; closure and spawns byte-identical); OWED to 0.2.11: the median-nose dimple (the 0.465 m), name blade nb12 at Quebec, lamp post 105; the synced-back loop.blend NOT in git (LFS budget), kept in D:/k10-track-archive/2026-11-23_201558_sand_creek_0210_loop_blend (md5 d2569a44); 0.2.9 parked in D:/k10-track-archive/2026-11-23_201432; Kevin: \"I always want newer builds\" / \"When they're done, install them\"",
       "role": "current",
-      "sha": "5a8e2c05",
+      "sha": "1b3f9cef",
       "track": "sand-creek-lm",
-      "version": "0.2.9"
+      "version": "0.2.10"
     }
   }
 }

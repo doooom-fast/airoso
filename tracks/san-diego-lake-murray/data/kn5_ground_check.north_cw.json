@@ -34,8 +34,8 @@
  "lamp_heads": 781,
  "lamp_orphans": 0,
  "road_over_ground": {
-  "over": 43,
-  "samples": 10900,
+  "over": 58,
+  "samples": 11641,
   "p95_m": 0.022,
   "max_m": 0.313
  }

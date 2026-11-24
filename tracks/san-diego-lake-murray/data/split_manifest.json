@@ -4,7 +4,7 @@
   "loop_main.blend": {
    "objects": 129,
    "meshes": 129,
-   "positions": 1035805,
+   "positions": 1035394,
    "max_positions": 62338,
    "materials": [
     "1GRASS_0_mat",
@@ -761,8 +761,8 @@
   "loop_street.blend": {
    "objects": 2,
    "meshes": 2,
-   "positions": 38459,
-   "max_positions": 26142,
+   "positions": 38714,
+   "max_positions": 26397,
    "materials": [
     "YLINE_0_mat",
     "YLINE_1_mat"
@@ -1098,7 +1098,7 @@
  "input_census": {
   "objects": 239,
   "meshes": 239,
-  "positions": 1450102,
+  "positions": 1449946,
   "max_positions": 62338,
   "materials": [
    "1GRASS_0_mat",

@@ -502,13 +502,13 @@
    "connector_width_m": 9.5,
    "cut_xyz": [
     1642.498,
-    27.067,
+    27.149,
     -794.895
    ],
    "host_seg": 8,
    "host_t": 0.0361,
    "angle_deg": 88.58,
-   "host_grade": -0.00167,
+   "host_grade": -0.02901,
    "piece": "grid_primary_73#0",
    "end": "end",
    "weld_runon": "mitre"
@@ -540,7 +540,7 @@
    "connector_width_m": 10.0,
    "cut_xyz": [
     846.272,
-    34.405,
+    34.357,
     -935.284
    ],
    "host_seg": 287,
@@ -603,7 +603,7 @@
    "host_seg": 293,
    "host_t": 0.9664,
    "angle_deg": 88.67,
-   "host_grade": -0.009,
+   "host_grade": -0.016,
    "piece": "grid_residential_19#0#0",
    "end": "end",
    "weld_runon": "mitre"
@@ -825,13 +825,13 @@
    "connector_width_m": 10.0,
    "cut_xyz": [
     -758.277,
-    27.649,
+    27.611,
     -752.669
    ],
    "host_seg": 258,
    "host_t": 0.1469,
    "angle_deg": 84.26,
-   "host_grade": 0.00633,
+   "host_grade": 0.01033,
    "piece": "grid_tertiary_68#0#0",
    "end": "end",
    "weld_runon": "mitre"
@@ -844,13 +844,13 @@
    "connector_width_m": 10.0,
    "cut_xyz": [
     -758.349,
-    27.642,
+    27.603,
     -743.846
    ],
    "host_seg": 257,
    "host_t": 0.6642,
    "angle_deg": 79.95,
-   "host_grade": 0.0048,
+   "host_grade": 0.00436,
    "piece": "grid_tertiary_68#0#1",
    "end": "start",
    "weld_runon": "mitre"
@@ -882,13 +882,13 @@
    "connector_width_m": 8.0,
    "cut_xyz": [
     -357.353,
-    28.147,
+    28.092,
     -848.069
    ],
    "host_seg": 395,
    "host_t": 0.809,
    "angle_deg": 84.77,
-   "host_grade": 0.00967,
+   "host_grade": 0.00467,
    "piece": "grid_unclassified_83#0",
    "end": "end",
    "weld_runon": "mitre"
@@ -901,13 +901,13 @@
    "connector_width_m": 8.0,
    "cut_xyz": [
     -258.051,
-    28.502,
+    28.39,
     -873.53
    ],
    "host_seg": 429,
    "host_t": 0.9968,
    "angle_deg": 81.16,
-   "host_grade": 0.00067,
+   "host_grade": 0.005,
    "piece": "grid_unclassified_90#0",
    "end": "end",
    "weld_runon": "mitre"
@@ -920,13 +920,13 @@
    "connector_width_m": 8.0,
    "cut_xyz": [
     -156.841,
-    28.365,
+    28.459,
     -896.864
    ],
    "host_seg": 464,
    "host_t": 0.5981,
    "angle_deg": 82.88,
-   "host_grade": -0.00533,
+   "host_grade": -0.02433,
    "piece": "grid_unclassified_100#0",
    "end": "end",
    "weld_runon": "mitre"

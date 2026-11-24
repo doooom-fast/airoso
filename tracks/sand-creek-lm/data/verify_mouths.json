@@ -1487,15 +1487,15 @@
    "notch": {
     "samples": 34,
     "fail": 0,
-    "max_dev_m": 0.009,
+    "max_dev_m": 0.008,
     "worst": []
    },
    "approach": {
     "lines": {
      "-3.75": {
-      "max_dg_per_m": 0.0081,
+      "max_dg_per_m": 0.0075,
       "at_m": 0.75,
-      "max_dg_per_m_1m": 0.0183,
+      "max_dg_per_m_1m": 0.0168,
       "at_m_1m": 1.5,
       "unmeasured": 1,
       "holes": 6,
@@ -1503,9 +1503,9 @@
       "grass_unmeasured_folded": 6
      },
      "+0.00": {
-      "max_dg_per_m": 0.0073,
+      "max_dg_per_m": 0.0069,
       "at_m": -0.5,
-      "max_dg_per_m_1m": 0.0185,
+      "max_dg_per_m_1m": 0.0174,
       "at_m_1m": 0.25,
       "unmeasured": 0,
       "holes": 1,
@@ -1513,9 +1513,9 @@
       "grass_unmeasured_folded": 0
      },
      "+3.75": {
-      "max_dg_per_m": 0.0063,
+      "max_dg_per_m": 0.006,
       "at_m": -1.75,
-      "max_dg_per_m_1m": 0.0151,
+      "max_dg_per_m_1m": 0.0143,
       "at_m_1m": -1.0,
       "unmeasured": 0,
       "holes": 0,
@@ -1523,8 +1523,8 @@
       "grass_unmeasured_folded": 8
      }
     },
-    "max_dg_per_m": 0.0081,
-    "max_dg_per_m_1m": 0.0185,
+    "max_dg_per_m": 0.0075,
+    "max_dg_per_m_1m": 0.0174,
     "wheelbase_m": 2.5,
     "grass_on_road": 0
    },
@@ -2459,15 +2459,15 @@
    "mouth_line": {
     "samples": 34,
     "fail": 0,
-    "max_dev_m": 0.006,
+    "max_dev_m": 0.014,
     "no_road": 0,
     "worst": [
-     -4.13,
-     1643.19,
-     -790.95,
+     -3.15,
+     1643.07,
+     -791.93,
      [
-      -0.006,
-      -0.006
+      -0.004,
+      -0.014
      ]
     ]
    },
@@ -2482,25 +2482,25 @@
    "notch": {
     "samples": 34,
     "fail": 0,
-    "max_dev_m": 0.009,
+    "max_dev_m": 0.018,
     "worst": []
    },
    "approach": {
     "lines": {
      "-3.75": {
-      "max_dg_per_m": 0.0022,
-      "at_m": 24.25,
-      "max_dg_per_m_1m": 0.0052,
-      "at_m_1m": 23.5,
+      "max_dg_per_m": 0.0036,
+      "at_m": -0.5,
+      "max_dg_per_m_1m": 0.0076,
+      "at_m_1m": -0.5,
       "unmeasured": 31,
       "holes": 0,
       "grass_on_road": [],
       "grass_unmeasured_folded": 14
      },
      "+0.00": {
-      "max_dg_per_m": 0.0034,
+      "max_dg_per_m": 0.0038,
       "at_m": 18.75,
-      "max_dg_per_m_1m": 0.0069,
+      "max_dg_per_m_1m": 0.0079,
       "at_m_1m": 18.0,
       "unmeasured": 0,
       "holes": 0,
@@ -2508,9 +2508,9 @@
       "grass_unmeasured_folded": 0
      },
      "+3.75": {
-      "max_dg_per_m": 0.0234,
-      "at_m": 11.75,
-      "max_dg_per_m_1m": 0.0117,
+      "max_dg_per_m": 0.0246,
+      "at_m": 20.0,
+      "max_dg_per_m_1m": 0.0154,
       "at_m_1m": 0.75,
       "unmeasured": 31,
       "holes": 0,
@@ -2518,8 +2518,8 @@
       "grass_unmeasured_folded": 10
      }
     },
-    "max_dg_per_m": 0.0234,
-    "max_dg_per_m_1m": 0.0117,
+    "max_dg_per_m": 0.0246,
+    "max_dg_per_m_1m": 0.0154,
     "wheelbase_m": 2.5,
     "grass_on_road": 0
    },
@@ -2639,15 +2639,15 @@
    "mouth_line": {
     "samples": 36,
     "fail": 0,
-    "max_dev_m": 0.002,
+    "max_dev_m": 0.003,
     "no_road": 0,
     "worst": [
-     1.91,
-     848.06,
-     -935.04,
+     3.14,
+     849.29,
+     -935.01,
      [
       -0.0,
-      0.002
+      0.003
      ]
     ]
    },
@@ -2662,25 +2662,25 @@
    "notch": {
     "samples": 36,
     "fail": 0,
-    "max_dev_m": 0.003,
+    "max_dev_m": 0.004,
     "worst": []
    },
    "approach": {
     "lines": {
      "-4.00": {
-      "max_dg_per_m": 0.0016,
-      "at_m": 26.0,
-      "max_dg_per_m_1m": 0.0035,
-      "at_m_1m": 25.5,
+      "max_dg_per_m": 0.0017,
+      "at_m": -0.75,
+      "max_dg_per_m_1m": 0.0041,
+      "at_m_1m": 0.0,
       "unmeasured": 0,
       "holes": 0,
       "grass_on_road": [],
       "grass_unmeasured_folded": 0
      },
      "+0.00": {
-      "max_dg_per_m": 0.0016,
+      "max_dg_per_m": 0.0017,
       "at_m": 26.0,
-      "max_dg_per_m_1m": 0.0036,
+      "max_dg_per_m_1m": 0.0039,
       "at_m_1m": 25.5,
       "unmeasured": 0,
       "holes": 0,
@@ -2688,9 +2688,9 @@
       "grass_unmeasured_folded": 0
      },
      "+4.00": {
-      "max_dg_per_m": 0.0016,
-      "at_m": 25.75,
-      "max_dg_per_m_1m": 0.0035,
+      "max_dg_per_m": 0.0017,
+      "at_m": 26.0,
+      "max_dg_per_m_1m": 0.0038,
       "at_m_1m": 25.5,
       "unmeasured": 0,
       "holes": 0,
@@ -2698,8 +2698,8 @@
       "grass_unmeasured_folded": 0
      }
     },
-    "max_dg_per_m": 0.0016,
-    "max_dg_per_m_1m": 0.0036,
+    "max_dg_per_m": 0.0017,
+    "max_dg_per_m_1m": 0.0041,
     "wheelbase_m": 2.5,
     "grass_on_road": 0
    },
@@ -2909,15 +2909,15 @@
    "mouth_line": {
     "samples": 27,
     "fail": 0,
-    "max_dev_m": 0.001,
+    "max_dev_m": 0.002,
     "no_road": 0,
     "worst": [
-     3.24,
-     995.06,
-     1320.98,
+     -2.75,
+     1001.06,
+     1321.03,
      [
-      -0.0,
-      -0.001
+      0.0,
+      -0.002
      ]
     ]
    },
@@ -2932,15 +2932,15 @@
    "notch": {
     "samples": 27,
     "fail": 0,
-    "max_dev_m": 0.003,
+    "max_dev_m": 0.004,
     "worst": []
    },
    "approach": {
     "lines": {
      "-3.00": {
-      "max_dg_per_m": 0.0054,
+      "max_dg_per_m": 0.0055,
       "at_m": 17.5,
-      "max_dg_per_m_1m": 0.0124,
+      "max_dg_per_m_1m": 0.0125,
       "at_m_1m": 18.25,
       "unmeasured": 0,
       "holes": 0,
@@ -2958,9 +2958,9 @@
       "grass_unmeasured_folded": 0
      },
      "+3.00": {
-      "max_dg_per_m": 0.0053,
+      "max_dg_per_m": 0.0054,
       "at_m": 18.75,
-      "max_dg_per_m_1m": 0.0126,
+      "max_dg_per_m_1m": 0.0128,
       "at_m_1m": 18.25,
       "unmeasured": 0,
       "holes": 0,
@@ -2968,8 +2968,8 @@
       "grass_unmeasured_folded": 0
      }
     },
-    "max_dg_per_m": 0.0054,
-    "max_dg_per_m_1m": 0.0126,
+    "max_dg_per_m": 0.0055,
+    "max_dg_per_m_1m": 0.0128,
     "wheelbase_m": 2.5,
     "grass_on_road": 0
    },
@@ -3994,12 +3994,12 @@
     "max_dev_m": 0.002,
     "no_road": 0,
     "worst": [
-     2.83,
-     -755.51,
-     -753.4,
+     -3.37,
+     -761.79,
+     -752.33,
      [
-      0.0,
-      0.002
+      -0.0,
+      -0.002
      ]
     ]
    },
@@ -4008,7 +4008,7 @@
     "road_kerb_above": 0,
     "grass_at_or_above": 0,
     "max_above_m": 0.0,
-    "max_grass_m": -0.019,
+    "max_grass_m": -0.02,
     "worst": []
    },
    "notch": {
@@ -4020,9 +4020,9 @@
    "approach": {
     "lines": {
      "-4.00": {
-      "max_dg_per_m": 0.002,
+      "max_dg_per_m": 0.0018,
       "at_m": 20.25,
-      "max_dg_per_m_1m": 0.005,
+      "max_dg_per_m_1m": 0.0043,
       "at_m_1m": 20.75,
       "unmeasured": 0,
       "holes": 0,
@@ -4030,9 +4030,9 @@
       "grass_unmeasured_folded": 0
      },
      "+0.00": {
-      "max_dg_per_m": 0.0015,
+      "max_dg_per_m": 0.0014,
       "at_m": 20.25,
-      "max_dg_per_m_1m": 0.0035,
+      "max_dg_per_m_1m": 0.0031,
       "at_m_1m": 20.75,
       "unmeasured": 0,
       "holes": 0,
@@ -4040,9 +4040,9 @@
       "grass_unmeasured_folded": 0
      },
      "+4.00": {
-      "max_dg_per_m": 0.0018,
+      "max_dg_per_m": 0.0016,
       "at_m": 21.5,
-      "max_dg_per_m_1m": 0.0041,
+      "max_dg_per_m_1m": 0.0038,
       "at_m_1m": 21.0,
       "unmeasured": 0,
       "holes": 0,
@@ -4050,8 +4050,8 @@
       "grass_unmeasured_folded": 0
      }
     },
-    "max_dg_per_m": 0.002,
-    "max_dg_per_m_1m": 0.005,
+    "max_dg_per_m": 0.0018,
+    "max_dg_per_m_1m": 0.0043,
     "wheelbase_m": 2.5,
     "grass_on_road": 0
    },
@@ -4081,15 +4081,15 @@
    "mouth_line": {
     "samples": 36,
     "fail": 0,
-    "max_dev_m": 0.002,
+    "max_dev_m": 0.001,
     "no_road": 0,
     "worst": [
-     3.39,
-     -755.09,
-     -743.82,
+     1.15,
+     -757.34,
+     -743.75,
      [
-      -0.0,
-      0.002
+      -0.001,
+      -0.001
      ]
     ]
    },
@@ -4110,9 +4110,9 @@
    "approach": {
     "lines": {
      "-4.00": {
-      "max_dg_per_m": 0.0013,
-      "at_m": 16.0,
-      "max_dg_per_m_1m": 0.0034,
+      "max_dg_per_m": 0.0012,
+      "at_m": 25.5,
+      "max_dg_per_m_1m": 0.003,
       "at_m_1m": 16.5,
       "unmeasured": 0,
       "holes": 0,
@@ -4120,9 +4120,9 @@
       "grass_unmeasured_folded": 0
      },
      "+0.00": {
-      "max_dg_per_m": 0.0013,
-      "at_m": 25.5,
-      "max_dg_per_m_1m": 0.0029,
+      "max_dg_per_m": 0.0015,
+      "at_m": 25.75,
+      "max_dg_per_m_1m": 0.0033,
       "at_m_1m": 25.5,
       "unmeasured": 0,
       "holes": 0,
@@ -4130,18 +4130,18 @@
       "grass_unmeasured_folded": 0
      },
      "+4.00": {
-      "max_dg_per_m": 0.0015,
+      "max_dg_per_m": 0.0017,
       "at_m": 25.5,
-      "max_dg_per_m_1m": 0.0031,
-      "at_m_1m": 16.75,
+      "max_dg_per_m_1m": 0.0033,
+      "at_m_1m": 25.5,
       "unmeasured": 0,
       "holes": 0,
       "grass_on_road": [],
       "grass_unmeasured_folded": 0
      }
     },
-    "max_dg_per_m": 0.0015,
-    "max_dg_per_m_1m": 0.0034,
+    "max_dg_per_m": 0.0017,
+    "max_dg_per_m_1m": 0.0033,
     "wheelbase_m": 2.5,
     "grass_on_road": 0
    },
@@ -4261,15 +4261,15 @@
    "mouth_line": {
     "samples": 28,
     "fail": 0,
-    "max_dev_m": 0.003,
+    "max_dev_m": 0.002,
     "no_road": 0,
     "worst": [
-     -2.05,
-     -359.4,
-     -847.79,
+     1.41,
+     -356.11,
+     -848.59,
      [
-      0.0,
-      -0.003
+      -0.001,
+      -0.002
      ]
     ]
    },
@@ -4278,22 +4278,22 @@
     "road_kerb_above": 0,
     "grass_at_or_above": 0,
     "max_above_m": 0.0,
-    "max_grass_m": -0.02,
+    "max_grass_m": -0.019,
     "worst": []
    },
    "notch": {
     "samples": 28,
     "fail": 0,
-    "max_dev_m": 0.004,
+    "max_dev_m": 0.003,
     "worst": []
    },
    "approach": {
     "lines": {
      "-3.00": {
-      "max_dg_per_m": 0.0013,
-      "at_m": 2.5,
-      "max_dg_per_m_1m": 0.0027,
-      "at_m_1m": 0.75,
+      "max_dg_per_m": 0.0015,
+      "at_m": 0.0,
+      "max_dg_per_m_1m": 0.0039,
+      "at_m_1m": 11.0,
       "unmeasured": 0,
       "holes": 0,
       "grass_on_road": [],
@@ -4301,7 +4301,7 @@
      },
      "+0.00": {
       "max_dg_per_m": 0.0009,
-      "at_m": 7.5,
+      "at_m": 10.25,
       "max_dg_per_m_1m": 0.0022,
       "at_m_1m": 11.0,
       "unmeasured": 0,
@@ -4311,9 +4311,9 @@
      },
      "+3.00": {
       "max_dg_per_m": 0.0015,
-      "at_m": -0.75,
-      "max_dg_per_m_1m": 0.0036,
-      "at_m_1m": 0.0,
+      "at_m": 11.75,
+      "max_dg_per_m_1m": 0.0042,
+      "at_m_1m": 11.0,
       "unmeasured": 0,
       "holes": 0,
       "grass_on_road": [],
@@ -4321,7 +4321,7 @@
      }
     },
     "max_dg_per_m": 0.0015,
-    "max_dg_per_m_1m": 0.0036,
+    "max_dg_per_m_1m": 0.0042,
     "wheelbase_m": 2.5,
     "grass_on_road": 0
    },
@@ -4351,15 +4351,15 @@
    "mouth_line": {
     "samples": 27,
     "fail": 0,
-    "max_dev_m": 0.004,
+    "max_dev_m": 0.002,
     "no_road": 0,
     "worst": [
      -3.0,
      -261.04,
      -872.99,
      [
-      -0.0,
-      -0.004
+      0.0,
+      0.002
      ]
     ]
    },
@@ -4368,21 +4368,21 @@
     "road_kerb_above": 0,
     "grass_at_or_above": 0,
     "max_above_m": 0.0,
-    "max_grass_m": -0.02,
+    "max_grass_m": -0.019,
     "worst": []
    },
    "notch": {
     "samples": 27,
     "fail": 0,
-    "max_dev_m": 0.004,
+    "max_dev_m": 0.002,
     "worst": []
    },
    "approach": {
     "lines": {
      "-3.00": {
-      "max_dg_per_m": 0.002,
+      "max_dg_per_m": 0.0022,
       "at_m": 12.0,
-      "max_dg_per_m_1m": 0.0052,
+      "max_dg_per_m_1m": 0.0057,
       "at_m_1m": 11.5,
       "unmeasured": 0,
       "holes": 0,
@@ -4390,9 +4390,9 @@
       "grass_unmeasured_folded": 0
      },
      "+0.00": {
-      "max_dg_per_m": 0.0018,
+      "max_dg_per_m": 0.002,
       "at_m": 10.75,
-      "max_dg_per_m_1m": 0.0044,
+      "max_dg_per_m_1m": 0.0048,
       "at_m_1m": 11.5,
       "unmeasured": 0,
       "holes": 0,
@@ -4401,17 +4401,17 @@
      },
      "+3.00": {
       "max_dg_per_m": 0.0021,
-      "at_m": -1.0,
-      "max_dg_per_m_1m": 0.0054,
-      "at_m_1m": -0.25,
+      "at_m": 7.75,
+      "max_dg_per_m_1m": 0.0051,
+      "at_m_1m": 11.5,
       "unmeasured": 0,
       "holes": 0,
       "grass_on_road": [],
       "grass_unmeasured_folded": 0
      }
     },
-    "max_dg_per_m": 0.0021,
-    "max_dg_per_m_1m": 0.0054,
+    "max_dg_per_m": 0.0022,
+    "max_dg_per_m_1m": 0.0057,
     "wheelbase_m": 2.5,
     "grass_on_road": 0
    },
@@ -4444,9 +4444,9 @@
     "max_dev_m": 0.003,
     "no_road": 0,
     "worst": [
-     -1.82,
-     -158.63,
-     -896.65,
+     -2.06,
+     -158.87,
+     -896.59,
      [
       -0.0,
       -0.003
@@ -4464,25 +4464,25 @@
    "notch": {
     "samples": 28,
     "fail": 0,
-    "max_dev_m": 0.002,
+    "max_dev_m": 0.003,
     "worst": []
    },
    "approach": {
     "lines": {
      "-3.00": {
-      "max_dg_per_m": 0.0018,
-      "at_m": 8.25,
-      "max_dg_per_m_1m": 0.0045,
-      "at_m_1m": 7.75,
+      "max_dg_per_m": 0.0016,
+      "at_m": 11.25,
+      "max_dg_per_m_1m": 0.0039,
+      "at_m_1m": 10.75,
       "unmeasured": 0,
       "holes": 0,
       "grass_on_road": [],
       "grass_unmeasured_folded": 0
      },
      "+0.00": {
-      "max_dg_per_m": 0.0015,
-      "at_m": 7.0,
-      "max_dg_per_m_1m": 0.0035,
+      "max_dg_per_m": 0.0012,
+      "at_m": 10.0,
+      "max_dg_per_m_1m": 0.0026,
       "at_m_1m": 7.75,
       "unmeasured": 0,
       "holes": 0,
@@ -4490,18 +4490,18 @@
       "grass_unmeasured_folded": 0
      },
      "+3.00": {
-      "max_dg_per_m": 0.0016,
-      "at_m": 7.0,
+      "max_dg_per_m": 0.0014,
+      "at_m": 10.0,
       "max_dg_per_m_1m": 0.0038,
-      "at_m_1m": 7.75,
+      "at_m_1m": 10.5,
       "unmeasured": 0,
       "holes": 0,
       "grass_on_road": [],
       "grass_unmeasured_folded": 0
      }
     },
-    "max_dg_per_m": 0.0018,
-    "max_dg_per_m_1m": 0.0045,
+    "max_dg_per_m": 0.0016,
+    "max_dg_per_m_1m": 0.0039,
     "wheelbase_m": 2.5,
     "grass_on_road": 0
    },

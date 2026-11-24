@@ -2468,11 +2468,11 @@
    "form": "flat",
    "wall_h_m": 7.3,
    "ground": [
-    34.35,
+    34.33,
     35.71
    ],
-   "bottom": 34.77,
-   "eave": 42.07,
+   "bottom": 34.76,
+   "eave": 42.06,
    "off_terrain": false,
    "collider": false
   },
@@ -2648,7 +2648,7 @@
    "form": "flat",
    "wall_h_m": 6.4,
    "ground": [
-    28.29,
+    28.28,
     29.82
    ],
    "bottom": 28.72,
@@ -2843,11 +2843,11 @@
    "form": "flat",
    "wall_h_m": 6.1,
    "ground": [
-    34.46,
+    34.49,
     35.71
    ],
-   "bottom": 34.81,
-   "eave": 40.91,
+   "bottom": 34.82,
+   "eave": 40.92,
    "off_terrain": false,
    "collider": false
   },
@@ -2948,11 +2948,11 @@
    "form": "flat",
    "wall_h_m": 6.9,
    "ground": [
-    28.06,
+    27.91,
     29.61
    ],
-   "bottom": 28.33,
-   "eave": 35.23,
+   "bottom": 28.34,
+   "eave": 35.24,
    "off_terrain": false,
    "collider": false
   },
@@ -2978,11 +2978,11 @@
    "form": "flat",
    "wall_h_m": 7.4,
    "ground": [
-    34.43,
+    34.42,
     35.5
    ],
-   "bottom": 34.55,
-   "eave": 41.95,
+   "bottom": 34.53,
+   "eave": 41.93,
    "off_terrain": false,
    "collider": false
   },
@@ -3053,11 +3053,11 @@
    "form": "flat",
    "wall_h_m": 5.9,
    "ground": [
-    34.26,
-    34.44
+    34.23,
+    34.52
    ],
-   "bottom": 33.94,
-   "eave": 39.84,
+   "bottom": 33.96,
+   "eave": 39.86,
    "off_terrain": false,
    "collider": false
   },
@@ -3098,11 +3098,11 @@
    "form": "flat",
    "wall_h_m": 8.2,
    "ground": [
-    28.08,
+    28.13,
     29.33
    ],
-   "bottom": 28.3,
-   "eave": 36.5,
+   "bottom": 28.33,
+   "eave": 36.53,
    "off_terrain": false,
    "collider": false
   },
@@ -3158,11 +3158,11 @@
    "form": "flat",
    "wall_h_m": 6.1,
    "ground": [
-    34.29,
+    34.37,
     35.23
    ],
-   "bottom": 34.39,
-   "eave": 40.49,
+   "bottom": 34.43,
+   "eave": 40.53,
    "off_terrain": false,
    "collider": false
   },
@@ -3563,7 +3563,7 @@
    "form": "flat",
    "wall_h_m": 7.1,
    "ground": [
-    28.28,
+    28.29,
     29.21
    ],
    "bottom": 28.26,
@@ -4178,7 +4178,7 @@
    "form": "flat",
    "wall_h_m": 8.9,
    "ground": [
-    27.83,
+    27.86,
     29.37
    ],
    "bottom": 28.39,
@@ -6008,11 +6008,11 @@
    "form": "flat",
    "wall_h_m": 7.4,
    "ground": [
-    10.95,
-    11.75
+    10.73,
+    11.72
    ],
-   "bottom": 10.99,
-   "eave": 18.39,
+   "bottom": 10.83,
+   "eave": 18.23,
    "off_terrain": false,
    "collider": false
   },
@@ -6038,11 +6038,11 @@
    "form": "flat",
    "wall_h_m": 3.8,
    "ground": [
-    10.56,
-    11.37
+    10.43,
+    11.34
    ],
-   "bottom": 10.57,
-   "eave": 14.37,
+   "bottom": 10.51,
+   "eave": 14.31,
    "off_terrain": false,
    "collider": false
   },
@@ -6053,7 +6053,7 @@
    "form": "flat",
    "wall_h_m": 6.5,
    "ground": [
-    10.54,
+    10.46,
     11.82
    ],
    "bottom": 10.73,
@@ -6683,7 +6683,7 @@
    "form": "flat",
    "wall_h_m": 6.8,
    "ground": [
-    18.6,
+    18.57,
     19.6
    ],
    "bottom": 18.75,
@@ -6698,11 +6698,11 @@
    "form": "flat",
    "wall_h_m": 6.9,
    "ground": [
-    18.6,
+    18.5,
     18.97
    ],
-   "bottom": 18.41,
-   "eave": 25.31,
+   "bottom": 18.4,
+   "eave": 25.3,
    "off_terrain": false,
    "collider": false
   },
@@ -6714,10 +6714,10 @@
    "wall_h_m": 4.5,
    "ground": [
     17.86,
-    18.89
+    18.58
    ],
-   "bottom": 18.01,
-   "eave": 22.51,
+   "bottom": 17.8,
+   "eave": 22.3,
    "off_terrain": false,
    "collider": false
   },
@@ -6728,11 +6728,11 @@
    "form": "hip ridge 7.1 m",
    "wall_h_m": 6.2,
    "ground": [
-    18.35,
-    18.74
+    18.09,
+    18.73
    ],
-   "bottom": 18.1,
-   "eave": 24.3,
+   "bottom": 17.94,
+   "eave": 24.14,
    "off_terrain": false,
    "collider": false
   },
@@ -9038,11 +9038,11 @@
    "form": "flat",
    "wall_h_m": 6.7,
    "ground": [
-    5.64,
+    5.74,
     7.4
    ],
-   "bottom": 6.06,
-   "eave": 12.76,
+   "bottom": 6.13,
+   "eave": 12.83,
    "off_terrain": false,
    "collider": false
   },
@@ -9098,11 +9098,11 @@
    "form": "flat",
    "wall_h_m": 7.8,
    "ground": [
-    7.86,
+    7.79,
     9.62
    ],
-   "bottom": 8.19,
-   "eave": 15.99,
+   "bottom": 8.32,
+   "eave": 16.12,
    "off_terrain": false,
    "collider": false
   },
@@ -10688,11 +10688,11 @@
    "form": "hip ridge 5.5 m",
    "wall_h_m": 5.1,
    "ground": [
-    11.92,
+    11.8,
     12.79
    ],
-   "bottom": 12.05,
-   "eave": 17.15,
+   "bottom": 12.01,
+   "eave": 17.11,
    "off_terrain": false,
    "collider": false
   },
@@ -10839,7 +10839,7 @@
    "wall_h_m": 3.9,
    "ground": [
     10.1,
-    11.96
+    11.98
    ],
    "bottom": 10.59,
    "eave": 14.49,
@@ -10884,10 +10884,10 @@
    "wall_h_m": 7.0,
    "ground": [
     9.39,
-    10.3
+    10.24
    ],
-   "bottom": 9.51,
-   "eave": 16.51,
+   "bottom": 9.49,
+   "eave": 16.49,
    "off_terrain": false,
    "collider": false
   },
@@ -10899,10 +10899,10 @@
    "wall_h_m": 6.9,
    "ground": [
     9.02,
-    10.22
+    9.95
    ],
-   "bottom": 9.26,
-   "eave": 16.16,
+   "bottom": 9.21,
+   "eave": 16.11,
    "off_terrain": false,
    "collider": false
   },
@@ -17424,7 +17424,7 @@
    "wall_h_m": 4.4,
    "ground": [
     14.04,
-    14.24
+    14.23
    ],
    "bottom": 13.73,
    "eave": 18.13,
@@ -20183,11 +20183,11 @@
    "form": "hip ridge 6.0 m",
    "wall_h_m": 5.2,
    "ground": [
-    14.68,
+    14.52,
     16.5
    ],
-   "bottom": 15.19,
-   "eave": 20.39,
+   "bottom": 15.15,
+   "eave": 20.35,
    "off_terrain": false,
    "collider": false
   },
@@ -21758,11 +21758,11 @@
    "form": "flat",
    "wall_h_m": 6.2,
    "ground": [
-    18.99,
+    18.89,
     19.38
    ],
-   "bottom": 18.84,
-   "eave": 25.04,
+   "bottom": 18.83,
+   "eave": 25.03,
    "off_terrain": false,
    "collider": false
   },
@@ -24428,11 +24428,11 @@
    "form": "gable ridge 4.2 m",
    "wall_h_m": 2.9,
    "ground": [
-    14.18,
-    14.88
+    14.17,
+    14.83
    ],
-   "bottom": 14.07,
-   "eave": 16.97,
+   "bottom": 14.04,
+   "eave": 16.94,
    "off_terrain": false,
    "collider": false
   },
@@ -27533,11 +27533,11 @@
    "form": "hip ridge 3.8 m",
    "wall_h_m": 2.8,
    "ground": [
-    14.54,
-    14.59
+    14.45,
+    14.55
    ],
-   "bottom": 14.17,
-   "eave": 16.97,
+   "bottom": 14.09,
+   "eave": 16.89,
    "off_terrain": false,
    "collider": false
   },
@@ -28239,10 +28239,10 @@
    "wall_h_m": 2.4,
    "ground": [
     18.04,
-    18.78
+    18.64
    ],
-   "bottom": 18.02,
-   "eave": 20.42,
+   "bottom": 17.95,
+   "eave": 20.35,
    "off_terrain": false,
    "collider": false
   },
@@ -28778,11 +28778,11 @@
    "form": "flat",
    "wall_h_m": 6.9,
    "ground": [
-    19.87,
+    19.64,
     20.26
    ],
-   "bottom": 19.66,
-   "eave": 26.56,
+   "bottom": 19.62,
+   "eave": 26.52,
    "off_terrain": false,
    "collider": false
   },
@@ -30203,7 +30203,7 @@
    "form": "hip ridge 5.0 m",
    "wall_h_m": 3.2,
    "ground": [
-    18.49,
+    18.5,
     19.12
    ],
    "bottom": 18.43,
@@ -30263,11 +30263,11 @@
    "form": "hip ridge 5.3 m",
    "wall_h_m": 3.5,
    "ground": [
-    18.97,
-    20.05
+    18.61,
+    19.35
    ],
-   "bottom": 19.25,
-   "eave": 22.75,
+   "bottom": 18.67,
+   "eave": 22.17,
    "off_terrain": false,
    "collider": false
   },
@@ -31613,11 +31613,11 @@
    "form": "hip ridge 6.9 m",
    "wall_h_m": 6.3,
    "ground": [
-    5.68,
+    5.72,
     6.15
    ],
-   "bottom": 5.44,
-   "eave": 11.74,
+   "bottom": 5.45,
+   "eave": 11.75,
    "off_terrain": false,
    "collider": false
   },
@@ -32678,11 +32678,11 @@
    "form": "flat",
    "wall_h_m": 2.6,
    "ground": [
-    14.26,
-    14.71
+    14.2,
+    14.69
    ],
-   "bottom": 14.05,
-   "eave": 16.65,
+   "bottom": 13.98,
+   "eave": 16.58,
    "off_terrain": false,
    "collider": false
   },

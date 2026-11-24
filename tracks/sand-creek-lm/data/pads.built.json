@@ -9303,14 +9303,14 @@
     "fade_m": [
      12.0,
      30.5,
-     3.0,
-     8.9
+     9.9,
+     12.0
     ]
    },
    "faces_removed": {
     "ROAD": 88,
     "CURB": 264,
-    "MARKINGS": 152,
+    "MARKINGS": 128,
     "YLINE": 88
    },
    "deck_vertices": 2162,
@@ -9319,9 +9319,9 @@
    "ribbon_edge_points_added": 11,
    "ground": {
     "edges_split": 27853,
-    "lowered": 3548,
-    "raised": 9597,
-    "chords_halved": 8
+    "lowered": 3817,
+    "raised": 9364,
+    "chords_halved": 5
    },
    "ribbon_union_m2": 0.0,
    "barriers": [],
@@ -11200,5 +11200,5 @@
   }
  ],
  "stubs": [],
- "written": "2026-11-23T13:52:49+00:00"
+ "written": "2026-11-24T02:06:27+00:00"
 }

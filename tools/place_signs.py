@@ -218,8 +218,11 @@ DEFAULTS = {
     "kappa_window_m": 2 * KAPPA_HALF_WIN, "hysteresis_stations": HYSTERESIS,
 }
 # opt-in knobs a signs.json may name that are absent from DEFAULTS (so a track that names none writes exactly the
-# record it wrote before): pad_decks (ledger 0079 round L) — the BUILT junction pad decks join the field as pavement
-OPT_IN_DEFAULTS = {"pad_decks": False}
+# record it wrote before): pad_decks (ledger 0079 round L) — the BUILT junction pad decks join the field as pavement;
+# walk_built_only (Sand Creek round 2, 2026-11-23) — tools/author_signs_blend.mesh_curb_crossing reads the walk off the
+# BUILT walk meshes alone (CURB / SIDEWALK / 1KERB), never TERRAIN / 1GRASS: past a junction pad's deck edge the pad's
+# ground band (tools/lm_pads_blend.ground_under, deck - 0.04 m) is flat terrain, and it read as a 3.6 m walk
+OPT_IN_DEFAULTS = {"pad_decks": False, "walk_built_only": False}
 PLATE_GEOMETRY = ("W1-6",)      # the plates sign_polygons can build; W1-7 / W1-8 are second-pass devices
 CORNER_KEYS = ("ribbon", "vertex", "skip", "reason", "slide_along_curb_m", "base_xz", "face_bearing_deg",
                "plate", "arrow", "expect_arrow", "height_m", "om1_3", "second_arrow", "force",

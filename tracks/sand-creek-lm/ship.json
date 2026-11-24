@@ -27,6 +27,7 @@
       "split_strip"
     ],
     "author": [
+      "lamp_heads",
       "race_bands",
       "race_planned_gate",
       "layout_dummies",
@@ -80,6 +81,7 @@
       "source/bespoke/trees.lm.json",
       "source/connector_profiles.lidar.json",
       "source/connector_profiles.lidar.round_i.json",
+      "source/connector_profiles.lidar.round_2.json",
       "source/ground_patches.lidar.json",
       "source/mouth_radii.naip.json",
       "source/name_blades.json",
@@ -125,6 +127,7 @@
       "data/bridge.spans.auto.json",
       "data/mouth_welds.json",
       "data/lights.local.json",
+      "data/lights.heads.json",
       "data/bespoke.report.json",
       "data/dummies_{id}.json",
       "data/drive_test.json",

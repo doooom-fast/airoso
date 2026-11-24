@@ -325,10 +325,15 @@ def test_whole_street_race_has_no_closure_wall_opt_in():
     # record at 0.2.6) races the whole street
     lm = json.loads((ROOT / "tracks" / "san-diego-lake-murray" / "track.config.json").read_text(encoding="utf-8"))
     assert whole_lap_layouts(lm, lm["layouts"]) == set()
-    for p, v in (("track.config.json", "0.2.9"), ("source/round_k/track.config.json", "0.2.6")):
+    for p, v in (("track.config.json", None), ("source/round_k/track.config.json", "0.2.6")):
         sc = json.loads((ROOT / "tracks" / "sand-creek-lm" / p).read_text(encoding="utf-8"))
         assert whole_lap_layouts(sc, sc["layouts"]) == {"race"}, p
-        assert sc["version"] == v, p
+        if v is None:
+            # the live config is any version since round R's 0.2.6 (0.2.10 since ledger 0098 round 2): an exact pin here
+            # tripped on every version bump; the version's own pins live in tests/tools/test_sand_creek_*.py
+            assert tuple(map(int, sc["version"].split("."))) >= (0, 2, 6), p
+        else:
+            assert sc["version"] == v, p                     # the round_k record stays exactly 0.2.6
 
 
 def test_spawns_stand_inside_the_declared_lane_of_a_race_layout():

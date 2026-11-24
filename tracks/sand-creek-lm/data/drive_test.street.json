@@ -124,12 +124,6 @@
     2.85
    ],
    [
-    5833.0,
-    -6.0,
-    3.01,
-    2.85
-   ],
-   [
     9575.0,
     6.0,
     3.53,
@@ -172,8 +166,8 @@
  "fold_severe_judge": "tools/verify_fold_fans.py (real wheel paths, hard)",
  "fold_severe_at": [],
  "fold_severe_unjudged": [],
- "vertex_kinks": 15,
- "kinks_per_km_station": 2.18,
+ "vertex_kinks": 14,
+ "kinks_per_km_station": 2.07,
  "dense_hops": 0,
  "fail": false
 }

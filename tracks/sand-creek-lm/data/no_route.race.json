@@ -18,19 +18,19 @@
   "barrier_half_m": 0.335
  },
  "seed": "AC_START_0",
- "domain_m2": 597441,
- "reached_m2": 87816,
- "allowed_m2": 87816,
+ "domain_m2": 596740,
+ "reached_m2": 87175,
+ "allowed_m2": 87175,
  "leak_cells": 0,
  "leak_m2": 0,
  "escaped": false,
- "wall_cells": 291587,
- "wall_tris_in_band": 78221,
- "local_deck_cells": 1368,
+ "wall_cells": 290862,
+ "wall_tris_in_band": 78047,
+ "local_deck_cells": 1142,
  "local_deck_walls": [
   {
    "object": "1WALL_race_edge_L_street0_0_0",
-   "cells": 160,
+   "cells": 159,
    "deck_minus_line_m": [
     0.308,
     0.327
@@ -44,12 +44,12 @@
   },
   {
    "object": "1WALL_race_edge_L_street1_140_0",
-   "cells": 87,
+   "cells": 82,
    "deck_minus_line_m": [
     -0.275,
-    -0.077
+    -0.006
    ],
-   "base_m": -0.031,
+   "base_m": 0.013,
    "top_m": 1.228,
    "vertices": [
     141,
@@ -58,13 +58,13 @@
   },
   {
    "object": "1WALL_race_edge_R_street0_0_0",
-   "cells": 8,
+   "cells": 10,
    "deck_minus_line_m": [
-    -0.143,
+    -0.144,
     -0.117
    ],
    "base_m": 0.059,
-   "top_m": 1.163,
+   "top_m": 1.167,
    "vertices": [
     143,
     144
@@ -72,82 +72,68 @@
   },
   {
    "object": "1WALL_race_edge_L_street3_207_0",
-   "cells": 22,
+   "cells": 19,
    "deck_minus_line_m": [
     -0.156,
-    -0.117
+    -0.095
    ],
-   "base_m": 0.058,
+   "base_m": 0.048,
    "top_m": 1.18,
    "vertices": [
     402,
-    404
-   ]
-  },
-  {
-   "object": "1WALL_race_edge_L_street5_779_0",
-   "cells": 29,
-   "deck_minus_line_m": [
-    -0.151,
-    -0.095
-   ],
-   "base_m": 0.045,
-   "top_m": 1.163,
-   "vertices": [
-    780,
-    782
+    405
    ]
   },
   {
    "object": "1WALL_race_edge_R_street5_779_0",
-   "cells": 286,
+   "cells": 290,
    "deck_minus_line_m": [
     -0.25,
-    -0.083
+    -0.102
    ],
    "base_m": 0.032,
    "top_m": 1.183,
    "vertices": [
     780,
-    875
+    874
+   ]
+  },
+  {
+   "object": "1WALL_race_edge_L_street5_779_0",
+   "cells": 25,
+   "deck_minus_line_m": [
+    -0.151,
+    -0.116
+   ],
+   "base_m": 0.045,
+   "top_m": 1.163,
+   "vertices": [
+    781,
+    782
    ]
   },
   {
    "object": "1WALL_race_edge_R_street5_779_1",
-   "cells": 125,
+   "cells": 267,
    "deck_minus_line_m": [
-    -0.372,
-    -0.02
+    -0.345,
+    -0.058
    ],
-   "base_m": -0.024,
-   "top_m": 1.41,
+   "base_m": 0.016,
+   "top_m": 1.239,
    "vertices": [
-    1933,
+    1932,
     1948
    ]
   },
   {
-   "object": "1WALL_race_edge_L_street5_779_1",
-   "cells": 399,
-   "deck_minus_line_m": [
-    0.341,
-    0.699
-   ],
-   "base_m": -0.04,
-   "top_m": 1.227,
-   "vertices": [
-    1934,
-    1941
-   ]
-  },
-  {
    "object": "1WALL_race_edge_R_street6_3195_0",
-   "cells": 224,
+   "cells": 225,
    "deck_minus_line_m": [
     -0.44,
     -0.103
    ],
-   "base_m": 0.034,
+   "base_m": 0.037,
    "top_m": 1.195,
    "vertices": [
     3196,
@@ -156,16 +142,16 @@
   },
   {
    "object": "1WALL_race_edge_R_street7_3210_0",
-   "cells": 33,
+   "cells": 69,
    "deck_minus_line_m": [
     -0.234,
-    -0.197
+    -0.143
    ],
    "base_m": 0.053,
-   "top_m": 1.161,
+   "top_m": 1.167,
    "vertices": [
     3210,
-    3211
+    3213
    ]
   }
  ],
@@ -180,5 +166,5 @@
  "spawns_unreached": [],
  "fail": false,
  "fails": [],
- "seconds": 15.2
+ "seconds": 15.3
 }

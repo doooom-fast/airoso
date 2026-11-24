@@ -3,7 +3,7 @@
  "fails": [],
  "warnings": [
   "F: race: author-time: minimum spawn clearance 0.98 m at AC_START_1 v2770 (edge-strip face 2.93 m) (hard floor 0.30 m)",
-  "built deck vs data height, worst 0.718 m"
+  "built deck vs data height, worst 0.429 m"
  ],
  "counts": {
   "by_layout": {
@@ -18,7 +18,7 @@
     "pins": []
    }
   },
-  "rings_total": 9208,
+  "rings_total": 9196,
   "interpolated": 0,
   "objects": 36,
   "kbar_objects": 0,
@@ -84,7 +84,7 @@
    "R": 20
   },
   "edge_gap_worst_m": 3.491,
-  "edge_rings": 6541,
+  "edge_rings": 6529,
   "free_ends": 0,
   "pins": 0,
   "pin_gap_max_m": 0.0,
@@ -346,7 +346,7 @@
    ]
   },
   "chord_fail_m": 0.15,
-  "chord_spans_measured": 6519,
+  "chord_spans_measured": 6507,
   "chord_spans_fold": 0,
   "chord_spans_unmeasured": 0,
   "chord_spans_over": 0,
@@ -581,8 +581,8 @@
     }
    ]
   },
-  "lamps": 171,
-  "lamps_checked": 171,
+  "lamps": 170,
+  "lamps_checked": 170,
   "lamp_arm_m": 1.8,
   "lamp_post_h_m": 10.668,
   "lamp_model": "led_cobra",

@@ -106,20 +106,9 @@ def test_width_hold_is_opt_in_and_the_intake_runs_it_only_with_the_key():
             assert cfgp.parent.name == "milford-road-course-lm", cfgp
 
 
-def test_milford_holds_its_two_long_curves_and_its_committed_line_carries_the_hold():
-    mf = ROOT / "tracks" / "milford-road-course-lm"
-    cfg = json.loads((mf / "track.config.json").read_text(encoding="utf-8"))
-    wcfg = cfg["lm_intake"]["width_hold"]
-    assert cfg["version"] == "0.1.16"
-    assert wcfg["spans"] == [[1114.0, 1270.0], [1557.0, 1857.0]] and wcfg["blend_m"] == 15.0
-    assert wcfg["evidence"] == "source/edges/edge_evidence_gm.json"
-    src = (mf / "source" / "round3" / "edit_config_0103.py").read_text(encoding="utf-8")
-    assert 'li["width_hold"] = {' in src and wcfg["_doc"] in src.replace('\\"', '"').replace('"\n        "', "")
-    # the committed swept line (predict_lines_0102.py: the build's own bytes) is straight in width across each span
-    loc = json.loads((mf / "data" / "centerline.local.json").read_text(encoding="utf-8"))
-    pts, w = loc["points_xyz_m"], loc["widths_m"]
-    s = wh.arc(pts)
-    for a, b in wcfg["spans"]:
-        rows = [k for k in range(len(s)) if a + 2 <= s[k] <= b - 2]
-        fa, fb = wh._lsq([s[k] for k in rows], [w[k] for k in rows])
-        assert max(abs(w[k] - (fa + fb * s[k])) for k in rows) < 0.01, (a, b)
+
+def test_no_track_names_width_hold_any_more():
+    """ledger 0103: Milford's two spans (3e79e619) are taken out by lm_intake.width_design with the rest of the lap; the
+    tool stays, opt-in, named by no track"""
+    for cfgp in sorted((ROOT / "tracks").glob("*/track.config.json")):
+        assert "width_hold" not in (json.loads(cfgp.read_text(encoding="utf-8")).get("lm_intake") or {}), cfgp

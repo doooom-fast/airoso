@@ -167,12 +167,13 @@ def test_trunk_reach_is_derived_from_the_barrier_lines_and_trunks_json_reproduce
     st = res["standoffs"]
     assert set(st) == {"g1_nw_corner_outside", "g2_front_straight_east", "g3_front_straight_west", "g4_infield_esses",
                        "t1_nw_hairpin_exit", "t2_esses_east_leg"}      # no screen: site fences; T3 off the lap (ledger 0102)
-    assert max(st, key=lambda k: st[k][1]) == "g4_infield_esses" and abs(st["g4_infield_esses"][1] - 19.07) < 0.01
+    # 19.07 m on 0.1.15; 19.06 on 0.1.16 (ledger 0103: the esses' lane edge a few cm in where a width bulge came out)
+    assert max(st, key=lambda k: st[k][1]) == "g4_infield_esses" and abs(st["g4_infield_esses"][1] - 19.065) < 0.01
     assert res["reach_m"] == 20.0
     tr = json.loads((MF / "source" / "vegetation" / "trunks.json").read_text(encoding="utf-8"))
-    # the GM lap (ledger 0102): 167 lidar + 84 verge; 0.1.14's file on 0.1.13's line: 261 (174 + 87)
-    assert tr["reach_m"] == 20.0 and tr["points"] == res["trunks"] and len(tr["points"]) == 251
-    # ledger 0103 (0.1.16) re-ran it on the swept line with the width held on two curves: 4 distances moved 0.1 m, same 251
+    # the GM lap (ledger 0102, 0.1.15): 251 (167 lidar + 84 verge); 0.1.14's file on 0.1.13's line: 261 (174 + 87).
+    # Ledger 0103 (0.1.16) re-ran it on the swept line with the width's bulges taken out: 249, two trees now just past 20 m
+    assert tr["reach_m"] == 20.0 and tr["points"] == res["trunks"] and len(tr["points"]) == 249
     assert "0.1.16's swept line" in tr["_source"]
     assert min(p[3] for p in tr["points"]) >= 3.0                          # none within the corridor margin
     veg_plan = (MF / "source" / "vegetation" / "scripts" / "veg_plan.py").read_text(encoding="utf-8")

@@ -1219,6 +1219,55 @@ def intake(proj: Path, *, connectors: bool | None = None) -> dict:
             f" -> {sp['built_minus_measured_width_m']['after']['median']} / {sp['built_minus_measured_width_m']['after']['rms_about_it']}"
             f" m over {sp['measured_bins']} of {sp['span_bins']} bins)"
             for sp in width_hold_rep["spans"]))
+    # THE WIDTH LAID OUT AS A PERSON WOULD, THE WHOLE LAP (lm_intake.width_design {"evidence": <file in the PORT track>,
+    # "lidar_edges"?: <an edges_curves.py read in the PORT track>, "held"?: [[s0, s1]]}; ledger 0103, Kevin 2026-11-24:
+    # "Look for primarily bulges during otherwise smooth curves and straights" / "Dreaded slop, a human would never do it";
+    # absent = nothing runs). tools/edge_design.py lays the width out (every swell and pinch narrower than 200 m taken out,
+    # steps and tapers kept), judges each excursion against the measured width (the lidar edges where they cover, the
+    # evidence elsewhere) and replaces every one the measured edge does not carry by the straight taper between its ends.
+    # Untouched: the held spans, and every edge_retrace record's spans and tapers (the retrace re-traces them after this).
+    # The line is not moved; a width outside a taken-out bulge is not changed, to the bit. data/width_design.json.
+    wd_cfg = li.get("width_design")
+    width_design_rep = None
+    if wd_cfg:
+        from tools import edge_design as _ed
+        unknown = sorted(set(wd_cfg) - {"evidence", "lidar_edges", "held"} - {k for k in wd_cfg if k.startswith("_")})
+        if unknown:
+            raise SystemExit(f"[lm_intake] lm_intake.width_design: unknown key(s) {unknown}")
+        ev_pts, lid = [], None
+        for key in ("evidence", "lidar_edges"):
+            rel_e = wd_cfg.get(key)
+            if rel_e is None:
+                continue
+            if rel_e.startswith(("/", "\\")) or ".." in Path(rel_e).parts:
+                raise SystemExit(f"[lm_intake] lm_intake.width_design.{key} {rel_e!r} must be a plain path inside the port track")
+            j_ = json.loads((proj / rel_e).read_text(encoding="utf-8"))
+            if key == "evidence":
+                o_ev, o_ln = j_.get("origin") or {}, local["origin"]
+                if abs(o_ev.get("lon", 1e9) - o_ln["lon"]) > 1e-9 or abs(o_ev.get("lat", 1e9) - o_ln["lat"]) > 1e-9:
+                    raise SystemExit(f"[lm_intake] width_design: {rel_e} was measured about another origin ({o_ev}) than "
+                                     "this line's")
+                ev_pts = j_["points"]
+            else:
+                lid = j_
+        held_ = [[float(a), float(b)] for a, b in (wd_cfg.get("held") or [])]
+        er_ = li.get("edge_retrace") or []
+        for r_ in (er_ if isinstance(er_, list) else [er_]):
+            tp = float(r_.get("taper_m", 60.0))
+            held_ += [[float(a) - tp, float(b) + tp] for a, b in r_["spans"]]
+        route_ = cfg.get("route") or {}
+        s_wd = _v021_smooth().smooth_centerline(pts, sigma_pts=float(route_.get("smooth_sigma_pts", 2.0)),
+                                                passes=int(route_.get("smooth_passes", 2)), sigma_y_pts=0.0)
+        widths, width_design_rep = _ed.design_width(s_wd, widths, closed, ev_pts, lid, held_)
+        width_design_rep["evidence"] = wd_cfg.get("evidence")
+        width_design_rep["lidar_edges"] = wd_cfg.get("lidar_edges")
+        (proj / "data").mkdir(parents=True, exist_ok=True)
+        (proj / "data" / "width_design.json").write_text(json.dumps(width_design_rep, indent=1), encoding="utf-8")
+        b_, a_ = width_design_rep["before"], width_design_rep["after"]
+        print(f"[lm_intake] width designed: {len(width_design_rep['taken_out'])} bulges taken out (edges moved max "
+              f"{width_design_rep['edge_moved_m']['max']} m); bulges the measured edge does not carry {b_['ours']} -> "
+              f"{a_['ours']} ({b_['ours_per_km']} -> {a_['ours_per_km']} /km), real {b_['real']} -> {a_['real']}, unmeasured "
+              f"{b_['unmeasured']} -> {a_['unmeasured']}")
     # A STRETCH RE-TRACED TO THE MEASURED PAVEMENT EDGE, SHORT OF EVERY RAIL (lm_intake.edge_retrace {"evidence", "spans":
     # [[s0, s1]], "rails": [scenery.bespoke.rails keys], "src"?, "clear_m"?, "taper_m"?}; ledger 0087 Q1, Kevin 2026-11-17:
     # "Yes, widen Milford's front straight"; absent = nothing runs). tools/edge_retrace.py, on the line the assembler will
@@ -1673,6 +1722,7 @@ def intake(proj: Path, *, connectors: bool | None = None) -> dict:
            **({"edge_retrace": edge_retrace_rep} if edge_retrace_rep else {}),
            **({"width_smooth": width_smooth_rep} if width_smooth_rep else {}),
            **({"width_hold": width_hold_rep} if width_hold_rep else {}),
+           **({"width_design": width_design_rep} if width_design_rep else {}),
            **({"measured_surface": surface_rep} if surface_rep else {}),
            "grid_upsample": up,
            "md5": {"source_centerline": _md5(need[0]), "heightfield.npy": _md5(data / "heightfield.npy"),

@@ -2,9 +2,13 @@
 
     python -I tracks/milford-road-course-lm/source/round3/edit_config_0103.py tracks/milford-road-course-lm/track.config.json
 
-1. The side lines' blooms on the lap's two longest smooth curves (Kevin 2026-11-24, to the Mac: "Not vertical waves,
-   horizontal at the edges" / "Long smooth curves get weird blooms" / "Look at the side lines"): lm_intake.width_hold on
-   the GM line's s 1,114-1,270 and 1,557-1,857 (tools/width_hold.py).
+1. The side lines' bulges, the whole lap (Kevin 2026-11-24: "Not vertical waves, horizontal at the edges" / "Long smooth
+   curves get weird blooms" / "Look at the side lines", to the Mac; then, here: "Look for primarily bulges during
+   otherwise smooth curves and straights" / "Dreaded slop, a human would never do it"): lm_intake.width_design
+   (tools/edge_design.py), every width bulge the measured edge does not carry taken out, the bowl held.
+2. The report's block (tools/edge_bulges.py): its measured edges and the bowl it counts apart.
+(3e79e619's lm_intake.width_hold on the two longest curves is superseded by 1 and no longer named: width_design takes
+those two bulges out with the rest.)
 """
 import json
 import sys
@@ -16,34 +20,42 @@ d = json.loads(raw)
 if d.get("version") != "0.1.15":
     raise SystemExit(f"expected round 2's 0.1.15, found {d.get('version')}")
 d["version"] = "0.1.16"
-d["_version_doc"] = ("0.1.16 (ledger 0103, Milford round 3; Kevin 2026-11-24: \"Long smooth curves get weird blooms\"): the "
-                     "trace's width held straight on the lap's two longest smooth curves, where it swelled and the measured "
-                     "edges do not. " + d.get("_version_doc", ""))
+d["_version_doc"] = ("0.1.16 (ledger 0103, Milford round 3; Kevin 2026-11-24: \"Long smooth curves get weird blooms\"): every "
+                     "bulge in the width that the measured edge does not carry taken out, the whole lap (ledger 0103). " + d.get("_version_doc", ""))
 li = d["lm_intake"]
 
-# 1. the width held on the two long curves
-li["width_hold"] = {
-    "spans": [[1114.0, 1270.0], [1557.0, 1857.0]],
-    "evidence": "source/edges/edge_evidence_gm.json",
-    "blend_m": 15.0,
+HELD = [[750.0, 1045.0]]      # the banked turn: route.densify.section's spans + taper (s 855-1,045) and the G10's s 750-1,015
+LIDAR = "source/surface/road_profile_lidar_g10/milford_edges_curves.lidar.g10.json"
+EVID = "source/edges/edge_evidence_gm.json"
+
+# 1. the width laid out as a person would, the whole lap
+li.pop("width_hold", None)
+li["width_design"] = {
+    "evidence": EVID, "lidar_edges": LIDAR, "held": HELD,
     "_doc": (
-        "ledger 0103 (Kevin 2026-11-24, to the Mac: \"Not vertical waves, horizontal at the edges\" / \"Long smooth curves "
-        "get weird blooms\" / \"Look at the side lines\"): on 0.1.15's track.obj every bloom on a long smooth curve is the "
-        "road edge, the paint and the edge strip swelling together on both sides by the width's own swell (the ribbon is "
-        "+-w/2 about the line), carried bit for bit from data_gm's widths (the 0.6.0 tracer's NAIP-mask scans); edge_fit "
-        "cuts 1-2 row spikes and width_smooth's 10 m Gaussian cannot reach a 50-150 m swell. On these two spans (R 92 / "
-        "93 m, the lap's two longest smooth curves) the trace swells 0.9-1.4 m while the measured edges hold their width: "
-        "edge_evidence_gm.json's two sides (5 m bins) and the G10's re-read of the 2017 lidar's intensity step "
-        "(milford_edges_curves.lidar.g10.json, branch claude/mf-road-profile-lidar-20261124 19018b12: real 10.4-10.8 / "
-        "10.6-10.7 m, steady; 0.1.15 built +0.63 / +0.76 m median over it). tools/width_hold.py holds each span to the "
-        "straight fit through the measured width (bins further than 2.5 MADs + 2 cm dropped [invented]), blended over "
-        "blend_m [invented]: 10.49-10.80 and 10.88-11.12 m; built minus measured width median 0.437 -> 0.018 and 0.302 "
-        "-> 0.042 m, RMS about it 0.518 -> 0.379 and 0.628 -> 0.342 m; the bloom +0.60 / +0.57 m a side -> 0; the edges "
-        "move p50 0.23 / 0.12, max 0.69 / 0.60 m. A span it fits worse than the trace, or measured on < 60 % of its bins, "
-        "is refused. The line is not moved. Owed, not here: s 580-660 (a third swell, built +0.96 m over a steady 10.5-11.0 "
-        "m, but the trace before it is too wide as well, so a hold there pinches both lines ~0.5 m in 15 m at s 565-580); "
-        "the banked turn (s 750-1,015: built 1.2-1.8 m UNDER the real at s 875-940, the 16 m cap)")}
+        "ledger 0103 (Kevin 2026-11-24: \"Not vertical waves, horizontal at the edges\" / \"Long smooth curves get weird "
+        "blooms\" / \"Look at the side lines\" / \"Look for primarily bulges during otherwise smooth curves and straights\" "
+        "/ \"Dreaded slop, a human would never do it because it's more work, both irl and digitally\"): on 0.1.15 every "
+        "bloom is the road edge, the paint and the edge strip swelling together on both sides by the width's own swell (the "
+        "ribbon is +-w/2 about the line), carried from data_gm's widths (the 0.6.0 tracer's NAIP-mask scans). "
+        "tools/edge_design.py lays the width out (every swell and pinch narrower than 200 m taken out, steps and tapers "
+        "kept [invented]), judges each excursion of >= 10 cm over 15-200 m [invented] against the measured width (the "
+        "G10's 2017-lidar edges on its six stretches, edge_evidence_gm.json's 5 m bins elsewhere: real when it makes the "
+        "same excursion, >= half the built one and >= 2 standard errors [invented]) and replaces every one it does not "
+        "carry by a cubic taper on the layout's slope, rounded over 10 m [invented]. Held: the banked turn (held, s "
+        "750-1,045) and every edge_retrace span and taper (re-traced to the measured edge after this). At intake: 10 "
+        "bulges taken out (2.12 -> 0.21 /km the measured edge does not carry; the one left, s 1,342-1,420, 0.15 m), 6 "
+        "real kept, the edges moved max 0.78 m, 1,360 of 6,304 points; the line not moved. On the swept line "
+        "(tools/edge_bulges.py --line, the retraced stretches and the bowl counted apart): width bulges ours 11 -> 2 "
+        "(2.33 -> 0.42 /km), left edge 9 -> 4, right 5 -> 1. Without the key the intake writes main's line byte for byte")}
+
+# 2. the report's block
+d["edge_bulges"] = {
+    "evidence": EVID, "lidar_edges": LIDAR, "skip": HELD,
+    "_doc": ("ledger 0103: tools/edge_bulges.py's measured edges (the G10's lidar read where it covers, the evidence "
+             "elsewhere) and the stretch it counts apart (the banked turn, built from its own section); the edge_retrace "
+             "spans and tapers are counted apart by the tool itself")}
 
 out = json.dumps(d, indent=2, ensure_ascii=False) + ("\n" if raw.endswith("\n") else "")
 p.write_text(out, encoding="utf-8", newline="\n")
-print(f"[0103] {p}: 0.1.15 -> 0.1.16; width_hold spans {li['width_hold']['spans']}")
+print(f"[0103] {p}: 0.1.15 -> 0.1.16; width_design (held {HELD}) + edge_bulges")

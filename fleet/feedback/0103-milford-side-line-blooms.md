@@ -1,6 +1,6 @@
 ---
 id: 0103
-title: Milford round 3 — the side lines' blooms on the long smooth curves (0.1.16)
+title: Milford round 3 — the side lines' bulges, the whole lap (0.1.16); tools/edge_bulges.py for every track
 track: milford-road-course-lm
 status: fixed-awaiting-rebuild
 opened: 2026-11-24
@@ -16,6 +16,10 @@ Kevin, 2026-11-24, after 0.1.15 (installed 2026-11-23):
 | What still needs work on Milford? | "Road still wavy" | typed to the PC session |
 | (clarifying) | "Not vertical waves, horizontal at the edges" | typed to the Mac, relayed verbatim |
 | (clarifying) | "Long smooth curves get weird blooms" / "Look at the side lines" | typed to the Mac, relayed verbatim |
+| (after 3e79e619, two spans) | "Mostly on supposedly smooth edges in very ugly unrealistic ways" / "Dreaded slop,a human would never do it because it's more work, both irl and digitally" / "The lines follow the edges though" / "Look for primarily bulges during otherwise smooth curves and straights" / "It's like flying a camera would see it faster" / "Data is noisy but the road is obvious in car" / "It's not even a 'curve' much as a bulge" / "Open up Milford's longest curve and look at the noise, it's should be entirely smooth" / "This is like a post build step, too complex for the main tool?" / "Like a review and fix agent and set of skills" / "Or: a tool that runs and listens to me verbally say when I see a dumb spot and it records that, and 3you learn from it or we do that every track, if you can't get this done on your own deterministically" / "Wehen I say records it, or 4mean all the meta data of where" | typed to the PC session |
+
+The Mac's answer to the last three: deterministic first, as a shared tool (`tools/edge_bulges.py`, any track); the
+spoken-tag fallback is not built unless the scan misses what he sees in the car (on the board).
 
 Branch `claude/mf-edge-blooms-20261124` from main d31cb9a8. Every measurement below is read-only, on the installed
 0.1.15's workshop (`D:/k10-scratch/milford_lm`, its `data/track.obj`) unless it says otherwise; the scripts are the PC
@@ -85,77 +89,122 @@ used):
 
 Both say the same: on the two spans the blooms are ours.
 
-## 5. The fix: `lm_intake.width_hold` (0.1.16)
+## 5. First: `lm_intake.width_hold` on two spans (3e79e619, superseded)
 
-`tools/width_hold.py` (new, stdlib), run by `tools/lm_engine_intake.py` after `edge_fit` and `width_smooth_m`, before
-`edge_retrace`, on the line `width_smooth_m` reads. Per span:
+`tools/width_hold.py` held s 1,114-1,270 and 1,557-1,857 to the straight fit through the measured width (a fit through
+the trace's own widths leaned with its late rise and was refused by its own check with `width_smooth_m` off): built minus
+measured width median +0.437 -> +0.018 / +0.302 -> +0.042 m. The Mac's suite passed on it (1,897 / 0). Kevin's next words
+(the table above) made it too narrow: every bulge on an otherwise smooth curve or straight, the whole lap. The tool stays,
+opt-in, named by no track (`test_width_hold.py`); 0.1.16 names `width_design` instead, which takes those two out with the
+rest.
 
-- the measured width: each evidence point on its nearest station of the span (within 20 m), per 5 m bin >= 4 points a
-  side, the two sides' median |u|; at least 60 % of the span's bins measured [invented], or the span is refused;
-- the width over the span is the straight fit through those bins (least squares, refitted 4 times without the bins
-  further than 2.5 MADs + 2 cm [invented]), blended in and out over `blend_m` 15 m by a raised cosine [invented];
-- self-check: built minus measured width, less its median, RMS before / after; a span the hold fits worse is refused.
-- The line is not moved. `data/width_hold.json` logs every span. Without the key the intake is byte for byte as before
-  (`predict_lines_0102.py --check` on main's config: "ARE the prediction").
+## 6. The whole lap: `tools/edge_design.py`, `lm_intake.width_design`, `tools/edge_bulges.py`
 
-A straight fit through the TRACE's own widths was built first (the Mac's first design): on s 1,114-1,270 it leans with
-the trace's late rise (built minus measured +0.31 m median, 0.50 m RMS against -0.05 / 0.28 through the measured width),
-and with `width_smooth_m` off (`test_milford_line_edges.py`'s comparison run) its own self-check refused that span. So
-the hold fits the measured width.
+The Mac's definition (2026-11-24), every number [invented]: a road as laid out is runs joined by tapers; a bulge goes out
+and comes back over 15-200 m and over N cm; a step that does not come back is a width change; a bulge is real only when
+the measured edge makes the same excursion beyond its own noise (the G10's lidar edges where they cover, the evidence
+elsewhere); output the list, the count per km before and after, and the "flying camera" strip.
 
-Intake-level, on the GM line (the tool's own numbers; `r2/blooms_intake.py` on the swept line agrees):
+`tools/edge_design.py` (stdlib, shared):
 
-| span | width before -> after | built - measured median | RMS about it | edges moved p50 / max | bloom a side |
-|---|---|---|---|---|---|
-| 1,114-1,270 | 10.59-12.18 -> 10.49-10.80 m | +0.437 -> +0.018 m | 0.518 -> 0.379 m | 0.23 / 0.69 m | +0.60 -> 0 |
-| 1,557-1,857 | 10.74-12.17 -> 10.88-11.12 m | +0.302 -> +0.042 m | 0.628 -> 0.342 m | 0.12 / 0.60 m | +0.57 -> 0 |
+- `layout(y)`: a morphological opening then closing over 200 m (a running minimum then maximum, then maximum then
+  minimum): every swell and pinch narrower than 200 m taken down to the road either side; a step or a steady taper is
+  monotone and comes through whole. An l1 trend filter was tried first and dropped: at any kink cost (300-3,000) it still
+  rode a 1.2 m swell 0.4-0.9 m and rounded real steps into false excursions either side.
+- `excursions(y, layout)`: where y leaves its layout by > 3 cm; a bulge at >= 10 cm and 15-200 m.
+- `verdict`: the measured values' deviation from the same layout, median inside the bulge's core (over half its peak)
+  minus median within 40 m outside: real at >= half the built peak and >= 2 standard errors (MADs); too few values in or
+  out = unmeasured (kept: at Milford's gores the evidence, searched 3.5 m off the old edge, never reached a 4.7-9.4 m
+  flare). A steady sensor bias and a real taper both cancel in the in-minus-out.
+- `designed`: a bulge that is ours replaced by a cubic between its two ends on the layout's slope (the road's own slope
+  just outside is the bulge's foot and rebuilt the bulges), the change rounded over 10 m (a Hann window, no kink at the
+  joins; it reaches <= 5 m past a bulge).
+- `measured`: the G10's lidar edges (`milford_edges_curves.lidar.g10.json`, merged from
+  `claude/mf-road-profile-lidar-20261124` 19018b12) on its six stretches, `edge_evidence_gm.json`'s points on their
+  nearest station elsewhere (the width per 5 m bin with >= 4 points a side).
 
-- The held widths sit between the lidar-only real width (10.4-10.8 / 10.6-10.7) and NAIP's (~11.1): the evidence mixes
-  both sensors. Not chased further (the Mac: "don't chase the last 0.5 m").
-- The other nine long curves: widths, bloom and RMS identical before / after. Outside the spans + blends the width
-  changes 0.0 m; the line moves 0.0 m.
-- At the span ends the fit meets the trace with a step of -1.18 / -1.39 m (s 1,114 / 1,270) and +0.13 / -0.30 m (s 1,557
-  / 1,857) of width over the 15 m blends. Both of s 1,114-1,270's sit where the measured road itself changes: the curve
-  enters from the wide flare (measured 12.35 m at s 1,100 -> 11.13 at 1,110 -> 10.68 at 1,120) and leaves into the
-  junction on the right (11.0 m at s 1,280 -> 12.0-12.2 at 1,290-1,300).
+`lm_intake.width_design` (Milford only; after `width_hold` and `width_smooth_m`, before `edge_retrace`): the width laid
+out the whole lap; held: s 750-1,045 (the banked turn and `route.densify.section`'s spans + taper) and every
+`edge_retrace` span and taper (re-traced to the measured edge after it). Without the key the intake writes main's line
+byte for byte (both lines equal to d31cb9a8's committed ones). `data/width_design.json` logs every bulge and verdict.
 
-The records that read the width, re-made by their own tools (unchanged rules; `source/round3/apply_0103.sh`):
+`tools/edge_bulges.py` (numpy; a report, not a gate): from a built `track.obj` (the 1ROAD boundary cast along the line's
+normals) or a line + widths; per side and on the width; the edge curvature's 2-30 m wobble and flips; the PNG strip
+(rows of 400 m, the offset x10, built against the measured 5 m medians, bulges shaded). Per-track block
+`track.config.json` "edge_bulges" {evidence, lidar_edges, skip}; the `edge_retrace` spans count apart by themselves.
 
-- the run-off pads (`runoff_pads.py --write`): the 19 pads identical; only `runoff_pads.json`'s line md5 changes;
-- the verge trees (`veg_naip_verge.py --write`): the same 884, `trees.lm.json` byte for byte; 44 recorded distances to
-  the drivable surface move up to 0.59 m;
-- the trunk colliders (`veg_trunks_reach.py --write`): the same 251; 3 recorded distances move up to 0.2 m.
+### Milford, measured
 
-`source/round3/edit_config_0103.py` writes the key and 0.1.16 on top of 0.1.15 (refuses anything else).
+On 0.1.15's built `track.obj` (`--workshop`): width bulges the measured edge does not carry 16 (3.39 / km, max 2.58 m),
+real 15, unmeasured 5; left edge 14 / right 9 (per side the line's own off-centre reading counts too).
 
-## 6. Owed (not in 0.1.16)
+At intake (`data/width_design.json`), the width before the retrace:
 
-- **s 580-660**, a third, smaller swell (G10: real 10.5-11.0 m steady, built +0.96 m). A hold there fits (built minus
-  measured +0.49 -> -0.02 m median) but the trace before it is too wide as well (s 474-572: built 11.3-11.7 m, measured
-  10.96-11.37 m, which really varies), so the blend at s 565-580 would pinch both lines ~0.53 m in 15 m where the road
-  does not. It needs its own span design.
+| s | dir | peak | length | measured excursion |
+|---|---|---|---|---|
+| 535-603 | out | 0.30 m | 69 m | +0.16 +- 0.10 |
+| 663-699 | in | 0.27 | 37 | -0.59 +- 0.12 |
+| 1,186-1,322 | out | 1.59 | 137 | +0.24 +- 0.09 |
+| 1,325-1,422 | in | 0.74 | 98 | -0.13 +- 0.40 |
+| 1,436-1,534 | out | 0.27 | 99 | +0.07 +- 0.16 |
+| 1,593-1,732 | out | 1.21 | 140 | -0.23 +- 0.07 |
+| 1,742-1,819 | out | 0.49 | 78 | -0.07 +- 0.07 |
+| 1,941-1,994 | in | 0.24 | 54 | +0.26 +- 0.13 |
+| 2,002-2,074 | out | 0.10 | 73 | +0.05 +- 0.13 |
+| 3,408-3,546 | out | 0.22 | 139 | -0.09 +- 0.20 |
+
+- 10 taken out (2.12 -> 0.21 / km; the one the re-scan still finds, s 1,342-1,420, is 0.15 m), 6 real kept, 0
+  unmeasured outside the held stretches; the edges moved max 0.78 m at 1,360 of 6,304 points; the line not moved.
+- On the swept line (`edge_bulges.py --line`, the bowl and the retraced stretches counted apart), before -> after:
+  width ours 11 -> 2 (2.33 -> 0.42 / km), left edge 9 -> 4, right 5 -> 1. The two left on the width: s 2,999-3,197 (0.42
+  m; the measured edge says the road widens there even more, +1.35 +- 0.84 m, just inside its noise) and the 0.15 m one.
+- The edges' curvature wobble (2-30 m, per 100 m) p50 0.18 -> 0.23 / 0.23 -> 0.24 per km (left / right), p90 and max
+  unchanged.
+- s 580-660 (the third swell, owed in 3e79e619) is taken out with the rest: the design keeps the trace's own level either
+  side, so no pinch at s 565-580.
+- Pictures (the PC's scratchpad `r2/`): `milford_edges_before_after.png` (four stretches, before / after / measured),
+  `bulges_line_before.png` / `_after.png` (the whole lap), `mf_longest_straight.png` (the longest curve as built).
+
+The records that read the width, re-made by their own tools (`source/round3/apply_0103.sh` rebuilds every file from
+main's d31cb9a8 byte for byte):
+
+- run-off pads (`runoff_pads.py --write`): the same 19 pads; L1355's inner and outer outline follow the lane edge in by
+  <= 0.21 m (175 -> 170 m2), L3543 (left out) by 0.01 m;
+- verge trees (`veg_naip_verge.py --write`): the same 884, `trees.lm.json` byte for byte; 111 recorded distances move
+  <= 0.57 m;
+- trunk colliders (`veg_trunks_reach.py --write`): 251 -> 249 (two trees now just past the 20 m reach), the reach still
+  20 m (g4_infield_esses' standoff 19.07 -> 19.06 m).
+
+## 7. Owed (not in 0.1.16)
+
+- **The line's centre**: per side, the measured edges put the road's centre 0.3-0.45 m off the line on the long curves
+  (the width is right, the line is not centred: left edge 4 / right 1 bulges left per side). The G10: no consistent offset
+  it can settle under ~0.6 m (the build's and NAIP's registrations are 0.66 m apart); one larger reading, s 1,295-1,316
+  (R < 50 m): +1.35 / +1.72 m toward the inside. Not moved.
 - **The banked turn, s 750-1,015**: built 1.2-1.8 m UNDER the real at s 875-940 (the trace's 16 m cap; real 14-17.8 m on
-  the inner banked part). The opposite problem, and it changes the bowl. On the board.
-- **The centre**: no shift. The lidar shows no consistent 0.3-0.8 m inside offset (the build's and NAIP's registrations
-  are 0.66 m apart, so nothing under ~0.6 m can be settled); one larger reading, s 1,295-1,316 (R < 50 m): +1.35 / +1.72
-  m toward the inside. Noted, not moved.
+  the inner banked part). On the board.
+- s 2,999-3,197: a 0.42 m width swell the measured edge may carry (+1.35 +- 0.84 m); kept.
 - Low-confidence edges (weak contrast): s 945-965 right, s 1,325-1,335.
+- Kevin's spoken-tag tool: only if the scan misses what he sees in the car.
 
 ## Tests
 
-- `tests/tools/test_width_hold.py` (6): a swell the measured edge does not carry is held to the measured width; one it
-  carries is refused; too few measured bins and bad spans refuse; the blend and the robust fit; opt-in only Milford names
-  it, the intake runs it only with the key, after width_smooth and before edge_retrace; Milford's two spans, the
-  edit script writes the key and its doc, and the committed line's width is straight across each span.
-- `test_milford_finish_0100.py`, `test_milford_round2_0102.py`: the version pins move to 0.1.16 (round 2's version doc
-  kept after round 3's); the trunks' line doc names 0.1.16's line.
-- Every test file that names Milford or the intake (31): 249 passed on the PC's system python; the 9 failures + 5
-  collection errors there are numpy / Pillow missing; under the lidar venv every one of those files passes except
-  `test_bespoke_assets.py::test_generator_reproduces_the_committed_files` (`traffic_cone.obj` / `.json` differ),
-  which fails the same on clean main d31cb9a8 on this PC.
+- `tests/tools/test_edge_design.py` (7): the layout takes out swells and pinches and keeps steps and tapers; the design
+  takes out only what the measured edge does not carry, keeps a real one, touches nothing else to the bit, never a held
+  span; an unmeasured bulge is kept and reported; the lidar edges judge where they cover; width_design is opt-in, runs
+  after width_hold and before the retrace, Milford only; Milford's config, script, ship.json and committed line;
+  `edge_bulges.py --line` on a synthetic lap (needs numpy).
+- `tests/tools/test_width_hold.py` (6): the tool's own tests; no track names it any more.
+- `test_milford_finish_0100.py`: 249 trunk colliders, the standoff 19.06 m, 0.1.16; `test_milford_round2_0102.py`: 0.1.16.
+- Every test file naming Milford, the intake, edge_design or width_hold (31): 256 passed on the PC's system python; its 9
+  failures + 5 collection errors are numpy / Pillow missing, and under the lidar venv every one of those files passes
+  except `test_bespoke_assets.py::test_generator_reproduces_the_committed_files` (traffic_cone.obj / .json), which fails
+  the same on clean main on this PC and passes on the Mac (its suite on 3e79e619: 1,897 / 0).
 
 ## Not done
 
-- The scratch chain on the PC (from an empty workshop, `--no-install`) when the queue reaches Milford; then the blooms
-  re-measured on its `track.obj` (`r2/blooms.py`), every gate, the kn5 against 0.1.15's 51,527,489 B.
+- The scratch chain on the PC (from an empty workshop, `--no-install`) when the queue reaches Milford; then
+  `tools/edge_bulges.py --workshop` on its `track.obj` (before: 16 width bulges of ours on 0.1.15's), every gate, the kn5
+  against 0.1.15's 51,527,489 B.
+- `tools/edge_bulges.py` on Lake Murray, Sand Creek and High Plains (the Mac).
 - Install on Kevin's standing word once green and matching; then his drive of the two curves.

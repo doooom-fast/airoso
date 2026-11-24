@@ -1,5 +1,5 @@
 {
- "_doc": "Corrections to accepted posts, made by eye after the second pass's readers flagged them (each checked on a 14 m crop of 2022 beside 2020, 2026-11-24). remove: the post nearest E,N within 1.5 m is dropped (move, reclass and flag match the same way). move: it is moved to the new E,N (position_from says so). flag: a note on its position. Not acted on: R118's 'three squares for two poles' (the 2022 picture shows three shadows: a short post and two tall poles) and R108's 'parking meters?' (2.0-2.3 m shadows against 1.1-1.3 m for the meters beside them). reclass: the post's class is changed. The posts refutation's findings (refutation/posts_round1.json) are applied here and in eye/verdicts_refute_r1.json (its misses).",
+ "_doc": "Corrections to accepted posts, made by eye after the second pass's readers flagged them (each checked on a 14 m crop of 2022 beside 2020, 2026-11-24). remove: the post nearest E,N within 1.5 m is dropped (move, reclass and flag match the same way). move: it is moved to the new E,N (position_from says so). flag: a note on its position. Not acted on: R118's 'three squares for two poles' (the 2022 picture shows three shadows: a short post and two tall poles) and R108's 'parking meters?' (2.0-2.3 m shadows against 1.1-1.3 m for the meters beside them). reclass: the post's class is changed. The posts refutation's findings (refutation/posts_round1.json) are applied here and in eye/verdicts_refute_r1.json (its misses). After posts refutation round 3 the settled signal_post definition was applied lap-wide to every post's own eye note (reclass entries quoting the note).",
  "remove": [
   {
    "E": -1269.9,
@@ -115,6 +115,36 @@
    "E": -678.4,
    "N": -16.0,
    "why": "a second square 2.1 m from g0104's mast (posts refutation round 2)"
+  },
+  {
+   "E": -519.8,
+   "N": -174.91,
+   "why": "a parking meter (posts refutation round 3)"
+  },
+  {
+   "E": -506.4,
+   "N": -174.91,
+   "why": "a parking meter (posts refutation round 3)"
+  },
+  {
+   "E": -1159.25,
+   "N": 903.87,
+   "why": "probably a parking meter (posts refutation round 3)"
+  },
+  {
+   "E": -1474.0,
+   "N": 942.1,
+   "why": "a kerb-ramp stub, no pole (posts refutation round 3)"
+  },
+  {
+   "E": -19.71,
+   "N": -168.63,
+   "why": "a ground-level globe light (posts refutation round 3)"
+  },
+  {
+   "E": -864.7,
+   "N": 492.91,
+   "why": "a one-year blob: a person or a temporary object (posts refutation round 3)"
   }
  ],
  "move": [
@@ -204,6 +234,120 @@
    "N": 131.48,
    "to": "signal_post",
    "why": "carries signal heads (posts refutation round 2)"
+  },
+  {
+   "E": -121.13,
+   "N": -19.06,
+   "to": "signal_post",
+   "why": "posts refutation round 3"
+  },
+  {
+   "E": -982.68,
+   "N": -173.33,
+   "to": "signal_post",
+   "why": "posts refutation round 3"
+  },
+  {
+   "E": -1263.09,
+   "N": 124.4,
+   "to": "signal_post",
+   "why": "posts refutation round 3"
+  },
+  {
+   "E": -1367.91,
+   "N": 576.44,
+   "to": "lamp",
+   "why": "posts refutation round 3"
+  },
+  {
+   "E": -115.5,
+   "N": 14.4,
+   "to": "lamp",
+   "why": "posts refutation round 3"
+  },
+  {
+   "E": -880.53,
+   "N": 472.62,
+   "to": "lamp",
+   "why": "posts refutation round 3"
+  },
+  {
+   "E": -1244.3,
+   "N": 138.91,
+   "to": "signal_mast",
+   "why": "posts refutation round 3"
+  },
+  {
+   "E": -860.24,
+   "N": 13.1,
+   "to": "signal_post",
+   "why": "settled definition applied to its eye note: 'tall twin-arm streetlight at the NE corner: 11 m stroke N in 2022 with curved arm and head, long NW stroke 2020; boxy sh'"
+  },
+  {
+   "E": -998.0,
+   "N": -18.0,
+   "to": "signal_post",
+   "why": "settled definition applied to its eye note: 'SW corner pole under a bare tree: 6 m stroke N with luminaire arm pointing east 2022, NW stroke 2020, real arm with brig'"
+  },
+  {
+   "E": -1130.58,
+   "N": -20.76,
+   "to": "signal_post",
+   "why": "settled definition applied to its eye note: 'SW corner pole: 6.5 m stroke N with luminaire arm 2022, NW stroke 2020, short real arm with bright head; boxy shadow on '"
+  },
+  {
+   "E": -906.79,
+   "N": 416.24,
+   "to": "signal_post",
+   "why": "settled definition applied to its eye note: 'tall pole, 7 m stroke N with round head 2022, long NW stroke 2020; boxy shadows on the pole suggest side-mounted signal '"
+  },
+  {
+   "E": -919.75,
+   "N": 430.91,
+   "to": "signal_post",
+   "why": "settled definition applied to its eye note: 'tall pole, stroke N with round head 2022, NW stroke 2020; boxy shadows on the pole suggest side-mounted signal heads'"
+  },
+  {
+   "E": -900.1,
+   "N": 412.8,
+   "to": "signal_post",
+   "why": "settled definition applied to its eye note: 'missed, found in posts refutation round 2 (j1758 14th Street / Stout Street): medium confidence: three sunlit globes vis'"
+  },
+  {
+   "E": -1010.5,
+   "N": 760.2,
+   "to": "signal_post",
+   "why": "settled definition applied to its eye note: 'E corner, 2020: long thin stroke NW ending in a blob; 2022 in dappled shadow; may also carry signal heads'"
+  },
+  {
+   "E": -1319.19,
+   "N": 1047.59,
+   "to": "signal_post",
+   "why": "settled definition applied to its eye note: 'on the triangular island: 3.2 m stroke N with a flag-shaped head in 2022, stroke with box in 2020; sign or signal pedest'"
+  },
+  {
+   "E": -1397.95,
+   "N": 971.91,
+   "to": "signal_post",
+   "why": "settled definition applied to its eye note: 'T-shaped head on the shadow in both years'"
+  },
+  {
+   "E": -1520.24,
+   "N": 847.96,
+   "to": "signal_post",
+   "why": "settled definition applied to its eye note: 'north corner, ~3.5 m SE of the corner mast square: 2022 a clear second vertical pole shadow (~6 m north) from a foot by '"
+  },
+  {
+   "E": -1169.9,
+   "N": -20.77,
+   "to": "lamp",
+   "why": "its eye note names a lamp head: 'on the bridge-end wall east of mast 1067; about 2.5 m stroke with a round head in both years (pedestrian globe lamp or a'"
+  },
+  {
+   "E": 211.77,
+   "N": -20.16,
+   "to": "signal_post",
+   "why": "settled definition applied to its eye note: 'SW corner Colfax/Logan: 7 m stroke with 3.5 m luminaire arm east; boxes on pole suggest side-mounted signal heads; ring '"
   }
  ]
 }

@@ -1,0 +1,29 @@
+{
+ "reader": "posts refutation round 3 reader (by eye): its misses, added",
+ "panels": {
+  "REF3": {
+   "candidates": {},
+   "added": [
+    {
+     "E": -1342.0,
+     "N": 575.5,
+     "class": "sign_or_small_post",
+     "note": "missed, found in posts refutation round 3 (j3368 Lawrence Street / North Speer Boulevard): on the bike-path edge: 2022 a north stroke ending in a plate, 2020 a NW stroke from the same foot"
+    },
+    {
+     "E": -1001.5,
+     "N": -193.0,
+     "class": "post_unknown",
+     "note": "missed, found in posts refutation round 3 (j4982 Galapago Street / West 14th Avenue): tall pole whose foot is under tree canopy; the 2022 north shadow (about 11 m) ends in a head at -181.8; moderate confidence"
+    },
+    {
+     "E": -881.0,
+     "N": 496.8,
+     "class": "lamp",
+     "note": "missed, found in posts refutation round 3 (m1820 Stout to 15th St mid-block): long north stroke in 2022 with a globe head visible both years"
+    }
+   ],
+   "note": "the misses of refutation round 3"
+  }
+ }
+}

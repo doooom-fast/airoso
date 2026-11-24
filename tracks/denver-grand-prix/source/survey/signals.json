@@ -1,6 +1,6 @@
 {
  "_doc": "Signal masts and signal posts on the lap corridor, and the count at every junction OSM tags as signalled (PLAN 4b). signal_mast: a pole with an arm over the roadway (signal heads hang from it); signal_post: any pole or pedestal carrying signal or pedestrian heads with no arm over the road, tall or short; carries_lamp is true where it also carries a light (its eye note names one, or its shadow is 5 m or longer). Classes are the eye's, off the aerial. Heads, their number and their faces are not read. See SURVEY.md.",
- "written_utc": "2026-11-24T20:44:10Z",
+ "written_utc": "2026-11-24T21:14:47Z",
  "frame": {
   "origin_lonlat": [
    -104.9849,
@@ -11,7 +11,7 @@
  "sources": {
   "aerials": "DRCOG 3-inch, 2022 / 2020 / 2018 (drapparchive.s3.amazonaws.com), by HTTP range",
   "reader": "posts_tile.py + posts_lap.py",
-  "eye": "panels of 2022 beside 2020; verdict files: verdicts_b0.json, verdicts_b1.json, verdicts_b2.json, verdicts_b3.json, verdicts_b4.json, verdicts_b5.json, verdicts_b6.json, verdicts_b7.json, verdicts_r2_b0.json, verdicts_r2_b1.json, verdicts_r2_b2.json, verdicts_r2_b3.json, verdicts_r2_b4.json, verdicts_refute_r1.json, verdicts_refute_r2.json, verdicts_sg_b0.json, verdicts_sg_b1.json, verdicts_sg_b2.json, verdicts_sg_b3.json"
+  "eye": "panels of 2022 beside 2020; verdict files: verdicts_b0.json, verdicts_b1.json, verdicts_b2.json, verdicts_b3.json, verdicts_b4.json, verdicts_b5.json, verdicts_b6.json, verdicts_b7.json, verdicts_r2_b0.json, verdicts_r2_b1.json, verdicts_r2_b2.json, verdicts_r2_b3.json, verdicts_r2_b4.json, verdicts_refute_r1.json, verdicts_refute_r2.json, verdicts_refute_r3.json, verdicts_sg_b0.json, verdicts_sg_b1.json, verdicts_sg_b2.json, verdicts_sg_b3.json"
  },
  "reader": {
   "first_pass": {
@@ -146,19 +146,19 @@
     }
    },
    "corrections_by_eye_after_the_second_pass": {
-    "removed": 19,
+    "removed": 25,
     "moved": 3,
     "flagged": 2,
-    "reclassed": 7
+    "reclassed": 26
    },
    "added_by_eye": {
-    "placed_on_a_shadow_foot": 188,
+    "placed_on_a_shadow_foot": 189,
     "placed_by_eye_only": 146,
-    "duplicates_of_a_candidate_dropped": 36,
-    "outside_the_corridor_dropped": 89
+    "duplicates_of_a_candidate_dropped": 37,
+    "outside_the_corridor_dropped": 90
    },
    "reader_precision_against_the_eye": 0.226,
-   "reader_recall_against_the_eye": 0.561
+   "reader_recall_against_the_eye": 0.56
   }
  },
  "heights": "not written: see SURVEY.md (the sun's elevation was not derived cleanly per flight line); shadow_m per year is kept so a height follows once it is",
@@ -173,16 +173,16 @@
   }
  ],
  "counts": {
-  "signal_masts": 119,
-  "signal_posts": 70,
+  "signal_masts": 118,
+  "signal_posts": 83,
   "osm_signal_nodes_on_the_lap": 55,
   "junctions_osm_tags_signalled": 49,
   "signalled_junctions_on_the_lap": 47,
   "signalled_junctions_off_the_lap_not_surveyed": 2,
   "signalled_junctions_on_the_lap_with_no_mast_or_post_found": 0,
   "masts_per_signalled_junction_on_the_lap": {
-   "3": 21,
-   "4": 4,
+   "3": 22,
+   "4": 3,
    "2": 17,
    "1": 4,
    "0": 1
@@ -190,14 +190,14 @@
   "signal_posts_not_at_a_tagged_junction": [
    "g0079",
    "g0157",
-   "g0351",
-   "g0514"
+   "g0348",
+   "g0511"
   ]
  },
  "grade_shares": {
-  "measured": 0.905,
-  "detected": 0.095,
-  "confirmed_by_a_second_flight_year": 0.751
+  "measured": 0.896,
+  "detected": 0.104,
+  "confirmed_by_a_second_flight_year": 0.746
  },
  "position_check": {
   "posts_with_two_or_more_years": 420,
@@ -226,8 +226,8 @@
    "ids": [
     "g0001",
     "g0002",
-    "g0740",
-    "g0741"
+    "g0735",
+    "g0736"
    ],
    "off_lap_m": 0.0
   },
@@ -244,8 +244,8 @@
     176103304
    ],
    "osm_tags_a_signal": true,
-   "signal_masts_found": 4,
-   "signal_posts_found": 1,
+   "signal_masts_found": 3,
+   "signal_posts_found": 2,
    "ids": [
     "g0020",
     "g0021",
@@ -402,8 +402,9 @@
    ],
    "osm_tags_a_signal": true,
    "signal_masts_found": 3,
-   "signal_posts_found": 1,
+   "signal_posts_found": 2,
    "ids": [
+    "g0128",
     "g0130",
     "g0132",
     "g0133",
@@ -425,10 +426,11 @@
    ],
    "osm_tags_a_signal": true,
    "signal_masts_found": 3,
-   "signal_posts_found": 0,
+   "signal_posts_found": 1,
    "ids": [
     "g0144",
     "g0145",
+    "g0147",
     "g0150"
    ],
    "off_lap_m": 0.4
@@ -447,9 +449,10 @@
    ],
    "osm_tags_a_signal": true,
    "signal_masts_found": 2,
-   "signal_posts_found": 0,
+   "signal_posts_found": 1,
    "ids": [
     "g0158",
+    "g0159",
     "g0161"
    ],
    "off_lap_m": 0.1
@@ -492,10 +495,13 @@
    ],
    "osm_tags_a_signal": true,
    "signal_masts_found": 2,
-   "signal_posts_found": 2,
+   "signal_posts_found": 5,
    "ids": [
     "g0183",
+    "g0185",
+    "g0186",
     "g0187",
+    "g0188",
     "g0192",
     "g0195"
    ],
@@ -517,12 +523,12 @@
    "signal_masts_found": 2,
    "signal_posts_found": 4,
    "ids": [
-    "g0208",
+    "g0207",
+    "g0209",
     "g0210",
     "g0211",
     "g0212",
-    "g0213",
-    "g0214"
+    "g0213"
    ],
    "off_lap_m": 0.0
   },
@@ -542,9 +548,9 @@
    "signal_masts_found": 1,
    "signal_posts_found": 2,
    "ids": [
-    "g0219",
-    "g0223",
-    "g0224"
+    "g0218",
+    "g0222",
+    "g0223"
    ],
    "off_lap_m": 0.3
   },
@@ -564,10 +570,10 @@
    "signal_masts_found": 1,
    "signal_posts_found": 3,
    "ids": [
-    "g0228",
-    "g0231",
-    "g0233",
-    "g0234"
+    "g0227",
+    "g0230",
+    "g0232",
+    "g0233"
    ],
    "off_lap_m": 0.3
   },
@@ -585,11 +591,12 @@
    ],
    "osm_tags_a_signal": true,
    "signal_masts_found": 3,
-   "signal_posts_found": 0,
+   "signal_posts_found": 1,
    "ids": [
+    "g0238",
     "g0239",
-    "g0243",
-    "g0244"
+    "g0242",
+    "g0243"
    ],
    "off_lap_m": 0.4
   },
@@ -609,8 +616,8 @@
    "signal_masts_found": 2,
    "signal_posts_found": 0,
    "ids": [
-    "g0251",
-    "g0252"
+    "g0250",
+    "g0251"
    ],
    "off_lap_m": 0.3
   },
@@ -630,10 +637,10 @@
    "signal_masts_found": 2,
    "signal_posts_found": 2,
    "ids": [
-    "g0265",
-    "g0266",
-    "g0269",
-    "g0271"
+    "g0263",
+    "g0264",
+    "g0267",
+    "g0269"
    ],
    "off_lap_m": 0.1
   },
@@ -653,10 +660,10 @@
    "signal_masts_found": 2,
    "signal_posts_found": 2,
    "ids": [
-    "g0282",
-    "g0283",
-    "g0287",
-    "g0288"
+    "g0280",
+    "g0281",
+    "g0285",
+    "g0286"
    ],
    "off_lap_m": 0.3
   },
@@ -672,9 +679,10 @@
    "osm_signal_nodes": [],
    "osm_tags_a_signal": false,
    "signal_masts_found": 0,
-   "signal_posts_found": 1,
+   "signal_posts_found": 2,
    "ids": [
-    "g0296"
+    "g0294",
+    "g0295"
    ],
    "off_lap_m": 0.1,
    "finding": "masts found where OSM tags no signal"
@@ -693,15 +701,16 @@
    ],
    "osm_tags_a_signal": true,
    "signal_masts_found": 2,
-   "signal_posts_found": 5,
+   "signal_posts_found": 6,
    "ids": [
+    "g0294",
+    "g0295",
     "g0296",
     "g0298",
     "g0300",
     "g0302",
-    "g0304",
-    "g0305",
-    "g0306"
+    "g0303",
+    "g0304"
    ],
    "off_lap_m": 0.1
   },
@@ -717,13 +726,14 @@
    "osm_signal_nodes": [],
    "osm_tags_a_signal": false,
    "signal_masts_found": 1,
-   "signal_posts_found": 4,
+   "signal_posts_found": 5,
    "ids": [
-    "g0296",
+    "g0294",
+    "g0295",
+    "g0300",
     "g0302",
-    "g0304",
-    "g0305",
-    "g0306"
+    "g0303",
+    "g0304"
    ],
    "off_lap_m": 0.4,
    "finding": "masts found where OSM tags no signal"
@@ -740,9 +750,12 @@
    "osm_signal_nodes": [],
    "osm_tags_a_signal": false,
    "signal_masts_found": 0,
-   "signal_posts_found": 0,
-   "ids": [],
-   "off_lap_m": 0.1
+   "signal_posts_found": 1,
+   "ids": [
+    "g0312"
+   ],
+   "off_lap_m": 0.1,
+   "finding": "masts found where OSM tags no signal"
   },
   {
    "junction": "Blake Street / 14th Street",
@@ -760,10 +773,10 @@
    "signal_masts_found": 3,
    "signal_posts_found": 1,
    "ids": [
+    "g0324",
+    "g0325",
     "g0326",
-    "g0327",
-    "g0329",
-    "g0331"
+    "g0328"
    ],
    "off_lap_m": 0.1
   },
@@ -785,13 +798,13 @@
    "signal_masts_found": 3,
    "signal_posts_found": 4,
    "ids": [
-    "g0344",
+    "g0341",
+    "g0343",
+    "g0345",
     "g0346",
-    "g0348",
+    "g0347",
     "g0349",
-    "g0350",
-    "g0352",
-    "g0355"
+    "g0352"
    ],
    "off_lap_m": 0.2
   },
@@ -809,12 +822,13 @@
    ],
    "osm_tags_a_signal": true,
    "signal_masts_found": 3,
-   "signal_posts_found": 1,
+   "signal_posts_found": 2,
    "ids": [
-    "g0362",
+    "g0359",
+    "g0360",
+    "g0361",
     "g0363",
-    "g0366",
-    "g0367"
+    "g0364"
    ],
    "off_lap_m": 0.2
   },
@@ -834,13 +848,13 @@
    "signal_masts_found": 3,
    "signal_posts_found": 4,
    "ids": [
+    "g0378",
+    "g0379",
+    "g0380",
     "g0381",
-    "g0382",
-    "g0383",
-    "g0384",
-    "g0390",
-    "g0392",
-    "g0393"
+    "g0387",
+    "g0389",
+    "g0390"
    ],
    "off_lap_m": 0.2
   },
@@ -857,13 +871,12 @@
     5934861525
    ],
    "osm_tags_a_signal": true,
-   "signal_masts_found": 3,
+   "signal_masts_found": 2,
    "signal_posts_found": 1,
    "ids": [
-    "g0404",
-    "g0405",
-    "g0410",
-    "g0411"
+    "g0401",
+    "g0407",
+    "g0408"
    ],
    "off_lap_m": 0.4
   },
@@ -883,11 +896,11 @@
    "signal_masts_found": 4,
    "signal_posts_found": 1,
    "ids": [
+    "g0412",
+    "g0413",
     "g0415",
     "g0416",
-    "g0418",
-    "g0419",
-    "g0420"
+    "g0417"
    ],
    "off_lap_m": 0.3
   },
@@ -923,9 +936,9 @@
    "signal_masts_found": 3,
    "signal_posts_found": 0,
    "ids": [
-    "g0440",
-    "g0441",
-    "g0442"
+    "g0437",
+    "g0438",
+    "g0439"
    ],
    "off_lap_m": 0.4
   },
@@ -943,8 +956,8 @@
    "signal_masts_found": 1,
    "signal_posts_found": 1,
    "ids": [
-    "g0449",
-    "g0451"
+    "g0446",
+    "g0448"
    ],
    "off_lap_m": 0.2,
    "finding": "masts found where OSM tags no signal"
@@ -971,11 +984,11 @@
    "signal_masts_found": 4,
    "signal_posts_found": 1,
    "ids": [
+    "g0455",
     "g0458",
-    "g0461",
-    "g0462",
-    "g0492",
-    "g0497"
+    "g0459",
+    "g0489",
+    "g0494"
    ],
    "off_lap_m": 7.9
   },
@@ -995,9 +1008,9 @@
    "signal_masts_found": 2,
    "signal_posts_found": 1,
    "ids": [
-    "g0472",
-    "g0473",
-    "g0475"
+    "g0469",
+    "g0470",
+    "g0472"
    ],
    "off_lap_m": 0.3
   },
@@ -1017,7 +1030,7 @@
    "signal_masts_found": 0,
    "signal_posts_found": 1,
    "ids": [
-    "g0481"
+    "g0478"
    ],
    "off_lap_m": 0.1
   },
@@ -1050,12 +1063,13 @@
     176112894
    ],
    "osm_tags_a_signal": true,
-   "signal_masts_found": 2,
+   "signal_masts_found": 3,
    "signal_posts_found": 1,
    "ids": [
-    "g0507",
-    "g0509",
-    "g0510"
+    "g0502",
+    "g0504",
+    "g0506",
+    "g0507"
    ],
    "off_lap_m": 0.2
   },
@@ -1077,9 +1091,9 @@
    "signal_masts_found": 3,
    "signal_posts_found": 0,
    "ids": [
-    "g0515",
-    "g0519",
-    "g0520"
+    "g0512",
+    "g0516",
+    "g0517"
    ],
    "off_lap_m": 0.2
   },
@@ -1099,10 +1113,10 @@
    "signal_masts_found": 2,
    "signal_posts_found": 2,
    "ids": [
-    "g0528",
-    "g0529",
-    "g0530",
-    "g0531"
+    "g0525",
+    "g0526",
+    "g0527",
+    "g0528"
    ],
    "off_lap_m": 0.4
   },
@@ -1122,11 +1136,11 @@
    "signal_masts_found": 3,
    "signal_posts_found": 2,
    "ids": [
+    "g0529",
+    "g0530",
     "g0532",
-    "g0533",
-    "g0535",
-    "g0537",
-    "g0538"
+    "g0534",
+    "g0535"
    ],
    "off_lap_m": 0.2
   },
@@ -1144,12 +1158,13 @@
    ],
    "osm_tags_a_signal": true,
    "signal_masts_found": 3,
-   "signal_posts_found": 1,
+   "signal_posts_found": 2,
    "ids": [
+    "g0532",
+    "g0534",
     "g0535",
-    "g0537",
-    "g0538",
-    "g0542"
+    "g0539",
+    "g0540"
    ],
    "off_lap_m": 0.3
   },
@@ -1185,10 +1200,10 @@
    "signal_masts_found": 3,
    "signal_posts_found": 1,
    "ids": [
-    "g0571",
-    "g0572",
-    "g0575",
-    "g0576"
+    "g0569",
+    "g0570",
+    "g0573",
+    "g0574"
    ],
    "off_lap_m": 0.2
   },
@@ -1208,10 +1223,10 @@
    "signal_masts_found": 3,
    "signal_posts_found": 1,
    "ids": [
+    "g0582",
     "g0584",
     "g0586",
-    "g0588",
-    "g0589"
+    "g0587"
    ],
    "off_lap_m": 0.0
   },
@@ -1231,10 +1246,10 @@
    "signal_masts_found": 3,
    "signal_posts_found": 1,
    "ids": [
+    "g0591",
+    "g0592",
     "g0593",
-    "g0594",
-    "g0595",
-    "g0597"
+    "g0595"
    ],
    "off_lap_m": 0.2
   },
@@ -1255,11 +1270,11 @@
    "signal_masts_found": 2,
    "signal_posts_found": 3,
    "ids": [
+    "g0603",
+    "g0604",
     "g0607",
-    "g0608",
-    "g0611",
-    "g0613",
-    "g0615"
+    "g0609",
+    "g0611"
    ],
    "off_lap_m": 2.8
   },
@@ -1279,7 +1294,7 @@
    "signal_masts_found": 1,
    "signal_posts_found": 0,
    "ids": [
-    "g0631"
+    "g0627"
    ],
    "off_lap_m": 0.0
   },
@@ -1299,10 +1314,10 @@
    "signal_masts_found": 2,
    "signal_posts_found": 2,
    "ids": [
-    "g0650",
-    "g0651",
-    "g0652",
-    "g0653"
+    "g0646",
+    "g0647",
+    "g0648",
+    "g0649"
    ],
    "off_lap_m": 0.5
   },
@@ -1322,10 +1337,10 @@
    "signal_masts_found": 3,
    "signal_posts_found": 1,
    "ids": [
-    "g0657",
-    "g0658",
-    "g0660",
-    "g0662"
+    "g0653",
+    "g0654",
+    "g0656",
+    "g0658"
    ],
    "off_lap_m": 0.0
   },
@@ -1345,10 +1360,10 @@
    "signal_masts_found": 2,
    "signal_posts_found": 2,
    "ids": [
-    "g0673",
-    "g0675",
-    "g0676",
-    "g0677"
+    "g0668",
+    "g0670",
+    "g0671",
+    "g0672"
    ],
    "off_lap_m": 0.4
   },
@@ -1368,10 +1383,10 @@
    "signal_masts_found": 2,
    "signal_posts_found": 2,
    "ids": [
-    "g0688",
-    "g0689",
-    "g0691",
-    "g0692"
+    "g0683",
+    "g0684",
+    "g0686",
+    "g0687"
    ],
    "off_lap_m": 0.1
   },
@@ -1391,9 +1406,9 @@
    "signal_masts_found": 2,
    "signal_posts_found": 1,
    "ids": [
-    "g0698",
-    "g0700",
-    "g0702"
+    "g0693",
+    "g0695",
+    "g0697"
    ],
    "off_lap_m": 0.4
   },
@@ -1413,11 +1428,12 @@
    ],
    "osm_tags_a_signal": true,
    "signal_masts_found": 3,
-   "signal_posts_found": 0,
+   "signal_posts_found": 1,
    "ids": [
-    "g0712",
-    "g0713",
-    "g0715"
+    "g0706",
+    "g0707",
+    "g0708",
+    "g0710"
    ],
    "off_lap_m": 0.4
   },
@@ -1475,10 +1491,10 @@
    "signal_masts_found": 3,
    "signal_posts_found": 1,
    "ids": [
-    "g0721",
-    "g0722",
-    "g0725",
-    "g0726"
+    "g0716",
+    "g0717",
+    "g0720",
+    "g0721"
    ],
    "off_lap_m": 0.4
   }
@@ -1493,8 +1509,8 @@
   {
    "osm_node": 176103304,
    "junction": "East Colfax Avenue / North Lincoln Street",
-   "signal_masts_found_at_its_junction": 4,
-   "signal_posts_found_at_its_junction": 1
+   "signal_masts_found_at_its_junction": 3,
+   "signal_posts_found_at_its_junction": 2
   },
   {
    "osm_node": 176072933,
@@ -1530,19 +1546,19 @@
    "osm_node": 1160443953,
    "junction": "West Colfax Avenue / 12th Street / Glenarm Place",
    "signal_masts_found_at_its_junction": 3,
-   "signal_posts_found_at_its_junction": 1
+   "signal_posts_found_at_its_junction": 2
   },
   {
    "osm_node": 1160446238,
    "junction": "West Colfax Avenue / Galapago Street / Welton Street",
    "signal_masts_found_at_its_junction": 3,
-   "signal_posts_found_at_its_junction": 0
+   "signal_posts_found_at_its_junction": 1
   },
   {
    "osm_node": 1160446242,
    "junction": "North Speer Boulevard / West Colfax Avenue",
    "signal_masts_found_at_its_junction": 2,
-   "signal_posts_found_at_its_junction": 0
+   "signal_posts_found_at_its_junction": 1
   },
   {
    "osm_node": 176094984,
@@ -1554,7 +1570,7 @@
    "osm_node": 176086275,
    "junction": "Stout Street / 14th Street",
    "signal_masts_found_at_its_junction": 2,
-   "signal_posts_found_at_its_junction": 2
+   "signal_posts_found_at_its_junction": 5
   },
   {
    "osm_node": 176113163,
@@ -1578,7 +1594,7 @@
    "osm_node": 176086584,
    "junction": "15th Street / Arapahoe Street",
    "signal_masts_found_at_its_junction": 3,
-   "signal_posts_found_at_its_junction": 0
+   "signal_posts_found_at_its_junction": 1
   },
   {
    "osm_node": 176101775,
@@ -1602,7 +1618,7 @@
    "osm_node": 176091533,
    "junction": "15th Street / Blake Street",
    "signal_masts_found_at_its_junction": 2,
-   "signal_posts_found_at_its_junction": 5
+   "signal_posts_found_at_its_junction": 6
   },
   {
    "osm_node": 176085736,
@@ -1626,7 +1642,7 @@
    "osm_node": 176086937,
    "junction": "North Speer Boulevard / Auraria Parkway",
    "signal_masts_found_at_its_junction": 3,
-   "signal_posts_found_at_its_junction": 1
+   "signal_posts_found_at_its_junction": 2
   },
   {
    "osm_node": 176099154,
@@ -1637,7 +1653,7 @@
   {
    "osm_node": 5934861525,
    "junction": "North Speer Boulevard / Lawrence Street",
-   "signal_masts_found_at_its_junction": 3,
+   "signal_masts_found_at_its_junction": 2,
    "signal_posts_found_at_its_junction": 1
   },
   {
@@ -1691,7 +1707,7 @@
   {
    "osm_node": 176112894,
    "junction": "North Kalamath Street / North Speer Boulevard / Stout Street",
-   "signal_masts_found_at_its_junction": 2,
+   "signal_masts_found_at_its_junction": 3,
    "signal_posts_found_at_its_junction": 1
   },
   {
@@ -1722,7 +1738,7 @@
    "osm_node": 176080245,
    "junction": "West 14th Avenue / Galapago Street",
    "signal_masts_found_at_its_junction": 3,
-   "signal_posts_found_at_its_junction": 1
+   "signal_posts_found_at_its_junction": 2
   },
   {
    "osm_node": 176080241,
@@ -1788,13 +1804,13 @@
    "osm_node": 176097376,
    "junction": "East Colfax Avenue / Logan Street / East Colfax Avenue",
    "signal_masts_found_at_its_junction": 3,
-   "signal_posts_found_at_its_junction": 0
+   "signal_posts_found_at_its_junction": 1
   },
   {
    "osm_node": 14073675876,
    "junction": "East Colfax Avenue / Logan Street / East Colfax Avenue",
    "signal_masts_found_at_its_junction": 3,
-   "signal_posts_found_at_its_junction": 0
+   "signal_posts_found_at_its_junction": 1
   },
   {
    "osm_node": 14073675873,
@@ -2415,7 +2431,7 @@
    "height_m": null
   },
   {
-   "class": "signal_mast",
+   "class": "signal_post",
    "lonlat": [
     -104.9863131,
     39.7399283
@@ -2433,7 +2449,9 @@
    "eye": {
     "verdict": "signal_mast",
     "panel": "P003",
-    "note": "SW corner; heads on the shadow both years; arm reach north uncertain, may be a tall signal pole only"
+    "note": "SW corner; heads on the shadow both years; arm reach north uncertain, may be a tall signal pole only",
+    "reclassed_from": "signal_mast",
+    "reclass_why": "posts refutation round 3"
    },
    "in_building_shadow": {
     "2022": false,
@@ -2485,7 +2503,8 @@
    "off_lap_m": 23.6,
    "leg": "Colfax WB to Speer NB",
    "id": "g0024",
-   "height_m": null
+   "height_m": null,
+   "carries_lamp": true
   },
   {
    "class": "signal_post",
@@ -3977,6 +3996,76 @@
    "height_m": null
   },
   {
+   "class": "signal_post",
+   "lonlat": [
+    -104.9949359,
+    39.740218
+   ],
+   "grade": "measured",
+   "position_from": "the foot of its shadow (the sun-ward end of the stroke)",
+   "years": [
+    2022,
+    2020,
+    2018
+   ],
+   "confirmed_by_second_year": true,
+   "spread_m": 1.14,
+   "reader_verdict": "post",
+   "eye": {
+    "verdict": "lamp",
+    "panel": "P019",
+    "note": "tall twin-arm streetlight at the NE corner: 11 m stroke N in 2022 with curved arm and head, long NW stroke 2020; boxy shadows at its base suggest side-mounted signal heads; no signal arm over the road seen",
+    "reclassed_from": "lamp",
+    "reclass_why": "settled definition applied to its eye note: 'tall twin-arm streetlight at the NE corner: 11 m stroke N in 2022 with curved arm and head, long NW stroke 2020; boxy sh'"
+   },
+   "in_building_shadow": {
+    "2022": false,
+    "2020": false,
+    "2018": false
+   },
+   "shadow_m": {
+    "2022": 8.68,
+    "2020": 6.53,
+    "2018": 13.79
+   },
+   "arms": {
+    "2020": [
+     {
+      "join_along_shadow_m": 0.0,
+      "length_m": 2.45,
+      "bearing_deg": 54.82,
+      "width_m": 0.27
+     },
+     {
+      "join_along_shadow_m": 0.0,
+      "length_m": 14.63,
+      "bearing_deg": 89.68,
+      "width_m": 0.28
+     }
+    ],
+    "2018": [
+     {
+      "join_along_shadow_m": 0.01,
+      "length_m": 5.03,
+      "bearing_deg": 89.58,
+      "width_m": 0.13
+     }
+    ]
+   },
+   "lamp_head_bright_at_foot": {
+    "2022": 45,
+    "2020": 57,
+    "2018": 63
+   },
+   "candidate": 232,
+   "s_m": 901.0,
+   "off_lap_m": 8.7,
+   "leg": "Colfax WB to Speer NB",
+   "id": "g0128",
+   "height_m": null,
+   "carries_lamp": true
+  },
+  {
    "class": "signal_mast",
    "lonlat": [
     -104.9951633,
@@ -4292,6 +4381,38 @@
    "height_m": null
   },
   {
+   "class": "signal_post",
+   "lonlat": [
+    -104.996543,
+    39.7399379
+   ],
+   "grade": "detected",
+   "position_from": "by eye off the panel's 5 m ticks (about +-1.5 m)",
+   "years": [],
+   "confirmed_by_second_year": false,
+   "spread_m": null,
+   "reader_verdict": "missed by the reader",
+   "eye": {
+    "verdict": "lamp",
+    "panel": "P022",
+    "note": "SW corner pole under a bare tree: 6 m stroke N with luminaire arm pointing east 2022, NW stroke 2020, real arm with bright head seen; boxy shadows mid-pole suggest side-mounted signal heads",
+    "read_at_en": [
+     -998.0,
+     -18.0
+    ],
+    "reclassed_from": "lamp",
+    "reclass_why": "settled definition applied to its eye note: 'SW corner pole under a bare tree: 6 m stroke N with luminaire arm pointing east 2022, NW stroke 2020, real arm with brig'"
+   },
+   "shadow_m": {},
+   "arms": {},
+   "s_m": 1038.0,
+   "off_lap_m": 23.6,
+   "leg": "Colfax WB to Speer NB",
+   "id": "g0147",
+   "height_m": null,
+   "carries_lamp": true
+  },
+  {
    "class": "signal_mast",
    "lonlat": [
     -104.996613,
@@ -4469,6 +4590,44 @@
    "leg": "Colfax WB to Speer NB",
    "id": "g0158",
    "height_m": null
+  },
+  {
+   "class": "signal_post",
+   "lonlat": [
+    -104.9980897,
+    39.739913
+   ],
+   "grade": "measured",
+   "position_from": "found by eye; placed at the foot of the nearest shadow stroke within 1.0 m",
+   "years": [
+    2022,
+    2020
+   ],
+   "confirmed_by_second_year": true,
+   "spread_m": null,
+   "reader_verdict": "missed by the reader",
+   "eye": {
+    "verdict": "lamp",
+    "panel": "P024",
+    "note": "SW corner pole: 6.5 m stroke N with luminaire arm 2022, NW stroke 2020, short real arm with bright head; boxy shadow on the pole suggests side-mounted signal heads; no signal arm",
+    "read_at_en": [
+     -1130.5,
+     -20.5
+    ],
+    "reclassed_from": "lamp",
+    "reclass_why": "settled definition applied to its eye note: 'SW corner pole: 6.5 m stroke N with luminaire arm 2022, NW stroke 2020, short real arm with bright head; boxy shadow on '"
+   },
+   "shadow_m": {
+    "2022": 6.78,
+    "2020": 6.58
+   },
+   "arms": {},
+   "s_m": 1170.0,
+   "off_lap_m": 28.2,
+   "leg": "Colfax WB to Speer NB",
+   "id": "g0159",
+   "height_m": null,
+   "carries_lamp": true
   },
   {
    "class": "signal_mast",
@@ -4968,6 +5127,139 @@
   {
    "class": "signal_post",
    "lonlat": [
+    -104.9954789,
+    39.7438489
+   ],
+   "grade": "measured",
+   "position_from": "the foot of its shadow (the sun-ward end of the stroke)",
+   "years": [
+    2022,
+    2020
+   ],
+   "confirmed_by_second_year": true,
+   "spread_m": 0.35,
+   "reader_verdict": "post",
+   "eye": {
+    "verdict": "lamp",
+    "panel": "P030",
+    "note": "tall pole, 7 m stroke N with round head 2022, long NW stroke 2020; boxy shadows on the pole suggest side-mounted signal heads",
+    "reclassed_from": "lamp",
+    "reclass_why": "settled definition applied to its eye note: 'tall pole, 7 m stroke N with round head 2022, long NW stroke 2020; boxy shadows on the pole suggest side-mounted signal '"
+   },
+   "in_building_shadow": {
+    "2022": false,
+    "2020": false,
+    "2018": false
+   },
+   "shadow_m": {
+    "2022": 7.62,
+    "2020": 9.71
+   },
+   "arms": {},
+   "lamp_head_bright_at_foot": {
+    "2022": 105,
+    "2020": 67
+   },
+   "candidate": 357,
+   "s_m": 1747.0,
+   "off_lap_m": 10.7,
+   "leg": "Stout to 15th St",
+   "id": "g0185",
+   "height_m": null,
+   "carries_lamp": true
+  },
+  {
+   "class": "signal_post",
+   "lonlat": [
+    -104.9956301,
+    39.743981
+   ],
+   "grade": "measured",
+   "position_from": "the foot of its shadow (the sun-ward end of the stroke)",
+   "years": [
+    2022,
+    2020
+   ],
+   "confirmed_by_second_year": true,
+   "spread_m": 0.27,
+   "reader_verdict": "post",
+   "eye": {
+    "verdict": "lamp",
+    "panel": "P030",
+    "note": "tall pole, stroke N with round head 2022, NW stroke 2020; boxy shadows on the pole suggest side-mounted signal heads",
+    "reclassed_from": "lamp",
+    "reclass_why": "settled definition applied to its eye note: 'tall pole, stroke N with round head 2022, NW stroke 2020; boxy shadows on the pole suggest side-mounted signal heads'"
+   },
+   "in_building_shadow": {
+    "2022": false,
+    "2020": false,
+    "2018": true
+   },
+   "shadow_m": {
+    "2022": 7.29,
+    "2020": 8.91
+   },
+   "arms": {
+    "2020": [
+     {
+      "join_along_shadow_m": 5.23,
+      "length_m": 3.48,
+      "bearing_deg": 74.77,
+      "width_m": 0.18
+     },
+     {
+      "join_along_shadow_m": 7.48,
+      "length_m": 5.11,
+      "bearing_deg": 78.16,
+      "width_m": 0.28
+     },
+     {
+      "join_along_shadow_m": 8.08,
+      "length_m": 11.37,
+      "bearing_deg": 257.6,
+      "width_m": 0.24
+     },
+     {
+      "join_along_shadow_m": 5.41,
+      "length_m": 3.59,
+      "bearing_deg": 78.57,
+      "width_m": 0.22
+     },
+     {
+      "join_along_shadow_m": 5.91,
+      "length_m": 12.82,
+      "bearing_deg": 258.07,
+      "width_m": 0.27
+     },
+     {
+      "join_along_shadow_m": 7.6,
+      "length_m": 1.98,
+      "bearing_deg": 88.8,
+      "width_m": 0.13
+     },
+     {
+      "join_along_shadow_m": 5.35,
+      "length_m": 1.94,
+      "bearing_deg": 349.42,
+      "width_m": 0.1
+     }
+    ]
+   },
+   "lamp_head_bright_at_foot": {
+    "2022": 25,
+    "2020": 44
+   },
+   "candidate": 358,
+   "s_m": 1748.0,
+   "off_lap_m": 8.9,
+   "leg": "Stout to 15th St",
+   "id": "g0186",
+   "height_m": null,
+   "carries_lamp": true
+  },
+  {
+   "class": "signal_post",
+   "lonlat": [
     -104.9955693,
     39.7439385
    ],
@@ -5033,6 +5325,38 @@
    "off_lap_m": 1.8,
    "leg": "Stout to 15th St",
    "id": "g0187",
+   "height_m": null,
+   "carries_lamp": false
+  },
+  {
+   "class": "signal_post",
+   "lonlat": [
+    -104.9954009,
+    39.7438179
+   ],
+   "grade": "detected",
+   "position_from": "by eye off the panel's 5 m ticks (about +-1.5 m)",
+   "years": [],
+   "confirmed_by_second_year": false,
+   "spread_m": null,
+   "reader_verdict": "missed by the reader",
+   "eye": {
+    "verdict": "lamp",
+    "panel": "REF2",
+    "note": "missed, found in posts refutation round 2 (j1758 14th Street / Stout Street): medium confidence: three sunlit globes visible in 2022 inside the building shadow; its 2022 shadow would end in the T-shaped head that l0192's square sits next to (-901,416.5)",
+    "read_at_en": [
+     -900.1,
+     412.8
+    ],
+    "reclassed_from": "lamp",
+    "reclass_why": "settled definition applied to its eye note: 'missed, found in posts refutation round 2 (j1758 14th Street / Stout Street): medium confidence: three sunlit globes vis'"
+   },
+   "shadow_m": {},
+   "arms": {},
+   "s_m": 1749.0,
+   "off_lap_m": 17.9,
+   "leg": "Stout to 15th St",
+   "id": "g0188",
    "height_m": null,
    "carries_lamp": false
   },
@@ -5301,7 +5625,7 @@
    "s_m": 1892.0,
    "off_lap_m": 7.2,
    "leg": "Stout to 15th St",
-   "id": "g0208",
+   "id": "g0207",
    "height_m": null,
    "carries_lamp": true
   },
@@ -5381,7 +5705,7 @@
    "s_m": 1897.0,
    "off_lap_m": 11.6,
    "leg": "Stout to 15th St",
-   "id": "g0210",
+   "id": "g0209",
    "height_m": null,
    "carries_lamp": true
   },
@@ -5453,7 +5777,7 @@
    "s_m": 1905.0,
    "off_lap_m": 15.5,
    "leg": "Stout to 15th St",
-   "id": "g0211",
+   "id": "g0210",
    "height_m": null
   },
   {
@@ -5506,7 +5830,7 @@
    "s_m": 1913.0,
    "off_lap_m": 16.8,
    "leg": "15th St to Blake",
-   "id": "g0212",
+   "id": "g0211",
    "height_m": null,
    "carries_lamp": true
   },
@@ -5578,7 +5902,7 @@
    "s_m": 1913.0,
    "off_lap_m": 11.5,
    "leg": "15th St to Blake",
-   "id": "g0213",
+   "id": "g0212",
    "height_m": null,
    "carries_lamp": true
   },
@@ -5679,7 +6003,7 @@
    "s_m": 1917.0,
    "off_lap_m": 8.6,
    "leg": "15th St to Blake",
-   "id": "g0214",
+   "id": "g0213",
    "height_m": null
   },
   {
@@ -5712,7 +6036,7 @@
    "s_m": 2000.0,
    "off_lap_m": 8.9,
    "leg": "15th St to Blake",
-   "id": "g0219",
+   "id": "g0218",
    "height_m": null,
    "carries_lamp": true
   },
@@ -5742,7 +6066,7 @@
    "s_m": 2020.0,
    "off_lap_m": 9.1,
    "leg": "15th St to Blake",
-   "id": "g0223",
+   "id": "g0222",
    "height_m": null
   },
   {
@@ -5775,7 +6099,7 @@
    "s_m": 2021.0,
    "off_lap_m": 9.5,
    "leg": "15th St to Blake",
-   "id": "g0224",
+   "id": "g0223",
    "height_m": null,
    "carries_lamp": true
   },
@@ -5826,7 +6150,7 @@
    "s_m": 2109.0,
    "off_lap_m": 11.5,
    "leg": "15th St to Blake",
-   "id": "g0228",
+   "id": "g0227",
    "height_m": null,
    "carries_lamp": true
   },
@@ -5931,7 +6255,7 @@
    "s_m": 2124.0,
    "off_lap_m": 14.5,
    "leg": "15th St to Blake",
-   "id": "g0231",
+   "id": "g0230",
    "height_m": null,
    "carries_lamp": true
   },
@@ -5961,7 +6285,7 @@
    "s_m": 2125.0,
    "off_lap_m": 11.7,
    "leg": "15th St to Blake",
-   "id": "g0233",
+   "id": "g0232",
    "height_m": null
   },
   {
@@ -5990,7 +6314,7 @@
    "s_m": 2129.0,
    "off_lap_m": 11.8,
    "leg": "15th St to Blake",
-   "id": "g0234",
+   "id": "g0233",
    "height_m": null,
    "carries_lamp": false
   },
@@ -6026,8 +6350,40 @@
    "s_m": 2210.0,
    "off_lap_m": 10.1,
    "leg": "15th St to Blake",
-   "id": "g0239",
+   "id": "g0238",
    "height_m": null
+  },
+  {
+   "class": "signal_post",
+   "lonlat": [
+    -104.9966888,
+    39.7469468
+   ],
+   "grade": "detected",
+   "position_from": "by eye off the panel's 5 m ticks (about +-1.5 m)",
+   "years": [],
+   "confirmed_by_second_year": false,
+   "spread_m": null,
+   "reader_verdict": "missed by the reader",
+   "eye": {
+    "verdict": "lamp",
+    "panel": "P040",
+    "note": "E corner, 2020: long thin stroke NW ending in a blob; 2022 in dappled shadow; may also carry signal heads",
+    "read_at_en": [
+     -1010.5,
+     760.2
+    ],
+    "reclassed_from": "lamp",
+    "reclass_why": "settled definition applied to its eye note: 'E corner, 2020: long thin stroke NW ending in a blob; 2022 in dappled shadow; may also carry signal heads'"
+   },
+   "shadow_m": {},
+   "arms": {},
+   "s_m": 2211.0,
+   "off_lap_m": 13.5,
+   "leg": "15th St to Blake",
+   "id": "g0239",
+   "height_m": null,
+   "carries_lamp": false
   },
   {
    "class": "signal_mast",
@@ -6059,7 +6415,7 @@
    "s_m": 2232.0,
    "off_lap_m": 10.8,
    "leg": "15th St to Blake",
-   "id": "g0243",
+   "id": "g0242",
    "height_m": null
   },
   {
@@ -6088,7 +6444,7 @@
    "s_m": 2234.0,
    "off_lap_m": 10.4,
    "leg": "15th St to Blake",
-   "id": "g0244",
+   "id": "g0243",
    "height_m": null
   },
   {
@@ -6117,7 +6473,7 @@
    "s_m": 2338.0,
    "off_lap_m": 12.7,
    "leg": "15th St to Blake",
-   "id": "g0251",
+   "id": "g0250",
    "height_m": null
   },
   {
@@ -6146,7 +6502,7 @@
    "s_m": 2340.0,
    "off_lap_m": 7.7,
    "leg": "15th St to Blake",
-   "id": "g0252",
+   "id": "g0251",
    "height_m": null
   },
   {
@@ -6179,7 +6535,7 @@
    "s_m": 2421.0,
    "off_lap_m": 10.1,
    "leg": "15th St to Blake",
-   "id": "g0265",
+   "id": "g0263",
    "height_m": null,
    "carries_lamp": true
   },
@@ -6209,7 +6565,7 @@
    "s_m": 2425.0,
    "off_lap_m": 12.8,
    "leg": "15th St to Blake",
-   "id": "g0266",
+   "id": "g0264",
    "height_m": null,
    "carries_lamp": false
   },
@@ -6243,7 +6599,7 @@
    "s_m": 2439.0,
    "off_lap_m": 13.6,
    "leg": "15th St to Blake",
-   "id": "g0269",
+   "id": "g0267",
    "height_m": null
   },
   {
@@ -6299,7 +6655,7 @@
    "s_m": 2446.0,
    "off_lap_m": 8.7,
    "leg": "15th St to Blake",
-   "id": "g0271",
+   "id": "g0269",
    "height_m": null
   },
   {
@@ -6340,7 +6696,7 @@
    "s_m": 2526.0,
    "off_lap_m": 10.9,
    "leg": "15th St to Blake",
-   "id": "g0282",
+   "id": "g0280",
    "height_m": null,
    "carries_lamp": true
   },
@@ -6420,7 +6776,7 @@
    "s_m": 2528.0,
    "off_lap_m": 7.0,
    "leg": "15th St to Blake",
-   "id": "g0283",
+   "id": "g0281",
    "height_m": null
   },
   {
@@ -6476,7 +6832,7 @@
    "s_m": 2549.0,
    "off_lap_m": 11.9,
    "leg": "15th St to Blake",
-   "id": "g0287",
+   "id": "g0285",
    "height_m": null,
    "carries_lamp": true
   },
@@ -6510,7 +6866,7 @@
    "s_m": 2549.0,
    "off_lap_m": 6.5,
    "leg": "15th St to Blake",
-   "id": "g0288",
+   "id": "g0286",
    "height_m": null
   },
   {
@@ -6543,7 +6899,74 @@
    "s_m": 2621.0,
    "off_lap_m": 16.1,
    "leg": "15th St to Blake",
-   "id": "g0296",
+   "id": "g0294",
+   "height_m": null,
+   "carries_lamp": true
+  },
+  {
+   "class": "signal_post",
+   "lonlat": [
+    -105.0002901,
+    39.7495352
+   ],
+   "grade": "measured",
+   "position_from": "the foot of its shadow (the sun-ward end of the stroke)",
+   "years": [
+    2022,
+    2018
+   ],
+   "confirmed_by_second_year": true,
+   "spread_m": 0.68,
+   "reader_verdict": "post",
+   "eye": {
+    "verdict": "post_unknown",
+    "panel": "P049",
+    "note": "on the triangular island: 3.2 m stroke N with a flag-shaped head in 2022, stroke with box in 2020; sign or signal pedestal",
+    "reclassed_from": "post_unknown",
+    "reclass_why": "settled definition applied to its eye note: 'on the triangular island: 3.2 m stroke N with a flag-shaped head in 2022, stroke with box in 2020; sign or signal pedest'"
+   },
+   "in_building_shadow": {
+    "2022": false,
+    "2020": false,
+    "2018": false
+   },
+   "shadow_m": {
+    "2022": 3.29,
+    "2018": 5.1
+   },
+   "arms": {
+    "2022": [
+     {
+      "join_along_shadow_m": 0.14,
+      "length_m": 3.24,
+      "bearing_deg": 132.56,
+      "width_m": 0.17
+     }
+    ],
+    "2018": [
+     {
+      "join_along_shadow_m": 0.68,
+      "length_m": 3.02,
+      "bearing_deg": 131.74,
+      "width_m": 0.29
+     },
+     {
+      "join_along_shadow_m": 0.95,
+      "length_m": 3.46,
+      "bearing_deg": 137.29,
+      "width_m": 0.3
+     }
+    ]
+   },
+   "lamp_head_bright_at_foot": {
+    "2022": 18,
+    "2018": 116
+   },
+   "candidate": 506,
+   "s_m": 2633.0,
+   "off_lap_m": 4.1,
+   "leg": "15th St to Blake",
+   "id": "g0295",
    "height_m": null,
    "carries_lamp": true
   },
@@ -6573,7 +6996,7 @@
    "s_m": 2637.0,
    "off_lap_m": 6.1,
    "leg": "15th St to Blake",
-   "id": "g0298",
+   "id": "g0296",
    "height_m": null,
    "carries_lamp": false
   },
@@ -6624,7 +7047,7 @@
    "s_m": 2644.0,
    "off_lap_m": 14.1,
    "leg": "15th St to Blake",
-   "id": "g0300",
+   "id": "g0298",
    "height_m": null
   },
   {
@@ -6668,7 +7091,7 @@
    "s_m": 2654.0,
    "off_lap_m": 8.6,
    "leg": "Blake to Speer SB",
-   "id": "g0302",
+   "id": "g0300",
    "height_m": null,
    "carries_lamp": false
   },
@@ -6722,7 +7145,7 @@
    "s_m": 2655.0,
    "off_lap_m": 6.2,
    "leg": "Blake to Speer SB",
-   "id": "g0304",
+   "id": "g0302",
    "height_m": null,
    "carries_lamp": false
   },
@@ -6787,7 +7210,7 @@
    "s_m": 2661.0,
    "off_lap_m": 9.0,
    "leg": "Blake to Speer SB",
-   "id": "g0305",
+   "id": "g0303",
    "height_m": null
   },
   {
@@ -6857,7 +7280,77 @@
    "s_m": 2667.0,
    "off_lap_m": 15.4,
    "leg": "Blake to Speer SB",
-   "id": "g0306",
+   "id": "g0304",
+   "height_m": null,
+   "carries_lamp": true
+  },
+  {
+   "class": "signal_post",
+   "lonlat": [
+    -105.001209,
+    39.7488536
+   ],
+   "grade": "measured",
+   "position_from": "the foot of its shadow (the sun-ward end of the stroke)",
+   "years": [
+    2022,
+    2020,
+    2018
+   ],
+   "confirmed_by_second_year": true,
+   "spread_m": 0.39,
+   "reader_verdict": "post",
+   "eye": {
+    "verdict": "lamp",
+    "panel": "P051",
+    "note": "T-shaped head on the shadow in both years",
+    "reclassed_from": "lamp",
+    "reclass_why": "settled definition applied to its eye note: 'T-shaped head on the shadow in both years'"
+   },
+   "in_building_shadow": {
+    "2022": false,
+    "2020": false,
+    "2018": false
+   },
+   "shadow_m": {
+    "2022": 4.75,
+    "2020": 5.07,
+    "2018": 3.73
+   },
+   "arms": {
+    "2022": [
+     {
+      "join_along_shadow_m": 0.0,
+      "length_m": 2.55,
+      "bearing_deg": 220.12,
+      "width_m": 0.17
+     }
+    ],
+    "2020": [
+     {
+      "join_along_shadow_m": 0.33,
+      "length_m": 1.85,
+      "bearing_deg": 9.43,
+      "width_m": 0.12
+     },
+     {
+      "join_along_shadow_m": 1.04,
+      "length_m": 3.94,
+      "bearing_deg": 222.66,
+      "width_m": 0.16
+     }
+    ]
+   },
+   "lamp_head_bright_at_foot": {
+    "2022": 64,
+    "2020": 109,
+    "2018": 113
+   },
+   "candidate": 566,
+   "s_m": 2757.0,
+   "off_lap_m": 8.3,
+   "leg": "Blake to Speer SB",
+   "id": "g0312",
    "height_m": null,
    "carries_lamp": true
   },
@@ -6916,7 +7409,7 @@
    "s_m": 2822.0,
    "off_lap_m": 11.3,
    "leg": "Blake to Speer SB",
-   "id": "g0326",
+   "id": "g0324",
    "height_m": null,
    "carries_lamp": true
   },
@@ -7028,7 +7521,7 @@
    "s_m": 2831.0,
    "off_lap_m": 10.9,
    "leg": "Blake to Speer SB",
-   "id": "g0327",
+   "id": "g0325",
    "height_m": null
   },
   {
@@ -7187,7 +7680,7 @@
    "s_m": 2841.0,
    "off_lap_m": 8.3,
    "leg": "Blake to Speer SB",
-   "id": "g0329",
+   "id": "g0326",
    "height_m": null
   },
   {
@@ -7237,7 +7730,7 @@
    "s_m": 2850.0,
    "off_lap_m": 9.1,
    "leg": "Blake to Speer SB",
-   "id": "g0331",
+   "id": "g0328",
    "height_m": null
   },
   {
@@ -7366,7 +7859,7 @@
    "s_m": 2908.0,
    "off_lap_m": 11.6,
    "leg": "Blake to Speer SB",
-   "id": "g0344",
+   "id": "g0341",
    "height_m": null,
    "carries_lamp": true
   },
@@ -7411,7 +7904,7 @@
    "s_m": 2912.0,
    "off_lap_m": 11.2,
    "leg": "Blake to Speer SB",
-   "id": "g0346",
+   "id": "g0343",
    "height_m": null,
    "carries_lamp": false
   },
@@ -7523,7 +8016,7 @@
    "s_m": 2920.0,
    "off_lap_m": 17.9,
    "leg": "Blake to Speer SB",
-   "id": "g0348",
+   "id": "g0345",
    "height_m": null
   },
   {
@@ -7620,7 +8113,7 @@
    "s_m": 2937.0,
    "off_lap_m": 9.9,
    "leg": "Blake to Speer SB",
-   "id": "g0349",
+   "id": "g0346",
    "height_m": null
   },
   {
@@ -7673,7 +8166,7 @@
    "s_m": 2941.0,
    "off_lap_m": 10.4,
    "leg": "Blake to Speer SB",
-   "id": "g0350",
+   "id": "g0347",
    "height_m": null,
    "carries_lamp": false
   },
@@ -7727,7 +8220,7 @@
    "s_m": 2946.0,
    "off_lap_m": 22.2,
    "leg": "Blake to Speer SB",
-   "id": "g0351",
+   "id": "g0348",
    "height_m": null,
    "carries_lamp": true
   },
@@ -7839,7 +8332,7 @@
    "s_m": 2955.0,
    "off_lap_m": 10.5,
    "leg": "Speer SB to Kalamath",
-   "id": "g0352",
+   "id": "g0349",
    "height_m": null
   },
   {
@@ -7880,7 +8373,7 @@
    "s_m": 2960.0,
    "off_lap_m": 6.5,
    "leg": "Speer SB to Kalamath",
-   "id": "g0355",
+   "id": "g0352",
    "height_m": null,
    "carries_lamp": false
   },
@@ -7948,7 +8441,7 @@
    "s_m": 3034.0,
    "off_lap_m": 10.6,
    "leg": "Speer SB to Kalamath",
-   "id": "g0362",
+   "id": "g0359",
    "height_m": null,
    "carries_lamp": true
   },
@@ -8022,8 +8515,44 @@
    "s_m": 3041.0,
    "off_lap_m": 9.8,
    "leg": "Speer SB to Kalamath",
-   "id": "g0363",
+   "id": "g0360",
    "height_m": null
+  },
+  {
+   "class": "signal_post",
+   "lonlat": [
+    -105.0026356,
+    39.7477372
+   ],
+   "grade": "measured",
+   "position_from": "found by eye; placed at the foot of the nearest shadow stroke within 1.0 m",
+   "years": [
+    2022
+   ],
+   "confirmed_by_second_year": false,
+   "spread_m": null,
+   "reader_verdict": "missed by the reader",
+   "eye": {
+    "verdict": "post_unknown",
+    "panel": "SG26",
+    "note": "north corner, ~3.5 m SE of the corner mast square: 2022 a clear second vertical pole shadow (~6 m north) from a foot by the curb ramp with signal heads at its base; 2020 a node on the arm shadows there; may be a second mast carrying the SE arms over Speer; review",
+    "read_at_en": [
+     -1520.0,
+     848.6
+    ],
+    "reclassed_from": "post_unknown",
+    "reclass_why": "settled definition applied to its eye note: 'north corner, ~3.5 m SE of the corner mast square: 2022 a clear second vertical pole shadow (~6 m north) from a foot by '"
+   },
+   "shadow_m": {
+    "2022": 7.62
+   },
+   "arms": {},
+   "s_m": 3045.0,
+   "off_lap_m": 8.9,
+   "leg": "Speer SB to Kalamath",
+   "id": "g0361",
+   "height_m": null,
+   "carries_lamp": true
   },
   {
    "class": "signal_mast",
@@ -8092,7 +8621,7 @@
    "s_m": 3065.0,
    "off_lap_m": 9.2,
    "leg": "Speer SB to Kalamath",
-   "id": "g0366",
+   "id": "g0363",
    "height_m": null
   },
   {
@@ -8169,7 +8698,7 @@
    "s_m": 3071.0,
    "off_lap_m": 10.5,
    "leg": "Speer SB to Kalamath",
-   "id": "g0367",
+   "id": "g0364",
    "height_m": null
   },
   {
@@ -8222,7 +8751,7 @@
    "s_m": 3212.0,
    "off_lap_m": 8.7,
    "leg": "Speer SB to Kalamath",
-   "id": "g0381",
+   "id": "g0378",
    "height_m": null,
    "carries_lamp": false
   },
@@ -8276,7 +8805,7 @@
    "s_m": 3218.0,
    "off_lap_m": 9.0,
    "leg": "Speer SB to Kalamath",
-   "id": "g0382",
+   "id": "g0379",
    "height_m": null
   },
   {
@@ -8348,7 +8877,7 @@
    "s_m": 3218.0,
    "off_lap_m": 17.4,
    "leg": "Speer SB to Kalamath",
-   "id": "g0383",
+   "id": "g0380",
    "height_m": null
   },
   {
@@ -8389,7 +8918,7 @@
    "s_m": 3218.0,
    "off_lap_m": 15.0,
    "leg": "Speer SB to Kalamath",
-   "id": "g0384",
+   "id": "g0381",
    "height_m": null,
    "carries_lamp": false
   },
@@ -8433,7 +8962,7 @@
    "s_m": 3237.0,
    "off_lap_m": 11.5,
    "leg": "Speer SB to Kalamath",
-   "id": "g0390",
+   "id": "g0387",
    "height_m": null,
    "carries_lamp": true
   },
@@ -8557,7 +9086,7 @@
    "s_m": 3239.0,
    "off_lap_m": 9.8,
    "leg": "Speer SB to Kalamath",
-   "id": "g0392",
+   "id": "g0389",
    "height_m": null
   },
   {
@@ -8669,7 +9198,7 @@
    "s_m": 3245.0,
    "off_lap_m": 14.2,
    "leg": "Speer SB to Kalamath",
-   "id": "g0393",
+   "id": "g0390",
    "height_m": null,
    "carries_lamp": false
   },
@@ -8723,51 +9252,7 @@
    "s_m": 3348.0,
    "off_lap_m": 11.1,
    "leg": "Speer SB to Kalamath",
-   "id": "g0404",
-   "height_m": null
-  },
-  {
-   "class": "signal_mast",
-   "lonlat": [
-    -105.0008585,
-    39.7452918
-   ],
-   "grade": "measured",
-   "position_from": "the foot of its shadow (the sun-ward end of the stroke)",
-   "years": [
-    2022,
-    2020,
-    2018
-   ],
-   "confirmed_by_second_year": true,
-   "spread_m": 0.14,
-   "reader_verdict": "post",
-   "eye": {
-    "verdict": "signal_mast",
-    "panel": "P064",
-    "note": "tall pole with luminaire, long strokes both years; short arm with a white head seen in 2020, less sure than 754"
-   },
-   "in_building_shadow": {
-    "2022": false,
-    "2020": false,
-    "2018": false
-   },
-   "shadow_m": {
-    "2022": 8.47,
-    "2020": 6.53,
-    "2018": 9.61
-   },
-   "arms": {},
-   "lamp_head_bright_at_foot": {
-    "2022": 77,
-    "2020": 34,
-    "2018": 57
-   },
-   "candidate": 757,
-   "s_m": 3362.0,
-   "off_lap_m": 10.4,
-   "leg": "Speer SB to Kalamath",
-   "id": "g0405",
+   "id": "g0401",
    "height_m": null
   },
   {
@@ -8808,7 +9293,7 @@
    "s_m": 3379.0,
    "off_lap_m": 9.1,
    "leg": "Speer SB to Kalamath",
-   "id": "g0410",
+   "id": "g0407",
    "height_m": null,
    "carries_lamp": true
   },
@@ -8950,7 +9435,7 @@
    "s_m": 3381.0,
    "off_lap_m": 9.4,
    "leg": "Speer SB to Kalamath",
-   "id": "g0411",
+   "id": "g0408",
    "height_m": null
   },
   {
@@ -9003,7 +9488,7 @@
    "s_m": 3484.0,
    "off_lap_m": 8.4,
    "leg": "Speer SB to Kalamath",
-   "id": "g0415",
+   "id": "g0412",
    "height_m": null
   },
   {
@@ -9055,7 +9540,7 @@
    "s_m": 3500.0,
    "off_lap_m": 9.6,
    "leg": "Speer SB to Kalamath",
-   "id": "g0416",
+   "id": "g0413",
    "height_m": null
   },
   {
@@ -9099,7 +9584,7 @@
    "s_m": 3510.0,
    "off_lap_m": 8.3,
    "leg": "Speer SB to Kalamath",
-   "id": "g0418",
+   "id": "g0415",
    "height_m": null
   },
   {
@@ -9134,7 +9619,7 @@
    "s_m": 3512.0,
    "off_lap_m": 9.6,
    "leg": "Speer SB to Kalamath",
-   "id": "g0419",
+   "id": "g0416",
    "height_m": null,
    "carries_lamp": false
   },
@@ -9235,7 +9720,7 @@
    "s_m": 3518.0,
    "off_lap_m": 8.9,
    "leg": "Speer SB to Kalamath",
-   "id": "g0420",
+   "id": "g0417",
    "height_m": null
   },
   {
@@ -9320,7 +9805,7 @@
    "s_m": 3750.0,
    "off_lap_m": 14.9,
    "leg": "Kalamath S to W 14th Ave",
-   "id": "g0440",
+   "id": "g0437",
    "height_m": null
   },
   {
@@ -9396,7 +9881,7 @@
    "s_m": 3760.0,
    "off_lap_m": 13.9,
    "leg": "Kalamath S to W 14th Ave",
-   "id": "g0441",
+   "id": "g0438",
    "height_m": null
   },
   {
@@ -9537,7 +10022,7 @@
    "s_m": 3772.0,
    "off_lap_m": 8.8,
    "leg": "Kalamath S to W 14th Ave",
-   "id": "g0442",
+   "id": "g0439",
    "height_m": null
   },
   {
@@ -9672,7 +10157,7 @@
    "s_m": 3868.0,
    "off_lap_m": 10.6,
    "leg": "Kalamath S to W 14th Ave",
-   "id": "g0449",
+   "id": "g0446",
    "height_m": null
   },
   {
@@ -9716,7 +10201,7 @@
    "s_m": 3884.0,
    "off_lap_m": 18.2,
    "leg": "Kalamath S to W 14th Ave",
-   "id": "g0451",
+   "id": "g0448",
    "height_m": null,
    "carries_lamp": false
   },
@@ -9767,7 +10252,7 @@
    "s_m": 3939.0,
    "off_lap_m": 9.3,
    "leg": "Kalamath S to W 14th Ave",
-   "id": "g0458",
+   "id": "g0455",
    "height_m": null
   },
   {
@@ -9808,7 +10293,7 @@
    "s_m": 3980.0,
    "off_lap_m": 5.5,
    "leg": "Kalamath S to W 14th Ave",
-   "id": "g0461",
+   "id": "g0458",
    "height_m": null,
    "carries_lamp": false
   },
@@ -9909,7 +10394,7 @@
    "s_m": 3981.0,
    "off_lap_m": 8.8,
    "leg": "Kalamath S to W 14th Ave",
-   "id": "g0462",
+   "id": "g0459",
    "height_m": null
   },
   {
@@ -9940,7 +10425,7 @@
    "s_m": 4135.0,
    "off_lap_m": 11.7,
    "leg": "Kalamath S to W 14th Ave",
-   "id": "g0472",
+   "id": "g0469",
    "height_m": null
   },
   {
@@ -9984,7 +10469,7 @@
    "s_m": 4138.0,
    "off_lap_m": 14.9,
    "leg": "W 14th Ave to Santa Fe",
-   "id": "g0473",
+   "id": "g0470",
    "height_m": null,
    "carries_lamp": false
   },
@@ -10014,7 +10499,7 @@
    "s_m": 4147.0,
    "off_lap_m": 10.2,
    "leg": "W 14th Ave to Santa Fe",
-   "id": "g0475",
+   "id": "g0472",
    "height_m": null
   },
   {
@@ -10099,7 +10584,7 @@
    "s_m": 4204.0,
    "off_lap_m": 22.4,
    "leg": "Santa Fe N to Colfax",
-   "id": "g0481",
+   "id": "g0478",
    "height_m": null,
    "carries_lamp": false
   },
@@ -10135,7 +10620,7 @@
    "s_m": 4385.0,
    "off_lap_m": 8.3,
    "leg": "Santa Fe N to Colfax",
-   "id": "g0492",
+   "id": "g0489",
    "height_m": null
   },
   {
@@ -10276,11 +10761,251 @@
    "s_m": 4425.0,
    "off_lap_m": 11.2,
    "leg": "Kalamath NB branch to Speer SB",
-   "id": "g0497",
+   "id": "g0494",
    "height_m": null
   },
   {
    "class": "signal_post",
+   "lonlat": [
+    -104.9996356,
+    39.7412204
+   ],
+   "grade": "measured",
+   "position_from": "the foot of its shadow (the sun-ward end of the stroke)",
+   "years": [
+    2022,
+    2020,
+    2018
+   ],
+   "confirmed_by_second_year": true,
+   "spread_m": 0.56,
+   "reader_verdict": "tree?",
+   "eye": {
+    "verdict": "utility_pole",
+    "panel": "P088",
+    "note": "not a tree: tall pole (8 m shadow in 2022) beside the tracks with wires and boxes on it; catenary or rail signal pole",
+    "reclassed_from": "utility_pole",
+    "reclass_why": "posts refutation round 3"
+   },
+   "in_building_shadow": {
+    "2022": false,
+    "2020": false,
+    "2018": false
+   },
+   "shadow_m": {
+    "2022": 9.22,
+    "2020": 11.12,
+    "2018": 10.1
+   },
+   "arms": {
+    "2022": [
+     {
+      "join_along_shadow_m": 2.04,
+      "length_m": 1.99,
+      "bearing_deg": 212.01,
+      "width_m": 0.17
+     },
+     {
+      "join_along_shadow_m": 8.87,
+      "length_m": 2.28,
+      "bearing_deg": 39.15,
+      "width_m": 0.21
+     },
+     {
+      "join_along_shadow_m": 8.38,
+      "length_m": 5.02,
+      "bearing_deg": 222.78,
+      "width_m": 0.29
+     },
+     {
+      "join_along_shadow_m": 3.07,
+      "length_m": 4.43,
+      "bearing_deg": 42.07,
+      "width_m": 0.31
+     },
+     {
+      "join_along_shadow_m": 2.39,
+      "length_m": 2.56,
+      "bearing_deg": 219.25,
+      "width_m": 0.27
+     },
+     {
+      "join_along_shadow_m": 8.09,
+      "length_m": 4.63,
+      "bearing_deg": 225.34,
+      "width_m": 0.27
+     },
+     {
+      "join_along_shadow_m": 3.28,
+      "length_m": 3.94,
+      "bearing_deg": 46.05,
+      "width_m": 0.31
+     }
+    ],
+    "2020": [
+     {
+      "join_along_shadow_m": 6.64,
+      "length_m": 9.6,
+      "bearing_deg": 44.24,
+      "width_m": 0.43
+     },
+     {
+      "join_along_shadow_m": 8.06,
+      "length_m": 6.79,
+      "bearing_deg": 43.56,
+      "width_m": 0.24
+     },
+     {
+      "join_along_shadow_m": 3.61,
+      "length_m": 7.12,
+      "bearing_deg": 43.19,
+      "width_m": 0.29
+     },
+     {
+      "join_along_shadow_m": 2.26,
+      "length_m": 8.79,
+      "bearing_deg": 44.1,
+      "width_m": 0.44
+     },
+     {
+      "join_along_shadow_m": 8.03,
+      "length_m": 13.84,
+      "bearing_deg": 220.46,
+      "width_m": 0.2
+     },
+     {
+      "join_along_shadow_m": 6.69,
+      "length_m": 23.22,
+      "bearing_deg": 219.95,
+      "width_m": 0.35
+     },
+     {
+      "join_along_shadow_m": 2.49,
+      "length_m": 16.35,
+      "bearing_deg": 47.22,
+      "width_m": 0.44
+     },
+     {
+      "join_along_shadow_m": 6.71,
+      "length_m": 9.59,
+      "bearing_deg": 45.11,
+      "width_m": 0.43
+     },
+     {
+      "join_along_shadow_m": 3.7,
+      "length_m": 6.95,
+      "bearing_deg": 44.74,
+      "width_m": 0.28
+     },
+     {
+      "join_along_shadow_m": 0.67,
+      "length_m": 1.81,
+      "bearing_deg": 240.46,
+      "width_m": 0.16
+     }
+    ],
+    "2018": [
+     {
+      "join_along_shadow_m": 3.24,
+      "length_m": 2.09,
+      "bearing_deg": 32.36,
+      "width_m": 0.19
+     },
+     {
+      "join_along_shadow_m": 2.53,
+      "length_m": 2.64,
+      "bearing_deg": 214.43,
+      "width_m": 0.28
+     },
+     {
+      "join_along_shadow_m": 9.15,
+      "length_m": 6.26,
+      "bearing_deg": 223.23,
+      "width_m": 0.41
+     },
+     {
+      "join_along_shadow_m": 5.59,
+      "length_m": 3.4,
+      "bearing_deg": 43.0,
+      "width_m": 0.22
+     },
+     {
+      "join_along_shadow_m": 3.32,
+      "length_m": 4.76,
+      "bearing_deg": 41.97,
+      "width_m": 0.31
+     },
+     {
+      "join_along_shadow_m": 4.62,
+      "length_m": 32.44,
+      "bearing_deg": 220.39,
+      "width_m": 0.26
+     },
+     {
+      "join_along_shadow_m": 2.49,
+      "length_m": 2.64,
+      "bearing_deg": 217.29,
+      "width_m": 0.31
+     },
+     {
+      "join_along_shadow_m": 10.06,
+      "length_m": 8.49,
+      "bearing_deg": 48.66,
+      "width_m": 0.3
+     },
+     {
+      "join_along_shadow_m": 3.71,
+      "length_m": 16.91,
+      "bearing_deg": 48.42,
+      "width_m": 0.2
+     },
+     {
+      "join_along_shadow_m": 8.95,
+      "length_m": 5.82,
+      "bearing_deg": 225.6,
+      "width_m": 0.41
+     },
+     {
+      "join_along_shadow_m": 5.91,
+      "length_m": 2.71,
+      "bearing_deg": 50.92,
+      "width_m": 0.17
+     },
+     {
+      "join_along_shadow_m": 2.01,
+      "length_m": 1.74,
+      "bearing_deg": 230.68,
+      "width_m": 0.16
+     },
+     {
+      "join_along_shadow_m": 7.05,
+      "length_m": 2.55,
+      "bearing_deg": 288.21,
+      "width_m": 0.13
+     },
+     {
+      "join_along_shadow_m": 5.66,
+      "length_m": 2.93,
+      "bearing_deg": 309.97,
+      "width_m": 0.12
+     }
+    ]
+   },
+   "lamp_head_bright_at_foot": {
+    "2022": 52,
+    "2020": 39,
+    "2018": 61
+   },
+   "candidate": 1018,
+   "s_m": 4530.0,
+   "off_lap_m": 9.3,
+   "leg": "Kalamath NB branch to Speer SB",
+   "id": "g0502",
+   "height_m": null,
+   "carries_lamp": true
+  },
+  {
+   "class": "signal_mast",
    "lonlat": [
     -104.9994164,
     39.7413511
@@ -10297,7 +11022,9 @@
    "eye": {
     "verdict": "signal_post",
     "panel": "RX034",
-    "note": "tall pole at the corner by the light-rail crossing; boxy head on the N (2022) and NW (2020) strokes; no arm over the roadway seen"
+    "note": "tall pole at the corner by the light-rail crossing; boxy head on the N (2022) and NW (2020) strokes; no arm over the roadway seen",
+    "reclassed_from": "signal_post",
+    "reclass_why": "posts refutation round 3"
    },
    "in_building_shadow": {
     "2022": false,
@@ -10406,9 +11133,8 @@
    "s_m": 4541.0,
    "off_lap_m": 16.6,
    "leg": "Kalamath NB branch to Speer SB",
-   "id": "g0507",
-   "height_m": null,
-   "carries_lamp": true
+   "id": "g0504",
+   "height_m": null
   },
   {
    "class": "signal_mast",
@@ -10486,7 +11212,7 @@
    "s_m": 4553.0,
    "off_lap_m": 9.7,
    "leg": "Speer SB to W 14th Ave",
-   "id": "g0509",
+   "id": "g0506",
    "height_m": null
   },
   {
@@ -10568,7 +11294,7 @@
    "s_m": 4559.0,
    "off_lap_m": 12.7,
    "leg": "Speer SB to W 14th Ave",
-   "id": "g0510",
+   "id": "g0507",
    "height_m": null
   },
   {
@@ -10618,7 +11344,7 @@
    "s_m": 4646.0,
    "off_lap_m": 16.6,
    "leg": "Speer SB to W 14th Ave",
-   "id": "g0514",
+   "id": "g0511",
    "height_m": null
   },
   {
@@ -10659,7 +11385,7 @@
    "s_m": 4654.0,
    "off_lap_m": 8.5,
    "leg": "Speer SB to W 14th Ave",
-   "id": "g0515",
+   "id": "g0512",
    "height_m": null
   },
   {
@@ -10750,7 +11476,7 @@
    "s_m": 4694.0,
    "off_lap_m": 10.7,
    "leg": "Speer SB to W 14th Ave",
-   "id": "g0519",
+   "id": "g0516",
    "height_m": null
   },
   {
@@ -10820,7 +11546,7 @@
    "s_m": 4701.0,
    "off_lap_m": 10.3,
    "leg": "Speer SB to W 14th Ave",
-   "id": "g0520",
+   "id": "g0517",
    "height_m": null
   },
   {
@@ -10853,7 +11579,7 @@
    "s_m": 4864.0,
    "off_lap_m": 10.6,
    "leg": "Speer SB to W 14th Ave",
-   "id": "g0528",
+   "id": "g0525",
    "height_m": null,
    "carries_lamp": true
   },
@@ -10904,7 +11630,7 @@
    "s_m": 4878.0,
    "off_lap_m": 8.1,
    "leg": "Speer SB to W 14th Ave",
-   "id": "g0529",
+   "id": "g0526",
    "height_m": null
   },
   {
@@ -10937,7 +11663,7 @@
    "s_m": 4884.0,
    "off_lap_m": 15.7,
    "leg": "14th Ave E to Logan",
-   "id": "g0530",
+   "id": "g0527",
    "height_m": null,
    "carries_lamp": true
   },
@@ -10979,7 +11705,7 @@
    "s_m": 4902.0,
    "off_lap_m": 15.6,
    "leg": "14th Ave E to Logan",
-   "id": "g0531",
+   "id": "g0528",
    "height_m": null
   },
   {
@@ -11014,7 +11740,7 @@
    "s_m": 4928.0,
    "off_lap_m": 13.4,
    "leg": "14th Ave E to Logan",
-   "id": "g0532",
+   "id": "g0529",
    "height_m": null
   },
   {
@@ -11047,7 +11773,7 @@
    "s_m": 4942.0,
    "off_lap_m": 11.2,
    "leg": "14th Ave E to Logan",
-   "id": "g0533",
+   "id": "g0530",
    "height_m": null,
    "carries_lamp": true
   },
@@ -11122,7 +11848,7 @@
    "s_m": 4955.0,
    "off_lap_m": 7.7,
    "leg": "14th Ave E to Logan",
-   "id": "g0535",
+   "id": "g0532",
    "height_m": null
   },
   {
@@ -11155,7 +11881,7 @@
    "s_m": 4966.0,
    "off_lap_m": 13.5,
    "leg": "14th Ave E to Logan",
-   "id": "g0537",
+   "id": "g0534",
    "height_m": null,
    "carries_lamp": true
   },
@@ -11279,8 +12005,67 @@
    "s_m": 4975.0,
    "off_lap_m": 8.0,
    "leg": "14th Ave E to Logan",
-   "id": "g0538",
+   "id": "g0535",
    "height_m": null
+  },
+  {
+   "class": "signal_post",
+   "lonlat": [
+    -104.9963643,
+    39.7385389
+   ],
+   "grade": "measured",
+   "position_from": "the foot of its shadow (the sun-ward end of the stroke)",
+   "years": [
+    2022,
+    2018
+   ],
+   "confirmed_by_second_year": true,
+   "spread_m": 0.54,
+   "reader_verdict": "post",
+   "eye": {
+    "verdict": "lamp",
+    "panel": "P098",
+    "note": "cobra head, arm reaches west over the cross street; hooked shadow both years",
+    "reclassed_from": "lamp",
+    "reclass_why": "posts refutation round 3"
+   },
+   "in_building_shadow": {
+    "2022": false,
+    "2020": false,
+    "2018": false
+   },
+   "shadow_m": {
+    "2022": 10.0,
+    "2018": 9.83
+   },
+   "arms": {
+    "2018": [
+     {
+      "join_along_shadow_m": 0.95,
+      "length_m": 1.83,
+      "bearing_deg": 230.34,
+      "width_m": 0.26
+     },
+     {
+      "join_along_shadow_m": 0.83,
+      "length_m": 1.73,
+      "bearing_deg": 238.58,
+      "width_m": 0.33
+     }
+    ]
+   },
+   "lamp_head_bright_at_foot": {
+    "2022": 44,
+    "2018": 94
+   },
+   "candidate": 1160,
+   "s_m": 4993.0,
+   "off_lap_m": 8.9,
+   "leg": "14th Ave E to Logan",
+   "id": "g0539",
+   "height_m": null,
+   "carries_lamp": true
   },
   {
    "class": "signal_mast",
@@ -11359,7 +12144,7 @@
    "s_m": 4994.0,
    "off_lap_m": 1.5,
    "leg": "14th Ave E to Logan",
-   "id": "g0542",
+   "id": "g0540",
    "height_m": null
   },
   {
@@ -11548,7 +12333,7 @@
    "s_m": 5179.0,
    "off_lap_m": 10.5,
    "leg": "14th Ave E to Logan",
-   "id": "g0571",
+   "id": "g0569",
    "height_m": null
   },
   {
@@ -11601,7 +12386,7 @@
    "s_m": 5180.0,
    "off_lap_m": 7.7,
    "leg": "14th Ave E to Logan",
-   "id": "g0572",
+   "id": "g0570",
    "height_m": null,
    "carries_lamp": true
   },
@@ -11635,7 +12420,7 @@
    "s_m": 5193.0,
    "off_lap_m": 10.3,
    "leg": "14th Ave E to Logan",
-   "id": "g0575",
+   "id": "g0573",
    "height_m": null
   },
   {
@@ -11752,7 +12537,7 @@
    "s_m": 5194.0,
    "off_lap_m": 8.1,
    "leg": "14th Ave E to Logan",
-   "id": "g0576",
+   "id": "g0574",
    "height_m": null
   },
   {
@@ -11802,7 +12587,7 @@
    "s_m": 5279.0,
    "off_lap_m": 7.0,
    "leg": "14th Ave E to Logan",
-   "id": "g0584",
+   "id": "g0582",
    "height_m": null,
    "carries_lamp": true
   },
@@ -11944,7 +12729,7 @@
    "s_m": 5280.0,
    "off_lap_m": 13.8,
    "leg": "14th Ave E to Logan",
-   "id": "g0586",
+   "id": "g0584",
    "height_m": null
   },
   {
@@ -12004,7 +12789,7 @@
    "s_m": 5295.0,
    "off_lap_m": 9.7,
    "leg": "14th Ave E to Logan",
-   "id": "g0588",
+   "id": "g0586",
    "height_m": null
   },
   {
@@ -12146,7 +12931,7 @@
    "s_m": 5297.0,
    "off_lap_m": 11.6,
    "leg": "14th Ave E to Logan",
-   "id": "g0589",
+   "id": "g0587",
    "height_m": null
   },
   {
@@ -12179,7 +12964,7 @@
    "s_m": 5386.0,
    "off_lap_m": 7.2,
    "leg": "14th Ave E to Logan",
-   "id": "g0593",
+   "id": "g0591",
    "height_m": null,
    "carries_lamp": true
   },
@@ -12298,7 +13083,7 @@
    "s_m": 5389.0,
    "off_lap_m": 11.1,
    "leg": "14th Ave E to Logan",
-   "id": "g0594",
+   "id": "g0592",
    "height_m": null
   },
   {
@@ -12331,7 +13116,7 @@
    "s_m": 5406.0,
    "off_lap_m": 8.1,
    "leg": "14th Ave E to Logan",
-   "id": "g0595",
+   "id": "g0593",
    "height_m": null
   },
   {
@@ -12360,7 +13145,7 @@
    "s_m": 5410.0,
    "off_lap_m": 8.3,
    "leg": "14th Ave E to Logan",
-   "id": "g0597",
+   "id": "g0595",
    "height_m": null
   },
   {
@@ -12404,7 +13189,7 @@
    "s_m": 5505.0,
    "off_lap_m": 6.0,
    "leg": "14th Ave E to Logan",
-   "id": "g0607",
+   "id": "g0603",
    "height_m": null,
    "carries_lamp": true
   },
@@ -12466,7 +13251,7 @@
    "s_m": 5509.0,
    "off_lap_m": 16.6,
    "leg": "14th Ave E to Logan",
-   "id": "g0608",
+   "id": "g0604",
    "height_m": null,
    "carries_lamp": true
   },
@@ -12511,7 +13296,7 @@
    "s_m": 5523.0,
    "off_lap_m": 13.2,
    "leg": "14th Ave E to Logan",
-   "id": "g0611",
+   "id": "g0607",
    "height_m": null,
    "carries_lamp": false
   },
@@ -12580,7 +13365,7 @@
    "s_m": 5526.0,
    "off_lap_m": 9.5,
    "leg": "14th Ave E to Logan",
-   "id": "g0613",
+   "id": "g0609",
    "height_m": null
   },
   {
@@ -12697,7 +13482,7 @@
    "s_m": 5530.0,
    "off_lap_m": 9.6,
    "leg": "14th Ave E to Logan",
-   "id": "g0615",
+   "id": "g0611",
    "height_m": null
   },
   {
@@ -12801,7 +13586,7 @@
    "s_m": 5657.0,
    "off_lap_m": 7.1,
    "leg": "14th Ave E to Logan",
-   "id": "g0631",
+   "id": "g0627",
    "height_m": null
   },
   {
@@ -13002,7 +13787,7 @@
    "s_m": 5802.0,
    "off_lap_m": 15.6,
    "leg": "14th Ave E to Logan",
-   "id": "g0650",
+   "id": "g0646",
    "height_m": null
   },
   {
@@ -13046,7 +13831,7 @@
    "s_m": 5803.0,
    "off_lap_m": 7.0,
    "leg": "14th Ave E to Logan",
-   "id": "g0651",
+   "id": "g0647",
    "height_m": null,
    "carries_lamp": true
   },
@@ -13103,7 +13888,7 @@
    "s_m": 5829.0,
    "off_lap_m": 6.7,
    "leg": "14th Ave E to Logan",
-   "id": "g0652",
+   "id": "g0648",
    "height_m": null,
    "carries_lamp": true
   },
@@ -13251,7 +14036,7 @@
    "s_m": 5830.0,
    "off_lap_m": 10.4,
    "leg": "14th Ave E to Logan",
-   "id": "g0653",
+   "id": "g0649",
    "height_m": null
   },
   {
@@ -13404,7 +14189,7 @@
    "s_m": 5915.0,
    "off_lap_m": 10.7,
    "leg": "14th Ave E to Logan",
-   "id": "g0657",
+   "id": "g0653",
    "height_m": null
   },
   {
@@ -13462,7 +14247,7 @@
    "s_m": 5916.0,
    "off_lap_m": 11.8,
    "leg": "14th Ave E to Logan",
-   "id": "g0658",
+   "id": "g0654",
    "height_m": null,
    "carries_lamp": true
   },
@@ -13556,7 +14341,7 @@
    "s_m": 5934.0,
    "off_lap_m": 11.2,
    "leg": "14th Ave E to Logan",
-   "id": "g0660",
+   "id": "g0656",
    "height_m": null
   },
   {
@@ -13589,7 +14374,7 @@
    "s_m": 5941.0,
    "off_lap_m": 10.7,
    "leg": "14th Ave E to Logan",
-   "id": "g0662",
+   "id": "g0658",
    "height_m": null
   },
   {
@@ -13639,7 +14424,7 @@
    "s_m": 6025.0,
    "off_lap_m": 6.2,
    "leg": "14th Ave E to Logan",
-   "id": "g0673",
+   "id": "g0668",
    "height_m": null,
    "carries_lamp": true
   },
@@ -13673,7 +14458,7 @@
    "s_m": 6027.0,
    "off_lap_m": 9.5,
    "leg": "14th Ave E to Logan",
-   "id": "g0675",
+   "id": "g0670",
    "height_m": null,
    "carries_lamp": true
   },
@@ -13803,7 +14588,7 @@
    "s_m": 6043.0,
    "off_lap_m": 4.8,
    "leg": "14th Ave E to Logan",
-   "id": "g0676",
+   "id": "g0671",
    "height_m": null
   },
   {
@@ -13909,7 +14694,7 @@
    "s_m": 6045.0,
    "off_lap_m": 9.9,
    "leg": "14th Ave E to Logan",
-   "id": "g0677",
+   "id": "g0672",
    "height_m": null
   },
   {
@@ -13953,7 +14738,7 @@
    "s_m": 6132.0,
    "off_lap_m": 5.6,
    "leg": "14th Ave E to Logan",
-   "id": "g0688",
+   "id": "g0683",
    "height_m": null,
    "carries_lamp": true
   },
@@ -13987,7 +14772,7 @@
    "s_m": 6132.0,
    "off_lap_m": 15.2,
    "leg": "14th Ave E to Logan",
-   "id": "g0689",
+   "id": "g0684",
    "height_m": null
   },
   {
@@ -14057,7 +14842,7 @@
    "s_m": 6153.0,
    "off_lap_m": 5.5,
    "leg": "14th Ave E to Logan",
-   "id": "g0691",
+   "id": "g0686",
    "height_m": null,
    "carries_lamp": true
   },
@@ -14108,7 +14893,7 @@
    "s_m": 6154.0,
    "off_lap_m": 10.8,
    "leg": "14th Ave E to Logan",
-   "id": "g0692",
+   "id": "g0687",
    "height_m": null
   },
   {
@@ -14158,7 +14943,7 @@
    "s_m": 6244.0,
    "off_lap_m": 5.3,
    "leg": "14th Ave E to Logan",
-   "id": "g0698",
+   "id": "g0693",
    "height_m": null,
    "carries_lamp": true
   },
@@ -14192,7 +14977,7 @@
    "s_m": 6251.0,
    "off_lap_m": 15.4,
    "leg": "Logan N to Colfax",
-   "id": "g0700",
+   "id": "g0695",
    "height_m": null
   },
   {
@@ -14274,8 +15059,85 @@
    "s_m": 6256.0,
    "off_lap_m": 9.0,
    "leg": "Logan N to Colfax",
-   "id": "g0702",
+   "id": "g0697",
    "height_m": null
+  },
+  {
+   "class": "signal_post",
+   "lonlat": [
+    -104.9824294,
+    39.7399184
+   ],
+   "grade": "measured",
+   "position_from": "the foot of its shadow (the sun-ward end of the stroke)",
+   "years": [
+    2022,
+    2018
+   ],
+   "confirmed_by_second_year": true,
+   "spread_m": 0.11,
+   "reader_verdict": "tree?",
+   "eye": {
+    "verdict": "lamp",
+    "panel": "P128",
+    "note": "SW corner Colfax/Logan: 7 m stroke with 3.5 m luminaire arm east; boxes on pole suggest side-mounted signal heads; ring was orange (tree) but it is a pole",
+    "reclassed_from": "lamp",
+    "reclass_why": "settled definition applied to its eye note: 'SW corner Colfax/Logan: 7 m stroke with 3.5 m luminaire arm east; boxes on pole suggest side-mounted signal heads; ring '"
+   },
+   "in_building_shadow": {
+    "2022": false,
+    "2020": false,
+    "2018": false
+   },
+   "shadow_m": {
+    "2022": 5.54,
+    "2018": 9.84
+   },
+   "arms": {
+    "2018": [
+     {
+      "join_along_shadow_m": 9.36,
+      "length_m": 1.78,
+      "bearing_deg": 80.13,
+      "width_m": 0.12
+     },
+     {
+      "join_along_shadow_m": 9.62,
+      "length_m": 3.2,
+      "bearing_deg": 89.47,
+      "width_m": 0.13
+     },
+     {
+      "join_along_shadow_m": 1.83,
+      "length_m": 2.11,
+      "bearing_deg": 112.82,
+      "width_m": 0.28
+     },
+     {
+      "join_along_shadow_m": 1.92,
+      "length_m": 2.33,
+      "bearing_deg": 119.83,
+      "width_m": 0.37
+     },
+     {
+      "join_along_shadow_m": 2.05,
+      "length_m": 2.44,
+      "bearing_deg": 127.78,
+      "width_m": 0.35
+     }
+    ]
+   },
+   "lamp_head_bright_at_foot": {
+    "2022": 21,
+    "2018": 44
+   },
+   "candidate": 1604,
+   "s_m": 6414.0,
+   "off_lap_m": 7.0,
+   "leg": "Logan N to Colfax",
+   "id": "g0706",
+   "height_m": null,
+   "carries_lamp": true
   },
   {
    "class": "signal_mast",
@@ -14307,7 +15169,7 @@
    "s_m": 6415.0,
    "off_lap_m": 10.5,
    "leg": "Logan N to Colfax",
-   "id": "g0712",
+   "id": "g0707",
    "height_m": null
   },
   {
@@ -14383,7 +15245,7 @@
    "s_m": 6431.0,
    "off_lap_m": 11.0,
    "leg": "Colfax W to S/F",
-   "id": "g0713",
+   "id": "g0708",
    "height_m": null
   },
   {
@@ -14412,7 +15274,7 @@
    "s_m": 6438.0,
    "off_lap_m": 6.1,
    "leg": "Colfax W to S/F",
-   "id": "g0715",
+   "id": "g0710",
    "height_m": null
   },
   {
@@ -14445,7 +15307,7 @@
    "s_m": 6525.0,
    "off_lap_m": 17.7,
    "leg": "Colfax W to S/F",
-   "id": "g0721",
+   "id": "g0716",
    "height_m": null
   },
   {
@@ -14486,7 +15348,7 @@
    "s_m": 6526.0,
    "off_lap_m": 5.0,
    "leg": "Colfax W to S/F",
-   "id": "g0722",
+   "id": "g0717",
    "height_m": null,
    "carries_lamp": true
   },
@@ -14516,7 +15378,7 @@
    "s_m": 6544.0,
    "off_lap_m": 18.8,
    "leg": "Colfax W to S/F",
-   "id": "g0725",
+   "id": "g0720",
    "height_m": null
   },
   {
@@ -14545,7 +15407,7 @@
    "s_m": 6547.0,
    "off_lap_m": 7.1,
    "leg": "Colfax W to S/F",
-   "id": "g0726",
+   "id": "g0721",
    "height_m": null
   },
   {
@@ -14578,7 +15440,7 @@
    "s_m": 6633.0,
    "off_lap_m": 18.9,
    "leg": "Colfax W to S/F",
-   "id": "g0740",
+   "id": "g0735",
    "height_m": null
   },
   {
@@ -14622,7 +15484,7 @@
    "s_m": 6636.0,
    "off_lap_m": 3.9,
    "leg": "Colfax W to S/F",
-   "id": "g0741",
+   "id": "g0736",
    "height_m": null,
    "carries_lamp": true
   }

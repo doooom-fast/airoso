@@ -234,7 +234,9 @@ Report: [`source/survey/SURVEY.md`](../../tracks/denver-grand-prix/source/survey
 - **Colfax** surveyed in its 2022 state (D8); OSM's present bus-lane tags recorded as changed since, not surveyed.
 - **Unsurveyed:** Stout under the Convention Center (344 m); paint on Stout's bright concrete.
 - **Refutation, fresh samples each round** (`source/survey/refutation/`): paint measured precision 0.89 → 0.89 → 0.92 → 0.93, recall
-  0.90 → 0.86 → 0.91 → 0.92, round 4 nothing new. Posts precision / recall POSTS_ROUNDS.
+  0.90 → 0.86 → 0.91 → 0.92, round 4 nothing new. Posts precision 0.94 → 0.93 → 0.95 → 0.97, recall 0.93 → 0.97 → 0.97 → 0.94, round 4 nothing new; each
+  round's errors fixed in the inventory. **Inventory: 323 lamps, 119 signal masts, 82 signal posts (58 with a light), 142 sign or small
+  posts, 18 utility poles, 51 posts of unknown kind; 62 % confirmed by a second flight year.**
 
 Owed: heights (flight hours), sign faces and posts' fixtures (street-level imagery, E3), Stout under the roof (captures), the
 free-roam grid's survey. The three gates of PLAN §4b now have inventories to hold a build to.

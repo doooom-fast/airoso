@@ -145,6 +145,21 @@
    "E": -864.7,
    "N": 492.91,
    "why": "a one-year blob: a person or a temporary object (posts refutation round 3)"
+  },
+  {
+   "E": -914.82,
+   "N": 16.74,
+   "why": "a parking meter (posts refutation round 4)"
+  },
+  {
+   "E": -1206.1,
+   "N": 123.9,
+   "why": "nothing at the square in 2022; a wall edge in 2020 (posts refutation round 4)"
+  },
+  {
+   "E": -1158.79,
+   "N": 915.26,
+   "why": "planters and a tree shadow, no pair of strokes (posts refutation round 4)"
   }
  ],
  "move": [
@@ -190,6 +205,16 @@
    "E": 16.1,
    "N": -168.1,
    "note": "about 1.7 m north of the light's base (sign-post pass SG50)"
+  },
+  {
+   "E": -1365.5,
+   "N": 633.0,
+   "note": "about 1.8 m from the globe lamp's foot (posts refutation round 4)"
+  },
+  {
+   "E": -1359.58,
+   "N": 632.21,
+   "note": "about 1.8 m from the globe lamp's foot (posts refutation round 4)"
   }
  ],
  "reclass": [
@@ -348,6 +373,12 @@
    "N": -20.16,
    "to": "signal_post",
    "why": "settled definition applied to its eye note: 'SW corner Colfax/Logan: 7 m stroke with 3.5 m luminaire arm east; boxes on pole suggest side-mounted signal heads; ring '"
+  },
+  {
+   "E": -1301.75,
+   "N": -22.88,
+   "to": "signal_mast",
+   "why": "its arm reaches west over the southbound lanes (posts refutation round 4)"
   }
  ]
 }

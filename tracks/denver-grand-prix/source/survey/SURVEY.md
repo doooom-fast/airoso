@@ -7,8 +7,8 @@ The pilot (`pilot/PILOT.md`) proved the sources on 385 m of Colfax; this is the 
 | File | What | Grades |
 |---|---|---|
 | [`paint.json`](paint.json) | 5,993 items: 185 + 10 crosswalks, 224 stop bars, 3,105 lines, 1,566 bars, 918 small marks (23 typed arrows), 5 coloured surfaces | 22 % measured, 78 % detected |
-| [`lamps.json`](lamps.json) | 507 posts that are not signals: 317 lamps, 118 sign or small posts, 19 utility poles, 53 posts of unknown kind | 88 % measured, 12 % detected |
-| [`signals.json`](signals.json) | 120 signal masts, 67 signal posts; the count at every OSM-signalled junction | 96 % measured, 4 % detected |
+| [`lamps.json`](lamps.json) | 534 posts that are not signals: 323 lamps, 142 sign or small posts, 18 utility poles, 51 posts of unknown kind | 79 % measured, 21 % detected |
+| [`signals.json`](signals.json) | 119 signal masts, 82 signal posts (58 also carry a light); the count at every OSM-signalled junction | 90 % measured, 10 % detected |
 | [`signs.json`](signs.json) | 57 junctions, 5 rail crossings, 15 speed-limit changes: what OSM implies | 100 % tagged |
 | `stills/legNN_*.jpg` | one overlay per leg on the 2022 picture | |
 | `refutation/` | every refutation round, the lap-wide registration check | |
@@ -110,22 +110,31 @@ of the sun's bearing starting at the post's foot.
 2. **Every candidate checked by eye.** 133 panels (2022 beside 2020, 58 m, 5 m ticks), eight readers, 1,643 candidates; then a second
    reader pass with the sun's bearing taken per tile from the confirmed posts, 299 new candidates and 44 rings the first readers could
    not find, on 138 panels that also show every accepted post. **1,942 candidates, all classed by eye** (`eye/verdicts_*.json`).
-   **269 posts were added by eye** where the reader missed them: 203 at the foot of a shadow stroke found within 2 m (measured), 66 by
-   eye only (detected, ±1.5 m). Five accepted posts were corrected after the second pass (2 removed, 1 moved, 2 positions flagged) (`eye/corrections.json`).
-3. **The reader against the eye:** precision **0.23**, recall **0.61**. Its false candidates are bare trees (by far the most), mast arms
+   Then a **sign-post pass**: four readers at all 55 junction boxes on the lap, looking only for posts with no square (62 added,
+   mostly corner and median sign posts and small globe lamps), and the misses of the four refutation rounds (below).
+   **336 posts were added by eye** where the reader missed them: 189 at the foot of a shadow stroke within 1 m (measured), 147 by eye
+   only (detected, ±1.5 m). After the passes, `eye/corrections.json` removed 28 accepted posts (not posts, meters, a square on another
+   post's shadow), moved 3, reclassed 27 and flagged 4 positions; each entry says why.
+3. **The reader against the eye:** precision **0.23**, recall **0.56**. Its false candidates are bare trees (by far the most), mast arms
    seen over the road, paint, cars, roof clutter seen over the street by the towers' lean, creek-bank rocks. Its misses: globe lamps
    under trees, lamps and masts in building shadow, short sign posts, corner masts whose shadow merges with the arm's.
 
-**Counts:** 317 lamps, 120 signal masts, 67 signal posts, 118 sign or small posts, 19 utility poles (light-rail catenary, span-wire
-poles), 53 posts of unknown kind. 694 posts in all; **461 (66 %) confirmed by a second flight year** (222 in three years, 239 in two),
-167 seen in one year (the others in shadow or the post not there), 66 placed by eye only.
+**Classes** (settled after refutation round 2, `eye/README.md`): `signal_mast` has an arm reaching over the roadway; `signal_post` is
+any pole or pedestal carrying signal or pedestrian heads with no such arm, tall or short (`carries_lamp` where it also has a light);
+`lamp` carries no heads; `sign_or_small_post` is short (about 1.5–3 m of 2022 shadow), usually ending in a plate; parking meters,
+bollards and delineators are not posts here.
+
+**Counts:** 323 lamps, 119 signal masts, 82 signal posts, 142 sign or small posts, 18 utility poles (light-rail catenary, span-wire
+poles), 51 posts of unknown kind. 735 posts in all; **457 (62 %) confirmed by a second flight year** (220 in three years, 237 in two),
+148 seen in one year (the others in shadow or the post not there), 130 placed by eye with no stroke in any year (in building shadow,
+or under trees).
 
 **Position:** where two or three years' feet are read, they agree to **0.45 m median, 0.78 m p84, 0.95 m p95** (`position_check`). The
 eye's own placements: ±0.5 m at a shadow foot, ±1.5 m otherwise, ±2–2.7 m where flagged (`position_note`).
 
 **Signals at every junction** (`signals.json` → `junctions`): OSM tags 55 signal nodes at 49 junctions. **All 47 signalled junctions on
-the lap have at least one mast or signal post**: 1 mast at 5 junctions, 2 at 17, 3 at 17, 4 at 7, none but signal posts at 1 (Santa Fe /
-W 14th: one signal post). **The other 2 OSM signal nodes (Colfax / Pennsylvania, a Logan St node 160 m north of Colfax) lie on lap ways
+the lap have at least one mast or signal post**: 1 mast at 4 junctions, 2 at 17, 3 at 22, 4 at 2, 5 at 1, none but signal posts at 1
+(Santa Fe / W 14th: one signal post). **The other 2 OSM signal nodes (Colfax / Pennsylvania, a Logan St node 160 m north of Colfax) lie on lap ways
 beyond the lap: not surveyed, nothing claimed.** 4 signal posts stand where OSM tags no signal (light-rail crossings and a mid-block
 pedestrian crossing).
 
@@ -133,6 +142,8 @@ pedestrian crossing).
 lidar roofs gave 58° and 47° for one 2022 picture; 2020 holds flight lines of different hours; DRCOG's metadata (flight date and time)
 is refused. No clean elevation exists for any year, so no height is claimed. `shadow_m` per year is kept on every post; a height
 follows as soon as the elevation does.
+
+**Signs on posts:** a sign post's plate is seen only as a shadow; its face is not read.
 
 **Not read from the air:** what a post carries (fixture type beyond lamp / globe / cobra seen by the eye, signal heads and their
 number, any sign face), posts in deep building shadow in both years, and anything under the Convention Center roof.
@@ -156,20 +167,20 @@ lane-use signs, parking and bus-stop signs. Signs mounted on the posts in `lamps
 
 | Leg | m | Crosswalks | Stop bars | Paint measured / detected | Lidar on measured (conf / contra / unread) | 2022 hidden: vehicles / shadow | Hidden every year | Lamps | Masts | Sig. posts | Other posts | Posts in 2+ years |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| Colfax WB to Speer NB | 1,176 | 44 | 43 | 291 / 677 | 240 / 6 / 41 | 12 % / 6 % | 8 % | 75 | 29 | 8 | 38 | 92 / 150 |
-| Speer NB to Stout | 151 | 5 | 3 | 21 / 58 | 12 / 1 / 8 | 15 % / 0 % | 10 % | 8 | 2 | 1 | 2 | 9 / 13 |
-| Stout to 15th St (344 m covered) | 579 | 7 | 11 | 29 / 154 | 19 / 8 / 2 | 9 % / 57 % | 34 % | 11 | 4 | 5 | 17 | 25 / 37 |
-| 15th St to Blake | 739 | 19 | 39 | 142 / 1,016 | 77 / 7 / 54 | 12 % / 55 % | 15 % | 46 | 11 | 14 | 11 | 41 / 82 |
-| Blake to Speer SB | 302 | 10 | 11 | 49 / 158 | 36 / 0 / 13 | 16 % / 3 % | 15 % | 23 | 6 | 8 | 8 | 42 / 45 |
-| Speer SB to Kalamath | 803 | 13 | 28 | 137 / 403 | 90 / 4 / 43 | 9 % / 0 % | 7 % | 44 | 16 | 6 | 16 | 69 / 82 |
-| Kalamath S to W 14th Ave | 388 | 8 | 15 | 103 / 315 | 68 / 4 / 29 | 9 % / 0 % | 7 % | 9 | 7 | 2 | 12 | 26 / 30 |
+| Colfax WB to Speer NB | 1,176 | 44 | 43 | 291 / 677 | 240 / 6 / 41 | 12 % / 6 % | 8 % | 74 | 27 | 13 | 45 | 92 / 159 |
+| Speer NB to Stout | 151 | 5 | 3 | 21 / 58 | 12 / 1 / 8 | 15 % / 0 % | 10 % | 7 | 2 | 2 | 3 | 9 / 14 |
+| Stout to 15th St (344 m covered) | 579 | 7 | 11 | 29 / 154 | 19 / 8 / 2 | 9 % / 57 % | 34 % | 10 | 4 | 8 | 14 | 24 / 36 |
+| 15th St to Blake | 739 | 19 | 39 | 142 / 1,016 | 77 / 7 / 54 | 12 % / 55 % | 15 % | 48 | 13 | 15 | 13 | 39 / 89 |
+| Blake to Speer SB | 302 | 10 | 11 | 49 / 158 | 36 / 0 / 13 | 16 % / 3 % | 15 % | 24 | 6 | 9 | 10 | 40 / 49 |
+| Speer SB to Kalamath | 803 | 13 | 28 | 137 / 403 | 90 / 4 / 43 | 9 % / 0 % | 7 % | 47 | 13 | 9 | 19 | 72 / 88 |
+| Kalamath S to W 14th Ave | 388 | 8 | 15 | 103 / 315 | 68 / 4 / 29 | 9 % / 0 % | 7 % | 9 | 8 | 1 | 15 | 26 / 33 |
 | W 14th Ave to Santa Fe | 66 | 3 | 2 | 17 / 73 | 7 / 7 / 3 | 22 % / 4 % | 19 % | 2 | 1 | 1 | 4 | 5 / 8 |
-| Santa Fe N to Colfax | 190 | 4 | 1 | 30 / 96 | 21 / 1 / 8 | 10 % / 2 % | 8 % | 4 | 1 | 1 | 3 | 7 / 9 |
-| Kalamath NB branch to Speer SB | 148 | 5 | 7 | 45 / 132 | 24 / 2 / 16 | 6 % / 0 % | 6 % | 2 | 1 | 1 | 11 | 9 / 15 |
-| Speer SB to W 14th Ave | 342 | 13 | 10 | 75 / 242 | 47 / 7 / 21 | 12 % / 8 % | 10 % | 6 | 7 | 1 | 7 | 15 / 21 |
-| 14th Ave E to Logan | 1,367 | 53 | 43 | 320 / 1,110 | 235 / 16 / 65 | 10 % / 10 % | 11 % | 72 | 26 | 17 | 47 | 101 / 162 |
-| Logan N to Colfax | 180 | 4 | 2 | 26 / 87 | 25 / 0 / 1 | 12 % / 2 % | 8 % | 5 | 3 | 0 | 5 | 6 / 13 |
-| Colfax W to S/F | 216 | 7 | 9 | 55 / 132 | 46 / 1 / 7 | 14 % / 5 % | 8 % | 10 | 6 | 2 | 9 | 14 / 27 |
+| Santa Fe N to Colfax | 190 | 4 | 1 | 30 / 96 | 21 / 1 / 8 | 10 % / 2 % | 8 % | 6 | 1 | 1 | 4 | 7 / 12 |
+| Kalamath NB branch to Speer SB | 148 | 5 | 7 | 45 / 132 | 24 / 2 / 16 | 6 % / 0 % | 6 % | 2 | 2 | 1 | 11 | 9 / 16 |
+| Speer SB to W 14th Ave | 342 | 13 | 10 | 75 / 242 | 47 / 7 / 21 | 12 % / 8 % | 10 % | 7 | 7 | 1 | 6 | 15 / 21 |
+| 14th Ave E to Logan | 1,367 | 53 | 43 | 320 / 1,110 | 235 / 16 / 65 | 10 % / 10 % | 11 % | 73 | 26 | 18 | 51 | 100 / 168 |
+| Logan N to Colfax | 180 | 4 | 2 | 26 / 87 | 25 / 0 / 1 | 12 % / 2 % | 8 % | 4 | 3 | 1 | 5 | 5 / 13 |
+| Colfax W to S/F | 216 | 7 | 9 | 55 / 132 | 46 / 1 / 7 | 14 % / 5 % | 8 % | 10 | 6 | 2 | 11 | 14 / 29 |
 
 (Crosswalks and stop bars counted by the leg whose lap point is nearest; a junction's crosswalks fall to one leg.)
 
@@ -194,7 +205,20 @@ look-window are real paint within reach of the street line. Each counts as an er
 
 **Posts**
 
-POSTS_REFUTATION
+Fresh boxes each round, 10 junctions and 10 mid-block stretches, read by a reader who had not read panels there; the inventory's
+squares drawn on 2022 beside 2020. Precision counts a real post at the wrong class or 1.5–2 m off as found (strict: only fully right).
+
+| Round | Squares | Precision (strict) | Recall | Errors found | Causes → fixed |
+|---|---|---|---|---|---|
+| 1 | 108 | 0.94 (0.94) | 0.93 | 8 missed (6 small sign posts), 4 class, 2 false, 1 misplaced | small sign posts at corners and islands missed by both passes → **a sign-post pass at every junction** (62 added) |
+| 2 | 152 | 0.93 (0.86) | **0.97** | 9 class, 8 false (3 on another post's shadow, 2 meters), 3 misplaced, 2 duplicate, 4 missed | eye placements snapped to any stroke end within 2 m → **1 m**; readers disagreed on tall poles with heads and no arm → **the class definition settled** |
+| 3 | 124 | 0.95 (0.89) | 0.97 | 7 class, 6 false (3 meters), 1 misplaced, 3 missed | the definition had not been applied to labels made before it → **applied lap-wide from each post's own eye note** (12 reclassed) |
+| 4 | 105 | **0.97 (0.94)** | 0.94 | 6 missed (3 globe lamps, 2 signs), 3 false (1 meter), 2 lamps 1.8 m off, 1 class | **none new**: every error is of a kind named in rounds 1–3. The loop stopped. |
+
+Every error each round found was fixed in the inventory (its misses added through `eye/verdicts_refute_r*.json`, the rest in
+`eye/corrections.json`), so the rounds' numbers describe the inventory BEFORE their own fixes. What remains, by the rounds' evidence:
+a few small posts and globe lamps missed per 20 boxes (under trees, in shadow), meters now and then taken for sign posts, a post here
+and there 1.5–2 m from its foot.
 
 ## Decisions made without Kevin, and why
 
@@ -210,10 +234,13 @@ POSTS_REFUTATION
 7. **Symbols by exemplar, not by a feature rule.** A first rule-based arrow typer called 1,300 things arrows; a gallery showed most
    were not. Replaced by exemplars cut from this imagery and named by eye, with a threshold set on the gallery.
 8. **Every post by eye.** The shadow reader's precision (0.23) is far too low to stand alone; the eye classed all 1,942 candidates
-   and added 269 misses. The reader's verdict is kept beside the eye's on every post.
+   and added 336 misses (a dedicated sign-post pass at every junction among them). The reader's verdict is kept beside the eye's on every post.
 9. **The sun's bearing per tile from the posts the eye confirmed** (second pass): 2020's flight lines differ by an hour or more.
 10. **No heights** (above). **No Mapillary** (no key in this session; E3 stands for later).
 11. **Signal nodes on lap ways that run past the lap are declared not surveyed**, not "none found".
+12. **`signal_post` covers any pole with heads and no arm over the road**, tall or short, with `carries_lamp`: the readers disagreed,
+    and the build needs the heads more than the pole's height class.
+13. **Eye placements snap to a shadow's foot only within 1 m** (2 m put some on another stroke's end).
 
 ## Not done / open
 

@@ -208,6 +208,371 @@
    },
    "added": [],
    "note": "most of the panel is in tower shadow in 2022; 2020 SE corner of the intersection unreadable"
+  },
+  "R044": {
+   "candidates": {
+    "10086": {
+     "class": "not_a_post",
+     "note": "rooftop duct/parapet"
+    },
+    "10087": {
+     "class": "not_a_post",
+     "note": "tree in a plaza planter"
+    },
+    "10088": {
+     "class": "not_a_post",
+     "note": "kiosk / box structure at the planter corner"
+    }
+   },
+   "added": [],
+   "note": "SW sidewalk hidden by the leaning building (2020) and its shadow (2022)"
+  },
+  "RX008": {
+   "candidates": {
+    "10089": {
+     "class": "not_a_post",
+     "note": "corner of the dark kiosk box in the plaza"
+    },
+    "10091": {
+     "class": "not_a_post",
+     "note": "bare tree"
+    }
+   },
+   "added": [
+    {
+     "E": -1133.8,
+     "N": 926.7,
+     "class": "lamp",
+     "note": "plaza lamp, N shadow with head 2022, NE-ish stroke 2020"
+    },
+    {
+     "E": -1139.6,
+     "N": 921.2,
+     "class": "lamp",
+     "note": "plaza lamp"
+    },
+    {
+     "E": -1129.1,
+     "N": 922.3,
+     "class": "lamp",
+     "note": "lamp inside the patio enclosure"
+    },
+    {
+     "E": -1123.9,
+     "N": 917.0,
+     "class": "lamp",
+     "note": "plaza lamp at the patio's south corner"
+    },
+    {
+     "E": -1134.9,
+     "N": 916.5,
+     "class": "lamp",
+     "note": "plaza lamp among the round tables"
+    },
+    {
+     "E": -1129.9,
+     "N": 911.9,
+     "class": "lamp",
+     "note": "plaza lamp in the 3-planter cluster"
+    },
+    {
+     "E": -1144.7,
+     "N": 916.3,
+     "class": "lamp",
+     "note": "plaza lamp east of the kiosk"
+    }
+   ],
+   "note": "2020 shadows in this tile fall NE, not NW; plaza lamps east of the green-squared ones were never accepted"
+  },
+  "RX009": {
+   "candidates": {
+    "10090": {
+     "class": "not_a_post",
+     "note": "building corner / roof edge (2020); 2022 shadow"
+    },
+    "452": {
+     "class": "cannot_tell",
+     "note": "2022 patio clutter (people, umbrellas, railing), 2020 building shadow"
+    },
+    "450": {
+     "class": "cannot_tell",
+     "note": "2022 patio clutter, 2020 building shadow"
+    }
+   },
+   "added": [
+    {
+     "E": -1200.2,
+     "N": 872.0,
+     "class": "lamp",
+     "note": "SW sidewalk by the patio; ~7 m shadow with head, both years agree"
+    },
+    {
+     "E": -1194.7,
+     "N": 879.7,
+     "class": "lamp",
+     "note": "patio edge; 2022 long N stroke, 2020 pole with heads ~2 m off; position +-1.5 m"
+    }
+   ],
+   "note": ""
+  },
+  "R047": {
+   "candidates": {
+    "10092": {
+     "class": "not_a_post",
+     "note": "bare tree beside an accepted post (~1.3 m)"
+    },
+    "10093": {
+     "class": "not_a_post",
+     "note": "small object on the sidewalk by a planter (2020), no stroke; 2022 shadow"
+    },
+    "10094": {
+     "class": "not_a_post",
+     "note": "red newspaper box"
+    },
+    "10095": {
+     "class": "cannot_tell",
+     "note": "short dark object at the building shadow edge; no clear stroke either year"
+    }
+   },
+   "added": [
+    {
+     "E": -1235.0,
+     "N": 1009.0,
+     "class": "lamp",
+     "note": "NE sidewalk by the dumpster; 2022 N shadow with cobra hook, 2020 NE-going shadow with arm; feet differ ~2 m"
+    }
+   ],
+   "note": "2020 shadows fall NE in this tile"
+  },
+  "R050": {
+   "candidates": {
+    "10096": {
+     "class": "not_a_post",
+     "note": "rooftop patio clutter / building edge"
+    },
+    "10097": {
+     "class": "cannot_tell",
+     "note": "parked cars and bare trees in building shadow; a small dark dot by the white car in 2020 only"
+    },
+    "10098": {
+     "class": "not_a_post",
+     "note": "parked car under a bare tree"
+    }
+   },
+   "added": [],
+   "note": ""
+  },
+  "R052": {
+   "candidates": {
+    "10100": {
+     "class": "not_a_post",
+     "note": "rooftop equipment"
+    },
+    "10101": {
+     "class": "not_a_post",
+     "note": "creek bed / bank vegetation"
+    },
+    "10102": {
+     "class": "not_a_post",
+     "note": "creek bank vegetation"
+    },
+    "10099": {
+     "class": "not_a_post",
+     "note": "2022: the head of the accepted lamp's shadow; 2020: shadow of a lot pole beyond the panel's east edge"
+    }
+   },
+   "added": [
+    {
+     "E": -1400.6,
+     "N": 931.6,
+     "class": "lamp",
+     "note": "east sidewalk south of the bridge, at the panel's south edge; N shadow with head 2022, NW stroke 2020"
+    }
+   ],
+   "note": "2020 shows lot poles just beyond the east edge (about E -1395, N 957 and N 960); not added from this panel"
+  },
+  "R056": {
+   "candidates": {
+    "10103": {
+     "class": "not_a_post",
+     "note": "bare tree on the lawn"
+    }
+   },
+   "added": [],
+   "note": "dark shapes on the roadway near -1572,925 are hanging signal heads' shadows from the accepted mast"
+  },
+  "R057": {
+   "candidates": {
+    "10104": {
+     "class": "not_a_post",
+     "note": "bare tree on the lawn"
+    },
+    "10105": {
+     "class": "not_a_post",
+     "note": "crosswalk / lane paint in the roadway"
+    }
+   },
+   "added": [
+    {
+     "E": -1513.6,
+     "N": 886.9,
+     "class": "lamp",
+     "note": "NE corner island, pole on a concrete pad; long NW shadow 2020"
+    },
+    {
+     "E": -1512.9,
+     "N": 877.6,
+     "class": "post_unknown",
+     "note": "short post on a pad in the NE planting island, ~2.4 m shadow with a round head both years"
+    },
+    {
+     "E": -1517.5,
+     "N": 883.1,
+     "class": "sign_or_small_post",
+     "note": "thin post at the island's west tip, ~2 m N shadow 2022, NW stroke 2020"
+    }
+   ],
+   "note": "green square at about -1547.5,854.0 sits by a young tree; a plate-like shadow N (2022) / NW (2020) suggests a sign, kept"
+  },
+  "R058": {
+   "candidates": {
+    "10106": {
+     "class": "not_a_post",
+     "note": "in the roadway by the crosswalk / bus"
+    }
+   },
+   "added": [],
+   "note": ""
+  },
+  "R059": {
+   "candidates": {
+    "10107": {
+     "class": "not_a_post",
+     "note": "young tree on the lawn"
+    }
+   },
+   "added": [],
+   "note": ""
+  },
+  "R060": {
+   "candidates": {
+    "10108": {
+     "class": "not_a_post",
+     "note": "2022 building shadow; 2020 bare sidewalk/grass edge, no stroke"
+    }
+   },
+   "added": [],
+   "note": "green squares at about -1464.7,746.5 and -1458.6,739.2 sit 1.5-2.5 m off the feet of the lamps they stand for (2022 feet look nearer -1462.3,745.0 and -1457.8,741.0); review, not added as new"
+  },
+  "RX010": {
+   "candidates": {
+    "10109": {
+     "class": "not_a_post",
+     "note": "young tree in the park lawn"
+    }
+   },
+   "added": [
+    {
+     "E": -1421.3,
+     "N": 651.9,
+     "class": "lamp",
+     "note": "park-path globe lamp east of the walk; bright globe at the foot, N stroke 2022, NW stroke 2020"
+    },
+    {
+     "E": -1419.0,
+     "N": 611.4,
+     "class": "lamp",
+     "note": "park-path globe lamp near the south edge; both years"
+    }
+   ],
+   "note": ""
+  },
+  "R063": {
+   "candidates": {
+    "10110": {
+     "class": "not_a_post",
+     "note": "bare tree shadow on the park grass"
+    },
+    "10111": {
+     "class": "not_a_post",
+     "note": "bare tree shadow on the park grass"
+    },
+    "10112": {
+     "class": "not_a_post",
+     "note": "street tree in the tree row"
+    }
+   },
+   "added": [],
+   "note": "2022 and 2020 feet differ by ~2-2.5 m (E-W) in this tile; green at about -1366.5,633.8 sits ~2.7 m W of the 2022 foot of its tall lamp but on the 2020 foot. Lamp at the SE corner (about -1351.6,597.6) is the green in R064."
+  },
+  "R064": {
+   "candidates": {
+    "10113": {
+     "class": "not_a_post",
+     "note": "bare tree"
+    },
+    "10114": {
+     "class": "not_a_post",
+     "note": "creek bank rocks / vegetation"
+    }
+   },
+   "added": [],
+   "note": "green square at about -1342.7,576.0 sits on the bike-lane stencil on the bridge path: no post visible in either year (review)"
+  },
+  "R065": {
+   "candidates": {
+    "10115": {
+     "class": "not_a_post",
+     "note": "creek bank rocks / grass"
+    },
+    "10116": {
+     "class": "not_a_post",
+     "note": "street tree in the tree row"
+    }
+   },
+   "added": [],
+   "note": ""
+  },
+  "R066": {
+   "candidates": {
+    "10117": {
+     "class": "not_a_post",
+     "note": "small white object at the sidewalk edge, no shadow stroke"
+    },
+    "10118": {
+     "class": "not_a_post",
+     "note": "creek bank"
+    }
+   },
+   "added": [],
+   "note": ""
+  },
+  "R067": {
+   "candidates": {
+    "10119": {
+     "class": "not_a_post",
+     "note": "bare tree"
+    }
+   },
+   "added": [
+    {
+     "E": -1372.8,
+     "N": 421.6,
+     "class": "lamp",
+     "note": "globe lamp at the west edge by the building's planting bed; ~3 m N shadow 2022, NW stroke and globe 2020"
+    }
+   ],
+   "note": ""
+  },
+  "R068": {
+   "candidates": {
+    "10120": {
+     "class": "not_a_post",
+     "note": "bare tree in the park"
+    }
+   },
+   "added": [],
+   "note": "a lamp's shadow enters at the south edge (about -1334,362) from a foot outside the panel"
   }
  }
 }

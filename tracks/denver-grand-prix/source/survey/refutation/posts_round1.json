@@ -1,0 +1,328 @@
+{
+ "reader": "claude-opus-5-5 refuter, round 1",
+ "_doc": "Each box read by eye in both years at 2-7x crops with metre ticks; a post counted only with its signature (stroke from one foot in both years, or one year with a head when the other is shadowed); feet located to ~0.5 m; posts with under ~1.5 m of 2022 shadow treated as meters/bollards.",
+ "boxes": [
+  {
+   "box": "j625 Court Place / West Colfax Avenue",
+   "inventory_posts": 6,
+   "correct": 4,
+   "false": [],
+   "duplicate": [],
+   "misplaced": [
+    {
+     "id": "g0092",
+     "m": 2.0,
+     "note": "mast foot is at about (-567.2,-19.5): the arm (2022 and 2020) and the 2020 NW pole shadow both end there, south of the square"
+    }
+   ],
+   "wrong_class": [
+    {
+     "id": "g0093",
+     "is": "lamp",
+     "note": "tall pole (2022 shadow ~7 m north) ending in a cobra-head arm pointing east; may also carry a side ped head, but it is not a short signal post"
+    }
+   ],
+   "missed": [],
+   "unjudgeable": "SE corner partly under tree/building shadow in 2022; nothing posted there could be judged"
+  },
+  {
+   "box": "j1327 North Speer Boulevard / Stout Street",
+   "inventory_posts": 8,
+   "correct": 8,
+   "false": [],
+   "duplicate": [],
+   "misplaced": [],
+   "wrong_class": [],
+   "missed": [],
+   "unjudgeable": "g0162 is a light-rail crossing flasher (crossbuck visible both years), accepted as signal_post; l0165 is likely a light-rail catenary pole, accepted as utility_pole. A ~1.3 m stub between the tracks at (-1213.5,159.5) ignored as too short."
+  },
+  {
+   "box": "j2220 15th Street / Arapahoe Street",
+   "inventory_posts": 5,
+   "correct": 4,
+   "false": [],
+   "duplicate": [],
+   "misplaced": [],
+   "wrong_class": [
+    {
+     "id": "g0225",
+     "is": "signal_mast",
+     "note": "2020 shows the grey arm and its black shadow leaving this foot NW over 15th St with 3-4 heads, reaching almost to g0228"
+    }
+   ],
+   "missed": [
+    {
+     "E": -1040.5,
+     "N": 732.0,
+     "class": "lamp",
+     "note": "cobra-head lamp at the south edge (behind a parked car in 2022); 2022 shadow N to a head at (-1041.3,737.6), 2020 shadow NW; foot is within ~0.5 m of the box edge"
+    }
+   ],
+   "unjudgeable": "2022 almost entirely in tower shadow; judged from 2020 only. A lamp at the east edge (shadow ends ~(-1001,748)) has its foot outside the box."
+  },
+  {
+   "box": "j2644 15th Street / Blake Street",
+   "inventory_posts": 8,
+   "correct": 8,
+   "false": [],
+   "duplicate": [],
+   "misplaced": [],
+   "wrong_class": [],
+   "missed": [],
+   "unjudgeable": "possible short sign at (-1343.8,1063.1): 2020 NW stroke only, 2022 in building shadow - not counted. Three poles whose shadows enter from the south edge (E -1330, -1319, -1307) have feet outside the box."
+  },
+  {
+   "box": "j3226 Larimer Street / North Speer Boulevard",
+   "inventory_posts": 12,
+   "correct": 11,
+   "false": [],
+   "duplicate": [],
+   "misplaced": [],
+   "wrong_class": [
+    {
+     "id": "g0362",
+     "is": "signal_post",
+     "note": "tall pole with side-mounted heads and a luminaire arm (2022 shadow N then NW hook, 2020 shadow NW); no arm over the roadway in either year"
+    }
+   ],
+   "missed": [
+    {
+     "E": -1396.5,
+     "N": 721.3,
+     "class": "sign_or_small_post",
+     "note": "third post on the north sidewalk east of l0357/l0358: 2022 2 m stroke N with flag plate, 2020 NW stroke"
+    },
+    {
+     "E": -1427.0,
+     "N": 680.3,
+     "class": "sign_or_small_post",
+     "note": "sign in the grass triangle SW: 2022 ~1.7 m stroke N with head, 2020 NW stroke to a blob"
+    }
+   ],
+   "unjudgeable": "dark tall object on a plinth at (-1433,679) is a sculpture/kiosk, not counted"
+  },
+  {
+   "box": "j3945 North Kalamath Street / North Santa Fe Drive / West Colfax Avenue",
+   "inventory_posts": 6,
+   "correct": 6,
+   "false": [],
+   "duplicate": [],
+   "misplaced": [],
+   "wrong_class": [],
+   "missed": [
+    {
+     "E": -1319.0,
+     "N": 19.1,
+     "class": "sign_or_small_post",
+     "note": "sign in the NW corner island 2.5 m west of g0426: 2022 2.4 m stroke N ending in a triangular plate, 2020 thin NW stroke"
+    }
+   ],
+   "unjudgeable": "white pillar at about (-1321.5,-20) with a wide (~0.6 m) long shadow: probably a pylon/monument, not judged as a post. The SW mast (arm east along N -18) has its foot on or just south of the box edge (~(-1316,-23.2)), not counted."
+  },
+  {
+   "box": "j4204 North Santa Fe Drive / West 14th Avenue",
+   "inventory_posts": 5,
+   "correct": 4,
+   "false": [],
+   "duplicate": [],
+   "misplaced": [],
+   "wrong_class": [
+    {
+     "id": "l0445",
+     "is": "post_unknown",
+     "note": "not small: 2022 shadow runs ~6.5 m north (-174.8 to -168.2) to a diamond plate; a tall pole carrying a sign"
+    }
+   ],
+   "missed": [],
+   "unjudgeable": "a thin 2022-only stroke at (-1218.9,-186.7) by the tree (2020 in tree shadow) not counted"
+  },
+  {
+   "box": "j4884 North Speer Boulevard / West 14th Avenue",
+   "inventory_posts": 4,
+   "correct": 4,
+   "false": [],
+   "duplicate": [],
+   "misplaced": [],
+   "wrong_class": [],
+   "missed": [],
+   "unjudgeable": "g0492: in 2022 a tall pole with side heads and a luminaire (no arm of its own; the arm over the road belongs to g0493), but 2020 shows an arm east from it - the corner may have been rebuilt; signal_post left as is"
+  },
+  {
+   "box": "j5398 Cherokee Street / West 14th Avenue",
+   "inventory_posts": 4,
+   "correct": 4,
+   "false": [],
+   "duplicate": [],
+   "misplaced": [],
+   "wrong_class": [],
+   "missed": [
+    {
+     "E": -568.8,
+     "N": -194.1,
+     "class": "sign_or_small_post",
+     "note": "SE corner, 2.7 m SW of g0554: 2022 2.4 m stroke N with a flag plate; 2020 in building shadow (a hook visible)"
+    }
+   ],
+   "unjudgeable": "2020 east half in building shadow"
+  },
+  {
+   "box": "j6142 East 14th Avenue / Grant Street",
+   "inventory_posts": 6,
+   "correct": 6,
+   "false": [],
+   "duplicate": [],
+   "misplaced": [],
+   "wrong_class": [],
+   "missed": [],
+   "unjudgeable": ""
+  },
+  {
+   "box": "m460 Colfax WB to Speer NB mid-block",
+   "inventory_posts": 7,
+   "correct": 7,
+   "false": [],
+   "duplicate": [],
+   "misplaced": [],
+   "wrong_class": [],
+   "missed": [],
+   "unjudgeable": "a 2022-only ~1.5 m stroke at (-406.1,-5.9) south of l0069 (nothing in 2020) not counted"
+  },
+  {
+   "box": "m1080 Colfax WB to Speer NB mid-block",
+   "inventory_posts": 1,
+   "correct": 1,
+   "false": [],
+   "duplicate": [],
+   "misplaced": [],
+   "wrong_class": [],
+   "missed": [
+    {
+     "E": -1041.3,
+     "N": 14.2,
+     "class": "sign_or_small_post",
+     "note": "on the sidewalk: 2022 2 m stroke N, 2020 NW stroke ending in a rectangular plate shadow"
+    },
+    {
+     "E": -1016.0,
+     "N": 14.1,
+     "class": "sign_or_small_post",
+     "note": "2022 1.7 m stroke N with round head, 2020 NW stroke; round head - could be a tall meter, borderline"
+    }
+   ],
+   "unjudgeable": "l0143 accepted as a small globe lamp (2022 thin 3.3 m stroke; the broad 2020 blob may be a banner)"
+  },
+  {
+   "box": "m1230 Speer NB to Stout mid-block",
+   "inventory_posts": 4,
+   "correct": 4,
+   "false": [],
+   "duplicate": [],
+   "misplaced": [],
+   "wrong_class": [],
+   "missed": [],
+   "unjudgeable": "l0154 is an overhead sign mast (arm with a sign box over Speer); post_unknown accepted. The large dark structure NE is a sculpture, not a post."
+  },
+  {
+   "box": "m2060 15th St to Blake mid-block",
+   "inventory_posts": 2,
+   "correct": 2,
+   "false": [],
+   "duplicate": [],
+   "misplaced": [],
+   "wrong_class": [],
+   "missed": [],
+   "unjudgeable": "2022 whole box in tower shadow; 2020 west sidewalk in building shadow - lamps on the SW side could not be checked"
+  },
+  {
+   "box": "m2770 Blake to Speer SB mid-block",
+   "inventory_posts": 8,
+   "correct": 8,
+   "false": [],
+   "duplicate": [],
+   "misplaced": [],
+   "wrong_class": [],
+   "missed": [],
+   "unjudgeable": "l0295 sits on l0297's 2022 shadow line; 2020 shows it as its own 2.6 m NW stroke with a round head, so accepted as a separate post"
+  },
+  {
+   "box": "m3600 Speer SB to Kalamath mid-block",
+   "inventory_posts": 2,
+   "correct": 2,
+   "false": [],
+   "duplicate": [],
+   "misplaced": [],
+   "wrong_class": [],
+   "missed": [],
+   "unjudgeable": ""
+  },
+  {
+   "box": "m4020 Kalamath S to W 14th Ave mid-block",
+   "inventory_posts": 3,
+   "correct": 3,
+   "false": [],
+   "duplicate": [],
+   "misplaced": [],
+   "wrong_class": [],
+   "missed": [],
+   "unjudgeable": "two cobra-head lamps along the east edge have feet just east of the box"
+  },
+  {
+   "box": "m4330 Santa Fe N to Colfax mid-block",
+   "inventory_posts": 3,
+   "correct": 3,
+   "false": [],
+   "duplicate": [],
+   "misplaced": [],
+   "wrong_class": [],
+   "missed": [
+    {
+     "E": -1278.5,
+     "N": -68.5,
+     "class": "lamp",
+     "note": "planting strip east sidewalk: 2022 ~7 m shadow N to a head, 2020 NW shadow to a head; two white junction boxes at the foot"
+    }
+   ],
+   "unjudgeable": "l0431 is the same post as in m4020 (counted in both boxes)"
+  },
+  {
+   "box": "m5100 14th Ave E to Logan mid-block",
+   "inventory_posts": 10,
+   "correct": 8,
+   "false": [
+    "l0510",
+    "l0517"
+   ],
+   "duplicate": [],
+   "misplaced": [],
+   "wrong_class": [],
+   "missed": [],
+   "unjudgeable": "l0510: only faint ~1 m strokes in a planting strip, no post signature; l0517: ~1.0 m 2022 shadow with a blob head at the parking curb = meter/bollard height. l0513 (1.4 m) and l0519 (1.6 m) are borderline-short but have plate-like heads, kept. A large sign/pay-station at the parking lot entrance (-880.5,-193.5) not judged."
+  },
+  {
+   "box": "m5750 14th Ave E to Logan mid-block",
+   "inventory_posts": 4,
+   "correct": 4,
+   "false": [],
+   "duplicate": [],
+   "misplaced": [],
+   "wrong_class": [],
+   "missed": [],
+   "unjudgeable": "a sign at (-272,-210.5) visible in 2020 only, gone in the 2022 construction site - not counted"
+  }
+ ],
+ "totals": {
+  "inventory_posts": 108,
+  "correct": 101,
+  "false": 2,
+  "duplicate": 0,
+  "misplaced": 1,
+  "wrong_class": 4,
+  "missed": 8,
+  "precision": 0.944,
+  "precision_real_post_any_class": 0.981,
+  "recall": 0.93,
+  "real_posts_found": 106,
+  "real_posts": 114,
+  "note": "l0431 is in two boxes and counted twice. 6 of 8 misses are small sign posts; 3 of 4 wrong classes are signal poles (mast vs post vs lamp)."
+ }
+}

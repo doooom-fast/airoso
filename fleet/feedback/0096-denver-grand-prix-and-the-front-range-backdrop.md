@@ -210,3 +210,33 @@ Decided on his behalf, and given to the survey session to run without stopping:
 - **Colfax:** the 2022 state, per D8, with OSM's present bus-lane tags recorded beside it as changed and unsurveyed.
 - **Signs:** tagged per junction from OSM; nothing invented.
 - A refutation pass on a fresh sample per class before it is called done; Stout's covered 344 m declared unsurveyed.
+
+## The lap survey, run unattended (2026-11-23/24)
+
+Kevin: "I want the best versions of these that you can do with no more input from me tonight". The whole lap corridor (6,646 m,
+30 m either side of OSM's line, every junction) surveyed from DRCOG's 3-inch aerials of **2022, 2020 and 2018** and the 2020 lidar.
+Report: [`source/survey/SURVEY.md`](../../tracks/denver-grand-prix/source/survey/SURVEY.md); one overlay still per leg in `source/survey/stills/`.
+
+- **Paint** (`paint.json`): 5,993 items, 22 % measured. 185 measured crosswalks (1,406 bars read, 18 inferred only where 2022 is
+  hidden there, 32 rebuilt from split pieces), 146 stop bars, 327 broken / 322 solid / 37 double / 147 dotted lines, 23 typed arrows,
+  5 red / green surfaces. Three flight years grade by agreement; 418 marks flagged possibly removed. **Lidar intensity: 947 of the
+  measured confirmed, 64 contradicted, 311 unreadable. Position against the lidar, lap-wide: 0.21 m median, 0.34 m p95, no bias.**
+  Lane-line width fitted 0.18 m (the pilot read 0.23): each line carries the fitted, the read and the nearest MUTCD width.
+- **Posts** (`lamps.json`, `signals.json`): the lidar does not see them; read from shadows in two flight years whose sun bearings
+  differ, so a post's feet in two years confirm it (agreement 0.45 m median). **Every one of 1,942 shadow candidates classed by eye,
+  then the misses added by eye**, including a dedicated sign-post pass at every junction. Shadow reader against the eye: precision
+  0.23, recall 0.56: the eye carries this class. 2020 turned out to hold flight lines of different hours (shadows north-west in most
+  of the lap, north elsewhere): the second pass takes the sun's bearing per tile from confirmed posts. **All 47 signalled junctions on
+  the lap have at least one mast or signal post;** two OSM signal nodes lie on lap ways beyond the lap and are declared not surveyed.
+  **No heights:** no clean sun elevation for any flight (two building shadows gave 58° and 47° on one picture; DRCOG's metadata host
+  is refused).
+- **Signs** (`signs.json`): tagged from OSM per junction; nothing placed, no face; what a street-level source must supply listed.
+- **Colfax** surveyed in its 2022 state (D8); OSM's present bus-lane tags recorded as changed since, not surveyed.
+- **Unsurveyed:** Stout under the Convention Center (344 m); paint on Stout's bright concrete.
+- **Refutation, fresh samples each round** (`source/survey/refutation/`): paint measured precision 0.89 → 0.89 → 0.92 → 0.93, recall
+  0.90 → 0.86 → 0.91 → 0.92, round 4 nothing new. Posts precision 0.94 → 0.93 → 0.95 → 0.97, recall 0.93 → 0.97 → 0.97 → 0.94, round 4 nothing new; each
+  round's errors fixed in the inventory. **Inventory: 323 lamps, 119 signal masts, 82 signal posts (58 with a light), 142 sign or small
+  posts, 18 utility poles, 51 posts of unknown kind; 62 % confirmed by a second flight year.**
+
+Owed: heights (flight hours), sign faces and posts' fixtures (street-level imagery, E3), Stout under the roof (captures), the
+free-roam grid's survey. The three gates of PLAN §4b now have inventories to hold a build to.

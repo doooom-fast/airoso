@@ -1,0 +1,1039 @@
+{
+ "reader": "panel reader batch 1 (claude-fable-5-2, by eye)",
+ "panels": {
+  "P017": {
+   "candidates": {
+    "209": {
+     "class": "not_a_post",
+     "note": "rooftop equipment on the building north of Colfax"
+    },
+    "210": {
+     "class": "not_a_post",
+     "note": "rooftop equipment on the building north of Colfax"
+    },
+    "211": {
+     "class": "not_a_post",
+     "note": "rooftop equipment on the building north of Colfax"
+    },
+    "214": {
+     "class": "not_a_post",
+     "note": "rooftop equipment on the building north of Colfax"
+    },
+    "215": {
+     "class": "not_a_post",
+     "note": "rooftop equipment on the building north of Colfax"
+    },
+    "216": {
+     "class": "not_a_post",
+     "note": "rooftop equipment on the building north of Colfax"
+    },
+    "217": {
+     "class": "not_a_post",
+     "note": "rooftop equipment on the building north of Colfax"
+    },
+    "218": {
+     "class": "not_a_post",
+     "note": "rooftop equipment on the building north of Colfax"
+    },
+    "219": {
+     "class": "lamp",
+     "note": "tall pole on N sidewalk: 2020 stroke ~6 m NW ending in a head blob, 2022 stroke north into the building shadow"
+    },
+    "212": {
+     "class": "not_a_post",
+     "note": "corner of a median planter wall, no stroke in either year"
+    },
+    "213": {
+     "class": "lamp",
+     "note": "globe lamp: bright dot at the foot, short stroke with head in both years"
+    }
+   },
+   "added": [
+    {
+     "E": -752.5,
+     "N": -16.5,
+     "class": "lamp",
+     "note": "tall streetlight on S kerb; long stroke over the roadway in both years, foot in building shadow in 2022 (bright head seen)"
+    },
+    {
+     "E": -774.5,
+     "N": -21.5,
+     "class": "lamp",
+     "note": "globe lamp in the plaza, bright dot at foot, strokes with head both years"
+    },
+    {
+     "E": -793.0,
+     "N": -22.0,
+     "class": "sign_or_small_post",
+     "note": "plaza sign, boxy plate shadow, ~1.8 m stroke in 2022"
+    },
+    {
+     "E": -783.5,
+     "N": -22.0,
+     "class": "sign_or_small_post",
+     "note": "plaza sign, boxy plate shadow, ~1.8 m stroke in 2022"
+    },
+    {
+     "E": -795.5,
+     "N": -16.5,
+     "class": "sign_or_small_post",
+     "note": "thin post at S kerb, ~1.7 m stroke 2022, both years"
+    },
+    {
+     "E": -776.0,
+     "N": -17.5,
+     "class": "sign_or_small_post",
+     "note": "thin post near S kerb by the benches, both years"
+    }
+   ],
+   "note": "all eight rings north of the N sidewalk are on a roof. Globe lamp at the W edge is ring 221 of P018."
+  },
+  "P018": {
+   "candidates": {
+    "220": {
+     "class": "not_a_post",
+     "note": "median planter bed, no stroke"
+    },
+    "222": {
+     "class": "not_a_post",
+     "note": "median planter wall corner"
+    },
+    "221": {
+     "class": "lamp",
+     "note": "pedestrian lamp, bright dot at foot, stroke with head both years"
+    },
+    "223": {
+     "class": "not_a_post",
+     "note": "round tree pit, no post stroke"
+    },
+    "226": {
+     "class": "not_a_post",
+     "note": "bare tree in a round tree pit"
+    },
+    "224": {
+     "class": "lamp",
+     "note": "tall streetlight, long stroke over roadway with head, both years"
+    },
+    "225": {
+     "class": "lamp",
+     "note": "orange (tree) flag is wrong: straight tall pole, 5 m stroke N in 2022 and long NW stroke with head in 2020"
+    },
+    "227": {
+     "class": "not_a_post",
+     "note": "white-capped low post on a fence/rail line that runs parallel to the building in both years (private car park)"
+    },
+    "228": {
+     "class": "not_a_post",
+     "note": "same fence/rail line as 227"
+    },
+    "229": {
+     "class": "lamp",
+     "note": "globe lamp seen in 2020 (bright dot + NW stroke with head) about 1 m N of the ring; 2022 in building shadow"
+    }
+   },
+   "added": [
+    {
+     "E": -806.5,
+     "N": -16.5,
+     "class": "sign_or_small_post",
+     "note": "thin post at S kerb, ~2 m stroke 2022, head blob 2020"
+    },
+    {
+     "E": -795.5,
+     "N": -16.5,
+     "class": "sign_or_small_post",
+     "note": "thin post at S kerb; same post as the one added in P017 at about the same E,N"
+    }
+   ]
+  },
+  "P019": {
+   "candidates": {
+    "230": {
+     "class": "not_a_post",
+     "note": "one of a row of short bollard-like posts on the car park wall line; nothing in 2020"
+    },
+    "231": {
+     "class": "not_a_post",
+     "note": "car park paint line / parked van"
+    },
+    "232": {
+     "class": "lamp",
+     "note": "tall twin-arm streetlight at the NE corner: 11 m stroke N in 2022 with curved arm and head, long NW stroke 2020; boxy shadows at its base suggest side-mounted signal heads; no signal arm over the road seen"
+    },
+    "233": {
+     "class": "not_a_post",
+     "note": "roadway beside the lamp-arm shadow in 2022, on a parked car in 2020"
+    },
+    "234": {
+     "class": "not_a_post",
+     "note": "parked car in both years"
+    },
+    "235": {
+     "class": "not_a_post",
+     "note": "crosswalk paint, small loose object in 2022"
+    },
+    "236": {
+     "class": "not_a_post",
+     "note": "on the shadow of the NW mast arm where it crosses the crosswalk"
+    },
+    "237": {
+     "class": "not_a_post",
+     "note": "roadway of the south leg beside crosswalk bars"
+    }
+   },
+   "added": [
+    {
+     "E": -889.0,
+     "N": 15.0,
+     "class": "signal_mast",
+     "note": "NW corner: pole with arm reaching SSW over Colfax westbound, heads visible on the arm and on its displaced shadow, both years; carries a luminaire"
+    },
+    {
+     "E": -879.5,
+     "N": -19.0,
+     "class": "signal_mast",
+     "note": "SE corner: arm reaching NNE over Colfax eastbound, heads on arm and on shadow in 2022; foot in building shadow in 2020 but arm visible"
+    },
+    {
+     "E": -895.5,
+     "N": 19.5,
+     "class": "sign_or_small_post",
+     "note": "post on the NW sidewalk, strokes of both years from one foot"
+    },
+    {
+     "E": -881.5,
+     "N": 19.5,
+     "class": "sign_or_small_post",
+     "note": "sign with plate on the sidewalk of the diagonal street, ~2 m stroke 2022"
+    },
+    {
+     "E": -862.0,
+     "N": 16.5,
+     "class": "sign_or_small_post",
+     "note": "post at the NE corner, ~1.8 m stroke with small plate"
+    }
+   ],
+   "note": "signalised intersection. The SW corner mast stands west of this panel (its arm tip reaches in near E -893, N -17)."
+  },
+  "P020": {
+   "candidates": {
+    "238": {
+     "class": "not_a_post",
+     "note": "crosswalk paint in the roadway"
+    },
+    "239": {
+     "class": "signal_mast",
+     "note": "SW corner: pole shadow N and arm reaching east over the south leg, heads on arm and shadow, both years"
+    },
+    "240": {
+     "class": "sign_or_small_post",
+     "note": "median-nose sign, plate shadow, ~1.7 m stroke 2022, NW stroke 2020"
+    },
+    "241": {
+     "class": "lamp",
+     "note": "tall streetlight, 7.5 m stroke N with head 2022, NW stroke 2020"
+    },
+    "242": {
+     "class": "not_a_post",
+     "note": "ring sits ~2 m SE of the lamp added here; nothing at the ring itself (building shadow edge)"
+    },
+    "243": {
+     "class": "not_a_post",
+     "note": "edge of a pavement patch in the car park"
+    }
+   },
+   "added": [
+    {
+     "E": -929.0,
+     "N": -16.0,
+     "class": "lamp",
+     "note": "tall streetlight on S kerb: bright head/base in the building shadow, 2022 stroke due north of it over the roadway, 2020 stroke NW; ring 242 is ~2 m off; foot good to ~1 m"
+    },
+    {
+     "E": -914.5,
+     "N": 16.5,
+     "class": "sign_or_small_post",
+     "note": "post with a round disc head on the car park entrance island, ~1.5 m stroke, both years; borderline short"
+    }
+   ],
+   "note": "the mast arm at the E edge belongs to the NW mast of P019."
+  },
+  "P021": {
+   "candidates": {
+    "244": {
+     "class": "not_a_post",
+     "note": "car park paint line / parked car"
+    },
+    "245": {
+     "class": "not_a_post",
+     "note": "car park paint line / parked car"
+    },
+    "246": {
+     "class": "lamp",
+     "note": "tall streetlight on N kerb, 7 m stroke N 2022, NW 2020"
+    },
+    "247": {
+     "class": "not_a_post",
+     "note": "white painted triangle in the car park"
+    },
+    "248": {
+     "class": "post_unknown",
+     "note": "tall pole in the private car park (2020 stroke ~6 m NW; 2022 stroke N runs under a parked car); probably a lot light, head not seen; foot ~1 m NW of the ring"
+    },
+    "249": {
+     "class": "signal_mast",
+     "note": "SE corner: arm reaching north over the Colfax crosswalk with heads, displaced shadow with heads and a luminaire in 2020"
+    }
+   },
+   "added": [
+    {
+     "E": -984.5,
+     "N": 13.0,
+     "class": "signal_mast",
+     "note": "NW corner: pole shadow N with luminaire arm, signal arm reaching west over the north leg, heads on the arm and on its shadow, both years"
+    },
+    {
+     "E": -980.0,
+     "N": 11.0,
+     "class": "sign_or_small_post",
+     "note": "post at the N kerb just E of the NW corner, ~1.9 m stroke 2022, head 2020"
+    },
+    {
+     "E": -986.5,
+     "N": 25.0,
+     "class": "sign_or_small_post",
+     "note": "two posts ~0.8 m apart (N-S) on the sidewalk of the north leg, plate head; strokes overlap in 2022, separate in 2020"
+    },
+    {
+     "E": -963.5,
+     "N": -15.5,
+     "class": "lamp",
+     "note": "tall streetlight on S kerb: bright head/base in building shadow, 2022 stroke due north over the roadway, 2020 stroke NW; foot good to ~1 m"
+    }
+   ],
+   "note": "the two-sided billboard frame in the car park (E -948) is not a street post."
+  },
+  "P022": {
+   "candidates": {
+    "250": {
+     "class": "not_a_post",
+     "note": "tip of the NW mast's arm over the centre line, not a foot"
+    },
+    "251": {
+     "class": "not_a_post",
+     "note": "cabinet-like box and its shadow beside the mast; the mast foot is ~3 m ESE and is added"
+    },
+    "252": {
+     "class": "not_a_post",
+     "note": "small bare sapling/shrub at the car park corner, fuzzy short shadow"
+    },
+    "253": {
+     "class": "not_a_post",
+     "note": "inside a bare tree crown"
+    },
+    "255": {
+     "class": "not_a_post",
+     "note": "inside a bare tree crown"
+    },
+    "256": {
+     "class": "not_a_post",
+     "note": "inside a bare tree crown"
+    },
+    "254": {
+     "class": "lamp",
+     "note": "orange (tree) flag is wrong: square base, straight 4 m stroke N in 2022, NW stroke with a head blob in 2020; pedestrian-scale post"
+    }
+   },
+   "added": [
+    {
+     "E": -1004.0,
+     "N": 12.0,
+     "class": "signal_mast",
+     "note": "NW corner: round base, pole shadow N, arm reaching south over Colfax westbound to the centre line (ring 250 is its tip), heads on arm and on shadow"
+    },
+    {
+     "E": -998.0,
+     "N": -18.0,
+     "class": "lamp",
+     "note": "SW corner pole under a bare tree: 6 m stroke N with luminaire arm pointing east 2022, NW stroke 2020, real arm with bright head seen; boxy shadows mid-pole suggest side-mounted signal heads"
+    }
+   ],
+   "note": "the mast arm entering at the NE corner belongs to the mast added in P021."
+  },
+  "P023": {
+   "candidates": {
+    "257": {
+     "class": "not_a_post",
+     "note": "shrub/planter at the patio corner"
+    },
+    "258": {
+     "class": "not_a_post",
+     "note": "object on the patio (planter or statue), not a post"
+    },
+    "259": {
+     "class": "not_a_post",
+     "note": "bare tree / shrub, no straight stroke"
+    },
+    "260": {
+     "class": "not_a_post",
+     "note": "bare tree / shrub, no straight stroke"
+    },
+    "261": {
+     "class": "not_a_post",
+     "note": "bare tree / shrub, no straight stroke"
+    },
+    "262": {
+     "class": "not_a_post",
+     "note": "sidewalk under the branches of a bare tree"
+    },
+    "263": {
+     "class": "lamp",
+     "note": "tall streetlight on S kerb, 7.5 m stroke N 2022, NW stroke 2020"
+    }
+   },
+   "added": [],
+   "note": "the tall dark rectangle shadows at the SW building corner are a business pylon sign, not a street post. Group of pedestrians on the N sidewalk in 2022."
+  },
+  "P024": {
+   "candidates": {
+    "264": {
+     "class": "not_a_post",
+     "note": "roof / canopy edge of the building"
+    },
+    "265": {
+     "class": "not_a_post",
+     "note": "building canopy corner, parked car in 2020"
+    },
+    "266": {
+     "class": "lamp",
+     "note": "tall streetlight on N kerb, stroke N with head 2022, NW 2020"
+    },
+    "267": {
+     "class": "not_a_post",
+     "note": "lawn, no stroke"
+    },
+    "268": {
+     "class": "signal_mast",
+     "note": "SE corner: arm reaching NNW over Colfax with heads, both years"
+    },
+    "269": {
+     "class": "not_a_post",
+     "note": "on the arm of mast 268 over the crosswalk"
+    },
+    "270": {
+     "class": "not_a_post",
+     "note": "truck in 2022, bare roadway in 2020"
+    },
+    "271": {
+     "class": "not_a_post",
+     "note": "bare tree / shrub, no straight stroke"
+    },
+    "275": {
+     "class": "not_a_post",
+     "note": "bare tree / shrub, no straight stroke"
+    },
+    "276": {
+     "class": "not_a_post",
+     "note": "bare tree / shrub, no straight stroke"
+    },
+    "272": {
+     "class": "signal_mast",
+     "note": "NW corner: pole shadow N with luminaire arm, signal arm reaching west with heads on arm and shadow, both years"
+    },
+    "273": {
+     "class": "not_a_post",
+     "note": "cabinet-like box with a square shadow beside mast 272"
+    }
+   },
+   "added": [
+    {
+     "E": -1130.5,
+     "N": -20.5,
+     "class": "lamp",
+     "note": "SW corner pole: 6.5 m stroke N with luminaire arm 2022, NW stroke 2020, short real arm with bright head; boxy shadow on the pole suggests side-mounted signal heads; no signal arm"
+    },
+    {
+     "E": -1094.5,
+     "N": -17.5,
+     "class": "sign_or_small_post",
+     "note": "post on the S sidewalk E of the SE corner, 2.7 m stroke 2022, wide plate shadow 2020"
+    }
+   ],
+   "note": "a globe lantern stands on a wall pier at the SW edge (about E -1133, N -18); it is on a wall, not counted."
+  },
+  "P025": {
+   "candidates": {
+    "274": {
+     "class": "not_a_post",
+     "note": "crosswalk, on the arm shadow of the NE mast (272 of P024)"
+    },
+    "277": {
+     "class": "not_a_post",
+     "note": "crosswalk paint"
+    },
+    "278": {
+     "class": "signal_mast",
+     "note": "W side of Speer at Colfax: pole shadow N, arm reaching SSE over Colfax with heads on arm and shadow, both years"
+    },
+    "279": {
+     "class": "not_a_post",
+     "note": "bare tree / shrub, no straight stroke"
+    },
+    "280": {
+     "class": "not_a_post",
+     "note": "end of the railing; the 2020 shadow of mast 278 ends here"
+    },
+    "281": {
+     "class": "not_a_post",
+     "note": "rock bed"
+    },
+    "282": {
+     "class": "lamp",
+     "note": "streetlight with a banner: 7 m stroke N 2022 with banner and head, NW stroke 2020; foot ~1.3 m N of the ring"
+    },
+    "283": {
+     "class": "not_a_post",
+     "note": "corner of the railing"
+    },
+    "284": {
+     "class": "not_a_post",
+     "note": "grass at the path edge"
+    },
+    "285": {
+     "class": "not_a_post",
+     "note": "railing along the sidewalk"
+    }
+   },
+   "added": [],
+   "note": "dark objects on plinths W of the sidewalk are urns/statues."
+  },
+  "P026": {
+   "candidates": {
+    "286": {
+     "class": "not_a_post",
+     "note": "bare tree / shrub, no straight stroke"
+    },
+    "287": {
+     "class": "not_a_post",
+     "note": "bare tree / shrub, no straight stroke"
+    },
+    "288": {
+     "class": "not_a_post",
+     "note": "roadway under tree-branch shadow"
+    },
+    "289": {
+     "class": "not_a_post",
+     "note": "bare tree / shrub, no straight stroke"
+    },
+    "290": {
+     "class": "not_a_post",
+     "note": "bare tree / shrub, no straight stroke"
+    },
+    "291": {
+     "class": "not_a_post",
+     "note": "bare tree / shrub, no straight stroke"
+    },
+    "292": {
+     "class": "lamp",
+     "note": "twin-globe lamp on the E verge: stroke N with crossarm and two globes 2022, long NW stroke 2020"
+    },
+    "293": {
+     "class": "not_a_post",
+     "note": "bare tree / shrub, no straight stroke"
+    },
+    "294": {
+     "class": "not_a_post",
+     "note": "edge of the path / wall"
+    },
+    "295": {
+     "class": "not_a_post",
+     "note": "bare tree / shrub, no straight stroke"
+    },
+    "296": {
+     "class": "not_a_post",
+     "note": "traffic lane"
+    },
+    "297": {
+     "class": "not_a_post",
+     "note": "bare tree / shrub, no straight stroke"
+    },
+    "298": {
+     "class": "not_a_post",
+     "note": "kerb; the cantilever sign pole added here stands ~2.2 m N of this ring"
+    },
+    "299": {
+     "class": "not_a_post",
+     "note": "tree branches just S of lamp 300; duplicate of 300 if it was meant as the lamp"
+    },
+    "300": {
+     "class": "lamp",
+     "note": "globe lamp on the W verge: pale base, 6 m stroke N with round head 2022, NW stroke 2020"
+    },
+    "301": {
+     "class": "not_a_post",
+     "note": "bare tree / shrub, no straight stroke"
+    },
+    "302": {
+     "class": "not_a_post",
+     "note": "bare tree / shrub, no straight stroke"
+    },
+    "303": {
+     "class": "not_a_post",
+     "note": "lawn, nothing"
+    },
+    "304": {
+     "class": "not_a_post",
+     "note": "small low object at the lawn edge, too short"
+    },
+    "305": {
+     "class": "not_a_post",
+     "note": "grass verge, nothing"
+    },
+    "306": {
+     "class": "lamp",
+     "note": "twin-globe lamp on the E verge: crossarm with two globes in the 2022 stroke, NW stroke 2020"
+    },
+    "307": {
+     "class": "not_a_post",
+     "note": "lawn edge, nothing"
+    },
+    "308": {
+     "class": "not_a_post",
+     "note": "bare tree / shrub, no straight stroke"
+    },
+    "309": {
+     "class": "not_a_post",
+     "note": "lawn edge, nothing"
+    },
+    "310": {
+     "class": "not_a_post",
+     "note": "bare tree / shrub, no straight stroke"
+    },
+    "311": {
+     "class": "not_a_post",
+     "note": "bare tree / shrub, no straight stroke"
+    },
+    "312": {
+     "class": "not_a_post",
+     "note": "bare tree / shrub, no straight stroke"
+    },
+    "1050": {
+     "class": "not_a_post",
+     "note": "rocks in the creek bed"
+    }
+   },
+   "added": [
+    {
+     "E": -1156.0,
+     "N": 76.5,
+     "class": "post_unknown",
+     "note": "pole of a cantilever overhead-sign structure on the E verge: heavy pole shadow N, arm with a sign panel reaching WSW over Speer NB, arm and panel shadows displaced, both years"
+    }
+   ],
+   "note": "most rings here are bare street trees. The big beam with a broad shadow NE of the sidewalk is a monument/sculpture."
+  },
+  "P027": {
+   "candidates": {
+    "313": {
+     "class": "not_a_post",
+     "note": "lawn"
+    },
+    "314": {
+     "class": "not_a_post",
+     "note": "small low object at the drive kerb in 2020 only"
+    },
+    "315": {
+     "class": "not_a_post",
+     "note": "path marking beside the creek"
+    },
+    "316": {
+     "class": "not_a_post",
+     "note": "bare tree / shrub, no straight stroke"
+    },
+    "317": {
+     "class": "not_a_post",
+     "note": "traffic lane / car"
+    },
+    "318": {
+     "class": "not_a_post",
+     "note": "kerb of the drive"
+    },
+    "319": {
+     "class": "lamp",
+     "note": "streetlight with banner on the W verge: stroke N with banner 2022, NW stroke and bright head 2020"
+    },
+    "320": {
+     "class": "not_a_post",
+     "note": "lawn"
+    },
+    "321": {
+     "class": "not_a_post",
+     "note": "bare tree / shrub, no straight stroke"
+    },
+    "322": {
+     "class": "not_a_post",
+     "note": "kerb under tree branches"
+    },
+    "323": {
+     "class": "not_a_post",
+     "note": "creek wall rocks"
+    },
+    "324": {
+     "class": "not_a_post",
+     "note": "shrub bed"
+    },
+    "325": {
+     "class": "not_a_post",
+     "note": "bare tree / shrub, no straight stroke"
+    },
+    "326": {
+     "class": "not_a_post",
+     "note": "creek wall rocks"
+    },
+    "327": {
+     "class": "not_a_post",
+     "note": "bare tree / shrub, no straight stroke"
+    },
+    "328": {
+     "class": "not_a_post",
+     "note": "low wall / fence edge"
+    },
+    "329": {
+     "class": "not_a_post",
+     "note": "creek wall rocks"
+    },
+    "330": {
+     "class": "not_a_post",
+     "note": "bare tree / shrub, no straight stroke"
+    },
+    "331": {
+     "class": "not_a_post",
+     "note": "traffic lane / car"
+    },
+    "332": {
+     "class": "not_a_post",
+     "note": "traffic lane / car"
+    },
+    "333": {
+     "class": "not_a_post",
+     "note": "kerb under tree branches"
+    },
+    "334": {
+     "class": "not_a_post",
+     "note": "bare tree / shrub, no straight stroke"
+    },
+    "336": {
+     "class": "lamp",
+     "note": "SW corner of Speer/Stout: 7 m stroke N with round head 2022, long NW stroke 2020, boxy shadows mid-pole suggest side-mounted signal heads; no signal arm"
+    },
+    "335": {
+     "class": "cannot_tell",
+     "note": "ring not found"
+    }
+   },
+   "added": [
+    {
+     "E": -1170.5,
+     "N": 111.5,
+     "class": "lamp",
+     "note": "twin-globe lamp on the E verge with no ring: stroke N with crossarm and globes 2022, long NW stroke 2020, pale crossarm seen from above"
+    },
+    {
+     "E": -1180.5,
+     "N": 135.5,
+     "class": "sign_or_small_post",
+     "note": "same sign as added in P028 (E verge of Speer S of the Stout crosswalk)"
+    }
+   ]
+  },
+  "P028": {
+   "candidates": {
+    "337": {
+     "class": "signal_mast",
+     "note": "SE corner: arm reaching NNW with heads, luminaire, both years"
+    },
+    "340": {
+     "class": "not_a_post",
+     "note": "crosswalk paint"
+    },
+    "341": {
+     "class": "not_a_post",
+     "note": "crosswalk paint"
+    },
+    "342": {
+     "class": "not_a_post",
+     "note": "crosswalk, under the arm of the NW mast"
+    },
+    "343": {
+     "class": "not_a_post",
+     "note": "crosswalk, under the arm of the NW mast"
+    },
+    "344": {
+     "class": "signal_post",
+     "note": "pedestal with boxy heads: bright dot at foot, 3.3 m stroke N 2022, NW stroke 2020; the mast is a separate pole 3.5 m SE"
+    },
+    "345": {
+     "class": "not_a_post",
+     "note": "sculpture"
+    },
+    "347": {
+     "class": "not_a_post",
+     "note": "sculpture"
+    },
+    "346": {
+     "class": "utility_pole",
+     "note": "tall bare pole beside the light-rail track (8 m stroke 2020), same kind as 348; catenary pole, no lamp head"
+    },
+    "348": {
+     "class": "utility_pole",
+     "note": "light-rail catenary pole: straight strokes both years, thin wires cross the tracks at it"
+    },
+    "338": {
+     "class": "cannot_tell",
+     "note": "ring not found"
+    },
+    "339": {
+     "class": "cannot_tell",
+     "note": "ring not found"
+    }
+   },
+   "added": [
+    {
+     "E": -1190.5,
+     "N": 155.5,
+     "class": "signal_mast",
+     "note": "NW corner: pale base, pole shadow N, arm reaching WSW over the crosswalk (rings 342/343 lie under it), heads on arm and on displaced shadow, both years"
+    },
+    {
+     "E": -1179.0,
+     "N": 161.0,
+     "class": "sign_or_small_post",
+     "note": "sign with plate on the island N of the corner, 1.9 m stroke 2022, NW stroke 2020"
+    },
+    {
+     "E": -1180.5,
+     "N": 135.5,
+     "class": "sign_or_small_post",
+     "note": "sign with plate on the E verge of Speer S of the crosswalk, 1.7 m stroke 2022, boxy shadow 2020"
+    }
+   ]
+  },
+  "P029": {
+   "candidates": {
+    "349": {
+     "class": "cannot_tell",
+     "note": "ring not found"
+    },
+    "351": {
+     "class": "cannot_tell",
+     "note": "ring not found"
+    },
+    "350": {
+     "class": "utility_pole",
+     "note": "orange (tree) flag is wrong: straight 5.7 m stroke N from a pale base beside the light-rail track in 2022, wires nearby; 2020 hidden under the leaning roof edge; catenary pole"
+    }
+   },
+   "added": [],
+   "note": "almost the whole panel is a roof. Only ring 350 is drawn."
+  },
+  "P030": {
+   "candidates": {
+    "352": {
+     "class": "cannot_tell",
+     "note": "ring not found"
+    },
+    "354": {
+     "class": "cannot_tell",
+     "note": "ring not found"
+    },
+    "359": {
+     "class": "cannot_tell",
+     "note": "ring not found"
+    },
+    "361": {
+     "class": "cannot_tell",
+     "note": "ring not found"
+    },
+    "353": {
+     "class": "cannot_tell",
+     "note": "deep building shadow in 2022, roof corner (building lean) in 2020"
+    },
+    "355": {
+     "class": "signal_post",
+     "note": "short post with boxy head by the track: 2.3 m stroke N 2022, NW stroke 2020"
+    },
+    "356": {
+     "class": "post_unknown",
+     "note": "base and a NW stroke leaving the top edge in 2020; at the shadow edge in 2022"
+    },
+    "357": {
+     "class": "lamp",
+     "note": "tall pole, 7 m stroke N with round head 2022, long NW stroke 2020; boxy shadows on the pole suggest side-mounted signal heads"
+    },
+    "358": {
+     "class": "lamp",
+     "note": "tall pole, stroke N with round head 2022, NW stroke 2020; boxy shadows on the pole suggest side-mounted signal heads"
+    },
+    "360": {
+     "class": "signal_post",
+     "note": "short post with a crossbar/boxy head by the track, 1.9 m stroke 2022, NW 2020; could be a sign"
+    }
+   },
+   "added": [
+    {
+     "E": -901.0,
+     "N": 415.5,
+     "class": "sign_or_small_post",
+     "note": "post with a small crossbar E of 357, 1.7 m stroke 2022, stroke 2020"
+    }
+   ],
+   "note": "six numbered rings are drawn; a cyan ring cut by the E edge (about E -899.5, N 403.5) shows no number. Thin same-direction lines in both years over the tracks are catenary wires."
+  },
+  "P031": {
+   "candidates": {
+    "362": {
+     "class": "signal_mast",
+     "note": "pole shadow N with luminaire, arm reaching SW with heads on arm and shadow, both years"
+    },
+    "363": {
+     "class": "not_a_post",
+     "note": "flat white board on the sidewalk in 2022; 2020 in shadow. A tall pole stands 3.5 m SE (added)"
+    },
+    "364": {
+     "class": "signal_mast",
+     "note": "2022 only: stroke N with boxy heads and an arm shadow reaching NW with a curved luminaire; 2020 in building shadow"
+    },
+    "365": {
+     "class": "utility_pole",
+     "note": "2022 only: straight stroke N with a fan of wires at its top beside the track curve; catenary pole; 2020 in shadow"
+    },
+    "366": {
+     "class": "post_unknown",
+     "note": "2.9 m stroke N with a small bracketed head 2022; 2020 in shadow with a bright dot at the foot"
+    },
+    "367": {
+     "class": "not_a_post",
+     "note": "roof"
+    },
+    "368": {
+     "class": "not_a_post",
+     "note": "track bed, no stroke in 2022; 2020 in shadow"
+    }
+   },
+   "added": [
+    {
+     "E": -903.0,
+     "N": 446.5,
+     "class": "post_unknown",
+     "note": "tall pole at the NW corner: 6.5 m stroke N with boxy attachments 2022 (signal or catenary pole); 2020 in building shadow"
+    },
+    {
+     "E": -911.0,
+     "N": 466.0,
+     "class": "lamp",
+     "note": "car-park light pole (private lot): 5.7 m stroke N with head 2022, bright head seen in the 2020 shade"
+    },
+    {
+     "E": -889.0,
+     "N": 466.0,
+     "class": "post_unknown",
+     "note": "tall pole at the car-park kerb line: straight 5.7 m stroke N 2022; 2020 in shade"
+    }
+   ],
+   "note": "the dark slab with a white pyramid tip S of 365 is a pylon/obelisk. NE half is tower shadow or roof in one year or the other."
+  },
+  "P032": {
+   "candidates": {
+    "369": {
+     "class": "cannot_tell",
+     "note": "ring not found"
+    },
+    "370": {
+     "class": "not_a_post",
+     "note": "parapet railing of the tower roof (building lean)"
+    },
+    "371": {
+     "class": "not_a_post",
+     "note": "parapet railing of the tower roof"
+    },
+    "372": {
+     "class": "not_a_post",
+     "note": "parapet railing of the tower roof"
+    },
+    "373": {
+     "class": "not_a_post",
+     "note": "parapet railing of the tower roof"
+    },
+    "374": {
+     "class": "cannot_tell",
+     "note": "deep tower shadow in 2022, under the leaning roof in 2020"
+    },
+    "375": {
+     "class": "cannot_tell",
+     "note": "deep tower shadow in 2022, under the leaning roof in 2020"
+    }
+   },
+   "added": [
+    {
+     "E": -881.0,
+     "N": 497.0,
+     "class": "lamp",
+     "note": "car-park light pole (private lot): 5.7 m stroke N with arm and head 2022, bright head seen in the 2020 shade"
+    },
+    {
+     "E": -880.5,
+     "N": 473.0,
+     "class": "post_unknown",
+     "note": "tall pole at the car-park kerb line: thick 6.6 m stroke N 2022, base seen in the 2020 shade; same kind as the one at E -889, N 466"
+    }
+   ],
+   "note": "the street itself is in deep tower shadow in both years; nothing can be read there."
+  },
+  "P033": {
+   "candidates": {
+    "376": {
+     "class": "not_a_post",
+     "note": "roof"
+    },
+    "377": {
+     "class": "not_a_post",
+     "note": "on the 2020 shadow stroke of 378, not a foot"
+    },
+    "378": {
+     "class": "lamp",
+     "note": "2020 only: bright round head/base with a long NW stroke through 377 (car-park light, private lot); 2022 in deep shadow"
+    },
+    "379": {
+     "class": "not_a_post",
+     "note": "white painted bar / wheel stop in the car park"
+    },
+    "380": {
+     "class": "not_a_post",
+     "note": "white painted bar / wheel stop in the car park"
+    },
+    "381": {
+     "class": "lamp",
+     "note": "tall pole with twin pendant arms: 7 m stroke N 2022, long NW stroke 2020"
+    },
+    "382": {
+     "class": "lamp",
+     "note": "tall pole with twin pendant arms: 6.8 m stroke N 2022; 2020 stroke mostly hidden against the building"
+    },
+    "384": {
+     "class": "not_a_post",
+     "note": "wide board/pylon at the car-park entrance: fat shadow in both years, not a thin post"
+    },
+    "385": {
+     "class": "cannot_tell",
+     "note": "ring not found"
+    },
+    "386": {
+     "class": "cannot_tell",
+     "note": "ring not found"
+    }
+   },
+   "added": [],
+   "note": "a yellow ring cut by the E edge (about E -798, N 513.5; 385 or 386) shows no number; it sits on the car-park fence line with nothing post-like. SW half is deep shadow in 2022."
+  }
+ }
+}

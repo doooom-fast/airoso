@@ -1,0 +1,1260 @@
+{
+ "reader": "panel reader batch 6 (model, by eye)",
+ "panels": {
+  "P102": {
+   "candidates": {
+    "1207": "lamp",
+    "1208": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1209": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1210": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1211": {
+     "class": "cannot_tell",
+     "note": "no stroke at the ring in 2022; short strokes nearby in 2020 look like stall signs but not at this foot"
+    },
+    "1212": {
+     "class": "sign_or_small_post",
+     "note": "short post, about 1.5 m shadow with a small head in 2022; marginal"
+    },
+    "1213": {
+     "class": "sign_or_small_post",
+     "note": "short post with a plate at the head of the accessible stalls; marginal"
+    },
+    "1214": {
+     "class": "signal_mast",
+     "note": "SW corner mast, arm reaches east over the side street; orange ring is wrong, not a tree"
+    },
+    "1215": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1216": {
+     "class": "not_a_post",
+     "note": "on the shadow of signal pole 1217 / tree 1218"
+    },
+    "1217": {
+     "class": "signal_post",
+     "note": "tall corner pole with signal heads on the shaft and a short thin arm south to the kerb (luminaire or sign); no long arm"
+    },
+    "1218": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1219": "lamp",
+    "1220": {
+     "class": "not_a_post",
+     "note": "nothing but a faint spot in the grass strip"
+    },
+    "1221": {
+     "class": "not_a_post",
+     "note": "nothing at the ring; 1.3 m from globe lamp 1219"
+    },
+    "1222": {
+     "class": "not_a_post",
+     "note": "kerb / crosswalk edge, no stroke"
+    },
+    "1223": "lamp",
+    "1224": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1225": {
+     "class": "signal_mast",
+     "note": "NE corner mast with a globe at the foot; arm reaches west over the side street"
+    },
+    "1226": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1227": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1228": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1229": "lamp",
+    "1230": "lamp",
+    "1231": {
+     "class": "not_a_post",
+     "note": "building roof / deep shadow"
+    }
+   },
+   "added": [
+    {
+     "E": -783.0,
+     "N": -192.3,
+     "class": "signal_mast",
+     "note": "SE corner; long arm reaches north over 14th Ave to about N -177 with heads; foot in building shadow in 2020"
+    },
+    {
+     "E": -819.6,
+     "N": -206.9,
+     "class": "lamp",
+     "note": "parking-lot light pole (off street, in the lot), strokes in both years"
+    }
+   ],
+   "note": "globe lamps on the north side are unmistakable (bright dot at the foot). South-east quarter in building shadow."
+  },
+  "P103": {
+   "candidates": {
+    "1232": {
+     "class": "not_a_post",
+     "note": "planter wall edge"
+    },
+    "1233": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1234": {
+     "class": "lamp",
+     "note": "tall lamp, long stroke with head in both years"
+    },
+    "1235": {
+     "class": "not_a_post",
+     "note": "planter wall, nothing"
+    },
+    "1236": {
+     "class": "not_a_post",
+     "note": "building corner"
+    },
+    "1237": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1238": {
+     "class": "not_a_post",
+     "note": "rooftop parking deck, corner of a structure"
+    },
+    "1239": {
+     "class": "not_a_post",
+     "note": "rooftop parking deck, vehicle / parapet shadow"
+    },
+    "1240": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1241": {
+     "class": "lamp",
+     "note": "globe lamp"
+    },
+    "1242": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1243": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1244": {
+     "class": "lamp",
+     "note": "tall lamp, long stroke with head in both years"
+    }
+   },
+   "added": [],
+   "note": "three flagpoles stand on the south side at about E -758.3/-754.5/-750.9, N -192.0 (flag shapes at the shadow ends; in building shadow in 2022) - not added, flags are not street posts. South sidewalk in deep shadow in 2022."
+  },
+  "P104": {
+   "candidates": {
+    "1245": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1246": {
+     "class": "lamp",
+     "note": "globe lamp"
+    },
+    "1247": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1248": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1249": {
+     "class": "lamp",
+     "note": "globe lamp"
+    },
+    "1250": {
+     "class": "signal_post",
+     "note": "NW corner: tall pole with signal heads on the shaft and a short thin arm south to the kerb; no long arm"
+    },
+    "1251": {
+     "class": "sign_or_small_post",
+     "note": "about 2 m shadow with a boxy plate in both years"
+    },
+    "1252": {
+     "class": "signal_mast",
+     "note": "SW corner, arm reaches east over the side street, luminaire arm above"
+    },
+    "1253": {
+     "class": "not_a_post",
+     "note": "on the yellow centre line, nothing"
+    },
+    "1254": {
+     "class": "signal_mast",
+     "note": "NE corner, arm reaches west over the side street"
+    },
+    "1255": {
+     "class": "not_a_post",
+     "note": "ring sits on the arm of mast 1256 over the roadway"
+    },
+    "1256": {
+     "class": "signal_mast",
+     "note": "SE corner, long arm reaches north over 14th Ave"
+    },
+    "1257": {
+     "class": "not_a_post",
+     "note": "fence / wall corner of the parking lot"
+    }
+   },
+   "added": [],
+   "note": "four corners all ringed."
+  },
+  "P105": {
+   "candidates": {
+    "1258": {
+     "class": "not_a_post",
+     "note": "fence post / fence line"
+    },
+    "1259": {
+     "class": "not_a_post",
+     "note": "parked car edge by the fence"
+    },
+    "1260": {
+     "class": "not_a_post",
+     "note": "roof edge in building shadow"
+    },
+    "1261": {
+     "class": "not_a_post",
+     "note": "fence post / fence line"
+    },
+    "1262": {
+     "class": "not_a_post",
+     "note": "fence post / fence line"
+    },
+    "1263": {
+     "class": "not_a_post",
+     "note": "fence post / fence line"
+    },
+    "1264": {
+     "class": "not_a_post",
+     "note": "fence post / fence line"
+    },
+    "1265": {
+     "class": "lamp",
+     "note": "tall lamp, long stroke with head in both years"
+    },
+    "1266": {
+     "class": "not_a_post",
+     "note": "fence post / fence line"
+    },
+    "1267": {
+     "class": "not_a_post",
+     "note": "fence post / fence line"
+    }
+   },
+   "added": [],
+   "note": "the parking-lot fence along N -171 collects a row of rings. South side in deep shadow in both years."
+  },
+  "P106": {
+   "candidates": {
+    "1268": {
+     "class": "not_a_post",
+     "note": "fence post / fence line"
+    },
+    "1269": {
+     "class": "not_a_post",
+     "note": "fence post / fence line"
+    },
+    "1270": {
+     "class": "not_a_post",
+     "note": "kerb under tree-branch shadow"
+    },
+    "1271": {
+     "class": "not_a_post",
+     "note": "roof edge"
+    },
+    "1272": {
+     "class": "not_a_post",
+     "note": "fence post / fence line"
+    },
+    "1273": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1274": {
+     "class": "not_a_post",
+     "note": "fence post / fence line"
+    },
+    "1275": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1276": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1277": {
+     "class": "not_a_post",
+     "note": "fence line; the 2020 shadow of the corner signal pole passes through it"
+    },
+    "1278": {
+     "class": "not_a_post",
+     "note": "gate / fence corner of the parking lot"
+    },
+    "1279": {
+     "class": "not_a_post",
+     "note": "kerb ramp, nothing"
+    },
+    "1280": {
+     "class": "signal_mast",
+     "note": "SW corner, arm reaches east over the side street, luminaire arm above"
+    }
+   },
+   "added": [
+    {
+     "E": -590.5,
+     "N": -174.8,
+     "class": "signal_post",
+     "note": "NW corner: tall pole with signal heads on the shaft, short thin arm south; 2022 stroke north, 2020 long stroke NW through ring 1277"
+    },
+    {
+     "E": -611.3,
+     "N": -190.5,
+     "class": "lamp",
+     "note": "tall lamp on the south sidewalk; foot visible in 2020 with a 9 m stroke and head, in building shadow in 2022 but its shadow emerges north onto the road"
+    }
+   ],
+   "note": "NE corner mast's foot is at the east edge (see P107)."
+  },
+  "P107": {
+   "candidates": {
+    "1281": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1282": {
+     "class": "lamp",
+     "note": "tall lamp, long stroke with head in both years"
+    }
+   },
+   "added": [
+    {
+     "E": -570.5,
+     "N": -174.2,
+     "class": "signal_mast",
+     "note": "NE corner, bright cap at the foot; arm reaches west over the cross street with three heads"
+    },
+    {
+     "E": -566.0,
+     "N": -190.4,
+     "class": "signal_mast",
+     "note": "SE corner; long arm reaches north over 14th Ave to about N -175 with heads; clear in both years"
+    }
+   ],
+   "note": "a short post with a boxy head (about 1.7 m shadow, 2022 only) stands about 3 m south-west of the SE mast - not added, one year only. Road and south side in tower shadow east of E -560."
+  },
+  "P108": {
+   "candidates": {
+    "1283": {
+     "class": "not_a_post",
+     "note": "rooftop / service-yard equipment"
+    },
+    "1284": {
+     "class": "not_a_post",
+     "note": "handrail end by the entrance walk"
+    },
+    "1285": {
+     "class": "not_a_post",
+     "note": "parked car in 2022, bare road in 2020"
+    },
+    "1286": {
+     "class": "lamp",
+     "note": "tall lamp; foot in building shadow in 2022 but its shadow and head emerge north; full stroke in 2020"
+    },
+    "1287": {
+     "class": "not_a_post",
+     "note": "parked truck in 2022, bare road in 2020"
+    },
+    "1288": {
+     "class": "sign_or_small_post",
+     "note": "thin post, about 1.7 m shadow in 2022 and 2.5 m in 2020; marginal against the parking meters beside it"
+    }
+   },
+   "added": [
+    {
+     "E": -481.1,
+     "N": -175.4,
+     "class": "sign_or_small_post",
+     "note": "twin of 1288: thin post, about 1.8 m shadow in 2022, stroke in 2020"
+    }
+   ],
+   "note": "the north kerb has a row of parking meters / pay posts with shadows of 1.1-1.3 m: not counted. A thin N-S line with a dot at about E -485, N -170..-173.5 shows in 2020 only: not added."
+  },
+  "P109": {
+   "candidates": {
+    "1289": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1290": {
+     "class": "signal_post",
+     "note": "NW corner: tall pole with signal heads on the shaft and a thin arm south to the kerb line; no long arm with heads"
+    },
+    "1291": {
+     "class": "not_a_post",
+     "note": "building edge"
+    },
+    "1292": {
+     "class": "signal_post",
+     "note": "SW corner: tall pole with signal heads on the shaft and a luminaire arm (shadow shows the arm east at the top)"
+    },
+    "1293": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1294": {
+     "class": "signal_post",
+     "note": "short post, about 2.5 m shadow with two boxy heads (bike / pedestrian signal)"
+    },
+    "1295": {
+     "class": "signal_mast",
+     "note": "NE corner, bright cap at the foot; long arm reaches south-south-west over 14th Ave with heads"
+    },
+    "1296": {
+     "class": "not_a_post",
+     "note": "crosswalk stripe, nothing"
+    },
+    "1297": {
+     "class": "signal_mast",
+     "note": "on the island; arm reaches west over the roadway with heads, luminaire arm above"
+    },
+    "1298": {
+     "class": "lamp",
+     "note": "globe lamp"
+    },
+    "1299": {
+     "class": "cannot_tell",
+     "note": "ring not found (lies east of the panel edge)"
+    },
+    "1300": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1301": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1302": {
+     "class": "cannot_tell",
+     "note": "ring not found (lies east of the panel edge)"
+    }
+   },
+   "added": [
+    {
+     "E": -445.9,
+     "N": -159.3,
+     "class": "lamp",
+     "note": "globe lamp on the east side of the north leg, bright dot and stroke in both years"
+    },
+    {
+     "E": -453.2,
+     "N": -164.0,
+     "class": "sign_or_small_post",
+     "note": "sign with a diamond plate in the north leg's median; plate shadow in both years, about 1.5 m"
+    }
+   ],
+   "note": "the globe lamp at about E -430.4, N -189.7 is P110's 1303 (grey ring here)."
+  },
+  "P110": {
+   "candidates": {
+    "1303": {
+     "class": "lamp",
+     "note": "globe lamp"
+    },
+    "1304": {
+     "class": "not_a_post",
+     "note": "sapling in the planter strip"
+    },
+    "1305": {
+     "class": "cannot_tell",
+     "note": "ring not found (lies west of the panel edge)"
+    },
+    "1306": {
+     "class": "not_a_post",
+     "note": "bare patch in the grass strip, no stroke"
+    },
+    "1307": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1308": {
+     "class": "not_a_post",
+     "note": "planter wall edge, nothing"
+    },
+    "1309": {
+     "class": "not_a_post",
+     "note": "shrub"
+    },
+    "1310": {
+     "class": "lamp",
+     "note": "globe lamp"
+    },
+    "1311": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1312": {
+     "class": "not_a_post",
+     "note": "planter bed in 2020; deep building shadow in 2022"
+    },
+    "1313": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1314": {
+     "class": "not_a_post",
+     "note": "planter bed in 2020; deep building shadow in 2022"
+    },
+    "1315": {
+     "class": "not_a_post",
+     "note": "planter bed in 2020; deep building shadow in 2022"
+    },
+    "1316": {
+     "class": "not_a_post",
+     "note": "planter bed in 2020; deep building shadow in 2022"
+    },
+    "1317": {
+     "class": "not_a_post",
+     "note": "planter bed in 2020; deep building shadow in 2022"
+    },
+    "1318": {
+     "class": "not_a_post",
+     "note": "planter bed in 2020; deep building shadow in 2022"
+    },
+    "1319": {
+     "class": "not_a_post",
+     "note": "tree"
+    }
+   },
+   "added": [
+    {
+     "E": -400.6,
+     "N": -219.9,
+     "class": "lamp",
+     "note": "globe lamp in the north-east grass strip, third of the row 1303-1310; bright dot both years, stroke in 2022"
+    },
+    {
+     "E": -425.6,
+     "N": -216.6,
+     "class": "lamp",
+     "note": "tall pole at the south-west kerb; foot in building shadow in 2022 but a 7 m shadow with a round head emerges north; 2020 shows a long stroke NW from the same foot among construction fencing. Position to about 1 m"
+    }
+   ],
+   "note": "the six cyan rings sit in a planter bed. Delineator posts along the bike buffer are not counted."
+  },
+  "P111": {
+   "candidates": {
+    "1320": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1321": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1322": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1323": {
+     "class": "not_a_post",
+     "note": "shadow head of the short post at 1325"
+    },
+    "1324": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1325": {
+     "class": "sign_or_small_post",
+     "note": "short post on a small pad, about 1.8 m shadow north in 2022, short stroke in 2020; marginal, under a tree"
+    },
+    "1326": {
+     "class": "lamp",
+     "note": "globe lamp; the foot (bright dot) is about 1.4 m north-north-west of the ring centre, near E -385.3, N -235.6"
+    },
+    "1327": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1328": {
+     "class": "not_a_post",
+     "note": "paving corner, nothing"
+    },
+    "1329": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1330": {
+     "class": "lamp",
+     "note": "tall cobra-head lamp at the kerb; 7 m stroke north with the arm and head in 2022, long stroke NW in 2020"
+    },
+    "1331": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1332": {
+     "class": "not_a_post",
+     "note": "planter corner, nothing"
+    },
+    "1333": {
+     "class": "lamp",
+     "note": "globe lamp"
+    },
+    "1334": {
+     "class": "not_a_post",
+     "note": "lawn; construction machine beside it in 2020"
+    },
+    "1335": {
+     "class": "cannot_tell",
+     "note": "ring not found (lies south of the panel edge)"
+    }
+   },
+   "added": [
+    {
+     "E": -371.9,
+     "N": -271.9,
+     "class": "post_unknown",
+     "note": "tall post in the round lawn by the building entrance: 5 m shadow north in 2022 with paired blobs at two heights (multi-head lamp or flagpole), long stroke NW from the same foot in 2020"
+    }
+   ],
+   "note": "the globe lamp at the top-left (about E -400.6, N -219.9) has no ring; it is added in P110. A monument on a round plinth stands at the top-right edge (not a post)."
+  },
+  "P112": {
+   "candidates": {
+    "1336": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1337": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1338": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1339": {
+     "class": "lamp",
+     "note": "tall lamp, long stroke with head in both years"
+    },
+    "1340": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1341": {
+     "class": "signal_mast",
+     "note": "mid-block crossing: long arm reaches north over the roadway with heads, clear in both years"
+    },
+    "1342": {
+     "class": "post_unknown",
+     "note": "plaza post, about 2.8 m shadow with a flat offset head in both years (pedestrian-scale light or sign)"
+    },
+    "1343": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1344": {
+     "class": "not_a_post",
+     "note": "thin curved line in 2022 only (cable or hose), nothing in 2020; the five-globe lamp is 3 m north"
+    },
+    "1345": {
+     "class": "sign_or_small_post",
+     "note": "about 2.3 m stroke with a flat plate in 2020, stroke north to a red plate in 2022 (inside the construction fence)"
+    },
+    "1346": {
+     "class": "post_unknown",
+     "note": "plaza post like 1342, about 2.5-3 m shadow with a head in both years"
+    },
+    "1347": {
+     "class": "sign_or_small_post",
+     "note": "crossing sign: about 2 m shadow with a flag-shaped plate in both years"
+    },
+    "1348": {
+     "class": "not_a_post",
+     "note": "building roof / shadow"
+    },
+    "1349": {
+     "class": "not_a_post",
+     "note": "sapling"
+    },
+    "1350": {
+     "class": "lamp",
+     "note": "tall lamp, long stroke with head in both years"
+    },
+    "1351": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1352": {
+     "class": "not_a_post",
+     "note": "tree"
+    }
+   },
+   "added": [
+    {
+     "E": -342.4,
+     "N": -241.5,
+     "class": "lamp",
+     "note": "five-globe cluster lamp west of the walk; five bright globes in both years, cluster shadow north"
+    },
+    {
+     "E": -334.2,
+     "N": -241.6,
+     "class": "lamp",
+     "note": "five-globe cluster lamp east of the walk; five-globe shadow unmistakable in 2020"
+    },
+    {
+     "E": -344.4,
+     "N": -283.2,
+     "class": "post_unknown",
+     "note": "plaza post, twin of 1342, 9 m south of it; flat-headed stroke in both years"
+    },
+    {
+     "E": -355.2,
+     "N": -282.4,
+     "class": "post_unknown",
+     "note": "post on the curved path, 5.5 m shadow north with a three-blob head in 2022, stroke NW in 2020"
+    }
+   ],
+   "note": "construction site in the south-east in both years. Bollards with chains across the walk are not counted."
+  },
+  "P113": {
+   "candidates": {
+    "1353": {
+     "class": "cannot_tell",
+     "note": "ring not found (lies west of the panel edge)"
+    },
+    "1354": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1355": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1356": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1357": {
+     "class": "not_a_post",
+     "note": "construction machine"
+    },
+    "1358": {
+     "class": "not_a_post",
+     "note": "building corner"
+    },
+    "1359": {
+     "class": "not_a_post",
+     "note": "lawn under tree-branch shadow, nothing"
+    },
+    "1360": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1361": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1362": {
+     "class": "lamp",
+     "note": "globe lamp under a tree: bright dot at the foot and a stroke north with a head in 2022; hidden in the tree's shadow in 2020. Orange ring is wrong; it continues the globe row (1377 is 26 m north-east)"
+    },
+    "1363": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1364": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1365": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1366": {
+     "class": "lamp",
+     "note": "tall lamp, long stroke with head in both years"
+    },
+    "1367": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1368": {
+     "class": "not_a_post",
+     "note": "walk edge by waste bins, nothing"
+    },
+    "1369": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1370": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1371": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1372": {
+     "class": "not_a_post",
+     "note": "building step corner"
+    },
+    "1373": {
+     "class": "not_a_post",
+     "note": "dumpster corner in 2022, bare path in 2020"
+    },
+    "1374": {
+     "class": "not_a_post",
+     "note": "the 2020 shadow head of globe lamp 1377; tree branches in 2022"
+    },
+    "1375": {
+     "class": "not_a_post",
+     "note": "dumpster in 2022, bare path edge in 2020"
+    },
+    "1376": {
+     "class": "cannot_tell",
+     "note": "ring not found (lies north of the panel edge)"
+    },
+    "1377": {
+     "class": "lamp",
+     "note": "globe lamp"
+    }
+   },
+   "added": [],
+   "note": "construction site with fencing on the south-east side in 2022. The two tall lamps at the top-right and bottom-left carry rings of P114 (1379) and P112 (1350)."
+  },
+  "P114": {
+   "candidates": {
+    "1378": {
+     "class": "not_a_post",
+     "note": "construction machinery in 2022, bare ground in 2020"
+    },
+    "1379": {
+     "class": "lamp",
+     "note": "tall lamp, long stroke with head in both years"
+    },
+    "1380": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1381": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1382": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1383": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1384": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1385": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1386": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1387": {
+     "class": "lamp",
+     "note": "globe lamp"
+    },
+    "1388": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1389": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1390": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1391": {
+     "class": "lamp",
+     "note": "tall lamp, long stroke with head in both years"
+    },
+    "1392": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1393": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1394": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1395": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1396": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1397": {
+     "class": "cannot_tell",
+     "note": "ring not found (lies north of the panel edge)"
+    },
+    "1398": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1399": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1400": {
+     "class": "lamp",
+     "note": "globe lamp"
+    },
+    "1402": {
+     "class": "not_a_post",
+     "note": "parked car in 2022, bare road in 2020"
+    }
+   },
+   "added": [
+    {
+     "E": -282.8,
+     "N": -174.3,
+     "class": "lamp",
+     "note": "globe lamp at the south edge of the wide walk; bright dot and stroke with head in both years"
+    },
+    {
+     "E": -264.5,
+     "N": -174.3,
+     "class": "lamp",
+     "note": "globe lamp at the south edge of the wide walk, 3.4 m north of rings 1393/1395 (which are on a tree); bright dot and stroke in both years"
+    }
+   ],
+   "note": "park trees take most rings here."
+  },
+  "P115": {
+   "candidates": {
+    "1401": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1403": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1404": {
+     "class": "cannot_tell",
+     "note": "a bright globe-like dot sits at the ring in 2022 (faint in 2020) under a tree crown, but no stroke can be separated from the branches"
+    },
+    "1405": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1406": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1407": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1408": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1409": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1410": {
+     "class": "not_a_post",
+     "note": "railing end"
+    },
+    "1411": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1412": {
+     "class": "signal_mast",
+     "note": "SW corner, arm reaches east over the cross street with heads, luminaire arm above; orange ring is wrong, not a tree"
+    },
+    "1413": {
+     "class": "signal_post",
+     "note": "NW corner: tall pole with signal heads on the shaft and a thin short arm south; no long arm"
+    },
+    "1414": {
+     "class": "not_a_post",
+     "note": "top of 1413's 2022 shadow, nothing at the ring in 2020"
+    },
+    "1415": {
+     "class": "not_a_post",
+     "note": "pavement under tree shadow, nothing"
+    },
+    "1416": {
+     "class": "not_a_post",
+     "note": "road surface by the ONLY lettering"
+    },
+    "1417": {
+     "class": "not_a_post",
+     "note": "road surface by the ONLY lettering"
+    },
+    "1418": {
+     "class": "not_a_post",
+     "note": "lane line by the BUS lettering"
+    },
+    "1419": {
+     "class": "not_a_post",
+     "note": "pavement at the crosswalk corner, nothing"
+    },
+    "1420": {
+     "class": "signal_post",
+     "note": "NE corner: tall pole with signal heads on the shaft and a short luminaire arm west; no long arm with heads"
+    },
+    "1421": {
+     "class": "sign_or_small_post",
+     "note": "short stroke with a head in 2020, a dark head 1.2 m north in 2022; marginal (people stand beside it in 2022)"
+    },
+    "1422": {
+     "class": "signal_mast",
+     "note": "SE corner; long arm reaches north over 14th Ave and a second arm west over the cross street, heads on both"
+    },
+    "1423": {
+     "class": "not_a_post",
+     "note": "tree"
+    }
+   },
+   "added": [],
+   "note": "a second globe-like bright dot (2022 only) sits about 1 m south-east of ring 1411, mirroring 1404 across the walk; neither shows a clean stroke, so neither is counted."
+  },
+  "P116": {
+   "candidates": {
+    "1424": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1425": {
+     "class": "not_a_post",
+     "note": "planter / steps, nothing"
+    },
+    "1426": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1427": {
+     "class": "cannot_tell",
+     "note": "a small bright dot at the ring in 2020 only, under a tree; nothing in 2022"
+    },
+    "1428": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1429": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1430": {
+     "class": "not_a_post",
+     "note": "building shadow edge"
+    },
+    "1431": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1432": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1433": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1434": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1435": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1436": {
+     "class": "lamp",
+     "note": "tall lamp, long stroke with head in both years"
+    },
+    "1437": {
+     "class": "not_a_post",
+     "note": "tree"
+    }
+   },
+   "added": [],
+   "note": "park trees take every ring on the north side."
+  },
+  "P117": {
+   "candidates": {
+    "1438": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1439": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1440": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1441": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1442": {
+     "class": "lamp",
+     "note": "tall lamp with a round head, pale globe at the foot; 6 m stroke north in 2022, bright dot in 2020"
+    },
+    "1443": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1444": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1445": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1446": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1447": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1448": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1449": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1450": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1451": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1452": {
+     "class": "lamp",
+     "note": "globe lamp"
+    },
+    "1453": {
+     "class": "not_a_post",
+     "note": "road surface at the stop line"
+    },
+    "1454": {
+     "class": "signal_mast",
+     "note": "NW corner, arm reaches east over the cross street with heads, luminaire arm above"
+    },
+    "1455": {
+     "class": "signal_post",
+     "note": "SW corner: tall pole with signal heads on the shaft and a short luminaire arm east; no long arm with heads"
+    }
+   },
+   "added": [],
+   "note": "the NE corner mast (arm reaching west) has its foot east of the panel: P118's 1457. South-east corner in tower shadow in 2020."
+  },
+  "P118": {
+   "candidates": {
+    "1456": {
+     "class": "not_a_post",
+     "note": "kerb ramp plate; a person beside it"
+    },
+    "1457": {
+     "class": "signal_mast",
+     "note": "NE corner, arm reaches west over the cross street with heads, luminaire arm above"
+    },
+    "1458": {
+     "class": "not_a_post",
+     "note": "rooftop parking deck, stair-house corner"
+    },
+    "1459": {
+     "class": "lamp",
+     "note": "globe lamp"
+    },
+    "1460": {
+     "class": "not_a_post",
+     "note": "sapling"
+    },
+    "1461": {
+     "class": "sign_or_small_post",
+     "note": "thin stroke north of about 2.4 m in 2022; only a dark blob in 2020; marginal"
+    },
+    "1462": {
+     "class": "lamp",
+     "note": "tall lamp with a round head, pale globe at the foot; 6.5 m stroke with head in both years"
+    },
+    "1463": {
+     "class": "post_unknown",
+     "note": "a second, plain pole 1 m east of 1462: its own parallel stroke in both years (about 4.5 m in 2022), no head"
+    },
+    "1464": {
+     "class": "not_a_post",
+     "note": "tree"
+    }
+   },
+   "added": [
+    {
+     "E": -93.6,
+     "N": -167.0,
+     "class": "lamp",
+     "note": "globe lamp north of the NE corner by the diagonal walk; bright dot and stroke with head in both years"
+    },
+    {
+     "E": -63.0,
+     "N": -169.5,
+     "class": "lamp",
+     "note": "globe lamp on the lawn edge north of the walk, 15 m east of 1459; bright dot and stroke with head in both years"
+    },
+    {
+     "E": -89.7,
+     "N": -192.7,
+     "class": "signal_mast",
+     "note": "SE corner; long arm reaches north over 14th Ave to the north kerb with heads; foot at the edge of building shadow, visible in both years"
+    }
+   ],
+   "note": "another globe lamp sits right on the east edge near E -49.6, N -169.5 (left to the next panel). South side east of E -88 in building shadow in 2022."
+  }
+ }
+}

@@ -1,0 +1,12 @@
+{
+ "_doc": "Paint, refutation round 2 (2026-11-23), after round 1's fixes, on 20 fresh boxes (refute.py r2: junctions at s 108, 738, 1175, 2000, 2480, 3120, 3746, 4390, 5810, 6030; mid-block at s 420, 1000, 1800, 2380, 2850, 3200, 4050, 4700, 5350, 6330). 3 boxes were read before the remaining cause was plain; the rest were not counted. Counts by eye, approximate.",
+ "boxes_read": [
+  {"box": "j108 Colfax / Lincoln", "measured": 12, "measured_false": 0, "detected": 25, "detected_false": 8, "missed": 5, "what": "four crosswalks, two stop bars and the turn guide read; missed: lane dashes on the west approach; false (detected): older-year fragments on the sidewalk"},
+  {"box": "j2000 15th St / Champa, half under a tower's shadow in 2022", "measured": 16, "measured_false": 2, "detected": 112, "detected_false": null, "missed": null,
+   "what": "false (measured): two stripes of an off-street parking lot inside the look-window. The shadowed half cannot be judged on the 2022 picture: most of its items are 2020 fills. Not typed and visible: two BUS legends on red, a through-left arrow, a bike symbol. Crosswalk bars in the shadow: about a third read"},
+  {"box": "m5350 W 14th Ave", "measured": 9, "measured_false": 2, "detected": 35, "detected_false": 12, "missed": 4, "what": "false (measured): the gutter's lip along the north kerb read as a solid white line, twice; green bike markings not read"}
+ ],
+ "totals": {"measured": 37, "measured_false": 4, "precision_measured": 0.89, "detected_judged": 60, "detected_false": 20, "precision_detected": 0.67, "missed_in_the_two_judged_boxes": 9, "recall_in_the_two_judged_boxes": 0.86},
+ "causes_and_fixes": ["a long white mark within 0.6 m of the flooded roadway's rim whose sides differ by 25 luminance steps 0.9 m out is the gutter's lip or the kerb: dropped in the tile stage (paint_tile.py)",
+                      "off-street parking stripes inside the look-window: NOT fixed (they are paint, on pavement, within reach of the OSM line); counted as false in every round"]
+}

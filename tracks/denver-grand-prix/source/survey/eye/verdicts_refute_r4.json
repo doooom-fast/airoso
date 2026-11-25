@@ -1,0 +1,41 @@
+{
+ "reader": "posts refutation round 4 reader (by eye): its misses, added",
+ "panels": {
+  "REF4": {
+   "candidates": {},
+   "added": [
+    {
+     "E": -188.3,
+     "N": -27.0,
+     "class": "lamp",
+     "note": "missed, found in posts refutation round 4 (j218 East Colfax Avenue / North Broadway / West Colfax Avenue): pedestrian globe lamp in the SE plaza; short stroke N in 2022, NW in 2020 from one foot"
+    },
+    {
+     "E": -1181.0,
+     "N": 135.3,
+     "class": "sign_or_small_post",
+     "note": "missed, found in posts refutation round 4 (j1327 North Speer Boulevard / Stout Street): sign in the grass strip south of g0172; plate shadow N in 2022, NW in 2020"
+    },
+    {
+     "E": -1145.4,
+     "N": 915.4,
+     "class": "lamp",
+     "note": "missed, found in posts refutation round 4 (j2432 15th Street / Larimer Street): globe lamp on the plaza NE of the planters; stroke N in 2022, NE in 2020 (2020 sun is north-east here)"
+    },
+    {
+     "E": -1084.0,
+     "N": -217.6,
+     "class": "lamp",
+     "note": "missed, found in posts refutation round 4 (j4884 North Speer Boulevard / West 14th Avenue): cobra-head lamp at the south edge on the east sidewalk; arm and head visible NE of the foot, pole shadow N 2022 / NW 2020"
+    },
+    {
+     "E": -951.7,
+     "N": 729.2,
+     "class": "sign_or_small_post",
+     "note": "missed, found in posts refutation round 4 (m2150 15th St to Blake mid-block): thin post with plate shadow N in 2022 at the NE corner; 2020 under tree shadow"
+    }
+   ],
+   "note": "the misses of refutation round 4"
+  }
+ }
+}

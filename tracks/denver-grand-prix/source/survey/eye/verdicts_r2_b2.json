@@ -1,0 +1,494 @@
+{
+ "reader": "second-pass panel reader batch 2 (by eye)",
+ "panels": {
+  "R069": {
+   "candidates": {
+    "10121": {
+     "class": "not_a_post",
+     "note": "bare grass west of road"
+    },
+    "10122": {
+     "class": "not_a_post",
+     "note": "creek bank rocks/brush"
+    },
+    "10123": {
+     "class": "not_a_post",
+     "note": "tree shadow at path edge"
+    },
+    "10124": {
+     "class": "not_a_post",
+     "note": "creek-bank tree"
+    }
+   },
+   "added": [],
+   "note": ""
+  },
+  "RX011": {
+   "candidates": {
+    "10125": {
+     "class": "not_a_post",
+     "note": "tree on creek bank"
+    }
+   },
+   "added": [
+    {
+     "E": -1283.0,
+     "N": 348.0,
+     "class": "lamp",
+     "note": "cobra-head lamp on west kerb of the east carriageway; arm shadow both years"
+    }
+   ],
+   "note": ""
+  },
+  "R070": {
+   "candidates": {
+    "10126": {
+     "class": "not_a_post",
+     "note": "rocks at creek edge"
+    }
+   },
+   "added": [],
+   "note": "a lamp's shadow enters the bottom edge near E -1299, N 270; foot appears to be south of the panel (neighbouring panel)"
+  },
+  "R072": {
+   "candidates": {
+    "10127": {
+     "class": "not_a_post",
+     "note": "creek water at panel edge"
+    }
+   },
+   "added": [],
+   "note": ""
+  },
+  "R073": {
+   "candidates": {
+    "10128": {
+     "class": "not_a_post",
+     "note": "tree crown by parking lot"
+    },
+    "10129": {
+     "class": "not_a_post",
+     "note": "inside conifer crown"
+    },
+    "10130": {
+     "class": "not_a_post",
+     "note": "inside conifer crown"
+    }
+   },
+   "added": [],
+   "note": ""
+  },
+  "R077": {
+   "candidates": {
+    "10131": {
+     "class": "not_a_post",
+     "note": "roof clutter"
+    },
+    "10132": {
+     "class": "not_a_post",
+     "note": "roof clutter"
+    },
+    "10133": {
+     "class": "not_a_post",
+     "note": "alley/parking beside building, nothing standing"
+    }
+   },
+   "added": [],
+   "note": ""
+  },
+  "R078": {
+   "candidates": {
+    "10134": {
+     "class": "not_a_post",
+     "note": "roof clutter"
+    },
+    "10135": {
+     "class": "not_a_post",
+     "note": "roof clutter"
+    },
+    "10136": {
+     "class": "not_a_post",
+     "note": "kerb corner, nothing standing"
+    }
+   },
+   "added": [],
+   "note": ""
+  },
+  "R079": {
+   "candidates": {
+    "10137": {
+     "class": "not_a_post",
+     "note": "yard tree"
+    },
+    "10138": {
+     "class": "not_a_post",
+     "note": "yard tree"
+    },
+    "10139": {
+     "class": "not_a_post",
+     "note": "yard tree"
+    },
+    "10140": {
+     "class": "not_a_post",
+     "note": "bare street tree in tree lawn"
+    },
+    "10141": {
+     "class": "not_a_post",
+     "note": "fence at back of sidewalk"
+    }
+   },
+   "added": [],
+   "note": ""
+  },
+  "R080": {
+   "candidates": {
+    "10142": {
+     "class": "not_a_post",
+     "note": "inside conifer crown"
+    },
+    "10143": {
+     "class": "not_a_post",
+     "note": "tree lawn, nothing standing"
+    },
+    "10144": {
+     "class": "cannot_tell",
+     "note": "very short stroke in 2022 only, likely parking meter"
+    }
+   },
+   "added": [
+    {
+     "E": -1318.5,
+     "N": -177.0,
+     "class": "post_unknown",
+     "note": "NW corner by crosswalk; long NW shadow in 2020, stroke north in 2022; maybe pedestrian signal post"
+    }
+   ],
+   "note": ""
+  },
+  "R082": {
+   "candidates": {
+    "10145": {
+     "class": "not_a_post",
+     "note": "park path, trash can/planting"
+    }
+   },
+   "added": [],
+   "note": ""
+  },
+  "R083": {
+   "candidates": {
+    "10146": {
+     "class": "not_a_post",
+     "note": "conifer edge"
+    },
+    "10147": {
+     "class": "lamp",
+     "note": "cobra-head lamp foot is at this ring (both years); the green square ~2.5 m east may be the same lamp misplaced"
+    }
+   },
+   "added": [],
+   "note": "green square at about E -1269.9, N -129.1 sits on the bus-shelter end, not on a post; the lamp it probably stands for is at ring 10147"
+  },
+  "R084": {
+   "candidates": {
+    "10148": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "10149": {
+     "class": "not_a_post",
+     "note": "fence line corner"
+    }
+   },
+   "added": [],
+   "note": ""
+  },
+  "R085": {
+   "candidates": {
+    "10150": {
+     "class": "not_a_post",
+     "note": "lane line"
+    },
+    "10151": {
+     "class": "not_a_post",
+     "note": "tree/parking"
+    },
+    "10152": {
+     "class": "not_a_post",
+     "note": "road edge"
+    },
+    "10153": {
+     "class": "not_a_post",
+     "note": "crosswalk end at island; mast is the green square to its east"
+    }
+   },
+   "added": [],
+   "note": ""
+  },
+  "R089": {
+   "candidates": {
+    "10154": {
+     "class": "not_a_post",
+     "note": "tree on bank"
+    },
+    "10155": {
+     "class": "not_a_post",
+     "note": "creek riprap"
+    }
+   },
+   "added": [],
+   "note": ""
+  },
+  "R090": {
+   "candidates": {
+    "10156": {
+     "class": "not_a_post",
+     "note": "creek wall shadow line by tree"
+    }
+   },
+   "added": [],
+   "note": ""
+  },
+  "R091": {
+   "candidates": {
+    "10157": {
+     "class": "not_a_post",
+     "note": "creek riprap"
+    }
+   },
+   "added": [],
+   "note": "a mast's shadow enters the bottom-right edge near E -1180, N -11; foot is south of the panel (R092)"
+  },
+  "R092": {
+   "candidates": {
+    "10158": {
+     "class": "not_a_post",
+     "note": "street tree by crosswalk"
+    },
+    "10159": {
+     "class": "not_a_post",
+     "note": "inside bare tree crown"
+    },
+    "10160": {
+     "class": "not_a_post",
+     "note": "inside bare tree crown"
+    },
+    "10161": {
+     "class": "not_a_post",
+     "note": "grass by tree trunk"
+    }
+   },
+   "added": [],
+   "note": "possible sign or pay kiosk in the parking lot near E -1186.5, N -49 (dark object with NW shadow in 2020) not added: off the street, kind unclear"
+  },
+  "R093": {
+   "candidates": {
+    "10162": {
+     "class": "not_a_post",
+     "note": "parked car (2022)"
+    },
+    "10163": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "10164": {
+     "class": "not_a_post",
+     "note": "creek-bank tree"
+    },
+    "10165": {
+     "class": "not_a_post",
+     "note": "parking-lot edge / fence shadow"
+    },
+    "10166": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "10167": {
+     "class": "not_a_post",
+     "note": "creek wall"
+    }
+   },
+   "added": [],
+   "note": ""
+  },
+  "R094": {
+   "candidates": {
+    "10168": {
+     "class": "not_a_post",
+     "note": "parked car / tree"
+    },
+    "10169": {
+     "class": "not_a_post",
+     "note": "creek"
+    },
+    "10170": {
+     "class": "not_a_post",
+     "note": "creek wall"
+    },
+    "10171": {
+     "class": "not_a_post",
+     "note": "creek riprap"
+    },
+    "10172": {
+     "class": "not_a_post",
+     "note": "parked car"
+    }
+   },
+   "added": [],
+   "note": ""
+  },
+  "R095": {
+   "candidates": {
+    "10173": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "10174": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "10175": {
+     "class": "not_a_post",
+     "note": "creek"
+    },
+    "10176": {
+     "class": "not_a_post",
+     "note": "tree on creek bank"
+    }
+   },
+   "added": [],
+   "note": "green square at about E -1135, N -137 (parking-lot edge, west) could not be confirmed as a post: next to a conifer, no clear stroke either year"
+  },
+  "R096": {
+   "candidates": {
+    "10177": {
+     "class": "not_a_post",
+     "note": "mast-arm shadows over the crosswalk"
+    },
+    "10178": {
+     "class": "not_a_post",
+     "note": "creek rocks"
+    }
+   },
+   "added": [],
+   "note": ""
+  },
+  "R097": {
+   "candidates": {
+    "10179": {
+     "class": "not_a_post",
+     "note": "duplicate of an accepted post (NW-corner mast green square ~2 m north); ring on bare sidewalk"
+    }
+   },
+   "added": [],
+   "note": ""
+  },
+  "R098": {
+   "candidates": {
+    "10180": {
+     "class": "not_a_post",
+     "note": "kerb/grass corner"
+    },
+    "10181": {
+     "class": "not_a_post",
+     "note": "building roof parapet"
+    },
+    "10182": {
+     "class": "not_a_post",
+     "note": "2022 building shadow on road, 2020 roof terrace furniture"
+    }
+   },
+   "added": [],
+   "note": "green square near E -961, N -189 is in deep building shadow in 2022; not verifiable"
+  },
+  "R099": {
+   "candidates": {
+    "10183": {
+     "class": "not_a_post",
+     "note": "inside bare tree crown"
+    },
+    "10184": {
+     "class": "not_a_post",
+     "note": "inside bare tree crown"
+    }
+   },
+   "added": [],
+   "note": "south-side green squares (about E -961, N -189 and E -919.5, N -189) are in deep building shadow; not verifiable"
+  },
+  "R101": {
+   "candidates": {
+    "10185": {
+     "class": "not_a_post",
+     "note": "inside bare tree crown"
+    }
+   },
+   "added": [],
+   "note": ""
+  },
+  "R103": {
+   "candidates": {
+    "10186": {
+     "class": "cannot_tell",
+     "note": "south sidewalk in deep building shadow in 2022; 2020 shows several NW lamp-shadow strokes ending at the shadow line along this sidewalk, feet hidden"
+    },
+    "10187": {
+     "class": "not_a_post",
+     "note": "planter vent box"
+    }
+   },
+   "added": [],
+   "note": "south sidewalk (N about -190) likely carries lamps whose feet are in building shadow both years; not guessed"
+  },
+  "R104": {
+   "candidates": {
+    "10188": {
+     "class": "cannot_tell",
+     "note": "building shadow on south sidewalk"
+    },
+    "10189": {
+     "class": "cannot_tell",
+     "note": "building shadow on south sidewalk"
+    },
+    "10190": {
+     "class": "cannot_tell",
+     "note": "building shadow; may lie on the shadow of the SW-corner mast"
+    },
+    "10191": {
+     "class": "not_a_post",
+     "note": "building edge / sidewalk"
+    },
+    "10192": {
+     "class": "not_a_post",
+     "note": "tree near the NE-corner post that has a green square ~2 m west"
+    },
+    "10193": {
+     "class": "not_a_post",
+     "note": "parking-lot fence corner / bare tree"
+    }
+   },
+   "added": [
+    {
+     "E": -673.0,
+     "N": -193.5,
+     "class": "sign_or_small_post",
+     "note": "short thin post on SE corner, short stroke both years; low confidence"
+    }
+   ],
+   "note": ""
+  },
+  "R105": {
+   "candidates": {
+    "10194": {
+     "class": "not_a_post",
+     "note": "fence at back of sidewalk"
+    },
+    "10195": {
+     "class": "not_a_post",
+     "note": "car"
+    }
+   },
+   "added": [],
+   "note": ""
+  }
+ }
+}

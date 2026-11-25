@@ -1,0 +1,142 @@
+[
+ {
+  "leg": "Colfax WB to Speer NB",
+  "file": "stills/leg01_colfax_wb_to_speer_nb.jpg",
+  "box_en": [
+   -246.4,
+   -26.9,
+   -182.4,
+   37.1
+  ]
+ },
+ {
+  "leg": "Speer NB to Stout",
+  "file": "stills/leg02_speer_nb_to_stout.jpg",
+  "box_en": [
+   -1197.1,
+   45.2,
+   -1133.1,
+   109.2
+  ]
+ },
+ {
+  "leg": "Stout to 15th St",
+  "file": "stills/leg03_stout_to_15th_st.jpg",
+  "box_en": [
+   -938.5,
+   399.7,
+   -874.5,
+   463.7
+  ]
+ },
+ {
+  "leg": "15th St to Blake",
+  "file": "stills/leg04_15th_st_to_blake.jpg",
+  "box_en": [
+   -1134.5,
+   800.6,
+   -1070.5,
+   864.6
+  ]
+ },
+ {
+  "leg": "Blake to Speer SB",
+  "file": "stills/leg05_blake_to_speer_sb.jpg",
+  "box_en": [
+   -1603.8,
+   897.8,
+   -1539.8,
+   961.8
+  ]
+ },
+ {
+  "leg": "Speer SB to Kalamath",
+  "file": "stills/leg06_speer_sb_to_kalamath.jpg",
+  "box_en": [
+   -1554.5,
+   803.1,
+   -1490.5,
+   867.1
+  ]
+ },
+ {
+  "leg": "Kalamath S to W 14th Ave",
+  "file": "stills/leg07_kalamath_s_to_w_14th_ave.jpg",
+  "box_en": [
+   -1339.0,
+   33.4,
+   -1275.0,
+   97.4
+  ]
+ },
+ {
+  "leg": "W 14th Ave to Santa Fe",
+  "file": "stills/leg08_w_14th_ave_to_santa_fe.jpg",
+  "box_en": [
+   -1305.5,
+   -211.8,
+   -1241.5,
+   -147.8
+  ]
+ },
+ {
+  "leg": "Santa Fe N to Colfax",
+  "file": "stills/leg09_santa_fe_n_to_colfax.jpg",
+  "box_en": [
+   -1325.6,
+   -90.2,
+   -1261.6,
+   -26.2
+  ]
+ },
+ {
+  "leg": "Kalamath NB branch to Speer SB",
+  "file": "stills/leg10_kalamath_nb_branch_to_speer_sb.jpg",
+  "box_en": [
+   -1321.4,
+   33.6,
+   -1257.4,
+   97.6
+  ]
+ },
+ {
+  "leg": "Speer SB to W 14th Ave",
+  "file": "stills/leg11_speer_sb_to_w_14th_ave.jpg",
+  "box_en": [
+   -1226.9,
+   -31.5,
+   -1162.9,
+   32.5
+  ]
+ },
+ {
+  "leg": "14th Ave E to Logan",
+  "file": "stills/leg12_14th_ave_e_to_logan.jpg",
+  "box_en": [
+   -1025.8,
+   -214.2,
+   -961.8,
+   -150.2
+  ]
+ },
+ {
+  "leg": "Logan N to Colfax",
+  "file": "stills/leg13_logan_n_to_colfax.jpg",
+  "box_en": [
+   187.8,
+   -125.5,
+   251.8,
+   -61.5
+  ]
+ },
+ {
+  "leg": "Colfax W to S/F",
+  "file": "stills/leg14_colfax_w_to_s_f.jpg",
+  "box_en": [
+   78.6,
+   -32.2,
+   142.6,
+   31.8
+  ]
+ }
+]

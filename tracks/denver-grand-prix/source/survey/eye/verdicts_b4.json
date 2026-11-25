@@ -1,0 +1,821 @@
+{
+ "reader": "panel reader batch 4 (claude-fable-5-2, by eye)",
+ "panels": {
+  "P068": {
+   "candidates": {
+    "821": {
+     "class": "not_a_post",
+     "note": "creek bank rock"
+    },
+    "822": "lamp",
+    "823": {
+     "class": "not_a_post",
+     "note": "creek bank rock"
+    },
+    "824": {
+     "class": "not_a_post",
+     "note": "creek bank rock"
+    },
+    "825": "lamp",
+    "826": {
+     "class": "lamp",
+     "note": "park path lamp, blob-headed shadow both years"
+    },
+    "827": "lamp",
+    "828": {
+     "class": "not_a_post",
+     "note": "creek bank rock"
+    },
+    "829": {
+     "class": "not_a_post",
+     "note": "bare tree"
+    },
+    "830": {
+     "class": "not_a_post",
+     "note": "creek path railing"
+    },
+    "831": {
+     "class": "not_a_post",
+     "note": "bare tree"
+    },
+    "832": {
+     "class": "not_a_post",
+     "note": "creek bank"
+    }
+   },
+   "added": [],
+   "note": "three cobra lamps on Speer, one park lamp; all creek-side rings are riprap"
+  },
+  "P069": {
+   "candidates": {
+    "833": "lamp",
+    "834": {
+     "class": "not_a_post",
+     "note": "bare tree beside lamp 833"
+    },
+    "835": {
+     "class": "not_a_post",
+     "note": "creek bank"
+    },
+    "836": {
+     "class": "not_a_post",
+     "note": "creek bank"
+    },
+    "837": "lamp",
+    "838": {
+     "class": "not_a_post",
+     "note": "path railing/wall"
+    }
+   },
+   "added": [],
+   "note": ""
+  },
+  "P070": {
+   "candidates": {
+    "839": "lamp",
+    "840": {
+     "class": "not_a_post",
+     "note": "retaining wall corner"
+    },
+    "841": "lamp",
+    "842": {
+     "class": "not_a_post",
+     "note": "wall corner"
+    },
+    "843": {
+     "class": "not_a_post",
+     "note": "wall corner"
+    },
+    "844": {
+     "class": "not_a_post",
+     "note": "bare tree"
+    },
+    "846": {
+     "class": "not_a_post",
+     "note": "bare tree"
+    },
+    "848": {
+     "class": "not_a_post",
+     "note": "bare tree"
+    },
+    "847": {
+     "class": "cannot_tell",
+     "note": "ring not found"
+    }
+   },
+   "added": [],
+   "note": ""
+  },
+  "P071": {
+   "candidates": {
+    "845": {
+     "class": "not_a_post",
+     "note": "small tree"
+    },
+    "849": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "850": "lamp",
+    "851": {
+     "class": "not_a_post",
+     "note": "creek wall"
+    },
+    "852": {
+     "class": "not_a_post",
+     "note": "bare tree"
+    },
+    "853": {
+     "class": "lamp",
+     "note": "orange ring but it is a path lamp: blob-headed stroke N in 2022, NW in 2020, same as 826"
+    },
+    "854": {
+     "class": "sign_or_small_post",
+     "note": "short stroke with small head at the crosswalk corner; moderate confidence"
+    },
+    "855": {
+     "class": "not_a_post",
+     "note": "creek wall"
+    },
+    "856": "lamp",
+    "857": {
+     "class": "not_a_post",
+     "note": "creek wall"
+    },
+    "858": {
+     "class": "cannot_tell",
+     "note": "2.5 m S of lamp 856, small pale object, no clear stroke"
+    },
+    "859": {
+     "class": "not_a_post",
+     "note": "bare tree"
+    },
+    "860": {
+     "class": "not_a_post",
+     "note": "bare tree"
+    }
+   },
+   "added": [],
+   "note": ""
+  },
+  "P072": {
+   "candidates": {
+    "861": {
+     "class": "post_unknown",
+     "note": "short stroke with boxy head in 2022, 2020 hidden by a car; sidewalk W side N of the junction"
+    },
+    "862": {
+     "class": "lamp",
+     "note": "corner pole, long shadow with blob both years"
+    },
+    "863": {
+     "class": "not_a_post",
+     "note": "duplicate of 864: pole-top shadow of that mast in 2022"
+    },
+    "864": {
+     "class": "signal_mast",
+     "note": "arm reaches SW over Speer; arm shadow with heads displaced N (2022) and NW (2020)"
+    },
+    "865": {
+     "class": "not_a_post",
+     "note": "bare tree"
+    },
+    "866": {
+     "class": "not_a_post",
+     "note": "tree shadow on the roadway edge"
+    },
+    "867": {
+     "class": "signal_mast",
+     "note": "tall pole, cabinet beside it; arm reaches SE over the west leg"
+    },
+    "868": {
+     "class": "not_a_post",
+     "note": "in a traffic lane: arm shadow of the island mast 879"
+    },
+    "869": {
+     "class": "not_a_post",
+     "note": "in the crosswalk on the roadway: arm/heads of mast 867"
+    },
+    "871": {
+     "class": "not_a_post",
+     "note": "in the crosswalk on the roadway"
+    },
+    "872": {
+     "class": "not_a_post",
+     "note": "in the crosswalk on the roadway"
+    },
+    "876": {
+     "class": "not_a_post",
+     "note": "in the crosswalk on the roadway"
+    },
+    "870": {
+     "class": "not_a_post",
+     "note": "conifer"
+    },
+    "875": {
+     "class": "not_a_post",
+     "note": "conifer"
+    },
+    "874": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "877": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "880": {
+     "class": "not_a_post",
+     "note": "conifer"
+    }
+   },
+   "added": [],
+   "note": "signalised junction; many rings sit on mast arms and their shadows over the roadway, not on feet"
+  },
+  "P073": {
+   "candidates": {
+    "873": {
+     "class": "not_a_post",
+     "note": "on the roadway: arm of mast 879 and its heads"
+    },
+    "878": {
+     "class": "not_a_post",
+     "note": "on the roadway W of the island tip: pole/head shadow of mast 879"
+    },
+    "879": {
+     "class": "signal_mast",
+     "note": "foot on the island, bright dot at foot; arm reaches NE over Speer, side heads on the pole"
+    },
+    "881": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "882": "lamp",
+    "883": {
+     "class": "not_a_post",
+     "note": "conifer"
+    },
+    "884": {
+     "class": "not_a_post",
+     "note": "conifer"
+    },
+    "885": {
+     "class": "not_a_post",
+     "note": "bare tree"
+    },
+    "886": {
+     "class": "not_a_post",
+     "note": "bare tree"
+    },
+    "887": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "888": "lamp",
+    "889": {
+     "class": "not_a_post",
+     "note": "conifer"
+    }
+   },
+   "added": [
+    {
+     "E": -1300.0,
+     "N": 143.5,
+     "class": "sign_or_small_post",
+     "note": "E end of the stop bar; headed shadow ~2 m N in 2022, NW in 2020"
+    }
+   ],
+   "note": ""
+  },
+  "P074": {
+   "candidates": {
+    "890": {
+     "class": "not_a_post",
+     "note": "conifer"
+    },
+    "891": {
+     "class": "not_a_post",
+     "note": "conifer"
+    },
+    "892": {
+     "class": "not_a_post",
+     "note": "conifer"
+    },
+    "893": "lamp",
+    "894": {
+     "class": "not_a_post",
+     "note": "shrub"
+    },
+    "895": {
+     "class": "sign_or_small_post",
+     "note": "railroad crossbuck: X-shaped shadow in 2022"
+    },
+    "896": {
+     "class": "not_a_post",
+     "note": "shrub in planter"
+    },
+    "897": {
+     "class": "not_a_post",
+     "note": "shrub; a bright dot ~1.5 m N both years may be a low globe light, no stroke seen"
+    },
+    "898": {
+     "class": "cannot_tell",
+     "note": "thin stroke in 2020 only, parking-lot kerb corner"
+    }
+   },
+   "added": [
+    {
+     "E": -1282.5,
+     "N": 109.5,
+     "class": "utility_pole",
+     "note": "light-rail catenary pole, cross-arm shadow both years"
+    }
+   ],
+   "note": "signal mast at the S edge is ring 900 of P075; catenary pole at -1299.5, 91.5 is ring 899"
+  },
+  "P075": {
+   "candidates": {
+    "899": {
+     "class": "utility_pole",
+     "note": "light-rail catenary pole"
+    },
+    "900": {
+     "class": "signal_mast",
+     "note": "arm reaches E over Kalamath, lamp arm on top"
+    },
+    "901": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "902": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "903": {
+     "class": "lamp",
+     "note": "tall post, blob-headed shadow both years, bright dot at foot; could be a rail signal"
+    },
+    "904": {
+     "class": "signal_post",
+     "note": "short headed post beside the tracks (crossing/ped signal)"
+    },
+    "905": {
+     "class": "post_unknown",
+     "note": "second short stroke 1.3 m E of 904, separate foot"
+    },
+    "906": {
+     "class": "utility_pole",
+     "note": "light-rail catenary pole"
+    },
+    "907": {
+     "class": "not_a_post",
+     "note": "small bare tree"
+    },
+    "908": {
+     "class": "sign_or_small_post",
+     "note": "~3.5 m shadow with small head both years; rail crossing sign or signal"
+    },
+    "909": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "911": {
+     "class": "not_a_post",
+     "note": "tree; the lamp here is 912"
+    }
+   },
+   "added": [
+    {
+     "E": -1335.0,
+     "N": 60.5,
+     "class": "utility_pole",
+     "note": "catenary pole at the W edge of the panel, cross-arm shadow in 2022; 2020 less clear"
+    }
+   ],
+   "note": ""
+  },
+  "P076": {
+   "candidates": {
+    "912": {
+     "class": "lamp",
+     "note": "orange ring; cobra head and arm seen both years over the kerb, foot under canopy ~1.5 m W of ring, shadow not seen"
+    },
+    "913": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "914": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "915": {
+     "class": "signal_mast",
+     "note": "on the island; arm reaches S over the west leg, long"
+    },
+    "998": {
+     "class": "not_a_post",
+     "note": "tip of the E mast's arm shadow on the median"
+    },
+    "1000": {
+     "class": "not_a_post",
+     "note": "median tree"
+    },
+    "1002": {
+     "class": "not_a_post",
+     "note": "median tree"
+    }
+   },
+   "added": [
+    {
+     "E": -1279.5,
+     "N": 22.0,
+     "class": "signal_mast",
+     "note": "E kerb; arm reaches W over the northbound lanes to the median, lamp arm on top"
+    },
+    {
+     "E": -1298.5,
+     "N": 21.0,
+     "class": "post_unknown",
+     "note": "dark headed blob on the median nose both years; sign or short signal"
+    }
+   ],
+   "note": ""
+  },
+  "P077": {
+   "candidates": {
+    "916": {
+     "class": "not_a_post",
+     "note": "car edge at the stop line"
+    },
+    "917": {
+     "class": "not_a_post",
+     "note": "white box; 2020 pole-top shadow of mast 919 lands here"
+    },
+    "918": {
+     "class": "signal_post",
+     "note": "median nose; short headed stroke both years; arm tip of mast 919 also ends here, moderate confidence"
+    },
+    "919": {
+     "class": "signal_mast",
+     "note": "arm reaches E over Kalamath to the median, three heads"
+    },
+    "920": {
+     "class": "cannot_tell",
+     "note": "1.9 m SSW of mast 919, small dark object both years"
+    },
+    "921": {
+     "class": "not_a_post",
+     "note": "on a roof"
+    },
+    "923": {
+     "class": "cannot_tell",
+     "note": "nothing seen on the sidewalk either year"
+    },
+    "924": {
+     "class": "not_a_post",
+     "note": "on a roof"
+    }
+   },
+   "added": [
+    {
+     "E": -1283.5,
+     "N": -17.5,
+     "class": "signal_mast",
+     "note": "SE corner island; very long arm reaches N over the cross street"
+    },
+    {
+     "E": -1321.5,
+     "N": -24.0,
+     "class": "post_unknown",
+     "note": "tall pole W of mast 919, long shadow both years, bright dot at foot; likely a lamp"
+    }
+   ],
+   "note": ""
+  },
+  "P078": {
+   "candidates": {
+    "925": {
+     "class": "not_a_post",
+     "note": "bus-stop furniture; 2020 shadow of lamp 927 crosses it"
+    },
+    "926": {
+     "class": "not_a_post",
+     "note": "landscaping kerb"
+    },
+    "927": "lamp",
+    "928": {
+     "class": "lamp",
+     "note": "twin-head parking-lot lamp on the driveway kerb"
+    },
+    "929": {
+     "class": "not_a_post",
+     "note": "conifer"
+    },
+    "930": {
+     "class": "not_a_post",
+     "note": "bare tree"
+    }
+   },
+   "added": [
+    {
+     "E": -1302.5,
+     "N": -90.5,
+     "class": "sign_or_small_post",
+     "note": "N nose of the median; headed shadow 1.5-2 m both years"
+    }
+   ],
+   "note": ""
+  },
+  "P079": {
+   "candidates": {
+    "931": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "932": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "933": "lamp",
+    "934": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "935": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "936": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "937": {
+     "class": "not_a_post",
+     "note": "median tree"
+    },
+    "938": {
+     "class": "not_a_post",
+     "note": "wall corner"
+    },
+    "939": {
+     "class": "not_a_post",
+     "note": "bare tree"
+    },
+    "940": {
+     "class": "not_a_post",
+     "note": "fence end post"
+    }
+   },
+   "added": [],
+   "note": ""
+  },
+  "P080": {
+   "candidates": {
+    "943": {
+     "class": "not_a_post",
+     "note": "guy anchor/thin line from pole 944"
+    },
+    "944": {
+     "class": "utility_pole",
+     "note": "alley pole, 6 m shadow in 2020; moderate confidence"
+    },
+    "945": {
+     "class": "not_a_post",
+     "note": "small bare tree"
+    },
+    "946": {
+     "class": "not_a_post",
+     "note": "building edge"
+    },
+    "947": {
+     "class": "signal_mast",
+     "note": "foot looks 2-3 m S of the ring at the kerb corner; arm reaches S over the cross street"
+    },
+    "948": {
+     "class": "signal_post",
+     "note": "SW corner, short headed stroke both years"
+    },
+    "950": {
+     "class": "cannot_tell",
+     "note": "small object on the brick pad, no stroke"
+    },
+    "979": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "949": {
+     "class": "cannot_tell",
+     "note": "ring not found"
+    }
+   },
+   "added": [
+    {
+     "E": -1297.5,
+     "N": -190.0,
+     "class": "signal_mast",
+     "note": "SE corner; arm reaches W over Kalamath with heads"
+    },
+    {
+     "E": -1296.5,
+     "N": -170.0,
+     "class": "lamp",
+     "note": "NE corner pole, shadow N with arm in 2022, long NW in 2020"
+    },
+    {
+     "E": -1292.0,
+     "N": -173.0,
+     "class": "post_unknown",
+     "note": "thin arm ~5 m reaching S over the E leg both years, foot under a bare tree; position rough"
+    }
+   ],
+   "note": ""
+  },
+  "P081": {
+   "candidates": {
+    "951": {
+     "class": "not_a_post",
+     "note": "bare tree"
+    },
+    "952": {
+     "class": "not_a_post",
+     "note": "bare tree"
+    },
+    "953": {
+     "class": "not_a_post",
+     "note": "bare tree"
+    },
+    "954": {
+     "class": "not_a_post",
+     "note": "bare tree"
+    },
+    "955": {
+     "class": "not_a_post",
+     "note": "bare tree"
+    },
+    "956": {
+     "class": "not_a_post",
+     "note": "conifer"
+    },
+    "957": {
+     "class": "not_a_post",
+     "note": "building corner"
+    },
+    "958": {
+     "class": "not_a_post",
+     "note": "bare tree"
+    },
+    "959": {
+     "class": "not_a_post",
+     "note": "conifer"
+    },
+    "960": {
+     "class": "not_a_post",
+     "note": "bare tree"
+    },
+    "961": {
+     "class": "not_a_post",
+     "note": "bare tree"
+    },
+    "962": {
+     "class": "lamp",
+     "note": "pale arm reaches S over the road with head at its end both years; shadow N seen in P082"
+    },
+    "963": {
+     "class": "sign_or_small_post",
+     "note": "short headed stroke in 2022; 2020 not clear"
+    },
+    "964": {
+     "class": "utility_pole",
+     "note": "strain pole for span-wire signals, ~11 m shadow; yellow heads hang on wires over the junction, no rigid arm"
+    },
+    "973": {
+     "class": "not_a_post",
+     "note": "bare tree"
+    },
+    "976": {
+     "class": "not_a_post",
+     "note": "utility box"
+    },
+    "978": {
+     "class": "not_a_post",
+     "note": "conifer"
+    }
+   },
+   "added": [],
+   "note": "junction signals hang on span wires"
+  },
+  "P082": {
+   "candidates": {
+    "965": {
+     "class": "cannot_tell",
+     "note": "ring not found"
+    },
+    "966": {
+     "class": "cannot_tell",
+     "note": "ring not found"
+    },
+    "967": {
+     "class": "cannot_tell",
+     "note": "ring not found"
+    },
+    "968": {
+     "class": "not_a_post",
+     "note": "bare tree"
+    },
+    "969": {
+     "class": "not_a_post",
+     "note": "bare tree"
+    },
+    "970": {
+     "class": "not_a_post",
+     "note": "bare tree"
+    },
+    "971": {
+     "class": "not_a_post",
+     "note": "bare tree"
+    },
+    "972": {
+     "class": "not_a_post",
+     "note": "small conifer"
+    },
+    "974": {
+     "class": "not_a_post",
+     "note": "bare tree"
+    },
+    "975": {
+     "class": "not_a_post",
+     "note": "bare tree"
+    },
+    "977": "lamp"
+   },
+   "added": [
+    {
+     "E": -1238.5,
+     "N": -170.5,
+     "class": "utility_pole",
+     "note": "NE corner wooden pole with cross-arm; span wire for the signals leaves it"
+    },
+    {
+     "E": -1230.0,
+     "N": -170.0,
+     "class": "sign_or_small_post",
+     "note": "plate shadow ~2 m both years"
+    }
+   ],
+   "note": ""
+  },
+  "P083": {
+   "candidates": {
+    "941": "lamp",
+    "942": {
+     "class": "not_a_post",
+     "note": "conifer shadow 3 m E of lamp 941"
+    },
+    "980": {
+     "class": "not_a_post",
+     "note": "bare tree"
+    },
+    "981": {
+     "class": "not_a_post",
+     "note": "bare kerb in 2020, conifer shadow in 2022"
+    },
+    "982": {
+     "class": "not_a_post",
+     "note": "bare tree"
+    }
+   },
+   "added": [
+    {
+     "E": -1271.5,
+     "N": -130.5,
+     "class": "lamp",
+     "note": "cobra lamp on the E sidewalk by the bus shelter, arm W, both years"
+    }
+   ],
+   "note": ""
+  },
+  "P084": {
+   "candidates": {
+    "983": {
+     "class": "not_a_post",
+     "note": "bare tree"
+    },
+    "984": "lamp",
+    "985": {
+     "class": "not_a_post",
+     "note": "bright object in the lawn, no stroke"
+    },
+    "986": {
+     "class": "not_a_post",
+     "note": "wall corner"
+    },
+    "987": {
+     "class": "not_a_post",
+     "note": "bare tree"
+    }
+   },
+   "added": [],
+   "note": "median-nose sign is the one added in P078"
+  }
+ }
+}

@@ -47,8 +47,8 @@ from scripts.aerial.engine import channels  # noqa: E402
 T = os.path.join(ROOT, 'tracks', 'denver-grand-prix')
 ORIGIN = (-104.9849, 39.7401)
 P = {'TOPHAT_M': 1.4, 'WHITE_TOP': 22.0, 'WHITE_SAT_MAX': 0.16, 'YEL_TOP': 16.0, 'PAVE_LUM_MAX': 165.0, 'SHADOW_LUM': 45.0,
-     'WINDOW_M': 16.0, 'TEX_MAX': 9.0, 'ROAD_YEL_MAX': 6.0, 'LEAK_M': 2.4, 'SIDE_SMOOTH_MIN': 0.5, 'VEH_DLUM': 38.0, 'HOLE_M2': 90.0, 'THICK_M': 0.34, 'DOUBLE_W_MIN': 0.27, 'SIDE_DIFF_MAX': 22.0, 'STEP_M': 0.5, 'MIN_AREA_M2': 0.08, 'SIDE_M': 0.28, 'LINE_W_MAX': 0.33, 'DASH_L_MAX': 4.6,
-     'BLOCK_W': (0.33, 1.05), 'BLOCK_L': (1.0, 5.2), 'CW_GAP_MAX': 3.0, 'LIDAR_GROUND_R': 1.5, 'LIDAR_MIN_N': 3, 'LIDAR_DLOG': 1.0, 'CW_MIN_BARS': 3}
+     'WINDOW_M': 16.0, 'LANE_M': 3.5, 'SIDE_ALLOW_M': 4.5, 'TEX_MAX': 9.0, 'ROAD_YEL_MAX': 6.0, 'LEAK_M': 2.4, 'SIDE_SMOOTH_MIN': 0.5, 'VEH_DLUM': 38.0, 'HOLE_M2': 90.0, 'THICK_M': 0.34, 'DOUBLE_W_MIN': 0.27, 'SIDE_DIFF_MAX': 22.0, 'STEP_M': 0.5, 'MIN_AREA_M2': 0.08, 'SIDE_M': 0.28, 'LINE_W_MAX': 0.33, 'DASH_L_MAX': 4.6,
+     'BLOCK_W': (0.33, 1.05), 'BLOCK_L': (1.0, 5.2), 'CW_GAP_MAX': 3.0, 'LIDAR_GROUND_R': 0.75, 'LIDAR_MIN_N': 3, 'LIDAR_DLOG': 1.0, 'CW_MIN_BARS': 3}
 
 
 def osm_lines(ortho):
@@ -66,9 +66,23 @@ def osm_lines(ortho):
 
 
 def window(ortho, lines, gsd):
-    im = Image.new('L', (ortho.W, ortho.H), 0); d = ImageDraw.Draw(im)
-    for _, xy in lines:
-        d.line([tuple(p) for p in xy], fill=255, width=int(2 * P['WINDOW_M'] / gsd))
+    """where to look: a band about each OSM street line as wide as its tagged lanes allow (lanes x LANE_M each side of the
+    line, plus SIDE_ALLOW_M for parking, a bike lane and the line being off-centre; WINDOW_M when untagged, and never more),
+    and a disc of WINDOW_M + 2 at every node where streets meet (turning radii, corner islands). OSM says where to look,
+    never where anything is. The pilot's flat WINDOW_M band reached 7 m into roofs and plazas beside a two-lane street."""
+    im = Image.new('L', (ortho.W, ortho.H), 0); d = ImageDraw.Draw(im); seen = {}
+    for w, xy in lines:
+        try:
+            half = min(P['WINDOW_M'], float(w['tags']['lanes']) * P['LANE_M'] / (1.0 if w['tags'].get('oneway') == 'yes' else 1.0) / 2 + P['SIDE_ALLOW_M'])
+        except (KeyError, ValueError):
+            half = P['WINDOW_M']
+        d.line([tuple(p) for p in xy], fill=255, width=int(2 * half / gsd))
+        for n, p in zip(w['nodes'], xy):
+            seen.setdefault(n, []).append(tuple(p))
+    r = (P['WINDOW_M'] + 2.0) / gsd
+    for n, ps in seen.items():
+        if len(ps) >= 2:
+            x, y = ps[0]; d.ellipse([x - r, y - r, x + r, y + r], fill=255)
     return np.asarray(im) > 0
 
 
@@ -90,13 +104,20 @@ def measure(ys, xs, gsd):
             'bearing': (math.degrees(math.atan2(ax[0], -ax[1])) % 180.0), 'ends': (c + ax * t.min(), c + ax * t.max())}
 
 
-def read(image, lidar=None):
-    ortho = Ortho.load(image, origin=ORIGIN); gsd = float(np.mean(ortho.gsd)); rgb = ortho.rgb
+def read(image, lidar=None, corridor=None, prepare=None):
+    """corridor: an optional callable ortho -> bool mask; the roadway is only looked for inside it (the lap survey's band)."""
+    ortho = Ortho.load(image, origin=ORIGIN); gsd = float(np.mean(ortho.gsd))
+    # prepare: an optional callable ortho -> {'mask_out': bool mask no mark is read on, 'road_extra': bool mask added to the
+    # roadway (painted surfaces that do not have asphalt's colour)}; it may rewrite ortho.rgb (the lap survey's shadow gain)
+    prep = prepare(ortho) if prepare is not None else {}
+    rgb = ortho.rgb
     ch = channels.compute(rgb, gsd, {'line_width_m': P['TOPHAT_M'], 'line_amp': 1.0})
     lum = ch['lum']; k = max(3, int(round(P['TOPHAT_M'] / gsd)) | 1)
     bg = ndimage.grey_opening(ndimage.gaussian_filter(lum, 0.6), size=(k, k)); top = lum - bg
     yel = ndimage.gaussian_filter(ch['yel'], 0.6); ybg = ndimage.grey_opening(yel, size=(k, k)); ytop = yel - ybg
     lines = osm_lines(ortho); win0 = window(ortho, lines, gsd)
+    if corridor is not None:
+        win0 = win0 & corridor(ortho)
     # the roadway: flooded from the OSM lines over ground that is dark and has asphalt's colour (not yellower than
     # ROAD_YEL_MAX on the engine's yellow axis, thin marks removed first: lawn, mulch and concrete are all yellower)
     texs = ndimage.gaussian_filter(ch['tex'], 2.0)
@@ -121,6 +142,8 @@ def read(image, lidar=None):
     fill = sizes < P['HOLE_M2']; fill[0] = False
     fill[np.unique(np.concatenate([hl[0], hl[-1], hl[:, 0], hl[:, -1]]))] = False
     win = big_(core | fill[hl]) & win0
+    if prep.get('road_extra') is not None:
+        win = win | (prep['road_extra'] & win0)
     smooth = win & (texs < P['TEX_MAX']) & (bg < P['PAVE_LUM_MAX'])
     sg = 6.0 / gsd / f; w_ = ndimage.gaussian_filter(smooth[::f, ::f].astype(np.float32), sg)
     rm = ndimage.gaussian_filter((lum * smooth)[::f, ::f], sg) / np.maximum(w_, 1e-3)
@@ -129,10 +152,14 @@ def read(image, lidar=None):
         roadmean = np.pad(roadmean, ((0, ortho.H - roadmean.shape[0]), (0, ortho.W - roadmean.shape[1])), mode='edge')
     bsat = ndimage.gaussian_filter(ch['sat'], 0.4 / gsd)
     covered = win & ((bg >= P['PAVE_LUM_MAX']) | (np.abs(bg - roadmean) > P['VEH_DLUM']) | ((bsat > 0.25) & (bg > 75)))
+    if prep.get('road_extra') is not None:
+        covered = covered & ~prep['road_extra']
     covered = ndimage.binary_opening(covered, iterations=max(1, int(0.5 / gsd)))       # vehicles and the like, not thin paint
     covered_d = ndimage.binary_dilation(covered, iterations=max(1, int(0.25 / gsd)))
     yellow = win & (ytop >= P['YEL_TOP']) & (top >= 4) & (bg < P['PAVE_LUM_MAX'])
     white = win & (top >= np.maximum(P['WHITE_TOP'], 0.22 * bg)) & (ch['sat'] <= P['WHITE_SAT_MAX']) & (bg < P['PAVE_LUM_MAX']) & ~yellow
+    if prep.get('mask_out') is not None:
+        white = white & ~prep['mask_out']; yellow = yellow & ~prep['mask_out']
     marks = []; dropped = {'small': 0, 'kerb_or_edge': 0, 'wide': 0, 'on_a_vehicle': 0, 'rough_ground_beside': 0}
     side_px = P['SIDE_M'] / gsd
     if gsd < 0.15:
@@ -209,7 +236,7 @@ def read(image, lidar=None):
     dark = win & (lum < P['SHADOW_LUM'])
     stats = {'gsd_m': round(gsd, 4), 'roadway_m2': round(float(win.sum()) * gsd * gsd), 'roadway_in_shadow_share': round(float(dark.sum()) / max(win.sum(), 1), 3),
              'roadway_covered_share': round(float(covered.sum()) / max(win.sum(), 1), 3), 'dropped': dropped}
-    return ortho, gsd, marks, stats, (white, yellow, win)
+    return ortho, gsd, marks, stats, (white, yellow, win, covered, dark, top, ytop)
 
 
 def group(marks, gsd):

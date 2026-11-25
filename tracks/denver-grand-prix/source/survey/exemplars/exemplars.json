@@ -1,0 +1,34 @@
+{
+ "_doc": "Exemplar shapes cut from the DRCOG pictures (year per exemplar) and named by eye, drawn in the street frame (up = along the OSM way), 64 x 64 px at 0.0762 m. symbols.py correlates blobs with them; arrow_right is the mirror image of arrow_left, made in code.",
+ "exemplars": [
+  {
+   "type": "arrow_left",
+   "file": "turn_arrow_left.png",
+   "area_m2": 1.96,
+   "cut_from": {
+    "year": 2022,
+    "centre_lonlat": [
+     -104.9928979,
+     39.7386331
+    ],
+    "street_bearing_up_deg": 180.1
+   },
+   "named_by": "eye, 2026-11-23",
+   "grid_m_per_px": 0.0762
+  },
+  {
+   "type": "arrow_through",
+   "file": "through_arrow.png",
+   "area_m2": 1.2,
+   "cut_from": {
+    "year": 2020,
+    "centre_lonlat": [
+     -104.9946819,
+     39.7402349
+    ]
+   },
+   "named_by": "eye, 2026-11-23",
+   "grid_m_per_px": 0.0762
+  }
+ ]
+}

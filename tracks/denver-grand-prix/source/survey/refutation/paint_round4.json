@@ -1,0 +1,9 @@
+{
+ "_doc": "Paint, refutation round 4 (2026-11-23), after round 3's fix, on 20 more boxes (refute.py r4: junctions at s 218, 929, 1500, 2100, 2640, 3000, 3940, 4660, 5300, 6440; mid-block at s 260, 1100, 1250, 1880, 2500, 3300, 3900, 4450, 4800, 6000). 12 boxes were read (three sheets of four); j2100 and j3940 had been seen in round 1 and are not fresh; j6440 is a signal node off the corridor and its box is empty. Counts by eye, approximate; j2100 (under the 2022 shadow) is left out of the detected count.",
+ "boxes_read": ["j218 Colfax / Broadway", "j929 Colfax / Glenarm", "j1500 Speer / Stout", "j2100 15th / Curtis", "j2640 15th / Blake", "j3000 Auraria / Speer", "j3940 Kalamath / Colfax", "j4660 Speer / Colfax", "m1250 Speer NB", "m1880 Stout", "m2500 15th St", "m3300 Speer SB"],
+ "totals": {"measured": 157, "measured_false": 11, "precision_measured": 0.93, "detected_judged": 360, "detected_false": 125, "precision_detected": 0.65, "missed": 31, "recall_of_real_marks": 0.92},
+ "false_measured_were": "off-street parking stripes inside the look-window (2), the light-rail slab's edges on Stout / Speer (4), a pair of 'bars' on a red car (2), a kerb's curve (2), one line in the 15th St shadow (1)",
+ "missed_were": "lane dashes on Stout's concrete, dotted guides and a few crosswalk bars at Speer / Colfax, dashes hidden by vehicles in every year",
+ "new_causes": "none. Every false mark and miss belongs to a class already named in rounds 1-3 and left unfixed for the reasons given there. The loop stops here.",
+ "not_typed_and_visible_in_these_boxes": "BUS legends on red panels (the panels are in the file as surfaces), bicycle symbols, green crossbike blocks"
+}

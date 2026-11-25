@@ -1,0 +1,156 @@
+{
+ "reader": "sign-post pass, junctions batch 2 (by eye)",
+ "panels": {
+  "SG28": {
+   "candidates": {},
+   "added": [
+    {
+     "E": -1342.8,
+     "N": 575.6,
+     "class": "sign_or_small_post",
+     "note": "in the plaza east of Speer by the bike-lane marking: 1.6 m N stroke ending in a diamond plate (2022), 2.8 m NW stroke (2020) from the same foot"
+    }
+   ],
+   "note": "One sign post added. Also a ~2.8 m sign/ped post at about (-1346.7, 564.5), shadow ending in a plate, but it is 0.9 m from the green square on the SE signal post (-1345.8, 564.0), so not added; review whether that square is meant to be the signal or the sign post. Rest covered."
+  },
+  "SG29": {
+   "candidates": {},
+   "added": [
+    {
+     "E": -1359.1,
+     "N": 422.6,
+     "class": "sign_or_small_post",
+     "note": "SW corner by the grass island nose: 2.0 m N stroke with plate (2022), NW stroke (2020), same foot"
+    },
+    {
+     "E": -1354.6,
+     "N": 428.2,
+     "class": "signal_post",
+     "note": "short pedestal/ped-signal post on the SW corner east of the mast: pole visible leaning in both years, boxy head shadow, about 5 m N of the SW mast"
+    }
+   ],
+   "note": "Two added. Green square at (-1360.9, 423.0) sits on bare pavement in both years, 1.8 m west of the sign post added at (-1359.1, 422.6): probably a misplaced copy of it. Row of short strokes along the west sidewalk at E ~ -1355.5, N 432-437 judged bollards (too short)."
+  },
+  "SG30": {
+   "candidates": {},
+   "added": [
+    {
+     "E": -1324.2,
+     "N": 258.2,
+     "class": "sign_or_small_post",
+     "note": "NW of the Saint Francis Way crosswalk, west side: 1.7 m N stroke with plate (2022), NW stroke (2020), same foot"
+    }
+   ],
+   "note": "One added. A lamp/mast pole whose shadow reaches the south edge at about (-1309.1, 240.5) in 2022 has its foot at or just beyond the panel edge, so not added here; check it is in the inventory. Dark blob at (-1328.1, 265.5) has no stroke in either year (bin or box)."
+  },
+  "SG31": {
+   "candidates": {},
+   "added": [],
+   "note": "Nothing added: every pole, mast and the NW sign post carry a green square; the remaining dark marks are signal heads and arms of the four masts, a cyclist and pedestrians."
+  },
+  "SG32": {
+   "candidates": {},
+   "added": [],
+   "note": "Nothing added. Short strokes along the grass-edge fence at about (-1323.4, 81.3), (-1326.0, 79.7), (-1328.6, 78.1) are bollard/fence-post height (well under 1.5 m). The green sign at (-1295.6, 77.5) has a diamond plate in 2022 but nothing in 2020 (installed between the flights), which is fine."
+  },
+  "SG33": {
+   "candidates": {},
+   "added": [
+    {
+     "E": -1301.3,
+     "N": -20.0,
+     "class": "sign_or_small_post",
+     "note": "on the nose of the south median island (Kalamath/Colfax): N stroke ending in a square plate (2022, keep-right type), NW stroke (2020), same foot"
+    },
+    {
+     "E": -1318.1,
+     "N": 3.8,
+     "class": "sign_or_small_post",
+     "note": "on the nose of the west median island: thin 2.5 m N stroke (2022), shorter WNW stroke from the same foot (2020); plate not distinct"
+    }
+   ],
+   "note": "Two added, both on median noses. The SW-corner and far-west mast/pole shadows run into the panel from feet south of the south edge (N < -22.1), not added here; check them in the neighbouring panel."
+  },
+  "SG34": {
+   "candidates": {},
+   "added": [
+    {
+     "E": -1298.1,
+     "N": -198.2,
+     "class": "sign_or_small_post",
+     "note": "east kerb south of 14th: diamond plate N in 2022, long SE-NW stroke in 2020 from the same foot"
+    },
+    {
+     "E": -1324.4,
+     "N": -176.1,
+     "class": "sign_or_small_post",
+     "note": "SW of the NW building on the 14th Ave kerb strip: 2 m N stroke with plate (2022), plate shadow NW (2020)"
+    }
+   ],
+   "note": "Two added. Green square at (-1299.3, -196.7) sits on the roadway where the 2020 shadow of the sign's plate lies, 1.9 m from the sign's foot at (-1298.1, -198.2): misplaced, probably on the shadow tip. Short (about 1 m) round-headed strokes on the west sidewalk at (-1315.0, -194.8) and (-1324.6, -187) read as parking meters, not added."
+  },
+  "SG35": {
+   "candidates": {},
+   "added": [],
+   "note": "Nothing added: corner masts, the NE lamp, the NE sign and the SW lamp all carry green squares. Short red-based strokes in the bike-lane buffer (e.g. -1222.8, -184.2; 2022 only) are delineators; low strokes along the bike buffer west of the junction likewise. A thin vertical at about (-1219.0, -187.3) beside the SE signal post looks like a railing/fence frame and 2020 is in tree shadow there: cannot tell, not added."
+  },
+  "SG36": {
+   "candidates": {},
+   "added": [
+    {
+     "E": -1272.25,
+     "N": -74.4,
+     "class": "sign_or_small_post",
+     "note": "nose of the parking-lot island east of Santa Fe: 2.4 m N stroke with a white plate tip (2022), NNW stroke (2020), same foot"
+    }
+   ],
+   "note": "One added (off the carriageway, in the parking lot). The two luminaire arms reaching in at the west edge (about -1316, -38 and -1315, -55) belong to poles west of the panel, not added here."
+  },
+  "SG37": {
+   "candidates": {},
+   "added": [
+    {
+     "E": -1241.3,
+     "N": 140.8,
+     "class": "post_unknown",
+     "note": "standing on/at the NE corner rail-station kiosk (stair/elevator box): thin 4.3 m N stroke (2022) and 6 m NW stroke (2020) from the same point, beside the kiosk's skylight; likely a lamp or pole on the kiosk, class not clear"
+    }
+   ],
+   "note": "One added. The lamp whose curved arm shadow enters at the SW edge (about -1271.5, 102) stands south of the panel edge; not added. A short blob in the tram trackway at (-1267, 128) is 2022 only (a pedestrian)."
+  },
+  "SG38": {
+   "candidates": {},
+   "added": [],
+   "note": "Nothing added. The two mast arms entering at the west edge (about -1218, 14 and -1218, 9) belong to poles west of the panel. A white X-shaped object with a short stroke on the SW grass at (-1210.5, -16.0) is 2022 only (temporary, e.g. a barricade), not added. Bridge-wall pillars at the north edge are not posts."
+  },
+  "SG39": {
+   "candidates": {},
+   "added": [],
+   "note": "Nothing added. In 2022 the whole west half is in the building's shadow; read from 2020 there, nothing missing. Possible small box-on-post at (-1099.7, -195.9) (2020: white plate, short stroke; 2022 shadowed) and a short dark item at (-1077.7, -193.3) (2022 only, under 1 m): cannot tell, not added. NE-corner mast green at (-1088.7, -171.1): its 2022 stroke appears to start about 2 m north at (-1088.1, -169.0) but 2020 puts the foot on the square; left as is."
+  },
+  "SG40": {
+   "candidates": {},
+   "added": [
+    {
+     "E": -1018.7,
+     "N": -164.7,
+     "class": "lamp",
+     "note": "plaza NE of the junction, beside the patio umbrellas: 2.5 m N stroke (2022) and 3.8 m NW stroke with a head blob (2020) from the same foot"
+    }
+   ],
+   "note": "One added (plaza lamp, off the carriageway). A pole at about (-1008.5, -186.9) on the east-leg buffer shows in 2020 only (removed by 2022), not added. Orange traffic cones in the 2022 crosswalks are not posts."
+  },
+  "SG41": {
+   "candidates": {},
+   "added": [
+    {
+     "E": -982.45,
+     "N": -176.2,
+     "class": "sign_or_small_post",
+     "note": "NE corner at the east-leg crosswalk end, 2.6 m S of the NE signal post: 1.5 m N stroke with a small round/boxy head (2022); 2020 under tree shadow. Possibly a pedestrian push-button post; borderline on length"
+    }
+   ],
+   "note": "One added (borderline). The junction was rebuilt between 2020 and 2022 (2020 shows a channelised island and poles that are gone in 2022), so 2020-only poles were not added. 2022 has temporary construction signs/A-frames and many cones (e.g. -987.6, -167 on the bike lane), not added. SE corner (-987..-983, -182..-190) has several short dark strokes in 2022 with 2020 in building shadow (pedestrians, a curved lamp-arm shadow): cannot tell, not added. Long diagonal entering at the west edge (-1016.7, -180) is the SG40 NE mast arm."
+  }
+ }
+}

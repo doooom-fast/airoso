@@ -1,0 +1,648 @@
+{
+ "reader": "second-pass panel reader batch 3 (by eye)",
+ "panels": {
+  "R106": {
+   "candidates": {
+    "10196": {
+     "class": "not_a_post",
+     "note": "on the fence line / its shadow along the north lot"
+    }
+   },
+   "added": [],
+   "note": "NE corner signal mast arm over the crosswalk at about E -572, N -170 whose foot looks just east of the panel edge; not added"
+  },
+  "R107": {
+   "candidates": {
+    "10197": {
+     "class": "not_a_post",
+     "note": "roof clutter"
+    },
+    "10198": {
+     "class": "not_a_post",
+     "note": "roof clutter"
+    }
+   },
+   "added": [],
+   "note": "possible small sign post at about E -568.6, N -192.9 (2022 only clear), not added"
+  },
+  "R108": {
+   "candidates": {
+    "10199": {
+     "class": "lamp",
+     "note": "2020 only: long thin NW stroke like the accepted lamp 13 m west; 2022 in building shadow"
+    }
+   },
+   "added": [
+    {
+     "class": "sign_or_small_post",
+     "note": "pair of short posts about 1 m apart; same look as the accepted north-sidewalk posts; could be meters",
+     "E": -519.8,
+     "N": -174.9
+    },
+    {
+     "class": "sign_or_small_post",
+     "note": "same row; 2020 stroke as long as accepted neighbours",
+     "E": -506.4,
+     "N": -174.9
+    },
+    {
+     "class": "sign_or_small_post",
+     "note": "same row; 2020 stroke as long as accepted neighbours",
+     "E": -494.0,
+     "N": -174.9
+    }
+   ],
+   "note": "north sidewalk row of short posts: the two accepted ones (E~-487.4, -481.3) look the same as the three added; if those are parking-meter class all five go together"
+  },
+  "R109": {
+   "candidates": {
+    "10200": {
+     "class": "not_a_post",
+     "note": "grass by the accepted lamp 1.8 m north; no stroke"
+    },
+    "10201": {
+     "class": "not_a_post",
+     "note": "signal controller cabinet"
+    },
+    "10202": {
+     "class": "not_a_post",
+     "note": "bus shelter / bench corner"
+    },
+    "10203": {
+     "class": "not_a_post",
+     "note": "tree crown"
+    },
+    "10204": {
+     "class": "not_a_post",
+     "note": "planter wall / building edge"
+    },
+    "10205": {
+     "class": "not_a_post",
+     "note": "planter wall / building edge"
+    }
+   },
+   "added": [
+    {
+     "class": "sign_or_small_post",
+     "note": "sign post with plate, both years",
+     "E": -465.5,
+     "N": -170.3
+    }
+   ],
+   "note": ""
+  },
+  "R110": {
+   "candidates": {
+    "10206": {
+     "class": "not_a_post",
+     "note": "plaza/bushes; 2022 in tower shadow, nothing post-like in 2020"
+    },
+    "10207": {
+     "class": "not_a_post",
+     "note": "planter edge"
+    },
+    "10208": {
+     "class": "not_a_post",
+     "note": "open park grass; no stroke"
+    },
+    "10209": {
+     "class": "not_a_post",
+     "note": "grass 2.9 m from the accepted lamp; no foot"
+    }
+   },
+   "added": [],
+   "note": ""
+  },
+  "RX012": {
+   "candidates": {
+    "10210": {
+     "class": "not_a_post",
+     "note": "tree"
+    }
+   },
+   "added": [
+    {
+     "class": "lamp",
+     "note": "park path globe lamp, both years",
+     "E": -384.5,
+     "N": -199.0
+    },
+    {
+     "class": "lamp",
+     "note": "globe lamp at the bottom edge, 2022 clear, 2020 shadow head seen; may duplicate a neighbour panel",
+     "E": -367.1,
+     "N": -245.1
+    }
+   ],
+   "note": "park path globe lamps ~20 m off the road. The globe lamp at about E -367.3, N -227.0 is NOT added here: it is candidate 10214 in R111 (ring ~2 m south of its foot). Another white globe-like dot at the top edge (about E -362.9, N -190.0) not added"
+  },
+  "R111": {
+   "candidates": {
+    "10211": {
+     "class": "not_a_post",
+     "note": "tree crown"
+    },
+    "10212": {
+     "class": "not_a_post",
+     "note": "tree crown"
+    },
+    "10213": {
+     "class": "not_a_post",
+     "note": "tree crown"
+    },
+    "10214": {
+     "class": "lamp",
+     "note": "park globe lamp; its foot (bright globe, 2022) is at about E -367.5, N -227.2, ~2 m north of the ring; 2020 hidden in trees"
+    }
+   },
+   "added": [],
+   "note": "flagpole in the plaza circle at about E -357, N -223 (long shadow both years) not added: flag"
+  },
+  "R112": {
+   "candidates": {
+    "10215": {
+     "class": "not_a_post",
+     "note": "grass by the curved wall; no post signature"
+    },
+    "10216": {
+     "class": "not_a_post",
+     "note": "duplicate of an accepted post (lamp 1.8 m SE; ring on its shadow)"
+    },
+    "10217": {
+     "class": "not_a_post",
+     "note": "in the roadway where 2020 mast-arm shadows cross; nothing in 2022"
+    },
+    "10218": {
+     "class": "not_a_post",
+     "note": "park grass; a small white plate 1.5 m north but no stroke"
+    },
+    "10219": {
+     "class": "not_a_post",
+     "note": "2020 shadow tip of the accepted post 1.8 m SE"
+    },
+    "10220": {
+     "class": "not_a_post",
+     "note": "park grass / tree"
+    },
+    "10221": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "10222": {
+     "class": "not_a_post",
+     "note": "tree"
+    }
+   },
+   "added": [],
+   "note": ""
+  },
+  "RX013": {
+   "candidates": {
+    "10223": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "1353": {
+     "class": "not_a_post",
+     "note": "tree"
+    }
+   },
+   "added": [],
+   "note": "flagpole in the plaza circle (about E -357, N -225) not added"
+  },
+  "R113": {
+   "candidates": {
+    "10224": {
+     "class": "not_a_post",
+     "note": "grass/tree by the lot edge"
+    },
+    "10225": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "10226": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "10227": {
+     "class": "not_a_post",
+     "note": "tree / fence"
+    },
+    "10228": {
+     "class": "not_a_post",
+     "note": "tree trunk"
+    },
+    "10229": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "10230": {
+     "class": "not_a_post",
+     "note": "tree; white debris on the ground in 2022"
+    },
+    "10231": {
+     "class": "not_a_post",
+     "note": "tree / path edge"
+    },
+    "10232": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "10233": {
+     "class": "not_a_post",
+     "note": "building corner"
+    },
+    "10234": {
+     "class": "not_a_post",
+     "note": "path edge"
+    }
+   },
+   "added": [],
+   "note": ""
+  },
+  "RX014": {
+   "candidates": {
+    "10235": {
+     "class": "not_a_post",
+     "note": "construction fence corner / tree edge by the path"
+    }
+   },
+   "added": [],
+   "note": ""
+  },
+  "R114": {
+   "candidates": {
+    "10236": {
+     "class": "not_a_post",
+     "note": "park tree"
+    },
+    "10237": {
+     "class": "not_a_post",
+     "note": "tree-trunk shadows on the sidewalk edge"
+    },
+    "10238": {
+     "class": "not_a_post",
+     "note": "tree"
+    }
+   },
+   "added": [],
+   "note": ""
+  },
+  "RX015": {
+   "candidates": {
+    "10239": {
+     "class": "not_a_post",
+     "note": "tree by the sidewalk edge"
+    },
+    "10240": {
+     "class": "not_a_post",
+     "note": "tree crown over the sidewalk edge"
+    },
+    "1397": {
+     "class": "not_a_post",
+     "note": "tree by the sidewalk edge"
+    }
+   },
+   "added": [
+    {
+     "class": "lamp",
+     "note": "park path globe lamp, globe both years, shadow north in 2022",
+     "E": -253.2,
+     "N": -154.1
+    }
+   ],
+   "note": "possible globe at about E -245.7, N -169.0 (2022 white dot, no clear stroke) and a possible short post at about E -234.4, N -171.3 (2020 stroke only) not added"
+  },
+  "R115": {
+   "candidates": {
+    "10241": {
+     "class": "not_a_post",
+     "note": "tree"
+    }
+   },
+   "added": [],
+   "note": "possible globe lamp in the NW-corner tree planter at about E -230.8, N -169.3 (2022 white dot + short stroke, 2020 under tree shadow) not added"
+  },
+  "R116": {
+   "candidates": {
+    "10242": {
+     "class": "not_a_post",
+     "note": "planter/path edge"
+    },
+    "10243": {
+     "class": "not_a_post",
+     "note": "tree trunk"
+    },
+    "10244": {
+     "class": "not_a_post",
+     "note": "tree"
+    }
+   },
+   "added": [],
+   "note": "a short sign post at about E -158.9, N -190.9 shows in 2020 only (2022 sunlit, nothing there: probably removed); not added"
+  },
+  "R117": {
+   "candidates": {
+    "10245": {
+     "class": "not_a_post",
+     "note": "tree / grass"
+    },
+    "10246": {
+     "class": "not_a_post",
+     "note": "tree"
+    }
+   },
+   "added": [
+    {
+     "class": "sign_or_small_post",
+     "note": "short post at the SW corner curb, stroke both years",
+     "E": -119.0,
+     "N": -191.2
+    },
+    {
+     "class": "sign_or_small_post",
+     "note": "short post on the SE plaza, stroke both years",
+     "E": -114.0,
+     "N": -199.5
+    }
+   ],
+   "note": "NE-corner signal mast arm reaches in from the east edge; its foot looks just outside the panel"
+  },
+  "R118": {
+   "candidates": {
+    "10247": {
+     "class": "not_a_post",
+     "note": "roof edge of the garage stair tower"
+    },
+    "10248": {
+     "class": "not_a_post",
+     "note": "tree branches over the sidewalk edge"
+    }
+   },
+   "added": [],
+   "note": "three green squares within ~3 m at about E -65.0..-62.0, N -177.7: 2022 shows two tall strokes there (lamp + another pole); the third may be a duplicate"
+  },
+  "R119": {
+   "candidates": {
+    "10249": {
+     "class": "not_a_post",
+     "note": "park grass / tree"
+    },
+    "10250": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "10251": {
+     "class": "not_a_post",
+     "note": "tree crown"
+    }
+   },
+   "added": [
+    {
+     "class": "lamp",
+     "note": "low globe lamp at the park edge, bright globe both years, same kind as the accepted ones at E -49 and -20",
+     "E": -32.7,
+     "N": -169.5
+    }
+   ],
+   "note": "parking lot NE: short dark strokes (~1 m, bollards/wheel-stop posts) and a long white bar with a dark line beside it at about E -5.2, N -166.4..-174 (lot light seen leaning? unclear) not added"
+  },
+  "R120": {
+   "candidates": {
+    "10252": {
+     "class": "not_a_post",
+     "note": "sidewalk by a tree; no foot"
+    },
+    "10253": {
+     "class": "not_a_post",
+     "note": "parked car edge"
+    }
+   },
+   "added": [
+    {
+     "class": "lamp",
+     "note": "parking-lot light: pole seen as a white bar running north to its head; foot taken at the south end of the bar (both years)",
+     "E": -4.7,
+     "N": -166.3
+    },
+    {
+     "class": "lamp",
+     "note": "parking-lot light: long diagonal white bar NW to its head; foot taken at the SE end (both years)",
+     "E": 16.2,
+     "N": -170.1
+    }
+   ],
+   "note": "lot lights show as leaning white bars (relief); the foot end is my judgement. Row of short bollards along the north plaza not added"
+  },
+  "R121": {
+   "candidates": {
+    "10254": {
+     "class": "not_a_post",
+     "note": "church roof edge"
+    }
+   },
+   "added": [],
+   "note": "row of short bollards on the south sidewalk west of the church not added"
+  },
+  "R122": {
+   "candidates": {
+    "10255": {
+     "class": "not_a_post",
+     "note": "stop bar in the roadway (car on it in 2020)"
+    }
+   },
+   "added": [],
+   "note": ""
+  },
+  "R123": {
+   "candidates": {
+    "10256": {
+     "class": "not_a_post",
+     "note": "roof parapet / building edge"
+    },
+    "10257": {
+     "class": "not_a_post",
+     "note": "parking lot by a car (2022); 2020 stroke there is the cross-arm shadow of the accepted utility pole ~3.5 m west"
+    },
+    "10258": {
+     "class": "not_a_post",
+     "note": "tree"
+    }
+   },
+   "added": [],
+   "note": ""
+  },
+  "R124": {
+   "candidates": {
+    "10259": {
+     "class": "not_a_post",
+     "note": "island kerb by a tree"
+    },
+    "10260": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "10261": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "10262": {
+     "class": "not_a_post",
+     "note": "in the roadway among parked cars"
+    }
+   },
+   "added": [],
+   "note": ""
+  },
+  "RX016": {
+   "candidates": {
+    "10263": {
+     "class": "not_a_post",
+     "note": "building corner"
+    },
+    "10264": {
+     "class": "cannot_tell",
+     "note": "in building shadow both years"
+    }
+   },
+   "added": [
+    {
+     "class": "utility_pole",
+     "note": "tall pole on the wire line, long shadow north in 2022 and NE with a cross-arm in 2020",
+     "E": 237.8,
+     "N": -192.5
+    },
+    {
+     "class": "post_unknown",
+     "note": "second pole ~1 m west of it, shorter stroke both years",
+     "E": 237.0,
+     "N": -192.3
+    }
+   ],
+   "note": ""
+  },
+  "R125": {
+   "candidates": {
+    "10265": {
+     "class": "not_a_post",
+     "note": "building roof edge"
+    },
+    "10266": {
+     "class": "not_a_post",
+     "note": "building shadow edge / tree"
+    },
+    "10267": {
+     "class": "not_a_post",
+     "note": "parked car edge"
+    },
+    "10268": {
+     "class": "not_a_post",
+     "note": "parked car edge / kerb"
+    }
+   },
+   "added": [
+    {
+     "class": "lamp",
+     "note": "lot-island light: stroke north to a head in 2022, NE in 2020",
+     "E": 226.2,
+     "N": -155.8
+    }
+   ],
+   "note": ""
+  },
+  "R127": {
+   "candidates": {
+    "10269": {
+     "class": "not_a_post",
+     "note": "lot edge under a tree"
+    },
+    "10270": {
+     "class": "not_a_post",
+     "note": "tree"
+    }
+   },
+   "added": [],
+   "note": "2020 row of short diagonal strokes along the west building line (E ~211, N -22..-40) is a railing/fence, not added"
+  },
+  "R128": {
+   "candidates": {
+    "10271": {
+     "class": "not_a_post",
+     "note": "crosswalk / ramp edge; no stroke"
+    },
+    "10272": {
+     "class": "not_a_post",
+     "note": "median nose among delineator stubs and a parked car"
+    },
+    "10273": {
+     "class": "not_a_post",
+     "note": "statue/monument and stones on the church lawn"
+    },
+    "10274": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "10275": {
+     "class": "not_a_post",
+     "note": "church lawn; no foot"
+    },
+    "10276": {
+     "class": "not_a_post",
+     "note": "in the roadway"
+    },
+    "10277": {
+     "class": "not_a_post",
+     "note": "kerb by a manhole"
+    },
+    "10278": {
+     "class": "not_a_post",
+     "note": "building corner"
+    },
+    "10279": {
+     "class": "not_a_post",
+     "note": "roof clutter"
+    },
+    "10280": {
+     "class": "not_a_post",
+     "note": "building edge / awning"
+    },
+    "10281": {
+     "class": "not_a_post",
+     "note": "roof clutter"
+    }
+   },
+   "added": [],
+   "note": "2020 shows short flexible delineator posts on the median (E ~222-246, N -5..-7): too short, not added"
+  },
+  "R129": {
+   "candidates": {
+    "10282": {
+     "class": "not_a_post",
+     "note": "roof clutter"
+    },
+    "10283": {
+     "class": "not_a_post",
+     "note": "street tree"
+    },
+    "10284": {
+     "class": "not_a_post",
+     "note": "roof clutter"
+    },
+    "10285": {
+     "class": "not_a_post",
+     "note": "roof clutter"
+    },
+    "10286": {
+     "class": "not_a_post",
+     "note": "building corner at the alley mouth"
+    },
+    "10287": {
+     "class": "not_a_post",
+     "note": "roof clutter"
+    }
+   },
+   "added": [],
+   "note": "alley (E ~162-170) has overhead wires and probably a utility pole near its north end (about E 164, N 22) but it is in building shadow in 2020; not added"
+  }
+ }
+}

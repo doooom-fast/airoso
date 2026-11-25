@@ -1,0 +1,17 @@
+{
+ "_doc": "Paint, refutation round 3 (2026-11-23), after round 2's fix, on 20 fresh boxes, ALL read (refute.py r3: junctions at s 325, 618, 1034, 1740, 2200, 2560, 3400, 4130, 4536, 5919; mid-block at s 60, 560, 1350, 2260, 2900, 3650, 4250, 5050, 5700, 6150). Counts by eye on the overlays, approximate; the 'detected' grade could not be judged in the two boxes that lie under a tower's shadow in 2022 (j2200, m2260: most items there are 2020 fills) and they are left out of its count.",
+ "per_sheet": [
+  {"boxes": "j325 Colfax / 15th, j618 Colfax / Court, j1034 Colfax / Welton, j1740 Stout / 14th St", "measured": 34, "measured_false": 6, "detected": 121, "detected_false": 40, "missed": 12,
+   "what": "false: the light-rail slab's edges and the white concrete borders of brick crossings on Stout read as lines; a kerb's curve as an edge line; a yellow tactile strip. Missed: lane dashes in the park bow; the dotted centre line through Court; green crossbike blocks (not a class the reader has)"},
+  {"boxes": "j2200 15th / Arapahoe (shadow), j2560 15th / Market, j3400 Speer / Lawrence, j4130 Kalamath / W 14th", "measured": 64, "measured_false": 7, "detected_judged": 142, "detected_false": 48, "missed": 10,
+   "what": "false: a wandering yellow 'line' across the shadowed junction, two wandering white ones on a sidewalk and a kerb; older-year fragments at kerbs (detected)"},
+  {"boxes": "j4536 Speer / Kalamath, j5919 14th / Lincoln, m60 Colfax hill, m560 Colfax", "measured": 51, "measured_false": 1, "detected": 100, "detected_false": 32, "missed": 6, "what": "eight crosswalks, stop bars, dashes and the double yellow read; one kerb curve as a line"},
+  {"boxes": "m1350 Stout (concrete), m2260 15th (shadow), m2900 Auraria, m3650 Speer", "measured": 27, "measured_false": 0, "detected_judged": 51, "detected_false": 17, "missed": 25,
+   "what": "missed: every lane dash on Stout's bright concrete (the reader only looks on dark pavement); a ladder crosswalk under the 2022 shadow that no year read; dashes on Auraria"},
+  {"boxes": "m4250 Santa Fe, m5050 W 14th (shadow), m5700 14th Pkwy, m6150 14th / Grant", "measured": 39, "measured_false": 4, "detected": 132, "detected_false": 40, "missed": 5, "what": "false: three lines that follow a building shadow's stepped edge; kerb lines are now graded detected, not measured"}
+ ],
+ "totals": {"measured": 215, "measured_false": 18, "precision_measured": 0.92, "detected_judged": 546, "detected_false": 177, "precision_detected": 0.68, "missed": 58, "recall_of_real_marks": 0.91},
+ "causes_and_fixes": ["wandering 'lines' (a shadow's stepped edge, a seam, a kerb's curve): a solid line that leaves its own cubic fit by 0.12 m rms or 0.35 m is graded detected (paint_lap.py)",
+                      "paint on bright concrete (Stout St): NOT fixed. The reader's pavement test is 'dark'; Stout's dashes are declared unread in SURVEY.md",
+                      "rail slab edges and concrete crossing borders on Stout: NOT fixed; they are bright bands on the roadway and the reader cannot tell them from paint"]
+}

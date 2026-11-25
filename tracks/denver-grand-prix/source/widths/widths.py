@@ -65,7 +65,7 @@ RM = 6378137.0
 Q = dict(  # [invented] reader tuning, every value written into the output
     WIN_M=2.5, BIN_M=0.25, REACH_M=30.0, BAND_M=0.75, STEP_MIN_M=0.06, STEP_MAX_M=0.40, STAY_M=1.5,
     MIN_HALF_M=1.5, MEDIAN_MAX_M=14.0, MOUTH_X=1.6, CONTRAST_MIN=30.0, AER_STAY_M=0.5, AER_SPREAD_M=1.5,
-    DISAGREE_M=0.3, SMOOTH_N=5, I_CONTRAST_MIN=400.0, I_ASPHALT_MAX=250.0, KERB_SEARCH_M=1.5, EDGE_OUTLIER_M=1.0)
+    DISAGREE_M=0.3, SMOOTH_N=5, I_CONTRAST_MIN=400.0, I_ASPHALT_MAX=250.0, KERB_SEARCH_M=1.5, EDGE_OUTLIER_M=1.0, CORE_M=3.0)
 
 
 # --- frame ---------------------------------------------------------------------------------------------------------
@@ -137,7 +137,19 @@ def lidar_section(Pk, Lk, Tk, tree, Lg):
     m = (np.abs(a) <= Q['WIN_M']) & (np.abs(o) <= Q['REACH_M'])
     if m.sum() < 20:
         return None
-    o, z, I = o[m], Lg['z'][idx][m], Lg['I'][idx][m]
+    a, o, z, I = a[m], o[m], Lg['z'][idx][m], Lg['I'][idx][m]
+    # the road's grade ALONG the station: a 5.6 % hill (Colfax at the Capitol) spreads +-14 cm over the +-2.5 m window
+    # and the step test fires on it (found 2026-11-25 at the start line: false 'kerbs' 2-3 m into the lanes). Fit
+    # z = z0 + g*a + c*o on the road core (|o| <= CORE_M), trim, refit, and take g*a out of every return.
+    core = np.abs(o) <= Q['CORE_M']
+    if core.sum() >= 12:
+        A_ = np.stack([np.ones(core.sum()), a[core], o[core]], 1)
+        coef, *_ = np.linalg.lstsq(A_, z[core], rcond=None)
+        r_ = z[core] - A_ @ coef
+        keep = np.abs(r_) <= max(0.05, 2.5 * 1.4826 * np.median(np.abs(r_)))
+        if keep.sum() >= 12:
+            coef, *_ = np.linalg.lstsq(A_[keep], z[core][keep], rcond=None)
+        z = z - coef[1] * a
     nb = int(round(2 * Q['REACH_M'] / Q['BIN_M']))
     b = np.clip(((o + Q['REACH_M']) / Q['BIN_M']).astype(int), 0, nb - 1)
     order = np.argsort(b, kind='stable')
@@ -212,8 +224,10 @@ def kerb_faces(c, zm, sgn, start=None, limit=None):
                 a_ = zm[jx - bw:jx] if sgn > 0 else zm[jx + 1:jx + 1 + bw]
                 b_ = zm[jx:jx + 3 * bw] if sgn > 0 else zm[jx - 3 * bw + 1:jx + 1]
                 za, zb = _nanmed(a_), _nanmed(b_)
-                if np.isfinite(za) and np.isfinite(zb) and za - zb >= Q['STEP_MIN_M'] and abs(zb - zi) <= 0.12 \
-                        and abs(za - top) <= 0.15:
+                # the far face: a step back down to road level (a planted median is crowned, so its top is not held to
+                # the near face's height: Colfax west of Sherman rises 0.37 m in the middle and comes down near +10 m)
+                if np.isfinite(za) and np.isfinite(zb) and za - zb >= Q['STEP_MIN_M'] and abs(zb - zi) <= 0.08 \
+                        and za >= top - 0.05:
                     far = round(abs(c[jx]), 2)
                     break
             return {'face': round(float(face), 2), 'step': round(float(st), 3), 'median_far': far, 'on_line': on_line,

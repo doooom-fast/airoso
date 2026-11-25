@@ -14,6 +14,16 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
+## 2026-11-25 — Interpolate the street ribbon's width at each sweep station (Denver, opt-in)
+
+At Denver r6 station 2455, the built ribbon widens from 10.71 to 12.53 m over 3.013 m. The sweep read the far row's
+width for the whole span and placed its outer probes at ±5.86 m, where the baked mesh has grass and no pavement.
+The interpolated width at that station is 11.293 m. At ±5.246 m the road is roughly 0.060 m above the terrain.
+
+`drive_test.interpolate_street_width` uses the width at the station for the street sweep. The same soft-surface, step,
+kink and clearance rules apply. Race layouts keep the declared lane. The widening-ribbon regression includes a
+grass patch over real pavement and verifies that the corrected sweep still fails it.
+
 ## 2026-11-25 — Preserve connector ownership at coincident mouth cuts (Denver, ledger 0096)
 
 Denver's r5 mouth record had 92 cut rows and 86 distinct piece endpoints. Six pairs of source connectors start at the

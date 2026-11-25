@@ -809,6 +809,7 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None, line: dict
     # window hangs from the road's own height at that edge (_road_top_at, DAYLIGHT_EDGE_INSET_M inside it), not from
     # the centre deck (module doc)
     _daylight_edge_ref = bool((cfg.get("drive_test") or {}).get("daylight_edge_ref"))
+    _interpolate_street_width = not race and bool((cfg.get("drive_test") or {}).get("interpolate_street_width"))
 
     def _in_flat_zone(px, pz):
         return any((px - a) ** 2 + (pz - b) ** 2 < d * d for a, b, c, d in _fzones)
@@ -1027,8 +1028,10 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None, line: dict
         L = math.hypot(tx, tz) or 1e-9
         nx, nz = -tz / L, tx / L
         w = widths[i]
-        # race layouts: the lane at THIS station (the lerped declared width, see _wl); everything else
-        # keeps widths[i]
+        if _interpolate_street_width:
+            # The swept street ribbon has this cross-section between its two built rows.
+            w = widths[i - 1] + (w - widths[i - 1]) * t
+        # Race layouts use their own declared lane at this station.
         w_lane = (_wl[i - 1] + (_wl[i] - _wl[i - 1]) * t) if race else w
         # TRAVEL-SWATH cap: at junction-flare boxes w balloons to 24-40 m, but a swept ribbon
         # covers a bowtie there, not the full square — wheel paths at box-width offsets ride the
@@ -1621,6 +1624,8 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None, line: dict
         # opt-in only (absent the key the report is byte-identical): severe readings re-measured on the dense path
         report["dense_hops"] = len(problems.get("dense_hops", []))
         report["worst"]["dense_hops"] = sorted(problems.get("dense_hops", []), key=lambda r: -r[2])[:200]
+    if _interpolate_street_width:
+        report["street_width_basis"] = "linear interpolation between built centreline rows"
     out_name = f"drive_test.{lid}.json" if lid else "drive_test.json"
     if line is not None:
         out_name = f"drive_test.line.{line['id']}.json"

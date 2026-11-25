@@ -89,6 +89,34 @@ def test_wall_across_the_lane_is_an_obstruction_and_fails():
     assert r["fail"] is True
 
 
+def test_interpolated_street_width_follows_widening_ribbon_and_still_gates_ground_on_road():
+    project = _project()
+    data = project / "data"
+    centerline = data / "centerline.local.json"
+    line = json.loads(centerline.read_text())
+    points = line["points_xyz_m"]
+    line["widths_m"] = [8.0 if z < 50.0 else 12.0 for _, _, z in points]
+    centerline.write_text(json.dumps(line))
+    road = ribbon.road_ribbon(points, line["widths_m"])
+    obj = data / "track.obj"
+    groups = [("1ROAD_main", road), ("1GRASS_base", _grass_plane())]
+    _write_obj(obj, groups)
+    baseline = drive_run(project)
+    assert baseline["soft_top_in_lane"] > 0 and baseline["fail"]
+
+    config = project / "track.config.json"
+    cfg = json.loads(config.read_text())
+    cfg["drive_test"] = {"interpolate_street_width": True}
+    config.write_text(json.dumps(cfg))
+    result = drive_run(project)
+    assert result["soft_top_in_lane"] == 0 and not result["fail"]
+    intrusion = {"vertices": [(-2, 0.05, 99), (2, 0.05, 99), (2, 0.05, 103), (-2, 0.05, 103)],
+                 "tris": [(0, 2, 1), (0, 3, 2)]}
+    _write_obj(obj, groups + [("1GRASS_intrusion", intrusion)])
+    result = drive_run(project)
+    assert result["soft_top_in_lane"] > 0 and result["fail"]
+
+
 def _apron_project(fan_rows=None, levelled=True, pad_h=0.10) -> Path:
     """a 12 m straight on a 1 m row pitch whose right edge steps up 0.12 m at z = 100: at offset -5 the wheel meets
     a 0.10 m rise inside one metre — on pavement this wide that is filed as an exempt apron step, unless a ledger-0050

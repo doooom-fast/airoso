@@ -1,6 +1,6 @@
 {
  "meta": {
-  "generated": "2026-11-24T23:24:22-0700",
+  "generated": "2026-11-24T23:37:08-0700",
   "script": "tracks/denver-grand-prix/source/widths/widths.py",
   "frame": {
    "origin_lonlat": [
@@ -31,7 +31,8 @@
    "I_CONTRAST_MIN": 400.0,
    "I_ASPHALT_MAX": 250.0,
    "KERB_SEARCH_M": 1.5,
-   "EDGE_OUTLIER_M": 1.0
+   "EDGE_OUTLIER_M": 1.0,
+   "CORE_M": 3.0
   },
   "sources": {
    "lidar": "USGS 3DEP CO_DRCOG_2_2020 (flown 2020-05-27), class 2 ground; class 17 bridge deck",
@@ -39,12 +40,12 @@
    "line": "data/lap_line.plan.json (OSM 2026-11-23)"
   },
   "state": "Colfax and every street as the 2022 aerial / 2020 lidar show them (D8); OSM present-day bus lanes not built",
-  "pan_all_left_m": 0.46,
+  "pan_all_left_m": 0.49,
   "pan_all_right_m": 0.46,
   "grades_all_edges": {
-   "measured": 3859,
-   "detected": 198,
-   "inferred": 1261
+   "measured": 3818,
+   "detected": 219,
+   "inferred": 1281
   }
  },
  "stout": {
@@ -69,17 +70,17 @@
     1382.5,
     1385.0
    ],
-   "left_offset_m": 3.62,
-   "right_offset_m": 4.25,
-   "width_m": 7.87,
+   "left_offset_m": 4.12,
+   "right_offset_m": 5.47,
+   "width_m": 9.59,
    "grades": [
     "inferred/measured",
     "inferred/measured",
-    "measured/measured",
     "inferred/measured",
-    "measured/inferred"
+    "measured/inferred",
+    "inferred/inferred"
    ],
-   "road_z": 1589.26,
+   "road_z": 1589.27,
    "structure_top_z_p95_within_8m": 1628.69,
    "clear_height_m": 5.0,
    "clear_height_source": "OSM maxheight=5 (tagged; not measured: the lidar sees the roof, not the soffit)"
@@ -94,14 +95,14 @@
     1740.0,
     1742.5
    ],
-   "left_offset_m": 3.0,
-   "right_offset_m": 3.0,
-   "width_m": 6.0,
+   "left_offset_m": 3.62,
+   "right_offset_m": 3.25,
+   "width_m": 6.87,
    "grades": [
     "measured/measured",
     "measured/measured",
     "inferred/measured",
-    "measured/measured",
+    "inferred/measured",
     "inferred/measured"
    ],
    "road_z": 1591.67,

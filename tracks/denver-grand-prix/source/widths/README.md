@@ -36,12 +36,16 @@ geometry and running medians with a section rule for a city street:
 1. **Kerb face, from the lidar (2020-05-27, class 2 ground):** returns within ±2.5 m along the station, binned 0.25 m
    across. The face is the first outward place past 1.5 m where the ground steps up 0.06–0.40 m and stays up.
    - Parked cars do not interfere: they are not class 2.
+   - The road's grade along the station is taken out first: a fit of z on along / across over the road core
+     (|offset| ≤ 3 m), trimmed and refitted, then the along-road slope is removed from every return. Without it a 5–6 %
+     hill spreads every bin by about ±14 cm and the 6 cm step test fires on noise. That was the first version's false
+     "kerbs" 2–3 m into Colfax's lanes at the start line, found by the build on 2026-11-25.
    - The search runs free from the line. An earlier pass tied it to an asphalt reading, and bike-lane paint, a concrete
      lane or a tower's shadow carried it off the kerb (seen on stills at 14th Ave and 15th St).
 2. **Asphalt edge, from lidar intensity:** asphalt returns near 0; concrete and paint return 500–3,000. The edge is a
    rise of 400 over the road that holds for 0.5 m. Streets that are concrete across the whole section give no reading.
 3. **Asphalt edge, from the 2022 aerial:** the same rule on luminance, a rise of 30, as the second source.
-4. **Gutter pan:** measured per way as kerb face minus asphalt edge. **Lap-wide median 0.46 m on both sides.** That
+4. **Gutter pan:** measured per way as kerb face minus asphalt edge. **Lap-wide median 0.49 m left, 0.46 m right.** That
    matches a 1.5 ft pan, which is a check on the method; the pan figure itself is the median of the readings.
 5. **Edge of record:**
    - the kerb face, graded `measured`;
@@ -52,7 +56,7 @@ geometry and running medians with a section rule for a city street:
 
    The record is smoothed by a 5-station running median.
 
-**Grades, all 5,318 edges:** 3,859 measured (73 %), 198 detected (4 %), 1,261 inferred (24 %). Inferred breaks down as
+**Grades, all 5,318 edges:** 3,818 measured (72 %), 219 detected (4 %), 1,281 inferred (24 %). Inferred breaks down as
 276 under Stout's roof, about 330 at junction mouths, and the rest unread.
 
 **Checked by eye** on the aerial, with the edges drawn (stills beside this file at four places, more were looked at):
@@ -66,8 +70,8 @@ geometry and running medians with a section rule for a city street:
 The brief asks where the aerial and the lidar disagree by more than 0.3 m. Where the lidar has a kerb face, the aerial's
 asphalt edge plus the pan is compared with it; elsewhere the aerial is compared with the intensity edge.
 
-- **1,929 edges have both readings; 1,429 (74 %) differ by more than 0.3 m.** The median difference is +0.10 m, and the
-  16th–84th percentile range is −1.3 to +4.2 m.
+- **1,924 edges have both readings; 1,416 (74 %) differ by more than 0.3 m.** The median difference is +0.06 m, and the
+  16th–84th percentile range is -1.6 to +4.1 m.
 - The aerial is the weak reading. It reads a parked car, a tree lawn, a crosswalk bar or a shadow as the edge.
 - So the **position of record rests on the lidar**, and the disagreement is mostly the aerial failing, not two good
   readings in conflict.
@@ -79,20 +83,20 @@ Width is the p50 of the kerb-to-kerb record. Measured is the share of edges grad
 
 | Leg | s (m) | Width p50 (m) | Measured | Aerial vs lidar >0.3 m |
 |---|---|---|---|---|
-| Colfax WB to Speer NB | 0–1175 | 11.4 | 76 % | 332 of 465 |
-| Speer NB to Stout | 1178–1325 | 15.9 | 76 % | 31 of 52 |
-| Stout to 15th St (incl. 344 m covered) | 1328–1905 | 9.5 | 27 % | 26 of 28 |
-| 15th St to Blake | 1908–2642 | 17.8 | 77 % | 175 of 186 |
-| Blake to Speer SB | 2645–2945 | 16.3 | 74 % | 79 of 82 |
-| Speer SB to Kalamath | 2948–3748 | 15.6 | 80 % | 192 of 290 |
-| Kalamath S to W 14th Ave | 3750–4138 | 18.4 | 79 % | 46 of 46 |
-| W 14th Ave to Santa Fe | 4140–4202 | 11.9 | 69 % | 3 of 4 |
-| Santa Fe N to Colfax | 4205–4392 | 21.3 | 88 % | 22 of 24 |
-| Kalamath NB branch to Speer SB | 4395–4540 | 17.9 | 65 % | 16 of 16 |
-| Speer SB to W 14th Ave | 4542–4882 | 15.9 | 77 % | 42 of 98 |
-| 14th Ave E to Logan | 4885–6250 | 12.9 | 78 % | 357 of 489 |
-| Logan N to Colfax | 6252–6430 | 11.8 | 63 % | 50 of 67 |
-| Colfax W to S/F | 6432–6645 | 16.4 | 77 % | 58 of 82 |
+| Colfax WB to Speer NB | 0–1175 | 12.8 | 72 % | 317 of 461 |
+| Speer NB to Stout | 1178–1325 | 16.2 | 76 % | 33 of 51 |
+| Stout to 15th St (incl. 344 m covered) | 1328–1905 | 9.8 | 26 % | 23 of 26 |
+| 15th St to Blake | 1908–2642 | 17.8 | 78 % | 177 of 188 |
+| Blake to Speer SB | 2645–2945 | 16.6 | 73 % | 79 of 81 |
+| Speer SB to Kalamath | 2948–3748 | 15.7 | 79 % | 182 of 281 |
+| Kalamath S to W 14th Ave | 3750–4138 | 19.6 | 77 % | 47 of 47 |
+| W 14th Ave to Santa Fe | 4140–4202 | 12.0 | 67 % | 2 of 3 |
+| Santa Fe N to Colfax | 4205–4392 | 21.1 | 84 % | 23 of 25 |
+| Kalamath NB branch to Speer SB | 4395–4540 | 19.4 | 63 % | 17 of 17 |
+| Speer SB to W 14th Ave | 4542–4882 | 16.0 | 76 % | 47 of 98 |
+| 14th Ave E to Logan | 4885–6250 | 13.7 | 79 % | 347 of 490 |
+| Logan N to Colfax | 6252–6430 | 12.0 | 69 % | 57 of 72 |
+| Colfax W to S/F | 6432–6645 | 19.7 | 81 % | 65 of 84 |
 
 Per-way detail, with confidence `high` / `medium` / `low`, is in `stretches.json`. Of the 6,646 m, `high` covers about
 4.7 km, `medium` 1.2 km and `low` 0.1 km; the covered 342 m has none.
@@ -102,7 +106,7 @@ Per-way detail, with confidence `high` / `medium` / `low`, is in `stretches.json
 - **Kerb to kerb, not lane to lane.** Where OSM maps a street as two one-way ways with only paint between them (Colfax
   east of Logan and at the Capitol, parts of Kalamath / Santa Fe, 15th at Blake), the two kerbs hold the other direction
   too. The width is then the whole street's.
-  - `opposing_carriageway_within` marks those stations: 129 of 2,659, with the other way's offset and id.
+  - `opposing_carriageway_within` marks those stations: 171 of 2,659, with the other way's offset and id.
   - The painted divider (double yellow) is in PR 66's `paint.json`.
   - Whether the race uses the whole street there is the build's call.
 - **A raised median on the lap's side is a kerb face here.** Colfax at Civic Center and Speer's parkway read to the
@@ -137,6 +141,33 @@ abutments. The profiles in `bridges.json` hold the detail; the edges include the
   8 m is 1628.7 m at the entry.
 - **Inside:** `between measured portals [invented]` (Tracks:Mac's call for tonight). The edges are interpolated linearly
   from portal to portal. No source sees under the roof; a capture by Kevin would replace it.
+
+## Corrections
+
+**2026-11-25: the along-road grade.** The build found the left "kerb" 2.25–3.25 m off the line on Colfax westbound
+from Grant through the start/finish (s 6602.5–62.5), inside the painted lanes. It was false: the 5.6 % fall from
+Sherman, left in the ±2.5 m window, read as steps. The grade is now removed before binning (method item 1). What the
+lidar and the aerial show there:
+
+- **s 6602.5 to about 45 (Grant to just west of Sherman, the grid and the S/F): no raised median.**
+  - Colfax is one paved street, the two directions divided by paint: PR 66's double yellow at about +5.5 m, the eastbound
+    carriageway's OSM line at +10.2 to +11.5 m.
+  - Left edge of record = **Colfax's south kerb, +16.75 to +17.5 m** (about +21 to +25 at the Sherman mouth, s 6640–0).
+  - Width kerb to kerb about 20.5 m. Flagged `opposing_carriageway_within`.
+- **From about s 47.5 west to s 95: a raised, planted median** (trees in the middle of Colfax on the aerial).
+  - Near face **+5.0 to +6.25 m**.
+  - Crowned top up to 0.37 m.
+  - **Far face about +10 m** from the 1 m profile. The `medians` list reads the far face early (+7.6 to +8.6) on this
+    crowned top; take +10 m here.
+  - The record's left edge is the near face: carriageway about 10 m.
+- **s 100–120:** the median opens (no reading, interpolated), and it resumes at s 125.
+
+Other stretches the fix moved by more than 0.5 m (p50), 38 in all, mostly on grades:
+- East 14th Ave, Lincoln to Logan (6 %): 8.1–13.6 m became 13.5–17.8 m, checked on the aerial at s 6000.
+  - At s 6180 the north edge reads the back of the walk for about 20 m in front of one building (tree pits break the
+    kerb line). That is a known check item.
+- 15th St, Blake, Auraria Pkwy, Kalamath and Speer moved by 1–3 m either way.
+- Kalamath at the Colfax crossing (s 3945–3965) now reads 37 m: Kalamath and Santa Fe together, junction, flagged.
 
 ## Not done
 

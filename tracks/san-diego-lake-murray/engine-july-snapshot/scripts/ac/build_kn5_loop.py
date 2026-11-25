@@ -1354,6 +1354,50 @@ def _conform_and_reseat(proj: Path, spans):
           f"{n_rel} props rode the terrain delta")
 
 
+# --- PAINT FROM AN INVENTORY (Denver Grand Prix PLAN 4b item 10; ledger 0096; opt-in) --------------------------
+# A track whose track.config.json names a paint inventory (inventory.paint.file) is painted from it and from
+# nothing else: tools/author_paint_inventory_blend.py lays MARKINGS_inv_* / YLINE_inv_* on the built road and pads,
+# and this prep, the last step before the export, takes out every other paint mesh (the assembler's lines by width,
+# the weld's connector paint, road text) so none reaches the kn5. inventory.paint.keep_prefixes names declared
+# additions that stay (a race layout's start line and grid). No inventory.paint = nothing here runs.
+PAINT_CLASS = ("MARKINGS", "YLINE", "ROADTEXT")
+INVENTORY_PAINT = ("MARKINGS_INV", "YLINE_INV")
+
+
+def paint_inventory_of(cfg: dict):
+    """track.config.json inventory.paint when it names a file, else None (the track paints as it always did)"""
+    inv = (cfg.get("inventory") or {}).get("paint")
+    return inv if isinstance(inv, dict) and inv.get("file") else None
+
+
+def is_bywidth_paint(name: str, keep=()) -> bool:
+    """a paint mesh that did not come from the inventory and is not a declared addition"""
+    up = str(name).upper()
+    if not up.startswith(PAINT_CLASS) or up.startswith(INVENTORY_PAINT):
+        return False
+    return not up.startswith(tuple(str(k).upper() for k in keep if str(k)))
+
+
+def drop_bywidth_paint(bpy, cfg: dict) -> list[str]:
+    """with a paint inventory declared: remove every paint mesh the inventory did not author; FATAL when the
+    inventory's own paint is not in the scene (the author step did not run). Returns the names removed."""
+    inv = paint_inventory_of(cfg)
+    if inv is None:
+        return []
+    keep = inv.get("keep_prefixes") or ()
+    names = [o.name for o in bpy.data.objects if o.type == "MESH"]
+    if not any(n.upper().startswith(INVENTORY_PAINT) for n in names):
+        raise SystemExit("[build_kn5_loop] FATAL: track.config.json inventory.paint names " + str(inv.get("file"))
+                         + " but the scene has no MARKINGS_inv_* / YLINE_inv_* mesh (tools/author_paint_inventory_blend.py "
+                         "did not run); nothing prepped")
+    gone = [n for n in names if is_bywidth_paint(n, keep)]
+    for n in gone:
+        bpy.data.objects.remove(bpy.data.objects[n], do_unlink=True)
+    print(f"[build_kn5_loop] paint inventory: removed {len(gone)} paint mesh(es) the inventory did not author "
+          f"{sorted(gone)[:6]}; kept {sorted(n for n in names if n.upper().startswith(INVENTORY_PAINT))[:6]}")
+    return gone
+
+
 def main():
     import bpy
 
@@ -1379,6 +1423,9 @@ def main():
             bpy.data.objects.remove(ob, do_unlink=True); continue
         ob.name = AC_NAME.get(ob.name, ob.name)
 
+    # 2a. paint from an inventory (PLAN 4b item 10, opt-in: track.config.json inventory.paint): nothing by width
+    drop_bywidth_paint(bpy, cfg)
+
     # 2b. terrain contact conform: declare the real bridge spans, pin the terrain to the deck under
     #     the footprint (subdividing the corridor first), spare the declared spans, and re-seat the
     #     props on the moved ground. Engine-owned so every future rebuild stays fixed.
@@ -1396,7 +1443,10 @@ def main():
         # ...and the race furniture (ledger 0047) + the phase-5 stub barriers (1WALL_STUB, ledger 0054): the strips carry
         # u = arc / 4.04 m along the
         # vertical faces and the kerbs v = arc / 1 m — a top-down projection would smear them
-        if not ob.name.upper().startswith(("PALM", "TREE", "SCRUB", "BUSHES", "CHAINLINK", "ROADTEXT",
+        # ...and a sign face (Denver Grand Prix PLAN 4b item 8, ledger 0096): a mesh named SIGNFACE* carries its
+        #   SIGNFACE          artwork's own unwrap (the plate's corners at the texture's corners). SIGNPLATE, the flat
+        #                     yellow W1-6 plate with its arrow as geometry, is NOT in this list and is projected as before
+        if not ob.name.upper().startswith(("SIGNFACE", "PALM", "TREE", "SCRUB", "BUSHES", "CHAINLINK", "ROADTEXT",
                                            "1WALL_RACE", "1KERB_RACE", "BRIDGESTRUCT", "1WALL_STUB",
                                            "BUILDING_FABRIC", "1WALL_FABRIC", "PROPCONE", "BUILDING_TILTUP", "BUILDING_METAL",
                                            "BUILDING_STUCCO", "BUILDING_SIDING", "ROOFTOP", "1WALL_TILTUP", "1WALL_TECPRO",
@@ -1404,7 +1454,7 @@ def main():
             planar_uv(me)
         bm = bmesh.new(); bm.from_mesh(me)
         # ledger 0061: the bespoke shells are authored and never welded (ledger 0024's inside-out shells)
-        if not ob.name.upper().startswith(("BUILDING_FABRIC", "PROPCONE", "BUILDING_TILTUP", "BUILDING_METAL", "BUILDING_STUCCO",
+        if not ob.name.upper().startswith(("SIGNFACE", "BUILDING_FABRIC", "PROPCONE", "BUILDING_TILTUP", "BUILDING_METAL", "BUILDING_STUCCO",
                                            "BUILDING_SIDING", "ROOFTOP", "GUARDRAIL", "BUILDING_DRYSTONE", "FARBLOCK")):
             bmesh.ops.remove_doubles(bm, verts=bm.verts, dist=1e-4)
         if ob.name.upper().startswith("1GRASS"):

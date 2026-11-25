@@ -1,6 +1,6 @@
 # old md5 (still live in C:/Users/Owner/Documents/GitHub/engine-july)  new md5 (this snapshot)  path —
 # changes rehearsed on a scratch ENG copy, to mirror into the real engine-july (cp, then check the
 # md5). Written by tools/snapshot_engine_july.py; tests accept the old md5 until then.
-dd5657ae2d2454af1f08770f3cfa658b  2a653ee16a916384c76fc874fe2966e9  scripts/ac/build_kn5_loop.py
+dd5657ae2d2454af1f08770f3cfa658b  07d23c054c45ec27c4783fb96902b059  scripts/ac/build_kn5_loop.py
 1bdc2628253532045f5ba6d490e7da4f  83b231e840c09b34ef32cde98dbf2c35  scripts/ac/export_kn5_addon.py
 56c3307f29e1072ad4748f1a85ecd8cf  e414f4076953373dbc6f3dbc42ca034a  scripts/ac/pbr.py

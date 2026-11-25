@@ -674,6 +674,16 @@ author_paint() {
   step "author: measured paint on the bespoke surfaces the config names (tools/author_paint_blend.py --stage author; ledger 0093; self-checked; no route.paint surface item = no-op)"
   (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_paint_blend.py" -- "$PROJ" --stage author 2>&1 | grep "^\[paint\]\|FATAL\|Error\|Traceback" )
 }
+author_paint_inventory() {
+  # ledger 0096 (Denver Grand Prix PLAN 4b item 10; Kevin 2026-11-23: "Same with road paint, we do a terrible job currently"):
+  # a track that names a paint inventory (track.config.json inventory.paint.file, the survey pilot's schema) is painted from it
+  # and from nothing else, on the built road and every junction pad: every paint object the inventory did not author leaves
+  # loop.blend, every item of a built grade is draped where it was read (AUTH_paint_inventory: MARKINGS_inv_* / YLINE_inv_*).
+  # List it AFTER every step that lays road or paint (the weld, the pads, author_paint). The prep drops by-width paint again
+  # before the export. No inventory.paint = no-op (every other track); the built paint is judged by gate_inventory
+  step "author: road paint from the surveyed inventory, on the ribbon and the pads, nothing by width (tools/author_paint_inventory_blend.py; ledger 0096; self-checked; no inventory.paint = no-op)"
+  (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_paint_inventory_blend.py" -- "$PROJ" 2>&1 | grep "^\[paint-inventory\]\|FATAL\|Error\|Traceback" )
+}
 
 ship_grassfx_aerial() {
   step "ship: GrassFX zones off the track's aerial (tools/plan_grassfx_aerial.py; none declared = no-op), read by the track folder's ext_config"
@@ -971,6 +981,23 @@ gate_textures() {
   step "gate: textures on everything (tools/verify_textures.py: every visible mesh of every packed kn5 binds an embedded diffuse — hard)"
   rm -f "$PROJ/data/verify_textures.json"
   (cd "$AIROSO" && python tools/verify_textures.py "$PROJ" --json "$PROJ/data/verify_textures.json")
+}
+gate_inventory() {
+  # ledger 0096 (Denver Grand Prix PLAN 4b item 11; Kevin, E1: "Hard gates for Denver, opt-in elsewhere until proven"): the
+  # built kn5 set each layout loads against the surveyed inventory, per class the config gates (inventory.<class>.gate true:
+  # paint, lamps, signals, signs): present (every item built within its grade's tolerance, right type, facing the right way),
+  # nothing extra, covered (every lap metre and junction has a record or a declared none); the share of each grade printed.
+  # Hard: exit 1 stops the chain here and --force-install never covers it. No gated class = it says so and passes
+  local lid KX
+  step "gate: the built kn5 against the surveyed inventory, per layout (tools/inventory_gate.py: present, nothing extra, covered; ledger 0096; opt-in by inventory.<class>.gate, hard where on)"
+  for lid in $LAYOUT_IDS; do
+    rm -f "$PROJ/data/inventory_gate.$lid.json"
+    if [[ " $RACE_IDS " == *" $lid "* ]]; then KX="--kn5 $PROJ/build/${RK[$lid]} --kn5 $PROJ/build/${SLUG}_closure_$lid.kn5"
+    elif [[ " $BARE_RACE_IDS " == *" $lid "* ]]; then KX=""
+    elif [ -f "$PROJ/build/${SLUG}_street.kn5" ]; then KX="--kn5 $PROJ/build/${SLUG}_street.kn5"; else KX=""; fi
+    echo "  layout $lid:"
+    (cd "$AIROSO" && python tools/inventory_gate.py "$PROJ" $KX --json "$PROJ/data/inventory_gate.$lid.json")
+  done
 }
 gate_edge_report() {
   # ledger 0078: what stands beside the lane (the kerb or shoulder 1 m out, its rise, the ground 3 / 6 / 10 m out) on the

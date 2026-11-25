@@ -637,6 +637,14 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None, line: dict
     # railing is the defect, not the railing) — obstruction hits on *bridge-named meshes there are skipped
     spans = [(b.get("center_m", 0) - b.get("len_m", 0) / 2 - 20, b.get("center_m", 0) + b.get("len_m", 0) / 2 + 20)
              for b in (cfg.get("capture", {}) or {}).get("bridges", [])] if line is None else []
+    # declared COVERED spans (Denver Grand Prix PLAN 4 item 1, ledger 0096; opt-in: capture.covered_spans): the bridge
+    # exemption the other way up. Inside a declared span, a triangle wholly min_clear_m or more above the road is the
+    # roof's (its soffit, what stands on it, a light hung from it): it is neither a surface a wheel could land on nor a
+    # thing in the corridor, and a wall up there is not floating furniture. What rises from the road is read as before.
+    # The zones lie on the MAINLINE whatever line this run drives (a lap passes under the same roof); a --line run reads
+    # none, as it reads no bridge span. No declaration = _cov is None and nothing below changes.
+    from scripts.geometry import covered_spans as _covered
+    _cov = _covered.zones_for(cfg, _main_pts, _main_w) if line is None else None
 
     surface = TriField()      # everything the car can roll on
     obstacle = TriField()     # everything else that could stand in the corridor
@@ -704,6 +712,8 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None, line: dict
                     for vi in tri:
                         if vi not in _seen_w:
                             _seen_w.add(vi)
+                            if _cov is not None and _cov.point_overhead(*verts[vi], count=False):
+                                continue        # a parapet on the declared roof: not this road's furniture
                             _wall_verts.append(verts[vi])
             field = surface if up.startswith(DRIVABLE) else obstacle
             for tri in grp["tris"]:
@@ -711,10 +721,18 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None, line: dict
                 if not _near_corridor(_a, _b, _c):
                     _culled += 1
                     continue
+                if _cov is not None and _cov.tri_overhead(_a, _b, _c):
+                    continue                    # the declared roof over the road: set aside, counted per span
                 field.add(verts, tri, grp["name"])
 
     if _culled:
         print(f"  [drive] corridor cull: skipped {_culled} triangles beyond {_CULL_M:.0f} m")
+    if _cov is not None:
+        for _cr in _cov.report():
+            print(f"  [drive] covered span {_cr['name']!r} ({_cr['from_m']:.0f}-{_cr['to_m']:.0f} m): {_cr['overhead_set_aside']} "
+                  f"overhead triangles set aside; lowest over the road "
+                  + ("none built" if _cr["lowest_overhead_m"] is None else f"{_cr['lowest_overhead_m']:.2f} m")
+                  + (f" (declared clear {_cr['clear_m']:.2f} m)" if _cr["clear_m"] is not None else ""))
     _phase("load + hash")
 
     # SANITY: there must BE a road. A build_mesh that dies mid-write (2.87 M grid verts ran the
@@ -1639,7 +1657,12 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None, line: dict
     if _exc_adv and report["excursion_drops"]:
         print(f"  !! EXCURSIONS ADVISORY MODE: {report['excursion_drops']} unguarded drops NOT gating "
               f"(awaiting construction selector #17)")
+    if _cov is not None:
+        # only a track that declares a covered span carries these keys (every other report is as it was)
+        report["covered_spans"] = _cov.report()
+        report["covered_low_overhead"] = sum(r["under_declared_clearance"] for r in report["covered_spans"])
     fail = (report["soft_top_in_lane"] > 0
+            or report.get("covered_low_overhead", 0) > 0
             or report["daylight_gaps"] > 0
             or (not _exc_adv and report["excursion_drops"] > int(report["lap_m"] / 1000))
             or report["obstruction_stations"] > 0
@@ -1694,6 +1717,9 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None, line: dict
           + (f"   [{off_pavement} station(s) skipped: no pavement — off the stage end]" if off_pavement else ""))
     print(f"  floating furniture (walls/fences off support): {report['floating_furniture']} "
           f"{problems['floating_furniture'][:3] if problems['floating_furniture'] else ''}")
+    if _cov is not None:
+        print(f"  covered spans          : {len(report['covered_spans'])} declared; overhead under its declared "
+              f"clearance (- {_covered.CLEAR_TOL_M} m): {report['covered_low_overhead']} triangle(s)")
     print(f"  undrivable corners (>100deg @ <11m): {report['undrivable_corners']} "
           f"{problems['undrivable_corners'][:4] if problems['undrivable_corners'] else ''}")
     print(f"  severe steps (>{STEP_SEVERE_M*100:.0f} cm)  : {report['severe_steps']}")

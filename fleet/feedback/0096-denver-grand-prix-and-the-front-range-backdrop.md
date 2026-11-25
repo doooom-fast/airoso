@@ -240,3 +240,26 @@ Report: [`source/survey/SURVEY.md`](../../tracks/denver-grand-prix/source/survey
 
 Owed: heights (flight hours), sign faces and posts' fixtures (street-level imagery, E3), Stout under the roof (captures), the
 free-roam grid's survey. The three gates of PLAN §4b now have inventories to hold a build to.
+
+## The street furniture: made, not placed (Mac, 2026-11-23)
+
+The asset half of PLAN §4b, on branch `claude/dgp-street-furniture-20261123`. Generated, self-made, CC0; nothing placed,
+no config changed, nothing installed. The table, the stills and the §8 rows are in
+`tracks/denver-grand-prix/source/furniture/README.md`.
+
+- **Signals** (`tools/make_signals.py`): mast arms of 25, 35 and 45 ft, a pedestal, a pushbutton post, five vehicle
+  heads, a light-rail bar head and a pedestrian head. Every lens is its own named mesh, so one can be lit steady (E2).
+  The 12 in lens and the mounting limits are the MUTCD's; arm lengths, pole sizes and colours are typical values, not
+  Denver's standard details.
+- **Lamps** (`tools/make_streetlight_posts.py`): a pedestrian post (acorn or globe) and an arterial bracket-arm post
+  (single or twin), parametric. **Provisional**: no survey has said which fixtures stand on the lap.
+- **Sign faces** (`tools/make_sign_faces.py`): 28 regulatory and warning faces, 11 plates cut to their outlines, and a
+  blade for each of the 38 streets on or meeting the lap. Sizes are the MUTCD's; the layouts and the letters (our own
+  stroke alphabet) are approximations. The blade style and the bus-lane legend are unverified.
+- **Rail** (`tools/make_rail_crossing.py`): a crossbuck. OSM tags the lap's five crossings as light rail under traffic
+  signals, so one may not stand anywhere on it; the survey decides.
+- The MUTCD was not opened while these were written: the numbers are from knowledge of the 2009 edition and are
+  stated per maker so they can be checked.
+- Owed by the engine before any of it shows: plate and lens UVs kept through the prep, the pbr rows, the lit lens.
+- Still gaps: guide signs beyond blades, crossing gates, catenary, shelters, hydrants, and every lamp class the survey
+  has yet to name.

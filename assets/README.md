@@ -19,3 +19,18 @@ Y-up, heights normalized). Conversion scripts: session scratchpad `convert_dropb
 Still placeholder (0005 remainder): concrete barrier set, traffic-sign pack (`Dropbox/Blender/obj/`),
 fences, pine trunk geometry (Small_Pine.blend has unlabeled materials — needs a hand pass),
 Street_Lamp full PBR (ao/metal/norm/emiss staged in Dropbox, engine shader path is diffuse-only today).
+
+## Generated street furniture (ledger 0096, 2026-11-23) — self-made, CC0
+
+Not from Dropbox. Deterministic generators; `--check` on each compares the committed files, and
+`tests/tools/test_street_furniture.py` runs them.
+
+| engine files | generator | notes |
+|---|---|---|
+| models/signal_*.obj, signals.json; textures/signal_lens_*.png, ped_signal_*.png | tools/make_signals.py | mast arms, pedestal, pushbutton post, heads with each lens a separate mesh; MUTCD where it fixes a number, `[typical]` elsewhere |
+| models/streetlight_ped_*.obj, streetlight_arterial_*.obj, streetlight_posts.json | tools/make_streetlight_posts.py | two provisional lamp classes beside led_cobra |
+| textures/mutcd_r*.png, mutcd_w10-1.png, mutcd_w11-2*.png; models/sign_plate_*.obj, sign_faces.json | tools/make_sign_faces.py | 28 MUTCD faces and their plates; Denver's blades go to tracks/denver-grand-prix/textures/blades/ |
+| models/rail_crossbuck.obj, rail_crossing.json | tools/make_rail_crossing.py | the crossbuck |
+
+Stills and the per-asset table: `tracks/denver-grand-prix/source/furniture/README.md`. None of it is bound by
+`scripts/ac/pbr.py` yet.

@@ -10,7 +10,7 @@ PYTHONUTF8=1 /Volumes/Sundowning/Claude/airoso-data/venv/bin/python \
 
 The defaults are the integration branch's paths once PR 66 and PR 60 are merged: `source/survey/` and `assets/models/`.
 This file was made with both read from their branches (PR 66 at `claude/kind-turing-5xrxlc`, PR 60 at
-`claude/dgp-street-furniture-20261123`), against the widths of `1becc3a0`.
+`claude/dgp-street-furniture-20261123`), against the widths of `c03567a5` (the along-road grade fix; first made against `1becc3a0`).
 
 `placements.plan.json` has one row per surveyed post, 735 rows:
 
@@ -34,7 +34,7 @@ This file was made with both read from their branches (PR 66 at `claude/kind-tur
 
 | Class | n | Model |
 |---|---|---|
-| signal mast | 119 | `signal_mast_arm_45` 31, `_35` 87, `_25` 1 |
+| signal mast | 119 | `signal_mast_arm_45` 35, `_35` 84 |
 | signal pole, tall, no arm | 60 | **GAP** (PR 60 has none); `signal_pedestal` named as a stand-in |
 | signal pedestal | 22 | `signal_pedestal` |
 | lamp, pedestrian | 179 | `ped_globe` |
@@ -46,8 +46,8 @@ This file was made with both read from their branches (PR 66 at `claude/kind-tur
 
 Signal poles that also carry a luminaire: 58 (`also_lamp: arterial_single`).
 
-- **What each post fronts:** 482 the lap, 71 the opposing carriageway, 111 a cross street, 71 off the corridor.
-- **Distance behind the kerb** for posts that front the lap: p10 0.16 m, p50 1.37 m, p90 5.62 m.
+- **What each post fronts:** 502 the lap, 61 the opposing carriageway, 100 a cross street, 72 off the corridor.
+- **Distance behind the kerb** for posts that front the lap: p10 0.05 m, p50 1.29 m, p90 5.67 m.
 - **Grades** (from the survey): 603 measured, 132 detected.
 
 ## How the model was chosen
@@ -57,8 +57,8 @@ Signal poles that also carry a luminaire: 58 (`also_lamp: arterial_single`).
   119 notes give one.
 - When the arm points across the lap (within 45° of the lap's inward normal) and the post fronts the lap, the arm needed
   is the distance behind the kerb plus 0.75 × the carriageway's width (the tip over the far lanes). The shortest model
-  that reaches is chosen. That applies to 40 masts.
-  - **17 of them need more than 45 ft:** Speer, 15th and Kalamath are 15–21 m wide. They get the 45 ft model and are
+  that reaches is chosen. That applies to 41 masts.
+  - **24 of them need more than 45 ft:** Speer, 15th and Kalamath are 15–21 m wide. They get the 45 ft model and are
     marked short. Denver's real arms there are likely longer; a 55–65 ft arm is a PR 60 follow-up.
 - Every other mast (an arm over a cross street or the opposing carriageway, or no direction in the note) gets 35 ft
   `[typical]`.
@@ -86,9 +86,9 @@ The placements were drawn on the 2022 aerial at Colfax / Sherman and at 14th Ave
 
 ## Read before placing
 
-- **`inside_edge`, 53 posts:** they stand more than 0.5 m inside the edge of record. They are on medians and islands
+- **`inside_edge`, 55 posts:** they stand more than 0.5 m inside the edge of record. They are on medians and islands
   where the record runs to the far kerb (paint-only divided streets), at junction mouths where the edge is bridged
-  straight across, or they are readings to check (17 of them masts on median noses or islands).
+  straight across, or they are readings to check (masts on median noses or islands among them).
 - **`fronts: cross_street` and `off_corridor`:** these belong to the side streets and the free-roam grid. They are
   listed so nothing is lost; the race corridor needs only `lap` and `opposing_carriageway`.
 - **Heights** come from the model, not the survey (the survey has no clean sun elevation).

@@ -16,7 +16,8 @@
       "seat_terrain",
       "densify_ribbon",
       "seat_edges",
-      "gap_mouths"
+      "gap_mouths",
+      "ground_patch"
     ],
     "author": [
       "race_bands",
@@ -54,7 +55,8 @@
   },
   "sync_in": {
     "required": [
-      "track.config.json"
+      "track.config.json",
+      "source/mcnichols_ground.lidar.json"
     ],
     "optional": [
       "signs.json"

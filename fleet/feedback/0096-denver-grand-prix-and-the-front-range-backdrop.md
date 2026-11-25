@@ -276,6 +276,9 @@ track.
   other corner the W1-6 rule would sign is skipped in `signs.json` with its reason, so no rule-placed sign stands in the
   free roam.
 - The origin's `elev_m` 1,580 is a datum for local Y, not a reading.
+- **Textures: the engine's stock rows.** The owned asphalt and concrete pairs are Kevin's for the four tracks he is
+  finishing ("On every track now", scoped to them 2026-11-22), not Denver until he says so (240b2797's follow-up: the Mac
+  build of eada16c2 had carried Sand Creek's overrides; the change binds textures only, no geometry).
 
 **The Mac build of eada16c2, from an empty workshop (a `git archive` of the commit), `--no-install`** (Blender 4.2.9; ENG = the engine-july snapshot with
 `assets/textures`; the runner changes only the Blender path and bash 3.2's `declare -A` / `${tok^^}`): **SHIP OK, every gate

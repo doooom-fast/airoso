@@ -14,8 +14,7 @@
   "plant_clear_m": 2.5,
   "kappa_window_m": 12,
   "hysteresis_stations": 6,
-  "pad_decks": false,
-  "walk_built_only": true
+  "pad_decks": false
  },
  "corners": {
   "DGP-HAIRPIN": {

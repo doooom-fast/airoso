@@ -443,23 +443,6 @@
    "golden_hour"
   ]
  },
- "texture_overrides": {
-  "1ROAD": {
-   "diffuse": "assets/textures/asphalt_dense_diffuse.jpg",
-   "normal": "assets/textures/asphalt_dense_normal.jpg",
-   "_doc": "ledger 0098 (Kevin 2026-11-22, asked \"The owned asphalt and concrete on the other tracks?\": \"On every track now\"): the owned dense-graded asphalt (tools/make_owned_surfaces.py, CC0; ledger 0095's High Plains / Milford pilot) in place of the borrowed cracked tile (LA Canyons, personal use; was: Kevin, \"use the Lariat's road texture\"). Its mean colour and relief were measured off the cracked tile. Sand Creek has no road_wear bake, so road_wear.detail_highpass_m (a road_wear key) has nothing to act on here: the tile is used as made"
-  },
-  "1GRASS": {
-   "diffuse": "assets/textures/grass_diffuse.jpg",
-   "normal": "assets/textures/grass_normal.jpg",
-   "_doc": "Kevin: the Lariat's alpine grass look on Sand Creek too"
-  },
-  "1KERB_SIDEWALK": {
-   "diffuse": "assets/textures/concrete_plain_diffuse.jpg",
-   "normal": "assets/textures/concrete_plain_normal.jpg",
-   "_doc": "ledger 0098 (\"On every track now\"): the owned plain concrete (tools/make_owned_surfaces.py, CC0, MEANT FOR 1KERB_SIDEWALK) in place of the Hamburg board-formed concrete (building_diffuse.jpg, mined) on every edge strip, corner return and the fork 91/92 island (1KERB_sidewalk_*: the only meshes of the road kn5 that bound building_diffuse.jpg on 0.2.7's m7d). Its mean colour was measured off building_diffuse.jpg"
-  }
- },
  "kerb": {
   "_about": "Racing-circuit kerbs: taller + rideable ramp on the lane side (vs the default 5cm street kerb).",
   "height_m": 0.05,
@@ -552,5 +535,6 @@
  },
  "signs_file": "signs.json",
  "_signs_file_doc": "the race layout's own W1-6 plate at the hairpin (signs.json: tools/place_signs.py per_layout, defaults.layout_plates_only), in the race closure kn5 alone; no rule-placed sign in the road kn5",
- "_layouts_name_doc": "ui_track.json reads '<ui_series> - <name> — <layout name>': 'doooom Colorado - Denver Grand Prix — Race' / '— Free Roam' (docs/ONE-CHAIN.md 3)"
+ "_layouts_name_doc": "ui_track.json reads '<ui_series> - <name> — <layout name>': 'doooom Colorado - Denver Grand Prix — Race' / '— Free Roam' (docs/ONE-CHAIN.md 3)",
+ "_texture_overrides_doc": "none: the engine's stock rows. The owned asphalt and concrete pairs are Kevin's for the four tracks he is finishing (2026-11-22 'On every track now', scoped to Lake Murray, Sand Creek, High Plains, Milford: tests/tools/test_lake_murray_0099.py), not this one until he says so"
 }

@@ -115,27 +115,14 @@ if cfg.get("road_wear") and (project / "data" / "road_wear.json").exists():
     print("[export] road wear:", sorted(road_wear))
 
 
-def shader_and_textures(name):
-    """(shader, [(slot, filename, source_path)]). A captured override replaces the stock asset for its
-    prefix so the SHIPPED kn5 binds to + embeds the real texture; source_path is where to stage it from."""
-    key = next((k for k in pbr.TEXTURES if name.upper().startswith(k)), None)
-    if key is None:
-        return "ksPerPixel", []
-    diff, norm = pbr.TEXTURES[key][0], pbr.TEXTURES[key][1]
-    ov = overrides.get(key, {})
-    tx = []
-    if ov.get("diffuse"):
-        p = Path(ov["diffuse"]); tx.append(("txDiffuse", p.name, str(p)))
-    elif diff:
-        tx.append(("txDiffuse", diff, str(assets_tex / diff)))
-    if ov.get("normal"):
-        p = Path(ov["normal"]); tx.append(("txNormal", p.name, str(p)))
-    elif norm:
-        tx.append(("txNormal", norm, str(assets_tex / norm)))
-    has_norm = bool(norm or ov.get("normal"))
-    if key in pbr.BILLBOARD:            # trees / bushes / road-text are alpha-cutout billboards
+def shader_and_textures(binding):
+    """Return the shader and texture slots the export add-on will embed."""
+    tx = [(slot, path.name, str(path))
+          for slot, path in (("txDiffuse", binding["diffuse"]), ("txNormal", binding["normal"]))
+          if path is not None]
+    if binding["key"] in pbr.BILLBOARD:
         return "ksTree", tx
-    return ("ksPerPixelMultiMap" if has_norm else "ksPerPixel"), tx
+    return ("ksPerPixelMultiMap" if binding["normal"] else "ksPerPixel"), tx
 
 
 # 4. write the persistence .ini the add-on reads (clear any stray .ini first)
@@ -150,8 +137,13 @@ for mat in bpy.data.materials:
     if mat.name.startswith("__") or mat.users == 0:
         continue
     obj = mat.name[:-4] if mat.name.endswith("_mat") else mat.name
-    shader, tx = shader_and_textures(obj)
-    at = 1 if shader == "ksTree" else 0   # tree/bush/text billboards are alpha-cutout
+    binding = pbr.resolve(obj, overrides, assets_tex)
+    shader, tx = shader_and_textures(binding)
+    if obj.upper().startswith("SIGNFACE"):
+        diffuse = binding["diffuse"]
+        if diffuse is None or not diffuse.is_file():
+            raise SystemExit(f"[export] {mat.name}: no readable sign-face texture ({diffuse})")
+    at = int(pbr.alpha_cutout(binding["key"]))
     # shader property VARs (pbr.KS_PROPS): without these AC uses shader defaults (ksDiffuse ~1.0)
     # and vegetation billboards blast neon under CSP streetlights (the glowing-forest video).
     ks_key = next((k for k in pbr.KS_PROPS if obj.upper().startswith(k)), None)

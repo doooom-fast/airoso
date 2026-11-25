@@ -69,7 +69,9 @@ def _names_the_repo_knows():
         if f.is_file():
             names.update(tok.findall(f.read_text(encoding="utf-8", errors="replace")))
     for k in list(pbr.TEXTURES):
-        names.update({k + "_0", k.lower() + "_a", k + "x"})
+        names.update({k + "_0", k.lower() + "_a"})
+        if k not in pbr.SIGN_FACE_TEXTURES:
+            names.add(k + "x")
     return names
 
 

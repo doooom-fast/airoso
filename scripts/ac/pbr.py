@@ -12,6 +12,20 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+# Face codes from assets/models/sign_faces.json. Order the normalized keys longest first so a
+# variant, such as W11-2 fluorescent yellow-green, takes precedence over the base plate.
+SIGN_FACE_CODES = (
+    "r1-1", "r2-1_25", "r2-1_30", "r2-1_35", "r3-1", "r3-2", "r3-4",
+    "r3-5a", "r3-5l", "r3-5r", "r3-6l", "r3-6r", "r3-7l", "r3-7r",
+    "r3-8_lt", "r3-8_tr", "r3-11_bus", "r5-1", "r6-1l", "r6-1r",
+    "r6-2l", "r6-2r", "r10-3", "r15-1_crossing", "r15-1_railroad",
+    "w10-1", "w11-2", "w11-2_fyg",
+)
+SIGN_FACE_TEXTURES = {
+    "SIGNFACE_" + code.upper().replace("-", "_"): f"mutcd_{code}.png"
+    for code in sorted(SIGN_FACE_CODES, key=len, reverse=True)
+}
+
 # name-prefix -> (diffuse, normal, roughness, fallback_rgba, metallic, water)
 TEXTURES = {
     "1ROAD":   ("asphalt_cracked_diffuse.jpg", "asphalt_cracked_normal.jpg", 0.80, (0.10, 0.10, 0.11, 1), 0.0, False),  # cracked/alligator asphalt (LA Canyons lac_tarmac_cracked)
@@ -156,6 +170,7 @@ TEXTURES = {
     "SIGNS":   ("signs_atlas.png", None, 0.55, (0.12, 0.40, 0.18, 1), 0.0, False),  # green street-name panels
     "MOUNTAINS": (None, None, 0.95, (0.52, 0.57, 0.66, 1), 0.0, False),  # hazy blue Front Range backdrop (flat silhouette)
     "SIGNPOST": ("solid_metal_grey.png", None, 0.60, (0.45, 0.46, 0.48, 1), 0.0, False),      # grey metal posts — SOLID TEXTURE (texture-less renders black)
+    "SIGNBACK": ("solid_metal_grey.png", None, 0.60, (0.45, 0.46, 0.48, 1), 0.0, False),
     "SIGNPLATE": ("solid_sign_yellow.png", None, 0.35, (1.0, 0.80, 0.0, 1), 0.0, False),   # W1-6 Large Arrow plate + OM1-3 diamond (tools/author_signs_blend.py) — SOLID TEXTURE: the arrow is geometry, the prep's planar UVs would collapse artwork
     "SIGNARROW": ("solid_sign_black.png", None, 0.45, (0.05, 0.05, 0.05, 1), 0.0, False),  # the black arrow + border standing 2-4 mm proud of that plate
     "PADAPRON": ("pad_asphalt_diffuse.jpg", None, 0.92, (0.35, 0.35, 0.34, 1), 0.0, False),  # a draped paddock or parking pad, visual only (CC0)
@@ -163,6 +178,8 @@ TEXTURES = {
     "PROPCONE": ("traffic_cone_diffuse.png", None, 0.60, (0.91, 0.33, 0.07, 1), 0.0, False),  # corner cones (tools/make_bespoke_assets.py, CC0): the strip's v runs up the cone
     "POLE":    (None, None, 0.85, (0.34, 0.24, 0.16, 1), 0.0, False),               # wooden utility/power pole
     "WIRE":    (None, None, 0.50, (0.06, 0.06, 0.07, 1), 0.0, False),               # overhead power cable
+    **{key: (name, None, 0.5, (0.5, 0.5, 0.5, 1), 0.0, False)
+       for key, name in SIGN_FACE_TEXTURES.items()},
 }
 
 # materials drawn as alpha-cutout — wire the texture alpha + clip the transparent bg (trees as
@@ -269,10 +286,16 @@ def load_overrides(project_dir: str | Path) -> dict[str, dict]:
 
 
 def match_key(name: str) -> str | None:
-    """The TEXTURES row an object/material name binds: the FIRST prefix (dict order) its upper-case
-    name starts with — the same expression export_kn5_addon.shader_and_textures uses."""
+    """Find the texture row for a mesh or material name."""
     up = str(name).upper()
+    if up.startswith("SIGNFACE_"):
+        return next((key for key in SIGN_FACE_TEXTURES
+                     if up == key or up.startswith((key + "_", key + "."))), None)
     return next((k for k in TEXTURES if up.startswith(k)), None)
+
+
+def alpha_cutout(key: str | None) -> bool:
+    return key in BILLBOARD or key in SIGN_FACE_TEXTURES
 
 
 def resolve(name: str, overrides: dict | None = None, tex_dir: Path | None = None) -> dict:
@@ -312,7 +335,7 @@ def setup_material(bpy, obj, tex_dir: Path | None = None, overrides: dict | None
         tex = nt.nodes.new("ShaderNodeTexImage")
         tex.image = bpy.data.images.load(str(dpath), check_existing=True)
         nt.links.new(tex.outputs["Color"], bsdf.inputs["Base Color"])
-        if key in BILLBOARD:  # cutout billboard: wire alpha + clip the transparent background
+        if alpha_cutout(key):
             nt.links.new(tex.outputs["Alpha"], bsdf.inputs["Alpha"])
             for attr, val in (("blend_method", "CLIP"), ("shadow_method", "CLIP"),
                               ("surface_render_method", "DITHERED")):

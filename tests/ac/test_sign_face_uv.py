@@ -16,9 +16,12 @@ Blender, which this suite does not run). Plain ``test_*``, stdlib only.
 from __future__ import annotations
 
 import ast
+import json
 import re
 import subprocess
 from pathlib import Path
+
+from scripts.ac import pbr
 
 ROOT = Path(__file__).resolve().parents[2]
 PREPS = {
@@ -82,3 +85,17 @@ def test_the_sign_texture_tools_note_still_names_the_problem_this_closes():
     its prefix; the prefix it gets is SIGNFACE, and docs/INVENTORY.md says so beside the mesh-name table"""
     doc = (ROOT / "docs" / "INVENTORY.md").read_text(encoding="utf-8")
     assert "SIGNFACE" in doc and "pbr.TEXTURES" in doc
+
+
+def test_each_catalogued_sign_face_binds_its_own_alpha_tested_texture():
+    faces = json.loads((ROOT / "assets" / "models" / "sign_faces.json").read_text())["faces"]
+    for code, face in faces.items():
+        prefix = "SIGNFACE_" + code.upper().replace("-", "_")
+        binding = pbr.resolve(prefix + "_12.003")
+        assert binding["key"] == prefix
+        assert binding["diffuse"].name == face["file"] and binding["diffuse"].is_file()
+        assert binding["normal"] is None
+        assert pbr.alpha_cutout(prefix) and prefix not in pbr.BILLBOARD
+    assert pbr.match_key("SIGNFACE_W11_20") is None
+    assert pbr.resolve("SIGNBACK_12")["diffuse"].name == "solid_metal_grey.png"
+    assert not pbr.alpha_cutout("SIGNBACK")

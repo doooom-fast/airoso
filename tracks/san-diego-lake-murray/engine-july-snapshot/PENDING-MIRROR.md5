@@ -2,5 +2,33 @@
 # changes rehearsed on a scratch ENG copy, to mirror into the real engine-july (cp, then check the
 # md5). Written by tools/snapshot_engine_july.py; tests accept the old md5 until then.
 dd5657ae2d2454af1f08770f3cfa658b  07d23c054c45ec27c4783fb96902b059  scripts/ac/build_kn5_loop.py
-1bdc2628253532045f5ba6d490e7da4f  83b231e840c09b34ef32cde98dbf2c35  scripts/ac/export_kn5_addon.py
-56c3307f29e1072ad4748f1a85ecd8cf  e414f4076953373dbc6f3dbc42ca034a  scripts/ac/pbr.py
+1bdc2628253532045f5ba6d490e7da4f  711401864a95315d6ad0c2e3793af546  scripts/ac/export_kn5_addon.py
+56c3307f29e1072ad4748f1a85ecd8cf  8841c44f80fa113a3779c18375ebe90b  scripts/ac/pbr.py
+-  a9b847120dd2aa44b55531dd6b9e9bb3  assets/textures/mutcd_r1-1.png
+-  ecfe6b643c6c94a99b2db2d7ba4421d8  assets/textures/mutcd_r6-1l.png
+-  029bbd9882fdb2aaaead8becac76f66b  assets/textures/mutcd_r6-1r.png
+-  3e8410cd344768f24b24e5b253d73b0d  assets/textures/mutcd_r6-2l.png
+-  e7ccdda54603a3906046377193f534e0  assets/textures/mutcd_r6-2r.png
+-  0ffdf5087e471375f2f70d77a80fa7af  assets/textures/mutcd_r5-1.png
+-  37183657d3d5496d2a1d1e21bbed6264  assets/textures/mutcd_r2-1_25.png
+-  e6b3cdc3c4f94563c3f4a15d14c5c0c6  assets/textures/mutcd_r2-1_30.png
+-  66b651a31be1694d464cee0073b956cb  assets/textures/mutcd_r2-1_35.png
+-  7e0280f141cb5ecf54e965f9f2024fd0  assets/textures/mutcd_r3-1.png
+-  7b346b8a40cb225cf2b53449746cfe3a  assets/textures/mutcd_r3-2.png
+-  5704b680ca178318362e79c15317fc5c  assets/textures/mutcd_r3-4.png
+-  49cd00cb6397237b0121376c1593e7da  assets/textures/mutcd_r3-5l.png
+-  f84ba875a45230723248f2e29d8cf2fd  assets/textures/mutcd_r3-5r.png
+-  a2b8f8e7863c05af73179f472ddda6ad  assets/textures/mutcd_r3-5a.png
+-  e90d10db824b30dc0d492b2b74a935ca  assets/textures/mutcd_r3-6l.png
+-  28f06ff04063261bbf1bc93492c25f75  assets/textures/mutcd_r3-6r.png
+-  e37e980f54eb5097de24e74db3a801fc  assets/textures/mutcd_r3-7l.png
+-  e43bd8ffd9617ebd8b365e63bebd1992  assets/textures/mutcd_r3-7r.png
+-  df2221dd4e234597aac85dbb25db6eee  assets/textures/mutcd_r3-8_lt.png
+-  ea2a3dec141a97e3e61cbc6b5352d21b  assets/textures/mutcd_r3-8_tr.png
+-  eecaf34e7ca605a82f9e6ebf7caaad0c  assets/textures/mutcd_r3-11_bus.png
+-  682c84966d4be76541013b7c942ce1d7  assets/textures/mutcd_r10-3.png
+-  49dcedfc40e4bbab4e4fcbfe690e614d  assets/textures/mutcd_r15-1_railroad.png
+-  e02759e7313b2b7722600f4b8a7325b8  assets/textures/mutcd_r15-1_crossing.png
+-  33276bf6f5f1d26fbf6879dd5a636b29  assets/textures/mutcd_w10-1.png
+-  2b4fa62a9dfa5613f8f07bc208954405  assets/textures/mutcd_w11-2.png
+-  b41773006480c0a7b59149a48559fcdc  assets/textures/mutcd_w11-2_fyg.png

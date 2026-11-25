@@ -121,9 +121,11 @@ By mesh name, in the chain's frame (a mirrored or yawed track is refused).
 
 **Sign plates and UVs (PLAN §4b item 8).** A mesh whose name starts with `SIGNFACE` keeps the UVs it was authored
 with through the prep and is not welded, in both preps. Every other name is treated as before; `SIGNPLATE` is still
-projected, so today's plates do not change. **Owed, and not part of this work:** a `pbr.TEXTURES` row for each
-`SIGNFACE_<CODE>` and its alpha test (`pbr.BILLBOARD`), in both engines. Without a row a plate has no texture and
-renders black (LAWS L7).
+projected, so today's plates do not change. The `pbr.TEXTURES` rows bind the bundled MUTCD faces by code in both
+engines. Use the code from `assets/models/sign_faces.json`, normalized as above. For example, use `SIGNFACE_R2_1_30`
+for the 30 mph plate. Object suffixes can follow an underscore or dot. Faces ship as alpha-tested `ksPerPixel`.
+Use `SIGNBACK` for the opaque grey back. The exporter stops if an authored `SIGNFACE` material has no readable diffuse.
+For lm-v4, stage the bundled artwork under the engine copy's `assets/textures/` before exporting.
 
 ## 5. The three gates (`tools/inventory_gate.py`, gate step `inventory`)
 

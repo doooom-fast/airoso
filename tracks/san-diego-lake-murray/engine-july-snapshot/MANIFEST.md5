@@ -4,9 +4,9 @@
 55be0145c3b3d202fd35e9a853c62af5  scripts/__init__.py
 6d284904936a0e9baf1c6ef37f93003c  scripts/ac/__init__.py
 07d23c054c45ec27c4783fb96902b059  scripts/ac/build_kn5_loop.py
-83b231e840c09b34ef32cde98dbf2c35  scripts/ac/export_kn5_addon.py
+711401864a95315d6ad0c2e3793af546  scripts/ac/export_kn5_addon.py
 1a725cd07bb0a9a4647f00e20080b371  scripts/ac/build_spawn_kn5.py
-e414f4076953373dbc6f3dbc42ca034a  scripts/ac/pbr.py
+8841c44f80fa113a3779c18375ebe90b  scripts/ac/pbr.py
 72849a5a3b2239b7618a8030b32756e5  scripts/geometry/__init__.py
 61966948c34647774dd6abcf28e880c1  scripts/geometry/dummies.py
 1338ccfca0fa3f7f429a452ddb10bf71  vendor/io_import_accsv/__init__.py

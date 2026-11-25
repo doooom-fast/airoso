@@ -1,0 +1,7164 @@
+{
+ "meta": {
+  "generated": "2026-11-24T23:37:08-0700",
+  "script": "tracks/denver-grand-prix/source/widths/widths.py",
+  "frame": {
+   "origin_lonlat": [
+    -104.9849,
+    39.7401
+   ],
+   "series": "scripts.aerial.engine.ortho.mpd",
+   "offset_sign": "+ = driver left"
+  },
+  "lap_length_m": 6646.5,
+  "step_m": 2.5,
+  "tuning_invented": {
+   "WIN_M": 2.5,
+   "BIN_M": 0.25,
+   "REACH_M": 30.0,
+   "BAND_M": 0.75,
+   "STEP_MIN_M": 0.06,
+   "STEP_MAX_M": 0.4,
+   "STAY_M": 1.5,
+   "MIN_HALF_M": 1.5,
+   "MEDIAN_MAX_M": 14.0,
+   "MOUTH_X": 1.6,
+   "CONTRAST_MIN": 30.0,
+   "AER_STAY_M": 0.5,
+   "AER_SPREAD_M": 1.5,
+   "DISAGREE_M": 0.3,
+   "SMOOTH_N": 5,
+   "I_CONTRAST_MIN": 400.0,
+   "I_ASPHALT_MAX": 250.0,
+   "KERB_SEARCH_M": 1.5,
+   "EDGE_OUTLIER_M": 1.0,
+   "CORE_M": 3.0
+  },
+  "sources": {
+   "lidar": "USGS 3DEP CO_DRCOG_2_2020 (flown 2020-05-27), class 2 ground; class 17 bridge deck",
+   "aerial": "DRCOG DRAPP 2022 3-inch (EPSG:2232), luminance",
+   "line": "data/lap_line.plan.json (OSM 2026-11-23)"
+  },
+  "state": "Colfax and every street as the 2022 aerial / 2020 lidar show them (D8); OSM present-day bus lanes not built",
+  "pan_all_left_m": 0.49,
+  "pan_all_right_m": 0.46,
+  "grades_all_edges": {
+   "measured": 3818,
+   "detected": 219,
+   "inferred": 1281
+  }
+ },
+ "stretches": [
+  {
+   "way": 1550341229,
+   "name": "East Colfax Avenue",
+   "leg": "Colfax WB to Speer NB",
+   "s_from": 0.0,
+   "s_to": 52.5,
+   "stations": 22,
+   "osm_lanes": "2",
+   "osm_oneway": "yes",
+   "surface": "asphalt",
+   "width_m": {
+    "p10": 10.53,
+    "p50": 21.25,
+    "p90": 23.38
+   },
+   "grades": {
+    "left": {
+     "measured": 21,
+     "detected": 0,
+     "inferred": 1
+    },
+    "right": {
+     "measured": 16,
+     "detected": 0,
+     "inferred": 6
+    }
+   },
+   "confidence": "high",
+   "gutter_pan_m": {
+    "left": null,
+    "right": 0.22
+   },
+   "two_readings": 21,
+   "disagree_over_0.3m": 11,
+   "disagree_share": 0.524,
+   "disagree_runs": [
+    {
+     "side": "left",
+     "s_from": 12.5,
+     "s_to": 12.5
+    },
+    {
+     "side": "left",
+     "s_from": 30.0,
+     "s_to": 32.5
+    },
+    {
+     "side": "left",
+     "s_from": 40.0,
+     "s_to": 40.0
+    },
+    {
+     "side": "left",
+     "s_from": 50.0,
+     "s_to": 52.5
+    },
+    {
+     "side": "right",
+     "s_from": 7.5,
+     "s_to": 7.5
+    },
+    {
+     "side": "right",
+     "s_from": 12.5,
+     "s_to": 12.5
+    },
+    {
+     "side": "right",
+     "s_from": 25.0,
+     "s_to": 25.0
+    },
+    {
+     "side": "right",
+     "s_from": 35.0,
+     "s_to": 35.0
+    },
+    {
+     "side": "right",
+     "s_from": 45.0,
+     "s_to": 45.0
+    }
+   ],
+   "aerial_minus_lidar_m_p50": -0.06,
+   "spans_opposing_carriageway_share": 0.77,
+   "raised_median_stations": 2,
+   "kerb_step_m_p50": 0.084
+  },
+  {
+   "way": 702462464,
+   "name": "East Colfax Avenue",
+   "leg": "Colfax WB to Speer NB",
+   "s_from": 55.0,
+   "s_to": 107.5,
+   "stations": 22,
+   "osm_lanes": "2",
+   "osm_oneway": "yes",
+   "surface": "asphalt",
+   "width_m": {
+    "p10": 6.85,
+    "p50": 10.0,
+    "p90": 11.06
+   },
+   "grades": {
+    "left": {
+     "measured": 16,
+     "detected": 0,
+     "inferred": 6
+    },
+    "right": {
+     "measured": 17,
+     "detected": 1,
+     "inferred": 4
+    }
+   },
+   "confidence": "high",
+   "gutter_pan_m": {
+    "left": 0.25,
+    "right": 0.28
+   },
+   "two_readings": 25,
+   "disagree_over_0.3m": 16,
+   "disagree_share": 0.64,
+   "disagree_runs": [
+    {
+     "side": "left",
+     "s_from": 65.0,
+     "s_to": 75.0
+    },
+    {
+     "side": "left",
+     "s_from": 80.0,
+     "s_to": 80.0
+    },
+    {
+     "side": "left",
+     "s_from": 90.0,
+     "s_to": 95.0
+    },
+    {
+     "side": "right",
+     "s_from": 55.0,
+     "s_to": 57.5
+    },
+    {
+     "side": "right",
+     "s_from": 62.5,
+     "s_to": 67.5
+    },
+    {
+     "side": "right",
+     "s_from": 72.5,
+     "s_to": 72.5
+    },
+    {
+     "side": "right",
+     "s_from": 82.5,
+     "s_to": 82.5
+    }
+   ],
+   "aerial_minus_lidar_m_p50": -0.09,
+   "spans_opposing_carriageway_share": 0.0,
+   "raised_median_stations": 14,
+   "kerb_step_m_p50": 0.095
+  },
+  {
+   "way": 130808957,
+   "name": "East Colfax Avenue",
+   "leg": "Colfax WB to Speer NB",
+   "s_from": 110.0,
+   "s_to": 152.5,
+   "stations": 18,
+   "osm_lanes": "2",
+   "osm_oneway": "yes",
+   "surface": "asphalt",
+   "width_m": {
+    "p10": 9.22,
+    "p50": 10.25,
+    "p90": 11.0
+   },
+   "grades": {
+    "left": {
+     "measured": 9,
+     "detected": 0,
+     "inferred": 9
+    },
+    "right": {
+     "measured": 12,
+     "detected": 3,
+     "inferred": 3
+    }
+   },
+   "confidence": "medium",
+   "gutter_pan_m": {
+    "left": 0.16,
+    "right": 0.25
+   },
+   "two_readings": 18,
+   "disagree_over_0.3m": 8,
+   "disagree_share": 0.444,
+   "disagree_runs": [
+    {
+     "side": "left",
+     "s_from": 122.5,
+     "s_to": 127.5
+    },
+    {
+     "side": "left",
+     "s_from": 140.0,
+     "s_to": 140.0
+    },
+    {
+     "side": "left",
+     "s_from": 145.0,
+     "s_to": 145.0
+    },
+    {
+     "side": "right",
+     "s_from": 125.0,
+     "s_to": 130.0
+    }
+   ],
+   "aerial_minus_lidar_m_p50": 0.08,
+   "spans_opposing_carriageway_share": 0.0,
+   "raised_median_stations": 4,
+   "kerb_step_m_p50": 0.083
+  },
+  {
+   "way": 600545919,
+   "name": "East Colfax Avenue",
+   "leg": "Colfax WB to Speer NB",
+   "s_from": 155.0,
+   "s_to": 217.5,
+   "stations": 26,
+   "osm_lanes": "2",
+   "osm_oneway": "yes",
+   "surface": "asphalt",
+   "width_m": {
+    "p10": 10.82,
+    "p50": 12.75,
+    "p90": 23.13
+   },
+   "grades": {
+    "left": {
+     "measured": 10,
+     "detected": 0,
+     "inferred": 16
+    },
+    "right": {
+     "measured": 16,
+     "detected": 6,
+     "inferred": 4
+    }
+   },
+   "confidence": "medium",
+   "gutter_pan_m": {
+    "left": 0.24,
+    "right": 0.43
+   },
+   "two_readings": 24,
+   "disagree_over_0.3m": 14,
+   "disagree_share": 0.583,
+   "disagree_runs": [
+    {
+     "side": "left",
+     "s_from": 177.5,
+     "s_to": 187.5
+    },
+    {
+     "side": "left",
+     "s_from": 197.5,
+     "s_to": 200.0
+    },
+    {
+     "side": "right",
+     "s_from": 157.5,
+     "s_to": 162.5
+    },
+    {
+     "side": "right",
+     "s_from": 172.5,
+     "s_to": 172.5
+    },
+    {
+     "side": "right",
+     "s_from": 177.5,
+     "s_to": 180.0
+    },
+    {
+     "side": "right",
+     "s_from": 190.0,
+     "s_to": 190.0
+    }
+   ],
+   "aerial_minus_lidar_m_p50": 0.41,
+   "spans_opposing_carriageway_share": 0.23,
+   "raised_median_stations": 14,
+   "kerb_step_m_p50": 0.08
+  },
+  {
+   "way": 16985345,
+   "name": "West Colfax Avenue",
+   "leg": "Colfax WB to Speer NB",
+   "s_from": 220.0,
+   "s_to": 282.5,
+   "stations": 26,
+   "osm_lanes": "3",
+   "osm_oneway": "yes",
+   "surface": "paved",
+   "width_m": {
+    "p10": 10.51,
+    "p50": 11.0,
+    "p90": 11.95
+   },
+   "grades": {
+    "left": {
+     "measured": 21,
+     "detected": 0,
+     "inferred": 5
+    },
+    "right": {
+     "measured": 17,
+     "detected": 6,
+     "inferred": 3
+    }
+   },
+   "confidence": "high",
+   "gutter_pan_m": {
+    "left": 0.04,
+    "right": null
+   },
+   "two_readings": 28,
+   "disagree_over_0.3m": 21,
+   "disagree_share": 0.75,
+   "disagree_runs": [
+    {
+     "side": "left",
+     "s_from": 235.0,
+     "s_to": 235.0
+    },
+    {
+     "side": "left",
+     "s_from": 250.0,
+     "s_to": 250.0
+    },
+    {
+     "side": "left",
+     "s_from": 257.5,
+     "s_to": 257.5
+    },
+    {
+     "side": "left",
+     "s_from": 262.5,
+     "s_to": 267.5
+    },
+    {
+     "side": "left",
+     "s_from": 272.5,
+     "s_to": 275.0
+    },
+    {
+     "side": "right",
+     "s_from": 225.0,
+     "s_to": 227.5
+    },
+    {
+     "side": "right",
+     "s_from": 235.0,
+     "s_to": 240.0
+    },
+    {
+     "side": "right",
+     "s_from": 250.0,
+     "s_to": 267.5
+    }
+   ],
+   "aerial_minus_lidar_m_p50": -0.38,
+   "spans_opposing_carriageway_share": 0.0,
+   "raised_median_stations": 21,
+   "kerb_step_m_p50": 0.099
+  },
+  {
+   "way": 645821543,
+   "name": "West Colfax Avenue",
+   "leg": "Colfax WB to Speer NB",
+   "s_from": 285.0,
+   "s_to": 295.0,
+   "stations": 5,
+   "osm_lanes": "3",
+   "osm_oneway": "yes",
+   "surface": "asphalt",
+   "width_m": {
+    "p10": 10.39,
+    "p50": 10.51,
+    "p90": 10.51
+   },
+   "grades": {
+    "left": {
+     "measured": 5,
+     "detected": 0,
+     "inferred": 0
+    },
+    "right": {
+     "measured": 3,
+     "detected": 1,
+     "inferred": 1
+    }
+   },
+   "confidence": "high",
+   "gutter_pan_m": {
+    "left": null,
+    "right": null
+   },
+   "two_readings": 4,
+   "disagree_over_0.3m": 3,
+   "disagree_share": 0.75,
+   "disagree_runs": [
+    {
+     "side": "right",
+     "s_from": 290.0,
+     "s_to": 295.0
+    }
+   ],
+   "aerial_minus_lidar_m_p50": -1.04,
+   "spans_opposing_carriageway_share": 0.0,
+   "raised_median_stations": 5,
+   "kerb_step_m_p50": 0.085
+  },
+  {
+   "way": 628677811,
+   "name": "West Colfax Avenue",
+   "leg": "Colfax WB to Speer NB",
+   "s_from": 297.5,
+   "s_to": 325.0,
+   "stations": 12,
+   "osm_lanes": "3",
+   "osm_oneway": "yes",
+   "surface": "concrete",
+   "width_m": {
+    "p10": 9.28,
+    "p50": 9.75,
+    "p90": 10.25
+   },
+   "grades": {
+    "left": {
+     "measured": 9,
+     "detected": 0,
+     "inferred": 3
+    },
+    "right": {
+     "measured": 12,
+     "detected": 0,
+     "inferred": 0
+    }
+   },
+   "confidence": "high",
+   "gutter_pan_m": {
+    "left": null,
+    "right": null
+   },
+   "two_readings": 18,
+   "disagree_over_0.3m": 18,
+   "disagree_share": 1.0,
+   "disagree_runs": [
+    {
+     "side": "left",
+     "s_from": 302.5,
+     "s_to": 302.5
+    },
+    {
+     "side": "left",
+     "s_from": 307.5,
+     "s_to": 307.5
+    },
+    {
+     "side": "left",
+     "s_from": 315.0,
+     "s_to": 317.5
+    },
+    {
+     "side": "left",
+     "s_from": 322.5,
+     "s_to": 325.0
+    },
+    {
+     "side": "right",
+     "s_from": 297.5,
+     "s_to": 325.0
+    }
+   ],
+   "aerial_minus_lidar_m_p50": -2.92,
+   "spans_opposing_carriageway_share": 0.0,
+   "raised_median_stations": 10,
+   "kerb_step_m_p50": 0.092
+  },
+  {
+   "way": 628677813,
+   "name": "West Colfax Avenue",
+   "leg": "Colfax WB to Speer NB",
+   "s_from": 327.5,
+   "s_to": 355.0,
+   "stations": 12,
+   "osm_lanes": "2",
+   "osm_oneway": "yes",
+   "surface": null,
+   "width_m": {
+    "p10": 11.0,
+    "p50": 13.62,
+    "p90": 15.27
+   },
+   "grades": {
+    "left": {
+     "measured": 11,
+     "detected": 0,
+     "inferred": 1
+    },
+    "right": {
+     "measured": 7,
+     "detected": 0,
+     "inferred": 5
+    }
+   },
+   "confidence": "high",
+   "gutter_pan_m": {
+    "left": null,
+    "right": null
+   },
+   "two_readings": 3,
+   "disagree_over_0.3m": 3,
+   "disagree_share": 1.0,
+   "disagree_runs": [
+    {
+     "side": "left",
+     "s_from": 327.5,
+     "s_to": 327.5
+    },
+    {
+     "side": "right",
+     "s_from": 327.5,
+     "s_to": 327.5
+    },
+    {
+     "side": "right",
+     "s_from": 340.0,
+     "s_to": 340.0
+    }
+   ],
+   "aerial_minus_lidar_m_p50": -0.61,
+   "spans_opposing_carriageway_share": 0.75,
+   "raised_median_stations": 11,
+   "kerb_step_m_p50": 0.12
+  },
+  {
+   "way": 100394655,
+   "name": "West Colfax Avenue",
+   "leg": "Colfax WB to Speer NB",
+   "s_from": 357.5,
+   "s_to": 512.5,
+   "stations": 63,
+   "osm_lanes": "2",
+   "osm_oneway": "yes",
+   "surface": null,
+   "width_m": {
+    "p10": 7.75,
+    "p50": 8.62,
+    "p90": 10.04
+   },
+   "grades": {
+    "left": {
+     "measured": 52,
+     "detected": 1,
+     "inferred": 10
+    },
+    "right": {
+     "measured": 41,
+     "detected": 6,
+     "inferred": 16
+    }
+   },
+   "confidence": "high",
+   "gutter_pan_m": {
+    "left": 0.08,
+    "right": 0.28
+   },
+   "two_readings": 79,
+   "disagree_over_0.3m": 60,
+   "disagree_share": 0.759,
+   "disagree_runs": [
+    {
+     "side": "left",
+     "s_from": 365.0,
+     "s_to": 412.5
+    },
+    {
+     "side": "left",
+     "s_from": 417.5,
+     "s_to": 422.5
+    },
+    {
+     "side": "left",
+     "s_from": 427.5,
+     "s_to": 427.5
+    },
+    {
+     "side": "left",
+     "s_from": 432.5,
+     "s_to": 440.0
+    },
+    {
+     "side": "left",
+     "s_from": 445.0,
+     "s_to": 447.5
+    },
+    {
+     "side": "left",
+     "s_from": 452.5,
+     "s_to": 455.0
+    },
+    {
+     "side": "left",
+     "s_from": 465.0,
+     "s_to": 470.0
+    },
+    {
+     "side": "left",
+     "s_from": 477.5,
+     "s_to": 477.5
+    },
+    {
+     "side": "left",
+     "s_from": 487.5,
+     "s_to": 487.5
+    },
+    {
+     "side": "right",
+     "s_from": 365.0,
+     "s_to": 365.0
+    },
+    {
+     "side": "right",
+     "s_from": 370.0,
+     "s_to": 377.5
+    },
+    {
+     "side": "right",
+     "s_from": 385.0,
+     "s_to": 385.0
+    },
+    {
+     "side": "right",
+     "s_from": 400.0,
+     "s_to": 405.0
+    },
+    {
+     "side": "right",
+     "s_from": 410.0,
+     "s_to": 420.0
+    },
+    {
+     "side": "right",
+     "s_from": 435.0,
+     "s_to": 442.5
+    },
+    {
+     "side": "right",
+     "s_from": 447.5,
+     "s_to": 447.5
+    },
+    {
+     "side": "right",
+     "s_from": 457.5,
+     "s_to": 460.0
+    },
+    {
+     "side": "right",
+     "s_from": 480.0,
+     "s_to": 480.0
+    },
+    {
+     "side": "right",
+     "s_from": 512.5,
+     "s_to": 512.5
+    }
+   ],
+   "aerial_minus_lidar_m_p50": 0.25,
+   "spans_opposing_carriageway_share": 0.0,
+   "raised_median_stations": 50,
+   "kerb_step_m_p50": 0.086
+  },
+  {
+   "way": 670422527,
+   "name": "West Colfax Avenue",
+   "leg": "Colfax WB to Speer NB",
+   "s_from": 515.0,
+   "s_to": 617.5,
+   "stations": 42,
+   "osm_lanes": "2",
+   "osm_oneway": "yes",
+   "surface": "asphalt",
+   "width_m": {
+    "p10": 8.88,
+    "p50": 9.25,
+    "p90": 10.69
+   },
+   "grades": {
+    "left": {
+     "measured": 27,
+     "detected": 0,
+     "inferred": 15
+    },
+    "right": {
+     "measured": 19,
+     "detected": 7,
+     "inferred": 16
+    }
+   },
+   "confidence": "medium",
+   "gutter_pan_m": {
+    "left": null,
+    "right": 0.19
+   },
+   "two_readings": 23,
+   "disagree_over_0.3m": 20,
+   "disagree_share": 0.87,
+   "disagree_runs": [
+    {
+     "side": "left",
+     "s_from": 527.5,
+     "s_to": 532.5
+    },
+    {
+     "side": "left",
+     "s_from": 552.5,
+     "s_to": 552.5
+    },
+    {
+     "side": "left",
+     "s_from": 582.5,
+     "s_to": 582.5
+    },
+    {
+     "side": "left",
+     "s_from": 597.5,
+     "s_to": 602.5
+    },
+    {
+     "side": "right",
+     "s_from": 542.5,
+     "s_to": 547.5
+    },
+    {
+     "side": "right",
+     "s_from": 557.5,
+     "s_to": 562.5
+    },
+    {
+     "side": "right",
+     "s_from": 567.5,
+     "s_to": 570.0
+    },
+    {
+     "side": "right",
+     "s_from": 575.0,
+     "s_to": 575.0
+    },
+    {
+     "side": "right",
+     "s_from": 585.0,
+     "s_to": 585.0
+    },
+    {
+     "side": "right",
+     "s_from": 592.5,
+     "s_to": 595.0
+    }
+   ],
+   "aerial_minus_lidar_m_p50": -0.33,
+   "spans_opposing_carriageway_share": 0.0,
+   "raised_median_stations": 29,
+   "kerb_step_m_p50": 0.079
+  },
+  {
+   "way": 427702697,
+   "name": "West Colfax Avenue",
+   "leg": "Colfax WB to Speer NB",
+   "s_from": 620.0,
+   "s_to": 682.5,
+   "stations": 26,
+   "osm_lanes": "3",
+   "osm_oneway": "yes",
+   "surface": "asphalt",
+   "width_m": {
+    "p10": 9.88,
+    "p50": 10.25,
+    "p90": 13.0
+   },
+   "grades": {
+    "left": {
+     "measured": 19,
+     "detected": 0,
+     "inferred": 7
+    },
+    "right": {
+     "measured": 20,
+     "detected": 0,
+     "inferred": 6
+    }
+   },
+   "confidence": "high",
+   "gutter_pan_m": {
+    "left": 0.11,
+    "right": 0.58
+   },
+   "two_readings": 36,
+   "disagree_over_0.3m": 26,
+   "disagree_share": 0.722,
+   "disagree_runs": [
+    {
+     "side": "left",
+     "s_from": 637.5,
+     "s_to": 657.5
+    },
+    {
+     "side": "left",
+     "s_from": 662.5,
+     "s_to": 670.0
+    },
+    {
+     "side": "left",
+     "s_from": 675.0,
+     "s_to": 677.5
+    },
+    {
+     "side": "right",
+     "s_from": 632.5,
+     "s_to": 632.5
+    },
+    {
+     "side": "right",
+     "s_from": 640.0,
+     "s_to": 640.0
+    },
+    {
+     "side": "right",
+     "s_from": 645.0,
+     "s_to": 645.0
+    },
+    {
+     "side": "right",
+     "s_from": 662.5,
+     "s_to": 680.0
+    }
+   ],
+   "aerial_minus_lidar_m_p50": 0.19,
+   "spans_opposing_carriageway_share": 0.0,
+   "raised_median_stations": 21,
+   "kerb_step_m_p50": 0.091
+  },
+  {
+   "way": 427702691,
+   "name": "West Colfax Avenue",
+   "leg": "Colfax WB to Speer NB",
+   "s_from": 685.0,
+   "s_to": 737.5,
+   "stations": 22,
+   "osm_lanes": "4",
+   "osm_oneway": "yes",
+   "surface": "asphalt",
+   "width_m": {
+    "p10": 9.92,
+    "p50": 12.75,
+    "p90": 13.25
+   },
+   "grades": {
+    "left": {
+     "measured": 12,
+     "detected": 2,
+     "inferred": 8
+    },
+    "right": {
+     "measured": 17,
+     "detected": 0,
+     "inferred": 5
+    }
+   },
+   "confidence": "medium",
+   "gutter_pan_m": {
+    "left": null,
+    "right": 0.47
+   },
+   "two_readings": 19,
+   "disagree_over_0.3m": 7,
+   "disagree_share": 0.368,
+   "disagree_runs": [
+    {
+     "side": "left",
+     "s_from": 707.5,
+     "s_to": 712.5
+    },
+    {
+     "side": "left",
+     "s_from": 720.0,
+     "s_to": 720.0
+    },
+    {
+     "side": "right",
+     "s_from": 687.5,
+     "s_to": 687.5
+    },
+    {
+     "side": "right",
+     "s_from": 707.5,
+     "s_to": 710.0
+    }
+   ],
+   "aerial_minus_lidar_m_p50": -0.28,
+   "spans_opposing_carriageway_share": 0.0,
+   "raised_median_stations": 19,
+   "kerb_step_m_p50": 0.083
+  },
+  {
+   "way": 628677822,
+   "name": "West Colfax Avenue",
+   "leg": "Colfax WB to Speer NB",
+   "s_from": 740.0,
+   "s_to": 852.5,
+   "stations": 46,
+   "osm_lanes": "3",
+   "osm_oneway": "yes",
+   "surface": "asphalt",
+   "width_m": {
+    "p10": 10.0,
+    "p50": 10.5,
+    "p90": 11.8
+   },
+   "grades": {
+    "left": {
+     "measured": 34,
+     "detected": 0,
+     "inferred": 12
+    },
+    "right": {
+     "measured": 38,
+     "detected": 2,
+     "inferred": 6
+    }
+   },
+   "confidence": "high",
+   "gutter_pan_m": {
+    "left": 0.46,
+    "right": 0.51
+   },
+   "two_readings": 51,
+   "disagree_over_0.3m": 29,
+   "disagree_share": 0.569,
+   "disagree_runs": [
+    {
+     "side": "left",
+     "s_from": 757.5,
+     "s_to": 757.5
+    },
+    {
+     "side": "left",
+     "s_from": 772.5,
+     "s_to": 772.5
+    },
+    {
+     "side": "left",
+     "s_from": 800.0,
+     "s_to": 800.0
+    },
+    {
+     "side": "left",
+     "s_from": 805.0,
+     "s_to": 807.5
+    },
+    {
+     "side": "left",
+     "s_from": 812.5,
+     "s_to": 815.0
+    },
+    {
+     "side": "left",
+     "s_from": 820.0,
+     "s_to": 830.0
+    },
+    {
+     "side": "left",
+     "s_from": 847.5,
+     "s_to": 847.5
+    },
+    {
+     "side": "right",
+     "s_from": 755.0,
+     "s_to": 757.5
+    },
+    {
+     "side": "right",
+     "s_from": 770.0,
+     "s_to": 770.0
+    },
+    {
+     "side": "right",
+     "s_from": 775.0,
+     "s_to": 775.0
+    },
+    {
+     "side": "right",
+     "s_from": 780.0,
+     "s_to": 792.5
+    },
+    {
+     "side": "right",
+     "s_from": 827.5,
+     "s_to": 830.0
+    },
+    {
+     "side": "right",
+     "s_from": 837.5,
+     "s_to": 837.5
+    },
+    {
+     "side": "right",
+     "s_from": 845.0,
+     "s_to": 847.5
+    },
+    {
+     "side": "right",
+     "s_from": 852.5,
+     "s_to": 852.5
+    }
+   ],
+   "aerial_minus_lidar_m_p50": -0.09,
+   "spans_opposing_carriageway_share": 0.0,
+   "raised_median_stations": 34,
+   "kerb_step_m_p50": 0.101
+  },
+  {
+   "way": 1053902828,
+   "name": "West Colfax Avenue",
+   "leg": "Colfax WB to Speer NB",
+   "s_from": 855.0,
+   "s_to": 885.0,
+   "stations": 13,
+   "osm_lanes": "3",
+   "osm_oneway": "yes",
+   "surface": "asphalt",
+   "width_m": {
+    "p10": 12.25,
+    "p50": 13.0,
+    "p90": 13.5
+   },
+   "grades": {
+    "left": {
+     "measured": 13,
+     "detected": 0,
+     "inferred": 0
+    },
+    "right": {
+     "measured": 11,
+     "detected": 0,
+     "inferred": 2
+    }
+   },
+   "confidence": "high",
+   "gutter_pan_m": {
+    "left": 0.19,
+    "right": 0.46
+   },
+   "two_readings": 16,
+   "disagree_over_0.3m": 10,
+   "disagree_share": 0.625,
+   "disagree_runs": [
+    {
+     "side": "left",
+     "s_from": 855.0,
+     "s_to": 865.0
+    },
+    {
+     "side": "right",
+     "s_from": 855.0,
+     "s_to": 862.5
+    },
+    {
+     "side": "right",
+     "s_from": 885.0,
+     "s_to": 885.0
+    }
+   ],
+   "aerial_minus_lidar_m_p50": -0.24,
+   "spans_opposing_carriageway_share": 0.0,
+   "raised_median_stations": 13,
+   "kerb_step_m_p50": 0.113
+  },
+  {
+   "way": 628677821,
+   "name": "West Colfax Avenue",
+   "leg": "Colfax WB to Speer NB",
+   "s_from": 887.5,
+   "s_to": 927.5,
+   "stations": 17,
+   "osm_lanes": "4",
+   "osm_oneway": "yes",
+   "surface": "asphalt",
+   "width_m": {
+    "p10": 13.75,
+    "p50": 18.25,
+    "p90": 19.77
+   },
+   "grades": {
+    "left": {
+     "measured": 10,
+     "detected": 0,
+     "inferred": 7
+    },
+    "right": {
+     "measured": 13,
+     "detected": 0,
+     "inferred": 4
+    }
+   },
+   "confidence": "medium",
+   "gutter_pan_m": {
+    "left": null,
+    "right": null
+   },
+   "two_readings": 15,
+   "disagree_over_0.3m": 12,
+   "disagree_share": 0.8,
+   "disagree_runs": [
+    {
+     "side": "left",
+     "s_from": 887.5,
+     "s_to": 892.5
+    },
+    {
+     "side": "left",
+     "s_from": 897.5,
+     "s_to": 905.0
+    },
+    {
+     "side": "right",
+     "s_from": 887.5,
+     "s_to": 887.5
+    },
+    {
+     "side": "right",
+     "s_from": 897.5,
+     "s_to": 900.0
+    },
+    {
+     "side": "right",
+     "s_from": 922.5,
+     "s_to": 925.0
+    }
+   ],
+   "aerial_minus_lidar_m_p50": -2.77,
+   "spans_opposing_carriageway_share": 0.0,
+   "raised_median_stations": 11,
+   "kerb_step_m_p50": 0.089
+  },
+  {
+   "way": 119006770,
+   "name": "West Colfax Avenue",
+   "leg": "Colfax WB to Speer NB",
+   "s_from": 930.0,
+   "s_to": 1097.5,
+   "stations": 68,
+   "osm_lanes": "3",
+   "osm_oneway": "yes",
+   "surface": "asphalt",
+   "width_m": {
+    "p10": 10.5,
+    "p50": 14.0,
+    "p90": 18.01
+   },
+   "grades": {
+    "left": {
+     "measured": 52,
+     "detected": 1,
+     "inferred": 15
+    },
+    "right": {
+     "measured": 51,
+     "detected": 3,
+     "inferred": 14
+    }
+   },
+   "confidence": "high",
+   "gutter_pan_m": {
+    "left": -0.04,
+    "right": 0.65
+   },
+   "two_readings": 62,
+   "disagree_over_0.3m": 44,
+   "disagree_share": 0.71,
+   "disagree_runs": [
+    {
+     "side": "left",
+     "s_from": 955.0,
+     "s_to": 955.0
+    },
+    {
+     "side": "left",
+     "s_from": 960.0,
+     "s_to": 960.0
+    },
+    {
+     "side": "left",
+     "s_from": 965.0,
+     "s_to": 965.0
+    },
+    {
+     "side": "left",
+     "s_from": 970.0,
+     "s_to": 995.0
+    },
+    {
+     "side": "left",
+     "s_from": 1005.0,
+     "s_to": 1005.0
+    },
+    {
+     "side": "left",
+     "s_from": 1020.0,
+     "s_to": 1020.0
+    },
+    {
+     "side": "left",
+     "s_from": 1027.5,
+     "s_to": 1027.5
+    },
+    {
+     "side": "left",
+     "s_from": 1072.5,
+     "s_to": 1075.0
+    },
+    {
+     "side": "left",
+     "s_from": 1090.0,
+     "s_to": 1090.0
+    },
+    {
+     "side": "right",
+     "s_from": 960.0,
+     "s_to": 967.5
+    },
+    {
+     "side": "right",
+     "s_from": 972.5,
+     "s_to": 975.0
+    },
+    {
+     "side": "right",
+     "s_from": 1000.0,
+     "s_to": 1000.0
+    },
+    {
+     "side": "right",
+     "s_from": 1007.5,
+     "s_to": 1015.0
+    },
+    {
+     "side": "right",
+     "s_from": 1052.5,
+     "s_to": 1055.0
+    },
+    {
+     "side": "right",
+     "s_from": 1060.0,
+     "s_to": 1062.5
+    },
+    {
+     "side": "right",
+     "s_from": 1072.5,
+     "s_to": 1072.5
+    },
+    {
+     "side": "right",
+     "s_from": 1077.5,
+     "s_to": 1090.0
+    },
+    {
+     "side": "right",
+     "s_from": 1095.0,
+     "s_to": 1097.5
+    }
+   ],
+   "aerial_minus_lidar_m_p50": 0.35,
+   "spans_opposing_carriageway_share": 0.03,
+   "raised_median_stations": 44,
+   "kerb_step_m_p50": 0.085
+  },
+  {
+   "way": 1023298583,
+   "name": "West Colfax Avenue",
+   "leg": "Colfax WB to Speer NB",
+   "s_from": 1100.0,
+   "s_to": 1157.5,
+   "stations": 24,
+   "osm_lanes": "4",
+   "osm_oneway": "yes",
+   "surface": "asphalt",
+   "width_m": {
+    "p10": 26.66,
+    "p50": 30.0,
+    "p90": 32.57
+   },
+   "grades": {
+    "left": {
+     "measured": 19,
+     "detected": 0,
+     "inferred": 5
+    },
+    "right": {
+     "measured": 22,
+     "detected": 0,
+     "inferred": 2
+    }
+   },
+   "confidence": "high",
+   "gutter_pan_m": {
+    "left": null,
+    "right": 0.72
+   },
+   "two_readings": 18,
+   "disagree_over_0.3m": 14,
+   "disagree_share": 0.778,
+   "disagree_runs": [
+    {
+     "side": "left",
+     "s_from": 1135.0,
+     "s_to": 1135.0
+    },
+    {
+     "side": "left",
+     "s_from": 1140.0,
+     "s_to": 1147.5
+    },
+    {
+     "side": "right",
+     "s_from": 1107.5,
+     "s_to": 1107.5
+    },
+    {
+     "side": "right",
+     "s_from": 1117.5,
+     "s_to": 1117.5
+    },
+    {
+     "side": "right",
+     "s_from": 1122.5,
+     "s_to": 1122.5
+    },
+    {
+     "side": "right",
+     "s_from": 1140.0,
+     "s_to": 1142.5
+    },
+    {
+     "side": "right",
+     "s_from": 1147.5,
+     "s_to": 1155.0
+    }
+   ],
+   "aerial_minus_lidar_m_p50": -0.32,
+   "spans_opposing_carriageway_share": 0.88,
+   "raised_median_stations": 4,
+   "kerb_step_m_p50": 0.077
+  },
+  {
+   "way": 306779271,
+   "name": "West Colfax Avenue",
+   "leg": "Colfax WB to Speer NB",
+   "s_from": 1160.0,
+   "s_to": 1175.0,
+   "stations": 7,
+   "osm_lanes": "4",
+   "osm_oneway": "yes",
+   "surface": null,
+   "width_m": {
+    "p10": 13.9,
+    "p50": 15.04,
+    "p90": 18.22
+   },
+   "grades": {
+    "left": {
+     "measured": 1,
+     "detected": 2,
+     "inferred": 4
+    },
+    "right": {
+     "measured": 6,
+     "detected": 0,
+     "inferred": 1
+    }
+   },
+   "confidence": "medium",
+   "gutter_pan_m": {
+    "left": null,
+    "right": null
+   },
+   "two_readings": 1,
+   "disagree_over_0.3m": 1,
+   "disagree_share": 1.0,
+   "disagree_runs": [
+    {
+     "side": "left",
+     "s_from": 1175.0,
+     "s_to": 1175.0
+    }
+   ],
+   "aerial_minus_lidar_m_p50": 2.25,
+   "spans_opposing_carriageway_share": 0.0,
+   "raised_median_stations": 5,
+   "kerb_step_m_p50": 0.083
+  },
+  {
+   "way": 933332973,
+   "name": "North Speer Boulevard",
+   "leg": "Speer NB to Stout",
+   "s_from": 1177.5,
+   "s_to": 1187.5,
+   "stations": 5,
+   "osm_lanes": "5",
+   "osm_oneway": "yes",
+   "surface": "asphalt",
+   "width_m": {
+    "p10": 13.92,
+    "p50": 14.88,
+    "p90": 15.61
+   },
+   "grades": {
+    "left": {
+     "measured": 0,
+     "detected": 0,
+     "inferred": 5
+    },
+    "right": {
+     "measured": 4,
+     "detected": 0,
+     "inferred": 1
+    }
+   },
+   "confidence": "low",
+   "gutter_pan_m": {
+    "left": null,
+    "right": null
+   },
+   "two_readings": 2,
+   "disagree_over_0.3m": 1,
+   "disagree_share": 0.5,
+   "disagree_runs": [
+    {
+     "side": "right",
+     "s_from": 1180.0,
+     "s_to": 1180.0
+    }
+   ],
+   "aerial_minus_lidar_m_p50": 0.06,
+   "spans_opposing_carriageway_share": 0.0,
+   "raised_median_stations": 4,
+   "kerb_step_m_p50": 0.097
+  },
+  {
+   "way": 628622215,
+   "name": "North Speer Boulevard",
+   "leg": "Speer NB to Stout",
+   "s_from": 1190.0,
+   "s_to": 1250.0,
+   "stations": 25,
+   "osm_lanes": "5",
+   "osm_oneway": "yes",
+   "surface": "asphalt",
+   "width_m": {
+    "p10": 15.75,
+    "p50": 16.5,
+    "p90": 16.82
+   },
+   "grades": {
+    "left": {
+     "measured": 25,
+     "detected": 0,
+     "inferred": 0
+    },
+    "right": {
+     "measured": 20,
+     "detected": 2,
+     "inferred": 3
+    }
+   },
+   "confidence": "high",
+   "gutter_pan_m": {
+    "left": 0.38,
+    "right": 0.69
+   },
+   "two_readings": 21,
+   "disagree_over_0.3m": 12,
+   "disagree_share": 0.571,
+   "disagree_runs": [
+    {
+     "side": "left",
+     "s_from": 1215.0,
+     "s_to": 1215.0
+    },
+    {
+     "side": "left",
+     "s_from": 1227.5,
+     "s_to": 1227.5
+    },
+    {
+     "side": "left",
+     "s_from": 1247.5,
+     "s_to": 1247.5
+    },
+    {
+     "side": "right",
+     "s_from": 1215.0,
+     "s_to": 1225.0
+    },
+    {
+     "side": "right",
+     "s_from": 1230.0,
+     "s_to": 1232.5
+    },
+    {
+     "side": "right",
+     "s_from": 1240.0,
+     "s_to": 1240.0
+    },
+    {
+     "side": "right",
+     "s_from": 1245.0,
+     "s_to": 1245.0
+    }
+   ],
+   "aerial_minus_lidar_m_p50": -0.18,
+   "spans_opposing_carriageway_share": 0.0,
+   "raised_median_stations": 25,
+   "kerb_step_m_p50": 0.086
+  },
+  {
+   "way": 628622209,
+   "name": "North Speer Boulevard",
+   "leg": "Speer NB to Stout",
+   "s_from": 1252.5,
+   "s_to": 1325.0,
+   "stations": 30,
+   "osm_lanes": "5",
+   "osm_oneway": "yes",
+   "surface": "asphalt",
+   "width_m": {
+    "p10": 15.5,
+    "p50": 16.13,
+    "p90": 17.77
+   },
+   "grades": {
+    "left": {
+     "measured": 21,
+     "detected": 3,
+     "inferred": 6
+    },
+    "right": {
+     "measured": 21,
+     "detected": 0,
+     "inferred": 9
+    }
+   },
+   "confidence": "high",
+   "gutter_pan_m": {
+    "left": null,
+    "right": 0.63
+   },
+   "two_readings": 28,
+   "disagree_over_0.3m": 20,
+   "disagree_share": 0.714,
+   "disagree_runs": [
+    {
+     "side": "left",
+     "s_from": 1262.5,
+     "s_to": 1262.5
+    },
+    {
+     "side": "left",
+     "s_from": 1267.5,
+     "s_to": 1270.0
+    },
+    {
+     "side": "left",
+     "s_from": 1277.5,
+     "s_to": 1277.5
+    },
+    {
+     "side": "left",
+     "s_from": 1295.0,
+     "s_to": 1297.5
+    },
+    {
+     "side": "left",
+     "s_from": 1305.0,
+     "s_to": 1307.5
+    },
+    {
+     "side": "left",
+     "s_from": 1315.0,
+     "s_to": 1317.5
+    },
+    {
+     "side": "right",
+     "s_from": 1252.5,
+     "s_to": 1262.5
+    },
+    {
+     "side": "right",
+     "s_from": 1280.0,
+     "s_to": 1280.0
+    },
+    {
+     "side": "right",
+     "s_from": 1285.0,
+     "s_to": 1285.0
+    },
+    {
+     "side": "right",
+     "s_from": 1290.0,
+     "s_to": 1290.0
+    },
+    {
+     "side": "right",
+     "s_from": 1297.5,
+     "s_to": 1297.5
+    },
+    {
+     "side": "right",
+     "s_from": 1317.5,
+     "s_to": 1317.5
+    }
+   ],
+   "aerial_minus_lidar_m_p50": -0.33,
+   "spans_opposing_carriageway_share": 0.0,
+   "raised_median_stations": 26,
+   "kerb_step_m_p50": 0.084
+  },
+  {
+   "way": 37812132,
+   "name": "Stout Street",
+   "leg": "Stout to 15th St",
+   "s_from": 1327.5,
+   "s_to": 1385.0,
+   "stations": 24,
+   "osm_lanes": "2",
+   "osm_oneway": "yes",
+   "surface": null,
+   "width_m": {
+    "p10": 8.25,
+    "p50": 9.17,
+    "p90": 18.56
+   },
+   "grades": {
+    "left": {
+     "measured": 14,
+     "detected": 1,
+     "inferred": 9
+    },
+    "right": {
+     "measured": 19,
+     "detected": 0,
+     "inferred": 5
+    }
+   },
+   "confidence": "medium",
+   "gutter_pan_m": {
+    "left": null,
+    "right": null
+   },
+   "two_readings": 2,
+   "disagree_over_0.3m": 2,
+   "disagree_share": 1.0,
+   "disagree_runs": [
+    {
+     "side": "left",
+     "s_from": 1382.5,
+     "s_to": 1382.5
+    },
+    {
+     "side": "right",
+     "s_from": 1365.0,
+     "s_to": 1365.0
+    }
+   ],
+   "aerial_minus_lidar_m_p50": 4.5,
+   "spans_opposing_carriageway_share": 0.0,
+   "raised_median_stations": 16,
+   "kerb_step_m_p50": 0.074
+  },
+  {
+   "way": 453022192,
+   "name": "Stout Street",
+   "leg": "Stout to 15th St",
+   "s_from": 1387.5,
+   "s_to": 1730.0,
+   "stations": 138,
+   "osm_lanes": "2",
+   "osm_oneway": "yes",
+   "surface": null,
+   "width_m": {
+    "p10": 6.84,
+    "p50": 8.11,
+    "p90": 9.37
+   },
+   "grades": {
+    "left": {
+     "measured": 0,
+     "detected": 0,
+     "inferred": 138
+    },
+    "right": {
+     "measured": 0,
+     "detected": 0,
+     "inferred": 138
+    }
+   },
+   "confidence": "none (covered: between measured portals)",
+   "gutter_pan_m": {
+    "left": null,
+    "right": null
+   },
+   "two_readings": 0,
+   "disagree_over_0.3m": 0,
+   "disagree_share": null,
+   "disagree_runs": [],
+   "aerial_minus_lidar_m_p50": null,
+   "spans_opposing_carriageway_share": 0.0,
+   "raised_median_stations": 0,
+   "kerb_step_m_p50": null
+  },
+  {
+   "way": 1051799389,
+   "name": "Stout Street",
+   "leg": "Stout to 15th St",
+   "s_from": 1732.5,
+   "s_to": 1757.5,
+   "stations": 11,
+   "osm_lanes": "2",
+   "osm_oneway": "yes",
+   "surface": "concrete",
+   "width_m": {
+    "p10": 6.51,
+    "p50": 10.25,
+    "p90": 11.7
+   },
+   "grades": {
+    "left": {
+     "measured": 3,
+     "detected": 1,
+     "inferred": 7
+    },
+    "right": {
+     "measured": 5,
+     "detected": 1,
+     "inferred": 5
+    }
+   },
+   "confidence": "low",
+   "gutter_pan_m": {
+    "left": null,
+    "right": null
+   },
+   "two_readings": 2,
+   "disagree_over_0.3m": 2,
+   "disagree_share": 1.0,
+   "disagree_runs": [
+    {
+     "side": "left",
+     "s_from": 1732.5,
+     "s_to": 1732.5
+    },
+    {
+     "side": "right",
+     "s_from": 1732.5,
+     "s_to": 1732.5
+    }
+   ],
+   "aerial_minus_lidar_m_p50": 4.28,
+   "spans_opposing_carriageway_share": 0.0,
+   "raised_median_stations": 2,
+   "kerb_step_m_p50": 0.07
+  },
+  {
+   "way": 305577945,
+   "name": "Stout Street",
+   "leg": "Stout to 15th St",
+   "s_from": 1760.0,
+   "s_to": 1905.0,
+   "stations": 59,
+   "osm_lanes": "2",
+   "osm_oneway": "yes",
+   "surface": "concrete",
+   "width_m": {
+    "p10": 11.5,
+    "p50": 13.94,
+    "p90": 15.39
+   },
+   "grades": {
+    "left": {
+     "measured": 31,
+     "detected": 5,
+     "inferred": 23
+    },
+    "right": {
+     "measured": 48,
+     "detected": 2,
+     "inferred": 9
+    }
+   },
+   "confidence": "medium",
+   "gutter_pan_m": {
+    "left": 0.23,
+    "right": null
+   },
+   "two_readings": 22,
+   "disagree_over_0.3m": 19,
+   "disagree_share": 0.864,
+   "disagree_runs": [
+    {
+     "side": "left",
+     "s_from": 1810.0,
+     "s_to": 1820.0
+    },
+    {
+     "side": "left",
+     "s_from": 1825.0,
+     "s_to": 1825.0
+    },
+    {
+     "side": "left",
+     "s_from": 1832.5,
+     "s_to": 1832.5
+    },
+    {
+     "side": "left",
+     "s_from": 1852.5,
+     "s_to": 1860.0
+    },
+    {
+     "side": "right",
+     "s_from": 1787.5,
+     "s_to": 1797.5
+    },
+    {
+     "side": "right",
+     "s_from": 1832.5,
+     "s_to": 1837.5
+    }
+   ],
+   "aerial_minus_lidar_m_p50": 5.97,
+   "spans_opposing_carriageway_share": 0.0,
+   "raised_median_stations": 8,
+   "kerb_step_m_p50": 0.077
+  },
+  {
+   "way": 628378945,
+   "name": "15th Street",
+   "leg": "15th St to Blake",
+   "s_from": 1907.5,
+   "s_to": 1957.5,
+   "stations": 21,
+   "osm_lanes": "3",
+   "osm_oneway": "yes",
+   "surface": "concrete",
+   "width_m": {
+    "p10": 12.5,
+    "p50": 15.75,
+    "p90": 19.67
+   },
+   "grades": {
+    "left": {
+     "measured": 16,
+     "detected": 1,
+     "inferred": 4
+    },
+    "right": {
+     "measured": 17,
+     "detected": 1,
+     "inferred": 3
+    }
+   },
+   "confidence": "high",
+   "gutter_pan_m": {
+    "left": null,
+    "right": null
+   },
+   "two_readings": 20,
+   "disagree_over_0.3m": 18,
+   "disagree_share": 0.9,
+   "disagree_runs": [
+    {
+     "side": "left",
+     "s_from": 1917.5,
+     "s_to": 1917.5
+    },
+    {
+     "side": "left",
+     "s_from": 1922.5,
+     "s_to": 1955.0
+    },
+    {
+     "side": "right",
+     "s_from": 1922.5,
+     "s_to": 1922.5
+    },
+    {
+     "side": "right",
+     "s_from": 1932.5,
+     "s_to": 1935.0
+    }
+   ],
+   "aerial_minus_lidar_m_p50": 4.45,
+   "spans_opposing_carriageway_share": 0.0,
+   "raised_median_stations": 13,
+   "kerb_step_m_p50": 0.075
+  },
+  {
+   "way": 628378944,
+   "name": "15th Street",
+   "leg": "15th St to Blake",
+   "s_from": 1960.0,
+   "s_to": 2010.0,
+   "stations": 21,
+   "osm_lanes": "3",
+   "osm_oneway": "yes",
+   "surface": "concrete",
+   "width_m": {
+    "p10": 15.25,
+    "p50": 16.0,
+    "p90": 19.58
+   },
+   "grades": {
+    "left": {
+     "measured": 19,
+     "detected": 0,
+     "inferred": 2
+    },
+    "right": {
+     "measured": 16,
+     "detected": 1,
+     "inferred": 4
+    }
+   },
+   "confidence": "high",
+   "gutter_pan_m": {
+    "left": null,
+    "right": -0.16
+   },
+   "two_readings": 19,
+   "disagree_over_0.3m": 13,
+   "disagree_share": 0.684,
+   "disagree_runs": [
+    {
+     "side": "left",
+     "s_from": 1962.5,
+     "s_to": 1980.0
+    },
+    {
+     "side": "right",
+     "s_from": 1972.5,
+     "s_to": 1977.5
+    },
+    {
+     "side": "right",
+     "s_from": 1985.0,
+     "s_to": 1985.0
+    },
+    {
+     "side": "right",
+     "s_from": 1995.0,
+     "s_to": 1995.0
+    }
+   ],
+   "aerial_minus_lidar_m_p50": 0.48,
+   "spans_opposing_carriageway_share": 0.0,
+   "raised_median_stations": 3,
+   "kerb_step_m_p50": 0.082
+  },
+  {
+   "way": 132261659,
+   "name": "15th Street",
+   "leg": "15th St to Blake",
+   "s_from": 2012.5,
+   "s_to": 2065.0,
+   "stations": 22,
+   "osm_lanes": "4",
+   "osm_oneway": "yes",
+   "surface": "paved",
+   "width_m": {
+    "p10": 15.78,
+    "p50": 17.0,
+    "p90": 19.8
+   },
+   "grades": {
+    "left": {
+     "measured": 19,
+     "detected": 0,
+     "inferred": 3
+    },
+    "right": {
+     "measured": 17,
+     "detected": 0,
+     "inferred": 5
+    }
+   },
+   "confidence": "high",
+   "gutter_pan_m": {
+    "left": null,
+    "right": 0.06
+   },
+   "two_readings": 27,
+   "disagree_over_0.3m": 27,
+   "disagree_share": 1.0,
+   "disagree_runs": [
+    {
+     "side": "left",
+     "s_from": 2025.0,
+     "s_to": 2062.5
+    },
+    {
+     "side": "right",
+     "s_from": 2020.0,
+     "s_to": 2022.5
+    },
+    {
+     "side": "right",
+     "s_from": 2040.0,
+     "s_to": 2042.5
+    },
+    {
+     "side": "right",
+     "s_from": 2047.5,
+     "s_to": 2060.0
+    },
+    {
+     "side": "right",
+     "s_from": 2065.0,
+     "s_to": 2065.0
+    }
+   ],
+   "aerial_minus_lidar_m_p50": 2.72,
+   "spans_opposing_carriageway_share": 0.0,
+   "raised_median_stations": 4,
+   "kerb_step_m_p50": 0.067
+  },
+  {
+   "way": 795818886,
+   "name": "15th Street",
+   "leg": "15th St to Blake",
+   "s_from": 2067.5,
+   "s_to": 2115.0,
+   "stations": 20,
+   "osm_lanes": "4",
+   "osm_oneway": "yes",
+   "surface": "concrete",
+   "width_m": {
+    "p10": 15.5,
+    "p50": 15.75,
+    "p90": 22.98
+   },
+   "grades": {
+    "left": {
+     "measured": 18,
+     "detected": 0,
+     "inferred": 2
+    },
+    "right": {
+     "measured": 15,
+     "detected": 2,
+     "inferred": 3
+    }
+   },
+   "confidence": "high",
+   "gutter_pan_m": {
+    "left": null,
+    "right": null
+   },
+   "two_readings": 29,
+   "disagree_over_0.3m": 29,
+   "disagree_share": 1.0,
+   "disagree_runs": [
+    {
+     "side": "left",
+     "s_from": 2067.5,
+     "s_to": 2102.5
+    },
+    {
+     "side": "right",
+     "s_from": 2070.0,
+     "s_to": 2077.5
+    },
+    {
+     "side": "right",
+     "s_from": 2082.5,
+     "s_to": 2105.0
+    }
+   ],
+   "aerial_minus_lidar_m_p50": 4.0,
+   "spans_opposing_carriageway_share": 0.0,
+   "raised_median_stations": 5,
+   "kerb_step_m_p50": 0.093
+  },
+  {
+   "way": 628378942,
+   "name": "15th Street",
+   "leg": "15th St to Blake",
+   "s_from": 2117.5,
+   "s_to": 2147.5,
+   "stations": 13,
+   "osm_lanes": "4",
+   "osm_oneway": "yes",
+   "surface": "concrete",
+   "width_m": {
+    "p10": 16.48,
+    "p50": 19.0,
+    "p90": 24.54
+   },
+   "grades": {
+    "left": {
+     "measured": 9,
+     "detected": 0,
+     "inferred": 4
+    },
+    "right": {
+     "measured": 8,
+     "detected": 3,
+     "inferred": 2
+    }
+   },
+   "confidence": "medium",
+   "gutter_pan_m": {
+    "left": null,
+    "right": null
+   },
+   "two_readings": 2,
+   "disagree_over_0.3m": 1,
+   "disagree_share": 0.5,
+   "disagree_runs": [
+    {
+     "side": "right",
+     "s_from": 2142.5,
+     "s_to": 2142.5
+    }
+   ],
+   "aerial_minus_lidar_m_p50": 1.04,
+   "spans_opposing_carriageway_share": 0.0,
+   "raised_median_stations": 3,
+   "kerb_step_m_p50": 0.083
+  },
+  {
+   "way": 130897978,
+   "name": "15th Street",
+   "leg": "15th St to Blake",
+   "s_from": 2150.0,
+   "s_to": 2187.5,
+   "stations": 16,
+   "osm_lanes": "4",
+   "osm_oneway": "yes",
+   "surface": "concrete",
+   "width_m": {
+    "p10": 17.88,
+    "p50": 19.5,
+    "p90": 19.75
+   },
+   "grades": {
+    "left": {
+     "measured": 16,
+     "detected": 0,
+     "inferred": 0
+    },
+    "right": {
+     "measured": 14,
+     "detected": 1,
+     "inferred": 1
+    }
+   },
+   "confidence": "high",
+   "gutter_pan_m": {
+    "left": null,
+    "right": null
+   },
+   "two_readings": 8,
+   "disagree_over_0.3m": 8,
+   "disagree_share": 1.0,
+   "disagree_runs": [
+    {
+     "side": "left",
+     "s_from": 2167.5,
+     "s_to": 2172.5
+    },
+    {
+     "side": "left",
+     "s_from": 2180.0,
+     "s_to": 2187.5
+    },
+    {
+     "side": "right",
+     "s_from": 2177.5,
+     "s_to": 2177.5
+    }
+   ],
+   "aerial_minus_lidar_m_p50": 19.98,
+   "spans_opposing_carriageway_share": 0.0,
+   "raised_median_stations": 9,
+   "kerb_step_m_p50": 0.087
+  },
+  {
+   "way": 628634465,
+   "name": "15th Street",
+   "leg": "15th St to Blake",
+   "s_from": 2190.0,
+   "s_to": 2217.5,
+   "stations": 12,
+   "osm_lanes": "4",
+   "osm_oneway": "yes",
+   "surface": "concrete",
+   "width_m": {
+    "p10": 18.38,
+    "p50": 23.0,
+    "p90": 24.9
+   },
+   "grades": {
+    "left": {
+     "measured": 9,
+     "detected": 0,
+     "inferred": 3
+    },
+    "right": {
+     "measured": 7,
+     "detected": 0,
+     "inferred": 5
+    }
+   },
+   "confidence": "medium",
+   "gutter_pan_m": {
+    "left": null,
+    "right": null
+   },
+   "two_readings": 0,
+   "disagree_over_0.3m": 0,
+   "disagree_share": null,
+   "disagree_runs": [],
+   "aerial_minus_lidar_m_p50": null,
+   "spans_opposing_carriageway_share": 0.0,
+   "raised_median_stations": 2,
+   "kerb_step_m_p50": 0.072
+  },
+  {
+   "way": 628378943,
+   "name": "15th Street",
+   "leg": "15th St to Blake",
+   "s_from": 2220.0,
+   "s_to": 2327.5,
+   "stations": 44,
+   "osm_lanes": "3",
+   "osm_oneway": "yes",
+   "surface": "concrete",
+   "width_m": {
+    "p10": 8.82,
+    "p50": 18.6,
+    "p90": 21.36
+   },
+   "grades": {
+    "left": {
+     "measured": 29,
+     "detected": 1,
+     "inferred": 14
+    },
+    "right": {
+     "measured": 26,
+     "detected": 8,
+     "inferred": 10
+    }
+   },
+   "confidence": "medium",
+   "gutter_pan_m": {
+    "left": null,
+    "right": null
+   },
+   "two_readings": 24,
+   "disagree_over_0.3m": 24,
+   "disagree_share": 1.0,
+   "disagree_runs": [
+    {
+     "side": "left",
+     "s_from": 2262.5,
+     "s_to": 2270.0
+    },
+    {
+     "side": "left",
+     "s_from": 2275.0,
+     "s_to": 2277.5
+    },
+    {
+     "side": "left",
+     "s_from": 2285.0,
+     "s_to": 2297.5
+    },
+    {
+     "side": "right",
+     "s_from": 2270.0,
+     "s_to": 2272.5
+    },
+    {
+     "side": "right",
+     "s_from": 2290.0,
+     "s_to": 2312.5
+    }
+   ],
+   "aerial_minus_lidar_m_p50": 7.58,
+   "spans_opposing_carriageway_share": 0.0,
+   "raised_median_stations": 17,
+   "kerb_step_m_p50": 0.091
+  },
+  {
+   "way": 130888010,
+   "name": "15th Street",
+   "leg": "15th St to Blake",
+   "s_from": 2330.0,
+   "s_to": 2387.5,
+   "stations": 24,
+   "osm_lanes": "3",
+   "osm_oneway": "yes",
+   "surface": "concrete",
+   "width_m": {
+    "p10": 16.82,
+    "p50": 18.5,
+    "p90": 20.75
+   },
+   "grades": {
+    "left": {
+     "measured": 21,
+     "detected": 1,
+     "inferred": 2
+    },
+    "right": {
+     "measured": 17,
+     "detected": 0,
+     "inferred": 7
+    }
+   },
+   "confidence": "high",
+   "gutter_pan_m": {
+    "left": null,
+    "right": null
+   },
+   "two_readings": 23,
+   "disagree_over_0.3m": 23,
+   "disagree_share": 1.0,
+   "disagree_runs": [
+    {
+     "side": "left",
+     "s_from": 2345.0,
+     "s_to": 2362.5
+    },
+    {
+     "side": "left",
+     "s_from": 2367.5,
+     "s_to": 2372.5
+    },
+    {
+     "side": "right",
+     "s_from": 2352.5,
+     "s_to": 2375.0
+    },
+    {
+     "side": "right",
+     "s_from": 2380.0,
+     "s_to": 2382.5
+    }
+   ],
+   "aerial_minus_lidar_m_p50": -5.03,
+   "spans_opposing_carriageway_share": 0.0,
+   "raised_median_stations": 10,
+   "kerb_step_m_p50": 0.091
+  },
+  {
+   "way": 628639108,
+   "name": "15th Street",
+   "leg": "15th St to Blake",
+   "s_from": 2390.0,
+   "s_to": 2430.0,
+   "stations": 17,
+   "osm_lanes": "3",
+   "osm_oneway": "yes",
+   "surface": "concrete",
+   "width_m": {
+    "p10": 13.95,
+    "p50": 17.75,
+    "p90": 20.0
+   },
+   "grades": {
+    "left": {
+     "measured": 15,
+     "detected": 1,
+     "inferred": 1
+    },
+    "right": {
+     "measured": 10,
+     "detected": 0,
+     "inferred": 7
+    }
+   },
+   "confidence": "high",
+   "gutter_pan_m": {
+    "left": null,
+    "right": null
+   },
+   "two_readings": 5,
+   "disagree_over_0.3m": 5,
+   "disagree_share": 1.0,
+   "disagree_runs": [
+    {
+     "side": "left",
+     "s_from": 2402.5,
+     "s_to": 2402.5
+    },
+    {
+     "side": "left",
+     "s_from": 2407.5,
+     "s_to": 2412.5
+    },
+    {
+     "side": "left",
+     "s_from": 2417.5,
+     "s_to": 2417.5
+    }
+   ],
+   "aerial_minus_lidar_m_p50": 6.19,
+   "spans_opposing_carriageway_share": 0.0,
+   "raised_median_stations": 12,
+   "kerb_step_m_p50": 0.081
+  },
+  {
+   "way": 106395269,
+   "name": "15th Street",
+   "leg": "15th St to Blake",
+   "s_from": 2432.5,
+   "s_to": 2537.5,
+   "stations": 43,
+   "osm_lanes": "3",
+   "osm_oneway": "yes",
+   "surface": "concrete",
+   "width_m": {
+    "p10": 14.63,
+    "p50": 18.5,
+    "p90": 20.95
+   },
+   "grades": {
+    "left": {
+     "measured": 36,
+     "detected": 1,
+     "inferred": 6
+    },
+    "right": {
+     "measured": 34,
+     "detected": 3,
+     "inferred": 6
+    }
+   },
+   "confidence": "high",
+   "gutter_pan_m": {
+    "left": null,
+    "right": null
+   },
+   "two_readings": 14,
+   "disagree_over_0.3m": 13,
+   "disagree_share": 0.929,
+   "disagree_runs": [
+    {
+     "side": "left",
+     "s_from": 2450.0,
+     "s_to": 2457.5
+    },
+    {
+     "side": "left",
+     "s_from": 2462.5,
+     "s_to": 2472.5
+    },
+    {
+     "side": "left",
+     "s_from": 2492.5,
+     "s_to": 2492.5
+    },
+    {
+     "side": "left",
+     "s_from": 2507.5,
+     "s_to": 2507.5
+    },
+    {
+     "side": "left",
+     "s_from": 2527.5,
+     "s_to": 2527.5
+    },
+    {
+     "side": "right",
+     "s_from": 2445.0,
+     "s_to": 2445.0
+    }
+   ],
+   "aerial_minus_lidar_m_p50": 4.54,
+   "spans_opposing_carriageway_share": 0.0,
+   "raised_median_stations": 7,
+   "kerb_step_m_p50": 0.085
+  },
+  {
+   "way": 130911257,
+   "name": "15th Street",
+   "leg": "15th St to Blake",
+   "s_from": 2540.0,
+   "s_to": 2590.0,
+   "stations": 21,
+   "osm_lanes": "4",
+   "osm_oneway": "yes",
+   "surface": "asphalt",
+   "width_m": {
+    "p10": 15.25,
+    "p50": 17.5,
+    "p90": 23.4
+   },
+   "grades": {
+    "left": {
+     "measured": 17,
+     "detected": 0,
+     "inferred": 4
+    },
+    "right": {
+     "measured": 18,
+     "detected": 0,
+     "inferred": 3
+    }
+   },
+   "confidence": "high",
+   "gutter_pan_m": {
+    "left": null,
+    "right": null
+   },
+   "two_readings": 5,
+   "disagree_over_0.3m": 5,
+   "disagree_share": 1.0,
+   "disagree_runs": [
+    {
+     "side": "right",
+     "s_from": 2565.0,
+     "s_to": 2570.0
+    },
+    {
+     "side": "right",
+     "s_from": 2577.5,
+     "s_to": 2580.0
+    }
+   ],
+   "aerial_minus_lidar_m_p50": 6.52,
+   "spans_opposing_carriageway_share": 0.0,
+   "raised_median_stations": 1,
+   "kerb_step_m_p50": 0.079
+  },
+  {
+   "way": 628636724,
+   "name": "15th Street",
+   "leg": "15th St to Blake",
+   "s_from": 2592.5,
+   "s_to": 2600.0,
+   "stations": 4,
+   "osm_lanes": "4",
+   "osm_oneway": "yes",
+   "surface": "asphalt",
+   "width_m": {
+    "p10": 15.5,
+    "p50": 15.88,
+    "p90": 16.43
+   },
+   "grades": {
+    "left": {
+     "measured": 4,
+     "detected": 0,
+     "inferred": 0
+    },
+    "right": {
+     "measured": 4,
+     "detected": 0,
+     "inferred": 0
+    }
+   },
+   "confidence": "high",
+   "gutter_pan_m": {
+    "left": null,
+    "right": null
+   },
+   "two_readings": 4,
+   "disagree_over_0.3m": 4,
+   "disagree_share": 1.0,
+   "disagree_runs": [
+    {
+     "side": "left",
+     "s_from": 2597.5,
+     "s_to": 2600.0
+    },
+    {
+     "side": "right",
+     "s_from": 2595.0,
+     "s_to": 2597.5
+    }
+   ],
+   "aerial_minus_lidar_m_p50": 5.19,
+   "spans_opposing_carriageway_share": 0.0,
+   "raised_median_stations": 1,
+   "kerb_step_m_p50": 0.105
+  },
+  {
+   "way": 99883921,
+   "name": "15th Street",
+   "leg": "15th St to Blake",
+   "s_from": 2602.5,
+   "s_to": 2642.5,
+   "stations": 17,
+   "osm_lanes": "2",
+   "osm_oneway": "yes",
+   "surface": "asphalt",
+   "width_m": {
+    "p10": 8.39,
+    "p50": 15.24,
+    "p90": 17.25
+   },
+   "grades": {
+    "left": {
+     "measured": 14,
+     "detected": 0,
+     "inferred": 3
+    },
+    "right": {
+     "measured": 13,
+     "detected": 0,
+     "inferred": 4
+    }
+   },
+   "confidence": "high",
+   "gutter_pan_m": {
+    "left": null,
+    "right": null
+   },
+   "two_readings": 8,
+   "disagree_over_0.3m": 7,
+   "disagree_share": 0.875,
+   "disagree_runs": [
+    {
+     "side": "left",
+     "s_from": 2602.5,
+     "s_to": 2612.5
+    },
+    {
+     "side": "right",
+     "s_from": 2612.5,
+     "s_to": 2612.5
+    },
+    {
+     "side": "right",
+     "s_from": 2632.5,
+     "s_to": 2632.5
+    }
+   ],
+   "aerial_minus_lidar_m_p50": 5.22,
+   "spans_opposing_carriageway_share": 0.53,
+   "raised_median_stations": 4,
+   "kerb_step_m_p50": 0.085
+  },
+  {
+   "way": 541284847,
+   "name": "Blake Street",
+   "leg": "Blake to Speer SB",
+   "s_from": 2645.0,
+   "s_to": 2675.0,
+   "stations": 13,
+   "osm_lanes": "3",
+   "osm_oneway": "yes",
+   "surface": "asphalt",
+   "width_m": {
+    "p10": 12.16,
+    "p50": 15.33,
+    "p90": 19.75
+   },
+   "grades": {
+    "left": {
+     "measured": 11,
+     "detected": 0,
+     "inferred": 2
+    },
+    "right": {
+     "measured": 6,
+     "detected": 3,
+     "inferred": 4
+    }
+   },
+   "confidence": "medium",
+   "gutter_pan_m": {
+    "left": null,
+    "right": null
+   },
+   "two_readings": 3,
+   "disagree_over_0.3m": 3,
+   "disagree_share": 1.0,
+   "disagree_runs": [
+    {
+     "side": "left",
+     "s_from": 2675.0,
+     "s_to": 2675.0
+    },
+    {
+     "side": "right",
+     "s_from": 2652.5,
+     "s_to": 2652.5
+    },
+    {
+     "side": "right",
+     "s_from": 2675.0,
+     "s_to": 2675.0
+    }
+   ],
+   "aerial_minus_lidar_m_p50": -1.8,
+   "spans_opposing_carriageway_share": 0.31,
+   "raised_median_stations": 6,
+   "kerb_step_m_p50": 0.086
+  },
+  {
+   "way": 99883930,
+   "name": "Blake Street",
+   "leg": "Blake to Speer SB",
+   "s_from": 2677.5,
+   "s_to": 2730.0,
+   "stations": 22,
+   "osm_lanes": "2",
+   "osm_oneway": "yes",
+   "surface": "asphalt",
+   "width_m": {
+    "p10": 15.5,
+    "p50": 16.5,
+    "p90": 19.53
+   },
+   "grades": {
+    "left": {
+     "measured": 21,
+     "detected": 0,
+     "inferred": 1
+    },
+    "right": {
+     "measured": 21,
+     "detected": 1,
+     "inferred": 0
+    }
+   },
+   "confidence": "high",
+   "gutter_pan_m": {
+    "left": null,
+    "right": 0.27
+   },
+   "two_readings": 22,
+   "disagree_over_0.3m": 21,
+   "disagree_share": 0.955,
+   "disagree_runs": [
+    {
+     "side": "left",
+     "s_from": 2677.5,
+     "s_to": 2680.0
+    },
+    {
+     "side": "left",
+     "s_from": 2690.0,
+     "s_to": 2692.5
+    },
+    {
+     "side": "left",
+     "s_from": 2712.5,
+     "s_to": 2715.0
+    },
+    {
+     "side": "right",
+     "s_from": 2682.5,
+     "s_to": 2682.5
+    },
+    {
+     "side": "right",
+     "s_from": 2687.5,
+     "s_to": 2687.5
+    },
+    {
+     "side": "right",
+     "s_from": 2695.0,
+     "s_to": 2707.5
+    },
+    {
+     "side": "right",
+     "s_from": 2712.5,
+     "s_to": 2722.5
+    },
+    {
+     "side": "right",
+     "s_from": 2727.5,
+     "s_to": 2730.0
+    }
+   ],
+   "aerial_minus_lidar_m_p50": -2.54,
+   "spans_opposing_carriageway_share": 0.0,
+   "raised_median_stations": 0,
+   "kerb_step_m_p50": 0.079
+  },
+  {
+   "way": 1563606689,
+   "name": "Blake Street",
+   "leg": "Blake to Speer SB",
+   "s_from": 2732.5,
+   "s_to": 2770.0,
+   "stations": 16,
+   "osm_lanes": "2",
+   "osm_oneway": "yes",
+   "surface": "asphalt",
+   "width_m": {
+    "p10": 16.25,
+    "p50": 18.25,
+    "p90": 20.16
+   },
+   "grades": {
+    "left": {
+     "measured": 14,
+     "detected": 1,
+     "inferred": 1
+    },
+    "right": {
+     "measured": 16,
+     "detected": 0,
+     "inferred": 0
+    }
+   },
+   "confidence": "high",
+   "gutter_pan_m": {
+    "left": null,
+    "right": null
+   },
+   "two_readings": 15,
+   "disagree_over_0.3m": 14,
+   "disagree_share": 0.933,
+   "disagree_runs": [
+    {
+     "side": "left",
+     "s_from": 2755.0,
+     "s_to": 2762.5
+    },
+    {
+     "side": "left",
+     "s_from": 2767.5,
+     "s_to": 2767.5
+    },
+    {
+     "side": "right",
+     "s_from": 2732.5,
+     "s_to": 2732.5
+    },
+    {
+     "side": "right",
+     "s_from": 2737.5,
+     "s_to": 2737.5
+    },
+    {
+     "side": "right",
+     "s_from": 2745.0,
+     "s_to": 2750.0
+    },
+    {
+     "side": "right",
+     "s_from": 2755.0,
+     "s_to": 2757.5
+    },
+    {
+     "side": "right",
+     "s_from": 2767.5,
+     "s_to": 2770.0
+    }
+   ],
+   "aerial_minus_lidar_m_p50": -0.44,
+   "spans_opposing_carriageway_share": 0.0,
+   "raised_median_stations": 5,
+   "kerb_step_m_p50": 0.097
+  },
+  {
+   "way": 1384814966,
+   "name": "Blake Street",
+   "leg": "Blake to Speer SB",
+   "s_from": 2772.5,
+   "s_to": 2775.0,
+   "stations": 2,
+   "osm_lanes": "3",
+   "osm_oneway": "yes",
+   "surface": "paved",
+   "width_m": {
+    "p10": 20.08,
+    "p50": 20.08,
+    "p90": 20.08
+   },
+   "grades": {
+    "left": {
+     "measured": 0,
+     "detected": 0,
+     "inferred": 2
+    },
+    "right": {
+     "measured": 2,
+     "detected": 0,
+     "inferred": 0
+    }
+   },
+   "confidence": "low",
+   "gutter_pan_m": {
+    "left": null,
+    "right": null
+   },
+   "two_readings": 2,
+   "disagree_over_0.3m": 2,
+   "disagree_share": 1.0,
+   "disagree_runs": [
+    {
+     "side": "right",
+     "s_from": 2772.5,
+     "s_to": 2775.0
+    }
+   ],
+   "aerial_minus_lidar_m_p50": -1.86,
+   "spans_opposing_carriageway_share": 0.0,
+   "raised_median_stations": 0,
+   "kerb_step_m_p50": 0.095
+  },
+  {
+   "way": 25679931,
+   "name": "Blake Street",
+   "leg": "Blake to Speer SB",
+   "s_from": 2777.5,
+   "s_to": 2780.0,
+   "stations": 2,
+   "osm_lanes": "3",
+   "osm_oneway": "yes",
+   "surface": "paved",
+   "width_m": {
+    "p10": 19.7,
+    "p50": 19.84,
+    "p90": 19.97
+   },
+   "grades": {
+    "left": {
+     "measured": 0,
+     "detected": 0,
+     "inferred": 2
+    },
+    "right": {
+     "measured": 2,
+     "detected": 0,
+     "inferred": 0
+    }
+   },
+   "confidence": "low",
+   "gutter_pan_m": {
+    "left": null,
+    "right": null
+   },
+   "two_readings": 2,
+   "disagree_over_0.3m": 2,
+   "disagree_share": 1.0,
+   "disagree_runs": [
+    {
+     "side": "right",
+     "s_from": 2777.5,
+     "s_to": 2780.0
+    }
+   ],
+   "aerial_minus_lidar_m_p50": -2.54,
+   "spans_opposing_carriageway_share": 0.0,
+   "raised_median_stations": 0,
+   "kerb_step_m_p50": 0.15
+  },
+  {
+   "way": 461500433,
+   "name": "Blake Street",
+   "leg": "Blake to Speer SB",
+   "s_from": 2782.5,
+   "s_to": 2820.0,
+   "stations": 16,
+   "osm_lanes": "4",
+   "osm_oneway": "yes",
+   "surface": "paved",
+   "width_m": {
+    "p10": 15.73,
+    "p50": 20.49,
+    "p90": 21.67
+   },
+   "grades": {
+    "left": {
+     "measured": 12,
+     "detected": 0,
+     "inferred": 4
+    },
+    "right": {
+     "measured": 10,
+     "detected": 1,
+     "inferred": 5
+    }
+   },
+   "confidence": "medium",
+   "gutter_pan_m": {
+    "left": null,
+    "right": null
+   },
+   "two_readings": 17,
+   "disagree_over_0.3m": 17,
+   "disagree_share": 1.0,
+   "disagree_runs": [
+    {
+     "side": "left",
+     "s_from": 2785.0,
+     "s_to": 2787.5
+    },
+    {
+     "side": "left",
+     "s_from": 2807.5,
+     "s_to": 2807.5
+    },
+    {
+     "side": "left",
+     "s_from": 2812.5,
+     "s_to": 2817.5
+    },
+    {
+     "side": "right",
+     "s_from": 2782.5,
+     "s_to": 2800.0
+    },
+    {
+     "side": "right",
+     "s_from": 2807.5,
+     "s_to": 2807.5
+    },
+    {
+     "side": "right",
+     "s_from": 2817.5,
+     "s_to": 2820.0
+    }
+   ],
+   "aerial_minus_lidar_m_p50": -2.45,
+   "spans_opposing_carriageway_share": 0.0,
+   "raised_median_stations": 3,
+   "kerb_step_m_p50": 0.198
+  },
+  {
+   "way": 512311518,
+   "name": "Blake Street",
+   "leg": "Blake to Speer SB",
+   "s_from": 2822.5,
+   "s_to": 2827.5,
+   "stations": 3,
+   "osm_lanes": "4",
+   "osm_oneway": "yes",
+   "surface": "paved",
+   "width_m": {
+    "p10": 11.96,
+    "p50": 12.0,
+    "p90": 12.62
+   },
+   "grades": {
+    "left": {
+     "measured": 1,
+     "detected": 0,
+     "inferred": 2
+    },
+    "right": {
+     "measured": 0,
+     "detected": 0,
+     "inferred": 3
+    }
+   },
+   "confidence": "low",
+   "gutter_pan_m": {
+    "left": null,
+    "right": null
+   },
+   "two_readings": 0,
+   "disagree_over_0.3m": 0,
+   "disagree_share": null,
+   "disagree_runs": [],
+   "aerial_minus_lidar_m_p50": null,
+   "spans_opposing_carriageway_share": 0.0,
+   "raised_median_stations": 1,
+   "kerb_step_m_p50": 0.189
+  },
+  {
+   "way": 628634516,
+   "name": "Blake Street",
+   "leg": "Blake to Speer SB",
+   "s_from": 2830.0,
+   "s_to": 2835.0,
+   "stations": 3,
+   "osm_lanes": "4",
+   "osm_oneway": "yes",
+   "surface": "paved",
+   "width_m": {
+    "p10": 13.68,
+    "p50": 14.3,
+    "p90": 14.88
+   },
+   "grades": {
+    "left": {
+     "measured": 0,
+     "detected": 0,
+     "inferred": 3
+    },
+    "right": {
+     "measured": 0,
+     "detected": 0,
+     "inferred": 3
+    }
+   },
+   "confidence": "low",
+   "gutter_pan_m": {
+    "left": null,
+    "right": null
+   },
+   "two_readings": 0,
+   "disagree_over_0.3m": 0,
+   "disagree_share": null,
+   "disagree_runs": [],
+   "aerial_minus_lidar_m_p50": null,
+   "spans_opposing_carriageway_share": 0.0,
+   "raised_median_stations": 1,
+   "kerb_step_m_p50": 0.107
+  },
+  {
+   "way": 25679930,
+   "name": "Blake Street",
+   "leg": "Blake to Speer SB",
+   "s_from": 2837.5,
+   "s_to": 2922.5,
+   "stations": 35,
+   "osm_lanes": "4",
+   "osm_oneway": "yes",
+   "surface": "paved",
+   "width_m": {
+    "p10": 14.5,
+    "p50": 14.75,
+    "p90": 17.98
+   },
+   "grades": {
+    "left": {
+     "measured": 30,
+     "detected": 0,
+     "inferred": 5
+    },
+    "right": {
+     "measured": 27,
+     "detected": 0,
+     "inferred": 8
+    }
+   },
+   "confidence": "high",
+   "gutter_pan_m": {
+    "left": null,
+    "right": null
+   },
+   "two_readings": 20,
+   "disagree_over_0.3m": 20,
+   "disagree_share": 1.0,
+   "disagree_runs": [
+    {
+     "side": "left",
+     "s_from": 2837.5,
+     "s_to": 2837.5
+    },
+    {
+     "side": "left",
+     "s_from": 2860.0,
+     "s_to": 2875.0
+    },
+    {
+     "side": "left",
+     "s_from": 2890.0,
+     "s_to": 2890.0
+    },
+    {
+     "side": "right",
+     "s_from": 2855.0,
+     "s_to": 2877.5
+    },
+    {
+     "side": "right",
+     "s_from": 2905.0,
+     "s_to": 2905.0
+    }
+   ],
+   "aerial_minus_lidar_m_p50": 3.59,
+   "spans_opposing_carriageway_share": 0.0,
+   "raised_median_stations": 29,
+   "kerb_step_m_p50": 0.104
+  },
+  {
+   "way": 628634511,
+   "name": "Auraria Parkway",
+   "leg": "Blake to Speer SB",
+   "s_from": 2925.0,
+   "s_to": 2945.0,
+   "stations": 9,
+   "osm_lanes": "3",
+   "osm_oneway": "yes",
+   "surface": null,
+   "width_m": {
+    "p10": 16.43,
+    "p50": 17.2,
+    "p90": 20.63
+   },
+   "grades": {
+    "left": {
+     "measured": 0,
+     "detected": 0,
+     "inferred": 9
+    },
+    "right": {
+     "measured": 4,
+     "detected": 0,
+     "inferred": 5
+    }
+   },
+   "confidence": "low",
+   "gutter_pan_m": {
+    "left": null,
+    "right": null
+   },
+   "two_readings": 0,
+   "disagree_over_0.3m": 0,
+   "disagree_share": null,
+   "disagree_runs": [],
+   "aerial_minus_lidar_m_p50": null,
+   "spans_opposing_carriageway_share": 0.11,
+   "raised_median_stations": 0,
+   "kerb_step_m_p50": 0.088
+  },
+  {
+   "way": 628622164,
+   "name": "North Speer Boulevard",
+   "leg": "Speer SB to Kalamath",
+   "s_from": 2947.5,
+   "s_to": 3052.5,
+   "stations": 43,
+   "osm_lanes": "4",
+   "osm_oneway": "yes",
+   "surface": "asphalt",
+   "width_m": {
+    "p10": 14.25,
+    "p50": 14.8,
+    "p90": 20.16
+   },
+   "grades": {
+    "left": {
+     "measured": 24,
+     "detected": 0,
+     "inferred": 19
+    },
+    "right": {
+     "measured": 30,
+     "detected": 0,
+     "inferred": 13
+    }
+   },
+   "confidence": "medium",
+   "gutter_pan_m": {
+    "left": null,
+    "right": null
+   },
+   "two_readings": 2,
+   "disagree_over_0.3m": 2,
+   "disagree_share": 1.0,
+   "disagree_runs": [
+    {
+     "side": "left",
+     "s_from": 2982.5,
+     "s_to": 2985.0
+    }
+   ],
+   "aerial_minus_lidar_m_p50": 16.26,
+   "spans_opposing_carriageway_share": 0.0,
+   "raised_median_stations": 13,
+   "kerb_step_m_p50": 0.092
+  },
+  {
+   "way": 204336217,
+   "name": "North Speer Boulevard",
+   "leg": "Speer SB to Kalamath",
+   "s_from": 3055.0,
+   "s_to": 3225.0,
+   "stations": 69,
+   "osm_lanes": "4",
+   "osm_oneway": "yes",
+   "surface": "asphalt",
+   "width_m": {
+    "p10": 14.25,
+    "p50": 14.5,
+    "p90": 16.99
+   },
+   "grades": {
+    "left": {
+     "measured": 60,
+     "detected": 0,
+     "inferred": 9
+    },
+    "right": {
+     "measured": 57,
+     "detected": 0,
+     "inferred": 12
+    }
+   },
+   "confidence": "high",
+   "gutter_pan_m": {
+    "left": null,
+    "right": null
+   },
+   "two_readings": 21,
+   "disagree_over_0.3m": 21,
+   "disagree_share": 1.0,
+   "disagree_runs": [
+    {
+     "side": "right",
+     "s_from": 3072.5,
+     "s_to": 3090.0
+    },
+    {
+     "side": "right",
+     "s_from": 3120.0,
+     "s_to": 3130.0
+    },
+    {
+     "side": "right",
+     "s_from": 3135.0,
+     "s_to": 3142.5
+    },
+    {
+     "side": "right",
+     "s_from": 3182.5,
+     "s_to": 3190.0
+    }
+   ],
+   "aerial_minus_lidar_m_p50": 14.4,
+   "spans_opposing_carriageway_share": 0.0,
+   "raised_median_stations": 8,
+   "kerb_step_m_p50": 0.113
+  },
+  {
+   "way": 628634529,
+   "name": "North Speer Boulevard",
+   "leg": "Speer SB to Kalamath",
+   "s_from": 3227.5,
+   "s_to": 3302.5,
+   "stations": 31,
+   "osm_lanes": "4",
+   "osm_oneway": "yes",
+   "surface": "asphalt",
+   "width_m": {
+    "p10": 17.94,
+    "p50": 18.17,
+    "p90": 18.92
+   },
+   "grades": {
+    "left": {
+     "measured": 19,
+     "detected": 2,
+     "inferred": 10
+    },
+    "right": {
+     "measured": 26,
+     "detected": 0,
+     "inferred": 5
+    }
+   },
+   "confidence": "high",
+   "gutter_pan_m": {
+    "left": 0.88,
+    "right": 0.46
+   },
+   "two_readings": 34,
+   "disagree_over_0.3m": 24,
+   "disagree_share": 0.706,
+   "disagree_runs": [
+    {
+     "side": "left",
+     "s_from": 3250.0,
+     "s_to": 3257.5
+    },
+    {
+     "side": "left",
+     "s_from": 3262.5,
+     "s_to": 3262.5
+    },
+    {
+     "side": "left",
+     "s_from": 3267.5,
+     "s_to": 3267.5
+    },
+    {
+     "side": "left",
+     "s_from": 3285.0,
+     "s_to": 3285.0
+    },
+    {
+     "side": "left",
+     "s_from": 3295.0,
+     "s_to": 3295.0
+    },
+    {
+     "side": "right",
+     "s_from": 3245.0,
+     "s_to": 3250.0
+    },
+    {
+     "side": "right",
+     "s_from": 3270.0,
+     "s_to": 3275.0
+    },
+    {
+     "side": "right",
+     "s_from": 3280.0,
+     "s_to": 3302.5
+    }
+   ],
+   "aerial_minus_lidar_m_p50": 0.67,
+   "spans_opposing_carriageway_share": 0.0,
+   "raised_median_stations": 26,
+   "kerb_step_m_p50": 0.09
+  },
+  {
+   "way": 628622237,
+   "name": "North Speer Boulevard",
+   "leg": "Speer SB to Kalamath",
+   "s_from": 3305.0,
+   "s_to": 3352.5,
+   "stations": 20,
+   "osm_lanes": "5",
+   "osm_oneway": "yes",
+   "surface": "asphalt",
+   "width_m": {
+    "p10": 13.56,
+    "p50": 18.12,
+    "p90": 18.79
+   },
+   "grades": {
+    "left": {
+     "measured": 13,
+     "detected": 7,
+     "inferred": 0
+    },
+    "right": {
+     "measured": 20,
+     "detected": 0,
+     "inferred": 0
+    }
+   },
+   "confidence": "high",
+   "gutter_pan_m": {
+    "left": null,
+    "right": 0.44
+   },
+   "two_readings": 19,
+   "disagree_over_0.3m": 17,
+   "disagree_share": 0.895,
+   "disagree_runs": [
+    {
+     "side": "left",
+     "s_from": 3305.0,
+     "s_to": 3307.5
+    },
+    {
+     "side": "left",
+     "s_from": 3315.0,
+     "s_to": 3315.0
+    },
+    {
+     "side": "left",
+     "s_from": 3322.5,
+     "s_to": 3322.5
+    },
+    {
+     "side": "left",
+     "s_from": 3327.5,
+     "s_to": 3330.0
+    },
+    {
+     "side": "right",
+     "s_from": 3305.0,
+     "s_to": 3312.5
+    },
+    {
+     "side": "right",
+     "s_from": 3317.5,
+     "s_to": 3322.5
+    },
+    {
+     "side": "right",
+     "s_from": 3327.5,
+     "s_to": 3330.0
+    },
+    {
+     "side": "right",
+     "s_from": 3335.0,
+     "s_to": 3335.0
+    },
+    {
+     "side": "right",
+     "s_from": 3342.5,
+     "s_to": 3342.5
+    }
+   ],
+   "aerial_minus_lidar_m_p50": 3.99,
+   "spans_opposing_carriageway_share": 0.0,
+   "raised_median_stations": 18,
+   "kerb_step_m_p50": 0.098
+  },
+  {
+   "way": 628622238,
+   "name": "North Speer Boulevard",
+   "leg": "Speer SB to Kalamath",
+   "s_from": 3355.0,
+   "s_to": 3367.5,
+   "stations": 6,
+   "osm_lanes": "5",
+   "osm_oneway": "yes",
+   "surface": "asphalt",
+   "width_m": {
+    "p10": 15.99,
+    "p50": 16.45,
+    "p90": 18.05
+   },
+   "grades": {
+    "left": {
+     "measured": 0,
+     "detected": 3,
+     "inferred": 3
+    },
+    "right": {
+     "measured": 6,
+     "detected": 0,
+     "inferred": 0
+    }
+   },
+   "confidence": "medium",
+   "gutter_pan_m": {
+    "left": null,
+    "right": null
+   },
+   "two_readings": 3,
+   "disagree_over_0.3m": 3,
+   "disagree_share": 1.0,
+   "disagree_runs": [
+    {
+     "side": "left",
+     "s_from": 3362.5,
+     "s_to": 3362.5
+    },
+    {
+     "side": "right",
+     "s_from": 3362.5,
+     "s_to": 3362.5
+    },
+    {
+     "side": "right",
+     "s_from": 3367.5,
+     "s_to": 3367.5
+    }
+   ],
+   "aerial_minus_lidar_m_p50": -0.49,
+   "spans_opposing_carriageway_share": 0.0,
+   "raised_median_stations": 2,
+   "kerb_step_m_p50": 0.073
+  },
+  {
+   "way": 16989043,
+   "name": "North Speer Boulevard",
+   "leg": "Speer SB to Kalamath",
+   "s_from": 3370.0,
+   "s_to": 3682.5,
+   "stations": 126,
+   "osm_lanes": "4",
+   "osm_oneway": "yes",
+   "surface": "asphalt",
+   "width_m": {
+    "p10": 14.5,
+    "p50": 15.0,
+    "p90": 16.29
+   },
+   "grades": {
+    "left": {
+     "measured": 97,
+     "detected": 2,
+     "inferred": 27
+    },
+    "right": {
+     "measured": 116,
+     "detected": 1,
+     "inferred": 9
+    }
+   },
+   "confidence": "high",
+   "gutter_pan_m": {
+    "left": 0.57,
+    "right": 0.46
+   },
+   "two_readings": 183,
+   "disagree_over_0.3m": 102,
+   "disagree_share": 0.557,
+   "disagree_runs": [
+    {
+     "side": "left",
+     "s_from": 3370.0,
+     "s_to": 3375.0
+    },
+    {
+     "side": "left",
+     "s_from": 3395.0,
+     "s_to": 3395.0
+    },
+    {
+     "side": "left",
+     "s_from": 3405.0,
+     "s_to": 3405.0
+    },
+    {
+     "side": "left",
+     "s_from": 3410.0,
+     "s_to": 3410.0
+    },
+    {
+     "side": "left",
+     "s_from": 3415.0,
+     "s_to": 3417.5
+    },
+    {
+     "side": "left",
+     "s_from": 3432.5,
+     "s_to": 3447.5
+    },
+    {
+     "side": "left",
+     "s_from": 3455.0,
+     "s_to": 3455.0
+    },
+    {
+     "side": "left",
+     "s_from": 3460.0,
+     "s_to": 3460.0
+    },
+    {
+     "side": "left",
+     "s_from": 3472.5,
+     "s_to": 3472.5
+    },
+    {
+     "side": "left",
+     "s_from": 3507.5,
+     "s_to": 3507.5
+    },
+    {
+     "side": "left",
+     "s_from": 3517.5,
+     "s_to": 3517.5
+    },
+    {
+     "side": "left",
+     "s_from": 3530.0,
+     "s_to": 3540.0
+    },
+    {
+     "side": "left",
+     "s_from": 3557.5,
+     "s_to": 3557.5
+    },
+    {
+     "side": "left",
+     "s_from": 3565.0,
+     "s_to": 3565.0
+    },
+    {
+     "side": "left",
+     "s_from": 3587.5,
+     "s_to": 3587.5
+    },
+    {
+     "side": "left",
+     "s_from": 3592.5,
+     "s_to": 3592.5
+    },
+    {
+     "side": "left",
+     "s_from": 3597.5,
+     "s_to": 3607.5
+    },
+    {
+     "side": "left",
+     "s_from": 3622.5,
+     "s_to": 3622.5
+    },
+    {
+     "side": "left",
+     "s_from": 3635.0,
+     "s_to": 3637.5
+    },
+    {
+     "side": "left",
+     "s_from": 3662.5,
+     "s_to": 3662.5
+    },
+    {
+     "side": "left",
+     "s_from": 3672.5,
+     "s_to": 3675.0
+    },
+    {
+     "side": "left",
+     "s_from": 3680.0,
+     "s_to": 3682.5
+    },
+    {
+     "side": "right",
+     "s_from": 3370.0,
+     "s_to": 3372.5
+    },
+    {
+     "side": "right",
+     "s_from": 3380.0,
+     "s_to": 3382.5
+    },
+    {
+     "side": "right",
+     "s_from": 3387.5,
+     "s_to": 3407.5
+    },
+    {
+     "side": "right",
+     "s_from": 3412.5,
+     "s_to": 3417.5
+    },
+    {
+     "side": "right",
+     "s_from": 3422.5,
+     "s_to": 3422.5
+    },
+    {
+     "side": "right",
+     "s_from": 3430.0,
+     "s_to": 3440.0
+    },
+    {
+     "side": "right",
+     "s_from": 3445.0,
+     "s_to": 3455.0
+    },
+    {
+     "side": "right",
+     "s_from": 3460.0,
+     "s_to": 3482.5
+    },
+    {
+     "side": "right",
+     "s_from": 3527.5,
+     "s_to": 3530.0
+    },
+    {
+     "side": "right",
+     "s_from": 3537.5,
+     "s_to": 3537.5
+    },
+    {
+     "side": "right",
+     "s_from": 3560.0,
+     "s_to": 3560.0
+    },
+    {
+     "side": "right",
+     "s_from": 3565.0,
+     "s_to": 3570.0
+    },
+    {
+     "side": "right",
+     "s_from": 3575.0,
+     "s_to": 3582.5
+    },
+    {
+     "side": "right",
+     "s_from": 3602.5,
+     "s_to": 3602.5
+    },
+    {
+     "side": "right",
+     "s_from": 3612.5,
+     "s_to": 3612.5
+    },
+    {
+     "side": "right",
+     "s_from": 3617.5,
+     "s_to": 3622.5
+    },
+    {
+     "side": "right",
+     "s_from": 3630.0,
+     "s_to": 3630.0
+    },
+    {
+     "side": "right",
+     "s_from": 3635.0,
+     "s_to": 3635.0
+    }
+   ],
+   "aerial_minus_lidar_m_p50": -0.07,
+   "spans_opposing_carriageway_share": 0.0,
+   "raised_median_stations": 79,
+   "kerb_step_m_p50": 0.084
+  },
+  {
+   "way": 628622236,
+   "name": "North Speer Boulevard",
+   "leg": "Speer SB to Kalamath",
+   "s_from": 3685.0,
+   "s_to": 3700.0,
+   "stations": 7,
+   "osm_lanes": "4",
+   "osm_oneway": "yes",
+   "surface": "asphalt",
+   "width_m": {
+    "p10": 17.7,
+    "p50": 18.5,
+    "p90": 18.5
+   },
+   "grades": {
+    "left": {
+     "measured": 3,
+     "detected": 0,
+     "inferred": 4
+    },
+    "right": {
+     "measured": 6,
+     "detected": 1,
+     "inferred": 0
+    }
+   },
+   "confidence": "medium",
+   "gutter_pan_m": {
+    "left": null,
+    "right": null
+   },
+   "two_readings": 7,
+   "disagree_over_0.3m": 4,
+   "disagree_share": 0.571,
+   "disagree_runs": [
+    {
+     "side": "left",
+     "s_from": 3697.5,
+     "s_to": 3700.0
+    },
+    {
+     "side": "right",
+     "s_from": 3692.5,
+     "s_to": 3695.0
+    }
+   ],
+   "aerial_minus_lidar_m_p50": -0.49,
+   "spans_opposing_carriageway_share": 0.0,
+   "raised_median_stations": 5,
+   "kerb_step_m_p50": 0.078
+  },
+  {
+   "way": 962281032,
+   "name": "North Speer Boulevard",
+   "leg": "Speer SB to Kalamath",
+   "s_from": 3702.5,
+   "s_to": 3747.5,
+   "stations": 19,
+   "osm_lanes": "5",
+   "osm_oneway": "yes",
+   "surface": "asphalt",
+   "width_m": {
+    "p10": 17.87,
+    "p50": 18.25,
+    "p90": 21.42
+   },
+   "grades": {
+    "left": {
+     "measured": 11,
+     "detected": 2,
+     "inferred": 6
+    },
+    "right": {
+     "measured": 18,
+     "detected": 0,
+     "inferred": 1
+    }
+   },
+   "confidence": "high",
+   "gutter_pan_m": {
+    "left": 0.86,
+    "right": null
+   },
+   "two_readings": 12,
+   "disagree_over_0.3m": 9,
+   "disagree_share": 0.75,
+   "disagree_runs": [
+    {
+     "side": "left",
+     "s_from": 3707.5,
+     "s_to": 3707.5
+    },
+    {
+     "side": "left",
+     "s_from": 3715.0,
+     "s_to": 3717.5
+    },
+    {
+     "side": "left",
+     "s_from": 3722.5,
+     "s_to": 3732.5
+    },
+    {
+     "side": "right",
+     "s_from": 3725.0,
+     "s_to": 3725.0
+    }
+   ],
+   "aerial_minus_lidar_m_p50": -0.24,
+   "spans_opposing_carriageway_share": 0.0,
+   "raised_median_stations": 11,
+   "kerb_step_m_p50": 0.084
+  },
+  {
+   "way": 130886776,
+   "name": "North Kalamath Street",
+   "leg": "Kalamath S to W 14th Ave",
+   "s_from": 3750.0,
+   "s_to": 3805.0,
+   "stations": 23,
+   "osm_lanes": "3",
+   "osm_oneway": "yes",
+   "surface": null,
+   "width_m": {
+    "p10": 14.25,
+    "p50": 16.25,
+    "p90": 19.31
+   },
+   "grades": {
+    "left": {
+     "measured": 18,
+     "detected": 0,
+     "inferred": 5
+    },
+    "right": {
+     "measured": 20,
+     "detected": 1,
+     "inferred": 2
+    }
+   },
+   "confidence": "high",
+   "gutter_pan_m": {
+    "left": 0.76,
+    "right": 0.46
+   },
+   "two_readings": 11,
+   "disagree_over_0.3m": 11,
+   "disagree_share": 1.0,
+   "disagree_runs": [
+    {
+     "side": "left",
+     "s_from": 3787.5,
+     "s_to": 3790.0
+    },
+    {
+     "side": "right",
+     "s_from": 3760.0,
+     "s_to": 3760.0
+    },
+    {
+     "side": "right",
+     "s_from": 3780.0,
+     "s_to": 3787.5
+    },
+    {
+     "side": "right",
+     "s_from": 3792.5,
+     "s_to": 3792.5
+    },
+    {
+     "side": "right",
+     "s_from": 3797.5,
+     "s_to": 3802.5
+    }
+   ],
+   "aerial_minus_lidar_m_p50": 1.01,
+   "spans_opposing_carriageway_share": 0.0,
+   "raised_median_stations": 2,
+   "kerb_step_m_p50": 0.088
+  },
+  {
+   "way": 628622224,
+   "name": "North Kalamath Street",
+   "leg": "Kalamath S to W 14th Ave",
+   "s_from": 3807.5,
+   "s_to": 3890.0,
+   "stations": 34,
+   "osm_lanes": "4",
+   "osm_oneway": "yes",
+   "surface": null,
+   "width_m": {
+    "p10": 15.0,
+    "p50": 15.75,
+    "p90": 17.05
+   },
+   "grades": {
+    "left": {
+     "measured": 23,
+     "detected": 2,
+     "inferred": 9
+    },
+    "right": {
+     "measured": 24,
+     "detected": 2,
+     "inferred": 8
+    }
+   },
+   "confidence": "medium",
+   "gutter_pan_m": {
+    "left": 1.16,
+    "right": 0.72
+   },
+   "two_readings": 0,
+   "disagree_over_0.3m": 0,
+   "disagree_share": null,
+   "disagree_runs": [],
+   "aerial_minus_lidar_m_p50": null,
+   "spans_opposing_carriageway_share": 0.0,
+   "raised_median_stations": 4,
+   "kerb_step_m_p50": 0.079
+  },
+  {
+   "way": 628622219,
+   "name": "North Kalamath Street",
+   "leg": "Kalamath S to W 14th Ave",
+   "s_from": 3892.5,
+   "s_to": 3942.5,
+   "stations": 21,
+   "osm_lanes": "4",
+   "osm_oneway": "yes",
+   "surface": null,
+   "width_m": {
+    "p10": 18.33,
+    "p50": 20.5,
+    "p90": 38.75
+   },
+   "grades": {
+    "left": {
+     "measured": 16,
+     "detected": 0,
+     "inferred": 5
+    },
+    "right": {
+     "measured": 15,
+     "detected": 2,
+     "inferred": 4
+    }
+   },
+   "confidence": "high",
+   "gutter_pan_m": {
+    "left": null,
+    "right": null
+   },
+   "two_readings": 3,
+   "disagree_over_0.3m": 3,
+   "disagree_share": 1.0,
+   "disagree_runs": [
+    {
+     "side": "left",
+     "s_from": 3930.0,
+     "s_to": 3932.5
+    },
+    {
+     "side": "right",
+     "s_from": 3927.5,
+     "s_to": 3927.5
+    }
+   ],
+   "aerial_minus_lidar_m_p50": 0.92,
+   "spans_opposing_carriageway_share": 0.67,
+   "raised_median_stations": 10,
+   "kerb_step_m_p50": 0.076
+  },
+  {
+   "way": 628677830,
+   "name": "North Kalamath Street",
+   "leg": "Kalamath S to W 14th Ave",
+   "s_from": 3945.0,
+   "s_to": 3965.0,
+   "stations": 9,
+   "osm_lanes": "4",
+   "osm_oneway": "yes",
+   "surface": null,
+   "width_m": {
+    "p10": 33.03,
+    "p50": 37.13,
+    "p90": 38.15
+   },
+   "grades": {
+    "left": {
+     "measured": 0,
+     "detected": 6,
+     "inferred": 3
+    },
+    "right": {
+     "measured": 4,
+     "detected": 1,
+     "inferred": 4
+    }
+   },
+   "confidence": "medium",
+   "gutter_pan_m": {
+    "left": null,
+    "right": null
+   },
+   "two_readings": 2,
+   "disagree_over_0.3m": 2,
+   "disagree_share": 1.0,
+   "disagree_runs": [
+    {
+     "side": "right",
+     "s_from": 3952.5,
+     "s_to": 3952.5
+    },
+    {
+     "side": "right",
+     "s_from": 3957.5,
+     "s_to": 3957.5
+    }
+   ],
+   "aerial_minus_lidar_m_p50": -1.36,
+   "spans_opposing_carriageway_share": 0.0,
+   "raised_median_stations": 3,
+   "kerb_step_m_p50": 0.084
+  },
+  {
+   "way": 131620808,
+   "name": "North Kalamath Street",
+   "leg": "Kalamath S to W 14th Ave",
+   "s_from": 3967.5,
+   "s_to": 3990.0,
+   "stations": 10,
+   "osm_lanes": "3",
+   "osm_oneway": "yes",
+   "surface": null,
+   "width_m": {
+    "p10": 12.25,
+    "p50": 13.62,
+    "p90": 37.66
+   },
+   "grades": {
+    "left": {
+     "measured": 8,
+     "detected": 1,
+     "inferred": 1
+    },
+    "right": {
+     "measured": 7,
+     "detected": 0,
+     "inferred": 3
+    }
+   },
+   "confidence": "high",
+   "gutter_pan_m": {
+    "left": 0.43,
+    "right": null
+   },
+   "two_readings": 1,
+   "disagree_over_0.3m": 1,
+   "disagree_share": 1.0,
+   "disagree_runs": [
+    {
+     "side": "left",
+     "s_from": 3972.5,
+     "s_to": 3972.5
+    }
+   ],
+   "aerial_minus_lidar_m_p50": 1.17,
+   "spans_opposing_carriageway_share": 0.0,
+   "raised_median_stations": 8,
+   "kerb_step_m_p50": 0.112
+  },
+  {
+   "way": 628689595,
+   "name": "North Kalamath Street",
+   "leg": "Kalamath S to W 14th Ave",
+   "s_from": 3992.5,
+   "s_to": 4035.0,
+   "stations": 18,
+   "osm_lanes": "4",
+   "osm_oneway": "yes",
+   "surface": null,
+   "width_m": {
+    "p10": 14.35,
+    "p50": 37.0,
+    "p90": 37.33
+   },
+   "grades": {
+    "left": {
+     "measured": 17,
+     "detected": 1,
+     "inferred": 0
+    },
+    "right": {
+     "measured": 17,
+     "detected": 1,
+     "inferred": 0
+    }
+   },
+   "confidence": "high",
+   "gutter_pan_m": {
+    "left": null,
+    "right": null
+   },
+   "two_readings": 14,
+   "disagree_over_0.3m": 14,
+   "disagree_share": 1.0,
+   "disagree_runs": [
+    {
+     "side": "left",
+     "s_from": 4027.5,
+     "s_to": 4032.5
+    },
+    {
+     "side": "right",
+     "s_from": 3995.0,
+     "s_to": 3995.0
+    },
+    {
+     "side": "right",
+     "s_from": 4000.0,
+     "s_to": 4015.0
+    },
+    {
+     "side": "right",
+     "s_from": 4025.0,
+     "s_to": 4030.0
+    }
+   ],
+   "aerial_minus_lidar_m_p50": 0.75,
+   "spans_opposing_carriageway_share": 0.39,
+   "raised_median_stations": 2,
+   "kerb_step_m_p50": 0.079
+  },
+  {
+   "way": 628689593,
+   "name": "North Kalamath Street",
+   "leg": "Kalamath S to W 14th Ave",
+   "s_from": 4037.5,
+   "s_to": 4070.0,
+   "stations": 14,
+   "osm_lanes": "3",
+   "osm_oneway": "yes",
+   "surface": null,
+   "width_m": {
+    "p10": 10.32,
+    "p50": 10.91,
+    "p90": 35.88
+   },
+   "grades": {
+    "left": {
+     "measured": 12,
+     "detected": 0,
+     "inferred": 2
+    },
+    "right": {
+     "measured": 14,
+     "detected": 0,
+     "inferred": 0
+    }
+   },
+   "confidence": "high",
+   "gutter_pan_m": {
+    "left": 0.22,
+    "right": 0.76
+   },
+   "two_readings": 8,
+   "disagree_over_0.3m": 8,
+   "disagree_share": 1.0,
+   "disagree_runs": [
+    {
+     "side": "right",
+     "s_from": 4050.0,
+     "s_to": 4067.5
+    }
+   ],
+   "aerial_minus_lidar_m_p50": 4.03,
+   "spans_opposing_carriageway_share": 0.0,
+   "raised_median_stations": 7,
+   "kerb_step_m_p50": 0.092
+  },
+  {
+   "way": 628689599,
+   "name": "North Kalamath Street",
+   "leg": "Kalamath S to W 14th Ave",
+   "s_from": 4072.5,
+   "s_to": 4137.5,
+   "stations": 27,
+   "osm_lanes": "4",
+   "osm_oneway": "yes",
+   "surface": null,
+   "width_m": {
+    "p10": 13.35,
+    "p50": 15.75,
+    "p90": 17.45
+   },
+   "grades": {
+    "left": {
+     "measured": 21,
+     "detected": 2,
+     "inferred": 4
+    },
+    "right": {
+     "measured": 23,
+     "detected": 0,
+     "inferred": 4
+    }
+   },
+   "confidence": "high",
+   "gutter_pan_m": {
+    "left": 0.64,
+    "right": 0.88
+   },
+   "two_readings": 8,
+   "disagree_over_0.3m": 8,
+   "disagree_share": 1.0,
+   "disagree_runs": [
+    {
+     "side": "right",
+     "s_from": 4077.5,
+     "s_to": 4082.5
+    },
+    {
+     "side": "right",
+     "s_from": 4115.0,
+     "s_to": 4115.0
+    },
+    {
+     "side": "right",
+     "s_from": 4120.0,
+     "s_to": 4127.5
+    }
+   ],
+   "aerial_minus_lidar_m_p50": 4.9,
+   "spans_opposing_carriageway_share": 0.0,
+   "raised_median_stations": 14,
+   "kerb_step_m_p50": 0.089
+  },
+  {
+   "way": 700604346,
+   "name": "West 14th Avenue",
+   "leg": "W 14th Ave to Santa Fe",
+   "s_from": 4140.0,
+   "s_to": 4202.5,
+   "stations": 26,
+   "osm_lanes": null,
+   "osm_oneway": null,
+   "surface": null,
+   "width_m": {
+    "p10": 11.25,
+    "p50": 12.0,
+    "p90": 19.37
+   },
+   "grades": {
+    "left": {
+     "measured": 14,
+     "detected": 0,
+     "inferred": 12
+    },
+    "right": {
+     "measured": 21,
+     "detected": 3,
+     "inferred": 2
+    }
+   },
+   "confidence": "medium",
+   "gutter_pan_m": {
+    "left": null,
+    "right": null
+   },
+   "two_readings": 3,
+   "disagree_over_0.3m": 2,
+   "disagree_share": 0.667,
+   "disagree_runs": [
+    {
+     "side": "left",
+     "s_from": 4150.0,
+     "s_to": 4150.0
+    },
+    {
+     "side": "right",
+     "s_from": 4170.0,
+     "s_to": 4170.0
+    }
+   ],
+   "aerial_minus_lidar_m_p50": -0.06,
+   "spans_opposing_carriageway_share": 0.0,
+   "raised_median_stations": 4,
+   "kerb_step_m_p50": 0.097
+  },
+  {
+   "way": 628689591,
+   "name": "North Santa Fe Drive",
+   "leg": "Santa Fe N to Colfax",
+   "s_from": 4205.0,
+   "s_to": 4227.5,
+   "stations": 10,
+   "osm_lanes": "3",
+   "osm_oneway": "yes",
+   "surface": null,
+   "width_m": {
+    "p10": 13.38,
+    "p50": 15.25,
+    "p90": 15.51
+   },
+   "grades": {
+    "left": {
+     "measured": 2,
+     "detected": 2,
+     "inferred": 6
+    },
+    "right": {
+     "measured": 9,
+     "detected": 0,
+     "inferred": 1
+    }
+   },
+   "confidence": "medium",
+   "gutter_pan_m": {
+    "left": null,
+    "right": null
+   },
+   "two_readings": 8,
+   "disagree_over_0.3m": 6,
+   "disagree_share": 0.75,
+   "disagree_runs": [
+    {
+     "side": "left",
+     "s_from": 4225.0,
+     "s_to": 4227.5
+    },
+    {
+     "side": "right",
+     "s_from": 4207.5,
+     "s_to": 4207.5
+    },
+    {
+     "side": "right",
+     "s_from": 4217.5,
+     "s_to": 4220.0
+    },
+    {
+     "side": "right",
+     "s_from": 4225.0,
+     "s_to": 4225.0
+    }
+   ],
+   "aerial_minus_lidar_m_p50": -0.45,
+   "spans_opposing_carriageway_share": 0.0,
+   "raised_median_stations": 5,
+   "kerb_step_m_p50": 0.085
+  },
+  {
+   "way": 131620810,
+   "name": "North Santa Fe Drive",
+   "leg": "Santa Fe N to Colfax",
+   "s_from": 4230.0,
+   "s_to": 4275.0,
+   "stations": 19,
+   "osm_lanes": "4",
+   "osm_oneway": "yes",
+   "surface": null,
+   "width_m": {
+    "p10": 14.7,
+    "p50": 15.0,
+    "p90": 16.05
+   },
+   "grades": {
+    "left": {
+     "measured": 19,
+     "detected": 0,
+     "inferred": 0
+    },
+    "right": {
+     "measured": 18,
+     "detected": 1,
+     "inferred": 0
+    }
+   },
+   "confidence": "high",
+   "gutter_pan_m": {
+    "left": 0.57,
+    "right": 0.5
+   },
+   "two_readings": 8,
+   "disagree_over_0.3m": 8,
+   "disagree_share": 1.0,
+   "disagree_runs": [
+    {
+     "side": "right",
+     "s_from": 4230.0,
+     "s_to": 4230.0
+    },
+    {
+     "side": "right",
+     "s_from": 4247.5,
+     "s_to": 4255.0
+    },
+    {
+     "side": "right",
+     "s_from": 4265.0,
+     "s_to": 4267.5
+    },
+    {
+     "side": "right",
+     "s_from": 4275.0,
+     "s_to": 4275.0
+    }
+   ],
+   "aerial_minus_lidar_m_p50": 0.88,
+   "spans_opposing_carriageway_share": 0.0,
+   "raised_median_stations": 1,
+   "kerb_step_m_p50": 0.084
+  },
+  {
+   "way": 628689590,
+   "name": "North Santa Fe Drive",
+   "leg": "Santa Fe N to Colfax",
+   "s_from": 4277.5,
+   "s_to": 4342.5,
+   "stations": 27,
+   "osm_lanes": "5",
+   "osm_oneway": "yes",
+   "surface": null,
+   "width_m": {
+    "p10": 18.15,
+    "p50": 19.0,
+    "p90": 34.35
+   },
+   "grades": {
+    "left": {
+     "measured": 18,
+     "detected": 0,
+     "inferred": 9
+    },
+    "right": {
+     "measured": 27,
+     "detected": 0,
+     "inferred": 0
+    }
+   },
+   "confidence": "high",
+   "gutter_pan_m": {
+    "left": 0.4,
+    "right": 0.24
+   },
+   "two_readings": 8,
+   "disagree_over_0.3m": 8,
+   "disagree_share": 1.0,
+   "disagree_runs": [
+    {
+     "side": "left",
+     "s_from": 4295.0,
+     "s_to": 4302.5
+    },
+    {
+     "side": "right",
+     "s_from": 4277.5,
+     "s_to": 4280.0
+    },
+    {
+     "side": "right",
+     "s_from": 4330.0,
+     "s_to": 4332.5
+    }
+   ],
+   "aerial_minus_lidar_m_p50": 8.57,
+   "spans_opposing_carriageway_share": 0.0,
+   "raised_median_stations": 12,
+   "kerb_step_m_p50": 0.078
+  },
+  {
+   "way": 343784769,
+   "name": "North Santa Fe Drive",
+   "leg": "Santa Fe N to Colfax",
+   "s_from": 4345.0,
+   "s_to": 4392.5,
+   "stations": 20,
+   "osm_lanes": "4",
+   "osm_oneway": "yes",
+   "surface": null,
+   "width_m": {
+    "p10": 19.25,
+    "p50": 32.6,
+    "p90": 37.25
+   },
+   "grades": {
+    "left": {
+     "measured": 16,
+     "detected": 2,
+     "inferred": 2
+    },
+    "right": {
+     "measured": 18,
+     "detected": 2,
+     "inferred": 0
+    }
+   },
+   "confidence": "high",
+   "gutter_pan_m": {
+    "left": null,
+    "right": null
+   },
+   "two_readings": 1,
+   "disagree_over_0.3m": 1,
+   "disagree_share": 1.0,
+   "disagree_runs": [
+    {
+     "side": "right",
+     "s_from": 4387.5,
+     "s_to": 4387.5
+    }
+   ],
+   "aerial_minus_lidar_m_p50": 3.7,
+   "spans_opposing_carriageway_share": 0.55,
+   "raised_median_stations": 16,
+   "kerb_step_m_p50": 0.081
+  },
+  {
+   "way": 1183404166,
+   "name": "North Kalamath Street",
+   "leg": "Kalamath NB branch to Speer SB",
+   "s_from": 4395.0,
+   "s_to": 4415.0,
+   "stations": 9,
+   "osm_lanes": null,
+   "osm_oneway": "yes",
+   "surface": null,
+   "width_m": {
+    "p10": 33.13,
+    "p50": 34.1,
+    "p90": 36.52
+   },
+   "grades": {
+    "left": {
+     "measured": 3,
+     "detected": 6,
+     "inferred": 0
+    },
+    "right": {
+     "measured": 2,
+     "detected": 7,
+     "inferred": 0
+    }
+   },
+   "confidence": "medium",
+   "gutter_pan_m": {
+    "left": null,
+    "right": null
+   },
+   "two_readings": 3,
+   "disagree_over_0.3m": 3,
+   "disagree_share": 1.0,
+   "disagree_runs": [
+    {
+     "side": "right",
+     "s_from": 4402.5,
+     "s_to": 4405.0
+    },
+    {
+     "side": "right",
+     "s_from": 4410.0,
+     "s_to": 4410.0
+    }
+   ],
+   "aerial_minus_lidar_m_p50": -2.48,
+   "spans_opposing_carriageway_share": 0.0,
+   "raised_median_stations": 1,
+   "kerb_step_m_p50": 0.089
+  },
+  {
+   "way": 343784768,
+   "name": "North Kalamath Street",
+   "leg": "Kalamath NB branch to Speer SB",
+   "s_from": 4417.5,
+   "s_to": 4525.0,
+   "stations": 44,
+   "osm_lanes": "3",
+   "osm_oneway": "yes",
+   "surface": null,
+   "width_m": {
+    "p10": 11.75,
+    "p50": 16.62,
+    "p90": 23.5
+   },
+   "grades": {
+    "left": {
+     "measured": 27,
+     "detected": 8,
+     "inferred": 9
+    },
+    "right": {
+     "measured": 40,
+     "detected": 1,
+     "inferred": 3
+    }
+   },
+   "confidence": "high",
+   "gutter_pan_m": {
+    "left": null,
+    "right": 0.19
+   },
+   "two_readings": 14,
+   "disagree_over_0.3m": 14,
+   "disagree_share": 1.0,
+   "disagree_runs": [
+    {
+     "side": "left",
+     "s_from": 4420.0,
+     "s_to": 4420.0
+    },
+    {
+     "side": "left",
+     "s_from": 4475.0,
+     "s_to": 4485.0
+    },
+    {
+     "side": "left",
+     "s_from": 4490.0,
+     "s_to": 4490.0
+    },
+    {
+     "side": "left",
+     "s_from": 4495.0,
+     "s_to": 4500.0
+    },
+    {
+     "side": "right",
+     "s_from": 4422.5,
+     "s_to": 4422.5
+    },
+    {
+     "side": "right",
+     "s_from": 4465.0,
+     "s_to": 4467.5
+    },
+    {
+     "side": "right",
+     "s_from": 4477.5,
+     "s_to": 4477.5
+    }
+   ],
+   "aerial_minus_lidar_m_p50": 0.09,
+   "spans_opposing_carriageway_share": 0.0,
+   "raised_median_stations": 20,
+   "kerb_step_m_p50": 0.076
+  },
+  {
+   "way": 321937332,
+   "name": "North Kalamath Street",
+   "leg": "Kalamath NB branch to Speer SB",
+   "s_from": 4527.5,
+   "s_to": 4540.0,
+   "stations": 6,
+   "osm_lanes": "3",
+   "osm_oneway": "yes",
+   "surface": null,
+   "width_m": {
+    "p10": 17.51,
+    "p50": 17.98,
+    "p90": 22.52
+   },
+   "grades": {
+    "left": {
+     "measured": 1,
+     "detected": 2,
+     "inferred": 3
+    },
+    "right": {
+     "measured": 1,
+     "detected": 4,
+     "inferred": 1
+    }
+   },
+   "confidence": "medium",
+   "gutter_pan_m": {
+    "left": null,
+    "right": null
+   },
+   "two_readings": 0,
+   "disagree_over_0.3m": 0,
+   "disagree_share": null,
+   "disagree_runs": [],
+   "aerial_minus_lidar_m_p50": null,
+   "spans_opposing_carriageway_share": 0.0,
+   "raised_median_stations": 1,
+   "kerb_step_m_p50": 0.079
+  },
+  {
+   "way": 427699953,
+   "name": "North Speer Boulevard",
+   "leg": "Speer SB to W 14th Ave",
+   "s_from": 4542.5,
+   "s_to": 4600.0,
+   "stations": 24,
+   "osm_lanes": "5",
+   "osm_oneway": "yes",
+   "surface": "asphalt",
+   "width_m": {
+    "p10": 19.82,
+    "p50": 20.5,
+    "p90": 21.55
+   },
+   "grades": {
+    "left": {
+     "measured": 21,
+     "detected": 1,
+     "inferred": 2
+    },
+    "right": {
+     "measured": 18,
+     "detected": 1,
+     "inferred": 5
+    }
+   },
+   "confidence": "high",
+   "gutter_pan_m": {
+    "left": null,
+    "right": 0.51
+   },
+   "two_readings": 10,
+   "disagree_over_0.3m": 7,
+   "disagree_share": 0.7,
+   "disagree_runs": [
+    {
+     "side": "left",
+     "s_from": 4552.5,
+     "s_to": 4552.5
+    },
+    {
+     "side": "left",
+     "s_from": 4562.5,
+     "s_to": 4562.5
+    },
+    {
+     "side": "left",
+     "s_from": 4580.0,
+     "s_to": 4582.5
+    },
+    {
+     "side": "right",
+     "s_from": 4555.0,
+     "s_to": 4555.0
+    },
+    {
+     "side": "right",
+     "s_from": 4580.0,
+     "s_to": 4582.5
+    }
+   ],
+   "aerial_minus_lidar_m_p50": 0.25,
+   "spans_opposing_carriageway_share": 0.0,
+   "raised_median_stations": 6,
+   "kerb_step_m_p50": 0.082
+  },
+  {
+   "way": 427699952,
+   "name": "North Speer Boulevard",
+   "leg": "Speer SB to W 14th Ave",
+   "s_from": 4602.5,
+   "s_to": 4662.5,
+   "stations": 25,
+   "osm_lanes": "6",
+   "osm_oneway": "yes",
+   "surface": "asphalt",
+   "width_m": {
+    "p10": 19.38,
+    "p50": 19.73,
+    "p90": 23.56
+   },
+   "grades": {
+    "left": {
+     "measured": 14,
+     "detected": 0,
+     "inferred": 11
+    },
+    "right": {
+     "measured": 20,
+     "detected": 0,
+     "inferred": 5
+    }
+   },
+   "confidence": "medium",
+   "gutter_pan_m": {
+    "left": null,
+    "right": null
+   },
+   "two_readings": 5,
+   "disagree_over_0.3m": 5,
+   "disagree_share": 1.0,
+   "disagree_runs": [
+    {
+     "side": "right",
+     "s_from": 4607.5,
+     "s_to": 4612.5
+    },
+    {
+     "side": "right",
+     "s_from": 4635.0,
+     "s_to": 4637.5
+    }
+   ],
+   "aerial_minus_lidar_m_p50": 9.35,
+   "spans_opposing_carriageway_share": 0.0,
+   "raised_median_stations": 11,
+   "kerb_step_m_p50": 0.089
+  },
+  {
+   "way": 427890846,
+   "name": "North Speer Boulevard",
+   "leg": "Speer SB to W 14th Ave",
+   "s_from": 4665.0,
+   "s_to": 4685.0,
+   "stations": 9,
+   "osm_lanes": "4",
+   "osm_oneway": "yes",
+   "surface": "asphalt",
+   "width_m": {
+    "p10": 15.77,
+    "p50": 17.76,
+    "p90": 20.0
+   },
+   "grades": {
+    "left": {
+     "measured": 2,
+     "detected": 0,
+     "inferred": 7
+    },
+    "right": {
+     "measured": 3,
+     "detected": 0,
+     "inferred": 6
+    }
+   },
+   "confidence": "low",
+   "gutter_pan_m": {
+    "left": null,
+    "right": null
+   },
+   "two_readings": 1,
+   "disagree_over_0.3m": 1,
+   "disagree_share": 1.0,
+   "disagree_runs": [
+    {
+     "side": "right",
+     "s_from": 4665.0,
+     "s_to": 4665.0
+    }
+   ],
+   "aerial_minus_lidar_m_p50": -1.3,
+   "spans_opposing_carriageway_share": 0.0,
+   "raised_median_stations": 3,
+   "kerb_step_m_p50": 0.073
+  },
+  {
+   "way": 132706724,
+   "name": "North Speer Boulevard",
+   "leg": "Speer SB to W 14th Ave",
+   "s_from": 4687.5,
+   "s_to": 4882.5,
+   "stations": 79,
+   "osm_lanes": "4",
+   "osm_oneway": "yes",
+   "surface": "asphalt",
+   "width_m": {
+    "p10": 12.88,
+    "p50": 13.25,
+    "p90": 14.96
+   },
+   "grades": {
+    "left": {
+     "measured": 60,
+     "detected": 0,
+     "inferred": 19
+    },
+    "right": {
+     "measured": 71,
+     "detected": 1,
+     "inferred": 7
+    }
+   },
+   "confidence": "high",
+   "gutter_pan_m": {
+    "left": 0.58,
+    "right": 0.27
+   },
+   "two_readings": 82,
+   "disagree_over_0.3m": 34,
+   "disagree_share": 0.415,
+   "disagree_runs": [
+    {
+     "side": "left",
+     "s_from": 4732.5,
+     "s_to": 4735.0
+    },
+    {
+     "side": "left",
+     "s_from": 4745.0,
+     "s_to": 4745.0
+    },
+    {
+     "side": "left",
+     "s_from": 4752.5,
+     "s_to": 4752.5
+    },
+    {
+     "side": "left",
+     "s_from": 4757.5,
+     "s_to": 4757.5
+    },
+    {
+     "side": "left",
+     "s_from": 4767.5,
+     "s_to": 4767.5
+    },
+    {
+     "side": "left",
+     "s_from": 4827.5,
+     "s_to": 4827.5
+    },
+    {
+     "side": "left",
+     "s_from": 4835.0,
+     "s_to": 4837.5
+    },
+    {
+     "side": "left",
+     "s_from": 4847.5,
+     "s_to": 4847.5
+    },
+    {
+     "side": "left",
+     "s_from": 4877.5,
+     "s_to": 4877.5
+    },
+    {
+     "side": "right",
+     "s_from": 4732.5,
+     "s_to": 4732.5
+    },
+    {
+     "side": "right",
+     "s_from": 4747.5,
+     "s_to": 4747.5
+    },
+    {
+     "side": "right",
+     "s_from": 4755.0,
+     "s_to": 4755.0
+    },
+    {
+     "side": "right",
+     "s_from": 4760.0,
+     "s_to": 4760.0
+    },
+    {
+     "side": "right",
+     "s_from": 4775.0,
+     "s_to": 4775.0
+    },
+    {
+     "side": "right",
+     "s_from": 4780.0,
+     "s_to": 4780.0
+    },
+    {
+     "side": "right",
+     "s_from": 4785.0,
+     "s_to": 4795.0
+    },
+    {
+     "side": "right",
+     "s_from": 4800.0,
+     "s_to": 4800.0
+    },
+    {
+     "side": "right",
+     "s_from": 4807.5,
+     "s_to": 4807.5
+    },
+    {
+     "side": "right",
+     "s_from": 4812.5,
+     "s_to": 4812.5
+    },
+    {
+     "side": "right",
+     "s_from": 4822.5,
+     "s_to": 4825.0
+    },
+    {
+     "side": "right",
+     "s_from": 4830.0,
+     "s_to": 4832.5
+    },
+    {
+     "side": "right",
+     "s_from": 4837.5,
+     "s_to": 4837.5
+    },
+    {
+     "side": "right",
+     "s_from": 4847.5,
+     "s_to": 4850.0
+    },
+    {
+     "side": "right",
+     "s_from": 4855.0,
+     "s_to": 4857.5
+    }
+   ],
+   "aerial_minus_lidar_m_p50": -0.21,
+   "spans_opposing_carriageway_share": 0.0,
+   "raised_median_stations": 55,
+   "kerb_step_m_p50": 0.08
+  },
+  {
+   "way": 628677808,
+   "name": "West 14th Avenue",
+   "leg": "14th Ave E to Logan",
+   "s_from": 4885.0,
+   "s_to": 4892.5,
+   "stations": 4,
+   "osm_lanes": "3",
+   "osm_oneway": "yes",
+   "surface": null,
+   "width_m": {
+    "p10": 21.44,
+    "p50": 22.23,
+    "p90": 22.79
+   },
+   "grades": {
+    "left": {
+     "measured": 4,
+     "detected": 0,
+     "inferred": 0
+    },
+    "right": {
+     "measured": 2,
+     "detected": 0,
+     "inferred": 2
+    }
+   },
+   "confidence": "high",
+   "gutter_pan_m": {
+    "left": null,
+    "right": null
+   },
+   "two_readings": 2,
+   "disagree_over_0.3m": 2,
+   "disagree_share": 1.0,
+   "disagree_runs": [
+    {
+     "side": "left",
+     "s_from": 4885.0,
+     "s_to": 4887.5
+    }
+   ],
+   "aerial_minus_lidar_m_p50": -5.36,
+   "spans_opposing_carriageway_share": 0.0,
+   "raised_median_stations": 1,
+   "kerb_step_m_p50": 0.092
+  },
+  {
+   "way": 44932761,
+   "name": "West 14th Avenue",
+   "leg": "14th Ave E to Logan",
+   "s_from": 4895.0,
+   "s_to": 4932.5,
+   "stations": 16,
+   "osm_lanes": "3",
+   "osm_oneway": "yes",
+   "surface": null,
+   "width_m": {
+    "p10": 22.25,
+    "p50": 23.31,
+    "p90": 25.12
+   },
+   "grades": {
+    "left": {
+     "measured": 13,
+     "detected": 0,
+     "inferred": 3
+    },
+    "right": {
+     "measured": 12,
+     "detected": 1,
+     "inferred": 3
+    }
+   },
+   "confidence": "high",
+   "gutter_pan_m": {
+    "left": null,
+    "right": null
+   },
+   "two_readings": 14,
+   "disagree_over_0.3m": 13,
+   "disagree_share": 0.929,
+   "disagree_runs": [
+    {
+     "side": "left",
+     "s_from": 4897.5,
+     "s_to": 4905.0
+    },
+    {
+     "side": "left",
+     "s_from": 4910.0,
+     "s_to": 4915.0
+    },
+    {
+     "side": "left",
+     "s_from": 4920.0,
+     "s_to": 4922.5
+    },
+    {
+     "side": "right",
+     "s_from": 4907.5,
+     "s_to": 4910.0
+    },
+    {
+     "side": "right",
+     "s_from": 4930.0,
+     "s_to": 4932.5
+    }
+   ],
+   "aerial_minus_lidar_m_p50": -3.96,
+   "spans_opposing_carriageway_share": 0.0,
+   "raised_median_stations": 10,
+   "kerb_step_m_p50": 0.129
+  },
+  {
+   "way": 1181924025,
+   "name": "West 14th Avenue",
+   "leg": "14th Ave E to Logan",
+   "s_from": 4935.0,
+   "s_to": 4937.5,
+   "stations": 2,
+   "osm_lanes": "2",
+   "osm_oneway": "yes",
+   "surface": null,
+   "width_m": {
+    "p10": 23.57,
+    "p50": 23.59,
+    "p90": 23.61
+   },
+   "grades": {
+    "left": {
+     "measured": 0,
+     "detected": 0,
+     "inferred": 2
+    },
+    "right": {
+     "measured": 0,
+     "detected": 0,
+     "inferred": 2
+    }
+   },
+   "confidence": "low",
+   "gutter_pan_m": {
+    "left": null,
+    "right": null
+   },
+   "two_readings": 0,
+   "disagree_over_0.3m": 0,
+   "disagree_share": null,
+   "disagree_runs": [],
+   "aerial_minus_lidar_m_p50": null,
+   "spans_opposing_carriageway_share": 0.0,
+   "raised_median_stations": 0,
+   "kerb_step_m_p50": 0.113
+  },
+  {
+   "way": 61135128,
+   "name": "West 14th Avenue",
+   "leg": "14th Ave E to Logan",
+   "s_from": 4940.0,
+   "s_to": 5185.0,
+   "stations": 99,
+   "osm_lanes": "2",
+   "osm_oneway": "yes",
+   "surface": null,
+   "width_m": {
+    "p10": 11.0,
+    "p50": 11.75,
+    "p90": 15.68
+   },
+   "grades": {
+    "left": {
+     "measured": 74,
+     "detected": 2,
+     "inferred": 23
+    },
+    "right": {
+     "measured": 77,
+     "detected": 2,
+     "inferred": 20
+    }
+   },
+   "confidence": "high",
+   "gutter_pan_m": {
+    "left": 0.69,
+    "right": null
+   },
+   "two_readings": 100,
+   "disagree_over_0.3m": 76,
+   "disagree_share": 0.76,
+   "disagree_runs": [
+    {
+     "side": "left",
+     "s_from": 4952.5,
+     "s_to": 4975.0
+    },
+    {
+     "side": "left",
+     "s_from": 5005.0,
+     "s_to": 5010.0
+    },
+    {
+     "side": "left",
+     "s_from": 5015.0,
+     "s_to": 5015.0
+    },
+    {
+     "side": "left",
+     "s_from": 5020.0,
+     "s_to": 5022.5
+    },
+    {
+     "side": "left",
+     "s_from": 5027.5,
+     "s_to": 5035.0
+    },
+    {
+     "side": "left",
+     "s_from": 5055.0,
+     "s_to": 5072.5
+    },
+    {
+     "side": "left",
+     "s_from": 5117.5,
+     "s_to": 5117.5
+    },
+    {
+     "side": "left",
+     "s_from": 5127.5,
+     "s_to": 5132.5
+    },
+    {
+     "side": "left",
+     "s_from": 5137.5,
+     "s_to": 5137.5
+    },
+    {
+     "side": "left",
+     "s_from": 5155.0,
+     "s_to": 5155.0
+    },
+    {
+     "side": "left",
+     "s_from": 5170.0,
+     "s_to": 5170.0
+    },
+    {
+     "side": "right",
+     "s_from": 4995.0,
+     "s_to": 5010.0
+    },
+    {
+     "side": "right",
+     "s_from": 5015.0,
+     "s_to": 5025.0
+    },
+    {
+     "side": "right",
+     "s_from": 5030.0,
+     "s_to": 5037.5
+    },
+    {
+     "side": "right",
+     "s_from": 5042.5,
+     "s_to": 5050.0
+    },
+    {
+     "side": "right",
+     "s_from": 5055.0,
+     "s_to": 5072.5
+    },
+    {
+     "side": "right",
+     "s_from": 5082.5,
+     "s_to": 5082.5
+    },
+    {
+     "side": "right",
+     "s_from": 5105.0,
+     "s_to": 5107.5
+    },
+    {
+     "side": "right",
+     "s_from": 5122.5,
+     "s_to": 5122.5
+    },
+    {
+     "side": "right",
+     "s_from": 5130.0,
+     "s_to": 5132.5
+    },
+    {
+     "side": "right",
+     "s_from": 5142.5,
+     "s_to": 5145.0
+    },
+    {
+     "side": "right",
+     "s_from": 5150.0,
+     "s_to": 5150.0
+    },
+    {
+     "side": "right",
+     "s_from": 5155.0,
+     "s_to": 5157.5
+    },
+    {
+     "side": "right",
+     "s_from": 5162.5,
+     "s_to": 5162.5
+    },
+    {
+     "side": "right",
+     "s_from": 5175.0,
+     "s_to": 5175.0
+    }
+   ],
+   "aerial_minus_lidar_m_p50": -0.1,
+   "spans_opposing_carriageway_share": 0.0,
+   "raised_median_stations": 32,
+   "kerb_step_m_p50": 0.085
+  },
+  {
+   "way": 798188692,
+   "name": "West 14th Avenue",
+   "leg": "14th Ave E to Logan",
+   "s_from": 5187.5,
+   "s_to": 5397.5,
+   "stations": 85,
+   "osm_lanes": "2",
+   "osm_oneway": "yes",
+   "surface": null,
+   "width_m": {
+    "p10": 10.58,
+    "p50": 11.75,
+    "p90": 12.0
+   },
+   "grades": {
+    "left": {
+     "measured": 63,
+     "detected": 4,
+     "inferred": 18
+    },
+    "right": {
+     "measured": 67,
+     "detected": 5,
+     "inferred": 13
+    }
+   },
+   "confidence": "high",
+   "gutter_pan_m": {
+    "left": 0.75,
+    "right": null
+   },
+   "two_readings": 82,
+   "disagree_over_0.3m": 56,
+   "disagree_share": 0.683,
+   "disagree_runs": [
+    {
+     "side": "left",
+     "s_from": 5197.5,
+     "s_to": 5200.0
+    },
+    {
+     "side": "left",
+     "s_from": 5217.5,
+     "s_to": 5217.5
+    },
+    {
+     "side": "left",
+     "s_from": 5225.0,
+     "s_to": 5225.0
+    },
+    {
+     "side": "left",
+     "s_from": 5240.0,
+     "s_to": 5242.5
+    },
+    {
+     "side": "left",
+     "s_from": 5260.0,
+     "s_to": 5260.0
+    },
+    {
+     "side": "left",
+     "s_from": 5267.5,
+     "s_to": 5267.5
+    },
+    {
+     "side": "left",
+     "s_from": 5280.0,
+     "s_to": 5280.0
+    },
+    {
+     "side": "left",
+     "s_from": 5300.0,
+     "s_to": 5300.0
+    },
+    {
+     "side": "left",
+     "s_from": 5337.5,
+     "s_to": 5360.0
+    },
+    {
+     "side": "right",
+     "s_from": 5207.5,
+     "s_to": 5207.5
+    },
+    {
+     "side": "right",
+     "s_from": 5212.5,
+     "s_to": 5217.5
+    },
+    {
+     "side": "right",
+     "s_from": 5225.0,
+     "s_to": 5225.0
+    },
+    {
+     "side": "right",
+     "s_from": 5230.0,
+     "s_to": 5237.5
+    },
+    {
+     "side": "right",
+     "s_from": 5245.0,
+     "s_to": 5265.0
+    },
+    {
+     "side": "right",
+     "s_from": 5312.5,
+     "s_to": 5325.0
+    },
+    {
+     "side": "right",
+     "s_from": 5332.5,
+     "s_to": 5332.5
+    },
+    {
+     "side": "right",
+     "s_from": 5337.5,
+     "s_to": 5337.5
+    },
+    {
+     "side": "right",
+     "s_from": 5342.5,
+     "s_to": 5360.0
+    },
+    {
+     "side": "right",
+     "s_from": 5380.0,
+     "s_to": 5382.5
+    }
+   ],
+   "aerial_minus_lidar_m_p50": 0.18,
+   "spans_opposing_carriageway_share": 0.0,
+   "raised_median_stations": 27,
+   "kerb_step_m_p50": 0.095
+  },
+  {
+   "way": 130911269,
+   "name": "West 14th Avenue",
+   "leg": "14th Ave E to Logan",
+   "s_from": 5400.0,
+   "s_to": 5505.0,
+   "stations": 43,
+   "osm_lanes": "2",
+   "osm_oneway": "yes",
+   "surface": null,
+   "width_m": {
+    "p10": 12.88,
+    "p50": 14.75,
+    "p90": 15.75
+   },
+   "grades": {
+    "left": {
+     "measured": 31,
+     "detected": 1,
+     "inferred": 11
+    },
+    "right": {
+     "measured": 37,
+     "detected": 1,
+     "inferred": 5
+    }
+   },
+   "confidence": "high",
+   "gutter_pan_m": {
+    "left": 0.19,
+    "right": null
+   },
+   "two_readings": 38,
+   "disagree_over_0.3m": 32,
+   "disagree_share": 0.842,
+   "disagree_runs": [
+    {
+     "side": "left",
+     "s_from": 5427.5,
+     "s_to": 5427.5
+    },
+    {
+     "side": "left",
+     "s_from": 5440.0,
+     "s_to": 5442.5
+    },
+    {
+     "side": "left",
+     "s_from": 5447.5,
+     "s_to": 5452.5
+    },
+    {
+     "side": "left",
+     "s_from": 5457.5,
+     "s_to": 5457.5
+    },
+    {
+     "side": "left",
+     "s_from": 5467.5,
+     "s_to": 5470.0
+    },
+    {
+     "side": "left",
+     "s_from": 5480.0,
+     "s_to": 5487.5
+    },
+    {
+     "side": "left",
+     "s_from": 5495.0,
+     "s_to": 5495.0
+    },
+    {
+     "side": "right",
+     "s_from": 5420.0,
+     "s_to": 5425.0
+    },
+    {
+     "side": "right",
+     "s_from": 5430.0,
+     "s_to": 5442.5
+    },
+    {
+     "side": "right",
+     "s_from": 5455.0,
+     "s_to": 5455.0
+    },
+    {
+     "side": "right",
+     "s_from": 5460.0,
+     "s_to": 5460.0
+    },
+    {
+     "side": "right",
+     "s_from": 5465.0,
+     "s_to": 5465.0
+    },
+    {
+     "side": "right",
+     "s_from": 5472.5,
+     "s_to": 5482.5
+    },
+    {
+     "side": "right",
+     "s_from": 5502.5,
+     "s_to": 5502.5
+    }
+   ],
+   "aerial_minus_lidar_m_p50": 0.42,
+   "spans_opposing_carriageway_share": 0.0,
+   "raised_median_stations": 7,
+   "kerb_step_m_p50": 0.079
+  },
+  {
+   "way": 1178151878,
+   "name": "West 14th Avenue",
+   "leg": "14th Ave E to Logan",
+   "s_from": 5507.5,
+   "s_to": 5512.5,
+   "stations": 3,
+   "osm_lanes": "2",
+   "osm_oneway": "yes",
+   "surface": null,
+   "width_m": {
+    "p10": 16.11,
+    "p50": 16.55,
+    "p90": 16.55
+   },
+   "grades": {
+    "left": {
+     "measured": 1,
+     "detected": 0,
+     "inferred": 2
+    },
+    "right": {
+     "measured": 1,
+     "detected": 0,
+     "inferred": 2
+    }
+   },
+   "confidence": "low",
+   "gutter_pan_m": {
+    "left": null,
+    "right": null
+   },
+   "two_readings": 0,
+   "disagree_over_0.3m": 0,
+   "disagree_share": null,
+   "disagree_runs": [],
+   "aerial_minus_lidar_m_p50": null,
+   "spans_opposing_carriageway_share": 0.0,
+   "raised_median_stations": 1,
+   "kerb_step_m_p50": 0.08
+  },
+  {
+   "way": 1222114207,
+   "name": "West 14th Avenue Parkway",
+   "leg": "14th Ave E to Logan",
+   "s_from": 5515.0,
+   "s_to": 5517.5,
+   "stations": 2,
+   "osm_lanes": "2",
+   "osm_oneway": "yes",
+   "surface": "asphalt",
+   "width_m": {
+    "p10": 15.56,
+    "p50": 16.0,
+    "p90": 16.44
+   },
+   "grades": {
+    "left": {
+     "measured": 0,
+     "detected": 0,
+     "inferred": 2
+    },
+    "right": {
+     "measured": 0,
+     "detected": 0,
+     "inferred": 2
+    }
+   },
+   "confidence": "low",
+   "gutter_pan_m": {
+    "left": null,
+    "right": null
+   },
+   "two_readings": 0,
+   "disagree_over_0.3m": 0,
+   "disagree_share": null,
+   "disagree_runs": [],
+   "aerial_minus_lidar_m_p50": null,
+   "spans_opposing_carriageway_share": 0.0,
+   "raised_median_stations": 0,
+   "kerb_step_m_p50": null
+  },
+  {
+   "way": 1180027312,
+   "name": "West 14th Avenue Parkway",
+   "leg": "14th Ave E to Logan",
+   "s_from": 5520.0,
+   "s_to": 5525.0,
+   "stations": 3,
+   "osm_lanes": "2",
+   "osm_oneway": "yes",
+   "surface": "asphalt",
+   "width_m": {
+    "p10": 13.41,
+    "p50": 14.05,
+    "p90": 14.29
+   },
+   "grades": {
+    "left": {
+     "measured": 0,
+     "detected": 0,
+     "inferred": 3
+    },
+    "right": {
+     "measured": 2,
+     "detected": 0,
+     "inferred": 1
+    }
+   },
+   "confidence": "low",
+   "gutter_pan_m": {
+    "left": null,
+    "right": null
+   },
+   "two_readings": 2,
+   "disagree_over_0.3m": 2,
+   "disagree_share": 1.0,
+   "disagree_runs": [
+    {
+     "side": "right",
+     "s_from": 5522.5,
+     "s_to": 5525.0
+    }
+   ],
+   "aerial_minus_lidar_m_p50": 0.54,
+   "spans_opposing_carriageway_share": 0.0,
+   "raised_median_stations": 2,
+   "kerb_step_m_p50": 0.092
+  },
+  {
+   "way": 1102883776,
+   "name": "West 14th Avenue Parkway",
+   "leg": "14th Ave E to Logan",
+   "s_from": 5527.5,
+   "s_to": 5587.5,
+   "stations": 25,
+   "osm_lanes": "2",
+   "osm_oneway": "yes",
+   "surface": "asphalt",
+   "width_m": {
+    "p10": 11.0,
+    "p50": 13.0,
+    "p90": 13.25
+   },
+   "grades": {
+    "left": {
+     "measured": 25,
+     "detected": 0,
+     "inferred": 0
+    },
+    "right": {
+     "measured": 18,
+     "detected": 2,
+     "inferred": 5
+    }
+   },
+   "confidence": "high",
+   "gutter_pan_m": {
+    "left": 0.93,
+    "right": null
+   },
+   "two_readings": 14,
+   "disagree_over_0.3m": 11,
+   "disagree_share": 0.786,
+   "disagree_runs": [
+    {
+     "side": "left",
+     "s_from": 5567.5,
+     "s_to": 5567.5
+    },
+    {
+     "side": "left",
+     "s_from": 5575.0,
+     "s_to": 5582.5
+    },
+    {
+     "side": "left",
+     "s_from": 5587.5,
+     "s_to": 5587.5
+    },
+    {
+     "side": "right",
+     "s_from": 5530.0,
+     "s_to": 5530.0
+    },
+    {
+     "side": "right",
+     "s_from": 5557.5,
+     "s_to": 5557.5
+    },
+    {
+     "side": "right",
+     "s_from": 5565.0,
+     "s_to": 5565.0
+    },
+    {
+     "side": "right",
+     "s_from": 5585.0,
+     "s_to": 5587.5
+    }
+   ],
+   "aerial_minus_lidar_m_p50": -0.25,
+   "spans_opposing_carriageway_share": 0.0,
+   "raised_median_stations": 2,
+   "kerb_step_m_p50": 0.116
+  },
+  {
+   "way": 101312232,
+   "name": "West 14th Avenue Parkway",
+   "leg": "14th Ave E to Logan",
+   "s_from": 5590.0,
+   "s_to": 5665.0,
+   "stations": 31,
+   "osm_lanes": "2",
+   "osm_oneway": "yes",
+   "surface": "asphalt",
+   "width_m": {
+    "p10": 12.5,
+    "p50": 12.75,
+    "p90": 13.0
+   },
+   "grades": {
+    "left": {
+     "measured": 31,
+     "detected": 0,
+     "inferred": 0
+    },
+    "right": {
+     "measured": 25,
+     "detected": 0,
+     "inferred": 6
+    }
+   },
+   "confidence": "high",
+   "gutter_pan_m": {
+    "left": 0.72,
+    "right": null
+   },
+   "two_readings": 25,
+   "disagree_over_0.3m": 12,
+   "disagree_share": 0.48,
+   "disagree_runs": [
+    {
+     "side": "left",
+     "s_from": 5590.0,
+     "s_to": 5590.0
+    },
+    {
+     "side": "left",
+     "s_from": 5605.0,
+     "s_to": 5607.5
+    },
+    {
+     "side": "left",
+     "s_from": 5617.5,
+     "s_to": 5617.5
+    },
+    {
+     "side": "left",
+     "s_from": 5625.0,
+     "s_to": 5627.5
+    },
+    {
+     "side": "left",
+     "s_from": 5650.0,
+     "s_to": 5650.0
+    },
+    {
+     "side": "right",
+     "s_from": 5607.5,
+     "s_to": 5607.5
+    },
+    {
+     "side": "right",
+     "s_from": 5620.0,
+     "s_to": 5622.5
+    },
+    {
+     "side": "right",
+     "s_from": 5652.5,
+     "s_to": 5655.0
+    }
+   ],
+   "aerial_minus_lidar_m_p50": -0.08,
+   "spans_opposing_carriageway_share": 0.0,
+   "raised_median_stations": 6,
+   "kerb_step_m_p50": 0.101
+  },
+  {
+   "way": 628677810,
+   "name": "West 14th Avenue Parkway",
+   "leg": "14th Ave E to Logan",
+   "s_from": 5667.5,
+   "s_to": 5757.5,
+   "stations": 37,
+   "osm_lanes": "2",
+   "osm_oneway": "yes",
+   "surface": "asphalt",
+   "width_m": {
+    "p10": 11.83,
+    "p50": 12.5,
+    "p90": 13.88
+   },
+   "grades": {
+    "left": {
+     "measured": 36,
+     "detected": 0,
+     "inferred": 1
+    },
+    "right": {
+     "measured": 29,
+     "detected": 1,
+     "inferred": 7
+    }
+   },
+   "confidence": "high",
+   "gutter_pan_m": {
+    "left": 0.62,
+    "right": null
+   },
+   "two_readings": 35,
+   "disagree_over_0.3m": 24,
+   "disagree_share": 0.686,
+   "disagree_runs": [
+    {
+     "side": "left",
+     "s_from": 5672.5,
+     "s_to": 5675.0
+    },
+    {
+     "side": "left",
+     "s_from": 5715.0,
+     "s_to": 5722.5
+    },
+    {
+     "side": "left",
+     "s_from": 5730.0,
+     "s_to": 5730.0
+    },
+    {
+     "side": "left",
+     "s_from": 5742.5,
+     "s_to": 5742.5
+    },
+    {
+     "side": "left",
+     "s_from": 5747.5,
+     "s_to": 5747.5
+    },
+    {
+     "side": "left",
+     "s_from": 5757.5,
+     "s_to": 5757.5
+    },
+    {
+     "side": "right",
+     "s_from": 5680.0,
+     "s_to": 5690.0
+    },
+    {
+     "side": "right",
+     "s_from": 5702.5,
+     "s_to": 5702.5
+    },
+    {
+     "side": "right",
+     "s_from": 5712.5,
+     "s_to": 5717.5
+    },
+    {
+     "side": "right",
+     "s_from": 5730.0,
+     "s_to": 5730.0
+    },
+    {
+     "side": "right",
+     "s_from": 5737.5,
+     "s_to": 5737.5
+    },
+    {
+     "side": "right",
+     "s_from": 5742.5,
+     "s_to": 5742.5
+    },
+    {
+     "side": "right",
+     "s_from": 5755.0,
+     "s_to": 5757.5
+    }
+   ],
+   "aerial_minus_lidar_m_p50": -0.52,
+   "spans_opposing_carriageway_share": 0.0,
+   "raised_median_stations": 0,
+   "kerb_step_m_p50": 0.102
+  },
+  {
+   "way": 282445356,
+   "name": "West 14th Avenue Parkway",
+   "leg": "14th Ave E to Logan",
+   "s_from": 5760.0,
+   "s_to": 5815.0,
+   "stations": 23,
+   "osm_lanes": "3",
+   "osm_oneway": "yes",
+   "surface": "asphalt",
+   "width_m": {
+    "p10": 12.75,
+    "p50": 13.0,
+    "p90": 18.68
+   },
+   "grades": {
+    "left": {
+     "measured": 16,
+     "detected": 3,
+     "inferred": 4
+    },
+    "right": {
+     "measured": 16,
+     "detected": 5,
+     "inferred": 2
+    }
+   },
+   "confidence": "medium",
+   "gutter_pan_m": {
+    "left": 0.54,
+    "right": null
+   },
+   "two_readings": 16,
+   "disagree_over_0.3m": 11,
+   "disagree_share": 0.688,
+   "disagree_runs": [
+    {
+     "side": "left",
+     "s_from": 5770.0,
+     "s_to": 5770.0
+    },
+    {
+     "side": "left",
+     "s_from": 5777.5,
+     "s_to": 5777.5
+    },
+    {
+     "side": "left",
+     "s_from": 5800.0,
+     "s_to": 5802.5
+    },
+    {
+     "side": "right",
+     "s_from": 5775.0,
+     "s_to": 5790.0
+    }
+   ],
+   "aerial_minus_lidar_m_p50": 0.04,
+   "spans_opposing_carriageway_share": 0.0,
+   "raised_median_stations": 3,
+   "kerb_step_m_p50": 0.086
+  },
+  {
+   "way": 628643749,
+   "name": "East 14th Avenue",
+   "leg": "14th Ave E to Logan",
+   "s_from": 5817.5,
+   "s_to": 5925.0,
+   "stations": 44,
+   "osm_lanes": "3",
+   "osm_oneway": "yes",
+   "surface": "paved",
+   "width_m": {
+    "p10": 12.5,
+    "p50": 12.75,
+    "p90": 17.11
+   },
+   "grades": {
+    "left": {
+     "measured": 33,
+     "detected": 3,
+     "inferred": 8
+    },
+    "right": {
+     "measured": 28,
+     "detected": 3,
+     "inferred": 13
+    }
+   },
+   "confidence": "medium",
+   "gutter_pan_m": {
+    "left": 0.35,
+    "right": 0.91
+   },
+   "two_readings": 33,
+   "disagree_over_0.3m": 20,
+   "disagree_share": 0.606,
+   "disagree_runs": [
+    {
+     "side": "left",
+     "s_from": 5845.0,
+     "s_to": 5865.0
+    },
+    {
+     "side": "left",
+     "s_from": 5872.5,
+     "s_to": 5875.0
+    },
+    {
+     "side": "left",
+     "s_from": 5880.0,
+     "s_to": 5880.0
+    },
+    {
+     "side": "left",
+     "s_from": 5890.0,
+     "s_to": 5890.0
+    },
+    {
+     "side": "right",
+     "s_from": 5855.0,
+     "s_to": 5857.5
+    },
+    {
+     "side": "right",
+     "s_from": 5865.0,
+     "s_to": 5865.0
+    },
+    {
+     "side": "right",
+     "s_from": 5870.0,
+     "s_to": 5875.0
+    },
+    {
+     "side": "right",
+     "s_from": 5910.0,
+     "s_to": 5910.0
+    }
+   ],
+   "aerial_minus_lidar_m_p50": 0.91,
+   "spans_opposing_carriageway_share": 0.0,
+   "raised_median_stations": 8,
+   "kerb_step_m_p50": 0.081
+  },
+  {
+   "way": 1024245346,
+   "name": "East 14th Avenue",
+   "leg": "14th Ave E to Logan",
+   "s_from": 5927.5,
+   "s_to": 5992.5,
+   "stations": 27,
+   "osm_lanes": "3",
+   "osm_oneway": "yes",
+   "surface": "paved",
+   "width_m": {
+    "p10": 13.4,
+    "p50": 13.75,
+    "p90": 17.08
+   },
+   "grades": {
+    "left": {
+     "measured": 26,
+     "detected": 0,
+     "inferred": 1
+    },
+    "right": {
+     "measured": 22,
+     "detected": 1,
+     "inferred": 4
+    }
+   },
+   "confidence": "high",
+   "gutter_pan_m": {
+    "left": 0.62,
+    "right": 1.08
+   },
+   "two_readings": 36,
+   "disagree_over_0.3m": 20,
+   "disagree_share": 0.556,
+   "disagree_runs": [
+    {
+     "side": "left",
+     "s_from": 5935.0,
+     "s_to": 5935.0
+    },
+    {
+     "side": "left",
+     "s_from": 5940.0,
+     "s_to": 5940.0
+    },
+    {
+     "side": "left",
+     "s_from": 5952.5,
+     "s_to": 5952.5
+    },
+    {
+     "side": "left",
+     "s_from": 5962.5,
+     "s_to": 5967.5
+    },
+    {
+     "side": "left",
+     "s_from": 5985.0,
+     "s_to": 5985.0
+    },
+    {
+     "side": "right",
+     "s_from": 5947.5,
+     "s_to": 5977.5
+    }
+   ],
+   "aerial_minus_lidar_m_p50": 0.16,
+   "spans_opposing_carriageway_share": 0.0,
+   "raised_median_stations": 1,
+   "kerb_step_m_p50": 0.105
+  },
+  {
+   "way": 628643748,
+   "name": "East 14th Avenue",
+   "leg": "14th Ave E to Logan",
+   "s_from": 5995.0,
+   "s_to": 6032.5,
+   "stations": 16,
+   "osm_lanes": "3",
+   "osm_oneway": "yes",
+   "surface": "paved",
+   "width_m": {
+    "p10": 13.12,
+    "p50": 13.5,
+    "p90": 18.59
+   },
+   "grades": {
+    "left": {
+     "measured": 13,
+     "detected": 0,
+     "inferred": 3
+    },
+    "right": {
+     "measured": 13,
+     "detected": 0,
+     "inferred": 3
+    }
+   },
+   "confidence": "high",
+   "gutter_pan_m": {
+    "left": 0.31,
+    "right": 0.93
+   },
+   "two_readings": 14,
+   "disagree_over_0.3m": 9,
+   "disagree_share": 0.643,
+   "disagree_runs": [
+    {
+     "side": "left",
+     "s_from": 5995.0,
+     "s_to": 5995.0
+    },
+    {
+     "side": "left",
+     "s_from": 6007.5,
+     "s_to": 6010.0
+    },
+    {
+     "side": "left",
+     "s_from": 6017.5,
+     "s_to": 6017.5
+    },
+    {
+     "side": "left",
+     "s_from": 6025.0,
+     "s_to": 6025.0
+    },
+    {
+     "side": "right",
+     "s_from": 6005.0,
+     "s_to": 6007.5
+    },
+    {
+     "side": "right",
+     "s_from": 6025.0,
+     "s_to": 6027.5
+    }
+   ],
+   "aerial_minus_lidar_m_p50": -0.31,
+   "spans_opposing_carriageway_share": 0.0,
+   "raised_median_stations": 7,
+   "kerb_step_m_p50": 0.095
+  },
+  {
+   "way": 628643747,
+   "name": "East 14th Avenue",
+   "leg": "14th Ave E to Logan",
+   "s_from": 6035.0,
+   "s_to": 6107.5,
+   "stations": 30,
+   "osm_lanes": "3",
+   "osm_oneway": "yes",
+   "surface": "paved",
+   "width_m": {
+    "p10": 13.22,
+    "p50": 17.75,
+    "p90": 18.8
+   },
+   "grades": {
+    "left": {
+     "measured": 28,
+     "detected": 0,
+     "inferred": 2
+    },
+    "right": {
+     "measured": 27,
+     "detected": 2,
+     "inferred": 1
+    }
+   },
+   "confidence": "high",
+   "gutter_pan_m": {
+    "left": 0.49,
+    "right": 0.85
+   },
+   "two_readings": 34,
+   "disagree_over_0.3m": 21,
+   "disagree_share": 0.618,
+   "disagree_runs": [
+    {
+     "side": "left",
+     "s_from": 6040.0,
+     "s_to": 6045.0
+    },
+    {
+     "side": "left",
+     "s_from": 6050.0,
+     "s_to": 6052.5
+    },
+    {
+     "side": "left",
+     "s_from": 6057.5,
+     "s_to": 6065.0
+    },
+    {
+     "side": "left",
+     "s_from": 6082.5,
+     "s_to": 6082.5
+    },
+    {
+     "side": "left",
+     "s_from": 6095.0,
+     "s_to": 6100.0
+    },
+    {
+     "side": "right",
+     "s_from": 6042.5,
+     "s_to": 6045.0
+    },
+    {
+     "side": "right",
+     "s_from": 6050.0,
+     "s_to": 6050.0
+    },
+    {
+     "side": "right",
+     "s_from": 6055.0,
+     "s_to": 6057.5
+    },
+    {
+     "side": "right",
+     "s_from": 6092.5,
+     "s_to": 6097.5
+    }
+   ],
+   "aerial_minus_lidar_m_p50": -0.07,
+   "spans_opposing_carriageway_share": 0.0,
+   "raised_median_stations": 8,
+   "kerb_step_m_p50": 0.095
+  },
+  {
+   "way": 628643746,
+   "name": "East 14th Avenue",
+   "leg": "14th Ave E to Logan",
+   "s_from": 6110.0,
+   "s_to": 6140.0,
+   "stations": 13,
+   "osm_lanes": "4",
+   "osm_oneway": "yes",
+   "surface": "paved",
+   "width_m": {
+    "p10": 15.8,
+    "p50": 16.75,
+    "p90": 19.08
+   },
+   "grades": {
+    "left": {
+     "measured": 10,
+     "detected": 0,
+     "inferred": 3
+    },
+    "right": {
+     "measured": 13,
+     "detected": 0,
+     "inferred": 0
+    }
+   },
+   "confidence": "high",
+   "gutter_pan_m": {
+    "left": 0.83,
+    "right": null
+   },
+   "two_readings": 7,
+   "disagree_over_0.3m": 2,
+   "disagree_share": 0.286,
+   "disagree_runs": [
+    {
+     "side": "left",
+     "s_from": 6132.5,
+     "s_to": 6132.5
+    },
+    {
+     "side": "right",
+     "s_from": 6127.5,
+     "s_to": 6127.5
+    }
+   ],
+   "aerial_minus_lidar_m_p50": -0.12,
+   "spans_opposing_carriageway_share": 0.0,
+   "raised_median_stations": 4,
+   "kerb_step_m_p50": 0.085
+  },
+  {
+   "way": 628643742,
+   "name": "East 14th Avenue",
+   "leg": "14th Ave E to Logan",
+   "s_from": 6142.5,
+   "s_to": 6220.0,
+   "stations": 32,
+   "osm_lanes": "3",
+   "osm_oneway": "yes",
+   "surface": "paved",
+   "width_m": {
+    "p10": 13.0,
+    "p50": 17.0,
+    "p90": 19.61
+   },
+   "grades": {
+    "left": {
+     "measured": 24,
+     "detected": 2,
+     "inferred": 6
+    },
+    "right": {
+     "measured": 27,
+     "detected": 0,
+     "inferred": 5
+    }
+   },
+   "confidence": "high",
+   "gutter_pan_m": {
+    "left": 0.11,
+    "right": 0.07
+   },
+   "two_readings": 31,
+   "disagree_over_0.3m": 29,
+   "disagree_share": 0.935,
+   "disagree_runs": [
+    {
+     "side": "left",
+     "s_from": 6152.5,
+     "s_to": 6152.5
+    },
+    {
+     "side": "left",
+     "s_from": 6160.0,
+     "s_to": 6160.0
+    },
+    {
+     "side": "left",
+     "s_from": 6165.0,
+     "s_to": 6190.0
+    },
+    {
+     "side": "left",
+     "s_from": 6195.0,
+     "s_to": 6195.0
+    },
+    {
+     "side": "left",
+     "s_from": 6215.0,
+     "s_to": 6215.0
+    },
+    {
+     "side": "left",
+     "s_from": 6220.0,
+     "s_to": 6220.0
+    },
+    {
+     "side": "right",
+     "s_from": 6167.5,
+     "s_to": 6185.0
+    },
+    {
+     "side": "right",
+     "s_from": 6207.5,
+     "s_to": 6207.5
+    },
+    {
+     "side": "right",
+     "s_from": 6212.5,
+     "s_to": 6220.0
+    }
+   ],
+   "aerial_minus_lidar_m_p50": 0.08,
+   "spans_opposing_carriageway_share": 0.0,
+   "raised_median_stations": 2,
+   "kerb_step_m_p50": 0.09
+  },
+  {
+   "way": 628643741,
+   "name": "East 14th Avenue",
+   "leg": "14th Ave E to Logan",
+   "s_from": 6222.5,
+   "s_to": 6250.0,
+   "stations": 12,
+   "osm_lanes": "3",
+   "osm_oneway": "yes",
+   "surface": "paved",
+   "width_m": {
+    "p10": 12.25,
+    "p50": 12.25,
+    "p90": 14.17
+   },
+   "grades": {
+    "left": {
+     "measured": 9,
+     "detected": 0,
+     "inferred": 3
+    },
+    "right": {
+     "measured": 11,
+     "detected": 0,
+     "inferred": 1
+    }
+   },
+   "confidence": "high",
+   "gutter_pan_m": {
+    "left": 0.77,
+    "right": null
+   },
+   "two_readings": 7,
+   "disagree_over_0.3m": 7,
+   "disagree_share": 1.0,
+   "disagree_runs": [
+    {
+     "side": "right",
+     "s_from": 6222.5,
+     "s_to": 6237.5
+    }
+   ],
+   "aerial_minus_lidar_m_p50": 2.41,
+   "spans_opposing_carriageway_share": 0.0,
+   "raised_median_stations": 5,
+   "kerb_step_m_p50": 0.102
+  },
+  {
+   "way": 330579569,
+   "name": "Logan Street",
+   "leg": "Logan N to Colfax",
+   "s_from": 6252.5,
+   "s_to": 6422.5,
+   "stations": 69,
+   "osm_lanes": "2",
+   "osm_oneway": "yes",
+   "surface": "asphalt",
+   "width_m": {
+    "p10": 10.0,
+    "p50": 11.85,
+    "p90": 13.95
+   },
+   "grades": {
+    "left": {
+     "measured": 53,
+     "detected": 6,
+     "inferred": 10
+    },
+    "right": {
+     "measured": 47,
+     "detected": 3,
+     "inferred": 19
+    }
+   },
+   "confidence": "high",
+   "gutter_pan_m": {
+    "left": 1.02,
+    "right": 0.85
+   },
+   "two_readings": 72,
+   "disagree_over_0.3m": 57,
+   "disagree_share": 0.792,
+   "disagree_runs": [
+    {
+     "side": "left",
+     "s_from": 6257.5,
+     "s_to": 6257.5
+    },
+    {
+     "side": "left",
+     "s_from": 6265.0,
+     "s_to": 6292.5
+    },
+    {
+     "side": "left",
+     "s_from": 6297.5,
+     "s_to": 6310.0
+    },
+    {
+     "side": "left",
+     "s_from": 6332.5,
+     "s_to": 6335.0
+    },
+    {
+     "side": "left",
+     "s_from": 6340.0,
+     "s_to": 6340.0
+    },
+    {
+     "side": "left",
+     "s_from": 6345.0,
+     "s_to": 6345.0
+    },
+    {
+     "side": "left",
+     "s_from": 6360.0,
+     "s_to": 6360.0
+    },
+    {
+     "side": "left",
+     "s_from": 6365.0,
+     "s_to": 6365.0
+    },
+    {
+     "side": "left",
+     "s_from": 6392.5,
+     "s_to": 6392.5
+    },
+    {
+     "side": "left",
+     "s_from": 6407.5,
+     "s_to": 6407.5
+    },
+    {
+     "side": "left",
+     "s_from": 6417.5,
+     "s_to": 6417.5
+    },
+    {
+     "side": "right",
+     "s_from": 6262.5,
+     "s_to": 6262.5
+    },
+    {
+     "side": "right",
+     "s_from": 6267.5,
+     "s_to": 6270.0
+    },
+    {
+     "side": "right",
+     "s_from": 6280.0,
+     "s_to": 6280.0
+    },
+    {
+     "side": "right",
+     "s_from": 6285.0,
+     "s_to": 6290.0
+    },
+    {
+     "side": "right",
+     "s_from": 6300.0,
+     "s_to": 6300.0
+    },
+    {
+     "side": "right",
+     "s_from": 6305.0,
+     "s_to": 6310.0
+    },
+    {
+     "side": "right",
+     "s_from": 6315.0,
+     "s_to": 6327.5
+    },
+    {
+     "side": "right",
+     "s_from": 6335.0,
+     "s_to": 6335.0
+    },
+    {
+     "side": "right",
+     "s_from": 6342.5,
+     "s_to": 6345.0
+    },
+    {
+     "side": "right",
+     "s_from": 6352.5,
+     "s_to": 6352.5
+    },
+    {
+     "side": "right",
+     "s_from": 6360.0,
+     "s_to": 6365.0
+    },
+    {
+     "side": "right",
+     "s_from": 6377.5,
+     "s_to": 6380.0
+    },
+    {
+     "side": "right",
+     "s_from": 6385.0,
+     "s_to": 6385.0
+    },
+    {
+     "side": "right",
+     "s_from": 6390.0,
+     "s_to": 6390.0
+    },
+    {
+     "side": "right",
+     "s_from": 6407.5,
+     "s_to": 6407.5
+    }
+   ],
+   "aerial_minus_lidar_m_p50": -0.12,
+   "spans_opposing_carriageway_share": 0.0,
+   "raised_median_stations": 12,
+   "kerb_step_m_p50": 0.08
+  },
+  {
+   "way": 1417020223,
+   "name": "Logan Street",
+   "leg": "Logan N to Colfax",
+   "s_from": 6425.0,
+   "s_to": 6430.0,
+   "stations": 3,
+   "osm_lanes": "2",
+   "osm_oneway": "yes",
+   "surface": "asphalt",
+   "width_m": {
+    "p10": 12.23,
+    "p50": 15.85,
+    "p90": 15.98
+   },
+   "grades": {
+    "left": {
+     "measured": 0,
+     "detected": 2,
+     "inferred": 1
+    },
+    "right": {
+     "measured": 0,
+     "detected": 1,
+     "inferred": 2
+    }
+   },
+   "confidence": "low",
+   "gutter_pan_m": {
+    "left": null,
+    "right": null
+   },
+   "two_readings": 0,
+   "disagree_over_0.3m": 0,
+   "disagree_share": null,
+   "disagree_runs": [],
+   "aerial_minus_lidar_m_p50": null,
+   "spans_opposing_carriageway_share": 0.0,
+   "raised_median_stations": 0,
+   "kerb_step_m_p50": 0.069
+  },
+  {
+   "way": 1548629056,
+   "name": "East Colfax Avenue",
+   "leg": "Colfax W to S/F",
+   "s_from": 6432.5,
+   "s_to": 6535.0,
+   "stations": 42,
+   "osm_lanes": "2",
+   "osm_oneway": "yes",
+   "surface": "asphalt",
+   "width_m": {
+    "p10": 13.98,
+    "p50": 19.12,
+    "p90": 20.5
+   },
+   "grades": {
+    "left": {
+     "measured": 35,
+     "detected": 1,
+     "inferred": 6
+    },
+    "right": {
+     "measured": 33,
+     "detected": 2,
+     "inferred": 7
+    }
+   },
+   "confidence": "high",
+   "gutter_pan_m": {
+    "left": null,
+    "right": 0.31
+   },
+   "two_readings": 31,
+   "disagree_over_0.3m": 23,
+   "disagree_share": 0.742,
+   "disagree_runs": [
+    {
+     "side": "left",
+     "s_from": 6442.5,
+     "s_to": 6442.5
+    },
+    {
+     "side": "left",
+     "s_from": 6450.0,
+     "s_to": 6452.5
+    },
+    {
+     "side": "left",
+     "s_from": 6460.0,
+     "s_to": 6462.5
+    },
+    {
+     "side": "left",
+     "s_from": 6477.5,
+     "s_to": 6477.5
+    },
+    {
+     "side": "left",
+     "s_from": 6525.0,
+     "s_to": 6525.0
+    },
+    {
+     "side": "right",
+     "s_from": 6442.5,
+     "s_to": 6445.0
+    },
+    {
+     "side": "right",
+     "s_from": 6450.0,
+     "s_to": 6460.0
+    },
+    {
+     "side": "right",
+     "s_from": 6465.0,
+     "s_to": 6465.0
+    },
+    {
+     "side": "right",
+     "s_from": 6472.5,
+     "s_to": 6472.5
+    },
+    {
+     "side": "right",
+     "s_from": 6477.5,
+     "s_to": 6480.0
+    },
+    {
+     "side": "right",
+     "s_from": 6487.5,
+     "s_to": 6487.5
+    },
+    {
+     "side": "right",
+     "s_from": 6492.5,
+     "s_to": 6495.0
+    },
+    {
+     "side": "right",
+     "s_from": 6522.5,
+     "s_to": 6525.0
+    }
+   ],
+   "aerial_minus_lidar_m_p50": -0.88,
+   "spans_opposing_carriageway_share": 0.9,
+   "raised_median_stations": 8,
+   "kerb_step_m_p50": 0.089
+  },
+  {
+   "way": 1547338993,
+   "name": "East Colfax Avenue",
+   "leg": "Colfax W to S/F",
+   "s_from": 6537.5,
+   "s_to": 6645.0,
+   "stations": 44,
+   "osm_lanes": "2",
+   "osm_oneway": "yes",
+   "surface": "asphalt",
+   "width_m": {
+    "p10": 13.57,
+    "p50": 20.25,
+    "p90": 22.5
+   },
+   "grades": {
+    "left": {
+     "measured": 41,
+     "detected": 1,
+     "inferred": 2
+    },
+    "right": {
+     "measured": 30,
+     "detected": 1,
+     "inferred": 13
+    }
+   },
+   "confidence": "high",
+   "gutter_pan_m": {
+    "left": null,
+    "right": 0.18
+   },
+   "two_readings": 53,
+   "disagree_over_0.3m": 42,
+   "disagree_share": 0.792,
+   "disagree_runs": [
+    {
+     "side": "left",
+     "s_from": 6545.0,
+     "s_to": 6545.0
+    },
+    {
+     "side": "left",
+     "s_from": 6550.0,
+     "s_to": 6570.0
+    },
+    {
+     "side": "left",
+     "s_from": 6577.5,
+     "s_to": 6577.5
+    },
+    {
+     "side": "left",
+     "s_from": 6582.5,
+     "s_to": 6582.5
+    },
+    {
+     "side": "left",
+     "s_from": 6587.5,
+     "s_to": 6622.5
+    },
+    {
+     "side": "left",
+     "s_from": 6627.5,
+     "s_to": 6630.0
+    },
+    {
+     "side": "right",
+     "s_from": 6562.5,
+     "s_to": 6562.5
+    },
+    {
+     "side": "right",
+     "s_from": 6570.0,
+     "s_to": 6570.0
+    },
+    {
+     "side": "right",
+     "s_from": 6575.0,
+     "s_to": 6575.0
+    },
+    {
+     "side": "right",
+     "s_from": 6590.0,
+     "s_to": 6590.0
+    },
+    {
+     "side": "right",
+     "s_from": 6597.5,
+     "s_to": 6600.0
+    },
+    {
+     "side": "right",
+     "s_from": 6605.0,
+     "s_to": 6605.0
+    },
+    {
+     "side": "right",
+     "s_from": 6612.5,
+     "s_to": 6612.5
+    },
+    {
+     "side": "right",
+     "s_from": 6617.5,
+     "s_to": 6617.5
+    },
+    {
+     "side": "right",
+     "s_from": 6622.5,
+     "s_to": 6622.5
+    },
+    {
+     "side": "right",
+     "s_from": 6630.0,
+     "s_to": 6632.5
+    },
+    {
+     "side": "right",
+     "s_from": 6637.5,
+     "s_to": 6637.5
+    }
+   ],
+   "aerial_minus_lidar_m_p50": -1.57,
+   "spans_opposing_carriageway_share": 0.73,
+   "raised_median_stations": 18,
+   "kerb_step_m_p50": 0.085
+  }
+ ]
+}

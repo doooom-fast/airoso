@@ -1,0 +1,99 @@
+{
+  "_doc": "Denver Grand Prix 0.1.0 (ledger 0096) on Lake Murray v4's engine, as Sand Creek (tracks/sand-creek-lm/ship.json): engine lm-v4 = the loop assembler of tracks/san-diego-lake-murray/scripts-v021 (V021_SHIM) and engine-july's prep / exporter / spawn builder (ENG=<dir>: the snapshot tracks/san-diego-lake-murray/engine-july-snapshot with assets/textures beside it). The draft line is this track's own (source/draft/draft_line.py writes data/centerline.*, data/heightfield.* from committed files; lm_intake reads them as its source track). Drive 1: the lap alone, no side streets, no lamps, signs or buildings; the race layout's K-rails along both edges (Lake Murray's race furniture as Sand Creek uses it); the free roam on the same roads.",
+  "track": "denver-grand-prix",
+  "engine": "lm-v4",
+  "workshop": "D:/k10-scratch",
+  "workshop_project": "denver_grand_prix",
+  "require_race_layout": true,
+  "ui_name_prefix": "doooom Colorado",
+  "steps": {
+    "draft": [
+      "lm_intake",
+      "build_loop_blend",
+      "trim_connectors",
+      "rebuild_loop_blend",
+      "weld_mouths",
+      "seat_terrain",
+      "densify_ribbon",
+      "gap_mouths"
+    ],
+    "author": [
+      "race_bands",
+      "race_planned_gate",
+      "layout_dummies",
+      "race_author",
+      "race_verify",
+      "signs"
+    ],
+    "prep": [
+      "prep",
+      "split"
+    ],
+    "ship": [
+      "export_road",
+      "export_race",
+      "export_street",
+      "spawn_kn5",
+      "ai",
+      "verify_kn5",
+      "road_obj",
+      "track_folder",
+      "verify_inis",
+      "make_map"
+    ],
+    "gate": [
+      "drive_test_street",
+      "audit_street",
+      "race_gates",
+      "kn5_ground",
+      "verify_mouths",
+      "textures",
+      "edge_report"
+    ]
+  },
+  "sync_in": {
+    "required": [
+      "track.config.json"
+    ],
+    "optional": [
+      "signs.json"
+    ]
+  },
+  "sync_out": {
+    "required": [
+      "loop.blend"
+    ],
+    "files": [
+      "data/lm_intake.json",
+      "data/centerline.local.json",
+      "data/centerline.raw.local.json",
+      "data/finished_centerline.json",
+      "data/gate_centerline.json",
+      "data/bridge.spans.auto.json",
+      "data/mouth_welds.json",
+      "data/dummies_{id}.json",
+      "data/drive_test.json",
+      "data/drive_test.{id}.json",
+      "data/audit.json",
+      "data/kn5_ground_check.{id}.json",
+      "data/edge_report.json",
+      "data/verify_textures.json",
+      "data/barrier_bands.json",
+      "data/race_verify.json",
+      "data/no_route.{id}.json",
+      "data/signs.local.json",
+      "data/connectors.local.json",
+      "data/mouths.json",
+      "data/verify_mouths.json"
+    ],
+    "map": [
+      [
+        "blender/split/split_manifest.json",
+        "data/split_manifest.json"
+      ]
+    ],
+    "dirs": [
+      "ai/{id}"
+    ]
+  }
+}

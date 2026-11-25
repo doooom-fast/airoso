@@ -1,0 +1,118 @@
+{
+ "meta": {
+  "generated": "2026-11-24T23:37:08-0700",
+  "script": "tracks/denver-grand-prix/source/widths/widths.py",
+  "frame": {
+   "origin_lonlat": [
+    -104.9849,
+    39.7401
+   ],
+   "series": "scripts.aerial.engine.ortho.mpd",
+   "offset_sign": "+ = driver left"
+  },
+  "lap_length_m": 6646.5,
+  "step_m": 2.5,
+  "tuning_invented": {
+   "WIN_M": 2.5,
+   "BIN_M": 0.25,
+   "REACH_M": 30.0,
+   "BAND_M": 0.75,
+   "STEP_MIN_M": 0.06,
+   "STEP_MAX_M": 0.4,
+   "STAY_M": 1.5,
+   "MIN_HALF_M": 1.5,
+   "MEDIAN_MAX_M": 14.0,
+   "MOUTH_X": 1.6,
+   "CONTRAST_MIN": 30.0,
+   "AER_STAY_M": 0.5,
+   "AER_SPREAD_M": 1.5,
+   "DISAGREE_M": 0.3,
+   "SMOOTH_N": 5,
+   "I_CONTRAST_MIN": 400.0,
+   "I_ASPHALT_MAX": 250.0,
+   "KERB_SEARCH_M": 1.5,
+   "EDGE_OUTLIER_M": 1.0,
+   "CORE_M": 3.0
+  },
+  "sources": {
+   "lidar": "USGS 3DEP CO_DRCOG_2_2020 (flown 2020-05-27), class 2 ground; class 17 bridge deck",
+   "aerial": "DRCOG DRAPP 2022 3-inch (EPSG:2232), luminance",
+   "line": "data/lap_line.plan.json (OSM 2026-11-23)"
+  },
+  "state": "Colfax and every street as the 2022 aerial / 2020 lidar show them (D8); OSM present-day bus lanes not built",
+  "pan_all_left_m": 0.49,
+  "pan_all_right_m": 0.46,
+  "grades_all_edges": {
+   "measured": 3818,
+   "detected": 219,
+   "inferred": 1281
+  }
+ },
+ "stout": {
+  "way": 453022192,
+  "tags": {
+   "name": "Stout Street",
+   "tunnel": "building_passage",
+   "covered": "yes",
+   "maxheight": "5",
+   "lanes": "2"
+  },
+  "s_from": 1387.5,
+  "s_to": 1730.0,
+  "length_m": 345.0,
+  "entry": {
+   "name": "entry (south-west)",
+   "s": 1387.5,
+   "measured_at_s": [
+    1375.0,
+    1377.5,
+    1380.0,
+    1382.5,
+    1385.0
+   ],
+   "left_offset_m": 4.12,
+   "right_offset_m": 5.47,
+   "width_m": 9.59,
+   "grades": [
+    "inferred/measured",
+    "inferred/measured",
+    "inferred/measured",
+    "measured/inferred",
+    "inferred/inferred"
+   ],
+   "road_z": 1589.27,
+   "structure_top_z_p95_within_8m": 1628.69,
+   "clear_height_m": 5.0,
+   "clear_height_source": "OSM maxheight=5 (tagged; not measured: the lidar sees the roof, not the soffit)"
+  },
+  "exit": {
+   "name": "exit (north-east)",
+   "s": 1730.0,
+   "measured_at_s": [
+    1732.5,
+    1735.0,
+    1737.5,
+    1740.0,
+    1742.5
+   ],
+   "left_offset_m": 3.62,
+   "right_offset_m": 3.25,
+   "width_m": 6.87,
+   "grades": [
+    "measured/measured",
+    "measured/measured",
+    "inferred/measured",
+    "inferred/measured",
+    "inferred/measured"
+   ],
+   "road_z": 1591.67,
+   "structure_top_z_p95_within_8m": 1620.08,
+   "clear_height_m": 5.0,
+   "clear_height_source": "OSM maxheight=5 (tagged; not measured: the lidar sees the roof, not the soffit)"
+  },
+  "inside": "between measured portals [invented]: edges interpolated linearly from entry to exit; no source sees under the roof",
+  "covered_ways": [
+   453022192
+  ]
+ }
+}

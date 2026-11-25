@@ -1,0 +1,556 @@
+{
+ "_doc": "Denver Grand Prix (ledger 0096, PLAN.md, DOSSIER.md approved 2026-11-23): a fictional street circuit on Denver's real streets, through Lake Murray v4's engine as Sand Creek is (tracks/sand-creek-lm: engine lm-v4, race and street layouts). The draft line is the lap as OSM's nodes (data/lap_line.plan.json, routed on source/osm.json), rounded, profiled from 3DEP 1 m and widened by source/draft/draft_line.py into the files tools/lm_engine_intake.py reads (lm_intake.source_track is this track). 0.1.0 = Drive 1: the lap's road and ground, the race layout's K-rails, the free roam on the same roads. Every number not measured is marked [invented] in its _doc and listed in ledger 0096 '0.1.0 (Drive 1)'.",
+ "name": "Denver Grand Prix",
+ "slug": "denver_grand_prix",
+ "version": "0.1.0",
+ "kind": "fictional_street_circuit",
+ "archetype": "street_circuit",
+ "mirror_x": false,
+ "loop": true,
+ "true_north_rotation_deg": 0.0,
+ "location": {
+  "lat": 39.7401191,
+  "lon": -104.9848631,
+  "timezone": "America/Denver",
+  "city": "Denver",
+  "country": "United States"
+ },
+ "origin": {
+  "lon": -104.9849,
+  "lat": 39.7401,
+  "elev_m": 1580.0
+ },
+ "_origin_doc": "the lap's survey frame (data/lap_ways.plan.json, source/survey: metres east / north of -104.9849, 39.7401, beside the Colfax / Sherman crosswalk); elev_m is a datum for local Y, not a measurement",
+ "default_width_m": 9.9,
+ "surfaces": {
+  "road": "1ROAD",
+  "grass": "GRASS",
+  "kerb": "1KERB"
+ },
+ "install_folder": "denver_grand_prix",
+ "_install_folder_doc": "a new folder (PLAN 1: slug / install folder denver_grand_prix); nothing is parked",
+ "ui_series": "doooom Colorado",
+ "_ui_series_doc": "Kevin 2026-10-28: 'K10 is gone. doooom.' (docs/ONE-CHAIN.md 3)",
+ "source": {
+  "type": "osm",
+  "_doc": "the lap's OSM nodes in driving order (data/lap_line.plan.json, source/lap_route.py on source/osm.json, OSM as of 2026-11-23T01:12:49Z); no fetch: source/draft/draft_line.py writes the source track's data files from them"
+ },
+ "route": {
+  "start_at": [
+   39.7400769,
+   -104.9831224
+  ],
+  "_start_at_doc": "station 0 on Colfax westbound 152 m east of the Sherman crosswalk (data/lap_profile.3dep.json s 6,490), on the straight after the Logan corner, so the start line and the grid (behind it, facing west) lie on positive stations",
+  "fillet": {
+   "round_nodes": true,
+   "simplify_m": 0.0,
+   "arc_step_m": 1.0,
+   "corners": [
+    {
+     "name": "West Colfax Avenue -> North Speer Boulevard",
+     "at": [
+      39.7401689,
+      -104.9981376
+     ],
+     "radius_m": 17.3,
+     "curb_radius_m": 6.0,
+     "half_widths_m": [
+      14.69,
+      7.88
+     ],
+     "_doc": "s 1175 on OSM's line (data/lap_profile.3dep.json); half widths = half the median measured kerb-to-kerb width (source/widths/widths.json, both edges measured or detected) 15-45 m before / after the apex",
+     "s_osm": 1175.0
+    },
+    {
+     "name": "North Speer Boulevard -> Stout Street",
+     "at": [
+      39.7414203,
+      -104.9988393
+     ],
+     "radius_m": 12.1,
+     "curb_radius_m": 6.0,
+     "half_widths_m": [
+      7.93,
+      4.19
+     ],
+     "_doc": "s 1327 on OSM's line (data/lap_profile.3dep.json); half widths = half the median measured kerb-to-kerb width (source/widths/widths.json, both edges measured or detected) 15-45 m before / after the apex",
+     "s_osm": 1327.0
+    },
+    {
+     "name": "Stout Street -> 15th Street",
+     "at": [
+      39.7449199,
+      -104.9942609
+     ],
+     "radius_m": 12.6,
+     "curb_radius_m": 6.0,
+     "half_widths_m": [
+      5.25,
+      7.88
+     ],
+     "_doc": "s 1905 on OSM's line (data/lap_profile.3dep.json); half widths = half the median measured kerb-to-kerb width (source/widths/widths.json, both edges measured or detected) 15-45 m before / after the apex",
+     "s_osm": 1905.0
+    },
+    {
+     "name": "15th Street -> Blake Street",
+     "at": [
+      39.7496302,
+      -105.0003498
+     ],
+     "radius_m": 14.2,
+     "curb_radius_m": 6.0,
+     "half_widths_m": [
+      8.0,
+      8.5
+     ],
+     "_doc": "s 2644 on OSM's line (data/lap_profile.3dep.json); half widths = half the median measured kerb-to-kerb width (source/widths/widths.json, both edges measured or detected) 15-45 m before / after the apex",
+     "s_osm": 2644.0
+    },
+    {
+     "name": "Auraria Parkway -> North Speer Boulevard",
+     "at": [
+      39.7484399,
+      -105.0033568
+     ],
+     "radius_m": 13.1,
+     "curb_radius_m": 6.0,
+     "half_widths_m": [
+      7.0,
+      7.25
+     ],
+     "_doc": "s 2946 on OSM's line (data/lap_profile.3dep.json); half widths = half the median measured kerb-to-kerb width (source/widths/widths.json, both edges measured or detected) 15-45 m before / after the apex",
+     "s_osm": 2946.0
+    },
+    {
+     "name": "North Speer Boulevard -> North Kalamath Street",
+     "at": [
+      39.7419149,
+      -104.9998498
+     ],
+     "radius_m": 14.1,
+     "curb_radius_m": 6.0,
+     "half_widths_m": [
+      9.02,
+      7.19
+     ],
+     "_doc": "s 3750 on OSM's line (data/lap_profile.3dep.json); half widths = half the median measured kerb-to-kerb width (source/widths/widths.json, both edges measured or detected) 15-45 m before / after the apex",
+     "s_osm": 3750.0
+    },
+    {
+     "name": "North Kalamath Street -> West 14th Avenue",
+     "at": [
+      39.7384776,
+      -105.000146
+     ],
+     "radius_m": 12.9,
+     "curb_radius_m": 6.0,
+     "half_widths_m": [
+      7.88,
+      5.88
+     ],
+     "_doc": "s 4138 on OSM's line (data/lap_profile.3dep.json); half widths = half the median measured kerb-to-kerb width (source/widths/widths.json, both edges measured or detected) 15-45 m before / after the apex",
+     "s_osm": 4138.0
+    },
+    {
+     "name": "West 14th Avenue -> North Santa Fe Drive",
+     "at": [
+      39.7384802,
+      -104.9993739
+     ],
+     "radius_m": 12.7,
+     "curb_radius_m": 6.0,
+     "half_widths_m": [
+      5.88,
+      7.5
+     ],
+     "_doc": "s 4204 on OSM's line (data/lap_profile.3dep.json); half widths = half the median measured kerb-to-kerb width (source/widths/widths.json, both edges measured or detected) 15-45 m before / after the apex",
+     "s_osm": 4204.0
+    },
+    {
+     "name": "North Kalamath Street -> North Speer Boulevard",
+     "at": [
+      39.7412073,
+      -104.9994651
+     ],
+     "radius_m": 16.3,
+     "curb_radius_m": 6.0,
+     "half_widths_m": [
+      10.5,
+      10.12
+     ],
+     "_doc": "s 4541 on OSM's line (data/lap_profile.3dep.json); half widths = half the median measured kerb-to-kerb width (source/widths/widths.json, both edges measured or detected) 15-45 m before / after the apex",
+     "s_osm": 4541.0
+    },
+    {
+     "name": "North Speer Boulevard -> West 14th Avenue",
+     "at": [
+      39.7384663,
+      -104.9976451
+     ],
+     "radius_m": 15.0,
+     "curb_radius_m": 6.0,
+     "half_widths_m": [
+      6.5,
+      11.44
+     ],
+     "_doc": "s 4884 on OSM's line (data/lap_profile.3dep.json); half widths = half the median measured kerb-to-kerb width (source/widths/widths.json, both edges measured or detected) 15-45 m before / after the apex",
+     "s_osm": 4884.0
+    },
+    {
+     "name": "East 14th Avenue -> Logan Street",
+     "at": [
+      39.7384439,
+      -104.9823323
+     ],
+     "radius_m": 12.4,
+     "curb_radius_m": 6.0,
+     "half_widths_m": [
+      6.25,
+      6.5
+     ],
+     "_doc": "s 6251 on OSM's line (data/lap_profile.3dep.json); half widths = half the median measured kerb-to-kerb width (source/widths/widths.json, both edges measured or detected) 15-45 m before / after the apex",
+     "s_osm": 6251.0
+    },
+    {
+     "name": "Logan Street -> East Colfax Avenue",
+     "at": [
+      39.7400663,
+      -104.9823489
+     ],
+     "radius_m": 13.5,
+     "curb_radius_m": 6.0,
+     "half_widths_m": [
+      5.09,
+      9.88
+     ],
+     "_doc": "s 6431 on OSM's line (data/lap_profile.3dep.json); half widths = half the median measured kerb-to-kerb width (source/widths/widths.json, both edges measured or detected) 15-45 m before / after the apex",
+     "s_osm": 6431.0
+    }
+   ],
+   "_doc": "scripts/gps/fillet.py before the 3 m resample. Each of the lap's twelve corners over 45 deg: the circle of radius_m tangent to both legs, radius_m = curb_radius_m + the mean of the two legs' measured half widths (as Sand Creek's route.fillet). curb_radius_m 6.0 is [invented]: no curb return on the lap is measured (source/widths bridges every junction mouth straight across). Every other OSM node is rounded inside its own two segments; simplify_m 0 (merging OSM's near-colinear nodes made the corners' legs long, so a 90 deg corner rounded to a 60 m arc 25 m off the street)."
+  },
+  "smooth_sigma_pts": 2.0,
+  "smooth_passes": 2,
+  "smooth_sigma_y_pts": 1.5,
+  "_lm_smooth_doc": "the v021 assembler's corner rounding and profile smoothing, Lake Murray's values (its defaults)",
+  "divided_double": false,
+  "_divided_double_doc": "the lap runs one way on one-way streets and on one carriageway of each divided street: no double yellow down its middle (the assembler's centre line is off)",
+  "edge": {
+   "curb_h": 0.0,
+   "curb_face_w": 0.1,
+   "sidewalk_w": 0.2,
+   "connector_sidewalk_w": 0.2,
+   "grade_w": 1.5,
+   "grass_clearance": -0.08,
+   "connector_grass_clearance": 0.1,
+   "_connector_grass_clearance_doc": "0.2.8 (PC, 2026-11-09): the side streets keep 0.2.7's lip (the engine default 0.10, 20 cm under their lane edge); only the mainline's strip is flush. With -0.08 on the connectors too, the rehearsal's audit read I 42 / K 38: where two side streets meet, one street's strip stood 8-22 cm over the other's pavement (e.g. grid_unclassified_9#0#1, grid_primary_7#0), where the lower lip had lain under it. Kevin's ask was the fast curves' edges: the mainline",
+   "_grass_clearance_doc": "0.2.8 (PC, 2026-11-09; Kevin, asked whether the other circuit tracks have Milford's fast-curve edge mess: \"Yes, check them\"; Milford 0.1.6 is the same fix, ledger 0087): the strip's outer lip 2 cm under the lane edge (profile point 3 at -grass_clearance = +0.08 over the unlifted edge; the lane edge at +0.10). engine-july's prep holds the ground past the ROAD edge at the lane edge's height - 0.02 for 3 m (its contact band), so the lower lip lay in a gutter with a wall of ground at its lip. Measured on the installed 0.2.7 (gate OBJ, every 10 m, both sides; strip_gutter.py): the strip (1.5 m grade) ends 19 cm under the lane edge; the ground just past it stood more than 5 cm over the lip at 137 of 1,608 side-stations, more than 10 cm at 68 (max 17 cm). Flush with the band, nothing stands over it (none was set: the engine's default 0.10 put the lip 20 cm under the lane edge)",
+   "_doc": "Kevin 2026-11-03 (ledger 0070 Q1): \"race curbs, no sidewalks\" = race kerbs at the race corners (owed: they come with a race corridor), no street curbs, no sidewalks. The v021 edge strip with no curb: the lane edge stays at road height for 0.30 m, then meets the ground 0.20 m lower over 1.5 m [invented: the shortest run under the drive gate's 0.12 m per 0.5 m]. The strip keeps the assembler's four profile points a side, which tools/weld_mouths_blend.py reads."
+  },
+  "seat_edge_m": 1.8
+ },
+ "draft_line": {
+  "_doc": "source/draft/draft_line.py (ledger 0096 0.1.0): what the source track's data stages would have written, from committed files only",
+  "mean_window_m": 9.0,
+  "straight_spans": [
+   {
+    "name": "Stout St under the Colorado Convention Center",
+    "frame": "widths",
+    "from_s": 1387.5,
+    "to_s": 1730.0,
+    "z_from": 1589.27,
+    "z_to": 1591.67,
+    "why": "the portals' road heights are measured (source/widths/stout_portals.json: 2020 lidar, entry s 1,387.5 z 1,589.27, exit s 1,730.0 z 1,591.67); the road between them is the straight line [invented]: the lidar has no ground return under the roof (DOSSIER 3) and 3DEP is interpolated there"
+   },
+   {
+    "name": "15th St short of Lawrence",
+    "from_s": 2282.0,
+    "to_s": 2318.0,
+    "why": "[invented] DOSSIER 3: a 5 m pit 30 m long in 3DEP on the centre line (s 2,284-2,316 on the profile), read as a DEM artefact (NAIP 2023 shows an ordinary street); the straight line between its measured ends"
+   },
+   {
+    "name": "Blake St bridge over Cherry Creek",
+    "frame": "widths",
+    "from_s": 2780.0,
+    "to_s": 2822.5,
+    "z_level": 1584.6,
+    "why": "measured: the deck's class-17 lidar returns (source/widths/bridges.json, p50 z 1,584.60, abutment ground 1,584.39 / 1,584.68: within 0.25 m, a level deck)"
+   },
+   {
+    "name": "W 14th Ave bridge over Cherry Creek",
+    "frame": "widths",
+    "from_s": 4895.0,
+    "to_s": 4937.5,
+    "z_level": 1591.05,
+    "why": "measured: the deck's class-17 lidar returns (source/widths/bridges.json, p50 z 1,591.05, abutment ground 1,590.95 / 1,590.98: a level deck)"
+   }
+  ],
+  "widths": {
+   "mode": "measured",
+   "file": "source/widths/widths.json",
+   "corner_pad_m": 6.0,
+   "centre_smooth_m": 15.0,
+   "smooth_m": 9.0,
+   "_doc": "the measured kerb-to-kerb edges of source/widths/widths.json (claude/dgp-widths-20261125, 1becc3a0): the kerb face from the 2020 lidar's class-2 step, else the asphalt edge (lidar intensity / 2022 aerial) plus the measured 0.46 m gutter pan, else linear fill. Grades over all 5,318 edges: 73 % measured, 4 % detected, 24 % inferred [invented]: 276 under Stout's roof (linear portal to portal), about 330 at junction mouths (bridged straight across), the rest unread. The line is moved to the middle of its two edges and the width is their distance. Constructions [invented]: offset and width linear across each declared corner (tangent + corner_pad_m 6 m); where Kalamath and Santa Fe share one paved street south of Colfax, each direction's edge is cut at the middle between the two lap lines less divider_clear_m 1.8 m [invented] (the edge strip's own width, so neither ribbon's strip stands on the other's pavement: verify_race O, audit_mesh K): a 3.6 m strip of ground between the two directions where the real street is paved across (paint.json's yellow pieces there read 6.6-6.8 m from Kalamath's line, the middle is about 6.6-7.0 m); running means of 15 m on the offset and 9 m on the width. Where the lap's two directions run within shared_height_m 30 m [invented] of each other (Kalamath / Santa Fe), the two lines' heights are blended to their mean (full weight within 20 m): one street, one deck height, so the ground between the two ribbons never stands over the lower one; the real crossfall is not measured.",
+   "divider_clear_m": 1.8,
+   "edge_fills": [
+    {
+     "from_s": 2285.0,
+     "to_s": 2327.5,
+     "why": "[invented] 15th St short of Lawrence (widths frame s 2,287.5-2,325; OSM s 2,284-2,316): the 5 m pit in 3DEP's ground (DOSSIER 3, read as an artefact; this config's 15th St straight span) is in the lidar's class-2 returns too, and the kerb reader found steps inside it: 5.75-11 m kerb to kerb where the street either side reads 16-21 m. Both edges filled linearly between the measured stations at its ends; drive_test street read grass on top in the lane at the pinch (r6)"
+    }
+   ],
+   "shared_height_m": 30.0
+  },
+  "grid_margin_m": 470.0,
+  "grid_spacing_m": 40.0,
+  "mouths": {
+   "reach_m": 40.0,
+   "parallel_m": 20.0,
+   "min_m": 12.0,
+   "widths": {
+    "primary": 9.5,
+    "secondary": 10.0,
+    "tertiary": 10.0,
+    "unclassified": 8.0,
+    "residential": 8.0,
+    "living_street": 6.0,
+    "primary_link": 6.0,
+    "secondary_link": 6.0,
+    "tertiary_link": 6.0
+   },
+   "exclude": [
+    {
+     "name": "mouth_primary_6",
+     "why": "Speer NB at W 14th Ave (host v1652): verify_mouths NOTCH 3/42 (r8)"
+    },
+    {
+     "name": "mouth_primary_11",
+     "why": "Colfax between Speer's two legs (hosts v444 / v1579): verify_mouths NOTCH 3/26, audit_mesh K kerb over the lap (r8)"
+    },
+    {
+     "name": "mouth_primary_13",
+     "why": "Speer at Stout (host v489): verify_mouths APPROACH grade change > 3 %/m (r8)"
+    },
+    {
+     "name": "mouth_primary_21",
+     "why": "the Speer / Stout / Kalamath junction: audit_mesh K kerb over the lap (r8)"
+    },
+    {
+     "name": "mouth_primary_22",
+     "why": "Speer at the Kalamath fork (host v1290): verify_mouths NOTCH 1/36 (r8)"
+    },
+    {
+     "name": "mouth_primary_23",
+     "why": "Auraria Pkwy at Speer (host v1022): verify_mouths APPROACH grade change 3.4 %/m (r8)"
+    },
+    {
+     "name": "mouth_primary_26",
+     "why": "Auraria Pkwy at Speer (host v1016): verify_mouths APPROACH grass over the road, grade change 3.7 %/m (r8)"
+    },
+    {
+     "name": "mouth_primary_28",
+     "why": "Colfax at Speer SB (host v1585): audit_mesh I / K at the junction (r8)"
+    },
+    {
+     "name": "mouth_primary_30",
+     "why": "Colfax between Santa Fe and Speer SB: drive_test street ground on top at s 4,442 beside it (r8)"
+    },
+    {
+     "name": "mouth_primary_31",
+     "why": "Colfax between Speer's two legs (hosts v441 / v1581): verify_mouths NOTCH 23/31, APPROACH; audit_mesh I / K (r8)"
+    },
+    {
+     "name": "mouth_residential_3",
+     "why": "Sherman St at the start line (host v50): verify_mouths HOST LANE grass at the deck in the host lane (r8)"
+    },
+    {
+     "name": "mouth_secondary_9",
+     "why": "Stout at the Speer / Kalamath junction (host v1540): verify_mouths NOTCH 16/19, APPROACH (r8)"
+    },
+    {
+     "name": "mouth_secondary_10",
+     "why": "Logan at 14th Ave (host v2104): verify_mouths NOTCH 1/37 (r8)"
+    },
+    {
+     "name": "mouth_secondary_14",
+     "why": "Stout at the Speer / Kalamath junction (host v1538): verify_mouths APPROACH grade change 7 %/m; audit_mesh K (r8)"
+    },
+    {
+     "name": "mouth_secondary_15",
+     "why": "Stout at 15th (host v680): verify_mouths NOTCH 1/35 (r8)"
+    },
+    {
+     "name": "mouth_secondary_17",
+     "why": "Speer at the Kalamath fork (host v1287): verify_mouths NOTCH 3/36, APPROACH (r8)"
+    },
+    {
+     "name": "mouth_secondary_21",
+     "why": "W 14th Ave at Kalamath (host v1417): verify_mouths HOST LANE (r8)"
+    }
+   ],
+   "_doc": "source/draft/mouth_stubs.py: each side street's mouth for the free roam (the brief's 0.1.0 street layout: the lap's own roads plus each side street's mouth; the full D4 grid comes later). OSM ways meeting the lap's own nodes, followed along OSM's line for reach_m 40 m [invented]; parallel_m 20 m [invented] (a stub whose far end stays this close to the lap is the lap's other carriageway); min_m 12 m [invented] of it off the lap's pavement; widths by class [invented] (Sand Creek's grid table, links 6 m): the side streets' kerbs are not measured. Service roads (alleys, drives) are not mouths here. keep_both_on_lap false: a piece that meets the lap again within its reach (Colfax between Speer's two legs, the Speer / Stout / Kalamath junction) is not built in 0.1.0: its two welded ends failed verify_mouths (notch, approach) in the first run other_lap_clear_m 6 m [invented]: a stub stops before it reaches another part of the lap (Colfax between Speer's two legs, the Speer / Stout / Kalamath junction).",
+   "keep_both_on_lap": false,
+   "other_lap_clear_m": 6.0,
+   "_exclude_doc": "mouths not built in 0.1.0, each with the gate reading that refused it on the Mac (r8): the junction machinery (mouth returns, pads) Sand Creek uses at its hard junctions is owed for these; the street there is the lap's edge, as everywhere a mouth is not built"
+  }
+ },
+ "lm_intake": {
+  "source_track": "denver-grand-prix",
+  "_doc": "tools/lm_engine_intake.py: this track's own draft line (source/draft/draft_line.py) and its side streets' mouths (source/draft/mouth_stubs.py, data/connectors.local.json) into the assembler's inputs; the D4 free-roam grid is owed",
+  "grid_upsample": 2,
+  "_grid_doc": "the 40 m grid pre-divided to 20 m (bilinear, the same samples), as Sand Creek",
+  "connectors": true
+ },
+ "capture": {
+  "use_elevation": false,
+  "_covered_doc": "Stout St under the Colorado Convention Center (OSM way 453022192, tunnel=building_passage, covered=yes, maxheight=5; s 1,386-1,730 on OSM's line) is built OPEN-AIR between its portals for 0.1.0: no roof, no soffit, no columns. capture.covered_spans (PR 61's gate exemption) is not in this base; it is declared once it is, and nothing overhead is built until then"
+ },
+ "road_profile": {
+  "dips": [],
+  "cambers": [],
+  "_doc": "no banking is invented (L10): a street circuit's crossfall is what lidar shows; none is measured for 0.1.0"
+ },
+ "road_edge": {
+  "profile": "shoulder"
+ },
+ "road_markings": {
+  "style": "lane",
+  "center_yellow": false,
+  "gap_mouths": true,
+  "_doc": "the engine's default paint by width (edges and lane dividers), no centre yellow; the surveyed paint (source/survey/paint.json) through the paint_inventory step replaces it where it runs (PLAN 4b)"
+ },
+ "terrain": {
+  "terrain_band_m": 22.0,
+  "_doc": "the v021 assembler's band clamp (Lake Murray's 22 m)"
+ },
+ "scenery": {
+  "streetlights": {
+   "enabled": false
+  },
+  "road_signs": {
+   "enabled": false
+  },
+  "fence_auto": false,
+  "fences": false,
+  "draft_lamps": false,
+  "_doc": "0.1.0: no lamps, no signs, no buildings, no trees (lamps, signals and signs are 0.1.1 from the survey; buildings and landmarks P4)"
+ },
+ "lighting": {
+  "presets": [
+   "morning",
+   "noon",
+   "golden_hour"
+  ]
+ },
+ "texture_overrides": {
+  "1ROAD": {
+   "diffuse": "assets/textures/asphalt_dense_diffuse.jpg",
+   "normal": "assets/textures/asphalt_dense_normal.jpg",
+   "_doc": "ledger 0098 (Kevin 2026-11-22, asked \"The owned asphalt and concrete on the other tracks?\": \"On every track now\"): the owned dense-graded asphalt (tools/make_owned_surfaces.py, CC0; ledger 0095's High Plains / Milford pilot) in place of the borrowed cracked tile (LA Canyons, personal use; was: Kevin, \"use the Lariat's road texture\"). Its mean colour and relief were measured off the cracked tile. Sand Creek has no road_wear bake, so road_wear.detail_highpass_m (a road_wear key) has nothing to act on here: the tile is used as made"
+  },
+  "1GRASS": {
+   "diffuse": "assets/textures/grass_diffuse.jpg",
+   "normal": "assets/textures/grass_normal.jpg",
+   "_doc": "Kevin: the Lariat's alpine grass look on Sand Creek too"
+  },
+  "1KERB_SIDEWALK": {
+   "diffuse": "assets/textures/concrete_plain_diffuse.jpg",
+   "normal": "assets/textures/concrete_plain_normal.jpg",
+   "_doc": "ledger 0098 (\"On every track now\"): the owned plain concrete (tools/make_owned_surfaces.py, CC0, MEANT FOR 1KERB_SIDEWALK) in place of the Hamburg board-formed concrete (building_diffuse.jpg, mined) on every edge strip, corner return and the fork 91/92 island (1KERB_sidewalk_*: the only meshes of the road kn5 that bound building_diffuse.jpg on 0.2.7's m7d). Its mean colour was measured off building_diffuse.jpg"
+  }
+ },
+ "kerb": {
+  "_about": "Racing-circuit kerbs: taller + rideable ramp on the lane side (vs the default 5cm street kerb).",
+  "height_m": 0.05,
+  "width_m": 1.4,
+  "top_frac": 0.6,
+  "edge_ramp": 0.4
+ },
+ "layouts": [
+  {
+   "id": "race",
+   "name": "Race",
+   "kind": "race",
+   "direction": "forward",
+   "race_furniture": true,
+   "ai": "ai/race",
+   "uses_connectors": [],
+   "start": {
+    "line_vertex": 50,
+    "grid_vertex": 47,
+    "offset_right_m": 0.0
+   },
+   "run": "the lap, one way, as every street on it runs (PLAN 2: 0 m against traffic): Colfax west from the Capitol, Speer, Stout under the Convention Center, 15th, Blake over Cherry Creek, Speer, Kalamath south across Colfax, W 14th Ave, Santa Fe and the northbound Kalamath back to Speer, W 14th Ave over the creek, 14th Ave up Capitol Hill, Logan, Colfax to the line",
+   "ui_description": "Denver Grand Prix: a fictional street circuit on Denver's real streets, 6.5 km one way from the Colorado State Capitol, the streets as the 2022 aerial and the 2020 lidar measured them: concrete barriers along both edges, the side streets sealed. Drive 1: the road and the ground; the city, its lamps, signals, signs and paint come later. The AI line is a generated draft, not an in-game recording.",
+   "closure_token": "race",
+   "_start_doc": "the line at the Colfax / Sherman crosswalk (vertex 50 of the finished line, 152 m after station 0), the grid behind it on Colfax facing west, centred (columns at +-1.0 m) between the K-rails, as Sand Creek's race grid"
+  },
+  {
+   "id": "street",
+   "name": "Free Roam",
+   "kind": "street",
+   "direction": "forward",
+   "race_furniture": false,
+   "ai": "ai/street",
+   "uses_connectors": [],
+   "start": {
+    "line_vertex": 50,
+    "grid_vertex": 47,
+    "offset_right_m": 2.0
+   },
+   "run": "the lap's streets open, one way as they run",
+   "ui_description": "Denver Grand Prix Free Roam: the Denver Grand Prix lap's streets open, as the 2022 aerial and the 2020 lidar measured them. Drive 1: the lap's own roads; the side streets and the city grid come later.",
+   "_start_doc": "the free roam's grid in the right half of Colfax's westbound side (columns at +1.0 / +3.0 m right of the centre line; verify_kn5 holds street spawns right of travel), the line at the Sherman crosswalk"
+  }
+ ],
+ "drive_test": {
+  "dense_hops": true,
+  "vertex_kinks": true
+ },
+ "race": {
+  "_doc": "Lake Murray's race furniture as Sand Creek's race layout uses it (ledger 0079 round K; tools/barrier_bands.py, tools/author_race_furniture_blend.py, the race gates): Kevin's 4.04 m K-rail module swept along both edges of the whole lap, 0.82 m in from the lane edge (road mode), sealing every side street; the race kerbs at the corners the detector finds (race kn5 only). The free roam loads none of it.",
+  "barrier_profile_asset": "assets/models/concrete_barrier_4m.obj",
+  "barrier_height_m": 1.2,
+  "module_pitch_m": 4.04,
+  "edge_mode": "road",
+  "edge_inset_m": 0.82,
+  "edge_gaps": "none",
+  "mouths": "sealed",
+  "spawn_gate_layouts": "race_furniture",
+  "_spawn_gate_layouts_doc": "ledger 0079 round K: the spawn self-gate holds the race layout's grid clear of the strips; the free roam loads no strip and keeps its grid in the right-hand lane",
+  "corridor": {
+   "_doc": "the race is the WHOLE street, one way, the entire lap (as Sand Creek round K): no boxes, no closure runs; the K-rails along both measured edges seal every mouth. clear_width_m and the solver knobs are Lake Murray's (ledger 0049), read only by closure runs, of which there are none.",
+   "clear_width_m": 11.36,
+   "island_mode": "pavement",
+   "whole": [
+    0,
+    2182
+   ],
+   "boxes": [],
+   "closure_runs": [],
+   "whole_lap": true,
+   "rate_toward_race_side": 12,
+   "rate_away": 6,
+   "pin_zone_m": 120,
+   "pin_rate_min": 6,
+   "steepest_pin_rate": 3,
+   "base_open_m": 60,
+   "base_sigma_m": 20,
+   "island_env_m": 30,
+   "attract_m": 40,
+   "smooth_sigma_m": 4,
+   "clear_floor_m": 10.86,
+   "clear_hard_min_m": 6.5,
+   "pocket_min_m": 2.0
+  },
+  "grid_slots": 8,
+  "pit_slots": 8
+ },
+ "ai": {
+  "fillet_split": true
+ },
+ "signs_file": "signs.json",
+ "_signs_file_doc": "the race layout's own W1-6 plate at the hairpin (signs.json: tools/place_signs.py per_layout, defaults.layout_plates_only), in the race closure kn5 alone; no rule-placed sign in the road kn5",
+ "_layouts_name_doc": "ui_track.json reads '<ui_series> - <name> — <layout name>': 'doooom Colorado - Denver Grand Prix — Race' / '— Free Roam' (docs/ONE-CHAIN.md 3)"
+}

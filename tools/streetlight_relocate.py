@@ -112,3 +112,88 @@ def heads_too_close(heads, apart_m: float) -> list[tuple[int, int, float]]:
                             if d < apart_m:
                                 out.append((i, j, round(d, 3)))
     return sorted(out)
+
+
+# --- ledger 0098 0.2.13 (opt-in scenery.streetlights.measured, Sand Creek's Colorado Blvd): measured posts ---
+MEASURED_KEYS = ("file",)
+
+
+def measured_spec(cfg: dict, read_json) -> dict | None:
+    """scenery.streetlights.measured {"file": <a path in the project>} -> the validated record, or None (absent).
+    The record: {"zone_s_built_m": [s0, s1], "max_move_m", "step_m", "posts": [{"id", "base_xz", "out_xz"}, ...]}.
+    ValueError on a malformed one. ``read_json(rel)`` reads a project file."""
+    sl = ((cfg.get("scenery") or {}).get("streetlights") or {})
+    m = sl.get("measured")
+    if not m:
+        return None
+    if not isinstance(m, dict) or set(m) - set(MEASURED_KEYS) - {k for k in m if str(k).startswith("_")}:
+        raise ValueError(f"scenery.streetlights.measured must be {{'file': ...}}, got {m!r}")
+    rel = str(m.get("file") or "")
+    if not rel or rel.startswith(("/", "\\")) or ".." in rel.replace("\\", "/").split("/"):
+        raise ValueError(f"scenery.streetlights.measured.file {rel!r} must be a plain path inside the project")
+    rec = read_json(rel)
+    z = rec.get("zone_s_built_m")
+    if not (isinstance(z, list) and len(z) == 2 and float(z[0]) < float(z[1])):
+        raise ValueError(f"{rel}: zone_s_built_m must be [s0, s1], got {z!r}")
+    posts = []
+    for p in rec.get("posts") or []:
+        for key in ("base_xz", "out_xz"):
+            v = p.get(key)
+            if not (isinstance(v, (list, tuple)) and len(v) == 2):
+                raise ValueError(f"{rel}: post {p.get('id')!r}: {key} must be [x, z], got {v!r}")
+        ox, oz = float(p["out_xz"][0]), float(p["out_xz"][1])
+        if abs(math.hypot(ox, oz) - 1.0) > 1e-3:
+            raise ValueError(f"{rel}: post {p.get('id')!r}: out_xz must be a unit vector")
+        posts.append({"id": str(p["id"]), "base": (float(p["base_xz"][0]), float(p["base_xz"][1])), "out": (ox, oz)})
+    if not posts:
+        raise ValueError(f"{rel}: no posts")
+    return {"file": rel, "zone": (float(z[0]), float(z[1])), "posts": posts,
+            "max_move_m": float(rec.get("max_move_m", 0.75)), "step_m": float(rec.get("step_m", 0.05))}
+
+
+def measured_plan(heads, base_of_head, s_of, spec: dict, nearest_cl, arm: float, on_road, ground_y,
+                  head_over_ground_m: float):
+    """the measured posts in place of the draft's posts inside the spec's zone (stations on the built line; module doc):
+      * a draft post whose base s_of(base) lies in the zone is left out (recorded: "replaced");
+      * each measured post stands at its base; when on_road(bx, bz) (its footprint + setback reaches a road surface) it
+        steps out along out_xz by step_m to the first clear spot, at most max_move_m (recorded: moved_m); still on a road
+        there, it is kept at its measured base, recorded "on_road", and left to drop_on_road (never moved further);
+      * its head: the author's own rule solved for that base (head_for_base), head_over_ground_m over ground_y(bx, bz).
+    The measured posts go where the zone's first draft post was (the draft's order is along the lap, so LIGHTPOST's
+    batches keep their stretches). Returns (new heads, record)."""
+    keep, replaced, at = [], [], None
+    for i, h in enumerate(heads):
+        bx, bz = base_of_head(i, h)
+        s = s_of(bx, bz)
+        if spec["zone"][0] <= s <= spec["zone"][1]:
+            replaced.append({"i": i, "base_xz": [round(bx, 3), round(bz, 3)], "s_built_m": round(s, 1)})
+            if at is None:
+                at = len(keep)
+        else:
+            keep.append(list(h))
+    new, rows = [], []
+    for p in sorted(spec["posts"], key=lambda q: s_of(*q["base"])):
+        bx, bz = p["base"]
+        moved, status = 0.0, "placed"
+        if on_road(bx, bz):
+            status = "on_road"
+            n = int(round(spec["max_move_m"] / spec["step_m"]))
+            for k in range(1, n + 1):
+                d = k * spec["step_m"]
+                x, z = bx + p["out"][0] * d, bz + p["out"][1] * d
+                if not on_road(x, z):
+                    bx, bz, moved, status = x, z, d, "moved"
+                    break
+        g = ground_y(bx, bz)
+        if g is None:
+            raise ValueError(f"measured post {p['id']}: no ground under ({bx:.2f}, {bz:.2f})")
+        hx, hz = head_for_base(bx, bz, nearest_cl, arm)
+        new.append([round(hx, 3), round(float(g) + head_over_ground_m, 4), round(hz, 3)])
+        rows.append({"id": p["id"], "base_measured_xz": [round(p["base"][0], 3), round(p["base"][1], 3)],
+                     "base_xz": [round(bx, 3), round(bz, 3)], "moved_m": round(moved, 3), "status": status,
+                     "s_built_m": round(s_of(bx, bz), 1)})
+    at = len(keep) if at is None else at
+    out = keep[:at] + new + keep[at:]
+    rec = {"file": spec["file"], "zone_s_built_m": list(spec["zone"]), "max_move_m": spec["max_move_m"],
+           "replaced": replaced, "posts": rows, "inserted_at": at}
+    return out, rec

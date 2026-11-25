@@ -421,6 +421,62 @@ def _top(bvh, x, z):
     return None if hit[0] is None else float(hit[0].z)
 
 
+def measured_posts(proj, cfg, heads, cl, nearest_cl, base_of, model):
+    """ledger 0098 0.2.13 (opt-in scenery.streetlights.measured; Sand Creek's Colorado Blvd, the DRAPP 2022 poles): the
+    draft's posts inside the record's zone give way to the measured posts, each at its measured base or stepped straight
+    out (out_xz) to the first spot whose footprint + ROAD_SETBACK_M is clear of every road surface, at most max_move_m
+    (tools/streetlight_relocate.measured_plan, pure); ``heads`` is changed in place. A post still on a road there keeps its
+    measured base and is left to drop_on_road, which records it. Absent = None, nothing runs."""
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    import streetlight_relocate as SR
+    try:
+        spec = SR.measured_spec(cfg, lambda rel: json.loads((proj / rel).read_text(encoding="utf-8")))
+    except ValueError as e:
+        raise SystemExit(f"[lamps] measured: {e}")
+    if spec is None:
+        return None
+    tagged = _bvh_tagged(GROUND_PREFIXES, exclude=("GRASS_FAR",))
+    ground = _bvh(GROUND_PREFIXES, exclude=("GRASS_FAR",))
+    mast_r = float(led_spec()["mast_radius_m"]) if model == LED else 0.585
+    cum = [0.0]
+    for a, b in zip(cl, cl[1:]):
+        cum.append(cum[-1] + math.hypot(b[0] - a[0], b[2] - a[2]))
+    closed = math.hypot(cl[0][0] - cl[-1][0], cl[0][2] - cl[-1][2]) < 1e-6
+    cells = {}
+    for i, p in enumerate(cl):
+        cells.setdefault((int(p[0] // 30), int(p[2] // 30)), []).append(i)
+
+    def s_of(x, z):
+        """the built line's station of the nearest centreline point (a closed lap's repeated last point reads 0)"""
+        best, bi = float("inf"), 0
+        cx, cz = int(x // 30), int(z // 30)
+        for dx in (-1, 0, 1):
+            for dz in (-1, 0, 1):
+                for i in cells.get((cx + dx, cz + dz), ()):
+                    d = (cl[i][0] - x) ** 2 + (cl[i][2] - z) ** 2
+                    if d < best:
+                        best, bi = d, i
+        return 0.0 if (closed and bi == len(cl) - 1) else cum[bi]
+
+    def ground_y(x, z):
+        return _top(ground, x, z)
+
+    def on_road(x, z):
+        g = _top(ground, x, z)
+        return g is not None and bool(footprint_on_road(tagged, x, z, g, mast_r + ROAD_SETBACK_M))
+
+    try:
+        new, rec = SR.measured_plan(heads, lambda i, h: base_of(i, tuple(h))[:2], s_of, spec, nearest_cl, ARM_M,
+                                    on_road, ground_y, HEAD_OVER_GROUND_M)
+    except ValueError as e:
+        raise SystemExit(f"[lamps] measured: {e}")
+    heads[:] = new
+    print(f"[lamps] measured posts ({spec['file']}): {len(rec['replaced'])} draft post(s) in s {rec['zone_s_built_m']} "
+          f"replaced by {len(rec['posts'])} measured; moved out {[(r['id'], r['moved_m']) for r in rec['posts'] if r['moved_m']]}; "
+          f"still on a road (left to drop_on_road) {[r['id'] for r in rec['posts'] if r['status'] == 'on_road']}")
+    return rec
+
+
 def relocate(heads, nearest_cl, cfg, model):
     """apply scenery.streetlights.relocate to ``heads`` in place (module doc, RELOCATIONS); returns the provenance rows.
     SystemExit on a bad entry or a failed self-check — before anything is saved"""
@@ -689,6 +745,7 @@ def main():
         bpy.data.objects.remove(ob, do_unlink=True)          # idempotent: a re-run never stacks two lamp sets
 
     draft = [list(h) for h in heads]
+    measured = measured_posts(proj, cfg, heads, cl, nearest_cl, base_of, model)
     moved = relocate(heads, nearest_cl, cfg, model)
     apron_moved = apron_moves(heads, nearest_cl, data, ground=_bvh(GROUND_PREFIXES, exclude=("GRASS_FAR",)),
                               skip=set(recorded))
@@ -718,7 +775,7 @@ def main():
     else:
         lights.pop("dropped_on_road", None)
     reseated, seat_rows = reseat_and_check(heads, base_of, model, recorded)
-    if moved or apron_moved or reseated or dropped:
+    if moved or apron_moved or reseated or dropped or measured:
         lights["lampheads_draft"] = draft
     else:
         lights.pop("lampheads_draft", None)
@@ -726,6 +783,10 @@ def main():
         lights["relocated"] = moved
     else:
         lights.pop("relocated", None)
+    if measured:
+        lights["measured"] = measured
+    else:
+        lights.pop("measured", None)
     if apron_moved:
         lights["apron_moved"] = apron_moved
     else:

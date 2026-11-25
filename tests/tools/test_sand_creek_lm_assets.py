@@ -556,7 +556,7 @@ def test_round_k_keys_are_opt_in():
         assert "signs_name_blades" not in cfg, t
     # round K's candidate (live since round R, 0.2.6: test_round_r_live_is_the_candidate)
     live = json.loads((SC / "track.config.json").read_text(encoding="utf-8"))
-    assert "race_rule" not in (live.get("kerb") or {}) and live["version"] == "0.2.12"
+    assert "race_rule" not in (live.get("kerb") or {}) and live["version"] == "0.2.13"
     sc = json.loads((SC / "source" / "round_k" / "track.config.json").read_text(encoding="utf-8"))
     assert sc["version"] == "0.2.6"
     assert sc["race"]["edge_fold_chord"] is True
@@ -973,6 +973,25 @@ LIVE_R2_KEYS = (("lm_intake", "connector_profiles"), ("lm_intake", "_connector_p
 # stripped from the live config below (every other bridge key still compared with the candidate)
 LIVE_0212_KEYS = (("lm_intake", "deck_profiles"), ("lm_intake", "_deck_profiles_doc"))
 QUEBEC_BRIDGE_PROFILE_KEYS = ("profile_m", "profile_ramp_m", "_profile_doc")
+# 0.2.13 (ledger 0098, Colorado at its real width; the Mac 2026-11-24 / 25): the lap's measured carriageway, the far
+# carriageway as a side piece, the measured lamp posts (named here); the three median islands and the appended docs are
+# stripped from the live config below (_strip_0213)
+LIVE_0213_KEYS = (("lm_intake", "carriageway"), ("lm_intake", "_carriageway_doc"), ("lm_intake", "side_pieces"),
+                  ("lm_intake", "_side_pieces_doc"), ("scenery", "streetlights", "measured"),
+                  ("scenery", "streetlights", "_measured_doc"))
+SHIP_0213 = {"source/carriageway_colorado.lidar.json", "source/side_pieces_colorado.lidar.json",
+             "source/lamps_colorado.drapp.json"}
+COLORADO_ISLANDS = ("colorado_median_0", "colorado_median_1", "colorado_median_2")
+
+
+def _strip_0213(live):
+    """the live config less 0.2.13's islands and the text it appended to three docs"""
+    isl = live["route"]["islands"]
+    assert [i["id"] for i in isl[-3:]] == list(COLORADO_ISLANDS)
+    del isl[-3:]
+    for d, k in ((live["route"], "_islands_doc"), (live["race"]["corridor"], "_doc")):
+        assert " 0.2.13 (ledger 0098" in d[k]
+        d[k] = d[k].split(" 0.2.13 (ledger 0098")[0]
 
 # ledger 0086 (0.2.7): every key the live config adds to, or changes from, round_k's candidate
 LIVE_0_2_7_KEYS = (("name",), ("_name_doc",), ("slug",), ("version",), ("install_folder",), ("_install_folder_doc",),
@@ -1019,7 +1038,7 @@ def test_round_r_live_is_the_candidate():
     (race.corridor.whole_lap) and verify_kn5 runs both before (closure kn5) and after (--inis) the folder"""
     live = json.loads((SC / "track.config.json").read_text(encoding="utf-8"))
     cand = json.loads((SC / "source" / "round_k" / "track.config.json").read_text(encoding="utf-8"))
-    assert live["version"] == "0.2.12" and cand["version"] == "0.2.6"   # 0.2.9: ledger 0098; 0.2.10: its round 2; 0.2.12
+    assert live["version"] == "0.2.13" and cand["version"] == "0.2.6"   # 0.2.9: ledger 0098; 0.2.10: its round 2; 0.2.12, 0.2.13
     assert live["slug"] == live["install_folder"] == "sand_creek_raceway" and "LM" not in live["name"]
     assert [l["name"] for l in live["layouts"]] == ["Sand Creek Raceway", "Sand Creek Free Roam"]
     assert live["route"]["mouth_returns"] == ["grid_"] and live["route"]["verify_mouth_corners"] is True
@@ -1029,7 +1048,9 @@ def test_round_r_live_is_the_candidate():
     assert va[:len(vk)] == vk and [(r["piece"], r["end"]) for r in va[len(vk):]] == [("grid_tertiary_74#0", "start")]
     _finish_pc_pads(live, cand)
     assert live["lm_intake"]["connector_profiles"] == "source/connector_profiles.lidar.round_2.json"
-    for k in LIVE_0_2_7_KEYS + LIVE_0_2_8_KEYS + LIVE_0_2_9_KEYS + LIVE_FINISH_PC_KEYS + LIVE_R2_KEYS + LIVE_0212_KEYS:
+    _strip_0213(live)
+    for k in (LIVE_0_2_7_KEYS + LIVE_0_2_8_KEYS + LIVE_0_2_9_KEYS + LIVE_FINISH_PC_KEYS + LIVE_R2_KEYS + LIVE_0212_KEYS
+              + LIVE_0213_KEYS):
         _drop(live, k)
         _drop(cand, k)
     for b in live["capture"]["bridges"]:
@@ -1042,8 +1063,13 @@ def test_round_r_live_is_the_candidate():
     ship = json.loads((SC / "ship.json").read_text(encoding="utf-8"))
     ship_k = json.loads((SC / "source" / "round_k" / "ship.json").read_text(encoding="utf-8"))
     added = {"mouth_returns", "verify_mouth_corners", "source/mouth_radii.naip.json", "data/mouth_returns.json",
-             "data/verify_mouth_corners.json"} | SHIP_0_2_9 | SHIP_0_2_10
+             "data/verify_mouth_corners.json"} | SHIP_0_2_9 | SHIP_0_2_10 | SHIP_0213
     ship["sync_in"]["_assets_doc"] = ship["sync_in"]["_assets_doc"].split("; ledger 0098:")[0]
+    # 0.2.13: the three Colorado records named in sync_in (their doc appended); loop.blend out of sync_out.required (Kevin,
+    # relayed 2026-11-24: "Keep only builds apart"; Sand Creek's blend is a record, never synced back)
+    ship["sync_in"]["_optional_doc"] = ship["sync_in"]["_optional_doc"].split("; ledger 0098 0.2.13:")[0]
+    assert ship["sync_out"].pop("required") == [] and ship["sync_out"].pop("_required_doc")
+    assert ship_k["sync_out"].pop("required") == ["loop.blend"]
     assert ship.keys() == ship_k.keys()
     for k, v in ship.items():
         if isinstance(v, dict):

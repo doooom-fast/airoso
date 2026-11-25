@@ -273,7 +273,10 @@ def _trim_against(conns, hosts, mouths, deltas=None, capped=(), no_reach=()):
         # butts it to the edge. Only ends within REACH_M of a host are extended. A phase-5 STUB (tools/stub_roads.py,
         # `stub` in its record) is never extended: its start already stands inside its host and its far end, the
         # barrier's tail, is a dead end that must stay where it was declared.
-        for end in (() if c.get("stub") else (0, -1)):
+        # A record with `open_ends` true (opt-in, ledger 0098 0.2.13: tools/divided_road.py's far carriageway, a side
+        # piece beside the lap whose ends are open by decision) is never extended either: both its ends lie within
+        # REACH_M of the lap and would be stretched across the median onto the lap's centreline
+        for end in (() if (c.get("stub") or c.get("open_ends")) else (0, -1)):
             x, y, z = pts[end]
             # `no_reach` (opt-in, route.street_junctions): an end that is already a mouth's cut ((x, z) to 1 mm) stays
             # where it was cut, never stretched on to the next host (Sand Creek 48th / Colorado: grid_primary_49, cut at
@@ -394,7 +397,7 @@ def _trim_against(conns, hosts, mouths, deltas=None, capped=(), no_reach=()):
                         "points_xyz_m": [[round(v, 3) for v in p] for p in piece], "widths_m": pw,
                         **({"stub": c["stub"]} if c.get("stub") else {}),
                         **({"expansion": c["expansion"]} if c.get("expansion") else {}),
-                        **({k_: c[k_] for k_ in ("min_piece_m", "crossing") if k_ in c}),
+                        **({k_: c[k_] for k_ in ("min_piece_m", "crossing", "open_ends") if k_ in c}),
                         **({"paint": sliced_paint(c["paint"], ps)} if carries_paint(c) else {})})
         if any(inside):
             print(f"[trim] {c['name']}: {len(pieces)} piece(s), {sum(inside)} pt(s) inside a host dropped")

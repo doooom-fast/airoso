@@ -1,0 +1,68 @@
+{
+ "_doc": "ledger 0098 0.2.13 (the Mac's decisions 2026-11-24 / 25, relayed): tools/divided_road.py's spec. Stations are the G10's s on the BUILT line (a draft's data/centerline.local.json). lap.right.span: the right edge on the measured right curb (s 66-348); lap.left.span: the left edge on the median's near face (s 143-348, the divided stretch); taper_m: the raised-cosine eases outside both spans, all outside both pads' cut rows (48th_colorado v3193-v3216 ends before s 0; colorado_50th's v129 is at s ~388). far.span: the far carriageway's side piece, from the median nose (one station before the first island row, so the islands author finds its ROAD) to past grid_unclassified_96's mouth (its centreline at s ~348.4, 8 m wide). island.span: the islands' search span (the divided stretch); runs where the lidar reads no raised median are gaps. island.span starts one station after far.span. lamps: the 12 poles the DRAPP 2022 orthophoto reads on the stretch (the Mac 2026-11-24: west a w2 f h j p, east b g i k o, the median twin n; not c, z1, m (no arm read) nor nw / ne (north of E 50th, outside the zone)); zone_s_built_m covers the six draft posts 0.2.12 built here (lamps 0-5, s 57-330).",
+ "roads": [
+  {
+   "id": "colorado",
+   "stations_file": "source/roads_lidar_g10/lap_colorado_quebec.lidar.json",
+   "stretch": "colorado",
+   "draft_note": "Sand Creek 0.2.12 (2ffccca8; D:/k10-scratch/codex_sand_creek_0212_reh, the installed build)",
+   "lap": {
+    "out": "source/carriageway_colorado.lidar.json",
+    "right": {
+     "span": [
+      66.0,
+      348.0
+     ]
+    },
+    "left": {
+     "span": [
+      143.0,
+      348.0
+     ]
+    },
+    "taper_m": 25.0
+   },
+   "far": {
+    "out": "source/side_pieces_colorado.lidar.json",
+    "name": "grid_primary_colorado_sb",
+    "span": [
+     143.0,
+     358.0
+    ]
+   },
+   "island": {
+    "out": "source/islands_colorado.lidar.json",
+    "id_prefix": "colorado_median",
+    "span": [
+     145.0,
+     348.0
+    ]
+   },
+   "lamps": {
+    "out": "source/lamps_colorado.drapp.json",
+    "poles_file": "source/roads_lidar_g10/colorado_poles.ortho.json",
+    "credit": "DRAPP 2022, DRCOG (Denver Regional Council of Governments; CC BY 3.0 per DRCOG's metadata): positions read off it, the image not published",
+    "ids": [
+     "a",
+     "b",
+     "w2",
+     "g",
+     "f",
+     "i",
+     "h",
+     "k",
+     "j",
+     "n",
+     "p",
+     "o"
+    ],
+    "zone_s_built_m": [
+     0.0,
+     412.0
+    ],
+    "max_move_m": 0.75,
+    "step_m": 0.05
+   }
+  }
+ ]
+}

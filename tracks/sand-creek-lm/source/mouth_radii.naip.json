@@ -1,6 +1,7 @@
 {
  "_doc": "Measure every side-street mouth corner's curb-return RADIUS on NAIP 2023 (ledger 0086 fix, Sand Creek 0.2.7). Inputs: naip_2023_sc_z18.jpg (NAIP 2023, the 0.3 m scene at z18, 0.46 m px), the workshop's mouths / connectors / centre line; tools/mouth_radii.py.",
- "naip_item": "co_m_3910409_se_13_030_20230925_20240104",
+ "_renamed_0213": "ledger 0098 0.2.13 (PC): grid_unclassified_96#0#0|end|+1 / -1 renamed grid_unclassified_96#0#0#0|end|+1 / -1, the same mouth one cut deeper in its name (tools/trim_connectors.py pass 2 now cuts the street at the far carriageway grid_primary_colorado_sb first); nothing re-measured",
+  "naip_item": "co_m_3910409_se_13_030_20230925_20240104",
  "params": {
   "BAND_MIN": 16.0,
   "BAND_K": 2.5,
@@ -5429,7 +5430,7 @@
    "measured": true,
    "host": "grid_tertiary_1#0"
   },
-  "grid_unclassified_96#0#0|end|+1": {
+  "grid_unclassified_96#0#0#0|end|+1": {
    "phi_deg": 90.65,
    "K": [
     -1537.83,
@@ -5459,7 +5460,7 @@
    "measured": true,
    "host": "grid_unclassified_9#0#1"
   },
-  "grid_unclassified_96#0#0|end|-1": {
+  "grid_unclassified_96#0#0#0|end|-1": {
    "phi_deg": 88.76,
    "K": [
     -1537.97,

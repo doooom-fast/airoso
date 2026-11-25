@@ -858,6 +858,175 @@ claude/sc-roads-lidar-20261124 @ 10f75a0e, `source/roads_lidar_g10/quebec_bridge
   class-2 deck (seam residual 0.728 m in 0.2.11, faded over 30.5 m on that row) is for the rehearsal to read.
 - No mouth joins the lap over v1925-2010.
 
+## PC, 2026-11-25: 0.2.13, North Colorado Blvd at its real width (the Mac's Colorado round)
+
+**On s 143-348 the race lap narrows from the built 16.5 m to the real carriageway: 10.8-12.8 m, median 11.7 m.** About
+11 m where both curbs read. Wider past the railway and into the turn bay at 50th, where the right curb reads further out.
+
+**The decisions** (the Mac, 2026-11-24 / 25, relayed; Kevin's "I just want real", "Full street width"):
+- The lap is the near carriageway. The median is a raised island beside it. The far carriageway is its own side piece.
+- The right edge sits on the measured curb over s 66-348. The left edge sits on the median's near face over s 143-348.
+- Raised-cosine eases of about 25 m run outside both spans, all outside the pads' cut rows. s 9605-63 (the 48th
+  approach) and s 348 to the colorado_50th pad stay as built.
+- The race corridor runs curb to curb on the lap's carriageway, with no closure wall.
+- The 12 real poles replace the six spaced lamps. Twin arms tonight; single arms are owed.
+- A pole that touches 1ROAD steps out at most 0.75 m, else it is dropped. b is dropped.
+- s numbers below are the G10's, on the BUILT line (a draft's data/centerline.local.json). u is + left of travel.
+
+**Evidence.** All four files are on this branch, merged from the G10's data branches (no LFS objects):
+- the G10's 2020 lidar faces: `source/roads_lidar_g10/lap_colorado_quebec.lidar.json` (claude/sc-roads-lidar-20261124 @
+  10f75a0e; USGS CO_DRCOG_2_2020 class 2, every 2.5 m, faces good to about 0.25 m);
+- the poles: `source/roads_lidar_g10/colorado_poles.ortho.json` (claude/sc-colorado-poles-lidar-20261124 @ a1b74ac8).
+  Lamps are from DRAPP 2022, read by eye to about ±0.3 m. Credit: DRAPP 2022, DRCOG (CC BY 3.0 per DRCOG's metadata).
+  Only positions are published, never the image.
+- `source/COLORADO_WIDTH.md`: the measured table and the list of what moves (the PC's 2026-11-24 prep), as promised.
+
+**The tool: `tools/divided_road.py` (new, pure Python).** Its spec is `source/divided_roads.json`. It wrote four
+records off the installed 0.2.12 draft (2ffccca8, `D:/k10-scratch/codex_sand_creek_0212_reh`). Its smoothed line
+reproduces that draft's built line to 0.07 mm.
+- **How the series are read.** Per face key, it reads the stations' **curb** readings only. The G10's "fall" / "drop" /
+  "none" kinds are the pavement falling away or no step, not a curb. The far curb is read on divided stations only,
+  because on an undivided one the G10's left_edge can be the median's near face.
+- **How each series is built.**
+  - a row = the median of its readings within ±7.5 m (edge_retrace's MED_HALF_M), measuring with at least 2 readings
+    [invented];
+  - unread rows filled linearly between measured rows within 40 m (edge_retrace's GAP_M);
+  - then a Gaussian of 4 m [invented].
+- `source/carriageway_colorado.lidar.json` (md5 da38f286): **the lap.** 111 rows, v14-v124.
+  - Per row: the intake line's vertex, its position and its width before, its new position and width.
+  - The move is pre-compensated for the assembler's smoothing (2D − S(D), as edge_retrace's shift_precomp). Through the
+    assembler's own smoothing, the built edges land on the targets: across the road, worst 0.142 m right / 0.098 m left,
+    p95 0.090 / 0.067.
+  - The line moves at most 1.66 m (s 60-125, where only the right edge comes in, by 3.0 m). Y is untouched.
+  - The pads' cut rows (48th_colorado v3193-v3216, colorado_50th v129-v151) are not among the rows.
+  - **Not measured: s 263-298 on the right.** The curb reads no curb there: the v95 mouth, the railway, driveways. The
+    edge is the line between the readings at s 260.8 (u −6.0) and s 300.8 (u −7.75). Built: u −6.9..−7.1.
+- `source/side_pieces_colorado.lidar.json` (md5 e3669c8e): **the far carriageway,** `grid_primary_colorado_sb`.
+  - 86 points over s 143-358, between the median's far face and the far curb: 10.0-13.3 m wide.
+  - Its heights are the lidar pavement's (17.05-18.06 m local). The lap's 3DEP centre line stands 0.0-0.17 m over the
+    lidar pavement at the right curb (crown included).
+  - It runs against the lap (southbound). Both ends are open, with `open_ends` true.
+  - It runs past s 348 to s 358 because grid_unclassified_96's 8 m mouth is centred at s ~348.4. North of the median's
+    last reading (s 345.8) its east edge holds u +8.2. The lap's left edge strip (1.8 m) eases out over it there:
+    **owed: up to 0.7 m of CURB strip over its pavement at s 350-358.**
+- `source/islands_colorado.lidar.json` (md5 07fc3293): **the median islands,** as three route.islands entries.
+  - Each covers only where both faces read a raised median:
+    - colorado_median_0: s 145.8-255.8, 45 rows;
+    - colorado_median_1: s 270.8-290.8, 9 rows;
+    - colorado_median_2: s 330.8-345.8, 7 rows.
+  - Rule: a run survives one unread station [invented]; two or more is a gap. A run under 10 m is no island [invented].
+  - The gaps are the Mac's: s 256-271 by the railway, and s 291-331 at the turn bay (the median there is 1.5 m and
+    reads no raised top).
+  - rise_m = the faces' measured steps, medians per island: 0.141 / 0.128, 0.147 / 0.114, 0.173 / 0.117 m.
+  - Each edge stands 0.25 m [invented] onto its pavement (A onto the lap, B onto the far piece). tools/author_islands_blend.py
+    refuses a row with no ROAD under it, and the built edges' worst miss is 0.142 m.
+- `source/lamps_colorado.drapp.json` (md5 eb592608): **the 12 read poles.**
+  - west: a, w2, f, h, j, p; east: b, g, i, k, o; the median twin: n.
+  - Each carries its base as read and `out_xz`: away from the lap for a curb pole, toward the median's middle for n.
+  - zone s 0-412 holds 0.2.12's draft posts 0-6: lamps 0-5 at u ±11.05, and lamp 6, which 0.2.12 dropped on the pad.
+
+**The chain (all opt-in; Sand Creek alone names the keys; no gate or threshold changed):**
+- tools/lm_engine_intake.py:
+  - `lm_intake.carriageway` (apply_carriageway, after flare_one_sided) applies the rows. It is refused on any other line:
+    a vertex more than 0.01 m off, or a width not the record's.
+  - `lm_intake.side_pieces` (add_side_pieces) appends the far piece to the side streets just copied in, before their
+    profiles. A name already taken is refused, and `open_ends` is kept.
+- tools/trim_connectors.py: a record with `open_ends` true is never reached to a host. Both of the far piece's ends lie
+  within REACH_M (15 m) of the lap. A dry trim without the flag stretched them across the median and made two mainline
+  mouths.
+- tools/streetlight_relocate.py `measured_spec` / `measured_plan` (pure), and tools/author_lamps_blend.py
+  `measured_posts` (`scenery.streetlights.measured`), before relocate:
+  - the draft's posts in the zone are left out, recorded as `replaced`;
+  - each measured post stands at its base;
+  - if its footprint + 0.46 m setback reaches a road, it steps along out_xz in 0.05 m steps [invented] to the first
+    clear spot, at most 0.75 m [invented, the Mac];
+  - otherwise it keeps its measured base, is recorded `on_road`, and drop_on_road drops it;
+  - its head follows the author's own base rule, 8.8 m over the built ground;
+  - the measured posts take the zone's place in the lamp order, so LIGHTPOST's batches keep their stretches;
+  - the record goes in lights.local.json `measured`.
+- track.config.json 0.2.13 also:
+  - `route.islands` gains the three islands;
+  - `race.corridor._doc` says the median and the far piece stand outside the curb strips: still the whole lap, no
+    closure run;
+  - `route.verify_mouth_corners_allowed` and `source/mouth_radii.naip.json` rename `grid_unclassified_96#0#0` to
+    `grid_unclassified_96#0#0#0`. That is the same mouth (cut at grid_unclassified_9#0#1, (−1537.48, 90.31)), one cut
+    deeper in its name: pass 2 now cuts 96 at the far piece first. Nothing was re-measured, and its end is where 0.2.12
+    built it.
+- ship.json:
+  - sync_in names the three records;
+  - **sync_out.required no longer names loop.blend** (Kevin, relayed 2026-11-24: "Keep only builds apart"). The
+    workshop's blend is a record; the install archives it.
+
+**Dry runs on the PC (python only, no Blender):** the intake and trim on a scratch copy of the port.
+- The intake: `the lap on its measured carriageway ... 111 rows v[14, 124], widths [10.76, 19.97] m, the line moved up
+  to 1.659 m`; `side pieces ...: ['grid_primary_colorado_sb'] added`.
+- Only v14-v124 move (plan and width); no height moves.
+- Built edges against the faces, every 10 m: the right within 0.03 m of the curb over s 66-348, the left within 0.04 m
+  of the median face over s 145-348.
+- Trim: 125 mouths as 0.2.12 (the test pins it). The far piece passes through whole (86 points). No mouth on it: 96's
+  stretch between it and grid_unclassified_9 is under 15 m and dropped, as 0.2.12 dropped the stretch to the lap.
+  - 88 -> 89 pieces;
+  - v95's mouth (grid_unclassified_76#0#0, start) is cut 0.4 m inside the new right edge, as every cut is: u −6.66 in the G10's frame, −7.85 before, so in by 1.2 m.
+- The poles on the planned pavements (ribbons only, CURB not counted, as the author's footprint rule reads):
+  - 10 stand: a, w2, f, h, k, j, p in place; g moved 0.60 m, i moved 0.55 m, n moved 0.05 m;
+  - 2 dropped: b (on the 48th approach's built ribbon, as agreed) and **o (inside colorado_50th's measured pad
+    outline, on the corner's curb return)**.
+  - The rehearsal's own read is the one that counts.
+
+**Expected in the rehearsal, against 0.2.12's (codex_sand_creek_0212_reh):**
+- `[trim] 89 connector piece(s), 125 mouth cut(s)` (0.2.12: 88 / 125); `[gap-mouths] 125 mouths`.
+- `[islands] 4 island(s) authored` (fork_92 + colorado_median_0-2).
+- `[lamps] measured posts ...: 7 draft post(s) in s [0.0, 412.0] replaced by 12 measured`.
+- drop_on_road should name b and o, plus 0.2.12's lamps at the colorado_50th pad (7), sandcreek_quebec, the ROAD one and
+  48th_colorado.
+- About 174 lamps against 170, which means 348 lenses, `[heads] 174 back lenses` and lights_ini 348 / 174.
+- `[returns]` about 224 at 114 mouths. TreeFX may plant 1-2 fewer (the far piece's 5 m guard reaches the crowns at
+  u +23).
+- Gates: no_route PASS (the far piece and the islands lie outside the curb strips). verify_pads as 0.2.12 (no pad row
+  moved). kn5_ground_check and drive_test (street and race) read the new edges and eases.
+
+**Owed (not tonight):**
+- s 63-140 is one real 26.25 m road whose left curb is near u +21. "Full street width" there means a wider left side
+  (the Mac).
+- Single cobra arms on the 11 curb poles. Only n is a twin. This needs tools/author_lamps_blend.py,
+  tools/author_lamp_heads_blend.py and tools/check_lights_ini.py, tested.
+- The far piece's south end meets the unbuilt west half of the 26 m road.
+- The CURB strip over the far piece at s 350-358.
+- The right curb is unread over s 263-298.
+- o, if the rehearsal drops it.
+
+## Runbook 0098-2 (PLAYBOX): rehearse 0.2.13 from an empty workshop, NO install
+
+A scratch rehearsal only. The install is PLAYBOX's lane, after the Mac's review and suite.
+
+1. **Code.** A clean checkout of `claude/sc-0213-colorado-20261125` at the head the Mac passes on. No LFS blob is new,
+   and no blend is read: Sand Creek drafts from scratch.
+   - ENG = `D:/k10-scratch/eng_sclm_0209` (0.2.12's).
+   - The four TreeFX models in the checkout's `tracks/sand-creek/source/trees/` (gitignored, personal use), at:
+     - `Oak3.bin` 24111edeb192d0d3e765fd2d4b81f88d (11,186,868 B);
+     - `SycamoreV1.bin` 0986f1eacb5319e17474d8a54e460219 (3,526,062 B);
+     - `SycamoreV2.bin` 7010d61f1b1d8e6a7bb29a8533fa1100 (3,104,112 B);
+     - `SycamoreV3.bin` 0ad53d67d524a3ff6c01b4bc4d741e37 (4,816,236 B).
+   - Copy them from `D:/k10-worktrees/sc-r2/tracks/sand-creek/source/trees/` if missing. 0.2.10's rehearsal failed the
+     TreeFX gate without them.
+2. **Rehearse** with an empty `SHIP_PROJ`, for example `D:/k10-scratch/codex_sand_creek_0213_reh`:
+   `PYTHONUTF8=1 AIROSO_NUMPY_PY=D:/k10-scratch/lidar-venv/Scripts/python.exe SHIP_PROJ=D:/k10-scratch/codex_sand_creek_0213_reh ENG=/d/k10-scratch/eng_sclm_0209 bash tools/ship_track.sh sand-creek-lm --no-install > D:/k10-scratch/codex_sand_creek_0213_reh.log 2>&1`
+   No `--from`, no `--skip-blend`, no force.
+3. **Read** the "Expected in the rehearsal" list above, line by line, against 0.2.12's log. Call out:
+   - any `[islands] FATAL` (a row with no ROAD under it): name the island and the row;
+   - `[lamps] measured posts` with its moved / on_road lists; lights.local.json `measured.posts` and `dropped_on_road`;
+   - every gate row that differs from 0.2.12's, with numbers: kn5_ground_check, drive_test street and race, no_route,
+     verify_mouths (v95), verify_mouth_corners (96#0#0#0's allowed row), verify_pads, race_verify, verify_signs
+     (SC-C50 / SC-48C), TreeFX.
+4. **On the rehearsal's own files:**
+   - `python -I tools/sc_disconnects.py --project <proj> --obj <proj>/data/track.obj --osm tracks/sand-creek/data/osm.widths.cache.json --out D:/k10-scratch/sc_0213_disc`:
+     its group counts against 0211's (2 / 40 / 60 / 43 / 49 / 196 / 16), and any §5 edge over 0.30 m;
+   - `<proj>/data/lm_intake.json` `carriageway` and `side_pieces`: as the dry run above.
+5. **Report:** SHIP OK or the first red row with its numbers; the run's start and end; the kn5 sizes and md5s; the lamp
+   count and the two drop lists.
+6. **Owed to Kevin's drive:** Colorado northbound from 48th to 50th in both layouts (the 11 m carriageway, the median,
+   the far lanes), and the lamps at night.
+
 ## What needs Kevin, a download or the PC
 
 - **Kevin:**

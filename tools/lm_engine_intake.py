@@ -312,6 +312,64 @@ def apply_flare_one_sided(proj: Path, rel: str, pts, widths):
     return pts, widths, rep
 
 
+def apply_carriageway(proj: Path, rel: str, pts, widths):
+    """ledger 0098 0.2.13 (opt-in lm_intake.carriageway, a record of tools/divided_road.py; Sand Creek's Colorado Blvd):
+    the lap on its own measured carriageway. Per row the vertex k at line_xz (width width_was_m) moves to new_xz with
+    width_m: the record's edges are the lidar's curb and median face, the move already pre-compensated for the
+    assembler's smoothing (tools/divided_road.py). Refused on any other line (a vertex off its line_xz, a width not its
+    width_was_m). Y is untouched. Returns (pts, widths, report)."""
+    if str(rel).startswith(("/", "\\")) or ".." in Path(str(rel)).parts:
+        raise SystemExit(f"[lm_intake] lm_intake.carriageway {rel!r} must be a plain path inside the project")
+    rec = json.loads((proj / rel).read_text(encoding="utf-8"))
+    pts = [list(p) for p in pts]
+    widths = list(widths)
+    moved = []
+    for r in rec["rows"]:
+        k = int(r["k"])
+        if math.hypot(pts[k][0] - r["line_xz"][0], pts[k][2] - r["line_xz"][1]) > 0.01:
+            raise SystemExit(f"[lm_intake] {rel}: v{k} was measured on another line (it stands "
+                             f"{math.hypot(pts[k][0] - r['line_xz'][0], pts[k][2] - r['line_xz'][1]):.3f} m off); re-run "
+                             "tools/divided_road.py on this port's draft")
+        if abs(widths[k] - float(r["width_was_m"])) > 0.01:
+            raise SystemExit(f"[lm_intake] {rel}: v{k}'s width {widths[k]:.3f} m is not the record's {r['width_was_m']} m; "
+                             "re-run tools/divided_road.py")
+        moved.append(math.hypot(r["new_xz"][0] - pts[k][0], r["new_xz"][1] - pts[k][2]))
+        pts[k][0], pts[k][2] = float(r["new_xz"][0]), float(r["new_xz"][1])
+        widths[k] = float(r["width_m"])
+    rep = {"file": rel, "rows": len(rec["rows"]), "vertices": (rec.get("report") or {}).get("vertices"),
+           "width_m": (rec.get("report") or {}).get("width_m"), "line_moved_m_max": round(max(moved or [0.0]), 3),
+           "built_edge_off_target_across_m": (rec.get("report") or {}).get("built_edge_off_target_across_m")}
+    print(f"[lm_intake] the lap on its measured carriageway ({rel}): {rep['rows']} rows v{rep['vertices']}, widths "
+          f"{rep['width_m']} m, the line moved up to {rep['line_moved_m_max']} m")
+    return pts, widths, rep
+
+
+def add_side_pieces(proj: Path, rel: str, data: Path):
+    """ledger 0098 0.2.13 (opt-in lm_intake.side_pieces, a record of tools/divided_road.py): side pieces measured for the
+    port (Sand Creek: Colorado's far carriageway, grid_primary_colorado_sb) appended to the side streets just copied in,
+    before their profiles, so trim / divide / route and every later step treat them as the source's own; a record's
+    `open_ends` true is kept (tools/trim_connectors.py then never stretches its ends to a host). A name that is already a
+    side street is refused."""
+    if str(rel).startswith(("/", "\\")) or ".." in Path(str(rel)).parts:
+        raise SystemExit(f"[lm_intake] lm_intake.side_pieces {rel!r} must be a plain path inside the project")
+    add = json.loads((proj / rel).read_text(encoding="utf-8"))["connectors"]
+    cj = json.loads((data / "connectors.local.json").read_text(encoding="utf-8"))
+    have = {c["name"] for c in cj["connectors"]}
+    for c in add:
+        if c["name"] in have:
+            raise SystemExit(f"[lm_intake] {rel}: {c['name']} is already a side street")
+        if len(c["points_xyz_m"]) != len(c["widths_m"]) or len(c["points_xyz_m"]) < 2:
+            raise SystemExit(f"[lm_intake] {rel}: {c['name']} has {len(c['points_xyz_m'])} points and "
+                             f"{len(c['widths_m'])} widths")
+        cj["connectors"].append({"name": c["name"], "kind": c.get("kind", "connector"),
+                                 "points_xyz_m": c["points_xyz_m"], "widths_m": c["widths_m"],
+                                 **({"open_ends": True} if c.get("open_ends") else {})})
+    (data / "connectors.local.json").write_text(json.dumps(cj), encoding="utf-8")
+    names = [c["name"] for c in add]
+    print(f"[lm_intake] side pieces ({rel}): {names} added to the side streets")
+    return names
+
+
 def corner_flares_off(pts, widths, origin, entries):
     """THE DECLARED CORNERS' FLARES OFF (lm_intake.corner_flare_off; ledger 0079 round Q, Sand Creek). The source's widths
     stage (scripts.gps.widths_from_osm) sweeps a junction flare round a turn corner unless route.corner_flare_off declares
@@ -719,6 +777,14 @@ def intake(proj: Path, *, connectors: bool | None = None) -> dict:
     one_rep = None
     if li.get("flare_one_sided"):
         pts, widths, one_rep = apply_flare_one_sided(proj, str(li["flare_one_sided"]), pts, widths)
+    # THE LAP ON ITS MEASURED CARRIAGEWAY (lm_intake.carriageway, a file of tools/divided_road.py; ledger 0098 0.2.13;
+    # absent = the source's widths and line): apply_carriageway above
+    cw_rep = None
+    if li.get("carriageway"):
+        pts, widths, cw_rep = apply_carriageway(proj, str(li["carriageway"]), pts, widths)
+        if closed:
+            pts[-1] = list(pts[0])
+            widths[-1] = widths[0]
     # WIDTH STEPS TAPERED (lm_intake.width_taper, m of half-width per m along; absent = the widths as traced; ledger 0078
     # round 5). A traced width can jump in one station where the paved area takes in a gore or an apron (Milford s 2,604:
     # 12.2 -> 21.7 m in 3 m). The ribbon stays planar across such a row on any bank, but drive_test's wheel paths sit at
@@ -1408,6 +1474,7 @@ def intake(proj: Path, *, connectors: bool | None = None) -> dict:
         meta2["lm_intake_upsample"] = {"factor": up, "source_spacing_m": meta["spacing_m"],
                                        "_doc": "bilinear from the source 3DEP grid (tools/lm_engine_intake.py)"}
         (data / "heightfield.meta.json").write_text(json.dumps(meta2), encoding="utf-8")
+    side_rep = None
     want_conn = li.get("connectors", False) if connectors is None else connectors
     conn = sdata / conn_name
     # THE PORT'S OWN SIDE STREETS (lm_intake.connectors_file, a path inside the PORT project; ledger 0085, Pikes Peak's
@@ -1430,6 +1497,9 @@ def intake(proj: Path, *, connectors: bool | None = None) -> dict:
         # run left would re-trim the OLD set: the fresh copy is the only source
         for suf in (".pre-trim", ".pre-divide", ".pre-route"):
             (data / ("connectors.local.json" + suf)).unlink(missing_ok=True)
+        if li.get("side_pieces"):
+            # ledger 0098 0.2.13 (opt-in): the port's measured side pieces join the set first (add_side_pieces above)
+            side_rep = add_side_pieces(proj, str(li["side_pieces"]), data)
         if li.get("connector_profiles"):
             apply_connector_profiles(proj, str(li["connector_profiles"]))
         if li.get("grid_reach"):
@@ -1648,6 +1718,7 @@ def intake(proj: Path, *, connectors: bool | None = None) -> dict:
            **({"edge_on_bank": bank_rep} if bank_rep else {}), "corner_arcs": arcs_rep, "carried": carried,
            **({"line_precomp": precomp_rep} if precomp_rep else {}),
            **({"deck_profiles": deck_prof_rep} if deck_prof_rep else {}),
+           **({"carriageway": cw_rep} if cw_rep else {}), **({"side_pieces": side_rep} if side_rep else {}),
            **({"edge_fit": edge_fit_rep} if edge_fit_rep else {}),
            **({"edge_retrace": edge_retrace_rep} if edge_retrace_rep else {}),
            **({"width_smooth": width_smooth_rep} if width_smooth_rep else {}),

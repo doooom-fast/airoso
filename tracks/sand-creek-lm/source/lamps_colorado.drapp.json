@@ -1,0 +1,227 @@
+{
+ "_doc": "scenery.streetlights.measured (tools/author_lamps_blend.py measured_posts, tools/streetlight_relocate.measured_plan): the draft's posts whose base lies in zone_s_built_m (stations on the built line) give way to these posts. Bases: the DRAPP 2022 3-inch orthophoto (DRCOG), read by eye to about +-0.3 m; positions only, the image is not published. A post whose footprint + 0.46 m setback reaches a road steps along out_xz to the first clear spot, at most max_move_m [invented, the Mac 2026-11-25], else it is left to drop_on_road.",
+ "credit": "DRAPP 2022, DRCOG (Denver Regional Council of Governments; CC BY 3.0 per DRCOG's metadata): positions read off it, the image not published",
+ "poles_file": "source/roads_lidar_g10/colorado_poles.ortho.json",
+ "zone_s_built_m": [
+  0.0,
+  412.0
+ ],
+ "max_move_m": 0.75,
+ "step_m": 0.05,
+ "posts": [
+  {
+   "id": "a",
+   "base_xz": [
+    -1532.31,
+    -250.07
+   ],
+   "out_xz": [
+    -0.9999,
+    0.0126
+   ],
+   "s_built_m": 7.7,
+   "u_m": 21.53,
+   "side": "west",
+   "arms_seen": 1,
+   "from_curb": "0.53 m behind the far curb (about u +21)"
+  },
+  {
+   "id": "b",
+   "base_xz": [
+    -1503.33,
+    -220.84
+   ],
+   "out_xz": [
+    0.9999,
+    -0.0125
+   ],
+   "s_built_m": 37.3,
+   "u_m": -7.09,
+   "side": "east",
+   "arms_seen": 1,
+   "from_curb": "1.84 m behind the near carriageway's curb (u -5.25)"
+  },
+  {
+   "id": "w2",
+   "base_xz": [
+    -1531.63,
+    -188.51
+   ],
+   "out_xz": [
+    -0.9999,
+    0.0125
+   ],
+   "s_built_m": 69.3,
+   "u_m": 21.61,
+   "side": "west",
+   "arms_seen": 0,
+   "from_curb": "0.61 m behind the far curb (about u +21)"
+  },
+  {
+   "id": "g",
+   "base_xz": [
+    -1504.36,
+    -152.71
+   ],
+   "out_xz": [
+    0.9999,
+    -0.0105
+   ],
+   "s_built_m": 105.4,
+   "u_m": -5.22,
+   "side": "east",
+   "arms_seen": 1,
+   "from_curb": "at the near carriageway's curb (0.03 m inside it: the reading's tolerance)"
+  },
+  {
+   "id": "f",
+   "base_xz": [
+    -1531.0,
+    -123.43
+   ],
+   "out_xz": [
+    -1.0,
+    0.0049
+   ],
+   "s_built_m": 134.5,
+   "u_m": 21.64,
+   "side": "west",
+   "arms_seen": 1,
+   "from_curb": "0.64 m behind the far curb (about u +21)"
+  },
+  {
+   "id": "i",
+   "base_xz": [
+    -1504.29,
+    -91.75
+   ],
+   "out_xz": [
+    1.0,
+    0.0011
+   ],
+   "s_built_m": 166.3,
+   "u_m": -5.03,
+   "side": "east",
+   "arms_seen": 1,
+   "from_curb": "at the near carriageway's curb (0.22 m inside it: the reading's tolerance)"
+  },
+  {
+   "id": "h",
+   "base_xz": [
+    -1530.62,
+    -62.48
+   ],
+   "out_xz": [
+    -1.0,
+    0.0042
+   ],
+   "s_built_m": 195.5,
+   "u_m": 21.32,
+   "side": "west",
+   "arms_seen": 1,
+   "from_curb": "0.32 m behind the far curb (about u +21)"
+  },
+  {
+   "id": "k",
+   "base_xz": [
+    -1502.24,
+    -31.71
+   ],
+   "out_xz": [
+    0.9999,
+    -0.0152
+   ],
+   "s_built_m": 226.5,
+   "u_m": -6.75,
+   "side": "east",
+   "arms_seen": 1,
+   "from_curb": "1.50 m behind the near carriageway's curb (u -5.25)"
+  },
+  {
+   "id": "j",
+   "base_xz": [
+    -1530.25,
+    -1.21
+   ],
+   "out_xz": [
+    -1.0,
+    0.0065
+   ],
+   "s_built_m": 256.7,
+   "u_m": 21.63,
+   "side": "west",
+   "arms_seen": 1,
+   "from_curb": "0.63 m behind the far curb (about u +21)"
+  },
+  {
+   "id": "n",
+   "base_xz": [
+    -1516.01,
+    83.74
+   ],
+   "out_xz": [
+    1.0,
+    -0.0031
+   ],
+   "s_built_m": 341.8,
+   "u_m": 7.26,
+   "side": "median",
+   "arms_seen": 2,
+   "from_curb": "1.51 m from its east face, 2.74 m from its west face"
+  },
+  {
+   "id": "p",
+   "base_xz": [
+    -1528.09,
+    138.22
+   ],
+   "out_xz": [
+    -0.9989,
+    0.0465
+   ],
+   "s_built_m": 395.4,
+   "u_m": 19.92,
+   "side": "west",
+   "arms_seen": 1,
+   "from_curb": "at the far curb (1.08 m inside its u +21: the reading's tolerance)"
+  },
+  {
+   "id": "o",
+   "base_xz": [
+    -1501.57,
+    138.36
+   ],
+   "out_xz": [
+    0.9989,
+    -0.0465
+   ],
+   "s_built_m": 396.8,
+   "u_m": -6.56,
+   "side": "east",
+   "arms_seen": 1,
+   "from_curb": "1.31 m behind the near carriageway's curb (u -5.25)"
+  }
+ ],
+ "provenance": {
+  "tool": "tools/divided_road.py",
+  "road": "colorado",
+  "stations_file": "source/roads_lidar_g10/lap_colorado_quebec.lidar.json",
+  "stretch": "colorado",
+  "draft_line": "data/centerline.raw.local.json of a draft at Sand Creek 0.2.12 (2ffccca8; D:/k10-scratch/codex_sand_creek_0212_reh, the installed build)",
+  "origin": {
+   "lon": -104.92279307050907,
+   "lat": 39.78644888384044,
+   "elev_m": 1572.38
+  },
+  "constants": {
+   "MED_HALF_M": 7.5,
+   "MIN_READ": 2,
+   "GAP_M": 40.0,
+   "SMOOTH_M": 4.0,
+   "TAPER_M": 25.0,
+   "ISLAND_ON_ROAD_M": 0.25,
+   "ISLAND_GAP_STATIONS": 1,
+   "ISLAND_MIN_M": 10.0
+  }
+ }
+}

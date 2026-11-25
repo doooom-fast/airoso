@@ -88,9 +88,12 @@
       "textures/name_blades.png",
       "signs.json",
       "source/grid_reach.json",
-      "source/flares_one_sided.lidar.json"
+      "source/flares_one_sided.lidar.json",
+      "source/carriageway_colorado.lidar.json",
+      "source/side_pieces_colorado.lidar.json",
+      "source/lamps_colorado.drapp.json"
     ],
-    "_optional_doc": "ledger 0079: the port's own inputs (tools/lm_engine_intake.py uses a port file the source track lacks): its wider 3DEP grid (lm_intake.heightfield port), the buildings pipeline's blocks and the crowns read off NAIP",
+    "_optional_doc": "ledger 0079: the port's own inputs (tools/lm_engine_intake.py uses a port file the source track lacks): its wider 3DEP grid (lm_intake.heightfield port), the buildings pipeline's blocks and the crowns read off NAIP; ledger 0098 0.2.13: North Colorado Blvd's records (tools/divided_road.py): the lap's carriageway (lm_intake.carriageway), the far carriageway (lm_intake.side_pieces) and the measured lamp posts (scenery.streetlights.measured)",
     "assets": [
       "assets/textures/siding_wall_diffuse.jpg",
       "assets/textures/siding_wall_normal.jpg",
@@ -115,9 +118,7 @@
     ]
   },
   "sync_out": {
-    "required": [
-      "loop.blend"
-    ],
+    "required": [],
     "files": [
       "data/lm_intake.json",
       "data/centerline.local.json",
@@ -164,6 +165,7 @@
     ],
     "dirs": [
       "ai/{id}"
-    ]
+    ],
+    "_required_doc": "ledger 0098 0.2.13 (Kevin, relayed 2026-11-24: \"Keep only builds apart\", \"Yes, remove record-only scene files\"; fleet/SCENE-FILES.md): Sand Creek drafts its blend from scratch (no sync_in names loop.blend), so the workshop's loop.blend is a record, never synced back into airoso; the install archives it beside the parked build"
   }
 }

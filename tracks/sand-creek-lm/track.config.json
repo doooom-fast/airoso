@@ -3,7 +3,7 @@
   "name": "Sand Creek Raceway",
   "_name_doc": "0.2.7 (Kevin 2026-11-07: \"Get rid of Lm Version from names, nothing should be on any other engine now\" / \"LM is the airoso engine\"): the plain name, slug and AC folder; the old-engine sand_creek_raceway and the sand_creek_raceway_lm installs leave AC when the PC installs this (Kevin: \"We want to delete old copies from ac when installing new ones\"). The repo directory stays tracks/sand-creek-lm until directories are renamed in one pass.",
   "slug": "sand_creek_raceway",
-  "version": "0.2.12",
+  "version": "0.2.13",
   "mirror_x": false,
   "osm_road_widths": true,
   "_osm_road_widths_doc": "Real street circuit — after the project stage, scripts.gps.widths_from_osm map-matches each centerline vertex to its OSM way and sets curb-to-curb widths from lanes (arterials ~2x a side street) + writes intersection pads at the real junctions. Racetracks (defined widths) leave this off.",
@@ -852,9 +852,9 @@
         "why": "ledger 0086 0.2.7 owed: m7a corner lip 0.19 m; 1 of 2 corners built; corner +1: the return (tangent 21.5 m) runs off the host's end"
       },
       {
-        "piece": "grid_unclassified_96#0#0",
+        "piece": "grid_unclassified_96#0#0#0",
         "end": "end",
-        "why": "ledger 0086 0.2.7 owed: m7a corner lip 0.052 m; both corners built; the lip left is beyond the return (owed: ledger 0086 Fix (0.2.7))"
+        "why": "ledger 0086 0.2.7 owed: m7a corner lip 0.052 m; both corners built; the lip left is beyond the return (owed: ledger 0086 Fix (0.2.7)). 0.2.13: the same mouth (cut at grid_unclassified_9#0#1, (-1537.48, 90.31)), one cut deeper in its name: tools/trim_connectors.py pass 2 now cuts the street at grid_primary_colorado_sb before pass 3 cuts it at grid_unclassified_9"
       },
       {
         "piece": "grid_unclassified_105#0",
@@ -1236,9 +1236,408 @@
           0.078,
           0.0
         ]
+      },
+      {
+        "id": "colorado_median_0",
+        "street": "MAINLINE | grid_primary_colorado_sb",
+        "rows": [
+          [
+            -1515.058,
+            -112.233,
+            -1519.887,
+            -112.222
+          ],
+          [
+            -1515.033,
+            -109.736,
+            -1519.854,
+            -109.727
+          ],
+          [
+            -1514.99,
+            -107.239,
+            -1519.829,
+            -107.232
+          ],
+          [
+            -1514.931,
+            -104.742,
+            -1519.813,
+            -104.738
+          ],
+          [
+            -1514.873,
+            -102.244,
+            -1519.806,
+            -102.243
+          ],
+          [
+            -1514.833,
+            -99.747,
+            -1519.805,
+            -99.747
+          ],
+          [
+            -1514.816,
+            -97.249,
+            -1519.806,
+            -97.251
+          ],
+          [
+            -1514.817,
+            -94.75,
+            -1519.807,
+            -94.754
+          ],
+          [
+            -1514.838,
+            -92.252,
+            -1519.809,
+            -92.258
+          ],
+          [
+            -1514.88,
+            -89.753,
+            -1519.805,
+            -89.76
+          ],
+          [
+            -1514.934,
+            -87.254,
+            -1519.789,
+            -87.261
+          ],
+          [
+            -1514.974,
+            -84.754,
+            -1519.752,
+            -84.761
+          ],
+          [
+            -1514.98,
+            -82.253,
+            -1519.699,
+            -82.258
+          ],
+          [
+            -1514.949,
+            -79.752,
+            -1519.646,
+            -79.756
+          ],
+          [
+            -1514.91,
+            -77.249,
+            -1519.612,
+            -77.251
+          ],
+          [
+            -1514.884,
+            -74.745,
+            -1519.602,
+            -74.745
+          ],
+          [
+            -1514.868,
+            -72.242,
+            -1519.606,
+            -72.238
+          ],
+          [
+            -1514.853,
+            -69.737,
+            -1519.607,
+            -69.73
+          ],
+          [
+            -1514.835,
+            -67.233,
+            -1519.597,
+            -67.221
+          ],
+          [
+            -1514.82,
+            -64.728,
+            -1519.579,
+            -64.713
+          ],
+          [
+            -1514.806,
+            -62.223,
+            -1519.56,
+            -62.203
+          ],
+          [
+            -1514.794,
+            -59.717,
+            -1519.544,
+            -59.693
+          ],
+          [
+            -1514.779,
+            -57.212,
+            -1519.522,
+            -57.183
+          ],
+          [
+            -1514.756,
+            -54.706,
+            -1519.485,
+            -54.671
+          ],
+          [
+            -1514.722,
+            -52.201,
+            -1519.425,
+            -52.161
+          ],
+          [
+            -1514.674,
+            -49.695,
+            -1519.346,
+            -49.652
+          ],
+          [
+            -1514.618,
+            -47.191,
+            -1519.264,
+            -47.142
+          ],
+          [
+            -1514.563,
+            -44.686,
+            -1519.196,
+            -44.633
+          ],
+          [
+            -1514.513,
+            -42.18,
+            -1519.146,
+            -42.122
+          ],
+          [
+            -1514.464,
+            -39.675,
+            -1519.107,
+            -39.613
+          ],
+          [
+            -1514.412,
+            -37.172,
+            -1519.07,
+            -37.106
+          ],
+          [
+            -1514.366,
+            -34.669,
+            -1519.03,
+            -34.6
+          ],
+          [
+            -1514.333,
+            -32.167,
+            -1518.981,
+            -32.096
+          ],
+          [
+            -1514.298,
+            -29.665,
+            -1518.926,
+            -29.593
+          ],
+          [
+            -1514.237,
+            -27.167,
+            -1518.871,
+            -27.095
+          ],
+          [
+            -1514.152,
+            -24.668,
+            -1518.821,
+            -24.597
+          ],
+          [
+            -1514.073,
+            -22.172,
+            -1518.784,
+            -22.102
+          ],
+          [
+            -1514.022,
+            -19.675,
+            -1518.757,
+            -19.609
+          ],
+          [
+            -1513.996,
+            -17.181,
+            -1518.734,
+            -17.118
+          ],
+          [
+            -1513.976,
+            -14.686,
+            -1518.699,
+            -14.628
+          ],
+          [
+            -1513.954,
+            -12.192,
+            -1518.641,
+            -12.14
+          ],
+          [
+            -1513.926,
+            -9.698,
+            -1518.564,
+            -9.652
+          ],
+          [
+            -1513.887,
+            -7.204,
+            -1518.475,
+            -7.164
+          ],
+          [
+            -1513.833,
+            -4.71,
+            -1518.373,
+            -4.675
+          ],
+          [
+            -1513.769,
+            -2.217,
+            -1518.253,
+            -2.187
+          ]
+        ],
+        "rise_m": [
+          0.141,
+          0.128
+        ],
+        "_doc": "0.2.13 (ledger 0098): North Colorado Blvd's raised median, s 145.83-255.83 on the built line, tools/divided_road.py (source/islands_colorado.lidar.json): rows [x_A, z_A, x_B, z_B] every 2.5 m, A on the median's near face, B on its far face (the G10's 2020 lidar), each 0.25 m [invented] onto its pavement; rise_m the faces' measured steps (medians)."
+      },
+      {
+        "id": "colorado_median_1",
+        "street": "MAINLINE | grid_primary_colorado_sb",
+        "rows": [
+          [
+            -1513.577,
+            12.748,
+            -1517.908,
+            12.747
+          ],
+          [
+            -1513.579,
+            15.243,
+            -1517.96,
+            15.237
+          ],
+          [
+            -1513.584,
+            17.738,
+            -1518.01,
+            17.728
+          ],
+          [
+            -1513.591,
+            20.233,
+            -1518.052,
+            20.219
+          ],
+          [
+            -1513.6,
+            22.729,
+            -1518.082,
+            22.712
+          ],
+          [
+            -1513.61,
+            25.227,
+            -1518.094,
+            25.207
+          ],
+          [
+            -1513.619,
+            27.725,
+            -1518.072,
+            27.704
+          ],
+          [
+            -1513.62,
+            30.224,
+            -1517.986,
+            30.201
+          ],
+          [
+            -1513.61,
+            32.723,
+            -1517.804,
+            32.701
+          ]
+        ],
+        "rise_m": [
+          0.147,
+          0.114
+        ],
+        "_doc": "0.2.13 (ledger 0098): North Colorado Blvd's raised median, s 270.83-290.83 on the built line, tools/divided_road.py (source/islands_colorado.lidar.json): rows [x_A, z_A, x_B, z_B] every 2.5 m, A on the median's near face, B on its far face (the G10's 2020 lidar), each 0.25 m [invented] onto its pavement; rise_m the faces' measured steps (medians)."
+      },
+      {
+        "id": "colorado_median_2",
+        "street": "MAINLINE | grid_primary_colorado_sb",
+        "rows": [
+          [
+            -1513.597,
+            72.753,
+            -1516.073,
+            72.755
+          ],
+          [
+            -1513.695,
+            75.256,
+            -1516.193,
+            75.259
+          ],
+          [
+            -1513.832,
+            77.759,
+            -1516.354,
+            77.764
+          ],
+          [
+            -1513.988,
+            80.262,
+            -1516.549,
+            80.268
+          ],
+          [
+            -1514.138,
+            82.766,
+            -1516.762,
+            82.774
+          ],
+          [
+            -1514.27,
+            85.269,
+            -1516.973,
+            85.279
+          ],
+          [
+            -1514.391,
+            87.772,
+            -1517.16,
+            87.784
+          ]
+        ],
+        "rise_m": [
+          0.173,
+          0.117
+        ],
+        "_doc": "0.2.13 (ledger 0098): North Colorado Blvd's raised median, s 330.83-345.83 on the built line, tools/divided_road.py (source/islands_colorado.lidar.json): rows [x_A, z_A, x_B, z_B] every 2.5 m, A on the median's near face, B on its far face (the G10's 2020 lidar), each 0.25 m [invented] onto its pavement; rise_m the faces' measured steps (medians)."
       }
     ],
-    "_islands_doc": "ledger 0079 round I (Kevin: \"I just want real\"): fork 91/92's concrete island, built where it was measured by tools/author_islands_blend.py after the weld, its heights read off the welded ROAD. rows [x_west, z, x_east, z]: NAIP 2023 (track frame) every 0.5 m from z -811.0 (the north nose) to -838.0 (the crosswalk's stop bar; through the crosswalk the refuge is cut flush, and the nose past it lies on the lap's own deck past the mouth line: neither built), each edge half-way to the first sample of the bright run (gray >= 185) covering x 53, samples 0.25 m; rows -835.0 / -835.5 (the run broken by a shadow, under 3 m wide) interpolated. x 50.88 .. 53.62-54.62 (3.75 m wide from z -817). rise_m [west, east]: lidar (CO_DRCOG_2_2020 class 2) median 0.25-1.25 m inside minus outside each edge, +-0.5 m along, over the 53 rows read: west +0.078 m (range +0.024 .. +0.216, the median taken: the spread is the lidar's, a curb is one height); east -0.047 m (-0.19 .. +0.05: the island at or under the northbound lane beside it, which rises east where the built road is level across): built flush, 0. Round H's single section at z -824 (0.4 m over the east carriageway) is the one row where the east lane dips; along the island it does not.",
+    "_islands_doc": "ledger 0079 round I (Kevin: \"I just want real\"): fork 91/92's concrete island, built where it was measured by tools/author_islands_blend.py after the weld, its heights read off the welded ROAD. rows [x_west, z, x_east, z]: NAIP 2023 (track frame) every 0.5 m from z -811.0 (the north nose) to -838.0 (the crosswalk's stop bar; through the crosswalk the refuge is cut flush, and the nose past it lies on the lap's own deck past the mouth line: neither built), each edge half-way to the first sample of the bright run (gray >= 185) covering x 53, samples 0.25 m; rows -835.0 / -835.5 (the run broken by a shadow, under 3 m wide) interpolated. x 50.88 .. 53.62-54.62 (3.75 m wide from z -817). rise_m [west, east]: lidar (CO_DRCOG_2_2020 class 2) median 0.25-1.25 m inside minus outside each edge, +-0.5 m along, over the 53 rows read: west +0.078 m (range +0.024 .. +0.216, the median taken: the spread is the lidar's, a curb is one height); east -0.047 m (-0.19 .. +0.05: the island at or under the northbound lane beside it, which rises east where the built road is level across): built flush, 0. Round H's single section at z -824 (0.4 m over the east carriageway) is the one row where the east lane dips; along the island it does not. 0.2.13 (ledger 0098; the Mac 2026-11-25: \"where there's no raised median, there's no island\"): North Colorado Blvd's median as three islands between the lap and its far carriageway (colorado_median_0 s 146-256, _1 s 271-291, _2 s 331-346), where both faces read a raised median; the gaps (s 256-271 by the railway, s 291-331 the turn bay at 50th) read none.",
     "_paint_doc": "ledger 0079 round N (tools/author_paint_blend.py, draft step paint after islands): fork 94/95's painted median, measured on NAIP 2023 in the track frame (scratchpad probe lines2.py: every 0.5 m of z, the luminance across x minus its 4 m running median, each line tracked from a seed and fitted x = a + b z; west 121 rows, rms 0.116 m; east 136 rows, rms 0.149 m; NAIP's 0.46 m pixel quantises each row). The west line is the street's own centre (the assembler's double yellow ran within about 0.4 m of it to z -830, then bent up to 1.7 m into the median); the east line diverges from it, 0.32 m apart at z -773 to 5.56 m at -840 (the last row both read >= 19 grey levels of contrast; the crosswalk follows). Both painted as the assembler's double yellow (two 0.12 m stripes 0.06 m apart: NAIP resolves neither single nor double). clear: the assembler's paint inside west - 0.6 .. east - 0.2 m over the same z (its centre line and the white dashes it drew inside the median). The chevron hatch between the lines is NOT painted: NAIP does not resolve one (the interior's brightness has no period, sd 3.4 grey levels).",
     "paint": [
       {
@@ -1351,7 +1750,11 @@
       "drop_on_road": true,
       "_drop_on_road_doc": "ledger 0079 round B: a draft post (the assembler's every-55 m rule) that a later road stands on is left out and recorded in lights.local.json dropped_on_road, never moved to an unmeasured spot (tools/author_lamps_blend.py)",
       "light_both_heads": true,
-      "_light_both_heads_doc": "ledger 0098 (Kevin 2026-11-22, asked \"Light the back head of two-arm lamps?\": \"Yes, light both heads\"): tools/author_lamps_blend.py lays the back head's lens too (the road-ward lens mirrored through the pole: the twin post's heads stand at +-4.04 m), so every lamp carries two CSP lights; tools/check_lights_ini.py matches one light per recorded lens (provenance.heads_lit 2). The light's look (lighting.streetlight) is unchanged ROUND 2 (2026-11-23, the Mac): the same key was written twice in two rounds (ledger 0098 here, ledger 0099 Lake Murray's author step lamp_heads); 0.2.9 told them apart with scenery.streetlights.both_heads_by \"lamps\". 0.2.10 moves Sand Creek onto lamp_heads (ship.json author, data/lights.heads.json synced back) and both_heads_by goes: tools/author_lamps_blend.py lays the road-ward lens only, tools/author_lamp_heads_blend.py lights the back head, tools/check_lights_ini.py counts lights.heads.json's back lenses, as on Lake Murray"
+      "_light_both_heads_doc": "ledger 0098 (Kevin 2026-11-22, asked \"Light the back head of two-arm lamps?\": \"Yes, light both heads\"): tools/author_lamps_blend.py lays the back head's lens too (the road-ward lens mirrored through the pole: the twin post's heads stand at +-4.04 m), so every lamp carries two CSP lights; tools/check_lights_ini.py matches one light per recorded lens (provenance.heads_lit 2). The light's look (lighting.streetlight) is unchanged ROUND 2 (2026-11-23, the Mac): the same key was written twice in two rounds (ledger 0098 here, ledger 0099 Lake Murray's author step lamp_heads); 0.2.9 told them apart with scenery.streetlights.both_heads_by \"lamps\". 0.2.10 moves Sand Creek onto lamp_heads (ship.json author, data/lights.heads.json synced back) and both_heads_by goes: tools/author_lamps_blend.py lays the road-ward lens only, tools/author_lamp_heads_blend.py lights the back head, tools/check_lights_ini.py counts lights.heads.json's back lenses, as on Lake Murray",
+      "measured": {
+        "file": "source/lamps_colorado.drapp.json"
+      },
+      "_measured_doc": "0.2.13 (ledger 0098; opt-in, Sand Creek alone; the Mac 2026-11-24 / 25): on North Colorado Blvd (s 0-412 on the built line) the draft's six spaced posts (0.2.12's lamps 0-5, u +-11.05: the three west ones stood in the real far carriageway) give way to the 12 real poles, lamps from DRAPP 2022, read by eye to about +-0.3 m (credit: DRAPP 2022, DRCOG; positions only, the image is not published): west a w2 f h j p, east b g i k o, the median twin n (tools/author_lamps_blend.measured_posts). A pole whose footprint + 0.46 m setback reaches a road steps straight out to the first clear spot, at most 0.75 m [invented], recorded in lights.local.json measured; else drop_on_road drops it (b, on the 48th approach's built ribbon). OWED: the real poles are single cobra heads (apart from the median twin n); tonight every one stands as the fleet's twin-arm LED with both heads lit (scenery.streetlights.arms is per track; single arms need tools/author_lamps_blend.py, tools/author_lamp_heads_blend.py and tools/check_lights_ini.py, tested)."
     },
     "signs": {
       "_doc": "Street-name blade signs at each major junction (from data/street_labels.json, same legs as the painted road decals). enabled=false drops them. flip_read/flip_up are one-bit fixes if the text reads mirrored or upside-down in-game (verify on the first Windows drive).",
@@ -1707,6 +2110,10 @@
       "quebec_over_sand_creek"
     ],
     "_deck_profiles_doc": "0.2.12 (ledger 0098; opt-in, Sand Creek alone): the line rides these declared decks' MEASURED profiles (this port's capture.bridges[].profile_m; tools/lm_engine_intake.py, after the levelling). Quebec St over Sand Creek: lowered 0.29-0.39 m onto the class-17 deck. E 56th's profile_m is NOT named: its deck stays as levelled.",
+    "carriageway": "source/carriageway_colorado.lidar.json",
+    "_carriageway_doc": "0.2.13 (ledger 0098; opt-in, Sand Creek alone; the Mac 2026-11-24 / 25: \"the lap = the near carriageway\"): North Colorado Blvd's lap on its own measured carriageway, tools/divided_road.py off the G10's 2020 lidar faces (source/roads_lidar_g10/lap_colorado_quebec.lidar.json): the right edge on the measured right curb over s 66-348, the left edge on the median's near face over s 143-348, raised-cosine eases of 25 m outside both (none reaches a pad's cut rows); everywhere else the lap as built. ON s 143-348 THE RACE LAP NARROWS FROM THE BUILT 16.5 M TO THE REAL 10.8-12.8 M (median 11.7 m: 10.8-12.1 m where both curbs read, s 143-250; about 12.3 m past the railway, where the right curb reads at u -6 to -7.75 with no reading over s 263-298; 12.3-12.8 m into the turn bay at 50th, s 339-348). s 63-140 keeps its left side as built (one real 26.25 m road whose left curb is near u +21: owed). Applied after flare_one_sided (tools/lm_engine_intake.apply_carriageway); refused on any other line.",
+    "side_pieces": "source/side_pieces_colorado.lidar.json",
+    "_side_pieces_doc": "0.2.13 (ledger 0098; opt-in): Colorado's far (southbound) carriageway as its own side piece, grid_primary_colorado_sb (tools/divided_road.py: between the median's far face and the far curb, s 143-358, its heights the lidar's pavement; ends open), appended to the side streets before their profiles (tools/lm_engine_intake.add_side_pieces). A grid_primary* name, so tools/trim_connectors.py pass 2 hosts it (grid_unclassified_96 is cut at its west edge). Outside the race's curb strips: no closure wall (Kevin, \"Full street width\").",
     "_connector_profiles_doc": "ledger 0079 round H (Kevin: \"I just want real\"): these streets take their heights from the lidar (tools/lidar_connector_profile.py: the road surface, ground + bridge deck returns, median within 1 m [invented radius] of each source point), not the 3DEP grid, which cannot hold a bridge or an embankment: grid_tertiary_5 crosses Sand Creek on a 60 m bridge (class 17 at 22.2 m; the grid dropped it 5 m into the creek bed: its lap mouth read 3.9 %/m), grid_primary_84 / grid_primary_78 climb onto the interstate bridge (class 17 at 29.3 m; the grid held them up to 4.25 m low: 8.6 %/m at their own mouth), grid_unclassified_67 (lidar - 3DEP -0.03..+0.43 m) Round J (ledger 0079): the round I file is wired: 99 streets on the lidar (--surface; round H's four read the same); held on 3DEP: round I's 6 whose profiles jump > 0.5 m [invented] between neighbouring points, and grid_primary_15, a viaduct deck the build has no street-bridge path for (its embankment buried two houses' ground; the file's _doc names them and why). Sand Creek round 2 (2026-11-23): source/connector_profiles.lidar.round_2.json = round I's 99 streets + three of round I's held seven re-read at their true lon / lat that now pass its 0.5 m jump rule (grid_secondary_8, grid_secondary_42, grid_primary_71); the file's _doc has the numbers",
     "connector_widths": {
       "grid_unclassified_13": 10.0
@@ -3792,7 +4199,7 @@
     "seat_on_pads": true,
     "_seat_on_pads_doc": "ledger 0079 round K: the strips crossing the three built pads (colorado_50th, 50th_ash, 50th_dahlia) stand on the pads measured decks (1ROAD_pad_*), where the lap ribbon is cut, never interpolated over them",
     "corridor": {
-      "_doc": "ledger 0079 round K (Kevin: \"race curbs\"; the race closes the side streets it crosses, as Lake Murray's race layouts do): the race is the WHOLE street, one way, the entire lap (whole v0..v3216: no boxes, no closure runs, so no second line and no K-rail at a median nose — the lap carries no median island); the curb strips along both edges seal all 27 mainline mouths and the pads' arms. clear_width_m and the solver knobs are Lake Murray's (ledger 0049), read only by closure runs, of which there are none.",
+      "_doc": "ledger 0079 round K (Kevin: \"race curbs\"; the race closes the side streets it crosses, as Lake Murray's race layouts do): the race is the WHOLE street, one way, the entire lap (whole v0..v3216: no boxes, no closure runs, so no second line and no K-rail at a median nose — the lap carries no median island); the curb strips along both edges seal all 27 mainline mouths and the pads' arms. clear_width_m and the solver knobs are Lake Murray's (ledger 0049), read only by closure runs, of which there are none. 0.2.13 (ledger 0098): on North Colorado Blvd (s 143-348) the lap is the near carriageway; the raised median (route.islands colorado_median_*) and the far carriageway (grid_primary_colorado_sb) stand beside it, OUTSIDE the curb strips, which follow the lap's new edges: still the whole lap, no closure run, no K-rail along the median (Kevin: \"Full street width\").",
       "clear_width_m": 11.36,
       "island_mode": "pavement",
       "whole": [

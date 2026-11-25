@@ -1,0 +1,41 @@
+{
+  "installed_idle_at": "2026-11-25T06:52:17.1190013-07:00",
+  "retained_archive": "D:\\k10-track-archive\\2026-11-25_065217_dgp_preview_before_r4\\denver_grand_prix_drive2_preview",
+  "updated_path": "D:\\SteamLibrary\\steamapps\\common\\assettocorsa\\content\\tracks\\denver_grand_prix_drive2_preview",
+  "status": "PASS. The pavement R4 road and receipt were installed in the separate 40-file Drive 2 Preview while idle. Actual installed Race and Free Roam both reached pits and cockpit, loaded both correct splines and CLEAN EXIT. Simulator idle, settings hash-restored.",
+  "notes": "Only shared road KN5 and local pavement receipt changed from 39-file Capitol Preview. Full physical and material preflight, native comparison and cockpit checks passed. Existing dark curb shadow disclosed. 40 current, 39 immediate rollback, older rollback hashes and 34 canonical Drive 1 files reverified. No CSP or layout change.",
+  "manifest_sha256": "2f3855435077be7b33671c4c0075a3df229ddc071c0a02f216ff5391e1b1af6f",
+  "road_sha256": "104aa9229b1ecefbf7984580ce503770d4b9b0bb309c05ffb6e20120a9d2e2a3",
+  "receipt": {
+    "verified_road_sha256": "104aa9229b1ecefbf7984580ce503770d4b9b0bb309c05ffb6e20120a9d2e2a3",
+    "visual_verdict": "pass",
+    "native_sessions": [
+      "control Free Roam",
+      "candidate Free Roam",
+      "candidate Race"
+    ],
+    "conditions": "Fixed Colfax noon, matched broken clouds, stock default post-processing and fixed 24 km/h wind. Both candidate layouts reached cockpit, loaded layout splines and exited cleanly. A/B sky/exposure varies slightly by scene state.",
+    "observed": "Measured road color, variation and captured lane paint are present. The earlier R4 removal of two vehicle fragments remains visible. Dark curb/building shadow persists as disclosed. Capitol, Front Range, Civic and other scenery held; no visible new clipping or displaced road edge at the witness. All 445,919 triangle positions and normals, node/mesh physical headers and bounds matched on Windows. No full driven lap after this visual-only swap.",
+    "proof_hashes": {
+      "control-street-native.jpg": "13b2deef7440ff0bd07c40ba656e471d4592aff8ae899a24c0be2b4c0b376d0f",
+      "candidate-street-native.jpg": "3bd40905e8ba2619cbff040f4b1bd9cbc44447002c7761daa8c46853a183bd02",
+      "candidate-street-cockpit.jpg": "97ee006001fcc965dfe8b5852dc7822ead92cb6d436b2b3c73522141d3b91e20",
+      "candidate-race-cockpit.jpg": "c9b5f22d230dca11fd443f57284549b06546ccc021f372fc6d4612bd162c1a82",
+      "control-street.log": "ac68e5cd88d4e4f4a8333278e9250de2c63ec23242ca7a202a981579517caa0e",
+      "candidate-street.log": "5a6d482616baeeba7a703ce5f559aceb8b747ff3b1d44abc714c2bf1b653b537",
+      "candidate-race.log": "ca0aa215103901cb4bbb947b75529bbdf90fbc8399b55bde25674e1a530632d8"
+    }
+  },
+  "installed_log_hashes": {
+    "race": "2e40c285cbf318ba13e7593b2b57843df247784399fddb6ac043b6d6a904e6d2",
+    "street": "3d7795f67e1137858a6fa1d8f175fa5a4f79a6749e80912b8eaa620319c17b5d"
+  },
+  "event": 647,
+  "windows_manifest_original": "/Volumes/Sundowning/codex/mac/codex-denver-drive2-preview-artifacts-20261125/denver-drive2-r4-windows-manifest-original.json",
+  "git_manifest_snapshot": "drive2-preview-20261125.pavement.windows-manifest.json",
+  "files": 40,
+  "geometry_source": "9795c9291783e54067ded52959142a7c100c2cdf",
+  "road_asset_mac_path": "/Volumes/Sundowning/codex/mac/codex-denver-drive2-r4-transfer-20261125/build/denver_drive2_r4_atlas.kn5",
+  "original_installed_record": "ec455ab32ebefcb42b654860ed5d6fbbb3be779f",
+  "board": "http://mirror-reaper.local:8765/d/denver-grand-prix"
+}

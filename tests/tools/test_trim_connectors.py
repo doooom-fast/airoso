@@ -89,6 +89,19 @@ def test_trim_a_crossing_cuts_both_pieces_onto_the_host_deck():
     assert deltas["x"]
 
 
+def test_coincident_mouths_keep_their_own_connector_endpoints():
+    cut = (2.0, 0.0, 4.0)
+    pieces = [
+        {"name": "primary#0", "points_xyz_m": [cut, (12.0, 0.0, 4.0)]},
+        {"name": "secondary#0#1", "points_xyz_m": [(2.0, 0.0, 14.0), cut]},
+    ]
+    mouths = [{"connector": name, "cut_xyz": cut} for name in ("primary", "secondary")]
+    tc.resolve_pieces(mouths, pieces)
+    assert [(mouth["piece"], mouth["end"]) for mouth in mouths] == [
+        ("primary#0", "start"), ("secondary#0#1", "end"),
+    ]
+
+
 def test_the_side_comes_from_the_approach_not_the_first_point_inside():
     """a piece whose first point inside the host lies PAST its centreline (a route node on the far carriageway)"""
     hpts, hw = _host()

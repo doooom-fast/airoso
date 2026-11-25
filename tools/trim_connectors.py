@@ -419,19 +419,20 @@ def sliced_paint(paint: dict, idx: list) -> dict:
 
 
 def resolve_pieces(mouths, pieces):
-    """stamp every mouth with the FINAL piece whose endpoint is its cut, and which end"""
+    """Resolve a cut to the final endpoint, preferring descendants of its source connector."""
     for mo in mouths:
         cx, _, cz = mo["cut_xyz"]
-        hit = None
-        for c in pieces:
-            p = c["points_xyz_m"]
-            for end, q in (("start", p[0]), ("end", p[-1])):
-                if math.hypot(q[0] - cx, q[2] - cz) <= END_MATCH_M:
-                    hit = (c["name"], end)
-                    break
-            if hit:
-                break
-        mo["piece"], mo["end"] = (hit if hit else (None, None))
+        candidates = [(piece["name"], end) for piece in pieces
+                      for end, point in (("start", piece["points_xyz_m"][0]),
+                                         ("end", piece["points_xyz_m"][-1]))
+                      if math.hypot(point[0] - cx, point[2] - cz) <= END_MATCH_M]
+        owner = mo["connector"]
+        fallback = candidates[0] if candidates else (None, None)
+        mo["piece"], mo["end"] = next(
+            (candidate for candidate in candidates
+             if candidate[0] == owner or candidate[0].startswith(owner + "#")),
+            fallback,
+        )
     return mouths
 
 

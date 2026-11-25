@@ -14,6 +14,14 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
+## 2026-11-25 — Preserve connector ownership at coincident mouth cuts (Denver, ledger 0096)
+
+Denver's r5 mouth record had 92 cut rows and 86 distinct piece endpoints. Six pairs of source connectors start at the
+same cut and run in different directions. Coordinate-only resolution assigned both members of each pair to the first
+piece. Trim now looks for the source connector's own final piece among matches within the existing end tolerance.
+The r5 replay assigns all 92 rows to distinct endpoints. The same replay leaves all 160 recorded endpoints on
+Sand Creek, High Plains, Lake Murray and Pikes Peak unchanged. Weld and package gates keep their existing thresholds.
+
 ## 2026-11-23 (PC) — WIRING: the median-rebuild author step gains a paint-only mode that refuses unless it finds a connector's old paint exactly; no threshold moved (ledger 0099 round 3, item 4; opt-in, Lake Murray)
 
 Lake Murray's chain builds from the committed, authored blend, so a corrected painted median (Jackson Dr north,

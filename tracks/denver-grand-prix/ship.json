@@ -5,7 +5,7 @@
   "workshop": "D:/k10-scratch",
   "workshop_project": "denver_grand_prix",
   "require_race_layout": true,
-  "ui_name_prefix": "doooom Colorado",
+  "ui_name_prefix": "doooom Colorado Denver Grand Prix",
   "steps": {
     "draft": [
       "lm_intake",

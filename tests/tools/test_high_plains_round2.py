@@ -197,6 +197,7 @@ def test_rows_3_and_8_are_removed_as_kerb_paint():
 def test_version_and_every_round2_key_is_high_plains_own():
     c = _cfg()
     assert c["version"] in ("0.1.10", "0.1.11", "0.1.12")    # rounds 3 and 4 (0.1.11, 0.1.12) keep every round-2 key
+    concrete_users = {"milford-road-course-lm", "sand-creek-lm", "san-diego-lake-murray", "denver-grand-prix"}
     for t, cfg in ((p.parent.name, json.loads(p.read_text(encoding="utf-8")))
                    for p in (ROOT / "tracks").glob("*/track.config.json")):
         if t == "high-plains-lm":
@@ -204,10 +205,8 @@ def test_version_and_every_round2_key_is_high_plains_own():
         for r in (cfg.get("lm_intake") or {}).get("edge_retrace") or []:
             assert r.get("mode") != "measured", t
         assert (cfg.get("route") or {}).get("kerbs_file") != "source/edges/kerbs.lm.json", t
-        # (the Lariat binds its gravel verge on this row.) The owned concrete there: only the four tracks Kevin is finishing
-        # (his "On every track now", scoped to them on 2026-11-22); Milford binds it since 0.1.14 (ledger 0100)
         ov = ((cfg.get("texture_overrides") or {}).get("1KERB_SIDEWALK") or {}).get("diffuse", "")
-        assert "concrete_plain" not in ov or t in ("milford-road-course-lm", "sand-creek-lm", "san-diego-lake-murray"), t
+        assert "concrete_plain" not in ov or t in concrete_users, t
 
 
 def test_full_layouts_extra_pieces_are_measured_data():

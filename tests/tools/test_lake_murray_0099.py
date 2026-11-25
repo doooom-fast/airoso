@@ -28,7 +28,7 @@ SH = ROOT / "tools" / "ship_track.sh"
 TEXT = SH.read_text(encoding="utf-8").replace("\r\n", "\n")
 CFG = json.loads((LM / "track.config.json").read_text(encoding="utf-8"))
 SHIP = json.loads((LM / "ship.json").read_text(encoding="utf-8"))
-FINISH_FOUR = ("high-plains-lm", "milford-road-course-lm", "sand-creek-lm")   # the other three Kevin is finishing
+OTHER_OWNED_SURFACE_USERS = {"high-plains-lm", "milford-road-course-lm", "sand-creek-lm", "denver-grand-prix"}
 OTHER_CONFIGS = sorted(p for p in (ROOT / "tracks").glob("*/track.config.json") if p.parent.name != LM.name)
 OTHER_SPECS = sorted(p for p in (ROOT / "tracks").glob("*/ship.json") if p.parent.name != LM.name)
 
@@ -428,18 +428,23 @@ def test_the_road_and_the_sidewalks_bind_the_owned_pairs():
     # the 4 m tile the prep's planar UV lays (build_kn5_loop UV_TILE) is the pairs' own tile
     prep = (LM / "engine-july-snapshot" / "scripts" / "ac" / "build_kn5_loop.py").read_text(encoding="utf-8")
     assert "UV_TILE = 4.0" in prep
-    # the owned asphalt is High Plains' and Milford's too (ledger 0095). Kevin 2026-11-22 "On every track now" for the owned
-    # asphalt and concrete means the four tracks he is finishing (Lake Murray, Sand Creek, High Plains, Milford), never the
-    # rest: Milford binds concrete_plain since 0.1.14 (ledger 0100), High Plains and Sand Creek in their finish rounds
+    # Denver Drive 1 declares and ships both owned pairs for its main road and sidewalks.
     for p in OTHER_CONFIGS:
         t = p.read_text(encoding="utf-8")
         name = p.parent.name
         if "concrete_plain" in t:
-            assert name in FINISH_FOUR, p
+            assert name in OTHER_OWNED_SURFACE_USERS, p
         if name in ("high-plains-lm", "milford-road-course-lm"):
             assert "asphalt_dense" in t, p
         elif "asphalt_dense" in t:
-            assert name in FINISH_FOUR, p
+            assert name in OTHER_OWNED_SURFACE_USERS, p
+        if name == "denver-grand-prix":
+            overrides = json.loads(t)["texture_overrides"]
+            assets = json.loads(p.with_name("ship.json").read_text(encoding="utf-8"))["sync_in"]["assets"]
+            for key, (diffuse, normal) in OWNED.items():
+                pair = [f"assets/textures/{file}" for file in (diffuse, normal)]
+                assert [overrides[key]["diffuse"], overrides[key]["normal"]] == pair
+                assert set(pair) <= set(assets)
 
 
 def test_version_is_0_20_8():

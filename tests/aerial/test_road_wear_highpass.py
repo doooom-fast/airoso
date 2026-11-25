@@ -18,7 +18,7 @@ from scripts.aerial import road_wear as rw
 
 ROOT = Path(__file__).resolve().parents[2]
 PILOT = {"milford-road-course-lm", "high-plains-lm"}
-OWNED_ROAD_ONLY = {"sand-creek-lm"}   # ledger 0098: the owned 1ROAD pair without a road_wear bake
+OWNED_ROAD_ONLY = {"sand-creek-lm", "denver-grand-prix"}  # the owned 1ROAD pair without a road_wear bake
 PAIR = ["assets/textures/asphalt_dense_diffuse.jpg", "assets/textures/asphalt_dense_normal.jpg"]
 
 
@@ -77,9 +77,7 @@ def test_only_the_pilot_tracks_opt_in_and_they_bind_the_owned_pair():
         if slug not in PILOT:
             assert hp is None, slug                                       # every other track unchanged
             if slug in OWNED_ROAD_ONLY or slug == "san-diego-lake-murray":
-                # ledger 0098 (Kevin 2026-11-22: "On every track now"): the owned pair bound with no road_wear bake (Sand
-                # Creek has none, so no high-pass), and synced in. Ledger 0099 (the same words): Lake Murray binds the pair
-                # with no road_wear key, so no high-pass; its ship.json brings the pair (tests/tools/test_lake_murray_0099.py)
+                # Sand Creek and Denver ship the owned pair without a road-wear bake.
                 assert [ov["diffuse"], ov["normal"]] == PAIR, slug
                 # Lake Murray bakes road wear since 0.20.7 (ledger 0099 round 3, item 3), with no high-pass (hp above)
                 assert "road_wear" not in cfg or slug == "san-diego-lake-murray", slug

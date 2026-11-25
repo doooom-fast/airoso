@@ -1,5 +1,5 @@
 {
-  "_doc": "Denver Grand Prix 0.1.0 (ledger 0096) on Lake Murray v4's engine, as Sand Creek (tracks/sand-creek-lm/ship.json): engine lm-v4 = the loop assembler of tracks/san-diego-lake-murray/scripts-v021 (V021_SHIM) and engine-july's prep / exporter / spawn builder (ENG=<dir>: the snapshot tracks/san-diego-lake-murray/engine-july-snapshot with assets/textures beside it). The draft line is this track's own (source/draft/draft_line.py writes data/centerline.*, data/heightfield.* from committed files; lm_intake reads them as its source track). Drive 1: the lap alone, no side streets, no lamps, signs or buildings; the race layout's K-rails along both edges (Lake Murray's race furniture as Sand Creek uses it); the free roam on the same roads.",
+  "_doc": "Denver Grand Prix 0.1.0 (ledger 0096) on Lake Murray v4's engine. The track draft supplies the surveyed centerline, terrain, and connected street mouths to lm_intake. Drive 1 packages the race layout with race furniture and the street layout with access through 72 welded mouths. The common road and sidewalks use the owned asphalt and concrete texture pairs declared below.",
   "track": "denver-grand-prix",
   "engine": "lm-v4",
   "workshop": "D:/k10-scratch",
@@ -57,6 +57,12 @@
     ],
     "optional": [
       "signs.json"
+    ],
+    "assets": [
+      "assets/textures/asphalt_dense_diffuse.jpg",
+      "assets/textures/asphalt_dense_normal.jpg",
+      "assets/textures/concrete_plain_diffuse.jpg",
+      "assets/textures/concrete_plain_normal.jpg"
     ]
   },
   "sync_out": {

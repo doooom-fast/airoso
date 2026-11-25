@@ -1,0 +1,121 @@
+{
+  "scope": "Private PLAYBOX Assetto Corsa Drive 2 Preview. This receipt records the local package separately from canonical Drive 1.",
+  "canonical_source": "544e535b21ed758d0d5866d9e2e8752b53d5ad99",
+  "base_geometry_source": "9795c9291783e54067ded52959142a7c100c2cdf",
+  "art_in_order": {
+    "mcnichols.kn5": {
+      "sha256": "61c17b0c766a46b47df2e3f27e8fb664bb85e8806c5914f45cf407af842dc6ce",
+      "size_bytes": 9844216,
+      "purpose": "Measured site and interpreted fa\u00e7ade",
+      "position": [
+        0,
+        0,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "windows_filename": "mcnichols.kn5"
+    },
+    "civic_center_paving.kn5": {
+      "sha256": "2733a0f0bd161027f81327d95dbb55edebcdee30b858a2f2b8681e15882078ec",
+      "size_bytes": 9842550,
+      "purpose": "Surveyed conformal paths",
+      "position": [
+        0,
+        0,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "windows_filename": "civic_center_paving.kn5"
+    },
+    "denver_drive2_post_proof.kn5": {
+      "sha256": "342840f98a89b835e490fcd4d3b82e9938613b4371dfb808570b6170643472ac",
+      "size_bytes": 214205,
+      "purpose": "Ten measured or corroborated post positions",
+      "position": [
+        0,
+        0,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "windows_filename": "denver_drive2_post_proof.kn5"
+    },
+    "denver_backdrop_compact.kn5": {
+      "sha256": "7e856eba05b915f5928ea103f20e17a34d489ef21a68a0eb9fc96851857cd976",
+      "size_bytes": 33657405,
+      "purpose": "Measured Front Range with 35.93 percent triangle reduction",
+      "position": [
+        0,
+        0,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "windows_filename": "denver_grand_prix_backdrop.kn5"
+    },
+    "denver_capitol_visual.kn5": {
+      "sha256": "3a42f7c328d1ceeb0c0b7d4039e98c07bad11593dfc7f51c453765196606febb",
+      "size_bytes": 10355184,
+      "purpose": "Surveyed Capitol eaves and LiDAR profile with original details",
+      "position": [
+        0,
+        0,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "windows_filename": "denver_capitol_visual.kn5"
+    }
+  },
+  "asset_bundle": {
+    "mac_path": "/Volumes/Sundowning/codex/mac/codex-denver-drive2-preview-artifacts-20261125/denver-drive2-preview-verified-art.zip",
+    "sha256": "8f86914dd9522c837c380a3b13b1f4df0a009bf3a2f9ef2a18cf97c80f8ec5db",
+    "size_bytes": 63917715
+  },
+  "live_install": {
+    "evt": 598,
+    "receipt": {
+      "retained_archive": "D:\\k10-track-archive\\2026-11-25_053946_dgp_preview_before_capitol\\denver_grand_prix_drive2_preview",
+      "updated_path": "D:\\SteamLibrary\\steamapps\\common\\assettocorsa\\content\\tracks\\denver_grand_prix_drive2_preview",
+      "installed_idle_at": "2026-11-25T05:39:46.2607457-07:00",
+      "status": "PASS. Current installed Private Preview Race and Free Roam both reached Practice pits and entered stationary cockpit, loaded their fast and pit splines, zero laps, both CLEAN EXIT. Capitol is visible from the installed cockpit. Simulator idle.",
+      "source": "Road 9795c929, Civic r2, Compact 7e856eba, Capitol 3a42f7c3. One Capitol KN5 appended at identity in both layout model lists. 15 unique non-physics meshes, 12 materials, 16 embedded maps, 101376 triangles. Existing mesh and AI SHAs retained. R4 atlas staged separately.",
+      "verification": "39/39 current, 38/38 immediate rollback, 37/37 initial rollback, 34/34 canonical Drive 1 rehashed after smoke. Three cfg changes restored by SHA. Stock 100% AI lap on immediate prior Preview was 3:29.129, zero cuts; post-Capitol check was Practice with unchanged AI bytes.",
+      "manifest": "D:\\k10-scratch\\codex_dgp_drive2_preview_capitol_1125\\manifest.json",
+      "manifest_sha256": "afeffb48138395454fbf83a39b73cae0e09e5b8cd49c397b53dc7117a8ffe695",
+      "race_log_sha256": "98ded91fc8685798bacb47793bbbcaeb32d2d0a3d42fcd9c39003da94cc85106",
+      "street_log_sha256": "e2899fcc3376166ec47627ce5821d9ef863bb632ebb11e46c87ffc160dfbdeeb"
+    },
+    "prior_same_physics_ai_evt": 596,
+    "prior_same_physics_ai_record": "PASS. Exact 38-file Skyline Drive 2 Preview Race, Quick Race two cars, human stationary GMA T.50 grid 2, one stock Alfa Romeo Giulia Quadrifoglio AI at 100 percent grid 1. In-session log showed LAP VALID 1, CUTS 0, COUNT 1. AC best result 3:29.129, sectors 71.229/68.028/69.872 s, HR tyres, zero cuts; no human lap. Ignored the exit-added second result with empty tyre. Saved one explicit setup, 100 percent grip / 62.41 sun angle from stock template, no controlled performance comparison against prior Drive 1. Session CLEAN EXIT, settings and prior race output hash-restored, Preview 38 and Drive 1 34 exact. Simulator idle for Capitol swap.",
+    "verified_files": 39,
+    "canonical_verified_file_count": 34,
+    "exact_windows_manifest": {
+      "byte_exact_mac_archive": "/Volumes/Sundowning/codex/mac/codex-denver-drive2-preview-artifacts-20261125/denver-drive2-windows-manifest-original.json",
+      "sha256": "afeffb48138395454fbf83a39b73cae0e09e5b8cd49c397b53dc7117a8ffe695",
+      "byte_count": 11832,
+      "share_event": 607,
+      "git_snapshot": "tracks/denver-grand-prix/source/drive2-preview-20261125.windows-manifest.json",
+      "git_snapshot_sha256": "9d7fd9938c046da8fa1bf6c91dc1a11eacff6a3e93a3ad95adfdb59dbe6c49a4",
+      "git_snapshot_format": "Windows original with CRLF converted to LF for review"
+    }
+  },
+  "board": "http://mirror-reaper.local:8765/d/denver-grand-prix"
+}

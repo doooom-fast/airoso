@@ -260,7 +260,7 @@ def test_walk_built_only_reads_no_walk_off_a_pad_ground_band():
     strip = lambda x, z: 1.05 if 10.0 <= x < 12.4 else None             # a built 2.4 m strip still reads as the walk
     kept = mcc(road, lambda x, z: strip(x, z) or terrain(x, z), (0.0, 0.0), (1.0, 0.0), 1.8, 10.0, walk=strip)
     assert 2.3 < kept["walk_run_m"] < 2.5 and kept["s_S"] is not None
-    # opt-in, Sand Creek alone; a non-bool is refused; SC-D56 is a live corner again
+    # Sand Creek and Denver opt in. A non-bool is refused, and SC-D56 remains a live corner.
     assert ps.OPT_IN_DEFAULTS["walk_built_only"] is False and "walk_built_only" not in ps.DEFAULTS
     with pytest.raises(ps.SignsConfigError):
         ps.validate_overrides({"walk_built_only": "yes"}, {})
@@ -273,6 +273,8 @@ def test_walk_built_only_reads_no_walk_off_a_pad_ground_band():
             ov = d["corners"]["SC-D56"]
             assert ps.effective_override(ov, True)["skip"] is True and "grid_primary_35" in ov["rev"]["reason"]
             assert not ps.effective_override(ov, False).get("skip") and "fwd" not in ov
+        elif p.parent.name == "denver-grand-prix":
+            assert d["defaults"]["walk_built_only"] is True
         else:
             assert "walk_built_only" not in (d.get("defaults") or {}), p
 

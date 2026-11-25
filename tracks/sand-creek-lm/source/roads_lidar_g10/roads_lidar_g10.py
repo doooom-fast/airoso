@@ -60,6 +60,10 @@ import urllib.error
 import urllib.request
 from pathlib import Path
 
+# The repo's TLS rule (scripts/tls.py, tests/net/test_https_everywhere.py): every fetch uses scripts.tls.https_context().
+sys.path.insert(0, str(Path(__file__).resolve().parents[4]))
+from scripts.tls import https_context  # noqa: E402
+
 EPT_URL = "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CO_DRCOG_2_2020/ept.json"
 EPT_BASE = EPT_URL.rsplit("/", 1)[0]
 
@@ -124,12 +128,11 @@ class Mirror:
         if self.offline:
             raise SystemExit(f"offline: {r} is in no mirror")
         import ssl
-        ctx = ssl.create_default_context()
         last = None
         for k in range(6):
             try:
                 req = urllib.request.Request(url, headers={"User-Agent": "airoso-lidar/1.0"})
-                with urllib.request.urlopen(req, timeout=180, context=ctx) as resp:
+                with urllib.request.urlopen(req, timeout=180, context=https_context()) as resp:
                     body = resp.read()
                     cl = resp.headers.get("Content-Length")
                 if cl is not None and int(cl) != len(body):
@@ -151,7 +154,7 @@ class Mirror:
     def head(self, url):
         import ssl
         req = urllib.request.Request(url, method="HEAD", headers={"User-Agent": "airoso-lidar/1.0"})
-        with urllib.request.urlopen(req, timeout=60, context=ssl.create_default_context()) as resp:
+        with urllib.request.urlopen(req, timeout=60, context=https_context()) as resp:
             return int(resp.headers["Content-Length"])
 
 

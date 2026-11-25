@@ -34,6 +34,10 @@ import sys
 import time
 from pathlib import Path
 
+# The repo's TLS rule (scripts/tls.py, tests/net/test_https_everywhere.py): every fetch uses scripts.tls.https_context().
+sys.path.insert(0, str(Path(__file__).resolve().parents[4]))
+from scripts.tls import https_context  # noqa: E402
+
 HOST = "colorado-public-imagery.s3.us-west-2.amazonaws.com"
 PREFIX = "DRAPP/DRAPP2022"
 CRS = 6428                    # NAD83(2011) / Colorado Central (ftUS): each tile's GeoTIFF ProjectedCSTypeGeoKey (the crop's
@@ -121,14 +125,14 @@ class S3:
     """anonymous HTTPS GETs on one kept-alive connection, TLS verified; Range reads checked for length"""
 
     def __init__(self):
-        self.ctx = ssl.create_default_context()
+        self.ctx = None  # contexts come from scripts.tls at each call
         self.c = None
         self.requests = 0
         self.bytes = 0
 
     def _conn(self):
         if self.c is None:
-            self.c = http.client.HTTPSConnection(HOST, timeout=60, context=self.ctx)
+            self.c = http.client.HTTPSConnection(HOST, timeout=60, context=https_context())
         return self.c
 
     def get(self, key, start=None, end=None):

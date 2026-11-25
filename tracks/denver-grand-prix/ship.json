@@ -15,6 +15,7 @@
       "weld_mouths",
       "seat_terrain",
       "densify_ribbon",
+      "seat_edges",
       "gap_mouths"
     ],
     "author": [

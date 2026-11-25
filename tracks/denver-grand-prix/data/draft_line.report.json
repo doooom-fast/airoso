@@ -1,0 +1,542 @@
+{
+ "line": {
+  "points": 2184,
+  "length_m": 6581.2,
+  "osm_lap_m": 6639.2,
+  "start_at_offset_m": 0.008,
+  "foot_distance_m_max": 7.11,
+  "fillet": {
+   "corners": [
+    {
+     "name": "West Colfax Avenue -> North Speer Boulevard",
+     "apex_station_m": 1175.1,
+     "snap_m": 0.0,
+     "deflection_deg": -63.5,
+     "radius_m": 17.3,
+     "tangent_m": 10.71,
+     "radius_achieved_m": [
+      17.3,
+      17.3
+     ],
+     "apex_moved_m": 2.9,
+     "tangent_point_off_line_m": [
+      0.09,
+      0.07
+     ],
+     "curve": "circular arc (rational quadratic Bezier on the leg lines)"
+    },
+    {
+     "name": "North Speer Boulevard -> Stout Street",
+     "apex_station_m": 1326.5,
+     "snap_m": 0.0,
+     "deflection_deg": -80.0,
+     "radius_m": 12.1,
+     "tangent_m": 10.15,
+     "radius_achieved_m": [
+      12.1,
+      12.1
+     ],
+     "apex_moved_m": 5.51,
+     "tangent_point_off_line_m": [
+      0.04,
+      0.17
+     ],
+     "curve": "circular arc (rational quadratic Bezier on the leg lines)"
+    },
+    {
+     "name": "Stout Street -> 15th Street",
+     "apex_station_m": 1905.0,
+     "snap_m": 0.0,
+     "deflection_deg": 89.9,
+     "radius_m": 12.6,
+     "tangent_m": 12.59,
+     "radius_achieved_m": [
+      12.6,
+      12.6
+     ],
+     "apex_moved_m": 5.27,
+     "tangent_point_off_line_m": [
+      0.23,
+      0.19
+     ],
+     "curve": "circular arc (rational quadratic Bezier on the leg lines)"
+    },
+    {
+     "name": "15th Street -> Blake Street",
+     "apex_station_m": 2644.0,
+     "snap_m": 0.0,
+     "deflection_deg": 88.8,
+     "radius_m": 14.2,
+     "tangent_m": 13.9,
+     "radius_achieved_m": [
+      14.2,
+      14.2
+     ],
+     "apex_moved_m": 5.68,
+     "tangent_point_off_line_m": [
+      0.0,
+      0.02
+     ],
+     "curve": "circular arc (rational quadratic Bezier on the leg lines)"
+    },
+    {
+     "name": "Auraria Parkway -> North Speer Boulevard",
+     "apex_station_m": 2946.1,
+     "snap_m": 0.0,
+     "deflection_deg": 105.3,
+     "radius_m": 13.1,
+     "tangent_m": 17.18,
+     "radius_achieved_m": [
+      13.1,
+      13.1
+     ],
+     "apex_moved_m": 7.89,
+     "tangent_point_off_line_m": [
+      0.19,
+      0.22
+     ],
+     "curve": "circular arc (rational quadratic Bezier on the leg lines)"
+    },
+    {
+     "name": "North Speer Boulevard -> North Kalamath Street",
+     "apex_station_m": 3749.6,
+     "snap_m": 0.0,
+     "deflection_deg": -56.2,
+     "radius_m": 14.1,
+     "tangent_m": 7.53,
+     "radius_achieved_m": [
+      14.1,
+      14.1
+     ],
+     "apex_moved_m": 2.18,
+     "tangent_point_off_line_m": [
+      0.04,
+      0.2
+     ],
+     "curve": "circular arc (rational quadratic Bezier on the leg lines)"
+    },
+    {
+     "name": "North Kalamath Street -> West 14th Avenue",
+     "apex_station_m": 4137.6,
+     "snap_m": 0.0,
+     "deflection_deg": 89.6,
+     "radius_m": 12.9,
+     "tangent_m": 12.81,
+     "radius_achieved_m": [
+      12.9,
+      12.9
+     ],
+     "apex_moved_m": 5.61,
+     "tangent_point_off_line_m": [
+      0.11,
+      0.06
+     ],
+     "curve": "circular arc (rational quadratic Bezier on the leg lines)"
+    },
+    {
+     "name": "West 14th Avenue -> North Santa Fe Drive",
+     "apex_station_m": 4203.8,
+     "snap_m": 0.0,
+     "deflection_deg": 134.0,
+     "radius_m": 12.7,
+     "tangent_m": 29.93,
+     "radius_achieved_m": [
+      12.7,
+      12.7
+     ],
+     "apex_moved_m": 20.41,
+     "tangent_point_off_line_m": [
+      0.19,
+      0.08
+     ],
+     "curve": "circular arc (rational quadratic Bezier on the leg lines)"
+    },
+    {
+     "name": "North Kalamath Street -> North Speer Boulevard",
+     "apex_station_m": 4541.1,
+     "snap_m": 0.0,
+     "deflection_deg": -115.9,
+     "radius_m": 16.3,
+     "tangent_m": 26.06,
+     "radius_achieved_m": [
+      16.3,
+      16.3
+     ],
+     "apex_moved_m": 9.77,
+     "tangent_point_off_line_m": [
+      0.17,
+      0.01
+     ],
+     "curve": "circular arc (rational quadratic Bezier on the leg lines)"
+    },
+    {
+     "name": "North Speer Boulevard -> West 14th Avenue",
+     "apex_station_m": 4883.5,
+     "snap_m": 0.0,
+     "deflection_deg": 60.0,
+     "radius_m": 15.0,
+     "tangent_m": 8.66,
+     "radius_achieved_m": [
+      15.0,
+      15.0
+     ],
+     "apex_moved_m": 1.97,
+     "tangent_point_off_line_m": [
+      0.2,
+      0.14
+     ],
+     "curve": "circular arc (rational quadratic Bezier on the leg lines)"
+    },
+    {
+     "name": "East 14th Avenue -> Logan Street",
+     "apex_station_m": 6250.5,
+     "snap_m": 0.0,
+     "deflection_deg": 90.3,
+     "radius_m": 12.4,
+     "tangent_m": 12.47,
+     "radius_achieved_m": [
+      12.4,
+      12.4
+     ],
+     "apex_moved_m": 5.15,
+     "tangent_point_off_line_m": [
+      0.04,
+      0.02
+     ],
+     "curve": "circular arc (rational quadratic Bezier on the leg lines)"
+    },
+    {
+     "name": "Logan Street -> East Colfax Avenue",
+     "apex_station_m": 6430.7,
+     "snap_m": 0.0,
+     "deflection_deg": 88.3,
+     "radius_m": 13.5,
+     "tangent_m": 13.1,
+     "radius_achieved_m": [
+      13.5,
+      13.5
+     ],
+     "apex_moved_m": 5.48,
+     "tangent_point_off_line_m": [
+      0.0,
+      0.17
+     ],
+     "curve": "circular arc (rational quadratic Bezier on the leg lines)"
+    }
+   ],
+   "nodes_rounded": 237,
+   "length_in_m": 6646.36,
+   "length_out_m": 6554.86
+  }
+ },
+ "profile": {
+  "source": "data/lap_profile.3dep.json",
+  "md5": "511a4c668a03689cdd2f2768545e475f",
+  "median_m": 33.0,
+  "mean_m": 9.0,
+  "straight_spans": [
+   {
+    "name": "Stout St under the Colorado Convention Center",
+    "frame": "widths",
+    "given_s": [
+     1387.5,
+     1730.0
+    ],
+    "profile_s": [
+     1385.75,
+     1727.9
+    ],
+    "z_from": 1589.27,
+    "z_to": 1591.67,
+    "samples_replaced": 171,
+    "why": "the portals' road heights are measured (source/widths/stout_portals.json: 2020 lidar, entry s 1,387.5 z 1,589.27, exit s 1,730.0 z 1,591.67); the road between them is the straight line [invented]: the lidar has no ground return under the roof (DOSSIER 3) and 3DEP is interpolated there"
+   },
+   {
+    "name": "15th St short of Lawrence",
+    "frame": "profile",
+    "given_s": [
+     2282.0,
+     2318.0
+    ],
+    "profile_s": [
+     2282.0,
+     2318.0
+    ],
+    "z_from": 1589.344,
+    "z_to": 1589.094,
+    "samples_replaced": 19,
+    "why": "[invented] DOSSIER 3: a 5 m pit 30 m long in 3DEP on the centre line (s 2,284-2,316 on the profile), read as a DEM artefact (NAIP 2023 shows an ordinary street); the straight line between its measured ends"
+   },
+   {
+    "name": "Blake St bridge over Cherry Creek",
+    "frame": "widths",
+    "given_s": [
+     2780.0,
+     2822.5
+    ],
+    "profile_s": [
+     2776.81,
+     2819.25
+    ],
+    "z_from": 1584.6,
+    "z_to": 1584.6,
+    "samples_replaced": 21,
+    "why": "measured: the deck's class-17 lidar returns (source/widths/bridges.json, p50 z 1,584.60, abutment ground 1,584.39 / 1,584.68: within 0.25 m, a level deck)"
+   },
+   {
+    "name": "W 14th Ave bridge over Cherry Creek",
+    "frame": "widths",
+    "given_s": [
+     4895.0,
+     4937.5
+    ],
+    "profile_s": [
+     4889.95,
+     4932.39
+    ],
+    "z_from": 1591.05,
+    "z_to": 1591.05,
+    "samples_replaced": 22,
+    "why": "measured: the deck's class-17 lidar returns (source/widths/bridges.json, p50 z 1,591.05, abutment ground 1,590.95 / 1,590.98: a level deck)"
+   }
+  ],
+  "z_min": 1582.486,
+  "z_max": 1610.922
+ },
+ "widths": {
+  "mode": "measured",
+  "file": "source/widths/widths.json",
+  "md5": "7ea06638de8aa9d78aac396c2978cd76",
+  "min": 6.55,
+  "max": 31.97,
+  "edges": {
+   "shared_height_points": 161,
+   "edge_fills": [
+    {
+     "from_s": 2285.0,
+     "to_s": 2327.5,
+     "stations": 16,
+     "ends": [
+      [
+       7.75,
+       13.56
+      ],
+      [
+       4.42,
+       12.07
+      ]
+     ]
+    }
+   ],
+   "edge_overrides": [],
+   "centre_shift_m": {
+    "min": -4.29,
+    "max": 9.84
+   },
+   "corner_zones": [
+    {
+     "name": "West Colfax Avenue -> North Speer Boulevard",
+     "points": [
+      435,
+      446
+     ],
+     "s_osm": [
+      1158.3,
+      1191.7
+     ]
+    },
+    {
+     "name": "North Speer Boulevard -> Stout Street",
+     "points": [
+      485,
+      495
+     ],
+     "s_osm": [
+      1310.8,
+      1343.2
+     ]
+    },
+    {
+     "name": "Stout Street -> 15th Street",
+     "points": [
+      675,
+      687
+     ],
+     "s_osm": [
+      1886.4,
+      1923.6
+     ]
+    },
+    {
+     "name": "15th Street -> Blake Street",
+     "points": [
+      919,
+      932
+     ],
+     "s_osm": [
+      2624.1,
+      2663.9
+     ]
+    },
+    {
+     "name": "Auraria Parkway -> North Speer Boulevard",
+     "points": [
+      1017,
+      1030
+     ],
+     "s_osm": [
+      2922.8,
+      2969.2
+     ]
+    },
+    {
+     "name": "North Speer Boulevard -> North Kalamath Street",
+     "points": [
+      1285,
+      1295
+     ],
+     "s_osm": [
+      3736.5,
+      3763.5
+     ]
+    },
+    {
+     "name": "North Kalamath Street -> West 14th Avenue",
+     "points": [
+      1413,
+      1424
+     ],
+     "s_osm": [
+      4119.2,
+      4156.8
+     ]
+    },
+    {
+     "name": "West 14th Avenue -> North Santa Fe Drive",
+     "points": [
+      1427,
+      1442
+     ],
+     "s_osm": [
+      4168.1,
+      4239.9
+     ]
+    },
+    {
+     "name": "North Kalamath Street -> North Speer Boulevard",
+     "points": [
+      1530,
+      1549
+     ],
+     "s_osm": [
+      4508.9,
+      4573.1
+     ]
+    },
+    {
+     "name": "North Speer Boulevard -> West 14th Avenue",
+     "points": [
+      1647,
+      1657
+     ],
+     "s_osm": [
+      4869.3,
+      4898.7
+     ]
+    },
+    {
+     "name": "East 14th Avenue -> Logan Street",
+     "points": [
+      2100,
+      2112
+     ],
+     "s_osm": [
+      6232.5,
+      6269.5
+     ]
+    },
+    {
+     "name": "Logan Street -> East Colfax Avenue",
+     "points": [
+      2159,
+      2170
+     ],
+     "s_osm": [
+      6411.9,
+      6450.1
+     ]
+    }
+   ],
+   "divider_caps": {
+    "count": 113,
+    "first": [
+     [
+      1332,
+      "left",
+      8.14,
+      7.89
+     ],
+     [
+      1333,
+      "left",
+      8.41,
+      7.59
+     ],
+     [
+      1334,
+      "left",
+      8.63,
+      7.33
+     ]
+    ],
+    "last": [
+     [
+      1527,
+      "left",
+      15.53,
+      13.01
+     ],
+     [
+      1528,
+      "left",
+      15.32,
+      13.85
+     ],
+     [
+      1529,
+      "left",
+      15.05,
+      14.73
+     ]
+    ],
+    "points": [
+     1332,
+     1529
+    ]
+   },
+   "edge_grades_at_points": {
+    "measured": 3157,
+    "detected": 184,
+    "inferred": 1025
+   },
+   "invented": [
+    "corner zones: offset and width linear across each declared corner (curb returns not measured)",
+    "divider caps: the middle between the lap's two lines where they share one paved street"
+   ]
+  }
+ },
+ "grid": {
+  "nx": 69,
+  "ny": 57,
+  "spacing_m": 40.0,
+  "margin_m": 470.0,
+  "z_min": 1575.77,
+  "z_max": 1620.48
+ },
+ "md5": {
+  "centerline.geojson": "0c2ef19ecb347cc582e1ffb8bde8d1be",
+  "centerline.local.json": "cb93aa3d99e9cf0344dfd7b5a87f2a98",
+  "heightfield.npy": "a177b2c46c1f3100a8860f5b979d9e37",
+  "heightfield.meta.json": "6af8b635a8b9314e9fcec8ece95fcbb1"
+ }
+}

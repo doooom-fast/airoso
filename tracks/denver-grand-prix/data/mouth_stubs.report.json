@@ -1,0 +1,697 @@
+{
+ "dropped": {
+  "class": 41,
+  "parallel": 15,
+  "short": 0,
+  "excluded": 17,
+  "duplicate": 56,
+  "both_on_lap": 0,
+  "cut_short_of_lap": 3
+ },
+ "stubs": [
+  {
+   "name": "mouth_primary_0",
+   "osm_way": 963866754,
+   "street": "North Broadway",
+   "class": "primary",
+   "length_m": 40.0,
+   "both_on_lap": false,
+   "lap_node": 176072932
+  },
+  {
+   "name": "mouth_primary_1",
+   "osm_way": 963866754,
+   "street": "North Broadway",
+   "class": "primary",
+   "length_m": 40.0,
+   "both_on_lap": false,
+   "lap_node": 176072932
+  },
+  {
+   "name": "mouth_primary_2",
+   "osm_way": 450174379,
+   "street": "North Broadway",
+   "class": "primary",
+   "length_m": 40.0,
+   "both_on_lap": false,
+   "lap_node": 176072933
+  },
+  {
+   "name": "mouth_primary_3",
+   "osm_way": 450174379,
+   "street": "North Broadway",
+   "class": "primary",
+   "length_m": 40.0,
+   "both_on_lap": false,
+   "lap_node": 176072933
+  },
+  {
+   "name": "mouth_primary_4",
+   "osm_way": 381551546,
+   "street": "North Speer Boulevard",
+   "class": "primary",
+   "length_m": 40.0,
+   "both_on_lap": false,
+   "lap_node": 176080247
+  },
+  {
+   "name": "mouth_primary_5",
+   "osm_way": 381551546,
+   "street": "North Speer Boulevard",
+   "class": "primary",
+   "length_m": 40.0,
+   "both_on_lap": false,
+   "lap_node": 176080247
+  },
+  {
+   "name": "mouth_primary_7",
+   "osm_way": 27822941,
+   "street": "Auraria Parkway",
+   "class": "primary",
+   "length_m": 30.6,
+   "both_on_lap": false,
+   "lap_node": 176086937
+  },
+  {
+   "name": "mouth_primary_8",
+   "osm_way": 27822941,
+   "street": "Auraria Parkway",
+   "class": "primary",
+   "length_m": 40.0,
+   "both_on_lap": false,
+   "lap_node": 176086937
+  },
+  {
+   "name": "mouth_primary_9",
+   "osm_way": 646049976,
+   "street": "West Colfax Avenue",
+   "class": "primary",
+   "length_m": 40.0,
+   "both_on_lap": false,
+   "lap_node": 176089697
+  },
+  {
+   "name": "mouth_primary_10",
+   "osm_way": 648929103,
+   "street": "Blake Street",
+   "class": "primary",
+   "length_m": 40.0,
+   "both_on_lap": false,
+   "lap_node": 176091533
+  },
+  {
+   "name": "mouth_primary_12",
+   "osm_way": 44932758,
+   "street": "West Colfax Avenue",
+   "class": "primary",
+   "length_m": 40.0,
+   "both_on_lap": false,
+   "lap_node": 176092292
+  },
+  {
+   "name": "mouth_primary_14",
+   "osm_way": 600546003,
+   "street": "East Colfax Avenue",
+   "class": "primary",
+   "length_m": 40.0,
+   "both_on_lap": false,
+   "lap_node": 176097376
+  },
+  {
+   "name": "mouth_primary_15",
+   "osm_way": 130912251,
+   "street": "North Lincoln Street",
+   "class": "primary",
+   "length_m": 40.0,
+   "both_on_lap": false,
+   "lap_node": 176098353
+  },
+  {
+   "name": "mouth_primary_16",
+   "osm_way": 130912251,
+   "street": "North Lincoln Street",
+   "class": "primary",
+   "length_m": 40.0,
+   "both_on_lap": false,
+   "lap_node": 176098353
+  },
+  {
+   "name": "mouth_primary_17",
+   "osm_way": 647582785,
+   "street": "North Lincoln Street",
+   "class": "primary",
+   "length_m": 40.0,
+   "both_on_lap": false,
+   "lap_node": 176103304
+  },
+  {
+   "name": "mouth_primary_18",
+   "osm_way": 647582785,
+   "street": "North Lincoln Street",
+   "class": "primary",
+   "length_m": 40.0,
+   "both_on_lap": false,
+   "lap_node": 176103304
+  },
+  {
+   "name": "mouth_primary_19",
+   "osm_way": 130885097,
+   "street": "Market Street",
+   "class": "primary",
+   "length_m": 40.0,
+   "both_on_lap": false,
+   "lap_node": 176110270
+  },
+  {
+   "name": "mouth_primary_20",
+   "osm_way": 130885097,
+   "street": "Market Street",
+   "class": "primary",
+   "length_m": 40.0,
+   "both_on_lap": false,
+   "lap_node": 176110270
+  },
+  {
+   "name": "mouth_primary_24",
+   "osm_way": 628634524,
+   "street": "North Speer Boulevard",
+   "class": "primary",
+   "length_m": 40.0,
+   "both_on_lap": false,
+   "lap_node": 279934061
+  },
+  {
+   "name": "mouth_primary_25",
+   "osm_way": 317966284,
+   "street": "North Speer Boulevard",
+   "class": "primary",
+   "length_m": 40.0,
+   "both_on_lap": false,
+   "lap_node": 807523462
+  },
+  {
+   "name": "mouth_primary_27",
+   "osm_way": 131620812,
+   "street": "West Colfax Avenue",
+   "class": "primary",
+   "length_m": 40.0,
+   "both_on_lap": false,
+   "lap_node": 1024442600
+  },
+  {
+   "name": "mouth_primary_29",
+   "osm_way": 646099526,
+   "street": "West Colfax Avenue",
+   "class": "primary",
+   "length_m": 40.0,
+   "both_on_lap": false,
+   "lap_node": 1024452690
+  },
+  {
+   "name": "mouth_primary_32",
+   "osm_way": 933332971,
+   "street": "North Speer Boulevard",
+   "class": "primary",
+   "length_m": 40.0,
+   "both_on_lap": false,
+   "lap_node": 1160446242
+  },
+  {
+   "name": "mouth_primary_33",
+   "osm_way": 305098126,
+   "street": "Cheyenne Place",
+   "class": "primary",
+   "length_m": 40.0,
+   "both_on_lap": false,
+   "lap_node": 3096774183
+  },
+  {
+   "name": "mouth_primary_34",
+   "osm_way": 944728794,
+   "street": "West Colfax Avenue",
+   "class": "primary",
+   "length_m": 40.0,
+   "both_on_lap": false,
+   "lap_node": 4574957858
+  },
+  {
+   "name": "mouth_residential_0",
+   "osm_way": 16985107,
+   "street": "Elati Street",
+   "class": "residential",
+   "length_m": 40.0,
+   "both_on_lap": false,
+   "lap_node": 176080241
+  },
+  {
+   "name": "mouth_residential_1",
+   "osm_way": 326132259,
+   "street": "Fox Street",
+   "class": "residential",
+   "length_m": 40.0,
+   "both_on_lap": false,
+   "lap_node": 176080243
+  },
+  {
+   "name": "mouth_residential_2",
+   "osm_way": 326132259,
+   "street": "Fox Street",
+   "class": "residential",
+   "length_m": 40.0,
+   "both_on_lap": false,
+   "lap_node": 176080243
+  },
+  {
+   "name": "mouth_secondary_0",
+   "osm_way": 628657314,
+   "street": "Grant Street",
+   "class": "secondary",
+   "length_m": 40.0,
+   "both_on_lap": false,
+   "lap_node": 176072803
+  },
+  {
+   "name": "mouth_secondary_1",
+   "osm_way": 628657314,
+   "street": "Grant Street",
+   "class": "secondary",
+   "length_m": 40.0,
+   "both_on_lap": false,
+   "lap_node": 176072803
+  },
+  {
+   "name": "mouth_secondary_2",
+   "osm_way": 628677807,
+   "street": "West 14th Avenue",
+   "class": "secondary",
+   "length_m": 40.0,
+   "both_on_lap": false,
+   "lap_node": 176080251
+  },
+  {
+   "name": "mouth_secondary_3",
+   "osm_way": 340054386,
+   "street": "North Santa Fe Drive",
+   "class": "secondary",
+   "length_m": 40.0,
+   "both_on_lap": false,
+   "lap_node": 176080253
+  },
+  {
+   "name": "mouth_secondary_4",
+   "osm_way": 130911272,
+   "street": "West 14th Avenue",
+   "class": "secondary",
+   "length_m": 40.0,
+   "both_on_lap": false,
+   "lap_node": 176080253
+  },
+  {
+   "name": "mouth_secondary_5",
+   "osm_way": 628389351,
+   "street": "14th Street",
+   "class": "secondary",
+   "length_m": 40.0,
+   "both_on_lap": false,
+   "lap_node": 176086275
+  },
+  {
+   "name": "mouth_secondary_6",
+   "osm_way": 628389351,
+   "street": "14th Street",
+   "class": "secondary",
+   "length_m": 40.0,
+   "both_on_lap": false,
+   "lap_node": 176086275
+  },
+  {
+   "name": "mouth_secondary_7",
+   "osm_way": 16984028,
+   "street": "14th Street",
+   "class": "secondary",
+   "length_m": 40.0,
+   "both_on_lap": false,
+   "lap_node": 176086282
+  },
+  {
+   "name": "mouth_secondary_8",
+   "osm_way": 541284846,
+   "street": "15th Street",
+   "class": "secondary",
+   "length_m": 40.0,
+   "both_on_lap": false,
+   "lap_node": 176091533
+  },
+  {
+   "name": "mouth_secondary_11",
+   "osm_way": 628643740,
+   "street": "East 14th Avenue",
+   "class": "secondary",
+   "length_m": 40.0,
+   "both_on_lap": false,
+   "lap_node": 176097374
+  },
+  {
+   "name": "mouth_secondary_12",
+   "osm_way": 922432402,
+   "street": "Champa Street",
+   "class": "secondary",
+   "length_m": 40.0,
+   "both_on_lap": false,
+   "lap_node": 176112279
+  },
+  {
+   "name": "mouth_secondary_13",
+   "osm_way": 922432402,
+   "street": "Champa Street",
+   "class": "secondary",
+   "length_m": 40.0,
+   "both_on_lap": false,
+   "lap_node": 176112279
+  },
+  {
+   "name": "mouth_secondary_16",
+   "osm_way": 1051799390,
+   "street": "Stout Street",
+   "class": "secondary",
+   "length_m": 40.0,
+   "both_on_lap": false,
+   "lap_node": 176113163
+  },
+  {
+   "name": "mouth_secondary_18",
+   "osm_way": 670422528,
+   "street": "14th Street",
+   "class": "secondary",
+   "length_m": 40.0,
+   "both_on_lap": false,
+   "lap_node": 1160435647
+  },
+  {
+   "name": "mouth_secondary_19",
+   "osm_way": 16983968,
+   "street": "Welton Street",
+   "class": "secondary",
+   "length_m": 40.0,
+   "both_on_lap": false,
+   "lap_node": 1160446238
+  },
+  {
+   "name": "mouth_secondary_20",
+   "osm_way": 646120467,
+   "street": "Galapago Street",
+   "class": "secondary",
+   "length_m": 40.0,
+   "both_on_lap": false,
+   "lap_node": 1160446238
+  },
+  {
+   "name": "mouth_secondary_22",
+   "osm_way": 628634627,
+   "street": "Grant Street",
+   "class": "secondary",
+   "length_m": 40.0,
+   "both_on_lap": false,
+   "lap_node": 14073675880
+  },
+  {
+   "name": "mouth_secondary_23",
+   "osm_way": 628634627,
+   "street": "Grant Street",
+   "class": "secondary",
+   "length_m": 40.0,
+   "both_on_lap": false,
+   "lap_node": 14073675880
+  },
+  {
+   "name": "mouth_tertiary_0",
+   "osm_way": 1531678599,
+   "street": "Bannock Street",
+   "class": "tertiary",
+   "length_m": 36.4,
+   "both_on_lap": false,
+   "lap_node": 176080234
+  },
+  {
+   "name": "mouth_tertiary_1",
+   "osm_way": 130911277,
+   "street": "Cherokee Street",
+   "class": "tertiary",
+   "length_m": 40.0,
+   "both_on_lap": false,
+   "lap_node": 176080237
+  },
+  {
+   "name": "mouth_tertiary_2",
+   "osm_way": 130911277,
+   "street": "Cherokee Street",
+   "class": "tertiary",
+   "length_m": 40.0,
+   "both_on_lap": false,
+   "lap_node": 176080237
+  },
+  {
+   "name": "mouth_tertiary_3",
+   "osm_way": 16987965,
+   "street": "Galapago Street",
+   "class": "tertiary",
+   "length_m": 40.0,
+   "both_on_lap": false,
+   "lap_node": 176080245
+  },
+  {
+   "name": "mouth_tertiary_4",
+   "osm_way": 16987965,
+   "street": "Galapago Street",
+   "class": "tertiary",
+   "length_m": 40.0,
+   "both_on_lap": false,
+   "lap_node": 176080245
+  },
+  {
+   "name": "mouth_tertiary_5",
+   "osm_way": 1561052289,
+   "street": "14th Street",
+   "class": "tertiary",
+   "length_m": 40.0,
+   "both_on_lap": false,
+   "lap_node": 176085736
+  },
+  {
+   "name": "mouth_tertiary_6",
+   "osm_way": 1561052289,
+   "street": "14th Street",
+   "class": "tertiary",
+   "length_m": 40.0,
+   "both_on_lap": false,
+   "lap_node": 176085736
+  },
+  {
+   "name": "mouth_tertiary_7",
+   "osm_way": 133953246,
+   "street": "Arapahoe Street",
+   "class": "tertiary",
+   "length_m": 40.0,
+   "both_on_lap": false,
+   "lap_node": 176086584
+  },
+  {
+   "name": "mouth_tertiary_8",
+   "osm_way": 133953246,
+   "street": "Arapahoe Street",
+   "class": "tertiary",
+   "length_m": 40.0,
+   "both_on_lap": false,
+   "lap_node": 176086584
+  },
+  {
+   "name": "mouth_tertiary_9",
+   "osm_way": 628393627,
+   "street": "Lawrence Street",
+   "class": "tertiary",
+   "length_m": 40.0,
+   "both_on_lap": false,
+   "lap_node": 176101775
+  },
+  {
+   "name": "mouth_tertiary_10",
+   "osm_way": 628393627,
+   "street": "Lawrence Street",
+   "class": "tertiary",
+   "length_m": 40.0,
+   "both_on_lap": false,
+   "lap_node": 176101775
+  },
+  {
+   "name": "mouth_tertiary_11",
+   "osm_way": 44932622,
+   "street": "Arapahoe Street",
+   "class": "tertiary",
+   "length_m": 40.0,
+   "both_on_lap": false,
+   "lap_node": 672562134
+  },
+  {
+   "name": "mouth_tertiary_12",
+   "osm_way": 16986021,
+   "street": "Court Place",
+   "class": "tertiary",
+   "length_m": 39.9,
+   "both_on_lap": false,
+   "lap_node": 1160438174
+  },
+  {
+   "name": "mouth_tertiary_13",
+   "osm_way": 124661418,
+   "street": "Glenarm Place",
+   "class": "tertiary",
+   "length_m": 40.0,
+   "both_on_lap": false,
+   "lap_node": 1160443953
+  },
+  {
+   "name": "mouth_tertiary_14",
+   "osm_way": 322008847,
+   "street": "Tremont Place",
+   "class": "tertiary",
+   "length_m": 39.9,
+   "both_on_lap": false,
+   "lap_node": 2443906933
+  },
+  {
+   "name": "mouth_tertiary_15",
+   "osm_way": 282445354,
+   "street": "Bannock Street",
+   "class": "tertiary",
+   "length_m": 35.2,
+   "both_on_lap": false,
+   "lap_node": 2863652549
+  },
+  {
+   "name": "mouth_tertiary_16",
+   "osm_way": 628636725,
+   "street": "Larimer Street",
+   "class": "tertiary",
+   "length_m": 40.0,
+   "both_on_lap": false,
+   "lap_node": 3114138908
+  },
+  {
+   "name": "mouth_tertiary_17",
+   "osm_way": 27829270,
+   "street": "Curtis Street",
+   "class": "tertiary",
+   "length_m": 40.0,
+   "both_on_lap": false,
+   "lap_node": 3114170041
+  },
+  {
+   "name": "mouth_tertiary_18",
+   "osm_way": 27829270,
+   "street": "Curtis Street",
+   "class": "tertiary",
+   "length_m": 40.0,
+   "both_on_lap": false,
+   "lap_node": 3114170041
+  },
+  {
+   "name": "mouth_tertiary_19",
+   "osm_way": 322014447,
+   "street": "West 14th Avenue",
+   "class": "tertiary",
+   "length_m": 40.0,
+   "both_on_lap": false,
+   "lap_node": 4574957440
+  },
+  {
+   "name": "mouth_tertiary_20",
+   "osm_way": 503732560,
+   "street": "Delaware Street",
+   "class": "tertiary",
+   "length_m": 40.0,
+   "both_on_lap": false,
+   "lap_node": 4940096571
+  },
+  {
+   "name": "mouth_tertiary_21",
+   "osm_way": 503732560,
+   "street": "Delaware Street",
+   "class": "tertiary",
+   "length_m": 40.0,
+   "both_on_lap": false,
+   "lap_node": 4940096571
+  },
+  {
+   "name": "mouth_tertiary_22",
+   "osm_way": 628622239,
+   "street": "Lawrence Street",
+   "class": "tertiary",
+   "length_m": 40.0,
+   "both_on_lap": false,
+   "lap_node": 5934861525
+  },
+  {
+   "name": "mouth_unclassified_0",
+   "osm_way": 1176119047,
+   "street": "Sherman Street",
+   "class": "unclassified",
+   "length_m": 40.0,
+   "both_on_lap": false,
+   "lap_node": 176070187
+  },
+  {
+   "name": "mouth_unclassified_1",
+   "osm_way": 628634463,
+   "street": "Larimer Street",
+   "class": "unclassified",
+   "length_m": 40.0,
+   "both_on_lap": false,
+   "lap_node": 176099154
+  },
+  {
+   "name": "mouth_unclassified_2",
+   "osm_way": 628634463,
+   "street": "Larimer Street",
+   "class": "unclassified",
+   "length_m": 40.0,
+   "both_on_lap": false,
+   "lap_node": 176099154
+  },
+  {
+   "name": "mouth_unclassified_3",
+   "osm_way": 16987774,
+   "street": "Saint Francis Way",
+   "class": "unclassified",
+   "length_m": 40.0,
+   "both_on_lap": false,
+   "lap_node": 176108120
+  },
+  {
+   "name": "mouth_unclassified_4",
+   "osm_way": 576125196,
+   "street": "12th Street",
+   "class": "unclassified",
+   "length_m": 40.0,
+   "both_on_lap": false,
+   "lap_node": 1160443953
+  }
+ ],
+ "count": 74,
+ "md5": "a104a8241c2e152e797bd516974211c7",
+ "params": {
+  "reach_m": 40.0,
+  "parallel_m": 20.0,
+  "min_m": 12.0,
+  "widths": {
+   "primary": 9.5,
+   "secondary": 10.0,
+   "tertiary": 10.0,
+   "unclassified": 8.0,
+   "residential": 8.0,
+   "living_street": 6.0,
+   "primary_link": 6.0,
+   "secondary_link": 6.0,
+   "tertiary_link": 6.0
+  }
+ }
+}

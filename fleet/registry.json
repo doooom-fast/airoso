@@ -42,6 +42,7 @@
         "tracks/aspen/track.config.json",
         "tracks/del-mar-lm/track.config.json",
         "tracks/del-mar/track.config.json",
+        "tracks/denver-grand-prix/track.config.json",
         "tracks/exotics-racing-lv-lm/track.config.json",
         "tracks/exotics-racing-lv/track.config.json",
         "tracks/grand-junction-lm/track.config.json",
@@ -169,6 +170,12 @@
         "engine-legacy/projects/sand-creek-raceway"
       ],
       "moved_from": "k10-colorado/sand-creek (2026-11-01, the one-repo registry)"
+    },
+    "airoso/denver-grand-prix": {
+      "kind": "fictional_street_circuit",
+      "fidelity": "real",
+      "source": "OSM lap (2026-11-23) + measured kerb-to-kerb widths (2020 lidar, 2022 DRAPP) + 3DEP 1 m + class-17 bridge decks",
+      "note": "Born in airoso 2026-11-23 (ledger 0096, PLAN.md, DOSSIER.md). 0.1.0 = Drive 1 on Lake Murray v4's engine (lm-v4), race and street layouts"
     },
     "airoso/milford-road-course": {
       "kind": "circuit_port",

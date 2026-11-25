@@ -1,0 +1,85 @@
+{
+ "_doc": "Denver Grand Prix 0.1.0 (ledger 0096): the race layout's own W1-6 arrow plate at the hairpin (W 14th Ave -> Santa Fe Dr, 134 deg), as Sand Creek's race layout has one at the S at 48th / Colorado: race furniture behind the race layout's sealing K-rail, shipped in that layout's closure kn5 alone (tools/place_signs.py per_layout; a whole-lap race closure carries its layout's plates, tools/split_exports_blend.py). Every other corner the W1-6 rule would sign is skipped with its reason: no rule-placed sign stands on Denver's streets (the survey's inventory places the real ones, 0.1.1). Defaults are Sand Creek's (Lake Murray's place_signs defaults) but pad_decks (no pads).",
+ "defaults": {
+  "r_sign_max_m": 30.0,
+  "defl_min_deg": 45.0,
+  "hairpin_deg": 135.0,
+  "lateral_offset_m": 1.63,
+  "lateral_offset_connector_m": 1.33,
+  "height_m": 2.13,
+  "om1_3": true,
+  "include_connectors": false,
+  "both_directions_mainline": false,
+  "lamp_clear_m": 3.0,
+  "plant_clear_m": 2.5,
+  "kappa_window_m": 12,
+  "hysteresis_stations": 6,
+  "pad_decks": false,
+  "walk_built_only": true
+ },
+ "corners": {
+  "DGP-HAIRPIN": {
+   "ribbon": "MAINLINE",
+   "vertex": 1433,
+   "plate": "W1-6",
+   "expect_arrow": "left",
+   "where": "W 14th Ave -> N Santa Fe Dr (the hairpin, T8)",
+   "per_layout": true,
+   "note": "the race layout's plate, behind its sealing K-rail; the street layout has none"
+  },
+  "DGP-V441": {
+   "ribbon": "MAINLINE",
+   "vertex": 441,
+   "skip": true,
+   "reason": "no rule-placed sign on Denver's streets: the real signs come from the survey's inventory (source/survey/signs.json, 0.1.1); the race layout's own plate is at the hairpin alone"
+  },
+  "DGP-V488": {
+   "ribbon": "MAINLINE",
+   "vertex": 488,
+   "skip": true,
+   "reason": "no rule-placed sign on Denver's streets: the real signs come from the survey's inventory (source/survey/signs.json, 0.1.1); the race layout's own plate is at the hairpin alone"
+  },
+  "DGP-V680": {
+   "ribbon": "MAINLINE",
+   "vertex": 680,
+   "skip": true,
+   "reason": "no rule-placed sign on Denver's streets: the real signs come from the survey's inventory (source/survey/signs.json, 0.1.1); the race layout's own plate is at the hairpin alone"
+  },
+  "DGP-V924": {
+   "ribbon": "MAINLINE",
+   "vertex": 924,
+   "skip": true,
+   "reason": "no rule-placed sign on Denver's streets: the real signs come from the survey's inventory (source/survey/signs.json, 0.1.1); the race layout's own plate is at the hairpin alone"
+  },
+  "DGP-V1022": {
+   "ribbon": "MAINLINE",
+   "vertex": 1022,
+   "skip": true,
+   "reason": "no rule-placed sign on Denver's streets: the real signs come from the survey's inventory (source/survey/signs.json, 0.1.1); the race layout's own plate is at the hairpin alone"
+  },
+  "DGP-V1538": {
+   "ribbon": "MAINLINE",
+   "vertex": 1538,
+   "skip": true,
+   "reason": "no rule-placed sign on Denver's streets: the real signs come from the survey's inventory (source/survey/signs.json, 0.1.1); the race layout's own plate is at the hairpin alone"
+  },
+  "DGP-V1650": {
+   "ribbon": "MAINLINE",
+   "vertex": 1650,
+   "skip": true,
+   "reason": "no rule-placed sign on Denver's streets: the real signs come from the survey's inventory (source/survey/signs.json, 0.1.1); the race layout's own plate is at the hairpin alone"
+  },
+  "DGP-V2104": {
+   "ribbon": "MAINLINE",
+   "vertex": 2104,
+   "skip": true,
+   "reason": "no rule-placed sign on Denver's streets: the real signs come from the survey's inventory (source/survey/signs.json, 0.1.1); the race layout's own plate is at the hairpin alone"
+  },
+  "DGP-V2161": {
+   "ribbon": "MAINLINE",
+   "vertex": 2161,
+   "skip": true,
+   "reason": "no rule-placed sign on Denver's streets: the real signs come from the survey's inventory (source/survey/signs.json, 0.1.1); the race layout's own plate is at the hairpin alone"
+  }
+ }
+}

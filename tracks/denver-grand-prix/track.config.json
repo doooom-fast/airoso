@@ -247,7 +247,9 @@
    "_grass_clearance_doc": "0.2.8 (PC, 2026-11-09; Kevin, asked whether the other circuit tracks have Milford's fast-curve edge mess: \"Yes, check them\"; Milford 0.1.6 is the same fix, ledger 0087): the strip's outer lip 2 cm under the lane edge (profile point 3 at -grass_clearance = +0.08 over the unlifted edge; the lane edge at +0.10). engine-july's prep holds the ground past the ROAD edge at the lane edge's height - 0.02 for 3 m (its contact band), so the lower lip lay in a gutter with a wall of ground at its lip. Measured on the installed 0.2.7 (gate OBJ, every 10 m, both sides; strip_gutter.py): the strip (1.5 m grade) ends 19 cm under the lane edge; the ground just past it stood more than 5 cm over the lip at 137 of 1,608 side-stations, more than 10 cm at 68 (max 17 cm). Flush with the band, nothing stands over it (none was set: the engine's default 0.10 put the lip 20 cm under the lane edge)",
    "_doc": "Kevin 2026-11-03 (ledger 0070 Q1): \"race curbs, no sidewalks\" = race kerbs at the race corners (owed: they come with a race corridor), no street curbs, no sidewalks. The v021 edge strip with no curb: the lane edge stays at road height for 0.30 m, then meets the ground 0.20 m lower over 1.5 m [invented: the shortest run under the drive gate's 0.12 m per 0.5 m]. The strip keeps the assembler's four profile points a side, which tools/weld_mouths_blend.py reads."
   },
-  "seat_edge_m": 1.8
+  "seat_edge_m": 1.8,
+  "crossfall_file": "data/crossfall.lm.json",
+  "trim_host_bank": true
  },
  "draft_line": {
   "_doc": "source/draft/draft_line.py (ledger 0096 0.1.0): what the source track's data stages would have written, from committed files only",
@@ -400,7 +402,8 @@
   "_doc": "tools/lm_engine_intake.py: this track's own draft line (source/draft/draft_line.py) and its side streets' mouths (source/draft/mouth_stubs.py, data/connectors.local.json) into the assembler's inputs; the D4 free-roam grid is owed",
   "grid_upsample": 2,
   "_grid_doc": "the 40 m grid pre-divided to 20 m (bilinear, the same samples), as Sand Creek",
-  "connectors": true
+  "connectors": true,
+  "crossfall": "source/widths/colfax-crossfall-proof.json"
  },
  "capture": {
   "use_elevation": false,

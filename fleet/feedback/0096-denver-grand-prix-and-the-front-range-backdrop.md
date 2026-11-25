@@ -335,8 +335,10 @@ grid is one street, about 20.5 m kerb to kerb.
    - Then every row of the table in "0.1.0 (Drive 1)" above: both drive_tests PASS with ground on top 0 and severe 0;
      audit CLEAN on both; no_route PASS; kn5_ground_check PASS on both; verify_mouths PASS on 72; textures PASS.
    - The log ends `SHIP OK`.
-   - Kn5 sizes should be within a few hundred bytes of road 38,303,638 / race 9,365,823 / closure 5,599. Compare them
-     with `tools/kn5_equiv.py`, never md5: the tangent pass is not bit-stable.
+   - Kn5 sizes: race 9,365,823 and closure 5,599 should hold within a few hundred bytes. The road kn5 will differ from
+     the Mac's 38,303,638: that figure is eada16c2's, built with the owned asphalt / concrete pair, and 3aa0c02b binds the
+     stock textures (geometry unchanged). Compare kn5s with `tools/kn5_equiv.py`, never md5: the tangent pass is not
+     bit-stable.
    - Call out any row that differs.
 5. **Install on green.** AC must be closed. Run the same command without `SHIP_PROJ` and without `--no-install`:
    `ENG=D:/k10-scratch/eng_dgp_010 bash tools/ship_track.sh denver-grand-prix`.

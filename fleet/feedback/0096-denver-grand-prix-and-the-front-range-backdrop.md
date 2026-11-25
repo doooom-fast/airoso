@@ -210,3 +210,143 @@ Decided on his behalf, and given to the survey session to run without stopping:
 - **Colfax:** the 2022 state, per D8, with OSM's present bus-lane tags recorded beside it as changed and unsurveyed.
 - **Signs:** tagged per junction from OSM; nothing invented.
 - A refutation pass on a fresh sample per class before it is called done; Stout's covered 344 m declared unsurveyed.
+
+## 0.1.0 (Drive 1): the lap's road and ground, race and street, built on the Mac (2026-11-25)
+
+Kevin, 2026-11-24: "When these are installed, I want you to tag team the Denver Grand Prix build out"; at 23:06,
+"get what as much as you can done and installed at 7am". Branch `claude/dgp-buildout-20261125` (from main 60c694e2, the
+widths survey `claude/dgp-widths-20261125` c03567a5 merged). The engine work of PRs 61 / 60 / 66 and the SIGNFACE rows are
+Codex's integration; this build does not depend on them and is re-run once that base is merged.
+
+**What 0.1.0 is.** `tracks/denver-grand-prix/` on Lake Murray v4's engine (`ship.json` `engine: lm-v4`, Sand Creek's
+pattern): slug and install folder `denver_grand_prix`, `fictional_street_circuit`, `mirror_x` false, north 0. Two layouts on
+one road kn5: **Race** (the lap one way, Lake Murray's K-rails along both edges as Sand Creek uses them, every side street
+sealed, the race kerbs the detector finds at 11 corners, the grid on Colfax behind the Sherman crosswalk facing west, one
+W1-6 race plate at the hairpin in the race closure kn5) and **Free Roam** (the same roads open, plus each side street's
+mouth). No pit lane (D5). The draft is written from committed files by `source/draft/draft_line.py` (the line, its
+heights and widths, the 3DEP grid) and `source/draft/mouth_stubs.py` (the mouths); `lm_intake` reads them as its own source
+track.
+
+**Measured, and from what**
+
+| What | Source |
+|---|---|
+| the route | OSM as of 2026-11-23 (`data/lap_line.plan.json`, the lap's nodes in driving order) |
+| the edges, kerb to kerb | `source/widths/widths.json` (c03567a5): the kerb face from the 2020 lidar's class-2 step, else the asphalt edge (lidar intensity, 2022 aerial) plus the measured 0.46 m pan. At this build's 2,184 line points: 3,157 edges measured, 184 detected, 1,025 inferred |
+| the line | moved to the middle of its two measured edges (offset −4.3 to +9.8 m from OSM's line); width 6.6–32.0 m |
+| heights | 3DEP 1 m along OSM's line (`data/lap_profile.3dep.json`), a 33 m median despike and a 9 m mean, **no grade cap**: steepest 7.3 % over 10 m (E 14th Ave, Lincoln to Sherman) |
+| the two bridges | level decks at the class-17 lidar's p50: Blake 1,584.60 m (widths s 2,780–2,822.5), W 14th Ave 1,591.05 m (s 4,895–4,937.5) |
+| Stout's portals | road z 1,589.27 m (entry) and 1,591.67 m (exit, 14th St), lidar |
+| the ground | USGS 3DEP 1/3 arc-second tiles, a 40 m lattice over the lap plus 470 m, pre-divided to 20 m by the intake |
+
+**Every [invented] number** (each also in `track.config.json` beside the key it sets)
+
+- **Corner curb radius 6.0 m** on the lap's 12 corners over 45°: the fillet radius is 6.0 + the mean of the two legs'
+  measured half widths (9.3–17.3 m), Sand Creek's rule. No curb return on the lap is measured (the survey bridges every
+  junction mouth straight across).
+- Across each corner (tangent + **6 m**) the line's offset and width run linearly between the zone's ends; running means
+  of **15 m** on the offset and **9 m** on the width.
+- **Stout under the Convention Center, s 1,387.5–1,730:** the road between the measured portals is a straight line, and
+  its edges are the survey's linear fill (276 inferred edges). Built **open-air**: no roof, no soffit, no columns.
+  `capture.covered_spans` (PR 61) is not in this base; nothing overhead is built, so no gate needs it yet.
+- **15th St short of Lawrence:** the 5 m 3DEP pit (profile s 2,282–2,318) is a straight line between its measured ends,
+  and both edges are filled linearly over widths s 2,285–2,327.5. The kerb reader found steps inside the pit: 5.75–11 m
+  where the street reads 16–21 m either side.
+- **Kalamath / Santa Fe south of Colfax, the lap's two directions side by side:** each direction's edge stops **1.8 m**
+  short of the middle between the two lap lines (paint.json has no double yellow there; its two yellow pieces read
+  6.6–6.8 m from Kalamath's line, at that middle). That leaves a 3.6 m strip of ground where the real street is paved
+  across. The K-rails stand on each side of it, and in the race no_route holds the lap one way with no short cut. Within
+  **30 m** of each other the two lines' heights are blended to their mean (full weight within 20 m); they differed by
+  0.03–0.12 m.
+- **Side-street mouths:** OSM ways that meet the lap's own nodes, followed **40 m**. A stub is dropped if its far end stays
+  within **20 m** of the lap (the lap's other carriageway) or if less than **12 m** of it leaves the lap's pavement. A stub
+  stops **6 m** short of another part of the lap. Widths by class: primary 9.5, secondary 10, tertiary 10,
+  unclassified 8, residential 8, links 6 m. Heights: the 1/3 arc-second surface's rise from the lap's edge.
+  **74 built** (72 mouths). **17 excluded**, each named with the gate reading that refused it (verify_mouths notch /
+  approach / host lane, audit K / I, one drive_test ground-on-top), at the junctions where Sand Creek needed pads and
+  returns: Colfax between Speer's two legs, the Speer / Stout / Kalamath junction, Auraria Pkwy at Speer, Stout at 15th,
+  Logan at 14th, Sherman at the line, W 14th at Kalamath.
+- **The edge is Sand Creek's:** no curb, no sidewalk; the lane edge flat for 0.3 m, then down 0.2 m over 1.5 m. The real
+  kerbs read 0.06–0.18 m.
+- **The grid and the timing:** the line at the crosswalk (vertex 50, 152 m after station 0), the pole 3 vertices behind
+  it. Race columns are at ±1.0 m (the chain's), the free roam's at +1.0 / +3.0 m right of centre. Sectors are derived.
+  These are the chain's rules, not Denver's grid paint.
+- **Race furniture:** Lake Murray's K-rail 0.82 m inside each edge, the race kerbs at 11 corners, and the hairpin's W1-6
+  plate. The plate is there because a whole-lap race closure kn5 carries its layout's plates (Sand Creek's pattern). Every
+  other corner the W1-6 rule would sign is skipped in `signs.json` with its reason, so no rule-placed sign stands in the
+  free roam.
+- The origin's `elev_m` 1,580 is a datum for local Y, not a reading.
+
+**The Mac build of eada16c2, from an empty workshop (a `git archive` of the commit), `--no-install`** (Blender 4.2.9; ENG = the engine-july snapshot with
+`assets/textures`; the runner changes only the Blender path and bash 3.2's `declare -A` / `${tok^^}`): **SHIP OK, every gate
+green, no force, no threshold or tolerance changed, no engine change.**
+
+| Gate (built kn5) | Free Roam | Race |
+|---|---|---|
+| drive_test | **PASS**: ground on top 0, severe 0, bumps 0 /km, kinks 2.3 /km, excursions 0 (8 far flare ledges reported), obstructed 0, daylight 0 | **PASS**: ground on top 0, severe 0, bumps 0 /km, kinks 4.6 /km (station 5.82, vertex kinks 8 reported), barrier stations without a wall 0 of 13,056 |
+| audit_mesh | **CLEAN** (A–K 0) | **CLEAN** (A–K, W 0) |
+| no_route (built) | — | **PASS**: leak 0 m², 0 doors, 0 of 72 mouth probes reached, 77.4 k m² reached |
+| kn5_ground_check | **PASS**: road over ground 37 / 5,142 > 0.05 m, p95 0.021 m | **PASS** (the same, walls and plate seated) |
+| verify_mouths | **PASS**, 72 mouths | (the same road) |
+| verify_kn5 / --inis / textures | PASS / PASS / PASS (0 untextured) | the same; race kn5 and closure checked |
+| verify_race / verify_signs / planned no_route | — | OK / PASS / PASS |
+
+kn5: road `denver_grand_prix.kn5` 38,303,638 B; race `denver_grand_prix_race.kn5` 9,365,823 B; closure
+`denver_grand_prix_closure_race.kn5` 5,599 B; spawn kn5s 2,104 B each. Built lap 6.53 km on the driven line (6,639 m on
+OSM's: the corners are rounded). AI: generated drafts, race 196 s, free roam 211 s (estimates, not recordings).
+
+**Left out of 0.1.0, owed**
+
+- The full D4 free-roam grid: every street inside the lap and one block out. 0.1.0 has the lap's own roads and 72
+  mouths, each 40 m long and ending there.
+- The 17 hard junctions' mouths (pads and corner returns, as Sand Creek's), the medians as raised islands, curbs and
+  sidewalks, and the measured curb radii at the corners.
+- Paint from the survey's inventory: PR 61's `paint_inventory` step is not in this base. 0.1.0 carries the engine's
+  default paint by width, with no centre yellow.
+- Lamps, signals and signs from the survey (0.1.1, the furniture plan `claude/dgp-furniture-plan-20261125` 0cd1a05c).
+- Stout's inside: the roof, the columns, the rails and the lights. Its declaration as a covered span comes with PR 61.
+- The creek channels under the two bridges: no `capture.bridges` span is declared, so the ground is pinned to the deck.
+- The buildings and landmarks (P4), the trees, crossfall from lidar, and the Front Range backdrop (PR 59, D6).
+
+**For Kevin** (none blocks the install): the 6.0 m corner radius; the Kalamath / Santa Fe divider; the 17 mouths not
+built; the 15th St pit; Stout open-air. The widths session fixed the false kerb at the start line (c03567a5): Colfax at the
+grid is one street, about 20.5 m kerb to kerb.
+
+## Runbook 0096-1 (PC): rehearse Denver Grand Prix 0.1.0 from an empty workshop, then install on green
+
+1. **Code.** A clean checkout of `origin/claude/dgp-buildout-20261125` at the head the coordinator names. Denver commits no
+   blend and needs no LFS object.
+2. **ENG.** A fresh copy, as the Mac built with: `scripts/` and `vendor/` from
+   `tracks/san-diego-lake-murray/engine-july-snapshot` (MANIFEST-exact), plus the checkout's `assets/textures` beside them,
+   for example `D:/k10-scratch/eng_dgp_010`. The live engine-july still holds the PENDING-MIRROR md5s; do not point ENG at it.
+   The AC add-on is Blender 4.2's, as for every lm-v4 build.
+3. **Rehearse.** `set PYTHONUTF8=1`, then set `AIROSO_NUMPY_PY` to the PC's python with numpy, then run:
+   `SHIP_PROJ=D:/k10-scratch/denver_grand_prix_0961_reh ENG=D:/k10-scratch/eng_dgp_010 bash tools/ship_track.sh denver-grand-prix --no-install > D:/k10-scratch/dgp_0961_reh.log 2>&1`.
+   Use no `--from`, no `--skip-blend` and no force. The SHIP_PROJ folder must not exist yet.
+4. **Expected, as on the Mac:**
+   - `[lm_intake] denver-grand-prix: 2184 pts`, `connectors in`;
+   - `[weld] 72 mouth(s) welded, self-check clean`;
+   - `[bands] ... strips on 2184/2184 verts`, `22 kerbs at 11 corners`, `planned no_route: PASS`;
+   - `[signs] 1 placed (... 1 layout plate (DGP-HAIRPIN@race))`;
+   - `[split] closure race ... 3 sign plates`.
+   - Then every row of the table in "0.1.0 (Drive 1)" above: both drive_tests PASS with ground on top 0 and severe 0;
+     audit CLEAN on both; no_route PASS; kn5_ground_check PASS on both; verify_mouths PASS on 72; textures PASS.
+   - The log ends `SHIP OK`.
+   - Kn5 sizes should be within a few hundred bytes of road 38,303,638 / race 9,365,823 / closure 5,599. Compare them
+     with `tools/kn5_equiv.py`, never md5: the tangent pass is not bit-stable.
+   - Call out any row that differs.
+5. **Install on green.** AC must be closed. Run the same command without `SHIP_PROJ` and without `--no-install`:
+   `ENG=D:/k10-scratch/eng_dgp_010 bash tools/ship_track.sh denver-grand-prix`.
+   - The workshop is `D:/k10-scratch/denver_grand_prix`, empty the first time.
+   - It installs as `content/tracks/denver_grand_prix`, a new folder, so nothing is parked.
+   - The sync-back writes `loop.blend` and the data files into the checkout. `loop.blend` is a record: keep it in the PC's
+     track archive with its md5, never in git.
+   - A red rehearsal installs nothing; report its first red row with its numbers.
+6. **Report:** SHIP OK or the first red row; the kn5 sizes; the run's start and end; the install path.
+7. **Kevin's first drive** (DOSSIER §10):
+   - the launch down Colfax from the Capitol;
+   - E 14th Ave's 6 % climb to Sherman;
+   - both bridges;
+   - Stout between its portals, open-air in 0.1.0;
+   - the Kalamath / W 14th / Santa Fe hairpin as three streets;
+   - the free roam's mouths.

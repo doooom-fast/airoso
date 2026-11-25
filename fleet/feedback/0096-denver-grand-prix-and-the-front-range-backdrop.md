@@ -276,9 +276,11 @@ track.
   other corner the W1-6 rule would sign is skipped in `signs.json` with its reason, so no rule-placed sign stands in the
   free roam.
 - The origin's `elev_m` 1,580 is a datum for local Y, not a reading.
-- **Textures: the engine's stock rows.** The owned asphalt and concrete pairs are Kevin's for the four tracks he is
-  finishing ("On every track now", scoped to them 2026-11-22), not Denver until he says so (240b2797's follow-up: the Mac
-  build of eada16c2 had carried Sand Creek's overrides; the change binds textures only, no geometry).
+- **Textures: the owned asphalt and concrete pairs** (CC0, `tools/make_owned_surfaces.py`), synced in by `ship.json`; the
+  stock grass. Kevin's "On every track now" (2026-11-22) covers the tracks he has told us to work on, and on 2026-11-24 he
+  put Denver in that set ("tag team the Denver Grand Prix build out"); the stock road tile is borrowed for personal use, the
+  owned pair is CC0. 3aa0c02b had bound the stock rows; the Mac (Claude) put the owned pairs back and added Denver to the
+  tests that list the owned-pair tracks. Sand Creek's `walk_built_only` stays out (no walk is built).
 
 **The Mac build of eada16c2, from an empty workshop (a `git archive` of the commit), `--no-install`** (Blender 4.2.9; ENG = the engine-july snapshot with
 `assets/textures`; the runner changes only the Blender path and bash 3.2's `declare -A` / `${tok^^}`): **SHIP OK, every gate
@@ -335,9 +337,9 @@ grid is one street, about 20.5 m kerb to kerb.
    - Then every row of the table in "0.1.0 (Drive 1)" above: both drive_tests PASS with ground on top 0 and severe 0;
      audit CLEAN on both; no_route PASS; kn5_ground_check PASS on both; verify_mouths PASS on 72; textures PASS.
    - The log ends `SHIP OK`.
-   - Kn5 sizes: race 9,365,823 and closure 5,599 should hold within a few hundred bytes. The road kn5 will differ from
-     the Mac's 38,303,638: that figure is eada16c2's, built with the owned asphalt / concrete pair, and 3aa0c02b binds the
-     stock textures (geometry unchanged). Compare kn5s with `tools/kn5_equiv.py`, never md5: the tangent pass is not
+   - Kn5 sizes: race 9,365,823 and closure 5,599 should hold within a few hundred bytes. The road kn5 should hold near
+     the Mac's 38,303,638: that figure is eada16c2's, built with the owned asphalt / concrete pair, which this head binds
+     again (geometry unchanged). Compare kn5s with `tools/kn5_equiv.py`, never md5: the tangent pass is not
      bit-stable.
    - Call out any row that differs.
 5. **Install on green.** AC must be closed. Run the same command without `SHIP_PROJ` and without `--no-install`:

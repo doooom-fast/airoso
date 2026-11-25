@@ -536,5 +536,16 @@
  "signs_file": "signs.json",
  "_signs_file_doc": "the race layout's own W1-6 plate at the hairpin (signs.json: tools/place_signs.py per_layout, defaults.layout_plates_only), in the race closure kn5 alone; no rule-placed sign in the road kn5",
  "_layouts_name_doc": "ui_track.json reads '<ui_series> - <name> — <layout name>': 'doooom Colorado - Denver Grand Prix — Race' / '— Free Roam' (docs/ONE-CHAIN.md 3)",
- "_texture_overrides_doc": "none: the engine's stock rows. The owned asphalt and concrete pairs are Kevin's for the four tracks he is finishing (2026-11-22 'On every track now', scoped to Lake Murray, Sand Creek, High Plains, Milford: tests/tools/test_lake_murray_0099.py), not this one until he says so"
+ "texture_overrides": {
+  "1ROAD": {
+   "diffuse": "assets/textures/asphalt_dense_diffuse.jpg",
+   "normal": "assets/textures/asphalt_dense_normal.jpg",
+   "_doc": "the owned dense-graded asphalt (tools/make_owned_surfaces.py, CC0; ledger 0095), as on the four finishing tracks: Kevin 2026-11-22, \"On every track now\" (the owned asphalt and concrete), scoped by his own words to \"the ones I told you to be working on\"; 2026-11-24 he put Denver Grand Prix in that set: \"When these are installed, I want you to tag team the Denver Grand Prix build out\". No road_wear bake here, so no high-pass"
+  },
+  "1KERB_SIDEWALK": {
+   "diffuse": "assets/textures/concrete_plain_diffuse.jpg",
+   "normal": "assets/textures/concrete_plain_normal.jpg",
+   "_doc": "the owned plain concrete (tools/make_owned_surfaces.py, CC0), as on the four finishing tracks: Kevin 2026-11-22, \"On every track now\" (the owned asphalt and concrete), scoped by his own words to \"the ones I told you to be working on\"; 2026-11-24 he put Denver Grand Prix in that set: \"When these are installed, I want you to tag team the Denver Grand Prix build out\""
+  }
+ }
 }

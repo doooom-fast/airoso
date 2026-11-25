@@ -18,7 +18,7 @@ from scripts.aerial import road_wear as rw
 
 ROOT = Path(__file__).resolve().parents[2]
 PILOT = {"milford-road-course-lm", "high-plains-lm"}
-OWNED_ROAD_ONLY = {"sand-creek-lm"}   # ledger 0098: the owned 1ROAD pair without a road_wear bake
+OWNED_ROAD_ONLY = {"sand-creek-lm", "denver-grand-prix"}   # ledgers 0098 / 0096: the owned 1ROAD pair without a road_wear bake
 PAIR = ["assets/textures/asphalt_dense_diffuse.jpg", "assets/textures/asphalt_dense_normal.jpg"]
 
 

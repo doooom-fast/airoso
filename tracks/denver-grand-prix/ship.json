@@ -57,6 +57,12 @@
     ],
     "optional": [
       "signs.json"
+    ],
+    "assets": [
+      "assets/textures/asphalt_dense_diffuse.jpg",
+      "assets/textures/asphalt_dense_normal.jpg",
+      "assets/textures/concrete_plain_diffuse.jpg",
+      "assets/textures/concrete_plain_normal.jpg"
     ]
   },
   "sync_out": {

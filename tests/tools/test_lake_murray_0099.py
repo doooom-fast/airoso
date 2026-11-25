@@ -29,6 +29,8 @@ TEXT = SH.read_text(encoding="utf-8").replace("\r\n", "\n")
 CFG = json.loads((LM / "track.config.json").read_text(encoding="utf-8"))
 SHIP = json.loads((LM / "ship.json").read_text(encoding="utf-8"))
 FINISH_FOUR = ("high-plains-lm", "milford-road-course-lm", "sand-creek-lm")   # the other three Kevin is finishing
+# the tracks his "On every track now" covers besides those: the ones he has told us to work on (ledger 0096: Denver, 2026-11-24)
+OWNED_TOO = ("denver-grand-prix",)
 OTHER_CONFIGS = sorted(p for p in (ROOT / "tracks").glob("*/track.config.json") if p.parent.name != LM.name)
 OTHER_SPECS = sorted(p for p in (ROOT / "tracks").glob("*/ship.json") if p.parent.name != LM.name)
 
@@ -435,11 +437,11 @@ def test_the_road_and_the_sidewalks_bind_the_owned_pairs():
         t = p.read_text(encoding="utf-8")
         name = p.parent.name
         if "concrete_plain" in t:
-            assert name in FINISH_FOUR, p
+            assert name in FINISH_FOUR + OWNED_TOO, p
         if name in ("high-plains-lm", "milford-road-course-lm"):
             assert "asphalt_dense" in t, p
         elif "asphalt_dense" in t:
-            assert name in FINISH_FOUR, p
+            assert name in FINISH_FOUR + OWNED_TOO, p
 
 
 def test_version_is_0_20_8():

@@ -207,7 +207,8 @@ def test_version_and_every_round2_key_is_high_plains_own():
         # (the Lariat binds its gravel verge on this row.) The owned concrete there: only the four tracks Kevin is finishing
         # (his "On every track now", scoped to them on 2026-11-22); Milford binds it since 0.1.14 (ledger 0100)
         ov = ((cfg.get("texture_overrides") or {}).get("1KERB_SIDEWALK") or {}).get("diffuse", "")
-        assert "concrete_plain" not in ov or t in ("milford-road-course-lm", "sand-creek-lm", "san-diego-lake-murray"), t
+        assert "concrete_plain" not in ov or t in ("milford-road-course-lm", "sand-creek-lm", "san-diego-lake-murray",
+                                                  "denver-grand-prix"), t   # Denver: ledger 0096, Kevin 2026-11-24
 
 
 def test_full_layouts_extra_pieces_are_measured_data():

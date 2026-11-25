@@ -80,6 +80,12 @@
    "vertex": 2161,
    "skip": true,
    "reason": "no rule-placed sign on Denver's streets: the real signs come from the survey's inventory (source/survey/signs.json, 0.1.1); the race layout's own plate is at the hairpin alone"
+  },
+  "DGP-V1288": {
+   "ribbon": "MAINLINE",
+   "vertex": 1288,
+   "skip": true,
+   "reason": "no rule-placed sign on Denver's streets: the real signs come from the survey's inventory (source/survey/signs.json, 0.1.1); the race layout's own plate is at the hairpin alone (Speer -> Kalamath, |D| about 45 deg: the rule signs it on some builds)"
   }
  }
 }

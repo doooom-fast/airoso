@@ -239,16 +239,35 @@ def test_a_track_with_no_inventory_is_not_judged_and_no_kn5_is_opened():
     assert IG.check(d)["opted_in"] is False
 
 
-def test_no_installed_track_declares_an_inventory():
-    """E1: opt-in everywhere but Denver, whose config does not exist yet. Until one is written on purpose, the two
-    chain steps are in no ship.json and the key is in no track.config.json."""
-    for cfg in sorted((ROOT / "tracks").glob("*/track.config.json")):
+def test_inventory_and_covered_road_stay_opt_in_outside_denver():
+    """The Denver rollout must leave the existing tracks' chain untouched."""
+    tracks = ROOT / "tracks"
+    denver = tracks / "denver-grand-prix"
+    for cfg in sorted(tracks.glob("*/track.config.json")):
         c = json.loads(cfg.read_text(encoding="utf-8"))
+        if cfg.parent == denver:
+            continue
         assert "inventory" not in c, cfg
         assert not ((c.get("capture") or {}).get("covered_spans")), cfg
-    for spec in sorted((ROOT / "tracks").glob("*/ship.json")):
+    for spec in sorted(tracks.glob("*/ship.json")):
         steps = json.loads(spec.read_text(encoding="utf-8")).get("steps") or {}
+        if spec.parent == denver:
+            continue
         assert "paint_inventory" not in (steps.get("author") or []) and "inventory" not in (steps.get("gate") or []), spec
+
+
+def test_denver_wires_any_declared_inventory_and_covered_road_to_the_shipping_gates():
+    denver = ROOT / "tracks" / "denver-grand-prix"
+    cfg_path = denver / "track.config.json"
+    if not cfg_path.is_file():
+        return
+    cfg = json.loads(cfg_path.read_text(encoding="utf-8"))
+    spec = json.loads((denver / "ship.json").read_text(encoding="utf-8"))
+    gates = set(spec["steps"]["gate"])
+    if INV.gated_classes(cfg):
+        assert "inventory" in gates
+    if (cfg.get("capture") or {}).get("covered_spans"):
+        assert {"drive_test_street", "kn5_ground"} <= gates
 
 
 def test_a_mirrored_or_yawed_track_is_refused():

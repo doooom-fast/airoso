@@ -1,0 +1,163 @@
+{
+ "reader": "sign-post pass, junctions batch 3 (by eye)",
+ "panels": {
+  "SG42": {
+   "candidates": {},
+   "added": [
+    {
+     "E": -881.2,
+     "N": -194.8,
+     "class": "sign_or_small_post",
+     "note": "parking-lot entrance sign on the lot's north edge: 2022 shows a board-shaped shadow ~2 m north of a thin stroke; 2020 has a car parked over it"
+    },
+    {
+     "E": -869.8,
+     "N": -188.9,
+     "class": "sign_or_small_post",
+     "note": "post on the north curb of the vacant lot by the bike lane: 2022 stroke ~1.2 m north with plate head, 2020 ~1.4 m NW with flat plate; short (2022 shadows are short here: the accepted post at -876.5,-188 casts only ~1.8 m) and no parking on that curb, so not a meter; lower confidence"
+    }
+   ],
+   "note": "all lamps and the corner signals carry squares. SW quarter is in building shadow in 2022. A small T-shaped dark object at -899.8,-175.3 is 2022 only (temporary, skipped). Bike-lane delineators along the buffer skipped."
+  },
+  "SG43": {
+   "candidates": {},
+   "added": [
+    {
+     "E": -785.1,
+     "N": -169.9,
+     "class": "sign_or_small_post",
+     "note": "SW corner of the Elati median strip: 2022 thin stroke ~1.2 m north ending in a diamond plate and a second plate; 2020 stroke ~2.8 m NW ending in a plate"
+    },
+    {
+     "E": -807.4,
+     "N": -194.7,
+     "class": "sign_or_small_post",
+     "note": "parking-lot north edge (accessible stalls): 2022 stroke ~1.3 m north with a round plate shadow, 2020 ~2.0 m NW"
+    },
+    {
+     "E": -805.5,
+     "N": -194.9,
+     "class": "sign_or_small_post",
+     "note": "accessible-stall sign post on the lot's north edge, same size as the accepted post at -800.6,-195.6 (2022 ~0.8 m, 2020 ~1.4 m)"
+    },
+    {
+     "E": -803.5,
+     "N": -194.9,
+     "class": "sign_or_small_post",
+     "note": "accessible-stall sign post on the lot's north edge, same size as the accepted post at -800.6,-195.6"
+    }
+   ],
+   "note": "both NW-corner masts carry a pendant lamp whose 2020 shadow shows as a separate vertical stroke (e.g. -799.8,-173.5): that is the mast's, not a post. 2022 sun is high here: sign shadows are short (~0.8-1.3 m)."
+  },
+  "SG44": {
+   "candidates": {},
+   "added": [
+    {
+     "E": -682.4,
+     "N": -167.3,
+     "class": "sign_or_small_post",
+     "note": "sidewalk east of Delaware north of the NE corner: 2022 thin stroke ~1.8 m north reaching the mast-arm shadow, 2020 ~2.4 m NW ending in a plate"
+    }
+   ],
+   "note": "a dark plate at -701.1,-174.5 (2022 only, no stroke) looks like a ground-standing board, skipped. A box at -677.1,-163 inside the lot is a cabinet/pay station, not a post. Bollard at -677.2,-189.3 skipped."
+  },
+  "SG45": {
+   "candidates": {},
+   "added": [
+    {
+     "E": -557.2,
+     "N": -175.3,
+     "class": "post_unknown",
+     "note": "2020 only: clean thin stroke ~2.1 m NW (same azimuth as the mast shadows) on the sidewalk south of the lawn; 2022 is in building shadow there, no head visible"
+    }
+   ],
+   "note": "bollard rows on the SW plaza skipped; dark cabinets at -585.4,-194.6 and -564.5,-190.5 are boxes (same in both years). Lines running south from the masts are the poles' relief displacement, not posts."
+  },
+  "SG46": {
+   "candidates": {},
+   "added": [
+    {
+     "E": -455.6,
+     "N": -196.3,
+     "class": "sign_or_small_post",
+     "note": "sign on the pork-chop island SE of the junction: 2020 stroke ~2 m NW ending in a plate with a white foot; 2022 shows only a dark dot at the same foot (island repaved, sign may be gone); lower confidence"
+    }
+   ],
+   "note": "no other unmarked posts. 2020-only lane delineators on the road (-448.1,-190.9 and -427.2,-208.8) and construction barricades skipped; the 2022 plate shadow at -465.6,-192.6 is the SW mast's lamp arm."
+  },
+  "SG47": {
+   "candidates": {},
+   "added": [],
+   "note": "nothing added. Construction site in the south half (2020 scaffolding, 2022 equipment); bollard rows and a utility cabinet at -349.7,-266.6 skipped. Review: the green square at -341.9,-242.2 sits on the globe cluster of a five-globe lamp; in 2022 a ~3 m line runs from the cluster SSW to an apparent foot at about -342.4,-246.0 (tilted lamp or relief lean), so the inventory point may be ~3.5 m off the foot. A sign/lamp shadow enters the panel at -344.1,-280.5 from a foot south of the panel edge (not added)."
+  },
+  "SG48": {
+   "candidates": {},
+   "added": [
+    {
+     "E": -230.7,
+     "N": -169.4,
+     "class": "lamp",
+     "note": "short globe lamp in the tree pit NW of the Broadway corner: bright globe at the foot, 2022 shadow ~2.6 m north ending in a round head; 2020 NW shadow mostly lost in the tree's shadow"
+    },
+    {
+     "E": -203.0,
+     "N": -202.5,
+     "class": "sign_or_small_post",
+     "note": "plaza SE of the junction, west of the kiosk: 2022 thin stroke ~1.6 m north, 2020 ~1.9 m NW ending in a head"
+    }
+   ],
+   "note": "Review: the green square at -201.7,-202.3 sits on a ~0.8 m white box (kiosk/cabinet with a block shadow in both years), not on a post. Bollards and a hydrant on the SE plaza skipped; the 2020 vertical stroke at about -235.5,-172.9 is the NW mast's pendant lamp shadow."
+  },
+  "SG49": {
+   "candidates": {},
+   "added": [],
+   "note": "nothing added: every lamp, mast and small post seen carries a square. SE corner is in building shadow in 2020; the dark mark at -94.2,-194.8 (2022) is a pedestrian. Boxes on the SW sidewalk are newspaper boxes/cabinets."
+  },
+  "SG50": {
+   "candidates": {},
+   "added": [],
+   "note": "nothing added. The NW and NE parking lots are full of bollards and round-head posts (shadows under ~1 m in 2022): skipped. A short post on the east curb at about 9.9,-202.4 (2022 ~1.4 m shadow with a round blob head, 2020 ~1.2 m) looks meter-sized, skipped. Review: the green square at 16.1,-168.1 is ~1.7 m north of the NE lot light's base (white pole running from about 15.9,-169.8 in both years); it is the same pole, so not re-added."
+  },
+  "SG51": {
+   "candidates": {},
+   "added": [],
+   "note": "nothing added. A short round-head post at 131.5,-179.0 (2022 shadow ~1.5 m, no matching NW stroke in 2020) and one at 103.7,-168.7 (0.9 m) look meter/bollard-sized, skipped. Hydrants at 96.9,-177.7 and 127.9,-191.6. The 2020 vertical strokes near the masts are their pendant-lamp shadows."
+  },
+  "SG52": {
+   "candidates": {},
+   "added": [
+    {
+     "E": 227.0,
+     "N": -205.8,
+     "class": "sign_or_small_post",
+     "note": "SE corner, west edge of the planter south of the corner: 2022 thin stroke ~1.4 m north ending in a ~0.6 m plate, 2020 a diamond-shaped plate shadow at the same place (foot in the planter's dark)"
+    }
+   ],
+   "note": "the SW lot edge was rebuilt between 2020 (grass) and 2022 (concrete): 2022-only short posts there (e.g. 206.3,-202.7, ~1.2 m shadow with a head) are meter/bollard-sized and skipped. A bright white dot at 218.4,-200.7 (2022) is most likely glare off a parked car, skipped. Hydrants at 214.9,-170.6 and 226.5,-199.3."
+  },
+  "SG53": {
+   "candidates": {},
+   "added": [
+    {
+     "E": 225.5,
+     "N": -29.9,
+     "class": "sign_or_small_post",
+     "note": "SE corner sidewalk south of the red fire-alarm box: 2022 thin stroke ~1.5 m north ending in a dark plate; 2020 stroke ~1.1 m toward ENE (this panel's 2020 shadows run ENE) from the same foot"
+    }
+   ],
+   "note": "2020 shadows in this panel run ENE, not NW. Curb bollards, trash cans (200.8,2.0 and 207.1,1.9) and the newspaper-box cluster at about 213.5,13 skipped. Review: at the SE mast (green 229.2,-19.3) a second, thinner pole with a white head stands beside the mast in both years (2022 base about 229.9,-19.3; 2020 apparent base about 227.9,-20.5) - probably a pedestrian light within 1.5 m of the mast's square, not added; a reviewer may want it as its own lamp."
+  },
+  "SG56": {
+   "candidates": {},
+   "added": [
+    {
+     "E": 104.3,
+     "N": 16.6,
+     "class": "sign_or_small_post",
+     "note": "east edge of the planter strip north of the NW corner, by the bike corral: 2022 thin stroke ~1.5 m north ending in an oval head/plate, 2020 stroke ~1.8 m NW from the same foot"
+    }
+   ],
+   "note": "every lamp, mast and corner post seen otherwise carries a square. Bike-lane delineators along Grant (east of the NW corner, and around the SE curb) and the median delineators on Colfax skipped; newspaper boxes and a trash can on the NE plaza skipped. NE corner partly in building shadow in both years."
+  }
+ }
+}

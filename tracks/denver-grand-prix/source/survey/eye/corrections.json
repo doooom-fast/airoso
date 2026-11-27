@@ -1,0 +1,384 @@
+{
+ "_doc": "Corrections to accepted posts, made by eye after the second pass's readers flagged them (each checked on a 14 m crop of 2022 beside 2020, 2026-11-24). remove: the post nearest E,N within 1.5 m is dropped (move, reclass and flag match the same way). move: it is moved to the new E,N (position_from says so). flag: a note on its position. Not acted on: R118's 'three squares for two poles' (the 2022 picture shows three shadows: a short post and two tall poles) and R108's 'parking meters?' (2.0-2.3 m shadows against 1.1-1.3 m for the meters beside them). reclass: the post's class is changed. The posts refutation's findings (refutation/posts_round1.json) are applied here and in eye/verdicts_refute_r1.json (its misses). After posts refutation round 3 the settled signal_post definition was applied lap-wide to every post's own eye note (reclass entries quoting the note).",
+ "remove": [
+  {
+   "E": -1269.9,
+   "N": -129.1,
+   "why": "the end of a bus shelter, not a post (R083; its lamp is the second pass's 10147 about 2.5 m west)"
+  },
+  {
+   "E": -1342.7,
+   "N": 576.0,
+   "why": "a bike-lane stencil on the bridge path; no post in 2020 (R064)"
+  },
+  {
+   "E": -869.72,
+   "N": -188.93,
+   "why": "meter / bollard height, about 1.0 m of 2022 shadow (posts refutation round 1, m5100, l0517)"
+  },
+  {
+   "E": -896.79,
+   "N": -161.97,
+   "why": "only faint 1 m strokes in a planting strip (posts refutation round 1, m5100, l0510)"
+  },
+  {
+   "E": -201.7,
+   "N": -202.3,
+   "why": "a white box (kiosk or cabinet), not a post (sign-post pass SG48)"
+  },
+  {
+   "E": -1268.4,
+   "N": 988.0,
+   "why": "not on a post (sign-post pass SG19)"
+  },
+  {
+   "E": -1454.6,
+   "N": 940.5,
+   "why": "in a shrub bed; the globe lamp it stood for was added 2.2 m away (SG24)"
+  },
+  {
+   "E": -1587.7,
+   "N": 908.7,
+   "why": "in tree branches; the lamp it stood for was added 3.7 m away (SG25)"
+  },
+  {
+   "E": -1523.1,
+   "N": 850.5,
+   "why": "on bare pavement (SG26)"
+  },
+  {
+   "E": -1499.7,
+   "N": 831.2,
+   "why": "on bare pavement (SG26)"
+  },
+  {
+   "E": -682.5,
+   "N": 12.0,
+   "why": "on the tip of a sign's 2022 shadow; the foot 1.8 m south was added (SG07)"
+  },
+  {
+   "E": -980.7,
+   "N": 12.9,
+   "why": "on the tip of a sign's 2022 shadow; the foot 1.8 m south was added (SG09)"
+  },
+  {
+   "E": -1360.9,
+   "N": 423.0,
+   "why": "on the tip of a sign plate's 2020 shadow; the foot was added (SG29)"
+  },
+  {
+   "E": -1299.3,
+   "N": -196.7,
+   "why": "on the tip of a sign plate's 2020 shadow; the foot was added (SG34)"
+  },
+  {
+   "E": -929.07,
+   "N": 443.09,
+   "why": "on l0186's 2022 shadow (posts refutation round 2)"
+  },
+  {
+   "E": -861.6,
+   "N": 606.2,
+   "why": "a stub under 1.5 m of shadow (a meter) (posts refutation round 2)"
+  },
+  {
+   "E": -785.1,
+   "N": -169.9,
+   "why": "on the shadow of g0581's arm (posts refutation round 2)"
+  },
+  {
+   "E": -805.0,
+   "N": -195.72,
+   "why": "nothing at the square in either year (posts refutation round 2)"
+  },
+  {
+   "E": -862.0,
+   "N": 16.5,
+   "why": "on l0128's 2020 shadow (posts refutation round 2)"
+  },
+  {
+   "E": -1180.7,
+   "N": 134.97,
+   "why": "nothing at the square in either year (posts refutation round 2)"
+  },
+  {
+   "E": -119.0,
+   "N": -191.2,
+   "why": "a stub under 1.5 m of shadow (a meter) (posts refutation round 2)"
+  },
+  {
+   "E": -1319.76,
+   "N": -169.91,
+   "why": "a second square 6.3 m north of the Kalamath / 14th mast, which l0475 marks at its foot (posts refutation round 2)"
+  },
+  {
+   "E": -678.4,
+   "N": -16.0,
+   "why": "a second square 2.1 m from g0104's mast (posts refutation round 2)"
+  },
+  {
+   "E": -519.8,
+   "N": -174.91,
+   "why": "a parking meter (posts refutation round 3)"
+  },
+  {
+   "E": -506.4,
+   "N": -174.91,
+   "why": "a parking meter (posts refutation round 3)"
+  },
+  {
+   "E": -1159.25,
+   "N": 903.87,
+   "why": "probably a parking meter (posts refutation round 3)"
+  },
+  {
+   "E": -1474.0,
+   "N": 942.1,
+   "why": "a kerb-ramp stub, no pole (posts refutation round 3)"
+  },
+  {
+   "E": -19.71,
+   "N": -168.63,
+   "why": "a ground-level globe light (posts refutation round 3)"
+  },
+  {
+   "E": -864.7,
+   "N": 492.91,
+   "why": "a one-year blob: a person or a temporary object (posts refutation round 3)"
+  },
+  {
+   "E": -914.82,
+   "N": 16.74,
+   "why": "a parking meter (posts refutation round 4)"
+  },
+  {
+   "E": -1206.1,
+   "N": 123.9,
+   "why": "nothing at the square in 2022; a wall edge in 2020 (posts refutation round 4)"
+  },
+  {
+   "E": -1158.79,
+   "N": 915.26,
+   "why": "planters and a tree shadow, no pair of strokes (posts refutation round 4)"
+  }
+ ],
+ "move": [
+  {
+   "E": -1298.2,
+   "N": -188.8,
+   "to_E": -1298.4,
+   "to_N": -190.8,
+   "why": "the square sat on its own 2022 shadow, 2 m north of the pole's foot (RX032)"
+  },
+  {
+   "E": -568.04,
+   "N": -17.7,
+   "to_E": -568.04,
+   "to_N": -19.7,
+   "why": "the mast's foot is about 2 m south of where it was placed (posts refutation round 1, g0092)"
+  },
+  {
+   "E": -341.9,
+   "N": -242.2,
+   "to_E": -342.4,
+   "to_N": -246.0,
+   "why": "the square sat on the lamp's globe cluster; the foot is 3.5 m south-south-west (sign-post pass SG47)"
+  }
+ ],
+ "flag": [
+  {
+   "E": -1464.7,
+   "N": 746.5,
+   "note": "the 2022 and 2020 feet disagree by about 2 m here (R060); position about +-2 m"
+  },
+  {
+   "E": -1458.6,
+   "N": 739.2,
+   "note": "the 2022 and 2020 feet disagree by about 2 m here (R060); position about +-2 m"
+  },
+  {
+   "E": -1366.5,
+   "N": 633.8,
+   "note": "matches the 2020 foot; the 2022 foot is about 2.7 m east (R063); position about +-2.7 m"
+  },
+  {
+   "E": 16.1,
+   "N": -168.1,
+   "note": "about 1.7 m north of the light's base (sign-post pass SG50)"
+  },
+  {
+   "E": -1365.5,
+   "N": 633.0,
+   "note": "about 1.8 m from the globe lamp's foot (posts refutation round 4)"
+  },
+  {
+   "E": -1359.58,
+   "N": 632.21,
+   "note": "about 1.8 m from the globe lamp's foot (posts refutation round 4)"
+  }
+ ],
+ "reclass": [
+  {
+   "E": -1026.06,
+   "N": 742.43,
+   "to": "signal_mast",
+   "why": "2020 shows its arm reaching north-west over 15th St (refutation round 1)"
+  },
+  {
+   "E": -1400.92,
+   "N": 696.61,
+   "to": "signal_post",
+   "why": "no arm over the road: a tall pole with side-mounted heads and a light (refutation round 1)"
+  },
+  {
+   "E": -588.88,
+   "N": -19.73,
+   "to": "lamp",
+   "why": "a tall pole with a cobra-head arm, no signal heads seen (refutation round 1)"
+  },
+  {
+   "E": -1263.78,
+   "N": -174.77,
+   "to": "post_unknown",
+   "why": "its 2022 shadow is about 6.5 m: too tall for a sign post (refutation round 1)"
+  },
+  {
+   "E": -1318.5,
+   "N": -177.0,
+   "to": "signal_mast",
+   "why": "the Kalamath / 14th mast at its foot (posts refutation round 2)"
+  },
+  {
+   "E": -699.07,
+   "N": -19.61,
+   "to": "signal_post",
+   "why": "a short signal post, no arm over the road (posts refutation round 2)"
+  },
+  {
+   "E": -1198.83,
+   "N": 131.48,
+   "to": "signal_post",
+   "why": "carries signal heads (posts refutation round 2)"
+  },
+  {
+   "E": -121.13,
+   "N": -19.06,
+   "to": "signal_post",
+   "why": "posts refutation round 3"
+  },
+  {
+   "E": -982.68,
+   "N": -173.33,
+   "to": "signal_post",
+   "why": "posts refutation round 3"
+  },
+  {
+   "E": -1263.09,
+   "N": 124.4,
+   "to": "signal_post",
+   "why": "posts refutation round 3"
+  },
+  {
+   "E": -1367.91,
+   "N": 576.44,
+   "to": "lamp",
+   "why": "posts refutation round 3"
+  },
+  {
+   "E": -115.5,
+   "N": 14.4,
+   "to": "lamp",
+   "why": "posts refutation round 3"
+  },
+  {
+   "E": -880.53,
+   "N": 472.62,
+   "to": "lamp",
+   "why": "posts refutation round 3"
+  },
+  {
+   "E": -1244.3,
+   "N": 138.91,
+   "to": "signal_mast",
+   "why": "posts refutation round 3"
+  },
+  {
+   "E": -860.24,
+   "N": 13.1,
+   "to": "signal_post",
+   "why": "settled definition applied to its eye note: 'tall twin-arm streetlight at the NE corner: 11 m stroke N in 2022 with curved arm and head, long NW stroke 2020; boxy sh'"
+  },
+  {
+   "E": -998.0,
+   "N": -18.0,
+   "to": "signal_post",
+   "why": "settled definition applied to its eye note: 'SW corner pole under a bare tree: 6 m stroke N with luminaire arm pointing east 2022, NW stroke 2020, real arm with brig'"
+  },
+  {
+   "E": -1130.58,
+   "N": -20.76,
+   "to": "signal_post",
+   "why": "settled definition applied to its eye note: 'SW corner pole: 6.5 m stroke N with luminaire arm 2022, NW stroke 2020, short real arm with bright head; boxy shadow on '"
+  },
+  {
+   "E": -906.79,
+   "N": 416.24,
+   "to": "signal_post",
+   "why": "settled definition applied to its eye note: 'tall pole, 7 m stroke N with round head 2022, long NW stroke 2020; boxy shadows on the pole suggest side-mounted signal '"
+  },
+  {
+   "E": -919.75,
+   "N": 430.91,
+   "to": "signal_post",
+   "why": "settled definition applied to its eye note: 'tall pole, stroke N with round head 2022, NW stroke 2020; boxy shadows on the pole suggest side-mounted signal heads'"
+  },
+  {
+   "E": -900.1,
+   "N": 412.8,
+   "to": "signal_post",
+   "why": "settled definition applied to its eye note: 'missed, found in posts refutation round 2 (j1758 14th Street / Stout Street): medium confidence: three sunlit globes vis'"
+  },
+  {
+   "E": -1010.5,
+   "N": 760.2,
+   "to": "signal_post",
+   "why": "settled definition applied to its eye note: 'E corner, 2020: long thin stroke NW ending in a blob; 2022 in dappled shadow; may also carry signal heads'"
+  },
+  {
+   "E": -1319.19,
+   "N": 1047.59,
+   "to": "signal_post",
+   "why": "settled definition applied to its eye note: 'on the triangular island: 3.2 m stroke N with a flag-shaped head in 2022, stroke with box in 2020; sign or signal pedest'"
+  },
+  {
+   "E": -1397.95,
+   "N": 971.91,
+   "to": "signal_post",
+   "why": "settled definition applied to its eye note: 'T-shaped head on the shadow in both years'"
+  },
+  {
+   "E": -1520.24,
+   "N": 847.96,
+   "to": "signal_post",
+   "why": "settled definition applied to its eye note: 'north corner, ~3.5 m SE of the corner mast square: 2022 a clear second vertical pole shadow (~6 m north) from a foot by '"
+  },
+  {
+   "E": -1169.9,
+   "N": -20.77,
+   "to": "lamp",
+   "why": "its eye note names a lamp head: 'on the bridge-end wall east of mast 1067; about 2.5 m stroke with a round head in both years (pedestrian globe lamp or a'"
+  },
+  {
+   "E": 211.77,
+   "N": -20.16,
+   "to": "signal_post",
+   "why": "settled definition applied to its eye note: 'SW corner Colfax/Logan: 7 m stroke with 3.5 m luminaire arm east; boxes on pole suggest side-mounted signal heads; ring '"
+  },
+  {
+   "E": -1301.75,
+   "N": -22.88,
+   "to": "signal_mast",
+   "why": "its arm reaches west over the southbound lanes (posts refutation round 4)"
+  }
+ ]
+}

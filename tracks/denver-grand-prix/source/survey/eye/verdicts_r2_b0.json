@@ -1,0 +1,552 @@
+{
+ "reader": "second-pass panel reader batch 0 (by eye)",
+ "panels": {
+  "R000": {
+   "candidates": {
+    "10000": {
+     "class": "not_a_post",
+     "note": "on lane line / stop bar paint, no stroke"
+    },
+    "10001": {
+     "class": "not_a_post",
+     "note": "bare tree"
+    },
+    "10295": {
+     "class": "not_a_post",
+     "note": "tree crown"
+    },
+    "10296": {
+     "class": "not_a_post",
+     "note": "tree branches"
+    },
+    "10297": {
+     "class": "not_a_post",
+     "note": "tree branches"
+    },
+    "10298": {
+     "class": "not_a_post",
+     "note": "tree trunk at corner, accepted post 3 m SE"
+    }
+   },
+   "added": [],
+   "note": "bottom edge: parking-lot gate arms and ticket posts (short shadows), not counted; dark blobs on north sidewalk are people/bins"
+  },
+  "R001": {
+   "candidates": {
+    "10002": {
+     "class": "not_a_post",
+     "note": "roof clutter"
+    },
+    "10003": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "10004": {
+     "class": "not_a_post",
+     "note": "tree branches beside accepted lamp"
+    },
+    "10005": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "10006": {
+     "class": "not_a_post",
+     "note": "parking stripe/curb corner"
+    }
+   },
+   "added": [],
+   "note": ""
+  },
+  "R002": {
+   "candidates": {
+    "10007": {
+     "class": "not_a_post",
+     "note": "fence line; the real lamp foot is ~3 m N, added"
+    },
+    "10008": {
+     "class": "lamp",
+     "note": "foot ~1.5 m N of ring, globe lamp at lot corner"
+    },
+    "10009": {
+     "class": "not_a_post",
+     "note": "end of mast arm seen over the crosswalk"
+    },
+    "10010": {
+     "class": "not_a_post",
+     "note": "planter end, no stroke"
+    },
+    "10011": {
+     "class": "not_a_post",
+     "note": "2020 'stroke' is the planter's west edge (head = object at planter top, seen in R003); 2022 shows nothing"
+    }
+   },
+   "added": [
+    {
+     "E": -84.0,
+     "N": 18.3,
+     "class": "lamp",
+     "note": "globe lamp in lot planter, strokes in both years"
+    }
+   ],
+   "note": ""
+  },
+  "R003": {
+   "candidates": {
+    "10012": {
+     "class": "not_a_post",
+     "note": "edge of lot pavement, nothing in either year"
+    },
+    "10013": {
+     "class": "not_a_post",
+     "note": "edge of lot pavement / planter, nothing in 2022"
+    }
+   },
+   "added": [],
+   "note": "dark items on NE corner sidewalk in 2022 are pedestrians/bins"
+  },
+  "R004": {
+   "candidates": {
+    "10014": {
+     "class": "not_a_post",
+     "note": "on the mast arm / mast lean over the crosswalk; mast foot is the accepted square ~7 m S"
+    }
+   },
+   "added": [
+    {
+     "E": -195.4,
+     "N": 10.2,
+     "class": "sign_or_small_post",
+     "note": "thin post by hydrant, short N stroke 2022, NW stroke with plate 2020"
+    }
+   ],
+   "note": ""
+  },
+  "RX000": {
+   "candidates": {
+    "10015": {
+     "class": "not_a_post",
+     "note": "tree branches"
+    },
+    "10016": {
+     "class": "not_a_post",
+     "note": "tree branches over curb"
+    },
+    "10018": {
+     "class": "not_a_post",
+     "note": "tree trunk"
+    },
+    "62": {
+     "class": "not_a_post",
+     "note": "tree trunk; a globe lamp stands ~3.5 m NW (added)"
+    },
+    "64": {
+     "class": "not_a_post",
+     "note": "tree trunk"
+    }
+   },
+   "added": [
+    {
+     "E": -278.1,
+     "N": -3.3,
+     "class": "lamp",
+     "note": "globe lamp under trees, bright globe + N stroke 2022; 2020 under tree shadow"
+    },
+    {
+     "E": -282.3,
+     "N": -15.0,
+     "class": "lamp",
+     "note": "twin-globe lamp at N edge of sidewalk, 2022 stroke; 2020 under trees"
+    },
+    {
+     "E": -292.0,
+     "N": -20.3,
+     "class": "lamp",
+     "note": "globe lamp at S edge of sidewalk, 2022 stroke; 2020 faint globe"
+    },
+    {
+     "E": -252.2,
+     "N": -39.2,
+     "class": "lamp",
+     "note": "park-path globe lamp, ~29 m off the street; both years clear"
+    }
+   ],
+   "note": "park is heavily tree-covered; possible further globe at E -264.1 N -14.9 (bright dot 2022, no stroke seen) not added"
+  },
+  "R005": {
+   "candidates": {
+    "10017": {
+     "class": "not_a_post",
+     "note": "tree in planting bed"
+    }
+   },
+   "added": [],
+   "note": "vertical strokes over the eastbound lanes (2022 x E-245 N 3..9, 2020 similar) are mast arms seen over the road, not extra posts"
+  },
+  "R006": {
+   "candidates": {
+    "10019": {
+     "class": "lamp",
+     "note": "globe lamp at the park's N sidewalk edge: bright globe + short N stroke 2022; 2020 under tree shadow"
+    },
+    "10020": {
+     "class": "not_a_post",
+     "note": "tree trunk"
+    },
+    "10021": {
+     "class": "not_a_post",
+     "note": "tree trunk"
+    },
+    "10022": {
+     "class": "not_a_post",
+     "note": "tree branches"
+    },
+    "10023": {
+     "class": "not_a_post",
+     "note": "tree"
+    }
+   },
+   "added": [
+    {
+     "E": -290.4,
+     "N": 44.4,
+     "class": "post_unknown",
+     "note": "thin post by building corner, 3 m N stroke 2022; 2020 blob in tree shadow"
+    }
+   ],
+   "note": "dark figures on the median by the guardrail (2022) are pedestrians"
+  },
+  "R007": {
+   "candidates": {
+    "10024": {
+     "class": "not_a_post",
+     "note": "duplicate of an accepted post (signal-head shadow of the island mast 2.4 m S)"
+    }
+   },
+   "added": [],
+   "note": "post at E -290.3 N 44.8 by the building's SE corner is also visible here; added once, in R006"
+  },
+  "R008": {
+   "candidates": {
+    "10025": {
+     "class": "not_a_post",
+     "note": "crosswalk paint"
+    },
+    "10026": {
+     "class": "not_a_post",
+     "note": "low object in planting bed (bench/plinth), no stroke"
+    },
+    "10027": {
+     "class": "not_a_post",
+     "note": "planting bed / shrub"
+    }
+   },
+   "added": [],
+   "note": "SE corner in building shadow both years"
+  },
+  "RX001": {
+   "candidates": {
+    "10028": {
+     "class": "not_a_post",
+     "note": "tree branches; dark figure next to it in 2022 is a pedestrian"
+    }
+   },
+   "added": [],
+   "note": ""
+  },
+  "R010": {
+   "candidates": {
+    "10029": {
+     "class": "not_a_post",
+     "note": "mast pole/arm seen over the crosswalk; foot is the accepted square ~7 m S"
+    },
+    "10030": {
+     "class": "not_a_post",
+     "note": "plaza paving edge"
+    }
+   },
+   "added": [
+    {
+     "E": -441.5,
+     "N": 10.4,
+     "class": "sign_or_small_post",
+     "note": "sign post on plaza by the sidewalk, plate shadow both years"
+    },
+    {
+     "E": -424.4,
+     "N": -16.0,
+     "class": "sign_or_small_post",
+     "note": "short post behind S curb, 1.6 m N stroke with head 2022 only; like the accepted square 4 m E, which also shows nothing in 2020"
+    }
+   ],
+   "note": "possible small sign post at E -451 N -20 (SW corner by the yield triangle), not added: unclear"
+  },
+  "R011": {
+   "candidates": {
+    "10031": {
+     "class": "not_a_post",
+     "note": "bench/utility box on the corner sidewalk"
+    }
+   },
+   "added": [
+    {
+     "E": -503.1,
+     "N": 19.5,
+     "class": "sign_or_small_post",
+     "note": "sign post at NW corner sidewalk, plate shadow both years"
+    }
+   ],
+   "note": "2020 shows a second plated stroke at about E -499.6 N 13.8 (corner sidewalk); 2022 not clear there, not added"
+  },
+  "R012": {
+   "candidates": {
+    "10032": {
+     "class": "not_a_post",
+     "note": "duplicate of an accepted post: ring sits on the 2022 shadow of the lamp 4.5 m S (and on a fence in 2020)"
+    }
+   },
+   "added": [],
+   "note": "short posts on the N sidewalk are parking meters; S side in building shadow"
+  },
+  "R014": {
+   "candidates": {
+    "10033": {
+     "class": "not_a_post",
+     "note": "centre of a shrub/small tree, in building shadow 2022"
+    }
+   },
+   "added": [],
+   "note": "S sidewalk in building shadow 2022; objects at the N building face are utility boxes"
+  },
+  "R015": {
+   "candidates": {
+    "10034": {
+     "class": "not_a_post",
+     "note": "tree"
+    },
+    "10035": {
+     "class": "not_a_post",
+     "note": "tree branches behind the corner mast"
+    },
+    "10036": {
+     "class": "not_a_post",
+     "note": "on the crosswalk under the mast's lean/arm; mast foot is the accepted square"
+    },
+    "10037": {
+     "class": "not_a_post",
+     "note": "pedestrian/bin on the corner sidewalk, no stroke"
+    }
+   },
+   "added": [
+    {
+     "E": -682.5,
+     "N": 10.0,
+     "class": "sign_or_small_post",
+     "note": "thin sign post on N sidewalk, short N stroke 2022, NW stroke 2020"
+    }
+   ],
+   "note": ""
+  },
+  "R016": {
+   "candidates": {
+    "10038": {
+     "class": "not_a_post",
+     "note": "grass strip; building shadow 2022, nothing at the ring 2020 (stroke nearby is a sapling in a tree pit)"
+    },
+    "10039": {
+     "class": "not_a_post",
+     "note": "building corner"
+    }
+   },
+   "added": [
+    {
+     "E": -740.3,
+     "N": 10.0,
+     "class": "sign_or_small_post",
+     "note": "thin post on N sidewalk 3.5 m E of the accepted lamp; 1.8 m N stroke 2022, NW stroke 2020"
+    }
+   ],
+   "note": "S sidewalk in building shadow 2022"
+  },
+  "R017": {
+   "candidates": {
+    "10040": {
+     "class": "not_a_post",
+     "note": "rooftop clutter (building shadow 2022)"
+    },
+    "10041": {
+     "class": "not_a_post",
+     "note": "rooftop parapet/clutter"
+    }
+   },
+   "added": [],
+   "note": "S sidewalk greens all on posts; bike racks/benches unringed correctly"
+  },
+  "R025": {
+   "candidates": {
+    "10042": {
+     "class": "not_a_post",
+     "note": "cyclists/pedestrians on the bike path"
+    }
+   },
+   "added": [
+    {
+     "E": -1159.7,
+     "N": 21.7,
+     "class": "lamp",
+     "note": "pedestrian lamp on the pier at the wall end; N stroke with head 2022, NW stroke with head 2020"
+    }
+   ],
+   "note": "dark blocks on the fence piers along the sidewalk (about E -1163 N 37, E -1155 N 46) are short pier lights/bollards, not counted"
+  },
+  "RX002": {
+   "candidates": {
+    "10043": {
+     "class": "not_a_post",
+     "note": "cyclist/pedestrian on the bike path"
+    },
+    "1049": {
+     "class": "not_a_post",
+     "note": "rocks in the creek bed, no stroke"
+    }
+   },
+   "added": [],
+   "note": "pier lamp at E -1159.7 N 21.7 also visible here (added in R025); matching W pier at about E -1190.2 N 21.9 has an object but no clear stroke in either year, not added"
+  },
+  "R026": {
+   "candidates": {
+    "10044": {
+     "class": "not_a_post",
+     "note": "tree branches"
+    },
+    "10046": {
+     "class": "not_a_post",
+     "note": "tree/shrub"
+    }
+   },
+   "added": [],
+   "note": "stroke rising from the bottom edge near E -1162 is the shadow of the accepted lamp at E -1162.5 N 41.7 (R025)"
+  },
+  "RX003": {
+   "candidates": {
+    "10045": {
+     "class": "not_a_post",
+     "note": "bridge abutment corner / tree"
+    },
+    "1032": {
+     "class": "not_a_post",
+     "note": "cracks between cascade boulders"
+    }
+   },
+   "added": [],
+   "note": "dark blocks along the path walls are wall-end shadows"
+  },
+  "R027": {
+   "candidates": {
+    "10047": {
+     "class": "not_a_post",
+     "note": "lane line paint"
+    },
+    "10048": {
+     "class": "not_a_post",
+     "note": "open grass, nothing"
+    }
+   },
+   "added": [],
+   "note": ""
+  },
+  "R031": {
+   "candidates": {
+    "10049": {
+     "class": "not_a_post",
+     "note": "on the rails under the mast arm's shadow"
+    },
+    "10050": {
+     "class": "not_a_post",
+     "note": "tip of a triangular planter/kiosk shadow"
+    },
+    "10051": {
+     "class": "not_a_post",
+     "note": "low white object (bin/box) at the corner, no stroke"
+    }
+   },
+   "added": [
+    {
+     "E": -876.5,
+     "N": 415.6,
+     "class": "lamp",
+     "note": "twin-head pedestrian lamp at the panel's bottom edge, 2022 only (2020 hidden by building lean); may belong to the next panel"
+    },
+    {
+     "E": -882.2,
+     "N": 418.8,
+     "class": "post_unknown",
+     "note": "thin post by tree pit on the SE sidewalk, 2022 stroke only"
+    }
+   ],
+   "note": "SE quadrant: 2020 tower lean covers the sidewalk"
+  },
+  "R034": {
+   "candidates": {
+    "10052": {
+     "class": "not_a_post",
+     "note": "duplicate of an accepted post: ring on the 2022 shadow head of the lamp 3 m S, and on the planter tree"
+    }
+   },
+   "added": [],
+   "note": "dark items on the NW sidewalk are pedestrians; W half in tower shadow 2022"
+  },
+  "RX004": {
+   "candidates": {
+    "10053": {
+     "class": "not_a_post",
+     "note": "rooftop HVAC units"
+    }
+   },
+   "added": [
+    {
+     "E": -824.3,
+     "N": 546.4,
+     "class": "lamp",
+     "note": "pedestrian lamp at curb of NE sidewalk: 2020 globe foot + long NW stroke with head; 2022 in tower shadow (also falls in R034)"
+    }
+   ],
+   "note": "2022 street N of the building in tower shadow"
+  },
+  "R035": {
+   "candidates": {
+    "10054": {
+     "class": "not_a_post",
+     "note": "rooftop equipment"
+    },
+    "10055": {
+     "class": "not_a_post",
+     "note": "2022 building shadow; 2020 bare sidewalk by the building, nothing at the ring"
+    }
+   },
+   "added": [],
+   "note": "short dark strokes along the SW curb in 2022 are parking meters; 2020 sign-plate shadow at about E -859 N 580 not confirmed in 2022, not added"
+  },
+  "R036": {
+   "candidates": {
+    "10056": {
+     "class": "not_a_post",
+     "note": "2022 building shadow; 2020 a railing along the building, no post"
+    },
+    "10058": {
+     "class": "not_a_post",
+     "note": "parking meters / curb items, no post stroke"
+    },
+    "10059": {
+     "class": "not_a_post",
+     "note": "flagpole on the rooftop (flag at its foot), not a street post"
+    },
+    "10060": {
+     "class": "not_a_post",
+     "note": "parked-car edge in the lot"
+    }
+   },
+   "added": [],
+   "note": "W half in tower shadow 2022; green squares there judged from 2020 only"
+  }
+ }
+}

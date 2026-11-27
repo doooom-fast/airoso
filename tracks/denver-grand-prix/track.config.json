@@ -682,6 +682,14 @@
      "why": "the same median's west nose, short of the Sherman crosswalk and the start line (v50)"
     }
    ],
+   "hard_min_zones": [
+    {
+     "from": 26,
+     "to": 46,
+     "clear_hard_min_m": 5.3,
+     "why": "Kevin, 2026-11-27, from his Apple TV, verbatim: \"allow it narrow there\". He was answering: \"The city drew Colfax's raised median only from Sherman to Grant (56 m, the start/finish block). With a barrier lining it, the race lane there is 5.4-7.0 m between barriers, under Denver's 6.5 m minimum (an invented number borrowed from Lake Murray). Allow it narrower there (5.3 m minimum, that block only), or paint the median flat?\" The median run v27-v45 and its two nose pins only; 6.5 m everywhere else"
+    }
+   ],
    "_closure_doc": "the north lane sealed along the median by the fleet's usual K-rail (closure run v26-v46, island_mode pavement), the south carriageway beside it closed at both noses; whole street everywhere else (as Sand Creek round K before the median)",
    "rate_toward_race_side": 12,
    "rate_away": 6,

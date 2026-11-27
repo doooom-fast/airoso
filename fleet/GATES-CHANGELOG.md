@@ -14,6 +14,27 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
+## 2026-11-27 — A declared lower lane minimum for Colfax's median block (Denver only, opt-in; the race gate still red)
+
+Kevin, 2026-11-27, from his Apple TV, verbatim: "allow it narrow there". He was answering: "The city drew Colfax's raised
+median only from Sherman to Grant (56 m, the start/finish block). With a barrier lining it, the race lane there is 5.4-7.0
+m between barriers, under Denver's 6.5 m minimum (an invented number borrowed from Lake Murray). Allow it narrower there
+(5.3 m minimum, that block only), or paint the median flat?"
+
+`race.corridor.hard_min_zones` (tools/barrier_bands.py, opt-in; absent = every clear gate reads `clear_hard_min_m`, byte
+for byte): `[{from, to, clear_hard_min_m, why}]` lowers the race lane's HARD minimum over those vertices only (the
+closure-run clear gate, the nose-pin lane gate, the chicane lane gate). It may not raise the minimum, may not reach 0,
+and needs its why. Denver declares one: v26-v46 (the median run v27-v45 and its two nose pins) at 5.3 m; 6.5 m stays
+everywhere else and on every other track. The soft floor (`clear_floor_m` 10.86) is unchanged; lanes under it in the
+zone are still listed (island). Proven: tests/tools/test_barrier_bands*.py, test_race_noses.py, test_race_corridor.py
+54/54.
+
+**Not green:** with the zone, the Denver race declaration still fails three gates, none of them moved: the nose-pin lane
+at v26 is 5.23 m (< 5.3), the closure's plan radius at v27 is 14.5 m (< 20 m; the closure is held on the island's 9 m
+nose taper there because the narrow road puts the solve's floor bound under its island bound), and the spawn zone
+(pole to the last pit, one offset) has no offset that clears 0.3 m at both the grid (6.19-7.07 m right) and the pits on
+the narrower street toward Grant (3.98-4.79 m right).
+
 ## 2026-11-25 — Interpolate the street ribbon's width at each sweep station (Denver, opt-in)
 
 At Denver r6 station 2455, the built ribbon widens from 10.71 to 12.53 m over 3.013 m. The sweep read the far row's

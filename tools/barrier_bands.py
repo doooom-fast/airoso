@@ -392,6 +392,10 @@ def build(project_dir, out_name: str | None = None, config_path=None, *, planned
     height = float(race.get("barrier_height_m", 1.2))
     strip_c = edge_inset - bhalf                   # 0.485: the strip centre from the curb line
     P = _RC.params_from(cor_cfg)
+    # race.corridor.hard_min_zones (opt-in; absent = the one clear_hard_min_m everywhere, as before): a declared stretch
+    # whose race lane may be narrower than clear_hard_min_m, each with its own floor and the call that allowed it
+    hard_min_zones, hmz_fails = _hard_min_zones(cor_cfg.get("hard_min_zones"), P)
+    fails += hmz_fails
     island_mode = str(cor_cfg.get("island_mode", "pavement"))
     if island_mode != "pavement":
         fails.append(f"race.corridor.island_mode {island_mode!r}: only \"pavement\" is part of this ship "
@@ -685,6 +689,8 @@ def build(project_dir, out_name: str | None = None, config_path=None, *, planned
             "edge_inset": edge_inset, "bhalf": bhalf, "strip_c": strip_c}
     if ctx.get("island_off") is not None:
         vctx["island_off"] = ctx["island_off"]           # ledger 0054 Phase 2 (opt-in): the islands gate reads it
+    if hard_min_zones:
+        vctx["hard_min_zones"] = hard_min_zones          # opt-in: the clear gates read the zone's own floor
     if noses:
         # ledger 0054 Phase 2: the declared nose ends (the self-gates read them; nothing is added when none is declared)
         out["zones"]["noses"] = [{k: nz[k] for k in ("end", "median", "pin", "run")} for nz in noses]
@@ -735,7 +741,42 @@ def _corridor_params_echo(cor_cfg, P, measured_clear, island_mode):
     echo.update({"island_mode": island_mode, "clear_width_source": cor_cfg.get("clear_width_source"),
                  "clear_width_measured_m": measured_clear, "whole": cor_cfg.get("whole"),
                  "boxes": cor_cfg.get("boxes"), "closure_runs": cor_cfg.get("closure_runs")})
+    if cor_cfg.get("hard_min_zones"):
+        echo["hard_min_zones"] = cor_cfg.get("hard_min_zones")   # opt-in: absent on every declaration without one
     return echo
+
+
+def _hard_min_zones(spec, P):
+    """race.corridor.hard_min_zones (opt-in, 2026-11-27; first use Denver's Colfax median block, Kevin: "allow it narrow
+    there"): [{from, to, clear_hard_min_m, why}] -> ([{from, to, min}], fails). Each zone LOWERS the race lane's hard
+    minimum over its vertices (inclusive, wrapping on a closed lap) and only there; it may not raise it, may not go to 0,
+    and must say why (the call that allowed it). Absent = []: every clear gate reads clear_hard_min_m, byte for byte."""
+    if not spec:
+        return [], []
+    out, fails = [], []
+    glob = float(P["clear_hard_min_m"])
+    for z in spec if isinstance(spec, list) else [spec]:
+        try:
+            a, b, mn = int(z["from"]), int(z["to"]), float(z["clear_hard_min_m"])
+        except (KeyError, TypeError, ValueError) as e_:
+            fails.append(f"hard_min_zones: an entry needs integer from / to and clear_hard_min_m ({e_!r}): {z!r}")
+            continue
+        if not (0.0 < mn <= glob):
+            fails.append(f"hard_min_zones: v{a}-v{b} minimum {mn} m must be in (0, clear_hard_min_m {glob}]")
+            continue
+        if not str(z.get("why") or "").strip():
+            fails.append(f"hard_min_zones: v{a}-v{b} says no why (the call that allowed a narrower lane there)")
+            continue
+        out.append({"from": a, "to": b, "min": mn})
+    return out, fails
+
+
+def _hard_min_at(ctx, k):
+    """the race lane's hard minimum at vertex k: a declared hard_min_zones floor there, else clear_hard_min_m"""
+    for z in ctx.get("hard_min_zones") or ():
+        if _RC.in_rng(k, z["from"], z["to"], ctx["m"]):
+            return z["min"]
+    return float(ctx["params"]["clear_hard_min_m"])
 
 
 def _corridor_record(lid, tok, direction, sol, ctx, P, pts, widths, n, m, st, street_at, inset, bhalf, strip_c,
@@ -1607,7 +1648,7 @@ def _validate_chicanes(out: dict, ctx: dict) -> list[str]:
                 if not (-face - 1e-6 <= lo_ < hi_ <= face + 1e-6):
                     fails.append(f"chicanes {lid} {name}: v{k} lane [{lo_:.2f}, {hi_:.2f}] leaves the strip faces +-{face:.2f}")
                     break
-                if hi_ - lo_ < min(floor_, w_ends) - 1e-3 or hi_ - lo_ < hard_min:
+                if hi_ - lo_ < min(floor_, w_ends) - 1e-3 or hi_ - lo_ < _hard_min_at(ctx, k):
                     fails.append(f"chicanes {lid} {name}: v{k} lane {hi_ - lo_:.2f} m < min(the clear floor {floor_} m, "
                                  f"the corridor's own width at the chicane's ends {w_ends:.2f} m)")
                     break
@@ -1680,9 +1721,9 @@ def _validate_nose(lid, c, nz, ctx) -> list[str]:
         fails.append(f"noses {lid}: v{k} is a trimmed fold vertex of edge_{c['closure_side']} — no strip ring to bury "
                      f"the K-rail in")
     lo_, hi_ = c["lane_by_vertex"][k]
-    if hi_ - lo_ < float(ctx["params"]["clear_hard_min_m"]):
+    if hi_ - lo_ < _hard_min_at(ctx, k):
         fails.append(f"noses {lid}: the lane at the nose pin v{k} is {hi_ - lo_:.2f} m (< the hard minimum "
-                     f"{ctx['params']['clear_hard_min_m']} m)")
+                     f"{_hard_min_at(ctx, k)} m)")
     return fails
 
 
@@ -1870,8 +1911,8 @@ def validate(out: dict, ctx: dict) -> list[str]:
                 k = vs[q]
                 lo_, hi_ = lane[k]
                 clear = hi_ - lo_
-                if clear < hard_min:
-                    fails.append(f"clear {lid}: v{k} lane {clear:.2f} m < the hard minimum {hard_min} m")
+                if clear < _hard_min_at(ctx, k):
+                    fails.append(f"clear {lid}: v{k} lane {clear:.2f} m < the hard minimum {_hard_min_at(ctx, k)} m")
                     break
                 if clear < floor_ - 1e-6:
                     why = listed.get(k)

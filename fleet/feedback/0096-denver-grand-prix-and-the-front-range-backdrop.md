@@ -240,3 +240,16 @@ Report: [`source/survey/SURVEY.md`](../../tracks/denver-grand-prix/source/survey
 
 Owed: heights (flight hours), sign faces and posts' fixtures (street-level imagery, E3), Stout under the roof (captures), the
 free-roam grid's survey. The three gates of PLAN §4b now have inventories to hold a build to.
+## Colfax today: the sources and a per-block spec (cloud session, 2026-11-27)
+
+Kevin, 2026-11-25: "Colfax today yes". [`tracks/denver-grand-prix/source/survey/colfax_today/COLFAX-TODAY.md`](../../tracks/denver-grand-prix/source/survey/colfax_today/COLFAX-TODAY.md),
+with five crops of the city's drawing.
+
+- The rebuild is on the lap only from Broadway to Logan (431 m of Colfax's 1,389 m). The city's page says the bus-only
+  lanes have been in use since 2026-09-27; OSM (2026-11-23) tags them.
+- The layout comes from the city's **100% design roll plot, August 2024** (Denver Roll 1 of 4), read block by block.
+  **Broadway to Lincoln: bus lanes at the kerb, kerbside stops, no centre platform.** Lincoln to Sherman: the transition.
+  Sherman to Logan: two centre bus lanes with a 6 ft median between, one general lane each way. Section A-A (Sherman to
+  Grant): 64 ft kerb to kerb in a 100 ft right of way; the lap's westbound side there is 24 ft.
+- Not fixed by any public source: as built against the design, whether the lanes are red, the median's height, lane
+  widths outside section A-A. A dated photograph per block would close them.

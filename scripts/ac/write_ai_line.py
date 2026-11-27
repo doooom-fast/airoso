@@ -1639,7 +1639,10 @@ class CorridorFaces:
     (right of the y_hi face, left of the y_lo face, in forward order); ``island(x, z)`` = signed distance
     to the nearest island outline, positive outside it; ``clearance`` = the smallest of the three."""
 
-    def __init__(self, cl_pts, lane, closed: bool = True, island_half: list[float] | None = None):
+    def __init__(self, cl_pts, lane, closed: bool = True, island_half: list[float] | None = None,
+                 island_c: list[float] | None = None):
+        """``island_c`` (opt-in, OFFSET ISLAND): the island's centre lateral per vertex, forward-left (median_bands.json
+        island_off_by_vertex); None = every island centred on the line, as before."""
         m = len(cl_pts)
         if len(lane) < m:
             raise ValueError(f"lane_by_vertex has {len(lane)} rows for {m} vertices")
@@ -1697,8 +1700,14 @@ class CorridorFaces:
                 while j < m and island_half[j] > 0.0:
                     j += 1
                 ks = list(range(k, j))
-                left = [(cl_pts[q][0] - T[q][1] * island_half[q], cl_pts[q][2] + T[q][0] * island_half[q]) for q in ks]
-                right = [(cl_pts[q][0] + T[q][1] * island_half[q], cl_pts[q][2] - T[q][0] * island_half[q]) for q in ks]
+                if island_c is None:
+                    left = [(cl_pts[q][0] - T[q][1] * island_half[q], cl_pts[q][2] + T[q][0] * island_half[q]) for q in ks]
+                    right = [(cl_pts[q][0] + T[q][1] * island_half[q], cl_pts[q][2] - T[q][0] * island_half[q]) for q in ks]
+                else:
+                    yl = {q: island_c[q] + island_half[q] for q in ks}      # forward-left laterals of the two edges
+                    yr = {q: island_c[q] - island_half[q] for q in ks}
+                    left = [(cl_pts[q][0] - T[q][1] * yl[q], cl_pts[q][2] + T[q][0] * yl[q]) for q in ks]
+                    right = [(cl_pts[q][0] - T[q][1] * yr[q], cl_pts[q][2] + T[q][0] * yr[q]) for q in ks]
                 loops.append(left + right[::-1])
                 k = j
         self.island_loops = loops
@@ -1707,6 +1716,8 @@ class CorridorFaces:
         # is outside every island and at least that far clear (the queries stay local: a full 48 m reach
         # from every probe of a lap was 2/3 of the writer's run time)
         reach = ISLAND_REACH_CELLS + int(math.ceil(max(island_half or [0.0]) / FACE_CELL_M))
+        if island_c is not None:
+            reach += int(math.ceil(max([abs(c) for c in island_c] or [0.0]) / FACE_CELL_M))
         self._isl = _SegSet(loops, True, pos_left=True, far=reach * FACE_CELL_M, reach_cells=reach) if loops else None
 
     def polyline(self, which: str) -> list[tuple[float, float]]:
@@ -1765,7 +1776,7 @@ def _corner_stations(pts, closed: bool, ds: float, n_st: int, tan_xz, corners: l
 
 
 def corridor_for_layout(bands: dict, layout_id: str, pts_fwd, *, reverse: bool, closed: bool = True,
-                        island_w: list[float] | None = None) -> dict | None:
+                        island_w: list[float] | None = None, island_c: list[float] | None = None) -> dict | None:
     """A race layout's corridor from a ledger-0049 declaration (``data/barrier_bands.json`` version 2,
     ``corridors.<layout id>``), ready for build_line: the two faces right of THIS travel per travel-order
     vertex, the zone codes, the open corners, the CorridorFaces (built on ``pts_fwd``, the forward-order
@@ -1801,17 +1812,31 @@ def corridor_for_layout(bands: dict, layout_id: str, pts_fwd, *, reverse: bool, 
     zcode = [float(codes[z]) for z in zone[:m]]
     chic = [1.0 if z == "chicane" else 0.0 for z in zone[:m]]
     ih = authored_island_half(list(island_w[:m])) if island_w else [0.0] * m
-    faces = CorridorFaces(pts_fwd, lane, closed, island_half=ih)
+    ic = list(island_c[:m]) if island_c is not None else None
+    faces = CorridorFaces(pts_fwd, lane, closed, island_half=ih, island_c=ic)
     # the lane in the forward frame, stopped at an authored island's outline (a no-op in pavement mode,
     # where the closure face already stands 0.82 m off it)
     lane_c, island_clipped = [], 0
-    for (a, b), h in zip(lane, ih):
-        if h > 0.0:
-            if (a + b) / 2.0 <= 0.0 and b > -h:
-                b, island_clipped = -h, island_clipped + 1
-            elif (a + b) / 2.0 > 0.0 and a < h:
-                a, island_clipped = h, island_clipped + 1
-        lane_c.append((a, b))
+    if ic is None:
+        for (a, b), h in zip(lane, ih):
+            if h > 0.0:
+                if (a + b) / 2.0 <= 0.0 and b > -h:
+                    b, island_clipped = -h, island_clipped + 1
+                elif (a + b) / 2.0 > 0.0 and a < h:
+                    a, island_clipped = h, island_clipped + 1
+            lane_c.append((a, b))
+    else:
+        # OFFSET ISLAND: the island spans [c - h, c + h] (forward-left); a lane that holds it on both sides keeps THIS
+        # travel's race side (forward: right, y < c; reverse: left), any other lane the side its centre is on
+        for (a, b), h, c in zip(lane, ih, ic):
+            if h > 0.0:
+                both = a < c - h and b > c + h
+                right = (not reverse) if both else (a + b) / 2.0 <= c
+                if right and b > c - h:
+                    b, island_clipped = c - h, island_clipped + 1
+                elif not right and a < c + h:
+                    a, island_clipped = c + h, island_clipped + 1
+            lane_c.append((a, b))
     if reverse:
         lo = [lane_c[m - 1 - j][0] for j in range(m)]        # r = +y for the reverse travel
         hi = [lane_c[m - 1 - j][1] for j in range(m)]
@@ -2648,7 +2673,7 @@ def _to_engine_frame(pts, project: Path | None, mirror_x: bool) -> tuple[list[li
 
 
 def check_lane_clearance(line_pts, cl_pts, widths, dh, inset, island_w, *, closed: bool,
-                         expect_right: bool, clear_m: float = CHECK_CLEAR_M) -> dict:
+                         expect_right: bool, clear_m: float = CHECK_CLEAR_M, div_c: list[float] | None = None) -> dict:
     """Judge the finished line (engine frame) against the PER-VERTEX declaration, not the resampled
     channels: the nearest declared SEGMENT, the point's signed distance from it (positive = right of
     the declared forward order), the width interpolated along it and the larger divider / island /
@@ -2704,14 +2729,17 @@ def check_lane_clearance(line_pts, cl_pts, widths, dh, inset, island_w, *, close
         w = widths[i0] + (widths[i1] - widths[i0]) * t
         s = max(inset[i0], inset[i1])
         d, iw = max(dh[i0], dh[i1]), max(island_w[i0], island_w[i1])
-        if iw > 0.0 and abs(lat) <= iw / 2.0:
+        # OFFSET ISLAND (div_c, opt-in): the divider's centre, metres right of the declared forward order; 0 = the line
+        dc = 0.0 if div_c is None else (div_c[i0] if dh[i0] >= dh[i1] else div_c[i1])
+        lat_d = lat - dc if div_c is not None else lat
+        if iw > 0.0 and abs(lat_d) <= iw / 2.0:
             res["island_hits"] += 1
         if d > 0.0:
             res["divider_stations"] += 1
-            on_right = lat > 0.0
+            on_right = lat_d > 0.0
             if on_right == expect_right:
                 res["right_side"] += 1
-            c = abs(lat) - d
+            c = abs(lat_d) - d
             if c <= 0.0:
                 res["divider_hits"] += 1
             res["min_divider_clear_m"] = c if res["min_divider_clear_m"] is None else min(res["min_divider_clear_m"], c)
@@ -2937,6 +2965,17 @@ def main(argv: list[str] | None = None) -> None:
     # Per-vertex divider channels, ENGINE frame, index-aligned with the forward vertex order.
     zeros = [0.0] * n
     island = _channel(src if _lap else data_dir / "median_bands.json", "island_w_by_vertex", n, "island") or zeros
+    # OFFSET ISLAND (opt-in, the mainline only): median_bands.json island_off_by_vertex, forward-left metres; read
+    # silently when absent (every other track's run prints and writes exactly what it did)
+    island_c = None
+    if not _lap and (data_dir / "median_bands.json").exists():
+        _ioff = json.loads((data_dir / "median_bands.json").read_text(encoding="utf-8")).get("island_off_by_vertex")
+        if _ioff is not None:
+            if len(_ioff) not in (n, n + 1):
+                raise SystemExit(f"median_bands.json island_off_by_vertex: {len(_ioff)} values vs {n} vertices")
+            island_c = [float(v) for v in _ioff[:n]]
+            print(f"  [island] offset island: centre off the line at {sum(1 for c in island_c if abs(c) > 1e-9):,} "
+                  f"vertices ({min(island_c):+.2f} .. {max(island_c):+.2f} m forward-left)")
     if race and not _lap:
         # ledger 0055: a race layout drives beside the RACE island — a declared chicane's street-only island is not
         # in its kn5 set (scripts/geometry/race_chicane.race_island_w)
@@ -2951,7 +2990,8 @@ def main(argv: list[str] | None = None) -> None:
         # A version-1 file keeps the 0047 centre-chain lane below (legacy, until barrier_bands v2 lands).
         bands = json.loads(bands_path.read_text(encoding="utf-8")) if bands_path.exists() else {}
         corridor = corridor_for_layout(bands, args.layout or "", [list(p) for p in pts],
-                                       reverse=(mode == "reverse"), closed=closed, island_w=island) if bands else None
+                                       reverse=(mode == "reverse"), closed=closed, island_w=island,
+                                       **({"island_c": island_c} if island_c is not None else {})) if bands else None
         if corridor is None:
             centre_w = _channel(bands_path, "centre_w_by_vertex", n, "barrier") or zeros
             inset = _channel(bands_path, "edge_inset_by_vertex", n, "barrier") or zeros
@@ -2968,6 +3008,16 @@ def main(argv: list[str] | None = None) -> None:
     fwd_order = {"pts": [list(p) for p in pts], "widths": list(widths), "dh": dh, "inset": inset,
                  # a corridor is judged against the island as AUTHORED (nose taper), like its own faces
                  "island": island if corridor is None else [2.0 * h for h in authored_island_half(island)]}
+    div_c = None
+    if island_c is not None:
+        # OFFSET ISLAND: the self-check measures from the island's own centre (right of the forward order = -c), and
+        # the lane policy (lane_offsets / lane_corridor / sides) takes the island's RIGHT face in THIS travel's frame
+        # (forward: half - c; reverse: half + c) where a centred island's is its half
+        div_c = [(-c if iw > 0.0 else 0.0) for c, iw in zip(island_c, island)]
+        if corridor is None:
+            rev = mode == "reverse"
+            dh = [max((iw / 2.0 + c if rev else iw / 2.0 - c) if iw > 0.0 else 0.0, cw / 2.0)
+                  for iw, c, cw in zip(island, island_c, centre_w)]
     if mode == "reverse":
         pts, widths = list(reversed(pts)), list(reversed(widths))
         dh, inset = list(reversed(dh)), list(reversed(inset))
@@ -3038,7 +3088,7 @@ def main(argv: list[str] | None = None) -> None:
     # Write-time self-check against the DECLARATION (per-vertex, forward order, engine frame).
     chk = check_lane_clearance(line["pts"], fwd_order["pts"], fwd_order["widths"], fwd_order["dh"],
                                fwd_order["inset"], fwd_order["island"], closed=closed,
-                               expect_right=(mode == "forward"))
+                               expect_right=(mode == "forward"), **({"div_c": div_c} if div_c is not None else {}))
     chk_c = None
     if corridor is not None:
         # the race line against its corridor's wall FACES (funnels, island faces, the trimmed inside corners)

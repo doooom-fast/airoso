@@ -122,11 +122,16 @@ def islands(proj, short=False):
     data = Path(proj) / "data"
     P = json.loads((data / "centerline.local.json").read_text(encoding="utf-8"))["points_xyz_m"]
     mb = json.loads((data / "median_bands.json").read_text(encoding="utf-8"))
-    lines = [("MAINLINE", P, mb["island_w_by_vertex"])]
+    # OFFSET ISLAND (opt-in, median_bands.json island_off_by_vertex, + = forward-left; tools/median_island.py): the
+    # mainline island's rows stand at its own centre, as tools/author_median_blend.py builds it; absent = the line
+    off = mb.get("island_off_by_vertex")
+    if off is not None and len(off) != len(P):
+        die(f"median_bands.json island_off_by_vertex has {len(off)} rows, the centreline {len(P)}")
+    lines = [("MAINLINE", P, mb["island_w_by_vertex"], off)]
     for ci in mb.get("connector_islands") or []:
-        lines.append((ci["name"], ci["points_xyz_m"], ci["island_w_by_point"]))
+        lines.append((ci["name"], ci["points_xyz_m"], ci["island_w_by_point"], None))
     out = []
-    for name, pts, iw in lines:
+    for name, pts, iw, ioff in lines:
         m, k = len(pts), 0
         while k < m:
             if iw[k] <= 0:
@@ -140,7 +145,11 @@ def islands(proj, short=False):
                 a, b = pts[max(0, r - 1)], pts[min(m - 1, r + 1)]
                 tx, tz = b[0] - a[0], b[2] - a[2]
                 L = math.hypot(tx, tz) or 1.0
-                rows.append((pts[r][0], pts[r][2], -tz / L, tx / L, float(iw[r])))
+                if ioff is None:
+                    rows.append((pts[r][0], pts[r][2], -tz / L, tx / L, float(iw[r])))
+                else:
+                    o = float(ioff[r])
+                    rows.append((pts[r][0] - tz / L * o, pts[r][2] + tx / L * o, -tz / L, tx / L, float(iw[r])))
             if (j - k >= MIN_ISLAND_ROWS) != short:
                 out.append({"line": name, "first": k, "last": j - 1, "rows": rows})
             k = j

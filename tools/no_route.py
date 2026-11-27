@@ -115,7 +115,7 @@ class Corridor:
     """Everything the fill needs from the project, in the frame of data/centerline.local.json
     (x = E, y = up, z = N; +y lateral = LEFT of the increasing-vertex tangent)."""
 
-    def __init__(self, pts, widths, layout: dict, bands: dict, island_w=None, mirror=False):
+    def __init__(self, pts, widths, layout: dict, bands: dict, island_w=None, mirror=False, island_off=None):
         n = len(pts)
         self.closed = n > 2 and abs(pts[0][0] - pts[-1][0]) < 1e-6 and abs(pts[0][2] - pts[-1][2]) < 1e-6
         self.m = n - 1 if self.closed else n
@@ -146,6 +146,10 @@ class Corridor:
             self.st.append(self.st[-1] + math.hypot(b[0] - a[0], b[2] - a[2]))
         iw = list(island_w or [])
         self.island_half = auth_island_half(iw[:m] if len(iw) >= m else [0.0] * m)
+        # OFFSET ISLAND (opt-in, median_bands.json island_off_by_vertex on the mainline, + = forward-left): the island's
+        # centre lateral per vertex; None = every island centred on the line, as before
+        self.island_off = ([float(o) for o in island_off[:m]] if island_off is not None and len(island_off) >= m
+                           else None)
         self.edge_strip = [int(v) for v in (bands.get("edge_strip_by_vertex") or [1] * n)[:m]]
         self.corners = [{"side": str(c["side"]), "i": int(c["in_vertex"]), "j": int(c["out_vertex"]),
                          "removed": set(int(v) for v in c.get("removed", [])),
@@ -198,6 +202,9 @@ class Corridor:
                 div = cw[k] / 2.0
             elif self.island_half[k] > 0:
                 div = self.island_half[k]
+                if self.island_off is not None:
+                    # the v1 lane's island face on the travel side (forward: right, y < 0; reverse: left)
+                    div = div - self.island_off[k] if not self.reverse else div + self.island_off[k]
             else:
                 div = None
             if div is None:
@@ -732,12 +739,15 @@ def run(project_dir, layout_id: str, *, planned: bool = False, obj: str | None =
         pts = [tuple(p) for p in cl["points_xyz_m"]]
         widths = [float(w) for w in cl["widths_m"]]
         mb = data / "median_bands.json"
-        iw = json.loads(mb.read_text(encoding="utf-8")).get("island_w_by_vertex", []) if mb.exists() else []
+        mbj = json.loads(mb.read_text(encoding="utf-8")) if mb.exists() else {}
+        iw = mbj.get("island_w_by_vertex", []) if mb.exists() else []
         iw = _race_chicane().race_island_w(iw, cfg)       # ledger 0055: a street-only island is not in a race lane
+        ioff = mbj.get("island_off_by_vertex")            # OFFSET ISLAND (opt-in), the mainline's
     else:
         ln = _LAP.line_for(proj, cfg, layout_id)
         pts, widths, iw = ln["pts"], ln["widths"], ln["island_w"]
-    corr = Corridor(pts, widths, lo, bands, iw, mirror)
+    corr = Corridor(pts, widths, lo, bands, iw, mirror, **({"island_off": ioff} if lap is None and line is None
+                                                          and ioff is not None else {}))
     if len(corr.lane) != corr.m:
         raise SystemExit(f"[no_route] lane_by_vertex ({len(corr.lane)}) vs centreline ({corr.m}) length mismatch")
     say = print if verbose else (lambda *a, **k: None)
@@ -1261,7 +1271,8 @@ def _door_class(corr: Corridor, k: int, y: float) -> str:
             if mo["side"] == side and lo_ - 2 <= k <= hi_ + 2:
                 return "side_street"
         return "off_road"
-    if corr.island_half[k] > 0 and abs(y) <= corr.island_half[k] + ISLAND_MARGIN_M:
+    yc = y - corr.island_off[k] if corr.island_off is not None else y      # OFFSET ISLAND: from its own centre
+    if corr.island_half[k] > 0 and abs(yc) <= corr.island_half[k] + ISLAND_MARGIN_M:
         return "island"
     return "opposite"
 

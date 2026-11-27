@@ -26,6 +26,8 @@ finished_centerline.json, else centerline.local.json with mirror_x), and answers
     zone.contains(x, z)                            # on the island? (default kinds = ('island',))
     zone.contains(x, z, ('island', 'barrier'))     # ... or on a declared barrier band
     zone.island_half_at(i)                         # island half-width at centreline vertex i
+    zone.island_centre_at(i)                       # its centre lateral (forward-left; 0 unless an offset island)
+    zone.island_face_at(i)                         # its RIGHT face, metres right of this zone's travel (= half when centred)
     zone.barrier_half_at(i)                        # 0.335 where the centre chain stands, else 0
     zone.edge_inset_at(i)                          # the kerb-line barrier's lane inset (0.82), else 0
     zone.edge_corner_spans('edge_R')               # trimmed fold corners of that strip: [(i, j, [A, X, B])]
@@ -92,7 +94,7 @@ def _load_pts(project: Path):
 class MedianZone:
     def __init__(self, pts, island_w, extra=(), *, widths=None, centre_w=None, edge_strip=None,
                  edge_inset=None, barrier_half=0.335, edge_centre_from_lip=-0.485, mouths=(), edge_corners=(),
-                 closure_y=None, lane=None, zone_kind=None, layout=None, race_wall_y=None):
+                 closure_y=None, lane=None, zone_kind=None, layout=None, race_wall_y=None, island_off=None):
         """pts/island_w: the mainline (gate frame). extra: [(pts, island_w), ...] for divided
         connectors' islands (tools/divide_connectors.py), same frame as the gate OBJ.
         Barrier kind (all per mainline vertex, same length as pts, or absent): centre_w (the chain's
@@ -109,7 +111,19 @@ class MedianZone:
         # (SD: 27.5 m vs Alvarado's 17.0 m) and a one-sided tangent that is 6.8 deg off at the seam
         self.closed = n > 2 and abs(pts[0][0] - pts[-1][0]) < 1e-6 and abs(pts[0][2] - pts[-1][2]) < 1e-6
         self.island_w = list(island_w) if island_w else [0.0] * n
-        self.polys = [(pts, self.island_w)] + list(extra)
+        # OFFSET ISLAND (opt-in: median_bands.json island_off_by_vertex on the mainline, + = forward-left, the frame of
+        # tools/median_island.py): the island's own centre points stand in the band test; absent = the line itself
+        self.island_off = ([float(o) for o in island_off] if island_off is not None and len(island_off) == n else None)
+        isl_pts = pts
+        if self.island_off is not None:
+            isl_pts = []
+            for i in range(n):
+                a, b = pts[max(0, i - 1)], pts[min(n - 1, i + 1)]
+                tx, tz = b[0] - a[0], b[2] - a[2]
+                L = math.hypot(tx, tz) or 1e-9
+                o = self.island_off[i]
+                isl_pts.append((pts[i][0] - tz / L * o, pts[i][1], pts[i][2] + tx / L * o))
+        self.polys = [(isl_pts, self.island_w)] + list(extra)
         self.widths = list(widths) if widths and len(widths) == n else [0.0] * n
         self.centre_w = list(centre_w) if centre_w and len(centre_w) == n else [0.0] * n
         self.edge_strip = list(edge_strip) if edge_strip and len(edge_strip) == n else [0] * n
@@ -229,9 +243,15 @@ class MedianZone:
             pts, widths = _load_pts(project)
         iw: list = []
         extra = []
+        ioff = None
         if bands.exists():
             mj = json.loads(bands.read_text(encoding="utf-8"))
             iw = mj.get("island_w_by_vertex", []) if lap_rec is None else list(lap_rec["island_w_by_vertex"])
+            if lap_rec is None and mj.get("island_off_by_vertex") is not None:
+                ioff = list(mj["island_off_by_vertex"])       # OFFSET ISLAND (opt-in), the mainline's
+                if len(ioff) != len(pts):
+                    raise SystemExit(f"median_zone: median_bands island_off_by_vertex ({len(ioff)}) vs centreline "
+                                     f"({len(pts)}) - re-run tools/declared_medians.py")
             if len(iw) != len(pts):
                 print(f"  [median-zone] bands ({len(iw)}) vs centreline ({len(pts)}) length mismatch "
                       f"— island exemption DISABLED")
@@ -287,7 +307,7 @@ class MedianZone:
                         # median noses are declared bands too, segment bands like the sealed-mouth lines (D / drive_test
                         # exempt a wall standing on them, as on a closure) — absent on every declaration without noses
                         kw["mouths"] = kw["mouths"] + [w.get("polyline_xyz_m", []) for w in cor["nose_walls"]]
-        zone = cls(pts, iw, extra, widths=widths, **kw)
+        zone = cls(pts, iw, extra, widths=widths, island_off=ioff, **kw)
         if zone.n_island == 0 and zone.n_barrier == 0 and zone.n_edge == 0 and zone.n_closure == 0:
             return None
         return zone
@@ -325,6 +345,20 @@ class MedianZone:
         if 0 <= i < len(self.island_w):
             return self.island_w[i] / 2.0
         return 0.0
+
+    def island_centre_at(self, i: int) -> float:
+        """the island's centre lateral at vertex i, forward-left of this zone's order (0 unless an offset island)"""
+        if self.island_off is not None and 0 <= i < len(self.island_off):
+            return self.island_off[i]
+        return 0.0
+
+    def island_face_at(self, i: int) -> float:
+        """the island's RIGHT face at vertex i, metres right of this zone's travel: its half-width when it is centred
+        (exactly island_half_at), half - centre for an offset island; 0 where no island stands"""
+        h = self.island_half_at(i)
+        if h <= 0.0 or self.island_off is None:
+            return h
+        return h - self.island_centre_at(i)
 
     def barrier_half_at(self, i: int) -> float:
         """half-width of the centre chain where the band declares it (0.335), else 0"""
@@ -404,12 +438,13 @@ class MedianZone:
         ry = None if self.race_wall_y is None else [None if v is None else -v for v in self.race_wall_y[::-1]]
         lane = None if self.lane is None else [(-b, -a) for a, b in self.lane[::-1]]
         zk = None if self.zone_kind is None else self.zone_kind[::-1]
+        ioff = None if self.island_off is None else [-o for o in self.island_off[::-1]]
         return MedianZone(self.pts[::-1], self.island_w[::-1], self.polys[1:],
                           widths=self.widths[::-1], centre_w=self.centre_w[::-1],
                           edge_strip=self.edge_strip[::-1], edge_inset=self.edge_inset[::-1],
                           barrier_half=self.barrier_half, edge_centre_from_lip=self.edge_centre_from_lip,
                           mouths=self.mouths, edge_corners=corners, closure_y=cy, lane=lane, zone_kind=zk,
-                          layout=self.layout, race_wall_y=ry)
+                          layout=self.layout, race_wall_y=ry, island_off=ioff)
 
     # ---- the band test --------------------------------------------------------------------
     def contains(self, x: float, z: float, kinds=ISLAND_KINDS) -> bool:

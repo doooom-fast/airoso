@@ -886,7 +886,8 @@ def run(project_dir: str | Path, layout=None, obj: str | None = None, line: dict
         """(divider half-width, kerb-line inset) at mainline vertex j for THIS layout's kinds."""
         if _zone is None or not (0 <= j < n):
             return 0.0, 0.0
-        dh = _zone.island_half_at(j)
+        # the island's RIGHT face (its half-width when centred; half - centre for an OFFSET island, median_zone)
+        dh = _zone.island_face_at(j)
         if race:
             return max(dh, _zone.barrier_half_at(j)), _zone.edge_inset_at(j)
         return dh, 0.0

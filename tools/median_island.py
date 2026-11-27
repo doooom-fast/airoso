@@ -10,7 +10,13 @@ An island is a run of at least MIN_ISLAND_VERTS points of a line (the mainline, 
 whose band width is over 0. Per point k of the run [i, j): a curb ring of six vertices across the island, a deck pair
 inside it, and on a run of BARRIER_MIN_M or more a box beam along the middle with a post every POST_EVERY_M. The island
 tapers to NOSE_HALF over its first and last NOSE_VERTS points. Local frame x = east, y = up, z = north; every vertex
-is returned in Blender's frame (x, z, y): `B`."""
+is returned in Blender's frame (x, z, y): `B`.
+
+OFFSET ISLANDS (opt-in; data/median_bands.json `island_off_by_vertex` on the mainline, + = forward-left metres, the
+same sign as a lap's island_off_by_vertex): an island whose centre stands off the line it is indexed on (Denver's
+Colfax median, DOTI 100% design Aug 2024: 7.32 m off the north kerb, not in the street's middle). Every shape function
+takes `off` (that list) and `ys` (the road's height under each centre, from the scene) as keyword arguments; both
+absent = the centre is the line point itself, exactly as before, byte for byte."""
 from __future__ import annotations
 
 import math
@@ -61,6 +67,17 @@ def seg_length(pts, i, j):
     return sum(math.hypot(pts[k + 1][0] - pts[k][0], pts[k + 1][2] - pts[k][2]) for k in range(i, j - 1))
 
 
+def centre(pts, k, off=None, ys=None):
+    """(x, y, z) of the island's centre at point k: the line point, moved off[k] along the line's left normal and set
+    at ys[k] when either is given (OFFSET ISLANDS above); the line point itself otherwise"""
+    p = pts[k]
+    if off is None and ys is None:
+        return p[0], p[1], p[2]
+    o = float(off[k]) if off is not None else 0.0
+    tx, tz = tangent(pts, k)
+    return p[0] - tz * o, (float(ys[k]) if ys is not None else p[1]), p[2] + tx * o
+
+
 def half_width(iw, i, j, k):
     """the island's half width at point k of the run [i, j): half the band, tapered to NOSE_HALF at both ends"""
     si, n = k - i, j - i
@@ -72,12 +89,13 @@ def half_width(iw, i, j, k):
     return half
 
 
-def ring(pts, iw, i, j, k):
+def ring(pts, iw, i, j, k, off=None, ys=None):
     """(the curb ring's six vertices: Lbase LtopO LtopI RtopI RtopO Rbase, the deck's two) at point k of the run [i, j)"""
     half = half_width(iw, i, j, k)
     tx, tz = tangent(pts, k)
     lx, lz = -tz, tx
-    cx, cy, cz = pts[k][0], pts[k][1] + LIFT, pts[k][2]
+    cx, cy, cz = centre(pts, k, off, ys)
+    cy = cy + LIFT
 
     def P(off, dy):
         return B((cx + lx * off, cy + dy, cz + lz * off))
@@ -112,11 +130,11 @@ def beam_points(i, j):
     return list(range(i + NOSE_VERTS, j - NOSE_VERTS))
 
 
-def beam_ring(pts, k):
+def beam_ring(pts, k, off=None, ys=None):
     tx, tz = tangent(pts, k)
     lx, lz = -tz, tx
-    cx, cz = pts[k][0], pts[k][2]
-    yb = pts[k][1] + LIFT + CURB_H
+    cx, cy, cz = centre(pts, k, off, ys)
+    yb = cy + LIFT + CURB_H
     return [B((cx + lx * off, yb + dy, cz + lz * off)) for off, dy in BEAM]
 
 
@@ -137,9 +155,10 @@ def post_points(pts, bks):
     return out
 
 
-def post(pts, k):
+def post(pts, k, off=None, ys=None):
     """(eight vertices, the faces on them counted from 0) of the post at point k"""
-    cx, cz, yb = pts[k][0], pts[k][2], pts[k][1] + LIFT + CURB_H
+    cx, cy, cz = centre(pts, k, off, ys)
+    yb = cy + LIFT + CURB_H
     verts = []
     for (ox, oz) in POST:
         verts.append(B((cx + ox, yb, cz + oz)))

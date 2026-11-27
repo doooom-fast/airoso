@@ -787,7 +787,16 @@ def build(proj: Path, cfg: dict, spec: dict) -> dict:
     iw = bands.get("island_w_by_vertex") or [0.0] * len(pts)
     if len(iw) != len(pts):
         raise SystemExit(f"[road_lanes] FATAL: median_bands island_w_by_vertex has {len(iw)} rows, the centreline {len(pts)}")
-    isl = [(-iw[i] / 2.0, iw[i] / 2.0) if iw[i] > 0 else None for i in range(len(fr))]
+    ioff = bands.get("island_off_by_vertex")
+    if ioff is None:
+        isl = [(-iw[i] / 2.0, iw[i] / 2.0) if iw[i] > 0 else None for i in range(len(fr))]
+    else:
+        # OFFSET ISLAND (opt-in, median_bands.json island_off_by_vertex, + = forward-left = this file's lateral frame
+        # when the frames' left normal is the line's): the island stands off its line by that much
+        if len(ioff) != len(pts):
+            raise SystemExit(f"[road_lanes] FATAL: median_bands island_off_by_vertex has {len(ioff)} rows, the centreline "
+                             f"{len(pts)}")
+        isl = [(float(ioff[i]) - iw[i] / 2.0, float(ioff[i]) + iw[i] / 2.0) if iw[i] > 0 else None for i in range(len(fr))]
     per = [rule_lanes(widths[i] / 2.0, rule) for i in range(len(fr))]
     ex = _rows_excluded(len(fr), excl_by_road.get("mainline", []))
     lanes += road_lanes("mainline", "mainline", fr, closed, per, isl, ex, spec, stats)

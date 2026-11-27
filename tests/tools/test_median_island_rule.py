@@ -129,8 +129,9 @@ def test_and_with_a_street_only_span_cutting_an_island():
 
 def test_the_draft_tool_takes_its_shape_from_the_rule_and_holds_no_copy():
     src = TOOL.read_text(encoding="utf-8")
-    for frag in ('_MI = _load("_median_island_med", "tools/median_island.py")', "_MI.ring(pts, iw, i, j, k)",
-                 "_MI.curb_span_faces(base + si * 6)", "_MI.beam_ring(pts, k)", "_MI.post_points(pts, bks)",
+    # the calls carry the OFFSET ISLAND keywords (tools/median_island.py; None on every island but an offset one)
+    for frag in ('_MI = _load("_median_island_med", "tools/median_island.py")', "_MI.ring(pts, iw, i, j, k, off=ioff, ys=iys)",
+                 "_MI.curb_span_faces(base + si * 6)", "_MI.beam_ring(pts, k, off=ioff, ys=iys)", "_MI.post_points(pts, bks)",
                  "half_here = _MI.half_width(iw, i, j, k)", "_segments = _MI.segments"):
         assert frag in src, frag
     for gone in ("NOSE_HALF + (half - NOSE_HALF)", "CURB_H = 0.18", "if j - i >= 6:", "0.45), (-0.12, 0.75)"):

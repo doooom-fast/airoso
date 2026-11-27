@@ -432,6 +432,13 @@ draft_ground_release() {
   (cd "$AIROSO" && python tools/ground_release.py "$PROJ")
   (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/ground_release_blend.py" -- "$PROJ" 2>&1 | grep "^\[release\]\|Error\|Traceback" )
 }
+draft_declared_medians() {
+  # opt-in track.config.json route.declared_medians (Denver's Colfax bus-lane median, 2026-11-27): a raised median whose
+  # centre line is DECLARED (a design drawing read into the track's source) and may stand off the line -> median_bands.json
+  # island_w_by_vertex + island_off_by_vertex (tools/declared_medians.py, self-gated). Before `median`, which authors it
+  step "draft: declared raised medians -> median_bands.json (tools/declared_medians.py: island centre off the line, self-gated)"
+  (cd "$AIROSO" && python tools/declared_medians.py "$PROJ")
+}
 draft_median() {
   step "author: median island"
   (cd "$WS" && "$BL" --background --python-exit-code 1 --python "$AIROSO/tools/author_median_blend.py" -- "$PROJ" 2>&1 | grep "^\[median" )

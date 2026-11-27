@@ -25,6 +25,13 @@ share their cut rings, no nose at a cut; each piece left in the road kn5 is capp
 closed island end there). The grass deck stays in TERRAIN (the prep pins it under the road: no race-lane effect); no
 shrub is planted over the span (they become TreeFX, which is track-wide — a race lane crosses there).
 
+OFFSET ISLAND (opt-in: median_bands.json `island_off_by_vertex`, the mainline only; tools/median_island.py's OFFSET
+ISLANDS): the mainline island's centre stands that far off the line (+ = forward-left), and each ring sits on the ROAD
+surface under its own centre (a ray down onto the scene's ROAD), not at the line's height — the road's crossfall
+over the offset would float or bury the curb. Its top joins CURB (1KERB_sidewalk: a concrete top, the surface of every
+curb and walk) rather than TERRAIN, which the prep pins under the road (ledger 0055's known defect). Absent = every
+island exactly as before.
+
 Local frame is x=east, y=up, z=north; the blend is Blender Z-up via the (x, z, y) remap —
 apply the same remap here (LAWS L6: it is a reflection; wind faces deliberately).
 """
@@ -96,6 +103,44 @@ def _join_into(target_name, ob):
     bpy.ops.object.join()
 
 
+def _seat_heights(pts, iw, off):
+    """OFFSET ISLAND: per line point, the local height the shape rule takes for the island's centre — the scene's ROAD
+    under that centre (a ray straight down) less the ribbon lift the rule adds back (median_island.LIFT), so the curb's
+    base stands 0.02 m into the road there exactly as it does on a centred island. A point with no band keeps the
+    line's height. FATAL when no ROAD stands under a banded centre (an island off the pavement is a defect, not a
+    fallback)."""
+    from mathutils import Vector
+    from mathutils.bvhtree import BVHTree
+    road = bpy.data.objects.get("ROAD")
+    if road is None or road.type != "MESH":
+        raise SystemExit("[median-blend] FATAL: an offset island seats on the scene's ROAD — there is no ROAD mesh")
+    bvh = BVHTree.FromObject(road, bpy.context.evaluated_depsgraph_get())
+    mw = road.matrix_world
+    inv = mw.inverted()
+    down = (inv.to_3x3() @ Vector((0.0, 0.0, -1.0))).normalized()
+    ys, missed, moved = [], [], []
+    for k, p in enumerate(pts):
+        if iw[k] <= 0:
+            ys.append(p[1])
+            continue
+        cx, cy, cz = _MI.centre(pts, k, off, None)
+        hit = bvh.ray_cast(inv @ Vector((cx, cz, cy + 5.0)), down, 20.0)
+        if hit[0] is None:
+            missed.append(k)
+            ys.append(p[1])
+            continue
+        y = (mw @ hit[0]).z - LIFT
+        moved.append(y - p[1])
+        ys.append(y)
+    if missed:
+        raise SystemExit(f"[median-blend] FATAL: no ROAD under the offset island's centre at {len(missed)} row(s), "
+                         f"first v{missed[0]}")
+    if moved:
+        print(f"[median-blend] offset island: {len(moved)} rows seated on ROAD under their own centre; seat minus the "
+              f"line's height {min(moved):+.3f} .. {max(moved):+.3f} m")
+    return ys
+
+
 def main():
     argv = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else sys.argv[1:]
     proj = Path(argv[0])
@@ -108,10 +153,18 @@ def main():
     main_iw = bands["island_w_by_vertex"]
     if len(main_iw) != len(main_pts):
         raise SystemExit(f"[median-blend] vertex count mismatch: bands {len(main_iw)} vs centerline {len(main_pts)}")
+    # OFFSET ISLAND (opt-in): the mainline island's centre off the line, each ring seated on the ROAD under it
+    main_off = bands.get("island_off_by_vertex")
+    main_ys = None
+    if main_off is not None:
+        if len(main_off) != len(main_pts):
+            raise SystemExit(f"[median-blend] island_off_by_vertex has {len(main_off)} rows, the centerline {len(main_pts)}")
+        main_off = [float(o) for o in main_off]
+        main_ys = _seat_heights(main_pts, main_iw, main_off)
     # islands to author: the mainline's, plus divided connectors' (tools/divide_connectors.py)
-    islands = [("mainline", main_pts, main_iw)]
+    islands = [("mainline", main_pts, main_iw, main_off, main_ys)]
     for ci in bands.get("connector_islands", []):
-        islands.append((ci["name"], [tuple(p) for p in ci["points_xyz_m"]], ci["island_w_by_point"]))
+        islands.append((ci["name"], [tuple(p) for p in ci["points_xyz_m"]], ci["island_w_by_point"], None, None))
 
     curbV, curbF, deckV, deckF = [], [], [], []
     railV, railF, shrubV, shrubF = [], [], [], []
@@ -124,8 +177,8 @@ def main():
 
     total_len = 0.0
     segs = []
-    for name, pts, iw in islands:
-        segs += [(name, pts, iw, i, j) for (i, j) in _segments(iw)]
+    for name, pts, iw, ioff, iys in islands:
+        segs += [(name, pts, iw, i, j, ioff, iys) for (i, j) in _segments(iw)]
     # ledger 0055: the mainline island's street-only spans (race.chicanes) — their curb and barrier go to the
     # STREET_* objects; everything else exactly as before
     cfg_p = proj / "track.config.json"
@@ -137,7 +190,11 @@ def main():
     def in_street(name, k):
         return name == "mainline" and any(a <= k <= b for a, b in street_spans)
 
-    for (_name, pts, iw, i, j) in segs:
+    kdeckV, kdeckF = [], []          # OFFSET ISLAND tops: concrete, into CURB
+    for (_name, pts, iw, i, j, ioff, iys) in segs:
+        if ioff is not None:
+            deckV, kdeckV = kdeckV, deckV
+            deckF, kdeckF = kdeckF, deckF
         deck_start = len(deckV)
         ks = list(range(i, j))
         seg_len = _MI.seg_length(pts, i, j)
@@ -145,7 +202,7 @@ def main():
         # per-station rings (tools/median_island.py: the curb ring's six vertices and the deck's two, nose-tapered)
         rings = []
         for k in ks:
-            curb_ring, deck_pair = _MI.ring(pts, iw, i, j, k)
+            curb_ring, deck_pair = _MI.ring(pts, iw, i, j, k, off=ioff, ys=iys)
             rings.append(curb_ring)
             deckV += deck_pair
         # faces between rings (bands: 0-1 sideL, 1-2 lipL, 3-4 lipR, 4-5 sideR; deck separate)
@@ -185,9 +242,10 @@ def main():
             off = (rnd() - 0.5) * max(0.2, 2.0 * half_here - 1.6)
             h = 0.35 + rnd() * 0.35
             w = 0.5 + rnd() * 0.4
-            cx = pts[k][0] + lx * off
-            cy = pts[k][1] + LIFT + CURB_H
-            cz = pts[k][2] + lz * off
+            px, py, pz = _MI.centre(pts, k, ioff, iys)
+            cx = px + lx * off
+            cy = py + LIFT + CURB_H
+            cz = pz + lz * off
             if in_street(_name, k):
                 continue          # no planting on a street-only island (the draws above keep every other shrub's place)
             for (dx, dz) in ((tx, tz), (lx, lz)):
@@ -204,21 +262,25 @@ def main():
                 V, F = (srV, srF) if street else (railV, railF)
                 beam_start = len(V)
                 for k in range(a_k, b_k + 1):
-                    V += _MI.beam_ring(pts, k)
+                    V += _MI.beam_ring(pts, k, off=ioff, ys=iys)
                 for si in range(b_k - a_k):
                     F += _MI.beam_span_faces(beam_start + si * 4)
             # posts every ~8 m
             for k in _MI.post_points(pts, bks):
                 V, F = (srV, srF) if in_street(_name, k) else (railV, railF)
                 s = len(V)
-                pv, pf = _MI.post(pts, k)
+                pv, pf = _MI.post(pts, k, off=ioff, ys=iys)
                 V += pv
                 F += [tuple(s + q for q in f) for f in pf]
 
+        if ioff is not None:
+            deckV, kdeckV = kdeckV, deckV
+            deckF, kdeckF = kdeckF, deckF
     print(f"[median-blend] {len(segs)} island segment(s), {total_len:.0f} m total; "
           f"curb {len(curbV)}v, deck {len(deckV)}v, rail {len(railV)}v, shrubs {len(shrubV)}v")
     for name, verts, faces, target in (("MEDIAN_CURB", curbV, curbF, "CURB"),
                                        ("MEDIAN_DECK", deckV, deckF, "TERRAIN"),
+                                       ("MEDIAN_DECK_KERB", kdeckV, kdeckF, "CURB"),
                                        ("MEDIAN_RAIL", railV, railF, "GUARDRAIL"),
                                        ("MEDIAN_SHRUB", shrubV, shrubF, "SCRUB")):
         if not verts:

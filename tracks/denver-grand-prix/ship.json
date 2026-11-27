@@ -16,6 +16,8 @@
       "seat_terrain",
       "densify_ribbon",
       "seat_edges",
+      "declared_medians",
+      "median",
       "gap_mouths",
       "ground_patch"
     ],
@@ -56,7 +58,8 @@
   "sync_in": {
     "required": [
       "track.config.json",
-      "source/mcnichols_ground.lidar.json"
+      "source/mcnichols_ground.lidar.json",
+      "source/colfax_median/colfax_median.json"
     ],
     "optional": [
       "signs.json"

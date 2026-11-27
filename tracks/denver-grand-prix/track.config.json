@@ -249,7 +249,11 @@
   },
   "seat_edge_m": 1.8,
   "crossfall_file": "data/crossfall.lm.json",
-  "trim_host_bank": true
+  "trim_host_bank": true,
+  "declared_medians": {
+   "file": "source/colfax_median/colfax_median.json",
+   "_doc": "Colfax's raised bus-lane median, Sherman to Grant (Kevin 2026-11-27: \"raised\"; the race keeps \"the correct side of the street\", the north side): its centre line from the DOTI 100% design, Aug 2024 (section A-A, 24 ft north kerb to median face, 6 ft median) on the measured north kerb (source/colfax_median/colfax_median.py). tools/declared_medians.py writes it as median_bands.json island_w_by_vertex + island_off_by_vertex (the island's centre off the line); the draft's median step authors it (concrete top). Logan to Grant draws no 6 ft median (two abutting bus lanes, a double line) and is not built; Sherman to Lincoln waits for the Colfax curb redo."
+  }
  },
  "draft_line": {
   "_doc": "source/draft/draft_line.py (ledger 0096 0.1.0): what the source track's data stages would have written, from committed files only",
@@ -604,12 +608,12 @@
    "start": {
     "line_vertex": 50,
     "grid_vertex": 47,
-    "offset_right_m": 0.0
+    "offset_right_m": 5.0
    },
    "run": "the lap, one way, as every street on it runs (PLAN 2: 0 m against traffic): Colfax west from the Capitol, Speer, Stout under the Convention Center, 15th, Blake over Cherry Creek, Speer, Kalamath south across Colfax, W 14th Ave, Santa Fe and the northbound Kalamath back to Speer, W 14th Ave over the creek, 14th Ave up Capitol Hill, Logan, Colfax to the line",
    "ui_description": "Denver Grand Prix: a fictional street circuit on Denver's real streets, 6.5 km one way from the Colorado State Capitol, the streets as the 2022 aerial and the 2020 lidar measured them: concrete barriers along both edges, the side streets sealed. Drive 1: the road and the ground; the city, its lamps, signals, signs and paint come later. The AI line is a generated draft, not an in-game recording.",
    "closure_token": "race",
-   "_start_doc": "the line at the Colfax / Sherman crosswalk (vertex 50 of the finished line, 152 m after station 0), the grid behind it on Colfax facing west, centred (columns at +-1.0 m) between the K-rails, as Sand Creek's race grid"
+   "_start_doc": "the line at the Colfax / Sherman crosswalk (vertex 50 of the finished line, 152 m after station 0), the grid behind it on Colfax facing west, on the north side of the Colfax bus-lane median (Kevin 2026-11-27: \"the correct side of the street\"): columns at 4.0 / 6.0 m right of the centre line, between the median's north face (1.2-3.2 m right) and the north K-rail (7.6-9.8 m right) with 0.3 m clear of both for a 1.9 m car [invented: 5.0 m, the middle of the feasible 4.76-5.39 m]"
   },
   {
    "id": "street",
@@ -622,11 +626,11 @@
    "start": {
     "line_vertex": 50,
     "grid_vertex": 47,
-    "offset_right_m": 2.0
+    "offset_right_m": 5.0
    },
    "run": "the lap's streets open, one way as they run",
    "ui_description": "Denver Grand Prix Free Roam: the Denver Grand Prix lap's streets open, as the 2022 aerial and the 2020 lidar measured them. Drive 1: the lap's own roads; the side streets and the city grid come later.",
-   "_start_doc": "the free roam's grid in the right half of Colfax's westbound side (columns at +1.0 / +3.0 m right of the centre line; verify_kn5 holds street spawns right of travel), the line at the Sherman crosswalk"
+   "_start_doc": "the free roam's grid on Colfax's westbound side north of the bus-lane median (columns at +4.0 / +6.0 m right of the centre line, as the race grid; verify_kn5 holds street spawns right of travel), the line at the Sherman crosswalk"
   }
  ],
  "drive_test": {

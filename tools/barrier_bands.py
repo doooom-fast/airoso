@@ -349,9 +349,16 @@ def build(project_dir, out_name: str | None = None, config_path=None, *, planned
         mouths = [dict(mo) for mo in lap_rec.get("mouths") or []]
     else:
         mb = data / "median_bands.json"
-        island_w = json.loads(mb.read_text(encoding="utf-8")).get("island_w_by_vertex", []) if mb.exists() else [0.0] * n
+        mbj = json.loads(mb.read_text(encoding="utf-8")) if mb.exists() else {}
+        island_w = mbj.get("island_w_by_vertex", []) if mb.exists() else [0.0] * n
         if len(island_w) != n:
             raise SystemExit(f"[bands] median_bands.json ({len(island_w)}) vs centreline ({n}) length mismatch")
+        # OFFSET ISLAND (opt-in): the mainline's island_off_by_vertex (tools/declared_medians.py; + = forward-left, a
+        # lap's island_off_by_vertex frame) - the corridor's island faces move with it exactly as on a lap; absent = None
+        main_island_off = mbj.get("island_off_by_vertex")
+        if main_island_off is not None and len(main_island_off) != n:
+            raise SystemExit(f"[bands] median_bands.json island_off_by_vertex ({len(main_island_off)}) vs centreline "
+                             f"({n}) length mismatch")
         bsp = data / "bridge.spans.auto.json"
         spans = [tuple(map(float, s)) for s in json.loads(bsp.read_text(encoding="utf-8"))] if bsp.exists() else []
         mp = data / "mouths.json"
@@ -463,7 +470,7 @@ def build(project_dir, out_name: str | None = None, config_path=None, *, planned
         fails.append("no layouts[].race_furniture — no corridor to declare")
     # ledger 0054 Phase 2 (opt-in, race.laps.<id>.island_offsets): a lap's island standing off its line (race_lap's
     # island_off_by_vertex); absent on the mainline and on every lap that declares none — nothing below changes then
-    island_off = lap_rec.get("island_off_by_vertex") if lap_rec is not None else None
+    island_off = lap_rec.get("island_off_by_vertex") if lap_rec is not None else main_island_off
     ctx = _RC.prepare(pts, widths, island_w, P, **({"island_off": island_off} if island_off else {}))
     half_auth = ctx["half_auth"]
     # ledger 0054 Phase 2 (opt-in, race.corridor.noses; absent = nothing below changes): closure-run ends declared at a

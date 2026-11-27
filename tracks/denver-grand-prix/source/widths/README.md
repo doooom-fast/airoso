@@ -59,7 +59,7 @@ geometry and running medians with a section rule for a city street:
 **Grades, all 5,318 edges:** 3,818 measured (72 %), 219 detected (4 %), 1,281 inferred (24 %). Inferred breaks down as
 276 under Stout's roof, about 330 at junction mouths, and the rest unread.
 
-**Checked by eye** on the aerial, with the edges drawn (stills beside this file at four places, more were looked at):
+**Checked by eye** on the aerial, with the edges drawn (stills in `stills/`, five places; more were looked at):
 - the kerbs sit on the kerbs on Colfax at Civic Center, 14th Ave at Kalamath, Speer at the Blake split, Kalamath and
   Santa Fe (including the brick median between them), and Colfax at the Capitol;
 - junction mouths are bridged straight across;
@@ -175,3 +175,7 @@ Other stretches the fix moved by more than 0.5 m (p50), 38 in all, mostly on gra
 - No mouth geometry at junctions.
 - The aerial reading was not improved past the point where it ceased to matter for the record.
 - The 2020 aerial year was not used.
+
+## Credits
+
+The five JPEGs in `stills/` are crops of the DRAPP 2022 aerial (Denver Regional Aerial Photography Project, 2022, DRCOG), with the edges drawn on them by `widths.py`. Credit: "DRAPP 2022, DRCOG".

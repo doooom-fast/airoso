@@ -78,6 +78,16 @@ centre platforms are at Pennsylvania, east of Logan.
 
 A photograph from Kevin's own drive, or one dated street-level frame per block, would close 1, 2 and 3.
 
+## An independent reading of the width (Tracks:Mac, 2026-11-27)
+
+The Mac's v7 curb model (2020 lidar and 2022 aerial, so the street **before** the rebuild) measures **Grant to Sherman
+20.54 m kerb to kerb** (p10 to p90: 20.43 to 20.97 m; both kerbs seen at 15 of 37 stations). Section A-A says 64 ft =
+19.51 m. The difference is 1.0 m. Either the rebuild moved a kerb, or 64 ft is the drawing's nominal width. Open until a
+photograph after the rebuild exists; the v7 outer kerbs stand until then. v7 has no reading for Logan to Grant.
+
+**With Kevin** (bridge row `ask-dgp-colfax-median`): the raised 6 ft median through the start/finish block leaves a 7.3 m
+race side. Build it raised, paint it flat, or leave it out.
+
 ## Unchanged, for the record
 
 West of Broadway to Speer (958 m of the leg): OSM carries no bus-lane tags, the project page puts the service on 15th

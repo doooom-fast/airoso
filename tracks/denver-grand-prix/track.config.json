@@ -304,6 +304,11 @@
      "from_s": 2285.0,
      "to_s": 2327.5,
      "why": "[invented] 15th St short of Lawrence (widths frame s 2,287.5-2,325; OSM s 2,284-2,316): the 5 m pit in 3DEP's ground (DOSSIER 3, read as an artefact; this config's 15th St straight span) is in the lidar's class-2 returns too, and the kerb reader found steps inside it: 5.75-11 m kerb to kerb where the street either side reads 16-21 m. Both edges filled linearly between the measured stations at its ends; drive_test street read grass on top in the lane at the pinch (r6)"
+    },
+    {
+     "from_s": 6620.0,
+     "to_s": 6627.5,
+     "why": "Colfax, Grant to Sherman (the raised bus-lane median's block; the Colfax curb redo 2026-11-27): the 2020 lidar's south 'kerb' at s 6,622.5 and 6,625 (-4.38 / -4.34 m N) is the north face of a raised refuge island the same survey lists there (widths.json medians: left 6.25-7.62 m), not the kerb, which reads -15.17 / -14.80 at the two stations either side. Through the draft's running means and Lake Murray's line smoothing it stood the built NORTH edge 0.9-1.3 m inside the measured north kerb at v40-44. Filled linearly between s 6,620 and 6,627.5: the south edge goes to its kerb, the north edge's readings there (5.12 / 5.41) are within 0.04 m of the fill. The 2024 design (DOTI 100%, section A-A) draws no island there: Kevin's newest source per feature"
     }
    ],
    "shared_height_m": 30.0
@@ -653,12 +658,31 @@
    "clear_width_m": 11.36,
    "island_mode": "pavement",
    "whole": [
-    0,
-    2182
+    [
+     46,
+     26
+    ]
    ],
    "boxes": [],
-   "closure_runs": [],
-   "whole_lap": true,
+   "closure_runs": [
+    [
+     26,
+     46
+    ]
+   ],
+   "noses": [
+    {
+     "end": 26,
+     "median": 27,
+     "why": "Colfax's raised bus-lane median, Sherman to Grant (Kevin 2026-11-27: \"raised\", the race on \"the correct side of the street\"): its east nose; the K-rail across the south carriageway beside it seals the far side"
+    },
+    {
+     "end": 46,
+     "median": 45,
+     "why": "the same median's west nose, short of the Sherman crosswalk and the start line (v50)"
+    }
+   ],
+   "_closure_doc": "the north lane sealed along the median by the fleet's usual K-rail (closure run v26-v46, island_mode pavement), the south carriageway beside it closed at both noses; whole street everywhere else (as Sand Creek round K before the median)",
    "rate_toward_race_side": 12,
    "rate_away": 6,
    "pin_zone_m": 120,

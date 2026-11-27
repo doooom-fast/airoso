@@ -1,7 +1,7 @@
 {
  "line": {
   "points": 2184,
-  "length_m": 6581.2,
+  "length_m": 6580.4,
   "osm_lap_m": 6639.2,
   "start_at_offset_m": 0.008,
   "foot_distance_m_max": 7.11,
@@ -326,6 +326,21 @@
        12.07
       ]
      ]
+    },
+    {
+     "from_s": 6620.0,
+     "to_s": 6627.5,
+     "stations": 2,
+     "ends": [
+      [
+       17.0,
+       3.25
+      ],
+      [
+       16.75,
+       3.5
+      ]
+     ]
     }
    ],
    "edge_overrides": [],
@@ -515,9 +530,9 @@
     ]
    },
    "edge_grades_at_points": {
-    "measured": 3157,
+    "measured": 3155,
     "detected": 184,
-    "inferred": 1025
+    "inferred": 1027
    },
    "invented": [
     "corner zones: offset and width linear across each declared corner (curb returns not measured)",
@@ -534,8 +549,8 @@
   "z_max": 1620.48
  },
  "md5": {
-  "centerline.geojson": "0c2ef19ecb347cc582e1ffb8bde8d1be",
-  "centerline.local.json": "cb93aa3d99e9cf0344dfd7b5a87f2a98",
+  "centerline.geojson": "16e3e2701432af7aee3884d7784d31e4",
+  "centerline.local.json": "75ccf68c7729fd6a5c2cd1514e4bf07e",
   "heightfield.npy": "a177b2c46c1f3100a8860f5b979d9e37",
   "heightfield.meta.json": "6af8b635a8b9314e9fcec8ece95fcbb1"
  }

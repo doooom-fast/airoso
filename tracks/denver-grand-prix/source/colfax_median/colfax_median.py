@@ -34,6 +34,13 @@ TRACK = HERE.parents[1]
 KERB_TO_CENTRE_M = (24 + 3) * 0.3048       # section A-A: 24 ft north kerb to the median face + half the 6 ft median
 WIDTH_M = 6 * 0.3048                        # 1.829 m
 FT_PER_STATION = 1.0
+# [invented] the Grant (east) end stands this far short of the drawing's px 975 (E 73.2): with it there, the fleet's nose
+# rule puts the closure's nose pin at the finished line's v26, where the street narrows to 16.2 m (the measured south kerb
+# bulb at E 77-90) and the north lane is 5.23 m, under Kevin's 5.3 m; and the closure, held on the island's 9 m nose
+# taper, bends at R 14.5 m (< the 20 m minimum). 2.2 m moves the nose one vertex west. Within the drawing's read accuracy
+# (stations mapped through two junction centres, about +-5 m; the plan read by eye at 12.28 px/m; the design is marked
+# preliminary). The Sherman end is where the drawing puts it.
+GRANT_END_SHORT_M = 2.2
 
 
 def station_to_e(st_ft):
@@ -48,7 +55,7 @@ def main():
     slope = statistics.median(slopes)
     icept = statistics.median([n - slope * e for e, n in rows])
     resid = [n - (slope * e + icept) for e, n in rows]
-    e0, e1 = station_to_e(10762.0), station_to_e(10945.0)
+    e0, e1 = station_to_e(10762.0), station_to_e(10945.0) - GRANT_END_SHORT_M
     import math
     L = math.hypot(1.0, slope)
     sx, sz = slope / L, -1.0 / L                 # unit normal toward the south (the kerb line's right side going east)
@@ -73,6 +80,8 @@ def main():
                                  "109+45 (crop px 290-975), E = 3.2 + (station - 10718) x 108.8 / 353",
                         "invented": ["anchored on the north kerb (the drawing is 0.73 m narrower kerb to kerb than measured)",
                                      "the dashed west part (E 16.8-57.5) built raised like the solid part",
+                                     f"the Grant end {GRANT_END_SHORT_M} m short of the drawing (E 73.2), so the closure's nose "
+                                     f"pin and bend meet the race corridor's rules (colfax_median.py)",
                                      "curb height 0.18 m and the concrete top (the fleet's island rule)",
                                      "as built against the 2024 design (no photograph after the rebuild)"]},
         }],

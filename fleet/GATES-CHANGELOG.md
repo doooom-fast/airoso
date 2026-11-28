@@ -14,6 +14,18 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
+## 2026-11-27 — A nose pin's neighbour keeps its own race-side face (opt-in; Denver only)
+
+The nose rule (ledger 0054 Phase 2) narrows the pin's box-side neighbour to the pin's WHOLE lane. Where the street narrows
+toward the box, the copied race-side face stands past that vertex's own K-rail: Denver's Colfax Grant nose, 0.67 m past
+v26's north K-rail, read by drive_test race as 2 obstructed stations (s 78-79). `race.corridor.nose_neighbour_own_face`
+(tools/barrier_bands.py, opt-in; absent = the pin's whole lane, byte for byte) keeps the narrower of the copied face and
+the vertex's own. Denver opts in (Kevin on this nose: "match what's really there"). No threshold moved.
+
+Finding for Lake Murray (not changed here: an installed track's corridor stays as built): its north lap has the same
+over-copy at v716 (race face 15.440 -> 15.393 m) and v1476 (12.415 -> 12.238 m), both layouts. Turning the opt-in on
+there is Codex's call for Lake Murray's next build, with tests/tools/test_race_noses.py's exact-copy assert.
+
 ## 2026-11-27 — A declared closure bend allowance at Colfax's Grant nose; pits at their own offset (Denver only, opt-in)
 
 Kevin, 2026-11-27, in chat, verbatim: "Yes, both". He was answering: "Allow the 14.4 m bend at Grant and move the pits

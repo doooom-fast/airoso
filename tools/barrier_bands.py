@@ -515,7 +515,8 @@ def build(project_dir, out_name: str | None = None, config_path=None, *, planned
         fails += [f"chicanes {lid}: {f_}" for f_ in ch_fails]
         corridors[lid] = _corridor_record(lid, tok, direction, sol, ctx, P, pts, widths, n, m, st, street_at,
                                           edge_inset, bhalf, strip_c, wholes, chicane_lane=ch_lane,
-                                          **({"noses": noses} if noses else {}))
+                                          **({"noses": noses} if noses else {}),
+                                          nose_own_face=bool(cor_cfg.get("nose_neighbour_own_face")))
         _chicane_record(corridors[lid], walls, mine, direction, pts, widths, n, m, st, edge_inset, bhalf, P)
 
     # ---- kerbs: outside + inside at every corner, clipped against EVERY layout's closure --------------
@@ -767,6 +768,8 @@ def _corridor_params_echo(cor_cfg, P, measured_clear, island_mode):
         echo["hard_min_zones"] = cor_cfg.get("hard_min_zones")   # opt-in: absent on every declaration without one
     if cor_cfg.get("radius_zones"):
         echo["radius_zones"] = cor_cfg.get("radius_zones")       # opt-in: absent on every declaration without one
+    if cor_cfg.get("nose_neighbour_own_face"):
+        echo["nose_neighbour_own_face"] = True                   # opt-in: absent on every declaration without one
     return echo
 
 
@@ -827,7 +830,7 @@ def _hard_min_at(ctx, k):
 
 
 def _corridor_record(lid, tok, direction, sol, ctx, P, pts, widths, n, m, st, street_at, inset, bhalf, strip_c,
-                     whole, chicane_lane=None, noses=None):
+                     whole, chicane_lane=None, noses=None, nose_own_face=False):
     """corridors.<lid>: the solved closure as a declaration (forward-frame laterals per vertex). chicane_lane
     {vertex: (y_lo, y_hi)}: the declared chicanes' lane (ledger 0055) — zone 'chicane' there, the lane between the
     closure and the chicane's race-side wall (or a curb strip). noses (ledger 0054 Phase 2, opt-in): the declared
@@ -864,12 +867,14 @@ def _corridor_record(lid, tok, direction, sol, ctx, P, pts, widths, n, m, st, st
         nb = (k - 1) % m if (nz["median"] - k) % m == 1 else (k + 1) % m
         own = list(lane[nb])
         lane[nb] = list(lane[k])
-        # ...but never past the neighbour's OWN race-side strip (2026-11-27, Denver's Colfax Grant nose: the street narrows
-        # toward the box, and the pin's race face stood 0.67 m past v26's own K-rail): the narrower of the two faces
-        if race_side == "R":
-            lane[nb][0] = max(lane[nb][0], own[0])
-        else:
-            lane[nb][1] = min(lane[nb][1], own[1])
+        # opt-in race.corridor.nose_neighbour_own_face (2026-11-27, Denver's Colfax Grant nose: the street narrows toward
+        # the box, and the pin's race face stood 0.67 m past v26's own K-rail): never past the neighbour's OWN race-side
+        # strip, the narrower of the two faces. Absent = the pin's whole lane, exactly as before
+        if nose_own_face:
+            if race_side == "R":
+                lane[nb][0] = max(lane[nb][0], own[0])
+            else:
+                lane[nb][1] = min(lane[nb][1], own[1])
     for v, lh in (chicane_lane or {}).items():
         lane[v] = [float(lh[0]), float(lh[1])]
         zone[v] = "chicane"

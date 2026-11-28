@@ -692,6 +692,8 @@
      "why": "Kevin, 2026-11-27, from his Apple TV, verbatim: \"allow it narrow there\". He was answering: \"The city drew Colfax's raised median only from Sherman to Grant (56 m, the start/finish block). With a barrier lining it, the race lane there is 5.4-7.0 m between barriers, under Denver's 6.5 m minimum (an invented number borrowed from Lake Murray). Allow it narrower there (5.3 m minimum, that block only), or paint the median flat?\" The median run v28-v45 and its two nose pins only; 6.5 m everywhere else"
     }
    ],
+   "nose_neighbour_own_face": true,
+   "_nose_neighbour_own_face_doc": "opt-in (tools/barrier_bands.py, 2026-11-27): a nose pin's box-side neighbour takes the closure's lane but keeps its OWN race-side face where the pin's stands past it. At the Grant nose the street narrows toward Grant and the copied face stood 0.67 m past v26's own north K-rail (drive_test race: 2 obstructed stations). Kevin on this nose: \"match what's really there\"",
    "radius_zones": [
     {
      "from": 27,

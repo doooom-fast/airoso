@@ -862,7 +862,14 @@ def _corridor_record(lid, tok, direction, sol, ctx, P, pts, widths, n, m, st, st
         # its far-side wheel paths through the K-rail in the last metres before it. The far carriageway up to the
         # K-rail stays reachable (no_route allows the open walk at full width: Corridor.nose_walls)
         nb = (k - 1) % m if (nz["median"] - k) % m == 1 else (k + 1) % m
+        own = list(lane[nb])
         lane[nb] = list(lane[k])
+        # ...but never past the neighbour's OWN race-side strip (2026-11-27, Denver's Colfax Grant nose: the street narrows
+        # toward the box, and the pin's race face stood 0.67 m past v26's own K-rail): the narrower of the two faces
+        if race_side == "R":
+            lane[nb][0] = max(lane[nb][0], own[0])
+        else:
+            lane[nb][1] = min(lane[nb][1], own[1])
     for v, lh in (chicane_lane or {}).items():
         lane[v] = [float(lh[0]), float(lh[1])]
         zone[v] = "chicane"

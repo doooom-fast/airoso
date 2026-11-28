@@ -190,6 +190,10 @@ def layout_dummies(line: Line, layout: dict, race: dict, island_w=None, override
     grid_v = int(start.get("grid_vertex", start.get("vertex", -1)))
     off = float(start.get("offset_right_m", 0.0))
     pit_off_decl = start.get("pit_offset_right_m")      # opt-in: the pits' own lateral; None = the grid's
+    if pit_off_decl is not None and float(pit_off_decl) < 0.0:
+        # refused, as tools/barrier_bands.py refuses it: the opt-in is right of travel only (Codex review of 582aa6e2)
+        fails.append(f"{lid}: start.pit_offset_right_m {pit_off_decl} < 0 is refused (right of travel only)")
+        pit_off_decl = None
     n_grid = int(race.get("grid_slots", 8))
     n_pits = int(race.get("pit_slots", 8))
     if direction not in DIRECTIONS:

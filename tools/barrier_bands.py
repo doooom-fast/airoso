@@ -631,7 +631,12 @@ def build(project_dir, out_name: str | None = None, config_path=None, *, planned
             continue
         # opt-in start.pit_offset_right_m (tools/layout_dummies.py): the pits stand single file at their own offset — two
         # zones, the grid's (pole .. last slot + a car, two columns) and the pits' (first .. last pit +- a car, one column)
-        pit_off = abs(float(start["pit_offset_right_m"]))
+        pit_off = float(start["pit_offset_right_m"])
+        if pit_off < 0.0:
+            # Codex review of 582aa6e2: layout_dummies places a signed pit offset, so an abs() here would check the mirrored
+            # side in an asymmetric corridor. The opt-in is right-of-travel only; a negative declaration is refused in both tools.
+            raise SystemExit(f"[bands] layout {lo.get('id')}: start.pit_offset_right_m {pit_off} < 0 is refused "
+                             f"(the opt-in pit offset is right of travel, as tools/layout_dummies.py places it)")
         car = SPAWN_CAR_REACH_M
         for kind, a_, b_, o_, cols in (("grid", 0.0, GRID_PITCH_M * (grid_slots - 1) + car, off, 2),
                                        ("pits", PIT_SETBACK_M + PIT_PITCH_M - car, behind + car, pit_off, 1)):

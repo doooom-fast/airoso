@@ -613,12 +613,13 @@
    "start": {
     "line_vertex": 50,
     "grid_vertex": 47,
-    "offset_right_m": 5.0
+    "offset_right_m": 7.03,
+    "pit_offset_right_m": 4.33
    },
    "run": "the lap, one way, as every street on it runs (PLAN 2: 0 m against traffic): Colfax west from the Capitol, Speer, Stout under the Convention Center, 15th, Blake over Cherry Creek, Speer, Kalamath south across Colfax, W 14th Ave, Santa Fe and the northbound Kalamath back to Speer, W 14th Ave over the creek, 14th Ave up Capitol Hill, Logan, Colfax to the line",
    "ui_description": "Denver Grand Prix: a fictional street circuit on Denver's real streets, 6.5 km one way from the Colorado State Capitol, the streets as the 2022 aerial and the 2020 lidar measured them: concrete barriers along both edges, the side streets sealed. Drive 1: the road and the ground; the city, its lamps, signals, signs and paint come later. The AI line is a generated draft, not an in-game recording.",
    "closure_token": "race",
-   "_start_doc": "the line at the Colfax / Sherman crosswalk (vertex 50 of the finished line, 152 m after station 0), the grid behind it on Colfax facing west, on the north side of the Colfax bus-lane median (Kevin 2026-11-27: \"the correct side of the street\"): columns at 4.0 / 6.0 m right of the centre line, between the median's north face (1.2-3.2 m right) and the north K-rail (7.6-9.8 m right) with 0.3 m clear of both for a 1.9 m car [invented: 5.0 m, the middle of the feasible 4.76-5.39 m]"
+   "_start_doc": "the line at the Colfax / Sherman crosswalk (vertex 50 of the finished line, 152 m after station 0), the grid behind it on Colfax facing west, in the north lane beside the bus-lane median (Kevin 2026-11-27: \"the correct side of the street\"): columns at 6.03 / 8.03 m right of the centre line, the one offset (7.00-7.05 m) at which the spawn gate holds both columns 0.3 m clear of the closure and the north K-rail at every vertex from the pole back past the last slot [invented: 7.03 inside it]; the pits single file at their own offset (Kevin: \"Yes, both\"), 4.33 m right, the middle of the 3.88-4.78 m where all eight clear 0.3 m on the narrower street toward Grant"
   },
   {
    "id": "street",
@@ -631,11 +632,12 @@
    "start": {
     "line_vertex": 50,
     "grid_vertex": 47,
-    "offset_right_m": 5.0
+    "offset_right_m": 7.03,
+    "pit_offset_right_m": 4.33
    },
    "run": "the lap's streets open, one way as they run",
    "ui_description": "Denver Grand Prix Free Roam: the Denver Grand Prix lap's streets open, as the 2022 aerial and the 2020 lidar measured them. Drive 1: the lap's own roads; the side streets and the city grid come later.",
-   "_start_doc": "the free roam's grid on Colfax's westbound side north of the bus-lane median (columns at +4.0 / +6.0 m right of the centre line, as the race grid; verify_kn5 holds street spawns right of travel), the line at the Sherman crosswalk"
+   "_start_doc": "the free roam's grid as the race's (columns 6.03 / 8.03 m right of the centre line, north of the bus-lane median; verify_kn5 holds street spawns right of travel) and its pits at 4.33 m right, as the race's; the line at the Sherman crosswalk"
   }
  ],
  "drive_test": {
@@ -688,6 +690,14 @@
      "to": 46,
      "clear_hard_min_m": 5.3,
      "why": "Kevin, 2026-11-27, from his Apple TV, verbatim: \"allow it narrow there\". He was answering: \"The city drew Colfax's raised median only from Sherman to Grant (56 m, the start/finish block). With a barrier lining it, the race lane there is 5.4-7.0 m between barriers, under Denver's 6.5 m minimum (an invented number borrowed from Lake Murray). Allow it narrower there (5.3 m minimum, that block only), or paint the median flat?\" The median run v28-v45 and its two nose pins only; 6.5 m everywhere else"
+    }
+   ],
+   "radius_zones": [
+    {
+     "from": 27,
+     "to": 31,
+     "radius_min_m": 14.39,
+     "why": "Kevin, 2026-11-27, in chat, verbatim: \"Yes, both\". He was answering: \"Allow the 14.4 m bend at Grant and move the pits closer to the line?\" The closure along Colfax's median at its Grant nose (pin v27, the island's 9 m nose taper to v31) follows the taper on that narrow street; 20 m everywhere else. Codex was asked (claude-resume.to_codex_colfax_median_nose) to make the barrier follow the real nose, which may retire this"
     }
    ],
    "_closure_doc": "the north lane sealed along the median by the fleet's usual K-rail (closure run v27-v46, island_mode pavement), the south carriageway beside it closed at both noses; whole street everywhere else (as Sand Creek round K before the median)",

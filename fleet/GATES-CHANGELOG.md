@@ -14,6 +14,30 @@ feel right (`fleet/reference/MEASURED.md`). Until that lands, the ⚠ items belo
 
 ---
 
+## 2026-11-27 — A declared closure bend allowance at Colfax's Grant nose; pits at their own offset (Denver only, opt-in)
+
+Kevin, 2026-11-27, in chat, verbatim: "Yes, both". He was answering: "Allow the 14.4 m bend at Grant and move the pits
+closer to the line?"
+
+1. `race.corridor.radius_zones` (tools/barrier_bands.py, opt-in; absent = every closure vertex against RADIUS_MIN_M 20 m,
+   byte for byte): `[{from, to, radius_min_m, why}]` lowers the closure's plan-radius minimum over those vertices only
+   (tools/race_corridor.plan_radius takes an opt-in `only` predicate; the polyline and its +-6 m stencil are the whole
+   run's). Denver declares v27-v31 (the closure's nose pin and the island's 9 m nose taper at Grant) at 14.39 m, the
+   measured 14.395 m; every other vertex of the run is still held to 20 m (42.6 m at v45). Why the bend: on that narrow
+   street (16-17.5 m, the measured south kerb bulb at E 77-90) the solve's floor bound falls under its island bound, so the
+   closure follows the AUTHORED nose taper. Codex was asked (claude-resume.to_codex_colfax_median_nose) to make the
+   barrier follow the real nose, which may retire this allowance.
+2. `layouts[].start.pit_offset_right_m` (tools/layout_dummies.py) and the spawn gate (tools/barrier_bands.py 8. spawns):
+   opt-in; absent = the pits at the grid's offset and ONE spawn zone (pole .. last pit, two columns), byte for byte.
+   Declared, the gate checks two zones: the grid's (pole .. last slot + 3 m, both columns) at the grid's offset, and the
+   pits' (first .. last pit +- 3 m [invented], single file) at theirs. The 0.3 m clearance (GRID_CLEAR_MIN_M) is
+   unchanged. Denver: grid 7.03 m right (both columns clear 0.3 m only at 7.00-7.05 m), pits 4.33 m (3.88-4.78 m).
+
+Proof of no-op: Lake Murray (the repo's committed data) and Sand Creek (the 0.2.13 r2 project) through
+tools/layout_dummies.py, tools/barrier_bands.py (with its planned no_route) and scripts/ac/write_ai_line.py per layout, on
+the base 2a636941 and on this branch: every output file byte-identical except two wall-clock `seconds` fields of Lake
+Murray's planned no_route (4.4 / 4.3 s).
+
 ## 2026-11-27 — A declared lower lane minimum for Colfax's median block (Denver only, opt-in; the race gate still red)
 
 Kevin, 2026-11-27, from his Apple TV, verbatim: "allow it narrow there". He was answering: "The city drew Colfax's raised

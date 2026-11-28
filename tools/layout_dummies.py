@@ -12,7 +12,9 @@ from the declared start in track.config.json `layouts[].start`:
 
 Grid: AC_START_g (g = 1..slots-1) at pole - 5.5 g m, two staggered columns INSIDE the lane at the
 lane centre +/- GRID_STAGGER_M = 1.0 m (never dummies.py's +/-30 % of the half-width about the CENTRE, which would put
-slots in the oncoming lane). Pits: AC_PIT_p single file at the lane centre, pole - 45 - 7 (p+1) m.
+slots in the oncoming lane). Pits: AC_PIT_p single file at the lane centre, pole - 45 - 7 (p+1) m — at the grid's own
+offset, or (opt-in, start.pit_offset_right_m; Denver 2026-11-27, Kevin: "Yes, both") at their own, right of THAT layout's
+travel like offset_right_m; absent = the grid's, exactly as before.
 Heights: START/PIT/HOTLAP at centreline y + LIFT 0.10 + DROP_IN 0.30 (tools/set_start_blend.py),
 TIME at y + 0.10. "Behind" = lower station for `direction: forward`, higher for `reverse`.
 
@@ -187,6 +189,7 @@ def layout_dummies(line: Line, layout: dict, race: dict, island_w=None, override
     line_v = int(start.get("line_vertex", -1))
     grid_v = int(start.get("grid_vertex", start.get("vertex", -1)))
     off = float(start.get("offset_right_m", 0.0))
+    pit_off_decl = start.get("pit_offset_right_m")      # opt-in: the pits' own lateral; None = the grid's
     n_grid = int(race.get("grid_slots", 8))
     n_pits = int(race.get("pit_slots", 8))
     if direction not in DIRECTIONS:
@@ -272,10 +275,11 @@ def layout_dummies(line: Line, layout: dict, race: dict, island_w=None, override
         lat = pole_off + (GRID_STAGGER_M if g % 2 == 1 else -GRID_STAGGER_M)
         pos, k, u = place(line, s, direction, lat, LIFT + DROP_IN)
         put(f"AC_START_{g}", pos, k, s, lat, u)
+    pit_off = pole_off if (pit_off_decl is None or override) else float(pit_off_decl)
     for p in range(n_pits):
         s = s_pole + sgn * (PIT_SETBACK_M + PIT_PITCH_M * (p + 1))
-        pos, k, u = place(line, s, direction, pole_off, LIFT + DROP_IN)
-        put(f"AC_PIT_{p}", pos, k, s, pole_off, u)
+        pos, k, u = place(line, s, direction, pit_off, LIFT + DROP_IN)
+        put(f"AC_PIT_{p}", pos, k, s, pit_off, u)
 
     meta = {
         "_layout": lid, "_direction": direction, "_kind": layout.get("kind"),

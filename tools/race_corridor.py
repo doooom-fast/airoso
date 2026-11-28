@@ -465,11 +465,13 @@ def lane_by_vertex(y_closure, widths, n, direction, *, inset=INSET_M, half=BARRI
 RADIUS_STENCIL_M = 6.0    # the study's stencil: the circle through the points >= 6 m before and after a vertex
 
 
-def plan_radius(pts, n, vs, y, stencil_m=RADIUS_STENCIL_M):
+def plan_radius(pts, n, vs, y, stencil_m=RADIUS_STENCIL_M, only=None):
     """(min plan radius (m) of the closure centre polyline, its vertex, backward steps) along the run `vs` in its
     TRAVEL order. Radius: the circle through the points >= stencil_m before / after each interior vertex (the
     study's +-6 m stencil; a 3-point circle on 3 m spacing reads raster-level jitter as a 10 m bend). Backward
-    step: a step that does not advance along the centreline's own direction of travel there (a fold)."""
+    step: a step that does not advance along the centreline's own direction of travel there (a fold). ``only``
+    (opt-in, tools/barrier_bands.py radius_zones): a predicate on the vertex; the minimum is taken over the vertices
+    it accepts (the polyline and its stencil are the whole run's, as without it). None = every interior vertex."""
     def at(v, yy):
         a, b = pts[(v - 1) % n], pts[(v + 1) % n]
         tx, tz = b[0] - a[0], b[2] - a[2]
@@ -494,6 +496,8 @@ def plan_radius(pts, n, vs, y, stencil_m=RADIUS_STENCIL_M):
         while ib < len(q) - 1 and arc[ib] - arc[i] < stencil_m:
             ib += 1
         if not ia < i < ib:
+            continue
+        if only is not None and not only(vs[i]):
             continue
         (ax, az), (bx, bz), (cx, cz) = q[ia], q[i], q[ib]
         ab, bc, ca = math.hypot(bx - ax, bz - az), math.hypot(cx - bx, cz - bz), math.hypot(ax - cx, az - cz)

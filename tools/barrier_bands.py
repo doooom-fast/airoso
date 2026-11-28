@@ -87,6 +87,7 @@ HERE = Path(__file__).resolve().parent
 AIROSO = HERE.parent
 
 CAR_HALF_W_M = 0.95          # a 1.9 m car, for the grid clearance check (race_furniture.CAR_HALF_W)
+SPAWN_CAR_REACH_M = 3.0      # [invented] opt-in pit_offset_right_m: each spawn zone reaches this far past its end slot
 
 
 def _load_tool(stem, alias):
@@ -396,6 +397,10 @@ def build(project_dir, out_name: str | None = None, config_path=None, *, planned
     # whose race lane may be narrower than clear_hard_min_m, each with its own floor and the call that allowed it
     hard_min_zones, hmz_fails = _hard_min_zones(cor_cfg.get("hard_min_zones"), P)
     fails += hmz_fails
+    # race.corridor.radius_zones (opt-in; absent = RADIUS_MIN_M for every closure vertex, as before): a declared stretch
+    # whose closure may bend tighter than RADIUS_MIN_M, each with its own minimum and the call that allowed it
+    radius_zones, rz_fails = _radius_zones(cor_cfg.get("radius_zones"))
+    fails += rz_fails
     island_mode = str(cor_cfg.get("island_mode", "pavement"))
     if island_mode != "pavement":
         fails.append(f"race.corridor.island_mode {island_mode!r}: only \"pavement\" is part of this ship "
@@ -614,13 +619,28 @@ def build(project_dir, out_name: str | None = None, config_path=None, *, planned
         reverse = str(lo.get("direction", "forward")) == "reverse"
         behind = PIT_SETBACK_M + PIT_PITCH_M * pit_slots
         s_pole = st[gv]
-        s0, s1 = (s_pole, min(lap, s_pole + behind)) if reverse else (max(0.0, s_pole - behind), s_pole)
-        vs = [v for v in range(m) if s0 - 1e-6 <= st[v] <= s1 + 1e-6]
-        if not vs:
+        if start.get("pit_offset_right_m") is None:
+            s0, s1 = (s_pole, min(lap, s_pole + behind)) if reverse else (max(0.0, s_pole - behind), s_pole)
+            vs = [v for v in range(m) if s0 - 1e-6 <= st[v] <= s1 + 1e-6]
+            if not vs:
+                continue
+            no_gap.append({"layout": lo.get("id"), "i": vs[0], "j": vs[-1], "station_from_m": round(s0, 1),
+                           "station_to_m": round(s1, 1), "offset_right_m": off, "reverse": reverse,
+                           "grid_slots": grid_slots, "pit_slots": pit_slots})
             continue
-        no_gap.append({"layout": lo.get("id"), "i": vs[0], "j": vs[-1], "station_from_m": round(s0, 1),
-                       "station_to_m": round(s1, 1), "offset_right_m": off, "reverse": reverse,
-                       "grid_slots": grid_slots, "pit_slots": pit_slots})
+        # opt-in start.pit_offset_right_m (tools/layout_dummies.py): the pits stand single file at their own offset — two
+        # zones, the grid's (pole .. last slot + a car, two columns) and the pits' (first .. last pit +- a car, one column)
+        pit_off = abs(float(start["pit_offset_right_m"]))
+        car = SPAWN_CAR_REACH_M
+        for kind, a_, b_, o_, cols in (("grid", 0.0, GRID_PITCH_M * (grid_slots - 1) + car, off, 2),
+                                       ("pits", PIT_SETBACK_M + PIT_PITCH_M - car, behind + car, pit_off, 1)):
+            s0, s1 = (min(lap, s_pole + a_), min(lap, s_pole + b_)) if reverse else (max(0.0, s_pole - b_), s_pole - a_)
+            vs = [v for v in range(m) if s0 - 1e-6 <= st[v] <= s1 + 1e-6]
+            if not vs:
+                continue
+            no_gap.append({"layout": lo.get("id"), "i": vs[0], "j": vs[-1], "station_from_m": round(s0, 1),
+                           "station_to_m": round(s1, 1), "offset_right_m": o_, "reverse": reverse,
+                           "grid_slots": grid_slots, "pit_slots": pit_slots, "spawns": kind, "columns": cols})
 
     out = {
         "version": 2,
@@ -691,6 +711,8 @@ def build(project_dir, out_name: str | None = None, config_path=None, *, planned
         vctx["island_off"] = ctx["island_off"]           # ledger 0054 Phase 2 (opt-in): the islands gate reads it
     if hard_min_zones:
         vctx["hard_min_zones"] = hard_min_zones          # opt-in: the clear gates read the zone's own floor
+    if radius_zones:
+        vctx["radius_zones"] = radius_zones              # opt-in: the shape gate reads the zone's own minimum
     if noses:
         # ledger 0054 Phase 2: the declared nose ends (the self-gates read them; nothing is added when none is declared)
         out["zones"]["noses"] = [{k: nz[k] for k in ("end", "median", "pin", "run")} for nz in noses]
@@ -743,6 +765,8 @@ def _corridor_params_echo(cor_cfg, P, measured_clear, island_mode):
                  "boxes": cor_cfg.get("boxes"), "closure_runs": cor_cfg.get("closure_runs")})
     if cor_cfg.get("hard_min_zones"):
         echo["hard_min_zones"] = cor_cfg.get("hard_min_zones")   # opt-in: absent on every declaration without one
+    if cor_cfg.get("radius_zones"):
+        echo["radius_zones"] = cor_cfg.get("radius_zones")       # opt-in: absent on every declaration without one
     return echo
 
 
@@ -766,6 +790,29 @@ def _hard_min_zones(spec, P):
             continue
         if not str(z.get("why") or "").strip():
             fails.append(f"hard_min_zones: v{a}-v{b} says no why (the call that allowed a narrower lane there)")
+            continue
+        out.append({"from": a, "to": b, "min": mn})
+    return out, fails
+
+
+def _radius_zones(spec):
+    """race.corridor.radius_zones (opt-in, 2026-11-27; first use Denver's Colfax median Grant nose, Kevin: "Yes, both"):
+    [{from, to, radius_min_m, why}] -> ([{from, to, min}], fails). Each zone LOWERS the closure's plan-radius minimum
+    (RADIUS_MIN_M) over its vertices only; it may not raise it, may not reach 0, and must say why. Absent = []."""
+    if not spec:
+        return [], []
+    out, fails = [], []
+    for z in spec if isinstance(spec, list) else [spec]:
+        try:
+            a, b, mn = int(z["from"]), int(z["to"]), float(z["radius_min_m"])
+        except (KeyError, TypeError, ValueError) as e_:
+            fails.append(f"radius_zones: an entry needs integer from / to and radius_min_m ({e_!r}): {z!r}")
+            continue
+        if not (0.0 < mn <= RADIUS_MIN_M):
+            fails.append(f"radius_zones: v{a}-v{b} minimum {mn} m must be in (0, RADIUS_MIN_M {RADIUS_MIN_M}]")
+            continue
+        if not str(z.get("why") or "").strip():
+            fails.append(f"radius_zones: v{a}-v{b} says no why (the call that allowed a tighter bend there)")
             continue
         out.append({"from": a, "to": b, "min": mn})
     return out, fails
@@ -1904,8 +1951,22 @@ def validate(out: dict, ctx: dict) -> list[str]:
             rad, rad_v, back = _RC.plan_radius(pts, m, vs, y)
             if back:
                 fails.append(f"shape {lid}: run v{r['i']}-v{r['j']} has {back} backward steps (a fold)")
-            if rad < RADIUS_MIN_M:
-                fails.append(f"shape {lid}: run v{r['i']}-v{r['j']} plan radius {rad:.1f} m at v{rad_v} < {RADIUS_MIN_M} m")
+            rzs = ctx.get("radius_zones") or []
+            if not rzs:
+                if rad < RADIUS_MIN_M:
+                    fails.append(f"shape {lid}: run v{r['i']}-v{r['j']} plan radius {rad:.1f} m at v{rad_v} < {RADIUS_MIN_M} m")
+            else:
+                # opt-in radius_zones: each zone's vertices against its own minimum, every other vertex against RADIUS_MIN_M
+                def _in_z(v, z):
+                    return _RC.in_rng(v, z["from"], z["to"], m)
+                rad_o, v_o, _ = _RC.plan_radius(pts, m, vs, y, only=lambda v: not any(_in_z(v, z) for z in rzs))
+                if rad_o < RADIUS_MIN_M:
+                    fails.append(f"shape {lid}: run v{r['i']}-v{r['j']} plan radius {rad_o:.1f} m at v{v_o} < {RADIUS_MIN_M} m")
+                for z in rzs:
+                    rad_z, v_z, _ = _RC.plan_radius(pts, m, vs, y, only=lambda v, z=z: _in_z(v, z))
+                    if rad_z < z["min"]:
+                        fails.append(f"shape {lid}: run v{r['i']}-v{r['j']} plan radius {rad_z:.1f} m at v{v_z} < the zone "
+                                     f"v{z['from']}-v{z['to']} minimum {z['min']} m")
             # 4. clear width / pocket ; 5. islands
             for q in range(1, len(vs) - 1):
                 k = vs[q]
@@ -1989,8 +2050,9 @@ def validate(out: dict, ctx: dict) -> list[str]:
                 face = widths[k] / 2.0 - inset
                 lo_, hi_ = -face, face
             r_lo, r_hi = (lo_, hi_) if reverse else (-hi_, -lo_)
-            outer = off + GRID_STAGGER_M + CAR_HALF_W_M
-            inner = off - GRID_STAGGER_M - CAR_HALF_W_M
+            stagger = 0.0 if int(z.get("columns", 2)) == 1 else GRID_STAGGER_M     # opt-in pits zone: single file
+            outer = off + stagger + CAR_HALF_W_M
+            inner = off - stagger - CAR_HALF_W_M
             cl_out, cl_in = r_hi - outer, inner - r_lo
             z.setdefault("grid_clearance_m", round(min(cl_out, cl_in), 2))
             z["grid_clearance_m"] = round(min(z["grid_clearance_m"], cl_out, cl_in), 2)
